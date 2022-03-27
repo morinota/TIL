@@ -71,35 +71,7 @@ $$ arg min_{H, W} = ||X-\hat{X}|| \\
   - $$ W'_{u, k}= W_{u, k} + 2 \times \alpha \cdot E_{u, i} \cdot H_{k, i}$$
   - $$ H'_{i, k}= H_{u, k} + 2 \times \alpha \cdot E_{u, i} \cdot W_{u, k}$$
   - ここで、$\alpha$は学習率?
-- ALSは、トレーニングデータの複数のパーテーションに渡って、最急降下法を並行して実行する。
 
-
-ユーザの総数を $|U|$、 商品の総数を $|D|$ とすると $P$ と $Q$ はそれぞれ $|U| \times K$ 行列と $|D| \times K$ 行列となります。このとき $K$ はモデルに与えられるパラメータで潜在因子の数を表します。
-
-このとき$\hat{R}$の各要素である、ユーザ $u$ の商品 $i$ に対するレーティングの推定値 $\hat{r}_{ui}$ は
-
-$$ \hat{r}_{ui} = \mathbf{p}_u^\mathrm{T} \mathbf{q}_i $$
-
-で与えられます。
-
-ALS では L2 正則化を行います。このL2(誤差平方和＋L2正則化項)を最小化するようなPとQを求める??
-
-
-ここで $n_{p_u}$ と $n_{q_i}$ はそれぞれユーザ $u$ と商品 $i$ のレーティングの数を表します。また $I_u$ がユーザ $u$ が評価した商品の集合です。この損失関数を $p_{uk}$ で偏微分してみると：
-
-$$ \begin{aligned}\frac{1}{2} \frac{\partial L}{\partial p_{uk}} &= \sum_{i \in I_u}(\mathbf{p}u^\mathrm{T}\mathbf{q}i - r{ui})q{ik} + \lambda n_{p_u} p_{ku} \ &= \sum_{i \in I_u} q_{ik} \mathbf{q}i^\mathrm{T}\mathbf{p}u - \sum{i \in I_u} q{ik}r_{ui} + \lambda n_{p_u} p_{ku}\end{aligned}$$
-
-$1$ から $K$ までの潜在因子 $k$ を並べてベクトルとしてまとめると：
-
-$$ \begin{aligned}\frac{1}{2} \frac{\partial L}{\partial \mathbf{p}u} &= Q{I_u} Q_{I_u}^\mathrm{T} \mathbf{p}u - Q{I_u} R^\mathrm{T} (u, I_n) + \lambda n_{p_u} \mathbf{p}u \ &= (Q{I_u} Q_{I_u}^\mathrm{T} + \lambda n_p E) \mathbf{p}u - Q{I_u} R^\mathrm{T} (u, I_n) \end{aligned}$$
-
-ここで $Q_{I_u}$ は $Q$ の中からユーザ $u$ が評価した商品 $I_u$ に関する行だけを抜き出したもので、$R^\mathrm{T} (u, I_n)$ は $R$ からユーザ $u$ の行の中から商品 $I_u$ に関するものだけを抜き出したベクトルを表します。
-
-$$ \begin{aligned}\frac{\partial L}{\partial \mathbf{p}u} &= 0 \ \Rightarrow ; \mathbf{p}u &= (Q{I_u} Q{I_u}^\mathrm{T} + \lambda n_p E)^{-1} Q_{I_u} R^\mathrm{T} (u, I_n) \ \Rightarrow ; \mathbf{p}_u &= A_u^{-1}V_u \end{aligned}$$
-
-このようにユーザ因子行列 $P$ は $Q$ と $R$ だけに依存して更新できることが分かります。 $q_{ik}$ で偏微分して整理していけば同様に商品因子行列 $Q$ が $P$ と $R$ だけを使って更新できることが示されます。
-
-ALS ではこの式を用いて $P$ と $Q$ を交互に更新し、損失関数が変化しなくなるまで反復します。問題は $A_u$ の逆行列が存在するのか定かでないことですが、この点についてもとの論文にも特に言及がなかったのでよくわかっていません。
 # おわりに
 
 # 参考
