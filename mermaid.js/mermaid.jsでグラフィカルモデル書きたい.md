@@ -1,27 +1,26 @@
 # mermaid.js でノードの形を変更する
-
 括弧を使い別ける事で、ノードの形を変更できるようですね。
 
 ```
 graph TD
-    ノード
-    ノード1[テキスト入りノード]
-    ノード2(丸括弧形ノード)
-    ノード3((円形ノード))
-    ノード4>非対称形ノード]
-    ノード5{ひし形ノード}
+    a
+    b[テキスト入りノード]
+    c(丸括弧形ノード)
+    d((円形ノード))
+    e>非対称形ノード]
+    f{ひし形ノード}
 ```
 
 こんな感じになるようです。
 
 ```mermaid
 graph TD
-    ノード
-    ノード1[テキスト入りノード]
-    ノード2(丸括弧形ノード)
-    ノード3((円形ノード))
-    ノード4>非対称形ノード]
-    ノード5{ひし形ノード}
+    a
+    b[テキスト入りノード]
+    c(丸括弧形ノード)
+    d((円形ノード))
+    e>非対称形ノード]
+    f{ひし形ノード}
 ```
 
 グラフィカルモデルにおいては、基本的には円形ノードを使っていきます。
@@ -32,7 +31,7 @@ CSS の記法(?)が使えるようです。
 
 ```
 graph LR
-    start(開始)-->stop(完了)
+    start((x))-->stop((y))
     style start fill:#f9f
     style stop fill:#ccf
 ```
@@ -41,7 +40,7 @@ graph LR
 
 ```mermaid
 graph LR
-    start(開始)-->stop(完了)
+    start((x))-->stop((y))
     style start fill:#f99f
     style stop fill:#ccf
 ```
@@ -91,10 +90,13 @@ graph LR
     end
     z((z)):::non-observed --> y
 ```
-とりあえずこれで何とか、グラフィカルモデルっぽい図は書けそうな気がします。
-
+# おわりに
+とりあえずこれで何とか、グラフィカルモデルっぽい図は書けそうな気がします。(気がするだけですが...。)
+皆さんはグラフィカルモデルをどうやって書いてるのでしょうか？オススメのツール等があればぜひコメント等で教えていただければ嬉しいです：）
 # 参考
-
-- https://zenn.dev/junkawa/articles/zenn-mermaidjs-theme-config
+- 【目的無しの泥臭調査⑤】mermaid.jsの記法を覚えて、楽しく図を描く。
+  - https://qiita.com/t_o_d/items/ac5b04419252f768a535
+- Mermaid のテーマ・スタイルの変更方法
+  - https://zenn.dev/junkawa/articles/zenn-mermaidjs-theme-config
 - CSS カラーコード
   - http://www.netyasun.com/home/color.html
