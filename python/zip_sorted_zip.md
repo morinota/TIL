@@ -1,8 +1,8 @@
 # はじめに：zip(\*sorted(zip(list1, list2)))が何やってるか分からなかった。
 
-- 202203 現在、開催中の Kaggle competition「h-and-m-personalized-fashion-recommendations」に参加中
+- 202203 現在、開催中の Kaggle competition「h-and-m-personalized-fashion-recommendations」に参加中。
 - コンペ内の Notebook を読んでいる際に、`zip(*sorted(zip(list1, list2)))`の意味がよく分からなかった。
-- 備忘録として残しておく。
+- 備忘録として残しておきます。
 
 # 理解できなかったコード
 
@@ -13,7 +13,7 @@ _, popular_items = zip(*sorted(zip(popular_items_group, popular_items_group.keys
 '''
 ここで、すでに生成済みの変数の意味合いは以下。
 -------------------
-popular_items_group:pd.Series=indexは各アイテムのユニークなid, valueは各アイテムの人気度合いを表す指標。
+popular_items_group:pd.Seriesオブジェクト。indexは各アイテムのユニークなid, valueは各アイテムの人気度合いを表す指標。
 '''
 ```
 
