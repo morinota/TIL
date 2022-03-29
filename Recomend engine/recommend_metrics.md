@@ -67,8 +67,22 @@ Implicit データに対する?
    -
 
 ## Precision@K
+
 aa
-##
+
+## Recall@K
+
+## f1-score@K
+
+## MAP@K
+
+- Mean Average Precision の略。
+- MAP の前に、AP(Average Precision)について。
+  - Precision は閾値によって変化する。
+  - AP は適合アイテムが出現した時点をそれぞれ閾値として、閾値ごとの Precision を算出し、Precision の平均をとったものである。
+  - なお**AP は PR 曲線の AUC と同じ値**となる。
+  - ユーザuのAPは以下の様に表される。
+  - 
 
 # 参考
 
