@@ -101,6 +101,6 @@ $$
 上記の2つの更新式を交互に繰り返し計算する事で、$P \approx X ^T \cdot Y = \hat{P} \\$を満たすようなアイテム行列とユーザ行列を推定する事ができます。
 (Explicitデータの場合は評価行列を直接近似するような$R \approx X ^T \cdot Y = \hat{R} \\$を推定していましたよね。)
 
-ImplicitデータにおけるALSを用いたMatrix Factorizationでは、**Preference値を用いて評価行列をBinary値に変換**する事と、**目的関数においてConfidence値を用いて各要素の重み付け**をしている点が、Explicitデータの場合と異なるようですね！
+ImplicitデータにおけるALSを用いたMatrix Factorizationでは、**Preference値を用いて評価行列をBinary値に変換**する事と、**目的関数においてConfidence値を用いて各要素の重み付け**をしている点が、Explicitデータの場合と異なるようです。
 
 この得られた$\hat{P} $において、各ユーザにおけるPreference値の高いアイテムをレコメンドしていく、という理解でいいのか...??
