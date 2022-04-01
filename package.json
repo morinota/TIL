@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "prettier-plugin-md-nocjsp": "^1.2.0"
+  }
+}
