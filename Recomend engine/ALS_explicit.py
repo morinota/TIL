@@ -17,10 +17,10 @@ def get_rating_error(x, w, h):
     ---------
     X_uiとX_ui_hat(wとhの内積)の誤差.
     '''
-    return x - numpy.dot(w, h)
+    return x - np.dot(w, h)
 
 
-def get_error(X: np.ndarray, W: np.ndarray, H: np.ndarray, beta):
+def get_error(X: np.matrix, W: np.matrix, H: np.matrix, beta):
     '''
     ALSによる行列分解における誤差関数の値を計算する関数
 
@@ -56,7 +56,7 @@ def get_error(X: np.ndarray, W: np.ndarray, H: np.ndarray, beta):
     return error
 
 
-def matrix_factorization(X: np.ndarray, len_of_latest_variable, steps=5000, alpha=0.0002, beta=0.02, threshold=0.001):
+def matrix_factorization(X: np.matrix, len_of_latest_variable, steps=5000, alpha=0.0002, beta=0.02, threshold=0.001):
     '''
     ALSによる行列分解を実行する関数
 
@@ -104,7 +104,7 @@ def matrix_factorization(X: np.ndarray, len_of_latest_variable, steps=5000, alph
 
 def main():
     # サンプルの評価行列を生成
-    X = numpy.array([
+    X = np.array([
         [5, 3, 0, 1],
         [4, 0, 0, 1],
         [1, 1, 0, 5],

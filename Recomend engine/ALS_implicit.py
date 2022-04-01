@@ -1,4 +1,8 @@
 import numpy as np
+from numpy import c_
+from tqdm import tqdm
+
+np.seterr(over='raise')  # =>オーバーフローしたらエラーメッセージ出してくれる。
 
 
 def _get_preference_all_element(R: np.ndarray) -> np.ndarray:
@@ -33,7 +37,7 @@ def _get_error_each_element(p_ui, x_u, y_i: np.ndarray) -> float:
     ---------
     X_uiとX_ui_hat(wとhの内積)の誤差.
     '''
-    return p_ui - np.dot(x_u, y_i)
+    return (p_ui - np.dot(x_u, y_i))
 
 
 def _get_error_all_element(P, C, X, Y: np.ndarray, beta) -> float:
@@ -58,12 +62,9 @@ def _get_error_all_element(P, C, X, Y: np.ndarray, beta) -> float:
     # 2重(各アイテム、各ユーザ)のforループでXの各要素に対して処理を実行する.
     for u in range(len(P)):
         for i in range(len(P[u])):
-            # 誤差をpow関数で2乗して足し合わせ
-            error += pow(_get_error_each_element(
-                p_ui=P[u][i],
-                x_u=X[u, :],
-                y_i=Y[i, :]
-            ), 2)
+            # 誤差をpow関数で2乗して、信頼度c_uiで重み付して、足し合わせ
+            error += C[u][i] * \
+                pow(_get_error_each_element(P[u][i], X[u, :], Y[i, :]), 2)
 
     # 全ての要素を足し終えたら、L2正則化項を追加
     error += beta/2.0 * (np.linalg.norm(x=X, ord=2) +
@@ -102,27 +103,30 @@ def matrix_factorization_implicit(R, len_of_latest_variable, steps=5000, lr=0.00
     print(P)
     # 信頼度行列Cを取得
     C = _get_confidence_all_element(R=R, alpha=alpha)
-    print(C)
+    # 誤差関数の値の初期値
+    error_value = 100
 
     # パラメータ更新
-    for step in range(steps):
+    for step in tqdm(range(steps)):
         # 更新式において、事前に計算できる値を計算
         Y_T_Y = np.dot(Y.T, Y)  # -.(k×k行列)
         X_T_X = np.dot(X.T, X)  # -.(k×k行列)
 
         # まずはユーザ行列を更新
         for u in range(m):
-            # C_uを作成
+            # C_uを作成(n×nの対角行列)
             C_u = np.diag(C[u])
             # p_uを作成(一次元配列=>列ベクトル)
             p_u = P[u].reshape(-1, 1)
-
             # 更新式
-            X_u = (Y_T_Y + Y.T @ (C_u - np.eye(n)) @ Y +
-                    np.eye(len_of_latest_variable) * beta) @ Y.T @ C_u @ p_u
-            X[u:u+1, :] = X_u.T
+            # x_u = np.linalg.inv(Y.T @ C_u @ Y + np.eye(len_of_latest_variable)
+            #                     * beta) @ Y.T @ C_u @ p_u
+            # 更新式(計算量節約ver.)
+            x_u = np.linalg.inv(Y_T_Y + Y.T @ (C_u - np.eye(n)) @ Y +
+                                np.eye(len_of_latest_variable) * beta) @ Y.T @ C_u @ p_u
+            X[u:u+1, :] = x_u.T
 
-        print(X)
+            del C_u, p_u, x_u
 
         # 続いてアイテム行列を更新
         for i in range(n):
@@ -132,20 +136,23 @@ def matrix_factorization_implicit(R, len_of_latest_variable, steps=5000, lr=0.00
             p_i = P[:, i].reshape(-1, 1)
 
             # 更新式
-            Y_i = (X_T_X + X.T @ (C_i - np.eye(m)) @ X +
-                    np.eye(len_of_latest_variable) * beta) @ X.T @ C_i @ p_i
-            Y[i:i+1, :] = Y_i.T
-            # print(Y_i.shape)
-            # print(Y_i.T.shape)
-            # print(Y[i].shape)
-            # print(Y[i:i+1, :].shape)
+            # y_i = np.linalg.inv(
+            #     X.T @ C_i @ X + np.eye(len_of_latest_variable)*beta) @ X.T @ C_i @ p_i
+
+            # 更新式(計算量節約ver.)
+            y_i = np.linalg.inv(X_T_X + X.T @ (C_i - np.eye(m)) @ X +
+                                np.eye(len_of_latest_variable) * beta) @ X.T @ C_i @ p_i
+            Y[i:i+1, :] = y_i.T
+
+            del C_i, p_i, y_i
 
         # 更新後の目的関数(誤差関数)の値を確認
-        error = _get_error_all_element(P, C, X, Y, beta)
+        error_value = _get_error_all_element(P, C, X, Y, beta)
         # 十分に評価行列Xを近似できていれば、パラメータ更新終了！
-        if error < threshold:
+        if error_value < threshold:
             break
 
+    print(error_value)
     return X, Y
 
 
@@ -162,7 +169,7 @@ def main():
 
     # 行列分解
     X_hat, Y_hat = matrix_factorization_implicit(
-        R, len_of_latest_variable=3, steps=5)
+        R, len_of_latest_variable=3, steps=10)
     # P\hatを生成.
     P_hat = np.dot(a=X_hat, b=Y_hat.T)
     print(P_hat)
