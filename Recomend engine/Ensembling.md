@@ -7,6 +7,7 @@ URL(https://www.kaggle.com/code/hechtjp/h-m-eda-rule-base-by-customer-age)
 URL(https://www.kaggle.com/code/lichtlab/0-0226-byfone-chris-combination-approach/notebook?scriptVersionId=89289696)
 内容自体はByfoneとChrisのメソッドを融合させただけのもの。
 ## Byfone approach overview
+
 ## Chris approach overview
 ## Byfone & Chris combination approach
 
