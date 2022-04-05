@@ -1,6 +1,6 @@
 # GRU - RNNに記憶を持たせる試みその1
 
-RNNに使われる層の一種＝Gated Recurrent Unitは、RNNに対して長期的な記憶力を与えるという試みの中で生まれたもの。
+RNNに使われる層の一種＝Gated Recurrent Unit(GRU, ゲート付き回帰型ユニット)は、RNNに対して長期的な記憶力を与えるという試みの中で生まれたもの。
 
 ## Simple RNNの限界
 
