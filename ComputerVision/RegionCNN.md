@@ -203,4 +203,5 @@ RPNモデルは1箇所につき、**k個のBoundingBoxを提案**する。
 - https://jonathan-hui.medium.com/what-do-we-learn-from-region-based-object-detectors-faster-r-cnn-r-fcn-fpn-7e354377a7c9
 - Kaggle notebook
   - https://www.kaggle.com/code/pestipeti/pytorch-starter-fasterrcnn-train
-  - 
+- Faster R-CNNにおけるRPNの世界一分かりやすい解説
+  - https://medium.com/lsc-psd/faster-r-cnn%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8Brpn%E3%81%AE%E4%B8%96%E7%95%8C%E4%B8%80%E5%88%86%E3%81%8B%E3%82%8A%E3%82%84%E3%81%99%E3%81%84%E8%A7%A3%E8%AA%AC-dfc0c293cb69

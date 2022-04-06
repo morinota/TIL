@@ -1,41 +1,40 @@
 ---
 # Frontmatterと呼ばれる領域. Slidevの設定を記述する。
 theme: seriph # https://sli.dev/themes/gallery.html
-title: SlidevのMarkdown記法サンプル
+title: presentation material for whole seminar
 download: false
 lineNumbers: true
 background: https://source.unsplash.com/collection/94734566/1920x1080
-class: 'text-center'
+class: "text-center"
 ---
 
+# Backdoor Criterion
 
-# SlidevのMarkdown記法<br>サンプル
+Things to keep in mind when discussing "Causal Relation" through regression analysis
 
-公式サンプルにないtipsもあるよ
+回帰分析を通して因果関係を議論する時に注意したいこと
 
 ---
-layout: intro
----
 
-# 1章
+## Outline
+
+# 1章 因果関係ってなんだっけ？回帰分析ってなんだっけ？
 
 各章の冒頭スライドはこのように表示されるのですね。
 
----
-layout: intro
-class: 'text-center'
+# 2章 どんな時に回帰係数の値と因果効果の値がズレる？？
+
+# 3章 いざ、バックドア基準へ！
+
 ---
 
-# 1章
+# 1章 因果関係ってなんだっけ？回帰分析ってなんだっけ？
 
 center表示もできます。
 
 ---
-layout: cover
-background: https://source.unsplash.com/collection/94734566/1920x1080
----
 
-# 1章
+# 2章 どんな時に回帰係数の値と因果効果の値がズレる？？
 
 seriphテーマで使えるcoverレイアウトです。このように背景画像も指定できます。
 
@@ -65,7 +64,7 @@ seriphテーマで使えるcoverレイアウトです。このように背景画
 
 ~~これも本文です(取り消し)~~
 
-*じゃあ私も本文です(イタリック)*
+_じゃあ私も本文です(イタリック)_
 
 なお、&#045;&#045;&#045; を書くとページが区切られます。お試しくださいませ。
 
@@ -87,16 +86,17 @@ seriphテーマで使えるcoverレイアウトです。このように背景画
   - bbbb
   - bbbb
 
-</div><div>
+</div>
+<div>
 
 番号付きリストだよ
 
 1. AAAA
-    1. aaaa
-    1. aaaa
+   1. aaaa
+   1. aaaa
 1. bbbb
-    1. BBBB
-    1. bbbb
+   1. BBBB
+   1. bbbb
 
 </div></div>
 
@@ -106,7 +106,6 @@ seriphテーマで使えるcoverレイアウトです。このように背景画
 
 - [ ] タスク1
 - [x] タスク2
-
 
 ---
 
@@ -118,7 +117,7 @@ seriphテーマで使えるcoverレイアウトです。このように背景画
 
 [Python](https://www.python.org/)には、シーケンス型に属する型として以下があります。<br>
 
-|                                                            型                                                             |                                       概要                                       |
+| 型                                                                                                                        | 概要                                                                             |
 | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | [リスト](https://docs.python.org/ja/3/library/stdtypes.html#lists)                                                        | データの並びを表現できます。                                                     |
 | [タプル](https://docs.python.org/ja/3/library/stdtypes.html#tuples)                                                       | リストと同じように使えますが、生成後は中身を変更できないことが保証されています。 |
@@ -148,20 +147,18 @@ seriphテーマで使えるcoverレイアウトです。このように背景画
 
 [Travel](https://unsplash.com/t/travel)
 
-![](https://source.unsplash.com/category/travel/320x140)
+![](sample_image.jpg "因果ダイアグラム")
+
 
 </div></div>
 
-画像などのassetsは`public`ディレクトリに格納すると良いです。SPAのドキュメントルートにコピーされます。
+画像などのassetsは`public`ディレクトリに格納すると良いです。SPAのドキュメントルートにコピーされます。画像サイズは、通常のMarkdown記法ではコントロールできないが、Gridレイアウトでコントロールできるみたい。
 
-
-![](/img/piano.jpg)
-
+![](sample_image.jpg "因果ダイアグラム")
 
 ---
 
 ## 1.5. アイコン
-
 
 [Icons | Slidev](https://sli.dev/guide/syntax.html#icons) に利用可能なアイコンの情報があります。
 
@@ -284,7 +281,6 @@ $$
 }
 </style>
 
-
 Vueのコンポーネントが使えるので簡単に埋め込めます。<br>
 画像ではないので文字コピーやリンククリックもできます。
 
@@ -293,7 +289,6 @@ Vueのコンポーネントが使えるので簡単に埋め込めます。<br>
 <br><br><br>
 
 Markdownに書くのはこれだけでOK。
-
 
 ```markdown
 <Tweet id="1423237009561186308"/>
@@ -354,8 +349,8 @@ graph LR
 ```
 
 ---
-layout: cover
----
+
+## layout: cover
 
 # ご清聴ありがとうございました。
 

@@ -162,3 +162,5 @@ LSTMは、
 ## 参考
 
 - https://www.youtube.com/watch?v=oxygME2UBFc
+- https://medium.data4sci.com/causal-inference-part-xi-backdoor-criterion-e29627a1da0e
+
