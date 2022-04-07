@@ -1,0 +1,2 @@
+- 推論結果の返値の中には、boxes（bounding box）, scores（各bbox の信頼スコア）, labels（各bboxのラベル） の3つが含まれている。
+  - http://maruo51.com/2020/06/06/faster-rcnn_dogcat/
