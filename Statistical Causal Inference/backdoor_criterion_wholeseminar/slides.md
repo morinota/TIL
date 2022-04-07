@@ -8,350 +8,248 @@ background: https://source.unsplash.com/collection/94734566/1920x1080
 class: "text-center"
 ---
 
+<!-- 表紙 -->
+
 # Backdoor Criterion
+
+# バックドア基準
 
 Things to keep in mind when discussing "Causal Relation" through regression analysis
 
-回帰分析を通して因果関係を議論する時に注意したいこと
+回帰分析を通して因果関係を議論したい時に注意すべきこと
 
 ---
 
 ## Outline
 
-# 1章 因果関係ってなんだっけ？回帰分析ってなんだっけ？
+# 1. What is causal relation? What is regression analysis?
 
-各章の冒頭スライドはこのように表示されるのですね。
+因果関係ってなんだっけ？回帰分析ってなんだっけ？
 
-# 2章 どんな時に回帰係数の値と因果効果の値がズレる？？
+# 2. when is the values of the regression coefficients different from causal effects?
 
-# 3章 いざ、バックドア基準へ！
+どんな場合に回帰係数の値と因果効果の値がズレる？
+
+# 3. Now let's land on the backdoor criterion!
+
+いざ、バックドア基準へ着地しよう！
+
+---
+layout: intro
+class: 'text-center'
+---
+
+# 1. What is causal relation? What is regression analysis?
+因果関係ってなんだっけ？回帰分析ってなんだっけ？
+
+---
+layout: intro
+class: 'text-center'
+---
+
+# 2. When is the values of the regression coefficients different from causal effects?
+どんな場合に回帰係数の値と因果効果の値がズレる？
 
 ---
 
-# 1章 因果関係ってなんだっけ？回帰分析ってなんだっけ？
+# 2. 回帰分析の観点から-どんな時に回帰係数と介入効果(因果効果)の値が「ズレる」??-
 
-center表示もできます。
+「ズレる」パターンは大きく3パターンあります。
 
----
+1. 「因果の方向が逆」のパターン
+2. 「上流側に共通の要因がある」パターン
+3. 「合流点で選別している」パターン
 
-# 2章 どんな時に回帰係数の値と因果効果の値がズレる？？
-
-seriphテーマで使えるcoverレイアウトです。このように背景画像も指定できます。
-
----
-
-## 1.1. 見出しのレベルや書体の見栄えを見てみよう
-
-<br>
-
-# H1です
-
-## H2です
-
-### H3です
-
-#### H4です
-
-##### H5です
-
-これは本文です。H4から先は書体が変わりませんね。どうやら有効なのはH3まででしょうか。<br>
-でも、H3はかなり小さい文字になるのと灰色なのでほとんど使う機会はない印象。<br>
-
-使用するテーマを変えたり、テーマをカスタマイズすることで変更できそうです。<br>
-よいテーマを見つけた/作った方はぜひ教えて下さい。
-
-**これは本文です(太字)**
-
-~~これも本文です(取り消し)~~
-
-_じゃあ私も本文です(イタリック)_
-
-なお、&#045;&#045;&#045; を書くとページが区切られます。お試しくださいませ。
+ここからは、「介入効果」と因果構造の関係をイメージする為の例として、「ある丘にある複数の人口池の水位」の例を考えます。
 
 ---
 
-## 1.2. リスト
-
-リストの表示を見てみましょう。<br>
-なにげにGridレイアウト使って左右にコンテンツを配置していますのでその記法もご確認ください。
-
-<div class="grid grid-cols-[50%,50%] gap-4"><div>
-
-箇条書きリストだよ
-
-- AAAA
-  - aaaa
-  - aaaa
-- BBBB
-  - bbbb
-  - bbbb
-
-</div>
-<div>
-
-番号付きリストだよ
-
-1. AAAA
-   1. aaaa
-   1. aaaa
-1. bbbb
-   1. BBBB
-   1. bbbb
-
-</div></div>
-
-<br>
-
-普通、Markdownで以下のように書くと [ ] 部分がチェックボックスとして描画されますけどSlidevではそうならないみたいですね。<br>
-
-- [ ] タスク1
-- [x] タスク2
-
----
-
-## 1.3. テーブル
-
-テーブルがどのように表示されるか見てみましょう。
-
-突然のPython講義。
-
-[Python](https://www.python.org/)には、シーケンス型に属する型として以下があります。<br>
-
-| 型                                                                                                                        | 概要                                                                             |
-| ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| [リスト](https://docs.python.org/ja/3/library/stdtypes.html#lists)                                                        | データの並びを表現できます。                                                     |
-| [タプル](https://docs.python.org/ja/3/library/stdtypes.html#tuples)                                                       | リストと同じように使えますが、生成後は中身を変更できないことが保証されています。 |
-| [range](https://docs.python.org/ja/3/library/stdtypes.html#ranges)                                                        | 数の並びを表します。ループと組み合わせて使うことが多いです。                     |
-| [テキストシーケンス](https://docs.python.org/ja/3/library/stdtypes.html#text-sequence-type-str)                           | いわゆる文字列型です。                                                           |
-| [バイナリシーケンス](https://docs.python.org/ja/3/library/stdtypes.html#binary-sequence-types-bytes-bytearray-memoryview) | バイナリ(バイト列)を扱えます。                                                   |
-
----
-
-## 1.4. 画像
-
-リロードするたびにランダムで画像が変わります。Gridレイアウトをタイルのようにつかうのも良さそうですね。
-
-<div class="grid grid-cols-[33%,33%,33%] gap-4"><div>
-
-[Nature](https://unsplash.com/t/nature)
-
-![](https://source.unsplash.com/category/nature/320x140)
-
-</div><div>
-
-[Technology](https://unsplash.com/t/technology)
-
-![](https://source.unsplash.com/category/technology/320x140)
-
-</div><div>
-
-[Travel](https://unsplash.com/t/travel)
-
-![](sample_image.jpg "因果ダイアグラム")
-
-
-</div></div>
-
-画像などのassetsは`public`ディレクトリに格納すると良いです。SPAのドキュメントルートにコピーされます。画像サイズは、通常のMarkdown記法ではコントロールできないが、Gridレイアウトでコントロールできるみたい。
-
-![](sample_image.jpg "因果ダイアグラム")
-
----
-
-## 1.5. アイコン
-
-[Icons | Slidev](https://sli.dev/guide/syntax.html#icons) に利用可能なアイコンの情報があります。
-
-[Tailwind CSS](https://tailwindcss.com/docs/animation) のクラスを設定するとAnimationなど面白い効果が狙えるかもしれません。
-
-<div class="grid grid-cols-[50%,50%] gap-4"><div>
-
-<center>
-
-<logos-chrome class="text-5xl m-12 animate-bounce"/>
-<logos-firefox class="text-5xl m-12 animate-bounce"/>
-<logos-microsoft-edge class="text-5xl m-12 animate-bounce"/>
-
-</center>
-
-</div><div class="content-center">
-
-<center>
-
-<twemoji-grinning-face-with-sweat class="text-5xl m-12 animate-pulse"/>
-<twemoji-party-popper class="text-5xl m-12 animate-ping"/>
-<twemoji-cat-with-tears-of-joy class="text-5xl m-12 animate-spin"/>
-
-</center>
-
-</div></div>
-
----
-
-## 1.6. コード
-
-<style>
-.language-bash span.line { /* bashのコード */
-  margin-left: -40px; /* 左に40px移動して行番号を隠す(邪道) */
-}
-</style>
-
-行番号が表示されているのは `lineNumbers: true` のおかげです。<br>
-4行目以降がハイライトされているのは `{4-}` のおかげです。
-
-<div class="grid grid-cols-[50%,50%] gap-4"><div>
-before
-
-```python {4-}
-import os
-test_path = os.path.join("data", "data-01.txt")
-
-f = open(test_path, "a", encoding="utf-8")
-f.write("this is new append line\n")
-f.close()
-```
-
-</div><div>
-after
-
-```python {4-}
-import os
-test_path = os.path.join("data", "data-01.txt")
-
-with open(test_path, "a", encoding="utf-8") as f:
-    f.write("this is new append line\n")
-```
-
-</div></div>
-
-以下は行番号を表示しないようにしてみました。<br>
-この章の&lt;style&gt;に指定している`language-bash span.line`をご参照ください。
-
-```bash
-$ ps aux
-USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root           2  0.0  0.0      0     0 ?        S     7月20   0:00 [kthreadd]
-root           3  0.0  0.0      0     0 ?        I<    7月20   0:00 [rcu_gp]
-root           4  0.0  0.0      0     0 ?        I<    7月20   0:00 [rcu_par_gp]
-root          12  0.0  0.0      0     0 ?        S     7月20   0:07 [migration/0]
-```
-
----
-
-## 1.7. LaTeX
-
-組版にも対応。数式をかっこよく書きたい場合に使えそうですね。
-
-$\sqrt{3x-1}+(1+x)^2$
-
-これは中央に配置されるようです。
-
-$$
-\begin{array}{c}
-
-\sin x = \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)!} x^{2n+1}
-
-\end{array}
-$$
-
-であるからして、これがこうなってこうじゃ。
-
-$$
-\begin{array}{c}
-
-\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} &
-= \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} & = 4 \pi \rho \\
-
-\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t} & = \vec{\mathbf{0}} \\
-
-\nabla \cdot \vec{\mathbf{B}} & = 0
-
-\end{array}
-$$
-
-このページは講義資料のような雰囲気がありますね。
-
----
-
-## 1.8. Twitter
-
-<style>
-.language-markdown span.line { /* markdownのコード */
-  margin-left: -40px; /* 左に40px移動して行番号を隠す(邪道) */
-}
-</style>
-
-Vueのコンポーネントが使えるので簡単に埋め込めます。<br>
-画像ではないので文字コピーやリンククリックもできます。
-
-<div class="grid grid-cols-[40%,60%] gap-4"><div>
-
-<br><br><br>
-
-Markdownに書くのはこれだけでOK。
-
-```markdown
-<Tweet id="1423237009561186308"/>
-```
-
-</div><div>
-
-<Tweet id="1423237009561186308"/>
-
-</div></div>
-
-参考になったよという方はぜひTwitterのフォローといいねをポチッとしていただけると喜びます。
-
----
-
-## 1.9. YouTube
-
-YouTube動画の埋め込みコード(HTML)を貼りつけてみました。動画が埋め込めています。<br>
-スライド上で動画を再生できるのは画面切り替えが不要なので嬉しいですね。
-
-<center>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/OQmr5MLpF_4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</center>
-
-YouTubeに限らず、各種サイトで埋め込みコードが用意されているものはスライドに埋め込める可能性があります。<br>
-ただし&lt;scrpit&gt;タグで埋め込むタイプのコンテンツは埋め込めないかもです。
-
----
-
-## 1.10. Flowchart diagrams
-
-[Mermaid記法](https://sli.dev/guide/syntax.html#diagrams) による Jiro Flow
+## まずは単純な2変量で「ズレない」パターンを考える.
+
+まずは、単純な2変量の例として、丘にある2つの人口池(X池、Y池)を考えます。
+丘の上側にX池、下側にY池があり、それらは水路で繋がっているとします。
+各池の水位をそれぞれ、X、Yとした時、
 
 ```mermaid
-graph LR
-    A{add garlic?}
-    B[OK]
-    C[protocol error <br>]
-    D[as is]
-    E[garlic]
-    F[vegetable]
-    G[oil]
-    H[sauce]
-    A -->|YES or No| C
-    A --> D
-    A --> E
-    E --> F
-    A --> F
-    F --> G
-    A --> G
-    G --> H
-    A --> H
-    D --> B
-    E --> B
-    F --> B
-    G --> B
-    H --> B
+graph TB
+X(lake X<br>上流側) --> Y(lake Y<br>下流側)
+```
+
+下流側の水位Yは上流側の水位Xに依存して、
+$Y=\beta_{X, Y} +\gamma + 誤差$
+の式で決まるとします。
+今回の例では、$\beta_{X,Y}=0.5$, $\gamma=10cm$であるとしましょう。
+つまり、例えば$X=80cm$の時、$Y=0.5\times 80 + 10 +誤差=50cm +誤差$となります！
+(これ以降は、記述の簡略化の為に誤差項は省略します)
+
+ここで、「X→Yの介入効果」について考えてみます。
+上流側の水位Xを人為的な介入により1cm増やしたとします。
+この時、下流側の水位は上式に従い、$\beta_{X,Y}$に相当する0.5cmだけ増加する事になります。
+この場合の「X->Yの介入効果」は0.5cmであり、「Yに対するXの回帰係数$\beta_{X,Y}$の値」と合致します。
+
+しかし残念ながら、必ずしも回帰係数の値をそのまま介入効果として解釈できるわけではありません...。
+
+---
+
+## ズレるパターン1「因果の方向が逆」のパターン
+
+まず「因果の方向が逆」のパターンとして、前節の例における「Y→Xの介入効果」について考えてみましょう。
+
+前節で登場した$Y=\beta_{X, Y} +\gamma$の式を変形すると、
+$X=\frac{1}{\beta_{X,Y}} Y - \frac{\gamma}{\beta_{X,Y}}$
+となります。
+しかし、下流側の水位Yを人為的な介入により1cm増やした場合に、上流側の水位が$\frac{1}{\beta_{X,Y}}=2cm$増えるかというと、もちろんそんな奇妙なことは起こりません。
+
+上流-下流関係により水は高いところから低いところにしか流れない為(=因果関係の話の例として、水のイメージで話しています！)、下流側の水位を操作しても上流側の水位には影響しないのです。
+つまり「Y→Xの介入効果」はあくまで0であり、$\frac{1}{\beta_{X,Y}}$とも、Y→Xの単回帰係数$\beta_{Y,X}$とも一致しません！
+
+この例のように、興味の対象となる介入効果における因果の矢印の向き(Y->X)と、データ生成過程における因果関係の矢印の向きが(X->Y)が異なる場合には、**回帰係数の値と介入効果の間には「ズレ＝Bias」が生じてしまいます**。
+
+---
+
+## ズレるパターン2「上流側に共通の要因がある」パターン
+
+---
+
+## ズレるパターン3「合流点で選別している」パターン
+
+---
+
+## ズレるパターン4「合流点で選別している」パターン
+
+さて実は、回帰係数と介入効果の値のズレが生まれる状況を考える場合には、もう一つ別のパターンも考える必要があります。
+ここでは以下の図の、上流-下流関係にある3つの池を考えます。
+
+```mermaid
+graph TB
+X-->Z
+X-->Y
+Z-->Y
+```
+
+ここで、各池の水位X, Y, Zのデータ生成メカニズムが以下の構造方程式で記述されるとします.
+$Z=\beta_{X,Z} Z$
+$Y = \beta_{X,Y} X +\beta_{Z, Y} Z$
+
+ここで、上図と上式は、池Zには池Xから水が流れ込み、池Yには池Xと池Zから流れ込む上流-下流関係を表しています。
+このような構造の時、変数ZはX→Yの因果関係における「中間変数」と呼ばれます。
+
+---
+
+# 2. バックドア基準の定義
+
+回帰モデルに追加された説明変数の組が「バックドア基準」を満たす時、回帰分析から得られた「$X→Y$の偏回帰係数$\beta_{X,Y}$」をそのまま「$X→Y$の因果効果(介入効果)」と見なす事が妥当となります。
+
+バックドア基準の内容は、以下の2つの条件から構成されます。
+
+- 因果ダイアグラム$G$において、$X$から$Y$へと有向道があるとする。
+  この時、次の2つの条件を満たす頂点集合Sは、(X, Y)についてバックドア基準を満たすという。
+  1. XからSの任意の要素に有向道がない
+  2. 因果ダイアグラムGよりXから出る矢印を除いたグラフにおいて、SがXとYを有向分離する.
+
+---
+
+# 3. バックドア基準の定義を解読していく...
+
+色々と見慣れない単語が出てきたので、解読していきます！
+
+## 3.1. "因果ダイアグラムGにおいて"
+
+これは「丸と矢印で描かれた因果構造において」という意味だと解釈できます。
+それこそこんな感じの！
+
+```mermaid
+flowchart TD
+A[doublesの勝敗] --> B[Home Teamの勝敗]
+C[Single1の勝敗] --> B
+D[Home Teamの選手層の厚さ] -->A
+D-->B
+D -->C
+E[Away Teamの選手層の厚さ] --> A
+E-->B
+E-->C
+linkStyle 0 stroke:red
+linkStyle 1 stroke:red
 ```
 
 ---
 
-## layout: cover
+## 3.2. "XからYへと有向道があるとする"
 
-# ご清聴ありがとうございました。
+これは、池の例で考えると「池Xから水路を下流側に辿ると、池Yに至る経路がある」という意味になります。
+因果ダイアグラムにおいて、「Xから出る矢印を、矢印の向きに従って辿ると、Yに行き着くルートがある」という意味と解釈して良いと思います。
+(この場合の"経路"を、「XからYへの有向道」と呼びます。)
 
-よいSlidevライフを！
+## 3.3. "頂点集合Sは、(X, Y)についてのバックドア基準を満たす"
+
+これは、回帰分析の枠組みを念頭においた場合には、「**モデルに追加した説明変数の組**は、X＝＞Yの介入効果の推定においてバックドア基準を満たす」という意味に相当します。
+
+---
+
+## 3.4. "XからSの任意の要素に有向道がない"
+
+続いて、条件(1)の文に入ります.
+これは、「モデルに追加した説明変数は、Xの下流側にない」という意味になります。
+この条件は、前節で見た「**中間変数を説明変数として加えてはいけない**」という一般則に対応するものです。
+また「**Xの下流側にある合流点を加えてはいけない**」事も含意しています。(=選択Bias)
+
+---
+
+## 3.5. ”因果ダイアグラムGよりXから出る矢印を除いたグラフにおいて”
+
+ここから、条件(2)の文に入ります。まずは前半部分。
+これは、「**Xから出る矢印を除いた時の因果構造において**」という意味になります。
+例えば、元々の因果構造が以下の様な場合を考えます。
+
+```mermaid
+graph TB
+X-->Y
+Z-->X
+Z-->Y
+```
+
+この場合、以下の図が「Xから出る矢印を除いた時の因果構造」になります。
+
+```mermaid
+graph TB
+Z-->X
+Z-->Y
+```
+
+---
+
+## 3.6. "SがXとYを有向分離する"
+
+条件(2)の後半部分ですね。
+これは、「**モデルに追加した説明変数の組により、(XとYの)上流側の共通要因からの、XとYの両方に影響を与える流れが全て遮断されている**」という意味になります。
+ここでの「遮断されている」という事の意味内容を少し詳細に補足すると、「(XとYの)上流側の共通要因からの、Xへの有向道もしくはYへの有向道の道上において、合流点ではない変数が少なくとも1つ、説明変数としてモデルに追加されている」という意味になります。
+この条件(2)は前節で見た「交絡」を消失させる為の一般則に対応するものです。
+
+また、「バックドア基準」という名称を念頭においた言い方をすると、条件(2)は、上流側から「Xへの入力となる矢印(Xの"裏側のドア=バックドア"から入る矢印)」を通って交絡をもたらすすべての経路が、追加された説明変数の組により遮断されている事を意味します。
+
+---
+
+# 4. いざ、バックドア基準をカジュアルな用語で置き換える！
+
+- 丸と矢印で描かれた因果構造において、Xから下流側に矢印をたどった時にYに繋がる経路があるとする。X＝＞Yの介入効果(因果効果)の推定において、次の2つの条件を満たす「モデルに追加した説明変数の組」は、バックドア基準を満たすという。
+  1. 追加した説明変数はXの下流側にない。
+  2. Xから出る矢印を除いた時の因果構造において、追加した「説明変数の組」により、(XとYの)上流側の共通要因から、XとYの両方に影響を与える流れが全て遮断されている。
+
+そして、回帰分析の枠組みを念頭においた場合には、回帰モデルに追加された説明変数の組が上記の「バックドア基準を満たす」時、回帰分析から得られた「X=>Yの偏回帰係数$\beta_{X, Y}$」をそのまま「X=>Yの介入効果(因果効果)」とみなす事ができる、らしいです...。
+
+---
+
+# 5. 参考文献
+
+- 岩波データサイエンス vol.3 因果推論-実世界のデータから因果を読む.
+- backdoor criterion の英語Document
+  - https://medium.data4sci.com/causal-inference-part-xi-backdoor-criterion-e29627a1da0e
+
+---
+
+# Thank you for your attention:)
+ご清聴ありがとうございました。
+
+## 難しくも楽しい分析ライフを！
+
+---
