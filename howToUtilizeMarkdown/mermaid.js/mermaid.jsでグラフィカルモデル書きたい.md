@@ -14,7 +14,7 @@ graph TD
 こんな感じになるようです。
 
 ```mermaid
-graph TD
+graph T
     a
     b[テキスト入りノード]
     c(丸括弧形ノード)

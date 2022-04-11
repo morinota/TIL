@@ -1,22 +1,47 @@
 ---
-# Frontmatterと呼ばれる領域. Slidevの設定を記述する。
-theme: seriph # https://sli.dev/themes/gallery.html
-title: presentation material for whole seminar
-download: false
-lineNumbers: true
-background: https://source.unsplash.com/collection/94734566/1920x1080
-class: "text-center"
+marp: true
+theme: gaia
+_class: lead
+paginate: true
+backgroundColor: #fff
+backgroundImage: url('https://marp.app/assets/hero-background.svg')
 ---
 
-<!-- 表紙 -->
+<!-- ![bg left:40% 80%](https://marp.app/assets/marp.svg) -->
+
+# Backdoor Criterion
+
+# バックドア基準
+Things to keep in mind when discussing "Causal Relation" through regression analysis
+
+回帰分析を通して因果関係を議論したい時に注意すべきこと
+
+---
+
+# How to write slides
+
+Split pages by horizontal ruler (`---`). It's very simple! :satisfied:
+
+```markdown
+# Slide 1
+
+foobar
+
+---
+
+# Slide 2
+
+foobar
+```
+
+---
+
 
 # Backdoor Criterion
 
 # バックドア基準
 
-Things to keep in mind when discussing "Causal Relation" through regression analysis
 
-回帰分析を通して因果関係を議論したい時に注意すべきこと
 
 ---
 
@@ -315,5 +340,9 @@ Z-->Y
 ご清聴ありがとうございました。
 
 ## 難しくも楽しい分析ライフを！
+
+---
+
+
 
 ---
