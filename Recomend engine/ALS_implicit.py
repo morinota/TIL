@@ -1,62 +1,89 @@
+from typing import Tuple
 import numpy as np
-from numpy import c_
+from numpy import ndarray
 from tqdm import tqdm
-
-np.seterr(over='raise')  # =>オーバーフローしたらエラーメッセージ出してくれる。
 
 
 def _get_preference_all_element(R: np.ndarray) -> np.ndarray:
-    '''
-    評価行列Rの各要素r_uiを入力とし嗜好度p_uiを計算する関数。
-    '''
+    """評価行列Rを入力とし、Preferenceの実測値の行列Pを計算する関数。
+
+    Parameters
+    ----------
+    R : np.ndarray
+        評価行列R
+
+    Returns
+    -------
+    np.ndarray
+        Preferenceの実測値の行列P
+    """
     # 各要素に対して条件分岐処理
     P = np.where(R > 0, 1, 0)
     return P
 
 
-def _get_confidence_all_element(R: np.ndarray, alpha) -> np.ndarray:
-    '''
-    評価行列Rの各要素r_uiと\alphaを入力とし、信頼度を計算する関数
-    '''
+def _get_confidence_all_element(R: np.ndarray, alpha: int) -> np.ndarray:
+    """評価行列Rと\alphaを入力とし、Confidence値の行列Cを計算する関数
+
+    Parameters
+    ----------
+    R : np.ndarray
+        評価行列R
+    alpha : int
+        Confidence値の計算式におけるハイパーパラメータα。
+
+    Returns
+    -------
+    np.ndarray
+        Confidence値の行列C
+    """
     # 各要素に対して四則演算
     C = R * alpha + 1
     return C
 
 
-def _get_error_each_element(p_ui, x_u, y_i: np.ndarray) -> float:
-    '''
-    嗜好度行列内の各要素の実測値と推定値の差を計算する関数
+def _get_error_each_element(p_ui: float, x_u: np.ndarray, y_i: np.ndarray) -> float:
+    """Preference行列内のある1要素p_uiの実測値と推定値の差を計算する関数
 
-    parameters
-    ------------
-    p_ui: 評価行列Rの各要素r_uiから算出された嗜好度p_ui
-    x_u:ユーザ行列Xのu列目(列ベクトル)
-    y_i:アイテム行列yのi列目(列ベクトル)
+    Parameters
+    ----------
+    p_ui : float
+        Preference行列内の各要素p_ui
+    x_u : np.ndarray
+        ユーザuのユーザベクトル。すなわちユーザ行列Xのu列目(列ベクトル)
+    y_i : np.ndarray
+        アイテムiのアイテムベクトル。すなわちアイテム行列yのi列目(列ベクトル)
 
-    Return
-    ---------
-    X_uiとX_ui_hat(wとhの内積)の誤差.
-    '''
+    Returns
+    -------
+    float
+        Preference行列内のある1要素p_uiの実測値と推定値の差。
+    """
     return (p_ui - np.dot(x_u, y_i))
 
 
-def _get_error_all_element(P, C, X, Y: np.ndarray, beta) -> float:
-    '''
-    ALSによる行列分解における誤差関数の値を計算する関数
+def _get_error_all_element(P: np.ndarray, C: np.ndarray, X: np.ndarray, Y: np.ndarray, beta: float) -> float:
+    """implicitデータに対するALSの行列分解における、目的関数の値を計算する関数。
 
-    parameters
-    -----------
-    P:評価行列の各要素r_uiから算出された嗜好度p_uiの行列(ユーザ×アイテム).
-    C:評価行列の各要素r_uiから算出された信頼度c_uiの行列(ユーザ×アイテム).
-    X:ユーザ行列(潜在変数×ユーザ)
-    Y:アイテム行列(潜在変数×アイテム)
-    alpha:信頼度の計算におけるハイパーパラメータ(元論文では40)
-    beta:L2正則化における罰則項のハイパーパラメータlambda
+    Parameters
+    ----------
+    P : np.ndarray
+        評価行列の各要素r_uiから算出された嗜好度p_uiの行列(ユーザ×アイテム).
+    C : np.ndarray
+        評価行列の各要素r_uiから算出された信頼度c_uiの行列(ユーザ×アイテム).
+    X : np.ndarray
+        ユーザ行列(潜在変数×ユーザ)
+    Y : np.ndarray
+        アイテム行列(潜在変数×アイテム)
+    beta : float
+        L2正則化における罰則項のハイパーパラメータlambda
 
-    Return
+    Returns
     -------
-    ALSによる行列分解における目的関数(誤差関数)の値.
-    '''
+    float
+        implicitデータに対するALSの行列分解における、目的関数の値。
+    """
+
     # 誤差関数の初期値
     error = 0.0
     # 2重(各アイテム、各ユーザ)のforループでXの各要素に対して処理を実行する.
@@ -73,23 +100,32 @@ def _get_error_all_element(P, C, X, Y: np.ndarray, beta) -> float:
     return error
 
 
-def matrix_factorization_implicit(R, len_of_latest_variable, steps=5000, lr=0.0002, alpha=40, beta=0.02, threshold=0.001):
-    '''
-    ALSによる行列分解を実行する関数
+def matrix_factorization_implicit(R: np.ndarray, len_of_latest_variable: int, steps: int = 5000, lr: float = 0.0002, alpha: int = 40, beta: float = 0.02, threshold: float = 0.001) -> Tuple[np.ndarray, np.ndarray]:
+    """implicitデータに対する、ALSによる行列分解を実行する関数
 
-    parameters
-    -----------
-    X:実際に観測された評価行列.
-    len_of_latest_variable:潜在変数の数.
-    alpha:信頼度の計算におけるハイパーパラメータ(元論文では40)
-    beta:L2正則化における罰則項のハイパーパラメータlambda
-    lr:勾配降下法の学習率
-    threshold:学習を終了するかどうかを判定する、誤差関数の値の閾値.
+    Parameters
+    ----------
+    R : np.ndarray
+        実際に観測された評価行列.
+    len_of_latest_variable : int
+        Matrix Factorizationにおける潜在変数の数。
+    steps : int, optional
+        パラメータ更新を実行する回数, by default 5000:int
+    lr : _type_, optional
+        勾配降下法の学習率, by default 0.0002:float
+    alpha : _type_, optional
+        Confidence値の計算におけるハイパーパラメータ(元論文では40), by default 40:int
+    beta : _type_, optional
+        L2正則化における罰則項のハイパーパラメータlambda, by default 0.02:float
+    threshold : _type_, optional
+        学習を終了するかどうかを判定する、目的関数の値の閾, by default 0.001:float
 
-    Return
-    -----------
-    分解されたユーザ行列W(潜在変数×ユーザ)とアイテム行列H(潜在変数×アイテム)
-    '''
+    Returns
+    -------
+    Tuple[np.ndarray, np.ndarray]
+        分解されたユーザ行列W(潜在変数×ユーザ)とアイテム行列H(潜在変数×アイテム)のタプル。
+    """
+
     # ユニークなユーザ数mとアイテム数nを取得
     m = len(R)
     n = len(R[0])
@@ -100,7 +136,7 @@ def matrix_factorization_implicit(R, len_of_latest_variable, steps=5000, lr=0.00
 
     # 嗜好度行列Pを取得
     P = _get_preference_all_element(R=R)
-    print(P)
+    
     # 信頼度行列Cを取得
     C = _get_confidence_all_element(R=R, alpha=alpha)
     # 誤差関数の値の初期値
