@@ -95,4 +95,88 @@ $$
    - 従って、観測地iとjの距離が近いほど、$D_{ij}$は小さく重み$W_{ij}$は大きくなる...！
 
 上述した3つのW特定方法は、いずれも良く用いられるが、どの方法が住宅市場に表れる相関構造を最も良く実現しているかについては、合意が得られていない。
+
+## 重み行列Wと撹乱項ベクトルuの関係性(Wを用いて、uの不均一分散性を表現している事を確認する。):
+
+式(1.b)をuについて解くと、
+
+$$ \mathbf{u} = (I - \lambda W)^{-1} \mathbf{\epsilon}$$
+
+よって上記のuを、撹乱項ベクトルの共分散行列の式$V[\mathbf{u}] = E[\mathbf{u} \mathbf{u}^T]$に代入すると...
+
+$$
+V[\mathbf{u}] = E[\mathbf{u} \mathbf{u}^T] \\
+= V[(I - \lambda W)^{-1} \mathbf{\epsilon}]
+$$
+
+(I - \lambda W)^{-1}は固定された(=非確率的な)行列なので、共分散行列の外側に出せる。
+
+$$
+(\because var[AX] = A \cdot var[X] \cdot A^T )\\
+V[(I - \lambda W)^{-1} \mathbf{\epsilon}]
+  = (I - \lambda W)^{-1} \cdot V[\mathbf{\epsilon}] \cdot ((I - \lambda W)^{-1})^T
+$$
+
+$V[\mathbf{\epsilon}] = \sigma^2 I$なので、
+
+$$
+= (I - \lambda W)^{-1} \cdot \sigma^2 I \cdot ((I - \lambda W)^{-1})^T
+$$
+
+転置と逆行列の性質(=順番入れ替え可能！)より、
+
+$$
+= (I - \lambda W)^{-1} \cdot \sigma^2 I \cdot ((I - \lambda W)^{T})^{-1}
+$$
+
+転置行列の性質より、
+
+$$
+= (I - \lambda W)^{-1} \cdot \sigma^2 I \cdot ((I^T - \lambda W^T)^{-1} \\
+= (I - \lambda W)^{-1} \cdot \sigma^2 I \cdot ((I - \lambda W^T)^{-1}  \\
+\because I^T = I
+$$
+
+スカラーである$\sigma^2$を前に出してきて...
+
+$$
+= \sigma^2 (I - \lambda W)^{-1} \cdot I \cdot (I - \lambda W^T)^{-1}
+$$
+
+ここで、V[u]はuの共分散行列。
+
+- Vは通常、主対角線上に定数を持たない事に注意。
+- ＝＞従ってこのタイプのモデルでは、uは分散不均一。（例え$\epsilon$が均一分散でも）
+
+## 重み行列Wの各生成方法が意味する(自己)相関関係(相関図)
+
+生成方法１～３のいずれでも、各観測データの位置が分かれば、距離行列$D$を計算する事ができる。
+距離行列Dを元に、重み行列Wを計算できる。
+
+相関図(Correlogram)は、空間的な依存関係を表現するのに便利なツール。
+各ポイント間の相関関係を、ポイント間の距離の関数としてグラフ化したものである。
+
+- 縦軸は、共分散行列V[u]の各要素である$V_{ij} = V_{ji}$の値。
+- 横軸は、ポイントiとjの距離$D_{ij}=D_{ji}$の値。
+
+Correlogramの良い特性は、「分離距離が増加すると、相関が減少する」こと
+＝＞これは、Tobler(1970)の地理学の第一法則「**全てのモノは他の全てのモノに関係しているが、近くのモノは遠くのモノよりも関係している**」に従っている！
+
+Correlogramは、観測データ(yやX)に基づいたものではなく、"観測地点と空間重み行列Wの生成方法が与えられた場合の母集団の相関図"である点に注意！！
+
+もし、実際に観測された相関係数と距離の関係がむちゃくちゃ(Random)だったら、空間的な関係はない＝空間的な自己相関はない。
+もしある関係性が観測(Non-Random)されたら、空間的な関係がある＝Spatial Autocorrelationが存在する！！
+
+### 生成方法①Nearest Neighbor correlationの場合のCorrelogram
+あ
+
+### 生成方法②$W_{ij} = 1 if D_{ij} <= L$の場合のCorrelogram
+あ
+
+### 生成方法②$W_{ij} = \frac{1}{D_{ij}^p}$の場合のCorrelogram
+あ
+
 # 誤差項の共分散行列を直接モデル化する方法
+
+$$
+$$
