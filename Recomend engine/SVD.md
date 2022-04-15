@@ -10,7 +10,7 @@
 SVDでは、任意i×ji×jの実数行列AAを幾何的に解釈可能な3つの行列の積へと分解する。
 
 $$
-A_{m\times n} = U_{m\times r} \Sigma_{r\times r} V_{n \times r}^T
+A_{m\times n} = U_{m\times m} \Sigma_{n\times m} V_{n \times n}^T
 $$
 
 ここで、
@@ -52,3 +52,9 @@ $$
 - $\Sigma$は各類似度の強調度合い。
 
 # SVD vs MF in Recommender Systems
+
+# 参考
+- Pythonで特異値分解(SVD)を理解する
+  - https://ohke.hateblo.jp/entry/2017/12/14/230500
+- Singular Value Decomposition vs. Matrix Factorization in Recommender Systems
+  - https://www.freecodecamp.org/news/singular-value-decomposition-vs-matrix-factorization-in-recommender-systems-b1e99bc73599/
