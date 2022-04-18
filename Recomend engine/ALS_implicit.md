@@ -679,3 +679,6 @@ if __name__ == '__main__':
 
 - Collaborative Filtering for Implicit Feedback Datasets(上述した手法の論文です！)
   - http://yifanhu.net/PUB/cf.pdf
+
+- Implicitモジュールの使い方が結構分かりやすかった！
+  - https://recruit.gmo.jp/engineer/jisedai/blog/sketchfab_implicit_feedback/
