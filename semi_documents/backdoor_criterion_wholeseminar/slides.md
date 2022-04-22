@@ -26,7 +26,7 @@ Things to keep in mind when discussing "Causal Relation" through regression anal
 
 因果関係ってなんだっけ？回帰分析ってなんだっけ？
 
-# 2. when is the values of the regression coefficients different from causal effects?
+# 2. When is **regression coefficients** different from **causal effects**?
 
 どんな場合に回帰係数の値と因果効果の値がズレる？
 
@@ -40,11 +40,13 @@ class: 'text-center'
 ---
 
 # 1. What is causal relation? What is regression analysis?
+
 因果関係ってなんだっけ？回帰分析ってなんだっけ？
 
 ---
 
 # What is causal relation?
+
 <div class="grid grid-cols-[50%,50%] gap-4"><div>
 
 定義
@@ -61,40 +63,48 @@ class: 'text-center'
 番号付きリストだよ
 
 1. AAAA
-    1. aaaa
-    2. aaaa
+   1. aaaa
+   2. aaaa
 2. bbbb
-    1. BBBB
-    2. bbbb
+   1. BBBB
+   2. bbbb
 
 </div></div>
 
 ---
 
 # What is regression analysis?
+
+...is hogehoge..
+
 <div class="grid grid-cols-[50%,50%] gap-4"><div>
 
-定義
+Fourmula
 
-- AAAA
-  - aaaa
-  - aaaa
-- BBBB
-  - bbbb
-  - bbbb
+$$
+\mathbf{y} = \beta_0 + \beta_1 \mathbf{x}_1 + \cdots + \beta_k \mathbf{x}_k + \mathbf{\epsilon}\\
+= \mathbf{\beta}X + \mathbf{\epsilon}
+$$
+
+here is ...
+- $y$ : 目的変数
+- $X$ :
+- $\mathbf{\beta}$ :
+- $\mathbf{\epsilon}$ : yのうち、確率的に変動する成分。
 
 </div><div>
 
 番号付きリストだよ
 
 1. AAAA
-    1. aaaa
-    2. aaaa
+   1. aaaa
+   2. aaaa
 2. bbbb
-    1. BBBB
-    2. bbbb
+   1. BBBB
+   2. bbbb
 
 </div></div>
+あああああああああああああああああああああああああああああああああああああああああああ
 
 ---
 layout: intro
@@ -102,11 +112,13 @@ class: 'text-center'
 ---
 
 # 2. When is the values of the regression coefficients different from causal effects?
+
 どんな場合に回帰係数の値と因果効果の値がズレる？
 
 ---
 
 # 2. 回帰分析の観点から-どんな時に回帰係数と介入効果(因果効果)の値が「ズレる」??-
+
 <div class="grid grid-cols-[50%,50%] gap-4"><div>
 「ズレる」パターンは大きく4パターンあります。
 
@@ -119,6 +131,34 @@ a
 </div></div>
 
 ここからは、「介入効果」と因果構造の関係をイメージする為の例として、「ある丘にある複数の人口池の水位」の例を考えます。
+
+---
+
+# What is regression analysis?
+
+<div class="grid grid-cols-[50%,50%] gap-4"><div>
+
+定義
+
+- AAAA
+  - aaaa
+  - aaaa
+- BBBB
+  - bbbb
+  - bbbb
+
+</div><div>
+
+番号付きリストだよ
+
+1. AAAA
+   1. aaaa
+   2. aaaa
+2. bbbb
+   1. BBBB
+   2. bbbb
+
+</div></div>
 
 ---
 
@@ -142,9 +182,8 @@ X(lake X<br>上流側) --> Y(lake Y<br>下流側)
 今回の例では、$\beta_{X,Y}=0.5$, $\gamma=10cm$であるとしましょう。
 つまり、例えば$X=80cm$の時、$Y=0.5\times 80 + 10 +誤差=50cm +誤差$となります！
 (これ以降は、記述の簡略化の為に誤差項は省略します)
+
 </div></div>
-
-
 
 ここで、「X→Yの介入効果」について考えてみます。
 上流側の水位Xを人為的な介入により1cm増やしたとします。
@@ -311,9 +350,8 @@ Z-->Y
 
 ---
 
-# Thank you for your attention:)
+# Thank you for your attention:）
+
 ご清聴ありがとうございました。
 
 ## 難しくも楽しい分析ライフを！
-
----
