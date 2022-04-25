@@ -57,7 +57,7 @@ test
   - 第2引数にはメッセージとしてログに出力する文字列を入力
 - log関数を使ってログを出力させる
 
-ログ出力を行うものの総称をロガー(Logger)という。
+**ログ出力を行うものの総称をロガー(Logger)**という。
 loggingモジュールの場合、**Loggerオブジェクト**がロガーに当たる。
 
 ### 出力するログレベルの変更
@@ -111,7 +111,7 @@ logger.info('info')
 logger.warning('warning')
 ```
 
-(4)では、ログのファイル出力先が設定されています。このようにファイル名を指定しておくことにより、ログをファイルに出力することができるようになります。
+(4)では、ログのファイル出力先が設定されています。このように`FileHandler`オブジェクトを生成して、ファイル名を指定しておくことにより、ログをファイルに出力することができるようになります。
 
 ## ログのフォーマットを指定する
 
@@ -183,6 +183,103 @@ logger.warning('warning')
 | %(thread)d | スレッドID |
 
 # (応用)Configファイルで、ログのフォーマットを指定する。
+
+ログの設定はコード量が増えがち。
+そしてコード量が増えると、コードが読みにくくなる原因にもなる。
+
+そこでlogging.configモジュールを使って、ログの設定を「.conf」ファイルのよう**な設定ファイルにまとめて書く**ことで管理がしやすくなる。
+
+## まず設定ファイル
+
+logging.conf
+
+```
+[loggers]
+keys=root
+
+[handlers]
+keys=consoleHandler, fileHandler
+
+[logger_root]
+handlers=consoleHandler, fileHandler
+level=DEBUG
+
+[handler_consoleHandler]
+class=StreamHandler
+level=DEBUG
+formatter=logFormatter
+args=(sys.stdout, )
+
+[handler_fileHandler]
+class=FileHandler
+level=DEBUG
+formatter=logFormatter
+args=('test.log', )
+
+[formatters]
+keys=logFormatter
+
+[formatter_logFormatter]
+class=logging.Formatter
+format=%(asctime)s:%(lineno)d:%(levelname)s:%(message)s
+```
+
+まずはlogging.confファイルの記述から。設定ファイルには以下の項目が必要になる。
+
+- [loggers]
+  - `keys=`の後に、任意のLogger名を記述。rootは必須。
+  - 複数設定する場合は「,」（カンマ）で区切る。
+- [handlers]
+  - `keys=`の後に、任意のhandler名を記述。
+  - 複数設定する場合は「,」（カンマ）で区切る。
+  -
+- [formatters]
+  - `keys=`の後に、任意のformatter名を記述。
+  - 複数設定する場合は「,」（カンマ）で区切る。
+
+次にこれまで記述したそれぞれの名称に対して設定を記述していく。
+
+## [logger_logger名] ロガーにハンドラーの追加
+
+handlersの設定を行う。この例では[logger_root]として「handlers=」句の後にhandlerの名前を書いている。
+
+## [handler_handler名] ハンドラーの設定
+
+class、level、formatter、argsなどの設定をする。
+この例の[handler_consoleHandler]ではコンソールへのログ出力について設定している。
+
+argsには、コンソール出力の場合は出力先に「sys.stdout」を入力します。argsには引数を複数設定する必要があり、引数が1つの場合であっても「,」で区切る必要がある。
+
+この例の[handler_fileHandler]ではファイルへのログ表示について設定している。クラスにはファイルへ出力するためのlogging.FileHandlerクラスのクラス名を入力している。
+
+argsにはファイル出力の場合は**出力先のアドレス名**「test.log」を入力。
+## サンプルのPythonスクリプト
+
+```python
+import logging.config
+
+# ログ設定ファイルからログ設定を読み込み
+logging.config.fileConfig('logging.conf')
+
+logger = logging.getLogger()
+
+logger.log(20, 'info')
+logger.log(30, 'warning')
+logger.log(100, 'test')
+
+logger.info('info')
+logger.warning('warning')
+```
+
+実行結果
+
+```python
+2019-08-06 16:33:57,169:8:INFO:info
+2019-08-06 16:33:57,169:9:WARNING:warning
+2019-08-06 16:33:57,169:10:Level 100:test
+2019-08-06 16:33:57,169:12:INFO:info
+2019-08-06 16:33:57,169:13:WARNING:warning
+```
 
 # 参考
 
