@@ -28,6 +28,9 @@ Masato MORITA
 
 ---
 
+# First of all, **Why I chose this topic**??
+
+---
 # Today's My Objective
 
 I want to share one of the idea of **Statistical Causal Inference**: it is the field of analysing causal relation from observed dataset.
