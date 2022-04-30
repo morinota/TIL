@@ -62,7 +62,7 @@ Implicit データに対する?
    - $$ \frac{2\cdot Precision@K \cdot Recall@K}{Precision@K + Recall@K}$$
 4. MAP@K
    - ユーザ毎に Precision＠K の K についての平均(AP@K)を算出し、その結果についてユーザ全体の平均を取る。
-   - $$ AP@K = \sum\_{i=1}^k{\frac{Precision@i}{min(k, N(actual))}} $$
+   - $$ AP@K = \sum_{i=1}^k{\frac{Precision@i}{min(k, N(actual))}} $$
    - $$ MAP@K = \sum\_{u \in U}{\frac{AP@K}{N(U)}}$$
    -
 
