@@ -140,12 +140,32 @@ $$
 となる。この式の両辺の期待値をとると、
 
 $$
-cov(X,Y) =\beta_{x,y} var(X) + \beta_{z,y} cov(X,Z) \\
+E[XY] = E[\beta_{x,y} X^2 +\beta_{z,y} XZ +X\epsilon] \\
+\Leftrightarrow 
+E[X]E[Y] + Cov[X,Y] = \beta_{xy} E[X^2] + \beta_{zy} E[XZ] + E[X\epsilon]
+\\
+= \beta_{xy}(E[X]^2 +Var[X]) + \beta_{zy}(E[X]E[Z]+Cov[X,Z]) + (E[X]E[\epsilon] + Cov[X, \epsilon])
+\\
+= \beta_{xy}E[X]^2 + \beta_{xy} Var[X] + \beta_{zy}E[X]E[Z] + \beta_{zy}Cov[X,Z]
+\\
+$$
+左辺のE[X]E[Y] を右辺に以降して、E[X]でくくると...
+$$
+\Leftrightarrow 
+Cov[X,Y] = \beta_{xy} Var[X] 
++ \beta_{zy}Cov[X,Z] 
++ E[X] \cdot \left(\beta_{xy}E[X] + \beta_{zy}E[X] - E[Y] \right)
+\\
+\Leftrightarrow
+cov(X,Y) =\beta_{x,y} var(X) + \beta_{z,y} cov(X,Z) + E[X] \cdot 0 \\
+\because Y = \beta_{x,y} X + \beta_{z,y} Z より、\beta_{x,y} X + \beta_{z,y} Z - Y = 0
+$$
 
+これにより、以下の式が導出される。
+$$
 \therefore \frac{cov(X,Y)}{var(X)} = \beta_{x,y} + \beta_{z,y} \frac{cov(X,Z)}{var(X)} \tag{3}
 $$
 
-という式が得られる。
 ここで、
 
 - $cov(A,B)$はAとBの共分散。
