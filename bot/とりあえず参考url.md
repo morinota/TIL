@@ -1,2 +1,4 @@
 - https://qiita.com/hesoponyo/items/947414c36398c7237cbd
 - https://note.com/hht/n/n61e6ecefd059
+- 知識ゼロから仮想通貨を半年勉強してB級botter(月次10万)になったお話
+  - https://note.com/amadotanzirou/n/n7ecc02945785
