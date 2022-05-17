@@ -6,7 +6,7 @@ paginate: true
 backgroundColor: #fff
 backgroundImage: url('https://marp.app/assets/hero-background.svg')
 header: Confounding factor 
-footer: 2022, 5, 17 Morita
+# footer: 2022, 5, 17 Morita
 style: |
   section.title * , h1{
       text-align: center;
@@ -17,7 +17,7 @@ style: |
 
 ![bg 50% opacity:.3](因果ダイアグラム.drawio.png)
 
-# **Confounding factor**
+# **Confounding Factor**
 
 ### 交絡因子
 
@@ -34,20 +34,20 @@ Masato MORITA
 
 ### 1. I have the impression that more and more members are using regression analysis in their research activities these days.
 
-### 2. I recently read a book on statistical causal inference and learned how to analyze causality using regression analysis, so I want to share some light information...!
+### 2. I recently read a book on statistical causal inference and learned how to analyze causality using regression analysis, so I want to share some information a little bit...!
 
 ---
 
 # Today's My Objective
 
-I want to share one of the idea of **Statistical Causal Inference**: it is the field of analysing causal relation from observed dataset.
+I want to share one of the idea of **Statistical Causal Inference (統計的因果推論)**: it is the field of analysing causal relation from observed dataset.
 
-- (dear user of regression analysis)
+#### (Dear user of regression analysis)
 
-  - I want to share what we should careful when interpreting the value of regression coefficient obtained in the regression analysis in terms of causal inference.
+###### I want to share **what we should careful when interpreting the value of regression coefficient** from viewpoint of causal inference.
 
-- (dear not user of regression analysis)
-  - I want to share the patterns that may mislead us when evaluating causality based on observational data.
+#### (Dear not user of regression analysis)
+###### I want to share **the patterns that may mislead us** when discussing causal relation based on observed data.
 
 ---
 
@@ -57,9 +57,9 @@ I want to share one of the idea of **Statistical Causal Inference**: it is the f
 
 因果関係ってなんだっけ？回帰分析ってなんだっけ？
 
-### 2. When is **regression coefficients** different from **causal effects**? When is fitted??
+### 2. When is **regression coefficients** different from **causal effects**? 
 
-どんな場合に回帰係数の値と因果効果の値がズレる？どんな時に一致する？？
+どんな場合に回帰係数の値と因果効果の値がズレる？
 
 ---
 
@@ -72,17 +72,27 @@ I want to share one of the idea of **Statistical Causal Inference**: it is the f
 ---
 
 # What is Causal Relation?
-
-- The definition of causal relation is ...
-  - causal relationship between 'cause' and their ''outcome.
+#### - The definition of causal relation is ...
+###### In case that **"when factor X is changed (intervention), factor Y also changes,"** we can say "there is a **causal relationship of factor X → factor Y**
+  
 - The difference with correlation is ...
   ![w: h:9cm](relations_3kinds.png)
 
 ---
 
+# What is Causal Effect?
+#### - The definition of causal relation is ...
+###### In case that **"when factor X is changed (intervention), factor Y also changes**," we can say "there is a **causal relationship of factor X → factor Y**
+  
+In above case,
+##### - X: "cause"(原因変数), Y: "outcome"(結果変数)
+##### - "**causal effect(intervention effect)** of $X \Rightarrow Y$" :Average change of Y when X is changed by one unit
+
+#### In Causal Inference, one motivation is quontification of causal effect.
+---
 # What is Linear Regression Analysis?
 
-It's a little bit mathematical :satisfied:
+It's a little bit mathematical.
 
 $$
 \mathbf{y} = f(\mathbf{x_1}, \cdots, \mathbf{x}_k) + \mathbf{\epsilon}\\
@@ -92,10 +102,10 @@ $$
 
 where is ...
 
-- $\mathbf{y}$ : (in Causal Inference, it should be "outcome")
-- $X$ : (in Causal Inference, it should include "cause")
-- $\mathbf{\beta}$ : the regression coefficent of $X$.
-- $\mathbf{\epsilon}$ : yのうち、確率的に変動する成分。
+###### $\mathbf{y}$ : (in Causal Inference, it should be "outcome")
+###### $X$ : (in Causal Inference, it should include "cause")
+###### $\mathbf{\beta}$ : the regression coefficent of $X$.
+###### $\mathbf{\epsilon}$ : Probabilistic component of y。
 
 ---
 
@@ -111,11 +121,16 @@ from viewpoint of "Causal Inference", regression analysis is utilized for "Descr
 
 # Example: height=>weight
 
-##### In this case, $\beta_1$ can be interpret 'causal effect' of 'height' to 'weight' on average.
+$$
+\text{weight} = \beta_0 + \beta_1 \times \text{height} + \epsilon \\
+\Rightarrow \beta_1 = 0.34 (p = 0.00)
+$$
 
-##### However, the value of the regression coefficient **does not necessarily fit** with the causal effect.
+###### In this case, $\beta_1$ can be interpret 'causal effect' of 'height' $\Rightarrow$ 'weight'.
 
-![bg left:50% 90%](height_x_weight_y.png)
+###### However, the value of the regression coefficient **does not necessarily fit** with the causal effect.
+
+![bg left:50% 90%](height_x_weight_y_with_LRline.png)
 
 ---
 
@@ -123,13 +138,13 @@ from viewpoint of "Causal Inference", regression analysis is utilized for "Descr
 
 there are mainly 4 cases :
 
-#### 1. Cases where the **direction of causation** is **opposite**
+### 1. Direction of causation is opposite
 
-#### 2. Cases where **a common factor exists upstream** of the causation
+### 2. **Confounding**
 
-#### 3. Cases where the factors **are selected at the confluence** of causes and effects
+### 3. Selection Bias
 
-#### 4. Cases in which **intermediate variables are included**
+### 4. Intermediate variables are included
 
 ---
 
@@ -137,33 +152,32 @@ there are mainly 4 cases :
 
 <!-- 河川の生物多様性の保全の為に、私達は「生物の種数」と河川中の環境汚染物質について調査する事にした。 -->
 
-For preserving biodiversity of the river, we decided to investigate the "biodiversity in the river(species count)" and some kind of "environmental pollutants" in the river.
+#### For preserving biodiversity of the river, we decided to investigate the "biodiversity in the river(num of species)" and some kind of "environmental pollutants" in the river.
 
 ---
 
 ### A negative linear correlation was found between the "biodiversity in the river" and "zinc concentration(亜鉛濃度)".
 
-![bg left:35% 90%](height_x_weight_y.png)
+![bg left:35% 100%](Zinc_x_Biodiversity_y.png)
 
 ###### At this point, taking into account the general finding that "high zinc concentration is toxic to many organisms,"
 
-###### we can guess easily the causal relationship of "increased zinc concentration in the river"(X) => "decreased biodiversity in the river"(Y).
-
-###### so, let's try to quantify causal effect!
+###### we can guess easily the causal relationship of "**increased zinc concentration in the river"(X) => "decreased biodiversity in the river"(Y)**.
 
 ---
 
-# quantification causal effect by regression analysis
+![bg left:35% 100%](Zinc_x_Biodiversity_y_with_line.png)
+### Let's quantify causal effect by regression analysis
 
-Let us now analyze the "biodiversity in the river" using a single regression model with "zinc concentration" as the explanatory variable.
+###### Let's analyze the "biodiversity in the river" using a single regression model with "zinc concentration" as the explanatory variable.
 
 $$
-\text{biodiversity in the river}  = \beta_0 + \beta_1 \times \text{zinc concentration} + \epsilon
+\text{biodiversity}  = \beta_0 + \beta_1 \times \text{zinc concentration} + \epsilon
 $$
 
-we estimated the regression coefficient $\beta_1= -1.01$
+###### we estimated the regression coefficient $\beta_1= -0.87(p=0.00)$
 
-So -1.01 is causal effect of "zinc concentration" to "biodiversity in the river"??
+###### So we can say $\beta_1= -0.87$ is **the causal effect of "zinc concentration" to "biodiversity**"??
 
 ---
 
@@ -177,58 +191,70 @@ So -1.01 is causal effect of "zinc concentration" to "biodiversity in the river"
 
 # However...
 
-![bg left:35% 90%](height_x_weight_y.png)
+![bg left:35% 100%](BOD_x_Biodiversity_y.png)
 
 ###### Further investigation revealed that ....
 
-- a negative linear correlation between "biodiversity in the river" and "BOD in the river".
+- a negative linear correlation between "biodiversity in the river" and "BOD in the river" is also observed.
 
 - Therefore, we cas also guess a causal relationship of "increase in BOD" => "decrease biodiversity"...
 
-<!-- ここで果たして、「亜鉛が河川生物の種数を減らしている」と言えるのか？ -->
-
-###### In this case, **can we really say that "zinc is reducing the biodiversity in the river?**"
-
 ---
 
+# However...
+
+![bg left:35% 100%](BOD_x_Biodiversity_y_with_LRline.png)
+
+###### Let's try regression analysis...
+
+$$
+\text{biodiversity}  = \beta_0 + \beta_2 \times \text{BOD} + \epsilon
+$$
+
+###### we estimated the regression coefficient $\beta_2= -1.81(p=0.00)$
+
+<!-- ここで果たして、「亜鉛が河川生物の種数を減らしている」と言えるのか？ -->
+
+#### In this case, **can we really say that "zinc concentration is reducing the biodiversity in the river?**"
+
+---
 # In actual...There is "Confounding"
 
 ![bg 40% opacity:1.0](因果ダイアグラム_2.drawio.png)
 
- <!-- So causal effect is close to 0.0. -->
-
+ <!-- So truth causal effect of zinc concentration to biodiversity is close to 0.0. -->
 ---
 
-# check Confounding using regression analysis
+# Let's check confounding using regression analysis
 
-###### in this case, one way is **a multiple regression analysis** with "biodiversity in the river" as the exprained variable and "zinc concentration in the river" and "BOD in the river" as the explanatory variables.
+###### in this case, one way is **a multiple regression analysis** with "biodiversity in the river" as the exprained variable and "zinc concentration" and "BOD" as the explanatory variables.
 
 $$
-\text{biodiversity in the river}  = \beta_0 + \beta_1 \times \text{zinc concentration}
+\text{biodiversity in the river} = \beta_0 + \beta_1 \times \text{zinc concentration}
 + \beta_2 \times \text{BOD}
 + \epsilon
 \\
 
-\Rightarrow \text{we estimated }\beta_1 = 0.001, \beta_2 = 111
+\Rightarrow \text{we estimated }\beta_1 = 0.08 (p=0.63), \beta_2 = -2.33(p=0.04)
 $$
 
-###### Then, $\beta_1$ became almost zero, and the effect of "zinc concentration" was no longer observed.
+###### Then, $\beta_1$ became **close to zero**  and **the effect of "zinc concentration" was no longer observed**.
 
 ###### From this, we can infer that the correlation between "zinc concentration" and "biodiversity" is **due to confounding** and **not caused by zinc itself**.
 
 ---
 
-###### So one of the way "to estimate causal effect by regression analysis in Confounding" is ...
+##### So, the way "to estimate causal effect in **Confounding**" is **Cut the indirect upstream connection** between X and Y. 
 
-- Adding confounding factors to explanatory variables.
+###### -  one way is **adding confounding factors to explanatory variables**.
 
-###### In order to do that ...
+#### In order to do that ...
 
-- imagine and draw structure of relations (it's called '**causal diagram**')
-- consider what will be confaunding factor of X and Y
-- observe candidates of confounding factor with X and Y
+###### 1. imagine and draw structure of relations (it's called '**causal diagram**')
+###### 2. consider **what will be confaunding factor** of X and Y
+###### 3. observe the candidates of confounding factor similar to X and Y.
 
-![bg left:35% 90%](因果ダイアグラム_2.drawio.png)
+![bg left:35% 100%](因果ダイアグラム_2.drawio.png)
 
  <!-- So causal effect is close to 0.0. -->
 
@@ -244,9 +270,9 @@ $$
 
 ---
 
-# Causal diagram is alike with "system thinking", right??
+# By the way, causal diagram is alike with "system thinking", right??:satisfied:
 
-![bg 50%](因果ダイアグラム_2.drawio.png)
+![bg left:50% 100%](因果ダイアグラム_2.drawio.png)
 
 ---
 
@@ -254,7 +280,7 @@ $$
 
 # Thank you for your listening!
 
-### let's enjoy your profound and interesting analytics life.:satisfied:
+### pls enjoy your profound and interesting analytics life.:satisfied:
 
 #### Reference
 
