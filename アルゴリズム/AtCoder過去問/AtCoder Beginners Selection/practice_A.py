@@ -10,4 +10,4 @@ b, c = map(int, input().split())
 s = input()
 # 出力
 # print("{} {}".format(a+b+c, s))
-print(f'{a+b+c} {s}')
+print(f"{a+b+c} {s}")
