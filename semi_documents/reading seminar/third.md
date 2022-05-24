@@ -93,21 +93,29 @@ Material intensity database for the Dutch building stock Towards Big Data in mat
 
 ## overview
 
-- 材料強度データベースは、オランダで実際に行われた相当数の解体プロジェクトからの経験的データに基づいています。
+- 材料強度データベースは、オランダで実際に行われた相当数の**解体プロジェクトからの経験的データ**に基づいています。
   - 建物は7つのサブタイプに分類
-    - Single house
-    - Row house
-    - Apartment
-    - High rise
-    - Commercial
-    - Office
-    - Other
-  - このデータはGISデータ（Kadaster, 2018）で補強され、解体された物の正確な表面積、建設年、体積が提供された。
+    - Residential
+      - Single house
+      - Row house
+      - Apartment
+      - High rise
+    - Utility
+      - Commercial
+      - Office
+      - Other
+  - このデータは**GISデータ（Kadaster, 2018）で補強**され、解体された物の正確な表面積、建設年、体積が提供された。
   - この組み合わせにより、1平方メートルあたりの材料強度データベースを構築することができる。
 - 建物の構造に関する材料（例：基礎、壁、屋根）と建物の構成要素に関する材料（例：ドア、天井、ランプ、窓枠）の2つのクラスに細分化されました。
   - このように分けるのは、構造材と構成材では解体時の処理が異なるためです。
 
 ## On-site data collection
+- 61の大規模な解体プロジェクトの文書を分析したところ、様々な規模の317の建物があった。
+  - 大規模な住宅用建物には、複数の住居が含まれている（政府のGISデータセットでは住所として表現されている）。
+-  The provided building material data is based on a company specialist's estimate, of which the original purpose is to make an invoice for demolition. 
+   - 提供された建材データは、本来は解体工事の請求書を作成するための専門家による見積もりがベースになっています。
+   -  This estimate is done using on-site measurements of the to be demolished building.
+     - この見積もりは、解体される建物の現場での計測をもとに行われます
 
 ## Data processing
 

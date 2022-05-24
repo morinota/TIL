@@ -153,3 +153,22 @@ flowchart LR
     - 空き家モデルの全国展開を見越すと、建物工法の判定を含めた方がいい！
 - 土木は
 
+
+# 2022/05/24
+## 前回まで(前年度まで)の進捗
+## 今週の進捗
+- 学振 申請書の執筆作業(学内締め切り5/26)
+- ISIE-SEM Conferenceの口頭発表(修士研究の内容)がaccept
+- 修士研究の内容をどうにか論文化する必要がある??(ISIE-SEM Conferenceの前に...)
+  - 投稿雑誌(Journal)の選択：
+    - Scope(どのような論文を求めているか)を読んで決める？？
+    - Environmental Science & Technology
+    - **Journal of Industrial Ecology**
+    - Resources, Conservation & Recycling
+  - 学術論文の形態(Paper Style)の選択
+    - Regular Article （通常の学術論文）かレター（Letter）
+    - 現在進行系の研究成果(D1～の研究に繋がる)なので、**レター論文の方がいい**?
+## 今後の予定
+- 学振提出
+- 修士研究の論文投稿
+- 北九州市での画像データ収集
