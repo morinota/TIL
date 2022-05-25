@@ -163,21 +163,21 @@ _なんか正規分布の式っぽい？？ ==> x = (t-n)とした対数正規�
 ## Temporal changes of material stocks and flows MSとMFの時間的変化
 
 1つの都市の結果だけ乗せると、傾向しかわからない。他の都市ものせて比較すべき？？
-- **Material stocks** kept increasing in both spatial extent and density on Xiamen Island (Figure 3). In the 1980s, only the downtown area, located in the southwest corner of the island, had materials stocks (Figure 3).
--**Material inputs** showed a reversed U-shaped tendency during 1980–2018.More specifically, material inputs increased from the 1980s, peaked in
-2003 (∼8 Mt/year), and then declined (Figure 2).
-  - *投入量の各complementary construction activitiesのContributionのBreakdownを把握できるのは、色々得られる示唆が増えそうでいいなぁ...*
+
+- **Material stocks** kept increasing in both spatial extent and density on Xiamen Island (Figure 3). In the 1980s, only the downtown area, located in the southwest corner of the island, had materials stocks (Figure 3). -**Material inputs** showed a reversed U-shaped tendency during 1980–2018.More specifically, material inputs increased from the 1980s, peaked in
+  2003 (∼8 Mt/year), and then declined (Figure 2).
+  - _投入量の各complementary construction activitiesのContributionのBreakdownを把握できるのは、色々得られる示唆が増えそうでいいなぁ..._
 - Material outputs generally kept growing since the 1980s and hit ∼0.8 Mt until 2018 (Figure 2).
   - Before 2005, solid waste generated from new construction activities dominated material outputs (Figure 2).
     - 2005年以前は、新規建設活動から発生する固形廃棄物がOutputの大半を占めていた。
   - After that, the maintenance and replacement activities had generated more and more wastes and finally contributed to ∼85% and ∼10% in 2018, respectively (Figure 2).
     - その語、維持管理および交換活動から発生する廃棄物が増加し、2018年にはそれぞれ約85%、約10%を占めるに至った。
-    - *Demolishionはゼロ??*
+    - _Demolishionはゼロ??_
   - The substantial contributions of waste generation (material output) from construction and maintenance activities indicated that it is necessary to identify such activities for material flow quantification (see more in Section 4.1).
     - 建設と維持管理活動によるOutputの寄与が大きい事から、MFの定量化の為には、こうした活動を特定する必要がある事が示された。
 
-
 ## Spatial patterns of material stocks and flows MSとMFの空間的パターン
+
 - 空間的なホットスポット。
 
 # Discussion
@@ -185,7 +185,9 @@ _なんか正規分布の式っぽい？？ ==> x = (t-n)とした対数正規�
 ## Advances and uncertainties of the improved MFA-GIS framework on material flow quantificationマテリアルフローの定量化に関する改良型フレームワークの進展と不確実性
 
 ## Policy implications for urban management 都市経営における政策的な意義
+
 - The spatial features of material stock and potential CDW (output flow) generation simulated based on the updated framework are key information to design recycling facilities planning and optimize the waste management system.
+
   - シミュレーションされた物質ストックと潜在的なCDW発生の空間的特徴は、リサイクル施設計画を設計し、廃棄物管理システムを最適化する為の重要な情報である。
   - ホットスポットは、地域のリサイクル施設や物流センターを計画する上で重要な地域となる可能性がある。
 
