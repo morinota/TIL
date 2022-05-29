@@ -23,8 +23,8 @@ def calc_f(A: int, B: int) -> int:
 # (A*B=B*Aより、後半\sqrt(N)<=A<=Nは同じだから！)
 # =>時間計算量がO(\sqrt(N))となる為間に合う！
 
-min_f = 10**12  # N=10**10の時??
-for A in range(1, int((N + 1) ** 0.5)):
+min_f = 11  # N=10**10の時??
+for A in range(1, int((N + 1) ** 0.5) + 1):  # int は切り捨てなので一応+1
     if N % A == 0:
         min_f = min(min_f, calc_f(A, int(N / A)))
     else:
