@@ -1,0 +1,3 @@
+- https://zenn.dev/dlbsabu/articles/5300da50921070
+- 確率変数の収束についてまとめる
+  - https://kriver-1.hatenablog.com/entry/2018/05/14/204137
