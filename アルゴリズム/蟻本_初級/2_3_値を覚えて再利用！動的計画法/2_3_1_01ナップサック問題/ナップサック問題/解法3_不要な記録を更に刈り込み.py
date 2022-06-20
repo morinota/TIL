@@ -28,7 +28,7 @@ if w[1] <= W:
 
 for n in range(2, N + 1):
 
-    # dpの中の刈り込み処理
+    # 解法3. dpの中の刈り込み処理
     dp_keys = list(dp.keys())  # dp[n-1]の残容量パターンを取得
     dp_keys.sort(reverse=True)  # 残容量の多い順でソート
     pre_val = -1

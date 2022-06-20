@@ -1,0 +1,28 @@
+# 参考
+
+# Sequential Recommendationに分類されるアルゴリズム
+通常のGeneral Recommendationでは、ユーザがアイテムを消費する順序は考慮せず、長期予測としてユーザが最終的に消費するアイテムを予測する。
+シーケンシャルレコメンドの場合は、ユーザがアイテムを消費した順序に基づいて推薦を行い、ユーザが次に買いそうなアイテムを予測する。
+
+シーケンシャルレコメンドの領域は、自然言語処理の分野と強い相関がある。然言語処理では、単語の並ぶ方向からID化した単語をembeddingする。
+シーケンシャルレコメンドでも、ユーザの商品への消費履歴からアイテム情報をembeddingしていく。
+ほとんどのシーケンシャルモデルは、自然言語モデルを元に作られている。
+
+# RNNRecommender
+
+- https://arxiv.org/pdf/1608.07400.pdf
+
+RNNRecommenderは、ユーザの1Session分の短期の行動（クリック履歴）から時系列データを取得し、RNNによってユーザのembeddingを行う手法。
+RNNの層にGRUやLSTMを使用したり、双方向モデルを使用したりと、様々なアーキテクチャが存在する。
+
+# Item2Vec
+
+Item2Vecは、自然言語処理で文脈から単語のembedding処理を行うWord2Vecを応用し、ユーザの行動履歴からアイテムのembeddingを行う。
+
+# BERT4Rec
+BERT4Recの「BERT」はBidirectional Encoder Representations from Transformersの略。
+2018年10月にGoogleのJacob Devlinらの論文で発表された自然言語処理モデル。
+「AIが人間を超えた」と言わしめるほどのブレークスルーをもたらし、多様なタスクにおいて当時の最高スコアを叩き出している。
+このBERTモデルをレコメンドに応用したものがBERT4Rec。
+
+なお、自然言語処理の領域では、BERTの他にもALBERTやXLNetやGPT-xなど様々なモデルが登場している。
