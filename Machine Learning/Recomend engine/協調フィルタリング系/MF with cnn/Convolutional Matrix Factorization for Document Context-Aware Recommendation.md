@@ -267,4 +267,152 @@ $$
 
 ### Pooling Layer プーリング層
 
+The pooling layer **extracts representative features from the convolution layer**, and also deals with variable lengths of documents via **pooling operation that constructs a fixed-length feature vector**. プーリング層は、**畳み込み層から代表的な特徴を抽出**し、**固定長の特徴ベクトルを構築するプーリング操作**によって、文書の可変長に対処する。
+
+After the convolution layer, a document is represented as nc contextual feature vectors, where each contextual feature vector has variable length (i.e., l − ws + 1 contextual feature). 畳み込み層の出力後、ドキュメントは$n_c$ 個の文脈的特徴ベクトルとして表現され，**各文脈特徴ベクトルは可変長**である（すなわち、$l - ws + 1$ 個の文脈特徴）
+(つまり$l$がドキュメントの長さ(=単語数)なので、各アイテムによって文脈特徴的特徴ベクトルの長さ(=次元数)が異なる！って事??)
+
+However, such representation imposes two problems: しかし、このような表現では問題が２つある。
+
+- 1）there are too many contextual features ci, where most contextual features might not help enhance the performance,文脈特徴量$c_i$が多すぎて、ほとんどの文脈特徴量が性能向上に寄与しない可能性がある
+- 2） the length of contextual feature vectors varies, which makes it difficult to construct the following layers. 文脈特徴ベクトルの長さが変化し、後続の層の構築が困難になる、という問題がある。
+
+Therefore, we utilize max-pooling, which reduces the representation of a document into a nc fixed-length vector by extracting only the maximum contextual feature from each contextual feature vector as follows.そこで、以下のように、pooling層を使って各文脈特徴ベクトルから**最大の文脈特徴のみを抽出**し、**文書の表現を$n_c$個の固定長ベクトルに縮小するmax-pooling**を利用する。
+(シンプルに、可変長の各ベクトルから、要素の値が大きいもののみを残すって事か！)
+
+$$
+d_f = [max(c^1), max(c^2), \cdots, max(c^j), \cdts, max(c^{n_c})]
+$$
+
+ここで、
+
+- $c^j$はj番目の共有重みW j cによって抽出された長さl-ws+1の文脈的な特徴ベクトル(?)
+
 ### Output Layer 出力層
+
+Generally, at output layer, high-level features obtained from the previous layer should be converted for a specific task. 一般に、出力層では、**前の層で得られた高次の素性 を、特定のタスクのために変換**する必要がある。
+
+Thus, we project df on a k-dimensional space of user and item latent models for our recommendation task, which finally produces a document latent vector by using conventional nonlinear projection:そこで、推薦タスクのために、ユーザ潜在モデルと項目潜在モデルの$k$次元空間に$d_f$を射影し、最終的に従来の非線形射影を用いて文書潜在ベクトルを生成する:
+
+$$
+s = \tanh (W_{f2} {\tanh(W_{f1}d_f + d_{f1})} + b_{f_2}) \tag{3}
+$$
+
+ここで、
+
+- $W_{f_1}\in \mathbb{R}^{f \times n_c}$と$W_{f_2}\in \mathbb{R}^{k \times f}$は、projection matrices。＝＞全結合層の重み？？
+- $b_{f_1}\in \mathbb{R}^f$と$b_{f_1}\in \mathbb{R}^k$はbias vector for $W_{f1}$と$W_{f2}$
+- $s \in \mathbb{R}^k$
+- 忘れてるかもしれないけど、kは潜在ベクトルの数！！(ユーザ特徴ベクトル、アイテム特徴ベクトルの縦の長さ！)
+
+Eventually, through the above processes, our CNN architecture becomes **a function that takes a raw document as input, and returns latent vectors of each documents as output**:最終的に、上記のプロセスを経て、我々のCNNアーキテクチャは、**生の文書を入力とし、各文書の潜在的なベクトルを出力として返す**関数となる。
+つまりこう！
+
+$$
+s_j = cnn(W, X_j) \tag{4}
+$$
+
+ここで、
+
+- $W$ denotes all the weight and bias variables to prevent clutter. Wは乱雑さを防ぐための**全ての重み変数とバイアス変数**を示す。(つまり推定されるパラメータ)
+- $X_j$はアイテムjのDocument。
+- $s_j$はアイテムjのDocument潜在ベクトル。
+
+# Optimization Methodology
+
+To optimize the variables such as **user latent models, item latent models, weight and bias variables of CNN**, we use maximum a posteriori (MAP) estimation as follows. **ユーザ潜在モデル、アイテム潜在モデル、CNNの重み&バイアスなどのパラメータ**を最適化するために、以下のように事後分布最大化推定（**MAP推定**）を行う。
+
+$$
+\max_{U, V, W} p(U, V, W|R, X, \sigma^2, \sigma_U^2, \sigma_V^2, \sigma_W^2) \\
+= \max_{U, V, W}[尤度関数 \times 事前分布] \\
+= \max_{U, V, W}[
+  p(R|U, V, \sigma^2)
+  \cdot p(U|\sigma_U^2)
+  \cdot p(V|W, X, \sigma_V^2)
+  \cdot p(W|\sigma_W^2)
+  ]
+  \tag{5}
+$$
+
+By taking negative logarithm on Eqn.(5), it is reformulated as follows.式(5)を負対数化(=対数とってマイナスを掛ける！)して、いい感じに変形する($\sigma^2$で割る!)と、以下のようになる。
+
+$$
+L(U,V,W) = \frac{1}{2} \sum_{i}^N \sum_{j}^M I_{ij}(r_{ij} - u_{i}^T v_j)^2 \\
+  + \frac{\lambda_U}{2} \sum_{i}^N||u_i||^2 \\
+  + \frac{\lambda_V}{2} \sum_{j}^M ||v_j - cnn(W,X_j)||^2 \\
+  + \frac{\lambda_W}{2} \sum_{k}^{|W_k|}||w_k||^2
+\tag{6}
+
+\\
+(
+\lambda_U = \frac{\sigma^2}{\sigma_U^2},
+\lambda_V = \frac{\sigma^2}{\sigma_V^2},
+\lambda_W = \frac{\sigma}{\sigma_W^2}
+)
+$$
+
+We adopt coordinate descent, which iteratively optimizes a latent variable while fixing the remaining variables. そこで、残 りの変数を固定したまま潜在変数を反復して最適化する座標降下を採用 する。(要するにAlternating Least Square??)
+
+Specifically, Eqn.(6) becomes a quadratic function with respect to U (or V ) while temporarily assuming W and V (or U ) to be constant.具体的には、W と V（または U）を一時的に一定とし、式（6）は U（または V）に関して二次関数となる。 Then, the optimal solution of U (or V ) can be analytically computed in a closed form by simply differentiating the optimization function L with respect to ui (or vj) as follows.そして、U （またはV ）の最適解は、最適化関数L をui （またはvj ）に関して以下のように微分するだけで、**閉形式(closed-form, 要するに解析的に解ける式？)で解析的に計算**することができる。
+
+$$
+u_i \leftarrow (VI_i V^T + \lambda_U I_K)^{-1}VR_i \tag{7}
+$$
+
+$$
+v_j \leftarrow (U I_j U^T + \lambda_V I_K)^{-1}(UR_j + \lambda_V \cdot cnn(W, X_j)) \tag{8}
+$$
+
+(ここは通常のALSによるMFと同じ印象を受けるなぁ...)
+
+where
+
+- ユーザiについて
+  - $I_i$ は$I_{ij} , (j=1, \cdots, M)$を対角要素とする対角行列。
+  - $R_i$ はユーザiについて$(r_{ij})_{j=1}^M$とするベクトル。
+    - つまり、ユーザiの各アイテムjに対する評価値が入ったベクトル!
+- アイテムjについて
+  - $I_j$と$R_j$の定義は、$I_i$と$R_i$のものと同様。
+  - 式(8)はアイテム潜在ベクトル$v_j$を生成する際のCNNのDocument潜在ベクトル$s_j = cnn(W, X_j)$の効果を示している。
+  - $\lambda_V$はバランシングパラメータ(要は重み付け平均みたいな?, 意味合いとしては正則化項のハイパラでしょ?)になる。
+
+However, W cannot be optimized by an analytic solution as we do for U and V because W is closely related to the features in CNN architecture such as max-pooling layers and non-linear activation functions. しかし、Wは最大プール層や非線形活性化関数などCNNアーキテクチャの特徴と密接に関係しているため、UやVのように**解析的な解法で最適化することはできない**。
+
+Nonetheless, we observe that L can be interpreted as a squared error function with L2 regularized terms as follows when U and V are temporarily constant.それでも、**UとVが一時的に一定であるとき**、Lは以下のように**L2正則化項を持つ二乗誤差関数**として解釈できることがわかる。
+(つまり式(6)をUとVが定数と仮定した時Ver.)
+
+$$
+\varepsilon(W) = \frac{\lambda_V}{2} \sum_{j}^M ||v_j - cnn(W,X_j)||^2 \\
++ \frac{\lambda_W}{2} \sum_{k}^{|W_k|}||w_k||^2 + constant
+\tag{9}
+$$
+
+To optimize W , we use back propagation algorithm. (Recall that W is the weights and biases of each layer.)W を最適化するために、**バックプロパゲーションアルゴリズムを使用**する。(Wは各層の重みとバイアスであることを想起してほしい)。
+
+(=>つまり、式(9)を目的関数としたNNの勾配降下法か！)
+
+The overall optimization process (U, V and W are alternatively updated) is repeated until convergence.
+**全体の最適化処理（U, V, Wは交互に更新される）は収束するまで繰り返される**。
+With optimized U , V , and W , finally we can predict unknown ratings of users on items:
+最適化されたU、V、Wにより、最終的にアイテムに対するユーザの未知の評価を予測することができる。
+
+$$
+r_{ij} \approx E[r_{ij}|u_i^T v_j, \sigma^2] \\
+= u_i^T v_j = u_i^T \cdot (cnn(W, X_j) + \epsilon_j)
+$$
+
+$v_j = cnn(W, X_j) + \epsilon_j$だったことを思い出してほしい...!
+
+## Time Complexity Analysis 時間複雑性解析
+
+For each epoch, all user and item latent models are updated in O(k2nR + k3N + k3M ), where nR is the number of observed ratings. Note that document latent vectors are computed while updating W .
+各エポックにおいて、全てのユーザとアイテムの潜在モデルを$O(k^2n_R + k^3N + k^3M )$で更新する（ここで$n_R$は観測された評価の数)
+
+Time complexity for updating W is dominated by the computation of convolution layer, and thus all weight and bias variables of CNN are updated in O(nc · p · l · M ).
+Wの更新にかかる時間は畳み込み層の計算に支配されるため，CNNのすべての重み変数とバイアス変数の更新は$O(n_c \cdot  p \cdot l \cdot M)$で行われる．
+
+
+As a result, the total time complexity per epoch is O(k2nR +k3N +k3M +nc ·p·l·M ), and this optimization process scales linearly with the size of given data.
+その結果、エポックあたりの総時間は $O(k^2n_R +k^3N +k^3M +n_c \cdot p\cdot l\cdot M)$となり、この最適化処理は与えられたデータのサイズに比例してスケールする。
+
+
