@@ -4,6 +4,8 @@
   - https://tkengo.github.io/blog/2016/03/11/understanding-convolutional-neural-networks-for-nlp/
 - PyTorchを使ってCNNで文章分類を実装してみた
   - https://qiita.com/m__k/items/6c39cfe7dfa99102fa8e
+- A Complete Guide to CNN for Sentence Classification with PyTorch
+  - https://chriskhanhtran.github.io/posts/cnn-sentence-classification/
 
 # 自然言語処理における畳み込みニューラルネットワークを理解する
 

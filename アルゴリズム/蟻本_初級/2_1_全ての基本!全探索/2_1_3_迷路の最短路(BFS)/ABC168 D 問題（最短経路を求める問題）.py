@@ -35,7 +35,7 @@ class Node:
 
 # n個のインスタンス(Node)を生成し、nodesに格納する
 nodes: List[Node] = []
-for i in range(0, n + 1):
+for i in range(0, n + 1):  # ノード 0 も生成されるが使用しない。
     nodes.append(Node(idx=i))
 
 # 隣接 nodeをnears属性に格納する
