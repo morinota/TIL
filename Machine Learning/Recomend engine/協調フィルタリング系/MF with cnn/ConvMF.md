@@ -1,7 +1,13 @@
 ## 0.1. 参考
 
 - https://www.m3tech.blog/entry/2018/03/07/122353
-- https://github.com/nishiba/convmf
+- nishibaさんのConvMF実装例
+  - https://github.com/nishiba/convmf
+
+### 実装編
+
+- numpy.linalg.invとnumpy.linalg.solveを用いた逆行列計算
+  - https://sleepy-yoshi.hatenablog.com/entry/20120513/p1
 
 ## 0.2. タイトル
 
@@ -13,7 +19,7 @@
 ## 1.1. 評価行列のスパース性の上昇
 
 - The exploding growth of the number of users and items in ecommerce services increases the sparseness of user-to-item ratining data. eコマースサービスにおけるユーザ数とアイテム数の爆発的な増加により、ユーザからアイテムへの評価データのスパース性が高まっている。
-  - Eventually, this sparsity deteriorates the rating prediction accuracy of traditional collaborative filtering techniこのようなスパース性は， 従来の協調型レコメンデーション手法のレーティング予測精度を低下させる
+  - Eventually, this sparsity deteriorates the rating prediction accuracy of traditional collaborative filtering techniこのようなスパース性は、従来の協調型レコメンデーション手法のレーティング予測精度を低下させる
   - To enhance the accuracy, several recommendation techniques had been proposed that consider not only rating information but also auxil-そこで、評価情報だけでなく、ソーシャルネットワーク、アイテムの説明文書のような**補助的な情報も考慮した推薦手法**が提案されている。
 
 ## 1.2. 補助的な情報も考慮した推薦手法
@@ -174,7 +180,7 @@ $$
 
 However, unlike the probabilistic model for item latent models in conventional PMF, we assume that an item latent model is generated from three variables: しかし、**従来のPMF(確率的行列分解)におけるアイテム特徴行列の確率モデルとは異なり**、今回のアイテム特徴行列は以下の３変数から生成される：
 
-- 1） internal weights W in our CNN1 我々のCNN1における内部重みW、
+- 1） internal weights W in our CNN 我々のCNNにおける内部重みW、
 - 2）Xj representing the document of item j項目jの文書を表すXj、
 - 3）epsilon variable as Gaussian noise ガウス雑音としてのε変数
 
@@ -196,7 +202,7 @@ Accordingly, the conditional distribution over item latent models is given by...
 
 $$
 p(V|W, X, \sigma^2_V) = \prod_j^{M}
-N(\mathbf{\mu} = v_j|cnn(W,X_j), \Omega = \sigma_V^2I)
+N(v_j|cnn(W,X_j),\sigma_V^2I)
 $$
 
 ここで、
@@ -221,7 +227,7 @@ Figure 2 shows our CNN architecture that consists of four layers; 1) embedding l
 - 具体的には、Documentを$l$個の単語の列と見なし、**文書中の単語のベクトルを連結して行列として表現**する。
 - 単語ベクトルはランダムに初期化されるか、Glove[18]のような事前に学習された単語埋め込みモデルで初期化される。
 - この単語ベクトルは、さらに最適化処理によって学習される。
-- そして、文書行列$D \in \mathbb{R}^{p\timesl}$は次のようになる。
+- そして、ある一つのDocumentの文書行列$D \in \mathbb{R}^{p \times l}$は次のようになる。
 
 $$
 D = [
@@ -289,6 +295,7 @@ $$
 ここで、
 
 - $c^j$はj番目の共有重みW j cによって抽出された長さl-ws+1の文脈的な特徴ベクトル(?)
+- $d_f \in \mathbf{R}^{n_c}$ 各アイテムjに対応するDocumentの、Document間の"長さを統一した"文脈特徴ベクトル。
 
 ### 3.2.4. Output Layer 出力層
 
@@ -300,12 +307,15 @@ $$
 s = \tanh (W_{f2} {\tanh(W_{f1}d_f + d_{f1})} + b_{f_2}) \tag{3}
 $$
 
+(上式はつまり、入力$d_f$で出力$s$となる中間層1つの全結合層。入力=>中間層、中間層=>出力層ともに活性化関数はtanhを使ってる。)
+
 ここで、
 
-- $W_{f_1}\in \mathbb{R}^{f \times n_c}$と$W_{f_2}\in \mathbb{R}^{k \times f}$は、projection matrices。＝＞全結合層の重み？？
-- $b_{f_1}\in \mathbb{R}^f$と$b_{f_1}\in \mathbb{R}^k$はbias vector for $W_{f1}$と$W_{f2}$
+- $W_{f_1}\in \mathbb{R}^{f \times n_c}$と$W_{f_2}\in \mathbb{R}^{k \times f}$は、projection matrices。＝＞全結合層の重み!!それぞれ活性化関数はtanh!
+- $b_{f_1}\in \mathbb{R}^f$と$b_{f_2}\in \mathbb{R}^k$はbias vector for $W_{f1}$と$W_{f2}$
 - $s \in \mathbb{R}^k$
 - 忘れてるかもしれないけど、kは潜在ベクトルの数！！(ユーザ特徴ベクトル、アイテム特徴ベクトルの縦の長さ！)
+- またここでの$f$は、全結合層における中間層の次元数.
 
 Eventually, through the above processes, our CNN architecture becomes **a function that takes a raw document as input, and returns latent vectors of each documents as output**:最終的に、上記のプロセスを経て、我々のCNNアーキテクチャは、**生の文書を入力とし、各文書の潜在的なベクトルを出力として返す**関数となる。
 つまりこう！
@@ -319,8 +329,11 @@ $$
 - $W$ denotes all the weight and bias variables to prevent clutter. Wは乱雑さを防ぐための**全ての重み変数とバイアス変数**を示す。(つまり推定されるパラメータ)
 - $X_j$はアイテムjのDocument。
 - $s_j$はアイテムjのDocument潜在ベクトル。
+- $s_j \in \mathbf{R}^{k}$
 
 # 4. Optimization Methodology
+
+## MAP(事後分布最大化)推定
 
 To optimize the variables such as **user latent models, item latent models, weight and bias variables of CNN**, we use maximum a posteriori (MAP) estimation as follows. **ユーザ潜在モデル、アイテム潜在モデル、CNNの重み&バイアスなどのパラメータ**を最適化するために、以下のように事後分布最大化推定（**MAP推定**）を行う。
 
@@ -339,7 +352,7 @@ $$
 By taking negative logarithm on Eqn.(5), it is reformulated as follows.式(5)を負対数化(=対数とってマイナスを掛ける！)して、いい感じに変形する($\sigma^2$で割る!)と、以下のようになる。
 
 $$
-L(U,V,W|R, X, \lambda_U, \lambda_V, \lambda_W) 
+L(U,V,W|R, X, \lambda_U, \lambda_V, \lambda_W)
 = \frac{1}{2} \sum_{i}^N \sum_{j}^M I_{ij}(r_{ij} - u_{i}^T v_j)^2 \\
   + \frac{\lambda_U}{2} \sum_{i}^N||u_i||^2 \\
   + \frac{\lambda_V}{2} \sum_{j}^M ||v_j - cnn(W,X_j)||^2 \\
@@ -356,7 +369,9 @@ $$
 
 We adopt coordinate descent, which iteratively optimizes a latent variable while fixing the remaining variables. そこで、残 りの変数を固定したまま潜在変数を反復して最適化する座標降下を採用 する。(要するにAlternating Least Square??)
 
-Specifically, Eqn.(6) becomes a quadratic function with respect to U (or V ) while temporarily assuming W and V (or U ) to be constant.具体的には、W と V（または U）を一時的に一定とし、式（6）は U（または V）に関して二次関数となる。 Then, the optimal solution of U (or V ) can be analytically computed in a closed form by simply differentiating the optimization function L with respect to ui (or vj) as follows.そして、U （またはV ）の最適解は、最適化関数L をui （またはvj ）に関して以下のように微分するだけで、**閉形式(closed-form, 要するに解析的に解ける式？)で解析的に計算**することができる。
+## UとVの推定方法は...ALS??
+
+Specifically, Eqn.(6) becomes a quadratic function with respect to U (or V ) while temporarily assuming W and V (or U ) to be constant.具体的には、W と V（または U）を一時的に一定とみなすと、式（6）は **U（または V）に関して(1変数の！)二次関数**となる。 Then, the optimal solution of U (or V ) can be analytically computed in a closed form by simply differentiating the optimization function L with respect to ui (or vj) as follows.そして、U （またはV ）の最適解は、最適化関数L をui （またはvj ）に関して以下のように微分するだけで、**閉形式(closed-form, 要するに解析的に解ける式？)で解析的に計算**することができる。
 
 $$
 u_i \leftarrow (VI_i V^T + \lambda_U I_K)^{-1}VR_i \tag{7}
@@ -379,6 +394,8 @@ where
   - 式(8)はアイテム潜在ベクトル$v_j$を生成する際のCNNのDocument潜在ベクトル$s_j = cnn(W, X_j)$の効果を示している。
   - $\lambda_V$はバランシングパラメータ(要は重み付け平均みたいな?, 意味合いとしては正則化項のハイパラでしょ?)になる。
 
+## Wの推定方法も...UとVを固定して勾配降下法!
+
 However, W cannot be optimized by an analytic solution as we do for U and V because W is closely related to the features in CNN architecture such as max-pooling layers and non-linear activation functions. しかし、Wは最大プール層や非線形活性化関数などCNNアーキテクチャの特徴と密接に関係しているため、UやVのように**解析的な解法で最適化することはできない**。
 
 Nonetheless, we observe that L can be interpreted as a squared error function with L2 regularized terms as follows when U and V are temporarily constant.それでも、**UとVが一時的に一定であるとき**、Lは以下のように**L2正則化項を持つ二乗誤差関数**として解釈できることがわかる。
@@ -394,6 +411,8 @@ To optimize W , we use back propagation algorithm. (Recall that W is the weights
 
 (=>つまり、式(9)を目的関数としたNNの勾配降下法か！)
 
+## Uの最適化→Vの最適化→Wの最適化→...を繰り返す...! ALS!
+
 The overall optimization process (U, V and W are alternatively updated) is repeated until convergence.
 **全体の最適化処理（U, V, Wは交互に更新される）は収束するまで繰り返される**。
 With optimized U , V , and W , finally we can predict unknown ratings of users on items:
@@ -404,7 +423,7 @@ r_{ij} \approx E[r_{ij}|u_i^T v_j, \sigma^2] \\
 = u_i^T v_j = u_i^T \cdot (cnn(W, X_j) + \epsilon_j)
 $$
 
-$v_j = cnn(W, X_j) + \epsilon_j$だったことを思い出してほしい...!
+$v_j = cnn(W, X_j) + \epsilon_j$で定義していたことを思い出してほしい...!
 
 ## 4.1. Time Complexity Analysis 時間複雑性解析
 
