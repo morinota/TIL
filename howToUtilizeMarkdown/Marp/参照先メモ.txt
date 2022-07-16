@@ -1,0 +1,2 @@
+- Image syntax(公式)
+    - https://marpit.marp.app/image-syntax

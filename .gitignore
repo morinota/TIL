@@ -1,3 +1,7 @@
-images
-img
+images/
+img/
 semi_documents\img
+
+# 特定の拡張子を無視する
+*.jpg
+*.png
