@@ -112,8 +112,8 @@ It's a little bit mathematical.
 
 $$
 \mathbf{y} = f(\mathbf{x_1}, \cdots, \mathbf{x}_k) + \mathbf{\epsilon}\\
-= \beta_0 + \beta_1 \mathbf{x}_1 + \cdots + \beta_k \mathbf{x}_k + \mathbf{\epsilon}
-= \mathbf{\beta}X + \mathbf{\epsilon}
+= a_0 + a_1 \mathbf{x}_1 + \cdots + a_k \mathbf{x}_k + \mathbf{\epsilon}
+= \mathbf{a}X + \mathbf{\epsilon}
 $$
 
 where is ...
@@ -122,7 +122,7 @@ where is ...
 
 ###### $X$ : (in Causal Inference, it should include "cause")
 
-###### $\mathbf{\beta}$ : the regression coefficent of $X$.
+###### $\mathbf{a}$ : the regression coefficent of $X$.
 
 ###### $\mathbf{\epsilon}$ : Probabilistic component of y。
 
@@ -141,11 +141,11 @@ from viewpoint of "Causal Inference", regression analysis is utilized for "**Des
 # Example: height=>weight
 
 $$
-\text{weight} = \beta_0 + \beta_1 \times \text{height} + \epsilon \\
-\Rightarrow \beta_1 = 0.34 (p = 0.00)
+\text{weight} = a_0 + a_1 \times \text{height} + \epsilon \\
+\Rightarrow a_1 = 0.34 (p = 0.00)
 $$
 
-###### In this case, $\beta_1$ can be interpret 'causal effect' of 'height' $\Rightarrow$ 'weight'.
+###### In this case, $a_1$ can be interpret 'causal effect' of 'height' $\Rightarrow$ 'weight'.
 
 ###### However, the value of the regression coefficient **does not necessarily fit** with the causal effect.
 
@@ -153,7 +153,7 @@ $$
 
 ---
 
-# 2. When is **regression coefficients** different from **causal effects**?
+# 2. When is **regression coefficients** $\neq$ **causal effects** happend?
 
 there are mainly 4 cases :
 
@@ -167,13 +167,31 @@ there are mainly 4 cases :
 
 ---
 
+##### So, the way "to estimate causal effect in **Confounding**" is **Cut the indirect upstream connection** between X and Y.
+
+###### - one way is **adding confounding factors to explanatory variables**.
+
+#### In order to do that ...
+
+###### 1. imagine and draw structure of relations (it's called '**causal diagram**')
+
+###### 2. consider **what will be confaunding factor** of X and Y
+
+###### 3. observe the candidates of confounding factor similar to X and Y.
+
+![bg left:35% 100%](因果ダイアグラム_2.drawio.png)
+
+ <!-- So causal effect is close to 0.0. -->
+
+---
+
 # Summary of my last short lecture
 
 ##### - Correlation $\neq$ Causation(Causal relation)
 
-##### - When discussing causal relation from observational data, we should consider **confounding factors**.
+##### - When discussing causal relation from observational data, we should consider **confounding factors**(i.e. **indirect upstream connection**).
 
-##### - When estimating causal effects from regression coefficients in regression analysis, we should **check confounding factors** and **add them to the explanatory variables**.
+##### - When estimating causal effects from regression coefficients through regression analysis, we should **check confounding factors** and **add them to the explanatory variables**.
 
 ---
 
@@ -181,11 +199,11 @@ there are mainly 4 cases :
 
 ###### So, according to my last short lecture...
 
-#### we should **add factors that seem to be related to X(cause) & Y(outcome) to the model** as explanatory variables"...??
+#### we should add **factors that seem to be related to X(cause) & Y(outcome)** to the model as explanatory variables"...??
 
-###### However...but...in actual... I am afraid that...
+##### However...in actual... I am afraid that...**this is also not necessarily true**!
 
-#### Sometimes, because of adding factors that seems to be related to the X(cause) & Y(outcome), "regression coefficients $\neq$ causal effects"(i.e. Suprious Correlation 疑似相関) is happened.
+#### Sometimes, **due to adding** factors that seems to be related to the X(cause) & Y(outcome), "regression coefficients $\neq$ causal effects"(i.e. Correlation $\neq$ Causation)(i.e. Suprious Correlation 疑似相関) is happened.
 
 ---
 
@@ -217,14 +235,16 @@ there are mainly 4 cases :
 
 ---
 
-## Example of "collider bias"(in data collection)
+## Example of "collider bias"
 
 ### Let's imagine the case of "enviromnental subsidy (環境補助金)" based on CO2 emission & TMR of a car!
 
 <!-- 我々は地方自治体の環境グループ。この地方自治体では、企業の"環境負荷低減"の取り組みを推奨する為に補助金制度を設定している。補助金付与の可否は、CO2排出量とTMRの2つの指標に基づいて判定される。-->
 
 ###### - We are the member of environmental group of a government.
-###### - We has set up **a environmental subsidy(環境補助金)  for automobile makers** to promote "reduce their environmental impact" of automobile.
+
+###### - We has set up **a environmental subsidy(環境補助金) for automobile makers** to promote "reduce their environmental impact" of automobile.
+
 ###### - **"Whether receiving subsidy or not"** depends on two indicators: **"CO2 emissions"** and **"TMR(Total Material Requirement)"** in the one automobile's life cycle.
 
 ---
@@ -233,33 +253,36 @@ there are mainly 4 cases :
 
 ![bg 80%](causal_diagram_collider_CO2_TMR.drawio.png)
 ![bg 80%](CO2_x_TMR_y.png)
+
 <!-- left figure shows that ... -->
 <!-- So, "receive subsidy or not" is collider of X and Y -->
 <!-- right figure shows that ... -->
 <!-- the values of CO2 and TMR is standardized to have mean 0.0 & variance 1.0 -->
-<!-- blue plot is..., green plot is ... -->
+
+## <!-- blue plot is..., green plot is ... -->
+
 ---
 
 ##### So, in order to promote this subsidy program, **we selected data at the only successful companies(left figure)** and tried to find their characteristics.
 
 ##### => A **negative correlation** between CO2 emission and TMR is happened!
 
-##### =>Is there a trade-off between CO2 emission and TMR? Does improving one worsen the other?
+##### =>Is there a trade-off between CO2 emission and TMR...?
 
 ![bg left:35% 100%](CO2_x_TMR_y_selected.png)
 
-### =>Actually, this is "collider bias" in data collection!
+### =>Actually, this is **"collider bias" by selecting(選択) at collider**!
 
 ---
 
-## this is one of "collider bias"!
+## This is one of "collider bias"!
 
 ![bg left:40% 100%](CO2_x_TMR_y.png)
 ![bg left:40% 100%](CO2_x_TMR_y_selected.png)
 
 ###### - Originally, **there is no correlation(相関) & causation(因果)** between "CO2 emission" and "TMR". (i.e. basically, they are not "trade off"!)
 
-###### - However, **by selecting(選択) data at the "collider"**, correlation(相関) is happend without causation(因果).
+###### - However, **by selecting(選択) data at "collider"**, correlation(相関) is happend without causation(因果).
 
 ##### In case of **"collider bias" by selecting(選択)**, relatively easy to imagine, right??
 
@@ -304,7 +327,9 @@ $$
 ![bg left:55% 100%](triathlon_pairplots.png)
 
 ---
+
 If you wanna try this experiment, you can also generate the dataset.
+
 ```python
 # set the num of sample data
 N = 5000
@@ -372,7 +397,8 @@ $$
 
 ###### $\hat{a_1} = - 0.823$. This value is **close to $-0.8$(=actula causal effect)**
 
-###### So here, the causal effect of "$X_1$ -> $t_{dual}$" **is  properly estimated** by a single regression with "bicycle power($X_1$)" as the only explanatory variable.
+###### So here, the causal effect of "$X_1$ -> $t_{dual}$" **is properly estimated** by a single regression with "bicycle power($X_1$)" as the only explanatory variable.
+
 ###### In this case, **this simple regression is "necessary and sufficient"!**
 
 ---
@@ -382,12 +408,12 @@ $$
 ![bg 100%](triathlon_pairplots.png)
 ![bg 100%](causal_diagram_triathlon.drawio.png)
 
-
 ---
 
 #### Let's add "variable that might be related to X(cause) and Y(outcome)!"
 
 ###### - Explanatory variables = [$X_1$, $t_{triple}$]
+
 ###### - Explained variable = $t_{dual}$
 
 $$
@@ -399,14 +425,17 @@ $$
 ###### After estimation, let's check **whether $\hat{a_1}$ is close to $-0.8$(=actula causal effect)** or not.
 
 ![bg right:40% 100%](causal_diagram_triathlon.drawio.png)
+
 <!-- ![bg right:40% 100%](triathlon_pairplots.png) -->
 
-
 ---
+
 ### The result is...
+
 $$
 t_{dual} \sim Normal(\mu = a_0 +  a_1 \times X_1 + a_2 \times t_{triple}, \sigma^2)
 $$
+
 ###### $\hat{a_1} = - 0.293$.
 
 ###### By adding "triathlon time($t_{triple}$)" to the model, "$\hat{a_1} \neq \text{causal effect}$" (i.e. $Correlation \neq Causation$) is happened!
@@ -421,42 +450,36 @@ $$
 
 ###### this table shows the result of each regression analysis.
 
-| explanatory variables                       | AIC          | $\hat{a_1}$| $abs (0.8- \hat{a_1})$|
-|---------------------------------------------|--------------|------------------------------|--------------------------------| 
-| [bike_ability]                              | 20261 | -0.848                    | 0.048                   | 
-| [bike_ability, triathlon_time]              | 19203 | -0.304                    | 0.496                       | 
-| [bike_ability, triathlon_time, run_ability] | 14258 | -0.824                    | 0.024                       | 
-| [bike_ability, run_ability]                 | 14256 | -0.827                    | 0.027
+| explanatory variables                       | AIC   | $\hat{a_1}$ | $abs (0.8- \hat{a_1})$ |
+| ------------------------------------------- | ----- | ----------- | ---------------------- |
+| [bike_ability]                              | 20261 | -0.848      | 0.048                  |
+| [bike_ability, triathlon_time]              | 19203 | -0.304      | 0.496                  |
+| [bike_ability, triathlon_time, run_ability] | 14258 | -0.824      | 0.024                  |
+| [bike_ability, run_ability]                 | 14256 | -0.827      | 0.027                  |
 
 ---
 
-| explanatory variables                       | AIC          | $\hat{a_1}$| $abs(0.8 - \hat{a_1})$| 
-|---------------------------------------------|--------------|------------------------------|--------------------------------| 
-| [bike_ability]                              | 20261 | -0.848                    | 0.048                   | 
-| [bike_ability, triathlon_time]              | 19203 | -0.304                    | 0.496                       | 
-| [bike_ability, triathlon_time, run_ability] | 14258 | -0.824                    | 0.024                       | 
-| [bike_ability, run_ability]                 | 14256 | -0.827                    | 0.027
+| explanatory variables                       | AIC   | $\hat{a_1}$ | $abs(0.8 - \hat{a_1})$ |
+| ------------------------------------------- | ----- | ----------- | ---------------------- |
+| [bike_ability]                              | 20261 | -0.848      | 0.048                  |
+| [bike_ability, triathlon_time]              | 19203 | -0.304      | 0.496                  |
+| [bike_ability, triathlon_time, run_ability] | 14258 | -0.824      | 0.024                  |
+| [bike_ability, run_ability]                 | 14256 | -0.827      | 0.027                  |
 
-###### [bike_ability] model can estimate causal effect more properly, but AIC is higher than [bike_ability, triathlon_time] model! 
+###### [bike_ability] model can estimate causal effect more properly, but AIC is higher than [bike_ability, triathlon_time] model!
+
 ###### This example shows that "**AIC of model is low**" and "**$\hat{a_1}$ is representing the causal effect more properly**" is **essentially different**.:satisfied:
 
 ---
+
 # Summary of today's short lecture
 
 ##### - Correlation $\neq$ Causation(Causal relation)
 
 ##### - When estimating causal effects from regression coefficients in regression analysis,
 
-- ##### (the contents of last short lecture) In case of '**confounding factor**', we **should add them** to the explanatory variables for avoid "confounding(交絡)".
-- ##### (the contents of today's short lecture) In case of '**collider**', we **should not add them** to the explanatory variables for avoid "collider bias(合流点バイアス)".
-
----
-
-## finally...
-
-# Causal Inference has a 2 frameworks: Pearl & Rubin
-
-##### I talked about Pearl's framework
+- ##### (the contents of last short lecture) In case of '**confounding factor**'(i.e. **indirect upstream connection**), we **should add them** to the explanatory variables for avoid "confounding(交絡)".
+- ##### (the contents of today's short lecture) In case of '**collider**'(i.e. **indirect downstream connection**), we **should not add them** to the explanatory variables for avoid "collider bias(合流点バイアス)".
 
 ---
 
@@ -477,4 +500,3 @@ $$
 - Multiple Regression Viewed from Causal Inference Perspective
   統計的因果推論の視点による重回帰分析, Mahabu Iwasaki
 - 岩波データサイエンス vol.3 因果推論-実世界のデータから因果を読む.
-- https://www.slideshare.net/takehikoihayashi/ss-73059140
