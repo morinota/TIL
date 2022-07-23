@@ -8,15 +8,78 @@
 
 # 2. Related Work
 
-# 3. Preliminaries
+# 3. Preliminaries 前置き
 
 ## 3.1. MF method for Implicit Feedback
+
+まず基本的な表記法をまとめる。
+
+- $R \in \mathbb{R}^{M \times N}$:ユーザとアイテムのInteraction Matrix(Explicitデータの場合はRating Matrix?)
+- $M$:the number of users
+- $N$:the number of items
+- $\mathcal{R}$: the set of user-item pairs whose values are non-zero.
+- $u, i$: indices of a user and an item.
+- $\mathbf{p}_u$: the user latent vector for $u$
+- $\mathcal{R}_{u}$: the set of items that are interacted by $u$.
+- $\mathbf{q}_i$: the item latent vector for $u$
+- $\mathcal{R}_{i}$: the set of users that are interacted by $i$.
+- $P \in \mathbb{R}^{M\times K}$: the latent factor matrix for users.
+- $Q \in \mathbb{R}^{N\times K}$: the latent factor matrix for items.
+
+モデルパラメータを推定する為に、Hu et al. は、Implicitフィードバック行列$R$の各予測に**信頼度Confidence**を関連付ける、weighted regression functionを(目的関数として！！)導入した。
+
+$$
+J = \sum_{u=1}^M \sum_{i=1}^N w_{ui}(r_{ui} - \hat{r}_{ui})^2
++ \lambda(\sum_{u=1}^M ||\mathbf{p}_u||^2
++ \sum_{i=1}^N ||\mathbf{q}_i||^2)
+\tag{2}
+$$
+
+ここで、
+- $w_{ui}$: the weight of entry $r_{ui}$. and we use $W=[w_{ui}]_{M\times N}$
+- $\lambda$: the strength of regularizationをコントロールする。
+
+ImplicitフィードバックのMFでは、通常、欠落したentriesにはruiの値はゼロだが、**wuiの重みはゼロでないものが割り当てられ**、どちらも性能にとって重要であることに注意されたい。
+
 
 ## 3.2. Optimization by ALS
 
 ### 3.2.1. Efficiency Issue with ALS
 
+- userとitemのlatent vectorを更新する為に、$K \times K$行列の逆行列の計算が避けられない。
+- **行列の反転はExpensiveな処理**であり、通常、時間計算量は$O(K^3)$と仮定される。
+- その為、ある１ユーザのuser latent vectorを更新するには、時間$O(K^3 + N K^2)$を要する。
+- したがって、全てのモデルパラメータ(user latent matrix & item latent matrix)を一回更新する為に必要な時間計算量(Time Complexity)は、$O((M+N)K^3 + MNK^2)$
+- 明らかに、この計算量の多さは、数百万のuserとitem、数十億のInteractionが存在し得る大規模データでこのアルゴリズムを実行する事を非現実的なモノにしている。
+
 ### 3.2.2. Speed-up with Uniform Weighting
+
+- Hu et alは、高い計算量を削減する為に、missing entries(=Rating matrixのゼロ要素)に対して一律の重みを適用した。
+  - ＝＞すなわち、Rating Matrixの全てのゼロ要素は、同じ重み$w_0$を持つと仮定。
+
+この工夫を使うと、user latent vectorの更新式(式3)の中の$Q^T W^u Q$は以下のように変形できる。
+
+$$
+Q^T W^u Q = w_0 Q^T Q + Q^T (W^u - W^0)Q \tag{4}
+$$
+
+ここで、
+
+- $W^0$ : 全ての対角要素が$w0$である対角行列(diagonal matrix)
+
+そして$Q^T Q$は、任意の$u$とは独立なので、全てのuser latent vectorを更新する前に事前計算が可能。
+$W^u - W^0$が$|R_u|$個の非ゼロ要素しか持たない事を考慮すると、式(4)を$O(|R_u| K^2)$で計算する事が可能。
+
+＝＞したがって、ALSにおける全てのパラメータ一回更新にかかるtime Complexityは、$O((M + N)K^3 + |R|K^2)$に低減される！
+
+それでも、逆行列の計算部分$O((M + N)K^3)$項は、$(M + N)K \geq |R|$の場合に主要なコストとなりうる。(**すなわちlatent vectorの次元数$K$が多くなればなるほど**...!!!**$K^3$だからグングン**！！)
+更に、$O|R|K^2$の部分は、$O(|R|K)$の時間しか必要としないSGDに比べてずっと高い。
+
+＝＞latent vectorの次元数$K$の大きさは、より良い汎化性、ひいてはより良い予測性能につながる為、非常に重要なハイパーパラメータである。
+そのため、上記の手法によって高速化されたALSを持ってしても、大規模データでの実行はまだ禁止されている。
+
+更に、Uniform weightingの仮定は実際のアプリケーションでは通常無効であり、モデルの予測性能を劣化させる。
+＝＞このため、Uniform Weightingに依存しない、効率的なImplicit MF法を設計する事が必要。
 
 ## 3.3. Generic Element-wise ALS Learner
 
@@ -34,7 +97,7 @@ $$
 
 ここで、
 
-- $\hat{r}_{ui}^f = \hat{r}_{ui} - p_{uf} q_{if}$. 言い換えれば、latent factor の一要素 $f$なしの予測値$\hat{r}$
+- $\hat{r}_{ui}^f = \hat{r}_{ui} - p_{uf} q_{if}$. 言い換えれば、latent factor の一要素 (添字$f$)を含めない場合の予測値$\hat{r}$
 
 この微分式=0とすると、$p_{uf}$の解が得られる。
 
@@ -62,6 +125,15 @@ $$
 目的関数が非凸である為、勾配が損失する臨界点がlocal minimam(局所最小解)になる事がある。
 
 ### 3.3.1. Time Complexity
+
+上述したように、要素レベルでパラメータ最適化を行う事で、サイズの大きい(expensiveな)行列の**逆行列の計算を回避**する事ができる。
+
+＝＞これにより、一回の反復(=MFの全てのパラメータの一回更新)にかかる
+Time Complexityは$O(M N K^2)$となり、$O(K^3)$の項を排除することで直接的にALSを高速化できる。
+
+さらに、$\hat{r}_{ui}$を事前計算する事で、$\hat{r}_{ui}^f$を$O(K)$ではなく$O(1)$で計算する事ができる！
+＝＞そのため、**一回の反復(=MFの全てのパラメータの一回更新)にかかる
+Time Complexityは$O(M N K)$となり**、全てのuser × itemの評価値$\hat{r}_{ui}$を予測するのと同じになる。
 
 # 4. Our Implicit MF Method
 
