@@ -90,17 +90,19 @@ The study was based on previous quantitative research on the relationship betwee
 
 This article engages with the ongoing discourse on circular vs. linear consumption and the management of product lifespan (Camacho-Otero et al., 2018; Cooper, 2008) by investigating the reasons of disposable house consumption (i.e., the linearity of the built environment in post-war Japan). Lastly, this article contributes to the global and local material stock management research (Krausmann et al., 2017; Tanikawa et al., 2015). Additionally, by shedding light on the role of building lifespan and the sociocultural dimension, this study tried to understand how path dependencies created by dynamic material stock and decisions have and will continue to influence material flows.
 
-本稿は、**使い捨て住宅消費の理由（すなわち、戦後日本における建築環境の直線性＝すなわち、スクラップ&ビルド?? not closed roop??）**を調査することによって、循環型消費 対 直線型消費および製品寿命の管理に関する進行中の言説（Camacho-Otero et al.2018; Cooper, 2008）に関与するものである。最後に、本稿は、グローバルおよびローカルな材料ストック管理研究（Krausmann et al., 2017; Tanikawa et al., 2015）に貢献する。さらに、建物の寿命と社会文化的次元の役割に光を当てることで、本研究は、ダイナミックなマテリアルストックと意思決定が生み出す経路依存性が、マテリアルフローにどのように影響を与え、今後も与え続けるかを理解しようとした。
+本稿は、**使い捨て住宅消費の理由（すなわち、戦後日本における建築環境の直線性＝すなわち、スクラップ&ビルド?? not closed roop??）**を調査することによって、循環型消費vs直線型消費、および製品寿命の管理に関する進行中の言説（Camacho-Otero et al.2018; Cooper, 2008）に関与するものである。最後に、本稿は、グローバルおよびローカルな材料ストック管理研究（Krausmann et al., 2017; Tanikawa et al., 2015）に貢献する。さらに、建物の寿命と社会文化的次元の役割に光を当てることで、本研究は、ダイナミックなマテリアルストックと意思決定が生み出す経路依存性が、マテリアルフローにどのように影響を与え、今後も与え続けるかを理解しようとした。
 
 ## 1.11. 論文構成
 
-具体的には、以下のような研究課題に答えることを目的としている。
+1.  2.  3.  4.  5.
 
-- 1. 20世紀における建築物の短寿命化の背景には、日本人の価値観や意識、市場の状況があったのか？
-- 2. 建物の短寿命化の根底には技術的な要因があったのか？
-- 3. この現象は、技術的な要因と非技術的な要因のどちらがより密接に関係しているのか？
-- 4. 関係するステークホルダーは誰で、その動機は何か？
-- 5. 現在の政治的言説の中で提案され、実施されている行動は、このプロセスに効果的に寄与しているのだろうか？
+Specifically, this article aims to answer the following research questions.具体的には、以下のような研究課題に答えることを目的としている。
+
+- 1. What were the values and attitudes of Japanese people and the market conditions behind the short use of buildings in the 20th century? 20世紀における建築物の短寿命化の背景には、日本人の価値観や意識、市場の状況があったのか？
+- 2.  Were there technical factors at the base of the short building lifespan? 建物の短寿命化の根底には技術的な要因があったのか？
+- 3. Is this phenomenon more closely linked to technical or non-technical factors? この現象は、技術的な要因と非技術的な要因のどちらがより密接に関係しているのか？
+- 4. Who are the involved stakeholders and what are their motivations? 関係するステークホルダーは誰で、その動機は何か？
+- 5. Are the proposed and undertaken actions in the current political discourse effectively contributing to this process? 現在の政治的言説の中で提案され、実施されている行動は、このプロセスに効果的に寄与しているのだろうか？
 
 ここでは、住宅建築の陳腐化と耐用年数の終了に関するステークホルダーの視点を理解するためのフレームワークを提示し、日本における様々なステークホルダーに対する社会循環型のソリューションを提供する。
 
@@ -224,7 +226,7 @@ In this paper, the “**economic obsolescence**” of a residential building is 
 ### 3.2.3. "Planned obsolescence"(メソスケールのeconomic obsolescence)
 
 “Planned obsolescence” is the practice of planning or designing a product with an artificially limited useful life, in order to hasten its replacement and increase revenue (den Hollander et al., 2017).
-「計画的陳腐化」とは、**買い替えを早めて収益を上げるために、人為的に耐用年数を制限した製品を計画・設計すること**である（den Hollander et al.、2017）。
+「Planned obsolescence」とは、**買い替えを早めて収益を上げるために、人為的に耐用年数を制限した製品を計画・設計すること**である（den Hollander et al.、2017）。
 
 When planned obsolescence is applied to architecture, its translates into this article's concept of mesoscale economic obsolescence: functional buildings are replaced with new ones, in order to maximise land value and revenue (either by selling or renting the building).
 計画的陳腐化を建築に適用した場合、その訳は本論文のメソスケール経済的陳腐化の概念である：地価と収益を最大化するために（建物を売却または賃貸することによって）、機能的な建物は新しいものに置き換えられる。
@@ -234,14 +236,14 @@ This practice has started at the beginning of the 20th century, at the spread of
 Goetz (2012) noted the importance and influence of economic dynamics (e.g., land value) on this phenomenon, which have led to changes in the built environment, renovations, and large building activities.
 Goetz（2012）は、この現象に対する経済力学（地価など）の重要性と影響力を指摘し、それが建築環境の変化、改修、大規模な建築活動をもたらしたと述べている。
 
-These authors also pointed out that there is no evidence of a deliberate planned obsolescence for buildings, contrary to what happens for other consumer goods (e.g., electronic products).
+These authors also pointed out that there is no evidence of a deliberate **planned obsolescence** for buildings, contrary to what happens for other consumer goods (e.g., electronic products).
 また、これらの著者は、他の消費財（例えば、電気製品）に起こることとは逆に、建築物には意図的に計画された陳腐化の証拠がないことを指摘している。
 
 However, construction, demolition, and real estate companies are stakeholders who benefit from a large number of (de)construction activities and are interested in maintaining the status quo.
-しかし、建設会社、解体会社、不動産会社は、多くの（脱）建設活動から利益を得るステークホルダーであり、現状を維持することに関心がある。
+しかし、**建設会社、解体会社、不動産会社は、多くの（解体 or ）建設活動から利益を得るステークホルダーであり、現状を維持することに関心がある**。
 
 Nowadays, although solutions for long-lived buildings are available in Japan and building standards oblige designers and builders to comply with certain minimum quality requirements (Hasewaga, 2013), construction companies heavily promote new designs and technologies through their marketing campaigns, encouraging customers to replace old buildings with new ones.
-現在、日本では長寿命建築のためのソリューションが提供されており、建築基準法は設計者や施工者に一定の最低品質要件の遵守を義務付けているが（長谷川、2013）、建設会社はマーケティングキャンペーンを通じて新しいデザインや技術を大きく宣伝し、顧客に古い建物から新しい建物への建て替えを促している。
+現在、日本では長寿命建築のためのソリューションが提供されており、**建築基準法は設計者や施工者に一定の最低品質要件の遵守を義務付けている**が（長谷川、2013）、**建設会社はマーケティングキャンペーンを通じて新しいデザインや技術を大きく宣伝し、顧客に古い建物から新しい建物への建て替えを促している**。
 
 This theory was explored by Winistorfer et al. (2007), who pointed out how desirability constitutes a more important decision criterion than durability in the design of a house.
 この理論は、Winistorfer ら（2007）により検討され、住宅の設計において、耐久性よりも意匠性の方が重要な判断基準となることが指摘されている。
@@ -380,7 +382,7 @@ All of these socio-economic changes resulted in a further renewal of the built e
 
 Obvious stakeholders are the local and national governments, interested in providing affordable houses for the whole population, but also lobbied by construction companies that promote the creation of new buildings. Local governments are primarily affected by the consequences of short-lived buildings, since they have to handle the needs of the local population and mitigate the environmental impacts associated with the consumption of resources (during constructions) and the generation of waste (during demolitions). On the other hand, the central government limits its actions to the prescription of constructions, the imposition of environmental laws, and the design of taxation systems.
 主な利害関係者は、全国民に手頃な価格の住宅を提供することに関心を持つ地方自治体や国であるが、同時に新しい建物の建設を推進する建設会社からも働きかけを受けている。
-地方自治体は、地域住民のニーズに対応し、**資源の消費（建設時）と廃棄物の発生（解体時）に伴う環境への影響を軽減しなければならな**いため、短命な建築物の影響を主に受ける。
+地方自治体は、地域住民のニーズに対応し、**資源の消費（建設時）と廃棄物の発生（解体時）に伴う環境への影響を軽減しなければならない**ため、短命な建築物の影響を主に受ける。
 一方、中央政府は、建築物の規定、環境法の施行、税制の設計などに限定して行動している。
 
 ### 4.2.2. Universities and other research institutes
@@ -544,7 +546,7 @@ Table 2 summarizes the interview results: the stakeholders participating in the 
 
 ![](../images/2022-07-21-20-34-46.png)
 
-# 5. Discussion: premature, justified, and delayed obsolescence
+# 5. Discussion: premature(早期), justified(正当), and delayed(遅延) obsolescence
 
 Previous studies demonstrating the abundance of short-lived buildings in Japan and other East Asian countries were mostly based on descriptive aggregate evidence, derived from material flow and stock analysis. However, these accounts did not analyse in detail the underlying causes (mostly social and psychological), nor the power structures behind the disposable housing culture.
 日本や他の東アジア諸国における短命建築の多さを示すこれまでの研究は、そのほとんどがマテリアルフローやストック分析から得られた記述的な集約的証拠に基づいている。しかし、これらの研究では、**使い捨て住宅文化の背後にある根本的な原因（主に社会的・心理的なもの）**や権力構造について詳細に分析することはなかった。
@@ -578,9 +580,11 @@ Such buildings are usually located in exposed areas (e.g., those in Onomichi cas
 このような建物は、通常、露出した場所にあるか（尾道のケースなど）、改修に必要な投資額が利益を上回ると思われるほど損傷している。
 
 ## 表3
+
 ![](../images/2022-07-21-20-35-14.png)
 
 ## “Premature obsolescence” "早すぎる陳腐化 "
+
 “Premature obsolescence” reflects mostly the interests of an elite at the expense of less privileged people (Abramson, 2016). Small residential buildings are replaced in favour of more profitable buildings, following urban economic logistics. This kind of renovation, known as gentrification, has the tendency of pushing previous owners to more peripheral areas, since new buildings are costlier (Abramson, 2016; Akyurek and Ciravoğ;lu 2017). The phenomenon of gentrification in Japan consists mainly in the removal of old buildings, rather than in the removal of people as observed in Western contexts (where well-maintained old houses and buildings can become a highly-appreciated asset). Nevertheless, the premature obsolescence of buildings in Japan still causes great economic instability to owners, since they become unable to accumulate wealth for themselves and their next generations through home investments.
 "早すぎる陳腐化 "は、特権の少ない人々を犠牲にして、主にエリートの利益を反映している（Abramson, 2016）。小規模な居住用建物は、都市の経済ロジスティックスに従って、より収益性の高い建物に置き換えられている。このような改修はジェントリフィケーションと呼ばれ、新しい建物はコストが高いため、以前の所有者をより周辺地域に追いやる傾向がある（Abramson, 2016; Akyurek and Ciravoğ;lu 2017）。日本におけるジェントリフィケーションの現象は、欧米の文脈で観察されるような人の移動ではなく、古い建物の撤去が主である（よく手入れされた古い家や建物が高く評価される資産となることがある）。とはいえ、日本では建物の老朽化が進むと、所有者は住宅投資によって自分自身や次世代のために富を蓄積することができなくなるため、経済的に大きな不安定さを抱えることになる。
 
@@ -589,26 +593,36 @@ Such buildings are usually located in exposed areas (e.g., those in Onomichi cas
 On the other hand, a considerable number of houses in Japan still does not comply with the BSL of 1981: although technically unsafe in case of a major seismic event, they are still occupied, either because of emotional or financial reasons. The term “delayed obsolescence” defines buildings that should have been demolished, or at least retrofitted, but are not. Similar situations are clearly linked to people's lack of economic resources: they cannot buy a new house apt to their needs, renovate, or even maintain their present house. This is often the case for older people or other citizens at the edge of society.
 一方、**日本には1981年のBSLに適合していない住宅がまだ相当数あり、大地震の際に技術的に安全でないにもかかわらず、感情的あるいは経済的な理由でまだ居住されている**。
 「遅れてきた陳腐化」という言葉は、**取り壊されるか、少なくとも改修されるべきだったにもかかわらず、そうなっていない建物**を定義している。同じような状況は、明らかに人々の経済的資源の不足と関連している。ニーズに合った新しい家を買うことができず、現在の家を改築したり、維持したりすることさえできない。このような状況は、高齢者や社会の片隅にいる人々にとって、しばしば見られることである。
-## 
+
+##
+
 Many houses in Japan, built during the quantity-oriented stage, suffer from delayed obsolescence. Policy makers in countries dealing with the aftermath of wars or other severe crises can learn from Japan's history. After the World War II, the Japanese government encouraged mass ownership by providing financial incentives (e.g., house loans) to citizens, rather than social housing programs, although many people had lost their capital. This likely nudged high-risk loan borrowers in purchasing low-quality houses; alternatively, citizens were nudged in buying normal houses, but without much capital left for their maintenance and improvement in the following decades. Different socio-economic or psychological characteristics in the population influence their maintenance and house improvement behaviours, which in turn affect house appreciation (Hayunga et al., 2018).
 日本の住宅は、数量重視の時代に建てられたため、遅発性陳腐化に悩まされている。戦争やその他の深刻な危機の余波を受けている国の政策立案者は、日本の歴史に学ぶことができる。第二次世界大戦後、日本政府は、多くの人々が資本を失っていたにもかかわらず、社会住宅計画ではなく、国民に財政的インセンティブ（例えば、住宅ローン）を提供することによって、大量保有を奨励した。このため、リスクの高いローン利用者は低品質の住宅を購入するように誘導され、逆に、市民は普通の住宅を購入するように誘導されたが、その後の数十年間はその維持・改善のための資金があまり残されていなかったと思われる。住民の異なる社会経済的または心理的特性は、メンテナンスや家屋の改善行動に影響を与え、それが家屋の評価に影響を与える（Hayunga et al.、2018）。
 
 # 6. Conclusion: social circular strategies for the residential built environment
 
 ## まとめ
+
 This study built on previous research, by combining the quantification of short lived buildings with insights from local communities and citizens, and with a cultural historical analysis of the post-war disposable house culture. Analysing the values, attitudes, and motivations of stakeholders in Japan during the second half of the 20th century, this study could disentangle the non-technical factors behind the short use and disposal culture of housing in both the previous quality-oriented and the current individualist-oriented stage. The observed situation in Japan reflects the unintended consequences of regulatory frameworks, socioeconomic changes, geographic-upward social mobility, and induced lifestyle changes in the middle class, which led to a linear economy for the built environment. In this context, different countermeasures were explored and theorised (cf. §5).
 本研究は、短命建築の定量化と地域社会や市民からの洞察、そして戦後の使い捨て住宅文化の文化史的分析を組み合わせることで、先行研究を発展させたものである。20世紀後半の日本における関係者の価値観、態度、動機を分析することで、以前の品質重視の段階と現在の個人主義重視の段階の両方において、住宅の短期使用と廃棄文化の背後にある非技術的要因を切り離すことができた。日本で観察された状況は、規制の枠組み、社会経済的変化、地理的な上方への社会移動、中産階級のライフスタイルの変化が誘発した意図しない結果を反映しており、建築環境の線形経済化をもたらしたと言える。このような状況の中で、様々な対策が検討され、理論化されている（§5参照）。
 
 ## 結果
-The results indicate that a people-centred approach (i.e., on a case-to-case basis) is the most effective method to tackle premature obsolescence. Demolition is encouraged for older, unsafe, and unsanitary buildings, at the condition of retrieving all valuable components (e.g., metals). The will to demolish an old building (i.e., justified obsolescence) should not be confused with its perceived obsolescence, which is used by stakeholders to justify its demolition (on the basis of a subjective opinion, rather than on a rigorous objective judgement). Identifying the moment in which obsolescence is justified is particularly challenging and requires a case-by-case assessment, preferably through the input of different stakeholders; moreover, it requires investigations on the costs, benefits, and a cradle-to-grave environmental assessment of the benefits linked to the construction of a new building versus those linked to the lifespan extension of the existing one.
-その結果、早期の陳腐化に取り組むには、人を中心としたアプローチ（つまり、ケースバイケース）が最も効果的であることが示された。古い建物、安全でない建物、不衛生な建物については、貴重な部品（金属など）をすべて回収することを条件に、取り壊しが奨励されている。古い建物を取り壊す意志（すなわち正当化された陳腐化）を、利害関係者が取り壊しを正当化するために用いる（厳密な客観的判断ではなく、主観的意見に基づいて）陳腐化の認識と混同しないようにすることが必要である。老朽化が正当化される瞬間を特定することは特に困難であり、できれば様々な利害関係者の意見を通してケースバイケースで評価する必要がある。さらに、新しい建物の建設と既存の建物の寿命延長に関連する利益について、コスト、利益、ゆりかごから墓場までの環境評価について調査する必要がある。
 
-## a
+The results indicate that **a people-centred approach (i.e., on a case-to-case basis) is the most effective method to tackle premature obsolescence**. Demolition is encouraged for older, unsafe, and unsanitary buildings, at the condition of retrieving all valuable components (e.g., metals). The will to demolish an old building (i.e., justified obsolescence) should not be confused with its perceived obsolescence, which is used by stakeholders to justify its demolition (on the basis of a subjective opinion, rather than on a rigorous objective judgement). Identifying the moment in which obsolescence is justified is particularly challenging and requires a case-by-case assessment, preferably through the input of different stakeholders; moreover, it requires investigations on the costs, benefits, and a cradle-to-grave environmental assessment of the benefits linked to the construction of a new building versus those linked to the lifespan extension of the existing one.
+その結果、早期の陳腐化に取り組むには、**人を中心としたアプローチ（つまり、ケースバイケース）が最も効果的である**ことが示された。
+古い建物、安全でない建物、不衛生な建物については、貴重な部品（金属など）をすべて回収することを条件に、取り壊しが奨励されている。
+古い建物を取り壊す意志（すなわちjustified obsolescence）を、利害関係者が取り壊しを正当化するために用いる（厳密な客観的判断ではなく、主観的意見に基づいて）obsolescenceの認識と混同しないようにすることが必要である。obsolescenceが正当化される瞬間を特定することは特に困難であり、できれば様々な利害関係者の意見を通してケースバイケースで評価する必要がある。さらに、新しい建物の建設と既存の建物の寿命延長に関連する利益について、コスト、利益、ゆりかごから墓場までの環境評価について調査する必要がある。
 
-早期の陳腐化には、建物の築年数に応じた段階的な解体税の導入や、建物の高さ制限を行うことで対抗できるかもしれない。しかし、このような措置は富裕層には影響しないし、ロビー活動が行われたとしても実行されないだろう。
+## justified obsolescenceの為の介入
 
+**Premature obsolescence might be counteracted by the introduction of a scalable demolition tax, which would be based on the age of the building and of a restriction of building height**. However, such measure would not affect the wealthiest, and would not be even implemented in the case of lobbying.
+Premature obsolescenceには、建物の築年数に応じた段階的な解体税の導入や、建物の高さ制限を行うことで対抗できるかもしれない。しかし、このような措置は富裕層には影響しないし、ロビー活動が行われたとしても実行されないだろう。
+
+In order to divert people from living in delayed obsolete buildings, the government should put in place renovation or relocation incentives, and inform stakeholders about the necessity of improving the quality of living. Policy makers have a major role in addressing the issue of empty houses.
 遅れている老朽化した建物に住むのをやめさせるために、政府は改築や移転のインセンティブを設け、関係者に生活の質を向上させる必要性を知らせるべきである。政策立案者は、空き家問題の解決に大きな役割を担っている。
 
+**The design of better strategies in a material stock-based CE requires specific measures to counteract the psychological causes of the current situation**. The already established “Act for Promotion of Long-Life Quality Housing” can contribute to the change, but it is not sufficient. This study highly recommends larger investments in continuous behavioural economics, more cooperation between ministries (e.g., construction and welfare ministries) addressing the influence of the marketing strategies of housing manufacturers, and changes in the current property-tax system. Even more so than technical solutions and innovations, the problem of short-lived houses in Japan requires the creation of local and national governmental programs that address certain social norms, encouraging a longer use, the improvement, and/or the maintenance of houses.
 **物質的なストック型CEにおけるより良い戦略設計には、現状の心理的な原因を打ち消す具体的な施策が必要**である。すでに制定されている「長期優良住宅の普及の促進に関する法律」は、その変化に貢献することはできるが、十分ではない。**本研究では、継続的な行動経済学へのより大きな投資、住宅メーカーのマーケティング戦略の影響に対処するための省庁間（例えば、建設省と厚生省）の協力、および現行の固定資産税システムの変更を強く推奨するもの**である。技術的な解決策やイノベーション以上に、日本における短命住宅の問題は、特定の社会的規範に対処し、住宅の長期使用、改善、維持を奨励する地方や国の政府プログラムの作成を必要としている。
 
+Future research should address the relationship between service time, home owner, tenant characteristics, and maintenance investments; additionally, it should investigate the role of national or local housing programs in house maintenance and obsolescence delay. For instance, it could try to answer the following questions: “Would a stronger social housing policy in Japan lead to a higher average building lifespan?” and “Do rural areas experience different spatial patterns of obsolescence compared to their urban counterparts? Since the present study was based on a small number of communities, future research should focus on expanding the area of analysis. Last, but not least, future studies should address the reduction and/or devaluation of skilled workers, who could be employed to maintain existing buildings operative, functional, and comfortable.
 今後の研究では、使用期間、住宅所有者、テナントの特性、メンテナンス投資との関係を明らかにし、さらに、住宅のメンテナンスと陳腐化の遅延における国や地方の住宅プログラムの役割についても調査する必要がある。例えば、次のような問いに答えることができるだろう。例えば、「日本の社会住宅政策が強化されれば、建物の平均寿命は伸びるのか」、「農村部では都市部と比較して、老朽化の空間的パターンが異なるのか」という問いに答えることができる。本研究は、少数のコミュニティに基づいているため、今後の研究では、分析範囲の拡大に焦点を当てる必要がある。最後に、既存の建物を機能的かつ快適に維持するために雇用されうる熟練労働者の減少や切り捨てについて、今後の研究が必要であろう。
