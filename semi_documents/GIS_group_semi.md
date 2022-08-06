@@ -351,6 +351,9 @@ image_recognition_obsolete_or_inuse
 - 現時点で確認できている事。
   - 360度全方位の映像を撮影可能。
   - GPS情報(位置、高さ、速度、etc.)を映像に付与可能。
+    - https://www.insta360.com/jp/support/supportcourse?post_id=10894
+    - GPSデータを記録するには、リモコンがGPS信号を受信するまで屋外で動かさずにしばらく待つ必要があるらしい
+      - https://tohasen.com/actioncamera/insta360-ja-2/one-r-accessory/gps-gps-smart-remote/
 - 現時点で未確認・調査までに確認すべき事。
   - 映像に付与されたGPS情報を、映像ファイルから抽出・取得する方法。
     - 長尾先生によると、「以前調査で使用したGoProでは、位置情報の抽出が困難だった」との事。
@@ -360,10 +363,11 @@ image_recognition_obsolete_or_inuse
       - ExifTool（画像や動画等のメディアファイルからメタデータを取得できるツール）
       - https://exiftool.org/forum/index.php?PHPSESSID=ee21d78b08eb29c8361710dbff6d1e3a&topic=9884.0
       -
-  - 360度の映像ファイル(独自のファイル拡張子)を、映像の形式(全方位, 歪みなし)を保ったまま変換する方法。
+  - 360度の映像ファイル(独自のファイル拡張子)を、映像の形式(全方位, 歪みなし)を保ったまま変換する方法。====> これはクリア！！
     - 長尾先生によると、「GoProの場合は、全方位の映像を歪みなしでmp4形式に変換する方法が存在する」との事。
     - Insta360の公式のアプリケーションで変換可能との事。(卒業研究時は失敗した記憶あり。ファイルの変換は可能だが、全方位映像の歪みが発生した記憶が...。)
     - https://hyakuyattsu.com/photo/camera/insv-mp4
+
 
 ### 現地調査の実施場所に関して
 
