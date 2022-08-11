@@ -2,6 +2,10 @@
 
 - https://arxiv.org/abs/1708.05024
 
+## title:
+
+Fast Matrix Factorization for Online Recommendation with Implicit Feedback
+
 ## 0.2. Abstract
 
 # 1. Introduction
@@ -26,6 +30,11 @@
 - $P \in \mathbb{R}^{M\times K}$: the latent factor matrix for users.
 - $Q \in \mathbb{R}^{N\times K}$: the latent factor matrix for items.
 
+$$
+\hat{r}_{ui} = <\mathbf{p}_u, \mathbf{q}_i> = \mathbf{p}_u^T \mathbf{q}_i
+\tag{1}
+$$
+
 モデルパラメータを推定する為に、Hu et al. (確かこれが前に読んだやつ！)は、Implicitフィードバック行列$R$の各予測に**重み（＝たしか、信頼度Confidenceだっけ...?**）を関連付ける、**weighted regression function**を(目的関数として！！)導入した。
 
 $$
@@ -43,6 +52,34 @@ $$
 ImplicitフィードバックのMFでは、通常、欠落したentriesには$r_{ui}$の値はゼロだが、**$w_{ui}$の重みはゼロでないものが割り当てられ**、どちらも性能にとって重要であることに注意されたい。
 
 ## 3.2. Optimization by ALS
+
+交互最小二乗法(ALS)は、MFやグラフ正則化などの回帰モデルを最適化するための一般的なアプローチです[10]。ALSは、1つのパラメータを繰り返し最適化し、他のパラメータは固定することで機能します。**ALSの前提条件は、最適化の部分問題が解析的に解けること**である。ここでは、Huの研究[12]がこの問題をどのように解決しているかを説明する。
+
+まず、user latent vector puに関してJを最小化することは、以下の目的関数$J_u$最小化することと等価である。
+
+$$
+J_u = ||W^u (r_u - Q \mathbf{p}_u)||^2 + \lambda ||\mathbf{p}_u||^2
+$$
+
+ここで、
+
+- $W^u$は、$N \times N$のDiagonal matrix(対角行列)。
+  - つまりその対角要素$W_{ii}^u = w_{ui}$
+
+そして上の$J_u$を最小にするのは、一階微分=0となるところ。
+
+$$
+\frac{\partial J_u}{\partial p_u}
+= 2 Q^T W^u Q p_u - 2Q^T W^u r_u + 2\lambda p_u = 0 \\
+\Rightarrow p_u = (Q^T W^u Q + \lambda I)^{-1} Q^T W^u r_u
+\tag{3}
+$$
+
+ここで、
+
+- $I$は単位行列(Identity Martix)。
+
+この解析解はリッジ回帰とも呼ばれる。同じ手順に従って、$q_i$の解も得る事ができる。
 
 ### 3.2.1. Efficiency Issue with ALS
 
@@ -412,11 +449,14 @@ eALSのIterationは簡単に並列化できるらしい！
 - 第三に、異なるアイテムのitem latent vectorの更新：
   - user latent vectorと同様に、並列計算できる。
 
-これは、commonly-used SGD learner(一般に用いられるSGD学習器。訓練インスタンスが与えられた時にモデルのパラメータを更新する確率的手法)に対する、eALSのAdvantageである。
+これは、commonly-used SGD learner(一般に用いられるSGD学習器=**確率的勾配降下法, stochastic gradient descent**。訓練インスタンスが与えられた時にモデルのパラメータを更新する確率的手法)に対する、eALSのAdvantageである。
 
 - SGDでは、異なる勾配ステップが互いに影響しあう可能性があり、異なるユーザ・アイテムのパラメータ更新を分離する正確な方法は存在しないらしい...。
   - 並列化によって生じる可能性のある損失を抑制するための高度な戦略が必要となる[7]
 - 我々の提案するeALSは、座標降下法により最適化を行い、各ステップで専用のパラメータを更新することで、近似的な損失なしに恥ずかしいほど並列化されたアルゴリズムを実現する。
+- 座標降下 vs 勾配降下??「座標降下」ってなんだっけ?
+  - 座標降下＝＞目的関数を一つの変数(パラメータ)ずつ最適化する事？＝要するにALSとか？
+  - それに対して、勾配降下＝＞各変数(パラメータ)毎に目的関数に対する勾配を求めて、一斉に最適化する事？
 
 ## 4.3. Online Update
 
