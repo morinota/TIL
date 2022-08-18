@@ -372,6 +372,7 @@ print(min_thr)
 コンソール出力結果は`180878.91800926204`でした。
 よって、すべての自治体が隣接するためには、距離帯は少なくとも約 181 Km である必要があります。
 この情報は、Spatial Weight Matrixの生成時に、`DistanceBand` コンストラクタに渡すことができます。
+
 ```python
 w_db = weights.DistanceBand.from_dataframe(db_osgb, min_thr)
 ```
@@ -384,5 +385,3 @@ gao = esda.getisord.G(db['Pct_Leave'], w_db)
 
 G statisticには`gao.G`属性でアクセスできる。
 global G statisticの推定の統計的検定は他の指標と同様の方法で行われる。
-
-
