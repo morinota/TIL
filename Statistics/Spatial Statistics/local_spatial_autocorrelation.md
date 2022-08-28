@@ -171,7 +171,7 @@ lisa = esda.moran.Moran_Local(db["Pct_Leave"], w)
 ```
 
 関数実行時には、引数として、興味のある変数（この文脈では離脱票の割合）と、データセットを構成する異なるエリア間の近隣関係を記述するSpatial Weight Matrixを渡す必要があります。
-この関数はLISAオブジェクト(`lisa`)を作成し、そのオブジェクトにはいくつかの属性があります。ローカル指標は`Is`属性にあり、seabornを使ってその分布を知ることができる。
+この関数はLISAオブジェクト(`lisa`)を作成し、そのオブジェクトにはいくつかの属性があります。Local指標は`Is`属性にあり、seabornを使ってその分布を知ることができる。
 
 ```python
 # Draw KDE line
@@ -271,10 +271,118 @@ LISA統計から話を進める前に、有意水準やその他の情報を「�
 
 - これまでのところ、Cluster Mapは`splot`によって処理されてきましたが、フードの下ではかなりのことが起こっています。
 - もしそのマップを再作成したり、この情報を別の文脈で使ったりする必要があれば、lisaオブジェクトからそれらを取り出して、元のデータベーステーブルにリンクする必要があります。
-- 以下は一つの方法です。
+- 以下は一つの方法です。(Cluster Map作成時の処理の中身の部分)
 
-### 4.9.1. まず、lisaで計算した情報を引っ張ってきて、メインデータのテーブルに挿入します。
+(中身はあとで書く！)
+このことから、ほとんどの地域別統計は統計的に有意ではないことがわかる。統計的に有意なものでは、ドーナツやダイヤモンド・イン・ザ・ラフよりもホットスポットやコールドスポットの方が多いことがわかる。これは、先ほどの地域別統計の分布に見られた歪みと一致している。
 
 # 5. Getis and Ord’s local statistics
 
+Globalの場合と同様に、Local Moran's I以外にもSpatial Autocorrelationの度合いを表す指標があります。
+
+`esda`には**Getis and Ord's $G_i$-type statistic**が含まれています。これらは異なる種類のLocal statisticであり、一般的に２つの形式で使用される。
+
+- 一つ目：**$G_i$ statistic**. Local Summary(局所的な要約)にサイトでの値(各Observation自身の値？)を省略した統計量。
+- ２つ目：**$G_i^*$ statistic**. Local Summaryにサイト自身の値を含む統計量
+- また、その計算方法も上記のLocal Moran's I statisticと同様のパターンになる。Brexitの例でどのように見えるか見てみましょう。
+
+```python
+# Gi
+go_i = esda.getisord.G_Local(db["Pct_Leave"], w)
+# Gi*
+go_i_star = esda.getisord.G_Local(db["Pct_Leave"], w, star=True)
+```
+
+Local統計量なので地図上にプロットして探索するのが一番良い。しかし、LISAとは異なり、**G統計量はPositive Spatial Autocorrelationしか特定できない**。標準化すると、正の値は高い値の集まり(＝つまりHot spot！)を意味し、負の値は低い値の集まり(＝Cold Spot！)を意味する。残念ながら、空間的な外れ値(Outlier)を識別することはできない。
+
+LISA とは異なり、`splot` は現時点では G 統計量の視覚化をサポートしていません。その出力を視覚化するために、代わりに統計量の出力オブジェクトとそれに関連するジオメトリのセットからマップを生成する小さな関数を書くことになります。
+
+```python
+def g_map(g, db, ax):
+    """
+    Create a cluster map
+    ...
+
+    Arguments
+    ---------
+    g      : G_Local
+             Object from the computation of the G statistic
+    db     : GeoDataFrame
+             Table aligned with values in `g` and containing
+             the geometries to plot
+    ax     : AxesSubplot
+             `matplotlib` axis to draw the map on
+
+    Returns
+    -------
+    ax     : AxesSubplot
+             Axis with the map drawn
+    """
+    ec = "0.8"
+
+    # Break observations into significant or not
+    sig = g.p_sim < 0.05
+
+    # Plot non-significant clusters
+    ns = db.loc[sig == False, "geometry"]
+    ns.plot(ax=ax, color="lightgrey", edgecolor=ec, linewidth=0.1)
+    # Plot HH clusters
+    hh = db.loc[(g.Zs > 0) & (sig == True), "geometry"]
+    hh.plot(ax=ax, color="red", edgecolor=ec, linewidth=0.1)
+    # Plot LL clusters
+    ll = db.loc[(g.Zs < 0) & (sig == True), "geometry"]
+    ll.plot(ax=ax, color="blue", edgecolor=ec, linewidth=0.1)
+    # Style and draw
+    contextily.add_basemap(
+        ax,
+        crs=db.crs,
+        source=contextily.providers.Stamen.TerrainBackground,
+    )
+    # Flag to add a star to the title if it's G_i*
+    st = ""
+    if g.star:
+        st = "*"
+    # Add title
+    ax.set_title(f"G{st} statistic for Pct of Leave votes", size=15)
+    # Remove axis for aesthetics
+    ax.set_axis_off()
+    return ax
+```
+
+この関数があれば、G統計量のクラスターマップの生成は、splotを用いたLISA出力と同様に簡単です。
+
+```python
+# Setup figure and axes
+f, axs = plt.subplots(1, 2, figsize=(12, 6))
+# Loop over the two statistics
+for g, ax in zip([go_i, go_i_star], axs.flatten()):
+    # Generate the statistic's map
+    ax = g_map(g, db, ax)
+# Tight layout to minimise blank spaces
+f.tight_layout()
+# Render
+plt.show()
+```
+
+![](https://geographicdata.science/book/_images/07_local_autocorrelation_52_0.png)
+
+- この場合、G_i と G_i^\* ではほぼ同じ結果になります。
+- また，一見すると，これらのマップは上の最終的なLISAマップと視覚的に似ているように見える。
+- 当然ながら、これは「**なぜG_iの統計量を全く使わないのか**」という疑問につながります。
+  - この疑問に対する答えは、**Local I statisticとLocal G statisticという2つのLocal統計量のセットは、補完的な統計量である**ということです。
+  - Local I統計量（それ自体）は、**クラスター／アウトライアの状態**を示しします。
+    - ＝Local G統計量では分からない事！
+  - LocalG_iは、観測値が**ホットスポット／コールドスポットのどちら側にあるか**を示します。
+    - ＝Local I 統計量では分からない事！
+- あるいは、LocalなMoran's Iクラスタ・マップは、上記の両方の情報を提供しますが、**一度にすべてを可視化するのはより難しいかも**しれません。
+  - （＝前述した４つのコロプレスマップ）
+  - したがって、それはあなたの分析の好みと手元の分析のポイントに依存します。
+
 # 6. Bonus: local statistics on surfaces
+
+# Conclusion
+- Local Statistics(ここの意味は統計量?)は、Geographical Data ScienceのToolkitの中で最も一般的に使用されているツールの1つです。
+- 適切に使用されれば、Local Statistics(統計量)は地理データの構造を分析・視覚化する強力な手段となる。
+- Local Moran's I統計量は、Spatial Associationを表すLocal指標として、Observationとその近傍の環境との間の共変動(Co-variation)を要約するものである。
+- 一方、Getis-Ord Local G 統計量は、各サイトの周辺領域の値の合計を比較するものである。
+- いずれにせよ、Local統計量は多くの分析において最も一般的な「最初の筆」となる地理統計量であるため、効果的な使い方を学ぶことは、Geographical Data Scienceにとって重要である。
