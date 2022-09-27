@@ -1,0 +1,64 @@
+---
+format:
+    revealjs:
+        incremental: false
+        theme: [default, custom_lab.scss]
+        logo: logo_nagoya_university.png
+        # footer: "⇒ https://www.urban.env.nagoya-u.ac.jp/ensap/"
+        footer: "⇒ hogehoge/hoge/hogehogehoge/"
+        data-background-color: "#42affa"
+---
+
+# Piyo Piyopiyo
+<!-- # Future Simulation of Urban Metabolism Considering In-use and Obsolete Stock  -->
+<!-- -case study of Kitakyushu city, Japan- -->
+-hugahuga huga-
+
+モーリタ
+<!-- Masato MORITA, Hiroaki SHIRAKAWA, Hiroki TANIKAWA -->
+
+## Background
+
+- Turn off alarm
+- Get out of bed
+
+## Previous Study 
+
+:::{.nonincremental}
+- Eat eggs
+- Drink coffee
+:::
+# In the evening
+
+## Dinner
+
+- Eat spaghetti
+- Drink wine
+
+## Going to sleep
+
+- Get in bed
+- Count sheep
+
+## Multiple Columns
+
+:::: {.columns}
+
+::: {.column width="40%"}
+contents...
+
+- hoge
+- hogehoge
+
+:::
+
+::: {.column width="60%"}
+contents...
+
+- piyo
+- piyopiyo
+
+:::
+
+::::
+
