@@ -6,3 +6,6 @@ semi_documents\img
 *.jpg
 *.png
 *.pptx
+*.potx
+# 地理情報データ(重そうなので)
+*.geojson
