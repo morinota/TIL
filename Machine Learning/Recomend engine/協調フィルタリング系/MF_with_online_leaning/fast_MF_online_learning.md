@@ -480,7 +480,7 @@ eALSのIterationは簡単に並列化できるらしい！
 ### 4.3.2. Weight of New Interactions 新規Interactionの重み付け
 
 - Online 学習において、新しいInteractionはユーザの短期的な興味(Interest)をより反映したものとなる。
-- ＝＞Offline学習で使用される過去のInteractionに比べ、新しいInteractionのデータはユーザの将来の行動を予測する為に高いWeightを割り当てるべきである。
+- ＝＞Offline学習で使用される過去のInteractionに比べ、**新しいInteractionのデータはユーザの将来の行動を予測する為に高いWeightを割り当てるべき**である。
 - ＝＞そこで、各新規Interactionに重み$w_{new}$を設定し(上のアルゴリズム2の4行目)、調整可能(Tunable)なHyper Parameterとする。
   - 後述の５．３節では、このハイパラの設定がOnline学習の性能にどのような影響を与えるかについて検討する。
 
@@ -489,7 +489,7 @@ eALSのIterationは簡単に並列化できるらしい！
 - 新規Interaction$(u,i)$に対する逐次更新(Incremental Update)は、Time Complexity $O(K^2 + (|\mathcal{R}_u| + |\mathcal{R}_i|)\times K)$で実行可能。
   - このコストは、$u$と$i$のそれぞれの観測されたInteractionの数（$|R_u| と|R_i|$）に依存する。
   - 一方で、「Interactionの総数（$|\mathcal{R}|$）、ユーザ数$M$、アイテム数$N$には依存しない！」
-- この**局所的(localized)なTime Complexity**は、**data dependencies(データ依存性??)**を扱う複雑なSoftware stakを避ける事ができる為、Online learing alogrithmのIndustrial useでのDeployment(展開、適用、採用？)に適している。
+- この**局所的(localized)なTime Complexity**は、**data dependencies(データ依存性??)**を扱う複雑なSoftware stackを避ける事ができる為、Online learing alogrithmのIndustrial useでのDeployment(展開、適用、採用？)に適している。
 
 # 5. Experiments
 

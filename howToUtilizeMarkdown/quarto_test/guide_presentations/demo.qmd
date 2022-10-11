@@ -1,19 +1,19 @@
 ---
 format:
     revealjs:
-        incremental: false
+        # incremental: false
         theme: [default, custom_lab.scss]
-        logo: logo_nagoya_university.png
+        logo: https://i.imgur.com/EPc8Hur.png
         # footer: "⇒ https://www.urban.env.nagoya-u.ac.jp/ensap/"
         footer: "⇒ hogehoge/hoge/hogehogehoge/"
-        data-background-color: "#42affa"
+        # data-background-color: "#42affa"
 ---
 
 # Piyo Piyopiyo
 <!-- # Future Simulation of Urban Metabolism Considering In-use and Obsolete Stock  -->
 <!-- -case study of Kitakyushu city, Japan- -->
 -hugahuga huga-
-
+![](https://i.imgur.com/EPc8Hur.png)
 モーリタ
 <!-- Masato MORITA, Hiroaki SHIRAKAWA, Hiroki TANIKAWA -->
 

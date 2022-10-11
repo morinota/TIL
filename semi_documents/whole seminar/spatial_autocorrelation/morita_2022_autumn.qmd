@@ -1,0 +1,94 @@
+---
+format:
+    revealjs:
+        # incremental: false
+        theme: [default, custom_lab.scss]
+        logo: https://i.imgur.com/EPc8Hur.png
+        footer: "⇒ https://www.urban.env.nagoya-u.ac.jp/ensap/"
+        # data-background-color: "#42affa"
+---
+
+# Spatial Autocorrelation 
+
+空間的自己相関
+
+-One of the Unique Feature of Spatial Data-
+
+D1 Masato MORITA
+
+## Today's Objective
+
+- Turn off alarm
+- Get out of bed
+
+## Today's Outline
+
+:::{.nonincremental}
+- Eat eggs
+- Drink coffee
+:::
+## What is Spatial Data?
+
+The definition of Spatial Data in this short lecture:
+
+the "data" having "value" and "location"
+
+# What is Spatial Autocorrelation?
+## The Concept of Spatial Autocorrelation
+
+:::: {.columns}
+
+::: {.column width="50%"}
+#### The concept of "Spatial Autocorrelation(空間的自己相関)" relates to 
+
+- "functional relationship between what happens at one point in space and what happens elsewhere"
+- ⇒ it means "the degree that **the similarity in values (値の類似性) between observations** is related to **the similarity in locations (位置の類似性) of these observations**".
+
+:::
+
+::: {.column width="50%"}
+![Concept of Spatial Autocorrelation](https://i.imgur.com/VNemQHH.png)
+:::
+
+::::
+
+## Spatial Randomness vs Autocorrelation
+
+In order to better understand the concept of spatial autocorrelation, Let's consider **the absence of spatial autocorrelation**...! = **Spatial Randomness**:
+
+- **Spatial Randomness** is a situation in which the location of an observation **gives no information** about its value.
+- i.e. a variable is spatially random if its distribution follows no discernible spatial pattern.
+- Spatial autocorrelation can thus be defined as the “absence of spatial randomness”.
+
+## How to consider Spatial Autocorrelation
+
+# The Ideas for apply to our research
+
+## Evaluation of spatial distribution of MS & MF
+
+## add Spatial Autocorrelation term to model
+
+
+
+## Multiple Columns
+
+:::: {.columns}
+
+::: {.column width="40%"}
+contents...
+
+- hoge
+- hogehoge
+
+:::
+
+::: {.column width="60%"}
+contents...
+
+- piyo
+- piyopiyo
+
+:::
+
+::::
+

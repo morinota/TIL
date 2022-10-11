@@ -31,7 +31,9 @@ quarto(クオルト?)とは、
 もしくは、[@Nobukuni-Hyakutake様の記事](https://qiita.com/Nobukuni-Hyakutake/items/112a7bd5b34abd446395)でも丁寧にまとめられています。感謝...!
 
 # QuartoのPreview( Internal or External)
+
 デフォルトでは、.qmdファイルのプレビューはInternal、すなわちVSCode上に表示されます。外部ブラウザを使用してPreviewを表示させたい場合は、設定から`Quarto › Render: Preview Type`オプションを指定する事で実現できます。
+
 # QuartoによるPresentationスライド作成
 
 ## スライドのフォーマット
@@ -189,7 +191,91 @@ contents...
 作成されるスライドはこんな感じ
 
 ![](../images/2022-09-03-17-25-06.png)
+
 ## Reveal JS formatの扱い
+
+### themeについて
+
+参考 [quarto Reveal Themes](https://quarto.org/docs/presentations/revealjs/themes.html)
+
+以下のような感じで、YAML部分の`revealjs:`以下の階層に`theme:`オプションを指定します。
+
+```yml
+---
+title: "Presentation"
+format:
+  revealjs:
+    theme: dark
+---
+```
+
+デフォルトで利用可能なbuild-in themeは、現状以下の11個のようです。
+
+- `beige`
+- `blood`
+- `dark`
+- `default`
+- `league`
+- `moon`
+- `night`
+- `serif`
+- `simple`
+- `sky`
+- `solarized`
+
+### Customizing Themeについて
+
+また、ユーザ自身でカスタマイズされたthemeも使用する事ができるようです。
+その際には、独自に`Sass`テーマファイルを作成する必要があります。
+
+#### Sassとは??
+
+参考
+
+- [Black Lives Matter](https://sass-lang.com/)
+- [これからはcssはSassで書こう。](https://qiita.com/m0nch1/items/b01c966dd2273e3f6abe)
+
+Sass(Syntactically Awesome StyleSheet)は、CSSを拡張したメタ言語(=ある言語について何らかの記述をするための言語)らしいです。CSSをより効率的にコーディングできるようにした言語、みたいな感じみたいです...!
+(そもそも私はCSSをほとんど書いたことがないので、あまりイメージつきませんが...!)
+
+`.sass`記法(インデントで依存関係を表す。Pythonっぽい?)と`.scss`記法(`{}`で依存関係を表す。CSSの書き方)の２種類があるらしく、今回は後者の`.scss`記法を使用してみます。
+
+```css:custom.scss
+/*-- scss:defaults --*/
+
+$body-bg: #191919;
+// $body-color: #fff;
+$body-color: #42affa;
+$link-color: #fff;
+
+/*-- scss:rules --*/
+
+.reveal .slide blockquote {
+  border-left: 3px solid $text-muted;
+  padding-left: 0.5em;
+}
+```
+
+- `.scss`ファイルのコードの意味：
+  - `/*-- scss:defaults --*/` は、フォント、色、ボーダーなどに影響する変数を定義するために使用します
+    - 変数は `$` で書き始める。
+    - [カスタマイズ可能な変数の一覧](https://quarto.org/docs/presentations/revealjs/themes.html#sass-variables)
+  - `/*-- scss:rules --*/` は、CSSルールを作成するために使用します。 - Reveal コンテンツを対象とする CSS 規則は、一般にテーマのデフォルトスタイルをうまく上書きするために `.reveal .slide`という接頭辞を使用する必要があるらしい...! -
+
+作成した`custom.scss`を`.qmd`ファイルと同じ階層に保存し、`.qmd`側での`theme`オプションを以下のように指定します。
+
+```yaml
+---
+format:
+  revealjs:
+    incremental: false
+    theme: [default, custom.scss]
+---
+```
+
+### footerとLogoについて
+
+`footer`オプションと`logo`オプションを使用すると、各スライドの下部にフッターテキストとロゴを含めることができます。
 
 ## PowerPoint formatの扱い
 

@@ -9,3 +9,18 @@ semi_documents\img
 *.potx
 # 地理情報データ(重そうなので)
 *.geojson
+*.csv
+*.json
+*.gpkg
+
+# quartoで生成されるファイル(無数にできるので)
+*.js
+*.css
+*.eot
+*.map
+*.ttf
+*.woff
+*.yml
+*.pdf
+*.html
+LICENSE
