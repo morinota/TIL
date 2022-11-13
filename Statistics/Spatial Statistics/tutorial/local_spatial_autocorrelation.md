@@ -195,6 +195,102 @@ Local Moran's Iの値だけでは、この2つのケースを区別すること�
 
 ## 4.6. LISAの性質と、Choroplethとの相性
 
+```python
+from splot import esda as esdaplot
+```
+
+```python
+# Set up figure and axes
+f, axs = plt.subplots(nrows=2, ncols=2, figsize=(12, 12))
+# Make the axes accessible with single indexing
+axs = axs.flatten()
+
+# Subplot 1 #
+# Choropleth of local statistics
+# Grab first axis in the figure
+ax = axs[0]
+# Assign new column with local statistics on-the-fly
+db.assign(
+    Is=lisa.Is
+    # Plot choropleth of local statistics
+).plot(
+    column="Is",
+    cmap="plasma",
+    scheme="quantiles",
+    k=5,
+    edgecolor="white",
+    linewidth=0.1,
+    alpha=0.75,
+    legend=True,
+    ax=ax,
+)
+
+# Subplot 2 #
+# Quadrant categories
+# Grab second axis of local statistics
+ax = axs[1]
+# Plot Quandrant colors (note to ensure all polygons are assigned a
+# quadrant, we "trick" the function by setting significance level to
+# 1 so all observations are treated as "significant" and thus assigned
+# a quadrant color
+esdaplot.lisa_cluster(lisa, db, p=1, ax=ax)
+
+# Subplot 3 #
+# Significance map
+# Grab third axis of local statistics
+ax = axs[2]
+#
+# Find out significant observations
+labels = pandas.Series(
+    1 * (lisa.p_sim < 0.05),  # Assign 1 if significant, 0 otherwise
+    index=db.index  # Use the index in the original data
+    # Recode 1 to "Significant and 0 to "Non-significant"
+).map({1: "Significant", 0: "Non-Significant"})
+# Assign labels to `db` on the fly
+db.assign(
+    cl=labels
+    # Plot choropleth of (non-)significant areas
+).plot(
+    column="cl",
+    categorical=True,
+    k=2,
+    cmap="Paired",
+    linewidth=0.1,
+    edgecolor="white",
+    legend=True,
+    ax=ax,
+)
+
+
+# Subplot 4 #
+# Cluster map
+# Grab second axis of local statistics
+ax = axs[3]
+# Plot Quandrant colors In this case, we use a 5% significance
+# level to select polygons as part of statistically significant
+# clusters
+esdaplot.lisa_cluster(lisa, db, p=0.05, ax=ax)
+
+# Figure styling #
+# Set title to each subplot
+for i, ax in enumerate(axs.flatten()):
+    ax.set_axis_off()
+    ax.set_title(
+        [
+            "Local Statistics",
+            "Scatterplot Quadrant",
+            "Statistical Significance",
+            "Moran Cluster Map",
+        ][i],
+        y=0,
+    )
+# Tight layout to minimise in-betwee white space
+f.tight_layout()
+
+# Display the figure
+plt.show()
+```
+
 その性質上、LISAの数値結果を見ることは、LISAが提供できるすべての情報を利用する上で、必ずしも最も有用な方法とは言えない。
 
 **LISAの場合、データ中のすべての観測値に対して統計量を計算している**ので、もし多くの観測値があれば、**意味のあるパターンを抽出することは困難**であることを思い出してください。
@@ -381,6 +477,7 @@ plt.show()
 # 6. Bonus: local statistics on surfaces
 
 # Conclusion
+
 - Local Statistics(ここの意味は統計量?)は、Geographical Data ScienceのToolkitの中で最も一般的に使用されているツールの1つです。
 - 適切に使用されれば、Local Statistics(統計量)は地理データの構造を分析・視覚化する強力な手段となる。
 - Local Moran's I統計量は、Spatial Associationを表すLocal指標として、Observationとその近傍の環境との間の共変動(Co-variation)を要約するものである。

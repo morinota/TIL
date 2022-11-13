@@ -64,6 +64,22 @@ ESDAの手法は幅広く、前章の人口分布図のような単純なアプ�
 
 ## 実証的図解 An Empirical Illustration
 
+```python
+# Graphics
+import matplotlib.pyplot as plt
+import seaborn
+from pysal.viz import splot
+from splot.esda import plot_moran
+import contextily
+
+# Analysis
+import geopandas
+import pandas
+from pysal.explore import esda
+from pysal.lib import weights
+from numpy.random import seed
+```
+
 2016年、イギリスではEU残留か離脱かを決める国民投票、いわゆる「Brexit」投票が行われた。ここでは、選挙管理委員会から提供された、残留派と離脱派の投票率に関する自治体レベルの公式データを使用する。組み合わせるデータセットは2つある。
 
 自己相関を調べる前に必要な最後の要素は、空間重み付け行列です。この例では、8つの最近傍を使用しますが、前の章の重みに関する議論がこの文脈でも適用されますし、他の基準も有効でしょう。また、行の標準化も行います。

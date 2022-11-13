@@ -2,8 +2,8 @@
 format:
     revealjs:
         # incremental: false
-        theme: [default, custom_lab.scss]
-        logo: https://i.imgur.com/EPc8Hur.png
+        theme: [default, ../custom_lab.scss]
+        logo: https://i.imgur.com/EPc8Hur.png// カーソルで選択した時の色
         footer: "⇒ https://www.urban.env.nagoya-u.ac.jp/ensap/"
         # data-background-color: "#42affa"
 from: markdown+emoji
@@ -118,7 +118,7 @@ bottom-up accountingのMSFAをしている人は、結果として、空間分�
 
 そして作成した空間分布を見て「この辺がどうだ」とか「この辺りが盛んだ」とか、定性的な評価を下すよね??もちろんそれが悪いとは思ってないんだ！じゃあその空間分布を定量的に評価してみたらどうだろう??良い感じじゃない??
 
-## add Spatial Autocorrelation term to model
+## Add Spatial Autocorrelation term to model
 
 例えば僕の研究では、「建物のLifespanの期待値とばらつきは、各建物自身の属性と周囲の地理的・社会的条件によって異なる」と仮定してモデリングしているんだ。そしてこの場合では、近隣の建物jは建物iのLifespanになんの影響も与えない。
 実際に影響を与えるか否かは分からないけど、空間データを用いたモデリングに対してSpatial Autocorrelationの表現を含める事は大きな理があるんだ...!
@@ -128,7 +128,7 @@ bottom-up accountingのMSFAをしている人は、結果として、空間分�
 
 ## Thank you for your kind attention:)
 
-pls enjoy your analytics life ~ :wave:
+let's enjoy your analytics life ~ :wave:
 
 
 
