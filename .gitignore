@@ -1,26 +1,11 @@
-images/
-img/
-semi_documents\img
-
-# 特定の拡張子を無視する
-*.jpg
-*.png
-*.pptx
-*.potx
-# 地理情報データ(重そうなので)
-*.geojson
-*.csv
-*.json
-*.gpkg
-
-# quartoで生成されるファイル(無数にできるので)
-*.js
-*.css
-*.eot
-*.map
-*.ttf
-*.woff
-*.yml
-*.pdf
-*.html
-LICENSE
+# すべてのファイルの除外を指定。
+*
+# ディレクトリは許可(これをしないと、ディレクトリの中のファイルが除外されてしまう)
+!*/
+# 例外的に許可
+!*.py 
+!*.ipynb
+!.gitignore
+!*.sav
+!*.md
+!*.html
