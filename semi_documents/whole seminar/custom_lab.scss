@@ -1,10 +1,15 @@
 /*-- scss:defaults --*/
-
+// colors
 $body-bg: #fff;
 $body-color: #191919;
 $link-color: #42affa;
-$presentation-font-size-root: 24px;
-$selection-color: #fa5a42;
+$selection-color: #fa5a42; // カーソルで選択した時の色
+$border-color: #fa5a42; // カーソルで選択した時の色
+
+// font sizes
+$presentation-font-size-root: 30px;
+
+
 
 /*-- scss:rules --*/
 
@@ -12,6 +17,7 @@ $selection-color: #fa5a42;
   border-left: 3px solid $text-muted;
   padding-left: 0.5em;
 }
+
 // !importantを使用して、どのような場合でも使用するルールとしてフラグを立てる。
 // ロゴの設定
 .reveal .slide-logo {
@@ -30,4 +36,11 @@ $selection-color: #fa5a42;
   text-align: left !important;
   // text-align: left;
   background-color: #48fa42;
+}
+
+// markdown の**hogehoge**(bold)の設定(変換された.htmlのタグを見たら<strong>タグだった！)
+.reveal strong {
+  font-weight: bold;
+  background-color: #48fa42;
+  color: #4a0cbd;
 }

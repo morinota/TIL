@@ -1,0 +1,405 @@
+---
+format:
+    revealjs:
+        # incremental: false
+        # theme: [default, custom_lab.scss]
+        theme: [default, ../custom_lab.scss]
+        logo: https://i.imgur.com/EPc8Hur.png
+        footer: "⇒ https://www.urban.env.nagoya-u.ac.jp/ensap/"
+from: markdown+emoji
+
+fig-cap-location: bottom
+
+title: Misunderstanding Causal Effect by Including "Intermediate Variable" \n 中間変数を加える事による因果効果の誤解
+subtitle: Things to keep in mind when you want to discuss "Causal Relation" through Ovservational Data:part 3 \n 観察データから因果関係を議論したい時に注意すべきこと:part 3
+date: 2022/11/15
+author: Masato MORITA
+title-slide-attributes: 
+  data-background-image: https://i.imgur.com/nTazczH.png
+  data-background-size: contain
+  data-background-opacity: "0.5"
+---
+
+# First of all, **Why I chose this topic**??
+
+1. I have the impression that more and more members are using regression analysis in their research activities these days.
+
+2. I recently read a book on statistical causal inference and learned how to analyze causality using regression analysis, so I want to share some information a little bit...!
+
+# Today's My Objective
+
+I want to share one of the idea of **Statistical Causal Inference (統計的因果推論)**:
+
+- One of the application fields of statistics and machine learning.
+- The aim of Statistical Causal Inference (統計的因果推論) is analysing causal relation using **observational dataset**(not experimental data).
+
+# Today's My Objective
+
+- (Dear user of regression analysis)
+    - I want to share **what we should careful when interpreting the value of regression coefficient** from viewpoint of causal inference.
+
+- (Dear not user of regression analysis)
+    - I want to share **the patterns that may mislead us** when discussing causal relation based on observational data.
+
+## Outline
+
+1. Review:Correlation vs Causation, Confounding, Collider bias
+    - (復習)相関関係vs因果関係、交絡, 合流点バイアス
+2. When **Correlation $\neq$ Causal relation** happens (i.e. regression coefficient $\neq$ causal effect)? part 3: Including intermediate variable
+    - どの場合に回帰係数の値と因果効果の値がズレる？part 3: 中間変数を加える
+
+# 1. Review:Correlation vs Causation(Causal relation), Confounding, Collider bias
+
+(復習)相関関係vs因果関係、交絡、合流点バイアス
+
+## What is Causal Relation(因果関係)?
+- The definition of causal relation is ...
+    - In case that **"when factor X is changed (intervention), factor Y also changes,"** we can say "there is a **causal relationship of factor X → factor Y**
+- The difference with correlation is ...
+![](https://i.imgur.com/DrJbhL9.png)
+- なのでObservational Dataから得られる示唆は基本的にはCorrelationの事が多い。
+
+## What is Causal Effect(因果効果)?
+- The definition of causal relation is ...
+    - In case that **"when factor X is changed (intervention), factor Y also changes**," we can say "there is a **causal relationship of factor X → factor Y**
+
+- In above case,
+    - X: "cause"(原因変数), Y: "outcome"(結果変数)
+    - "**causal effect(intervention effect)** of $X \Rightarrow Y$" :Average change of Y when X is changed by one unit
+
+In Causal Inference, one motivation is quontification of causal effect.
+
+## What is Linear Regression Analysis?
+
+It's a little bit mathematical.
+
+$$
+\mathbf{y} = f(\mathbf{x_1}, \cdots, \mathbf{x}_k) + \mathbf{\epsilon}\\
+= a_0 + a_1 \mathbf{x}_1 + \cdots + a_k \mathbf{x}_k + \mathbf{\epsilon}
+= \mathbf{a}X + \mathbf{\epsilon}
+$$
+
+where is ...
+
+- $\mathbf{y}$ : (in Causal Inference, it should be "outcome")
+- $X$ : (in Causal Inference, it should include "cause")
+- $\mathbf{a}$ : the regression coefficent of $X$.
+- $\mathbf{\epsilon}$ : Probabilistic component of y
+
+最も人気な方法では、Observational DataとしてyとXのペアを取得し、$\mathbf{\epsilon}$を最小化する方法を取って$\mathbf{a}$を推定する。
+
+そして「推定された$\mathbf{a}$からyとXの関係性の示唆を得る」のが活用の一つ。
+
+## the usage of Regression analysis
+
+the usage of Regession analysis is separated mainly three objectives:
+
+![](https://i.imgur.com/fz7Mzgz.png)
+
+from viewpoint of "Causal Inference", regression analysis is utilized for "**Description**" and "**Control/Intervention**".
+
+## Example of "Correlation = Causal relation": height=>weight
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![ランダムに取得した名古屋市民100人の身長&体重](https://i.imgur.com/d2sdIxu.png)
+
+:::
+
+::: {.column width="50%"}
+
+さて、Observational Dataとして名古屋市内でランダムに抽出した100人の身長*体重のデータを取得したとしましょう。
+
+$$
+\text{weight} = a_0 + a_1 \times \text{height} + \epsilon \\
+\Rightarrow a_1 = 0.34 (p = 0.00)
+$$
+
+In this case, $a_1$ can be interpret 'causal effect' of 'height' $\Rightarrow$ 'weight'.
+
+However, the value of the regression coefficient **does not necessarily fit** with the causal effect.
+
+:::
+
+::::
+
+# 2. When is **regression coefficients** $\neq$ **causal effects** happend?
+
+there are mainly 4 cases :
+
+1. Direction of causation is opposite 因果の向きが逆
+
+2. **Confounding** 交絡
+
+3. Collider Bias 合流点バイアス
+
+4. Intermediate variables are included
+
+## Example of Confounding: 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![Causal Diagram with confounding factor ](https://i.imgur.com/zGtNK3m.png){width=100%}
+
+:::
+
+::: {.column width="50%"}
+
+- So, the way "to estimate causal effect in **Confounding**" is **Cut the indirect upstream connection** between X and Y.
+    - => One way is **adding confounding factors to explanatory variables**.
+- In order to do that ...
+    1. imagine and draw structure of relations (it's called '**causal diagram**')
+    2. consider **what will be confaunding factor** of X and Y
+    3. observe the candidates of confounding factor similar to X and Y.
+:::
+
+::::
+
+# Summary of my previous previous short lecture
+
+- Correlation $\neq$ Causation(Causal relation)
+- When discussing causal relation from observational data, we should consider **confounding factors**(i.e. **indirect upstream connection** from X to Y).
+- When estimating causal effects from regression coefficients through regression analysis, we should **check confounding factors** and **add them to the explanatory variables**.
+<!-- TODO: 全員が回帰分析知ってる訳でも無いので、以下のように書き換えた方が良いかも。 -->
+<!-- 観察データから因果効果を定量化する際は、交絡因子の影響をカットする必要がある。回帰分析の場合は説明変数に加えるのが一つの手。 -->
+
+# However...
+
+So, according to my last short lecture...
+
+- we should add **factors that seem to be related to X(cause) & Y(outcome)** to the model as explanatory variables"...??
+
+However...in actual... I am afraid that...**this is also not necessarily true**!
+
+- Sometimes, **due to adding** factors that seems to be related to the X(cause) & Y(outcome), "regression coefficients $\neq$ causal effects"(i.e. Correlation $\neq$ Causation)(i.e. Suprious Correlation 疑似相関) is happened.
+
+=> In my previous short lecture, I talked about **回帰分析に含めない方が良いケースの一つ:Collider Bias**.
+
+# 2. When is **regression coefficients** $\neq$ **causal effects** happend?
+
+there are mainly 4 cases :
+
+1. Direction of causation is opposite 因果の向きが逆
+
+2. Confounding 交絡
+
+3. **Collider Bias 合流点バイアス**
+
+4. Intermediate variables are included
+
+## What is "collider bias" (合流点バイアス)??
+:::: {.columns}
+
+::: {.column width="50%"}
+"collider" is ...
+
+- here, in these causal diagrams, factor B is called "collider(合流点)" of X and Y:
+
+"collider bias(合流点バイアス)" is ...
+
+- the bias(偏り) caused by **selecting(選択)/ stratifing(層別化)/ adjusting(調整) data at the "collider"** of cause(X) and effect(Y) in the data collection process or analytics process.
+
+:::
+
+::: {.column width="50%"}
+
+![Causal Diagram having Collider](https://i.imgur.com/obXAU5R.png){width=100%}
+
+:::
+
+::::
+
+## Example of Collider Bias: enviromnental subsidy (環境補助金)
+
+:::: {.columns}
+::: {.column width="50%"}
+
+:::{.r-stack}
+![Imgur](https://i.imgur.com/zqf4iWo.png){.fragment width="450" height="300"}
+
+![Imgur](https://i.imgur.com/2zNOSUC.png){.fragment width="450" height="300"}
+
+![Imgur](https://i.imgur.com/oyrnC2l.png){.fragment width="450" height="300"}
+
+:::
+
+:::
+
+::: {.column width="50%"}
+
+- We are the member of environmental group of a government.
+- We has set up **a environmental subsidy(環境補助金) for automobile makers** to promote "reduce their environmental impact" of automobile.
+- **"Whether receiving subsidy or not"** depends on two indicators: **"CO2 emissions"** and **"TMR(Total Material Requirement)"** in the one automobile's life cycle.
+
+:::
+
+::::
+
+## Summary of my previous two short lecture: 
+
+- Correlation $\neq$ Causation(Causal relation)
+- When estimating causal effects from regression coefficients in regression analysis,
+    - (the contents of last short lecture) In case of '**confounding factor**'(i.e. **indirect upstream connection**), we **should add them** to the explanatory variables for avoid "confounding(交絡)".
+    - (the contents of previous short lecture) In case of '**collider**'(i.e. **indirect downstream connection**), we **should not add them** to the explanatory variables for avoid "collider bias(合流点バイアス)".
+
+So today's short lecture, I will introduce **the last case** of happening Correlation $\neq$ Causation(Causal relation): **mask by intermediate variable**
+
+# 2. When is **regression coefficients** $\neq$ **causal effects** happend?
+
+there are mainly 4 cases :
+
+1. Direction of causation is opposite 因果の向きが逆
+
+2. Confounding 交絡
+
+3. Collider Bias 合流点バイアス
+
+4. **Intermediate variables are included** 中間変数を加える事によるマスク
+
+## What is Intermediate variables
+
+## Example: Salt Insake(cause) & mortality risk(outcome) & Blood Pressure(intermediate variable)
+
+Let's think about causation from "Salt Insake(cause)" to "mortality risk(outcome)".
+
+::::{.columns}
+
+::: {.column width="50%"}
+
+![Causal Diagram](https://i.imgur.com/vj7qFXz.png){width="100%"}
+
+:::
+
+::: {.column width="50%"}
+
+- The causal diagram is assumed as left figure.(Maybe it's not correct medically, but for the ease of explanation...)
+- This causal diagram mean that ...
+    - Increasing "salt intake" contribute to "mortality risk" increases through increasing "blood pressure".
+
+:::
+::::
+
+From viewpoint that "salt intake = **cause**" & "mortality risk = **outcome**", "blood pressure" is **Intermediate Variable**.
+
+So, in order to estimate **the causal effect** from "salt Intake($x_1$)" to "mortality risk($y$)", *should we inclode "blood pressure($x_2$)" to regression analysis...??*
+
+## Generating sample dataset & check the answer
+
+the setting for generating data is bellow.
+
+1. 
+
+## Generated dataset is below.
+
+## If you wanna try this experiment, you can also generate the dataset by using the code below.
+
+```python
+hogehoge
+```
+
+## Let's Regression Analysis:)
+
+Our objective is estimating **"the causal effect of $X_1$ =>$t_{dual}$"**. So, firstly, I tried single linear regression:
+
+- Explanatory variables = [$x_1$] : salt intake(cause)
+- Explained variable = $y$ : mortatity risk(outcome)
+
+$$
+y \sim Normal(\mu = a_0 +  a_1 \times x_1, \sigma^2)
+$$
+
+using this assumed formula and datasets(5000 samples), we estimated $a_0$, $a_1$, $\sigma^2$.
+
+After estimation, let's check **whether $\hat{a_1}$ is close to $-0.8$(=actual causal effect)** or not.
+
+## The result of single linear regression analysis is ...
+
+$$
+y \sim Normal(\mu = a_0 +  a_1 \times x_1, \sigma^2)
+$$
+
+$\hat{a_1} = - 0.823$. This value is **close to $-0.8$(=actula causal effect)**
+
+=> So here, the causal effect of "$X_1$ -> $t_{dual}$" **is properly estimated** by a single regression with "bicycle power($X_1$)" as the only explanatory variable.
+
+In the case of intermediate variable, same with collider, **this simple regression is "necessary and sufficient"!**
+
+## So then, what happens if we add intermediate variable to explanatory variables here?
+
+- Explanatory variables = [$x_1$, $x_2$] : 
+    - $x_1$ is salt intake(cause), $x_2$ is blood pressure(intermediate variable)
+- Explained variable = $y$ : mortatity risk(outcome)
+
+$$
+y \sim Normal(\mu = a_0 +  a_1 \times x_1 + a_2 \times x_2, \sigma^2)
+$$
+
+Same with previous model, using this formula and datasets(5000 samples), we estimated $a_0$, $a_1$, $a_2$, $\sigma^2$.
+
+After estimation, let's check **whether $\hat{a_1}$ is close to $-0.8$(=actual causal effect)** or not.
+
+## The result is...
+
+$$
+y \sim Normal(\mu = a_0 +  a_1 \times x_1 + a_2 \times x_2, \sigma^2)
+$$
+
+$\hat{a_1} = - 0.293$.
+
+By adding "triathlon time($t_{triple}$)" to the formula, "$\hat{a_1} \neq \text{causal effect}$" (i.e. $Correlation \neq Causation$) is happened!
+
+In fact, in this causal diagram, by adding the intermediate variable  "triathlon time($t_{triple}$)", 因果効果が見かけ上マスクされてしまう。
+
+はたして、この重回帰の結果から「塩分摂取量→超過死亡リスクの因果関係はない」と結論づけてしまって良いのか??
+
+# summary
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+- Correlation $\neq$ Causation(Causal relation) is often happend: Supirious Correlation(疑似相関).
+- "**confounding factor**"(i.e. **indirect upstream connection**):  
+    - =>we **should add them** to the explanatory variables for avoid "confounding(交絡)".
+- "**collider**"(i.e. **indirect downstream connection**)
+    - =>we **should not add them** to the explanatory variables for avoid "collider bias(合流点バイアス)".
+- "**intermediate variable**": 
+    - hogehoge...
+
+:::
+:::{.column width="50%"}
+
+![Causal Diagram with Confounding factor, collider, and intermediate variable](https://i.imgur.com/ELYvjiq.png){width="100%"}
+
+:::
+::::
+
+
+
+# Finally...
+
+Observational Dataから因果関係を評価するのは凄く難しいよ！
+
+なぜなら分析したい"cause(X)"と"outcome(Y)"以外に、交絡因子や合流点、中間変数の影響により擬似相関が発生してし得るからだよ！
+
+(なので理想的には、Experimental Dataを使った方が色々と安心して因果関係を評価できるよ！)
+
+でもとにかく一番大事なのは、データを見る上で、今日話した様なバイアスとか擬似相関が存在している可能性がある事を認識しておくことだよ！
+
+"Supirious Correlation", "Confounding", "Collider Bias", 等の言葉をkeep in your mind してくれると嬉しいよ！
+
+# Thank you for your kind attention:)
+
+let's enjoy your analytics life ~ :wave:
+
+References
+
+- hogehoge
+- hugahuga
+- piyopiyo
+
+
