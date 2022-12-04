@@ -77,4 +77,4 @@ Team Draft Interleavingを例に説明する。
 - Optimized interlaving
   - 「いくつかの制約のもと、生成されるランキングの感度の期待値を最大にするようなランキング提示確率を用いる」インターリービング手法。
 
-##
+## 
