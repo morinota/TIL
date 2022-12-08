@@ -1,16 +1,16 @@
-### link
+### 0.1. link
 
 - https://dl.acm.org/doi/abs/10.1145/3097983.3098108?casa_token=E2V72vGAK60AAAAA:b1coQnhN8zeSe6KNZrv_2T3HC5NfMI5LtYH7Mrj9ckNTblQQuiP9FEvoPtpGYnIN5hbNA7zEwefO6qvo
 
-### title
+### 0.2. title
 
 Embedding-based News Recommendation for Millions of Users
 
-### ABSTRACT
+### 0.3. ABSTRACT
 
 It is necessary to understand the content of articles and user preferences to make effective news recommendations. While ID-based methods, such as collaborative filtering and low-rank factorization, are well known for making recommendations, they are not suitable for news recommendations because candidate articles expire quickly and are replaced with new ones within short spans of time. Word-based methods, which are often used in information retrieval settings, are good candidates in terms of system performance but have issues such as their ability to cope with synonyms and orthographical variants and define "queries" from users' historical activities. This paper proposes an embedding-based method to use distributed representations in a three step end-to-end manner: (i) start with distributed representations of articles based on a variant of a denoising autoencoder, (ii) generate user representations by using a recurrent neural network (RNN) with browsing histories as input sequences, and (iii) match and list articles for users based on inner-product operations by taking system performance into consideration. The proposed method performed well in an experimental offline evaluation using past access data on Yahoo! JAPAN's homepage. We implemented it on our actual news distribution system based on these experimental results and compared its online performance with a method that was conventionally incorporated into the system. As a result, the click-through rate (CTR) improved by 23% and the total duration improved by 10%, compared with the conventionally incorporated method. Services that incorporated the method we propose are already open to all users and provide recommendations to over ten million individual users per day who make billions of accesses per month.
 
-## INTRODUCTION
+## 1. INTRODUCTION
 
 It is impossible for users of news distributions to read all available articles due to limited amounts of time. Thus, users prefer news services that can selectively provide articles. Such selection is typically done manually by editors and a common set of selected stories are provided to all users in outmoded media such as television news programs and newspapers. However, we can identify users before they select articles that will be provided to them on the Internet by using information, such as that in user ID cookies, and personalize the articles for individual users [3, 22].
 
@@ -30,7 +30,7 @@ The key to our method is using a simple inner product to estimate article-user r
 
 The proposed method was applied to our news distribution service for smartphones, which is described in the next section. We compared our method to a conventional approach, and the results (see Section 6) revealed that the proposed method outperformed the conventional approach with a real service as well as with static experimental data, even if disadvantages, such as increased learning time and large latency in model updates, are taken into consideration.
 
-## OUR SERVICE AND PROCESS FLOW
+## 2. OUR SERVICE AND PROCESS FLOW
 
 The methods discussed in this paper were designed to be applied to the news distribution service on the homepage of Yahoo! JAPAN on smartphones. The online experiments described in Section 6 were also conducted on this page. This section introduces our service and process flow.
 
@@ -46,11 +46,11 @@ These processes have to be done within hundreds of milliseconds between user req
 
 We use the inner product of distributed representations of a user and candidate articles in matching to quantify relevance and select promising candidates. We determine the order of priorities in ranking by considering additional factors, such as the expected number of page views and freshness of each article, in addition to the relevance used for matching. We skip similar articles in a greedy manner in de-duplication based on the cosine similarity of distributed representations. An article is skipped when the maximum value of its cosine similarity with articles with higher priorities is above a threshold. This is an important process in real news distribution services because similar articles tend to have similar scores in ranking. If similar articles are displayed close to one another, a real concern is that user satisfaction will decrease due to reduced diversity on the display. Details on comparison experiments in this process have been discussed in a report on our previous study [12]. Advertising is also important, but several studies [2, 10] have already reported on the relationship between advertising and user satisfaction, so such discussion has been omitted here.
 
-## ARTICLE REPRESENTATIONS
+## 3. ARTICLE REPRESENTATIONS
 
 Section 1 discussed a method of using words as features for an article that did not work well in certain cases of extracting and de-duplicating. This section describes a method of dealing with articles as a distributed representation. We proposed a method in our previous study [12], from which part of this section has been excerpted.
 
-### Generating Method
+### 3.1. Generating Method
 
 Our method generates distributed representation vectors on the basis of a denoising autoencoder [19] with weak supervision. The conventional denoising autoencoder is formulated as:
 
@@ -92,11 +92,11 @@ where $p$ is the corruption rate in the training phase. Thus, $h$ is uniquely de
 
 We use the $h$ generated above in three applications as the representation of the article: (i) to input the user-state function described in Section 4, (ii) to measure the relevance of the user and the article in matching, and (iii) to measure the similarity between articles in de-duplication.
 
-## USER REPRESENTATIONS
+## 4. USER REPRESENTATIONS
 
 This section describes several variations of the method to calculate user preferences from the browsing history of the user. First, we formulate our problem and a simple word-based baseline method and discuss the issues that they have. We then describe some methods of using distributed representations of articles, as was explained in the previous section.
 
-### Notation
+### 4.1. Notation
 
 Let $A$ be the entire set of articles. Representation of element $a \in A$ depends on the method. The $a$ is a sparse vector in the word-based method described in Section 4.2, and each element of a vector corresponds to each word in the vocabulary (i.e., $x$ in Section 3). However, $a$ is a distributed representation vector of the article (i.e., $h$ in Section 3) in the method using distributed representations described in Sections 4.3 and 4.4.
 
@@ -116,7 +116,7 @@ Let $u_t$ be the user state depending on $a_1^u , \cdots, a_t^u$, i.e., $u_t$ re
 
 $$
 u_t = F(a_1^u, \cdots, a_t^u) \\
-\forall{s_t^u} \forall{p_{+}} \in P_{+} \forall{p_{-}} 
+\forall{s_t^u} \forall{p_{+}} \in P_{+} \forall{p_{-}}
 \in P_{-} R(u_t, s_{t,p_{+}}^u) > R(u_t, s_{t, p_{-}}^u). \\
 \tag{2}
 $$
@@ -125,3 +125,118 @@ $$
 
 When considering the constrained response time of a real news distribution system with large traffic volumes, $R(·, ·)$ must be a simple function that can be quickly calculated. Because candidate articles are frequently replaced, it is impossible to pre-calculate the relevance score, $R(u_t, a)$, for all users ${u_t |u \in U }$ and all articles ${a \in A}$. Thus, it is necessary to calculate this in a very short time until the recommended list from visiting our service page is displayed. However, we have sufficient time to calculate the user state function, $F (·, \cdots, ·)$, until the next session occurs from browsing some article pages.
 
+We restrict relevance function $R(·, ·)$ to a simple inner-product relation, $R(u_t , a) = u_t^T a$, for these reasons and only optimize the user state function, $F (·, \cdots, ·)$, to minimize the objective:
+
+$$
+\sum_{s_t^u} \sum_{p_{+} \in P_{+}, p_{-} \in P_{-}}
+- \frac{
+    \log (\sigma(R(u_t, s_{t, p_{+}}^u) - R(u_t, s_{t,p_{-}}^u)))
+}{
+    |P_{+}||P_{-}|
+}
+\tag{3}
+$$
+
+where $\sigma(·)$ is the logistic sigmoid function. Equation 4.1 is a relaxation of Eq. 2. As there is a bias, in practice, in the probability of clicks depending on the displayed position when articles are vertically arranged, we use the following objective including the bias term, $B(·,·)$, to correct such effects. Although $B(·,·)$ is a parameter to be determined by learning, its description has been omitted below since it is a common term in the models that follow
+
+$$
+\sum_{s_t^u} \sum_{p_{+} \in P_{+}, p_{-} \in P_{-}}
+- \frac{
+    \log (\sigma(R(u_t, s_{t, p_{+}}^u) - R(u_t, s_{t,p_{-}}^u)) + B(p_{+}, p_{-}))
+}{
+    |P_{+}||P_{-}|
+}
+$$
+
+### 4.2. Word-based Model
+
+We formulate the word-based baseline model introduced in Section 1 as a baseline implementation on the basis of the notations in the previous section.
+
+Recall the three steps in the baseline implementation.
+
+- An article is represented by a collection of words included in its text,
+- A user is represented by a collection of words included in articles he/she has browsed, and
+- The relevance between the user and article is expressed by a linear function on the co-occurrences of words between them.
+
+This model can be regarded as a special case of the notation in
+the previous section, if article representation $a$ and user function $F$ are defined as:
+
+$$
+V : \text{Vocabulary set} \\
+a, u_t \in {0, 1}^V \\
+(a)_{v} = \left\{
+  \begin{array}{cc}
+    1 (\text{if the article contains the word v}) \\
+    0 (\text{otherwise}) \\
+  \end{array}
+\right. \\
+(u_t)_v = (F(a_1^u, \cdots, a_t^u))_v = \alpha_v \max_{1 \leq t' \leq t} (a_{t'}^u)_{v'}
+\tag{4}
+$$
+
+where $(x)_v$ is the $v$-th element of $x$. Then, the relevance function becomes a simple linear model with parameters ${\alpha_v}$ as:
+
+$$
+R(u_t, a) = u_t^T a \\
+= \sum_{v \in V} (u_t)_v (a)_v \\
+= \sum_{v \in V} \alpha_v 1_{v \in u_{t} \cap a}
+$$
+
+There are two major issues with this model, as was explained in Section 1.
+
+The first is the sparseness of the representation. The $R(u_t, a)$ in this model increases if only if $u_t$ and $a$ contain the same words. Thus, even if a user is interested in similar articles, the relevance scores may greatly differ depending on whether they have been written using the same words as the articles in his/her browsing histories.
+
+The second issue is intensity. Because the browsing history is regarded as a set, the information about the browsing order and frequency are lost. Thus, the model is very vulnerable to noise that is mixed into the browsing history.
+
+We describe other models by using distributed representations by taking into account these issues in the subsections below.
+
+### 4.3. Decaying Model
+
+We introduce a simple model with distributed representations to solve these issues. Two changes in this model from that of the baseline are:
+
+- It uses the distributed representation constructed in Section 3 as the representation vector, a, of an article, instead of a bag-of-words (BoW) representation (which addresses the first issue).
+- It uses the weighted average to aggregate browsing histories, instead of the maximum value. More specifically, we increase the weights for recent browses and reduce the weights for the previous days’ browses (which addresses the second issue).
+
+$$
+u_t = \alpha \odot 
+\frac{1}{\sum_{1\leq t' \leq t} \beta^{t-t'}} 
+\sum_{1 \leq t' \leq t} \beta^{t-t'} a_{t'}^u
+$$
+
+($\odot$はドット積を表すもの。ベクトルの演算方法の一つ。二つのベクトルが与えられたとき、対応する要素同士の掛け算をした結果を要素とする新しいベクトルを求める。)
+
+where $\alpha$ is a parameter vector that has the same dimension as $a_t^u$,  ⊙ is the elementwise multiplication of two vectors, and 0 < β ≤ 1 is a scalar value that is a hyperparameter that represents the strength of time decay. If β is 1, aggregation is the simple average, so that the browsing order is not taken into consideration. Training parameters are only α in this model, which are similar to those in the baseline model.
+
+### 4.4. Recurrent Models
+
+#### 4.4.1. Simple Rqcurrent Unit
+
+#### 4.4.2. Long-short Term Memory Unit
+
+#### 4.4.3. Gated Recurrent Unit
+
+## 5. Offline Experiments
+
+### 5.1. Training Dataset
+
+### 5.2. Test Dataset
+
+### 5.3. Offline Metrics
+
+### 5.4. Models and Training
+
+### 5.5. Experimental results
+
+## 6. Deployment
+
+### 6.1. Settings
+
+### 6.2. Online Metrics
+
+### 6.3. Experimental Results
+
+### 6.4. Deployment challenges to large-scale deep-learning-based services
+
+## 7. Related work
+
+## 8. Conclusion
