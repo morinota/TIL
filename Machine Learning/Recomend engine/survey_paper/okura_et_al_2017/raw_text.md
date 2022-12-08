@@ -198,24 +198,72 @@ We introduce a simple model with distributed representations to solve these issu
 - It uses the weighted average to aggregate browsing histories, instead of the maximum value. More specifically, we increase the weights for recent browses and reduce the weights for the previous days’ browses (which addresses the second issue).
 
 $$
-u_t = \alpha \odot 
-\frac{1}{\sum_{1\leq t' \leq t} \beta^{t-t'}} 
+u_t = \alpha \odot
+\frac{1}{\sum_{1\leq t' \leq t} \beta^{t-t'}}
 \sum_{1 \leq t' \leq t} \beta^{t-t'} a_{t'}^u
 $$
 
 ($\odot$はドット積を表すもの。ベクトルの演算方法の一つ。二つのベクトルが与えられたとき、対応する要素同士の掛け算をした結果を要素とする新しいベクトルを求める。)
 
-where $\alpha$ is a parameter vector that has the same dimension as $a_t^u$,  ⊙ is the elementwise multiplication of two vectors, and 0 < β ≤ 1 is a scalar value that is a hyperparameter that represents the strength of time decay. If β is 1, aggregation is the simple average, so that the browsing order is not taken into consideration. Training parameters are only α in this model, which are similar to those in the baseline model.
+where $\alpha$ is a parameter vector that has the same dimension as $a_t^u$, ⊙ is the elementwise multiplication of two vectors, and 0 < β ≤ 1 is a scalar value that is a hyperparameter that represents the strength of time decay. If β is 1, aggregation is the simple average, so that the browsing order is not taken into consideration. Training parameters are only α in this model, which are similar to those in the baseline model.
 
 ### 4.4. Recurrent Models
 
 #### 4.4.1. Simple Rqcurrent Unit
 
+Although the decaying model in the previous subsection took into account issues with the wordbased model, it had limitations such as being linear with respect to frequency and that the forgetting effect was limited to exponential decay with hyperparameters.
+
+More generally, $u_t$ should be determined by a previous state, $u_{t−1}$, and previous browse $a_t^u$ as:
+
+$$
+u_t = f(a_t^u, u_{t-1})
+$$
+
+Therefore, we try to learn this function by using an RNN. A simple RNN is formulated by:
+
+$$
+u_t = \phi(W^{in} a_t^u + W^{out} u_{t-1} + b)
+$$
+
 #### 4.4.2. Long-short Term Memory Unit
+
+$$
+gi_t = \sigma(W_{gi}^{in}a_t^u + W_{gi}^{out} u_{t-1} + W_{gi}^{mem}h_{t-1}^u + b_{gi})
+\\
+gf_t = \sigma(W_{gf}^{in}a_t^u + W_{gf}^{out} u_{t-1} + W_{gf}^{mem}h_{t-1}^u + b_{gf})
+\\
+enc_t = \phi(W_{enc}^{in}a_t^u + W_{enc}^{out} u_{t-1} + b_{gf})
+\tag{5}
+$$
+
+$$
+h_t^u = gi_t \odot enc_t + gf_t \odot h_{t-1}^u
+\tag{6}
+$$
+
+$$
+go_t = \sigma(W_{go}^{in}a_t^u + W_{go}^{out} u_{t-1} + W_{go}^{mem}h_{t}^u + b_{go})
+\\
+dec_t = \phi(W_{dec}^{mem}h_t^u +  b_{dec}) \tag{7}
+$$
+
+$$
+u_t = go_t \odot dec_t \tag{8}
+$$
 
 #### 4.4.3. Gated Recurrent Unit
 
+Gated recurrent unit (GRU) [1] is another structure to avoid gradient vanishing and explosion problems [5]. We formulate a GRU-based model as:
+
+We describe these formulations using symbols that correspond to those of the LSTM-based model as much as possible. More precisely, this model is constructed using one GRU layer and one fully connected layer because Eq. 10 is not contained in the original GRU configuration. Figure 5 outlines a network image of the GRUbased model structure.
+
+Equation 11 can be a large value for a very long input sequence; however, Eq. 12 never exceeds the constant. Therefore, we think the GRU-based model has a higher aptitude to solve the gradient explosion problem than the LSTM-based model.
+
+The LSTM-based model occasionally failed in training due to gradient explosion when we did not use gradient clipping [13] in the experiments that are described in the next section. However, the GRU-based model did not cause gradient explosion without any supplementary processing.
+
 ## 5. Offline Experiments
+
+This section discusses the effectiveness of the distributed representationbased method with the models in the previous section by offline evaluation using past serving logs. We compared the three wordbased models that were variants of the model introduced in Section 4.2 and five distributed representation-based models introduced in Sections 4.3 and 4.4. These models are summarized in Table 1.
 
 ### 5.1. Training Dataset
 
