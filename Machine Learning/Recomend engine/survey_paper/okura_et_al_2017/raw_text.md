@@ -209,6 +209,8 @@ where $\alpha$ is a parameter vector that has the same dimension as $a_t^u$, ⊙
 
 ### 4.4. Recurrent Models
 
+![](https://d3i71xaburhd42.cloudfront.net/376953b2d70b30cfa9d56ae841b8c16f059e0867/6-Figure4-1.png)
+
 #### 4.4.1. Simple Rqcurrent Unit
 
 Although the decaying model in the previous subsection took into account issues with the wordbased model, it had limitations such as being linear with respect to frequency and that the forgetting effect was limited to exponential decay with hyperparameters.
@@ -225,7 +227,15 @@ $$
 u_t = \phi(W^{in} a_t^u + W^{out} u_{t-1} + b)
 $$
 
+where φ(·) is the activation function; therefore, we subsequently use hyperbolic tangent function tanh(·). Training parameters are square matrices $W^{in}$ ,$W^{out}$ , bias vector $b$, and initial state vector $u_0$ in this model, where $u_0$ is a common initial value that does not depend on $u$.
+
+We learn these parameters by end-to-end mini-batch SGD with the objective function in Eq. 4.1. However, when the input sequence is too long, simple RNN makes it too difficult to learn this due to gradient vanishing and explosion problems [5]. Additional structures that are attached to the hidden layer are able to alleviate these problems in such cases.
+
+The following subsections introduce two models that use such structures.
+
 #### 4.4.2. Long-short Term Memory Unit
+
+Long-short term memory (LSTM) [6] is a well-known structure for vanishing and exploding gradients [5]. We formulate an LSTM-based model as:
 
 $$
 gi_t = \sigma(W_{gi}^{in}a_t^u + W_{gi}^{out} u_{t-1} + W_{gi}^{mem}h_{t-1}^u + b_{gi})
@@ -251,11 +261,33 @@ $$
 u_t = go_t \odot dec_t \tag{8}
 $$
 
+where σ (·) is the elementwise logistic sigmoid function, and $h^u_t$ is a hidden memory state. Figure 4 has a network image of the structure of the LSTM-based model.
+
+The center flows are the main flows from input (browsed article) to output (user state). The input, $a^u_t$, is encoded from article vector space to hidden space (Eq. 5), merged into the previous hidden state (Eq. 6), and decoded to the article vector space (Eq. 7, Eq. 8) as the user state.
+
+In addition, this unit has three gates, called input gate ($gi_t$ ), forget gate ($gf_t$), and output gate ($go_t$). We assumed each gate would conceptually play the following roles in this case. The input gate filters unnecessary inputs to construct a user state, such as that caused by sudden interest. The forget gate represents the decline in interest by the user. It can represent a more complex forgetting effect than the exponential decay that is used in the decaying model. The output gate filters components that should not be focused on in the next session.
+
+Training parameters are weight matrices $W$, bias vectors $b$ and initial state vectors $u_0$ and $h^u_0$ in this model, where $u_0$ and $h^u_0$ are common initial values that do not depend on u.
+
 #### 4.4.3. Gated Recurrent Unit
+
+![](https://d3i71xaburhd42.cloudfront.net/376953b2d70b30cfa9d56ae841b8c16f059e0867/6-Figure5-1.png)
 
 Gated recurrent unit (GRU) [1] is another structure to avoid gradient vanishing and explosion problems [5]. We formulate a GRU-based model as:
 
 We describe these formulations using symbols that correspond to those of the LSTM-based model as much as possible. More precisely, this model is constructed using one GRU layer and one fully connected layer because Eq. 10 is not contained in the original GRU configuration. Figure 5 outlines a network image of the GRUbased model structure.
+
+Except for the omission of some arrows, this structure is similar to that of the LSTM-based model. However, there is an important difference between Eqs. 6 and 9. The $gz_t$ gate in this model plays the role of two gates, i.e., $gi_t$ and $gf_t$ in the LSTM-based model. As a result, the following difference in the upper limit of norm $||h_t^u||_{\infty}$ occurs.
+
+$$
+\sup_{u} ||h_t^u||_{\infty} = \left \{
+  \begin{array}{cc}
+    ||h_0^u||_{\infty} + t \sup_{x}|\phi(x)| \text{in LSTM} \\
+    \max (||h_0^u||_{\infty}, \sup_{x}|\phi(x)|) \text{in GRU}
+  \end{array}
+\right.
+\tag{11,12}
+$$
 
 Equation 11 can be a large value for a very long input sequence; however, Eq. 12 never exceeds the constant. Therefore, we think the GRU-based model has a higher aptitude to solve the gradient explosion problem than the LSTM-based model.
 
@@ -265,26 +297,134 @@ The LSTM-based model occasionally failed in training due to gradient explosion w
 
 This section discusses the effectiveness of the distributed representationbased method with the models in the previous section by offline evaluation using past serving logs. We compared the three wordbased models that were variants of the model introduced in Section 4.2 and five distributed representation-based models introduced in Sections 4.3 and 4.4. These models are summarized in Table 1.
 
+![](https://d3i71xaburhd42.cloudfront.net/376953b2d70b30cfa9d56ae841b8c16f059e0867/500px/7-Table1-1.png)
+
 ### 5.1. Training Dataset
+
+First, we sampled approximately 12 million users who had clicked at least one article from the service logs of Yahoo! JAPAN’s homepage on smartphones between January and September 2016. We extracted logs for each user over a two-week period chosen at random to include at least one click. This method of extraction was used to mitigate the impact of epidemic articles within a specific period.
+
+As a result, there were about 166 million sessions, one billion browses, and two million unique articles in the training data. We also created another dataset for the same period and used it as a validation dataset to optimize the hyperparameters.
 
 ### 5.2. Test Dataset
 
+We sampled 500,000 sessions, in which users clicked articles above position 20 on October 2016. We extracted browse logs in the previous two weeks for each session. We used the article data from positions 1 to 20 for evaluation regardless of whether they were actually displayed on the screen. This was based on our observation with timeline-based user-interfaces. Users scrolled from top to bottom and tended to leave our service when they clicked one article. That is, if we only used data actually displayed for evaluation, the method of arranging the actual displayed order in reverse was evaluated as being disproportionately better.
+
 ### 5.3. Offline Metrics
+
+We evaluated the rankings provided by each model by using three popular metrics, i.e., the area under the ROC curve (AUC), mean reciprocal rank (MRR), and normalized discounted cumulative gain (nDCG), which regarded clicks as positive labels.
+
+Let $S$ be the set of sessions for the evaluation, $c_{s,i}$ be one when the article at position $i$ is clicked, and zero otherwise. Each metric is formulated as:
+
+$$
+\text{AUC} = hogehoge \\
+\text{MRR} = \frac{1}{|S|} \sum_{s=1}^{|S|} \frac{1}{\min_{c_{s,i}=1} i} \\
+\text{nDCG} = \frac{\text{DCG}}{\text{IDCG}} \\
+\text{DCG} = \sum_{i=1}^n \frac{2^{rel_i}-1}{\log_2(i+1)} \\
+\text{iDCG} = \sum_{i=1}^n \frac{2^{rel_i}-1}{\log_2(i+1)}
+$$
+
+where π is an arbitrary permutation of positions.
+
+The AUC is the metric directly related to the objective of training (see Eq.2). The MRR and nDCG are popular ranking metrics; the former focuses on the first occurrence of positive instances, and the latter evaluates ranks for all the positive instances. Each metric is a value between zero and one, which is calculated as the average score for each session; i.e., the larger the better.
 
 ### 5.4. Models and Training
 
+We evaluated the eight models listed in Table 1.
+
+As was described in Section 4.2, word-based models can be regarded as simple linear logistic regressions for pairwise data with sparse feature vectors, like the ranking support vector machine (SVM) [7]. Thus, we used LIBLINEAR [4] for training L2-regularized logistic regression (solver type 0).
+
+We used mini-batch SGD with RMS-prop to adjust the learning rate for the other models. The mini-batch size was 20 and the initial learning rate was 0.005. The numbers of dimensions of the distributed representations of article a and user state ut were 500. The number of dimensions of internal state $h^u_t$ was 200 in LSTM and GRU. These parameters were determined by using the development dataset.
+
+We used the gradient clipping technique [13] to avoid gradient explosion in RNN and LSTM. GRU did not cause gradient explosion when this technique was not used in these experiments.
+
 ### 5.5. Experimental results
+
+![](https://d3i71xaburhd42.cloudfront.net/376953b2d70b30cfa9d56ae841b8c16f059e0867/500px/7-Table2-1.png)
+
+Table 2 lists all metrics used in the experiments. We split the test dataset into ten sub-datasets and calculated each metric per subdataset. The values in Table 2 are the averages for each metric of the sub-datasets and each metric’s 99% confidence intervals that were estimated based on the t-distribution.
+
+GRU had the best score for all metrics with a sufficient margin, and it yielded a significant difference against all other models according to a paired t-test with p < 0.01.
+
+Because Average exhibited a significant improvement from BoWAve, distributed representations of articles should work better than BoW representations.
+
+Decay and BoW-Dec were worse than Average and BoW-Ave. This suggests that browsing-order information cannot be expressed with simple attenuation. RNN also exhibited a slight improvement on AUC against Average. However, LSTM and GRU were significantly better than Average. We believe this was because it was able to express more complex relations for the order of browsing sequences by using the gate structures in these models.
 
 ## 6. Deployment
 
+We began using GRU on December 2016 for the main traffic in our service (which we denoted the Proposed bucket). However, we continued to apply the conventional BoW model to 1 % of users to enable comparisons of performance (which we denoted the Control bucket). This section reports the results obtained from comparisons after deployment.
+
 ### 6.1. Settings
+
+Our system presents articles to users who visit our service page according to a three step procedure.
+
+- The user state, $u_t$, of each model should be calculated from the browsing history in advance.
+- When user $u$ visits our service, we calculate the relevance scores, $R(u_t , a) = u_t^Ta$, for all articles a that were newly published within a certain period of time.
+- We present the articles to the user in order from the highest relevance score by applying de-duplication.
+
+The representation of $u_t$ and a for relevance scores depends on the bucket. We applied de-duplication by using the distributed representations described in Section 2 to both Control and Proposed buckets. As the effects of de-duplication on users are not discussed here, refer to our past paper [12] for details on an experiment on these effects.
+
+We can identify the user from browser cookies in addition to the ID for login. Therefore, we can extract some histories for most users including those who are not logged in. However, there are some users who have no history such as new users or who have been privately browsing. Although we can provide articles to them with other methods by using popularity, diversity, and freshness, instead of relevance scores, all results on them have been excluded from the following reports.
 
 ### 6.2. Online Metrics
 
+The list below represents the four online metrics we used.
+
+- Sessions: The average number of times one user utilized our service per day.
+- Duration: The average time (in seconds) that the user spent with our service per session. It was the total time the user took looking at the recommendation list and the time it took him/her to read the article after clicking on it.
+- Clicks: The average number of clicks per session (which corresponded to |P+| in Section 4).
+- Click through rate (CTR): Clicks/number of displayed articles. These were decreased if article retrieval became inefficient and users spent more time exploring the recommendation list.
+
+A session in this section means the collection of accesses by a user. It is regarded as another session if there is a gap of more than 10 min between accesses.
+
+Our most important metric is the total duration per user, which is the product of Sessions and Duration.
+
 ### 6.3. Experimental Results
+
+![](https://d3i71xaburhd42.cloudfront.net/376953b2d70b30cfa9d56ae841b8c16f059e0867/500px/9-Figure6-1.png)
+
+![](https://pic3.zhimg.com/80/v2-9c926fa7e7ffb79f710bc7bef9f4b5d6_720w.webp)
+
+![](https://d3i71xaburhd42.cloudfront.net/376953b2d70b30cfa9d56ae841b8c16f059e0867/8-Table4-1.png)
+
+The results obtained from comparison are summarized in Figure 6 and Table 3.
+
+Figure 6 plots the daily transition in the lift rate of each metric (i.e., that with the Proposed and metric with Control). All metrics improved significantly with the Proposed bucket. Duration, Clicks, and CTR indicated a certain rate of improvement from the first day the new model was applied. However, Sessions demonstrated a relatively small rate of improvement on the first day but gradually improved a great deal. This meant that a good recommendation model first increases clicks, and multiple click experiences encourage users to gradually use the service more frequently.
+
+Table 3 summarizes the average metric lift rates in the seventh week and those by user segments split according to the frequency of visits. The definitions for segments are three fold. The user composition ratios are roughly Heavy : Medium : Liдht = 3 : 2 : 1.
+
+- Heavy:Users who have visited for more than five days during the previous week.
+- Medium: Users who have visited for between two and five days during the previous week.
+- Light: Users who have visited for less than two days during the previous week.
+
+Improvements in the metrics were confirmed for all segments. Light users demonstrated particularly large improvement rates. Therefore, we derived the following hypotheses. Users who had little history were strongly influenced by feature sparsity if we used BoW representations. Also, some noisy browsing caused by sudden interest seriously affected the accuracy of recommendations. Our method with the GRU-based model might successfully prevent these problems with distributed representations and the gate structures of GRU. This is why the Proposed bucket worked better than the Control bucket with the word-based model, especially for light users.
+
+In addition to the improvement in metrics within each segment, we also observed a shift in users from Light to Medium, and Medium to Heavy, as listed in Table 4. This is why the overall rate of increase in Sessions was higher than the increase in each segment in Table 3.
 
 ### 6.4. Deployment challenges to large-scale deep-learning-based services
 
+It is very important to keep updating models with the latest data when applying machine learning to actual news distribution systems. In fact, the Control bucket described in the previous section uses the latest article data and session data every three hours to update the model. The Proposed bucket using the GRU-based model, on the other hand, could not update the model as frequently due to four reasons.
+
+- It takes a long time to learn the model. In fact, the model actually used in main traffic is calculated over a week using GPU.
+- If we update the article-representation model (discussed in Section 3), we have to re-calculate representations for all available articles and re-index to the article search engine.
+- If we update the user-representation model (discussed in Section 4), we have to re-calculate the user state from the first browse in the past. In practice, there is no choice but to give up on re-calculating old histories over a certain period of time.
+- The data store holding the user representations and the search index holding the article representations must be synchronously updated.
+
+Therefore, we prepared two identical systems and switched them alternately to update the model once every two weeks. Of course, adding fresh articles and updating user states by users’ browsing are executed more frequently because they require fewer calculations than those for updating models.
+
+As word-based models in our experience have responded sensitively to buzz-words, they deteriorate as soon as a few days after stops have been updated; however, the distributed representationbased model maintains sufficient accuracy at this frequency of model updates. When we left the GRU-based model for about three months, it had deteriorated to the same accuracy as the word-based model with updates every three hours in experiments without model updates.
+
 ## 7. Related work
 
+This section presents related work to our proposed approach.
+
+We generated distributed representations of articles by using a denoising autoencoder with weak supervision, as described was in Section 3 and our previous paper [12]. There have been many studies on generating distributed representations of sentences. The conventional denoising auto-encoder [19], its variant [20], and Paragraph Vector [11] are well-known methods of unsupervised learning. Representations of articles generated with these methods may be used for our problem setting. While there have been reports [11, 16] that the representations generated with these methods provide helpful features for sentiment classification tasks, it has not been clarified whether these representations would be suitable for our purposes because these methods are unsupervised approaches.
+
+Of course, fully supervised methods can be applied if we obtain a sufficient amount of human-annotated data for article pairs, but this is too costly since news articles and the proper nouns they contain change over time. Therefore, our proposed method uses a weakly supervised method with an objective function that includes loss terms that correspond to the similarities between categories of articles, as well as reconstruction terms for the denoising autoencoder of words. As these categories, such as politics, sports, and entertainment, are provided by news publishers, they are easy to obtain. In addition, as distributed representations, which are generated by optimizing objective functions that consist of two terms, are expected to represent reasonable granularity of similarity, they inherit the properties of both words and categories.
+
+There have been some studies [18, 21] on obtaining the representations of user interests from the sequence of users’ behaviors on the Web. Zhang et al. [21] proposed a framework based on an RNN for click prediction of sponsored search advertising. Tagami et al. [18] applied Paragraph Vector [11] to users’ Web browsing sequences to obtain common features from user-related prediction tasks. RNN and its variants have recently been widely used to obtain sequential data in various research fields, such as speech recognition [15], machine translation [17], and image captioning [9]. Learning with standard RNNs often suffers from vanishing and exploding gradient problems. Thus, some architectures such as LSTM [6] and GRU [1] have been employed to overcome these problems. Jozefowicz et al. [8] empirically evaluated various RNN architectures and reported that GRU outperformed LSTM on almost all tasks they evaluated. Our experimental results presented in Section 5.5 also showed that the GRU-based model produced better results than the LSTM-based model.
+
 ## 8. Conclusion
+
+This paper proposed an embedding-based method to use distributed representations in a three step end-to-end manner: (i) start with distributed representations of articles based on a variant of a denoising autoencoder, (ii) generate user representations by using an RNN with browsing histories as input sequences, and (iii) match and list articles for individual users based on inner-product operations by considering system performance. We found that our method was effective even in a real news distribution system with large-scale traffic because it was designed with an awareness of implementation.
+
+The method we propose has already been fully incorporated in all the traffic of Yahoo! JAPAN’s homepage on smartphones, and it recommends various articles to millions of users every day. We plan to further improve our recommendation service continuously in the future and apply this approach to other domains such as advertisements.
