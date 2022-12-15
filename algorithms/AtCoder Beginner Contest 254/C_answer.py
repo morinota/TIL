@@ -8,28 +8,32 @@
 # 全ての0<=i<Kについて、「iが同じグループ」を昇順にソートする。
 # ＝＞こうしてできた数列が、全体として昇順になっているか確認すればOK
 
+
 def judge():
     N, K = map(int, input().split())
     A = list(map(int, input().split()))
 
     # 正解となるソートされたaを用意しておく
-    A_sorted = sorted(A, reverse=False)
+    A_sorted_expected = sorted(A, reverse=False)
 
-    B = [[] for _ in range(K)] # K個= 「iが同じグループ」の数の[]を作る  idxを Kで割った余り=iごとに管理する.
+    # K個= 「iが同じグループ」の数の[]を作る  idxを Kで割った余り=iごとに管理する.
+    k_grouping_list = [[] for _ in range(K)]
 
     for idx, a in enumerate(A):
         # idx % K = iの値ごとに管理する.
         # Aの各要素aを「iが同じグループ」に分割していく
-        B[idx % K].append(a) 
+        k_grouping_list[idx % K].append(a)
     # 各「iが同じグループ」毎にソートしていく。
     for i in range(K):
-        B[i].sort() # ソートする
+        k_grouping_list[i].sort()  # ソートする
 
-    # 各グループでソートしたものを結合して、SAとして再編成
-    SA = [0] * N
+    # 各グループでソートしたものを連結して(元通りになるように)、SAとして再編成
+    A_sorted_actual = [0] * N
     for idx in range(N):
-        SA[idx] = B[idx % K][idx//K] # すなわちB[i][j]
+        print(idx % K, idx // K)
+        A_sorted_actual[idx] = k_grouping_list[idx % K][idx // K]  # すなわちk_grouping_list[i][j]
 
-    return SA == A_sorted
+    return A_sorted_actual == A_sorted_expected
 
-print('Yes' if judge() else 'No')
+
+print("Yes" if judge() else "No")

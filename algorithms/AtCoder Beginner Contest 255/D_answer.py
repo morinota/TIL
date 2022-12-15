@@ -1,3 +1,4 @@
+# https://atcoder.jp/contests/abc255/tasks/abc255_d
 N, Q = map(int, input().split())
 
 A = list(map(int, input().split()))
