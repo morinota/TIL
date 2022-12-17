@@ -6,7 +6,16 @@
 """
 
 
+# from linked_list_1_single_direction import LinkedList
+
+
 from linked_list_1_single_direction import LinkedList
 
 
-class LinkedListWithInverse(LinkedList):
+class LinkedListWithReverse(LinkedList):
+    def reverse_interactive(self) -> None:
+        """List型のreverseメソッドをLinkedListで実装する。while ループを使うver."""
+
+
+if __name__ == "__main__":
+    pass

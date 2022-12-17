@@ -1,7 +1,8 @@
 ### 0.1. link リンク
 
-- https://dl.acm.org/doi/abs/10.1145/3097983.3098108?casa_token=E2V72vGAK60AAAAA:b1coQnhN8zeSe6KNZrv_2T3HC5NfMI5LtYH7Mrj9ckNTblQQuiP9FEvoPtpGYnIN5hbNA7zEwefO6qvo
-- httpsを使用しています。
+- [元論文]https://dl.acm.org/doi/abs/10.1145/3097983.3098108?casa_token=E2V72vGAK60AAAAA:b1coQnhN8zeSe6KNZrv_2T3HC5NfMI5LtYH7Mrj9ckNTblQQuiP9FEvoPtpGYnIN5hbNA7zEwefO6qvo
+- [githubのリポジトリ](https://github.com/louislung/DAE_RNN_News_Recommendation)
+- [the article embeddings trainingに関するブログ記事](https://medium.com/deep-learning-hk/compute-document-similarity-using-autoencoder-with-triplet-loss-eb7eb132eb38)
 
 ### 0.2. title タイトル
 
@@ -9,6 +10,8 @@ Embedding-based News Recommendation for Millions of Users
 数百万人のユーザーを対象にした埋め込み型ニュース推薦システム
 
 ### 0.3. ABSTRACT ABSTRACT
+
+これはニュースの埋め込みベクトル([the article embeddings trainingに関するブログ記事](https://medium.com/deep-learning-hk/compute-document-similarity-using-autoencoder-with-triplet-loss-eb7eb132eb38))を元にした、コンテンツベースの手法
 
 It is necessary to understand the content of articles and user preferences to make effective news recommendations. While ID-based methods, such as collaborative filtering and low-rank factorization, are well known for making recommendations, they are not suitable for news recommendations because candidate articles expire quickly and are replaced with new ones within short spans of time. Word-based methods, which are often used in information retrieval settings, are good candidates in terms of system performance but have issues such as their ability to cope with synonyms and orthographical variants and define "queries" from users' historical activities. This paper proposes an embedding-based method to use distributed representations in a three step end-to-end manner: (i) start with distributed representations of articles based on a variant of a denoising autoencoder, (ii) generate user representations by using a recurrent neural network (RNN) with browsing histories as input sequences, and (iii) match and list articles for users based on inner-product operations by taking system performance into consideration. The proposed method performed well in an experimental offline evaluation using past access data on Yahoo! JAPAN's homepage. We implemented it on our actual news distribution system based on these experimental results and compared its online performance with a method that was conventionally incorporated into the system. As a result, the click-through rate (CTR) improved by 23% and the total duration improved by 10%, compared with the conventionally incorporated method. Services that incorporated the method we propose are already open to all users and provide recommendations to over ten million individual users per day who make billions of accesses per month.
 

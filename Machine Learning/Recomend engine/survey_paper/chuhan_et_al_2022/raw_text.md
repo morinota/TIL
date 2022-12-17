@@ -1,8 +1,12 @@
-## title
+### 0.1. link
+
+- https://arxiv.org/abs/2106.08934
+
+### 0.2. title
 
 Personalized News Recommendation: Methods and Challenges
 
-## abstruct
+### 0.3. abstruct
 
 Personalized news recommendation is important for users to ind interested news information and alleviate informationoverload. Although it has been extensively studied over decades and has achieved notable success in improving userexperience, there are still many problems and challenges that need to be further studied. To help researchers master theadvances in personalized news recommendation, in this paper we present a comprehensive overview of personalized newsrecommendation. Instead of following the conventional taxonomy of news recommendation methods, in this paper wepropose a novel perspective to understand personalized news recommendation based on its core problems and the associatedtechniques and challenges. We irst review the techniques for tackling each core problem in a personalized news recommendersystem and the challenges they face. Next, we introduce the public datasets and evaluation methods for personalized newsrecommendation. We then discuss the key points on improving the responsibility of personalized news recommender systems.Finally, we raise several research directions that are worth investigating in the future. This paper can provide up-to-date andcomprehensive views on personalized news recommendation. We hope this paper can facilitate research on personalizednews recommendation as well as related ields in natural language processing and data mining.
 
@@ -11,7 +15,6 @@ Personalized news recommendation is important for users to ind interested news i
 In the era of the Internet, online news distributing platforms such as Microsoft News1have attracted hundredsof millions of users [223]. Due to the convenience and timeliness of online news services, many users haveshifted their news reading habits from conventional newspapers to digital news content [144]. However, a largenumber of news articles are created and published every day, and it is impossible for users to browse throughall available news to seek their interested news information [204]. Thus, personalized news recommendationtechniques, which aim to select news according to users’ personal interest, are critical for news platforms to helpusers alleviate their information overload of users and improve news reading experience [113]. Researches onpersonalized news recommendation have also attracted increasing attention from both academia and industry inrecent years [144, 203].
 
 <img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/2-Figure1-1.png">
-
 
 Fig. 1. An example workflow of personalized news recommender systems.
 
@@ -29,7 +32,7 @@ In this paper, we present a comprehensive review of the personalized news recomm
 
 Fig. 2. A framework of the key components in developing personalized news recommendation model.
 
-## 2 FRAMEWORK OF PERSONALIZED NEWS RECOMMENDATION
+## 2. 2 FRAMEWORK OF PERSONALIZED NEWS RECOMMENDATION
 
 Personalized news recommendation techniques have been widely used in many online news websites [144,223].Diferent from non-personalized news recommendation methods that suggest news articles solely based onnon-personalized factors [100] such as news popularity [27,127,130,227], editors’ demonstration [199] andgeographic information [21,178], personalized news recommendation can consider the personal interest of eachindividual user to provide personalized news services and better satisfy users’ need.
 
@@ -37,7 +40,7 @@ Existing surveys on personalized news recommendation usually classify methods in
 
 Instead of following the conventional taxonomy, in this survey we propose a novel perspective to reviewexisting personalized news recommendation techniques based on the core problems involved in the developmentof a personalized news recommender system. A common framework of personalized news recommendationmodel development is shown in Fig. 2. We can see that there are several key problems in this framework.First, news modeling is the backbone of news recommendation and a core problem is how to understand thecontent and characteristics of news. In addition, user modeling is required to understand the personal interestof users in news, and it is critical to accurately infer user interest from user proiles like behaviors. Based onthe news and user representations built by the news and user models, the next step is ranking candidate newsaccording to certain policies such as the relevance between news and user interest. Then, it is important totrain the recommendation model with proper objectives to make high-quality news recommendations, andevaluating the ranking results given by the recommendation model is also a core problem in the development ofpersonalized recommender systems. Besides, the datasets and benchmarks for news recommendation are alsonecessities in designing personalized news recommendation models. Moreover, beyond developing accuratemodels, improving the responsibility of intelligent systems has been a spotlight problem in recent years. How todevelop responsible news recommender systems is a less studied but extremely important problem in personalizednews recommendation. Next, we briely discuss the key problems mentioned above in the following sections.
 
-### 2.1 News Modeling
+### 2.1. 2.1 News Modeling
 
 News modeling aims to understand the characteristics and content of news, which is the backbone of newsrecommendation. There are mainly two kinds of techniques for news modeling, i.e., feature-based news modelingand deep learning-based news modeling. Feature-based news modeling methods usually rely on handcraftedfeatures to represent news articles. For instance, in many methods based on collaborative iltering (CF), newsarticles are represented by their IDs [29,168]. However, on most news websites novel news articles are publishedcontinuously and old ones soon vanish. Thus, representing news articles with their IDs will sufer from severecold-start problems, and the performance is usually suboptimal.
 
@@ -45,39 +48,39 @@ Considering the drawbacks of ID-based news modeling methods, most approaches inc
 
 With the development of natural language processing techniques in recent years, many methods employneural NLP models to learn deep representations of news. For example, Okura et al. [144] proposed to useautoencoders to learn news representations from news content. Wang et al. [197] proposed to use a knowledge-aware convolutional neural network (CNN) to learn news representations from news titles and their entities. Wuet al. [207] proposed to learn news representations from news titles via a combination of multi-head self-attentionand additive attention networks. Wu et al. [214] studied to use pre-trained language models to encode news texts.These deep learning-based news modeling methods can automatically learn informative news representationswithout heavy efort on manual feature engineering, and they can usually better understand news content thantraditional feature-based methods.
 
-### 2.2 User Modeling
+### 2.2. 2.2 User Modeling
 
 User modeling techniques in news recommendation aim to understand users’ personal interest in news. Similar tonews modeling, user modeling methods can also be roughly classiied into two categories, i.e., feature-based anddeep learning-based. Some feature-based methods like CF represent users with their IDs [29,168]. However, theyusually sufer from the sparsity of user data and cannot model user interest accurately. Thus, most feature-basedmethods consider other user information such as click behaviors on news. For example, Garcin et al. [52] proposedto use Latent Dirichlet Allocation (LDA) to extract topics from the concatenation of news title, summary andbody. The topic vectors of all clicked news are further aggregated into a user vector by averaging. There are alsoseveral works that explore to incorporate other user features into user modeling, such as demographics [104],location [43] and access patterns [109]. However, feature-based user modeling methods also require an enormousamount of domain knowledge to design informative user features in speciic scenarios, and they are usuallysuboptimal in representing user interests.
 
 There are several methods that use neural networks to learn user representations from users’ click behaviors.For example, Okura et al. [144] proposed to use a GRU network to learn user representations from clicked news.Wu et al. [204] proposed a personalized attention network to learn user representations from clicked news in apersonalized manner. Qi et al. [160] proposed a hierarchical user interest representation method to model thehierarchical structure of user interest. These methods can automatically learn deep interest representations ofusers for personalized news recommendation, which are usually more accurate than handcrafted user interestfeatures.
 
-### 2.3 Personalized Ranking
+### 2.3. 2.3 Personalized Ranking
 
 On the basis of news and user interest modeling, the next step is ranking candidate news in a personalizedway according to user interest. Most methods rank news based on their relevance to user interest, and how toaccurately measure the relevance between user interest and candidate news is their core problem. Some methodsmeasure the user-news relevance based on their representations. For example, Goossen et al. [58] proposed tocompute the cosine similarity between the Concept Frequency-Inverse Document Frequency (CF-IDF) featuresextracted from candidate news and clicked news, which was further used for personalized candidate newsranking. Okura et al. [144] used the inner product between news and user embeddings to compute the clickscores, and ranked candidate news based on these scores. Gershman et al. [55] proposed to use an SVM model foreach individual user to classify whether this user will click a candidate news based on news and user interestfeatures. In several recent methods, the relevance between candidate news and user interest is modeled in aine-grained way by matching candidate news with clicked news. For example, Wang et al. [196] proposed tomatch candidate news and clicked news with a 3-D convolutional neural network to mine the ine-grainedrelatedness between their content. However, ranking candidate news and user interest merely based on theirrelevance may recommend news that are similar to those previously clicked by users [160], which may cause thełilter bubble” problem.
 
 A few methods use reinforcement learning for personalized ranking. Li et al. [106] irst explore to model thepersonalized news recommendation task as a contextual bandit problem. They proposed a LinUCB approach thatcomputes the upper conidence bound (UCB) of each arm eiciently in closed form based on a linear payof model,which can match news with users’ personal interest and meanwhile explore making diverse recommendations.DRN [244] uses a deep reinforcement learning approach to ind the interest matching policy that optimizes thelong-term reward. In addition, it uses a Dueling Bandit Gradient Descent (DBGD) method for exploration. Thesemethods usually optimize the long-term reward rather than the current click probability, which has the potentialto alleviate the ilter bubble problem by exploring more diverse user interest.
 
-### 2.4 Model Training
+### 2.4. 2.4 Model Training
 
 Many personalized news recommendation methods employ machine learning models for news modeling, usermodeling and interest matching. How to train these models to make accurate recommendations is a criticalproblem. A few methods train their models by predicting the ratings on news given by users. For example, theGrouplens [168] system is trained by predicting the unknown ratings in the user-news matrix. However, explicitfeedback such as ratings is usually sparse on news platforms. Thus, most existing methods use implicit feedbacklike clicks to construct prediction targets for model training. For example, Wang et al. [197] formulated the newsclick prediction problem as a binary classiication task, and use crossentropy as the loss function for modeltraining. Wu et al. [204] proposed to employ negative sampling techniques that combine each positive samplewith several negative samples to construct labeled samples for model training. However, click feedback usuallycontains heavy noise and may not indicate user interest, which poses great challenges to learning accuraterecommendation models.
 
 There are only a few methods that consider user feedback beyond click signals [213,215]. For example,Wu et al. [213] proposed to model click preference with click feedback and model reading satisfaction basedon the personalized reading speed of users, and train the recommendation model to predict both clicks anduser satisfaction. By optimizing objectives beyond news clicks, these methods are aware of user engagementinformation and thereby can better understand user interest. In addition, these methods have the potential torecommend news articles that are not only clicked by users, but also indeed satisfy their information needs. Thus,designing engagement-aware training objectives is useful for news recommender systems to provide high-qualitynews suggestions.
 
-### 2.5 Evaluation
+### 2.5. 2.5 Evaluation
 
 Properly evaluating the performance of personalized news recommendation algorithms is important for devel-oping real-world news recommender systems. Most existing methods use click-related metrics to measure theaccuracy of recommendation results. Some of them regard the recommendation task as a classiication prob-lem [70,116,197], where the performance is evaluated by classiication metrics such as Area Under Curve (AUC)and F1-score. Many other methods use ranking metrics such as Mean Reciprocal Rank (MRR) and normalized Dis-counted Cummulative Gain (nDCG). However, click-based metrics may not indicate user experience. Thus, a fewworks explore to use user engagement-based metrics to evaluate the recommendation performance [215], such asdwell time and dislike, which can evaluate the performance of recommendation models more comprehensively.In most works, the performance of recommendation models is oline evaluated. However, the data used foroline evaluation is usually inluenced by the recommendation results generated by the predecessor recommen-dation algorithms, and the real user feedback on recommendation results cannot be obtained. Only a few worksreported online evaluation results [214], which may better indicate the real performance of the recommendersystems. To ill the gaps between oline and online experiments, one prior study [107] proposed an unbiasedevaluation method of contextual bandit-based news recommendation methods. However, there still lacks a generalmethod that can oline evaluate the potentials of various news recommender algorithms in online environments.
 
-### 2.6 Dataset and Benchmark
+### 2.6. 2.6 Dataset and Benchmark
 
 Publicly available datasets are important for facilitating researches in the corresponding ields as well as bench-marking their results and indings. However, in the personalized news recommendation ield most researches areconducted on proprietary datasets collected from diferent news platforms, such as Google News, Microsoft News,Yahoo News, Bing News, etc. There are only a few datasets that are publicly available for news recommendationresearch. Several representative datasets such as plista [91], Adressa [61] and MIND [223] are widely used byrecent studies. The plista dataset is a German news dataset. A newer version of this dataset is published by the CLEF 2017 NewsREEL [126] task, and a competition is held based on this data to train and evaluate newsrecommender systems. Adressa is a Norwegian dataset that contains not only click information, but also the dwelltime of users and rich context information of users and news. MIND is a large-scale English news recommendationdataset with raw textual information of news. In addition, MIND is associated with a public leaderboard andan open competition, which can fairly compare the performance of diferent algorithms. Thus, many recentresearches are conducted on the MIND dataset [210, 214, 218].
 
-### 2.7 Responsible News Recommendation
+### 2.7. 2.7 Responsible News Recommendation
 
 Most endeavors on personalized news recommendation focus on improving the accuracy of recommendationresults. In recent years, research on the responsibility of machine intelligent systems has gained high attentionto help AI techniques better serve humans and avoid their risky and even harmful behaviors that can lead tonegative societal impacts and unethical consequences [36]. There are many aspects to improve the responsibilityof personalized news recommender systems [5]. For example, since many news recommendation methods arelearned on private user data, it is important to protect user privacy in recommendation model training and onlineserving [159]. Federated learning [137] is a privacy-aware machine learning paradigm, which can empowerthe construction of privacy-preserving news recommender systems. Besides optimizing news recommendationaccuracy, it is also important to promote the diversity of news recommendation results, which can satisfy users’needs on information variety and alleviate the ilter bubble problem [65,164,166,212]. Moreover, fairness isa critical aspect of responsible news recommendation, since the recommendation models learned on biaseduser data may inherit unwanted biases, which may lead to the prejudice of algorithms and further unfairrecommendation results. To mitigate the unfairness issue of news recommendation methods, fairness-awaremachine learning techniques [221] can help build inclusive and fair algorithms to provide high-quality newsrecommendation services to diferent groups of users. These research ields on responsible news recommendationemerging in recent years have the potential to improve the quality of news recommender systems to serve usersin a more responsible way. However, there lacks a systematic review on responsible news recommendation inexisting survey papers. In this survey, we irst give a comprehensive review on the frontiers of responsible newsrecommendation research.
 
 Given the overview above, we then present in-depth discussions on each mentioned core problem in thefollowing sections.
 
-## 3 NEWS MODELING
+## 3. 3 NEWS MODELING
 
 News modeling is a critical step in personalized news recommendation methods to capture the characteristicsof news articles and understand their content. The techniques for news modeling can be roughly divided intotwo categories, i.e., feature-based and deep learning-based. For feature-based methods, news articles are mainlyrepresented by handcrafted features, while deep learning-based methods mainly aim to learn hidden newsrepresentations from the raw inputs. Note that although a few methods may employ some deep learning methodslike multi-layer perceptrons to model interactions between sophisticated handcrafted features, we still categorizethem into feature-based ones because their news representations are not learned from scratch. In addition, somedeep learning-based methods may involve some eforts in feature engineering. Since their news representationmethods mainly focus on incorporating additional features to enhance deep representations learned from scratch,we still put them into the deep learning-based category. The details of the two types of news modeling methodsare as introduced follows.
 
@@ -85,7 +88,7 @@ News modeling is a critical step in personalized news recommendation methods to 
 
 Fig. 3. An overview of different types of news features.
 
-### 3.1 Feature-based News Modeling
+### 3.1. 3.1 Feature-based News Modeling
 
 Designing informative features to represent news articles is the key problem in feature-based news modelingmethods. As summarized in Fig. 2, there are mainly four types of features used in news modeling, which areintroduced as follows.
 
@@ -107,7 +110,7 @@ To draw a big picture of feature-based news modeling methods, we summarize the m
 
 Table 2. Main features used for news representation. \*XF-IDF means TF-IDF and its variants such as CF-IDF and SF-IDF.
 
-### 3.2 Deep learning-based News Modeling
+### 3.2. 3.2 Deep learning-based News Modeling
 
 With the development of deep learning techniques, in recent years many methods employ neural networksto automatically learn news representations. Instead of using handcrafted features like TF-IDF to representnews content, most of them use neural NLP techniques to learn news representations from news texts. Forexample, Okura et al. [144] proposed an embedding-based news recommendation (EBNR) method that uses avariant of denoising autoencoders to learn news representations from news texts. RA-DSSM [96] is a neuralnews recommendation approach which incorporates a similar architecture as DSSM [72]. It irst builds therepresentations of news using the doc2vec [102] tool, then uses a two-layer neural network to learn hidden newsrepresentations. This method is also adopted by [97]. 3-D-CNN [98] represents news by the word2vec [139]embeddings of their words, which is further considered by [242]. However, it is diicult for these methods tomine the semantic information in news texts with traditional neural NLP models.
 
@@ -129,9 +132,9 @@ There are a few methods that learn news representations from graphs. For example
 
 To help better understand the relatedness and diferences between the methods reviewed above, we summarizethe information and models they used for learning news representations in Table 3. Next, we provide severaldiscussions on the aforementioned methods for news modeling.
 
-### 3.3 Discussions on News Modeling
+### 3.3. 3.3 Discussions on News Modeling
 
-#### 3.3.1 Feature-based News Modeling.
+#### 3.3.1. 3.3.1 Feature-based News Modeling.
 
 In feature-based news modeling methods, mining textual information ofnews is critical for representing news content. Many methods incorporate BOW/TF-IDF features or their variantsto represent news texts, which are also popular in the NLP ield. In addition, topic models like LDA are employedby various methods to extract topics from texts. This is probably because topic models are capable of miningthe topic distributions of news articles and can also provide useful clues for inferring user interest on diferenttopics. Moreover, since users may focus more on the entities or keywords in news, they are considered by manymethods to summarize the content and topic of news, and can also be useful links to ind similar news or mapnews on knowledge graphs. Especially, some methods also use ontology such as Wikipedia to extract entityfeatures to represent them more accurately.
 
@@ -145,7 +148,7 @@ Although feature-based news modeling methods have comprehensive coverage of vari
 
 Table 3. Comparison of different methods on news modeling.
 
-#### 3.3.2 Deep Learning-based News Modeling.
+#### 3.3.2. 3.3.2 Deep Learning-based News Modeling.
 
 Among all the reviewed methods, only two methods, i.e., DNA [235]and DeepJoNN [237], directly incorporate the embeddings of news IDs. This is probably because of the shortlifecycle of news articles and the quick generation of novel news, which make the coverage of news IDs in thetraining set very limited. Thus, it is very important to understand news from their content.
 
@@ -159,7 +162,7 @@ There are also a few methods that explore to enhance news modeling with graph in
 
 In summary, by reviewing news modeling techniques used in existing news recommendation methods, we cansee that news modeling is still a quite challenging problem in news recommendation due to the variety, dynamic,and timeliness of online news information.
 
-## 4 USER MODELING
+## 4. 4 USER MODELING
 
 <img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/17-Figure4-1.png">
 
@@ -167,7 +170,7 @@ Fig. 4. An example framework of user modeling.
 
 User modeling is also a critical step in personalized news recommender systems to infer users’ personal interestsin news. It is usually important for user modeling algorithms to understand users from their behaviors [205]. Anexample user modeling framework in personalized news recommendation is shown in Fig. 4. We can see thatuser modeling is based on the modeling of news that users have interactions with, and it introduces additionaluser features to achieve better personalized user understanding. The techniques for user modeling in existingnews recommendation methods can also be classiied into feature-based ones and deep learning-based ones.Feature-based user modeling techniques mainly rely on manually designed user modeling rules or heuristicpatterns to represent user interest. By contrast, deep learning-based methods usually focus on automaticallyinding useful patterns from user behaviors to infer user interest. The details of the two kinds of user modelingmethods are introduced in the following sections.
 
-### 4.1 Feature-based User Modeling
+### 4.1. 4.1 Feature-based User Modeling
 
 Feature-based user modeling methods use handcrafted features to represent users. Similar to news modeling, inCF-based methods users are also represented by their IDs [29, 168]. However, ID-based user modeling methodsusually sufer from the data sparsity. Thus, most methods consider the behaviors of users such as news clicks tomodel their interest. An intuitive way is to use the features of clicked news to build user features. For example,Goossen et al. [58] used the CF-IDF features of clicked news to represent user interest. Capelle et al. [16] proposedto use the SF-IDF features of clicked news for user modeling. Garcin et al. [52] proposed to model users byaggregating the LDA features of all clicked news into a user vector by averaging. However, it is diicult for thesemethods to model users accurately when their news click behaviors are sparse.
 
@@ -183,7 +186,7 @@ Considering the evolutionary characteristics of user interest, some methods mode
 
 To help readers better understand feature-based user modeling methods in personalized news recommendersystems, we summarize the additional user features (ID and news features are excluded) used in these methods in Table 4.
 
-### 4.2 Deep Learning-based User Modeling
+### 4.2. 4.2 Deep Learning-based User Modeling
 
 <img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/19-Table4-1.png">
 
@@ -207,13 +210,13 @@ There are also several methods that learn user representations on graphs that in
 
 We summarize the user information and user modeling techniques used in these deep learning-based methodsin Table 5. We then provide several discussions on the user modeling methods introduced in this section.
 
-### 4.3 Discussions on User Modeling
+### 4.3. 4.3 Discussions on User Modeling
 
-#### 4.3.1 Feature-based User Modeling.
+#### 4.3.1. 4.3.1 Feature-based User Modeling.
 
 Most feature-based methods construct user proiles based on the collectionsof features extracted from the clicked news. Besides the news information, some methods leverage additionaluser features to facilitate user modeling. For example, the demographics of users (e.g., age, gender and profession)are used in several methods, since users with diferent demographics usually have diferent preferences onnews. The location of users can be used to identify the news related to the user’s neighborhood, and the accesspatterns of users can also help understand the news click behaviors of users. In addition, many methods usethe tags or keywords of users to indicate user interest, and cluster users based on their characteristics. In thisway, the recommender system can more efectively recommend news according to users’ interest in diferenttopics. Moreover, several methods incorporate user behaviors on other platforms, such as social media, searchengines and e-commerce platforms. These behaviors can not only facilitate user interest modeling, but also has the potential to mitigate the problem of cold-start on the news platform if user data can be successfullyaligned. However, feature-based user modeling methods usually require massive expertise for feature design andvalidation, and may not be optimal for representing user interests.
 
-#### 4.3.2 Deep Learning-based User Modeling.
+#### 4.3.2. 4.3.2 Deep Learning-based User Modeling.
 
 <img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/23-Table5-1.png">
 
@@ -227,7 +230,7 @@ To select clicked news that is informative for inferring user interest, attentio
 
 Some methods study modeling multiple types of user interests. For example, LSTUR, GNewsRec and FedRecconsider both long-term and short-term interests of users to better capture their interest dynamics. HieRec modelsthe hierarchical structure of user interests, which can capture the user interests in diferent granularities. Thesemethods can improve user interest understanding of user interests by taking diferent kinds of user interest intoconsideration. However, user interests are diverse and evolutional, which are still diicult to be comprehensivelyand accurately modeled by these methods.
 
-#### 4.3.3 Diferences to User Modeling in General Recommendation.
+#### 4.3.3. 4.3.3 Diferences to User Modeling in General Recommendation.
 
 The user modeling techniques used for person-alized news recommendation have close relations to the user modeling methods in general recommendationscenarios such as e-commerce [246] and movie recommendation [35]. For example, the core neural architecturessuch as RNN, CNN, self-attention and graph neural networks, are also widely used for sequential recommendation.In addition, several useful user modeling paradigms such as long short-term user interest modeling are alsopopular in other recommendation ields. However, by scrutinizing recent literature, we ind there are severalunique characteristics of user modeling in personalized news recommendation:
 
@@ -241,11 +244,11 @@ The user modeling techniques used for person-alized news recommendation have clo
 
 In summary, by reviewing user modeling techniques used in existing news recommendation methods, weargue that user modeling is also remained challenging due to many reasons, such as the noise and sparsity ofuser behaviors, the diverse and dynamic characteristics of user interests, and the diiculties in modeling userinterests in a speciic candidate news efectively and eiciently.
 
-## 5 PERSONALIZED RANKING
+## 5. 5 PERSONALIZED RANKING
 
 On the basis of news and user modeling, news ranking aims to rank candidate news for personalized displayaccording to users’ personal interest. Common news ranking techniques can be divided into two categories, i.e.,relevance-based and reinforcement learning-based. We introduce them in the following sections.
 
-### 5.1 Relevance-based Personalized Ranking
+### 5.1. 5.1 Relevance-based Personalized Ranking
 
 Relevance-based news ranking methods usually rank candidate news with user interests based on their personal-ized relevance. In these methods, how to accurately measure the relevance between candidate news and userinterest is a core problem. Many methods directly evaluate the user-news relevance based on the similarities oftheir inal representations. For instance, Goossen et al. [58] computed the cosine similarities between the CF-IDFfeature vectors of user and news to measure their relevance. Garcin et al. [52] used the similarities between thenews topic vectors and the user topic vector to evaluate their relevance. Okura et al. [144] used the inner productbetween news and user representations to predict the relevance scores. DFM [116] uses an inception module thatcombines neural networks with diferent depths to compute the relevance scores from news and user features.These methods usually employ two-tower architectures, which enable eicient inference by computing newsand user features in advance. However, user interests are usually diverse, and candidate news may only matchthe user interests indicated by a part of the clicked news. These methods cannot fully consider the relatednessbetween candidate news and clicked news, and the matching between candidate news and user interest may notbe very accurate.
 
@@ -253,11 +256,11 @@ A few methods use ine-grained interest matching techniques to better model the r
 
 In most methods, candidate news with higher relevance to user interest will gain higher ranks. However, thesemethods may tend to recommend news that are similar to those previously clicked by users, which is also calledthe łilter bubble” problem. Thus, some news ranking methods explore to recommend news that are somewhatdiferent from previously clicked ones to introduce diversity and serendipity [1]. For example, Newsjunkie [47] isa system that ranks news articles based on their novelty in the context of the news that users previously clicked.SCENE [109] irst ranks news articles based on their relevance to user interests, and then reines the ranking listbased on news popularity and recency to form the inal recommendation list. Diferent from the methods that aresolely based on the relevance between candidate news and user interests, these methods have the potential toprovide more diverse recommendations.
 
-### 5.2 Reinforcement Learning-based Personalized Ranking
+### 5.2. 5.2 Reinforcement Learning-based Personalized Ranking
 
 Diferent from relevance-based ranking methods that mainly aim to optimize the objectives (e.g., clicks) oncurrent candidate news articles, reinforcement learning-based ranking methods usually aim to optimize thetotal reward in a long term [179,244]. A representative reinforcement learning-based approach to personalizednews recommendation is LinUCB [106], which models the problem of personalized news recommendation asa contextual bandit problem. In this method, LinUCB computes the payof by a hybrid linear model, whichmeans that some parameters are shared by all arms, while the others are not. LinUCB can outperform context-free bandit methods such asε-greedy and Upper Conidence Bound (UCB), and it is computationally eicientbecause the block parameters in LinUCB have ixed dimensions and can be incrementally updated [106]. It isalso latterly evaluated by [107] in an unbiased manner by estimating the per-trial payof with log data directlyrather than a simulator. In the CLEF NewsREEL 2017 challenge, Liang et al. [117] also developed a systembased on LinUCB. The LinUCB model is used to help choose the appropriate recommender from a pool ofrecommendation algorithms based on user and news features. Deep reinforcement learning is also explored innews recommendation [76,179,244]. For example, DRN [244] uses a Deep Q-Network (DQN) to estimate thepolicy reward, which is a weighted summation of click labels and the activeness of users that is computed basedon their return time after recommendations. In addition, DRN applies the Dueling Bandit Gradient Descent [233]algorithm to eliminate the recommendation performance decline brought by classical exploration methods suchasε-greedy and UCB. Diferent from relevance-based ranking methods, reinforcement learning-based rankingmethods have the ability of exploration, which can increase the diversity of recommendation results and furtherdiscover potential user interests.
 
-### 5.3 Discussions on Personalized Ranking
+### 5.3. 5.3 Discussions on Personalized Ranking
 
 In this section we provide some discussions on the news ranking methods in existing personalized news rec-ommender systems. Relevance-based news ranking methods mainly need to accurately evaluate the relevancebetween candidate news and user interest for subsequent news ranking. Many methods model their overallrelevance by evaluating the relevance between the uniied representations of user interest and candidate news.However, candidate news usually can only match part of user interests, and directly match the overall user interestwith candidate news may be suboptimal. A few methods explore to evaluate the relevance between user interestand candidate news in a ine-grained way by modeling the relatedness between candidate news and clicked news,which can improve the accuracy of relevance modeling for news ranking. However, these methods are muchmore time-consuming because the representations of users are dependent on candidate news and cannot becomputed in advance. Moreover, pure relevance-based interest matching methods may tend to recommend newsthat are similar to previously clicked news, which is not beneicial for users to receive diverse news information.Thus, a few works explore to adjust the news ranking strategy by incorporating other factors such as newsnovelty, popularity and recency, which have the potential to make more diverse news recommendations andmitigate the filter bubble problem in news recommender systems.
 
@@ -265,11 +268,11 @@ In relevance-based news ranking methods, candidate news is usually greedily matc
 
 In summary, news ranking in news recommendation also faces many challenges, including how to accuratelyand eiciently evaluate the relevance between candidate news and user interest indicated by user behaviors, how to mitigate the łilter bubble” problem in news recommender systems, and how to explore potential user interestswithout hurting user experience.
 
-## 6 MODEL TRAINING
+## 6. 6 MODEL TRAINING
 
 Many personalized news recommendation methods exploit machine learning models for news modeling, user mod-eling and interest matching. Training these models is a necessary step in building an accurate news recommendersystem. In this section, we review the techniques used for model training in news recommendation.
 
-### 6.1 Training Methods
+### 6.1. 6.1 Training Methods
 
 In a few methods based on collaborative iltering, the news recommendation task is formulated as a ratingprediction problem, i.e., predicting the ratings that users give to news [78]. To learn their models, they usuallyuse loss functions such as the mean squared error (MSE) computed between the predicted ratings and the goldratings, which are further used to optimize the model [26]. However, explicit user feedback like rating is usuallyvery sparse, which may be insuicient to train an accurate recommendation model.
 
@@ -279,11 +282,11 @@ Besides click feedback, a few methods also consider other kinds of feedback to c
 
 There are several methods that use additional news information to design auxiliary training tasks. For exam-ple, EBNR [144] uses autoencoder to learn news representations and it uses another weak supervision task byencouraging the embeddings of news in the same topic to be similar than the embeddings of news in diferenttopics. TANR [205] uses an auxiliary news topic prediction task to help learn topic-aware news representa-tions. SentiRec [212] uses a news sentiment orientation score prediction task to learn sentiment-bearing newsrepresentations. KRED [121] trains the model in various tasks including item recommendation, item-to-itemrecommendation, category classiication, popularity prediction and local news detection. These methods canalso efectively encode additional information into the recommendation model without taking it as the input.However, it is usually non-trivial to balance the main recommendation task and the auxiliary tasks.
 
-### 6.2 Training Environment
+### 6.2. 6.2 Training Environment
 
 Existing researches mainly focus on the model training methods while ignoring the implementation environmentof model training, which is in fact important in developing real-world news recommender systems. In manyexisting methods, the news recommendation models are oline trained on centrally stored data with centralizedcomputing resources [223]. This model training paradigm can help quick development of news recommendersystems, but it also has several main drawbacks. First, user behavior data for model training is usually abundantand many recent news recommendation models are in large size [214], which require a large amount of computingresource to train accurate models. Although some recent works like [214] explore to train models in parallelon multiple GPUs, it is still insuicient to train huge models. Thus, distributed model learning with properacceleration methods like data rearrangement and cache mechanisms may be required in industrial practice [224].Second, the model learned on oline data only may also have some mismatches with the characteristics ofrecommendation scenarios [244]. Moreover, the distribution of user interest and news topics may also evolve, andit is shown in previous research that the performance of oline trained models may decline with time [204]. Thus,instead of re-training models periodically, online model training on streaming data is needed. Third, most existingnews recommendation methods are trained on centrally stored user data, which may have some privacy risksbecause user data usually contains private user information. Several recent works like [158,159,231] explore totrain news recommendation models based on decentralized data with federated learning techniques, which canbetter protect user privacy in model training.
 
-### 6.3 Discussions on Model Training
+### 6.3. 6.3 Discussions on Model Training
 
 Next, we provide some discussions on the model training techniques used in news recommendation methods.In some CF-based methods, news recommendation is modeled as a regression task where the ratings given byusers are regarded as prediction targets. However, on news platforms explicit user feedback such as rating isusually scarce, which poses great challenges to model training. Therefore, most methods adopt implicit feedbackto construct training tasks. Click feedback is one of the most widely used signals for model training because itcan implicitly indicate user interests in news and help the model optimize the CTR of recommendation results.However, click signals also have some gaps with the real user interests [232], and increasing CTR only may leadto recommending clickbait news to users, which is actually harmful to user experience. Thus, a few methodsincorporating other user engagement signals such as dwell time and inish into model training, which can helplearn user engagement-aware recommendation model to improve user experience. Besides user feedback, somemethods also consider using additional news information as auxiliary prediction objectives. By jointly trainingthe model in both recommendation task and auxiliary tasks, the model can be aware of the additional newsinformation. Since these methods do not take the additional features as the input, they can handle the scenarioswhere the additional features are unavailable. However, in multi-task learning based methods, it is diicult tochoose the proper coeicients for weighting the loss functions of diferent tasks, and these coeicients may alsobe sensitive to the dataset characteristics.
 
@@ -293,53 +296,106 @@ Besides, the environment for news recommendation model training is a less studie
 
 In summary, model training is critical for news recommendation while it still has much room for improvement,such as designing more efective training tasks, choosing more representative training samples, adaptivelytuning the loss coeicients for multi-task learning, and building more efective, eicient and privacy-preservingenvironment for news recommendation model training.
 
-#### 6.3.1 A Bird’s-eye View on Recent Approaches.
+#### 6.3.1. 6.3.1 A Bird’s-eye View on Recent Approaches.
 
 To help readers better understand the details of recent newsrecommendation methods in terms of their news modeling, user modeling, ranking, and model training techniques,we illustrate a joint table that summarizes their details in these aspects. Due to the limitation of page sizes, we do notinclude it in the main content, and readers can refer to it in a public repository (https://github.com/wuch15/News-Rec-Survey).
 
-## 7 EVALUATION METRICS
+## 7. 7 EVALUATION METRICS
 
 There are many metrics to quantitatively evaluate the performance of news recommender systems. Most metricsaim to measure the recommendation performance in terms of the ranking relevance. For methods that regard thetask of news recommendation as a classiication problem, the Area Under Curve (AUC) score is a widely usedmetric, which is formulated as follows:
 
-formula (1)
+$$
+AUC=\frac{1}{N(N-1)} \sum_{i}^{N-1} \sum_{j}^{i+1} \frac{1}{2} [f_{i} \geq f_{j}] \tag{1}
+$$
+
+ここで、$N$はサンプル数、$f_{i}$はサンプル $i$ のスコア、$[f_{i} \geq f_{j}]$は $f_{i} \geq f_{j}$ のときに 1、それ以外のときに 0 となる真偽値関数です。
 
 where $N_p$ and $N_n$ the numbers of positive and negative samples, respectively. $p_i$ is the predicted score of the i-th positive sample and $n_j$ is the score of the j-th negative sample. Another set of popular metrics are precision,recall and F1 scores, which are computed as:
 
-formula (2), (3), (4)
+$$
+\text{Precision} = \frac{TP}{TP + FP} \tag*{2}
+$$
+
+$$
+\text{Recall} = \frac{TP}{TP + FN} \tag*{3}
+$$
+
+$$
+\text{F1} = \frac{2 * \text{Precision} * \text{Recall}}{\text{Precision} + \text{Recall}} \tag*{4}
+$$
 
 where TP, FP and FN respectively denote true positive, false positive and false negative.
 
 For methods that model news recommendation as a regression task (e.g., predict the ratings of news), severalcommon metrics for regression such as mean absolute error (MAE), mean squared error (MSE), rooted meansquared error (RMSE) and Pearson correlation coeicient (PCC) are used to indicate the recommendationperformance, which are respectively formulated as follows:
 
-formula (5), (6), (7), (8)
+$$
+MAE = hoghoge \tag*{5}
+$$
+
+$$
+MSE = hogehoge \tag*{6}
+$$
+
+$$
+RMSE = hoge \tag*{7}
+$$
+
+$$
+PCC = hoge \tag*{8}
+$$
 
 where $r_i$ and $p_i$ are the real and predicted ratings of the i-th sample, ̄r and ̄p respectively denote the arithmeticmean of the real and predicted ratings, and $\sigma$ is the standard deviation.
 
 For methods that regard news recommendation as a ranking task, besides the AUC metric there are also severalother metrics such as Average Precision (AP), Hit Ratio (HR), Mean Reciprocal Rank (MRR) and normalizedDiscounted Cummulative Gain (nDCG). Note that these metrics may be applied to the top K recommendationlists, e.g., HR@K and nDCG@K. These metrics are respectively formulated as follows:
 
-formula 9,10, 11, 12
+$$
+AP = hoge \tag*{9}
+$$
+
+$$
+HR@K = hoge \tag*{10}
+$$
+
+$$
+MRR = hoge \tag*{11}
+$$
+
+$$
+nDCG@K = hoge \tag*{12}
+$$
 
 where $r_i$ is a relevance score of news with the i-th rank, which is 1 for clicked news and 0 for non-clicked news.There are several other metrics such as Click-Through Rate (CTR) and dwell time, which can be only used tomeasure the performance of online news recommenders.
 
 Besides the metrics for measuring ranking accuracy, there are several other objective or subjective metricsto evaluate news recommender systems in other aspects. In [47] the recommendation results are evaluated bynovelty, which is subjectively judged by a group of human subjects by rating the news sets from most novel to leastnovel. In FeedRec [215], the recommendation results are further evaluated by a set of user engagement-relatedmetrics, such as the average dwell time, inish ratio, dislike ratio and share ratio of the top ranked news. Thesemetrics can help comprehensively evaluate the performance of news recommender systems and further improveuser experience. A few methods also measure the diversity of recommendation results in diferent aspects. Forexample, in [244], an Intra-List Similarity (ILS) function is used to measure the diversity of recommendationresults. More speciically, given a ranking list $L$, its ILS score is calculated as follows:
 
-formula 13
+$$
+\text{ILS}(L) = hoge \tag*{13}
+$$
 
 where $S(b_i,b_j)$ represents the cosine similarity between the item $b_i$ and $b_j$. A similar diversity metric ILAD is alsoused in [157,160]. SentiRec [212] uses a set of sentiment diversity metrics to measure the sentiment diferencebetween historical clicked news and candidate news, which are formulated as follows:
 
-formula 14
+$$
+\text{Senti}_{MRR} = \max() \\
+\text{Senti}@5 = hoge \\
+\text{Senti}@10 = hoge \\
+\tag*{14}
+$$
 
 where N is the number of candidate news in an impression,$s_i^c$ denotes the sentiment score of the i-th ranked candidate news.
 
 Besides diversity, several fairness metrics are used to measure whether a news recommender system is fair todiferent groups of users or diferent news publishers. For example, FairRec [221] uses the accuracy of sensitiveattribute (e.g., gender) prediction based on top recommendation results as the fairness metric, where a higheraccuracy means more serious unfairness because the recommendation results are more heavily inluenced bysensitive attributes. [57] studies the news recommendation fairness to diferent groups of authors. It uses anEquity Attention for group fairness (EAGF) measurement and a Supplier Popularity Deviation (SPD) measurementfor evaluating such kind of fairness, which if formulated as follows:
 
-formula 15
+$$
+\text{EAGF} = hoge \\
+\text{SPD} = piyo 
+\tag*{15}
+$$
 
 where g is the set of author groups and $L(i)$ is the set of recommended news belonging to the i-th group,Lis theset of all recommended items, $A(i)$ is the set of items in the training set belonging to thei-th group, andAis thewhole set of items. A higher EAGF and a lower SPD score indicate better fairness. These metrics used in the twoworks can be used to measure user-side fairness and provider-side fairness, respectively.
 
 With the development of privacy-preserving news recommendation methods based on federated learning,a few measurements can be used to evaluate the degree of privacy protection in news recommendation. Forexample, in FedRec [158] the privacy protection ability of the model can be directly indicated by the privacybudget of model gradients. In addition, privacy protection can also be measured by conducting membershipinference attack on user behavior histories to guess whether a behavior belongs to a target user [159]. Thesemetrics can indicate whether private user information encoded in exchanged models results is well-protected.
 
-## 8 DATASET, COMPETITION AND BENCHMARK
+## 8. 8 DATASET, COMPETITION AND BENCHMARK
 
 Table 6. Comparisons of the five public datasets for news recommendation.
 
@@ -363,11 +419,11 @@ Based on the datasets introduced above, several competitions and benchmarks on p
 
 Another recent competition is the MIND News Recommendation Competition6, which is conducted on theMIND dataset. The goal of this challenge is to predict the click scores of candidate news based on user interestsand rank candidate news in each impression. This challenge attracted more than 200 registered participantsand the top submission achieved 71.33% in terms of AUC. The leaderboard of this challenge opens after thechallenge, and researchers can submit their predictions on the test set to obtain the oicial evaluation scores. Thecurrent top result on this leaderboard is 73.04% in terms of AUC, which is achieved by a recommender namedłUniUM-Fastformer-Pretrain” based on the techniques in [214] and [219]. The MIND dataset, challenge and thepublic leaderboard can form a good benchmark to facilitate research and engineering on personalized newsrecommendation.
 
-## 9 RESPONSIBLE PERSONALIZED NEWS RECOMMENDATION
+## 9. 9 RESPONSIBLE PERSONALIZED NEWS RECOMMENDATION
 
 Although personalized news recommendation techniques have achieved notable success in targeting user interest,they still have several issues that may afect user experience and even lead to potential negative social impacts.There are several critical problems in developing more responsible personalized news recommender systems,including privacy protection, debiasing and fairness, diversity, and content quality, which are discussed in thefollowing sections, respectively.
 
-### 9.1 Privacy Protection
+### 9.1. 9.1 Privacy Protection
 
 Most existing personalized news recommender systems rely on centralized storage of users’ behavior data foruser modeling and model training. However, user behaviors are usually privacy sensitive, and centrally storing them may lead to users’ privacy concerns and further risks on data leakage [115]. There are only a few works thatstudy the privacy preservation problem in news recommendation [32,158]. For example, FedRec [158] may bethe irst attempt to learning privacy-preserving news recommendation model. Instead of collecting and storinguser behavior data in a central server, in FedRec users’ news click data are locally stored on user devices. FedRecuses a federated learning based framework to collaboratively learn news recommendation model. Each clientkeeps a local copy of the model and locally computes the model updates based on local data. The local modelupdates are uploaded to a central server that coordinates a number of user clients for model training. The serveraggregates the local gradients into a global one to update its maintained global model, and distributes the updatedglobal model to user devices for local update. In addition, to further protect user privacy, FedRec applies localdiferential privacy (LDP) techniques to perturb the local model gradients. Since the protected model gradientsusually contain much less private information, user privacy can be better protected. However, FedRec is only aframework for privacy-preserving news recommendation model training, and privacy-preserving online servingis still a challenging problem.
 
@@ -375,76 +431,76 @@ Uni-FedRec [159] is an improved version of FedRec that considers both privacy-pr
 
 Although existing works on privacy-preserving news recommendation have made notable progresses, there arestill many challenges in this ield, such as the huge performance sacriice of diferential privacy mechanism, thediiculty of involving some context features (e.g., CTR) and collaborative information in GNN, and the diicultyof real-world deployment of federated news recommender systems.
 
-### 9.2 Debiasing
+### 9.2. 9.2 Debiasing
 
 User behavior data usually encodes various kinds of biases. Some kinds of biases are related to news. For example,click behaviors are inluenced by the positions and sizes of news displayed on the webpages (i.e., presentationbias) [230]. In addition, popular news may have higher chances to be clicked than unpopular news (i.e., popularitybias) [157]. These types of bias information may afect the accuracy of user interest modeling and model training.A few works explore to eliminate the inluence of certain kinds of bias information to improve personalized newsrecommendation. For instance, DebiasRec [230] aims to reduce the inluence of position and size biases on newsrecommendation. It uses a bias-aware user modeling method to learn debiased user interest representations,and uses a bias-aware click prediction method that decomposes the overall click score into a bias score and abias-independent user preference score. PP-Rec [157] uses a popularity-aware user modeling method to learncalibrated user interest representations, and it separately models the popularity of news and users’ personalpreference on news, which can help better model personalized user interest. These methods mainly aim toinfer debiased user interest from biased user data. However, without any prior knowledge about unbiased datadistribution, the bias information usually cannot be fully eliminated. In addition, many kinds of bias such as exposure and selection biases are rarely studied in the news recommendation ield. Thus, it is important forfuture research to understand how diferent biases afect user behaviors and the recommendation model as wellas how to eliminate their efect in model training and evaluation.
 
-### 9.3 Fairness
+### 9.3. 9.3 Fairness
 
 Making fair recommendations is an important problem in responsible news recommendation. Researchers havestudied various kinds of fairness problems in recommendation, such as provider-side fairness and consumer-sidefairness [12]. In personalized news recommendation, a representative kind of unfairness is brought by the biasesrelated to sensitive user attributes, such as genders and professions. Users with the same sensitive attributesmay have similar patterns in news click behaviors, e.g., fashion news are more preferred by female users. Themodel may capture these biases and produce biased recommendation results, e.g., tend to only recommendfashion news to female users. This will lead to the unfairness problem that some users cannot obtain theirinterested news information, which is harmful to user experience. To address this problem, FairRec [221] uses adecomposed adversarial learning framework with independent user models to learn a bias-aware user embeddingand a bias-free user embedding. The bias-aware user embedding mainly aims to capture bias information relatedto sensitive user attributes, and the bias-free user embedding aims to model bias-independent user interest.Both embeddings are regularized to be orthogonal thereby the bias-free user embedding can contain less biasinformation. The bias-free user embedding is further used for making fair news recommendations. By learninguser embeddings that are agnostic to the sensitive user attributes, the unfairness brought by the bias informationrelated to sensitive user attributes can be efectively mitigated. However, adversarial learning based methods areusually brittle and it is diicult to tune their hyperparameters to fully remove the bias information. In addition,many other genres of fairness (e.g., provider-side fairness) are less studied in news recommendation. In summary,there are many types of fairness to be improved in news recommendation and it is non-trivial to make both fairand accurate news recommendations.
 
-### 9.4 Diversity
+### 9.4. 9.4 Diversity
 
 Diversity is critical for personalized news recommendation [124,155,169]. Users may not prefer to click news withhomogeneous information and improving the information variety is important for improving user experience andengagement [6]. However, most existing news recommendation methods focus on optimizing recommendationaccuracy while ignoring recommendation diversity, and it is shown in [157,160,212] that many existing newsrecommendation methods cannot make suiciently diverse recommendations. There are only a few methods thatconsider the diversity of news recommendation. Some methods aim to recommend news that are diverse frompreviously clicked news [47,212], and several other works explore to diversify the top news recommendationlist [46,109]. However, there is still no work on promoting both kinds of diversity in news recommendation.In addition, many diversity-aware news recommendation methods rely on reranking strategies to improverecommendation diversity, which may not be optimal for achieving a good tradeof between recommendationaccuracy and diversity. Thus, further research on learning uniied diversity-aware news recommendation modelsis important for improving the quality of online news services.
 
-### 9.5 Content Moderation
+### 9.5. 9.5 Content Moderation
 
 The moderation of news content in news recommendation is a rarely studied problem. In fact, some newsarticles published online are clickbaits, fake news or containing misinformation. In addition, some news mayencode adversarial clues [33] or contain low-quality or even harmful content (e.g., racialism and hate speech).Recommending these news will damage user experience and the reputation of news platforms, and may evenlead to negative societal impact [101]. Although online news platforms can perform manual moderation on news content quality, the huge amount of online news information makes it too diicult or even impossible to ilter allnews articles with harmful and useless content. Thus, it is important to design news recommendation algorithmsthat can avoid recommending news with low-quality content. Researchers have found that news with high ratiosof short reading dwell time (e.g., less than 10 seconds) are probably clickbaits [209]. In addition, user behaviorssuch as comments and sharing on social media may also provide rich clues for detecting news that containmisinformation and harmful content [4,177]. Thus, incorporating the various user feedback has the potential tohelp recommend news with high-quality content, which can improve the responsibility of news recommendationalgorithms.
 
-## 10 FUTURE DIRECTION AND CONCLUSION
+## 10. 10 FUTURE DIRECTION AND CONCLUSION
 
-### 10.1 Deep News Understanding
+### 10.1. 10.1 Deep News Understanding
 
 News modeling is at the heart of personalized news recommendation. It can be improved in the following aspects.First, text understanding is a core problem in news modeling, and existing methods may not be capable ofunderstanding the textual content of news deeply. Thus, using more advanced NLP techniques (e.g., knowledge-aware PLMs) may help better understand news texts and improve news modeling. Second, besides textualinformation, news also contain rich multimodal information such as images, videos and slides. The multimodalnews content can provide complementary information on news understanding. Thus, using multimodal contentmodeling techniques has the potential to improve the comprehensiveness of news understanding. Third, thereare many useful factors for news modeling that are not covered by news content, such as publisher, popularityand recency. A uniied framework is required to incorporate various kinds of news information (e.g., propertyfeatures and context features) and meanwhile efectively model the relatedness between diferent features. Furtherresearch on these directions can help understand news more accurately and deeply to empower subsequent usermodeling and news ranking.
 
-### 10.2 Universal User Modeling
+### 10.2. 10.2 Universal User Modeling
 
 User modeling is critical for understanding users’ interest in news. However, it is diicult to model the dynamic anddiverse user interest accurately and comprehensively for news recommendation. To tackle this problem, a universaluser modeling framework that can model various kinds of user interest is needed. We argue that this frameworkshould satisfy the following requirements. First, the user modeling framework needs to comprehensively inferuser interest from multiple kinds of user behaviors and feedback. This is because click behaviors are very noisyand may be sparse for some users, and it is insuicient to model user interests solely from click behaviors.Fortunately, diferent kinds of user behaviors and feedback (e.g., read and dislike) can provide rich complementaryinformation like user engagement, and incorporating them in a uniied framework can better support usermodeling. Second, the framework needs to model the diverse and multi-grained user interest. Since a single userembedding may be insuicient to comprehensively model user interests, it may be a promising way to representuser interest with more sophisticated structures such as embedding sets and graphs to improve the understandingof user interest. Third, the framework needs to capture the dynamics of user interests. Since user interest usuallyevolves with time, it is important to understand user interest in diferent periods and further model their inherentrelations. To meet this end, using more advanced sequence modeling techniques may help improve user interestmodeling in personalized news recommendation.
 
-### 10.3 Efective and Eficient Personalized Ranking
+### 10.3. 10.3 Efective and Eficient Personalized Ranking
 
 News ranking is an essential step to make personalized news recommendations. There are mainly three researchdirections to improve news ranking. First, most existing personalized ranking methods are mainly based thecoarse-grained relevance between candidate news and user interest, which may not be optimal for accuratelytargeting user interest. Although a few methods can model the ine-grained relatedness between user and news,they are ineicient and may not be suitable for scenarios with limited computation resources and latency tolerance.Thus, developing both efective and eicient personalized ranking methods is important for improving onlinenews recommendation. Second, ranking news solely based on relevance may lead to the ilter bubble problem. It isimportant to design more sophisticated news ranking strategies to achieve a good tradeof between accuracy anddiversity. Third, most existing news ranking methods are greedy, i.e., only consider the current ranking list in theranking policy. However, they may not be optimal for achieving good user engagement in the long-term. Thus,designing proper news ranking strategies to optimize long-term rewards may be beneicial for user experience.
 
-### 10.4 Hyperbolic Representation Learning for News Recommendation
+### 10.4. 10.4 Hyperbolic Representation Learning for News Recommendation
 
 In most existing news recommendation methods, news and users representations are learned in Euclidean space.Matching functions such as inner product and cosine similarity are widely used for computing relevance scoresfor news ranking. However, representation learning in Euclidean space is inefective in capturing the hierarchicalstructure of data, while hyperbolic representation learning is much better at it. There are many inherent hierarchi-cal data structures in personalized news recommendation, such as diferent levels of user interests, news topics,and commonsense knowledge encoded by knowledge graphs. Thus, news recommendation with hyperbolicrepresentation learning may be a promising solution. There are several existing neural architectures in hyperbolicspace, such as hyperbolic attention [60] and hyperbolic GCN [20], which can serve as the core model componentsin news recommendation. In addition, there have been several successful applications of hyperbolic representationlearning to CF-based recommendation [184,194] and knowledge graph embedding [19,198], which can provideuseful guidance of collaborative signal modeling and knowledge exploitation in news recommendation. Futureresearch on hyperbolic representation learning may create a new direction to overcome several drawbacks ofcurrent user/news modeling and personalized ranking techniques conducted in Euclidean space.
 
-### 10.5 Unified Model Training
+### 10.5. Unified Model Training
 
 Model training techniques are also important for learning efective and robust personalized news recommendationmodels. There are four potential directions for future works to improve model training. First, most methods onlyuse click signals for model training, which may be inaccurate because click signals are usually noisy and biased.In addition, the supervision signals in speciic tasks may also be insuicient [220]. Thus, a uniied frameworkto incorporate various kinds of supervised and self-supervised training signals and objectives for collaborativemodel learning can efectively improve the model quality. Second, although several methods explore to usemulti-task learning frameworks to incorporate multiple objectives into model training, they need to manuallytune the loss coeicients of diferent tasks in model training, which usually require much human efort and maybe sensitive to the characteristics of datasets. Thus, a self-adaptive multi-task learning framework to automaticallytune hyperparameters like loss coeicients can reduce the developing efort and improve the model generality.Third, many methods use randomly selected negative samples for model training, which may be noisy andless informative. Thus, using more efective negative sampling can help train more robust and accurate newsrecommendation models. Fourth, oline trained models may have gaps with the online scenarios and may suferfrom the performance decline with time. Thus, it is important to incorporate both oline and online learningtechniques to help the model better adapt to the latest online serving requirements.
 
-### 10.6 News Recommendation in Social Context
+### 10.6. News Recommendation in Social Context
 
 On some news platforms, users may have social interactions with other users in many ways, such as leavingcomments, replies, and sharing to their social media blogs like Twitter. The social interactions among usersconcerning certain news can usually relect their opinions, preferences, and satisfaction on the recommendednews [200], which can provide rich complementary information to user modeling. In addition, users’ discussionsand dissemination behaviors can also help understand the content, quality and authenticity of news [177]. Besides,they can help recognize breaking news and adjust recommendation results accordingly [153]. Therefore, thesocial contexts of news recommendation play an important role. However, they are usually neglected by newsrecommendation researches in recent years. In future researches, it is an interesting topic to study the impacts ofusers’ online social interactions on the accuracy, timeliness and quality of news personalization.
 
-### 10.7 Privacy-preserving News Recommendation
+### 10.7. Privacy-preserving News Recommendation
 
 In recent years, the ethical issues of intelligent systems have attracted much attention from both the academiaand public. Developing more responsible news recommender systems can help better serve users of onlinenews services with smaller risks. One important direction for improving the responsibility of personalized newsrecommendation is user privacy protection. Although a few works like [158] explore to use federated learningtechniques to train news recommendation models in a privacy-preserving way, there are still many challenges indeveloping a privacy-preserving news recommender system. First, given a model learned in a federated way, it isstill challenging to deploy it online to serve users eiciently. Second, there may also be potential privacy risksduring the training and serving of news recommendation models, and canonical diferential privacy techniquesusually lead to a heavy sacriice on model utility. Third, the data isolation problem in federated learning frameworksettings makes it diicult to exploit some context features like CTR and collaborative information in GNN. Thus,further researches on developing more efective, eicient and privacy-preserving news recommendation methodsare needed.
 
-### 10.8 Secure and Robust News Recommendation
+### 10.8. Secure and Robust News Recommendation
 
 Existing researches on news recommendation focus on building algorithms in a trusted environment. However,in real-world scenarios there may be various kinds of threats brought by malicious users and platforms. Forexample, existing news recommendation methods are vulnerable to poisoning attacks, which aim to promotecertain items, trigger certain backdoors, or degrade the recommender system performance. In addition, newsrecommender systems may be sensitive to adversarial samples. When news recommender systems are trainedin the federated learning framework, the threats from the untrusted outside environment become even moreserious. Unfortunately, although the security and robustness of personalized news recommender systems arecritical, researches on this problem are rather limited. Future studies on secure and robust news recommendationare important for the stability and reliability of online news platforms.
 
-### 10.9 Diversity-aware News Recommendation
+### 10.9. Diversity-aware News Recommendation
 
 Besides accuracy, diversity in news recommendation also has decisive inluence on user experience. There arethree main research directions to improve the diversity of news recommendation. The irst one is temporal-spatialdiversity-aware news recommendation, which aims to recommend news that are diverse from each other andmeanwhile diverse from historical clicked news. This can help the recommendation results better satisfy users’preference on information variety. The second one is personalizing the diversity in news recommendation.Diferent users may have diferent preferences on the tradeof between accuracy and diversity, and it maybe better to consider their personalized preference to improve user experience. The third one is ine-graineddiversity, which aims to not only diversify the content and topic of news, but also many other factors like publishers, locations, opinions and emotions. It has the potential to make higher-quality diversity-aware newsrecommendations.
 
-### 10.10 Bias-free News Recommendation
+### 10.10. Bias-free News Recommendation
 
 Debiasing is another important problem in improving the responsibility of news recommendation. The biasesencoded by user behavior data will propagate to the recommendation model and may further be ampliied inthe loops of recommendation. Thus, designing efective methods to eliminate the inluence of the various kindsof biases on recommendation results is important for making high-quality news recommendations. There areseveral potential research directions in this ield. First, it is important to understand the inluence of diferentkinds of biases on user behaviors and the recommendation model, which can help the subsequent debiasing.Second, diferent users may be inluenced by the same bias information in diferent ways, and considering thepersonalized preference of users on bias information can help better eliminate the efects of biases. Third, thereare various kinds of biases in news recommendation. A uniied debiasing framework that can simultaneouslyreduce the efects of diferent biases can greatly improve the accuracy and robustness of news recommendationalgorithms.
 
-### 10.11 Fairness-aware News Recommendation
+### 10.11. Fairness-aware News Recommendation
 
 Fairness is an essential but often ignored factor in personalized news recommendation. A fair news recommendersystem is required to provide fair recommendation services to diferent groups of users and give fair chancesto news from diferent providers to be recommended. Future research on fair news recommendation can beconducted in the following three directions. First, it is important to reduce the consumer-side unfairness relatedto sensitive user attributes. Although adversarial learning techniques are mature solutions to this problem, theyare usually brittle and diicult to tune. Thus, more robust and efective methods are required to remove thebiases introduced by sensitive user attributes. Second, diferent news providers and publishers are diverse intheir characteristics, such as topic preference and reputation. Thus, it is non-trivial to properly balance therecommendation chances of news from diferent providers and publishers to achieve better provider-side fairness.Third, there are diferent types of fairness in the personalized news recommendation scenario, and it is verychallenging to simultaneously achieve multi-side fairness without a heavy sacriice of recommendation accuracy.
 
-### 10.12 Content Moderation in News Recommendation
+### 10.12. Content Moderation in News Recommendation
 
 The moderation of news content is important for online news platforms to avoid recommending news withlow quality or harmful content to users and mitigate their impact on users and society. However, this issue israrely studied and cannot be resolved by most existing news recommendation methods. There are three keyresearch directions on this problem. First, it is essential to understand the generation and spreading mechanism ofharmful news as well as their impact on users, which can help news platforms better defend toxic content. Second,it may be useful to incorporate content moderation techniques like fake news detection [177] and clickbaitdetection [211] into news recommendation to adjust the recommendation results according to the quality ofnews content. Third, without the assistance of additional tasks and resources, we can learn content quality-awarenews recommendation models with the guidance of certain kinds of user feedback such as comments and dislikes,which is expected to help recommend high-quality news to users.
 
-### 10.13 Societal Impact of News Recommendation
+### 10.13. Societal Impact of News Recommendation
 
 News recommender systems can generate societal impact when they serve a certain number of users. They mayimperceptibly inluence the opinions and views of users when displaying personalized news content [134]. Thus, itis valuable for further research to identify and analyze the societal impact of personalized news recommendation algorithms, such as their inluence on political events, economic activities and psychological health. In addition,research on how to reduce the potential negative societal impact of personalized news recommendation methodscan help avoid their risky behaviors and better serve online users.
 
-## Conclusion
+## 11. Conclusion
 
 Finally, we present a conclusion to this survey paper. In this survey, we conduct a comprehensive overviewof the personalized news recommendation ield, including the technologies involved in diferent core modulesof a personalized news recommender, the dataset and metrics for performance evaluation, the key points fordeveloping responsible personalized news recommender systems, and potential directions to be explored in thefuture. Diferent from existing survey papers that follow the conventional taxonomy of news recommendationmethods, in this paper we provide a novel perspective to understand personalized news recommendationfrom its key problems and the associated techniques and challenges. In addition, this is the irst survey paperthat comprehensively covers both traditional and up-to-date deep learning techniques for personalized newsrecommendation, which can provide rich insights for extending the frontier of this ield. We hope this paper canfacilitate future research on personalized news recommendation as well as related ields in NLP and data mining.
