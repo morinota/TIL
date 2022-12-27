@@ -1,88 +1,134 @@
 from typing import Tuple
 
+import numpy as np
 import torch
-from pairwise_distances import pairwise_distances
+from pairwise_distances import calc_pairwise_distances
 from torch import Tensor
+from valid_triplet import TripletValidetor
 
 
-def batch_all_triplet_loss(
-    labels: Tensor,
-    embeddings: Tensor,
-    margin: float,
-    squared: bool = False,
-) -> Tuple[Tensor, Tensor]:
-    """Build the triplet loss over a batch of embeddings.
-    We generate all the valid triplets and average the loss over the positive ones.
+class BatchAllStrategy:
+    def __init__(
+        self,
+        margin: float,
+        squared: bool = False,
+    ) -> None:
+        """
+        - margin : float
+            margin for triplet loss
+        - squared : bool, optional
+            If true, output is the pairwise squared euclidean distance matrix.
+            If false, output is the pairwise euclidean distance matrix.,
+            by default False
+        """
+        self.margin = margin
+        self.squared = squared
+        self.triplet_validetor = TripletValidetor()
 
-    Parameters
-    ----------
-    labels : Tensor
-        labels of the batch, of size (batch_size,)
-    embeddings : Tensor
-        tensor of shape (batch_size, embed_dim)
-    margin : float
-        margin for triplet loss
-    squared : bool, optional
-        If true, output is the pairwise squared euclidean distance matrix.
-        If false, output is the pairwise euclidean distance matrix.,
-        by default False
+    def calc_triplet_loss(
+        self,
+        labels: Tensor,
+        embeddings: Tensor,
+    ) -> Tuple[Tensor, Tensor]:
+        """Build the triplet loss over a batch of embeddings.
+        We generate all the valid triplets and average the loss over the positive ones.
 
-    Returns
-    -------
-    Tuple[Tensor, Tensor]
-        triplet_loss: scalar tensor containing the triplet loss
-    """
-    # Get the pairwise distance matrix
-    pairwise_distance_matrix = pairwise_distances(embeddings, squared=squared)
-    anchor_positive_dist = pairwise_distance_matrix.unsqueeze(dim=2)  # 指定されたidxにサイズ1の次元をinsertする
-    # -> (batch_size, batch_size, 1)
-    anchor_negative_dist = pairwise_distance_matrix.unsqueeze(dim=1)
-    # -> (batch_size, 1, batch_size)
-
-    # Compute a 3D tensor of size (batch_size, batch_size, batch_size)
-    # triplet_loss[i, j, k] will contain the triplet loss of anchor=i, positive=j, negative=k
-    # Uses broadcasting where the 1st argument has shape (batch_size, batch_size, 1)
-    # and the 2nd (batch_size, 1, batch_size)
-    triplet_loss = anchor_positive_dist - anchor_negative_dist + margin
-    # Put to zero the invalid triplets
-    # (where label(a) != label(p) or label(n) == label(a) or a == p)
+        Parameters
+        ----------
+        labels : Tensor
+            labels of the batch, of size (batch_size,)
+        embeddings : Tensor
+            tensor of shape (batch_size, embed_dim)
 
 
-def _get_triplet_mask(labels: Tensor) -> Tensor:
-    """Return a 3D mask where mask[a, p, n]
-        is True iff the triplet (a, p, n) is valid.
+        Returns
+        -------
+        Tuple[Tensor, Tensor]
+            triplet_loss: scalar tensor containing the triplet loss
+            fraction_positive_triplets: scalar tensor containing 有効なtripletに対するpositive(i.e. not easy) tripletsの割合
+        """
+        pairwise_distance_matrix = calc_pairwise_distances(embeddings, squared=self.squared)
+        triplet_loss = self._initialize_triplet_loss(pairwise_distance_matrix)
 
-    A triplet (i, j, k) is valid if:
-        - i, j, k are distinct
-        - labels[i] == labels[j] and labels[i] != labels[k]
+        valid_triplet_mask = self.triplet_validetor.get_mask(labels)
 
-    Parameters
-    ----------
-    labels : Tensor
-        int32 `Tensor` with shape [batch_size]
+        triplet_loss = self._remove_invalid_triplets(triplet_loss, valid_triplet_mask)
 
-    return:Tensor
-    """
-    pass
+        triplet_loss = self._remove_negative_loss(triplet_loss)
+
+        num_positive_triplets = self._count_positive_triplet(triplet_loss)
+
+        num_valid_triplets = torch.sum(valid_triplet_mask)
+        fraction_positive_triplets = num_positive_triplets / (num_valid_triplets + 1e-16)
+        # -> 有効なtripletに対するnot easy tripletsの割合
+
+        # Get final mean triplet loss over the positive valid triplets
+        triplet_loss = torch.sum(triplet_loss) / (num_positive_triplets + 1e-16)
+
+        return triplet_loss, fraction_positive_triplets
+
+    def _initialize_triplet_loss(self, pairwise_distance_matrix: Tensor) -> Tensor:
+        """triplet_loss(batch_size*batch_size*batch_sizeの形のTensor)の初期値を作る.
+        各要素がtriplet_loss(i,j,k),
+        一旦、全てのi,j,kの組み合わせでtriplet_lossを計算する
+        """
+        # 指定されたidxにサイズ1の次元をinsertする
+        anchor_positive_dist = pairwise_distance_matrix.unsqueeze(dim=2)
+        # -> (batch_size, batch_size, 1)
+        anchor_negative_dist = pairwise_distance_matrix.unsqueeze(dim=1)
+        # -> (batch_size, 1, batch_size)
+
+        # Compute a 3D tensor of size (batch_size, batch_size, batch_size)
+        # triplet_loss[i, j, k] will contain the triplet loss of anchor=i, positive=j, negative=k
+        # Uses broadcasting where the 1st argument has shape (batch_size, batch_size, 1)
+        # and the 2nd (batch_size, 1, batch_size)
+        return anchor_positive_dist - anchor_negative_dist + self.margin
+
+    def _remove_invalid_triplets(self, triplet_loss: Tensor, valid_triplet_mask: Tensor) -> Tensor:
+        """triplet lossのTensorから、有効なtripletのlossのみ残し、無効なtripletのlossをゼロにする"""
+        masks_float = valid_triplet_mask.float()  # True->1.0, False->0.0
+        return triplet_loss * masks_float  # アダマール積(要素積)を取る
+
+    def _remove_negative_loss(self, triplet_loss: Tensor) -> Tensor:
+        """triplet lossのTensorから、negative(easy) triplet lossをゼロにし、positive(hard)なlossの要素のみ残す.
+        negative(easy)なtriplet loss= triplet lossが0未満の要素.
+        Remove negative losses (i.e. the easy triplets).
+        """
+        return torch.max(
+            input=triplet_loss,
+            other=torch.zeros(size=triplet_loss.shape),
+        )
+
+    def _count_positive_triplet(self, triplet_loss: Tensor) -> Tensor:
+        """triplet_lossのTensorの中で、positive(i.e. not easy) triplet lossの要素数をカウントして返す
+        Count number of positive triplets (where triplet_loss > 0)
+        """
+        valid_triplets = torch.gt(input=triplet_loss, other=1e-16)
+        valid_triplets = valid_triplets.float()  # positive triplet->1.0, negative triplet->0.0
+        return torch.sum(valid_triplets)
 
 
 def test_batch_all_strategy() -> None:
-    embeddings = Tensor([[1, 2], [3, 4], [5, 6]])  # ベクトル数:3, 次元数:2
-    labels = Tensor([0, 1, 1])
-    print(embeddings.shape)
-    distances_actual = pairwise_distances(embeddings, squared=True)
-    print(distances_actual)
-    distance_expected = Tensor([[0.0, 8.0, 32.0], [8.0, 0.0, 8.0], [32.0, 8.0, 0.0]])
+    """Test the triplet loss with batch all triplet mining in a simple case.
+    There is just one class in this super simple edge case, and we want to make sure that
+    the loss is 0.
+    """
+    num_data = 10
+    feat_dim = 6
+    margin = 0.2
+    num_classes = 1
+    squared = False
 
-    assert torch.equal(distances_actual, distance_expected)
-
-
-if __name__ == "__main__":
-    embeddings = Tensor([[1, 2], [3, 4], [5, 6]])  # ベクトル数:3, 次元数:2
-    labels = Tensor([0, 1, 1])
-    margin = 0.5
-    batch_all_triplet_loss(
-        labels=labels,
-        embeddings=embeddings,
+    embeddings = Tensor(np.random.rand(num_data, feat_dim).astype(np.float32))
+    labels = Tensor(np.random.randint(0, num_classes, size=(num_data)).astype(np.float32))
+    batch_all_obj = BatchAllStrategy(
         margin=margin,
+        squared=squared,
     )
+    triplet_loss, fraction = batch_all_obj.calc_triplet_loss(
+        labels,
+        embeddings,
+    )
+    triplet_loss_expected, fraction_expected = 0.0, 0.0
+    assert triplet_loss.item() == triplet_loss_expected
+    assert fraction.item() == fraction_expected

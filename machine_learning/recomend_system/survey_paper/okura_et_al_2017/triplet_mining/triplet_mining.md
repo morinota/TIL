@@ -209,7 +209,13 @@ The second thing to take care of is that if any element is exactly 0.0 (the diag
 In this strategy, we want to compute the triplet loss on almost all triplets. In the TensorFlow graph, we want to create a 3D tensor of shape $(B,B,B)$ where the element at index $(i,j,k)$ contains the loss for triplet $(i,j,k)$.
 この戦略では、**ほぼ全てのトリプレットに対してトリプレットロスを計算**したい。TensorFlowグラフにおいて、$(B,B,B)$の形状の3次元テンソルを作成し、$(i,j,k)$のインデックスの要素にトリプレット$(i,j,k)$に対する損失が含まれているようにしたい。
 
-We then get a 3D mask of the valid triplets with function \_get_triplet_mask. Here, mask[i, j, k] is true iff $(i,j,k)$ is a valid triplet.
+We then get a 3D mask of the valid triplets with function `_get_triplet_mask`. Here, mask[i, j, k] is true iff $(i,j,k)$ is a valid triplet.
+次に、関数 `_get_triplet_mask` を用いて、有効なトリプレットの 3D マスクを取得します。ここで、**mask[i, j, k] は $(i,j,k)$ が有効なトリプレットであれば真**となります。
+
+Finally, we set to $0$ the loss of the invalid triplets and take the average over the positive triplets.
+最後に、無効な三つ組の損失を$0$とし、正の三つ組の平均をとる。
+
+Everything is implemented in function `batch_all_triplet_loss`:
 
 ## Batch hard strategy
 
