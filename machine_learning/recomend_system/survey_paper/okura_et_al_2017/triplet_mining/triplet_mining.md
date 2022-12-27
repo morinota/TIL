@@ -162,11 +162,54 @@ However it really depends on your dataset and should be decided by comparing per
 
 In the stackoverflow answer, I gave a simple implementation of triplet loss for offline triplet mining:
 
+```python
+anchor_output = ...    # shape [None, 128]
+positive_output = ...  # shape [None, 128]
+negative_output = ...  # shape [None, 128]
+
+d_pos = tf.reduce_sum(tf.square(anchor_output - positive_output), 1)
+d_neg = tf.reduce_sum(tf.square(anchor_output - negative_output), 1)
+
+loss = tf.maximum(0.0, margin + d_pos - d_neg)
+loss = tf.reduce_mean(loss)
+```
+
+The network is replicated three times (with shared weights) to produce the embeddings of $B$ anchors, $B$ positives and $B$ negatives. We then simply compute the triplet loss on these embeddings.
+このネットワークを3回複製し（重みは共有）、$B$アンカー、$B$ポジ、$B$ネガの埋め込みを生成する。そして、これらの埋め込みに対して単純に三重項損失を計算する。
+
+This is an easy implementation, but also a very inefficient one because it uses offline triplet mining.
+これは簡単な実装ですが、オフラインでトリプレットマイニングを行うため、非常に非効率的な実装でもあります。
+
 # A better implementation with online triplet mining オンライントリプレットマイニングを用いたより良い実装
+
+All the relevant code is available on github in model/triplet_loss.py.
+
+There is an existing implementation of triplet loss with semi-hard online mining in TensorFlow: `tf.contrib.losses.metric_learning.triplet_semihard_loss`. Here we will not follow this implementation and start from scratch. TensorFlowのセミハードオンラインマイニングによるtriplet lossの既存の実装があります: `tf.contrib.losses.metric_learning.triplet_semihard_loss`. ここでは、この実装には従わず、ゼロから始めることにします。
 
 ## Compute the distance matrix
 
+As the final triplet loss depends on the distances $d(a, p)$ and $d(a,n)$, we first need to efficiently compute the pairwise distance matrix. We implement this for the euclidean norm and the squared euclidean norm, in the `_pairwise_distances` function:
+最終的な三重項の損失は距離 $d(a, p)$ と $d(a, n)$ に依存するので、まず、**対の距離行列を効率的に計算**する必要があります。ユークリッドノルムと二乗ユークリッドノルムについて、 `_pairwise_distances` 関数でこれを実装します。
+
+To explain the code in more details, we compute the dot product between embeddings which will have shape $(B,B)$. The squared euclidean norm of each embedding is actually contained in the diagonal of this dot product so we extract it with tf.diag_part. Finally we compute the distance using the formula:
+より詳しく説明すると、形状$(B,B)$を持つ埋め込み間の**ドットプロダクト(???)**を計算しています。各埋め込みのユークリッドノルムの2乗は、実はこの**ドットプロダクトの対角線**に含まれているので、tf.diag_partでそれを抽出します。最後に、この式を使って距離を計算します。
+
+$$
+||a-b||^2 = ||a||^2 -2<a, b> + ||b||^2
+$$
+
+One tricky thing is that if squared=False, we take the square root of the distance matrix. First we have to ensure that the distance matrix is always positive. Some values could be negative because of small inaccuracies in computation. We just make sure that every negative value gets set to 0.0.
+一つ厄介なのは、`squared=False` の場合、距離行列の平方根を取るということです。まず、距離行列が常に正であることを確認する必要があります。計算の小さな不正確さのために、いくつかの値は負になる可能性があります。すべての負の値が`0.0`に設定されることを確認します。
+
+The second thing to take care of is that if any element is exactly 0.0 (the diagonal should always be 0.0 for instance), as the derivative of the square root is infinite in $0$, we will have a nan gradient. To handle this case, we replace values equal to 0.0 with a small epsilon = 1e-16. We then take the square root, and replace the values $\sqrt{\epsilon}$ with 0.0.
+次に気をつけなければならないのは、平方根の微分が$0$で無限大になるため、いずれかの要素が正確に0.0であれば（例えば対角線は常に0.0でなければならない）、ナノグラデーションになることである。この場合、**0.0に等しい値を小さなイプシロン=1e-16で置き換え**ます。次に平方根をとり、$\sqrt{\epsilon}$の値を0.0に置き換えます。
+
 ## Batch all strategy
+
+In this strategy, we want to compute the triplet loss on almost all triplets. In the TensorFlow graph, we want to create a 3D tensor of shape $(B,B,B)$ where the element at index $(i,j,k)$ contains the loss for triplet $(i,j,k)$.
+この戦略では、**ほぼ全てのトリプレットに対してトリプレットロスを計算**したい。TensorFlowグラフにおいて、$(B,B,B)$の形状の3次元テンソルを作成し、$(i,j,k)$のインデックスの要素にトリプレット$(i,j,k)$に対する損失が含まれているようにしたい。
+
+We then get a 3D mask of the valid triplets with function \_get_triplet_mask. Here, mask[i, j, k] is true iff $(i,j,k)$ is a valid triplet.
 
 ## Batch hard strategy
 
