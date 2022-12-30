@@ -20,20 +20,27 @@ def is_in_order(numbers: List[int]) -> bool:
     # return True
 
 
-def bubble_sort(numbers: List[int]) -> List[int]:
-    """Bubbleソートを実行する"""
-    len_numbers = len(numbers)
-    # limit_lineを最後尾から1つずつ手前にづらしていく
-    for i in range(len_numbers):
-        len_numbers_in_limit = len_numbers - i
-        # limit line内の最後尾の一つ手前まで繰り返し
-        for j in range(len_numbers_in_limit - 1):
+def run_bubble_sort(numbers: List[int]) -> List[int]:
+    """List[int]を受け取りBubbleソートを実行し、昇順ソートが完了された状態のListを返す
+    1. limit_lineの場所をnumbersの`最後尾の要素の右側`で初期化
+    2. 「隣り合う数字を比較して昇順に入れ替える」処理を、
+    先頭からlimit line内の最後尾の一つ手前まで順番に実行する.
+    3. limit_lineの場所を1つずつ手前にずらす
+    4. limit lineの左側の要素が先頭の要素のみになった時点でソート完了
+
+    """
+    limit_line_idx = len(numbers)
+
+    while limit_line_idx > 1:
+        for j in range(limit_line_idx - 1):  # limit line内の最後尾の一つ手前まで繰り返し
             if numbers[j] > numbers[j + 1]:
                 numbers[j], numbers[j + 1] = numbers[j + 1], numbers[j]
+        limit_line_idx -= 1  # limit_lineを1つずつ手前にずらす
+
     return numbers
 
 
 if __name__ == "__main__":
     numbers = [random.randint(0, 1000) for _ in range(10)]
-    print(numbers)
-    print(bubble_sort(numbers))
+    print(f"[LOG]init numbers: {numbers}")
+    print(f"[LOG]sorted numbers: {run_bubble_sort(numbers)}")
