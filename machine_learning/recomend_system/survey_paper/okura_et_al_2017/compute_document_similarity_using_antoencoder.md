@@ -1,7 +1,8 @@
 ## 参考
 
 - https://medium.com/deep-learning-hk/compute-document-similarity-using-autoencoder-with-triplet-loss-eb7eb132eb38
-- -
+- [論文:Article De-duplication Using Distributed Representations](http://gdac.uqam.ca/WWW2016-Proceedings/companion/p87.pdf)
+  - 分散表現を用いた記事の重複排除
 
 ## title & overview
 

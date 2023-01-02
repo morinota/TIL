@@ -219,7 +219,41 @@ Everything is implemented in function `batch_all_triplet_loss`:
 
 ## Batch hard strategy
 
+In this strategy, we want to find the hardest positive and negative for each anchor. この戦略では、**各アンカーに対して最も難しいポジティブとネガティブ**を見つけたいと考えています。
+
+### Hardest positive:
+
+To compute the hardest positive, we begin with the pairwise distance matrix. We then get a 2D mask of the valid pairs $(a,p)$ (i.e. $a\neq p$ and $a$ and $p$ have same labels) and put to $0$ any element outside of the mask.
+Hardest positiveを計算するために、我々はペアワイズ距離行列から始める。次に、有効なペア$(a,p)$の2次元マスクを取得し（すなわち、$aneq p$と$a$と$p$が同じラベルを持つ）、マスクの外の要素を$0$にする。
+
+The last step is just to take the maximum distance over each row of this modified distance matrix. The result should be a valid pair $(a, p)$ since invalid elements are set to $0$.
+最後のステップは、この修正された**距離行列の各行に対する最大距離を取るだけ**です。無効な要素は$0$に設定されるので、結果は有効なペア$(a, p)$になるはずです。
+
+### Hardest negative:
+
+The hardest negative is similar but a bit trickier to compute. Here we need to get the minimum distance for each row, so we cannot set to $0$ the invalid pairs $(a,p)$ (invalid if $a$ and $n$ have the same label).
+Hardest negativeも同様であるが、**計算が少し厄介**である。ここでは、各行の最小距離を求める必要があるので、無効なペア $(a,p)$ ($a$ と $n$ が同じラベルなら無効) を $0$ にすることはできない。
+
+Our trick here is for each row to add the maximum value to the invalid pairs $(a,n)$. We then take the minimum over each row. The result should be a valid pair $(a, n)$ since invalid elements are set to the maximum value.
+ここで、**各行で、無効なペア $(a,n)$ に最大値を足すのがコツ**です。そして、**各行で最小値をとり**ます。無効な要素には最大値が設定されるので、結果は有効なペア $(a, n)$ になるはずです。
+
+### combine anchor & hardest positive & hardest negative
+
+The final step is to combine these into the triplet loss: 最終的には、これらを組み合わせてトリプレットロスにする。
+
+```python
+triplet_loss = tf.maximum(hardest_positive_dist - hardest_negative_dist + margin, 0.0)
+```
+
+Everything is implemented in function batch_hard_triplet_loss:
+
 ## Testing our implementation
+
+If you don’t trust that the implementation above works as expected, then you’re right! The only way to make sure that there is no bug in the implementation is to write tests for every function in `model/triplet_loss.py`
+もしあなたが、上記の実装が期待通りに動作することを信用していないのなら、その通りです! 実装にバグがないことを確認する唯一の方法は、 `model/triplet_loss.py` にあるすべての関数に対してテストを書くことです。
+
+This is especially important for tricky functions like this that are difficult to implement in TensorFlow but much easier to write using three nested for loops in python for instance. The tests are written in `model/tests/test_triplet_loss.py`, and compare the result of our TensorFlow implementation with the results of a simple numpy implementation.
+これは、**TensorFlowで実装するのは難しいが、例えばpythonで3つのネストしたforループを使って書くのはずっと簡単な、このようなトリッキーな関数**では特に重要である。テストは `model/tests/test_triplet_loss.py` に書かれており、TensorFlowの実装と**numpyの単純な実装の結果を比較**します。
 
 # Experience with MNIST
 
