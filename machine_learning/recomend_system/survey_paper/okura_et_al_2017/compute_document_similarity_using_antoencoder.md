@@ -167,7 +167,9 @@ I have implemented this autoencoder using Tensorflow and you may find the implem
 The embeddings is trained with following autoencoder network’s settings:
 埋め込みは、以下のオートエンコーダーネットワークの設定で学習されます。
 
-- Input vector = Binary vector corresponding to each word in the vocabulary ([Scikit learn’s Count Vectorizer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html) is used to prepare the input vector) 入力ベクトル = 語彙の各単語に対応する2値ベクトル（入力ベクトルの準備にはScikit learnのCount Vectorizerを使用します。）
+- Input vector = Binary vector corresponding to each word in the vocabulary ([Scikit learn’s Count Vectorizer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html) is used to prepare the input vector) 入力ベクトル = 語彙の各単語に対応する2値ベクトル（入力ベクトルの準備には**Scikit learnのCount Vectorizer**を使用します。）
+  - ベクトルの長さはコーパス内のトークン数(idfの低いトークンは取り除くかも)
+  - ベクトルの要素は、document内における各tokenの出現回数を保持する。
 - Dimension of Input layer = 10000, Embeddings layer =50, Output layer = 10000
 - Optimization Algorithm = Adam
 - Corruption Function = Every element of input vector is masked (set to zero) randomly with probability 0.3. Corruption Function = 入力ベクトルの各要素を確率0.3でランダムにマスク（0に設定）する。
