@@ -172,7 +172,7 @@ h = f(W\tilde{x} + b) - f(b)
 $$
 
 where $p$ is the corruption rate in the training phase. Thus, $h$ is uniquely determined at the time of application. Multiplying $1 − p$ has the effect of equalizing the input distribution to each neuron in the middle layer between learning with masking noise and that without the application of this noise.
-ここで、$p$は学習段階での破損率である。 したがって、$h$は適用時に一意に決定される。 1 - p$を掛けると、マスキングノイズを適用した学習と適用しない学習とで、中間層の各ニューロンへの入力分布が等しくなる効果がある。
+ここで、$p$は学習段階での破損率である。 したがって、$h$は適用時に一意に決定される。 $1 - p$を掛けると、マスキングノイズを適用した学習と適用しない学習とで、中間層の各ニューロンへの入力分布が等しくなる効果がある。
 
 We use the $h$ generated above in three applications as the representation of the article: (i) to input the user-state function described in Section 4, (ii) to measure the relevance of the user and the article in matching, and (iii) to measure the similarity between articles in de-duplication.
 上記で生成された$h$を記事の表現として3つの用途で用いる。 (i) セクション4で述べるユーザ状態関数の入力、(ii) マッチングにおけるユーザと記事の関連性測定、(iii) 重複排除における記事間の類似度測定である。

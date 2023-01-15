@@ -34,7 +34,7 @@ The previous version of our implementation was based on this method for these re
 前バージョンの実装は、これらの理由からこの方法に基づいていました。 しかし、レコメンデーションの品質に悪影響を及ぼす可能性のある問題がいくつかあった。 ひとつは、単語の表現方法である。 単語を特徴量とした場合、同じ意味の単語でも表記が違えば全く別の特徴量として扱われてしまう。 この問題は、同じ出来事について複数のプロバイダが別々に記事を投稿したニュース記事で発生しがちであった。 二つ目は、閲覧履歴の扱いである。 本手法では、閲覧履歴を集合として扱っている。 しかし、履歴は連続したものであり、本来であれば閲覧の順番がユーザの興味の変遷を表すものである。 また、私的な閲覧から1時間に何度もサイトを訪れるユーザーまで、履歴の長さに大きなばらつきがあることに注意する必要がありました。 近年、様々な領域でディープラーニングを用いたアプローチが有効であることが報告されています。 単語の分散表現により、意味情報を徹底的に捉える[11, 16]。 リカレントニューラルネットワーク（RNN）は、可変長の入力列を扱う手法として有効な結果を出している[9, 15, 17]。
 
 If we build a model with a deep network using an RNN to estimate the degree of interest between users and articles, on the other hand, it is difficult to satisfy the response time constraints on accesses in real systems. This paper proposes an embedding-based method of using distributed representations in a three step endto-end manner from representing each article to listing articles for each user based on relevance and duplication: Start with distributed representations of articles based on a variant of the denoising autoencoder (which addresses the first issue in Section 3). • Generate user representations by using an RNN with browsing histories as input sequences (which addresses the second issue in Section 4). • Match and list articles for each user based on the inner product of article-user for relevance and article-article for de-duplication (outlined in Section 2).
-一方、RNNを用いたディープネットワークでモデルを構築し、ユーザと記事の間の関心度を推定すると、実システムにおけるアクセスの応答時間制約を満たすことが困難となる。 本論文では、各記事の表現から、関連性と重複に基づく各ユーザーの記事のリストアップまで、3段階のエンドツーエンドで分散表現を利用する埋め込みベースの手法を提案する。 ノイズ除去オートエンコーダの変形に基づく記事の分散表現から始める（これはセクション3で最初の問題に対処する）。 - 閲覧履歴を入力列とするRNNを用いてユーザ表現を生成する（セクション4の第二の課題に対応）。 - 記事-ユーザ間の関連性と記事-記事の重複排除の内積に基づいて、各ユーザの記事をマッチングしリスト化する（セクション2で概説）。
+一方、RNNを用いたディープネットワークでモデルを構築し、ユーザと記事の間の関心度を推定すると、**実システムにおけるアクセスの応答時間制約を満たすことが困難**となる。 本論文では、各記事の表現から、関連性と重複に基づく各ユーザーの記事のリストアップまで、3段階のエンドツーエンドで分散表現を利用する埋め込みベースの手法を提案する。 **ノイズ除去オートエンコーダの変形に基づく記事の分散表現**から始める（これはセクション3で最初の問題に対処する）。 - 閲覧履歴を入力列とするRNNを用いてユーザ表現を生成する（セクション4の第二の課題に対応）。 - 記事-ユーザ間の関連性と記事-記事の重複排除の内積に基づいて、各ユーザの記事をマッチングしリスト化する（セクション2で概説）。
 
 The key to our method is using a simple inner product to estimate article-user relevance. We can calculate article representations and user representations before user visits in sufficient amounts of time. When a user accesses our service, we only select his/her representations and calculate the inner product of candidate articles and the representations. Our method therefore both expresses complex relations that are included in the user’s browsing history and satisfies the response time constraints of the real system.
 我々の手法の鍵は、記事とユーザーの関連性を推定するために単純な内積を使うことである。 我々は、ユーザーがアクセスする前に、十分な量の記事表現とユーザー表現を計算することができる。 ユーザが我々のサービスにアクセスしたとき、我々は彼の
@@ -103,7 +103,7 @@ where $T \subset X^3$ , such that $x_0$ and $x_1$ are in the same category/simil
 <img src="https://d3i71xaburhd42.cloudfront.net/376953b2d70b30cfa9d56ae841b8c16f059e0867/3-Figure2-1.png">
 
 We use the elementwise sigmoid function, $\sigma(x)_i = 1/(1+exp(-x_i))$, as $f(·)$, elementwise cross entropy as $L_R(·, ·)$, and masking noise as $q(·|·)$. We train the model, $\theta = {W ,W′, b, b′}$, by using mini-batch stochastic gradient descent (SGD).
-要素別シグモイド関数$Σsigma(x)_i = 1を使用する。
+要素別シグモイド関数$Σsigma(x)\_i = 1を使用する。
 
 We construct x˜ in the application phase by using constant decay, instead of stochastic corruption in the training phase, as:
 応用段階では、学習段階での確率的な破損の代わりに、一定の減衰を用いて、x〜を次のように構成する。
@@ -139,7 +139,7 @@ When $u$ clicks an article in our recommendation service (a session occurs), he/
 u$がレコメンドサービスの記事をクリックしたとき（セッションが発生したとき）に
 
 Since a session corresponds to the list presented to $u$, we express a session, $s^u_t$, by a list of articles ${s^u_{t,p} \in A}_{p \in P}$. The notation, $P \subseteq N$, is the set of positions of the recommended list that is actually displayed on the screen in this session. Let $P_{+} \subseteq P$ be the clicked positions and $P_{-} = P \ P_{+}$ be non-clicked positions. Although $P$, $P_{+}$, and $P_{-}$ depend on $u$ and $t$, we omit these subscripts to simplify the notation. Figure 3 outlines the relationships between these notations.
-セッションは$u$に提示されたリストに対応するので、セッション$s^u_t$を記事のリスト${s^u_{t,p}で表現する。 \のリストで表現する。 このとき、$P \subseteq N$という表記は、このセッションで実際に画面に表示される推奨リストの位置の集合である。 P_{+} \subseteq P$をクリックされた位置、$P_{-} = P \ P_{+}$を非クリックの位置とする。 P$、$P_{+}$、$P_{-}$は$u$、$t$に依存するが、表記を簡略化するためにこれらの添え字を省略する。 図3にこれらの表記の関係の概略を示す。
+セッションは$u$に提示されたリストに対応するので、セッション$s^u_t$を記事のリスト${s^u_{t,p}で表現する。 \のリストで表現する。 このとき、$P \subseteq N$という表記は、このセッションで実際に画面に表示される推奨リストの位置の集合である。 P_{+} \subseteq P$をクリックされた位置、$P_{-} = P \ P_{+}$を非クリックの位置とする。 P$、$P*{+}$、$P*{-}$は$u$、$t$に依存するが、表記を簡略化するためにこれらの添え字を省略する。 図3にこれらの表記の関係の概略を示す。
 
 <img src="https://d3i71xaburhd42.cloudfront.net/376953b2d70b30cfa9d56ae841b8c16f059e0867/4-Figure3-1.png">
 
@@ -478,7 +478,7 @@ The list below represents the four online metrics we used.
 - 継続時間。 ユーザーが1回のセッションで弊社サービスを利用した平均時間（秒）。 これは、ユーザーがレコメンドリストを見るのにかかった時間と、レコメンドリストを見るのにかかった時間の合計である。
 
 - Clicks: The average number of clicks per session (which corresponded to |P+| in Section 4).
-P+
+  P+
 
 - Click through rate (CTR): Clicks/number of displayed articles. These were decreased if article retrieval became inefficient and users spent more time exploring the recommendation list.
 - クリックスルー率（CTR）。 クリック数
