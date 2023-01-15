@@ -1,10 +1,10 @@
-# Chapter 1. Domain Modeling 第1章 ドメイン・モデリング
+# 1. Chapter 1. Domain Modeling 第1章 ドメイン・モデリング
 
 This chapter looks into how we can model business processes with code, in a way that’s highly compatible with TDD.
 この章では、TDDと親和性の高い方法で、ビジネスプロセスをコードでモデル化する方法について検討します。
 We’ll discuss why domain modeling matters, and we’ll look at a few key patterns for modeling domains:
 なぜドメインモデリングが重要なのかについて説明し、ドメインをモデリングするためのいくつかの重要なパターンを見ていきます。
-Entity, Value Object, and Domain Service.
+**Entity**, **Value Object**, and **Domain Service**.
 エンティティ、バリューオブジェクト、そしてドメインサービスです。
 
 Figure 1-1 is a simple visual placeholder for our Domain Model pattern.
@@ -14,7 +14,7 @@ We’ll fill in some details in this chapter, and as we move on to other chapter
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0101.png)
 
-## What is Domain Model? ドメインモデルとは？
+## 1.1. What is Domain Model? ドメインモデルとは？
 
 In the introduction, we used the term business logic layer to describe the central layer of a three-layered architecture.
 序章では、**3層アーキテクチャの中心層**を表すために、ビジネスロジック層という用語を使いました。
@@ -80,7 +80,7 @@ This process would happen quite naturally, without any formal effort to build a 
 
 - In a nutshell, DDD says that the most important thing about software is that it provides a useful model of a problem. If we get that model right, our software delivers value and makes new things possible. DDDは、一言で言えば、**ソフトウェアで最も重要なことは、問題の有用なモデルを提供すること**である、と言っています。 そのモデルが正しければ、ソフトウェアは価値を提供し、新しいことを可能にするのです。
 
-- If we get the model wrong, it becomes an obstacle to be worked around. In this book, we can show the basics of building a domain model, and building an architecture around it that leaves the model as free as possible from external constraints, so that it’s easy to evolve and change. モデルを間違えると、それが障害となり、回避することができなくなります。 本書では、ド**メインモデルを構築し、そのモデルを中心にアーキテクチャを構築**することで、**モデルを外部の制約からできる限り解放し、進化や変更を容易にするための基本的な方法を紹介**することができます。
+- If we get the model wrong, it becomes an obstacle to be worked around. In this book, we can show the basics of building a domain model, and building an architecture around it that leaves the model as free as possible from external constraints, so that it’s easy to evolve and change. モデルを間違えると、それが障害となり、回避することができなくなります。 本書では、**ドメインモデルを構築し、そのモデルを中心にアーキテクチャを構築**することで、**モデルを外部の制約からできる限り解放し、進化や変更を容易にするための基本的な方法を紹介**することができます。
 
 - But there’s a lot more to DDD and to the processes, tools, and techniques for developing a domain model. We hope to give you a taste of it, though, and cannot encourage you enough to go on and read a proper DDD book: しかし、DDDとドメインモデルを開発するためのプロセス、ツール、テクニックには、もっとたくさんのものがあります。 しかし、私たちはその一端に触れることができ、適切なDDDの本を読むことをお勧めします。
 
@@ -132,7 +132,7 @@ We need a more complex **allocation mechanism**.
 Time for some domain modeling.
 ドメイン・モデリングの時間だ。
 
-## Exploring the Domain Language ドメイン言語の探索
+## 1.2. Exploring the Domain Language ドメイン言語の探索
 
 Understanding the domain model takes time, and patience, and Post-it notes.
 ドメインモデルを理解するには、時間と忍耐とポストイット・ノートが必要です。
@@ -161,7 +161,7 @@ We choose memorable identifiers for our objects so that the examples are easier 
 
 - We need to allocate order lines to batches. When we’ve allocated an order line to a batch, we will send stock from that specific batch to the customer’s delivery address. When we allocate x units of stock to a batch, the available quantity is reduced by x. For example: バッチに注文書を割り当てる必要があります。 バッチにオーダーラインを割り当てると、そのバッチから顧客の配送先に在庫を送ることになる。 バッチに x 個の在庫を割り当てると、利用可能な数量が x 個減ります。たとえば、次のようになります。
 
-- We have a batch of 20 SMALL-TABLE, and we allocate an order line for 2 SMALL-TABLE. SMALL-TABLEが20台分あり、SMALL-TABLE2台分の受注枠を確保しました。
+- We have a batch of 20 SMALL-TABLE, and we allocate an order line for 2 SMALL-TABLE.
 
 - The batch should have 18 SMALL-TABLE remaining. バッチには、18個のSMALL-TABLEが残っているはずです。
 
@@ -179,7 +179,7 @@ We choose memorable identifiers for our objects so that the examples are easier 
 
 - Batches have an ETA if they are currently shipping, or they may be in warehouse stock. We allocate to warehouse stock in preference to shipment batches. We allocate to shipment batches in order of which has the earliest ETA. バッチには、現在出荷中の場合はETAが表示され、また、倉庫の在庫にある場合もあります。 出荷バッチよりも倉庫在庫に優先的に割り当てます。 出荷バッチは、ETAが早いものから順に割り当てる。
 
-## Unit Testing Domain Models ドメインモデルの単体テスト
+## 1.3. Unit Testing Domain Models ドメインモデルの単体テスト
 
 We’re not going to show you how TDD works in this book, but we want to show you how we would construct a model from this business conversation.
 本書ではTDDの仕組みは紹介しませんが、このビジネスの会話からどのようにモデルを構築していくかを紹介したいと思います。
@@ -203,10 +203,10 @@ A first test for allocation (test_batches.py)
 
 ```python
 def test_allocating_to_a_batch_reduces_the_available_quantity():
-batch = Batch("batch-001", "SMALL-TABLE", qty=20, eta=date.today())
-line = OrderLine('order-ref', "SMALL-TABLE", 2)
-batch.allocate(line)
-assert batch.available_quantity == 18
+    batch = Batch("batch-001", "SMALL-TABLE", qty=20, eta=date.today())
+    line = OrderLine('order-ref', "SMALL-TABLE", 2)
+    batch.allocate(line)
+    assert batch.available_quantity == 18
 ```
 
 The name of our unit test describes the behavior that we want to see from the system, and the names of the classes and variables that we use are taken from the business jargon.
@@ -223,19 +223,19 @@ First cut of a domain model for batches (model.py)
 ```python
 @dataclass(frozen=True)  12
 class OrderLine:
-orderid: str
-sku: str
-qty: int
+    orderid: str
+    sku: str
+    qty: int
 class Batch:
-def __init__(
-self, ref: str, sku: str, qty: int, eta: Optional[date]  2
-):
-self.reference = ref
-self.sku = sku
-self.eta = eta
-self.available_quantity = qty
-def allocate(self, line: OrderLine):
-self.available_quantity -= line.qty  3
+    def __init__(
+    self, ref: str, sku: str, qty: int, eta: Optional[date]  2
+    ):
+        self.reference = ref
+        self.sku = sku
+        self.eta = eta
+        self.available_quantity = qty
+    def allocate(self, line: OrderLine):
+        self.available_quantity -= line.qty  3
 ```
 
 - `OrderLine` is an immutable dataclass with no behavior.2 OrderLine` は振る舞いのないイミュータブルなデータクラスです。
@@ -424,7 +424,7 @@ That would allow our type checker to make sure that we don’t pass a `Sku` wher
 Whether you think this is wonderful or appalling is a matter of debate.4
 これをすばらしいと思うか、ひどいと思うかは議論の分かれるところです4。
 
-### Dataclasses Are Great for Value Objects データクラスはバリューオブジェクトに最適です。
+### 1.3.1. Dataclasses Are Great for Value Objects データクラスはバリューオブジェクトに最適です。
 
 We’ve used `line` liberally in the previous code listings, but what is a line?
 これまでのコード一覧では、`line`を自由に使ってきましたが、lineとは何でしょうか？
@@ -523,7 +523,7 @@ with pytest.raises(TypeError):
 tenner * fiver
 ```
 
-### Value Objects and Entities バリューオブジェクトとエンティティ
+### 1.3.2. Value Objects and Entities バリューオブジェクトとエンティティ
 
 An order line is uniquely identified by its order ID, SKU, and quantity; if we change one of those values, we now have a new line.
 オーダーラインは、オーダーID、SKU、数量によって一意に識別され、これらの値のいずれかを変更すると、新しいラインが作成されます。
@@ -623,7 +623,7 @@ You should also try to somehow make that attribute read-only.
 
 - This is tricky territory; you shouldn’t modify `__hash__` without also modifying `__eq__`. If you’re not sure what you’re doing, further reading is suggested. “Python Hashes and Equality” by our tech reviewer Hynek Schlawack is a good place to start. これは厄介な領域で、 `__eq__` を変更せずに `__hash__` を変更することはできません。 もし、自分が何をしているのかわからない場合は、さらに詳しい情報を読むことをお勧めします。 私たちの技術レビュアーである Hynek Schlawack による "Python Has and Equality" が良い手始めです。
 
-## Not Everything Has to Be an Object: A Domain Service Function 何でもかんでもオブジェクトにすればいいってもんじゃない。 ドメインサービス機能
+## 1.4. Not Everything Has to Be an Object: A Domain Service Function 何でもかんでもオブジェクトにすればいいってもんじゃない。 ドメインサービス機能
 
 We’ve made a model to represent batches, but what we actually need to do is allocate order lines against a specific set of batches that represent all our stock.
 バッチを表すモデルを作りましたが、実際に必要なのは、全在庫を表す特定のバッチの集合に対して、注文行を割り当てることです。
@@ -682,7 +682,7 @@ batch.allocate(line)
 return batch.reference
 ```
 
-### Python’s Magic Methods Let Us Use Our Models with Idiomatic Python Pythonのマジックメソッドでモデルを自在に操る
+### 1.4.1. Python’s Magic Methods Let Us Use Our Models with Idiomatic Python Pythonのマジックメソッドでモデルを自在に操る
 
 You may or may not like the use of `next()` in the preceding code, but we’re pretty sure you’ll agree that being able to use `sorted()` on our list of batches is nice, idiomatic Python.
 前のコードで `next()` を使うのが好きかどうかは別として、バッチのリストで `sorted()` を使えるのは素敵でイディオムな Python であることには同意していただけると思います。
@@ -707,7 +707,7 @@ return self.eta > other.eta
 That’s lovely.
 それは素敵ですね。
 
-### Exceptions Can Express Domain Concepts Too 例外はドメインの概念も表現できる
+### 1.4.2. Exceptions Can Express Domain Concepts Too 例外はドメインの概念も表現できる
 
 We have one final concept to cover: exceptions can be used to express domain concepts too.
 最後にもう一つ、例外はドメインの概念を表現するために使うことができます。
