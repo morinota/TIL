@@ -1,7 +1,7 @@
 # 2. Repository Pattern 2. リポジトリパターン
 
 It’s time to make good on our promise to use the dependency inversion principle as a way of decoupling our core logic from infrastructural concerns.
-コアロジックをインフラから切り離す方法として、依存関係逆転の原則を使うという約束を実行する時が来たのです。
+コアロジックをインフラから切り離す方法として、依存関係の逆転原理を使うという約束を実行する時が来たのです。
 
 We’ll introduce the Repository pattern, a simplifying abstraction over data storage, allowing us to decouple our model layer from the data layer.
 データストレージを単純化し、モデル層をデータ層から切り離すことを可能にするRepositoryパターンを紹介します。
@@ -51,14 +51,14 @@ What our first API endpoint will look like
 ```python
 @flask.route.gubbins
 def allocate_endpoint():
-# extract order line from request
-line = OrderLine(request.params, ...)
-# load all batches from the DB
-batches = ...
-# call our domain service
-allocate(line, batches)
-# then save the allocation back to the database somehow
-return 201
+    # extract order line from request
+    line = OrderLine(request.params, ...)
+    # load all batches from the DB
+    batches = ...
+    # call our domain service
+    allocate(line, batches)
+    # then save the allocation back to the database somehow
+    return 201
 ```
 
 - NOTE 注
@@ -68,39 +68,40 @@ return 201
 We’ll need a way to retrieve batch info from the database and instantiate our domain model objects from it, and we’ll also need a way of saving them back to the database.
 データベースからバッチ情報を取得し、そこからドメインモデルオブジェクトをインスタンス化する方法と、データベースに保存する方法が必要です。
 
+What?
+え？
+Oh, “gubbins” is a British word for “stuff.”
+"gubbins "は英国語で "物 "だ
+You can just ignore that.
+それは無視していい
+It’s pseudocode, OK?
+これは擬似コードだ
 
-
-## Applying the DIP to Data Access DIPをデータアクセスに応用する
+## Applying the DIP to Data Access DIPをデータアクセスに適用する
 
 As mentioned in the introduction, a layered architecture is a common approach to structuring a system that has a UI, some logic, and a database (see Figure 2-2).
 冒頭で述べたように、レイヤーアーキテクチャは、UI、いくつかのロジック、データベースを持つシステムを構成する一般的なアプローチである（図2-2参照）。
 
-!
-!
-[Figure 2-2.
-[図2-2.
-Layered architecture
-レイヤードアーキテクチャ
-
-](https:
-]（https:
+![Figure 2-2. Layered architecture](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0202.png)
 
 Django’s Model-View-Template structure is closely related, as is Model-View-Controller (MVC).
 Django の Model-View-Template 構造は、 Model-View-Controller (MVC) と同様に、密接に関連しています。
 In any case, the aim is to keep the layers separate (which is a good thing), and to have each layer depend only on the one below it.
 いずれにせよ、目的は、レイヤーを分離し (これは良いことです)、各レイヤーがその下のレイヤーにのみ依存するようにすることです。
 
+But we want our domain model to have no dependencies whatsoever.1 We don’t want infrastructure concerns bleeding over into our domain model and slowing our unit tests or our ability to make changes.
+しかし、ドメインモデルには一切の依存性を持たせたくない。1 インフラの懸念がドメインモデルに影響を及ぼし、ユニットテストや変更に時間がかかるようでは困るのである。
 
-
-
+Instead, as discussed in the introduction, we’ll think of our model as being on the “inside,” and dependencies flowing inward to it; this is what people sometimes call onion architecture (see Figure 2-3).
+その代わり、冒頭で述べたように、モデルは「内側」にあり、依存関係はその内側に流れていると考えることにします。これは、オニオンアーキテクチャと呼ばれることもあります（図2-3参照）。
 
 ![Figure 2-3. Onion architecture](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0203.png)
 
-- IS THIS PORTS AND ADAPTERS? 
+- IS THIS PORTS AND ADAPTERS? は、ポートやアダプターのことでしょうか？
 
-- If you’ve been reading about architectural patterns, you may be asking yourself questions like this: 
+- If you’ve been reading about architectural patterns, you may be asking yourself questions like this: アーキテクチャーパターンについて読んでいると、こんな疑問が湧いてくるかもしれません。
 
-- Is this ports and adapters? Or is it hexagonal architecture? Is that the same as onion architecture? What about the clean architecture? What’s a port, and what’s an adapter? Why do you people have so many words for the same thing? 
+- Is this ports and adapters? Or is it hexagonal architecture? Is that the same as onion architecture? What about the clean architecture? What’s a port, and what’s an adapter? Why do you people have so many words for the same thing? これはポートやアダプターでしょうか？ それともヘキサゴンアーキテクチャ？ オニオン・アーキテクチャと同じなのでしょうか？ クリーンアーキテクチャはどうなんだろう？ ポートってなんだ、アダプタってなんだ？ どうしてあなた方は同じものを表すのにたくさんの言葉を持っているのですか？
 
 - Although some people like to nitpick over the differences, all these are pretty much names for the same thing, and they all boil down to the dependency inversion principle: high-level modules (the domain) should not depend on low-level ones (the infrastructure).2 その違いを指摘する人もいるが、これらはすべて同じものの名称であり、依存関係逆転の原則に帰結する。高位モジュール（ドメイン）は低位モジュール（インフラ）に依存すべきではない、ということだ2。
 
@@ -143,17 +144,21 @@ SQLAlchemy の "宣言的" 構文、モデルは ORM に依存する (orm.py)
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+
 Base = declarative_base()
+
 class Order(Base):
-id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
+
 class OrderLine(Base):
-id = Column(Integer, primary_key=True)
-sku = Column(String(250))
-qty = Integer(String(250))
-order_id = Column(Integer, ForeignKey('order.id'))
-order = relationship(Order)
+    id = Column(Integer, primary_key=True)
+    sku = Column(String(250))
+    qty = Integer(String(250))
+    order_id = Column(Integer, ForeignKey('order.id'))
+    order = relationship(Order)
+
 class Allocation(Base):
-...
+    ...
 ```
 
 You don’t need to understand SQLAlchemy to see that our pristine model is now full of dependencies on the ORM and is starting to look ugly as hell besides.
@@ -172,13 +177,15 @@ Django ORM の例
 
 ```python
 class Order(models.Model):
-pass
+    pass
+
 class OrderLine(models.Model):
-sku = models.CharField(max_length=255)
-qty = models.IntegerField()
-order = models.ForeignKey(Order)
+    sku = models.CharField(max_length=255)
+    qty = models.IntegerField()
+    order = models.ForeignKey(Order)
+
 class Allocation(models.Model):
-...
+    ...
 ```
 
 - The point is the same—our model classes inherit directly from ORM classes, so our model depends on the ORM. We want it to be the other way around. ポイントは同じで、モデルクラスは ORM クラスを直接継承しているので、モデルは ORM に依存しています。 私たちはその逆を望んでいます。
@@ -190,25 +197,31 @@ class Allocation(models.Model):
 Well, thankfully, that’s not the only way to use SQLAlchemy.
 さて、ありがたいことに、これだけが SQLAlchemy を使う唯一の方法ではありません。
 The alternative is to define your schema separately, and to define an explicit mapper for how to convert between the schema and our domain model, what SQLAlchemy calls a classical mapping:
-スキーマを別に定義し、スキーマとドメインモデルの間の変換を行う明示的なマッ パーを定義する方法もあります（SQLAlchemy では古典的マッピングと呼んでいます）。
+スキーマを別に定義し、スキーマとドメインモデルの間の変換を行う明示的なマッパーを定義する方法もあります（SQLAlchemy では古典的マッピングと呼んでいます）。
 
 Explicit ORM mapping with SQLAlchemy Table objects (orm.py)
 SQLAlchemyのテーブルオブジェクトを用いた明示的なORMマッピング(orm.py)
 
 ```python
 from sqlalchemy.orm import mapper, relationship
+
 import model  1
+
+
 metadata = MetaData()
+
 order_lines = Table(  2
-'order_lines', metadata,
-Column('id', Integer, primary_key=True, autoincrement=True),
-Column('sku', String(255)),
-Column('qty', Integer, nullable=False),
-Column('orderid', String(255)),
+    'order_lines', metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('sku', String(255)),
+    Column('qty', Integer, nullable=False),
+    Column('orderid', String(255)),
 )
+
 ...
+
 def start_mappers():
-lines_mapper = mapper(model.OrderLine, order_lines)  3
+    lines_mapper = mapper(model.OrderLine, order_lines)  3
 ```
 
 1. The ORM imports (or “depends on” or “knows about”) the domain model, and not the other way around. ORMはドメインモデルをインポートする（あるいは「依存する」あるいは「知っている」）のであって、その逆ではない。
@@ -218,7 +231,7 @@ lines_mapper = mapper(model.OrderLine, order_lines)  3
 3. When we call the mapper function, SQLAlchemy does its magic to bind our domain model classes to the various tables we’ve defined. マッパー関数を呼び出すと、SQLAlchemy はドメインモデルクラスを定義された様々なテーブルにバインドする魔法をかけます。
 
 The end result will be that, if we call `start_mappers`, we will be able to easily load and save domain model instances from and to the database.
-最終的には、もし `start_mappers` を呼び出せば、ドメインモデルインスタンスをデータベースから、またはデータベースへ簡単にロードしたり保存したりできるようになります。
+最終的には、`start_mappers` を呼び出せば、ドメインモデルインスタンスを簡単にデータベースからロードしたり、データベースへ保存したりできるようになります。
 But if we never call that function, our domain model classes stay blissfully unaware of the database.
 しかし、もしこの関数を呼ばなければ、ドメインモデルクラスはデータベースを意識することなく、至ってシンプルなままです。
 
@@ -233,24 +246,27 @@ ORMを直接テストする(捨て身のテスト) (test_orm.py)
 
 ```python
 def test_orderline_mapper_can_load_lines(session):  1
-session.execute(
-'INSERT INTO order_lines (orderid, sku, qty) VALUES '
-'("order1", "RED-CHAIR", 12),'
-'("order1", "RED-TABLE", 13),'
-'("order2", "BLUE-LIPSTICK", 14)'
-)
-expected = [
-model.OrderLine("order1", "RED-CHAIR", 12),
-model.OrderLine("order1", "RED-TABLE", 13),
-model.OrderLine("order2", "BLUE-LIPSTICK", 14),
-]
-assert session.query(model.OrderLine).all() == expected
+    session.execute(
+        'INSERT INTO order_lines (orderid, sku, qty) VALUES '
+        '("order1", "RED-CHAIR", 12),'
+        '("order1", "RED-TABLE", 13),'
+        '("order2", "BLUE-LIPSTICK", 14)'
+    )
+    expected = [
+        model.OrderLine("order1", "RED-CHAIR", 12),
+        model.OrderLine("order1", "RED-TABLE", 13),
+        model.OrderLine("order2", "BLUE-LIPSTICK", 14),
+    ]
+    assert session.query(model.OrderLine).all() == expected
+
+
 def test_orderline_mapper_can_save_lines(session):
-new_line = model.OrderLine("order1", "DECORATIVE-WIDGET", 12)
-session.add(new_line)
-session.commit()
-rows = list(session.execute('SELECT orderid, sku, qty FROM "order_lines"'))
-assert rows == [("order1", "DECORATIVE-WIDGET", 12)]
+    new_line = model.OrderLine("order1", "DECORATIVE-WIDGET", 12)
+    session.add(new_line)
+    session.commit()
+
+    rows = list(session.execute('SELECT orderid, sku, qty FROM "order_lines"'))
+    assert rows == [("order1", "DECORATIVE-WIDGET", 12)]
 ```
 
 1. If you haven’t used pytest, the session argument to this test needs explaining. You don’t need to worry about the details of pytest or its fixtures for the purposes of this book, but the short explanation is that you can define common dependencies for your tests as “fixtures,” and pytest will inject them to the tests that need them by looking at their function arguments. In this case, it’s a SQLAlchemy database session. もしあなたがpytestを使ったことがないなら、このテストのsession引数について説明が必要です。 この本の目的のために pytest やそのフィクスチャの詳細を心配する必要はありませんが、簡単に説明すると、テストのための共通の依存関係を「フィクスチャ」として定義することができ、pytest はその関数の引数を見ることによって、それを必要とするテストに注入するということです。 この場合、それは SQLAlchemy データベースセッションです。
@@ -268,28 +284,34 @@ Depending on what you’re doing in your domain model, and especially if you str
 As the Zen of Python says, “Practicality beats purity!”
 Pythonの禅が言うように、「実用性は純粋さに勝る！」のです。
 
-
+At this point, though, our API endpoint might look something like the following, and we could get it to work just fine:
+しかし、この時点では、APIエンドポイントは次のようなもので、うまく動作させることができるかもしれません。
 
 Using SQLAlchemy directly in our API endpoint
-SQLAlchemyをAPIエンドポイントで直接利用する
+SQLAlchemyをAPIエンドポイントで直接使う
 
 ```python
 @flask.route.gubbins
 def allocate_endpoint():
-session = start_session()
-# extract order line from request
-line = OrderLine(
-request.json['orderid'],
-request.json['sku'],
-request.json['qty'],
-)
-# load all batches from the DB
-batches = session.query(Batch).all()
-# call our domain service
-allocate(line, batches)
-# save the allocation back to the database
-session.commit()
-return 201
+    session = start_session()
+
+    # extract order line from request
+    line = OrderLine(
+        request.json['orderid'],
+        request.json['sku'],
+        request.json['qty'],
+    )
+
+    # load all batches from the DB
+    batches = session.query(Batch).all()
+
+    # call our domain service
+    allocate(line, batches)
+
+    # save the allocation back to the database
+    session.commit()
+
+    return 201
 ```
 
 ## Introducing the Repository Pattern リポジトリパターンを導入する
@@ -311,16 +333,18 @@ You have to get your data from somewhere
 
 ```python
 import all_my_data
+
 def create_a_batch():
-batch = Batch(...)
-all_my_data.batches.add(batch)
+    batch = Batch(...)
+    all_my_data.batches.add(batch)
+
 def modify_a_batch(batch_id, new_quantity):
-batch = all_my_data.batches.get(batch_id)
-batch.change_initial_quantity(new_quantity)
+    batch = all_my_data.batches.get(batch_id)
+    batch.change_initial_quantity(new_quantity)
 ```
 
 Even though our objects are in memory, we need to put them somewhere so we can find them again.
-オブジェクトはメモリ上にあるけれども、それをどこかに置いて、また見つけることができるようにする必要がある。
+オブジェクトはメモリ上にあるけれども、それをどこかに置いて、また見つけられるようにする必要がある。
 Our in-memory data would let us add new objects, just like a list or a set.
 メモリ内のデータでは、リストやセットのように新しいオブジェクトを追加することができます。
 Because the objects are in memory, we never need to call a .save() method; we just fetch the object we care about and modify it in memory.
@@ -341,12 +365,14 @@ The simplest possible repository (repository.py)
 
 ```python
 class AbstractRepository(abc.ABC):
-@abc.abstractmethod  1
-def add(self, batch: model.Batch):
-raise NotImplementedError  2
-@abc.abstractmethod
-def get(self, reference) -> model.Batch:
-raise NotImplementedError
+
+    @abc.abstractmethod  1
+    def add(self, batch: model.Batch):
+        raise NotImplementedError  2
+
+    @abc.abstractmethod
+    def get(self, reference) -> model.Batch:
+        raise NotImplementedError
 ```
 
 1. Python tip: `@abc.abstractmethod` is one of the only things that makes ABCs actually “work” in Python. Python will refuse to let you instantiate a class that does not implement all the `abstractmethods` defined in its parent class.7 Pythonのヒント： `@abc.abstractmethod` はPythonでABCを実際に「機能」させる唯一のものの1つです。 Pythonは親クラスで定義されているすべての `abstractmethods` を実装していないクラスのインスタンスを作成することを拒否します7。
@@ -376,7 +402,7 @@ And what does it cost us?”
 そして、その代償は何なのか？
 
 Usually, at the very least, we’ll be introducing an extra layer of abstraction, and although we may hope it will reduce complexity overall, it does add complexity locally, and it has a cost in terms of the raw numbers of moving parts and ongoing maintenance.
-通常、少なくとも抽象化のレイヤーを追加することになります。全体として複雑さが軽減されることを期待しても、局所的には複雑さが増し、可動部品の数や継続的なメンテナンスという点でコストが発生します。
+通常、少なくとも抽象化のレイヤーを追加することになります。全体として複雑さが軽減されることを期待しても、局所的には複雑さが増し、可動部品の数や継続的なメンテナンスという点で、コストが発生します。
 
 The Repository pattern is probably one of the easiest choices in the book, though, if you’re already heading down the DDD and dependency inversion route.
 もしあなたが既にDDDや依存関係の逆転の道を歩んでいるのであれば、Repositoryパターンはこの本の中で最も簡単な選択肢の一つでしょう。
@@ -400,7 +426,7 @@ As always, we start with a test.
 This would probably be classified as an integration test, since we’re checking that our code (the repository) is correctly integrated with the database; hence, the tests tend to mix raw SQL with calls and assertions on our own code.
 なぜなら、私たちのコード (リポジトリ) がデータベースと正しく統合されているかどうかをチェックしているからです。そのため、テストには生の SQL と私たち自身のコードの呼び出しやアサーションが混在する傾向があります。
 
-- tip 端っこ
+- tip 
 
 - Unlike the ORM tests from earlier, these tests are good candidates for staying part of your codebase longer term, particularly if any parts of your domain model mean the object-relational map is nontrivial. 先ほどの ORM テストとは異なり、これらのテストはコードベースの一部として長期的に使用するのに適しています。特に、ドメインモデルの一部でオブジェクトリレーショナルマップが自明ではない場合です。
 
@@ -409,14 +435,16 @@ Repository test for saving an object (test_repository.py)
 
 ```python
 def test_repository_can_save_a_batch(session):
-batch = model.Batch("batch1", "RUSTY-SOAPDISH", 100, eta=None)
-repo = repository.SqlAlchemyRepository(session)
-repo.add(batch)  1
-session.commit()  2
-rows = list(session.execute(
-'SELECT reference, sku, _purchased_quantity, eta FROM "batches"'  3
-))
-assert rows == [("batch1", "RUSTY-SOAPDISH", 100, None)]
+    batch = model.Batch("batch1", "RUSTY-SOAPDISH", 100, eta=None)
+
+    repo = repository.SqlAlchemyRepository(session)
+    repo.add(batch)  1
+    session.commit()  2
+
+    rows = list(session.execute(
+        'SELECT reference, sku, _purchased_quantity, eta FROM "batches"'  3
+    ))
+    assert rows == [("batch1", "RUSTY-SOAPDISH", 100, None)]
 ```
 
 1. `repo.add()` is the method under test here. `repo.add()` は、ここでテストされているメソッドです。
@@ -433,62 +461,70 @@ Repository test for retrieving a complex object (test_repository.py)
 
 ```python
 def insert_order_line(session):
-session.execute(  1
-'INSERT INTO order_lines (orderid, sku, qty)'
-' VALUES ("order1", "GENERIC-SOFA", 12)'
-)
-[[orderline_id]] = session.execute(
-'SELECT id FROM order_lines WHERE orderid=:orderid AND sku=:sku',
-dict(orderid="order1", sku="GENERIC-SOFA")
-)
-return orderline_id
+    session.execute(  1
+        'INSERT INTO order_lines (orderid, sku, qty)'
+        ' VALUES ("order1", "GENERIC-SOFA", 12)'
+    )
+    [[orderline_id]] = session.execute(
+        'SELECT id FROM order_lines WHERE orderid=:orderid AND sku=:sku',
+        dict(orderid="order1", sku="GENERIC-SOFA")
+    )
+    return orderline_id
+
 def insert_batch(session, batch_id):  2
-...
+    ...
+
 def test_repository_can_retrieve_a_batch_with_allocations(session):
-orderline_id = insert_order_line(session)
-batch1_id = insert_batch(session, "batch1")
-insert_batch(session, "batch2")
-insert_allocation(session, orderline_id, batch1_id)  3
-repo = repository.SqlAlchemyRepository(session)
-retrieved = repo.get("batch1")
-expected = model.Batch("batch1", "GENERIC-SOFA", 100, eta=None)
-assert retrieved == expected  # Batch.__eq__ only compares reference  3
-assert retrieved.sku == expected.sku  4
-assert retrieved._purchased_quantity == expected._purchased_quantity
-assert retrieved._allocations == {  4
-model.OrderLine("order1", "GENERIC-SOFA", 12),
-}
+    orderline_id = insert_order_line(session)
+    batch1_id = insert_batch(session, "batch1")
+    insert_batch(session, "batch2")
+    insert_allocation(session, orderline_id, batch1_id)  3
+
+    repo = repository.SqlAlchemyRepository(session)
+    retrieved = repo.get("batch1")
+
+    expected = model.Batch("batch1", "GENERIC-SOFA", 100, eta=None)
+    assert retrieved == expected  # Batch.__eq__ only compares reference  3
+    assert retrieved.sku == expected.sku  4
+    assert retrieved._purchased_quantity == expected._purchased_quantity
+    assert retrieved._allocations == {  4
+        model.OrderLine("order1", "GENERIC-SOFA", 12),
+    }
 ```
 
 1. This tests the read side, so the raw SQL is preparing data to be read by the `repo.get()`. これは読み込み側のテストなので、生のSQLは `repo.get()` が読み込むデータを準備していることになります。
 
-2. We’ll spare you the details of `insert_batch` and `insert_allocation`; the point is to create a couple of batches, and, for the batch we’re interested in, to have one existing order line allocated to it. 重要なのは、いくつかのバッチを作成することと、興味のあるバッチに対して、既存のオーダーラインを1つ割り当てることです。
+2. We’ll spare you the details of `insert_batch` and `insert_allocation`; the point is to create a couple of batches, and, for the batch we’re interested in, to have one existing order line allocated to it. 重要なのは、いくつかのバッチを作成することと、興味のあるバッチに対して、既存のオーダーラインを1つ割り当てる事.
 
-3. And that’s what we verify here. The first `assert ==` checks that the types match, and that the reference is the same (because, as you remember, `Batch` is an entity, and we have a custom `eq` for it). そしてこれがここで検証する内容です。 最初の `assert ==` は、型が一致していることと、参照が同じであることを確認します（覚えているように、`Batch` はエンティティであり、それ用のカスタム `eq` があるためです）。
+3. And that’s what we verify here. The first `assert ==` checks that the types match, and that the reference is the same (because, as you remember, `Batch` is an entity, and we have a custom `eq` for it). そしてこれがここで検証する内容です。 最初の `assert ==` は、型が一致していることと、参照が同じであることをチェックします（覚えているように、`Batch` はエンティティであり、それ用のカスタム `eq` があるからです）。
 
 4. So we also explicitly check on its major attributes, including `._allocations`, which is a Python set of `OrderLine` value objects. そのため、 `._allocations` を含む主要な属性も明示的にチェックします。これは、Python の `OrderLine` 値オブジェクトのセットです。
 
 Whether or not you painstakingly write tests for every model is a judgment call.
 すべてのモデルに対して丹念にテストを書くかどうかは、判断の分かれるところです。
 Once you have one class tested for create
-一旦、一つのクラスがテストされると、そのクラスは
+一旦、1つのクラスがテストされると
 
 You end up with something like this:
-結局、こんな感じになってしまうんですね。
+結局、こんな感じになるんですね。
 
 A typical repository (repository.py)
 典型的なリポジトリ(repository.py)です。
 
 ```python
 class SqlAlchemyRepository(AbstractRepository):
-def __init__(self, session):
-self.session = session
-def add(self, batch):
-self.session.add(batch)
-def get(self, reference):
-return self.session.query(model.Batch).filter_by(reference=reference).one()
-def list(self):
-return self.session.query(model.Batch).all()
+
+    def __init__(self, session):
+        self.session = session
+
+    def add(self, batch):
+        self.session.add(batch)
+
+    def get(self, reference):
+        return self.session.query(model.Batch).filter_by(reference=reference).one()
+
+    def list(self):
+        return self.session.query(model.Batch).all()
 ```
 
 And now our Flask endpoint might look something like the following:
@@ -500,21 +536,21 @@ APIエンドポイントで直接リポジトリを使用する
 ```python
 @flask.route.gubbins
 def allocate_endpoint():
-batches = SqlAlchemyRepository.list()
-lines = [
-OrderLine(l['orderid'], l['sku'], l['qty'])
-for l in request.params...
-]
-allocate(lines, batches)
-session.commit()
-return 201
+    batches = SqlAlchemyRepository.list()
+    lines = [
+        OrderLine(l['orderid'], l['sku'], l['qty'])
+         for l in request.params...
+    ]
+    allocate(lines, batches)
+    session.commit()
+    return 201
 ```
 
 - EXERCISE FOR THE READER 読書運動
 
 - We bumped into a friend at a DDD conference the other day who said, “I haven’t used an ORM in 10 years.” The Repository pattern and an ORM both act as abstractions in front of raw SQL, so using one behind the other isn’t really necessary. Why not have a go at implementing our repository without using the ORM? You’ll find the code on GitHub. 先日、DDDのカンファレンスで、"もう10年もORMを使っていない "と言っている友人とばったり会いました。 リポジトリパターンとORMはどちらも生のSQLの前での抽象化として機能するので、どちらかを後ろに使うことはあまり必要ではありません。 ORMを使わずにリポジトリを実装してみるのはどうでしょう？ GitHubにコードがあります。
 
-- We’ve left the repository tests, but figuring out what SQL to write is up to you. Perhaps it’ll be harder than you think; perhaps it’ll be easier. But the nice thing is, the rest of your application just doesn’t care. リポジトリのテストは残したが、どのようなSQLを書くかはあなた次第である。 おそらくあなたが思っているより難しいでしょうし、簡単かもしれません。 しかし、良いことに、アプリケーションの残りの部分は気にしません。
+- We’ve left the repository tests, but figuring out what SQL to write is up to you. Perhaps it’ll be harder than you think; perhaps it’ll be easier. But the nice thing is, the rest of your application just doesn’t care. リポジトリのテストは残したが、どのようなSQLを書くかはあなた次第だ。 おそらくあなたが思っているより難しいでしょうし、簡単かもしれません。 しかし、良いことに、アプリケーションの残りの部分は気にしません。
 
 ## Building a Fake Repository for Tests Is Now Trivial! テスト用の偽リポジトリを作るのは簡単だ!
 
@@ -526,14 +562,18 @@ A simple fake repository using a set (repository.py)
 
 ```python
 class FakeRepository(AbstractRepository):
-def __init__(self, batches):
-self._batches = set(batches)
-def add(self, batch):
-self._batches.add(batch)
-def get(self, reference):
-return next(b for b in self._batches if b.reference == reference)
-def list(self):
-return list(self._batches)
+
+    def __init__(self, batches):
+        self._batches = set(batches)
+
+    def add(self, batch):
+        self._batches.add(batch)
+
+    def get(self, reference):
+        return next(b for b in self._batches if b.reference == reference)
+
+    def list(self):
+        return list(self._batches)
 ```
 
 Because it’s a simple wrapper around a set, all the methods are one-liners.
@@ -559,9 +599,9 @@ You’ll see this fake in action in the next chapter.
 ## What Is a Port and What Is an Adapter, in Python? Pythonにおけるポート、アダプタとは？
 
 We don’t want to dwell on the terminology too much here because the main thing we want to focus on is dependency inversion, and the specifics of the technique you use don’t matter too much.
-ここであまり専門用語にこだわらないのは、私たちが注目したいのは依存関係の逆転であり、使用する技法の具体的な内容はあまり重要ではないからです。
+ここであまり専門用語にこだわらないのは、私たちが注目したいのは依存関係の逆転であり、使用する技法の具体的な内容はあまり重要でないからです。
 Also, we’re aware that different people use slightly different definitions.
-また、人によって微妙に定義が異なることも承知しています。
+また、人によって微妙に異なる定義を使っていることも承知しています。
 
 Ports and adapters came out of the OO world, and the definition we hold onto is that the port is the interface between our application and whatever it is we wish to abstract away, and the adapter is the implementation behind that interface or abstraction.
 ポートやアダプタはOOの世界から生まれたもので、私たちが抱いている定義は、ポートはアプリケーションと抽象化したいものとの間のインタフェースであり、アダプタはそのインタフェースや抽象化の背後にある実装である、というものだ。
@@ -599,7 +639,7 @@ Repository pattern and persistence ignorance: the trade-offs
 
 - Writing the domain model before thinking about persistence helps us focus on the business problem at hand. If we ever want to radically change our approach, we can do that in our model, without needing to worry about foreign keys or migrations until later. 永続化について考える前にドメインモデルを書いておくと、目の前のビジネス問題に集中することができます。 もしアプローチを根本的に変えたくなったら、モデルの中でそれを行うことができ、外部キーやマイグレーションについて後で心配する必要はありません。
 
-- Our database schema is really simple because we have complete control over how we map our objects to tables. このデータベーススキーマは、オブジェクトとテーブルの対応付けを完全に制御できるため、実にシンプルなものとなっています。
+- Our database schema is really simple because we have complete control over how we map our objects to tables. データベースのスキーマは、オブジェクトとテーブルの対応付けを完全に制御できるため、実にシンプルなものとなっています。
 
 - Cons 短所
 
@@ -614,7 +654,7 @@ Figure 2-6 shows the basic thesis: yes, for simple cases, a decoupled domain mod
 
 - TIP ヒント
 
-- If your app is just a simple CRUD (create-read-update-delete) wrapper around a database, then you don’t need a domain model or a repository. もしあなたのアプリがデータベースの周りの単純なCRUD（create-read-update-delete）ラッパーであるなら、ドメインモデルやリポジトリは必要ありません。
+- If your app is just a simple CRUD (create-read-update-delete) wrapper around a database, then you don’t need a domain model or a repository. もしあなたのアプリが、データベースの周りの単純なCRUD（create-read-update-delete）ラッパーであれば、ドメインモデルやリポジトリは必要ありません。
 
 But the more complex the domain, the more an investment in freeing yourself from infrastructure concerns will pay off in terms of the ease of making changes.
 しかし、ドメインが複雑になればなるほど、インフラへの懸念から解放されるための投資は、変更のしやすさという点で高く評価されるでしょう。
@@ -624,7 +664,7 @@ But the more complex the domain, the more an investment in freeing yourself from
 Our example code isn’t complex enough to give more than a hint of what the right-hand side of the graph looks like, but the hints are there.
 このサンプルコードは、グラフの右側がどのように見えるかのヒント以上のものを与えるほど複雑ではありませんが、ヒントはそこにあります。
 Imagine, for example, if we decide one day that we want to change allocations to live on the `OrderLine` instead of on the `Batch` object: if we were using Django, say, we’d have to define and think through the database migration before we could run any tests.
-例えば、ある日アロケーションを `Batch` オブジェクトではなく `OrderLine` で行うようにしたいと考えたとします。もし Django を使っていたら、テストを実行する前にデータベースのマイグレーションを定義して考えなければならないでしょう。
+例えば、ある日アロケーションを `Batch` オブジェクトではなく `OrderLine` で行うようにしたいと考えたとします。もし Django を使っていたら、テストを実行する前にデータベースの移行を定義して考えなければならないでしょう。
 As it is, because our model is just plain old Python objects, we can change a `set()` to being a new attribute, without needing to think about the database until later.
 このように、我々のモデルは単なる古い Python オブジェクトなので、 `set()` を新しい属性に変更することで、データベースのことを後々まで考える必要がないのです。
 
@@ -632,11 +672,11 @@ As it is, because our model is just plain old Python objects, we can change a `s
 
 - Apply dependency inversion to your ORM ORMに依存性の逆転を適用する
 
-- Our domain model should be free of infrastructure concerns, so your ORM should import your model, and not the other way around. 私たちのドメインモデルは、インフラストラクチャに関する懸念がないはずです。したがって、ORMはあなたのモデルをインポートすべきであり、その逆ではありません。
+- Our domain model should be free of infrastructure concerns, so your ORM should import your model, and not the other way around. 私たちのドメインモデルは、インフラストラクチャの懸念から解放されるべきです。したがって、ORMはあなたのモデルをインポートすべきであり、その逆ではありません。
 
 - The Repository pattern is a simple abstraction around permanent storage Repositoryパターンは、永続的なストレージに関するシンプルな抽象化です。
 
-- The repository gives you the illusion of a collection of in-memory objects. It makes it easy to create a FakeRepository for testing and to swap fundamental details of your infrastructure without disrupting your core application. See Appendix C for an example. リポジトリは、インメモリオブジェクトのコレクションのような錯覚を与えます。 これにより、テスト用の FakeRepository を簡単に作成でき、コアアプリケーションを中断することなくインフラの基本的な詳細を入れ替えることができます。 例については、付録Cを参照してください。
+- The repository gives you the illusion of a collection of in-memory objects. It makes it easy to create a FakeRepository for testing and to swap fundamental details of your infrastructure without disrupting your core application. See Appendix C for an example. リポジトリは、インメモリオブジェクトのコレクションのような錯覚を与えます。 これにより、テスト用の FakeRepository を作成したり、コアアプリケーションを中断することなくインフラの基本的な詳細を入れ替えたりすることが簡単にできるようになります。 例については、付録Cを参照してください。
 
 You’ll be wondering, how do we instantiate these repositories, fake or real?
 これらのリポジトリをどのようにインスタンス化するのか、偽物なのか本物なのか、気になるところです。
@@ -650,7 +690,7 @@ But first, a brief digression.
 
 - 1 I suppose we mean “no stateful dependencies.” Depending on a helper library is fine; depending on an ORM or a web framework is not. 1 "ステートフルな依存性がない "という意味だろう。 ヘルパーライブラリに依存するのは良いが、ORMやWebフレームワークに依存するのは良くない。
 
-- 2 Mark Seemann has an excellent blog post on the topic. 2 Mark Seemannのブログ記事が秀逸です。
+- 2 Mark Seemann has an excellent blog post on the topic. 2 Mark Seemann氏のブログ記事が秀逸です。
 
 - 3 In this sense, using an ORM is already an example of the DIP. Instead of depending on hardcoded SQL, we depend on an abstraction, the ORM. But that’s not enough for us—not in this book! 3 この意味で、ORMの使用はすでにDIPの一例です。 ハードコードされたSQLに依存する代わりに、ORMという抽象化されたものに依存するのです。 しかし、この本では、それだけでは十分ではありません。
 
@@ -658,8 +698,8 @@ But first, a brief digression.
 
 - 5 Shout-out to the amazingly helpful SQLAlchemy maintainers, and to Mike Bayer in particular. 5 驚くほど親切な SQLAlchemy のメンテナたち、特に Mike Bayer に感謝します。
 
-- 6 You may be thinking, “What about list or delete or update?” However, in an ideal world, we modify our model objects one at a time, and delete is usually handled as a soft-delete—i.e., batch.cancel(). Finally, update is taken care of by the Unit of Work pattern, as you’ll see in Chapter 6. 6 "listやdeleteやupdateはどうするんだ？"と思われるかもしれません。 しかし、理想的な世界では、モデルオブジェクトを一度に一つずつ修正します。削除は通常、ソフト削除、つまり batch.cancel() として処理されます。 最後に、更新は第6章で見るように、Unit of Workパターンで処理されます。
+- 6 You may be thinking, “What about list or delete or update?” However, in an ideal world, we modify our model objects one at a time, and delete is usually handled as a soft-delete—i.e., batch.cancel(). Finally, update is taken care of by the Unit of Work pattern, as you’ll see in Chapter 6. 6 "listやdeleteやupdateはどうするんだ？"と思われるかもしれません。 しかし、理想的な世界では、モデルオブジェクトを一度に一つずつ修正します。削除は通常、ソフト削除、つまり batch.cancel() として処理されます。 最後に、updateはUnit of Workパターンで処理されます（第6章を参照）。
 
-- 7 To really reap the benefits of ABCs (such as they may be), be running helpers like pylint and mypy. 7 ABCの恩恵を本当に受けるには、pylintやmypyなどのヘルパーを実行することです。
+- 7 To really reap the benefits of ABCs (such as they may be), be running helpers like pylint and mypy. 
 
 - 8 Diagram inspired by a post called “Global Complexity, Local Simplicity” by Rob Vens. 8 Rob Vens氏の「Global Complexity, Local Simplicity」という投稿に触発されて作成した図。
