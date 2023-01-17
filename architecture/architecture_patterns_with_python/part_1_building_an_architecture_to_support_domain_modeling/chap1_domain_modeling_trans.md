@@ -1,10 +1,10 @@
-# 1. Chapter 1. Domain Modeling 第1章 ドメイン・モデリング
+# Chapter 1. Domain Modeling 第1章 ドメイン・モデリング
 
 This chapter looks into how we can model business processes with code, in a way that’s highly compatible with TDD.
 この章では、TDDと親和性の高い方法で、ビジネスプロセスをコードでモデル化する方法について検討します。
 We’ll discuss why domain modeling matters, and we’ll look at a few key patterns for modeling domains:
 なぜドメインモデリングが重要なのかについて説明し、ドメインをモデリングするためのいくつかの重要なパターンを見ていきます。
-**Entity**, **Value Object**, and **Domain Service**.
+Entity, Value Object, and Domain Service.
 エンティティ、バリューオブジェクト、そしてドメインサービスです。
 
 Figure 1-1 is a simple visual placeholder for our Domain Model pattern.
@@ -14,17 +14,17 @@ We’ll fill in some details in this chapter, and as we move on to other chapter
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0101.png)
 
-## 1.1. What is Domain Model? ドメインモデルとは？
+## What is Domain Model? ドメインモデルとは？
 
 In the introduction, we used the term business logic layer to describe the central layer of a three-layered architecture.
-序章では、**3層アーキテクチャの中心層**を表すために、ビジネスロジック層という用語を使いました。
+序章では、3層アーキテクチャの中心層を表すために、ビジネスロジック層という用語を使いました。
 For the rest of the book, we’re going to use the term domain model instead.
-この本の残りの部分では、**代わりにドメインモデルという用語を使う**ことにします。
+この本の残りの部分では、代わりにドメインモデルという用語を使うことにします。
 This is a term from the DDD community that does a better job of capturing our intended meaning (see the next sidebar for more on DDD).
 これはDDDコミュニティからの用語で、私たちの意図する意味をよりよく捉えています（DDDについての詳細は次のサイドバーをご覧ください）。
 
 The domain is a fancy way of saying the problem you’re trying to solve.
-ドメインとは、あなたが**解決しようとしている問題**を表現する空想的な方法です。
+ドメインとは、あなたが解決しようとしている問題を表現する空想的な方法です。
 Your authors currently work for an online retailer of furniture.
 あなたの著者は現在、家具のオンライン小売業者で働いています。
 Depending on which system you’re talking about, the domain might be purchasing and procurement, or product design, or logistics and delivery.
@@ -33,7 +33,7 @@ Most programmers spend their days trying to improve or automate business process
 多くのプログラマーは、ビジネスプロセスの改善や自動化に日々取り組んでいますが、ドメインとは、それらのプロセスがサポートする一連の活動のことです。
 
 A model is a map of a process or phenomenon that captures a useful property.
-モデルとは、あるプロセスや現象について、有用な性質を捉えた**写像**のことである。
+モデルとは、あるプロセスや現象について、有用な性質を捉えた写像のことである。
 Humans are exceptionally good at producing models of things in their heads.
 人間は、頭の中で物事のモデルを作ることが非常に得意です。
 For example, when someone throws a ball toward you, you’re able to predict its movement almost unconsciously, because you have a model of the way objects move in space.
@@ -46,7 +46,7 @@ That doesn’t mean the model is wrong, but it does mean that some predictions f
 だからといってモデルが間違っているわけではなく、ある予測はモデルの範囲外であることを意味します。
 
 The domain model is the mental map that business owners have of their businesses.
-**ドメインモデルとは、ビジネスオーナーが自分のビジネスについて持っているメンタルマップのこと**です。
+ドメインモデルとは、ビジネスオーナーが自分のビジネスについて持っているメンタルマップのことです。
 All business people have these mental maps—they’re how humans think about complex processes.
 すべてのビジネスパーソンは、このメンタルマップを持っています。
 
@@ -59,7 +59,7 @@ Imagine that you, our unfortunate reader, were suddenly transported light years 
 もし、あなたが不幸にも友人や家族と一緒に宇宙船に乗って地球から何光年も離れた場所に突然飛ばされ、どうやって家に帰ろうかと第一原理から考えなければならなくなったと想像してください。
 
 In your first few days, you might just push buttons randomly, but soon you’d learn which buttons did what, so that you could give one another instructions.
-最初の数日は、ただやみくもにボタンを押すだけかもしれませんが、すぐにどのボタンが何をするのかを覚え、お互いに指示を出し合えるようになります。
+最初の数日は、ただ適当にボタンを押すだけかもしれませんが、すぐにどのボタンが何をするのかを覚えて、お互いに指示を出し合えるようになります。
 “Press the red button near the flashing doohickey and then throw that big lever over by the radar gizmo,” you might say.
 「点滅しているボタンの近くにある赤いボタンを押して、レーダー装置のそばにある大きなレバーを投げてください」と言うかもしれません。
 
@@ -76,11 +76,11 @@ This process would happen quite naturally, without any formal effort to build a 
 
 - THIS IS NOT A DDD BOOK. YOU SHOULD READ A DDD BOOK. これはDDの本ではありません。 DDDの本を読むべきでしょう。
 
-- Domain-driven design, or DDD, popularized the concept of domain modeling,1 and it’s been a hugely successful movement in transforming the way people design software by focusing on the core business domain. Many of the architecture patterns that we cover in this book—including Entity, Aggregate, Value Object (see Chapter 7), and Repository (in the next chapter)—come from the DDD tradition. **ドメイン駆動設計（DDD）**は、ドメインモデリングの概念を普及させ1、中核となるビジネスドメインに焦点を当てることで、ソフトウェアを設計する方法を変革し、大きな成功を収めました。 **本書で取り上げるEntity、Aggregate、Value Object（第7章参照）、Repository（次章参照）などのアーキテクチャパターンの多くは、DDDの伝統に由来するもの**である。
+- Domain-driven design, or DDD, popularized the concept of domain modeling,1 and it’s been a hugely successful movement in transforming the way people design software by focusing on the core business domain. Many of the architecture patterns that we cover in this book—including Entity, Aggregate, Value Object (see Chapter 7), and Repository (in the next chapter)—come from the DDD tradition. ドメイン駆動設計（DDD）は、ドメインモデリングの概念を普及させ1、中核となるビジネスドメインに焦点を当てることで、ソフトウェアを設計する方法を変革し、大きな成功を収めました。 本書で取り上げるEntity、Aggregate、Value Object（第7章参照）、Repository（次章参照）などのアーキテクチャパターンの多くは、DDDの伝統に由来するものである。
 
-- In a nutshell, DDD says that the most important thing about software is that it provides a useful model of a problem. If we get that model right, our software delivers value and makes new things possible. DDDは、一言で言えば、**ソフトウェアで最も重要なことは、問題の有用なモデルを提供すること**である、と言っています。 そのモデルが正しければ、ソフトウェアは価値を提供し、新しいことを可能にするのです。
+- In a nutshell, DDD says that the most important thing about software is that it provides a useful model of a problem. If we get that model right, our software delivers value and makes new things possible.
 
-- If we get the model wrong, it becomes an obstacle to be worked around. In this book, we can show the basics of building a domain model, and building an architecture around it that leaves the model as free as possible from external constraints, so that it’s easy to evolve and change. モデルを間違えると、それが障害となり、回避することができなくなります。 本書では、**ドメインモデルを構築し、そのモデルを中心にアーキテクチャを構築**することで、**モデルを外部の制約からできる限り解放し、進化や変更を容易にするための基本的な方法を紹介**することができます。
+- If we get the model wrong, it becomes an obstacle to be worked around. In this book, we can show the basics of building a domain model, and building an architecture around it that leaves the model as free as possible from external constraints, so that it’s easy to evolve and change. モデルを間違えると、それが障害となり、回避することができなくなります。 本書では、ドメインモデルを構築し、そのモデルを中心にアーキテクチャを構築することで、モデルを外部の制約からできる限り解放し、進化や変更を容易にするための基本的な方法を紹介することができます。
 
 - But there’s a lot more to DDD and to the processes, tools, and techniques for developing a domain model. We hope to give you a taste of it, though, and cannot encourage you enough to go on and read a proper DDD book: しかし、DDDとドメインモデルを開発するためのプロセス、ツール、テクニックには、もっとたくさんのものがあります。 しかし、私たちはその一端に触れることができ、適切なDDDの本を読むことをお勧めします。
 
@@ -94,7 +94,7 @@ The terminology used by business stakeholders represents a distilled understandi
 ビジネス関係者が使う用語は、複雑なアイデアやプロセスを一つの単語やフレーズに煮詰めた、ドメインモデルの蒸留された理解を表しています。
 
 When we hear our business stakeholders using unfamiliar words, or using terms in a specific way, we should listen to understand the deeper meaning and encode their hard-won experience into our software.
-私たちは、ビジネス関係者が聞きなれない言葉を使ったり、特定の方法で用語を使ったりするのを聞いたとき、深い意味を理解するために耳を傾け、彼らが苦労して得た経験をソフトウェアにコード化する必要があります。
+私たちは、ビジネス関係者が聞き慣れない言葉を使っていたり、特定の方法で用語を使っていたりするのを聞いたとき、深い意味を理解するために耳を傾け、彼らが苦労して得た経験をソフトウェアにコード化する必要があります。
 
 We’re going to use a real-world domain model throughout this book, specifically a model from our current employment.
 この本では、実世界のドメインモデル、特に私たちが現在勤めている会社のモデルを使うことにします。
@@ -107,14 +107,14 @@ When you buy a sofa or a coffee table, we have to figure out how best to get you
 ソファやコーヒーテーブルを購入する場合、ポーランドや中国、ベトナムから商品をどうやってリビングルームに運ぶのがベストなのかを考えなければなりません。
 
 At a high level, we have separate systems that are responsible for buying stock, selling stock to customers, and shipping goods to customers.
-大まかに言えば、**在庫を買うシステム**、**顧客に在庫を売るシステム**、**顧客に商品を出荷するシステム**が別々に存在します。
+大まかに言えば、在庫を買うシステム、顧客に在庫を売るシステム、顧客に商品を出荷するシステムが別々に存在します。
 A system in the middle needs to coordinate the process by allocating stock to a customer’s orders; see Figure 1-2.
 中間に位置するシステムは、顧客の注文に対して在庫を割り当てることで、このプロセスを調整する必要があります（図1-2参照）。
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0102.png)
 
 For the purposes of this book, we’re imagining that the business decides to implement an exciting new way of allocating stock.
-本書では、**ある企業が在庫配分の新しい方法を導入**することを決定したと仮定します。
+本書では、ある企業が在庫配分の新しい方法を導入することを決定したと仮定します。
 Until now, the business has been presenting stock and lead times based on what is physically available in the warehouse.
 これまで、在庫とリードタイムは、倉庫にある物理的な在庫に基づいて表示されていました。
 If and when the warehouse runs out, a product is listed as “out of stock” until the next shipment arrives from the manufacturer.
@@ -127,12 +127,12 @@ Fewer goods will appear to be out of stock, we’ll sell more, and the business 
 
 But allocating orders is no longer a trivial matter of decrementing a single quantity in the warehouse system.
 しかし、オーダーの割り当ては、もはや倉庫システムで1つの数量をデクリメントするという些細な問題ではありません。
-We need a more complex **allocation mechanism**.
-もっと複雑な**割り当てメカニズム**が必要なのです。
+We need a more complex allocation mechanism.
+もっと複雑な割り当てメカニズムが必要なのです。
 Time for some domain modeling.
 ドメイン・モデリングの時間だ。
 
-## 1.2. Exploring the Domain Language ドメイン言語の探索
+## Exploring the Domain Language ドメイン言語の探索
 
 Understanding the domain model takes time, and patience, and Post-it notes.
 ドメインモデルを理解するには、時間と忍耐とポストイット・ノートが必要です。
@@ -142,7 +142,7 @@ Wherever possible, we ask for concrete examples to illustrate each rule.
 可能な限り、各ルールを説明するための具体例を求めます。
 
 We make sure to express those rules in the business jargon (the ubiquitous language in DDD terminology).
-その**ルールをビジネス用語（DDD用語でいうところのユビキタス言語）で表現**するようにします。
+そのルールをビジネス用語（DDD用語でいうところのユビキタス言語）で表現するようにします。
 We choose memorable identifiers for our objects so that the examples are easier to talk about.
 オブジェクトの識別子には覚えやすいものを選び、事例が話しやすいようにします。
 
@@ -151,7 +151,7 @@ We choose memorable identifiers for our objects so that the examples are easier 
 
 - SOME NOTES ON ALLOCATION 割り付けに関する注意事項
 
-- A product is identified by a SKU, pronounced “skew,” which is short for stock-keeping unit. Customers place orders. An order is identified by an order reference and comprises multiple order lines, where each line has a SKU and a quantity. For example: SKUとは、Stock-Keeping Unitの略で、「スキュー」と発音され、商品を識別する。 顧客は注文をする。 注文は注文参照番号で識別され、複数の注文行から構成され、各行にはSKUと数量がある。 例えば:
+- A product is identified by a SKU, pronounced “skew,” which is short for stock-keeping unit. Customers place orders. An order is identified by an order reference and comprises multiple order lines, where each line has a SKU and a quantity. For example: SKUとは、Stock-Keeping Unitの略で、「スキュー」と発音され、商品を識別する。 顧客は注文をする。 注文は注文参照番号で識別され、複数の注文行から構成され、各行にはSKUと数量がある。 例えば
 
 - 10 units of RED-CHAIR RED-CHAIR10台
 
@@ -159,9 +159,9 @@ We choose memorable identifiers for our objects so that the examples are easier 
 
 - The purchasing department orders small batches of stock. A batch of stock has a unique ID called a reference, a SKU, and a quantity. 購買部門は、小ロットの在庫を発注する。 在庫のバッチは、リファレンスと呼ばれる一意のID、SKU、および数量を持っています。
 
-- We need to allocate order lines to batches. When we’ve allocated an order line to a batch, we will send stock from that specific batch to the customer’s delivery address. When we allocate x units of stock to a batch, the available quantity is reduced by x. For example: バッチに注文書を割り当てる必要があります。 バッチにオーダーラインを割り当てると、そのバッチから顧客の配送先に在庫を送ることになる。 バッチに x 個の在庫を割り当てると、利用可能な数量が x 個減ります。たとえば、次のようになります。
+- We need to allocate order lines to batches. When we’ve allocated an order line to a batch, we will send stock from that specific batch to the customer’s delivery address. When we allocate x units of stock to a batch, the available quantity is reduced by x. For example: バッチに注文書を割り当てる必要があります。 バッチにオーダーラインを割り当てると、そのバッチから顧客の配送先に在庫を送ることになる。 バッチに x 個の在庫を割り当てると、使用可能な数量が x 個減ります。たとえば、次のようになります。
 
-- We have a batch of 20 SMALL-TABLE, and we allocate an order line for 2 SMALL-TABLE.
+- We have a batch of 20 SMALL-TABLE, and we allocate an order line for 2 SMALL-TABLE. SMALL-TABLEが20台分あり、SMALL-TABLE2台分の受注枠を確保しました。
 
 - The batch should have 18 SMALL-TABLE remaining. バッチには、18個のSMALL-TABLEが残っているはずです。
 
@@ -179,7 +179,7 @@ We choose memorable identifiers for our objects so that the examples are easier 
 
 - Batches have an ETA if they are currently shipping, or they may be in warehouse stock. We allocate to warehouse stock in preference to shipment batches. We allocate to shipment batches in order of which has the earliest ETA. バッチには、現在出荷中の場合はETAが表示され、また、倉庫の在庫にある場合もあります。 出荷バッチよりも倉庫在庫に優先的に割り当てます。 出荷バッチは、ETAが早いものから順に割り当てる。
 
-## 1.3. Unit Testing Domain Models ドメインモデルの単体テスト
+## Unit Testing Domain Models ドメインモデルの単体テスト
 
 We’re not going to show you how TDD works in this book, but we want to show you how we would construct a model from this business conversation.
 本書ではTDDの仕組みは紹介しませんが、このビジネスの会話からどのようにモデルを構築していくかを紹介したいと思います。
@@ -205,7 +205,9 @@ A first test for allocation (test_batches.py)
 def test_allocating_to_a_batch_reduces_the_available_quantity():
     batch = Batch("batch-001", "SMALL-TABLE", qty=20, eta=date.today())
     line = OrderLine('order-ref', "SMALL-TABLE", 2)
+
     batch.allocate(line)
+
     assert batch.available_quantity == 18
 ```
 
@@ -226,26 +228,29 @@ class OrderLine:
     orderid: str
     sku: str
     qty: int
+
+
 class Batch:
     def __init__(
-    self, ref: str, sku: str, qty: int, eta: Optional[date]  2
+        self, ref: str, sku: str, qty: int, eta: Optional[date]  2
     ):
         self.reference = ref
         self.sku = sku
         self.eta = eta
         self.available_quantity = qty
+
     def allocate(self, line: OrderLine):
         self.available_quantity -= line.qty  3
 ```
 
 - `OrderLine` is an immutable dataclass with no behavior.2 OrderLine` は振る舞いのないイミュータブルなデータクラスです。
 
-- We’re not showing imports in most code listings, in an attempt to keep them clean. We’re hoping you can guess that this came via `from dataclasses import dataclass`; likewise, `typing.Optional` and datetime.date. If you want to double-check anything, you can see the full working code for each chapter in its branch (e.g., chapter_01_domain_model). 私たちは、コードをきれいに保つために、ほとんどのコードリストでインポートを表示していません。 これは `from dataclasses import dataclass`; 同様に `typing.Optional` と `datetime.date` から来ていると推測していただければと思います。 もし何かを再確認したいのであれば、各章のブランチで完全な作業コードを見ることができます (例: chapter_01_domain_model)。
+- We’re not showing imports in most code listings, in an attempt to keep them clean. We’re hoping you can guess that this came via `from dataclasses import dataclass`; likewise, `typing.Optional` and datetime.date. If you want to double-check anything, you can see the full working code for each chapter in its branch (e.g., chapter_01_domain_model). 私たちは、コードをきれいに保つために、ほとんどのコードリストでインポートを表示していません。 これは `from dataclasses import dataclass`; 同様に `typing.Optional` と datetime.date から来ていると推測できるかと思います。 もし何かを再確認したいのであれば、各章のブランチで完全な作業コードを見ることができます (例: chapter_01_domain_model)。
 
 - Type hints are still a matter of controversy in the Python world. For domain models, they can sometimes help to clarify or document what the expected arguments are, and people with IDEs are often grateful for them. You may decide the price paid in terms of readability is too high. タイプヒントはPythonの世界ではまだ論争の的になっています。 ドメインモデルについては、期待される引数が何であるかを明確にしたり文書化したりするのに役立つことがあり、IDEを持つ人々はしばしばそれをありがたがることがあります。 あなたは、可読性という点で支払った代償が高すぎると判断するかもしれません。
 
 Our implementation here is trivial: a `Batch` just wraps an integer `available_quantity`, and we decrement that value on allocation.
-バッチは単に整数の `available_quantity` をラップして、割り当て時にその値をデクリメントしています。
+バッチは単に整数の `available_quantity` をラップして、オーダーラインの割り当て時にその値をデクリメント(カウンタ等の値を一定の値だけ減算する事)しています。
 We’ve written quite a lot of code just to subtract one number from another, but we think that modeling our domain precisely will pay off.3
 ある数字から別の数字を引くだけのコードを大量に書いてしまいましたが、私たちのドメインを正確にモデル化することで、その成果を得ることができると考えています3。
 
@@ -257,23 +262,28 @@ Testing logic for what we can allocate (test_batches.py)
 
 ```python
 def make_batch_and_line(sku, batch_qty, line_qty):
-return (
-Batch("batch-001", sku, batch_qty, eta=date.today()),
-OrderLine("order-123", sku, line_qty)
-)
+    return (
+        Batch("batch-001", sku, batch_qty, eta=date.today()),
+        OrderLine("order-123", sku, line_qty)
+    )
+
+
 def test_can_allocate_if_available_greater_than_required():
-large_batch, small_line = make_batch_and_line("ELEGANT-LAMP", 20, 2)
-assert large_batch.can_allocate(small_line)
+    large_batch, small_line = make_batch_and_line("ELEGANT-LAMP", 20, 2)
+    assert large_batch.can_allocate(small_line)
+
 def test_cannot_allocate_if_available_smaller_than_required():
-small_batch, large_line = make_batch_and_line("ELEGANT-LAMP", 2, 20)
-assert small_batch.can_allocate(large_line) is False
+    small_batch, large_line = make_batch_and_line("ELEGANT-LAMP", 2, 20)
+    assert small_batch.can_allocate(large_line) is False
+
 def test_can_allocate_if_available_equal_to_required():
-batch, line = make_batch_and_line("ELEGANT-LAMP", 2, 2)
-assert batch.can_allocate(line)
+    batch, line = make_batch_and_line("ELEGANT-LAMP", 2, 2)
+    assert batch.can_allocate(line)
+
 def test_cannot_allocate_if_skus_do_not_match():
-batch = Batch("batch-001", "UNCOMFORTABLE-CHAIR", 100, eta=None)
-different_sku_line = OrderLine("order-123", "EXPENSIVE-TOASTER", 10)
-assert batch.can_allocate(different_sku_line) is False
+    batch = Batch("batch-001", "UNCOMFORTABLE-CHAIR", 100, eta=None)
+    different_sku_line = OrderLine("order-123", "EXPENSIVE-TOASTER", 10)
+    assert batch.can_allocate(different_sku_line) is False
 ```
 
 There’s nothing too unexpected here.
@@ -290,27 +300,27 @@ A new method in the model (model.py)
 モデル(model.py)に新しいメソッドを追加しました。
 
 ```python
-def can_allocate(self, line: OrderLine) -> bool:
-return self.sku == line.sku and self.available_quantity >= line.qty
+    def can_allocate(self, line: OrderLine) -> bool:
+        return self.sku == line.sku and self.available_quantity >= line.qty
 ```
 
 So far, we can manage the implementation by just incrementing and decrementing `Batch.available_quantity`, but as we get into `deallocate()` tests, we’ll be forced into a more intelligent solution:
-今のところ、`Batch.available_quantity` をインクリメント、デクリメントするだけで実装を管理できますが、 `deallocate()` テストに入ると、よりインテリジェントな解決策に迫られるでしょう。
+今のところ、`Batch.available_quantity` をインクリメント、デクリメントするだけで実装を管理できますが、 `deallocate()` テストに入ると、よりインテリジェントな解決策を迫られることになります。
 
 This test is going to require a smarter model (test_batches.py)
 このテストでは、よりスマートなモデル(test_batches.py)が必要になりそうです。
 
 ```python
 def test_can_only_deallocate_allocated_lines():
-batch, unallocated_line = make_batch_and_line("DECORATIVE-TRINKET", 20, 2)
-batch.deallocate(unallocated_line)
-assert batch.available_quantity == 20
+    batch, unallocated_line = make_batch_and_line("DECORATIVE-TRINKET", 20, 2)
+    batch.deallocate(unallocated_line)
+    assert batch.available_quantity == 20
 ```
 
 In this test, we’re asserting that deallocating a line from a batch has no effect unless the batch previously allocated the line.
-このテストでは、バッチから行の割り当てを解除しても、そのバッチが以前にその行を割り当てていない限り、何の効果もないことを主張しています。
+このテストでは、バッチからオーダーの割り当てを解除しても、そのバッチが以前にそのオーダーを割り当てていない限り、何の効果もないことを主張しています。
 For this to work, our `Batch` needs to understand which lines have been allocated.
-これが動作するためには、`Batch` がどの行が割り当てられたかを理解する必要があります。
+これが動作するためには、`Batch` がどのオーダーが割り当てられたかを理解する必要があります。
 Let’s look at the implementation:
 では、その実装を見てみましょう。
 
@@ -319,28 +329,34 @@ The domain model now tracks allocations (model.py)
 
 ```python
 class Batch:
-def __init__(
-self, ref: str, sku: str, qty: int, eta: Optional[date]
-):
-self.reference = ref
-self.sku = sku
-self.eta = eta
-self._purchased_quantity = qty
-self._allocations = set()  # type: Set[OrderLine]
-def allocate(self, line: OrderLine):
-if self.can_allocate(line):
-self._allocations.add(line)
-def deallocate(self, line: OrderLine):
-if line in self._allocations:
-self._allocations.remove(line)
-@property
-def allocated_quantity(self) -> int:
-return sum(line.qty for line in self._allocations)
-@property
-def available_quantity(self) -> int:
-return self._purchased_quantity - self.allocated_quantity
-def can_allocate(self, line: OrderLine) -> bool:
-return self.sku == line.sku and self.available_quantity >= line.qty
+    def __init__(
+        self, ref: str, sku: str, qty: int, eta: Optional[date]
+    ):
+        self.reference = ref
+        self.sku = sku
+        self.eta = eta
+        self._purchased_quantity = qty
+        self._allocations = set()  # type: Set[OrderLine]
+
+    def allocate(self, line: OrderLine):
+        if self.can_allocate(line):
+            self._allocations.add(line)
+
+    def deallocate(self, line: OrderLine):
+        if line in self._allocations:
+            self._allocations.remove(line)
+
+    @property
+    def allocated_quantity(self) -> int:
+        return sum(line.qty for line in self._allocations)
+
+    @property
+    def available_quantity(self) -> int:
+        return self._purchased_quantity - self.allocated_quantity
+
+    def can_allocate(self, line: OrderLine) -> bool:
+        return self.sku == line.sku and self.available_quantity >= line.qty
+
 ```
 
 Figure 1-3 shows the model in UML.
@@ -349,13 +365,13 @@ Figure 1-3 shows the model in UML.
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0103.png)
 
 Now we’re getting somewhere!
-今、私たちはどこかに向かっているのです!
+今、私たちはどこかに向かっているのです
 A batch now keeps track of a set of allocated `OrderLine` objects.
 バッチは、割り当てられた `OrderLine` オブジェクトのセットを追跡するようになりました。
 When we allocate, if we have enough available quantity, we just add to the set.
 割り当て時に、十分な空き数量があれば、そのセットに追加するだけです。
 Our `available_quantity` is now a calculated property: purchased quantity minus allocated quantity.
-この `available_quantity` は、購入量から割り当て量を差し引いた、計算されたプロパティです。
+この `available_quantity` は、購入数量から割り当て数量を引いた、計算されたプロパティです。
 
 Yes, there’s plenty more we could do.
 そうです、もっとできることがたくさんあるのです。
@@ -363,7 +379,7 @@ It’s a little disconcerting that both `allocate()` and `deallocate()` can fail
 allocate()`と`deallocate()` の両方がサイレントで失敗する可能性があるのは少し気になりますが、基本はできています。
 
 Incidentally, using a set for `._allocations` makes it simple for us to handle the last test, because items in a set are unique:
-ちなみに、`._allocations`にセットを使用すると、セット内のアイテムは一意であるため、最後のテストを簡単に処理することができます。
+ちなみに、`._allocations`にセットを使用すると、セット内のアイテムが一意になるので、最後のテストを簡単に処理することができます。
 
 Last batch test!
 最後のバッチテスト!
@@ -372,10 +388,10 @@ Last batch test!
 
 ```python
 def test_allocation_is_idempotent():
-batch, line = make_batch_and_line("ANGULAR-DESK", 20, 2)
-batch.allocate(line)
-batch.allocate(line)
-assert batch.available_quantity == 18
+    batch, line = make_batch_and_line("ANGULAR-DESK", 20, 2)
+    batch.allocate(line)
+    batch.allocate(line)
+    assert batch.available_quantity == 18
 ```
 
 At the moment, it’s probably a valid criticism to say that the domain model is too trivial to bother with DDD (or even object orientation!).
@@ -392,9 +408,11 @@ A real business in the real world knows how to pile on complexity faster than we
 現実の世界のビジネスは、私たちがページ上で紹介するよりも早く、複雑さを積み重ねる方法を知っているのです。
 
 But taking this simple domain model as a placeholder for something more complex, we’re going to extend our simple domain model in the rest of the book and plug it into the real world of APIs and databases and spreadsheets.
-しかし、この単純なドメインモデルを、より複雑なもののためのプレースホルダーとして、この本の残りの部分で単純なドメインモデルを拡張し、APIやデータベースやスプレッドシートの現実の世界に差し込んでいきます。
+しかし、この単純なドメインモデルを、より複雑なもののためのプレースホルダー(実際の内容を後から挿入する為に、とりあえず仮に確保した場所の事)として、この本の残りの部分で単純なドメインモデルを拡張し、APIやデータベースやスプレッドシートの現実の世界に差し込んでいきます。
 We’ll see how sticking rigidly to our principles of encapsulation and careful layering will help us to avoid a ball of mud.
 カプセル化と慎重なレイヤリングの原則を厳格に守ることが、 泥の玉を避けるためにどのように役立つか、私たちは知ることになるでしょう。
+
+---
 
 MORE TYPES FOR MORE TYPE HINTS
 より多くのタイプのヒントを得るために
@@ -407,15 +425,17 @@ Just taking it way too far, Bob
 ```python
 from dataclasses import dataclass
 from typing import NewType
+
 Quantity = NewType("Quantity", int)
 Sku = NewType("Sku", str)
 Reference = NewType("Reference", str)
 ...
+
 class Batch:
-def __init__(self, ref: Reference, sku: Sku, qty: Quantity):
-self.sku = sku
-self.reference = ref
-self._purchased_quantity = qty
+    def __init__(self, ref: Reference, sku: Sku, qty: Quantity):
+        self.sku = sku
+        self.reference = ref
+        self._purchased_quantity = qty
 ```
 
 That would allow our type checker to make sure that we don’t pass a `Sku` where a `Reference` is expected, for example.
@@ -424,12 +444,14 @@ That would allow our type checker to make sure that we don’t pass a `Sku` wher
 Whether you think this is wonderful or appalling is a matter of debate.4
 これをすばらしいと思うか、ひどいと思うかは議論の分かれるところです4。
 
-### 1.3.1. Dataclasses Are Great for Value Objects データクラスはバリューオブジェクトに最適です。
+---
+
+### Dataclasses Are Great for Value Objects データクラスはバリューオブジェクトに最適です。
 
 We’ve used `line` liberally in the previous code listings, but what is a line?
 これまでのコード一覧では、`line`を自由に使ってきましたが、lineとは何でしょうか？
 In our business language, an order has multiple line items, where each line has a SKU and a quantity.
-私たちのビジネス言語では、注文は複数の行項目を持ち、それぞれの行は SKU と数量を持っています。
+私たちのビジネス言語では、注文は複数の行アイテムを持ち、それぞれの行は SKU と数量を持っています。
 We can imagine that a simple YAML file containing order information might look like this:
 注文情報を含むシンプルな YAML ファイルは次のようになると想像できます。
 
@@ -439,12 +461,12 @@ Order info as YAML
 ```yaml
 Order_reference: 12345
 Lines:
-- sku: RED-CHAIR
-qty: 25
-- sku: BLU-CHAIR
-qty: 25
-- sku: GRN-CHAIR
-qty: 25
+  - sku: RED-CHAIR
+    qty: 25
+  - sku: BLU-CHAIR
+    qty: 25
+  - sku: GRN-CHAIR
+    qty: 25
 ```
 
 Notice that while an order has a reference that uniquely identifies it, a line does not.
@@ -463,13 +485,14 @@ OrderLine はバリューオブジェクト
 ```python
 @dataclass(frozen=True)
 class OrderLine:
-orderid: OrderReference
-sku: ProductReference
-qty: Quantity
+    orderid: OrderReference
+    sku: ProductReference
+    qty: Quantity
+
 ```
 
 One of the nice things that dataclasses (or namedtuples) give us is value equality, which is the fancy way of saying, “Two lines with the same `orderid`, `sku`, and `qty` are equal.”
-データクラス(または名前付きタプル)が与えてくれる素晴らしいものの1つに、値の等価性があります。これは、「同じ `orderid`, `sku`, `qty` を持つ2つの行は等しい」という空想的な言い方です。
+データクラス(または`namedtuples`)が与えてくれる素晴らしいものの1つに、値の等価性があります。これは、「同じ `orderid`, `sku`, `qty` を持つ2つの行は等しい」という空想的な言い方です。
 
 More examples of value objects
 バリューオブジェクトのその他の例
@@ -478,24 +501,28 @@ More examples of value objects
 from dataclasses import dataclass
 from typing import NamedTuple
 from collections import namedtuple
+
 @dataclass(frozen=True)
 class Name:
-first_name: str
-surname: str
+    first_name: str
+    surname: str
+
 class Money(NamedTuple):
-currency: str
-value: int
+    currency: str
+    value: int
+
 Line = namedtuple('Line', ['sku', 'qty'])
+
 def test_equality():
-assert Money('gbp', 10) == Money('gbp', 10)
-assert Name('Harry', 'Percival') != Name('Bob', 'Gregory')
-assert Line('RED-CHAIR', 5) == Line('RED-CHAIR', 5)
+    assert Money('gbp', 10) == Money('gbp', 10)
+    assert Name('Harry', 'Percival') != Name('Bob', 'Gregory')
+    assert Line('RED-CHAIR', 5) == Line('RED-CHAIR', 5)
 ```
 
 These value objects match our real-world intuition about how their values work.
 これらのバリューオブジェクトは、その価値の仕組みについて私たちの現実世界での直感と一致しています。
 It doesn’t matter which £10 note we’re talking about, because they all have the same value.
-どの10ポンド札について話していても、すべて同じ値を持っているからです。
+どの10ポンド札について話していても、すべて同じ値を持つので問題ありません。
 Likewise, two names are equal if both the first and last names match; and two lines are equivalent if they have the same customer order, product code, and quantity.
 同様に、2つの名前は姓と名の両方が一致すれば等しいし、2つの行は顧客オーダー、商品コード、数量が同じなら等価である。
 We can still have complex behavior on a value object, though.
@@ -509,21 +536,26 @@ Math with value objects
 ```python
 fiver = Money('gbp', 5)
 tenner = Money('gbp', 10)
+
 def can_add_money_values_for_the_same_currency():
-assert fiver + fiver == tenner
+    assert fiver + fiver == tenner
+
 def can_subtract_money_values():
-assert tenner - fiver == fiver
+    assert tenner - fiver == fiver
+
 def adding_different_currencies_fails():
-with pytest.raises(ValueError):
-Money('usd', 10) + Money('gbp', 10)
+    with pytest.raises(ValueError):
+        Money('usd', 10) + Money('gbp', 10)
+
 def can_multiply_money_by_a_number():
-assert fiver * 5 == Money('gbp', 25)
+    assert fiver * 5 == Money('gbp', 25)
+
 def multiplying_two_money_values_is_an_error():
-with pytest.raises(TypeError):
-tenner * fiver
+    with pytest.raises(TypeError):
+        tenner * fiver
 ```
 
-### 1.3.2. Value Objects and Entities バリューオブジェクトとエンティティ
+### Value Objects and Entities バリューオブジェクトとエンティティ
 
 An order line is uniquely identified by its order ID, SKU, and quantity; if we change one of those values, we now have a new line.
 オーダーラインは、オーダーID、SKU、数量によって一意に識別され、これらの値のいずれかを変更すると、新しいラインが作成されます。
@@ -549,7 +581,7 @@ A name itself cannot change…
 
 ```python
 def test_name_equality():
-assert Name("Harry", "Percival") != Name("Barry", "Percival")
+    assert Name("Harry", "Percival") != Name("Barry", "Percival")
 ```
 
 But what about Harry as a person?
@@ -564,13 +596,18 @@ But a person can!
 
 ```python
 class Person:
-def __init__(self, name: Name):
-self.name = name
+
+    def __init__(self, name: Name):
+        self.name = name
+
+
 def test_barry_is_harry():
-harry = Person(Name("Harry", "Percival"))
-barry = harry
-barry.name = Name("Barry", "Percival")
-assert harry is barry and barry is harry
+    harry = Person(Name("Harry", "Percival"))
+    barry = harry
+
+    barry.name = Name("Barry", "Percival")
+
+    assert harry is barry and barry is harry
 ```
 
 Entities, unlike values, have identity equality.
@@ -590,13 +627,15 @@ Implementing equality operators (model.py)
 
 ```python
 class Batch:
-...
-def __eq__(self, other):
-if not isinstance(other, Batch):
-return False
-return other.reference == self.reference
-def __hash__(self):
-return hash(self.reference)
+    ...
+
+    def __eq__(self, other):
+        if not isinstance(other, Batch):
+            return False
+        return other.reference == self.reference
+
+    def __hash__(self):
+        return hash(self.reference)
 ```
 
 Python’s `__eq__` magic method defines the behavior of the class for the `==` operator.5
@@ -623,7 +662,7 @@ You should also try to somehow make that attribute read-only.
 
 - This is tricky territory; you shouldn’t modify `__hash__` without also modifying `__eq__`. If you’re not sure what you’re doing, further reading is suggested. “Python Hashes and Equality” by our tech reviewer Hynek Schlawack is a good place to start. これは厄介な領域で、 `__eq__` を変更せずに `__hash__` を変更することはできません。 もし、自分が何をしているのかわからない場合は、さらに詳しい情報を読むことをお勧めします。 私たちの技術レビュアーである Hynek Schlawack による "Python Has and Equality" が良い手始めです。
 
-## 1.4. Not Everything Has to Be an Object: A Domain Service Function 何でもかんでもオブジェクトにすればいいってもんじゃない。 ドメインサービス機能
+## Not Everything Has to Be an Object: A Domain Service Function 何でもかんでもオブジェクトにすればいいってもんじゃない。 ドメインサービス機能
 
 We’ve made a model to represent batches, but what we actually need to do is allocate order lines against a specific set of batches that represent all our stock.
 バッチを表すモデルを作りましたが、実際に必要なのは、全在庫を表す特定のバッチの集合に対して、注文行を割り当てることです。
@@ -644,27 +683,35 @@ Testing our domain service (test_allocate.py)
 
 ```python
 def test_prefers_current_stock_batches_to_shipments():
-in_stock_batch = Batch("in-stock-batch", "RETRO-CLOCK", 100, eta=None)
-shipment_batch = Batch("shipment-batch", "RETRO-CLOCK", 100, eta=tomorrow)
-line = OrderLine("oref", "RETRO-CLOCK", 10)
-allocate(line, [in_stock_batch, shipment_batch])
-assert in_stock_batch.available_quantity == 90
-assert shipment_batch.available_quantity == 100
+    in_stock_batch = Batch("in-stock-batch", "RETRO-CLOCK", 100, eta=None)
+    shipment_batch = Batch("shipment-batch", "RETRO-CLOCK", 100, eta=tomorrow) # 出荷中
+    line = OrderLine("oref", "RETRO-CLOCK", 10)
+
+    allocate(line, [in_stock_batch, shipment_batch])
+
+    assert in_stock_batch.available_quantity == 90
+    assert shipment_batch.available_quantity == 100
+
+
 def test_prefers_earlier_batches():
-earliest = Batch("speedy-batch", "MINIMALIST-SPOON", 100, eta=today)
-medium = Batch("normal-batch", "MINIMALIST-SPOON", 100, eta=tomorrow)
-latest = Batch("slow-batch", "MINIMALIST-SPOON", 100, eta=later)
-line = OrderLine("order1", "MINIMALIST-SPOON", 10)
-allocate(line, [medium, earliest, latest])
-assert earliest.available_quantity == 90
-assert medium.available_quantity == 100
-assert latest.available_quantity == 100
+    earliest = Batch("speedy-batch", "MINIMALIST-SPOON", 100, eta=today)
+    medium = Batch("normal-batch", "MINIMALIST-SPOON", 100, eta=tomorrow)
+    latest = Batch("slow-batch", "MINIMALIST-SPOON", 100, eta=later)
+    line = OrderLine("order1", "MINIMALIST-SPOON", 10)
+
+    allocate(line, [medium, earliest, latest])
+
+    assert earliest.available_quantity == 90
+    assert medium.available_quantity == 100
+    assert latest.available_quantity == 100
+
+
 def test_returns_allocated_batch_ref():
-in_stock_batch = Batch("in-stock-batch-ref", "HIGHBROW-POSTER", 100, eta=None)
-shipment_batch = Batch("shipment-batch-ref", "HIGHBROW-POSTER", 100, eta=tomorrow)
-line = OrderLine("oref", "HIGHBROW-POSTER", 10)
-allocation = allocate(line, [in_stock_batch, shipment_batch])
-assert allocation == in_stock_batch.reference
+    in_stock_batch = Batch("in-stock-batch-ref", "HIGHBROW-POSTER", 100, eta=None)
+    shipment_batch = Batch("shipment-batch-ref", "HIGHBROW-POSTER", 100, eta=tomorrow)
+    line = OrderLine("oref", "HIGHBROW-POSTER", 10)
+    allocation = allocate(line, [in_stock_batch, shipment_batch])
+    assert allocation == in_stock_batch.reference
 ```
 
 And our service might look like this:
@@ -675,14 +722,14 @@ A standalone function for our domain service (model.py)
 
 ```python
 def allocate(line: OrderLine, batches: List[Batch]) -> str:
-batch = next(
-b for b in sorted(batches) if b.can_allocate(line)
-)
-batch.allocate(line)
-return batch.reference
+    batch = next(
+        b for b in sorted(batches) if b.can_allocate(line)
+    )
+    batch.allocate(line)
+    return batch.reference
 ```
 
-### 1.4.1. Python’s Magic Methods Let Us Use Our Models with Idiomatic Python Pythonのマジックメソッドでモデルを自在に操る
+### Python’s Magic Methods Let Us Use Our Models with Idiomatic Python Pythonのマジックメソッドでモデルを自在に操る
 
 You may or may not like the use of `next()` in the preceding code, but we’re pretty sure you’ll agree that being able to use `sorted()` on our list of batches is nice, idiomatic Python.
 前のコードで `next()` を使うのが好きかどうかは別として、バッチのリストで `sorted()` を使えるのは素敵でイディオムな Python であることには同意していただけると思います。
@@ -695,19 +742,20 @@ Magic methods can express domain semantics (model.py)
 
 ```python
 class Batch:
-...
-def __gt__(self, other):
-if self.eta is None:
-return False
-if other.eta is None:
-return True
-return self.eta > other.eta
+    ...
+
+    def __gt__(self, other):
+        if self.eta is None:
+            return False
+        if other.eta is None:
+            return True
+        return self.eta > other.eta
 ```
 
 That’s lovely.
 それは素敵ですね。
 
-### 1.4.2. Exceptions Can Express Domain Concepts Too 例外はドメインの概念も表現できる
+### Exceptions Can Express Domain Concepts Too 例外はドメインの概念も表現できる
 
 We have one final concept to cover: exceptions can be used to express domain concepts too.
 最後にもう一つ、例外はドメインの概念を表現するために使うことができます。
@@ -719,15 +767,17 @@ Testing out-of-stock exception (test_allocate.py)
 
 ```python
 def test_raises_out_of_stock_exception_if_cannot_allocate():
-batch = Batch('batch1', 'SMALL-FORK', 10, eta=today)
-allocate(OrderLine('order1', 'SMALL-FORK', 10), [batch])
-with pytest.raises(OutOfStock, match='SMALL-FORK'):
-allocate(OrderLine('order2', 'SMALL-FORK', 1), [batch])
+    """在庫切れ(out-of-stock)例外のテスト"""
+    batch = Batch('batch1', 'SMALL-FORK', 10, eta=today)
+    allocate(OrderLine('order1', 'SMALL-FORK', 10), [batch])
+
+    with pytest.raises(OutOfStock, match='SMALL-FORK'):
+        allocate(OrderLine('order2', 'SMALL-FORK', 1), [batch])
 ```
 
 - DOMAIN MODELING RECAP ドメインモデリング再録
 
-- Domain modeling
+- Domain modeling ドメイン・モデリング
 
 - This is the part of your code that is closest to the business, the most likely to change, and the place where you deliver the most value to the business. Make it easy to understand and modify. これは、あなたのコードの中で、ビジネスに最も近く、最も変更されやすい部分であり、あなたがビジネスに最も価値を提供する場所です。 理解しやすく、変更しやすいコードにする。
 
@@ -743,7 +793,7 @@ allocate(OrderLine('order2', 'SMALL-FORK', 1), [batch])
 
 - Revisit the SOLID principles and all the other good heuristics like “has a versus is-a,” “prefer composition over inheritance,” and so on. SOLIDの原則や、「has a対is-a」「継承より合成を優先する」などの優れたヒューリスティックを再確認してください。
 
-- You’ll also want to think about consistency boundaries and aggregates 一貫性の境界と集計についても考えておきたい
+- You’ll also want to think about consistency boundaries and aggregates 一貫性の境界と集約についても考えたいところです
 
 - But that’s a topic for Chapter 7. しかし、それは第7章のテーマです。
 
@@ -755,13 +805,15 @@ Raising a domain exception (model.py)
 
 ```python
 class OutOfStock(Exception):
-pass
+    pass
+
+
 def allocate(line: OrderLine, batches: List[Batch]) -> str:
-try:
-batch = next(
-...
-except StopIteration:
-raise OutOfStock(f'Out of stock for sku {line.sku}')
+    try:
+        batch = next(
+        ...
+    except StopIteration:
+        raise OutOfStock(f'Out of stock for sku {line.sku}')
 ```
 
 Figure 1-4 is a visual representation of where we’ve ended up.
@@ -786,4 +838,4 @@ But first we’ll need a database…
 
 5. The `__eq__` method is pronounced “dunder-EQ.” By some, at least. eq\_\_`メソッドは、"ダンダーイーク "と発音します。 少なくとも一部の人には。
 
-6. Domain services are not the same thing as the services from the service layer, although they are often closely related. A domain service represents a business concept or process, whereas a service-layer service represents a use case for your application. Often the service layer will call a domain service. ドメインサービスとサービスレイヤーのサービスは、しばしば密接に関連していますが、同じものではありません。 ドメインサービスはビジネスのコンセプトやプロセスを表しますが、 サービスレイヤーのサービスはアプリケーションのユースケースを表します。 多くの場合、サービスレイヤーはドメインサービスを呼び出します。
+6. Domain services are not the same thing as the services from the service layer, although they are often closely related. A domain service represents a business concept or process, whereas a service-layer service represents a use case for your application. Often the service layer will call a domain service. ドメインサービスとサービスレイヤーのサービスは、しばしば密接に関連しますが、同じものではありません。 ドメインサービスはビジネスのコンセプトやプロセスを表しますが、 サービスレイヤーのサービスはアプリケーションのユースケースを表します。 多くの場合、サービスレイヤーはドメインサービスを呼び出します。
