@@ -190,7 +190,7 @@ where $P(v|d)$ is equal to 1 if $v \in d$ and 0 otherwise.
 
 We measure $P(i|d, S)$ in two different ways to produce two different algorithms. The first way is to use the same function as $P(v|d)$, an indicator function where it equals to 1 when item i in list S already covers category d and 0 otherwise. We call this method Binary xQuAD and it is how original xQuAD was introduced. Another method that we present in this paper is to find the ratio of items in list S that covers category d. We call this method Smooth xQuAD.
 P(i|d, S)$を2つの異なる方法で測定し、2つの異なるアルゴリズムを作成します.
-最初の方法は$P(v|d)$と同じ関数で、リストSのアイテムiが既にカテゴリdをカバーしているとき1に等しく、それ以外は0となる指標関数を使用する方法である。この方法はバイナリxQuADと呼ばれ、オリジナルのxQuADはこの方法で導入された。本論文で紹介するもう一つの方法は、リストS中の項目がカテゴリdをカバーしている比率を求める方法である。
+最初の方法は$P(v|d)$と同じ関数で、リストSのアイテムiが既にカテゴリdをカバーしているとき1に等しく、それ以外は0となる指標関数を使用する方法である。この方法はバイナリxQuADと呼ばれ、オリジナルのxQuADはこの方法で導入された。本論文で紹介するもう一つの方法は、リストS中の項目がカテゴリcをカバーしている比率を求める方法である。
 
 The likelihood $P(d|u)$ is the measure of user preference over different item categories. In other words, it measures how much each user is interested in short head items versus long tail items. We calculate this likelihood by the ratio of items in the user profile which belong to category d.
 尤度 $P(d|u)$ は、**異なるアイテム・カテゴリに対するユーザーの嗜好を表す尺度**である。言い換えれば、各ユーザーがロングテール・アイテムに対してショートヘッド・アイテムにどれだけ興味があるかを測定するものである。我々はこの尤度を、ユーザープロファイルの中でカテゴリdに属するアイテムの比率で計算する。
