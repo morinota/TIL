@@ -3,7 +3,7 @@
 We’ve introduced the service layer to capture some of the additional orchestration responsibilities we need from a working application.
 サービスレイヤーは、アプリケーションに必要なオーケストレーションの責任を果たすために導入されました。
 The service layer helps us clearly define our use cases and the workflow for each: what we need to get from our repositories, what pre-checks and current state validation we should do, and what we save at the end.
-サービス層は、ユースケースとそれぞれのワークフローを明確に定義するのに役立ちます。リポジトリから取得する必要があるもの、事前チェックと現在の状態の検証を行うべきもの、そして最後に保存するものです。
+サービス層は、ユースケースとそれぞれのワークフローを明確に定義するのに役立ちます。リポジトリから取得する必要があるもの、事前チェックと現在の状態の検証を行うべきもの、そして最後に保存するものなどです。
 
 But currently, many of our unit tests operate at a lower level, acting directly on the model.
 しかし現在、多くのユニットテストはより低いレベルで動作し、モデルに対して直接作用しています。
@@ -18,7 +18,7 @@ In this chapter we’ll discuss the trade-offs involved in moving those tests up
 
 - Once you implement domain modeling and the service layer, you really actually can get to a stage where unit tests outnumber integration and end-to-end tests by an order of magnitude. Having worked in places where the E2E test build would take hours (“wait ‘til tomorrow,” essentially), I can’t tell you what a difference it makes to be able to run all your tests in minutes or seconds. ドメインモデリングとサービスレイヤーを実装すれば、ユニットテストがインテグレーションテストやエンドツーエンドテストよりも桁違いに多くなる段階に実際に到達することができます。 E2Eテストのビルドに何時間もかかるような場所で働いてきた私にとって、数分から数秒ですべてのテストを実行できるようになることが、どれほど大きな違いであるかは、想像もつかないほどです。
 
-- Read on for some guidelines on how to decide what kinds of tests to write and at which level. The high gear versus low gear way of thinking really changed my testing life. どのような種類のテストを、どのレベルで書くべきかを決定するためのガイドラインについては、こちらをお読みください。 ハイギアとローギアの考え方は、私のテスト人生を大きく変えました。
+- Read on for some guidelines on how to decide what kinds of tests to write and at which level. The high gear versus low gear way of thinking really changed my testing life. どのような種類のテストをどのレベルで書くべきかを決定するためのガイドラインについては、こちらをお読みください。 ハイギアとローギアの考え方は、私のテスト人生を大きく変えました。
 
 ## How Is Our Test Pyramid Looking? How Is Our Test Pyramid Looking?
 
@@ -33,8 +33,10 @@ $ grep -c test_ test_*.py
 tests/unit/test_allocate.py:4
 tests/unit/test_batches.py:8
 tests/unit/test_services.py:3
+
 tests/integration/test_orm.py:6
 tests/integration/test_repository.py:2
+
 tests/e2e/test_api.py:2
 ```
 
@@ -43,7 +45,7 @@ Not bad!
 We have 15 unit tests, 8 integration tests, and just 2 end-to-end tests.
 ユニットテストが15個、統合テストが8個、そしてエンドツーエンドテストが2個だけです。
 That’s already a healthy-looking test pyramid.
-これはすでに健康的なテストピラミッドです。
+これはすでに健全なテストピラミッドです。
 
 ## Should Domain Layer Tests Move to the Service Layer? ドメイン層のテストはサービス層に移行すべきなのか？
 
@@ -52,7 +54,7 @@ Let’s see what happens if we take this a step further.
 Since we can test our software against the service layer, we don’t really need tests for the domain model anymore.
 サービス層に対してソフトウェアをテストできるようになったので、 ドメインモデルに対するテストはもう必要ありません。
 Instead, we could rewrite all of the domain-level tests from Chapter 1 in terms of the service layer:
-そのかわり、第1章でのドメインレベルのテストをすべてサービス層の観点で書き直すことができます。
+その代わり、第1章でのドメインレベルのテストをすべてサービス層の観点で書き直すことができます。
 
 Rewriting a domain test at the service layer (tests
 サービス層でドメインテストを書き換える（テスト
@@ -60,22 +62,29 @@ Rewriting a domain test at the service layer (tests
 ```python
 # domain-layer test:
 def test_prefers_current_stock_batches_to_shipments():
-in_stock_batch = Batch("in-stock-batch", "RETRO-CLOCK", 100, eta=None)
-shipment_batch = Batch("shipment-batch", "RETRO-CLOCK", 100, eta=tomorrow)
-line = OrderLine("oref", "RETRO-CLOCK", 10)
-allocate(line, [in_stock_batch, shipment_batch])
-assert in_stock_batch.available_quantity == 90
-assert shipment_batch.available_quantity == 100
+    in_stock_batch = Batch("in-stock-batch", "RETRO-CLOCK", 100, eta=None)
+    shipment_batch = Batch("shipment-batch", "RETRO-CLOCK", 100, eta=tomorrow)
+    line = OrderLine("oref", "RETRO-CLOCK", 10)
+
+    allocate(line, [in_stock_batch, shipment_batch])
+
+    assert in_stock_batch.available_quantity == 90
+    assert shipment_batch.available_quantity == 100
+
+
 # service-layer test:
 def test_prefers_warehouse_batches_to_shipments():
-in_stock_batch = Batch("in-stock-batch", "RETRO-CLOCK", 100, eta=None)
-shipment_batch = Batch("shipment-batch", "RETRO-CLOCK", 100, eta=tomorrow)
-repo = FakeRepository([in_stock_batch, shipment_batch])
-session = FakeSession()
-line = OrderLine('oref', "RETRO-CLOCK", 10)
-services.allocate(line, repo, session)
-assert in_stock_batch.available_quantity == 90
-assert shipment_batch.available_quantity == 100
+    in_stock_batch = Batch("in-stock-batch", "RETRO-CLOCK", 100, eta=None)
+    shipment_batch = Batch("shipment-batch", "RETRO-CLOCK", 100, eta=tomorrow)
+    repo = FakeRepository([in_stock_batch, shipment_batch])
+    session = FakeSession()
+
+    line = OrderLine('oref', "RETRO-CLOCK", 10)
+
+    services.allocate(line, repo, session)
+
+    assert in_stock_batch.available_quantity == 90
+    assert shipment_batch.available_quantity == 100
 ```
 
 Why would we want to do that?
@@ -99,7 +108,7 @@ The flip side, though, is that if we want to change the design of our code, any 
 逆に言えば、もしコードの設計を変えたいのなら、そのコードに直接依存しているテストも失敗してしまうということです。
 
 As we get further into the book, you’ll see how the service layer forms an API for our system that we can drive in multiple ways.
-この本をさらに読み進めると、サービスレイヤーがどのようにシステムのためのAPIを形成し、複数の方法で駆動できるかがわかります。
+この本をさらに読み進めると、サービスレイヤーがどのようにシステムのためのAPIを形成し、複数の方法で駆動できるかがわかるでしょう。
 Testing against this API reduces the amount of code that we need to change when we refactor our domain model.
 この API に対してテストを行うことで、ドメインモデルをリファクタリングする際に変更する必要があるコードの量を減らすことができます。
 If we restrict ourselves to testing only against the service layer, we won’t have any tests that directly interact with “private” methods or attributes on our model objects, which leaves us freer to refactor them.
@@ -123,7 +132,7 @@ To answer those questions, it’s important to understand the trade-off between 
 Extreme programming (XP) exhorts us to “listen to the code.”
 エクストリームプログラミング（XP）では、"コードに耳を傾ける "ことを勧めています。
 When we’re writing tests, we might find that the code is hard to use or notice a code smell.
-テストを書いているとき、コードが使いにくいと感じたり、コードの匂いに気づいたりすることがあります。
+テストを書いているとき、コードが使いにくいと感じたり、コードの臭いに気づいたりすることがあります。
 This is a trigger for us to refactor, and to reconsider our design.
 これは、リファクタリングや設計を見直すきっかけになります。
 
@@ -142,12 +151,12 @@ At the other end of the spectrum, the tests we wrote in Chapter 1 helped us to f
 The tests guided us to a design that makes sense and reads in the domain language.
 テストは、私たちを理にかなった設計に導き、ドメイン言語で読めるようにします。
 When our tests read in the domain language, we feel comfortable that our code matches our intuition about the problem we’re trying to solve.
-テストがドメイン言語で読めるようになると、私たちは自分のコードが、解決しようとしている問題についての直感と一致していることに安心感を覚えます。
+テストがドメイン言語で読めるようになると、私たちのコードが、解決しようとしている問題についての直感と一致していることに安心感を覚えます。
 
 Because the tests are written in the domain language, they act as living documentation for our model.
 テストはドメイン言語で書かれているため、私たちのモデルの生きたドキュメントとして機能します。
 A new team member can read these tests to quickly understand how the system works and how the core concepts interrelate.
-新しいチームメンバーは、これらのテストを読むことで、システムがどのように動作し、コアコンセプトがどのように関連しているのかを素早く理解することができます。
+新しいチームメンバーは、これらのテストを読むことで、システムがどのように動作し、コアコンセプトがどのように相互関連しているかを素早く理解することができます。
 
 We often “sketch” new behaviors by writing tests at this level to see how the code might look.
 私たちはしばしば、このレベルでテストを書いて新しい動作を「スケッチ」し、 コードがどのように見えるかを確認します。
@@ -172,7 +181,7 @@ The metaphor we use is that of shifting gears.
 When starting a journey, the bicycle needs to be in a low gear so that it can overcome inertia.
 旅立ちのとき、自転車は慣性を克服するために低いギアで走る必要があります。
 Once we’re off and running, we can go faster and more efficiently by changing into a high gear; but if we suddenly encounter a steep hill or are forced to slow down by a hazard, we again drop down to a low gear until we can pick up speed again.
-しかし、急な坂道や障害物によって減速を余儀なくされた場合は、再び低速のギアを入れて、スピードを取り戻します。
+しかし、急な坂道や障害物によって減速を余儀なくされた場合は、再び低速ギアに切り替えてスピードを取り戻します。
 
 ## Fully Decoupling the Service-Layer Tests from the Domain サービスレイヤーのテストをドメインから完全に切り離す
 
@@ -192,15 +201,14 @@ Before: allocate はドメインオブジェクト（service_layer）を取る�
 def allocate(line: OrderLine, repo: AbstractRepository, session) -> str:
 ```
 
-How would it look if its parameters were all primitive types?
-もし、パラメータがすべてプリミティブ型だったら、どのように見えるでしょうか？
+
 
 After: allocate takes strings and ints (service_layer
 後: 文字列とint型（サービスレイヤー）を確保する。
 
 ```python
 def allocate(
-orderid: str, sku: str, qty: int, repo: AbstractRepository, session
+        orderid: str, sku: str, qty: int, repo: AbstractRepository, session
 ) -> str:
 ```
 
@@ -212,10 +220,11 @@ Tests now use primitives in function call (tests
 
 ```python
 def test_returns_allocation():
-batch = model.Batch("batch1", "COMPLICATED-LAMP", 100, eta=None)
-repo = FakeRepository([batch])
-result = services.allocate("o1", "COMPLICATED-LAMP", 10, repo, FakeSession())
-assert result == "batch1"
+    batch = model.Batch("batch1", "COMPLICATED-LAMP", 100, eta=None)
+    repo = FakeRepository([batch])
+
+    result = services.allocate("o1", "COMPLICATED-LAMP", 10, repo, FakeSession())
+    assert result == "batch1"
 ```
 
 But our tests still depend on the domain, because we still manually instantiate `Batch` objects.
@@ -223,7 +232,7 @@ But our tests still depend on the domain, because we still manually instantiate 
 So, if one day we decide to massively refactor how our `Batch` model works, we’ll have to change a bunch of tests.
 もし、ある日 `Batch` モデルの動作方法を大幅にリファクタリングすることになったら、たくさんのテストを変更しなければならなくなります。
 
-### Mitigation: Keep All Domain Dependencies in Fixture Functions 軽減策 すべてのドメイン依存をフィクスチャ関数に保持する
+### Mitigation: Keep All Domain Dependencies in Fixture Functions 軽減策 すべてのドメイン依存をフィクスチャ関数に保持する。
 
 We could at least abstract that out to a helper function or a fixture in our tests.
 少なくとも、ヘルパー関数やテストのフィクスチャに抽象化することができます。
@@ -231,24 +240,28 @@ Here’s one way you could do that, adding a factory function on FakeRepository:
 ここでは、FakeRepositoryにファクトリー関数を追加することでそれを実現する方法を紹介します。
 
 Factory functions for fixtures are one possibility (tests
-フィクスチャのファクトリー機能は、一つの可能性です（テスト
+フィクスチャのファクトリ関数は、その可能性のひとつです（テスト
 
 ```python
 class FakeRepository(set):
-@staticmethod
-def for_batch(ref, sku, qty, eta=None):
-return FakeRepository([
-model.Batch(ref, sku, qty, eta),
-])
-...
+
+    @staticmethod
+    def for_batch(ref, sku, qty, eta=None):
+        return FakeRepository([
+            model.Batch(ref, sku, qty, eta),
+        ])
+
+    ...
+
+
 def test_returns_allocation():
-repo = FakeRepository.for_batch("batch1", "COMPLICATED-LAMP", 100, eta=None)
-result = services.allocate("o1", "COMPLICATED-LAMP", 10, repo, FakeSession())
-assert result == "batch1"
+    repo = FakeRepository.for_batch("batch1", "COMPLICATED-LAMP", 100, eta=None)
+    result = services.allocate("o1", "COMPLICATED-LAMP", 10, repo, FakeSession())
+    assert result == "batch1"
 ```
 
 At least that would move all of our tests’ dependencies on the domain into one place.
-少なくとも、ドメインに依存しているテストのすべてを1つの場所に移動させることができます。
+少なくとも、ドメインに依存しているテストのすべてを一カ所に集めることができます。
 
 ### Adding a Missing Service 欠落しているサービスの追加
 
@@ -262,10 +275,10 @@ Test for new add_batch service (tests
 
 ```python
 def test_add_batch():
-repo, session = FakeRepository([]), FakeSession()
-services.add_batch("b1", "CRUNCHY-ARMCHAIR", 100, None, repo, session)
-assert repo.get("b1") is not None
-assert session.committed
+    repo, session = FakeRepository([]), FakeSession()
+    services.add_batch("b1", "CRUNCHY-ARMCHAIR", 100, None, repo, session)
+    assert repo.get("b1") is not None
+    assert session.committed
 ```
 
 - TIP ヒント
@@ -280,15 +293,17 @@ add_batch の新サービス(service_layer)
 
 ```python
 def add_batch(
-ref: str, sku: str, qty: int, eta: Optional[date],
-repo: AbstractRepository, session,
+        ref: str, sku: str, qty: int, eta: Optional[date],
+        repo: AbstractRepository, session,
 ):
-repo.add(model.Batch(ref, sku, qty, eta))
-session.commit()
+    repo.add(model.Batch(ref, sku, qty, eta))
+    session.commit()
+
+
 def allocate(
-orderid: str, sku: str, qty: int, repo: AbstractRepository, session
+        orderid: str, sku: str, qty: int, repo: AbstractRepository, session
 ) -> str:
-...
+    ...
 ```
 
 - NOTE 注
@@ -303,15 +318,18 @@ Services tests now use only services (tests
 
 ```python
 def test_allocate_returns_allocation():
-repo, session = FakeRepository([]), FakeSession()
-services.add_batch("batch1", "COMPLICATED-LAMP", 100, None, repo, session)
-result = services.allocate("o1", "COMPLICATED-LAMP", 10, repo, session)
-assert result == "batch1"
+    repo, session = FakeRepository([]), FakeSession()
+    services.add_batch("batch1", "COMPLICATED-LAMP", 100, None, repo, session)
+    result = services.allocate("o1", "COMPLICATED-LAMP", 10, repo, session)
+    assert result == "batch1"
+
+
 def test_allocate_errors_for_invalid_sku():
-repo, session = FakeRepository([]), FakeSession()
-services.add_batch("b1", "AREALSKU", 100, None, repo, session)
-with pytest.raises(services.InvalidSku, match="Invalid sku NONEXISTENTSKU"):
-services.allocate("o1", "NONEXISTENTSKU", 10, repo, FakeSession())
+    repo, session = FakeRepository([]), FakeSession()
+    services.add_batch("b1", "AREALSKU", 100, None, repo, session)
+
+    with pytest.raises(services.InvalidSku, match="Invalid sku NONEXISTENTSKU"):
+        services.allocate("o1", "NONEXISTENTSKU", 10, repo, FakeSession())
 ```
 
 This is a really nice place to be in.
@@ -333,51 +351,52 @@ API for adding a batch (entrypoints
 ```python
 @app.route("/add_batch", methods=['POST'])
 def add_batch():
-session = get_session()
-repo = repository.SqlAlchemyRepository(session)
-eta = request.json['eta']
-if eta is not None:
-eta = datetime.fromisoformat(eta).date()
-services.add_batch(
-request.json['ref'], request.json['sku'], request.json['qty'], eta,
-repo, session
-)
-return 'OK', 201
+    session = get_session()
+    repo = repository.SqlAlchemyRepository(session)
+    eta = request.json['eta']
+    if eta is not None:
+        eta = datetime.fromisoformat(eta).date()
+    services.add_batch(
+        request.json['ref'], request.json['sku'], request.json['qty'], eta,
+        repo, session
+    )
+    return 'OK', 201
 ```
 
 - NOTE 注
 
 - Are you thinking to yourself, POST to /add_batch? That’s not very RESTful! You’re quite right. We’re being happily sloppy, but if you’d like to make it all more RESTy, maybe a POST to /batches, then knock yourself out! Because Flask is a thin adapter, it’ll be easy. See the next sidebar. 自分に言い聞かせているのか、POST to
 
-And our hardcoded SQL queries from conftest.py get replaced with some API calls, meaning the API tests have no dependencies other than the API, which is also nice:
-そして、conftest.pyからハードコードされたSQLクエリは、いくつかのAPIコールで置き換えられます。つまり、APIテストはAPI以外の依存性を持たないので、これもまた良いことです。
+
 
 API tests can now add their own batches (tests
 APIテストが独自のバッチを追加できるようになりました（テスト
 
 ```python
 def post_to_add_batch(ref, sku, qty, eta):
-url = config.get_api_url()
-r = requests.post(
-f'{url}/add_batch',
-json={'ref': ref, 'sku': sku, 'qty': qty, 'eta': eta}
-)
-assert r.status_code == 201
+    url = config.get_api_url()
+    r = requests.post(
+        f'{url}/add_batch',
+        json={'ref': ref, 'sku': sku, 'qty': qty, 'eta': eta}
+    )
+    assert r.status_code == 201
+
+
 @pytest.mark.usefixtures('postgres_db')
 @pytest.mark.usefixtures('restart_api')
 def test_happy_path_returns_201_and_allocated_batch():
-sku, othersku = random_sku(), random_sku('other')
-earlybatch = random_batchref(1)
-laterbatch = random_batchref(2)
-otherbatch = random_batchref(3)
-post_to_add_batch(laterbatch, sku, 100, '2011-01-02')
-post_to_add_batch(earlybatch, sku, 100, '2011-01-01')
-post_to_add_batch(otherbatch, othersku, 100, None)
-data = {'orderid': random_orderid(), 'sku': sku, 'qty': 3}
-url = config.get_api_url()
-r = requests.post(f'{url}/allocate', json=data)
-assert r.status_code == 201
-assert r.json()['batchref'] == earlybatch
+    sku, othersku = random_sku(), random_sku('other')
+    earlybatch = random_batchref(1)
+    laterbatch = random_batchref(2)
+    otherbatch = random_batchref(3)
+    post_to_add_batch(laterbatch, sku, 100, '2011-01-02')
+    post_to_add_batch(earlybatch, sku, 100, '2011-01-01')
+    post_to_add_batch(otherbatch, othersku, 100, None)
+    data = {'orderid': random_orderid(), 'sku': sku, 'qty': 3}
+    url = config.get_api_url()
+    r = requests.post(f'{url}/allocate', json=data)
+    assert r.status_code == 201
+    assert r.json()['batchref'] == earlybatch
 ```
 
 ## Wrap-Up まとめ
@@ -385,7 +404,7 @@ assert r.json()['batchref'] == earlybatch
 Once you have a service layer in place, you really can move the majority of your test coverage to unit tests and develop a healthy test pyramid.
 サービスレイヤーが出来上がると、テストカバレッジの大部分をユニットテストに移行し、健全なテストピラミッドを構築することができます。
 
-- RECAP: RULES OF THUMB FOR DIFFERENT TYPES OF TEST まとめ：テストタイプ別の経験則
+- RECAP: RULES OF THUMB FOR DIFFERENT TYPES OF TEST まとめ：テストの種類によって異なる経験則
 
 - Aim for one end-to-end test per feature 1機能につき1回のエンドツーエンドテストを目標とする
 
@@ -397,7 +416,7 @@ Once you have a service layer in place, you really can move the majority of your
 
 - Maintain a small core of tests written against your domain model ドメインモデルに対して記述されたテストの小さなコアを維持する。
 
-- These tests have highly focused coverage and are more brittle, but they have the highest feedback. Don’t be afraid to delete these tests if the functionality is later covered by tests at the service layer. これらのテストはカバレッジが非常に狭く、より脆いものですが、最高のフィードバックが得られます。 もしその機能がサービスレイヤのテストによってカバーされるなら、 これらのテストを削除することを恐れないでください。
+- These tests have highly focused coverage and are more brittle, but they have the highest feedback. Don’t be afraid to delete these tests if the functionality is later covered by tests at the service layer. これらのテストはカバレッジが非常に狭く、より脆弱ですが、最も高いフィードバックが得られます。 もしその機能がサービスレイヤのテストによってカバーされるなら、 これらのテストを削除することを恐れないでください。
 
 - Error handling counts as a feature エラー処理も機能としてカウント
 
@@ -406,11 +425,11 @@ Once you have a service layer in place, you really can move the majority of your
 A few things will help along the way:
 その過程で、いくつかのことが役に立ちます。
 
-- Express your service layer in terms of primitives rather than domain objects. サービス層をドメインオブジェクトではなく、プリミティブで表現する。
+- Express your service layer in terms of primitives rather than domain objects. ドメインオブジェクトではなく、プリミティブでサービス層を表現する。
 
-- In an ideal world, you’ll have all the services you need to be able to test entirely against the service layer, rather than hacking state via repositories or the database. This pays off in your end-to-end tests as well. 理想的な世界では、リポジトリやデータベースを介して状態をハックするのではなく、サービス層に対して完全にテストを行うことができるように、必要なすべてのサービスが用意されていることでしょう。 これは、エンドツーエンドのテストでも同じように効果があります。
+- In an ideal world, you’ll have all the services you need to be able to test entirely against the service layer, rather than hacking state via repositories or the database. This pays off in your end-to-end tests as well. 理想的な世界では、リポジトリやデータベースを介して状態をハックするのではなく、サービス層に対して完全にテストを行うことができるように、必要なすべてのサービスを用意しておく必要があります。 これは、エンドツーエンドのテストでも同じように効果があります。
 
 Onto the next chapter!
 次の章へ!
 
-1. A valid concern about writing tests at a higher level is that it can lead to combinatorial explosion for more complex use cases. In these cases, dropping down to lower-level unit tests of the various collaborating domain objects can be useful. But see also Chapter 8 and “Optionally: Unit Testing Event Handlers in Isolation with a Fake Message Bus”. より高いレベルでテストを書くことの有効な懸念は、より複雑なユースケースにおいて組合せ爆発につながる可能性があることです。 このような場合は、さまざまなドメインオブジェクトを連携させた低レベルのユニットテストに落とし込むと便利です。 しかし、第8章と「オプション」も参照してください。 偽のメッセージバスを使ったイベントハンドラの単体テスト" も参照してください。
+1. A valid concern about writing tests at a higher level is that it can lead to combinatorial explosion for more complex use cases. In these cases, dropping down to lower-level unit tests of the various collaborating domain objects can be useful. But see also Chapter 8 and “Optionally: Unit Testing Event Handlers in Isolation with a Fake Message Bus”. より高いレベルでテストを書くことの有効な懸念は、より複雑なユースケースにおいて組合せ爆発につながる可能性があることです。 このような場合は、さまざまなドメインオブジェクトを連携させた低レベルのユニットテストに落とし込むと便利です。 しかし、第8章と「オプション」も参照してください。 偽のメッセージバスでイベントハンドラを分離してユニットテストする" も参照してください。

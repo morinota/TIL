@@ -391,10 +391,10 @@ class AbstractRepository(abc.ABC):
 
 > You know they say economists know the price of everything and the value of nothing?
 > 経済学者はあらゆるものの価格を知り、無の価値を知る、と言われるのをご存知でしょうか。
-Well, programmers know the benefits of everything and the trade-offs of nothing.
-プログラマーはあらゆるものの利点と、何もないところでのトレードオフを知っているんだ。
-Rich Hickey
-リッチ・ヒッキー
+> Well, programmers know the benefits of everything and the trade-offs of nothing.
+> プログラマーはあらゆるものの利点と、何もないところでのトレードオフを知っているんだ。
+> Rich Hickey
+> リッチ・ヒッキー
 
 Whenever we introduce an architectural pattern in this book, we’ll always ask, “What do we get for this?
 この本でアーキテクチャ・パターンを紹介するときは、必ず「これで何が得られるのか？
@@ -426,7 +426,7 @@ As always, we start with a test.
 This would probably be classified as an integration test, since we’re checking that our code (the repository) is correctly integrated with the database; hence, the tests tend to mix raw SQL with calls and assertions on our own code.
 なぜなら、私たちのコード (リポジトリ) がデータベースと正しく統合されているかどうかをチェックしているからです。そのため、テストには生の SQL と私たち自身のコードの呼び出しやアサーションが混在する傾向があります。
 
-- tip 
+- tip
 
 - Unlike the ORM tests from earlier, these tests are good candidates for staying part of your codebase longer term, particularly if any parts of your domain model mean the object-relational map is nontrivial. 先ほどの ORM テストとは異なり、これらのテストはコードベースの一部として長期的に使用するのに適しています。特に、ドメインモデルの一部でオブジェクトリレーショナルマップが自明ではない場合です。
 
@@ -700,6 +700,6 @@ But first, a brief digression.
 
 - 6 You may be thinking, “What about list or delete or update?” However, in an ideal world, we modify our model objects one at a time, and delete is usually handled as a soft-delete—i.e., batch.cancel(). Finally, update is taken care of by the Unit of Work pattern, as you’ll see in Chapter 6. 6 "listやdeleteやupdateはどうするんだ？"と思われるかもしれません。 しかし、理想的な世界では、モデルオブジェクトを一度に一つずつ修正します。削除は通常、ソフト削除、つまり batch.cancel() として処理されます。 最後に、updateはUnit of Workパターンで処理されます（第6章を参照）。
 
-- 7 To really reap the benefits of ABCs (such as they may be), be running helpers like pylint and mypy. 
+- 7 To really reap the benefits of ABCs (such as they may be), be running helpers like pylint and mypy.
 
 - 8 Diagram inspired by a post called “Global Complexity, Local Simplicity” by Rob Vens. 8 Rob Vens氏の「Global Complexity, Local Simplicity」という投稿に触発されて作成した図。
