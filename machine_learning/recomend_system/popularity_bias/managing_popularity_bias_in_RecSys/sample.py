@@ -85,10 +85,6 @@ class xQuADReranker(abc.ABC):
     def calc_c_shortage_in_s(self, c_group_items: List[int], S: List[int]) -> float:
         """「現時点で S にはどの程度 c_group のitem達が不足しているか」を表すスコアを計算する.
         論文中のP(S'|c) = \Pi_{i \in S} (1 - P(i|c, S)).
-        - binary xQuADの場合:
-            - P(i|c, S) = 1 if i in c else 0
-        - smooth xQuADの場合:
-            - P(i|c, S) = "リストSの中でCに属するアイテムの割合. (iは関係ない...?)"
         """
         c_shortage_in_s = 1.0  # 論文中のP(S'|c)の初期値
         for item_in_s in S:
@@ -101,6 +97,12 @@ class xQuADReranker(abc.ABC):
         c_group_items: List[int],
         S_items: List[int],
     ) -> float:
+        """S中のitem iに対して, P(i|c, S)を計算して返す.
+        - binary xQuADの場合:
+            - P(i|c, S) = 1 if i in c else 0
+        - smooth xQuADの場合:
+            - P(i|c, S) = "リストSの中でCに属するアイテムの割合. (iは関係ない...?)"
+        """
         if self.xquad_type == "binary":
             return 1.0 if item_id in c_group_items else 0.0
 
