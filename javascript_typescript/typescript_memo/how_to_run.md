@@ -9,7 +9,7 @@
 
 ```
 cd project_dir/
-tsc –-init
+tsc --init
 ```
 
 `main.ts`の中身を記述した後は、以下のコマンドでコンパイルを実行し、TypeScriptファイルからJavaScriptファイルに変換する. (恐らくproject_dir内の全てのtsファイルをjsファイルにコンパイルする...?)
@@ -18,11 +18,15 @@ tsc –-init
 cd project_dir/
 tsc
 ```
-
 最後に、コンパイルで生成された`main.js`ファイルを実行する.
 
 ```
 node main.js
+```
+
+もしくは以下のコマンドでコンパイル->実行を行う
+```
+ts-node main.ts
 ```
 
 
