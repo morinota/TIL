@@ -12,3 +12,4 @@ const server = http.createServer(
 server.listen(port);
 // ログを出力する
 console.log(`http://localhost:${port} へアクセスください:${fortune()}`);
+

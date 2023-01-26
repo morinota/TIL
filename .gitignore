@@ -10,3 +10,6 @@
 !*.md
 !*.html
 !*.qmd
+!*.ts
+
+*node_modules*/*
