@@ -391,7 +391,7 @@ Service layer が出来上がると、テストカバレッジの大部分をユ
 
 - RECAP: RULES OF THUMB FOR DIFFERENT TYPES OF TEST まとめ：テストの種類によって異なる経験則
 - 
-- Aim for one end-to-end test per feature 1機能につき1回のエンドツーエンドテストを目標とする
+- Aim for one end-to-end test per feature 1機能につき1回のエンドツーエンドテストを目標とする.
   - This might be written against an HTTP API, for example. The objective is to demonstrate that the feature works, and that all the moving parts are glued together correctly. 例えば、HTTPのAPIに対して書かれるかもしれません。 目的は、その機能が動作すること、そしてすべての可動部品が正しく組み合わされていることを実証することです。
 
 - Write the bulk of your tests against the service layer Service Layerに対してテストの大部分を記述する.
