@@ -1,15 +1,15 @@
 # Chapter 6. Unit of Work Pattern 第6章 ユニットオブワークパターン
 
 In this chapter we’ll introduce the final piece of the puzzle that ties together the Repository and Service Layer patterns: the Unit of Work pattern.
-この章では、リポジトリパターンとサービスレイヤーパターンを結びつけるパズルの最後のピース、Unit of Workパターンを紹介します。
+この章では、Repository Pattern と Service layer Pattern を結びつけるパズルの最後のピース、 **Unit of Work Pattern** を紹介する.
 
 If the Repository pattern is our abstraction over the idea of persistent storage, the Unit of Work (UoW) pattern is our abstraction over the idea of atomic operations.
-Repositoryパターンが永続的ストレージの概念を抽象化したものだとすれば、Unit of Work（UoW）パターンはアトミック操作の概念を抽象化したものである。
+Repositoryパターンが永続的ストレージの概念を抽象化したものだとすれば、**Unit of Work（UoW）パターンはアトミック操作の概念を抽象化したもの**である.
 It will allow us to finally and fully decouple our service layer from the data layer.
-これにより、最終的にサービス層をデータ層から完全に切り離すことができる。
+これにより、最終的に **Service Layer をデータ層から完全に切り離す**ことができる.
 
 Figure 6-1 shows that, currently, a lot of communication occurs across the layers of our infrastructure: the API talks directly to the database layer to start a session, it talks to the repository layer to initialize `SQLAlchemyRepository`, and it talks to the service layer to ask it to allocate.
-図 6-1 は、現在、多くの通信がインフラストラクチャの層を越えて行われていることを示しています。 API はセッションを開始するためにデータベース層と直接対話し、`SQLAlchemyRepository` を初期化するためにリポジトリ層と対話し、サービス層に割り当てを依頼するために対話するのです。
+図 6-1 は、**現在、多くの通信がインフラストラクチャの層(=Repository Layerの事?)を越えて行われている**ことを示している. API はセッションを開始するためにデータベース層と直接対話し、`SQLAlchemyRepository` を初期化するためにRepository Layer と対話し、Service Layer に割り当てを依頼するために対話するのである.
 
 TIP
 ヒント
@@ -28,26 +28,25 @@ git checkout chapter_04_service_layer
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0601.png)
 
 Figure 6-2 shows our target state.
-図6-2は、私たちの目標状態を示しています。
-The Flask API now does only two things: it initializes a unit of work, and it invokes a service.
-Flask APIは今、たった2つのことしかしていない：ユニットオブワークを初期化し、サービスを呼び出す。
-The service collaborates with the UoW (we like to think of the UoW as being part of the service layer), but neither the service function itself nor Flask now needs to talk directly to the database.
-サービスはUoWと連携しますが（UoWをサービスレイヤーの一部と考えたい）、サービス関数自体もFlaskもデータベースと直接会話する必要はなくなりました。
+図6-2は、私たちの目標状態を示している.
+The Flask API now does only two things: 
+Flask APIは今、たった2つのことしかしていない：
+- it initializes a unit of work, and it invokes a service. unit of work を初期化し、サービスを呼び出す.
+- The service collaborates with the UoW (we like to think of the UoW as being part of the service layer), but neither the service function itself nor Flask now needs to talk directly to the database. サービスはUoWと連携しますが（**UoWをService Layer の一部と考えたい**）、**サービス関数自体もFlaskもデータベースと直接会話する必要はなくなった**.
 
 And we’ll do it all using a lovely piece of Python syntax, a context manager.
-そして、Pythonの素敵な構文であるコンテキスト・マネージャーを使って、すべてを行います。
+そして、**Pythonの素敵な構文であるcontext manager(??)**を使って、全てを行う.
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0602.png)
 
 ## The Unit of Work Collaborates with the Repository 
 
 Let’s see the unit of work (or UoW, which we pronounce “you-wow”) in action.
-それでは、ユニット・オブ・ワーク（UoW、私たちは「ユーワウ」と発音しています）を実際に見てみましょう。
+それでは、**unit of work（UoW、私たちは“you-wow”と発音しています）**を実際に見てみよう.
 Here’s how the service layer will look when we’re finished:
-サービスレイヤーが完成したら、こんな感じになります。
+サービスレイヤーが完成したら、こんな感じになる.
 
-Preview of unit of work in action (src
-ユニットオブワークの動作プレビュー（src
+Preview of unit of work in action (src/allocation/service_layer/services.py)
 
 ```python
 def allocate(
@@ -55,37 +54,33 @@ def allocate(
         uow: unit_of_work.AbstractUnitOfWork
 ) -> str:
     line = OrderLine(orderid, sku, qty)
-    with uow:  1
+    with uow: 1 
         batches = uow.batches.list()  2
         ...
         batchref = model.allocate(line, batches)
         uow.commit()  3
 ```
 
-1. We’ll start a UoW as a context manager. コンテキストマネージャーとしてUoWを起動します。
-
-2. `uow.batches` is the batches repo, so the UoW provides us access to our permanent storage. `uow.batches` はバッチレポなので、UoWは私たちの恒久的なストレージへのアクセスを提供します。
-
-3. When we’re done, we commit or roll back our work, using the UoW. 作業が終わったら、UoWを使ってコミットしたりロールバックしたりします。
+1. We’ll start a UoW as a context manager. コンテキストマネージャーとしてUoWを起動する.
+2. `uow.batches` is the batches repo, so the UoW provides us access to our permanent storage. `uow.batches` はバッチレポ(??)なので、UoWは私たちの恒久的なストレージへのアクセスを提供する.
+3. When we’re done, we commit or roll back our work, using the UoW. 作業が終わったら、UoWを使ってコミットしたりロールバックしたりする.
 
 The UoW acts as a single entrypoint to our persistent storage, and it keeps track of what objects were loaded and of the latest state.1
-UoWは、永続記憶装置への単一のエントリポイントとして機能し、どのオブジェクトがロードされたか、最新の状態を記録する1。
+**UoWは、永続記憶装置への単一のエントリポイントとして機能**し、どのオブジェクトがロードされたか、最新の状態を記録する1.
 
 This gives us three useful things:
-これによって、3つの便利なことがわかります。
+これによって、3つの便利なことが得られる:
 
-- A stable snapshot of the database to work with, so the objects we use aren’t changing halfway through an operation データベースの安定したスナップショットを使用することで、操作の途中で使用するオブジェクトが変更されることがありません。
-
-- A way to persist all of our changes at once, so if something goes wrong, we don’t end up in an inconsistent state すべての変更を一度に永続化する方法です。
-
-- A simple API to our persistence concerns and a handy place to get a repository 永続化に関する簡単なAPIと、リポジトリを取得するための便利な場所です。
+- A stable snapshot of the database to work with, so the objects we use aren’t changing halfway through an operation データベースの安定したスナップショットを使用する(=**定期的にDBの中身をメモリに取ってきておく事**??)ことで、**操作の途中で使用するオブジェクトが変更されることがない**. 
+- A way to persist all of our changes at once, so if something goes wrong, we don’t end up in an inconsistent state すべての変更を一度に永続化できる方法.
+- A simple API to our persistence concerns and a handy place to get a repository 永続化に関する簡単なAPIと、リポジトリを取得するための便利な場所である.
 
 ## Test-Driving a UoW with Integration Tests インテグレーションテストによるUoWのテストドライブ
 
 Here are our integration tests for the UOW:
-UOWの統合テストを紹介します。
+UOWの統合テストを紹介する.
 
-A basic “round-trip” test for a UoW (tests
+A basic “round-trip” test for a UoW (tests/integration/test_uow.py)
 UoWの基本的な「ラウンドトリップ」テスト（テスト
 
 ```python
@@ -105,16 +100,14 @@ def test_uow_can_retrieve_a_batch_and_allocate_to_it(session_factory):
     assert batchref == 'batch1'
 ```
 
-1. We initialize the UoW by using our custom session factory and get back a uow object to use in our with block. カスタムセッションファクトリを使用してUoWを初期化し、withブロックで使用するuowオブジェクトを取得します。
-
-2. The UoW gives us access to the batches repository via uow.batches. UoWは、uow.batchesを介してバッチリポジトリにアクセスできるようにしてくれています。
-
-3. We call commit() on it when we’re done. 3. 完了したら、その上でcommit()を呼び出す。
+1. We initialize the UoW by using our custom session factory and get back a uow object to use in our with block. custom session factory を使用してUoWを初期化し、withブロックで使用するuowオブジェクトを取得する.
+2. The UoW gives us access to the batches repository via uow.batches. UoWは、`uow.batches`を介してバッチリポジトリにアクセスできるようにしてくれている.
+3. We call commit() on it when we’re done. 完了したら、その上で`commit()`を呼び出す.
 
 For the curious, the `insert_batch` and `get_allocated_batch_ref` helpers look like this:
-興味深いことに、 `insert_batch` と `get_allocated_batch_ref` ヘルパーは次のようなものです。
+興味深いことに、 `insert_batch` と `get_allocated_batch_ref` ヘルパーは次のようなもの: 
 
-Helpers for doing SQL stuff (tests
+Helpers for doing SQL stuff (tests/integration/test_uow.py)
 SQL を行うためのヘルパー (テスト)
 
 ```python
@@ -142,12 +135,12 @@ def get_allocated_batch_ref(session, orderid, sku):
 ## Unit of Work and Its Context Manager Unit of Work and Its Context Manager (仕事の単位とそのコンテキストマネージャー)
 
 In our tests we’ve implicitly defined an interface for what a UoW needs to do.
-このテストでは、UoWが何をする必要があるのか、暗黙のうちにインターフェースを定義している。
+このテストでは、**UoWが何をする必要があるのか**、暗黙のうちにインターフェースを定義している. 
 Let’s make that explicit by using an abstract base class:
-抽象的な基底クラスを使って、それを明示的にしてみよう。
+**abstract base クラス**を使って、それを**明示的に**してみよう.
 
-Abstract UoW context manager (src
-抽象的な UoW コンテキストマネージャ (src
+Abstract UoW context manager (src/allocation/service_layer/unit_of_work.py)
+抽象的な UoW コンテキストマネージャ
 
 ```python
 class AbstractUnitOfWork(abc.ABC):
