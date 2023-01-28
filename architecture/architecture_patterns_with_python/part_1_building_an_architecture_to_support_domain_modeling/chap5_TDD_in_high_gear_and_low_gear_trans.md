@@ -412,4 +412,4 @@ A few things will help along the way:
 Onto the next chapter!
 次の章へ!
 
-1. A valid concern about writing tests at a higher level is that it can lead to combinatorial explosion for more complex use cases. In these cases, dropping down to lower-level unit tests of the various collaborating domain objects can be useful. But see also Chapter 8 and “Optionally: Unit Testing Event Handlers in Isolation with a Fake Message Bus”. より高いレベルでテストを書くことの有効な懸念は、より複雑なユースケースにおいて組合せ爆発につながる可能性があることです。 このような場合は、さまざまなドメインオブジェクトを連携させた低レベルのユニットテストに落とし込むと便利です。 しかし、第8章と「オプション」も参照してください。 偽のメッセージバスでイベントハンドラを分離してユニットテストする" も参照してください。
+1. A valid concern about writing tests at a higher level is that it can lead to combinatorial explosion for more complex use cases. In these cases, dropping down to lower-level unit tests of the various collaborating domain objects can be useful. But see also Chapter 8 and “Optionally: Unit Testing Event Handlers in Isolation with a Fake Message Bus”. より高いレベルでテストを書くことの有効な懸念は、より複雑なユースケースにおいて組合せ爆発につながる可能性があることである.  このような場合は、さまざまなドメインオブジェクトを連携させた低レベルのユニットテストに落とし込むと便利.  しかし、第8章と「オプション」も参照してください. 偽のメッセージバスでイベントハンドラを分離してユニットテストする" も参照してください.
