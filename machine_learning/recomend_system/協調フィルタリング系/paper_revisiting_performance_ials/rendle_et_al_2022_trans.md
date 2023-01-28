@@ -12,63 +12,63 @@ Revisiting the Performance of iALS on Item Recommendation Benchmarks
 ## 0.3. abstruct abstruct
 
 Matrix factorization learned by implicit alternating least squares (iALS) is a popular baseline in recommender system research publications. iALS is known to be one of the most computationally efficient and scalable collaborative filtering methods.
-iALSは最も計算効率が良くスケーラブルな協調フィルタリング手法の1つとして知られている．
+iALSは**最も計算効率が良くスケーラブルな協調フィルタリング手法の1つ**として知られている．
 However, recent studies suggest that its prediction quality is not competitive with the current state of the art, in particular autoencoders and other item-based collaborative filtering methods.
-しかし、最近の研究では、iALSの予測品質は、特にオートエンコーダや他のアイテムベースの協調フィルタリング手法など、現在の最先端技術と競合しないことが示唆されている。
+しかし、最近の研究では、iALSの予測品質は、特にオートエンコーダや他のアイテムベースの協調フィルタリング手法など、現在の最先端技術と競合しないことが示唆されている.
 In this work, we revisit four well-studied benchmarks where iALS was reported to perform poorly and show that with proper tuning, iALS is highly competitive and outperforms any method on at least half of the comparisons.
-本研究では、iALSの性能が低いと報告されている4つのよく研究された**ベンチマーク**(=機械学習モデルの性能を測定・比較するための標準化されたタスク・データセット)を再検討し、適切なチューニングによりiALSが高い競争力を持ち、少なくとも比較対象の半分でどの手法よりも優れていることを示す。
+本研究では、iALSの性能が低いと報告されている4つのよく研究された**ベンチマーク**(=機械学習モデルの性能を測定・比較するための標準化されたタスク・データセット)を再検討し、適切なチューニングによりiALSが高い競争力を持ち、少なくとも比較対象の半分でどの手法よりも優れていることを示す.
 We hope that these high quality results together with iALS's known scalability spark new interest in applying and further improving this decade old technique.
-我々は、iALSの既知のスケーラビリティとともに、これらの高品質な結果が、この10年来の手法の適用とさらなる改善に対する新たな関心を呼び起こすことを期待している。
+我々は、iALSの既知のスケーラビリティとともに、これらの高品質な結果が、この10年来の手法の適用とさらなる改善に対する新たな関心を呼び起こすことを期待している.
 
 # 1. introduction 導入
 
 Research in recommender system algorithms is largely driven by results from empirical studies.
-レコメンダーシステムアルゴリズムの研究は、主に経験的研究の結果によって推進されている。
+レコメンダーシステムアルゴリズムの研究は、主に経験的研究の結果によって推進されている.
 Newly proposed recommender algorithms are typically compared to established baseline algorithms on a set of recommender tasks.
-新しく提案されたレコメンダーアルゴリズムは、通常、一連のレコメンダータスクにおいて確立されたベースラインアルゴリズムと比較される。
+新しく提案されたレコメンダーアルゴリズムは、通常、一連のレコメンダータスクにおいて確立されたベースラインアルゴリズムと比較される.
 Findings from such studies influence both the direction of future research and the algorithms for practitioners to adopt, hence it is very important to make sure that the experimental results are reliable.
-このような研究から得られた知見は、将来の研究の方向性と実務家が採用するアルゴリズムの両方に影響を与えるため、実験結果の信頼性を確認することが非常に重要である。
+このような研究から得られた知見は、将来の研究の方向性と実務家が採用するアルゴリズムの両方に影響を与えるため、実験結果の信頼性を確認することが非常に重要である.
 Recent work has highlighted issues in recommender system evaluations (e.g., [6, 24]) where newly proposed algorithms often were unable to outperform older baselines hence leading to unreliable claims about the quality of different algorithms.
-最近の研究では、レコメンダーシステムの評価における問題点（例えば[6, 24]）が強調されており、新しく提案されたアルゴリズムはしばしば古いベースラインを上回ることができないため、異なるアルゴリズムの品質について信頼できない主張をすることになった。
+最近の研究では、**レコメンダーシステムの評価における問題点（例えば[6, 24]）**が強調されており、**新しく提案されたアルゴリズムはしばしば古いベースラインを上回ることができないため、異なるアルゴリズムの品質について信頼できない主張をすることになった**.
 
 In this work, we carry out a study of the performance of iALS, a matrix factorization algorithm with quadratic loss, on top-n item recommendation benchmarks.
 本研究では，二次損失を用いた行列分解アルゴリズムであるiALSの性能に関する研究を，トップn項目の推薦ベンチマークに対して実施した．
 We demonstrate that iALS is able to achieve much better performance than previously reported and is competitive with recently developed and often more complex models.
-その結果、iALSは従来の報告よりもはるかに優れた性能を達成することができ、最近開発されたより複雑なモデルに対しても競争力を持つことが実証された。
+その結果、iALSは従来の報告よりもはるかに優れた性能を達成することができ、最近開発されたより複雑なモデルに対しても競争力を持つことが実証された.
 In addition to reinforcing the importance of tuning baseline models, we provide detailed guidance on tuning iALS, which we hope to help unlock the power of this algorithm in practice.
-また、ベースラインモデルのチューニングの重要性を強調するとともに、iALSのチューニングに関する詳細なガイダンスを提供し、このアルゴリズムが実際に力を発揮することを期待する。
+また、**ベースラインモデルのチューニングの重要性**を強調するとともに、iALSのチューニングに関する詳細なガイダンスを提供し、このアルゴリズムが実際に力を発揮することを期待する.
 
 iALS 1 [12] is an algorithm for learning a matrix factorization model for the purpose of top-n item recommendation from implicit feedback.
-iALS 1 [12]は、暗黙のフィードバックから上位n項目の推薦を行うための行列分解モデルを学習するアルゴリズムである。
+iALS 1 [12]は、暗黙のフィードバックから上位n項目の推薦を行うための行列分解モデルを学習するアルゴリズムである.
 An example for such a recommendation task would be to find the best movies (products, songs,...) for a user given the past movies watched (products bought, songs listened,...) by this user. iALS has been proposed over a decade ago and serves as one of the most commonly used baselines in the recommender system literature.
-iALSは10年以上前に提案され、**推薦システムの文献で最もよく使われるベースラインの一つ**である。
+iALSは10年以上前に提案され、**推薦システムの文献で最もよく使われるベースラインの一つ**である.
 While iALS is regarded as a simple and computationally efficient algorithm, it is typically no longer considered a top performing method with respect to prediction quality (e.g., [9, 17]).
-iALSはシンプルで計算効率の良いアルゴリズムとみなされているが、**予測品質に関してはもはやトップパフォーマンスとみなされていない**（例えば、[9, 17]）。
+iALSはシンプルで計算効率の良いアルゴリズムとみなされているが、**予測品質に関してはもはやトップパフォーマンスとみなされていない**（例えば、[9, 17]). 
 In this work, we revisit four well-studied item recommendation benchmarks where poor prediction quality was reported for iALS.
-本研究では、iALSの予測品質が低いと報告された、よく研究された4つの項目推薦ベンチマークを再検討する。
+本研究では、iALSの予測品質が低いと報告された、よく研究された4つのアイテム推薦ベンチマークを再検討する.
 The benchmarks that we pick have been proposed and studied by multiple research groups [1, 6, 9, 13, 17] and other researchers have used them for evaluating newly proposed algorithms [14, 18, 25, 26].
-これらのベンチマークは複数の研究グループによって提案・研究されており[1, 6, 9, 13, 17]、他の研究者も新しく提案されたアルゴリズムの評価に用いている[14, 18, 25, 26]。
+これらのベンチマークは複数の研究グループによって提案・研究されており[1, 6, 9, 13, 17]、他の研究者も新しく提案されたアルゴリズムの評価に用いている[14, 18, 25, 26].
 The poor iALS results have been established and reproduced by multiple groups [1, 6, 9, 13, 17] including a paper focused on reproducibility [1].
-iALSの結果の悪さは、再現性に焦点を当てた論文[1]を含め、複数のグループによって立証され、再現されてきた。
+iALSの結果の悪さは、再現性に焦点を当てた論文[1]を含め、複数のグループによって立証され、再現されてきた.
 However, contrary to these results, we show that iALS can in fact generate high quality results on exactly the same benchmarks using exactly the same evaluation method.
-しかし、これらの結果とは逆に、我々は**iALSが全く同じベンチマーク**で、**全く同じ評価方法**を用いて、実際に高品質な結果を生成できることを示す。
+しかし、これらの結果とは逆に、我々は**iALSが全く同じベンチマーク**で、**全く同じ評価方法**を用いて、実際に高品質な結果を生成できることを示す.
 Our iALS numbers outperform not only the previously reported numbers for iALS but outperform the reported quality of any other recommender algorithm on at least half of the evaluation metrics.
-私たちのiALSの数値は、以前に報告されたiALSの数値だけでなく、少なくとも半分の評価指標において、他のどの推薦アルゴリズムの報告された品質よりも優れている。
+私たちのiALSの数値は、以前に報告されたiALSの数値だけでなく、少なくとも半分の評価指標において、他のどの推薦アルゴリズムの報告された品質よりも優れている.
 We attribute this contradiction to the difficulty of evaluating baselines [24], which can be challenging for many reasons, including improper hyper-parameter tuning.
-この矛盾は、不適切なハイパーパラメータのチューニングを含む多くの理由で困難なベースライン評価[24]の難しさに起因すると考えている。
+この矛盾は、不適切なハイパーパラメータのチューニングを含む多くの理由で困難なベースライン評価[24]の難しさに起因すると考えている. 
 In this work, we give a detailed description of the role of the iALS hyperparameters, and how to tune them.
-この研究では、**iALSのハイパーパラメータの役割と、その調整方法について**詳細に説明する。
+この研究では、**iALSのハイパーパラメータの役割と、その調整方法について**詳細に説明する.
 We hope that these insights help both researchers and practitioners to obtain better results for this important algorithm in the future.
-これらの知見が、今後この重要なアルゴリズムにおいて、研究者と実務家の両方がより良い結果を得るために役立つことを期待している。
+これらの知見が、今後この重要なアルゴリズムにおいて、研究者と実務家の両方がより良い結果を得るために役立つことを期待している.
 As our experiments show, properly tuning an existing algorithm can have as much quality gain as inventing novel modeling techniques.
-我々の実験が示すように、**既存のアルゴリズムを適切に調整する**ことは、新しいモデリング技術を発明することと同じくらいに品質を向上させることができる。
+我々の実験が示すように、**既存のアルゴリズムを適切に調整する**ことは、新しいモデリング技術を発明することと同じくらいに品質を向上させることができる. 
 
 Our empirical results also call for rethinking the effectiveness of the quadratic loss for ranking problems.
-また、我々の実証結果は、**ランキング問題に対する2次ロスの有効性を再考すること**を求めている。
+また、我々の実証結果は、**ランキング問題に対する2次ロスの有効性を再考すること**を求めている. 
 It is striking that iALS achieves competitive or better performance than models learned with ranking losses (LambdaNet, WARP, softmax) which reflect the top-n recommendation task more closely.
-iALSは、トップN推薦課題をより忠実に反映するランキング損失で学習したモデル（LambdaNet、WARP、softmax）と同等以上の性能を達成していることが印象的であった。
+**iALSは、トップN推薦課題をより忠実に反映するランキング損失で学習したモデル（LambdaNet、WARP、softmax, i.e.ランク学習モデル!）と同等以上の性能を達成していることが印象的であった**. 
 These observations suggest that further research efforts are needed to deepen our understanding of loss functions for recommender systems.
-これらのことから、推薦システムのための損失関数に対する理解を深めるために、さらなる研究努力が必要であることが示唆される。
+これらのことから、推薦システムのための損失関数に対する理解を深めるために、さらなる研究努力が必要であることが示唆される. 
 
 # 2. Implicit Alternating Least Squares (iALS) 暗黙の交互最小二乗法(iALS)
 
@@ -77,7 +77,7 @@ These observations suggest that further research efforts are needed to deepen ou
 The iALS algorithm targets the problem of learning an item recommender that is trained from implicit feedback [21].
 iALSアルゴリズムでは、暗黙のフィードバックから学習されたアイテム推薦器を学習する問題を扱う[21]。
 In this problem setting, items from a set I should be recommended to users u ∈ U. For learning such a recommender, a set of positive user-item pairs S⊆U × I is given.
-この問題では、ユーザu∈Uに対して集合Iからアイテムを推薦する必要がある。このような推薦器を学習するために、正のユーザ・アイテムペア集合S⊆U × Iが与えられる。
+この問題では、ユーザu∈Uに対して集合Iからアイテムを推薦する必要がある. このような推薦器を学習するために、正のユーザ・アイテムペア集合S⊆U × Iが与えられる. 
 For example, a pair $(u, i)\in S$ could express that user u watched movie i, or customer u bought product i. A major difficulty of learning from implicit feedback is that the pairs in S are typically positive only and need to be contrasted with all the unobserved pairs (U × I)∖S.
 例えば、ペア $(u, i)\in S$ は、ユーザuが映画iを見たこと、あるいは顧客uが製品iを買ったことを表現することができる。**暗黙のフィードバックからの学習の大きな困難は、S中のペアが典型的に正のみ**で、すべての未観測ペア（U×I)/Sと対比される必要があることである。
 For example, the movies that haven't been watched by a user or the products that haven't been bought by a customer need to be considered when learning the preferences of a user.
@@ -112,7 +112,7 @@ $$
 There exist slightly different definitions for these components in the literature on matrix factorization with ALS.
 **ALSを用いた行列分解に関する文献**では、これらの成分について若干異なる定義が存在する。
 We use the formalization that weights all pairs by an unobserved weight [ 2] and allow for frequency-based regularizer as suggested by [ 29] for ALS algorithms for rating prediction.
-我々は、すべてのペアを未知の重みで重み付けする形式 [ 2 ] を使用し、格付け予測のためのALSアルゴリズムに [ 29 ] が提案したように、周波数ベースの正則化を可能にします。
+我々は、すべてのペアを未知の重みで重み付けする形式 [ 2 ] を使用し、評価値予測のためのALSアルゴリズムに [ 29 ] が提案したように、周波数ベースの正則化を可能にします。
 The components are defined as:
 構成要素は以下のように定義される。
 
