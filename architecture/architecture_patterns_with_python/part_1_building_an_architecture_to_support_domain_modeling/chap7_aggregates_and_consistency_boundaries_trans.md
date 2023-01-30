@@ -444,33 +444,30 @@ But we set up our database integrity rules such that only one of them is allowed
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0704.png)
 
 - Optimisitc Concurrency Control and Retries 楽観的並行性制御とリトライ
-  - What we’ve implemented here is called optimistic concurrency control because our default assumption is that everything will be fine when two users want to make changes to the database. We think it’s unlikely that they will conflict with each other, so we let them go ahead and just make sure we have a way to notice if there is a problem. ここで実装したのは楽観的同時実行制御と呼ばれるもので、2人のユーザーがデータベースに変更を加えようとするとき、すべてうまくいくだろうというのが私たちのデフォルトの仮定です。 2人のユーザーがお互いに衝突する可能性は低いと考えているので、2人を先に進ませ、問題が発生したときに気づく方法を確保するだけです。
-  - Pessimistic concurrency control works under the assumption that two users are going to cause conflicts, and we want to prevent conflicts in all cases, so we lock everything just to be safe. In our example, that would mean locking the whole `batches` table, or using `SELECT FOR UPDATE`—we’re pretending that we’ve ruled those out for performance reasons, but in real life you’d want to do some evaluations and measurements of your own. 悲観的な同時実行制御は、2人のユーザーが衝突を起こすという前提で動作します。あらゆる場合に衝突を防ぎたいので、念のためにすべてをロックします。 この例では、`batches`テーブル全体をロックしたり、`SELECT FOR UPDATE`を使用することになります。ここでは、パフォーマンス上の理由からこれらを除外したことにしていますが、実際のところ、自分自身で評価や測定を行いたいところでしょう。
-  - With pessimistic locking, you don’t need to think about handling failures because the database will prevent them for you (although you do need to think about deadlocks). With optimistic locking, you need to explicitly handle the possibility of failures in the (hopefully unlikely) case of a clash. 悲観的ロックでは、データベースが失敗を防いでくれるので、失敗の処理について考える必要はありません (デッドロックについては考える必要がありますが)。 楽観的ロックでは、（できれば起こりそうもないことですが）衝突した場合の失敗の可能性を明示的に処理する必要があります。
 
-- The usual way to handle a failure is to retry the failed operation from the beginning. Imagine we have two customers, Harry and Bob, and each submits an order for `SHINY-TABLE`. Both threads load the product at version 1 and allocate stock. The database prevents the concurrent update, and Bob’s order fails with an error. When we retry the operation, Bob’s order loads the product at version 2 and tries to allocate again. If there is enough stock left, all is well; otherwise, he’ll receive `OutOfStock`. Most operations can be retried this way in the case of a concurrency problem. 失敗を処理する通常の方法は、失敗した操作を最初からやり直すことです。 ハリーとボブという二人の顧客がいて、それぞれが `SHINY-TABLE` の注文を出したとします。 両方のスレッドが製品をバージョン 1 でロードし、在庫を割り当てます。 データベースは同時更新を阻止し、ボブの注文はエラーで失敗します。 操作を再試行すると、ボブさんの注文は商品をバージョン2でロードし、再度割り当てを試みます。 十分な在庫が残っていれば問題はありませんが、そうでない場合は `OutOfStock` を受け取ります。 ほとんどの操作は、並行処理の問題が発生した場合にこの方法で再試行することができます。
-
-- Read more on retries in “Recovering from Errors Synchronously” and “Footguns”. 再試行については、「同期的にエラーから回復する」と「フットガン」で詳しく説明しています。
+  - What we’ve implemented here is called optimistic concurrency control because our default assumption is that everything will be fine when two users want to make changes to the database. We think it’s unlikely that they will conflict with each other, so we let them go ahead and just make sure we have a way to notice if there is a problem. ここで実装したのは**Optimisitc Concurrency Control(楽観的同時実行制御?)**と呼ばれるもので、**2人のユーザがデータベースに変更を加えようとするとき、すべてうまくいくだろうというのが私たちのデフォルトの仮定**である. 2人のユーザがお互いに衝突する可能性は低いと考えているので、2人を先に進ませ、問題が発生したときに気づく方法を確保するだけである.
+  - Pessimistic concurrency control works under the assumption that two users are going to cause conflicts, and we want to prevent conflicts in all cases, so we lock everything just to be safe. In our example, that would mean locking the whole `batches` table, or using `SELECT FOR UPDATE`—we’re pretending that we’ve ruled those out for performance reasons, but in real life you’d want to do some evaluations and measurements of your own. 一方で**Pessimistic concurrency control(悲観的な同時実行制御)**は、**2人のユーザーが衝突を起こすという前提**で動作する. あらゆる場合に衝突を防ぎたいので、念のためにすべてをロックする. この例では、`batches`テーブル全体をロックしたり、`SELECT FOR UPDATE`を使用することになる. ここでは、パフォーマンス上の理由からこれらを除外したことにしているが、実際のところ、自分自身で評価や測定を行いたいとこだろう.
+  - With pessimistic locking, you don’t need to think about handling failures because the database will prevent them for you (although you do need to think about deadlocks). With optimistic locking, you need to explicitly handle the possibility of failures in the (hopefully unlikely) case of a clash. **pessimistic locking**では、データベースが失敗を防いでくれるので、失敗の処理について考える必要はない (デッドロックについては考える必要がありますが). optimistic lockingでは、（できれば起こりそうもないことですが）**衝突した場合の失敗の可能性を明示的に処理する必要**がある.
+  - The usual way to handle a failure is to retry the failed operation from the beginning. Imagine we have two customers, Harry and Bob, and each submits an order for `SHINY-TABLE`. Both threads load the product at version 1 and allocate stock. The database prevents the concurrent update, and Bob’s order fails with an error. When we retry the operation, Bob’s order loads the product at version 2 and tries to allocate again. If there is enough stock left, all is well; otherwise, he’ll receive `OutOfStock`. Most operations can be retried this way in the case of a concurrency problem. **失敗を処理する通常の方法は、失敗した操作を最初からやり直すこと**である. ハリーとボブという二人の顧客がいて、それぞれが `SHINY-TABLE` の注文を出したとする. 両方のスレッドが製品をバージョン 1 でロードし、在庫を割り当てる. データベースは同時更新を阻止し、ボブの注文はエラーで失敗する. 操作を再試行すると、ボブさんの注文は商品をバージョン2でロードし、再度割り当てを試みる. 十分な在庫が残っていれば問題ないが、そうでない場合は `OutOfStock` を受け取る. ほとんどの操作は、並行処理の問題が発生した場合にこの方法で再試行することができる.
+  - Read more on retries in “Recovering from Errors Synchronously” and “Footguns”. 再試行については、「同期的にエラーから回復する」と「フットガン」で詳しく説明している.
 
 ### 1.7.1. Implementation Options for Version Numbers バージョン番号の実装オプション
 
 There are essentially three options for implementing version numbers:
-バージョン番号の実装には、基本的に3つの選択肢があります。
+バージョン番号の実装には、基本的に3つの選択肢がある.
 
-1. `version_number` lives in the domain; we add it to the `Product` constructor, and `Product.allocate()` is responsible for incrementing it. バージョン番号 `version_number` はドメイン内に存在します。これを `Product` コンストラクタに追加し、 `Product.allocate()` がこれをインクリメントする役割を担います。
-
-2. The service layer could do it! The version number isn’t strictly a domain concern, so instead our service layer could assume that the current version number is attached to `Product` by the repository, and the service layer will increment it before it does the `commit()`. サービス層がそれを行うことができます! バージョン番号は厳密にはドメインの問題ではないので、代わりにサービス層は、現在のバージョン番号がリポジトリによって `Product` にアタッチされており、サービス層が `commit()` を実行する前にそれをインクリメントすると仮定することができます。
-
-3. Since it’s arguably an infrastructure concern, the UoW and repository could do it by magic. The repository has access to version numbers for any products it retrieves, and when the UoW does a commit, it can increment the version number for any products it knows about, assuming them to have changed. これは間違いなくインフラストラクチャの問題なので、UoWとリポジトリはマジックでそれを行うことができます。 リポジトリは取得した製品のバージョン番号にアクセスでき、UoWがコミットするときに、それが知っているすべての製品のバージョン番号を、それらが変更されたと仮定してインクリメントすることができるのです。
+1. `version_number` lives in the domain; we add it to the `Product` constructor, and `Product.allocate()` is responsible for incrementing it. バージョン番号 `version_number` はドメイン内に存在する. これを `Product` コンストラクタに追加し、 `Product.allocate()` がこれをインクリメント(+1)する役割を担う.
+2. The service layer could do it! The version number isn’t strictly a domain concern, so instead our service layer could assume that the current version number is attached to `Product` by the repository, and the service layer will increment it before it does the `commit()`. Service Layerがそれを行うことができる! バージョン番号は厳密にはDomainの問題ではないので、代わりにService Layerは、現在のバージョン番号がリポジトリによって `Product` にアタッチされており、Service Layerが `commit()` を実行する前にそれをインクリメントすると仮定できる.
+3. Since it’s arguably an infrastructure concern, the UoW and repository could do it by magic. The repository has access to version numbers for any products it retrieves, and when the UoW does a commit, it can increment the version number for any products it knows about, assuming them to have changed. **version numberは間違いなくインフラストラクチャの問題**なので、UoWとRepositoryはマジックでそれを行うことができる. Repositoryは取得した製品のバージョン番号にアクセスでき、UoWがコミットするときに、それが知っているすべての製品のバージョン番号を、それらが変更されたと仮定してインクリメントすることができる.
 
 Option 3 isn’t ideal, because there’s no real way of doing it without having to assume that all products have changed, so we’ll be incrementing version numbers when we don’t have to.1
-というのも、すべての製品が変更されたと仮定する必要がないため、バージョン番号を増加させる必要があるからです。
+というのも、すべての製品が変更されたと仮定する必要がないため、バージョン番号を増加させる必要があるからである.
 
 Option 2 involves mixing the responsibility for mutating state between the service layer and the domain layer, so it’s a little messy as well.
-選択肢2は、サービス層とドメイン層の間で状態の変異の責任を混在させることになり、同様に少し面倒です。
+選択肢2は、Service LayerとDomain Layerの間で状態の変異の責任を混在させることになり、同様に少し面倒.
 
 So in the end, even though version numbers don’t have to be a domain concern, you might decide the cleanest trade-off is to put them in the domain:
-ですから、最終的には、バージョン番号はドメインに関係ないとしても、最もクリーンなトレードオフとして、ドメインに入れるべきだと判断することもあります。
+ですから、最終的には、**バージョン番号はDomainに関係ないとしても、最もクリーンなトレードオフとして、Domainに入れるべき**だと判断することもある.
 
 Our chosen aggregate, Product (src
 私たちが選んだ集合体である製品（src
@@ -498,8 +495,7 @@ class Product:
 1. There it is! あった！
 
 - TIP ヒント
-
-- If you’re scratching your head at this version number business, it might help to remember that the number isn’t important. What’s important is that the `Product` database row is modified whenever we make a change to the `Product` aggregate. The version number is a simple, human-comprehensible way to model a thing that changes on every write, but it could equally be a random UUID every time. もしあなたがこのバージョン番号ビジネスで頭を悩ませているなら、番号は重要ではないことを思い出すのに役立つかもしれません。 重要なのは、 `Product` データベースの行は、 `Product` 集計に変更を加えるたびに変更されることです。 バージョン番号は、書き込みのたびに変更されるものをモデル化するための、シンプルで人間が理解しやすい方法ですが、毎回ランダムな UUID にすることも可能です。
+- If you’re scratching your head at this version number business, it might help to remember that the number isn’t important. What’s important is that the `Product` database row is modified whenever we make a change to the `Product` aggregate. The version number is a simple, human-comprehensible way to model a thing that changes on every write, but it could equally be a random UUID every time. もしあなたがこのバージョン番号ビジネスで頭を悩ませているなら、番号は重要ではないことを思い出すのに役立つかもしれない. 重要なのは、 `Product` データベースの行(row)は、 `Product` 集計に変更を加えるたびに変更されることである. **バージョン番号は、書き込みのたびに変更されるものをモデル化するための、シンプルで人間が理解しやすい方法ですが、毎回ランダムな UUID にすることも可能**である.
 
 ## 1.8. Testing for Our Data Integrity Rules データ完全性ルールのテスト
 
