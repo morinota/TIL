@@ -6,7 +6,7 @@ You might be asking if the increased testability and expressiveness are really w
 テスト容易性と表現力の向上が、本当にすべての努力に見合うものなのかどうか、 疑問に思っているかもしれません。
 
 In practice, though, we find that it’s not the obvious features that make a mess of our codebases: it’s the goop around the edge.
-しかし実際には、コードベースを混乱させるのは明らかな機能ではなく、その周辺にある「汚れ」なのです。
+しかし、実際には、コードベースを混乱させるのは、明らかな機能ではなく、その周辺にあるゴミなのです。
 It’s reporting, and permissions, and workflows that touch a zillion objects.
 レポート、パーミッション、ワークフローなど、多くのオブジェクトに触れているのです。
 
@@ -67,22 +67,23 @@ Just whack it in the endpoint—what could go wrong?
 ```python
 @app.route("/allocate", methods=['POST'])
 def allocate_endpoint():
-line = model.OrderLine(
-request.json['orderid'],
-request.json['sku'],
-request.json['qty'],
-)
-try:
-uow = unit_of_work.SqlAlchemyUnitOfWork()
-batchref = services.allocate(line, uow)
-except (model.OutOfStock, services.InvalidSku) as e:
-send_mail(
-'out of stock',
-'stock_admin@made.com',
-f'{line.orderid} - {line.sku}'
-)
-return jsonify({'message': str(e)}), 400
-return jsonify({'batchref': batchref}), 201
+    line = model.OrderLine(
+        request.json['orderid'],
+        request.json['sku'],
+        request.json['qty'],
+    )
+    try:
+        uow = unit_of_work.SqlAlchemyUnitOfWork()
+        batchref = services.allocate(line, uow)
+    except (model.OutOfStock, services.InvalidSku) as e:
+        send_mail(
+            'out of stock',
+            'stock_admin@made.com',
+            f'{line.orderid} - {line.sku}'
+        )
+        return jsonify({'message': str(e)}), 400
+
+    return jsonify({'batchref': batchref}), 201
 ```
 
 …but it’s easy to see how we can quickly end up in a mess by patching things up like this.
@@ -99,15 +100,15 @@ Email-sending code in our model isn’t lovely either (src
 私たちのモデルのメール送信コードも素敵ではありません (src
 
 ```python
-def allocate(self, line: OrderLine) -> str:
-try:
-batch = next(
-b for b in sorted(self.batches) if b.can_allocate(line)
-)
-#...
-except StopIteration:
-email.send_mail('stock@made.com', f'Out of stock for {line.sku}')
-raise OutOfStock(f'Out of stock for sku {line.sku}')
+    def allocate(self, line: OrderLine) -> str:
+        try:
+            batch = next(
+                b for b in sorted(self.batches) if b.can_allocate(line)
+            )
+            #...
+        except StopIteration:
+            email.send_mail('stock@made.com', f'Out of stock for {line.sku}')
+            raise OutOfStock(f'Out of stock for sku {line.sku}')
 ```
 
 But that’s even worse!
@@ -118,12 +119,12 @@ We don’t want our model to have any dependencies on infrastructure concerns li
 This email-sending thing is unwelcome goop messing up the nice clean flow of our system.
 このメール送信の件は、私たちのシステムのきれいな流れを台無しにする歓迎されないグープです。
 What we’d like is to keep our domain model focused on the rule “You can’t allocate more stuff than is actually available.”
-私たちが望むのは、ドメインモデルを "実際に利用できる量以上のものを割り当ててはいけない "というルールに集中させることです。
+私たちが望むのは、ドメインモデルを "実際に利用できる以上のものを割り当ててはいけない "というルールに集中させ続けることです。
 
 The domain model’s job is to know that we’re out of stock, but the responsibility of sending an alert belongs elsewhere.
 ドメインモデルの仕事は、在庫がないことを知ることですが、アラートを送る責任は他にあります。
 We should be able to turn this feature on or off, or to switch to SMS notifications instead, without needing to change the rules of our domain model.
-ドメインモデルのルールを変更することなく、この機能をオンまたはオフにしたり、代わりにSMS通知に切り替えたりすることができるようにすべきです。
+ドメインモデルのルールを変更することなく、この機能をオンにしたりオフにしたり、代わりにSMS通知に切り替えたりすることができるはずです。
 
 ### Or the Service Layer! サービス層でもいい!
 
@@ -138,21 +139,21 @@ And in the service layer, it’s out of place (src
 
 ```python
 def allocate(
-orderid: str, sku: str, qty: int,
-uow: unit_of_work.AbstractUnitOfWork
+        orderid: str, sku: str, qty: int,
+        uow: unit_of_work.AbstractUnitOfWork
 ) -> str:
-line = OrderLine(orderid, sku, qty)
-with uow:
-product = uow.products.get(sku=line.sku)
-if product is None:
-raise InvalidSku(f'Invalid sku {line.sku}')
-try:
-batchref = product.allocate(line)
-uow.commit()
-return batchref
-except model.OutOfStock:
-email.send_mail('stock@made.com', f'Out of stock for {line.sku}')
-raise
+    line = OrderLine(orderid, sku, qty)
+    with uow:
+        product = uow.products.get(sku=line.sku)
+        if product is None:
+            raise InvalidSku(f'Invalid sku {line.sku}')
+        try:
+            batchref = product.allocate(line)
+            uow.commit()
+            return batchref
+        except model.OutOfStock:
+            email.send_mail('stock@made.com', f'Out of stock for {line.sku}')
+            raise
 ```
 
 Catching an exception and reraising it?
@@ -176,7 +177,7 @@ Our endpoint, service function, and domain methods are all called `allocate`, no
 One formulation of the SRP is that each class should have only a single reason to change.
 SRPの一つの定式化は、各クラスが変更する理由はただ一つであるべきだということです。
 When we switch from email to SMS, we shouldn’t have to update our `allocate()` function, because that’s clearly a separate responsibility.
-電子メールから SMS に切り替えるとき、 `allocate()` 関数を更新する必要はありません。
+電子メールから SMS に切り替えるとき、`allocate()` 関数を更新する必要はありません。
 
 To solve the problem, we’re going to split the orchestration into separate steps so that the different concerns don’t get tangled up.2 The domain model’s job is to know that we’re out of stock, but the responsibility of sending an alert belongs elsewhere.
 この問題を解決するために、オーケストレーションを別々のステップに分割し、異なる懸念が絡まないようにします。2 ドメインモデルの仕事は、在庫切れを知ることですが、アラートを送る責任は別のところに属します。
@@ -219,11 +220,14 @@ Event classes (src
 
 ```python
 from dataclasses import dataclass
+
 class Event:  1
-pass
+    pass
+
 @dataclass
 class OutOfStock(Event):  2
-sku: str
+    sku: str
+
 ```
 
 1. Once we have a number of events, we’ll find it useful to have a parent class that can store common attributes. It’s also useful for type hints in our message bus, as you’ll see shortly. イベントが多数になると、共通の属性を保存できる親クラスがあると便利だと思います。 また、まもなく見るように、メッセージバスのタイプヒントにも便利です。
@@ -243,12 +247,13 @@ Test our aggregate to raise events (tests
 
 ```python
 def test_records_out_of_stock_event_if_cannot_allocate():
-batch = Batch('batch1', 'SMALL-FORK', 10, eta=today)
-product = Product(sku="SMALL-FORK", batches=[batch])
-product.allocate(OrderLine('order1', 'SMALL-FORK', 10))
-allocation = product.allocate(OrderLine('order2', 'SMALL-FORK', 1))
-assert product.events[-1] == events.OutOfStock(sku="SMALL-FORK")  1
-assert allocation is None
+    batch = Batch('batch1', 'SMALL-FORK', 10, eta=today)
+    product = Product(sku="SMALL-FORK", batches=[batch])
+    product.allocate(OrderLine('order1', 'SMALL-FORK', 10))
+
+    allocation = product.allocate(OrderLine('order2', 'SMALL-FORK', 1))
+    assert product.events[-1] == events.OutOfStock(sku="SMALL-FORK")  1
+    assert allocation is None
 ```
 
 1. Our aggregate will expose a new attribute called `.events` that will contain a list of facts about what has happened, in the form of `Event` objects. 私たちのアグリゲートは `.events` という新しい属性を公開します。この属性には、起こったことに関する事実のリストが `Event` オブジェクトの形で格納されます。
@@ -261,18 +266,20 @@ The model raises a domain event (src
 
 ```python
 class Product:
-def __init__(self, sku: str, batches: List[Batch], version_number: int = 0):
-self.sku = sku
-self.batches = batches
-self.version_number = version_number
-self.events = []  # type: List[events.Event]  1
-def allocate(self, line: OrderLine) -> str:
-try:
-#...
-except StopIteration:
-self.events.append(events.OutOfStock(line.sku))  2
-# raise OutOfStock(f'Out of stock for sku {line.sku}')  3
-return None
+
+    def __init__(self, sku: str, batches: List[Batch], version_number: int = 0):
+        self.sku = sku
+        self.batches = batches
+        self.version_number = version_number
+        self.events = []  # type: List[events.Event]  1
+
+    def allocate(self, line: OrderLine) -> str:
+        try:
+            #...
+        except StopIteration:
+            self.events.append(events.OutOfStock(line.sku))  2
+            # raise OutOfStock(f'Out of stock for sku {line.sku}')  3
+            return None
 ```
 
 1. Here’s our new .events attribute in use. 新しい.events属性が使用されている様子です。
@@ -301,15 +308,20 @@ Simple message bus (src
 
 ```python
 def handle(event: events.Event):
-for handler in HANDLERS[type(event)]:
-handler(event)
+    for handler in HANDLERS[type(event)]:
+        handler(event)
+
+
 def send_out_of_stock_notification(event: events.OutOfStock):
-email.send_mail(
-'stock@made.com',
-f'Out of stock for {event.sku}',
-)
+    email.send_mail(
+        'stock@made.com',
+        f'Out of stock for {event.sku}',
+    )
+
+
 HANDLERS = {
-events.OutOfStock: [send_out_of_stock_notification],
+    events.OutOfStock: [send_out_of_stock_notification],
+
 }  # type: Dict[Type[events.Event], List[Callable]]
 ```
 
@@ -319,9 +331,9 @@ events.OutOfStock: [send_out_of_stock_notification],
 
 - IS THIS LIKE CELERY? は、セロリのようなものでしょうか？
 
-- Celery is a popular tool in the Python world for deferring self-contained chunks of work to an asynchronous task queue. The message bus we’re presenting here is very different, so the short answer to the above question is no; our message bus has more in common with a Node.js app, a UI event loop, or an actor framework. Celeryは、Pythonの世界では、自己完結した仕事の塊を非同期タスクキューに先送りするためのツールとして人気があります。 このメッセージバスは、Node.jsのアプリやUIのイベントループ、あるいはアクターフレームワークと共通する部分が多いのです。
+- Celery is a popular tool in the Python world for deferring self-contained chunks of work to an asynchronous task queue. The message bus we’re presenting here is very different, so the short answer to the above question is no; our message bus has more in common with a Node.js app, a UI event loop, or an actor framework. Celeryは、Pythonの世界では、自己完結した仕事の塊を非同期タスクキューに先送りするためのツールとして人気があります。 このメッセージバスは、Node.jsのアプリやUIのイベントループ、あるいはアクターフレームワークと共通点が多いのです。
 
-- If you do have a requirement for moving work off the main thread, you can still use our event-based metaphors, but we suggest you use external events for that. There’s more discussion in Table 11-1, but essentially, if you implement a way of persisting events to a centralized store, you can subscribe other containers or other microservices to them. Then that same concept of using events to separate responsibilities across units of work within a single process/service can be extended across multiple processes—which may be different containers within the same service, or totally different microservices. メインスレッドから作業を移す必要がある場合、イベントベースのメタファーを使用することはできますが、その場合は外部イベントを使用することをお勧めします。 表11-1に詳しい説明がありますが、基本的には、イベントを集中型ストアに永続化する方法を実装すれば、他のコンテナや他のマイクロサービスをそれらにサブスクライブすることができます。 次に、イベントを使用して、単一のプロセス内の作業単位間で責任を分離するという同じコンセプトがあります。
+- If you do have a requirement for moving work off the main thread, you can still use our event-based metaphors, but we suggest you use external events for that. There’s more discussion in Table 11-1, but essentially, if you implement a way of persisting events to a centralized store, you can subscribe other containers or other microservices to them. Then that same concept of using events to separate responsibilities across units of work within a single process/service can be extended across multiple processes—which may be different containers within the same service, or totally different microservices. メインスレッドから作業を移す要件がある場合、イベントベースのメタファーをまだ使用できますが、その場合は外部イベントを使用することをお勧めします。 表11-1に詳しい説明がありますが、基本的には、イベントを集中型ストアに永続化する方法を実装すれば、他のコンテナや他のマイクロサービスをそれにサブスクライブすることができます。 次に、イベントを使用して、単一のプロセス内の作業単位間で責任を分離するという同じコンセプトがあります。
 
 - If you follow us in this approach, your API for distributing tasks is your event classes—or a JSON representation of them. This allows you a lot of flexibility in who you distribute tasks to; they need not necessarily be Python services. Celery’s API for distributing tasks is essentially “function name plus arguments,” which is more restrictive, and Python-only. このアプローチに従えば、タスクを配布するためのAPIはイベントクラスか、そのJSON表現になります。 これにより、タスクを配布する相手がPythonのサービスである必要はなく、非常に柔軟に対応することができます。 Celeryのタスク配信APIは、基本的に「関数名＋引数」であり、より制約が多く、Python専用となります。
 
@@ -343,21 +355,22 @@ The service layer with an explicit message bus (src
 ```python
 from . import messagebus
 ...
+
 def allocate(
-orderid: str, sku: str, qty: int,
-uow: unit_of_work.AbstractUnitOfWork
+        orderid: str, sku: str, qty: int,
+        uow: unit_of_work.AbstractUnitOfWork
 ) -> str:
-line = OrderLine(orderid, sku, qty)
-with uow:
-product = uow.products.get(sku=line.sku)
-if product is None:
-raise InvalidSku(f'Invalid sku {line.sku}')
-try:  1
-batchref = product.allocate(line)
-uow.commit()
-return batchref
-finally:  1
-messagebus.handle(product.events)  2
+    line = OrderLine(orderid, sku, qty)
+    with uow:
+        product = uow.products.get(sku=line.sku)
+        if product is None:
+            raise InvalidSku(f'Invalid sku {line.sku}')
+        try:  1
+            batchref = product.allocate(line)
+            uow.commit()
+            return batchref
+        finally:  1
+            messagebus.handle(product.events)  2
 ```
 
 1. We keep the try/finally from our ugly earlier implementation (we haven’t gotten rid of all exceptions yet, just OutOfStock). 私たちは、トライを続ける
@@ -377,19 +390,20 @@ Service layer calls messagebus.handle directly (src
 
 ```python
 def allocate(
-orderid: str, sku: str, qty: int,
-uow: unit_of_work.AbstractUnitOfWork
+        orderid: str, sku: str, qty: int,
+        uow: unit_of_work.AbstractUnitOfWork
 ) -> str:
-line = OrderLine(orderid, sku, qty)
-with uow:
-product = uow.products.get(sku=line.sku)
-if product is None:
-raise InvalidSku(f'Invalid sku {line.sku}')
-batchref = product.allocate(line)
-uow.commit() 1
-if batchref is None:
-messagebus.handle(events.OutOfStock(line.sku))
-return batchref
+    line = OrderLine(orderid, sku, qty)
+    with uow:
+        product = uow.products.get(sku=line.sku)
+        if product is None:
+            raise InvalidSku(f'Invalid sku {line.sku}')
+        batchref = product.allocate(line)
+        uow.commit() 1
+
+        if batchref is None:
+            messagebus.handle(events.OutOfStock(line.sku))
+        return batchref
 ```
 
 1. As before, we commit even if we fail to allocate because the code is simpler this way and it’s easier to reason about: we always commit unless something goes wrong. Committing when we haven’t changed anything is safe and keeps the code uncluttered. この方がコードがシンプルになり、理屈もつけやすいからです。何か問題が起きない限り、常にコミットします。 何も変更していないときにコミットすることは、安全であり、コードをすっきりさせることができます。
@@ -409,23 +423,29 @@ UoWがメッセージバスに出会い（src
 
 ```python
 class AbstractUnitOfWork(abc.ABC):
+    ...
+
+    def commit(self):
+        self._commit()  1
+        self.publish_events()  2
+
+    def publish_events(self):  2
+        for product in self.products.seen:  3
+            while product.events:
+                event = product.events.pop(0)
+                messagebus.handle(event)
+
+    @abc.abstractmethod
+    def _commit(self):
+        raise NotImplementedError
+
 ...
-def commit(self):
-self._commit()  1
-self.publish_events()  2
-def publish_events(self):  2
-for product in self.products.seen:  3
-while product.events:
-event = product.events.pop(0)
-messagebus.handle(event)
-@abc.abstractmethod
-def _commit(self):
-raise NotImplementedError
-...
+
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
-...
-def _commit(self):  1
-self.session.commit()
+    ...
+
+    def _commit(self):  1
+        self.session.commit()
 ```
 
 1. We’ll change our commit method to require a private .\_commit() method from subclasses. サブクラスから private .\_commit() メソッドを要求するようにコミットメソッドを変更します。
@@ -443,30 +463,41 @@ Repository tracks aggregates that pass through it (src
 
 ```python
 class AbstractRepository(abc.ABC):
-def __init__(self):
-self.seen = set()  # type: Set[model.Product]  1
-def add(self, product: model.Product):  2
-self._add(product)
-self.seen.add(product)
-def get(self, sku) -> model.Product:  3
-product = self._get(sku)
-if product:
-self.seen.add(product)
-return product
-@abc.abstractmethod
-def _add(self, product: model.Product):  2
-raise NotImplementedError
-@abc.abstractmethod  3
-def _get(self, sku) -> model.Product:
-raise NotImplementedError
+
+    def __init__(self):
+        self.seen = set()  # type: Set[model.Product]  1
+
+    def add(self, product: model.Product):  2
+        self._add(product)
+        self.seen.add(product)
+
+    def get(self, sku) -> model.Product:  3
+        product = self._get(sku)
+        if product:
+            self.seen.add(product)
+        return product
+
+    @abc.abstractmethod
+    def _add(self, product: model.Product):  2
+        raise NotImplementedError
+
+    @abc.abstractmethod  3
+    def _get(self, sku) -> model.Product:
+        raise NotImplementedError
+
+
+
 class SqlAlchemyRepository(AbstractRepository):
-def __init__(self, session):
-super().__init__()
-self.session = session
-def _add(self, product):  2
-self.session.add(product)
-def _get(self, sku):  3
-return self.session.query(model.Product).filter_by(sku=sku).first()
+
+    def __init__(self, session):
+        super().__init__()
+        self.session = session
+
+    def _add(self, product):  2
+        self.session.add(product)
+
+    def _get(self, sku):  3
+        return self.session.query(model.Product).filter_by(sku=sku).first()
 ```
 
 1. For the UoW to be able to publish new events, it needs to be able to ask the repository for which `Product` objects have been used during this session. We use a `set` called `.seen` to store them. That means our implementations need to call `super().__init__()`. UoW が新しいイベントを発行できるようにするには、このセッションでどの `Product` オブジェクトが使用されたかをリポジトリに問い合わせることができるようにする必要があります。 私たちは、それらを保存するために `.seen` という `set` を使用します。 つまり、私たちの実装では `super().__init__()` を呼び出す必要があるのです。
@@ -487,17 +518,17 @@ Service layer is clean again (src
 
 ```python
 def allocate(
-orderid: str, sku: str, qty: int,
-uow: unit_of_work.AbstractUnitOfWork
+        orderid: str, sku: str, qty: int,
+        uow: unit_of_work.AbstractUnitOfWork
 ) -> str:
-line = OrderLine(orderid, sku, qty)
-with uow:
-product = uow.products.get(sku=line.sku)
-if product is None:
-raise InvalidSku(f'Invalid sku {line.sku}')
-batchref = product.allocate(line)
-uow.commit()
-return batchref
+    line = OrderLine(orderid, sku, qty)
+    with uow:
+        product = uow.products.get(sku=line.sku)
+        if product is None:
+            raise InvalidSku(f'Invalid sku {line.sku}')
+        batchref = product.allocate(line)
+        uow.commit()
+        return batchref
 ```
 
 We do also have to remember to change the fakes in the service layer and make them call `super()` in the right places, and to implement underscorey methods, but the changes are minimal:
@@ -508,18 +539,24 @@ Service-layer fakes need tweaking (tests
 
 ```python
 class FakeRepository(repository.AbstractRepository):
-def __init__(self, products):
-super().__init__()
-self._products = set(products)
-def _add(self, product):
-self._products.add(product)
-def _get(self, sku):
-return next((p for p in self._products if p.sku == sku), None)
+
+    def __init__(self, products):
+        super().__init__()
+        self._products = set(products)
+
+    def _add(self, product):
+        self._products.add(product)
+
+    def _get(self, sku):
+        return next((p for p in self._products if p.sku == sku), None)
+
 ...
+
 class FakeUnitOfWork(unit_of_work.AbstractUnitOfWork):
-...
-def _commit(self):
-self.committed = True
+    ...
+
+    def _commit(self):
+        self.committed = True
 ```
 
 - EXERCISE FOR THE READER 読書運動
@@ -534,18 +571,21 @@ A wrapper adds functionality and then delegates (src
 
 ```python
 class TrackingRepository:
-seen: Set[model.Product]
-def __init__(self, repo: AbstractRepository):
-self.seen = set()  # type: Set[model.Product]
-self._repo = repo
-def add(self, product: model.Product):  1
-self._repo.add(product)  1
-self.seen.add(product)
-def get(self, sku) -> model.Product:
-product = self._repo.get(sku)
-if product:
-self.seen.add(product)
-return product
+    seen: Set[model.Product]
+
+    def __init__(self, repo: AbstractRepository):
+        self.seen = set()  # type: Set[model.Product]
+        self._repo = repo
+
+    def add(self, product: model.Product):  1
+        self._repo.add(product)  1
+        self.seen.add(product)
+
+    def get(self, sku) -> model.Product:
+        product = self._repo.get(sku)
+        if product:
+            self.seen.add(product)
+        return product
 ```
 
 1. By wrapping the repository, we can call the actual `.add()` and `.get()` methods, avoiding weird underscorey methods. リポジトリをラップすることで、実際の `.add()` と `.get()` メソッドを呼び出すことができ、変なアンダースコアを使ったメソッドを回避することができます。
@@ -589,7 +629,7 @@ Domain events: the trade-offs
 
 - Event handlers are nicely decoupled from the “core” application logic, making it easy to change their implementation later. イベントハンドラは、「コア」アプリケーションロジックからうまく切り離されているため、後から実装を変更することも容易です。
 
-- Domain events are a great way to model the real world, and we can use them as part of our business language when modeling with stakeholders. ドメインイベントは実世界をモデル化する優れた方法であり、ステークホルダーとモデル化する際にビジネス言語の一部として使用することができるのです。
+- Domain events are a great way to model the real world, and we can use them as part of our business language when modeling with stakeholders. ドメインイベントは実世界をモデル化する優れた方法であり、ステークホルダーとモデル化する際に、ビジネス言語の一部として使用することができるのです。
 
 - Cons 短所
 
@@ -619,7 +659,7 @@ When an order is canceled, we should find the products that were allocated to it
 
 - Events can help with the single responsibility principle イベントは単一責任原則に役立つ
 
-- Code gets tangled up when we mix multiple concerns in one place. Events can help us to keep things tidy by separating primary use cases from secondary ones. We also use events for communicating between aggregates so that we don’t need to run long-running transactions that lock against multiple tables. 複数の関心事が混在していると、コードがこんがらがってしまいます。 イベントは、主要なユースケースと副次的なユースケースを分離することで、物事を整理整頓するのに役立つ。 また、アグリゲート間の通信にもイベントを利用し、複数のテーブルに対してロックするような長時間トランザクションを実行する必要がないようにしています。
+- Code gets tangled up when we mix multiple concerns in one place. Events can help us to keep things tidy by separating primary use cases from secondary ones. We also use events for communicating between aggregates so that we don’t need to run long-running transactions that lock against multiple tables. 複数の関心事が混在していると、コードがこんがらがってしまいます。 イベントは、一次的なユースケースと二次的なユースケースを分離することで、物事を整理整頓するのに役立っています。 また、アグリゲート間の通信にもイベントを利用し、複数のテーブルに対してロックするような長時間トランザクションを実行する必要がないようにしています。
 
 - A message bus routes messages to handlers メッセージバスは、メッセージをハンドラに転送する
 
