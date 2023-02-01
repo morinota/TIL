@@ -601,13 +601,13 @@ SELECT FOR UPDATE`は異なる動作をする. 2つの同時実行トランザ�
 If two transactions both try to `SELECT FOR UPDATE`a row at the same time, one will win, and the other will wait until the lock is released.
 2つのトランザクションが同時に行を`SELECT FOR UPDATE` しようとすると、一方が勝者となり、もう一方はロックが解除されるまで待つことになる.
 So this is an example of pessimistic concurrency control.
-つまり、これは悲観的な同時実行制御の一例です。
+つまり、これはpessimistic concurrency controlの一例で
 
 Here’s how you can use the SQLAlchemy DSL to specify `FOR UPDATE` at query time:
-ここでは、SQLAlchemy DSL を使って、クエリ時に `FOR UPDATE` を指定する方法を紹介します。
+ここでは、SQLAlchemy DSL を使って、クエリ時に `FOR UPDATE` を指定する方法を紹介する.
 
 SQLAlchemy with_for_update (src
-SQLAlchemy with_for_update (src)
+SQLAlchemy with_for_update (src
 
 ```python
     def get(self, sku):
@@ -618,122 +618,108 @@ SQLAlchemy with_for_update (src)
 ```
 
 This will have the effect of changing the concurrency pattern from
-これは、同時実行パターンを次のように変更する効果があります。
+これは、同時実行パターンを次のように変更する効果がある.
 
 ```
 read1, read2, write1, write2(fail)
 ```
 
-to
-まで
+↑を↓に変更する効果.
 
 ```
 read1, write1, read2, write2(succeed)
 ```
 
 Some people refer to this as the “read-modify-write” failure mode.
-これを「read-modify-write」障害モードと呼ぶ人もいます。
+これを「**read-modify-write**」障害モードと呼ぶ人もいる.
 Read “PostgreSQL Anti-Patterns:
-PostgreSQLアンチパターン "を読んでください。
+PostgreSQLアンチパターン "を読んでください.
 Read-Modify-Write Cycles” for a good overview.
-Read-Modify-Write Cycles" を読むと概要がよくわかります。
+Read-Modify-Write Cycles" を読むと概要がよくわかる.
 
 We don’t really have time to discuss all the trade-offs between `REPEATABLE READ` and `SELECT FOR UPDATE`, or optimistic versus pessimistic locking in general.
-PREPEATABLE READ`と`SELECT FOR UPDATE` の間のトレードオフや、一般的な楽観的ロックと悲観的ロックについて議論している時間は本当にありません。
+`PREPEATABLE READ`と`SELECT FOR UPDATE` の間のトレードオフや、一般的なoptimistic locking と pessimistic locking について議論している時間は本当にない.
 But if you have a test like the one we’ve shown, you can specify the behavior you want and see how it changes.
-しかし、今回紹介したようなテストがあれば、欲しい動作を指定して、それがどのように変化するかを確認することができます。
+しかし、今回紹介したようなテストがあれば、欲しい動作を指定して、それがどのように変化するかを確認することができる.
 You can also use the test as a basis for performing some performance experiments.
-また、このテストを元に性能実験を行うこともできます。
+また、このテストを元に性能実験を行うこともできる.
 
 ## 1.9. Wrap-Up まとめ
 
 Specific choices around concurrency control vary a lot based on business circumstances and storage technology choices, but we’d like to bring this chapter back to the conceptual idea of an aggregate: we explicitly model an object as being the main entrypoint to some subset of our model, and as being in charge of enforcing the invariants and business rules that apply across all of those objects.
-並行処理制御に関する具体的な選択肢は、ビジネスの状況やストレージ技術の選択によって大きく異なりますが、この章では、集約の概念に戻りたいと思います。つまり、あるオブジェクトをモデルのサブセットへの主要なエントリポイントとして明示的にモデル化し、それらのオブジェクトすべてに適用される不変性とビジネスルールを実施する役割を果たします。
+concurrency controlに関する具体的な選択肢は、ビジネスの状況やストレージ技術の選択によって大きく異なるが、この章では、Aggregateの概念に戻りたいと思う. つまり、**あるオブジェクトを model のサブセット(=集合)への主要な entrypoint として明示的にモデル化**し、それらの オブジェクト すべてに適用される invariant と ビジネスルール(=Constraints?) を実施する役割を果たす.
 
 Choosing the right aggregate is key, and it’s a decision you may revisit over time.
-正しい集計方法を選択することが重要であり、時間の経過とともに見直される可能性のある決定です。
+正しい Aggregate 方法を選択することが重要であり、時間の経過とともに見直される可能性のある決定である.
 You can read more about it in multiple DDD books.
-この点については、複数のDDD関連書籍で詳しく述べられています。
+この点については、複数のDDD関連書籍で詳しく述べられている.
 We also recommend these three online papers on effective aggregate design by Vaughn Vernon (the “red book” author).
-また、「red book」の著者であるVaughn Vernonによる効果的な集合体設計に関する3つのオンラインペーパーもお勧めします。
+また、「red book」の著者であるVaughn Vernonによる効果的な Aggregate 設計に関する3つのオンラインペーパーもお勧めする.
 
 Table 7-1 has some thoughts on the trade-offs of implementing the Aggregate pattern.
 表7-1に、Aggregateパターンを実装する際のトレードオフに関する考察がある。
 
 - Pros 長所
-
-- Python might not have “official” public and private methods, but we do have the underscores convention, because it’s often useful to try to indicate what’s for “internal” use and what’s for “outside code” to use. Choosing aggregates is just the next level up: it lets you decide which of your domain model classes are the public ones, and which aren’t. Pythonには「公式」のpublicメソッドとprivateメソッドがないかもしれませんが、アンダースコアの規約があります。これは、何が「内部」用で何が「外部コード」用かを示すのに便利なことが多いからです。 集約の選択は、その次の段階です。ドメインモデルのクラスのうち、どれを公開し、どれを公開しないかを決定することができます。
-
-- Modeling our operations around explicit consistency boundaries helps us avoid performance problems with our ORM. 明示的な一貫性境界を中心に操作をモデル化することで、ORMの性能問題を回避することができます。
-
-- Putting the aggregate in sole charge of state changes to its subsidiary models makes the system easier to reason about, and makes it easier to control invariants. 集合体は、その子モデルの状態変化を単独で担当することで、システムの推論が容易になり、不変量の制御が容易になる。
-
+  - Python might not have “official” public and private methods, but we do have the underscores convention, because it’s often useful to try to indicate what’s for “internal” use and what’s for “outside code” to use. Choosing aggregates is just the next level up: it lets you decide which of your domain model classes are the public ones, and which aren’t. Pythonには「公式」のpublicメソッドとprivateメソッドがないかもしれないが、アンダースコアの規約がある.これは、何が「内部」用で何が「外部コード」用かを示すのに便利なことが多いからである. Aggregate の選択は、その次の段階である. **Domain Model のクラスのうち、どれを公開(=public)し、どれを公開しない(=private)かを決定することができる**.
+  - Modeling our operations around explicit consistency boundaries helps us avoid performance problems with our ORM. 明示的な一貫性境界を中心に操作をモデル化することで、ORMの性能問題を回避することができます。
+  - Putting the aggregate in sole charge of state changes to its subsidiary models makes the system easier to reason about, and makes it easier to control invariants. **Aggredateは、その子モデルの状態変化を単独で担当することで、システムの推論が容易になり、Invariantの制御が容易**になる。
 - Cons 短所
 
-- Yet another new concept for new developers to take on. Explaining entities versus value objects was already a mental load; now there’s a third type of domain model object? 新しい開発者にとって、また新しいコンセプトが増えました。 エンティティやバリューオブジェクトを説明するのは、すでに精神的な負担になっていました。
-
-- Sticking rigidly to the rule that we modify only one aggregate at a time is a big mental shift. 一度に1つの集合体しか修正しないというルールに固執するのは、大きな精神的な変化です。
-
-- Dealing with eventual consistency between aggregates can be complex. 集合体間の最終的な整合性を扱うのは、複雑な場合があります。
+  - Yet another new concept for new developers to take on. Explaining entities versus value objects was already a mental load; now there’s a third type of domain model object? 新しい開発者にとって、また新しいコンセプトが増えました。 Entityやvalue object を説明するのは、すでに精神的な負担になっていた.
+  - Sticking rigidly to the rule that we modify only one aggregate at a time is a big mental shift. **一度に1つのAggregateしか修正しない(?)**というルールに固執するのは、大きな精神的な変化.
+  - Dealing with eventual consistency between aggregates can be complex. Aggregate間の最終的な整合性を扱うのは、複雑な場合がある.
 
 - AGGREGATES AND CONSISTENCY BOUNDARIES RECAP アグリゲートとコンシステンシーバウンダリーのリキャップ
-
-- Aggregates are your entrypoints into the domain model 集計はドメインモデルへの入口である
-
-- By restricting the number of ways that things can be changed, we make the system easier to reason about. 物事の変更方法を制限することで、システムを推論しやすくしているのです。
-
-- Aggregates are in charge of a consistency boundary アグリゲートは一貫性のある境界を担当する
-
-- An aggregate’s job is to be able to manage our business rules about invariants as they apply to a group of related objects. It’s the aggregate’s job to check that the objects within its remit are consistent with each other and with our rules, and to reject changes that would break the rules. アグリゲートの仕事は、関連するオブジェクトのグループに適用される不変量に関するビジネスルールを管理できるようにすることです。 アグリゲートの仕事は、その権限内のオブジェクトが互いに、そして私たちのルールと一致していることを確認し、ルールを破るような変更を拒否することです。
-
-- Aggregates and concurrency issues go together 集計と並行性の問題は両立する
-
-- When thinking about implementing these consistency checks, we end up thinking about transactions and locks. Choosing the right aggregate is about performance as well as conceptual organization of your domain. これらの一貫性チェックの実装を考えるとき、結局はトランザクションとロックについて考えることになる。 正しいアグリゲートを選択することは、パフォーマンスだけでなく、ドメインの概念的な構成にも関わることです。
+  - Aggregates are your entrypoints into the domain model. **Aggregate はDomain Model への entrypoint(入口)** である.
+  - By restricting the number of ways that things can be changed, we make the system easier to reason about. 物事の変更方法を制限することで、システムを推論しやすくしている.
+  - Aggregates are in charge of a consistency boundary **Aggregate はconsistency boundary を担当する**
+  - An aggregate’s job is to be able to manage our business rules about invariants as they apply to a group of related objects. It’s the aggregate’s job to check that the objects within its remit are consistent with each other and with our rules, and to reject changes that would break the rules. **Aggregateの仕事は、関連するオブジェクトのグループに適用されるInvariantに関するビジネスルールを管理できるようにすること**である. Aggregate の仕事は、その権限内のオブジェクトが互いに、そして私たちのルールと一致していることを確認し、**ルールを破るような変更を拒否すること**である.
+  - Aggregates and concurrency issues go together. AggregateとConcurrency(並行性)の問題は両立する.
+  - When thinking about implementing these consistency checks, we end up thinking about transactions and locks. Choosing the right aggregate is about performance as well as conceptual organization of your domain. これらの**Consistency(一貫性)チェックの実装を考えるとき、結局はトランザクションとロックについて考えることになる**. 正しいAggregateを選択することは、パフォーマンスだけでなく、Domainの概念的な構成にも関わることである.
 
 ## 1.10. Part I Recap Part I Recap
 
 Do you remember Figure 7-5, the diagram we showed at the beginning of Part I to preview where we were heading?
-第1部の冒頭で、これから向かう先を予習するために示した図7-5を覚えているだろうか。
+第1部の冒頭で、これから向かう先を予習するために示した図7-5を覚えているだろうか.
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0705.png)
 
 So that’s where we are at the end of Part I. What have we achieved?
-さて、ここまでが第一部の終わりです。
+さて、ここまでが第一部の終わりである.
 We’ve seen how to build a domain model that’s exercised by a set of high-level unit tests.
-私たちは、一連のハイレベルなユニットテストによって実行されるドメインモデルを構築する方法を見ました。
+私たちは、一連のハイレベルなユニットテストによって実行されるドメインモデルを構築する方法を見てきた.
 Our tests are living documentation: they describe the behavior of our system—the rules upon which we agreed with our business stakeholders—in nice readable code.
-テストは生きたドキュメントであり、システムの動作や、ビジネス関係者と合意したルールを、読みやすいコードで記述します。
+**テストは生きたドキュメント**であり、システムの動作や、ビジネス関係者と合意したルールを、読みやすいコードで記述する.
 When our business requirements change, we have confidence that our tests will help us to prove the new functionality, and when new developers join the project, they can read our tests to understand how things work.
-また、新しい開発者がプロジェクトに参加したときにも、テストを読んでどのように動作するかを理解することができます。
+また、新しい開発者がプロジェクトに参加したときにも、テストを読んでどのように動作するかを理解することができる.
 
 We’ve decoupled the infrastructural parts of our system, like the database and API handlers, so that we can plug them into the outside of our application.
-データベースやAPIハンドラなど、システムのインフラ部分を切り離し、アプリケーションの外部にプラグインできるようにしたのです。
+データベースやAPIハンドラなど、システムのインフラ部分を切り離し、アプリケーションの外部にプラグインできるようにしたのである.
 This helps us to keep our codebase well organized and stops us from building a big ball of mud.
-これにより、コードベースが整理され、大きな泥の塊になるのを防ぐことができます。
+これにより、コードベースが整理され、大きな泥の塊になるのを防ぐことができる.
 
 By applying the dependency inversion principle, and by using ports-and-adapters-inspired patterns like Repository and Unit of Work, we’ve made it possible to do TDD in both high gear and low gear and to maintain a healthy test pyramid.
-依存関係逆転の原則を適用し、RepositoryやUnit of Workといったports and-adaptersにインスパイアされたパターンを使うことで、ハイギアでもローギアでもTDDを行うことができ、健全なテストピラミッドを維持することができるようになったのです。
+**dependency inversion principle(依存関係逆転の原則)**を適用し、RepositoryやUnit of Workといったports and-adaptersにインスパイアされたパターンを使うことで、ハイギアでもローギアでもTDDを行うことができ、健全なテストピラミッドを維持することができるようになったのである.
 We can test our system edge to edge, and the need for integration and end-to-end tests is kept to a minimum.
-システムの端から端までテストすることができ、統合テストやエンドツーエンドテストの必要性は最低限に抑えられます。
+システムの端から端までテストすることができ、統合テストやエンドツーエンドテストの必要性は最低限に抑えられる.
 
 Lastly, we’ve talked about the idea of consistency boundaries.
-最後に、一貫性の境界の考え方についてお話しました。
+最後に、consistency boundariesの考え方についてお話した.
 We don’t want to lock our entire system whenever we make a change, so we have to choose which parts are consistent with one another.
-変更を加えるたびにシステム全体をロックすることは避けたいので、どの部分が互いに一貫しているかを選択する必要があります。
+**変更を加えるたびにシステム全体をロックすることは避けたい**ので、どの部分が互いにconsistent(一貫している)かを選択する必要がある.
 
 For a small system, this is everything you need to go and play with the ideas of domain-driven design.
-小規模なシステムであれば、ドメイン駆動設計のアイデアを活用するために必要なものは、これですべて揃います。
+小規模なシステムであれば、ドメイン駆動設計のアイデアを活用するために必要なものは、これですべて揃う.
 You now have the tools to build database-agnostic domain models that represent the shared language of your business experts.
-あなたは今、ビジネスエキスパートたちの共有言語を表す、データベースにとらわれないドメインモデルを構築するためのツールを手に入れました。
+あなたは今、ビジネスエキスパートたちの共有言語を表す、データベースにとらわれないドメインモデルを構築するためのツールを手に入れた.
 Hurrah!
 万歳!
 
 - NOTE 注
-
-- At the risk of laboring the point—we’ve been at pains to point out that each pattern comes at a cost. Each layer of indirection has a price in terms of complexity and duplication in our code and will be confusing to programmers who’ve never seen these patterns before. If your app is essentially a simple CRUD wrapper around a database and isn’t likely to be anything more than that in the foreseeable future, you don’t need these patterns. Go ahead and use Django, and save yourself a lot of bother. 私たちは、それぞれのパターンが犠牲を伴うものであることを苦心して指摘してきた。 間接的なレイヤーを重ねるごとに、コードの複雑さや重複が発生し、これらのパターンを見たことがないプログラマーは混乱するでしょう。 もしあなたのアプリケーションが本質的にデータベースの周りの単純な CRUD ラッパーで、当面それ以上にはなりそうにないのなら、これらのパターンは必要ないでしょう。 どうぞ、Django を使って、多くの手間を省いてください。
+  - At the risk of laboring the point—we’ve been at pains to point out that each pattern comes at a cost. Each layer of indirection has a price in terms of complexity and duplication in our code and will be confusing to programmers who’ve never seen these patterns before. If your app is essentially a simple CRUD wrapper around a database and isn’t likely to be anything more than that in the foreseeable future, you don’t need these patterns. Go ahead and use Django, and save yourself a lot of bother. 私たちは、それぞれのパターンが犠牲を伴うものであることを苦心して指摘してきた. 間接的なレイヤーを重ねるごとに、コードの複雑さや重複が発生し、**これらのパターンを見たことがないプログラマーは混乱するだろう**. もしあなたのアプリケーションが本質的にデータベースの周りの単純な CRUD ラッパーで、当面それ以上にはなりそうにないのなら、これらのパターンは必要ないだろう. どうぞ、Django を使って、多くの手間を省いてください.
 
 In Part II, we’ll zoom out and talk about a bigger topic: if aggregates are our boundary, and we can update only one at a time, how do we model processes that cross consistency boundaries?
-パートIIでは、より大きなトピックについて説明します。アグリゲートが境界であり、一度に1つしか更新できない場合、一貫性の境界を越えるプロセスをどのようにモデル化するのでしょうか。
+パートIIでは、より大きなトピックについて説明する. **Aggregateが境界であり、一度に1つしか更新できない場合、一貫性の境界を越えるプロセスをどのようにモデル化するのだろうか**.
 
 1. Perhaps we could get some ORM/SQLAlchemy magic to tell us when an object is dirty, but how would that work in the generic case—for example, for a `CsvRepository`? おそらく、いくつかのORMを手に入れることができるでしょう。
 
