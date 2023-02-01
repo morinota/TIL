@@ -248,8 +248,8 @@ So the plan is this: when we want to allocate an order line, instead of Figure 7
 Let’s see how that looks in code form:
 それでは、コード形式で見てみよう.
 
-Our chosen aggregate, Product (src
-私たちが選んだAggregate = `Product`（src
+Our chosen aggregate, Product (src/allocation/domain/model.py)
+私たちが選んだAggregate = `Product`
 
 ```python
 class Product:
@@ -270,9 +270,7 @@ class Product:
 ```
 
 1. `Product`’s main identifier is the `sku`. `Product`の主な識別子(=ユニークなインスタンスを識別する情報)は「sku」である.
-
 2. Our `Product` class holds a reference to a collection of `batches` for that SKU. 私たちの `Product` クラスは、その SKU のための `batches` のcollection への参照を保持する.
-
 3. Finally, we can move the `allocate()` domain service to be a method on the `Product` aggregate. 最後に、`allocate()` Domain Service を `Product` 集合体のメソッドに移動させる.
 
 - NOTE 注
@@ -327,8 +325,7 @@ The nice thing is, the Repository pattern means we don’t have to worry about t
 We can just use our `FakeRepository` and then feed through the new model into our service layer to see how it looks with `Product` as its main entrypoint:
 `FakeRepository`を使って、新しいモデルを Service Layer に送り込み、`Product` を主なエントリポイントとしてどのように見えるかを確認することができる.
 
-Service layer (src
-サービス層（src
+Service layer (src/allocation/service_layer/services.py)
 
 ```python
 def add_batch(
@@ -449,7 +446,7 @@ But we set up our database integrity rules such that only one of them is allowed
   - Pessimistic concurrency control works under the assumption that two users are going to cause conflicts, and we want to prevent conflicts in all cases, so we lock everything just to be safe. In our example, that would mean locking the whole `batches` table, or using `SELECT FOR UPDATE`—we’re pretending that we’ve ruled those out for performance reasons, but in real life you’d want to do some evaluations and measurements of your own. 一方で**Pessimistic concurrency control(悲観的な同時実行制御)**は、**2人のユーザーが衝突を起こすという前提**で動作する. あらゆる場合に衝突を防ぎたいので、念のためにすべてをロックする. この例では、`batches`テーブル全体をロックしたり、`SELECT FOR UPDATE`を使用することになる. ここでは、パフォーマンス上の理由からこれらを除外したことにしているが、実際のところ、自分自身で評価や測定を行いたいとこだろう.
   - With pessimistic locking, you don’t need to think about handling failures because the database will prevent them for you (although you do need to think about deadlocks). With optimistic locking, you need to explicitly handle the possibility of failures in the (hopefully unlikely) case of a clash. **pessimistic locking**では、データベースが失敗を防いでくれるので、失敗の処理について考える必要はない (デッドロックについては考える必要がありますが). optimistic lockingでは、（できれば起こりそうもないことですが）**衝突した場合の失敗の可能性を明示的に処理する必要**がある.
   - The usual way to handle a failure is to retry the failed operation from the beginning. Imagine we have two customers, Harry and Bob, and each submits an order for `SHINY-TABLE`. Both threads load the product at version 1 and allocate stock. The database prevents the concurrent update, and Bob’s order fails with an error. When we retry the operation, Bob’s order loads the product at version 2 and tries to allocate again. If there is enough stock left, all is well; otherwise, he’ll receive `OutOfStock`. Most operations can be retried this way in the case of a concurrency problem. **失敗を処理する通常の方法は、失敗した操作を最初からやり直すこと**である. ハリーとボブという二人の顧客がいて、それぞれが `SHINY-TABLE` の注文を出したとする. 両方のスレッドが製品をバージョン 1 でロードし、在庫を割り当てる. データベースは同時更新を阻止し、ボブの注文はエラーで失敗する. 操作を再試行すると、ボブさんの注文は商品をバージョン2でロードし、再度割り当てを試みる. 十分な在庫が残っていれば問題ないが、そうでない場合は `OutOfStock` を受け取る. ほとんどの操作は、並行処理の問題が発生した場合にこの方法で再試行することができる.
-  - Read more on retries in “Recovering from Errors Synchronously” and “Footguns”. 再試行については、「同期的にエラーから回復する」と「フットガン」で詳しく説明している.
+  - Read more on retries in “Recovering from Errors Synchronously” and “Footguns”. 再試行については、"Recovering from Errors Synchronously(同期的にエラーから回復する)"と"Footguns(?)"で詳しく説明している.
 
 ### 1.7.1. Implementation Options for Version Numbers バージョン番号の実装オプション
 
@@ -469,8 +466,7 @@ Option 2 involves mixing the responsibility for mutating state between the servi
 So in the end, even though version numbers don’t have to be a domain concern, you might decide the cleanest trade-off is to put them in the domain:
 ですから、最終的には、**バージョン番号はDomainに関係ないとしても、最もクリーンなトレードオフとして、Domainに入れるべき**だと判断することもある.
 
-Our chosen aggregate, Product (src
-私たちが選んだ集合体である製品（src
+Our chosen aggregate, Product (src/allocation/domain/model.py)
 
 ```python
 class Product:
@@ -500,13 +496,13 @@ class Product:
 ## 1.8. Testing for Our Data Integrity Rules データ完全性ルールのテスト
 
 Now to make sure we can get the behavior we want: if we have two concurrent attempts to do allocation against the same `Product`, one of them should fail, because they can’t both update the version number.
-もし、同じ `Product` に対して同時に 2 つのアロケーションを行おうとしたら、どちらかが失敗するはずです。なぜなら、両方ともバージョン番号を更新できないからです。
+もし、同じ `Product` に対して同時に 2 つのallocationを行おうとしたら、どちらかが失敗するはず. なぜなら、両方ともバージョン番号を更新できないからである.
 
 First, let’s simulate a “slow” transaction using a function that does allocation and then does an explicit sleep:2
-まず、割り当てを行い、明示的にスリープさせる関数を使って、「遅い」トランザクションをシミュレートしてみましょう2。
+まず、alocationを行い明示的にスリープさせる関数を使って、"遅い"トランザクションをシミュレートしてみよう. 2
 
-time.sleep can reproduce concurrency behavior (tests
-time.sleepは並行処理の挙動を再現することができる（テスト
+`time.sleep` can reproduce concurrency behavior (tests/integration/test_uow.py)
+**time.sleepは並行処理の挙動を再現**することができる.
 
 ```python
 def try_to_allocate(orderid, sku, exceptions):
@@ -523,10 +519,10 @@ def try_to_allocate(orderid, sku, exceptions):
 ```
 
 Then we have our test invoke this slow allocation twice, concurrently, using threads:
-そして、テストでは、このスローアロケーションをスレッドを使って2回、同時に呼び出すようにします。
+そして、テストでは、このスローアロケーションをスレッドを使って2回、同時に呼び出すようにする.
 
-An integration test for concurrency behavior (tests
-並行処理動作の統合テスト（テスト
+An integration test for concurrency behavior (tests/integration/test_uow.py)
+並行処理動作の統合テスト
 
 ```python
 def test_concurrent_updates_to_version_are_not_allowed(postgres_session_factory):
@@ -566,18 +562,18 @@ def test_concurrent_updates_to_version_are_not_allowed(postgres_session_factory)
         uow.session.execute('select 1')
 ```
 
-1. We start two threads that will reliably produce the concurrency behavior we want: `read1, read2, write1, write2`. 私たちが望む並行処理を確実に行うために、`read1, read2, write1, write2` という2つのスレッドを開始します。
+1. We start two threads that will reliably produce the concurrency behavior we want: `read1, read2, write1, write2`. 私たちが望む並行処理を確実に行うために、`read1, read2, write1, write2` という2つのスレッドを開始する.
 
-2. We assert that the version number has been incremented only once. バージョン番号は1回だけインクリメントされていると断言します。
+2. We assert that the version number has been incremented only once. バージョン番号は1回だけインクリメントされている事をassertする.
 
-3. We can also check on the specific exception if we like. また、お好みで特定の例外を確認することもできます。
+3. We can also check on the specific exception if we like. また、お好みで特定の例外を確認することもできる.
 
-4. And we double-check that only one allocation has gotten through. そして、1つの割り当てだけが通過していることを再確認します。
+4. And we double-check that only one allocation has gotten through. そして、1つのallocationだけが通過していることを再確認する.
 
 ### 1.8.1. Enforcing Concurrency Rules by Using Database Transaction Isolation Levels データベーストランザクションの分離レベルを使用した同時実行ルールの適用
 
 To get the test to pass as it is, we can set the transaction isolation level on our session:
-このままテストに合格するには、セッションにトランザクション分離レベルを設定すればよいでしょう。
+このままテストに合格するには、セッションにトランザクション isolation(分離) levelを設定すればよいだろう.
 
 Set isolation level for session (src
 セッションのアイソレーションレベルを設定 (src
@@ -590,19 +586,20 @@ DEFAULT_SESSION_FACTORY = sessionmaker(bind=create_engine(
 ```
 
 - TIP ヒント
-
-Transaction isolation levels are tricky stuff, so it’s worth spending time understanding the Postgres documentation.3
-トランザクションの分離レベルは厄介なものなので、Postgres のドキュメントを理解するのに時間を費やす価値があります。
+- Transaction isolation levels are tricky stuff, so it’s worth spending time understanding the Postgres documentation.3
+  トランザクションの分離レベルは厄介なものなので、Postgres のドキュメントを理解するのに時間を費やす価値がある.
 
 ### 1.8.2. Pessimistic Concurrency Control Example: SELECT FOR UPDATE 悲観的同時実行制御の例。 更新のために選択する
 
 There are multiple ways to approach this, but we’ll show one.
-このアプローチには複数の方法がありますが、ここではそのうちの一つを紹介します。
+このアプローチには複数の方法がありますが、ここではそのうちの一つを紹介する.
 `SELECT FOR UPDATE` produces different behavior; two concurrent transactions will not be allowed to do a read on the same rows at the same time:
-SELECT FOR UPDATE`は異なる動作をします。2つの同時実行トランザクションが同時に同じ行の読み取りを行うことはできません。
+SELECT FOR UPDATE`は異なる動作をする. 2つの同時実行トランザクションが同時に同じ行の読み取りを行うことはできない.
 
 `SELECT FOR UPDATE` is a way of picking a row or rows to use as a lock (although those rows don’t have to be the ones you update).
-SELECT FOR UPDATE`は、ロックする行を選択する方法です（ただし、これらの行は更新する行である必要はありません）。 If two transactions both try to `SELECT FOR UPDATE`a row at the same time, one will win, and the other will wait until the lock is released. 2つのトランザクションが同時に行を`SELECT FOR UPDATE` しようとすると、一方が勝者となり、もう一方はロックが解除されるまで待つことになります。
+`SELECT FOR UPDATE`は、**ロックする行を選択する方法**である（ただし、これらの行は更新する行である必要はない).
+If two transactions both try to `SELECT FOR UPDATE`a row at the same time, one will win, and the other will wait until the lock is released.
+2つのトランザクションが同時に行を`SELECT FOR UPDATE` しようとすると、一方が勝者となり、もう一方はロックが解除されるまで待つことになる.
 So this is an example of pessimistic concurrency control.
 つまり、これは悲観的な同時実行制御の一例です。
 
