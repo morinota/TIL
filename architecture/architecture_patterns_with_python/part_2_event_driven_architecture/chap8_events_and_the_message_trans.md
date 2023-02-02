@@ -1,9 +1,9 @@
 # Chapter 8. Events and the Message Bus 第8章 イベントとメッセージバス イベントとメッセージバス
 
 So far we’ve spent a lot of time and energy on a simple problem that we could easily have solved with Django.
-これまで私たちは、Django で簡単に解決できた単純な問題に、多くの時間とエネルギーを費やしてきました。
+これまで私たちは、Django で簡単に解決できた単純な問題に、多くの時間とエネルギーを費やしてきた.
 You might be asking if the increased testability and expressiveness are really worth all the effort.
-テスト容易性と表現力の向上が、本当にすべての努力に見合うものなのかどうか、 疑問に思っているかもしれません。
+テスト容易性と表現力の向上が、本当にすべての努力に見合うものなのかどうか、 疑問に思っているかもしれない.
 
 In practice, though, we find that it’s not the obvious features that make a mess of our codebases: it’s the goop around the edge.
 しかし、実際には、コードベースを混乱させるのは、明らかな機能ではなく、その周辺にあるゴミなのです。

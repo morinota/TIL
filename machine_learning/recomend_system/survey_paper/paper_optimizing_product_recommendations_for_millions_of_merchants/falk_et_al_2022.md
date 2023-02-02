@@ -64,6 +64,7 @@ Chen is a Data Science Lead at Shopify, where she leads the Discovery Experience
 
 # References
 
-- [1] K. Falk. 2019. Practical Recommender Systems. Manning. https://www.manning. com/books/practical-recommender-systems
-- [2] R. Kohavi, D. Tang, and Y. Xu. 2020. Trustworthy Online Controlled Experiments: A Practical Guide to A/B Testing. Cambridge University Press. https://books.google. dk/books?id=TFjPDwAAQBAJ
+- [1] K. Falk. 2019. Practical Recommender Systems. Manning. https://www.manning. com/books/practical-recommeB Testing. Cambridge University Press. https://books.google. dk/books?id=TFjPDwAAQBAJ
 - [3] Aleksandrs Slivkins. 2019. Introduction to Multi-Armed Bandits. (2019). https: //doi.org/10.48550/ARXIV.1904.07272
+nder-systems
+- [2] R. Kohavi, D. Tang, and Y. Xu. 2020. Trustworthy Online Controlled Experiments: A Practical Guide to A/
