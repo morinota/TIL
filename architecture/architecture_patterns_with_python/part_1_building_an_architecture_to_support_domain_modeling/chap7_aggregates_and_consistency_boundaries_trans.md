@@ -713,7 +713,7 @@ For a small system, this is everything you need to go and play with the ideas of
 You now have the tools to build database-agnostic domain models that represent the shared language of your business experts.
 あなたは今、ビジネスエキスパートたちの共有言語を表す、データベースにとらわれないドメインモデルを構築するためのツールを手に入れた.
 Hurrah!
-万歳!
+万歳!g
 
 - NOTE 注
   - At the risk of laboring the point—we’ve been at pains to point out that each pattern comes at a cost. Each layer of indirection has a price in terms of complexity and duplication in our code and will be confusing to programmers who’ve never seen these patterns before. If your app is essentially a simple CRUD wrapper around a database and isn’t likely to be anything more than that in the foreseeable future, you don’t need these patterns. Go ahead and use Django, and save yourself a lot of bother. 私たちは、それぞれのパターンが犠牲を伴うものであることを苦心して指摘してきた. 間接的なレイヤーを重ねるごとに、コードの複雑さや重複が発生し、**これらのパターンを見たことがないプログラマーは混乱するだろう**. もしあなたのアプリケーションが本質的にデータベースの周りの単純な CRUD ラッパーで、当面それ以上にはなりそうにないのなら、これらのパターンは必要ないだろう. どうぞ、Django を使って、多くの手間を省いてください.
@@ -721,8 +721,8 @@ Hurrah!
 In Part II, we’ll zoom out and talk about a bigger topic: if aggregates are our boundary, and we can update only one at a time, how do we model processes that cross consistency boundaries?
 パートIIでは、より大きなトピックについて説明する. **Aggregateが境界であり、一度に1つしか更新できない場合、一貫性の境界を越えるプロセスをどのようにモデル化するのだろうか**.
 
-1. Perhaps we could get some ORM/SQLAlchemy magic to tell us when an object is dirty, but how would that work in the generic case—for example, for a `CsvRepository`? おそらく、いくつかのORMを手に入れることができるでしょう。
+1. Perhaps we could get some ORM/SQLAlchemy magic to tell us when an object is dirty, but how would that work in the generic case—for example, for a `CsvRepository`? おそらく、オブジェクトがダーティになったときに教えてくれるORM/SQLAlchemyマジックがあるのでしょうが、一般的なケース、たとえば `CsvRepository` の場合はどうだろうか.
 
-2. `time.sleep()` works well in our use case, but it’s not the most reliable or efficient way to reproduce concurrency bugs. Consider using semaphores or similar synchronization primitives shared between your threads to get better guarantees of behavior. 2. `time.sleep()` は私たちの使用例ではうまく機能しますが、並行処理のバグを再現するための最も信頼できる、または効率的な方法ではありません。 より良い動作保証を得るために、スレッド間で共有されるセマフォや類似の同期プリミティブを使うことを検討してください。
+2. `time.sleep()` works well in our use case, but it’s not the most reliable or efficient way to reproduce concurrency bugs. Consider using semaphores or similar synchronization primitives shared between your threads to get better guarantees of behavior. 2. `time.sleep()` は私たちの使用例ではうまく機能しますが、並行処理のバグを再現するための最も信頼できる、または効率的な方法ではない. より良い動作保証を得るために、スレッド間で共有されるセマフォや類似の同期プリミティブを使うことを検討してください.
 
-3. If you’re not using Postgres, you’ll need to read different documentation. Annoyingly, different databases all have quite different definitions. Oracle’s `SERIALIZABLE` is equivalent to Postgres’s `REPEATABLE READ`, for example. Postgresを使用していない場合は、別のドキュメントを読む必要があります。 困ったことに、データベースによって定義が全く異なるのです。 例えば、Oracleの `SERIALIZABLE` はPostgresの `REPEATABLE READ` と同等です。
+3. If you’re not using Postgres, you’ll need to read different documentation. Annoyingly, different databases all have quite different definitions. Oracle’s `SERIALIZABLE` is equivalent to Postgres’s `REPEATABLE READ`, for example. Postgresを使用していない場合は、別のドキュメントを読む必要がある. 困ったことに、データベースによって定義が全く異なる. 例えば、Oracleの `SERIALIZABLE` はPostgresの `REPEATABLE READ` と同等である.
