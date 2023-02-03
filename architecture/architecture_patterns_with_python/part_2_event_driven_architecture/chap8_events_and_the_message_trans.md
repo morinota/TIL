@@ -1,4 +1,4 @@
-# Chapter 8. Events and the Message Bus 第8章 イベントとメッセージバス
+# 1. Chapter 8. Events and the Message Bus 第8章 イベントとメッセージバス
 
 So far we’ve spent a lot of time and energy on a simple problem that we could easily have solved with Django.
 これまで私たちは、Django で簡単に解決できた単純な問題に、多くの時間とエネルギーを費やしてきた.
@@ -45,24 +45,22 @@ git checkout chapter_08_events_and_message_bus
 git checkout chapter_07_aggregate
 ```
 
-## Avoiding Making a Mess ♪混乱を避けるために
+## 1.1. Avoiding Making a Mess ♪混乱を避けるために
 
 So.
 だから
 Email alerts when we run out of stock.
-在庫が無くなった時のメール通知。
+在庫が無くなった時のメール通知.
 When we have new requirements like ones that really have nothing to do with the core domain, it’s all too easy to start dumping these things into our web controllers.
-コア・ドメインとは全く関係ないような 新しい要件があると ウェブ・コントローラーにこれらのものを 投入し始めるのはあまりにも簡単です。
+Core Domainとは全く関係ないような 新しい要件があると Web Controllersにこれらのものを 投入し始めるのはあまりにも簡単である.
 
-### First, Let’s Avoid Making a Mess of Our Web Controllers まず、ウェブコントローラーを混乱させないようにしよう
+### 1.1.1. First, Let’s Avoid Making a Mess of Our Web Controllers まず、ウェブコントローラーを混乱させないようにしよう
 
 As a one-off hack, this might be OK:
-一回限りのハックとしては、これでOKかもしれません。
+一回限りのハックとしては、これでOKかもしれない.
 
-Just whack it in the endpoint—what could go wrong?
+Just whack it in the endpoint—what could go wrong? (src/allocation/entrypoints/flask_app.py)
 エンドポイントに叩き込むだけ-何が問題なのか？
-(src
-(src
 
 ```python
 @app.route("/allocate", methods=['POST'])
@@ -80,24 +78,23 @@ def allocate_endpoint():
             'out of stock',
             'stock_admin@made.com',
             f'{line.orderid} - {line.sku}'
-        )
+        ) # メール送信機能をhttpレイヤーに追加してみたが...
         return jsonify({'message': str(e)}), 400
 
     return jsonify({'batchref': batchref}), 201
 ```
 
 …but it’s easy to see how we can quickly end up in a mess by patching things up like this.
-...しかし、このようにパッチを適用することで、すぐに混乱に陥ることは容易に想像できます。
+...しかし、このようにパッチを適用することで、すぐに混乱に陥ることは容易に想像できる.
 Sending email isn’t the job of our HTTP layer, and we’d like to be able to unit test this new feature.
-メールの送信はHTTPレイヤーの仕事ではありませんし、この新しい機能をユニットテストできるようにしたいのです。
+**メールの送信はHTTPレイヤーの仕事ではないし、この新しい機能をユニットテストできるようにしたい**のである.
 
-### And Let’s Not Make a Mess of Our Model Either そして、私たちのモデルも台無しにしないようにしましょう。
+### 1.1.2. And Let’s Not Make a Mess of Our Model Either そして、私たちのモデルも台無しにしないようにしよう.
 
 Assuming we don’t want to put this code into our web controllers, because we want them to be as thin as possible, we may look at putting it right at the source, in the model:
-ウェブコントローラはできるだけ薄くしたいので、このコードをウェブコントローラに入れたくないと仮定すると、このコードをソースであるモデルに直接入れることになるかもしれません。
+**Web Controller(=HTTP Layer?)はできるだけ薄くしたい**ので、このコードをWeb Controller に入れたくないと仮定すると、このコードをソースであるModelに直接入れる作戦になるかもしれない.
 
-Email-sending code in our model isn’t lovely either (src
-私たちのモデルのメール送信コードも素敵ではありません (src
+Email-sending code in our model isn’t lovely either (src/allocation/domain/model.py)
 
 ```python
     def allocate(self, line: OrderLine) -> str:
@@ -107,35 +104,34 @@ Email-sending code in our model isn’t lovely either (src
             )
             #...
         except StopIteration:
-            email.send_mail('stock@made.com', f'Out of stock for {line.sku}')
+            email.send_mail('stock@made.com', f'Out of stock for {line.sku}') # domain service にsend_mailを追加してみる方法もあんまり...
             raise OutOfStock(f'Out of stock for sku {line.sku}')
 ```
 
 But that’s even worse!
-しかし、それはさらに悪いことです
+しかし、それはさらに悪いことだ.
 We don’t want our model to have any dependencies on infrastructure concerns like `email.send_mail`.
-私たちのモデルには、`email.send_mail`のようなインフラストラクチャへの依存性を持たせたくありません。
+**私たちのモデルには、`email.send_mail`のようなインフラストラクチャへの依存性を持たせたくない**. (Domain Modelはどれにも依存しないようにしたいんだった...!)
 
 This email-sending thing is unwelcome goop messing up the nice clean flow of our system.
-このメール送信の件は、私たちのシステムのきれいな流れを台無しにする歓迎されないグープです。
+このメール送信の件は、私たちのシステムのきれいな流れを台無しにする歓迎されないgoop(?)である.
 What we’d like is to keep our domain model focused on the rule “You can’t allocate more stuff than is actually available.”
-私たちが望むのは、ドメインモデルを "実際に利用できる以上のものを割り当ててはいけない "というルールに集中させ続けることです。
+私たちが望むのは、**Domain Model を "実際に利用できる以上のものを割り当ててはいけない "というルールに集中させ続けること**である.
 
 The domain model’s job is to know that we’re out of stock, but the responsibility of sending an alert belongs elsewhere.
-ドメインモデルの仕事は、在庫がないことを知ることですが、アラートを送る責任は他にあります。
+Domain Modelの仕事は在庫がないことを知ることだが、**アラートを送るresponsibilityは他にある**.
 We should be able to turn this feature on or off, or to switch to SMS notifications instead, without needing to change the rules of our domain model.
-ドメインモデルのルールを変更することなく、この機能をオンにしたりオフにしたり、代わりにSMS通知に切り替えたりすることができるはずです。
+**Domain Model のルールを変更することなく、この機能をオンにしたりオフにしたり、代わりにSMS通知に切り替えたりすることができるは**ずである...!! (機能追加や変更のしやすさ...!)
 
-### Or the Service Layer! サービス層でもいい!
+### 1.1.3. Or the Service Layer!
 
 The requirement “Try to allocate some stock, and send an email if it fails” is an example of workflow orchestration: it’s a set of steps that the system has to follow to achieve a goal.
-在庫の割り当てを試み、失敗したらメールを送る」という要件は、ワークフロー・オーケストレーションの一例です：これは、システムが目標を達成するために従わなければならない一連のステップです。
+"在庫の割り当てを試み、失敗したらメールを送る"という要件は、Workflow Orchestration の一例である：これは、システムが目標を達成するために従わなければならない一連のステップだ.
 
 We’ve written a service layer to manage orchestration for us, but even here the feature feels out of place:
-私たちは、オーケストレーションを管理するためのサービスレイヤーを書きましたが、ここでもこの機能は場違いな感じがします。
+私たちは、Orchestration を管理するための Service layer を書いたが、ここでもこの機能は場違いな感じがする...
 
-And in the service layer, it’s out of place (src
-そして、サービス層では、場違い（src
+And in the service layer, it’s out of place (src/allocation/service_layer/services.py)
 
 ```python
 def allocate(
@@ -152,32 +148,31 @@ def allocate(
             uow.commit()
             return batchref
         except model.OutOfStock:
-            email.send_mail('stock@made.com', f'Out of stock for {line.sku}')
+            email.send_mail('stock@made.com', f'Out of stock for {line.sku}') # Service Layer にsend_mailを追加してみるのも, うーん...
             raise
 ```
 
 Catching an exception and reraising it?
 例外をキャッチして再レイズ？
 It could be worse, but it’s definitely making us unhappy.
-もっとひどいかもしれませんが、間違いなく私たちを不幸にしています。
+もっとひどいかもしれませんが、間違いなく私たちを不幸にしている.
 Why is it so hard to find a suitable home for this code?
-なぜこのコードに適した家を見つけるのがこんなに難しいのでしょうか？
+**なぜこのコードに適した家を見つけるのがこんなに難しいのだろうか？**
 
-## Single Responsibility Principle 単一責任原則
+## 1.2. Single Responsibility Principle 単一責任原則
 
 Really, this is a violation of the single responsibility principle (SRP).1 Our use case is allocation.
-本当に、これは単一責任原則(SRP)に違反しています。1 私たちのユースケースはアロケーションです。
+本当に、これは**Single Responsibility Principle(SRP, 単一責任原則?)**に違反している. 私たちのユースケースはallocationである.
 Our endpoint, service function, and domain methods are all called `allocate`, not `allocate_and_send_mail_if_out_of_stock`.
-私たちのエンドポイント、サービス関数、ドメインのメソッドはすべて `allocate` と呼ばれ、`allocate_and_send_mail_if_out_of_stock` と呼ばれることはないのです。
+私たちのエンドポイント、サービス関数、ドメインのメソッドはすべて `allocate` と呼ばれ、`allocate_and_send_mail_if_out_of_stock` と呼ばれることはないのである.
 
 - TIP ヒント
-
-- Rule of thumb: if you can’t describe what your function does without using words like “then” or “and,” you might be violating the SRP. 経験則：もし、「then」や「and」といった言葉を使わずに関数の動作を説明できない場合、SRPに違反している可能性があります。
+- Rule of thumb: if you can’t describe what your function does without using words like “then” or “and,” you might be violating the SRP. **経験則：もし、"then"や"and"といった言葉を使わずに関数の動作を説明できない場合、SRPに違反している可能性がある**.
 
 One formulation of the SRP is that each class should have only a single reason to change.
-SRPの一つの定式化は、各クラスが変更する理由はただ一つであるべきだということです。
+SRPの一つの定式化は、**各クラスが変更する理由はただ一つであるべきだ**ということである.
 When we switch from email to SMS, we shouldn’t have to update our `allocate()` function, because that’s clearly a separate responsibility.
-電子メールから SMS に切り替えるとき、`allocate()` 関数を更新する必要はありません。
+電子メールから SMS に切り替えるとき、`allocate()` 関数を更新する必要はあに.
 
 To solve the problem, we’re going to split the orchestration into separate steps so that the different concerns don’t get tangled up.2 The domain model’s job is to know that we’re out of stock, but the responsibility of sending an alert belongs elsewhere.
 この問題を解決するために、オーケストレーションを別々のステップに分割し、異なる懸念が絡まないようにします。2 ドメインモデルの仕事は、在庫切れを知ることですが、アラートを送る責任は別のところに属します。
@@ -189,21 +184,21 @@ We’d also like to keep the service layer free of implementation details.
 We want to apply the dependency inversion principle to notifications so that our service layer depends on an abstraction, in the same way as we avoid depending on the database by using a unit of work.
 私たちは依存関係の逆転原理をnotificationに適用し、サービス層が抽象化されたものに依存するようにしたいと思います。
 
-## All Aboard the Message Bus! ♪みんなでメッセージバスに乗ろう！
+## 1.3. All Aboard the Message Bus! ♪みんなでメッセージバスに乗ろう！
 
 The patterns we’re going to introduce here are Domain Events and the Message Bus.
 今回紹介するのは、ドメインイベントとメッセージバスのパターンです。
 We can implement them in a few ways, so we’ll show a couple before settling on the one we like most.
 これらのパターンはいくつかの方法で実装することができるので、いくつか紹介した後、最も気に入ったものに決定します。
 
-### The Model Records Events モデルにはイベントが記録される
+### 1.3.1. The Model Records Events モデルにはイベントが記録される
 
 First, rather than being concerned about emails, our model will be in charge of recording events—facts about things that have happened.
 まず、このモデルでは、メールではなく、イベント（起こったこと）を記録することに専念します。
 We’ll use a message bus to respond to events and invoke a new operation.
 メッセージバスを使って、イベントに応答し、新しいオペレーションを呼び出すことにします。
 
-### Events Are Simple Dataclasses イベントは単純なデータクラス
+### 1.3.2. Events Are Simple Dataclasses イベントは単純なデータクラス
 
 An event is a kind of value object.
 イベントは値オブジェクトの一種です。
@@ -234,7 +229,7 @@ class OutOfStock(Event):  2
 
 2. `dataclasses` are great for domain events too. データクラス`はドメインイベントにも最適です。
 
-### The Model Raises Events モデルがイベントを発生させる
+### 1.3.3. The Model Raises Events モデルがイベントを発生させる
 
 When our domain model records a fact that happened, we say it raises an event.
 ドメインモデルが、起こった事実を記録することを、イベントを発生させると言う。
@@ -292,7 +287,7 @@ class Product:
 
 - We’re actually addressing a code smell we had until now, which is that we were using exceptions for control flow. In general, if you’re implementing domain events, don’t raise exceptions to describe the same domain concept. As you’ll see later when we handle events in the Unit of Work pattern, it’s confusing to have to reason about events and exceptions together. 実は今まであったコードの臭い、つまり制御フローに例外を使っていたことに対処しているのです。 一般に、ドメインイベントを実装する場合、同じドメインコンセプトを表現するために例外を発生させないようにしましょう。 後でUnit of Workパターンでイベントを処理するときにわかりますが、イベントと例外を一緒に理由づけしなければならないのは混乱します。
 
-### The Message Bus Maps Events to Handlers メッセージバスはイベントをハンドラにマッピングする
+### 1.3.4. The Message Bus Maps Events to Handlers メッセージバスはイベントをハンドラにマッピングする
 
 A message bus basically says, “When I see this event, I should invoke the following handler function.”
 メッセージバスは、基本的に "このイベントを見たら、次のハンドラ関数を呼び出すように "というものだ。
@@ -337,7 +332,7 @@ HANDLERS = {
 
 - If you follow us in this approach, your API for distributing tasks is your event classes—or a JSON representation of them. This allows you a lot of flexibility in who you distribute tasks to; they need not necessarily be Python services. Celery’s API for distributing tasks is essentially “function name plus arguments,” which is more restrictive, and Python-only. このアプローチに従えば、タスクを配布するためのAPIはイベントクラスか、そのJSON表現になります。 これにより、タスクを配布する相手がPythonのサービスである必要はなく、非常に柔軟に対応することができます。 Celeryのタスク配信APIは、基本的に「関数名＋引数」であり、より制約が多く、Python専用となります。
 
-## Option 1: The Service Layer Takes Events from the Model and Puts Them on the Message Bus Option 1: サービス層はモデルからイベントを受け取り、メッセージバスに載せる
+## 1.4. Option 1: The Service Layer Takes Events from the Model and Puts Them on the Message Bus Option 1: サービス層はモデルからイベントを受け取り、メッセージバスに載せる
 
 Our domain model raises events, and our message bus will call the right handlers whenever an event happens.
 ドメインモデルはイベントを発生させ、メッセージバスはイベントが発生するたびに適切なハンドラを呼び出します。
@@ -380,7 +375,7 @@ def allocate(
 That already avoids some of the ugliness that we had in our naive implementation, and we have several systems that work like this one, in which the service layer explicitly collects events from aggregates and passes them to the message bus.
 このように、サービス層が明示的にアグリゲートからイベントを収集し、メッセージバスに渡すような仕組みのシステムもいくつかあります。
 
-## Option 2: The Service Layer Raises Its Own Events Option 2: サービス層は独自のイベントを発生させる
+## 1.5. Option 2: The Service Layer Raises Its Own Events Option 2: サービス層は独自のイベントを発生させる
 
 Another variant on this that we’ve used is to have the service layer in charge of creating and raising events directly, rather than having them raised by the domain model:
 また、ドメインモデルからイベントを発生させるのではなく、サービスレイヤーが直接イベントの作成と発生を担当するのも、このバリエーションになります。
@@ -413,10 +408,9 @@ Again, we have applications in production that implement the pattern in this way
 What works for you will depend on the particular trade-offs you face, but we’d like to show you what we think is the most elegant solution, in which we put the unit of work in charge of collecting and raising events.
 何がうまくいくかは、あなたが直面する特定のトレードオフに依存しますが、私たちが最もエレガントだと思う解決策をお見せしたいと思います。それは、作業単位にイベントの収集と発生を担当させるというものです。
 
-## Option 3: The UoW Publishes Events to the Message Bus オプション 3: UoW がイベントをメッセージバスに発行する
+## 1.6. Option 3: The UoW Publishes Events to the Message Bus オプション 3: UoW がイベントをメッセージバスに発行する
 
-The UoW already has a `try
-UoWはすでに`try'を搭載しています。
+The UoW already has a `try UoWはすでに`try'を搭載しています。
 
 The UoW meets the message bus (src
 UoWがメッセージバスに出会い（src
@@ -508,7 +502,7 @@ class SqlAlchemyRepository(AbstractRepository):
 
 - NOTE 注
 
-- The use of `._underscorey()` methods and subclassing is definitely not the only way you could implement these patterns. Have a go at the Exercise for the Reader in this chapter and experiment with some alternatives. ._underscorey()` メソッドの使用とサブクラス化は、これらのパターンを実装するための唯一の方法であることは間違いありません。 この章の「読者のための練習問題」を読んで、いくつかの選択肢を試してみてください。
+- The use of `._underscorey()` methods and subclassing is definitely not the only way you could implement these patterns. Have a go at the Exercise for the Reader in this chapter and experiment with some alternatives. .\_underscorey()` メソッドの使用とサブクラス化は、これらのパターンを実装するための唯一の方法であることは間違いありません。 この章の「読者のための練習問題」を読んで、いくつかの選択肢を試してみてください。
 
 After the UoW and repository collaborate in this way to automatically keep track of live objects and process their events, the service layer can be totally free of event-handling concerns:
 UoWとリポジトリがこのように連携して、生きているオブジェクトを自動的に追跡し、そのイベントを処理した後、サービス層はイベント処理に関する懸念から完全に解放されることになる。
@@ -603,7 +597,7 @@ Once your project is up and running, the interface for your repository and UoW a
 And if you’re using ABCs, they’ll help remind you when things get out of sync.
 また、ABCを使用している場合は、同期がとれなくなったときに、ABCが教えてくれます。
 
-## Wrap-Up まとめ
+## 1.7. Wrap-Up まとめ
 
 Domain events give us a way to handle workflows in our system.
 ドメインイベントは、システムでワークフローを処理するための方法です。
