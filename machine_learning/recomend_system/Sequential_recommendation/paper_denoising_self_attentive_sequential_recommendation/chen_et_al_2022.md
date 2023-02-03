@@ -103,13 +103,62 @@ In practice, it is usually beneficial to learn hierarchical item dependencies by
 
 ### 3.2.3. Learning Objective
 
+After stacked $L$ Transformer blocks, one can predict the next item (given the first $t$ items) based on $F_t^{(L)}$. In this work, we use inner product to predict the relevance of item $i$ as:
+
+$$
+r_{i, t} = <F_{t}^{(L)}, T_i>,
+$$
+
+where $T_i \in R^d$ is the embedding of item $i$. Recall that the model inputs a sequence $s = (s_1, s_2, \cdots, s_n)$ and its desired output is a shifted version of the same sequence $o = (o_1, o_2, \cdots, o_n)$, we can adopt the binary cross-entropy loss as:
+
+$$
+L_{BCE} = - \sum_{S^u \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1 - \sigma (r_{o_t', t})}]} + a \cdot ||\theta||^2_F
+\tag{4}
+$$
+
+where $\theta$ is the mode parameters, $a$ is the reqularizer to prevent over-fitting, $o'_t \notin S^u$ is a negative sample corresponding to $o_t$, and $\sigma(\cdot)$ is the sigmoid function.
+More details can be found in SASRec [26] and BERT4Rec [41].
+
 ## 3.3. The Noisy Attentions Problem
+
+Despite the success of SASRec and its variants, we argue that they are insufficient to address the noisy items in sequences. The reason is that the full attention distributions (e.g., Eq. (2)) are dense and would assign certain credits to irrelevant items. This complicates the item-item dependencies, increases the training difficulty, and even degrades the model performance. To address this issue, several attempts have been proposed to manually define sparse attention schemas in language modeling tasks [2, 10, 18, 58]. However, these fixed sparse attentions cannot adapt to the input data [12], leading to sub-optimal performance.
+
+On the other hand, several dropout techniques are specifically designed for Transformers to keep only a small portion of attentions, including LayerDrop [17], DropHead [60], and UniDrop [52]. Nevertheless, these randomly dropout approaches are susceptible to bias: the fact that attentions can be dropped randomly does not mean that the model allows them to be dropped, which may lead to over-aggressive pruning issues. In contrast, we propose a simple yet effective data-driven method to mask out irrelevant attentions by using differentiable masks.
 
 # 4. Rec-Denoiser
 
+In this section, we present our Rec-Denoiser that consists of two parts: differentiable masks for self-attention layers and Jacobian regularization for Transformer blocks.
+
 ## 4.1. Differentiable Masks
 
+The self-attention layer is the cornerstone of Transformers to capture long-range dependencies. As shown in Eq. (2), the softmax operator assigns a non-zero weight to every item. However, full attention distributions may not always be advantageous since they may cause irrelevant dependencies, unnecessary computation, and unexpected explanation. We next put forward differentiable masks to address this concern.
+
 ### 4.1.1. Learnable Sparse Attentions
+
+Not every item in a sequence is aligned well with user preferences in the same sense that not all attentions are strictly needed in self-attention layers. Therefore, we attach each self-attention layer with a trainable binary mask to prune noisy or task-irrelevant attentions. Formally, for the 𝑙-th self-attention layer in Eq. (2), we introduce a binary matrix $Z^{(l)} \in {0, 1}^{n\times n}$, where $Z^{(l)}_{u,v}$ denotes whether the connection between query $u$ and key $v$ is present. As such, the $l$-th self-attention layer becomes:
+
+$$
+A^{(l)} = \text{softmax}(\frac{Q^{(l)} K^{(l)T}}{\sqrt{d}}),
+\\
+M^{(l)} = A^{(l)} \odot Z^{(l)},
+\\
+\text{Attention}(Q^{(l)}, K^{(l)}, V^{(l)}) = M^{(l)} V^{(l)},
+\tag{5}
+$$
+
+where $A^{(l)}$ is the original full attentions, $M^{(l)}$ denotes the sparse attentions, and $\odot$ is the element-wise product. Intuitively, the mask $Z^{(l)}$ (e.g., 1 is kept and 0 is dropped) requires minimal changes to the original self-attention layer. More importantly, they are capable of yielding exactly zero attention scores for irrelevant dependencies, resulting in better interpretability. The idea of differentiable masks is not new. In the language modeling, differentiable masks have been shown to be very powerful to extract short yet sufficient sentences, which achieves better performance [1, 13].
+
+One way to encourage sparsity of $M^{(l)}$ is to explicitly penalize the number of non-zero entries of $Z^{(l)}$, for $1 \leq l \leq L$, by minimizing:
+
+$$
+R_M = \sum_{l=1}^{L}||Z^{l}||_{0} 
+= \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0], 
+\tag{6}
+$$
+
+where $I[c]$ is an indicator that is equal to 1 if the condition $c$ holds and 0 otherwise; and $||\cdot||_{0}$ denotes the $L_0$ norm that is able to drive irrelevant attentions to be exact zeros.
+
+However, there are two challenges for optimizing $Z^{(l)}$: non-differentiability and large variance. $L_0$ is discontinuous and has zero derivatives almost everywhere. Additionally, there are $2^{n^2}$ possible states for the binary mask $Z^{(l)}$ with large variance. Next, we propose an efficient estimator to solve this stochastic binary optimization problem.
 
 ### 4.1.2. Efficient Gradient Computation
 
