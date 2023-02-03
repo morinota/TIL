@@ -1,4 +1,4 @@
-# Chapter 8. Events and the Message Bus 第8章 イベントとメッセージバス イベントとメッセージバス
+# Chapter 8. Events and the Message Bus 第8章 イベントとメッセージバス
 
 So far we’ve spent a lot of time and energy on a simple problem that we could easily have solved with Django.
 これまで私たちは、Django で簡単に解決できた単純な問題に、多くの時間とエネルギーを費やしてきた.
@@ -6,28 +6,28 @@ You might be asking if the increased testability and expressiveness are really w
 テスト容易性と表現力の向上が、本当にすべての努力に見合うものなのかどうか、 疑問に思っているかもしれない.
 
 In practice, though, we find that it’s not the obvious features that make a mess of our codebases: it’s the goop around the edge.
-しかし、実際には、コードベースを混乱させるのは、明らかな機能ではなく、その周辺にあるゴミなのです。
+しかし、実際には、コードベースを混乱させるのは、明らかな機能ではなく、その周辺にあるゴミなのである.
 It’s reporting, and permissions, and workflows that touch a zillion objects.
-レポート、パーミッション、ワークフローなど、多くのオブジェクトに触れているのです。
+レポート、パーミッション、ワークフローなど、多くのオブジェクトに触れているのである.
 
 Our example will be a typical notification requirement: when we can’t allocate an order because we’re out of stock, we should alert the buying team.
-この例では、典型的な通知要件として、在庫切れで注文を割り当てられない場合、購買チームに警告する必要があります。
+この例では、典型的な通知要件として、**在庫切れで注文を割り当てられない場合、購買チームに警告する必要がある**.
 They’ll go and fix the problem by buying more stock, and all will be well.
-在庫切れのため注文を割り当てられない場合、購買チームに警告する必要があります。購買チームは在庫を買い足して問題を解決し、すべてがうまくいくでしょう。
+購買チームは在庫を買い足して問題を解決し、すべてがうまくいくだろう.
 
 For a first version, our product owner says we can just send the alert by email.
-最初のバージョンでは、製品オーナーは、電子メールでアラートを送信すればよいと言います。
+最初のバージョンでは、製品オーナーは、電子メールでアラートを送信すればよいと言う.
 
 Let’s see how our architecture holds up when we need to plug in some of the mundane stuff that makes up so much of our systems.
-では、私たちのシステムの多くを占める、ありふれたものを接続したときに、このアーキテクチャがどのように耐えられるか見てみましょう。
+では、私たちのシステムの多くを占める、ありふれたものを接続したときに、このアーキテクチャがどのように耐えられるか見てみよう.
 
 We’ll start by doing the simplest, most expeditious thing, and talk about why it’s exactly this kind of decision that leads us to the Big Ball of Mud.
-まずは、最もシンプルで手軽な方法から始めて、なぜ、このような判断が「泥の大箱」につながってしまうのか、その理由をお話しします。
+まずは、最もシンプルで手軽な方法から始めて、なぜ、このような判断が「泥の大箱」につながってしまうのか、その理由をお話しする.
 
 Then we’ll show how to use the Domain Events pattern to separate side effects from our use cases, and how to use a simple Message Bus pattern for triggering behavior based on those events.
-次に、Domain Eventsパターンを使ってユースケースから副作用を分離する方法と、これらのイベントに基づいて動作をトリガーするためのシンプルなMessage Busパターンを使う方法を紹介します。
+次に、**Domain Events pattern** を使ってユースケースから副作用を分離する方法と、これらの Event に基づいて動作をトリガーするためのシンプルな **Message Bus pattern** を使う方法を紹介する.
 We’ll show a few options for creating those events and how to pass them to the message bus, and finally we’ll show how the Unit of Work pattern can be modified to connect the two together elegantly, as previewed in Figure 8-1.
-これらのイベントを作成するためのいくつかのオプションと、それらをメッセージバスに渡す方法を紹介し、最後に図8-1でプレビューしたように、Unit of Workパターンを修正して、この2つをエレガントに接続する方法を紹介する。
+これらの Event を作成するためのいくつかのオプションと、それらを Message Bus に渡す方法を紹介し、最後に図8-1でプレビューしたように、Unit of Work pattern を修正して、この2つをエレガントに接続する方法を紹介する.
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0801.png)
 
