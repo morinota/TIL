@@ -25,7 +25,7 @@ Collectively, this methodology allows us to optimize the types of recommendation
 # 1. Introduction はじめに
 
 Building a good product recommendation system for an e-commerce site is challenging.
-Eコマースサイトに優れた商品推薦システムを構築することは困難です。
+Eコマースサイトに優れた商品推薦システムを構築することは困難.
 What about building millions of them?
 しかし、それを何百万個も作るとなるとどうでしょう？
 Shopify powers millions of diverse businesses, from small artisanal mom and pop shops, to large established businesses.
@@ -101,7 +101,7 @@ After running the experiment for a sufficient amount of time, we compute busines
 十分な期間実験を行った後、2つの実験グループのビジネス指標を計算し、統計的な有意性を検証することで、新しいモデルと観測されたビジネスインパクトの因果関係を確立する.
 
 In our experience, running reliable A/B tests in a modern production setting is not as straightforward as one might expect [2]. There are many factors that must be accounted for when designing and analyzing the results of an A/B test: caching, novelty effects, redundant systems, and even adversarial users (bots). To help mitigate these effects and ensure that our testing framework is sound, it’s advisable to run an A/A test before starting to run regular A/B tests. An A/A test is a null test, in which we expect there to be no statistically significant differences between the two groups [2]. Running a successful A/A test can help ensure that we have accounted for all factors, and that results from the upcoming A/B tests can be trusted.
-私たちの経験では、最新のプロダクション環境で信頼性の高いA/Bテストを実行することは、期待されるほど簡単ではありません[2]. A/Bテストを設計し、その結果を分析する際には、キャッシュ、新規性効果、冗長システム、さらには敵対するユーザー（ボット）など、考慮しなければならない要素がたくさんある. これらの影響を軽減し、テストの枠組みが健全であることを確認するために、**通常のA/Bテストの実行を開始する前にA/Aテストを実行することが推奨される**. A/Aテストとは、2つのグループの間に統計的に有意な差がないことを期待するヌルテストです[2]. A/Aテストを成功させることで、すべての要因を考慮し、これから行うA/Bテストの結果が信頼できるものであることを確認することができます。
+私たちの経験では、最新のプロダクション環境で信頼性の高いA/Bテストを実行することは、期待されるほど簡単ではありません[2]. A/Bテストを設計し、その結果を分析する際には、キャッシュ、新規性効果、冗長システム、さらには敵対するユーザー（ボット）など、考慮しなければならない要素がたくさんある. これらの影響を軽減し、テストの枠組みが健全であることを確認するために、**通常のA/Bテストの実行を開始する前にA/Aテストを実行することが推奨される**. **A/Aテストとは、2つのグループの間に統計的に有意な差がないことを期待するnullテスト**[2]. A/Aテストを成功させることで、すべての要因を考慮し、これから行うA/Bテストの結果が信頼できるものであることを確認することができる.
 
 # 4. Multi-Armed Bandit
 

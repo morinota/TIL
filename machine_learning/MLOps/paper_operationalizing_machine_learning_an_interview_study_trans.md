@@ -45,7 +45,7 @@ MLOpsに関する我々の現在の理解は、白書、逸話、考察[14、18�
 Early work by Sculley et al. attributes MLOps challenges to “technical debt”, due to which there is “massive ongoing maintenance costs in real-world ML systems” [64].
 Sculleyらによる初期の研究は，**MLOpsの課題を "技術的負債 "とし**，その原因は "実世界のMLシステムにおける膨大な継続的メンテナンスコスト "であるとしている[64]．
 Most successful ML deployments seem to involve a “team of engineers who spend a significant portion of their time on the less glamorous aspects of ML like maintaining and monitoring ML pipelines” [54].
-**ほとんどの成功したMLデプロイメントは、"MLパイプラインの保守や監視のようなMLのあまり華やかでない側面に彼らの時間のかなりの部分を費やすエンジニアのチーム"[54]を含む**ようです。
+**ほとんどの成功したMLデプロイメントは、"MLパイプラインの保守や監視のようなMLのあまり華やかでない側面に彼らの時間のかなりの部分を費やすエンジニアのチーム"[54]を含む**ようである.
 Prior work has studied general practices of data analysis and science [30, 49, 62, 82], without considering MLOps challenges of productionizing models.
 先行研究は、モデルを生産化するMLOpsの課題を考慮することなく、データ分析と科学の一般的なプラクティス[30, 49, 62, 82]を研究している.
 
@@ -98,88 +98,88 @@ We conclude the description of each pain point with a discussion of opportunitie
 # 2. Related Work 2. 関連作品
 
 Several books and papers in the traditional software engineering literature describe the need for DevOps, a combination of software developers and operations teams, to streamline the process of delivering software in organizations [13, 37, 39, 40].
-従来のソフトウェア工学の文献には，組織におけるソフトウェアの提供プロセスを合理化するために，ソフトウェア開発者と運用チームの組み合わせであるDevOpsの必要性を述べた書籍や論文がいくつかあります[13, 37, 39, 40]．
+従来のソフトウェア工学の文献には，組織におけるソフトウェアの提供プロセスを合理化するために，**ソフトウェア開発者と運用チームの組み合わせであるDevOps**の必要性を述べた書籍や論文がいくつかある[13, 37, 39, 40]．
 Similarly, MLOps, or DevOps principles applied to machine learning, has emerged from the rise of machine learning (ML) application development in software organizations.
 同様に，MLOps，すなわち機械学習に適用されるDevOpsの原則は，ソフトウェア組織における機械学習（ML）アプリケーション開発の台頭から生まれたものである．
 MLOps is a nascent field, where most existing papers give definitions and overviews of MLOps, as well as its relation to ML, software engineering, DevOps, and data engineering [28, 34, 44, 73].
-MLOpsはまだ始まったばかりの分野であり，既存の論文の多くはMLOpsの定義と概要，そしてML，ソフトウェア工学，DevOps，データ工学との関連性を述べています[28, 34, 44, 73]．
+MLOpsはまだ始まったばかりの分野であり，既存の論文の多くはMLOpsの定義と概要，そしてML，ソフトウェア工学，DevOps，データ工学との関連性を述べている[28, 34, 44, 73]．
 MLOps poses unique challenges because of its focus on developing, deploying, and sustaining models, or artifacts that need to reflect data as data changes over time [59, 65, 67].
-MLOpsは，時間の経過とともに変化するデータを反映する必要があるモデルや成果物を開発，展開，維持することに重点を置いているため，独自の課題を提起しています[59, 65, 67]．
+**MLOpsは，時間の経過とともに変化するデータを反映する必要があるモデルや成果物を開発，展開，維持することに重点を置いているため，独自の課題を提起している**[59, 65, 67]．
 We discuss work related to MLOps workflows, challenges and interview studies for ML.
-我々は、MLOpsのワークフロー、課題、MLのためのインタビュー研究に関連する仕事を議論する。
+我々は、MLOpsのワークフロー、課題、MLのためのインタビュー研究に関連する仕事を議論する.
 
 MLOps Workflow.
 MLOpsのワークフロー
 The MLOps workflow involves supporting data collection and processing, experimentation, evaluation and deployment, and monitoring and response, as shown in Figure 1.
 MLOps のワークフローは，図 1 に示すように，データの収集と処理，実験，評価と配備，監視と対応 を支援するものである．
 Several research papers and companies have proposed tools to accomplish various tasks in the workflow, such as data pre-processing [22, 58, 60] and experiment tracking [6, 74, 81].
-いくつかの研究論文や企業が，データの前処理 [22，58，60]や実験の追跡 [6，74，81]など，ワークフローにおけるさまざまなタスクを実現するツールを提案しています．
+いくつかの研究論文や企業が，データの前処理 [22，58，60]や実験の追跡 [6，74，81]など，ワークフローにおけるさまざまなタスクを実現するツールを提案している．
 Crankshaw et al. studied the problem of model deployment and low-latency prediction serving [12].
-Crankshaw らは、モデルの展開と低遅延予測サービングの問題を研究しています[12]。
+Crankshaw らは、モデルの展開と低遅延予測サービングの問題を研究している[12].
 With regards to validating changes in production systems, some researchers have studied CI (Continuous Integration) for ML and proposed preliminary solutions—for example, ease.ml
 本番環境における変更の検証に関しては，MLのためのCI（Continuous Integration）を研究し，予備的な解決策を提案している研究者がいる-例えば ease.ml
 
 MLOps Challenges.
 MLOpsの課題
 Sculley et al. were early proponents that production ML systems raise special challenges and can be hard to maintain over time, based on their experience at Google [64].
-Sculleyらは、Googleでの経験に基づいて、プロダクションMLシステムは特別な課題を提起し、長期間にわたって維持することが困難であることを、早くから提唱していました[64]。
+Sculleyらは、Googleでの経験に基づいて、プロダクションMLシステムは特別な課題を提起し、長期間にわたって維持することが困難であることを、早くから提唱していた[64].
 Since then, several research projects have emerged to explore and tackle individual challenges in the MLOps workflow.
-それ以来、MLOpsのワークフローにおける個々の課題を探求し、それに取り組むいくつかの研究プロジェクトが出現しています。
+それ以来、MLOpsのワークフローにおける個々の課題を探求し、それに取り組むいくつかの研究プロジェクトが出現している.
 For example, some discuss the need to manage data provenance and training context for model debugging purposes [8, 17, 24, 50].
-例えば、モデルのデバッグのためにデータの出所とトレーニングのコンテキストを管理する必要性について議論しているものがあります[8, 17, 24, 50]。
+例えば、モデルのデバッグのためにデータの出所とトレーニングのコンテキストを管理する必要性について議論しているものがある[8, 17, 24, 50].
 Others describe the challenges of handling state and ensuring reproducibility (i.e., “managing messes”) while using computational notebooks [23, 42, 66].
-また、計算ノートブックを使用しながら、状態の取り扱いと再現性の確保（すなわち、「混乱の管理」）の課題について述べているものもあります[23, 42, 66]。
+また、計算ノートブックを使用しながら、状態の取り扱いと再現性の確保（すなわち、「混乱の管理」）の課題について述べているものもある[23, 42, 66].
 Additionally, data distribution shifts have been technically but not operationally studied—i.e., how humans debug such shifts in practice [46, 51, 57, 71, 78].
-さらに、データ分布のシフトは、技術的には研究されていますが、運用的には研究されていません。つまり、人間が実際にそのシフトをどのようにデバッグするかということです[46、51、57、71、78]。
+さらに、データ分布のシフトは、技術的には研究されていますが、運用的には研究されていない. つまり、人間が実際にそのシフトをどのようにデバッグするかということである[46、51、57、71、78].
 Rather than focus on a single pain point, Lee et al. analyze challenges across ML workflows on an open-source ML platform [36].
-Leeらは、単一のペインポイントに焦点を当てるのではなく、オープンソースのMLプラットフォームにおけるMLワークフロー全体の課題を分析している[36]。
+Leeらは、単一のペインポイントに焦点を当てるのではなく、オープンソースのMLプラットフォームにおけるMLワークフロー全体の課題を分析している[36].
 Similarly, Xin et al. [79] analyze ML pipelines at Google to understand typical model configurations and retraining patterns.
-同様に、Xinら[79]はGoogleのMLパイプラインを分析し、典型的なモデル構成と再トレーニングのパターンを理解しています。
+同様に、Xinら[79]はGoogleのMLパイプラインを分析し、典型的なモデル構成と再トレーニングのパターンを理解している.
 Polyzotis et al. [54, 55] survey challenges centric to data management for machine learning deployments.
-Polyzotisら[54, 55]は、機械学習導入のためのデータ管理を中心とした課題を調査しています。
+Polyzotisら[54, 55]は、機械学習導入のためのデータ管理を中心とした課題を調査している.
 Paleyes et al. review published reports of individual ML deployments and survey common challenges [52].
-Paleyesらは、個々のML導入に関する公表されたレポートをレビューし、共通の課題を調査しています[52]。
+Paleyesらは、個々のML導入に関する公表されたレポートをレビューし、共通の課題を調査しています[52].
 Our study instead focuses on issues across the production workflow (i.e., MLOps practices and challenges) as opposed to individual pain-points, identified by interviewing those who are are most affected by it—the ML engineers.
-私たちの研究は、個々のペインポイントとは対照的に、生産ワークフロー全体の問題（すなわち、MLOpsの実践と課題）に焦点を当て、その影響を最も受ける人たち-MLエンジニアにインタビューすることで特定しました。
+私たちの研究は、個々のペインポイントとは対照的に、生産ワークフロー全体の問題（すなわち、MLOpsの実践と課題）に焦点を当て、その影響を最も受ける人たち-MLエンジニアにインタビューすることで特定しました.
 
 Data Science and ML-Related Interview Studies.
-データサイエンスとMLに関連したインタビュー調査。
+データサイエンスとMLに関連したインタビュー調査.
 Kandel et al. [30] interview data analysts at enterprises, focusing on broader organizational contexts like we do; however, MLOps workflows and challenges extend beyond data analysis.
-Kandelら[30]は企業のデータアナリストにインタビューし、我々のような広い組織のコンテキストに焦点を当てています。しかし、MLOpsのワークフローと課題はデータ分析にとどまりません。
+Kandelら[30]は企業のデータアナリストにインタビューし、我々のような広い組織のコンテキストに焦点を当てています. しかし、MLOpsのワークフローと課題はデータ分析にとどまりません.
 Other studies build on Kandel et al.’s work, exploring aspects such as collaboration, code practices, and tools [32, 33, 49, 53, 82], all centered on general data analysis and data science, as opposed to transitioning workflows in ML to production.
-しかし，MLOpsのワークフローと課題はデータ解析にとどまらない．他の研究はKandelらの研究を基に，コラボレーション，コードプラクティス，ツールなどの側面を調査している[32，33，49，53，82]が，MLのワークフローを生産に移行するとは異なり，一般的なデータ解析とデータサイエンスに重点を置いている．
+他の研究はKandelらの研究を基に，コラボレーション，コードプラクティス，ツールなどの側面を調査している[32，33，49，53，82]が，MLのワークフローを生産に移行するとは異なり，一般的なデータ解析とデータサイエンスに重点を置いている．
 Many ML-related interview studies focus on a single tool, task, or challenge in the workflow—for example, AutoML [75, 80], data iteration [25], model training [72], minimizing bias in ML models [26, 35, 43], and building infrastructure for ML pipelines [47].
-ML関連の多くのインタビュー研究は、ワークフローにおける単一のツール、タスク、または課題に焦点を当てています。例えば、AutoML [75, 80]、データ反復 [25]、モデルトレーニング [72]、MLモデルにおけるバイアスの最小化 [26, 35, 43] 、MLパイプラインのインフラ構築 [47] などがあります。
+ML関連の多くのインタビュー研究は、ワークフローにおける単一のツール、タスク、または課題に焦点を当てています. 例えば、AutoML [75, 80]、データ反復 [25]、モデルトレーニング [72]、MLモデルにおけるバイアスの最小化 [26, 35, 43] 、MLパイプラインのインフラ構築 [47] などがある.
 Sambasivan et al. [62] study data quality issues during machine learning, as opposed to challenges in MLOps.
-Sambasivanら[62]は、MLOpsの課題とは対照的に、機械学習中のデータ品質の問題を研究している。
+Sambasivanら[62]は、MLOpsの課題とは対照的に、機械学習中のデータ品質の問題を研究している.
 Other ML-related interview studies focus on specific applications of ML, such as medicine [56], customer service [16], and interview processing [7].
-他のML関連のインタビュー研究は，医療[56]，顧客サービス[16]，インタビュー処理[7]などのMLの特定のアプリケーションに焦点を当てています．
+他のML関連のインタビュー研究は，医療[56]，顧客サービス[16]，インタビュー処理[7]などのMLの特定のアプリケーションに焦点を当てている.
 Some interview studies report on software engineering practices for ML development; however, they focus only on a few applications and primarily on engineering, not operational, challenges [5, 41].
 また，ML開発におけるソフトウェア工学の実践を報告するインタビュー研究もある．しかし，それらはいくつかのアプリケーションにのみ焦点を当て，運用上の課題ではなく，主に工学的な課題に焦点を当てている[5, 41]．
 Our interview study aims to be both broad and focused: we consider many applications and companies, but is centered around the engineers that perform MLOps tasks, with an eye towards highlighting both engineering and operational practices and challenges.
-私たちのインタビュー調査は、広範かつ焦点を絞ることを目的としています。多くのアプリケーションや企業を考慮しつつ、MLOpsタスクを実行するエンジニアを中心とし、エンジニアリングとオペレーションの両方の実践と課題を強調することを視野に入れています。
+私たちのインタビュー調査は、広範かつ焦点を絞ることを目的としている. 多くのアプリケーションや企業を考慮しつつ、MLOpsタスクを実行するエンジニアを中心とし、エンジニアリングとオペレーションの両方の実践と課題を強調することを視野に入れています.
 Additionally, our focus is on learning how models are deployed and sustained in production—we discover this by interviewing ML practitioners directly.
-さらに、私たちの焦点は、ML実践者に直接インタビューすることで、モデルがどのようにプロダクションで展開され、維持されているかを学ぶことです。
+さらに、私たちの焦点は、ML実践者に直接インタビューすることで、モデルがどのようにプロダクションで展開され、維持されているかを学ぶことです.
 
 # 3. Methods 3. 方法
 
 Following review by our institution’s review board, we conducted an interview study of 18 ML Engineers (MLEs) working across a wide variety of sectors to learn more about their first-hand experiences serving and maintaining models in production.
-私たちの機関の審査委員会の審査を経て、さまざまな分野で活躍する18人のMLエンジニア（MLE）にインタビュー調査を行い、実稼働中のモデルのサービスやメンテナンスの実体験を詳しく伺いました。
+私たちの機関の審査委員会の審査を経て、さまざまな分野で活躍する18人のMLエンジニア（MLE）にインタビュー調査を行い、実稼働中のモデルのサービスやメンテナンスの実体験を詳しく伺いました.
 
 ## 3.1. Participant Recruitment 3.1. 参加者の募集
 
 We recruited persons who were responsible for the development, regular retraining, monitoring and deployment of any ML model in production.
-このため、MLモデルの開発、定期的な再トレーニング、モニタリング、実運用への展開を担当する人を採用した。
+このため、MLモデルの開発、定期的な再トレーニング、モニタリング、実運用への展開を担当する人を採用した.
 A description of the 18 MLEs (22% female-identifying2 ) is shown in Table 1.
-18 名の MLE（22%が女性2 ）について、表 1 に示す。
+18 名の MLE（22%が女性2 ）について、表 1 に示す.
 The MLEs we interviewed varied in their educational backgrounds, years of experience, roles, team size, and work sector.
-インタビューしたMLEは、学歴、経験年数、役割、チームサイズ、業務部門など様々であった。
+インタビューしたMLEは、学歴、経験年数、役割、チームサイズ、業務部門など様々であった.
 Recruitment was conducted in rounds over the course of an academic year (2021-2022).
-採用は、1学年（2021～2022年）にわたりラウンド方式で行われた。
+採用は、1学年（2021～2022年）にわたりラウンド方式で行われた.
 In each round, between three to five candidates were reached by email and invited to participate.
-各ラウンドで、3人から5人の候補者に電子メールで連絡を取り、参加を呼びかけました。
+各ラウンドで、3人から5人の候補者に電子メールで連絡を取り、参加を呼びかけました.
 We relied on our professional networks and open calls posted on MLOps channels in Discord3 , Slack4 , and Twitter to compile a roster of candidates.
-候補者の名簿を作成するために、私たちの職業上のネットワークと、Discord3、Slack4、TwitterのMLOpsチャンネルに投稿された公募を利用しました。
+候補者の名簿を作成するために、私たちの職業上のネットワークと、Discord3、Slack4、TwitterのMLOpsチャンネルに投稿された公募を利用しました.
 The roster was incrementally updated roughly after every round of interviews, integrating information gained from the concurrent coding and analysis of transcripts (Section 3.3).
 この名簿は、おおよそ面談のたびに更新され、同時進行のコーディングとトランスクリプトの分析（セクション 3.3）から得られた情報を統合していった。
 Recruitment rounds were repeated until we reached saturation on our findings [48].
@@ -224,30 +224,30 @@ Coding passes were repeated until reaching convergence.
 More information about the codes is shown in Appendix C, including a list of the most frequently occurring codes (Table 3) and co-occurring codes (Figure 4).
 コードに関するより詳細な情報は、最も頻出するコードのリスト（表3）および共起するコード（図4）を含む付録Cに示されている。
 
-# 4. Mlops Practices: Out Findings 4. Mlopsの実践。 アウトファインディング
+# 4. Mlops Practices: Out Findings 4. MLopsの実践。 アウトファインディング
 
 In this section, we present information about common practices in production ML deployments that we learned from the interviews.
 本節では，インタビューから得られた本番用ML導入の共通事例に関する情報を紹介する．
 First, we describe common tasks in the production ML workflow in Section 4.1.
-まず、4.1節で本番用MLワークフローにおける一般的なタスクについて説明します。
+まず、**4.1節で本番用MLワークフローにおける一般的なタスク**について説明する.
 Next, we introduce the Three Vs of MLOps, grounding both the discussion of findings and the challenges that we will explain in Section 5.
-次に、MLOpsの3つのVsを紹介し、セクション5で説明する知見や課題の根拠とします。
+次に、**MLOpsの3つのVs**を紹介し、セクション5で説明する知見や課題の根拠とする.
 Then in Section 4.3, we describe the strategies ML engineers leverage to produce successful experiment ideas.
-次にセクション4.3では、MLエンジニアが実験のアイデアを成功させるために活用する戦略について述べる。
+次にセクション4.3では、**MLエンジニアが実験のアイデアを成功させるために活用する戦略**について述べる.
 In Section 4.4, we discuss organizational efforts to effectively evaluate models.
-セクション4.4では、モデルを効果的に評価するための組織的な取り組みについて述べる。
+セクション4.4では、**モデルを効果的に評価するための組織的な取り組み**について述べる.
 Finally, in Section 4.5, we investigate the hacks ML engineers use to sustain high performance in productions ML pipelines.
-最後に、セクション4.5では、MLエンジニアがプロダクションMLパイプラインで高いパフォーマンスを維持するために使用するハックを調査する。
+最後に、セクション4.5では、MLエンジニアが**プロダクションMLパイプラインで高いパフォーマンスを維持するために使用するハック**を調査する.
 
 ## 4.1. Tasks in the Production ML Lifecycle 4.1. プロダクションMLのライフサイクルにおけるタスク
 
 We characterized ML engineers’ workflows into four high-level tasks, each of which employ a wide variety of tools.
-MLエンジニアのワークフローを4つのハイレベルなタスクに分類し、それぞれで様々なツールを使用することを特徴とする。
+MLエンジニアのワークフローを4つのハイレベルなタスクに分類し、それぞれで様々なツールを使用することを特徴とする.
 We briefly describe each task in turn, and elaborate on them as they arise in our findings below.
-各タスクについて簡単に説明し、以下で得られた知見について詳しく説明します。
+各タスクについて簡単に説明し、以下で得られた知見について詳しく説明します.
 
-Data Collection and Labeling.
-データ収集とラベリング。
+### 4.1.1. Data Collection and Labeling.データ収集とラベリング。
+
 Data collection spans sourcing new data, wrangling data from sources into a centralized repository, and cleaning data.
 データ収集は、新しいデータの調達、ソースからのデータの一元化、およびデータのクリーニングに及びます。
 Data labeling can be outsourced (e.g., Mechanical Turk) or performed in-house with teams of annotators.
@@ -255,41 +255,41 @@ Data labeling can be outsourced (e.g., Mechanical Turk) or performed in-house wi
 Since descriptions and interview studies of data collection, analysis, wrangling and labeling activities can be found in related papers [11, 29, 30, 62], we focus our summary of findings on the other three tasks.
 データ収集、分析、ラングリング、ラベリングの各作業に関する説明やインタビュー調査は、関連論文 [11, 29, 30, 62] で見ることができるため、ここでは他の3つの作業に焦点を絞って調査結果をまとめる。
 
-Feature Engineering and Model Experimentation.
-特徴量エンジニアリングとモデル実験。
+### 4.1.2. Feature Engineering and Model Experimentation. 特徴量エンジニアリングとモデル実験。
+
 ML engineers typically focus on improving ML performance, measured via metrics such as accuracy or mean-squared-error.
 MLエンジニアは通常、精度や平均二乗誤差のようなメトリクスで測定されるMLのパフォーマンスを向上させることに重点を置いています。
 Experiments can be data-driven or model-driven; for example, an engineer can create a new feature or change the model architecture from tree-based to neural network-based.
 実験にはデータ駆動型とモデル駆動型があります。例えば、エンジニアは新しい機能を作成したり、モデルのアーキテクチャをツリーベースからニューラルネットワークベースに変更したりすることができます。
 
-Model Evaluation and Deployment.
-モデルの評価と配備
+### 4.1.3. Model Evaluation and Deployment. モデルの評価と配備
+
 A model is typically evaluated by computing a metric (e.g., accuracy) over a collection of labeled data points hidden at training time, or a validation dataset, to see if its performance is better than what the currently-running production model achieved during its evaluation phase.
 モデルの評価は、通常、トレーニング時に隠されたラベル付きデータポイントの集合、または検証データセットに対してメトリック（例えば精度）を計算し、現在実行中の本番モデルがその評価段階で達成した性能よりも優れているかどうかを確認することで行われます。
 Deployment involves reviewing the proposed change, possibly staging the change to increasing percentages of the population, or A
 展開では、提案された変更をレビューし、場合によっては、母集団のパーセンテージを増加させながら変更をステージングする、あるいはA
 
-ML Pipeline Monitoring and Response.
-MLパイプラインのモニタリングとレスポンス。
+### 4.1.4. ML Pipeline Monitoring and Response. MLパイプラインのモニタリングとレスポンス。
+
 Monitoring ML pipelines and responding to bugs involve tracking live metrics (via queries or dashboards), slicing and dicing sub-populations to investigate prediction quality, patching the model with non-ML heuristics for known failure modes, and finding in-the-wild failures and adding them to the evaluation set.
 MLパイプラインのモニタリングとバグ対応には、（クエリーやダッシュボードによる）ライブメトリクスの追跡、予測品質を調査するためのサブ集団のスライスとダイシング、既知の故障モードに対する非MLヒューリスティックによるモデルのパッチ、および実環境での故障の発見と評価セットへの追加などが含まれます。
 
 ## 4.2. Three Vs of MLOps: Velocity, Validation, Versioning 4.2. MLOpsの3つのV：ベロシティ、バリデーション、バージョニング
 
 When developing and pushing ML models to production, three properties of the workflow and infrastructure dictate how successful deployments will be:
-MLモデルを開発し、本番環境に投入する場合、ワークフローとインフラの3つの特性がデプロイの成功を左右します。
+MLモデルを開発し、本番環境に投入する場合、ワークフローとインフラの3つの特性がデプロイの成功を左右する.
 Velocity, Validation, and Versioning, discussed in turn.
 Velocity、Validation、Versioningについて順番に説明します。
 
-Velocity.
-速度。
+### Velocity. 速度.
+
 Since ML is so experimental in nature, it’s important to be able to prototype and iterate on ideas quickly (e.g., go from a new idea to a trained model in a day).
-MLは実験的な性格を持つため、アイデアを素早くプロトタイプ化して反復できることが重要です（例えば、新しいアイデアから1日で学習済みモデルまで到達させる）。
+MLは実験的な性格を持つため、**アイデアを素早くプロトタイプ化して反復できることが重要**です（例えば、新しいアイデアから1日で学習済みモデルまで到達させる）。
 ML engineers attributed their productivity to development environments that prioritized high experimentation velocity and debugging environments that allowed them to test hypotheses quickly (P1, P3, P6, P10, P11, P14, P18).
 MLエンジニアは、高い実験速度を優先する開発環境と、仮説を素早く検証できるデバッグ環境が生産性を高めたと述べています（P1、P3、P6、P10、P11、P14、P18）。
 
-Validation.
-検証。
+### Validation. 検証.
+
 Since errors become more expensive to handle when users see them, it’s good to test changes, prune bad ideas, and proactively monitor pipelines for bugs as early as possible (P1, P2, P5, P6, P7, P10, P14, P15, P18).
 エラーがユーザーに見られると処理にコストがかかるので、できるだけ早い段階で変更をテストし、悪いアイデアを刈り込み、パイプラインのバグを積極的に監視するのがよい（P1、P2、P5、P6、P7、P10、P14、P15、P18)。
 P1 said:
@@ -297,17 +297,17 @@ P1 は次のように述べています。
 “The general theme, as we moved up in maturity, is: how do you do more of the validation earlier, so the iteration cycle is faster?”
 「成熟度が上がるにつれて、一般的なテーマは、いかにしてより多くの検証を早期に行い、反復サイクルを高速化するかということです」。
 
-Versioning.
-バージョン管理。
+### Versioning. バージョン管理。
+
 Since it’s impossible to anticipate all bugs before they occur, it’s helpful to store and manage multiple versions of production models and datasets for querying, debugging, and minimizing production pipeline downtime.
 すべてのバグを事前に予測することは不可能なので、本番モデルとデータセットの複数のバージョンを保存・管理することは、クエリ、デバッグ、本番パイプラインのダウンタイムを最小限に抑えるために有効です。
 ML engineers responded to buggy models in production by switching the model to a simpler, historical, or retrained version (P6, P8, P10, P14, P15, 18).
-ML エンジニアは、実運用環境でバグが発生した場合、モデルをよりシンプルなバージョン、履歴バージョン、または再トレーニングバージョンに切り替えて対応しています (P6, P8, P10, P14, P15, 18)。
+ML エンジニアは、**実運用環境でバグが発生した場合、モデルをよりシンプルなバージョン、履歴バージョン、または再トレーニングバージョンに切り替えて対応**しています (P6, P8, P10, P14, P15, 18)。
 
 ## 4.3. Machine Learning Engineering is Very Experimental, Even in Production 4.3. 機械学習エンジニアリングは、プロダクションでも非常に実験的である
 
 ML engineering, as a discipline, is highly experimental and iterative in nature, especially compared to typical software engineering.
-MLエンジニアリングは、一般的なソフトウェアエンジニアリングと比較して、非常に実験的で反復的な性質を持つ分野です。
+MLエンジニアリングは、一般的なソフトウェアエンジニアリングと比較して、非常に実験的で反復的な性質を持つ分野. 
 Contrary to popular negative sentiment around the large numbers of experiments and models that don’t make it to production, we found that it’s actually okay for experiments and models not to make it to production.
 しかし、私たちは、実験やモデルが製品化されなくても構わないということを発見しました。
 What matters is making sure ideas can be prototyped and validated quickly—so that bad ones can be pruned away immediately.

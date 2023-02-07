@@ -12,8 +12,8 @@
   - 1つのアプリケーションを、ビジネス機能に沿った**複数の小さいサービスの疎に結合された集合体**として構成する.
   - 対義語的な開発技法は、**monolithic(=一枚岩のような)型**.
 
-micro serviceもOrchestrationもChoreographyも定義が曖昧らしい...。
+micro serviceもOrchestrationもChoreographyも定義が曖昧らしい...。統一されてないらしい...。
 
 # Orchestration
 
-
+# Choreography
