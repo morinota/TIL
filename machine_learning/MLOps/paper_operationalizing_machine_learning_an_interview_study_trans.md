@@ -279,141 +279,143 @@ MLパイプラインのモニタリングとバグ対応には、（クエリー
 When developing and pushing ML models to production, three properties of the workflow and infrastructure dictate how successful deployments will be:
 MLモデルを開発し、本番環境に投入する場合、ワークフローとインフラの3つの特性がデプロイの成功を左右する.
 Velocity, Validation, and Versioning, discussed in turn.
-Velocity、Validation、Versioningについて順番に説明します。
+Velocity、Validation、Versioningについて順番に説明する.
 
-### Velocity. 速度.
+### 4.2.1. Velocity. 速度.
 
 Since ML is so experimental in nature, it’s important to be able to prototype and iterate on ideas quickly (e.g., go from a new idea to a trained model in a day).
-MLは実験的な性格を持つため、**アイデアを素早くプロトタイプ化して反復できることが重要**です（例えば、新しいアイデアから1日で学習済みモデルまで到達させる）。
+MLは実験的な性格を持つため、**アイデアを素早くプロトタイプ化して反復できることが重要**である（例えば、新しいアイデアから1日で学習済みモデルまで到達させる）.
 ML engineers attributed their productivity to development environments that prioritized high experimentation velocity and debugging environments that allowed them to test hypotheses quickly (P1, P3, P6, P10, P11, P14, P18).
-MLエンジニアは、高い実験速度を優先する開発環境と、仮説を素早く検証できるデバッグ環境が生産性を高めたと述べています（P1、P3、P6、P10、P11、P14、P18）。
+MLエンジニアは、**高い実験速度を優先する開発環境**と、**仮説を素早く検証できるデバッグ環境**が生産性を高めたと述べている（P1、P3、P6、P10、P11、P14、P18）.
 
-### Validation. 検証.
+### 4.2.2. Validation. 検証.
 
 Since errors become more expensive to handle when users see them, it’s good to test changes, prune bad ideas, and proactively monitor pipelines for bugs as early as possible (P1, P2, P5, P6, P7, P10, P14, P15, P18).
-エラーがユーザーに見られると処理にコストがかかるので、できるだけ早い段階で変更をテストし、悪いアイデアを刈り込み、パイプラインのバグを積極的に監視するのがよい（P1、P2、P5、P6、P7、P10、P14、P15、P18)。
+エラーがユーザーに見られると処理にコストがかかるので、できるだけ早い段階で変更をテストし、悪いアイデアを刈り込み、**パイプラインのバグを積極的に監視**するのがよい（P1、P2、P5、P6、P7、P10、P14、P15、P18).
 P1 said:
-P1 は次のように述べています。
+P1 は次のように述べている.
 “The general theme, as we moved up in maturity, is: how do you do more of the validation earlier, so the iteration cycle is faster?”
-「成熟度が上がるにつれて、一般的なテーマは、いかにしてより多くの検証を早期に行い、反復サイクルを高速化するかということです」。
+「成熟度が上がるにつれて、一般的なテーマは、**いかにしてより多くの検証を早期に行い、反復サイクルを高速化するか**ということである」.
 
-### Versioning. バージョン管理。
+### 4.2.3. Versioning. バージョン管理。
 
 Since it’s impossible to anticipate all bugs before they occur, it’s helpful to store and manage multiple versions of production models and datasets for querying, debugging, and minimizing production pipeline downtime.
-すべてのバグを事前に予測することは不可能なので、本番モデルとデータセットの複数のバージョンを保存・管理することは、クエリ、デバッグ、本番パイプラインのダウンタイムを最小限に抑えるために有効です。
+すべてのバグを事前に予測することは不可能なので、本番モデルとデータセットの複数のバージョンを保存・管理することは、クエリ、デバッグ、本番パイプラインのダウンタイムを最小限に抑えるために有効である.
 ML engineers responded to buggy models in production by switching the model to a simpler, historical, or retrained version (P6, P8, P10, P14, P15, 18).
-ML エンジニアは、**実運用環境でバグが発生した場合、モデルをよりシンプルなバージョン、履歴バージョン、または再トレーニングバージョンに切り替えて対応**しています (P6, P8, P10, P14, P15, 18)。
+ML エンジニアは、**実運用環境でバグが発生した場合、モデルをよりシンプルなバージョン、履歴バージョン、または再トレーニングバージョンに切り替えて対応**している (P6, P8, P10, P14, P15, 18).
 
 ## 4.3. Machine Learning Engineering is Very Experimental, Even in Production 4.3. 機械学習エンジニアリングは、プロダクションでも非常に実験的である
 
 ML engineering, as a discipline, is highly experimental and iterative in nature, especially compared to typical software engineering.
 MLエンジニアリングは、一般的なソフトウェアエンジニアリングと比較して、非常に実験的で反復的な性質を持つ分野. 
 Contrary to popular negative sentiment around the large numbers of experiments and models that don’t make it to production, we found that it’s actually okay for experiments and models not to make it to production.
-しかし、私たちは、実験やモデルが製品化されなくても構わないということを発見しました。
+一般に、大量の実験やモデルが製品化されないという事はネガティブなイメージがある. しかし、私たちは、**実験やモデルが製品化されなくても構わない**ということを発見した.
 What matters is making sure ideas can be prototyped and validated quickly—so that bad ones can be pruned away immediately.
-重要なのは、アイデアを素早くプロトタイプ化して検証し、悪いものはすぐに切り捨てることです。
+重要なのは、**アイデアを素早くプロトタイプ化して検証し、悪いものはすぐに切り捨てること**である.
 While there is no substitute for on-the-job experience to learn how to choose successful projects (P5), we document some self-reported strategies from our interviewees.
-成功するプロジェクトの選び方（P5）を学ぶには、実地経験に勝るものはありませんが、インタビューに答えてくれた人たちの自己申告による戦略をいくつかご紹介します。
+成功するプロジェクトの選び方（P5）を学ぶには、実地経験に勝るものはありませんが、インタビューに答えてくれた人たちの自己申告による戦略をいくつかご紹介する.
 
 ### 4.3.1. 4.3.1 Good project ideas start with collaborators. 4.3.1. 4.3.1 良いプロジェクトのアイデアは、協力者から始まる。
 
 Project ideas, such as new features, came from or were validated early by domain experts, data scientists and analysts who had already performed a lot of exploratory data analysis.
-新機能のようなプロジェクトのアイデアは、すでに多くの探索的データ分析を行っていたドメインエキスパート、データサイエンティスト、アナリストから生まれたり、早期に検証されたりしていました。
+新機能のようなプロジェクトのアイデアは、すでに多くの探索的データ分析を行っていたドメインエキスパート、データサイエンティスト、アナリストから生まれたり、早期に検証されたりしていた.
 P14 and P17 independently recounted successful project ideas that came from asynchronous conversations on Slack:
-P14とP17は、Slack上の非同期な会話から生まれたプロジェクトの成功例を独自に語っている。
+P14とP17は、**Slack上の非同期な会話から生まれたプロジェクトの成功例**を独自に語っている.
 P17 said, “I look for features from data scientists, [who have ideas of] things that are correlated with what I’m trying to predict.”
-P17は、"私はデータサイエンティストから機能を探します。"私が予測しようとしているものと相関しているものについてのアイデアを持っています。
+P17は、"私はデータサイエンティストから機能を探す."私が予測しようとしているものと相関しているものについてのアイデアを持っている.
 Solely relying on other collaborators wasn’t enough, though—P5 mentioned that they “still need to be pretty proactive about what to search for.”
-しかし、他の協力者に頼るばかりでは不十分で、P5は「何を探すかについて、まだかなり積極的になる必要がある」と述べている。
+しかし、他の協力者に頼るばかりでは不十分で、P5は「何を探すかについて、まだかなり積極的になる必要がある」と述べている.
 
 Some organizations explicitly prioritized cross-team collaboration as part of their culture.
-チーム横断的なコラボレーションを文化として明確に優先している組織もありました。
+**チーム横断的なコラボレーションを文化として明確に優先している組織**もあった.
 P11 said:
 P11 はこう言っています。
 
-- We really think it’s important to bridge that gap between what’s often, you know, a [subject matter expert] in one room annotating and then handing things over the wire to a data scientist—a scene where you have no communication. So we make sure there’s both data science and subject matter expertise representation [on our teams]. ある部屋で専門家がアノテーションを行い、それをデータサイエンティストに引き継ぐというような、コミュニケーションのない現場とのギャップを埋めることが重要だと考えています。 ですから、私たちのチームにはデータサイエンスと専門知識の両方が存在するようにしています。
-
+- We really think it’s important to bridge that gap between what’s often, you know, a [subject matter expert] in one room annotating and then handing things over the wire to a data scientist—a scene where you have no communication. So we make sure there’s both data science and subject matter expertise representation [on our teams]. ある部屋で専門家がアノテーションを行い、それをデータサイエンティストに引き継ぐというような、**コミュニケーションのない現場とのギャップを埋めることが重要だ**と考えている. ですから、**私たちのチームにはデータサイエンスと専門知識の両方が存在するようにしている**.
 To foster a more collaborative culture, P16 discussed the concept of “building goodwill” with other teams through tedious tasks that weren’t always explicitly a part of company plans:
-P16は、より協力的な文化を醸成するために、会社の計画には必ずしも明示されていない面倒な仕事を通じて、他のチームと「親善を深める」というコンセプトを打ち出しました。
+P16は、より協力的な文化を醸成するために、会社の計画には必ずしも明示されていない面倒な仕事を通じて、他のチームと「親善を深める」というコンセプトを打ち出した.
 
-- Sometimes we’ll fix something [here and] there to like build some good goodwill, so that we can call on them in the future...I do this stuff as I have to do it, not because I’m really passionate about doing it. 時には、将来、彼らに声をかけることができるよう、好意を持ってもらうために、あちこちを修理することもあります...私は、本当に情熱を持ってやっているわけではなく、やらなければならないこととしてやっています。
+- Sometimes we’ll fix something [here and] there to like build some good goodwill, so that we can call on them in the future...I do this stuff as I have to do it, not because I’m really passionate about doing it. 時には、将来、彼らに声をかけることができるよう、好意を持ってもらうために、あちこちを修理することもあります...私は、本当に情熱を持ってやっているわけではなく、やらなければならないこととしてやっている.
 
 ### 4.3.2. 4.3.2 Iterate on the data, not necessarily the model. 4.3.2. 4.3.2 必ずしもモデルではなく、データに対して反復する。
 
 Several participants recommended focusing on experiments that provide additional context to the model, typically via new features (P5, P6, P11, P12, P14, P16, P17, P18, P19).
-何人かの参加者は、典型的には新機能によってモデルに追加のコンテキストを提供する実験に焦点を当てることを推奨した（P5, P6, P11, P12, P14, P16, P17, P18, P19）。
+何人かの参加者は、典型的には新機能によってモデルに追加のコンテキストを提供する実験に焦点を当てることを推奨した（P5, P6, P11, P12, P14, P16, P17, P18, P19）. 
 P17 mentioned that most ML projects at their organization centered around adding new features.
-P17は、組織内のほとんどのMLプロジェクトが新機能の追加を中心にしていると述べた。
+P17は、組織内のほとんどのMLプロジェクトが新機能の追加を中心にしていると述べた. 
 P14 mentioned that one of their current projects was to move feature engineering pipelines from Scala to SparkSQL (a language more familiar to ML engineers and data scientists), so experiment ideas could be coded and validated faster.
-P14は、現在のプロジェクトの1つは、機能エンジニアリングパイプラインをScalaからSparkSQL（MLエンジニアやデータ科学者に馴染みのある言語）に移行し、実験のアイデアをより速くコード化し、検証できるようにすることであると述べました。
+P14は、現在のプロジェクトの1つは、機能エンジニアリングパイプラインをScalaからSparkSQL（MLエンジニアやデータ科学者に馴染みのある言語）に移行し、実験のアイデアをより速くコード化し、検証できるようにすることであると述べた.
 P11 noted that iterating on the data, not the model, was preferable because it resulted in faster velocity:
-P11 は、モデルではなくデータで反復することが、より速い速度につながるため好ましいと述べています。
+P11 は、**モデルではなくデータで反復することが、より速い速度につながるため好ましい**と述べている.
 
-- I’m gonna start with a [fixed] model because it means faster [iterations]. And often, like most of the time empirically, it’s gonna be something in our data that we can use to kind of push the boundary...obviously it’s not like a dogmatic We Will Never Touch The Model, but it shouldn’t be our first move. 私は、「固定」モデルから始めることにしています。 経験的に、ほとんどの場合、境界を押し広げるために使えるデータの何かがあるはずです...もちろん、独断で「モデルには絶対に触れない」と決めているわけではありませんが、それが最初の行動であるべきではありません。
+- I’m gonna start with a [fixed] model because it means faster [iterations]. And often, like most of the time empirically, it’s gonna be something in our data that we can use to kind of push the boundary...obviously it’s not like a dogmatic We Will Never Touch The Model, but it shouldn’t be our first move. 私は、「固定」モデルから始めることにしている. 経験的に、ほとんどの場合、境界を押し広げるために使えるデータの何かがあるはずです...もちろん、独断で「モデルには絶対に触れない」と決めているわけではないが、それが最初の行動であるべきではない.
 
 Prior work has also identified the importance of data work [62].
-先行研究でも、データ作業の重要性が指摘されている[62]。
+先行研究でも、データ作業の重要性が指摘されている[62].
 
-### 4.3.3. Account for diminishing returns. 4.3.3. 収穫逓減を考慮する。
+### 4.3.3. Account for diminishing returns. 4.3.3. 収穫逓減を考慮する
 
 At many organizations (especially larger companies), deployment can occur in stages—i.e., first validated offline, then deployed to 1% of production traffic, then validated again before a deployment to larger percentages of traffic.
-多くの組織 (特に大企業) では，まずオフラインで検証し，次に本番トラフィックの 1%に展開し，さらに大きな割合のトラフィックに展開する前に再度検証するといったように，段階的な展開が行われることがある．
+多くの組織 (特に大企業) では，**まずオフラインで検証し，次に本番トラフィックの 1%に展開し，さらに大きな割合のトラフィックに展開する前に再度検証するといったように，段階的な展開が行われる**ことがある．
 Some interviewees (P5, P6, P18) explained that experiment ideas typically have diminishing performance gains in later stages of deployment.
-インタビューに答えてくれた人たち（P5、P6、P18）は、実験のアイデアは、通常、展開の後半になると性能向上が鈍化すると説明している。
+インタビューに答えてくれた人たち（P5、P6、P18）は、**実験のアイデアは、通常、展開の後半になると性能向上が鈍化**すると説明している.
 As a result, P18 mentioned that they would initially try multiple ideas but focus only on ideas with the largest performance gains in the earliest stage of deployment; they emphasized the importance of “validat[ing] ideas offline...[to make] productivity higher.”
-その結果，P18 は，最初は複数のアイデアを試してみるが，展開の初期段階で最も大きな性能向上が得られるアイデアのみに焦点を絞ると述べ，「オフラインでアイデアを検証し...（生産性を）高める」ことの重要性を強調している．
+その結果，P18 は，最初は複数のアイデアを試してみるが，**展開の初期段階で最も大きな性能向上が得られるアイデアのみに焦点を絞る**と述べ，「オフラインでアイデアを検証し...（生産性を）高める」ことの重要性を強調している．
 P19 corroborated this by saying end-to-end staged deployments could take several months, making it a high priority to kill ideas with minimal gain in early stages to avoid wasting future time.
-P19はこれを裏付けるように、エンドツーエンドの段階的デプロイメントには数ヶ月かかることがあり、将来の時間を無駄にしないために、初期段階で最小限の利益しか得られないアイデアを潰すことが優先される、と述べています。
+P19はこれを裏付けるように、エンドツーエンドの段階的デプロイメントには数ヶ月かかることがあり、将来の時間を無駄にしないために、**初期段階で最小限の利益しか得られないアイデアを潰すことが優先される**、と述べている.
 Additionally, to help with validating early, many engineers discussed the importance of a sandbox for stress-testing their ideas (P1, P5, P6, P11, P12, P13, P14, P15, P17, P18, P19).
-さらに、早期検証のために、多くのエンジニアが、アイデアをストレステストするためのサンドボックスの重要性について議論しました（P1、P5、P6、P11、P12、P13、P14、P15、P17、P18、P19）。
+さらに、早期検証のために、多くのエンジニアが、アイデアをストレステストするためのサンドボックスの重要性について議論しました（P1、P5、P6、P11、P12、P13、P14、P15、P17、P18、P19）.
 For some engineers, this was a single Jupyter notebook; others’ organizations had separate sandbox environments to load production models and run ad-hoc queries.
-あるエンジニアにとっては、これは単一のJupyterノートブックでしたが、他のエンジニアの組織では、本番モデルをロードし、アドホッククエリを実行するための別のサンドボックス環境を持っていました。
+あるエンジニアにとっては、これは単一のJupyterノートブックでしたが、他のエンジニアの組織では、本番モデルをロードし、アドホッククエリを実行するための別のサンドボックス環境を持っていた.
 
 ### 4.3.4. Small changes are preferable to larger changes. 4.3.4. 大きな変更より小さな変更が望ましい。
 
 In line with software best practices, interviewees discussed keeping their code changes as small as possible for multiple reasons, including faster code review, easier validation, and fewer merge conflicts (P2, P5, P6, P10, P11, P18, P19).
-ソフトウェアのベストプラクティスに沿って、インタビューに応じた人々は、コードレビューの迅速化、検証の容易化、マージの競合の減少など、複数の理由から、コードの変更をできるだけ小さくすることを議論しました (P2, P5, P6, P10, P11, P18, P19)。
+ソフトウェアのベストプラクティスに沿って、インタビューに応じた人々は、コードレビューの迅速化、検証の容易化、マージの競合の減少など、複数の理由から、**コードの変更をできるだけ小さくすること**を議論した (P2, P5, P6, P10, P11, P18, P19).
 Additionally, changes in large organizations were primarily made in config files instead of main application code (P1, P2, P5, P10, P12, P19).
-さらに、大規模な組織における変更は、主にメインアプリケーションのコードではなく、設定ファイルで行われました (P1、P2、P5、P10、P12、P19)。
+さらに、**大規模な組織における変更は、主にメインアプリケーションのコードではなく、設定ファイルで行われた** (P1、P2、P5、P10、P12、P19).
 For example, instead of editing parameters directly in a Python model training script, it was preferable to edit a config file (e.g., JSON or YAML) of parameters instead and link the config file to the model training script.
-例えば、Pythonのモデル学習スクリプトで直接パラメータを編集するのではなく、代わりにパラメータの設定ファイル（JSONやYAMLなど）を編集し、その設定ファイルをモデル学習スクリプトにリンクすることが望ましいとされた。
+例えば、Pythonのモデル学習スクリプトで直接パラメータを編集するのではなく、**代わりにパラメータの設定ファイル（JSONやYAMLなど）を編集し**、その設定ファイルをモデル学習スクリプトにリンクすることが望ましいとされた. (user-data.zipやitem-data.zipの生成処理で使えないかな...! methodの指定方法とか、user_idの範囲とか?)
 
 P19 described how, as their team matured, they edited the model code less:
-P19は、彼らのチームが成熟するにつれて、モデルコードの編集が少なくなっていったことを説明しました。
+P19は、彼らのチームが成熟するにつれて、モデルコードの編集が少なくなっていったことを説明した.
 “Eventually it was the [DAG] pipeline code which changed more...there was no reason to touch the [model] code...everything is config-based.”
-「最終的には[DAG]パイプラインのコードがより変更されました...モデルコードに触れる理由はありませんでした...すべては設定ベースです。
+「最終的には[DAG]パイプラインのコードがより変更されました...モデルコードに触れる理由はありませんでした...すべては設定ベースである.
 P5 mentioned that several of their experiments involved “[taking] an existing model, modify[ing] [the config] with some changes, and deploying it within an existing training cluster.”
-P5は、彼らの実験のいくつかは、"[既存の]モデルを取り、いくつかの変更で[設定]を修正し、既存のトレーニングクラスタ内でそれをデプロイする "ことを含んでいると述べました。
+P5は、彼らの実験のいくつかは、"[既存の]モデルを取り、いくつかの変更で[設定]を修正し、既存のトレーニングクラスタ内でそれをデプロイする "ことを含んでいると述べた.
 Supporting a config-driven development was important, P1 said, otherwise bugs might arise when promoting the experiment idea to production:
-P1は、コンフィグ駆動の開発をサポートすることが重要であり、そうでなければ、実験のアイデアを本番に進める際にバグが発生する可能性があると述べています。
+P1は、**config-drivenの開発をサポートすることが重要であり、そうでなければ、実験のアイデアを本番に進める際にバグが発生する可能性がある**と述べている.
 
-- People might forget to, when they spawn multiple processes, to do data loading in parallel, they might forget to set different random seeds, especially [things] you have to do explicitly many times...you’re talking a lot about these small, small things you’re not going to be able to catch [at deployment time] and then of course you won’t have the expected performance in production. 複数のプロセスを起動し、並行してデータをロードする際に、異なる乱数種を設定することを忘れるかもしれません。特に、明示的に何度も行わなければならないことについては、このように小さな、小さなことをたくさん話していると、（デプロイ時に）キャッチできなくなり、当然、本番では期待通りのパフォーマンスが得られません。
+- People might forget to, when they spawn multiple processes, to do data loading in parallel, they might forget to set different random seeds, especially [things] you have to do explicitly many times...you’re talking a lot about these small, small things you’re not going to be able to catch [at deployment time] and then of course you won’t have the expected performance in production. 複数のプロセスを起動し、並行してデータをロードする際に、異なる乱数種を設定することを忘れるかもしれない. 特に、明示的に何度も行わなければならないことについては、このように小さな、小さなことをたくさん話していると、（デプロイ時に）キャッチできなくなり、当然、本番では期待通りのパフォーマンスが得られない.
 
 Because ML experimentation requires many considerations to yield correct results—e.g., setting random seeds, accessing the same versions of code libraries and data—constraining engineers to configonly changes can reduce the number of bugs.
-MLの実験では、ランダムな種の設定、同じバージョンのコードライブラリやデータへのアクセスなど、正しい結果を得るために多くの配慮が必要なため、エンジニアが設定変更のみを行うように制限することで、バグの数を減らすことができます。
+MLの実験では、ランダムな種の設定、同じバージョンのコードライブラリやデータへのアクセスなど、正しい結果を得るために多くの配慮が必要なため、エンジニアが設定変更のみを行うように制限することで、バグの数を減らすことができる.
 
 ## 4.4. Operationalizing Model Evaluation is an Active Effort 4.4. モデル評価の運用は積極的な努力で
 
 We found that MLEs described intensive model evaluation efforts at their companies to keep up with data changes, product and business requirement changes, user changes, and organizational changes.
-MLE は、データの変更、製品およびビジネス要件の変更、ユーザーの変更、組織の変更に対応するため、各社で集中的にモデル評価を行っていることを説明しました。
+MLE は、データの変更、製品およびビジネス要件の変更、ユーザーの変更、組織の変更に対応するため、各社で集中的にモデル評価を行っていることを説明した.
 The goal of model evaluation is to prevent repeated failures and bad models from making it to production while maintaining velocity— i.e., the ability for pipelines to quickly adapt to change.
-モデル評価の目的は、失敗を繰り返したり、悪いモデルが本番稼動するのを防ぐと同時に、パイプラインが変化に迅速に対応する能力を維持することです。
+モデル評価の目的は、失敗を繰り返したり、悪いモデルが本番稼動するのを防ぐと同時に、パイプラインが変化に迅速に対応する能力を維持することである.
 
-### 4.4.1. Validation datasets should be dynamic. 4.4.1. 検証用データセットは動的であるべきである。
+### 4.4.1. Validation datasets should be dynamic. 4.4.1. 検証用データセットは動的であるべきである
 
 Many engineers reported processes to analyze live failure modes and update the validation datasets to prevent similar failures from happening again (P1, P2, P5, P6, P8, P11, P15, P16, P17, P18).
-多くのエンジニアが，実際に発生した故障モードを分析し，同様の故障が再び発生しないように検証データセットを更新するプロセスを報告している（P1, P2, P5, P6, P8, P11, P15, P16, P17, P18）．
+多くのエンジニアが，**実際に発生した故障モードを分析し，同様の故障が再び発生しないように検証データセットを更新するプロセス(??)**を報告している（P1, P2, P5, P6, P8, P11, P15, P16, P17, P18）．
 P1 described this process as a departure from what they had learned in academia:
-P1は、このプロセスを、彼らがアカデミアで学んだことからの逸脱であると述べています。
+P1は、このプロセスを、彼らがアカデミアで学んだことからの逸脱であると述べている.
 “You have this classic issue where most researchers are evaluat[ing] against fixed data sets...[but] most industry methods change their datasets.”
-「ほとんどの研究者は固定されたデータセットに対して評価を行っていますが，産業界の手法ではデータセットを変更することが多いのです」。
-We found that these dynamic validation sets served two purposes: (1) the obvious goal of making sure the validation set reflects live data as much as possible, given new learnings about the problem and shifts in the aggregate data distribution, and (2) the more subtle goal of addressing localized shifts that subpopulations may experience (e.g., low accuracy for a specific label).
-1）問題についての新たな学習や総データ分布の変化を考慮し、検証セットが実際のデータを可能な限り反映するようにするという明白な目標、および（2）部分集団が経験する局所的な変化（例えば、特定のラベルに対する精度が低いなど）に対処するというより繊細な目標である。
+「**ほとんどの研究者は固定されたデータセットに対して評価を行っているが，産業界の手法ではデータセットを変更することが多いのである**」. 
+We found that these dynamic validation sets served two purposes:
+この動的検証セットには、2つの目的があることがわかった:
+
+- (1) the obvious goal of making sure the validation set reflects live data as much as possible, given new learnings about the problem and shifts in the aggregate data distribution, (1）問題についての新たな学習や総データ分布の変化を考慮し、**検証セットが実際のデータを可能な限り反映するようにする**という明白な目標
+- (2) the more subtle goal of addressing localized shifts that subpopulations may experience (e.g., low accuracy for a specific label).（2）部分集団が経験する局所的な変化（例えば、特定のラベルに対する精度が低いなど）に対処するというより繊細な目標.
 
 The challenge with (2) is that many subpopulations are typically unforeseen; many times they are discovered post-deployment.
-(2)の課題は、多くのサブ集団が通常予見できないものであり、多くの場合、展開後に発見されることである。
+(2)の課題は、**多くのサブ集団が通常予見できないものであり、多くの場合、展開後に発見されること**である.
 To enumerate them, P11 discussed how they systematically bucketed their data points based on the model’s error and created validation sets for each underperforming bucket:
-これらを列挙するために、P11は、モデルの誤差に基づいてデータポイントを体系的にバケット化し、パフォーマンスが低いバケットごとに検証セットを作成した方法について述べました。
+これらを列挙するために、P11は、モデルの誤差に基づいてデータポイントを体系的にバケット化し、**パフォーマンスが低いバケットごとに検証セットを作成した方法**について述べた.
 
 - Some [of the metrics in my tool] are standard, like a confusion matrix, but it’s not really effective because it doesn’t drill things down [into specific subpopulations that users care about]. Slices are user-defined, but sometimes it’s a little bit more automated. [During offline evaluation, we] find the error bucket that [we] want to drill down, and then [we] either improve the model in very systematic ways or improve [our] data in very systematic ways. 私のツールの測定基準には）混乱マトリックスのような標準的なものもありますが、（ユーザーが気にする特定の部分集団に）掘り下げることができないので、あまり効果的ではありません。 スライスはユーザーが定義するものですが、もう少し自動化されている場合もあります。 [オフライン評価では、ドリルダウンしたいエラーのバケットを見つけ、非常に体系的な方法でモデルを改善するか、非常に体系的な方法でデータを改善します。
 

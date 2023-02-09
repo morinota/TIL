@@ -14,11 +14,11 @@ Countering Popularity Bias by Regularizing Score Differences
 ## 0.3. abstruct 0.3. abstruct
 
 Recommendation system often suffers from popularity bias.
-レコメンデーションシステムはしばしば人気度バイアスに悩まされる。
+レコメンデーションシステムはしばしば人気度バイアスに悩まされる.
 Often the training data inherently exhibits long-tail distribution in item popularity (data bias).
-多くの場合、学習データはアイテムの人気度においてロングテール分布を示している（データバイアス）。
+多くの場合、学習データはアイテムの人気度においてロングテール分布を示している（データバイアス）.
 Moreover, the recommendation systems could give unfairly higher recommendation scores to popular items even among items a user equally liked, resulting in over-recommendation of popular items (model bias).
-さらに、推薦システムは、ユーザが同じように好きなアイテムであっても、人気のあるアイテムに不当に高い推薦スコアを与えることがあり、その結果、人気のあるアイテムを過剰に推薦してしまう（モデルの偏り）。
+さらに、推薦システムは、ユーザが同じように好きなアイテムであっても、人気のあるアイテムに不当に高い推薦スコアを与えることがあり、その結果、人気のあるアイテムを過剰に推薦してしまう（モデルの偏り）.
 In this study we propose a novel method to reduce the model bias while maintaining accuracy by directly regularizing the recommendation scores to be equal across items a user preferred.
 そこで本研究では，**ユーザが好むアイテム間で推薦スコアが等しくなるように直接正則化**することで，精度を維持したままモデルの偏りを低減する新しい手法を提案する．
 Akin to contrastive learning, we extend the widely used pairwise loss (BPR loss) which maximizes the score differences between preferred and unpreferred items, with a regularization term that minimizes the score differences within preferred and unpreferred items, respectively, thereby achieving both high debias and high accuracy performance with no additional training.
@@ -89,32 +89,32 @@ A debias method that does not involve collective score
 集合スコア
 
 To this end, we propose a novel debias method to reduce model bias.
-このため、我々はモデルの偏りを低減するための新しいデビアス法を提案する。
+このため、我々はモデルの偏りを低減するための新しいdebias methodを提案する.
 We refer to earlier studies of **contrastive learning** [11, 21], and propose to add a regularization term to the loss function to aid the recommendation system to predict equal recommendation scores across positive items for each user.
-我々は**対照学習(contrastive learning)**に関する先行研究[11, 21]を参照し、推薦システムが各ユーザーのポジティブアイテム間で等しい推薦スコアを予測することを支援するために、**損失関数に正則化項を追加すること**を提案する。
+我々は**対照学習(contrastive learning)**に関する先行研究[11, 21]を参照し、**推薦システムが各ユーザーのポジティブアイテム間で等しい推薦スコアを予測する(=人気アイテムのスコアを過剰に高くしない)**ことを支援するために、**損失関数にregularization termを追加すること**を提案する.
 Specifically, we extend the Bayesian Personalized Ranking Loss [26] which maximizes the score differences between positive and negative items, with a regularization term which minimizes the score differences within positive and negative items, respectively.
-具体的には、正アイテムと負アイテムのスコア差を最大化するベイズパーソナライズランキングロス[26]に、正アイテムと負アイテム内のスコア差をそれぞれ最小化する正則化項を追加し、拡張したものである.
+具体的には、正アイテムと負アイテムのスコア差を最大化する**Bayesian Personalized Ranking Loss**[26]に、正アイテムと負アイテム内のスコア差をそれぞれ最小化する **regularization term** を追加し、拡張したものである.
 As a result, the recommendation system model will predict equal scores across positive items, solving the model bias.
-その結果、推薦システムモデルは、ポジティブ項目間で同じスコアを予測し、モデルのバイアスを解決する。
+その結果、推薦システムモデルは、**ポジティブアイテム間で同じスコアを予測**し、モデルのバイアスを解決する. (=regularization termの役割)
 Simultaneously, the model will contrast item scores for positive and negative items, maintaining high accuracy.
-同時に、ポジティブ項目とネガティブ項目のスコアを対比させ、高い精度を維持することができる。
+同時に、**ポジティブアイテムネガティブアイテムのスコアを対比させ、高い精度を維持**することができる. (Ranking Lossの役割)
 Few prior research took the similar approach of regulating the scores only for positive items [7, 42].
 このような正則化項を導入した先行研究はほとんどない[7, 42]．
 These studies introduced a regularization term penalizing the size of the Pearson correlation between item popularity and scores of positive items.
-これらの研究では、項目の人気度とポジティブ項目のスコアとの間のピアソン相関の大きさにペナルティを課す正則化項を導入している。
+これらの研究では、**itemの人気度とポジティブitemのスコアとの間のピアソン相関の大きさにペナルティを課すregularization term**を導入している.(なるほど...既存研究とはregularization termのpenalize対象が異なるのか...!!)
 Our method shares similar motivation while improving performance and cost efficiency.
 本手法では，性能とコスト効率を向上させながら，同様の動機を共有する．
 
 Our research proceeds as follows.
-我々の研究は以下のように進められる。
+我々の研究は以下のように進められる.
 We propose to extend the BPR loss with a new regularization term to achieve both high accuracy and high debias performance.
-BPR損失を新しい正則化項で拡張し、高精度と高いデビアス性能を両立させることを提案する。
+BPR損失を新しい正則化項で拡張し、高精度と高いdebias性能を両立させることを提案する.
 To systematically test the effectiveness of our method, we design a synthetic experiment.
-本手法の有効性を系統的に検証するために、合成実験を計画する。
+本手法の有効性を系統的に検証するために、合成実験を計画する.
 We design a data with explicit popularity bias which induces model bias when training a recommendation system using the baseline BPR loss.
 まず，BPR損失を用いて推薦システムを学習する際に，**モデルに偏りを生じさせるような明示的な人気度バイアスを持つデータを作成**する．
 We then apply our regularization term and analyze its performance.
-そして、我々の正則化項を適用し、その性能を分析する。
+そして、我々の正則化項を適用し、その性能を分析する.
 As a result, our method outperformed earlier debias methods in terms of accuracy and debias performance.
 その結果，本手法は従来のデビアス手法を精度およびデビアス性能の点で凌駕していた．
 Additional comparison shows our method has advantages over the earlier methods in terms of computational validity and efficiency.
