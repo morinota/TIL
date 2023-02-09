@@ -1,4 +1,4 @@
-## link 
+## link
 
 - [pdf](https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf) pdf](https:
 
@@ -13,39 +13,39 @@ News Recommender Systems - Survey and Roads Ahead
 ## abstract アブストラクト
 
 More and more people read the news online, e.g., by visiting the websites of their favorite newspapers or by navigating the sites of news aggregators.
-お気に入りの新聞のウェブサイトを訪れたり、ニュースアグリゲーターのサイトを閲覧するなど、オンラインでニュースを読む人はますます増えています。
+お気に入りの新聞のウェブサイトを訪れたり、ニュースアグリゲーターのサイトを閲覧するなど、オンラインでニュースを読む人はますます増えている.
 However, the abundance of news information that is published online every day through different channels can make it challenging for readers to locate the content they are interested in.
-しかし、さまざまなチャネルを通じて毎日オンラインで発表される豊富なニュース情報は、読者が興味のあるコンテンツを見つけることを困難にしている場合があります。
+しかし、さまざまなチャネルを通じて毎日オンラインで発表される豊富なニュース情報は、読者が興味のあるコンテンツを見つけることを困難にしている場合がある.
 The goal of News Recommender Systems (NRS) is to make reading suggestions to users in a personalized way.
-ニュース推薦システム（NRS）の目標は、パーソナライズされた方法でユーザーに読書提案を行うことです。
+ニュース推薦システム（NRS）の目標は、パーソナライズされた方法でユーザーに読書提案を行うことである.
 Due to their practical relevance, a variety of technical approaches to build such systems have been proposed over the last two decades.
-その実用的な関連性から、過去20年間にそのようなシステムを構築するための様々な技術的アプローチが提案されてきた。
+その実用的な関連性から、過去20年間にそのようなシステムを構築するための様々な技術的アプローチが提案されてきた.
 In this work, we review the state-of-the-art of designing and evaluating news recommender systems over the last ten years.
-本研究では、過去10年間のニュース推薦システムの設計と評価に関する最先端技術をレビューする。
+本研究では、**過去10年間のニュース推薦システムの設計と評価に関する最先端技術をレビューする**.
 One main goal of the work is to analyze which particular challenges of news recommendation (e.g., short item life times and recency aspects) have been well explored and which areas still require more work.
-この研究の主な目的の一つは、ニュース推薦の特定の課題（例えば、短いアイテムのライフタイムや再帰性の側面など）がよく研究されており、どの領域がまだ多くの研究を必要としているかを分析することである。
+この研究の主な目的の一つは、**ニュース推薦の特定の課題（例えば、短いアイテムのライフタイムや再帰性の側面など）がよく研究されており、どの領域がまだ多くの研究を必要としているかを分析すること**である.
 Furthermore, in contrast to previous surveys, the paper specifically discusses methodological questions and today’s academic practice of evaluating and comparing different algorithmic news recommendation approaches based on accuracy measures.
-さらに、これまでの調査とは対照的に、本論文では、精度指標に基づいて異なるアルゴリズムによるニュース推薦アプローチを評価・比較する方法論的な質問と今日の学術的な実践について具体的に議論している。
+さらに、これまでの調査とは対照的に、**本論文では、精度指標に基づいて異なるアルゴリズムによるニュース推薦アプローチを評価・比較する方法論的な質問**と今日の学術的な実践について具体的に議論している.
 
 # Introduction はじめに
 
 The newspaper industry has experienced a substantial transformation during the last twenty years.
-新聞業界は、過去20年間に大きな変化を経験した。
+新聞業界は、過去20年間に大きな変化を経験した.
 Today, readers can find various sources of news online, e.g., on the web presences of traditional newspaper companies, on digitalonly news sites, or on news aggregation platforms provided, for example, by Google2 or Yahoo!3 .
-今日、読者は、伝統的な新聞社のウェブプレゼンス、デジタル専用のニュースサイト、あるいはGoogle2やYahoo！3が提供するニュース集約プラットフォームなど、さまざまなニュースソースをオンラインで見つけることができる。
+今日、読者は、伝統的な新聞社のウェブプレゼンス、デジタル専用のニュースサイト、あるいはGoogle2やYahoo！3が提供するニュース集約プラットフォームなど、さまざまなニュースソースをオンラインで見つけることができる.
 Additionally, the digital form of information delivery allows publishers to distribute new or updated content in real-time, leading to an increased speed of publication.
 さらに、デジタル形式の情報配信により、出版社は新しいコンテンツや更新されたコンテンツをリアルタイムで配信することができ、出版スピードの向上につながる。
 The availability of the various (often free) online news sources has led to a constant increase of users of such platforms [138].
 さまざまな（しばしば無料の）オンライン・ニュース・ソースが利用可能であるため，このようなプラットフォームの利用者は常に増加している[138]。
 At the same time, however, the abundance of available information and the constant update cycle make it increasingly challenging for readers to keep track of news that are most relevant to them.
-しかし同時に、利用可能な情報の多さと絶え間ない更新サイクルにより、読者が自分に最も関係のあるニュースを追跡することは、ますます困難になっている。
+しかし同時に、利用可能な情報の多さと絶え間ない更新サイクルにより、読者が自分に最も関係のあるニュースを追跡することは、ますます困難になっている.
 
 Recommender Systems have shown to be a valuable tool to help users in such situations of information overload [84].
-リコメンダーシステムは、このような情報過多の状況下でユーザーを支援するための貴重なツールであることが示されている[84]。
+リコメンダーシステムは、このような情報過多の状況下でユーザーを支援するための貴重なツールであることが示されている[84].
 The main tasks of such systems are typically to filter incoming streams of information according to the users’ preferences or to point them to additional items of interest in the context of a given object.
-このようなシステムの主なタスクは、典型的には、ユーザの好みに応じて入ってくる情報の流れをフィルタリングしたり、与えられたオブジェクトのコンテキストで興味のある追加のアイテムを指し示したりすることである。
+このようなシステムの主なタスクは、典型的には、ユーザの好みに応じて入ってくる情報の流れをフィルタリングしたり、与えられたオブジェクトのコンテキストで興味のある追加のアイテムを指し示したりすることである.
 During the past decades, significant advances in recommendation technology have been made.
-過去数十年の間に、推薦技術には大きな進歩があった。
+過去数十年の間に、推薦技術には大きな進歩があった.
 Recommenders have been successfully applied in a variety of domains , and the recommendable objects include movies, books, travel and tourism services, research articles, search queries, and many more [9, 15, 144].
 レコメンダーは様々な分野で応用され、映画、書籍、旅行・観光サービス、研究論文、検索クエリなど、多くの分野で成功を収めている [9, 15, 144]。
 
@@ -65,9 +65,9 @@ Another typical challenge in the news domain is that a user’s interest can dyn
 Due to the high practical relevance of the news recommendation problem and its specific challenges, a considerable number of research works has been published on this topic in particular within the last ten years.
 ニュース推薦問題は，その実用性の高さと特有の課題から，特に過去10年間にかなりの数の研究論文が発表されている．
 Many of these works propose novel algorithmic approaches to generate personalized recommendations.
-これらの研究の多くは、パーソナライズされた推薦文を生成するための新しいアルゴリズムアプローチを提案している。
+これらの研究の多くは、パーソナライズされた推薦文を生成するための新しいアルゴリズムアプローチを提案している.
 These algorithms are typically evaluated using offline experimental designs and existing log data.
-これらのアルゴリズムは、オフラインの実験デザインと既存のログデータを用いて評価されるのが一般的である。
+これらのアルゴリズムは、オフラインの実験デザインと既存のログデータを用いて評価されるのが一般的である.
 In recent years, however, recommender systems research in a variety of domains has shown that it is also important to evaluate recommendations in a more user- or system utility-oriented way [48, 78, 83, 96, 151].
 しかし，近年，さまざまな領域におけるレコメンダーシステムの研究により，よりユーザやシステムの効用を重視した方法でレコメンダーを評価することも重要であることが示されている[48, 78, 83, 96, 151]．
 These developments have also led to a number of alternative forms of assessing the quality of the recommendations, e.g., in terms of diversity [80, 161, 172].
@@ -407,7 +407,7 @@ Besides the question of how to balance diversity with accuracy, researchers inve
 In the news domain, these aspects have not been investigated much yet, even though some of these aspects – like the consideration of the time of the day when recommending [40] – might have an effect on the user’s short-term diversity preferences.
 ニュース領域では，これらの側面はまだあまり研究されていないが，推薦時に時間帯を考慮すること[40]などは，ユーザの短期的な多様性選好に影響を与える可能性がある．
 
-### Novelty 
+### Novelty
 
 Novelty, as a quality criterion for recommendations, was defined in terms of the non-obviousness of the item suggestions by Herlocker et al. [68].
 レコメンデーションの品質基準としての新規性は、Herlockerら[68]によってアイテム提案の非自明性という観点で定義された。
@@ -640,7 +640,7 @@ One main insight of these contests is that simply recommending those items that 
 A recent analysis of the performance of other approaches that took part in the NewsREEL challenge can be found in [46].
 NewsREELチャレンジに参加した他のアプローチのパフォーマンスに関する最近の分析は、[46]に記載されています。
 
-## Open Source News Evaluation Frameworks 
+## Open Source News Evaluation Frameworks
 
 As discussed above, the availability and quality of public news-related data sets can be a problem when evaluating news recommendation algorithms.
 上述したように、ニュース推薦アルゴリズムを評価する際に、公共ニュース関連データセットの利用可能性と品質が問題になることがあります。
