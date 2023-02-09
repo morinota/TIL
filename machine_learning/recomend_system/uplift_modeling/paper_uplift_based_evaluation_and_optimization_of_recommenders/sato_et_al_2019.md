@@ -23,9 +23,32 @@ The contributions of this paper are summarized as follows.
 
 # 2. Uplift-Based Evaluation
 
+Recommenders are typically evaluated in terms of recommendation accuracy. A recommender is considered to be better than others if a larger number of its recommended items are purchased. We refer to this evaluation approach as accuracy-based evaluation. Precision, which is a commonly utilized accuracy metric for recommenders, is defned as the number of purchases divided by the number of recommendations. However, items may have been bought even without recommendations if the user was already aware of and had a preference for those items. Thus, we aim to evaluate recommenders in terms of the uplift they achieve.
+
 ## 2.1. Discrepancy between Accuracy and Uplift
 
+In this subsection, we demonstrate that accuracy metrics such as precision are unsuitable for the goal of increasing user purchases. To describe two cases with and without a recommendation, we adopt the concept of potential outcome from causal inference [15, 28, 37]. Let $Y^T \in {0, 1}$ be the potential outcome with a recommendation (treatment condition) and $Y^C \in {0, 1}$ be the potential outcome without a recommendation (control condition)2. $Y^T= 1$ and $Y^C= 1$ indicate that an item3 will be purchased when recommended and not recommended, respectively. The uplift $\tau$ of an item for a given user4 is $Y^T - Y^C$ . Considering the two possible actions of a user in the two given scenarios, there are four item classes for the user:
+
+- True Uplift (TU). $Y^T= 1$ and $Y^C = 0$, hence $\tau = 1$. The item will be purchased if recommended, but will not be purchased if not recommended.
+- False Uplift (FU). $Y^T= Y^C = 1$, hence $\tau= 0$. The item will be purchased regardless of whether it is recommended.
+- True Drop (TD). $Y^T= 0$ and $Y^C = 1$, hence $\tau = −1$. The item will be purchased if it is not recommended, but will not be purchased if it is recommended.
+- False Drop (FD). $Y^T = Y^C = 0$, hence $\tau= 0$. The item will not be purchased regardless of whether it is recommended.
+
+To intuitively illustrate the diference between the uplift and accuracy in an ofine evaluation setting, we consider four lists of ten recommendations, as shown in Fig. 1. We assume that we have an ofine dataset, which includes both purchase logs and recommendation logs for a currently deployed recommender. Note that TU items are only purchased if recommended, and TD items are only purchased if not recommended. Purchases of other FU and FD items do not depend on recommendations. The total uplift that would have been obtained if all the ten items were recommended in the past is shown in Table 1. We also list precision under two settings: one with all items on the list, and the other with only the items recommended in the logs. The former is a common setting for the ofine evaluations of recommenders [9]. The latter is a setting employed in the previous work [7, 25] to estimate the online performance of a recommender. The former precision value and total uplift exhibit opposite trends for these samples. This means that the best model for achieving a higher uplift cannot be selected based on this former precision. Excluding items without recommendations does not resolve this issue. The latter precision value, calculated using only the recommended items (items with solid boundaries in Fig. 1), exhibits the same value for all lists, and is still unable to select the best model.
+
+As demonstrated by the above illustration, accuracy-based evaluation is not suitable for evaluating the uplift caused by recommenders. We need to employ an evaluation metric designed for uplift-based evaluation. However, we cannot directly calculate the total uplift, because we only observe either $Y^T$ or $Y^C$ for a user-item pair at a given time. To overcome this difculty, we apply a causal inference framework to estimate the average treatment efect.
+
 ## 2.2. Causal Inference Framework
+
+In this subsection, we introduce the causal inference framework [15, 28, 37], which we apply to the uplift-based evaluation of recommenders in the next subsection. The treatment efect τ for a subject is defned as the diference between the potential outcomes with and without treatment: $\tau \equiv Y^T - Y^C$ . Note that $\tau$ is not directly measurable, because each subject is either treated or not, and either $Y^T$ or $Y^C$ is observed. However, we can estimate the average treatment efect (ATE), which is expressed as $E[\tau] = E[Y^T] − E[Y^C]$. 
+
+Let $Z \in {0, 1}$ be the binary indicator for the treatment, with $Z = 1$ and $Z = 0$ indicating that the subject does and does not receive treatment, respectively. The covariates associated with the subject are denoted by $X$, e.g., demographic and past records of the subject before treatment assignment. Consider $N$ subjects, indexed by $n$. We use $S^T$ and $S^C$ to denote the sets of subjects who do and do not receive treatment, respectively. Naively, the ATE can be estimated as the diference between the average outcomes of the two sets;
+
+$$
+\tag{1}
+$$
+
+If treatment is randomly assigned to subjects independent of the potential outcomes, i.e., (YT ,YC )⊥Z, then τˆ converges to the ATE almost surely when N → ∞ (see the proof of [31, Theorem 9.2]). Because the independence condition (YT ,YC )⊥Z is a strong assumption, we instead consider conditional independence (YT , YC ) ⊥Z |X, which means that the covariates X contain all confounders of (YT ,YC ) and Z [28]. Under the conditional independence, the inverse propensity scoring (IPS) estimator,
 
 ## 2.3. Uplift Estimates for Recommenders
 

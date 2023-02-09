@@ -15,7 +15,7 @@ TIP
 ヒント
 
 The code for this chapter is in the chapter_06_uow branch on GitHub:
-この章のコードは、GitHubのchapter_06_uowブランチにあります。
+この章のコードは、GitHubのchapter_06_uowブランチにある.
 
 ```
 git clone https://github.com/cosmicpython/code.git

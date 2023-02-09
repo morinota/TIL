@@ -75,26 +75,26 @@ These observations suggest that further research efforts are needed to deepen ou
 ## 2.1. Item Recommendation from Implicit Feedback 暗黙のフィードバックからのアイテム推薦
 
 The iALS algorithm targets the problem of learning an item recommender that is trained from implicit feedback [21].
-iALSアルゴリズムでは、暗黙のフィードバックから学習されたアイテム推薦器を学習する問題を扱う[21]。
+iALSアルゴリズムでは、暗黙のフィードバックから学習されたアイテム推薦器を学習する問題を扱う[21].
 In this problem setting, items from a set I should be recommended to users u ∈ U. For learning such a recommender, a set of positive user-item pairs S⊆U × I is given.
 この問題では、ユーザu∈Uに対して集合Iからアイテムを推薦する必要がある. このような推薦器を学習するために、正のユーザ・アイテムペア集合S⊆U × Iが与えられる. 
 For example, a pair $(u, i)\in S$ could express that user u watched movie i, or customer u bought product i. A major difficulty of learning from implicit feedback is that the pairs in S are typically positive only and need to be contrasted with all the unobserved pairs (U × I)∖S.
-例えば、ペア $(u, i)\in S$ は、ユーザuが映画iを見たこと、あるいは顧客uが製品iを買ったことを表現することができる。**暗黙のフィードバックからの学習の大きな困難は、S中のペアが典型的に正のみ**で、すべての未観測ペア（U×I)/Sと対比される必要があることである。
+例えば、ペア $(u, i)\in S$ は、ユーザuが映画iを見たこと、あるいは顧客uが製品iを買ったことを表現することができる. **暗黙のフィードバックからの学習の大きな困難は、S中のペアが典型的に正のみ**で、すべての未観測ペア（U×I)/Sと対比される必要があることである.
 For example, the movies that haven't been watched by a user or the products that haven't been bought by a customer need to be considered when learning the preferences of a user.
-例えば、ユーザの嗜好を学習する際には、ユーザが見ていない映画や顧客が買っていない製品を考慮する必要がある。
+例えば、ユーザの嗜好を学習する際には、ユーザが見ていない映画や顧客が買っていない製品を考慮する必要がある.
 A recommender algorithm uses S to learn a scoring function $\hat{y} ; U \times I -> \mathbb{R}$ that assigns a score $\hat{y}(u,i)$ to each user-item pair (u, i).
-レコメンダーアルゴリズムは、Sを用いて、ユーザとアイテムのペア（u, i）にスコア $hat{y}(u,i)$ を割り当てるスコアリング関数$U \times I -> \mathbb{R}$を学習する。
+レコメンダーアルゴリズムは、Sを用いて、ユーザとアイテムのペア（u, i）にスコア $hat{y}(u,i)$ を割り当てるスコアリング関数$U \times I -> \mathbb{R}$を学習する.
 A common application of the scoring function is to return a ranked list of recommended items for a user u, e.g., sorting all items by $\hat{y}(u,i)$ and recommending the k highest ranked ones to the user.
-スコアリング関数の一般的な応用例として、ユーザuに対する推奨アイテムのランク付けリストを返すことが挙げられる。例えば、すべてのアイテムを$hat{y}(u,i)$でソートし、最もランクの高いk個のアイテムをユーザに推奨することが可能である。
+スコアリング関数の一般的な応用例として、ユーザuに対する推奨アイテムのランク付けリストを返すことが挙げられる. 例えば、すべてのアイテムを$hat{y}(u,i)$でソートし、最もランクの高いk個のアイテムをユーザに推奨することが可能である. 
 
 ## 2.2. iALS: Model, Loss and Training iALS モデル、損失、トレーニング
 
 iALS uses the matrix factorization model for scoring a user-item pair.
-iALSは、ユーザとアイテムのペアをスコアリングするために、行列分解モデルを用いる。
+iALSは、ユーザとアイテムのペアをスコアリングするために、**行列分解モデル**を用いる.
 Each user u is embedded into a d dimensional embedding vector Math 4 and every item i into a an embedding vector $w_u \in \mathbb{R}^d$.
-各ユーザーuはd次元の埋め込みベクトルMath 4に、各アイテムiは埋め込みベクトル$w_u \in \mathbb{R}^d$に埋め込まれる。
+各ユーザーuはd次元の埋め込みベクトルMath 4に、各アイテムiは埋め込みベクトル$w_u \in \mathbb{R}^d$に埋め込まれる.
 The predicted score of a user-item pair is the dot product between their embedding vectors:
-ユーザとアイテムのペアの予測スコアは、それらの埋め込みベクトル間の内積である。
+ユーザとアイテムのペアの予測スコアは、それらの**埋め込みベクトル間の内積**である.
 Its scoring function is
 そのスコアリング関数は
 
@@ -103,18 +103,18 @@ $$
 $$
 
 The model parameters of matrix factorization are the embedding matrices W and H. These model parameters are learned by minimizing the iALS loss, L( W, H), which consists of three components:
-行列分解のモデルパラメータは埋め込み行列WとHであり、これらのモデルパラメータは3つの要素からなるiALS損失$L(W, H)$を最小化することによって学習される。
+行列分解のモデルパラメータは埋め込み行列WとHであり、これらのモデルパラメータは3つの要素からなるiALS損失$L(W, H)$を最小化することによって学習される.
 
 $$
 \begin{align} L(W,H) &= L_S(W,H) + L_I(W,H) + R(W,H) \end{align} \tag*{2}
 $$
 
 There exist slightly different definitions for these components in the literature on matrix factorization with ALS.
-**ALSを用いた行列分解に関する文献**では、これらの成分について若干異なる定義が存在する。
+**ALSを用いた行列分解に関する文献では、これらの成分について若干異なる定義が存在する**.(=なるほど.オリジナルの論文は違う形だった...!!)
 We use the formalization that weights all pairs by an unobserved weight [ 2] and allow for frequency-based regularizer as suggested by [ 29] for ALS algorithms for rating prediction.
-我々は、すべてのペアを未知の重みで重み付けする形式 [ 2 ] を使用し、評価値予測のためのALSアルゴリズムに [ 29 ] が提案したように、周波数ベースの正則化を可能にします。
+我々は、**すべてのペアを未知の重みで重み付けする形式** [ 2 ] を使用し、評価値予測のためのALSアルゴリズムに [ 29 ] が提案したように、**frequency-basedの正則化**を可能にする.
 The components are defined as:
-構成要素は以下のように定義される。
+構成要素は以下のように定義される.
 
 $$
 \begin{align} L_S(W,H) &= \sum _{(u,i) \in S} (\hat{y}(u,i) - 1)^2 \end{align}
@@ -132,57 +132,55 @@ $$
 $$
 
 where
-どこ
+ここで
 
 $$
 \begin{align*} \#_u = |\lbrace i : (u,i) \in S\rbrace |+\alpha _0 |I|, \quad \#_i = |\lbrace u : (u,i) \in S\rbrace |+\alpha _0 |U|. \end{align*}
 $$
 
 - The first component LS is defined over the observed pairs S and measures how much the predicted score differs from the observed label, here 1.
-  - 第1成分LSは**観測されたペアSに対して**定義され、予測スコアが観測されたラベル（ここでは1）とどの程度異なるかを測定するものである。
+  - 第1成分LSは**観測されたペアSに対して**定義され、予測スコアが観測されたラベル（ここでは1）とどの程度異なるかを測定するもの.
 - The second component LI is defined over all pairs in U × I and measures how much the predicted score differs from 0.
-  - F第二成分LIは**U×Iにおける全てのペアに対して**定義され、予測スコアが0とどれだけ違うかを測る。
+  - F第二成分LIは**U×Iにおける全てのペアに対して**定義され、予測スコアが0とどれだけ違うかを測る.
 - The third component R is an L2 regularizer that encourages small norms of the embedding vectors.
-  - 第三成分RはL2正則化であり、埋め込みベクトルのノルムが小さくなるように促すものである。
-
-In the regularizer, each embedding is weighted by the frequency it appears in LS and LI. ν controls the strength of the frequency regularizer and can switch between traditional ALS regularization ν = 0 and the frequency regularization weighting ν = 1 that an SGD optimizer would apply implicitly.
-νは頻度正則化の強さを制御し、従来のALS正則化ν=0とSGD最適化器が暗黙的に適用する頻度正則化重み付けν=1の間で切り替えることができる。
+  - 第三成分RはL2正則化であり、**埋め込みベクトルのノルムが小さくなるように**促すもの.
+  - In the regularizer, each embedding is weighted by the frequency it appears in LS and LI. ν controls the strength of the frequency regularizer and can switch between traditional ALS regularization $ν = 0$ and the frequency regularization weighting $ν = 1$ that an SGD optimizer would apply implicitly. $v$は**frecquency正則化の強さを制御**し、従来のALS正則化$v=0$と、SGD optimizer が暗黙的に適用するfrequency正則化重み付け$v=1$の間で切り替えることができる.
 
 Individually, it is easy to get a loss of 0 for each component LS, LI, R, however, jointly they form a meaningful objective.
-個々には、各成分LS, LI, Rの損失は0になりやすいが、**合同で意味のある目的を形成**する。
+個々には、各成分LS, LI, Rの損失は0になりやすいが、**合同で意味のある目的を形成**する.
 The trade-off between the three components is controlled by **the unobserved weight α0** and the regularization weight λ.
-この3つの成分のトレードオフは、観測されない重み$\alpha_0$と正則化の重み$\lambda$によって制御される。
+この3つの成分のトレードオフは、観測されない重み$\alpha_0$と正則化の重み$\lambda$によって制御される.
 Choosing the proper trade-off is crucial for iALS and is explained in detail in Section A.2.
-**適切なトレードオフを選択することはiALSにとって重要**であり、セクションA.2で詳細に説明される。
+**適切なトレードオフを選択することはiALSにとって重要**であり、セクションA.2で詳細に説明される.
 
 The iALS loss can be optimized efficiently by T epochs of alternating least squares, where the computational complexity of each epoch is in $O(d^2|S| + d^3(|U|+|I|))$ for the originally proposed solver [12], or in $O(d|S| + d^2 (|U|+|I|))$ for iterative solvers [2, 10, 20].
-iALSの損失は、交互最小二乗法のT個のエポックによって効率的に最適化される。各エポックの計算量は、当初提案したソルバーでは$O(d^2 |S| + d^3(|U|+|I|))$ で、iterative solversでは$O(d^S| + d^2 (|U|+|I|))$ である [2, 10, 20]．
+iALSの損失は、**交互最小二乗法のT個のエポックによって効率的に最適化される**. 各エポックの計算量は、当初提案したsolver(=更新式??)では$O(d^2 |S| + d^3(|U|+|I|))$ で, **iterative solvers(=高速化された更新式?eALSもreferenceにあった. 他の論文は?)**(??)では$O(d^S| + d^2 (|U|+|I|))$ である [2, 10, 20]．
 
 # 3. Evaluation 評価
 
 We revisit the performance of iALS on four well-studied benchmarks proposed by other authors.
 我々は，他の著者によって提案された4つのよく研究された**ベンチマーク**に対して，iALSの性能を再検討した．
 Two of them are **item recommendation tasks** and two are **sampled item recommendation tasks**.
-そのうち2つは**アイテム推薦タスク**であり、2つは**サンプルアイテム推薦タスク(??)**である。
+そのうち2つは**item recommendation tasks**であり、2つは**sampled item recommendation tasks(??)**である.
 We use exactly the same evaluation protocol (i.e., same splits, metrics) as in the referenced papers.
-評価プロトコルは参考論文と全く同じものを用いた（すなわち、同じ分割、評価基準）。
+評価プロトコル(=metrics?)は参考論文と全く同じものを用いた（すなわち、同じ分割、評価基準）.
 Table 1 summarizes the benchmarks and the selected iALS hyperparameters.
-表1はベンチマークと選択したiALSのハイパーパラメータをまとめたものである。
+表1はベンチマークと選択したiALSのハイパーパラメータをまとめたものである.
 For all quality results, we repeated the experiment 10 times and report the mean.
-すべての品質結果について、実験を10回繰り返し、その平均値を報告しています。
+すべての品質結果について、実験を10回繰り返し、その平均値を報告している.
 Our source code is available at [this link](https://github.com/google-research/google-research/tree/master/ials/.)
-ソースコードは[このリンク](https://github.com/google-research/google-research/tree/master/ials/.)で公開されています。
+ソースコードは[このリンク](https://github.com/google-research/google-research/tree/master/ials/.)で公開されている.
 
 ## 3.1. Item Recommendation Item Recommendation
 
 Table 1: Benchmarks (dataset and evaluation protocol) used in our experiments.
-表1：実験に使用したベンチマーク（データセットと評価プロトコル）。
+表1：実験に使用したベンチマーク（データセットと評価プロトコル）.
 Our iALS hyperparameters were tuned on holdout sets.
-iALSのハイパーパラメータはholdoutセットでチューニングした。
+iALSのハイパーパラメータはholdoutセットでチューニングした,
 All of the experiments share ν = 1 and σ\* = 0.1.
-すべての実験でν = 1とσthes\* = 0.1を共有。
+すべての実験で$v = 1$と$\sigma= 0.1$を共有.
 For ML1M and Pinterest, we set a maximum dimension of d = 192 for a fair comparison to the results from [9, 22].
-ML1MとPinterestについては、[9, 22]の結果と公平に比較するために、最大次元をd = 192に設定した。
+ML1MとPinterestについては、[9, 22]の結果と公平に比較するために、最大次元を$d = 192$に設定した.
 
 | Benchmark     |           | Statistics |        |       | iALS hyperparameters |       |     |      |
 | ------------- | --------- | ---------- | ------ | ----- | -------------------- | ----- | --- | ---- |
@@ -193,9 +191,9 @@ ML1MとPinterestについては、[9, 22]の結果と公平に比較するため
 | Pinterest [7] | [9]       | 55,187     | 9,916  | 1.4M  | 0.02                 | 0.007 | 16  | 192  |
 
 In their work about variational autoencoders, Liang et al. [17] have established a set of benchmarks for item recommendation that have been followed by other authors [14, 18, 25, 26] since then.
-Liangら[17]は変分オートエンコーダに関する研究の中で、アイテム推薦のベンチマークを確立し、それ以降、他の著者[14, 18, 25, 26]が追随するようになった。
+Liangら[17]は変分オートエンコーダに関する研究の中で、アイテム推薦のベンチマークを確立し、それ以降、他の著者[14, 18, 25, 26]が追随するようになった.
 The benchmarks include results for iALS that were produced in [13, 17].
-このベンチマークには、[13, 17]で作成されたiALSの結果も含まれている。
+このベンチマークには、[13, 17]で作成されたiALSの結果も含まれている.
 We reinvestigate the results on the Movielens 20M (ML20M) and Million Song Data (MSD) benchmarks.
 ここでは、**Movielens 20M (ML20M)** と **Million Song Data (MSD)** ベンチマークでの結果を再調査する。
 We shortly recap the overall evaluation procedure and refer to [17] and their code2 for details:
