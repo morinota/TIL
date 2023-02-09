@@ -3,6 +3,7 @@
 - https://qiita.com/guglilac/items/49bc35bd2631177624ce#implicit-feedback--ranking%E5%AD%A6%E7%BF%92
 - レコメンドアルゴリズム(BPR)の導出から実装まで
   - https://techblog.zozo.com/entry/2016/07/01/134825
+- [元論文? ](https://github.com/zerebom/paper-books/issues/51)
 
 # implicit feedback + ranking学習
 
@@ -89,9 +90,9 @@ while trainMatrix[u, j] != 0:
 ## 定式化
 
 分解後の行列を$W \in R^{U\times k}$, $H\in R^{I\times k}$とする。
-「あるユーザuについての全アイテムの嗜好度の順序(大小関係)」を$>_u$で表すとすると、$i >_u j$と表記すれば「ユーザuはアイテムjよりもアイテムiを好む」事を指す。
+「あるユーザuについての全アイテムの嗜好度の順序(大小関係)」を$>_u$で表すとすると、$i >_u j$と表記すれば「ユーザuはアイテムjよりもアイテムiを好む」事を指す. 
 
-この場合の尤度関数は以下のように定義される。
+この場合の尤度関数は以下のように定義される.
 
 $$
 \prod_{u\in U}{p(>_u | W, H)}
