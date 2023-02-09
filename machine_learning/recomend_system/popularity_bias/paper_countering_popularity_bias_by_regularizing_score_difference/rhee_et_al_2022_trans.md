@@ -351,46 +351,51 @@ $$
 Using such data, we train a matrix factorization (MF) model, which is a basic collaborative filtering recommendation system [30].
 このようなデータを用いて、協調フィルタリング推薦システムの基本である行列因子法（MF）モデルを学習する[30].
 We use BPR loss as the loss function [26].
-損失関数としてBPR損失を用いる[26].
+**損失関数としてBPR損失**を用いる[26].
 Figure 1a shows the synthetic data in matrix form: the white area corresponds to positive items, and the black negative items.
-図1aは合成データを行列形式で表したもので、白い部分が正の項目、黒い部分が負の項目に相当する。
+図1aは合成データを行列形式で表したもので、白い部分がpositive item、黒い部分がnegative itemに相当する.
 Figure 1b shows the recommendation score of the trained MF model, showing salient model bias.
 図1bは学習したMFモデルの推薦スコアであり、モデルの偏りが顕著に表れている。
 The popular items (smaller item index) shows higher score even when conditioned on the positive items.
-肯定的な項目を条件とした場合でも、人気のある項目（項目インデックスが小さい）ほど高いスコアを示している。
+**positiveなアイテムを条件とした場合でも、人気のあるアイテム（項目インデックスが小さい）ほど高いスコアを示している.**
 For instance, for user index 100, the model predicts higher score to popular items of index 0 ~ 20, even though the user equally consumed items from index 0 ~ 100.
-例えば、ユーザインデックスが100の場合、ユーザはインデックス0〜100のアイテムを同じように消費しているにもかかわらず、モデルはインデックス0〜20の人気アイテムに高いスコアを予測する。
+例えば、ユーザインデックスが100の場合、ユーザはインデックス0〜100のアイテムを同じように消費しているにもかかわらず、モデルはインデックス0〜20の人気アイテムに高いスコアを予測する.
 
 The accuracy and debias performance of the model was quantitatively evaluated.
-モデルの正確さとデビアス性能は定量的に評価された．
+モデルの正確さとdebias性能は定量的に評価された．
 To measure accuracy, the average frequency of the positive item being scored higher than the negative item was computed over all positive-negative item pairs.
-精度は，正項目と負項目の組で，正項目が負項目より高いスコアを獲得する頻度の平均を計算した．
+**精度は，positive item と negative item の組で，positive item が negative item より高いスコアを獲得する頻度の平均を計算**した．
 We report the error rate ((1-accuracy)\*100) of 0.01%.
 その結果，誤差（(1-accuracy)Γ\*100）は0.01%であった．
 Hence, the model trained with the BPR loss shows high accuracy.
 したがって，BPR損失を用いて学習したモデルは高い精度を示していることがわかる．
 The debias performance was evaluated using the PRI and `PopQ@1` metrics.
-また、PRIとPopQ@1`という指標を用いてデビアス性能を評価した。 Figure 1c shows the average item rank quantile of the items, where the x axis shows the item index of the synthetic data (items with smaller x index is more popular). 図1cは、x軸が合成データのアイテムインデックスを示し、アイテムの平均ランク分位を示したものである（xインデックスが小さいアイテムほど人気がある）。 Specifically, we see the most popular item on average is ranked at the top 0.0% among the positive items; and as the item popularity decreases, the item no longer has the highest rank. 具体的には、平均的に最も人気のあるアイテムは、正のアイテムの中で上位0.0%にランクされており、アイテムの人気が低下すると、そのアイテムはもはや最高ランクではなくなりました。 This indicates high model bias, and the PRI is also computed at 0.99. これはモデルの偏りが大きいことを示しており、PRIも0.99と計算される。 Figure 1d shows the histogram of the popularity quantile of top scoring positive items of each user. 図1dは、各ユーザの肯定的なアイテムの上位得点の人気度分位をヒストグラムにしたものである。 We see the popularity quantile is focused around 0, meaning the top scoring positive items mostly consists of the most popular positive items of each user. 人気度分位は0付近に集中しており、上位得点の正項目はほとんど各ユーザーの最も人気のある正項目で構成されていることが分かります。 Taking the mean of the 200 quantiles, the `PopQ@1` is computed at 0.02. 200の分位数の平均をとると、`PopQ@1`は0.02となる。 Both PRI and `PopQ@1` metrics indicate the model trained with the BPR loss showing high model bias. PRIとPopQ@1`の両メトリクスは、BPR損失で学習したモデルが高いバイアスを示していることを示している。
+また、`PRI`と`PopQ@1`という指標を用いてdebias性能を評価した. 
+Figure 1c shows the average item rank quantile of the items, where the x axis shows the item index of the synthetic data (items with smaller x index is more popular). 図1cは、x軸が合成データのアイテムインデックスを示し、アイテムの平均ランク分位を示したものである（xインデックスが小さいアイテムほど人気がある).
+Specifically, we see the most popular item on average is ranked at the top 0.0% among the positive items; and as the item popularity decreases, the item no longer has the highest rank. 具体的には、平均的に最も人気のあるアイテムは、正のアイテムの中で上位0.0%にランクされており、アイテムの人気が低下すると、そのアイテムはもはや最高ランクではなくなりました. 
+This indicates high model bias, and the PRI is also computed at 0.99. 
+**これはmodel-biasが大きいことを示しており、PRIも0.99と計算される.**
+Figure 1d shows the histogram of the popularity quantile of top scoring positive items of each user. 図1dは、各ユーザの肯定的なアイテムの上位得点の人気度分位をヒストグラムにしたものである。 We see the popularity quantile is focused around 0, meaning the top scoring positive items mostly consists of the most popular positive items of each user. 人気度分位は0付近に集中しており、上位得点の正項目はほとんど各ユーザーの最も人気のある正項目で構成されていることが分かります。 Taking the mean of the 200 quantiles, the `PopQ@1` is computed at 0.02. 200の分位数の平均をとると、`PopQ@1`は0.02となる。 Both PRI and `PopQ@1` metrics indicate the model trained with the BPR loss showing high model bias. `PRI`と`PopQ@1`の両メトリクスは、BPR損失で学習したモデルが高いmodel-biasの存在を示している.
 
 # 4. Proposed Method 4. 提案された方法
 
 ## 4.1. Regularization Term ot Minimize Score Difference 4.1. スコア差を最小化する正則化項
 
 To reduce model bias, we propose a method to extend the BPR loss with an additional regularization term which minimizes the score differences between positive and negative items, respectively.
-モデルの偏りを減らすために、我々はBPR損失に正則化項を追加して拡張し、正負項目間のスコア差をそれぞれ最小化する方法を提案する。
+モデルの偏りを減らすために、我々はBPR損失に正則化項を追加して拡張し、正負項目間のスコア差をそれぞれ最小化する方法を提案する. (**positive同士、negative同士のスコアを近くしたい...!!**)
 Thus while the BPR loss contrasts the recommendation scores between positive and negative items, the regularization term will additionally force the scores to be equal within positive(negative) items.
-このように、BPR損失はポジティブ項目とネガティブ項目の推薦スコアを対比させるが、正則化項はさらに、ポジティブ（ネガティブ）項目内でスコアが等しくなるように強制する。
+**このように、BPR損失はpositive item と negative item の推薦スコアを対比させるが、正則化項はさらに、ポジティブ（ネガティブ）項目内でスコアが等しくなるように強制する.**
 Thus the model can achieve both high accuracy and debias performance.
-このように、このモデルは高い精度とデビアス性能の両方を達成することができる。
+このように、このモデルは高い精度とdebias性能の両方を達成することができる.
 We propose a total loss function of the following form as in Equation (5):
-我々は、式(5)のような形の全損失関数を提案する。
+我々は、式(5)のような形の全損失関数を提案する.
 
 $$
 \text{Total Loss} = \text{BPR Loss} + \text{Reg Term} \tag{5}
 $$
 
 We propose two variations of regularization term:
-我々は、正則化項のバリエーションを2つ提案する。
+我々は、**regularization term のバリエーションを2つ**提案する.
 
 - Pos2Neg2 Term : 2 positive and 2 negative items are sampled per user at a time, and the score difference of the positive(negative) items are minimized, respectively. Pos2Neg2 Term : 1ユーザにつき2つの正項目と2つの負項目を同時にサンプリングし、それぞれ正項目（負項目）のスコア差を最小にする。
 
@@ -413,10 +418,10 @@ Both of the regularization terms aim to reduce model bias by leading the model t
 どちらの正則化項も、正（負）の項目に対して等しいスコアを与えるようにモデルを導くことで、モデルの偏りを減らすことを目的としている。
 Such approach has two advantages.
 このようなアプローチには2つの利点がある．
-First, it is robust to the accuracydebias tradeoff.
-第一に，精度とバイアスのトレードオフに対してロバストである．
+First, it is robust to the accuracy debias tradeoff.
+第一に，精度とdebiasのトレードオフに対してロバストである．
 In contrast to debias methods collectively adjusting the scores for all items, the proposed method does not sacrifice the scores of positive items to boost those of the negative items.
-全項目のスコアを一括して調整するデビアス手法とは対照的に，提案手法は正項目のスコアを犠牲にして負項目のスコアを上げることがない．
+全項目のスコアを一括して調整するdebias手法とは対照的に，提案手法は正項目のスコアを犠牲にして負項目のスコアを上げることがない．
 The second advantage is the simplicity.
 第二の利点は，単純であることである．
 The proposed method is applicable to any model which uses the BPR loss, with no additional training.
@@ -428,7 +433,7 @@ Finally, experiments showed only regularizing the scores of positive items lead 
 ## 4.2. Illustration of the Proposed Method on the Synthetic Data 4.2. 合成データにおける提案手法の説明
 
 We test the debias performance of the proposed methods using the synthetic data.
-合成データを用いて、提案手法のデビアス性能を検証する。
+合成データを用いて、提案手法のデビアス性能を検証する.
 We add the regularization term to the BPR loss and train the matrix factorization model to see if the model bias exhibited in the baseline training is alleviated.
 BPR損失に正則化項を追加し、行列分解モデルを学習させ、ベースライン学習で見られたモデルの偏りが緩和されるかどうかを確認する。
 Note, the baseline refers to the method of using BPR loss for training.

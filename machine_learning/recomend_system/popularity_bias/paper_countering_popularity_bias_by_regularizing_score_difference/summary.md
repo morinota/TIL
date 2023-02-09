@@ -33,15 +33,71 @@ url: https://dl.acm.org/doi/fullHtml/10.1145/3523227.3546757
 
 ## どうやって有効だと検証した?
 
-1. ベースライン学習によりモデルの偏りを誘発する合成データセットを用いた実験.
-  - 本研究では、model-biasとそれに続く様々な手法のdebias性能を説明するために、data-biasを明示した合成データを設計する.
-  - 200 x 200のuser-item interaction matrix $R$
-  - 式(4)を使って疑似データを生成: アイテム列のindexが増加するにつれてアイテムの人気が直線的に減少するように設定.
-  - 行列は binary(0 or 1) のinteraction情報で満たされている.
-  - このようなデータは、疎でノイズの多い実世界のデータからは逸脱しているが、**推薦システムがどのようにmodel-biasを生み出すか**を観察するには適切.
-  - 
-1. 4つのベンチマークデータセットと4つの推薦モデルを用いた実証実験.
+### ベースライン学習によりmodel-biasを誘発する疑似データセットを用いた実験.
 
+本研究では、model-biasとそれに続く様々な手法のdebias性能を説明するために、data-biasを明示した合成データを設計する.
+
+- 200 x 200のuser-item interaction matrix $R$
+- 式(4)を使って疑似データを生成: アイテム列のindexが増加するにつれてアイテムの人気が直線的に減少するように設定.
+- 行列は binary(0 or 1) のinteraction情報で満たされている.
+- このようなデータは、疎でノイズの多い実世界のデータからは逸脱しているが、**推薦システムがどのようにmodel-biasを生み出すか**を観察するには適切.
+
+疑似データ生成方法をコードにするとこんな感じ.
+
+```python
+def generate_sysnthetic_data(
+    n_user: int = 200,
+    n_item: int = 200,
+) -> np.ndarray:
+    user_item_matrix = np.zeros(shape=(n_user, n_item))
+    for user_idx in range(n_user):
+        for item_idx in range(n_item):
+            user_item_matrix[user_idx, item_idx] = _get_synthetic_rating(
+                user_idx,
+                item_idx,
+            )
+    return user_item_matrix
+
+
+def _get_synthetic_rating(user_idx: int, item_idx: int, boundary_num: int = 200) -> int:
+    if user_idx + item_idx <= boundary_num:
+        return 1
+    return 0
+```
+
+このようなデータを用いて、ベースラインとして協調フィルタリング推薦システムの基本であるmatrix factorization (MF) modelを学習する. **損失関数としてBPR損失**を用いる.
+
+また、提案手法も疑似データに対して学習させてみて、debias性能を検証した.
+BPR損失に正則化項を追加した上で、同様のMFモデルを学習させ、ベースライン学習で見られたmodel-biasが緩和されるかどうかを確認する.
+
+#### 結果:
+
+- 図1aは疑似データを行列形式で表したもので、白い部分がpositive item(1)、黒い部分がnegative item(0)に相当する.
+- 図1bは学習したMFモデル(ベースライン)の推薦スコアであり、model-biasが顕著に表れている.
+  - positiveアイテムにおいて、人気のあるアイテム(=item indexが小さい)ほど高いスコアを推論している.
+  - ex) `user_idx=100`の場合、ユーザは `item_idx=0 ~ 100`のアイテムを同じようにconsume(=click等, 何らかのreaction)しているにもかかわらず、モデルは`item_idx=0 ~ 20`の人気アイテムに高いスコアを予測している.
+
+以下、モデルのaccuracyとdebias性能の定量的評価:
+
+- BPR損失関数を用いて学習したモデルは高い精度を示していた.
+- `PRI`と`PopQ@1`によるdebias性能:
+  - 図1cは、x軸が疑似データの`item_idx`を示し、アイテムの平均ランク分位を示したもの（i.e. x軸の値が小さいアイテムほど人気がある).
+    - 平均的に最も人気のあるアイテムは、positiveアイテムの中で上位0.0%にランクされる. アイテムの人気が低下すると、そのアイテムはもはや最高ランクではなくなる.
+    - **これはmodel-biasが大きいことを示しており、PRIも0.99と計算される.**
+  - 図1dは、各ユーザのpositive itemのtopスコアの人気度分位をヒストグラムにしたもの.
+    - 人気度分位は0付近に集中しており、topスコアのpositive itemはほとんど最も人気のあるpositive itemで構成されていることが分かる.
+  - `PRI`と`PopQ@1`の両メトリクスは、BPR損失で学習したモデルが高いmodel-biasの存在を示している.
+
+提案手法を疑似データに適用した結果:
+
+- 図2は、ベースラインモデル(BPR損失関数のMF)と提案手法(BPR損失+正則化項のMF)を用いた場合のモデル予測値(推薦スコア).
+  - 
+
+
+
+### 4つのベンチマークデータセットと4つの推薦モデルを用いた実証実験.
+
+#### 結果:
 
 ## 技術や手法の肝は？
 
@@ -92,9 +148,58 @@ $$
 
 この2つの指標により、model-biasを詳細に評価することができる.
 
-推薦システムにとって重要なことは、model-biasを抑えながら精度を維持すること. 
+推薦システムにとって重要なことは、model-biasを抑えながら精度を維持すること.
 model-biasが少なくても精度が低ければ、個人に合った推薦を行うことはできない.
 例えば、ランダムな推薦を行うモデルは、model-biasを示さないが、ユーザの嗜好を全く考慮しない.
+
+
+
+### Proposed Method
+
+model-biasを減らすために、我々は**BPR損失関数にregularization termを追加**して拡張し、positive & negativeアイテム間のスコア差をそれぞれ最小化する方法を提案する. (**positive同士、negative同士のスコアを近くしたい...!!**)
+
+BPR損失はpositive item と negative item の推薦スコアを対比させるが、追加するregularization termはさらに、positive (negative) item内でスコアが等しくなるように強制する.
+
+提案する損失関数は以下.
+
+$$
+\text{Total Loss} = \text{BPR Loss} + \text{Reg Term}
+\tag{5}
+$$
+
+論文では、**regularization term のバリエーションを2つ**提案している.
+
+- **Pos2Neg2 Term**: 1ユーザにつき2つのpositive item(`p_1`, `p_2`)と2つのnegative item(`n_1`, `n_2`)を同時にサンプリングし、それぞれpositive item(negative item)のスコア差を最小にする.
+
+$$
+\text{Reg Term} = - \sum_{u \in U} \sum_{p_1, p_2 \in Pos_{u}, n_1, n_2 \in Neg_{u}}
+\log (1 - \tanh(|\hat{y}_{u, p_1} - \hat{y}_{u, p_2}|))
++ \log (1 - \tanh(|\hat{y}_{u, n_1} - \hat{y}_{u, n_2}|))
+\\
+\tag{6}
+$$
+
+- **Zerosum Term**: : 一人のユーザに対してpositive item と negative item をそれぞれ1つずつサンプリングし、positive item と negative item の推薦スコアの和が0に近づくように正則化する.
+  - 学習により、正則化はユーザのランダムなpositive-negative itemペアに伝播し、positive itemと negative item が対称的な推薦スコアを持つことを余儀なくされる.
+  - 最終的には、positive itemのスコアは単一の値に収束し、negative itemのスコアは対称的な値に収束する.
+
+$$
+\text{Reg Term} = - \sum_{u \in U} \sum_{p \in Pos_{u}, n \in Neg_{u}}
+\log (1 - \tanh(|\hat{y}_{u, p} + \hat{y}_{u, n}|))
+\\
+\tag{7}
+$$
+
+どちらのReg Termも、positive(negative)のアイテムに対して等しいスコアを与えるようにモデルを導くことで、model-biasを減らすことを目的としている.
+
+本アプローチには2つの利点がある．
+
+- 第一に，精度とdebiasのトレードオフに対してrobust.
+  - 全itemのスコアを一括して調整するdebias手法と比較して，提案手法はpositive itemのスコアを犠牲にしてnegative itemのスコアを上げることがない．
+- 第二に，単純であること.
+  - 提案手法はBPR損失を用いるどのようなモデルにも適用可能.
+
+実験ではpositive item のスコアだけを正則化すると精度が悪化することがわかったので、positiveとnegativeの両方に正則化を適用している.
 
 ## 議論はある？
 
