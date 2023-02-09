@@ -64,10 +64,8 @@ In this work, we focus on the solution of the model bias.
 Our effort can be combined with additional solutions for data bias and feedback loop to systematically eliminate popularity bias.
 我々の取り組みは、データの偏りや feedback roop に対する追加の解決策と組み合わせることで、人気度バイアスを体系的に除去することができる.
 
-
-
 A variety of methods have been proposed to tackle the popularity bias.
-人気度バイアスに対処するために、様々な方法が提案されている. 
+人気度バイアスに対処するために、様々な方法が提案されている.
 These methods include inverse propensity weighting (IPW) [16, 27, 29], causal intervention [34, 36, 38, 40], and reranking [2, 37].
 これらの手法には，逆傾向重み付け（IPW）[16, 27, 29]，因果関係介入[34, 36, 38, 40]，**再ランキング(以前読んだやつ)**[2, 37]が含まれる．
 IPW aims to produce unbiased model prediction by weighting the imbalanced data with propensity weights [16, 27, 29].
@@ -108,7 +106,7 @@ Our method shares similar motivation while improving performance and cost effici
 Our research proceeds as follows.
 我々の研究は以下のように進められる.
 We propose to extend the BPR loss with a new regularization term to achieve both high accuracy and high debias performance.
-BPR損失を新しい正則化項で拡張し、高精度と高いdebias性能を両立させることを提案する.
+BPR損失を新しいregularization termで拡張し、高精度と高いdebias性能を両立させることを提案する.
 To systematically test the effectiveness of our method, we design a synthetic experiment.
 本手法の有効性を系統的に検証するために、合成実験を計画する.
 We design a data with explicit popularity bias which induces model bias when training a recommendation system using the baseline BPR loss.
@@ -116,153 +114,150 @@ We design a data with explicit popularity bias which induces model bias when tra
 We then apply our regularization term and analyze its performance.
 そして、我々の正則化項を適用し、その性能を分析する.
 As a result, our method outperformed earlier debias methods in terms of accuracy and debias performance.
-その結果，本手法は従来のデビアス手法を精度およびデビアス性能の点で凌駕していた．
+その結果，本手法は従来のdebias手法を精度およびdebias性能の点で凌駕していた．
 Additional comparison shows our method has advantages over the earlier methods in terms of computational validity and efficiency.
 また，追加的な比較により，本手法が計算の妥当性と効率性の点で先行する手法よりも優れていることが示された．
 
 We further conduct extensive empirical experiments utilizing 4 benchmark datasets [10, 13, 31–33], and 4 recommendation models:
-さらに、4つのベンチマークデータセット[10, 13, 31-33]と4つの推薦モデルを用いた広範な実証実験を行った。
+さらに、4つのベンチマークデータセット[10, 13, 31-33]と4つの推薦モデルを用いた広範な実証実験を行った.
 MF [26], NeuCF [15], NGCF [35], and LightGCN [14].
 MF [26], NeuCF [15], NGCF [35], LightGCN [14]の4つの推薦モデルを用いた実証実験を行った．
 The proposed method showed high accuracy and debias performance across MF, NGCF, LightGCN models in 3 of the 4 datasets, whereas the earlier methods failed to show consistent performance.
-提案手法は，4つのデータセットのうち3つのデータセットにおいて，MF, NGCF, LightGCNモデルに対して高い精度とデビアス性能を示したが，先行手法では一貫した性能を示すことができなかった．
+提案手法は，4つのデータセットのうち3つのデータセットにおいて，MF, NGCF, LightGCNモデルに対して高い精度とdebias性能を示したが，先行手法では一貫した性能を示すことができなかった．
 Hence, the proposed method showed general improvement over the earlier methods.
 その結果，提案手法は，従来の手法に比べて全般的に改善されていることがわかった．
 
 The contributions of our work are summarized as follows:
-本研究の貢献は、以下のようにまとめられる。
+本研究の貢献は、以下のようにまとめられる.
 
-- We propose a novel method to reduce model bias, by extending the existing BPR loss with a new regularization term which regulates the score differences within positive and negative items, respectively. 我々は、既存のBPRロスを拡張し、ポジティブ項目とネガティブ項目内のスコア差をそれぞれ調節する新たな正則化項でモデルの偏りを軽減する新しい方法を提案する。
-
-- The proposed method shows high debias performance, minimal sacrifice in accuracy, with no additional training. 提案手法は、高いデビアス性能を示し、精度の犠牲は最小限であり、追加の学習は不要である。
-
-- Quantitative and qualitative evaluation using a synthetic data is conducted to show advantages over earlier debias methods. 合成データを用いた定量的・定性的な評価を行い、従来のデビアス手法に対する優位性を示す。
-
-- Empircal experiments using 4 benchmark datasets and 4 recommendation system models show the proposed method generally improved over earlier debias methods. 4つのベンチマークデータセットと4つの推薦システムモデルを用いた実証実験により，提案手法は従来のデバイアス手法よりも全般的に改善されていることが示された．
+- We propose a novel method to reduce model bias, by extending the existing BPR loss with a new regularization term which regulates the score differences within positive and negative items, respectively. 我々は、既存のBPRロスを拡張し、ポジティブ項目とネガティブ項目内のスコア差をそれぞれ調節する新たなregularization termでモデルの偏りを軽減する新しい方法を提案する.
+- The proposed method shows high debias performance, minimal sacrifice in accuracy, with no additional training. 提案手法は、高いdebias性能を示し、精度の犠牲は最小限であり、追加の学習は不要である.
+- Quantitative and qualitative evaluation using a synthetic data is conducted to show advantages over earlier debias methods. 合成データを用いた定量的・定性的な評価を行い、従来のdebias手法に対する優位性を示す.
+- Empircal experiments using 4 benchmark datasets and 4 recommendation system models show the proposed method generally improved over earlier debias methods. 4つのベンチマークデータセットと4つの推薦システムモデルを用いた実証実験により，提案手法は従来のdebias手法よりも全般的に改善されていることが示された．
 
 # 2. Related Work 2. 関連作品
 
-## 2.1. Popularity Bias 2.1. ポピュラリティ・バイアス
+## 2.1. Popularity Bias
 
 Various studies have been conducted on popularity bias.
 人気度バイアスについては様々な研究が行われている．
 First, the popularity bias can be understood in terms of data (data bias) [2, 8, 25, 36, 38].
-まず，人気度バイアスはデータの観点から理解することができる（データバイアス）[2, 8, 25, 36, 38]．
+まず，人気度バイアスはデータの観点から理解することができる（data bias）[2, 8, 25, 36, 38]．
 The user-item interaction data usually shows a long tail distribution in item popularity [2, 25].
 ユーザとアイテムのインタラクションデータは，通常，アイテムの人気度にロングテールの分布を示す[2, 25]．
 This may be due to selective item exposure [8, 9], as well as unequal preference of the users [38, 39].
 これは，アイテムの選択的な露出[8, 9]や，ユーザの不平等な嗜好[38, 39]によるものと思われる．
 
 On the other hand, the popularity bias also can be understood in terms of the recommendation system model (model bias).
-一方，人気度の偏りは，推薦システムのモデル（モデルバイアス）の観点からも理解することができる．
+一方，人気度の偏りは，推薦システムのモデル（model bias）の観点からも理解することができる．
 Some studies addressed how the recommendation system trained on imbalanced data can amplify the bias in the data by over-recommending popular items than the data warrants [3, 7, 34, 38, 42].
-アンバランスなデータに対して学習させた推薦システムが，データよりも人気のある項目を過剰に推薦することによって，データの偏りを増幅することを取り上げた研究がある [3, 7, 34, 38, 42]．
+**アンバランスなデータに対して学習させた推薦システムが，データよりも人気のあるアイテムを過剰に推薦することによって，データの偏りを増幅すること**を取り上げた研究がある [3, 7, 34, 38, 42]．
 In particular, [42] defined such model bias as the degree the model gives higher scores to more popular positive items among positive items equally liked by a user.
-特に，[42]では，モデルの偏りを「ユーザが同じように好きな正のアイテムの中で，より人気のある正のアイテムに高いスコアを与える度合い」と定義している．
+特に，[42]では，**model biasを"ユーザが同じように好きな正のアイテムの中で，より人気のある正のアイテムに高いスコアを与える度合い"**と定義している.
 Such model bias results in the recommendation system not being able to produce personalized recommendation, which could harm user experience.
-このようなモデルの偏りは，推薦システムが個人化された推薦を行うことができなくなり，ユーザエクスペリエンスを損なう可能性がある．
+このようなモデルの偏りは，推薦システムが個人化された推薦を行うことができなくなり，ユーザ体験を損なう可能性がある．
 In addition, some studies explore how over-recommendation can cause a feedback loop resulting in filter bubble or echo chamber [12, 22, 23].
-また，過剰な推薦がフィードバックループを引き起こし，フィルタバブルやエコーチェンバーを引き起こすという研究もある [12, 22, 23]．
+また，over-recommendation(過剰な推薦)がフィードバックループを引き起こし，フィルタバブルやエコーチェンバーを引き起こすという研究もある [12, 22, 23]．
 
 The varied forms of popularity bias require individual approaches and solutions.
 人気度バイアスは様々な形で発生するため，個別のアプローチと解決策が必要である．
 Since the data bias is caused by external selection bias [8, 9], a solution should be applied by controlling external factors in the data collection stage; simple debiasing of the collected data may distort the user preference shown in the data [38, 39].
-データの偏りは外部からの選択バイアス[8, 9]に起因するため，データ収集段階で外部要因を制御することで解決する必要があり，収集したデータを単純にデビアスすると，データに示されるユーザの嗜好が歪んでしまう[38, 39]．
+data-biasは外部からの選択バイアス[8, 9]に起因するため，データ収集段階で外部要因を制御することで解決する必要があり，収集したデータを単純にdebiasすると，データに示されるユーザの嗜好が歪んでしまう[38, 39]．
 In contrast, the model bias is a computational problem where the model fails to learn the user preference from the collected data.
-一方，モデルの偏りは，モデルが収集されたデータから ユーザーの嗜好を学習できない計算上の問題である．
+一方，model-biasは，モデルが収集されたデータから ユーザーの嗜好を学習できない計算上の問題である．
 Hence proper model training is required to remedy such bias, and allow the model to recommend items fairly across items of different popularity.
 そのため，このようなバイアスを改善し，異なる人気度のアイテムを公平に推薦できるようにするためには，適切なモデル学習が必要である．
 In addition, some researchers investigated solving the feedback loops or the filter bubble, which takes place in the online setting where the live system gives continual recommendation [6, 22].
 さらに，オンラインシステムが継続的に推薦を行う際に生じるフィードバックループやフィルタバブルの解決についても研究されている [6, 22]．
 
 Among various types of popularity biases, our work mainly focuses on the model bias.
-様々な種類の人気度バイアスのうち、私たちは主にモデルバイアスに着目して研究を行っています。
+様々な種類の人気度バイアスのうち、私たちは主に**model-biasに着目**して研究を行っている.
 
 ## 2.2. Countering Popularity Bias 2.2. 人気度バイアスに対抗する
 
 Various methods were proposed to address popularity bias, such as the inverse propensity weighting (IPW) [16, 27], causal intervention [34, 36, 38, 40], and reranking [2, 37].
-人気度バイアスに対処するために，逆傾向重み付け（IPW）[16, 27]，因果関係介入[34, 36, 38, 40]，再ランキング[2, 37]など様々な方法が提案された．
+人気度バイアスに対処するために，inverse propensity weighting(IPW, 逆傾向重み付け)[16, 27]，因果関係介入[34, 36, 38, 40]，再ランキング[2, 37]など様々な方法が提案された．
 IPW weights each training instance with the inverse of the item popularity to produce unbiased model prediction [16, 27, 29].
 IPWは不偏のモデル予測を行うために、各トレーニングインスタンスをアイテムの人気度の逆数で重み付けする [16、27、29]。
 Causal intervention often assumes a causal graph which models the effect item popularity has on the recommendation score, and computes counterfactual recommendation scores by removing such effect [34, 36, 38].
-Causal interventionは，項目人気度が推薦スコアに与える影響をモデル化した因果グラフを仮定し，その影響を除去することで反実仮想的な推薦スコアを計算することが多い[34, 36, 38]．
+Causal interventionは，アイテム人気度が推薦スコアに与える影響をモデル化した因果グラフを仮定し，その影響を除去することで反実仮想的な推薦スコアを計算することが多い[34, 36, 38]. 
 Some works utilizes unbiased data to better learn the item embeddings [40].
-また，アイテムの埋め込みをより適切に学習するために，不偏のデータを利用する研究もある[40]．
+また，アイテムの埋め込みをより適切に学習するために，unbiasedのデータを利用する研究もある[40]. 
 Reranking methods conduct ranking adjustment of item recommendation list [2, 37].
-再順位付け法は，項目推薦リストの順位を調整する[2, 37]．
+再順位付け法は，アイテム推薦リストの順位を調整する[2, 37]．
 
 The above debias methods shares the logic of lowering the recommendation score of popular items and lifting those of unpopular items.
-上記のデビアス法は、人気アイテムの推薦スコアを下げ、不人気アイテムの推薦スコアを上げるという論理を共有している。
+**上記のdebias法は、人気アイテムの推薦スコアを下げ、不人気アイテムの推薦スコアを上げるという論理を共有している**.
 For instance the IPW method lowers the training weights of popular items while lifting those of unpopular items [27, 29].
-例えば、IPW法は人気アイテムの学習ウエイトを下げ、不人気アイテムの学習ウエイトを上げる[27, 29]。
+例えば、IPW法は人気アイテムの学習ウエイトを下げ、不人気アイテムの学習ウエイトを上げる[27, 29].(=reaction type毎に重み付けするみたいな事と同じ??)
 The causal intervention methods often removes the causal effect of item popularity by discounting the recommendation scores proportionally to the item popularity [34, 36, 38].
 因果的介入法は，アイテムの人気に比例して推薦スコアを割り引くことで，アイテムの人気による因果的効果を取り除くことが多い[34, 36, 38]．
 The reranking method explicitly boosts the rank of the tail items while sacrificing the rank of popular items [2, 37].
 また，再ランク付け法は，人気アイテムのランクを犠牲にする一方で，テールアイテムのランクを明示的にブーストする[2, 37]．
 Although these measures could alleviate the model bias by balancing the recommendation scores, it holds the risk of overly penalizing the scores of positive items while compensating those of negative items.
-これらの方法は，推薦スコアのバランスをとることでモデルのバイアスを軽減することができるが，ネガティブなアイテムのスコアを補う一方で，ポジティブなアイテムのスコアに過度にペナルティを与える危険性がある．
+これらの方法は，**推薦スコアのバランスをとることでモデルのバイアスを軽減することができるが，ネガティブなアイテムのスコアを補う一方で，ポジティブなアイテムのスコアに過度にペナルティを与える危険性がある**．
 Hence accuracy may be sacrificed as part of the debias process.
-そのため，デバイアス処理の一環として精度が犠牲になる可能性がある．
+そのため，**debias処理の一環として精度が犠牲になる可能性がある**．
 
 A debias method that regulates the recommendation score imbalance only for positive items may lead to successful debias with minimal sacrifice in accuracy.
-また，推薦スコアのアンバランスを正項目のみで規制するデビアス手法は，精度を犠牲にすることなくデビアスに成功する可能性がある．
+また，**推薦スコアのアンバランスを positive アイテムのみで規制するdebias手法**は，精度を犠牲にすることなくdebiasに成功する可能性がある．
 Few studies took such approach [7, 42].
 このようなアプローチをとる研究はほとんどない[7, 42]．
 The studies similarly proposed a method to regulate the Pearson correlation of item popularity and item score for positive items such that the recommendation scores can be independent of item popularity.
-これらの研究では，アイテムの人気度とアイテムスコアのピアソン相関を正則化することで，アイテムの人気度に依存しないレコメンデーションスコアを実現する方法が提案されている．
+これらの研究では，ア**イテムの人気度とアイテムスコアのピアソン相関を正則化**することで，アイテムの人気度に依存しないレコメンデーションスコアを実現する方法が提案されている．
 However, the approach has two limitations: regularizing the correlation coefficient may not necessarily lead to independence, and computation is costly.
-しかし，相関係数を正則化しても独立になるとは限らないこと，計算コストがかかること，という2つの制約がある．
+しかし，相関係数を正則化しても独立(=itemの人気度と独立になるって意味??)になるとは限らないこと，**計算コストがかかる**こと，という2つの制約がある．
 
 Our work overcomes limitations of the earlier methods and proposes a cost-efficient debias method to reduce model bias while maintaining accuracy by regularizing recommendation scores.
-本研究では、これまでの手法の限界を克服し、推薦スコアを正則化することで精度を維持しつつモデルの偏りを低減する、コスト効率の良いデビアス手法を提案する。
+本研究では、これまでの手法の限界を克服し、推薦スコアを正則化することで精度を維持しつつモデルの偏りを低減する、コスト効率の良いdebias手法を提案する。
 
-## 2.3. Contrastive Learning 2.3. 対照的な学習
+## 2.3. Contrastive Learning 
 
 Metric learning is a branch of machine learning which utilizes the distance or similarity of the training data to enhance learning [21].
 計量学習は機械学習の一分野であり，学習データの距離や類似性を利用して学習を促進する[21]．
 A related approach is contrastive learning which compares and contrasts training instances for efficient representation learning [18].
-関連するアプローチとして、訓練事例を比較対照して効率的な表現学習を行う対照学習がある[18]。
+関連するアプローチとして、訓練事例を比較対照して効率的な表現学習を行う **contrastive learning(対照学習)**がある[18].
 Contrastive loss [11], triplet loss [28], infoNCE loss [24] are representative loss functions in contrastive learning which follow the basic principles - 1) learning similar representations for instances of the same category, and 2) learning contrasting representations for instances of different categories.
-対照学習における代表的な損失関数として、Contrastive loss [11], triplet loss [28], infoNCE loss [24] があり、1）同じカテゴリのインスタンスに対しては類似表現を学習し、2）異なるカテゴリのインスタンスに対しては対照表現を学習するという基本原理に従っている。
+contrastive learningにおける代表的な損失関数として、Contrastive loss [11], **triplet loss** [28], infoNCE loss [24] があり、1）同じカテゴリのインスタンス(=学習データの１レコード的な意味か...!)に対しては**類似表現(similar representations)**を学習し、2）異なるカテゴリのインスタンスに対しては**対照表現(contrasting representations)**を学習するという基本原理に従っている.
 
 A similar contrastive approach is used in the training of recommendation system models.
-推薦システムモデルの学習においても、同様の対比的アプローチが用いられている。
+推薦システムモデルの学習においても、同様の contrastive(対比的)アプローチが用いられている.
 The pairwise ranking loss [26] such as the Bayesian Personalized Ranking (BPR) loss is often used to train the relative ranking of positive and negative items by contrasting the recommendation scores.
-推薦スコアを対比して肯定的項目と否定的項目の相対順位を学習するために、Bayesian Personalized Ranking (BPR) loss などのペアワイズランキングロス [26] がよく使われる。
+推薦スコアを対比してpositiveアイテムとnegative アイテムの相対順位を学習するために、**Bayesian Personalized Ranking (BPR) loss** などのpairwiseのranking loss [26] がよく使われる.
 However, unlike the contrastive learning losses, the BPR loss does not include a term to minimize the score differences within positive and negative items, respectively.
-しかし、BPR損失は対比学習損失と異なり、肯定的項目と否定的項目それぞれの中のスコア差を最小化する項を含んでいない。
+しかし、BPR損失はcontrastive learningの損失学習とは異なり、positiveアイテムとnegativeアイテム**それぞれの中のスコア差(=positiveなアイテム同士のスコアを近づけるregularization term?)**を最小化する項を含んでいない.
 Extending the BPR loss to include a term to minimize the score differences within positive(negative) items can help in reducing the model bias while maintaining accuracy.
-BPR損失を拡張し、正（負）項目内のスコア差を最小化する項を追加することで、精度を維持しつつモデルのバイアスを軽減することができる。
+BPR lossを拡張し、**正（負）アイテム内のスコア差を最小化する項(=positiveなアイテム同士のスコアを近づけるregularization term?)**を追加することで、精度を維持しつつモデルのバイアスを軽減することができる.
 
 Although a few works studied contrastive learning in the context of recommendation systems [20, 41], these studies focused on the sampling scheme of negative items, and did not discuss how minimizing the positive and negative scores, respectively, can reduce the model bias.
-推薦システムの文脈で対比学習を研究した研究はいくつかあるが[20, 41]，これらの研究では，ネガティブ項目のサンプリング方式に着目し，ポジティブスコアとネガティブスコアをそれぞれ最小化することでモデルのバイアスをどのように軽減できるかは議論されていない．
+**推薦システムの文脈でcontrastive learningを研究した研究はいくつかある**が[20, 41]，これらの研究では，negativeアイテムのサンプリング方式に着目し，ポジティブスコアとネガティブスコアをそれぞれ最小化することでモデルのバイアスをどのように軽減できるかは議論されていない．
 One study outside the context of contrastive learning took a similar approach of penalizing the score differences of the average recommendation scores across different item groups to promote fairness [43].
-対照学習の文脈以外では，異なる項目群の平均推薦スコアのスコア差にペナルティを課すことで，公平性を促進するという同様のアプローチをとった研究がある[43]．
+contrastive learningの文脈以外では，異なるアイテム群の平均推薦スコアのスコア差にペナルティを課すことで，公平性を促進するという同様のアプローチをとった研究がある[43]．
 However, this study did not suggest a method to reduce the score differences at the individual item level.
-しかし，この研究では，個々の項目レベルでのスコア差異を低減する方法は提案されていない．
+しかし，この研究では，個々のアイテムレベルでのスコア差異を低減する方法は提案されていない．
 To the best of our knowledge, our work is the first to introduce a method to reduce model bias while maintaining accuracy with a regularization term that minimizes the score differences within positive and negative items, respectively.
-我々の知る限り，正項目内と負項目内のスコア差をそれぞれ最小化する正則化項を用いて，精度を維持しつつモデルの偏りを低減する方法を導入したのは，本研究が初めてである．
+我々の知る限り，**positive item内とnegative item内のスコア差をそれぞれ最小化するregularization termを用いて，精度を維持しつつモデルの偏りを低減する方法を導入したのは，本研究が初めて**である．
 
 # 3. Preliminaries 3. 前段階
 
 ## 3.1. Implicit Recommendation System and Bayesian Personalized Ranking Loss 3.1. 暗黙のレコメンデーションシステムとベイズ型パーソナライズドランキングロス
 
 Implicit recommendation systems are trained with implicit user feedback [14, 17, 26].
-暗黙の推薦システムは，暗黙のユーザフィードバックを用いて学習する[14, 17, 26]．
+Implicitの推薦システムは，暗黙のユーザフィードバックを用いて学習する[14, 17, 26]．
 Implicit data consists of tuple (u,i) meaning that a user $u \in U$ consumed an item $i \in I$.
-暗黙のデータは，ユーザ$uがアイテム$iを消費したことを意味するタプル(u,i)から構成される．
+暗黙のデータは，ユーザuがアイテムiをconsume(=clickとか良いねとかreaction的な意味)したことを意味するタプル(u,i)から構成される．
 We denote the set of items user u consumed as $Po_{s_u}$, since the items implicitly show the positive preference of u. In contrast, we denote the items that u did not consume as $Ne_{g_u}$.
-uが消費したアイテムの集合を$Po_{s_u}$と呼ぶ．これは，uが消費しなかったアイテムを$Ne_{g_u}$と呼ぶ．
+uがconsumeしたアイテムの集合を$Po_{s_u}$と呼ぶ．これは，uがconsumeしなかったアイテムを$Ne_{g_u}$と呼ぶ．
 The recommendation system learns the preference of the users to produce a recommendation score $\hat{y_{ui}}$ based on the predicted preference useru has on itemi.
-推薦システムは、ユーザの嗜好を学習し、ユーザuがアイテムiに対して持つ予測嗜好に基づき、推薦スコア$Chat{y_{ui}}$を生成する。
+推薦システムは、ユーザの嗜好を学習し、ユーザuがアイテムiに対して持つ予測嗜好に基づき、推薦スコア$\hat{y_{ui}}$を生成する.
 Subsequently, the item with the highest predicted score is recommended to the user.
 その後、予測スコアが最も高い項目がユーザに推薦される。
 Implicit recommendation systems are usually trained using the pairwise ranking loss such as the Bayesian Personalized Ranking (BPR) loss [14, 15, 26].
 暗黙の推薦システムは通常、Bayesian Personalized Ranking (BPR) loss などのペアワイズランキング損失を用いて学習される[14, 15, 26]。
 The BPR loss is given as Equation (1), where $\sigma()$ refers to the sigmoid function.
-BPR損失は、式(1)のように与えられ、$ghesigma()$はシグモイド関数を指す。
+BPR損失は、式(1)のように与えられ、$\sigma()$はシグモイド関数を指す。
 The L2 regularization term is omitted for brevity.
-L2正則化項は簡潔にするため省略した。
+L2正則化項は簡潔にするため省略した.
 
 $$
 Loss_{BPR} = - \sum_{u \in U} \sum_{p \in Po_{s_u}, n \in Ne_{g_u}} \log \sigma(\hat{y}_{u,p} - \hat{y}_{u,n})
@@ -270,82 +265,82 @@ Loss_{BPR} = - \sum_{u \in U} \sum_{p \in Po_{s_u}, n \in Ne_{g_u}} \log \sigma(
 $$
 
 During training, positive and negative items of each user are paired and the recommendation system learns to maximize the score differences between the paired items.
-学習時には、各ユーザーのポジティブ項目とネガティブ項目をペアにして、ペアとなった項目間のスコア差を最大にするように推薦システムが学習する。
+学習時には、**各ユーザーのpositiveアイテムとnegativeアイテムをペアにして、ペアとなったアイテム間のスコア差を最大にするように推薦システムが学習する.**
 The accuracy of the recommendation system is evaluated based on how accurately the model scores positive items higher than negative items.
-推薦システムの精度は、モデルがどれだけ正確に正の項目を負の項目より高く採点したかに基づいて評価される。
+推薦システムの精度は、モデルがどれだけ正確に**positiveのアイテムをnegativeのアイテムより高く採点したか**(コレって良いの??negativeなアイテムの中には、まだ出会ってないアイテムが含まれてない??)に基づいて評価される.
 Common accuracy metrics such as Hit, NDCG [17] is computed based on the ranking of the positive test item relative to the negative test items.
-Hit, NDCG [17]などの一般的な精度指標は、ネガティブテスト項目に対するポジティブテスト項目の相対的な順位に基づいて計算される。
+Hit, NDCG [17]などの一般的な精度指標は、negativeテストアイテムに対するpositiveテストアイテムの相対的な順位に基づいて計算される.
 
 ## 3.2. Popularity Bias in Model Prediction (Model Bias) 3.2. モデル予測における人気の偏り（モデルバイアス）
 
 The data used to train recommendation systems usually exhibits long-tail distribution in item popularity [2, 25].
 推薦システムの学習に用いられるデータは，通常，アイテムの人気度がロングテール分布をしている[2, 25]．
 Often, the recommendation systems trained with such data produce higher recommendation scores to more popular items even among items equally liked by a user [3, 34, 42].
-このようなデータを用いて学習させた推薦システムでは，ユーザが同じように好きなアイテムであっても，より人気の高いアイテムの推薦スコアが高くなることがよくある[3, 34, 42]．
+このようなデータを用いて学習させた推薦システムでは，**ユーザが同じように好きなアイテムであっても，より人気の高いアイテムの推薦スコアが高くなることがよくある**[3, 34, 42]．
 The tendency that recommendation systems show popularity bias in model prediction is what we refer to as model bias.
-このように，推薦システムの予測に人気の偏りが生じることを，我々はモデルの偏りと呼んでいる．
+このように，推薦システムの予測に人気の偏りが生じることを，我々はmodel-biasと呼んでいる．
 
 A few prior research suggested metrics to measure the model bias [7, 42].
-いくつかの先行研究では，モデルの偏りを測定するための指標を提案している[7, 42]．
+いくつかの先行研究では，**model-biasを測定するための指標**を提案している[7, 42]．
 One study [42] suggested a metric computing the popularityrank correlation for items (PRI).
-ある研究[42]では，アイテムの人気度順位相関（PRI）を計算する指標を提案した．
+ある研究[42]では，アイテムの**PopularityRank correlation for items （PRI, アイテムの人気度順位相関）**を計算する指標を提案した．
 PRI computes the Spearman rank correlation coefficient (SRC) of item popularity and the average ranking position, conditioned on the positive items.
-PRIはアイテムの人気度と平均ランキング位置のスピアマン順位相関係数(SRC)を計算し，正項目を条件とする．
+PRIはアイテムの人気度と平均ランキング位置の**Spearman rank correlation coefficient(SRC, スピアマン順位相関係数)**を計算し，positive アイテムを条件とする．
 The PRI is given as in Equation (2):
-PRIは式(2)のように与えられる。
+PRIは式(2)のように与えられる.
 
 $$
-\text{PRI} = - \text{SRC} (\text{popularity} (I), \text{ave_rank} (I))
+PRI = SRC (popularity(I), ave_rank(I))
 \tag{2}
 $$
 
-where the `ave_rank` of each item i is computed as follows: for each item i, we locate each user u who have i in Posu and compute the rank position quantile of i within $Po_{s_u}$.
-ここで、各項目iの `ave_rank` は以下のように計算される：各項目iについて、Posuにiを持つ各ユーザーuを探し出し、$Po_{s_u}$内でのiのランク位置の分位数を計算する。
+where the `ave_rank` of each item i is computed as follows: for each item i, we locate each user u who have i in Posu and compute the rank position quantile of i within $Pos_{u}$.
+ここで、各アイテムiの `ave_rank` は以下のように計算される：各アイテムiについて、$Pos_{u}$にiを持つ各ユーザーuを探し出し、$Pos_{u}$内でのiのランク位置の分位数を計算する.
 Then the rank position quantile is averaged across all user u who have i in $Po_{s_u}$.
-次に、$Po_{s_u}$内でiを持つ全てのユーザuの順位位置の分位数を平均する。
+次に、$Po_{s_u}$内でiを持つ全てのユーザuの順位位置の分位数を平均する.
 Note that an item with smaller average rank quantile close to 0 means the item on average scores higher among the $Po_{s_u}$ of each user, whereas a greater average rank quantile close to 1 means that the item generally scores lower than other positive items.
-なお、平均順位分位が0に近いほど小さい項目は、各ユーザーの$Po_{s_u}$の中で平均的にスコアが高い項目を意味し、1に近いほど大きい平均順位分位は、他の正の項目よりも一般的にスコアが低い項目を意味します。
+なお、平均順位分位が0に近いほど小さい(=順位が高い)アイテムは、各ユーザーの$Po_{s_u}$の中で平均的にスコアが高いアイテムを意味し、1に近いほど大きい平均順位分位は、他のpositievのアイテムよりも一般的にスコアが低いアイテムを意味する.
 Hence, a PRI value close to 1 implies the model gives higher scores to more popular items, and a PRI value close to 0 implies the model shows less model bias, since the popularity of positive items and the recommendation score ranking shows no correlation.
 したがって，PRI 値が 1 に近いほど，人気のあるアイテムに高いスコアを与えるモデルであり，PRI 値が 0 に近いほど，ポジティブなアイテムの人気と推薦スコアランキングに相関がないため，モデルの偏りが少ないことを意味する．
 
 We further propose a metric computing the average popularity quantile of the top scoring positive items of each user (PopQ@1) as in Equation (3):
-さらに、各ユーザーの正項目の得点上位の平均人気度分位値（PopQ@1）を計算する指標を式（3）のように提案する。
+さらに、各ユーザーのpositiveアイテムのスコア上位の平均人気度分位値（PopQ@1）を計算する指標を式（3）のように提案する. 
 
 $$
 PopQ@1 = \frac{1}{|U|}\sum_{u\in U} \text{PopQuantile}_u(\argmax_{x\in Po_{s_u}}(\hat{y}_{ui}))
 \tag{3}
 $$
 
-where $\text{PopQuantile}_u$ returns the popularity quantile of the item conditioned on $Po_{s_u}$ .
-ここで、$text{PopQuantile}_u$ は、$Po_{s_u}$ を条件とするアイテムの人気度分位を返す。
-The item of $Po_{s_u}$ which has the highest global popularity has a $\text{PopQuantile}_u$ of 0, and the item with the lowest global popularity has a $\text{PopQuantile}_u$ of 1. Hence, a` PopQ@1` value close to 0 implies high model bias, since the top scoring positive items of each user is usually the positive item with the highest global popularity.
-Po\_{s_u}$ のうち、グローバルな人気が最も高いアイテムは $text{PopQuantile}_u$ が 0 で、グローバルな人気が最も低いアイテムは $text{PopQuantile}_u$ が 1 である。したがって、各ユーザの正項目の得点上位は、通常グローバルな人気が最も高い正項目になるので、` PopQ@1` が 0 に近い場合はモデルの偏りが大きいことを意味する。
+where $\text{PopQuantile}_u$ returns the popularity quantile of the item conditioned on $Pos_{u}$ .
+ここで、$text{PopQuantile}_u$ は、$Pos_{u}$ を条件とするアイテムの人気度分位を返す.
+The item of $Pos_{u}$ which has the highest global popularity has a $\text{PopQuantile}_u$ of 0, and the item with the lowest global popularity has a $\text{PopQuantile}_u$ of 1. Hence, a` PopQ@1` value close to 0 implies high model bias, since the top scoring positive items of each user is usually the positive item with the highest global popularity.
+$Pos_{u}$ のうち、グローバルな人気が最も高いアイテムは $/text{PopQuantile}_u$ が 0 で、グローバルな人気が最も低いアイテムは $/text{PopQuantile}_u$ が 1 である。したがって、各ユーザのpositiveアイテムのスコア上位は、通常グローバルな人気が最も高いpositive itemになるので、` PopQ@1` が 0 に近い場合はmodel-biasが大きいことを意味する.
 A `PopQ@1` value close to 0.5 implies no model bias, since the popularity quantile of the top scoring positive items is likely to be spread out across 0 and 1. Whereas the PRI computes the overall correlation between the item popularity and the average rank for all positive items, `PopQ@1` focuses on the popularity quantile only for the top scoring positive items which has a high chance of being recommended.
-一方、PopQ@1 の値が 0.5 に近い場合は、人気度分位が 0 と 1 の間に分散している可能性が高いため、モデルの偏りがないことを意味する。 PRI がアイテムの人気度と全正項目の平均順位との相関を計算するのに対し、PopQ@1 は推奨される可能性の高いトップスコア正項目の人気度分位に注目するものである。
+一方、PopQ@1 の値が 0.5 に近い場合は、人気度分位が 0 と 1 の間に分散している可能性が高いため、model-biasがないことを意味する. PRI がアイテムの人気度と全positive itemの平均順位との相関を計算するのに対し、PopQ@1 は**推薦される可能性の高いトップスコアpositive itemの人気度分位に注目するもの**である.
 The two metrics allow detailed evaluation of the model bias.
-この2つの指標により、モデルの偏りを詳細に評価することができる。
+この2つの指標により、model-biasを詳細に評価することができる.
 
 A recommendation system should be trained to achieve both high accuracy and low model bias.
-推薦システムは、高い精度と低いモデルバイアスの両方を達成するように学習させる必要がある。
+推薦システムは、**高い精度と低いmodel-biasの両方を達成するように学習させる必要がある**.
 The accuracy and debias performance of a recommendation system is often orthogonal.
-推薦システムの精度とデビアス性能は直交していることが多い。
+推薦システムの精度とdebias性能は直交していることが多い.
 Accuracy metrics measure how well the system distinguishes between positive and negative preference, while debias metrics assess how item popularity is (un)correlated with recommendation score conditioned on positive items.
-精度の指標はシステムがどの程度ポジティブな嗜好とネガティブな嗜好を区別できるかを評価し、デビアスの指標はアイテムの人気がポジティブなアイテムを条件とした推薦スコアとどの程度（非）相関しているかを評価するものである。
+精度の指標はシステムが**どの程度positiveな嗜好とnegativeな嗜好を区別できるか**を評価し、debiasの指標は**アイテムの人気度がpositiveなアイテムを条件とした推薦スコアとどの程度（非）相関しているか**を評価するものである.
 Note that it is important for the recommendation system to maintain accuracy while reducing model bias.
-推薦システムにとって重要なことは、モデルの偏りを抑えながら精度を維持することである。
+推薦システムにとって重要なことは、model-biasを抑えながら精度を維持すること.
 A system with low model bias but also low accuracy can not give personalized recommendations.
-モデルの偏りが少なくても精度が低ければ、個人に合った推薦を行うことはできません。
+model-biasが少なくても精度が低ければ、個人に合った推薦を行うことはできない.
 For instance, a model giving random recommendation would show no model bias but does not consider the user preference at all.
-例えば、ランダムな推薦を行うモデルは、モデルの偏りを示さないが、ユーザの嗜好を全く考慮しない。
+例えば、ランダムな推薦を行うモデルは、model-biasを示さないが、ユーザの嗜好を全く考慮しない.
 
 ## 3.3. Visual Illustration on Synthetic Data 3.3. 合成データでの視覚的な説明
 
 Throughout the study, we design a synthetic data with explicit data bias to illustrate model bias and subsequent debias performance of various methods.
-本研究では、モデルの偏りとそれに続く様々な手法のデバイアス性能を説明するために、データの偏りを明示した合成データを設計する。
+本研究では、model-biasとそれに続く様々な手法のdebias性能を説明するために、**data-biasを明示した合成データ**を設計する.
 The synthetic data is a 200 x 200 user-item interaction matrix R. The matrix is filled with binary interaction information such that the item popularity linearly decreases as the item index increases, as seen in Equation (4).
-合成データは200 x 200のユーザとアイテムの相互作用行列Rであり、式（4）に見られるように、アイテムのインデックスが増加するにつれてアイテムの人気が直線的に減少するように、行列はバイナリ相互作用情報で満たされている。
+合成データは200 x 200のユーザ*アイテムの相互作用行列Rであり、式（4）に見られるように、**アイテムのインデックスが増加するにつれてアイテムの人気が直線的に減少するように**、行列はバイナリ相互作用情報で満たされている.
 Although such data deviates from the sparse and noisy real-world data, it provides a systematic way to observe how a recommendation system exhibits model bias.
-このようなデータは、疎でノイズの多い実世界のデータからは逸脱しているが、推薦システムがどのようにモデルの偏りを示すかを観察する体系的な方法を提供するものである。
+このようなデータは、疎でノイズの多い実世界のデータからは逸脱しているが、推薦システムがどのようにmodel-biasを示すかを観察する体系的な方法を提供するものである。
 
 $$
 R[u,i] = 1 ( \text{if} i + j <= 200) \\
@@ -354,9 +349,9 @@ R[u, i] = 0 ( o.w. )
 $$
 
 Using such data, we train a matrix factorization (MF) model, which is a basic collaborative filtering recommendation system [30].
-このようなデータを用いて、協調フィルタリング推薦システムの基本である行列因子法（MF）モデルを学習する[30]。
+このようなデータを用いて、協調フィルタリング推薦システムの基本である行列因子法（MF）モデルを学習する[30].
 We use BPR loss as the loss function [26].
-損失関数としてBPR損失を用いる[26]。
+損失関数としてBPR損失を用いる[26].
 Figure 1a shows the synthetic data in matrix form: the white area corresponds to positive items, and the black negative items.
 図1aは合成データを行列形式で表したもので、白い部分が正の項目、黒い部分が負の項目に相当する。
 Figure 1b shows the recommendation score of the trained MF model, showing salient model bias.
