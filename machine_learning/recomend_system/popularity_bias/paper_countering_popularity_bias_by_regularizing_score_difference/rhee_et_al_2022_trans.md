@@ -406,7 +406,7 @@ $$
 \tag{6}
 $$
 
-- Zerosum Term : 1 positive and 1 negative item is sampled per user at a time, and the sum of the recommendation scores of positive and negative items is regularized to be close to 0. Through training, the regularization will propagate across random positive-negative item pairs of the user, forcing the positive and negative items to have symmetric recommendation scores. Eventually, the scores of the positive items of the user will converge to a single value, while the scores of the negative items converge to a symmetric value. ゼロサム項 : 一人のユーザに対して正項目と負項目をそれぞれ1つずつ抽出し、正項目と負項目の推薦スコアの和が0に近づくように正則化する。学習により、正則化はユーザのランダムな正負項目ペアに伝播し、正項目と負項目が対称的な推薦スコアを持つことを余儀なくされる。 最終的には、肯定的な項目のスコアは単一の値に収束し、否定的な項目のスコアは対称的な値に収束する。
+- Zerosum Term : 1 positive and 1 negative item is sampled per user at a time, and the sum of the recommendation scores of positive and negative items is regularized to be close to 0. Through training, the regularization will propagate across random positive-negative item pairs of the user, forcing the positive and negative items to have symmetric recommendation scores. Eventually, the scores of the positive items of the user will converge to a single value, while the scores of the negative items converge to a symmetric value. ゼロサム項 : 一人のユーザに対して正項目と負項目をそれぞれ1つずつ抽出し、正項目と負項目の推薦スコアの和が0に近づくように正則化する.学習により、正則化はユーザのランダムな正負項目ペアに伝播し、正項目と負項目が対称的な推薦スコアを持つことを余儀なくされる。 最終的には、肯定的な項目のスコアは単一の値に収束し、否定的な項目のスコアは対称的な値に収束する。
 
 $$
 \text{Reg Term} = - \sum_{u \in U} \sum_{p \in Po_{s_u}, n \in Ne_{g_u}}
@@ -433,70 +433,70 @@ Finally, experiments showed only regularizing the scores of positive items lead 
 ## 4.2. Illustration of the Proposed Method on the Synthetic Data 4.2. 合成データにおける提案手法の説明
 
 We test the debias performance of the proposed methods using the synthetic data.
-合成データを用いて、提案手法のデビアス性能を検証する.
+合成データを用いて、提案手法のdebias性能を検証する.
 We add the regularization term to the BPR loss and train the matrix factorization model to see if the model bias exhibited in the baseline training is alleviated.
-BPR損失に正則化項を追加し、行列分解モデルを学習させ、ベースライン学習で見られたモデルの偏りが緩和されるかどうかを確認する。
+BPR損失に正則化項を追加し、行列分解モデルを学習させ、ベースライン学習で見られたモデルの偏りが緩和されるかどうかを確認する.
 Note, the baseline refers to the method of using BPR loss for training.
-なお、ベースラインとは、BPR損失を用いて学習を行う方法のことである。
+なお、ベースラインとは、BPR損失を用いて学習を行う方法のことである.
 Figure 2 shows the model prediction when using the baseline BPR loss as well as the proposed methods.
-図2は、ベースラインBPR損失と提案手法を用いた場合のモデル予測値である。
+図2は、ベースラインBPR損失と提案手法を用いた場合のモデル予測値である.
 Whereas the baseline BPR loss resulted in high model bias in Figure 2a, the proposed methods show equal scores across positive items for each user (Figure 2b, 2c), while accurately contrasting the scores between positive and negative items.
-ベースラインBPRロスを用いた場合、図2aではモデルの偏りが大きくなるのに対し、提案手法では、各ユーザーのポジティブ項目でスコアが均等になり（図2b、2c）、ポジティブ項目とネガティブ項目のスコアが正確に対比されることがわかります。
+ベースラインBPRロスを用いた場合、図2aではmodel-biasが大きくなるのに対し、提案手法では、各ユーザーのポジティブ項目でスコアが均等になり（図2b、2c）、ポジティブ項目とネガティブ項目のスコアが正確に対比されることがわかります。
 Such qualitative analysis shows high debias and accuracy performance of the proposed methods.
-このような定性的な分析から、提案手法の高いデビアス性能と精度性能が示されました。
+このような**定性的な分析から、提案手法の高いdebias性能と精度性能が示された**.
 
 Next we quantitatively analyze the accuracy and debias performance.
-次に、精度とデビアス性能を定量的に分析する。
+次に、精度とデビアス性能を定量的に分析する.
 Table 1 shows the error rate of the proposed methods compared to the baseline.
 表1は提案手法の誤差をベースラインと比較したものである．
 Both Pos2Neg2 and Zerosum method show low error rate, and the Zerosum method even shows higher accuracy than the baseline.
-Pos2Neg2法、Zerosum法ともに誤差が少なく、Zerosum法はベースラインよりも高い精度を示しています。
+Pos2Neg2法、Zerosum法ともに誤差が少なく、Zerosum法はベースラインよりも高い精度を示している.
 For the debias performance, the upper graph of Figure 2d, 2e, 2f show the average rank quantile of the positive items.
-デビアス性能については、Figure 2d, 2e, 2fの上段のグラフは、正項目の平均順位分位数を示しています。
+debias性能については、Figure 2d, 2e, 2fの上段のグラフは、positive itemの平均順位分位数を示している.
 For the proposed methods, we see the average rank is around 0.25 ~ 0.75 for most of the items including the popular items (small item index), meaning the ranking is no longer affected by popularity.
-提案手法では、人気アイテム（小アイテムインデックス）を含むほとんどのアイテムで平均順位が0.25～0.75程度となり、順位が人気の影響を受けなくなったことがわかる。
+提案手法では、人気アイテム（小アイテムインデックス）を含むほとんどのアイテムで平均順位が0.25～0.75程度となり、**順位が人気の影響を受けなくなったことがわかる**.
 However, the few tail items with least popularity (item index 190 ~ 200) is still ranked at the bottom on average, indicating the debias was not effective for tail items.
-しかし、人気度の低いテールアイテム（アイテムインデックス190〜200）は依然として平均順位が最下位であり、テールアイテムに対してデビアスは有効でなかったことがわかる。
+しかし、人気度の低いtail item（アイテムインデックス190〜200）は依然として平均順位が最下位であり、tail itemに対してdebiasは有効でなかったことがわかる.
 Similarly, Table 1 shows the PRI of the proposed methods are reduced from 0.99 to 0.42 and 0.50, respectively.
-同様に、表1より提案手法のPRIはそれぞれ0.99から0.42、0.50に減少していることがわかる。
+同様に、表1より提案手法のPRIはそれぞれ0.99から0.42、0.50に減少していることがわかる.
 The lower graph of Figure 2d, 2e, 2f show the histogram of popularity quantiles of the top scoring positive items of each user.
-図2d, 2e, 2fの下のグラフは、各ユーザの正項目の得点上位の人気度分位値のヒストグラムである。
+図2d, 2e, 2fの下のグラフは、各ユーザのpositive itemのスコアtopの人気度分位値のヒストグラムである.
 For both Pos2Neg2 and Zerosum methods, the popularity quantiles are spread across 0 ~ 1. We see in Table 1 that the `PopQ@1` is computed at 0.62 and 0.61, respectively, which is closer to the ideal 0.5.
 Pos2Neg2法、Zerosum法ともに、人気度分位は0〜1に広がっている。表1より、PopQ@1`はそれぞれ0.62、0.61と計算され、理想の0.5により近づいていることがわかる。
 All of these results show that both of the proposed regularization terms have the effect of reducing model bias while maintaining high accuracy.
-これらの結果から、提案した正則化項はいずれも高い精度を維持しつつ、モデルの偏りを低減する効果があることがわかる。
+これらの結果から、提案した正則化項はいずれも高い精度を維持しつつ、model-biasを低減する効果があることがわかる。
 
 Finally, we compare the proposed methods.
-最後に、提案手法を比較する。
+最後に、提案手法を比較する.
 The Zerosum method reports higher accuracy than the Pos2Neg2 method.
-Zerosum法はPos2Neg2法よりも高い精度を報告した。
+Zerosum法はPos2Neg2法よりも高い精度を報告した.
 We suggest two explanations.
 我々は2つの説明を提案する．
 One reason may be due to the wider range of item pairing of the Zerosum method.
-一つは、Zerosum法の方が項目の組合せの範囲が広いためと考えられる。
+一つは、**Zerosum法の方がitemの組合せの範囲が広い**事が理由と考えられる.
 Figure 2b shows the Pos2Neg2 method failing to distinguish positive and negative preference for users with low item consumption (user index 180 ~ 200), whereas in Figure 2c the Zerosum method showed accurate predictions for the same users.
-図2bは、Pos2Neg2法がアイテム消費量の少ないユーザ（ユーザ指数180～200）に対して、ポジティブ嗜好とネガティブ嗜好を区別できないことを示しているのに対し、図2cではZerosum法が同じユーザに対して正確な予測を示している。
+図2bは、**Pos2Neg2法がアイテム消費量の少ないユーザ（ユーザ指数180～200）に対して、positive嗜好とnegative嗜好を区別できない**ことを示しているのに対し、図2cではZerosum法が同じユーザに対して正確な予測を示している.
 For users with small positive item consumptions, the Pos2Neg2 method may suffer from limited choices in positive item pairing, whereas the Zerosum method selects a pair for the positive items from the negative items.
-Pos2Neg2法は、正項目の消費量が少ないユーザに対して、正項目と負項目の組を選択することができますが、Zerosum法は、負項目と正項目の組を選択するため、正項目の消費量が少ないユーザに対しては、正項目の組の選択肢が少なくなることが予想されます。
+Pos2Neg2法は、**positive itemの消費量が少ないユーザに対して**、**positive item同士のペアの選択肢が限られる**可能性がある. 一方、Zerosum法では、negative itemとpositive itemのペアをを選択する.
 Consequently, the Pos2Neg2 method may not be able to learn the preference of some users due to limited range of training samples.
-その結果，Pos2Neg2法は，学習サンプルの範囲が狭く，一部のユーザの嗜好を学習できない可能性がある．
+その結果，**Pos2Neg2法は，学習サンプルの範囲が狭く，一部のユーザの嗜好を学習できない可能性がある**．
 The second reason may be due to the symmetric scoring effect of the Zerosum method.
-第二の理由は，Zerosum法の対称的なスコアリング効果によるものと考えられる．
+第二の理由は，**Zerosum法の対称的なスコアリング効果**によるものと考えられる．
 Figure 2b shows the Pos2Neg2 method gives unequal scores for negative items for different users, whereas Figure 2c shows the Zerosum method gives equal scores to negative items across different users, which also forms a symmetry with the positive items.
-図2bは、Pos2Neg2法がユーザごとに負の項目に対して不均等なスコアを与えているのに対し、図2cは、Zerosum法がユーザごとに負の項目に対して均等なスコアを与え、それが正の項目と対称性を形成していることを示しています。
+図2bは、Pos2Neg2法がユーザごとにnegative itemに対して不均等なスコアを与えているのに対し、図2cは、Zerosum法がユーザごとにnegative itemmに対して均等なスコアを与え、それがpositive itemと対称性を形成していることを示している.
 The different score distribution of the Pos2Neg2 method may lead to unequal training for item pairs of different users, whereas the training is uniform for those of the Zerosum method.
-Pos2Neg2法のスコア分布が異なるため、ユーザが異なると項目ペアの学習が不均等になるのに対し、Zerosum法のものは均一に学習されることが考えられます。
+Pos2Neg2法の場合はユーザ毎にスコア分布が異なるケースでは、itemペアの学習が不均等になるのに対し、Zerosum法のものは均一に学習されることが考えられる.
 In sum, we conclude that the Zerosum is more than a simplified version of the Pos2Neg2 method but has additional effect of promoting accuracy.
-以上のことから、ZerosumはPos2Neg2法の簡易版である以上に、精度を向上させる効果があることがわかった。
+以上のことから、**ZerosumはPos2Neg2法の簡易版である以上に、精度を向上させる効果がある**ことがわかった.
 Hence, we present the Zerosum term as our main proposed method and contribution.
-したがって、我々はZerosum項を主要な提案手法として提示し、貢献する。
+したがって、**我々はZerosum項を主要な提案手法として提示**し、貢献する.
 
 # 5. Advangtages of the Proposed Method 5. 提案手法の長所
 
 We compare the performance of the proposed method with earlier debias methods: inverse propensity weighting (IPW) [16, 27], causal intervention [36, 38, 40], reranking [2, 37], and Pearson regularization method [42].
-我々は提案手法の性能を，先行するデビアス手法である逆傾向重み付け(IPW) [16, 27]，因果関係介入[36, 38, 40]，再ランク[2, 37]，Pearson正規化法 [42] と比較検討する．
+我々は**提案手法の性能を，先行するdebias手法と比較する**.(具体的には、逆傾向重み付け(IPW) [16, 27]，因果関係介入[36, 38, 40]，再ランク[2, 37]，Pearson正規化法 [42] )
 The IPW method applies weights to the training instance to reduce the data bias, where the weight is inverse to the item popularity [16, 27].
-IPW法はデータの偏りを減らすために学習インスタンスに重みを適用し、ここで重みは項目の人気度に逆である[16, 27]。
+IPW法はmodel-biasを減らすために学習インスタンスに重みを適用し、ここで重みはitemの人気度に逆である[16, 27]。
 Causal intervention models the causal effect the item popularity has on the recommendation score and removes such effect [36, 38].
 Causal intervention はアイテムの人気度が推薦スコアに与える因果関係をモデル化し，その効果を除去する[36, 38]．
 We select the state of the art PD (Popularity-bias Deconfounding) method for comparison [38].
@@ -504,7 +504,7 @@ We select the state of the art PD (Popularity-bias Deconfounding) method for com
 The reranking method applies post-hoc rank adjustment of the recommendation list.
 この手法では，推薦リストのランクを事後的に調整する．
 However, in the context of model bias this corresponds to the oracle method, hence comparison is not appropriate.
-しかし，モデルバイアスの文脈では，これはオラクル法に相当するため，比較は適切でない．
+しかし，model-biasの文脈では，これはオラクル法に相当するため，比較は適切でない．
 Finally [42] suggested to reduce the model bias by adding a regularization term to the loss function to force the Pearson correlation of item popularity and recommendation score to be close to 0, conditioned on the positive items.
 最後に[42]は，損失関数に正則化項を追加し，正の項目を条件として，項目の人気度と推薦スコアのピアソン相関を0に近づけることで，モデルの偏りを軽減することを提案している．
 We first overview the debias performance of IPW, PD, and Pearson methods, then conduct in-depth comparison with the proposed method.
@@ -515,56 +515,56 @@ We first overview the debias performance of IPW, PD, and Pearson methods, then c
 Each debias methods (IPW, PD, Pearson) was applied to the training of MF model on the synthetic dataset.
 合成データセットに対するMFモデルの学習には，各デビアス手法（IPW，PD，Pearson）が適用された．
 Figure 3 shows the model score results.
-図3はモデルのスコア結果である。
+図3はモデルのスコア結果である.
 Figure 3a shows the IPW method was not able to clearly distinguish the contrasting preference between positive and negative items.
-図3aより、IPW法はポジティブ項目とネガティブ項目の対比的な選好を明確に区別することができないことがわかる。
+図3aより、IPW法はpositive itemとnegative item の対比的な選好を明確に区別することができないことがわかる.
 Moreover, the method was not able to reduce model bias as seen in the results of Figure 3d.
-また、図3dの結果からわかるように、この手法はモデルの偏りを減らすことができなかった。
+また、図3dの結果からわかるように、この手法はmodel-biasを減らすことができなかった.
 Figure 3b shows the PD method performed satisfactory debias performance, while also accurately distinguishing positive and negative preference.
-図3bは、PD法が満足のいくデビアス性能を発揮し、かつ、ポジティブとネガティブの嗜好を正確に区別していることを示している。
+**図3bは、PD法が満足のいくデビアス性能を発揮し、かつ、ポジティブとネガティブの嗜好を正確に区別していることを示している.**
 However the debias is not even throughout the items.
-しかし、デビアスは全ての項目で均一ではありません。
+しかし、debiasは全てのアイテムで均一ではない.
 This is also reflected in Figure 3e, where the upper graph of Figure 3e shows the average item rank quantile exhibiting a curved shape, with the most popular item still being ranked at the top.
-これは図3eにも反映されており、図3eの上側のグラフでは、平均的な項目のランク分位が曲線的な形状を示し、最も人気のある項目が依然として上位にランクされていることがわかる。
+これは図3eにも反映されており、図3eの上側のグラフでは、平均的な項目のランク分位が曲線的な形状を示し、**最も人気のある項目が依然として上位にランクされていることがわかる**.
 The lower graph shows about half of the popularity quantiles focused on value close to 0. Figure 3c shows the Pearson method resulted in low scores of popular items for some users (e.g. user index 0 ~ 20) while it is high for other users (e.g. user index 100 ~ 200).
-図3cは、Pearson法では、あるユーザ（例：ユーザインデックス0〜20）では人気アイテムのスコアが低く、他のユーザ（例：ユーザインデックス100〜200）では高くなることを示している。
+**図3cは、Pearson法では、あるユーザ（例：ユーザインデックス0〜20）では人気アイテムのスコアが低く、他のユーザ（例：ユーザインデックス100〜200）では高くなることを示している.**
 This indicates the method penalized the scores of popular items for some users to force the Pearson correlation coefficient close to 0. However, such superficial balancing of scores is undesirable because it introduces additional model bias of different directions.
-これは、ピアソン相関係数を0に近づけるために、一部のユーザの人気アイテムのスコアにペナルティを与えていることを示している。しかし、このような表面的なスコアのバランスは、異なる方向のモデルのバイアスを追加するため、望ましくない。
+これは、ピアソン相関係数を0に近づけるために、一部のユーザの人気アイテムのスコアにペナルティを与えていることを示している. しかし、このような表面的なスコアのバランスは、**異なる方向のmodel-biasを追加(人気なアイテムをあえてオススメしないようにする?)するため、望ましくない**.
 For instance, now the popular items are under-recommended to users of index 0 ~ 20.
-例えば、現在、指数0〜20のユーザには、人気アイテムはあまり推奨されていない。
+例えば、現在、指数0〜20のユーザには、人気アイテムはあまり推奨されていない.
 The upper graph of Figure 3f shows that the average rank quantile of the popular items (item index 0 ~ 20) is close to 0.5, but the model bias is not reduced for the rest of the items.
-図3fの上のグラフは、人気アイテム（アイテムインデックス0〜20）の平均ランク分位が0.5に近いことを示しているが、残りのアイテムについてはモデルのバイアスが減少していないことがわかる。
+図3fの上のグラフは、人気アイテム（アイテムインデックス0〜20）の平均ランク分位が0.5に近いことを示しているが、残りのアイテムについてはmodel-biasが減少していないことがわかる.
 The lower graph of Figure 3f shows fair spread of popularity quantiles.
-図3fの下側のグラフは、人気順位の分位数が公平に広がっていることを示している。
+図3fの下側のグラフは、人気順位の分位数が公平に広がっていることを示している.
 
 The accuracy and debias performance metrics of the earlier methods is reported in Table 2.
-表2は、先行手法の精度とデビアス性能の指標を示したものである。
+表2は、先行手法の精度とdebias性能の指標を示したもの.
 All of the earlier methods showed worse accuracy performance compared to the Zerosum method.
-すべての先行手法はZerosum手法に比べ、精度が低いことがわかった。
+**すべての先行手法はZerosum手法に比べ、精度が低いことがわかった.**
 The methods also showed worse debias performance with IPW showing no debias effect; PD reporting PRI value of –0.52, indicating the model favoring unpopular items; and the Pearson method reporting a high PRI value of 0.80.
-IPWはデビアス効果を示さず，PDは-0.52のPRI値を報告しており，これはモデルが不人気な項目を好んでいることを示している．
+IPWはdebias効果を示さず，PDは-0.52のPRI値を報告しており，これはモデルが不人気なitemを好んでいることを示している．
 Both PD and Pearson reports a `PopQ@1` value around 0.3, which is farther from 0.5 than the Zerosum method.
-PDとPearsonは共に`PopQ@1`の値を0.3程度と報告し、Zerosum法よりも0.5から遠い。
+PDとPearsonは共に`PopQ@1`の値を0.3程度と報告し、Zerosum法よりも0.5から遠い.
 
 ## 5.2. Comparing the Zerosum Method with the PD Method 5.2. Zerosum 法と PD 法の比較
 
 The PD method has two limitations in terms of computational validity and efficiency compared to the Zerosum method.
-PD法は、Zerosum法と比較して、計算の妥当性と効率の面で2つの制約がある。
+**PD法は、Zerosum法と比較して、計算の妥当性と効率の面で2つの制約がある.**
 Methods such as PD adjusts the biased recommendation scores by lowering the scores of popular items while boosting the scores of unpopular items.
-PD法のような方法は、人気のある項目のスコアを下げ、不人気の項目のスコアを上げることで、偏った推薦スコアを調整する。
+PD法のような方法は、人気のあるitemのスコアを下げ、不人気のitemのスコアを上げることで、偏った推薦スコアを調整する. 
 This score adjusting scheme can lower the scores of positive items while boosting those of negative items, potentially leading to accuracy-debias tradeoff.
-このスコア調整方式は、ポジティブな項目のスコアを下げ、ネガティブな項目のスコアを上げるため、精度とバイアスのトレードオフを引き起こす可能性がある。
+このスコア調整方式は、positive itemのスコアを下げ、negative itemのスコアを上げるため、精度とバイアスのトレードオフを引き起こす可能性がある.(???)
 
 Such debias method has further limitation in terms of computational validity because the score adjusting scheme is often heuristically designed instead of being based on the computational mechanism of the recommendation model [36, 38, 42].
-このようなデビアス法は、スコア調整方式が推薦モデルの計算機構に基づくのではなく、ヒューリスティックに設計されることが多いため、計算の妥当性の点でさらなる限界がある[36, 38, 42]。
+このようなdebias法は、**スコア調整方式が推薦モデルの計算機構に基づくのではなく、ヒューリスティックに設計されることが多いため、計算の妥当性の点でさらなる限界がある**[36, 38, 42]。
 For instance the PD method uses the formula $\text{model score} = ELU (debiased score)\times(item pop)^a$ to derive the debiased score [38].
 例えば、PD法では、$text{model score} = ELU (debiased score)\times(item pop)^a$という式を用いて、debiased scoreを導出している[38]。
 However, this formula may not generalize to other recommendation models with different computational process.
-しかし、この式は、計算過程の異なる他の推薦モデルに対して一般化できない可能性がある。
+しかし、この式は、計算過程の異なる他の推薦モデルに対して一般化できない可能性がある.
 In contrast, the logic of the Zerosum method is generalizable to other models.
-これに対し、Zerosum法の論理は他のモデルにも一般化可能である。
+これに対し、Zerosum法の論理は他のモデルにも一般化可能である.
 To elaborate, we test how the Zerosum and PD method perform when switching the recommendation system model from matrix factorization to a different model such as NeuCF [15].
-そこで、推薦システムのモデルを行列分解法からNeuCF[15]などの別のモデルに変更した場合、Zerosum法とPD法がどのように作用するかを検証する。
+そこで、推薦システムのモデルを行列分解法からNeuCF[15]などの別のモデルに変更した場合、Zerosum法とPD法がどのように作用するかを検証する.
 The score result of the baseline BPR loss, Zerosum, and PD method, when training the NeuCF model is compared.
 NeuCFモデルを学習させたときのベースラインBPR損失、Zerosum、PD法のスコア結果を比較する。
 Figure 4a shows the baseline prediction of the NeuCF model differs from when using matrix factorization.
@@ -581,24 +581,24 @@ In contrast, the Zerosum method trains the model to simultaneously achieve high 
 ## 5.3. Comparing the Zerosum Method with the Pearson Method 5.3. Zerosum 法と Pearson 法の比較
 
 Some works suggested penalizing the size of the correlation value between item popularity and item scores conditioned on the positive items, in addition to the original loss function [7, 42].
-いくつかの研究では，本来の損失関数に加えて，項目人気度と項目得点の相関値の大きさを正の項目で条件づけることを提案している[7, 42]．
+いくつかの研究では，本来の損失関数に加えて，item人気度とitemスコアの相関値の大きさをpositive itemで条件づけることを提案している[7, 42]．
 This strategy aims to balance only the scores of positive items without boosting the negative items.
 この方法は，ネガティブアイテムをブーストすることなく，ポジティブアイテムのスコアのみをバランスさせることを目的としている．
 Therefore, such method can be more robust to accuracy-debias tradeoff.
-したがって，この方法は精度とバイアスのトレードオフに対してよりロバストである．
+したがって，**この方法は精度とバイアスのトレードオフに対してよりロバストである．**
 Indeed, the Zerosum method shares similar motivation.
 実際，Zerosum 法も同様の動機を持っている．
 
 However such Pearson regularization method also has two limitations.
-しかし、このようなPearson正則化法にも2つの限界がある。
+しかし、このようなPearson正則化法にも2つの限界がある.
 In terms of computational validity, we see from Figure 3c that the Pearson method selectively lowered the scores of popular items to bring the correlation coefficient close to 0; without achieving the intended independence between item popularity and score.
-計算の妥当性という点では、図3cから、Pearson法は人気項目のスコアを選択的に下げて相関係数を0に近づけており、意図した項目の人気とスコアの独立性が達成されていないことがわかる。
+計算の妥当性という点では、図3cから、**Pearson法は人気itemのスコアを選択的に下げて相関係数を0に近づけており、意図した項目の人気とスコアの独立性が達成されていない**ことがわかる.
 In contrast, the Zerosum method employs a simpler logic which is effective in directly predicting debiased scores.
-これに対し、Zerosum法はより単純なロジックを採用しており、劣化したスコアを直接予測するのに有効である。
+これに対し、**Zerosum法はより単純なロジックを採用しており、debiasedスコアを直接予測するのに有効である**.
 In terms of computational efficiency, the Pearson method requires the costly computation of all positive items scores for one step of training.
-計算効率の面では、Pearson法では1回の学習ですべての正項目のスコアを計算する必要があり、計算コストがかかる。
+計算効率の面では、Pearson法では1回の学習ですべてのpositive itemのスコアを計算する必要があり、計算コストがかかる.
 In contrast, the Zerosum method allows efficient mini-batch training which integrates naturally with the BPR loss.
-これに対し、Zerosum法では、BPRの損失と自然に統合された効率的なミニバッチ学習が可能である。
+これに対し、**Zerosum法では、BPRの損失と自然に統合された効率的なミニバッチ学習が可能である**.(なんでだっけ...??)
 
 # 6. Empirical Experiments 6. 実証実験
 
@@ -607,8 +607,7 @@ We conduct experiments to validate the effectiveness of the proposed method.
 
 ## 6.1. Experimental Settings 6.1. 実験設定
 
-6.1.1 Data.
-6.1.1 データ
+### 6.1.1 Data.
 We use Movielens [13], Gowalla [10], Goodreads [32, 33], and Ciao [31] datasets.
 我々は、Movielens [13], Gowalla [10], Goodreads [32, 33], and Ciao [31] datasetsを使用する。
 The datasets were preprocessed to filter out users and items with too few interactions.
@@ -619,16 +618,16 @@ The details of the preprocessed data is in Table 4.
 6.1.2 Recommendation Systems Models.
 6.1.2 推薦システムモデル。
 We used BPR-MF [26], NeuCF [15], NGCF [35], and LightGCN [14]; ranging from classical matrix factorization to the state of the art graph neural networks models.
-我々は、BPR-MF [26], NeuCF [15], NGCF [35], LightGCN [14] を用いた。古典的な行列分解から最新のグラフニューラルネットワークモデルに至るまで、様々なモデルを使用した。
+我々は、BPR-MF [26], NeuCF [15], NGCF [35], LightGCN [14] を用いた。古典的な行列分解から最新のグラフニューラルネットワークモデルに至るまで、様々なモデルを使用した.
 
-6.1.3 Comparison Methods.
-6.1.3 比較方法。
+### 6.1.3 Comparison Methods.
+
 The following methods are compared.
 以下の方法を比較する。
 Baseline is training the model with the BPR loss [26].
-ベースラインはBPR損失でモデルを学習する[26]。
+ベースラインはBPR損失でモデルを学習する[26].
 IPW weights each training instance with the inverse of item popularity [27].
-IPWは各訓練インスタンスに項目人気度の逆数で重み付けを行う[27]。
+IPWは各訓練インスタンスに項目人気度の逆数で重み付けを行う[27].
 PD is a causal intervention method which divides a factor proportional to the item popularity from the predicted score.
 PD は予測スコアからアイテム人気度に比例した因子を除算する因果的介入法である．
 The hyperparameter $\gamma$ was tuned in the range of $\gamma \in [0.05, 0.25]$ [38].
@@ -648,8 +647,8 @@ The hyperparameter α, β was tuned in the range of $\alpha \in [0.1, 1.5]$, $\b
 Zerosum is the proposed method which extends the BPR loss with a term which regulates the sum of paired positive and negative item scores of each user to be close to 0. The weight of the term is fixed at 0.1 for all experiments.
 Zerosumは、各ユーザーの正負の項目スコアの和が0に近くなるように制御する項をBPR損失に追加する提案手法であり、すべての実験において項の重みは0.1に固定されている。
 
-6.1.4 Training.
-6.1.4 トレーニング
+### 6.1.4 Training.
+
 Positive data was split into 60%, 20%, 20% for train, test, validation.
 ポジティブデータを60%, 20%, 20%に分割し、トレーニング、テスト、バリデーションを行った。
 For each user, 100 test negative items were selected before training.
@@ -657,8 +656,8 @@ For each user, 100 test negative items were selected before training.
 The same learning rate (0.001), batch size (2048), and embedding size (64 dim for MF, NeuCF model, and 10 dim with 3 GCN layers for NGCF, LightGCN) was used for each combination of (data, model, debias method).
 学習率（0.001）、バッチサイズ（2048）、埋め込みサイズ（MF、NeuCFモデルは64dim、NGCF、LightGCNはGCN3層で10dim）は、（データ、モデル、デバイアス方法）の組み合わせ毎に同じものを使用した。
 
-6.1.5 Evaluation.
-6.1.5 評価
+### 6.1.5 Evaluation.
+
 To evaluate the accuracy, each positive test item was paired with the 100 test negative items, andHit@10, NDCG@10 was measured.
 精度を評価するために，各陽性テスト項目と100個のテスト陰性項目のペアを作り，Hit@10, NDCG@10を測定した．
 Higher value means higher accuracy.
@@ -677,56 +676,56 @@ For methods requiring hyperparameter search, we report the best result in terms 
 Table 5 shows the experiments results.
 表 5 に実験結果を示す．
 The bold font emphasizes the results showing an accuracy (Hit@10) loss within 2% compared to the baseline method, while also showing an improvement of at least 0.07 for the debias performance (PopQ@1).
-太字は、ベースライン法と比較して精度（Hit@10）損失が2%以内であり、デビアス性能（PopQ@1）が0.07以上向上している結果を強調したものである。
+**太字は、ベースライン法と比較して精度（Hit@10）損失が2%以内であり、デビアス性能（PopQ@1）が0.07以上向上している結果を強調したもの**である.
 
 The Zerosum method showed high accuracy and debias performance in the Movielens, Gowalla, and Goodreads datasets when using the MF, NGCF, and LightGCN models.
-Zerosum法は、MF、NGCF、LightGCNモデルを用いた場合、Movielens、Gowalla、Goodreadsデータセットにおいて高い精度とデビアス性能を発揮した。
+Zerosum法は、MF、NGCF、LightGCNモデルを用いた場合、Movielens、Gowalla、Goodreadsデータセットにおいて高い精度とデビアス性能を発揮した.
 However, Zerosum method generally did not show high performance when using the NeuCF model or the Ciao dataset.
-しかし、NeuCFモデルやCiaoデータセットを用いた場合、Zerosum法は概して高い性能を示さなかった。
+しかし、NeuCFモデルやCiaoデータセットを用いた場合、Zerosum法は概して高い性能を示さなかった.
 Other methods such as PD and Pearson sometimes showed good performances but this was not consistent; the PD method did not show good performance in the Movielens and Gowalla datasets when using the NGCF and LightGCN method; the Pearson method showed high accuracy loss when using the NGCF or LightGCN method when training the Movielens dataset.
 PD法はNGCFとLightGCNを用いた場合，MovielensとGowallaのデータセットで良い性能を示さず，Pearson法はNGCFとLightGCNを用いた場合，Movielensデータセットで高い精度損失を示している．
 Based on the consistent performance of the Zerosum method in addition to the computational advantages discussed earlier, we conclude the Zerosum method to be more effective than earlier methods.
-先に述べた計算上の利点に加え、Zerosum法の安定した性能に基づき、Zerosum法は以前の方法よりも効果的であると結論づけた。
+**先に述べた計算上の利点に加え、Zerosum法の安定した性能に基づき、Zerosum法は以前の方法よりも効果的であると結論づけた**.
 Finally, IPW, MACR, and Post-Process often showed excessive accuracy loss and did not show competent performance.
-最後に、IPW、MACR、Post-Processは、しばしば過度の精度低下を示し、有能な性能を発揮することができなかった。
+最後に、IPW、MACR、Post-Processは、しばしば過度の精度低下を示し、有能な性能を発揮することができなかった.
 
 Finally we discuss why Zerosum method did not show debias effect with the Ciao dataset.
-最後に、Zerosum法がCiaoデータセットでdebian効果を示さなかった理由について考察する。
+最後に、**Zerosum法がCiaoデータセットでdebias効果を示さなかった理由**について考察する.
 We observed the debias performance of the Zerosum method depends on baseline model accuracy.
-Zerosum法のデビアス効果は、ベースラインモデルの精度に依存することが分かった。
+Zerosum法のdebias効果は、ベースラインモデルの精度に依存することが分かった.
 Figure 5 shows the NeuCF scores of positive (blue), negative (orange) items of one user.
-図5は、あるユーザの正項目（青）、負項目（オレンジ）のNeuCFスコアを示している。
+図5は、あるユーザのpositive item（青）、negative item（オレンジ）のNeuCFスコアを示している.
 Smaller x index indicates higher popularity.
-x指数が小さいほど人気度が高いことを示している。
+x indexが小さいほど人気度が高いことを示している.
 The Zerosum method predicted scores focused on symmetric values of +2 and -2 as intended.
-Zerosum法は意図したとおり、+2と-2の対称的な値に着目してスコアを予測した。
+Zerosum法は意図したとおり、+2と-2の対称的な値に着目してスコアを予測した.
 However, since the model accuracy is low when training with the baseline BPR loss, the model trained with the Zerosum method (which extends the BPR loss) also inaccurately scored -2 for some positive items.
-しかし、ベースラインのBPR損失で学習した場合、モデルの精度が低いため、BPR損失を拡張したZerosum法で学習したモデルでも、一部のポジティブアイテムに対して-2という不正確なスコアになってしまう。
+しかし、**ベースラインのBPR損失で学習した場合、モデルの精度が低いため、BPR損失を拡張したZerosum法で学習したモデルでも、一部のポジティブアイテムに対して-2という不正確なスコアになってしまう**.
 Hence, although the Zerosum method balances the scores for items predicted to be positive, such balancing may be misdirected since the predicted items can differ from actual positive items.
-したがって，Zerosum法では正と予測される項目のスコアをバランスさせるが，予測される項目が実際の正項目と異なる場合があるため，そのバランスは誤った方向へ向かう可能性がある．
+**したがって，Zerosum法では正と予測されるitemのスコアをバランスさせるが，予測されるitemが実際のpositive itemと異なる場合があるため，そのバランスは誤った方向へ向かう可能性がある．**
 Hence the Zerosum method may have limited debias effect if the baseline model accuracy is low.
 したがって、ベースライン・モデルの精度が低い場合、Zerosum法のデビアス効果は限定的であると考えられる。
 However, this also hints the effectiveness of the Zerosum method can increase proportionally with baseline model accuracy.
-しかし、これはゼロサム法の効果がベースラインモデルの精度に比例して増加することを示唆するものでもある。
+しかし、**これはゼロサム法の効果がベースラインモデルの精度に比例して増加することを示唆するものでもある**.
 
 # 7. Conclusion 7. まとめ
 
 In this study we tackle the popularity bias, particularly model bias, where the recommendation systems give higher score to popular items among items the user equally liked.
-本研究では，人気度バイアス，特に，ユーザが同じように好きなアイテムの中で人気のあるアイテムに高いスコアを与えてしまうモデルバイアスに着目し，これを解決する．
+本研究では，**人気度バイアス，特に，ユーザが同じように好きなアイテムの中で人気のあるアイテムに高いスコアを与えてしまうmodel-biasに着目**し，これを解決する．
 We propose a novel approach to extend the BPR loss with a regularization term which tries to minimize the score differences within positive and negative items, respectively, thus reducing model bias while maintaining high accuracy.
-我々は、BPR損失を正則化項によって拡張し、ポジティブ項目とネガティブ項目それぞれにおけるスコア差を最小化することで、高い精度を維持しつつモデルの偏りを低減する新しいアプローチを提案する。
+我々は、**BPR損失を正則化項によって拡張し、positive itemとnegative itemそれぞれにおけるスコア差を最小化することで、高い精度を維持しつつmodel-biasを低減する新しいアプローチ**を提案する.
 We conduct an experiment to test our method: we embedded explicit popularity bias in a synthetic dataset, which results in model bias in naive training setting.
-本手法を検証するため，合成データセットに明示的な人気度バイアスを埋め込んだところ，素朴な学習設定においてモデルのバイアスが発生した．
+本手法を検証するため，合成データセットに明示的な人気度バイアスを埋め込んだところ，素朴な学習設定においてmodel-biasが発生した．
 We apply our method to counter such model bias.
-そこで、本手法を適用し、モデルの偏りに対処する。
+そこで、本手法を適用し、モデルの偏りに対処する.
 The results showed our method outperformed earlier debias methods in terms of accuracy and debias performance.
-その結果，本手法は従来のデビアス手法を精度およびデビアス性能の点で凌駕することが示された．
+その結果，**本手法は従来のデビアス手法を精度およびデビアス性能の点で凌駕する**ことが示された．
 We further conducted empirical experiments using four benchmark datasets and four recommendation models.
 さらに，4つのベンチマークデータセットと4つの推薦モデルを用いて実証実験を行った．
 The proposed method showed consistent debias performance with minimal accuracy loss in 3 of the 4 datasets, in which earlier debias methods lacked consistency.
 その結果，提案手法は，4つのデータセットのうち3つのデータセットにおいて，従来のデビアス手法では整合性に欠けていた精度の低下を最小限に抑え，安定したデビアス性能を示すことがわかった．
 Our work provides a new way of reducing model bias which can be applied both in academic and industrial settings.
-本研究は、モデルの偏りを低減する新しい方法を提供するものであり、学術・産業の両分野で応用が可能である。
+本研究は、model-biasを低減する新しい方法を提供するものであり、学術・産業の両分野で応用が可能である。
 For future work, we plan to further investigate improved regularization methods.
 今後の課題として、正則化手法の改良をさらに検討する予定である。
 We hope that our method can promote diverse recommendations.

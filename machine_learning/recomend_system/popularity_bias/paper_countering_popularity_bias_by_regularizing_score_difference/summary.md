@@ -1,10 +1,9 @@
-はじめに, 本記事は論文読み会で発表した内容になります.
-
 # Countering Popularity Bias by Regularizing Score Differences
 
 published date: 13 September 2022,
 authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
-url: https://dl.acm.org/doi/fullHtml/10.1145/3523227.3546757
+url(paper): https://dl.acm.org/doi/fullHtml/10.1145/3523227.3546757
+url(presantation slide): https://dl.acm.org/action/downloadSupplement?doi=10.1145%2F3523227.3546757&file=Countering+Popularity+Bias+by+Regularizing+Score+Differences.pdf
 (勉強会発表者: morinota)
 
 ---
@@ -29,75 +28,7 @@ url: https://dl.acm.org/doi/fullHtml/10.1145/3523227.3546757
 
 - 既存のdebias化を目的としたregularization term手法は、"itemの人気度とポジティブitemのスコアとの間のピアソン相関の大きさにペナルティを課す"ようなアプローチ. (なるほど...既存研究とはregularization termのpenalize対象が異なるのか...!!)
   - しかし、相関係数を正則化しても独立(=itemの人気度と独立になるって意味??)になるとは限らないこと，**計算コストがかかる**こと，という2つの制約がある.
-- positive item内とnegative item内のスコア差をそれぞれ最小化するregularization termを用いて，精度を維持しつつモデルの偏りを低減する方法を導入したのは，本研究が初めて.
-
-## どうやって有効だと検証した?
-
-### ベースライン学習によりmodel-biasを誘発する疑似データセットを用いた実験.
-
-本研究では、model-biasとそれに続く様々な手法のdebias性能を説明するために、data-biasを明示した合成データを設計する.
-
-- 200 x 200のuser-item interaction matrix $R$
-- 式(4)を使って疑似データを生成: アイテム列のindexが増加するにつれてアイテムの人気が直線的に減少するように設定.
-- 行列は binary(0 or 1) のinteraction情報で満たされている.
-- このようなデータは、疎でノイズの多い実世界のデータからは逸脱しているが、**推薦システムがどのようにmodel-biasを生み出すか**を観察するには適切.
-
-疑似データ生成方法をコードにするとこんな感じ.
-
-```python
-def generate_sysnthetic_data(
-    n_user: int = 200,
-    n_item: int = 200,
-) -> np.ndarray:
-    user_item_matrix = np.zeros(shape=(n_user, n_item))
-    for user_idx in range(n_user):
-        for item_idx in range(n_item):
-            user_item_matrix[user_idx, item_idx] = _get_synthetic_rating(
-                user_idx,
-                item_idx,
-            )
-    return user_item_matrix
-
-
-def _get_synthetic_rating(user_idx: int, item_idx: int, boundary_num: int = 200) -> int:
-    if user_idx + item_idx <= boundary_num:
-        return 1
-    return 0
-```
-
-このようなデータを用いて、ベースラインとして協調フィルタリング推薦システムの基本であるmatrix factorization (MF) modelを学習する. **損失関数としてBPR損失**を用いる.
-
-また、提案手法も疑似データに対して学習させてみて、debias性能を検証した.
-BPR損失に正則化項を追加した上で、同様のMFモデルを学習させ、ベースライン学習で見られたmodel-biasが緩和されるかどうかを確認する.
-
-#### 結果:
-
-- 図1aは疑似データを行列形式で表したもので、白い部分がpositive item(1)、黒い部分がnegative item(0)に相当する.
-- 図1bは学習したMFモデル(ベースライン)の推薦スコアであり、model-biasが顕著に表れている.
-  - positiveアイテムにおいて、人気のあるアイテム(=item indexが小さい)ほど高いスコアを推論している.
-  - ex) `user_idx=100`の場合、ユーザは `item_idx=0 ~ 100`のアイテムを同じようにconsume(=click等, 何らかのreaction)しているにもかかわらず、モデルは`item_idx=0 ~ 20`の人気アイテムに高いスコアを予測している.
-
-以下、モデルのaccuracyとdebias性能の定量的評価:
-
-- BPR損失関数を用いて学習したモデルは高い精度を示していた.
-- `PRI`と`PopQ@1`によるdebias性能:
-  - 図1cは、x軸が疑似データの`item_idx`を示し、アイテムの平均ランク分位を示したもの（i.e. x軸の値が小さいアイテムほど人気がある).
-    - 平均的に最も人気のあるアイテムは、positiveアイテムの中で上位0.0%にランクされる. アイテムの人気が低下すると、そのアイテムはもはや最高ランクではなくなる.
-    - **これはmodel-biasが大きいことを示しており、PRIも0.99と計算される.**
-  - 図1dは、各ユーザのpositive itemのtopスコアの人気度分位をヒストグラムにしたもの.
-    - 人気度分位は0付近に集中しており、topスコアのpositive itemはほとんど最も人気のあるpositive itemで構成されていることが分かる.
-  - `PRI`と`PopQ@1`の両メトリクスは、BPR損失で学習したモデルが高いmodel-biasの存在を示している.
-
-提案手法を疑似データに適用した結果:
-
-- 図2は、ベースラインモデル(BPR損失関数のMF)と提案手法(BPR損失+正則化項のMF)を用いた場合のモデル予測値(推薦スコア).
-  - 
-
-
-
-### 4つのベンチマークデータセットと4つの推薦モデルを用いた実証実験.
-
-#### 結果:
+- positive item内とnegative item内のスコア差をそれぞれ最小化するregularization termを用いて，精度を維持しつつmodel-biasを低減する方法を導入したのは，本研究が初めて.
 
 ## 技術や手法の肝は？
 
@@ -152,8 +83,6 @@ $$
 model-biasが少なくても精度が低ければ、個人に合った推薦を行うことはできない.
 例えば、ランダムな推薦を行うモデルは、model-biasを示さないが、ユーザの嗜好を全く考慮しない.
 
-
-
 ### Proposed Method
 
 model-biasを減らすために、我々は**BPR損失関数にregularization termを追加**して拡張し、positive & negativeアイテム間のスコア差をそれぞれ最小化する方法を提案する. (**positive同士、negative同士のスコアを近くしたい...!!**)
@@ -200,6 +129,101 @@ $$
   - 提案手法はBPR損失を用いるどのようなモデルにも適用可能.
 
 実験ではpositive item のスコアだけを正則化すると精度が悪化することがわかったので、positiveとnegativeの両方に正則化を適用している.
+
+## どうやって有効だと検証した?
+
+### ベースライン学習にmodel-biasを誘発するような、疑似データセットを用いた実験.
+
+本研究では、model-biasとそれに続く様々な手法のdebias性能を説明するために、data-biasを明示した合成データを設計する.
+
+- 200 x 200のuser-item interaction matrix $R$
+- 式(4)を使って疑似データを生成: アイテム列のindexが増加するにつれてアイテムの人気が直線的に減少するように設定.
+- 行列は binary(0 or 1) のinteraction情報で満たされている.
+- このようなデータは、疎でノイズの多い実世界のデータからは逸脱しているが、**推薦システムがどのようにmodel-biasを生み出すか**を観察するには適切.
+
+疑似データ生成方法をコードにするとこんな感じ.
+
+```python
+def generate_sysnthetic_data(
+    n_user: int = 200,
+    n_item: int = 200,
+) -> np.ndarray:
+    user_item_matrix = np.zeros(shape=(n_user, n_item))
+    for user_idx in range(n_user):
+        for item_idx in range(n_item):
+            user_item_matrix[user_idx, item_idx] = _get_synthetic_rating(
+                user_idx,
+                item_idx,
+            )
+    return user_item_matrix
+
+
+def _get_synthetic_rating(user_idx: int, item_idx: int, boundary_num: int = 200) -> int:
+    if user_idx + item_idx <= boundary_num:
+        return 1
+    return 0
+```
+
+このようなデータを用いて、ベースラインとして協調フィルタリング推薦システムの基本であるmatrix factorization (MF) modelを学習する. **損失関数としてBPR損失**を用いる.
+
+また、提案手法も疑似データに対して学習させてみて、debias性能を検証した.
+BPR損失に正則化項を追加した上で、同様のMFモデルを学習させ、ベースライン学習(=BPR損失)で見られたmodel-biasが緩和されるかどうかを確認する.
+
+#### 結果:
+
+- 図1aは疑似データを行列形式で表したもので、白い部分がpositive item(1)、黒い部分がnegative item(0)に相当する.
+- 図1bは学習したMFモデル(ベースライン)の推薦スコアであり、model-biasが顕著に表れている.
+  - positiveアイテムにおいて、人気のあるアイテム(=item indexが小さい)ほど高いスコアを推論している.
+  - ex) `user_idx=100`の場合、ユーザは `item_idx=0 ~ 100`のアイテムを同じようにconsume(=click等, 何らかのreaction)しているにもかかわらず、モデルは`item_idx=0 ~ 20`の人気アイテムに高いスコアを予測している.
+
+以下、モデルのaccuracyとdebias性能の定量的評価:
+
+- BPR損失関数を用いて学習したモデルは高い精度を示していた.
+- `PRI`と`PopQ@1`によるdebias性能:
+  - 図1cは、x軸が疑似データの`item_idx`を示し、アイテムの平均ランク分位を示したもの（i.e. x軸の値が小さいアイテムほど人気がある).
+    - 平均的に最も人気のあるアイテムは、positiveアイテムの中で上位0.0%にランクされる. アイテムの人気が低下すると、そのアイテムはもはや最高ランクではなくなる.
+    - **これはmodel-biasが大きいことを示しており、PRIも0.99と計算される.**
+  - 図1dは、各ユーザのpositive itemのtopスコアの人気度分位をヒストグラムにしたもの.
+    - 人気度分位は0付近に集中しており、topスコアのpositive itemはほとんど最も人気のあるpositive itemで構成されていることが分かる.
+  - `PRI`と`PopQ@1`の両メトリクスは、BPR損失で学習したモデルが高いmodel-biasの存在を示している.
+
+提案手法を疑似データに適用した結果:
+
+![fig_2](https://pbs.twimg.com/media/FdJXTGEaEAEWsAy?format=jpg&name=4096x4096)
+
+- 図2は、ベースラインモデル(BPR損失関数によるMF)と提案手法(BPR損失+正則化項のMF)を用いた場合の、モデル出力値(推薦スコア).
+  - 精度に関する評価(fig2-a~c):
+  - debias 性能に関する評価(fig2-d~f):
+    - 上のグラフ: positive itemの平均順位分位数.
+      - 提案手法では、人気アイテム（小アイテムインデックス）を含むほとんどのアイテムで平均順位が0.25～0.75程度となり、**順位が人気の影響を受けなくなったことがわかる**.
+      - しかし、人気度の低いtail item（アイテムインデックス190〜200）は依然として平均順位が最下位であり、tail itemに対してdebiasは有効でなかったことがわかる.
+    - 下のグラフ: 各ユーザのpositive itemのスコアtopの人気度分位値のヒストグラム.
+      - Pos2Neg2法、Zerosum法ともに、人気度分位は0〜1に広がっている.
+      - 表1より、PopQ@1`はそれぞれ0.62、0.61と計算され、理想の0.5により近づいていることがわかる.
+
+これらの結果から、提案した正則化項はいずれも高い精度を維持しつつ、model-biasを低減する効果があることがわかる.
+
+#### 2つの提案手法の比較.
+
+hogehoge
+
+以上のことから、**ZerosumはPos2Neg2法の簡易版である以上に、精度を向上させる効果がある**ことがわかった.
+
+#### 他のdebias手法との比較.
+
+提案手法の性能を，以下の先行研究debias手法と比較する.
+
+- 逆傾向重み付け(IPW, inverse propensity weighting): model-biasを減らすために学習データに重みを適用する. ここで重みはitemの人気度の逆数. (i.e. 人気度の低いアイテムの学習優先度を上げるような方法...!)
+- PD (Popularity-bias Deconfounding) 法: Causal interventionの一種.アイテムの人気度が推薦スコアに与える因果関係をモデル化し，その効果を除去する方法(因果推論的なアプローチだろうか...?? 例えば、アイテムの人気度が交絡因子みたいなイメージ??)
+- Pearson regularization method: アイテム人気度と推薦スコアのPearson相関を0に近づけるような正則化項を損失関数に含める手法.
+
+### 4つのベンチマークデータセットと4つの推薦モデルを用いた実証実験.
+
+すべての先行手法はZerosum手法に比べ、精度が低いことがわかった.
+IPWはdebias効果を示さず，PDは-0.52のPRI値を報告しており，これはモデルが不人気なitemを好んでいることを示している．
+PDとPearsonは共に`PopQ@1`の値を0.3程度と報告し、Zerosum法よりも0.5(理想的な値)から遠い.
+
+#### 結果:
 
 ## 議論はある？
 
