@@ -1,18 +1,19 @@
 import numpy as np
+from scipy import sparse
 
 
 def generate_sysnthetic_data(
     n_user: int = 200,
     n_item: int = 200,
-) -> np.ndarray:
-    user_item_matrix = np.zeros(shape=(n_user, n_item))
+) -> sparse.csr_matrix:
+    user_item_matrix_array = np.zeros(shape=(n_user, n_item))
     for user_idx in range(n_user):
         for item_idx in range(n_item):
-            user_item_matrix[user_idx, item_idx] = _get_synthetic_rating(
+            user_item_matrix_array[user_idx, item_idx] = _get_synthetic_rating(
                 user_idx,
                 item_idx,
             )
-    return user_item_matrix
+    return sparse.csr_matrix(user_item_matrix_array)
 
 
 def _get_synthetic_rating(user_idx: int, item_idx: int, boundary_num: int = 200) -> int:
