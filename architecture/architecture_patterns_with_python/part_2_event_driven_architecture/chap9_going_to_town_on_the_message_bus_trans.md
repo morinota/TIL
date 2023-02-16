@@ -45,7 +45,7 @@ In these types of situations, we learn about the need to change batch quantities
 Perhaps someone made a mistake on the number in the manifest, or perhaps some sofas fell off a truck.
 おそらく、誰かがマニフェストの番号を間違えたか、あるいはトラックからソファが落ちたのでしょう.
 Following a conversation with the business,1 we model the situation as in Figure 9-3.
-ビジネスとの会話に続いて、私たちは図9-3のように状況をモデル化します1。
+ビジネスとの会話に続いて、私たちは図9-3のように状況をモデル化する.1
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0903.png)
 
@@ -57,62 +57,56 @@ Then each one will require a new allocation, which we can capture as an event ca
 Perhaps you’re already anticipating that our internal message bus and events can help implement this requirement.
 おそらく、内部Message Bus と Event がこの要件を実装するのに役立つと既に予想されているだろう.
 We could define a service called `change_batch_quantity` that knows how to adjust batch quantities and also how to deallocate any excess order lines, and then each deallocation can emit an `AllocationRequired` event that can be forwarded to the existing `allocate` service, in separate transactions.
-バッチ数量を調整する方法と、余分な注文行の割り当てを解除する方法を知っている `change_batch_quantity` というサービスを定義して、割り当て解除ごとに `AllocationRequired` イベントを発行して、既存の `allocate` サービスに転送できるように、別々のトランザクションで設定することが可能です。
+バッチ数量を調整する方法と、余分な注文行の割り当てを解除する方法を知っている `change_batch_quantity` というサービスを定義して、割り当て解除ごとに `AllocationRequired` イベントを発行して、既存の `allocate` サービスに転送できるように、別々のトランザクションで設定することが可能である.
 Once again, our message bus helps us to enforce the single responsibility principle, and it allows us to make choices about transactions and data integrity.
-繰り返しになりますが、Message bus は**single responsibility principle(単一責任の原則)**を実施するのに役立ち、トランザクションとデータの整合性について選択することを可能にする.
+繰り返しになりますが、**Message bus はsingle responsibility principle(単一責任の原則)を実施するのに役立ち**、トランザクションとデータの整合性について選択することを可能にする.
 
 ### 1.1.1. Imagining an Architecture Change: Everything Will Be an Event Handler アーキテクチャの変化を想像してみる。 すべてがイベントハンドラになる
 
 But before we jump in, think about where we’re headed.
 しかし、飛び込む前に、どこに向かっているのかを考えてみましょう。
 There are two kinds of flows through our system:
-私たちのシステムには、2種類の流れがあります。
+私たちのシステムには、**2種類の流れ**がある.
 
-API calls that are handled by a service-layer function
-サービスレイヤの機能で処理されるAPIコール
-
-Internal events (which might be raised as a side effect of a service-layer function) and their handlers (which in turn call service-layer functions)
-内部イベント（サービスレイヤー機能の副作用として発生する可能性がある）とそのハンドラ（そのハンドラがサービスレイヤー機能を呼び出す）。
+- 1. API calls that are handled by a service-layer function Service Layer の機能で処理されるAPIコール
+- 2. Internal events (which might be raised as a side effect of a service-layer function) and their handlers (which in turn call service-layer functions).内部イベント（Service Layer 機能の副作用として発生する可能性がある）とそのハンドラ（そのハンドラがサービスレイヤー機能を呼び出す）.
 
 Wouldn’t it be easier if everything was an event handler?
-すべてがイベントハンドラであれば、もっと簡単ではないでしょうか？
+**すべてがEvent Handlerであれば**、もっと簡単ではないだろうか？
 If we rethink our API calls as capturing events, the service-layer functions can be event handlers too, and we no longer need to make a distinction between internal and external event handlers:
-APIコールをイベントの捕捉と捉えれば、サービスレイヤーの関数もイベントハンドラになり、内部と外部のイベントハンドラを区別する必要はなくなる。
+**APIコールをcapturing eventsと捉えれば**、Service Layer の関数もイベントハンドラになり、内部と外部のイベントハンドラを区別する必要はなくなる.
 
-- `services.allocate()` could be the handler for an `AllocationRequired` event and could emit `Allocated` events as its output. `services.allocate()` は `AllocationRequired` イベントのハンドラで、その出力として `Allocated` イベントを発生させることができます。
-
-- `services.add_batch()` could be the handler for a `BatchCreated` event.2 `services.add_batch()` は `BatchCreated` イベントのハンドラである可能性があります。
+- `services.allocate()` could be the handler for an `AllocationRequired` event and could emit `Allocated` events as its output. `services.allocate()` は `AllocationRequired` イベントのハンドラで、その出力として `Allocated` イベントを発生させることができる.
+- `services.add_batch()` could be the handler for a `BatchCreated` event.2 `services.add_batch()` は `BatchCreated` イベントのハンドラとみなせる.
 
 Our new requirement will fit the same pattern:
-私たちの新しい要求も、同じパターンに当てはまるでしょう。
+私たちの新しい要求も、同じパターンに当てはまるだろう.
 
-- An event called `BatchQuantityChanged` can invoke a handler called `change_batch_quantity()`. BatchQuantityChanged`というイベントは、`change_batch_quantity()` というハンドラを呼び出すことができます。
-
-- And the new `AllocationRequired` events that it may raise can be passed on to `services.allocate()` too, so there is no conceptual difference between a brand-new allocation coming from the API and a reallocation that’s internally triggered by a deallocation. そして、新たに発生する可能性のある `AllocationRequired` イベントも `services.allocate()` に渡すことができます。したがって、API から来る新しい割り当てと、割り当て解除によって内部的に引き起こされる再割り当ての間に、概念的な違いはありません。
+- An event called `BatchQuantityChanged` can invoke a handler called `change_batch_quantity()`. `BatchQuantityChanged`というイベントは、`change_batch_quantity()` というハンドラを呼び出すことができる.
+- And the new `AllocationRequired` events that it may raise can be passed on to `services.allocate()` too, so there is no conceptual difference between a brand-new allocation coming from the API and a reallocation that’s internally triggered by a deallocation. そして、新たに発生する可能性のある `AllocationRequired` イベントも `services.allocate()` に渡すことができる. したがって、API から来る新しい割り当てと、割り当て解除によって内部的に引き起こされる再割り当ての間に、概念的な違いはない.
 
 All sound like a bit much?
 全部はちょっと無理かな？
 Let’s work toward it all gradually.
-少しずつ進めていきましょう。
+少しずつ進めていこう.
 We’ll follow the Preparatory Refactoring workflow, aka “Make the change easy; then make the easy change”:
-私たちは、準備的リファクタリングのワークフロー、別名「変更を簡単にし、次に簡単な変更をする」ことに従います。
+私たちは、準備的リファクタリングのワークフロー、別名「変更を簡単にし、次に簡単な変更をする」ことに従う.
 
-1. We refactor our service layer into event handlers. We can get used to the idea of events being the way we describe inputs to the system. In particular, the existing `services.allocate()` function will become the handler for an event called `AllocationRequired`. サービスレイヤーをイベントハンドラにリファクタリングする。 システムに対する入力を記述する方法がイベントであるという考え方に慣れることができます。 特に、既存の `services.allocate()` 関数は、 `AllocationRequired` というイベントのハンドラになります。
+1. We refactor our service layer into event handlers. We can get used to the idea of events being the way we describe inputs to the system. In particular, the existing `services.allocate()` function will become the handler for an event called `AllocationRequired`. **サービスレイヤーをイベントハンドラにリファクタリングする**. システムに対する入力を記述する方法がイベントであるという考え方に慣れることができる. 特に、既存の `services.allocate()` 関数は、 `AllocationRequired` というイベントのハンドラになる.
 
-2. We build an end-to-end test that puts `BatchQuantityChanged` events into the system and looks for `Allocated` events coming out. BatchQuantityChanged` イベントをシステムに投入し、`Allocated` イベントが出てくるかどうかを調べるエンドツーエンドテストを構築します。
+2. We build an end-to-end test that puts `BatchQuantityChanged` events into the system and looks for `Allocated` events coming out. `BatchQuantityChanged` イベントをシステムに投入し、`Allocated` イベントが出てくるかどうかを調べるエンドツーエンドテストを構築する.
 
-3. Our implementation will conceptually be very simple: a new handler for `BatchQuantityChanged` events, whose implementation will emit `AllocationRequired` events, which in turn will be handled by the exact same handler for allocations that the API uses. BatchQuantityChanged`イベント用の新しいハンドラで、その実装は`AllocationRequired` イベントを発行し、順番に API が使うのと全く同じ割り当て用のハンドラによって処理されます。
+3. Our implementation will conceptually be very simple: a new handler for `BatchQuantityChanged` events, whose implementation will emit `AllocationRequired` events, which in turn will be handled by the exact same handler for allocations that the API uses. `BatchQuantityChanged`イベント用の新しいハンドラで、その実装は`AllocationRequired` イベントを発行し、順番に API が使うのと全く同じ割り当て用のハンドラによって処理される.
 
 Along the way, we’ll make a small tweak to the message bus and UoW, moving the responsibility for putting new events on the message bus into the message bus itself.
-その過程で、メッセージバスとUoWに小さな手を加え、メッセージバスに新しいイベントを置く責任をメッセージバス自体に移すことにします。
+その過程で、メッセージバスとUoWに小さな手を加え、**メッセージバスに新しいイベントを置く責任をメッセージバス自体に移す**ことにする.
 
 ## 1.2. Refactoring Service Functions to Message Handlers サービスファンクションからメッセージハンドラへのリファクタリング
 
 We start by defining the two events that capture our current API inputs—`AllocationRequired` and `BatchCreated`:
-まず、現在の API 入力を取得するための 2 つのイベント、`AllocationRequired` と `BatchCreated` を定義します。
+まず、現在の API 入力を取得するための 2 つのイベント、`AllocationRequired` と `BatchCreated` を定義する.
 
-BatchCreated and AllocationRequired events (src
-BatchCreated および AllocationRequired イベント（src
+BatchCreated and AllocationRequired events (src/allocation/domain/events.py)
 
 ```python
 @dataclass
@@ -132,7 +126,7 @@ class AllocationRequired(Event):
 ```
 
 Then we rename services.py to handlers.py; we add the existing message handler for `send_out_of_stock_notification`; and most importantly, we change all the handlers so that they have the same inputs, an event and a UoW:
-そして、services.py を handlers.py にリネームします。既存の `send_out_of_stock_notification` のメッセージハンドラを追加します。最も重要なのは、すべてのハンドラが同じ入力、イベントと UoW を持つように変更することです。
+そして、services.py を handlers.py にリネームする. 既存の `send_out_of_stock_notification` のメッセージハンドラを追加する. 最も重要なのは、すべてのハンドラが同じ入力、イベントと UoW を持つように変更することである.
 
 Handlers and services are the same thing (src
 ハンドラとサービスは同じものです（src
@@ -163,7 +157,7 @@ def send_out_of_stock_notification(
 ```
 
 The change might be clearer as a diff:
-差分として変化が明確になるかもしれません。
+差分として変化が明確になるかもしれない.
 
 Changing from services to handlers (src
 サービスからハンドラへの変更（src
@@ -198,33 +192,29 @@ Changing from services to handlers (src
 ```
 
 Along the way, we’ve made our service-layer’s API more structured and more consistent.
-その過程で、私たちはサービスレイヤーのAPIをより構造化し、より一貫性のあるものにしました。
+その過程で、私たちは**サービスレイヤーのAPIをより構造化し、より一貫性のあるものにした**.
 It was a scattering of primitives, and now it uses well-defined objects (see the following sidebar).
-以前はプリミティブが散在していましたが、今ではきちんと定義されたオブジェクトを使っています（次のサイドバーを参照）。
+以前はプリミティブ(build-inデータ型)が散在していたが、今ではきちんと定義されたオブジェクトを使っている（次のサイドバーを参照）.
+(primitivesは良くないの...??**確かDomain ModelとService Layerを疎結合にするために、Service LayerのAPIにprimitivesを渡すようにした**気がするんだけど... 下に回答があった!)
 
-- FROM DOMAIN OBJECTS, VIA PRIMITIVE OBSESSION, TO EVENTS AS AN INTERFACE ドメインオブジェクトから、プリミティブオブセッションを経て、インターフェースとしてのイベントへ
+### 1.2.1. FROM DOMAIN OBJECTS, VIA PRIMITIVE OBSESSION, TO EVENTS AS AN INTERFACE Domani Objectsから、primitive obsessionを経て、インターフェースとしてのイベントへ...!
 
-- Some of you may remember “Fully Decoupling the Service-Layer Tests from the Domain”, in which we changed our service-layer API from being in terms of domain objects to primitives. And now we’re moving back, but to different objects? What gives? サービスレイヤーのテストをドメインから完全に切り離す "を覚えている人もいるだろう。その中で、私たちはサービスレイヤーのAPIをドメインオブジェクトからプリミティブに変更した。 そして今、私たちはまた別のオブジェクトに戻ろうとしている？ どうしたんだ？
+- Some of you may remember “Fully Decoupling the Service-Layer Tests from the Domain”, in which we changed our service-layer API from being in terms of domain objects to primitives. And now we’re moving back, but to different objects? What gives? **"サービスレイヤーのテストをドメインから完全に切り離す"**を覚えている人もいるだろう。その中で、私たちはサービスレイヤーのAPIをドメインオブジェクトからプリミティブに変更した. そして今、私たちはまた別のオブジェクトに戻ろうとしている？ どうしたんだ？
+- In OO circles, people talk about primitive obsession as an anti-pattern: avoid primitives in public APIs, and instead wrap them with custom value classes, they would say. In the Python world, a lot of people would be quite skeptical of that as a rule of thumb. When mindlessly applied, it’s certainly a recipe for unnecessary complexity. So that’s not what we’re doing per se. OOサークルでは、**primitiveへのこだわりはアンチパターン(??)**として語られる. **パブリックAPIではprimitiveを避け、代わりにカスタムvalue classでラップする**、と. Pythonの世界では、多くの人がその経験則に懐疑的だろう. 無頓着に適用すると、確かに不必要に複雑化することになる.(だよね...!!) なので、私たちがやっていることは、それ自体ではない.
+- The move from domain objects to primitives bought us a nice bit of decoupling: our client code was no longer coupled directly to the domain, so the service layer could present an API that stays the same even if we decide to make changes to our model, and vice versa. **ドメインオブジェクトからprimitivesへの移行は、素晴らしいデカップリングをもたらした**. クライアントコード(=APIを呼び出す、requestする側!)はもはやドメインに直接結合されていないので、サービスレイヤーは、私たちがモデルを変更することにしても変わらないAPIを提示できるし、逆もまた然りである.
+- So have we gone backward? Well, our core domain model objects are still free to vary, but instead we’ve coupled the external world to our event classes. They’re part of the domain too, but the hope is that they vary less often, so they’re a sensible artifact to couple on. では、今回の変更で我々は後戻りしたのだろうか? さて、**core domain modelのオブジェクトはまだ自由に変化する(=どこにも依存していない!)**が、**その代わりに、外部(external)世界をeventクラスに結合**している. イベントクラスもドメインの一部だが、**イベントクラスはあまり頻繁に変化しない為**、カップリング(=external world=client codeと?)するには理にかなった成果物であると期待されている.
+- And what have we bought ourselves? Now, when invoking a use case in our application, we no longer need to remember a particular combination of primitives, but just a single event class that represents the input to our application. That’s conceptually quite nice. On top of that, as you’ll see in Appendix E, those event classes can be a nice place to do some input validation. そして、今回の変更によって我々は何を手にしたのだろうか. これで、アプリケーションで**ユースケースを呼び出す(=(client codeから特定の機能をrequestする)ときにprimitiveの特定の組み合わせを覚える必要がなくなり**、**アプリケーションへの入力を表すイベントクラスを1つだけ覚えるだけで良くなった**. これは概念的には非常に素晴らしいことである. その上、付録Eで見るように、これらのイベントクラスは入力の検証を行うのに格好の場所となり得る.
 
-- In OO circles, people talk about primitive obsession as an anti-pattern: avoid primitives in public APIs, and instead wrap them with custom value classes, they would say. In the Python world, a lot of people would be quite skeptical of that as a rule of thumb. When mindlessly applied, it’s certainly a recipe for unnecessary complexity. So that’s not what we’re doing per se. OOサークルでは、プリミティブへのこだわりはアンチパターンとして語られます。パブリックAPIではプリミティブを避け、代わりにカスタム値クラスでラップする、と。 Pythonの世界では、多くの人がその経験則に懐疑的でしょう。 無頓着に適用すると、確かに不必要に複雑化することになります。 ですから、私たちがやっていることは、それ自体ではありません。
-
-- The move from domain objects to primitives bought us a nice bit of decoupling: our client code was no longer coupled directly to the domain, so the service layer could present an API that stays the same even if we decide to make changes to our model, and vice versa. ドメインオブジェクトからプリミティブへの移行は、素晴らしいデカップリングをもたらしました。クライアントコードはもはやドメインに直接結合されていないので、サービス層は、私たちがモデルを変更することにしても変わらないAPIを提示できますし、逆もまた然りです。
-
-- So have we gone backward? Well, our core domain model objects are still free to vary, but instead we’ve coupled the external world to our event classes. They’re part of the domain too, but the hope is that they vary less often, so they’re a sensible artifact to couple on. では、後戻りしたのでしょうか？ さて、コア・ドメイン・モデルのオブジェクトはまだ自由に変化しますが、その代わりに、外部世界をイベント・クラスに結合しています。 イベントクラスもドメインの一部ですが、イベントクラスはあまり頻繁に変化しないので、カップリングするには理にかなった成果物であると期待されています。
-
-- And what have we bought ourselves? Now, when invoking a use case in our application, we no longer need to remember a particular combination of primitives, but just a single event class that represents the input to our application. That’s conceptually quite nice. On top of that, as you’ll see in Appendix E, those event classes can be a nice place to do some input validation. そして、私たちは何を買ったのでしょうか？ これで、アプリケーションでユースケースを呼び出すときに、プリミティブの特定の組み合わせを覚える必要はなくなり、アプリケーションへの入力を表すイベントクラスを1つだけ覚えることができるようになりました。 これは概念的には非常に素晴らしいことです。 その上、付録Eで見るように、これらのイベントクラスは入力の検証を行うのに格好の場所となり得ます。
-
-### 1.2.1. The Message Bus Now Collects Events from the UoW メッセージバスがUoWからイベントを収集するようになりました。
+### 1.2.2. The Message Bus Now Collects Events from the UoW メッセージバスがUoWからイベントを収集するようになりました。
 
 Our event handlers now need a UoW.
-イベントハンドラには UoW が必要です。
+イベントハンドラには UoW が必要である.(??)
 In addition, as our message bus becomes more central to our application, it makes sense to put it explicitly in charge of collecting and processing new events.
-さらに、メッセージバスがアプリケーションの中心になるにつれて、新しいイベントの収集と処理を明示的に担当させることは理にかなっています。
+さらに、メッセージバスがアプリケーションの中心になるにつれて、新しいイベントの収集と処理を明示的に担当させることは理にかなっている.
 There was a bit of a circular dependency between the UoW and message bus until now, so this will make it one-way:
-これまでUoWとメッセージバスの間には、ちょっとした循環型依存関係がありましたので、これで一方通行になります。
+これまでUoWとメッセージバスの間には、ちょっとした循環型依存関係(これはたしかに良くない...!)がありましたので、これで一方通行になる.
 
-Handle takes a UoW and manages a queue (src
-ハンドルはUoWを受け取り、キューを管理する（src
+Handle takes a UoW and manages a queue (src/allocation/service_layer/messagebus.py)
 
 ```python
 def handle(event: events.Event, uow: unit_of_work.AbstractUnitOfWork):  1
@@ -236,21 +226,16 @@ def handle(event: events.Event, uow: unit_of_work.AbstractUnitOfWork):  1
             queue.extend(uow.collect_new_events())  5
 ```
 
-1. The message bus now gets passed the UoW each time it starts up. メッセージバスが起動するたびにUoWに渡されるようになった。
-
-2. When we begin handling our first event, we start a queue. 最初のイベントの処理を開始するとき、キューを開始します。
-
-3. We pop events from the front of the queue and invoke their handlers (the HANDLERS dict hasn’t changed; it still maps event types to handler functions). イベントをキューの先頭からポップし、そのハンドラを呼び出します（HANDLERSディクショ ンは変更されていません；イベントの種類をハンドラ関数にマッピングしています）。
-
-4. The message bus passes the UoW down to each handler. メッセージバスは、UoWを各ハンドラに受け渡す。
-
-5. After each handler finishes, we collect any new events that have been generated and add them to the queue. 各ハンドラの終了後、新たに発生したイベントを収集し、キューに追加する。
+1. The message bus now gets passed the UoW each time it starts up. メッセージバスが起動するたびにUoWに渡されるようになった.
+2. When we begin handling our first event, we start a queue. 最初のイベントの処理を開始するとき、キューを開始する.
+3. We pop events from the front of the queue and invoke their handlers (the HANDLERS dict hasn’t changed; it still maps event types to handler functions). イベントをキューの先頭からポップし、そのハンドラを呼び出す.（HANDLERS dictは変更されていない.；イベントの種類 & ハンドラ関数の対応関係をマッピングしている）.
+4. The message bus passes the UoW down to each handler. メッセージバスは、UoWを各ハンドラに受け渡す.
+5. After each handler finishes, we collect any new events that have been generated and add them to the queue. 各ハンドラの終了後、新たに発生したイベントを収集し、キューに追加する.
 
 In unit_of_work.py, `publish_events()` becomes a less active method, `collect_new_events()`:
-unit_of_work.py では、`publish_events()` は、あまり活発でないメソッド `collect_new_events()` になりました。
+unit_of_work.py では、`publish_events()` は、あまり活発でないメソッド `collect_new_events()` になった.
 
-UoW no longer puts events directly on the bus (src
-UoWはイベントを直接バスに乗せなくなった（src
+UoW no longer puts events directly on the bus (src/allocation/service_layer/unit_of_work.py)
 
 ```python
 -from . import messagebus  1
@@ -273,19 +258,17 @@ UoWはイベントを直接バスに乗せなくなった（src
 +                yield product.events.pop(0)  3
 ```
 
-1. The `unit_of_work` module now no longer depends on `messagebus`. unit_of_work`モジュールは、もはや`messagebus` に依存しません。
+1. The `unit_of_work` module now no longer depends on `messagebus`. `unit_of_work`モジュールは、もはや`messagebus`に**依存しない**.
+2. We no longer `publish_events` automatically on commit. The message bus is keeping track of the event queue instead. コミット時に自動的に `publish_events`を発行しなくなった. **代わりにメッセージバスがイベントキューをkeeping track**している.
 
-2. We no longer `publish_events` automatically on commit. The message bus is keeping track of the event queue instead. コミット時に自動的に `publish_events` を発行しなくなりました。 代わりにメッセージバスがイベントキューを追跡しています。
+3. And the UoW no longer actively puts events on the message bus; it just makes them available. また、UoWはもはや積極的に(=UoW自身が)イベントをメッセージバスに載せることはなく、ただ利用できるようにするだけである.(=**今回のリファクタにより、Eventをmessagebusに乗せるのはmessagebus自身になった**...!!)
 
-3. And the UoW no longer actively puts events on the message bus; it just makes them available. また、UoWはもはや積極的にイベントをメッセージバスに載せることはなく、ただ利用できるようにするだけである。
-
-### 1.2.2. Our Tests Are All Written in Terms of Events Too 私たちのテストもすべて事象で書かれている
+### 1.2.3. Our Tests Are All Written in Terms of Events Too 私たちのテストもすべてEventで書かれる
 
 Our tests now operate by creating events and putting them on the message bus, rather than invoking service-layer functions directly:
-テストは、サービス層の関数を直接呼び出すのではなく、イベントを生成してメッセージバスに乗せることで動作するようになりました。
+テストは、**サービスレイヤーの関数を直接呼び出すのではなく、イベントを生成してメッセージバスに乗せることで動作するようになった**.
 
-Handler tests use events (tests
-ハンドラテストはイベントを使用する（テスト
+Handler tests use events (tests/unit/test_handlers.py)
 
 ```python
 class TestAddBatch:
@@ -316,15 +299,14 @@ class TestAddBatch:
          assert result == "batch1"
 ```
 
-### 1.2.3. A Temporary Ugly Hack: The Message Bus Has to Return Results メッセージバスが結果を返さなければならないという一時的な醜いハック
+### 1.2.4. A Temporary Ugly Hack: The Message Bus Has to Return Results メッセージバスが結果を返さなければならないという一時的な醜いハック
 
 Our API and our service layer currently want to know the allocated batch reference when they invoke our `allocate()` handler.
-API とサービス層は現在、`allocate()` ハンドラを呼び出したときに、割り当てられたバッチリファレンスを知りたがっています。
+API とサービス層は現在、`allocate()` ハンドラを呼び出したときに、割り当てられたバッチreference(=どのBatchに割り当てられたか)を知りたがっている.
 This means we need to put in a temporary hack on our message bus to let it return events:
-これは、イベントを返すようにするために、メッセージバスを一時的にハックする必要があることを意味します。
+これは、イベントを返すようにするために、メッセージバスを一時的にハック(??)する必要があることを意味する.
 
-Message bus returns results (src
-メッセージバスが返す結果（src
+Message bus returns results (src/allocation/service_layer/messagebus.py)
 
 ```python
  def handle(event: events.Event, uow: unit_of_work.AbstractUnitOfWork):
@@ -340,14 +322,13 @@ Message bus returns results (src
 ```
 
 It’s because we’re mixing the read and write responsibilities in our system.
-それは、システムの中で読み取りと書き込みの責任を混同しているからです。
+この原因は、**システムの中で読み取りと書き込みの責任を混同しているから**である.
 We’ll come back to fix this wart in Chapter 12.
-第12章では、このイボイボを直すために戻ってくることにします。
+第12章では、この変な点を直すために戻ってくることにする.
 
-### 1.2.4. Modifying Our API to Work with Events イベントと連動するようにAPIを変更する
+### 1.2.5. Modifying Our API to Work with Events イベントと連動するようにAPIを変更する
 
-Flask changing to message bus as a diff (src
-Flaskがメッセージバスに変更されたことを差分として（src
+Flask changing to message bus as a diff (src/allocation/entrypoints/flask_app.py)
 
 ```python
  @app.route("/allocate", methods=['POST'])
@@ -367,44 +348,37 @@ Flaskがメッセージバスに変更されたことを差分として（src
 ```
 
 1. Instead of calling the service layer with a bunch of primitives extracted from the request JSON… リクエストJSONから抽出したプリミティブの束でサービスレイヤーを呼び出すのではなく、...
-
-2. We instantiate an event. イベントをインスタンス化する。
-
-3. Then we pass it to the message bus. そして、メッセージバスに渡します。
+2. We instantiate an event. イベントをインスタンス化する.
+3. Then we pass it to the message bus. そしてeventインスタンスを、メッセージバスに渡す.
 
 And we should be back to a fully functional application, but one that’s now fully event-driven:
-そして、完全に機能するアプリケーションに戻るはずですが、完全にイベントドリブンになったアプリケーションです。
+そして、完全に機能するアプリケーションに戻るはずですが、**完全にイベントドリブンになったアプリケーション**である.
 
-- What used to be service-layer functions are now event handlers. これまでサービスレイヤーの機能であったものが、イベントハンドラになっている。
-
-- That makes them the same as the functions we invoke for handling internal events raised by our domain model. つまり、ドメインモデルから発生する内部イベントを処理するために呼び出す関数と同じになります。
-
-- We use events as our data structure for capturing inputs to the system, as well as for handing off of internal work packages. システムへの入力や、内部のワークパッケージの受け渡しを行うためのデータ構造として、イベントを使用しています。
-
-- The entire app is now best described as a message processor, or an event processor if you prefer. We’ll talk about the distinction in the next chapter. このアプリは、メッセージ・プロセッサー、またはイベント・プロセッサーと呼ぶのが適切でしょう。 この区別については、次の章で説明します。
+- What used to be service-layer functions are now event handlers. これまでサービスレイヤーの**functionsであったものが、イベントハンドラになっている**.
+- That makes them the same as the functions we invoke for handling internal events raised by our domain model. つまり、ドメインモデルから発生する**internalイベント(=割り当てようとして内部で発生するOutOfStockとか?)**を処理するために呼び出す関数と同じになる.
+- We use events as our data structure for capturing inputs to the system, as well as for handing off of internal work packages. 我々は、システムへの入力(=**external worldとのやり取り?**)や、内部のワークパッケージの受け渡し(=**internal で発生するリクエスト?**)を行うためのデータ構造として、イベントを使用している.
+- The entire app is now best described as a message processor, or an event processor if you prefer. We’ll talk about the distinction in the next chapter. このアプリは、メッセージ・プロセッサー(??)、またはイベント・プロセッサー(??)と呼ぶのが適切だろう. この区別については、次の章で説明する.
 
 ## 1.3. Implementing Our New Requirement 新要件の実装
 
 We’re done with our refactoring phase.
-リファクタリングの段階は終了です。
+リファクタリングの段階は終了である.
 Let’s see if we really have “made the change easy.”
-本当に「変更を簡単に」できたかどうか見てみましょう。
+本当に「変更を簡単に」できたかどうか見てみよう.
 Let’s implement our new requirement, shown in Figure 9-4: we’ll receive as our inputs some new `BatchQuantityChanged` events and pass them to a handler, which in turn might emit some `AllocationRequired` events, and those in turn will go back to our existing handler for reallocation.
-図 9-4 に示すように、新しい要件を実装してみましょう。新しい `BatchQuantityChanged` イベントを入力として受け取り、それをハンドラに渡します。ハンドラは次に `AllocationRequired` イベントを発行し、それが既存のハンドラに戻って再割り当てを行います。
+図 9-4 に示すように、新しい要件を実装してみよう. 新しい `BatchQuantityChanged` イベントを入力として受け取り、それをハンドラに渡す. ハンドラは次に `AllocationRequired` イベントを発行し、それが既存のハンドラに戻って再割り当てを行う.
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_0904.png)
 
 - WARNING 警告
-
-- When you split things out like this across two units of work, you now have two database transactions, so you are opening yourself up to integrity issues: something could happen that means the first transaction completes but the second one does not. You’ll need to think about whether this is acceptable, and whether you need to notice when it happens and do something about it. See “Footguns” for more discussion. このように物事を2つの作業単位に分割すると、2つのデータベーストランザクションが発生するため、整合性の問題に直面する可能性があります。 このような事態を許容できるかどうか、また、このような事態が発生したときに気づいて何か対処する必要があるかどうかを考える必要があります。 より詳細な議論は「フットガン」を参照してください。
+- When you split things out like this across two units of work, you now have two database transactions, so you are opening yourself up to integrity issues: something could happen that means the first transaction completes but the second one does not. You’ll need to think about whether this is acceptable, and whether you need to notice when it happens and do something about it. See “Footguns” for more discussion. このように物事を2つの作業単位に分割すると、2つのデータベーストランザクションが発生するため、整合性の問題に直面する可能性がある. このような事態を許容できるかどうか、また、このような事態が発生したときに気づいて何か対処する必要があるかどうかを考える必要がある. より詳細な議論は「フットガン」を参照してください.
 
 ### 1.3.1. Our New Event 私たちの新しいイベント
 
 The event that tells us a batch quantity has changed is simple; it just needs a batch reference and a new quantity:
-バッチ数量が変更されたことを伝えるイベントはシンプルで、バッチ参照と新しい数量が必要なだけです。
+バッチ数量が変更されたことを伝えるイベントはシンプルで、バッチ referenceと新しいquantityが必要なだけである.
 
 New event (src
-新規イベント（src
 
 ```python
 @dataclass
@@ -416,12 +390,11 @@ class BatchQuantityChanged(Event):
 ## 1.4. Test-Driving a New Handler 新しいハンドラをテストドライブする
 
 Following the lessons learned in Chapter 4, we can operate in “high gear” and write our unit tests at the highest possible level of abstraction, in terms of events.
-第4章での教訓を生かし、ユニットテストを「ハイギア」で動作させ、イベントの観点から可能な限り高い抽象度で書くことができます。
+**第4章での教訓を生かし、ユニットテストを"high gear"で動作させ(なんだっけ...?)**、イベントの観点から可能な限り高い抽象度で書くことができる.
 Here’s what they might look like:
-以下のような感じです。
+以下のような感じ.
 
-Handler tests for change_batch_quantity (tests
-change_batch_quantity のハンドラテスト (tests)
+Handler tests for change_batch_quantity (tests/unit/test_handlers.py)
 
 ```python
 class TestChangeBatchQuantity:
@@ -461,17 +434,16 @@ class TestChangeBatchQuantity:
         assert batch2.available_quantity == 30  2
 ```
 
-1. The simple case would be trivially easy to implement; we just modify a quantity. 単純なケースでは、量を変更するだけなので、実装は些細に簡単です。
-
-2. But if we try to change the quantity to less than has been allocated, we’ll need to deallocate at least one order, and we expect to reallocate it to a new batch. しかし、数量を割り当て済みより少なく変更しようとすると、少なくとも1つの注文の割り当てを解除する必要があり、新しいバッチに再割り当てされることが予想されます。
+1. The simple case would be trivially easy to implement; we just modify a quantity. 単純なケースでは、量を変更するだけなので、実装は些細に簡単.
+2. But if we try to change the quantity to less than has been allocated, we’ll need to deallocate at least one order, and we expect to reallocate it to a new batch. しかし、**数量を割り当て済みより少なく変更しようとする**ケースでは、少なくとも1つの注文の割り当てを解除する必要があり、新しいバッチに再割り当てされることが予想される.
 
 ### 1.4.1. Implementation 実装
 
 Our new handler is very simple:
-新しいハンドラはとてもシンプルです。
+新しいハンドラはとてもシンプルである.
 
-Handler delegates to model layer (src
-ハンドラはモデル層に委譲する（src
+Handler delegates to model layer (src/allocation/service_layer/handlers.py)
+ハンドラはモデル層に委譲する
 
 ```python
 def change_batch_quantity(
@@ -484,7 +456,7 @@ def change_batch_quantity(
 ```
 
 We realize we’ll need a new query type on our repository:
-私たちは、リポジトリに新しいクエリータイプが必要であることを理解しています。
+私たちは、リポジトリに新しいクエリータイプが必要であることを理解している.
 
 A new query type on our repository (src
 私たちのリポジトリにある新しいクエリタイプ（src
@@ -528,7 +500,7 @@ class SqlAlchemyRepository(AbstractRepository):
 ```
 
 And on our `FakeRepository` too:
-そして、私たちの `FakeRepository` にも。
+そして、私たちの `FakeRepository` にも.
 
 Updating the fake repo too (tests
 フェイクレポも更新（テスト
@@ -548,15 +520,14 @@ class FakeRepository(repository.AbstractRepository):
 ```
 
 - NOTE 注
-
-- We’re adding a query to our repository to make this use case easier to implement. So long as our query is returning a single aggregate, we’re not bending any rules. If you find yourself writing complex queries on your repositories, you might want to consider a different design. Methods like `get_most_popular_products` or `find_products_by_order_id` in particular would definitely trigger our spidey sense. Chapter 11 and the epilogue have some tips on managing complex queries. このユースケースを簡単に実装するために、リポジトリにクエリを追加しています。 このクエリが単一の集約を返す限り、何のルールも曲げることはありません。 もしリポジトリに複雑なクエリを書いているのであれば、別の設計を検討したほうがよいでしょう。 特に `get_most_popular_products` や `find_products_by_order_id` のようなメソッドは、間違いなく我々のスパイダーセンスを刺激することでしょう。 11章とエピローグでは、複雑なクエリを管理するためのいくつかのヒントを紹介します。
+- We’re adding a query to our repository to make this use case easier to implement. So long as our query is returning a single aggregate, we’re not bending any rules. If you find yourself writing complex queries on your repositories, you might want to consider a different design. Methods like `get_most_popular_products` or `find_products_by_order_id` in particular would definitely trigger our spidey sense. Chapter 11 and the epilogue have some tips on managing complex queries. このユースケースを簡単に実装するために、リポジトリにクエリを追加している. このクエリが単一のAggregate を返す限り、何のルールも曲げることはありまない. もしリポジトリに複雑なクエリを書いているのであれば、別の設計を検討したほうがよいだろう. 特に `get_most_popular_products` や `find_products_by_order_id` のようなメソッドは、間違いなく我々のスパイダーセンスを刺激することだろう. 11章とエピローグでは、複雑なクエリを管理するためのいくつかのヒントを紹介する.
 
 ### 1.4.2. A New Method on the Domain Model ドメインモデルに関する新手法
 
 We add the new method to the model, which does the quantity change and deallocation(s) inline and publishes a new event.
-新しいメソッドをモデルに追加し、量の変更と割り当て解除をインラインで行い、新しいイベントを発行します。
+新しいメソッドをモデルに追加し、量の変更と割り当て解除をインラインで行い、新しいイベントを発行する.
 We also modify the existing allocate function to publish an event:
-また、既存のallocate関数を修正して、イベントを発行するようにします。
+また、既存のallocate関数を修正して、イベントを発行するようにする.
 
 Our model evolves to capture the new requirement (src
 私たちのモデルは、新しい要件を満たすように進化しています（src
