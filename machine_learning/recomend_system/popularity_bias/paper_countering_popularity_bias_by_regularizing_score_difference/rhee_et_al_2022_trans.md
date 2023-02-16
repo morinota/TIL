@@ -525,7 +525,7 @@ Figure 3b shows the PD method performed satisfactory debias performance, while a
 However the debias is not even throughout the items.
 しかし、debiasは全てのアイテムで均一ではない.
 This is also reflected in Figure 3e, where the upper graph of Figure 3e shows the average item rank quantile exhibiting a curved shape, with the most popular item still being ranked at the top.
-これは図3eにも反映されており、図3eの上側のグラフでは、平均的な項目のランク分位が曲線的な形状を示し、**最も人気のある項目が依然として上位にランクされていることがわかる**.
+これは図3eにも反映されており、図3eの上側のグラフでは、平均的なitemのランク分位が曲線的な形状を示し、**最も人気のある項目が依然として上位にランクされていることがわかる**.
 The lower graph shows about half of the popularity quantiles focused on value close to 0. Figure 3c shows the Pearson method resulted in low scores of popular items for some users (e.g. user index 0 ~ 20) while it is high for other users (e.g. user index 100 ~ 200).
 **図3cは、Pearson法では、あるユーザ（例：ユーザインデックス0〜20）では人気アイテムのスコアが低く、他のユーザ（例：ユーザインデックス100〜200）では高くなることを示している.**
 This indicates the method penalized the scores of popular items for some users to force the Pearson correlation coefficient close to 0. However, such superficial balancing of scores is undesirable because it introduces additional model bias of different directions.

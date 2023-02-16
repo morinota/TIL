@@ -85,8 +85,6 @@ BPR := - \ln \prod_{u \in U} p(\Theta| >_u) \\
 = - \sum_{(u,i,j) \in D_s} \ln \sigma(\hat{x}_{uij}(\Theta)) + \ln p(\Theta) \\
 $$
 
-
-
 # BPRの導出から実装まで
 
 要するにBPR(Bayesian Personalized Ranking)は、~~ALSと同じような、行列分解におけるパラメータを求める手法**??? ~~ **ランク学習的な損失関数の種類に近い\*\*気がする...!!
