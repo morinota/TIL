@@ -15,7 +15,7 @@ url(presantation slide): https://dl.acm.org/action/downloadSupplement?doi=10.114
 - 本論文は，**推薦システムが各ユーザーのポジティブアイテム間で等しい推薦スコアを予測する(=人気アイテムのスコアを過剰に高くしない)**ように、BPR損失関数にregularization termを追加することで，精度を維持したまま推薦結果のbiasを低減する新しい手法を提案する．
 
 Popularity biasとはこういう話でした...!(先月の論文読み会で読んだ論文より)
-![Figure 1: The long-tail of item popularity.](https://d3i71xaburhd42.cloudfront.net/6d77d7467f993780d02f3d8ea563959643d48f89/1-Figure1-1.png)
+![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1697279/6b6f12c4-dd34-d41c-ee07-32cb965da284.png)
 
 ## 先行研究と比べて何がすごい？
 
@@ -172,6 +172,8 @@ BPR損失に正則化項を追加した上で、同様のMFモデルを学習さ
 
 #### 結果:
 
+![](https://dl.acm.org/cms/attachment/af5498b4-9f16-40e8-a374-488c975453ca/recsys22-6-fig1.jpg)
+
 - 図1aは疑似データを行列形式で表したもので、白い部分がpositive item(1)、黒い部分がnegative item(0)に相当する.
 - 図1bは学習したMFモデル(ベースライン)の推薦スコアであり、model-biasが顕著に表れている.
   - positiveアイテムにおいて、人気のあるアイテム(=item indexが小さい)ほど高いスコアを推論している.
@@ -219,6 +221,21 @@ BPR損失に正則化項を追加した上で、同様のMFモデルを学習さ
 - PD (Popularity-bias Deconfounding) 法: Causal interventionの一種.アイテムの人気度が推薦スコアに与える因果関係をモデル化し，その効果を除去する方法(因果推論的なアプローチだろうか...?? 例えば、アイテムの人気度が交絡因子みたいなイメージ??)
 - Pearson regularization method: アイテム人気度と推薦スコアのPearson相関を0に近づけるような正則化項を損失関数に含める手法.
 
+![](https://dl.acm.org/cms/attachment/4724d5c2-b5ca-4e9e-b354-b8d1d5736e68/recsys22-6-fig3.jpg)
+
+- 逆傾向重み付け(IPW, inverse propensity weighting)
+  - 図3aより、IPW法はpositive itemとnegative item の対比的な preference を明確に区別することができないことがわかる.
+  - また、図3dの結果からわかるように、この手法はmodel-biasを減らすことができなかった.
+- PD (Popularity-bias Deconfounding) 法:
+  - 図3bは、PD法が満足のいくデビアス性能を発揮し、かつ、ポジティブとネガティブの preference を正確に区別していることを示している.
+  - しかし、debiasは全てのアイテムで均一ではない. 図3eの上側のグラフでは、平均的なitemのランク分位が曲線的な形状を示し、**最も人気のある項目が依然として上位にランクされていることがわかる**.
+- Pearson regularization method:
+  - 図3cは、Pearson法では、**あるユーザ（例：ユーザインデックス0〜20）では人気アイテムのスコアが低く、他のユーザ（例：ユーザインデックス100〜200）では高くなる**ことを示している.
+    - ex) user_index 0〜20のユーザには、人気アイテムの推薦スコアが過剰に低くなる.
+    - いわば、**異なる方向のmodel-biasを追加**(人気なアイテムをあえてオススメしないようにする?)している状況...??
+  - 図3fの上のグラフは、人気アイテム（アイテムインデックス0〜20）のaverage rank quantile が0.5に近いことを示しているが、残りのアイテムについてはmodel-biasが減少していないことがわかる.
+  - 図3fの下側のグラフは、popularity quantiles が公平に広がっていることを示している.
+
 ## 議論はある？
 
 Pearson regularization methodと提案debias手法の比較:
@@ -234,7 +251,7 @@ Pearson regularization methodの欠点:
   - これに対して、Zerosum法はより単純なロジックを採用しており、debiasedスコア(=model-biasを取り除いたスコア)を直接予測するのに有効.
 - 計算効率:
   - Pearson regularization methodでは、1回の学習ですべてのpositive itemのスコアを計算する必要があり、計算コストがかかる.(ミニバッチ学習ができない)
-  - Zerosum法では、通常のBPR損失関数と同様に**学習データの一部をサンプリングして**損失関数を計算できるので, ミニバッチ学習が可能(メモリ効率 & 計算量の話?)
+  - これに対して、Zerosum法では、通常のBPR損失関数と同様に**学習データの一部をサンプリングして**損失関数を計算できるので, ミニバッチ学習が可能(メモリ効率 & 計算量の話?)
 
 ## 次に読むべき論文は？
 
@@ -256,6 +273,7 @@ from torch.utils.data import DataLoader, Dataset
 
 
 class BPRLossZerosumRegularized(nn.Module):
+    """BPR損失関数 + Zerosum法による正則化項"""
     def __init__(
         self,
         is_regularized: bool = True,
@@ -299,6 +317,7 @@ class BPRLossZerosumRegularized(nn.Module):
 
 
 class MatrixFactorization(nn.Module):
+    """提案された損失関数を適用するベースモデル"""
     def __init__(
         self,
         num_users: int,
@@ -444,5 +463,4 @@ def test_train_bpr(
 
     for epoch_loss in loss_histroy:
         assert epoch_loss >= 0
-
 ```
