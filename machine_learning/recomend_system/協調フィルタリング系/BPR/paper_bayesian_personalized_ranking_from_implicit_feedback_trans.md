@@ -678,7 +678,7 @@ Comparing the same models among each other one can see the importance of the opt
 For example all MF methods (SVD-MF, WR-MF and BPR-MF) share exactly the same model, but their prediction quality differs a lot.
 例えば、すべてのMF手法（SVD-MF、WR-MF、BPR-MF）は全く同じモデルを共有していますが、その予測品質は大きく異なっています。
 Even though SVD-MF is known to yield the best fit on the training data with respect to element-wise least square, it is a poor prediction method for machine learning tasks as it results in overfitting.
-SVD-MFは、要素ごとの最小二乗法に関しては学習データに最もフィットすることが知られていますが、オーバーフィッティングになるため、機械学習タスクの予測手法としては不向きです。
+SVD-MFは、要素ごとの最小二乗法に関しては学習データに最もフィットすることが知られていますが、オーバーフィッティングになるため、機械学習タスクの予測手法としては不向きである.
 This can be seen as the quality of SVD-MF decreases with an increasing number of dimensions.
 これは、SVD-MFの品質が次元数の増加とともに低下することからもわかる。
 WR-MF is a more successful learning method for the task of ranking.
@@ -693,7 +693,7 @@ For example on Netflix a MF model with 8 dimensions optimized by BPR-MF achieves
 To summarize, our results show the importance of optimizing model parameters to the right criterion.
 要約すると、我々の結果はモデルパラメータを正しい基準で最適化することの重要性を示している.
 The empirical results indicate that our BPR-Opt criterion learned by LearnBPR outperforms the other stateof-the-art methods for personalized ranking from implicit feedback.
-実証結果は、LearnBPRによって学習された我々のBPR-Opt基準は、暗黙のフィードバックから個人化されたランキングのための他の最先端手法を凌駕していることを示している。
+実証結果は、LearnBPRによって学習された我々のBPR-Opt基準は、暗黙のフィードバックから個人化されたランキングのための他の最先端手法を凌駕していることを示している.
 The results are justified by the analysis of the problem (section 3.2) and by the theoretical derivation of BPR-Opt from the MLE.
 この結果は、問題の分析（3.2節）とMLEからのBPR-Optの理論的導出によって正当化される。
 
