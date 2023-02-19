@@ -182,7 +182,35 @@ The uplift estimate by Eq. (4) depends on the assumption that potential outcomes
 
 # 3. Uplift-Based Optimization
 
+Of the four item classes TU, FU, TD, and TD, defned in Subsection 2.1, only TU items can lead to uplift when recommended. However, identifcation of these four classes requires observation of both YT and YC , which is not feasible by nature. This implies that we do not have an observable ground truth against which to train models. In this section, we propose uplift optimization methods to overcome the above problem.
+
 ## 3.1. Classifcation of the Observations
+
+In Subsection 2.1, we categorized items into four hidden classes based on the combinations of potential outcomes. We now categorize items into observable classes from purchase and recommendation logs, while aligning them with the hidden classes. In the observed dataset, for a given user and time instance, an item is either recommended (R) or not (NR); and either purchased (P) or not (NP). This provides the following observable classes (also summarized in Table 2):
+
+- An item is recommended and purchased (R-P). Possible hidden classes of the observed item are TU or FU.
+- An item is recommended and NOT purchased (R-NP). Possible hidden classes of the observed item are FD or TD.
+- An item is NOT recommended and purchased (NR-P). Possible hidden classes of the observed item are FU or TD.
+- An item is NOT recommended and NOT purchased (NR-NP). Possible hidden classes of the observed item are TU or FD.
+
+We defne $C_{class}$ as the set of items in $class \in {R-P, R-NP, NR-P, NR-NP}$ for a particular user, u ∈ U . We also defne I+ and I− as the set of positive and negative items for that user.
+In traditional accuracy-based optimizations [14, 32, 35], I+ u ∼ CR−P ∪ CN R−P (purchased items) and I− ∼ CR−N P ∪ CN R−N P (non-purchased u items). We argue that this sampling method is not optimal for uplift and redefne the positive and negative samples. Since TU items result in an uplift, we consider classes that include TU items as positive. Thus, (CR−P ∪CN R−N P ) should be a reasonable choice for positive item sampling. Following the same reasoning, sinceCR−N P and CN R−P do not include TU items, Iu − ∼ (CR−N P ∪ CN R−P ).
+
+However, using these positive samples has some problems. Most purchase logs are extremely sparse (NP is large) and most recommenders limit the recommendations to a small number (NR is large). This means that the cardinality of CN R−N P is much larger than that of the other classes and is close to the total number of items. Owing to a consumer’s limited purchasing power, we assume that the number of TU items is much smaller than the total number of items. Hence, the probability of the items in CN R−N P belonging to TU should be low:
+
+$$
+p(i \in TU | i \in C_{NR-NP}) = \frac{|TU \cap C_{NR-NP}|}{|C_{NR-NP}|}
+\\
+\approx \frac{|TU \cap C_{NR-NP}|}{|I|} < \frac{|TU|}{|I|} << 1
+$$
+
+On the contrary, considering the fact that recommenders generally improve sales substantially [1], we assume that the possibility of the items in CR−P belonging to TU is not relatively low. Hence,
+
+$$
+P(i \in TU | i \in C_{R-P}) > P(i \in TU | i \in C_{NR-NP})
+$$
+
+Because of the above, we cannot considerCN R−N P to be completely positive. Thus, we propose a parameter α, which is the probability of items from set CN R−N P being sampled as positive. We discuss this further in the following subsection.
 
 ## 3.2. Proposed Sampling Method
 

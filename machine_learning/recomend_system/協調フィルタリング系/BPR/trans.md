@@ -166,8 +166,6 @@ $$
 
 $$
 \forall i, j, k \in I:  i >_u j \land j >_u k => i >_u k \tag{transitivity}
-
-
 $$
 
 - $\forall$=任意の、全ての $\forall$=arbitrary, all
@@ -257,8 +255,8 @@ $$
 
 - $\propto$: 比例. 比例。
 
-Here, $>_u$ is the desired but latent preference structure for user u. All users are presumed to act independently of each other. We also assume the ordering of each pair of items (i, j) for a specific user is independent of the ordering of every other pair. Hence, the above user-specific likelihood function $p(>_u
-\Theta)$ can first be rewritten as a product of single densities and second be combined for all users $u \in U$.
+Here, $>_u$ is the desired but latent preference structure for user u. All users are presumed to act independently of each other. We also assume the ordering of each pair of items (i, j) for a specific user is independent of the ordering of every other pair. Hence, the above user-specific likelihood function $p(>_u|\Theta)$ can first be rewritten as a product of single densities and second be combined for all users $u \in U$.
+ここで、$>_u$はユーザーuの望ましいが潜在的な選好構造である。すべてのユーザーは互いに独立して行動すると仮定する. また、特定のユーザーに対するアイテムの各組（i, j）の順序は、他のすべての組の順序とは独立であると仮定する。したがって、上記のユーザー別尤度関数$p(>_u|Theta)$は、まず単一密度の積として書き換えられ、次にすべてのユーザー$u \in U$について結合されることができる。
 
 $$
 \prod_{u \in U} p(>_u | \Theta) = \prod_{(u,i,j) \in U \times I \times I} p(i >_u j|\Theta)^{\epsilon((u,i,j)\in D_s)} \cdot (1 - p(i >_u j|\Theta))^{\epsilon((u,i,j)\in D_s)}
@@ -516,7 +514,7 @@ For the matrix factorization model the derivatives are:
 行列分解モデルの場合、導関数は以下の通りです。
 
 $$
-\frac{\partial}{\partial \theta} \hat{x}_{uij} = 
+\frac{\partial}{\partial \theta} \hat{x}_{uij} =
 $$
 
 Furthermore, we use three regularization constants: one $\lambda_W$ for the user features W; for the item features H we have two regularization constants, $\lambda_{H^+}$ that is used for positive updates on $h_{if}$, and $\lambda_{H^-}$ for negative updates on $h_{jf}$.

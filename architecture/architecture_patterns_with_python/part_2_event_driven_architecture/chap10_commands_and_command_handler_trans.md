@@ -1,21 +1,20 @@
 # Chapter 10. Commands and Command Handler 第10章 コマンドとコマンドハンドラ
 
 In the previous chapter, we talked about using events as a way of representing the inputs to our system, and we turned our application into a message-processing machine.
-前章では、システムへの入力を表現する方法としてイベントを使用し、アプリケーションをメッセージ処理マシンに変身させるという話をしました。
+前章では、システムへの入力を表現する方法としてEventを使用し、**アプリケーションをメッセージ処理マシン(message-processing machine)に変身させる**という話をした.
 
 To achieve that, we converted all our use-case functions to event handlers.
-これを実現するために、すべてのユースケース関数をイベントハンドラに変換しました。
+これを実現するために、すべてのユースケース関数(=Service layer function?)をEvent Handlerに変換した.
 When the API receives a POST to create a new batch, it builds a new BatchCreated event and handles it as if it were an internal event.
-APIが新しいバッチを作成するためのPOSTを受け取ると、新しいBatchCreatedイベントを構築し、それを内部イベントのように処理します。
+APIが新しいBatchを作成するためのPOSTを受け取ると、新しいBatchCreatedイベントを構築し、それを internal event のように処理する.
 This might feel counterintuitive.
-これは直感に反していると感じるかもしれません。
+これは直感に反していると感じるかもしれない.
 After all, the batch hasn’t been created yet; that’s why we called the API.
-結局のところ、バッチはまだ作成されておらず、それがAPIを呼び出した理由です。
+結局のところ、バッチはまだ作成されておらず、それがAPIを呼び出した理由である.
 We’re going to fix that conceptual wart by introducing commands and showing how they can be handled by the same message bus but with slightly different rules.
-私たちは、コマンドを導入し、それらが同じメッセージバスによってどのように処理されるかを示すことによって、その概念のイボを修正するつもりですが、わずかに異なるルールを持っています。
+私たちは、commandsを導入し、それらが同じメッセージバスによってどのように処理されるかを示すことによって、その概念のイボを修正するつもりですが、わずかに異なるルールを持っています
 
-===================
-===================
+# ===================
 
 TIP
 ヒント
@@ -76,20 +75,6 @@ Table 10-1.
 表10-1.
 Events versus commands
 イベントとコマンドの比較
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 What kinds of commands do we have in our system right now?
 今、私たちのシステムにはどのようなコマンドがあるのでしょうか。
@@ -522,7 +507,7 @@ Table 10-2 discusses some of the things you should think about before you jump o
 
 - Treating commands and events differently helps us understand which things have to succeed and which things we can tidy up later. コマンドとイベントを区別して扱うことで、どれが成功しなければならないか、どれが後で片づけられるかを理解することができます。
 
-- `CreateBatch` is definitely a less confusing name than `BatchCreated`. We are being explicit about the intent of our users, and explicit is better than implicit, right? CreateBatch` は `BatchCreated` よりも紛らわしくない名前であることは間違いありません。 私たちはユーザーの意図に対して明示的であり、暗黙的であるよりも明示的である方が良いのではないでしょうか?
+- `CreateBatch` is definitely a less confusing name than `BatchCreated`. We are being explicit about the intent of our users, and explicit is better than implicit, right? CreateBatch`は`BatchCreated` よりも紛らわしくない名前であることは間違いありません。 私たちはユーザーの意図に対して明示的であり、暗黙的であるよりも明示的である方が良いのではないでしょうか?
 
 - Cons 短所
 

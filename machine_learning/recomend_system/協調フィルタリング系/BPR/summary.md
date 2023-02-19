@@ -28,9 +28,171 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
 
 ### Formalization & 問題設定
 
+Uを全ユーザの集合、Iを全アイテムの集合として、implicit feedback $S \subset U×I$を想定する.
+
+ここで推薦システムのタスクは、ユーザ毎にパーソナライズされた全アイテムの合計順位 $>_u \subset I^2$ を提供することである. (ここで、$I^2$のサブセットなのは、I内の任意の２種類のアイテムに対して、ユーザ毎にパーソナライズされたPairwiseのrankingを予測するから...??)
+
+ここで$>_u$は、以下の total order の特性(?)を満たさなければならない。
+
+$$
+\forall i, j \in I: i \neq j => i >_u j \lor j >_u i \tag{totality}
+$$
+
+$$
+\forall i, j \in I:  i >_u j \land j >_u i =>i=j \tag{antisymmetry}
+$$
+
+$$
+\forall i, j, k \in I:  i >_u j \land j >_u k => i >_u k \tag{transitivity}
+$$
+
+- $\forall$=任意の、全ての $\forall$=arbitrary, all
+
+- $\lor$ = 論理和(or), "または" $\lor$ = logical OR, "or"
+
+- $\land$ = 論理積(and), "かつ" $\land$ = logical product(and), "and"
+
+- $\subset$ = 部分集合. subset$ = 部分集合。
+
+また、便宜上、以下のように定義する.
+
+$$
+I_u^+ := {i \in I : (u,i) \in S}
+\\
+U_i^+ := {u \in U : (u,i) \in S}
+$$
+
 ### 問題設定の分析から Bayesian Personalized Ranking(BPR)へ
 
+implicit feedback システムでは、positiveのクラスのみが観測される.
+残りのデータは、実際には**負の値や欠損値が混在**している.
+欠損値問題に対処する最も一般的なアプローチは、欠損値をすべて無視する事だが、そうすると典型的な機械学習モデルは、2つのレベルを区別できなくなり、何も学習できなくなる.
+
+アイテム推薦の通常のアプローチは、アイテムに対するユーザの好みを反映したPersonalized Score $\hat{x}_{ui}$を予測することである.
+そして、そのスコアに従ってアイテムをソートすることでランク付けを行う.
+機械学習アプローチ[5, 10]では、$(u, i) \in S$にpositiveのクラスラベルを、 $(U × I) \setminus S$ に含まれる**0要素の組み合わせにnegativeのクラスラベルを与えてSから学習データを作成する**ことが一般的(図1参照).
+
+![](https://camo.qiitausercontent.com/333cc14ac6adf74a453597ad237f139336fd4af9/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f30356564616461632d613132372d663638372d643566362d3663316631663430383535382e706e67)
+
+つまり、Sに含まれる要素は値1、それ以外は値0と予測するようにモデルを最適化する.
+この方法の問題点は、**学習時にモデルが将来順位をつけるべき要素**（$(U × I) \setminus S$）が全て負のフィードバックとして学習アルゴリズムに提示されることである.
+つまり、十分な表現力を持つ（学習データにぴったりとフィットする）モデルは、0ばかりを予測してしまうため、全く順位がつけられない.
+このアプローチが順位を予測できるのは、**正則化のようなオーバーフィッティングを防ぐための戦略**を適用した場合だけである. (なるほど...確かに正則化項を追加すれば、この手法でもなんとかなるのか...!)
+
+本手法では、学習データとしてアイテムペアを使用し、単アイテムのスコア(point-wise)ではなく、アイテムペアを正しくランク付けすることで最適化するアプローチ(**pair-wise**)をとっている. これは、単に欠損値を負の値で置き換えるよりも問題をよく表している.
+Sから各ユーザーの$>_u$の部分を再構築することを試みる.
+本手法において、「もしあるアイテムiがユーザuによって閲覧されたことがあれば（すなわち$(u, i) \in S$）、そのユーザは他のすべての非観測アイテムよりもこのアイテムを好む」と仮定する.
+これを定式化するために、学習データ $D_s:U × I × I$を定義する:
+
+$$
+D_s := {(u,i,j)|i \in I_u^+ \land j \in I\setminus I_u^+}
+$$
+
+任意のTriplet $(u, i, j)\in D_s$は、「ユーザ u はアイテムj よりも アイテムiを好む」という仮定を意味する.
+
 ### 損失関数:BPR-Opt
+
+尤度関数$p(i >_u j |\Theta)$ 及び モデルパラメータの事前確率$p(\Theta)$ を用いてベイズの定理に基づき、最適化基準BPR-Optを導出する.
+
+全てのアイテム$i \in I$に対して正しい Personalized ranking を求めるベイズ定式化は、以下の事後確率を最大化することである.
+($Theta$は任意の推薦モデルクラス(ex. 行列分解)のパラメータベクトル)
+
+$$
+p(\Theta|>_u) \propto p(>_u|\Theta) p(\Theta)
+$$
+
+ここで、以下の２つの仮定を採用する.
+
+- 全てのユーザは互いに独立して行動する.
+- あるユーザに対する任意のアイテム2つ組（i, j）の順序は、他のすべての2つ組の順序とは独立である.
+
+この2つの仮定により、ユーザ毎の尤度関数$p(>_u|Theta)$を全ユーザの同時確率として、以下のように置き換えられる.
+
+$$
+\prod_{u \in U} p(>_u | \Theta) = \prod_{(u,i,j) \in U \times I \times I} p(i >_u j|\Theta)^{\epsilon((u,i,j)\in D_s)} \cdot (1 - p(i >_u j|\Theta))^{\epsilon((u,i,j)\in D_s)}
+$$
+
+ここで、$epsilon$は指標関数(indicator function).
+
+$$
+\epsilon(b) := 1 \text{ if b is true} \text{ else } 0
+$$
+
+$>_u$が満たすべきtotal order の特性(totality と antisymmetry)より,上の尤度関数は以下のように簡略化される.
+
+$$
+\prod_{u \in U} p(>_u | \Theta) = \prod_{(u,i,j) \in D_s} p(i >_u j|\Theta)
+$$
+
+↑を成立させるためには、total order の特性(全体性、非対称性、推移性)を満たす必要がある.(=まあだから尤度関数を簡略化できたのだし...!!)
+
+そのために(??)、あるユーザーがアイテムjよりもアイテムiを本当に好む個別確率を次のように定義する.
+
+$$
+p(i >_u j|\Theta) := \sigma(\hat{x}_{uij}(\Theta))
+$$
+
+ここで、$sigma$はsigmoid関数.
+$hat{x}_{uij}( \Theta)$ は、ユーザu、アイテムi、アイテムjの関係を捉えるモデルパラメータベクトル$\Theta$に基づく**任意**の実数値関数である.
+言い換えれば、本論文で提案するBPR汎用フレームワークは、u、i、j間の関係のモデル化タスク(i.e. $\hat{x}_{uij}( \Theta)$ を推定する事)を任意の推薦モデルクラスに委ねる(ex. 行列分解, 適応的kNN).
+
+ここまでが尤度関数に関する説明.
+以下が事前分布に関する説明.
+
+モデルパラメータの事前分布として、平均が0で分散共分散行列が$\Sigma_{\Theta}$の正規分布である一般的な事前確率密度(=事前分布)$p(\theta)$ を導入する.
+
+$$
+p(\Theta) \sim N(0, \Sigma_{\Theta})
+$$
+
+以下では、未知のハイパーパラメータの数を減らすために、$Sigma_{Theta} = \lambda_{Theta} I$と仮定する.(i.e. 各モデルパラメータの事前分布は、それぞれ独立 & 等しい分散を持つ & 同じ形状の確率分布に従う. = **i.i.d.**っていうんだっけ??)
+
+ここまでで尤度関数と事前分布を定式化できたので、**最大事後推定量(MAP推定量)**を定式化し、Personalized rankingの汎用最適化基準BPR-Optを導出することができる.
+
+$$
+BPR-O_{PT}:= \ln \prod_{u \in U} p(\Theta| >_u) \\
+= \ln \prod_{u \in U} p(>_u | \Theta) p(\Theta) \\
+= \ln \prod_{(u,i,j) \in D_s} \sigma(\hat{x}_{uij}(\Theta)) p(\Theta) \\
+= \sum_{(u,i,j) \in D_s} \ln \sigma(\hat{x}_{uij}(\Theta)) + \ln p(\Theta) \\
+= \sum_{(u,i,j) \in D_s} \ln \sigma(\hat{x}_{uij}(\Theta)) -  \lambda_{\Theta}||\Theta||^2 \\
+$$
+
+ここで、$lambda_{Theta}$はモデル固有の正則化パラメータである. (=元々の意味合いは、モデルパラメータの事前分布をi.i.dの正規分布と仮定した時の、標準偏差...!)
+
+#### (おまけ)
+
+BPR-Optを定式化すると、AUCとの類似性を把握できる.
+
+ユーザーごとのAUCは通常次のように定義される:
+
+$$
+\text{AUC}(u) := \frac{1}{|I_u^+||I \setminus I_u^+|} \sum_{i \in I_u^+} \sum_{j \in |I \setminus I_u^+|} \epsilon(\hat{x}_{uij} > 0)
+$$
+
+したがって、全ユーザ平均のAUCは...
+
+$$
+\text{AUC} := \frac{1}{|U|} \sum_{u \in U} \text{AUC}(u)
+$$
+
+$D_s$による表記で、全ユーザ平均のAUCは以下のように書ける...!
+
+$$
+\text{AUC}(u):= \sum_{(u,i,j) \in D_S} z_u \epsilon(\hat{x}_{uij} > 0)
+\\
+z_u = \frac{1}{|U| |I_u^+||I \setminus I_u^+|}
+\\
+\epsilon(x > 0) = H(x) := 1 \text{ x>0, } \text{ else } 0
+\tag{1}
+$$
+
+ここで、$z_u$は正規化定数(normalizing constant = ノルムを1にする為の定数??).
+
+全ユーザ平均のAUCとBPR-Optは共通点が多く、異なる点は以下の2つ.
+
+- 正規化定数$z_u$の有無.
+- non-differentiable(微分不可能)な $\epsilon(x > 0)$か / differentiable(微分可能)な$\sigma(x)$か.
+  - AUCを最適化する際に、微分不可能なHeaviside関数$\epsilon(x > 0)$を置き換えるのは一般的な方法らしい...!
 
 ### 最適化手法:LearnBPR
 
