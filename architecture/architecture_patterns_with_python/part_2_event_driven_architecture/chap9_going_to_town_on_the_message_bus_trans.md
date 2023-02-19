@@ -520,12 +520,12 @@ class FakeRepository(repository.AbstractRepository):
 ```
 
 - NOTE 注
-- We’re adding a query to our repository to make this use case easier to implement. So long as our query is returning a single aggregate, we’re not bending any rules. If you find yourself writing complex queries on your repositories, you might want to consider a different design. Methods like `get_most_popular_products` or `find_products_by_order_id` in particular would definitely trigger our spidey sense. Chapter 11 and the epilogue have some tips on managing complex queries. このユースケースを簡単に実装するために、リポジトリにクエリを追加している. このクエリが単一のAggregate を返す限り、何のルールも曲げることはありまない. もしリポジトリに複雑なクエリを書いているのであれば、別の設計を検討したほうがよいだろう. 特に `get_most_popular_products` や `find_products_by_order_id` のようなメソッドは、間違いなく我々のスパイダーセンスを刺激することだろう. 11章とエピローグでは、複雑なクエリを管理するためのいくつかのヒントを紹介する.
+- We’re adding a query to our repository to make this use case easier to implement. So long as our query is returning a single aggregate, we’re not bending any rules. If you find yourself writing complex queries on your repositories, you might want to consider a different design. Methods like `get_most_popular_products` or `find_products_by_order_id` in particular would definitely trigger our spidey sense. Chapter 11 and the epilogue have some tips on managing complex queries. このユースケースを簡単に実装するために、リポジトリにクエリを追加している. このクエリが単一の Aggregate を返す限り、何のルールも曲げることはありまない. **もしリポジトリに複雑なクエリを書いているのであれば、別の設計を検討したほうがよい**だろう. 特に `get_most_popular_products` や `find_products_by_order_id` のようなメソッドは、間違いなく我々のスパイダーセンスを刺激することだろう. 11章とエピローグでは、複雑なクエリを管理するためのいくつかのヒントを紹介する.
 
-### 1.4.2. A New Method on the Domain Model ドメインモデルに関する新手法
+### 1.4.2. A New Method on the Domain Model ドメインモデルに関する新method
 
 We add the new method to the model, which does the quantity change and deallocation(s) inline and publishes a new event.
-新しいメソッドをモデルに追加し、量の変更と割り当て解除をインラインで行い、新しいイベントを発行する.
+新しいメソッドをモデルに追加し、量(batchのquantity)の変更と割り当て解除をインラインで行い、新しいイベントを発行する.
 We also modify the existing allocate function to publish an event:
 また、既存のallocate関数を修正して、イベントを発行するようにする.
 
@@ -554,7 +554,7 @@ class Batch:
 ```
 
 We wire up our new handler:
-新しいハンドラーを配線する。
+新しいハンドラーを配線する.
 
 The message bus grows (src
 メッセージバスが成長する（src
@@ -570,21 +570,21 @@ HANDLERS = {
 ```
 
 And our new requirement is fully implemented.
-そして、私たちの新しい要件は完全に実行されます。
+そして、私たちの新しい要件は完全に実行される.
 
 ## 1.5. Optionally: Unit Testing Event Handlers in Isolation with a Fake Message Bus Optionally: 偽のメッセージバスでイベントハンドラを分離してユニットテストする
 
 Our main test for the reallocation workflow is edge-to-edge (see the example code in “Test-Driving a New Handler”).
-私たちの再割り当てワークフローのメインテストは edge-to-edge です (「新しいハンドラのテスト駆動」のサンプルコードを参照してください)。
+私たちのreallocationワークフローのメインテストは edge-to-edge である.(「新しいハンドラのテスト駆動」のサンプルコードを参照してください).
 It uses the real message bus, and it tests the whole flow, where the `BatchQuantityChanged` event handler triggers deallocation, and emits new `AllocationRequired` events, which in turn are handled by their own handlers.
-これは実際のメッセージバスを使用しており、`BatchQuantityChanged` イベントハンドラが割り当て解除のトリガーとなり、新しい `AllocationRequired` イベントを発生させ、そのイベントがそれぞれのハンドラによって処理されるというフロー全体をテストしています。
+これは実際のメッセージバスを使用しており、`BatchQuantityChanged` イベントハンドラが割り当て解除のトリガーとなり、新しい `AllocationRequired` イベントを発生させ、そのイベントがそれぞれのハンドラによって処理されるというフロー全体をテストしている.
 One test covers a chain of multiple events and handlers.
-一つのテストが複数のイベントとハンドラの連鎖をカバーします。
+一つのテストが複数のイベントとハンドラの連鎖をカバーする.
 
 Depending on the complexity of your chain of events, you may decide that you want to test some handlers in isolation from one another.
-イベントの連鎖の複雑さによっては、いくつかのハンドラを分離してテストしたいと思うかもしれません。
+イベントの連鎖の複雑さによっては、**いくつかのハンドラを分離してテストしたい**と思うかもしれない.
 You can do this using a “fake” message bus.
-これは、"偽の "メッセージバスを使って行うことができます。
+これは、**"fake"メッセージバス**を使って行うことができる.
 
 In our case, we actually intervene by modifying the `publish_events()` method on `FakeUnitOfWork` and decoupling it from the real message bus, instead making it record what events it sees:
 この例では、`FakeUnitOfWork` の `publish_events()` メソッドを修正して、実際のメッセージバスから切り離し、代わりに見たイベントを記録するようにすることで、実際に介入しています。
@@ -606,9 +606,9 @@ class FakeUnitOfWorkWithFakeMessageBus(FakeUnitOfWork):
 ```
 
 Now when we invoke `messagebus.handle()` using the `FakeUnitOfWorkWithFakeMessageBus`, it runs only the handler for that event.
-これで、`FakeUnitOfWorkWithFakeMessageBus` を使って `messagebus.handle()` を呼び出すと、そのイベントのハンドラーだけが実行されるようになりました。
+これで、`FakeUnitOfWorkWithFakeMessageBus` を使って `messagebus.handle()` を呼び出すと、そのイベントのハンドラーだけが実行されるようになった.
 So we can write a more isolated unit test: instead of checking all the side effects, we just check that `BatchQuantityChanged` leads to `AllocationRequired` if the quantity drops below the total already allocated:
-つまり、すべての副作用をチェックするのではなく、`BatchQuantityChanged` が、量がすでに割り当てられている合計よりも少なくなった場合に `AllocationRequired` につながることだけをチェックすればいいのです。
+つまり、すべての副作用をチェックするのではなく、`BatchQuantityChanged` が、量がすでに割り当てられている合計よりも少なくなった場合に `AllocationRequired` につながることだけをチェックすればいいのである.
 
 Testing reallocation in isolation (tests
 再割り当てを単独でテストする（テスト
@@ -640,21 +640,21 @@ def test_reallocates_if_necessary_isolated():
 ```
 
 Whether you want to do this or not depends on the complexity of your chain of events.
-これを行うかどうかは、イベントの連鎖の複雑さによって決まります。
+これ(=連鎖するEventsの中での、一つのEventのテスト)を行うかどうかは、イベントの連鎖の複雑さによって決まる.
 We say, start out with edge-to-edge testing, and resort to this only if necessary.
-私たちは、まずエッジ・トゥ・エッジテストから始め、必要な場合にのみエッジ・トゥ・エッジテストに頼ればいいと言っています。
+私たちは、まずエッジ・トゥ・エッジテストから始め、必要な場合に一部を抜き出してテストすると主張します.
 
 # 2. =========================================
 
 - EXERCISE FOR THE READER 読書運動
 
 A great way to force yourself to really understand some code is to refactor it.
-あるコードを本当に理解することを自分に強制する素晴らしい方法は、それをリファクタリングすることです。
+**あるコードを本当に理解することを自分に強制する素晴らしい方法は、それをリファクタリングすることである**.
 In the discussion of testing handlers in isolation, we used something called `FakeUnitOfWorkWithFakeMessageBus`, which is unnecessarily complicated and violates the SRP.
-ハンドラを分離してテストするという議論では、`FakeUnitOfWorkWithFakeMessageBus`というものを使いましたが、これは不必要に複雑でSRPに違反しています。
+ハンドラを分離してテストするという議論では、`FakeUnitOfWorkWithFakeMessageBus`というものを使いましたが、これは**不必要に複雑でSRP(単一責任の原則, single-responsibility principle)に違反している**.
 
 If we change the message bus to being a class,3 then building a FakeMessageBus is more straightforward:
-メッセージバスをクラスとすれば3、FakeMessageBusの構築はより簡単になる。
+**メッセージバスをクラスとすれば、FakeMessageBusの構築はより簡単になる**.
 
 An abstract message bus and its real and fake versions
 抽象的なメッセージバスとその実機・偽機
@@ -684,49 +684,49 @@ class FakeMessageBus(messagebus.AbstractMessageBus):
 ```
 
 So jump into the code on GitHub and see if you can get a class-based version working, and then write a version of `test_reallocates_if_necessary_isolated()` from earlier.
-そこで、GitHub にあるコードに飛び込んで、クラスベースのバージョンが動作するかどうかを確認し、先ほどの `test_reallocates_if_necessary_isolated()` のバージョンを書いてみてください。
+そこで、GitHub にあるコードに飛び込んで、クラスベースのバージョンが動作するかどうかを確認し、先ほどの `test_reallocates_if_necessary_isolated()` のバージョンを書いてみてください.
 
 We use a class-based message bus in Chapter 13, if you need more inspiration.
-第13章では、クラスベースのメッセージバスを使用しています。
+第13章では、クラスベースのメッセージバスを使用している.
 
 # 3. ========================================================
 
 ## 3.1. Wrap-Up まとめ
 
 Let’s look back at what we’ve achieved, and think about why we did it.
-私たちが達成したことを振り返り、なぜそれをしたのかを考えてみましょう。
+私たちが達成したことを振り返り、なぜそれをしたのかを考えてみよう.
 
 ### 3.1.1. What Have We Achieved? 私たちは何を達成したのでしょうか？
 
 Events are simple dataclasses that define the data structures for inputs and internal messages within our system.
-イベントは、システム内の入力と内部メッセージのデータ構造を定義するシンプルなデータクラスである。
+**Eventは、システム内の入力(from external world)とinternalメッセージのデータ構造を定義するシンプルなデータクラス**である.
 This is quite powerful from a DDD standpoint, since events often translate really well into business language (look up event storming if you haven’t already).
-イベントはしばしばビジネス言語にうまく変換されるため、これはDDDの観点から非常に強力です（まだの方はイベントストーミングを調べてみてください）。
+**イベントはしばしばビジネス言語にうまく変換されるため、これはDDDの観点から非常に強力**である（まだの方はイベントストーミングを調べてみてください）.
 
 Handlers are the way we react to events.
-ハンドラは、イベントに反応する方法です。
+Handlersは、イベントに反応する方法である.
 They can call down to our model or call out to external services.
-ハンドラは私たちのモデルを呼び出したり、外部サービスを呼び出したりすることができます。
+Handlersは私たちのモデルを呼び出したり、外部サービスを呼び出したりすることができる.
 We can define multiple handlers for a single event if we want to.
-必要であれば、1つのイベントに対して複数のハンドラを定義することができます。
+必要であれば、**1つのイベントに対して複数のHandlersを定義**することができる.
 Handlers can also raise other events.
-ハンドラは、他のイベントを発生させることもできる。
+**Handlersは、他のイベントを発生させる**こともできる.
 This allows us to be very granular about what a handler does and really stick to the SRP.
-これにより、ハンドラが何をするかについて非常に細かく設定することができ、SRPに本当に忠実であることができます。
+これにより、ハンドラが何をするかについて非常に細かく設定することができ、SRP(単一責任の原則)に本当に忠実であることができる.
 
 ### 3.1.2. Why Have We Achieved? なぜ、私たちは成功したのか？
 
 Our ongoing objective with these architectural patterns is to try to have the complexity of our application grow more slowly than its size.
-これらのアーキテクチャパターンを使用する目的は、アプリケーションの複雑さがそのサイズよりも緩やかに成長するようにすることです。
+**これらのアーキテクチャパターンを使用する目的は、アプリケーションの複雑さがそのサイズよりも緩やかに成長するようにすること**である.
 When we go all in on the message bus, as always we pay a price in terms of architectural complexity (see Table 9-1), but we buy ourselves a pattern that can handle almost arbitrarily complex requirements without needing any further conceptual or architectural change to the way we do things.
-メッセージバスに全力を注ぐと、いつものようにアーキテクチャーの複雑さという代償を払うことになりますが（表9-1参照）、それ以上の概念的あるいはアーキテクチャーの変更を必要とせずに、ほとんど任意の複雑な要求を処理できるパターンを手に入れることができるのです。
+Messagebusに全力を注ぐと、いつものようにアーキテクチャの複雑さという代償を払うことになるが（表9-1参照）、**それ以上の概念的あるいはアーキテクチャーの変更を必要とせずに、ほとんど任意の複雑な要求を処理できるパターンを手に入れることができる**のである.
 
 Here we’ve added quite a complicated use case (change quantity, deallocate, start new transaction, reallocate, publish external notification), but architecturally, there’s been no cost in terms of complexity.
-ここでは、かなり複雑なユースケース（量の変更、割り当て解除、新しいトランザクションの開始、再割り当て、外部通知の発行）を追加しましたが、アーキテクチャ的には、複雑さの点ではコストはかかっていません。
+ここでは、かなり複雑なユースケース(量の変更、割り当て解除、新しいトランザクションの開始、再割り当て、外部通知の発行)を追加しましたが、**アーキテクチャ的には、複雑さの点では(ユースケース追加による)コストはかかっていない**.(なるほど...!!)
 We’ve added new events, new handlers, and a new external adapter (for email), all of which are existing categories of things in our architecture that we understand and know how to reason about, and that are easy to explain to newcomers.
-新しいイベント、新しいハンドラ、そして新しい外部アダプタ（メール用）を追加しましたが、これらはすべて、私たちが理解し、推論する方法を知っているアーキテクチャの既存のカテゴリであり、新規参入者に簡単に説明することができます。
+新しいEvent、新しいHandler、そして新しいExternal Adapters(メール用)を追加しましたが、これらはすべて、私たちが理解し、推論する方法を知っているアーキテクチャの既存のカテゴリであり、新規参入者に簡単に説明することができる.
 Our moving parts each have one job, they’re connected to each other in well-defined ways, and there are no unexpected side effects.
-私たちの可動部品はそれぞれ1つの仕事を持ち、明確に定義された方法で互いに接続されており、予期せぬ副作用はありません。
+私たちの可動部品はそれぞれ1つの仕事を持ち、明確に定義された方法で互いに接続されており、予期せぬ副作用はない.
 
 Table 9-1.
 表9-1.
@@ -735,22 +735,19 @@ Whole app is a message bus: the trade-offs
 
 - Pros 長所
 
-- Handlers and services are the same thing, so that’s simpler. ハンドラとサービスは同じものだから、その方がシンプルでいい。
-
-- We have a nice data structure for inputs to the system. システムへの入力のための素敵なデータ構造があります。
+  - Handlers and services are the same thing, so that’s simpler. ハンドラとサービスは同じものであり, Handlerの方がよりシンプルだ.
+  - We have a nice data structure for inputs to the system. システムへの入力(external worldからの...!!)のための素敵なデータ構造を持つ.
 
 - Cons 短所
-
-- A message bus is still a slightly unpredictable way of doing things from a web point of view. You don’t know in advance when things are going to end. メッセージバスは、Webの観点から見ると、やはり少し予測不可能な方法です。 いつ終わるのか、事前にわからないのです。
-
-- There will be duplication of fields and structure between model objects and events, which will have a maintenance cost. Adding a field to one usually means adding a field to at least one of the others. モデルオブジェクトとイベントの間で、フィールドや構造の重複が発生し、メンテナンスコストがかかります。 通常、1つのフィールドを追加することは、他のフィールドの少なくとも1つにフィールドを追加することを意味します。
+  - A message bus is still a slightly unpredictable way of doing things from a web point of view. You don’t know in advance when things are going to end. MessageBusは、Webの観点から見ると、やはり少し予測不可能な方法である. **いつ終わるのか、事前にわからない**(??)のだ.
+  - There will be duplication of fields and structure between model objects and events, which will have a maintenance cost. Adding a field to one usually means adding a field to at least one of the others. モデルオブジェクトとイベントの間で、フィールドや構造の重複が発生し、**メンテナンスコスト(双方向の依存関係??)**がかかる. ex) 通常、モデルオブジェクトにフィールドを追加することは、イベントの少なくとも1つにフィールドを追加することを意味する.
 
 Now, you may be wondering, where are those `BatchQuantityChanged` events going to come from?
-さて、この `BatchQuantityChanged` イベントはどこから来るのだろうかと疑問に思うかもしれません。
+さて、この `BatchQuantityChanged` イベントは**どこから来るのだろうか(external worldから...?)**と疑問に思うかもしれない.
 The answer is revealed in a couple chapters’ time.
-その答えは、数章後に明らかになります。
+その答えは、数章後に明らかになる.
 But first, let’s talk about events versus commands.
-しかしその前に、イベントとコマンドの違いについて説明しましょう。
+しかしその前に次章で、**eventsとcommandsの違い**について説明しよう.
 
 1. Event-based modeling is so popular that a practice called event storming has been developed for facilitating event-based requirements gathering and domain model elaboration. イベントベースモデリングは、イベントベースの要求収集やドメインモデルの推敲を容易にするために、イベントストーミングと呼ばれるプラクティスが開発されるほど普及している。
 
