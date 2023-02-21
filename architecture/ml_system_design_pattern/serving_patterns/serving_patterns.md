@@ -71,3 +71,10 @@ Webサービスではキャンペーンや不慮の事件等によってアク�
 
 ## Serving template pattern
 
+## Edge prediction pattern: To do
+
+## Antipatterns:
+
+### Online bigsize pattern
+
+### All-in-one pattern

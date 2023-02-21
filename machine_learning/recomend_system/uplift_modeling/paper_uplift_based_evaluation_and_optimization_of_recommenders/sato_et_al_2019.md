@@ -202,17 +202,29 @@ $$
 p(i \in TU | i \in C_{NR-NP}) = \frac{|TU \cap C_{NR-NP}|}{|C_{NR-NP}|}
 \\
 \approx \frac{|TU \cap C_{NR-NP}|}{|I|} < \frac{|TU|}{|I|} << 1
+\tag{7}
 $$
 
 On the contrary, considering the fact that recommenders generally improve sales substantially [1], we assume that the possibility of the items in CR−P belonging to TU is not relatively low. Hence,
 
 $$
 P(i \in TU | i \in C_{R-P}) > P(i \in TU | i \in C_{NR-NP})
+\tag{8}
 $$
 
 Because of the above, we cannot considerCN R−N P to be completely positive. Thus, we propose a parameter α, which is the probability of items from set CN R−N P being sampled as positive. We discuss this further in the following subsection.
 
 ## 3.2. Proposed Sampling Method
+
+$$
+L_{point}^{ll} = - (r_{ui} \log(\sigma(\hat{x}_{ui})) + (1 - r_{ui}) \log(1 - \sigma(\hat{x}_{ui}))).
+\tag{9}
+$$
+
+$$
+L_{pair}^{bpr} = - \log(\sigma(\hat{x}_{ui} - \hat{x}_{uj}))
+\tag{10}
+$$
 
 # 4. Related Work
 

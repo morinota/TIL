@@ -143,7 +143,6 @@ def handle(message: Message, uow: unit_of_work.AbstractUnitOfWork):  1
 ```
 
 1. It still has a main `handle()` entrypoint that takes a `message`, which may be a command or an event. メインとなる `handle()` エントリポイントを持ち、コマンドやイベントのような `message` を受け取る.
-
 2. We dispatch events and commands to two different helper functions, shown next. イベントとコマンドは、次に示す2種類のヘルパー関数にdispatch(=送る、発送する,etc.)する.
 
 Here’s how we handle events:
@@ -356,7 +355,7 @@ What if we raised those events before we persisted, and committed all our change
 That way, we could be sure that all the work was complete.
 そうすれば、すべての作業が完了したことを確認することができる.
 Wouldn’t that be safer?
-その方が**安全**ではないでしょうか？
+その方が**安全**ではないだろうか？
 
 What happens, though, if the email server is slightly overloaded?
 しかし、メールサーバーが少しでも過負荷になるとどうなるのでしょうか？
@@ -364,12 +363,12 @@ If all the work has to complete at the same time, a busy email server can stop u
 **すべての作業を同時に完了させなければならない場合、メールサーバーが混雑する**と、注文のためのお金を取ることができなくなることがある.
 
 What happens if there is a bug in the implementation of the `History` aggregate?
-履歴`集計の実装にバグがあった場合、どうなるか？
+`History` Aggregateの実装にバグがあった場合、どうなるか？
 Should we fail to take your money just because we can’t recognize you as a VIP?
 あなたをVIPと認識できないからといって、お金を受け取れないようにしなければならないのでしょうか？
 
 By separating out these concerns, we have made it possible for things to fail in isolation, which improves the overall reliability of the system.
-これらの懸念事項を分離することで、物事が単独で失敗することを可能にし、システム全体の信頼性を向上させているのである.
+これらの懸念事項を分離することで、**物事が単独で失敗することを可能にし、システム全体の信頼性を向上させている**(?)のである.
 The only part of this code that has to complete is the command handler that creates an order.
 このコードの中で唯一完了しなければならないのは、注文を作成するコマンドハンドラである.
 This is the only part that a customer cares about, and it’s the part that our business stakeholders should prioritize.
@@ -473,7 +472,7 @@ def handle_event(
             continue
 ```
 
-1. Tenacity is a Python library that implements common patterns for retrying. Tenacity は再試行のための一般的なパターンを実装した Python ライブラリである.
+1. Tenacity is a Python library that implements common patterns for retrying. **Tenacity** は再試行のための一般的なパターンを実装した Python ライブラリである.
 2. Here we configure our message bus to retry operations up to three times, with an exponentially increasing wait between attempts. ここでは、メッセージバスが最大3回まで操作を再試行し、試行間隔が指数関数的に長くなるように設定している.
 
 Retrying operations that might fail is probably the single best way to improve the resilience of our software.
@@ -482,31 +481,28 @@ Again, the Unit of Work and Command Handler patterns mean that each attempt star
 繰り返しになりますが、Unit of Work と Command Handler のパターンは、**各試行が一貫した状態(consistent state)から始まり、物事を中途半端な状態で終わらせない**ことを意味する.
 
 - WARNING 警告
-- At some point, regardless of `tenacity`, we’ll have to give up trying to process the message. Building reliable systems with distributed messages is hard, and we have to skim over some tricky bits. There are pointers to more reference materials in the epilogue. ある時点で、「粘り強さ」に関係なく、メッセージを処理することをあきらめなければならなくなるのです。 分散メッセージで信頼性の高いシステムを構築することは難しく、いくつかの厄介な部分には目をつぶらなければならない。 エピローグには、より多くの参考資料へのポインタがあります。
+- At some point, regardless of `tenacity`, we’ll have to give up trying to process the message. Building reliable systems with distributed messages is hard, and we have to skim over some tricky bits. There are pointers to more reference materials in the epilogue. ある時点で、「粘り強さ」に関係なく、メッセージを処理することをあきらめなければならなくなるのである. 分散メッセージで信頼性の高いシステムを構築することは難しく、いくつかの厄介な部分には目をつぶらなければならない。 エピローグには、より多くの参考資料へのポインタがある.
 
 ## Wrap-Up まとめ
 
 In this book we decided to introduce the concept of events before the concept of commands, but other guides often do it the other way around.
-この本では、コマンドの概念の前にイベントの概念を導入することにしましたが、他のガイドではしばしばその逆になっています。
+この本では、コマンドの概念の前にイベントの概念を導入することにしましたが、他のガイドではしばしばその逆になっている.
 Making explicit the requests that our system can respond to by giving them a name and their own data structure is quite a fundamental thing to do.
-システムが応答できるリクエストに名前と独自のデータ構造を与えて明示することは、非常に基本的なことです。
+**システムが応答できるリクエストに名前と独自のデータ構造を与えて明示することは、非常に基本的なこと**である.
 You’ll sometimes see people use the name Command Handler pattern to describe what we’re doing with Events, Commands, and Message Bus.
-イベント、コマンド、メッセージバスでやっていることを説明するのに、コマンドハンドラーパターンという名前を使う人を時々見かけますが、これはそのためです。
+イベント、コマンド、メッセージバスでやっていることを説明するのに、Command Handler pattern という名前を使う人を時々見かけますが、これはそのため.
 
 Table 10-2 discusses some of the things you should think about before you jump on board.
-表10-2は、飛びつく前に考えるべきことを述べている。
+表10-2は、飛びつく前に考えるべきことを述べている.
 
 - Pros 長所
 
-- Treating commands and events differently helps us understand which things have to succeed and which things we can tidy up later. コマンドとイベントを区別して扱うことで、どれが成功しなければならないか、どれが後で片づけられるかを理解することができます。
-
-- `CreateBatch` is definitely a less confusing name than `BatchCreated`. We are being explicit about the intent of our users, and explicit is better than implicit, right? CreateBatch`は`BatchCreated` よりも紛らわしくない名前であることは間違いありません。 私たちはユーザーの意図に対して明示的であり、暗黙的であるよりも明示的である方が良いのではないでしょうか?
+  - Treating commands and events differently helps us understand which things have to succeed and which things we can tidy up later. **CommandとEventを区別して扱うことで、どれが成功しなければならないか、どれが後で片づけられるかを理解することができる**(どっちがどっちだ...?).
+  - `CreateBatch` is definitely a less confusing name than `BatchCreated`. We are being explicit about the intent of our users, and explicit is better than implicit, right? `CreateBatch`は`BatchCreated` よりも紛らわしくない名前であることは間違いない. 私たちはユーザーの意図に対して明示的であり、暗黙的であるよりも明示的である方が良いのではないだろうか?
 
 - Cons 短所
-
-- The semantic differences between commands and events can be subtle. Expect bikeshedding arguments over the differences. コマンドとイベントの意味上の違いは、微妙な場合があります。 その違いをめぐっての激しい論争が予想されます。
-
-- We’re expressly inviting failure. We know that sometimes things will break, and we’re choosing to handle that by making the failures smaller and more isolated. This can make the system harder to reason about and requires better monitoring. 私たちは、明示的に失敗を誘い込んでいるのです。 時には物事が壊れることを承知で、失敗をより小さく、より孤立したものにすることで対処することにしているのです。 そのため、システムを推論するのが難しくなり、より良い監視が必要になります。
+  - The semantic differences between commands and events can be subtle. Expect bikeshedding arguments over the differences. コマンドとイベントの意味上の違いは、微妙な場合がある. その違いをめぐっての激しい論争が予想される.
+  - We’re expressly inviting failure. We know that sometimes things will break, and we’re choosing to handle that by making the failures smaller and more isolated. This can make the system harder to reason about and requires better monitoring. 私たちは、明示的に失敗を誘い込んでいるのである. 時には物事が壊れることを承知で、**失敗をより小さく、より孤立したものにすることで対処することにしている**のだ. そのため、システムを推論するのが難しくなり、より良い監視が必要になる.
 
 In Chapter 11 we’ll talk about using events as an integration pattern.
-第11章では、統合パターンとしてのイベントの利用について説明します。
+第11章では、統合パターンとしてのイベントの利用について説明する.

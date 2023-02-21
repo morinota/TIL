@@ -77,6 +77,10 @@ CMFモデルは、我々の設定において多くの利点を提供する。�
 
 ## 3.4. Problem Definition
 
+$$
+L_{S_u}(\Phi) = E_{\Phi}
+$$
+
 # 4. Algorithm and Analysis
 
 ## 4.1. Maximum Likelihood Estimation

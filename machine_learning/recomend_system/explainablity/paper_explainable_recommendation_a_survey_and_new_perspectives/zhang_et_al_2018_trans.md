@@ -5,11 +5,11 @@
 ## 0.2. abstract 0.2. 抽象的
 
 Explainable recommendation attempts to develop models that generate not only high-quality recommendations but also intuitive explanations.
-説明可能なレコメンデーションは、高品質のレコメンデーションだけでなく、直感的な説明も生成するモデルを開発することを試みる。
-The explanations may either be post-hoc or directly come from an explainable model (also called interpretable or transparent model in some contexts).
-説明可能な推薦とは、説明可能なモデル（文脈によっては解釈可能なモデル、透明なモデルとも呼ばれる）から直接的に得られる説明か、ポストホックな説明かのどちらかである。
+説明可能なレコメンデーションは、高品質のレコメンデーションだけでなく、直感的な説明も生成するモデルを開発することを試みる.
+The explanations may either be post-hoc or directly come from an **explainable model** (also called interpretable or transparent model in some contexts).
+説明可能な推薦とは、**説明可能なモデル**（文脈によっては解釈可能なモデル、透明なモデルとも呼ばれる）から直接的に得られる説明か、ポストホックな説明かのどちらかである.
 Explainable recommendation tries to address the problem of why: by providing explanations to users or system designers, it helps humans to understand why certain items are recommended by the algorithm, where the human can either be users or system designers.
-説明可能な推薦とは、なぜという問題を解決しようとするもので、ユーザーやシステム設計者に説明を提供することで、アルゴリズムによってある項目が推薦される理由を人間が理解できるようにするものである（人間はユーザーでもシステム設計者でもよい）。
+説明可能な推薦とは、なぜという問題を解決しようとするもので、ユーザーやシステム設計者に説明を提供することで、**アルゴリズムによってあるアイテムが推薦される理由を人間が理解できるようにするもの**である（人間はユーザーでもシステム設計者でもよい）.
 Explainable recommendation helps to improve the transparency, persuasiveness, effectiveness, trustworthiness, and satisfaction of recommendation systems.
 説明可能な推薦とは、推薦システムの透明性、説得力、有効性、信頼性、満足度を向上させるのに有効である。
 It also facilitates system designers for better system debugging.
@@ -19,86 +19,87 @@ In recent years, a large number of explainable recommendation approaches – esp
 In this survey, we provide a comprehensive review for the explainable recommendation research.
 本調査では、説明可能な推薦手法の研究を包括的にレビューする。
 We first highlight the position of explainable recommendation in recommender system research by categorizing recommendation problems into the 5W, i.e., what, when, who, where, and why.
-まず、推薦問題を5W（what, when, who, where, why）に分類し、推薦システム研究における説明可能な推薦の位置づけを明らかにする。
+まず、推薦問題を5W（what, when, who, where, why）に分類し、推薦システム研究における説明可能な推薦の位置づけを明らかにする.
 We then conduct a comprehensive survey of explainable recommendation on three perspectives:
-次に、説明可能な推薦について、3つの観点から包括的に調査する。
-1) We provide a chronological research timeline of explainable recommendation, including user study approaches in the early years and more recent model-based approaches.
-1）説明可能なレコメンデーションに関する研究年表を作成し、初期のユーザー研究的アプローチから最近のモデルベースアプローチまで、説明可能なレコメンデーションの研究年表を作成する。
-2) We provide a two-dimensional taxonomy to classify existing explainable recommendation research: one dimension is the information source (or display style) of the explanations, and the other dimension is the algorithmic mechanism to generate explainable recommendations.
-2）既存の説明可能なレコメンデーション研究を、説明の情報源（あるいは表示スタイル）と説明可能なレコメンデーション生成のアルゴリズム機構という2次元の分類で紹介する。
-3) We summarize how explainable recommendation applies to different recommendation tasks, such as product recommendation, social recommendation, and POI recommendation.
-3) 商品推薦、社会的推薦、POI推薦などの異なる推薦タスクに対して、説明可能な推薦がどのように適用されるかを要約している。
-We also devote a section to discuss the explanation perspectives in broader IR and AI
+次に、説明可能な推薦について、3つの観点から包括的に調査する.
+
+1. We provide a chronological research timeline of explainable recommendation, including user study approaches in the early years and more recent model-based approaches.
+   1）説明可能なレコメンデーションに関する研究年表を作成し、初期のユーザー研究的アプローチから最近のモデルベースアプローチまで、説明可能なレコメンデーションの研究年表を作成する。
+2. We provide a two-dimensional taxonomy to classify existing explainable recommendation research: one dimension is the information source (or display style) of the explanations, and the other dimension is the algorithmic mechanism to generate explainable recommendations.
+   2）既存の説明可能なレコメンデーション研究を、説明の情報源（あるいは表示スタイル）と説明可能なレコメンデーション生成のアルゴリズム機構という2次元の分類で紹介する。
+3. We summarize how explainable recommendation applies to different recommendation tasks, such as product recommendation, social recommendation, and POI recommendation. 商品推薦、社会的推薦、POI推薦などの異なる推薦タスクに対して、説明可能な推薦がどのように適用されるかを要約している。
+
+We also devote a section to discuss the explanation perspectives in broader IR and AI.
 また、より広範なIRやAIにおける説明の視点について議論するセクションを設ける。
 
 # 1. Introduction 1. はじめに
 
-## 1.1. Explainable Recommendation 1.1. 説明可能な推奨事項
+## 1.1. Explainable Recommendation 1.1. 説明可能なレコメンデーション
 
 Explainable recommendation refers to personalized recommendation algorithms that address the problem of why – they not only provide users or system designers with recommendation results, but also explanations to clarify why such items are recommended.
-説明可能な推薦とは、ユーザーやシステム設計者に推薦結果を提供するだけでなく、なぜそのような項目が推薦されたのかを明確にするための説明を提供する、「なぜ」の問題を解決した個人化推薦アルゴリズムのことである。
+説明可能な推薦とは、ユーザーやシステム設計者に推薦結果を提供するだけでなく、なぜそのような項目が推薦されたのかを明確にするための説明を提供する、「なぜ」の問題を解決した個人化推薦アルゴリズムのことである.
 In this way, it helps to improve the transparency, persuasiveness, effectiveness, trustworthiness, and user satisfaction of the recommendation systems.
-これにより、推薦システムの透明性、説得力、有効性、信頼性、ユーザー満足度を向上させることができる。
+これにより、推薦システムの透明性、説得力、有効性、信頼性、ユーザー満足度を向上させることができる.
 It also facilitates system designers to diagnose, debug, and refine the recommendation algorithm.
-また、システム設計者が推薦アルゴリズムを診断し、デバッグし、改良することも容易になる。
+また、システム設計者が推薦アルゴリズムを診断し、デバッグし、改良することも容易になる.
 
 To highlight the position of explainable recommendation in the recommender system research area, we classify personalized recommendation with a broad conceptual taxonomy.
-推薦システム研究領域における説明可能な推薦の位置づけを明らかにするために、我々は個人化推薦を広い概念分類で分類している。
+推薦システム研究領域における説明可能な推薦の位置づけを明らかにするために、我々は個人化推薦を広い概念分類で分類している.
 Specifically, personalized recommendation research can be classified into the 5W problems – when, where, who, what, and why, corresponding to time-aware recommendation (when), location-based recommendation (where), social recommendation (who), application-aware recommendation (what), and explainable recommendation (why), where explainable recommendation aims to answer why-type questions in recommender systems.
-具体的には、個人向け推薦の研究は、いつ、どこで、誰が、何を、なぜという5W問題に分類される。これは、時間考慮型推薦（いつ）、位置情報推薦（どこで）、ソーシャル推薦（誰が）、アプリケーション考慮型推薦（何が）、そして説明可能な推薦（なぜ）に対応し、提案システムにおけるなぜ型の質問に答えることを目的としたものである。
+具体的には、**個人向け推薦の研究は、いつ、どこで、誰が、何を、なぜという5W問題に分類される**.これは、時間考慮型推薦（いつ）、位置情報推薦（どこで）、ソーシャル推薦（誰が）、アプリケーション考慮型推薦（何が）、そして説明可能な推薦（なぜ）に対応し、提案システムにおけるなぜ型の質問に答えることを目的としたものである.
 
 Explainable recommendation models can either be model-intrinsic or model-agnostic (Lipton, 2018; Molnar, 2019).
-説明可能なレコメンデーションモデルには、モデル内在型とモデル不可知論型がある（Lipton, 2018; Molnar, 2019）。
+説明可能なレコメンデーションモデルには、**モデル内在型(model-intrinsic)**と**モデル不可知論型(model-agnostic)**がある（Lipton, 2018; Molnar, 2019）.
 The model-intrinsic approach develops interpretable models, whose decision mechanism is transparent, and thus, we can naturally provide explanations for the model decisions (Zhang et al., 2014a).
-モデル内在的アプローチは、解釈可能なモデルを開発し、その決定メカニズムは透明であり、したがって、モデルの決定に対して自然に説明を提供することができる（Zhang et al.）
+モデル内在的アプローチは、解釈可能なモデルを開発し、その決定メカニズムは透明であり、したがって、モデルの決定に対して自然に説明を提供することができる（Zhang et al.）.
 The model-agnostic approach (Wang et al., 2018d), or sometimes called the post-hoc explanation approach (Peake and Wang, 2018), allows the decision mechanism to be a blackbox.
-モデル不可知論的アプローチ（Wang et al., 2018d）、あるいはポストホック説明アプローチ（Peake and Wang, 2018）と呼ばれることもあるが、意思決定機構をブラックボックスとすることが可能である。
+モデル不可知論的アプローチ（Wang et al., 2018d）、あるいは**post-hoc explanationアプローチ**（Peake and Wang, 2018）と呼ばれることもあるが、意思決定機構をブラックボックスとすることが可能である.
 Instead, it develops an explanation model to generate explanations after a decision has been made.
-その代わり、意思決定後に説明を生成するための説明モデルを開発する。
+その代わり、**意思決定後に説明を生成するためのexplanationモデル**を開発する.
 The philosophy of these two approaches is deeply rooted in our understanding of human cognitive psychology – sometimes we make decisions by careful, rational reasoning and we can explain why we make certain decisions; other times we make decisions first and then find explanations for the decisions to support or justify ourselves (Lipton, 2018; Miller, 2019).
-この2つのアプローチの思想は、人間の認知心理学に対する理解に深く根ざしている--私たちは慎重かつ合理的な推論によって意思決定を行い、ある決定を行う理由を説明できることもあれば、まず意思決定を行ってから、その決定に対する説明を見つけ出し、自分自身を支持または正当化することもある（Lipton，2018； Miller，2019 ）. 
+この2つのアプローチの思想は、人間の認知心理学の理解に深く根ざしている--私たちは慎重かつ合理的な推論によって意思決定を行い、ある決定を行う理由を説明できることもあれば、**まず意思決定を行ってから、その決定に対する説明を見つけて自分自身を支持または正当化する**こともある（Lipton，2018； Miller，2019 ）.
 
 The scope of explainable recommendation not only includes developing transparent machine learning, information retrieval, or data mining models.
-説明可能なレコメンデーションは、機械学習、情報検索、データマイニングなどの透明性の高いモデルを開発することだけを指すのではない。
+説明可能なレコメンデーションは、機械学習、情報検索、データマイニングなどの透明性の高いモデルの開発だけでなく、ユーザーやシステム設計者に効果的なレコメンデーションや説明の方法を提供することも含まれる.
 It also includes developing effective methods to deliver the recommendations or explanations to users or system designers, because explainable recommendations naturally involve humans in the loop.
-また、説明可能な推薦には当然ながら人間が関与するため、ユーザーやシステム設計者に推薦や説明を提供する効果的な手法の開発も含まれる。
+また、説明可能な推薦には当然ながら人間が関与するため、ユーザーやシステム設計者に推薦や説明を提供する効果的な手法の開発も含まれる.
 Significant research efforts in user behavior analysis and humancomputer interaction community aim to understand how users interact with explanations.
-ユーザー行動分析およびヒューマンコンピュータインタラクションの分野では、ユーザーが説明とどのように関わるかを理解するために、重要な研究努力がなされている。
+ユーザー行動解析やヒューマンコンピュータインタラクションの分野では、ユーザーが説明とどのように関わるかを理解するために、重要な研究活動が行われている.
 
 With this section, we will introduce not only the explainable recommendation problem, but also a big picture of the recommender system research area.
-この章では、説明可能な推薦問題だけでなく、推薦システム研究領域の全体像についても紹介する。
+この章では、説明可能な推薦問題だけでなく、推薦システム研究領域の全体像についても紹介する.
 It will help readers to understand what is unique about the explainable recommendation problem, what is the position of explainable recommendation in the research area, and why explainable recommendation is important to the area.
-説明可能な推薦問題とは何か、説明可能な推薦の研究領域における位置づけは何か、説明可能な推薦がなぜこの領域で重要なのかを読者に理解してもらうためである。
+説明可能な推薦問題とは何か、説明可能な推薦の研究領域における位置づけは何か、説明可能な推薦がなぜこの領域で重要なのかを読者に理解してもらうためである.
 
 ## 1.2. A Historical Overview 1.2. 歴史的な概要
 
 In this section, we will provide a historical overview of the explainable recommendation research.
-このセクションでは、説明可能な推薦の研究の歴史的な概要を説明します。
+このセクションでは、説明可能な推薦の研究の歴史的な概要を説明する.
 Though the term explainable recommendation was formally introduced in recent years (Zhang et al., 2014a), the basic concept, however, dates back to some of the earliest works in personalized recommendation research.
-説明可能なレコメンデーションという用語は近年正式に導入されましたが（Zhang et al., 2014a）、しかし、その基本概念はパーソナライズド・レコメンデーション研究の最も初期の研究までさかのぼります。
+Explainable Recommendation という用語は近年正式に導入されましたが（Zhang et al., 2014a）、**しかし、その基本概念はパーソナライズド・レコメンデーション研究の最も初期の研究までさかのぼる**.
 For example, Schafer et al. (1999) noted that recommendations could be explained by other items that the user is familiar with, such as this product you are looking at is similar to these other products you liked before, which leads to the fundamental idea of item-based collaborative filtering (CF); Herlocker et al. (2000) studied how to explain CF algorithms in MovieLens based on user surveys; and Sinha and Swearingen (2002) highlighted the role of transparency in recommender systems.
-例えば、Schaferら（1999）は、あなたが見ているこの商品は、あなたが以前気に入ったこれらの他の商品と似ているなど、ユーザーがよく知っている他のアイテムによって推薦が説明できることに注目し、アイテムベースの協調フィルタリング（CF）の基本的な考え方につながり、Herlockerら（2000）はユーザー調査に基づいてMovieLensにおけるCFアルゴリズムの説明方法を研究し、Sinha and Swearingen（2002）は推薦システムにおける透明性の役割に注目した。
+例えば、Schaferら（1999）は、「あなたが見ているこの商品は、あなたが以前気に入ったこれらの他の商品と似ている」など、**ユーザがよく知っている他のアイテムによって推薦が説明できることに注目**し、アイテムベースの協調フィルタリング（CF）の基本的な考え方につながり、Herlockerら（2000）はユーザ調査に基づいてMovieLensにおけるCFアルゴリズムの説明方法を研究し、Sinha and Swearingen（2002）は推薦システムにおける透明性の役割に注目した.
 Besides, even before explainable recommendation has attracted serious research attention, the industry has been using manual or semi-automatic explanations in practical systems, such as the people also viewed explanation in e-commerce systems (Tintarev and Masthoff, 2007a).
-また、説明可能な推薦が本格的に研究される以前から、業界では、電子商取引システムにおける人々も見る説明（Tintarev and Masthoff, 2007a）のように、手動または半自動の説明を実用的なシステムで使用してきた。
+また、説明可能な推薦が本格的に研究される以前から、業界では、電子商取引システムにおける人々も見る説明（Tintarev and Masthoff, 2007a）のように、手動または半自動の説明を実用的なシステムで使用してきた.
 
 To help the readers understand the “pre-history” research of recommendation explanation and how explainable recommendation emerged as an essential research task in the recent years, we provide a historical overview of the research line in this section.
-推薦説明の「前史」研究と、近年、説明可能な推薦が必須の研究課題として浮上した経緯を理解するために、本節では、研究ラインの歴史的概観を示す。
+推薦説明の「前史」研究と、近年、説明可能な推薦が必須の研究課題として浮上した経緯を理解するために、本節では、研究ラインの歴史的概観を示す.
 
 Early approaches to personalized recommender systems mostly focused on content-based or collaborative filtering (CF)-based recommendation (Ricci et al., 2011).
 パーソナライズド・レコメンダーシステムの初期のアプローチは、コンテンツベースまたは協調フィルタリング（CF）ベースのレコメンダーに焦点を当てたものであった（Ricci et al.）
 Content-based recommender systems model user and item profiles with various available content information, such as the price, color, brand of the goods in e-commerce, or the genre, director, duration of the movies in review systems (Balabanović and Shoham, 1997; Pazzani and Billsus, 2007).
-コンテンツベースレコメンダーは，電子商取引における商品の価格，色，ブランド，レビューシステムにおける映画のジャンル，監督，時間など，様々な利用可能なコンテンツ情報を用いて，ユーザとアイテムのプロファイルをモデル化する (Balabanović and Shoham, 1997; Pazzani and Billsus, 2007)．
+コンテンツベースレコメンダーは，電子商取引における商品の価格，色，ブランド，レビューシステムにおける映画のジャンル，監督，時間など，**様々な利用可能なコンテンツ情報を用いて，ユーザとアイテムのプロファイルをモデル化**する(Balabanović and Shoham, 1997; Pazzani and Billsus, 2007).
 Because the item contents are easily understandable to users, it was usually intuitive to explain to users why an item is recommended.
-アイテムの内容はユーザにとって理解しやすいため，なぜそのアイテムが推奨されるのかをユーザに説明することは，通常，直感的に理解できるものであった．
+アイテムの内容はユーザにとって理解しやすいため，なぜそのアイテムが推薦されるのかをユーザに説明することは，通常，直感的に理解できるものであった．
 For example, one straightforward way is to let users know the content features he
-例えば，「なぜその項目が推奨されるのか」をユーザに説明することは，直感的な方法の一つである．
+例えば，「なぜそのアイテムが推薦されるのか」をユーザに説明することは，直感的な方法の一つである．
 
 However, collecting content information in different application domains is time-consuming.
-しかし、異なるアプリケーション領域でコンテンツ情報を収集するのは時間がかかる。
+しかし、異なるアプリケーション領域でコンテンツ情報を収集するのは時間がかかる.
 Collaborative filtering (CF)-based approaches (Ekstrand et al., 2011), on the other hand, attempt to avoid this difficulty by leveraging the wisdom of crowds.
-一方、協調フィルタリング（CF）ベースのアプローチ（Ekstrand et al.2011）は、群衆の知恵を活用することによって、この困難を回避しようとするものである。
+一方、協調フィルタリング（CF）ベースのアプローチ（Ekstrand et al.2011）は、群衆の知恵を活用することによって、この困難を回避しようとするものである.
 One of the earliest CF algorithms is User-based CF for the GroupLens news recommendation system (Resnick et al., 1994).
-初期の CF アルゴリズムのひとつに、GroupLens ニュース推薦シス テムのためのユーザベース CF がある（Resnick et al.）
+初期の CF アルゴリズムのひとつに、GroupLens **ニュース推薦システム(!?)**のためのユーザベース CF がある（Resnick et al.）
 User-based CF represents each user as a vector of ratings, and predicts the user’s missing rating on a news message based on the weighted average of other users’ ratings on the message.
 ユーザベースCFは、各ユーザを評価のベクトルとして表現し、あるニュースメッセージに対する他のユーザの評価の加重平均に基づいて、そのユーザの欠落している評価を予測する。
 Symmetrically, Sarwar et al. (2001) introduced the Item-based CF method, and Linden et al. (2003) further described its application in Amazon product recommendation system.
@@ -155,11 +156,12 @@ As an essential branch of AI research, this also highlights the importance of th
 In this survey, we provide a classification taxonomy of existing explainable recommendation methods, which can help readers to understand the state-of-the-art of explainable recommendation research.
 本調査では、既存の説明可能な推薦手法の分類法を提供し、読者が説明可能な推薦研究の最先端を理解する一助とする。
 Specifically, we classify existing explainable recommendation research with two orthogonal dimensions:
-具体的には、既存の説明可能なレコメンデーション研究を2つの直交する次元で分類する。
-1) The information source or display style of the explanations (e.g., textual sentence explanation, or visual explanation), which represents the human-computer interaction (HCI) perspective of explainable recommendation research, and 2) the model to generate such explanations, which represents the machine learning (ML) perspective of explainable recommendation research.
-1）説明の情報源や表示方法（例：文章による説明、視覚的な説明）、2）説明を生成するモデル、これは説明可能な推薦手法の機械学習（ML）の視点である。
-Potential explainable models include the nearest-neighbor, matrix factorization, topic modeling, graph models, deep learning, knowledge reasoning, association rule mining, and others.
-説明可能なモデルとしては、最近傍モデル、行列分解、トピックモデリング、グラフモデル、深層学習、知識推論、アソシエーションルールマイニングなどが考えられる。
+具体的には、既存の説明可能な推薦手法の研究を2つの直交する次元で分類する。
+
+1. The information source or display style of the explanations (e.g., textual sentence explanation, or visual explanation), which represents the human-computer interaction (HCI) perspective of explainable recommendation research, and 2) the model to generate such explanations, which represents the machine learning (ML) perspective of explainable recommendation research.
+   1）説明の情報源や表示方法（例：文章による説明、視覚的な説明）、2）説明を生成するモデル、これは説明可能な推薦手法の機械学習（ML）の視点である。
+   Potential explainable models include the nearest-neighbor, matrix factorization, topic modeling, graph models, deep learning, knowledge reasoning, association rule mining, and others.
+   説明可能なモデルとしては、最近傍モデル、行列分解、トピックモデリング、グラフモデル、深層学習、知識推論、アソシエーションルールマイニングなどが考えられる。
 
 With this taxonomy, each combination of the two dimensions refers to a particular sub-direction of explainable recommendation research.
 この分類法では、2つの次元のそれぞれの組み合わせが、説明可能なレコメンデーション研究の特定のサブディレクションを指す。
@@ -188,12 +190,12 @@ Explainability and effectiveness could sometimes be conflicting goals in model d
 While recent evidence also suggests that these two goals may not necessarily conflict with each other when designing recommendation models (Bilgic et al., 2004; Zhang et al., 2014a).
 しかし，最近の証拠によれば，推薦モデルを設計する際に，この2つの目標は必ずしも相反しない可能性があることも示唆されている（Bilgic et al.2004; Zhang et al.2014a）．
 For example, state-ofthe-art techniques – such as the deep representation learning approaches – can help us to design recommendation models that are both effective and explainable.
-例えば、深層表現学習アプローチなどの最先端技術は、効果的かつ説明可能なレコメンデーションモデルを設計するのに役立つ可能性があります。
+例えば、深層表現学習アプローチなどの最先端技術は、効果的かつ説明可能なレコメンデーションモデルを設計するのに役立つと考えられます。
 Developing explainable deep models is also an attractive direction in the broader AI community, leading to progress not only in explainable recommendation research, but also in fundamental explainable machine learning problems.
 また、説明可能なディープモデルの開発は、より広いAIコミュニティにおいても魅力的な方向性であり、説明可能なレコメンデーション研究のみならず、説明可能な機械学習の基本問題においても進展が期待できる。
 
 When introducing each explainable recommendation model in the following sections, we will also discuss the relationship between explainability and effectiveness in personalized recommendations.
-以下、各説明可能なレコメンデーションモデルを紹介する際に、説明可能性とパーソナライズド・レコメンデーションにおける有効性の関係についても言及する。
+以下、各説明可能なレコメンデーションモデルを紹介する際に、説明可能性とパーソナライズドレコメンデーションにおける有効性の関係についても言及する。
 
 ## 1.5. Explainability and Interpretability 1.5. 説明可能性と解釈可能性
 
@@ -202,7 +204,7 @@ Explainability and interpretability are closely related concepts in the literatu
 In general, interpretability is one of the approaches to achieve explainability.
 一般に、解釈可能性は説明可能性を実現するためのアプローチの1つである。
 More specifically, Explainable AI (XAI) aims to develop models that can explain their (or other model’s) decisions for system designers or normal users.
-より具体的には、説明可能なAI（XAI）は、システム設計者や一般ユーザーに対して自分（または他のモデル）の決定を説明できるモデルを開発することを目的としている。
+より具体的には、説明可能なAI（XAI）は、システム設計者や一般ユーザーに対して、自分（または他のモデル）の判断を説明できるモデルを開発することを目的としている。
 To achieve the goal, the model can be either interpretable or non-interpretable.
 この目標を達成するために、モデルには解釈可能なものと解釈不可能なものがある。
 For example, interpretable models (such as interpretable machine learning) try to develop models whose decision mechanism is locally or globally transparent, and in this way, the model outputs are usually naturally explainable.
@@ -271,7 +273,7 @@ More specifically, the following subsections present an overview of several freq
 We start from the very early stages of recommendation explanation research.
 我々は推薦説明の研究の非常に初期の段階からスタートする。
 In this section, we introduce explainable recommendation based on user- and item-based collaborative filtering (Cleger-Tamayo et al., 2012; Resnick et al., 1994; Sarwar et al., 2001; Zanker and Ninaus, 2010) – two fundamental methods for personalized recommendation.
-本節では、個人向け推薦の基本的な手法であるユーザーベース協調フィルタリングとアイテムベース協調フィルタリング（Cleger-Tamayo et al.
+ここでは、個人向け推薦の基本的な手法であるユーザーベース協調フィルタリングとアイテムベース協調フィルタリング（Cleger-Tamayo et al.2012; Resnick et al.1994; Sarwar et al.2001; Zanker and Ninaus, 2010）に基づく説明可能推薦について紹介する。
 Extensions of the two basic methods will also be introduced in this section.
 本節では、この2つの基本的な手法の拡張版についても紹介する。
 
@@ -343,14 +345,14 @@ Furthermore, Ferwerda et al. (2012) conducted a user study, and the results supp
 Content features can be displayed in many different explanation styles.
 コンテンツの特徴は、さまざまな説明スタイルで表示することができます。
 For example, Hou et al. (2018) used radar charts to explain why an item is recommended and why others are not.
-例えば、Houら（2018）は、あるアイテムが推奨され、他のアイテムが推奨されない理由をレーダーチャートで説明しました。
+例えば、Houら（2018）は、あるアイテムが推奨される理由と他のアイテムが推奨されない理由をレーダーチャートで説明しました。
 As shown in Figure 2.5, a recommendation is explained in that most of its aspects satisfy the preference of the target user.
 図 2.5 に示すように、レコメンデーションは、そのほとんどの側面が対象ユーザーの好みを満たしていることを説明するものである。
 
 User demographic information describes the content features of users, and the demographic features can also be used to generate feature-based explanations.
 ユーザーのデモグラフィック情報は、ユーザーのコンテンツ特徴を記述し、デモグラフィック特徴は、特徴ベースの説明を生成するためにも使用することができる。
 Demographic-based recommendation (Pazzani, 1999) is one of the earliest approaches to personalized recommendation systems.
-デモグラフィックベースの推薦（Pazzani, 1999）は、パーソナライズされた推薦システムの最も初期のアプローチの1つである。
+デモグラフィックベースの推薦（Pazzani, 1999）は、パーソナライズされた推薦システムに対する最も初期のアプローチの一つである。
 Recently, researchers have also integrated demographic methods into social media to provide product recommendations in social environments (Zhao et al., 2014, 2016).
 最近では、研究者は人口統計学的手法をソーシャルメディアに統合し、社会環境における商品推薦を提供することも行っています（Zhao et al.）
 
@@ -373,7 +375,7 @@ With this motivation, many models have been proposed to explain recommendations 
 このような動機から、ユーザーが作成したテキストに基づくレコメンデーションを説明するためのモデルが数多く提案されている。
 
 Methods in this direction can be broadly classified into aspect-level and sentence-level approaches, according to how the explanations are displayed.
-この方向の手法は、説明文の表示方法によって、アスペクトレベルとセンテンスレベルのアプローチに大別される。
+この方向の手法は、説明文の表示方法によって、アスペクトレベルのアプローチと文レベルのアプローチに大別される。
 See Figure 2.1 for example, where aspect-level models present item aspects (such as color, quality) and their scores as explanations, while the sentence-level models directly present an explanation sentence to users about why the camera lens is recommended.
 例えば図2.1を見ると、アスペクトレベルのモデルは項目の側面（色や品質など）とそのスコアを説明として提示し、センテンスレベルのモデルはそのカメラレンズがなぜおすすめなのかという説明文を直接ユーザに対して提示するものである。
 We will focus on aspect-level explanation in this subsection, while sentence-level explanations will be introduced in the following subsection together with other natural language generation-based explanation models.
@@ -421,7 +423,7 @@ We will introduce more about the model details in the explainable recommendation
 ## 2.4. Sentence Explanation 2.4. 文の説明
 
 Sentence-level approach provides explanation sentences to users.
-文レベルでのアプローチは、ユーザーに説明文を提供する。
+文レベルでのアプローチは、ユーザーに説明文を提供するものである。
 This approach can be further classified into template-based approach and generation-based approach.
 このアプローチはさらに、テンプレートベースのアプローチとジェネレーションベースのアプローチに分類される。
 
@@ -432,14 +434,14 @@ For example, Zhang et al. (2014a) constructed explanations by telling the user t
 In this template, the feature will be selected based on personalization algorithms to construct a personalized explanation, as shown in Figure 2.7.
 このテンプレートでは、図2.7に示すように、パーソナライズアルゴリズムに基づいてfeatureが選択され、パーソナライズされた説明が構築されることになる。
 Based on the templates, the model can also provide “dis-recommendations” to let the user know why an item is not a good fit, by telling the user You might be interested in feature, on which this product performs poorly.
-また、このテンプレートに基づき、「この製品は性能が低いので、あなたはその特徴に興味があるかもしれません」とユーザーに伝えることで、ある商品がなぜ良くないのかを知らせる「ディスレコメンデーション」を提供することもできる。
+また、テンプレートに基づき、ある商品がなぜ良くないのかをユーザーに知らせるために、You might be interested in feature, on which this product performs poorを伝える「ディスレコメンデーション」を提供することもできる。
 Based on user studies, it shows that providing both recommendation and dis-recommendation explanations improve the persuasiveness and conversion rate of recommender systems.
 ユーザー調査に基づき、推薦と非推薦の両方の説明を提供することで、レコメンダーシステムの説得力とコンバージョン率が向上することが示されている。
 
 Wang et al. (2018b) provided template-based explanations based on both feature and opinion words, for example, an explanation for Yelp restaurant recommendation could be Its decor is [neat] [good] [nice].
 Wangら（2018b）は、特徴語と意見語の両方に基づくテンプレートベースの説明を提供し、例えば、Yelpレストランの推薦に対する説明は、Its decor is [neat] [good] [nice]となる。
 Its sandwich is [grilled] [cajun] [vegan].
-そのサンドイッチは[グリル][ケイジャン][ビーガン]である。
+そのサンドイッチは[グリル][ケイジャン][ヴィーガン]である。
 Its sauce is [good] [green] [sweet], where words in brackets are opinion words selected by the model to describe the corresponding item feature.
 ここで、括弧内の単語は、対応する項目の特徴を説明するためにモデルによって選択された意見の単語である。
 
@@ -491,7 +493,7 @@ In terms of data, the authors proposed an extractive approach to identify review
 In terms of generation, the authors proposed a reference-based Seq2Seq model with aspect-planning to generate explanations covering different aspects.
 生成の面では、著者らは、異なる側面をカバーする説明を生成するために、アスペクトプランニングを用いた参照ベースのSeq2Seqモデルを提案した。
 The authors also proposed an aspect-conditional masked language model to generate diverse justifications based on templates extracted from justification histories.
-また、正当化履歴から抽出したテンプレートに基づき多様な正当化を生成するアスペクト条件付きマスク言語モデルを提案した。
+また、正当化履歴から抽出したテンプレートに基づき、多様な正当化を生成するアスペクト条件付きマスク言語モデルを提案した。
 
 ## 2.5. Visual Explanation 2.5. 視覚的な説明
 
@@ -560,28 +562,29 @@ Specifically, a two-phase ranking algorithm is proposed, where the first phase p
 
 In this section, we introduced several styles of recommendation explanations, including:
 本節では、推薦説明のスタイルとして、以下のようなものを紹介した。
-1) Explanations based on relevant users or items, which present nearest-neighbor users or items as an explanation.
-1) 関連するユーザやアイテムに基づく説明：最近傍のユーザやアイテムを説明として提示する。
-They are closely related to the critical idea behind user-based or item-based collaborative filtering methods.
-これは、ユーザベース協調フィルタリングやアイテムベース協調フィルタリングの背後にある重要な考えと密接に関連している。
-2) Feature-based explanation, which provides users with the item features that match the target user’s interest profile.
-2) 特徴に基づく説明。ターゲットユーザーの興味プロファイルに合致するアイテムの特徴をユーザーに提示する。
-This approach is closely related to content-based recommendation methods.
-この手法は、コンテンツベースの推薦手法と密接な関係がある。
-3) Opinion-based explanation, which aggregates users’ collective opinions in user generated contents as explanations.
-3) 意見ベース説明：ユーザが作成したコンテンツにユーザの意見を集約し、説明として提供する。
-4) Textual sentence explanation, which provides the target users with explanation sentences.
-4) テキスト文による説明：ターゲットユーザに説明文を提供する。
-The sentence could be constructed based on pre-defined templates or directly generated based on natural language generation models.
-説明文は、あらかじめ用意されたテンプレートに基づき構成される場合と、自然言語生成モデルに基づき直接生成される場合がある。
-5) Visual explanations, which provide users with image-based explanations.
-5）視覚的説明：画像による説明をユーザに提供する。
-The visual explanation could be a whole image or a region-of-interest highlight in the image.
-視覚的説明には、画像全体、または画像中の関心領域のハイライトが用いられる。
-6) Social explanations, which provide explanations based on the target user’s social relations.
-6) 社会的説明：対象ユーザーの社会的関係性に基づいた説明を行う。
-They help to improve user trust in recommendations and explanations.
-推薦や説明に対するユーザーの信頼度を向上させることができる。
+
+1. Explanations based on relevant users or items, which present nearest-neighbor users or items as an explanation.
+1. 関連するユーザやアイテムに基づく説明：最近傍のユーザやアイテムを説明として提示する。
+   They are closely related to the critical idea behind user-based or item-based collaborative filtering methods.
+   これは、ユーザベース協調フィルタリングやアイテムベース協調フィルタリングの背後にある重要な考えと密接に関連している。
+1. Feature-based explanation, which provides users with the item features that match the target user’s interest profile.
+1. 特徴に基づく説明。ターゲットユーザーの興味プロファイルに合致するアイテムの特徴をユーザーに提示する。
+   This approach is closely related to content-based recommendation methods.
+   この手法は、コンテンツベースの推薦手法と密接な関係がある。
+1. Opinion-based explanation, which aggregates users’ collective opinions in user generated contents as explanations.
+1. 意見ベース説明：ユーザが作成したコンテンツにユーザの意見を集約し、説明として提供する。
+1. Textual sentence explanation, which provides the target users with explanation sentences.
+1. テキスト文による説明：ターゲットユーザに説明文を提供する。
+   The sentence could be constructed based on pre-defined templates or directly generated based on natural language generation models.
+   説明文は、あらかじめ用意されたテンプレートに基づき構成される場合と、自然言語生成モデルに基づき直接生成される場合がある。
+1. Visual explanations, which provide users with image-based explanations.
+   5）視覚的説明：画像による説明をユーザに提供する。
+   The visual explanation could be a whole image or a region-of-interest highlight in the image.
+   視覚的説明には、画像全体、または画像中の関心領域のハイライトが使用される。
+1. Social explanations, which provide explanations based on the target user’s social relations.
+1. 社会的説明：対象ユーザーの社会的関係性に基づいた説明を行う。
+   They help to improve user trust in recommendations and explanations.
+   推薦や説明に対するユーザーの信頼度を向上させることができる。
 
 It should be noted that while 1 to 3 are usually bonded with certain types of recommendation algorithms, 4 to 6 focus more on how the explanations are shown to users, which are not necessarily generated by one particular type of algorithm.
 1〜3がある種の推薦アルゴリズムと結びつくことが多いのに対して、4〜6はユーザーへの説明の見せ方に重点が置かれており、必ずしもある種のアルゴリズムによって生成されているわけではないことに注意が必要である。
@@ -593,10 +596,10 @@ In the following section, we will introduce more details of different explainabl
 In the previous section, we have seen different types of explanations in recommender systems.
 前節では、レコメンダーシステムにおけるさまざまなタイプの説明文を見てきた。
 Our next step is to describe how such explanations can be generated.
-次のステップでは、そのような説明をどのように生成するかを説明する。
+次のステップでは、そのような説明をどのように生成できるかを説明する。
 
 Explainable recommendation research can consider the explainability of either the recommendation methods or the recommendation results.
-説明可能なレコメンデーションの研究では、レコメンデーション手法の説明可能性とレコメンデーション結果の説明可能性のいずれかを考慮することができる。
+説明可能なレコメンデーションとは、レコメンデーション手法の説明可能性とレコメンデーション結果の説明可能性のどちらかを考慮する研究である。
 When considering the explainability of methods, explainable recommendation aims to devise interpretable models for increased transparency, and such models usually directly lead to the explainability of results.
 手法の説明可能性を考える場合、説明可能な推薦とは、透明性を高めるために解釈可能なモデルを考案することを目的とし、そのようなモデルは通常、結果の説明可能性に直接つながる。
 In this section, many of the factorization-based, topic modeling, graphbased, deep learning, knowledge-based, and rule mining approaches adopt this research philosophy – they aim to design intrinsic explainable models and understand how the recommendation process works.
@@ -621,7 +624,7 @@ Recent research on model-based explainable recommendation is closely related to 
 We first provide a brief overview of machine learning for personalized recommendations in this section.
 本節ではまず、パーソナライズド・レコメンデーションのための機械学習について簡単に説明する。
 One of the classical ML models for recommendation is Latent Factor Model (LFM), based on Matrix Factorization (MF).
-推薦のための古典的なMLモデルの一つは、行列因子分解（Matrix Factorization: MF）に基づく潜在因子モデル（Latent Factor Model: LFM）である。
+推薦のための古典的なMLモデルのひとつに、行列因子分解（Matrix Factorization, MF）に基づく潜在因子モデル（Latent Factor Model, LFM）がある。
 It learns latent factors to predict the missing ratings in a user-item rating matrix.
 LFMは潜在的な因子を学習することで、ユーザとアイテムの評価行列に欠落している評価を予測する。
 Representative matrix factorization methods include Singular Value Decomposition (SVD) (Koren, 2008; Koren et al., 2009; Srebro and Jaakkola, 2003), Non-negative Matrix Factorization (NMF) (Lee and Seung, 1999, 2001), Max-Margin Matrix Factorization (MMMF) (Rennie and Srebro, 2005; Srebro et al.,
@@ -729,7 +732,7 @@ Qiuら（2016）とHouら（2018）も、評価とレビューを統合して推
 Latent factor models can also be integrated with other structured data for better recommendation and explainability, such as tree structures or graph structures.
 潜在因子モデルは、木構造やグラフ構造など、より良い推薦や説明可能性のために他の構造化データと統合することも可能である。
 Tao et al. (2019a) proposed to tame latent factor models for explainability with factorization trees.
-Taoら（2019a）は、説明可能性のために潜在因子モデルを因数分解ツリーで飼いならすことを提案した。
+Taoら（2019a）は、説明可能性のために潜在因子モデルを因数分解ツリーで飼い慣らすことを提案した。
 The authors integrate regression trees to guide the learning of latent factor models for recommendation, and use the learned tree structure to explain the resulting latent factors.
 著者らは、推薦のための潜在因子モデルの学習を誘導するために回帰木を統合し、学習された木構造を用いて、得られた潜在因子を説明する。
 In particular, the authors build regression trees on users and items with user-generated reviews, and associate a latent profile to each node on the trees to represent users and items.
@@ -737,20 +740,20 @@ In particular, the authors build regression trees on users and items with user-g
 With the growth of the regression tree, the latent factors are refined under the regularization imposed by the tree structure.
 回帰木の成長とともに、潜在的な要因は木構造によって課される正則化の下で洗練されていく。
 As a result, we can track the creation of latent profiles by looking into the path of each factor on regression trees, which thus serves as an explanation for the resulting recommendations.
-その結果、回帰木における各因子の経路を調べることで、潜在プロファイルの生成を追跡することができ、レコメンデーション結果の説明となる。
+その結果、回帰木における各因子の経路を調べることで、潜在プロファイルの生成を追跡することができ、結果としてレコメンデーションを説明することができる。
 
 Researchers also investigated model-based approaches to generate relevant-user or relevant-item explanations, which provide explainable recommendations solely based on the user-item rating matrix (see Figure 3.3).
 研究者たちは、関連ユーザーまたは関連アイテムの説明を生成するモデルベースのアプローチも研究し、ユーザー・アイテム評価行列（図3.3参照）にのみ基づいて説明可能な推薦を提供するものである。
 Specifically, Abdollahi and Nasraoui (2016, 2017) described Explainable Matrix Factorization (EMF) for explainable recommendation.
-具体的には、Abdollahi and Nasraoui (2016, 2017) は、説明可能な推薦のための説明可能な行列因子分解 (EMF) を説明しました。
+具体的には、Abdollahi and Nasraoui (2016, 2017) は、説明可能な推薦のための説明可能な行列因子分解 (EMF) について述べている。
 This model generates relevant-user explanations, where a recommended item is explained as many users similar to you purchased this item.
-このモデルは、推薦されたアイテムが自分と似た多くのユーザーがこのアイテムを購入したと説明される、関連性のあるユーザーの説明を生成するものです。
+このモデルは、推薦されたアイテムが自分と似た多くのユーザーがこのアイテムを購入したと説明される、関連するユーザーの説明を生成するものである。
 To achieve this goal, the authors added an explainability regularizer into the objective function of matrix factorization.
 この目標を達成するために、著者らは、行列分解法の目的関数に説明可能性正則化を追加した。
 The explainability regularizer forces the user latent vector and item latent vector to be close to each other if a lot of the user’s neighbors also purchased the item.
 説明可能性正則化とは、ユーザーの潜在ベクトルとアイテムの潜在ベクトルを、ユーザーの近隣にいる多くのユーザーがそのアイテムを購入した場合に、互いに近づくように強制するものである。
 In this way, the model naturally selects those commonly purchased items from a user’s neighbors as recommendations, and meanwhile maintains high rating prediction accuracy.
-このようにして、このモデルは、ユーザーの隣人からよく購入されるアイテムを推薦として自然に選択し、一方で高い評価予測精度を維持する。
+このようにして、このモデルは、ユーザーの近隣住民からよく購入されるアイテムを推薦として自然に選択し、一方で高い評価予測精度を維持する。
 Liu et al. (2019) extended the idea by considering the fact that ratings in the user-item interaction matrix are missing not at random.
 Liuら（2019）は、ユーザーとアイテムの相互作用行列の評価がランダムではなく欠落しているという事実を考慮し、このアイデアを拡張した。
 The authors proposed an explainable probabilistic factorization model, which employs an influence mechanism to evaluate the importance of the users’ historical data, so that the most related users and items can be selected to explain each predicted rating.
@@ -965,7 +968,7 @@ With the natural language explanations, users can better understand why the part
 With the advantage of reasoning over explicit memory slots, memory networks have been explored in explainable recommendation tasks.
 明示的なメモリスロットを超える推論の利点により、メモリネットワークは説明可能な推薦タスクで研究されてきた。
 For example, Chen et al. (2018c) studied explainable sequential recommendation based on memory networks.
-例えば、Chenら（2018c）は、メモリネットワークに基づく説明可能な逐次推薦を研究した。
+例えば、Chenら（2018c）は、メモリネットワークに基づく説明可能な逐次推薦を研究している。
 It considers each item in a user’s interaction history as a memory slot, and develops an attention mechanism over the slots to predict the subsequent user behaviors.
 これは、ユーザーの対話履歴の各項目をメモリスロットとみなし、スロット上の注意メカニズムを開発して、その後のユーザーの行動を予測するものである。
 Explanations are provided by showing how and which of the user’s previous item(s) influenced the current prediction.
@@ -988,7 +991,7 @@ It considers an “item aspect – user viewpoint” pair as a logic unit, which
 The model discovers the logic units from reviews and resolves their sentiments for explanations.
 このモデルは、レビューから論理ユニットを発見し、説明のためにそのセンチメントを解決する。
 A sentiment capsule architecture with a Routing by Bi-Agreement mechanism is proposed to identify the informative logic units for rating prediction, while the informativeness of each unit helps to produce explanations for the predictions.
-評価予測のための情報量の多い論理ユニットを特定するために、Bi-Agreementによるルーティング機構を持つ感情カプセルアーキテクチャを提案し、各ユニットの情報量は予測に対する説明の生成を支援する。
+評価予測のための情報量の多い論理ユニットを特定するために、Routing by Bi-Agreement メカニズムを用いた感情カプセルアーキテクチャを提案し、各ユニットの情報量は予測に対する説明の生成に役立つとする。
 Developing capsule logic units for explainable reasoning shows a promising approach towards explainable recommendation systems.
 説明可能な推論のためのカプセル論理ユニットの開発は、説明可能な推薦システムに向けた有望なアプローチであることを示している。
 
@@ -1008,7 +1011,7 @@ For example, attention mechanism is a frequently used technique to design explai
 However, Jain and Wallace (2019) argued that standard attention modules do not provide meaningful explanations and should not be treated as though they do, while Wiegreffe and Pinter (2019) later challenged many of the assumptions underlying the prior work, arguing that such a claim depends on one’s definition of explanation, and showed that the prior work does not disprove the usefulness of attention mechanisms for explainability.
 しかし、Jain and Wallace（2019）は、標準的なアテンションモジュールは意味のある説明を提供せず、あたかもそうであるかのように扱うべきではないと主張し、Wiegreffe and Pinter（2019）はその後、先行研究の基礎となる多くの前提に挑戦し、そのような主張は説明に関する人の定義に依存すると主張して、先行研究が説明可能性に対するアテンションメカニズムの有用性を否定するものでないことを示している。
 Overall, the explainability of deep models is still an important open problem to explore, and more advanced explanation models are needed to understand the behavior of neural networks.
-全体として、ディープモデルの説明可能性はまだ探求すべき重要な未解決問題であり、神経ネットワークの振る舞いを理解するためには、より高度な説明モデルが必要です。
+全体として、深層モデルの説明可能性はまだ探求すべき重要な未解決問題であり、神経ネットワークの振る舞いを理解するためには、より高度な説明モデルが必要です。
 We will further discuss this problem in the following section of evaluating explainable recommendations.
 この問題については、次の説明可能なレコメンデーションの評価のセクションでさらに議論する予定である。
 
@@ -1046,7 +1049,7 @@ Similar to ripples propagating on the surface of the water, the Ripple Network s
 It automatically and iteratively extends a user’s potential interests through the links in the KG.
 リップルネットワークは、KGのリンクを通じて、ユーザーの潜在的な興味関心を自動的に、かつ反復的に拡張する。
 The multiple “ripples” activated by a user’s historically clicked items are thus superposed to form the preference distribution of the user for a candidate item, which can be used to predict the final click probability.
-ユーザーが過去にクリックしたアイテムによって活性化された複数の「波紋」を重ね合わせ、候補アイテムに対するユーザーの嗜好分布を形成し、最終的なクリック確率の予測に利用することができる。
+ユーザーが過去にクリックしたアイテムによって活性化された複数の「波紋」を重ね合わせ、候補となるアイテムに対するユーザーの嗜好分布を形成し、最終的なクリック確率の予測に利用することができる。
 Explanations can also be provided by finding a path from the user and the recommended item over the knowledge graph.
 また、ユーザと推奨アイテムの経路を知識グラフ上で求めることで、説明を行うことも可能である。
 
@@ -1076,7 +1079,7 @@ The framework encourages two modules to complement each other in generating expl
 One module is based on inductive rules mined from item knowledge graphs.
 1 つのモジュールは、アイテム知識グラフからマイニングされた帰納的ルールに基づく。
 The rules summarize common multi-hop relational patterns for inferring the item associations, and they provide human-readable explanations for model prediction.
-このルールはアイテムの関連性を推論するための一般的なマルチホップ関係パターンを要約し、モデル予測のための人間が読める説明を提供する。
+このルールはアイテムの関連性を推論するために一般的なマルチホップ関係パターンを要約し、モデル予測のために人間が読める説明を提供する。
 The second module is a recommendation module, which is augmented by the induced rules.
 第二のモジュールは推薦モジュールであり、誘導されたルールによって拡張される。
 The KG inductive rules are translated into explanations, which connect the recommended item with the user’s purchase history.
@@ -1151,7 +1154,7 @@ Recently, Balog et al. (2019) proposed a set-based approach for transparent, scr
 Please note that although we discuss this work in this section of rule mining for explainable recommendation, the proposed approach is a framework that can be generalized to machine learning models depending on how item priors are estimated.
 この研究では、説明可能な推薦のためのルールマイニングのセクションで議論しているが、提案されたアプローチは、項目プリオールの推定方法によって機械学習モデルに一般化できるフレームワークであることに留意してほしい。
 The proposed model assumes that user preferences can be characterized by a set of tags or keywords.
-提案モデルは、ユーザの嗜好がタグまたはキーワードの集合によって特徴付けられることを想定している。
+提案モデルは、ユーザーの嗜好がタグやキーワードの集合によって特徴付けられることを想定している。
 These tags may be provided by users (social tagging) or extracted automatically.
 これらのタグはユーザから提供されたもの（ソーシャルタギング）、あるいは自動的に抽出されたものである。
 Given explicit ratings of specific items, it infers set-based preferences by aggregating over items associated with a tag.
@@ -1161,7 +1164,7 @@ This set-based user preference model enables us to generate item recommendations
 A significant advantage of this explainable recommendation model is that it provides scrutability by letting users provide feedback on individual sentences.
 この説明可能な推薦モデルの大きな利点は、ユーザーに個々の文章に対するフィードバックを提供させることで、精査可能性を提供することである。
 Any change to the user’s preferences has an immediate impact, thereby endowing users with more direct control over the recommendations they receive.
-また、ユーザーの嗜好を変更すると即座に反映されるため、ユーザーが受け取る推薦文をより直接的にコントロールできるようになる。
+また、ユーザーの嗜好を変更すると即座に反映されるため、ユーザーが受け取る推薦文をより直接的にコントロールすることが可能となる。
 
 ## 3.8. Model Agnostic and Post Hoc Explainable Recommendation 3.8. モデル不可知論とポストホック説明可能な推奨事項
 
@@ -1170,7 +1173,7 @@ Sometimes the recommendation mechanism may be too complex to explain.
 In such cases, we rely on post-hoc or model-agnostic approaches to explainable the recommendations.
 このような場合、レコメンデーションを説明可能にするために、ポストホックアプローチやモデルアグノスティックアプローチに頼ることになる。
 In these methods, recommendations and explanations are generated from different models – an explanation model (independent from the recommendation mechanism) provides explanations for the recommendation model after the recommendations have been provided (thus “post-hoc”).
-これらの方法では、推薦と説明は異なるモデルから生成される。（推薦メカニズムから独立した）説明モデルは、推薦が提供された後に推薦モデルに対する説明を提供する（したがって「ポストホック」である）。
+これらの方法では、推薦と説明は異なるモデルから生成される。（推薦メカニズムから独立した）説明モデルは、推薦が行われた後に推薦モデルに対する説明を行う（したがって「ポストホック」である）。
 
 For example, in many e-commerce systems, the items are recommended based on very sophisticated hybrid models, but after an item is recommended, we can provide some simple statistical information as explanations, such as “70% of your friends bought this item”.
 例えば、多くのeコマースシステムでは、非常に高度なハイブリッドモデルに基づいて商品を推奨しているが、商品が推奨された後に、「あなたの友人の70%がこの商品を買いました」というような簡単な統計情報を説明として提供することが可能である。
@@ -1208,14 +1211,14 @@ In this sense, Peake and Wang (2018) can be considered as a point-wise post-hoc 
 In general machine learning context, a prominent idea of modelagnostic explanation is using simple models to approximate a complex model around a sample, so that the simple models help to understand the complex model locally.
 一般的な機械学習の文脈では、サンプル周辺の複雑なモデルを単純なモデルで近似し、単純なモデルが局所的に複雑なモデルの理解を助けるというmodelagnostic explanationの考え方が著名である。
 For example, Ribeiro et al. (2016) proposed LIME (Local Interpretable Model-agnostic Explanation), which adopts sparse linear models to approximate a complex (non-linear) classifier around a sample, and the linear model can thus explain to us which feature(s) of the sample contributed to its predicted label.
-例えば、Ribeiroら（2016）はLIME（Local Interpretable Model-agnostic Explanation）を提案し、サンプルの周りの複雑な（非線形）分類器を近似するためにスパース線形モデルを採用し、このようにして線形モデルはサンプルのどの特徴（複数）がその予測ラベルに寄与したかを我々に説明できるようにしました。
+例えば、Ribeiroら（2016）はLIME（Local Interpretable Model-agnostic Explanation）を提案し、サンプルの周りの複雑な（非線形）分類器を近似するためにスパース線形モデルを採用し、このようにして線形モデルはサンプルのどの特徴（複数）がその予測ラベルに貢献したかを我々に説明できるようにしました。
 Singh and Anand (2019) extended the idea to explore the local explainability of ranking models.
 Singh and Anand (2019) は、このアイデアを拡張して、ランキングモデルの局所的な説明可能性を探った。
 In particular, the authors converted the ranking problem over query-document pairs into a binary classification problem over relevant
 特に、著者らは、クエリとドキュメントのペアに関するランキング問題を、関連する以下のようなバイナリ分類問題に変換した。
 
 McInerney et al. (2018) developed a bandit approach to explainable recommendation.
-McInerneyら(2018)は、説明可能なレコメンデーションに対するバンディットアプローチを開発した。
+McInerneyら(2018)は、説明可能な推薦のためのバンディットアプローチを開発した。
 The authors proposed that users would respond to explanations differently and dynamically, and thus, a bandit-based approach for exploitation-exploration trade-off would help to find the best explanation orderings for each user.
 著者らは、ユーザーは説明に対して異なる動的な反応を示すため、バンディットベースで搾取-探索のトレードオフを行うことで、各ユーザーにとって最適な説明の順序を見つけることができると提案した。
 In particular, they proposed methods to jointly learn which explanations each user responds to, which are the best contents to recommend for each user, and how to balance exploration with exploitation to deal with uncertainty.
@@ -1236,7 +1239,7 @@ The environment rewards the agents if they can correctly predict the output rati
 Based on some prior knowledge about desirable explanations (e.g., the desirable length), the environment also rewards the agents if the explanations have good presentation quality (explanation quality control).
 また、望ましい説明文（例えば、望ましい長さ）に関する事前知識に基づいて、説明文のプレゼンテーション品質が良ければ、環境はエージェントに報酬を与える（説明文品質管理）。
 The agents learn to generate explanations with good explainability and presentation quality by optimizing the expected reward of their actions.
-エージェントは、自分の行動の期待報酬を最適化することで、説明性とプレゼンテーションの質が高い説明を生成するように学習する。
+エージェントは、自分の行動の期待報酬を最適化することで、説明性と提示品質の良い説明を生成するように学習する。
 In this way, the recommendation model reinforces the explanation model towards better post-hoc explanations.
 このように、推薦モデルは、より良い事後説明に向けて説明モデルを強化する。
 
@@ -1247,7 +1250,7 @@ Influence functions, which stem from robust statistics, have been used to unders
 Inspired by this, the authors propose an explanation method named FIA (Fast Influence Analysis), which helps to understand the prediction of trained latent factor models by tracing back to the training data with influence functions.
 これに触発された著者らは、FIA (Fast Influence Analysis) と名付けた説明手法を提案し、影響関数を用いて学習データに遡り、学習済み潜在的因子モデルの予測値を理解することを支援する。
 They presented how to employ influence functions to measure the impact of historical user-item interactions on the prediction results of LFMs, and provided intuitive neighbor-style explanations based on the most influential interactions.
-彼らは、影響関数を用いて、過去のユーザとアイテムの相互作用がLFMの予測結果に与える影響を測定し、最も影響力のある相互作用に基づく直感的な近隣型説明を提供する方法を提示しました。
+彼らは、影響関数を用いて、過去のユーザとアイテムの相互作用がLFMの予測結果に与える影響を測定し、最も影響力のある相互作用に基づいて直感的な隣人風の説明を提供する方法を提示しました。
 
 Overall, post-hoc explainable recommendation approaches attempt to develop an explanation model to explain a black-box prediction model.
 全体として、ポストホック説明可能なレコメンデーションアプローチは、ブラックボックス予測モデルを説明するために説明モデルを開発しようとするものである。
@@ -1281,7 +1284,7 @@ Answering this question requires significant breakthroughs in human cognitive sc
 In this section, we provide a review of the evaluation methods for explainable recommendations.
 本節では、説明可能な推薦の評価方法について概説する。
 It would be desirable if an explainable recommendation model can achieve comparable or even better recommendation performance than conventional “non-explainable” methods, and meanwhile, achieve better explainability.
-説明可能な推薦モデルが、従来の「非説明可能」な手法と同等以上の推薦性能を達成し、一方でより良い説明可能性を達成できれば望ましいと考えられる。
+説明可能な推薦モデルが、従来の「説明不可能な」手法と同等かそれ以上の推薦性能を達成し、一方でより優れた説明可能性を達成できれば望ましい。
 To evaluate the recommendation performance, we can adopt the same measures as evaluating conventional recommendation algorithms.
 推薦性能の評価には、従来の推薦アルゴリズムの評価と同じ尺度を採用することができる。
 For rating prediction tasks, we can use mean absolute error (MAE) or root mean square error (RMSE), while for top-n recommendation, we can adopt standard ranking measures such as precision, recall, Fmeasure, and normalized discounted cumulative gain (NDCG).
@@ -1312,14 +1315,14 @@ For example, Herlocker et al. (2000) studied the effectiveness of different expl
 In this research, the study was performed as a survey, and study participants were presented with the following hypothetical situation:
 この研究では、調査はアンケートとして行われ、調査参加者は以下のような仮想的な状況を提示された。
 
->Imagine that you have $7 and a free evening coming up.
->7ドルと自由な夜が迫っていると想像してください。
-You are considering going to the theater to see a movie, but only if there is a movie worth seeing.
-あなたは映画館に映画を見に行こうと考えていますが、それは見る価値のある映画がある場合のみです。
-To determine if there is a movie worth seeing, you consult MovieLens for a personalized movie recommendation.
-見る価値のある映画があるかどうかを判断するために、あなたはMovieLensに相談し、個人的に映画を推薦してもらいます。
-MovieLens recommends one movie, and provides some justification.
-MovieLensは、1本の映画を推薦し、その理由を説明します。
+> Imagine that you have $7 and a free evening coming up.
+> 7ドルと自由な夜が迫っていると想像してください。
+> You are considering going to the theater to see a movie, but only if there is a movie worth seeing.
+> あなたは映画館に映画を見に行こうと考えていますが、それは見る価値のある映画がある場合だけです。
+> To determine if there is a movie worth seeing, you consult MovieLens for a personalized movie recommendation.
+> 見る価値のある映画があるかどうかを判断するために、あなたはMovieLensに相談し、個人的に映画を推薦してもらいます。
+> MovieLens recommends one movie, and provides some justification.
+> MovieLensは、1本の映画を推薦し、その理由を説明します。
 
 Each participant was then provided with 21 individual movie recommendations, each with a different explanation component (see Figure 2.2 for two examples), and asked to rate on a scale of one to seven how likely they would be to go and see the movie.
 次に、各被験者に、それぞれ異なる説明要素を持つ21の個別のおすすめ映画を提供し（2つの例は図2.2参照）、その映画を見に行く可能性を1～7で評価するよう求めた。
@@ -1330,12 +1333,26 @@ Vig et al. (2009) conducted a user study for four explanation interfaces based o
 Vig ら（2009）は、図 4.1 に示すように、MovieLens の Web サイトをベースとした 4 つの説明インターフェイスのユーザ調査を実施した。
 Subjects complete an online survey, in which they evaluate each interface about how well it helps them to:
 被験者は、オンラインサーベイに参加し、各インター フェースがどの程度役立つかを評価する。
-1) understand why an item is recommended (justification), 2) decide if they like the recommended item (effectiveness), and 3) determine if the recommended item matches their mood (mood compatibility).
-この調査では、被験者がそれぞれのインタフェースについて、1) なぜそのアイテムが勧められるのかを理解すること（正当化）、2) そのアイテムが好きかどうかを判断すること（有効性）、3) そのアイテムが自分の気分に合っているかどうか（気分適合性）、について評価しています。
-The survey responses help the authors to conclude the role of tag preference and tag relevance in promoting justification, effectiveness, and mood compatibility.
-この調査から、タグの嗜好性と関連性が、正当性、有効性、気分の適合性を促進する上でどのような役割を果たすかを結論付けることができました。
 
+1. understand why an item is recommended (justification), 2) decide if they like the recommended item (effectiveness), and 3) determine if the recommended item matches their mood (mood compatibility).
+   この調査では、被験者がそれぞれのインタフェースについて、1) なぜそのアイテムが勧められるのかを理解すること（正当化）、2) そのアイテムが好きかどうかを判断すること（有効性）、3) そのアイテムが自分の気分に合っているかどうか（気分適合性）、について評価しています。
+   The survey responses help the authors to conclude the role of tag preference and tag relevance in promoting justification, effectiveness, and mood compatibility.
+   この調査から、タグの嗜好性と関連性が、正当性、有効性、気分の適合性を促進する上でどのような役割を果たすかを結論付けることができました。
 
+User study is also used to evaluate recent machine learning approaches to explainable recommendation.
+説明可能なレコメンデーションに対する最近の機械学習アプローチの評価には、ユーザー調査も利用されている。
+For example, Wang et al. (2018b) recruited participants through Amazon Mechanical Turk to evaluate with a diverse population of users.
+例えば、Wangら（2018b）は、多様なユーザー集団で評価するために、Amazon Mechanical Turkを通じて参加者を募集しました。
+The study is based on the review data in Amazon and Yelp datasets.
+この研究は、AmazonとYelpのデータセットのレビューデータに基づいている。
+For each participant, the authors randomly selected a user from the dataset, and showed this user’s reviews to the participant, so that the participant can get familiar with the user.
+各参加者に対し、著者らはデータセットからランダムにユーザーを選び、このユーザーのレビューを参加者に見せ、参加者がこのユーザーに親しみを持てるようにしました。
+Participants are then asked to infer the user’s preference based on these reviews.
+そして、参加者はこれらのレビューに基づいてユーザーの好みを推論するよう求められる。
+Then they will be asked to evaluate the recommendations and explanations provided to the user by answering several survey questions from this user’s perspective.
+そして、このユーザーの視点から、いくつかの調査項目に答えることで、ユーザーに提供された推奨事項や説明を評価してもらいます。
+Except for textual explanations, user study is also used to evaluate visual explanations, for example, Chen et al. (2019b) generated visual explanations by highlighting image region-of-interest to users, and leveraged Amazon MTurk to hire freelancers to label the ground-truth images for evaluation.
+文字による説明以外では、視覚的な説明の評価にもユーザー調査が利用されており、例えば、Chenら（2019b）は、ユーザーに画像のregion-of-interestを強調することで視覚的説明を生成し、Amazon MTurkを活用してフリーランスを雇い、評価のためのグランドトルース画像にラベル付けをさせたという。
 
 Besides large-scale online workers, we may also conduct user studies with relative small-scale volunteers, paid subjects, or manually labeling the explanations.
 大規模なネットワーカー以外にも、比較的小規模なボランティアや有償の被験者、あるいは手動でラベリングした説明文を用いてユーザー調査を実施することも考えられる。
@@ -1351,9 +1368,9 @@ Renら（2017）は、100のレコメンデーションのランダムサンプ�
 ## 4.2. Online Evaluation 4.2. オンライン評価
 
 Another approach to evaluating explainable recommendation is through online experiments.
-説明可能なレコメンデーションを評価するもう一つのアプローチとして、オンライン実験がある。
+説明可能なレコメンデーションを評価するもう一つのアプローチとして、オンライン実験があります。
 There could be several different perspectives to consider, including persuasiveness, effectiveness, efficiency, and satisfaction of the explanations.
-説得力、効果、効率、説明の満足度など、いくつかの異なる視点が考えられます。
+説得力、効果、効率、説明の満足度など、いくつかの異なる視点が考えられる。
 
 Due to the limited type of information that one can collect in online systems, it is usually easier to evaluate the persuasiveness of the explanations, i.e., to see if the explanations can help to make users accept the recommendations.
 オンラインシステムで収集できる情報の種類が限られているため、通常は説明の説得力を評価すること、すなわち、説明がユーザーに推薦を受け入れさせるのに役立つかどうかを確認することが容易である。
@@ -1412,9 +1429,9 @@ The explanation quality can also be evaluated in terms of readability measures, 
 また、説明の質は、Gunning Fog Index (Gunning, 1952), Flesch Reading Ease (Flesch, 1948), Flesch Kincaid Grade Level (Kincaid et al., 1975), Automated Readability Index (Senter and Smith, 1967), Smog Index (Mc Laughlin, 1969) など、読みやすさを表す指標で評価することが可能である。
 
 Overall, regardless of the explanation style (text or image or others), offline explanation quality evaluation would be easy if we have (small scale) ground-truth explanations.
-全体として、説明のスタイル（テキスト、画像、その他）にかかわらず、（小規模の）真実の説明があれば、オフラインでの説明の品質評価は容易であろう。
+全体として、説明のスタイル（テキスト、画像、その他）に関わらず、（小規模の）真実の説明があれば、オフラインでの説明の品質評価は容易であろう。
 In this way, we can evaluate how well the generated explanations match with the ground-truth, in terms of precision, recall, and their variants.
-このように、生成された説明がどの程度真実に合致しているかを、精度、再現率、およびその変化率の観点から評価することができる。
+このように、生成された説明がどの程度真実に適合しているかを、精度、再現率、およびその変化率の観点から評価することができる。
 
 ## 4.4. Qualitative Evaluation by Case Study 4.4. ケーススタディによる定性的評価
 
@@ -1432,14 +1449,14 @@ Through case studies, the authors found that many sequential recommendations can
 “One-to-multiple” means that a series of subsequent purchases are triggered by the same item, while “one-to-one” means that each of the subsequent purchases is triggered by its preceding item.
 「一対多」とは、同じ商品をきっかけに次々と買い物をすることであり、「一対一」とは、前の商品をきっかけに次々と買い物をすることである。
 These explanations can help users to understand why an item is recommended and how the recommended items match their already purchased items.
-これらの説明により、ユーザーは、なぜそのアイテムがおすすめされるのか、おすすめされたアイテムがすでに購入したアイテムとどのようにマッチするのかを理解することができる。
+これらの説明により、ユーザーは、なぜそのアイテムがおすすめされるのか、おすすめされたアイテムがすでに購入したアイテムとどのようにマッチするのかを理解することができます。
 
 Hou et al. (2018) adopted case studies to analyze the user preference, item quality, and explainability of the hotel recommendations.
 Houら(2018)は、ケーススタディを採用し、ホテル推薦のユーザー嗜好、項目品質、説明可能性を分析した。
 The authors first proposed a metric called Satisfaction Degree on Aspects (SDA) to measure the user satisfaction on item aspects, and then conducted case studies to show how the model explains the recommendations, as shown in Figure 4.4.
 著者らはまず、アイテムの側面に対するユーザーの満足度を測るSDA（Satisfaction Degree on Aspects）という指標を提案し、図4.4に示すように、このモデルがどのようにレコメンドを説明するかを示すケーススタディを実施した。
 In this example, item 1 is recommended instead of item 2 for the target user.
-この例では、対象ユーザーに対して、アイテム2の代わりにアイテム1が推奨されている。
+この例では、対象ユーザーに対して、アイテム2の代わりにアイテム1が推薦されている。
 By examining the user preference and item quality, this recommendation is explained by the fact that item 1 satisfies user preferences over most aspects.
 ユーザの嗜好とアイテムの品質を検討した結果，アイテム1がほとんどの側面でユーザの嗜好を満たしていることから，この推薦が説明される．
 
@@ -1483,9 +1500,9 @@ As an example of this scenario, Zhang et al. (2014a) proposed explainable recomm
 Later, many explainable recommendation models are proposed for e-commerce recommendation.
 その後、電子商取引推薦のための説明可能な推薦モデルが多く提案されている。
 For instance, He et al. (2015) introduced a tripartite graph ranking algorithm for explainable recommendation of electronics products; Chen et al. (2016) proposed a learning to rank approach to cross-category explainable recommendation of the products; Seo et al. (2017) and Wu et al.
-例えば、Heら（2015）はエレクトロニクス製品の説明可能な推薦のための三分割グラフランキングアルゴリズムを、Chenら（2016）は商品のカテゴリ横断的な説明可能な推薦のためのランク付け学習アプローチを、Seoら（2017）およびWuら（2017）は、商品のカテゴリ横断的な説明可能な推薦のためのランク付け学習アプローチを、それぞれ提案している。
+例えば、Heら（2015）はエレクトロニクス製品の説明可能な推薦のための三分割グラフランキングアルゴリズムを、Chenら（2016）は商品のカテゴリ横断的な説明可能な推薦のためのランク付け学習アプローチを、Seoら（2017）およびWuら（2017）は商品のカテゴリ横断的な説明可能な推薦のためのランク付け学習アプローチを、それぞれ紹介している。
 (2019) conducted explainable recommendation for multiple product categories in Amazon, and highlighted important words in user reviews based on attention mechanism; Heckel et al. (2017) adopted overlapping co-clustering to provide scalable and interpretable product recommendations; Chen et al. (2019b) proposed a visually explainable recommendation model to provide visual explanations for fashion products; Hou et al.
-(2019)はAmazonの複数の商品カテゴリに対して説明可能な推薦を実施し、注目メカニズムに基づいてユーザーレビューの重要語を強調した、Heckelら(2017)は重複コクラスタリングを採用してスケーラブルで解釈可能な商品推薦を提供した、Chenら(2019b)はファッション商品の視覚的な説明を提供するために視覚的に説明できる推薦モデルを提案した、Houら(2019b)はファッション商品に対して説明できるような説明を提供し、Houら(2019c)はファッション商品に対して説明できるような提案を実施した。
+(2019)はAmazonの複数の商品カテゴリに対して説明可能な推薦を実施し、注目メカニズムに基づいてユーザーレビューの重要語を強調した、Heckelら(2017)は重複コクラスタリングを採用して拡張可能で解釈可能な商品推薦を提供した、Chenら(2019b)はファッション商品の視覚的な説明を提供するために視覚的説明可能推薦モデルを提案した、Houら(2017)は商品カテゴリを横断して説明可能な推薦を実施し、Houら.
 (2018) used product aspects to conduct explainable video game recommendation in Amazon; Chen et al. (2018a) leveraged neural attention regression based on reviews to conduct rating prediction on three Amazon product categories; Chen et al. (2018c) adopted memory networks to provide explainable sequential recommendations in Amazon; Wang et al. (2018b) leveraged multi-task learning with tensor factorization to learn textual explanations for Amazon product recommendation; By incorporating explicit queries, explainable recommendation can also be extended to explainable product search in e-commerce systems (Ai et al.,
 (2018)は商品アスペクトを用いてAmazonで説明可能なビデオゲームレコメンデーションを実施した、Chenら(2018a)はレビューに基づくニューラルアテンション回帰を活用して3つのAmazon商品カテゴリで評価予測を実施した、Chenら(2018c)はメモリーネットワークを採用してAmazonで説明可能な逐次推薦を提供した、Wangら(2018b)はテンソル分解によるマルチタスキング学習を活用してAmazon商品推奨のテキスト説明を学んだ、明解な問い合わせを組み込むことにより説明可能な推薦もECシステムで説明可能な製品探索に拡張できる(Ai et al,
 2019).
@@ -1561,7 +1578,7 @@ The social relations not only help to improve the recommendation performance, bu
 Quijano-Sanchez et al. (2017) developed a social explanation system applied to group recommendations.
 Quijano-Sanchezら（2017）は、グループレコメンデーションに適用される社会的説明システムを開発した。
 It integrates explanations about the group recommendations and explanations about the group’s social reality, which gives better perceptions of the group recommendations.
-これは、グループ推薦に関する説明とグループの社会的現実に関する説明を統合し、グループ推薦のより良い認識を与えるものである。
+これは、グループ推薦に関する説明とグループの社会的現実に関する説明を統合し、グループ推薦のより良い認知を与えるものである。
 Tsai and Brusilovsky (2018) studied how to design explanation interfaces for casual (nonexpert) users to achieve different explanatory goals.
 Tsai and Brusilovsky (2018) は、カジュアル（非専門家）なユーザーに対して、異なる説明の目標を達成するために、どのように説明インターフェースを設計するかについて研究した。
 In particular, the authors conducted an international online survey of a social recommender system – based on 14 active users and across 13 countries – to capture user feedback and frame it in terms of design principles of explainable social recommender systems.
@@ -1646,7 +1663,7 @@ For example, while driving on highways, users may want to know the correct exit 
 Even more critical scenarios include emergency medical decisions or battlefield decisions, where spending time for evaluation may not be permitted.
 さらに重要なシナリオとして、緊急医療判断や戦場での判断など、評価のための時間をかけることが許されない場合もある。
 Depending on the scenario, explainable recommendation systems may need to avoid providing too much explanation, and avoid repeated explanations, explaining the obvious, or explaining in too many details, which may hurt rather than improve the user experience.
-シナリオによっては、説明可能なレコメンデーションシステムは、説明のしすぎを避け、繰り返し説明したり、当たり前のことを説明したり、詳細に説明しすぎて、ユーザー体験を向上させるどころか、傷つけてしまうようなことを避ける必要がある場合もある。
+シナリオによっては、説明可能なレコメンデーションシステムは、説明のしすぎを避け、繰り返し説明したり、当たり前のことを説明したり、詳細に説明しすぎたりして、ユーザー体験を向上させるどころか、傷つけてしまうようなことは避ける必要がある。
 The system also needs to be especially careful not to provide obviously misleading or even wrong explanations, because people may lose confidence in algorithms after seeing them trying to mistakenly convince others (Dietvorst et al., 2015).
 また、明らかに誤解を招くような説明や、間違った説明をしないように特に注意する必要があります。人々は、誤って他人を説得しようとしているのを見て、アルゴリズムへの信頼を失う可能性があるからです（Dietvorst et al.、2015）。
 
@@ -1661,28 +1678,236 @@ We make discussion on four broad perspectives: methodology, evaluation, cognitiv
 
 ### 6.1.1. Explainable Deep Learning for Recommendation 6.1.1. レコメンデーションのための説明可能なディープラーニング
 
+The research community has been developing explainable deep learning models for explainable recommendations.
+研究コミュニティでは、説明可能なレコメンデーションのための説明可能な深層学習モデルの開発が進められています。
+Current approaches focus on designing deep models to generate explanations accompanying the recommendation results.
+現在のアプローチは、推薦結果に付随する説明を生成するためのディープモデルを設計することに焦点を当てている。
+The explanations could come from attention weights over texts, images, or video frames.
+説明は、テキスト、画像、またはビデオフレームに対する注目度から来る可能性がある。
+However, the research of explainable deep learning is still in its initial stage, and there is still much to explore in the future (Gunning, 2017).
+しかし、説明可能な深層学習の研究はまだ初期段階であり、今後探求すべきことはまだたくさんある（Gunning, 2017）。
+
+Except for designing deep models for explainable recommendations, the explainability of the deep model itself also needs further research.
+説明可能な推薦のための深層モデルの設計を除けば、深層モデル自体の説明可能性についてもさらなる研究が必要である。
+In most cases, the recommendation and explanation models are still black boxes, and we do not fully understand how an item is recommended out of other alternatives.
+多くの場合、推薦モデルや説明モデルはまだブラックボックスであり、あるアイテムが他の選択肢の中からどのように推薦されるのか、完全には理解されていない。
+This is mostly because the hidden layers in most deep neural networks do not possess intuitive meanings.
+これは、ほとんどのディープニューラルネットワークの隠れ層が直感的な意味を持っていないことが主な原因である。
+As a result, an important task is to make the deep models explainable for recommendations.
+そのため、推薦のためにディープモデルを説明可能にすることが重要な課題である。
+This will benefit not only the personalized recommendation research, but also many other research areas such as computer vision and natural language processing, as well as their application in healthcare, education, chatbots, and autonomous systems, etc.
+これは、パーソナライズド・レコメンデーション研究だけでなく、コンピュータビジョンや自然言語処理など他の多くの研究分野や、ヘルスケア、教育、チャットボット、自律システムなどへの応用にも役立つと思われます。
+
+Recent advances in machine learning have shed light on this problem, for example, Koh and Liang (2017) provided a framework to analyze deep neural networks based on influence analyses, while Pei et al. (2017) proposed a white-box testing mechanism to help understand the nature of deep learning systems.
+近年の機械学習の進歩によりこの問題に光が当てられ、例えばKoh and Liang（2017）は影響力分析に基づいて深層ニューラルネットワークを分析するフレームワークを提供し、Peiら（2017）は深層学習システムの性質を理解するためにホワイトボックステスト機構を提案しました。
+Regarding explainable recommendation, this will help us to understand what are the meanings of each latent component in a neural network, and how they interact with each other to generate the final results.
+説明可能なレコメンデーションについては、ニューラルネットワークの各潜在成分がどのような意味を持ち、それらがどのように相互作用して最終的な結果を生成しているのかを理解するのに役立つと思われます。
+
 ### 6.1.2. Knowledge-enhanced Explainable Recommendation 6.1.2. 知識で強化された説明可能なレコメンデーション
+
+Most of the explainable recommendation research is based on unstructured data, such as texts or images.
+説明可能な推薦の研究のほとんどは、テキストや画像などの非構造化データに基づくものである。
+However, if the recommendation system possesses specific knowledge about the recommendation domain, it will help to generate more tailored recommendations and explanations.
+しかし、推薦システムが推薦領域に関する特定の知識を有していれば、よりカスタマイズされた推薦や説明の生成に役立つ。
+For example, with the knowledge graph about movies, actors, and directors, the system can explain to users precisely that “a movie is recommended because he has watched many movies starred by an actor”.
+例えば、映画、俳優、監督に関する知識グラフがあれば、「ある俳優が主演した映画をたくさん見ているので、ある映画をおすすめします」とユーザに的確に説明することができる。
+Such explanations usually have high fidelity scores.
+このような説明は、通常、高い忠実度を持ちます。
+Previous work based on this idea dates back to the content-based recommendation, which is effective, but lacks serendipity and requires extensive manual efforts to match the user interests with the content profiles.
+この考え方に基づく従来の研究は、コンテンツに基づく推薦にまでさかのぼる。これは効果的ではあるが、セレンディピティに欠け、ユーザーの興味とコンテンツプロファイルをマッチングさせるために大規模な手作業を必要とする。
+
+With the fast progress of (knowledge) graph embedding techniques, it has been possible for us to integrate the learning of graph embeddings and recommendation models for explainable recommendation, so that the system can make recommendations with specific domain knowledge, and tell the user why such items are recommended based on knowledge reasoning, similar to what humans do when asked to make recommendations.
+(知識)グラフ埋め込み技術の急速な進歩により、グラフ埋め込みと推薦モデルの学習を統合して説明可能な推薦を行うことが可能となり、人間が推薦を求められたときに行うのと同様に、特定のドメイン知識を持った推薦を行い、知識推論に基づいてなぜその項目が推薦されるかをユーザに伝えることができるようになった。
+It will also help to construct conversational recommendation systems, which communicate with users to provide explainable recommendations based on knowledge.
+また、知識に基づいて説明可能な推薦を行うために、ユーザーとコミュニケーションをとる会話型推薦システムの構築にも役立つだろう。
+Moreover, in a more general sense, this represents an important future direction for intelligent systems research, i.e., to integrate rational and empirical approaches for agent modeling.
+さらに、より一般的な意味では、エージェントモデリングのための合理的アプローチと経験的アプローチを統合するという、知的システム研究の重要な将来の方向性を示すものである。
 
 ### 6.1.3. Multi-Modality and Heterogenous Information Modeling 6.1.3. マルチモダリティと異質な情報モデリング
 
+Modern information retrieval and recommendation systems work on many heterogeneous multi-modal information sources.
+現代の情報検索・推薦システムは、多くの異質なマルチモーダル情報源に対して動作する。
+For example, web search engines have access to documents, images, videos, and audios as candidate search results; e-commerce recommendation system works on user numerical ratings, textual reviews, product images, demographic information and others for user personalization and recommendation; social networks leverage user social relations and contextual information such as time and location for search and recommendation.
+例えば、ウェブ検索エンジンは文書、画像、動画、音声を検索結果の候補として利用し、電子商取引推薦システムはユーザの数値評価、テキストレビュー、商品画像、デモグラフィック情報などを利用してユーザの個人化と推薦を行い、ソーシャルネットワークはユーザの社会関係や時間、場所などの文脈情報を検索と推薦に利用する。
+
+Current systems mostly leverage heterogeneous information sources to improve search and recommendation performance, while many research efforts are needed to use heterogeneous information for explainability.
+現在のシステムでは、検索や推薦の性能を向上させるために異種情報源を活用することがほとんどであるが、説明可能性のために異種情報を活用するためには多くの研究努力が必要である。
+These include a wide range of research tasks such as multi-modal explanations by aligning two or more different information sources, transfer learning over heterogeneous information sources for explainable recommendations, cross-domain explanation in information retrieval and recommendation systems, and how the different information modalities influence user receptiveness on the explanations.
+例えば、2つ以上の異なる情報源を連携させたマルチモーダルな説明、説明可能な推薦のための異種情報源上での転移学習、情報検索・推薦システムにおけるクロスドメイン説明、異なる情報様式が説明に対するユーザの受容性にどのように影響するか、などの幅広い研究課題がある。
+
 ### 6.1.4. Context-aware Explanations 6.1.4. 文脈を考慮した説明
+
+User preferences or item profiles may change along with context information such as time and location, and thus personalized recommendations could be context-aware (Adomavicius and Tuzhilin, 2011).
+ユーザーの嗜好やアイテムのプロフィールは、時間や場所などのコンテキスト情報とともに変化する可能性があるため、パーソナライズされたレコメンデーションはコンテキストを意識したものとなりうる（Adomavicius and Tuzhilin, 2011）。
+The same idea applies to explainable recommendations.
+同じ考え方が説明可能なレコメンデーションにも適用される．
+Because user preferences may change over context, the explanations could also be context-aware, so that recommendations can be explained in the most appropriate way.
+ユーザーの好みは文脈によって変化するため，説明も文脈に応じたものとすることで，最適な方法でレコメンデーションを説明することができる．
+Most of the current explainable recommendation models are static, i.e., users are profiled based on a training dataset, and explanations are generated accordingly, while context-aware explainable recommendation needs extensive exploration in the future.
+現在の説明可能なレコメンデーションモデルの多くは、学習データに基づいてユーザーをプロファイリングし、それに応じて説明を生成する静的なモデルである。
 
 ### 6.1.5. Aggregation of Different Explanations 6.1.5. 異なる説明の集約
 
+Different explainable recommendation models may generate different explanations, and the explanations may highly depend on the specific model.
+説明可能なレコメンデーションモデルが異なると、異なる説明を生成する可能性があり、その説明は特定のモデルに大きく依存する場合がある。
+As a result, we usually have to design different explainable models to generate different explanations for different purposes.
+その結果、我々は通常、目的に応じて異なる説明を生成するために、異なる説明可能なモデルを設計しなければならない。
+On one hand, researchers have shown that providing diversified explanations is beneficial to user satisfaction in recommender systems (Tsukuda and Goto, 2019).
+一方では、研究者は、多様な説明を提供することが推薦システムにおけるユーザ満足度に有益であることを示している（Tsukuda and Goto, 2019）。
+While on the other hand, different explanations may not be logically consistent in explaining one item, and according to cognitive science research, having a complete set of explanations may not be what we need in many cases (Miller, 2019).
+一方で、異なる説明は1つの項目を説明する上で論理的に一貫していない可能性があり、認知科学の研究によれば、完全な説明のセットを持つことは多くの場合、必要なことではない可能性がある（Miller, 2019）。
+When the system generates many candidate explanations for a search or recommendation result, a significant challenge is how to select the best combination of the explanations to display, and how to aggregate different explanations into a logically consistent unified explanation.
+システムが検索や推薦の結果について多くの説明候補を生成する場合、表示する説明の最適な組み合わせをどのように選択するか、異なる説明をどのように論理的に一貫性のある統一的な説明に集約するかは重要な課題である。
+Solving this problem may require extensive efforts to integrate statistical and logical reasoning approaches to machine learning, so that the decision-making system is equipped with the ability of logical inference to explain the results.
+この問題を解決するには、統計的推論と論理的推論のアプローチを機械学習に統合し、意思決定システムが結果を説明するための論理的推論の能力を備えるようにするための広範な取り組みが必要かもしれない。
+
 ### 6.1.6. Explainable Recommendation as Reasoning 6.1.6. 推論としての説明可能なレコメンデーション
+
+Early approaches to AI, such as Logical
+ロジカルなど、初期のAIへのアプローチ
+
+As a representative branch of AI research, the advancement of collaborative filtering for recommendation followed a similar path.
+AI研究の代表的な一分野として、推薦のための協調フィルタリングの発展も同様の道をたどってきた。
+Early approaches to CF adopted straightforward yet transparent methods, such as user-based (Resnick et al., 1994) or item-based (Sarwar et al., 2001) methods, which find similar users or items first, and then calculate the weighted average ratings for prediction.
+初期の協調フィルタリングは、ユーザベース（Resnick et al., 1994）やアイテムベース（Sarwar et al., 2001）のように、類似ユーザやアイテムを最初に発見し、その加重平均評価を予測する、わかりやすく透明性の高い手法を採用していた。
+Later approaches to CF, however, more and more advanced to less transparent “latent” machine learning approaches, beginning from shallow latent factor models such as matrix factorization to deep learning approaches.
+しかし、その後のCFのアプローチは、行列分解などの浅い潜在因子モデルから深層学習アプローチに至るまで、より透明性の低い「潜在的」機械学習アプローチにどんどん進化している。
+Though effective in ranking and rating prediction, the key philosophy of these approaches is to learn user
+ランキングや視聴率予測に有効ではあるが、これらのアプローチの重要な思想は、ユーザー
 
 ### 6.1.7. NLP and Explainable Recommendation 6.1.7. NLPと説明可能なレコメンデーション
 
+Most explainable recommendation models are designed to generate some predefined types of explanations, e.g., based on sentence templates, specific association rules, or word clouds.
+説明可能な推薦モデルの多くは、文型、特定のアソシエーションルール、ワードクラウドなど、あらかじめ定義されたタイプの説明を生成するように設計されている。
+A more natural explanation form could be free-text explanations based on natural language.
+より自然な説明として、自然言語に基づくフリーテキストの説明も考えられる。
+
+There has been some work trying to generate natural language explanations.
+自然言語による説明を生成しようとする研究はいくつかある。
+The basic idea is to train sentence generation models based on user reviews and generate “review-like” sentences as explanations, such as Li et al. (2017), Costa et al. (2018), Chen et al. (2019d), and Ni et al. (2019).
+基本的な考え方は、Liら（2017）、Costaら（2018）、Chenら（2019d）、Niら（2019）など、ユーザーのレビューをもとに文章生成モデルを学習し、説明として「レビュー風」の文章を生成することである。
+The research of generating natural language explanation is still in its early stage, and much needs to be done so that machines can explain themselves using natural language.
+自然言語による説明を生成する研究はまだ初期段階であり、機械が自然言語を使って説明できるようにするためには多くのことが必要である。
+For example, not all of the review contents are of explanation purpose, and it is challenging to cope with various noise for generating explanations.
+例えば、レビュー内容の全てが説明目的ではなく、説明生成のための様々なノイズに対処することは困難である。
+Since explanations should be personalized, it is important to adapt pre-trained language models such as BERT (Devlin et al., 2018) to personalized per-training models.
+説明はパーソナライズされるべきなので、BERT (Devlin et al., 2018) などの事前学習済みの言語モデルをパーソナライズされたパーレーニングモデルに適応させることが重要である。
+Explanations should also be generated beyond textual reviews, e.g., we can integrate visual images, knowledge graphs, sentiments, and other external information to generate more informed natural language explanations, such as explanation with specific sentiment orientations.
+説明はまた、テキストレビューを超えて生成されるべきである、例えば、我々は、特定のセンチメントの方向性を持つ説明など、より情報に基づいた自然言語の説明を生成するために、視覚的な画像、知識グラフ、センチメント、および他の外部情報を統合することができます。
+Natural language explanations are also crucial for explainable conversational systems, which we will discuss in the following subsections.
+自然言語による説明は、説明可能な会話システムにとっても重要であり、これについては以下のサブセクションで説明する。
+
 ### 6.1.8. Answering the “Why” in Conversations 6.1.8. 会話の中で「なぜ」に答える
+
+The research of recommendation system has extended itself to multiple perspectives, including what to recommend (user
+推薦システムの研究は、何を推薦するのか（ユーザ
+
+Based on different application scenarios, users can receive recommendation explanations either passively or actively.
+レコメンデーションの説明には、受動的なものと能動的なものがある。
+In conventional web-based systems such as online e-commerce, the explanations can be displayed together with the recommended item, so that the users passively receive the explanations for each recommendation.
+eコマースのような従来のウェブベースのシステムでは、推薦された商品と一緒に説明が表示されるため、ユーザーは受動的に各推薦商品の説明を受け取ることができる。
+In the emerging environment of conversational recommendation based on smart agent devices, users can ask “why-related” questions to actively seek for explanations when a recommendation is not intuitive.
+一方、スマートエージェントによる会話型レコメンデーションでは、直感的でないレコメンデーションに対して、ユーザが「なぜ」と問いかけ、能動的に説明を求めることができる。
+In this case, explainable recommendations will significantly increase the scope of queries that intelligent systems can process.
+この場合、説明可能なレコメンデーションは、知的システムが処理できるクエリの範囲を大幅に拡大することになる。
 
 ## 6.2. Evaluation and User Behavior Analysis 6.2. 評価とユーザー行動分析
 
 ### 6.2.1. Evaluation of Explainable Recommendations 6.2.1. 説明可能な推奨事項の評価
 
+Evaluation of explainable recommendation systems remains a significant problem.
+説明可能なレコメンデーションシステムの評価は、依然として重要な問題である。
+For recommendation performance, explainable recommendations can be easily evaluated based on traditional rating prediction or top-n ranking measures, while for explanation performance, a reliable protocol is to test explainable vs. non-explainable recommendations based on real-world user studies, such as A
+推薦性能については、説明可能な推薦を従来の評価予測やトップNランキングの尺度に基づいて容易に評価することができる。一方、説明性能については、信頼できるプロトコルは、実際のユーザー調査に基づいて説明可能な推薦と説明不可能な推薦を比較するテストであり、例えば、A
+
+Evaluation of the explanations is related to both user perspective and algorithm perspective.
+説明文の評価は、ユーザの視点とアルゴリズムの視点の両方が関係する。
+On user perspective, the evaluation should reflect how the explanations influence users, in terms of, e.g., persuasiveness, effectiveness, efficiency, transparency, trustworthiness, and user satisfaction.
+ユーザー視点での評価は、説明がユーザーにどのような影響を与えるかを、説得力、有効性、効率性、透明性、信頼性、ユーザー満足度などの観点から反映させる必要がある。
+On algorithm perspective, the evaluation should reflect to what degree the explanations reveal the real mechanism that generated the recommendations (sometimes called explanation fidelity).
+アルゴリズムの観点からは、説明文がどの程度、推薦文を生成した実際のメカニズムを明らかにしているか（説明の忠実度ということもある）を評価する必要がある。
+The evaluation may also be related to the form of explanations, e.g., visual and textual explanations could be evaluated in different ways.
+また、視覚的な説明と文字による説明では評価が異なるなど、説明の形態に関連した評価も考えられる。
+Developing reliable and readily usable evaluation measures for different evaluation perspectives will save many efforts for offline evaluation of explainable recommendation systems.
+このように、説明可能な推薦システムのオフライン評価において、信頼性が高く、容易に利用可能な評価指標を開発することは、多くの労力を節約することになる。
+
 ### 6.2.2. User Behavior Perspectives 6.2.2. ユーザー行動の視点
+
+Though early research explored a lot about how users interact with explanations (Herlocker et al., 2000), many recent research on explainable recommendation is mostly model-driven, which designs new explainable models to generate recommendations and explanations.
+初期の研究では、ユーザが説明とどのように相互作用するかについて多くの研究がなされたが (Herlocker et al., 2000)、最近の説明可能な推薦に関する研究の多くは、新しい説明可能なモデルを設計して推薦と説明を生成するモデル駆動型のものである。
+However, since recommender systems are inherently human-computer interaction systems, it is also essential to study explainable recommendations from user behavior perspectives, where the “user” could either be recommender system designers or normal users of the system.
+しかし、推薦システムは本質的に人間とコンピュータのインタラクションシステムであるため、「ユーザ」が推薦システムの設計者であったり、システムの一般ユーザであったりする、ユーザ行動の観点から説明可能な推薦を研究することも必要不可欠である。
+There exist a broad scope of problems to explore, including but not limited to how users interact with explanations, and the user receptiveness on different types of explanations.
+ユーザが説明とどのように関わるか、異なるタイプの説明に対するユーザの受容性など、探求すべき問題は広範に存在する。
+Research on user behavior perspectives for explainable recommendation will also benefit the evaluation of explainable recommendation systems.
+説明可能な推薦を行うためのユーザ行動の視点に関する研究は、説明可能な推薦システムの評価にも役立つと思われる。
 
 ## 6.3. Explanation for Broader Impacts 6.3. 広範な影響についての説明
 
+Existing explainable recommendations mostly focus on generating explanations to persuade users to accept the explanations (Nanou et al., 2010).
+既存の説明可能なレコメンデーションは、そのほとんどがユーザーを説得するための説明を生成することに焦点を当てている（Nanou et al.、2010）。
+However, explanations could have broader impacts beyond persuasiveness.
+しかし、説明は説得力だけでなく、より広範な影響を与える可能性がある。
+It is worthwhile to explore how explanations can help to improve the trustworthiness (Cramer et al., 2008), efficiency (Tintarev and Masthoff, 2011), diversity (Yu et al., 2009), satisfaction (Bilgic and Mooney, 2005), and scrutability of the system (Balog et al., 2019; Knijnenburg et al., 2012).
+説明が、信頼性（Cramer et al., 2008）、効率性（Tintarev and Masthoff, 2011）、多様性（Yu et al., 2009）、満足度（Bilgic and Mooney, 2005）、システムの精査性（Balog et al., 2019; Knijnenburg et al., 2012）を改善するために役立つことを探る価値がある。
+For example, by letting the user know why not to buy a certain product, the system can help to save time for the users and to win the user’s trust in the system (Zhang et al., 2014a).
+例えば、ある商品を買わない理由をユーザーに知らせることで、ユーザーの時間を節約し、ユーザーのシステムに対する信頼を獲得することができる（Zhang et al.）
+
+Another important problem is the relationship between explainability and fairness.
+もう一つの重要な問題は、説明可能性と公正さの関係である。
+Though researchers have shown that transparency helps to increase the fairness in economic (Cowgill and Tucker, 2019), political (Fine Licht, 2014) and legal (Burke and Leben, 2007) systems, we are yet to see if and how transparency and fairness relate with each other in information systems.
+経済（Cowgill and Tucker, 2019）、政治（Fine Licht, 2014）、法律（Burke and Leben, 2007）システムにおいて透明性が公平性を高めるのに役立つことは研究者によって示されているものの、情報システムにおいて透明性と公平性が互いに関連するか、どのように関連するかはまだ確認されていない。
+One example is that if the system inevitably has to output unfair rankings for a user, explaining to the user why this happens could help to gain user’s understanding.
+一例として、システムがどうしてもユーザーにとって不公平なランキングを出力しなければならない場合、なぜそうなるのかをユーザーに説明することで、ユーザーの理解を得ることができるかもしれません。
+
 ## 6.4. Cognitive Science Foundations 6.4. 認知科学の基礎
 
+There are two research philosophies towards explainable recommendation – and more broadly explainable decision making or explainable AI (Lipton, 2018).
+説明可能なレコメンデーション、より広くは説明可能な意思決定や説明可能なAIに向けた研究哲学は2つある（Lipton, 2018）。
+One is to design transparent
+1 つは、透明な
+
+It is interesting to see that both research philosophies have their roots in human cognitive science (Miller, 2019).
+どちらの研究哲学も、そのルーツが人間の認知科学にあることは興味深い（Miller, 2019）。
+Sometimes, human-beings make decisions based on careful reasoning, and they can clearly explain how a decision is made by showing the reasoning process step by step.
+人間は時に、慎重な推論に基づいて意思決定を行い、その推論過程を段階的に示すことで、意思決定がどのように行われたかを明確に説明することができます。
+Other times, people make intuition decisions first and then “seek” an explanation for the decision, which belongs to the post-hoc explanation approach.
+また、人間はまず直感的に判断し、その後に説明を「求める」こともあり、これは事後的説明アプローチに属します。
+It is challenging to decide which research philosophy towards explainable recommendation – and explainable AI in a broader sense – is the correct approach (or both).
+説明可能な推薦、そして広い意味での説明可能なAIに向けた研究理念は、どちらが正しいアプローチなのか（あるいは両方なのか）、判断に迷うところです。
+Answering this question requires significant breakthroughs in human cognitive science as well as our understanding of how the human brain works.
+この問いに答えるには、人間の認知科学と、人間の脳の働きに関する理解において、大きなブレークスルーが必要である。
+
 # 7. Conclusions 7. 結論
+
+Early recommendation models – such as user
+初期のレコメンデーションモデル（ユーザーなど
+
+The lack of explainability mainly exists in terms of two perspectives:
+説明可能性の欠如は、主に以下の2つの観点から存在する。
+
+1. the outputs of the recommendation system (i.e., recommendation results) are hardly explainable to system users, and 2) the mechanism of the recommendation model (i.e., recommendation algorithm) is hardly explainable to system designers.
+   1）推薦システムの出力（推薦結果）が利用者に説明しにくい、2）推薦モデルの仕組み（推薦アルゴリズム）がシステム設計者に説明しにくい、である。
+   This lack of explainability for recommendation algorithms leads to many problems: without letting the users know why specific results are provided, the system may be less effective in persuading the users to accept the results, which may further decrease the system’s trustworthiness.
+   このような推薦アルゴリズムの説明可能性の欠如は、なぜ特定の結果が提供されるのかをユーザーに知らせなければ、その結果をユーザーが受け入れるための説得力が低下し、システムの信頼性をさらに低下させる可能性があるなど、多くの問題を引き起こす。
+   More importantly, many recommendation systems nowadays are not only useful for information seeking – by providing supportive information and evidence, they are also crucial for complicated decision making.
+   さらに重要なことは、最近の多くの推薦システムは、情報探索に役立つだけでなく、裏付けとなる情報や証拠を提供することで、複雑な意思決定にも欠かせない存在になっていることです。
+   For example, medical workers may need comprehensive healthcare document recommendations or retrieval to make medical diagnoses.
+   例えば、医療従事者は、医療診断を行うために、包括的な医療文書の推薦や検索を必要とする場合がある。
+   In these decision making tasks, the explainability of the results and systems is extremely important, so that system users can understand why a particular result is provided, and how to leverage the result to take actions.
+   このような意思決定において、なぜそのような結果が得られたのか、また、その結果をどのように活用すればよいのかをシステム利用者が理解できるように、結果やシステムの説明可能性が非常に重要である。
+
+Recently, deep neural models have been used in many information retrieval and recommendation systems.
+近年、多くの情報検索・推薦システムでディープニューラルモデルが利用されています。
+The complexity and inexplainability of many neural models have further highlighted the importance of explainable recommendation and search, and there is a wide range of research topics for the community to address in the coming years.
+多くのニューラルモデルが複雑で説明不可能であることから、説明可能な推薦・検索の重要性がさらに強調されており、今後、コミュニティが取り組むべき研究テーマは多岐にわたります。
+
+In this survey, we provided a brief history of explainable recommendation research ever since the early stage of recommendation systems, towards the very recent research achievements.
+本サーベイでは、説明可能な推薦システムの初期段階から最近の研究成果まで、説明可能な推薦研究の歴史を簡単に紹介した。
+We introduced some different types of explanations, including user
+また、説明文の種類として、ユーザ名、住所、氏名、電話番号、メールアドレスなどを紹介した。
+
+In a broader sense, researchers in the broader AI community have also realized the importance of Explainable AI, which aims to address a wide range of AI explainability problems in deep learning, computer vision, autonomous driving systems, and natural language processing tasks.
+広い意味でのAIコミュニティの研究者も、深層学習、コンピュータビジョン、自律走行システム、自然言語処理タスクなど、AIの説明可能性の問題に幅広く対応することを目指す「説明可能なAI」の重要性に気づいています。
+As an essential branch of AI research, this highlights the importance of the IR
+AI研究の本質的な一分野として、これはIRの重要性を浮き彫りにしています。
