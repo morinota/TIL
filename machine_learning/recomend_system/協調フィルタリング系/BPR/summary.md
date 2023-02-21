@@ -1,4 +1,4 @@
-# Bayesian Personalized Ranking from Implicit Feedback
+# 1. Bayesian Personalized Ranking from Implicit Feedback
 
 published date: hogehoge September 2022,
 authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
@@ -7,7 +7,7 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
 
 ---
 
-## どんなもの?
+## 1.1. どんなもの?
 
 - implicit feedbackからアイテムを推薦する手法として行列因子分解(Matrix Factorization, MF)や適応的最近防探索法(Adaptive K-nearest Negibhor: kNN)等の手法が存在するが、これらの手法はパーソナライズされたアイテムランキングを予測するタスクの為に設計されているのにも関わらず、**ランキングの為に直接最適化されていない(=ランキングを考慮した損失関数ではない、って事??)**.
 - 本論文では、Personalized Rankingの為の汎用的なOptimization Criterion(i.e. Loss Functionや目的関数だよね...??)として、**BPR-Opt**を提案する.
@@ -17,16 +17,16 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
 - 本論文では、Personalized Rankingタスクに対して、提案手法がMFとkNNの標準的な学習手法を凌駕する事を示した.
 - この結果は、**正しい criterion**で モデルを最適化する事の重要性を示している.
 
-## 先行研究と比べて何がすごい？
+## 1.2. 先行研究と比べて何がすごい？
 
 - 1. Personalizedされた最適なランキングのための事後確率最大推定量から導かれる汎用的なOptimization Criterion(=目的関数、損失関数)としてBPR-Optを提案.
-- 2. BPR-Optに関してモデルを最適化するために、我々は確率的勾配降下法とブートストラップサンプリングに基づく汎用学習アルゴリズム **LearnBPR** を提案する.
+- 2. BPR-Optに関してモデルを最適化するために、我々は確率的勾配降下法とブートストラップサンプリングに基づく汎用学習アルゴリズム **LearnBPR** を提案.
 - 3. BPR-Opt & LearnBPR を2つの最先端(当時の!)推薦モデルに適用する方法を示した.
 - 4. 実験の結果、Personalized Rankingのタスクに対して、BPRによるモデル学習が他の学習方法よりも優れている事が示された.
 
-## 技術や手法の肝は？
+## 1.3. 技術や手法の肝は？
 
-### Formalization & 問題設定
+### 1.3.1. Formalization & 問題設定
 
 Uを全ユーザの集合、Iを全アイテムの集合として、implicit feedback $S \subset U×I$を想定する.
 
@@ -62,7 +62,7 @@ I_u^+ := {i \in I : (u,i) \in S}
 U_i^+ := {u \in U : (u,i) \in S}
 $$
 
-### 問題設定の分析から Bayesian Personalized Ranking(BPR)へ
+### 1.3.2. 問題設定の分析から Bayesian Personalized Ranking(BPR)へ
 
 implicit feedback システムでは、positiveのクラスのみが観測される.
 残りのデータは、実際には**負の値や欠損値が混在**している.
@@ -90,7 +90,7 @@ $$
 
 任意のTriplet $(u, i, j)\in D_s$は、「ユーザ u はアイテムj よりも アイテムiを好む」という仮定を意味する.
 
-### 損失関数:BPR-Opt
+### 1.3.3. 損失関数:BPR-Opt
 
 尤度関数$p(i >_u j |\Theta)$ 及び モデルパラメータの事前確率$p(\Theta)$ を用いてベイズの定理に基づき、最適化基準BPR-Optを導出する.
 
@@ -159,7 +159,7 @@ $$
 
 ここで、$lambda_{Theta}$はモデル固有の正則化パラメータである. (=元々の意味合いは、モデルパラメータの事前分布をi.i.dの正規分布と仮定した時の、標準偏差...!)
 
-#### (おまけ)
+#### 1.3.3.1. (おまけ)
 
 BPR-Optを定式化すると、AUCとの類似性を把握できる.
 
@@ -194,7 +194,7 @@ $$
 - non-differentiable(微分不可能)な $\epsilon(x > 0)$か / differentiable(微分可能)な$\sigma(x)$か.
   - AUCを最適化する際に、微分不可能なHeaviside関数$\epsilon(x > 0)$を置き換えるのは一般的な方法らしい...!
 
-### 最適化手法:LearnBPR
+### 1.3.4. 最適化手法:LearnBPR
 
 BPR-Optはパラメータについて微分可能なので、勾配降下法(gradient descent)に基づくアルゴリズムがパッと選択肢になる.
 
@@ -239,19 +239,49 @@ $$
 本論文では、観測されたpositive feedback (u,i)の数$S$に応じて、single ステップの数(=バッチサイズ?)を線形に選択する.
 
 図5は、典型的なuserwise(=ユーザ毎??)確率的勾配降下法と我々のアプローチLearnBPR with bootstrappingの比較. (採用したモデルは、factor_size=16のBPRMF)
+
+![](https://camo.qiitausercontent.com/8929a7f2017b44372b15de459522b479dfac7e7f/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f62623961623834382d346362612d323130332d306432352d3233346638376636666531332e706e67)
+
 LearnBPRはユーザーワイズ勾配降下法よりはるかに速く収束する事がわかる.
 
-## どうやって有効だと検証した?
+## 1.4. どうやって有効だと検証した?
 
-### 検証方法
+### 1.4.1. 検証方法
 
-2つのデータセットを用いて、Personalized Rankingの精度を評価した.
+BPRを用いた学習を他の学習アプローチと比較した.
+行列分解(MF)とk-nearest-neighborという**2つの一般的な推薦モデル**を選択.
+他の学習アプローチ(SVD-MF, WR-MF, Cosine-kNN)と、提案されたBPRを用いて学習させたモデル(BPR-MF, BPR-kNN)を比較する.
 
-### 検証結果
+2つの異なるアプリケーションのデータセットを使用: Rossmannデータセット(オンラインショップの購買履歴), the DVD rental dataset of Netflix.
+
+評価方法: 各ユーザの履歴からランダムに一つのアクションを抜き出しテストデータ$S_{test}$を作る. 残りを訓練データ$S_{train}$とする.
+モデルは$S_{train}$を用いて学習され、予測されたPersonalized Ranking は$S_{test}$上で平均AUC統計量によって評価される.
+
+$$
+AUC = \frac{1}{|U|} \sum_{u} \frac{1}{|E(u)|}
+\sum_{(i,j) \in E(u)} \delta(\hat{x}_{ui} > \hat{x}_{uj})
+\tag{2}
+$$
+
+ここで、任意のユーザu毎の２つ組(i,j)の集合$E(u)$は以下で表される.
+
+$$
+E(u) := {(i,j)|(u,i) \in S_{test} \And (u,j) \notin (S_{test} \cup S_{train})}
+$$
+
+AUCの値が高いほど精度が良いことを示している.
+ランダムなモデルのAUCは0.5であり、達成可能な最高の精度は1.0である.
+
+我々は、各ラウンドで新しいtrain/test分割を描くことによって、すべての実験を10回繰り返した.
+すべての手法のハイパーパラメータは、最初のラウンドでグリッドサーチにより最適化され、その後、残りの9回の繰り返しで一定に保たれる.
+
+### 1.4.2. 検証結果
+
+![](https://camo.qiitausercontent.com/f7398661d4548afb6edea3eac2083493efeb3614/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f62346638363833322d386265352d646237662d633434662d6534383938613037323863352e706e67)
 
 まず、BPRで最適化された2つの手法は、予測品質において他のすべての手法を上回っている.
 同じモデル同士を比較すると、optimization criterion & method の重要性がわかる.
-例えば、すべてのMF手法（SVD-MF、WR-MF、BPR-MF）は全く同じモデルを共有していますが、その予測品質は大きく異なってる.
+例えば、すべてのMF手法（SVD-MF、WR-MF、BPR-MF）は全く同じモデルを共有しているが、その予測品質は大きく異なってる.
 
 - SVD-MFは、要素ごとの最小二乗法に関しては学習データに最もフィットすることが知られているが、オーバーフィッティングになるため、implicit feedbackを用いたPersonalized Ranking タスクの予測手法としては不向き.
   - これは、SVD-MFの品質が次元数の増加とともに低下することからもわかる. 次元数が増える程、表現力が高くなる->overfitting しやすくなる. -> negative feedbackを等しくnegativeとして予測してしまう.
@@ -260,15 +290,17 @@ LearnBPRはユーザーワイズ勾配降下法よりはるかに速く収束す
 - しかし、BPR-MFは両データセットにおいて、ランキングのタスクで明らかにWR-MFを上回る性能を示している.
   - 例えばNetflixでは、BPR-MFで最適化された8次元のMFモデルは、WR-MFで最適化された128次元のMFモデルと同等の品質を達成する
 
-## 議論はある？
+## 1.5. 議論はある？
 
 要約すると、我々の結果はモデルパラメータを**正しい基準(=ランキング問題なのだから、ランキングを考慮した損失関数を使って学習しよう！って話...!!)で最適化**することの重要性を示している.
 実証結果は、LearnBPRによって学習された我々のBPR-Opt基準は、implicit feedback からPersonalized Rankingタスクのための他の最先端手法(当時の!)を凌駕していることを示している.
 
-## 次に読むべき論文は？
+## 1.6. 次に読むべき論文は？
 
-- BPRの元論文を読んだので、これでBPR応用手法を読みやすくなった...!!
+- BPRの元論文を読んだので、これでBPRの派生手法を読みやすくなった...!!
+- [@guglilac 様の記事](https://qiita.com/guglilac/items/49bc35bd2631177624ce) にBPRの派生研究が紹介されているので読んでみる.
+- 次週は、推薦モデルの効果(=推薦モデルがユーザの行動を変えたかどうかのcausal effect??)を適切に評価する為の"Uplift"に関する論文を読む. (最近、推薦モデルのオフライン評価方法について考えていたので...)
 
-## お気持ち実装
+## 1.7. お気持ち実装
 
 実装するとしたら、なんとなくこんな感じ...?

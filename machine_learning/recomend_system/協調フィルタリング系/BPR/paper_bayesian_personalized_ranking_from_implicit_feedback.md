@@ -322,14 +322,17 @@ Besides this, their learning method for MMMF differs from our generic approach L
 # Evaluation
 
 In our evaluation we compare learning with BPR to other learning approaches. We have chosen the two popular model classes of matrix factorization (MF) and k-nearest-neighbor (kNN). MF models are known to outperform [12] many other models including the Bayesian models URP [9] and PLSA [4] for the related task of collaborative rating prediction. In our evaluation, the matrix factorization models are learned by three different methods, i.e. SVD-MF, WR-MF [5, 10] and our BPR-MF. For kNN, we compare cosine vector similarity (Cosine-kNN) to a model that has been optimized using our BPR method (BPR-kNN). Additionally, we report results for the baseline mostpopular, that weights each item user-independent, e.g.: $\hat{x}^{most-pop}_{ui} := |U^+_i|$. Furthermore, we give the theoretical upper bound on AUC ($np_{max}$) for any nonpersonalized ranking method.
+我々の評価では、BPRを用いた学習を他の学習アプローチと比較した。我々は、行列分解(MF)とk-nearest-neighbor(kNN)という2つの一般的なモデルクラスを選択した。MFモデルは協調評価予測に関連するタスクにおいて、ベイズモデルURP [9]やPLSA [4]を含む多くの他のモデルより優れた性能を示すことが知られている[12]。我々の評価では、行列分解モデルは3つの異なる方法、すなわち、SVD-MF, WR-MF [5, 10] と我々のBPR-MFによって学習される。kNNについては、コサインベクトルの類似性（Cosine-kNN）と我々のBPR法を用いて最適化されたモデル（BPR-kNN）を比較する。さらに、各項目をユーザ非依存に重み付けするベースラインmostpopularの結果を報告する（例: $hat{x}^{most-pop}_{ui} := |U^+_i|$）。さらに，任意の非パーソナライズドランキング手法のAUCの理論的上限($np_{max}$)を与える．
 
 ## Datasets
 
 We use two datasets of two different applications. The Rossmann dataset is from an online shop. It contains the buying history of 10, 000 users on 4000 items. In total 426, 612 purchases are recorded. The task is to predict a personalized list of the items the user wants to buy next. The second dataset is the DVD rental dataset of Netflix. This dataset contains the rating behavior of users, where a user provides explicit ratings 1 to 5 stars for some movies. As we want to solve an implicit feedback task, we removed the rating scores from the dataset. Now the task is to predict if a user is likely to rate a movie. Again we are interested in a personalized ranked list starting with the movie that is most likely to be rated. For Netflix we have created a subsample of 10, 000 users, 5000 items containing 565, 738 rating actions. We draw the subsample such that every user has at least 10 items (∀u ∈ U : |I + u | ≥ 10) and each item has at least 10 users: ∀i ∈ I : |U + i | ≥ 10.
+我々は2つの異なるアプリケーションのデータセットを使用する。ロスマンデータセットはオンラインショップのデータセットである。10,000 人のユーザの 4000 品目に対する購買履歴が含まれている．合計426,612の購入が記録されている。タスクは、ユーザが次に買いたいアイテムのパーソナライズされたリストを予測することである。2つ目のデータセットはNetflixのDVDレンタルデータセットである。このデータセットにはユーザの評価行動が含まれており、ユーザはいくつかの映画に対して1〜5つの星を明示的につける。我々は暗黙のフィードバックタスクを解決したいので、データセットから評価スコアを削除した。このタスクは、ユーザが映画を評価する可能性があるかどうかを予測することである。ここでも我々は、評価される可能性が最も高い映画から始まるパーソナライズされたランク付けされたリストに興味があります。Netflixでは、10,000人のユーザー、5000のアイテム、565,738の評価アクションからなるサブサンプルを作成した。サブサンプルは、すべてのユーザが少なくとも10個のアイテムを持ち（∀u∈U : |I + u | ≥ 10）、各アイテムが少なくとも10人のユーザを持つように描画します： ∀i ∈I : |U + i | ≥ 10。
 
 ## Evaluation Methodology
 
-We use the leave one out evaluation scheme, where we remove for each user randomly one action (one useritem pair) from his history, i.e. we remove one entry from I + u per user u. This results in a disjoint train set Strain and test set Stest. The models are then learned on Strain and their predicted personalized ranking is evaluated on the test set Stest by the average AUC statistic:
+We use the leave one out evaluation scheme, where we remove for each user randomly one action (one useritem pair) from his history, i.e. we remove one entry from I + u per user u. This results in a disjoint train set $S_{train}$ and test set $S_{test}$. The models are then learned on Strain and their predicted personalized ranking is evaluated on the test set Stest by the average AUC statistic:
+ここでは，各ユーザの履歴からランダムに1つのアクション（1つのユーザアイテムのペア）を削除する，すなわち，ユーザuごとにI + uから1つのエントリを削除する，leave one out評価スキームを用いる．そして、モデルはS_train上で学習され、予測されたパーソナライズされたランキングはテストセットS_test上で平均AUC統計量によって評価される。
 
 $$
 AUC = \tag{2}
@@ -341,7 +344,7 @@ $$
 E(u) :=
 $$
 
-A higher value of the AUC indicates a better quality. The trivial AUC of a random guess method is 0.5 and the best achievable quality is 1. 
+A higher value of the AUC indicates a better quality. The trivial AUC of a random guess method is 0.5 and the best achievable quality is 1.
 
 We repeated all experiments 10 times by drawing new train/test splits in each round. The hyperparameters for all methods are optimized via grid search in the first round and afterwards are kept constant in the remaining 9 repetitions.
 
