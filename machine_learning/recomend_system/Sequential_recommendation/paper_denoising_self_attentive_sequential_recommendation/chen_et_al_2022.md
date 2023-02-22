@@ -1,6 +1,7 @@
 ## 0.1. link
 
 - https://dl.acm.org/doi/abs/10.1145/3523227.3546788
+- https://arxiv.org/pdf/2212.04120.pdf
 
 ## 0.2. title
 
@@ -161,6 +162,11 @@ where $I[c]$ is an indicator that is equal to 1 if the condition $c$ holds and 0
 However, there are two challenges for optimizing $Z^{(l)}$: non-differentiability and large variance. $L_0$ is discontinuous and has zero derivatives almost everywhere. Additionally, there are $2^{n^2}$ possible states for the binary mask $Z^{(l)}$ with large variance. Next, we propose an efficient estimator to solve this stochastic binary optimization problem.
 
 ### 4.1.2. Efficient Gradient Computation
+
+$$
+L(Z, \Theta) = L_{BCE}({A^{(l)} \odot Z^{(l)}}, \Theta) + \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0]
+\tag{7}
+$$
 
 ## 4.2. Jacobian Regularization
 

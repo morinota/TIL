@@ -216,15 +216,30 @@ Because of the above, we cannot considerCN R−N P to be completely positive. Th
 
 ## 3.2. Proposed Sampling Method
 
+The optimization methods of recommender models are generally grouped into two categories: pointwise [11, 14, 32] and pairwise [35, 43] methods. In this subsection, we propose pointwise ($ULO_{point}$) and pairwise ($ULO_{pair}$) optimization methods for uplift. 
+
+Following the discussion in the previous subsection, items in CR−P are relatively better than the items in the other classes, and thus we assign positive labels to them. On the contrary, the items in CNR−P and CR−NP are relatively worse and assigned negative labels. The items in CN R−N P are positive with probability α, and negative with probability 1 − α. 
+
+Furthermore, we conduct stratifed sampling because the number of items in each observed class is diferent. We introduce a parameter γP , which represents the ratio of sampling from the purchased items. This kind of downsampling for unpurchased items is a common technique for implicit feedback data [11], which is equivalent to downweighting unpurchased items [14, 32]. Similarly, γR is the ratio of sampling from the recommended items. For example, the ratio of the items sampled from CR−P is γPγR and that from CN R−N P is (1−γP )(1−γR ). For the pairwise optimization, we select the positive and negative samples simultaneously. We choose positive samples from CR−P ∪ CN R−N P with probability α, and from CR−P with probability 1−α. The negative samples are selected from the other classes. We sample a candidate class with the same probability; that is, if we sample items from CR−P ∪CN R−N P , we sample half from CR−P and the other half from CN R−N P .
+さらに、観測されたクラスごとにアイテムの数が異なるため、層別サンプリングを行う.このとき、購入済みアイテムからのサンプリングの比率を表すパラメータγP を導入する。このような未購入項目のダウンサンプリングは、暗黙のフィードバックデータでよく用いられる手法であり[11]、未購入項目のダウンウェイトに相当する[14, 32]。同様に、γRは推奨項目からのサンプリングの比率である。例えば、CR-P からサンプリングした項目の比率は γPγR であり、CN R-N P からの比率は (1-γP )(1-γR ) である。ペアワイズ最適化では、正と負のサンプルを同時に選択する。CR-P∪CN R-N P からは確率αで，CR-P からは確率1-αで，正標本を選択する．負のサンプルは他のクラスから選択する．つまり，CR-P ∪CN R-N P から項目を抽出する場合，半分は CR-P から，残りの半分は CN R-N P から抽出します．
+
+Algorithms 1 and 2 describe the details of each algorithm. rui is the label for the u-i pair, L is the loss function, η is the learning rate, and λ is the regularization coefcient. We use a stochastic gradient descent for training. Parameters Θ related to each point or pair are updated at each iteration. As for loss function, we use the logistic loss [18] for the pointwise optimization,
+
 $$
 L_{point}^{ll} = - (r_{ui} \log(\sigma(\hat{x}_{ui})) + (1 - r_{ui}) \log(1 - \sigma(\hat{x}_{ui}))).
 \tag{9}
 $$
 
+The predicted value xˆui is converted into the label prediction using the sigmoid function, σ (x) = 1/(1 + exp(−x)). We use the Bayesian personalized ranking (BPR) loss [35] for the pairwise optimization:
+
 $$
 L_{pair}^{bpr} = - \log(\sigma(\hat{x}_{ui} - \hat{x}_{uj}))
 \tag{10}
 $$
+
+where i is the positive sample and j is the negative sample. In both types of learning, the L2 regularization term $\Omega = ||\Theta||^2_2$ is added to prevent the overfitting of the parameter Θ. We use Matrix Factorization (MF) [22] for xˆui . Our modifed versions of MF are called UpLift-optimized Regularized MF (ULRMF) and UpLift-optimized BPR (ULBPR), which are trained by algorithms 1 and 2 respectively. 
+
+As for time complexity, we note that our algorithms perform random sampling of items from prepared sets of observable classes, which is O(1). The bottleneck is for parameter updates, which is O(d) for MF with d factor dimensions. This is common to conventional accuracy-based optimizations. Further, in Subsection 5.3, we show empirically that our uplift-based methods converge faster than accuracy-based ones in terms of iterations required.
 
 # 4. Related Work
 
@@ -235,6 +250,20 @@ $$
 # 5. Experiments
 
 ## 5.1. Experimental Settings
+
+### Datasets and Preprocessing. 
+
+We experimented with three publicly available datasets6: Dunnhumby7, Tafeng [13], and Xing8. The statistics of datasets after fltering are presented in Table 3. The purchase and recommendation logs are separated in discrete time intervals (by day or by week), because recommended items change over time. We explain the details for each dataset below. 
+
+Dunnhumby. This dataset includes purchase and promotion logs at a retailer. It provides product category information and we consider these product categories as items. We handle items featured in the weekly mailer, which is information included in the promotion logs, as recommendations. Promotions change each week, and so we separate purchase and recommendation logs by week. The dataset includes logs from many stores, and promotions are diferent for each store. If a user visited a shop when an item was promoted, then we regard the user as having received a recommendation for the item. We fltered the dataset according to the following conditions: shops that have at least one visitor for each week, items recommended for at least one week on average among the shops, items that existed for at least half the period (47 weeks), and users visiting more than one store in at least fve weeks. 
+
+Tafeng. This dataset contains purchase logs with price information from a Chinese grocery store. This includes the category id for each product, and we consider each category id as a separate item. If the discount ratios of any products in a certain category is over 0.1, then we consider the item as recommended9. The dataset is discretized by days. We fltered the dataset according to the following conditions: items recommended on at least one day, items that existed for at least half of the periods (60 days), and users visiting the shop on at least fve days. 
+
+Xing. This dataset contains interactions of users at an online job-seeking site. We regard the positive user interactions of click, bookmark, and apply, as purchases. This includes the impression logs of items which are shown to users by the Xing platform. We consider these impressions as recommendations. The dataset is discretized by days. We fltered the dataset according to the following conditions: items recommended on at least one day, items that existed for at least half of the time period (13 days), and users visiting the site on at least three days.
+
+### Evaluation Protocols. 
+
+We evaluated the uplift performance of each method using the proposed Uplift@N and UpliftSNIPS@N for N =10, 30, and 10010. Precision@30 was also measured, as a reference. Training and evaluation was conducted on each discrete time period. For each training step, we frst sampled a time period from among the training periods, and then drew users from among the active users who purchased at least one item during the time period. For evaluation, we calculated the metric for each discrete time, and then averaged them over the evaluation periods. We conducted chronological splitting of the datasets for training and evaluation, to prevent the leakage of future information for training. The length of evaluation periods are 8, 14, and 3 for the Dunnhumby, Tafeng, Xing datasets. For a dataset with t_d discrete time periods indexed by 1 to t_d , with the evaluation periods being of length t_e, each phase of validation and testing was conducted as follows:
 
 ## 5.2. Performance Comparison (RQ1)
 
