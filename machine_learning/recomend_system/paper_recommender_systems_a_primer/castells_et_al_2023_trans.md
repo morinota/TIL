@@ -779,64 +779,63 @@ More specific evaluation methodologies in the context of session-based recommend
 Recommendation technologies as we experience them on Spotify, Netflix, Amazon, YouTube, Booking, Twitter, Facebook—you name it—have undergone a filtering funnel from the early conception of an algorithmic idea (perhaps in an academic research context) to the final production system [Amatriain and Basilico 2015].
 私たちが Spotify，Netflix，Amazon，YouTube，Booking，Twitter，Facebook などで体験しているレコメンデーション技術は，アルゴリズムのアイデアの初期構想から（おそらく学術研究の文脈で）最終的な生産システムに至るまで，フィルタリング・ファネルを経てきました [Amatriain and Basilico 2015]．
 This pipeline involves a combination of offline and online experimentation where new ideas are compared to each other, to established baselines, and finally, to the recommendation algorithms currently operating in a live application.
-このパイプラインでは、オフライン実験とオンライン実験を組み合わせて、新しいアイデアを互いに比較し、確立されたベースラインと比較し、最終的に、実際のアプリケーションで現在動作している推薦アルゴリズムと比較します。
+このパイプラインでは、オ**フライン実験とオンライン実験を組み合わせて、新しいアイデアを互いに比較し、確立されたベースラインと比較し、最終的に、実際のアプリケーションで現在動作している推薦アルゴリズムと比較**する.
 By and large, offline experimentation precedes online evaluation, given the cost and bandwidth constraints of live testing [Gruson et al. 2019].
-ライブテストのコストと帯域幅の制約を考えると、オフライン実験がオンライン評価に先行するのが一般的です[Gruson et al.］
+ライブテストのコストと帯域幅の制約を考えると、**オフライン実験がオンライン評価に先行するのが一般的**である.[Gruson et al.］
 The final test in validating a new idea consists in launching it in the production platform alongside the current version, driving a fraction of user traffic to it, and comparing its performance to that of the present system— whichever wins takes over or remains the working system version.
-新しいアイデアを検証するための最終的なテストは、現行バージョンと一緒に本番プラットフォームで起動し、ユーザー・トラフィックの一部を駆動し、現行システムのパフォーマンスと比較することであり、どちらか勝った方が現行システムのバージョンを引き継ぐか残る。
+**新しいアイデアを検証するための最終的なテストは、現行バージョンと一緒に本番プラットフォームで起動**し、ユーザ・トラフィックの一部を駆動し、現行システムのパフォーマンスと比較することであり、どちらか勝った方が現行システムのバージョンを引き継ぐか残る.
 
-This is called an A
+This is called an A/B test, since two systems A and B are compared, where by A one usually means the current system (often referred to as control, borrowing from clinical trial terminology), and B is the challenger (treatment). In practice, it is common to run so-called multivariate tests comparing more than two systems simultaneously. Popular applications such as the ones mentioned at the beginning of this section are running hundreds of simultaneous A/B tests as we speak [Amatriain and Basilico 2015]. One genuine characteristic of A/B tests is that users do not know which version of the system they are facing, just like subjects in drug research do not know whether they are dispensed the actual treatment under trial (system B) or a placebo (system A). This aims to maximize the objectivity of the comparison by avoiding the introduction of confounding distortions in the experiment.
+
 これをA
 
-In addition to testing ideas in the most realistic possible conditions, A
+In addition to testing ideas in the most realistic possible conditions, A/B tests allow measuring the effects of algorithms on ultimate business performance and goals, beyond theoretical, more speculative effectiveness metrics. Effects can be measured on engagement (clicks, playcount, dwelling time), sales (revenue, profit, number of purchases), customer retention, and any other metric or key performance indicator the business relies on. We further elaborate on the business value of recommendation from wider perspectives in Section 2.3, also considering other possible stakeholders—beyond the customer and the system—involved in and impacted by recommendations.
 最も現実的な条件でアイデアを検証することに加え、A
 
-A
-A
+A/B tests are commonly run until a statistically significant difference is found between system A and B, or until an affordable time limit has elapsed without a clear conclusion. A typical duration for an A/B test is in the order of weeks—the time needed to collect sufficient evidence to make data-driven decisions about system changes. This, and the risk involved in exposing customers to new untested changes, limits the number of experiments than can be run simultaneously on a production platform. For this reason, offline evaluation is used to shortlist a small selection of change proposals to be brought to live evaluation—we discuss offline experimentation methodology in some detail in the next section.
 
 One open challenge to this respect is the weak or missing correlation often observed between the outcome of offline and online comparisons [Garcin et al. 2014, Gomez-Uribe and Hunt 2015, Jannach and Jugovac 2019, Kouki et al. 2020].
 この点に関する未解決の課題として、オフラインとオンラインの比較の結果の間にしばしば観察される弱い相関や欠落がある[Garcin et al. 2014, Gomez-Uribe and Hunt 2015, Jannach and Jugovac 2019, Kouki et al. 2020]。
 While this remains a major open research question in the field [Gilotte et al. 2018, Jannach and Bauer 2020, Rossetti et al. 2016], offline evaluation is routinely practiced as a selection yardstick before online testing in industry, and is by far the main resource for empirical observation in academic research.
 このことは、この分野における主要な未解決の研究課題として残っていますが [Gilotte et al. 2018, Jannach and Bauer 2020, Rossetti et al. 2016] 、オフライン評価は、産業界ではオンラインテストの前の選択基準として日常的に行われており、学術研究においても経験観察のための主要リソースとして圧倒的に利用されています。
 
-Besides A
-A以外に
+Besides A/B testing, other forms of online experimentation and user studies can be designed with specific purposes [Knijnenburg and Willemsen 2015], not necessarily involving a production system. We discuss such studies with humans in the loop in Section 2.3.1.
 
 ### 1.4.2. Offline Evaluation 1.4.2. オフライン評価
 
 An offline experiment can be seen as a simulation of the system interacting with users, where different proxies—i.e., offline metrics—for system effectiveness are measured [Castells and Moffat 2022].
-オフライン実験とは、システムがユーザーと相互作用するシミュレーションとみなすことができ、そこでは、システムの有効性に関するさまざまなプロキシ、つまりオフラインの測定基準が測定される [Castells and Moffat 2022]。
+オフライン実験とは、システムがユーザーと相互作用するシミュレーションとみなすことができ、そこでは、システムの有効性に関するさまざまなプロキシ、つまりオフラインの測定基準が測定される [Castells and Moffat 2022].
 The most informative offline experiment is the one that best simulates and represents the production setting.
-最も有益なオフライン実験は、生産設定を最もよくシミュレートし、表現するものである。
+最も有益なオフライン実験は、生産設定を最もよくシミュレートし、表現するものである.
 In industrial developments, very specific production settings may be required.
-産業開発では、非常に特殊な生産設定が要求されることがある。
+産業開発では、非常に特殊な生産設定が要求されることがある.
 Therefore, in general research, a number of abstractions are usually made.
-そのため、一般的な研究では、多くの抽象化が行われるのが普通である。
+そのため、一般的な研究では、多くの抽象化が行われるのが普通である.
 
 The difference between online and offline evaluation can be neatly defined as follows: whereas online evaluation acquires user feedback data (for metric computation) after recommendations are delivered to users—from these same users—in offline evaluation the test data is collected before recommendations are produced—and users are in fact never delivered the evaluated recommendations.
-オンライン評価とオフライン評価の違いを簡単に説明すると、オンライン評価では、ユーザーに推薦文を配信した後に、同じユーザーからフィードバックデータを取得するのに対し、オフライン評価では、推薦文を作成する前にテストデータを収集し、実際にはユーザーに評価済みの推薦文を配信することはない、ということである。
+オンライン評価とオフライン評価の違いを簡単に説明すると、オンライン評価では、ユーザーに推薦文を配信した後に、同じユーザーからフィードバックデータを取得するのに対し、オフライン評価では、推薦文を作成する前にテストデータを収集し、実際にはユーザーに評価済みの推薦文を配信することはない、ということである.
 
 Setting up a basic offline experiment for evaluating a recommendation algorithm may seem a straightforward endeavor at first sight, given the wide body of well established methodologies and experimental design principles, in fields such as machine learning and information retrieval, to draw upon.
-機械学習や情報検索などの分野では、確立された方法論や実験設計の原則が幅広く存在するため、推薦アルゴリズムを評価するための基本的なオフライン実験の設定は、一見すると簡単なことのように思われるかもしれません。
+機械学習や情報検索などの分野では、確立された方法論や実験設計の原則が幅広く存在するため、**推薦アルゴリズムを評価するための基本的なオフライン実験の設定は、一見すると簡単なことのように思われるかもしれない**.
 The recommendation task has however peculiarities of its own that result in a fair degree of hidden complexity and pitfalls, that can produce inconsistent evaluation outcomes more easily than one might think [Canamares et al. 2020].
-しかし、推薦タスクにはそれなりの複雑さと落とし穴が隠されており、人が考える以上に簡単に一貫性のない評価結果を生み出してしまうという特殊性がある [Canamares et al.2020]。
+**しかし、推薦タスクにはそれなりの複雑さと落とし穴が隠されており、人が考える以上に簡単に一貫性のない評価結果を生み出してしまうという特殊性がある** [Canamares et al.2020].
 ˜ The experimenter is advised to carefully consider, understand and report the detailed design choices made in an experiment and their implications.
-実験者は、実験におけるデザインの詳細な選択とその意味を注意深く検討し、理解し、報告することが望まれる。
+実験者は、**実験におけるデザインの詳細な選択とその意味を注意深く検討**し、理解し、報告することが望まれる.
 We overview some of them in the following sections.
-以下のセクションでそのいくつかを概観する。
+以下のセクションでそのいくつかを概観する.
 
 ### 1.4.3. Offline Data 1.4.3. オフラインデータ
 
 Offline evaluation generally distinguishes training data and test data, which should be strictly disjoint [Guy 2022].
-オフライン評価では一般的にトレーニングデータとテストデータを区別し、厳密に分離する必要がある[Guy 2022]。
+オフライン評価では一般的にトレーニングデータとテストデータを区別し、厳密に分離する必要がある[Guy 2022].
 Training data is supplied as input to the recommender system being evaluated, whereas test data is hidden from the system and is used to compute metrics on the returned recommendations.
-トレーニングデータは評価対象のレコメンダーシステムへの入力として供給され、一方テストデータはシステムから隠され、返されたレコメンダーのメトリックを計算するために使用される。
+トレーニングデータは評価対象のレコメンダーシステムへの入力として供給され、一方テストデータはシステムから隠され、返されたレコメンダーのメトリックを計算するために使用される.
 Training data in an offline experiment can be similar to the data that a production system may have available (the more similar the better), whereas test data is used in the experiment to simulate user feedback in reaction to the delivered recommendations.
-オフライン実験におけるトレーニングデータは、本番システムが利用可能なデータと類似している（類似しているほど良い）ことがあり、一方、テストデータは、配信された推薦に対するユーザーの反応をシミュレートするために実験に使用される。
+オフライン実験におけるトレーニングデータは、本番システムが利用可能なデータと類似している（類似しているほど良い）ことがあり、一方、テストデータは、配信された推薦に対するユーザーの反応をシミュレートするために実験に使用される.
 The training and test data for recommendation usually reflect user-item interactions as one of their major components—that is, they can be seen as disjoint subsets of the rating matrix.
-レコメンデーションのためのトレーニングデータとテストデータは通常、ユーザーとアイテムの相互作用を主要な構成要素の一つとして反映している。
+レコメンデーションのためのトレーニングデータとテストデータは通常、ユーザーとアイテムの相互作用を主要な構成要素の一つとして反映している.
 Training data can however also include additional side-information that specific recommendation algorithms may consume.
-しかし、学習データには、特定の推薦アルゴリズムが消費する可能性のある付加的な副次的情報を含めることができる。
+しかし、学習データには、特定の推薦アルゴリズムが消費する可能性のある付加的な副次的情報を含めることができる.
 
 Training and test data can be acquired in many different ways.
 トレーニングデータとテストデータは様々な方法で取得することができます。
@@ -1122,9 +1121,9 @@ Personalized novelty, often referred to as unexpectedness [Adamopoulos and Tuzhi
 Long-tail novelty and unexpectedness can be quantified in different ways, which we summarize next.
 ロングテールの新規性と意外性は様々な方法で定量化することが可能であり、次にその概要を説明します。
 
-##### 1.4.5.1.1.
+##### 1.4.5.1.1. 1.4.5.1.1.
 
-##### 1.4.5.1.1.
+##### 1.4.5.1.2. 1.4.5.1.1.
 
 Long-tail novelty.
 ロングテールの新しさ
@@ -1150,9 +1149,9 @@ With the first definition, novelty can be read as the probability that a random 
 When measured this way, novelty can be seen as a condition of coldness (lack of data) or unpopularity.
 このように測定すると、新規性は冷淡さ（データの欠如）あるいは不人気さの条件とみなすことができる。
 
-##### 1.4.5.1.2.
+##### 1.4.5.1.3. 1.4.5.1.2.
 
-##### 1.4.5.1.2.
+##### 1.4.5.1.4. 1.4.5.1.2.
 
 Unexpectedness.
 予期せぬ事態
@@ -1173,9 +1172,9 @@ Set dissimilarity can be any conventional measure such as Jaccard, Hausdorff, av
 When pairwise item distance is used, feature-based dissimilarity (measured e.g., by the cosine or Jaccard distance between feature vectors
 ペアワイズ項目距離が使用される場合、特徴ベースの非類似度（例えば、特徴ベクトル間のコサインまたはジャカール距離によって測定される。
 
-##### 1.4.5.1.3.
+##### 1.4.5.1.5. 1.4.5.1.3.
 
-##### 1.4.5.1.3.
+##### 1.4.5.1.6. 1.4.5.1.3.
 
 Serendipity.
 セレンディピティ
@@ -1187,9 +1186,9 @@ While the definitions slightly vary in the literature, the dominant convention c
 If we equate value, in this sense, to relevance, a straightforward way to measure serendipity is to restrict the computation of the above novelty metrics to the recommended items that are relevant to the target user (according to the available test data), and ignore the rest.
 この意味で価値を関連性と同一視すると、セレンディピティを測定する簡単な方法は、上記の新規性メトリックの計算を、ターゲットユーザーに関連する（利用可能なテストデータによる）推奨アイテムに限定し、残りを無視することです。
 
-##### 1.4.5.1.4.
+##### 1.4.5.1.7. 1.4.5.1.4.
 
-##### 1.4.5.1.4.
+##### 1.4.5.1.8. 1.4.5.1.4.
 
 Further notions.
 さらなる概念
@@ -1368,66 +1367,71 @@ Figure 2.2 visualizes the differences between (pure) session-based and session-a
 Various algorithmic approaches were explored for sequence-aware recommendation problems.
 sequenceを考慮した推薦問題に対して、様々なアルゴリズム的アプローチが検討された.
 The following main types of technical approaches were identified in [Quadrana et al. 2018]: (i) Sequence Learning Approaches (ii) Sequence-Aware Matrix Factorization (iii) Hybrid Approaches, and (iv) Nearest Neighbors and Other Methods.
-Quadrana et al. 2018]では、技術的アプローチの主な種類として、（i）シーケンス学習アプローチ（ii）シーケンスを考慮した行列因子分解（iii）ハイブリッドアプローチ、および（iv）最近傍と他の方法、が挙げられた。
+Quadrana et al. 2018]では、技術的アプローチの主な種類として、以下の4つが挙げられた.
 
-#### Sequence Learning Approaches. シーケンス学習のアプローチ。
+- （i）シーケンス学習アプローチ
+- （ii）シーケンスを考慮した行列因子分解
+- （iii）ハイブリッドアプローチ
+- （iv）最近傍と他の方法
+
+#### 2.1.2.1. Sequence Learning Approaches. シーケンス学習のアプローチ。
 
 Approaches in this category can be subdivided into several main paradigms.
-このカテゴリのアプローチは、いくつかの主要なパラダイムに細分化することができます。
+このカテゴリのアプローチは、いくつかの主要なパラダイムに細分化することができる.
 
-- Frequent Pattern Mining techniques were historically often applied for the problem of detecting (unexpected) patterns in shopping baskets, e.g., in the form of association rules. Later, these techniques were extended to consider sequential patterns, in which the order of the elements is relevant. 頻出パターンマイニング技術は、歴史的にしばしば買い物かごの中の（予期しない）パターンを検出する問題に適用されてきた（例えば、関連ルールの形で）。 その後、これらの技術は、要素の順序が関連するシーケンシャルなパターンを考慮するように拡張された。
+- Frequent Pattern Mining techniques were historically often applied for the problem of detecting (unexpected) patterns in shopping baskets, e.g., in the form of association rules. Later, these techniques were extended to consider sequential patterns, in which the order of the elements is relevant. 頻出パターンマイニング技術は、歴史的にしばしば買い物かごの中の（予期しない）パターンを検出する問題に適用されてきた（例えば、関連ルールの形で）. その後、これらの技術は、**要素の順序が関連するsequentialなパターンを考慮するように拡張**された.
 
-- Sequence Modeling approaches try to go beyond mined patterns and aim to learn models from past time-ordered data to predict future events. A large variety of corresponding machine learning models were proposed over the years. The predominant approaches in the literature are based on Markov Models, Reinforcement Learning, or Deep Learning, in particular in the form of Recurrent Neural Networks (RNNs). Often, modern sequential models are based on ideas from Natural Language Processing to model the sequences in the interaction data, see e.g., [Sun et al. 2019a]. シーケンスモデリングのアプローチは、採掘されたパターンを超えて、過去の時間順のデータからモデルを学習し、将来のイベントを予測することを目的としている。 対応する機械学習モデルは、長年にわたって多種多様なものが提案されてきた。 文献上の主要なアプローチは、マルコフモデル、強化学習、またはディープラーニング、特にリカレントニューラルネットワーク（RNNs）の形式に基づいている。 多くの場合、現代のシーケンシャルモデルは、自然言語処理からのアイデアに基づいて、相互作用データのシーケンスをモデル化するものであり、例えば、[Sun et al. 2019a]を参照。
+- Sequence Modeling approaches try to go beyond mined patterns and aim to learn models from past time-ordered data to predict future events. A large variety of corresponding machine learning models were proposed over the years. The predominant approaches in the literature are based on Markov Models, Reinforcement Learning, or Deep Learning, in particular in the form of Recurrent Neural Networks (RNNs). Often, modern sequential models are based on ideas from Natural Language Processing to model the sequences in the interaction data, see e.g., [Sun et al. 2019a]. sequence modeling のアプローチは、採掘されたパターンを超えて、過去の時間順のデータからモデルを学習し、将来のイベントを予測することを目的としている. 対応する機械学習モデルは、長年にわたって多種多様なものが提案されてきた. 文献上の主要なアプローチは、マルコフモデル、強化学習、またはディープラーニング、**特にRecurrent Neural Networks(RNNs)の形式**に基づいている. 多くの場合、現代のsequential modelは、自然言語処理からのアイデアに基づいて、interactionデータのsequenceをモデル化するものであり、例えば、[Sun et al. 2019a]を参照.
 
-- Distributed Item Representations are another form of encoding sequential information. These representations (embeddings) are projections from sequences of item-related events (e.g., views) into a lower-dimensional representation in which the transition between items is preserved. 分散アイテム表現はシーケンシャルな情報を符号化するもう一つの形式である。 これらの表現（埋め込み）は、アイテムに関連するイベントのシーケンス（例えば、ビュー）から、アイテム間の遷移が保持された低次元の表現に投影されたものである。
+- Distributed Item Representations are another form of encoding sequential information. These representations (embeddings) are projections from sequences of item-related events (e.g., views) into a lower-dimensional representation in which the transition between items is preserved. **Distributed Item Representations(分散アイテム表現)**はsequentialな情報をencode(符号化)するもう一つの形式である. これらの表現(embedding)は、アイテムに関連するイベントのsequence（例えば、ビュー）から、**アイテム間のtransition(遷移)が保持された低次元の表現に投影されたもの**である.
 
-- Supervised Learning with Sliding Windows, finally, is a rather specific approach, where the idea is to reframe the next-item prediction problem to a supervised learning problem by moving a sliding window over the sequence of events and to derive the corresponding feature values from this sliding window to predict the next event. スライディングウィンドウを用いた教師あり学習は、イベントのシーケンス上でスライディングウィンドウを移動させることによって、次アイテム予測問題を教師あり学習問題に再構成し、このスライディングウィンドウから対応する特徴量を導き出して次のイベントを予測するという、かなり特殊なアプローチである。
+- Supervised Learning with Sliding Windows, finally, is a rather specific approach, where the idea is to reframe the next-item prediction problem to a supervised learning problem by moving a sliding window over the sequence of events and to derive the corresponding feature values from this sliding window to predict the next event. **Sliding Windowsを用いた教師あり学習(=CNN的な?)**は、イベントのsequence上でSliding Windowsを移動させることによって、次アイテム予測問題を教師あり学習問題に再構成し、このSliding Windowsから対応する特徴量を導き出して次のイベントを予測するという、かなり特殊なアプローチである.
 
-#### Sequence-Aware Matrix Factorization. 配列に配慮した行列因子分解。
+#### 2.1.2.2. Sequence-Aware Matrix Factorization. 配列に配慮した行列因子分解
 
 A few examples exist in the literature that extend matrix factorization approaches to consider sequential information, usually derived from timestamps that are available for the entries in the user-item rating matrix.
-行列分解アプローチを拡張して、連続的な情報、通常はユーザー-アイテム評価行列のエントリに利用可能なタイムスタンプから得られる情報を考慮するいくつかの例が文献に存在する。
+行列分解アプローチを拡張して、連続的な情報、通常はユーザ-アイテム評価行列のエントリに利用可能なタイムスタンプから得られる情報を考慮するいくつかの例が文献に存在する.
 These approaches are conceptually related to time-aware recommender systems [Campos et al. 2014], which aim to identify changes in user preferences over larger time spans.
-これらのアプローチは、概念的には、より大きな時間スパンでのユーザー嗜好の変化を識別することを目的とした時間考慮型推薦システム[Campos et al.
+これらのアプローチは、概念的には、より大きな時間スパンでのユーザ嗜好の変化を識別することを目的としたtime-aware recommender systems[Campos et al. 2014]
 
-#### Hybrid Approaches. ハイブリッド・アプローチ
+#### 2.1.2.3. Hybrid Approaches. ハイブリッド・アプローチ
 
 A more common approach in the literature is to combine sequence modeling with the power of latent factor models.
-文献上のより一般的なアプローチは、シーケンス・モデリングと潜在因子モデルのパワーを組み合わせることである。
+文献上のより一般的なアプローチは、**sequence modelingとlatent factor model(=MFとか?)のパワーを組み合わせること**である.
 One of the earlier approaches of that type is the Factorized Personalized Markov Chain (FPMC) method [Rendle et al. 2010].
-このタイプの初期のアプローチの1つは，FPMC（Factorized Personalized Markov Chain）法である [Rendle et al.］
+このタイプの初期のアプローチの1つは，FPMC（Factorized Personalized Markov Chain）法である [Rendle et al. 2010］
 This method jointly factorizes a first-order Markov Chain, which models user-specific item transitions, and a traditional user-item rating matrix to make next-item predictions.
-この方法は，ユーザ固有の項目遷移をモデル化した一次マルコフ連鎖と，従来のユーザ項目評価行列を合同で因子分解し，次の項目予測を行うものである．
+この方法は，ユーザ固有の項目遷移をモデル化した一次マルコフ連鎖(=って事は初期のsequential recommenderだ...!)と，従来のuser-item評価行列を合同で因子分解し，次の項目予測を行うものである.
 Similar approaches were proposed later on, e.g., in [He and McAuley 2016].
-同様のアプローチは、その後、例えば[He and McAuley 2016]で提案された。
+同様のアプローチは、その後、例えば[He and McAuley 2016]で提案された.
 More recently, methods that combine neural techniques (e.g., RNNs, Convolutional Neural Networks, or Attention) with matrix factorization layers, have become more popular, e.g., [Kang and McAuley 2018, Tang and Wang 2018].
-最近では、ニューラル技術（RNN、Convolutional Neural Networks、Attentionなど）と行列分解層を組み合わせた手法が普及しており、例えば[Kang and McAuley 2018, Tang and Wang 2018]などである。
+最近では、ニューラル技術（RNN、Convolutional Neural Networks、Attentionなど）と行列分解層を組み合わせた手法が普及しており、例えば[Kang and McAuley 2018, Tang and Wang 2018]などである.
 
-#### Nearest-Neighbors and Other Methods. 近傍界とその他の方法。
+#### 2.1.2.4. Nearest-Neighbors and Other Methods. 近傍界とその他の方法。
 
 In particular in the context of session-based recommendation, a simple yet effective method is often to apply neighborhood-based techniques.
-特にセッションベースの推薦の文脈では、シンプルかつ効果的な方法として、近傍ベースの技術を適用することがよくあります。
+特にsession-based recommendationの文脈では、**シンプルかつ効果的な方法として、neighborhood-basedの技術**を適用することがよくある.
 In [Jannach and Ludewig 2017] and subsequent works, the idea was explored to use those past sessions in the data as a basis for predicting the next event, which are most similar to the ongoing one.
-Jannach and Ludewig 2017]とそれに続く作品では、現在進行中のイベントに最も類似している次のイベントを予測するための基礎として、データ内のそれらの過去のセッションを使用するというアイデアが検討されました。
+[Jannach and Ludewig 2017]とそれに続く作品では、現在進行中のイベントに最も類似している次のイベントを予測するための基礎として、データ内のそれらの過去のセッションを使用するというアイデアが検討された.
 Despite the conceptual simplicity of the approach, it turned out to be competitive or even superior to much more complex models.
-このアプローチの概念的な単純さにもかかわらず、それははるかに複雑なモデルに対して競争力があるか、あるいは優れていることが判明した。
+このアプローチの概念的な単純さにもかかわらず、それははるかに複雑なモデルに対して競争力があるか、あるいは優れていることが判明した.
 Finally, a number of alternative proposals were identified in [Quadrana et al. 2018], including methods that rely on (non-neural) graphbased models or techniques from discrete optimization, where the latter class of problems may however suffer from scalability problems given the usually high number of recommendable items.
-最後に、多くの代替案が[Quadrana et al. 2018]で確認され、（非ニューラル）グラフベースのモデルや離散最適化の技術に依存する方法などがあり、後者のクラスの問題はしかし、通常推奨できるアイテムの数が多いことを考えるとスケーラビリティ問題に苦しむかもしれません。
+最後に、多くの代替案が[Quadrana et al. 2018]で確認され、（非ニューラル）グラフベースのモデルや離散最適化の技術に依存する方法などがあり、後者のクラスの問題はしかし、**通常推薦できるアイテムの数が多いことを考えるとscalability問題に苦しむかも**しれません.
 
 ### 2.1.3. Evaluation of Sequential and Session-based Recommender Systems 2.1.3. 逐次型推薦システムおよびセッション型推薦システムの評価
 
 In practical applications, recommender systems are evaluated with respect to the organizational goals and purpose they should fulfill (e.g., increase customer retention) and the specific computational tasks they implement that serve this purpose (e.g., help users find novel content) [Jannach and Adomavicius 2016].
-実際の応用では、レコメンダーシステムは、それらが果たすべき組織的な目標や目的（例えば、顧客維持率の向上）と、この目的を果たすために実装する特定の計算タスク（例えば、ユーザーが新規コンテンツを見つけるのを助ける）に関して評価される［Jannach and Adomavicius 2016］。
+実際の応用では、レコメンダーシステムは、それらが果たすべき組織的な目標や目的（例えば、顧客維持率の向上）と、この目的を果たすために実装する特定の計算タスク(例えば、**ユーザが新規コンテンツを見つけるのを助ける**)に関して評価される［Jannach and Adomavicius 2016］.
 While the general goals of sequence-aware recommender systems are usually not very different from traditional ones, sequential and sessionbased recommenders often implement a number of computational tasks based on the particular nature of their input data, as identified in [Quadrana et al. 2018]:
-シーケンスを考慮したレコメンダーシステムの一般的な目標は、通常、従来のものとあまり変わらないが、シーケンシャルおよびセッションベースのレコメンダーは、[Quadrana et al. 2018]で確認したように、入力データの特定の性質に基づく多くの計算タスクを実装することが多い。
+sequence-awareの推薦システムの一般的な目標は、通常、従来のものとあまり変わらないが、シーケンシャルおよびセッションベースのrecommenderは、[Quadrana et al. 2018]で確認したように、入力データの特定の性質に基づく多くの計算タスクを実装することが多い:
 
-- Context Adaptation is the fundamental problem of session-based algorithms, i.e., to guess the user’s situation and intents from the interactions observed in an ongoing session. The observed user behavior thus represents a form of interactional context [Adomavicius et al. 2022]. コンテキスト適応はセッションベースのアルゴリズムの基本的な問題であり、すなわち、進行中のセッションで観察された相互作用からユーザーの状況や意図を推測することである。 このように、観測されたユーザー行動は相互作用コンテキストの一形態を表す[Adomavicius et al.2022]。
+- Context Adaptation is the fundamental problem of session-based algorithms, i.e., to guess the user’s situation and intents from the interactions observed in an ongoing session. The observed user behavior thus represents a form of interactional context [Adomavicius et al. 2022]. Context Adaptation(?)はsession-basedのアルゴリズムの基本的な問題であり、すなわち、進行中のセッションで観察されたinteractionsからユーザの状況や意図を推測することである. このように、観測されたユーザ行動は、interaction コンテキストの一形態を表す[Adomavicius et al.2022].
 
-- Trend Detection is a still under-explored topic in academic research and relates both to individual trends (e.g., interest drift) and community trends that might, for example, depend on seasonal patterns or popularity peaks of items. トレンドの検出は、学術的な研究においてまだ十分に検討されていないテーマであり、個々のトレンド（例えば、興味ドリフト）と、例えば、季節パターンやアイテムの人気ピークに依存するかもしれないコミュニティのトレンドの両方に関連する。
+- Trend Detection is a still under-explored topic in academic research and relates both to individual trends (e.g., interest drift) and community trends that might, for example, depend on seasonal patterns or popularity peaks of items. **Trend Detection(トレンドの検出)**は、学術的な研究においてまだ十分に検討されていないテーマであり、個々のトレンド（例えば、interest drift）と、例えば、季節パターンやアイテムの人気ピークに依存するかもしれないコミュニティのトレンドの両方に関連する.
 
-- Repeated Recommendations, which are usually not considered in matrix-completion problems, can both be valuable in the context of consumable items (e.g., printer ink) and for the sake of reminding users of items they liked in the past (e.g., a past favorite artist). 通常、行列補完問題では考慮されない「繰り返し推奨」は、消耗品（例えば、プリンターインク）の文脈でも、ユーザーが過去に好きだったもの（例えば、過去の好きなアーティスト）を思い出すためにも、どちらも価値があります。
+- Repeated Recommendations, which are usually not considered in matrix-completion problems, can both be valuable in the context of consumable items (e.g., printer ink) and for the sake of reminding users of items they liked in the past (e.g., a past favorite artist). 通常、行列補完問題では考慮されない"**Repeated Recommendations(繰り返し推薦)**"は、**消耗品**（例えば、プリンターインク）の文脈でも、**ユーザが過去に好きだったもの（例えば、過去の好きなアーティスト）を思い出す**ためにも、どちらも価値がある.
 
-- Consideration of Order Constraints and Patterns: In a number of domains, there is a strict order in which items should or must be recommended (e.g., learning course recommendation); in other domains, there might be a “natural” order in which things should be recommended (e.g., in the case of movie sequels). Sequence-aware recommenders can learn and/or enforce such patterns as a computational task. 順序の制約とパターンに関する考察。 多くの領域では、推奨されるべき、あるいはされなければならない順序が厳然として存在する（例：学習コースの推奨）。他の領域では、推奨されるべき「自然な」順序が存在する場合がある（例：映画の続編の場合）。 順序を意識したレコメンダーは、学習と
+- Consideration of Order Constraints and Patterns: In a number of domains, there is a strict order in which items should or must be recommended (e.g., learning course recommendation); in other domains, there might be a “natural” order in which things should be recommended (e.g., in the case of movie sequels). Sequence-aware recommenders can learn and/or enforce such patterns as a computational task. 順序の制約とパターンに関する考察. **多くの領域では、推薦されるべき、あるいはされなければならない順序が厳然として存在する**（例：学習コースの推薦）.他の領域では、推薦されるべき"自然な"順序が存在する場合がある（例：映画の続編の場合）. Sequence-aware recommendersは、その様な "and/orの制約のpatterns"をcomputational taskとして学習できる.
 
 In principle, all evaluation approaches outlined in Section 1.4 can be applied for the evaluation of sequential and session-based recommender systems, including offline experiments, user studies, and field tests (A
 逐次型およびセッション型レコメンダーシステムの評価には、オフライン実験、ユーザースタディ、フィールドテストなど、原則として1.4節で示したすべての評価手法が適用可能である（A
@@ -1435,11 +1439,11 @@ In principle, all evaluation approaches outlined in Section 1.4 can be applied f
 #### 2.1.3.1. Offline Evaluation 2.1.3.1. オフライン評価
 
 Remember from above that the output of a sequence-aware recommender system as usual is a ranked list of item suggestions.
-シーケンスを考慮した推薦システムの出力は、通常、アイテム提案のランク付けされたリストであることを、上記から思い出してほしい。
+シーケンスを考慮した推薦システムの出力は、通常、アイテム提案のランク付けされたリストであることを、上記から思い出してほしい.
 Following the usual “hide-and-predict” evaluation approach in offline experiments, common evaluation measures from information retrieval for ranking accuracy such as precision and recall can be applied.
-オフライン実験での通常の「隠して予測する」評価方法に従って、精度や再現率といったランキング精度に関する情報検索の一般的な評価尺度を適用することができる。
+オフライン実験での通常の「隠して予測する」評価方法に従って、精度や再現率といったランキング精度に関する情報検索の一般的な評価尺度を適用することができる.
 The evaluation procedure of sequenceaware recommender systems therefore involves the hiding of a number of interactions in a given sequence of events and the subsequent measurement of how good an algorithm is to predict the hidden interaction(s).
-したがって、シーケンス認識型レコメンダーシステムの評価方法は、与えられたイベントのシーケンスにおけるいくつかのインタラクションを隠し、その後、隠されたインタラクションを予測するアルゴリズムがどの程度優れているかを測定することになる。
+したがって、シーケンス認識型レコメンダーシステムの評価方法は、与えられたイベントのシーケンスにおけるいくつかのインタラクションを隠し、その後、隠されたインタラクションを予測するアルゴリズムがどの程度優れているかを測定することになる.
 
 In evaluations of traditional matrix completion problem settings, the selection of the hidden elements (i.e. the test set) is often done in a randomized way, e.g., by randomly selecting 20 % of the data for testing.
 伝統的な行列補完問題設定の評価では、隠れ要素（すなわちテストセット）の選択は、例えば、テスト用にデータの20 %をランダムに選択するなど、ランダムな方法で行われることが多い。
@@ -1448,9 +1452,9 @@ Moreover, cross-validation is in many cases applied to increase the confidence i
 Such an entirely randomized approach is not meaningful for sequence-aware recommendation problems, and alternative procedures have to be applied.
 このような完全にランダム化されたアプローチはシーケンスを考慮した推薦問題では意味がなく、別の手順を適用する必要がある。
 
-##### Data Splitting.
+##### 2.1.3.1.1. Data Splitting.
 
-##### データ分割
+##### 2.1.3.1.2. データ分割
 
 When splitting the data into training, validation, and test data sets, the sequential order must be considered, and the held-out interactions to be predicted must happen after those that are used for training.
 データをトレーニング、検証、テストデータセットに分割する際、順序を考慮する必要があり、予測するための保留された相互作用は、トレーニングに使用された相互作用の後に発生する必要があります。
@@ -1463,9 +1467,7 @@ The following are relatively common.
 
 - In session-based scenarios, it is, in contrast, more common to apply a time-based split. Commonly, research datasets cover an extended period of time, e.g., a few weeks. Often, the sessions of the very last or the last few days are used for testing (and one or more preceding days for validation). 一方、セッションベースのシナリオでは、時間ベースの分割を適用することがより一般的です。 一般に、研究データセットは、数週間といった長期間をカバーする。 多くの場合、直近または数日前のセッションがテストに使用される（そして、1日以上前のセッションが検証に使用される）。
 
-##### Making the Measurement.
-
-##### 測定を行う。
+##### 2.1.3.1.3. Making the Measurement. 測定を行う。
 
 In sequential recommendation problems, when the last interaction of each user is hidden, the making the measurement amounts to determining if and at which position an algorithm was ranking the hidden interaction within a top-n list.
 逐次推薦問題では、各ユーザーの最後のインタラクションが隠されている場合、測定はアルゴリズムがトップNリスト内で隠されたインタラクションをランキングしていたか、どの位置にあるかを決定することになる。
@@ -1503,9 +1505,7 @@ In many academic research works, only the most frequent type of interactions is 
 In reality, however, it might be much more important to predict item purchases, and to use all available types of interactions in the training and prediction process.
 しかし、現実には商品購入を予測することの方がはるかに重要であり、学習と予測プロセスにおいて利用可能なすべてのタイプのインタラクションを使用する必要があるかもしれない。
 
-##### Cross-Validation.
-
-##### クロスバリデーション
+##### 2.1.3.1.5. Cross-Validation.
 
 Given the sequential nature of the data, performing cross-validation based on random splits is not meaningful.
 データの連続性を考えると、ランダムな分割に基づくクロスバリデーションは意味がない。
@@ -1980,7 +1980,7 @@ In the same handbook, a variety of other timely research topics in recommender s
 In the remainder of this paper, we would like to discuss a small set of additional promising topics of which we believe that they require more research in the future.
 本論文の残りの部分では、今後さらに研究が必要であると思われる有望なトピックを追加して議論したいと思う。
 
-#### Conversational Recommender Systems. 会話型推薦システム。
+#### 2.4.2.1. Conversational Recommender Systems. 会話型推薦システム。
 
 Most of today’s online recommender system have a rather simple user interaction model.
 今日のオンライン・レコメンダーシステムのほとんどは、ユーザーとのインタラクションモデルがかなり単純である。
@@ -1997,7 +1997,7 @@ Considerable progress was made in that context in recent years.
 Still, pure learning-based approaches still have their limitations, and it is expected that future CRS will be often based on a mix of explicit domain and inference knowledge and of learning components.
 しかし、純粋な学習ベースのアプローチにはまだ限界があり、将来のCRSはしばしば、明示的なドメインと推論知識、および学習コンポーネントの混合に基づくことが予想される。
 
-#### Fairness in Recommender Systems. 推薦システムにおける公平性
+#### 2.4.2.2. Fairness in Recommender Systems. 推薦システムにおける公平性
 
 Fairness and ethical concerns have grown around the exponential development of artificial intelligence and technology, permeating and transforming all realms of modern societies—and recommendation technologies are no exception to these matters.
 人工知能やテクノロジーの急激な発達に伴い、現代社会のあらゆる領域に浸透し、変容していく中で、公正さや倫理に関する懸念が高まっており、推薦技術もこれらの問題の例外ではありません。
@@ -2017,7 +2017,7 @@ Studies are unanimous in stressing the importance of bias awareness and understa
 An ample strand of reflection and research efforts can be expected to continue in the times to come.
 このような考察と研究の努力は、今後も継続されることが期待される。
 
-#### Offline / Online Misalignment in Evaluation. オフライン
+#### 2.4.2.3. Offline / Online Misalignment in Evaluation. オフライン
 
 As mentioned in Section 1.4.1, offline evaluation results are often weakly aligned with the outcomes of online A
 1.4.1 節で述べたように、オフラインの評価結果は、しばしばオンラインの A
