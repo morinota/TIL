@@ -1195,3 +1195,5 @@ HTTP では、responseの一部として 3 digit の数値 status codeを送信�
 async def create_item(name: str):
     return {"name": name}
 ```
+
+# Form data(request bodyから指定のfieldのみparameterとして取得する、みたいな?)

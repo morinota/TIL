@@ -14,17 +14,17 @@ A Primer
 ## 0.3. abstract 0.3. 抽象的
 
 Personalized recommendations have become a common feature of modern online services, including most major e-commerce sites, media platforms and social networks.
-パーソナライズされたレコメンデーションは、ほとんどの主要なeコマースサイト、メディアプラットフォーム、ソーシャルネットワークなど、現代のオンラインサービスにおいて一般的な機能になっています。
+パーソナライズされたレコメンデーションは、ほとんどの主要なeコマースサイト、メディアプラットフォーム、ソーシャルネットワークなど、現代のオンラインサービスにおいて一般的な機能になっている.
 Today, due to their high practical relevance, research in the area of recommender systems is flourishing more than ever.
-今日、その実用的な関連性の高さから、レコメンダーシステム分野の研究はかつてないほど盛んになっています。
+今日、その実用的な関連性の高さから、レコメンダーシステム分野の研究はかつてないほど盛んになっている.
 However, with the new application scenarios of recommender systems that we observe today, constantly new challenges arise as well, both in terms of algorithmic requirements and with respect to the evaluation of such systems.
-しかしながら、レコメンダーシステムの新たな応用シナリオの出現に伴い、アルゴリズムへの要求やシステムの評価に関しても常に新たな課題が発生している。
+しかしながら、**レコメンダーシステムの新たな応用シナリオの出現に伴い、アルゴリズムへの要求やシステムの評価に関しても常に新たな課題が発生**している.
 In this paper, we first provide an overview of the traditional formulation of the recommendation problem.
-本論文では、まず、推薦問題の伝統的な定式化について概観する。
+本論文では、まず、推薦問題の伝統的な定式化について概観する.
 We then review the classical algorithmic paradigms for item retrieval and ranking and elaborate how such systems can be evaluated.
-次に，項目検索とランキングのための古典的なアルゴリズムパラダイムを概観し，そのようなシステムがどのように評価されるかを詳しく説明する．
+次に，項目検索とランキングのための古典的なアルゴリズムパラダイムを概観し，そのようなシステムがどのように評価されるかを詳しく説明する.
 Afterwards, we discuss a number of recent developments in recommender systems research, including research on session-based recommendation, biases in recommender systems, and questions regarding the impact and value of recommender systems in practice.
-その後、セッションベースの推薦に関する研究、推薦システムにおけるバイアス、および推薦システムの実際の影響と価値に関する疑問など、推薦システム研究における最近のいくつかの発展について議論する。
+その後、**session-based recommendation**(=sequential hogehoge~の話??)に関する研究、推薦システムにおけるバイアス、および推薦システムの実際の影響と価値に関する疑問など、推薦システム研究における最近のいくつかの発展について議論する.
 
 # 1. Basic Concepts 1. 基本コンセプト
 
@@ -481,20 +481,19 @@ where θ are the parameters of the recommendation model, and the loss $l(u,i, j
 A representative and effective example in this area is Bayesian Personalized Ranking (BPR) [Rendle et al. 2009], which has become a common reference and baseline in the literature. Ranking inconsistency in BPR is expressed and developed in terms of the probability that the scores predicted by the learned model θ rank pairs of items in contradiction to the training rating data: essentially, and omitting details, $l(u,i, j) = 1_{r(u,i)>r(u, j)}P(\text{j is ranked above i for u}
 θ)P(θ)$. The probability of ranking precedence is smoothed (for differentiability) as a logistic sigmoid of the ranking score difference.
 
-
-
 Many alternatives to such a scheme have been proposed on a similar principle.
 このようなスキームに対して、同様の原理で多くの代替案が提案されています。
 For instance, also in a pairwise approach, RankALS [Takacs and Tikk 2012] essentially takes $l(u,i, j) = ((r(u,i) − r(u, j))
 例えば、同じくペアワイズアプローチのRankALS [Takacs and Tikk 2012] は、基本的に$l(u,i,j) = ((r(u,i) - r(u,j)))
 − (q^t_i p_u − q^t_j p_u))^2$ as the core pairwise ordering error to be minimized, and alternating least squares instead of gradient descent as the minimization procedure.
+
 - (q^t_i p_u - q^t_j p_u))^2$ を最小化すべきペアワイズ順序誤差のコアとし、最小化手順として勾配降下の代わりに交互最小二乗法を採用しています。
-Other approaches introduce a target ranking evaluation metric—such as nDCG, Mean Average Precision (MAP) or Mean Reciprocal Rank (MRR)—in the objective function, i.e., the objective approximates how much is lost in the metric by a suboptimal item ordering.
-他のアプローチでは、nDCG、平均平均精度（MAP）、平均逆順位（MRR）などの目標順位評価指標を目的関数に導入し、すなわち、最適でない項目の順序付けによって指標内でどれだけ失われるかを目的関数で近似している。
-For instance, CLiMF [Shi et al. 2012] defines the objective function as a smooth lowerbound approximation of MRR.
-例えば，CLiMF [Shi et al. 2012]は，目的関数をMRRの滑らかな下界近似として定義している．
-These methods are referred to as listwise in the LTR literature [Liu 2009], because even though the loss function is still often evolved into pairwise form, it reflects a ranking goodness function (the target evaluation metric) rather than a metricagnostic item pair classification error in a binary order.
-これらの方法はLTRの文献[Liu 2009]ではリストワイズと呼ばれている．なぜなら，損失関数は依然としてペアワイズ形式に発展することが多いが，それは2値順のメトリックにとらわれない項目ペア分類誤差ではなく，ランキングの良さ関数（目標評価メトリック）を反映するからである．
+  Other approaches introduce a target ranking evaluation metric—such as nDCG, Mean Average Precision (MAP) or Mean Reciprocal Rank (MRR)—in the objective function, i.e., the objective approximates how much is lost in the metric by a suboptimal item ordering.
+  他のアプローチでは、nDCG、平均平均精度（MAP）、平均逆順位（MRR）などの目標順位評価指標を目的関数に導入し、すなわち、最適でない項目の順序付けによって指標内でどれだけ失われるかを目的関数で近似している。
+  For instance, CLiMF [Shi et al. 2012] defines the objective function as a smooth lowerbound approximation of MRR.
+  例えば，CLiMF [Shi et al. 2012]は，目的関数をMRRの滑らかな下界近似として定義している．
+  These methods are referred to as listwise in the LTR literature [Liu 2009], because even though the loss function is still often evolved into pairwise form, it reflects a ranking goodness function (the target evaluation metric) rather than a metricagnostic item pair classification error in a binary order.
+  これらの方法はLTRの文献[Liu 2009]ではリストワイズと呼ばれている．なぜなら，損失関数は依然としてペアワイズ形式に発展することが多いが，それは2値順のメトリックにとらわれない項目ペア分類誤差ではなく，ランキングの良さ関数（目標評価メトリック）を反映するからである．
 
 ### 1.3.5. Neural Recommendation 1.3.5. ニューラル・レコメンデーション
 
@@ -1124,7 +1123,9 @@ Long-tail novelty and unexpectedness can be quantified in different ways, which 
 ロングテールの新規性と意外性は様々な方法で定量化することが可能であり、次にその概要を説明します。
 
 ##### 1.4.5.1.1.
+
 ##### 1.4.5.1.1.
+
 Long-tail novelty.
 ロングテールの新しさ
 
@@ -1150,7 +1151,9 @@ When measured this way, novelty can be seen as a condition of coldness (lack of 
 このように測定すると、新規性は冷淡さ（データの欠如）あるいは不人気さの条件とみなすことができる。
 
 ##### 1.4.5.1.2.
+
 ##### 1.4.5.1.2.
+
 Unexpectedness.
 予期せぬ事態
 
@@ -1171,7 +1174,9 @@ When pairwise item distance is used, feature-based dissimilarity (measured e.g.,
 ペアワイズ項目距離が使用される場合、特徴ベースの非類似度（例えば、特徴ベクトル間のコサインまたはジャカール距離によって測定される。
 
 ##### 1.4.5.1.3.
+
 ##### 1.4.5.1.3.
+
 Serendipity.
 セレンディピティ
 
@@ -1183,7 +1188,9 @@ If we equate value, in this sense, to relevance, a straightforward way to measur
 この意味で価値を関連性と同一視すると、セレンディピティを測定する簡単な方法は、上記の新規性メトリックの計算を、ターゲットユーザーに関連する（利用可能なテストデータによる）推奨アイテムに限定し、残りを無視することです。
 
 ##### 1.4.5.1.4.
+
 ##### 1.4.5.1.4.
+
 Further notions.
 さらなる概念
 
@@ -1296,69 +1303,70 @@ The study revealed that serendipity plays a decisive role for user satisfaction 
 ## 2.1. Sequential and Session-based Recommendation 2.1. シーケンシャルレコメンデーションとセッションベースレコメンデーション
 
 The traditional problem formulation of recommender systems, as described in Section 1.2, is designed for making non-contextual item suggestions based on stable long-term user preferences.
-セクション 1.2 で述べたような従来のレコメンダーシステムの問題定式化は、長期的に安定したユーザーの嗜好に基づいて、非コンテクスト的なアイテム提案を行うように設計されている。
+セクション 1.2 で述べたような従来のレコメンダーシステムの問題定式化は、**長期的に安定したユーザーのpreferenceに基づいて**、**非context的な(i.e.文脈を考慮しない)アイテム提案**を行うように設計されている.
 Such an approach is for example meaningful to present landing-page recommendations to a frequent user of a media streaming site.
-このようなアプローチは、例えば、メディアストリーミングサイトを頻繁に利用するユーザーに対して、ランディングページの推薦を提示するのに有意義である。
+このようなアプローチは、例えば、メディアストリーミングサイトを頻繁に利用するユーザーに対して、ランディングページの推薦を提示するのに有意義である.
 However, there are many other important application scenarios where we cannot assume to have long-term preference information available.
-しかし、長期的な嗜好情報が利用可能であると仮定できない重要なアプリケーションシナリオは、他にも数多く存在します。
+しかし、**長期的な嗜好情報が利用可能であると仮定できない重要なアプリケーションシナリオ**は、他にも数多く存在する.
 Think, for example, of visitors of an e-commerce shop who are not logged in or who are first time users.
-例えば、Eコマースショップの訪問者で、ログインしていない人や初めて利用する人を考えてみましょう。
+例えば、Eコマースショップの訪問者で、ログインしていない人や初めて利用する人を考えてみよう.
 Moreover, on an e-commerce site, a user’s interests and needs might change from shopping session to shopping session.
-また、ECサイトでは、ユーザーの興味やニーズは、ショッピングセッションごとに変化する可能性があります。
+また、ECサイトでは、**ユーザーの興味やニーズは、ショッピングセッションごとに変化する可能性**がある.
 Therefore, even if we would know the identity of the user it is important to consider the user’s short-term history and current intents when we determine what we should recommend to the user next.
-そのため、たとえユーザーの身元がわかっても、短期的な履歴と現在の意思を考慮した上で、次に何を勧めるべきかを判断することが重要なのです。
+そのため、たとえユーザーの身元がわかっても、**短期的な履歴と現在の意思を考慮**した上で、次に何を勧めるべきかを判断することが重要なのである.
 
 ### 2.1.1. Problem Definition and Terminology 2.1.1. 問題の定義と用語
 
 These requirements, which cannot be easily addressed with the traditional matrix completion abstraction, led to the development of different types of sequence-aware recommender systems [Quadrana et al. 2018].
-従来の行列補完の抽象化では容易に対応できないこれらの要件から、様々なタイプのシーケンスを考慮したレコメンダーシステムが開発されました [Quadrana et al. 2018]。
+従来の行列補完の抽象化では容易に対応できないこれらの要件から、様々なタイプのsequenceを考慮したレコメンダーシステムが開発されました [Quadrana et al. 2018].
 Instead of a user-item rating matrix, the main input to this type of recommenders consists of a sequence of logged interactions.
-ユーザーアイテムの評価行列の代わりに、このタイプのレコメンダーへの主な入力は、ログに記録されたインタラクションのシーケンスで構成されています。
+ユーザアイテムの評価行列の代わりに、このタイプのレコメンダーへの主な入力は、**ログに記録されたinteractionのsequence(=系列データのイメージ?)**で構成されている.
 The entries of these logs are typically collected through the application, e.g., a web store, and they can have different types.
-これらのログのエントリは、典型的にはアプリケーション、例えばウェブショップを通じて収集され、それらは異なるタイプを持つことができる。
+これらのログのエントリは、典型的にはアプリケーション、例えばウェブショップを通じて収集され、それらは異なるタイプを持つことができる.
 A web shop might for example record item views, add-to-cart events, or purchases.
-例えば、ウェブショップでは、アイテムビュー、カートに入れるイベント、または購入が記録されるかもしれない。
+例えば、ウェブショップでは、アイテムビュー、カートに入れるイベント、または購入が記録されるかもしれない.
 Moreover, each log entry is usually associated with an individual user.
-さらに、各ログ・エントリーは、通常、個々のユーザーに関連付けられている。
+さらに、各ログ・エントリーは、通常、個々のユーザーに関連付けられている.(そりゃそう.)
 This can be a known user, who is logged in to the web shop, or an anonymous one which is only identified through a cookie or IP address.
-これは、ウェブショップにログインしている既知のユーザーであることもあれば、クッキーや IP アドレスを通してのみ識別される匿名のユーザーであることもあります。
+これは、ウェブショップにログインしている既知のユーザーであることもあれば、クッキーや IP アドレスを通してのみ識別される匿名のユーザーであることもある.(なるほど...確かに.匿名ユーザの場合はshort-termの嗜好しか考慮できない.)
 Finally, a last difference to the user-item rating matrix is that the interaction log may contain multiple user-item interaction pairs, for example, when the user viewed an item multiple times before a purchase.
-最後に、ユーザ-アイテム評価マトリックスとの違いは、例えば、ユーザが購入前にアイテムを複数回見た場合、インタラクションログは、複数のユーザ-アイテムインタラクションペアを含むことができるということである。
+最後に、ユーザ-アイテム評価マトリックスとの違いは、例えば、ユーザが購入前にアイテムを複数回見た場合、interaction logは、**同一のユーザ-アイテムinteraction pairを複数、ログに含むことができる**ということである.(一方でrating matrixの場合は、同一のuser-itemペアでログは一つ...!)
 In addition, a log entry may have additional types of meta-data attached such as a time stamp.
-さらに、ログにはタイムスタンプなどのメタデータが付加されている場合があります。
+さらに、ログにはタイムスタンプなどのメタデータが付加されている場合がある.
 Overall, while the inputs are different from the matrix-completion problem, the output of a sequence-aware recommender is usually a ranked list of items.
-全体として、入力は行列補完問題とは異なるが、シーケンスを考慮したレコメンダーの出力は通常、アイテムのランク付けされたリストである。
+全体として、入力は行列補完問題とは異なるが、sequenceを考慮したレコメンダーの出力は通常、アイテムのランク付けされたリストである.
 Figure 2.1 shows an overview of the problem setting.
-図 2.1 に問題設定の概要を示す。
+図 2.1 に問題設定の概要を示す.
 
 Within the family of sequence-aware recommender systems, two related terms can be identified in the literature: (i) sequential recommendation and (ii) session-based recommendation.
-順序を考慮した推薦システムには、(i) 順次推薦と (ii) セッションベース推薦という二つの関連する用語が存在する。
+**sequence-aware recommender systems** には、(i) **sequential recommendation** と (ii) **session-based recommendation** という2つの関連する用語が存在する.
 Sequential recommendation refers to the more general problem of making next-item recommendations.
-逐次推薦とは、次のアイテムを推薦するという、より一般的な問題である。
+sequential recommendationとは、"**次のアイテムを推薦する**"という、より一般的な問題である.
 A typical example is the problem of recommending the next Point-Of-Interest (POI) to a user in a tourism scenario or to recommend an entire next shopping basket in an ecommerce scenario.
-典型的な例としては、観光の場面で次のPOI（Point-Of-Interest）をユーザに推薦する問題や、eコマースの場面で次の買い物かご全体を推薦する問題がある。
+典型的な例としては、観光の場面で**次のPOI(Point-Of-Interest)**をユーザに推薦する問題や、eコマースの場面で次の買い物かご全体を推薦する問題がある.
 In session-based recommendation scenarios, the problem is also to make next-item predictions, but the underlying assumptions are that (a) the past interaction log is organized in usage sessions and that (b) recommendations are made in the context of an ongoing session.
-セッションベースの推薦シナリオでも、問題は次のアイテムを予測することであるが、その基礎となる仮定は、（a）過去のインタラクションログが使用セッションで整理されていること、（b）推薦が進行中のセッションのコンテキストで行われることである。
+session-based recommendationのシナリオでも、問題は"次のアイテムを予測すること"であるが、その基礎となる仮定は、（a）過去のinteraction logが使用セッション(usage session. ??)で整理されていること、（b）推薦が進行中のセッション(ongoing session = 短期的なセッション?)のcontextで行われることである.(sequential recommendationとどう違うんだろう...?)
 Another underlying assumption of session-based approaches typically is that the user’s interests and needs can change from session to session.
-セッションベースのアプローチのもう一つの基本的な前提は、一般的に、ユーザーの興味やニーズがセッションごとに変化しうるということである。
+session-basedのアプローチのもう一つの基本的な前提は、一般的に、"**ユーザーの興味やニーズがセッションごとに変化しうる**"ということである.
 Furthermore, in many practical problem settings, no long-term preference information is available at all for the current user, which means that the recommendations must be based on a small set of interactions—e.g., a few item view events—that are observed in an ongoing session.
-さらに、多くの実用的な問題設定において、現在のユーザーについて長期的な嗜好情報が全く利用できない。これは、推薦が、進行中のセッションで観察される小さな相互作用のセット、例えば、いくつかのアイテムビューイベントに基づく必要があることを意味する。
+さらに、多くの実用的な問題設定において、現在のユーザーについて**長期的な嗜好情報が全く利用できない**. これは、推薦が、進行中のセッションで観察される小さなinteractionのセット、例えば、いくつかのアイテムビューイベントに基づく必要があることを意味する.
+(sequential recommendationよりも、short-termなcontextを前提にしてる??)
 
 In the literature, two alternative situations are considered when recommendations have to be made in the context of an ongoing session.
-この文献では、進行中のセッションのコンテキストで推薦を行わなければならない場合、2つの代替的な状況が検討されている。
+この文献では、進行中のsessionのコンテキストで推薦を行わなければならない場合、**2つの代替的な状況**が検討されている.
 In one case, nothing is known about the current user but the interactions that are observed in the session.
-1つは、現在のユーザーについて、セッションで観察されるインタラクション以外、何も知らない場合である。
+1つは、現在のユーザーについて、**セッションで観察されるinteraction以外、何も知らない場合**である.(session-basedアプローチは、**IPアドレスやcookieのみでshort-termのinteraction logが得られるケース**??)
 In the other case, also information about past sessions of the same user is available.
-もう1つのケースでは、同じユーザーの過去のセッションに関する情報も利用可能である。
+もう1つは、同じユーザの過去のセッションに関する情報も利用可能なケース(session-basedは、short-termだけではないのか...).
 This second scenario is often referred to as personalized session-based recommendation or session-aware recommendation.
-この2つ目のシナリオは、個人向けセッションベース推薦またはセッション認識型推薦と呼ばれることが多い。
+この2つ目のシナリオは、**personalized session-based recommendation**または**session-aware recommendation**と呼ばれることが多い。
 Figure 2.2 visualizes the differences between (pure) session-based and session-aware recommendation problems.
-図2.2に、セッションベース推薦とセッションアウェア推薦の違いを示します。
+図2.2に、pureなsession-based recommendation(シナリオ1)と session-aware recommendation(シナリオ2)の違いを示す.
 
 ### 2.1.2. Algorithms for Sequential and Session-based Recommendation 2.1.2. 逐次推薦とセッションベースの推薦のためのアルゴリズム
 
 Various algorithmic approaches were explored for sequence-aware recommendation problems.
-シーケンスを考慮した推薦問題に対して、様々なアルゴリズム的アプローチが検討された。
+sequenceを考慮した推薦問題に対して、様々なアルゴリズム的アプローチが検討された.
 The following main types of technical approaches were identified in [Quadrana et al. 2018]: (i) Sequence Learning Approaches (ii) Sequence-Aware Matrix Factorization (iii) Hybrid Approaches, and (iv) Nearest Neighbors and Other Methods.
 Quadrana et al. 2018]では、技術的アプローチの主な種類として、（i）シーケンス学習アプローチ（ii）シーケンスを考慮した行列因子分解（iii）ハイブリッドアプローチ、および（iv）最近傍と他の方法、が挙げられた。
 
@@ -1441,6 +1449,7 @@ Such an entirely randomized approach is not meaningful for sequence-aware recomm
 このような完全にランダム化されたアプローチはシーケンスを考慮した推薦問題では意味がなく、別の手順を適用する必要がある。
 
 ##### Data Splitting.
+
 ##### データ分割
 
 When splitting the data into training, validation, and test data sets, the sequential order must be considered, and the held-out interactions to be predicted must happen after those that are used for training.
@@ -1455,6 +1464,7 @@ The following are relatively common.
 - In session-based scenarios, it is, in contrast, more common to apply a time-based split. Commonly, research datasets cover an extended period of time, e.g., a few weeks. Often, the sessions of the very last or the last few days are used for testing (and one or more preceding days for validation). 一方、セッションベースのシナリオでは、時間ベースの分割を適用することがより一般的です。 一般に、研究データセットは、数週間といった長期間をカバーする。 多くの場合、直近または数日前のセッションがテストに使用される（そして、1日以上前のセッションが検証に使用される）。
 
 ##### Making the Measurement.
+
 ##### 測定を行う。
 
 In sequential recommendation problems, when the last interaction of each user is hidden, the making the measurement amounts to determining if and at which position an algorithm was ranking the hidden interaction within a top-n list.
@@ -1494,6 +1504,7 @@ In reality, however, it might be much more important to predict item purchases, 
 しかし、現実には商品購入を予測することの方がはるかに重要であり、学習と予測プロセスにおいて利用可能なすべてのタイプのインタラクションを使用する必要があるかもしれない。
 
 ##### Cross-Validation.
+
 ##### クロスバリデーション
 
 Given the sequential nature of the data, performing cross-validation based on random splits is not meaningful.

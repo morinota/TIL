@@ -415,7 +415,7 @@ In the literature, two alternative situations are considered when recommendation
 
 Various algorithmic approaches were explored for sequence-aware recommendation problems. The following main types of technical approaches were identified in [Quadrana et al. 2018]: (i) Sequence Learning Approaches (ii) Sequence-Aware Matrix Factorization (iii) Hybrid Approaches, and (iv) Nearest Neighbors and Other Methods.
 
-#### Sequence Learning Approaches.
+#### 2.1.2.1. Sequence Learning Approaches.
 
 Approaches in this category can be subdivided into several main paradigms.
 
@@ -424,15 +424,15 @@ Approaches in this category can be subdivided into several main paradigms.
 - Distributed Item Representations are another form of encoding sequential information. These representations (embeddings) are projections from sequences of item-related events (e.g., views) into a lower-dimensional representation in which the transition between items is preserved.
 - Supervised Learning with Sliding Windows, finally, is a rather specific approach, where the idea is to reframe the next-item prediction problem to a supervised learning problem by moving a sliding window over the sequence of events and to derive the corresponding feature values from this sliding window to predict the next event.
 
-#### Sequence-Aware Matrix Factorization.
+#### 2.1.2.2. Sequence-Aware Matrix Factorization.
 
 A few examples exist in the literature that extend matrix factorization approaches to consider sequential information, usually derived from timestamps that are available for the entries in the user-item rating matrix. These approaches are conceptually related to time-aware recommender systems [Campos et al. 2014], which aim to identify changes in user preferences over larger time spans.
 
-#### Hybrid Approaches.
+#### 2.1.2.3. Hybrid Approaches.
 
 A more common approach in the literature is to combine sequence modeling with the power of latent factor models. One of the earlier approaches of that type is the Factorized Personalized Markov Chain (FPMC) method [Rendle et al. 2010]. This method jointly factorizes a first-order Markov Chain, which models user-specific item transitions, and a traditional user-item rating matrix to make next-item predictions. Similar approaches were proposed later on, e.g., in [He and McAuley 2016]. More recently, methods that combine neural techniques (e.g., RNNs, Convolutional Neural Networks, or Attention) with matrix factorization layers, have become more popular, e.g., [Kang and McAuley 2018, Tang and Wang 2018].
 
-#### Nearest-Neighbors and Other Methods.
+#### 2.1.2.4. Nearest-Neighbors and Other Methods.
 
 In particular in the context of session-based recommendation, a simple yet effective method is often to apply neighborhood-based techniques. In [Jannach and Ludewig 2017] and subsequent works, the idea was explored to use those past sessions in the data as a basis for predicting the next event, which are most similar to the ongoing one. Despite the conceptual simplicity of the approach, it turned out to be competitive or even superior to much more complex models. Finally, a number of alternative proposals were identified in [Quadrana et al. 2018], including methods that rely on (non-neural) graphbased models or techniques from discrete optimization, where the latter class of problems may however suffer from scalability problems given the usually high number of recommendable items.
 
@@ -453,14 +453,14 @@ Remember from above that the output of a sequence-aware recommender system as us
 
 In evaluations of traditional matrix completion problem settings, the selection of the hidden elements (i.e. the test set) is often done in a randomized way, e.g., by randomly selecting 20 % of the data for testing. Moreover, cross-validation is in many cases applied to increase the confidence in the observed results. Such an entirely randomized approach is not meaningful for sequence-aware recommendation problems, and alternative procedures have to be applied.
 
-##### Data Splitting.
+##### 2.1.3.1.1. Data Splitting.
 
 When splitting the data into training, validation, and test data sets, the sequential order must be considered, and the held-out interactions to be predicted must happen after those that are used for training. Different strategies are possible in the data splitting process. The following are relatively common.
 
 - In sequential problem settings, often the splitting of the data is done per user. Commonly, the very last interaction of each user is hidden and put in the test set.1
 - In session-based scenarios, it is, in contrast, more common to apply a time-based split. Commonly, research datasets cover an extended period of time, e.g., a few weeks. Often, the sessions of the very last or the last few days are used for testing (and one or more preceding days for validation).
 
-##### Making the Measurement.
+##### 2.1.3.1.2. Making the Measurement.
 
 In sequential recommendation problems, when the last interaction of each user is hidden, the making the measurement amounts to determining if and at which position an algorithm was ranking the hidden interaction within a top-n list. Common evaluation measures therefore include the Hit Rate, the NDCG or the MRR at a certain cut-off length.
 
@@ -470,7 +470,7 @@ Note that like in traditional recommendation scenarios, quality factors other th
 
 Generally, observe that while we hide interactions in the data, we are usually making predictions for items. In case there is only one type of interactions in the logs, e.g., listening events on a music streaming site, an item prediction corresponds to predicting a listening event. However, real-world datasets often consist of interactions of different types, e.g., item views, add-to-cart actions, or purchases on an e-commerce site. In many academic research works, only the most frequent type of interactions is considered, for example item views. In reality, however, it might be much more important to predict item purchases, and to use all available types of interactions in the training and prediction process.
 
-##### Cross-Validation.
+##### 2.1.3.1.3. Cross-Validation.
 
 Given the sequential nature of the data, performing cross-validation based on random splits is not meaningful. In the literature, often only one single train-test split is applied, which, however, bears a certain risk that the obtained results are specific to that split. An alternative approach therefore is to create multiple overlapping or non-overlapping timebased splits of the data, and to repeat the measurement on these splits, see [Ludewig et al. 2021].
 
@@ -611,16 +611,16 @@ In this paper, we largely focused on algorithmic aspects of recommender systems,
 
 In the same handbook, a variety of other timely research topics in recommender systems are discussed, which were not considered here, including the recent algorithmic developments, context-awareness, attacks on recommender systems, privacy aspects, or human factors in the evaluation process. In the remainder of this paper, we would like to discuss a small set of additional promising topics of which we believe that they require more research in the future.
 
-#### Conversational Recommender Systems.
+#### 2.4.2.1. Conversational Recommender Systems.
 
 Most of today’s online recommender system have a rather simple user interaction model. At defined places in the application, the system presents users with recommendations, and often the only available user action is to inspect or accept these recommendations.5 With the recent developments in natural language processing, the current progress in machine learning in general, and the increased spread of voice-enabled devices, more interactive forms of information retrieval and recommendation [Radlinski and Craswell 2017] have received renewed interest in recent years. One vision of such conversational recommender systems (CRS) is that they are able to act like a human and engage in a “natural” conversation with their users, see [Jannach et al. 2021] for a survey. Correspondingly, such future systems will be able to support a variety of user intents [Cai and Chen 2019], thus supporting interactive preference elicitation and revision, explanation, and also chit-chat. While historically such CRS were often built based on engineered knowledge, e.g., about possible dialog states, many of today’s approaches also consider “end-to-end learning” as their main approach, where a machine learning model is trained on larger collections of dialogues between humans. Considerable progress was made in that context in recent years. Still, pure learning-based approaches still have their limitations, and it is expected that future CRS will be often based on a mix of explicit domain and inference knowledge and of learning components.
 
-#### Fairness in Recommender Systems.
+#### 2.4.2.2. Fairness in Recommender Systems.
 
 Fairness and ethical concerns have grown around the exponential development of artificial intelligence and technology, permeating and transforming all realms of modern societies—and recommendation technologies are no exception to these matters. Recommendation functionalities can determine the success of a music artist on Spotify, a seller on Amazon, a job candidate or a recruiter through LinkedIn, a research author on Google Scholar, a hotel owner on Booking.com, an Internet celebrity on YouTube, Instagram or TikTok, a political party or a world view or a value system through online news and online media. As mediators between providers and consumers, recommender systems, willingly or not, get laded with a burden of responsibility they can hardly let go of.
 
 Fairness, and more generally, responsible AI, has indeed become a pressing issue in recommender systems research that finds reflection in the recent research literature [Mehrotra et al. 2018a], keynote talks [Baeza-Yates 2020], new dedicated research outlets [Elish et al. 2021], and public debate. Metrics are being proposed to measure fairness, and algorithms and enhancements are being researched to avoid unfair treatment of groups [Yao and Huang 2017], minorities or individuals, as both providers and consumers of recommended choices [Patro et al. 2020]. A first realization with the onset of this new research area is the complexity of fairness as a concept and the difficulty of achieving universal solutions. Studies are unanimous in stressing the importance of bias awareness and understanding as a key step (and possibly a considerable part of the solution) to prevent or mitigate unfairness. An ample strand of reflection and research efforts can be expected to continue in the times to come.
 
-#### Offline / Online Misalignment in Evaluation.
+#### 2.4.2.3. Offline / Online Misalignment in Evaluation.
 
 As mentioned in Section 1.4.1, offline evaluation results are often weakly aligned with the outcomes of online A/B testing [Garcin et al. 2014, Gomez-Uribe and Hunt 2015, Jannach and Jugovac 2019]. Known causes may partially account for this, such as a metric mismatch, bias in the offline data, or interference from external components when the evaluated techniques are integrated in complex, multistep recommendation pipelines usually involved in industrial-scale applications [Amatriain and Basilico 2015]. But a more complete explanation seems not to have been reached, and the problem may not have been fully understood yet. Important efforts are being made in this direction from different angles, as discussed in earlier sections [Gilotte et al. 2018, Jannach and Bauer 2020]. Improvements in bringing offline evaluation closer to a measure of the final effect of recommendation would have a great positive impact in the future development of recommendation technologies.
