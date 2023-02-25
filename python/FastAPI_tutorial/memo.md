@@ -463,7 +463,7 @@ async def update_item(item_id: int, item: Item = Body(embed=True)): # ここ
     return results
 ```
 
-### 4.4. request body parameterの各要素に対して、`pydantic.Field`で設定をdeclareする.
+### 4.3.2. request body parameterの各要素に対して、`pydantic.Field`で設定をdeclareする.
 
 `pydantic.Field`では、`pydantic.BaseModel`の各field(=**request body parameterの各要素!**)に対して追加のvalidationやmetadataをdeclareできる.
 そして、それは生成されたJSONスキーマ(=API document?)に含まれることになる.
@@ -478,7 +478,7 @@ class Item(BaseModel):
     tax: Union[float, None] = None
 ```
 
-### request body parameterのnested化
+### 4.3.3. request body parameterのnested化
 
 FastAPI を使用すると、任意に深くネストされたモデル(=request body parameter)をdeclare、validation、documentation、使用できる.
 
@@ -520,7 +520,7 @@ async def update_item(item_id: int, item: Item):
 }
 ```
 
-### `List[submodel]`をrequest body parameterのfieldとして期待するケース
+### 4.3.4. `List[submodel]`をrequest body parameterのfieldとして期待するケース
 
 Pydanticモデルをリストやセットなどのサブタイプとして使用することもできる.
 
@@ -561,16 +561,637 @@ class Item(BaseModel):
 }
 ```
 
-# 特殊なdata typeとvalidationについて
+## 4.4. Request BodyのExample data をdeclareする
+
+アプリが受け取ることができるデータ(request body)の例をdeclareできる.
+
+ここではいくつかの方法を紹介する.
+
+### 4.4.1. pydanticの`schema_extra`を用いる方法
+
+request body parameterのBaseModelクラスの中に、`schema_extra`fieldを持つ`Config`を定義する事でExample dataをdeclareできる.
+そのモデルの出力JSON Schemaにそのまま追加され、APIドキュメントで使用される.
+`schema_extra` fieldに`example`以外のメタデータを追加する事もできる.
+
+```python
+class Item(BaseModel):
+    name: str
+    description: Union[str, None] = None
+    price: float
+    tax: Union[float, None] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "Foo",
+                "description": "A very nice Item",
+                "price": 35.4,
+                "tax": 3.2,
+            }
+        }
+```
+
+### 4.4.2. `pydantic.Field`のaddtional arguments(=\*argの引数?)を用いる方法
+
+Pydanticモデルで`Field()`を使用する場合、他の任意の引数を渡すことで、JSON Schemaのための特別な情報をdeclareできる.
+これを利用して、request body parameterの各fieldのexampleを追加できる.
+(additional argumentsは何のvalidationも行わず、API ducumentation のための追加情報としての利用される.)
+
+```python
+class Item(BaseModel):
+    name: str = Field(example="Foo")
+    description: Union[str, None] = Field(default=None, example="A very nice Item")
+    price: float = Field(example=35.4)
+    tax: Union[float, None] = Field(default=None, example=3.2)
+```
+
+### 4.4.3. OpenAPI(=FastAPI?)の`example`や`examples`を用いる方法
+
+Path, Query, Body等のFastAPIのdeclare用クラスを使っている場合、OpenAPI(=API doc??)に追加されるdata `example` や `examples` をdeclareすることもできる.
+以下では`Body()`で期待されるdata `example`をdeclareしている.
+
+```python
+class Item(BaseModel):
+    name: str
+    description: Union[str, None] = None
+    price: float
+    tax: Union[float, None] = None
+
+
+@app.put("/items/{item_id}")
+async def update_item(
+    item_id: int,
+    item: Item = Body(
+        example={
+            "name": "Foo",
+            "description": "A very nice Item",
+            "price": 35.4,
+            "tax": 3.2,
+        },
+    ),
+):
+    results = {"item_id": item_id, "item": item}
+    return results
+```
+
+### 4.4.4. Example in the docs UI
+
+上記のいずれの方法でも、docs UI(`/docs`)には以下のように表示される.
+
+![](https://fastapi.tiangolo.com/img/tutorial/body-fields/image01.png)
+
+### 4.4.5. 単一の`example`ではなく、複数の`examples`をdeclareする.
+
+単一のexampleではなく、複数のexampleを持つdictを使用して`examples`をdeclareする事もできる.
+dict のkeyがそれぞれのexampleを特定し、それぞれのvalueが別の dict となる.
+
+`examples` の中のそれぞれの具体的な`example`の dict には、以下のものを含めることができる.
+
+- `summary`: 例に対する短い説明.
+- `description`: Markdownテキストを含むことができる長い説明.
+- `value`: これは示された実際のexample. 例えば、dict.
+- `externalValue`: valueの代わりとなるもので、例を指すURL. これはvalueとは異なり、多くのツールでサポートされていないかもしれない.
+
+```python
+@app.put("/items/{item_id}")
+async def update_item(
+    *,
+    item_id: int,
+    item: Item = Body(
+        examples={ # 複数のexamplesをdeclare
+            "normal": {
+                "summary": "A normal example",
+                "description": "A **normal** item works correctly.",
+                "value": {
+                    "name": "Foo",
+                    "description": "A very nice Item",
+                    "price": 35.4,
+                    "tax": 3.2,
+                },
+            },
+            "converted": {
+                "summary": "An example with converted data",
+                "description": "FastAPI can convert price `strings` to actual `numbers` automatically",
+                "value": {
+                    "name": "Bar",
+                    "price": "35.4",
+                },
+            },
+            "invalid": { # 良くないexampleも含める事ができる.
+                "summary": "Invalid data is rejected with an error",
+                "value": {
+                    "name": "Baz",
+                    "price": "thirty five point four",
+                },
+            },
+        },
+    ),
+):
+    results = {"item_id": item_id, "item": item}
+    return results
+```
+
+# 5. Extra Data Types
+
+## 5.1. 特殊なdata typeとvalidationについて
 
 str、int、float などの通常の単数型とは別に str を継承した、より複雑な**singular data types**を使用できる.
 
 どのようなsingular data typesがあるかは、Pydanticの**exotic types**に関するドキュメントを参照してください. いくつかの例をあげる.
 
-## `pydantic.HttpUrl`
+## 5.2. `pydantic.HttpUrl`
 
 ```python
 class Image(BaseModel):
     url: HttpUrl
     name: str
+```
+
+## 5.3. Other data types
+
+- `UUID`:
+- `datetime.datetime`
+- `datetime.date`
+- `datetime.time`
+- `datetime.timedelta`
+- `frozenset`:
+  - In requests and responses, treated the same as a `set`:
+    - request時にはlistを読み込みsetに変換する.
+    - response時には、setをlistにconvertする.
+    - 生成されたschema(=API doc?)には、set扱いになる.
+- `bytes`:
+  - Pythonの標準的なバイト.
+  - リクエストとレスポンスではstrとして扱われる.
+  - リクエストとレスポンスではstrとして扱われる.
+- `Decimal`:
+  - Pythonの標準的な10進数。
+  - リクエストやレスポンスにおいて、floatと同じように扱われる.
+
+以下に、上記のextra data typeのいくつかを使ったparameter群によるpath operation functionの例を示す.
+
+```python
+@app.put("/items/{item_id}")
+async def read_items(
+    item_id: UUID,
+    start_datetime: Union[datetime, None] = Body(default=None),
+    end_datetime: Union[datetime, None] = Body(default=None),
+    repeat_at: Union[time, None] = Body(default=None),
+    process_after: Union[timedelta, None] = Body(default=None),
+):
+    start_process = start_datetime + process_after
+    duration = end_datetime - start_process
+    return {
+        "item_id": item_id,
+        "start_datetime": start_datetime,
+        "end_datetime": end_datetime,
+        "repeat_at": repeat_at,
+        "process_after": process_after,
+        "start_process": start_process,
+        "duration": duration,
+    }
+```
+
+# 6. Cookie parameter
+
+cookie parameter は、query paremter やpath parameterと同じ方法でdeclareできる.
+`fastapi.Cookie`を用いて、cookie parameterの設定をdeclare & validation できる.
+(cookie parameterをdeclareするには、`Cookie`を使う必要がある. なぜなら、**そうしないと定義したparameterがquery parameterとして解釈されてしまう**...!)
+
+```python
+@app.get("/items/")
+async def read_items(ads_id: Union[str, None] = Cookie(default=None)):
+    return {"ads_id": ads_id}
+```
+
+# 7. Header parameter
+
+header parameterは, query parameterやpath parameterと同じ方法でdeclareできる.
+`fastapi.Header`を用いて、 header parameterの設定をdeclare & validation できる.
+(header parameterをdeclareするには、`Header`を使う必要がある. なぜなら、**そうしないと定義したparameterがquery parameterとして解釈されてしまう**...!)
+
+```python
+@app.get("/items/")
+async def read_items(user_agent: Union[str, None] = Header(default=None)):
+    return {"User-Agent": user_agent}
+```
+
+## 7.1. auto translate
+
+`Header`は`Path`や`Query`、`Cookie`が提供する機能に加え、少しだけ追加の機能を持っている.
+
+ほとんどの標準ヘッダーは、「マイナス記号」（-）としても知られる「ハイフン」で区切られている.
+しかし`user-agent`のような変数名はPythonでは無効.
+そのため、defaultでは`Header`は header parameterの文字をアンダースコア`_`からハイフン`-`に変換して、headerを探索してparameterを抽出する.
+
+またHTTP headerは大文字小文字を区別しない為、header parameter名はスネークケースでdeclareできる.
+
+## 7.2. headerの重複
+
+受信したヘッダーが重複することがあります。つまり、同じヘッダーで複数の値を持つということ.
+これらの場合、リストの型宣言を使用してdeclareできる.
+
+重複したheaderのすべての値を、header parameterではPythonのlistとして受け取れる.
+
+```python
+@app.get("/items/")
+async def read_items(x_token: Union[List[str], None] = Header(default=None)):
+    return {"X-Token values": x_token}
+```
+
+上のpath operation functionは、以下のように2つのHTTP headerを期待している.
+
+```
+X-Token: foo
+X-Token: bar
+```
+
+# 8. Responsce Modelの設定をdeclareする.
+
+## 8.1. path operation functionの返り値のtype hintを用いる方法
+
+path operation functionの返り値のtype hintをつける事で、responseのdata typeをdeclareできる.
+
+FastAPIでは、返り値のtype hintを用いて以下の事ができる.
+
+- responseのvalidation
+  - データがinvalidな場合、app codeが壊れている事を意味し、**invalidなデータではなくserver errorを返す**.(type hintではなく、きちんとtype annotationとして機能するのか...!)
+- responceの為のjson schemaを OpenAPI path operation(=automaticで生成されるdocumentの事)に追加してくれる.
+
+最も重要なのは、responce dataを返り値のtypeで定義されているものにlimit & filter処理をする. = security的に特に重要...!
+
+## 8.2. response model parameter
+
+また、path operation functionのに付与している**decorator**の`response_model`引数に指定する事ができる...!
+(notice that... `response_model`引数はdecoratorメソッドのparameter! path operator functionのparameterではない!)
+(`response_model`引数でresponce modelの設定をdeclareする場合は、path operator functionの返り値のtype hintを`Any`としておくと良い.=曖昧にしとく?)
+
+```python
+@app.post("/items/", response_model=Item)
+async def create_item(item: Item) -> Any:
+    return item
+
+@app.get("/items/", response_model=List[Item])
+async def read_items() -> Any:
+    return [
+        {"name": "Portal Gun", "price": 42.0},
+        {"name": "Plumbus", "price": 32.0},
+    ]
+```
+
+### 8.2.1. response model の priority
+
+"path operation funcitonの返り値のtype hint"と"decoratorの`response_model`引数"の両方でdeclareしたケースでは、FastAPIは後者のdeclareを優先する.
+
+`response_model=None`を指定して、そのpath operation の response modelの作成を無効にすることも可能.
+
+## 8.3. input dataをそのままresponseとして(ただ秘匿情報のみ隠して)返したい場合
+
+ここでは `UserIn` モデルをdeclareしている. これにはプレーンテキストのパスワードが含まれる.
+
+```python
+class UserIn(BaseModel):
+    username: str
+    password: str
+    email: EmailStr
+    full_name: Union[str, None] = None
+
+
+# Don't do this in production!
+@app.post("/user/")
+async def create_user(user: UserIn) -> UserIn:
+    return user
+```
+
+password が response modelとして返されてしまうのがかなり危険.
+
+この場合、秘匿性の高い情報(field)を取り除いたoutput modelを別途、declareすれば良い.
+
+```python
+class UserIn(BaseModel):
+    username: str
+    password: str
+    email: EmailStr
+    full_name: Union[str, None] = None
+
+
+class UserOut(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: Union[str, None] = None
+
+
+@app.post("/user/", response_model=UserOut)
+async def create_user(user: UserIn) -> Any:
+    return user
+```
+
+ここでは path operation functionが、passwordを含む入力値と同じ`user`を返しているが、`response_model`にdeclareしている`UserOut`modelには`password`fieldが含まれていない為、pydanticは`user`を`UserOut`に変換してresponseを返してくれる...!
+(**FastAPI はpydanticによって、response model でdeclare されていないすべてのデータを除外してくれる**...!!)
+
+### 8.3.1. どちらを使うべき?: `response_model` or 返り値のtype hint
+
+上のケースでは、"返り値のtype hint"を用いた場合、editorやtoolはinvalidだと怒ってしまう.
+＝＞このようなdata filtering が必要なケースでは、`response_model`がbetter.
+
+### 8.3.2. "返り値のtype hint"でも、data filteringを行いたい.
+
+Abstract Base Class 等のクラスのinheritance(継承)を適用する事で、type hintを用いる方法でも data filteringが可能.
+
+```python
+class BaseUser(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: Union[str, None] = None
+
+
+class UserIn(BaseUser):
+    password: str
+
+
+@app.post("/user/")
+async def create_user(user: UserIn) -> BaseUser:
+    return user
+```
+
+## 8.4. 他の "path operation functionの返り値のtype annotation"
+
+### 8.4.1. `faspapi.Response`クラスを直接用いる.
+
+最も単純なケース.
+
+```python
+from fastapi import FastAPI, Response
+from fastapi.responses import JSONResponse, RedirectResponse
+
+app = FastAPI()
+
+
+@app.get("/portal")
+async def get_portal(teleport: bool = False) -> Response:
+    if teleport:
+        return RedirectResponse(url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    return JSONResponse(content={"message": "Here's your interdimensional portal."})
+```
+
+### 8.4.2. `faspapi.Response`のサブクラス(子クラス)を用いる.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
+
+app = FastAPI()
+
+
+@app.get("/teleport")
+async def get_teleport() -> RedirectResponse:
+    return RedirectResponse(url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+```
+
+## 8.5. Invalid Return Type Annotations
+
+ただし、有効な Pydantic 型ではない他の任意のオブジェクト (database オブジェクトなど)を返し、関数でそのようにannotationを付けると、FastAPI はその type annotation から Pydantic response model を作成しようとし、失敗する.
+
+1 つ以上の型が有効な Pydantic 型ではない異なる型間の結合のようなものがある場合、同じことが起こる. たとえば、これは失敗する.
+-> type annotationが Responseと dictのUnion(2つのうちのどちらか)の為...(??)
+-> FastAPIによって自動生成されるOpenAPI docが壊れるから??
+
+```python
+@app.get("/portal")
+async def get_portal(teleport: bool = False) -> Union[Response, dict]:
+    if teleport:
+        return RedirectResponse(url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    return {"message": "Here's your interdimensional portal."}
+```
+
+この場合、`response_model=None`をdeclareする事で、response modelの生成をskipできる. これにより FastAPI アプリケーションに影響を与えることなく、必要な返り値のtype annotationを付与できる.
+
+## 8.6. `response_model_exclude_unset`parameterの使用
+
+`response_model_exclude_unset=True`をdeclareすると、response modelの生成時に適用されたdefalut値が、respose modelから除外される.
+(response model生成時にsetされてないfieldが、responseから除外される.)
+
+他にも、`app.decorator()`method には以下のようなparameterがある.
+
+- `response_model_exclude_defaults=True`
+- `response_model_exclude_none=True`
+
+## 8.7. `response_model_include`引数 と `response_model_exclude`引数
+
+```python
+@app.get(
+    "/items/{item_id}/name",
+    response_model=Item,
+    response_model_include={"name", "description"}, # equal to set(["name", "description"])
+)
+async def read_item_name(item_id: str):
+    return items[item_id]
+```
+
+# 9. Extra Models(ケーススタディ)
+
+appの作成では、複数の関連したmodel(request model や response model...)があるのが一般的.
+
+これは特に User モデルの場合に当てはまる.
+
+- input model は plaintext password を持つことができる必要がある.
+- output model にはパスワードを設定してはいけない.
+- database model には、おそらく**password hash** が必要.
+  - ユーザのplaintext passwordを保存してはいけない.
+  - 後で検証できる"secure hash"を常に保存すべき.
+
+```python
+class UserIn(BaseModel):
+    username: str
+    password: str
+    email: EmailStr
+    full_name: Union[str, None] = None
+
+
+class UserOut(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: Union[str, None] = None
+
+
+class UserInDB(BaseModel):
+    username: str
+    hashed_password: str
+    email: EmailStr
+    full_name: Union[str, None] = None
+
+
+def fake_password_hasher(raw_password: str) -> str:
+    return "supersecret" + raw_password
+
+
+def fake_save_user(user_in: UserIn) -> UserInDB:
+    hashed_password = fake_password_hasher(user_in.password)
+    user_in_db = UserInDB(**user_in.dict(), hashed_password=hashed_password)
+    print("User saved! ..not really")
+    return user_in_db
+
+
+@app.post("/user/", response_model=UserOut)
+async def create_user(user_in: UserIn) -> Any:
+    user_saved = fake_save_user(user_in)
+    return user_saved
+```
+
+## 9.1. Unwrapping a dict(単にpythonのSyntaxの話ですが...)
+
+dictを functionやclassの引数として`**dict`で渡す場合、Pythonは**unwrap**する.
+i.e. dictの各itemが、functionのkey-value argumentとして渡される.
+
+```python
+user_in = UserIn(username="john", password="secret", email="john.doe@example.com")
+user_dict = user_in.dict()
+UserInDB(**user_dict)
+```
+
+unwapしたdictに加えて、extra keywordsもargumentとして渡す事ができる.
+
+```python
+UserInDB(**user_in.dict(), hashed_password=hashed_password)
+```
+
+## 9.2. duplication(重複)を減らす
+
+コードのduplicationを減らすことは、FastAPI の中心的なアイデアの 1つ.
+
+コードのduplicationにより、**バグ、セキュリティの問題、コードのdesynchronization(非同期化)の問題(ある場所ではコードを更新しても他の場所では更新しないケース, なるほど...!)**などの可能性が高くなる.
+
+これらのモデル(UserHogehoge)はすべて多くのデータを共有し、field の名前と型を複製している.
+もっとうまくできるはずだ...!
+
+他のモデルのベースとして機能する `UserBase` モデルをdeclareする.
+そして、そのfield(type annotation、validationなど) を継承するそのモデルのサブクラスを作成するようにしてみよう.
+(すべての data translation、validation、documentationなどはリファクタ前と同じように機能する.)
+
+そうすれば子クラスでは、モデル間の違いだけをdeclareできる (plaintext passwordあり、hashed_password あり、パスワードなし):
+
+```python
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: Union[str, None] = None
+
+
+class UserIn(UserBase):
+    password: str
+
+
+class UserOut(UserBase):
+    pass
+
+
+class UserInDB(UserBase):
+    hashed_password: str
+```
+
+## 9.3. `Union`を使う例(OpenAPIでは`anyOf`としてdocumentationされる.)
+
+```python
+class BaseItem(BaseModel):
+    description: str
+    type: str
+
+
+class CarItem(BaseItem):
+    type = "car"
+
+
+class PlaneItem(BaseItem):
+    type = "plane"
+    size: int
+
+
+items = {
+    "item1": {"description": "All my friends drive a low rider", "type": "car"},
+    "item2": {
+        "description": "Music is my aeroplane, it's my aeroplane",
+        "type": "plane",
+        "size": 5,
+    },
+}
+
+
+@app.get("/items/{item_id}", response_model=Union[PlaneItem, CarItem])
+async def read_item(item_id: str):
+    return items[item_id]
+```
+
+## 9.4. Response として BaseModelのListを採用する例
+
+responseを何らかのObjectのListとしてdeclareするケースを考える.
+
+```python
+class Item(BaseModel):
+    name: str
+    description: str
+
+
+items = [
+    {"name": "Foo", "description": "There comes my hero"},
+    {"name": "Red", "description": "It's my aeroplane"},
+]
+
+
+@app.get("/items/", response_model=List[Item])
+async def read_items():
+    return items
+```
+
+## 9.5. Response として Dictを採用する例
+
+```python
+@app.get("/keyword-weights/", response_model=Dict[str, float])
+async def read_keyword_weights():
+    return {"foo": 2.3, "bar": 3.4}
+```
+
+# 10. Response Status Code
+
+Response model を declareできるのと同じ方法で、decoratorの`status_code` parameterを使用して、path operation の response に使用される **HTTP status code**をdeclareできる.
+
+```python
+@app.post("/items/", status_code=201)
+async def create_item(name: str):
+    return {"name": name}
+```
+
+## HTTP status codeに関して
+
+HTTP では、responseの一部として 3 digit の数値 status codeを送信する.
+
+これらのstatus code には、それらを認識するための名前が関連付けられていますが、重要な部分は番号である.
+
+要するに：
+
+- 100 and above are for "**Information**":
+  - それらを直接使用する事はめったにない.
+  - これらのstatus codeを含むresponseにbody(本文)を含める事はできない.
+- 200 and above are for "**Successful**" responses:
+  - これらは、最もよく使用するもの.
+  - 200 is the default status code, which means everything was "OK".
+  - Another example would be 201, "Created(作成済み)". databaseに新しいrecordを作成した後によく使用される.
+  - A special case is 204, "No Content". このresponseは、clientに返すcontentがない場合に使用されるため、responseにbodyを含める事はできない.
+- 300 and above are for "**Redirection(リダイレクト)**".
+  - bodyがある場合とない場合がある.
+  - 304(Not Modified)は必ずbodyを持たない.
+- 400 and above are for "**Client error**" responses.
+  - これらは、おそらく最もよく使用する2番目のstatus code.
+  - 404: for a "Not Found" response.
+  - clientからの一般的なエラーの場合は、400 を使用できる.
+- 500 and above are for **server errors**.
+  - それらを直接使用することはほとんどない.
+  - application code または server のどこかで問題が発生すると、これらの status code のいずれかが**自動的に(!)**返される.
+
+## Shortcut to remember the names(& status code)
+
+`fastapi.status.`を使うと良い.
+
+```python
+@app.post("/items/", status_code=fastapi.status.HTTP_201_CREATED)
+async def create_item(name: str):
+    return {"name": name}
 ```
