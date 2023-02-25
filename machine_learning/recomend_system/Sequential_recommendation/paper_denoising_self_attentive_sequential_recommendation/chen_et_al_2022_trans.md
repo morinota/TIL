@@ -12,9 +12,9 @@ Denoising Self-Attentive Sequential Recommendation
 ## 0.3. abstract 0.3. 抽象的
 
 Transformer-based sequential recommenders are very powerful for capturing both short-term and long-term sequential item dependencies.
-トランスフォーマーに基づく逐次推薦器は、短期的および長期的な逐次項目の依存関係を捉えるのに非常に強力である。
+トランスフォーマーに基づく逐次推薦器は、短期的および長期的な逐次項目の依存関係を捉えるのに非常に強力である.
 This is mainly attributed to their unique self-attention networks to exploit pairwise item-item interactions within the sequence.
-これは主に、シーケンス内のペアワイズアイテム-アイテム相互作用を利用するための、独自の自己注意ネットワークに起因している。
+これは主に、シーケンス内のペアワイズアイテム-アイテム相互作用を利用するための、独自の自己注意ネットワークに起因している.
 However, real-world item sequences are often noisy, which is particularly true for implicit feedback.
 しかし、実世界のアイテム列はしばしばノイズが多く、特に暗黙的なフィードバックにはそれが当てはまる。
 For example, a large portion of clicks do not align well with user preferences, and many products end up with negative reviews or being returned.
@@ -46,133 +46,127 @@ Quantitative results on real-world datasets show that our Rec-denoiser outperfor
 # 1. introduction 1.はじめに
 
 Sequential recommendation aims to recommend the next item based on a user’s historical actions [20, 35, 39, 44, 47], e.g., to recommend a bluetooth headphone after a user purchases a smart phone.
-逐次推薦の目的は，ユーザの過去の行動に基づいて次のアイテムを推薦することである[20, 35, 39, 44, 47]．例えば，ユーザがスマートフォンを購入した後にBluetoothヘッドホンを推薦するような場合である．
+**Sequential recommendationの目的は，ユーザの過去の行動に基づいて次のアイテムを推薦すること**である[20, 35, 39, 44, 47]．例えば，**ユーザがスマートフォンを購入した後にBluetoothヘッドホンを推薦するような場合**である.
 Learning sequential user behaviors is, however, challenging since a user’s choices on items generally depend on both long-term and short-term preferences.
-しかし，一般にユーザのアイテム選択は長期的嗜好と短期的嗜好の両方に依存するため，逐次的なユーザ行動の学習は困難である．
+しかし，一般にユーザのアイテム選択は**長期的嗜好(long-term preference)**と**短期的嗜好(short-term preference)**の両方に依存するため，逐次的(sequential)なユーザ行動の学習は困難である.
 Early Markov Chain models [19, 39] have been proposed to capture short-term item transitions by assuming that a user’s next decision is derived from a few preceding actions, while neglecting long-term preferences.
-初期のマルコフ連鎖モデル[19, 39]は、ユーザーの次の決定がいくつかの先行行動から導かれると仮定することによって、短期的なアイテムの遷移を捉えるために提案されたが、長期的な嗜好は無視されたままであった。
+初期のマルコフ連鎖モデル[19, 39]は、ユーザの次の決定がいくつかの先行行動から導かれると仮定することによって、短期的なアイテムの遷移を捉えるために提案されたが、長期的な嗜好は無視されたままであった.
 To alleviate this limitation, many deep neural networks have been proposed to model the entire users’ sequences and achieve great success, including recurrent neural networks [20, 53] and convolutional neural networks [42, 54, 57].
-この限界を緩和するために、リカレントニューラルネットワーク[20, 53]や畳み込みニューラルネットワーク[42, 54, 57]など、ユーザのシーケンス全体をモデル化する多くのディープニューラルネットワークが提案され、大きな成功を収めている。
+この限界を緩和するために、リカレントニューラルネットワーク[20, 53]や畳み込みニューラルネットワーク[42, 54, 57]など、**ユーザのsequence全体をモデル化する多くのディープニューラルネットワークが提案され、大きな成功を収めている**.
 
 Recently, Transformers have shown promising results in various tasks, such as machine translation [43].
-最近、Transformersは機械翻訳のような様々なタスクで有望な結果を示している[43]。
+最近、Transformersは機械翻訳のような様々なタスクで有望な結果を示している[43].
 One key component of Transformers is the self-attention network, which is capable of learning long-range dependencies by computing attention weights between each pair of objects in a sequence.
-Transformersの主要な構成要素の1つは自己アテンションネットワークであり、シーケンス中の各対象間のアテンション重みを計算することで長距離依存関係を学習することができる。
+Transformersの主要な構成要素の1つはself-attention networkであり、シーケンス中の各対象間のattention weightを計算することで**長距離依存関係を学習することができる**.
 Inspired by the success of Transformers, several self-attentive sequential recommenders have been proposed and achieve the state-of-the-art performance [26, 41, 49, 50].
-Transformersの成功に触発され、いくつかの自己注意型逐次推薦器が提案され、最新の性能を達成している[26, 41, 49, 50]。
+Transformersの成功に触発され、いくつかのself-attentive sequential recommendersが提案され、最新の性能を達成している[26, 41, 49, 50].
 For example, SASRec [26] is the pioneering framework to adopt self-attention network to learn the importance of items at different positions.
-例えば、SASRec [26]は、異なる位置にある項目の重要度を学習するために、自己注意ネットワークを採用した先駆的なフレームワークである。
+例えば、SASRec [26]は、異なる位置にあるitemの重要度を学習するために、self-attention networkを採用した先駆的なフレームワークである.
 BERT4Rec [41] further models the correlations of items from both left-to-right and right-to-left directions.
-BERT4Rec [41]は、さらに左から右、右から左の両方向の項目の相関をモデル化する。
+BERT4Rec [41]は、さらに左から右、右から左の両方向のitemの相関をモデル化する.
 SSE-PT [50] is a personalized Transformer model that provides better interpretability of engagement patterns by introducing user embeddings.
-SSE-PT [50]は、ユーザ埋め込みを導入することにより、エンゲージメントパターンの解釈可能性を向上させるパーソナライズドトランスフォーマーモデルである。
+SSE-PT [50]は、user embeddingsを導入することにより、エンゲージメントパターンの解釈可能性を向上させるパーソナライズドトランスフォーマーモデルである.
 LSAN [31] adopts a novel twin-attention sequential framework, which can capture both long-term and short-term user preference signals.
-LSAN [31]は新しいツインアテンションシーケンシャルフレームワークを採用し、長期と短期の両方のユーザー嗜好シグナルを捉えることができる。
+LSAN [31]は新しいtwin-attention sequential frameworkを採用し、長期と短期の両方のユーザー嗜好シグナルを捉えることができる.
 Recently, Transformers4Rec [14] performs an empirical analysis with broad experiments of various Transformer architectures for the task of sequential recommendation.
-最近、Transformers4Rec [14]は、逐次推薦のタスクのために、様々なTransformerアーキテクチャの幅広い実験による実証分析を行っている。
+最近、Transformers4Rec [14]は、逐次推薦のタスクのために、様々なTransformerアーキテクチャの幅広い実験による実証分析を行っている.
 
 Although encouraging performance has been achieved, the robustness of sequential recommenders is far less studied in the literature.
-しかし、逐次推薦器の頑健性についてはあまり研究されていない。
+しかし、**逐次推薦器のrobustnessについてはあまり研究されていない**.
 Many real-world item sequences are naturally noisy, containing both true-positive and false-positive interactions [6, 45, 46].
-実世界の多くのアイテム列は自然にノイズが多く、真陽性と偽陽性 の両方の相互作用を含んでいる [6, 45, 46]。
+実世界の多くのアイテム列は自然にノイズが多く、真陽性(true-positive)と偽陽性(false-positive. ex. **好きじゃないけどクリックしてしまった. 購入してみたが嫌いだった...??**)の両方の相互作用を含んでいる [6, 45, 46].
 For example, a large portion of clicks do not align well with user preferences, and many products end up with negative reviews or being returned.
-例えば、クリックの大部分はユーザの嗜好に合わず、多くの製品は否定的なレビューで終わったり、返品されたりする。
+例えば、クリックの大部分はユーザの嗜好に合わず、多くの製品は否定的なレビューで終わったり、返品されたりする.
 In addition, there is no any prior knowledge about how a user’s historical actions should be generated in online systems.
-また、オンラインシステムでは、ユーザの過去の行動をどのように生成すべきかという事前知識は存在しない。
+また、オンラインシステムでは、ユーザの過去の行動をどのように生成すべきかという事前知識は存在しない.
 Therefore, developing robust algorithms to defend noise is of great significance for sequential recommendation.
-そのため、ノイズに強いアルゴリズムを開発することは、逐次推薦において大きな意義がある。
+そのため、**ノイズに強いアルゴリズムを開発することは、逐次推薦において大きな意義がある**.
 
 Clearly, not every item in a sequence is aligned well with user preferences, especially for implicit feedbacks (e.g., clicks, views, etc.) [8].
-特に、暗黙のフィードバック（クリック、ビューなど）の場合、シーケンス内のすべての項目がユーザーの嗜好とうまく整合しているわけではないことは明らかである [8]。
+特に、暗黙のフィードバック（クリック、ビューなど）の場合、**sequence内のすべてのitemがユーザーの嗜好とうまく整合しているわけではないことは明らか**である [8].
 Unfortunately, the vanilla self-attention network is not Lipschitz continuous1 , and is vulnerable to the quality of input sequences [28].
-残念ながら、バニラ自己注視ネットワークはリプシッツ連続ではなく1 、入力シーケンスの質に弱いという問題がある[28]。
+残念ながら、vanilla self-attention networkは**Lipschitz連続ではなく(?)**、**入力シーケンスの質に弱いという問題**がある[28]。
 Recently, in the tasks of language modeling, people found that a large amount of BERT’s attentions focus on less meaningful tokens, like "[SEP]" and ".
-最近、言語モデリングのタスクにおいて、BERT の注意の多くが、"[SEP]" や "." のようなあまり意味のないトークンに集中することが判明した。
+最近、言語モデリングのタスクにおいて、BERT の注意の多くが、"[SEP]" や "." のようなあまり意味のないトークンに集中することが判明した.
 ", which leads to a misleading explanation [11].
-「のような、あまり意味のないトークンに BERT の注意が集中し、誤解を招く説明になっていることが判明し ている[11]。
+「のような、あまり意味のないトークンに BERT の注意が集中し、誤解を招く説明になっていることが判明している[11]。
 It is thus likely to obtain sub-optimal performance if self-attention networks are not well regularized for noisy sequences.
-このように、自己注意ネットワークがノイズの多いシーケンスに対してうまく正則化されていない場合、最適とは言えない性能が得られる可能性がある。
+このように、自己注意ネットワークがノイズの多いシーケンスに対してうまく正則化されていない場合、最適とは言えない性能が得られる可能性がある.
 We use the following example to further explain above concerns.
-以下の例を用いて、上記の懸念についてさらに説明する。
+以下の例を用いて、上記の懸念についてさらに説明する.
 
 Figure 1 illustrates an example of left-to-right sequential recommendation where a user’s sequence contains some noisy or irrelevant items.
-図1は、左から右への順序推薦の一例である。
+図1は、左から右へのsequential recommendationの一例である.
 For example, a father may interchangeably purchase (phone, headphone, laptop) for his son, and (bag, pant) for his daughter, resulting in a sequence: (phone, bag, headphone, pant, laptop).
-例えば、ある父親が息子に（携帯電話、ヘッドフォン、ノートパソコン）、娘に（カバン、ズボン）を購入する場合、（携帯電話、カバン、ヘッドフォン、ズボン、ノートパソコン）という順序になる。
+例えば、ある父親が息子に（携帯電話、ヘッドフォン、ノートパソコン）、娘に（カバン、ズボン）を購入する場合、（携帯電話、カバン、ヘッドフォン、ズボン、ノートパソコン）という順序になる.
 In the setting of sequential recommendation, we intend to infer the next item, e.g., laptop, based on the user’s previous actions, e.g., (phone, bag, headphone, pant).
-逐次推薦の設定では、ユーザーの以前の行動、例えば（電話、カバン、ヘッドホン、ズボン）から、次のアイテム、例えばノートパソコンを推論することを意図している。
+逐次推薦の設定では、**ユーザーの以前の行動、例えば（電話、カバン、ヘッドホン、ズボン）から、次のアイテム、例えばノートパソコンを推論すること**を意図している.
 However, the correlations among items are unclear, and intuitively pant and laptop are neither complementary nor compatible to each other, which makes the prediction untrustworthy.
-しかし、アイテム間の相関が不明確であり、直感的にpantとlaptopは補完関係にも相容れないため、この予測は信頼できない。
+しかし、アイテム間の相関が不明確であり、**直感的にpantとlaptopは補完関係にも相容れない**ため、この予測は信頼できない.
 A trustworthy model should be able to only capture correlated items while ignoring these irrelevant items within sequences.
-信頼できるモデルは、シーケンス内のこれらの無関係なアイテムを無視し、相関のあるアイテムのみを捉えることができるはずである。
+**信頼できるモデルは、シーケンス内のこれらの無関係なアイテムを無視し、相関のあるアイテムのみを捉えることができるはず**である.
 Existing self-attentive sequential models (e.g., SASRec [26] and BERT4Rec [41]) are insufficient to address noisy items within sequences.
-既存の自己注意型逐次モデル（例えば、SASRec [26]やBERT4Rec [41]）は、シーケンス内のノイズの多いアイテムに対処するには不十分である。
+既存のself-attentive sequential model（例えば、SASRec [26]やBERT4Rec [41]）は、シーケンス内のノイズの多いアイテムに対処するには不十分である.
 The reason is that their full attention distributions are dense and would assign certain credits to all items, including irrelevant items.
-その理由は、それらの完全な注意分布が密であり、無関係な項目を含むすべての項目に一定のクレジットを割り当ててしまうからである。
+その理由は、それらのfull attention distributionsが密であり、無関係なitemを含むすべてのitemに一定のcreditを割り当ててしまうからである.
 This causes a lack of focus and makes models less interpretable [10, 58].
-このため、注目度が不足し、モデルの解釈性が低下する[10, 58]。
+このため、注目度(focus)が不足し、モデルの解釈性が低下する[10, 58].
 
 To address the above issues, one straightforward strategy is to design sparse Transformer architectures that sparsify the connections in the attention layers, which have been actively investigated in language modeling tasks [10, 58].
-上記の問題を解決するために、一つの簡単な戦略は、言語モデリングタスクで活発に研究されている注意層の接続をスパースにしたTransformerアーキテクチャを設計することである[10, 58]。
+上記の問題を解決するために、一つの簡単な戦略は、言語モデリングタスクで活発に研究されている**attention layersの接続をsparseにした**Transformerアーキテクチャを設計することである[10, 58].
 Several representative models are Star Transformer [18], Sparse Transformer [10], Longformer [2], and BigBird [58].
-いくつかの代表的なモデルはStar Transformer [18], Sparse Transformer [10], Longformer [2], そしてBigBird [58]である。
+いくつかの代表的なモデルはStar Transformer [18], Sparse Transformer [10], Longformer [2], そしてBigBird [58]である.
 These sparse attention patterns could mitigate noisy issues and avoid allocating credits to unrelated contents for the query of interest.
-これらの疎な注目パターンは、ノイズの問題を軽減し、関心のあるクエリに無関係なコンテンツにクレジットを割り当てることを回避することができる。
+これらのsparse attentionパターンは、ノイズの問題を軽減し、関心のあるクエリに無関係なコンテンツにクレジットを割り当てることを回避することができる.
 However, these models largely rely on pre-defined attention schemas, which lacks flexibility and adaptability in practice.
-しかし、これらのモデルは事前に定義されたアテンションスキーマに大きく依存しており、実際のところ柔軟性や適応性に欠けている。
+しかし、これらのモデルは事前に定義されたattention schemas(??)に大きく依存しており、実際のところ柔軟性や適応性に欠けている.
 Unlike end-to-end training approaches, whether these sparse patterns could generalize well to sequential recommendation remains unknown and is still an open research question.
-また、エンドツーエンドの学習アプローチとは異なり、これらの疎なパターンが逐次推薦にうまく一般化できるかどうかは不明であり、まだ未解決の研究課題である。
+また、エンドツーエンドの学習アプローチとは異なり、これらの疎なパターンが逐次推薦にうまく一般化できるかどうかは不明であり、まだ未解決の研究課題である.
 
-Fig. 1.
-図1.
-An illustrative example of sequential recommendation where a sequence contains noisy or irrelevant items in left-to-right self-attention networks.
-左から右への自己注意ネットワークにおいて、ノイズの多い項目や無関係な項目が含まれる場合の逐次推薦の説明例。
+## 1.1. Contributions.
 
-Contributions.
 貢献度
 In this work, we propose to design a denoising strategy, Rec-Denoiser, for better training of selfattentive sequential recommenders.
-本研究では、自己注意型逐次推薦器をより良く学習させるためのノイズ除去戦略、Rec-Denoiserを提案する。
+本研究では、自己注意型逐次推薦器をより良く学習させるためのノイズ除去戦略、Rec-Denoiserを提案する.
 Our idea stems from the recent findings that not all attentions are necessary and simply pruning redundant attentions could further improve the performance [10, 12, 40, 55, 58].
-我々のアイデアは、全ての注意は必要ではなく、冗長な注意を刈り取ることでさらに性能が向上するという最近の知見に由来する[10, 12, 40, 55, 58]。
+我々のアイデアは、全てのattentionsは必要ではなく、冗長なattentionsを刈り取ることでさらに性能が向上するという最近の知見に由来する[10, 12, 40, 55, 58].
 Rather than randomly dropping out attentions, we introduce differentiable masks to drop task-irrelevant attentions in the self-attention layers, which can yield exactly zero attention scores for noisy items.
-我々は、ランダムに注意を削除するのではなく、微分可能なマスクを導入し、タスクと無関係な注意を自己注意層で削除することで、ノイズの多い項目に対して注意スコアを正確にゼロにすることができる。
+我々は、ランダムにattentionsを削除するのではなく、**微分可能なマスクを導入し、タスクと無関係なattentionsをself-attention layersで削除する**ことで、ノイズの多いitemに対してattentionスコアを正確にゼロにすることができる.
 The introduced sparsity in the self-attention layers has several benefits:
-自己注意層に導入されたスパース性には、いくつかの利点がある。
-1) Irrelevant attentions with parameterized masks can be learned to be dropped in a data-driven way.
-1) パラメータ化されたマスクを持つ無関係な注意は、データ駆動型の方法で削除されるように学習させることができる。
-Taking Figure 1 as an example, our Rec-denoiser would prune the sequence (phone, bag, headphone) for pant, and (phone, bag, headphone, pant) for laptop in the attention maps.
-図1を例にとると、Rec-denoiserは、アテンションマップにおいて、ズボンには(phone, bag, headphone)、ノートパソコンには(phone, bag, headphone, pant)という順序を切り捨てることになる。
-Namely, we seek next item prediction explicitly based on a subset of more informative items.
-つまり、より情報量の多いアイテムの部分集合に基づき、明示的に次のアイテム予測を行うのです。
-2) Our Rec-Denoiser still takes full advantage of Transformers as it does not change their architectures, but only the attention distributions.
-2) 我々のRec-DenoiserはTransformerのアーキテクチャを変更せず、アテンション分布のみを変更するため、Transformerを最大限に活用することができる。
-As such, Rec-Denoiser is easy to implement and is compatible to any Transformers, making them less complicated as well as improving their interpretability.
-そのため、Rec-Denoiserは実装が容易で、あらゆるTransformerと互換性があり、Transformerの複雑さを軽減し、その解釈可能性を向上させることができる。
+self-attention layersに導入されたスパース性には、いくつかの利点がある.
+
+1. Irrelevant attentions with parameterized masks can be learned to be dropped in a data-driven way.
+2. パラメータ化されたマスクを持つ無関係なattentionは、データ駆動型の方法で削除されるように学習させることができる.
+   - Taking Figure 1 as an example, our Rec-denoiser would prune the sequence (phone, bag, headphone) for pant, and (phone, bag, headphone, pant) for laptop in the attention maps.図1を例にとると、Rec-denoiserは、アテンションマップにおいて、ズボンには(phone, bag, headphone)、ノートパソコンには(phone, bag, headphone, pant)という順序を切り捨てることになる.
+   - Namely, we seek next item prediction explicitly based on a subset of more informative items. つまり、より情報量の多いアイテムの部分集合(subset)に基づき、明示的に次のアイテム予測を行うのです.
+3. Our Rec-Denoiser still takes full advantage of Transformers as it does not change their architectures, but only the attention distributions.
+4. 我々のRec-DenoiserはTransformerのアーキテクチャを変更せず、**アテンション分布のみを変更する**ため、Transformerを最大限に活用することができる.
+   - As such, Rec-Denoiser is easy to implement and is compatible to any Transformers, making them less complicated as well as improving their interpretability. そのため、Rec-Denoiserは実装が容易で、あらゆるTransformerと互換性があり、Transformerの複雑さを軽減し、その解釈可能性を向上させることができる.
 
 In our proposed Rec-Denoiser, there are two major challenges.
-我々が提案するRec-Denoiserでは、2つの大きな課題がある。
+我々が提案するRec-Denoiserでは、2つの大きな課題がある.
 First, the discreteness of binary masks (i.e., 0 is dropped while 1 is kept) is, however, intractable in the back-propagation.
-まず、2値マスクの離散性（すなわち、0は削除され、1は保持される）は、しかし、バックプロパゲーションでは実行不可能である。
+まず、2値マスクの離散性（すなわち、0は削除され、1は保持される）は、しかし、バックプロパゲーションでは実行不可能である.
 To remedy this issue, we relax the discrete variables with a continuous approximation through probabilistic reparameterization [25].
-この問題を解決するために、我々は確率的再パラメータ化[25]により、離散変数を連続的な近似値で緩和する。
+この問題を解決するために、我々は確率的再パラメータ化[25]により、離散変数を連続的な近似値で緩和する.
 As such, our differentiable masks can be trained jointly with original Transformers in an end-to-end fashion.
-このように、我々の微分可能なマスクは、オリジナルのTransformerとエンドツーエンドで共同して学習することができる。
+このように、我々の微分可能なマスクは、オリジナルのTransformerとエンドツーエンドで共同して学習することができる.
 In addition, the scaled dot-product attention is not Lipschitz continuous and is thus vulnerable to input perturbations [28].
-また、スケールドットプロダクトの注目点はリプシッツ連続ではないため、入力摂動に対して脆弱である[28]。
+また、スケールドットプロダクトの注目点はLipschitz連続(?)ではないため、入力摂動に対して脆弱である[28].
 In this work, Jacobian regularization [21, 24] is further applied to the entire Transformer blocks, to improve the robustness of Transformers for noisy sequences.
-この研究では、ノイズの多いシーケンスに対するTransformerの頑健性を向上させるために、Transformerブロック全体にヤコビアン正則化[21, 24]をさらに適用している。
+この研究では、**ノイズの多いシーケンスに対するTransformerのrobustnessを向上させるため**に、Transformerブロック全体にヤコビアン正則化[21, 24]をさらに適用している.
 Experimental results on real-world benchmark datasets demonstrate the effectiveness and robustness of the proposed Rec-Denoiser.
-実世界のベンチマークデータセットに対する実験結果から、提案するRec-Denoiserの有効性と頑健性を実証する。
+実世界のベンチマークデータセットに対する実験結果から、提案するRec-Denoiserの有効性と頑健性を実証する.
 In summary, our contributions are:
-まとめると、我々の貢献は以下の通りである。
+まとめると、我々の貢献は以下の通りである.
 
-- We introduce the idea of denoising item sequences for better of training self-attentive sequential recommenders, which greatly reduces the negative impacts of noisy items. 本論文では、自己認識型逐次推薦器を学習するために、項目列のノイズ除去のアイデアを紹介し、ノイズの多い項目による悪影響を大幅に軽減する。
+- We introduce the idea of denoising item sequences for better of training self-attentive sequential recommenders, which greatly reduces the negative impacts of noisy items. 本論文では、自己認識型逐次推薦器を学習するために、item列のノイズ除去のアイデアを紹介し、ノイズの多いitemによる悪影響を大幅に軽減する.
 
-- We present a general Rec-Denoiser framework with differentiable masks that can achieve sparse attentions by dynamically pruning irrelevant information, leading to better model performance. 我々は、微分可能なマスクを持つ一般的なRec-Denoiserフレームワークを提示し、無関係な情報を動的に刈り取ることで疎な注意を達成し、より良いモデル性能を導くことが可能である。
+- We present a general Rec-Denoiser framework with differentiable masks that can achieve sparse attentions by dynamically pruning irrelevant information, leading to better model performance. 我々は、微分可能なマスクを持つ一般的なRec-Denoiserフレームワークを提示し、無関係な情報を動的に刈り取ることで疎な注意を達成し、より良いモデル性能を導くことが可能である.
 
-- We propose an unbiased gradient estimator to optimize the binary masks, and apply Jacobian regularization on the gradients of Transformer blocks to further improve its robustness. バイナリマスクの最適化のために不偏勾配推定器を提案し、Transformerブロックの勾配にヤコビアン正則化を適用して、さらに頑健性を向上させる。
+- We propose an unbiased gradient estimator to optimize the binary masks, and apply Jacobian regularization on the gradients of Transformer blocks to further improve its robustness. バイナリマスクの最適化のために不偏勾配推定器を提案し、Transformerブロックの勾配にヤコビアン正則化を適用して、さらに頑健性を向上させる.
 
-- The experimental results demonstrate significant improvements that Rec-Denoiser brings to self-attentive recommenders (5.05% ∼ 19.55% performance gains), as well as its robustness against input perturbations. 実験結果は、Rec-Denoiserが自己注意型推薦器にもたらす大きな改善（5.05% ∼ 19.55%の性能向上）と、入力の摂動に対する頑健性を示している。
+- The experimental results demonstrate significant improvements that Rec-Denoiser brings to self-attentive recommenders (5.05% ∼ 19.55% performance gains), as well as its robustness against input perturbations. 実験結果は、Rec-Denoiserが自己注意型推薦器にもたらす大きな改善（5.05% ∼ 19.55%の性能向上）と、入力の摂動に対する頑健性を示している.
 
 # 2. Related Work 2. 関連作品
 
@@ -257,13 +251,13 @@ We further discuss the limitations of the existing work.
 In sequential recommendation, let $U$ be a set of users, $I$ a set of items, and $S = {S^1, S^2,\cdots, S^{
 U
 
-We user $S^u = (S^u_1, S^u_2, \cdots, S^u_{
+We user $S^u = (S^u*1, S^u_2, \cdots, S^u*{
 S^u
 
 Given the interaction history $S^u$, sequential recommendation seeks to predict the next item $S^u_{S^u+1}$ at time step $
 S^u+1
 
-During the training process [26, 41], it will be convenient to regard the model’s input as $(S^u_1, S^u_2, \cdots, S^u_{
+During the training process [26, 41], it will be convenient to regard the model’s input as $(S^u*1, S^u_2, \cdots, S^u*{
 S^u - 1
 
 ## 3.2. Self-attenvive Recommenders 3.2. 自己アテンバイブ型レコメンダー
@@ -433,8 +427,8 @@ One way to encourage sparsity of $M^{(l)}$ is to explicitly penalize the number 
 M^{(l)}$ のスパース性を促す方法の一つとして、$Z^{(l)}$ の0でないエントリーの数を、1 \l L$ に対して、明示的にペナルティとして、最小化する方法があります。
 
 $$
-R_M = \sum_{l=1}^{L}||Z^{l}||_{0} 
-= \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0], 
+R_M = \sum_{l=1}^{L}||Z^{l}||_{0}
+= \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0],
 \tag{6}
 $$
 
@@ -489,10 +483,11 @@ For the number of blocks 𝐿 and the number of heads 𝐻, we find that self-at
 ブロック数ᵃとヘッド数ᵃについて、自己注意型モデルは典型的に小さな値（例えば、ᵃ≤ 4）から恩恵を受けることがわかり、これは[31, 41]と同様である。
 In this section, we mainly study the following hyper-parameters:
 本節では、主に以下のハイパーパラメータについて検討する。
-1) the maximum length 𝑛, 2) the regularizers 𝛽 and 𝛾 to control the sparsity and smoothness.
-1) 最大長 𝑛, 2) 正則化 ǖ と 𝛾 で疎密と平滑性を制御する。
-Here we only study the SASRec and SASRec-Denoiser due to page limitations.
-ここでは、ページの制限からSASRecとSASRec-Denoiserについてのみ検討する。
+
+1. the maximum length 𝑛, 2) the regularizers 𝛽 and 𝛾 to control the sparsity and smoothness.
+1. 最大長 𝑛, 2) 正則化 ǖ と 𝛾 で疎密と平滑性を制御する。
+   Here we only study the SASRec and SASRec-Denoiser due to page limitations.
+   ここでは、ページの制限からSASRecとSASRec-Denoiserについてのみ検討する。
 
 Fig. 3.
 図3.
