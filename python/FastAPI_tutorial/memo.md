@@ -1196,4 +1196,231 @@ async def create_item(name: str):
     return {"name": name}
 ```
 
-# Form data(request bodyから指定のfieldのみparameterとして取得する、みたいな?)
+# Form data(request bodyに関して、jsonではなくform fieldを受け取る??)
+
+JSON(=request body?)の代わりにform field(?)を受け取る場合は、`fastapi.Form`を使用する.
+
+```python
+from fastapi import FastAPI, Form
+
+app = FastAPI()
+
+
+@app.post("/login/")
+async def login(username: str = Form(), password: str = Form()):
+    return {"username": username}
+```
+
+## Form Fieldとは??
+
+**HTML Form（`<form></form>`）がサーバにデータを送信する方法(=Form field?)**は、通常、そのデータに「特別な」エンコーディングを使用しているが、これはjsonとは異なる.
+
+# request file parameter を受け取る.
+
+clientがuploadするファイルは、`fastapi.File`と`fastapi.UploadFile`を使ってdeclareできる.
+`Body`や`Form`と同じように、file parameterを作成する.
+(`File`は`Form`をそのまま継承したクラス...!へぇー！)
+(file parameterを`File`を使用してdeclareしないと、query parameter や request body parameter(=JSON)として解釈されてしまう.)
+
+- default値に`File`を使うケース
+  - request fileは "form data" としてuploadされる.
+  - `bytes` typeのデフォルト値に`File`でdeclareすると、content全体がメモリに保存される...!(小さなファイルには有効)
+- type hintに`UploadFile`を使うケース
+  - `bytes`に比べていくつかの利点がある.
+    - パラメータのデフォルト値で`File()`を使用する必要がない.
+    - "spool"されたファイルを使用する.
+      - **spooled file** = 最大サイズの制限まではメモリに保存され、この制限を超えた後はディスクに保存されるファイル.
+      - -> つまり、画像、ビデオ、大きなバイナリなどの大きなファイルに対して、メモリを消費することなく、うまく動作する.
+    - アップロードされたファイルからメタデータを取得できる.
+    -
+
+```python
+from fastapi import FastAPI, File, UploadFile
+
+app = FastAPI()
+
+
+@app.post("/files/")
+async def create_file(file: bytes = File()):
+    return {"file_size": len(file)}
+
+
+@app.post("/uploadfile/")
+async def create_upload_file(file: UploadFile):
+    return {"filename": file.filename}
+```
+
+## `UploadFile`について
+
+`UploadFile` has the following attributes:
+
+https://fastapi.tiangolo.com/ja/tutorial/request-files/#uploadfile
+
+## file parameterをオプショナルにするケース
+
+```python
+@app.post("/files/")
+async def create_file(file: Union[bytes, None] = File(default=None)):
+    if not file:
+        return {"message": "No file sent"}
+    else:
+        return {"file_size": len(file)}
+
+
+@app.post("/uploadfile/")
+async def create_upload_file(file: Union[UploadFile, None] = None):
+    if not file:
+        return {"message": "No upload file sent"}
+    else:
+        return {"filename": file.filename}
+```
+
+## Fileと UploadFileを一緒に使うケース
+
+`UploadFile` などで `File()` を使用すると、追加のmetadataを設定することができる.
+
+```python
+@app.post("/uploadfile/")
+async def create_upload_file(
+    file: UploadFile = File(description="A file read as UploadFile"),
+):
+    return {"filename": file.filename}
+```
+
+# SQL Databases(RDB)をapplicationに組み込む.
+
+FastAPIのapplicationは、必ずしもSQL database(=RDB)を使う必要はない.(ex. PostgreSQL, MySQL, SQListe, Oracle, Microsoft SQL Server, etc.)
+
+必要があれば、FastAPIとSQLAlchemyを組み合わせて適用できる.
+(tips: サンプルコードのほとんどは標準的なSQLAlchemyのcode. FastAPI固有のcodeはほんのすこし)
+
+## 最もcommon: ORM(Object-Relational Mapping)を使用するパターン
+
+SQL Databases(RDB)をapplicationに組み込む上で、一般的なパターンはORM(Object-Relational Mapping)ライブラリを使用する事.
+
+- ORMとは:
+  - code内のオブジェクト(ex. Domain Model) と Database table(=relation)間の変換(=map).
+- ORMでは通常、RDBのテーブルを表すクラスを作成し、classの各fieldがDBのcolumnに対応する.
+  - ex) `Pet` class -> RDBのpetsテーブル
+- そのclass のインスタンスは、RDBテーブルの各recordを表す.
+
+一般的なORM ライブラリ:
+
+- Django-ORM (Django フレームワークの一部),
+- SQLAlchemy ORM (SQLAlchemy の一部、フレームワークとは無関係),
+- Peewee (フレームワークとは無関係), etc.
+
+## DBモデルクラスにmagic attribute `relationship`をdeclareする.
+
+`my_user.items`にアクセスすると、users テーブルの このレコードを指す外部キーを持つ、`Item`モデル(items テーブルから)のリストを取得できる. (my_user.items にアクセスすると、SQLAlchemy は、実際にデータベースから items テーブルにあるアイテムを取得してくる...!)
+
+```python
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    is_active = Column(Boolean, default=True)
+
+    items = relationship("Item", back_populates="owner")
+
+
+class Item(Base):
+    __tablename__ = "items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    description = Column(String, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="items")
+```
+
+## SQLAlchemy models と Pydantic models のconfuseを避ける.
+
+SQLAlchemy models(=ORMの為のDBモデル)とPydantic models(=request body やresponse bodyの設定をdeclareする為のBaseModel)のconfuseを避ける為に、前者を`models.py`に、後者を`schemas.py`(<=多かれ少なかれ**"schema"="validなデータの形を定義する"**ので...!)に記述するといい.
+
+## SQLAlchemy models と Pydantic models の declare styleの違い
+
+SQLAlchemy modelsのケース
+
+```python
+name = Column(String)
+```
+
+Pydantic models
+
+```python
+name: str
+```
+
+## pydanticの`orm_mode`を使用する.
+
+pydantic BaseModelの internal `Config` classに `orm_mode = True`を追加する.
+Pydanticの`orm_mode`は、Pydanticのモデルが`dict`ではなく、ORM model(または属性を持つ他の任意のオブジェクト)であってもデータを読み込むようにdeclareする.
+(i.e. **dict以外からでも、pydantic modelのauto translationが効くようになる**って事...??)
+これによって、Squalchemy ORM model -> response body modelの自動変換が可能になる.
+
+```python
+
+class User(UserBase):
+    id: int
+    is_active: bool
+    items: List[Item] = []
+
+    class Config:
+        orm_mode = True
+```
+
+`orm_mode`を指定しなければ、もしあなたが path operation から SQLAlchemy model を返したとしても、**それはrelationshipのデータを含んでいない**だろう.
+
+`orm_mode`を使用する事で, Pydantic 自身が必要なデータを(dict を想定するのではなく)fieldからアクセスしようとするので、返したい特定のデータをdeclareすれば、ORM modelからであってもそれを取りに行くことができるようになる.
+
+## CRUD(Create, Read, Update, Delete)用のutilsを用意すると良い...!
+
+/crud.pyを定義する. このファイルでは、Databaseのデータを操作するための再利用可能な関数が用意されている.
+
+### Read data 用 の utility funcitonを作る.
+
+`sqlalchemy.orm` から `Session` をimportする.
+`Session`クラスをtype hintに用いる事で、`db` parameterのtypeをdeclareし、function内でより良いtype check と completion(補完) ができるようになる.
+
+`models` (the SQLAlchemy models) と `schemas` (the Pydantic models / schemas)をimportして、以下のようなutility functionを作成できる.
+
+tips: path operation function とは別に、Databaseとのやり取り(ユーザーやアイテムの取得)だけに特化した関数を作ることで、**より簡単に複数のパーツで再利用でき、unit testも追加しやすい**.(SRP= single responsibility principleだー!!)
+
+```python
+from sqlalchemy.orm import Session
+
+from . import models, schemas
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.email == email).first()
+
+
+def get_users(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.User).offset(skip).limit(limit).all()
+```
+
+### Create date用の utility function を作る.
+
+```python
+def create_user(db: Session, user: schemas.UserCreate):
+    fake_hashed_password = user.password + "notreallyhashed"
+    db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
+    db_item = models.Item(
+        **item.dict(), # pydantic modelを一旦dictに変換して、dictをuppackingしてkey-valueをargumentsとして渡している.
+        owner_id=user_id, # 加えて、pydantic modelにない argumentを追加してる.
+        )
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+```
