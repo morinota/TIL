@@ -216,9 +216,9 @@ Because of the above, we cannot considerCN R−N P to be completely positive. Th
 
 ## 3.2. Proposed Sampling Method
 
-The optimization methods of recommender models are generally grouped into two categories: pointwise [11, 14, 32] and pairwise [35, 43] methods. In this subsection, we propose pointwise ($ULO_{point}$) and pairwise ($ULO_{pair}$) optimization methods for uplift. 
+The optimization methods of recommender models are generally grouped into two categories: pointwise [11, 14, 32] and pairwise [35, 43] methods. In this subsection, we propose pointwise ($ULO_{point}$) and pairwise ($ULO_{pair}$) optimization methods for uplift.
 
-Following the discussion in the previous subsection, items in CR−P are relatively better than the items in the other classes, and thus we assign positive labels to them. On the contrary, the items in CNR−P and CR−NP are relatively worse and assigned negative labels. The items in CN R−N P are positive with probability α, and negative with probability 1 − α. 
+Following the discussion in the previous subsection, items in CR−P are relatively better than the items in the other classes, and thus we assign positive labels to them. On the contrary, the items in CNR−P and CR−NP are relatively worse and assigned negative labels. The items in CN R−N P are positive with probability α, and negative with probability 1 − α.
 
 Furthermore, we conduct stratifed sampling because the number of items in each observed class is diferent. We introduce a parameter γP , which represents the ratio of sampling from the purchased items. This kind of downsampling for unpurchased items is a common technique for implicit feedback data [11], which is equivalent to downweighting unpurchased items [14, 32]. Similarly, γR is the ratio of sampling from the recommended items. For example, the ratio of the items sampled from CR−P is γPγR and that from CN R−N P is (1−γP )(1−γR ). For the pairwise optimization, we select the positive and negative samples simultaneously. We choose positive samples from CR−P ∪ CN R−N P with probability α, and from CR−P with probability 1−α. The negative samples are selected from the other classes. We sample a candidate class with the same probability; that is, if we sample items from CR−P ∪CN R−N P , we sample half from CR−P and the other half from CN R−N P .
 さらに、観測されたクラスごとにアイテムの数が異なるため、層別サンプリングを行う.このとき、購入済みアイテムからのサンプリングの比率を表すパラメータγP を導入する。このような未購入項目のダウンサンプリングは、暗黙のフィードバックデータでよく用いられる手法であり[11]、未購入項目のダウンウェイトに相当する[14, 32]。同様に、γRは推奨項目からのサンプリングの比率である。例えば、CR-P からサンプリングした項目の比率は γPγR であり、CN R-N P からの比率は (1-γP )(1-γR ) である。ペアワイズ最適化では、正と負のサンプルを同時に選択する。CR-P∪CN R-N P からは確率αで，CR-P からは確率1-αで，正標本を選択する．負のサンプルは他のクラスから選択する．つまり，CR-P ∪CN R-N P から項目を抽出する場合，半分は CR-P から，残りの半分は CN R-N P から抽出します．
@@ -237,7 +237,7 @@ L_{pair}^{bpr} = - \log(\sigma(\hat{x}_{ui} - \hat{x}_{uj}))
 \tag{10}
 $$
 
-where i is the positive sample and j is the negative sample. In both types of learning, the L2 regularization term $\Omega = ||\Theta||^2_2$ is added to prevent the overfitting of the parameter Θ. We use Matrix Factorization (MF) [22] for xˆui . Our modifed versions of MF are called UpLift-optimized Regularized MF (ULRMF) and UpLift-optimized BPR (ULBPR), which are trained by algorithms 1 and 2 respectively. 
+where i is the positive sample and j is the negative sample. In both types of learning, the L2 regularization term $\Omega = ||\Theta||^2_2$ is added to prevent the overfitting of the parameter Θ. We use Matrix Factorization (MF) [22] for xˆui . Our modifed versions of MF are called UpLift-optimized Regularized MF (ULRMF) and UpLift-optimized BPR (ULBPR), which are trained by algorithms 1 and 2 respectively.
 
 As for time complexity, we note that our algorithms perform random sampling of items from prepared sets of observable classes, which is O(1). The bottleneck is for parameter updates, which is O(d) for MF with d factor dimensions. This is common to conventional accuracy-based optimizations. Further, in Subsection 5.3, we show empirically that our uplift-based methods converge faster than accuracy-based ones in terms of iterations required.
 
@@ -249,26 +249,108 @@ As for time complexity, we note that our algorithms perform random sampling of i
 
 # 5. Experiments
 
+We experiment to address the following research questions:
+我々は以下の研究課題を解決するために実験を行っている。
+
+- RQ1 How do our uplift-based recommenders perform compared with other existing methods?
+- RQ1 我々が開発したアップリフトベースのレコメンダーは他の既存手法と比較してどのようなパフォーマンスを示すか？
+- RQ2 What are the properties of uplift-based optimization?
+- RQ2 アップリフトベースの最適化はどのような性質を持つか？
+- RQ3 How do recommended items difer for traditional and uplift-based recommender methods?
+- RQ3 従来のレコメンダー手法とアップリフトベースのレコメンダー手法では推薦されるアイテムはどのように異なるのか？
+
 ## 5.1. Experimental Settings
 
-### Datasets and Preprocessing. 
+### Datasets and Preprocessing.
 
-We experimented with three publicly available datasets6: Dunnhumby7, Tafeng [13], and Xing8. The statistics of datasets after fltering are presented in Table 3. The purchase and recommendation logs are separated in discrete time intervals (by day or by week), because recommended items change over time. We explain the details for each dataset below. 
+We experimented with three publicly available datasets6: Dunnhumby7, Tafeng [13], and Xing8. The statistics of datasets after fltering are presented in Table 3. The purchase and recommendation logs are separated in discrete time intervals (by day or by week), because recommended items change over time. We explain the details for each dataset below.
+我々は3つの一般に公開されているデータセット6で実験した。Dunnhumby7、Tafeng [13]、Xing8 の3つの公開データセットで実験を行った。表 3 にフィルタリング後のデータセットの統計量を示す．購入履歴と推薦履歴は，推薦されるアイテムが時間的に変化するため，離散的な時間間隔（日単位，週単位）で区切られている．以下，各データセットの詳細を説明する．
 
-Dunnhumby. This dataset includes purchase and promotion logs at a retailer. It provides product category information and we consider these product categories as items. We handle items featured in the weekly mailer, which is information included in the promotion logs, as recommendations. Promotions change each week, and so we separate purchase and recommendation logs by week. The dataset includes logs from many stores, and promotions are diferent for each store. If a user visited a shop when an item was promoted, then we regard the user as having received a recommendation for the item. We fltered the dataset according to the following conditions: shops that have at least one visitor for each week, items recommended for at least one week on average among the shops, items that existed for at least half the period (47 weeks), and users visiting more than one store in at least fve weeks. 
+- Dunnhumby.
 
-Tafeng. This dataset contains purchase logs with price information from a Chinese grocery store. This includes the category id for each product, and we consider each category id as a separate item. If the discount ratios of any products in a certain category is over 0.1, then we consider the item as recommended9. The dataset is discretized by days. We fltered the dataset according to the following conditions: items recommended on at least one day, items that existed for at least half of the periods (60 days), and users visiting the shop on at least fve days. 
+  - This dataset includes purchase and promotion logs at a retailer. It provides product category information and we consider these product categories as items. We handle items featured in the weekly mailer, which is information included in the promotion logs, as recommendations. Promotions change each week, and so we separate purchase and recommendation logs by week. The dataset includes logs from many stores, and promotions are diferent for each store. If a user visited a shop when an item was promoted, then we regard the user as having received a recommendation for the item. We fltered the dataset according to the following conditions: shops that have at least one visitor for each week, items recommended for at least one week on average among the shops, items that existed for at least half the period (47 weeks), and users visiting more than one store in at least fve weeks.
+  - このデータセットには、小売店での購入履歴と販売促進履歴が含まれている。これは商品カテゴリ情報を提供し、我々はこれらの商品カテゴリをアイテムとして考える。プロモーションログに含まれる情報である週刊メーラーで紹介された商品をレコメンデーションとして扱う。プロモーションは毎週変わるので、購入ログとレコメンドログを週ごとに分けている。データセットには多くの店舗のログが含まれており、プロモーションは店舗ごとに異なる。このため、ある商品がプロモーションされたときにその店舗を訪れたユーザは、その商品のレコメンドを受けたとみなす。各週に1人以上訪問者がいる店舗、店舗間で平均1週間以上推奨されたアイテム、期間の半分（47週）以上存在するアイテム、少なくとも5週間に1店舗以上訪問したユーザ、という条件に従ってデータセットをフラッタリングした結果、各週に1人以上訪問者がいる店舗では、アイテムの推奨を受けたとみなすことができた。
 
-Xing. This dataset contains interactions of users at an online job-seeking site. We regard the positive user interactions of click, bookmark, and apply, as purchases. This includes the impression logs of items which are shown to users by the Xing platform. We consider these impressions as recommendations. The dataset is discretized by days. We fltered the dataset according to the following conditions: items recommended on at least one day, items that existed for at least half of the time period (13 days), and users visiting the site on at least three days.
+- Tafeng.
+  - This dataset contains purchase logs with price information from a Chinese grocery store. This includes the category id for each product, and we consider each category id as a separate item. If the discount ratios of any products in a certain category is over 0.1, then we consider the item as recommended9. The dataset is discretized by days. We fltered the dataset according to the following conditions: items recommended on at least one day, items that existed for at least half of the periods (60 days), and users visiting the shop on at least fve days.このデータセットには、中国の食料品店からの価格情報を含む購入ログが含まれている。これには各商品のカテゴリIDが含まれており、各カテゴリIDを個別の商品とみなしている。あるカテゴリに属する商品の割引率が0.1以上であれば，その商品を推奨品9とみなす．データセットは日単位で離散化されている。少なくとも1日に推奨されたアイテム、期間の半分以上（60日）存在するアイテム、少なくとも5日にショップを訪れたユーザー、という条件に従ってデータセットをフラッタリングした。
+- Xing.
+  - This dataset contains interactions of users at an online job-seeking site. We regard the positive user interactions of click, bookmark, and apply, as purchases. This includes the impression logs of items which are shown to users by the Xing platform. We consider these impressions as recommendations. The dataset is discretized by days. We fltered the dataset according to the following conditions: items recommended on at least one day, items that existed for at least half of the time period (13 days), and users visiting the site on at least three days.このデータセットには，あるオンライン求職サイトにおけるユーザのインタラクションが含まれている．クリック、ブックマーク、応募というポジティブなユーザーインタラクションを購入とみなす。このデータセットには、Xingプラットフォームによってユーザーに表示されたアイテムのインプレッションログが含まれる。我々は、これらのインプレッションをレコメンデーションとみなす。データセットは日数で区切られている。少なくとも1日に推奨されたアイテム、期間の半分（13日）以上存在したアイテム、少なくとも3日にサイトを訪れたユーザーという条件に従ってデータセットをフラッタリングしている。
 
-### Evaluation Protocols. 
+### Evaluation Protocols.
 
 We evaluated the uplift performance of each method using the proposed Uplift@N and UpliftSNIPS@N for N =10, 30, and 10010. Precision@30 was also measured, as a reference. Training and evaluation was conducted on each discrete time period. For each training step, we frst sampled a time period from among the training periods, and then drew users from among the active users who purchased at least one item during the time period. For evaluation, we calculated the metric for each discrete time, and then averaged them over the evaluation periods. We conducted chronological splitting of the datasets for training and evaluation, to prevent the leakage of future information for training. The length of evaluation periods are 8, 14, and 3 for the Dunnhumby, Tafeng, Xing datasets. For a dataset with t_d discrete time periods indexed by 1 to t_d , with the evaluation periods being of length t_e, each phase of validation and testing was conducted as follows:
+提案するUplift@NとUpliftSNIPS@Nを用いて、N =10、30、10010でそれぞれの手法のアップリフト性能を評価した。また、参考としてPrecision@30も測定した。学習と評価は離散的な時間帯ごとに行った。学習は，学習期間から1期間を抽出し，その期間に1つでも商品を購入したアクティブユーザーを抽出して行った．評価は，離散的な時間ごとに指標を計算し，評価期間の平均をとった．学習用と評価用のデータセットを時系列に分割することで、学習用の未来の情報が漏れないようにした. 評価期間の長さは、Dunnhumby、Tafeng、Xingの各データセットで、8、14、3である. 1からt_dまでのインデックスを持つt_d個の離散期間を持つデータセットに対して、評価期間の長さをt_eとし、検証およびテストの各フェーズは以下のように実施された.
+
+- validation phase: train the model by periods from 1 to (td − 2te ), and evaluate by periods from (td − 2te + 1) to (td − te ).
+- test phase: train the model by periods from (te +1) to (td −te ), and evaluate by periods from (td − te + 1) to td .
+
+Evaluation of UpliftSNIPS@N requires estimates of propensity e (X ). For the Xing dataset, in which recommendations of currently deployed model D are personalized, we estimated the propensities using a logistic regression with features representing matches of titles, disciplines, career levels, industries, countries, and regions, between the users and items. The features used were the same as in the baseline model11 provided by Xing for the RecSys Challenge 2017 competition. Here, covariates X are these features created from user and item information. The recommendations of D are not personalized in the Dunnhumby and Tafeng datasets. For the Tafeng dataset, we estimated the propensities by the ratio of recommended times for each item in the training periods. That is, we used past recommendation logs as covariates X . For the Dunnhumby dataset, in which time period is much longer (roughly 22 months for Dunnhumby and 4 months for Tafeng), we estimated the propensities by a logistic regression that uses the numbers of purchases and recommendations during previous four weeks as features.
+UpliftSNIPS@N の評価には、傾向性 e (X ) の推定が必要である。現在導入されているモデルDのレコメンデーションがパーソナライズされているXingデータセットについて、ユーザーとアイテムの間のタイトル、分野、キャリアレベル、産業、国、地域の一致を表す特徴量を用いたロジスティック回帰により、性向を推定した。使用した素性は、Xing社がRecSys Challenge 2017のコンペティションで提供したベースラインモデル11と同じであった。ここで、共変量Xは、ユーザーとアイテムの情報から作成されたこれらの特徴量である。Dunnhumby と Tafeng のデータセットでは、Dのレコメンデーションはパーソナライズされていない。Tafengデータセットでは、学習期間における各アイテムの推奨回数の比率でプロペンシティを推定した。つまり，共変数 X として過去の推薦ログを用いた．また，Dunnhumby では約 22 か月，Tafeng では約 4 か月と期間が長いため，過去 4 週間の購入回数と推奨回数を特徴量としたロジスティック回帰により性向を推定した．
+
+### Compared Methods.
+
+The following methods are compared.
+
+- RMF [14, 32] 12: The regularized MF trained with accuracybased pointwise optimization.
+- BPR [35]: The MF trained with accuracy-based BPR loss.
+- RecResp [40]: The MF with user- and item-specifc bias terms for recommendations.
+- CausE [3]: The joint training of two MFs with and without recommendations.
+- CausE-Prod [3]: The variant of CausE, which has common user factors for two MFs.
+- ULRMF (ours): The MF trained with proposed ULOpoint.
+- ULBPR (ours): The MF trained with proposed ULOpair .
+
+RMF and BPR are trained by conventional accuracy-based optimization, i.e., CR−P ∪ CN R−P as positive samples. RecResp and CausE are recent recommendation methods targeting uplift. For these methods, we predict the uplift using the diference between purchase probabilities with and without recommendations, and use them for top-N recommendation as described in [40]. They once train models for accurate purchase prediction (CR−P ∪ CN R−P as positive samples), and then target uplift using the accuracyoptimized models. Only our methods, ULRMF and ULBPR, are optimized directly for uplift by the unique sampling strategy described in Subsection 3.2.
+
+### Implementation and Parameter Setings.
+
+All the compared methods are latent factor models, and we set the factor dimensions to 100. Adam [21] was employed with batch size 1000, and the initial learning rate was set to 0.0001. For pointwise learning, there are two stratifcations of data sampling: one is between purchased and unpurchased items (by γP ), and the other is between recommended and not recommended items (by γR ). γP is set to 0.2, an optimal ratio for various datasets in [11], for RMF and ULRMF. We do not apply this stratifcation to RecResp and CausE, because it distorts the purchase probability and prohibits the uplift prediction. γR is set to 0.5 for RecResp, CausE, and ULRMF.
+比較した手法は全て潜在因子モデルであり、因子の次元は100とした。Adam[21]を採用し、バッチサイズは1000、初期学習率は0.0001に設定した。ポイントワイズ学習では、データサンプリングの層別は、購入品と未購入品（γP による）と、推奨品と非推奨品（γR による）の 2 つである。γP は [11] の様々なデータセットで RMF と ULRMF に最適な比率である 0.2 に設定されている. この層別は購入確率を歪め、高揚予測を禁止するため、RecResp と CausE には適用しない。γR は RecResp、CausE、ULRMF に対して 0.5 とした。
+
+The regularization coefcient λ ∈ {10−2 , 10−4 , 10−6 , 10−8} and other model-specifc hyperparameters were tuned in the validation phase to maximize Uplift@10. The model-specifc hyperparameters and their exploration ranges are as follows: regularization coefcient between the treatment and control latent factors λbet ∈ {10−2 , 10−4 , 10−6 , 10−8} and its distance metric ∈ {L1 , L2 ,cosine} for CausE, the probability that NR-NP is regarded as positive α ∈ {1.0, 0.8, 0.6, 0.4, 0.2, 0.0} for ULRMF and ULBPR.
+Uplift@10を最大化するために，正則化係数λ∈{10-2 , 10-4 , 10-6 , 10-8}とその他のモデル固有のハイパーパラメータを検証フェーズで調整した．モデル固有のハイパーパラメータとその探索範囲は，CausEでは治療潜在因子と対照潜在因子間の正則化係数λbet∈ {10-2 , 10-4 , 10-6 , 10-8}とその距離メトリック∈ {L1 , L2 ,cosine}，ULRMF と ULBPR では NR-NP が正とされる確率 α∈ {1.0, 0.8, 0.6, 0.4, 0.2, 0.0} となっている．
 
 ## 5.2. Performance Comparison (RQ1)
 
+We compared the uplift performances between our methods and baselines (Table 4). We make the following key observations:
+
+- Our ULRMF or ULBPR methods achieve the best in Uplift@N and UpliftSNIPS@N for most cases.
+- The accuracy-based methods (RMF and BPR) perform the best in Precision; however, for the most part, they perform worse in the uplift metrics than other methods.
+- The methods targeting uplift (RecResp, CausE, and ours) tend to outperform RMF and BPR. This implies that our uplift metrics can measure the uplift improvement as expected.
+
+我々の手法とベースラインとのアップリフト性能を比較した（表4）。その結果、以下のような重要な知見が得られた。
+
+- ULRMFとULBPRはほとんどの場合，Uplift@NとUpliftSNIPS@Nで最良を達成する．
+- 精度ベースの手法(RMFとBPR)はPrecisionで最も良い結果を出すが，ほとんどの場合，他の手法よりもupliftのメトリクスで悪い結果を出す．
+- しかし，RMFとBPRは他の手法に比べ，高揚度が低い．このことは，我々のアップリフトメトリクスが期待通りのアップリフトの改善を測定できることを示唆している.
+
 ## 5.3. Uplift-based Optimization Properties (RQ2)
+
+We investigated the learning curves in the Dunnhumby dataset13 (Fig. 2 (a)). Uplift@10 increases with training iterations. The learning curve of ULBPR tends to be steadier than that of ULRMF. ULRMF and ULBPR converge faster than RMF and BPR, which shows scalability of our methods in terms of computation time.
+Dunnhumbyデータセット13の学習曲線を調査した（図2（a））. Uplift@10は学習反復回数が増えるにつれて増加する。ULBPR の学習曲線は ULRMF よりも安定する傾向がある。ULRMF と ULBPR は RMF と BPR よりも収束が速く、計算時間の点で 我々の手法のスケーラビリティがあることがわかる。
+
+In our experiments, items were fltered by the time periods that the items existed for in purchase logs. We modifed the fltering criteria from 7 to 19 days by a 3-day interval for the Xing dataset, in which the numbers of items varied from 41,099 to 5,828. As shown in Fig. 2 (b), ULBPR outperforms BPR in all these conditions. We also experimented with items in product-level instead of categorylevel for the Dunnhumby dataset, in which the number of items is 4,287. In this condition, Uplift@10 are 0.0826 and 0.0484 for ULBPR and BPR, respectively. These results indicate that our uplift-based optimization can improve uplift for datasets in a wide range of data densities.
+実験では、アイテムは購入ログに存在する期間によってフラッタリングされた.
+アイテム数が41,099から5,828のXingデータセットに対して、フラッタリング基準を7日から19日の間で3日間隔で変更した.
+図2 (b)に示すように、いずれの条件においてもULBPRはBPRを上回った.
+また、item数が4,287のDunnhumbyデータセットでは、itemがカテゴリレベルではなく、プロダクトレベルで実験した.
+この条件では，ULBPRとBPRのUplift@10はそれぞれ0.0826と0.0484であった.
+これらの結果は、我々のUpliftベースの最適化が、幅広いデータ密度のデータセットに対してUpliftを改善できることを示している.
+
+ULRMF and ULBPR have a model-specifc hyperparameter α, which is the probability of regarding NR-NP as positive. Fig. 3 shows the dependence on α. The optimal α is less than 1, which supports our claim of treating NR-NP as an intermediate between positive and negative in Subsection 3.1.
+ULRMFとULBPRは、NR-NPを正とみなす確率であるハイパーパラメータαをモデル特異的に持つ。図3はαの依存性を示しており、最適なαは1以下であり、3.1節で述べたNR-NPを正と負の中間として扱うという主張が支持されている。
+
+Our optimization methods handle R-P as positive and NR-P as negative, while the accuracy-oriented methods treat both as positive. To see the efect of this diference, we investigated the distribution of the recommended items in the observable four classes (Table 5). ULRMF and ULBPR successfully reduce the recommendations of the NR-P class, in which items can be purchased without recommendations. The R-NP ratio also decreases, thereby avoiding recommendations that result in no outcome. Further, the sum of R-P and R-NP ratios, which is equal to the ratio of items included in the recommendation logs, is not higher for ULRMF and ULBPR compared to RMF and BPR. This indicates that our optimization methods do not orient a model M for mimicking the recommendation policy of the currently deployed model D.
+我々の最適化手法はR-Pを正、NR-Pを負として扱うが、精度重視の手法ではどちらも正として扱う。この違いを見るために，観測可能な4つのクラスにおける推奨アイテムの分布を調べた（表5）．ULRMFとULBPRは、推薦がなくても購入できるNR-Pクラスの推薦を減少させることに成功した。また、R-NP比も減少することで、結果が出ないレコメンドを回避することができる。さらに，R-P比とR-NP比の和（推薦ログに含まれるアイテムの割合に等しい）は，ULRMFとULBPRではRMFとBPRと比べて高くならない．このことから、我々の最適化手法は、現在導入されているモデルDの推薦方針を模倣するためのモデルMを志向していないことがわかる。
 
 ## 5.4. Trends of the Recommended Items (RQ3)
 
+To intuitively understand the diference in the recommendation outputs between the accuracy-based optimization and uplift-based optimization, Table 6 shows the often-recommended items by RMF and ULRMF in the Dunnhumby dataset. While RMF tends to recommend popular items, ULRMF recommends items without an emphasis on popular ones14. Often-recommended items by ULRMF include those that might induce impulse purchases such as pasta sauce and heat-and-serve meals.
+精度に基づく最適化と隆起に基づく最適化の推薦出力の違いを直感的に理解するために、DunnhumbyデータセットにおいてRMFとULRMFがよく推薦する項目を表6に示す。RMFは人気のあるアイテムを推奨する傾向があるのに対し、ULRMFは人気のあるアイテムを重視せずに推奨している14。ULRMFでよく勧められる品目には、パスタソースや温めるだけの料理など、衝動買いを誘発するような品目が含まれている。
+
 # 6. Conclusions
+
+This study proposed new evaluation and optimization methods for uplift-based recommendation. We demonstrated that accuracy metrics such as precision cannot be utilized to assess recommenders in terms of uplift. Based on a causal inference framework, we proposed an ofine evaluation protocol to estimate the expected uplift of items in a recommendation list. Then, we derived the relative priorities of four observation classes from purchase and recommendation logs and utilized their priorities to construct pointwise and pairwise sampling methods. Using three public datasets, we confrmed that our proposed optimization methods outperform conventional accuracy-based methods and recent methods targeting uplift. We also investigated the characteristics of uplift-based optimization, and its output recommendations.
+本研究では、アップリフトベース推薦のための新しい評価・最適化手法を提案した。レコメンダーの評価には，精度などの正確さの指標は利用できないことを実証した．因果推論の枠組みに基づき、推薦リストに含まれる項目の期待高揚度を推定するためのofine評価プロトコルを提案した。そして，購入履歴と推薦履歴から4つの観測クラスの相対的な優先順位を導き出し，その優先順位を用いてポイントワイズサンプリングとペアワイズサンプリング手法を構築する．3つの公共データセットを用いて，提案する最適化手法は，従来の精度ベースの手法や高揚を対象とした最新の手法を凌駕することが確認された．また，高揚に基づく最適化手法の特徴や，出力される推薦文についても調査した．
+
+In the future, we plan to compare our uplift-based ofine evaluations with online A/B experiments. Because our uplift-based optimizations are generic methods, they are applicable to various recommender models. Recently, recommender models using neural networks have outperformed conventional models [11, 43]. We expect that applying our uplift-based optimizations to neural network models would further enhance the uplift, which is also a subject of our future work.
+今後は、アップリフトベースのオファイン評価とオンラインA/B実験との比較を行う予定である。我々の高揚に基づく最適化は汎用的な手法であるため，様々なレコメンダーモデルに適用可能である．近年，ニューラルネットワークを用いたレコメンダーモデルが従来のレコメンダーモデルを凌駕している[11, 43]．本研究で提案する高揚に基づく最適化手法をニューラルネットワークモデルに適用することで，さらに高揚が向上することが期待され，今後の課題としている．

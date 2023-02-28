@@ -302,11 +302,98 @@ $$
 
 いずれの学習においても、パラメータ$\Theta$のoverfitting を防ぐため、L2正則化項$Omega = ||Theta||^2_2$ を加える.
 $\hat{x}_{ui}$にはMatrix Factorization (MF) [22]を使用する.
-MF を改良したものを **UpLift-optimized Regularized MF (ULRMF)** および **UpLift-optimized BPR(ULBPR)**と呼び、それぞれアルゴリズム 1 および 2 で学習させる.
+アルゴリズム1 & 2で学習させる事で MF を改良したものを **UpLift-optimized Regularized MF (ULRMF)** および **UpLift-optimized BPR(ULBPR)**と呼ぶ.
 
 ## 1.4. どうやって有効だと検証した?
 
+以下の3つのResearch Questionを解決する為に実験を行っている.
+
+- RQ1: Uplift-based の 推薦モデル は他の既存手法と比較してどのようなパフォーマンスを示すか？
+- RQ2: Uplift-based の最適化は、どのような性質を持つか？(Accuracy-basedと比較して.)
+- RQ3: 従来(Accuracy-based)の 推薦手法 と Uplift-based の 推薦手法 では、推薦されるアイテムはどのように異なるのか？
+
+三種類のオープンソースのデータセット(Dunnhumby, Tafeng, Xing)を用いている.
+
+- Dunnhumby: 小売店での購入履歴とpromotion履歴.
+- Tafeng: 中国の食料品店からの価格情報を含む購入ログ. 商品の割引率が0.1以上あれば、その商品を"推薦されたアイテム"とみなす.
+- Xing: オンライン求職サイトにおけるユーザのinteractionログ.
+  - クリック、ブックマーク、応募というpositiveな user interaction を "購入されたアイテム"とみなす.
+  - impressionログ = ユーザに表示されたアイテムを"推薦されたアイテム"とみなす.
+  - (↑のようなinteractionログの分け方であれば、NPでも使えるかも...??)
+
+### 1.4.1. EvaluationのProtocols
+
+提案する Uplift@N と UpliftSNIPS@N を用いて、N =10、30、10010でそれぞれの手法のUplift 性能を評価した. また、参考として Precision@30 (Accuracy-basedの評価指標)も測定した.
+
+- validation phase: 1から(t_d - 2 t_e)までの期間でモデルを学習し、(t_d - 2 t_e + 1)から(t_d - t_e)までの期間でモデルを評価する.
+- test phase: (t_e +1)から(t_d − t_e)までの期間でモデルを学習し、(t_d − t_e + 1)から t_d までの期間でモデルを評価する.
+
+### 1.4.2. compareするmethod
+
+比較対象は以下の手法(元となる推薦モデル=$\hat{y}_{ui}$を予測するモデルは、全てMatrix Factorization).
+
+- Accuracy-basedの推薦手法:
+  - RMF [14, 32] 12: 正則化 MF を精度よく学習させたもの．
+  - BPR [35]: 精度に基づく BPR ロスを用いて学習させた MF．
+- 既存研究のUplift-Basedの手法:
+  - RecResp [40]: ユーザとアイテムに依存した推薦のためのバイアス項を持つMF．
+  - CausE [3]: レコメンデーションがある場合とない場合の2つのMFを合同で学習させる．
+  - CausE-Prod [3]: CausE の変形版で，2つのMFに共通のユーザ係数を持つ．
+- 本論文で提案された、Uplift-Basedの手法:
+  - ULRMF: 提案するULOpointで学習させたMF．
+  - ULBPR: 提案するULOpairで学習させたMF．
+
+RMF と BPR は従来のAccuracy-basedの最適化, すなわち $C_{R-P} \cup C_{NR-P}$ を positive サンプルとして学習させるもの.
+RecRespとCausEは，Uplift を対象とした推薦手法. これらの手法は，[40]にあるように，推薦がある場合とない場合の購買確率の差分を用いて Uplift を予測し，top-N 推薦に用いる.
+これらの手法は，一旦，Accuracy-Basedの手法でモデルを学習させ、それを用いて間接的にUpliftの度合いを推薦アイテムリストを調整する(?)．
+本論文の提案手法である ULRMF と ULBPR のみ、直接的にUpliftに基づいてモデルが最適化されている.
+
 ## 1.5. 議論はある？
+
+### 1.5.1. 結果1: Performance Comparison (RQ1)
+
+![](https://camo.qiitausercontent.com/8317c78cce1b17b33da5043cef72b2de983bb6f6/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f61336664663566652d353863392d663561662d386632382d3939643361656430663534392e706e67)
+
+table 4 は、各手法のUplift性能の評価指標の結果である. その結果、以下のような知見が得られた.
+
+- 提案手法(ULRMFとULBPR)はほとんどの場合，Uplift@NとUpliftSNIPS@Nで最良のスコアを達成する.
+- 精度ベースの手法(RMFとBPR)はPrecisionで最も良い結果を出すが，ほとんどの場合，他の手法よりもupliftのmetricsで悪い結果を出す.
+- Upliftを対象とした手法(RecResp，CausE, 提案手法)は，RMFやBPRを上回る傾向にある. このことは，我々のUplift metrics(Uplift@NとUpliftSNIPS@N)が期待通りのuplift性能の向上を計測できることを意味している.
+
+### 1.5.2. 結果2: Uplift-based Optimization Properties (RQ2)
+
+![](https://camo.qiitausercontent.com/1d14777cd31f9bcded4ad9ee70146f007bb592e3/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f63646339313139382d316634382d373064322d343964322d6665303439636133316638312e706e67)
+
+図2-aは、学習曲線(横軸=iteration回数, 縦軸=Uplift性能の評価指標)の推移.
+
+- Uplift@10はiteration回数が増えるにつれて増加する. ULBPR の学習曲線は ULRMF よりも安定する傾向がある.
+- ULRMF と ULBPR は RMF と BPR よりも収束が速く、計算時間の点で 提案手法のScalability があることがわかる.
+
+図2-bは、学習データに使用するユニークアイテム数 - Uplift性能評価指標の推移.
+
+- Uplift性能において、いずれの条件においてもULBPRはBPRを上回った.
+
+図3は, 提案手法のハイパーパラメータa(NR-NPをpositiveラベルとみなす確率) と Uplift性能評価指標の推移.
+
+- 最適なαは1.0以下(あれ?当たり前じゃない...?)であり、3.1節で述べたNR-NPを正と負の中間として扱うという主張が支持されている.
+
+![](https://camo.qiitausercontent.com/34b0a304a47e5f32aaaad470e0d694a4d41ad7a8/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32353639373964662d646633392d633330352d656332662d3136373633386434376134392e706e67)
+
+提案手法はR-Pをpositive, NR-PPをnegativeとして扱う. 一方でaccuracy-basedの手法ではどちらもpositiveとして扱う. この違いを見るために，観測可能な4つのクラスにおける推薦アイテムの分布を確認した(表5).
+
+- ULRMFとULBPRは、推薦がなくても購入されるNR-Pクラスの推薦を減少させることに成功している.
+- また、R-NP比も減少することで、結果が出ないレコメンドを回避することができた.
+- さらに，R-P比とR-NP比の和(推薦ログに含まれるアイテムの割合に等しい)は，ULRMFとULBPRではRMFとBPRと比べて高くならない.
+  - このことから、提案された最適化手法は、新モデルMの最適化の方向として、現在導入されているモデルDの推薦方針を模倣するような結果になっていない事がわかる.(推薦されたアイテムが更に推薦されやすくなる、ようなフィードバックループを回避するような方向に学習できているって事...??)
+
+### 1.5.3. 結果3: Trends of the Recommended Items (RQ3)
+
+**accuracy-basedの最適化とuplift-basedの最適化の推薦結果の違い**を直感的に理解するために、DunnhumbyデータセットにおいてRMFとULRMFがよく推薦するアイテム群が表6に示されている.
+(parentheses braket内の数字は、purchaseログにおける人気ランク.)
+
+![](https://camo.qiitausercontent.com/5c23db80bae182840d0d0a1ac77ca739cb5d30c3/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f66663633396263332d303862652d653564322d363261332d3063666165663466373161632e706e67)
+
+RMFは人気のあるアイテムを推奨する傾向があるのに対し、ULRMFは人気のあるアイテムを重視せずに推薦している. ULRMFでよく推薦されるアイテムには、パスタソースや温めるだけの料理など、**衝動買い(=オススメした事によりユーザが買ってしまうようなアクション...!)**を誘発するようなアイテムが含まれている.
 
 ## 1.6. 次に読むべき論文は？
 
