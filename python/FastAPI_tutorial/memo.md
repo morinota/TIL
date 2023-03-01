@@ -1417,7 +1417,7 @@ def create_user(db: Session, user: schemas.UserCreate):
 def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     db_item = models.Item(
         **item.dict(), # pydantic modelを一旦dictに変換して、dictをuppackingしてkey-valueをargumentsとして渡している.
-        owner_id=user_id, # 加えて、pydantic modelにない argumentを追加してる.
+        owner_id=user_id, 
         )
     db.add(db_item)
     db.commit()

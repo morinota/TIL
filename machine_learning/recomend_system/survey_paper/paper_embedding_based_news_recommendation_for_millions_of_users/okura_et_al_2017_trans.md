@@ -16,7 +16,7 @@ It is necessary to understand the content of articles and user preferences to ma
 ## 1. INTRODUCTION 1. はじめに
 
 It is impossible for users of news distributions to read all available articles due to limited amounts of time. Thus, users prefer news services that can selectively provide articles. Such selection is typically done manually by editors and a common set of selected stories are provided to all users in outmoded media such as television news programs and newspapers. However, we can identify users before they select articles that will be provided to them on the Internet by using information, such as that in user ID cookies, and personalize the articles for individual users [3, 22].
-ニュース配信の利用者は，限られた時間の中で，配信されているすべての記事を読むことは不可能. そのため，ユーザは記事を選択的に提供できるニュースサービスを好む。 テレビのニュース番組や新聞のような時代遅れのメディアでは、このような選択は通常編集者の手作業で行われ、選択された記事の共通のセットが全ユーザに提供される。 しかし，インターネット上では，ユーザIDクッキーなどの情報を利用して，提供される記事を選択する前にユーザを特定し，個々のユーザに対して記事をパーソナライズすることができる[3, 22]。
+ニュース配信の利用者は，限られた時間の中で，配信されているすべての記事を読むことは不可能. そのため，ユーザは記事を選択的に提供できるニュースサービスを好む。 テレビのニュース番組や新聞のような時代遅れのメディアでは、このような選択は通常編集者の手作業で行われ、選択された記事の共通のセットが全ユーザに提供される. しかし，インターネット上では，ユーザIDクッキーなどの情報を利用して，提供される記事を選択する前にユーザを特定し，個々のユーザに対して記事をパーソナライズすることができる[3, 22].
 
 ID-based methods, such as collaborative filtering and low-rank factorization, are well known in making recommendations. However, Zhong et al. [22] suggested that such methods were not suitable for news recommendations because candidate articles expired too quickly and were replaced with new ones within short time spans. Thus, the three keys in news recommendations are: Understanding the content of articles, • Understanding user preferences, and • Listing selected articles for individual users based on content and preferences.
 ID ベースの推薦方法としては，協調フィルタリングや低ランク因子法などがよく知られている． しかし，Zhong ら[22]は，候補となる記事の期限が切れるのが早く，短時間で新しい記事に置き換わるため，こうした手法はニュース推薦には適さないとしている． このように、ニュース推薦における鍵は以下の3つである。 このように，ニュース推薦の鍵は，記事の内容を理解すること， - ユーザーの嗜好を理解すること， - 内容と嗜好に基づいて個々のユーザーに対して選択された記事をリストアップすることの 3 点である．
@@ -34,13 +34,13 @@ The previous version of our implementation was based on this method for these re
 前バージョンの実装は、これらの理由からこの方法に基づいていました。 しかし、レコメンデーションの品質に悪影響を及ぼす可能性のある問題がいくつかあった。 ひとつは、単語の表現方法である。 単語を特徴量とした場合、同じ意味の単語でも表記が違えば全く別の特徴量として扱われてしまう。 この問題は、同じ出来事について複数のプロバイダが別々に記事を投稿したニュース記事で発生しがちであった。 二つ目は、閲覧履歴の扱いである。 本手法では、閲覧履歴を集合として扱っている。 しかし、履歴は連続したものであり、本来であれば閲覧の順番がユーザの興味の変遷を表すものである。 また、私的な閲覧から1時間に何度もサイトを訪れるユーザーまで、履歴の長さに大きなばらつきがあることに注意する必要がありました。 近年、様々な領域でディープラーニングを用いたアプローチが有効であることが報告されています。 単語の分散表現により、意味情報を徹底的に捉える[11, 16]。 リカレントニューラルネットワーク（RNN）は、可変長の入力列を扱う手法として有効な結果を出している[9, 15, 17]。
 
 If we build a model with a deep network using an RNN to estimate the degree of interest between users and articles, on the other hand, it is difficult to satisfy the response time constraints on accesses in real systems. This paper proposes an embedding-based method of using distributed representations in a three step endto-end manner from representing each article to listing articles for each user based on relevance and duplication: Start with distributed representations of articles based on a variant of the denoising autoencoder (which addresses the first issue in Section 3). • Generate user representations by using an RNN with browsing histories as input sequences (which addresses the second issue in Section 4). • Match and list articles for each user based on the inner product of article-user for relevance and article-article for de-duplication (outlined in Section 2).
-一方、RNNを用いたディープネットワークでモデルを構築し、ユーザと記事の間の関心度を推定すると、**実システムにおけるアクセスの応答時間制約を満たすことが困難**となる。 本論文では、各記事の表現から、関連性と重複に基づく各ユーザーの記事のリストアップまで、3段階のエンドツーエンドで分散表現を利用する埋め込みベースの手法を提案する。 **ノイズ除去オートエンコーダの変形に基づく記事の分散表現**から始める（これはセクション3で最初の問題に対処する）。 - 閲覧履歴を入力列とするRNNを用いてユーザ表現を生成する（セクション4の第二の課題に対応）。 - 記事-ユーザ間の関連性と記事-記事の重複排除の内積に基づいて、各ユーザの記事をマッチングしリスト化する（セクション2で概説）。
+一方、RNNを用いたディープネットワークでモデルを構築し、ユーザと記事の間の関心度を推定すると、**実システムにおけるアクセスの応答時間制約を満たすことが困難**となる。 本論文では、各記事の表現から、関連性と重複に基づく各ユーザーの記事のリストアップまで、3段階のエンドツーエンドで分散表現を利用する埋め込みベースの手法を提案する。 **ノイズ除去オートエンコーダの変形に基づく記事の分散表現**から始める（これはセクション3で最初の問題に対処する）. - 閲覧履歴を入力列とするRNNを用いてユーザ表現を生成する（セクション4の第二の課題に対応）. - 記事-ユーザ間の関連性と記事-記事の重複排除の内積に基づいて、各ユーザの記事をマッチングしリスト化する（セクション2で概説）.
 
 The key to our method is using a simple inner product to estimate article-user relevance. We can calculate article representations and user representations before user visits in sufficient amounts of time. When a user accesses our service, we only select his/her representations and calculate the inner product of candidate articles and the representations. Our method therefore both expresses complex relations that are included in the user’s browsing history and satisfies the response time constraints of the real system.
-我々の手法の鍵は、記事とユーザーの関連性を推定するために単純な内積を使うことである。 我々は、ユーザーがアクセスする前に、十分な量の記事表現とユーザー表現を計算することができる。 ユーザが我々のサービスにアクセスしたとき、我々は彼の
+我々の手法の鍵は、記事とユーザーの関連性を推定するために単純な内積を使うことである. 我々は、ユーザーがアクセスする前に、十分な量の記事表現とユーザー表現を計算することができる. ユーザが我々のサービスにアクセスしたとき、我々は彼の
 
 The proposed method was applied to our news distribution service for smartphones, which is described in the next section. We compared our method to a conventional approach, and the results (see Section 6) revealed that the proposed method outperformed the conventional approach with a real service as well as with static experimental data, even if disadvantages, such as increased learning time and large latency in model updates, are taken into consideration.
-提案手法を次節で述べるスマートフォン向けニュース配信サービスに適用しました。 提案手法を従来手法と比較した結果（6章参照），学習時間の増加やモデル更新の遅延が大きいなどのデメリットを考慮しても，実サービスや静的実験データにおいて提案手法が従来手法を上回る性能を持つことが明らかとなった．
+提案手法を次節で述べるスマートフォン向けニュース配信サービスに適用しました. 提案手法を従来手法と比較した結果（6章参照），学習時間の増加やモデル更新の遅延が大きいなどのデメリットを考慮しても，実サービスや静的実験データにおいて提案手法が従来手法を上回る性能を持つことが明らかとなった．
 
 ## 2. OUR SERVICE AND PROCESS FLOW 2. 当社のサービスおよびプロセスの流れ
 
@@ -64,7 +64,7 @@ These processes have to be done within hundreds of milliseconds between user req
 We use the inner product of distributed representations of a user and candidate articles in matching to quantify relevance and select promising candidates. We determine the order of priorities in ranking by considering additional factors, such as the expected number of page views and freshness of each article, in addition to the relevance used for matching. We skip similar articles in a greedy manner in de-duplication based on the cosine similarity of distributed representations. An article is skipped when the maximum value of its cosine similarity with articles with higher priorities is above a threshold. This is an important process in real news distribution services because similar articles tend to have similar scores in ranking. If similar articles are displayed close to one another, a real concern is that user satisfaction will decrease due to reduced diversity on the display. Details on comparison experiments in this process have been discussed in a report on our previous study [12]. Advertising is also important, but several studies [2, 10] have already reported on the relationship between advertising and user satisfaction, so such discussion has been omitted here.
 マッチングに用いるユーザと候補記事の分散表現の内積を用いて、関連性を定量化し、有望な候補を選択する。 マッチングに用いる関連性に加えて、各記事の予想ページビュー数や鮮度などの要素を加味して、ランキングの優先順位を決定している。 重複排除では、分散表現のコサイン類似度に基づいて、類似記事を貪欲にスキップする。 より優先度の高い記事とのコサイン類似度の最大値が閾値を超えると、その記事はスキップされる。 これは実際のニュース配信サービスにおいて重要な処理である。なぜなら、類似した記事はランキングにおいて類似したスコアを持つ傾向があるからである。 類似記事同士が近くに表示されると、表示の多様性が損なわれるため、ユーザーの満足度が低下することが懸念される。 この過程での比較実験の詳細については、我々の先行研究報告[12]で述べている。 広告も重要であるが、広告とユーザ満足度の関係については、すでにいくつかの研究[2, 10]で報告されているので、ここではその議論は省略した。
 
-## 3. ARTICLE REPRESENTATIONS 3. 記事表示
+## 3. Article Representations 記事表現
 
 Section 1 discussed a method of using words as features for an article that did not work well in certain cases of extracting and de-duplicating. This section describes a method of dealing with articles as a distributed representation. We proposed a method in our previous study [12], from which part of this section has been excerpted.
 セクション1では、記事の特徴として単語を用いる方法について述べたが、これは抽出や重複排除の特定のケースでうまく機能しなかった。 本節では、記事を分散表現として扱う方法について述べる。 我々は以前の研究[12]でこの方法を提案したが、本節はその一部を抜粋したものである。
@@ -119,21 +119,23 @@ where $p$ is the corruption rate in the training phase. Thus, $h$ is uniquely de
 We use the $h$ generated above in three applications as the representation of the article: (i) to input the user-state function described in Section 4, (ii) to measure the relevance of the user and the article in matching, and (iii) to measure the similarity between articles in de-duplication.
 上記で生成された$h$を記事の表現として3つの用途で用いる。 (i) セクション4で述べるユーザ状態関数の入力、(ii) マッチングにおけるユーザと記事の関連性測定、(iii) 重複排除における記事間の類似度測定である。
 
-## 4. USER REPRESENTATIONS 4. ユーザー表現
+## 4. User Representations 4. ユーザ表現
 
 This section describes several variations of the method to calculate user preferences from the browsing history of the user. First, we formulate our problem and a simple word-based baseline method and discuss the issues that they have. We then describe some methods of using distributed representations of articles, as was explained in the previous section.
-ここでは、ユーザの閲覧履歴からユーザの嗜好を算出する方法について、いくつかのバリエーションを説明する。 まず、我々の問題と単純な単語ベースのベースライン法を定式化し、それらが持つ問題点を議論する。 次に、前節で説明したように、記事の分散表現を利用するいくつかの方法について説明する。
+ここでは、ユーザの閲覧履歴からユーザの嗜好を算出する方法について、いくつかのバリエーションを説明する. まず、我々の問題と単純なword-basedのベースライン法を定式化し、それらが持つ問題点を議論する. 次に、前節で説明したように、記事の分散表現(article embeddings)を利用するいくつかの方法について説明する.
 
 ### 4.1. Notation 4.1. 表記方法
 
 Let $A$ be the entire set of articles. Representation of element $a \in A$ depends on the method. The $a$ is a sparse vector in the word-based method described in Section 4.2, and each element of a vector corresponds to each word in the vocabulary (i.e., $x$ in Section 3). However, $a$ is a distributed representation vector of the article (i.e., $h$ in Section 3) in the method using distributed representations described in Sections 4.3 and 4.4.
-冠詞の全集合を$A$とする。 A$の要素$a \の表現は手法に依存する。 a$ は4.2節で述べた単語ベースの手法ではスパースベクトルであり、ベクトルの各要素は語彙の各単語に対応する（すなわち、3節では$x$）。 しかし、セクション4.3および4.4で述べた分散表現を用いる方法では、$a$は記事の分散表現ベクトル（すなわち、セクション3では$h$）である。
+記事の全集合を$A$とする. article representationの各要素=各記事のembeddingベクトル $a \in A$は手法に依存する.
+aは4.2節で述べたword-basedの手法(=たぶんtf-idfとbag-of-wordを使ったベクトルの事?)ではスパースベクトルであり、ベクトルの各要素はvocabularyの各wordに対応する(すなわち、3節では$x$).
+しかし、セクション4.3および4.4で述べた分散表現を用いる方法では、$a$は記事の分散表現ベクトル(すなわち、セクション3では$h$)である.
 
 Browse means that the user visits the uniform resource locator (URL) of the page of an article. Let ${_t^u \in A}_{t=1,\cdots,T_u}$ be the browsing history of user $u \in U$.
-閲覧とは、ユーザが記事のページのURL(Uniform Resource Locator)を訪問することである。 ここで、${_t^u \in A}_{t=1,\cdots,T_u}$ をユーザ $u \in U$ のブラウズ履歴とする。
+閲覧とは、ユーザが記事のページのURL(Uniform Resource Locator)を訪問することである. ここで、${_t^u \in A}_{t=1,\cdots,T_u}$ をユーザ $u \in U$ のブラウズ履歴とする.
 
 Session means that the user visits our recommendation service and clicks one of the articles in the recommended list.
-セッションとは、ユーザーが当社のレコメンデーションサービスにアクセスし、おすすめリストの記事をクリックすることを指します。
+"Session"とは、ユーザーが当社のレコメンデーションサービスにアクセスし、**おすすめリストの記事をクリックすること**を指す.
 
 When $u$ clicks an article in our recommendation service (a session occurs), he/she will immediately visit the URL of the clicked article (a browse occurs). Thus, there is never more than one session between browses $a_t^u$ and $a^u_{t+1}$ ; therefore, this session is referred to as $s_t^u$ . However, $u$ can visit the URL of an article without our service, e.g., by using a Web search. Therefore, $s_t^u$ does not always exist.
 u$がレコメンドサービスの記事をクリックしたとき（セッションが発生したとき）に
