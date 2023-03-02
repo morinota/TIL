@@ -138,12 +138,11 @@ Session means that the user visits our recommendation service and clicks one of 
 "Session"とは、ユーザーが当社のレコメンデーションサービスにアクセスし、**おすすめリストの記事をクリックすること**を指す.
 
 When $u$ clicks an article in our recommendation service (a session occurs), he/she will immediately visit the URL of the clicked article (a browse occurs). Thus, there is never more than one session between browses $a_t^u$ and $a^u_{t+1}$ ; therefore, this session is referred to as $s_t^u$ . However, $u$ can visit the URL of an article without our service, e.g., by using a Web search. Therefore, $s_t^u$ does not always exist.
-u$がレコメンドサービスの記事をクリックしたとき（セッションが発生したとき）に
+$u$は推薦サービスにおいて記事をクリックすると（セッションが発生）、すぐにクリックした記事のURLにアクセスする（ブラウジングが発生）。したがって、$a_t^u$と$a^u_{t+1}$の間に複数のセッションが存在することはない；したがって、このセッションを$s_t^u$と呼ぶ。 しかし、$u$は我々のサービスを使わずに、例えばウェブ検索を使って記事のURLを訪れることができる。したがって、$s_t^u$は常に存在するとは限らない。
 
 Since a session corresponds to the list presented to $u$, we express a session, $s^u_t$, by a list of articles ${s^u_{t,p} \in A}_{p \in P}$. The notation, $P \subseteq N$, is the set of positions of the recommended list that is actually displayed on the screen in this session. Let $P_{+} \subseteq P$ be the clicked positions and $P_{-} = P \ P_{+}$ be non-clicked positions. Although $P$, $P_{+}$, and $P_{-}$ depend on $u$ and $t$, we omit these subscripts to simplify the notation. Figure 3 outlines the relationships between these notations.
 セッションは$u$に提示されたリストに対応するので、セッション$s^u_t$を記事のリスト${s^u_{t,p}で表現する。 \のリストで表現する。 このとき、$P \subseteq N$という表記は、このセッションで実際に画面に表示される推奨リストの位置の集合である。 P_{+} \subseteq P$をクリックされた位置、$P_{-} = P \ P_{+}$を非クリックの位置とする。 P$、$P*{+}$、$P*{-}$は$u$、$t$に依存するが、表記を簡略化するためにこれらの添え字を省略する。 図3にこれらの表記の関係の概略を示す。
 
-<img src="https://d3i71xaburhd42.cloudfront.net/376953b2d70b30cfa9d56ae841b8c16f059e0867/4-Figure3-1.png">
 
 Figure 3: Browsing history and session
 図3：閲覧履歴とセッション

@@ -149,16 +149,15 @@ Our work measures the effect of exploration on recommendation accuracy, diversit
 
 We base our work on the REINFORCE recommender system introduced in [11], in which the authors framed a set recommendation problem as a Markov Decision Process (MDP) (S, A, P, R, ρ0,γ ).
 本論文では、[11] で紹介された REINFORCE 推薦システムをベースにしている. これは著者らが**集合推薦問題をマルコフ決定過程 (MDP) $(S, A, P, R, \rho_0,\gamma)$として定式化したもの**である.
-Here S is the state space capturing the user interests and context, A is the discrete action space containing items available for recommendation, P : S × A × S → R is the state transition probability, and R : S × A → R is the reward function, with r(s, a) note the immediate reward of action a under state s. ρ0 is the initial state distribution, and γ the discount for future rewards.
-ここで、
+Her, ここで、
 
-- S はユーザの興味とcontextを表す状態空間(state space)、
-- A は推薦可能なアイテムを含む離散行動空間(discrete action space)、
-- P : S × A × S → R は状態遷移確率(state transition probability)、
-- R : S × A → R は報酬関数(reward function):
-  - $r(s、a)$ は状態 s における行動 a の即時報酬(immediate reward)、
-  - $\rho_0$ は初期状態分布(initial state distribution)、
-  - $\gamma$は将来の報酬(reward)に対する割引(discount)である.
+- S is the state space capturing the user interests and context, S はユーザの興味とcontextを表す状態空間(state space)、
+- A is the discrete action space containing items available for recommendation, A は推薦可能なアイテムを含む離散行動空間(discrete action space)、
+- P : S × A × S → R is the state transition probability, P : S × A × S → R は状態遷移確率(state transition probability)、
+- R : S × A → R is the reward function, R : S × A → R は報酬関数(reward function):
+  - r(s, a) note the immediate reward of action a under state s. $r(s、a)$ は状態 s における行動 a の即時報酬(immediate reward)、
+  - ρ0 is the initial state distribution, $\rho_0$ は初期状態分布(initial state distribution)、
+  - γ the discount for future rewards. $\gamma$は将来の報酬(reward)に対する割引(discount)である.
 
 Let $H_t = {(A_0, a_0,r_0), \cdots, (A_{t−1}, a_{t−1},r_{t−1})}$ denote an user’s historical activities on the platform up to time t, where ...
 $H_t = {(A_0, a_0,r_0), \cdots, (A_{t−1}, a_{t−1},r_{t−1})}$は、**時間0 ~ 時間tまでのプラットフォーム上でのユーザの履歴活動**を表すとすると...
