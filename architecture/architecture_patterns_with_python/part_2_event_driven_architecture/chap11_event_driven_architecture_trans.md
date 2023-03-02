@@ -207,27 +207,26 @@ Redis は全体のプロセスを開始する `BatchQuantityChanged` イベン�
 ## Test-Driving It All Using an End-to-End Test エンド・ツー・エンド・テストですべてを検証する
 
 Here’s how we might start with an end-to-end test.
-ここでは、エンドツーエンドのテストをどのように始めるかについて説明します。
+ここでは、エンドツーエンドのテストをどのように始めるかについて説明する.
 We can use our existing API to create batches, and then we’ll test both inbound and outbound messages:
-既存のAPIを使ってバッチを作成し、インバウンドとアウトバウンドの両方のメッセージをテストすることができます。
+既存のAPIを使ってバッチを作成し、インバウンドとアウトバウンドの両方のメッセージをテストすることができる.
 
-An end-to-end test for our pub
-パブのエンドツーエンドテスト
+An end-to-end test for our pub/sub model (tests/e2e/test_external_events.py)
 
 ```python
 def test_change_batch_quantity_leading_to_reallocation():
     # start with two batches and an order allocated to one of them  1
     orderid, sku = random_orderid(), random_sku()
     earlier_batch, later_batch = random_batchref('old'), random_batchref('newer')
-    api_client.post_to_add_batch(earlier_batch, sku, qty=10, eta='2011-01-02')  2
+    api_client.post_to_add_batch(earlier_batch, sku, qty=10, eta='2011-01-02') # 2
     api_client.post_to_add_batch(later_batch, sku, qty=10, eta='2011-01-02')
-    response = api_client.post_to_allocate(orderid, sku, 10)  2
+    response = api_client.post_to_allocate(orderid, sku, 10) # 2
     assert response.json()['batchref'] == earlier_batch
 
-    subscription = redis_client.subscribe_to('line_allocated')  3
+    subscription = redis_client.subscribe_to('line_allocated') #3
 
     # change quantity on allocated batch so it's less than our order  1
-    redis_client.publish_message('change_batch_quantity', {  3
+    redis_client.publish_message('change_batch_quantity', {  #3
         'batchref': earlier_batch, 'qty': 5
     })
 
@@ -244,21 +243,20 @@ def test_change_batch_quantity_leading_to_reallocation():
             assert data['batchref'] == later_batch
 ```
 
-1. You can read the story of what’s going on in this test from the comments: we want to send an event into the system that causes an order line to be reallocated, and we see that reallocation come out as an event in Redis too. このテストで何が起こっているかは、コメントから読み取ることができます。注文行を再割り当てするイベントをシステムに送信したいのですが、その再割り当てがRedisでもイベントとして表示されるのがわかります。
+1. You can read the story of what’s going on in this test from the comments: we want to send an event into the system that causes an order line to be reallocated, and we see that reallocation come out as an event in Redis too. このテストで何が起こっているかは、コメントから読み取ることができる. orderlineを再割り当てするイベントをシステムに送信したいのですが、その再割り当てがRedisでもイベントとして表示されるのがわかる.
 
-2. `api_client` is a little helper that we refactored out to share between our two test types; it wraps our calls to `requests.post`. 2. `api_client` は小さなヘルパーで、2つのテストタイプで共有できるようにリファクタリングしたもので、 `requests.post` への呼び出しをラップしています。
+2. `api_client` is a little helper that we refactored out to share between our two test types; it wraps our calls to `requests.post`. 2. `api_client` は小さなヘルパーで、2つのテストタイプで共有できるようにリファクタリングしたもので、 `requests.post` への呼び出しをラップしている.
 
-3. `redis_client` is another little test helper, the details of which don’t really matter; its job is to be able to send and receive messages from various Redis channels. We’ll use a channel called `change_batch_quantity` to send in our request to change the quantity for a batch, and we’ll listen to another channel called `line_allocated` to look out for the expected reallocation. redis_client`はもうひとつの小さなテストヘルパーで、その詳細はあまり重要ではありません。このヘルパーの仕事は、さまざまな Redis チャンネルからメッセージを送受信できるようにすることです。 ここでは`change_batch_quantity`という名前のチャンネルを使ってバッチの数量を変更するリクエストを送信し、`line_allocated` という名前のチャンネルで再割り当てが行われるのを待ちます。
+3. `redis_client` is another little test helper, the details of which don’t really matter; its job is to be able to send and receive messages from various Redis channels. We’ll use a channel called `change_batch_quantity` to send in our request to change the quantity for a batch, and we’ll listen to another channel called `line_allocated` to look out for the expected reallocation. `redis_client`はもうひとつの小さなテストヘルパーで、その詳細はあまり重要ではない. このヘルパーの仕事は、さまざまな Redis チャンネルからメッセージを送受信できるようにすることである. ここでは`change_batch_quantity`という名前のチャンネルを使ってバッチの数量を変更するリクエストを送信し、`line_allocated` という名前のチャンネルで再割り当てが行われるのを待つ.
 
-4. Because of the asynchronous nature of the system under test, we need to use the `tenacity` library again to add a retry loop—first, because it may take some time for our new `line_allocated` message to arrive, but also because it won’t be the only message on that channel. まず、新しい `line_allocated` メッセージが到着するまでに時間がかかるかもしれませんし、そのチャンネルにあるのはそのメッセージだけではないからです。
+4. Because of the asynchronous nature of the system under test, we need to use the `tenacity` library again to add a retry loop—first, because it may take some time for our new `line_allocated` message to arrive, but also because it won’t be the only message on that channel. まず、新しい `line_allocated` メッセージが到着するまでに時間がかかるかもしれませんし、そのチャンネルにあるのはそのメッセージだけではないからである.
 
 ### Redis Is Another Thin Adapter Around Our Message Bus Redisはメッセージバスを囲むもう一つの薄いアダプターである
 
 Our Redis pub
 当社のRedisパブ
 
-Simple Redis message listener (src
-シンプルなRedisメッセージリスナー (src
+Simple Redis message listener (src/allocation/entrypoints/redis_eventconsumer.py)
 
 ```python
 r = redis.Redis(**config.get_redis_host_and_port())
@@ -280,15 +278,14 @@ def handle_change_batch_quantity(m):
     messagebus.handle(cmd, uow=unit_of_work.SqlAlchemyUnitOfWork())
 ```
 
-1. `main()` subscribes us to the `change_batch_quantity` channel on load. 1. `main()` はロード時に `change_batch_quantity` チャンネルにサブスクライブします。
+1. `main()` subscribes us to the `change_batch_quantity` channel on load. 1. `main()` はロード時に `change_batch_quantity` チャンネルにサブスクライブする.
 
-2. Our main job as an entrypoint to the system is to deserialize JSON, convert it to a `Command`, and pass it to the service layer—much as the Flask adapter does. システムのエントリポイントとしての我々の主な仕事は、JSON をデシリアライズして `Command` に変換し、Flask アダプタが行うのと同じようにサービス層に渡すことである。
+2. Our main job as an entrypoint to the system is to deserialize JSON, convert it to a `Command`, and pass it to the service layer—much as the Flask adapter does. **システムのentrypointとしての我々の主な仕事**は、**JSON をデシリアライズして `Command` に変換**し、Flask アダプタが行うのと同じように Service Layer に渡すことである.
 
 We also build a new downstream adapter to do the opposite job—converting domain events to public events:
-また、ドメインイベントをパブリックイベントに変換する、逆の作業を行うダウンストリームアダプタも新たに構築します。
+また、Domain event(?)を public event(?)に変換する、逆の作業を行うダウンストリームアダプタも新たに構築します。
 
-Simple Redis message publisher (src
-シンプルなRedisメッセージパブリッシャー (src
+Simple Redis message publisher (src/allocation/adapters/redis_eventpublisher.py)
 
 ```python
 r = redis.Redis(**config.get_redis_host_and_port())
@@ -299,12 +296,12 @@ def publish(channel, event: events.Event):  1
     r.publish(channel, json.dumps(asdict(event)))
 ```
 
-1. We take a hardcoded channel here, but you could also store a mapping between event classes/names and the appropriate channel, allowing one or more message types to go to different channels. ここではハードコードされたチャンネルを使用していますが、イベントクラス間のマッピングを保存することもできます。
+1. We take a hardcoded channel here, but you could also store a mapping between event classes/names and the appropriate channel, allowing one or more message types to go to different channels. ここではハードコードされたチャンネルを使用していますが、イベントクラス間のマッピングを保存することもできる.(??)
 
 ### Our New Outgoing Event 新発売のイベント
 
 Here’s what the `Allocated` event will look like:
-以下は、`Allocated`イベントの様子です。
+以下は、`Allocated`イベントの様子.
 
 New event (src
 新規イベント（src
@@ -319,13 +316,13 @@ class Allocated(Event):
 ```
 
 It captures everything we need to know about an allocation: the details of the order line, and which batch it was allocated to.
-これは、オーダーラインの詳細や、どのバッチに割り当てられたかなど、割り当てに関する必要な情報をすべて把握することができます。
+これは、オーダーラインの詳細や、どのバッチに割り当てられたかなど、割り当てに関する必要な情報をすべて把握することができる.
 
 We add it into our model’s `allocate()` method (having added a test first, naturally):
-これをモデルの `allocate()` メソッドに追加します (当然ながら、最初にテストを追加しています)。
+これをモデルの `allocate()` メソッドに追加する. (当然ながら、最初にテストを追加している).
 
-Product.allocate() emits new event to record what happened (src
-Product.allocate() は、何が起こったかを記録するために新しいイベントを発行します (src)
+Product.allocate() emits new event to record what happened (src/allocation/domain/model.py)
+`Product.allocate()` は、何が起こったかを記録するために新しいイベントを発行します (src)
 
 ```python
 class Product:
@@ -343,10 +340,9 @@ class Product:
 ```
 
 The handler for `ChangeBatchQuantity` already exists, so all we need to add is a handler that publishes the outgoing event:
-ChangeBatchQuantity` のハンドラはすでに存在しているので、追加する必要があるのは発信イベントをパブリッシュするハンドラだけです。
+`ChangeBatchQuantity` のhandlerはすでに存在しているので、追加する必要があるのはoutgoingするeventをpublishするhandlerだけである.
 
-The message bus grows (src
-メッセージバスが成長する（src
+The message bus grows (src/allocation/service_layer/messagebus.py)
 
 ```python
 HANDLERS = {
@@ -356,10 +352,9 @@ HANDLERS = {
 ```
 
 Publishing the event uses our helper function from the Redis wrapper:
-イベントの発行には、Redisラッパーのヘルパー関数が使用されます。
+eventの発行には、Redis wrapperのhelper functionが使用される.
 
-Publish to Redis (src
-Redisにパブリッシュする (src
+Publish to Redis (src/allocation/service_layer/handlers.py)
 
 ```python
 def publish_allocated_event(
@@ -368,43 +363,40 @@ def publish_allocated_event(
     redis_eventpublisher.publish('line_allocated', event)
 ```
 
-## Internal Versus External Events 内部事象と外部事象
+## Internal Versus External Events. Internal Events と External Events
 
 It’s a good idea to keep the distinction between internal and external events clear.
-内部イベントと外部イベントの区別を明確にしておくとよいでしょう。
+**Internal EventとExternal Eventの区別**を明確にしておくとよいだろう.
 Some events may come from the outside, and some events may get upgraded and published externally, but not all of them will.
-あるイベントは外部からやってくるかもしれませんし、あるイベントはアップグレードされて外部で公開されるかもしれませんが、すべてがそうなるわけではありません。
+あるEventは外部からやってくるかもしれないし、あるイベントはアップグレードされて外部でpublishedされるかもしれないが、すべてがそうなるわけではない.
 This is particularly important if you get into event sourcing (very much a topic for another book, though).
-これは、イベントソーシング（非常に別の本のためのトピックですが）に取り掛かる場合、特に重要です。
+これは、**event sourcing**(=Eventをどこから受け取るかの話??)に取り掛かる場合、特に重要である.
 
 - TIP ヒント
 
-- Outbound events are one of the places it’s important to apply validation. See Appendix E for some validation philosophy and examples. アウトバウンドイベントは、バリデーションを適用することが重要な場所の一つである。 検証の考え方や例については、付録Eを参照されたい。
+  - Outbound events are one of the places it’s important to apply validation. See Appendix E for some validation philosophy and examples. Outbound events(?)は、バリデーションを適用することが重要な場所の一つである. 検証の考え方や例については、付録Eを参照されたい.
 
 - EXERCISE FOR THE READER 読書運動
-
-- A nice simple one for this chapter: make it so that the main `allocate()` use case can also be invoked by an event on a Redis channel, as well as (or instead of) via the API. この章ではシンプルなものを紹介します。メインの `allocate()` ユースケースを、API経由だけでなく、Redisチャネルのイベントでも呼び出せるようにします (あるいはAPI経由の代わりに)。
-
-- You will likely want to add a new E2E test and feed through some changes into `redis_eventconsumer.py`. 新しいE2Eテストを追加して、いくつかの変更を `redis_eventconsumer.py` に反映させたいと思うことでしょう。
+- A nice simple one for this chapter: make it so that the main `allocate()` use case can also be invoked by an event on a Redis channel, as well as (or instead of) via the API. この章ではシンプルなものを紹介します。メインの `allocate()` usecase(=ユースケースはpublicメソッド的な意味合い?)を、**API経由だけでなく、Redisチャネルのイベントでも呼び出せるよう**にしたい (あるいはAPI経由の代わりに).
+- You will likely want to add a new E2E test and feed through some changes into `redis_eventconsumer.py`. 新しいE2Eテストを追加して、いくつかの変更を `redis_eventconsumer.py` に反映させたいと思うことだろう.
 
 ## Wrap-Up まとめ
 
 Events can come from the outside, but they can also be published externally—our `publish` handler converts an event to a message on a Redis channel.
-イベントは外部からやってくるものですが、外部へ公開することもできます。`publish`ハンドラはイベントをRedisチャンネル上のメッセージに変換します。
+**イベントは外部からやってくるものですが、外部へ公開(publish)することもできる**(まだあんまり意味をわかってない..., GUIにレスポンスを返す的なイメージだろうか...? ).`publish`ハンドラはイベントをRedisチャンネル上のメッセージに変換する.
 We use events to talk to the outside world.
-私たちはイベントを利用して外の世界と会話しています。
+私たちは**eventを利用して外の世界と会話**(=Connascence of Nameだっけ...!!)している.
 This kind of temporal decoupling buys us a lot of flexibility in our application integrations, but as always, it comes at a cost.
-このような時間的なデカップリングは、アプリケーションの統合に多くの柔軟性をもたらしますが、いつものように、それにはコストがかかります。
+このような**temporal decoupling**(?)は、アプリケーションの統合に多くの柔軟性をもたらしますが、いつものように、それにはコストがかかる.
 
 > Event notification is nice because it implies a low level of coupling, and is pretty simple to set up.
-> イベント通知は、低レベルの結合を意味し、セットアップが非常に簡単であるため、素晴らしいものです。
+> **Event notificationは、低レベルの結合を意味し(=(=Connascence of Nameだから?)**、セットアップが非常に簡単であるため、素晴らしいものである.
 > It can become problematic, however, if there really is a logical flow that runs over various event notifications...It can be hard to see such a flow as it’s not explicit in any program text....This can make it hard to debug and modify.
 > しかし、様々なイベント通知の上に流れる論理的な流れが本当にある場合、問題になることがある...プログラムのテキストに明示されていないので、そのような流れを見るのは難しい...これは、デバッグや修正を困難にすることがある。
 > --Martin Fowler, “What do you mean by ‘Event-Driven’”
-> --Martin Fowler, "What do you mean by 'Event-Driven'" （イベント駆動とはどういう意味か？
 
 Table 11-1 shows some trade-offs to think about.
-表11-1に、考えるべきトレードオフをいくつか示す。
+表11-1に、考えるべきトレードオフをいくつか示す.
 
 Table 11-1.
 表11-1.
@@ -412,20 +404,14 @@ Event-based microservices integration: the trade-offs
 イベントベースのマイクロサービス統合：トレードオフの関係
 
 - Pros 長所
-
-- Avoids the distributed big ball of mud. 配布された大きな泥の玉を避けることができます。
-
-- Services are decoupled: it’s easier to change individual services and add new ones サービスの分離：個々のサービスの変更や新しいサービスの追加が容易になる
-
+- Avoids the distributed big ball of mud. 配布された大きな泥の玉を避けることができる.
+- Services are decoupled: it’s easier to change individual services and add new ones **サービスのdecoupling**：個々のサービスの変更や新しいサービスの追加が容易になる.
 - Cons 短所
-
-- The overall flows of information are harder to see. 全体的な情報の流れは見えにくくなっています。
-
-- Eventual consistency is a new concept to deal with. 最終的な整合性は、新しい概念として扱われます。
-
-- Message reliability and choices around at-least-once versus at-most-once delivery need thinking through. メッセージの信頼性や、at-least-onceとat-most-onceの選択について、よく考える必要がある。
+  - The overall flows of information are harder to see. 全体的な情報の流れは見えにくくなっている.(サービス間ではNameのみを使って会話するから??)
+  - Eventual consistency is a new concept to deal with. 最終的な整合性(Eventual consistency)は、新しい概念として扱われる.
+  - Message reliability and choices around at-least-once versus at-most-once delivery need thinking through. メッセージの信頼性や、at-least-onceとat-most-onceの選択について、よく考える必要がある.
 
 More generally, if you’re moving from a model of synchronous messaging to an async one, you also open up a whole host of problems having to do with message reliability and eventual consistency.
-より一般的には、同期メッセージングのモデルから非同期メッセージングに移行する場合、メッセージの信頼性と最終的な一貫性に関連する問題のホスト全体を開くことにもなります。
+より一般的には、**synchronous(同期的な) messagingのモデルからasync(非同期的な) messagingに移行する**(i.e. サービス同士をより疎な結合にする? その為に Connasance of Name の状態にする?)場合、メッセージの信頼性と最終的な一貫性(eventual consistency)に関連する問題のホスト全体を開くことにもなる.
 Read on to “Footguns”.
 フットガンズ」までお読みください。
