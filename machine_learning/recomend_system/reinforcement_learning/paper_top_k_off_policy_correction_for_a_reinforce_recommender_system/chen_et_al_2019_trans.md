@@ -522,7 +522,7 @@ $$
 \tag{9}
 $$
 
-Smaller value of $c$ reduces variance in the gradient estimate, but introduces larger bias.
+Smaller value of $c$ reduces variance in the gradient estgiimate, but introduces larger bias.
 $c$ の値を小さくすると、勾配推定の分散は小さくなるが、バイアスが大きくなる.
 
 ### 4.4.2. Normalized Importance Sampling (NIS). 正規化重要度サンプリング(NIS)
@@ -539,7 +539,7 @@ $E_{\beta}[w(s,a)] = 1$ の場合、正規化定数 $\frac{1}{\sum_{(s', a') \si
 As 𝑛 increases, the effect of NIS is equivalent to tuning down the learning rate.
 n が増加すると、NIS の効果は学習率をチューニングすることと等価になる.
 
-### 4.4.3. Trusted Region Policy Optimization (TRPO). TRPO（Trusted Region Policy Optimization）。
+### 4.4.3. Trusted Region Policy Optimization (TRPO). 
 
 TRPO [36] prevents the new policy 𝜋 from deviating from the behavior policy by adding a regularization that penalizes the KL divergence of these two policies.
 TRPO [36]は，new policy $\pi$ がbehavior policy $\beta$ から逸脱しないように，これら二つの policy の KL Divergence にペナルティを与える正則化を追加することによって行う.
@@ -549,38 +549,38 @@ It achieves similar effect as the weight capping.
 # 5. Exploration 探求
 
 As should be clear by this point, the distribution of training data is important for learning a good policy.
-ここまでで明らかなように、良い方針を学習するためには学習データの分布が重要である。
+ここまでで明らかなように、**良いpolicyを学習するためには学習データの分布が重要である**.
 Exploration policies to inquire about actions rarely taken by the existing system have been extensively studied.
-既存のシステムでほとんど行われない行動を問い合わせる探索方針は広く研究されている。
+既存のシステムでほとんど行われない action を問い合わせる探索方針は広く研究されている.
 In practice, brute-force exploration, such as 𝜖-greedy, is not viable in a production system like YouTube where this could, and mostly likely would, result in inappropriate recommendations and a bad user experience.
-しかし，YouTube のようなシステムにおいて，𝜖貪欲に探索を行うことは，不適切な推薦やユーザ体験の低下を招く可能性があり，現実的でないと考えられる．
+しかし，**YouTube のようなシステムにおいて，𝜖-greedyに探索を行うことは，不適切な推薦やユーザ体験の低下を招く可能性があり，現実的でない**と考えられる.
 For example, Schnabel et al. [35] studied the cost of exploration.
-例えば、Schnabel ら [35] は探索のコストについて研究しています。
+例えば、Schnabel ら [35] は探索のコストについて研究している.
 
 Instead we employ Boltzmann exploration [12] to get the benefit of exploratory data without negatively impacting user experience.
-その代わりに、ボルツマン探索 [12] を採用し、ユーザーエクスペリエンスに悪影響を与えることなく、探索的データの利点を得ることができる。
+その代わりに、**Boltzmann探索** [12] を採用し、ユーザ体験に悪影響を与えることなく、探索的データの利点を得ることができる.
 We consider using a stochastic policy where recommendations are sampled from 𝜋𝜃 rather than taking the 𝐾 items with the highest probability.
-我々は、最も確率の高い ᵃ項目を選ぶのではなく、𝜋から推薦をサンプリングする確率的なポリシーを使用することを検討する。
+我々は、最も確率の高い K アイテムを選ぶ(=確定的)のではなく、**$\pi$ から推薦をサンプリングする確率的なpolicyを使用すること**を検討する.
 This has the challenge of being computationally inefficient because we need to calculate the full softmax, which is prohibitively expensive considering our action space.
-これは、完全なソフトマックスを計算する必要があるため、計算効率が悪いという課題があり、行動空間を考慮すると法外なコストがかかる。
+これは、**完全なソフトマックスを計算する必要がある(選択肢が多すぎる)**ため、計算効率が悪いという課題があり、action spaceを考慮すると法外なコストがかかる.
 Rather, we make use of efficient approximate nearest neighbor-based systems to look up the top 𝑀 items in the softmax [14].
-その代わりに、効率的な近似最近傍システムを利用し、ソフトマックスの上位 ǔ項目を検索する[14]。
+その代わりに、効率的な**近似最近傍システムを利用し、ソフトマックスの上位 M アイテムを検索**する[14]。
 We then feed the logits of these 𝑀 items into a smaller softmax to normalize the probabilities and sample from this distribution.
-次に、これらのǔ項目の対数をより小さなソフトマックスに送り込み、確率を正規化し、この分布からサンプリングする。
+次に、これらの **M アイテムの対数をより小さなソフトマックスに送り込み、確率を正規化し、この分布からサンプリング**する.
 By setting 𝑀 ≫ 𝐾 we can still retrieve most of the probability mass, limit the risk of bad recommendations, and enable computationally efficient sampling.
-𝑀 ≫ ᵃとすることで、確率の塊のほとんどを取り出すことができ、悪い推薦のリスクを制限し、計算効率の良いサンプリングを可能にする。
+$M >> K$とすることで、確率の塊のほとんどを取り出すことができ、悪い推薦のリスクを制限し、計算効率の良いサンプリングを可能にする. 
 In practice, we further balance exploration and exploitation by returning the top 𝐾 ′ most probable items and sample 𝐾 − 𝐾 ′ items from the remaining 𝑀 − 𝐾 ′ items.
-実際には、最も確率の高い上位 ᵃ項目を返し、残りの ᵃ項目から ᵃ項目を抽出することで、探索と抽出のバランスをさらに取る。
+実際には、最も確率の高い上位 K' アイテムを返し、残りの $M - K'$ アイテムから $K - K'$ アイテムを抽出することで、探索と抽出のバランスをさらに取る.(**なるほど...! Kアイテムのうち、K'個は確定的に選び、K-K'個は確率的に選ぶ!**)
 
 # 6. Experimental Results 実験結果
 
 We showcase the effectiveness of these approaches for addressing data biases in a series of simulated experiments and live experiments in an industrial-scale recommender system.
-我々は、一連のシミュレーション実験と産業規模の推薦システムでのライブ実験で、データの偏りに対処するためのこれらのアプローチの有効性を紹介する。
+我々は、一連のシミュレーション実験と産業規模の推薦システムでのライブ実験で、データの偏りに対処するためのこれらのアプローチの有効性を紹介する.
 
 ## 6.1. Simulation シミュレーション
 
 We start with designing simulation experiments to shed light on the off-policy correction ideas under more controlled settings.
-我々は、より制御された環境下でオフポリシー補正のアイデアを明らかにするために、シミュレーション実験を設計することから始める。
+我々は、より制御された環境下でoff-policy補正のアイデアを明らかにするために、シミュレーション実験を設計することから始める.
 To simplify our simulation, we assume the problem is stateless, in other words, the reward 𝑅 is independent of user states, and the action does not alter the user states either.
 シミュレーションを簡単にするために、我々は問題がステートレスであると仮定する。言い換えれば、報酬ǔはユーザの状態から独立しており、行動はユーザの状態も変えない。
 As a result, each action on a trajectory can be independently chosen.
