@@ -582,96 +582,99 @@ We showcase the effectiveness of these approaches for addressing data biases in 
 We start with designing simulation experiments to shed light on the off-policy correction ideas under more controlled settings.
 我々は、より制御された環境下でoff-policy補正のアイデアを明らかにするために、シミュレーション実験を設計することから始める.
 To simplify our simulation, we assume the problem is stateless, in other words, the reward 𝑅 is independent of user states, and the action does not alter the user states either.
-シミュレーションを簡単にするために、我々は問題がステートレスであると仮定する。言い換えれば、報酬ǔはユーザの状態から独立しており、行動はユーザの状態も変えない。
+シミュレーションを簡単にするために、我々は問題が stateless であると仮定する. 言い換えれば、**報酬 $R$ はユーザの状態(state)から独立しており、行動(action)はユーザの状態(state)も変えない**.
 As a result, each action on a trajectory can be independently chosen.
-その結果、軌道上の各行動は独立して選択することができる。
+その結果、軌跡(trajectory)上の各行動(action)は独立して選択することができる.
 
 ### 6.1.1. Off-policy correction. オフポリシー修正
 
 In the first simulation, we assume there are 10 items, that is A = {𝑎𝑖 ,𝑖 = 1, · · · , 10}.
-最初のシミュレーションでは、アイテムが10個あると仮定し、すなわちA = {ᵄ𝑖 ,𝑖 = 1, - - , 10}とする。
+最初のシミュレーションでは、アイテムが10個あると仮定し、すなわち $A = {a_i, i = 1,\cdots, 10}$ とする.
 The reward of each one is equal to its index, that is, 𝑟(𝑎𝑖) = 𝑖.
-それぞれの報酬はそのインデックスに等しく、つまりᵄ𝑖(↪Ll_1D45E) = 𝑖である。
+それぞれの報酬はそのインデックスに等しく、つまり $r(a_i) = i$ である.
 When we are choosing a single item, the optimal policy under this setting is to always choose the 10𝑡ℎ item as it gives the most reward, that is,
-一つの項目を選ぶとき、この設定の下での最適な政策は、最も多くの報酬を与えるので、常に10𝑡↪Ll_210E の項目を選ぶこと、である。
+一つのアイテムを選ぶとき、この設定の下での最適な方策(policy)は、最も多くの報酬を与えるので、常に i = 10 のアイテムを選ぶこと、である.
 
 $$
-\tag{}
+\pi^*(a_i) = I(i =10)
 $$
 
 We parameterize 𝜋𝜃 using a stateless softmax
-Űᜃはステートレスソフトマックスを用いてパラメータ化する。
+ステートレスソフトマックスを用いて $\pi_{\theta}$ をパラメータ化する.
 
 $$
-\tag{}
+\pi(a_i) = \frac{e^{\theta_i}}{\sum_{j} e^{\theta_j}}
 $$
 
 Given observations sampled from the behavior policy 𝛽, naively applying policy gradient without taking into account of data bias as in Equation (2) would converge to a policy
-行動政策ǽからサンプリングされた観測値が与えられたとき，式(2)のようにデータの偏りを考慮せずに素朴に政策勾配を適用すると，政策
+行動方策 $\beta$ からサンプリングされた観測値が与えられたとき，式(2)のようにデータの偏りを考慮せずに素朴に方策勾配(policy-gradient)を適用すると，方策は収束する.
 
 $$
-\tag{}
+\pi(a_i) = \frac{r(a_i) \beta(a_i)}{\sum_{j} r(a_j) \beta(a_j)}
 $$
 
 This has an obvious downside: the more the behavior policy chooses a sub-optimal item, the more the new policy will be biased toward choosing the same item.
-これには明らかな欠点がある。行動政策が最適でない項目を選べば選ぶほど、新しい政策は同じ項目を選ぶ方向に偏ってしまう。
+これには明らかな欠点がある. 行動方策が最適でないアイテムを選べば選ぶほど、新しい方策は同じアイテムを選ぶ方向に偏ってしまう.
 
 Figure 2 compares the policies 𝜋𝜃 , learned without and with off-policy correction using SGD [7], when the behavior policy 𝛽 is skewed to favor items with least reward.
-図2は，SGD[7]を用いてオフポリシー補正を行うことなく学習したポリシーŰと，報酬が最も少ない項目を優先するように偏った行動ポリシー↪L_1D6↩を比較したものである．
+図2は，行動方策 $\beta$ が 報酬の最も少ないアイテムを優先するように偏った場合において、SGD[7]を用いてオフポリシー補正 あり/なしで 学習した方策 $\pi_{\theta}$ を比較したものである.
 As shown in Figure 2 (left), naively applying the policy gradient without accounting for the data biases leads to a sub-optimal policy.
-図2（左）に示すように，データの偏りを考慮せずに素朴に政策勾配を適用すると，最適とは言えない政策になる．
+図2（左）に示すように，データの偏りを考慮せずに素朴に方策勾配を適用すると，最適とは言えない方策になる.(最適なのはi=10のアイテムを常に選ぶべき!)
 In the worst case, if the behavior policy always chooses the action with the lowest reward, we will end up with a policy that is arbitrarily poor and mimicking the behavior policy (i.e., converge to selecting the least rewarded item).
-最悪の場合、行動政策が常に報酬の最も少ない行動を選択する場合、任意に貧弱な行動政策を模倣した政策になってしまう（つまり、報酬の最も少ない項目を選択するように収束してしまう）。
+最悪の場合、**行動方策が常に報酬の最も少ない行動を選択する場合**、任意に貧弱な行動方策を模倣した方策になってしまう(つまり、報酬の最も少ないアイテムを選択するように収束してしまう)。
 On the other hand, applying the off-policy correction allows us to converge to the optimal policy 𝜋 ∗ regardless of how the data is collected, as shown in Figure 2 (right).
-一方、オフポリシー補正を適用すると、図2（右）のように、データの収集方法に関わらず、最適な政策𝜋∗に収束させることができる。
+一方、オフポリシー補正を適用すると、図2（右）のように、**データの収集方法に関わらず、最適な方策 $\pi^*$ に収束させることができる**.
 
-### 6.1.2. Top-𝐾 off-policy correction. top-ᵃ off-policy correction.
+### 6.1.2. Top-𝐾 off-policy correction.
 
 To understand the difference between the standard off-policy correction and the top-𝐾 off-policy correction proposed, we designed another simulation in which we can recommend multiple items.
-標準的なオフポリシー補正と提案された top-\_1D43 オフポリシー補正の違いを理解するために、複数のアイテムを推薦できる別のシミュレーションを設計した。
+標準的なオフポリシー補正と提案された top-K オフポリシー補正の違いを理解するために、複数のアイテムを推薦できる別のシミュレーションを設計した. 
 Again we assume there are 10 items, with 𝑟(𝑎1) = 10, 𝑟(𝑎2) = 9, and the remaining items are of much lower reward 𝑟(𝑎𝑖) = 1, ∀𝑖 = 3, · · · , 10. Here we focus on recommending two items, that is, 𝐾 = 2.
-ここでも10個のアイテムがあり、Ǳ(ᵄ) = 10、ǲ = 9、残りのアイテムは報酬がかなり低いᑟ(𝑎) = 1、∀𝑖 = 3、-、10とする。ここでは2個のアイテム、つまりᵃ = 2の推薦に焦点を合わせる。
+ここでも10個のアイテムがあり、$r(a_1) = 10$、$r(a_2) = 9$ 、残りのアイテムは報酬がかなり低い $r(a_i) = 1. \forall i = 3, \cdots 10$ とする. ここでは2個のアイテム、つまり $K = 2$ の推薦に焦点を合わせる.
 The behavior policy 𝛽 follows a uniform distribution, i.e., choosing each item with equal chance.
-行動方針ǖは一様分布に従う、つまり、各項目を等しい確率で選択する。
+行動方針 $\beta$ は一様分布に従う、つまり、各アイテムを等しい確率で選択する.
 
 Given an observation (𝑎𝑖 , 𝑟𝑖) sampled from 𝛽, the standard offpolicy correction has a SGD updates of the following form,
-𝑎𝑖𝑖からサンプリングされた観測値（ᵅ）が与えられると、標準オフポリシー補正は以下の形式のSGD更新を持つ。
+$\beta$ からサンプリングされた観測値$(a_i, r_i)$が与えられると、標準オフポリシー補正は以下の形式のSGD更新を持つ.
 
 $$
-\tag{}
+\theta_{j} = \theta_{j} + \eta \frac{\pi_{\theta}(a_j)}{\beta(a_j)} r(a_i)[I(j=i) - \pi_{\theta}(a_j)], 
+\forall j = 1, \cdots , 10
 $$
 
 where 𝜂 is the learning rate.
-ここで、𝜂は学習率である。
+ここで、$\eta$ は学習率である.
 SGD keeps increasing the likelihood of the item 𝑎𝑖 proportional to the expected reward under 𝜋𝜃 until 𝜋𝜃 (𝑎𝑖) = 1, under which the gradient goes to 0. The top-𝐾 off-policy correction, on the other hand, has an update of the following form,
-SGDはᜋ (ᜃ) = 1まで、ᜃの下で期待報酬に比例して項目ᑎの尤度を上げ続け、その下で勾配は0になる。 一方、top-ᵃ off-policy correctionは以下の形の更新がある。
+SGDは $\pi_{\theta}(a_i) = 1$ まで、$\pi_{\theta}$ の下で期待報酬に比例してアイテム $a_i$ の尤度を上げ続け、その下で勾配は0になる. 一方、top-K off-policy correctionは以下の形の更新がある. 
 
 $$
-\tag{}
+\theta_{j} = \theta_{j} + \eta \lambda_{K}(a_j) \frac{\pi_{\theta}(a_j)}{\beta(a_j)} 
+r(a_i)[I(j=i) - \pi_{\theta}(a_j)], 
+\forall j = 1, \cdots , 10
 $$
 
 where 𝜆𝐾 (𝑎𝑖) is the multiplier as defined in section 4.3.
-ここで、𝜆 (ᵃ)は 4.3 節で定義された乗数である。
+ここで、$\lambda_K(a_i)$ は 4.3 節で定義された乗数である.
 When 𝜋𝜃 (𝑎𝑖) is small, 𝜆𝐾 (𝑎𝑖) ≈ 𝐾, and SGD increases the likelihood of the item 𝑎𝑖 more aggressively.
-ᜋが小さいときは、ᜆ (ᜎ) ≈ ↪Lu_1D43E となり、SGD はより積極的に項目 ᵄの可能性を増加させる。
+$\pi_{\theta}(a_i)$ が小さいときは、$\lambda_K(a_i) \simcolon K$ となり、SGD はより積極的にアイテム $a_i$ の可能性を増加させる.
 As 𝜋𝜃 (𝑎𝑖) reaches to a large enough value, 𝜆𝐾 (𝑎𝑖) goes to 0. As a result, SGD will no longer force to increase the likelihood of this item even when 𝜋𝜃 (𝑎𝑖) is still less than 1. This in return allows the second-best item to take up some mass in the learned policy.
-ᜋ (ᜃ) が十分に大きな値になると、ᜆ (ᵄ𝑖) は 0 になり、その結果、ᜋ (ᵄ𝑖) がまだ 1 以下でも SGD はこの項目の尤度を無理に上げなくなる。 その代わりに学習した方針において、二番手の項目がある程度の量を占めれるようにすることができた。
+$\pi_{\theta}(a_i)$ が十分に大きな値になると、$\lambda_K(a_i)$ は 0 になり、その結果、$\pi_{\theta}(a_i)$ がまだ 1 以下でも SGD はこのアイテムの尤度を無理に上げなくなる. その代わりに学習した方針において、二番手のアイテムがある程度の量を占めれるようにすることができた.
 
 Figure 3 shows the policies 𝜋𝜃 learned with the standard (left) and top-𝐾 off-policy correction (right).
-図3は、標準的なオフポリシー補正(左)とtop-1_703補正(右)で学習された政策Űを示す。
-We can see that with the standard off-policy correction, although the learned policy is calibrated [23] in the sense that it still maintains the ordering of items w.r.t. their expected reward, it converges to a policy that cast almost its entire mass on the top-1 item, that is 𝜋 (𝑎1) ≈ 1.0.
-標準的なオフポリシー補正では，学習されたポリシーは期待報酬に対するアイテムの順序を維持するという意味で較正[23]されているが，トップ1のアイテムにほぼ全量を投じるポリシー，すなわち，ᵄ (↪Ll_1D1E) ≈ 1.0 に収束していることが分かる．
+図3は、標準的なオフポリシー補正(左)とtop-1_703補正(右)で学習された方策 $\pi_{\theta}$ を示す.
+We can see that with the standard off-policy correction, although the learned policy is calibrated [23] in the sense that it still maintains the ordering of items w.r.t. their expected reward, it converges to a policy that cast almost its entire mass on the top-1 item, that is $\pi_{\theta}(a_1) \simcolon 1.0$.
+標準的なオフポリシー補正では，**学習された方策は期待報酬に対するアイテムの順序を維持**するという意味で較正[23]されているが，**トップ1のアイテムにほぼ全量を投じる方策**，すなわち，$\pi_{\theta}(a_1) \simcolon 1.0$ に収束していることが分かる．
 As a result, the learned policy loses track of the difference between a slightly sub-optimal item (𝑎2 in this example) and the rest.
-その結果，学習された政策は，わずかに最適でない項目 (この例では ᵄ) と残りの項目との間の差を見失う．
+その結果，学習された方策は，わずかに最適でないアイテム (この例では $a_2$) と残りのアイテムとの間の差を見失う.
 The top-𝐾 correction, on the other hand, converges to a policy that has a significant mass on the second optimal item, while maintaining the order of optimality between items.
-一方、top-ᵃの補正は、項目間の最適性の順序を維持したまま、2番目に最適な項目に大きな質量を持つ政策に収束させる。
+一方、**top-Kの補正は、アイテム間の最適性の順序を維持したまま、2番目に最適なアイテムに大きな質量(=確率質量)を持つ方策に収束させる**.
 As a result, we are able to recommend to users two high-reward items and aggregate more reward overall.
-その結果、2つの高報酬のアイテムをユーザに推奨し、全体としてより多くの報酬を集約することができる。
+その結果、2つの高報酬のアイテムをユーザに推奨し、全体としてより多くの報酬を集約することができる.
 
 ## 6.2. Live Experiments Live Experiments
 
 While simulated experiments are valuable to understand new methods, the goal of any recommender systems is ultimately to improve real user experience.
-新しい手法を理解するためのシミュレーション実験は貴重ですが、あらゆるレコメンダーシステムの目標は、最終的には実際のユーザー体験を向上させることです。
+新しい手法を理解するためのシミュレーション実験は貴重ですが、あらゆるレコメンダーシステムの目標は、最終的には実際のユーザ体験を向上させることである.
 We therefore conduct a series of A
 そのため、私たちは、実際に利用されるユーザー体験を向上させるための一連のA
 
