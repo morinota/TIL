@@ -314,183 +314,237 @@ Achiamら. [1]は、この一次近似の影響を証明する. 学習したpoli
 ## 4.1. Parametrising the policy $\pi_{\theta}$
 
 We model our belief on the user state at each time 𝑡, which capture both evolving user interests using a 𝑛-dimensional vector, that is, s𝑡 ∈ R 𝑛 .
-各時間𝑡におけるユーザーの状態に関する信念をモデル化し、𝑛次元ベクトル、すなわちs𝑡∈R 𝑛を用いて進化する両方のユーザーの興味を捕捉する。
-The action taken at each time 𝑡 along the trajectory is embedded using an 𝑚-dimensional vector u𝑎𝑡 ∈ R 𝑚.
-軌跡に沿った各時刻𝑡で取られた行動は、𝑎𝑡∈R ᵅを用いて埋め込まれている。
+各時間 t におけるユーザのstateに関するpolicyをモデル化し、 n次元ベクトル、すなわち $s_t \in \mathbb{R}^n$を用いて進化する両方のユーザの興味を捕捉する.
+The action taken at each time 𝑡 along the trajectory is embedded using an 𝑚-dimensional vector $u_{a_t} \in \mathbb{R}^n$.
+軌跡(trajectory)に沿った各時刻$t$で取られたactionは, $u_{a_t} \in \mathbb{R}^n$ を用いて埋め込まれている.
 We model the state transition P : S×A×S with a recurrent neural network [6, 49]
-状態遷移 P : S×A×S をリカレントニューラルネットワークでモデル化する [6, 49] 。
+**state transition(状態遷移) P : S×A×S を recurrent neural network でモデル化**する[6, 49]:
 
 $$
-\tag{}
+s_{t+1} = f(s_t, u_{a_t})
 $$
 
 We experimented with a variety of popular RNN cells such as Long Short-Term Memory (LSTM) [18] and Gated Recurrent Units (GRU) [10], and ended up using a simplified cell called Chaos Free RNN (CFN) [24] due to its stability and computational efficiency.
-我々は、LSTM（Long Short-Term Memory） [18] やGRU（Gated Recurrent Units） [10] などの有名なRNNセルをいろいろと実験した結果、安定性と計算効率の点から、Chaos Free RNN（CFN） [24] という簡易セルを使うことにした。
+我々は、LSTM（Long Short-Term Memory） [18] やGRU（Gated Recurrent Units） [10] などの有名なRNNセルをいろいろと実験した結果、安定性と計算効率の点から、Chaos Free RNN（CFN） [24] という簡易セルを使うことにした.
 The state is updated recursively as
-状態は、以下のように再帰的に更新される。
+stateは、以下のように**再帰的(recursively)**に更新される.
 
 $$
+s_{t+1} =  f(s_t, u_{a_t}) = z_t \odot \tanh(s_t) + i_t \odot \tanh(W_{a}u_{a_t})
+\\
+z_t = \sigma(U_{z}s_{t} + W_{z}u_{a_t} + b_{z})
+\\
+i_t = \sigma(U_{i}s_{t} + W_{i}u_{a_t} + b_{i})
+\\
 \tag{5}
 $$
 
-where z𝑡 , i𝑡 ∈ R 𝑛 are the update and input gate respectively.
-ここで、z𝑡 , i𝑡はそれぞれ更新ゲートと入力ゲートである。
+where $z_t, i_t \in \mathbb{R}^n$ are the update and input gate respectively.
+ここで、 $z_t, i_t \in \mathbb{R}^n$ はそれぞれ update gate と input gate である.
 
-Conditioning on a user state s, the policy 𝜋𝜃 (𝑎
-s) is then modeled with a simple softmax,
+Conditioning on a user state s, the policy 𝜋𝜃 (𝑎|s) is then modeled with a simple softmax,
+ユーザのstate $s$ を条件として、policy $\pi_{\theta}(a|s)$は、**単純な softmax** でモデル化される.
 
 $$
+\pi_{\theta}(a|s) = \frac{\exp(s^T v_{a} / T)}{\sum_{a'\in A} \exp(s^T v_{a'}/T)}
 \tag{6}
 $$
 
 where v𝑎 ∈ R 𝑛 is another embedding for each action 𝑎 in the action space A and 𝑇 is a temperature that is normally set to 1.
-ここで、vᵄ∈ R 𝑛 は行動空間Aにおける各行動ᵄの別の埋め込みで、↪L_1D447↩は通常1に設定される温度である。
+ここで、 $v_a \in \mathbb{R}^{n}$ は action space $A$ における各action $a$ の別の埋め込みベクトル(actionの埋め込みベクトルが二種類ある?)で、 $T$ は通常 1 に設定される temperature である.
 Using a higher value in 𝑇 produces a smoother policy over the action space.
-↪Lu_1D447 の値を大きくすることで、行動空間上でよりスムーズな政策が実現される。
+$T$ の値を大きくすることで、action space 上でよりスムーズなpolicyが実現される.
 The normalization term in the softmax requires going over all the possible actions, which is in the order of millions in our setting.
-ソフトマックスの正規化項はすべての可能なアクションを調べる必要があり、我々の設定では数百万のオーダーとなる。
+softmax の正規化項はすべての可能な action を調べる必要があり、我々の設定では数百万のオーダーとなる.
 To speed up the computation, we perform sampled softmax [4] during training.
-この計算を高速化するために、我々は学習時にサンプルド・ソフトマックス[4]を実行する。
+この計算を高速化するために、我々は学習時に sampled softmax[4]を実行する.
 At serving time, we used an efficient nearest neighbor search algorithm to retrieve top actions and approximate the softmax probability using these actions only, as detailed in section 5.
-このとき、効率的な最近傍探索アルゴリズムを用いて上位のアクションを取得し、これらのアクションのみを用いてソフトマックス確率を近似する（セクション5で詳述）。
+このとき、効率的な最近傍探索アルゴリズムを用いて**上位のactionを取得し、これらのactionのみを用いてsoftmax確率を近似する**（セクション5で詳述）.
 
-In summary, the parameter 𝜃 of the policy 𝜋𝜃 contains the two action embeddings U ∈ R 𝑚×
-A
+In summary, the parameter 𝜃 of the policy 𝜋𝜃 contains the two action embeddings U ∈ R 𝑚× |A | and V ∈ R 𝑛× |A | as well as the weight matrices U𝑧, U𝑖 ∈ R 𝑛×𝑛 , W𝑢, W𝑖 , W𝑎 ∈ R 𝑛×𝑚 and biases b𝑢, b𝑖 ∈ R 𝑛 in the RNN cell.
+まとめると、policy $\pi_{\theta}$ のパラメータ $\theta$ は、二種類の action 埋め込み $U \in \mathbb{R}^{m \times |A|}$ と $V \in \mathbb{R}^{n \times |A|}$ を 含んでいる. また、重み行列 $U_z, U_i \in \mathbb{R}^{n \times n}$ と $W_u, W_i, W_a in \mathbb{R}^{n \times m}$ 及びバイアス項 $b_{u}, b_{i} \in \mathbb{R}^{n}$ を含んでいる.
+Figure 1 shows a diagram describing the neural architecture of the main policy 𝜋𝜃.
+図1は、main(?) policy $\pi_{\theta}$ のneural architecture を説明する図である.
+Given an observed trajectory 𝜏 = (𝑠0, 𝑎0, 𝑠1, · · · ) sampled from a behavior policy 𝛽, the new policy first generates a model of the user state s𝑡+1 by starting with an initial state s0 ∼ 𝜌0 1 and iterating through the recurrent cell as in Equation (5).
+policy $\beta$ からサンプリングされた観測されたtrajectory(軌道) $\tau = (s_0, a_0, s_1, \cdots)$ が与えられると、新しいpolicyはまずitinial state $s_0 \sim \rho_{0}$ で開始し、式(5) のように recurrent セルを反復して user state $s_{t+1}$ のモデルを生成する.
+Given the user state s𝑡+1 the policy head casts a distribution on the action space through a softmax as in Equation (6).
+With 𝜋𝜃 (𝑎𝑡+1 |s𝑡+1), we can then produce a policy gradient as in Equation (4) to update the policy.
+user state $s_{𝑡+1}$が与えられると，policy head(policyの先端?)は式(6)のようにsoftmaxを用いて action state に分布(=確率質量分布)を投影する．
+$\pi_{\theta}(a_{t+1}|s_{t+1})$ が与えられる事で、式(4) のように policy-gradient を生成し、policy を更新することができる(i.e. 期待累積報酬を最大化するようなpolicyに近づける事ができる...!).
 
 ## 4.2. Estimating the behavior policy 行動ポリシーの推定
 
 One difficulty in coming up with the off-policy corrected estimator in Equation (4) is to get the behavior policy 𝛽.
-式（4）のオフポリシー補正推定量を考える上で難しいのは、行動政策ǽを得ることである。
+式(4)のoff-policy補正推定量を考える上で難しいのは、behavior policy $\beta$ を得ることである.
 Ideally, for each logged feedback of a chosen action we received, we would like to also log the probability of the behavior policy choosing that action.
-理想的には、受け取った選択行動のフィードバックをログするごとに、その行動を選択する行動ポリシーの確率もログしたいところである。
+理想的には、**受け取った chosen action のフィードバックを記録するごとに、そのactionを選択するbehavior policy の確率も記録したいところ**である.
 Directly logging the behavior policy is however not feasible in our case as (1) there are multiple agents in our system, many of which we do not have control over, and (2) some agents have a deterministic policy, and setting 𝛽 to 0 or 1 is not the most effective way to utilize these logged feedback.
-しかし、行動方針を直接ログに記録することは、(1)我々のシステムには複数のエージェントが存在し、その多くは我々が制御できない、(2)いくつかのエージェントは決定論的方針を持っており、ǖを0または1に設定することは、これらのログされたフィードバックを活用する最も有効な方法ではないため、このケースでは実現可能であるとはいえない。
+しかし、behavior policy(の出力する確率の値?) を直接ログに記録することは、(1)我々のシステムには複数のagentが存在し、その多くは我々が制御できない、(2)いくつかのagentは決定論的方針(deterministic policy)を持っており、 $\beta$ を0または1に設定することは、これらの記録されたフィードバックを活用する最も有効な方法ではないため、このケースでは実現可能であるとはいえない.
 
-Instead we take the approach first introduced in [39], and estimate the behavior policy 𝛽, which in our case is a mixture of the policies of the multiple agents in the system, using the logged actions. Given a set of logged feedback D = {(s𝑖 , 𝑎𝑖),𝑖 = 1, · · · , 𝑁}, Strehl et al. [39] estimates ˆ𝛽 (𝑎) independent of user state by aggregate action frequency throughout the corpus. In contrast, we adopt a context-dependent neural estimator. For each state-action pair (𝑠, 𝑎) collected, we estimate the probability ˆ𝛽𝜃 ′ (𝑎
-𝑠) that the mixture of behavior policies choosing that action using another softmax, parametrised by 𝜃 ′ . As shown in Figure 1, we re-use the user state 𝑠 generated from the RNN model from the main policy, and model the mixed behavior policy with another softmax layer. To prevent the behavior head from intefering with the user state of the main policy, we block its gradient from flowing back into the RNN. We also experimented with separating the 𝜋𝜃 and 𝛽𝜃 ′ estimators, which incurs computational overhead for computing another state representation but does not results in any metric improvement in offline and live experiments.
+Instead we take the approach first introduced in [39], and estimate the behavior policy 𝛽, which in our case is a mixture of the policies of the multiple agents in the system, using the logged actions.
+その代わりに、我々は[39]で最初に紹介されたアプローチを取り、**システム内の複数のagentの policy の混合であるbehavior policy $\beta$** を、記録されたactionを使用して推定する.
+Given a set of logged feedback D = {(s𝑖 , 𝑎𝑖),𝑖 = 1, · · · , 𝑁}, Strehl et al.[39] estimates ˆ𝛽 (𝑎) independent of user state by aggregate action frequency throughout the corpus.
+記録されたフィードバック $D = {(s_i, a_i), i = 1, \cdots N}$ のセットが与えられたとき、Strehlら[39]はコーパス全体のaction頻度を集約して user state に依存しない $\hat{\beta}_{\theta}$ を推定する.
+In contrast, we adopt a context-dependent neural estimator.
+これに対し、我々はcontextに依存(?)したニューラル推定を採用する.
+For each state-action pair (𝑠, 𝑎) collected, we estimate the probability ˆ𝛽𝜃 ′ (𝑎𝑠) that the mixture of behavior policies choosing that action using another softmax, parametrised by 𝜃 ′ .
+収集した各state-actionペア $(s, a)$ について、aでパラメタライズされた別のsoftmaxを用いて、混合behavior policy がその action を選択する確率 $\hat{\beta_{\theta'}}(a|s)$ を推定する.
+As shown in Figure 1, we re-use the user state 𝑠 generated from the RNN model from the main policy, and model the mixed behavior policy with another softmax layer.
+図1に示すように、main policy のRNNモデルから生成された user state $s$ を再利用し、別のソフトマックス層で混合behavior policy をモデル化する.
+To prevent the behavior head from intefering with the user state of the main policy, we block its gradient from flowing back into the RNN.
+behavior head(=actionの最後尾?)が main policy のuser state に干渉するのを防ぐため、その勾配がRNNに逆流するのをブロックしている.
+We also experimented with separating the 𝜋𝜃 and 𝛽𝜃 ′ estimators, which incurs computational overhead for computing another state representation but does not results in any metric improvement in offline and live experiments.
+また、$\pi_{\theta}$ と $\beta_{\theta'}$ の推定器を分離する実験も行いましたが、これは別のstate表現を計算するための計算オーバーヘッドが発生しますが、オフラインおよびライブ実験ではメトリックの向上にはつながらなかった.
 
 Despite a substantial sharing of parameters between the two policy heads 𝜋𝜃 and 𝛽𝜃 ′, there are two noticeable difference between them:
-2つのポリシーヘッドᵰと𝜃の間でパラメータがかなり共有されているにもかかわらず、両者の間には2つの顕著な違いがある。
+2つのポリシーヘッド $\pi_{\theta}$ と $\beta_{\theta'}$ の間でパラメータがかなり共有されているにもかかわらず、両者の間には2つの顕著な違いがある.
 (1) While the main policy 𝜋𝜃 is effectively trained using a weighted softmax to take into account of long term reward, the behavior policy head 𝛽𝜃 ′ is trained using only the state-action pairs;
-(1) 主政策 Ű が長期的な報酬を考慮した重み付きソフトマックスを効果的に用いて学習されるのに対し、行動政策 Ű は状態-行動ペアのみを用いて学習される。
+(1) main policy(=更新したいpolicy??) $\pi_{\theta}$ が長期的な報酬を考慮した重み付きソフトマックスを効果的に用いて学習されるのに対し、behavior policy(=今運用されてるpolicy?) $\beta_{\theta'}$ はstate-actionペアのみを用いて学習される.
 (2) While the main policy head 𝜋𝜃 is trained using only items on the trajectory with non-zero reward 3 , the behavior policy 𝛽𝜃 ′ is trained using all of the items on the trajectory to avoid introducing bias in the 𝛽 estimate.
-(2) メインポリシーヘッドŰが軌道上の非ゼロ報酬3の項目のみを用いて学習するのに対し、行動ポリシーᜃは軌道上の全ての項目を用いて学習し、ǽの推定値に偏りが生じないようにする。
+(2) main policy head $\pi_{\theta}$ が軌道上の非ゼロ報酬のitemのみを用いて学習するのに対し、behavior policy $\beta_{\theta'}$ は軌道上の全てのitemを用いて学習し、$\beta$ の推定値に偏りが生じないようにする.
 
 In [39], it is argued that that a behavior policy that is deterministically choosing an action 𝑎 given state 𝑠 at time 𝑡1 and action 𝑏 at time 𝑡2 can be treated as randomizing between action 𝑎 and 𝑏 over the timespan of the logging.
-39]では、時間ᵆ1における状態ᵆと時間ᵆ2における行動ᵄを決定論的に選択する行動方針は、ログの時間幅において行動ᵄと行動の間でランダム化すると扱うことができると論じている。
+[39]では、時間 $t_1$ におけるstate $s_1$ におけるaction $a$ と、時間 $t_2$ における行動 $b$ を決定論的に選択する行動方針は、ログの時間幅においてaction $a$ とaction $b$ の間でランダム化すると扱うことができると論じている.(??)
 Here we could argue the same point, which explains why the behavior policy could be other than 0 or 1 given a deterministic policy.
-ここで、決定論的な方針が与えられた場合に、行動方針が0または1以外になりうる理由を説明する、同じ点を論じることができる。
+ここで、決定論的な方針が与えられた場合に、behavior policy が0または1以外になりうる理由を説明する、同じ点を論じることができる.
 In addition, since we have multiple policies acting simultaneously, if one policy is determinstically choosing action 𝑎 given user state 𝑠, and another one is determinstically choosing action 𝑏, then estimating ˆ𝛽𝜃 ′ in such a way would approximate the expected frequency of action 𝑎 being chosen under the mixture of these behavior policies given user state 𝑠.
-また、複数のポリシーが同時に作用しているので、あるポリシーがユーザ状態ǔを与えられたときに決定論的に行動ᵄを選択し、別のポリシーが決定論的に行動ᵄを選択しているとすると、そのようにˆᵄ′を推定すると、ユーザ状態ǔを与えられたこれらの行動ポリシーの混合下で行動ᵄが選ばれる期待頻度に近似することができるだろう。
+また、複数の policy が同時に作用しているので、あるpolicyがuser state $s$ を与えられたときに決定論的にaction $a$ を選択し、別のポリシーが決定論的に行動 $b$ を選択しているとすると、そのように $\hat{\beta_{\theta'}}$ を推定すると、user state $s$ を与えられたこれらのbehavior policy の混合下で行動 $a$ が選ばれる期待頻度に近似することができるだろう.
 
 ## 4.3. Top-𝐾 Off-Policy Correction Top-ᵃ Off-Policy Correction (オフポリシー補正)
 
-Another challenge in our setting is that our system recommends a page of 𝑘 items to users at a time. As users are going to browse through (the full or partial set of) our recommendations and potentially interact with more than one item, we need to pick a set of relevant items instead of a single one. In other words, we seek a policy Π𝜃 (𝐴
-𝑠), here each action 𝐴 is to select a set of 𝑘 items, to maximize the expected cumulative reward,
+Another challenge in our setting is that our system recommends a page of 𝑘 items to users at a time. As users are going to browse through (the full or partial set of) our recommendations and potentially interact with more than one item, we need to pick a set of relevant items instead of a single one. In other words, we seek a policy Π𝜃 (𝐴|𝑠), here each action 𝐴 is to select a set of 𝑘 items, to maximize the expected cumulative reward,
+私たちの設定におけるもう一つの課題は、私たちのシステムが一度にk個のアイテムのページをユーザに推薦することである.
+ユーザは推薦されたアイテムの全部または一部を閲覧し、複数のアイテムに触れる可能性があるため、単一のアイテムではなく、関連するアイテムのセットを選択する必要がある.
+言い換えれば、我々はpolicy $\Pi_{\theta}(A|s)$ を求め、ここで各action $A$ は、"期待累積報酬を最大化するような**k個のアイテムのセット**を選択する"事を意味する.
 
 $$
-\tag{}
+\max_{\theta} J(\Pi_{\theta}) E_{s_t \sim d_t^{\Pi}(\cdot), A_t \sim \Pi_{\theta}(\cdot|s_t)}[R_t(s_t, A_t)]
 $$
 
 Here 𝑅𝑡 (𝑠𝑡 , 𝐴𝑡) denotes the cumulative return of the set 𝐴𝑡 at state 𝑠𝑡 .
-ここで、𝑅 (↪Ll_1D461) は、状態𝑡における集合𝑠の累積リターンを示す。
+ここで、$R_t(s_t, A_t)$ は、state $s_t$ における集合 $A_t$ の累積報酬を示す.
 Unfortunately, the action space grows exponentially under this set recommendation formulation [44, 50], which is prohibitively large given the number of items we choose from are in the orders of millions.
-残念ながら、この集合推薦の定式化では行動空間が指数関数的に増大し [44, 50]、選択するアイテムの数が数百万のオーダーであることを考えると、法外に大きい。
+残念ながら、**この集合推薦の定式化ではaction space が指数関数的に増大**し [44, 50]、選択するアイテムの数が数百万のオーダーであることを考えると、法外に大きい.
 
 To make the problem tractable, we assume that a user will interact with at most one item from the returned set 𝐴.
-問題を扱いやすくするために、我々は、ユーザが返された集合ǔから最大1つのアイテムと対話することを仮定する。
+問題を扱いやすくするために、我々は、ユーザが返された集合 $A$ から最大1つのアイテムと interaction することを仮定する.
 In other words, there will be at most one item with non-zero cumulative reward among 𝐴.
-言い換えれば、ǔの中でゼロでない累積報酬を持つアイテムは、せいぜい1つであろう。
+言い換えれば、"**$A$ の中でゼロでない累積報酬を持つアイテムは、せいぜい1つであろう**"という仮定をおく.
 We further assume that the expected return of an item is independent of other items chosen in the set 𝐴 4 .
-さらに，あるアイテムの期待リターンは，集合ǔの中で選ばれた他のアイテムとは独立であると仮定する4 ．
+さらに，あるアイテムの期待リターンは，集合$A$の中で選ばれた他のアイテムとは独立であると仮定する．
 With these two assumptions, we can reduce the set problem to
-これら二つの仮定により、集合問題は次のように縮小できる。
+これら二つの仮定により、集合問題は次のように縮小できる.
 
 $$
-\tag{}
+J(\Pi_{\theta}) E_{s_t \sim d_t^{\Pi}(\cdot), a_t \in A_t \sim \Pi_{\theta}(\cdot|s_t)}[R_t(s_t, a_t)]
 $$
 
-Here 𝑅𝑡 (𝑠𝑡 , 𝑎𝑡) is the cumulative return of the item 𝑎𝑡 the user interacted with, and 𝑎𝑡 ∈ 𝐴𝑡 ∼ Π𝜃 (·
-𝑠𝑡) indicates that 𝑎𝑡 was chosen by the set policy. Furthermore, we constrain ourselves to generate the set action 𝐴 by independently sampling each item 𝑎 according to the softmax policy 𝜋𝜃 described in Equation (6) and then de-duplicate. As a result, the probability of an item 𝑎 appearing in the final non-repetitive set 𝐴 is simply 𝛼𝜃 (𝑎
+Here 𝑅𝑡 (𝑠𝑡 , 𝑎𝑡) is the cumulative return of the item 𝑎𝑡 the user interacted with, and 𝑎𝑡 ∈ 𝐴𝑡 ∼ Π𝜃 (·|𝑠𝑡) indicates that 𝑎𝑡 was chosen by the set policy. Furthermore, we constrain ourselves to generate the set action 𝐴 by independently sampling each item 𝑎 according to the softmax policy 𝜋𝜃 described in Equation (6) and then de-duplicate. As a result, the probability of an item 𝑎 appearing in the final non-repetitive set 𝐴 is simply 𝛼𝜃 (𝑎|𝑠) = 1 − (1 − 𝜋𝜃 (𝑎|𝑠))𝐾, where 𝐾 is the number of times we sample.
+ここで、 $R_t(s_t, a_t)$ はユーザがinteractionしたアイテム$at$の累積リターン、$a_t \in A_t \sim \Pi_{\theta}(\cdot|s_t)$ はset policy によって $a_t$ が選択されたことを表す.
+さらに、式（6）で記述したソフトマックスポリシー $\pi_{\theta}$ に従って各アイテム $a$ を独立にサンプリングしてセットアクション$A$を生成し、重複を解除するという制約を設けている.
+その結果、アイテム $a$ が最終的な非反復集合$A$に現れる確率は、単純に $\alpha_{\theta}(a|s) = 1 - (1 - \pi_{\theta}(a|s))^K$ 、ただし$K$はサンプリングの回数とする.
 
 We can then adapt the REINFORCE algorithm to the set recommendation setting by simply modifying the gradient update in Equation (2) to
-そこで、REINFORCEアルゴリズムを集合推薦の設定に適応させるには、式（2）の勾配更新を次のように変更するだけでよい。
+そこで、REINFORCEアルゴリズムを集合推薦の設定に適応させるには、式（2）の勾配更新を次のように変更するだけでよい.
 
 $$
-\tag{}
+\sum_{s_t \sim d_t^{\pi}(\cdot), a_t \sim \alpha_{\theta}(\cdot|s_t)} R_t(s_t, a_t) \nabla_{\theta} \log \alpha_{\theta}(a_t|s_t)
 $$
 
 Accordingly, we can update the off-policy corrected gradient in Equation (4) by replacing 𝜋𝜃 with 𝛼𝜃 , resulting in the top-𝐾 off-policy correction factor:
-したがって、式(4)のオフポリシー補正勾配をᜋᜃに置き換えて更新すれば、top-u_1D6FC補正係数が得られる。
+したがって、式(4)の $\pi_{\theta}$ を $\alpha_{\theta}$ に置き換えてoff-policy補正勾配を更新すれば、**top-K off-policy補正係数**が得られる.
 
 $$
+\sum_{s_t \sim d_{t}^{\pi}(\cdot), a_t \sim \beta(\cdot|s_t)}
+[\frac{\alpha_{\theta}(a_t|s_t)}{\beta_{\theta}(a_t|s_t)} 
+R_{t}(s_t, a_t) 
+\nabla_{\theta} \log \alpha_{\theta}(a_t|s_t)]
+\\
+= \sum_{s_t \sim d_{t}^{\pi}(\cdot), a_t \sim \beta(\cdot|s_t)}
+[\frac{\pi_{\theta}(a_t|s_t)}{\beta_{\theta}(a_t|s_t)} 
+\frac{\partial \alpha_{\theta}(a_t|s_t)}{\partial \pi(a_t|s_t)} 
+R_{t}(s_t, a_t) 
+\nabla_{\theta} \log \pi_{\theta}(a_t|s_t)]
 \tag{7}
 $$
 
 Comparing Equation (7) with Equation (4), the top-𝐾 policy adds an additional multiplier of
-式（7）と式（4）を比較すると、top-u_43 政策は、さらに次の乗数を追加する。
+式（7）と式（4）を比較すると、top-K policy は、元の off-policy補正係数 $\frac{\pi_{\theta}(a_t|s_t)}{\beta_{\theta}(a_t|s_t)}$ に次の乗数(multiplier)を追加している.
 
 $$
+\lambda_{K}(s_t, a_t) = \frac{\partial \alpha_{\theta}(a_t|s_t)}{\partial \pi(a_t|s_t)} 
+= K(1 - \pi_{\theta}(a_t|s_t))^{K-1}
 \tag{8}
 $$
 
-to the original off-policy correction factor of 𝜋 (𝑎
-𝑠) 𝛽 (𝑎
-
 Now let us take a closer look at this additional multiplier:
-では、この追加倍率について詳しく見ていきましょう。
+では、この追加倍率について詳しく見ていこう.
 
-- As 𝜋𝜃 (𝑎|𝑠) → 0, 𝜆𝐾 (𝑠, 𝑎) → 𝐾. The top-𝐾 off-policy correction increases the policy update by a factor of 𝐾 comparing to the standard off-policy correction; → 0, 𝜆𝐾 (𝑠, 𝑎) → 𝐾. The top-𝐾 off-policy correction increases the policy update by a factor of 𝐾 comparing to the standard off-policy correction;
+- As 𝜋𝜃 (𝑎|𝑠) → 0, 𝜆𝐾 (𝑠, 𝑎) → 𝐾. The top-𝐾 off-policy correction increases the policy update by a factor of 𝐾 comparing to the standard off-policy correction;
+- $\pi_{\theta}(a_t|s_t) -> 0$ 即ち $\lambda_{K}(s_t, a_t) -> K$ の場合、top-K off-policy補正は標準のoff-policy補正と比較して、policyの更新をK倍に増加させる.
 
-- As 𝜋𝜃 (𝑎|𝑠) → 1, 𝜆𝐾 (𝑠, 𝑎) → 0. This multiplier zeros out the policy update. → 1, 𝜆𝐾 (𝑠, 𝑎) → 0. This multiplier zeros out the policy update.
+- As 𝜋𝜃 (𝑎|𝑠) → 1, 𝜆𝐾 (𝑠, 𝑎) → 0. This multiplier zeros out the policy update.
+- $\pi_{\theta}(a_t|s_t) -> 1$ 即ち $\lambda_{K}(s_t, a_t) -> 0$ の場合、この乗数はpolicyの更新をゼロにする.
 
 - As 𝐾 increases, this multiplier reduces the gradient to zero faster as 𝜋𝜃 (𝑎|𝑠) reaches a reasonable range. reaches a reasonable range.
+- Kが大きい場合、この乗数は、$\pi_{\theta}(a_t|s_t)$ が合理的な範囲に達すると、より速く勾配(policy-gradient)をゼロにすることができる.(ゼロになったら更新が停止する.これって良いことなんだっけ?)
 
-In summary, when the desirable item has a small mass in the softmax policy 𝜋𝜃 (·
-𝑠), the top-𝐾 correction more aggressively pushes up its likelihood than the standard correction. Once the softmax policy 𝜋𝜃 (·
+In summary, when the desirable item has a small mass in the softmax policy 𝜋𝜃 (·|𝑠), the top-𝐾 correction more aggressively pushes up its likelihood than the standard correction. 
+要約すると、ソフトマックス policy (関数) $\pi_{\theta}(a_t|s_t)$ において望ましいアイテム(desirable item??)の質量(=確率質量?)が小さい場合、**top-K補正係数は標準の補正係数よりも積極的にその尤度を押し上げる**. 
+Once the softmax policy 𝜋𝜃 (·|𝑠) casts a reasonable mass on the desirable item (to ensure it will be likely to appear in the top-𝐾), the correction then zeros out the gradient and no longer tries to push up its likelihood. 
+ソフトマックスポリシー $\pi_{\theta}(a_t|s_t)$ が望ましいアイテム(desirable item??)に適度な質量(確率質量)を与えると（top-K に登場する可能性を確保するため）、補正係数は勾配をゼロにして尤度を押し上げようとはしなくなる. 
+This in return allows other items of interest to take up some mass in the softmax policy. 
+これにより、ソフトマックスポリシーにおいて、他の興味あるあいてむがある程度の質量を占めることができるようになる.
+As we are going to demonstrate in the simulation as well as live experiment, while the standard off-policy correction converges to a policy that is optimal when choosing a single item, the top-𝐾 correction leads to better top-𝐾 recommendations.
+シミュレーションと実機で実証するように、標準的なオフポリシー補正は1つのアイテムを選択する際に最適なpolicyに収束するが、top-K補正はtop-K推薦 を向上させることにつながる.
 
 ## 4.4. Variance Reduction Techniques
 
-As detailed at the beginning of this section, we take a first-order approximation to reduce variance in the gradient estimate. Nonetheless, the gradient can still suffer from large variance due to large importance weight of 𝜔(𝑠, 𝑎) = 𝜋 (𝑎
-𝑠) 𝛽 (𝑎
-
+As detailed at the beginning of this section, we take a first-order approximation to reduce variance in the gradient estimate. 
+本節の冒頭で詳述したように、勾配推定値の分散を減らすために一次近似を行う.
+Nonetheless, the gradient can still suffer from large variance due to large importance weight of 𝜔(𝑠, 𝑎) = 𝜋 (𝑎 |𝑠) 𝛽 (𝑎 |𝑠) as shown in Equation (4), Similarly for top-𝐾 off-policy correction. 
+それにもかかわらず、勾配は、top-K off-policy補正と同様に、式(4)に示すように、 $w(s,a) = \frac{\pi(a|s)}{\beta(a|s)}$ の**大きな重要度重みによって大きな分散に苦しむことがある**.
+Large importance weight could result from (1) large deviation of the new policy 𝜋 (·|𝑠) from the behavior policy, in particular, the new policy explores regions that are less explored by the behavior policy. That is, 𝜋 (𝑎|𝑠) ≫ 𝛽 (𝑎|𝑠) and (2) large variance in the 𝛽 estimate.
+大きな重要度重みは、以下の２つの要因から発生する可能性がある.（1）new policy $\pi(\cdot|s)$ の behavior policy(現在のpolicy) からの大きな乖離、特に、new policy が behavior policy によってあまり探索されない領域を探索することに起因すると考えられる. つまり、$\pi(a|s) >> \beta(a|s)$ 、(2) $\beta$ 推定値の分散が大きい.
+ 
 We tested several techniques proposed in counterfactual learning and RL literature to control variance in the gradient estimate.
-我々は、勾配推定の分散を制御するために、反実仮想学習やRLの文献で提案されているいくつかの手法を検証した。
+我々は、**勾配(policy-gradient)推定の分散を制御するため**に、反実仮想学習やRLの文献で提案されているいくつかの手法を検証した.
 Most of these techniques reduce variance at the cost of introducing some bias in the gradient estimate.
-これらの手法のほとんどは、勾配推定値に何らかのバイアスをもたらす代償として、分散を減少させる。
+これらの手法のほとんどは、勾配推定値に何らかのバイアスをもたらす代償として、分散を減少させる.(=不偏推定量ではなくなるが、分散が減少するような手法?)
 
-### 4.4.1. Weight Capping. ウェイトキャッピング
+### 4.4.1. Weight Capping.
 
 The first approach we take is to simply cap the weight [8] as
-最初のアプローチとして、ウェイト[8]を単純にキャップする。
+最初のアプローチとして、weighet を単純に cap(=大きさに上限を設ける?)する[8].
 
 $$
+\bar{w}_{c}(s,a) = \min(\frac{\pi(a|s)}{\beta(a|s)}, c)
 \tag{9}
 $$
 
-Smaller value of 𝑐 reduces variance in the gradient estimate, but introduces larger bias.
-↪Ll_1D450 の値を小さくすると、勾配推定の分散は小さくなるが、バイアスが大きくなる。
+Smaller value of $c$ reduces variance in the gradient estimate, but introduces larger bias.
+$c$ の値を小さくすると、勾配推定の分散は小さくなるが、バイアスが大きくなる.
 
-### 4.4.2. Normalized Importance Sampling (NIS). 正規化重要度サンプリング(NIS)。
+### 4.4.2. Normalized Importance Sampling (NIS). 正規化重要度サンプリング(NIS)
 
 Second technique we employed is to introduce a ratio control variate, where we use classical weight normalization [32] defined by:
-第二の手法は、比率制御変数を導入することである。ここで、古典的な重みの正規化[32]を用いて、次のように定義する。
+第二の手法は、**ratio control variate(比率制御変数)**を導入することである. ここで、classical weight normalization(古典的な重みの**正規化**)[32]を用いて、次のように定義する.
 
 $$
-\tag{}
+\bar{w}_{n}(s,a) = \frac{w(s,a)}{\sum_{(s', a') \sim \beta} w(s', a')}
 $$
 
 As E𝛽 [𝜔(𝑠, 𝑎)] = 1, the normalizing constant is equal to 𝑛, the batch size, in expectation.
-Eǖ [Ǘ] = 1として、正規化定数は期待値でバッチサイズである𝑛と等しくなる。
+$E_{\beta}[w(s,a)] = 1$ の場合、正規化定数 $\frac{1}{\sum_{(s', a') \sim \beta} w(s', a')}$ は期待値的にバッチサイズである$n$と等しくなる.
 As 𝑛 increases, the effect of NIS is equivalent to tuning down the learning rate.
-𝑛 が増加すると、NIS の効果は学習率をチューニングすることと等価になる。
+n が増加すると、NIS の効果は学習率をチューニングすることと等価になる.
 
 ### 4.4.3. Trusted Region Policy Optimization (TRPO). TRPO（Trusted Region Policy Optimization）。
 
 TRPO [36] prevents the new policy 𝜋 from deviating from the behavior policy by adding a regularization that penalizes the KL divergence of these two policies.
-TRPO [36]は，新しい政策ᴈが行動政策から逸脱しないように，これら二つの政策のKL発散にペナルティを与える正則化を追加することによって行う．
+TRPO [36]は，new policy $\pi$ がbehavior policy $\beta$ から逸脱しないように，これら二つの policy の KL Divergence にペナルティを与える正則化を追加することによって行う.
 It achieves similar effect as the weight capping.
-これは，ウェイトキャッピングと同様の効果を得ることができる．
+これは，weight capping と同様の効果を得ることができる.
 
 # 5. Exploration 探求
 
