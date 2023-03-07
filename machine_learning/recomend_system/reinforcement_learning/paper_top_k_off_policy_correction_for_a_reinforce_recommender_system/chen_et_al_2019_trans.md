@@ -674,175 +674,181 @@ As a result, we are able to recommend to users two high-reward items and aggrega
 ## 6.2. Live Experiments Live Experiments
 
 While simulated experiments are valuable to understand new methods, the goal of any recommender systems is ultimately to improve real user experience.
-新しい手法を理解するためのシミュレーション実験は貴重ですが、あらゆるレコメンダーシステムの目標は、最終的には実際のユーザ体験を向上させることである.
-We therefore conduct a series of A
-そのため、私たちは、実際に利用されるユーザー体験を向上させるための一連のA
+新しい手法を理解するためのシミュレーション実験は貴重ですが、あらゆる推薦システムの目標は、最終的には実際のユーザ体験を向上させることである.
+We therefore conduct a series of A/B experiments running in a live system to measure the benefits of these approaches.
+そこで、これらのアプローチの効果を測定するために、ライブシステムで実行する一連のA/Bテストを実施しました.
 
 We evaluate these methods on a production RNN candidate generation model in use at YouTube, similar to the setup described in [6, 11].
-我々は、[6, 11]で説明したセットアップと同様に、YouTubeで使用されている本番のRNN候補生成モデルでこれらのメソッドを評価します。
+我々は、[6, 11]で説明したセットアップと同様に、YouTubeで使用されている本番のRNN候補生成モデルでこれらのメソッドを評価する.
 The model is one of many candidate generators that produce recommendations, which are scored and ranked by a separate ranking model before being shown to users on the YouTube Homepage or the side panel on the video watch page.
-このモデルは、YouTubeホームページや動画視聴ページのサイドパネルでユーザーに表示される前に、別のランキングモデルによってスコアリングとランク付けが行われる、推薦文を生成する多くの候補生成者のうちの1つです。
+このモデルは、YouTubeホームページや動画視聴ページのサイドパネルでユーザに表示される前に、別のランキングモデルによってスコアリングとランク付けが行われる、推薦結果を生成する多くの候補生成者のうちの1つである.
 As described above, the model is trained following the REINFORCE algorithm.
-上述したように、モデルは REINFORCE アルゴリズムに従って学習されます。
+上述したように、モデルは REINFORCE アルゴリズムに従って学習される.
 The immediate reward 𝑟 is designed to reflect different user activities; videos that are recommended but not clicked receive zero reward.
-即時報酬 ὅ はさまざまなユーザーの活動を反映するように設計されており、推奨されてもクリックされないビデオはゼロ報酬を受け取ります。
+即時報酬 $r$ はさまざまなユーザの活動を反映するように設計されており、**推薦されてもクリックされないビデオはゼロ報酬を受け取る**.
 The long term reward 𝑅 is aggregated over a time horizon of 4–10 hours.
-長期報酬 х は4-10時間の時間軸で集計される。
+長期報酬 $R$ は4-10時間の時間軸で集計される.
 In each experiment both the control and the test model use the same reward function.
-各実験において、コントロールモデルとテストモデルは同じ報酬関数を使用する。
+各実験において、コントロールモデルとテストモデルは同じ報酬関数(reward function)を使用する.
 Experiments are run for multiple days, during which the model is trained continuously with new events being used as training data with a lag under 24 hours.
-実験は複数日にわたって行われ、その間、新しいイベントが24時間以内の遅れでトレーニングデータとして使用され、モデルは継続的にトレーニングされる。
+実験は複数日にわたって行われ、その間、**新しいイベントが24時間以内の遅れでトレーニングデータとして使用され、モデルは継続的にトレーニングされる**.
 While we look at various online metrics with the recommender system during live experiments, we are going to focus our discussion on the amount of time user spent watching videos, referred to as ViewTime.
-ライブ実験では、レコメンダーシステムの様々なオンラインメトリクスを見ますが、ここでは、ユーザーがビデオを見るのに費やした時間（ViewTimeと呼ばれる）に焦点をあてて議論したいと思います。
+ライブ実験では、推薦システムの様々な Online Metrics を見ますが、ここでは、**ユーザがビデオを見るのに費やした時間(ViewTimeと呼ばれる)**に焦点をあてて議論したいと思う.
 
 The experiments presented here describe multiple sequential improvements to the production system.
-ここで紹介する実験は、プロダクションシステムを複数回に分けて改良したものである。
+ここで紹介する実験は、プロダクションシステム(?)を複数回に分けて改良したものである.
 Unfortunately, in such a setting, the latest recommender system provides the training data for the next experiment, and as a result, once the production system incorporates a new approach, subsequent experiments cannot be compared to the earlier system.
-残念ながら、このような設定では、最新のレコメンダーシステムが次の実験のためのトレーニングデータを提供するため、いったん本番システムが新しいアプローチを取り込むと、それ以降の実験は以前のシステムと比較することができない。
+残念ながら、このような設定では、**最新の推薦システムが次の実験のためのトレーニングデータを提供するため**、いったん本番システムが新しいアプローチを取り込むと、それ以降の実験は以前のシステムと比較することができない.
 Therefore, each of the following experiments should be taken as the analysis for each component individually, and we state in each section what was the previous recommender system from which the new approach receives data.
-したがって、以下の各実験は、各構成要素の個別の分析として捉えるべきであり、新しいアプローチがデータを受け取る前のレコメンダーシステムが何であったかを各セクションに記載する。
+したがって、以下の各実験は、各構成要素の個別の分析として捉えるべき(=時間的変化を見ても意味がない?)であり、新しいアプローチがデータを受け取る前の推薦システムが何であったかを各セクションに記載する.
 
-### 6.2.1. Exploration. エクスプロージョン
+### 6.2.1. Exploration.
 
 We begin with understanding the value of exploratory data in improving model quality.
-まず，モデルの品質を向上させるための探索的なデータ の価値を理解することから始める．
+まず，モデルの品質を向上させるための探索的なデータ の価値を理解することから始める. 
 In particular, we would like to measure if serving a stochastic policy, under which we sample from the softmax model as described in Section 5, results in better recommendations than serving a deterministic policy where the model always recommends the 𝐾 items with the highest probability according to the softmax.
-特に，セクション 5 で述べたように，ソフトマッ クスモデルからサンプリングする確率的な政策が，ソフトマッ クスに従って常に最も高い確率で ᵃ の項目を推薦する決定論的な政策より良い推薦 をもたらすかどうかを測定したい．
+特に，セクション 5 で述べたように，**ソフトマックスモデルからサンプリングする確率的な方策**が，ソフトマックスに従って常に最も高い確率で K個のアイテムを推薦する**決定論的な方策より良い推薦 をもたらすかどうか**を測定したい. 
 
 We conducted a first set of experiments to understand the impact of serving a stochastic policy vs. a deterministic one while keeping the training process unchanged.
-この実験では，確率的なポリシーと決定論的なポリシーとを比較し て，学習過程を変更しない場合の影響を調べるために，最初の実験 をおこなった．
+この実験では，**確率的な方策と決定論的な方策とを比較**して，学習過程を変更しない場合の影響(?)を調べるために，最初の実験をおこなった．
 In the experiment, the control population is served with a deterministic policy, while a small slice of test traffic is served with the stochastic policy as described in Section 5.
-この実験では，制御集団には決定論的なポリシーを適用し，テスト・トラフィックの小片にはセクション 5 で述べたような確率論的なポリシーを適用した．
+この実験では，control集団には決定論的な方策を適用し，test trafficの小片(=介入群, test集団)にはセクション 5 で述べたような確率論的な方策を適用した.
 Both policies are based on the same softmax model trained as in Equation (??).
-両ポリシーとも式 (?) のように学習された同じソフトマックスモデルにもとづくものである．
+両ポリシーとも式(??)のように学習された**同じソフトマックスモデルにもとづくもの**である.
 To control the amount of randomness in the stochastic policy at serving, we varied the temperature used in Equation (6).
-また，ストキャスティックポリシーのランダムネス量を制御するために，式 (6) で使用する温度を変化させた．
+また，確率論的方策のrandomness量を制御するために，式(6)で使用するtemperatureを変化させた.
 A lower 𝑇 reduces the stochastic policy to a deterministic one, while a higher 𝑇 leads to a random policy that recommends any item with equal chance.
-↪Lu_1D447 が低いと確率的政策が決定論的政策になり，↪Lu_1D447 が高いと任意のアイテムを等しい確率で推奨するランダム政策になる．
+$T$が低いと確率論的方策が決定論的方策に近づき，$T$ が高いと任意のアイテムを等しい確率で推薦するランダム方策になる.
 With 𝑇 set to 1, we observed no statistically significant change in ViewTime during the experiment, which suggests the amount of randomness introduced from sampling does not hurt the user experience directly.
-↪Lu_1D447 を 1 に設定した場合，実験中に ViewTime に統計的に有意な変化は観察されず， サンプリングによって生じるランダム性の量が直接ユーザ経験を損なわないことを 示している．
+$T$を1に設定した場合，実験中に ViewTime に統計的に有意な変化は観察されず， **サンプリングによって生じるランダム性の量が直接ユーザ経験を損なわないこと**を 示している. 
 
 However, this experimental setup does not account for the benefit of having exploratory data available during training.
-しかし、この実験設定では、学習中に探索的なデータを利用できることの利点が考慮されていない。
+しかし、この実験設定では、**学習中に探索的なデータを利用できることの利点が考慮されていない**. 
 One of the main biases in learning from logged data is that the model does not observe feedback of actions not chosen by the previous recommendation policy, and exploratory data alleviates this problem.
-ログデータからの学習における主なバイアスの1つは、モデルが前回の推薦方針で選択されなかった行動のフィードバックを観測しないことであり、探索データはこの問題を軽減する。
+ログデータからの学習における主なバイアスの1つは、**モデルが前回の推薦方針で選択されなかった行動(action)のフィードバックを観測しないことであり、探索データはこの問題を軽減する**.
 We conducted a followup experiment where we introduce the exploratory data into training.
-そこで、探索データを学習に導入する追試を行った。
+そこで、探索データを学習に導入する追試を行った.
 To do that, we split users on the platform into three buckets: 90%, 5%, 5%.
-そのために、プラットフォーム上のユーザーを90％、5％、5％の3つのバケットに分割しました。
+そのために、プラットフォーム上のユーザーを90％、5％、5％の3つのバケットに分割した.
 The first two buckets are served with a deterministic policy based on a deterministic model and the last bucket of users is served with a stochastic policy based on a model trained with exploratory data.
-最初の2つのバケットには決定論的なモデルに基づく決定論的なポリシーでサービスを提供し、最後のバケットのユーザーには探索的なデータで学習したモデルに基づく確率的なポリシーでサービスを提供します。
+最初の2つのバケットには決定論的なモデルに基づく決定論的な方策でサービスを提供し、最後のバケットのユーザーには探索的なデータで学習したモデルに基づく確率論的な方策でサービスを提供する.
 The deterministic model is trained using only data acquired in the first two buckets, while the stochastic model is trained on data from the first and third buckets.
-決定論的モデルは、最初の2つのバケットで取得したデータのみを使用して訓練され、確率論的モデルは、最初と3番目のバケットのデータで訓練される。
+決定論的モデルは、最初の2つのバケットで取得したデータのみを使用して訓練され、確率論的モデルは、最初と3番目のバケットのデータで訓練される.
 As a result, these two models receive the same amount of training data, but the stochastic model is more likely to observe the outcomes of some rarer state, action pairs because of exploration.
-その結果、これら2つのモデルは同じ量の学習データを受け取るが、ストキャスティックモデルは探索のため、いくつかの稀な状態と行動のペアの結果を観察する可能性が高くなる。
+その結果、これら**2つのモデルは同じ量の学習データを受け取る**が、確率論的モデルは探索のため、いくつかの稀な状態(state)と行動(action)のペアの結果を観察する可能性が高くなる.
 
 Following this experimental procedure, we observe a statistically significant increase in ViewTime by 0.07% in the test population.
-この実験手順に従うと、テスト母集団において、ViewTime が 0.07% と統計的に有意に増加することが確認されま した。
+この実験手順に従うと、テスト母集団において、ViewTime が 0.07% と統計的に有意に増加することが確認された.(探索的データを使った方がより良い結果になったって事??)
 While the improvement is not large, it comes from a relatively small amount of exploration data (only 5% of users experience the stochastic policy).
-この改善は大きくはありませんが，比較的少ない探索データから得られたものです (確率的ポリシーを経験したユーザはわずか 5%)．
+この改善は大きくはありませんが，比較的少ない探索データから得られたものである(確率論的な方策を経験したユーザはわずか 5%)．
 We expect higher gain now that the stochastic policy has been fully launched.
-ストキャスティック・ポリシーが完全に開始された今、より高い利得が期待されます。
+確率論的な方策が完全に開始された今、より高い利得が期待される.
 
 ### 6.2.2. Off-Policy Correction. オフポリシー修正
 
 Following the use of a stochastic policy, we tested incorporating off-policy correction during training.
-ストキャスティックポリシーに続いて、トレーニング中にオフポリシー補正を組み込むことをテストしました。
-Here, we follow a more traditional A
-ここでは、より伝統的なA
+確率論的方策に続いて、トレーニング中にオフポリシー補正を組み込むことをテストした.
+Here, we follow a more traditional A/B testing setup 6 where we train two models, both using the full traffic. 
+ここでは、より伝統的なA/Bテストの設定に従って、2つのモデルを訓練し、どちらも完全なトラフィックを使用する. 
+The control model is trained following Equation (??), only weighting examples by the reward. 
+controlモデルは式(??)に従って訓練し，報酬によってのみ例を重み付けする. (=$\beta$を運用してる?)
+The test model follows the structure in Figure 1, where the model learns both a serving policy 𝜋𝜃 as well as the behavior policy 𝛽𝜃 ′. 
+testモデルは図 1 の構造に従っており，モデルは serving policy $\pi$ と behavior plicy $\beta$ の両方を学習する. 
+The serving policy is trained with the off-policy correction described in Equation (4) where each example is weighted not only by the reward but also the importance weight 𝜋𝜃 𝛽𝜃 ′ for addressing data bias.
+このとき、各例は報酬だけでなく、データの偏りに対処するための重要度重み $\frac{\pi}{\beta}$ も加味されるため、式（4）で表されるオフポリシー補正を用いて、serving policy が学習される.
 
 During experiments, we observed the learned policy (test) starts to deviate from the behavior policy (control) that is used to acquire the traffic.
-また，実験中に，学習されたポリシー(test)がトラフィックを獲得するための行動ポリシー(control)から乖離し始めることが観察された．
+また，実験中に，学習されたポリシー(test)(=$\pi$?)がトラフィックを獲得するための行動ポリシー(control)(=$\beta$?) から乖離し始めることが観察された. 
 Figure 4 plots a CDF of videos selected by our nominator in control and experiment according to the rank of videos in control population (rank 1 is the most nominated video by the control model, and the rightmost is least nominated).
-図4は、制御母集団における動画のランクに応じて、制御と実験でノミネータが選択した動画のCDFをプロットしたものです（ランク1は制御モデルによって最もノミネートが多い動画、右端は最もノミネートが少ない動画です）。
+図4は、制御母集団における動画のランクに応じて、**controlとtestでノミネータが選択した動画(=アイテム)のCDF(=累積密度関数?)をプロットしたもの**である(ランク1は制御モデルによって最もノミネートが多い動画、右端は最もノミネートが少ない動画である).
 We see that instead of mimicking the model (shown in blue) used for data collection, the test model (shown in green) favors videos that are less explored by the control model.
-データ収集に用いたモデル（青色で表示）を模倣するのではなく、テストモデル（緑色で表示）はコントロールモデルであまり探索されていない動画を優先していることがわかる。
+データ収集に用いたモデル(青色で表示)を模倣するのではなく、testモデル(緑色で表示)はcontrolモデルであまり探索されていない動画を優先していることがわかる.(**i.e. 推薦のDiversityが広がっているイメージ?**)
 We observed that the proportion of nominations coming from videos outside of the top ranks is increased by nearly a factor of three in experiment.
-実験では、上位ランク以外の動画からのノミネートの割合が、ほぼ1/3に増加することが観察されました。
+実験では、上位ランク以外の動画からのノミネートの割合が、ほぼ1/3に増加することが観察された.
 This aligns with what we observed in the simulation shown in Figure 2.
-これは、図2に示したシミュレーションで観察されたものと一致しています。
+これは、図2に示したシミュレーションで観察されたものと一致している.
 While ignoring the bias in the data collection process creates a “rich get richer“ phenomenon, whereby a video is nominated in the learned policy simply because it was heavily nominated in the behavior policy, incorporating the off-policy correction reduces this effect.
-データ収集過程での偏りを無視すると，行動ポリシーで多くノミネートされたからといって学習ポリシーでノミネートされるという「金持ちがより金持ちになる」現象が生じるが，オフポリシー補正を組み込むことでこの効果を低減することができる．
+データ収集過程での偏りを無視すると，**行動policyで多くノミネートされたからといって学習policyでノミネートされるという「金持ちがより金持ちになる」現象が生じる**が，off-policy補正を組み込むことでこの効果を低減することができる.
 
 Interestingly, in live experiment, we did not observe a statistically significant change in ViewTime between control and test population.
-興味深いことに、ライブ実験では、コントロール集団とテスト集団の間で、ViewTimeの統計的に有意な変化は観察されませんでした。
+興味深いことに、ライブ実験では、control集団とtest集団の間で、ViewTime の統計的に有意な変化は観察されなかった.
 However, we saw an increase in the number of videos viewed by 0.53%, which was statistically significant, suggesting that users are indeed getting more enjoyment.
-しかし、動画の視聴回数が0.53%増加し、統計的に有意であったことから、ユーザーがより楽しめていることが伺えます。
+しかし、**動画の視聴回数が0.53%増加し、統計的に有意であったことから、ユーザがより楽しめていることが伺える**.
 
-### 6.2.3. Top-𝐾 Off-Policy. Top-ᵃ Off-Policy.
+### 6.2.3. Top-𝐾 Off-Policy.
 
 We now focus on understanding if the top-𝐾 off-policy learning improves the user experience over the standard off-policy approach.
-我々は、オフポリシー学習が標準的なオフポリシーアプローチよりもユーザーエクスペリエンスを向上させるかどうかを理解することに重点を置く。
+我々は、top-K off-policyアプローチが標準的なoff-policyアプローチよりもユーザ体験を向上させるかどうかを理解することに重点を置く.
 In this case, we launched an equivalently structured model now trained with the top-𝐾 off-policy corrected gradient update given in Equation (7) and compared its performance to the previous off-policy model, described in Section 6.2.2.
-この場合，式(7)で与えられるtop-ᵃ off-policy補正勾配更新で学習した等価構造モデルを起動し，セクション6.2.2で述べた以前のoff-policyモデルと性能を比較しました．
+この場合，式(7)で与えられるtop-K off-policy補正勾配更新で学習した等価構造モデルを起動し，セクション6.2.2で述べた以前のoff-policyモデルと性能を比較した.
 In this experiment, we use 𝐾 = 16 and capping 𝑐 = 𝑒 3 in Equation (9); we will explore these hyperparameters in more detail below.
-この実験では，式 (9) で ᵃ = 16 とキャッピング 𝑒 = 𝑓 を使用しました．
+この実験では，式 (9) で $K = 16$ と capping $c = e^3$ を使用した.
 
 As described in Section 4.3 and demonstrated in the simulation in Section 6.1.2, while the standard off-policy correction we tested before leads to a policy that is overly-focused on getting the top-1 item correct, the top-𝐾 off-policy correction converges to a smoother policy under which there is a non-zero mass on the other items of interest to users as well.
-セクション 4.3 で説明し，セクション 6.1.2 のシミュレーションで示したように，以前テストした標準的なオフポリシー補正はトップ 1 の項目を正すことに過度に集中したポリシーを導くが，トップ ᵃオフポリシー補正は，ユーザが興味を持つ他の項目にもゼロではない質量がある，より滑らかなポリシーに収束させる．
+セクション 4.3 で説明し，セクション 6.1.2 のシミュレーションで示したように，以前テストした標準的なオフポリシー補正はトップ 1 のアイテムを正すことに過度に集中した方策を導くが，top-Kオフポリシー補正は，**ユーザが興味を持つ他のアイテムにもゼロではない質量**があるような，**より滑らかな方策に収束させる**.
 This in turn leads to better top-𝐾 recommendation.
-これにより、より良いトップ ᵃの推薦につながる。
+これにより、より良いtop-Kの推薦につながる.
 Given that we can recommend multiple items, the top-𝐾 off-policy correction leads us to present a better fullpage experience to users than the standard off-policy correction.
-複数の項目を推薦することができることを考えると、トップ\_1オフポリシー補正は標準的なオフポリシー補正よりもユーザーに良いフルページ体験を提供することにつながる。
+複数のアイテムを推薦することができることを考えると、top-K オフポリシー補正は標準的なオフポリシー補正よりもユーザに良いフルページ体験を提供することにつながる.
 In particular, we find that the amount of ViewTime increased by 0.85% in the test traffic, with the number of videos viewed slightly decreasing by 0.16%.
-特に、テストトラフィックでは、ViewTime の量が 0.85% 増加し、動画の視聴数は 0.16% とわずかに減少していることがわかります。
+特に、テストトラフィックでは、ViewTime の量が 0.85% 増加し、動画の視聴数は 0.16% とわずかに減少していることがわかる.
 
-### 6.2.4. Understanding Hyperparameters. ハイパーパラメータを理解する。
+### 6.2.4. Understanding Hyperparameters. ハイパーパラメータを理解する
 
 Last, we perform a direct comparison of how different hyperparameter choices affect the top-𝐾 off-policy correction, and in turn the user experience on the platform.
-最後に、ハイパーパラメータの選択がtop-ᵃ off-policy補正、ひいてはプラットフォームでのユーザー体験にどのような影響を与えるかを直接比較しました。
+最後に、ハイパーパラメータの選択がtop-K off-policy補正、ひいてはプラットフォームでのユーザ体験にどのような影響を与えるかを直接比較した.
 We perform these tests after the top-𝐾 off-policy correction became the production model.
-これらのテストは、top-ᵃ off-policy補正がプロダクションモデルになった後に実施しました。
+これらのテストは、**top-K off-policy補正がプロダクションモデル(=プロダクトに採用してるモデル?)になった後に実施**した.
 
 #### 6.2.4.1. Number of actions. アクションの数
 
 We first explore the choice of 𝐾 in the top-𝐾 off-policy correction.
-まず、top-ᵃ off-policy補正におけるᵃの選択について検討する。
+まず、top-K off-policy補正におけるKの選択について検討する.
 We train three structurally identical models, using 𝐾 ∈ {1, 2, 16, 32}; The control (production) model is the top-𝐾 off-policy model with 𝐾 = 16.
-ᵃ∈ {1, 2, 16, 32} を用いて、3つの構造的に同一のモデルを訓練する。対照（生産）モデルは、↪Lu_1D43E = 16 の top-ᵃ off-policy モデルである。
+$K \in {1, 2, 16, 32}$ を用いて、3つの構造的に同一のモデルを訓練する. control(production)モデルは、$K = 16$ の top-K off-policy モデルである.
 We plot the results during a 5-day experiment in Figure 5.
-5 日間の実験の結果を図 5 にプロットする。
+5 日間の実験の結果を図 5 にプロットする.
 As explained in Section 4.3, with 𝐾 = 1, the top-𝐾 off-policy correction reduces to the standard off-policy correction.
-4.3 節で説明したように、↪Lu_1D43E = 1 の場合、top-𝐾 off-policy の補正は標準の off-policy の補正に減少する。
+4.3 節で説明したように、K = 1 の場合、top-K off-policy の補正は標準の off-policy の補正と一致する.
 A drop of 0.66% ViewTime was observed for 𝐾 = 1 compared with the baseline with 𝐾 = 16.
-ᵃ = 1 では、ᵃ = 16 のベースラインと比較して 0.66% の ViewTime の減少が観察されました。
+K = 1 では、$K = 16$ のベースラインと比較して 0.66% の ViewTime の減少が観察された.
 This further confirms the gain we observed shifting from the standard off-policy correction to the top-𝐾 off-policy correction.
-これは、標準のオフポリシー補正から top-ᵃオフポリシー補正に移行して観測された利得をさらに確認するものです。
+これは、標準のオフポリシー補正から top-Kオフポリシー補正に移行して観測された利得をさらに確認するものである.
 Setting 𝐾 = 2 still performs worse than the production model, but the gap is reduced to 0.35%.
-ᵃ = 2に設定しても、製品モデルよりも性能は劣るが、その差は0.35%に縮まった。
+K = 2に設定しても、productionモデルよりも性能は劣るが、その差は0.35%に縮まった.
 𝐾 = 32 achieves similar performance as the baseline.
-ᵃ = 32はベースラインと同様の性能を達成した。
+K = 32はベースラインと同様の性能を達成した.
 We conducted follow up experiment which showed mildly positive gain in ViewTime (+0.15% statistically significant) when 𝐾 = 8.
-フォローアップ実験を行ったところ、ᵃ = 8 のときに、ViewTime がわずかに増加しました (+0.15% 統計的に有意)。
+フォローアップ実験を行ったところ、K = 8 のときに、ViewTime がわずかに増加しました (+0.15% 統計的に有意).
 
 #### 6.2.4.2. Capping. キャッピング
 
 Here we consider the effect of the variance reduction techniques on the final quality of the learned recommender.
-ここでは、学習済みレコメンダーの最終的な品質に対する分散削減技術の効果について考察する。
+ここでは、学習済みレコメンダーの最終的な品質に対する分散削減技術(=policy-gradient推定の!)の効果について考察する.
 Among the techniques discussed in Section 4.4, weight capping brings the biggest gain online in initial experiments.
-セクション4.4で議論した技術の中で、重みキャッピングは初期の実験においてオンラインで最大の利得をもたらす。
+セクション4.4で議論した技術の中で、 weight capping は初期の実験においてオンラインで最大の利得をもたらす.
 We did not observe further metric improvements from normalized importance sampling, or TRPO [36].
-また、正規化重要度サンプリングやTRPO[36]による更なるメトリックの向上は観察されなかった。
+また、正規化重要度サンプリングやTRPO[36]による更なるメトリックの向上は観察されなかった.
 We conducted a regression test to study the impact of weight capping.
-我々は、ウェイトキャッピングの影響を調査するために回帰テストを実施した。
+我々は、weight capping の影響を調査するために回帰テストを実施した.
 We compare a model trained using cap 𝑐 = 𝑒 3 (as in production model) in Equation (9) with one trained using 𝑐 = 𝑒 5 .
-これは，式(9)のcap 𝑐 = 𝑒（生産モデルのように）を用いて学習したモデルと， 𝑐 = 𝑒を用いて学習したモデルを比較するものである．
+これは，式(9)のcap $c = e^3$ (productionモデルと同じ)を用いて学習したモデルと， $c = e^5$を用いて学習したモデルを比較するものである.
 As we lift the restriction on the importance weight, the learned policy 𝜋𝜃 could potentially overfit to a few logged actions that accidentally receives high reward.
-重要度重みの制限を解除すると，学習された政策ᜃは偶然に高い報酬を受け取る少数の記録された行動に対して過剰に適合する可能性がある．
+importance weightの制限を解除すると，学習された方策$\pi_{\theta}$は**偶然に高い報酬を受け取る少数の記録された行動(action)に対して過剰に適合する可能性**がある.
 Swaminathan and Joachims [43] described a similar effect of propensity overfitting.
-SwaminathanとJoachims [43]は、傾向のオーバーフィッティングの同様の効果について述べている。
+SwaminathanとJoachims [43]は、傾向のオーバーフィッティングの同様の効果について述べている.
 During live experiment, we observe a significant drop of 0.52% in ViewTime when the cap on importance weight was lifted.
-ライブ実験では、重要度ウェイトの上限が解除されたときに、ViewTimeが0.52%という大幅な低下を観測しています。
+ライブ実験では、importance weightの上限が解除されたときに、ViewTimeが0.52%という大幅な低下を観測している.
 
 # 7. Conclusion 結論
 
 In this paper we have laid out a practical implementation of a policy gradient-based top-𝐾 recommender system in use at YouTube.
-この論文では、YouTubeで使用されている政策勾配に基づくトップ1推薦システムの実用的な実装を示しました。
+この論文では、YouTubeで使用されている方策勾配に基づくtop-K推薦システムの実用的な実装を示した.
 We scale up REINFORCE to an action space in the orders of millions and have it stably running in a live production system.
-また、REINFORCEを数百万単位のアクションスペースにスケールアップし、本番システムで安定的に動作させることができた。
+また、REINFORCEを数百万単位のaction spaceにスケールアップし、本番システムで安定的に動作させることができた.
 To realize the full benefits of such an approach, we have demonstrated how to address biases in logged data through incorporating a learned logging policy and a novel top-𝐾 off-policy correction.
-このようなアプローチの利点を最大限に実現するために、学習されたロギングポリシーと新しい top-ᵃ off-policy correction を組み込むことによって、ログデータのバイアスに対処する方法を実証しました。
+このようなアプローチの利点を最大限に実現するために、logging policy(=今動いてる方策?)の学習と新しい top-K off-policy correction を組み込むことによって、ログデータのバイアスに対処する方法を実証しました.
 We conducted extensive analysis and live experiments to measure empirically the importance of accounting for and addressing these underlying biases.
-私たちは、これらの根底にあるバイアスを考慮し、対処することの重要性を実証的に測定するために、広範な分析とライブ実験を実施しました。
+私たちは、これらの根底にあるバイアスを考慮し、対処することの重要性を実証的に測定するために、広範な分析とライブ実験を実施した.
 We believe these are important steps in making reinforcement learning practically impactful for recommendation and will provide a solid foundation for researchers and practitioners to explore new directions of applying RL to recommender systems.
-我々は、強化学習が推薦に実用的なインパクトを与えるための重要なステップであり、研究者や実務家が推薦システムに強化学習を適用する新しい方向性を探るための強固な基礎を提供すると考えている。
+我々は、強化学習が推薦に実用的なインパクトを与えるための重要なステップであり、研究者や実務家が推薦システムに強化学習を適用する新しい方向性を探るための強固な基礎を提供すると考えている.
