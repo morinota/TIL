@@ -297,7 +297,7 @@ However, the variance of the estimator can be huge when the difference in 𝜋�
 しかし、更新対象のpolicy $\pi$ と 別のpolicy $\beta$ の違いにより重要度重みが非常に小さいか大きい場合には、**推定値の分散が大きくなる**可能性がある.(それでも不偏性は失われないのか...)
 
 To reduce the variance of each gradient term, we take the firstorder approximation and ignore the state visitation differences under the two policies as the importance weights of future trajectories, which yields a slightly biased estimator of the policy gradient with lower variance:
-各勾配項の分散を小さくするために，1次近似(?)を行い，将来の軌道の重要度重みとして2つの政策下の状態訪問差分を無視することで，分散を小さくしたpolicy-gradientのやや偏った(=不偏性は失われた)推定値を得ることができた．
+各勾配項の分散を小さくするために，1次近似(?)を行い，将来の軌道の重要度重みとして2つの方策下のstate visitationの差分を無視することで，分散を小さくしたpolicy-gradientのやや偏った(=不偏性は失われた)推定値を得ることができた．
 
 $$
 \nabla_{\theta} J(\pi_{\theta})
@@ -379,7 +379,7 @@ One difficulty in coming up with the off-policy corrected estimator in Equation 
 Ideally, for each logged feedback of a chosen action we received, we would like to also log the probability of the behavior policy choosing that action.
 理想的には、**受け取った chosen action のフィードバックを記録するごとに、そのactionを選択するbehavior policy の確率も記録したいところ**である.
 Directly logging the behavior policy is however not feasible in our case as (1) there are multiple agents in our system, many of which we do not have control over, and (2) some agents have a deterministic policy, and setting 𝛽 to 0 or 1 is not the most effective way to utilize these logged feedback.
-しかし、behavior policy(の出力する確率の値?) を直接ログに記録することは、(1)我々のシステムには複数のagentが存在し、その多くは我々が制御できない、(2)いくつかのagentは決定論的方針(deterministic policy)を持っており、 $\beta$ を0または1に設定することは、これらの記録されたフィードバックを活用する最も有効な方法ではないため、このケースでは実現可能であるとはいえない.
+しかし、behavior policy(の出力する確率の値?) を直接ログに記録することは、(1)我々のシステムには複数のagentが存在し、その多くは我々が制御できない、(2)いくつかのagentは決定論的方策(deterministic policy)を持っており、 $\beta$ を0または1に設定することは、これらの記録されたフィードバックを活用する最も有効な方法ではないため、このケースでは実現可能であるとはいえない.
 
 Instead we take the approach first introduced in [39], and estimate the behavior policy 𝛽, which in our case is a mixture of the policies of the multiple agents in the system, using the logged actions.
 その代わりに、我々は[39]で最初に紹介されたアプローチを取り、**システム内の複数のagentの policy の混合であるbehavior policy $\beta$** を、記録されたactionを使用して推定する.
@@ -494,7 +494,7 @@ In summary, when the desirable item has a small mass in the softmax policy 𝜋�
 Once the softmax policy 𝜋𝜃 (·|𝑠) casts a reasonable mass on the desirable item (to ensure it will be likely to appear in the top-𝐾), the correction then zeros out the gradient and no longer tries to push up its likelihood. 
 ソフトマックスポリシー $\pi_{\theta}(a_t|s_t)$ が望ましいアイテム(desirable item??)に適度な質量(確率質量)を与えると（top-K に登場する可能性を確保するため）、補正係数は勾配をゼロにして尤度を押し上げようとはしなくなる. 
 This in return allows other items of interest to take up some mass in the softmax policy. 
-これにより、ソフトマックスポリシーにおいて、他の興味あるあいてむがある程度の質量を占めることができるようになる.
+これにより、ソフトマックスポリシーにおいて、他の興味あるアイテムがある程度の質量を占めることができるようになる.
 As we are going to demonstrate in the simulation as well as live experiment, while the standard off-policy correction converges to a policy that is optimal when choosing a single item, the top-𝐾 correction leads to better top-𝐾 recommendations.
 シミュレーションと実機で実証するように、標準的なオフポリシー補正は1つのアイテムを選択する際に最適なpolicyに収束するが、top-K補正はtop-K推薦 を向上させることにつながる.
 
@@ -505,7 +505,7 @@ As detailed at the beginning of this section, we take a first-order approximatio
 Nonetheless, the gradient can still suffer from large variance due to large importance weight of 𝜔(𝑠, 𝑎) = 𝜋 (𝑎 |𝑠) 𝛽 (𝑎 |𝑠) as shown in Equation (4), Similarly for top-𝐾 off-policy correction. 
 それにもかかわらず、勾配は、top-K off-policy補正と同様に、式(4)に示すように、 $w(s,a) = \frac{\pi(a|s)}{\beta(a|s)}$ の**大きな重要度重みによって大きな分散に苦しむことがある**.
 Large importance weight could result from (1) large deviation of the new policy 𝜋 (·|𝑠) from the behavior policy, in particular, the new policy explores regions that are less explored by the behavior policy. That is, 𝜋 (𝑎|𝑠) ≫ 𝛽 (𝑎|𝑠) and (2) large variance in the 𝛽 estimate.
-大きな重要度重みは、以下の２つの要因から発生する可能性がある.（1）new policy $\pi(\cdot|s)$ の behavior policy(現在のpolicy) からの大きな乖離、特に、new policy が behavior policy によってあまり探索されない領域を探索することに起因すると考えられる. つまり、$\pi(a|s) >> \beta(a|s)$ 、(2) $\beta$ 推定値の分散が大きい.
+大きな重要度重みは、以下の２つの要因から発生する可能性がある.（1）更新したい policy $\pi(\cdot|s)$ と behavior policy $\beta$ との大きな乖離、特に、new policy が behavior policy によってあまり探索されない領域を探索することに起因すると考えられる. つまり、$\pi(a|s) >> \beta(a|s)$ 、(2) $\beta$ 推定値の分散が大きい.
  
 We tested several techniques proposed in counterfactual learning and RL literature to control variance in the gradient estimate.
 我々は、**勾配(policy-gradient)推定の分散を制御するため**に、反実仮想学習やRLの文献で提案されているいくつかの手法を検証した.
@@ -617,7 +617,7 @@ This has an obvious downside: the more the behavior policy chooses a sub-optimal
 これには明らかな欠点がある. 行動方策が最適でないアイテムを選べば選ぶほど、新しい方策は同じアイテムを選ぶ方向に偏ってしまう.
 
 Figure 2 compares the policies 𝜋𝜃 , learned without and with off-policy correction using SGD [7], when the behavior policy 𝛽 is skewed to favor items with least reward.
-図2は，行動方策 $\beta$ が 報酬の最も少ないアイテムを優先するように偏った場合において、SGD[7]を用いてオフポリシー補正 あり/なしで 学習した方策 $\pi_{\theta}$ を比較したものである.
+図2は，行動方策 $\beta$ が 報酬の最も少ないアイテムを優先的に選択するような偏った場合において、SGD[7]を用いてオフポリシー補正 あり/なしで 学習した方策 $\pi_{\theta}$ を比較したものである.
 As shown in Figure 2 (left), naively applying the policy gradient without accounting for the data biases leads to a sub-optimal policy.
 図2（左）に示すように，データの偏りを考慮せずに素朴に方策勾配を適用すると，最適とは言えない方策になる.(最適なのはi=10のアイテムを常に選ぶべき!)
 In the worst case, if the behavior policy always chooses the action with the lowest reward, we will end up with a policy that is arbitrarily poor and mimicking the behavior policy (i.e., converge to selecting the least rewarded item).
@@ -710,7 +710,7 @@ In particular, we would like to measure if serving a stochastic policy, under wh
 特に，セクション 5 で述べたように，**ソフトマックスモデルからサンプリングする確率的な方策**が，ソフトマックスに従って常に最も高い確率で K個のアイテムを推薦する**決定論的な方策より良い推薦 をもたらすかどうか**を測定したい. 
 
 We conducted a first set of experiments to understand the impact of serving a stochastic policy vs. a deterministic one while keeping the training process unchanged.
-この実験では，**確率的な方策と決定論的な方策とを比較**して，学習過程を変更しない場合の影響(?)を調べるために，最初の実験をおこなった．
+この実験では，**確率的な方策と決定論的な方策とを比較**して，学習過程を変更しない場合の影響(?)を調べるために，最初の実験をおこなった.
 In the experiment, the control population is served with a deterministic policy, while a small slice of test traffic is served with the stochastic policy as described in Section 5.
 この実験では，control集団には決定論的な方策を適用し，test trafficの小片(=介入群, test集団)にはセクション 5 で述べたような確率論的な方策を適用した.
 Both policies are based on the same softmax model trained as in Equation (??).

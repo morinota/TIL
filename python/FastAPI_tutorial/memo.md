@@ -1058,7 +1058,7 @@ UserInDB(**user_in.dict(), hashed_password=hashed_password)
 
 コードのduplicationを減らすことは、FastAPI の中心的なアイデアの 1つ.
 
-コードのduplicationにより、**バグ、セキュリティの問題、コードのdesynchronization(非同期化)の問題(ある場所ではコードを更新しても他の場所では更新しないケース, なるほど...!)**などの可能性が高くなる.
+コードのduplicationにより、**バグ、セキュリティの問題、コードのdesynchronization(非同期化)の問題(ある場所ではコードを更新しても他の場所では更新し忘れる, なるほど...!)**などの可能性が高くなる.
 
 これらのモデル(UserHogehoge)はすべて多くのデータを共有し、field の名前と型を複製している.
 もっとうまくできるはずだ...!
@@ -1159,7 +1159,7 @@ async def create_item(name: str):
     return {"name": name}
 ```
 
-## HTTP status codeに関して
+## 10.1. HTTP status codeに関して
 
 HTTP では、responseの一部として 3 digit の数値 status codeを送信する.
 
@@ -1186,7 +1186,7 @@ HTTP では、responseの一部として 3 digit の数値 status codeを送信�
   - それらを直接使用することはほとんどない.
   - application code または server のどこかで問題が発生すると、これらの status code のいずれかが**自動的に(!)**返される.
 
-## Shortcut to remember the names(& status code)
+## 10.2. Shortcut to remember the names(& status code)
 
 `fastapi.status.`を使うと良い.
 
@@ -1196,7 +1196,7 @@ async def create_item(name: str):
     return {"name": name}
 ```
 
-# Form data(request bodyに関して、jsonではなくform fieldを受け取る??)
+# 11. Form data(request bodyに関して、jsonではなくform fieldを受け取る??)
 
 JSON(=request body?)の代わりにform field(?)を受け取る場合は、`fastapi.Form`を使用する.
 
@@ -1211,11 +1211,11 @@ async def login(username: str = Form(), password: str = Form()):
     return {"username": username}
 ```
 
-## Form Fieldとは??
+## 11.1. Form Fieldとは??
 
 **HTML Form（`<form></form>`）がサーバにデータを送信する方法(=Form field?)**は、通常、そのデータに「特別な」エンコーディングを使用しているが、これはjsonとは異なる.
 
-# request file parameter を受け取る.
+# 12. request file parameter を受け取る.
 
 clientがuploadするファイルは、`fastapi.File`と`fastapi.UploadFile`を使ってdeclareできる.
 `Body`や`Form`と同じように、file parameterを作成する.
@@ -1250,13 +1250,13 @@ async def create_upload_file(file: UploadFile):
     return {"filename": file.filename}
 ```
 
-## `UploadFile`について
+## 12.1. `UploadFile`について
 
 `UploadFile` has the following attributes:
 
 https://fastapi.tiangolo.com/ja/tutorial/request-files/#uploadfile
 
-## file parameterをオプショナルにするケース
+## 12.2. file parameterをオプショナルにするケース
 
 ```python
 @app.post("/files/")
@@ -1275,9 +1275,9 @@ async def create_upload_file(file: Union[UploadFile, None] = None):
         return {"filename": file.filename}
 ```
 
-## Fileと UploadFileを一緒に使うケース
+## 12.3. Fileと UploadFileを一緒に使うケース
 
-`UploadFile` などで `File()` を使用すると、追加のmetadataを設定することができる.
+`UploadFile`タイプヒントの初期値に`File()` を使用すると、追加のmetadataを設定することができる.
 
 ```python
 @app.post("/uploadfile/")
@@ -1287,14 +1287,31 @@ async def create_upload_file(
     return {"filename": file.filename}
 ```
 
-# SQL Databases(RDB)をapplicationに組み込む.
+## Multiple File Uploads
+
+同時に複数のファイルをアップロードすることが可能.
+
+その場合、`bytes`か`UploadFile`のListをfile parameterのtype hintとしてdeclareする.
+
+```python
+@app.post("/files/")
+async def create_files(files: List[bytes] = File()):
+    return {"file_sizes": [len(file) for file in files]}
+
+
+@app.post("/uploadfiles/")
+async def create_upload_files(files: List[UploadFile]):
+    return {"filenames": [file.filename for file in files]}
+```
+
+# 13. SQL Databases(RDB)をapplicationに組み込む.
 
 FastAPIのapplicationは、必ずしもSQL database(=RDB)を使う必要はない.(ex. PostgreSQL, MySQL, SQListe, Oracle, Microsoft SQL Server, etc.)
 
 必要があれば、FastAPIとSQLAlchemyを組み合わせて適用できる.
 (tips: サンプルコードのほとんどは標準的なSQLAlchemyのcode. FastAPI固有のcodeはほんのすこし)
 
-## 最もcommon: ORM(Object-Relational Mapping)を使用するパターン
+## 13.1. 最もcommon: ORM(Object-Relational Mapping)を使用するパターン
 
 SQL Databases(RDB)をapplicationに組み込む上で、一般的なパターンはORM(Object-Relational Mapping)ライブラリを使用する事.
 
@@ -1310,7 +1327,7 @@ SQL Databases(RDB)をapplicationに組み込む上で、一般的なパターン
 - SQLAlchemy ORM (SQLAlchemy の一部、フレームワークとは無関係),
 - Peewee (フレームワークとは無関係), etc.
 
-## DBモデルクラスにmagic attribute `relationship`をdeclareする.
+## 13.2. DBモデルクラスにmagic attribute `relationship`をdeclareする.
 
 `my_user.items`にアクセスすると、users テーブルの このレコードを指す外部キーを持つ、`Item`モデル(items テーブルから)のリストを取得できる. (my_user.items にアクセスすると、SQLAlchemy は、実際にデータベースから items テーブルにあるアイテムを取得してくる...!)
 
@@ -1337,11 +1354,11 @@ class Item(Base):
     owner = relationship("User", back_populates="items")
 ```
 
-## SQLAlchemy models と Pydantic models のconfuseを避ける.
+## 13.3. SQLAlchemy models と Pydantic models のconfuseを避ける.
 
 SQLAlchemy models(=ORMの為のDBモデル)とPydantic models(=request body やresponse bodyの設定をdeclareする為のBaseModel)のconfuseを避ける為に、前者を`models.py`に、後者を`schemas.py`(<=多かれ少なかれ**"schema"="validなデータの形を定義する"**ので...!)に記述するといい.
 
-## SQLAlchemy models と Pydantic models の declare styleの違い
+## 13.4. SQLAlchemy models と Pydantic models の declare styleの違い
 
 SQLAlchemy modelsのケース
 
@@ -1355,7 +1372,7 @@ Pydantic models
 name: str
 ```
 
-## pydanticの`orm_mode`を使用する.
+## 13.5. pydanticの`orm_mode`を使用する.
 
 pydantic BaseModelの internal `Config` classに `orm_mode = True`を追加する.
 Pydanticの`orm_mode`は、Pydanticのモデルが`dict`ではなく、ORM model(または属性を持つ他の任意のオブジェクト)であってもデータを読み込むようにdeclareする.
@@ -1377,11 +1394,11 @@ class User(UserBase):
 
 `orm_mode`を使用する事で, Pydantic 自身が必要なデータを(dict を想定するのではなく)fieldからアクセスしようとするので、返したい特定のデータをdeclareすれば、ORM modelからであってもそれを取りに行くことができるようになる.
 
-## CRUD(Create, Read, Update, Delete)用のutilsを用意すると良い...!
+## 13.6. CRUD(Create, Read, Update, Delete)用のutilsを用意すると良い...!
 
 /crud.pyを定義する. このファイルでは、Databaseのデータを操作するための再利用可能な関数が用意されている.
 
-### Read data 用 の utility funcitonを作る.
+### 13.6.1. Read data 用 の utility funcitonを作る.
 
 `sqlalchemy.orm` から `Session` をimportする.
 `Session`クラスをtype hintに用いる事で、`db` parameterのtypeをdeclareし、function内でより良いtype check と completion(補完) ができるようになる.
@@ -1403,7 +1420,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 ```
 
-### Create date用の utility function を作る.
+### 13.6.2. Create date用の utility function を作る.
 
 ```python
 def create_user(db: Session, user: schemas.UserCreate):
