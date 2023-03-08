@@ -1,7 +1,7 @@
 # Top-K Off-Policy Correction for a REINFORCE Recommender System
 
-published date: hogehoge September 2019,
-authors: Chen
+published date: 15 December 2019,
+authors: Minmin Chen, Alex Beutel, Paul Covington, Sagar Jain, Francois Belletti, Ed Chi
 url(paper): https://arxiv.org/abs/1812.02353
 (勉強会発表者: morinota)
 
@@ -11,12 +11,23 @@ url(paper): https://arxiv.org/abs/1812.02353
 
 - 推薦システムにおいては、膨大な量のimplicit feedback(ex. ユーザのクリック数、滞在時間など)が学習用に利用できる.
 - しかし、ログに記録されたfeedbackからの学習は、現在運用している推薦システムによって選択された推薦アイテムリストに対するfeedback のみ を観測することによって引き起こされるbiasに左右される.
-- 本論文では、REINFORCEアルゴリズム[48]を、非常に大きなaction space と state space を持つneural candidate generator(top-K推薦システム)に適応させた経験を紹介する.
+- 本論文では、REINFORCEアルゴリズム[48]を、非常に大きな action space と state space を持つneural candidate generator(top-K推薦システム)に適応させた手法を提案する.
   - REINFORCEアルゴリズム[48]:
     - 強化学習の一種であるpolicy勾配法の中で、最も基本的なアプローチ.
     - policy勾配法 = agentのpolicy(行動選択戦略)を直接最適化することで、最適な行動を選択するようにagentを訓練する方法.
 
 ## 先行研究と比べて何がすごい？
+
+RL の研究のほとんどは，**単一のitemを選択するpolicyの作成に焦点をあてている**．
+一方、実世界の推薦システムは通常、一度に複数の推薦アイテムをユーザに提供する.
+本論文は、REINFORCEアルゴリズムをtop-K推薦のタスクに対応させた.
+
+本論文の貢献:
+
+- 非常に大きな action space におけるneural recommendation policy を学習する為に、REINFORCEのpolicy-gradient-basedなアプローチをscaleさせる.
+- 事前モデルpolicyから収集されたログfeedbackから学習する為の off-policy 補正を適用する.
+- 推薦システムが一度に複数のアイテムを出力することを考慮し、新しいtop-K off-policy補正を提供する.
+- 既存のRLの文献ではほとんど行われていなかった、**ユーザの長期的な満足度を向上させるこれらのアプローチの価値**をオンライン実験(実環境でのA/Bテスト)で実証する.
 
 ## 技術や手法の肝は？
 
@@ -513,4 +524,5 @@ importance weightの制限を解除すると，学習された方策$\pi_{\theta
 
 ## お気持ち実装
 
-時間的な余力がなく...!
+時間的な余力がなく、断念...!
+(強化学習の経験がなさすぎて読むのにかなり苦労してしまった)
