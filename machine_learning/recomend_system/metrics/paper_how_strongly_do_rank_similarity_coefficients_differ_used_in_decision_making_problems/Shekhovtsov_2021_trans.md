@@ -135,7 +135,7 @@ The weight of a given comparison is determined based on the significance of the 
 与えられた比較の重みは、計算中に参照順位として使用される最初の順位における位置の重要性に基づいて決定される.
 
 $$
-WS = 1 - 
+WS = 1 -
 \tag{6}
 $$
 
@@ -144,18 +144,19 @@ $$
 Kendall’s Tau is a measure of similarity degree between two sets of rankings [1].
 ケンドールのタウは、2組の順位間の類似度を表す尺度である[1]。
 This correlation coefficient depends on how many pairs of rank positions should be inverted to change one ranking into the other.
-この相関係数は、あるランキングを他のランキングに変更するために、何組のランキングの位置を反転させればよいかに依存します。
+この相関係数は、**あるランキングを他のランキングに変更するために、何組のランキングの位置を反転させればよいか**に依存する.
 The Kendall’s Tau correlation is defined as (7).
-ケンドールのタウの相関は(7)のように定義される。
+ケンドールのタウの相関は(7)のように定義される.
 
 $$
+\tau = 2 \frac{P - Q}{N(N-1)}
 \tag{7}
 $$
 
 where P is number of concordant pairs and Q is a number of discordant pairs.
-ここで、Pは一致するペアの数、Qは不一致のペアの数である。
+ここで、Pは一致するペアの数、Qは不一致のペアの数である.
 In other words, P means number of pairs (xi, yi) and (xj, yj), where i < j in both rankings if both xi > xj and yi > yj, and Q means number of pairs with both xi < xj and yi < yj conditions fulfilled.
-すなわち、Pは、（xi，yi）と（xj，yj）の組のうち、xi＞xjとyi＞yjの両方の条件を満たす場合に、両方の順位でi＜jとなる組の数を意味し、Qは、xi＜xjとyi＜yjの両方の条件を満たす組の数を意味している。
+すなわち、Pは、（xi，yi）と（xj，yj）の組のうち、xi＞xjとyi＞yjの両方の条件を満たす場合に、両方のランキングでi＜jとなる組の数を意味し、Qは、xi＜xjとyi＜yjの両方の条件を満たす組の数を意味している。
 
 # Study case 研究事例
 
@@ -171,17 +172,17 @@ There should be noted that in this case, the rankings do not contain ties.
 # Results 結果
 
 After calculating Spearman’s, Weighted Spearman’s, Rank similarity and Kendall Tau rank correlation coefficients between reference ranking and 40320 permutations of this ranking, we calculated Pearson correlation between obtained vectors of correlations.
-基準順位とこの順列の40320通りの並べ替えとの間のスピアマン相関、加重スピアマン相関、順位類似度、ケンドールタウ順位相関係数を計算した後、得られた相関のベクトル間のピアソン相関を算出した。
+基準順位とこの順列の40320通りの並べ替えとの間のスピアマン相関、加重スピアマン相関、順位類似度、ケンドールタウ順位相関係数を計算した後、得られた相関のベクトル間のピアソン相関を算出した.
 Table 1 contains Pearson correlations calculated for each pair of obtained rank correlations.
-表1に、得られた順位相関の各組について計算したピアソン相関を示す。
+表1に、得られた順位相関の各組について計算したピアソン相関を示す.
 Values of Spearman’s and Weighted Spearman’s coefficients are correlated most (r = 0.9879).
-Spearmanの係数とWeighted Spearmanの係数の値が最も相関が高い（r = 0.9879）。
+Spearmanの係数とWeighted Spearmanの係数の値が最も相関が高い(r = 0.9879).
 It can be seen that values calculated with Spearman’s and Kendall Tau coefficient are slightly less correlated (r = 0.9820) in comparison to the correlation between Spearman’s and Weighted Spearman’s coefficients.
-Spearmanの係数とKendall Tauの係数で計算した値は、Spearmanの係数とWeighted Spearmanの係数の相関と比較して、若干相関が低いことがわかる（r = 0.9820）。
+Spearmanの係数とKendall Tauの係数で計算した値は、Spearmanの係数とWeighted Spearmanの係数の相関と比較して、若干相関が低いことがわかる(r = 0.9820).
 The two most minor correlated coefficients are Rank similarity coefficient and Kendall Tau.
-最も相関の小さい係数は、順位類似度係数とケンドールタウである。
+最も相関の小さい係数は、順位類似度係数とケンドールタウである.
 Pearson correlations for them is only r = 0.7912.
-これらのピアソン相関は、r = 0.7912に過ぎない。
+これらのピアソン相関は、r = 0.7912に過ぎない.
 
 Figure 2 presented a visual comparison between Spearman’s and Weighted Spearman’s, and Weighted Spearman’s and Rank similarity (right) correlation coefficients.
 図2は、スピアマンの相関係数と加重スピアマンの相関係数、加重スピアマンの相関係数と順位類似度（右）の比較を視覚的に示したものである。
@@ -260,20 +261,20 @@ On the other hand, the mean value for Rank similarity coefficient is 0.5197.
 It could be explained with the asymmetric nature of this correlation coefficient and that it takes values from (0, 1] range.
 これは、この相関係数が非対称的な性質を持ち、(0, 1)の範囲から値を取ることから説明できる。
 Therefore, it could be expected that mean values lie near the centre of the range but slightly shifted to 1. It is also interesting that Rank similarity coefficient has a smaller standard deviation and variance across other correlation coefficients.
-また、Rank類似度係数は、他の相関係数に比べて標準偏差と分散が小さいことも興味深い点です。
+また、Rank類似度係数は、他の相関係数に比べて標準偏差と分散が小さいことも興味深い点である.
 According to [28] it makes it performs better than coefficients with higher variance and standard deviation.
-28]によれば、分散や標準偏差が大きい係数よりも性能が良いということになります。
+28]によれば、分散や標準偏差が大きい係数よりも性能が良いということになる.
 
 # Conclusions 結論
 
 In this paper, we present some comparisons which could be helpful when deciding which correlation coefficients should be used.
-この論文では、どの相関係数を使用すべきかを決定する際に有用と思われるいくつかの比較を示す。
+この論文では、どの相関係数を使用すべきかを決定する際に有用と思われるいくつかの比較を示す.
 It turns out that a Rank correlation coefficient differs significantly from other popular rank correlation coefficients due to its unusual range and asymmetric nature.
-ランク相関係数は、その特異な範囲と非対称性により、他の一般的なランク相関係数と大きく異なることがわかった。
+ランク相関係数は、その特異な範囲と非対称性により、他の一般的なランク相関係数と大きく異なることがわかった.
 Another interesting observation is that Rank correlation coefficient values are denser in the range, which may be due to half less range than other correlation coefficients.
-また、Rank相関係数の値が範囲内で密になっているのも興味深い観察結果で、これは他の相関係数に比べて範囲が半分ほど狭いことが原因かもしれません。
+また、Rank相関係数の値が範囲内で密になっているのも興味深い観察結果で、これは他の相関係数に比べて範囲が半分ほど狭いことが原因かもしれない.
 Other tested correlation coefficients perform very similarly, except Kendall Tau correlation coefficients which values are discrete since it based on counting pair in rankings.
-他の相関係数もほぼ同じような結果が得られていますが、Kendall Tau相関係数はランキングのペアをカウントしているため、値が不連続になっています。
+他の相関係数もほぼ同じような結果が得られていますが、Kendall Tau相関係数はランキングのペアをカウントしているため、値が不連続になっている.
 There is no unambiguous answer which correlation coefficients is better and which one should be used.
 どの相関係数が優れていて、どの相関係数を使うべきかという明確な答えはありません。
 
