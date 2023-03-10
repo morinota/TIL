@@ -127,7 +127,7 @@ Bellemareら[6]は、情報利得あるいは学習進歩というレンズを�
 While early recommendation research has focused almost exclusively on improving recommendation accuracy, it has become increasingly recognized that there are other factors of recommendation quality contributing to the overall user experience on the platform.
 初期のレコメンデーション研究では、レコメンデーション精度を向上させることのみに焦点が当てられていたが、**プラットフォーム上でのユーザ体験全体に貢献するレコメンデーション品質の他の要因が存在すること**が次第に認識されるようになってきました.
 Herlocker et al. [19] in their seminal work of evaluating collaborative filtering based recommender systems defined various metrics to measure recommendation accuracy, coverage, novelty as well as serendipity.
-Herlocker ら [19] は協調フィルタリングベースのレコメンダーシステムを評価した代表的な研究で、レコメンデーション精度、カバレッジ、新規性、セレンディピティを測定するためのさまざまな指標を定義している.
+**Herlocker ら [19] は協調フィルタリングベースのレコメンダーシステムを評価した代表的な研究で、レコメンデーション精度、カバレッジ、新規性、セレンディピティを測定するためのさまざまな指標を定義している**.
 Diversity is another important aspect that has been extensively studied [3, 5].
 多様性はもう一つの重要な側面であり、広く研究されている[3, 5].
 Diversification algorithms are used to increase coverage of the full range of user interests, and to counter the saturation effect of consuming similar contents [72].
@@ -135,7 +135,7 @@ Diversification algorithms are used to increase coverage of the full range of us
 Zhou et al. [71] studied the dilemma between accuracy and diversity, and proposed a hybrid approach to balance the two.
 Zhou ら [71]は，精度と多様性の間のジレンマを研究し，両者のバランスをとるためのハイブリッドなアプローチを提案している.
 Novelty [8] is closely related to long tail recommendation [62], measuring the capacity of the recommender systems to make predictions and reach the full inventory of contents available on the platforms.
-新規性 [8] はロングテール推薦 [62]と密接に関連し，推薦システムが 予測を行い，プラットフォームで利用可能なコンテンツの完全 なインベントリに到達する能力を測定している.
+新規性(Novelty) [8] はロングテール推薦 [62]と密接に関連し，推薦システムが 予測を行い，プラットフォームで利用可能なコンテンツの完全 なインベントリに到達する能力を測定している.
 One of the early definitions of serendipity was introduced in [19], which captures the degree to which a recommendation is both relevant and surprising to users.
 セレンディピティの初期の定義の一つは[19]で紹介され，**推薦がユーザにとって関連性がありかつ意外である度合い**を捉えている.
 Zhang et al. [66] proposed a hybrid rank-interpolation approach to combine outputs of three LDA algorithms [7] focusing on either accuracy, diversity or serendipity to achieve a balance between these factors in the end recommendations.
@@ -156,13 +156,13 @@ Her, ここで、
 - P : S × A × S → R is the state transition probability, P : S × A × S → R は状態遷移確率(state transition probability)、
 - R : S × A → R is the reward function, R : S × A → R は報酬関数(reward function):
   - r(s, a) note the immediate reward of action a under state s. $r(s、a)$ は状態 s における行動 a の即時報酬(immediate reward)、
-  - ρ0 is the initial state distribution, $\rho_0$ は初期状態分布(initial state distribution)、
-  - γ the discount for future rewards. $\gamma$は将来の報酬(reward)に対する割引(discount)である.
+- ρ0 is the initial state distribution, $\rho_0$ は初期状態分布(initial state distribution)、
+- γ the discount for future rewards. $\gamma$は将来の報酬(reward)に対する割引(discount)である.
 
 Let $H_t = {(A_0, a_0,r_0), \cdots, (A_{t−1}, a_{t−1},r_{t−1})}$ denote an user’s historical activities on the platform up to time t, where ...
-$H_t = {(A_0, a_0,r_0), \cdots, (A_{t−1}, a_{t−1},r_{t−1})}$は、**時間0 ~ 時間tまでのプラットフォーム上でのユーザの履歴活動**を表すとすると...
+$H_t = {(A_0, a_0,r_0), \cdots, (A_{t−1}, a_{t−1},r_{t−1})}$は、**時間0 ~ 時間tまでのプラットフォーム上でのユーザのaction履歴**を表すとすると...
 
-- At ′ stands for the set of items recommended to the user at time t ′, $A_{t′}$は、時間$t′$でユーザに推薦されたアイテムの集合を表す.
+- $A_{t′}$ stands for the set of items recommended to the user at time t ′, $A_{t′}$は、時間$t′$でユーザに推薦されたアイテムの集合を表す.
 - $a_{t′}$ denotes the item the user interacted with at t ′ (at ′ can be null), $a_{t′}$は、時間$t′$においてユーザがinteractしたアイテムを示し($a_{t′}$はnullでもよい)、
 - and rt ′ captures the user feedback (reward) on at ′ (rt ′ = 0 if the user did not interact with any item in At ′). $r_{t′}$は、$a_{t′}$に対するユーザのフィードバック（報酬）を捕らえる(ユーザがAt ′のどのアイテムとも相互作用しなかった場合はrt ′＝0である).
 - The history $H_t$ is encoded through a recurrent neural network to capture the latent user state, that is, ust = RNNθ (Ht ). 履歴$H_t$は、潜在的なユーザの状態を捕らえるために、**リカレントニューラルネットワークを通じて符号化(encode)される**、すなわち、$u_{st} = RNN_{θ} (H_t)$である.
@@ -196,9 +196,9 @@ where $R_t = I_{r(s_t, a_t)>0} \cdot \sum_{t'=t}^{T}{\gamma^{t′-t}r(s_{t′}, 
 RL was designed as an online learning paradigm in the first place [57].
 **RLはそもそもオンライン学習のparadigm**(=パラダイムって枠組み? 方法論みたいな?)として設計されたものである[57].
 Note that the expectation in eq. 2 is taken over the trajectories generated according to the learned policy, and d πθ t (s) is the discounted state visitation probability under πθ [32].
-ただし、式2の期待値は、学習された方針に従って生成された軌道(trajectories)に対するものであり、$d_{t}^{\pi_{\theta}}(s)$ は, $\pi_{\theta}$ という条件下での,割引後の状態来訪確率(discounted state visitation probability)である[32].
+ただし、式2の期待値は、学習された方策に従って生成された軌道(trajectories)に対するものであり、$d_{t}^{\pi_{\theta}}(s)$ は, $\pi_{\theta}$ という条件下での,割引後の状態来訪確率(discounted state visitation probability)である[32].
 One of the main contribution of [11] is bringing the REINFORCE algorithm to the offline batch learning setup commonly deployed in industrial recommender systems.
-[11]の主な貢献の一つは、産業用推薦システムで一般的に展開されているオフラインのバッチ学習設定にREINFORCEアルゴリズムを導入したことである.
+[11]の主な貢献の一つは、**産業用推薦システムで一般的に展開されているオフラインのバッチ学習設定にREINFORCEアルゴリズムを導入したこと**である.
 The authors applied a first-order approximation [2] of importance sampling to address the distribution shift caused by offline training, resulting in a gradient of the following:
 著者らは、オフライン学習による分布シフトに対処するために、重要度サンプリングの一次近似[2]を適用し、以下のような勾配を得ることができた.
 
@@ -215,19 +215,19 @@ $$
 $$
 
 Here $\beta(\cdot|s)$ denotes the behavior policy, i.e., the action distribution conditioning on state s in the batch collected trajectories. d β t (s) is the discounted state visitation probability under β. This importance weight is further adapted to accommodate the set recommendation setup. We refer interested readers to [11] for more details.
-ここで、$\beta(\cdot|s)$は**行動方針(behavior policy)**、すなわち、収集した軌跡のうち状態sを条件とする行動分布(action distribution)を示す.
+ここで、$\beta(\cdot|s)$は**行動方策(behavior policy)**、すなわち、収集した軌跡のうち状態sを条件とする行動分布(action distribution)(action aを離散変数とした確率質量分布)を示す.
 $d^{\beta}_{t}(s)$ はβの条件下での割引状態訪問確率(discounted state visitation probability)である.
 このimportance weight(??)はさらに集合推薦設定(set recommendation setup)に適合するように調整される. 詳細については、[11]を参照されたい.
 
 To balance exploration and exploitation, a hybrid approach that returns the top K ′ most probable items, while sampling the rest K −K ′ items according to πθ (Boltzmann exploration [13]), is employed during serving.
-探索と活用のバランスをとるために、上位$K′$個のmost probable items(=最も確率が高いアイテム)を返し、残りの $K-K′$ 個のアイテムを$\pi_{\theta}$に従ってサンプリングするハイブリッドアプローチ（Boltzmann exploration [13]）を提供中に採用する.
+**探索と活用のバランスをとるために**、上位$K′$個のmost probable items(=最も確率が高いアイテム)を返し、残りの $K-K′$ 個のアイテムを$\pi_{\theta}$に従ってサンプリングするハイブリッドアプローチ（Boltzmann exploration [13]）を提供中に採用する.
 
 # 4. Method メソッド
 
 Here we introduce three simple methods inspired by exploration research in RL to increase user exploration in the REINFORCE recommender system during training.
-ここでは、REINFORCE推薦システムにおいて、学習中にユーザの探索性を高めるために、RLにおける探索研究にヒントを得た3つの簡単な方法を紹介する。
+ここでは、REINFORCE推薦システムにおいて、**学習中にユーザの探索性を高めるために、RLにおける探索研究にヒントを得た3つの簡単な方法**を紹介する.
 That is, to recommend content less pertinent to the known user interests, and to discover new user interests.
-すなわち、既知のユーザの興味にあまり関係のないコンテンツを推薦し、新しいユーザの興味を発見することである。
+すなわち、**既知のユーザの興味にあまり関係のないコンテンツを推薦し、新しいユーザの興味を発見すること**である。
 
 ## 4.1. Entropy Regularization Entropy Regularization (エントロピー正則化)
 
@@ -235,28 +235,29 @@ The first method promotes recommending contents less pertinent to the known user
 s) to have an output distribution with high entropy [61]. Mnih et al. [38] observed that adding entropy of the policy to the objective function discourages premature convergence to sub-optimal deterministic policies and leads to better performance. Pereyra et al. [46] conducted a systemic study of entropy regularization and found it to improve a wide range of state-of-the-art models.
 
 We add of the entropy to the RL learning objective as defined in eq. 2 during training.
-式2で定義されるRL学習目的に対して、学習時にエントロピーを追加する。
+式2で定義されるRL学習目的に対して、学習時にエントロピーを追加する.
 That is,
 すなわち
 
 $$
+\max_{\theta} J(\pi_{\theta}) + \alpha \sum_{s_t \in d_t^\beta (s)} H(\pi_{\theta}(\cdot|s_t))
 \tag{4}
 $$
 
-where the entropy of the conditional distribution πθ (·
-s) is defined as H (πθ (·
+where the entropy of the conditional distribution πθ (·|s) is defined as H (πθ (·|s)) = − Í a ∈A πθ (a|s) log πθ (a|s). Here α controls the strength of the regularization. The entropy is equivalent to the negative reverse KL divergence of the conditional distribution πθ (·|s) to the uniform distribution. That is, H (πθ (·|s)) = −DK L(πθ (·|s)||U ) + const, where U stands for a uniform distribution across the action space A. As we increase this regularization, it pushes the learned policy to be closer to a uniform distribution, thus promoting exploration.
+ここで、条件付き分布πθ (-|s)のエントロピーは、H (πθ (-|s)) = - Í a∈A πθ (a|s) log πθ (a|s) として定義される。ここで、αは正則化の強さを制御する。エントロピーは、条件分布πθ (-|s)の一様分布に対する負の逆KL発散と等価である。つまり、H (πθ (-|s)) = -DK L(πθ (-|s)||U ) + const、ここでUは行動空間Aにわたる一様分布を表す。この正則化を強めると、学習した政策がより一様分布に近くなり、探索を促進することができる。
 
 ## 4.2. Intrinsic Motivation and Reward Shaping 内発的動機づけと報酬の形成
 
 The second method helps discovering new user interests through reward shaping.
-第二の方法は，報酬の整形を通して，新しいユーザの興味を発見するのに役立つ．
+第二の方法は，報酬の整形を通して，新しいユーザの興味を発見するのに役立つ.
 The reward function r(s, a) as defined in eq. 2, describes the (immediate) value of a recommendation a to a user s. It plays a critical role in deciding the learned policy πθ .
-報酬関数r(s, a)は式2で定義されるように、ユーザsに対する推薦aの（即時）価値を記述するもので、学習された政策πθを決定する上で重要な役割を果たす。
+報酬関数r(s, a)は式2で定義されるように、ユーザs(=user state $s$)に対する推薦$a$の(即時)価値を記述するもので、学習された方策πθを決定する上で重要な役割を果たす.
 Reward shaping, transforming or supplying additional rewards beyond those provided by the MDP, is very effective in guiding the learning of RL agents to produce policies desired by the algorithm designers [1, 27, 40].
 報酬関数r(s, 2)は，ユーザsに対する推薦aの（即時）価値を記述し，学習した政策πθを決定する上で重要な役割を果たす．報酬関数は，MDPが提供する報酬以外の報酬を変換したり供給したりして，RLエージェントの学習を導き，アルゴリズム設計者が望む政策を実現する上で非常に有効である [1, 27, 40]．
 
-Exploration has been extensively studied in RL [6, 42–44, 55], and has been shown to be extremely useful in solving hard tasks, e.g., tasks with sparse reward and
-探索はRLにおいて広く研究されており[6, 42-44, 55]、難しいタスク、例えば、報酬と
+Exploration has been extensively studied in RL [6, 42–44, 55], and has been shown to be extremely useful in solving hard tasks, e.g., tasks with sparse reward and/or long horizons, and . These works can be roughly grouped into two categories. One concerns quantifying the uncertainty of the value function of the state-action pairs so the agent can direct its exploration on regions where it is most uncertain. The other uses a qualitative notion of curiosity or intrinsic motivation to encourage the agent to explore its environment and learn skills that might be useful later. Both camps of methods later adds an intrinsic reward r i (s, a), either capturing the uncertainty or curiosity to the extrinsic reward r e (s, a) that is emitted by the environment directly, to help the agent explore the unknown or learn new skills. That is, transforming the reward function to...
+探索はRLにおいて広く研究されており[6, 42-44, 55]、困難なタスク、例えば、報酬が疎なタスクや長い地平線を持つタスク、.NETを解く際に非常に有用であることが示されている。これらの研究は、大きく分けて2つのカテゴリーに分類できる。一つは、状態-行動ペアの価値関数の不確実性を定量化し、エージェントが最も不確実な領域に探索を向けることができるようにすることに関するものである。もう一つは、好奇心や内発的動機付けという定性的な概念を用いて、エージェントが環境を探索し、後で役に立つかもしれないスキルを学習することを促すものである。どちらの陣営の手法も、エージェントが未知の領域を探索したり、新しいスキルを学ぶのを助けるために、環境から直接発せられる外在的報酬r e (s, a)に、不確実性や好奇心を捉えた内在的報酬r i (s, a)を後から追加します。つまり、報酬関数を以下のように変換する...
 
 $$
 \tag{5}
@@ -299,7 +300,7 @@ Comparing with the additive form (eq. 5), the multiplicative design results in:
 加法型（式 5）と比較すると、乗法型は次のような結果をもたらす。
 
 1. a candidate action at with zero extrinsic reward, i.e., R e t (st , at ) = 0 will NOT receive any additional reward even if being under-surfaced; 2) an action at receiving higher extrinsic reward R e t (st , at ) will be rewarded even more compared with those that are equally surprising but received lower extrinsic reward.
-1. 外挿報酬がゼロの候補行動at、すなわちR e t (st , at ) = 0は、表面下であっても追加報酬を受けない。2) 外挿報酬R e t (st , at ) が高い行動atは、同様に驚くが外挿報酬が低いものに比べてさらに多く報酬を受ける。
+2. 外挿報酬がゼロの候補行動at、すなわちR e t (st , at ) = 0は、表面下であっても追加報酬を受けない。2) 外挿報酬R e t (st , at ) が高い行動atは、同様に驚くが外挿報酬が低いものに比べてさらに多く報酬を受ける。
    This contrasts with the additive form where the extrinsic rewards observed does not influence the intrinsic reward.
    これは、外発的報酬が内発的報酬に影響を与えない加法的なデザインとは対照的である。
    In other words, the additive design gives a uniform boost to actions based entirely on surprise.
