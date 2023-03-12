@@ -252,293 +252,354 @@ where the entropy of the conditional distribution πθ (·|s) is defined as H (�
 The second method helps discovering new user interests through reward shaping.
 第二の方法は，報酬の整形を通して，新しいユーザの興味を発見するのに役立つ.
 The reward function r(s, a) as defined in eq. 2, describes the (immediate) value of a recommendation a to a user s. It plays a critical role in deciding the learned policy πθ .
-報酬関数r(s, a)は式2で定義されるように、ユーザs(=user state $s$)に対する推薦$a$の(即時)価値を記述するもので、学習された方策πθを決定する上で重要な役割を果たす.
+報酬関数$r(s, a)$は式2で定義されるように、ユーザ $s$ (=user state $s$)に対する推薦 $a$ の(即時)価値を記述するもので、学習された方策$\$を決定する上で重要な役割を果たす.
 Reward shaping, transforming or supplying additional rewards beyond those provided by the MDP, is very effective in guiding the learning of RL agents to produce policies desired by the algorithm designers [1, 27, 40].
-報酬関数r(s, 2)は，ユーザsに対する推薦aの（即時）価値を記述し，学習した政策πθを決定する上で重要な役割を果たす．報酬関数は，MDPが提供する報酬以外の報酬を変換したり供給したりして，RLエージェントの学習を導き，アルゴリズム設計者が望む政策を実現する上で非常に有効である [1, 27, 40]．
+報酬関数 の形状は，ユーザ$s$に対する推薦$a$の(即時)価値を記述し，学習した方策πθを決定する上で重要な役割を果たす．報酬関数 は，MDPが提供する報酬以外の報酬を変換したり供給したりして，RLエージェントの学習を導き，アルゴリズム設計者が望む方策を実現する上で非常に有効である[1, 27, 40].
 
-Exploration has been extensively studied in RL [6, 42–44, 55], and has been shown to be extremely useful in solving hard tasks, e.g., tasks with sparse reward and/or long horizons, and . These works can be roughly grouped into two categories. One concerns quantifying the uncertainty of the value function of the state-action pairs so the agent can direct its exploration on regions where it is most uncertain. The other uses a qualitative notion of curiosity or intrinsic motivation to encourage the agent to explore its environment and learn skills that might be useful later. Both camps of methods later adds an intrinsic reward r i (s, a), either capturing the uncertainty or curiosity to the extrinsic reward r e (s, a) that is emitted by the environment directly, to help the agent explore the unknown or learn new skills. That is, transforming the reward function to...
-探索はRLにおいて広く研究されており[6, 42-44, 55]、困難なタスク、例えば、報酬が疎なタスクや長い地平線を持つタスク、.NETを解く際に非常に有用であることが示されている。これらの研究は、大きく分けて2つのカテゴリーに分類できる。一つは、状態-行動ペアの価値関数の不確実性を定量化し、エージェントが最も不確実な領域に探索を向けることができるようにすることに関するものである。もう一つは、好奇心や内発的動機付けという定性的な概念を用いて、エージェントが環境を探索し、後で役に立つかもしれないスキルを学習することを促すものである。どちらの陣営の手法も、エージェントが未知の領域を探索したり、新しいスキルを学ぶのを助けるために、環境から直接発せられる外在的報酬r e (s, a)に、不確実性や好奇心を捉えた内在的報酬r i (s, a)を後から追加します。つまり、報酬関数を以下のように変換する...
+Exploration has been extensively studied in RL [6, 42–44, 55], and has been shown to be extremely useful in solving hard tasks, e.g., tasks with sparse reward and/or long horizons, and.
+探索はRLにおいて広く研究されており[6, 42-44, 55]、困難なタスク、例えば、報酬が疎なタスクや長い地平線を持つタスク、.NETを解く際に非常に有用であることが示されている.
+These works can be roughly grouped into two categories.
+これらの研究は、大きく分けて2つのカテゴリーに分類できる.
+One concerns quantifying the uncertainty of the value function of the state-action pairs so the agent can direct its exploration on regions where it is most uncertain.
+一つは、**state-actionペアの価値関数の不確実性を定量化**し、エージェントが**最も不確実な領域に探索を向けることができるようにすること**に関するものである.
+The other uses a qualitative notion of curiosity or intrinsic motivation to encourage the agent to explore its environment and learn skills that might be useful later.
+もう一つは、curiosity(好奇心)や**intrinsic motivation(内発的動機付け)**という定性的な概念を用いて、エージェントが環境を探索し、後で役に立つかもしれないスキルを学習することを促すものである.
+Both camps of methods later adds an intrinsic reward r i (s, a), either capturing the uncertainty or curiosity to the extrinsic reward r e (s, a) that is emitted by the environment directly, to help the agent explore the unknown or learn new skills.
+どちらの陣営の手法も、エージェントが未知の領域を探索したり、新しいスキルを学ぶのを助けるために、環境から直接発せられる**extrinsic reward(外在的報酬)** $r^{e}(s, a)$ に、不確実性や好奇心を捉えた**intrinsic reward(内在的報酬)** $r^{i}(s, a)$ を後から追加する.
+That is, transforming the reward function to...
+つまり、報酬関数を以下のように変換する...
 
 $$
+r(s, a) = c \cdot r^{i}(s, a) + r^{e}(s, a)
 \tag{5}
 $$
 
-where c controls the relative importance of the intrinsic reward w.r.t. the extrinsic reward emitted by the environment.
-ここで、cは環境から放出される外来報酬に対する内発的報酬の相対的重要度を制御する。
+where $c$ controls the relative importance of the intrinsic reward w.r.t. the extrinsic reward emitted by the environment.
+ここで、$c$ は環境から放出されるextrinsic reward に対する intrinsic rewardの相対的重要度を制御する.
 
 Schmidhuber [49] formally captures the theory of creativity, fun and curiosity as an intrinsic desire to discover surprising patterns of the environment, and argues that a curiosity-driven agent can learn even in the absence of external reward.
-Schmidhuber [49] は、創造性、楽しさ、好奇心の理論を、環境の驚くべきパターンを発見したいという内在的欲求として正式に捉え、好奇心駆動型エージェントは外部報酬が無くても学習できると主張している。
+Schmidhuber [49] は、創造性、楽しさ、好奇心の理論を、環境の驚くべきパターンを発見したいというintrinsic rewardとして正式に捉え、好奇心駆動型エージェントはexternal reward(=extrinsic rewardの事?)が無くても学習できると主張している.
 Our proposal bears the same principle by rewarding the agent more when it discovers some previously unknown patterns of the environment, that is the user.
-我々の提案は、エージェントがユーザである環境のこれまで知られていなかったパターンを発見したときに、より多くの報酬を与えるという同じ原理を担っている。
-Let R e t (st , at ) = Ir e (st ,at )>0 · ÍT t ′=t γ t ′−t r e (st ′, at ′) be the discounted cumulation of the extrinsic reward on the stateaction pair (st , at ) observed on the trajectory.
-R e t (st , at ) = Ir e (st ,at )>0 - ÍT t ′=t γ t ′-t r e (st ′, at ′) を、軌道上で観測された状態行動対 (st , at ) の外部報酬の割引累積とする。
-We then define the cumulative reward Rt (st , at ) used for the gradient update in eq. 3 as
-そして、式 3 の勾配更新に用いる累積報酬 Rt (st , at ) を次のように定義する。
+我々の提案は、**エージェントがユーザ=環境のこれまで知られていなかったパターンを発見したときに、より多くの報酬を与える**という同じ原理を担っている.
+Let $R_t^{e}(s_t, a_t) = I_{r^e(st ,at )>0} \cdot \sum_{t'=t}^{T}\gamma^{t' - t}r^{e}(s_{t'}, a_{t'})$ be the discounted cumulation of the extrinsic reward on the stateaction pair (st , at ) observed on the trajectory.
+$R_t^{e}(s_t, a_t) = I_{r^e(st ,at )>0} \cdot \sum_{t'=t}^{T}\gamma^{t' - t}r^{e}(s_{t'}, a_{t'})$ を、軌道上で観測されたstate-actionペア $(s_{t'}, a_{t'})$ の extrinsic rewardの割引累積報酬とする.
+We then define the cumulative reward $R_t(s_t, a_t)$ used for the gradient update in eq. 3 as
+そして、式 3 の勾配更新に用いる累積報酬(cumulative reward) $R_t(s_t, a_t)$ を次のように定義する.
 
 $$
+R_{t}(s_t, a_t) =
 \tag{6}
 $$
 
 Here c > 1 is a constant multiplier.
-ここで、c > 1 は定数倍である。
+ここで、c > 1 は定数倍である.
 
 As explained in Section 3, the agent perceives the environment, that is the user interests and context, through encoding user’s historical activities Ht = {(A0, a0,r0), · · · , (At−1, at−1,rt−1)}.
-セクション 3 で説明したように，エージェントはユーザの履歴 Ht = {(A0, a0,r0), - - , (At-1, at-1,rt-1)} によって環境，つまりユーザの興味と文脈を認識する．
+セクション 3 で説明したように，エージェントはユーザの履歴 $H_t = {(A_0, a_0, r_0), - - , (A_{t-1}, a_{t-1},r_{t-1})}$ によって環境，つまりユーザの興味と文脈を認識する.
 One can imagine a large update (surprise) to the agent’s modeling of the environment if an item at recommended given the state st is 1) drastically different from any of the items the user interacted with in the past; 2) enjoyed by the user, i.e., r e (st , at ) or R e (st , at ) is high.
-もし、状態 st が与えられたときに推奨されるアイテムが、 1) ユーザが過去にやりとりしたアイテムのどれとも大きく異なる、 2) ユーザが楽しんでいる、すなわち、r e (st , at ) または R e (st , at ) が高い場合、エージェントの環境モデリングに大きな更新 （驚き）があると想像される。
+もし、状態 $s_t$ が与えられたときに推薦されるアイテムが、 1) ユーザが過去にやりとりしたアイテムのどれとも大きく異なる、 2) ユーザが楽しんでいる、すなわち、$r_e(s_t , a_t)$ または $R_e(s_t, a_t)$ が高い場合、**agentの環境モデリング(=policyモデル)に大きな更新(surprise)があると想像される**.
 These two conditions, surprise and relevance, align with the serendipity metrics we are going to detail in Section 5.5.
-この2つの条件、驚きと関連性は、セクション 5.5 で詳述するセレンディピティのメトリックと一致する。
+この2つの条件、**surpriseとrelevance**は、セクション 5.5 で詳述するセレンディピティのメトリックと一致する.(??)
 
-To measure the surprise of at , we define It = {at ′, ∀t ′ < t and rt ′ > 0} as the set of items the user interacted with up to time t. As recommendation items are often associated with various attributes as described in Section 5.1, we use these attributes to measure the similarity (or difference) of a candidate action at towards It .
-レコメンデーションアイテムは，5.1 節で述べたような様々 な属性と関連付けられていることが多いため，これらの 属性を用いて，行動候補 at の It に対する類似度（または相違度） を測定する．
+To measure the surprise of $a_t$, we define $I_t = {a_{t'}, \forall t′ < t \And r_{t'} > 0}$ as the set of items the user interacted with up to time t.
+$a_t$の surprise を測るために、時刻tまでにユーザがinteractionしたアイテムの集合を$I_t = {a_{t'}, \forall t′ < t \And r_{t'} > 0}$ を定義する.
+As recommendation items are often associated with various attributes as described in Section 5.1, we use these attributes to measure the similarity (or difference) of a candidate action at towards I_t.
+推薦アイテムは、5.1節で述べたように、様々な属性と関連付けられていることが多いので、これらの属性を用いて、$I_t$に対して**action候補の類似性(または差異)を計測**する.
 For example, we consider an item at surprising (different) if its topic cluster is different from any of the items in It .
-例えば，It に含まれるアイテムのいずれともトピック・クラスタが異なる場合，そのアイテムは意外（異なる）であると考える．
+例えば，$I_t$に含まれるアイテムのいずれともトピック・クラスタが異なる場合，**そのアイテムはsurprising (different)である**と考える.
 
 The multiplicative design in eq. 6 naturally accomplishes the second condition, that is, relevance.
-式6の乗法設計は、2番目の条件である「関連性」を自然に達成する。
+式6の乗法設計は、2番目の条件である"**relevance(関連性)**"を自然に達成する。
 Comparing with the additive form (eq. 5), the multiplicative design results in:
-加法型（式 5）と比較すると、乗法型は次のような結果をもたらす。
+加法型（式 5）と比較すると、乗法型(式6?)は次のような結果をもたらす.
 
-1. a candidate action at with zero extrinsic reward, i.e., R e t (st , at ) = 0 will NOT receive any additional reward even if being under-surfaced; 2) an action at receiving higher extrinsic reward R e t (st , at ) will be rewarded even more compared with those that are equally surprising but received lower extrinsic reward.
-2. 外挿報酬がゼロの候補行動at、すなわちR e t (st , at ) = 0は、表面下であっても追加報酬を受けない。2) 外挿報酬R e t (st , at ) が高い行動atは、同様に驚くが外挿報酬が低いものに比べてさらに多く報酬を受ける。
-   This contrasts with the additive form where the extrinsic rewards observed does not influence the intrinsic reward.
-   これは、外発的報酬が内発的報酬に影響を与えない加法的なデザインとは対照的である。
-   In other words, the additive design gives a uniform boost to actions based entirely on surprise.
-   つまり、加法的デザインは、驚きだけに基づく行動に対して一律のブーストを与える。
-   The multiplicative design on the other end, favors surprising actions that actually lead to improved user experience, indicated by higher extrinsic reward.
-   一方、乗法的なデザインは、より高い外発的報酬によって示されるユーザー体験の改善に実際につながる驚きのある行動を好む。
+- 1. a candidate action at with zero extrinsic reward, i.e., R e t (st , at ) = 0 will NOT receive any additional reward even if being under-surfaced; extrinsic rewardがゼロのaction候補$a_t$、すなわち$R^e_t(s_t, a_t) = 0$は、表面下であっても追加報酬を受けない.
+- 2.  an action at receiving higher extrinsic reward R e t (st , at ) will be rewarded even more compared with those that are equally surprising but received lower extrinsic reward. 2) 外挿報酬$R^e_t(s_t, a_t) $が高いaction $a_t$は、同様に驚くが外挿報酬が低いものに比べてさらに多く報酬を受ける.
+
+This contrasts with the additive form where the extrinsic rewards observed does not influence the intrinsic reward.
+これは、**外発的報酬が内発的報酬に影響を与えない加法的なデザインとは対照的**である.
+In other words, the additive design gives a uniform boost to actions based entirely on surprise.
+つまり、**加法的デザインは、surpriseだけに基づくactionに対して一律のブーストを与える**.
+The multiplicative design on the other end, favors surprising actions that actually lead to improved user experience, indicated by higher extrinsic reward.
+一方、乗法的なデザインは、**ユーザ体験の改善(=より高い外発的報酬によって示される)に実際につながる surprise のある action を好む**.
 
 ## 4.3. Actionable Representation for Exploration 探究のための行動的表現
 
 The third method reinforces the newly discovered user interest through representation learning.
-3つ目の方法は、新たに発見されたユーザーの興味を表現学習によって補強するものである。
+3つ目の方法は、新たに発見されたユーザの興味を**表現学習(representation learning)**によって補強するものである.
 Learning effective representation is critical to improve the sample efficiency of many machine learning algorithms, and RL is no exception.
-多くの機械学習アルゴリズムのサンプル効率を向上させるためには、効果的な表現を学習することが重要であり、RLも例外ではない。
+多くの機械学習アルゴリズムのサンプル効率を向上させるためには、**効果的な表現を学習することが重要**であり、RLも例外ではない.
 Most prior work on representation learning for RL has focused on generative approaches, learning representations that capture all underlying factors of variation in the observation space in a more disentangled or well-ordered manner.
-RLのための表現学習に関する先行研究のほとんどは、生成的なアプローチに焦点を当てており、観測空間の変動のすべての根本的な要因を、より分離された、あるいは、よく秩序だった方法で捉える表現を学習している。
+RLのための表現学習に関する先行研究のほとんどは、生成的なアプローチに焦点を当てており、観測空間(observation space)の変動のすべての根本的な要因を、より分離された、あるいは、よく秩序だった方法で捉える表現を学習している.
 Self-supervised learning [20, 25, 50, 54] to capture the full dynamics of the environment has also attracted a lot of attentions lately.
-また、環境のダイナミクスを完全に捉えるための自己教師付き学習[20, 25, 50, 54]も最近注目されている。
+また、環境のDynamics(state $s_t$ とactin $a_t$が与えられた時に、環境がどのように $s_{t+1}$ と $r_t$ を返すか?の設定)を完全に捉えるための自己教師付き学習[20, 25, 50, 54]も最近注目されている.
 Ghosh et al. [16] instead argue to learn functionally salient representations: representations that are not necessarily complete in terms of capturing all factors of variation in the observation space, but rather aim to capture those factors of variation that are important for decision making – that are "actionable."
-Ghoshら[16]はその代わりに、機能的に顕著な表現を学習することを主張している：観察空間における変動の全ての要因を捕らえるという点では必ずしも完全ではなく、むしろ意思決定にとって重要な、つまり "行動可能な "変動の要因を捕らえることを目指した表現である。
+Ghoshら[16]はその代わりに、機能的に顕著な表現を学習することを主張している：観察空間における変動の全ての要因を捕らえるという点では必ずしも完全ではなく、むしろ意思決定にとって重要な、つまり "action可能な(actionableな)"変動の要因を捕らえることを目指した表現である.
 
-The REINFORCE agent introduced in Section 3 describes the environment, i.e., the user, through encoding his
-第3章で紹介したREINFORCEエージェントは、環境、すなわちユーザーを符号化することで記述する。
+The REINFORCE agent introduced in Section 3 describes the environment, i.e., the user, through encoding his/her historical activities Ht .
+第3節で紹介したREINFORCEエージェントは、ユーザの過去の活動$H_t$を符号化することで、環境、つまりユーザを記述する.
+That is, $u_{st} = RNN_{\theta}(H_t)$.
+すなわち、$u_{st} = RNN_{\theta}(H_t)$である.
+When an user interacted with a surprising item at (to the agent) and gave high reward, the user state ust should be updated to capture the new information so the agent can act differently next.
+That is, to make recommendations according to the newly acquired information about the new interest of the user. To aid the agent in capturing this information in its state, we extend Ht with an additional bit, indicating whether or not an item the user interacts with is surprising and relevant. That is, we expand Ht = {(A0, a0,r0,i0), · · · , (At−1, at−1,rt−1,it−1)}, where it ′ = 1 if 1) the attribute of at (such as topic cluster) is different from that of any items in It ′ (being a surprise) and; 2) rt > 0 (being relevant). Here It ′ is the list of items the user has interacted with up to time t ′ . This feature is then embedded and consumed by the RNN along with other features describing the item at.
+ユーザが（エージェントにとって）意外なアイテムとinteractし、高い報酬を得た場合、ユーザ状態$u_{s_t}$は、エージェントが次に異なるactionを取れるように、新しい情報を捕らえるために更新されるべきである.
+つまり、**ユーザの新しい興味に関する新しく得た情報に従って、推薦を行う**ことである.
+エージェントがその状態にこの情報を取り込むのを助けるために、我々は$H_t$を追加ビットで拡張し、ユーザが相互作用するアイテムが驚きと関連性があるか否かを示す.
+すなわち、$H_{t} ={(A_0, a_0, r_0, i_0), \cdots, (A_{t-1}, a_{t-1}, r_{t-1}, i_{t-1})}$ と展開し、
+
+- 1. $a_t$の属性（トピッククラスタなど）が$I_{t′}$内のどのアイテムとも異なる場合(= **being a surprice** )
+- 2. $r_t > 0$ (=**being relevant**)
+
+の場合に、$i_{t′}=1$ 、とする.
+
+ここで、$I_{t′}$ は、時刻$t'$までにユーザがinteractionしたアイテムのリストである.
+この特徴は、その後、RNNによって、アイテムを説明する他の特徴とともに埋め込まれ、消費される.
 
 # 5. Measurement 測定
 
 Personalization has been the cornerstone of modern recommender systems.
-パーソナライゼーションは、現代のレコメンダーシステムの基礎となっている。
+パーソナライゼーションは、現代のレコメンダーシステムの基礎となっている.
 It aims to produce targeted and accurate recommendations based on user historical activities.
-これは、ユーザーの過去の行動履歴をもとに、ターゲットを絞った正確な推薦を行うことを目的としている。
+これは、ユーザの過去の行動履歴をもとに、ターゲットを絞った正確な推薦を行うことを目的としている.
 Overly focusing on the accuracy aspect of recommendation, however, runs the risk of exposing users only to a concentrated set of contents.
-しかし、精度を重視するあまり、限られたコンテンツにしかアクセスできなくなる危険性がある。
+しかし、**精度(accuracy)を重視するあまり、限られたコンテンツにしかアクセスできなくなる危険性がある**.
 This could attract user attention in the near term, but likely hurt user experience in the long run.
-これは、短期的にはユーザーの注目を集めることができても、長期的にはユーザーエクスペリエンスを損なう可能性がある。
+これは、**短期的にはユーザの注目を集めることができても、長期的にはユーザーエクスペリエンスを損なう可能性がある**.
 There has been a growing body of work examining factors other than accuracy in shaping user’s perception of recommendation quality [9, 19, 35, 66, 72, 72].
-このように，レコメンデーションの品質に対する ユーザーの認識を形成する要因として，精度以外の要素 を検討する研究が増えてきています [9, 19, 35, 66, 72, 72]．
+このように，レコメンデーションの品質に対する ユーザの認識を形成する要因として，**精度以外の要素(factors other than accuracy)** を検討する研究が増えてきている [9, 19, 35, 66, 72, 72].
 In particular, aspects such as diversity, novelty and serendipity of recommendations have been studied.
-特に，レコメンデーションの多様性，新規性，セレンディピティなどの側面が研究されています．
+特に，レコメンデーションの多様性，新規性，セレンディピティなどの側面が研究されている.
 Here we design metrics to measure these four aspects for a RL based recommender system.
-本論文では，RL ベースの推薦システムにおいて，これら4つの側面を測定するための指標を設計する．
+本論文では，RL ベースの推薦システムにおいて，これら**4つの側面**を測定するための指標を設計する.
 Some of the metrics measure directly on the learned policy πθ , and thus apply only to systems producing a distribution over the content vocabulary.
-これらのメトリクスの中には，学習された推薦方針πθを直接測定するものがあり，コンテンツ語彙の分布を生成するシステムにのみ適用される．
+これらのメトリクスの中には，学習された推薦方策$\pi_{\theta}$を直接測定するものがあり，content vocabularyの分布(=action spaceの分布の事?)を生成するシステムにのみ適用される.
 Others measure on the recommendation set A πθ generated by acting according to πθ (taking most probable items) 1 , which are generic for any types of recommender systems 2 .
-また，πθに従って行動することで生成される推薦集合A πθ（Most probable items）1を測定するものもあり，これらはあらゆる種類の推薦システム2に対して汎用的である．
+また，$\pi_{\theta}$ に従って行動することで生成される推薦集合 $A_{\pi_{\theta}}$ **(Most probable items)** を測定するものもあり，これらはあらゆる種類の推薦システムに対して汎用的である.
 These metrics bear similarity to many prior works in quantifying the four factors of recommendation quality [5, 8, 15, 19, 26, 29, 66].
-これらの指標は，推薦品質の 4 要素を定量化した多くの先行研究 [5, 8, 15, 19, 26, 29, 66] と類似している．
+これらの指標は，推薦品質の 4 要素を定量化した多くの先行研究 [5, 8, 15, 19, 26, 29, 66] と類似している.
 
 ## 5.1. Attributes 属性
 
 We first introduce two item attributes that are used to define both the surprise factor in eq (6) as well as the metrics:
-まず、式(6)の驚き因子と測定基準を定義するために使用される2つの項目属性を紹介する。
+まず、式(6)のsurprice因子と測定基準を定義するために使用される2つのアイテム属性を紹介する.
 
 Topic cluster.
-トピッククラスタ。
+トピッククラスタ.
 A topic cluster for each item is produced by:
-各アイテムのトピッククラスタは次のようにして作成される。
+各アイテムのTopic Clusterは次のようにして作成される.
 
-1. taking the item co-occurrence matrix, where entry (i, j) counts the number of times item i and j were interacted by the same user consecutively; 2) performing matrix factorization to generate one embedding for each item; 3) using k-means to cluster the learned embeddings into 10K clusters; 4) assigning the nearest cluster to each item.
-1. アイテム共起行列（エントリ (i, j) は、アイテム i と j が同じユーザーによって連続的に操作された回数を数える）を取る、2) 各アイテムの埋め込みを生成するために行列分解を行う、3) k-means を使って学習した埋め込みを 10K クラスタにまとめる、4) 最も近いクラスタを各アイテムに割り当てる、によって生成される。
+1. taking the item co-occurrence matrix, where entry (i, j) counts the number of times item i and j were interacted by the same user consecutively; アイテム共起行列(エントリ(i, j)は、アイテム i と j が同じユーザーによって連続的に操作された回数を数える)を取る
+2. performing matrix factorization to generate one embedding for each item; 各アイテムの埋め込みを生成するために行列分解を行う、
+3. using k-means to cluster the learned embeddings into 10K clusters; k-means を使って学習した埋め込みを 10K クラスタにまとめる、
+4. assigning the nearest cluster to each item. 最も近いクラスタを各アイテムに割り当てる
 
 Content provider.
-コンテンツの提供者。
+コンテンツの提供者.
 Content provider is another attribute of interest as:
-コンテンツ提供者は、次のような理由から注目される属性である。
+コンテンツ提供者は、次のような理由から注目される属性である.
 
-1. we observed consistency between contents produced by the same provider, e.g., a food blogger often writes about specific cuisines; 2) we are interested in understanding the importance of content-provider diversity
-   例えば、料理ブロガーは特定の料理について書くことが多いなど、同じプロバイダーによって作られたコンテンツ間の一貫性が観察された。
+- 1. we observed consistency between contents produced by the same provider, e.g., a food blogger often writes about specific cuisines; 例えば、料理ブロガーは特定の料理について書くことが多いなど、同じプロバイダーによって作られたコンテンツ間の一貫性が観察された.
+- 2.  we are interested in understanding the importance of content-provider diversity/novelty [37, 64] in influencing long term user experience. 長期的なユーザ体験に影響を与えるcontent-providerの多様性/新規性 [37, 64] の重要性を理解することに興味がある.
 
 ## 5.2. Accuracy 精度
+
+Arguably the most important property of a recommender is to be able to retrieve contents the user is interested in consuming. We compute the mean average precision at K = 50 (mAP@50) [63] on the recommended set A πθ to measure the accuracy, that is the average precision of identifying an item the user is interested in consuming among A πθ.
+レコメンダーの最も重要な特性は、ユーザーが消費することに興味があるコンテンツを検索できることであると言える.
+そこで、推薦セット$A_{\pi_{\theta}}$のK = 50におけるmean average precision at K=50(mAP@50)[63]を計算し、精度、すなわち$A_{\pi_{\theta}}$の中からユーザが消費したいと思うアイテムを特定できる平均精度を計測する.
 
 ## 5.3. Diversity ♪多様性
 
 Diversity measures the number of distinct faucets the recommendation set contains.
-多様性は、推薦セットが含む異なる蛇口の数を測定する。
+多様性は、推薦セットが含む異なるfaucets(蛇口?)の数を測定する.
 Many measurements of set diversity have been proposed [39, 45, 53].
 セットの多様性の測定は多く提案されている[39, 45, 53]．
 Among them, the average dissimilarity of all pairs of items in the set is a popular choice.
-その中でも，集合に含まれるすべてのペアの平均非類似度はよく選ばれている．
+その中でも，**集合に含まれるすべてのペアの平均非類似度**はよく選ばれている.(dissimilarity = 1 - 正規化したsimillarity みたいなイメージ.)
 
 $$
+\text{Diversity}(A^{\pi_{\theta}})
+= E_{s \in d^{\beta}}[1 - \frac{1}{|A^{\pi_{\theta}}|(|A^{\pi_{\theta}}| -1)}
+\sum_{i, j \in A^{\pi_{\theta}}} \text{sim}(i,j)
+]
 \tag{7}
 $$
 
 We define the similarity between two items i and j both on topic level and on content provider level.
-2つの項目iとjの間の類似度をトピックレベルとコンテンツプロバイダレベルの両方で定義する。
+2つのアイテムiとjの間の類似度を topic level と content provoderレベルの両方で定義する.
 That is, Sim(i, j) = 1 if i and j belongs to the same topic cluster, and 0 otherwise.
-すなわち、Sim(i, j) = iとjが同じトピッククラスタに属する場合は1、そうでない場合は0とする。
+すなわち、Sim(i, j) = iとjが同じトピッククラスタに属する場合は1、そうでない場合は0とする.
 Similarly for content provider.
-コンテンツ・プロバイダについても同様である。
+コンテンツ・プロバイダについても同様.
 
 ## 5.4. Novelty
 
 The two terms of novelty and serendipity have been used interchangeably in the literature.
-新規性とセレンディピティという2つの用語は、文献上では互換的に用いられている。
+**Novelty(新規性)とセレンディピティという2つの用語は、文献上では互換的に用いられている**.
 In this work, we use novelty to focus on the global popularity-based measurements and serendipity to capture the unexpectedness
-この研究では、グローバルな人気に基づく測定に焦点を当てるために新規性を使用し、意外性を捉えるためにセレンディピティを使用している
+この研究では、グローバルな人気に基づく測定に焦点を当てるためにNoveltyを使用し、unexpectedness(意外性)を捉えるためにセレンディピティを使用している.
 
 $$
+I(a) = - \log p(a)
+= - \log \frac{\text{# user consumed item a}}{\text{# users}}
+\\
+= - \log (\text{# users consumeed item a}) + \text{const}
 \tag{8}
 $$
 
-Herep(a) measures the chance a random user would have consumed item a. By definition, a globally "under-explored" item (tail content) will have higher self-information.
-ここで、p(a)はランダムなユーザがアイテムaを消費する確率を表す。定義によれば、グローバルに「探索されていない」アイテム（テールコンテンツ）は、より高い自己情報を持つことになる。
+Here $p(a)$ measures the chance a random user would have consumed item a. By definition, a globally "under-explored" item (tail content) will have higher self-information.
+ここで、 $p(a)$ は**ランダムなユーザがアイテムaを消費する確率**を表す.定義によれば、グローバルに"探索されていない"("under-explored"な)アイテム(tail content = long-tailアイテムの事か!)は、**より高いself-information**(自己情報??)$I(a)$を持つことになる.
 With the definition of item-level self-information, we can then measure novelty of the learned policy πθ as
-このようなアイテムレベルの自己情報の定義により、学習されたポリシーπθの新規性を次のように測定することができる。
+このようなアイテムレベルの自己情報$I(a)$の定義により、学習されたポリシー$\pi_{\theta}$の Novelty を次のように測定することができる.
 
 $$
+\text{Novelty}(\pi_{\theta})
+= E_{s_t \in d_t^{\beta}}[\sum_{a \in A} \pi_{\theta}(a|s_t) I(a)]
 \tag{9}
 $$
 
 A learned policy πθ that casts more mass on items with higher selfinformation, being able to recommend "under-explored" items, is deemed more novel.
-自己情報の高い項目により多くの質量を投じ、「開拓されていない」項目を推薦できる学習済みポリシーπθは、より新規性が高いと判断される。
+**self-informantionの高いアイテムにより多くの質量(=そのアイテムを選ぶ確率質量?)を投じ**、"開拓されていない"アイテムを推薦できる学習済みポリシー$\pi_{\theta}$は、よりNoveltyが高いと判断される.
 We can define the novelty metrics for attributes similarly by looking at the self-information of the attribute instead, e.g., popularity of the content provider.
-属性についても、コンテンツ提供者の人気度など、属性の自己情報を代わりに見ることで、同様に新規性の指標を定義することができる。
+属性についても、**content-providerの人気度など**、**属性のself-informationを代わりに見る**ことで、**同様にNoveltyの指標を定義できる**.
 
 ## 5.5. Serendipity ♪セレンディピティ
 
-Serendipity captures the unexpectedness
-セレンディピティは、意外性をとらえる
+Serendipity captures the unexpectedness/surprise of a recommendation to a specific user. It measures the capability of the recommender system to recommend relevant contents outside of the user’s normal interests. There are two important factors in play here: 1) unexpectedness/surprise: as a counter example, a recommendation of John Lenon to listeners of The Beatles will not constitutes a surprising recommendation; 2) relevance: the surprising contents should be of interest to the user. In other words, serendipity measure the ability of the recommender to discover previously unknown (to the recommender) interests of the user.
+セレンディピティは、**特定のユーザに対する推薦の unexpectedness/surprise** を表現するものである.
+推薦システムが、ユーザの通常の関心事以外の関連コンテンツを推薦する能力を測るものである.
+ここでは、2つの重要な要素がある.
+
+- 1. unexpectedness/surprise：反例として、ビートルズのリスナーにジョン・レノンを推薦しても、意外な推薦にはならない.
+- 2. relevance：意外なコンテンツは、ユーザにとって興味があるものでなければならない.
+
+つまり、セレンディピティとは、**推薦者がユーザの（推薦者にとって）未知の興味を発見する能力を測定するもの**である.
 
 We define the serendipity value of a recommendation at w.r.t. a user with interaction history of It as
-我々は、Itのインタラクション履歴を持つユーザに対する推薦のセレンディピティ値を以下のように定義する。
+我々は、"$I_t$のインタラクション履歴を持つユーザに対して、アイテム$a_t$を推薦する事"のセレンディピティ値を以下のように定義する.
 
 $$
+S^{topic}(a_t|s_t, I_t) = \begin{cases}
+  1, & \text{hoge} \\
+  0, & \text{otherwise}
+\end{cases}
 \tag{10}
 $$
 
 Again we can define the content-provider level serendipity value similarly.
-ここでも同様に、コンテンツ提供者レベルのセレンディピティ値を定義することができます。
+ここでも同様に、content-providerレベルのセレンディピティ値を定義することもできる.
 With the serendipity value of an item defined, we can then quantify the serendipity of the recommendation set Sπθ as
-アイテムのセレンディピティ値が定義されると、推薦セットSπθのセレンディピティは以下のように定量化されます。
+あるアイテム$a_t$のセレンディピティ値が定義されると、推薦セット $S_{\pi_{\theta}}$ のセレンディピティは以下のように定量化される.
 
 $$
+\text{Serendipity}(A^{\pi_{\theta}})
+= E_{s_t \in d^{\beta}_t}
+[\frac{1}{|A^{\pi_{\theta}}|} \sum_{a \in A^{\pi}} S^{topic}(a_t|s_t, H_t)]
 \tag{11}
 $$
 
-## 5.6. Long Term User Experience 長期的なユーザーエクスペリエンス
+## 5.6. Long Term User Experience 長期的なユーザエクスペリエンス
 
 Past work has suggested connections between these recommendation qualities toward long term user experience, either through surveys or interviews [5, 66].
-過去の研究では、調査やインタビューを通じて、長期的なユーザー体験に向けたこれらの推薦品質の間の関連性が示唆されています[5, 66]。
+過去の研究では、調査やインタビューを通じて、長期的なユーザ体験に向けたこれらの推薦品質の間の関連性が示唆されている[5, 66].
 We use user returning to the platform, and user moving from a low-activity bucket to a highly-active one on the platform as the holistic measurement of improved long term user experience, and establish the connection between these measurements and long term user experience.
-我々は，長期的なユーザ経験の改善の全体的な測定として，ユーザがプラットフォームに戻ること，および，ユーザがプラットフォーム上で低活動バケットから高活動バケットに移動することを使用し，これらの測定と長期的なユーザ経験の間の関係を確立する．
+我々は，長期的なユーザ経験の改善の全体的な測定として，ユーザがプラットフォームに戻ること，および，ユーザがプラットフォーム上で低活動バケットから高活動バケットに移動することを使用し，これらの測定と長期的なユーザ経験の間の関係を確立する.
 
 # 6. Offline Analysis オフライン分析
 
 We conducted an extensive set of offline experiments comparing the exploration strategies introduced in Section 4.
-我々は、セクション 4 で紹介した探索戦略を比較するために、広範なオフライン実験を実施した。
+我々は、セクション 4 で紹介した探索戦略を比較するために、広範なオフライン実験を実施した.
 Specifically, we built these exploration approaches onto the baseline REINFORCE recommender described in Section 3.
-具体的には、セクション 3 で述べたベースライン REINFORCE レコメンダー上にこれらの探索手法を構築した。
+具体的には、セクション 3 で述べたベースライン REINFORCE レコメンダー上にこれらの探索手法を構築した.
 We evaluate them by computing the set of metrics defined in Section 5 and compare the metric movements between different hyper-parameter settings and different exploration methods.
-我々は、セクション5で定義されたメトリクスのセットを計算することによってそれらを評価し、異なるハイパーパラメータの設定と異なる探索方法の間でメトリクスの動きを比較した。
+我々は、セクション5で定義されたメトリクスのセットを計算することによってそれらを評価し、**異なるハイパーパラメータの設定と異なる探索方法の間でメトリクスの動きを比較し**た.
 
 ## 6.1. Dataset データセット
 
 We conducted 3 runs of experiments for each comparison and report the mean and standard deviation of the metrics.
-各比較について3回の実験を行い、メトリクスの平均と標準偏差を報告する。
+各比較について3回の実験を行い、メトリクスの平均と標準偏差を報告する.
 For each experiment run, we extracted close to a billion user trajectories from a commercial recommendation platform.
-各実験では、商用レコメンデーションプラットフォームから10億近くのユーザーの軌跡を抽出した。
+各実験では、**商用レコメンデーションプラットフォームから10億近くのユーザの軌跡を抽出**した.
 Each trajectory HT = {(st ,At , at ,rt ) : t = 0, . . .
-各軌跡 HT = {(st ,At , at ,rt ) : t = 0, ....
-,T }, as described in Section 3, contains user historical events on the platform.
-T }は、セクション3で説明したように、プラットフォーム上のユーザーの履歴イベントを含んでいる。
+各軌跡 $H_T = {(s_t, A_t, a_t, r_t):t = 0, \cdots, T}$, as described in Section 3, contains user historical events on the platform.
+各軌跡 $H_T = {(s_t, A_t, a_t, r_t):t = 0, \cdots, T}$は、セクション3で説明したように、プラットフォーム上のユーザの履歴イベントを含んでいる.
 The lengths of trajectories between users can vary depending on their activity level.
-ユーザ間の軌跡の長さは、ユーザの活動レベルに応じて変化しうる。
+ユーザ間の軌跡の長さは、ユーザの活動レベルに応じて変化しうる.
 We keep at most 500 historical pages with at least one positive user interaction (nonzero rt ) for each user.
-また，各ユーザーの少なくとも1回の正のユーザー間インタラクション（非ゼロrt ）を持つ履歴ページを最大500件保持する．
+また，各ユーザの少なくとも1回の正のユーザ間Interaction(非ゼロ$r_t$)を持つ履歴ページを最大500件保持する.
 Among the collected trajectories, we hold out 1% for evaluation.
-また，収集した軌跡のうち，1%を評価のために残しておく．
+また，収集した軌跡のうち，1%を評価のために残しておく.
 We restrict our action space (item corpus) to the most popular 10 million items in the past 48 hours on the platform.
-また，行動空間（アイテムコーパ ス）を，過去 48 時間にプラットフォーム上で最も人気のあっ た 1000 万アイテムに限定する．
+また，action space(=アイテムコーパス)を，過去 48 時間にプラットフォーム上で最も人気のあった 1000 万アイテムに限定する.
 Our goal is to build a recommender agent that can choose among the 10 million corpus the next set of items for users to consume so as to maximize the cumulative long-term reward.
-我々の目標は、長期的な累積報酬を最大化するように、ユーザが消費する次のアイテムセットを1000万コーパスの中から選択することができる推薦エージェントを構築することである。
+我々の目標は、長期的な累積報酬(cumulative long-term reward)を最大化するように、**ユーザが消費する次のアイテムセットを1000万コーパスの中から選択することができる推薦エージェントを構築すること**である.
 
 ## 6.2. Entropy Regularization Entropy Regularization (エントロピー正則化)
 
 The most straightforward knob to tune up and down the exploration strength for entropy regularization is the regularization coefficient α as defined in eq. 4.
-エントロピー正則化の探索強度を上下に調整するための最も分かりやすいノブは、式4で定義される正則化係数αである。
+エントロピー正則化の探索強度を上下に調整するための最も分かりやすいknob(ノブ?)は、式4で定義される正則化係数αである.
 We compare the baseline method, a REINFORCE agent maximizing only the expected return as defined in eq. 2, with added entropy regularization with α in [0.1, 0.5, 1.0, 10.0].
-式2で定義される期待収益のみを最大化するREINFORCEエージェントと、αを[0.1, 0.5, 1.0, 10.0]としたエントロピー正則化を加えたベースラインの方法を比較する。
+式2で定義される期待収益(expected return = reward?)のみを最大化するREINFORCEエージェントと、αを[0.1, 0.5, 1.0, 10.0]としたエントロピー正則化を加えたベースラインの方法を比較する.
 
 As shown in Table 1, entropy regularization is an extremely efficient method to introduce diversity and novelty to the system, at the cost of reduced accuracy.
-表1に示すように、エントロピー正則化は、精度の低下を代償に、システムに多様性と新規性を導入する非常に効率的な方法である。
+表1に示すように、**エントロピー正則化は、精度の低下を代償に、システムに多様性と新規性を導入する非常に効率的な方法**である.
 When the regularization strength is large, it also significantly drops the system’s capability to introduce serendipitous contents to users because of the loss of relevance.
-また、正則化の強度が大きいと、関連性が失われるため、ユーザーにセレンディピティなコンテンツを紹介するシステムの能力が大きく低下する。
+また、**正則化の強度が大きいと、relevanceが失われるため、ユーザにセレンディピティなコンテンツを紹介するシステムの能力が大きく低下する**.
 For example, a regularization strength of α = 1.0 drops the topic serendipity value by −21.6% (0.037 → 0.029).
-例えば、正則化の強さをα=1.0とすると、トピックセレンディピティの値は-21.6%（0.037→0.029）低下する。
+例えば、正則化の強さをα=1.0とすると、トピックセレンディピティの値は-21.6%（0.037→0.029）低下する.
 
 ## 6.3. Intrinsic Motivation 内発的動機づけ
 
 One of the obvious hyper-parameters to adjust the exploration strength for the intrinsic motivation approach is to tune the boosting factor c defined in eq. 6.
-内発的動機付けアプローチの探索強度を調整するための明白なハイパーパラメータの1つは、式6で定義されるブースティング係数cを調整することである。
+内発的動機付けアプローチの探索強度を調整するための明白なハイパーパラメータの1つは、式6で定義されるブースティング係数cを調整することである.
 Here we study the impact of the more interesting variants.
-ここでは、より興味深い変種の影響について研究する。
+ここでは、より興味深い変数?の影響について研究する.
 
 First, on which attribute to use to define surprise.
-まず、どの属性で驚きを定義するかについて。
+まず、**どの属性で"surprise"を定義するか**について.
 We experimented with defining surprise by topic cluster (denoted as "topic" in Table 2) and content provider (denoted as "provider" in Table 2).
-我々は、トピッククラスタ（表2では「トピック」と表記）とコンテンツプロバイダー（表2では「プロバイダー」と表記）によって驚きを定義する実験を行った。
+我々は、トピッククラスタ(表2では"topic"と表記)とコンテンツプロバイダー（表2では「プロバイダー」と表記）によって"surprise"を定義する実験を行った.
 Second, on the length of the user historical events used to define surprise.
-第二に、驚きを定義するために使用するユーザーの履歴イベントの長さについて。
+第二に、**"surprise"を定義するために使用するユーザの履歴イベントの長さ**について。
 As explained in [66], users’ perception of surprise of contents can drift over time.
-66]で説明したように，ユーザのコンテンツの驚きに対する認識は，時間の経過とともに漂うことがある。
+[66]で説明したように，ユーザのコンテンツの"surprise"に対する認識は，時間の経過とともに漂うことがある.
 Contents that the user interacted in the past, but has not been served and interacted for a long time, can be deemed surprising when being resurfaced again.
-また，過去にインタラクションを行ったが，長い間サービスやインタラクションを行っていないコンテンツは，再び登場したときに驚きと感じることがある．
+**また，過去にinteractionを行ったが，長い間サービスやインタラクションを行っていないコンテンツは，再び登場したときに"surprise"と感じることがある**.
 We experimented with having It contain all the items the user interacted with in the past one day, one week and one year (denoted as d = 1, d = 7 and d = 365 respectively in Table 2).
-そこで，過去1日，1週間，1年（表2においてそれぞれd=1，d=7，d=365と表記）にユーザが接触したすべてのアイテムをItに含ませて実験した．
+そこで，**過去1日，1週間，1年（表2においてそれぞれd=1，d=7，d=365と表記）にユーザが接触したすべてのアイテムを$I_t$に含ませて実験した.**
 
 Table 2 summarizes the comparison between different variants of the intrinsic motivation proposal.
-表2は、内発的動機付けの提案の異なるバリエーション間の比較をまとめたものである。
+表2は、内発的動機付けの提案(intrinsic motivation proposal)の異なるバリエーション間の比較をまとめたもので.
 Similar to entropy regularization, all variants improve on diversity at the cost of lower accuracy.
-エントロピー正則化と同様に、すべてのバリエーションは精度を下げる代償に多様性を向上させる。
+**エントロピー正則化と同様に、すべてのバリエーションは精度を下げる代償に多様性を向上させる**.
 This method does not change the novelty metrics significantly, neither on the item level nor content provider level.
-この方法は、アイテムレベルでもコンテンツプロバイダレベルでも、新規性の指標を大きく変えることはない。
+この方法は、アイテムレベルでもコンテンツプロバイダレベルでも、新規性の指標を大きく変えることはない.
 We thus conclude that tail contents are not necessarily more serendipitous (relevant and surprising) than popular ones.
-したがって，テールコンテンツは必ずしも人気コンテンツよりもセレンディピティ（関連性と意外性）が高いとは言えないと結論づけることができる．
+したがって，**tailコンテンツは必ずしも人気コンテンツよりもセレンディピティ(relevantとsurprising)が高いとは言えないと結論づけることができる**.(まあなー...)
 We do see a significant improvement in the serendipity metrics, even though the overall accuracy of these methods turn out unfavorable comparing with the baseline.
-しかし，これらの手法の全体的な精度はベースラインと比較して劣るものの，セレンディピティメトリクスには大きな改善が見られる．
+しかし，これらの手法の全体的な精度はベースラインと比較して劣るものの，セレンディピティメトリクスには大きな改善が見られる.
 As an example, the variant which uses topic cluster and a historical window size of 7 days, improves the serendipity level by +18.9% (0.037 → 0.044) even though the overall accuracy measured by mAP@50 was dropped by −13.7% (0.070 → 0.063).
-例えば、トピッククラスタと7日間の履歴ウィンドウサイズを使用するバリエーションは、mAP@50で測定された全体的な精度が-13.7% (0.070 → 0.063) 減少しても、セレンディピティのレベルが+18.9% (0.037 → 0.044) 改善されています。
+例えば、トピッククラスタと7日間の履歴ウィンドウサイズを使用するバリエーションは、mAP@50で測定された全体的な精度が-13.7% (0.070 → 0.063) 減少しても、セレンディピティのレベルが+18.9% (0.037 → 0.044) 改善されている.
+
 Attributes.
-属性。
+属性についての比較結果.
 Offline analyses showed both definitions of surprise based on topic cluster and content provider are equally effective in optimizing different angles of serendipity.
-オフライン分析では、トピッククラスタとコンテンツプロバイダに基づく驚きの定義の両方が、セレンディピティの異なる角度を最適化する上で等しく有効であることが示されました。
+オフライン分析では、トピッククラスタとコンテンツプロバイダに基づく驚きの定義の両方が、セレンディピティの異なる角度を最適化する上で**等しく有効**であることが示された.
 That is topic cluster definition improves offline topic serendipity metrics by +18.9% from 0.037 to 0.044, and content provider definition improves content provider serendipity for +11.5% from 0.078 to 0.087.
-つまり、トピッククラスタの定義は、オフラインでのトピックセレンディピティの指標を0.037から0.044へ+18.9%改善し、コンテンツプロバイダーの定義は、コンテンツプロバイダセレンディピティを0.078から0.087へ+11.5%改善することが示されました。
+つまり、トピッククラスタの定義は、オフラインでのトピックセレンディピティの指標を0.037から0.044へ+18.9%改善し、コンテンツプロバイダーの定義は、コンテンツプロバイダセレンディピティを0.078から0.087へ+11.5%改善することが示された.
 We however do see very different performance in user metrics in live experiments as shown in Section 7.1 below, suggesting one angle (topic serendipity) is more important than the other (content provider serendipity) in optimizing the overall user experience.
-しかし、以下のセクション7.1に示すように、ライブ実験では、ユーザーメトリクスのパフォーマンスが非常に異なっており、全体的なユーザー体験を最適化する上で、一方の角度（トピックセレンディピティ）が他方（コンテンツプロバイダセレンディピティ）よりも重要であることが示唆されています。
+しかし、以下のセクション7.1に示すように、ライブ実験では、ユーザメトリクスのパフォーマンスが非常に異なっており、**全体的なユーザ体験を最適化する上で、一方の角度（トピックセレンディピティ）が他方（コンテンツプロバイダセレンディピティ）よりも重要であること**が示唆されている.
 
 Window sizes.
-ウィンドウのサイズ。
+ウィンドウのサイズに関する実験結果.
 As we extend the historical window used to define surprise, i.e., having It contain longer user history, the definition of surprise becomes stricter.
-驚きを定義するために使用する履歴ウィンドウを拡張すると、つまり、より長いユーザー履歴を含むようにすると、驚きの定義がより厳しくなります。
+"surprise"を定義するために使用する履歴ウィンドウを拡張すると、つまり、より長いユーザー履歴を含むようにすると、**"surprise"の定義がより厳しくなる**.
 An item is less likely to be surprising
-アイテムがサプライズである可能性は低くなる
+アイテムがサプライズである可能性は低くなる.
 
 ## 6.4. Actionable Representation Actionable Representation
 
 In this set of experiments, we compare four setups:
-この実験では、4つのセットアップを比較した。
+この実験では、4つのセットアップを比較した.
 
 1. baseline: the baseline REINFORCE algorithm; 2) repre. alone: the baseline REINFORCE with the actionable representation, i.e., the additional bit indicating if the item at is serendipitous at state st according to user historical interactions It ; 3) intrinsic alone: the baseline REINFORCE with intrinsic motivation for reward shaping; 4) repre.
 1. ベースライン: ベースライン REINFORCE アルゴリズム、2) repre.alone: ベースライン REINFORCE に実行可能な表現、すなわち、ユーザーの過去のインタラクション It に従って状態 st でアイテムがセレンディピティであるかどうかを示す追加ビットを加えたもの、 3) intrinsic alone: 報酬形成用の内在的動機を加えたもの、 4) repre.+intrinsic: ベースライン REINFORCE に内在的動機と実行可能表現を加えたもの、 5) REINFORCE に実行可能表現を加えたもの。

@@ -157,6 +157,7 @@ A learned policy πθ that casts more mass on items with higher selfinformation,
 
 Serendipity captures the unexpectedness/surprise of a recommendation to a specific user. It measures the capability of the recommender system to recommend relevant contents outside of the user’s normal interests. There are two important factors in play here: 1) unexpectedness/surprise: as a counter example, a recommendation of John Lenon to listeners of The Beatles will not constitutes a surprising recommendation; 2) relevance: the surprising contents should be of interest to the user. In other words, serendipity measure the ability of the recommender to discover previously unknown (to the recommender) interests of the user.
 
+
 We define the serendipity value of a recommendation at w.r.t. a user with interaction history of It as
 
 $$
