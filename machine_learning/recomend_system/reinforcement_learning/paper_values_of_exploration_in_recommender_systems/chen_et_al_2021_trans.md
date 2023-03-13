@@ -87,7 +87,7 @@ Together, we make the following contributions:
 ## 2.1. Reinforcement Learning for Recommender Systems. 推薦システムのための強化学習.
 
 Deep reinforcement learning, combining high-capacity function approximators, i.e., deep neural networks, with the mathematical formulations in classic reinforcement learning [57], has achieved enormous success in various domains such as games, robotics and hardware design [18, 33, 36, 52].
-深層強化学習は、高容量関数近似器である深層ニューラルネットワークと古典的強化学習における数学的定式化[57]を組み合わせ、ゲーム、ロボット工学、ハードウェア設計などの様々な領域で大きな成功を収めている[18, 33, 36, 52].
+深層強化学習は、**高容量関数近似器である深層ニューラルネットワーク**と**古典的強化学習における数学的定式化**[57]を組み合わせ、ゲーム、ロボット工学、ハードウェア設計などの様々な領域で大きな成功を収めている[18, 33, 36, 52].
 It has attracted a lot of attention from the recommeder system research community as well.
 また、レコメンダーシステム研究コミュニティでも注目されている.
 Shani et al. [51] were among the first to formally formulate recommendation as a Markov decision process (MDP) and experiment with model-based RL approaches for book recommendation.
@@ -636,8 +636,9 @@ Adding the feature helps RNN differentiate the two groups better.
 
 # 7. Live Experiments and Long Term User Experience ライブ実験と長期的なユーザーエクスペリエンス
 
-We conduct a series of live A
-を実施し、ライブA
+We conduct a series of live A/B tests on a industrial recommendation platform serving billions of users to evaluate the impact of the proposed exploration approaches. The control serves the base REINFORCE agent as described in Section 3. The agent selects hundreds of candidates from a corpus of 10 million. The returned candidates A πθ , along with others, are ranked by a separate ranking system before showing to the users. We ran three separate experiments: 1) Entropy regularization: serving the REINFORCE agent with entropy regularization as explained in Section 4.1; 2) Intrinsic motivation: serving the REINFORCE agent with intrinsic motivation to discover new user interest (using topic cluster attributes with a history window of 7 days and a serendipity boost c = 4) as explained in Section 4.2; 3) Intrinsic Motivation + Actionable Representation: serving the REINFORCE agent with both the intrinsic motivation and the actionable representation as introduced in Section 4.3. We compare 1) and 2) to the baseline REINFORCE system as described in Section 3 as control to measure the effect of entropy regularization and intrinsic motivation respectively, and 3) to 2) as control to measure the additional value of introducing the actionable representation on top of intrinsic motivation. We first summarize the live experiment results of these experiments in Section 7.1, and later measure several aspects of long term user experience in Section 7.2. In the end, we establish the connection between exploration and different aspects of recommendation quality toward improving long term user experience.
+我々は、提案する探索アプローチの影響を評価するために、数十億のユーザーにサービスを提供する産業推薦プラットフォーム上で一連のライブA/Bテストを実施した。制御は、セクション3で説明したように、基本的なREINFORCEエージェントを提供する。エージェントは1,000万件のコーパスから数百の候補を選択する。返された候補A πθは、他の候補とともに、ユーザに見せる前に別のランキングシステムによってランク付けされる。我々は3つの別々の実験を行った。1) エントロピー正則化：セクション4.1で説明したように、エントロピー正則化でREINFORCEエージェントを提供する。2) 本質的動機づけ：セクション4.2で説明したように、新しいユーザーの興味を発見するための本質的動機づけ（7日の履歴ウィンドウとセレンディピティ・ブーストc = 4でトピッククラスタ属性を使用）をREINFORCEエージェントに与える。 3) 本質的動機づけ + 行動可能表現：セクション4.3で紹介したように、本質的動機づけと行動可能表現両方でREINFORCEエージェントへ与える。1)と2)は、エントロピー正則化と内在的動機付けの効果を測定するために、セクション3で説明したベースラインREINFORCEシステムと比較し、3)は、内在的動機付けの上に実用的表現を導入することによる付加価値を測定するために、コントロールとして2)と比較しました。まず、7.1節でこれらの実験のライブ実験結果をまとめ、その後、7.2節で長期的なユーザー体験のいくつかの側面を測定する。最後に、長期的なユーザー体験を向上させるために、探索と推薦品質のさまざまな側面との関連性を確立する。
+
 
 ## 7.1. Results 結果
 
@@ -692,8 +693,8 @@ We would like to see if adding exploration in the recommendation has any effect 
 レコメンデーションに探索を加えることで、ユーザーのアクティビティレベルを動かす効果があるかどうかを確認したいと思います。
 We define four user activity levels in terms of how many days they are active on the platform in a 2-week period, which is shown in Fig 5a.
 図5aに示すように、2週間のうち何日プラットフォーム上で活動しているかという観点から、4つのユーザー活動レベルを定義しています。
-For example, a user being casual means that he
-例えば、ユーザーがカジュアルであるということは、その人が
+For example, a user being casual means that he/she has been active for 1 to 4 days in the last 14 days. Users can become more active or less active depending their experience on the platform as well as exogenous factors not control by recommendation. Suppose the goal of a recommendation platform is moving causal users to become core users. An intuitive way to measure the conversion is by counting the number of users who start off casual, and end up core. This can be realized with a user activity level transition matrix, which measures the movement between different user activity levels.
+例えば、カジュアルなユーザーとは、過去14日間のうち1～4日間アクティブであったことを意味します。ユーザーは、プラットフォームでの経験や、レコメンデーションではコントロールできない外的要因によって、よりアクティブになったり、よりアクティブでなくなったりすることがあります。あるレコメンデーション・プラットフォームのゴールが、因果的なユーザーをコアユーザーに移行させることだとします。このコンバージョンを測定する直感的な方法は、カジュアルユーザーからコアユーザーになったユーザーの数を数えることである。これは、異なるユーザーの活動レベル間の移動を測定する、ユーザーの活動レベル遷移行列で実現できます。
 
 We examine user activity level before the experiment start date and at the end of the experiment for every treatment group to compute the transition matrix, and compare with control.
 実験開始日前と実験終了時のユーザの活動量を処理群ごとに調べて遷移行列を計算し、対照と比較する。
