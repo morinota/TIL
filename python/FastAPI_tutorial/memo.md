@@ -1295,12 +1295,12 @@ async def create_upload_file(
 
 ```python
 @app.post("/files/")
-async def create_files(files: List[bytes] = File()):
+async def create_files(files: List[bytes] = File()): # これ
     return {"file_sizes": [len(file) for file in files]}
 
 
 @app.post("/uploadfiles/")
-async def create_upload_files(files: List[UploadFile]):
+async def create_upload_files(files: List[UploadFile]): # これ
     return {"filenames": [file.filename for file in files]}
 ```
 
