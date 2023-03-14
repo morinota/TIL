@@ -91,7 +91,7 @@ Deep reinforcement learning, combining high-capacity function approximators, i.e
 It has attracted a lot of attention from the recommeder system research community as well.
 また、レコメンダーシステム研究コミュニティでも注目されている.
 Shani et al. [51] were among the first to formally formulate recommendation as a Markov decision process (MDP) and experiment with model-based RL approaches for book recommendation.
-Shani ら [51] は、推薦を Markov 決定過程 (MDP) として公式に定式化し、書籍推薦のためのモデルベース RL アプローチを実験した最初の研究者の一人である.
+Shani ら [51] は、**推薦を Markov 決定過程 (MDP) として公式に定式化**し、書籍推薦のためのモデルベース RL アプローチを実験した最初の研究者の一人である.
 Zheng et al. [70] applied DQN for news recommendation.
 Zheng ら [70] は DQN をニュース推薦に応用した.
 Dulac-Arnold et al. [14] enabled RL in problem spaces with a large number of discrete actions and showcased its performance on various recommendation tasks with tens of thousands of actions.
@@ -594,126 +594,140 @@ Window sizes.
 As we extend the historical window used to define surprise, i.e., having It contain longer user history, the definition of surprise becomes stricter.
 "surprise"を定義するために使用する履歴ウィンドウを拡張すると、つまり、より長いユーザー履歴を含むようにすると、**"surprise"の定義がより厳しくなる**.
 An item is less likely to be surprising
-アイテムがサプライズである可能性は低くなる.
+アイテムがsurpriseである可能性は低くなる.
 
 ## 6.4. Actionable Representation Actionable Representation
 
 In this set of experiments, we compare four setups:
 この実験では、4つのセットアップを比較した.
 
-1. baseline: the baseline REINFORCE algorithm; 2) repre. alone: the baseline REINFORCE with the actionable representation, i.e., the additional bit indicating if the item at is serendipitous at state st according to user historical interactions It ; 3) intrinsic alone: the baseline REINFORCE with intrinsic motivation for reward shaping; 4) repre.
-1. ベースライン: ベースライン REINFORCE アルゴリズム、2) repre.alone: ベースライン REINFORCE に実行可能な表現、すなわち、ユーザーの過去のインタラクション It に従って状態 st でアイテムがセレンディピティであるかどうかを示す追加ビットを加えたもの、 3) intrinsic alone: 報酬形成用の内在的動機を加えたもの、 4) repre.+intrinsic: ベースライン REINFORCE に内在的動機と実行可能表現を加えたもの、 5) REINFORCE に実行可能表現を加えたもの。
+- 1. baseline: the baseline REINFORCE algorithm; ベースライン: ベースライン REINFORCE アルゴリズム、
+- 2. repre. alone: the baseline REINFORCE with the actionable representation, i.e., the additional bit indicating if the item at is serendipitous at state st according to user historical interactions It ; ベースライン REINFORCE に実行可能な表現、すなわち、ユーザーの過去のインタラクション It に従って状態 st でアイテムがセレンディピティであるかどうかを示す追加ビットを加えたもの、
+- 3. intrinsic alone: the baseline REINFORCE with intrinsic motivation for reward shaping; ベースラインREINFORCEに対して、報酬形成用 の内在的動機を加えたもの.
+- 4. repre. + intrinsic: the baseline REINFORCE adding both the intrinsic motivation and the actionable representation ベースライン REINFORCE に内在的動機と実行可能表現を加えたもの、
 
-- intrinsic: the baseline REINFORCE adding both the intrinsic motivation and the actionable representation.
-- 本源的動機づけと行動可能な表現の両方を追加したベースラインREINFORCE。
-  As shown in Table 3, adding the indicator alone (row 2) and adding the indicator along with the intrinsic motivation (row 4) resulted in very different metrics.
-  表3に示すように、指標を単独で追加した場合（2行目）と、指標を内発的動機づけとともに追加した場合（4行目）では、非常に異なる指標となった。
-  Adding the indicator alone without the reward shaping performs very similarly to the baseline method, suggesting the representation is more useful when combined with the reward shaping.
-  報酬形成なしで指標を単独で追加すると、ベースライン手法と非常に似たパフォーマンスを示し、報酬形成と組み合わせた場合に表現がより有用であることが示唆されました。
-  We see +24.3% improvement in the serendipity value comparing (row 4) to (row 1) (0.037 → 0.046), and +4.5% improvement comparing to (row 3) (0.044 → 0.046).
-  セレンディピティ値は、(4)と(1)を比較すると+24.3% (0.037 → 0.046) 、(3)を比較すると+4.5% (0.044 → 0.046) の向上が見られました。
-  This suggests that the added representation is indeed helpful for decision making when the intrinsic motivation is rewarding serendipitous actions, i.e. actions that discover previously unknown user interests.
-  このことから、セレンディピティ行動、すなわち、これまで知られていなかったユーザの興味を発見する行動に対して報酬を与えることが本質的な動機である場合、追加した表現が意思決定に有用であることが示唆された。
+As shown in Table 3, adding the indicator alone (row 2) and adding the indicator along with the intrinsic motivation (row 4) resulted in very different metrics.
+表3に示すように、**indicatorを単独で追加した場合（2行目）と、指標を内発的動機づけとともに追加した場合（4行目）では、非常に異なるmetricsとなった**.
+Adding the indicator alone without the reward shaping performs very similarly to the baseline method, suggesting the representation is more useful when combined with the reward shaping.
+報酬形成なしでindicatorを単独で追加すると、ベースライン手法と非常に似たパフォーマンスを示し、報酬形成と組み合わせた場合に表現がより有用であることが示唆された.
+We see +24.3% improvement in the serendipity value comparing (row 4) to (row 1) (0.037 → 0.046), and +4.5% improvement comparing to (row 3) (0.044 → 0.046).
+セレンディピティ値は、(4)と(1)を比較すると+24.3% (0.037 → 0.046) 、(3)を比較すると+4.5% (0.044 → 0.046) の向上が見られた.
+This suggests that the added representation is indeed helpful for decision making when the intrinsic motivation is rewarding serendipitous actions, i.e. actions that discover previously unknown user interests.
+このことから、セレンディピティ行動、すなわち、**これまで知られていなかったユーザの興味を発見する行動に対して報酬を与えることがintrinsic motivationである場合**、追加した表現が意思決定に有用であることが示唆された.
 
 To gain more insight into how the agent utilizes the additional bit indicating whether or not a historical event is surprising when provided, we compare the learning of the baseline REINFORCE algorithm with intrinsic motivation alone (shown in orange in Figure 1) vs the one combined with both the intrinsic motivation and the actionable representation (shown in cyan in Figure 1).
-歴史的事象が提供されたときに驚くかどうかを示す追加のビットをエージェントがどのように利用するかをより深く理解するために、ベースラインREINFORCEアルゴリズムの学習を、内在的動機付けのみ（図1のオレンジで示す）と内在的動機付けと行動可能表現の両方を組み合わせたもの（図1のシアン色で示す）とを比較してみる。
+historical eventが提供されたときに驚くかどうかを示す追加のビットをエージェントがどのように利用するかをより深く理解するために、ベースラインREINFORCEアルゴリズムの学習を、intrinsic motivationのみ（図1のオレンジで示す）と、intrinsic motivationとactionable representationの両方を組み合わせたもの（図1のシアン色で示す）とを比較してみる.
 The RNN [31] Chen et al. [11] used to encode the user history Ht has an important gate named input gate.
-ユーザー履歴Htを符号化するために使用されるRNN [31] Chenら[11]には、入力ゲートという重要なゲートがある。
+ユーザ履歴 $H_t$ を符号化するために使用されるRNN [31](Chenら[11])には、入力ゲートという重要なゲートがある.
 This gate controls how much the RNN is updating its hidden state to take into account a new input (event).
-このゲートは、RNNが新しい入力（イベント）を考慮して、どれだけ隠れ状態を更新するかを制御する。
+このゲートは、RNNが新しい入力（イベント）を考慮して、どれだけ隠れ状態を更新するかを制御する.
 We take the activation values of the input gates across the user trajectory, and separate the values in two groups: the ones on historical events that are considered surprising and relevant (shown in Figure 1 left), and the ones on historical events that are not (shown in Figure 1 right).
-ユーザーの軌跡を横断して入力ゲートの活性化値をとり、意外性があり関連性があると考えられる履歴イベントに関するもの（図1左）と、そうでない履歴イベントに関するもの（図1右）に分けます。
+ユーザの軌跡を横断して入力ゲートの活性化値をとり、意外性があり関連性があると考えられる履歴イベントに関するもの（図1左）と、そうでない履歴イベントに関するもの（図1右）に分ける.
 Comparing the left and right figures, we can see that by adding this additional information, the RNN is able to differentiate better between historical events that are serendipitous and those that are not.
-左右の図を比較すると、このように付加的な情報を加えることで、RNNはセレンディピティとなる歴史的事象とそうでないものをより区別することができることがわかる。
+左右の図を比較すると、**このように付加的な情報を加えることで、RNNはセレンディピティとなるhistrical event とそうでないものをより区別することができる**ことがわかる.
 At the end of training, the mean activation for events that are surprising and relevant (left) is at 0.1765 (+1.4% higher) for intrinsic motivation + actionable representation compared with 0.1741 for intrinsic motivation alone.
-学習終了時、驚きと関連性のある出来事（左図）に対する平均活性度は、内発的動機づけだけの場合0.1741であるのに対し、内発的動機づけ＋行動可能表現では0.1765（+1.4%）になっています。
+学習終了時、"surprising"と"relevant"のあるevent(i.e. セレンディピティ的なevent)（左図）に対する平均活性度は、intrinsic motivation だけの場合0.1741であるのに対し、 intrinsic motivation ＋ actionable representation では0.1765（+1.4%）になっている.
 The mean activation for events that are NOT serendipitous (right) is at 0.1409 (−11.2% lower) for intrinsic motivation + actionable representation compared with 0.1586 for intrinsic motivation alone.
-一方、セレンディピティではない事象（右）に対する活性化の平均値は、内発的動機づけ＋行動可能な表現では0.1409（-11.2%）となり、内発的動機づけのみの場合の0.1586と比較して低くなっています。
+一方、セレンディピティではない事象（右）に対する活性化の平均値は、 intrinsic motivation ＋ actionable representation では0.1409（-11.2%）となり、 intrinsic motivation のみの場合の0.1586と比較して低くなっている.
 This suggests that relying on the reward alone, RNN can still recognize the difference between these two groups of events and perform slightly larger update when the historical event is considered surprising.
-このことは、RNNが報酬だけに頼っていても、歴史的事象が意外だと思われる場合には、これら2つのグループの違いを認識し、やや大きな更新を行うことができることを示唆しています。
+このことは、RNNが報酬だけに頼っていても、**historical eventが surprising だと思われる場合には、これら2つのグループの違いを認識し、やや大きな更新を行うことができる**ことを示唆している.
 Adding the feature helps RNN differentiate the two groups better.
-特徴を加えることで、RNNが2つのグループをよりよく区別することができます。
+特徴を加えることで、RNNが2つのグループをよりよく区別することができる.
 
 # 7. Live Experiments and Long Term User Experience ライブ実験と長期的なユーザーエクスペリエンス
 
 We conduct a series of live A/B tests on a industrial recommendation platform serving billions of users to evaluate the impact of the proposed exploration approaches. The control serves the base REINFORCE agent as described in Section 3. The agent selects hundreds of candidates from a corpus of 10 million. The returned candidates A πθ , along with others, are ranked by a separate ranking system before showing to the users. We ran three separate experiments: 1) Entropy regularization: serving the REINFORCE agent with entropy regularization as explained in Section 4.1; 2) Intrinsic motivation: serving the REINFORCE agent with intrinsic motivation to discover new user interest (using topic cluster attributes with a history window of 7 days and a serendipity boost c = 4) as explained in Section 4.2; 3) Intrinsic Motivation + Actionable Representation: serving the REINFORCE agent with both the intrinsic motivation and the actionable representation as introduced in Section 4.3. We compare 1) and 2) to the baseline REINFORCE system as described in Section 3 as control to measure the effect of entropy regularization and intrinsic motivation respectively, and 3) to 2) as control to measure the additional value of introducing the actionable representation on top of intrinsic motivation. We first summarize the live experiment results of these experiments in Section 7.1, and later measure several aspects of long term user experience in Section 7.2. In the end, we establish the connection between exploration and different aspects of recommendation quality toward improving long term user experience.
-我々は、提案する探索アプローチの影響を評価するために、数十億のユーザーにサービスを提供する産業推薦プラットフォーム上で一連のライブA/Bテストを実施した。制御は、セクション3で説明したように、基本的なREINFORCEエージェントを提供する。エージェントは1,000万件のコーパスから数百の候補を選択する。返された候補A πθは、他の候補とともに、ユーザに見せる前に別のランキングシステムによってランク付けされる。我々は3つの別々の実験を行った。1) エントロピー正則化：セクション4.1で説明したように、エントロピー正則化でREINFORCEエージェントを提供する。2) 本質的動機づけ：セクション4.2で説明したように、新しいユーザーの興味を発見するための本質的動機づけ（7日の履歴ウィンドウとセレンディピティ・ブーストc = 4でトピッククラスタ属性を使用）をREINFORCEエージェントに与える。 3) 本質的動機づけ + 行動可能表現：セクション4.3で紹介したように、本質的動機づけと行動可能表現両方でREINFORCEエージェントへ与える。1)と2)は、エントロピー正則化と内在的動機付けの効果を測定するために、セクション3で説明したベースラインREINFORCEシステムと比較し、3)は、内在的動機付けの上に実用的表現を導入することによる付加価値を測定するために、コントロールとして2)と比較しました。まず、7.1節でこれらの実験のライブ実験結果をまとめ、その後、7.2節で長期的なユーザー体験のいくつかの側面を測定する。最後に、長期的なユーザー体験を向上させるために、探索と推薦品質のさまざまな側面との関連性を確立する。
+我々は、提案する探索アプローチの影響を評価するために、数十億のユーザーにサービスを提供する産業推薦プラットフォーム上で一連のライブA/Bテストを実施した/
+制御は、セクション3で説明したように、基本的なREINFORCEエージェントを提供する.
+エージェントは1,000万件のコーパスから数百の候補を選択する. 
+返された候補 $A^{\pi_{\theta}}$ は、他の候補とともに、ユーザに見せる前に別のランキングシステムによってランク付けされる. 
+我々は3つの別々の実験を行った.
+- 1. エントロピー正則化：セクション4.1で説明したように、エントロピー正則化でREINFORCEエージェントを提供する. 
+- 2. Intrinsic motivation ：セクション4.2で説明したように、新しいユーザーの興味を発見するための本質的動機づけ（7日の履歴ウィンドウとセレンディピティ・ブーストc = 4でトピッククラスタ属性を使用）をREINFORCEエージェントに与える.
+- 3. Intrinsic motivation + Actionable Representation：セクション4.3で紹介したように、 Intrinsic motivation と Actionable Representation 両方でREINFORCEエージェントへ与える.
 
+1)と2)は、エントロピー正則化と内在的動機付けの効果を測定するために、セクション3で説明したベースラインREINFORCEシステムと比較し、3)は、内在的動機付けの上に実用的表現を導入することによる付加価値を測定するために、コントロールとして2)と比較した. 
+まず、7.1節でこれらの実験のライブ実験結果をまとめ、その後、7.2節で長期的なユーザ体験のいくつかの側面を測定する.
+最後に、**長期的なユーザ体験を向上させるために、探索と推薦品質のさまざまな側面との関連性**を確立する.
 
 ## 7.1. Results 結果
 
 Figure 3 summarizes the performances of these exploration approaches on the top-line metric capturing user overall enjoyment of the platform.
-図3は、ユーザーのプラットフォームに対する総合的な楽しさを表すトップラインメトリックスにおける、これらの探索アプローチのパフォーマンスをまとめたものです。
+図3は、**ユーザのプラットフォームに対する総合的な楽しさを表す top-line metric** における、これらの探索アプローチのパフォーマンスをまとめたものである.
 As shown in Figure 3a (α = 0.1 in red, and α = 0.5 in blue), although entropy regularization increases diversity and novelty in both offline and live experiments, it does not lead to significant improvement on the user enjoyment.
-図3a（赤がα=0.1、青がα=0.5）に示すように、エントロピー正則化はオフラインとライブの両方の実験で多様性と新規性を高めるが、ユーザーの楽しみを大きく改善することにはつながらない。
+図3a（赤がα=0.1、青がα=0.5）に示すように、**エントロピー正則化はオフラインとライブの両方の実験で多様性と新規性を高めるが、ユーザの楽しみを大きく改善することにはつながらない.**
 In other words, increased diversity or novelty alone does not necessarily lead to better user experience.
-つまり、多様性や新規性の向上だけでは、必ずしもユーザー体験の向上につながらないのです。
+つまり、**多様性や新規性の向上だけでは、必ずしもユーザ体験の向上につながらないのである**.
 When we increase the regularization strength to α = 0.5, we see slightly worse live metrics.
-正則化の強さをα=0.5まで上げると、ライブのメトリクスが若干悪くなることがわかる。
+正則化の強さをα=0.5まで上げると、ライブのメトリクスが若干悪くなることがわかる.
 
 Another top-line metric that we keep track of is the number of days users returning to the platform.
-もうひとつの重要な指標は、ユーザーがプラットフォームを再び利用する日数です。
+もうひとつの重要な指標は、**ユーザがプラットフォームを再び利用する日数**である.
 For both the intrinsic motivation and actionable representation treatment, we observed significant improvement on this metric as well, suggesting users are encouraged to return to the platform due to better recommendation quality.
-これは、レコメンデーションの質が向上することで、ユーザーがプラットフォームに戻ってくるようになることを示唆しています。
+これは、レコメンデーションの質が向上することで、ユーザがプラットフォームに戻ってくるようになることを示唆している.
 Figure 2 shows the improvement of user returning in the actionable representation experiment, comparing with the base REINFORCE with intrinsic motivation as control, suggesting that aiding the representation learning with the serendipity information further improves the learned policy, leading to better overall user experience.
-図2は、内発的動機付けを用いたREINFORCEと、アクショナブル表現の実験におけるユーザーの再訪率の向上を示しており、セレンディピティ情報を用いて表現学習を支援することで、学習したポリシーがさらに向上し、全体としてより良いユーザー体験につながっていることが示唆されます。
+図2は、内発的動機付けを用いたREINFORCE(control群)と比較して、アクショナブル表現の実験(treatment群)におけるユーザの再訪率の向上を示しており、**セレンディピティ情報を用いて表現学習を支援することで、学習したポリシーがさらに向上し、全体としてより良いユーザ体験につながっている**ことが示唆される.
 
 ## 7.2. Long Term User Experience 長期的なユーザーエクスペリエンス
 
 Learning Effect of Intrinsic Motivation.
-内発的動機付けの学習効果。
+内発的動機付けの学習効果.
 To better understand the effect of intrinsic motivation and reward shaping in the long term, we examine the temporal trend of the live metrics in addition to the aggregated metrics reported above.
-長期的な内発的動機づけと報酬形成の効果をよりよく理解するために、我々は、上記で報告された集約されたメトリクスに加えて、ライブメトリクスの時間的傾向を調べます。
+長期間における intrinsic motivation と reward shaping の効果をよりよく理解するために、我々は、上記で報告された集約された aggregated metrics に加えて、live metrics(オンラインで観測するようなmetrics?)の時間的傾向を調べる.
 For the 6-week experiment on intrinsic motivation, we look at week-over-week metrics by aggregating user activities within each week.
-内発的動機付けに関する 6 週間の実験では、各週のユーザー活動を集計して、前週比のメトリクスを調べます。
+intrinsic motivation に関する 6 週間の実験では、各週のユーザ活動を集計して、前週比のmetricsを調べる.
 Specifically, we track the number of unique topic clusters the user has interacted with over every week, as well as the entropy of those topic clusters.
-具体的には、ユーザーが1週間にわたって交流したユニークなトピッククラスタの数と、それらのトピッククラスタのエントロピーの追跡を行います。
-Suppose the user has interacted with Ni items from topic cluster i, then the entropy of his
-ユーザーがトピッククラスタiからNi個のアイテムと相互作用したとすると、そのエントロピーは
+具体的には、**ユーザが1週間にわたって交流したユニークなトピッククラスタの数**と、**それらのトピッククラスタのエントロピー(=乱雑さの度合い?)の追跡**を行う.
+Suppose the user has interacted with Ni items from topic cluster i, then the entropy of his/her history is computed as − Í i pˆi loд(pˆi), where pˆi = Ni / Í i Ni is the proportion of items interacted with that are from topic cluster i.
+ユーザーがトピッククラスタ $i$ から $N_i$ 個のアイテムと相互作用したとすると、その履歴のエントロピーは $- \sum_{i} \hat{p}_{i} \log (\hat{p}_i)$ と計算される. ここで $\hat{p}_i = \frac{N_i}{\sum_{i} N_i}$ はトピッククラスタ $i$ から相互作用したアイテムの割合である.
 
 Figure 4 shows the comparison between control and treatment, where the treatment group has a boosting multiplier of 4 for unknown user interests as in Eq. (6).
-図4は、式(6)のように、未知のユーザの興味に対してブースティング乗数を4とした場合の、対照群と処理群の比較を示している。
+図4は、式(6)のように、未知のユーザの興味に対してブースティング乗数を4とした場合の、対照群と処理群の比較を示している.
 Compared with users in the control group which does not have the reward shaping, users in the treatment group have consistently interacted with more topic clusters (Fig 4a) and generated a higher entropy over cluster distributions (Fig 4c) over the whole experiment period.
-報酬シェーピングを行わない対照群のユーザーに比べ、処理群のユーザーは実験期間全体を通して一貫して、より多くのトピッククラスタと交流し（図4a）、クラスタ分布に対するより高いエントロピーを生成している（図4c）。
+reward shaping を行わない control群のユーザに比べ、**treatment群のユーザは実験期間全体を通して一貫して、より多くのトピッククラスタと交流し（図4a）、クラスタ分布に対するより高いエントロピーを生成している（図4c）**.
 More interestingly, the amount of improvements over control is increasing over time (Fig 4b and 4d).
-さらに興味深いことに、対照群に対する改善量は時間とともに増加しています（図4b、図4d）。
+さらに興味深いことに、control群に対する(=比較した)改善量は時間とともに増加している .（図4b、図4d）.
 This suggests a learning effect over time from exploration, which enables users to continuously find and engage with new topics.
-これは、探索による経時的な学習効果により、ユーザーが継続的に新しいトピックを見つけ、それに関わることができるようになったことを示唆しています。
+これは、**探索による経時的な学習効果により、ユーザが継続的に新しいトピックを見つけ、それに関わることができるようになったこと**を示唆している.
 
 User Activity Levels.
-ユーザーの活動レベル。
+ユーザーの活動レベル.
 Users who come to the recommendation platform are heterogeneous in terms of activity levels.
-レコメンデーション・プラットフォームにやってくるユーザーは、活動レベルにおいて異質である。
+レコメンデーション・プラットフォームにやってくるユーザーは、活動レベルにおいて異質である(??).
 Some users visit the platform occasionally, while others visit the platform more regularly and consistently.
-たまに訪れるユーザーもいれば、定期的かつコンスタントに訪れるユーザーもいます。
+たまに訪れるユーザもいれば、定期的かつコンスタントに訪れるユーザーもいる.
 The long-term goal of a recommendation platform is to not only satisfy the user’s need in the current session, but ideally to see them return to the recommendation platform more often in the future.
-推薦プラットフォームの長期的な目標は、現在のセッションでユーザーのニーズを満たすだけでなく、将来的にユーザーがより頻繁に推薦プラットフォームを訪れるようになることが理想的です。
+推薦プラットフォームの長期的な目標は、**現在のセッションでユーザのニーズを満たすだけでなく、将来的にユーザがより頻繁に推薦プラットフォームを訪れるようになること**が理想的である.
 
 We would like to see if adding exploration in the recommendation has any effect on moving user activity levels.
-レコメンデーションに探索を加えることで、ユーザーのアクティビティレベルを動かす効果があるかどうかを確認したいと思います。
+**レコメンデーションに探索を加えることで、ユーザのアクティビティレベルを動かす効果があるかどうか**を確認したいと思う.
 We define four user activity levels in terms of how many days they are active on the platform in a 2-week period, which is shown in Fig 5a.
-図5aに示すように、2週間のうち何日プラットフォーム上で活動しているかという観点から、4つのユーザー活動レベルを定義しています。
-For example, a user being casual means that he/she has been active for 1 to 4 days in the last 14 days. Users can become more active or less active depending their experience on the platform as well as exogenous factors not control by recommendation. Suppose the goal of a recommendation platform is moving causal users to become core users. An intuitive way to measure the conversion is by counting the number of users who start off casual, and end up core. This can be realized with a user activity level transition matrix, which measures the movement between different user activity levels.
-例えば、カジュアルなユーザーとは、過去14日間のうち1～4日間アクティブであったことを意味します。ユーザーは、プラットフォームでの経験や、レコメンデーションではコントロールできない外的要因によって、よりアクティブになったり、よりアクティブでなくなったりすることがあります。あるレコメンデーション・プラットフォームのゴールが、因果的なユーザーをコアユーザーに移行させることだとします。このコンバージョンを測定する直感的な方法は、カジュアルユーザーからコアユーザーになったユーザーの数を数えることである。これは、異なるユーザーの活動レベル間の移動を測定する、ユーザーの活動レベル遷移行列で実現できます。
+図5aに示すように、**2週間のうち何日プラットフォーム上で活動しているかという観点から、4つのユーザ活動レベルを定義**している.
+For example, a user being casual means that he/she has been active for 1 to 4 days in the last 14 days. Users can become more active or less active depending their experience on the platform as well as exogenous factors not control by recommendation. Suppose the goal of a recommendation platform is moving casual users to become core users. An intuitive way to measure the conversion is by counting the number of users who start off casual, and end up core. This can be realized with a user activity level transition matrix, which measures the movement between different user activity levels.
+例えば、カジュアルなユーザとは、過去14日間のうち1～4日間アクティブであったことを意味する.
+ユーザは、プラットフォームでの経験や、レコメンデーションではコントロールできない外的要因によって、よりアクティブになったり、よりアクティブでなくなったりすることがある.
+あるレコメンデーション・プラットフォームのゴールが、カジュアルユーザをコアユーザ に移行させることだとする. 
+この conversion を測定する直感的な方法は、**カジュアルユーザからコアユーザ になったユーザの数を数えること**である.
+これは、異なるユーザーの活動レベル間の移動を測定する、**ユーザの活動レベル遷移行列(user activity level transition matrix)**で実現できる.
 
 We examine user activity level before the experiment start date and at the end of the experiment for every treatment group to compute the transition matrix, and compare with control.
-実験開始日前と実験終了時のユーザの活動量を処理群ごとに調べて遷移行列を計算し、対照と比較する。
+実験開始日前と実験終了時のユーザの活動量をtreatment群ごとに調べて遷移行列を計算し、control群と比較する.
 Figure 5b shows the percentage difference of the transition matrices between the actionable representation treatment group and control.
-図5bは、アクショナブル表現処理グループとコントロールの遷移行列の差の割合です。
+図5bは、アクショナブル表現処理グループ(treatment群の一つ )とcontrolの遷移行列 の**差の割合**である.
 We see that there is a significant increase in casual-to-core conversion rate.
-カジュアルからコアへの変換率が大きく上昇していることがわかる。
+カジュアルからコアへの変換率が大きく上昇していることがわかる.
 This suggests that a successful exploration strategy can result in a desired user movement as less active users are becoming more engaged on the platform.
-これは、探索戦略が成功すると、あまりアクティブでないユーザーがプラットフォーム上でより熱心になるため、望ましいユーザーの動きになることを示唆しています。
+これは、**探索戦略が成功すると、あまりアクティブでないユーザがプラットフォーム上でより熱心になるため、望ましいユーザの動きになることを示唆している**.
 
 # 8. Conclusion 結論
 
 We present a systemic study to understand the values of exploration in recommender systems beyond reducing model uncertainty.
-我々は、推薦システムにおける探索の価値を、モデルの不確実性の低減を超えて理解するための体系的な研究を発表する。
+我々は、推薦システムにおける探索の価値を、モデルの不確実性の低減を超えて理解するための体系的な研究を発表する.
 We examine different user exploration strategies in affecting the four facets of recommendation quality, i.e., accuracy, diversity, novelty and serendipity, that contribute directly to user experience on the platform.
-我々は、推薦品質（正確性、多様性、新規性、セレンディピティ）の4つの側面、すなわち、推薦プラットフォームにおけるユーザ体験に直接貢献するユーザ探索戦略について、様々な角度から検証する。
+我々は、推薦品質（正確性、多様性、新規性、セレンディピティ）の4つの側面、すなわち、推薦プラットフォームにおけるユーザ体験に直接貢献するユーザ探索戦略について、様々な角度から検証する.
 We showcase exploration strategies that oriented toward discovering unknown user interests in positively influencing user experience on recommendation platforms.
-我々は、未知のユーザーの興味を発見することに重点を置いた探索戦略が、推薦プラットフォームにおけるユーザー体験にポジティブな影響を与えることを紹介します。
+我々は、**未知のユーザの興味を発見することに重点を置いた探索戦略が、推薦プラットフォームにおけるユーザ体験にポジティブな影響を与える**ことを紹介する.
 Using conversion of casual users to core users as an indicator of the holistic long term user experience, we connects serendipity to improved long term user experience.
-また、カジュアルユーザーからコアユーザーへの転換率を指標として、セレンディピティを長期的なユーザー体験の向上につなげています。
+また、カジュアルユーザからコアユーザへの転換率を指標として、セレンディピティを長期的なユーザー体験の向上につなげている.
 We believe these are important first steps in understanding and improving exploration and serendipity in (RL based) recommender systems, and providing foundation for future effort in this direction.
-これらは、（RLベースの）推薦システムにおける探索とセレンディピティを理解し、改善するための重要な第一歩であり、この方向での将来の努力に基礎を提供するものであると信じている。
+これらは、(RLベースの)推薦システムにおける探索とセレンディピティを理解し、改善するための重要な第一歩であり、この方向での将来の努力に基礎を提供するものであると信じている.
