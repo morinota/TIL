@@ -34,11 +34,11 @@ http://127.0.0.1:8000/docs にアクセスする.
 - これが、全てのAPIを作成する為のmain pointになる.
 - **この`app`は、コマンドで`uvicorn`が参照するものと同じ**
 
-### 1.1.3. Step 3：path operationを作成(宣言)
+### 1.1.3. Step 3： path operation を作成(宣言)
 
 - ここでの"path"とは、最初の`/`から始まるURLの最後の部分.
   - ex) `https://example.com/items/foo`の場合、pathは`/items/foo`.
-  - pathは一般に、**"endpoint"または"root"**とも呼ばれる.
+  - pathは一般に、**"endpoint"** または **"root"** とも呼ばれる.
 - ここでの"operation"とは、HTTPのメソッドの1つを指す.
   - ex)
     - POST, GET, PUT, DELETE
@@ -61,7 +61,7 @@ async def root():
 
 他のoperationも使用できる： `@app.post()`, `@app.put()`, `@app.delete()`
 
-ここで、operation=`get`, path=`/`, `root()`はpath operation function.
+ここで、operation=`get`, path=`/`, `root()`は **path operation function**.
 path operation function `root`は、`GET` operationを使った path `/`へのリクエストを受け取る度に、FastAPIによって呼び出される.
 
 async function `async def hogehoge()`の代わりに、通常の関数`def hogehoge()`として定義する事もできる.
@@ -1434,7 +1434,7 @@ def create_user(db: Session, user: schemas.UserCreate):
 def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     db_item = models.Item(
         **item.dict(), # pydantic modelを一旦dictに変換して、dictをuppackingしてkey-valueをargumentsとして渡している.
-        owner_id=user_id, 
+        owner_id=user_id,
         )
     db.add(db_item)
     db.commit()
