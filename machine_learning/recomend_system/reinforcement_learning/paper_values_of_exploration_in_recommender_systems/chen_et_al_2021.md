@@ -182,7 +182,7 @@ We conducted an extensive set of offline experiments comparing the exploration s
 
 We conducted 3 runs of experiments for each comparison and report the mean and standard deviation of the metrics. For each experiment run, we extracted close to a billion user trajectories from a commercial recommendation platform. Each trajectory HT = {(st ,At , at ,rt ) : t = 0, . . . ,T }, as described in Section 3, contains user historical events on the platform. The lengths of trajectories between users can vary depending on their activity level. We keep at most 500 historical pages with at least one positive user interaction (nonzero rt ) for each user. Among the collected trajectories, we hold out 1% for evaluation. We restrict our action space (item corpus) to the most popular 10 million items in the past 48 hours on the platform. Our goal is to build a recommender agent that can choose among the 10 million corpus the next set of items for users to consume so as to maximize the cumulative long-term reward.
 
-## Entropy Regularization
+## Entropy RegularizationWe conduct a series of live A
 
 The most straightforward knob to tune up and down the exploration strength for entropy regularization is the regularization coefficient α as defined in eq. 4. We compare the baseline method, a REINFORCE agent maximizing only the expected return as defined in eq. 2, with added entropy regularization with α in [0.1, 0.5, 1.0, 10.0]. 
 
