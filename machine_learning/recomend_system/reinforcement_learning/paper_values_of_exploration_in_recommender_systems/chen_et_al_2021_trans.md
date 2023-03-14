@@ -12,9 +12,9 @@ Values of User Exploration in Recommender Systems
 Reinforcement Learning (RL) has been sought after to bring next-generation recommender systems to further improve user experience on recommendation platforms.
 強化学習（Renforcement Learning: RL）は、推薦プラットフォームにおけるユーザ体験をさらに向上させる次世代推薦システムを実現するために求められている.
 While the exploration-exploitation tradeoff is the foundation of RL research, the value of exploration in (RL-based) recommender systems is less well understood.
-探索と利用のトレードオフはRL研究の基礎であるが、（RLに基づく）推薦システムにおける探索の価値についてはあまり理解されていない.
+探索と活用のトレードオフはRL研究の基礎であるが、（RLに基づく）推薦システムにおける探索の価値についてはあまり理解されていない.
 Exploration, commonly seen as a tool to reduce model uncertainty in regions of sparse user interaction
-探索は、一般に、**ユーザとのインタラクションが疎な領域でモデルの不確実性を低減するためのツール**とみなされている.
+探索は、一般に、**ユーザとのInteractionが疎な領域でモデルの不確実性を低減するためのツール**とみなされている.
 
 We examine the role of user exploration in changing different facets of recommendation quality that more directly impact user experience.
 我々は、ユーザーエクスペリエンスに直接影響を与える推薦品質の様々な側面を変化させるユーザー探索の役割を検証する.
@@ -59,7 +59,7 @@ Compared with supervised learning based approaches, RL offers two advantages:
   - We focus our discussion on exploration, though as we show in the analyses it innately connects to the long-term user experience.ここでは、探索に焦点を当てますが、分析で示すように、探索は長期的なユーザー体験と本質的に結びついている.
 
 The tradeoff between exploration and exploitation is central to the design of RL agents [17, 57].
-探査と開拓の間のトレードオフはRLエージェントの設計の中心である[17, 57].
+探索と活用の間のトレードオフはRLエージェントの設計の中心である[17, 57].
 An agent learns to form a policy to maximize returns in a changing environment by taking actions and receiving reward
 エージェントは行動を起こし、報酬を受け取ることによって、変化する環境の中でリターンを最大化するための政策を形成するように学習する.
 
@@ -68,19 +68,19 @@ As exploration innately leads to recommending something less pertinent to the kn
 Here we argue that recommender systems have an inherent need for exploration as users perceive other factors of recommendation quality besides accuracy [5, 66].
 ここでは、**ユーザはaccuracy以外の推薦品質の要因を認識するため、推薦システムには本質的に探索の必要性があることを主張する**[5, 66].
 We dissect the values of user exploration by examining its role in changing different aspects of recommendation quality that impact the user experience on recommendation platforms.
-我々は、推薦プラットフォームにおけるユーザ体験に影響を与える推薦品質の様々な側面を変化させる役割を検証することで、ユーザー探索の価値を分解する.
+我々は、推薦プラットフォームにおけるユーザ体験に影響を与える推薦品質の様々な側面を変化させる役割を検証することで、ユーザ探索の価値を分解する.
 Together, we make the following contributions:
 併せて、以下の貢献を行う.
 
-- Methods to Introduce User Exploration: We introduce a collection of methods, inspired by exploration research in RL, to improve user exploration in recommender systems. ユーザ探索を導入するためのメソッド RLにおける探索研究にヒントを得て、推薦システムにおけるユーザ探索を向上させるための手法群を紹介する.
+- Methods to Introduce User Exploration: We introduce a collection of methods, inspired by exploration research in RL, to improve user exploration in recommender systems. ユーザ探索を導入するためのメソッド: RLにおける探索研究にヒントを得て、**推薦システムにおけるユーザ探索を向上させるための手法群**を紹介する.
 
 - Metrics: We propose a set of metrics measuring the different aspects of recommendation quality, that is accuracy, diversity, novelty and serendipity for RL based recommender systems. メトリクス RLベースの推薦システムにおいて、推薦品質の異なる側面、すなわち、正確性、多様性、新規性、セレンディピティを測定する一連のメトリクスを提案する.
 
-- Offline Analyses: We conduct an extensive set of offline analyses to understand the values of user exploration in changing the four aspects of recommendation quality. オフライン分析 レコメンデーション品質の4つの側面を変化させるユーザー探索の価値を理解するために、広範なオフライン分析を行っている.
+- Offline Analyses: We conduct an extensive set of offline analyses to understand the values of user exploration in changing the four aspects of recommendation quality. オフライン分析: 推薦品質の4つの側面を変化させるユーザ探索の価値を理解するために、広範なオフライン分析を行っている.
 
-- Live Experiments: We conduct live experiments of the proposed methods on a commercial recommendation platform serving billions of users and millions of items, and showcase the value of user exploration in improving long-term user experience on the platform. ライブ実験 数十億のユーザと数百万のアイテムを扱う商用推薦プラットフォームにおいて、提案手法のライブ実験を行い、プラットフォームにおける長期的なユーザ体験の向上におけるユーザ探索の価値を紹介する.
+- Live Experiments: We conduct live experiments of the proposed methods on a commercial recommendation platform serving billions of users and millions of items, and showcase the value of user exploration in improving long-term user experience on the platform. ライブ実験: 数十億のユーザと数百万のアイテムを扱う商用推薦プラットフォームにおいて、提案手法のライブ実験を行い、プラットフォームにおける長期的なユーザ体験の向上におけるユーザ探索の価値を紹介する.
 
-- Serendipity for Long Term User Experience: Through offline analyses and live experiments, we study the correlation between these four aspects of recommendation quality and the long term user experience. Using conversion of casual users to core users as an indicator of the holistic long term user experience, we connect serendipity to improved long term user experience. 長期的なユーザーエクスペリエンスのためのセレンディピティ: オフライン分析とライブ実験を通じて、これら4つのレコメンデーション品質と長期的なユーザ体験の相関を研究しています. カジュアルユーザからコアユーザへの転換率を指標とし、セレンディピティを長期的なユーザ体験の向上と結びつける.
+- Serendipity for Long Term User Experience: Through offline analyses and live experiments, we study the correlation between these four aspects of recommendation quality and the long term user experience. Using conversion of casual users to core users as an indicator of the holistic long term user experience, we connect serendipity to improved long term user experience. 長期的なユーザ体験のためのセレンディピティ: オフライン分析とライブ実験を通じて、これら4つのレコメンデーション品質と長期的なユーザ体験の相関を研究している. カジュアルユーザからコアユーザへの転換率を指標とし、セレンディピティを長期的なユーザ体験の向上と結びつける.
 
 # 2. Related Work 関連作品
 
@@ -231,8 +231,8 @@ That is, to recommend content less pertinent to the known user interests, and to
 
 ## 4.1. Entropy Regularization Entropy Regularization (エントロピー正則化)
 
-The first method promotes recommending contents less pertinent to the known user interests by encouraging the policy πθ (·
-s) to have an output distribution with high entropy [61]. Mnih et al. [38] observed that adding entropy of the policy to the objective function discourages premature convergence to sub-optimal deterministic policies and leads to better performance. Pereyra et al. [46] conducted a systemic study of entropy regularization and found it to improve a wide range of state-of-the-art models.
+The first method promotes recommending contents less pertinent to the known user interests by encouraging the policy πθ (·s) to have an output distribution with high entropy [61]. Mnih et al. [38] observed that adding entropy of the policy to the objective function discourages premature convergence to sub-optimal deterministic policies and leads to better performance. Pereyra et al. [46] conducted a systemic study of entropy regularization and found it to improve a wide range of state-of-the-art models.
+最初の方法は、policy $\pi_{\theta}(\cdot|s)$ が高いエントロピー(乱雑さ)を持つ確率分布を持つように促すことで、既知のユーザの興味にあまり関係のないコンテンツを推薦することを促進する[61]。Mnihら[38]は，ポリシーのエントロピーを目的関数に加えることで，最適でない決定論的ポリシーへの早期収束を阻止し，より良いパフォーマンスにつながることを観察した．Pereyraら[46]は、エントロピー正則化の体系的な研究を行い、エントロピー正則化が広範囲の最新モデルを改善することを発見した。
 
 We add of the entropy to the RL learning objective as defined in eq. 2 during training.
 式2で定義されるRL学習目的に対して、学習時にエントロピーを追加する.
@@ -245,7 +245,7 @@ $$
 $$
 
 where the entropy of the conditional distribution πθ (·|s) is defined as H (πθ (·|s)) = − Í a ∈A πθ (a|s) log πθ (a|s). Here α controls the strength of the regularization. The entropy is equivalent to the negative reverse KL divergence of the conditional distribution πθ (·|s) to the uniform distribution. That is, H (πθ (·|s)) = −DK L(πθ (·|s)||U ) + const, where U stands for a uniform distribution across the action space A. As we increase this regularization, it pushes the learned policy to be closer to a uniform distribution, thus promoting exploration.
-ここで、条件付き分布πθ (-|s)のエントロピーは、H (πθ (-|s)) = - Í a∈A πθ (a|s) log πθ (a|s) として定義される。ここで、αは正則化の強さを制御する。エントロピーは、条件分布πθ (-|s)の一様分布に対する負の逆KL発散と等価である。つまり、H (πθ (-|s)) = -DK L(πθ (-|s)||U ) + const、ここでUは行動空間Aにわたる一様分布を表す。この正則化を強めると、学習した政策がより一様分布に近くなり、探索を促進することができる。
+ここで、条件付き分布πθ (-|s)のエントロピーは、 $H(\pi_{\theta}(\cdot|s_t)) = - \sum_{a \in A} \pi_{\theta}(a|s)$ として定義される. ここで、αは正則化の強さを制御する。エントロピーは、条件分布πθ (-|s)の一様分布に対する負の逆KL発散と等価である。つまり、 $H(\pi_{\theta}(\cdot|s_t)) = - D_{KL}(\pi_{\theta}(\cdot|s_t)||U ) + const$ 、ここでUは行動空間Aにわたる一様分布を表す. この正則化を強めると、学習した政策がより一様分布に近くなり、探索を促進することができる.
 
 ## 4.2. Intrinsic Motivation and Reward Shaping 内発的動機づけと報酬の形成
 
@@ -254,7 +254,7 @@ The second method helps discovering new user interests through reward shaping.
 The reward function r(s, a) as defined in eq. 2, describes the (immediate) value of a recommendation a to a user s. It plays a critical role in deciding the learned policy πθ .
 報酬関数$r(s, a)$は式2で定義されるように、ユーザ $s$ (=user state $s$)に対する推薦 $a$ の(即時)価値を記述するもので、学習された方策$\$を決定する上で重要な役割を果たす.
 Reward shaping, transforming or supplying additional rewards beyond those provided by the MDP, is very effective in guiding the learning of RL agents to produce policies desired by the algorithm designers [1, 27, 40].
-報酬関数 の形状は，ユーザ$s$に対する推薦$a$の(即時)価値を記述し，学習した方策πθを決定する上で重要な役割を果たす．報酬関数 は，MDPが提供する報酬以外の報酬を変換したり供給したりして，RLエージェントの学習を導き，アルゴリズム設計者が望む方策を実現する上で非常に有効である[1, 27, 40].
+Reward Shaping とは、MDPが提供する報酬以外の追加報酬(add)を変換したり供給したりすることで、アルゴリズム設計者が望む政策を生み出すようにRLエージェントの学習を導くのに非常に有効である [1, 27, 40].
 
 Exploration has been extensively studied in RL [6, 42–44, 55], and has been shown to be extremely useful in solving hard tasks, e.g., tasks with sparse reward and/or long horizons, and.
 探索はRLにおいて広く研究されており[6, 42-44, 55]、困難なタスク、例えば、報酬が疎なタスクや長い地平線を持つタスク、.NETを解く際に非常に有用であることが示されている.
@@ -287,12 +287,16 @@ We then define the cumulative reward $R_t(s_t, a_t)$ used for the gradient updat
 そして、式 3 の勾配更新に用いる累積報酬(cumulative reward) $R_t(s_t, a_t)$ を次のように定義する.
 
 $$
-R_{t}(s_t, a_t) =
+R_{t}(s_t, a_t) = \begin{cases}
+  c \cdot R^{e}_{t}(s_t, a_t) && \text{if surprising pattern} \\
+  R^{e}_t(s_t, a_t) && \text{otherwise}
+\end{cases}
 \tag{6}
 $$
 
 Here c > 1 is a constant multiplier.
 ここで、c > 1 は定数倍である.
+surprising patternとはif recommending a_t under s_t leads to discovery of previously unknown user interestsの事.
 
 As explained in Section 3, the agent perceives the environment, that is the user interests and context, through encoding user’s historical activities Ht = {(A0, a0,r0), · · · , (At−1, at−1,rt−1)}.
 セクション 3 で説明したように，エージェントはユーザの履歴 $H_t = {(A_0, a_0, r_0), - - , (A_{t-1}, a_{t-1},r_{t-1})}$ によって環境，つまりユーザの興味と文脈を認識する.
@@ -313,7 +317,7 @@ The multiplicative design in eq. 6 naturally accomplishes the second condition, 
 Comparing with the additive form (eq. 5), the multiplicative design results in:
 加法型（式 5）と比較すると、乗法型(式6?)は次のような結果をもたらす.
 
-- 1. a candidate action at with zero extrinsic reward, i.e., R e t (st , at ) = 0 will NOT receive any additional reward even if being under-surfaced; extrinsic rewardがゼロのaction候補$a_t$、すなわち$R^e_t(s_t, a_t) = 0$は、表面下であっても追加報酬を受けない.
+- 1. a candidate action at with zero extrinsic reward, i.e., R e t (st , at ) = 0 will NOT receive any additional reward even if being under-surfaced(多分surpriseのミスタイプ?); extrinsic rewardがゼロのaction候補$a_t$、すなわち$R^e_t(s_t, a_t) = 0$は、表面下であっても追加報酬を受けない.
 - 2.  an action at receiving higher extrinsic reward R e t (st , at ) will be rewarded even more compared with those that are equally surprising but received lower extrinsic reward. 2) 外挿報酬$R^e_t(s_t, a_t) $が高いaction $a_t$は、同様に驚くが外挿報酬が低いものに比べてさらに多く報酬を受ける.
 
 This contrasts with the additive form where the extrinsic rewards observed does not influence the intrinsic reward.
@@ -341,10 +345,12 @@ The REINFORCE agent introduced in Section 3 describes the environment, i.e., the
 That is, $u_{st} = RNN_{\theta}(H_t)$.
 すなわち、$u_{st} = RNN_{\theta}(H_t)$である.
 When an user interacted with a surprising item at (to the agent) and gave high reward, the user state ust should be updated to capture the new information so the agent can act differently next.
-That is, to make recommendations according to the newly acquired information about the new interest of the user. To aid the agent in capturing this information in its state, we extend Ht with an additional bit, indicating whether or not an item the user interacts with is surprising and relevant. That is, we expand Ht = {(A0, a0,r0,i0), · · · , (At−1, at−1,rt−1,it−1)}, where it ′ = 1 if 1) the attribute of at (such as topic cluster) is different from that of any items in It ′ (being a surprise) and; 2) rt > 0 (being relevant). Here It ′ is the list of items the user has interacted with up to time t ′ . This feature is then embedded and consumed by the RNN along with other features describing the item at.
 ユーザが（エージェントにとって）意外なアイテムとinteractし、高い報酬を得た場合、ユーザ状態$u_{s_t}$は、エージェントが次に異なるactionを取れるように、新しい情報を捕らえるために更新されるべきである.
+That is, to make recommendations according to the newly acquired information about the new interest of the user. 
 つまり、**ユーザの新しい興味に関する新しく得た情報に従って、推薦を行う**ことである.
+To aid the agent in capturing this information in its state, we extend Ht with an additional bit, indicating whether or not an item the user interacts with is surprising and relevant. 
 エージェントがその状態にこの情報を取り込むのを助けるために、我々は$H_t$を追加ビットで拡張し、ユーザが相互作用するアイテムが驚きと関連性があるか否かを示す.
+That is, we expand $H_{t} ={(A_0, a_0, r_0, i_0), \cdots, (A_{t-1}, a_{t-1}, r_{t-1}, i_{t-1})}$, where it ′ = 1 if 1) the attribute of at (such as topic cluster) is different from that of any items in It ′ (being a surprise) and; 2) rt > 0 (being relevant). 
 すなわち、$H_{t} ={(A_0, a_0, r_0, i_0), \cdots, (A_{t-1}, a_{t-1}, r_{t-1}, i_{t-1})}$ と展開し、
 
 - 1. $a_t$の属性（トピッククラスタなど）が$I_{t′}$内のどのアイテムとも異なる場合(= **being a surprice** )
@@ -352,7 +358,9 @@ That is, to make recommendations according to the newly acquired information abo
 
 の場合に、$i_{t′}=1$ 、とする.
 
+Here It ′ is the list of items the user has interacted with up to time t ′ . 
 ここで、$I_{t′}$ は、時刻$t'$までにユーザがinteractionしたアイテムのリストである.
+This feature is then embedded and consumed by the RNN along with other features describing the item at.
 この特徴は、その後、RNNによって、アイテムを説明する他の特徴とともに埋め込まれ、消費される.
 
 # 5. Measurement 測定
@@ -414,7 +422,7 @@ Diversity measures the number of distinct faucets the recommendation set contain
 Many measurements of set diversity have been proposed [39, 45, 53].
 セットの多様性の測定は多く提案されている[39, 45, 53]．
 Among them, the average dissimilarity of all pairs of items in the set is a popular choice.
-その中でも，**集合に含まれるすべてのペアの平均非類似度**はよく選ばれている.(dissimilarity = 1 - 正規化したsimillarity みたいなイメージ.)
+その中でも，**集合に含まれるすべてのペアの平均非類似度(average dissimilarity)**はよく選ばれている.(dissimilarity = 1 - 正規化したsimillarity みたいなイメージ.)
 
 $$
 \text{Diversity}(A^{\pi_{\theta}})
@@ -596,7 +604,7 @@ As we extend the historical window used to define surprise, i.e., having It cont
 An item is less likely to be surprising
 アイテムがsurpriseである可能性は低くなる.
 
-## 6.4. Actionable Representation Actionable Representation
+## 6.4. Actionable Representation 
 
 In this set of experiments, we compare four setups:
 この実験では、4つのセットアップを比較した.
@@ -639,14 +647,15 @@ Adding the feature helps RNN differentiate the two groups better.
 We conduct a series of live A/B tests on a industrial recommendation platform serving billions of users to evaluate the impact of the proposed exploration approaches. The control serves the base REINFORCE agent as described in Section 3. The agent selects hundreds of candidates from a corpus of 10 million. The returned candidates A πθ , along with others, are ranked by a separate ranking system before showing to the users. We ran three separate experiments: 1) Entropy regularization: serving the REINFORCE agent with entropy regularization as explained in Section 4.1; 2) Intrinsic motivation: serving the REINFORCE agent with intrinsic motivation to discover new user interest (using topic cluster attributes with a history window of 7 days and a serendipity boost c = 4) as explained in Section 4.2; 3) Intrinsic Motivation + Actionable Representation: serving the REINFORCE agent with both the intrinsic motivation and the actionable representation as introduced in Section 4.3. We compare 1) and 2) to the baseline REINFORCE system as described in Section 3 as control to measure the effect of entropy regularization and intrinsic motivation respectively, and 3) to 2) as control to measure the additional value of introducing the actionable representation on top of intrinsic motivation. We first summarize the live experiment results of these experiments in Section 7.1, and later measure several aspects of long term user experience in Section 7.2. In the end, we establish the connection between exploration and different aspects of recommendation quality toward improving long term user experience.
 我々は、提案する探索アプローチの影響を評価するために、数十億のユーザーにサービスを提供する産業推薦プラットフォーム上で一連のライブA/Bテストを実施した/
 制御は、セクション3で説明したように、基本的なREINFORCEエージェントを提供する.
-エージェントは1,000万件のコーパスから数百の候補を選択する. 
-返された候補 $A^{\pi_{\theta}}$ は、他の候補とともに、ユーザに見せる前に別のランキングシステムによってランク付けされる. 
+エージェントは1,000万件のコーパスから数百の候補を選択する.
+返された候補 $A^{\pi_{\theta}}$ は、他の候補とともに、ユーザに見せる前に別のランキングシステムによってランク付けされる.
 我々は3つの別々の実験を行った.
-- 1. エントロピー正則化：セクション4.1で説明したように、エントロピー正則化でREINFORCEエージェントを提供する. 
+
+- 1. エントロピー正則化：セクション4.1で説明したように、エントロピー正則化でREINFORCEエージェントを提供する.
 - 2. Intrinsic motivation ：セクション4.2で説明したように、新しいユーザーの興味を発見するための本質的動機づけ（7日の履歴ウィンドウとセレンディピティ・ブーストc = 4でトピッククラスタ属性を使用）をREINFORCEエージェントに与える.
 - 3. Intrinsic motivation + Actionable Representation：セクション4.3で紹介したように、 Intrinsic motivation と Actionable Representation 両方でREINFORCEエージェントへ与える.
 
-1)と2)は、エントロピー正則化と内在的動機付けの効果を測定するために、セクション3で説明したベースラインREINFORCEシステムと比較し、3)は、内在的動機付けの上に実用的表現を導入することによる付加価値を測定するために、コントロールとして2)と比較した. 
+1)と2)は、エントロピー正則化と内在的動機付けの効果を測定するために、セクション3で説明したベースラインREINFORCEシステムと比較し、3)は、内在的動機付けの上に実用的表現を導入することによる付加価値を測定するために、コントロールとして2)と比較した.
 まず、7.1節でこれらの実験のライブ実験結果をまとめ、その後、7.2節で長期的なユーザ体験のいくつかの側面を測定する.
 最後に、**長期的なユーザ体験を向上させるために、探索と推薦品質のさまざまな側面との関連性**を確立する.
 
@@ -679,7 +688,7 @@ intrinsic motivation に関する 6 週間の実験では、各週のユーザ�
 Specifically, we track the number of unique topic clusters the user has interacted with over every week, as well as the entropy of those topic clusters.
 具体的には、**ユーザが1週間にわたって交流したユニークなトピッククラスタの数**と、**それらのトピッククラスタのエントロピー(=乱雑さの度合い?)の追跡**を行う.
 Suppose the user has interacted with Ni items from topic cluster i, then the entropy of his/her history is computed as − Í i pˆi loд(pˆi), where pˆi = Ni / Í i Ni is the proportion of items interacted with that are from topic cluster i.
-ユーザーがトピッククラスタ $i$ から $N_i$ 個のアイテムと相互作用したとすると、その履歴のエントロピーは $- \sum_{i} \hat{p}_{i} \log (\hat{p}_i)$ と計算される. ここで $\hat{p}_i = \frac{N_i}{\sum_{i} N_i}$ はトピッククラスタ $i$ から相互作用したアイテムの割合である.
+ユーザがトピッククラスタ $i$ から $N_i$ 個のアイテムと相互作用したとすると、その履歴のエントロピーは $- \sum_{i} \hat{p}_{i} \log (\hat{p}_i)$ と計算される. ここで $\hat{p}_i = \frac{N_i}{\sum_{i} N_i}$ はトピッククラスタ $i$ から相互作用したアイテムの割合である.
 
 Figure 4 shows the comparison between control and treatment, where the treatment group has a boosting multiplier of 4 for unknown user interests as in Eq. (6).
 図4は、式(6)のように、未知のユーザの興味に対してブースティング乗数を4とした場合の、対照群と処理群の比較を示している.
@@ -706,7 +715,7 @@ We define four user activity levels in terms of how many days they are active on
 For example, a user being casual means that he/she has been active for 1 to 4 days in the last 14 days. Users can become more active or less active depending their experience on the platform as well as exogenous factors not control by recommendation. Suppose the goal of a recommendation platform is moving casual users to become core users. An intuitive way to measure the conversion is by counting the number of users who start off casual, and end up core. This can be realized with a user activity level transition matrix, which measures the movement between different user activity levels.
 例えば、カジュアルなユーザとは、過去14日間のうち1～4日間アクティブであったことを意味する.
 ユーザは、プラットフォームでの経験や、レコメンデーションではコントロールできない外的要因によって、よりアクティブになったり、よりアクティブでなくなったりすることがある.
-あるレコメンデーション・プラットフォームのゴールが、カジュアルユーザをコアユーザ に移行させることだとする. 
+あるレコメンデーション・プラットフォームのゴールが、カジュアルユーザをコアユーザ に移行させることだとする.
 この conversion を測定する直感的な方法は、**カジュアルユーザからコアユーザ になったユーザの数を数えること**である.
 これは、異なるユーザーの活動レベル間の移動を測定する、**ユーザの活動レベル遷移行列(user activity level transition matrix)**で実現できる.
 
