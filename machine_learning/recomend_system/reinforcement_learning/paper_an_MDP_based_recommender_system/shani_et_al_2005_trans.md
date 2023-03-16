@@ -1,387 +1,390 @@
-## link リンク
+## 0.1. link リンク
 
 - https://www.jmlr.org/papers/volume6/shani05a/shani05a.pdf https
 
-## title タイトルです。
+## 0.2. title タイトルです。
 
 An MDP-Based Recommender System.
-MDPに基づく推薦システム。
+MDPに基づく推薦システム.
 
-## abstract abstract.
+## 0.3. abstract abstract.
 
 Typical recommender systems adopt a static view of the recommendation process and treat it as a prediction problem.
-一般的なレコメンダーシステムは、推薦プロセスを静的な視点で捉え、予測問題として扱っています。
+一般的なレコメンダーシステムは、**推薦プロセスを静的な視点で捉え**、予測問題として扱っている.
 We argue that it is more appropriate to view the problem of generating recommendations as a sequential optimization problem and, consequently, that Markov decision processes (MDPs) provide a more appropriate model for recommender systems.
-我々は、推薦文を生成する問題を逐次最適化問題として捉えることがより適切であり、その結果、マルコフ決定過程（MDP）が推薦文システムのモデルとしてより適切であることを主張する。
+我々は、推**薦を生成する問題を逐次最適化問題として捉えることがより適切**であり、その結果、マルコフ決定過程（MDP）が推薦システムのモデルとしてより適切であることを主張する.
 MDPs introduce two benefits: they take into account the long-term effects of each recommendation and the expected value of each recommendation.
-MDPは、各推薦の長期的な効果と各推薦の期待値を考慮するという2つの利点を導入しています。
+MDPは、各推薦の長期的な効果と各推薦の期待値を考慮するという2つの利点を導入している.
 To succeed in practice, an MDP-based recommender system must employ a strong initial model, must be solvable quickly, and should not consume too much memory.
-MDPベースのレコメンダーシステムが実際に成功するためには、強力な初期モデルを採用し、素早く解けること、そしてメモリをあまり消費しないことが必要です。
+MDPベースの推薦システムが実際に成功するためには、強力な初期モデルを採用し、素早く解けること、そしてメモリをあまり消費しないことが必要.
 In this paper, we describe our particular MDP model, its initialization using a predictive model, the solution and update algorithm, and its actual performance on a commercial site.
-本論文では、私たちがこだわったMDPモデルについて、予測モデルを用いた初期化、解と更新のアルゴリズム、商用サイトでの実際の性能について説明します。
+本論文では、私たちがこだわったMDPモデルについて、予測モデルを用いた初期化、解と更新のアルゴリズム、商用サイトでの実際の性能について説明する.
 We also describe the particular predictive model we used which outperforms previous models.
-また、私たちが使用した、従来のモデルを凌駕する特定の予測モデルについて説明します。
+また、私たちが使用した、従来のモデルを凌駕する特定の予測モデルについて説明する.
 Our system is one of a small number of commercially deployed recommender systems.
-私たちのシステムは、商業的に展開されている数少ないレコメンダーシステムの一つです。
+私たちのシステムは、商業的に展開されている数少ないレコメンダーシステムの一つ.
 As far as we know, it is the first to report experimental analysis conducted on a real commercial site.
-実際の商用サイトで行われた実験的な分析結果を報告したのは、知る限り初めてです。
+実際の商用サイトで行われた実験的な分析結果を報告したのは、知る限り初めて.
 These results validate the commercial value of recommender systems, and in particular, of our MDP-based approach.
-これらの結果は、レコメンダーシステム、特にMDPベースのアプローチの商業的価値を検証するものです。
+これらの結果は、レコメンダーシステム、特にMDPベースのアプローチの商業的価値を検証するもの.
 Keywords: recommender systems, Markov decision processes, learning, commercial applications..
-キーワード：レコメンダーシステム、マルコフ決定過程、学習、商業応用。
+キーワード：レコメンダーシステム、マルコフ決定過程、学習、商業応用.
 
-# Introduction 紹介します。
+# 1. Introduction
 
 In many markets, consumers are faced with a wealth of products and information from which they can choose.
-多くの市場において、消費者は豊富な商品と情報を前にして、その中から選択することができます。
+多くの市場において、消費者は豊富な商品と情報を前にして、その中から選択することができる.
 To alleviate this problem, many web sites attempt to help users by incorporating a recommender system (Resnick and Varian, 1997) that provides users with a list of items and/or webpages that are likely to interest them.
-この問題を軽減するために、多くのWebサイトでは、ユーザーにアイテムのリストを提供するレコメンダーシステム（Resnick and Varian, 1997）を組み込んで、ユーザーを支援しようと試みている。
+この問題を軽減するために、多くのWebサイトでは、ユーザーにアイテムのリストを提供するレコメンダーシステム（Resnick and Varian, 1997）を組み込んで、ユーザーを支援しようと試みている.
 Once the user makes her choice, a new list of recommended items is presented.
-ユーザーが選択すると、新しいおすすめアイテムのリストが表示されます。
+ユーザが選択すると、新しいおすすめアイテムのリストが表示される.
 Thus, the recommendation process is a sequential process.
-このように、レコメンドプロセスは逐次的なプロセスです。
+このように、**推薦プロセスは逐次的なプロセスである**.
 Moreover, in many domains, user choices are sequential in nature – for example, we buy a book by the author of a recent book we liked..
-さらに、多くのドメインでは、ユーザーの選択は、例えば、最近気に入った本の著者の本を買うというように、連続的な性質を持っています。
+さらに、多くのドメインでは、**ユーザの選択は、例えば、最近気に入った本の著者の本を買うというように、連続的な性質を持っている**.
 
 The sequential nature of the recommendation process was noticed in the past (Zimdars et al., 2001).
-推薦プロセスの逐次性は過去にも注目されていた（Zimdars et al, 2001）。
+推薦プロセスの逐次性は過去にも注目されていた（Zimdars et al, 2001）.
 Taking this idea one step farther, we suggest that recommendation is not simply a sequential prediction problem, but rather, a sequential decision problem.
-この考えを一歩進めて、推薦とは単なる逐次予測問題ではなく、逐次決定問題であることを提案します。
+この考えを一歩進めて、**推薦とは単なる逐次予測問題(sequential prediction problem)ではなく、逐次決定問題(sequential decision problem)である**ことを提案する.
 At each point the Recommender System makes a decision: which recommendation to issue.
-各ポイントで、リコメンダーシステムは、どの推薦文を発行するかという決定を下します。
+各ポイントで、推薦システムは、どの推薦を発行するかという決定を下す.
 This decision should take into account the sequential process involved and the optimization criteria suitable for the recommender system, such as the profit generated from selling an item.
-この決定には、関連する順序的なプロセスや、アイテムを販売することで得られる利益など、レコメンダーシステムに適した最適化基準を考慮する必要があります。
+この決定には、関連する順序的なプロセスや、アイテムを販売することで得られる利益など、推薦システムに適した最適化基準を考慮する必要がある.
 Thus, we suggest the use of Markov decision processes (MDP) (Puterman, 1994), a well known stochastic model of sequential decisions..
-そこで、逐次決定の確率モデルとしてよく知られているマルコフ決定過程（MDP）（Puterman, 1994）の利用を提案する。
+そこで、**逐次決定の確率モデルとしてよく知られているマルコフ決定過程（MDP）**（Puterman, 1994）の利用を提案する.
 
 With this view in mind, a more sophisticated approach to recommender systems emerges.
-このような考えから、より洗練されたレコメンダーシステムの考え方が生まれています。
+このような考えから、より洗練されたレコメンダーシステムの考え方が生まれている.
 First, one can take into account the utility of a particular recommendation – for example, we might want to recommend a product that has a slightly lower probability of being bought, but generates higher profits.
-例えば、購入される確率は少し低いが、より高い利益を生み出す商品を薦めるなど、特定の薦めの効用を考慮することができる。
+例えば、**購入される確率は少し低いが、より高い利益を生み出す商品を薦めるなど、特定の推薦アイテムの効用を考慮することができる**.
 Second, we might suggest an item whose immediate reward is lower, but leads to more likely or more profitable rewards in the future..
-次に、「目先の報酬は低いが、将来、より可能性の高い、あるいはより有益な報酬につながるアイテム」を提案することがある。
+次に、「**目先の報酬は低いが、将来、より可能性の高い、あるいはより有益な報酬につながる**アイテム」を提案することがある.(=まさに短期的なクリックではなく、長期的なユーザ体験の改善みたいな...?)
 
 These considerations are taken into account automatically by any good or optimal policy generated for an MDP model of the recommendation process.
-これらの考慮は、推薦プロセスのMDPモデルに対して生成される、優れたまたは最適なポリシーによって自動的に考慮される。
+これらの考慮は、推薦プロセスのMDPモデルに対して生成される、優れたまたは最適なポリシーによって自動的に考慮される.
 In particular, an optimal policy will take into account the likelihood of a recommendation to be accepted by the user, the immediate value to the site of such an acceptance, and the long-term implications of this on the user’s future choices.
-特に、最適なポリシーは、推薦がユーザーに受け入れられる可能性、そのような受け入れがサイトにもたらす直接的な価値、そしてそれがユーザーの将来の選択に与える長期的な影響を考慮したものである。
+特に、**最適なポリシーは、推薦がユーザに受け入れられる可能性、そのような受け入れがサイトにもたらす直接的な価値、そしてそれがユーザの将来の選択に与える長期的な影響を考慮したもの**である.
 These considerations are taken with the appropriate balance to ensure the generation of the maximal expected reward stream..
-これらの配慮を適切なバランスで行うことで、最大限の期待報酬を生み出すことができるのです。
+これらの考慮(複数の価値?)を適切なバランスで行うことで、最大限の期待報酬を生み出すことができる.
 
 For instance, consider a site selling electronic appliances faced with the option to suggest a video camera with a success probability of 0.5, or a VCR with a probability of 0.6.
-例えば、家電製品の販売サイトで、成功確率0.5のビデオカメラを提案するか、0.6の確率でビデオデッキを提案するかの選択を迫られたとする。
+例えば、家電製品の販売サイトで、成功確率0.5のビデオカメラを提案するか、0.6の確率でビデオデッキを提案するかの選択を迫られたとする.
 The site may choose the camera, which is less profitable, because the camera has accessories that are likely to be purchased, whereas the VCR does not.
-カメラには購入される可能性の高い付属品があるが、ビデオデッキにはないため、サイト側は利益の少ないカメラを選択する可能性がある。
+カメラには購入される可能性の高い付属品があるが、ビデオデッキにはないため、サイト側は利益の少ないカメラを選択する可能性がある.
 If a video-game console is another option with a smaller success probability, the large profit from the likely future event of selling game cartridges may tip the balance toward this latter choice.
-ゲーム機が成功確率の低いもう一つの選択肢であれば、将来起こりうるゲームカートリッジの販売で得られる大きな利益によって、後者の選択肢にバランスが傾くかもしれません。
+ゲーム機が成功確率の低いもう一つの選択肢であれば、将来起こりうるゲームカートリッジの販売で得られる大きな利益によって、後者の選択肢にバランスが傾くかもしれない.
 Similarly, when the products sold are books, by recommending a book for which there is a sequel, we may increase the likelihood that this sequel will be purchased later..
-同様に、販売する商品が書籍の場合、続編がある本を勧めることで、その続編を後から購入する可能性を高めることができるかもしれません。
+同様に、販売する商品が書籍の場合、続編がある本を勧めることで、その続編を後から購入する可能性を高めることができるかもしれない.
 
 Indeed, in our implemented system, we observed less obvious instances of such sequential behavior: users who purchased novels by the well-known science fiction author, Roger Zelazny, who uses many mythological themes in his writing, often later purchase books on Greek or Hindu mythology.
-神話を題材にしたSF作家として知られるロジャー・ゼラズニーの小説を購入したユーザーが、その後、ギリシャ神話やヒンドゥー神話に関する本を購入することが多いなど、あまり目立たない例ですが、このような連続的な行動を観察することができました。
+神話を題材にしたSF作家として知られるロジャー・ゼラズニーの小説を購入したユーザが、その後、ギリシャ神話やヒンドゥー神話に関する本を購入することが多いなど、あまり目立たない例ですが、このような連続的な行動を観察することができた.
 On the other hand, users who buy mythology books do not appear to buy Roger Zelazny novels afterwards..
-一方、神話の本を買うユーザーは、その後、ロジャー・ゼラズニーの小説を買うことはないようです。
+一方、神話の本を買うユーザは、その後、ロジャー・ゼラズニーの小説を買うことはないようだ.
 
 The benefits of an MDP-based recommender system discussed above are offset by the fact that the model parameters are unknown.
-上述したMDPベースのレコメンダーシステムの利点は、モデルのパラメータが未知であるという事実によって相殺されています。
+上述したMDPベースの推薦システムの利点は、**モデルのパラメータが未知であるという事実**(=最適なpolicyを見つけるのがめちゃめちゃ大変って話?)によって相殺されている.
 Standard reinforcement learning techniques that learn optimal behaviors will not do – they take considerable time to converge and their initial behavior is random.
-最適な振る舞いを学習する一般的な強化学習では、収束にかなりの時間を要し、初期動作もランダムになってしまうからです。
+最適な振る舞いを学習する一般的な強化学習では、収束にかなりの時間を要し、初期動作もランダムになってしまうからである.
 No commercial site will deploy a system with such behavior.
-商業サイトでは、このような動作をするシステムを導入することはありません。
+商業サイトでは、このような動作をするシステムを導入することはない.
 Thus, we must find ways for generating good initial estimates for the MDP parameters.
-そのため、MDPパラメータの初期推定値をうまく生成する方法を見つけなければなりません。
+そのため、MDPパラメータの初期推定値をうまく生成する方法を見つけなければならない.
 The approach we suggest initializes a predictive model of user behavior using data gathered on the site prior to the implementation of the recommender system.
-私たちが提案するアプローチは、レコメンダーシステムを導入する前に、サイトで収集したデータを使って、ユーザーの行動予測モデルを初期化します。
+私たちが提案するアプローチは、推薦システムを導入する前に、サイトで収集したデータを使って、ユーザの行動予測モデルを初期化する.
 We then use the predictive model to provide initial parameters for the MDP..
-そして、予測モデルを用いて、MDPの初期パラメータを提供する。
+そして、**予測モデルを用いて、MDPの初期パラメータを提供する**.
 
 Our initialization process can be performed using any predictive model.
-私たちの初期化処理は、任意の予測モデルを用いて行うことができます。
+**私たちの初期化処理は、任意の予測モデルを用いて行うことができる**.
 In this paper we suggest a particular model that outperforms previous approaches.
-本論文では、これまでのアプローチを凌駕する特定のモデルを提案します。
+本論文では、これまでのアプローチを凌駕する特定のモデルを提案する.
 The predictive model we describe is motivated by our sequential view of the recommendation process, but constitutes an independent contribution.
-この予測モデルは、レコメンデーションプロセスの逐次的な見方によって動機づけられたものですが、独立した貢献となります。
+この予測モデルは、レコメンデーションプロセスの逐次的な見方によって動機づけられたものですが、独立した貢献となる.
 The model can be thought of as an n-gram model (Chen and Goodman, 1996) or, equivalently, a (first-order) Markov chain in which states correspond to sequences of events.
-このモデルは、n-gramモデル（Chen and Goodman, 1996）、あるいは、状態がイベントのシーケンスに対応する（一次）マルコフ連鎖と考えることができる。
+このモデルは、n-gramモデル（Chen and Goodman, 1996）、あるいは、状態がイベントのシーケンスに対応する（一次）マルコフ連鎖と考えることができる.
 In this paper, we emphasize the latter interpretation due to its natural relationship with an MDP.
-本論文では、MDPとの自然な関係から、後者の解釈を重視する。
-We note that Su et al.
-なお、Su et al.
-(2000) have described the use of simple n-gram models for predicting web pages.
-(2000) は、ウェブページを予測するための単純なn-gramモデルの使用について述べています。
+本論文では、MDPとの自然な関係から、後者の解釈を重視する.
+We note that Su et al.(2000) have described the use of simple n-gram models for predicting web pages.
+なお、Su et al.(2000) は、ウェブページを予測するための単純なn-gramモデルの使用について述べている.
 Their methods, however, yield poor performance on our data, probably because in our case, due to the relatively limited data set, the use of the enhancement techniques discussed below is needed..
-しかし、これらの方法は、私たちのデータでは性能が低く、おそらく、私たちの場合、データセットが比較的限られているため、以下に述べるエンハンスメント技術を使用する必要があるためだと思われます。
+しかし、これらの方法は、私たちのデータでは性能が低く、おそらく、私たちの場合、データセットが比較的限られているため、以下に述べるエンハンスメント技術を使用する必要があるためだと思われる.
 
 Validating recommender system algorithms is not simple.
-レコメンダーシステムのアルゴリズムの検証は簡単ではありません。
+レコメンダーシステムのアルゴリズムの検証は簡単ではない.
 Most recommender systems, such as dependency networks (Heckerman et al., 2000), are tested on historical data for their predictive accuracy.
-依存関係ネットワーク（Heckerman et al., 2000）のようなほとんどのレコメンダーシステムは、その予測精度を過去のデータでテストしています。
+依存関係ネットワーク（Heckerman et al., 2000）のようなほとんどのレコメンダーシステムは、**その予測精度を過去のデータでテストしている.**
 That is, the system is trained using historical data from sites that do not provide recommendations, and tested to see whether the recommendations conform to actual user behavior.
-つまり、レコメンドを行わないサイトの履歴データを使ってシステムを学習させ、レコメンドが実際のユーザーの行動に合致しているかどうかをテストするのです。
+つまり、**レコメンドを行わないサイトの履歴データを使ってシステムを学習させ、レコメンドが実際のユーザの行動に合致しているかどうかをテストする**のである.
 We present the results of a similar test with our system showing it to perform better than the previous leading approach..
-本システムで同様のテストを行った結果、従来の主要なアプローチよりも優れた性能を発揮することがわかりました。
+本システムで同様のテストを行った結果、従来の主要なアプローチよりも優れた性能を発揮することがわかった.
 
 However, predictive accuracy is not an ideal measure, as it does not test how user behavior is influenced by the system’s suggestions or what percentage of recommendations are accepted by users.
-しかし、予測精度は、システムの提案によってユーザーの行動がどのように影響されるのか、また、推奨の何パーセントがユーザーに受け入れられるのかを検証するものではないので、理想的な指標とは言えません。
+しかし、**予測精度は、推薦システムの提案によってユーザの行動がどのように影響されるのか、また、推奨の何パーセントがユーザに受け入れられるのかを検証するものではないので、理想的な指標とは言えない**.
 To obtain this data, one must employ the system at a real site with real users, and compare the performance of this site with and without the system (or with this and other systems).
-このデータを得るためには、実際のユーザーがいるサイトでシステムを採用し、そのサイトのパフォーマンスを、システムを使った場合と使わない場合（あるいは、このシステムと他のシステムを使った場合）で比較する必要があります。
+このデータ(=理想的な指標の為のデータ)を得るためには、実際のユーザがいるサイトでシステムを採用し、そのサイトのパフォーマンスを、システムを使った場合と使わない場合（あるいは、このシステムと他のシステムを使った場合）で比較する必要がある.
 The extent to which such experiments are possible is limited, as commercial site owners are unlikely to allow experiments which can degrade the performance or the “look-and-feel” of their systems.
-商用サイトの所有者は、システムのパフォーマンスや「ルック＆フィール」を低下させるような実験を許可しにくいため、このような実験が可能な範囲は限定的です。
+商用サイトの所有者は、システムのパフォーマンスや「ルック＆フィール」を低下させるような実験を許可しにくいため、このような実験が可能な範囲は限定的である.
 However, we were able to perform a certain set of experiments using our commercial system at the online bookstore Mitos (www.mitos.co.il) by running two models simultaneously on different users: one based on a predictive model and one based on an MDP model.
-しかし、オンライン書店ミトス（www.mitos.co.il）では、当社の商用システムを用いて、異なるユーザーに対して予測モデルに基づくモデルとMDPモデルに基づくモデルの2つを同時に実行することで、一定の実験を行うことができました。
+しかし、オンライン書店ミトス（www.mitos.co.il）では、当社の商用システムを用いて、異なるユーザに対して予測モデルに基づくモデルとMDPモデルに基づくモデルの2つを同時に実行することで、一定の実験を行うことができた.
 We were also able, for a short period, to compare user behavior with and without recommendations.
-また、短期間ではありますが、レコメンデーションの有無によるユーザー行動の比較も行うことができました。
+また、短期間ではありますが、レコメンデーションの有無によるユーザー行動の比較も行うことができた.
 These results, which to the best of our knowledge are among the first reports of online performance in a commercial site, are reported in Section 6, providing very encouraging validation to recommender systems in general, and to our sequential optimization approach in particular..
-これらの結果は、私たちの知る限り、商業サイトにおけるオンラインパフォーマンスの最初の報告の一つであり、一般的な推薦システム、特に私たちの逐次最適化アプローチに非常に有望な検証を提供するものであることを第6節で報告する。
+これらの結果は、**私たちの知る限り、商業サイトにおけるオンラインパフォーマンスの最初の報告の一つ**であり、一般的な推薦システム、特に私たちの逐次最適化アプローチに非常に有望な検証を提供するものであることを第6節で報告する.
 
-The main contributions of this paper are: (1) A novel approach to recommender systems based on an MDP model together with appropriate initialization and solution techniques.
-本論文の主な貢献は以下の通りである。(1) MDPモデルと適切な初期化・解法に基づく推薦システムに対する新しいアプローチ。
-(2) A novel predictive model that outperforms previous predictive models.
-(2) 従来の予測モデルを凌駕する新規予測モデル。
-(3) One of a small number of commercial applications based on MDPs.
-(3) MDPに基づく少数の商用アプリケーションの1つ。
-(4) The first (to the best of our knowledge) experimental analysis of a commercially deployed recommender system..
-(4) 商業的に展開されているレコメンダーシステムの実験的分析を行ったのは（我々の知る限り）初めてである。
+The main contributions of this paper are:
+本論文の主な貢献は以下の通りである.
+
+- (1) A novel approach to recommender systems based on an MDP model together with appropriate initialization and solution techniques.
+- (1) MDPモデルと適切な初期化・解法に基づく推薦システムに対する新しいアプローチ.
+- (2) A novel predictive model that outperforms previous predictive models.
+- (2) 従来の予測モデルを凌駕する新規予測モデル.
+- (3) One of a small number of commercial applications based on MDPs.
+- (3) MDPに基づく少数の商用アプリケーションの1つ.
+- (4) The first (to the best of our knowledge) experimental analysis of a commercially deployed recommender system..
+- (4) **商業的に展開されているレコメンダーシステムの実験的分析を行ったのは（我々の知る限り）初めて**である.
 
 We note that the use of MDPs for recommender systems was previously suggested by Bohnenberger and Jameson (2001).
-なお、推薦システムにMDPを用いることは、Bohnenberger and Jameson (2001)が以前に提案している。
+なお、推薦システムにMDPを用いることは、Bohnenberger and Jameson (2001)が以前に提案している.
 They used an MDP to model the process of a consumer navigating within an airport.
-彼らはMDPを使って、消費者が空港内を移動するプロセスをモデル化しました。
+彼らはMDPを使って、消費者が空港内を移動するプロセスをモデル化した.
 The state of this MDP was the consumer’s position and rewards were obtained when the consumer entered a store or bought an item.
-このMDPの状態は消費者の位置であり、消費者が店に入ったり商品を購入したりすると報酬が得られる。
+このMDPの状態(state)は消費者の位置であり、消費者が店に入ったり商品を購入したりすると報酬が得られる.
 Recommendations were issued on a palm-top, suggesting routes and stores to visit.
-パームトップには、ルートやお店を提案するレコメンドが書かれていました。
+パームトップには、ルートやお店を提案するレコメンドが書かれていた.
 However, the MDP model was hand-coded and experiments were conducted with students rather than real users..
-しかし、MDPモデルは手作業でコーディングされ、実験も実際のユーザーではなく、学生を対象に行われました。
+しかし、MDPモデルは手作業でコーディングされ、実験も実際のユーザではなく、学生を対象に行われた.
 
 The paper is structured as follows.
-本稿は以下のような構成になっている。
+本稿は以下のような構成になっている.
 In Section 2 we review the necessary background on recommender systems, MDPs, and reinforcement learning.
-第2節では、レコメンダーシステム、MDP、強化学習について必要な背景を概説する。
+第2節では、レコメンダーシステム、MDP、強化学習について必要な背景を概説する.
 In Section 3 we describe the predictive model we constructed whose goal is to accurately predict user behavior in an environment without recommendations.
-セクション3では、推薦のない環境におけるユーザーの行動を正確に予測することを目的として構築した予測モデルについて説明する。
+セクション3では、**推薦のない環境におけるユーザの行動を正確に予測することを目的として構築した予測モデル**について説明する.(この予測モデルをRLの初期値に用いる)
 In Section 4 we present our empirical evaluation of the predictive model.
-セクション4では、予測モデルの実証評価を紹介する。
+セクション4では、予測モデルの実証評価を紹介する.
 In Section 5 we explain how we use this predictive model as a basis for a more sophisticated MDP-based model for the recommender system.
-セクション5では、この予測モデルを、より洗練された推薦システムのMDPベースのモデルの基礎として使用する方法を説明します。
+セクション5では、この予測モデルを、より洗練された推薦システムのMDPベースのモデルの基礎として使用する方法を説明する.
 In Section 6 we provide an empirical evaluation of the actual recommender system based on data gathered from our deployed system.
-第6節では、実際に導入したシステムから収集したデータに基づき、実際のレコメンダーシステムの実証評価を行う。
+第6節では、実際に導入したシステムから収集したデータに基づき、実際のレコメンダーシステムの実証評価を行う.
 We conclude the paper in Section 7 discussing our current and future work..
-最後に、第7節で、現在と将来の仕事について述べる。
+最後に、第7節で、現在と将来の仕事について述べる.
 
-# Background バックグラウンド
+# 2. Background バックグラウンド
 
 In this section we provide the necessary background on recommender systems, N-gram models, and MDPs..
-ここでは、レコメンダーシステム、N-gramモデル、MDPについて必要な背景を説明する。
+ここでは、レコメンダーシステム、N-gramモデル、MDPについて必要な背景を説明する.
 
-## Recommender Systems Recommender Systems.
+## 2.1. Recommender Systems Recommender Systems.
 
 Early in the 1990s, when the Internet became widely used as a source of information, information explosion became an issue that needed addressing.
-インターネットが情報源として広く普及した1990年代初頭、情報爆発が問題視されるようになりました。
+インターネットが情報源として広く普及した1990年代初頭、情報爆発が問題視されるようになった.
 Many web sites presenting a wide variety of content (such as articles, news stories, or items to purchase) discovered that users had difficulties finding the items that interested them out of the total selection.
-多くのWebサイトでは、記事、ニュース、商品など様々なコンテンツが用意されており、その中から自分の興味のあるものを探し出すことが困難であることがわかりました。
+多くのWebサイトでは、記事、ニュース、商品など様々なコンテンツが用意されており、その中から自分の興味のあるものを探し出すことが困難であることがわかった.
 Recommender Systems (Resnick and Varian, 1997) help users limit their search by supplying a list of items that might interest a specific user.
-リコメンダーシステム（Resnick and Varian, 1997）は、特定のユーザーが興味を持ちそうなアイテムのリストを提供することで、ユーザーが検索を制限することを支援します。
+リコメンダーシステム（Resnick and Varian, 1997）は、特定のユーザーが興味を持ちそうなアイテムのリストを提供することで、ユーザーが検索を制限することを支援する.
 Different approaches were suggested for supplying meaningful recommendations to users and some were implemented in modern sites (Schafer et al., 2001).
-ユーザーに意味のあるレコメンデーションを提供するために様々なアプローチが提案され、いくつかは現代のサイトに実装されている（Schafer et al, 2001）。
+ユーザに意味のあるレコメンデーションを提供するために様々なアプローチが提案され、いくつかは現代のサイトに実装されている（Schafer et al, 2001）.
 Traditional data mining techniques such as association rules were tried at the early stages of the development of recommender systems.
-レコメンダーシステムの開発初期には、アソシエーションルールのような伝統的なデータマイニング技術が試みられました。
+レコメンダーシステムの開発初期には、アソシエーションルールのような**伝統的なデータマイニング技術が試みられた**.
 Initially, they proved to be insufficient for the task, but more recent attempts have yielded some successful systems (Kitts et al., 2000)..
-当初、これらのシステムはタスクに対して不十分であることが証明されたが、より最近の試みにより、いくつかの成功したシステムが得られた（Kitts et al.、2000）。
+当初、これらのシステムはタスクに対して不十分であることが証明されたが、より最近の試みにより、いくつかの成功したシステムが得られた（Kitts et al.、2000）.
 
 Approaches originating from the field of information retrieval (IR) rely on the content of the items (such as description, category, title, author) and therefore are known as content-based recommendations (Mooney and Roy, 2000).
-情報検索（IR）の分野から生まれたアプローチは、アイテムの内容（説明、カテゴリー、タイトル、著者など）に依存するため、コンテンツベースの推奨として知られている（Mooney and Roy, 2000）。
+**情報検索（IR）の分野から生まれたアプローチ**は、アイテムの内容（説明、カテゴリー、タイトル、著者など）に依存するため、**コンテンツベースの推薦**として知られている（Mooney and Roy, 2000）.
 These methods use some similarity score to match items based on their content.
-これらの方法は、何らかの類似性スコアを用いて、その内容に基づいてアイテムをマッチングさせる。
+これらの方法は、何らかの類似性スコアを用いて、その内容に基づいてアイテムをマッチングさせる.
 Based on this score, a list of items similar to the ones the user previously selected can be supplied.
-このスコアに基づいて、ユーザーが以前に選択したものと類似したアイテムのリストを提供することができます。
+このスコアに基づいて、ユーザが以前に選択したものと類似したアイテムのリストを提供することができる.
 Knowledge-based recommender systems (Burke, 2000) go one step farther by using deeper knowledge about the user and the domain.
-知識ベース推薦システム（Burke, 2000）は、ユーザーやドメインに関するより深い知識を利用することで、さらに一歩進んだシステムです。
+**知識ベース(Knowledge-based )推薦システム**（Burke, 2000）は、ユーザやドメインに関するより深い知識を利用することで、さらに一歩進んだシステムである.
 In particular, the user is able to introduce explicit information about her preferences.
-特に、ユーザーが自分の好みに関する情報を明示的に導入することができるのが特徴です。
+特に、ユーザが自分の好みに関する情報を明示的に導入することができるのが特徴.
 Thus, for instance, the user could specify interest in Thai cuisine, and the system might suggest a restaurant serving some other south-Asian cuisine..
-例えば、ユーザーがタイ料理に興味があることを伝えると、システムは他の南アジア料理のレストランを提案することができるのです。
+例えば、ユーザがタイ料理に興味があることを伝えると、システムは他の南アジア料理のレストランを提案することができる. (=なるほど...! knowledge-basedの推薦システムは、推薦と検索の間に位置するようなアプローチっぽい...!)
 
 Another possibility is to avoid using information about the content, but rather use historical data gathered from other users in order to make a recommendation.
-また、コンテンツに関する情報を使わず、他のユーザーから集めた過去のデータを使って推薦することも考えられます。
+また、**コンテンツに関する情報を使わず、他のユーザから集めた過去のデータを使って推薦**することも考えられる.
 These methods are widely known as collaborative filtering (CF) (Resnick et al., 1994), and we discuss them in more depth below.
-これらの手法は協調フィルタリング（CF）（Resnick et al, 1994）として広く知られており、以下、より深く議論する。
+これらの手法は協調フィルタリング（CF）（Resnick et al, 1994）として広く知られており、以下、より深く議論する.
 Finally, some systems try to create hybrid models that combine collaborative filtering and content-based recommendations (Balabanovic and Shoham, 1997; Burke, 2002)..
-最後に、協調フィルタリングとコンテンツベースの推薦を組み合わせたハイブリッドモデルを作ろうとするシステムもある（Balabanovic and Shoham, 1997; Burke, 2002）。
+最後に、協調フィルタリングとコンテンツベースの推薦を組み合わせたハイブリッドモデルを作ろうとするシステムもある（Balabanovic and Shoham, 1997; Burke, 2002）.
 
-## Collaborative Filtering Collaborative Filtering（コラボレイティブ・フィルタリング）。
+## 2.2. Collaborative Filtering Collaborative Filtering（コラボレイティブ・フィルタリング）。
 
 The collaborative filtering approach originates in human behavior: people searching for an interesting item they know little of, such as a movie to rent at the video store, tend to rely on friends to recommend items they tried and liked.
-例えば、ビデオ屋さんで借りる映画など、自分があまり知らない面白いものを探している人は、自分が試してみて気に入ったものを友達に勧める傾向があります。
+例えば、**ビデオ屋さんで借りる映画など、自分があまり知らない面白いものを探している人は、自分が試してみて気に入ったものを友達に勧める傾向がある**.
 The person asking for advice is using a (small) community of friends that know her taste and can therefore make good predictions as to whether she will like a certain item.
 アドバイスを求める人は、自分の好みを知っている友人たちの（小さな）コミュニティを使っているので、あるアイテムを気に入るかどうか、うまく予測することができます。
 Over the net however, a larger community that can recommend items to our user is available, but the persons in this large community know little or nothing about each other.
-しかし、ネット上では、ユーザーに対してアイテムを推薦してくれる大きなコミュニティが用意されていますが、この大きなコミュニティの中の人たちは、お互いのことをほとんど知らないのです。
+しかし、ネット上では、ユーザに対してアイテムを推薦してくれる大きなコミュニティが用意されていますが、この大きなコミュニティの中の人たちは、お互いのことをほとんど知らないのである.
 Conceptually, the goal of a collaborative filtering engine is to identify those users whose taste in items is predictive of the taste of a certain person (usually called a neighborhood), and use their recommendations to construct a list of items interesting for her..
-協調フィルタリングエンジンの目的は、ある人（通常、neighborhoodと呼ばれる）の好みを予測できるようなアイテムを持つユーザーを特定し、そのユーザーの推薦をもとに、その人にとって興味深いアイテムのリストを作成することである、という概念です。
+協調フィルタリングエンジンの目的は、ある人（通常、neighborhoodと呼ばれる）の好みを予測できるようなアイテムを持つユーザを特定し、そのユーザの推薦をもとに、その人にとって興味深いアイテムのリストを作成することである、という概念.
 
 To build a user’s neighborhood, these methods rely on a database of past users interactions with the system.
-ユーザーの周辺環境を構築するために、これらの方法は、過去のユーザーとシステムとのインタラクションのデータベースに依存しています。
+ユーザの周辺環境を構築するために、これらの方法は、過去のユーザとシステムとのインタラクションのデータベースに依存している.
 Early systems used explicit ratings.
-初期のシステムでは、明示的なレーティングが使われていました。
+初期のシステムでは、明示的なレーティングが使われていた.
 In such systems, users grade items (e.g., 5 stars to a great movie, 1 star to a horrible one) and then receive recommendations.1 Later systems shifted toward implicit ratings.
-このようなシステムでは、ユーザーはアイテムに点数を付け（例えば、素晴らしい映画には5つ星、ひどい映画には1つ星）、推奨を受けることができます1その後、システムは暗黙の評価にシフトしました。
+このようなシステムでは、ユーザはアイテムに点数を付け（例えば、素晴らしい映画には5つ星、ひどい映画には1つ星）、推薦を受けることができる. その後、システムは implicit rating にシフトしました.
 A common approach assumes that people like what they buy.
-一般的なアプローチでは、人々は自分が買ったものが好きだと仮定します。
+一般的なアプローチでは、人々は自分が買ったものが好きだと仮定する.
 A binary grading method is used when a value of 1 is given to items the user has bought and 0 to other items.
-ユーザーが購入したアイテムに1を、それ以外のアイテムに0を付与する場合、二値採点方式が採用されます。
+ユーザが購入したアイテムに1を、それ以外のアイテムに0を付与する場合、二値採点方式が採用される.
 Many modern recommender systems successfully implement this approach.
-最近のレコメンダーシステムの多くは、このアプローチの実装に成功しています。
-Claypool et al.
-Claypoolら。
-(2001) have suggested the use of other implicit grading methods through a special web browser that keeps track of user behavior such as the time spent looking at the web page, the scrolling of the page by the user, and movements of the mouse over the page.
-(2001)は、ウェブページを見ている時間、ユーザーによるページのスクロール、ページ上でのマウスの動きなどのユーザーの行動を記録する特別なウェブブラウザを通して、他の暗黙の採点方法を使用することを提案しています。
+最近のレコメンダーシステムの多くは、このアプローチの実装に成功している.
+Claypool et al.(2001) have suggested the use of other implicit grading methods through a special web browser that keeps track of user behavior such as the time spent looking at the web page, the scrolling of the page by the user, and movements of the mouse over the page.
+Claypoolら(2001)は、ウェブページを見ている時間、ユーザによるページのスクロール、ページ上でのマウスの動きなどのユーザの行動を記録する特別なウェブブラウザを通して、他のimplicitな採点方法を使用することを提案している.
 Their evaluation, however, failed to establish a method of rating that gave results consistently better than the binary method mentioned above..
-しかし、彼らの評価では、上記の2値法よりも安定した結果を得られる評価方法を確立することはできなかった。
+しかし、彼らの評価では、上記の2値法よりも安定した結果を得られる評価方法を確立することはできなかった.
 
-As described in Breese et al.
-Breeseらに記載されているように
-(1998), collaborative filtering systems are either memory based or model based.
-(1998)は、協調フィルタリングシステムには、メモリベースとモデルベースの2種類があるとしている。
+As described in Breese et al.(1998), collaborative filtering systems are either memory based or model based.
+Breeseらに記載されているように(1998)、協調フィルタリングシステムには、メモリベースとモデルベースの2種類があるとしている.
 Memory-based systems work directly with user data.
-メモリベースのシステムは、ユーザーのデータを直接扱う。
+メモリベースのシステムは、ユーザのデータを直接扱う.
 Given the selections of a given user, a memory-based system identifies similar users and makes recommendations based on the items selected by these users.
-あるユーザーの選択したアイテムがあれば、記憶に基づいて類似のユーザーを特定し、そのユーザーが選択したアイテムに基づいて推薦を行うものである。
+あるユーザの選択したアイテムがあれば、記憶に基づいて類似のユーザを特定し、そのユーザが選択したアイテムに基づいて推薦を行うものである.
 Model-based systems compress such user data into a predictive model.
-モデルベースシステムは、このようなユーザーデータを圧縮して予測モデルにする。
+モデルベースシステムは、このようなユーザデータを圧縮して予測モデルにする.
 Examples of model-based collaborative filtering systems are Bayesian networks (Breese et al., 1998) and dependency networks (Heckerman et al., 2000).
-モデルベースの協調フィルタリングシステムの例としては、ベイジアンネットワーク（Breese et al., 1998）や依存性ネットワーク（Heckerman et al., 2000）がある。
+モデルベースの協調フィルタリングシステムの例としては、ベイジアンネットワーク（Breese et al., 1998）や依存性ネットワーク（Heckerman et al., 2000）がある.
 In this paper, we consider modelbased systems..
-本論文では、モデルベースシステムを検討する。
+本論文では、モデルベースシステムを検討する.
 
-## The Sequential Nature of the Recommendation Process レコメンデーションプロセスの順次性
+## 2.3. The Sequential Nature of the Recommendation Process レコメンデーションプロセスの逐次性
 
 Most recommender systems work in a sequential manner: they suggest items to the user who can then accept one of the recommendations.
-ほとんどのレコメンダーシステムは、ユーザーにアイテムを提案し、ユーザーはその中から1つを選択する、という順序で動作します。
+ほとんどのレコメンダーシステムは、ユーザにアイテムを提案し、ユーザはその中から1つを選択する、という順序で動作する.
 At the next stage a new list of recommended items is calculated and presented to the user.
-次のステージでは、新しいおすすめアイテムのリストが計算され、ユーザーに提示されます。
+次のステージでは、新しいおすすめアイテムのリストが計算され、ユーザに提示される.
 This sequential nature of the recommendation process, where at each stage a new list is calculated based on the user’s past ratings, will lead us naturally to our reformulation of the recommendation process as a sequential optimization process..
-このように、ユーザーの過去の評価をもとに、各段階で新しいリストを算出するという推薦プロセスの逐次性は、推薦プロセスを逐次最適化プロセスとして再定義することに自然につながっていくでしょう。
+このように、**ユーザの過去の評価をもとに、各段階で新しいリストを算出するという推薦プロセスの逐次性**は、推薦プロセスを逐次最適化プロセスとして再定義することに自然につながっていくだろう.
 
 There is yet another sequential aspect to the recommendation process.
-推薦のプロセスには、さらにもう一つの順序性があります。
+推薦のプロセスには、**さらにもう一つの逐次性がある.**
 Namely, optimal recommendations may depend not only on previous items pruchased, but also on the order in which those items are purchased.
-すなわち、最適なレコメンデーションは、過去に購入したアイテムだけでなく、それらのアイテムを購入した順番にも依存する可能性がある。
-Zimdars et al.
-Zimdars et al.
-(2001) recognized this possible dependency and suggested the use of an auto-regressive model (a k-order Markov chain) to represent it.
-(2001)は、この可能性のある依存関係を認識し、自己回帰モデル（k次マルコフ連鎖）を使って表現することを提案した。
+すなわち、**最適なレコメンデーションは、過去に購入したアイテムだけでなく、それらのアイテムを購入した順番にも依存する**可能性がある.
+Zimdars et al.(2001) recognized this possible dependency and suggested the use of an auto-regressive model (a k-order Markov chain) to represent it.
+Zimdars et al.(2001)は、この可能性のある依存関係を認識し、自己回帰モデル（k次マルコフ連鎖）を使って表現することを提案した.
 They divided a sequence of transactions X1,...,XT (for example, product purchases, web-page views) into cases (Xt−k,...,Xt−1,Xt) for t = 1,...,T as shown in Table 1.
-彼らは、一連のトランザクションX1,...,XT（例えば、商品購入やウェブページ閲覧）を、表1のようにt＝1,...,Tのケース（Xt-k,...,Xt-1，Xt）に分割している。
+彼らは、一連のトランザクション$X_1,...,X_T$（例えば、商品購入やウェブページ閲覧）を、表1のように$t＝1,...,T$のケース$(X_{t-k},...,X_{t-1}, X_t)$ に分割している.
 They then built a model (in particular, a dependency network) to predict the last column given the other columns, under the assumption that the cases were exchangeable.
-そして、事例が交換可能であるという仮定のもと、他の列から最後の列を予測するモデル（特に依存関係ネットワーク）を構築したのです。
+そして、事例が交換可能であるという仮定のもと、**他の列から最後の列を予測するモデル**(特に依存関係ネットワーク)を構築したのである.
 Our model will also incorporate this sequential view..
-私たちのモデルは、この逐次表示も取り入れる予定です。
+私たちのモデルは、この逐次表示も取り入れる予定.
 
-## N-gram Models N-gram Models（エヌグラムモデル）。
+## 2.4. N-gram Models N-gram Models（エヌグラムモデル）。
 
 N-gram models originate in the field of language modeling.
-N-gramモデルは、言語モデリングの分野で生まれたモデルです。
+N-gramモデルは、言語モデリングの分野で生まれたモデル.
 They are used to predict the next word in a sentence given the last n − 1 words.
-最後のn - 1個の単語から、文中の次の単語を予測するために使用されます。
+**直近のn - 1個の単語から、文中の次の単語を予測する**ために使用される.
 In the simplest form of the model, probabilities for the next word are estimated via maximum likelihood; and many methods exist for improving this simple approach including skipping, clustering, and smoothing.
-最も単純なモデルでは、次の単語の確率を最尤法で推定します。この単純なアプローチを改善するために、スキップ、クラスタリング、スムージングなど多くの方法が存在します。
+最も単純なモデルでは、次の単語の確率を最尤法で推定する. この単純なアプローチを改善するために、スキップ、クラスタリング、スムージングなど多くの方法が存在する.
 Skipping assumes that the probability of the next word xi depends on words other than just the previous n − 1.
-スキップは、次の単語xiの確率が、前のn - 1以外の単語にも依存することを想定しています。
+スキップは、次の単語$x_i$の確率が、前のn - 1以外の単語にも依存することを想定している.
 A separate model is built using skipping and then combined with the standard n-gram model.
-スキップを使って別モデルを構築し、標準的なn-gramモデルと組み合わせています。
+スキップを使って別モデルを構築し、標準的なn-gramモデルと組み合わせている.
 Clustering is an approach that groups some states together for purposes of predicting next states.
-クラスタリングは、次の状態を予測するために、いくつかの状態をグループ化するアプローチです。
+クラスタリングは、次の状態を予測するために、いくつかの状態をグループ化するアプローチ.
 For example, we can group items such a basketball, football, and volleyball into a “sports ball” class.
-例えば、バスケットボール、サッカー、バレーボールなどのアイテムを「スポーツボール」というクラスにまとめることができます。
+例えば、バスケットボール、サッカー、バレーボールなどのアイテムを「スポーツボール」というクラスにまとめることができる.
 Such grouping helps to address the problem of data sparsity.
-このようなグループ分けは、データの疎密の問題を解決するのに役立ちます。
+このようなグループ分けは、データの疎密の問題を解決するのに役立つ.
 Smoothing is a general name for methods that modify the estimates of probabilities to achieve higher accuracy by adjusting zero or low probabilities upward.
-スムージングとは、確率の推定値を修正する方法の総称で、ゼロまたは低い確率を上方修正することで、より高い精度を実現するものです。
+**Smoothing(平滑化)**とは、確率の推定値を修正する方法の総称で、ゼロまたは低い確率を上方修正することで、より高い精度を実現するものである.(=要するに、確率分布の裾野を広くするようなイメージ?)
 One type of smoothing is finite mixture modeling, which combines multiple models via a convex combination.
-平滑化の一種に、複数のモデルを凸組み合わせで結合する有限混合モデリングがある。
-In particular, given k component models for xi given a prior sequence X—pM1 (xi |X),..., pMk (xi |X)—we can define the k-component mixture model p(xi |X) = π1 · pM1 (xi |X) + ···+ πk · pMk (xi |X), where ∑ k i=1 πi = 1 are its mixture weights.
-X),..., pMk (xi
+平滑化の一種に、複数のモデルを凸組み合わせで結合する有限混合モデリングがある.
+In particular, given k component models for xi given a prior sequence X — $p_{M_1}(x_i|X),\cdots, p_{M_k}(x_i|X)$ —we can define the k-component mixture model $p(x_i|X)= \pi_{1}\cdot p_{M_1}(x_i|X) + \cdots \pi_{k} \cdot p_{M_k}(x_i|X)$, where $\sum_{i=1}^{k}\pi_{i} = 1$ are its mixture weights.
+特に、事前シーケンス$X$を与えられた$x_i$の $k$ 成分モデル $p_{M_1}(x_i|X),\cdots, p_{M_k}(x_i|X)$ が与えられた場合、$k$ 成分混合モデル$p(x_i|X)= \pi_{1}\cdot p_{M_1}(x_i|X) + \cdots \pi_{k} \cdot p_{M_k}(x_i|X)$を定義できる. ここで $\sum_{i=1}^{k}\pi_{i} = 1$ はその混合重み.
 Details of these and other methods are given in Chen and Goodman (1996)..
-これらの方法と他の方法の詳細は、Chen and Goodman (1996)に記載されています。
+これらの方法と他の方法の詳細は、Chen and Goodman (1996)に記載されている.
 
-## MDPs MDPです。
+## 2.5. MDPs
 
 An MDP is a model for sequential stochastic decision problems.
-MDPとは、逐次確率的決定問題のモデルである。
+MDPとは、**逐次確率的決定問題(sequential stochastic decision problems)のモデル**である.
 As such, it is widely used in applications where an autonomous agent is influencing its surrounding environment through actions (for example, a navigating robot).
-そのため、自律的なエージェントが行動によって周囲の環境に影響を与えるようなアプリケーション（例えば、ナビゲーションロボットなど）に広く利用されています。
+そのため、**自律的なエージェントが行動(action)によって周囲の環境(environment)に影響を与えるようなアプリケーション**(例えば、ナビゲーションロボットなど)に広く利用されている.
 MDPs (Bellman, 1962) have been known in the literature for quite some time, but due to some fundamental problems discussed below, few commercial applications have been implemented..
-MDP（Bellman、1962）は、かなり以前から文献で知られていましたが、後述するいくつかの基本的な問題のため、商用アプリケーションはほとんど実装されていませんでした。
+MDP（Bellman、1962）は、かなり以前から文献で知られていましたが、後述するいくつかの基本的な問題のため、**商用アプリケーションはほとんど実装されていなかった**.
 
 An MDP is by definition a four-tuple: hS,A,Rwd,tri, where S is a set of states, A is a set of actions, Rwd is a reward function that assigns a real value to each state/action pair, and tr is the state-transition function, which provides the probability of a transition between every pair of states given each action..
-MDPの定義は4タプル：hS,A,Rwd,triで、Sは状態の集合、Aはアクションの集合、Rwdは各状態に実数値を割り当てる報酬関数である
+**MDP(マルコフ決定過程)の定義**は four-tuple(４つ組)：$\langle S, S, Rwd, tr \rangle$で、$S$ はstateの集合、Aはactionの集合、$Rwd$は各stateに実数値を割り当てる報酬関数である.
+($tr$ は状態遷移関数?)
 
 In an MDP, the decision-maker’s goal is to behave so that some function of its reward stream is maximized – typically the average reward or the sum of discounted reward.
-MDPでは、意思決定者の目標は、報酬の流れの関数が最大になるように行動することである（通常は平均報酬または割引報酬の合計）。
+MDPでは、意思決定者の目標は、reward stream関数(=streamってどういう意味? 短期的でimmidiateなrewardではなく、長期的なrewardって意味?)が最大になるように行動することである(通常は平均報酬、または割引報酬の合計).
 An optimal solution to the MDP is such a maximizing behavior.
-MDPの最適解とは、このような最大化動作のことである。
+MDPの最適解とは、このようなmaximizing behaviorのことである.
 Formally, a stationary policy for an MDP π is a mapping from states to actions, specifying which action to perform in each state.
-形式的には、MDPπの定常政策は、状態からアクションへのマッピングであり、各状態でどのアクションを実行するかを指定するものである。
+形式的には、MDP $\pi$ の**stationary policy(定常方策?)は、stateからaction へのmapping**であり、**各stateでどのactionを実行するかを指定するもの**である.(=**stateが決まれば、常に同じactionが決定するって意味**??)
 Given such an optimal policy π, at each stage of the decision process, the agent need only establish what state s it is in and execute the action a = π(s)..
-このような最適な政策πが与えられた場合、エージェントは意思決定プロセスの各段階において、どのような状態sにあるかを確定し、行動a＝π（s）を実行すればよい。
+このような最適な方策 $\pi$ が与えられた場合、エージェントは意思決定プロセスの各段階において、どのような state $s$ にあるかを確定し、action $a = \pi(s)$ を実行すればよい.
 
 Various exact and approximate algorithms exist for computing an optimal policy.
-最適なポリシーを計算するために、様々な厳密および近似アルゴリズムが存在する。
+最適なポリシーを計算するために、様々な厳密および近似アルゴリズムが存在する.
 Below we briefly review the algorithm known as policy-iteration (Howard, 1960), which we use in our implementation.
-以下では、我々の実装で使用しているpolicy-iteration (Howard, 1960)として知られるアルゴリズムについて簡単に説明します。
+以下では、我々の実装で使用しているpolicy-iteration (Howard, 1960)として知られるアルゴリズムについて簡単に説明する.
 A basic concept in all approaches is that of the value function.
-すべてのアプローチにおいて基本的な概念は、価値関数である。
-The value function of a policy π, denoted V π , assigns to each state s a value which corresponds to the expected infinitehorizon discounted sum of rewards obtained when using π starting from s.
-政策πの価値関数（V π）は、各状態sに、sからπを使用した場合に得られる報酬の期待無限地平割引和に相当する値を代入するものである。
+すべてのアプローチにおいて基本的な概念は、**価値関数(value function)**である.
+The value function of a policy $\pi$, denoted $V^{\pi}$, assigns to each state $s$ a value which corresponds to the expected infinitehorizon discounted sum of rewards obtained when using $\pi$ starting from $s$.
+方策 $\pi$ の価値関数 $V^{\pi}$ は、各state $s$ を入力に受け取り、**あるstate $s$ (initial state)から方策 $\pi$ を使用した(スタートした)**場合に得られる**報酬のexpected infinitehorizon discounted sumに相当する値** を出力するものである.
+
 This function satisfies the following recursive equation:.
-この関数は、以下の再帰的方程式を満たします。
+value functionは、以下の再帰的方程式を満たします:
+(reward function と value functionの違い: reward functionは、agentが state $s$で action $a$ を取った時に得られる即時報酬を定義する関数.
+一方で value functionは、**あるstate $s$ を initial stateとして、ある方策 $\pi$ を取った場合に得られる将来の累積報酬の期待値**を定義する.よって**価値関数は報酬関数とは異なり、agentが採用する方策に依存する.**)
 
 $$
+V^{\pi}(s) = Rwd(s, \pi(s)) + \gamma \sum_{s_j \in S} tr(s, \pi(s), s_j) V^{\pi}(s_j)
 \tag{1}
 $$
 
+(右辺第一項は、initial stateにおいて方策に基づいてactionした場合のt=1の即時報酬? 右辺第二項は、t=2, ...の期待累積報酬?)
+
 where 0 < γ < 1 is the discount factor.2 An optimal value function, denoted V ∗ , assigns to each state s its value according to an optimal policy π ∗ and satisfies.
-ここで、0 < γ < 1 は割引係数である2 最適価値関数（V ∗ とする）は、最適政策 π ∗ に従って各状態 s にその価値を割り当て、以下を満たすものである。
+ここで、$0 < \gamma < 1$ は割引係数である. 最適な価値関数( $V*$ とする)は、最適な方策 $\pi*$ に従って各state $s$ にその価値を割り当て、以下を満たすものである.
 
 $$
+V^{*} = \max_{a \in A}[Rwd(s, a) + \gamma \sum_{s_j \in S} tr(s, a, s_j) V^{*}(s_j)]
 \tag{2}
 $$
 
 To find a π ∗ and V ∗ using the policy-iteration algorithm, we search the space of possible policies.
-ポリシー反復アルゴリズムを用いてπ＊とV＊を見つけるために、可能なポリシーの空間を探索する。
+ポリシー反復アルゴリズムを用いて $\pi^*$ と $V^*$ を見つけるために、可能なポリシーの空間を探索する.
 We start with an initial policy π0(s) = argmax a∈A Rwd(s,a).
-初期政策π0(s) = argmax a∈A Rwd(s,a) でスタートする。
+初期方策 $\pi_{0}(s) = \argmax_{a \in A} Rwd(s,a)$ でスタートする.
 At each step we compute the value function based on the former policy and update the policy given the new value function:.
-各ステップでは、以前のポリシーに基づいて価値関数を計算し、新しい価値関数を与えてポリシーを更新します：。
+各ステップでは、以前の方策に基づいて価値関数を計算し、新しい価値関数を与えてポリシーを更新する.：
 
 $$
+V_{i}(s) = Rwd(s, \pi_{i}(s)) + \gamma \sum_{s_j \in S} tr(s, \pi_{i}(s), s_j) V_i(s_j)
 \tag{3}
 $$
 
 $$
+\pi_{i+1}(s) = \argmax_{a \in A}[Rwd(s, a) + \gamma \sum_{s_j \in S} tr(s, a, s_j) V_{i}(s_j)]
 \tag{4}
 $$
 
 These iterations will converge to an optimal policy (Howard, 1960)..
-これらの繰り返しにより、最適な政策に収束する（Howard, 1960）。
+これらの繰り返しにより、最適な方策に収束する(Howard, 1960).
 
 Solving MDPs is known to be a polynomial problem in the number of states (via a reduction to linear programming (Puterman, 1994)).
-MDPの解法は、状態数の多項式問題であることが知られている（線形計画法への還元により（Puterman, 1994））。
+MDPの解法は、state数の多項式問題であることが知られている(線形計画法への還元により（Puterman, 1994）).
 It is usually more natural to represent the problem in terms of states variables, where each state is a possible assignment to these variables and the number of states is hence exponential in the number of state variables.
-通常、問題を状態変数で表現する方が自然であり、各状態はこれらの変数への可能な割り当てであり、したがって状態の数は状態変数の数の指数関数となる。
+通常、問題をstate変数で表現する方が自然であり、各stateはこれらの変数への可能な割り当てであり、したがってstateの数は状態変数の数の指数関数となる.
 This well known “curse of dimensionality” makes algorithms based on an explicit representation of the state-space impractical.
-このよく知られた「次元の呪い」によって、状態空間の明示的な表現に基づくアルゴリズムは非現実的なものとなっています。
-Thus, a major research effort in the area of MDPs during the last decade has been on computing an optimal policy in a tractable manner using factored representations of the state space and other techniques (for example Boutilier et al.
-そのため、この10年間、MDPの分野では、状態空間のファクタリング表現などを用いて、扱いやすい方法で最適な政策を計算することが大きな研究課題となっていた（例えば、Boutilier et al.
-(2000); Koller and Parr (2000)).
-(2000); Koller and Parr (2000))。
+このよく知られた"次元の呪い"によって、状態空間の明示的な表現に基づくアルゴリズムは非現実的なものとなっている.
+Thus, a major research effort in the area of MDPs during the last decade has been on computing an optimal policy in a tractable manner using factored representations of the state space and other techniques (for example Boutilier et al.(2000); Koller and Parr (2000)).
+そのため、この10年間、MDPの分野では、状態空間のファクタリング表現などを用いて、**扱いやすい方法で最適な方策を計算すること**が大きな研究課題となっていた（例えば、Boutilier et al.(2000); Koller and Parr (2000))。
 Unfortunately, these recent methods do not seem applicable in our domain in which the structure of the state space is quite different – that is, each state can be viewed as an assignment to a very small number of variables (three in the typical case) each with very large domains.
-つまり、各状態は、非常に大きな領域を持つ非常に少数の変数（典型的なケースでは3つ）への割り当てとみなすことができるのです。
+つまり、各stateは、非常に大きな領域を持つ非常に少数の変数（典型的なケースでは3つ）への割り当てとみなすことができる.
 Moreover, the values of the variables (describing items bought recently) are correlated.
-さらに、変数（最近買ったものを表す）の値には相関がある。
+さらに、変数（最近買ったものを表す）の値には相関がある.
 However, we were able to exploit the special structure of our state and action spaces using different techniques.
-しかし、私たちは別の手法で、状態空間と行動空間の特殊な構造を利用することができたのです。
+しかし、私たちは別の手法で、状態空間(state space)と行動空間(action space)の特殊な構造を利用することができた.
 In addition, we introduce approximations that exploit the fact that most states – that is, most item sequences – are highly unlikely to occur (a detailed explanation will follow in Section 3)..
 さらに、ほとんどの状態、つまりほとんどの項目配列が非常に起こりにくいという事実を利用した近似を導入する（詳細な説明は第3節に続く）。
 
@@ -415,7 +418,7 @@ More general transformation techniques that attempt to reduce the size of the st
 (2002))..
 (2002))..
 
-# The Predictive Model 予測モデル
+# 3. The Predictive Model 予測モデル
 
 Our first step is to construct a predictive model of user purchases, that is, a model that can predict what item the user will buy next.
 まず、ユーザーの購買予測モデル、つまり、ユーザーが次にどのようなアイテムを購入するかを予測できるモデルを構築します。
@@ -426,7 +429,7 @@ Nonetheless, we shall use a Markov chain, with an appropriate formulation of the
 In Section 4 we shall show that our predictive model outperforms previous models, and in Section 5 we shall intialize our MDP-based recommender system using this predictive model..
 第4節では、本予測モデルが従来のモデルを凌駕することを示し、第5節では、本予測モデルを用いたMDPベースのレコメンダーシステムの初期化について述べる。
 
-## The Basic Model 基本モデルです。
+## 3.1. The Basic Model 基本モデルです。
 
 A Markov chain is a model of system dynamics – in our case, user “dynamics.” To use it, we need to formulate an appropriate notion of a user state and to estimate the state-transition function..
 マルコフ連鎖は、システムのダイナミクス（ここではユーザーの "ダイナミクス"）をモデル化したものです。マルコフ連鎖を利用するためには、ユーザーの状態に関する適切な概念を定式化し、状態遷移関数を推定することが必要である。
@@ -484,7 +487,7 @@ This model, however, still suffers from the problem of data sparsity (for exampl
 In the next section, we describe several techniques for improving the estimate..
 次節では、推定値を改善するためのいくつかの技法について説明する。
 
-## Some Improvements いくつかの改善点。
+## 3.2. Some Improvements いくつかの改善点。
 
 We experimented with several enhancements to the maximum-likelihood n-gram model on data different from that used in our formal evaluation.
 最尤N-gramモデルについては、正式な評価で使用したデータとは異なるデータで、いくつかの機能拡張の実験を行いました。
@@ -565,7 +568,7 @@ Nonetheless, for simplicity, we use π1 = ··· = πk = 1/k in our experiments.
 Because our primary model is based on the k last items, the generation of the models for smaller values entails little computational overhead..
 我々の主要なモデルは最後のk個のアイテムに基づいているため、より小さな値のモデルの生成はほとんど計算オーバーヘッドを必要としない。
 
-# Evaluation of the Predictive Model 予測モデルの評価
+# 4. Evaluation of the Predictive Model 予測モデルの評価
 
 Before incorporating our predictive model into an MDP-based recommender system, we evaluated the accuracy of the predictive model.
 MDPベースのレコメンダーシステムに予測モデルを組み込む前に、予測モデルの精度を評価しました。
@@ -574,7 +577,7 @@ Our evaluation used data corresponding to user behavior on a web site (without r
 In Section 6 we evaluate the MDP-based approach using an experimental approach in which recommendations on an e-commerce site are manipulated by our algorithms..
 セクション6では、電子商取引サイトのレコメンデーションが我々のアルゴリズムによって操作される実験的アプローチを用いて、MDPベースのアプローチを評価する。
 
-## Data Sets データセット
+## 4.1. Data Sets データセット
 
 We base our evaluations on real user transactions from the Israeli online bookstore Mitos(www.mitos.co.il).
 イスラエルのオンライン書店Mitos(www.mitos.co.il)の実際のユーザー取引に基づく評価を行っています。
@@ -616,12 +619,12 @@ For each case, we then used our various models to determine the probability dist
 Finally, we used the ti actually observed in conjunction with the list of recommended items to compute a score for the list..
 最後に、実際に観察されたtiと推奨アイテムのリストを合わせて、リストのスコアを算出しました。
 
-## Evaluation Metrics 評価指標
+## 4.2. Evaluation Metrics 評価指標
 
 We used two scores: Recommendation Score (RC) (Microsoft, 2002) and Exponential Decay Score (ED) (Breese et al., 1998) with slight modifications to fit into our sequential domain..
 我々は2つのスコアを使用した。Recommendation Score (RC) (Microsoft, 2002) と Exponential Decay Score (ED) (Breese et al., 1998) の2つのスコアを使用し、我々のシーケンシャルドメインに適合するように若干の修正を加えている．
 
-### Recommendation Score レコメンドスコア
+### 4.2.1. Recommendation Score レコメンドスコア
 
 For this measure of accuracy, a recommendation is deemed successful if the observed item ti is among the top m recommended items (m is varied in the experiments).
 この精度の指標では、観測されたアイテムtiが上位m個の推奨アイテムの中にあれば、推奨は成功したとみなされる（実験ではmは変化させる）。
@@ -632,7 +635,7 @@ A score of 100 means that the recommendation was successful in all cases.
 This score is meaningful for commerce sites that require a short list of recommendations and therefore care little about the ordering of the items in the list..
 このスコアは、短い推奨リストを必要とし、したがってリスト内のアイテムの順序をあまり気にしないコマースサイトに有意義である。
 
-### Exponential Decay Score 指数関数的減衰スコア。
+### 4.2.2. Exponential Decay Score 指数関数的減衰スコア。
 
 This measure of accuracy is based on the position of the observed ti on the recommendation list, thus evaluating not only the content of the list but also the order of items in it.
 この精度の指標は、推薦リストにおける観測されたtiの位置に基づいているため、リストの内容だけでなく、リスト内のアイテムの順序も評価されます。
@@ -665,9 +668,9 @@ Breeseらの実験と整合性を取るため、実験ではα＝5を使用し�
 The relative performance of the models was not sensitive to α..
 モデルの相対的な性能は、αに敏感ではなかった。
 
-## Comparison Models 比較モデルです。
+## 4.3. Comparison Models 比較モデルです。
 
-### Commerce Server 2000 Predictor Commerce Server 2000 Predictor.
+### 4.3.1. Commerce Server 2000 Predictor Commerce Server 2000 Predictor.
 
 A model to which we compared our results is the Predictor tool developed by Microsoft as a part of Microsoft Commerce Server 2000, based on the models of Heckerman et al.
 今回の結果を比較したモデルとして、HeckermanらのモデルをベースにMicrosoft Commerce Server 2000の一部としてMicrosoft社が開発したPredictorツールがあります。
@@ -718,7 +721,7 @@ We built five sequential models 1 ≤ k ≤ 5 for each of the data sets.
 We refer to the non-sequential Predictor models as Predictor-NS, and to the Predictor models built using the data expansion methods with a history of length k as Predictor-k..
 非連続的なPredictorモデルをPredictor-NS、長さkの履歴を持つデータ拡張法を用いて構築したPredictorモデルをPredictor-kと呼ぶことにする。
 
-### Unordered MCs アンオーダーメイドのMC
+### 4.3.2. Unordered MCs アンオーダーメイドのMC
 
 We also evaluated a non-sequential version of our predictive model, where sequences such as hx, y,zi and hy,z, xi are mapped to the same state.
 また、hx,y,ziやhy,z,xiなどのシーケンスが同じ状態にマッピングされる、予測モデルの非シーケンシャル版も評価しました。
@@ -729,7 +732,7 @@ Skipping, clustering, and mixture modeling were included as described in section
 We call this model UMC (Unordered Markov chain)..
 このモデルをUMC(Unordered Markov chain)と呼ぶ。
 
-## Variations of the MC Model MCモデルのバリエーション
+## 4.4. Variations of the MC Model MCモデルのバリエーション
 
 In order to measure how each n-gram enhancement influenced predictive accuracy, we also evaluated models that excluded some of the enhancements.
 また、各n-gramの強化が予測精度に与える影響を測定するために、一部の強化を除いたモデルも評価しました。
@@ -740,7 +743,7 @@ In addition, we use numbers to denote which mixture components are used.
 Thus, for example, we use MC 123 SK to denote a Markov chain model learned with three mixture components—a bigram, trigram, and quadgram—where each component employs skipping but not clustering..
 例えば、MC123 SKは、bigram, trigram, quadgramの3つの混合成分で学習したマルコフ連鎖モデルであり、各成分はクラスタリングを行わず、スキップすることを表す。
 
-## Experimental Results 実験結果です。
+## 4.5. Experimental Results 実験結果です。
 
 Figure 1(a) and figure 1(b) show the exponential decay score for the best models of each type (Markov chain, Unordered Markov chain, Non-Sequential Predictor model, and Sequential Predictor Model).
 図1（a）、図1（b）は、各タイプの最良モデル（マルコフ連鎖、非順序マルコフ連鎖、非順序予測モデル、順序予測モデル）の指数関数的減衰スコアを示しています。
@@ -767,7 +770,7 @@ Perhaps users tend to follow the same paths in a rather conservative manner, or 
 In either case, once recommendations are available in the site (thus changing the site structure), skipping may prove beneficial..
 いずれにせよ、サイト内でレコメンデーションが利用できるようになると（サイト構造が変わる）、スキップが有効になる可能性があります。
 
-#  An MDP-Based Recommender Model MDP ベースの推薦者モデル
+# 5. An MDP-Based Recommender Model MDP ベースの推薦者モデル
 
 The predictive model we described above does not attempt to capture the short and long-term effect of recommendations on the user, nor does it try to optimize its behavior by taking into account such effects.
 先に述べた予測モデルは、レコメンデーションがユーザーに与える短期的・長期的な影響を捉えようとするものではなく、また、そうした影響を考慮して行動を最適化しようというものでもない。
@@ -793,7 +796,7 @@ Naturally, in our implementation we used the predictive model developed in Secti
 (2002))..
 (2002))..
 
-## Defining the MDP MDPを定義する。
+## 5.1. Defining the MDP MDPを定義する。
 
 Recall that to define an MDP, we need to provide a set of states, actions, transition function, and a reward function.
 MDPを定義するためには、状態、行動、遷移関数、報酬関数のセットを提供する必要があることを思い出してください。
@@ -843,7 +846,7 @@ is the probability that the user will select item x 00 given that item x 0 is re
 We write tr1 MDP to denote that only single item recommendations are used..
 単品推薦のみを行うことを表すためにtr1 MDPと表記する。
 
-### Initializing $tr_{MMDP}$ $tr_{MMDP}$ を初期化する。
+### 5.1.1. Initializing $tr_{MMDP}$ $tr_{MMDP}$ を初期化する。
 
 Proper initialization of the transition function is an important implementation issue in our system.
 遷移関数の適切な初期化は、本システムにおける重要な実装課題である。
@@ -939,7 +942,7 @@ s,r)) and the probability that an item will be selected when it is not recommend
 Because the number of items is much smaller than the number of states, we obtain significant reduction in the space requirements of the model..
 アイテム数が状態数よりはるかに少ないため、モデルの空間要件が大幅に削減されます。
 
-### Generating Multple Recommendations 複数の推薦文を生成する。
+### 5.1.2. Generating Multple Recommendations 複数の推薦文を生成する。
 
 When moving to multiple recommendations, we make the assumption that recommendations are independent.
 複数のレコメンデーションに移行する場合、レコメンデーションが独立していることを前提にしています。
@@ -985,7 +988,7 @@ As before, trMDP(s,r ∈/ R,s·r) does not depend on r, and will not depend on R
 We note again, that these values are merely reasonable initial values and are adjusted by our system based on actual user behavior, as we shall discuss..
 なお、これらの値はあくまで妥当な初期値であり、実際のユーザーの行動に基づいてシステムで調整されることは、後述するとおりです。
 
-## Solving the MDP MDPを解く。
+## 5.2. Solving the MDP MDPを解く。
 
 Having defined the MDP, we now consider how to solve it in order to obtain an optimal policy.
 MDPを定義した上で、最適な政策を得るためにどのように解くかを考える。
@@ -1168,7 +1171,7 @@ Another way to handle this problem is to recommend a book with a large MDP score
 We did not find it necessary to introduce these modifications in our current system..
 現在のシステムでは、このような改良を加える必要はないと考えています。
 
-## Updating the Model Online オンラインでモデルを更新する。
+## 5.3. Updating the Model Online オンラインでモデルを更新する。
 
 Once the recommender system is deployed with its initial model, we need to update the model according to actual observations.
 レコメンダーシステムが初期モデルで展開された後は、実際の観測結果に応じてモデルを更新する必要があります。
@@ -1272,7 +1275,7 @@ Consequently, in our Mitos implementation, items are programmatically removed fr
 Another solution that we have implemented but not evaluated is to use weighted data and to exponentially decay the weights in time, thus placing more weight on more recently observed transitions..
 もう一つの解決策は、重み付けされたデータを使用し、時間的に指数関数的に減衰させることで、より最近観測された遷移に重きを置くというものです（評価はしていません）。
 
-# Evaluation of the MDP Recommender Model MDPレコメンダーモデルを評価する。
+# 6. Evaluation of the MDP Recommender Model MDPレコメンダーモデルを評価する。
 
 The main thesis of this work is that (1) recommendation should be viewed as a sequential optimization problem, and (2) MDPs provide an adequate model for this view.
 本研究の主要なテーゼは、（1）推薦を逐次最適化問題として捉えるべきであり、（2）MDPはこの見解に適したモデルを提供する、というものである。
@@ -1306,7 +1309,7 @@ Once every two or three weeks, a process was run to update the model given the d
 We compared the MDP and MC models both in terms of their value or utility to the site as well as their computational costs..
 MDPモデルとMCモデルを、現場での価値や有用性、計算コストの両面から比較検討しました。
 
-## Utility Performance ユーティリティの性能
+## 6.1. Utility Performance ユーティリティの性能
 
 Our first set of results is based on the assumption that the transition function we learn for our MDP using data collected with recommendations, provides the the best available model of user behavior under recommendation.
 最初の結果は、レコメンデーションで収集されたデータを用いてMDPに学習させた遷移関数が、レコメンデーション下のユーザー行動の最良のモデルを提供するという仮定に基づいています。
@@ -1337,7 +1340,7 @@ We compared four policies, where the first policy uses information about the eff
 
 - Greedy – recommends items that maximize Pr(x|h)· R(x) (where Pr(x|h) is the probability of buying item x given user history h, and R(x) is the value of x to the site – for example, net profit). R(x) (where Pr(x
 
-- Most likely – recommends items that maximize Pr(x|h). 
+- Most likely – recommends items that maximize Pr(x|h).
 
 - Lift – recommends items that maximize Pr(x|h) Pr(x) , where Pr(x) is the prior probability of buying item x. Pr(x) , where Pr(x) is the prior probability of buying item x..
 
@@ -1420,7 +1423,7 @@ Although, we cannot rule out the possibility that this difference is due to othe
 Overall, our experiments support the claims concerning the added value of using recommendations in commercial web sites and the validity of the MDP-based model for recommender systems..
 本実験は、商用サイトにおけるレコメンデーションの付加価値と、レコメンデーションシステムのためのMDPベースのモデルの有効性に関する主張を支持するものであった。
 
-## Computational Analysis Computational Analysis（計算解析）。
+## 6.2. Computational Analysis Computational Analysis（計算解析）。
 
 In this section, we compare computational costs of the MDP-based and the Predictor recommender system..
 ここでは、MDPベースとPredictorレコメンダーシステムの計算コストを比較する。
@@ -1464,7 +1467,7 @@ Overall the MDP-based model is quite competitive with the Predictor model.
 It provides the fastest recommendations at the price of more memory use, and builds models more quickly.
 より多くのメモリを使用する代償として最速のレコメンデーションを提供し、より速くモデルを構築します。
 
-# Discussion ディスカッション
+# 7. Discussion ディスカッション
 
 This paper describes a new model for recommender systems based on an MDP.
 本論文では、MDPに基づくレコメンダーシステムの新しいモデルについて説明する。
