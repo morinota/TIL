@@ -386,50 +386,46 @@ Moreover, the values of the variables (describing items bought recently) are cor
 However, we were able to exploit the special structure of our state and action spaces using different techniques.
 しかし、私たちは別の手法で、状態空間(state space)と行動空間(action space)の特殊な構造を利用することができた.
 In addition, we introduce approximations that exploit the fact that most states – that is, most item sequences – are highly unlikely to occur (a detailed explanation will follow in Section 3)..
-さらに、ほとんどの状態、つまりほとんどの項目配列が非常に起こりにくいという事実を利用した近似を導入する（詳細な説明は第3節に続く）。
+さらに、**ほとんどのstate、つまりほとんどのitem逐次配列が非常に起こりにくいという事実を利用した近似**を導入する（詳細な説明は第3節に続く）.
 
 MDPs extend the simpler Markov chain (MC) model – a well known model of dynamic systems.
-MDPは、動的システムのモデルとしてよく知られている、より単純なマルコフ連鎖(MC)モデルを拡張したものです。
+MDPは、動的システムのモデルとしてよく知られている、より単純なマルコフ連鎖(MC)モデルを拡張したものである.
 A Markov chain is simply an MDP without actions.
-マルコフ連鎖とは、単純にアクションのないMDPのことである。
+**マルコフ連鎖とは、単純にactionを含まないMDPのこと**である.
 It contains a set of states and a stochastic transition function between states.
-これは、状態のセットと状態間の確率的遷移関数を含んでいます。
+これは、**stateの集合とstate間の確率的遷移関数(stochastic transition function)を含んでいる**.
 In both models the next state does not depend on any states other than the current state..
-どちらのモデルでも、次の状態は現在の状態以外の状態には依存しない。
+**どちらのモデルでも、次のstateは現在のstate以外のstateには依存しない**.(なるほど! 次のstateは直近のstateのみに依存するんだ!)
 
 In the context of recommender systems, if we equate actions with recommendations, then an MDP can be used to model user behavior with recommendations – as we show below – whereas an MC can be used to model user behavior without recommendations.
-レコメンダーシステムの文脈では、行動と推奨を同一視すると、以下に示すように、MDPは推奨を伴うユーザーの行動をモデル化するのに使用でき、MCは推奨を伴わないユーザーの行動をモデル化するのに使用できることになります。
+推薦システムの文脈では、**actionと推薦を同一視すると**、以下に示すように、**MDPは推薦を伴うユーザのactionをモデル化するのに使用**でき、**MCは推薦を伴わないユーザの行動をモデル化するのに使用できる**ことになる.
 Markov chains are also closely related to n-gram models.
-マルコフ連鎖は、n-gramモデルとも密接な関係がある。
+マルコフ連鎖は、n-gramモデルとも密接な関係がある.
 In a bi-gram model, the choice of the next word depends probabilistically on the previous word only.
-バイグラムモデルでは、次の単語の選択は、前の単語のみに確率的に依存する。
+bi-gramモデル(n=binaryのケース?)では、**次の単語の選択は、前の単語のみに確率的に依存する**.
 Thus, a bi-gram is simply a first-order Markov chain whose states correspond to words.
-したがって、バイグラムは、単に、状態が単語に対応する一次マルコフ連鎖である。
+したがって、**bi-gramは、単に、stateが単語に対応する一次マルコフ連鎖**である。
 An n-gram is a n−1-order Markovian model in which the next state depends on the previous n − 1 states.
-n-gramは、次の状態が前のn - 1個の状態に依存するn-1次マルコフモデルである。
+**n-gramは、次の状態が前のn - 1個の状態に依存するn-1次マルコフモデル**である.
 Such variants of MDP-models are well known.
-このようなMDPモデルの変種はよく知られている。
+このようなMDPモデルの変種はよく知られている.
 A non-first-order Markovian model can be converted into a first-order model by making each state include information related to the previous n−1 states.
-非一次マルコフモデルは、各状態が前のn-1個の状態に関連する情報を含むようにすることで、一次モデルに変換することができます。
+非一次マルコフモデルは、**各stateが前のn-1個のstateに関連する情報を含むようにすることで、一次モデルに変換**することができる.($s_{t-1}$から$s_{t-n+1}$までの情報を含んだ一つのstate $s'_{t-1}$ とみなすイメージ??)
 More general transformation techniques that attempt to reduce the size of the state space have been investigated in the literature (for example, see Bacchus et al.
-状態空間のサイズを小さくしようとする、より一般的な変換技術が文献で研究されている（例えば、Bacchus et al.
-(1996); Thiebaux et al.
-(1996); Thiebaux et al.
-(2002))..
-(2002))..
+state空間のサイズを小さくしようとする、より一般的な変換技術が文献で研究されている（例えば、Bacchus et al.(1996); Thiebaux et al.(2002);
 
 # 3. The Predictive Model 予測モデル
 
 Our first step is to construct a predictive model of user purchases, that is, a model that can predict what item the user will buy next.
-まず、ユーザーの購買予測モデル、つまり、ユーザーが次にどのようなアイテムを購入するかを予測できるモデルを構築します。
+まず、ユーザの購買予測モデル、つまり、ユーザが次にどのようなアイテムを購入するかを予測できるモデルを構築する.
 This model does not take into account its influence on the user, as it does not model the recommendation process and its effects.
-このモデルでは、推薦のプロセスやその効果をモデル化していないため、ユーザーへの影響を考慮していない。
+このモデルでは、推薦のプロセスやその効果をモデル化していないため、ユーザへの影響を考慮していない.
 Nonetheless, we shall use a Markov chain, with an appropriate formulation of the state space, as our model.
-それでも、状態空間を適切に定式化したマルコフ連鎖をモデルとして使用することにする。
+それでも、**状態空間(state space)を適切に定式化したマルコフ連鎖をモデルとして使用することにする**.
 In Section 4 we shall show that our predictive model outperforms previous models, and in Section 5 we shall intialize our MDP-based recommender system using this predictive model..
-第4節では、本予測モデルが従来のモデルを凌駕することを示し、第5節では、本予測モデルを用いたMDPベースのレコメンダーシステムの初期化について述べる。
+第4節では、本予測モデルが従来のモデルを凌駕することを示し、第5節では、**本予測モデルを用いたMDPベースのレコメンダーシステムの初期化**について述べる.
 
-## 3.1. The Basic Model 基本モデルです。
+## 3.1. The Basic Model 基本モデル
 
 A Markov chain is a model of system dynamics – in our case, user “dynamics.” To use it, we need to formulate an appropriate notion of a user state and to estimate the state-transition function..
 マルコフ連鎖は、システムのダイナミクス（ここではユーザーの "ダイナミクス"）をモデル化したものです。マルコフ連鎖を利用するためには、ユーザーの状態に関する適切な概念を定式化し、状態遷移関数を推定することが必要である。
