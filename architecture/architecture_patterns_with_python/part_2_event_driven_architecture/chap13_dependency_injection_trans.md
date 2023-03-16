@@ -1,29 +1,30 @@
 # chapter 13. Dependency Injection (And Bootstrapping) 第13章 依存性注入（とブートストラップ）。
 
 Dependency injection (DI) is regarded with suspicion in the Python world.
-Pythonの世界では、依存性注入（DI）は疑惑の目で見られています。
+Pythonの世界では、**Dependency injection(依存性注入, DI)**は疑惑の目で見られています.
 And we’ve managed just fine without it so far in the example code for this book!.
-そして、本書のサンプルコードでは、これまでそれを使わずにうまくやりくりしてきたのです！。
+そして、本書のサンプルコードでは、これまでそれを使わずにうまくやりくりしてきたのである!
 
-In this chapter, we’ll explore some of the pain points in our code that lead us to consider using DI, and we’ll present some options for how to do it, leaving it to you to pick which you think is most Pythonic..
-この章では、DIの利用を検討するきっかけとなったコードの問題点を探り、その方法についていくつかの選択肢を提示し、あなたが最もPythonicだと思うものを選んでもらいます。
+In this chapter, we’ll explore some of the pain points in our code that lead us to consider using DI, and we’ll present some options for how to do it, leaving it to you to pick which you think is most Pythonic.
+この章では、DIの利用を検討するきっかけとなったコードの問題点を探り、その方法についていくつかの選択肢を提示し、あなたが最もPythonicだと思うものを選んでもらう.
 
 We’ll also add a new component to our architecture called bootstrap.py; it will be in charge of dependency injection, as well as some other initialization stuff that we often need.
-また、bootstrap.pyという新しいコンポーネントをアーキテクチャに追加します。このコンポーネントは、依存性の注入や、よく必要とされるその他の初期化を担当します。
+また、**bootstrap.pyという新しいコンポーネントをアーキテクチャに追加する**. このコンポーネントは、 Dependency Injection や、よく必要とされるその他の初期化を担当する.
 We’ll explain why this sort of thing is called a composition root in OO languages, and why bootstrap script is just fine for our purposes..
-このようなものをOO言語ではコンポジション・ルートと呼ぶが、なぜbootstrapスクリプトが我々の目的にはちょうどいいのか、その理由を説明する。
+このようなものをOO言語では **composition root** と呼ぶが、なぜ**bootstrap スクリプト**が我々の目的にはちょうどいいのか、その理由を説明する.
 
 Figure 13-1 shows what our app looks like without a bootstrapper: the entrypoints do a lot of initialization and passing around of our main dependency, the UoW..
-図13-1は、ブートストラッパーを使わない場合のアプリの様子を示しています。エントリーポイントは、多くの初期化と主要な依存関係であるUoWの受け渡しを行います。
+図13-1は、bootstrapper を使わない場合のアプリの様子を示している.
+エントリーポイントは、多くの初期化と主要な依存関係であるUoWの受け渡しを行う.
 
 ---.
 ---.
 
 TIP.
-TIPです。
+TIP.
 
 If you haven’t already, it’s worth reading Chapter 3 before continuing with this chapter, particularly the discussion of functional versus object-oriented dependency management..
-この章を読み進める前に、第3章を読んでおくとよいでしょう。特に、関数型依存性管理とオブジェクト指向型依存性管理の違いについて説明しています。
+この章を読み進める前に、第3章を読んでおくとよいでしょう. 特に、**関数型依存性管理(functional-oriented dependency managementF)とオブジェクト指向型依存性管理(object-oriented dependency management)の違い**について説明している.
 
 ---.
 ---.
@@ -34,7 +35,7 @@ If you haven’t already, it’s worth reading Chapter 3 before continuing with 
 ---.
 
 TIP.
-TIPです。
+TIPです.
 
 The code for this chapter is in the chapter_13_dependency_injection branch on GitHub:.
 この章のコードはGitHub: の chapter_13_dependency_injection ブランチにあります。
@@ -51,26 +52,26 @@ git checkout chapter_12_cqrs
 ---.
 
 Figure 13-2 shows our bootstrapper taking over those responsibilities..
-図13-2は、ブートストラッパーがこれらの責任を引き継いでいる様子を示しています。
+図13-2は、ブートストラッパーがこれらの責任を引き継いでいる様子を示している.
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_1302.png)
 
 ## Implicit Versus Explicit Dependencies Implicit Versus Explicit Dependencies (暗黙の依存と明示の依存).
 
 Depending on your particular brain type, you may have a slight feeling of unease at the back of your mind at this point.
-あなたの脳のタイプによっては、この時点で心の奥底にちょっとした不安を感じるかもしれません。
+あなたの脳のタイプによっては、この時点で心の奥底にちょっとした不安を感じるかもしれない.
 Let’s bring it out into the open.
-表に出していきましょう。
+表に出していきましょう.
 We’ve shown you two ways of managing dependencies and testing them..
-依存関係を管理し、テストする2つの方法を紹介しました。
+依存関係を管理し、テストする2つの方法を紹介した.
 
 For our database dependency, we’ve built a careful framework of explicit dependencies and easy options for overriding them in tests.
-データベースの依存関係については、明示的な依存関係と、テストでそれを上書きするための簡単なオプションという、慎重な枠組みを構築しました。
+データベースの依存関係については、明示的な依存関係と、テストでそれを上書きするための簡単なオプションという、慎重な枠組みを構築した.
 Our main handler functions declare an explicit dependency on the UoW:.
-私たちのメインハンドラ関数は、UoW:への明示的な依存を宣言しています。
+私たちのメインハンドラ関数は、UoW:への明示的な依存を宣言している.
 
 Our handlers have an explicit dependency on the UoW (src/allocation/service_layer/handlers.py).
-私たちのハンドラは、UoWに明示的に依存しています（src
+私たちのハンドラは、UoWに明示的に依存している.(まあuowを引数にとってるから分かる...)
 
 ```python
 def allocate(
@@ -79,7 +80,7 @@ def allocate(
 ```
 
 And that makes it easy to swap in a fake UoW in our service-layer tests:.
-そのため、サービスレイヤーのテストでは、偽のUoWを簡単に入れ替えることができます：。
+そのため、サービスレイヤーのテストでは、偽のUoWを簡単に入れ替えることがで着る:
 
 Service-layer tests against a fake UoW: (tests/unit/test_services.py).
 偽UoWに対するサービスレイヤーのテスト：（テスト
@@ -90,10 +91,10 @@ Service-layer tests against a fake UoW: (tests/unit/test_services.py).
 ```
 
 The UoW itself declares an explicit dependency on the session factory:.
-UoW自身は、セッションファクトリ:への依存を明示的に宣言しています。
+UoW自身は、session factory:への依存を明示的に宣言している. (**explicit depencyを宣言している=>引数に取ってる...!!**)
 
 The UoW depends on a session factory (src/allocation/service_layer/unit_of_work.py).
-UoWは、セッションファクトリ（src）に依存しています。
+UoWは、セッションファクトリ（src）に依存している.
 
 ```python
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
@@ -104,27 +105,27 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
 ```
 
 We take advantage of it in our integration tests to be able to sometimes use SQLite instead of Postgres:.
-私たちの統合テストでは、Postgres:の代わりにSQLiteを使用することができるように、この機能を活用しています。
+私たちの統合テストでは、Postgres:の代わりにSQLiteを使用することができるように、この機能を活用している.
 
 Integration tests against a different DB (tests/integration/test_uow.py).
-異なるDBに対する統合テスト（テスト
+異なるDBに対する統合テスト.
 
 ```python
 def test_rolls_back_uncommitted_work_by_default(sqlite_session_factory):
     uow = unit_of_work.SqlAlchemyUnitOfWork(sqlite_session_factory)  1
 ```
 
-1. Integration tests swap out the default Postgres session_factory for a SQLite one. 統合テストでは、デフォルトのPostgresのsession_factoryをSQLiteのsession_factoryに置き換えています。
+1. Integration tests swap out the default Postgres session_factory for a SQLite one. 統合テストでは、デフォルトのPostgresのsession_factoryをSQLiteのsession_factoryに置き換えている.
 
 ## Aren’t Explicit Dependencies Totally Weird and Java-y? Explicit Dependencies Aren't Totally Weird and Java-y?
 
 If you’re used to the way things normally happen in Python, you’ll be thinking all this is a bit weird.
-Pythonで普通に物事が起こる方法に慣れていると、このすべてが少し奇妙に思えることでしょう。
+Pythonで普通に物事が起こる方法に慣れていると、このすべてが少し奇妙に思えることだろう.
 The standard way to do things is to declare our dependency implicitly by simply importing it, and then if we ever need to change it for tests, we can monkeypatch, as is Right and True in dynamic languages:.
-標準的なやり方は、インポートすることで暗黙のうちに依存関係を宣言し、テスト用に変更する必要がある場合は、動的言語におけるRight and Trueのように、monkeypatchで対応します。
+標準的なやり方は、**インポートすることで暗黙のうちに依存関係を宣言**(=implicit dependencyの宣言はimport文なんだ...!!)し、テスト用に変更する必要がある場合は、動的言語におけるRight and Trueのように、monkeypatchで対応する.
 
 Email sending as a normal import-based dependency (src/allocation/service_layer/handlers.py).
-通常のインポートベースの依存関係としてのメール送信（src
+通常のインポートベースの依存関係としてのメール送信.
 
 ```python
 from allocation.adapters import email, redis_eventpublisher  1
@@ -139,15 +140,14 @@ def send_out_of_stock_notification(
     )
 ```
 
-1. Hardcoded import ハードコードされた輸入品です。
+1. Hardcoded import ハードコードされたimport文(=declaring implicit dependency...!)
 
-2. Calls specific email sender directly 特定のメール送信者に直接電話をかけます。
+2. Calls specific email sender directly 特定のメール送信者に直接連絡する.
 
 Why pollute our application code with unnecessary arguments just for the sake of our tests? `mock.patch` makes monkeypatching nice and easy:.
-テストのためだけに、不必要な引数でアプリケーションコードを汚すのはいかがなものでしょうか？mock.patch`を使えば、モンキーパッチを簡単に作成できます。
+テストのためだけに、不必要な引数でアプリケーションコードを汚すのはいかがなものでしょうか？mock.patch`を使えば、モンキーパッチ(?)を簡単に作成できる.
 
 mock dot patch, thank you Michael Foord (tests/unit/test_handlers.py).
-mock dot patch, thank you Michael Foord (tests)
 
 ```python
     with mock.patch("allocation.adapters.email.send") as mock_send_mail:
@@ -155,32 +155,32 @@ mock dot patch, thank you Michael Foord (tests)
 ```
 
 The trouble is that we’ve made it look easy because our toy example doesn’t send real email (`email.send_mail` just does a `print`), but in real life, you’d end up having to call `mock.patch` for every single test that might cause an out-of-stock notification.
-問題は、このおもちゃの例では実際のメールを送信しないので（`email.send_mail`は単に`print`を実行するだけです）、簡単に見えるのですが、現実には、在庫切れの通知を引き起こすかもしれないテストごとに `mock.patch` を呼び出さなければならないことになってしまうという点です。
+問題は、このおもちゃの例では実際のメールを送信しないので（`email.send_mail`は単に`print`を実行するだけ!）、簡単に見えるのですが、現実には、在庫切れの通知を引き起こすかもしれないテストごとに `mock.patch` を呼び出さなければならないことになってしまうという点である.
 If you’ve worked on codebases with lots of mocks used to prevent unwanted side effects, you’ll know how annoying that mocky boilerplate gets..
-望まない副作用を防ぐためにモックを多用するコードベースで仕事をしたことがある人なら、モック的なボイラープレートがどれほど煩わしいかわかるでしょう。
+**望まない副作用を防ぐためにモックを多用するコードベースで仕事をしたことがある人なら、モック的なボイラープレートがどれほど煩わしいかわかるだろう**.
 
 And you’ll know that mocks tightly couple us to the implementation.
-そして、モックは私たちと実装をしっかりと結びつけてくれることがお分かりいただけると思います。
+そして、モックは私たちと実装をしっかりと結びつけてくれる(?)ことがお分かりいただけると思う.
 By choosing to monkeypatch `email.send_mail`, we are tied to doing `import email`, and if we ever want to do `from email import send_mail`, a trivial refactor, we’d have to change all our mocks..
-email.send_mail`をmonkeypatchすることで、`import email`に縛られ、もし、`from email import send_mail`をしたい場合、些細なリファクターですが、モックを全て変更しなければなりません。
+email.send_mail`をmonkeypatchすることで、`import email`に縛られ、もし、`from email import send_mail`をしたい場合、些細なリファクターですが、モックを全て変更しなければならない.
 
 So it’s a trade-off.
-だから、トレードオフなんです。
+だから、トレードオフなんだ.
 Yes, declaring explicit dependencies is unnecessary, strictly speaking, and using them would make our application code marginally more complex.
-そうですね、明示的な依存関係の宣言は厳密に言えば不要ですし、それを使うとアプリケーションのコードがほんの少し複雑になりますね。
+そうですね、**明示的な依存関係の宣言は厳密に言えば不要だし、それを使うとアプリケーションのコードがほんの少し複雑になるよね**.
 But in return, we’d get tests that are easier to write and manage..
-でも、その代わり、書きやすく、管理しやすいテストが手に入る。
+でも、**その代わり、書きやすく、管理しやすいテストが手に入る**.
 
 On top of that, declaring an explicit dependency is an example of the dependency inversion principle—rather than having an (implicit) dependency on a specific detail, we have an (explicit) dependency on an abstraction:.
-その上、明示的な依存関係を宣言することは、依存関係の逆転の原則の一例となります。
+その上、明示的な依存関係を宣言することは、依存関係の逆転現象(**Dependency Inversion, SOLIDのD!!**)の一例である. 特定の詳細(ex. implementedクラス)に（暗黙の）依存するのではなく、抽象化(ex. interfaceクラス)に（明示的）依存するべきだ.
 
-> Explicit is better than implicit.
-> 暗黙の了解より明示的な方がいい＞。
----The Zen of Python.
----The Zen of Python.
+> **Explicit is better than implicit.**
+> implicit より Explicit な方がいい＞。
+> ---The Zen of Python.
+> ---The Zen of Python.
 
 The explicit dependency is more abstract (src/allocation/service_layer/handlers.py).
-明示的な依存関係はより抽象的である（src
+明示的な依存関係はより抽象的である.
 
 ```python
 def send_out_of_stock_notification(
@@ -193,29 +193,29 @@ def send_out_of_stock_notification(
 ```
 
 But if we do change to declaring all these dependencies explicitly, who will inject them, and how? So far, we’ve really been dealing with only passing the UoW around: our tests use `FakeUnitOfWork`, while Flask and Redis eventconsumer entrypoints use the real UoW, and the message bus passes them onto our command handlers.
-しかし、もしこれらの依存関係をすべて明示的に宣言するように変更した場合、誰がどのように注入するのでしょうか？テストは `FakeUnitOfWork` を使い、Flask と Redis のイベントコンシューマエントリポイントは本物の UoW を使い、メッセージバスはそれらをコマンドハンドラに渡します。
+しかし、**もしこれらの依存関係をすべて明示的に宣言するように変更した場合**、誰がどのように注入(=引数として注入するって意味??)するのでしょうか？テストは `FakeUnitOfWork` を使い、Flask と Redis のイベントコンシューマエントリポイントは本物の UoW を使い、メッセージバスはそれらをコマンドハンドラに渡す.
 If we add real and fake email classes, who will create them and pass them on?.
-本物のメールクラスと偽物のメールクラスを追加した場合、誰がそれを作成し、伝えるのか。
+本物のメールクラスと偽物のメールクラスを追加した場合、誰がそれを作成し、伝えるのか.
 
 That’s extra (duplicated) cruft for Flask, Redis, and our tests.
-これは、Flask、Redis、そしてテストのための余分な（重複した）残骸です。
+これは、Flask、Redis、そしてテストのための余分な（重複した）残骸である.
 Moreover, putting all the responsibility for passing dependencies to the right handler onto the message bus feels like a violation of the SRP..
-また、依存関係を適切なハンドラに渡すための責任をすべてメッセージバスに押し付けるのは、SRPに反するような気がします。
+また、**依存関係を適切なハンドラに渡すための責任をすべてメッセージバスに押し付けるのは、SRP(=単一責任の原則, SOLIDのS=Single Reponsibility)に反するような気がする**.
 
 Instead, we’ll reach for a pattern called Composition Root (a bootstrap script to you and me),1 and we’ll do a bit of “manual DI” (dependency injection without a framework).
-その代わりに、Composition Root（あなたと私のためのブートストラップスクリプト）1というパターンに手を伸ばし、「マニュアルDI」（フレームワークを使わない依存性注入）を少しやってみることにしましょう。
+その代わりに、**Composition Root(あなたと私のためのブートストラップスクリプト)というパターン**に手を伸ばし、**“manual DI” (フレームワークを使わない依存性注入)を少しやってみる**ことにしよう.
 See Figure 13-3.2.
 図13-3.2参照。
 
 ![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781492052197/files/assets/apwp_1303.png)
 
-## Preparing Handlers: Manual DI with Closures and Partials ハンドラーを準備する。クロージャとパーシャルを使った手動DI。
+## Preparing Handlers: Manual DI with Closures and Partials ハンドラーを準備する。クロージャとパーシャルを使った手動DI.
 
 One way to turn a function with dependencies into one that’s ready to be called later with those dependencies already injected is to use closures or partial functions to compose the function with its dependencies:.
-依存関係を持つ関数を、依存関係を注入した状態で後で呼び出せるようにする方法の1つは、クロージャや部分関数を使って、関数とその依存関係を合成することです：。
+依存関係を持つ関数を、依存関係を注入(明示的に注入?)した状態で後で呼び出せるようにする方法の1つは、クロージャや部分関数を使って、関数とその依存関係を合成することである:
 
 Examples of DI using closures or partial functions.
-クロージャや部分関数を使ったDIの例。
+クロージャや部分関数を使ったDIの例.
 
 ```python
 # existing allocate function, with abstract uow dependency
@@ -247,13 +247,13 @@ def bootstrap(..):
 allocate_composed(cmd)
 ```
 
-1. The difference between closures (lambdas or named functions) and `functools.partial` is that the former use late binding of variables, which can be a source of confusion if any of the dependencies are mutable. クロージャ（ラムダや名前付き関数）と`functools.partial`の違いは、前者が変数の後期バインディングを使うことです。
+1. The difference between closures (lambdas or named functions) and `functools.partial` is that the former use late binding of variables, which can be a source of confusion if any of the dependencies are mutable. クロージャ（ラムダや名前付き関数）と`functools.partial`の違いは、前者が変数の後期バインディングを使うことである(よくわからん...???)
 
 Here’s the same pattern again for the `send_out_of_stock_notification()` handler, which has different dependencies:.
-以下、同じパターンを `send_out_of_stock_notification()` ハンドラに対して再度示しますが、これは依存関係が異なります。
+以下、同じパターンを `send_out_of_stock_notification()` ハンドラに対して再度示しますが、これは依存関係が異なる.
 
 Another closure and partial functions example.
-もう一つのクロージャと部分関数の例。
+もう一つのクロージャと部分関数の例.
 
 ```python
 def send_out_of_stock_notification(
@@ -275,14 +275,14 @@ sosn_composed(event)  # will have email.send_mail already injected in
 ## An Alternative Using Classes クラスを使った代替案
 
 Closures and partial functions will feel familiar to people who’ve done a bit of functional programming.
-クロージャや部分関数は、関数型プログラミングを少しやったことがある人には馴染み深いものでしょう。
+**クロージャ(Closures)や部分関数(partial functions)**は、関数型プログラミングを少しやったことがある人には馴染み深いものだろう.(ふーん...なるほど??)
 Here’s an alternative using classes, which may appeal to others.
-ここでは、クラスを使った代替案を紹介しますが、これは他の人にもアピールできるかもしれません。
+ここでは、**クラスを使った代替案**を紹介しますが、これは他の人にもアピールできるかもしれない.
 It requires rewriting all our handler functions as classes, though:.
-そのためには、ハンドラ関数をすべてクラスとして書き換える必要がありますが......。
+そのためには、ハンドラ関数をすべてクラスとして書き換える必要がありますが......
 
 DI using classes.
-クラスを使用したDI。
+クラスを使用したDI.(Dependency Injection)
 
 ```python
 # we replace the old `def allocate(cmd, uow)` with:
@@ -310,28 +310,28 @@ allocate = AllocateHandler(uow)
 allocate(cmd)
 ```
 
-1. The class is designed to produce a callable function, so it has a `call` method. このクラスは呼び出し可能な関数を生成するように設計されているので、`call`メソッドを持っています。
+1. The class is designed to produce a callable function, so it has a `call` method. このクラスは呼び出し可能な関数を生成するように設計されているので、`call`メソッドを持っている.
 
-2. But we use the `init` to declare the dependencies it requires. This sort of thing will feel familiar if you’ve ever made class-based descriptors, or a class-based context manager that takes arguments. しかし、それが必要とする依存関係を宣言するために、`init`を使用します。 このようなことは、クラスベースのディスクリプタや、引数を受け取るクラスベースのコンテキストマネージャを作ったことがある人なら、よく感じることでしょう。
+2. But we use the `init` to declare the dependencies it requires. This sort of thing will feel familiar if you’ve ever made class-based descriptors, or a class-based context manager that takes arguments. しかし、それが必要とする依存関係を宣言するために、`init`を使用する. このようなことは、クラスベースのディスクリプタや、引数を受け取るクラスベースのコンテキストマネージャを作ったことがある人なら、よく感じることだろう.
 
 Use whichever you and your team feel more comfortable with..
-あなたやあなたのチームが使いやすいほうを選んでください。
+あなたやあなたのチームが使いやすいほうを選んでください.
 
-## A Bootstrap Script Bootstrapスクリプトです。
+## A Bootstrap Script Bootstrapスクリプト
 
 We want our bootstrap script to do the following:.
-私たちは、ブートストラップ・スクリプトに次のことをさせたいと考えています。
+私たちは、**ブートストラップ・スクリプト**に次のことをさせたいと考えている.
 
-1. Declare default dependencies but allow us to override them デフォルトの依存関係を宣言するが、それを上書きすることができるようにする。
+1. Declare default dependencies but allow us to override them デフォルトの依存関係を宣言するが、それを上書きすることができるようにする.
 
-2. Do the “init” stuff that we need to get our app started アプリを起動するために必要な「init」処理を行います。
+2. Do the “init” stuff that we need to get our app started アプリを起動するために必要な"init"処理を行う.
 
-3. Inject all the dependencies into our handlers すべての依存関係をハンドラーにインジェクトします。
+3. Inject all the dependencies into our handlers **すべての依存関係をハンドラーにインジェクト**する.(??)
 
-4. Give us back the core object for our app, the message bus アプリのコアオブジェクトであるメッセージバスを返してください。
+4. Give us back the core object for our app, the message bus アプリのコアオブジェクトであるメッセージバスを返してほしい.
 
 Here’s a first cut:.
-以下、ファーストカット：です。
+以下、ファーストカット：
 
 A bootstrap function (src/allocation/bootstrap.py).
 ブートストラップ関数（src

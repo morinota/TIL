@@ -1,8 +1,8 @@
-fun main() {
-    println("Hello World")
-    println(hogehoge(2))
+fun main(){
+    val fruits = listOf("banana", "avocado", "apple", "kiwifruit")
+    fruits.filter { it.startsWith("a") }.sortedBy { it }.map { it.uppercase() }.forEach {
+        println(it)
+    }
+    println("hoge $fruits")
 }
 
-fun hogehoge(num: Int): Int {
-    return num * 2
-}

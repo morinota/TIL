@@ -42,3 +42,15 @@ fun sum(a: Int, b: Int): Int {
 fun sum(a: Int, b: Int) = a + b
 
 ```
+
+## Nullable values and null checks
+
+NULL値が可能な場合、参照は明示的にNULL可能であるとマークする必要がある。Nullableな型名には末尾に`?`が付く.
+
+`str`が整数を保持していない場合は`null`を返す。
+
+```kotlin
+fun parseInt(str: String): Int? {
+    // ...
+}
+```
