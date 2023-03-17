@@ -390,4 +390,9 @@ reward shaping を行わない control群のユーザに比べ、**treatment群�
 
 ## 次に読むべき論文は?
 
+- 推薦タスクをMarkov 決定過程 (MDP) として定式化し、RLアプローチを適用した最初の論文らしい?[An MDP-Based Recommender System](https://www.jmlr.org/papers/volume6/shani05a/shani05a.pdf)
+- DQN をニュース推薦に応用した論文 [DRN: A Deep Reinforcement Learning Framework for News Recommendation](https://dl.acm.org/doi/pdf/10.1145/3178876.3185994)
+
 ## お気持ち実装
+
+今週も余力なかったです...!(機会があれば今度...!)
