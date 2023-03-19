@@ -10,7 +10,7 @@ DRN: A Deep Reinforcement Learning Framework for News Recommendation.
 ## abstract abstract.
 
 In this paper, we propose a novel Deep Reinforcement Learning framework for news recommendation.
-本論文では、ニュース推薦のための新しいDeep Reinforcement Learningフレームワークを提案する。
+本論文では、ニュース推薦のための新しいDeep Reinforcement Learningフレームワークを提案する.
 Online personalized news recommendation is a highly challenging problem due to the dynamic nature of news features and user preferences.
 オンラインパーソナライズドニュースレコメンデーションは、ニュースの特徴やユーザーの好みがダイナミックに変化するため、非常に難しい問題である。
 Although some online recommendation models have been proposed to address the dynamic nature of news recommendation, these methods have three major issues.

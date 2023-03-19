@@ -428,323 +428,301 @@ In Section 4 we shall show that our predictive model outperforms previous models
 ## 3.1. The Basic Model 基本モデル
 
 A Markov chain is a model of system dynamics – in our case, user “dynamics.” To use it, we need to formulate an appropriate notion of a user state and to estimate the state-transition function..
-マルコフ連鎖は、システムのダイナミクス（ここではユーザーの "ダイナミクス"）をモデル化したものです。マルコフ連鎖を利用するためには、ユーザーの状態に関する適切な概念を定式化し、状態遷移関数を推定することが必要である。
+マルコフ連鎖は、システムのダイナミクス（ここではユーザの "ダイナミクス"）をモデル化したものである. マルコフ連鎖を利用するためには、**ユーザのstateに関する適切な概念を定式化**し、 **state-transition function を推定することが必要**である.
 
-States.
-状態です。
+### States.
+
 The states in our MC model represent the relevant information that we have about the user.
-MCモデルの状態は、ユーザーについて我々が持っている関連情報を表しています。
+MCモデルの state は、ユーザについて我々が持っている関連情報を表している.
 This information corresponds to previous choices made by users in the form of a set of ordered sequences of selections.
-この情報は、ユーザーが過去に行った選択に対応するもので、順序付けられた選択順序の集合の形をしています。
+この情報は、**ユーザが過去に行った選択に対応するもの(="どのアイテムを買った"みたいなログ...?)で、順序付けられた選択順序(sequences)の集合**の形をしている.
 We ignore data such as age or gender, although it could be beneficial.3 Thus, the set of states contains all possible sequences of user selections.
-年齢や性別のようなデータは、有益である可能性があるが、無視する。3 したがって、状態のセットは、ユーザーの選択のすべての可能なシーケンスを含む。
+**年齢や性別のようなデータは、有益である可能性があるが、無視する**. したがって、state のセットは、ユーザの選択のすべての可能な sequences を含む.
 Of course, this formulation leads to an unmanageable state space with the usual associated problems—data sparsity and MDP solution complexity.
-もちろん、この定式化は、データスパース性とMDP解の複雑さという、通常の関連問題を伴う扱いにくい状態空間をもたらす。
+もちろん、この定式化は、 データスパース性 と MDP解の複雑さ という、通常の関連問題を伴う扱いにくい state space をもたらす.
 To reduce the size of the state space, we consider only sequences of at most k items, for some relatively small value of k.
-状態空間のサイズを小さくするために、kの値が比較的小さい場合、最大でk個のアイテムのシーケンスのみを考慮する。
+state space のサイズを小さくするために、 $k$ の値が比較的小さい場合、最大で $k$ 個のアイテムの sequences のみを考慮する.
 We note that this approach is consistent with the intuition that the near history (for example, the current user session) often is more relevant than selections made less recently (for example, past user sessions).
-このアプローチは、近い履歴（例えば、現在のユーザーセッション）は、より最近（例えば、過去のユーザーセッション）に選択されたものよりも関連性が高いことが多いという直観と一致することに留意されたい。
+このアプローチは、近い履歴(ex. 現在のユーザセッション)は、より最近(ex. 過去のユーザセッション)に選択されたものよりも関連性が高いことが多いという直観と一致することに留意されたい.
 These sequences are represented as vectors of size k.
-これらの配列は、サイズkのベクトルとして表現される。
-In particular, we use hx1,...,xki to denote the state in which the user’s last k selected items were x1, .
-特に、hx1,...,xkiを使用して、ユーザーの直近のk個の選択項目がx1, .
-.
-.
-.
-.
-, xk.
-を、xk。
+**これらの配列(sequences)は、サイズ$k$のベクトルとして表現される**.
+In particular, we use $<x_1, \cdots,x_k>$ to denote the state in which the user’s last k selected items were $x_1, \cdots x_k$.
+特に、**ユーザの直近のk個の選択アイテムが $x_1, \cdots, x_k$ であった状態を $<x_1, \cdots, x_k>$ と表現する**.
 Selection sequences with l < k items are transformed into a vector in which x1 through xk−l have the value missing.
-l＜k個の選択配列は、x1〜xk-lの値がmissingとなるベクトルに変換される。
+$l＜k$ 個の選択配列(=直近の選択アイテム数がk個に満たない場合!)は、$x_1$ ~ $x_{k-l}$の値がmissingとなるベクトルに変換される.
 The initial state in the Markov chain is the state in which every entry has the value missing.
-マルコフ連鎖の初期状態は、すべてのエントリーが値missingを持つ状態である。
-4 In our experiments, we used values of k ranging from 1 to 5..
-4 実験では、kの値を1～5まで使用した。
+**マルコフ連鎖の初期状態は、すべてのエントリーがvalue missingを持つ状態**である.
+In our experiments, we used values of k ranging from 1 to 5..
+実験では、kの値を1～5まで使用した.
 
-The Transition Function.
-トランジション機能です。
+### The state-Transition Function.
+
 The transition function for our Markov chain describes the probability that a user whose k recent selections were x1,...,xk will select the item x 0 next, denoted trMC(hx1, x2,...,xki,hx2,...,xk, x 0 i).
-マルコフ連鎖の遷移関数は、最近k回選択したアイテムがx1,...,xkであったユーザが次にx0を選択する確率を記述し、trMC（hx1, x2,...,xki,hx2,...,xk, x 0 i）と表記されます。
+**マルコフ連鎖の transition function は、直近 k 回選択したアイテムが $x_1,\cdots, x_k$ であるユーザが、次に $x'$ を選択する確率を記述**し、$tr_{MC}(<x_1, x_2, \cdots, x_k>, <x_2,\cdots, x_k, x'>)$と表記される.
 Initially, this transition function is unknown to us; and we would like to estimate it based on user data.
-この遷移関数は、当初は未知であり、ユーザーデータに基づいて推定したい。
+この transition function は、当初は未知であり、ユーザデータに基づいて推定したい.
 As mentioned, a maximum-likelihood estimate can be used:.
-前述したように、最尤推定を使用することができます：。
+前述したように、最尤推定を使用することができる：
 
 $$
+tr_{MC}(<x_1, x_2, x_3>, <x_2,x_3, x_4>) = \frac{const(<x_1, x_2, x_3, x_4>)}{const(<x_1, x_2, x_3>)}
 \tag{5}
 $$
 
-where count(hx1, x2,...,xki) is the number of times the sequence x1, x2,...,xk was observed in the data set.
-ここで、count(hx1, x2,...,xki) は、シーケンス x1, x2,...,xk がデータセットで観察された回数である。
-This model, however, still suffers from the problem of data sparsity (for example, see Sarwar et al.
-しかし、このモデルは、依然としてデータの疎密の問題に悩まされている（例えば、Sarwar et al.
-(2000a)) and performs poorly in practice.
-(2000a)）で、実際の性能は低い。
+where $const(<x_1, x_2, x_3, x_4>)$ is the number of times the sequence x1, x2,...,xk was observed in the data set.
+ここで、$const(<x_1, x_2, \cdots, x_k>)$ は、**シーケンス $x_1, x_2,...,x_k$ がデータセットで観察された回数**である.
+This model, however, still suffers from the problem of data sparsity (for example, see Sarwar et al.(2000a)) and performs poorly in practice.
+**しかし、このモデルは、依然としてデータの疎密の問題に悩まされており(ex. Sarwar et al.(2000a))、実際の性能は低い**.
 In the next section, we describe several techniques for improving the estimate..
-次節では、推定値を改善するためのいくつかの技法について説明する。
+次節では、推定値を改善するためのいくつかの技法について説明する.
 
-## 3.2. Some Improvements いくつかの改善点。
+## 3.2. Some Improvements いくつかの改善点.
 
 We experimented with several enhancements to the maximum-likelihood n-gram model on data different from that used in our formal evaluation.
-最尤N-gramモデルについては、正式な評価で使用したデータとは異なるデータで、いくつかの機能拡張の実験を行いました。
+最尤N-gramモデルについては、正式な評価で使用したデータとは異なるデータで、いくつかの機能拡張の実験を行った.
 The improvements described and used here are those that were found to work well..
-ここで説明され、使用されている改良は、うまく機能することが確認されたものです。
+ここで説明され、使用されている改良は、うまく機能することが確認されたもの.
 
-One enhancement is a form of skipping (Chen and Goodman, 1996), and is based on the observation that the occurrence of the sequence x1, x2, x3 lends some likelihood to the sequence x1, x3.
-1つの強化はスキップの一種で（Chen and Goodman, 1996）、シーケンスx1, x2, x3の発生がシーケンスx1, x3にある程度の可能性を与えるという観察に基づいている。
+One enhancement is a form of skipping (Chen and Goodman, 1996), and is based on the observation that the occurrence of the sequence $x_1, x_2, x_3$ lends some likelihood to the sequence $x_1, x_3$.
+1つの強化はスキップの一種で（Chen and Goodman, 1996）、シーケンス$x_1, x_2, x_3$ の発生がシーケンス $x_1, x_3$ にある程度の可能性を与えるという観察に基づいている.(?? 次の例を見たらわかりやすかった!)
 That is, if a person bought x1, x2, x3, then it is likely that someone will buy x3 after x1.
-つまり、x1、x2、x3を買った人がいた場合、x1の次にx3を買う人がいる可能性が高い。
+**つまり、$x_1, x_2, x_3$ を買った人がいた場合、$x1$の次に$x3$を買う人がいる可能性が高い.**
 The particular skipping model that we found to work well is a simple additive model.
-私たちがうまく機能することを発見した特定のスキップモデルは、単純な加法モデルです。
+私たちがうまく機能することを発見した特定のスキップモデルは、**単純な加法モデル**である.
 First, the count for each state transition is initialized to the number of observed transitions in the data.
-まず、各状態遷移のカウントは、データで観測された遷移の数に初期化される。
-Then, given a user sequence x1, x2,...,xn, we add the fractional count 1/2 (j−(i+3)) to the transition from hxi , xi+1, xi+2i to hxi+1, xi+2, xji, for all i+3 < j ≤ n.
-次に、ユーザー列x1,x2,...,xnが与えられたとき、分数カウント1
+まず、各 state transition のカウントは、データで観測されたtransitionsの数に初期化される.
+Then, given a user sequence $x_1, x_2, \cdots, x_n$, we add the fractional count $1/2^{(j−(i+3))}$ to the transition from $<x_i, x_{i+1}, x_{i+2}$ to $<x_{i+1}, x_{i+2}, x_{j}>$, for all $i+3 < j <= n$.
+次に、ユーザ列 $x_1, x_2, \cdots, x_n$ が与えられたとき、すべての $i+3 < j <= n$ について、$<x_i, x_{i+1}, x_{i+2}>$ から $<x_{i+1}, x_{i+2}, x_{j}>$ への遷移(transition)に分数 $1/2^{(j−(i+3))}$ を追加する.(->分数を追加する意味って...?)
 This fractional count corresponds to a diminishing probability of skipping a large number of transactions in the sequence.
-この端数カウントは、シーケンス内の多数のトランザクションをスキップする確率が減少することに対応しています。
+この端数カウントは、シーケンス内の多数のトランザクションをスキップする確率が減少することに対応している.(??)
 We then normalize the counts to obtain the transition probabilities:.
-次に、カウントを正規化し、遷移確率を求める。
+次に、カウントを正規化し、遷移確率(transition probabilities)(=state sのユーザがs'にtransitionする確率質量?)を求める.
 
 $$
+tr_{MC}(s, s') = \frac{const(s, s')}{\sum_{s'} const(s,s')}
 \tag{6}
 $$
 
-where count(s,s 0 ) is the (fractional) count associated with the transition from s to s 0 ..
-ここで、count(s,s 0 )は、sからs 0への遷移に関連する（分数）カウントである。
+where $const(s, s')$ is the (fractional) count associated with the transition from s to s 0 ..
+ここで、$const(s, s')$ は、**sからs'へのtransitionに関連する(分数)カウント(??)**である.
 
 A second enhancement is a form of clustering that we have not found in the literature.
-2つ目の強化点は、文献にはないクラスタリングという形式を採用したことです。
+**2つ目の強化点**は、文献にはないクラスタリングという形式を採用したことである.
 Motivated by properties of our domain, the approach exploits similarity of sequences.
-このアプローチは、我々のドメインの特性から動機づけられ、シーケンスの類似性を利用するものである。
+このアプローチは、我々のドメインの特性から動機づけられ、シーケンスの類似性を利用するものである.
 For example, the state hx, y,zi and the state hw, y,zi are similar because some of the items appearing in the former appear in the latter as well.
-例えば、状態hx,y,ziと状態hw,y,ziは、前者に出現する項目の一部が後者にも出現するため、類似しています。
+例えば、state $<x,y,z>$ とstate $<w,y,z>$ は、**前者に出現するアイテムの一部が後者にも出現するため、類似している**.
 The essence of our approach is that the likelihood of transition from s to s 0 can be predicted by occurrences from t to s 0 , where s and t are similar.
-このアプローチの本質は、sとtが類似している場合、sからs 0への移行の尤度を、tからs 0への発生によって予測できることである。
+**このアプローチの本質は、$s$ と $t$ が類似している場合、$s$ から $s'$ への遷移(transition)の尤度を、$t$から$s'$への発生によって予測できること**である.
 In particular, we define the similarity of states si and sj to be.
-特に、状態siとsjの類似性を次のように定義する。
+特に、state $s_i$ と $s_j$ の類似性を次のように定義する.
 
 $$
+sim(s_i,s_j) = \sum_{m=1}^{k} \delta(s_{i}^{m}, s_{j}^{m})\cdot (m + 1)
 \tag{7}
 $$
 
-where δ(·,·) is the Kronecker delta function and s m i is the mth item in state si .
-ここで、δ(-,-)はクロネッカーデルタ関数、s m i は状態 si における m 番目のアイテムである。
+where $\delta(\cdot ,\cdot)$ is the Kronecker delta function and s m i is the mth item in state si .
+ここで、$\delta(\cdot ,\cdot)$ は**クロネッカーデルタ関数**、$s^{m}_{i}$ はstate $s_i$ における m 番目のアイテムである.
 This similarity is arbitrary up to a constant.
-この類似性は一定まで任意である。
+この類似性は一定まで任意である.
 In addition, we define the similarity count from state s to s 0 to be.
-また、状態sからs 0への類似度カウントを次のように定義する。
+また、state $s$ から $s'$ への類似度カウント(カウント??)を次のように定義する.
 
 $$
+simcount(s, s') = \sum_{s_i} sim(s,s_{i})\cdot tr_{MC}^{old}(s_i, s')
 \tag{8}
 $$
 
-where trold MC(si ,s 0 ) is the original transition function, with or without skipping (we shall compare the models created with and without the benefit of skipping).
-ここで、trold MC(si ,s 0 )は、スキップの有無にかかわらず、元の遷移関数である（スキップの恩恵の有無で作成したモデルを比較することにする）。
+where $tr_{MC}^{old}(s_i, s')$ is the original transition function, with or without skipping (we shall compare the models created with and without the benefit of skipping).
+ここで、$tr_{MC}^{old}(s_i, s')$ は、スキップの有無にかかわらず、**元のtransition function** である(スキップの恩恵の有無で作成したモデルを比較することにする).
 The new transition probability from s 0 to s is then given by5.
-そして、s 0からsへの新しい遷移確率は、次式で与えられる5。
+そして、$s'$ から$s$への新しい遷移確率は、次式で与えられる:
 
 $$
+tr_{MC}(s, s') = \frac{1}{2} tr_{MC}^{old}(s, s')
++ \frac{1}{2} \frac{simcount(s, s')}{\sum_{s''} simcount(s,s'')}
 \tag{9}
 $$
 
-A third enhancement is the use of finite mixture modeling.6 Similar methods are used in ngram models, where—for example—a trigram, a bigram, and a unigram are combined into a single model.
-同様の手法は、例えば、トリグラム、ビッグラム、ユニグラムを1つのモデルに統合する、ヌグラムモデルでも使用されています6。
+A third enhancement is the use of finite mixture modeling.6 Similar methods are used in n-gram models, where—for example—a trigram, a bigram, and a unigram are combined into a single model.
+同様の手法は、例えば、trigram(n=3)、bigram(n=2?)、unigram(n=1)を1つのモデルに統合する、n-gramモデルでも使用されている.
 Our mixture model is motivated by the fact that larger values of k lead to states that are more informative whereas smaller values of k lead to states on which we have more statistics.
-この混合モデルは、kの値が大きいほど情報量の多い状態になり、kの値が小さいほど統計量の多い状態になるという事実に基づいています。
+**この混合モデルは、kの値が大きいほど情報量の多い状態になり、kの値が小さいほど統計量の多い状態になるという事実に基づいている**.(情報量と統計量の値定義を調べた方がよさそう...!)
 To balance these conflicting properties, we mix k models, where the ith model looks at the last i transactions.
-これらの相反する特性のバランスをとるために、k個のモデルを混合し、i番目のモデルは直近のi個のトランザクションを見るようにする。
+これらの相反する特性のバランスをとるために、k個のモデルを混合し、i番目のモデルは直近のi個のトランザクションを見るようにする.
 Thus, for k = 3, we mix three models that predict the next transaction based on the last transaction, the last two transactions, and the last three transactions.
-したがって、k = 3の場合、最後の取引、最後の2つの取引、最後の3つの取引に基づいて次の取引を予測する3つのモデルを混合する。
+したがって、**k = 3の場合**、最後のtransaction、最後の2つのtransactions、最後の3つのtransactionsに基づいて次の取引を予測する、**3つのモデルを混合する**.
 In general, we can learn mixture weights from data.
-一般的には、データから混合物の重みを学習することができます。
+一般的には、データから混合物の重みを学習することができる.
 We can even allow the mixture weights to depend on the given case (and informal experiments on our data suggest that such context-specificity would improve predictive accuracy).
-また、混合比の重みが与えられたケースに依存するようにすることもできます（私たちのデータに対する非公式な実験では、このような文脈特異性が予測精度を向上させることが示唆されています）。
+また、混合比の重みが与えられたケースに依存するようにすることもできる(私たちのデータに対する非公式な実験では、このような文脈特異性が予測精度を向上させることが示唆されている)
 Nonetheless, for simplicity, we use π1 = ··· = πk = 1/k in our experiments.
-それにもかかわらず、簡単のために、π1＝---＝πk＝1とする。
+ただ我々の実験では、簡単のために、$\pi_1 = \cdots = \pi_k = \frac{1}{k}$ とする.
 Because our primary model is based on the k last items, the generation of the models for smaller values entails little computational overhead..
-我々の主要なモデルは最後のk個のアイテムに基づいているため、より小さな値のモデルの生成はほとんど計算オーバーヘッドを必要としない。
+我々の主要なモデルは直近のk個のアイテムに基づいているため、より小さな値のモデルの生成はほとんど計算オーバーヘッドを必要としない(=混合するか否かは計算量に影響を与えない、みたいな意味??).
 
 # 4. Evaluation of the Predictive Model 予測モデルの評価
 
 Before incorporating our predictive model into an MDP-based recommender system, we evaluated the accuracy of the predictive model.
-MDPベースのレコメンダーシステムに予測モデルを組み込む前に、予測モデルの精度を評価しました。
+MDPベースのレコメンダーシステムに予測モデルを組み込む前に、予測モデルの精度を評価した.
 Our evaluation used data corresponding to user behavior on a web site (without recommendation) and employed the evaluation metrics commonly used in the collaborative filtering literature.
-評価には、Webサイト上でのユーザーの行動（推薦なし）に相当するデータを使用し、協調フィルタリングの文献で一般的に使用されている評価指標を採用しました。
+**評価には、Webサイト上でのユーザの行動(推薦なし)に相当するデータを使用**し、協調フィルタリングの文献で一般的に使用されている評価指標を採用した.
 In Section 6 we evaluate the MDP-based approach using an experimental approach in which recommendations on an e-commerce site are manipulated by our algorithms..
-セクション6では、電子商取引サイトのレコメンデーションが我々のアルゴリズムによって操作される実験的アプローチを用いて、MDPベースのアプローチを評価する。
+セクション6では、電子商取引サイトのレコメンデーションが我々のアルゴリズムによって操作される実験的アプローチを用いて、MDPベースのアプローチを評価する.
 
 ## 4.1. Data Sets データセット
 
 We base our evaluations on real user transactions from the Israeli online bookstore Mitos(www.mitos.co.il).
-イスラエルのオンライン書店Mitos(www.mitos.co.il)の実際のユーザー取引に基づく評価を行っています。
+イスラエルのオンライン書店Mitos(www.mitos.co.il)の実際のユーザ取引に基づく評価を行っている.
 Two data sets were used: one containing user transactions (purchases) and one containing user browsing paths obtained from web logs.
-ユーザーのトランザクション（購入）を含むデータセットと、ウェブログから取得したユーザーのブラウジングパスを含むデータセットの2つを使用しました。
-We filtered out items that were bought/visited less than 100 times and users who bought/browsed no more than one item as is commonly done when evaluating predictive models (for example, Zimdars et al.
-購入された商品をフィルタリングしました
-(2001)).
-(2001)).
+ユーザのトランザクション(購入)を含むデータセットと、ウェブログから取得したユーザのブラウジングパスを含むデータセットの2つを使用した.
+We filtered out items that were bought/visited less than 100 times and users who bought/browsed no more than one item as is commonly done when evaluating predictive models (for example, Zimdars et al.(2001)).
+**予測モデルを評価する際によく行われるように、購入・閲覧回数が100回以下のアイテムや、購入・閲覧回数が1回以下のユーザをフィルタリングした**（例えば、Zimdars et al(2001))。
 We were left with 116 items and 10820 users in the transactions data set, and 65 items and 6678 users in the browsing data set.7 In our browsing data, no cookies were used by the site.
-その結果，トランザクションデータセットとして116アイテム，10820ユーザー，ブラウジングデータセットとして65アイテム，6678ユーザーが残された7。ブラウジングデータでは，サイトがクッキーを使用していない。
+その結果，トランザクションデータセットとして116アイテム，10820ユーザー，ブラウジングデータセットとして65アイテム，6678ユーザーが残された7。ブラウジングデータでは，サイトがクッキーを使用していない.
 If the same user visited the site with a new IP address, then we would treat her as a new user.
-同じユーザーが新しいIPアドレスでサイトを訪れた場合、新しいユーザーとして扱われます。
+同じユーザが新しいIPアドレスでサイトを訪れた場合、新しいユーザーとして扱われる.
 Also, activity on the same IP address was attributed to a new user whenever there were no requests for two hours.
-また、同じIPアドレスでのアクティビティは、2時間リクエストがない場合、新しいユーザーに帰属していました。
+また、同じIPアドレスでのアクティビティは、2時間リクエストがない場合、新しいユーザーに帰属していた.
 These data sets were randomly split into a training set (90% of the users) and a test set (10% of the users)..
-これらのデータセットは、ランダムにトレーニングセット（ユーザーの90％）とテストセット（ユーザーの10％）に分割されました。
+これらのデータセットは、ランダムにトレーニングセット（ユーザーの90％）とテストセット（ユーザーの10％）に分割された.
 
 The rational for removing items that were rarely bought is that they cannot be reliably predicted.
-ほとんど買われなかったものを削除する根拠は、確実な予測ができないからです。
-This is a conservative approach which implies, in practice, that a rarely visited item will not be recommended by the system, at least initially..
-これは保守的なアプローチであり、実際には、めったに訪れないアイテムは、少なくとも最初はシステムによって推奨されないことを意味します。
+ほとんど買われなかったアイテムを削除した(フィルタリングした)根拠は、確実な予測ができないからである.
+This is a conservative approach which implies, in practice, that a rarely visited item will not be recommended by the system, at least initially.
+これは保守的なアプローチであり、実際には、めったに訪れないアイテムは、少なくとも最初はシステムによって推薦されないことを意味する.
 
 We evaluated predictions as follows.
-予測値の評価は以下のように行いました。
-For every user sequence t1,t2,..,tn in the test set, we generated the following test cases:.
-テストセット内の各ユーザーシーケンスt1,t2,...,tnに対して、以下のテストケースを生成した。
+予測値の評価は以下のように行った.
+For every user sequence $t_1,t_2,\cdots,t_n$ in the test set, we generated the following test cases:.
+テストセット内の各ユーザ sequence $t_1,t_2,\cdots,t_n$ に対して、以下のテストケースを生成した.
 
 $$
+<t_1>, <t_1, t_2>, \cdots, <t_{n-k}, t_{n-k + 1}, \cdots, t_{n-1}>
 \tag{10}
 $$
 
-closely following tests done by Zimdars et al.
-Zimdarsらによって行われたテストに密着しています。
-(2001).
-(2001).
+closely following tests done by Zimdars et al.(2001).
+Zimdarsらによって行われたテストに密着している(2001).
 For each case, we then used our various models to determine the probability distribution for ti given ti−k,ti−k+1,...,ti−1 and ordered the items by this distribution.
-そして、それぞれのケースについて、様々なモデルを用いて、ti-k,ti-k+1,...,ti-1が与えられたときのtiの確率分布を求め、この分布によって項目を並べました。
+そして、それぞれのケースについて、様々なモデルを用いて、$t_{i-k},t_{i-k+1},\cdots, t_{i-1}$ が与えられたときの $t_{i}$ の確率分布(=**次にどのアイテムをinteractionするかって話だっけ...??**)を求め、この分布によってアイテムをソートした.
 Finally, we used the ti actually observed in conjunction with the list of recommended items to compute a score for the list..
-最後に、実際に観察されたtiと推奨アイテムのリストを合わせて、リストのスコアを算出しました。
+最後に、実際に観察された$t_i(=t_i番目にinteractionしたアイテム?)$と推薦アイテムのリスト(=$t_i$の予測値の順に降順ソートしたアイテムリスト??)を合わせて、リストのスコアを算出した.
 
 ## 4.2. Evaluation Metrics 評価指標
 
 We used two scores: Recommendation Score (RC) (Microsoft, 2002) and Exponential Decay Score (ED) (Breese et al., 1998) with slight modifications to fit into our sequential domain..
-我々は2つのスコアを使用した。Recommendation Score (RC) (Microsoft, 2002) と Exponential Decay Score (ED) (Breese et al., 1998) の2つのスコアを使用し、我々のシーケンシャルドメインに適合するように若干の修正を加えている．
+我々は2つのスコアを使用した. Recommendation Score (RC) (Microsoft, 2002) と Exponential Decay Score (ED) (Breese et al., 1998) の2つのスコアを使用し、我々のシーケンシャルドメインに適合するように若干の修正を加えている.
 
 ### 4.2.1. Recommendation Score レコメンドスコア
 
 For this measure of accuracy, a recommendation is deemed successful if the observed item ti is among the top m recommended items (m is varied in the experiments).
-この精度の指標では、観測されたアイテムtiが上位m個の推奨アイテムの中にあれば、推奨は成功したとみなされる（実験ではmは変化させる）。
+この精度の指標では、**観測されたアイテム $t_i$ が上位$m$個の推薦アイテムの中にあれば、推薦は成功したとみなされる**(実験では$m$は変化させる).
 The score RC is the percentage of cases in which the prediction is successful.
-スコアRCは、予測が成功したケースの割合である。
+**スコアRCは、予測が成功したケースの割合**.
 A score of 100 means that the recommendation was successful in all cases.
-100点満点は、すべてのケースで推薦が成功したことを意味します。
+100点満点は、すべてのケースで推薦が成功したことを意味する.
 This score is meaningful for commerce sites that require a short list of recommendations and therefore care little about the ordering of the items in the list..
-このスコアは、短い推奨リストを必要とし、したがってリスト内のアイテムの順序をあまり気にしないコマースサイトに有意義である。
+このスコアは、短い推薦リストを必要とし、したがって**リスト内のアイテムの順序をあまり気にしないコマースサイトに有意義**である.
 
-### 4.2.2. Exponential Decay Score 指数関数的減衰スコア。
+### 4.2.2. Exponential Decay Score 指数関数的減衰スコア
 
 This measure of accuracy is based on the position of the observed ti on the recommendation list, thus evaluating not only the content of the list but also the order of items in it.
-この精度の指標は、推薦リストにおける観測されたtiの位置に基づいているため、リストの内容だけでなく、リスト内のアイテムの順序も評価されます。
+この精度の指標は、**推薦リストにおける観測された $t_i$ の位置に基づいている**ため、リストの内容だけでなく、**リスト内のアイテムの順序も評価される**.
 The underlying assumption is that users are more likely to select a recommendation near the top of the list.
-ユーザーがリストのトップに近いレコメンドを選択する可能性が高いというのが根本的な前提です。
+ユーザがリストのトップに近いレコメンドを選択する可能性が高いというのが根本的な前提.
 In particular, it is assumed that a user will actually see the mth item in the list with probability.
-特に、ユーザがリストのm番目の項目を実際に見ることは確率的に想定されている。
+特に、ユーザがリストの$m$番目のアイテムを実際に見ることは確率的に想定されている.
 
 $$
+p(m) = 2^{-\frac{(m-1)}{(\alpha - 1)}}, (m \geq 1)
 \tag{11}
 $$
 
 where α is the half-life parameter—the index of the item in the list with probability 0.5 of being seen.
-ここで、αは半減期パラメータ-リストの中で0.5%の確率で見られるアイテムのインデックス-である。
+ここで、$\alpha$ は**半減期パラメータ(half-life parameter)**=リストの中で0.5%の確率で見られるアイテムのインデックスである.
 The score is given by.
-スコアは、次のように与えられます。
+スコアは、次のように与えられる.
 
 $$
+100 \cdot \frac{\sum_{c \in C} p(m = pos(t_i|c))}{|C|}
 \tag{12}
 $$
 
-where C is the set of all cases, c = ti−k,ti−k+1,...,ti−1 is a case, and pos(ti |c) is the position of the observed item ti in the list of recommended items for c.
-c) is the position of the observed item ti in the list of recommended items for c.
-We used α = 5 in our experiments in order to be consistent with the experiments of Breese et al.
-Breeseらの実験と整合性を取るため、実験ではα＝5を使用した。
-(1998) and Zimdars et al.
-(1998)、Zimdars et al.
-(2001).
-(2001).
+where $C$ is the set of all cases, $c = t_{i−k},t_{i−k+1}, \cdots,t_{i−1}$ is a case, and $pos(t_i|c)$ is the position of the observed item $t_i$ in the list of recommended items for $c$.
+ここで、$C$は全ケースの集合、$c = t_{i-k},t_{i-k+1},\cdots,t_{i-1}$ はケース、$pos(t_i |c)$ は$c$のアイテムアイテムリストにおける観測アイテム$t_i$の位置である.
+We used α = 5 in our experiments in order to be consistent with the experiments of Breese et al.(1998) and Zimdars et al.(2001).
+Breese et al.(1998) and Zimdars et al.(2001)の実験と整合性を取るため、実験ではα＝5を使用した.
 The relative performance of the models was not sensitive to α..
-モデルの相対的な性能は、αに敏感ではなかった。
+モデルの相対的な性能は、αに敏感ではなかった.(=$\alpha$の影響をそんなに受けなかった.)
 
-## 4.3. Comparison Models 比較モデルです。
+## 4.3. Comparison Models 比較モデル.
 
 ### 4.3.1. Commerce Server 2000 Predictor Commerce Server 2000 Predictor.
 
-A model to which we compared our results is the Predictor tool developed by Microsoft as a part of Microsoft Commerce Server 2000, based on the models of Heckerman et al.
-今回の結果を比較したモデルとして、HeckermanらのモデルをベースにMicrosoft Commerce Server 2000の一部としてMicrosoft社が開発したPredictorツールがあります。
-(2000).
-(2000).
+A model to which we compared our results is the Predictor tool developed by Microsoft as a part of Microsoft Commerce Server 2000, based on the models of Heckerman et al.(2000).
+今回の結果を比較したモデルとして、HeckermanらのモデルをベースにMicrosoft Commerce Server 2000の一部としてMicrosoft社が開発したPredictorツールがある.
 This tool builds dependency-network models in which the local distributions are probabilistic decision trees.
-局所分布が確率的な決定木である依存関係ネットワークモデルを構築するツールです。
+局所分布が確率的な決定木である依存関係ネットワークモデルを構築するツールである.
 We used these models in both a non-sequential and sequential form.
-これらのモデルを、非連続型と連続型の両方で使用しました。
-These two approaches are described in Heckerman et al.
-これら2つのアプローチについては、Heckerman et al.に記載されています。
-(2000) and Zimdars et al.
-(2000)、Zimdars et al.
-(2001), respectively.
-(2001)をそれぞれ参照してください。
+これらのモデルを、非連続型と連続型の両方で使用した.
+These two approaches are described in Heckerman et al.(2000) and Zimdars et al.(2001), respectively.
+これら2つのアプローチについては、Heckerman et al.(2000)やZimdars et al.(2001)に記載されている.
+
 In the non-sequential approach, for every item, a decision tree is built that predicts whether the item will be selected based on whether the remaining items were or were not selected.
-非連続型では、すべての項目に対して、残りの項目が選ばれたか選ばれなかったかで、その項目が選ばれるかどうかを予測する決定木が構築されます。
+**non-sequential approachでは、すべてのアイテムに対して、残りのアイテムが選ばれたか選ばれなかったかで、そのアイテムが選ばれるかどうかを予測する決定木が構築**される.
 In the sequential approach, for every item, a decision tree is built that predicts whether the item will be selected next, based on the previous k items that were selected.
-逐次方式では、すべての項目に対して、過去に選択されたk個の項目に基づいて、次にその項目が選択されるかどうかを予測する決定木が構築されます。
+sequential approachでは、すべてのアイテムに対して、過去に選択されたk個のアイテムに基づいて、次にそのアイテムが選択されるかどうかを予測する決定木が構築される.
 The predictions are normalized to account for the fact that only one item can be predicted next.
-予測値は、次に予測できる項目が1つだけであることを考慮して正規化されています。
-Zimdars et al.
-Zimdars et al.
-(2001) also use a “cache” variable, but preliminary experiments showed it to decrease predictive accuracy.
-(2001)も「キャッシュ」変数を用いているが、予備実験では予測精度を低下させることがわかった。
+予測値は、次に予測できるアイテムが1つだけであることを考慮して正規化されている.
+Zimdars et al.(2001) also use a “cache” variable, but preliminary experiments showed it to decrease predictive accuracy.
+Zimdars et al.(2001)も“cache” variableを用いているが、予備実験では予測精度を低下させることがわかった.
 Consequently, we did not use the cache variable in our formal evaluation..
-そのため、正式な評価では、キャッシュ変数を使用しませんでした。
+そのため、正式な評価では、キャッシュ変数を使用しなかった.
 
 These algorithms appear to be the most competitive among published work.
-これらのアルゴリズムは、公開されている作品の中で最も競争力があると思われます。
-The combined results of Breese et al.
-Breeseらの結果を総合すると
-(1998) and Heckerman et al.
-(1998)、Heckerman et al.
-(2000) show that (non-sequential) dependency networks are no less accurate than Bayesian-network or clustering models, and about as accurate as Correlation, the most accurate (but computationally expensive) memory-based method.
-(2000)は、（非連続）依存性ネットワークは、ベイジアンネットワークやクラスタリングモデルに劣らず、最も正確な（しかし計算コストのかかる）メモリベースの方法であるCorrelationとほぼ同じ精度であることを示しています。
-Sarwar et al.
-Sarwarら。
-(2000b) apply dimensionality reduction techniques to the user rating matrix, but their approach fails to be consistently more accurate than Correlation.
-(2000b)は、ユーザー評価行列に次元削減技術を適用したが、彼らのアプローチは、Correlationより一貫して正確であることを失敗した。
-Only the sequential algorithm of Zimdars et al.
-Zimdarsらの逐次アルゴリズムのみ。
-(2001) is more accurate than the non-sequential dependency network to our knowledge..
-(2001)は、我々の知る限り、非連続従属ネットワークより正確である。
+これらのアルゴリズムは、公開されている作品の中で最も競争力があると思われる.
+The combined results of Breese et al.(1998) and Heckerman et al.(2000) show that (non-sequential) dependency networks are no less accurate than Bayesian-network or clustering models, and about as accurate as Correlation, the most accurate (but computationally expensive) memory-based method.
+Breese et alらとeckerman et al.の結果を総合すると、(non-sequential)依存性ネットワークは、ベイジアンネットワークやクラスタリングモデルに劣らず、最も正確な(しかし計算コストのかかる)メモリベースの方法であるCorrelationとほぼ同じ精度であることを示している.
+Sarwar et al.(2000b) apply dimensionality reduction techniques to the user rating matrix, but their approach fails to be consistently more accurate than Correlation.
+Sarwarら(2000b)は、ユーザ評価行列に次元削減技術を適用したが、彼らのアプローチは、Correlationより一貫して正確であることを失敗した.
+Only the sequential algorithm of Zimdars et al.(2001) is more accurate than the non-sequential dependency network to our knowledge..
+Zimdarsらのsequentialアルゴリズム(2001)のみは、我々の知る限り、non-sequential従属ネットワークより正確である.
 
 We built five sequential models 1 ≤ k ≤ 5 for each of the data sets.
-各データセットについて、1≦k≦5の5つの逐次モデルを構築しました。
+各データセットについて、1≦k≦5の5つの逐次モデルを構築した.
 We refer to the non-sequential Predictor models as Predictor-NS, and to the Predictor models built using the data expansion methods with a history of length k as Predictor-k..
-非連続的なPredictorモデルをPredictor-NS、長さkの履歴を持つデータ拡張法を用いて構築したPredictorモデルをPredictor-kと呼ぶことにする。
+**non-sequentialなPredictorモデルをPredictor-NS**、**長さkの履歴を持つデータ拡張法を用いて構築したPredictorモデルをPredictor-k**と呼ぶことにする.
 
-### 4.3.2. Unordered MCs アンオーダーメイドのMC
+### 4.3.2. Unordered MCs
 
 We also evaluated a non-sequential version of our predictive model, where sequences such as hx, y,zi and hy,z, xi are mapped to the same state.
-また、hx,y,ziやhy,z,xiなどのシーケンスが同じ状態にマッピングされる、予測モデルの非シーケンシャル版も評価しました。
+また、$x,y,z$や$y,z,x$などのシーケンスが**同じ状態にマッピングされる、予測モデルのnon-sequential version**も評価した.
 If our assumption about the sequential nature of recommendations is incorrect, then we should expect this model to perform better than our MC model, as it learns the probabilities using more training data for each state, gathering all the ordered data into one unordered set.
-もし、レコメンデーションの順次性についての仮定が正しくない場合、このモデルは、各状態についてより多くのトレーニングデータを用いて確率を学習し、すべての順序付きデータを1つの順序なしセットに集めるので、MCモデルよりも良いパフォーマンスを示すと予想されます。
+もし、**レコメンデーションの順次性(sequential nature)についての仮定が正しくない場合**、このモデルは、各stateについてより多くのトレーニングデータを用いて確率を学習し、すべての順序付きデータを1つの順序なしセットに集めるので、MCモデルよりも良いパフォーマンスを示すと予想される.
 Skipping, clustering, and mixture modeling were included as described in section 2.
-スキップ、クラスタリング、混合モデリングは、セクション 2 で説明したように含まれています。
-We call this model UMC (Unordered Markov chain)..
-このモデルをUMC(Unordered Markov chain)と呼ぶ。
+スキップ、クラスタリング、混合モデリングは、セクション 2 で説明したように含まれている.
+We call this model UMC (Unordered Markov chain).
+このモデルをUMC(Unordered Markov chain)と呼ぶ.
 
 ## 4.4. Variations of the MC Model MCモデルのバリエーション
 
 In order to measure how each n-gram enhancement influenced predictive accuracy, we also evaluated models that excluded some of the enhancements.
-また、各n-gramの強化が予測精度に与える影響を測定するために、一部の強化を除いたモデルも評価しました。
+また、各n-gramの強化が予測精度に与える影響を測定するために、一部の強化を除いたモデルも評価した.
 In reporting our results, we refer to a model that uses skipping and similarity clustering with the terms SK and SM, respectively.
-結果を報告する際、飛び飛びのクラスタリングと類似のクラスタリングを使用するモデルをそれぞれSKとSMと呼ぶことにする。
+結果を報告する際、**飛び飛び(skipping)のクラスタリングと類似(similarity)のクラスタリングを使用するモデルをそれぞれSKとSMと呼ぶ**ことにする.
 In addition, we use numbers to denote which mixture components are used.
-また、どの混合成分が使用されているかを数字で表しています。
+また、どの混合成分が使用されているかを数字で表している.
 Thus, for example, we use MC 123 SK to denote a Markov chain model learned with three mixture components—a bigram, trigram, and quadgram—where each component employs skipping but not clustering..
-例えば、MC123 SKは、bigram, trigram, quadgramの3つの混合成分で学習したマルコフ連鎖モデルであり、各成分はクラスタリングを行わず、スキップすることを表す。
+例えば、MC123 SKは、bigram, trigram, quadgram の3つの混合成分で学習したマルコフ連鎖モデルであり、各成分はクラスタリングを行わず、スキップすることを表す.(n=1,2,3 ではなく n=2, 3, 4になるのか...!)
 
-## 4.5. Experimental Results 実験結果です。
+## 4.5. Experimental Results 実験結果
 
 Figure 1(a) and figure 1(b) show the exponential decay score for the best models of each type (Markov chain, Unordered Markov chain, Non-Sequential Predictor model, and Sequential Predictor Model).
-図1（a）、図1（b）は、各タイプの最良モデル（マルコフ連鎖、非順序マルコフ連鎖、非順序予測モデル、順序予測モデル）の指数関数的減衰スコアを示しています。
+図1（a）、図1（b）は、各タイプの最良モデル（マルコフ連鎖、非順序マルコフ連鎖、非順序予測モデル、順序予測モデル）の指数関数的減衰スコアを示している.
 It is important to note that all the MC models using skipping, clustering, and mixture modelling yielded better results than every one of the Predictor-k models and the non-sequential Predictor model.
-スキップ、クラスタリング、混合モデリングを用いたすべてのMCモデルが、Predictor-kモデルや非連続Predictorモデルのどれよりも良い結果をもたらしたことは重要なポイントです。
+スキップ、クラスタリング、混合モデリングを用いたすべてのMCモデルが、Predictor-kモデルや非連続Predictorモデルのどれよりも良い結果をもたらしたことは重要なポイント.
 We see that the sequence-sensitive models are better predictors than those that ignore sequence information.
 配列情報を無視したモデルよりも、配列に敏感なモデルの方が予測精度が高いことがわかる。
 Furthermore, the Markov chain predicts best for both data sets..
@@ -1271,7 +1249,7 @@ Consequently, in our Mitos implementation, items are programmatically removed fr
 Another solution that we have implemented but not evaluated is to use weighted data and to exponentially decay the weights in time, thus placing more weight on more recently observed transitions..
 もう一つの解決策は、重み付けされたデータを使用し、時間的に指数関数的に減衰させることで、より最近観測された遷移に重きを置くというものです（評価はしていません）。
 
-# 6. Evaluation of the MDP Recommender Model MDPレコメンダーモデルを評価する。
+# 6. Evaluation of the MDP Recommender Model MDPレコメンダーモデルを評価する
 
 The main thesis of this work is that (1) recommendation should be viewed as a sequential optimization problem, and (2) MDPs provide an adequate model for this view.
 本研究の主要なテーゼは、（1）推薦を逐次最適化問題として捉えるべきであり、（2）MDPはこの見解に適したモデルを提供する、というものである。
