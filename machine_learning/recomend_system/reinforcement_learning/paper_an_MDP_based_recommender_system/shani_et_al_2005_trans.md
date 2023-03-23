@@ -1310,9 +1310,9 @@ Another solution that we have implemented but not evaluated is to use weighted d
 # 6. Evaluation of the MDP Recommender Model MDPレコメンダーモデルを評価する
 
 The main thesis of this work is that (1) recommendation should be viewed as a sequential optimization problem, and (2) MDPs provide an adequate model for this view.
-本研究の主要なテーゼは、（1）推薦を逐次最適化問題として捉えるべきであり、（2）MDPはこの見解に適したモデルを提供する、というものである。
+本研究の主要なテーゼは、**（1）推薦を逐次最適化問題として捉えるべきであり、（2）MDPはこの見解に適したモデルを提供する**、というものである.
 This is to be contrasted with previous systems which used predictive models for generating recommendations.
-これは、従来のシステムが予測モデルを用いてレコメンデーションを生成していたのと対照的である。
+これは、従来のシステムが予測モデルを用いてレコメンデーションを生成していたのと対照的である.
 In this section, we present an empirical validation of our thesis.
 本節では、本論文の実証的な検証を紹介する。
 We compare the performance of our MDP-based recommender system (denoted MDP) with the performance of a recommender system based on our predictive model (denoted MC) as well as other variants..

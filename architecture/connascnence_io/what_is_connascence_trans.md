@@ -2,6 +2,10 @@
 
 - https://connascence.io/ https
 
+> Two software components are connascent if a change in one would require the other to be modified in order to maintain the overall correctness of the system.
+>
+> > システム全体の正しさを維持するために、一方を変更すると他方も変更する必要がある場合、2つのソフトウェアコンポーネントは"conascent"(結合?)している.
+
 # What is COnnascence? COnnascenceとは何か？
 
 Connascence is a software quality metric & a taxonomy for different types of coupling..
