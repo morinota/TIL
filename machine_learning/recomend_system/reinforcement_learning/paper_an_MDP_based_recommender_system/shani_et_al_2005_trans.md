@@ -1314,240 +1314,236 @@ The main thesis of this work is that (1) recommendation should be viewed as a se
 This is to be contrasted with previous systems which used predictive models for generating recommendations.
 これは、従来のシステムが予測モデルを用いてレコメンデーションを生成していたのと対照的である.
 In this section, we present an empirical validation of our thesis.
-本節では、本論文の実証的な検証を紹介する。
+本節では、本論文の実証的な検証を紹介する.
 We compare the performance of our MDP-based recommender system (denoted MDP) with the performance of a recommender system based on our predictive model (denoted MC) as well as other variants..
-MDPに基づくレコメンダーシステム（MDPと表記）と、予測モデルに基づくレコメンダーシステム（MCと表記）、および他の変種との性能を比較しました。
+**MDPに基づく推薦システム（MDPと表記）と、予測モデルに基づく推薦システム(MCと表記)、および他の変種との性能を比較した**.
 
 Our studies were performed on the online book store Mitos (www.mitos.co.il) from August, 2002 till April, 2004.
-2002年8月から2004年4月まで、オンライン書店「ミトス」（www.mitos.co.il）で調査を行いました。
+2002年8月から2004年4月まで、オンライン書店「ミトス」（www.mitos.co.il）で調査を行った.
 During our evaluations, approximately 5000 − 6000 different users visited the Mitos site daily.
-私たちの評価では、毎日約5000〜6000人のユーザーがミトスのサイトを訪れていました。
+私たちの評価では、毎日約5000〜6000人のユーザがミトスのサイトを訪れていた.
 Of those, around 900 users inserted items into their basket, thus entering our data-set.11 On average, each customer inserted 1.97 items into the shopping basket.
-このうち、約900人のユーザーが買い物かごに商品を入れ、データセットに登録されました。11 平均して、1人当たり1.97個の商品を買い物かごに入れました。
+このうち、約900人のユーザが買い物かごに商品を入れ、データセットに登録された. 平均して、1人当たり1.97個の商品を買い物かごに入れた.
 Over 15,000 items were available for purchase on the site..
-サイトでは15,000点以上のアイテムが販売されていました。
+サイトでは15,000点以上のアイテムが販売されていた.
 
 Users received recommendations when adding items to the shopping cart.12 The recommendations were based on the last k items added to the cart ordered by the time they were added.
-ショッピングカートに商品を追加する際に、ユーザーにおすすめの商品を紹介しました12。このおすすめ商品は、カートに追加された商品のうち、追加された時間順に並んだ直近のk個の商品に基づいています。
+ショッピングカートに商品を追加する際に、ユーザにおすすめの商品を紹介した. **このおすすめ商品は、カートに追加された商品のうち、追加された時間順に並んだ直近のk個の商品に基づいている**.
 An example is shown in Figure 4 where the three book covers at the bottom are the recommended items.
-例として、図4に示すように、下部の3つのブックカバーがおすすめアイテムであることを示します。
+例として、図4に示すように、下部の3つのブックカバーがおすすめアイテムであることを示す.
 Every time a user was presented with a list of recommendations on either page, the system stored the recommendations that were presented and recorded whether the user purchased a recommended item.
-どちらのページでも、ユーザーにおすすめ商品のリストが提示されるたびに、提示されたおすすめ商品を記憶し、ユーザーがおすすめ商品を購入したかどうかを記録しました。
+どちらのページでも、ユーザにおすすめ商品のリストが提示されるたびに、提示されたおすすめ商品を記憶し、**ユーザがおすすめ商品を購入したかどうかを記録した.**
 Cart deletions were rare and ignored.
-カートの削除は稀であり、無視された。
+カートの削除は稀であり、無視された.
 Once every two or three weeks, a process was run to update the model given the data that was collected over the latest time period.13.
-2～3週間に一度、最新の期間に収集されたデータをもとに、モデルを更新するプロセスが実行された13。
+**2～3週間に一度、最新の期間に収集されたデータをもとに、モデルを更新するプロセスが実行された**.
 
 We compared the MDP and MC models both in terms of their value or utility to the site as well as their computational costs..
-MDPモデルとMCモデルを、現場での価値や有用性、計算コストの両面から比較検討しました。
+MDPモデルとMCモデルを、**現場での価値や有用性、計算コストの両面から比較検討**した.
 
 ## 6.1. Utility Performance ユーティリティの性能
 
 Our first set of results is based on the assumption that the transition function we learn for our MDP using data collected with recommendations, provides the the best available model of user behavior under recommendation.
-最初の結果は、レコメンデーションで収集されたデータを用いてMDPに学習させた遷移関数が、レコメンデーション下のユーザー行動の最良のモデルを提供するという仮定に基づいています。
+最初の結果は、レコメンデーションで収集されたデータを用いてMDPに学習させた遷移関数が、レコメンデーション下のユーザ行動の最良のモデルを提供するという仮定に基づいている.
 Under this assumption, we can measure the effect of different recommendation policies.
-この前提のもと、さまざまな推薦ポリシーの効果を測定することができます。
+この前提のもと、さまざまな推薦ポリシーの効果を測定することができる.
 An important caveat is that the states in our MDP correspond to truncated (that is, last k) user sequences.
-重要な注意点は、MDPの状態は切り捨てられた（つまり最後のk個の）ユーザーシーケンスに対応することである。
+**重要な注意点は、MDPの state は切り捨てられた(つまり最後のk個の)ユーザーシーケンスに対応すること**である.
 Thus, the model does not exclude repeated purchases of the same item.
-したがって、このモデルでは、同じ商品の繰り返し購入は除外されない。
+したがって、**このモデルでは、同じ商品の繰り返し購入は除外されない**.
 Despite this shortcoming, we proceeded with the evaluation..
-このような欠点があるにもかかわらず、我々は評価を進めたのです。
+このような欠点があるにもかかわらず、我々は評価を進めた.
 
 As discussed above, a predictive model can answer queries in the form Pr(x|h)—the probability that item x will be purchased given user history h.
-h)—the probability that item x will be purchased given user history h.
+上述したように、予測モデルは、$Pr(x|h)$-**ユーザー履歴hが与えられた場合にアイテムxが購入される確率**-という形式のクエリに答えることができる.
 Recommender systems may employ different strategies when generating recommendations using such a predictive model.
-リコメンダーシステムは、このような予測モデルを用いて推薦を生成する際に、異なる戦略を採用することができる。
+推薦システムは、このような予測モデルを用いて推薦を生成する際に、異なる戦略を採用することができる.
 Assuming that an MDP formalizes the recommendation problem well, we may use the learned MDP model to evaluate these strategies.
-MDPが推薦問題をうまく定式化していると仮定すると、学習したMDPモデルを用いて、これらの戦略を評価することができる。
+MDPが推薦問題をうまく定式化していると仮定すると、**学習したMDPモデルを用いて、これらの戦略を評価することができる.**(??)
 The evaluation of the quality of different possible policies for the MDP, each corresponding to a popular approach to recommending, may shed light on the preferred recommendation strategy..
-MDPで考えられる様々な政策（それぞれ一般的な推薦のアプローチに対応する）の質を評価することで、好ましい推薦戦略を明らかにすることができるかもしれません。
+MDPで考えられる様々な方策(それぞれ一般的な推薦のアプローチに対応する)の質を評価することで、好ましい推薦戦略を明らかにすることができるかもしれない.
 
 The MDP model was built using data gathered while the model was running in the site with incremental updates (as described above) for almost a year.
-MDPモデルは、約1年間、サイト内でインクリメンタルアップデート（上記のようなアップデート）を行いながら、収集したデータを使って構築しました。
+MDPモデルは、約1年間、サイト内でインクリメンタルアップデート(上記のようなアップデート)を行いながら、収集したデータを使って構築した.
 We compared four policies, where the first policy uses information about the effect of recommendations, and the remaining policies are based on the predictive model solely:.
-最初のポリシーはレコメンドの効果に関する情報を使用し、残りのポリシーは予測モデルのみに基づいている：4つのポリシーを比較しました。
+最初のポリシーはレコメンドの効果に関する情報を使用し、残りのポリシーは予測モデルのみに基づいている：**4つのポリシーを比較**した.
 
-- Optimal – recommends items based on optimal policy for the MDP. Optimal - MDPに最適なポリシーに基づいたアイテムを推奨します。
+- Optimal – recommends items based on optimal policy for the MDP. Optimal - MDPに最適なポリシーに基づいたアイテムを推薦する.
 
-- Greedy – recommends items that maximize Pr(x|h)· R(x) (where Pr(x|h) is the probability of buying item x given user history h, and R(x) is the value of x to the site – for example, net profit). R(x) (where Pr(x
+- Greedy – recommends items that maximize Pr(x|h)· R(x) (where Pr(x|h) is the probability of buying item x given user history h, and R(x) is the value of x to the site – for example, net profit). - $Pr(x|h)\cdot R(x)$ を最大化するアイテムを推薦する(ここで、$Pr(x|h)$はユーザーの履歴hが与えられた場合にアイテムxを購入する確率、$R(x)$ はサイトにとってのxの価値（例えば純利益）である).
 
-- Most likely – recommends items that maximize Pr(x|h).
+- Most likely – recommends items that maximize Pr(x|h).最も可能性が高い - Pr(x|h)を最大化するアイテムを推薦する.
 
-- Lift – recommends items that maximize Pr(x|h) Pr(x) , where Pr(x) is the prior probability of buying item x. Pr(x) , where Pr(x) is the prior probability of buying item x..
+- Lift – recommends items that maximize $Pr(x|h)/Pr(x)$ , where Pr(x) is the prior probability of buying item x.Pr(x|h)/Pr(x)$を最大化するアイテムを推薦する. ここで、Pr(x)はアイテムxを購入する事前確率である.
 
 To evaluate the different policies we ran a simulation of the interaction of a user with the system.
-異なるポリシーを評価するために、ユーザーとシステムとのインタラクションのシミュレーションを実行しました。
+異なるポリシーを評価するために、ユーザとシステムとのInteractionのシミュレーションを実行した.
 During the simulation the system generated a list of recommended items R, from which the simulated user selected the next item, using the distribution tr(s,R,s· x)—the probability that the next selected item is x given the current state s and the recommendation list R, simulating the purchase of x by the user.
-シミュレーション中、システムは推奨アイテムのリストRを生成し、そこから模擬ユーザーが次のアイテムを選択する。分布tr（s,R,s-x）-現在の状態sと推奨リストRが与えられたときに、次の選択アイテムがxである確率-を用いて、ユーザーによるx購入のシミュレーションをした。
+シミュレーション中、システムは推薦アイテムのリストRを生成し、そこから模擬ユーザが次のアイテムを選択する。(遷移確率質量の)分布$tr(s,R,s \cdot x)$-**現在のstate sと推薦リストRが与えられたときに、次の選択アイテムがxである確率**-を用いて、ユーザによるx購入のシミュレーションをした.
 The length of user session was taken from the learned distribution of user session length in the actual site.
-ユーザーセッションの長さは、実際のサイトにおけるユーザーセッションの長さの学習済み分布から取得しました。
+ユーザセッションの長さは、実際のサイトにおけるユーザセッションの長さの学習済み分布から取得した.(?)
 We ran the simulation for 10,000 iterations for each policy, and calculated the average accumulated reward for user session..
-各ポリシーについて10,000回の反復シミュレーションを行い、ユーザーセッションの平均累積報酬を算出しました。
+各ポリシーについて10,000回の反復シミュレーションを行い、ユーザセッションの平均累積報酬を算出した.
 
 The results are presented in Table 3.
-その結果を表3に示します。
+その結果を表3に示す.
 The calculated value for each policy is the sum of discounted profit in (New Israeli Shekels) averaged over all states.
-各保険の計算値は、全州で平均した（新イスラエル・シェケル）割引利益の合計です。
+各方策の計算値は、全state で平均した（新イスラエル・シェケル）割引利益の合計である.
 We used a weighted average, where the weight of each state was the probability of observing it.
-各状態の重みを観測する確率とした加重平均を使用しました。
+各state の重みを観測する確率とした加重平均を使用した.
 Obviously, an optimal policy results in the highest value.
-当然ながら、最適なポリシーは最も高い値をもたらします。
+当然ながら、optimal policyは最も高い値をもたらす.
 However, the differences are small, and it appears that one can use the predictive model alone with very good results..
-しかし、その差は小さく、予測モデルだけでも非常に良い結果が得られると思われます。
+しかし、**その差は小さく、予測モデルだけでも非常に良い結果が得られると思われる**.
 
 Next, we performed an experiment to compare the performance of the MDP-based system with that of the MC-based system.
-次に、MDPベースのシステムとMCベースのシステムの性能を比較する実験を行いました。
+次に、MDPベースのシステムとMCベースのシステムの性能を比較する実験を行った.
 In this experiment, each user entering the site was assigned a randomly generated cart-id.
-この実験では、サイトに入る各ユーザーに、ランダムに生成されたカートIDが割り当てられました。
+この実験では、サイトに入る各ユーザに、ランダムに生成されたカートIDが割り当てられた.
 Based on the last bit of this cart-id, the user was provided with recommendations by the MDP or MC.
-このcart-idの最終ビットに基づき、MDPまたはMCからユーザーにレコメンドが提供された。
+このcart-idの最終ビットに基づき、MDPまたはMCからユーザにレコメンドが提供された.(要するにA/Bテスト!!)
 Reported mean profits were calculated for each user session (a single visit to the site).
-報告された平均利益は、ユーザーセッション（サイトへの1回の訪問）ごとに計算されました。
+報告された平均利益は、ユーザセッション(サイトへの1回の訪問)ごとに計算された.
 Data gathered in both cases was used to update both models.14.
-この2つのケースで収集されたデータは、両モデルのアップデートに使用されました14。
+この2つのケースで収集されたデータは、両モデルのアップデートに使用された.
 
 The deployed system was built using three mixture components, with history length ranging from one to three for both the MDP model and the MC model.
-展開されたシステムは、MDPモデル、MCモデルともに履歴長が1～3までの3つの混合コンポーネントを用いて構築された。
+展開されたシステムは、MDPモデル、MCモデルともに履歴長が1～3までの3つの混合コンポーネントを用いて構築された.
 Recommendations from the different mixture components were combined using an equal (0.33) weight.
-異なる混合成分からの勧告は、等しい（0.33）重量を使用して結合された。
+異なる混合成分からの勧告は、等しい(0.33)重み付けを使用して結合された.
 We used the policy-iteration procedure and approximations described in Section 5 to compute an optimal policy for the MDP.
-セクション5で説明した政策反復手順と近似を用いて、MDPの最適政策を計算した。
+セクション5で説明したpolicy-iteration手順と近似を用いて、MDPの最適方策を計算した.
 Our model encoded approximately 25,000 states in the two top mixture components (k = 2, k = 3).
-我々のモデルでは、上位2つの混合成分（k = 2, k = 3）に約25,000の状態を符号化した。
+我々のモデルでは、上位2つの混合成分（k = 2, k = 3）に約25,000のstate を符号化した.
 The reported results were gathered after the model was running in the site with incremental updates (as described above) for almost a year..
-今回発表された結果は、サイト内で約1年間、段階的なアップデート（上記のような）を行いながらモデルを稼働させた後に得られたものです。
+今回発表された結果は、**サイト内で約1年間、段階的なアップデート(上記のような方策=遷移関数の更新)を行いながらモデルを稼働させた後に得られたもの**である.
 
 During the testing period, 50.7% of the users who made at least one purchase were shown MDP-based recommendations and the other 49.3% of these users were shown MC-based recommendations.
-テスト期間中、少なくとも1回購入したユーザーの50.7%にMDPベースのレコメンデーションが表示され、残りの49.3%にMCベースのレコメンデーションが表示されました。
+テスト期間中、少なくとも1回購入したユーザの50.7%にMDPベースのレコメンデーションが表示され、残りの49.3%にMCベースのレコメンデーションが表示されました.
 For each user, we computed the average site profit per session for that user, leaving out of consideration the first purchase made in each session.
-各ユーザーについて、各セッションで最初に購入されたものは考慮せず、そのユーザーのセッションごとの平均サイト利益を計算しました。
+各ユーザについて、各セッションで最初に購入されたものは考慮せず、そのユーザのセッションごとの平均サイト利益を計算した.
 The first item was excluded as it was bought without the benefit of recommendations, and is therefore irrelevant to the comparison between the recommender systems.15.
-最初の商品は、レコメンデーションの恩恵を受けずに購入したため、レコメンダーシステム間の比較には無関係であるとして除外した15。
+最初の商品は、レコメンデーションの恩恵を受けずに購入したため、レコメンダーシステム間の比較には無関係であるとして除外した.
 
 The average site profit generated by the users was 28% higher for the MDP group.16 We used a permutation test (see, for example, Yeh (2000)) to see how likely it would be for a difference this large to emerge if there were in fact no systematic difference in the effectiveness of the two recommendation methods.17 We randomly generated 10000 permutations of the assignments of session profits to users, for each permutation computing the ratio of average session profits between the MDP and the MC groups.
-セッション利益の割り当てをランダムに 10000 通り作成し，それぞれの順列について，MDP 群と MC 群の平均セッション利益の比率を計算した．
+2つの推薦手法の有効性に系統的な差がない場合、これほど大きな差が生じる可能性があるのか、順列検定（例えば、Yeh (2000)を参照）を用いて検討した. セッション利益の割り当てをランダムに10000通り生成し、それぞれの順列について、MDPグループとMCグループの平均セッション利益の比率を計算した.
 With only 8% of these random assignments was the ratio as large as (or larger than) 1.282.
-このうち、1.282と同程度（またはそれ以上）の比率となったのは、わずか8％であった。
+このうち、1.282と同程度（またはそれ以上）の比率となったのは、わずか8％であった.
 Therefore, the better performance of the MDP recommender is statistically significant with p = 0.08 by a one-tailed permutation test..
-したがって、MDPレコメンダーの性能向上は、片側並べ替え検定でp = 0.08と統計的に有意であったことがわかる。
+したがって、**MDPレコメンダーの性能向上は**、片側並べ替え検定でp = 0.08と**統計的に有意であった**ことがわかる.
 
 There are two possible sources for the observed improvement—the MDP may be generating more sales or sales of more expensive items.
-MDPがより多くの売上を生み出しているか、より高価な商品の売上を生み出しているかの2つの可能性があるのです。
+これは、**MDPがより多くのアイテム購入を生み出しているか、より高価な商品の売上を生み出しているかの2つの可能性がある**.
 In our experiment, the average number of items bought per user session was 6.8% in favor of the MDP-based recommender (p = 0.15), whereas the average price of items was 4% higher in favor of the MDP-based recommender (p = 0.04).
-実験では、ユーザーセッションあたりの平均購入アイテム数は、MDPベースのレコメンダーが6.8%有利であったのに対し（p = 0.15）、アイテムの平均価格はMDPベースのレコメンダーが4%有利であった（p = 0.04）．
+実験では、ユーザセッションあたりの平均購入アイテム数は、MDPベースのレコメンダーが6.8%有利であったのに対し（p = 0.15）、アイテムの平均価格はMDPベースのレコメンダーが4%有利であった（p = 0.04）．
 Thus, both effects may have played a role..
-したがって、両方の効果が作用している可能性があります。
+したがって、両方の効果が作用している可能性がある.
 
 In our second and last experiment, we compared site performance with and without a recommender system.
-最後の2つ目の実験では、レコメンダーシステムを導入した場合と導入しない場合のサイトパフォーマンスを比較しました。
+最後の2つ目の実験では、レコメンダーシステムを導入した場合と導入しない場合のサイトパフォーマンスを比較した.
 Ideally, we would have liked to assign users randomly to an experience with and without recommendations.
-理想を言えば、レコメンデーションのある体験とない体験にランダムにユーザーを割り当てることができればよかったのですが。
+理想を言えば、レコメンデーションのある体験とない体験にランダムにユーザを割り当てることができればよかったが.
 This option was ruled-out by the site owner because it would have led to a non-uniform user experience.
-この選択肢は、ユーザーエクスペリエンスが統一されないという理由で、サイトオーナーによって除外されました。
+この選択肢は、ユーザエクスペリエンスが統一されないという理由で、サイトオーナーによって除外された.
 Fortunately, the site owner was willing to remove the recommender system from the site for one week.
-幸い、サイトオーナーが1週間だけレコメンドシステムをサイトから外してくれることになった。
+幸い、サイトオーナーが1週間だけレコメンドシステムをサイトから外してくれることになった.(=なるほど...! A/Bテストではない!)
 Thus, we were able to compare average profits per user session during two consecutive weeks – one with recommendations and one without recommendations.18 We found that, when the recommender system was not in use, average site profit dropped 17% (p = 0.0).
-その結果、レコメンダーシステムを使用しない場合、サイトの平均利益は17%減少することがわかりました（p=0.0）。
+その結果、レコメンダーシステムを使用しない場合、サイトの平均利益は17%減少することがわかりました（p=0.0）.
 Although, we cannot rule out the possibility that this difference is due to other factors (for example, seasonal effects or special events), these result are quite encouraging..
-この差が他の要因（例えば、季節的な影響や特別なイベントなど）によるものである可能性は否定できませんが、この結果は非常に有望です。
+**この差が他の要因（例えば、季節的な影響や特別なイベントなど）によるものである可能性は否定できませんが、この結果は非常に有望である**.
 
 Overall, our experiments support the claims concerning the added value of using recommendations in commercial web sites and the validity of the MDP-based model for recommender systems..
-本実験は、商用サイトにおけるレコメンデーションの付加価値と、レコメンデーションシステムのためのMDPベースのモデルの有効性に関する主張を支持するものであった。
+本実験は、商用サイトにおけるレコメンデーションの付加価値と、レコメンデーションシステムのためのMDPベースのモデルの有効性に関する主張を支持するものであった.
 
 ## 6.2. Computational Analysis Computational Analysis（計算解析）。
 
 In this section, we compare computational costs of the MDP-based and the Predictor recommender system..
-ここでは、MDPベースとPredictorレコメンダーシステムの計算コストを比較する。
+ここでは、**MDPベースとPredictorレコメンダーシステムの計算コスト**を比較する。
 
 Our comparison uses the transaction data set and corresponding models described in Section 4.
-この比較では、セクション4で説明したトランザクションデータセットと対応するモデルを使用する。
+この比較では、セクション4で説明したトランザクションデータセットと対応するモデルを使用する.
 In addition to using the full data set, we measured costs associated with smaller versions of the data in which transactions among only the the top N items were considered, in order to demonstrate the effect of the size of the data-set on performance..
-また、データセットの規模がパフォーマンスに与える影響を示すため、フルセットに加えて、上位N項目のみの取引を考慮した小規模なデータセットに関連するコストを測定しました。
+また、データセットの規模がパフォーマンスに与える影響を示すため、フルセットに加えて、上位Nアイテムのみの取引を考慮した小規模なデータセットに関連するコストを測定した.
 
 First, let us consider the time it takes to make a recommendation.
-まず、推薦にかかる時間について考えてみましょう。
+まず、**推薦にかかる時間**について考えてみましょう.
 Recommendation time is typically the most critical of computational costs.
-レコメンデーション時間は、一般的に計算コストの中で最も重要なものです。
+**レコメンデーション時間は、一般的に計算コストの中で最も重要なもの**である.
 If recommendation latency is noticeable, no reasonable site administrator will use the recommender system.
-レコメンデーションの遅延が目立つようでは、合理的なサイト管理者はレコメンダーシステムを利用しないでしょう。
+レコメンデーションの遅延が目立つようでは、合理的なサイト管理者はそのレコメンダーシステムを利用しないだろう.
 Table 5 shows the number of recommendations generated per second by the recommender system.
-表5は、レコメンダーシステムが1秒間に生成するレコメンド数を示しています。
+表5は、レコメンダーシステムが1秒間に生成するレコメンド数を示している.
 The results show that the MDP model is faster.
-その結果、MDPモデルの方が高速であることがわかりました。
+その結果、MDPモデルの方が高速であることがわかった.
 This result is due to the fact that, with the MDP model, we do almost no computations online.
-この結果は、MDPモデルで、オンラインでほとんど計算をしないことに起因しています。
+この結果は、**MDPモデルで、オンラインでほとんど計算をしないこと**に起因している.
 While predicting, the model simply finds the proper state and returns the state’s pre-calculated list of recommendations..
-予測中は、モデルは単に適切な状態を見つけ、その状態の事前に計算された推奨リストを返します。
+予測中は、モデルは単に適切な state を見つけ、その state に対応する、**事前に計算された推薦リストを返す**.
 
 The price paid for faster recommendation is a larger memory footprint.
-より高速な推薦のために支払われる代償は、より大きなメモリフットプリントです。
+**より高速な推薦のために支払われる代償は、より大きなmemory footprintである**.
 Table 6 shows the amount of memory needed to build and store a model in megabytes.
-表6に、モデルの構築と保存に必要なメモリ量をメガバイトで示します。
+表6に、モデルの構築と保存に必要なメモリ量をメガバイトで示す.
 The MDP model requires more memory to store than the Predictor model, due to the structured representation of the Predictor model using a collection of decision trees..
-MDPモデルはPredictorモデルより多くのメモリを必要としますが、これはPredictorモデルが決定木の集合体を用いて構造的に表現されているためです。
+**MDPモデルはPredictorモデルより多くのメモリを必要とする**が、これはPredictorモデルが決定木の集合体を用いて構造的に表現されているからである.
 
 Finally, we consider the time needed to build a new model.
-最後に、新しいモデルを構築するのに必要な時間を考慮します。
+最後に、新しいモデルを構築するのに必要な時間を考慮する.
 This computational cost is perhaps the least important parameter when selecting a recommender system, as model building is an offline task executed at long time intervals (say once a week at most) on a machine that does not affect the performance of the site.
-モデル構築は、サイトのパフォーマンスに影響を与えないマシンで、長い時間間隔（せいぜい週に1回程度）で実行されるオフラインタスクであるため、この計算コストは、レコメンダーシステムを選択する際に最も重要ではないパラメータと言えるかもしれません。
+モデル構築は、サイトのパフォーマンスに影響を与えないマシンで、長い時間間隔(せいぜい週に1回程度)で実行されるオフラインタスクであるため、この計算コストは、レコメンダーシステムを選択する際に最も重要ではないパラメータと言えるかもしれない.
 That being said, as we see in Table 4, the MDP model has the smallest build times..
-とはいえ、表4にあるように、MDPモデルは構築時間が最も短い。
+とはいえ、表4にあるように、**MDPモデルは構築時間が最も短い**.(=MDPはオンライン更新的な事だから??)
 
 Overall the MDP-based model is quite competitive with the Predictor model.
-全体的にMDPベースのモデルは、Predictorモデルとかなり競合しています。
+全体的にMDPベースのモデルは、Predictorモデルとかなり競合している.
 It provides the fastest recommendations at the price of more memory use, and builds models more quickly.
-より多くのメモリを使用する代償として最速のレコメンデーションを提供し、より速くモデルを構築します。
+**より多くのメモリを使用する代償として最速のレコメンデーションを提供し、より速くモデルを構築する**.
 
 # 7. Discussion ディスカッション
 
 This paper describes a new model for recommender systems based on an MDP.
-本論文では、MDPに基づくレコメンダーシステムの新しいモデルについて説明する。
+本論文では、MDPに基づくレコメンダーシステムの新しいモデルについて説明する.
 Our work presents one of a few examples of commercial systems that use MDPs, and one of the first reports of the performance of commercially deployed recommender system.
-私たちの研究は、MDPを用いた商用システムの数少ない例の一つであり、商用に展開されたレコメンダーシステムの性能に関する最初の報告の一つでもあります。
+私たちの研究は、MDPを用いた商用システムの数少ない例の一つであり、商用に展開されたレコメンダーシステムの性能に関する最初の報告の一つでもある.
 Our experimental results validate both the utility of recommender systems and the utility of the MDP-based approach to recommender systems..
-この実験結果は、推薦システムの有用性と推薦システムに対するMDPベースのアプローチの有用性の両方を検証するものである。
+この実験結果は、推薦システムの有用性と推薦システムに対するMDPベースのアプローチの有用性の両方を検証するものである.
 
 To provide the kind of performance required by an online commercial site, we used various approximations and, in particular, made heavy use of the special properties of our state space and its sequential origin.
-オンライン商業サイトに求められる性能を実現するために、さまざまな近似式を用い、特に状態空間の特殊な性質とその逐次的な起源を大いに利用しました。
+オンライン商業サイトに求められる性能を実現するために、さまざまな近似式を用い、**特に state space の特殊な性質とそのsequentialな起源を大いに利用した**.
 Whereas the applicability of these techniques beyond recommender systems is not clear, it represents an interesting case study of a successful real system.
-これらの技術のレコメンダーシステム以外への適用性は明確ではありませんが、実際のシステムの成功例として興味深い事例です。
+これらの技術のレコメンダーシステム以外への適用性は明確ではありませんが、実際のシステムの成功例として興味深い事例である.
 Moreover, the sequential nature of our system stems from the fact that we need to maintain history of past purchases in order to obtain a Markovian state space.
-また、本システムの逐次性は、マルコフの状態空間を得るために、過去の購入履歴を保持する必要があることに起因しています。
-The need to record facts about the past in the current state arises in various domains, and has been discussed in a number of papers on handling non-first-order Markov reward functions (see, for example, Bacchus et al.
-過去に関する事実を現在の状態に記録する必要性は様々なドメインで生じ、非一次マルコフ報酬関数の取り扱いに関する多くの論文で議論されてきた（例えば、Bacchus et al.
-(1996) or Thiebaux et al.
-(1996)やThiebaux et al.
-(2002))..
-(2002))..
+また、**本システムの逐次性(sequential nature)は、マルコフのstate spaceを得るために、過去の購入履歴を保持する必要があることに起因**している.
+The need to record facts about the past in the current state arises in various domains, and has been discussed in a number of papers on handling non-first-order Markov reward functions (see, for example, Bacchus et al.(1996) or Thiebaux et al.(2002))..
+**過去に関する事実を現在の state に記録する必要性**は様々なドメインで生じ、非一次マルコフ報酬関数の取り扱いに関する多くの論文で議論されてきた(例えば、Bacchus et al.(1996)やThiebaux et al.(2002))..
 
 Another interesting technique is our use of off-line data to initialize a model that can provide adequate initial performance..
-また、オフラインのデータを使ってモデルを初期化することで、十分な初期性能を発揮させるという手法も興味深い。
+また、**オフラインのデータを使ってモデルを初期化することで、十分な初期性能を発揮させるという手法も興味深い.**
 
 In the future, we hope to improve our transition function on those states that are seldom encountered using generalization techniques, such as skipping and clustering, that are similar to the ones we employed in the predictive Markov chain model.
-今後は、予測マルコフ連鎖モデルで採用したようなスキップやクラスタリングなどの汎化手法を用いて、めったに遭遇しないような状態の遷移関数を改善したいと考えています。
+今後は、予測MCモデルで採用したようなスキップやクラスタリングなどの汎化手法を用いて、**めったに遭遇しないような state の遷移関数を改善したい**と考えています。
 Other potential improvements are the use of a partially observable MDP to model the user.
-その他の改善点として、ユーザーをモデル化するために部分観測可能なMDPを使用することが考えられます。
+その他の改善点として、ユーザをモデル化するために部分観測可能なMDPを使用することが考えられる.(??)
 As a model, this is more appropriate than an MDP, as it allows us to explicitly model our uncertainty about the true state of the user (Boutilier, 2002)..
-モデルとしては、ユーザーの真の状態に関する不確実性を明示的にモデル化できるため、MDPよりも適切である（Boutilier, 2002）。
+モデルとしては、ユーザの真の state に関する不確実性を明示的にモデル化できるため、MDPよりも適切である（Boutilier, 2002）.
 
 In fact, our current model can be viewed as approximating a particular POMDP by using a finite – rather than an unbounded – window of past history to define the current state.
-実際、現在のモデルは、現在の状態を定義するために過去の履歴のウィンドウを無制限ではなく、有限のウィンドウを使用することで、特定のPOMDPを近似していると見なすことができます。
+実際、現在のモデルは、**現在の state を定義するために過去の履歴のウィンドウを無制限ではなく、有限のウィンドウを使用する**ことで、特定のPOMDP(POって何??)を近似していると見なすことができる.
 Of course, the computational and representational overhead of POMDPs are significant, and appropriate techniques for overcoming these problems must be developed..
-もちろん、POMDPの計算量や表現力のオーバーヘッドは大きく、これらの問題を克服するための適切な技術の開発が必要である。
+もちろん、POMDPの計算量や表現力のオーバーヘッドは大きく、これらの問題を克服するための適切な技術の開発が必要である.
 
 Weaknesses of our predictive (Markov chain) model include the use of ad hoc weighting functions for skipping and similarity functions and the use of fixed mixture weights.
-予測（マルコフ連鎖）モデルの弱点として、スキップや類似関数にアドホックな重み付け関数を使用していること、混合物の重みが固定であることが挙げられます。
+予測(マルコフ連鎖)モデルの弱点として、スキップや類似関数にアドホックな重み付け関数を使用していること、混合物の重みが固定であることが挙げられる.
 Although the recommendations that result from our current model are (empirically) useful for ranking items, we have noticed that the model probability distributions are not calibrated.
-現在のモデルから得られるレコメンデーションは、（経験的に）アイテムのランキングに有用ですが、モデルの確率分布が較正されていないことに気づきました。
+現在のモデルから得られるレコメンデーションは、（経験的に）アイテムのランキングに有用ですが、モデルの確率分布が較正されていないことに気づいた.
 Learning the weighting functions and mixture weights from data should improve calibration.
-データから重み付け関数や混合重みを学習することで、キャリブレーションを向上させることができるはずです。
+データから重み付け関数や混合重みを学習することで、キャリブレーションを向上させることができるはずである.
 In addition, in informal experiments, we have seen evidence that learning case-dependent mixture weights should improve predictive accuracy..
-また、非公式な実験では、ケースに依存した混合重みを学習することで、予測精度が向上することが確認されています。
+また、非公式な実験では、ケースに依存した混合重みを学習することで、予測精度が向上することが確認されている.
 
 Our predictive model should also make use of relations between items that can be explicitly specified.
-予測モデルは、明示的に指定できる項目間の関係も利用する必要があります。
+予測モデルは、明示的に指定できるアイテム間の関係も利用する必要がある.
 For example, most sites that sell items have a large catalogue with hierarchical structure such as categories or subjects, a carefully constructed web structure, and item properties such as author name.
-例えば、物品を販売するサイトの多くは、カテゴリーやテーマなどの階層構造、綿密に構築されたウェブ構造、著者名などのアイテムプロパティを持つ大規模なカタログを用意しています。
+例えば、物品を販売するサイトの多くは、カテゴリーやテーマなどの階層構造、綿密に構築されたウェブ構造、著者名などのアイテムプロパティを持つ大規模なカタログを用意している.
 Finally, our models should incorporate information about users such as age and gender..
-最後に、年齢や性別など、ユーザーに関する情報をモデルに取り込む必要があります。
+最後に、年齢や性別など、ユーザーに関する情報をモデルに取り込む必要がある.
