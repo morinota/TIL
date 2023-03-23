@@ -715,54 +715,54 @@ In reporting our results, we refer to a model that uses skipping and similarity 
 In addition, we use numbers to denote which mixture components are used.
 また、どの混合成分が使用されているかを数字で表している.
 Thus, for example, we use MC 123 SK to denote a Markov chain model learned with three mixture components—a bigram, trigram, and quadgram—where each component employs skipping but not clustering..
-例えば、MC123 SKは、bigram, trigram, quadgram の3つの混合成分で学習したマルコフ連鎖モデルであり、各成分はクラスタリングを行わず、スキップすることを表す.(n=1,2,3 ではなく n=2, 3, 4になるのか...!)
+例えば、MC123 SKは、bigram, trigram, quadgram の3つの混合成分で学習したマルコフ連鎖モデルであり、各成分はクラスタリングを行わず、スキップすることを表す.(n=1,2,3 ではなく n=2, 3, 4になるのか...?)
 
 ## 4.5. Experimental Results 実験結果
 
 Figure 1(a) and figure 1(b) show the exponential decay score for the best models of each type (Markov chain, Unordered Markov chain, Non-Sequential Predictor model, and Sequential Predictor Model).
-図1（a）、図1（b）は、各タイプの最良モデル（マルコフ連鎖、非順序マルコフ連鎖、非順序予測モデル、順序予測モデル）の指数関数的減衰スコアを示している.
+図1（a）、図1（b）は、各タイプの最良モデル(Markov chain、Unordered Markov chain、Non-Sequential Predictor model、Sequential Predictor Model)の指数関数的減衰スコアを示している.
 It is important to note that all the MC models using skipping, clustering, and mixture modelling yielded better results than every one of the Predictor-k models and the non-sequential Predictor model.
-スキップ、クラスタリング、混合モデリングを用いたすべてのMCモデルが、Predictor-kモデルや非連続Predictorモデルのどれよりも良い結果をもたらしたことは重要なポイント.
+スキップ、クラスタリング、混合モデリングを用いた**すべてのMCモデルが、Predictor-kモデルや非連続Predictorモデルのどれよりも良い結果をもたらしたことは重要なポイント**.
 We see that the sequence-sensitive models are better predictors than those that ignore sequence information.
-配列情報を無視したモデルよりも、配列に敏感なモデルの方が予測精度が高いことがわかる。
+**sequence情報を無視したモデルよりも、sequence-sensitiveなモデルの方が予測精度が高いことがわかる**.
 Furthermore, the Markov chain predicts best for both data sets..
-さらに、マルコフ連鎖は、どちらのデータセットに対しても最適な予測をしている。
+さらに、**マルコフ連鎖は、どちらのデータセットに対しても最適な予測**をしている.
 
 Figure 2(a) and Figure 2(b) show the recommendation score as a function of list length (m).
-図2（a）と図2（b）は、リスト長（m）の関数として推薦スコアを示したものである。
+図2（a）と図2（b）は、リスト長 $m$ の関数として推薦スコアを示したものである.
 Once again, sequential models are superior to non-sequential models, and the Markov chain models are superior to the Predictor models..
-今回もシーケンシャルモデルはノンシーケンシャルモデルより優れており、マルコフ連鎖モデルはプレディクターモデルより優れています。
+今回も sequential モデルは non-sequential モデルより優れており、マルコフ連鎖モデルはpredictorモデルより優れている.
 
 Figure 3(a) and Figure 3(b) show how different versions of the Markov chain performed under the exponential decay score in both data sets.
-図3(a)と図3(b)は、両方のデータセットにおいて、指数関数的減衰スコアの下でマルコフ連鎖の異なるバージョンがどのように機能するかを示している。
+図3(a)と図3(b)は、両方のデータセットにおいて、指数関数的減衰スコアの下で**マルコフ連鎖の異なるバージョンがどのように機能するか**を示している.
 We see that multi-component models out-perform single-component models, and that similarity clustering is beneficial.
-多成分モデルが単成分モデルより優れていること、類似性クラスタリングが有効であることがわかります。
+**多成分モデルが単成分モデルより優れていること、similarity clusteringが有効であること**がわかる.
 In contrast, we find that skipping is only beneficial for the transactions data set.
-一方、スキップが有効なのは、トランザクションデータセットのみであることがわかります。
+**一方、スキップが有効なのは、トランザクションデータセットのみ**であることがわかる.
 Perhaps users tend to follow the same paths in a rather conservative manner, or site structure does not allow users to “jump ahead”.
-おそらく、ユーザーはどちらかというと保守的に同じ道をたどる傾向があるのか、サイト構造上、ユーザーが "先に進む "ことができないのでしょう。
+おそらく、ユーザはどちらかというと保守的に同じ道をたどる傾向があるのか、サイト構造上、ユーザが "先に進む "ことができないのだろう.(??)
 In either case, once recommendations are available in the site (thus changing the site structure), skipping may prove beneficial..
-いずれにせよ、サイト内でレコメンデーションが利用できるようになると（サイト構造が変わる）、スキップが有効になる可能性があります。
+いずれにせよ、**サイト内でレコメンデーションが利用できるようになると(サイト構造が変わる)、スキップが有効になる可能性がある**.
 
 # 5. An MDP-Based Recommender Model MDP ベースの推薦者モデル
 
 The predictive model we described above does not attempt to capture the short and long-term effect of recommendations on the user, nor does it try to optimize its behavior by taking into account such effects.
-先に述べた予測モデルは、レコメンデーションがユーザーに与える短期的・長期的な影響を捉えようとするものではなく、また、そうした影響を考慮して行動を最適化しようというものでもない。
+先に述べた予測モデルは、レコメンデーションがユーザに与える短期的・長期的な影響を捉えようとするものではなく、また、そうした影響を考慮して行動を最適化しようというものでもない.
 We now move to an MDP model that explicitly models the recommendation process and attempts to optimize it.
-ここで、推薦プロセスを明示的にモデル化し、その最適化を試みるMDPモデルに移行する。
+**ここで、推薦プロセスを明示的にモデル化し、その最適化を試みるMDPモデルに移行**する.
 The predictive model plays an important role in the construction of this model..
-このモデルの構築には、予測モデルが重要な役割を果たします。
+このモデルの構築には、**予測モデルが重要な役割を果たす**.
 
 We assume that we are given a set of cases describing user behavior within a site that does not provide recommendations, as well as a probabilistic predictive model of a user acting without recommendations generated from this data.
-ここでは、レコメンデーションを提供しないサイト内でのユーザーの行動を記述したケースと、このデータから生成されたレコメンデーションなしで行動するユーザーの確率的予測モデルが与えられると仮定する。
+ここでは、レコメンデーションを提供しないサイト内でのユーザの行動を記述したケースと、このデータから生成されたレコメンデーションなしで行動するユーザの確率的予測モデル(前の章のやつ.)が与えられると仮定する.
 The set of cases is needed to support some of the approximations we make, and in particular, the lazy initialization approach we take.
-このケースは、私たちが行う近似の一部、特に私たちが取る遅延初期化アプローチをサポートするために必要です。
+このケースは、私たちが行う近似の一部、特に私たちが取る遅延初期化(lazy initialization)アプローチをサポートするために必要.(?)
 The predictive model provides the probability the user will purchase a particular item x given that her sequence of past purchases is x1,...,xk.
-予測モデルは、ユーザーが過去の購入履歴がx1,...,xkである場合に、特定のアイテムxを購入する確率を提供します。
+**予測モデルは、ユーザが過去の購入履歴が$x1,...,xk$である場合に、特定のアイテムxを購入する確率を提供**する.(うんうん！)
 We denote this value by Prpred(x|x1,...,xk), where k = 3 in our case.
 x1,...,xk), where k = 3 in our case.
 It is important to stress that the approach presented here is independent of the particular technique by which the above predictive value is approximated.
-ここで強調したいのは、ここで紹介するアプローチは、上記の予測値を近似する特定の技術に依存しないということである。
+ここで強調したいのは、**ここで紹介するアプローチは、上記の予測値を近似する特定の技術に依存しないということ**である.
 Naturally, in our implementation we used the predictive model developed in Section 3, but there are other ways of constructing such a model (for example, Zimdars et al.
 当然ながら、我々の実装では、セクション3で開発した予測モデルを使用したが、このようなモデルを構築する方法は他にもある（例えば、Zimdars et al.
 (2001); Kadie et al.
@@ -770,341 +770,367 @@ Naturally, in our implementation we used the predictive model developed in Secti
 (2002))..
 (2002))..
 
-## 5.1. Defining the MDP MDPを定義する。
+## 5.1. Defining the MDP MDPを定義する
 
 Recall that to define an MDP, we need to provide a set of states, actions, transition function, and a reward function.
-MDPを定義するためには、状態、行動、遷移関数、報酬関数のセットを提供する必要があることを思い出してください。
+MDPを定義するためには、**状態(state)、行動(action)、遷移関数(transition function)、報酬関数(reward function)のセットを提供する必要がある**ことを思い出してください.
 We now describe each of these elements.
-次に、これらの要素についてそれぞれ説明します。
+次に、これらの要素についてそれぞれ説明する.
 The states of the MDP for our recommender system are k-tuples of items (for example, books, CDs), some prefix of which may contain null values corresponding to missing items.
-推薦システムのMDPの状態は、アイテム（例えば、本、CD）のkタプルであり、そのうちのいくつかの接頭辞は、アイテムの欠落に対応するNULL値を含むことができる。
+推薦システムのMDPの **状態(state) は、アイテム（例えば、本、CD）の k-tuples(interaction履歴)** であり、そのうちのいくつかの接頭辞は、アイテムの欠落に対応するNULL値を含むことができる.(ユーザのinteractionがk個に満たないケース)
 This allows us to model shorter sequences of purchases..
-これにより、より短い購入の連続をモデル化することができます。
+これにより、より短い購入の連続をモデル化することができる.
 
 The actions of the MDP correspond to a recommendation of an item.
-MDPのアクションは、アイテムの推薦に対応しています。
+MDPの **action は、アイテムの推薦に対応**している.
 One can consider multiple recommendations but, to keep our presentation simple, we start by discussing single recommendations..
-複数の推奨事項を検討することも可能ですが、ここではシンプルに、一つの推奨事項を検討することから始めます。
+複数の推奨事項を検討することも可能ですが、ここではシンプルに、一つの推奨事項を検討することから始める.
 
 Rewards in our MDP encode the utility of selling an item (or showing a web page) as defined by the site.
-MDPの報酬は、サイトが定義する商品を売る（あるいはウェブページを見せる）ことの効用を符号化したものである。
+MDPの報酬は、サイトが定義する interaction (ex. 商品を売る, ウェブページを見せる, etc.)の効用を符号化したものである.
 Because the state encodes the list of items purchased, the reward depends on the last item defining the current state only.
-状態は購入したアイテムのリストを符号化するため、報酬は現在の状態を定義する最後のアイテムにのみ依存する。
+状態は購入したアイテムのリストを符号化するため、報酬は現在の状態を定義する最後のアイテムにのみ依存する.
 For example, the reward for state hx1, x2, x3i is the reward generated by the site from the sale of item x3.
-例えば、状態hx1, x2, x3iの報酬は、アイテムx3の販売からサイトが生み出す報酬である。
+例えば、状態hx1, x2, x3iの報酬は、アイテムx3の販売からサイトが生み出す報酬である.
 In this paper, we use net profit for reward..
-本論文では、報酬のために純利益を使用します。
+本論文では、報酬のために純利益を使用する.
 
 The state following each recommendation is determined by the user’s response to that recommendation.
-各レコメンドに続く状態は、そのレコメンドに対するユーザーの反応によって決まります。
+**各レコメンドに続く state は、そのレコメンドに対するユーザの反応によって決まる.**
 When we recommend an item x 0 , the user has three options:.
-アイテムx 0を勧めるとき、ユーザーには次の3つの選択肢がある。
+アイテム $x'$ を推薦するとき、ユーザには次の**3つの選択肢**がある.
 
-- Accept this recommendation, thus transferring from state hx1, x2, x3i into hx2, x3, x 0 i この勧告を受け入れることで、状態hx1, x2, x3iからhx2, x3, x 0 iに移行する。
-
-- Select some non-recommended item x 00, thus transferring the state hx1, x2, x3i into hx2, x3, x 00i. ある非推奨アイテムx 00を選択することで、状態hx1, x2, x3iをhx2, x3, x 00iに移行させる。
-
-- Select nothing (for example, when the user terminates the session), in which case the system remains in the same state. 何もしない（ユーザーがセッションを終了した場合など）を選択すると、システムはそのままの状態を維持します。
+- Accept this recommendation, thus transferring from state hx1, x2, x3i into hx2, x3, x 0 i この勧告を受け入れることで、状態hx1, x2, x3iからhx2, x3, x 0 iに移行する.
+- Select some non-recommended item x 00, thus transferring the state hx1, x2, x3i into hx2, x3, x 00i. ある非推薦アイテム$x''$を選択することで、状態hx1, x2, x3iをhx2, x3, x 00iに移行する.
+- Select nothing (for example, when the user terminates the session), in which case the system remains in the same state. 何もしない(ユーザーがセッションを終了した場合など)を選択すると、システムはそのままのstate を維持する.
 
 Thus, the stochastic element in our model is the user’s actual choice.
-したがって、このモデルにおける確率的要素は、ユーザーの実際の選択である。
+したがって、このモデルにおける確率的要素は、ユーザの実際の選択である.
 The transition function for the MDP model:.
-MDPモデルの遷移関数：。
+MDPモデルの遷移関数は以下:
 
 $$
+tr^{1}_{MDP} (<x_1, x_2, x_3>, x', <x_2, x_3, x''>)
 \tag{13}
 $$
 
 is the probability that the user will select item x 00 given that item x 0 is recommended in state hx1, x2, x3i.
-は、状態hx1, x2, x3iでアイテムx0が推奨されている場合に、ユーザがアイテムx00を選択する確率である。
+は、状態hx1, x2, x3iでアイテムx0が推奨されている場合に、ユーザがアイテムx00を選択する確率.
 We write tr1 MDP to denote that only single item recommendations are used..
-単品推薦のみを行うことを表すためにtr1 MDPと表記する。
+単品推薦のみを行うことを表すためにtr1 MDPと表記する.
 
 ### 5.1.1. Initializing $tr_{MMDP}$ $tr_{MMDP}$ を初期化する。
 
 Proper initialization of the transition function is an important implementation issue in our system.
-遷移関数の適切な初期化は、本システムにおける重要な実装課題である。
+**transition functionの適切な初期化は、本システムにおける重要な実装課題**である.
 Unlike traditional model-based reinforcement learning algorithms that learn the proper values for the transition function and hence an optimal policy online, our system needs to be fairly accurate when it is first deployed.
-従来のモデルベースの強化学習アルゴリズムが、遷移関数の適切な値、つまり最適なポリシーをオンラインで学習するのとは異なり、私たちのシステムは、最初に展開するときにかなり正確である必要があります。
+**従来のモデルベースの強化学習アルゴリズムが、遷移関数の適切な値、つまり最適な方策をオンラインで学習するのとは異なり、私たちのシステムは、最初に展開するときにかなり正確である必要がある.**
 A for-profit e-commerce8 site is unlikely to use a recommender system that generates irrelevant recommendations for a long period, while waiting for it to converge to an optimal policy.
-営利目的のEコマース8サイトでは、最適なポリシーに収束するのを待つ間、無関係なレコメンドを生成するレコメンダーシステムを長期間使用することは考えにくいです。
+営利目的のEコマース8サイトでは、**最適なポリシーに収束するのを待つ間、無関係なレコメンドを生成するレコメンダーシステムを長期間使用することは考えにくい**.
 We therefore need to initialize the transition function carefully.
-そのため、遷移関数を慎重に初期化する必要があります。
+そのため、遷移関数を慎重に初期化する必要がある.
 We can do so based on any good predictive model, making the following assumptions:.
-あらゆる優れた予測モデルに基づいて、次のような仮定を立てて行うことができます。
+あらゆる優れた予測モデルに基づいて、以下の**2つの仮定**を立てて行うことができる.
 
-- A recommendation increases the probability that a user will buy an item. This probability is proportional to the probability that the user will buy this item in the absence of recommendations. This assumption is made by most collaborative filtering models dealing with e-commerce sites.9 We denote the proportionality constant for recommendation r in state s by αs,r , where αs,r > 1. レコメンデーションは、ユーザーが商品を購入する確率を高めるものです。 この確率は、レコメンドがない場合にユーザーがこのアイテムを購入する確率に比例する。 この仮定は、電子商取引サイトを扱う協調フィルタリングモデルの多くでなされている9。状態sにおける推薦rの比例定数をαs,rとし、αs,r > 1とする。
+- A recommendation increases the probability that a user will buy an item. This probability is proportional to the probability that the user will buy this item in the absence of recommendations. This assumption is made by most collaborative filtering models dealing with e-commerce sites.9 We denote the proportionality constant for recommendation r in state s by αs,r , where αs,r > 1. レコメンデーションは、ユーザが商品を購入する確率を高めるもの. **この確率は、レコメンドがない場合にユーザがこのアイテムを購入する確率に比例する**. この仮定は、電子商取引サイトを扱う協調フィルタリングモデルの多くでなされている9。状態$s$における推薦$r$の比例定数を$\alpha_{s,r}$とし、$\alpha_{s,r}>1$ とする.
 
-- The probability that a user will buy an item that was not recommended is lower than the probability that she will buy when the system issues no recommendations at all, but still proportional to it. We denote the proportionality constant for recommendation r in state s by βs,r , where βs,r < 1. 推薦されなかった商品を購入する確率は、システムが全く推薦をしない場合に購入する確率より低いが、それでも比例しているのである。 状態sにおける推薦者rの比例定数をβs,rとする（βs,r＜1）。
+- The probability that a user will buy an item that was not recommended is lower than the probability that she will buy when the system issues no recommendations at all, but still proportional to it. We denote the proportionality constant for recommendation r in state s by βs,r , where βs,r < 1. 推薦されなかった商品を購入する確率は、システムが全く推薦をしない場合に購入する確率より低いが、それでも比例しているのである. 状態 $s$ における推薦 $r$ の比例定数を$\beta_{s,r}$とする（$\beta_{s,r} < 1$）.
 
 To allow for a simpler representation of the equations, for a state s = hx1,...,xki and a recommendation r let us use s·r to denote the state s 0 = hx2,...,xk,ri.
-方程式をより簡単に表現するために、状態s = hx1,...,xkiと推薦rに対して、状態s 0 = hx2,...,xk,ri を表すためにs-rを使用することにする。
+方程式をより簡単に表現するために、state $s = <x1,...,xk>$と推薦rに対して、state $s' = <x2,...,xk,r>$ を表すために $s \cdot r$ を使用することにする.
 We use trpredict(s,s·r) to denote the probability that the user will choose r next, given that its current state is s according to the predictive model in which recommendations are not considered, that is, Prpred(r|s).
-s).
+推薦を考慮しない予測モデルにより、ユーザの現在の状態が$s$である場合に、次に$r$を選択する確率、すなわち$P_{r_{pred}}(r|s)$を表すために、$tr_{predict}(s,s \cdot r)$とする.
 Thus, with αs,r and βs,r constant over s and r and equal to α and β, respectively, we have.
-したがって、αs,rとβs,rがsとrにわたって一定で、それぞれαとβに等しいとすると、次のようになる。
+したがって、$\alpha_{s,r}$ と $\beta_{s,r}$ がsとrにわたって(任意のsとrの組み合わせにおいて)一定で、それぞれαとβに等しいとすると、次のようになる.
 
 $$
+tr^{1}_{MDP}(s,r, s \cdot r) = \alpha \cdot $tr_{predict}(s,s \cdot r)
 \tag{14}
 $$
 
 the probability that a user will buy r next if it was recommended;.
-推奨された場合、ユーザーが次にrを購入する確率；。
+推薦された場合、ユーザーが次にrを購入する確率；↑
 
 $$
+tr^{1}_{MDP}(s,r', s \cdot r) = \beta \cdot $tr_{predict}(s,s \cdot r), r' \neq r,
+
 \tag{15}
 $$
 
 the probability that a user will buy r if something else was recommended; and.
-他のものを勧められた場合に、ユーザーがrを購入する確率。
+他のアイテム$r'$を推薦された場合に、ユーザーがrを購入する確率↑
 
 $$
+tr^{1}_{MDP}(s,r, s) = 1 - tr^{1}_{MDP}(s,r, s \cdot r) - \sum_{r' \neq r} tr^{1}_{MDP}(s,r, s \cdot r')
+
 \tag{16}
 $$
 
 the probability that a user will not buy any new item after r was recommended.
-が推奨された後、そのユーザーが新たなアイテムを購入しない確率を示す。
+↑は推薦された後、そのユーザが新たなアイテムを購入しない確率を示す.
 We do not see a reason to stipulate a particular relationship between α and β, although we must have.
-なければならないが、αとβの関係を特に規定する理由は見いだせない。
+しなければならないが、αとβの関係を特に規定する理由は見いだせない.
 
 $$
+tr^{1}_{MDP}(s,r, s \cdot r) +  \sum_{r' \neq r} tr^{1}_{MDP}(s,r, s \cdot r') < 1
 \tag{17}
 $$
 
 The exact values of αs,r and βs,r should be chosen carefully.
-αs,rとβs,rの正確な値は慎重に選択する必要があります。
+$α_{s,r}$と$β_{s,r}$の正確な値は慎重に選択する必要がある.
 Choosing αs,r and βs,r to be constants over all states and recommendations (say α = 2, β = 0.5) might cause the sum of transition probabilities in the MDP to exceed 1.
-αs,rとβs,rをすべての状態とレコメンデーションで定数にすると（α＝2、β＝0.5）、MDPの遷移確率の合計が1を超えてしまう可能性があります。
+$α_{s,r}$と$β_{s,r}$ をすべての state $s$ と 推薦action $r$ で定数にすると（α＝2、β＝0.5）、**MDPの遷移確率の合計が1を超えてしまう可能性がある**.
 The approach we took was motivated by Kitts et al.
-私たちがとったアプローチは、Kittsらによって動機づけられたものです。
-(2000), who showed that the increase in the probability of following a recommendation is large when one recommends items having high lift, defined to be pr(x|h) pr(x) .
-h) pr(x) .
+私たちがとったアプローチは、Kittsらによって動機づけられたもの.
+(2000), who showed that the increase in the probability of following a recommendation is large when one recommends items having high lift, defined to be $pr(x|h) / pr(x)$.
+$pr(x|h) / pr(x)$を"Lift"と定義し、"Lift"が高いアイテムを推薦した場合に、推薦に従う確率の増加が大きくなる.
 Thus, it is not unreasonable to assume that this increase in probability is proportional to lift:.
-したがって、この確率の上昇は、リフト：に比例すると考えても無理はないでしょう。
+したがって、**この確率(?)の上昇は、"Lift"値に比例する**と考えても無理はないだろう:
 
 $$
+pr(r|s, r) - pr(r|s, r') \sim \gamma \frac{p(r|s)}{p(r)}
 \tag{18}
 $$
 
 where p(r) is the prior probability of buying r.
-ここで、p(r)はrを購入する事前確率である。
+ここで、**$p(r)$はrを購入する事前確率**である.
 Fixing αs,r to be a little larger than 1 as follows:.
-次のようにαs,rが1より少し大きくなるように固定する。
+次のように$α_{s,r}$が1より少し大きくなるように固定する:
 
 $$
+\alpha_{s, r} = \frac{\gamma + p(r)}{p(r)}
 \tag{19}
 $$
 
 where γ is a very small constant (we use γ = 1 1000 ), and solving for βs,r , we obtain.
-ここで、γは非常に小さな定数（ここではγ＝1 1000としている）であり、βs,r について解くと、次のようになる。
+ここで、$\gamma$ は非常に小さな定数（ここではγ＝1/1000としている）であり、$β_{s,r}$について解くと、次のようになる:
 
 $$
+\beta_{s,r} = \frac{1 - \sum_{r'} \alpha_{s,r'} p(s \cdot r'|s)}{(n-1)p(s \cdot r|s)} + \alpha_{s,r}
 \tag{20}
 $$
 
 If βs,r is negative, we set it to a very small positive value and normalize the probabilities afterwards..
-βs,rが負の値であれば、非常に小さな正の値に設定し、その後の確率を正規化します。
+$β_{s,r}$が負の値であれば、非常に小さな正の値に設定し、その後の確率を正規化する.
 
 There are a few things to note about tr1 MDP(s,r 0 ,s·r), the probability that a user will buy r if something else was recommended, and its representation.
-tr1 MDP(s,r 0 ,s-r)、ユーザーが他のものを勧められた場合にrを購入する確率とその表現について、いくつか注意すべき点があります。
+$tr^{1}_{MDP}(s,r', s\cdot r)$、即ち**ユーザが他のアイテムを勧められた場合にrを購入する確率とその表現**について、いくつか注意すべき点がある.
 First, since tr1 MDP(s,r 0 ,s·r) = βs,r ·tr(s,s· r), the MDP’s initial transition probability does not depend on r 0 because our initialization is based on data that was collected without the benefit of recommendations.
-まず、tr1 MDP(s,r 0 ,s-r) = βs,r -tr(s,s- r)であるため、推薦の恩恵を受けずに収集したデータに基づいて初期化を行うため、MDPの初期遷移確率がr 0に依存しない。
+まず、$tr^{1}_{MDP}(s,r', s\cdot r) = \beta_{s,r} \cdot tr(s,s\cdot r)$ であるため、**推薦の恩恵を受けずに収集したデータに基づいて初期化を行う**ため、MDPの初期遷移確率が$r'$に依存しない.
 Of course, if one has access to data that reflects the effect of recommendations (prpredict(s·r|s,r)), one can use it to provide a more accurate initial model.
-s,r)), one can use it to provide a more accurate initial model.
+もちろん、**推薦の効果を反映したデータ**($pr_{predict}(s \cdot r|s,r)$)**にアクセスできれば**、それを使ってより正確な初期モデルを提供することができる.
 Next, note that we can represent this transition function concisely using at most two values for every state-item pair: the probability that an item will be selected in a state when it is recommended (that is, pr(s·r|s,r)) and the probability that an item will be selected when it is not recommended (that is, pr(s·r|s,r 0 )).
-s,r)) and the probability that an item will be selected when it is not recommended (that is, pr(s·r
+次に、**この transition function は、各state-itemペアに対して最大2つの値を用いて簡潔に表現できること**に注目する：
+すなわち、ある state において、**あるアイテムが推薦されたときに選択(interaction)される確率**(= $pr(s \cdot r|s,r)$)と、あるアイテムが推薦されていないときに選択(interaction)される確率(= $pr(s \cdot r|s,r')$)である.
 Because the number of items is much smaller than the number of states, we obtain significant reduction in the space requirements of the model..
-アイテム数が状態数よりはるかに少ないため、モデルの空間要件が大幅に削減されます。
+アイテム数がstate数よりはるかに少ないため(これは分かる. state数はnum_item^mくらい?)、モデルの空間要件が大幅に削減される.(?)
 
-### 5.1.2. Generating Multple Recommendations 複数の推薦文を生成する。
+### 5.1.2. Generating Multple Recommendations 複数の推薦を生成する。
 
 When moving to multiple recommendations, we make the assumption that recommendations are independent.
-複数のレコメンデーションに移行する場合、レコメンデーションが独立していることを前提にしています。
+複数の推薦に移行する場合、**推薦アイテム達が独立していること**(i.e. 推薦アイテムリストの組み合わせによって、ユーザのinteraction確率が変化しない事...!)を前提にしている.
 Namely we assume that for every pair of sets of recommended items, R,R 0 , we have that.
-すなわち、推奨アイテムの集合であるR,R 0の各ペアについて、次のように仮定する。
+すなわち、推奨アイテムの集合であるR,R'の各ペアについて、次のように仮定する.
 
 $$
+(r \in R \cup r \in R') \cap (r \notin R \cup r \notin R') \rightarrow tr_{MDP}(s,R,s\cdot r) = tr_{MDP}(s,R',s\cdot r)
 \tag{21}
 $$
 
 This assumption might prove to be false.
-この仮定は誤りであることが証明されるかもしれません。
+この仮定は誤りであることが証明されるかもしれない.
 It seems reasonable that, as the list of recommendations grows, the probability of selecting any item decreases.
-推薦リストが大きくなるにつれて、どの項目も選択される確率が低くなるのは、合理的なことだと思います。
+推薦リストが大きくなるにつれて、どの項目も選択される確率が低くなるのは、合理的なことだと思う.
 Another more subtle example is the case where the system “thinks” that the user is interested in an inexpensive cooking book.
-また、もっと微妙な例として、ユーザーが安価な料理本に興味を持っているとシステムが "考える "ケースもあります。
+また、もっと微妙な例として、ユーザが安価な料理本に興味を持っているとシステムが "考える "ケースもある.
 It can then recommend a few very expensive cooking books and one is reasonably priced (but in no way cheap) cooking book.
-そして、非常に高価な料理本を数冊と、手頃な価格の（しかし決して安くはない）料理本を1冊を推薦することができます。
+そして、**非常に高価な料理本を数冊と、手頃な価格の（しかし決して安くはない）料理本を1冊を推薦することができる**.(=推薦アイテム達が独立でないケース!)
 The reasonably priced book will seem like a bargain compared to the expensive ones, thus making the user more likely to buy it..
-リーズナブルな価格の本は、高価な本と比べてお買い得に感じられるため、ユーザーは購入しやすくなります。
+リーズナブルな価格の本は、高価な本と比べてお買い得に感じられるため、ユーザーは購入しやすくなる.
 
 Nevertheless, we make this assumption so as not to be forced to create a larger action space where actions are ordered combinations of recommendations.
-しかし、この仮定は、アクションがレコメンデーションの順序付けられた組み合わせである、より大きなアクション空間を作ることを余儀なくされないようにするためである。
+しかし、この仮定は、アクションがレコメンデーションの順序付けられた組み合わせである、より大きなアクション空間を作ることを余儀なくされないようにするためである.
 Taking the simple approach for representing the transition function we defined above, we still keep only two values for every state–item pair:.
-先に定義した遷移関数をシンプルに表現すると、各状態-項目のペアに対して、次の2つの値しか保持しない。
+先に定義した遷移関数をシンプルに表現すると、各状態-項目のペアに対して、次の2つの値しか保持しない:
 
 $$
+tr_{MDP}(s,r \in R, s\cdot r) = tr_{MDP}^{1}(s,r, s\cdot r)
 \tag{22}
 $$
 
 the probability that r will be bought if it appeared in the list of recommendations; and.
-推奨リストに登場した場合にrが購入される確率、である。
+↑は推薦リスト$R$に登場した場合に$r$が購入される確率、である.
+(複数アイテムを推薦しようが一つだけ推薦しようが、ユーザのinteractionしやすさは変わらないという仮定.)
 
 $$
+tr_{MDP}(s,r \notin R, s\cdot r) = tr_{MDP}^{1}(s,r', s\cdot r)
+,\forall r' \notin r
 \tag{23}
 $$
 
 the probability that r will be bought if it did not appear in the list..
-リストに掲載されなかった場合、rが購入される確率が高い。
+↑はリストに掲載されなかった場合にrが購入される確率である.
 
 As before, trMDP(s,r ∈/ R,s·r) does not depend on r, and will not depend on R in the discussion that follows.
-先ほどと同様に、trMDP(s,r∈)
+前回同様、trMDP(s,r∈/ R,s-r)はrに依存せず、以降の議論でもRに依存することはないだろう.
 We note again, that these values are merely reasonable initial values and are adjusted by our system based on actual user behavior, as we shall discuss..
-なお、これらの値はあくまで妥当な初期値であり、実際のユーザーの行動に基づいてシステムで調整されることは、後述するとおりです。
+なお、**これらの値はあくまで妥当な初期値であり、実際のユーザの行動に基づいてシステムで調整される**ことは、後述するとおり.
 
-## 5.2. Solving the MDP MDPを解く。
+## 5.2. Solving the MDP MDPを解く
 
 Having defined the MDP, we now consider how to solve it in order to obtain an optimal policy.
-MDPを定義した上で、最適な政策を得るためにどのように解くかを考える。
+MDPを定義した上で、**最適な方策を得るためにどのように解くか**を考える.
 Such a policy will, in effect, tell us what item to recommend given any sequence of user purchases.
-このようなポリシーは、事実上、ユーザーが購入した商品の中から、どの商品を推奨するかを教えてくれるものです。
+このような方策は、事実上、ユーザが購入した商品の中から、どの商品を推薦するかを教えてくれるもの.
 For the domains we studied, we found policy iteration (Howard, 1960)—with a few approximations to be described—to be a tractable solution method.
-私たちが研究した領域では、政策的反復（Howard, 1960）-いくつかの近似を説明する-が扱いやすい解法であることがわかった。
+私たちが研究した領域では、**policy iteration（Howard, 1960）—with a few approximations to be described—が扱いやすい解法であることがわかった**.
 In fact, on tests using real data, we found that policy iteration terminates after a few iterations.
-実際、実データを使ったテストでは、ポリシーの反復が数回で終了してしまうことがわかりました。
+実際、実データを使ったテストでは、ポリシーの反復が数回で終了してしまうことがわかった.
 This stems from the special nature of our state space and the approximations we make, as we now explain..
-これは、これから説明するように、状態空間とその近似の特殊性に起因しています。
+これは、これから説明するように、**state spaceとその近似の特殊性**に起因している.
 
 Our state space enjoys a number of features that lead to fast convergence of the policy iteration algorithm:.
-この状態空間は、政策反復アルゴリズムの高速収束につながる以下のような特徴を備えています。
+**この状態空間は、政策反復アルゴリズムの高速収束につながる以下のような特徴を備えている**:
 
-Directionality.
-指向性です。
+### Directionality. 指向性
+
 Transitions in our state space seem to have inherent directionality: First, a state representing a short sequence cannot follow a state representing a longer sequence.
-状態空間における遷移には、固有の方向性があるようです。まず、短い配列を表す状態が、長い配列を表す状態に続くことはない。
+**状態空間における遷移には、固有の方向性があるようだ**. まず、短い配列を表す状態が、長い配列を表す状態に続くことはない.(それはそう.)
 Second, the success of the sequential prediction model indicates that typically, if x is likely to follow y, y is less likely to follow x – otherwise, the sequence x, y and y, x would have similar probabilities, and we could simply use sets.
-第二に、順序予測モデルの成功は、典型的には、xがyに続く可能性が高い場合、yはxに続く可能性が低いことを示している - そうでなければ、順序x、yとy、xは同様の確率を持ち、単にセットを使用することができるだろう。
+第二に、**sequential prediction modelの成功は、典型的には、xがyに続く可能性が高い場合、yはxに続く可能性が低いことを示している** - そうでなければ、順序x、yとy、xは同様の確率を持ち、単にセットを使用することができる.(=そうでなければnon-sequential モデルの性能が低下しないはず...!)
 Thus, loops, which in principle could occur in our MDP model because we maintain only a limited amount of history, are not very likely.
-このように、MDPモデルでは限られた量の履歴しか保持しないため、原理的に起こりうるループはあまり起こりません。
+このように、MDPモデルでは限られた量の履歴しか保持しないため、原理的に起こりうるループ(**feedback loopの事ではなく、policy iterationの事!**)はあまり起こらない.
 Indeed, an examination of the loops in our state space graph reveals them to be small and scarce.
-実際、状態空間グラフのループを調べると、ループは小さく希少であることがわかります。
+実際、状態空間グラフのループを調べると、ループは小さく希少であることがわかる.
 Moreover, in the web site implementation, it is easy enough to filter out items that were already bought by the user from our list of recommendations.
-さらに、Webサイトの実装では、ユーザーがすでに購入したアイテムをおすすめリストからフィルタリングすることも簡単です。
+さらに、**Webサイトの実装では、ユーザがすでに購入したアイテムをおすすめリストからフィルタリングすることも簡単**である.
 It is well-known that directionality can be used to reduce the running time of MDP solution algorithm (for example, Bonet and Geffner (2003))..
-MDP解法アルゴリズムの実行時間を短縮するために方向性を利用できることはよく知られている（例えば、Bonet and Geffner (2003) など）。
+MDP解法アルゴリズムの実行時間を短縮するために**方向性を利用できること**はよく知られている（例えば、Bonet and Geffner (2003) など）.
 
-Insensitivity to k.
-kに対する不感症。
+### Insensitivity to k. kに対する不感性
+
 We have also found that the computation of an optimal policy is not heavily sensitive to variations in k—the number of past transactions we encapsulate in a state.
-また、最適なポリシーの計算は、1つの状態にカプセル化された過去のトランザクションの数であるkの変動に大きく影響されないことも分かっています。
+また、**最適なポリシーの計算は、1つの state にカプセル化された過去のトランザクションの数であるkの変動に大きく影響されないこと**も分かっている.
 As k increases, so does the number of states, but the number of positive entries in our transition matrix remains similar.
-kが大きくなると状態の数も増えますが、遷移行列の正のエントリーの数は変わりません。
+kが大きくなると state の数(種類)も増えますが、遷移行列の正のエントリーの数は変わらない.(そうなんだ?)
 Note that, at most, a state can have as many successors as there are items.
-なお、1つの状態は、せいぜいアイテムの数だけ後継者を持つことができる。
+なお、1つのstateは、せいぜいアイテムの数だけ後継者(=次のstateの最後尾に追加されるアイテム履歴)を持つことができる.
 When k is small, the number of observed successors for a state can be large.
-kが小さいと、ある状態に対して観測される後継者の数が多くなることがある。
+kが小さいと、あるstateに対して観測される後継者の数が多くなることがある.(??)
 When k grows, however, the number of successors decreases considerably.
-しかし、kが大きくなると、後継者の数が大幅に減少する。
+しかし、kが大きくなると、後継者の数が大幅に減少する.
 Table 2 demonstrates this relation in our implemented model..
-表2は、この関係を我々の実装モデルで示したものである。
+表2は、この関係を我々の実装モデルで示したものである:
 
 Despite these properties of the state space, policy evaluation still requires much effort given the large state and action space we have to deal with.
-このような状態空間の特性にもかかわらず、扱うべき状態空間と行動空間が大きいため、政策評価には多くの労力が必要です。
+このような状態空間の特性にもかかわらず、扱うべきstate spaceとaction space が大きいため、方策評価には多くの労力が必要.
 To alleviate this problem we resort to a number of approximations..
-この問題を解決するために、いくつかの近似に頼ることになる。
+この問題を解決するために、いくつかの近似に頼ることになる.
 
-Ignoring Unobserved States.
-観察されない状態を無視する。
+### Ignoring Unobserved States.観察されない状態を無視する.
+
 The vast majority of states in our models do not correspond to sequences that were observed in our training set because most combinations of items are extremely unlikely.
-ほとんどのアイテムの組み合わせは極めてあり得ないため、モデルの状態の大部分は、トレーニングセットで観察されたシーケンスに対応しない。
+ほとんどのアイテムの組み合わせは極めてあり得ないため、モデルの状態の大部分は、トレーニングセットで観察されたシーケンスに対応しない.
 For example, it is unlikely to find adjacent purchases of a science-fiction and a gardening book.
-例えば、SFとガーデニングの本が隣接して購入されることはまずないでしょう。
+例えば、SFとガーデニングの本が隣接して購入されることはまずないでしょう.
 We leverage this fact to save both space and computation time.
-この事実を利用して、スペースと計算時間の両方を節約しています。
+この事実を利用して、スペースと計算時間の両方を節約している.
 First, we maintain transition probabilities only for states for which a transition occurred in our training data.
-まず、学習データで遷移が発生した状態のみ遷移確率を保持するようにしました。
+まず、**学習データで遷移が発生したstateのみ遷移確率を保持するようにした.**
 These transitions correspond to pairs of states of the form s and s·r.
-これらの遷移は、sとs-rという形の状態のペアに対応しています。
+これらの**遷移は、sとs-rという形の状態のペアに対応**している.
 Thus, the number of transitions required per state is bounded by the number of items rather than by an amount exponential in k in the worst case.
-したがって、1つの状態に必要な遷移の数は、最悪の場合、kの指数関数的な量ではなく、アイテムの数によって制限されるのである。
+したがって、**1つの状態に必要な遷移の数は、最悪の場合、kの指数関数的な量ではなく、アイテムの数によって制限される**のである.(i.e.過去に観測された遷移のパターンのみを遷移確率に考慮する...!!)
 The non-zero transitions are stored explicitly, and as can be inferred from Table 2, their number is much smaller than the total number of entries in the explicit transition matrix.
-非ゼロ遷移は明示的に保存され、表2から推測できるように、その数は明示的遷移行列の総エントリ数よりはるかに少ない。
+**非ゼロ遷移は明示的に保存され、表2から推測できるように、その数は明示的遷移行列の総エントリ数よりはるかに少ない**.
 And while much memory is still required, in Section 6.2, we show that these requirements are not too large for modern computers to handle..
-また、多くのメモリが必要であるが、6.2節では、これらの要件は現代のコンピュータが扱うには大きすぎないことを示す。
+また、多くのメモリが必要であるが、6.2節では、これらの要件は現代のコンピュータが扱うには大きすぎないことを示す.
 
 Moreover, we do not compute a policy choice for a state that was not encountered in our training data.
-また、訓練データで遭遇しなかった状態に対する政策選択を計算することはない。
+また、**訓練データで遭遇しなかったstateに対する方策選択を計算することはない**.
 When the value of such a state is needed for the computation of an optimal policy of some observed state, we simply use its immediate reward.
-このような状態の値が、ある観測された状態の最適なポリシーの計算に必要な場合、単にその即時報酬を使用します。
+このような状態の値が、ある観測された状態の最適なポリシーの計算に必要な場合、単にその即時報酬を使用する.
 That is, if the sequence hx, y,zi did not appear in the training data, we do not calculate a policy for it and assume its value to be R(z)—the reward for the last item in the sequence.
-つまり、hx,y,ziというシーケンスが学習データに現れなかった場合、そのポリシーは計算せず、その値をR(z)（シーケンスの最後のアイテムの報酬）と仮定するのである。
+つまり、**$<x,y,z>$というシーケンスが学習データに現れなかった場合、そのポリシーは計算せず、その値をR(z)(シーケンスの最後のアイテムの報酬)と仮定する**のである.
 Note that given the skipping and clustering methods we use, the probability of making a transition from some (observed) sequence hw, x, yi to hw, x, yi is not zero even though hx, y,zi was never observed.
-なお、スキップやクラスタリングの手法を用いると、ある（観測された）シーケンスhw, x, yiからhw, x, yiへ遷移する確率は、hx, y,zi が一度も観測されていなくてもゼロにはならない。
+なお、スキップやクラスタリングの手法を用いると、ある（観測された）シーケンス$<w, x, y>$から$<x, y,z>$へ遷移する確率は、$x, y,z$ が一度も観測されていなくてもゼロにはならない.
 This approximation, although risky in general MDPs, is motivated by the fact that in our initial model, for each state there is a relatively small number of items that are likely to be selected; and the probability of making a transition into an un-encountered state is very low.
-この近似は、一般的なMDPでは危険だが、今回の初期モデルでは、各状態で選択されそうな項目が比較的少なく、未遭遇の状態に遷移する確率が非常に低いという事実に動機づけられている。
+この近似は、一般的なMDPでは危険だが、今回の初期モデルでは、**各stateで選択されそうなアイテムが比較的少なく、未遭遇のstateに遷移する確率が非常に低いという事実に動機づけられている**.
 Moreover, the reward (that is, profit) does not change significantly across different states, so, there are no “hidden treasures” in the future that we could miss..
-しかも、州によって報酬（つまり利益）が大きく変わるわけではないので、将来を見逃してしまうような「隠し玉」は存在しないのです。
+しかも、異なるstateによって報酬(つまり利益)が大きく変わるわけではないので、将来を見逃してしまうような「隠し玉」は存在しないのである.
 
 When a recommendation must be generated for a state that was not encountered in the past, we compute the value of the policy for this state online.
-過去に遭遇していない状態に対して推薦文を生成する必要がある場合、この状態に対するポリシーの値をオンラインで計算する。
+**過去に遭遇していないstateに対して推薦を生成する必要がある場合**、このstateに対するポリシーの値をオンラインで計算する.
 This requires us to estimate the transition probabilities for a state that did not appear in our training data.
-そのため、学習データに現れていない状態の遷移確率を推定する必要がある。
+そのため、学習データに現れていないstateの遷移確率を推定する必要がある.
 We handle such new states in the same manner that we handled states for which we had sparse data in the initial predictive model – that is, using the techniques of skipping, clustering, and finite mixture of unigram, bigram, and trigrams described in Section 3.2..
-このような新しい状態は、最初の予測モデルでデータが疎な状態を扱ったのと同じ方法で、つまり、セクション3.2で説明したスキップ、クラスタリング、ユニグラム、ビッググラム、トリグラムの有限混合という手法で扱われるのです。
+このような新しいstateは、最初の予測モデルでデータが疎な状態を扱ったのと同じ方法で、つまり、セクション3.2で説明したスキップ、クラスタリング、ユニグラム、ビッググラム、トリグラムの有限混合という手法で扱われる.
 
-Using the Independence of Recommendations.
-レコメンデーションの独立性を利用する。
+### Using the Independence of Recommendations. レコメンデーションの独立性を利用する。
+
 One of the basic steps in policy iteration is policy determination.
-政策反復の基本的なステップのひとつに、政策決定がある。
+policy iteration の基本的なステップのひとつに、方策決定がある.
 At each iteration, we compute the best action for each state s – that is, the action satisfying:.
-各反復において、各状態sに対する最適なアクションを計算する、つまり、以下を満たすアクションを計算する。
+各反復において、各state $s$ に対する最適なアクションを計算する、つまり、以下を満たすアクションを計算する:
 
 $$
+\argmax_{R}[Rwd(s) + \gamma \sum_{s'\in S}tr(s, R, s')V_{i}(s')]
+= \argmax_{R}
+[Rwd(s) + \gamma (\sum_{r\in R}tr_{MDP}(s, r \in R, s\cdot r)V_{i}(s \cdot r) + \sum_{r \notin R}tr_{MDP}(s, r \notin R, s \cdot r))]
 \tag{24}
 $$
 
 where tr(s,r ∈ R,s·r) and tr(s,r ∈/ R,s·r) follow the definitions above..
-ここで、tr（s，r∈R，s-r）およびtr（s，r∈R，s-r）である。
+ここで、$tr_{MDP}(s, r \in R, s\cdot r)$ および $tr_{MDP}(s, r \notin R, s \cdot r)$ は全セクションで定義したものである.
 
 The above equation requires maximization over the set of possible recommendations for each state.
-上記の式は、各状態に対して可能な推奨事項のセットに対する最大化を要求している。
+上記の式は、各stateに対して可能な推薦アイテムのセットに対する最大化を要求している.
 The number of possible recommendations is n κ , where n is the number of items and κ is the number of items we recommend each time.
-推薦可能な数はn κ 、ここでnはアイテムの数、κは毎回推薦するアイテムの数である。
+推薦可能なアイテム数は$n^k$ 、ここでnはアイテムの数、κは毎回推薦するアイテムの数である.
 To handle this large action space, we make use of our independence assumption.
-この大きな行動空間を扱うために、私たちは独立性の仮定を利用する。
+**この大きな行動空間を扱うために、私たちは独立性の仮定を利用する**.
 Recall that we assumed that the probability that a user buys a particular item depends on her current state, the item, and whether or not this item is recommended.
-ユーザーが特定の商品を購入する確率は、ユーザーの現在の状態、その商品、そしてその商品が推奨されているか否かに依存すると仮定したことを思い出してください。
+**ユーザが特定の商品を購入する確率は、ユーザの現在の状態、その商品、そしてその商品が推薦されているか否かに依存すると仮定したこと**を思い出してください.
 It does not depend on the identity of the other recommended items.
-他の推奨アイテムの同一性には依存しません。
+他の推薦アイテムの同一性には依存しない.
 The following method uses this fact to quickly generate an optimal set of recommendations for each state..
-次の方法は、この事実を利用して、各状態に最適な推薦文のセットを素早く生成するものです。
+次の方法は、この事実を利用して、各 state に最適な推薦のセットを素早く生成するものである.
 
-Let us define ∆(s,r) – the additional value of recommending r in state s:.
-ここで、△（s,r）-状態sにおいてrを推奨することの付加価値-と定義する：。
+Let us define $\Delta(s,r)$ – the additional value of recommending r in state s:.
+ここで、$\Delta(s,r)$を、**状態sにおいてrを推薦することの付加価値**-と定義する:
 
 $$
+\Delta(s,r) = (tr(s,r \in R, s \cdot r) - tr(s, r \notin R, s \cdot r))V(s \cdot r).
 \tag{25}
 $$
 
-Now define.
-では、定義します。
+Now define
+では、付加価値を最大にするような推薦アイテムリストを以下のように定義します:
 
 $$
+R^{s, k}_{max \Delta} = {r_1, \cdots, r_k| \Delta(s, r_1) \geq \cdots \geq \Delta(s, r_k)
+\\
+\And \forall r \neq r_i(i = 1, \cdots,k), \Delta(s, r_k) \geq \Delta(s,r)
+}
 \tag{26}
 $$
 
 R s,κ max∆ is the set of κ items that have the maximal ∆(s,r) values..
-R s,κ max△は、△(s,r)の値が最大となるκ個のアイテムの集合である。
+$R^{s, k}_{max \Delta}$ は、$\Delta(s,r)$の値が最大となるk個のアイテムの集合である.
 
-Theorem 1 R s,κ max∆ is the set that maximizes Vi+1(s) – that is,.
-定理1 R s,κ max△は、Vi+1(s)を最大化する集合である、つまり。
+#### Theorem 1 定理1
+
+R s,κ max∆ is the set that maximizes Vi+1(s) – that is,.
+$R^{s, k}_{max \Delta}$ は、$V_{i+1}(s)$を最大化する集合である、つまり...
 
 $$
+V_{i+1}(s) = Rwd(s) +
+\gamma(\sum_{r \in R^{s, k}_{max \Delta}}tr(s,r \in R, s\cdot r)V_i(s \cdot r) +
+\sum_{r \notin R^{s, k}_{max \Delta}} tr(s, r \notin R, s \cdot r)V_i(s \cdot r)).
 \tag{27}
 $$
 
-Proof.
-証明する。
+#### Proof.
 
 Let us assume that there exists some other set of κ recommendations R 6= R s,κ max∆ that maximizes Vi+1(s).
 ここで、Vi+1(s)を最大化するκ推奨R 6= R s,κ max△の他の集合が存在すると仮定する。
@@ -1126,128 +1152,160 @@ $$
 To compute Vi+1(s) we therefore need to compute all ∆(s,r) and find R s,κ max∆ , making the computation of Vi+1(s) independent of the number of subsets (or even worse—ordered subsets) of κ items.
 したがって、Vi+1(s)を計算するためには、すべての△(s,r)を計算し、R s,κ max△を求める必要があり、Vi+1(s)の計算はκ項目の部分集合（あるいはさらに悪い順の部分集合）の数とは無関係となる。
 The complexity of finding an optimal policy when recommending multiple items at each stage under our assumptions remains the same as the complexity of computing an optimal policy for single item recommendations..
-本仮定の下で、各ステージで複数のアイテムを推奨する場合の最適なポリシーを見つける複雑さは、単一のアイテムを推奨する場合の最適なポリシーを計算する複雑さと変わりません。
+本仮定の下で、**各ステージで複数のアイテムを推薦する場合の最適なポリシーを見つける複雑さは、単一のアイテムを推薦する場合の最適なポリシーを計算する複雑さと変わらない**.
 
 By construction, our MDP optimizes site profits.
-このように、私たちのMDPは、サイトの利益を最適化します。
+このように、私たちのMDPは、サイトの利益を最適化する.
 In particular, the system does not recommend items that are likely to be bought whether recommended or not, but rather recommends items whose likelihood of being purchased is increased when they are recommended.
-特に、推薦してもしなくても買われる可能性が高いものを推薦するのではなく、推薦すると買われる可能性が高くなるものを推薦するようにしました。
+特に、**推薦してもしなくても買われる可能性が高いものを推薦するのではなく、推薦すると買われる可能性が高くなるものを推薦するようにした**.
 Nonetheless, when recommendations are based solely on lift, it is possible that many recommendations will be made for which the absolute probability of a purchase (or click) is small.
-しかし、リフトだけでレコメンドすると、購入（クリック）される絶対確率が低いレコメンドが多くなる可能性があります。
+**しかし、リフトだけでレコメンドすると、購入(クリック)される絶対確率が低いレコメンドが多くなる可能性がある**.
 In this case, if recommendations are seldom followed, users might start ignoring them altogether, making the overall benefit zero.
-この場合、推奨事項がほとんど守られないと、ユーザーはそれを完全に無視するようになり、全体の利益はゼロになってしまうかもしれません。
+この場合、推奨事項がほとんど守られないと(?)、ユーザはそれを完全に無視するようになり、全体の利益はゼロになってしまうかもしれない.
 Our model does not capture such effects.
-私たちのモデルは、そのような効果を捉えていません。
+私たちのモデルは、そのような効果を捉えていない.
 One way to remedy this possible problem is to alter the reward function so as to provide a certain immediate reward for the acceptance of a recommendation.
-このような問題を解決する一つの方法として、推薦を受けるとすぐに一定の報酬が得られるように報酬機能を変更することが考えられる。
+このような問題を解決する一つの方法として、推薦を受けるとすぐに一定の報酬が得られるように報酬機能を変更することが考えられる.
 Another way to handle this problem is to recommend a book with a large MDP score only if the probability of buying it passes some threshold.
-この問題を扱う別の方法として、MDPスコアが大きい本を購入する確率がある閾値を超えた場合にのみ推薦する方法があります。
+この問題を扱う別の方法として、MDPスコアが大きい本を購入する**確率がある閾値を超えた場合にのみ推薦する**方法がある.
 We did not find it necessary to introduce these modifications in our current system..
-現在のシステムでは、このような改良を加える必要はないと考えています。
+現在のシステムでは、このような改良を加える必要はないと考えている.
 
 ## 5.3. Updating the Model Online オンラインでモデルを更新する。
 
 Once the recommender system is deployed with its initial model, we need to update the model according to actual observations.
-レコメンダーシステムが初期モデルで展開された後は、実際の観測結果に応じてモデルを更新する必要があります。
+レコメンダーシステムが初期モデルで展開された後は、**実際の観測結果に応じてモデルを更新する必要がある**.
 One approach is to use some form of reinforcement learning— methods that improve the model after each recommendation is made.
-強化学習と呼ばれる、推薦が行われるたびにモデルを改良していく方法を用いるのも一つの方法です。
+強化学習と呼ばれる、推薦が行われるたびにモデルを改良していく方法を用いるのも一つの方法である.
 Although such models need little administration to improve, the implementation requires many calls and computations by the recommender system online, which will lead to slower responses—an undesirable result.
-このようなモデルは、改良のための管理はほとんど必要ありませんが、その実装には、レコメンダーシステムがオンラインで多くの呼び出しと計算を行う必要があり、レスポンスが遅くなるという好ましくない結果を招きます。
+このようなモデルは、改良のための管理はほとんど必要ないが、その実装には、推**薦システムがオンラインで多くの呼び出しと計算を行う必要があり、レスポンスが遅くなるという好ましくない結果を招く**.
 A simpler approach is to perform off-line updates at fixed time intervals.
-よりシンプルな方法として、一定の時間間隔でオフラインの更新を行う方法があります。
+**よりシンプルな方法として、一定の時間間隔でオフラインの更新を行う方法がある**.
 The site need only keep track of the recommendations and the user selections and, say, once a week use those statistics to build a new model and replace it with the old one.
-サイトでは、レコメンデーションとユーザーの選択を記録し、例えば週に一度、それらの統計情報を使って新しいモデルを構築し、古いモデルと置き換えるだけでいいのです。
+サイトでは、**推薦内容とユーザの選択を記録し、例えば週に一度、それらの統計情報を使って新しいモデルを構築し、古いモデルと置き換えるだけでいい**のである.
 This is the approach we used..
-このようなアプローチで臨みました。
+このようなアプローチで臨んだ.
 
 In order to re-estimate the transition function the following counts are obtained from the recently collected statistics:.
-遷移関数を再推定するために、最近収集した統計から以下のカウントを取得した。
+**遷移関数を再推定するため**に、最近収集した統計から以下のカウントを取得した.
 
-- cin(s,r,s·r)—the number of times the r recommendation was accepted in state s. cin(s,r,s-r)-状態sでrの推薦が受け入れられた回数です。
+- $c_{in}(s,r,s·r)$—the number of times the r recommendation was accepted in state s. $c_{in}(s,r,s·r)$-状態sでrの推薦が受け入れられた回数.
 
-- cout(s,r,s·r)—the number of times the user took item r in state s even though it was not recommended, cout(s,r,s-r)-状態sにおいて、推奨されていないにもかかわらず、ユーザーがアイテムrを取った回数、。
+- $c_{out}(s,r,s·r)$—the number of times the user took item r in state s even though it was not recommended, $c_{out}(s,r,s·r)$-状態sにおいて、推薦されていないにもかかわらず、ユーザがアイテムrを取った回数.
 
-- ctotal(s,s·r)—the number of times a user took item r while being in state s, regardless of whether it was recommended or not. ctotal(s,s-r)-ユーザーが状態sの時にアイテムrを摂取した回数（推奨されたか否かに関わらず）。
+- $c_{total}(s,s·r)$—the number of times a user took item r while being in state s, regardless of whether it was recommended or not. $c_{total}(s,s·r)$-ユーザが状態sの時にアイテムrを摂取した回数(推薦されたか否かに関わらず).
 
 We compute the new counts and the new approximation for the transition function at time t +1 based on the counts and probabilities at time t as follows:.
-時刻tのカウントと確率に基づいて、時刻t +1の新しいカウントと遷移関数の新しい近似を次のように計算する。
+時刻tにおけるカウントと確率に基づいて、時刻t+1の新しいカウントと遷移関数の新しい近似を次のように計算する.
 
 $$
+c^{t+1}_{in}(s,r,s·r) = c^t_{in}(s, r, s \cdot r) + count(s, r, s\cdot r)
 \tag{29}
 $$
 
-Note that at this stage the constants αs,r and βs,r no longer play a role—they were used only to generate the initial model.
-この段階では、定数αs,rとβs,rはもはや役割を果たさず、初期モデルの生成にのみ使用されたことに注意してください。
-We still need to define how the counts at time t = 0 are initialized.
-時刻t = 0のカウントがどのように初期化されるかを定義する必要があります。
-We showed in section 5.1.1 how the transition function tr is initialized, and now we define:.
-5.1.1節で遷移関数trの初期化方法を示したが、ここでは次のように定義する。
+$$
+c^{t+1}_{total}(s,s·r) = c^t_{total}(s, s \cdot r) + count(s, s\cdot r)
+\tag{30}
+$$
 
 $$
+c^{t+1}_{out}(s,r,s·r) = c^t_{out}(s, r, s \cdot r) + count(s, s\cdot r) - count(s, r, s\cdot r)
+\tag{31}
+$$
+
+$$
+tr(s, r \in R, s\cdot r) = \frac{c^{t+1}_{in}(s,r,s·r)}{c^{t+1}_{total}(s,s·r) }
+\tag{32}
+$$
+
+$$
+tr(s, r \notin R, s\cdot r) = \frac{c^{t+1}_{out}(s,r,s·r)}{c^{t+1}_{total}(s,s·r) }
+\tag{33}
+$$
+
+Note that at this stage the constants αs,r and βs,r no longer play a role—they were used only to generate the initial model.
+この段階では、**定数$\alpha_{s,r}$と$\beta_{s,r}$はもはや役割を果たさず、初期モデルの生成にのみ使用されたことに注意してください**.
+We still need to define how the counts at time t = 0 are initialized.
+時刻t = 0のカウントがどのように初期化されるかを定義する必要がある.
+We showed in section 5.1.1 how the transition function tr is initialized, and now we define:.
+5.1.1節で遷移関数$tr$の初期化方法を示したが、ここでは次のように定義する:
+
+$$
+c^{0}_{in}(s,r,s·r) = \xi_s \cdot tr(s, r, s\cdot r)
 \tag{34}
 $$
 
+$$
+c^{0}_{out}(s,r,s·r) = \xi_s \cdot tr(s, r, s\cdot r)
+\tag{35}
+$$
+
+$$
+c^{0}_{total}(s,s·r) = \xi_s
+\tag{36}
+$$
+
 where ξs is proportional to the number of times the state s was observed in the training data (in our implementation we used 10 · count(s)).
-ここで、ξsは学習データで状態sが観測された回数に比例する（我々の実装では、10 - count(s)を使用）。
+ここで、$\xi_s$ は**学習データでstate sが観測された回数に比例する**(定数)(我々の実装では、$10 \cdot count(s)$ を使用).
 This initialization causes states that were observed infrequently to be updated faster than states that were observed frequently and in whose estimated transition probabilities we have more confidence.10.
-この初期化により、観測頻度の低い状態は、観測頻度が高く、推定遷移確率に信頼性がある状態よりも速く更新される。
+この初期化により、観測頻度の低いstateは、観測頻度が高く推定遷移確率に信頼性があるstateよりも速く(??)更新される.
 
 To ensure convergence to an optimal solution, the system must obtain accurate estimates of the transition probabilities.
-最適解に収束させるためには、システムは遷移確率の正確な推定値を得る必要があります。
+最適解に収束させるためには、システムは遷移確率の正確な推定値を得る必要がある.
 This, in turn, requires that for each state s and for every recommendation r, we observe the response of users to a recommendation of r in state s sufficiently many times.
-そのためには、各状態sと各推薦rについて、状態sにおけるrの推奨に対するユーザの反応を十分な回数観察する必要がある。
+そのためには、各state $s$ と各推薦 $r$ について、state $s$ におけるrの推薦に対するユーザの反応を十分な回数観察する必要がある.
 If at each state the system always returns the best recommendations only, then most values for count(s,r,s·r) would be 0, because most items will not appear among the best recommendations.
-もし、各状態で常にベストレコメンデーションのみを返すシステムであれば、ほとんどのアイテムがベストレコメンデーションに含まれないため、count(s,r,s-r)の値は0となります。
+もし、各stateで常に ベストレコメンデーションのみを返すシステムであれば、ほとんどのアイテムがベストレコメンデーションに含まれないため、$count(s,r, s \cdot r)$ の値は0となる.
 Thus, the system needs to recommend non-optimal items occasionally in order to get counts for those items.
-そのため、最適でないアイテムを推奨することで、そのアイテムのカウントを獲得する必要があるのです。
+そのため、最適でないアイテムを推薦することで、そのアイテムのカウントを獲得する必要があるである.(探索の要素!!)
 This problem is widely known in computational learning as the exploration versus exploitation tradeoff (for some discussion of learning rate decay and exploration vs.
-この問題は、計算機学習において、探索と利用のトレードオフとして広く知られている（学習率の減衰と探索と利用のトレードオフに関するいくつかの議論については、こちら）。
+この問題は、計算機学習において、**探索と利用のトレードオフ**として広く知られている(学習率の減衰と探索と利用のトレードオフに関するいくつかの議論については、こちら)
 exploitation in reinforcement learning, see, for example Kaelbling et al.
 強化学習での活用は、例えばKaelbling et al.
 (1996) and Sutton and Barto (1998)).
-(1996)、Sutton and Barto(1998))がある。
+(1996)、Sutton and Barto(1998))がある.
 The system balances the need to explore unobserved options in order to improve its model and the desire to exploit the data it has gathered so far in order to get rewards..
-このシステムは、モデルを改良するために未観測のオプションを探索する必要性と、報酬を得るためにこれまでに収集したデータを利用する必要性のバランスをとっています。
+このシステムは、**モデルを改良するために未観測のオプションを探索(explore)する必要性**と、報酬を得るためにこれまでに収集したデータを活用(exploit)する必要性のバランスをとっている.
 
 One possible solution is to select some constant ε, such that recommendations whose expected value is ε-close to optimal will be allowed—for example, by following a Boltzmann distribution:.
-一つの可能な解決策は、ある定数εを選択することで、期待値がεに近いレコメンデーションは、例えば、ボルツマン分布に従うことで、最適になるようにすることである：。
+一つの可能な解決策は、ある定数$\epsilon$を選択することで、期待値が$\epsilon$に近いレコメンデーションは、例えば、ボルツマン分布に従うことで、最適になるようにすることである：
 
 $$
 \tag{37}
 $$
 
 with an ε cutoff—meaning that only items whose value is within ε of the optimal value will be allowed.
-を設定し、その値が最適値からε以内にある項目のみを許可することを意味する。
+↑を設定し、その値が最適値からε以内にあるアイテムのみを許可することを意味する.
 The exact value of ε can be determined by the site operators.
-εの正確な値は、サイト運営者が決定することができます。
+εの正確な値は、サイト運営者が決定することができる.
 The price of such a conservative exploration policy is that we are not guaranteed convergence to an optimal policy.
-このような保守的な探査方針の代償として、最適な方針への収束が保証されないことが挙げられます。
+**このような保守的な探索方針の代償**として、最適な方針への収束が保証されないことが挙げられる.
 Another possible solution is to show the best recommendation on the top of the list, but show items less likely to be purchased as the second and third items on the list.
-また、一番お勧めの商品をリストの一番上に表示し、購入の可能性が低いものをリストの2番目、3番目に表示する方法も考えられます。
+また、**一番お勧めの商品をリストの一番上に表示し、購入の可能性が低いものをリストの2番目、3番目に表示する方法**も考えられる.(=これは推薦システム \* 強化学習で特有かも!)
 In our implementation we use a list of three recommendations where the first one is always the optimal one, but the second and third items are selected using the Boltzman distribution without a cutoff..
-我々の実装では、3つの推薦リストを使用し、最初のものは常に最適なものであるが、2番目と3番目の項目は、カットオフなしでボルツマン分布を用いて選択されるものである。
+我々の実装では、3つの推薦リストを使用し、最初のものは常に最適なものであるが、2番目と3番目のアイテムは、カットオフなしでボルツマン分布を用いて選択されるものである.
 
 We also had to equip our system to change with frequent changes (for example, addition and removal of items).
-また、頻繁な変更（例えば、項目の追加や削除など）に対応できるような装備にする必要がありました。
+また、頻繁な変更(例えば、アイテムの追加や削除など)に対応できるような装備にする必要があった.
 When new items are added, users will start buying them and positive counts for them will appear.
-新しいアイテムが追加されると、ユーザーはそれを買い始め、そのアイテムのプラスカウントが表示されるようになります。
+新しいアイテムが追加されると、ユーザはそれを買い始め、そのアイテムのプラスカウントが表示されるようになる.
 At this stage, our system adds new states for these new items, and the transition function is expanded to express the transitions for these new states.
-この段階で、私たちのシステムは、これらの新しいアイテムのための新しい状態を追加し、これらの新しい状態のための遷移を表現するために遷移関数を拡張する。
+この段階で、私たちのシステムは、これらの新しいアイテムのための新しい state を追加し、これらの新しい state のための遷移を表現するために遷移関数を拡張する.
 Of course, prior to updating the model, the system is not able to recommend those new items (the well-known “cold start” problem (Good et al., 1999) in recommender systems).
-もちろん、モデルを更新する前は、システムはそれらの新しいアイテムを推薦することができない（推薦システムにおけるよく知られた「コールドスタート」問題（Good et al.，1999））。
+もちろん、モデルを更新する前は、システムはそれらの新しいアイテムを推薦することができない(推薦システムにおけるよく知られた「コールドスタート」問題(Good et al.，1999)).
 In our implementation, when the first transition to a state s·r is observed, its probability is initialized to 0.9 the probability of the most likely next item in state s with ξs = 10.
-本実装では、状態s-rへの最初の遷移が観測されたとき、その確率は、状態sで最も可能性の高い次の項目の確率をξs = 10として、0.9に初期化される。
+本実装では、状態 $s\cdot r$ への最初の遷移が観測されたとき、その確率は、状態sで最も可能性の高い次のアイテムの確率を$\xi_s = 10$として、0.9に初期化される.
 This approach causes the new items to be recommended quite frequently..
-この方法だと、新しいアイテムが推奨される頻度が高くなりますね。
+**この方法だと、新しいアイテムが推薦される頻度が高くなりますね**.
 
 One possible approach to handling removed items is to do nothing to our system, in which case the transition probabilities slowly decay to zero.
-削除されたアイテムを処理する方法として考えられるのは、システムに何もしないことであり、その場合、遷移確率はゆっくりとゼロに減衰する。
+**削除されたアイテムを処理する方法**として考えられるのは、システムに何もしないことであり、その場合、遷移確率はゆっくりとゼロに減衰する.
 Using this approach, however, we may still insert deleted items into the list of recommended items – an undesirable feature.
-しかし、この方法では、削除されたアイテムが推奨アイテムに挿入される可能性があり、好ましくない機能です。
+しかし、この方法では、**削除されたアイテムが推奨アイテムに挿入される可能性があり**、好ましくない機能.
 Consequently, in our Mitos implementation, items are programmatically removed from the model during offline updates.
-そのため、Mitosの実装では、オフラインアップデート時にアイテムをプログラムから削除しています。
+そのため、Mitosの実装では、オフラインアップデート時にアイテムをプログラムから削除している.
 Another solution that we have implemented but not evaluated is to use weighted data and to exponentially decay the weights in time, thus placing more weight on more recently observed transitions..
-もう一つの解決策は、重み付けされたデータを使用し、時間的に指数関数的に減衰させることで、より最近観測された遷移に重きを置くというものです（評価はしていません）。
+もう一つの解決策は、**重み付けされたデータを使用し、時間的に指数関数的に減衰させることで、より最近観測された遷移に重きを置く**というもの.（評価はしていません）.
 
 # 6. Evaluation of the MDP Recommender Model MDPレコメンダーモデルを評価する
 
