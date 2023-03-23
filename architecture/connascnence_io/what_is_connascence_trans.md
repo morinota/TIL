@@ -4,7 +4,7 @@
 
 > Two software components are connascent if a change in one would require the other to be modified in order to maintain the overall correctness of the system.
 >
-> > システム全体の正しさを維持するために、一方を変更すると他方も変更する必要がある場合、2つのソフトウェアコンポーネントは"conascent"(結合?)している.
+> システム全体の正しさを維持するために、一方を変更すると他方も変更する必要がある場合、2つのソフトウェアコンポーネントは"conascent"(結合?)している.
 
 # What is COnnascence? COnnascenceとは何か？
 
@@ -41,7 +41,7 @@ However, connascence takes a more holistic approach, where each instance of conn
 The three properties of Strength, Degree, and Locality give the programmer all the tools they need in order to make informed decisions about when they will permit certain types of coupling, and when the code ought to be refactored..
 Strength、Degree、Localityの3つの特性は、プログラマが、**ある種の結合をいつ許すか、いつコードをリファクタリングすべきか**について、情報に基づいた決定を下すために必要なすべてのツールを提供する.
 
-## A Vocabulary for Coupling A Vocabulary for Coupling.
+## A Vocabulary for Coupling
 
 Arguably one of the most important benefits of connascence is that it gives developers a vocabulary to talk about different types of coupling.
 connascenceの最も重要な利点の1つは、**開発者に異なるタイプのカップリングについて話すための語彙を与えること**であると思われる.
