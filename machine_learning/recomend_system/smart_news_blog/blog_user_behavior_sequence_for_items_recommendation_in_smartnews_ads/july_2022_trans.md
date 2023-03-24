@@ -5,79 +5,75 @@
 ## title タイトルです。
 
 User Behavior Sequence for Items Recommendation in SmartNews Ads.
-スマートニュース広告におけるアイテム推薦のためのユーザー行動シーケンス。
+スマートニュース広告におけるアイテム推薦のためのユーザ行動Sequence.
 
-## NLP vs. Recommendation NLP vs. 推奨する。
+## NLP vs. Recommendation 
 
 User historical behavior sequences give us objective data about a user, regardless of his/her gender/age/income, which is ultimately reflected in what he/she has seen and purchased.
-ユーザーの過去の行動シーケンスから、ユーザーに関する客観的なデータを得ることができます（ユーザーとは関係ありません）。
+**ユーザの過去のbehavior sequencesは、性別や年齢、収入に関係なく、そのユーザに関する客観的なデータとなり**、最終的にはそのユーザが見たもの、買ったものに反映される.
 Therefore, how to mine user preferences from behavioral sequences is a hot area in recommendation systems..
-そのため、行動シーケンスからどのようにユーザーの嗜好を掘り起こすかは、推薦システムのホットな分野である。
+そのため、behavior sequencesからどのようにユーザの嗜好を掘り起こすかは、推薦システムのホットな分野である.
 
 The traditional approach is to process these sequences statistically, e.g.
-従来のアプローチは、これらのシーケンスを統計的に処理するものであった。
+従来のアプローチは、これらのsequencesを統計的に処理するものであった.
 collaborative filtering, which calculates the probability that a user who has bought item A will buy item B as a recommendation score.
-協調フィルタリングで、アイテムAを購入したユーザーがアイテムBを購入する確率を推薦スコアとして算出します。
+協調フィルタリングで、アイテムAを購入したユーザーがアイテムBを購入する確率を推薦スコアとして算出する.
 Or calculating the average number of times a user has viewed a category/store, the number of activities in a certain time interval for feature modeling, and so on.
-あるいは、ユーザーがカテゴリーを閲覧した平均回数の算出
+あるいは、ユーザがカテゴリ／ストアを閲覧した平均回数や、フィーチャーモデリングのためのある時間間隔でのアクティビティ数などを算出することもできる.
 However, when it comes to sequences, natural language processing (NLP) is essentially solving this type of problem.
-しかし、配列に関しては、自然言語処理（NLP）がこの種の問題を本質的に解決しています。
+しかし、**sequencesに関しては、自然言語処理（NLP）がこの種の問題を本質的に解決している**.
 A sentence is a sequence, and a conversation is a combination of sequences of sentences.
-文は配列であり、会話は文の配列の組み合わせである。
+文はsequenceであり、会話は文のsequenceの組み合わせである.
 So in the NLP domain, researchers have been thinking about how to effectively characterize sentences or even strings of conversations (paragraphs)..
-そこで、NLPの領域では、文や会話の文字列（パラグラフ）を効果的に特徴付ける方法について研究者が考えてきました。
+そこで、NLPの領域では、文や会話の文字列（パラグラフ）を効果的に特徴付ける方法について研究者が考えてきた.
 
 ![](https://miro.medium.com/v2/resize:fit:1400/0*DslE4AF44bC9PnwX)
 
 As shown above, around 2015, we can observe a series of model breakthroughs, from RNN -> LSTM/GRU -> Attention -> Transformer -> Bert -> Bert variants, and watch the SOTA list keep rotating and breaking, while the techniques of these models are also starting to ferment in other domains.
-上図のように、2015年あたりから、RNN→LSTMと、モデルのブレークスルーが相次いで観測されるようになります
-For example, in the field of vision, the Transformer has been used for different tasks, e.g.
-例えば、視覚の分野では、トランスフォーマーは様々なタスクに使用されてきました、例えば。
-DETR-based improvements in Object Detection have also yielded SOTA results.
-DETRによる物体検出の改善も、SOTAの成果を生んでいます。
+このように、2015年あたりから、RNN→LSTM/GRU→Attention→Transformer→Bert→Bert亜種と、一連のモデルのブレイクスルーを観察し、SOTAリストが回転しながら壊れ続けるのを見守り、またこれらのモデルの技術が他のドメインで発酵し始めるのを見ることができる.
+For example, in the field of vision, the Transformer has been used for different tasks, e.g. DETR-based improvements in Object Detection have also yielded SOTA results.
+例えば、視覚の分野では、トランスフォーマーは様々なタスクに使用されてきた. 例えばDETRによる物体検出の改善も、SOTAの成果を生んでいる.
 In the field of speech, the presence of Transformer can be seen in speech recognition, speech synthesis and text-to-speech.
-音声の分野では、音声認識、音声合成、音声合成でTransformerの存在を確認することができます。
+音声の分野では、音声認識、音声合成、音声合成でTransformerの存在を確認することができる.
 In the field of search and push, it is also following the evolution of NLP.
-検索やプッシュの分野では、NLPの進化も追いかけている。
+検索やプッシュの分野では、NLPの進化も追いかけている.
 From GRU4Rec -> NARM -> SASRec -> Bert4Rec, it has been in public testing and breakthroughs.
-GRU4Rec→NARM→SASRec→Bert4Recと、公開テストやブレークスルーで活躍してきた。
+GRU4Rec→NARM→SASRec→Bert4Recと、公開テストやブレークスルーで活躍してきた.
 The same is true for news recommendation, which is more relevant to NLP, and furthermore, finetune through PLM (Pretrained Language Model) has achieved very good results..
-NLPとの関連性が高いニュース推薦も同様で、さらにPLM（Pretrained Language Model）によるfinetuneは非常に良い結果を出しています。
+**NLPとの関連性が高いニュース推薦も同様**で、さらにPLM（Pretrained Language Model）によるfinetuneは非常に良い結果を出している.
 
 However, beyond academics, it is important to know whether it can really bring improvements in business scenarios.
-しかし、学術的なこと以上に、ビジネスシーンで本当に改善をもたらすことができるのかどうかが重要です。
+しかし、**学術的なこと以上に、ビジネスシーンで本当に改善をもたらすことができるのかどうかが重要**である.
 In particular, NLP features are simple, consisting mainly of sentences and words, with some scenarios adding keywords and lexical properties.
-特にNLPの特徴は、文と単語を中心に構成されるシンプルなもので、シナリオによってはキーワードや字句のプロパティを追加するものもある。
-However, in the case of recommendations, there are many other features that affect user clicks and purchases (e.g.
-しかし、レコメンデーションの場合、ユーザーのクリックや購入に影響する他の機能（例．
-super sales day/product prices/discount etc.).
-スーパーセールスデー
+特にNLPの特徴は、文と単語を中心に構成されるシンプルなもので、シナリオによってはキーワードや字句のプロパティを追加するものもある.
+However, in the case of recommendations, there are many other features that affect user clicks and purchases (e.g. super sales day/product prices/discount etc.).
+しかし、レコメンデーションの場合、ユーザのクリックや購入に影響を与える機能は他にもたくさんある（例：スーパーセール日／商品価格／割引など）.
 Imagine that we often buy things that we wouldn’t normally buy because of a discount on a Black Friday..
-ブラックフライデーの割引で普段買わないようなものを買うことが多いと想像してください。
+ブラックフライデーの割引で普段買わないようなものを買うことが多いと想像してください.
 
 Today we’re going to take a look at how we’re using SmartNews user historical behavior data in an advertising scenario, and share our tips on how to do this in practice..
-本日は、SmartNewsのユーザー履歴行動データを広告シナリオに活用する方法を紹介し、実践するためのヒントをお伝えします。
+本日は、**SmartNewsのユーザ履歴行動データを広告シナリオに活用する方法**を紹介し、実践するためのヒントをお伝えする.
 
-## SmartNews Ads Scenario SmartNews Ads のシナリオ。
+## SmartNews Ads Scenario SmartNews Ads のシナリオ
 
 In SmartNews Ads, there are a lot of advertisers who want to advertise products that will be exposed to interested users and lead to purchases or app installs.
-SmartNews Adsでは、興味のあるユーザーに商品を露出し、購入やアプリのインストールにつなげたい広告主が多く存在します。
+SmartNews Adsでは、**興味のあるユーザに商品を露出し、購入やアプリのインストールにつなげたい広告主が多く存在する**.
 For example, like e-commerce advertisers, there may be tens of millions of items, and our platform has to recommend the right items to different users to achieve the advertiser’s CPA/ROAS expectations based on different optimization goals..
-例えば、Eコマースの広告主のように、数千万点のアイテムが存在する場合があり、私たちのプラットフォームは、広告主のCPAを達成するために、さまざまなユーザーに適切なアイテムを推薦する必要があります。
+例えば、Eコマースの広告主のように、数千万点のアイテムが存在する場合があり、私たちのプラットフォームは、広告主のCPAを達成するために、さまざまなユーザに適切なアイテムを推薦する必要がある.
 
 ![](https://miro.medium.com/v2/resize:fit:1400/0*eXQQUCRpjM5eOvJE)
 
 It is necessary to use the user’s behavioral data on the SmartNews to better understand the user and achieve better recommendations.
-ユーザーをより理解し、より良いレコメンデーションを実現するために、SmartNews上でユーザーの行動データを利用することが必要です。
+ユーザをより理解し、より良いレコメンデーションを実現するために、SmartNews上でユーザの行動データを利用することが必要である.
 Basic recommendations, such as what users have seen recently, or recommending similar items based on CF, are already very effective in their own right.
-ユーザーが最近見たもの、CFに基づいて似たようなものを勧めるなど、基本的なレコメンデーションは、それ自体ですでに非常に効果的です。
+**ユーザが最近見たもの、CFに基づいて似たようなものを勧めるなど、基本的なレコメンデーションは、それ自体ですでに非常に効果的である**.
 But now that we have the user behavioral sequence data, we try to incorporate the sequence recommendation modeling approach to see if it can lead to better recommendation results and user experience..
-しかし、ユーザーの行動シーケンスデータを手に入れた今、シーケンス・レコメンデーション・モデリングのアプローチを取り入れることで、より良いレコメンデーション結果とユーザー体験につながるかどうか試しています。
+しかし、ユーザのbehavioral sequenceデータを手に入れた今、**sequence recommendation modeling のアプローチを取り入れる**ことで、より良いレコメンデーション結果とユーザ体験につながるかどうか試している.
 
 The diagram below shows the scenario we want to model.
-下図は、モデル化したいシナリオを示したものです。
+下図は、モデル化したいシナリオを示したもの.
 When we know the user’s historical behavior, can we guess what items the user will be most interested in next!.
-ユーザーの過去の行動がわかると、そのユーザーが次にどんなアイテムに最も興味を持つかを推測することができるのです
+**ユーザの過去の行動がわかると、そのユーザが次にどんなアイテムに最も興味を持つかを推測することができる**.
 
 ![](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*uJrnTI2Sm0VdVba0.png)
 
@@ -86,35 +82,31 @@ When we know the user’s historical behavior, can we guess what items the user 
 ### Model Selection モデル選択。
 
 As mentioned before, there are a range of models in the recommendation domain that also attempt to deal with sequences.
-前述したように、推薦の領域でも配列を扱おうとする様々なモデルが存在する。
+前述したように、推薦の領域でも sequences を扱おうとする様々なモデルが存在する.
 Here we have chosen SASRec as the basis for our experiments, which is a Self-Attention based model architecture with the clear idea of using the past N product sequences to predict the N+1th product.
-SASRecは、過去N個の商品シーケンスを用いてN+1個目の商品を予測するという明確なアイデアを持ったSelf-Attentionベースのモデルアーキテクチャであり、ここでは実験の基礎としてSASRecを選択しました。
+**SASRec** は、**過去N個の商品sequences を用いてN+1個目の商品を予測するという明確なアイデアを持ったSelf-Attentionベースのモデルアーキテクチャ**であり、ここでは実験の基礎としてSASRecを選択した.
 The overall structure is shown in the figure below, using the Multi-head Attention mechanism to obtain a vector of the first N items, hoping that the inner product of the vector with the next item is greater than the other negative sample items.
-全体の構成は下図のとおりで、Multi-head Attention機構を用いて、最初のN項目のベクトルを取得し、次の項目とのベクトルの内積が他の負のサンプル項目より大きいことを期待します。
+全体の構成は下図のとおりで、**Multi-head Attention機構**を用いて、最初のNアイテムのベクトルを取得し、次のアイテムとのベクトルの内積が他の負のサンプルアイテムより大きいことを期待する.
 The inference is made by putting the user’s historical behavior into the model, obtaining the vector, and using the ANN to find the next most likely TopK item from a pool of 10 million items..
-推論は、ユーザーの過去の行動をモデルに落とし込んでベクトルを取得し、ANNを使って1000万アイテムのプールから次のTopKアイテムの可能性が高いものを探し出すというものです。
+推論は、ユーザの過去の行動をモデルに落とし込んでベクトルを取得し、ANN(?)を使って1000万アイテムのプールから次のTop-Kアイテムの可能性が高いものを探し出すというものある.
 
 ![](https://miro.medium.com/v2/resize:fit:1400/0*YGRlGEFLL1p_wNj3)
 
-###  Improve Training Speed トレーニングスピードを向上させる。
+###  Improve Training Speed トレーニングスピードを向上させる
 
-In order to use sequential modeling, a common training framework resembles a double tower (as shown in Fig.
-逐次モデリングを使用するために、一般的なトレーニングの枠組みは二重の塔のようなものです（図に示すように）。
-5), with the left tower being the User Representation, i.e.
-5）、左の塔がUser Representation、すなわち
-the past historical behavior of the user.
-ユーザーの過去の歴史的な行動
+In order to use sequential modeling, a common training framework resembles a double tower (as shown in Fig.5), with the left tower being the User Representation, i.e.the past historical behavior of the user.
+逐次モデリングを行うために、一般的な学習フレームワークは、図5に示すような二重の塔のような形をしており、左の塔はユーザー表現（ユーザーの過去の履歴行動）である。.
 The right tower is the next item, which is finally compared to the label (positive or negative), using dot or cosine.
-右の塔は次の項目で、最後にラベル（正または負）とドットまたはコサインで比較されます。
+右の塔は次のアイテムで、最後にラベル（正または負）とドット(=ドット積?)またはコサイン(cosine類似度?)で比較される.
 If there are 10M users, and each user takes 50 different historical behavior sequences, and 3 negative samples, then there are 2 billion (10M * 50 * (1+3)) samples in total, which is a very high training time and iteration cost..
-仮に10Mのユーザーがいて、各ユーザーが50種類の過去の行動シーケンスと3種類のネガティブサンプルを取る場合、合計で20億（10M * 50 * (1+3)）ものサンプルが必要となり、これは非常に高い学習時間と反復コストです。
+仮に10Mのユーザーがいて、各ユーザが50種類の過去の behavior sequences と3種類のネガティブサンプル(explicitなネガティブ??)を取る場合、合計で20億（10M * 50 * (1+3)）ものサンプルが必要となり、これは非常に高い学習時間と反復コストである.
 
 An optimization point here is that much of the historical behavior data of the same user is calculated repeatedly.
-ここでの最適化ポイントは、同じユーザーの過去の行動データの多くが繰り返し計算されることです。
+ここでの最適化ポイントは、同じユーザの過去の行動データの多くが繰り返し計算されること.
 For example, the first sample sequence is T0 to T50, the second sample sequence is T1 to T51, and the middle sequence (T2 to T50) is actually the same.
-例えば、第1サンプル配列はT0～T50、第2サンプル配列はT1～T51、中間配列（T2～T50）は実際には同じです。
+例えば、第1サンプル配列はT0～T50、第2サンプル配列はT1～T51、中間配列（T2～T50）は実際には同じ.
 SASRec’s training approach solves this problem considerably.
-SASRecのトレーニング方法は、この問題をかなり解決しています。
+SASRecのトレーニング方法は、この問題をかなり解決している.
 For each user, we take a sequence of historical behaviors (e.g.
 各ユーザーについて、過去の一連の行動（例．
 T0 to T50, then T0 predicts T1, T0 to T1 predicts T2, and so on).
