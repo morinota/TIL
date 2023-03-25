@@ -95,66 +95,64 @@ The inference is made by putting the user’s historical behavior into the model
 ###  Improve Training Speed トレーニングスピードを向上させる
 
 In order to use sequential modeling, a common training framework resembles a double tower (as shown in Fig.5), with the left tower being the User Representation, i.e.the past historical behavior of the user.
-逐次モデリングを行うために、一般的な学習フレームワークは、図5に示すような二重の塔のような形をしており、左の塔はユーザー表現（ユーザーの過去の履歴行動）である。.
+逐次モデリングを行うために、一般的な学習フレームワークは、図5に示すような二重の塔のような形をしており、左の塔はユーザー表現（ユーザの過去の履歴行動）である。.
 The right tower is the next item, which is finally compared to the label (positive or negative), using dot or cosine.
 右の塔は次のアイテムで、最後にラベル（正または負）とドット(=ドット積?)またはコサイン(cosine類似度?)で比較される.
 If there are 10M users, and each user takes 50 different historical behavior sequences, and 3 negative samples, then there are 2 billion (10M * 50 * (1+3)) samples in total, which is a very high training time and iteration cost..
 仮に10Mのユーザーがいて、各ユーザが50種類の過去の behavior sequences と3種類のネガティブサンプル(explicitなネガティブ??)を取る場合、合計で20億（10M * 50 * (1+3)）ものサンプルが必要となり、これは非常に高い学習時間と反復コストである.
 
 An optimization point here is that much of the historical behavior data of the same user is calculated repeatedly.
-ここでの最適化ポイントは、同じユーザの過去の行動データの多くが繰り返し計算されること.
+ここでの**最適化ポイントは、同じユーザの過去の行動データの多くが繰り返し計算される**こと.
 For example, the first sample sequence is T0 to T50, the second sample sequence is T1 to T51, and the middle sequence (T2 to T50) is actually the same.
 例えば、第1サンプル配列はT0～T50、第2サンプル配列はT1～T51、中間配列（T2～T50）は実際には同じ.
 SASRec’s training approach solves this problem considerably.
 SASRecのトレーニング方法は、この問題をかなり解決している.
-For each user, we take a sequence of historical behaviors (e.g.
-各ユーザーについて、過去の一連の行動（例．
-T0 to T50, then T0 predicts T1, T0 to T1 predicts T2, and so on).
-T0からT50までなら、T0がT1を予測し、T0からT1がT2を予測する、といった具合に）。
+For each user, we take a sequence of historical behaviors (e.g. T0 to T50, then T0 predicts T1, T0 to T1 predicts T2, and so on).
+各ユーザーについて、過去の行動（例えば、T0からT50まで、次にT0がT1を予測し、T0からT1がT2を予測する、など）を連続的に取得する.
 Since Self Attention looks at the entire sequence, a Mask is introduced to mask the items to the right of the Target Item in order to avoid message traversal due to future click behaviors.
-Self Attentionはシーケンス全体を見るので、将来のクリック行動によるメッセージトラバースを避けるために、Target Itemの右側のアイテムをマスクするMaskが導入されています。
+Self Attentionはシーケンス全体を見るので、将来のクリック行動によるメッセージトラバースを避けるために、Target Itemの右側のアイテムをマスクするMaskが導入されている.
 Thus, by walking through Attention, we actually get a vector of N different sequences and train N samples.
-このように、Attentionを歩くことで、実際にはN種類の配列のベクトルが得られ、N個のサンプルを訓練することができます。
+このように、**Attentionを歩くことで、実際にはN種類のsequencesのベクトルが得られ、N個のサンプルを訓練することができる**.
 This way of training makes the overall training speed shorter, for a billion levels of click data, it only takes 3~4 hours to get a good convergence result, and it is also convenient for us to do parameter fine-tuning and model iteration..
-この学習方法は、全体の学習速度を短くし、10億レベルのクリックデータに対して、3〜4時間で良い収束結果を得ることができ、パラメータの微調整やモデルの反復を行うのにも都合が良いのです。
+この学習方法は、全体の学習速度を短くし、10億レベルのクリックデータに対して、3〜4時間で良い収束結果を得ることができ、パラメータの微調整やモデルの反復を行うのにも都合が良いのである.
 
 ![](https://miro.medium.com/v2/resize:fit:1400/0*aJHT3_bGIvERfhaY)
 
-### K+1 Cross-entropy K+1 クロスエントロピーのこと。
+### K+1 Cross-entropy 
 
 The original Loss Function was trained to discriminate binary classification, assuming the target is whether the user clicks or not, and the label is click/no click.
-元の損失関数は、ターゲットがユーザーがクリックしたかどうかであり、ラベルがクリックであると仮定して、2値分類を識別するように訓練されたものである
+元の損失関数は、ターゲットがユーザがクリックしたかどうかであり、**ラベルがclick/no click**であると仮定して、2値分類を識別するように訓練されたものである.
 However, because in advertising, our scenario is first used in the recall phase, we do not need to consider the accuracy of the CTR value, but rather the accuracy of the recommended sequence.
-しかし、広告では、我々のシナリオはまず想起の段階で使われるため、CTR値の精度を考慮する必要はなく、推奨シーケンスの精度を考慮すればよいのです。
+しかし、広告では、我々のシナリオはまず想起の段階で使われるため、**CTR値の精度を考慮する必要はなく、推奨シーケンスの精度を考慮すればよ**いのである.
 Therefore, in order to speed up the learning of the model, the loss function is also used in a way like DSSM, where each positive sample is combined with K negative samples, and then these K+1 scores are passed through a Softmax, which judges whether the prediction of the positive samples is correct.
-そこで、モデルの学習を高速化するために、損失関数もDSSMのように、各陽性サンプルとK個の陰性サンプルを組み合わせ、このK+1個のスコアをSoftmaxに通して、陽性サンプルの予測が正しいかどうかを判定する方法を採用しています。
+そこで、モデルの学習を高速化するために、損失関数もDSSMのように、各陽性サンプルとK個の陰性サンプルを組み合わせ、このK+1個のスコアをSoftmaxに通して、陽性サンプルの予測が正しいかどうかを判定する方法を採用している.
 This approach allows for faster convergence and saves training time while ensuring the correctness of the sequence (hopefully maximizing the score of the positive samples).
-このアプローチにより、シーケンスの正しさを確保しながら（うまくいけば正サンプルのスコアを最大化できる）、収束を早め、学習時間を短縮することができます。
+このアプローチにより、シーケンスの正しさを確保しながら（うまくいけば正サンプルのスコアを最大化できる）、収束を早め、学習時間を短縮することができる.
 This training approach is often used in other scenarios as well.
-このトレーニング方法は、他の場面でもよく使われます。
+このトレーニング方法は、他の場面でもよく使われる.
 For example, in an NLP task, where we want to know what the next sentence in the sentence is most likely to follow, the same can be converted into a classification task and trained with great effect..
-例えば、文中の次の文が何に続く可能性が高いかを知りたいというNLPタスクでは、同様に分類タスクに変換して学習することで大きな効果を得ることができます。
+例えば、文中の次の文が何に続く可能性が高いかを知りたいというNLPタスクでは、同様に分類タスクに変換して学習することで大きな効果を得ることができる.
 
 ![](https://miro.medium.com/v2/resize:fit:1064/0*9xLTuBWZoGxXioHK)
 
 ### Integrate Other Features その他の機能を統合する。
 
 SASRec only uses the item id as a feature.
-SASRecはアイテムIDのみを特徴量として使用します。
+**SASRecはアイテムIDのみを特徴量として使用する.**
 However, there is a lot of side information that can be used to help with training, such as title / description / image / category and other multimodal features that may be able to better characterize the items.
-しかし、トレーニングに役立つ側面情報も多く、例えば、タイトル
+しかし、タイトル / 説明 / 画像 / カテゴリなどのマルチモーダルな特徴など、トレーニングに役立つサイド情報がたくさんあり、アイテムをよりよく特徴付けることができるかもしれない.
 The easiest way to do this is to concatenate these features and turn them into a fixed vector after an MLP.
-最も簡単な方法は、これらの特徴を連結し、MLPの後に固定ベクトルにすることです。
+**最も簡単な方法は、これらの特徴を連結し、MLPの後に固定ベクトルにすること**である.
 In this paper, FDSA introduces an attention mechanism, with the idea that attention is used to learn which features most influence user choice.
-本論文では、FDSAがアテンション機構を導入し、どの特徴がユーザーの選択に最も影響を与えるかをアテンションで学習することを考えた。
+本論文では、FDSAがアテンション機構を導入し、どの特徴がユーザーの選択に最も影響を与えるかをアテンションで学習することを考えた.
 In our experiments, however, most of the id features are quick to train and work well.
-しかし、我々の実験では、ほとんどのid特徴が短時間で学習でき、うまく機能することがわかりました。
+しかし、**我々の実験では、ほとんどのid特徴が短時間で学習でき、うまく機能することがわかった**.
 However, in some verticals, such as real estate/used cars, the addition of some features can improve the conversion rate a lot.
-ただし、不動産など一部のバーティカルでは
+しかし、不動産/中古車など一部のバーティカルでは、いくつかの機能を追加することでコンバージョン率を大きく向上させることができる.
 For example, the type of house/price/distance from the metro station, etc., and the mileage/brand/price of a used car are all important variables for conversion.
-例えば、家のタイプ
+例えば、家のタイプ/価格/地下鉄駅からの距離など、中古車の走行距離/ブランド/価格などは、変換のための重要な変数となる.
 Also in the cold start of an item, it is helpful to generalize the item’s features..
-また、アイテムのコールドスタートでは、アイテムの機能を一般化することが有効です。
+また、アイテムのコールドスタートでは、アイテムの機能を一般化することが有効.
 
 ![](https://miro.medium.com/v2/resize:fit:1400/0*46i0gnC0EZWWZEhu)
 
