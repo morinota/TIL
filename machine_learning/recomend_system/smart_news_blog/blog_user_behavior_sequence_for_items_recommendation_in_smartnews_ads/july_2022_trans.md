@@ -7,7 +7,7 @@
 User Behavior Sequence for Items Recommendation in SmartNews Ads.
 スマートニュース広告におけるアイテム推薦のためのユーザ行動Sequence.
 
-## NLP vs. Recommendation 
+## NLP vs. Recommendation
 
 User historical behavior sequences give us objective data about a user, regardless of his/her gender/age/income, which is ultimately reflected in what he/she has seen and purchased.
 **ユーザの過去のbehavior sequencesは、性別や年齢、収入に関係なく、そのユーザに関する客観的なデータとなり**、最終的にはそのユーザが見たもの、買ったものに反映される.
@@ -92,14 +92,14 @@ The inference is made by putting the user’s historical behavior into the model
 
 ![](https://miro.medium.com/v2/resize:fit:1400/0*YGRlGEFLL1p_wNj3)
 
-###  Improve Training Speed トレーニングスピードを向上させる
+### Improve Training Speed トレーニングスピードを向上させる
 
 In order to use sequential modeling, a common training framework resembles a double tower (as shown in Fig.5), with the left tower being the User Representation, i.e.the past historical behavior of the user.
 逐次モデリングを行うために、一般的な学習フレームワークは、図5に示すような二重の塔のような形をしており、左の塔はユーザー表現（ユーザの過去の履歴行動）である。.
 The right tower is the next item, which is finally compared to the label (positive or negative), using dot or cosine.
 右の塔は次のアイテムで、最後にラベル（正または負）とドット(=ドット積?)またはコサイン(cosine類似度?)で比較される.
-If there are 10M users, and each user takes 50 different historical behavior sequences, and 3 negative samples, then there are 2 billion (10M * 50 * (1+3)) samples in total, which is a very high training time and iteration cost..
-仮に10Mのユーザーがいて、各ユーザが50種類の過去の behavior sequences と3種類のネガティブサンプル(explicitなネガティブ??)を取る場合、合計で20億（10M * 50 * (1+3)）ものサンプルが必要となり、これは非常に高い学習時間と反復コストである.
+If there are 10M users, and each user takes 50 different historical behavior sequences, and 3 negative samples, then there are 2 billion (10M _ 50 _ (1+3)) samples in total, which is a very high training time and iteration cost..
+仮に10Mのユーザーがいて、各ユーザが50種類の過去の behavior sequences と3種類のネガティブサンプル(explicitなネガティブ??)を取る場合、合計で20億（10M _ 50 _ (1+3)）ものサンプルが必要となり、これは非常に高い学習時間と反復コストである.
 
 An optimization point here is that much of the historical behavior data of the same user is calculated repeatedly.
 ここでの**最適化ポイントは、同じユーザの過去の行動データの多くが繰り返し計算される**こと.
@@ -118,7 +118,7 @@ This way of training makes the overall training speed shorter, for a billion lev
 
 ![](https://miro.medium.com/v2/resize:fit:1400/0*aJHT3_bGIvERfhaY)
 
-### K+1 Cross-entropy 
+### K+1 Cross-entropy
 
 The original Loss Function was trained to discriminate binary classification, assuming the target is whether the user clicks or not, and the label is click/no click.
 元の損失関数は、ターゲットがユーザがクリックしたかどうかであり、**ラベルがclick/no click**であると仮定して、2値分類を識別するように訓練されたものである.
@@ -158,93 +158,98 @@ Also in the cold start of an item, it is helpful to generalize the item’s feat
 
 ### Auto Tuning オートチューニング
 
-Although the overall training time can be compressed to 3–4 hours, it is particularly time-consuming to do tuning (e.g.
-全体の学習時間は3～4時間に圧縮できますが、特にチューニングに時間がかかるため（例．
-dimension / dropout rate / learning rate / multi-head / blocks, etc.) if it cannot be done in parallel.
-次元
+Although the overall training time can be compressed to 3–4 hours, it is particularly time-consuming to do tuning (e.g.dimension / dropout rate / learning rate / multi-head / blocks, etc.) if it cannot be done in parallel.
+全体の学習時間は3～4時間に圧縮できるが、チューニング（次元／ドロップアウト率／学習率／マルチヘッド／ブロックなど）を並行して行えない場合は特に時間がかかると思われる.
 Thanks to the SmartNews AI-Infra team, which has adopted Microsoft’s NNI to support fast Auto Tuning, the framework is able to automatically get the best parameters from a defined range of parameters, through a number of Search Algorithms, and supports parallel training.
-高速なAuto TuningをサポートするためにMicrosoftのNNIを採用したSmartNews AI-Infraチームにより、フレームワークは、定義されたパラメータの範囲から、多数のSearch Algorithmにより最適なパラメータを自動的に取得することができ、並列トレーニングにも対応しています。
+高速なAuto TuningをサポートするためにMicrosoftのNNIを採用したSmartNews AI-Infraチームにより、フレームワークは、定義されたパラメータの範囲から、多数のSearch Algorithmにより最適なパラメータを自動的に取得することができ、並列トレーニングにも対応している.
 Experimental results also show that the appropriate parameters vary in different vertical domains and data sizes.
-また、実験結果から、適切なパラメータは、垂直領域やデータサイズが異なると変化することがわかります。
+また、実験結果から、適切なパラメータは、垂直領域やデータサイズが異なると変化することがわかる.
 With this training, the CTR can be increased by 5–10%.
-このトレーニングで、CTRを5～10％アップさせることができます。
+このトレーニングで、CTRを5～10％アップさせることができる.
 The user’s Reject Rate is also reduced by another 10%..
-また、ユーザーの不合格率もさらに10％低下します。
+また、ユーザーの不合格率もさらに10％低下する.
 
 ![](https://miro.medium.com/v2/resize:fit:1400/0*Z2KcvFq7M7K4vugw)
 
 ## Cold Start Scenario コールドスタートシナリオ
 
 We have two types of Cold Start, new items and new users.
-コールドスタートには、新商品と新ユーザーの2種類を用意しています。
+**コールドスタートには、新商品と新ユーザーの2種類を用意している.**
 In fact, the retention rate is different for different items in different areas.
-実は、地域によってアイテムによって保持率が違うんです。
+実は、地域(広告の種類?)によってアイテムによって保持率が違うのである.
 For example, in the e-commerce scenario, the rate of new items is relatively low compared to old items.
-例えば、Eコマースのシナリオでは、新商品の割合は旧商品に比べて相対的に低くなっています。
+例えば、Eコマースのシナリオでは、新商品の割合は旧商品に比べて相対的に低くなっている.
 So even if we only use product ids for modeling, we can still get good results.
-ですから、製品IDだけを使ったモデリングでも、良い結果を得ることができるのです。
+ですから、**製品IDだけを使ったモデリングでも、良い結果を得ることができる**.
 However, in an auction scenario, such as eBay, where many items are auctioned off and gone, the ratio of new items is particularly high as new items are constantly being auctioned.
-しかし、eBayのように多くの商品が競売にかけられ消えていくオークションの場面では、常に新しい商品が競り落とされるため、特に新品の比率が高くなるのです。
-This requires the use of multimodality to generalize the items to make recommendations for new items (e.g.
-そのためには、マルチモダリティを利用してアイテムを一般化し、新たなアイテムのレコメンドを行う必要がある（例：。
-FDSA with multimodal features)..
-マルチモーダル特徴量を用いたFDSA)...
+しかし、eBayのように多くの商品が競売にかけられ消えていくオークションの場面では、常に新しい商品が競り落とされるため、特に新品の比率が高くなる.
+This requires the use of multimodality to generalize the items to make recommendations for new items (e.g.FDSA with multimodal features)..
+そのため、マルチモダリティを利用してitemを一般化(=そういう表現なんだ...!)し、新たなitemの推薦を行う必要がある(例：マルチモダリティ機能を用いたFDSA).
 
 For new users, it is relatively difficult, as they need to have a cold start period to collect user behavior to understand their interests.
-新規ユーザーの場合は、コールドスタート期間を設けてユーザーの行動を収集し、興味を把握する必要があるため、比較的難しい。
+新規ユーザの場合は、**コールドスタート期間を設けてユーザの行動を収集**し、興味を把握する必要があるため、比較的難しい.
 If you only look at advertising behavior, the data collection takes even longer.
-広告行動だけを見れば、データ収集にはさらに時間がかかる。
+広告行動だけを見れば、データ収集にはさらに時間がかかる.
 In the absence of sufficient user historical behavior sequences, the sequence model is not applicable.
-十分なユーザー履歴の行動シーケンスがない場合、シーケンスモデルは適用できない。
+十分なユーザ履歴の行動sequencesがない場合、sequencesモデルは適用できない.
 Another idea is to use the user’s news click sequence on the APP (which is easier to collect) to establish a relationship with the product, which is another interesting challenge..
-また、ユーザーのAPP上でのニュースのクリックシーケンス（収集しやすい）を利用して、製品との関係性を構築するというアイデアもあり、これも面白いチャレンジです。
+また、**ユーザーのAPP上でのニュースのクリックsequences(収集しやすい)を利用して、製品との関係性を構築するというアイデア**もあり、これも面白いチャレンジ.
 
 ## Performance パフォーマンス
 
 We trained individual models for different domains, such as e-commerce/property/automotive/auction, and were able to increase click-through rates by 10–20% compared to the original CF i2i model.
-電子商取引など、ドメインごとに個別のモデルを学習させました。
+電子商取引など、ドメインごとに個別のモデルを学習させた.
 Some small advertisers in some verticals were even able to increase their CVR by around 30%, which was very impressive, even though the models were not specifically optimized for CVR.
-一部のバーティカルな小規模広告主は、CVRに特化して最適化されたモデルではないにもかかわらず、CVRを30％程度向上させることができたこともあり、非常に印象的でした。
+一部のバーティカルな小規模広告主は、**CVRに特化して最適化されたモデルではないにもかかわらず**、CVRを30％程度向上させることができたこともあり、非常に印象的でした.
 However, in the case of large e-merchants with more than 10M products, the advantage is not so obvious.
-しかし、10M以上の商品を扱う大規模なe-マーチャントの場合、その優位性はあまり明らかではありません。
+しかし、10M以上の商品を扱う大規模なe-マーチャントの場合、その優位性はあまり明らかではない.
 The click-through rate only increases by about 5%.
-クリック率は5％程度しか上がりません。
+クリック率は5％程度しか上がらない.
 But another significant improvement is the user reject rate, which can be reduced by about 10–20%.
-しかし、もう一つの大きな改善点は、ユーザーの拒否率を約10〜20％削減できることです。
+しかし、もう一つの大きな改善点は、ユーザーの拒否率を約10〜20％削減できることである.
 We interpret this as the model recommending products that are more in line with the user’s interests, so that the user does not feel annoyed by the ads, making the overall user experience better..
-これは、モデルがユーザーの興味に沿った商品を推薦することで、ユーザーが広告に煩わしさを感じることなく、全体的なユーザー体験をより良いものにするためだと解釈しています。
+これは、モデルがユーザの興味に沿った商品を推薦することで、**ユーザが広告に煩わしさを感じることなく、全体的なユーザ体験をより良いものにするため**だと解釈している.
 
 ## Future work 今後の課題
 
-### News to Ads 広告へのニュースです。
+### News to Ads
 
 SmartNews is an information app and has a lot of user news reading sequences.
-SmartNewsは情報アプリであり、ユーザーニュースの閲覧配列が多いのが特徴です。
+**SmartNewsは情報アプリであり、ユーザニュースの閲覧sequencesが多いのが特徴**.
 If we could model the user’s news viewing behavior and transfer it to item recommendations, this could be very helpful for new users and be of greater value to advertisers.
-ユーザーのニュース閲覧行動をモデル化し、それをアイテムのレコメンデーションに転用できれば、新規ユーザーにとって非常に有益であり、広告主にとってもより大きな価値を持つことができるだろう。
+ユーザのニュース閲覧行動をモデル化し、それをアイテム(=広告アイテム?)のレコメンデーションに転用できれば、新規ユーザにとって非常に有益であり、広告主にとってもより大きな価値を持つことができるだろう.
 Intuitively, the correlation between news and purchase is weak most of the time, but it would be particularly valuable if user interests could be tapped from the news sequence and then transferred to merchandise to bring new users to advertisers..
-直感的には、ニュースと購買の相関は弱いことが多いが、ニュースの系列からユーザーの興味を引き出し、それを商品に転嫁して新規ユーザーを広告主に呼び込むことができれば、特に価値があると思うのだが。
+**直感的には、ニュースと購買(=広告アイテム購買?)の相関は弱いことが多い**が、ニュースの sequence からユーザの興味を引き出し、それを商品に転嫁して新規ユーザを広告主に呼び込むことができれば、特に価値があると思うのだが...
 
 ### How to Add Any Features 任意の機能を追加する方法。
 
 More features are better.
-機能は多い方がいい。
+featuresは多い方がいい.
 However, adding all of the features doesn’t necessarily pay off for the model results.
-しかし、すべての機能を追加しても、必ずしもモデルの結果が報われるわけではありません。
+しかし、すべてのfeaturesを追加しても、必ずしもモデルの結果が報われるわけではない.
 Many statistical features in recommendations are also very effective.
-レコメンデーションにおける多くの統計的特徴も非常に有効です。
+レコメンデーションにおける多くの統計的特徴(=協調フィルタリング的な情報??)も非常に有効.
 If you add them all to the attention, sometimes they tend to skew the model, and can’t get much effect.
-全部を注目させると、モデルが歪みがちで、あまり効果が得られないこともあります。
+全部を注目させると、モデルが歪みがちで、あまり効果が得られないこともある.
 So for statistical features, it is possible to train them separately and finally fuse individual scores in an MLP to get better results.
-そのため、統計的な特徴量については、別々に学習させ、最終的にMLPで個々のスコアを融合させることで、より良い結果を得ることが可能です。
+そのため、統計的な特徴量については、別々に学習させ、最終的に**MLP(?)**で個々のスコアを融合させることで、より良い結果を得ることが可能.
 At the moment, there is no significant gain in all aspects through FDSA, but the cost of training is much higher..
-現時点では、FDSAを通じてすべての面で大きな利益を得ることはできませんが、トレーニングにかかる費用ははるかに高くなります。
+現時点では、FDSAを通じてすべての面で大きな利益を得ることはできませんが、トレーニングにかかる費用ははるかに高くなる.
 
-### PLM Model PLMモデル。
+### PLM(pre-trained language model?) Model
 
 In the NLP domain, it is a common paradigm to use Bert to do large-scale training and then fine-tune for downstream tasks.
-NLPの領域では、Bertを使って大規模な学習を行い、その後、下流のタスクのために微調整を行うというのが一般的なパラダイムです。
+NLPの領域では、Bertを使って大規模な学習を行い、その後、下流のタスクのために微調整を行うというのが一般的なパラダイム.
 In recommendation, if the amount of data is large enough, we can also try to train a base model by self-data and use self-supervised training to train the model as a pre-train model for downstream tasks, which can accelerate the convergence and also bring benefits to some small advertisers.
-レコメンデーションでは、データ量が十分であれば、自己データでベースモデルを訓練し、自己教師付き訓練を使って、下流タスクのプレトレーニングモデルとして訓練することも試み、収束を早め、一部の小規模広告主にも利益をもたらすことができる。
+レコメンデーションでは、データ量が十分であれば、自己データでベースモデルを訓練し、自己教師付き訓練を使って、下流タスクのプレトレーニングモデルとして訓練することも試み、収束を早め、一部の小規模広告主にも利益をもたらすことができる.
 For example, much new research in News Recommendation uses the NLP pre-train model to finetune, which can get better results..
-例えば、ニュースレコメンデーションの新しい研究の多くは、NLPのプレトレーニングモデルを使用して微調整を行い、より良い結果を得ることができます。
+例えば、ニュースレコメンデーションの新しい研究の多くは、NLPのpre-train model(?)を使用して微調整を行い、より良い結果を得ることができる.
+
+## Reference
+
+- [1] [Self-Attentive Sequential Recommendation](https://arxiv.org/pdf/1808.09781.pdf)
+- [2] [Feature-level Deeper Self-Attention Network for Sequential Recommendation](https://www.ijcai.org/proceedings/2019/0600.pdf)
+- [3] Transformers4Rec: Bridging the Gap between NLP and Sequential / Session-Based Recommendation
+- [4] [Learning Deep Structured Semantic Models for Web Search using Clickthrough Data](https://posenhuang.github.io/papers/cikm2013_DSSM_fullversion.pdf)
+- [5] [Empowering News Recommendation with Pre-trained Language Models](https://arxiv.org/pdf/2104.07413.pdf)
+- [6] Neural Network Intelligence
