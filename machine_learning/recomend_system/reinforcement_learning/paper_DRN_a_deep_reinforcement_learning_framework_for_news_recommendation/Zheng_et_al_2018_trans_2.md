@@ -644,7 +644,7 @@ As expected, our algorithm (DDQN + U + DBGD) converges to a better CTR faster th
 ## Online evaluation オンライン評価
 
 In the online evaluation stage, we deployed our models and compared algorithms on a commercial news recommendation application.
-オンライン評価段階では、商用ニュース推薦アプリケーションにモデルを導入し、アルゴリズムを比較した
+オンライン評価段階では、商用ニュース推薦アプリケーションにモデルを導入し、アルゴリズムを比較した.
 Users are divided evenly to different algorithms.
 ユーザはアルゴリズムごとに均等に分かれている.
 In online setting, we can not only measure the accuracy of recommendation, but also observe the recommendation diversity for different algorithms.
