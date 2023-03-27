@@ -323,33 +323,35 @@ But they can be easily integrated into our framework for better performance..
 ## Deep Reinforcement Recommendation Deep Reinforcementのススメ。
 
 Considering the previous mentioned dynamic feature of news recommendation and the need to estimate future reward, we apply a Deep Q-Network (DQN) [31] to model the probability that one user may click on one specific piece of news.
-前述したニュース推薦の動的な特徴と将来の報酬を推定する必要性を考慮し、あるユーザーがある特定のニュースをクリックする確率をモデル化するために、Deep Q-Network (DQN) [31] を適用します。
+前述したニュース推薦の動的な特徴と将来の報酬を推定する必要性を考慮し、あるユーザがある特定のニュースをクリックする確率をモデル化するために、Deep Q-Network (DQN) [31] を適用する.
 Under the setting of reinforcement learning, the probability for a user to click on a piece of news (and future recommended news) is essentially the reward that our agent can get.
-強化学習の設定では、ユーザーがニュース（および将来の推奨ニュース）をクリックする確率が、基本的に我々のエージェントが得ることのできる報酬となります。
+強化学習の設定では、ユーザがニュース（および将来の推奨ニュース）をクリックする確率が、基本的に我々のエージェントが得ることのできる報酬となる.
 Therefore, we can model the total reward as Equation 1..
-したがって、総報酬を式1のようにモデル化することができる。
+したがって、総報酬を式1のようにモデル化することができる.
 
 $$
+y_{s, a} = Q(s, a) = r_{immediate} + \gamma r_{future}
 \tag{1}
 $$
 
 where state s is represented by context features and user features, action a is represented by news features and user-news interaction features, rimmed iate represents the rewards (e.g., whether user click on this piece of news) for current situation, and rf utur e represents the agent’s projection of future rewards.
-ここで、状態sはコンテキスト特徴とユーザ特徴、行動aはニュース特徴とユーザとニュースの相互作用特徴、rimmed iateは現在の状況に対する報酬（例えば、ユーザがこのニュースをクリックしたかどうか）、rf utur eはエージェントの将来の報酬の予測を表しています。
+ここで、状態sはコンテキスト特徴とユーザ特徴、行動aはニュース特徴とユーザとニュースの相互作用特徴、$r_{immediate}$ は現在の状況に対する報酬(例えば、ユーザがこのニュースをクリックしたかどうか)、$r_{future}$ はエージェントの将来の報酬の予測を表している.
 γ is a discount factor to balance the relative importance of immediate rewards and future rewards.
 γは、目先の報酬と将来の報酬の相対的な重要性をバランスさせるための割引係数である。
 Specifically, given s as the current state, we use the DDQN [41] target to predict the total reward by taking action a at timestamp t as in Equation 2.
-具体的には、sを現在の状態として、DDQN[41]ターゲットを用いて、式2のようにタイムスタンプtで行動aをとることによる報酬の合計を予測する。
+具体的には、sを現在の状態として、DDQN[41]ターゲットを用いて、式2のようにタイムスタンプtで行動aをとることによる合計報酬を予測する.
 
 $$
+y_{s,a,t} = r_{a, t+1}  + \gamma Q(s_{a, t+1}, \argmax_{a'} Q(s_{a,t+1}, a':W_t);W_t')
 \tag{2}
 $$
 
 where ra,t+1 represents the immediate reward by taking action a (the subscript t + 1 is because the reward is always delayed 1 timeslot than the action).
-ここで、ra,t+1は行動aをとることによる即時の報酬を表す（添字t+1は、報酬が常に行動より1タイムスロット遅れるからである）。
+ここで、ra,t+1は行動aをとることによる即時の報酬を表す(添字t+1は、報酬が常に行動より1タイムスロット遅れるからである).
 Here, Wt and W′ t are two different sets of parameters of the DQN.
-ここで、WtとW′tはDQNの2種類のパラメータセットである。
+ここで、WtとW′tはDQNの2種類のパラメータセットである.
 In this formulation, our agent G will speculate the next state sa,t+1, given action a is selected.
-この定式化では、エージェントGは、行動aが選択された場合に、次の状態sa,t+1を推測することになる。
+この定式化では、エージェントGは、行動aが選択された場合に、次の状態$s_{a,t+1}$を推測することになる.(=つまり状態遷移関数??)
 Based on this, given a candidate set of actions {a ′ }, the action a ′ that gives the maximum future reward is selected according to parameter Wt .
 これに基づき、アクションの候補セット{a ′ }が与えられると、パラメータWt に従って、将来の報酬が最大となるアクションa ′を選択する。
 After this, the estimated future reward given state sa,t+1 is calculated based on W′ t .
@@ -368,7 +370,7 @@ User features and Context features are used as state features, while User news f
 On one hand, the reward for taking action a at certain state s is closely related to all the features.
 一方、ある状態sで行動aをとったときの報酬は、すべての特徴と密接に関係している。
 On the other hand, the reward that determined by the characteristics of the user himself (e.g., whether this user is active, whether this user has read enough news today) is more impacted by the status of the user and the context only.
-一方、ユーザー自身の特性（例えば、このユーザーはアクティブか、このユーザーは今日十分なニュースを読んだか）によって決まる報酬は、ユーザーのステータスと文脈のみに影響されやすいと言えます。
+一方、ユーザー自身の特性（例えば、このユーザーはアクティブか、このユーザーは今日十分なニュースを読んだか）によって決まる報酬は、ユーザーのステータスと文脈のみに影響されやすいと言える.
 Based on this observation, like [47], we divide the Q-function into value function V (s) and advantage function A(s, a), whereV (s) is only determined by the state features, and A(s, a) is determined by both the state features and the action features..
 この観察に基づき、[47]と同様に、Q関数を価値関数V（s）と優位関数A（s，a）に分け、V（s）は状態特徴のみ、A（s，a）は状態特徴と行動特徴の両方によって決定される。
 
@@ -457,7 +459,7 @@ $$
 Although we use survival models here to estimate the user activeness, other alternatives like Poisson point process [13] can also be applied and should serve similar function..
 ここでは、生存モデルを用いてユーザーの活性度を推定しているが、ポアソン点過程[13]などの他の選択肢も適用可能であり、同様の機能を果たすはずである。
 
-## Explore Explore.
+## Explore
 
 The most straightforward strategies to do exploration in reinforcement learning are ϵ-greedy [31] and UCB [23].
 強化学習において探索を行う最も簡単な戦略は、?-greedy [31]とUCB [23]です。
@@ -522,21 +524,24 @@ The number of times each news are pushed also follow a long tail distribution an
 
 ## Evaluation measures 評価指標
 
-- CTR. [10] Click through rate is calculated as Equation 9. CTRです。 [10] クリック率は、式 9 で算出されます。
+- CTR. [10] Click through rate is calculated as Equation 9. CTRです。 [10] クリック率は、式 9 で算出される.
 
 $$
+CTR = \frac{\text{number of clicked items}}{\text{number of total items}}
 \tag{9}
 $$
 
-- Precision@k [10]. Precision at k is calculated as Equation 10 Precision@k [10]です。 k での精度は、式 10 のように計算されます。
+- Precision@k [10]. Precision at k is calculated as Equation 10 Precision@k [10]です。 k での精度は、式 10 のように計算される.
 
 $$
+Precision@k = \frac{\text{number of clicks in top-k recommended items}}{k}
 \tag{10}
 $$
 
-- nDCG. We apply the standard Normalized Discounted Cumulative Gain proved in [46] as Equation 11, where r is the rank of items in the recommendation list, n is the length of the recommendation list, f is the ranking function or algorithm, y f r is the 1 or 0 indicating whether a click happens and D(r) is the discount. nDCGです。 ここで，rは推薦リストのアイテムのランク，nは推薦リストの長さ，fはランキング関数またはアルゴリズム，y f rはクリックの有無を示す1または0，D（r）は割引率であるとして，[46]で証明された標準の正規化割引累積ゲインを式11として適用する．
+- nDCG. We apply the standard Normalized Discounted Cumulative Gain proved in [46] as Equation 11, where r is the rank of items in the recommendation list, n is the length of the recommendation list, f is the ranking function or algorithm, y f r is the 1 or 0 indicating whether a click happens and D(r) is the discount. nDCGです。 ここで，rは推薦リストのアイテムのランク，nは推薦リストの長さ，fはランキング関数またはアルゴリズム，$y^{f}_{r}$ はクリックの有無を示す1または0，D（r）は割引率であるとして，[46]で証明された標準の正規化割引累積ゲインを式11として適用する.
 
 $$
+DCG(f) = \sum_{r=1}
 \tag{11}
 $$
 
@@ -560,19 +565,19 @@ Variations of our model..
 私たちのモデルのバリエーション。
 
 Our basic model is named as “DN”, which uses a dueling-structure [47] Double Deep Q-network [41] without considering future reward.
-我々の基本モデルは「DN」と名付けられ、将来の報酬を考慮せずに、決闘構造 [47] Double Q-network [41] を使用する。
+我々の基本モデルは「DN」と名付けられ、将来の報酬を考慮せずに、** dueling-structure [47] Double Q-network [41]** を使用する。
 Then, by adding future reward into consideration, this becomes “DDQN”.
 そして、将来の報酬を考慮することで、「DDQN」となるのです。
 After that, we add more components to “DDQN”.
-その後、"DDQN "にさらにコンポーネントを追加していきます。
+その後、"DDQN "にさらにコンポーネントを追加していく.
 “U” stands for user activeness, “EG” stands for ϵ-greedy, and “DBGD” stands for Dueling Bandit Gradient Descent..
-"U "はユーザー活性度、"EG "はϵ-greedy、"DBGD "はDueling Bandit Gradient Descentを意味します。
+"U "はユーザー活性度、"EG "はϵ-greedy、"DBGD "はDueling Bandit Gradient Descentを意味する.
 
 Baseline algorithms..
 ベースライン・アルゴリズム...
 
 We compared our algorithms with following five baseline methods.
-私たちのアルゴリズムを、以下の5つのベースライン手法と比較しました。
+私たちのアルゴリズムを、**以下の5つのベースライン手法**と比較した.
 All these five methods will conduct online update during the testing stage.
 これら5つの方式は、いずれもテスト段階でオンラインアップデートを実施する。
 Some state-of-art methods can not be applied due to their inapplicability to our problem, like [43] (user graph and item graph is oversized and can not be updated incrementally), [45] (similar with W&D when textual features are removed), and [48] (user return is not applicable to experience replay update)..
