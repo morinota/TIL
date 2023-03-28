@@ -374,131 +374,141 @@ On the other hand, the reward that determined by the characteristics of the user
 Based on this observation, like [47], we divide the Q-function into value function V (s) and advantage function A(s, a), whereV (s) is only determined by the state features, and A(s, a) is determined by both the state features and the action features..
 この観察に基づき、[47]と同様に、Q関数を価値関数V（s）と優位関数A（s，a）に分け、V（s）は状態特徴のみ、A（s，a）は状態特徴と行動特徴の両方によって決定される。
 
-## User Activeness ユーザーの行動力
+## User Activeness
 
 Traditional recommender systems only focus on optimizing CTRlike metrics (i.e., only utilizing click / no click labels), which only depicts part of the feedback information from users.
-従来のレコメンダーシステムは、CTRのような指標を最適化することだけに注力していました（つまり、クリックを利用するだけで
+従来のレコメンダーシステムは、**CTRのような指標の最適化(クリック／クリックなしのラベルの活用のみ)にのみ**注力しており、ユーザーからのフィードバック情報の一部しか描かれていなかった.
 The performance of recommendation might also influence whether users want to use the application again, i.e., better recommendation will increase the frequency for users to interact with the application.
-レコメンデーションの性能は、ユーザーが再びアプリケーションを使いたいと思うかどうかにも影響を与えるかもしれません。
+レコメンデーションの性能は、**ユーザが再びアプリケーションを使いたいと思うかどうかにも影響を与えるかもしれない**.
 Therefore, the change of user activeness should also be considered properly.
-したがって、ユーザーの活性度の変化もきちんと考慮する必要があります。
+したがって、user activenessの変化もきちんと考慮する必要がある.
 Users request for news in a non-uniform pattern..
-ユーザーからのニュースに対する要望が不規則なパターンである。
+(具体的には?)ユーザからのニュースに対するリクエストが不規則なパターンである.(??)
 
 Users usually read news for a short period (e.g., 30 minutes), during which they will request or click news with high frequency.
-ユーザーは通常、30分程度の短時間でニュースを読み、その間に高い頻度でニュースのリクエストやクリックを行います。
+ユーザは通常、30分程度の短時間でニュースを読み、その間に高い頻度でニュースのリクエストやクリックを行う.
 Then they might leave the application and return to the application when they want to read more news after several hours.
-そして、一度アプリケーションから離れ、数時間後にもっとニュースを読みたくなったときにアプリケーションに戻るかもしれません。
+そして、一度アプリケーションから離れ、数時間後にもっとニュースを読みたくなったときにアプリケーションに戻るかもしれない.
 A user return happens when a user requests for news (users will always request for news before they click on news, therefore, user click is also implicitly considered)..
-ユーザーリターンとは、ユーザーがニュースを要求したときに発生するものです（ユーザーはニュースをクリックする前に必ずニュースを要求するため、ユーザークリックも暗黙のうちに考慮されます）。
+ユーザリターン とは、**ユーザがニュースを要求したときに発生するもの**である(ユーザーはニュースをクリックする前に必ずニュースを要求するため、ユーザクリックも暗黙のうちに考慮される).
 
 We use survival models [18, 30] to model user return and user activeness.
-我々は、生存モデル[18, 30]を使用して、ユーザーの復帰とユーザーの活性化をモデル化する。
+我々は、**生存モデル[18, 30]を使用**して、ユーザリターン(ユーザの復帰?)とユーザの活性化をモデル化する.
 Survival analysis [18, 30] has been applied in the field of estimating user return time [20].
-生存時間分析[18, 30]は、ユーザーの復帰時間を推定する分野で適用されている[20]。
+**生存時間分析[18, 30]は、ユーザの復帰時間を推定する分野で適用**されている[20].
 Suppose T is the time until next event (i.e., user return) happens, then the hazard function (i.e., instantaneous rate for the event to happen) can be defined as Equation 3 [1, 30].
-次のイベント（ユーザーリターン）が起こるまでの時間をTとすると、ハザード関数（イベントが起こる瞬間の割合）は、式3のように定義できる[1, 30]。
+次のイベント（ユーザーリターン）が起こるまでの時間を $T$ とすると、ハザード関数(イベントが起こりうる 瞬間的な割合=微分っぽい? = たぶん確率密度関数)は、式3のように定義できる[1, 30]。
 
 $$
+\lambda(t) = \lim_{dt -> 0} \frac{Pr(t \leq T < t + dt|T \geq t)}{dt}
 \tag{3}
 $$
 
 Then the probability for the event to happen after t can be defined as Equation 4 [1, 30].
-すると、t以降に事象が発生する確率は式4で定義できる[1, 30]。
+すると、**$t$ 以降にイベントが発生する確率**は式4で定義できる[1, 30].
 
 $$
+S(t) = e^{- \int_{0}^{t} \lambda(x)dx}
 \tag{4}
 $$
 
 and the expected life span T0 can be calculated as [1, 30].
-であり、期待寿命T0は次のように計算できる[1, 30]。
+であり、期待寿命$T_0$は次のように計算できる[1, 30].
 
 $$
+T_0 = \int_{0}^{\infty} S(t) dt
 \tag{5}
 $$
 
 In our problem, we simply set λ(t) = λ0, which means each user has a constant probability to return.
-この問題では、単純にλ(t)=λ0とし、各ユーザーが一定の確率で戻ってくることを意味します。
+この問題では、単純に$\lambda(t)=\lambda_0$を仮定する. これは**各ユーザが一定の確率で戻ってくること**を意味する.
 Every time we detect a return of user, we will set S(t) = S(t) + Sa for this particular user.
-ユーザーの復帰を検出するたびに、この特定のユーザーについてS(t)=S(t)+Saを設定することになります。
+ユーザリターンを検出するたびに、この特定のユーザについて $S(t)=S(t)+S_a$ を設定することになる.
 The user activeness score will not exceed 1.
-ユーザー活性度スコアは1を超えることはありません。
+ユーザ活性度スコアは1を超えることはない.
 For instance, as shown in Figure 5, user activeness for this specific user starts to decay from S0 at time 0.
-例えば、図5に示すように、この特定ユーザーのユーザー活性度は、時刻0のS0から減衰し始める。
+例えば、図5に示すように、この特定ユーザの**ユーザ活性度は、時刻0の$S_0$から減衰し始める.**
 At timestamp t1, the user returns and this results in a Sa increase in the user activeness.
-タイムスタンプt1では、ユーザーが戻り、その結果、ユーザーのアクティブ度がSa上昇する。
+タイムスタンプt1ではユーザリターンが発生し、その結果、**ユーザのアクティブ度がSa上昇する**.
 Then, the user activeness continues to decay after t1.
-そして、t1以降、ユーザーの活性度は減衰し続ける。
+そして、t1以降、**再びユーザの活性度は減衰し続ける**.
 Similar things happen at t2, t3, t4 and t5.
-t2、t3、t4、t5でも同様のことが起こります。
+t2、t3、t4、t5でも同様のことが起こる.
 Note that, although this user has a relatively high request frequency during t4 to t9, the maximum user activeness is truncated to 1..
-なお、このユーザーはt4～t9の間は比較的要求頻度が高いが、ユーザーの活性度の最大値は1に切り捨てられている。
+なお、このユーザーはt4～t9の間は比較的リクエスト(=ユーザリターン)頻度が高いが、**ユーザの活性度の最大値は1に切り捨てられている**.
 
 The parameters S0, Sa, λ0, T0 are determined according to the real user pattern in our dataset.
-パラメータS0, Sa, λ0, T0は、本データセットに含まれる実際のユーザーパターンに応じて決定される。
+パラメータS0, Sa, λ0, T0は、本データセットに含まれる実際のユーザパターンに応じて決定される.("決定される"=ハイパーパラメータって意味??)
 S0 is set to 0.5 to represent the random initial state of a user (i.e., he or she can be either active or inactive).
-S0は、ユーザーのランダムな初期状態（つまり、アクティブにもインアクティブにもなる）を表すために0.5に設定されています。
+S0は、ユーザのランダムな初期状態(つまり、アクティブにもインアクティブにもなる)を表すために0.5に設定されている.(=じゃあハイパーパラメータなのか...!)
 We can observe the histogram of the time interval between every two consecutive requests of users as shown in Figure 6.
-図6に示すように、ユーザーの連続した2つのリクエストの間の時間間隔のヒストグラムを観察することができます。
+図6に示すように、ユーザの連続した2つのリクエストの間の時間間隔のヒストグラムを観察することができる.
 We observe that besides reading news multiple times in a day, people usually return to the application on a daily regular basis.
 1日に何度もニュースを読む以外に、毎日定期的にアプリケーションに戻るのが普通であることが観察されます。
 So we set T0 to 24 hours.
 そこで、T0を24時間に設定しました。
 The decaying parameter λ0 is set to 1.2 × 10−5 second−1 according to Equation 4 and Equation 5.
-減衰パラメータλ0は、式4と式5により、1.2×10-5秒-1に設定されています。
+減衰パラメータλ0は、式4と式5により、1.2×10-5秒-1に設定されている.
 In addition, the user activeness increase Sa for each click is set to 0.32 to make sure user will return to the initial state after one daily basis request, i.e., S0e −λ0T0 + Sa = S0..
-また、1回のクリックに対するユーザー活性度増加量Saは、1日単位の要求でユーザーが初期状態に戻るように、0.32とした、すなわち、S0e -λ0T0 + Sa = S0.とした。
+また、1回のクリックに対するユーザ活性度 増加量Saは、1日単位の要求でユーザーが初期状態に戻るように、0.32とした、すなわち、$S_0 * $e^{- \lambda_0 T_0}$ + S_a = S_0$ とした.
 
 The click / no click label rcl ick and the user activeness ract ive are combined as in Equation 6..
-クリック
+クリック/クリックなしラベル $r_{click}$ とユーザー活性度 $r_{active}$ は、式6のように組み合わせている.
 
 $$
+r_{total} = r_{click} + \beta r_{active}
 \tag{6}
 $$
 
 Although we use survival models here to estimate the user activeness, other alternatives like Poisson point process [13] can also be applied and should serve similar function..
-ここでは、生存モデルを用いてユーザーの活性度を推定しているが、ポアソン点過程[13]などの他の選択肢も適用可能であり、同様の機能を果たすはずである。
+ここでは、生存モデルを用いてユーザ活性度を推定しているが、ポアソン点過程[13]などの**他の選択肢も適用可能**であり、同様の機能を果たすはずである.
 
 ## Explore
 
 The most straightforward strategies to do exploration in reinforcement learning are ϵ-greedy [31] and UCB [23].
-強化学習において探索を行う最も簡単な戦略は、?-greedy [31]とUCB [23]です。
+強化学習において探索を行う最も簡単な戦略は、epsilon-greedy [31]とUCB [23]である.
 ϵ-greedy will randomly recommend new items with a probability of ϵ, while UCB will pick items that have not been explored for many times (because these items may have larger variance).
-ϵグリーディは新しいアイテムをϵの確率でランダムに推薦し、UCBは何度も探索されていないアイテムを選ぶ（これらのアイテムはより大きな分散を持つ可能性があるから）。
+ϵグリーディは新しいアイテムをepsilonの確率でランダムに推薦し、UCBは何度も探索されていないアイテムを選ぶ(これらのアイテムはより大きな分散を持つ可能性があるから).
 It is evident that these trivial exploration techniques will harm the recommendation performance in a short period.
-このような些細な探索手法では、短期間で推薦性能に悪影響が出ることは明らかです。
+**このような些細な探索手法では、短期間で推薦性能に悪影響が出ることは明らかである**.
 Therefore, rather than doing random exploration, we apply a Dueling Bandit Gradient Descent algorithm [16, 17, 49] to do the exploration.
-そこで、ランダムな探索を行うのではなく、Dueling Bandit Gradient Descentアルゴリズム [16, 17, 49] を適用して探索を行います。
+そこで、ランダムな探索を行うのではなく、**Dueling Bandit Gradient Descentアルゴリズム** [16, 17, 49] を適用して探索を行う.
 Intuitively, as shown in Figure 7, the agent G is going to generate a recommendation list L using the current network Q and another list L˜ using an explore network Q˜ .
-直感的には、図7に示すように、エージェントGは、現在のネットワークQを用いて推薦リストLを生成し、探索ネットワークQ〜を用いて別のリストL〜を生成しようと考えている。
+**直感的には、図7に示すように、エージェントGは、現在のネットワークQを用いて推薦リストLを生成し、探索ネットワーク $Q^~$ を用いて別のリスト$L^~$を生成**しようと考えている.
 The parameters W˜ of network Q˜ can be obtained by adding a small disturb ∆W (Equation 7) to the parameters W of the current network.
-ネットワークQ〜のパラメータW〜は、現在のネットワークのパラメータWに小さな外乱△W（式7）を加えることで得ることができる。
+ネットワーク$Q^~$のパラメータ $W^~$ は、**現在のネットワークのパラメータ $W$ に小さな外乱 $\Delta W$ (式7)を加えることで得ることができる**.
 
 $$
+\Delta W = \alpha \cdot rand(-1, 1) \cdot W
 \tag{7}
 $$
 
 where α is the explore coefficient, and rand(−1, 1) is a random number between -1 and 1.
-ここで、αは探索係数、rand(-1, 1)は-1～1の乱数である。
+ここで、
+
+- αは探索係数
+- rand(-1, 1)は-1～1の乱数.
+
 Then, the agent G will do a probabilistic interleave [16] to generate the merged recommendation list Lˆ using L and L˜ .
-次に、エージェントGは、確率的インターリーブ[16]を行い、LとL〜を用いてマージされた推薦リストLˆを生成する。
+次に、エージェントGは、確率的interleave[16](=複数のランキングを混ぜ合わせる手法)を行い、LとL〜を用いてマージされた推薦リストLˆを生成する.
 To determine the item for each position in the recommendation list Lˆ, the probabilistic interleave approach basically will first randomly select between list L and L˜ .
-推薦リストLˆの各位置の項目を決定するために、確率的インターリーブアプローチは基本的に、まずリストLとL〜の間をランダムに選択します。
+推薦リストLˆの各位置のアイテムを決定するために、確率的インターリーブアプローチは基本的に、まずリストLとL〜をランダムに選択する.
 Suppose L is selected, then an item i from L will be put into Lˆ with a probability determined by its ranking in L (items with top rankings will be selected with higher probability).
-Lが選択されたとすると、Lのアイテムiは、Lでの順位で決まる確率でLˆに入れられる（順位が上位のアイテムは高い確率で選択される）。
+Lが選択されたとすると、Lのアイテムiは、Lでの順位で決まる確率でLˆに入れられる(順位が上位のアイテムは高い確率で選択される).
 Then, list Lˆ will be recommended to user u and agent G will obtain the feedback B.
-そして、リストLˆがユーザuに推薦され、エージェントGはフィードバックBを得ることになる。
+そして、リストLˆがユーザuに推薦され、**エージェントGはフィードバックBを得る**ことになる.
 If the items recommended by the explore network Q˜ receive a better feedback, the agent G will update the network Q towards Q˜ , with the parameters of the network being updated as Equation 8.
-探索ネットワークQ〜が推奨するアイテムがより良いフィードバックを受けた場合、エージェントGはネットワークQをQ〜に向けて更新し、ネットワークのパラメータは式8のように更新される。
+**探索ネットワーク $Q^~$ が推薦するアイテムがより良いフィードバックを受けた場合、エージェントGはネットワークQをQ〜に向けて更新**し、ネットワークのパラメータは式8のように更新される.
 
 $$
+W' = W + \eta \tilde{W}
 \tag{8}
 $$
 
 Otherwise, the agent G will keep network Q unchanged.
-そうでない場合は、エージェントGはネットワークQを変更せずに維持する。
+そうでない場合は、エージェントGは**ネットワークQを変更せずに維持する**.(=フィードバックを受けて更新しないの? あ、一時間毎に更新するんだっけ)
 Through this kind of exploration, the agent can do more effective exploration without losing too much recommendation accuracy..
-このような探索を行うことで、エージェントは推薦精度をあまり落とさずに、より効果的な探索を行うことができます。
+このような探索を行うことで、**エージェントは推薦精度をあまり落とさずに、より効果的な探索を行うことができる**.
 
 # Experiment 実験です。
 
@@ -630,7 +640,7 @@ This is because the dueling network structure can better model the interaction b
 Adding future reward consideration (DDQN), we achieve another significant improvement.
 将来の報酬を考慮すること（DDQN）を加えることで、さらに大きな改善を実現しています。
 Then, incorporating user activeness and exploration do not necessarily improve the performance under the offline setting, which might because under offline setting, the algorithm can not make the best interaction with user due to the limited static set of candidate news.
-そして、ユーザactivenessや探索性を取り込んでも、オフライン環境下では必ずしも性能は向上しない、 
+そして、ユーザactivenessや探索性を取り込んでも、オフライン環境下では必ずしも性能は向上しない、
 これは、オフラインの設定では、候補となるニュースの静的な集合が限られているため、**アルゴリズムがユーザと最適なやりとりをすることができない**ためと思われる.
 (It is possible that our agent G want to recommend user u a news i for user activeness or exploration consideration, but actually the information about whether user u will click on news i or not does not exist in the offline log.) In addition, naive random exploration like ϵ-greedy will harm the recommendation accuracy.
 (エージェントGはユーザの能動性や探索を考慮してユーザuにニュースiを推薦したいが、実際にはユーザuがニュースiをクリックするかどうかの情報はオフラインログに存在しない可能性がある)。また、ϵ-greedyのような素朴なランダム探索は、推薦精度を低下させることになる。
