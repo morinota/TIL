@@ -203,13 +203,41 @@ Qで表現され、Pで表現されないカテゴリ(例えば、ニュース�
 確率分布全体 $bar{P}$ と $tar{Q}$ が適切な統計分布であり続けるために、$\sum_{x}\bar{P}(x) = \sum_{x}\bar{Q}(x) = 1$となるように正規化する.
 notation(表記)の混雑を避けるため、以下の節では、$P$と$Q$は暗黙に$\bar{P}$と$\bar{Q}$を指すことにする.
 
-### 工夫1: Rank-Aware f-Divergence Metrics
+### 工夫1: Rank-Aware な f-Divergence Metrics に改良する
 
 本論文の工夫として、ランク付け推薦の設定に対応する為に、f-Divergence metrics の更なる reformulation を提案する.
 
 Learning To Rank (LTR) の文献 [67, 85]、ひいては従来のdescriptive diversiyt metrics [13] では、ユーザが推薦ランクリストのさらに下のアイテムを見る可能性はかなり低くなる(i.e. inspection probabilitiesが低下する)ことがよく知られている.
 また，ランキングはしばしばユーザとのrelevanceを反映するが，ニュースの場合は必ずしもそうではない(ex. ニュースのホームページのレイアウト次第?)ことに注意されたい.
 本論文では、ランク付けされた推薦リストで下位の結果の重要性を重み付けするために、**PとQにオプションの discount 係数を付けてmetricを拡張する**.
+
+rank-awareな$Q^∗$と任意でrank-awareな $P^∗$で、rank-awareなf-DivergenceメトリックであるRADioを定式化する.
+
+### 工夫2: RADioを用いて、DART metricsを拡張する
+
+本論文では、RADioを用いて5つの DART metricsの formulation を拡張する.
+
+まず以下の global parameters(=notation?)を定義する:
+
+- $S$: 推薦システムが選択しうる(=推薦候補のアイテム?)ニュース記事のリストで、"supply"とも呼ばれる.
+- $R: 推薦セットに含まれる記事のランク付けされたリスト.
+- $H$: ユーザの reading history にある記事のリストで、新着順に表示される.
+
+$R_{i}^u \in {1, 2, 3, \cdots}$ は、ユーザ$u$に対する推薦リストにおけるアイテム $i$のランクを意味する.
+DART metrics は**ある時点の特定のユーザに対して定義される**ため、特に断らない限り、$R$ は暗黙的に$R^𝑢$を意味する.
+
+以下で、DART metricsの各metricをRADioを用いて拡張していく.
+(DART metricsの詳細は、元論文を参照.)
+
+#### １つ目:Calibration
+
+#### ２つ目:Fragmentation
+
+#### 3つ目:Activation
+
+#### 4つ目:Representation
+
+#### 5つ目:Alternative Voices
 
 ## どうやって有効だと検証した?
 

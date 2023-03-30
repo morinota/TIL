@@ -356,23 +356,22 @@ The context distribution 𝑃 is discounted in the same manner, when it is a ran
 When 𝑃 is a user’s reading history (see Figure 1), the discount on 𝑃 increases with time: articles read recently are weighted higher than articles read longer ago.
 𝑃がユーザーの読書履歴の場合（図1参照）、𝑃の割引率は時間と共に増加する：最近読んだ記事は、より昔に読んだ記事より高く評価される。
 There are situations when rank-awareness is not applicable, for example when 𝑃 is the entire pool of available articles.5 With rankaware $𝑄^∗$ and optionally rank-aware $𝑃^∗$ , we formulate RADio, our rank-aware f-Divergence metric:
-ランクを考慮した$ᵄ^∗$と任意でランクを考慮した$𝑃^∗$で、ランクを考慮したf-DivergenceメトリックであるRADioを定式化する。
+rank-awareな$Q^∗$と任意でrank-awareな $P^∗$で、rank-awareなf-DivergenceメトリックであるRADioを定式化する.
 
 $$
 \tag{6}
 $$
 
-$𝑄^∗(𝑥)$ and $𝑃^∗(𝑥)$ accommodate for multiple situations: for example, $𝑄^∗(𝑐
-𝑅)$ is the rank-aware distribution of news categories 𝑐 over the recommendation set 𝑅. In the following, we specify $𝑃^∗(𝑥
+$𝑄^∗(𝑥)$ and $𝑃^∗(𝑥)$ accommodate for multiple situations: for example, $𝑄^∗(𝑐𝑅)$ is the rank-aware distribution of news categories 𝑐 over the recommendation set 𝑅. In the following, we specify $𝑃^∗(𝑥
 
 ## 3.4. Normative Diversity metrics as Rank-Aware f-Divergences 順位を考慮したf-Divergencesとしての規範的な多様性メトリクス
 
 In this section, we describe the RADio formalization of the general f-Divergence formulation above to the five DART metrics.
-このセクションでは、上記の一般的なf-Divergenceの定式化を5つのDARTメトリクスにRADioで定式化したものについて説明する。
+このセクションでは、上記の一般的なf-Divergenceの定式化を5つのDART metricsにRADioで定式化したものについて説明する.
 We leave the exact implementation of the metrics in practice for a particular open news recommendation dataset to the next section.
-特定のオープンなニュース推薦データセットに対する実際のメトリクスの正確な実装は次のセクションに譲ります。
+特定のオープンなニュース推薦データセットに対する実際の metrics の正確な実装は次のセクションに任せる.
 More formally, we define the following global parameters:
-より正式には、以下のグローバルパラメータを定義する。
+より正式には、以下のグローバルパラメータを定義する.
 
 - 𝑆: The list of news articles the recommender system could make its selection from, also referred to as the “supply.” 𝑆: レコメンダーシステムが選択しうるニュース記事のリストで、"供給 "とも呼ばれる。
 
@@ -381,9 +380,9 @@ More formally, we define the following global parameters:
 - 𝐻: The list of articles in a user’s reading history, ranked by recency. 𝐻: ユーザーの読書履歴にある記事のリストで、新着順に表示されます。
 
 $𝑅_{i}^u \in {1, 2, 3, \cdots}$ refers to the rank of an item 𝑖 in a ranked list of recommendations for user 𝑢.
-𝑅\_{i}^u \in {1, 2, 3, \cdots}$ は、ユーザー𝑢に対する推奨リストにおけるアイテム 𝑖のランクを意味する。
+$R_{i}^u \in {1, 2, 3, \cdots}$ は、ユーザ$u$に対する推薦リストにおけるアイテム $i$のランクを意味する.
 In this work, metrics are defined for a specific user at a certain point in time, therefore 𝑅 implicitly refers to $𝑅^𝑢$, unless stated otherwise.
-この作業では、メトリックはある時点の特定のユーザーに対して定義されるため、特に断らない限り、𝑅は暗黙的に$𝑢$を意味する。
+この作業では、メトリックはある時点の特定のユーザーに対して定義されるため、特に断らない限り、$R$ は暗黙的に$R^𝑢$を意味する。
 While this section contains some contextualization of the DART metrics [71], the original paper contains further normative justifications.
 このセクションはDARTメトリクス[71]の文脈を含んでいますが、元の論文はさらに規範的な正当性を含んでいます。
 
