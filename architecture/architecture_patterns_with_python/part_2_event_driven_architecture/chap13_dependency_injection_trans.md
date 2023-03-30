@@ -367,16 +367,16 @@ def bootstrap(
     )
 ```
 
-1. `orm.start_mappers()` is our example of initialization work that needs to be done once at the beginning of an app. We also see things like setting up the `logging` module. `orm.start_mappers()` は、アプリの開始時に一度だけ行う必要がある初期化作業の例です。 また、`logging`モジュールのセットアップなどについても見ていきます。
+1. `orm.start_mappers()` is our example of initialization work that needs to be done once at the beginning of an app. We also see things like setting up the `logging` module. `orm.start_mappers()` は、アプリの開始時に一度だけ行う必要がある初期化作業の例. また、`logging`モジュールのセットアップなどについても見ていく.
 
-2. We can use the argument defaults to define what the normal/production defaults are. It’s nice to have them in a single place, but sometimes dependencies have some side effects at construction time, in which case you might prefer to default them to `None` instead. 引数defaultsを使用して、通常の しかし、依存関係が構築時に何らかの副作用をもたらすことがあります。そのような場合は、代わりに`None`をデフォルトにすることをお勧めします。
+2. We can use the argument defaults to define what the normal/production defaults are. It’s nice to have them in a single place, but sometimes dependencies have some side effects at construction time, in which case you might prefer to default them to `None` instead. 引数defaultsを使用して、通常の しかし、依存関係が構築時に何らかの副作用をもたらすことがある. そのような場合は、代わりに`None`をデフォルトにすることをお勧めする.
 
-3. We build up our injected versions of the handler mappings by using a function called `inject_dependencies()`, which we’ll show next. 次に紹介する `inject_dependencies()` という関数を使って、注入されたバージョンのハンドラマッピングを構築していきます。
+3. We build up our injected versions of the handler mappings by using a function called `inject_dependencies()`, which we’ll show next. 次に紹介する `inject_dependencies()` という関数を使って、注入されたバージョンのハンドラマッピングを構築していく.
 
-4. We return a configured message bus ready for use. 使用可能な状態に設定されたメッセージバスを返送します。
+4. We return a configured message bus ready for use. 使用可能な状態に設定されたメッセージバスを返送する.
 
 Here’s how we inject dependencies into a handler function by inspecting it:.
-ここでは、ハンドラ関数を検査することによって、依存関係を注入する方法を説明します。
+ここでは、ハンドラ関数を検査することによって、DIする方法を説明する.
 
 DI by inspecting function signatures (src/allocation/bootstrap.py).
 関数のシグネチャを検査することでDIを行う（src
@@ -392,13 +392,12 @@ def inject_dependencies(handler, dependencies):
     return lambda message: handler(message, **deps)  3
 ```
 
-1. We inspect our command/event handler’s arguments. 私たちはコマンドを点検する
+1. We inspect our command/event handler’s arguments. 私たちはコマンドを点検する.
 
-2. We match them by name to our dependencies. それらを名前から依存関係にマッチさせるのです。
+2. We match them by name to our dependencies. それらを名前から依存関係にマッチさせる.
 
-3. We inject them as kwargs to produce a partial. これらをkwargsとして注入し、部分的に生成します。
+3. We inject them as kwargs to produce a partial. これらをkwargsとして注入し、部分的に生成する.
 
----.
 ---.
 
 - EVEN-MORE-MANUAL DI WITH LESS MAGIC より少ないマジックでより多くのマニュアルディ
@@ -407,13 +406,13 @@ If you’re finding the preceding `inspect` code a little harder to grok, this e
 もし、先ほどの `inspect` コードを理解するのが少し難しいと感じているのであれば、もっとシンプルなこのバージョンを使ってみてはいかがでしょうか？
 
 Harry wrote the code for `inject_dependencies()` as a first cut of how to do “manual” dependency injection, and when he saw it, Bob accused him of overengineering and writing his own DI framework..
-ハリーは、"手動 "の依存性注入を行う方法の最初の切り札として、`inject_dependencies()'のコードを書きました。それを見たボブは、彼はオーバーエンジニアリングで独自のDIフレームワークを書いていると非難しました。
+ハリーは、"手動 "のDIを行う方法の最初の切り札として、`inject_dependencies()`のコードを書きました。それを見たボブは、彼はオーバーエンジニアリングで独自のDIフレームワークを書いていると非難した.
 
 It honestly didn’t even occur to Harry that you could do it any more plainly, but you can, like this:.
-正直、これ以上わかりやすくできるなんてハリーにも思いつきませんでしたが、できるんですね、こういうの。
+正直、これ以上わかりやすくできるなんてハリーにも思いつきませんでしたが、できるんですね、こういうの.
 
 Manually creating partial functions inline (src/allocation/bootstrap.py).
-インラインで部分関数を手動で作成する（src
+インラインで部分関数を手動で作成する
 
 ```python
     injected_event_handlers = {
@@ -439,33 +438,33 @@ Manually creating partial functions inline (src/allocation/bootstrap.py).
 ```
 
 Harry says he couldn’t even imagine writing out that many lines of code and having to look up that many function arguments manually.
-ハリーは、あれだけのコードを書き出し、あれだけの関数の引数を手作業で調べなければならないなんて、想像すらできなかったと言います。
+ハリーは、あれだけのコードを書き出し、あれだけの関数の引数を手作業で調べなければならないなんて、想像すらできなかったと言う.
 This is a perfectly viable solution, though, since it’s only one line of code or so per handler you add, and thus not a massive maintenance burden even if you have dozens of handlers..
-ハンドラを1つ追加するごとに1行程度のコードで済むので、何十個もハンドラを追加してもメンテナンスの負担が大きくならないからです。
+ハンドラを1つ追加するごとに1行程度のコードで済むので、何十個もハンドラを追加してもメンテナンスの負担が大きくならないからである.
 
 Our app is structured in such a way that we always want to do dependency injection in only one place, the handler functions, so this super-manual solution and Harry’s `inspect()`-based one will both work fine..
-私たちのアプリは、依存性注入をハンドラ関数の一か所だけで行いたい構造になっているので、この超マニュアル的な解決策とハリーの `inspect() `ベースの解決策は、どちらもうまくいくはずです。
+私たちのアプリは、DIをハンドラ関数の一か所だけで行いたい構造になっているので、この超マニュアル的な解決策とハリーの `inspect() `ベースの解決策は、どちらもうまくいくはずである.
 
 If you find yourself wanting to do DI in more things and at different times, or if you ever get into dependency chains (in which your dependencies have their own dependencies, and so on), you may get some mileage out of a “real” DI framework..
-もし、もっといろいろなものを、いろいろなタイミングでDIしたいと思うようになったら、あるいは、依存関係の連鎖（依存関係にあるものが、さらに依存関係を持つなど）を考えるようになったら、「本物の」DIフレームワークを使うとよいかもしれませんね。
+もし、もっといろいろなものを、いろいろなタイミングでDIしたいと思うようになったら、あるいは、**依存関係の連鎖（依存関係にあるものが、さらに依存関係を持つなど）**を考えるようになったら、「本物の」DIフレームワークを使うとよいかもしれない.
 
 At MADE, we’ve used Inject in a few places, and it’s fine, although it makes Pylint unhappy.
-MADEでは、Injectを数カ所で使っていますが、Pylintを不幸にするものの、問題ないです。
+MADEでは、Injectを数カ所で使っていますが、Pylintを不幸にするものの、問題ない.
 You might also check out Punq, as written by Bob himself, or the DRY-Python crew’s dependencies..
-また、ボブ自身が書いたPunqや、DRY-Pythonクルーの依存関係をチェックするのもよいでしょう。
+また、ボブ自身が書いたPunqや、DRY-Pythonクルーの依存関係をチェックするのもよいだろう.
 
 ---.
 ---.
 
-## Message Bus Is Given Handlers at Runtime Message Bus Is Given Handlers at Runtime.
+## Message Bus Is Given Handlers at Runtime
 
 Our message bus will no longer be static; it needs to have the already-injected handlers given to it.
-メッセージバスはもはや静的なものではありません。すでに注入されたハンドラを与える必要があります。
+メッセージバスはもはや静的なものではない. すでに注入されたハンドラを与える必要がある.
 So we turn it from being a module into a configurable class:.
-そこで、モジュールから、設定可能なクラス：に変えます。
+そこで、モジュールから、**設定可能な(configurableな)クラス**に変える:
 
 MessageBus as a class (src/allocation/service_layer/messagebus.py).
-クラスとしてのMessageBus (src
+クラスとしてのMessageBus
 
 ```python
 class MessageBus:  1
@@ -492,19 +491,19 @@ class MessageBus:  1
                 raise Exception(f'{message} was not an Event or Command')
 ```
 
-1. The message bus becomes a class… メッセージバスがクラスになる...。
+1. The message bus becomes a class… メッセージバスがクラスになる...
 
-2. …which is given its already-dependency-injected handlers. ...依存性注入済みのハンドラが渡されます。
+2. …which is given its already-dependency-injected handlers. ...DI済みのハンドラが渡される.
 
-3. The main `handle()` function is substantially the same, with just a few attributes and methods moved onto `self`. メインの `handle()` 関数は、いくつかの属性とメソッドを `self` に移しただけで、実質的に同じです。
+3. The main `handle()` function is substantially the same, with just a few attributes and methods moved onto `self`. メインの `handle()` 関数は、いくつかの属性とメソッドを `self` に移しただけで、実質的に同じ.
 
-4. Using `self.queue` like this is not thread-safe, which might be a problem if you’re using threads, because the bus instance is global in the Flask app context as we’ve written it. Just something to watch out for. このように `self.queue` を使うことはスレッドセーフではないので、スレッドを使用している場合は問題になるかもしれません。 ただ、気をつけなければいけないことがあります。
+4. Using `self.queue` like this is not thread-safe, which might be a problem if you’re using threads, because the bus instance is global in the Flask app context as we’ve written it. Just something to watch out for. このように `self.queue` を使うことはスレッドセーフではないので、スレッドを使用している場合は問題になるかもしれない. ただ、気をつけなければいけないことがある.
 
 What else changes in the bus?.
-他にバスで何が変わるのでしょうか？
+他にバスで何が変わるのだろうか？
 
 Event and command handler logic stays the same (src/allocation/service_layer/messagebus.py).
-イベントやコマンドハンドラのロジックはそのままです（src
+イベントやコマンドハンドラのロジックはそのまま（src
 
 ```python
     def handle_event(self, event: events.Event):
@@ -529,14 +528,14 @@ Event and command handler logic stays the same (src/allocation/service_layer/mes
             raise
 ```
 
-1. `handle_event` and `handle_command` are substantially the same, but instead of indexing into a static `EVENT_HANDLERS` or `COMMAND_HANDLERS` dict, they use the versions on `self`. しかし、静的な `EVENT_HANDLERS` または `COMMAND_HANDLERS` ディクトにインデックスを作成するのではなく、 `self` のバージョンを使用します。
+1. `handle_event` and `handle_command` are substantially the same, but instead of indexing into a static `EVENT_HANDLERS` or `COMMAND_HANDLERS` dict, they use the versions on `self`. しかし、静的な `EVENT_HANDLERS` または `COMMAND_HANDLERS` ディクトにインデックスを作成するのではなく、 `self` のバージョンを使用する.
 
-2. Instead of passing a UoW into the handler, we expect the handlers to already have all their dependencies, so all they need is a single argument, the specific event or command. ハンドラーにUoWを渡すのではなく、ハンドラーにはすでにすべての依存関係があり、必要なのは特定のイベントやコマンドという1つの引数だけです。
+2. Instead of passing a UoW into the handler, we expect the handlers to already have all their dependencies, so all they need is a single argument, the specific event or command. **ハンドラーにUoWを渡すのではなく、ハンドラーにはすでにすべての依存関係があり、必要なのは特定のイベントやコマンドという1つの引数だけになる**.
 
-## Using Bootstrap in Our Entrypoints Bootstrapをエントリーポイントに使う。
+## Using Bootstrap in Our Entrypoints Bootstrapをエントリーポイントに使う.
 
 In our application’s entrypoints, we now just call `bootstrap.bootstrap()` and get a message bus that’s ready to go, rather than configuring a UoW and the rest of it:.
-アプリケーションのエントリポイントでは、UoWやその他を設定するのではなく、`bootstrap.bootstrap()`を呼び出して、すぐに使えるメッセージバスを取得するだけになりました:.
+アプリケーションのエントリポイントでは、UoWやその他を設定するのではなく、`bootstrap.bootstrap()`を呼び出して、すぐに使えるメッセージバスを取得するだけになった:
 
 Flask calls bootstrap (src/allocation/entrypoints/flask_app.py).
 Flaskはbootstrapを呼び出す（src
@@ -561,18 +560,18 @@ Flaskはbootstrapを呼び出す（src
      return 'OK', 201
 ```
 
-1. We no longer need to call `start_orm()`; the bootstrap script’s initialization stages will do that. もはや `start_orm()` を呼び出す必要はありません。起動スクリプトの初期化ステージがそれを行います。
+1. We no longer need to call `start_orm()`; the bootstrap script’s initialization stages will do that. もはや `start_orm()` を呼び出す必要はない. 起動スクリプトの初期化ステージがそれを行う.
 
-2. We no longer need to explicitly build a particular type of UoW; the bootstrap script defaults take care of it. 特定のタイプのUoWを明示的に構築する必要がなくなり、起動スクリプトのデフォルトで対応できるようになりました。
+2. We no longer need to explicitly build a particular type of UoW; the bootstrap script defaults take care of it. 特定のタイプのUoWを明示的に構築する必要がなくなり、起動スクリプトのデフォルトで対応できるようになった.
 
-3. And our message bus is now a specific instance rather than the global module.3 そして、メッセージバスは、グローバルモジュールではなく、特定のインスタンスになりました3。
+3. And our message bus is now a specific instance rather than the global module.3 そして、メッセージバスは、グローバルモジュールではなく、特定のインスタンスになった.
 
 ## Initializing DI in Our Tests テストでDIを初期化する。
 
 In tests, we can use `bootstrap.bootstrap()` with overridden defaults to get a custom message bus.
-テストでは、カスタムメッセージバスを取得するために、オーバーライドされたデフォルトで `bootstrap.bootstrap()` を使用することができます。
+テストでは、カスタムメッセージバスを取得するために、オーバーライドされたデフォルトで `bootstrap.bootstrap()` を使用することができる.
 Here’s an example in an integration test:.
-以下は、統合テストでの例です：。
+以下は、統合テストでの例：
 
 Overriding bootstrap defaults (tests/integration/test_views.py).
 ブートストラップのデフォルトをオーバーライドする（テスト
@@ -599,14 +598,14 @@ def test_allocations_view(sqlite_bus):
     ]
 ```
 
-1. We do still want to start the ORM… まだORMを始めたいとは思っているのですが...。
+1. We do still want to start the ORM… まだORMを始めたいとは思っているのですが...
 
-2. …because we’re going to use a real UoW, albeit with an in-memory database. ...インメモリデータベースとはいえ、本物のUoWを使用するのですから。
+2. …because we’re going to use a real UoW, albeit with an in-memory database. ...インメモリデータベースとはいえ、本物のUoWを使用するから.
 
-3. But we don’t need to send email or publish, so we make those noops. でも、メールを送ったり、出版したりする必要はないので、そういうヌケを良くしています。
+3. But we don’t need to send email or publish, so we make those noops. でも、メールを送ったり、出版したりする必要はないので、そういうヌケを良くしている.
 
 In our unit tests, in contrast, we can reuse our `FakeUnitOfWork`:.
-一方、ユニットテストでは、`FakeUnitOfWork`: を再利用することができます。
+一方、ユニットテストでは、`FakeUnitOfWork`: を再利用することができる.
 
 Bootstrap in unit test (tests/unit/test_handlers.py).
 ユニットテストでのBootstrap（テスト
@@ -621,14 +620,14 @@ def bootstrap_test_app():
     )
 ```
 
-1. No need to start the ORM… ORMを起動する必要がない...。
+1. No need to start the ORM… ORMを起動する必要がない...
 
-2. …because the fake UoW doesn’t use one. ...偽UoWは1つも使わないから。
+2. …because the fake UoW doesn’t use one. ...偽UoWは1つも使わないから
 
-3. We want to fake out our email and Redis adapters too. メールやRedisアダプタもフェイクアウトしたい。
+3. We want to fake out our email and Redis adapters too. メールやRedisアダプタもフェイクアウトしたい
 
 So that gets rid of a little duplication, and we’ve moved a bunch of setup and sensible defaults into a single place..
-そのため、重複を少し解消し、セットアップや感覚的なデフォルトを1つの場所に移動させました。
+そのため、重複を少し解消し、セットアップや感覚的なデフォルトを1つの場所に移動させた.
 
 ---.
 ---.
@@ -637,20 +636,19 @@ EXERCISE FOR THE READER 1.
 読者のためのエクササイズ 1.
 
 Change all the handlers to being classes as per the DI using classes example, and amend the bootstrapper’s DI code as appropriate.
-クラスを使ったDIの例に従って、すべてのハンドラーをクラスであるように変更し、ブートストラッパーのDIコードを適切に修正します。
+クラスを使ったDIの例に従って、すべてのハンドラーをクラスであるように変更し、ブートストラッパーのDIコードを適切に修正する.
 This will let you know whether you prefer the functional approach or the class-based approach when it comes to your own projects..
-これによって、自分のプロジェクトに関して、機能的なアプローチとクラスベースのアプローチのどちらが好きかを知ることができるのです。
+これによって、**自分のプロジェクトに関して、functional approach と class-based approach のどちらが好きかを知ることができる**.
 
----.
 ---.
 
 ## Building an Adapter “Properly”: A Worked Example アダプターを "正しく "構築する。作業例。
 
 To really get a feel for how it all works, let’s work through an example of how you might “properly” build an adapter and do dependency injection for it..
-どのように動作するかを実感するために、「適切に」アダプターを構築し、依存性注入を行う方法の例を挙げてみましょう。
+どのように動作するかを実感するために、「適切に」アダプターを構築し、DIを行う方法の例を挙げてみよう.
 
 At the moment, we have two types of dependencies:.
-現時点では、次の2種類の依存関係があります。
+現時点では、次の2種類の依存関係がある.
 
 Two types of dependencies (src/allocation/service_layer/messagebus.py).
 2種類の依存関係（src
@@ -663,31 +661,31 @@ Two types of dependencies (src/allocation/service_layer/messagebus.py).
     publish: Callable,  2
 ```
 
-1. The UoW has an abstract base class. This is the heavyweight option for declaring and managing your external dependency. We’d use this for the case when the dependency is relatively complex. UoWには、抽象的なベースクラスがあります。 これは、外部依存関係を宣言し、管理するためのヘビー級のオプションです。 依存関係が比較的複雑な場合に使用することになります。
+1. The UoW has an abstract base class. This is the heavyweight option for declaring and managing your external dependency. We’d use this for the case when the dependency is relatively complex. UoWには、抽象的なベースクラスがある. これは、external dependencyを宣言し、管理するためのヘビー級のオプション. 依存関係が比較的複雑な場合に使用することになる.
 
-2. Our email sender and pub/sub publisher are defined as functions. This works just fine for simple dependencies. 当社のメール送信者、パブ これは、単純な依存関係であれば問題なく動作します。
+2. Our email sender and pub/sub publisher are defined as functions. This works just fine for simple dependencies. 当社のメール送信者、パブ これは、単純な依存関係であれば問題なく動作する.
 
 Here are some of the things we find ourselves injecting at work:.
-ここでは、私たちが職場で注入しているものを紹介します：。
+ここでは、私たちが職場で注入しているものを紹介する：
 
-- An S3 filesystem client S3ファイルシステムクライアントです。
+- An S3 filesystem client S3ファイルシステムクライアント.
 
 - A key/value store client Aキー
 
-- A `requests` session object requests`のセッションオブジェクト。
+- A `requests` session object requests`のセッションオブジェクト.
 
 Most of these will have more-complex APIs that you can’t capture as a single function: read and write, GET and POST, and so on..
-これらのほとんどは、単一の関数として捕らえることができない、より複雑なAPIを持っています：読み取りと書き込み、GETとPOST、などなど。
+これらのほとんどは、単一の関数として捕らえることができない、より複雑なAPIを持っている：読み取りと書き込み、GETとPOST、などなど.
 
 Even though it’s simple, let’s use `send_mail` as an example to talk through how you might define a more complex dependency..
-単純ではありますが、`send_mail`を例にして、より複雑な依存関係を定義する方法について説明しましょう。
+単純ではありますが、`send_mail`を例にして、より複雑な依存関係を定義する方法について説明しよう.
 
-### Define the Abstract and Concrete Implementations 抽象的な実装と具体的な実装を定義する。
+### Define the Abstract and Concrete Implementations 抽象的な実装と具体的な実装を定義する
 
 We’ll imagine a more generic notifications API.
-より汎用的な通知用APIをイメージします。
+より汎用的な通知用APIをイメージする.
 Could be email, could be SMS, could be Slack posts one day..
-メールかもしれないし、SMSかもしれないし、ある日のSlackの投稿かもしれない。
+メールかもしれないし、SMSかもしれないし、ある日のSlackの投稿かもしれない.
 
 An ABC and a concrete implementation (src/allocation/adapters/notifications.py).
 ABCと具体的な実装（src
@@ -717,7 +715,7 @@ class EmailNotifications(AbstractNotifications):
 ```
 
 We change the dependency in the bootstrap script:.
-ブートストラップスクリプトの依存関係を次のように変更します。
+ブートストラップスクリプトの依存関係を次のように変更する.
 
 Notifications in message bus (src/allocation/bootstrap.py).
 メッセージバスでの通知（src
@@ -735,7 +733,7 @@ Notifications in message bus (src/allocation/bootstrap.py).
 ### Make a Fake Version for Your Tests テスト用のフェイクバージョンを作る。
 
 We work through and define a fake version for unit testing:.
-ユニットテスト用のフェイクバージョンを定義していきます。
+ユニットテスト用のフェイクバージョンを定義していく.
 
 Fake notifications (tests/unit/test_handlers.py).
 偽の通知（テスト
@@ -752,7 +750,7 @@ class FakeNotifications(notifications.AbstractNotifications):
 ```
 
 And we use it in our tests:.
-そして、私たちはそれをテストに使っています：。
+そして、私たちはそれをテストに使っている：
 
 Tests change slightly (tests/unit/test_handlers.py).
 テストが少し変わる（テスト
@@ -773,15 +771,15 @@ Tests change slightly (tests/unit/test_handlers.py).
         ]
 ```
 
-### Figure Out How to Integration Test the Real Thing 実物を統合テストする方法を考えよう。
+### Figure Out How to Integration Test the Real Thing 実物を統合テストする方法を考えよう
 
 Now we test the real thing, usually with an end-to-end or integration test.
-次に、通常エンドツーエンドテストや統合テストを行い、本番に臨みます。
+次に、通常エンドツーエンドテストや統合テストを行い、本番に臨む.
 We’ve used MailHog as a real-ish email server for our Docker dev environment:.
-MailHogは、Docker開発環境の本格的なメールサーバとして使用しています:.
+MailHogは、Docker開発環境の本格的なメールサーバとして使用している:.
 
 Docker-compose config with real fake email server (docker-compose.yml).
-本物の偽メールサーバーを使ったDocker-composeの設定(docker-compose.yml)。
+本物の偽メールサーバーを使ったDocker-composeの設定(docker-compose.yml)
 
 ```yaml
 version: "3"
@@ -815,7 +813,7 @@ services:
 ```
 
 In our integration tests, we use the real `EmailNotifications` class, talking to the MailHog server in the Docker cluster:.
-統合テストでは、本物の `EmailNotifications` クラスを使用し、Docker クラスタ内の MailHog サーバと通信します:.
+統合テストでは、本物の `EmailNotifications` クラスを使用し、Docker クラスタ内の MailHog サーバと通信する:.
 
 Integration test for email (tests/integration/test_email.py).
 メールに関する統合テスト（テスト
@@ -849,16 +847,16 @@ def test_out_of_stock_email(bus):
     assert f'Out of stock for {sku}' in email['Raw']['Data']
 ```
 
-1. We use our bootstrapper to build a message bus that talks to the real notifications class. ブートストラッパーを使用して、実際の通知クラスと会話するメッセージバスを構築しています。
+1. We use our bootstrapper to build a message bus that talks to the real notifications class. ブートストラッパーを使用して、実際の通知クラスと会話するメッセージバスを構築している.
 
-2. We figure out how to fetch emails from our “real” email server. 本物の」電子メールサーバーから電子メールを取得する方法を考え出す。
+2. We figure out how to fetch emails from our “real” email server. 本物の」電子メールサーバーから電子メールを取得する方法を考え出す.
 
-3. We use the bus to do our test setup. バスを使ってテストセットアップを行う。
+3. We use the bus to do our test setup. バスを使ってテストセットアップを行う.
 
 4. Against all the odds, this actually worked, pretty much at the first go! 一発で成功したんです。
 
 And that’s it really..
-そして、本当にそれだけです。
+そして、本当にそれだけ.
 
 ---.
 ---.
@@ -867,33 +865,33 @@ EXERCISE FOR THE READER 2.
 読者のためのエクササイズ 2.
 
 You could do two things for practice regarding adapters:.
-アダプターに関する練習のために、次の2つのことをすることができます。
+アダプターに関する練習のために、次の2つのことをすることができる.
 
-1. Try swapping out our notifications from email to SMS notifications using Twilio, for example, or Slack notifications. Can you find a good equivalent to MailHog for integration testing? 私たちの通知をメールから、例えばTwilioを使ったSMS通知や、Slackの通知などに置き換えてみてください。 統合テスト用のMailHogと同等の良いものはないでしょうか。
+1. Try swapping out our notifications from email to SMS notifications using Twilio, for example, or Slack notifications. Can you find a good equivalent to MailHog for integration testing? 私たちの通知をメールから、例えばTwilioを使ったSMS通知や、Slackの通知などに置き換えてみてください. 統合テスト用のMailHogと同等の良いものはないでしょうか.
 
-2. In a similar way to what we did moving from `send_mail` to a `Notifications` class, try refactoring our `redis_eventpublisher` that is currently just a `Callable` to some sort of more formal adapter/base class/protocol. send_mail`から`Notifications`クラスに移行したのと同じように、現在単なる`Callable`である `redis_eventpublisher` を、より正式なアダプタにリファクタリングしてみましょう。
+2. In a similar way to what we did moving from `send_mail` to a `Notifications` class, try refactoring our `redis_eventpublisher` that is currently just a `Callable` to some sort of more formal adapter/base class/protocol. `send_mail`から`Notifications`クラスに移行したのと同じように、現在単なる`Callable`である `redis_eventpublisher` を、より正式なアダプタにリファクタリングしてみよう.
 
 ---.
 ---.
 
-## Wrap-Up Wrap-Up.
+## Wrap-Up
 
 Once you have more than one adapter, you’ll start to feel a lot of pain from passing dependencies around manually, unless you do some kind of dependency injection..
-複数のアダプタを持つようになると、何らかの依存性注入を行わない限り、依存性を手動で受け渡すことに苦痛を感じるようになります。
+複数のアダプタを持つようになると、何らかのDependency Injectionを行わない限り、依存性を手動で受け渡すことに苦痛を感じるようになる.
 
 Setting up dependency injection is just one of many typical setup/initialization activities that you need to do just once when starting your app.
-依存性注入の設定は、多くの典型的な設定の1つに過ぎません。
+DIの設定は、多くの典型的な設定の1つに過ぎない.
 Putting this all together into a bootstrap script is often a good idea..
-これをまとめてブートストラップスクリプトにするのは、良いアイデアだと思います。
+これをまとめてブートストラップスクリプトにするのは、良いアイデアだと思う.
 
 The bootstrap script is also good as a place to provide sensible default configuration for your adapters, and as a single place to override those adapters with fakes for your tests..
-bootstrapスクリプトは、アダプタのデフォルト設定を適切に行う場所として、また、テスト用の偽アダプタを上書きするための一つの場所としても適しています。
+**bootstrapスクリプトは、アダプタのデフォルト設定を適切に行う場所として、また、テスト用の偽アダプタを上書きするための一つの場所としても適している**.
 
 A dependency injection framework can be useful if you find yourself needing to do DI at multiple levels—if you have chained dependencies of components that all need DI, for example..
-依存性注入フレームワークは、複数のレベルでDIを行う必要がある場合、例えば、すべてのDIが必要なコンポーネントの依存関係が連鎖しているような場合に便利です。
+DIフレームワークは、複数のレベルでDIを行う必要がある場合、例えば、すべてのDIが必要なコンポーネントの依存関係が連鎖しているような場合に便利.
 
 This chapter also presented a worked example of changing an implicit/simple dependency into a “proper” adapter, factoring out an ABC, defining its real and fake implementations, and thinking through integration testing..
-また、この章では、暗黙の了解を変更する作業例も紹介しました。
+また、この章では、暗黙の了解を変更する作業例も紹介した.
 
 ---.
 ---.
@@ -921,9 +919,9 @@ In summary:.
 These were the last patterns we wanted to cover, which brings us to the end of Part II.
 これらは、最後に取り上げたいパターンでしたので、第二部の終わりとなります。
 In the epilogue, we’ll try to give you some pointers for applying these techniques in the Real WorldTM..
-エピローグでは、これらのテクニックを「Real WorldTM」で活用するためのポイントをお伝えしていきます。
+**エピローグでは、これらのテクニックを「Real WorldTM」で活用するためのポイントをお伝えしていく**.
 
-1. Because Python is not a “pure” OO language, Python developers aren’t necessarily used to the concept of needing to compose a set of objects into a working application. We just pick our entrypoint and run code from top to bottom. Pythonは「純粋な」OO言語ではないため、Pythonの開発者は、オブジェクトのセットを組み合わせて動作するアプリケーションにする必要があるという概念に必ずしも慣れていません。 エントリーポイントを決めて、上から下へコードを走らせるだけです。
+1. Because Python is not a “pure” OO language, Python developers aren’t necessarily used to the concept of needing to compose a set of objects into a working application. We just pick our entrypoint and run code from top to bottom. Pythonは「純粋な」OO言語ではないため、Pythonの開発者は、オブジェクトのセットを組み合わせて動作するアプリケーションにする必要があるという概念に必ずしも慣れていない. エントリーポイントを決めて、上から下へコードを走らせるだけ.
 
 2. Mark Seemann calls this Pure DI or sometimes Vanilla DI. Mark SeemannはこれをPure DI、あるいはVanilla DIと呼んでいます。
 
