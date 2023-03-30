@@ -142,7 +142,7 @@ Agarwal ら [2] は Contextual bandits を扱いやすく，簡単に実装で�
 Hybrid methods that rely on matrix factorization and bandits have also been developed to solve cold-start problems in recommender systems [28].
 また、推薦システムにおけるコールドスタート問題を解決するために、**行列分解とバンディットによるハイブリッド手法**も開発されている[28].
 
-## 2.4. Propensity Scoring and Reinforcement Learning in Recommender Systems: Propensity Scoring and Reinforcement Learning in Recommender Systems:
+## 2.4. Propensity Scoring and Reinforcement Learning in Recommender Systems:
 
 The problem of learning off-policy [31, 33, 34] is pervasive in RL and affects policy gradient generally.
 off-policy学習の問題[31, 33, 34]はRLに広く存在し，一般にpolicy gradientに影響する.

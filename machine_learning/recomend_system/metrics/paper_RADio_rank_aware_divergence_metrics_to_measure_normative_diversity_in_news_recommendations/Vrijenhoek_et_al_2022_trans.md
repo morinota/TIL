@@ -12,17 +12,18 @@ RADio - ニュース推薦における規範的多様性を測定するための
 In traditional recommender system literature, diversity is often seen as the opposite of similarity, and typically defined as the distance between identified topics, categories or word models.
 従来の推薦システムの文献では、**多様性は類似性の反対と見なされる**ことが多く、一般に識別されたトピック、カテゴリ、または単語モデル間の距離として定義される.
 However, this is not expressive of the social science’s interpretation of diversity, which accounts for a news organization’s norms and values and which we here refer to as normative diversity.
-しかし、これは、**報道機関の規範や価値観を考慮した社会科学的な多様性の解釈を表現しておらず**、ここでは**規範的多様性**と呼ぶことにする.
+しかし、これは、報道機関の規範や価値観を考慮した社会科学的な多様性の解釈を表現しておらず、ここでは**規範的多様性**と呼ぶことにする.
 We introduce RADio, a versatile metrics framework to evaluate recommendations according to these normative goals.
 我々は、これらの規範的な目標に従って推薦を評価するための汎用的なメトリックフレームワークである**RADio**を紹介する.
 RADio introduces a rank-aware Jensen Shannon (JS) divergence.
 RADioはランクを考慮したジェンセン・シャノン（JS）ダイバージェンスを導入している.
+
 This combination accounts for (i) a user’s decreasing propensity to observe items further down a list and (ii) full distributional shifts as opposed to point estimates.
 この組み合わせは、(i)ユーザーがリストのさらに下のアイテムを観察する傾向が減少すること、(ii)点推定ではなく、完全な分布シフトを説明するものである.
 We evaluate RADio’s ability to reflect five normative concepts in news recommendations on the Microsoft News Dataset and six (neural) recommendation algorithms, with the help of our metadata enrichment pipeline.
 我々は、**Microsoft News Dataset**と6つの推薦アルゴリズム（ニューラル）において、**RADioが5つの規範的概念をニュース推薦に反映する能力**を、我々のメタデータ強化パイプラインの助けによって評価した.
 We find that RADio provides insightful estimates that can potentially be used to inform news recommender system design.
-その結果、**RADioはニュース推薦システムの設計に利用できる可能性のある**、洞察に満ちた推定値を提供することがわかった.
+その結果、**RADioはニュース推薦システムの設計に利用できる可能性のある、洞察に満ちた推定値を提供する**ことがわかった.
 
 # 1. Introduction はじめに
 
@@ -33,7 +34,7 @@ With the digitization of society, much has changed: while before, people would t
 News recommender systems can filter the enormous amount of information available to just those news items that are in some way interesting or relevant to their users [8, 52].
 ニュース推薦システムは、利用可能な膨大な情報を、ユーザーにとって何らかの形で興味深い、あるいは関連性のあるニュースアイテムだけに絞り込むことができる[8, 52].
 The use of news recommender systems is widespread, not just for personalized news recommendations, but also to automatically populate the front page of a news website [53], or present the reader of a particular news article with other articles about the same topic, but from a different perspective [54].
-ニュース推薦システムは，パーソナライズされたニュースを推薦するだけでなく，ニュースウェブサイトのフロントページを自動的に生成したり [53]，特定のニュース記事の読者に同じトピックに関する他の記事を異なる視点から提示したり [54]するために広く利用されている．
+ニュース推薦システムは，パーソナライズされたニュースを推薦するだけでなく，ニュースウェブサイトのフロントページを自動的に生成したり [53]，**特定のニュース記事の読者に同じトピックに関する他の記事を異なる視点から提示したり** [54]するために広く利用されている．
 The use of news recommender systems has a wide range of benefits.
 ニュース推薦システムの利用には、さまざまな利点がある.
 They can increase engagement [55] and help raise informed citizens [28].
@@ -87,57 +88,58 @@ Finally we describe the gap that exists between descriptive and normative divers
 ## 2.1. Descriptive (General-Purpose) Diversity Descriptive (汎用) 多様性
 
 Diversity is a central concept in Information Retrieval literature [17, 62], albeit with a different interpretation than the normative diversity described in the previous section.
-多様性は、前節で説明した規範的な多様性とは異なる解釈ではあるが、情報検索の文献[17, 62]では中心的な概念である.
+descriptive diversityは、本論文で対象にする"normative diversity"とは異なる解釈ではあるが、情報検索の文献[17, 62]では中心的な概念.
 During the development of news recommender systems, there is currently a large focus on the predictive power of an algorithm.
 ニュース推薦システムの開発では、**現在、アルゴリズムの予測力に大きな焦点が当てられている**.
 However, this may unduly promote content similar to what a user has interacted with before, and lock them in loops of “more of the same.”
-しかし、これでは、**ユーザーが過去に接したことのあるコンテンツと類似したものを不当に促進し、"more of the same "のループにユーザーを閉じ込めてしまう可能性がある**.
+しかし、これでは、**ユーザが過去に接したことのあるコンテンツと類似したものを不当に促進し、"more of the same "のループにユーザを閉じ込めてしまう可能性がある**.
 To tackle this, “diversity” is introduced, which is typically defined as the “opposite of similarity” [11].
 これに取り組むために，"**diversity**"が導入される．これは，典型的には"opposite of similarity"と定義される[11]．
 Its goal is to prevent users from being shown the same type of items in their recommendations list and is often expressed as intra-list-diversity (ILD) [11, 13, 19, 23, 24, 38, 48, 70]: mean pairwise dissimilarity between recommended item lists.
-その目的は、ユーザーが推薦リストで同じ種類のアイテムを表示されるのを防ぐことであり、しばしば **intra-list-diversity (ILD)** [11, 13, 19, 23, 24, 38, 48, 70]: 推薦アイテムリスト間の平均ペアワイズ非類似度として表現される.
+その目的は、ユーザが推薦リストで同じ種類のアイテムを表示されるのを防ぐことであり、しばしば **intra-list-diversity (ILD)** [11, 13, 19, 23, 24, 38, 48, 70]: 推薦アイテムリスト間の平均ペアワイズ非類似度として表現される.
 ILD requires the specification of a distance function between lists, and thus leaves it up to interpretation as to what it means for two lists to be distant.
 **ILDはリスト間の距離関数を指定する必要がある(=2つのアイテム間の距離を何らかの方法で定量化する必要がある?)**ため、2つのリストが離れていることの意味については解釈次第となる.
 In theory, it could still be interpreted with a metric that accounts for the presence of different sources or viewpoints [25].
-理論的には，異なる情報源や視点の存在を考慮した指標で解釈することも可能である[25]．
+理論的には，異なるsourcesや viewpoints の存在を考慮した指標で解釈することも可能である[25]．
 However, in practice, diversity is most often implemented as a descriptive distance metric such as cosine similarity between two bag-of-words models or word embeddings [43, 48].
 しかし、実際には2つのbag-of-wordsモデルや単語埋め込みのcosine similarityのような記述的な距離指標として実装されることがほとんどである[43, 48].
 
 Other popular “beyond-accuracy” metrics related to diversity are novelty (how different is this item from what the user has seen in the past), serendipity (is the user positively surprised by this item), and coverage (what percentage of articles are recommended to at least one user).
 多様性に関連する他の人気のある **"beyond-accuracy(精度を超えた)"メトリクス** は、以下がある.
 
-- **novelty(新規性)**（ユーザーが過去に見たものとこのアイテムがどれだけ違うか).
-- **serendipity**（ユーザーがこのアイテムにポジティブに驚いたか).
-- **coverage**（少なくとも1人のユーザーに推薦された記事の割合）.
+- **novelty(新規性)**(ユーザーが過去に見たものとこのアイテムがどれだけ違うか).
+- **serendipity**(ユーザーがこのアイテムにポジティブに驚いたか).
+- **coverage**(少なくとも1人のユーザに推薦された記事の割合).
 
 These metrics can be taken into account at different points in the machine learning pipeline [43, 81].
 これらの指標は、**機械学習パイプラインの異なるポイントで考慮(??)**することができる.
 
 One can optimize for these descriptive notions of diversity (i) before training, by clustering users based on their profile diversity with JS divergence [27], (ii) directly at training time (e.g., for learning-to-rank [10, 13, 70], collaborative filtering [60], graphs [30, 59] or bandits [21, 84]), (iii) by re-ranking a recommendation set and balance diversity vs. relevance [16] or popularity vs. relevance [15], and (iv) by defining a post-recommendation metric to measure diversity for each recommendation set or at user-level (e.g., the generalist-specialist score [2, 73]).
-このような多様性の概念は，学習パイプラインにおいて以下の**４つの時点**で対応する事が可能である.
 
-- (i)学習前に，JS divergence [27]を用いてプロファイルの多様性に基づいてユーザーをクラスタリングする，
-- (ii)学習時に直接最適化できる（例：learning-to-rank [10, 13, 70], collaborative filter [60], graph [30, 59] or bandits [21, 84]．また、
-- (iii) 推薦セットの再ランク付けを行い、多様性と関連性のバランスをとる [16]、あるいは人気と関連性のバランスをとる [15] 、
-- (iv) 推薦後の指標を定義し、推薦セットごとあるいはユーザ単位で多様性を測る（例：一般主義-専門主義スコア [2, 73]）
+このような descriptiveなdiversity の概念は，学習パイプラインにおいて以下の**４つの時点**で対応する事が可能である.
+
+- (i)学習前に，JS divergence [27]を用いてプロファイルの多様性に基づいてユーザをクラスタリングする，
+- (ii)学習時に直接最適化する（例：learning-to-rank [10, 13, 70], collaborative filter [60], graph [30, 59] or bandits [21, 84].
+- (iii) 推薦セットの再ランク付けを行い、diversity と relevance(=既に観測されたユーザのpreferenceとのrelevance??)のバランスをとる [16]、あるいは popularity と relevance のバランスをとる [15].
+- (iv) 推薦後のmetricを定義し、推薦セットごとあるいはユーザ単位で多様性を測る(ex. generalist-specialist score [2, 73])
 
 With any of these four methods, a trade-off must be made between the relevance of a recommendation issued to users and the level of descriptive diversity, though there have also been studies indicating that increasing diversity does not necessarily need to negatively affect relevance [48].
-この4つの方法のいずれにおいても、ユーザに提示する推薦文の関連性とdescriptive diversity のレベルはトレードオフの関係にあるが、**多様性を高めることが必ずしも関連性に悪影響を与える必要はない**ことを示す研究もある[48]。
+この4つの方法のいずれにおいても、ユーザに提示する推薦の relevance とdescriptive diversity のレベルはトレードオフの関係にあるが、**diversityを高めることが必ずしもrelevanceに悪影響を与える必要はない**ことを示す研究もある[48].
 Nevertheless, this encouraged recent efforts in training neural-based recommenders that explicitly make a trade-off between accuracy and diversity [61].
-しかし、近年では、**多様性と精度のトレードオフを明示的に行う**ニューラル・ベース・レコメンダーが注目されている[61].
+しかし、近年では、**diversity と accuracy のトレードオフを明示的に行う**ニューラル・ベース・レコメンダーが注目されている[61].
 Also recently, there have been studies that differentiate between diversity needs of users [83].
 また、最近では、ユーザの多様性ニーズを区別する研究も行われている[83].
 
 ## 2.2. Normative Diversity Normative Diversity (規範的多様性)
 
 Diversity is extensively discussed as a normative concept in literature, and has a role in many different areas of science [46, 65], spanning from ecological diversity to diversity as a proxy for fairness in machine learning systems [51].
-多様性は規範的な概念として文献で広く議論されており、生態系の多様性から機械学習システムにおける公平性の代理としての多様性[51]まで、科学の多くの異なる分野で役割を担っている[46, 65].
+多様性はnormative conceptとして文献で広く議論されており、生態系の多様性から機械学習システムにおける公平性の代理としての多様性[51]まで、科学の多くの異なる分野で役割を担っている[46, 65].
 While these interpretations of diversity are often related, they do not fully cover the nuances of a diverse news recommender system, the work on which stems from democratic theory and the role of media in society.
-これらの多様性の解釈はしばしば関連しているが，民主主義理論や社会におけるメディアの役割に由来する，多様なニュース推薦システムのニュアンスを完全にカバーするものではない.
+これらの多様性の解釈はしばしば関連しているが，**民主主義理論や社会におけるメディアの役割**に由来する，多様なニュース推薦システムのニュアンスを完全にカバーするものではない.
 Following Helberger [33], we define a normatively diverse news recommendation as one that succeeds in informing the user and supports them in fulfilling their role in democratic society.
-Helberger [33]に従い、我々は**規範的に多様なニュース推薦を、ユーザーに情報を提供することに成功し、民主主義社会における役割を果たすことを支援するもの**と定義する.
+Helberger [33]に従い、我々は**normatively diverseなニュース推薦**を、"ユーザに情報を提供することに成功し、民主主義社会における役割を果たすことを支援するもの"と定義する.
 Out of the many theoretical models that exist in literature, Helberger [33] describes four different models from the normative framework of democracy, each with a different view on what it means to properly inform citizens:
-文献に存在する多くの理論モデルのうち、Helberger [33]は、民主主義の規範的枠組みから**4つの異なるモデル**を説明し、それぞれ、市民に適切に情報を提供することの意味について異なる見解を示している.
+文献に存在する多くの理論モデルのうち、Helberger [33]は、民主主義のnormative framework から**4つの異なるモデル**を説明し、それぞれ、市民に適切に情報を提供することの意味について異なる見解を示している.
 
 - the Liberal model, which aims to enable personal development and autonomy,
 - 自由主義モデル：個人の成長と自律を可能にすること、
@@ -174,7 +176,7 @@ However, in their simplicity a large gap can be observed between this interpreta
 In their comprehensive work on the implementation of media diversity across different domains, Loecherbach et al. [46] note that there is “little to no overlap between concepts and operationalizations (of diversity) used in the different fields interested in media diversity.”
 Loecherbachら[46]は、異なる領域にわたるメディアの多様性の実現に関する包括的な研究の中で、"メディアの多様性に関心を持つ異なる分野で使用される（多様性の）概念と運用の間にはほとんど重複がない"ことを指摘している.
 As such, a recommendation that would score high on diversity according to traditional information retrieval-based metrics [17, 62], may not be considered to be diverse according to the criteria maintained by newsroom editors.
-そのため、従来の情報検索に基づく評価基準[17, 62]では多様性で高得点を得られる推薦文も、ニュースルームの編集者が保持する基準では多様性があるとは見なされない可能性がある. (i.e. **diversityの評価方法がまちまちだって話!**)
+そのため、従来の情報検索に基づく評価基準[17, 62]では多様性で高得点を得られる推薦システムも、ニュースルームの編集者が保持する基準では多様性があるとは見なされない可能性がある. (i.e. **diversityの評価方法がまちまちだって話!**)
 Both Loecherbach et al. [46] and Bernstein et al. [7] call for truly interdisciplinary research in bridging this gap, where Bernstein et al. [7] argue for close collaboration between academia and industry and the foundation of joint labs.
 Loecherbachら[46]とBernsteinら[7]は、このギャップを埋めるために真に学際的な研究を求めており、Bernsteinら[7]は、学術界と産業界の密接な協力と共同ラボの創設を主張している.
 This work is a step in that direction, as we provide a versatile and mathematically grounded **rank-aware metric** that can be used by practitioners to monitor their normative goals.
@@ -438,9 +440,9 @@ For the purpose of this paper we will evaluate these neural recommendation metho
 この論文では、RADioフレームワークでこれらのニューラル・レコメンデーション手法を評価し（DARTメトリクスで）、妥当な候補の集合（元のインプレッションログ）に基づく2つのナイーブなベースライン手法とそのパフォーマンスを比較します：ランダム選択と、アイテムの人気度がデータセットで記録されたクリック数で近似される最も人気のあるアイテムを選択する方法です。
 
 Since RADio computes the average of all {𝑃, 𝑄} pairs, we retrieve confidence intervals over paired distances too, as illustrated in the sensitivity analyses below.
-RADioはすべての{u_1D443}のペアの平均を計算するので、以下の感度分析で示されるように、我々はペアの距離に対する信頼区間も取得します。
+RADioはすべての${P, Q}$のペアの平均を計算するので、以下の感度分析で示されるように、我々はペアの距離に対する信頼区間も取得する.
 In a traditional model evaluation setting, it would be desirable to generate confidence intervals via different model seeds or cross-validation splits.
-伝統的なモデル評価の設定では、異なるモデルシードまたはクロスバリデーション分割によって信頼区間を生成することが望ましいと思われる。
+伝統的なモデル評価の設定では、異なるモデルシードまたはクロスバリデーション分割によって信頼区間を生成することが望ましいと思われる.
 We refrain from doing this for our metric evaluation as this would introduce a multidimensional confidence interval (e.g., over {𝑃, 𝑄} pairs and over model seeds).
 これは多次元信頼区間（例えば、{u, 𝑃のペアとモデルシード以上）を導入するので、我々のメトリック評価のためにこれを行うことを控える。）
 We scrape articles via the URLs provided in the MIND dataset.
@@ -491,7 +493,7 @@ The code for this implementation is available online.11
 この実装のコードはオンラインで入手可能である11。
 
 We evaluate the outcome of our RADio framework for different recommender strategies (LSTUR, NAML, NPA, NRMS, most popular and random), with both KL Divergence and Jensen-Shannon as divergence metrics, with and without discounting for the position in the recommendation and at different ranking cutoffs.
-我々は、異なる推薦戦略（LSTUR、NAML、NPA、NRMS、最も人気のある、ランダム）に対して、KL DivergenceとJensen-Shannonの両方をダイバージェンスメトリクスとして、推薦における位置に対する割引の有無、異なるランキングカットオフでRADioフレームワークの結果を評価した。
+我々は、異なる推薦戦略（LSTUR、NAML、NPA、NRMS、最も人気のある、ランダム）に対して、KL DivergenceとJensen-Shannonの両方をダイバージェンスメトリクスとして、推薦における位置に対する割引の有無、異なるランキングカットオフでRADioフレームワークの結果を評価した.
 
 # 5. Results 結果
 
@@ -515,21 +517,21 @@ Most popular and random have comparable NDCG results.
 Popularity scores for the articles are derived from the clicks recorded in the MIND interaction logs, and many articles have zero or only one click recorded.
 記事の人気度スコアはMINDのインタラクションログに記録されたクリック数から導かれ、多くの記事はゼロか1クリックしか記録されていません。
 When the candidate list contains exclusively articles with a similar number of clicks this forces the most popular recommender to a random choice, which explains the artificial similarity between most popular and random in terms of the NDCG score.
-候補リストに同程度のクリック数の記事しか含まれていない場合、最も人気のあるレコメンダーはランダムな選択を余儀なくされるため、NDCGスコアの観点から見ると、最も人気のあるものとランダムなものの間に人工的な類似性があることを説明しています。
+候補リストに同程度のクリック数の記事しか含まれていない場合、最も人気のあるレコメンダーはランダムな選択を余儀なくされるため、NDCGスコアの観点から見ると、最も人気のあるものとランダムなものの間に人工的な類似性があることを説明している.
 Between the neural recommenders, most scores for LSTUR, NPA, NRMS and NAML are in lower ranges.
 ニューラルレコメンダーのうち、LSTUR、NPA、NRMS、NAMLのスコアはほとんどが低い範囲にある。
 Note that they produce similar recommendations (see NDCG values and Wu et al. [80]).
 これらは類似のレコメンデーションを生成することに注意する（NDCG値およびWuら[80]を参照）。
 Some notable differences can be observed when comparing these neural methods to the baselines.
-これらのニューラルメソッドをベースラインと比較すると、いくつかの顕著な違いが観察される。
+これらのニューラルメソッドをベースラインと比較すると、いくつかの顕著な違いが観察される.
 For example, we see that the neural recommenders are more Calibrated to the items present in people’s reading history, though the most popular baseline performs marginally better in terms of Calibration of complexity.
-例えば、最も人気のあるベースラインは複雑さのCalibrationという点ではわずかに優れているが、ニューラル・リコメンダーは人々の読書履歴に存在するアイテムに対してよりCalibrationされていることが分かる。
+例えば、最も人気のあるベースラインは複雑さのCalibrationという点ではわずかに優れているが、ニューラル・リコメンダーは人々の読書履歴に存在するアイテムに対してよりCalibrationされていることが分かる.
 In the following, we further analyse the entire distribution of individual recommendation list divergences and test the sensitivity of RADio to different settings.
 以下では、さらに個々の推薦リストの発散の分布全体を分析し、異なる設定に対するRADioの感度をテストします。
 Boxplots for all metrics and all recommender strategies are available in the online repository, where we highlight the importance of rank-awareness.
 すべてのメトリックとすべてのレコメンダー戦略の箱ひげ図はオンラインリポジトリで入手可能であり、ランク意識の重要性を強調しています。
 
-## 5.1. Sensitivityto the Divergence Metric ♪ 発散メトリックへの感度
+## 5.1. Sensitivity to the Divergence Metric ♪ 発散メトリックへの感度
 
 JS divergence is our preferred implementation of universal diversity metrics.
 JSダイバージェンスは我々が推奨する普遍的多様性メトリクスの実装である。
@@ -544,22 +546,22 @@ KLダイバージェンスは低ダイバージェンスに偏り、JSダイバ�
 Additionally, JS divergence applies more contrast between the neural recommender systems and the naive recommendation methods and especially the random baseline.
 さらに、JSダイバージェンスは、ニューラル推薦システムとナイーブ推薦手法、特にランダムベースラインとの間に、より多くのコントラストを適用しています。
 Due to the large sample in MIND, the random baseline is an approximation of a diverse recommendation set, given the candidate articles.
-MINDではサンプルが多いため、ランダムベースラインは候補記事があれば、多様な推薦セットの近似となる。
+MINDではサンプルが多いため、ランダムベースラインは候補記事があれば、多様な推薦セットの近似となる.
 In certain cases KL introduces consequential skew in the distribution of individual 𝑃,𝑄 comparison pairs across recommendation models; this does not occur to that extent with JS.
-KLは推薦モデル間で個々のᵄ,ᵄ比較ペアの分布に結果的に歪みをもたらす場合があるが、JSではそのようなことはない。
+KLは推薦モデル間で個々の$P, Q$比較ペアの分布に結果的に歪みをもたらす場合があるが、JSではそのようなことはない。
 Although KL Divergence is a well-known metric that can be found in many applications and is simpler to express mathematically, we found the JS divergence to be a better fit both theoretically and empirically.
 KLダイバージェンスは多くのアプリケーションで見られる有名な指標であり、数学的に表現するのも簡単であるが、我々はJSダイバージェンスが理論的にも経験的にもより適合していることを発見した。
 
-## 5.2. Sensitivity to Rank-awareness ランク認識への感度
+## 5.2. Sensitivity to Rank-awareness
 
 In the original formulation of DART metrics [71], rank-awareness was not considered for most of the defined metrics.
 DARTメトリクスのオリジナルの定式化[71]では、定義されたメトリクスのほとんどについて、ランクを意識していませんでした。
 In our formalization, rank-awareness is the default.
-我々の定式化では、ランクアウェアネスがデフォルトである。
+我々の定式化では、ランクアウェアネスがデフォルトである.
 In Figure 3, we visualize the effect of removing the rank-awareness (in blue) on Fragmentation and compare to the original rank-aware Fragmentation (in orange).
 図3では、Fragmentationにおけるランク考慮の削除の効果（青）と、元のランク考慮Fragmentation（オレンジ）の比較を可視化しています。
 Rank-awareness allows for better differentiation between methods:
-ランクを意識することで、手法間の区別がより明確になる。
+Rank-awarenessなmetricを使用する事で、手法間の区別がより明確になる.
 LSTUR and “most popular” seem to be similarly distributed without a rank discount.
 LSTURと "最も人気のある "手法は、ランク割引を行わなくても同じように分布しているように見える。
 Introducing rank-awareness shifts LSTUR towards a larger divergence, whereas “most popular” remains largely the same.
@@ -581,27 +583,27 @@ Note that when calculating the divergence score for Activation, Representation o
 ## 5.4. Normative Evaluation #規範的評価
 
 By comparing divergence scores across different recommender strategies, we can draw conclusions on the way they influence exposure of news to users.
-異なるレコメンダー戦略のダイバージェンススコアを比較することで、ユーザーへのニュースの露出に影響を与える方法について結論を導き出すことができる。
+異なるレコメンダー戦略のダイバージェンススコアを比較することで、開発者は"推薦がユーザのニュース露出へ与える影響"について結論を導き出すことができる.
 This is especially the case when comparing neural methods to the random recommender, which should reflect the characteristics of the overall pool of data.
-これは特にニューラル手法をランダムレコメンダーと比較する場合に顕著であり、データプール全体の特性を反映するはずである。
+これは特にニューラル手法をランダムレコメンダーと比較する場合に顕著であり、データプール全体の特性を反映するはずである.
 Combining this with DART’s different theoretical models of democracy (summarized in Table 1), one can make informed decisions on which recommender system is better suited to one’s normative stance than others.
-これをDARTの民主主義に関するさまざまな理論モデル（表1にまとめた）と組み合わせることで、どのレコメンダーシステムが他よりも自分の規範的スタンスに適しているか、情報に基づいた判断ができるようになります。
+これをDARTの民主主義に関するさまざまな理論モデル（表1にまとめた）と組み合わせることで、どのレコメンダーシステムが他よりも自分の規範的スタンスに適しているか、情報に基づいた判断ができるようになる.
 Imagine, for example, a public service media organization that aims to reflect Participatory norms and values in their recommendations.
-例えば、参加型規範と価値をレコメンデーションに反映させることを目指す公共サービスメディア機関を想像してください。
+例えば、参加型規範と価値をレコメンデーションに反映させることを目指す公共サービスメディア機関を想像してください.
 The Participatory model prescribes low Fragmentation and low Activation, which is shown in the scores of the neural recommenders.
-Participatoryモデルは低Fragmentationと低Activationを規定し、それはニューラル・レコメンダーのスコアに示されます。
+Participatoryモデルは低Fragmentationと低Activationを規定し、それはニューラル・レコメンダーのスコアに示される.
 This would indicate that those models are more suitable for this organization’s goals.
-これは、それらのモデルがこの組織の目標により適していることを示すものだろう。
+これは、それらのモデルがこの組織の目標により適していることを示すものだろう.
 In comparison, imagine a large media organization that wants to dedicate a small section of their website to Critical principles, consisting of one element with recommendations called “A different perspective.”
-これと比較して、ウェブサイトの小さなセクションをCriticalの原則に充てたいと考えている大規模なメディア組織を想像してみましょう。"A different perspective "というレコメンデーションを持つ1つの要素で構成されています。
+それに比べて、ある大きなメディア組織が、ウェブサイトの小さなセクションをCritical principles に充てたいと考え、そのセクションが"A different perspective "と呼ばれる推薦を含む1つの要素で構成されているとする.
 The Critical model calls for a high divergence score in both Representation and Alternative Voices.
-Critical モデルでは、Representation と Alternative Voices の両方で高い発散スコアを要求しています。
+Critical モデルでは、Representation と Alternative Voices の両方で高いdivergence スコアを要求している.
 Given that the random recommender scores best according to these principles, the neural recommenders would not be very suitable for this goal.
-これらの原則に従ってランダムレコメンダーが最も良いスコアを出すことを考えると、ニューラルレコメンダーはこの目標にはあまり適さないでしょう。
+これらの原則に従ってランダムレコメンダーが最も良いスコアを出すことを考えると、ニューラルレコメンダーはこの目標にはあまり適さないだろう.
 Nevertheless, the conclusion that a random recommender is suitable for Critical norms and values is moot.
-とはいえ、ランダムレコメンダーがCriticalな規範や価値観に適しているという結論はムリです。
+とはいえ、ランダムレコメンダーがCriticalな規範や価値観に適しているという結論はムリがある.
 Additional steps should be taken to further improve upon these scores: recommendation algorithm developers could tweak the trade-off between different target values in the recommendation, or even explicitly optimize on these metrics.
-レコメンデーションアルゴリズムの開発者は、レコメンデーションにおける異なる目標値間のトレードオフを微調整したり、あるいはこれらの指標を明示的に最適化したりすることができるだろう。
+これらのスコアをさらに向上させるために、追加のステップを踏む必要がある: 推薦アルゴリズムの開発者は、推薦における異なる目標値間のトレードオフを微調整したり、あるいはこれらのmetricsを明示的に最適化したりすることができるだろう.
 
 # 6. Discussion ディスカッション
 
