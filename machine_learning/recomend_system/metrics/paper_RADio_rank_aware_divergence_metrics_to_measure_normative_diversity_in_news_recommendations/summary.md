@@ -91,6 +91,126 @@ Loecherbachら[46]とBernsteinら[7]は、このギャップを埋めるため�
 
 ## 技術や手法の肝は？
 
+本論文が提案するRADioフレームワークは、Vrijenhoekら[71]が定義した**DART Metrics をさらに改良**したものである.
+
+RADioフレームワークは、DART metricsの欠点をいくつか解決している:
+
+- metric によって異なる value ranges.
+  - ex) Activationは[-1, 1]の値域を持ち、スコアが高いほどactivatingなコンテンツの程度が高いことを示し、Calibrationは[0, ∞]の範囲を持っており、スコアが低いほどCalibrationが良いことを示している.
+  - **異なる value ranges は、metricsの解釈可能性を低下させ、説明が難しくなり、その結果、ニュース編集者が採用する可能性が低くなる**.
+- 推薦における記事の位置を考慮に入れていない点.
+  - ニュース推薦は通常、推薦された記事がユーザによって読まれる可能性がランキングの下方に行くほど低くなるようにランク付けされたリスト.
+  - -> 推薦システムの diversity を評価する際には、集合全体(ILDなど)を考慮するのではなく、**推薦ランキングにおける記事の位置**も考慮する必要がある.
+
+上の２つの欠点を解決する為に、以下の事を考慮してRADioフレームワークを提案する.
+
+- (i) metrics間および推薦システム間でスコアが比較可能であること.
+- (ii) ランク付けされていない推薦セットとランク付けされた推薦セットの両方の定量評価が可能である事.
+
+### ニュース推薦のmetricに望ましい基準を設定する.
+
+ニュース推薦metricに望ましい、3つの基準を設定する.
+
+**distance metric** の古典的な定義は以下.
+
+- 確率変数の集合$X$をとり、$x, y,z \in X$とすると、以下の3つの条件を満たす時、distance measureが適切であると言える:
+  - $D(x,y)=0 <=> x = y$: 同一性(identity)
+  - $D(x,y) = D(y,x)$: 対称性(symmetry)
+  - $D(x,y) \leq D(x,z) + D(z,y)$: 三角形の不等式(triangle inequality)
+
+上に加えて、(i)異なる推薦アルゴリズムの比較のために、value rangeが[0; 1]である事, (ii)異なる多様性の側面を公正に考慮するために統一されたvalue rangeである事, (iii)rank付けされた推薦設定に合うように、離散的なrank-based distributionのセットへ適用可能な指標である事, を条件として設定する.
+
+### f-Divergence
+
+diversity を定量化する作業は、**確率分布の比較としてモデル化される**:
+つまり、出力された推薦($Q$)とそのcontext($P$)の間の分布の違いである.
+
+各 diversity metric は独自の $Q$ と $P$ を設定している.
+分布Qの要素は推薦アイテムである場合もあるが、topicsやviewpoints(?)の分布など、より高いレベルの概念である場合もある.
+context $P$ は、利用可能なアイテムの全体的な供給量、reading history や明示的な好みなどのuser profile、他のユーザに発行された推薦結果のいずれかを参照することができる(図1参照).
+
+![](https://camo.qiitausercontent.com/fab3384dc55e20fc53bc5e14b3fe2c5f5c5c2e6b/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f30626365306131662d666335632d353239632d643137662d6365393938303665613462632e706e67)
+
+直感的には、P が Q と同じユーザにリンクされている場合、ユーザ内のdiversityを測定する(例えば、“filter bubbles”に閉じ込められるのを防ぐ事を目的に!).
+$P$ が $Q$ 以外のユーザにリンクされている場合、ユーザ間のdiversityを測定する(例えば、パーソナライズされたwebページで表現されるviewpointsのdiversityを監視する.)
+
+以下では、シンプルで一般的な **KL divergence metric** から始まり、その改良版(JensenShannonダイバージェンス)を本論文が推奨する metrics として提示する前に、2つの異なる metrics 設定における$P$と$Q$の役割を定式化する.
+
+### 最もシンプルで一般的な KL divergence metric
+
+2つの確率質量関数 Pと Q（ここではrecommendation と そのcontext）の間の**KL(Kullback-Leibler) divergence metric**［42］(relative entropyとも呼ばれる)の概念は次のように定義されている:
+
+$$
+D_{KL}(P, Q) = - \sum_{x\in X}{P(x)\log_{2}{Q(x)}}
++ \sum_{x\in X}{P(x)\log_{2}{P(x)}}
+\tag{1}
+$$
+
+しばしば、$D_{KL}(𝑄) = H(P,Q) - H(P)$とも表され、$H(P,Q)$はPとQとのcross entropy、$H(P)$はPの entropy であるとする.
+クロスエントロピーとKLダイバージェンスはともに、**probability distribution Q が reference probability distribution P からどれだけ離れているか**を測定するものと考えることができる.
+$P = Q$のとき、$D_{KL}(P, Q) = D_{KL}(P, P) = 0$となり、distance metricの同一性を満たす.
+一方で、cross entropy だけでは同一性は保証されない.(そうなの??)
+これが cross entropy よりも KL divergence metricを好む主な理由である.
+
+KL Divergence は 同一性(identity)の要件を満たすが、対称性(symmetry)と三角形の不等式(triangle inequality)は満たさない.
+これらは、KL Divergenceをさらに改良させることで解決することができる.
+
+### KL divergence の改良版: Jensen–Shannon Divergence.
+
+KL divergence から段階を経て、**Jensen-Shannon (JS) divergence** に至る.
+KLダイバージェンスはまず対称化され[37]、次に上界化(=upper boundを設定)され[45]、次のようにJS divergenceとして導出された:
+
+$$
+D_{JS}(P, Q) = - \sum_{x\in X}\frac{P(x)+Q(x)}{2} \log_{2}{\frac{P(x)+Q(x)}{2}}
+\\
++ \frac{1}{2} \sum_{x\in X}{P(x)\log_{2}{P(x)}}
++ \frac{1}{2} \sum_{x\in X}{Q(x)\log_{2}{Q(x)}}
+\tag{2}
+$$
+
+**基底対数2**を用いた場合、JS divergenceの境界は $0 \leq D_{JS}(P, Q) \leq 1$となる.
+またEndres and Schindelin [26]は、$\sqrt{D_{JS}}$が、identity、symmetry、triangle inequality の性質を満たす適切な distance metric であることを示している.
+以下、$D_{JS}$または JS Divergence と表記する場合、**log base 2**のJS定式化の平方根を暗黙に指すことになる.
+(以下、$D_{JS}$または JS Divergence と表記する場合、**log base 2**のJS formulation の square root(平方根)を暗黙に指すとする.)
+
+また、Liese and Vajda [44]は**f-Divergence**[$D_f$]を定義した：いくつかの divergence metrics の一般的な formulation である.(hogehoge-divergenceみたいなイメージ!)
+その中には、JS divergence とKL divergence が含まれる. さらに本文では、**KL divergence とJS divergence の略記法として$D_f$を用いる**
+離散形式の$D_f$は以下.
+
+$$
+D_f(P,Q) = \sum_{x}{Q(x)f(\frac{P(x)}{Q(x)})}
+\tag{3}
+$$
+
+ここで、
+
+- $f_{KL}(t) = t \log{t}$
+- $f_{JS}(t) = \frac{1}{2}[(t+1)\log{frac{2}{t+1}} +t \log{t}]$
+
+とする. ($t$は関数fの入力値.)
+
+また、metricsの指定ミス(??後述されてた)を避けるため[64]、$bar{P}$, $bar{Q}$と表記する.
+
+$$
+\bar{Q}(x) = (1 - a)Q(x) + a P(x), \\
+\bar{P}(x) = (1 - a)P(x) + a Q(x),
+\tag{4}
+$$
+
+ここで、aはゼロに近い小さな数である.
+Qで表現され、Pで表現されないカテゴリ(例えば、ニューストピック)がある場合、$D_f$を人為的にゼロにすることを防ぐために$bar{P}$が使用される.
+逆の場合(あるカテゴリが𝑃で表され、𝑄で表されない場合)、$bar{Q}$はゼロ除算を避けることができる.
+確率分布全体 $bar{P}$ と $tar{Q}$ が適切な統計分布であり続けるために、$\sum_{x}\bar{P}(x) = \sum_{x}\bar{Q}(x) = 1$となるように正規化する.
+notation(表記)の混雑を避けるため、以下の節では、$P$と$Q$は暗黙に$\bar{P}$と$\bar{Q}$を指すことにする.
+
+### 工夫1: Rank-Aware f-Divergence Metrics
+
+本論文の工夫として、ランク付け推薦の設定に対応する為に、f-Divergence metrics の更なる reformulation を提案する.
+
+Learning To Rank (LTR) の文献 [67, 85]、ひいては従来のdescriptive diversiyt metrics [13] では、ユーザが推薦ランクリストのさらに下のアイテムを見る可能性はかなり低くなる(i.e. inspection probabilitiesが低下する)ことがよく知られている.
+また，ランキングはしばしばユーザとのrelevanceを反映するが，ニュースの場合は必ずしもそうではない(ex. ニュースのホームページのレイアウト次第?)ことに注意されたい.
+本論文では、ランク付けされた推薦リストで下位の結果の重要性を重み付けするために、**PとQにオプションの discount 係数を付けてmetricを拡張する**.
+
 ## どうやって有効だと検証した?
 
 TUP RADioの潜在的な有効性を実証するために、public datasetで実験した.

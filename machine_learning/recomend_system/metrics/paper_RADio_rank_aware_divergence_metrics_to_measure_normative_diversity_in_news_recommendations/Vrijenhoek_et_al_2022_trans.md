@@ -193,9 +193,9 @@ These different value ranges reduce the interpretability of the metrics, making 
 Furthermore, the proposed metrics do not take the position of an article in a recommendation into account.
 さらに、提案されたmetricsは、**レコメンデーションにおける記事の位置を考慮に入れていない**.
 News recommendations are ranked lists of articles that are typically presented to users in such a way that the likelihood of a recommended article to be considered by the user decreases further down the ranking.
-ニュース推薦文は通常、推薦された記事がユーザーによって読まれる可能性がランキングの下方に行くほど低くなるようにランク付けされたリストである.
+ニュース推薦文は通常、推薦された記事がユーザによって読まれる可能性がランキングの下方に行くほど低くなるようにランク付けされたリスト.
 As such, in the evaluation of the diversity of the recommender system we should also account for the position of an article in the recommendation ranking, rather than considering the set as a whole (e.g. ILD).
-そのため、レコメンデーションシステムの多様性を評価する際には、集合全体（ILDなど）を考慮するのではなく、**レコメンデーションランキングにおける記事の位置**も考慮する必要がある.
+そのため、推薦システムの多様性を評価する際には、集合全体(ILDなど)を考慮するのではなく、**推薦ランキングにおける記事の位置**も考慮する必要がある.
 
 Thus, the two major challenges that we seek to address are that (i) scores should be comparable between the metrics and across recommendation systems, and (ii) scoring of both unranked and ranked sets of recommendations should be possible.
 このように、我々は以下の二つの大きな課題を解決しようとするものである.
@@ -224,25 +224,25 @@ We add that our distance measure should (i) be bounded by [0; 1], for comparison
 ## 3.2. f-Divergence ♪ f-ダイバージェンス
 
 We model the task of measuring diversity as a comparison between probability distributions: the difference in distribution between the issued recommendations (𝑄) and its context (𝑃).
-**diversity を測定する作業は、確率分布の比較としてモデル化される**.
+diversity を測定する作業は、**確率分布の比較としてモデル化される**.
 つまり、発行された推薦(Q)とそのcontext(P)の間の分布の違いである.
 Each diversity metric prescribes its own 𝑄 and 𝑃.
 各ダイバーシティ指標は独自の Qと P を規定する.
 The elements in the distribution 𝑄 can be recommendation items (cf. Calibrated Recommendations [64]), but can also be higher-level concepts, such as distributions of topics and viewpoints.
-分布Qの要素は推薦アイテム（cf. Calibrated Recommendations [64]）である場合もあるが、トピックや視点の分布など、より高いレベルの概念である場合もある.
+分布Qの要素は推薦アイテム(cf. Calibrated Recommendations [64])である場合もあるが、トピックや視点の分布など、より高いレベルの概念である場合もある.
 The context 𝑃 may refer to either the overall supply of available items, the user profile, such as the reading history or explicitly stated preferences, or the recommendations that were issued to other users (see Figure 1).
 context P は、利用可能なアイテムの全体的な供給量、読書履歴や明示的な好みなどのユーザープロファイル、他のユーザーに発行された推薦文のいずれかを参照することができる（図1参照）.
 Intuitively, when 𝑃 is linked to the same user as 𝑄, we measure within user diversity (e.g., towards preventing getting locked in “filter bubbles”).
-直感的には、Pが Q と同じユーザにリンクされている場合、ユーザ内の多様性を測定する（例えば、「フィルターバブル」に閉じ込められるのを防ぐために）.
+直感的には、Pが Q と同じユーザにリンクされている場合、ユーザ内のdiversityを測定する(例えば、“filter bubbles”に閉じ込められるのを防ぐ事を目的に!).
 When 𝑃 is linked to another user than 𝑄, we measure diversity across users (e.g., monitoring diversity of viewpoints represented across personalized homepages).
-Pが Q 以外のユーザにリンクされている場合、ユーザ間の多様性を測定する（例えば、個人化されたホームページで表現される視点の多様性を監視する）.
+$P$ が $Q$ 以外のユーザにリンクされている場合、ユーザ間のdiversityを測定する(例えば、個人化されたホームページで表現される視点のdiversityを監視する).
 In the following, we formalize the role of 𝑃 and 𝑄 in two different metric settings, starting with the simple and common KL divergence metric, before presenting its refinement (JensenShannon divergence) as our preferred metric.
-以下では、P と Q の役割を、単純で一般的なKL divergence metric から始めて、その改良版（JensenShannonダイバージェンス）を我々の好ましいメトリックとして提示する2種類のmetric設定において正式に説明する.
+以下では、シンプルで一般的な **KL divergence metric** から始まり、その改良版(JensenShannonダイバージェンス)を本論文が推奨する metrics として提示する前に、2つの異なる metrics 設定における$P$と$Q$の役割を定式化する.
 
 ### 3.2.1. Kullback-Leibler Divergence.
 
 The concept of relative entropy or KL (Kullback–Leibler) divergence [42] between two probability mass functions P and Q (here, a recommendation and its context) is defined as:
-2つの確率質量関数 Pと Q（ここではrecommendation と そのcontext）の間の相対entropyまたはKL（Kullback-Leibler）ダイバージェンス［42］の概念は次のように定義されている:
+2つの確率質量関数 Pと Q（ここではrecommendation と そのcontext）の間の相対entropyまたはKL(Kullback-Leibler)ダイバージェンス［42］の概念は次のように定義されている:
 
 $$
 D_{KL}(P, Q) = - \sum_{x\in X}{P(x)\log_{2}{Q(x)}}
@@ -255,11 +255,11 @@ Often also expressed as $D_{KL}(𝑃, 𝑄) = 𝐻(𝑃, 𝑄)−𝐻(𝑃)$, wi
 Both cross entropy and KL divergence can be thought of as measurements of how far the probability distribution 𝑄 is from the reference probability distribution 𝑃.
 クロスエントロピーとKLダイバージェンスはともに、**確率分布 Q が参照確率分布P からどれだけ離れているか**を測定するものと考えることができる.
 When $P = Q$, $D_{KL}(P, Q) = D_{KL}(P, P) = 0$, that identity property is not guaranteed by cross entropy alone.
-P = Q$のとき、$D*{KL}(P, Q) = D*{KL}(P, P) = 0$となり、その同一性はクロスエントロピーだけでは保証されない.
+$P = Q$のとき、$D_{KL}(P, Q) = D_{KL}(P, P) = 0$となり、その同一性はクロスエントロピーだけでは保証されない.
 This is the main reason to prefer KL divergence over cross entropy.
 これが**クロスエントロピーよりもKLダイバージェンスを好む主な理由**である.
 Though KL Divergence satisfies the identity requirement, the symmetry and triangle inequality are not fulfilled.
-KL Divergence はidentityの要件を満たすが、symmetryとtriangle inequality は満たさない.
+**KL Divergence はidentityの要件を満たすが、symmetryとtriangle inequality は満たさない.**
 This can be resolved by further refining KL Divergence.
 これは、KL Divergenceをさらに洗練させることで解決することができる.
 
@@ -279,10 +279,10 @@ D_{JS}(P, Q) = - \sum_{x\in X}\frac{P(x)+Q(x)}{2} \log_{2}{\frac{P(x)+Q(x)}{2}}
 $$
 
 When the base 2 logarithm is used, the JS divergence bounds are $0 \leq D_{JS}(P, Q) \leq 1$.
-基底2対数を用いた場合、JS divergenceの境界は $0 \leq D_{JS}(P, Q) \leq 1$となる.
+基底対数2を用いた場合、JS divergenceの境界は $0 \leq D_{JS}(P, Q) \leq 1$となる.
 Additionally, Endres and Schindelin [26] show that $\sqrt{𝐷_{JS}}$ is a proper distance which fulfills the identity, symmetry and the triangle inequality properties.
-またEndres and Schindelin [26]は、$\sqrt{D_{JS}}$がidentity、symmetry、triangle inequality の性質を満たす適切なdistance(=distance metric?)であることを示している.
-When we refer to $𝐷_{JS}$ or $JS$ divergence below, we therefore implicitly refer to the square root of the JS formulation with log base 2.
+またEndres and Schindelin [26]は、$\sqrt{D_{JS}}$が **identity、symmetry、triangle inequality の性質を満たす適切なdistance(=distance metric?)であることを示している**.
+When we refer to $D_{JS}$ or $JS$ divergence below, we therefore implicitly refer to the square root of the JS formulation with log base 2.
 以下、$D_{JS}$または JS Divergence と表記する場合、**log base 2**のJS定式化の平方根を暗黙に指すことになる.
 Liese and Vajda [44] defined f-Divergence[$D_f$]: a generic formulation of several divergence metrics.
 Liese and Vajda [44]は**f-Divergence**[$D_f$]を定義した：**いくつかの divergence metricsの一般的な定式化**である.
@@ -312,26 +312,26 @@ $$
 where a is a small number close to zero.
 ここで、aはゼロに近い小さな数である.
 $\bar{P}$ prevents artificially setting $D_f$ to zero when a category (e.g., a news topic) is represented in Q and not in P.
-Qで表現され、Pで表現されないカテゴリ（例えば、ニューストピック）がある場合、$D_f$を人為的にゼロにすることを防ぐために$bar{P}$が使用される.
+Qで表現され、Pで表現されないカテゴリ(例えば、ニューストピック)がある場合、$D_f$を人為的にゼロにすることを防ぐために$bar{P}$が使用される.
 In the opposite case (when a category is represented in 𝑃 and not in 𝑄), $\bar{Q}$ avoids zero divisions.
-逆の場合(あるカテゴリが𝑃で表され、𝑄で表されない場合)、$bar{Q}$はゼロ除算を避けることができる。
+逆の場合(あるカテゴリが𝑃で表され、𝑄で表されない場合)、$bar{Q}$はゼロ除算を避けることができる.
 In order for the entire probabilistic distributions $\bar{P}$ and $\bar{Q}$ to remain proper statistical distributions, we normalize them to ensure $\sum_{x}\bar{P}(x) = \sum_{x}\bar{Q}(x) = 1$.
-確率分布全体 $bar{P}$ と $tar{Q}$ が適切な統計分布であり続けるために、$Θsum_{x} Θbar{P}(x) = \sum_{x} Θbar{Q}(x) = 1$となるように正規化します。
+確率分布全体 $bar{P}$ と $tar{Q}$ が適切な統計分布であり続けるために、$\sum_{x}\bar{P}(x) = \sum_{x}\bar{Q}(x) = 1$となるように正規化します。
 To avoid notation congestion, 𝑃 and 𝑄 will implicitly refer to $\bar{P}$ and $\bar{Q}$, in the following sections.
 表記の混雑を避けるため、以下の節では、𝑃と𝑄は暗黙に$Θbar{P}$と$Θbar{Q}$を指すことにする。
 
 ## 3.3. Rank-Aware f-Divergence Metrics 順位考慮型 f-ダイバージェンスメトリクス
 
 Our ranked recommendation setting (characteristic (iii) above) motivates a further reformulation of our f-Divergence metric.
-ランク付け推薦の設定（上記の特性(iii)）はf-Divergenceメトリクスの更なる再定式化を動機づける。
+本論文の工夫として、ランク付け推薦の設定に対応する為に、f-Divergence metrics の更なる reformulation を動機づける.
 It is well entrenched in Learning To Rank (LTR) literature [67, 85], and by extension in conventional descriptive diversity metrics [13] that a user is a lot less likely to see items further down a recommended ranked list (i.e., diminishing inspection probabilities).
-Learning To Rank (LTR) の文献 [67, 85]、ひいては従来の記述的多様性指標 [13]では、ユーザが推奨ランクリストのさらに下のアイテムを見る可能性はかなり低い（すなわち、検査確率が逓減する）ということがよく理解されています。
+Learning To Rank (LTR) の文献 [67, 85]、ひいては従来のdescriptive diversiyt metrics [13] では、ユーザが推薦ランクリストのさらに下のアイテムを見る可能性はかなり低くなる(i.e. inspection probabilitiesが低下する)ことがよく知られている.
 Note that the ranking oftentimes reflects relevance to the user, but it is not always the case for news (e.g., editorial layout of a news homepage).
-また，ランキングはしばしばユーザとの関連性を反映するが，ニュースの場合は必ずしもそうではない（例えば，ニュースのホームページの編集レイアウト）ことに注意されたい．
+また，ランキングはしばしばユーザとのrelevanceを反映するが，ニュースの場合は必ずしもそうではない(ex. ニュースのホームページのレイアウト次第?)ことに注意されたい.
 We extend our metrics with an optional discount factor for 𝑃 and 𝑄 to weigh down the importance of results lower in the ranked recommendation list.
-我々は、ランク付けされた推薦リストで下位の結果の重要性を重み付けするために、ᵄとᵄにオプションの割引係数を付けて我々のメトリックを拡張します。
+我々は、ランク付けされた推薦リストで下位の結果の重要性を重み付けするために、**PとQにオプションの discount 係数を付けて我々のmetricを拡張する**.
 The ranking relevancy metrics Mean Reciprocal Rank (MRR) and Normalized Discounted Cumulative Gain (NDCG) are popular rank-aware metrics for LTR [14, 36], in particular for news recommendation [80].
-ランキング関連性指標であるMean Reciprocal Rank (MRR) と Normalized Discounted Cumulative Gain (NDCG) は，LTR [14, 36]，特にニュース推薦 [80] でよく用いられるランク考慮型指標である．
+ランキング関連性指標であるMean Reciprocal Rank (MRR) と Normalized Discounted Cumulative Gain (NDCG) は，LTR [14, 36]，特にニュース推薦 [80] でよく用いられるrank-aware metrics である.
 In line with the LTR literature, we first define the discrete probability distribution of a ranked recommendation set $𝑄^∗$ , given each item 𝑖 in the recommendation list 𝑅:
 LTRの文献に沿って、まず、推薦リスト𝑅の各項目𝑖を与えて、ランク付けされた推薦セット$ᵄ^∗$の離散確率分布を定義する。
 
