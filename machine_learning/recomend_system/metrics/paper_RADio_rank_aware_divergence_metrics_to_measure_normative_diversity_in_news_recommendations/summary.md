@@ -211,7 +211,39 @@ Learning To Rank (LTR) の文献 [67, 85]、ひいては従来のdescriptive div
 また，ランキングはしばしばユーザとのrelevanceを反映するが，ニュースの場合は必ずしもそうではない(ex. ニュースのホームページのレイアウト次第?)ことに注意されたい.
 本論文では、ランク付けされた推薦リストで下位の結果の重要性を重み付けするために、**PとQにオプションの discount 係数を付けてmetricを拡張する**.
 
+ランキング関連性指標であるMean Reciprocal Rank (MRR) と Normalized Discounted Cumulative Gain (NDCG) は，LTR [14, 36]，**特にニュース推薦 [80] でよく用いられるrank-aware metrics である**.
+
 rank-awareな$Q^∗$と任意でrank-awareな $P^∗$で、rank-awareなf-DivergenceメトリックであるRADioを定式化する.
+LTRの文献に沿って、まず、推薦リストRの各アイテム $i$ を与えて、ランク付けされた推薦セット$Q^*$の 離散確率分布(=確率質量関数?)を定義する.
+
+$$
+Q^*(x) = \frac{\sum_{i} w_{R_i} 1_{i \in x}}{\sum_{i} w_{R_i}}
+\tag{5}
+$$
+
+ここで、アイテム$i$のランクの重み$w_{R_i}$はdiscount形式(=rank-awareの方法)によって異なる.
+
+- MMRの場合、$w_{R_i} = \frac{1}{R_i}$
+- NDCGの場合、$w_{R_i} = \frac{1}{\log_{2}{R_i+1}}$
+- $w_{R_i} = 1$の場合、$Q^∗$ はdiscountされない.(i.e. $Q^*=Q$)
+
+**ニュース推薦では，スパース性バイアスが支配的な役割を果たす**. スクロール可能なニュース推薦ウェブサイト[40]のように，ユーザは大きなアイテムコレクションのごく一部とinteractionする.(これに関しては推薦問題全般に言える気がする)
+そのため，**NDCGよりもMRRに基づく重み付けを選択**する.
+これは，**NDCGよりもランキングに沿ってより重いdiscountを適用するため**である.
+**後者は、ユーザがクエリに関連した特定の情報ニーズを持っており、したがってページをスクロールする傾向がより高い、クエリ関連のランキングに適している**、と言われていることに注意してほしい[14].(あーなるほど...! nDCGを使いがちだった...!!)
+
+コンテキスト分布 $P$ がランク付けされた推薦リストである場合、同じようにdiscountされる.
+$P$がユーザのreading history の場合（図1参照）、$P$ の割引率は時間と共に増加する：最近読んだ記事は、より昔に読んだ記事より高く評価される.
+一方で、例えば$P$が利用可能な記事のプール全体である場合など、rank-awareを適用できない状況もある.
+rank-awareな$Q^∗$と、任意でrank-awareな $P^∗$を用いて、**rank-awareなf-DivergenceメトリックであるRADioを定式化する**.
+
+$$
+D^*_{f}(P, Q) = \sum_{x} Q^*(x) f(\frac{P^*(x)}{Q^*(x)})
+\tag{6}
+$$
+
+ここで、$Q^*(x)$ と $P^*(x)$ は複数の状況に対応する:例えば、$Q^*(c|R)$ は推薦セット$R$上のニュースカテゴリ $c$ のrank-aware分布である.
+以下では、我々の普遍的なmetric の為に、各normative concept(=DARTの事?) of interest に従って、$P^*(x|\cdot)$ と$Q^*(x|\cdot)$ を設定する.
 
 ### 工夫2: RADioを用いて、DART metricsを拡張する
 
@@ -224,12 +256,17 @@ rank-awareな$Q^∗$と任意でrank-awareな $P^∗$で、rank-awareなf-Diverg
 - $H$: ユーザの reading history にある記事のリストで、新着順に表示される.
 
 $R_{i}^u \in {1, 2, 3, \cdots}$ は、ユーザ$u$に対する推薦リストにおけるアイテム $i$のランクを意味する.
-DART metrics は**ある時点の特定のユーザに対して定義される**ため、特に断らない限り、$R$ は暗黙的に$R^𝑢$を意味する.
+DART metrics は**ある時点の特定のユーザに対して定義される**ため、特に断らない限り、$R$ は暗黙的に$R^u$を意味する.
 
 以下で、DART metricsの各metricをRADioを用いて拡張していく.
 (DART metricsの詳細は、元論文を参照.)
 
 #### １つ目:Calibration
+
+Calibration (式7)は、推薦がユーザの好みにどの程度合っているかを測定する.
+ユーザの好みは、reading history($H$)から推測される.
+Calibration には、推薦記事のカテゴリーの divergence と complexity の2つの側面が考えられる.
+前者はニュースのメタデータから抽出され、したがって本質的に categorical であると予想され、後者はlanguage model(?)を介して抽出されたビンの(categoricalな)確率的な尺度である.
 
 #### ２つ目:Fragmentation
 

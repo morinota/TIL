@@ -331,38 +331,47 @@ Note that the ranking oftentimes reflects relevance to the user, but it is not a
 We extend our metrics with an optional discount factor for 𝑃 and 𝑄 to weigh down the importance of results lower in the ranked recommendation list.
 我々は、ランク付けされた推薦リストで下位の結果の重要性を重み付けするために、**PとQにオプションの discount 係数を付けて我々のmetricを拡張する**.
 The ranking relevancy metrics Mean Reciprocal Rank (MRR) and Normalized Discounted Cumulative Gain (NDCG) are popular rank-aware metrics for LTR [14, 36], in particular for news recommendation [80].
-ランキング関連性指標であるMean Reciprocal Rank (MRR) と Normalized Discounted Cumulative Gain (NDCG) は，LTR [14, 36]，特にニュース推薦 [80] でよく用いられるrank-aware metrics である.
+ランキング関連性指標であるMean Reciprocal Rank (MRR) と Normalized Discounted Cumulative Gain (NDCG) は，LTR [14, 36]，**特にニュース推薦 [80] でよく用いられるrank-aware metrics である**.
 In line with the LTR literature, we first define the discrete probability distribution of a ranked recommendation set $𝑄^∗$ , given each item 𝑖 in the recommendation list 𝑅:
-LTRの文献に沿って、まず、推薦リスト𝑅の各項目𝑖を与えて、ランク付けされた推薦セット$ᵄ^∗$の離散確率分布を定義する。
+LTRの文献に沿って、まず、推薦リストRの各アイテム $i$ を与えて、ランク付けされた推薦セット$Q^*$の 離散確率分布(=確率質量関数?)を定義する.
 
 $$
+Q^*(x) = \frac{\sum_{i} w_{R_i} 1_{i \in x}}{\sum_{i} w_{R_i}}
 \tag{5}
 $$
 
-where $𝑤_{𝑅𝑖}$ , the weight of a rank for item 𝑖, can be different depending on the discount form.
-ここで、項目𝑖のランクの重み$𝑤_{ǔ𝑖}$は割引形式によって異なることがある。
-For MMR, $𝑤_{𝑅𝑖} = \frac{1}{Ri}$ , for NDCG, $𝑤_{𝑅𝑖} =  \frac{1}{\log_2{Ri+1}}$ When $𝑤_{𝑅𝑖} = 1$, $𝑄^∗$ is not discounted (i.e., $𝑄^∗ = 𝑄$).
-MMRの場合、$𝑤𝑖} = \frac{1}{Ri}$ 、NDCGの場合、$𝑤𝑖} = \frac{1}{log_2{Ri+1}$ $𝑅𝑖} = 1$ 時、$ᵄ^∗$は割引かれない（すなわち$ᵄ^∗ = 𝑄$）。
+where $w_{R_i}$, the weight of a rank for item 𝑖, can be different depending on the discount form.
+ここで、アイテム$i$のランクの重み$w_{R_i}$は割引形式によって異なる.
+For MMR, $w_{R_i} = \frac{1}{Ri}$ , for NDCG, $w_{R_i} =  \frac{1}{\log_2{Ri+1}}$ When $w_{R_i} = 1$, $Q^∗$ is not discounted (i.e., $Q^∗ = Q$).
+
+- MMRの場合、$w_{R_i} = \frac{1}{Ri}$
+- NDCGの場合、$w_{R_i} = \frac{1}{\log_2{Ri+1}}$
+- $w_{R_i} = 1$の場合、$Q^∗$ はdiscountされない.(i.e. $Q^*=Q$)
 
 In news recommendation, the sparsity bias plays a predominant role: users will interact with a small fraction of a large item collection, such as scrollable news recommendation websites [40].
-ニュース推薦では，スパース性バイアスが支配的な役割を果たす．スクロール可能なニュース推薦ウェブサイト[40]のように，ユーザーは大きなアイテムコレクションのごく一部とインタラクションする．
+ニュース推薦では，スパース性バイアスが支配的な役割を果たす. スクロール可能なニュース推薦ウェブサイト[40]のように，ユーザは大きなアイテムコレクションのごく一部とinteractionする.
 We thus opt for weighing based on MRR rather than NDCG, because it applies a heavier discount along the ranking than NDCG.
-そのため，NDCGよりもMRRに基づく重み付けを選択する。これは，NDCGよりもランキングに沿ってより重い割引を適用するためである。
+そのため，NDCGよりもMRRに基づく重み付けを選択する. これは，NDCGよりもランキングに沿ってより重い割引を適用するためである.
 Note that the latter is said to be more suited for query-related rankings, where the user has a particular information need related to a query and thus higher propensity to scroll down a page [14].
-後者は、ユーザーがクエリに関連した特定の情報ニーズを持っており、したがってページをスクロールする傾向がより高い、クエリ関連のランキングに適していると言われていることに注意してください[14]。
+後者は、ユーザがクエリに関連した特定の情報ニーズを持っており、したがってページをスクロールする傾向がより高い、クエリ関連のランキングに適していると言われていることに注意してください[14].
 
 The context distribution 𝑃 is discounted in the same manner, when it is a ranked recommendation list.
-コンテキスト分布 ᵄ は、ランク付けされた推薦リストである場合、同じように割り引かれる。
+コンテキスト分布 $P$ がランク付けされた推薦リストである場合、同じようにdiscountされる.
 When 𝑃 is a user’s reading history (see Figure 1), the discount on 𝑃 increases with time: articles read recently are weighted higher than articles read longer ago.
-𝑃がユーザーの読書履歴の場合（図1参照）、𝑃の割引率は時間と共に増加する：最近読んだ記事は、より昔に読んだ記事より高く評価される。
+$P$がユーザのreading history の場合（図1参照）、$P$ の割引率は時間と共に増加する：最近読んだ記事は、より昔に読んだ記事より高く評価される.
 There are situations when rank-awareness is not applicable, for example when 𝑃 is the entire pool of available articles.5 With rankaware $𝑄^∗$ and optionally rank-aware $𝑃^∗$ , we formulate RADio, our rank-aware f-Divergence metric:
-rank-awareな$Q^∗$と任意でrank-awareな $P^∗$で、rank-awareなf-DivergenceメトリックであるRADioを定式化する.
+一方で、例えば$P$が利用可能な記事のプール全体である場合など、rank-awareを適用できない状況もある.
+rank-awareな$Q^∗$と、任意でrank-awareな $P^∗$で、rank-awareなf-DivergenceメトリックであるRADioを定式化する.
 
 $$
+D^*_{f}(P, Q) = \sum_{x} Q^*(x) f(\frac{P^*(x)}{Q^*(x)})
 \tag{6}
 $$
 
-$𝑄^∗(𝑥)$ and $𝑃^∗(𝑥)$ accommodate for multiple situations: for example, $𝑄^∗(𝑐𝑅)$ is the rank-aware distribution of news categories 𝑐 over the recommendation set 𝑅. In the following, we specify $𝑃^∗(𝑥
+𝑄 ∗ (𝑥) and 𝑃 ∗ (𝑥) accommodate for multiple situations: for example, 𝑄 ∗ (𝑐|𝑅) is the rank-aware distribution of news categories 𝑐 over the recommendation set 𝑅.
+$Q^*(x)$ と $P^*(x)$ は複数の状況に対応する:例えば、$Q^*(c|R)$ は推薦セット$R$上のニュースカテゴリ $c$ のrank-aware分布である.
+In the following, we specify $P^*(x|\cdot)$ and $Q^*(x|\cdot)$ in accordance to each normative concept of interest for our universal metric.
+以下では、我々の普遍的なmetric の為に、各normative concept(=DARTの琴?) of interest に従って、$P^*(x|\cdot)$ と$Q^*(x|\cdot)$ を設定する.
 
 ## 3.4. Normative Diversity metrics as Rank-Aware f-Divergences 順位を考慮したf-Divergencesとしての規範的な多様性メトリクス
 
@@ -386,38 +395,79 @@ In this work, metrics are defined for a specific user at a certain point in time
 While this section contains some contextualization of the DART metrics [71], the original paper contains further normative justifications.
 このセクションはDARTメトリクス[71]の文脈を含んでいますが、元の論文はさらに規範的な正当性を含んでいます。
 
-### 3.4.1. Calibration. キャリブレーションを行います。
+### 3.4.1. Calibration.
 
-(Equation 7) measures to what extent the recommendations are tailored to a user’s preferences. The user’s preferences are deduced from their reading history (𝐻). Calibration can have two aspects: the divergence of the recommended articles’ categories and complexity. The former is expected to be extracted from news metadata and thus categorical by nature, the latter is a binned (categorical) probabilistic measure extracted via a language model. As such, we compare $𝑃^∗(𝑐
-𝐻)$, the rank-aware distribution of categories or complexity score bins 𝑐 over the users’ reading history, and $𝑄^∗(𝑐
+(Equation 7) measures to what extent the recommendations are tailored to a user’s preferences.
+Calibration (式7)は、推薦がユーザの好みにどの程度合っているかを測定する.
+The user’s preferences are deduced from their reading history (𝐻).
+ユーザーの好みは、読書履歴（ᵃ）から推測される.
+Calibration can have two aspects: the divergence of the recommended articles’ categories and complexity.
+キャリブレーションには、推薦記事のカテゴリーの divergence と complexity の2つの側面が考えられる.
+The former is expected to be extracted from news metadata and thus categorical by nature, the latter is a binned (categorical) probabilistic measure extracted via a language model.
+前者はニュースのメタデータから抽出され、したがって本質的に categorical であると予想され、後者はlanguage model(?)を介して抽出されたビンの(categoricalな)確率的な尺度である.
+As such, we compare $P^*(c|H)$, the rank-aware distribution of categories or complexity score bins $c$ over the users’ reading history, and $Q^*(c|R)$ the same in the recommendations issued to the user.
+このように、我々は、$P^*(c|H)$(ユーザのreading history上のカテゴリまたはcomplexity のスコアビン $c$ のrank-aware distribution)と、および同じく$c$に関するユーザへの推薦リスト$Q^*(c|R)$を比較する.
+
+$$
+Calibration = Cal(P^*(c|H), Q^*(c|R)) = \sum_{c} Q^*(c|R) f(\frac{P^*(c|H)}{Q^*(c|R)})
+\tag{7}
+$$
 
 ### 3.4.2. Fragmentation. フラグメンテーション
 
-(Equation 8) reflects to what extent we can speak of a common public sphere, or whether the users exist in their own bubble. We measure Fragmentation as the divergence between every pair of users’ recommendations. Here we consider$ 𝑃^∗(𝑒
-𝑅^𝑢)$ as the rank-aware distribution of news events 𝑒 over the recommendations 𝑅 for user 𝑢, and $𝑄^∗(𝑒
+(Equation 8) reflects to what extent we can speak of a common public sphere, or whether the users exist in their own bubble.
+We measure Fragmentation as the divergence between every pair of users’ recommendations.
+Here we consider 𝑃 ∗ (𝑒 |𝑅 𝑢 ) as the rank-aware distribution of news events 𝑒 over the recommendations 𝑅 for user 𝑢, and 𝑄 ∗ (𝑒 |𝑅 𝑣 ) the same but for user 𝑣.
+KL Divergence is asymmetric (see Section 3.2.1), which means that its outcome differs depending on which user’s recommendation is chosen as the target and which as the reference distribution.
+To avoid this, we compute the Fragmentation score as the average of KL Divergences with switched parameters.
+JS divergence is already symmetric and is thus implemented as for the other metrics.
+In theory, Fragmentation requires a user’s recommendation to be compared to those of all other users.
+This is not feasible with a sizeable dataset and the requirement of a reasonable compute time.
+Instead we opt to randomly sample user pairs.
+(式8)は、共通の公共圏と言えるのか、それともユーザーが自分たちのバブルの中に存在しているのかを反映している.
+Fragmentationは、各ユーザーのレコメンデーションペア間の乖離として測定される.
+ここでは、𝑃∗ (𝑒 |𝑒) をユーザー𝑢のレコメンデーション𝑅に対するニュースイベント𝑄のランク認識分布と考え、𝑣を同じユーザー𝑣のレコメンデーション𝑒（𝑒 |𝑣）と考える.
+KLダイバージェンスは非対称であり（セクション3.2.1参照），どのユーザーの推薦をターゲットとして，どのユーザーの推薦を参照分布として選択するかによって，結果が異なることを意味する.
+これを避けるために、パラメータを入れ替えたKLダイバージェンスの平均値としてFragmentationスコアを計算する.
+JSダイバージェンスはすでに対称的であるため、他のメトリクスと同様に実装されている.
+理論的には、Fragmentationでは、あるユーザーの推薦文を他のすべてのユーザーの推薦文と比較する必要がある.
+しかし、データ量が多く、計算時間が必要であるため、これは実現不可能である.
+その代わりに、我々はユーザーのペアをランダムにサンプリングすることを選択した.
 
 ### 3.4.3. Activation. アクティベーション
 
-(Equation 9) Most off-the-shelf sentiment analysis tools analyze a text, and return a value (0, 1] when the text expresses a positive emotion, a value [−1, 0) when the expressed sentiment is negative, and 0 if it is completely neutral. The more extreme the value, the stronger the expressed sentiment is. As proposed in [71], we use an article’s absolute sentiment score as an approximation to determine the height of the emotion and therefore the level of Activation expressed in a single article. This then yields a continuous value between 0 and 1. $𝑃(𝑘
-𝑆)$ denotes the distribution of (binned) article Activation score 𝑘 within the pool of items that were available at that point (𝑆). $𝑄^∗(𝑘
+(Equation 9) Most off-the-shelf sentiment analysis tools analyze a text, and return a value (0, 1] when the text expresses a positive emotion, a value [−1, 0) when the expressed sentiment is negative, and 0 if it is completely neutral. The more extreme the value, the stronger the expressed sentiment is.
+As proposed in [71], we use an article’s absolute sentiment score as an approximation to determine the height of the emotion and therefore the level of Activation expressed in a single article.
+This then yields a continuous value between 0 and 1.
+𝑃 (𝑘|𝑆) denotes the distribution of (binned) article Activation score 𝑘 within the pool of items that were available at that point (𝑆).
+𝑄 ∗ (𝑘|𝑅) expresses the same, but for the binned Activation scores in the rank-aware recommendation distribution.
+(式9)市販の感情分析ツールの多くは、テキストを分析し、テキストがポジティブな感情を表現している場合は値（0、1）、表現された感情がネガティブな場合は値（-1、0）、完全に中立の場合は0を返す。値が極端であればあるほど、表現された感情が強いことを意味する.
+[71]で提案されたように、私たちは1つの記事で表現された感情の高さ、したがって活性化のレベルを決定するための近似値として記事の絶対センチメントスコアを使用する.
+𝑃 (𝑘|𝑆)は、その時点(ᵆ)で利用可能だったアイテムのプール内の（ビン詰め）記事の活性化スコア𝑘の分布を示す。
+𝑄∗ (ᑘ) は、同じように、ランクを意識した推薦分布におけるビン詰めの活性化スコアについて表現するものである。
 
 ### 3.4.4. Representation. 表現
 
-(Equation 10) aims to approximate a notion of viewpoint diversity (e.g. mentions of political topics or political parties), where the viewpoints are expressed categorically. Here 𝑝 refers to the presence of a particular viewpoint, and $𝑃(𝑝
-𝑆)$ is the distribution of these viewpoints within the overall pool of articles, while $𝑄^∗(𝑝
+(Equation 10) aims to approximate a notion of viewpoint diversity (e.g. mentions of political topics or political parties), where the viewpoints are expressed categorically.
+(式10)は、視点の多様性（政治的トピックや政党の言及など）の概念を近似することを目的としており、視点はカテゴリ的に表現される。
+Here 𝑝 refers to the presence of a particular viewpoint, and 𝑃 (𝑝|𝑆) is the distribution of these viewpoints within the overall pool of articles, while 𝑄 ∗ (𝑝|𝑅) expresses the rank-aware distribution of viewpoints within the recommendation set.
+ここで、は特定の視点の存在を意味し、𝑃（ᵅ）は記事のプール全体におけるこれらの視点の分布であり、𝑄（ᵅ）は推薦セット内の視点のランク認識分布を表現する。
 
 ### 3.4.5. Alternative Voices. オルタナティブ・ヴォイス
 
 (Equation 11) is related to the Representation metric in the sense that it also aims to reflect an aspect of viewpoint diversity.
-(式11）は、視点の多様性の一面を反映させるという意味で、Representation指標と関連している。
+(式11)は、視点の多様性の一面を反映させるという意味で、Representation指標と関連している。
 Rather than focusing on the content of the viewpoint, it focuses on the viewpoint holder, and specifically whether they belong to a “protected group” or not.
 これは、視点の内容ではなく、視点の持ち主、特に「保護された集団」に属しているか否かに着目したものである。
-Examples of such protected
-保護された集団の例
+Examples of such protected/unprotected groups could be non-male/male, nonwhite/white, etc.7 This approach is based on the implementation of balanced neighbourhoods in recommender systems [12]. With 𝑚 we refer to the distribution of protected vs. non-protected groups, with 𝑚 ∈ {Minority, Majority}. 𝑃 (𝑚|𝑆) and 𝑄 ∗ (𝑚|𝑆) refer to the distribution of these groups in the pool of available articles and rank-aware recommendation distribution respectively.
+このような保護／非保護グループの例としては、非男性／男性、非白人／白人などがあります7。このアプローチは、レコメンダーシステムにおけるバランスドネイバーフッドの実装に基づくものです［12］。𝑚では、保護されるグループと保護されないグループの分布を指し、𝑚∈{Minority, Majority}とします。𝑃 (↪Ll_1D45A) と 𝑄∗ (𝑚|↪Lu_1D446) はそれぞれ、利用可能な記事のプールとランク認識推薦分布におけるこれらのグループの分布に言及する。
 
 $$
 \tag{11}
 $$
+
+Below is a summary of the formalization of DART with the RADio framework, the notation of which is defined in this section. In the next section, we show how to retrieve the necessary features from an example news dataset:
+以下、RADioフレームワークを用いたDARTの定式化の概要を説明し、その表記をこのセクションで定義する。次節では、ニュースデータセットの例から必要な特徴を取得する方法を示す：
 
 # 4. Experimental Setup 実験セットアップ
 
