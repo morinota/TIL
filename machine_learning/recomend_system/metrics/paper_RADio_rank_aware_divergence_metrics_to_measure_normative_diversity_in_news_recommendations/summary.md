@@ -373,6 +373,12 @@ divergence スコアを、DARTの民主主義に関するさまざまな理論�
 
 ## 議論はある？
 
-## 次に読むべき論文は？
+## 次に読むべき論文は？ 
+
+- 本論文に出てきた ニュース推薦の短いlifespanに特化した 推薦手法 の論文
+  - [NPA: Neural News Recommendation with Personalized Attention(2019)](https://arxiv.org/abs/1907.05559)
+  - [NAML: Neural News Recommendation with Attentive Multi-View Learning(2019)](https://arxiv.org/abs/1907.05576)
+  - [Neural News Recommendation with Multi-Head Self-Attention](https://aclanthology.org/D19-1671/)
+  - [Neural News Recommendation with Long- and Short-term User Representations](https://aclanthology.org/P19-1033/)
 
 ## お気持ち実装
