@@ -268,13 +268,72 @@ Calibration (式7)は、推薦がユーザの好みにどの程度合ってい�
 Calibration には、推薦記事のカテゴリーの divergence と complexity の2つの側面が考えられる.
 前者はニュースのメタデータから抽出され、したがって本質的に categorical であると予想され、後者はlanguage model(?)を介して抽出されたビンの(categoricalな)確率的な尺度である.
 
+$$
+Calibration = Cal(P^*(c|H), Q^*(c|R)) = \sum_{c} Q^*(c|R) f(\frac{P^*(c|H)}{Q^*(c|R)})
+\tag{7}
+$$
+
 #### ２つ目:Fragmentation
+
+Fragmentation(式8)は、「共通の public sphere と言えるのか、それともユーザが自分たちのbubbleの中に存在しているのか」を反映している.
+Fragmentationは、**各ユーザのレコメンデーションペア間のdivergence**として測定される. (=ユーザ$u$とユーザ$v$を比較する.)
+ここでは、$P^*(e|R^u)$ をユーザ $u$ の推薦リスト $R$ に対するニュースイベント $e$ のrank-aware分布と考え、$Q^*(e|R^v)$ を別のユーザ $v$ の推薦リスト$R$ に対するニュースイベント $e$ のrank-aware分布と考える.
+KLダイバージェンスは非対称である. すなわち、どのユーザの推薦をtarget distribution として，どのユーザの推薦をreference distributionとして選択するかによって，結果が異なることを意味する.(= $u$と$v$を入れ替えると結果が異なり得る. = distance metricの条件を満たせない!)
+これを避けるために、パラメータ(=uとv)を入れ替えた**KLダイバージェンスの平均値**としてFragmentationスコアを計算する.(=これでdistance metricの条件を満たせる...!)
+JSダイバージェンスはすでに対称性を持つため、他のmetricsと同様に実装されている.
+理論的には、**Fragmentationでは、あるユーザの推薦結果を他のすべてのユーザの推薦結果と比較する必要がある**.
+しかし、データ量が多く、計算時間が必要であるため、これは実現不可能である.
+その代わりに、我々は**ユーザのペアをランダムにサンプリング**することを選択した.
+
+$$
+Fragmentation = Frag(P^*(e|R^u), Q^*(e|R^v))
+= \sum_{e} Q^*(e|R^v) f(\frac{P^*(e|R^u)}{Q^*(e|R^v)})
+\tag{8}
+$$
 
 #### 3つ目:Activation
 
+off-the-shelf(市販?)のsentiment analysis(感情分析?)ツールの多くは、テキストを分析し、テキストがpositiveな感情を表現している(=ある出来事に対して、肯定的な記事?)場合は $(0、1]$、表現された感情がnegativeな場合(=否定的な記事?)は $[-1、0)$ 、完全に中立の場合は0の値を返す.
+(Activationは 肯定的な記事ばっかり推薦してしまってないか、逆に否定的な記事ばっかり推薦してしまってないか、みたいな意味合いのmetric...??)
+値が極端であればあるほど、表現されたpositive/negativeの感情が強いことを意味する.
+[71]で提案されたように、本論文では1つの記事で表現された感情の高さ(?)、したがって activation のレベルを決定するための近似値として記事のabsolute sentiment score を使用する.
+$P(k|S)$ は、その時点で利用可能だったアイテムプール内の(ビン詰め)記事$S$(=推薦可能アイテムリスト?)のActivation Score $k$ の分布を示す.
+$Q^*(k|R)$ は、同様に、rank-aware推薦リスト分布(=一方で、推薦されたアイテムリスト?)におけるbinned のActivation scores について表現するもの.
+
+$$
+Activation = Act(P(k|S), Q^*(k|R))
+= \sum_{k} Q^*(k|R) f(\frac{P(k|S)}{Q^*(k|R)})
+\tag{9}
+$$
+
+(要するに、推薦可能なアイテムプール$S$と, 実際に推薦したアイテムリスト$R$において、記事アイテムのsentiment値の分布が異なっている場合-> 過度に、肯定的/否定的な記事ばっかり推薦してしまっていると言えそう.)
+
 #### 4つ目:Representation
 
+Representation(式10)は、**viewpointのdiversity(ex. 政治的トピックや政党の言及など)**の概念を近似することを目的としており、viewpointはカテゴリ的に表現される.
+ここで、$p$ は特定の veiwpoint を意味し、$P(p|S)$ は記事プール全体におけるこれらの viewpoint の分布であり、$Q^*(p|R)$ は推薦セット内のveiwpoint の rank-aware分布を表現する.
+(viewpointって各記事アイテムに紐づくcategoricalなメタデータなのかな?)
+
+$$
+Representation = Rep(P(p|S), Q^*(p|R))
+= \sum_{p} Q^*(p|R) f(\frac{P(p|S)}{Q^*(p|R)})
+\tag{10}
+$$
+
 #### 5つ目:Alternative Voices
+
+Alternative Voices(式11)は、viewpoint diversity の一面を反映させるという意味で、**Representation metricと関連**している.
+これは、**viewpoint の内容ではなく、viewpointの持ち主、特に"protected group(保護された集団?)"に属しているか否かに着目したもの**である.
+このようなprotected/unprotected グループの例としては、非男性／男性、非白人／白人などがある.(なるほど...! あんまり日本だとイメージつかないなぁ...)
+このアプローチは、推薦システムにおける balanced neighbourhoods(?)の実装に基づくもの[12].
+$m$では、保護グループとnot保護グループの分布を指し、$m$ ∈ {Minority, Majority}とする.($m$はbinaryのcategorical変数?)
+$P(m|S)$ と $Q^*(m|R)$ はそれぞれ、推薦可能アイテムプールと、rank-awareな推薦リスト分布における 保護/not保護 グループの分布(割合と表現しても問題なさそう...!)を表す.
+
+$$
+AlternativeVoices = AltV(P(m|S), Q^*(m|R))
+= \sum_{m} Q^*(m|R) f(\frac{P(m|S)}{Q^*(m|R)})
+\tag{11}
+$$
 
 ## どうやって有効だと検証した?
 
@@ -373,7 +432,7 @@ divergence スコアを、DARTの民主主義に関するさまざまな理論�
 
 ## 議論はある？
 
-## 次に読むべき論文は？ 
+## 次に読むべき論文は？
 
 - 本論文に出てきた ニュース推薦の短いlifespanに特化した 推薦手法 の論文
   - [NPA: Neural News Recommendation with Personalized Attention(2019)](https://arxiv.org/abs/1907.05559)
@@ -382,4 +441,5 @@ divergence スコアを、DARTの民主主義に関するさまざまな理論�
   - [Neural News Recommendation with Long- and Short-term User Representations(2019)](https://aclanthology.org/P19-1033/)
 
 ## お気持ち実装
+
 mada

@@ -416,53 +416,82 @@ $$
 ### 3.4.2. Fragmentation. フラグメンテーション
 
 (Equation 8) reflects to what extent we can speak of a common public sphere, or whether the users exist in their own bubble.
+Fragmentation(式8)は、「共通の public sphere と言えるのか、それともユーザが自分たちのbubbleの中に存在しているのか」を反映している.
 We measure Fragmentation as the divergence between every pair of users’ recommendations.
-Here we consider 𝑃 ∗ (𝑒 |𝑅 𝑢 ) as the rank-aware distribution of news events 𝑒 over the recommendations 𝑅 for user 𝑢, and 𝑄 ∗ (𝑒 |𝑅 𝑣 ) the same but for user 𝑣.
+Fragmentationは、**各ユーザのレコメンデーションペア間のdivergence**として測定される. (=ユーザ$u$とユーザ$v$を比較する.)
+Here we consider $P^*(e|R^u)$ as the rank-aware distribution of news events 𝑒 over the recommendations 𝑅 for user 𝑢, and $Q^*(e|R^v)$ the same but for user 𝑣.
+ここでは、$P^*(e|R^u)$ をユーザ $u$ の推薦リスト $R$ に対するニュースイベント $e$ のrank-aware分布と考え、$Q^*(e|R^v)$ を別のユーザ $v$ の推薦リスト$R$ に対するニュースイベント $e$ のrank-aware分布と考える.
 KL Divergence is asymmetric (see Section 3.2.1), which means that its outcome differs depending on which user’s recommendation is chosen as the target and which as the reference distribution.
+KLダイバージェンスは非対称であり（セクション3.2.1参照)，どのユーザの推薦をtarget distribution として，どのユーザの推薦をreference distributionとして選択するかによって，結果が異なることを意味する.(= $u$と$v$を入れ替えると結果が異なり得る. = distance metricの条件を満たせない!)
 To avoid this, we compute the Fragmentation score as the average of KL Divergences with switched parameters.
+これを避けるために、パラメータ(=uとv)を入れ替えた**KLダイバージェンスの平均値**としてFragmentationスコアを計算する.(=これでdistance metricの条件を満たせる...!)
 JS divergence is already symmetric and is thus implemented as for the other metrics.
+JSダイバージェンスはすでに対称的であるため、他のmetricsと同様に実装されている.
 In theory, Fragmentation requires a user’s recommendation to be compared to those of all other users.
+理論的には、**Fragmentationでは、あるユーザの推薦結果を他のすべてのユーザの推薦結果と比較する必要がある**.
 This is not feasible with a sizeable dataset and the requirement of a reasonable compute time.
-Instead we opt to randomly sample user pairs.
-(式8)は、共通の公共圏と言えるのか、それともユーザーが自分たちのバブルの中に存在しているのかを反映している.
-Fragmentationは、各ユーザーのレコメンデーションペア間の乖離として測定される.
-ここでは、𝑃∗ (𝑒 |𝑒) をユーザー𝑢のレコメンデーション𝑅に対するニュースイベント𝑄のランク認識分布と考え、𝑣を同じユーザー𝑣のレコメンデーション𝑒（𝑒 |𝑣）と考える.
-KLダイバージェンスは非対称であり（セクション3.2.1参照），どのユーザーの推薦をターゲットとして，どのユーザーの推薦を参照分布として選択するかによって，結果が異なることを意味する.
-これを避けるために、パラメータを入れ替えたKLダイバージェンスの平均値としてFragmentationスコアを計算する.
-JSダイバージェンスはすでに対称的であるため、他のメトリクスと同様に実装されている.
-理論的には、Fragmentationでは、あるユーザーの推薦文を他のすべてのユーザーの推薦文と比較する必要がある.
 しかし、データ量が多く、計算時間が必要であるため、これは実現不可能である.
-その代わりに、我々はユーザーのペアをランダムにサンプリングすることを選択した.
+Instead we opt to randomly sample user pairs.
+その代わりに、我々は**ユーザのペアをランダムにサンプリング**することを選択した.
 
-### 3.4.3. Activation. アクティベーション
+$$
+Fragmentation = Frag(P^*(e|R^u), Q^*(e|R^v))
+= \sum_{e} Q^*(e|R^v) f(\frac{P^*(e|R^u)}{Q^*(e|R^v)})
+\tag{8}
+$$
 
-(Equation 9) Most off-the-shelf sentiment analysis tools analyze a text, and return a value (0, 1] when the text expresses a positive emotion, a value [−1, 0) when the expressed sentiment is negative, and 0 if it is completely neutral. The more extreme the value, the stronger the expressed sentiment is.
+### 3.4.3. Activation.
+
+(Equation 9) Most off-the-shelf sentiment analysis tools analyze a text, and return a value (0, 1] when the text expresses a positive emotion, a value [−1, 0) when the expressed sentiment is negative, and 0 if it is completely neutral.
+(式9) off-the-shelf(市販?)のsentiment analysis(感情分析?)ツールの多くは、テキストを分析し、テキストがpositiveな感情を表現している(=肯定的な記事?)場合は $(0、1]$、表現された感情がnegativeな場合(=否定的な記事?)は $[-1、0)$ 、完全に中立の場合は0の値を返す.
+The more extreme the value, the stronger the expressed sentiment is.
+値が極端であればあるほど、表現された感情が強いことを意味する.
 As proposed in [71], we use an article’s absolute sentiment score as an approximation to determine the height of the emotion and therefore the level of Activation expressed in a single article.
+[71]で提案されたように、本論文では1つの記事で表現された感情の高さ(?)、したがって activation のレベルを決定するための近似値として記事のabsolute sentiment score を使用する.
 This then yields a continuous value between 0 and 1.
-𝑃 (𝑘|𝑆) denotes the distribution of (binned) article Activation score 𝑘 within the pool of items that were available at that point (𝑆).
-𝑄 ∗ (𝑘|𝑅) expresses the same, but for the binned Activation scores in the rank-aware recommendation distribution.
-(式9)市販の感情分析ツールの多くは、テキストを分析し、テキストがポジティブな感情を表現している場合は値（0、1）、表現された感情がネガティブな場合は値（-1、0）、完全に中立の場合は0を返す。値が極端であればあるほど、表現された感情が強いことを意味する.
-[71]で提案されたように、私たちは1つの記事で表現された感情の高さ、したがって活性化のレベルを決定するための近似値として記事の絶対センチメントスコアを使用する.
-𝑃 (𝑘|𝑆)は、その時点(ᵆ)で利用可能だったアイテムのプール内の（ビン詰め）記事の活性化スコア𝑘の分布を示す。
-𝑄∗ (ᑘ) は、同じように、ランクを意識した推薦分布におけるビン詰めの活性化スコアについて表現するものである。
+$P(k|S)$ denotes the distribution of (binned) article Activation score $k$ within the pool of items that were available at that point ($S$).
+$P(k|S)$ は、その時点で利用可能だったアイテムプール内の(ビン詰め)記事$S$(=推薦可能アイテムリスト?)のActivation Score $k$ の分布を示す.
+$Q^*(k|R)$ expresses the same, but for the binned Activation scores in the rank-aware recommendation distribution.
+$Q^*(k|R)$ は、同様に、rank-aware推薦リスト分布(=一方で、推薦されたアイテムリスト?)におけるbinned のActivation scores について表現するもの.
+
+$$
+Activation = Act(P(k|S), Q^*(k|R))
+= \sum_{k} Q^*(k|R) f(\frac{P(k|S)}{Q^*(k|R)})
+\tag{9}
+$$
 
 ### 3.4.4. Representation. 表現
 
 (Equation 10) aims to approximate a notion of viewpoint diversity (e.g. mentions of political topics or political parties), where the viewpoints are expressed categorically.
-(式10)は、視点の多様性（政治的トピックや政党の言及など）の概念を近似することを目的としており、視点はカテゴリ的に表現される。
-Here 𝑝 refers to the presence of a particular viewpoint, and 𝑃 (𝑝|𝑆) is the distribution of these viewpoints within the overall pool of articles, while 𝑄 ∗ (𝑝|𝑅) expresses the rank-aware distribution of viewpoints within the recommendation set.
-ここで、は特定の視点の存在を意味し、𝑃（ᵅ）は記事のプール全体におけるこれらの視点の分布であり、𝑄（ᵅ）は推薦セット内の視点のランク認識分布を表現する。
+Representation(式10)は、**viewpointのdiversity(ex. 政治的トピックや政党の言及など)**の概念を近似することを目的としており、viewpointはカテゴリ的に表現される.
+Here $p$ refers to the presence of a particular viewpoint, and $P (p|S)$ is the distribution of these viewpoints within the overall pool of articles, while $Q^*(p|R)$ expresses the rank-aware distribution of viewpoints within the recommendation set.
+ここで、$p$ は特定の veiwpoint の存在を意味し、$P(p|S)$ は記事プール全体におけるこれらの viewpoint の分布であり、$Q^*(p|R)$ は推薦セット内のveiwpoint の rank-aware分布を表現する.
+(viewpointって各記事アイテムに紐づくcategoricalなメタデータなのかな?)
+
+$$
+Representation = Rep(P(p|S), Q^*(p|R))
+= \sum_{p} Q^*(p|R) f(\frac{P(p|S)}{Q^*(p|R)})
+\tag{10}
+$$
 
 ### 3.4.5. Alternative Voices. オルタナティブ・ヴォイス
 
-(Equation 11) is related to the Representation metric in the sense that it also aims to reflect an aspect of viewpoint diversity.
-(式11)は、視点の多様性の一面を反映させるという意味で、Representation指標と関連している。
+Alternative Voices(Equation 11) is related to the Representation metric in the sense that it also aims to reflect an aspect of viewpoint diversity.
+Alternative Voices(式11)は、viewpoint diversity の一面を反映させるという意味で、**Representation metricと関連**している.
 Rather than focusing on the content of the viewpoint, it focuses on the viewpoint holder, and specifically whether they belong to a “protected group” or not.
-これは、視点の内容ではなく、視点の持ち主、特に「保護された集団」に属しているか否かに着目したものである。
-Examples of such protected/unprotected groups could be non-male/male, nonwhite/white, etc.7 This approach is based on the implementation of balanced neighbourhoods in recommender systems [12]. With 𝑚 we refer to the distribution of protected vs. non-protected groups, with 𝑚 ∈ {Minority, Majority}. 𝑃 (𝑚|𝑆) and 𝑄 ∗ (𝑚|𝑆) refer to the distribution of these groups in the pool of available articles and rank-aware recommendation distribution respectively.
-このような保護／非保護グループの例としては、非男性／男性、非白人／白人などがあります7。このアプローチは、レコメンダーシステムにおけるバランスドネイバーフッドの実装に基づくものです［12］。𝑚では、保護されるグループと保護されないグループの分布を指し、𝑚∈{Minority, Majority}とします。𝑃 (↪Ll_1D45A) と 𝑄∗ (𝑚|↪Lu_1D446) はそれぞれ、利用可能な記事のプールとランク認識推薦分布におけるこれらのグループの分布に言及する。
+これは、**viewpoint の内容ではなく、viewpointの持ち主、特に"protected group(保護された集団?)"に属しているか否かに着目したもの**である.
+Examples of such protected/unprotected groups could be non-male/male, nonwhite/white, etc.
+このようなprotected/unprotected グループの例としては、非男性／男性、非白人／白人などがある.(なるほど...! あんまり日本だとイメージつかないなぁ...)
+This approach is based on the implementation of balanced neighbourhoods in recommender systems [12].
+このアプローチは、推薦システムにおける balanced neighbourhoods(?)の実装に基づくもの[12].
+With $m$ we refer to the distribution of protected vs. non-protected groups, with $m$ ∈ {Minority, Majority}.
+$m$では、保護グループとnot保護グループの分布を指し、$m$ ∈ {Minority, Majority}とする.($m$はbinaryのcategorical変数?)
+$P(m|S)$ and $Q^*(m|R)$ refer to the distribution of these groups in the pool of available articles and rank-aware recommendation distribution respectively.
+$P(m|S)$ と $Q^*(m|R)$ はそれぞれ、推薦可能アイテムプールと、rank-awareな推薦リスト分布における 保護/not保護 グループの分布に言及する.
 
 $$
+AlternativeVoices = AltV(P(m|S), Q^*(m|R))
+= \sum_{m} Q^*(m|R) f(\frac{P(m|S)}{Q^*(m|R)})
 \tag{11}
 $$
 
