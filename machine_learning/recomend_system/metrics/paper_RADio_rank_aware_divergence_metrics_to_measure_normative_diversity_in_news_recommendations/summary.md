@@ -444,4 +444,179 @@ divergence スコアを、DARTの民主主義に関するさまざまな理論�
 
 ## お気持ち実装
 
-mada
+KL divergence, JS divergence, 推薦アイテムリストをrank-aware pmfに変換する処理, rank-awareな JS divergence metricの実装.
+
+まずはテストコードから.(TDD! テストファースト開発!)
+
+```python:test_metric.py
+import math
+
+from metric import (
+    calc_f_JS_t,
+    calc_JS_divergence,
+    calc_KL_divergence,
+    calc_rank_aware_JS_divergence,
+    calc_rank_aware_pmf,
+    calc_rank_weight_MMR,
+    calc_rank_weight_nDCG,
+)
+
+
+def test_calc_KL_divergence() -> None:
+    P = {"a": 0.2, "b": 0.3, "c": 0.5}
+    Q = {"a": 0.3, "b": 0.3, "c": 0.4}
+    kl_div_PQ_expected = -(
+        0.2 * math.log2(0.3) + 0.3 * math.log2(0.3) + 0.5 * math.log2(0.4)
+    ) + (0.2 * math.log2(0.2) + 0.3 * math.log2(0.3) + 0.5 * math.log2(0.5))
+
+    kl_div_PQ_actual = calc_KL_divergence(P, Q)
+    assert math.isclose(kl_div_PQ_actual, kl_div_PQ_expected)
+
+
+def test_calc_JS_divergence() -> None:
+    P = {"a": 0.2, "b": 0.3, "c": 0.5}
+    Q = {"a": 0.3, "b": 0.3, "c": 0.4}
+
+    js_div_first_term = (
+        -(0.2 + 0.3) / 2 * math.log2((0.2 + 0.3) / 2)
+        - (0.3 + 0.3) / 2 * math.log2((0.3 + 0.3) / 2)
+        - (0.5 + 0.4) / 2 * math.log2((0.5 + 0.4) / 2)
+    )
+    js_div_second_term = (
+        1 / 2 * (0.2 * math.log2(0.2) + 0.3 * math.log2(0.3) + 0.5 * math.log2(0.5))
+    )
+    js_div_third_term = (
+        1 / 2 * (0.3 * math.log2(0.3) + 0.3 * math.log2(0.3) + 0.4 * math.log2(0.4))
+    )
+    js_div_PQ_expected = js_div_first_term + js_div_second_term + js_div_third_term
+
+    js_div_PQ_actual = calc_JS_divergence(P, Q)
+    print(js_div_PQ_actual)
+    assert math.isclose(js_div_PQ_actual, js_div_PQ_expected)
+
+
+def test_calc_rank_weight_nDCG() -> None:
+    rank = 2
+    rank_weight_expected = 1 / (math.log2(rank + 1))
+
+    rank_weight_actual = calc_rank_weight_nDCG(rank)
+    assert math.isclose(rank_weight_actual, rank_weight_expected)
+
+
+def test_calc_rank_weight_MMR() -> None:
+    rank = 2
+    rank_weight_expected = 1 / (rank + 1)
+
+    rank_weight_actual = calc_rank_weight_MMR(rank)
+    assert math.isclose(rank_weight_actual, rank_weight_expected)
+
+
+def test_calc_rank_aware_pmf() -> None:
+    R = ["a", "b", "c"]
+    Q_asterisk_expected = {
+        "a": calc_rank_weight_MMR(1)
+        / (calc_rank_weight_MMR(1) + calc_rank_weight_MMR(2) + calc_rank_weight_MMR(3)),
+        "b": calc_rank_weight_MMR(2)
+        / (calc_rank_weight_MMR(1) + calc_rank_weight_MMR(2) + calc_rank_weight_MMR(3)),
+        "c": calc_rank_weight_MMR(3)
+        / (calc_rank_weight_MMR(1) + calc_rank_weight_MMR(2) + calc_rank_weight_MMR(3)),
+    }
+    Q_asterisk_actual = calc_rank_aware_pmf(R)
+    assert Q_asterisk_actual == Q_asterisk_expected
+
+
+def test_calc_f_JS_t() -> None:
+    t = 1
+    f_JS_t_expected = 1 / 2 * ((t + 1) * math.log2(2 / (t + 1)) + t * math.log2(t))
+
+    f_JS_t_actual = calc_f_JS_t(t)
+    assert math.isclose(f_JS_t_actual, f_JS_t_expected)
+
+
+def test_calc_rank_aware_JS_divergence() -> None:
+    P_asterisk = {"a": 0.2, "b": 0.3, "c": 0.5}
+    Q_asterisk = {"a": 0.3, "b": 0.3, "c": 0.4}
+
+    rank_aware_JS_div_expected = (
+        0.3 * calc_f_JS_t(0.2 / 0.3)
+        + 0.3 * calc_f_JS_t(0.3 / 0.3)
+        + 0.4 * calc_f_JS_t(0.5 / 0.4)
+    )
+    rank_aware_JS_div_actual = calc_rank_aware_JS_divergence(P_asterisk, Q_asterisk)
+
+    assert math.isclose(rank_aware_JS_div_actual, rank_aware_JS_div_expected)
+```
+
+中身の実装は以下.
+
+```python: metric.py
+import math
+from collections import defaultdict
+from typing import Any, Dict, List
+
+
+def calc_KL_divergence(P: Dict[Any, float], Q: Dict[Any, float]) -> float:
+    """ともに確率質量分布を想定.
+    P: dictionary of probability distribution 1
+    Q: dictionary of probability distribution 2
+    """
+    kl_div_P_Q = 0
+    for x in P.keys():
+        if P[x] > 0 and Q.get(x, 0) > 0:
+            print(P[x], Q[x])
+            kl_div_P_Q += -P[x] * math.log2(Q[x]) + P[x] * math.log2(P[x])
+    return kl_div_P_Q
+
+
+def calc_JS_divergence(P: Dict[Any, float], Q: Dict[Any, float]) -> float:
+    js_first_term = 0
+    js_second_term = 0
+    js_third_term = 0
+    for x in P.keys():
+        P_x = P.get(x, 0)
+        Q_x = Q.get(x, 0)
+        if P_x <= 0 or Q_x <= 0:
+            continue
+        js_first_term += -(P_x + Q_x) / 2 * math.log2((P_x + Q_x) / 2)
+        js_second_term += 1 / 2 * P_x * math.log2(P_x)
+        js_third_term += 1 / 2 * Q_x * math.log2(Q_x)
+    return js_first_term + js_second_term + js_third_term
+
+
+def calc_rank_weight_nDCG(rank: int) -> float:
+    return 1 / (math.log2(rank + 1))
+
+
+def calc_rank_weight_MMR(rank: int) -> float:
+    return 1 / (rank + 1)
+
+
+def calc_rank_aware_pmf(R: List[Any]) -> Dict[Any, float]:
+    rank_aware_pmf = defaultdict(float)
+    rank_weights_sum = sum(
+        [calc_rank_weight_MMR(rank) for rank in range(1, len(R) + 1)]
+    )
+    for rank_idx in range(len(R)):
+        rank = rank_idx + 1
+        rank_aware_pmf[R[rank_idx]] = calc_rank_weight_MMR(rank) / rank_weights_sum
+    return rank_aware_pmf
+
+
+def calc_f_JS_t(t: float) -> float:
+    return 1 / 2 * ((t + 1) * math.log2(2 / (t + 1)) + t * math.log2(t))
+
+
+def calc_rank_aware_JS_divergence(
+    P_asterisk: Dict[Any, float],
+    Q_asterisk: Dict[Any, float],
+) -> float:
+    rank_aware_JS_div = 0
+    for x in P_asterisk.keys():
+        P_x = P_asterisk.get(x, 0)
+        Q_x = Q_asterisk.get(x, 0)
+        if P_x <= 0 or Q_x <= 0:
+            continue
+        rank_aware_JS_div += Q_x * calc_f_JS_t(P_x / Q_x)
+
+    return rank_aware_JS_div
+```

@@ -41,8 +41,29 @@ def calc_rank_weight_MMR(rank: int) -> float:
 
 def calc_rank_aware_pmf(R: List[Any]) -> Dict[Any, float]:
     rank_aware_pmf = defaultdict(float)
-    rank_weights_sum = sum([calc_rank_weight_MMR(rank) for rank in range(1, len(R) + 1)])
+    rank_weights_sum = sum(
+        [calc_rank_weight_MMR(rank) for rank in range(1, len(R) + 1)]
+    )
     for rank_idx in range(len(R)):
         rank = rank_idx + 1
         rank_aware_pmf[R[rank_idx]] = calc_rank_weight_MMR(rank) / rank_weights_sum
     return rank_aware_pmf
+
+
+def calc_f_JS_t(t: float) -> float:
+    return 1 / 2 * ((t + 1) * math.log2(2 / (t + 1)) + t * math.log2(t))
+
+
+def calc_rank_aware_JS_divergence(
+    P_asterisk: Dict[Any, float],
+    Q_asterisk: Dict[Any, float],
+) -> float:
+    rank_aware_JS_div = 0
+    for x in P_asterisk.keys():
+        P_x = P_asterisk.get(x, 0)
+        Q_x = Q_asterisk.get(x, 0)
+        if P_x <= 0 or Q_x <= 0:
+            continue
+        rank_aware_JS_div += Q_x * calc_f_JS_t(P_x / Q_x)
+
+    return rank_aware_JS_div
