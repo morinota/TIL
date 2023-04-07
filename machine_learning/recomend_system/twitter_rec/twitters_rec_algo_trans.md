@@ -163,6 +163,9 @@ This ranking mechanism takes into account thousands of features and outputs ten 
 We rank the Tweets from these scores.
 このスコアからツイートをランキングしている.
 
+- [Heavy Ranker](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md)
+- [Heavy Rankerで採用されているMLモデル: MaskNet(ランク学習のNNっぽい?)](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md)
+
 # Heuristics, Filters, and Product Features ヒューリスティック、フィルター、そして製品の特徴
 
 After the Ranking stage, we apply heuristics and filters to implement various product features
