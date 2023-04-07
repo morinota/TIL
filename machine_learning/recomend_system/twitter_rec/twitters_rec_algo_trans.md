@@ -146,87 +146,87 @@ The more that users from a community like a Tweet, the more that Tweet will be a
 # Ranking ランキング
 
 The goal of the For You timeline is to serve you relevant Tweets
-For Youのタイムラインの目的は、あなたに関連するTweetを提供することです。
+For Youのタイムラインの目的は、あなたに関連するTweetを提供することである.
 At this point in the pipeline, we have ~1500 candidates that may be relevant
-パイプラインのこの時点で、関連する可能性のある候補が1500件ほどある
+パイプラインのこの時点で、関連する可能性のある候補が1500件ほどある.
 Scoring directly predicts the relevance of each candidate Tweet and is the primary signal for ranking Tweets on your timeline
-スコアリングは、各候補ツイートの関連性を直接予測し、あなたのタイムライン上のツイートをランク付けする主要なシグナルとなります
+スコアリングは、各候補ツイートの関連性を直接予測し、あなたのタイムライン上のツイートをランク付けする主要なシグナルとなる.
 At this stage, all candidates are treated equally, without regard for what candidate source it originated from.
-この段階では、どの候補者のソースから出たものであるかは関係なく、すべての候補者が平等に扱われます。
+この段階では、どの candidate source から出たものであるかは関係なく、**すべての candidates が平等に扱われる**.
 
 Ranking is achieved with a ~48M parameter neural network that is continuously trained on Tweet interactions to optimize for positive engagement (e.g
 ランキングは、ツイートとのやり取りを継続的にトレーニングし、ポジティブなエンゲージメントを得るために最適化された、約48Mパラメータのニューラルネットワークで実現されています（例）。
 Likes, Retweets, and Replies)
 いいね！」「リツイート」「リプライ」)
 This ranking mechanism takes into account thousands of features and outputs ten labels to give each Tweet a score, where each label represents the probability of an engagement
-このランキングメカニズムは、何千もの特徴を考慮し、10個のラベルを出力して各ツイートにスコアを与えるもので、各ラベルはエンゲージメントの確率を表しています。
+このランキングメカニズムは、**何千もの特徴を考慮し、10個のラベルを出力して各ツイートにスコアを与えるもの**で、各ラベルはエンゲージメントの確率を表している.
 We rank the Tweets from these scores.
-このスコアからツイートをランキングしています。
+このスコアからツイートをランキングしている.
 
 # Heuristics, Filters, and Product Features ヒューリスティック、フィルター、そして製品の特徴
 
 After the Ranking stage, we apply heuristics and filters to implement various product features
-ランキングの段階を経て、ヒューリスティックとフィルターを適用して、さまざまな製品機能を実装する
+ランキングの段階を経て、ヒューリスティックとフィルターを適用して、さまざまな製品機能を実装する.
 These features work together to create a balanced and diverse feed
-これらの機能が連動して、バランスのとれた多様な飼料を作ることができます
+これらの機能が連動して、バランスのとれた多様な feed を作ることができる.
 Some examples include:
 などの例があります：
 
-- Visibility Filtering: Filter out Tweets based on their content and your preferences. For instance, remove Tweets from accounts you block or mute. ビジビリティフィルタリング： ツイートの内容や好みに応じてフィルタリングが可能 例えば、ブロックやミュートしたアカウントからのツイートを削除する。
+- Visibility Filtering: Filter out Tweets based on their content and your preferences. For instance, remove Tweets from accounts you block or mute. ビジビリティフィルタリング： ツイートの内容や好みに応じてフィルタリングが可能. 例えば、ブロックやミュートしたアカウントからのツイートを削除する.
 
-- Author Diversity: Avoid too many consecutive Tweets from a single author. 著者の多様性： 一人の著者のツイートが連続しすぎないようにする。
+- Author Diversity: Avoid too many consecutive Tweets from a single author. 著者の多様性： 一人の著者のツイートが連続しすぎないようにする.
 
-- Content Balance: Ensure we are delivering a fair balance of In-Network and Out-of-Network Tweets. コンテンツのバランス： ネットワーク内のツイートとネットワーク外のツイートを公平なバランスで配信していることを確認する。
+- Content Balance: Ensure we are delivering a fair balance of In-Network and Out-of-Network Tweets. コンテンツのバランス： **ネットワーク内のツイートとネットワーク外のツイートを公平なバランスで配信していることを確認する.**
 
-- Feedback-based Fatigue: Lower the score of certain Tweets if the viewer has provided negative feedback around it. フィードバックに基づく疲労感： 視聴者がそのツイートに対してネガティブなフィードバックをした場合、特定のツイートのスコアを下げる。
+- Feedback-based Fatigue: Lower the score of certain Tweets if the viewer has provided negative feedback around it. フィードバックに基づく疲労感： **視聴者がそのツイートに対してネガティブなフィードバックをした場合、特定のツイートのスコアを下げる.**
 
-- Social Proof: Exclude Out-of-Network Tweets without a second degree connection to the Tweet as a quality safeguard. In other words, ensure someone you follow engaged with the Tweet or follows the Tweet’s author. ソーシャルプルーフ： 品質保護として、そのツイートと二次的なつながりがないネットワーク外のツイートを除外する。 つまり、あなたがフォローしている誰かがそのツイートに関与しているか、そのツイートの作者をフォローしているかを確認します。
+- Social Proof: Exclude Out-of-Network Tweets without a second degree connection to the Tweet as a quality safeguard. In other words, ensure someone you follow engaged with the Tweet or follows the Tweet’s author. ソーシャルプルーフ： 品質保護として、そのツイートと**二次的なつながりがないネットワーク外のツイートを除外する**.  つまり、あなたがフォローしている誰かがそのツイートに関与しているか、そのツイートの作者をフォローしているかを確認する. 
 
-- Conversations: Provide more context to a Reply by threading it together with the original Tweet. 会話： 元のツイートと一緒にスレッド化することで、リプライにさらなる文脈を提供します。
+- Conversations: Provide more context to a Reply by threading it together with the original Tweet. 会話： 元のツイートと一緒にスレッド化することで、リプライに**さらなる文脈を提供**する.
 
-- Edited Tweets: Determine if the Tweets currently on a device are stale, and send instructions to replace them with the edited versions. 編集されたツイート 端末に現在表示されているツイートが古くなっているかどうかを判断し、編集されたバージョンに置き換える指示を送信する。
+- Edited Tweets: Determine if the Tweets currently on a device are stale, and send instructions to replace them with the edited versions. 編集されたツイート **端末に現在表示されているツイートが古くなっているかどうかを判断**し、編集されたバージョンに置き換える指示を送信する.
 
-# Mixing and Serving ミキシングとサーヴィス
+# Mixing and Serving
 
 At this point, Home Mixer has a set of Tweets ready to send to your device
-この時点で、Home Mixerはデバイスに送信するためのツイートセットを準備しています。
+この時点で、Home Mixerはデバイスに送信するためのツイートセットを準備している.
 As the last step in the process, the system blends together Tweets with other non-Tweet content like Ads, Follow Recommendations, and Onboarding prompts, which are returned to your device to display.
-このプロセスの最後のステップとして、システムはツイートと、広告、フォローの推奨、オンボーディングプロンプトなどのツイート以外のコンテンツを混ぜ合わせ、お客様の端末に戻して表示させるのです。
+このプロセスの最後のステップとして、システムはツイートと、広告、フォローの推薦、オンボーディングプロンプトなどの**ツイート以外のコンテンツを混ぜ合わせ**、お客様の端末に戻して表示させるのである.
 
 The pipeline above runs approximately 5 billion times per day and completes in under 1.5 seconds on average
-上記のパイプラインは1日に約50億回実行され、平均1.5秒未満で完了する
+上記のパイプラインは1日に約50億回実行され、平均1.5秒未満で完了する.
 A single pipeline execution requires 220 seconds of CPU time, nearly 150x the latency you perceive on the app.
-1回のパイプライン実行に220秒のCPU時間を要し、アプリで感じるレイテンシーの150倍近い時間がかかります。
+1回のパイプライン実行に220秒のCPU時間を要し、アプリで感じるレイテンシーの150倍近い時間がかかる.
 
 ![](https://cdn.cms-twdigitalassets.com/content/dam/blog-twitter/engineering/en_us/open-source/2023/twitter-recommendation-algorithm/phone-frame-padded.png.img.fullhd.medium.png)
 
 The goal of our open source endeavor is to provide full transparency to you, our users, about how our systems work
-オープンソースの目的は、私たちのシステムがどのように機能するかについて、ユーザーであるあなたに完全な透明性を提供することです。
+オープンソースの目的は、私たちのシステムがどのように機能するかについて、ユーザであるあなたに完全な透明性を提供することである.
 We’ve released the code powering our recommendations that you can view here (and here) to understand our algorithm in greater detail, and we are also working on several features to provide you greater transparency within our app
-私たちは、私たちのアルゴリズムをより詳しく理解するために、ここ（とここ）で見ることができる私たちの推奨を駆動するコードを公開しました。また、私たちのアプリでより透明性を提供するためにいくつかの機能に取り組んでいます。
+私たちは、私たちのアルゴリズムをより詳しく理解するために、[ここ](https://github.com/twitter/the-algorithm)（と[ここ](https://github.com/twitter/the-algorithm-ml)）で見ることができる私たちの推薦を駆動するコードを公開しました。また、私たちのアプリでより透明性を提供するためにいくつかの機能に取り組んでいる.
 Some of the new developments we have planned include:
-予定している新展開の一部をご紹介します：
+予定している新展開の一部をご紹介する：
 
-- A better Twitter analytics platform for creators with more information on reach and engagement クリエイターのための、リーチやエンゲージメントに関するより良いTwitter分析プラットフォームです。
+- A better Twitter analytics platform for creators with more information on reach and engagement クリエイターのための、リーチやエンゲージメントに関するより良いTwitter分析プラットフォーム.
 
-- Greater transparency into any safety labels applied to your Tweets or accounts ツイートやアカウントに貼られた安全ラベルの透明性を高めることができます。
+- Greater transparency into any safety labels applied to your Tweets or accounts ツイートやアカウントに貼られた安全ラベルの透明性を高める.
 
-- Greater visibility into why Tweets appear on your timeline ツイートがタイムラインに表示される理由をより深く知ることができます。
+- Greater visibility into why Tweets appear on your timeline ツイートがタイムラインに表示される理由をより深く知ることができる.
 
 # What’s Next? 次は何だ？
 
 Twitter is the center of conversations around the world
 世界中の会話の中心はTwitter
 Every day, we serve over 150 billion Tweets to people’s devices
-毎日、1,500億以上のツイートを人々の端末に配信しています
+毎日、1,500億以上のツイートを人々の端末に配信している.
 Ensuring that we’re delivering the best content possible to our users is both a challenging and an exciting problem
-ユーザーに最高のコンテンツを提供することは、チャレンジングであると同時にエキサイティングな問題でもあります。
+ユーザに最高のコンテンツを提供することは、チャレンジングであると同時にエキサイティングな問題でもある.
 We’re working on new opportunities to expand our recommendation systems—new real-time features, embeddings, and user representations—and we have one of the most interesting datasets and user bases in the world to do it with
-私たちは、新しいリアルタイム機能、エンベッディング、ユーザー表現など、レコメンデーションシステムを拡張する新しい機会に取り組んでいます。
+私たちは、新しいリアルタイム機能、エンベッディング、ユーザー表現など、レコメンデーションシステムを拡張する新しい機会に取り組んでいる.
 We are building the town square of the future
 未来の街の広場をつくる
 If this interests you, please consider joining us.
-もしご興味があれば、ぜひご参加をご検討ください。
+もしご興味があれば、ぜひご参加をご検討ください.
 
 Written by the Twitter Team.
 文責：Twitterチーム
