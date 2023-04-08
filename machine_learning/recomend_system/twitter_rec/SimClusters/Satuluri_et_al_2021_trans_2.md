@@ -1,13 +1,13 @@
-## link リンク
+## 0.1. link リンク
 
 - https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio
 
-## title タイトル
+## 0.2. title タイトル
 
 SimClusters: Community-Based Representations for Heterogeneous Recommendations at Twitter
 SimClusters（シムクラスター）： Twitterにおける異質なレコメンデーションのためのコミュニティベース表現
 
-## abstract アブストラクト
+## 0.3. abstract アブストラクト
 
 Personalized recommendation products at Twitter target a multitude of heterogeneous items: Tweets, Events, Topics, Hashtags, and users.
 Twitterのパーソナライズド・レコメンデーション製品は、多数の異質なアイテムを対象としている： ツイート、イベント、トピック、ハッシュタグ、そしてユーザ.
@@ -22,7 +22,7 @@ We propose a novel algorithm for community discovery based on Metropolis-Hasting
 SimClusters scales to networks with billions of users and has been effective across a variety of deployed applications at Twitter.
 SimClustersは数十億人のユーザーを抱えるネットワークにスケールし、Twitterの様々なデプロイメントアプリケーションで効果を発揮している.
 
-# Introduction 序章
+# 1. Introduction 序章
 
 Personalized recommendations lie at the heart of many different technology-enabled products, and Twitter is no exception.
 パーソナライズされたレコメンデーションは、**さまざまなテクノロジーを駆使したproductの中核をなすもの**であり、Twitterも例外ではない.
@@ -60,149 +60,149 @@ Previously, Twitter built systems to tackle each of these different recommendati
 これまでTwitterは、**これらの異なるレコメンデーション問題に個別に対応するシステムを構築しており、再利用や共通化はほとんど行われていなかった**.
 The original example here is the “Who To Follow” system that launched a decade ago [11] for user recommendations.
 ここでの元例は、10年前に発売されたユーザ推薦のための「Who To Follow」システム[11]である.
-Subsequently, Gupta et al.
-その後、Gupta et al.
-[12] described a specialized system to generate Tweet recommendations in real time, insights from which were later deployed in GraphJet [31].
-[12]では、ツイート推奨をリアルタイムで生成する特殊なシステムについて説明し、その洞察は後にGraphJet[31]で展開された。
+Subsequently, Gupta et al.[12] described a specialized system to generate Tweet recommendations in real time, insights from which were later deployed in GraphJet [31].
+その後、Guptaら[12]は、リアルタイムでツイートレコメンデーションを生成する特殊なシステムについて説明し、そこから得た知見は後にGraphJet[31]に展開された.
 GraphJet ingested the realtime stream of user-Tweet engagements to maintain a user-Tweet bipartite graph from which to generate recommendations, but the system was expensive to extend to new use cases.
-GraphJetは、ユーザーとツイートの関係をリアルタイムに取り込み、ユーザーとツイートの二部グラフを維持し、そこからレコメンデーションを生成しますが、このシステムは新しいユースケースに拡張するには高価でした。
+GraphJetは、ユーザーとツイートの関係をリアルタイムに取り込み、ユーザーとツイートの二部グラフを維持し、そこからレコメンデーションを生成しますが、このシステムは新しいユースケースに拡張するには高価だった.
 These aforementioned infrastructures were built mainly to generate candidates which got blended and scored subsequently.
-これらのインフラは、主に候補者を生み出し、それをブレンドして採点するために構築されたものです。
+これらのインフラは、**主にcandidatesを生み出し、それをブレンドして採点するために構築されたもの**である.
 Twitter also built custom infrastructure for feature retrieval and scoring of arbitrarily generated candidates - examples include RealGraph [14] and RecService [9].
-また、Twitterは、任意に生成された候補の特徴検索やスコアリングのためのカスタムインフラを構築しています。
+また、Twitterは、任意に生成された候補の特徴検索やスコアリングのためのカスタムインフラを構築している.
 All of these systems were built with the aim of solving specific sub-problems in the recommendations landscape at Twitter and require separate development and maintenance.
-これらのシステムはすべて、Twitterのレコメンデーション状況における特定のサブ問題を解決する目的で構築され、個別の開発・保守が必要です。
+これらのシステムはすべて、Twitterのレコメンデーション状況における特定のサブ問題を解決する目的で構築され、**個別の開発・保守が必要である**.
 The central motivating question of this paper is: can we build a general system that helps us advance the accuracy of all or most of the Twitter products which require personalization and recommendations?
-本論文の中心的な動機付けとなる問いは、パーソナライズやレコメンデーションが必要なTwitter製品のすべて、あるいはほとんどの精度を高めるのに役立つ一般的なシステムを構築できるかということです。
+本論文の中心的な動機付けとなる問いは、**パーソナライズやレコメンデーションが必要なTwitter製品のすべて、あるいはほとんどの精度を高めるのに役立つ一般的なシステムを構築できるか**ということである.
 
 The solution proposed in this paper is built on the insight that we can construct, from the user–user graph, a general-purpose representation based on community structure, where each community is characterized by a set of influencers that many people in that community follow.
-本論文で提案するソリューションは、ユーザー-ユーザーグラフから、コミュニティ構造に基づく汎用的な表現を構築できるという洞察に基づいており、各コミュニティは、そのコミュニティ内の多くの人々がフォローしているインフルエンサーのセットによって特徴づけられる。
+本論文で提案するソリューションは、**ユーザ \* ユーザグラフ**から、コミュニティ構造に基づく汎用的な表現を構築できるという洞察に基づいており、各コミュニティは、そのコミュニティ内の多くの人々がフォローしているインフルエンサーのセットによって特徴づけられる.
 Each of the different kinds of content (i.e., the targets in Table 1) is represented as a vector in the space of these communities, with the entry corresponding to the 𝑖-th community for item 𝑗 indicating how interested the 𝑖-th community is in item 𝑗.
-異なる種類のコンテンツ（すなわち表1のターゲット）のそれぞれは、これらのコミュニティの空間におけるベクトルとして表され、アイテム𝑗に対する𝑖番目のコミュニティに対応するエントリは、𝑖番目のコミュニティがアイテム𝑗にどれだけ興味を持っているかを示しています。
+**異なる種類のコンテンツ(すなわち表1のターゲット)のそれぞれは、これらのコミュニティの空間におけるベクトルとして表され**、アイテム $j$ に対する $i$ 番目のコミュニティに対応するエントリは、$i$番目のコミュニティがアイテム $j$ にどれだけ興味を持っているかを示している.
 The end result is that we can represent heterogeneous recommendation targets as sparse, interpretable vectors in the same space, which enables solutions for a wide variety of recommendation and personalization tasks (see details in Section 6).
-最終的には、異質な推薦対象を、同じ空間のスパースで解釈可能なベクトルとして表現することができ、様々な推薦やパーソナライゼーションタスクのソリューションが可能になります（詳細はセクション6を参照）。
+最終的には、**異質な推薦対象を、同じ空間のスパースで解釈可能なベクトルとして表現することができ**、様々な推薦やパーソナライゼーションタスクのソリューションが可能になる(詳細はセクション6を参照).
 There are two notable aspects of our design:
-私たちのデザインには、2つの特筆すべき点があります：
+私たちのデザインには、2つの特筆すべき点がある：
 
-- 1. We avoid conventional matrix factorization methods that typically require solving massive numerical optimization problems, and instead rely on a combination of similarity search and community discovery, both of which are easier to scale. A key algorithmic innovation of our work is a new approach to community discovery — called Neighborhood-aware MH — which is 10×-100× faster, 3×-4× more accurate than off-theshelf baselines, and scales easily to graphs with ∼109 nodes and ∼1011 edges. It helps us discover ∼105 communities on Twitter that are either organized around a common topic (e.g., “K-Pop” or “Machine Learning”) or based on social relationships (e.g., those who work together or went to high-school together). We have open-sourced the implementation of the new algorithm in https://github.com/twitter/sbf. 1. 私たちは、大規模な数値最適化問題を解く必要がある従来の行列分解法を避け、代わりに、スケールアップが容易な類似性検索とコミュニティ発見の組み合わせに頼っています。 このアルゴリズムは、既存のベースラインと比較して、10倍から100倍高速で、3倍から4倍高精度であり、109個のノードと1011個のエッジを持つグラフに容易に拡張することができます。 K-POP」や「機械学習」といった共通の話題や、「職場が一緒」「高校が一緒」といった社会的関係から構成されるTwitter上のコミュニティ（約105件）を発見することができます。 新しいアルゴリズムの実装は、https://github.com/twitter/sbf、オープンソース化しています。
+- 1. We avoid conventional matrix factorization methods that typically require solving massive numerical optimization problems, and instead rely on a combination of similarity search and community discovery, both of which are easier to scale. A key algorithmic innovation of our work is a new approach to community discovery — called Neighborhood-aware MH — which is 10×-100× faster, 3×-4× more accurate than off-theshelf baselines, and scales easily to graphs with ∼109 nodes and ∼1011 edges. It helps us discover ∼105 communities on Twitter that are either organized around a common topic (e.g., “K-Pop” or “Machine Learning”) or based on social relationships (e.g., those who work together or went to high-school together). We have open-sourced the implementation of the new algorithm in https://github.com/twitter/sbf. 1. 私たちは、**大規模な数値最適化問題を解く必要がある従来の行列分解法を避け、代わりに、スケールアップが容易な類似性検索とコミュニティ発見の組み合わせに頼っている**. このアルゴリズムは、既存のベースラインと比較して、10倍から100倍高速で、3倍から4倍高精度であり、109個のノードと1011個のエッジを持つグラフに容易に拡張することができる. 「K-POP」や「機械学習」といった共通の話題や、「職場が一緒」「高校が一緒」といった社会的関係から構成されるTwitter上のコミュニティ（約105件）を発見することができる. 新しいアルゴリズムの実装は、https://github.com/twitter/sbf、オープンソース化している.
 
-- 2.  Our overall architecture has a modular and extensible design to enable the use of whichever computing paradigm is most suited to a specific component – batch-distributed, batch-multicore, or streaming-distributed. In particular, the ability to dynamically update representations using streaming-distributed components has proved crucial for accurately modeling Tweets which are Twitter’s most important type of content. 2. 私たちのアーキテクチャは、特定のコンポーネントに最も適したコンピューティングパラダイム（バッチ分散、バッチマルチコア、ストリーミング分散）を使用できるように、全体的にモジュール式で拡張可能な設計となっています。 特に、Twitterで最も重要なコンテンツであるツイートを正確にモデル化するためには、ストリーミング分散コンポーネントを用いて表現を動的に更新する能力が重要であることが証明されました。
+- 2.  Our overall architecture has a modular and extensible design to enable the use of whichever computing paradigm is most suited to a specific component – batch-distributed, batch-multicore, or streaming-distributed. In particular, the ability to dynamically update representations using streaming-distributed components has proved crucial for accurately modeling Tweets which are Twitter’s most important type of content. 2. 私たちのアーキテクチャは、特定のコンポーネントに最も適したコンピューティングパラダイム(バッチ分散、バッチマルチコア、ストリーミング分散)を使用できるように、**全体的にモジュール式で拡張可能な設計となっている**. 特に、Twitterで最も重要なコンテンツであるツイートを正確にモデル化するためには、ストリーミング分散コンポーネントを用いて表現を動的に更新する能力が重要であることが証明された.
 
 We refer to our overall system as SimClusters (Similarity-based Clusters) and have deployed it in production for more than a year.
 私たちは、このシステム全体をSimClusters（Similarity-based Clusters）と呼び、1年以上にわたって実運用に展開しています。
 
 SimClusters also has the following features, which correspond to our design requirements:
-また、SimClustersは、私たちの設計要件に対応した以下のような特徴を持っています：
+また、SimClustersは、私たちの設計要件に対応した以下のような特徴を持っている：
 
-- 1. Universal representations: SimClusters provides representations for both users and a variety of content in the same space. This removes the need to invest in expensive custom infrastructure for each type of content. 1. ユニバーサルな表現： SimClustersは、ユーザーと様々なコンテンツの両方を同じ空間で表現することができます。 これにより、コンテンツの種類ごとに高価なカスタムインフラに投資する必要がなくなりました。
+- 1. Universal representations: SimClusters provides representations for both users and a variety of content in the same space. This removes the need to invest in expensive custom infrastructure for each type of content. 1. ユニバーサルな表現： SimClustersは、**ユーザと様々なコンテンツの両方を同じ空間で表現することができる**. これにより、**コンテンツの種類ごとに高価なカスタムインフラに投資する必要がなくなった**.
 
-- 2. Computational scale: We are able to apply SimClusters at Twitter scale, with ∼109 users, ∼1011 edges between them, and 108 new Tweets every day with ∼109 user engagements per day. 2. 計算規模： SimClustersは、109人のユーザー、1011人のエッジ、毎日108件の新しいツイート、1日あたり109人のユーザーのエンゲージメントを持つTwitterスケールで適用することが可能です。
+- 2. Computational scale: We are able to apply SimClusters at Twitter scale, with $~10^9$ users, $~10^{11}$ edges between them, and $10^8$ new Tweets every day with $~10^9$ user engagements per day. 2. 計算規模： SimClustersは、$~10^9$ 人のユーザー、$~10^{11}$ 人のエッジ、毎日$10^8$件の新しいツイート、1日あたり$~10^9$人のユーザーのエンゲージメントを持つTwitterスケールで適用することが可能である.
 
-- 3. Accuracy beyond the head: SimClusters representations are accurate beyond just the most popular content (“head”), primarily due to the ability to scale SimClusters to a very large representational space with ∼105 dimensions. 3. 頭部を超えた正確さ SimClustersの表現は、最も人気のあるコンテンツ（「頭」）を超えて正確です。これは主に、SimClustersを約105次元という非常に大きな表現空間に拡張できることによります。
+- 3. Accuracy beyond the head: SimClusters representations are accurate beyond just the most popular content (“head”), primarily due to the ability to scale SimClusters to a very large representational space with ∼105 dimensions. 3. 頭部を超えた正確さ: SimClustersの表現は、最も人気のあるコンテンツ(“head”)(most popular推薦より良いって事?)を超えて正確.これは主に、SimClustersを約105次元という非常に大きな表現空間に拡張できることによる.
 
-- 4. Item and graph churn: The modular design of SimClusters makes it easy to extend to dynamic items which rapidly rise and diminish in popularity. Many of our important recommendations and engagement prediction problem involve items that churn rapidly – most Tweets, Events, and Trends stay relevant for no more than a day or two, meaning that it is crucial to be able to efficiently learn representations of new items before they lose their relevance. 4. アイテムやグラフの入れ替わり： SimClustersのモジュール設計により、人気が急上昇・急降下する動的アイテムへの拡張が容易です。 私たちの重要なレコメンデーションやエンゲージメント予測の問題の多くは、急速に変化するアイテムを含んでいます。ほとんどのツイート、イベント、トレンドは、1日か2日程度しか関連性がありません。
+- 4. Item and graph churn: The modular design of SimClusters makes it easy to extend to dynamic items which rapidly rise and diminish in popularity. Many of our important recommendations and engagement prediction problem involve items that churn rapidly – most Tweets, Events, and Trends stay relevant for no more than a day or two, meaning that it is crucial to be able to efficiently learn representations of new items before they lose their relevance. 4. アイテムやグラフの入れ替わり： SimClustersのモジュール設計により、人気が急上昇・急降下する動的アイテムへの拡張が容易である. 私たちの重要なレコメンデーションやエンゲージメント予測の問題の多くは、急速に変化するアイテムを含んでいる. ほとんどのツイート、イベント、トレンドは、1日か2日程度しか関連性がない.
 
-- 5. Interpretability: SimClusters representations are sparse and each dimension corresponds to a specific community, making them interpretable to a degree that is hard to obtain with alternatives such as matrix factorization or graph embeddings. 5. 解釈のしやすさ SimClustersの表現は疎であり、各次元は特定のコミュニティに対応しているため、行列分解やグラフ埋め込みなどの代替手段では得難い解釈可能性を持っています。
+- 5. Interpretability: SimClusters representations are sparse and each dimension corresponds to a specific community, making them interpretable to a degree that is hard to obtain with alternatives such as matrix factorization or graph embeddings. 5. 解釈のしやすさ SimClustersの表現は疎であり、各次元は特定のコミュニティに対応しているため、行列分解やグラフ埋め込みなどの代替手段では得難い解釈可能性を持っている.
 
-- 6. Efficient nearest neighbor search: Identifying nearest neighbors is core to many downstream tasks such as generating recommendations, similar item retrieval, and user targeting. The sparsity of SimClusters representations makes it easy to setup and maintain inverted indices for retrieving nearest neighbors, even for rapidly churning domains (see details in Section 4). 6. 効率的な近傍探索 近傍探索は、レコメンデーションの生成、類似アイテムの検索、ユーザーターゲティングなど、多くの下流タスクの中核となる。 SimClusters表現のスパース性は、急速に変化するドメインであっても、最近傍を検索するための転置インデックスの設定と維持を容易にします（詳細はセクション4でご覧ください）。
+- 6. Efficient nearest neighbor search: Identifying nearest neighbors is core to many downstream tasks such as generating recommendations, similar item retrieval, and user targeting. The sparsity of SimClusters representations makes it easy to setup and maintain inverted indices for retrieving nearest neighbors, even for rapidly churning domains (see details in Section 4). 6. 効率的な近傍探索 **近傍探索は、レコメンデーションの生成、類似アイテムの検索、ユーザターゲティングなど、多くの下流タスクの中核となる**. SimClusters表現のスパース性は、急速に変化するドメインであっても、最近傍を検索するための転置インデックスの設定と維持を容易にする(詳細はセクション4でご覧ください).
 
 SimClusters has been applied to many recommendations and personalization problems at Twitter — even for mature products such as out-of-network Tweet recommendations and Personalized Trends, SimClusters has enabled double digit improvements in the engagement rates of recommendations.
-SimClustersは、Twitterの多くのレコメンデーションやパーソナライゼーションの問題に適用されています。ネットワーク外のツイート推奨やパーソナライズド・トレンドなどの成熟した製品においても、SimClustersは推奨のエンゲージメント率を2桁改善することを可能にしました。
+**SimClustersは、Twitterの多くのレコメンデーションやパーソナライゼーションの問題に適用されている**. ネットワーク外のツイート推薦やパーソナライズド・トレンドなどの成熟した製品においても、SimClustersは推薦のエンゲージメント率を2桁改善することを可能にした.
 It has also accelerated the building of entirely new products, such as Similar Tweets and Topic Tweet recommendations.
-また、Similar TweetやTopic Tweetのレコメンデーションなど、全く新しいプロダクトの構築も加速しています。
+また、Similar TweetやTopic Tweetのレコメンデーションなど、全く新しいプロダクトの構築も加速している.
 SimClusters continues to be actively developed internally and applied to new use cases.
-SimClustersは、社内で活発に開発され、新しいユースケースに適用され続けています。
+**SimClustersは、社内で活発に開発され、新しいユースケースに適用され続けている.**
 
-# Overview of SimClusters SimClustersの概要
+# 2. Overview of SimClusters SimClustersの概要
 
 The SimClusters system (see Figure 1) consists of two stages:
-SimClustersシステム（図1参照）は、2つのステージで構成されています：
+SimClustersシステム(図1参照)は、2つのステージで構成されている：
 
-- 1. In the first stage (detailed in Section 3), we discover bipartite communities from our user-user graph at scale, resulting in learning sparse, non-negative representations for our users. At the end of this stage, each user is associated with a list of communities they participate in, along with the scores quantifying the strength of their affiliation to each of those communities. We refer to this output as “User Interest Representations” and it is made available in both offline data warehouses as well as low-latency online stores, indexed by the user id. This first stage is run in a batch-distributed setting, typically as a series of MapReduce jobs running on Hadoop. 1. 第1段階（セクション3で詳述）では、ユーザーとユーザーのグラフから二部コミュニティを大規模に発見し、その結果、ユーザーの疎な非負の表現を学習する。 この段階が終わると、各ユーザーは自分が参加しているコミュニティのリストと、それぞれのコミュニティへの所属の強さを数値化したスコアとに関連づけられます。 この出力は「User Interest Representations」と呼ばれ、オフラインのデータウェアハウスと低遅延のオンラインストアの両方で、ユーザーIDによってインデックス化されて利用できるようになっています。 この最初の段階は、バッチ分散型の設定で実行され、通常はHadoop上で実行される一連のMapReduceジョブとして実行されます。
+![](https://camo.qiitausercontent.com/91062517c63bafedf6953cf10b1e3a74c62de8de/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32623466333165372d653361632d306639642d656431392d6361316535303763623534332e706e67)
 
-- 2. The second stage (detailed in Section 4) consists of several jobs running in parallel, each of which calculates the representations for a specific recommendation target, using a user–target bipartite graph formed from interaction logs on the platform. Each job in the second stage operates in either a batch-distributed setting or a streaming-distributed setting, depending on the shelf-life of the recommendation target and the churn in the corresponding user–target bipartite graph. 2. 第2段階（セクション4で詳述）は、並行して実行される複数のジョブで構成され、各ジョブは、プラットフォーム上の対話ログから形成されるユーザーとターゲットの二部グラフを用いて、特定の推薦対象に対する表現を計算する。 第2ステージの各ジョブは、推薦対象の賞味期限と対応するユーザー・ターゲット二部グラフのチャーンに応じて、バッチ分散設定またはストリーミング分散設定のどちらかで動作する。
+- 1. In the first stage (detailed in Section 3), we discover bipartite communities from our user-user graph at scale, resulting in learning sparse, non-negative representations for our users. At the end of this stage, each user is associated with a list of communities they participate in, along with the scores quantifying the strength of their affiliation to each of those communities. We refer to this output as “User Interest Representations” and it is made available in both offline data warehouses as well as low-latency online stores, indexed by the user id. This first stage is run in a batch-distributed setting, typically as a series of MapReduce jobs running on Hadoop. 1. 第1段階(セクション3で詳述)では、ユーザとユーザのグラフから二部コミュニティを大規模に発見し、その結果、ユーザーの疎な非負表現を学習する. この段階が終わると、**各ユーザは自分が参加しているコミュニティのリストと、それぞれのコミュニティへの所属の強さを数値化したスコアとに関連づけられる**. この出力は"User Interest Representations"と呼ばれ、オフラインのデータウェアハウスと低遅延のオンラインストアの両方で、ユーザIDによってインデックス化されて利用できるようになっている. この最初の段階は、バッチ分散型の設定で実行され、通常はHadoop上で実行される一連のMapReduceジョブとして実行される.
+
+- 2. The second stage (detailed in Section 4) consists of several jobs running in parallel, each of which calculates the representations for a specific recommendation target, using a user–target bipartite graph formed from interaction logs on the platform. Each job in the second stage operates in either a batch-distributed setting or a streaming-distributed setting, depending on the shelf-life of the recommendation target and the churn in the corresponding user–target bipartite graph. 2. 第2段階(セクション4で詳述)は、並行して実行される複数のジョブで構成され、各ジョブは、プラットフォーム上の対話ログから形成されるユーザとターゲットの二部グラフを用いて、特定の推薦対象に対する表現を計算する. 第2ステージの各ジョブは、推薦対象の賞味期限と対応するユーザ・ターゲット二部グラフのチャーンに応じて、バッチ分散設定またはストリーミング分散設定のどちらかで動作する.
 
 The most important detail about our design is that it’s based on discovering communities from the user–user graph.
-私たちのデザインで最も重要なのは、ユーザーとユーザーのグラフからコミュニティを発見することに基づいていることです。
+私たちのデザインで最も重要なのは、**ユーザとユーザのグラフ(この bipartite graphの事がよくわからない...)からコミュニティを発見することに基づいていること**である.
 While the other user–target graphs on Twitter evolve rapidly, the user–user graph is relatively long-term and stable, and the specific communities discovered from the graph often outlive specific edges or nodes in the graph.
-Twitterの他のユーザー・ターゲットグラフが急速に進化するのに対し、ユーザー・ユーザーグラフは比較的長期的に安定しており、グラフから発見された特定のコミュニティは、グラフの特定のエッジやノードよりも長生きすることが多いのです。
+Twitterの他のユーザ・ターゲットグラフが急速に進化するのに対し、**ユーザ・ユーザグラフは比較的長期的に安定しており**、グラフから発見された特定のコミュニティは、グラフの特定のエッジやノードよりも長生きすることが多いのである.
 In addition, the user-user graph usually also has more coverage, in the sense that there are a lot more users who have a minimum number of edges in this graph compared to the other user-item graphs.
-また、ユーザー-ユーザーグラフは、他のユーザー-アイテムグラフと比較して、このグラフのエッジ数が最小となるユーザーが多いという意味で、通常、カバレッジが高いとも言えます。
+また、ユーザ & ユーザグラフは、他のユーザ & アイテムグラフと比較して、このグラフのエッジ数が最小となるユーザが多いという意味で、通常、カバレッジが高いとも言える.
 
 The other important aspect of our design is its modularity.
-私たちのデザインのもう一つの重要な点は、モジュール化されていることです。
+私たちのデザインのもう一つの重要な点は、モジュール化されていることである.
 The different parts of the pipeline depend on each other only via offline data sets or online key-value stores, meaning that they are robust to delays in the preceding steps.
-パイプラインの異なる部分は、オフラインのデータセットまたはオンラインのキーバリューストアを介してのみ互いに依存し、先行ステップの遅延に対して堅牢であることを意味します。
+パイプラインの異なる部分は、オフラインのデータセットまたはオンラインのキーバリューストアを介してのみ互いに依存し、先行ステップの遅延に対して堅牢であることを意味する.
 It is also easy to swap out existing implementations with new variants, or run multiple implementations in parallel, as long as the output is in the format expected by the downstream jobs.
-また、下流のジョブが期待する出力形式であれば、既存の実装を新しいものに置き換えたり、複数の実装を並列に実行することも容易です。
+また、下流のジョブが期待する出力形式であれば、既存の実装を新しいものに置き換えたり、複数の実装を並列に実行することも容易である.
 The system degrades gracefully in the presence of bugs and errors - if any one of the item representation jobs has an issue, the other item representation jobs can still service their applications.
-バグやエラーが発生しても、システムは優雅に劣化します。アイテム表現ジョブの1つに問題が発生しても、他のアイテム表現ジョブはそのアプリケーションにサービスを提供できます。
+バグやエラーが発生しても、システムは優雅に劣化する. アイテム表現ジョブの1つに問題が発生しても、他のアイテム表現ジョブはそのアプリケーションにサービスを提供できる.
 Our design also allows for gradually adding more modules to the system without needing to build it all in at the start — in fact, the first version of the system only output communities without any item representations, but this by itself had many useful applications.
-実際、最初のバージョンでは、アイテムを表現せずにコミュニティだけを出力していましたが、それだけで多くの有用な用途がありました。
+実際、最初のバージョンでは、アイテムを表現せずにコミュニティだけを出力していましたが、それだけで多くの有用な用途があった.
 
-# Stage 1: Community Discovery ステージ1：コミュニティ発見
+# 3. Stage 1: Community Discovery ステージ1：コミュニティ発見
 
 This stage is about discovering communities from the Twitter user– user graph i.e.
-この段階は、Twitterのユーザーとユーザーのグラフからコミュニティを発見することである。
+この段階は、Twitterのユーザーとユーザーのグラフからコミュニティを発見することである.
 the directed graph of Follow relationships between users.
-ユーザー間のフォロー関係を表す有向グラフ。
+**ユーザ間のフォロー関係を表す有向グラフ**.
 Following seminal work in the analysis of directed graphs such as HITS [17] and SALSA [20], we find it convenient to reformulate the directed graph as a bipartite graph.
-HITS [17]やSALSA [20]などの有向グラフの解析における代表的な研究に倣って、有向グラフを二部グラフとして再定義することが便利であることがわかった。
+HITS [17]やSALSA [20]などの有向グラフの解析における代表的な研究に倣って、有向グラフを二部グラフ(bipartite graph)として再定義することが便利であることがわかった.
 We now frame our task as one of identifying bipartite communities i.e.
-ここで、私たちの課題は、2つのコミュニティ、すなわち、2分割されたコミュニティを識別することである。
+ここで、私たちの課題は、2つのコミュニティ、すなわち、**2分割されたコミュニティを識別すること**である.
 communities consisting of members from left as well as right partitions, and where the edge density between the left and right member sets is high.
-左パーティションと右パーティションのメンバーからなるコミュニティで、左右のメンバーセット間のエッジ密度が高い場合。
+左パーティションと右パーティションのメンバーからなるコミュニティで、左右のメンバーセット間のエッジ密度が高い場合.
 The bipartite reformulation lets us more flexibly assign users to communities — similar to HITS, we decouple the communities a user is influential in from the communities in which a user is interested.
 HITSと同様に、ユーザが影響力を持つコミュニティとユーザが関心を持つコミュニティを切り離すことで、より柔軟にユーザをコミュニティへ割り当てることができます。
 
 Problem Definition 1.
 問題定義 1.
 Given a bipartite user–user graph with left-partition 𝐿 and right-partition 𝑅, find 𝑘 (possibly overlapping) bipartite communities from the graph, and assign each left-node and right-node to the communities with weights to indicate the strength of their memberships.
-左パーティションᵃと右パーティションᵅを持つ二分割ユーザユーザグラフが与えられたとき、グラフから↪L_1D45↩（おそらく重複する）二分割コミュニティを見つけ、各左ノードと右ノードにそのメンバーシップの強さを示す重みをつけてコミュニティに割り当てます。
+左パーティション $L$(独立集合?) と右パーティション $R$ (=独立集合?)を持つbipartite user–user graph(=各頂点がユーザを意味するbi-partite graph)が与えられたとき、グラフから $k$個の (おそらく重複する=独立な集合ではないって事?)二分割コミュニティを見つけ、各左ノード(=左の独立集合の各頂点)と右ノード(=右の独立集合の各頂点)にそのメンバーシップの強さを示す重みをつけてコミュニティに割り当てる.
 
 The other advantage of reformulating the directed graph as a bipartite graph is that we can choose to make 𝑅, the right set of nodes, different from 𝐿, the left set of nodes – in particular, since the majority of edges in a typical social network is directed towards a minority of users, it makes sense to pick a smaller 𝑅 than 𝐿.
-有向グラフを二部グラフとして再定義するもう一つの利点は、ノードの右集合である𝑅をノードの左集合である𝐿と異なるように選択できることです。特に、典型的なソーシャルネットワークの大部分の辺は少数のユーザーに向けられているので、𝐿よりも小さな↪Lu_1D445を選ぶことは理にかなっているといえます。
+有向グラフを二部グラフとして再定義するもう一つの利点は、ノードの右集合である$R$をノードの左集合である$L$と異なるように選択できることである. 特に、典型的なソーシャルネットワークの大部分の辺は少数のユーザに向けられている(=多くの一般ユーザがインフルエンサー的なユーザをフォローしている状況??)ので、$L$ よりも小さな $R$ を選ぶことは理にかなっているといる.
 In Twitter’s case, we find that we’re able to cover the majority of edges (numbering ∼1011) in the full graph by including the top ∼107 most followed users in 𝑅, while 𝐿 continues to include all users, which is ∼109 .
-Twitterの場合、最もフォローされている上位107人のユーザーをᵅに含めることで、フルグラフの大半のエッジ（約1011個）をカバーすることができ、一方、ᵃは全てのユーザーを含み続け、約109個となることがわかった。
+Twitterの場合、最もフォローされている上位107人のユーザーを $R$ に含めることで、フルグラフの大半のエッジ(約 $10^{11}$ 個)をカバーすることができ、一方、$L$ は全てのユーザを含み続け、約 $10^9$ 個となることがわかった.
 Our problem definition also asks to assign non-negative scores to both the left and the right members indicating the strength of association to a community.
-また、問題定義では、コミュニティとの関連性の強さを示す非負のスコアを左右のメンバーに割り当てることを求めています。
-Therefore, we represent the left and right memberships as sparse, non-negative matrices U|𝐿|×𝑘 and V|𝑅|×𝑘 , where 𝑘 is the number of communities.
-𝐿
+また、問題定義では、コミュニティとの関連性の強さを示す非負のスコアを左右(=2つの独立集合R と L?)の各メンバー(=ノード=ユーザ)に割り当てることを求めている.
+Therefore, we represent the left and right memberships as sparse, non-negative matrices $U_{|L|\times k}$ and $V_{|R|\times k}$, where 𝑘 is the number of communities.
+そこで、左右のメンバーシップ(=2つの独立集合R と L?)を疎な非負行列 $U_{|L|\times k}$ と $V_{|R|\times k}$ で表現する. ここで、$k$ はコミュニティ数である.
 Hence, the problem of bipartite community discovery bears close similarities to the problem of sparse non-negative matrix factorization (NMF).
-したがって、2分割コミュニティ発見の問題は、スパース非負行列分解（NMF）の問題と密接な類似性を持っているのである。
-The biggest challenge with adapting existing approaches such as NMF and their variants [1, 3, 35] is the inability to scale them to graphs with ∼109 nodes and ∼1011 edges – all of our attempts internally to adapt these approaches (see e.g.
-NMFやその亜種[1, 3, 35]などの既存のアプローチを適応する際の最大の課題は、ノード数が約109、エッジ数が約1011のグラフに拡張できないことであり、これらのアプローチを適応するための我々の内部での試みはすべて（例えば、以下を参照。
+したがって、**2分割コミュニティ発見の問題は、sparse non-negative matrix factorization (NMF)の問題と密接な類似性を持っている**のである.(bi-partite graphとsparse行列分解の関係性がまだわかっていない??)
+The biggest challenge with adapting existing approaches such as NMF and their variants [1, 3, 35] is the inability to scale them to graphs with $∼10^9$ nodes and $~10^{11}$ edges – all of our attempts internally to adapt these approaches (see e.g.
+NMFやその亜種[1, 3, 35]などの**既存のアプローチを適応する際の最大の課題は、ノード数が約$∼10^9$、エッジ数が約$~10^{11}$のグラフに拡張できないこと**であり、これらのアプローチを適応するための我々の内部での試みはすべて（例えば、以下を参照。
 [30]) have only worked at smaller scales and have been very difficult to debug and maintain.
-[30]）は、小規模なものでしか機能せず、デバッグやメンテナンスが非常に困難であった。
+[30]）は、小規模なものでしか機能せず、デバッグやメンテナンスが非常に困難であった.
 
 With SimClusters, we instead adopt the following 3-step approach, illustrated with a toy example in Figure 2.
-SimClustersでは、図2におもちゃの例で示すように、次の3ステップのアプローチを採用しています。
+SimClustersでは、図2におもちゃの例で示すように、次の**3ステップのアプローチ**を採用している.
 
-- 1. Similarity Graph of Right Nodes: We calculate the “right projection” of the bipartite graph, i.e., we calculate the similarity between the nodes in the right partition of the bipartite graph based on their incoming edges, and we form a weighted, undirected graph consisting only of the nodes in the right partition. More details in Section 3.1. 1. 右ノードの類似度グラフ 二分割グラフの「右投影」を計算する。つまり、二分割グラフの右分割のノード間の類似度を入力エッジに基づいて計算し、右分割のノードのみからなる加重無向グラフを形成する。 詳細は3.1節で説明します。
+![](https://camo.qiitausercontent.com/194f3a26deb259e329da2e62437508f49aad755b/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f65613534653939372d656632322d366463372d626538302d6239333261626561376433632e706e67)
 
-- 2. Communities of Right Nodes: We discover communities from this similarity graph, using a novel neighborhood-based sampling algorithm that is inspired by the work of [33] but is much more accurate, faster, and scales to graphs with billions of edges. More details in Section 3.2. 2. 右ノードのコミュニティ この類似グラフからコミュニティを発見する。このアルゴリズムは、[33]の研究に触発されているが、より正確で高速であり、数十億のエッジを持つグラフに拡張可能である。 詳細は3.2節で説明します。
+- Step 1. Similarity Graph of Right Nodes: We calculate the “right projection” of the bipartite graph, i.e., we calculate the similarity between the nodes in the right partition of the bipartite graph based on their incoming edges, and we form a weighted, undirected graph consisting only of the nodes in the right partition. More details in Section 3.1. 1. **右ノードの類似度グラフ**: 二部グラフの“right projection”を計算する. つまり、二部グラフの右分割のノード間の類似度を入力エッジに基づいて計算し、右分割のノードのみからなる加重無向グラフを形成する。 詳細は3.1節で説明する.
 
-- 3. Communities of Left Nodes: We now assign nodes from the left partition to the communities discovered in step 2, and this is described in Section 3.3. 3. 左ノードのコミュニティ 次に、左のパーティションからノードをステップ2で発見されたコミュニティに割り当てますが、これについては3.3節で説明します。
+- Step 2. Communities of Right Nodes: We discover communities from this similarity graph, using a novel neighborhood-based sampling algorithm that is inspired by the work of [33] but is much more accurate, faster, and scales to graphs with billions of edges. More details in Section 3.2. 2. **右ノードのコミュニティ**: step 1で作った類似グラフからコミュニティを発見する. このアルゴリズムは、[33]の研究に触発されているが、より正確で高速であり、数十億のエッジを持つグラフに拡張可能である. 詳細は3.2節で説明する.
 
-We note that the broad outlines of this approach have been independently discovered and suggested in the past literature (see e.g.
-このアプローチの大枠は、過去の文献で独自に発見・提案されてきたものであることに留意されたい（例えば
-[23, 28]), but it has been largely neglected as an option among similar deployments in industry.
-[23,28]）が、産業界における同様の展開の中では、選択肢としてほとんど無視されてきた。
+- Step 3. Communities of Left Nodes: We now assign nodes from the left partition to the communities discovered in step 2, and this is described in Section 3.3. 3. **左ノードのコミュニティ** 次に、左のパーティションからノードをステップ2で発見されたコミュニティに割り当てるが、これについては3.3節で説明する.
+
+We note that the broad outlines of this approach have been independently discovered and suggested in the past literature (see e.g.[23, 28]), but it has been largely neglected as an option among similar deployments in industry.
+このアプローチの大枠は、過去の文献で独自に発見・提案されてきたものであることに留意されたい(例えば[23,28]). しかし産業界における同様の展開の中では、選択肢としてほとんど無視されてきた.
 The primary reason we think this works is that while the original bipartite graph is massive and noisy, the similarity graph of right nodes is much smaller and has clearer community structure.
-この方法が有効であると考える主な理由は、元の二部グラフが巨大でノイズが多いのに対し、右ノードの類似性グラフははるかに小さく、コミュニティ構造が明確であるためです。
+この方法が有効であると考える主な理由は、元の二部グラフが巨大でノイズが多いのに対し、**右ノードの類似性グラフははるかに小さく、コミュニティ構造が明確であるため**である.
 From a scalability point of view, this approach shifts most of the computational burden to the first step of identifying pairs of similar users based on their followers, which is a problem that is largely solved at Twitter (see Section 3.1).
-スケーラビリティの観点から、このアプローチは、計算負荷のほとんどを、フォロワーに基づいて類似したユーザーのペアを特定する最初のステップにシフトし、これはTwitterでほぼ解決されている問題である（セクション3.1参照）。
-From a matrix-factorization point of view, this 3-step approach closely mirrors one way of performing SVD of a matrix A, via the eigen-decomposition of A 𝑇 A.
-行列因数分解の観点から、この3ステップのアプローチは、Aᵄ Aの固有分解を介した行列AのSVDを実行する1つの方法とよく似ています。
+スケーラビリティの観点から、このアプローチは、**計算負荷のほとんどを、フォロワーに基づいて類似したユーザのペアを識別する最初のステップ(step 1)にシフト**し、これはTwitterでほぼ解決されている問題である(セクション3.1参照).
+From a matrix-factorization point of view, this 3-step approach closely mirrors one way of performing SVD of a matrix A, via the eigen-decomposition of $A^{T}A$.
+行列因数分解の観点から、この3ステップのアプローチは、$A^{T}A$の固有値分解を介した行列$A$のSVDを実行する1つの方法とよく似ている.
 
 Our 3-step approach also isolates the hard-to-parallelize step of community discovery into step 2, where it operates on a smaller graph that fits into the memory of a single machine, while the other two steps operate on much bigger inputs and out of necessity run in batch-distributed settings such as Hadoop MapReduce.
-この3ステップのアプローチでは、並列化が困難なコミュニティ発見のステップをステップ2に分離し、1台のマシンのメモリに収まる小さなグラフで動作させる一方、他の2ステップははるかに大きな入力で動作し、必然的にHadoop MapReduceなどのバッチ分散設定で動作します。
+この3ステップのアプローチでは、**並列化が困難なコミュニティ発見のステップをステップ2に分離し、1台のマシンのメモリに収まる小さなグラフで動作させる**一方、他の2ステップははるかに大きな入力で動作し、必然的にHadoop MapReduceなどのバッチ分散設定で動作する. (Hadoop使った事ないからイメージわかないな...)
 This approach is also modular and allows for swapping out implementations of each of the above steps independent of the others.
-また、このアプローチはモジュール化されており、上記の各ステップの実装を他のステップから独立して入れ替えることが可能です。
+また、このアプローチはモジュール化されており(step毎に??)、上記の各ステップの実装を他のステップから独立して入れ替えることが可能.
 A possible concern with our 3-step approach is that it may lead to reduced accuracy compared to directly learning the communities on the input bipartite network – we empirically test this in Supplemental Section A.2 and find this not to be an issue.
-この3ステップのアプローチで懸念されるのは、入力された2バイトネットワークのコミュニティを直接学習する場合に比べて精度が低下する可能性があるということです。補足セクションA.2で経験的に検証したところ、これは問題ではないことがわかりました。
+この3ステップのアプローチで懸念されるのは、入力された bi-partiteネットワークのコミュニティを直接学習する場合に比べて精度が低下する可能性があるということである. 補足セクションA.2で経験的に検証したところ、これは問題ではないことがわかった.
 
-## Step 1: Similarity Graph of Right Nodes ステップ1：右ノードの類似性グラフ
+## 3.1. Step 1: Similarity Graph of Right Nodes ステップ1：右ノードの類似性グラフ
 
 The goal of this step is to construct a much smaller unipartite, undirected graph 𝐺 over the nodes of the right partition.
 このステップの目的は、右のパーティションのノードの上に、より小さな単部分の無向グラフᵃを構築することである。
@@ -233,7 +233,7 @@ In other words, we go from shared-nothing cluster-computing scale to shared-memo
 The transformation wrought by this step is also reminiscent of prior research which suggested that keeping only the most important edges in a graph can benefit community discovery methods [29].
 このステップによってもたらされる変換は、グラフの最も重要なエッジのみを保持することでコミュニティ発見手法に利益をもたらすことを示唆した先行研究[29]をも想起させる。
 
-## Step 2: Communities of Right Nodes ステップ2：右ノードの共同体
+## 3.2. Step 2: Communities of Right Nodes ステップ2：右ノードの共同体
 
 In this step, we wish to discover communities of densely connected nodes from the undirected, possibly-weighted similarity graph from the previous step.
 このステップでは、前のステップで得られた無向きの、おそらくは重み付けされた類似性グラフから、密に接続されたノードのコミュニティを発見することを望んでいる。
@@ -271,7 +271,7 @@ $$
 Using the above background, we first describe the approach for discovering overlapping communities in a general way in Algorithm 1.
 以上の背景を踏まえ、まずアルゴリズム1において、重複するコミュニティを一般的な方法で発見するアプローチを説明する。
 After initializing Z, we run at most 𝑇 epochs of optimization, where in each epoch we iterate over all the vertices in the graph in a shuffled order.
-Zを初期化した後、最大でᵄエポック最適化を実行し、各エポックではグラフのすべての頂点をシャッフルした順序で反復する。
+Zを初期化した後、最大でᵄエポック最適化を実行し、各エポックではグラフ内のすべての頂点をシャッフルした順序で反復する。
 For each vertex 𝑢 we sample a new set of community assignments Z ′ (𝑢) using the proposal function, and calculate the difference in objective function between the newly proposed Z ′ (𝑢) and the current set of community assignments Z(𝑢).
 各頂点ᵆについて、提案関数を用いてコミュニティ割り当ての新しいセットZ ′（↪Ll_1D462）をサンプリングし、新しく提案されたZ ′（↪Ll_1D462）と現在のコミュニティ割り当てのセットZ（↪Ll_1D462）の間の目的関数の違いを計算します。
 If Z ′ (𝑢) is better, then it is accepted; if not, it may still be accepted with a certain probability, indicated in line 6 of Algorithm 1.
@@ -286,7 +286,7 @@ Because these functions are implemented using purely random sampling, we refer t
 The main practical drawback of Random MH is that it is extremely slow to obtain a satisfactorily accurate solution for even moderate values of 𝑘.
 ランダムMHの主な実用上の欠点は、ᑘの値が適度であっても、満足のいく精度の解を得るのに非常に時間がかかるということである。
 This is not surprising considering that in each step, the proposal function generates a completely random community assignments vector and evaluates Algorithm 3: Initialize and Proposal functions for Neighborhood-aware MH 1: Function: Initialize(𝐺, 𝑘) 2: for 𝑖 ← 1..𝑘 do 3: Set 𝑖 𝑡ℎ column of Z as neighbors of a randomly picked node 4: end for 5: return Z 6: 7: Function: Proposal(𝑢,𝐺, Z, 𝑘,𝑙) // 𝑙 << 𝑘 8: 𝑆 ← columns of Z with ≥ 1 non-zero in rows of 𝑁 (𝑢) // enumerateSubsets(𝑆,𝑙) returns all subsets of 𝑆 of size ≤ 𝑙 9: for 𝑠 ← enumerateSubsets(𝑆,𝑙) do 10: fMap(𝑠) ← 𝑓 (𝑢, 𝑠) // Per Eqn 2 11: end for 12: return Sample 𝑠 from 𝑆 according to softmax(fMap) it w.r.t.
-これは、提案関数が各ステップで完全にランダムなコミュニティ割り当てベクトルを生成し、評価することを考えれば驚くべきことではない。 Algorithm 3: Neighborhood-aware MHの初期化関数と提案関数 1: Function： Initialize(↪Lu_1D43A) 2: for 𝑖 ← 1..𝑘 do 3: Zの𝑖 𝑡 列をランダムに選んだノードの隣人に設定 4: end for 5: return Z 6: 7: Function： Proposal(ᵆ, Z, 𝐺) // 𝑙 << 𝑘 8: ᵆ ←Zの列で≧1の行が非ゼロ (ǔ) // enumerateSubsets(ᵆ,𝑙) size ≦ᵅのすべての部分集合を戻す 9： for 𝑠 ← enumerateSubsets(𝑠) do 10: fMap(𝑠) ← 𝑢 (𝑠) // 式2あたり 11: end for 12: return softmax(fMap) it wに従って𝑆からサンプル𝑠を得る。 r.t.
+これは、提案関数が各ステップで完全にランダムなコミュニティ割り当てベクトルを生成し、評価することを考えれば驚くべきことではない。 Algorithm 3: Neighborhood-aware MHの初期化関数と提案関数 1: Function： Initialize(↪Lu_1D43A) 2: for 𝑖 ← 1..𝑘 do 3: Zの𝑖 𝑡 列をランダムに選んだノードの隣人に設定 4: end for 5: return Z 6: 7: Function： Proposal(ᵆ, Z, 𝐺) // 𝑙 << 𝑘 8: ᵆ ←Zの列で≧1の行が非ゼロ (ǔ) // enumerateSubsets(ᵆ,𝑙) size ≦ᵅのすべての部分集合を戻す 9： for 𝑠 ← enumerateSubsets(𝑠) do 10: fMap(𝑠) ← 𝑢 (↪Ll_1D460) // 式2あたり 11: end for 12: return softmax(fMap) it wに従って𝑆からサンプル𝑠を得る。 r.t.
 the current vector; as 𝑘 increases, the space of community assignments increases exponentially which makes it very unlikely that the proposal will be able to generate an acceptable transition.
 ↪Ll458↩が増加すると、コミュニティ割り当ての空間は指数関数的に増加するため、提案者が許容できる遷移を生成できる可能性は非常に低くなります。
 
@@ -301,7 +301,7 @@ In the first step, for a given node 𝑢 we iterate over all the neighbors of �
 In the second step, we iterate over all subsets of size ≤ 𝑙 of 𝑆 from the first step, where 𝑙 is a user-provided upper bound on how many communities a node can be assigned to.
 ここで、ᑙはノードが割り当てられるコミュニティの数に対するユーザー提供の上限値である。
 For each subset 𝑠, we calculate the function 𝑓 (𝑢, 𝑠) from Eqn 2, and finally sample the subset 𝑠 with probability proportional to 𝑒 𝑓 (𝑢,𝑠) i.e.
-各サブセット𝑠について、式2より関数ᵆ（ᵆ）を計算し、最後に𝑒（ᵆ，𝑠）に比例した確率でサブセット↪Ll460↩をサンプルする、すなわち、ᵆの中に
+各サブセット𝑠について、式2より関数ᵆ（ᵆ）を計算し、最後に𝑒（ᵆ，𝑠）に比例する確率でサブセット↪Ll460↩をサンプルする、つまり
 we apply the softmax.
 ソフトマックスを適用します。
 The result of the sampling is then either accepted or rejected, as specified in lines 6 and 7 of Algorithm 1.
@@ -320,7 +320,7 @@ We discuss a few important implementation details.
 
 - The algorithm lends itself well to parallelization. Specifically the for loop in line 4 of Algorithm 1 can be distributed among several threads which share access to Z, the rows of which can optionally be synchronized using read-write locks. In practice, we have found that removing synchronization has no effect on the accuracy and gives a slight boost in speed (similar to [24]). このアルゴリズムは、並列化に適している。 具体的には、アルゴリズム1の4行目のforループを、Zへのアクセスを共有する複数のスレッドに分散させることができ、その行はオプションで読み書きロックを使って同期させることができる。 実際には、同期を削除しても精度に影響はなく、速度がわずかに向上することが分かっています（[24]と同様です）。
 
-## Step 3: Communities of Left Nodes ステップ3：左ノードの共同体
+## 3.3. Step 3: Communities of Left Nodes ステップ3：左ノードの共同体
 
 The output of the previous step is the matrix V|𝑅|×𝑘 in which the 𝑖- th row specifies the communities to which the right-node 𝑖 has been assigned.
 𝑅
@@ -341,7 +341,7 @@ UをUser Interest Representationsと呼び、以降のステップの主要な�
 The computation in this step can be scaled to our requirements easily by implementing in a batch-distributed computing paradigm such as Hadoop MapReduce.
 このステップの計算は、Hadoop MapReduceのようなバッチ分散コンピューティングパラダイムで実装することで、我々の要求に合わせて簡単にスケーリングすることができます。
 
-# Stage 2: Item Representations Stage 2: アイテム表現
+# 4. Stage 2: Item Representations Stage 2: アイテム表現
 
 In this section, we describe how to compute representations for different items, such as Tweets, Hashtags, or users - which can be the targets for different recommendation problems.
 本節では、ツイート、ハッシュタグ、ユーザーなど、様々な推薦問題の対象となりうるアイテムに対する表現を計算する方法について説明する。
@@ -407,7 +407,7 @@ These candidates can then be ranked by fetching their full representations and c
 The upshot is that we neither need to brute-force scan through all users/items nor need to build specialized nearest neighbor indices.
 その結果、すべてのユーザーやアイテムを総当たりでスキャンする必要も、特別な最近傍インデックスを構築する必要もない。
 
-# Deployment Details 配置の詳細
+# 5. Deployment Details 配置の詳細
 
 SimClusters has been deployed in production at Twitter for more than an year so far.
 SimClustersは、Twitter社で1年以上前から本番環境に導入されています。
@@ -416,7 +416,7 @@ SimClustersシステムから出力されるすべての表現は、モデルバ
 The main model that is currently running in production has ∼105 communities in the representations, discovered from the similarity graph of the top ∼107 users by follower count.
 現在、本番稼働中のメインモデルでは、フォロワー数上位∼107人のユーザーの類似性グラフから発見された∼105のコミュニティが表現されています。
 The bipartite communities discovered by the model contain nearly 70% of the edges in the input bipartite graph, suggesting that most of the structure of the graph is captured.
-モデルによって発見された二項コミュニティは、入力二項グラフのエッジの70%近くを含んでおり、グラフの構造のほとんどを捉えていることが示唆された。
+モデルによって発見された二項コミュニティは、入力された二項グラフのエッジの70%近くを含んでおり、グラフの構造のほとんどを捉えていることが示唆されます。
 The right member sets do not vary too much in their sizes, while the left member sets vary drastically, reflecting the variance in the original follower distribution.
 右のメンバーセットの大きさはあまり変わらないが、左のメンバーセットの大きさは大きく異なり、元のフォロワー分布のばらつきを反映している。
 Within Stage 1, Step 1 (similarity calculation) is the most expensive step, taking about 2 days to run end-to-end on Hadoop MapReduce, but note that this job was in production before SimClusters and therefore is not an additional cost introduced by SimClusters.
@@ -452,9 +452,9 @@ given a community, what are the top-k users/Topics/Tweets/Trends for that commun
 Having C is essential to retrieving the items whose representation has the largest dot product or cosine similarity with another representation.
 Cは、他の表現とのドット積やコサイン類似度が最も大きい表現を持つアイテムを検索するために不可欠である。
 
-# Applications アプリケーション
+# 6. Applications アプリケーション
 
-## Similar Tweets on Tweet Details page ツイート詳細ページでの類似ツイート
+## 6.1. Similar Tweets on Tweet Details page ツイート詳細ページでの類似ツイート
 
 For users who visit a Tweet via an email or a push notification, Twitter shows a module with other recommended Tweets, alongside replies.
 メールやプッシュ通知でツイートにアクセスしたユーザーに対して、Twitterは他のおすすめツイートと返信を並べたモジュールを表示します。
@@ -472,9 +472,9 @@ We found that the engagement rate on the resulting Tweets was 25% higher.4
 Subsequently, we added a second candidate source for this product based on SimClusters – retrieve Tweets whose SimClusters representation have high cosine similarity with the user influence representation of the author of the main Tweet on the page.
 その後、SimClustersに基づくこの製品の第二のソース候補を追加しました。SimClusters表現が、ページ上のメインツイートの著者のユーザー影響力表現と高いコサイン類似性を持つツイートを検索します。
 Adding this source increases the coverage further, while the overall increase in engagement rate is a more modest but still impressive 7%.
-このソースを追加することで、カバー率はさらに向上し、全体のエンゲージメント率の向上はより控えめですが、それでも印象的な7％となっています。
+このソースを追加することで、カバー率はさらに向上し、全体のエンゲージメント率の向上は、より控えめではありますが、それでも7％という素晴らしい結果となっています。
 
-## Tweet Recommendations in Home Page ホームページでおすすめツイート
+## 6.2. Tweet Recommendations in Home Page ホームページでおすすめツイート
 
 A user’s Home feed on Twitter consists of both Tweets from users being directly followed as well as recommended Tweets from users not being followed (“Out of Network Tweets”).
 Twitterのホームフィードは、直接フォローされているユーザーのツイートと、フォローされていないユーザーのおすすめツイート（以下「ネットワーク外ツイート」）の両方から構成されます。
@@ -499,14 +499,14 @@ The two candidate sources together were able to increase total weighted engageme
 Apart from new candidates, we also use the user interest and Tweet representations to improve the ranking of candidates coming from all sources.
 新しい候補とは別に、ユーザーの興味やツイート表現を利用して、あらゆるソースから来る候補のランキングを改善することもあります。
 The user and item representations are used to enrich the set of existing user features, item features, as well as user-item interaction features in the input to an engagement prediction model.
-ユーザーとアイテムの表現は、エンゲージメント予測モデルの入力において、既存のユーザー特徴、アイテム特徴、およびユーザーとアイテムの相互作用特徴のセットを充実させるために使用されます。
+ユーザーとアイテムの表現は、エンゲージメント予測モデルの入力において、既存のユーザー特徴、アイテム特徴、およびユーザーとアイテムの相互作用特徴のセットを豊かにするために使用されます。
 A/B testing showed that the model trained with these features was able to increase engagement rate of recommended content by 4.7% relatively, which is a significant lift for a mature model.
 A/Bテストでは、これらの機能で学習させたモデルは、推奨コンテンツのエンゲージメント率を4.7%相対的に高めることができ、成熟したモデルとしては大きなリフトアップ効果がありました。
 
-## Ranking of Personalized Trends
+## 6.3. Ranking of Personalized Trends
 
 Showing top trending content (e.g., Hashtags, Events, breaking news) is an important way to keep users informed about what is happening locally and globally.
-ハッシュタグ、イベント、ニュースなど、トレンドのトップコンテンツを表示することは、地域や世界で起きていることをユーザーに知らせる重要な方法です。
+トップトレンドのコンテンツ（ハッシュタグ、イベント、ニュース速報など）を表示することは、地域や世界で起こっていることをユーザーに知らせる重要な方法です。
 The implementation for Trends follows a two-stage process of Trends detection followed by ranking.
 Trendsの実装は、Trendsの検出とランキングの2段階を踏んでいます。
 Prior to SimClusters, the ranking of a Trend primarily depended on its volume and a small number of personalization features.
@@ -514,14 +514,14 @@ SimClusters以前は、トレンドのランキングは主にそのボリュー
 We used Trends SimClusters representations to score Trends for a given user by using the dot-product of the user’s interest representation along with the real-time representation for a Trend.
 トレンドのSimClusters表現を使って、ユーザーの関心表現とトレンドのリアルタイム表現のドットプロダクトを使用することで、与えられたユーザーのトレンドをスコア化しました。
 A/B testing revealed that using these scores led to a 8% increase in user engagement with the Trends themselves, as well as a bigger 12% increase in engagement on the landing page subsequent to a click.
-A/Bテストでは、このスコアを使用することで、Trends自体のユーザーエンゲージメントが8％増加し、さらにクリック後のランディングページでのエンゲージメントが12％増加することが確認されました。
+A/Bテストでは、このスコアを使用することで、Trends自体のユーザーエンゲージメントが8％増加し、さらにクリック後のランディングページのエンゲージメントが12％増加することがわかりました。
 These improvements are large when compared against other experiments run on this product.
 これらの改善は、この製品で行われた他の実験と比較すると、大きなものです。
 
-## Topic Tweet Recommendations トピック ツイート おすすめ度
+## 6.4. Topic Tweet Recommendations トピック ツイート おすすめ度
 
 Given a Topic in a pre-defined topic taxonomy such as “Fashion” or “Marvel Movies”, how can we identify the best content about it? The original implementation here (before the product was launched publicly) primarily relied on custom text matching rules curated by human experts to identify topical Tweets.
-ファッション」や「マーベル映画」など、あらかじめ定義されたトピック分類法のトピックがある場合、そのトピックに関する最高のコンテンツを特定するにはどうすればよいでしょうか。ここでのオリジナルの実装（製品が一般に発売される前）は、主にトピックツイートを特定するために人間の専門家がキュレーションしたカスタムテキストマッチングルールに頼っていました。
+ファッション」や「マーベル映画」など、あらかじめ定義されたトピック分類法のトピックがある場合、そのトピックに関する最高のコンテンツを特定するにはどうすればよいでしょうか。ここでのオリジナルの実装（製品が一般に発売される前）は、主に人間の専門家がキュレーションしたカスタムテキストマッチングルールに依存して、トピックツイートを識別していました。
 Once we realized that this approach surfaced a number of false positives (primarily due to a Tweet’s text incidentally matching the rules for a Topic), we tested a second implementation where we first identify those Tweets whose SimClusters representation has high cosine similarity with the representation of the query Topic, and then apply the textual matching rules.
 この方法では、多くの誤検出（主にツイートのテキストがトピックのルールと偶然一致することによる）があることがわかったので、2番目の実装をテストしました。まず、SimClusters表現がクエリトピックの表現と高いコサイン類似度を持つツイートを特定し、次にテキストマッチング規則を適用しました。
 Internal evaluation showed that the second approach returned much better results, therefore we launched this product publicly using this approach.
@@ -529,16 +529,16 @@ Internal evaluation showed that the second approach returned much better results
 Since launch, this feature has received positive press externally as well as causing higher engagement with Tweets from the broader user base.
 この機能は、発売以来、外部で好評を博し、より多くのユーザーからツイートへのエンゲージメントを高めています。
 
-## Ranking Who To Follow Recommendations フォローすべき人ランキング おすすめ
+## 6.5. Ranking Who To Follow Recommendations フォローすべき人ランキング おすすめ
 
 The candidates for Who To Follow recommendations are ranked using an engagement prediction model, to which we added new features based on the SimClusters representations of the viewing user and the candidate user.
 Who To Followレコメンデーションの候補は、エンゲージメント予測モデルを用いてランク付けされます。このモデルには、閲覧ユーザーと候補ユーザーのSimClusters表現に基づく新しい特徴が加えられています。
 In A/B tests, we observed an impressive increase of 7% in the follow rate by using these new features.
 A/Bテストでは、これらの新機能を使用することで、フォロー率が7％向上することが確認されました。
 
-## Applications in progress 現在進行中のアプリケーション
+## 6.6. Applications in progress 現在進行中のアプリケーション
 
-### Notifications quality filter. 通知品質フィルター。
+### 6.6.1. Notifications quality filter. 通知品質フィルター。
 
 A crucial task on Twitter is to protect users from getting abusive or spammy replies or mentions.
 Twitterの重要なタスクは、罵倒やスパム的なリプライやメンションを受けないようにユーザーを保護することです。
@@ -549,7 +549,7 @@ when one user blocks another), and used these representations as features to tra
 In offline tests, the model showed an impressive 4% lift in PR-AUC5 .
 オフラインテストでは、PR-AUC5 が 4％向上するという素晴らしい結果を示しました。
 
-### 6.6.2 Supervised embeddings from feature combinations. 6.6.2 特徴の組み合わせから教師付き埋込を行う。
+### 6.6.2. 6.6.2 Supervised embeddings from feature combinations. 6.6.2 特徴の組み合わせから教師付き埋込を行う。
 
 While SimClusters representations mostly capture information from various engagement graphs, we are also experimenting approaches to combine it with other features about users or items (for example, follower counts or geo information).
 SimClustersの表現は、主に様々なエンゲージメントグラフから情報を取得しますが、ユーザーやアイテムに関する他の特徴（例えば、フォロワー数やジオ情報）と組み合わせるアプローチも試しています。
@@ -558,7 +558,7 @@ One approach where we are obtaining promising early results is to train a deep n
 By choosing the right architecture for this neural net, for example, the two-tower DNN model [36], we are able to learn dense embeddings separately for users and items.
 このニューラルネットに適切なアーキテクチャ、例えば2塔式DNNモデル[36]を選択することで、ユーザーとアイテムについて別々に密な埋め込みを学習することができるようになる。
 
-### 6.6.3 Real-time Event notifications. 6.6.3 リアルタイムイベント通知。
+### 6.6.3. 6.6.3 Real-time Event notifications. 6.6.3 リアルタイムイベント通知。
 
 A major application at Twitter is to notify users who may be interested when a major news event happens.
 Twitterでの主な用途は、大きなニュースが起こったときに、興味を持ちそうなユーザーに通知することです。
@@ -567,10 +567,10 @@ Using the SimClusters representation of an Event (which is in turn derived by ag
 We are currently evaluating such an approach.
 現在、そのようなアプローチを評価しています。
 
-# Related Work 関連作品
+# 7. Related Work 関連作品
 
 Traditionally, approaches to recommender systems are categorized as either neighborhood-based (which do not involve model-fitting), or model-based (which fit a model to the input data).
-従来、レコメンダーシステムのアプローチは、モデルフィッティングを行わないネイバーベースと、入力データにモデルをフィッティングするモデルベースに分類される。
+従来、レコメンダーシステムのアプローチは、モデルフィッティングを伴わないネイバーベースと、入力データにモデルをフィッティングするモデルベースに分類されています。
 
 In our experience of building recommendations at Twitter, we find that neighborhood-based methods are easier to scale, more accurate, more interpretable, and also more flexible in terms of accommodating new users and/or items [9, 11, 12, 31].
 Twitterでレコメンデーションを構築した経験から、近隣ベースの手法は、スケールが簡単で、より正確で、より解釈しやすく、また新しいユーザーやアイテムに対応する点で、より柔軟であることがわかりました [9, 11, 12, 31] 。
@@ -601,7 +601,7 @@ Our problem definition bears some similarity to the cross-domain or heterogeneou
 It is unclear how these methods can support our requirements for scale, handling dynamic items and graphs, and intepretability.
 これらの方法は、スケール、動的なアイテムやグラフの扱い、インテプリタビリティといった我々の要求をどのようにサポートできるかは不明である。
 
-# Conclusion 結論
+# 8. Conclusion 結論
 
 We proposed a framework called SimClusters based on detecting bipartite communities from the user-user graph and use them as a representation space to solve many personalization and recommendation problems at scale.
 我々は、ユーザーとユーザーのグラフから二部コミュニティを検出し、それを表現空間として利用することに基づくSimClustersというフレームワークを提案し、多くのパーソナライゼーションや推薦問題をスケールアップして解決する。
@@ -610,17 +610,17 @@ SimClustersでは、一組のコミュニティ検出という重要な問題を
 We also presented several diverse deployed and in-progress applications where we use SimClusters representations to improve relevance at Twitter.
 また、SimClusters表現を用いてTwitterでの関連性を向上させる、多様なデプロイ済みおよび進行中のアプリケーションをいくつか紹介しました。
 
-# Supplement: Further Evaluation サプリメント さらなる評価
+# 9. Supplement: Further Evaluation サプリメント さらなる評価
 
 The code for Neighborhood-aware MH and an in-memory implementation of Stage 1 are open-sourced in https://github.com/ twitter/sbf.
 Neighborhood-aware MHのコードとStage 1のインメモリ実装は、https://github.com/ twitter/sbfでオープンソース化されています。
 
-## Neighborhood-aware MH Empirical evaluation 近傍探索型 MH 経験値評価
+## 9.1. Neighborhood-aware MH Empirical evaluation 近傍探索型 MH 経験値評価
 
-### A.1.1 Comparison with RandomMH [33]. A.1.1 RandomMH [33]との比較。
+### 9.1.1. A.1.1 Comparison with RandomMH [33]. A.1.1 RandomMH [33]との比較。
 
 We conducted a simple empirical evaluation in which we generated synthetic graphs with 100 nodes and varying number of communities, such that the probability of an edge between nodes inside the same community was large and the probability of an edge otherwise was small.
-100ノードの合成グラフを作成し、コミュニティ数を変化させ、同じコミュニティ内のノード間のエッジの確率が大きく、それ以外のエッジの確率が小さくなるように、簡単な実証評価を行いました。
+100ノードの合成グラフを作成し、コミュニティの数を変化させ、同じコミュニティ内のノード間のエッジの確率が大きく、それ以外のエッジの確率が小さくなるように、簡単な実証評価を行いました。
 The approach from [33] which we label ‘RandomMH’, as well as our approach (‘Neighborhood-Aware’) are implemented in the same code and use the same settings, except that the implementations for the proposal and the initialization functions are different.
 RandomMH」と名付けた[33]のアプローチと、我々のアプローチ（「Neighborhood-Aware」）は、提案と初期化関数の実装が異なるだけで、同じコードで実装され同じ設定を使用しています。
 We compare both the approaches in terms of how many epochs they need to be to run to recover the synthetic communities, as well as the wall clock time (since the runtime for each epoch differs between the two approaches).
@@ -630,16 +630,14 @@ As can be seen from the results in Table 2, the number of epochs and time requir
 Neighborhood-aware MH on the other hand has no such problem with increasing 𝑘.
 一方、Neighborhood-aware MHは、ᑘが増加してもそのような問題はない。
 
-### A.1.2 Comparison on real datasets. A.1.2 実際のデータセットでの比較。
+### 9.1.2. A.1.2 Comparison on real datasets. A.1.2 実際のデータセットでの比較。
 
 We ran experiments on 8 real datasets (see Table 3) and compared Neighborhood-aware MH to the following algorithms from prior literature: (a) BigClam [34]: BigClam is interesting to compare to since there are many similarities, with the main difference being that it’s optimized using gradient descent rather than randomized combinatorial optimization as in our case.
 我々は8つの実データセット（表3参照）で実験を行い、Neighborhood-aware MHを以下の先行文献のアルゴリズムと比較した： (a) BigClam [34]： BigClam[34]：多くの類似点があるため、比較するのは興味深いですが、主な違いは、我々の場合のようにランダムな組み合わせ最適化ではなく、勾配降下を使用して最適化されていることです。
 We used the implementation in the SNAP package [21].
 SNAPパッケージの実装を使用した[21]。
-(b) Graclus [7]: Graclus optimizes weighted graph cuts without needing to compute eigenvectors, making it much faster than spectral algorithms without losing accuracy.
-(b) Graclus [7]： Graclusは固有ベクトルを計算することなく、重み付きグラフカットを最適化するため、精度を落とすことなくスペクトルアルゴリズムよりはるかに高速になります。
-6 Note that for all 8 of these datasets, the RandomMH algorithm proposed in [33] was not able to make any progress inside the allotted time (6 hours).
-6 なお、これら8つのデータセットすべてにおいて、[33]で提案されたRandomMHアルゴリズムは、決められた時間（6時間）内に進歩することができませんでした。
+(b) Graclus [7]: Graclus optimizes weighted graph cuts without needing to compute eigenvectors, making it much faster than spectral algorithms without losing accuracy.6 Note that for all 8 of these datasets, the RandomMH algorithm proposed in [33] was not able to make any progress inside the allotted time (6 hours).
+(b) Graclus [7]： Graclusは固有ベクトルを計算することなく重み付きグラフカットを最適化するため，精度を落とすことなくスペクトルアルゴリズムよりもはるかに高速に処理することができます6．なお，これらの8つのデータセットすべてにおいて，[33]で提案したRandomMHアルゴリズムは決められた時間（6時間）内に進展することができませんでした．
 
 We use two kinds of datasets: similarity graphs calculated for a subset of Twitter users in the way described in Section 3.1, as well as the 4 biggest undirected social networks we were able to find externally on the KONECT [19] collection.
 3.1節で説明した方法でTwitterユーザーのサブセットに対して計算された類似グラフと、KONECT [19] コレクションで外部から見つけることができた4大無向性ソーシャルネットワークの2種類のデータセットを使用する。
@@ -688,12 +686,12 @@ As can be seen from the results in Table 3, our method is able to produce signif
 Neighborhood-aware MH is fast because each epoch requires making a single pass over all the vertices and their adjacency lists and also because the overall approach is easy to parallelize.
 近傍探索型MHが高速なのは、各エポックがすべての頂点とその隣接リストに対して1回のパスで済むためであり、また全体的なアプローチが並列化しやすいためです。
 Our approach is able to run inside 1.5 hours for a graph with 100M nodes and 5B edges (Top100M), while the largest graph either of our baselines is able to run on is at least an order of magnitude smaller.
-我々のアプローチは、100Mのノードと5Bのエッジを持つグラフ（Top100M）に対して1.5時間以内に実行することができましたが、我々のベースラインのいずれかが実行できる最大のグラフは、少なくとも1桁小さいです。
+我々のアプローチは、100Mのノードと5Bのエッジを持つグラフ（Top100M）に対して1.5時間以内に実行することができましたが、我々のベースラインのいずれかが実行できる最大のグラフは、少なくとも1桁小さいものです。
 
-## Bipartite Communities Empirical evaluation 二者間共同体 実証評価
+## 9.2. Bipartite Communities Empirical evaluation 二者間共同体 実証評価
 
 A possible concern with our approach to discovering bipartite communities is whether breaking the problem up into 3 separate steps can result in a loss of accuracy, as compared to jointly learning the bipartite communities directly.
-2つのコミュニティを発見する我々のアプローチで懸念されるのは、問題を3つの別々のステップに分けることで、2つのコミュニティを直接共同で学習する場合に比べて、精度が低下する可能性があるということです。
+2つのコミュニティを発見する我々のアプローチで懸念されるのは、問題を3つの別々のステップに分けることで、2つのコミュニティを直接共同で学習する場合と比較して、精度が低下する可能性があるということです。
 To understand this empirically, we compare against NMF (Non-negative Matrix Factorization) – recall that with both NMF and our approach, the end output is two low-dimensional sparse matrices.
 このことを経験的に理解するために、NMF（Non-negative Matrix Factorization）と比較します。NMFも我々のアプローチも、最終出力は2つの低次元スパースマトリックスであることを思い出してください。
 Specifically we use Scikit-Learn’s implementation [3, 25] of alternating minimization using a Coordinate Descent solver, and with ‘nndsvd’ initialization, and with 𝐿1 penalty, where the 𝐿1 coefficient is adjusted to return results of comparable sparsity to our approach.
@@ -705,7 +703,7 @@ each rightnode can be assigned to at most 4 communities), 𝛼 (see Eqn 1) to 10
 All experiments were run on commodity servers with 8 cores and 24GB RAM.
 すべての実験は、8コアと24GB RAMを搭載したコモディティサーバーで実行されました。
 Note that this evaluation is purely to benchmark the accuracy of our approach; in terms of actual applicability, neither NMF nor other variants are practically feasible at our scale.
-なお、この評価は、純粋に我々のアプローチの精度をベンチマークするためのものであり、実際の適用可能性という点では、NMFも他のバリエーションも、我々の規模では現実的に実現不可能であることに注意してください。
+なお、この評価は、純粋に我々のアプローチの精度をベンチマークするためのものであり、実際の適用可能性という点では、NMFも他のバリエーションも、我々のスケールでは現実的に実現不可能であることに注意してください。
 
 For evaluation, we use a combination of directed graphs and document-word occurrence graphs, and evaluate on the task of link prediction.
 評価には、有向グラフと文書-単語出現グラフの組み合わせを用い、リンク予測というタスクで評価しています。
@@ -725,4 +723,4 @@ In terms of Correlation, our approach is consistently better across all datasets
 We also include the timing information, where our approach is generally a little faster than NMF.
 また、タイミング情報を含めると、一般的にNMFより少し速くなる。
 However, note that the primary advantage of our approach is not that it’s faster than NMF, but that it’s more scalable, meaning that it is possible to extend to billionnode graphs and hundreds of thousands of latent dimensions while scaling NMF similarly is prohibitively costly.
-つまり、10億ノードのグラフや数十万個の潜在次元に拡張することが可能である一方、NMFを同様に拡張することは法外なコストがかかるということです。
+つまり、10億ノードのグラフや数十万個の潜在次元に拡張することが可能である一方、NMFを同様に拡張するのは法外なコストがかかるということです。
