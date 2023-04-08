@@ -205,122 +205,120 @@ A possible concern with our 3-step approach is that it may lead to reduced accur
 ## 3.1. Step 1: Similarity Graph of Right Nodes ステップ1：右ノードの類似性グラフ
 
 The goal of this step is to construct a much smaller unipartite, undirected graph 𝐺 over the nodes of the right partition.
-このステップの目的は、右のパーティションのノードの上に、より小さな単部分の無向グラフᵃを構築することである。
+このステップの目的は、右のパーティション(独立集合$R$)のノードの上に、より小さなuni-partite の無向グラフ $G$ を構築することである.
 We define the weight between two users (𝑢, 𝑣) based on the cosine similarity of their followers on the left side of the bipartite graph.
-2つのユーザー(𝑢, ↪Ll_1D463)間の重みを、2分木グラフの左側のフォロワーのコサイン類似度に基づいて定義する。
-To elaborate, if 𝑥®𝑢 and 𝑥®𝑣 represent the binary incidence vectors of 𝑢’s and 𝑣’s followers, their cosine similarity is defined as 𝑥®𝑢 · ®𝑥𝑣/ p ∥ ®𝑥𝑢 ∥ ∥ ®𝑥𝑣 ∥.
-詳しく説明すると、𝑥®𝑢と𝑥のフォロワーの2値入射ベクトルを表すと、その余弦類似度は𝑢-®𝑣/ p∥ ®𝑥®𝑥 ∥と定義する。
+2つのユーザ($u$, $v$)間の重みを、二部グラフの左側(独立集合$L$)のフォロワーのコサイン類似度に基づいて定義する.
+To elaborate, if $\vec{x_u}$ and $\vec{x_v}$ represent the binary incidence vectors of 𝑢’s and 𝑣’s followers, their cosine similarity is defined as 𝑥®𝑢 · ®𝑥𝑣/ p ∥ ®𝑥𝑢 ∥ ∥ ®𝑥𝑣 ∥.
+詳しく説明すると、$\vec{x_u}$ と $\vec{x_v}$ が ユーザuとvのフォロワーの2値入射ベクトルを表すと、そのcosine類似度は $\vec{x_u} \cdot \vec{x_v} / \sqrt{|\vec{x_u}||\vec{x_v}|}$ と定義する.
 With this definition, two users would have non-zero similarity, or an edge in 𝐺 simply by sharing one common neighbor in the bipartite graph.
-この定義によれば、2つのユーザーは、2分木グラフにおいて1つの共通の隣人を共有するだけで、ゼロではない類似性、すなわち↪Lu_1D43A のエッジを持つことになる。
+この定義によれば、2つのユーザは、二部グラフにおいて1つの共通の隣人を共有するだけで、ゼロではない類似度がある. すなわち 類似性グラフ $G$ にエッジ(=ノード間の接続=辺)を持つことになる.
 In order to avoid generating an extremely dense similarity graph, we discard the edges with similarity score lower than a certain threshold and additionally keep at most a certain number of neighbors with the largest similarity scores for each user.
-極端に密な類似グラフを生成しないために、類似度スコアがある閾値より低いエッジを破棄し、さらに各ユーザーの類似度スコアが最も大きい隣人を最大で一定数保持する。
+極端に密な類似グラフを生成しないために、類似度スコアがある閾値より低いエッジを破棄し、さらに各ユーザの類似度スコアが最も大きい隣人を最大で一定数保持する.
 
 The difficulty is that solving the similar users problem is very challenging at Twitter scale.
-難しいのは、類似ユーザー問題の解決は、Twitterの規模では非常に困難であるということです。
-But because this is a problem with important applications – e.g.
-しかし、これは重要なアプリケーション-例えば-で問題となるためです。
-it is the foundation of applying itembased collaborative filtering for the “Who To Follow” module [11] – we have invested significant resources to develop a robust solution.
-これは、「Who To Follow」モジュール[11]にアイテムベース協調フィルタリングを適用するための基礎となるもので、私たちは堅牢なソリューションを開発するために多大なリソースを投入してきました。
+難しいのは、**類似ユーザ問題の解決は、Twitterの規模では非常に困難であるということ**である.
+But because this is a problem with important applications – e.g. it is the foundation of applying itembased collaborative filtering for the “Who To Follow” module [11] – we have invested significant resources to develop a robust solution.
+しかし、これは重要なアプリケーションにおける問題であり、例えば"Who To Follow"モジュール[11]にアイテムベースの協調フィルタリングを適用する際の基礎となる問題であるため、私たちは堅牢なソリューションを開発するために多大な資源を投入してきた.
 Our solution, called WHIMP, uses a combination of wedge sampling and Locality Sensitive Hashing (LSH) to scale to the Twitter graph and lends itself to implementation on Hadoop MapReduce [32].
-WHIMPと呼ばれる我々のソリューションは、ウェッジサンプリングとLocality Sensitive Hashing（LSH）の組み合わせでTwitterグラフに対応し、Hadoop MapReduce（32）上での実装に適しています。
+WHIMPと呼ばれる我々のソリューションは、ウェッジサンプリングとLocality Sensitive Hashing（LSH）の組み合わせでTwitterグラフに対応し、Hadoop MapReduce（32）上での実装に適している.
 WHIMP is able to identify similar users for users with either large or small followings, and has been vetted in a variety of ways internally.
-WHIMPは、フォロワーが多いユーザーも少ないユーザーも、似たようなユーザーを特定することができ、社内でさまざまな検証が行われているそうです。
+**WHIMPは、フォロワーが多いユーザも少ないユーザも、類似性の高いユーザを特定することができ**、社内でさまざまな検証が行われているらしい.
 
 Ultimately, this similarity graph step takes as input a directed/bipartite graph with ∼109 nodes and ∼1011 edges and outputs an undirected graph with ∼107 nodes and ∼109 edges.
-最終的に、この類似グラフステップは、∼109個のノードと∼1011個のエッジを持つ有向/二部グラフを入力とし、∼107個のノードと∼109個のエッジを持つ無向グラフを出力する。
+最終的に、この類似グラフステップは、$~10^9$ 個のノードと$∼10^{11}$個のエッジを持つ有向/二部グラフを入力とし、$~10^7$ 個のノードと $~10^9$ 個のエッジを持つ無向グラフを出力する.
 In other words, we go from shared-nothing cluster-computing scale to shared-memory multi-core scale.
-つまり、シェアードナッシングのクラスタコンピューティング規模から、シェアードメモリのマルチコア規模になるのです。
+つまり、shared-nothing のクラスタコンピューティング規模から、shared-memory のマルチコア規模になるのだ.(??)
 The transformation wrought by this step is also reminiscent of prior research which suggested that keeping only the most important edges in a graph can benefit community discovery methods [29].
-このステップによってもたらされる変換は、グラフの最も重要なエッジのみを保持することでコミュニティ発見手法に利益をもたらすことを示唆した先行研究[29]をも想起させる。
+このステップによってもたらされる変換は、グラフの最も重要なエッジのみを保持することでコミュニティ発見手法に利益をもたらすことを示唆した先行研究[29]をも想起させる.
 
 ## 3.2. Step 2: Communities of Right Nodes ステップ2：右ノードの共同体
 
 In this step, we wish to discover communities of densely connected nodes from the undirected, possibly-weighted similarity graph from the previous step.
-このステップでは、前のステップで得られた無向きの、おそらくは重み付けされた類似性グラフから、密に接続されたノードのコミュニティを発見することを望んでいる。
+このステップでは、前のステップで得られた無向の(おそらくは重み付けされた)類似性グラフから、密に接続されたノード集合(=ユーザ集合)のコミュニティを発見することを目的としている.
 In order to accurately preserve the structure of the input similarity graph, we have observed that it is important for the communities to have hundreds of nodes, rather than thousands or tens or thousands.
-入力された類似性グラフの構造を正確に保持するためには、コミュニティのノード数が数千、数万ではなく、数百であることが重要であることが確認されています。
-This means that we need algorithms that can process input graphs with ∼107 nodes and ∼109 edges to find ∼105 communities.
-つまり、ノード∼107個、エッジ∼109個の入力グラフを処理して、∼105個のコミュニティを見つけることができるアルゴリズムが必要です。
+入力された類似性グラフの構造を正確に保持するためには、**コミュニティのノード数($k$)が数千、数万ではなく、数百であることが重要**であることが確認されている.
+This means that we need algorithms that can process input graphs with $∼10^7$ nodes and $∼10^9$ edges to find $∼10^5$ communities.
+つまり、ノード$∼10^7$個、エッジ$∼10^9$個の入力グラフを処理して、$∼10^5$ 個(数百だったら、$~10^3$ではない?)のコミュニティを見つけることができるアルゴリズムが必要.
 Despite the long history of community discovery algorithms, we were unable to find any existing solution that can satisfy these scale requirements.
-コミュニティ発見アルゴリズムの長い歴史にもかかわらず、これらの規模要件を満たすことができる既存のソリューションを見つけることができませんでした。
+コミュニティ発見アルゴリズムの長い歴史にもかかわらず、これらの規模要件を満たすことができる既存のソリューションを見つけることができなかった.
 We next describe the algorithm we developed, called Neighborhood-aware Metropolis Hastings (henceforth Neighborhood-aware MH), to meet our requirements.
-次に、我々の要求を満たすために開発した Neighborhood-aware Metropolis Hastings（以下、Neighborhood-aware MH）と呼ばれるアルゴリズムについて説明する。
+次に、我々の要求を満たすために開発した **Neighborhood-aware Metropolis Hastings(以下、Neighborhood-aware MH)**と呼ばれるアルゴリズムについて説明する.
 
 Our algorithm extends a Metropolis-Hastings sampling approach presented in [33] for discovering overlapping communities, which we first describe as background.
-我々のアルゴリズムは、重複するコミュニティを発見するために[33]で発表されたメトロポリス・ヘイスティングス・サンプリング・アプローチを拡張したものであり、まず背景として説明する。
-Let Z|𝑅|×𝑘 be a sparse binary community assignments matrix and Z(𝑢) denote the set of communities to which the vertex 𝑢 has been assigned (in other words, Z(𝑢) gives the non-zero column indices from the 𝑢-th row in Z).
-𝑅
+我々のアルゴリズムは、**重複するコミュニティを発見するために[33]で発表されたメトロポリス・ヘイスティングス・サンプリング・アプローチ**を拡張したものであり、まず背景として説明する.
+Let $Z_{|R|\times k}$ be a sparse binary community assignments matrix and Z(𝑢) denote the set of communities to which the vertex 𝑢 has been assigned (in other words, Z(𝑢) gives the non-zero column indices from the 𝑢-th row in Z).
+$Z_{|R|\times k}$ を疎なバイナリコミュニティ割り当て行列とし、 $Z(u)$ は頂点$u$が割り当てられたコミュニティの集合を表す(言い換えれば、$Z(u)$ は、行列 $Z$ の $u$ 行目から非ゼロの列indicesを出力するfunctionみたいな感じ?)、と仮定する.
 Equation 1 specifies an objective function over Z.
-式1は、Zに対する目的関数を指定する。
+式1は、Zに対する目的関数を指定する.(Zが推定すべきパラメータなのか...!)
 
 $$
+F(Z) = \alpha \sum_{u, v \in E}  1(|Z(u) \cap Z(v)| > 0)
++ \sum_{u, v \notin E}  1(|Z(u) \cap Z(v)| = 0)
 \tag{1}
 $$
 
 1 is the indicator function.
-1 はインジケーター機能です。
+1 はindicator function である.
 F (Z) is the sum of two terms – the first counts how many neighboring pairs of nodes in the graph share at least one community, while the second counts how many nonneighbor pairs of nodes in the graph do not share a community.2 Since most real, large-scale networks are very sparse, it is useful to upweight the contribution of the first term using the parameter 𝛼 – increasing values of 𝛼 means that the objective function is better optimized by Z with more non-zeros.
-F (Z)は2つの項の合計である。最初の項は、グラフ内のノードの隣接するペアが少なくとも1つのコミュニティを共有する数をカウントし、2番目の項は、グラフ内のノードの非隣接ペアがコミュニティを共有しない数をカウントする。2 実際の大規模ネットワークのほとんどは非常にスパースなので、パラメータ𝛼を用いて最初の項の寄与を重み付けすることが有用です。𝛼の値が増加すると、目的関数はより非ゼロのZによって最適化することになります。
-Note also that the objective function above is decomposable, in the sense that the overall objective function F (Z) can be expressed as a sum of a function 𝑓 (𝑢, Z) over individual vertices (below, N (𝑢) denotes the set of neighbors of vertex 𝑢).
-また、上記の目的関数は、全体の目的関数F（Z）が個々の頂点（以下、N（𝑢）は頂点𝑢の近傍集合を表す）に対する関数𝑢（Z）の和として表現できる意味で、分解可能であることに注意すること。
+F (Z)は2つの項の合計である. 最初の項は、グラフ内のノードの隣接するペアが少なくとも1つのコミュニティを共有する数をカウントし、2番目の項は、グラフ内のノードの非隣接ペアがコミュニティを共有しない数をカウントする. **実際の大規模ネットワークのほとんどは非常にスパースなので、パラメータ𝛼を用いて最初の項の寄与を重み付けすることが有用である**. 𝛼の値が増加すると、目的関数はより非ゼロのZによって最適化することになる.
+Note also that the objective function above is decomposable, in the sense that the overall objective function $F(Z)$ can be expressed as a sum of a function $f(u, Z)$ over individual vertices (below, $N(u)$ denotes the set of neighbors of vertex $u$).
+また、上記の目的関数は、**全体の目的関数$F(Z)$が個々の頂点に対する関数 $f(u, Z)$ の和として表現できる**意味で、分解可能であることに注意すること. (ここで、$N(u)$ はある頂点 $u$ の近傍集合を表す.)
 
 $$
+f(u, Z) = \alpha \sum_{v \in N(u)} 1(|Z(u) \cap Z(v)| > 0)
++ \sum_{v \notin N(u)} 1(|Z(u) \cap Z(v)| = 0)
 \tag{2}
 $$
 
 Using the above background, we first describe the approach for discovering overlapping communities in a general way in Algorithm 1.
-以上の背景を踏まえ、まずアルゴリズム1において、重複するコミュニティを一般的な方法で発見するアプローチを説明する。
+以上の背景を踏まえ、まずアルゴリズム1において、重複するコミュニティを一般的な方法で発見するアプローチを説明する.
 After initializing Z, we run at most 𝑇 epochs of optimization, where in each epoch we iterate over all the vertices in the graph in a shuffled order.
-Zを初期化した後、最大でᵄエポック最適化を実行し、各エポックではグラフ内のすべての頂点をシャッフルした順序で反復する。
+$Z$ を初期化した後、最大で $T$ epoch数回 最適化を実行し、各エポックではグラフ内のすべての頂点をシャッフルした順序(?)で反復する.
 For each vertex 𝑢 we sample a new set of community assignments Z ′ (𝑢) using the proposal function, and calculate the difference in objective function between the newly proposed Z ′ (𝑢) and the current set of community assignments Z(𝑢).
-各頂点ᵆについて、提案関数を用いてコミュニティ割り当ての新しいセットZ ′（↪Ll_1D462）をサンプリングし、新しく提案されたZ ′（↪Ll_1D462）と現在のコミュニティ割り当てのセットZ（↪Ll_1D462）の間の目的関数の違いを計算します。
-If Z ′ (𝑢) is better, then it is accepted; if not, it may still be accepted with a certain probability, indicated in line 6 of Algorithm 1.
-もしZ ′ (↪Ll_1D462) の方が良ければ、それは受け入れられる。もしそうでなくても、アルゴリズム1の6行目で示されるように、ある確率で受け入れられるかもしれない。
+各頂点 $u$ について、proposal function(=コードの関数)を用いてコミュニティ割り当ての新しい集合 $Z'(u)$ をサンプリングし、新しく提案された$Z'(u)$ と現在のコミュニティ割り当てのセット $Z(u)$ の間の目的関数の違いを計算する.
+If $Z'(u)$ is better, then it is accepted; if not, it may still be accepted with a certain probability, indicated in line 6 of Algorithm 1.
+もし $Z'(u)$ の方が良ければ、それは受け入れられる. もしそうでなくても、アルゴリズム1の6行目で示されるように、ある確率で受け入れられるかもしれない.
 As noted in [33], one reason for preferring a randomized optimization procedure as opposed a deterministic optimization procedure is to avoid getting stuck in local minima.
-33]で述べられているように，決定論的な最適化手順ではなく，ランダムな最適化手順を好む理由の1つは，局所最小値にはまるのを避けることである．
+[33]で述べられているように，決定論的な最適化手順ではなく，ランダムな最適化手順を好む理由の1つは，局所最小値にはまるのを避けることである.
 
 The specific choices for the ‘Initialize’ and ‘Proposal’ functions made in [33] are described in Algorithm 2.
-33]で行われた「Initialize」と「Proposal」関数の具体的な選択方法は、アルゴリズム2に記載されています。
+[33]で行われた`Initialize` function と`Proposal` function の具体的な選択方法は、アルゴリズム2に記載されている.
 Because these functions are implemented using purely random sampling, we refer to this approach as ‘Random MH’.
-これらの機能は、純粋にランダムなサンプリングで実装されているため、この手法を「ランダムMH」と呼んでいます。
-The main practical drawback of Random MH is that it is extremely slow to obtain a satisfactorily accurate solution for even moderate values of 𝑘.
-ランダムMHの主な実用上の欠点は、ᑘの値が適度であっても、満足のいく精度の解を得るのに非常に時間がかかるということである。
-This is not surprising considering that in each step, the proposal function generates a completely random community assignments vector and evaluates Algorithm 3: Initialize and Proposal functions for Neighborhood-aware MH 1: Function: Initialize(𝐺, 𝑘) 2: for 𝑖 ← 1..𝑘 do 3: Set 𝑖 𝑡ℎ column of Z as neighbors of a randomly picked node 4: end for 5: return Z 6: 7: Function: Proposal(𝑢,𝐺, Z, 𝑘,𝑙) // 𝑙 << 𝑘 8: 𝑆 ← columns of Z with ≥ 1 non-zero in rows of 𝑁 (𝑢) // enumerateSubsets(𝑆,𝑙) returns all subsets of 𝑆 of size ≤ 𝑙 9: for 𝑠 ← enumerateSubsets(𝑆,𝑙) do 10: fMap(𝑠) ← 𝑓 (𝑢, 𝑠) // Per Eqn 2 11: end for 12: return Sample 𝑠 from 𝑆 according to softmax(fMap) it w.r.t.
-これは、提案関数が各ステップで完全にランダムなコミュニティ割り当てベクトルを生成し、評価することを考えれば驚くべきことではない。 Algorithm 3: Neighborhood-aware MHの初期化関数と提案関数 1: Function： Initialize(↪Lu_1D43A) 2: for 𝑖 ← 1..𝑘 do 3: Zの𝑖 𝑡 列をランダムに選んだノードの隣人に設定 4: end for 5: return Z 6: 7: Function： Proposal(ᵆ, Z, 𝐺) // 𝑙 << 𝑘 8: ᵆ ←Zの列で≧1の行が非ゼロ (ǔ) // enumerateSubsets(ᵆ,𝑙) size ≦ᵅのすべての部分集合を戻す 9： for 𝑠 ← enumerateSubsets(𝑠) do 10: fMap(𝑠) ← 𝑢 (↪Ll_1D460) // 式2あたり 11: end for 12: return softmax(fMap) it wに従って𝑆からサンプル𝑠を得る。 r.t.
-the current vector; as 𝑘 increases, the space of community assignments increases exponentially which makes it very unlikely that the proposal will be able to generate an acceptable transition.
-↪Ll458↩が増加すると、コミュニティ割り当ての空間は指数関数的に増加するため、提案者が許容できる遷移を生成できる可能性は非常に低くなります。
+これらの機能は、純粋にランダムなサンプリングで実装されているため、この手法を"**ランダムMH(Metropolis-Hastings)**"と呼んでいる.
+The main practical drawback of Random MH is that it is extremely slow to obtain a satisfactorily accurate solution for even moderate values of $k$.
+ランダムMHの主な実用上の欠点は、$k$ の値が適度であっても、満足のいく精度の解を得るのに非常に時間がかかるということである.(最適化戦略無しに、ランダムにより良いパラメータを探索しているから?)
+This is not surprising considering that in each step, the proposal function generates a completely random community assignments vector and evaluates it w.r.t. the current vector; as 𝑘 increases, the space of community assignments increases exponentially which makes it very unlikely that the proposal will be able to generate an acceptable transition.
+これは、`Proposal` function が各ステップで完全にランダムなコミュニティ割り当てベクトルを生成し、現在のベクトルと照らし合わせて評価することを考えれば、驚くべきことではない. $k$ が増加すると、コミュニティ割り当ての空間(=パラメータの選択肢のイメージ)は指数関数的に増加し、`Proposal` function が許容できるtransition (パラメータ更新)を生成できる可能性は非常に低くなる.
 
 Instead, we propose Neighborhood-aware MH, specified in Algorithm 3.
-その代わりに、アルゴリズム3で規定されるNeighborhood-aware MHを提案する。
+その代わりに、アルゴリズム3で規定される **Neighborhood-aware MH(Metropolis-Hastings)** を提案する.
 The proposal function in Neighborhood-aware MH is based on two insights or assumptions – the first is that it is extremely unlikely that a node should belong to a community that none of its neighbors currently belongs to; the second is that for most practical applications, it is unnecessary to assign a node to more than a small number of communities.
-1つ目は、あるノードが、その隣接するノードが現在所属していないコミュニティに所属する可能性は極めて低いということ、2つ目は、ほとんどの実用的なアプリケーションでは、ノードを少数のコミュニティ以上に所属させる必要はないということです。
+Neighborhood-aware MH(Metropolis-Hastings) の proposal functionは、以下の2つの洞察 & 仮定に基づいている: 1つ目は、あるノード(=頂点=ユーザ)が、その隣接するノードが現在所属していないコミュニティに所属する可能性は極めて低いということ. 2つ目は、**ほとんどの実用的なアプリケーションでは、ノードを少数のコミュニティ以上に所属させる必要はない(?)**ということである.
 We design a two-step proposal function that works as follows.
-次のような2段階の提案機能を設計しています。
+次のような2段階のproposal function を設計している.
 In the first step, for a given node 𝑢 we iterate over all the neighbors of 𝑢, look up their community assignments in Z, and identify the set of communities which are represented at least once, call it 𝑆.
-最初のステップでは、与えられたノード𝑢について、𝑢のすべての近傍を繰り返し、Zで彼らのコミュニティ割り当てを検索し、少なくとも一度は表されるコミュニティのセットを識別し、それを𝑆と呼びます。
+最初のステップでは、与えられたノード $u$ について、$u$ のすべての近傍を繰り返し、$Z$で彼らのコミュニティ割り当てを検索し、**少なくとも一度は表されるコミュニティの集合**を識別し、それを$S$と呼ぶ.(まだ良く理解できてない.)
 In the second step, we iterate over all subsets of size ≤ 𝑙 of 𝑆 from the first step, where 𝑙 is a user-provided upper bound on how many communities a node can be assigned to.
-ここで、ᑙはノードが割り当てられるコミュニティの数に対するユーザー提供の上限値である。
-For each subset 𝑠, we calculate the function 𝑓 (𝑢, 𝑠) from Eqn 2, and finally sample the subset 𝑠 with probability proportional to 𝑒 𝑓 (𝑢,𝑠) i.e.
-各サブセット𝑠について、式2より関数ᵆ（ᵆ）を計算し、最後に𝑒（ᵆ，𝑠）に比例する確率でサブセット↪Ll460↩をサンプルする、つまり
-we apply the softmax.
-ソフトマックスを適用します。
+第2ステップでは、第1ステップで得られた $S$ のサイズ $\leq l$ のすべての部分集合について反復処理を行う. ここで、$l$ はノードが割り当てられるコミュニティの数に対するuser-provided(=要するに開発者が指定するハイパーパラメータの意味!)の上限値である.
+For each subset 𝑠, we calculate the function $f(u, s)$ from Eqn 2, and finally sample the subset 𝑠 with probability proportional to $e^{f(u,s)}$ i.e. we apply the softmax.
+各サブセット $s$ について、式2より関数 $f(u, s)$を計算し、最後に $e^{f(u,s)}$ に比例する確率でサブセット $s$ をサンプルする. (i.e. ソフトマックスを適用する)
 The result of the sampling is then either accepted or rejected, as specified in lines 6 and 7 of Algorithm 1.
-そして、アルゴリズム1の6行目と7行目に規定されているように、サンプリングの結果が受け入れられるか、拒否されるかのどちらかになります。
+そして、アルゴリズム1の6行目と7行目に規定されているように、サンプリングの結果が受け入れられるか、拒否されるかのどちらかになる.
 As for initializing Z, we seed each community with the neighborhood for a randomly selected node in the graph.
-Zの初期化については、各コミュニティにグラフ内のランダムに選ばれたノードの近傍をシードする。
+$Z$の初期化については、各コミュニティにグラフ内のランダムに選ばれたノードの近傍をシードする.
 
 We discuss a few important implementation details.
-いくつかの重要な実装の詳細について説明します。
+いくつかの重要な実装の詳細について説明する.
 
-- Most of the complexity comes from evaluating the function 𝑓 (𝑢, 𝑠), which requires calculating the intersection between a node’s neighbors and the union of the communities in 𝑠. For many members of 𝑆 (the set computed in line 8 Algorithm 3), we can incrementally compute the summary statistics required for 𝑓 (𝑢, 𝑠) as we go through a node’s neighborhood when executing line 8 of Algorithm 3, so that the subsequent inner loop in line 10 can execute much faster. Similarly, the acceptance probability for line 6 of Algorithm 1 can also reuse the 𝑓 (𝑢, Z) computed during the proposal process. 複雑さのほとんどは、関数𝑓（𝑢）の評価によるもので、ノードの近傍と𝑠のコミュニティの結合の間の交差を計算する必要があります。 ᵆ（アルゴリズム3の8行目で計算された集合）の多くのメンバーについては、アルゴリズム3の8行目を実行する際に、ノードの近傍を通過する際にᵆ（ᵆ，↪Ll_1D460） に必要な要約統計量を段階的に計算できるため、続く10行目の内部ループの実行速度が大幅に向上します。 同様に、アルゴリズム1の6行目の受け入れ確率も、提案プロセスで計算された𝑢（𝑢, Z）を再利用できる。
+- Most of the complexity comes from evaluating the function 𝑓 (𝑢, 𝑠), which requires calculating the intersection between a node’s neighbors and the union of the communities in 𝑠. For many members of 𝑆 (the set computed in line 8 Algorithm 3), we can incrementally compute the summary statistics required for $f(u, s)$ as we go through a node’s neighborhood when executing line 8 of Algorithm 3, so that the subsequent inner loop in line 10 can execute much faster. Similarly, the acceptance probability for line 6 of Algorithm 1 can also reuse the 𝑓 (𝑢, Z) computed during the proposal process. 複雑さのほとんどは、関数 $f(u)$ の評価によるもので、ノードの近傍と $s$ のコミュニティの結合の間の交差を計算する必要がある. $S$ (アルゴリズム3の8行目で計算された集合)の多くのメンバーについては、アルゴリズム3の8行目を実行する際に、ノードの近傍を通過する際に $f(u, s)$ に必要な要約統計量を段階的に計算できるため、続く10行目の内部ループの実行速度が大幅に向上する. 同様に、アルゴリズム1の6行目の受け入れ確率も、`proposal`プロセスで計算された $f(u, Z)$を再利用できる.
 
-- Sampling from a softmax distribution can be accomplished efficiently in a single pass using the Gumbel-Max trick. ソフトマックス分布からのサンプリングは、ガンベルマックストリックを使うことで1回のパスで効率的に行うことができます。
+- Sampling from a softmax distribution can be accomplished efficiently in a single pass using the Gumbel-Max trick. ソフトマックス分布(=これって、pを使ってZを更新するか判定する処理の事?=実際はbinaryのベルヌーイ分布では?)からのサンプリングは、Gumbel-Max trick(?)を使うことで1回のパスで効率的に行うことができる.
 
-- In the important special case where we assign each node to at most one community only, each epoch of Neighborhood-aware MH can execute in 𝑂(|𝐸|) time, using both of the above mentioned tricks.
+- In the important special case where we assign each node to at most one community only, each epoch of Neighborhood-aware MH can execute in 𝑂(|𝐸|) time, using both of the above mentioned tricks. 各ノードを最大1つのコミュニティのみに割り当てる重要な特殊ケースでは、上述の両方のトリックを使用することで、Neighborhood-aware MHの各エポックは $O(|E|)$ 時間で実行できる.($E$ってなんだっけ?)
 
-- The algorithm lends itself well to parallelization. Specifically the for loop in line 4 of Algorithm 1 can be distributed among several threads which share access to Z, the rows of which can optionally be synchronized using read-write locks. In practice, we have found that removing synchronization has no effect on the accuracy and gives a slight boost in speed (similar to [24]). このアルゴリズムは、並列化に適している。 具体的には、アルゴリズム1の4行目のforループを、Zへのアクセスを共有する複数のスレッドに分散させることができ、その行はオプションで読み書きロックを使って同期させることができる。 実際には、同期を削除しても精度に影響はなく、速度がわずかに向上することが分かっています（[24]と同様です）。
+- The algorithm lends itself well to parallelization. Specifically the for loop in line 4 of Algorithm 1 can be distributed among several threads which share access to Z, the rows of which can optionally be synchronized using read-write locks. In practice, we have found that removing synchronization has no effect on the accuracy and gives a slight boost in speed (similar to [24]). **このアルゴリズムは、並列化に適している**. 具体的には、アルゴリズム1の4行目のforループを、Zへのアクセスを共有する複数のスレッドに分散させることができ、その行はオプションで読み書きロックを使って同期させることができる. 実際には、同期を削除しても精度に影響はなく、速度がわずかに向上することが分かっている([24]と同様)
 
-## 3.3. Step 3: Communities of Left Nodes ステップ3：左ノードの共同体
+## 3.3. Step 3: Communities of Left Nodes
 
 The output of the previous step is the matrix V|𝑅|×𝑘 in which the 𝑖- th row specifies the communities to which the right-node 𝑖 has been assigned.
 𝑅
