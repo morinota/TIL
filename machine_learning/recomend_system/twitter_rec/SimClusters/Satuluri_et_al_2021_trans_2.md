@@ -236,7 +236,7 @@ The transformation wrought by this step is also reminiscent of prior research wh
 In this step, we wish to discover communities of densely connected nodes from the undirected, possibly-weighted similarity graph from the previous step.
 このステップでは、前のステップで得られた無向の(おそらくは重み付けされた)類似性グラフから、密に接続されたノード集合(=ユーザ集合)のコミュニティを発見することを目的としている.
 In order to accurately preserve the structure of the input similarity graph, we have observed that it is important for the communities to have hundreds of nodes, rather than thousands or tens or thousands.
-入力された類似性グラフの構造を正確に保持するためには、**コミュニティのノード数($k$)が数千、数万ではなく、数百であることが重要**であることが確認されている.
+入力された類似性グラフの構造を正確に保持するためには、**ある1コミュニティ当たりのノード数($k$)が数千、数万ではなく、数百であることが重要**であることが確認されている.
 This means that we need algorithms that can process input graphs with $∼10^7$ nodes and $∼10^9$ edges to find $∼10^5$ communities.
 つまり、ノード$∼10^7$個、エッジ$∼10^9$個の入力グラフを処理して、$∼10^5$ 個(数百だったら、$~10^3$ではない?)のコミュニティを見つけることができるアルゴリズムが必要.
 Despite the long history of community discovery algorithms, we were unable to find any existing solution that can satisfy these scale requirements.
@@ -247,7 +247,7 @@ We next describe the algorithm we developed, called Neighborhood-aware Metropoli
 Our algorithm extends a Metropolis-Hastings sampling approach presented in [33] for discovering overlapping communities, which we first describe as background.
 我々のアルゴリズムは、**重複するコミュニティを発見するために[33]で発表されたメトロポリス・ヘイスティングス・サンプリング・アプローチ**を拡張したものであり、まず背景として説明する.
 Let $Z_{|R|\times k}$ be a sparse binary community assignments matrix and Z(𝑢) denote the set of communities to which the vertex 𝑢 has been assigned (in other words, Z(𝑢) gives the non-zero column indices from the 𝑢-th row in Z).
-$Z_{|R|\times k}$ を疎なバイナリコミュニティ割り当て行列とし、 $Z(u)$ は頂点$u$が割り当てられたコミュニティの集合を表す(言い換えれば、$Z(u)$ は、行列 $Z$ の $u$ 行目から非ゼロの列indicesを出力するfunctionみたいな感じ?)、と仮定する.
+$Z_{|R|\times k}$ を疎なbinaryのコミュニティ割り当て行列とし、 $Z(u)$ は頂点$u$が割り当てられたコミュニティの集合を表す(言い換えれば、$Z(u)$ は、行列 $Z$ の $u$ 行目から非ゼロの列indicesを出力するfunctionみたいな感じ?)、と仮定する.
 Equation 1 specifies an objective function over Z.
 式1は、Zに対する目的関数を指定する.(Zが推定すべきパラメータなのか...!)
 
@@ -260,7 +260,7 @@ $$
 1 is the indicator function.
 1 はindicator function である.
 F (Z) is the sum of two terms – the first counts how many neighboring pairs of nodes in the graph share at least one community, while the second counts how many nonneighbor pairs of nodes in the graph do not share a community.2 Since most real, large-scale networks are very sparse, it is useful to upweight the contribution of the first term using the parameter 𝛼 – increasing values of 𝛼 means that the objective function is better optimized by Z with more non-zeros.
-F (Z)は2つの項の合計である. 最初の項は、グラフ内のノードの隣接するペアが少なくとも1つのコミュニティを共有する数をカウントし、2番目の項は、グラフ内のノードの非隣接ペアがコミュニティを共有しない数をカウントする. **実際の大規模ネットワークのほとんどは非常にスパースなので、パラメータ𝛼を用いて最初の項の寄与を重み付けすることが有用である**. 𝛼の値が増加すると、目的関数はより非ゼロのZによって最適化することになる.
+$F(Z)$は2つの項の合計である. 最初の項は、グラフ内のノードの隣接するペアが少なくとも1つのコミュニティを共有する数をカウントし、2番目の項は、グラフ内のノードの非隣接ペアがコミュニティを共有しない数をカウントする. **実際の大規模ネットワークのほとんどは非常にスパースなので、パラメータ𝛼を用いて最初の項の寄与を重み付けすることが有用である**. 𝛼の値が増加すると、目的関数はより非ゼロのZによって最適化することになる.
 Note also that the objective function above is decomposable, in the sense that the overall objective function $F(Z)$ can be expressed as a sum of a function $f(u, Z)$ over individual vertices (below, $N(u)$ denotes the set of neighbors of vertex $u$).
 また、上記の目的関数は、**全体の目的関数$F(Z)$が個々の頂点に対する関数 $f(u, Z)$ の和として表現できる**意味で、分解可能であることに注意すること. (ここで、$N(u)$ はある頂点 $u$ の近傍集合を表す.)
 
@@ -286,9 +286,9 @@ The specific choices for the ‘Initialize’ and ‘Proposal’ functions made 
 Because these functions are implemented using purely random sampling, we refer to this approach as ‘Random MH’.
 これらの機能は、純粋にランダムなサンプリングで実装されているため、この手法を"**ランダムMH(Metropolis-Hastings)**"と呼んでいる.
 The main practical drawback of Random MH is that it is extremely slow to obtain a satisfactorily accurate solution for even moderate values of $k$.
-ランダムMHの主な実用上の欠点は、$k$ の値が適度であっても、満足のいく精度の解を得るのに非常に時間がかかるということである.(最適化戦略無しに、ランダムにより良いパラメータを探索しているから?)
+ランダムMHの主な実用上の欠点は、$k$ の値が適度であっても、満足のいく精度の解を得るのに非常に時間がかかるということである.(最適化戦略無しに、ランダムに、より良いパラメータを探索しているから...!)
 This is not surprising considering that in each step, the proposal function generates a completely random community assignments vector and evaluates it w.r.t. the current vector; as 𝑘 increases, the space of community assignments increases exponentially which makes it very unlikely that the proposal will be able to generate an acceptable transition.
-これは、`Proposal` function が各ステップで完全にランダムなコミュニティ割り当てベクトルを生成し、現在のベクトルと照らし合わせて評価することを考えれば、驚くべきことではない. $k$ が増加すると、コミュニティ割り当ての空間(=パラメータの選択肢のイメージ)は指数関数的に増加し、`Proposal` function が許容できるtransition (パラメータ更新)を生成できる可能性は非常に低くなる.
+これは、`Proposal` function が各ステップで完全にランダムなコミュニティ割り当てベクトルを生成し、現在の割り当てベクトルと照らし合わせて評価することを考えれば、驚くべきことではない. $k$ が増加すると、コミュニティ割り当ての空間(=パラメータの選択肢のイメージ)は指数関数的に増加し、`Proposal` function が許容できるtransition (パラメータ更新)を生成できる可能性は非常に低くなる.
 
 Instead, we propose Neighborhood-aware MH, specified in Algorithm 3.
 その代わりに、アルゴリズム3で規定される **Neighborhood-aware MH(Metropolis-Hastings)** を提案する.
@@ -305,7 +305,7 @@ For each subset 𝑠, we calculate the function $f(u, s)$ from Eqn 2, and finall
 The result of the sampling is then either accepted or rejected, as specified in lines 6 and 7 of Algorithm 1.
 そして、アルゴリズム1の6行目と7行目に規定されているように、サンプリングの結果が受け入れられるか、拒否されるかのどちらかになる.
 As for initializing Z, we seed each community with the neighborhood for a randomly selected node in the graph.
-$Z$の初期化については、各コミュニティにグラフ内のランダムに選ばれたノードの近傍をシードする.
+$Z$の初期化については、各コミュニティにグラフ内のランダムに選ばれたノードのneigbborhoodをシードする.(?)
 
 We discuss a few important implementation details.
 いくつかの重要な実装の詳細について説明する.
@@ -320,24 +320,24 @@ We discuss a few important implementation details.
 
 ## 3.3. Step 3: Communities of Left Nodes
 
-The output of the previous step is the matrix V|𝑅|×𝑘 in which the 𝑖- th row specifies the communities to which the right-node 𝑖 has been assigned.
-𝑅
-The remaining problem that needs to be solved is coming up with the matrix U|𝐿|×𝑘 such that the 𝑖-th row specifies the communities to which the left-node 𝑖 has been assigned.
-𝐿
+The output of the previous step is the matrix $V_{|R|×k}$ in which the $i$-th row specifies the communities to which the right-node $i$ has been assigned.
+前のステップの出力は、$i$ 番目の行が右ノード$i$が割り当てられたコミュニティを指定する行列 $V_{|R| \times k}$ である.
+The remaining problem that needs to be solved is coming up with the matrix $U_{|L| \times k}$ such that the $i$-th row specifies the communities to which the left-node $i$ has been assigned.
+残りの問題は、i番目の行が左ノードiが割り当てられたコミュニティを指定するような行列 $U_{|L| \times k}$ を考え出すことである.
 A simple way to do this assignment is to assign a left-node to communities by looking at the communities that its neighbors (which will all be right-nodes, and hence already have assignments) have been assigned to.
-この割り当てを行う簡単な方法は、左ノードの隣人（すべて右ノードであるため、すでに割り当てを受けている）が割り当てられているコミュニティを見ることによって、左ノードをコミュニティに割り当てることです。
-More formally, if A|𝐿|× |𝑅| is the adjacency matrix of the input bipartite graph, then we set U = 𝑡𝑟𝑢𝑛𝑐𝑎𝑡𝑒 (A · V), where the 𝑡𝑟𝑢𝑛𝑐𝑎𝑡𝑒 function keeps only up to a certain number of nonzeros per row to save on storage.
-𝐿
+この割り当てを行う簡単な方法は、左ノードのneighbors(すべて右ノードであるため、すでに割り当てを受けている)が割り当てられているコミュニティを見ることによって、左ノードをコミュニティに割り当てることである.
+More formally, if $A_{|L| \times |R|}$ is the adjacency matrix of the input bipartite graph, then we set $U = truncate(A\cdot V)$, where the $truncate()$ function keeps only up to a certain number of nonzeros per row to save on storage.
+より正式には、$A_{|L| \times |R|}$ を**入力二部グラフの隣接行列(adjacency matrix)**(二部グラフの入力も行列で表せば良いのか...!)とすると、$U = truncate(A\cdot V)$ とする、 ここで、$truncate()$ 関数は、ストレージを節約するために、行(=左の独立集合の各頂点)ごとにある一定の数までのノンゼロだけを保持する.
 This equation for calculating U is motivated by the fact that in the special case when V is an orthonormal matrix, i.e.
-このUの計算式は、Vが正規直交行列である場合の特殊なケース、すなわち、次の事実に動機づけられている。
-V 𝑇 V = 𝐼, then U = A · V is the solution to A = U · V 𝑇 .
-V ᵄ V = 𝐼 であれば、U = A - V は A = U - V 𝑇 の解になります。
+この$U$の計算式は、$V$が正方直交行列である場合の特殊なケース、すなわち、次の事実に動機づけられている.
+$V^T V = I$, then $U = A \cdot V$ is the solution to $A = U \cdot V^T$.
+$V^T V = I$であれば、$U = A \cdot V$ は $A = U \cdot V^T$ の解になる.
 We have experimented with situations both where V is orthonormal (this can be achieved by assigning each right-node to at most one community) as well as situations where V is not, and have found that in each case the resulting U provides accurate representations for the left-nodes.
-Vが直交する場合（これは、各右ノードを最大1つのコミュニティに割り当てることで実現できる）と、そうでない場合の両方で実験を行い、いずれの場合も、結果として得られるUが左ノードを正確に表現することを発見しました。
+$V$が直交する場合(これは、**各右ノードを最大1つのコミュニティに割り当てることで実現できる**)(=あ、じゃあ運用する上では基本的に、$V$ は正方直交行列になるのか...!)と、そうでない場合の両方で実験を行い、いずれの場合も、結果として得られる$U$が左nodesを正確に表現することを発見した.(あ、結局$V$がorthonormal matrixではなくても問題なさそうなのか...!)
 We refer to U as User Interest Representations, and it forms the main input for subsequent steps.
-UをUser Interest Representationsと呼び、以降のステップの主要なインプットを形成する。
+**$U$ を User Interest Representations** と呼び、以降のステップの主要なインプットを形成する.(=UがSimClustersの段階2の入力情報になる...? $V$はならない?)
 The computation in this step can be scaled to our requirements easily by implementing in a batch-distributed computing paradigm such as Hadoop MapReduce.
-このステップの計算は、Hadoop MapReduceのようなバッチ分散コンピューティングパラダイムで実装することで、我々の要求に合わせて簡単にスケーリングすることができます。
+このステップの計算は、Hadoop MapReduce のようなバッチ分散コンピューティングパラダイムで実装することで、我々の要求に合わせて**簡単にスケーリングすることができる**.
 
 # 4. Stage 2: Item Representations Stage 2: アイテム表現
 
