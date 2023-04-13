@@ -224,7 +224,7 @@ WHIMPと呼ばれる我々のソリューションは、ウェッジサンプリ
 WHIMP is able to identify similar users for users with either large or small followings, and has been vetted in a variety of ways internally.
 **WHIMPは、フォロワーが多いユーザも少ないユーザも、類似性の高いユーザを特定することができ**、社内でさまざまな検証が行われているらしい.
 
-Ultimately, this similarity graph step takes as input a directed/bipartite graph with ∼109 nodes and ∼1011 edges and outputs an undirected graph with $∼10^7$ nodes and ∼109 edges.
+Ultimately, this similarity graph step takes as input a directed/bipartite graph with $~10^9$ nodes and $∼10^{11}$ edges and outputs an undirected graph with $∼10^7$ nodes and $~10^9$ edges.
 最終的に、この類似グラフステップは、$~10^9$ 個のノードと$∼10^{11}$個のエッジを持つ有向/二部グラフを入力とし、$~10^7$ 個のノードと $~10^9$ 個のエッジを持つ無向グラフを出力する.
 In other words, we go from shared-nothing cluster-computing scale to shared-memory multi-core scale.
 つまり、shared-nothing のクラスタコンピューティング規模から、shared-memory のマルチコア規模になるのだ.(??)
