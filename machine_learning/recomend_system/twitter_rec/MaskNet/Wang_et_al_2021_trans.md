@@ -10,7 +10,7 @@ MaskNet： インスタンス誘導型マスクによるCTRランキングモデ
 ## abstract アブストラクト
 
 Click-Through Rate(CTR) estimation has become one of the most fundamental tasks in many real-world applications and it's important for ranking models to effectively capture complex high-order features.
-クリックスルー率（CTR）の推定は、多くの実世界のアプリケーションにおいて最も基本的なタスクの1つとなっており、ランキングモデルにとって複雑な高次の特徴を効果的に捉えることが重要である。
+クリックスルー率(CTR)の推定は、多くの実世界のアプリケーションにおいて最も基本的なタスクの1つとなっており、ランキングモデルにとって複雑な高次の特徴を効果的に捉えることが重要である.
 Shallow feed-forward network is widely used in many state-of-the-art DNN models such as FNN, DeepFM and xDeepFM to implicitly capture high-order feature interactions.
 浅いフィードフォワードネットワークは、FNN、DeepFM、xDeepFMなどの多くの最先端のDNNモデルで、高次の特徴の相互作用を暗黙のうちに捉えるために広く使われています。
 However, some research has proved that addictive feature interaction, particular feed-forward neural networks, is inefficient in capturing common feature interaction.
@@ -47,7 +47,7 @@ However, Alex Beutel et.al [2] have proved that addictive feature interaction, p
 They proposed a simple but effective approach named "latent cross" which is a kind of multiplicative interactions between the context embedding and the neural network hidden states in RNN model.
 彼らは、RNNモデルにおけるコンテキスト埋め込みとニューラルネットワークの隠れ状態の間の一種の乗法的相互作用である「潜在クロス」というシンプルで効果的なアプローチを提案しました。
 Recently, Rendle et.al’s work [18] also shows that a carefully configured dot product baseline largely outperforms the MLP layer in collaborative filtering.
-最近、Rendleらの研究[18]でも、**協調フィルタリングにおいて、注意深く設定されたドット積ベースラインがMLP層を大きく上回ることが示されています**。
+最近、Rendleらの研究[18]でも、**協調フィルタリングにおいて、注意深く設定されたドット積ベースライン(MFのやつかな?)がMLP層を大きく上回ることが示されています**。
 While a MLP can in theory approximate any function, they show that it is non-trivial to learn a dot product with an MLP and learning a dot product with high accuracy for a decently large embedding dimension requires a large model capacity as well as many training data.
 MLPは理論的にはあらゆる関数を近似できるが、MLPでドットプロダクトを学習することは非自明であり、そこそこ大きな埋め込み次元に対して高い精度でドットプロダクトを学習するには、多くの学習データと同様に大きなモデル容量が必要であることを示している。
 Their work also proves the inefficiency of MLP layer’s ability to model complex feature interactions.
