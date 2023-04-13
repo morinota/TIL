@@ -162,8 +162,8 @@ Given a bipartite user–user graph with left-partition 𝐿 and right-partition
 
 The other advantage of reformulating the directed graph as a bipartite graph is that we can choose to make 𝑅, the right set of nodes, different from 𝐿, the left set of nodes – in particular, since the majority of edges in a typical social network is directed towards a minority of users, it makes sense to pick a smaller 𝑅 than 𝐿.
 有向グラフを二部グラフとして再定義するもう一つの利点は、ノードの右集合である$R$をノードの左集合である$L$と異なるように選択できることである. 特に、典型的なソーシャルネットワークの大部分の辺は少数のユーザに向けられている(=多くの一般ユーザがインフルエンサー的なユーザをフォローしている状況??)ので、$L$ よりも小さな $R$ を選ぶことは理にかなっているといる.
-In Twitter’s case, we find that we’re able to cover the majority of edges (numbering ∼1011) in the full graph by including the top ∼107 most followed users in 𝑅, while 𝐿 continues to include all users, which is ∼109 .
-Twitterの場合、最もフォローされている上位107人のユーザーを $R$ に含めることで、フルグラフの大半のエッジ(約 $10^{11}$ 個)をカバーすることができ、一方、$L$ は全てのユーザを含み続け、約 $10^9$ 個となることがわかった.
+In Twitter’s case, we find that we’re able to cover the majority of edges (numbering ∼1011) in the full graph by including the top $∼10^7$ most followed users in 𝑅, while 𝐿 continues to include all users, which is ∼109 .
+Twitterの場合、最もフォローされている上位$∼10^7$人のユーザーを $R$ に含めることで、フルグラフの大半のエッジ(約 $10^{11}$ 個)をカバーすることができ、一方、$L$ は全てのユーザを含み続け、約 $10^9$ 個となることがわかった.
 Our problem definition also asks to assign non-negative scores to both the left and the right members indicating the strength of association to a community.
 また、問題定義では、コミュニティとの関連性の強さを示す非負のスコアを左右(=2つの独立集合R と L?)の各メンバー(=ノード=ユーザ)に割り当てることを求めている.
 Therefore, we represent the left and right memberships as sparse, non-negative matrices $U_{|L|\times k}$ and $V_{|R|\times k}$, where 𝑘 is the number of communities.
@@ -224,7 +224,7 @@ WHIMPと呼ばれる我々のソリューションは、ウェッジサンプリ
 WHIMP is able to identify similar users for users with either large or small followings, and has been vetted in a variety of ways internally.
 **WHIMPは、フォロワーが多いユーザも少ないユーザも、類似性の高いユーザを特定することができ**、社内でさまざまな検証が行われているらしい.
 
-Ultimately, this similarity graph step takes as input a directed/bipartite graph with ∼109 nodes and ∼1011 edges and outputs an undirected graph with ∼107 nodes and ∼109 edges.
+Ultimately, this similarity graph step takes as input a directed/bipartite graph with ∼109 nodes and ∼1011 edges and outputs an undirected graph with $∼10^7$ nodes and ∼109 edges.
 最終的に、この類似グラフステップは、$~10^9$ 個のノードと$∼10^{11}$個のエッジを持つ有向/二部グラフを入力とし、$~10^7$ 個のノードと $~10^9$ 個のエッジを持つ無向グラフを出力する.
 In other words, we go from shared-nothing cluster-computing scale to shared-memory multi-core scale.
 つまり、shared-nothing のクラスタコンピューティング規模から、shared-memory のマルチコア規模になるのだ.(??)
@@ -396,219 +396,210 @@ The two top-k views R and C are stored in low-latency key-value stores.
 Using these two indices, it easy to retrieve nearest neighbors for any user or item – we simply look up the top communities that a user or item is active in, and for each of those communities, identify the top users or items.
 この2つの指標を用いると、**任意のユーザやアイテムの最近接者を簡単に検索することができる.** ユーザやアイテムと関連度の高い(=興味が近い=active inな) 上位のコミュニティを調べ、そのコミュニティごとに上位のユーザやアイテムを特定するだけでよいのである.
 These candidates can then be ranked by fetching their full representations and computing the similarity with the representation of the query object (either user or item).
-これらの候補は、その完全な表現(=embeddingべｋ)を取得し、queryオブジェクト(ユーザまたはアイテムのいずれか)の表現(=embedding)との類似性を計算することによってランク付けすることができる.
+これらの候補は、その完全な表現(=embeddingベクトル)を取得し、queryオブジェクト(ユーザまたはアイテムのいずれか)の表現(=embeddingベクトル)との**類似性を計算することによってランク付け**することができる.
 The upshot is that we neither need to brute-force scan through all users/items nor need to build specialized nearest neighbor indices.
 その結果、すべてのユーザやアイテムを総当たりでスキャンする必要も、特別な最近傍インデックスを構築する必要もない.
 
 # 5. Deployment Details 配置の詳細
 
 SimClusters has been deployed in production at Twitter for more than an year so far.
-SimClustersは、Twitter社で1年以上前から本番環境に導入されています。
+SimClustersは、Twitter社で1年以上前から本番環境に導入されている.
 All the representations output by the SimClusters system are also keyed by model-version, so that we can operate multiple models in parallel to enable the trying out of new parameters or code changes without affecting existing production.
-SimClustersシステムから出力されるすべての表現は、モデルバージョンでキーが設定されており、複数のモデルを並行して運用することで、既存の生産に影響を与えずに新しいパラメータやコードの変更を試すことができます。
-The main model that is currently running in production has ∼105 communities in the representations, discovered from the similarity graph of the top ∼107 users by follower count.
-現在、本番稼働中のメインモデルでは、フォロワー数上位∼107人のユーザーの類似性グラフから発見された∼105のコミュニティが表現されています。
+SimClustersシステムから出力されるすべての表現は、**モデルバージョンでキーが設定されており、複数のモデルを並行して運用すること**で、既存の生産に影響を与えずに新しいパラメータやコードの変更を試すことができる.
+The main model that is currently running in production has $∼10^5$ communities in the representations, discovered from the similarity graph of the top $∼10^7$ users by follower count.
+現在、本番稼働中のメインモデルでは、フォロワー数上位$∼10^7$人のユーザのsimilarityグラフから発見された$∼10^5$のコミュニティが表現されている.
 The bipartite communities discovered by the model contain nearly 70% of the edges in the input bipartite graph, suggesting that most of the structure of the graph is captured.
-モデルによって発見された二項コミュニティは、入力された二項グラフのエッジの70%近くを含んでおり、グラフの構造のほとんどを捉えていることが示唆されます。
+モデルによって発見されたbipartiteコミュニティは、入力されたbipartiteグラフのエッジの70%近くを含んでおり、グラフの構造のほとんどを捉えていることが示唆される.
 The right member sets do not vary too much in their sizes, while the left member sets vary drastically, reflecting the variance in the original follower distribution.
-右のメンバーセットの大きさはあまり変わらないが、左のメンバーセットの大きさは大きく異なり、元のフォロワー分布のばらつきを反映している。
+右のメンバーセットの大きさはあまり変わらないが、左のメンバーセットの大きさは大きく異なり、元のフォロワー分布のばらつきを反映している.
 Within Stage 1, Step 1 (similarity calculation) is the most expensive step, taking about 2 days to run end-to-end on Hadoop MapReduce, but note that this job was in production before SimClusters and therefore is not an additional cost introduced by SimClusters.
-ステージ1のうち、ステップ1（類似度計算）は最もコストがかかるステップで、Hadoop MapReduceでエンドツーエンドで実行するのに約2日かかりますが、このジョブはSimClusters以前から運用されていたため、SimClustersによる追加コストではないことに注意してください。
+ステージ1のうち、**ステップ1(類似度計算)は最もコストがかかるステップで、Hadoop MapReduceでエンドツーエンドで実行するのに約2日かかる**が、このジョブはSimClusters以前から運用されていたため、SimClustersによる追加コストではないことに注意してください. (高い頻度でバッチ実行するような感じではないのかな...。一ヶ月に一度とか? まあこのステップで使用するユーザデータは上位ユーザのみだからすでにデータは十分揃っていて、短期間で傾向がかわる事はないだろうから問題なさそう...!)
 Step 2 was run from scratch for the very first time when SimClusters launched; subsequently, we update the V matrix to take into account changes to the user–user similarity graph by running an abbreviated version of Neighborhood-aware MH initialized with the current V.
-ステップ2はSimClustersの起動時に初めて実行されました。その後、現在のVで初期化したNeighborhood-aware MHの短縮版を実行することにより、ユーザーとユーザーの類似性グラフの変化を考慮し、V行列を更新しています。
+ステップ2はSimClustersの起動時に初めて実行された. その後、現在の$V$で初期化した Neighborhood-aware MHの短縮版を実行することにより、ユーザとユーザの類似性グラフの変化を考慮し、$V$行列を更新している.
 Step 3 is also periodically run as batch application on Hadoop MapReduce using the latest version of the user–user graph and the latest V from Step 2.
-また、Step3は、最新版のユーザーユーザグラフとStep2の最新Vを使い、Hadoop MapReduce上でバッチアプリケーションとして定期的に実行されます。
+また、**Step3は、最新版のユーザ-ユーザグラフとStep2の最新$V$を使い、Hadoop MapReduce上でバッチアプリケーションとして定期的に実行される**.
 Once we have the output from Step 3 (the U matrix), we do not directly use the V matrix anymore, which is typically too sparse for accurate modeling.
-ステップ3の出力（U行列）を得た後は、V行列を直接使用することはありません。V行列は一般的に疎すぎて正確なモデリングができません。
+ステップ3の出力($U$行列)(=一般ユーザのcommunity表現ベクトル)を得た後は、$V$行列(=上位ユーザのcommunity表現ベクトル)を直接使用することはありません。V行列は一般的に疎すぎて正確なモデリングができない.
 
 For Stage 2, we currently have four jobs – two batch jobs, one for “user influence” representations and one for Topic representations; and two streaming jobs, one for Tweet representations and one for Trend representations.
-Stage2では、「ユーザーの影響力」表現と「話題」表現の2つのバッチジョブと、「ツイート」表現と「トレンド」表現の2つのストリーミングジョブの計4つのジョブを現在用意しています。
-The purpose of the user influence representations is to tell us what communities a user is influential in, as opposed to the user interest representations (the output of Stage 1) which tell us what communities a user is interested in, The user influence representations are better than the original original V matrix for this purpose as they cover many more users and are also denser for the original subset of users.
-ユーザー影響力表現の目的は、ユーザーがどのようなコミュニティに興味を持っているかを伝えるユーザー興味表現（ステージ1の出力）とは対照的に、ユーザーがどのようなコミュニティに影響を受けているかを伝えることです。ユーザー影響力表現は、より多くのユーザーをカバーし、またユーザーの元のサブセットに対してより密であるため、この目的のために元の元のVマトリックスよりも優れています。
+Stage2では、"user influence"表現(=これだけどういうアイテムか分からない...)と"Topic"表現の**2つのバッチジョブ**と、"ツイート"表現と"トレンド"表現(=これも単に人気度が高いトレンドを全員に見せている訳でなく、各communityと親和性の高いトレンドを探してるのか...!)の**2つのストリーミングジョブ(=online更新的なジョブ.)**の計4つのジョブを現在用意している.
+The purpose of the user influence representations is to tell us what communities a user is influential in, as opposed to the user interest representations (the output of Stage 1) which tell us what communities a user is interested in, The user influence representations are better than the original V matrix for this purpose as they cover many more users and are also denser for the original subset of users.
+**user influence表現の目的**は、ユーザがどのようなコミュニティに興味を持っているかを表す為のuser interest表現(=ステージ1の出力)とは対照的に、**ユーザがどのようなコミュニティに影響を受けているか**を表すことである. user influence表現は、より多くのユーザをカバーし、またユーザの元のサブセットに対してより密であるため、この目的のために元の$V$行列(=これって上位ユーザのcommunity表現じゃなかったっけ?)よりも優れている.(計算方法は、ステージ2の他のアイテムと同じなのかな...="上位ユーザ"をアイテムとして計算する感じ?)
 Topic representations tell us which communities are the most interested in a Topic, and the input to computing these is both the user interest representations as well as a user–Topic engagement graph.
-トピック表現は、どのコミュニティがトピックに最も興味を持っているかを示すもので、これを計算するための入力は、ユーザーの興味表現と、ユーザーとトピックの関係グラフの両方です。
+トピック表現は、どのコミュニティがトピックに最も興味を持っているかを示すもので、これを計算するための入力は、ユーザの興味表現と、ユーザ-トピックの関係グラフの両方である.(アイテム=トピックとしたver.)
 Tweet and Trend representations are computed and updated in a streaming job which takes as input user–Tweet engagements happening in real-time.
-ツイートとトレンドの表現は、リアルタイムで発生するユーザーとツイートのエンゲージメントを入力とするストリーミングジョブで計算・更新されます。
+ツイートとトレンドの表現は、リアルタイムで発生するユーザとツイートのエンゲージメントを入力とするストリーミングジョブで計算・更新される.
 Both the user interest and user influence representations are protected using authentication to only allow authorized access, and users are provided the chance to opt out of unwanted inferences in their Privacy dashboard.
-ユーザーの関心と影響力の表現は、認証により許可されたアクセスのみを許可するよう保護されており、ユーザーはプライバシーダッシュボードで不要な推論をオプトアウトする機会を得ることができます。
+user interest表現とuser influence表現は、認証により許可されたアクセスのみを許可するよう保護されており、ユーザはプライバシーダッシュボードで不要な推論をオプトアウトする機会を得ることができる.
 
 Note that we store only the non-zeros in all our representations, and in all cases we truncate entries close to zero.
-すべての表現において、ゼロでないものだけを保存し、すべての場合においてゼロに近いエントリーを切り捨てていることに注意してください。
-The user interest representations cover ∼109 users while the user influence representations cover ∼108 users, with both representations having on average 10−100 non-zeros.
-ユーザーの興味表現は約109人のユーザーをカバーし、ユーザーの影響表現は約108人のユーザーをカバーしており、どちらの表現も平均10-100個の非ゼロを有している。
+すべての表現において、ゼロでないものだけを保存し、すべての場合においてゼロに近いエントリーを切り捨てていることに注意してください.
+The user interest representations cover $∼10^9$ users while the user influence representations cover $∼10^8$ users, with both representations having on average 10−100 non-zeros.
+user interest表現は約$∼10^9$人のユーザをカバーし、user influence表現は約$∼10^8$人のユーザをカバーしており、どちらの表現も平均10~100個の非ゼロ要素を有している.(user influence表現の方がオーダーが小さいのは、user interest表現を元にaggregate計算する際に、ある一定数以上フォローされている必要があるから?)
 There are fewer recommendable Tweets and Trends at any given point in time (refer Table 1), but their representations are denser, having on average ∼102 non-zeros.
-ある時点で推奨されるツイートやトレンドの数は少ないが（表1参照）、その表現はより密で、平均して約102のノンゼロを持つ。
-Note that for the following four representations - user influence, Topic, Tweet, and Trend - we also maintain the inverted indices, i.e.
-なお、以下の4つの表現（ユーザーの影響力、トピック、ツイート、トレンド）については、反転した指標も維持している。
-given a community, what are the top-k users/Topics/Tweets/Trends for that community (denoted by C in Section 4).
-あるコミュニティが与えられたとき、そのコミュニティのトップkユーザー/トピック/ツイート/トレンドは何か（セクション4ではCと表記する）。
+ある時点で推薦されるツイートやトレンドの数は少ないが(表1参照)、その表現はより密で、平均して約102のノンゼロを持つ.
+Note that for the following four representations - user influence, Topic, Tweet, and Trend - we also maintain the inverted indices, i.e. given a community, what are the top-k users/Topics/Tweets/Trends for that community (denoted by C in Section 4).
+なお、以下の4つの表現(user influence、トピック、ツイート、トレンド)については、反転した指標も維持している: あるコミュニティが与えられたとき、そのコミュニティと関連度の高いトップkユーザー/トピック/ツイート/トレンドは何か（セクション4では$C$と表記している）.
 Having C is essential to retrieving the items whose representation has the largest dot product or cosine similarity with another representation.
-Cは、他の表現とのドット積やコサイン類似度が最も大きい表現を持つアイテムを検索するために不可欠である。
+$C$は、他の表現とのドット積やコサイン類似度が最も大きい表現を持つアイテムを検索するために不可欠である.
 
-# 6. Applications アプリケーション
+# 6. Applications 適用
 
 ## 6.1. Similar Tweets on Tweet Details page ツイート詳細ページでの類似ツイート
 
 For users who visit a Tweet via an email or a push notification, Twitter shows a module with other recommended Tweets, alongside replies.
-メールやプッシュ通知でツイートにアクセスしたユーザーに対して、Twitterは他のおすすめツイートと返信を並べたモジュールを表示します。
-Prior to SimClusters, this module retrieved Tweets solely based on author similarity i.e.
-SimClusters以前は、このモジュールは作者の類似性だけに基づいてツイートを検索していました（つまり、作者の類似性だけで、ツイートを検索していました）。
-Tweets written by users who share a lot of followers with the author of the main Tweet on the page.
-ページ内のメインツイートの作者と多くのフォロワーを共有しているユーザーが書いたツイート。
-We ran an online A/B test where we added similar Tweets from SimClusters i.e.
-SimClustersの類似ツイートを追加したオンラインA/Bテストを実施しました（例）。
-we retrieved Tweets whose SimClusters representation has high cosine similarity with the representation of the main Tweet on the page.
-は、SimClusters表現がそのページのメインツイートの表現と高いコサイン類似度を持つツイートを検索しました。
+メールやプッシュ通知でツイートにアクセスしたユーザに対して、Twitterは他のおすすめツイートと返信を並べたモジュールを表示する.
+Prior to SimClusters, this module retrieved Tweets solely based on author similarity i.e.Tweets written by users who share a lot of followers with the author of the main Tweet on the page.
+このモジュールは、SimClustersの前に、作者の類似性(ページ上のメインツイートの作者と多くのフォロワーを共有するユーザーが書いたツイート)にのみ基づいてツイートを検索していた.
+We ran an online A/B test where we added similar Tweets from SimClusters i.e. we retrieved Tweets whose SimClusters representation has high cosine similarity with the representation of the main Tweet on the page.
+オンラインA/Bテストでは、SimClustersから類似ツイートを追加した. つまり、SimClustersの表現(=どのcommunityと関連度が高いかを表すベクトル)がページ上のメインツイートの表現と高いコサイン類似度を持つツイートを取得した.
+
 We found that the engagement rate on the resulting Tweets was 25% higher.4
-その結果、ツイートに対するエンゲージメント率が25％高くなることがわかりました4。
+その結果、ツイートに対するエンゲージメント率が25％高くなることがわかった.
 
 Subsequently, we added a second candidate source for this product based on SimClusters – retrieve Tweets whose SimClusters representation have high cosine similarity with the user influence representation of the author of the main Tweet on the page.
-その後、SimClustersに基づくこの製品の第二のソース候補を追加しました。SimClusters表現が、ページ上のメインツイートの著者のユーザー影響力表現と高いコサイン類似性を持つツイートを検索します。
+その後、SimClustersに基づくこのproductの第二のソース候補を追加した.SimClusters表現が、ページ上のメインツイートの著者のuser influence表現(=user interest 表現からaggregateされたベクトル)と高いコサイン類似性を持つツイートを検索する.
 Adding this source increases the coverage further, while the overall increase in engagement rate is a more modest but still impressive 7%.
-このソースを追加することで、カバー率はさらに向上し、全体のエンゲージメント率の向上は、より控えめではありますが、それでも7％という素晴らしい結果となっています。
+このソースを追加することで、カバー率はさらに向上し、全体のエンゲージメント率の向上は、より控えめではありますが、それでも7％という素晴らしい結果となっている.
 
 ## 6.2. Tweet Recommendations in Home Page ホームページでおすすめツイート
 
 A user’s Home feed on Twitter consists of both Tweets from users being directly followed as well as recommended Tweets from users not being followed (“Out of Network Tweets”).
-Twitterのホームフィードは、直接フォローされているユーザーのツイートと、フォローされていないユーザーのおすすめツイート（以下「ネットワーク外ツイート」）の両方から構成されます。
-Prior to SimClusters, the main algorithm for recommended Tweets was what is called “Network Activity” - namely, use GraphJet [31] to identify which Tweets are being liked by the viewing user’s followings (i.e.
-SimClusters以前は、推奨ツイートの主なアルゴリズムは「ネットワークアクティビティ」と呼ばれるものでした。つまり、GraphJet [31]を使用して、閲覧ユーザーのフォロワー（つまり、「いいね!
-network).
-のネットワーク)。
+**Twitterのホームフィード**は、直接フォローされているユーザのツイートと、フォローされていないユーザのおすすめツイート（以下「ネットワーク外ツイート」）の両方から構成される.
+Prior to SimClusters, the main algorithm for recommended Tweets was what is called “Network Activity” - namely, use GraphJet [31] to identify which Tweets are being liked by the viewing user’s followings (i.e. network).
+SimClusters以前は、推薦ツイートの主なアルゴリズムは「ネットワークアクティビティ」と呼ばれるものだった. つまり、GraphJet [31]を使用して、閲覧ユーザのフォロー（つまりネットワーク）がどのツイートに「いいね」を付けているかを特定する.
 
 Using SimClusters Tweet representations, we built two candidate sources to supplement Network Activity Tweets.
-SimClustersのツイート表現を使って、ネットワークアクティビティツイートを補足する2つのソース候補を構築しました。
+**SimClustersのツイート表現(ツイートがどのcommunityと関連度が高いか?を表すベクトル)**を使って、ネットワークアクティビティツイートを補足する2つのcandidate sources を構築した.
 The first candidate source identifies Tweets whose real-time representation has the highest dot-product with the viewing user’s interest representation.
-第1の候補ソースは、リアルタイム表現が閲覧ユーザーの興味表現とのドット積が最も高いツイートを特定する。
+第1のcandidate sources は、リアルタイム表現(=現時点でのツイートのcommunity表現)が閲覧ユーザのinterest表現とのドット積が最も高いツイートを特定する.
 The second candidate source is based on item-based collaborative filtering, and uses the same underlying implementation as the “Similar Tweets” application described in Section 6.1 to identify Tweets similar to those Tweets which have been recently liked by the user.
-2つ目の候補は、アイテムベースの協調フィルタリングに基づくもので、セクション6.1で説明した「類似ツイート」アプリケーションと同じ基本的な実装を使用して、ユーザーが最近「いいね！」を押したツイートと類似するツイートを特定します。
+2つ目の候補は、アイテムベースの協調フィルタリングに基づくもので、セクション6.1で説明した「類似ツイート」アプリケーションと同じ基本的な実装を使用して、ユーザが最近「いいね！」を押したツイートと類似するツイートを特定する. (類似度の評価に使用するのは simclustersで作ったtweet表現.=>関連するコミュニティに基づく類似度!)
 We ran an online A/B test by replacing existing candidates in production (in certain positions on Home) using the candidates from these two new candidate sources.
-この2つの新しい候補者ソースからの候補者を、本番の既存の候補者（Homeの特定のポジション）に置き換えて、オンラインでA/Bテストを実施しました。
+この2つの新しい候補者ソースからの候補者を、本番の既存の候補者(Homeの特定のポジション)に置き換えて、オンラインでA/Bテストを実施した.
 The experiment showed that the engagement rate of the new candidates is 33% higher than that for candidates generated by Network Activity, and shown in similar positions.
-実験では、ネットワークアクティビティで生成された候補者と比較して、新しい候補者のエンゲージメント率が33%高く、同じようなポジションで表示されることがわかりました。
+実験では、ネットワークアクティビティで生成された候補者と比較して、新しい候補者のエンゲージメント率が33%高く、同じようなポジションで表示されることがわかった.
 The two candidate sources together were able to increase total weighted engagements on the platform by close to 1%, which is very large considering the maturity of this product and that recommended Tweets only account for a minority of the viewed content in Home pages.
-これは、本製品の成熟度や、おすすめツイートがトップページの閲覧コンテンツの少数派であることを考えると、非常に大きな効果です。
+これは、本製品の成熟度や、おすすめツイートがトップページの閲覧コンテンツの少数派であることを考えると、非常に大きな効果である.
 
 Apart from new candidates, we also use the user interest and Tweet representations to improve the ranking of candidates coming from all sources.
-新しい候補とは別に、ユーザーの興味やツイート表現を利用して、あらゆるソースから来る候補のランキングを改善することもあります。
+新しい候補とは別に、user interest表現やツイート表現を利用して、あらゆるソースから来る候補のランキングを改善することもある.(=>候補生成後のランキングモデルの特徴量として使用するみたいな感じ?)
 The user and item representations are used to enrich the set of existing user features, item features, as well as user-item interaction features in the input to an engagement prediction model.
-ユーザーとアイテムの表現は、エンゲージメント予測モデルの入力において、既存のユーザー特徴、アイテム特徴、およびユーザーとアイテムの相互作用特徴のセットを豊かにするために使用されます。
+ユーザとアイテムの表現は、エンゲージメント予測モデルの入力において、既存のユーザ特徴、アイテム特徴、およびユーザとアイテムの相互作用特徴のセットを豊かにするために使用される.
 A/B testing showed that the model trained with these features was able to increase engagement rate of recommended content by 4.7% relatively, which is a significant lift for a mature model.
-A/Bテストでは、これらの機能で学習させたモデルは、推奨コンテンツのエンゲージメント率を4.7%相対的に高めることができ、成熟したモデルとしては大きなリフトアップ効果がありました。
+A/Bテストでは、これらの機能で学習させたモデルは、推薦コンテンツのエンゲージメント率を4.7%相対的に高めることができ、成熟したモデルとしては大きなリフトアップ効果がありました。
 
 ## 6.3. Ranking of Personalized Trends
 
 Showing top trending content (e.g., Hashtags, Events, breaking news) is an important way to keep users informed about what is happening locally and globally.
-トップトレンドのコンテンツ（ハッシュタグ、イベント、ニュース速報など）を表示することは、地域や世界で起こっていることをユーザーに知らせる重要な方法です。
+トップトレンドのコンテンツ(ハッシュタグ、イベント、ニュース速報など)を表示することは、地域や世界で起こっていることをユーザに知らせる重要な方法.
 The implementation for Trends follows a two-stage process of Trends detection followed by ranking.
-Trendsの実装は、Trendsの検出とランキングの2段階を踏んでいます。
+Trendsの実装は、Trendsの検出とランキングの2段階を踏んでいる.
 Prior to SimClusters, the ranking of a Trend primarily depended on its volume and a small number of personalization features.
-SimClusters以前は、トレンドのランキングは主にそのボリュームと少数のパーソナライズ機能によって決定されていました。
+SimClusters以前は、トレンドのランキングは主にそのボリューム(?)と少数のパーソナライズ機能によって決定されていた.
 We used Trends SimClusters representations to score Trends for a given user by using the dot-product of the user’s interest representation along with the real-time representation for a Trend.
-トレンドのSimClusters表現を使って、ユーザーの関心表現とトレンドのリアルタイム表現のドットプロダクトを使用することで、与えられたユーザーのトレンドをスコア化しました。
+トレンドのSimClusters表現を使って、user interest表現とリアルタイムのtrend表現のドットプロダクト(内積!)を使用することで、与えられたユーザ-トレンドペアをスコア化した.
 A/B testing revealed that using these scores led to a 8% increase in user engagement with the Trends themselves, as well as a bigger 12% increase in engagement on the landing page subsequent to a click.
-A/Bテストでは、このスコアを使用することで、Trends自体のユーザーエンゲージメントが8％増加し、さらにクリック後のランディングページのエンゲージメントが12％増加することがわかりました。
+A/Bテストでは、このスコアを使用することで、Trends自体のユーザエンゲージメントが8％増加し、さらにクリック後のランディングページのエンゲージメントが12％増加することがわかった.
 These improvements are large when compared against other experiments run on this product.
-これらの改善は、この製品で行われた他の実験と比較すると、大きなものです。
+これらの改善は、この製品で行われた他の実験と比較すると、大きなものである.
 
 ## 6.4. Topic Tweet Recommendations トピック ツイート おすすめ度
 
 Given a Topic in a pre-defined topic taxonomy such as “Fashion” or “Marvel Movies”, how can we identify the best content about it? The original implementation here (before the product was launched publicly) primarily relied on custom text matching rules curated by human experts to identify topical Tweets.
-ファッション」や「マーベル映画」など、あらかじめ定義されたトピック分類法のトピックがある場合、そのトピックに関する最高のコンテンツを特定するにはどうすればよいでしょうか。ここでのオリジナルの実装（製品が一般に発売される前）は、主に人間の専門家がキュレーションしたカスタムテキストマッチングルールに依存して、トピックツイートを識別していました。
+「ファッション」や「マーベル映画」など、あらかじめ定義されたトピック分類法のトピックがある場合、そのトピックに関する最高のコンテンツを特定するにはどうすればよいだろうか. ここでのオリジナルの実装(productが一般に発売される前)は、主に人間の専門家がキュレーションしたカスタムテキストマッチングルールに依存して、トピックツイートを識別していた.
 Once we realized that this approach surfaced a number of false positives (primarily due to a Tweet’s text incidentally matching the rules for a Topic), we tested a second implementation where we first identify those Tweets whose SimClusters representation has high cosine similarity with the representation of the query Topic, and then apply the textual matching rules.
-この方法では、多くの誤検出（主にツイートのテキストがトピックのルールと偶然一致することによる）があることがわかったので、2番目の実装をテストしました。まず、SimClusters表現がクエリトピックの表現と高いコサイン類似度を持つツイートを特定し、次にテキストマッチング規則を適用しました。
+この方法では、多くの誤検出(主にツイートのテキストがトピックのルールと偶然一致することによる)があることがわかったので、2番目の実装をテストした. まず、SimClusters表現が、query topic表現(=対象のtopic表現)と高いコサイン類似度を持つツイート表現を特定し、次にテキストマッチング規則(??既存のアプローチ? 二段階にしたって事?)を適用した.
 Internal evaluation showed that the second approach returned much better results, therefore we launched this product publicly using this approach.
-社内で評価したところ、2番目のアプローチの方がはるかに良い結果が得られたため、このアプローチで本製品を一般発売しました。
+社内で評価したところ、2番目のアプローチの方がはるかに良い結果が得られたため、このアプローチでproductをlaunchした.
 Since launch, this feature has received positive press externally as well as causing higher engagement with Tweets from the broader user base.
-この機能は、発売以来、外部で好評を博し、より多くのユーザーからツイートへのエンゲージメントを高めています。
+この機能は、発売以来、外部で好評を博し、より多くのユーザからツイートへのエンゲージメントを高めている.
 
 ## 6.5. Ranking Who To Follow Recommendations フォローすべき人ランキング おすすめ
 
 The candidates for Who To Follow recommendations are ranked using an engagement prediction model, to which we added new features based on the SimClusters representations of the viewing user and the candidate user.
-Who To Followレコメンデーションの候補は、エンゲージメント予測モデルを用いてランク付けされます。このモデルには、閲覧ユーザーと候補ユーザーのSimClusters表現に基づく新しい特徴が加えられています。
+Who To Followレコメンデーションの候補は、エンゲージメント予測モデルを用いてランク付けされる. このモデルには、**閲覧ユーザと候補ユーザのSimClusters表現**に基づく新しい特徴が加えられている.(特徴量としての活用.)
 In A/B tests, we observed an impressive increase of 7% in the follow rate by using these new features.
-A/Bテストでは、これらの新機能を使用することで、フォロー率が7％向上することが確認されました。
+A/Bテストでは、これらの新たな特徴量を使用することで、フォロー率が7％向上することが確認された.
 
 ## 6.6. Applications in progress 現在進行中のアプリケーション
 
-### 6.6.1. Notifications quality filter. 通知品質フィルター。
+### 6.6.1. Notifications quality filter. 通知品質フィルター
 
 A crucial task on Twitter is to protect users from getting abusive or spammy replies or mentions.
-Twitterの重要なタスクは、罵倒やスパム的なリプライやメンションを受けないようにユーザーを保護することです。
-We developed new SimClusters representations for users based on the user–user block graph (i.e.
-ユーザーとユーザーのブロックグラフに基づくユーザーのための新しいSimClusters表現を開発した（すなわち。
-when one user blocks another), and used these representations as features to train a model for filtering out abusive and spammy replies.
-を表現し、これらの表現を特徴量として、罵倒やスパムの返信をフィルタリングするモデルを学習しています。
+Twitterの重要なタスクは、罵倒やスパム的なリプライやメンションを受けないようにユーザを保護することである.
+We developed new SimClusters representations for users based on the user–user block graph (i.e.when one user blocks another), and used these representations as features to train a model for filtering out abusive and spammy replies.
+**ユーザとユーザのブロックグラフ（あるユーザーが他のユーザーをブロックした場合）に基づく新しいユーザ表現をSimClustersで開発**し、この表現を特徴として、罵倒やスパムのような返信をフィルタリングするモデルを学習した.
 In offline tests, the model showed an impressive 4% lift in PR-AUC5 .
-オフラインテストでは、PR-AUC5 が 4％向上するという素晴らしい結果を示しました。
+オフラインテストでは、PR-AUC5 が 4％向上するという素晴らしい結果を示した.
 
-### 6.6.2. 6.6.2 Supervised embeddings from feature combinations. 6.6.2 特徴の組み合わせから教師付き埋込を行う。
+### 6.6.2.Supervised embeddings from feature combinations. 特徴の組み合わせから教師付き埋込を行う
 
 While SimClusters representations mostly capture information from various engagement graphs, we are also experimenting approaches to combine it with other features about users or items (for example, follower counts or geo information).
-SimClustersの表現は、主に様々なエンゲージメントグラフから情報を取得しますが、ユーザーやアイテムに関する他の特徴（例えば、フォロワー数やジオ情報）と組み合わせるアプローチも試しています。
+**SimClustersの表現は、主に様々なエンゲージメントグラフから情報を取得する**が、ユーザやアイテムに関する他の特徴(例えば、フォロワー数やジオ情報)と組み合わせるアプローチも試している.
 One approach where we are obtaining promising early results is to train a deep neural network on an ancillary prediction task (such as engagement prediction) where the input features are both the user and item SimClusters representations along with previously developed features for the user and item.
-私たちが有望な初期結果を得ているアプローチの1つは、補助的な予測タスク（エンゲージメント予測など）でディープニューラルネットワークを訓練することで、入力特徴としてユーザーとアイテムのSimClusters表現と、ユーザーとアイテムのために以前に開発した特徴の両方を使用します。
+私たちが有望な初期結果を得ているアプローチの1つは、補助的な予測タスク(エンゲージメント予測など)でディープニューラルネットワークを訓練することで、入力特徴としてユーザとアイテムのSimClusters表現と、ユーザとアイテムのために以前に開発した特徴の両方を使用する.
 By choosing the right architecture for this neural net, for example, the two-tower DNN model [36], we are able to learn dense embeddings separately for users and items.
-このニューラルネットに適切なアーキテクチャ、例えば2塔式DNNモデル[36]を選択することで、ユーザーとアイテムについて別々に密な埋め込みを学習することができるようになる。
+このニューラルネットに適切なアーキテクチャ、例えば2塔式DNNモデル[36]を選択することで、ユーザーとアイテムについて別々に密な埋め込みを学習することができるようになる.(説明変数にユーザやアイテムのsimClusters表現、目的変数にCTR等のengagementスコアで学習させ、中間層を新たなembeddingとして抜き出す、みたいなアプローチ?)
 
-### 6.6.3. 6.6.3 Real-time Event notifications. 6.6.3 リアルタイムイベント通知。
+### 6.6.3. 6.6.3 Real-time Event notifications. 6.6.3 リアルタイムイベント通知
 
 A major application at Twitter is to notify users who may be interested when a major news event happens.
-Twitterでの主な用途は、大きなニュースが起こったときに、興味を持ちそうなユーザーに通知することです。
+Twitterでの主な用途は、大きなニュースが起こったときに、興味を持ちそうなユーザに通知することである.(プッシュ通知か...!)
 Using the SimClusters representation of an Event (which is in turn derived by aggregating the representations of the human-curated Tweets about it), we can identify the communities of users who will be interested in it, and subsequently target users interested in them.
-イベントのSimClusters表現（これは、そのイベントに関する人間のキュレーションによるツイートの表現を集約することで得られる）を使って、そのイベントに興味を持つユーザーのコミュニティを特定し、そのコミュニティに興味を持つユーザーをターゲットにすることができます。
+イベントのSimClusters表現(これは、そのイベントに関する人間が作成したツイート表現を集約することで得られる)を使って、**そのイベントに興味を持つユーザのコミュニティを特定**し、そのコミュニティに興味を持つユーザをターゲットにすることができる. (新規アイテムの場合はどうしたらいいんだろう... そのアイテムの属性情報と類似したツイート表現や、作成者のUser表現を使ったら、aggregateして新規イベント表現を作れるだろうか...?)
 We are currently evaluating such an approach.
-現在、そのようなアプローチを評価しています。
+現在、そのようなアプローチを評価している.
 
 # 7. Related Work 関連作品
 
 Traditionally, approaches to recommender systems are categorized as either neighborhood-based (which do not involve model-fitting), or model-based (which fit a model to the input data).
-従来、レコメンダーシステムのアプローチは、モデルフィッティングを伴わないネイバーベースと、入力データにモデルをフィッティングするモデルベースに分類されています。
+従来、推薦システムのアプローチは、モデルフィッティングを伴わないneighborhoodベース(ex. content-base等で、埋め込みベクトルを作るアプローチ)と、入力データにモデルをフィッティングするモデルベース(factorization machine)に分類されている.
 
 In our experience of building recommendations at Twitter, we find that neighborhood-based methods are easier to scale, more accurate, more interpretable, and also more flexible in terms of accommodating new users and/or items [9, 11, 12, 31].
-Twitterでレコメンデーションを構築した経験から、近隣ベースの手法は、スケールが簡単で、より正確で、より解釈しやすく、また新しいユーザーやアイテムに対応する点で、より柔軟であることがわかりました [9, 11, 12, 31] 。
+**Twitterでレコメンデーションを構築した経験から、neighborhoodベースの手法は、スケールが簡単で、より正確で、より解釈しやすく、また新しいユーザやアイテムに対応する点で、より柔軟であることがわかった** [9, 11, 12, 31] .
 Recent research has also found that well-tuned neighborhood-based methods are not easy to beat in terms of accuracy [6].
-また、最近の研究では、よく調整された近傍領域ベースの手法は、精度の面で簡単には勝てないことが分かっています[6]。
+また、最近の研究では、よく調整された近傍領域ベースの手法は、精度の面で簡単には勝てないことが分かっている[6].
 However, neighborhoodbased approaches do not provide a general solution – we needed to build and maintain separate systems to solve each recommendation sub-problems at Twitter in the past (see Section 1 for more discussion of our past work).
-しかし、ネイバーベースのアプローチは一般的な解決策を提供するものではなく、私たちは過去にTwitterでそれぞれの推薦サブ問題を解決するために別々のシステムを構築・維持する必要がありました（過去の研究についての詳細はセクション1を参照してください）。
+しかし、neighborhoodベースのアプローチは一般的な解決策を提供するものではなく、私たちは過去にTwitterでそれぞれの推薦サブ問題を解決するために別々のシステムを構築・維持する必要がありました(過去の研究についての詳細はセクション1を参照してください)
 
 Model-based approaches, such as factorized models [18], graph embedding [10, 26] or VAE [22], fit separate parameters for each user or item.
-因数分解モデル[18]、グラフ埋め込み[10, 26]、VAE[22]などのモデルベースのアプローチは、各ユーザーやアイテムに対して別々のパラメータを当てはめます。
+因数分解モデル[18](factorization machineの事かと思ったらMFの事だった!)、グラフ埋め込み[10, 26]、VAE[22]などのモデルベースのアプローチは、各ユーザやアイテムに対して別々のパラメータを当てはめる.(ここでの"パラメータ"って、特徴量の事? 埋め込みベクトルの事でもあるのかな.)
 The number of model parameters that need to be learned in order to scale to a billion-user social network can easily approach 1012, necessitating unprecedentedly large systems for solving ML problems at that scale.
-10億人規模のソーシャルネットワークに対応するためには、学習すべきモデルパラメータの数が1012個に達することもあり、そのような規模のML問題を解決するためには、これまでにない大規模なシステムが必要となります。
+10億人規模のソーシャルネットワークに対応するためには、学習すべきモデルパラメータの数が$10^{12}$個に達することもあり、そのような規模のML問題を解決するためには、これまでにない大規模なシステムが必要となる.
 Hybrid models, such as Factorization Machine [27] and Deep Neural Networks (DNNs) [5] have been introduced to reduce the parameter space by utilizing the side information as prior knowledge for users and items.
-ユーザーやアイテムの事前知識としてサイド情報を活用し、パラメータ空間を縮小するために、因数分解マシン [27] やディープニューラルネットワーク (DNN) [5] などのハイブリッドモデルが導入されています。
+ユーザやアイテムの事前知識としてサイド情報(=属性情報的な?)を活用し、パラメータ空間を縮小するために、Factorization Machine [27] やディープニューラルネットワーク (DNN) [5] などのハイブリッドモデルが導入されている.
 However, they require either well-defined feature vectors or pre-trained embeddings from auxiliary tasks as the input representation of users and items.
-しかし、これらはユーザーやアイテムの入力表現として、よく定義された特徴ベクトルか、補助タスクから事前に訓練された埋め込みを必要とします。
+しかし、これらはユーザやアイテムの入力表現として、よく定義された特徴ベクトルか、補助タスクから事前に訓練された埋め込みを必要とする.
 Graph Convolutional Networks (GCNs) [16, 37] can enrich pre-existing feature representations of the nodes by propagating the neighborhood information from the graph, without fitting model parameters for each node.
-グラフ畳み込みネットワーク（GCN）[16, 37]は、各ノードのモデルパラメータをフィッティングすることなく、グラフから近傍情報を伝播することで、ノードの既存の特徴表現を豊かにすることができます。
+グラフ畳み込みネットワーク（GCN）[16, 37]は、各ノードのモデルパラメータをフィッティングすることなく、グラフから近傍情報を伝播することで、ノードの既存の特徴表現を豊かにすることができる.
 GCNs perform well in domains where the items have a good set of pre-existing features, e.g., where the items are images [37].
 GCNは、アイテムが画像である場合など、アイテムが既存の特徴の良いセットを持っているドメインでうまく機能します[37]。
 Such approaches work less well in the absence of useful content features and cannot deal with the short half life of items either.
 このようなアプローチは、有用なコンテンツの特徴がない場合にはうまく機能せず、アイテムの半減期が短い場合にも対応できない。
 We see SimClusters as an approach to scalably learn user and item representations which can be fed to hybrid models like DNNs [5] or GCNs [37].
-SimClustersは、DNN [5]やGCN [37]のようなハイブリッドモデルに供給できるユーザーとアイテムの表現をスケーラブルに学習するアプローチだと考えています。
+SimClustersは、DNN [5]やGCN [37]のような**ハイブリッドモデルに供給できるユーザとアイテムの表現をスケーラブルに学習するアプローチだと考えている**.
 
 Our problem definition bears some similarity to the cross-domain or heterogeneous recommender systems problem [2, 38], where one can use a joint objective function to simultaneously learn the representations of users and items across multiple domains [8, 39].
-我々の問題定義は、複数のドメインにまたがるユーザーとアイテムの表現を同時に学習するために共同目的関数を使用できる、クロスドメインまたは異種推薦システム問題 [2, 38] に類似している [8, 39]。
+我々の問題定義は、複数のドメインにまたがるユーザとアイテムの表現を同時に学習するために共同目的関数を使用できる、クロスドメインまたは異種推薦システム問題 [2, 38] に類似している [8, 39].
 It is unclear how these methods can support our requirements for scale, handling dynamic items and graphs, and intepretability.
-これらの方法は、スケール、動的なアイテムやグラフの扱い、インテプリタビリティといった我々の要求をどのようにサポートできるかは不明である。
+これらの方法は、スケール、動的なアイテムやグラフの扱い、インテプリタビリティといった我々の要求をどのようにサポートできるかは不明である.
 
 # 8. Conclusion 結論
 
 We proposed a framework called SimClusters based on detecting bipartite communities from the user-user graph and use them as a representation space to solve many personalization and recommendation problems at scale.
-我々は、ユーザーとユーザーのグラフから二部コミュニティを検出し、それを表現空間として利用することに基づくSimClustersというフレームワークを提案し、多くのパーソナライゼーションや推薦問題をスケールアップして解決する。
+我々は、**ユーザ-ユーザのグラフから二部コミュニティを検出**し、それを**表現空間として利用する**ことに基づくSimClustersというフレームワークを提案し、多くのパーソナライゼーションや推薦問題をスケールアップして解決する.
 SimClusters uses a novel algorithm called Neighborhood-aware MH for solving the crucial problem of unipartite community detection with better scalability and accuracy.
-SimClustersでは、一組のコミュニティ検出という重要な問題を、より優れたスケーラビリティと精度で解決するために、Neighborhood-aware MHという新しいアルゴリズムを用いています。
+SimClustersでは、一組のコミュニティ検出という重要な問題を、より優れたスケーラビリティと精度で解決するために、Neighborhood-aware MHという新しいアルゴリズムを用いている.
 We also presented several diverse deployed and in-progress applications where we use SimClusters representations to improve relevance at Twitter.
-また、SimClusters表現を用いてTwitterでの関連性を向上させる、多様なデプロイ済みおよび進行中のアプリケーションをいくつか紹介しました。
+また、SimClusters表現を用いてTwitterでの関連性を向上させる、多様なデプロイ済みおよび進行中のアプリケーションをいくつか紹介した.
 
 # 9. Supplement: Further Evaluation サプリメント さらなる評価
 
-The code for Neighborhood-aware MH and an in-memory implementation of Stage 1 are open-sourced in https://github.com/ twitter/sbf.
-Neighborhood-aware MHのコードとStage 1のインメモリ実装は、https://github.com/ twitter/sbfでオープンソース化されています。
+The code for Neighborhood-aware MH and an in-memory implementation of Stage 1 are open-sourced in https://github.com/twitter/sbf.
+Neighborhood-aware MHのコードとStage 1のインメモリ実装は、https://github.com/ twitter/sbfでオープンソース化されている.
 
-## 9.1. Neighborhood-aware MH Empirical evaluation 近傍探索型 MH 経験値評価
+## 9.1. Neighborhood-aware MH Empirical evaluation Neighborhood-aware MH の 経験的評価
 
 ### 9.1.1. A.1.1 Comparison with RandomMH [33]. A.1.1 RandomMH [33]との比較。
 
@@ -633,7 +624,7 @@ SNAPパッケージの実装を使用した[21]。
 (b) Graclus [7]： Graclusは固有ベクトルを計算することなく重み付きグラフカットを最適化するため，精度を落とすことなくスペクトルアルゴリズムよりもはるかに高速に処理することができます6．なお，これらの8つのデータセットすべてにおいて，[33]で提案したRandomMHアルゴリズムは決められた時間（6時間）内に進展することができませんでした．
 
 We use two kinds of datasets: similarity graphs calculated for a subset of Twitter users in the way described in Section 3.1, as well as the 4 biggest undirected social networks we were able to find externally on the KONECT [19] collection.
-3.1節で説明した方法でTwitterユーザーのサブセットに対して計算された類似グラフと、KONECT [19] コレクションで外部から見つけることができた4大無向性ソーシャルネットワークの2種類のデータセットを使用する。
+3.1節で説明した方法でTwitterユーザのサブセットに対して計算された類似グラフと、KONECT [19] コレクションで外部から見つけることができた4大無向性ソーシャルネットワークの2種類のデータセットを使用する。
 While our method (Neighborhood-Aware MH) and Graclus both work with weighted graphs, BigClam does not, so we restrict ourselves to unweighted graphs.
 我々の手法（Neighborhood-Aware MH）とGraclusは共に重み付きグラフを扱うが、BigClamはそうではないので、我々は非重み付きグラフに限定する。
 For Neighborhood-aware MH, we run it with 𝑙 = 1, i.e.
@@ -681,12 +672,12 @@ Neighborhood-aware MH is fast because each epoch requires making a single pass o
 Our approach is able to run inside 1.5 hours for a graph with 100M nodes and 5B edges (Top100M), while the largest graph either of our baselines is able to run on is at least an order of magnitude smaller.
 我々のアプローチは、100Mのノードと5Bのエッジを持つグラフ（Top100M）に対して1.5時間以内に実行することができましたが、我々のベースラインのいずれかが実行できる最大のグラフは、少なくとも1桁小さいものです。
 
-## 9.2. Bipartite Communities Empirical evaluation 二者間共同体 実証評価
+## 9.2. Bipartite Communities Empirical evaluation Bipartite Communitiesの実証評価
 
 A possible concern with our approach to discovering bipartite communities is whether breaking the problem up into 3 separate steps can result in a loss of accuracy, as compared to jointly learning the bipartite communities directly.
-2つのコミュニティを発見する我々のアプローチで懸念されるのは、問題を3つの別々のステップに分けることで、2つのコミュニティを直接共同で学習する場合と比較して、精度が低下する可能性があるということです。
+2つのコミュニティを発見する我々のアプローチで懸念されるのは、問題を3つの別々のステップに分けることで、2つのコミュニティを直接共同で学習する場合と比較して、精度が低下する可能性があるということである.
 To understand this empirically, we compare against NMF (Non-negative Matrix Factorization) – recall that with both NMF and our approach, the end output is two low-dimensional sparse matrices.
-このことを経験的に理解するために、NMF（Non-negative Matrix Factorization）と比較します。NMFも我々のアプローチも、最終出力は2つの低次元スパースマトリックスであることを思い出してください。
+このことを経験的に理解するために、NMF(Non-negative Matrix Factorization)と比較します。NMFも我々のアプローチも、最終出力は2つの低次元スパースマトリックスであることを思い出してください.
 Specifically we use Scikit-Learn’s implementation [3, 25] of alternating minimization using a Coordinate Descent solver, and with ‘nndsvd’ initialization, and with 𝐿1 penalty, where the 𝐿1 coefficient is adjusted to return results of comparable sparsity to our approach.
 具体的には、Scikit-Learnの座標降下ソルバーによる交互最小化の実装 [3, 25] を使用し、初期化は「nndsvd」、ᵃ1ペナルティは、我々のアプローチと同等のスパース性を返すようにᵃ1係数を調整します。
 For our approach, we set various parameters as follows: for the similarity graph calculation in step 1, we only include edges with cosine similarity > 0.02; for Neighborhood-aware MH in step 2, we set 𝑙 = 4, (i.e.
