@@ -63,7 +63,7 @@ The original example here is the “Who To Follow” system that launched a deca
 Subsequently, Gupta et al.[12] described a specialized system to generate Tweet recommendations in real time, insights from which were later deployed in GraphJet [31].
 その後、Guptaら[12]は、リアルタイムでツイートレコメンデーションを生成する特殊なシステムについて説明し、そこから得た知見は後にGraphJet[31]に展開された.
 GraphJet ingested the realtime stream of user-Tweet engagements to maintain a user-Tweet bipartite graph from which to generate recommendations, but the system was expensive to extend to new use cases.
-GraphJetは、ユーザーとツイートの関係をリアルタイムに取り込み、ユーザーとツイートの二部グラフを維持し、そこからレコメンデーションを生成しますが、このシステムは新しいユースケースに拡張するには高価だった.
+GraphJetは、ユーザーとツイートの関係をリアルタイムに取り込み、**ユーザ-ツイートの二部グラフを維持**し、そこからレコメンデーションを生成しますが、このシステムは新しいユースケースに拡張するには高価だった.
 These aforementioned infrastructures were built mainly to generate candidates which got blended and scored subsequently.
 これらのインフラは、**主にcandidatesを生み出し、それをブレンドして採点するために構築されたもの**である.
 Twitter also built custom infrastructure for feature retrieval and scoring of arbitrarily generated candidates - examples include RealGraph [14] and RecService [9].
@@ -71,7 +71,7 @@ Twitter also built custom infrastructure for feature retrieval and scoring of ar
 All of these systems were built with the aim of solving specific sub-problems in the recommendations landscape at Twitter and require separate development and maintenance.
 これらのシステムはすべて、Twitterのレコメンデーション状況における特定のサブ問題を解決する目的で構築され、**個別の開発・保守が必要である**.
 The central motivating question of this paper is: can we build a general system that helps us advance the accuracy of all or most of the Twitter products which require personalization and recommendations?
-本論文の中心的な動機付けとなる問いは、**パーソナライズやレコメンデーションが必要なTwitter製品のすべて、あるいはほとんどの精度を高めるのに役立つ一般的なシステムを構築できるか**ということである.
+本論文の中心的な動機付けとなる問いは、**パーソナライズやレコメンデーションが必要なTwitter product(機能と言ってもいいかも!)のすべて、あるいはほとんどの精度を高めるのに役立つ一般的なシステムを構築できるか**ということである.
 
 The solution proposed in this paper is built on the insight that we can construct, from the user–user graph, a general-purpose representation based on community structure, where each community is characterized by a set of influencers that many people in that community follow.
 本論文で提案するソリューションは、**ユーザ \* ユーザグラフ**から、コミュニティ構造に基づく汎用的な表現を構築できるという洞察に基づいており、各コミュニティは、そのコミュニティ内の多くの人々がフォローしているインフルエンサーのセットによって特徴づけられる.
@@ -82,7 +82,7 @@ The end result is that we can represent heterogeneous recommendation targets as 
 There are two notable aspects of our design:
 私たちのデザインには、2つの特筆すべき点がある：
 
-- 1. We avoid conventional matrix factorization methods that typically require solving massive numerical optimization problems, and instead rely on a combination of similarity search and community discovery, both of which are easier to scale. A key algorithmic innovation of our work is a new approach to community discovery — called Neighborhood-aware MH — which is 10×-100× faster, 3×-4× more accurate than off-theshelf baselines, and scales easily to graphs with ∼109 nodes and ∼1011 edges. It helps us discover ∼105 communities on Twitter that are either organized around a common topic (e.g., “K-Pop” or “Machine Learning”) or based on social relationships (e.g., those who work together or went to high-school together). We have open-sourced the implementation of the new algorithm in https://github.com/twitter/sbf. 1. 私たちは、**大規模な数値最適化問題を解く必要がある従来の行列分解法を避け、代わりに、スケールアップが容易な類似性検索とコミュニティ発見の組み合わせに頼っている**. このアルゴリズムは、既存のベースラインと比較して、10倍から100倍高速で、3倍から4倍高精度であり、109個のノードと1011個のエッジを持つグラフに容易に拡張することができる. 「K-POP」や「機械学習」といった共通の話題や、「職場が一緒」「高校が一緒」といった社会的関係から構成されるTwitter上のコミュニティ（約105件）を発見することができる. 新しいアルゴリズムの実装は、https://github.com/twitter/sbf、オープンソース化している.
+- 1. We avoid conventional matrix factorization methods that typically require solving massive numerical optimization problems, and instead rely on a combination of similarity search and community discovery, both of which are easier to scale. A key algorithmic innovation of our work is a new approach to community discovery — called Neighborhood-aware MH — which is 10×-100× faster, 3×-4× more accurate than off-theshelf baselines, and scales easily to graphs with $∼10^9$ nodes and $∼10^{11}$ edges. It helps us discover $∼10^5$ communities on Twitter that are either organized around a common topic (e.g., “K-Pop” or “Machine Learning”) or based on social relationships (e.g., those who work together or went to high-school together). We have open-sourced the implementation of the new algorithm in https://github.com/twitter/sbf. 1. 私たちは、**大規模な数値最適化問題を解く必要がある従来の行列分解法を避け、代わりに、スケールアップが容易な類似性検索とコミュニティ発見の組み合わせに頼っている**. このアルゴリズムは、既存のベースラインと比較して、10倍から100倍高速で、3倍から4倍高精度であり、 $∼10^9$ 個のノードと $∼10^{11}$ 個のエッジを持つグラフに容易に拡張することができる. 「K-POP」や「機械学習」といった共通の話題や、「職場が一緒」「高校が一緒」といった社会的関係から構成されるTwitter上のコミュニティ（約 $∼10^5$ 件）を発見することができる. 新しいアルゴリズムの実装は、https://github.com/twitter/sbf、オープンソース化している.
 
 - 2.  Our overall architecture has a modular and extensible design to enable the use of whichever computing paradigm is most suited to a specific component – batch-distributed, batch-multicore, or streaming-distributed. In particular, the ability to dynamically update representations using streaming-distributed components has proved crucial for accurately modeling Tweets which are Twitter’s most important type of content. 2. 私たちのアーキテクチャは、特定のコンポーネントに最も適したコンピューティングパラダイム(バッチ分散、バッチマルチコア、ストリーミング分散)を使用できるように、**全体的にモジュール式で拡張可能な設計となっている**. 特に、Twitterで最も重要なコンテンツであるツイートを正確にモデル化するためには、ストリーミング分散コンポーネントを用いて表現を動的に更新する能力が重要であることが証明された.
 
@@ -96,11 +96,11 @@ SimClusters also has the following features, which correspond to our design requ
 
 - 2. Computational scale: We are able to apply SimClusters at Twitter scale, with $~10^9$ users, $~10^{11}$ edges between them, and $10^8$ new Tweets every day with $~10^9$ user engagements per day. 2. 計算規模： SimClustersは、$~10^9$ 人のユーザー、$~10^{11}$ 人のエッジ、毎日$10^8$件の新しいツイート、1日あたり$~10^9$人のユーザーのエンゲージメントを持つTwitterスケールで適用することが可能である.
 
-- 3. Accuracy beyond the head: SimClusters representations are accurate beyond just the most popular content (“head”), primarily due to the ability to scale SimClusters to a very large representational space with ∼105 dimensions. 3. 頭部を超えた正確さ: SimClustersの表現は、最も人気のあるコンテンツ(“head”)(most popular推薦より良いって事?)を超えて正確.これは主に、SimClustersを約105次元という非常に大きな表現空間に拡張できることによる.
+- 3. Accuracy beyond the head: SimClusters representations are accurate beyond just the most popular content (“head”), primarily due to the ability to scale SimClusters to a very large representational space with $∼10^5$ dimensions. 3. 頭部を超えた正確さ: SimClustersの表現は、最も人気のあるコンテンツ(“head”)(most popular推薦より良いって事?)を超えて正確.これは主に、SimClustersを約$∼10^5$次元という非常に大きな表現空間に拡張できることによる.
 
 - 4. Item and graph churn: The modular design of SimClusters makes it easy to extend to dynamic items which rapidly rise and diminish in popularity. Many of our important recommendations and engagement prediction problem involve items that churn rapidly – most Tweets, Events, and Trends stay relevant for no more than a day or two, meaning that it is crucial to be able to efficiently learn representations of new items before they lose their relevance. 4. アイテムやグラフの入れ替わり： SimClustersのモジュール設計により、人気が急上昇・急降下する動的アイテムへの拡張が容易である. 私たちの重要なレコメンデーションやエンゲージメント予測の問題の多くは、急速に変化するアイテムを含んでいる. ほとんどのツイート、イベント、トレンドは、1日か2日程度しか関連性がない.
 
-- 5. Interpretability: SimClusters representations are sparse and each dimension corresponds to a specific community, making them interpretable to a degree that is hard to obtain with alternatives such as matrix factorization or graph embeddings. 5. 解釈のしやすさ SimClustersの表現は疎であり、各次元は特定のコミュニティに対応しているため、行列分解やグラフ埋め込みなどの代替手段では得難い解釈可能性を持っている.
+- 5. Interpretability: SimClusters representations are sparse and each dimension corresponds to a specific community, making them interpretable to a degree that is hard to obtain with alternatives such as matrix factorization or graph embeddings. 5. 解釈のしやすさ SimClustersの表現は疎であり、**各次元は特定のコミュニティに対応しているため**、**行列分解やグラフ埋め込みなどの代替手段では得難い解釈可能性**を持っている.
 
 - 6. Efficient nearest neighbor search: Identifying nearest neighbors is core to many downstream tasks such as generating recommendations, similar item retrieval, and user targeting. The sparsity of SimClusters representations makes it easy to setup and maintain inverted indices for retrieving nearest neighbors, even for rapidly churning domains (see details in Section 4). 6. 効率的な近傍探索 **近傍探索は、レコメンデーションの生成、類似アイテムの検索、ユーザターゲティングなど、多くの下流タスクの中核となる**. SimClusters表現のスパース性は、急速に変化するドメインであっても、最近傍を検索するための転置インデックスの設定と維持を容易にする(詳細はセクション4でご覧ください).
 
@@ -142,18 +142,15 @@ Our design also allows for gradually adding more modules to the system without n
 
 # 3. Stage 1: Community Discovery ステージ1：コミュニティ発見
 
-This stage is about discovering communities from the Twitter user– user graph i.e.
-この段階は、Twitterのユーザーとユーザーのグラフからコミュニティを発見することである.
-the directed graph of Follow relationships between users.
-**ユーザ間のフォロー関係を表す有向グラフ**.
+This stage is about discovering communities from the Twitter user– user graph i.e. the directed graph of Follow relationships between users.
+この段階は、Twitterのユーザとユーザのグラフ(i.e. **ユーザ間のフォロー関係を表す有向グラフ**.)からコミュニティを発見することである.
+
 Following seminal work in the analysis of directed graphs such as HITS [17] and SALSA [20], we find it convenient to reformulate the directed graph as a bipartite graph.
 HITS [17]やSALSA [20]などの有向グラフの解析における代表的な研究に倣って、有向グラフを二部グラフ(bipartite graph)として再定義することが便利であることがわかった.
-We now frame our task as one of identifying bipartite communities i.e.
-ここで、私たちの課題は、2つのコミュニティ、すなわち、**2分割されたコミュニティを識別すること**である.
-communities consisting of members from left as well as right partitions, and where the edge density between the left and right member sets is high.
-左パーティションと右パーティションのメンバーからなるコミュニティで、左右のメンバーセット間のエッジ密度が高い場合.
+We now frame our task as one of identifying bipartite communities i.e. communities consisting of members from left as well as right partitions, and where the edge density between the left and right member sets is high.
+ここで、我々の課題は、**bi-partite communities**、すなわち、左と右のパーティションからのメンバーで構成され、**左と右のメンバーセットの間のエッジ密度が高いコミュニティを識別すること**である.
 The bipartite reformulation lets us more flexibly assign users to communities — similar to HITS, we decouple the communities a user is influential in from the communities in which a user is interested.
-HITSと同様に、ユーザが影響力を持つコミュニティとユーザが関心を持つコミュニティを切り離すことで、より柔軟にユーザをコミュニティへ割り当てることができます。
+HITSと同様に、**ユーザが影響力を持つコミュニティとユーザが関心を持つコミュニティ**を切り離すことで、より柔軟にユーザをコミュニティへ割り当てることができる.(いまいち違いがわかってない??)
 
 Problem Definition 1.
 問題定義 1.

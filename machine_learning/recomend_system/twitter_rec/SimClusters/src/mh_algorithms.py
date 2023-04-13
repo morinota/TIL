@@ -1,41 +1,20 @@
 import abc
 import math
 import random
-from ast import List
-from typing import Union
+from typing import List, Union
 
 import numpy as np
-
-
-class ObjectiveFunction:
-    @staticmethod
-    def calc_f_uZ(
-        u: int,
-        graph: np.ndarray,
-        Z: np.ndarray,
-    ) -> float:
-        # graphからuと接しているnodesのindicesを取得する.
-        pass
-
-    @staticmethod
-    def _get_neigbor_node_indices(u: int, graph: np.ndarray) -> List[int]:
-        similarity_vec_u: List[Union[int, float]] = graph[u].tolist()
-        u_neigbor_node_indices = [u_idx for u_idx, sim_val in enumerate(similarity_vec_u) if sim_val > 0]
-        return u_neigbor_node_indices
-
-    @staticmethod
-    def _count_shared_community(
-        assignments_vector_u: np.ndarray,
-        assignments_vector_v: np.ndarray,
-    ) -> int:
-        community_set_u = set(assignments_vector_u.tolist())
-        community_set_v = set(assignments_vector_v.tolist())
-        return len(community_set_u.intersection(community_set_v))
+from mh_objective_function import ObjectiveFunctionInterface
 
 
 class CommunitySearcherAbstruct(abc.ABC):
-    def __init__(self, alpha: float = 10) -> None:
+    def __init__(
+        self,
+        objective_function: ObjectiveFunctionInterface,
+        alpha: float = 10,
+    ) -> None:
         self.alpha = alpha
+        self.objective_func = objective_function
 
     def search(
         self,
@@ -80,8 +59,8 @@ class CommunitySearcherAbstruct(abc.ABC):
         Z_updated: np.ndarray,
     ) -> float:
         """Zの置き換え確率を出力"""
-        f_uZ_updated = ObjectiveFunction.calc_f_uZ(u, graph, Z_updated)
-        f_uZ = ObjectiveFunction.calc_f_uZ(u, graph, Z)
+        f_uZ_updated = self.objective_func.calc_f_uZ(u, graph, Z_updated)
+        f_uZ = self.objective_func.calc_f_uZ(u, graph, Z)
         return min(1, math.e ** (f_uZ_updated - f_uZ))
 
     def _is_replace(self, p: float) -> bool:
