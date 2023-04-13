@@ -115,7 +115,7 @@ Wide & Deep Learning[22]は、推薦システムのための記憶と汎化の�
 However, expertise feature engineering is still needed on the input to the wide part of Wide & Deep model.
 しかし、Wide & DeepモデルのWide部分への入力には、まだ専門的なフィーチャーエンジニアリングが必要である。
 To alleviate manual efforts in feature engineering, DeepFM[6] replaces the wide part of Wide & Deep model with FM and shares the feature embedding between the FM and deep component.
-DeepFM[6]は、特徴工学の手作業を軽減するために、Wide & DeepモデルのWide部分をFMに置き換え、FMとDeepコンポーネント間で特徴埋込みを共有する。
+DeepFM[6]は、feature engineeringの手作業を軽減するために、Wide & DeepモデルのWide部分をFMに置き換え、FMとDeepコンポーネント間で特徴埋込みを共有する。
 
 While most DNN ranking models process high-order feature interactions by MLP layers in implicit way, some works explicitly introduce high-order feature interactions by sub-network.
 多くのDNNランキングモデルはMLP層による高次特徴量相互作用を暗黙のうちに処理しているが、いくつかの作品はサブネットワークによる高次特徴量相互作用を明示的に導入している。
