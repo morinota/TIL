@@ -208,8 +208,8 @@ The goal of this step is to construct a much smaller unipartite, undirected grap
 このステップの目的は、右のパーティション(独立集合$R$)のノードの上に、より小さなuni-partite の無向グラフ $G$ を構築することである.
 We define the weight between two users (𝑢, 𝑣) based on the cosine similarity of their followers on the left side of the bipartite graph.
 2つのユーザ($u$, $v$)間の重みを、二部グラフの左側(独立集合$L$)のフォロワーのコサイン類似度に基づいて定義する.
-To elaborate, if $\vec{x_u}$ and $\vec{x_v}$ represent the binary incidence vectors of 𝑢’s and 𝑣’s followers, their cosine similarity is defined as 𝑥®𝑢 · ®𝑥𝑣/ p ∥ ®𝑥𝑢 ∥ ∥ ®𝑥𝑣 ∥.
-詳しく説明すると、$\vec{x_u}$ と $\vec{x_v}$ が ユーザuとvのフォロワーの2値入射ベクトルを表すと、そのcosine類似度は $\vec{x_u} \cdot \vec{x_v} / \sqrt{|\vec{x_u}||\vec{x_v}|}$ と定義する.
+To elaborate, if $\vec{x_u}$ and $\vec{x_v}$ represent the binary incidence vectors of 𝑢’s and 𝑣’s followers, their cosine similarity is defined as $\vec{x_u} \cdot \vec{x_v} / \sqrt{|\vec{x_u}||\vec{x_v}|}$.
+詳しく説明すると、$\vec{x_u}$ と $\vec{x_v}$ が ユーザuとvのフォロワーのbinary incidence vectors(入射ベクトル)を表すと、そのcosine類似度は $\vec{x_u} \cdot \vec{x_v} / \sqrt{|\vec{x_u}||\vec{x_v}|}$ と定義する.
 With this definition, two users would have non-zero similarity, or an edge in 𝐺 simply by sharing one common neighbor in the bipartite graph.
 この定義によれば、2つのユーザは、二部グラフにおいて1つの共通の隣人を共有するだけで、ゼロではない類似度がある. すなわち 類似性グラフ $G$ にエッジ(=ノード間の接続=辺)を持つことになる.
 In order to avoid generating an extremely dense similarity graph, we discard the edges with similarity score lower than a certain threshold and additionally keep at most a certain number of neighbors with the largest similarity scores for each user.
