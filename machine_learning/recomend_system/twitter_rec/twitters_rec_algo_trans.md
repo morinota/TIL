@@ -89,7 +89,7 @@ We’re also in the process of redesigning the logistic regression ranking model
 ## Out-of-Network Sources ネットワーク外の情報源
 
 Finding relevant Tweets outside of a user’s network is a trickier problem: How can we tell if a certain Tweet will be relevant to you if you don’t follow the author? Twitter takes two approaches to addressing this.
-ユーザーのネットワークの外にある関連ツイートを見つけるのは、より厄介な問題である. 作者をフォローしていない場合、あるツイートが自分に関連するかどうかをどうやって判断すればいいのだろうか. Twitterは、この問題に対処するために2つのアプローチをとっている.
+ユーザのネットワークの外にある関連ツイートを見つけるのは、より厄介な問題である. 作者をフォローしていない場合、あるツイートが自分に関連するかどうかをどうやって判断すればいいのだろうか. Twitterは、この問題に対処するために2つのアプローチをとっている.
 
 ### Social Graph ソーシャルグラフ
 

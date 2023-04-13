@@ -47,7 +47,7 @@ However, Alex Beutel et.al [2] have proved that addictive feature interaction, p
 They proposed a simple but effective approach named "latent cross" which is a kind of multiplicative interactions between the context embedding and the neural network hidden states in RNN model.
 彼らは、RNNモデルにおけるコンテキスト埋め込みとニューラルネットワークの隠れ状態の間の一種の乗法的相互作用である「潜在クロス」というシンプルで効果的なアプローチを提案しました。
 Recently, Rendle et.al’s work [18] also shows that a carefully configured dot product baseline largely outperforms the MLP layer in collaborative filtering.
-最近、Rendleらの研究[18]でも、協調フィルタリングにおいて、注意深く設定されたドット積ベースラインがMLP層を大きく上回ることが示されています。
+最近、Rendleらの研究[18]でも、**協調フィルタリングにおいて、注意深く設定されたドット積ベースラインがMLP層を大きく上回ることが示されています**。
 While a MLP can in theory approximate any function, they show that it is non-trivial to learn a dot product with an MLP and learning a dot product with high accuracy for a decently large embedding dimension requires a large model capacity as well as many training data.
 MLPは理論的にはあらゆる関数を近似できるが、MLPでドットプロダクトを学習することは非自明であり、そこそこ大きな埋め込み次元に対して高い精度でドットプロダクトを学習するには、多くの学習データと同様に大きなモデル容量が必要であることを示している。
 Their work also proves the inefficiency of MLP layer’s ability to model complex feature interactions.
@@ -106,12 +106,12 @@ Section 5 concludes our work in this paper.
 ## State-Of-The-Art CTR Models 最先端のCTRモデル
 
 Many deep learning based CTR models have been proposed in recent years and it is the key factor for most of these neural network based models to effectively model the feature interactions.
-近年、多くの深層学習ベースのCTRモデルが提案されていますが、これらのニューラルネットワークベースのモデルの多くにとって、特徴の相互作用を効果的にモデル化することは重要な要素となっています。
+近年、多くの深層学習ベースのCTRモデルが提案されていますが、これらのニューラルネットワークベースのモデルの多くにとって、**特徴量の相互作用を効果的にモデル化することは重要な要素となっています**。
 
 Factorization-Machine Supported Neural Networks (FNN)[24] is a feed-forward neural network using FM to pre-train the embedding layer.
 FNN（Factorization-Machine Supported Neural Networks）[24]は、FMを用いて埋め込み層の事前学習を行うフィードフォワードニューラルネットワークです。
 Wide & Deep Learning[22] jointly trains wide linear models and deep neural networks to combine the benefits of memorization and generalization for recommender systems.
-Wide & Deep Learning[22]は、推奨システムのための記憶と汎化の利点を組み合わせるために、広い線形モデルと深いニューラルネットワークを共同で学習します。
+Wide & Deep Learning[22]は、推薦システムのための記憶と汎化の利点を組み合わせるために、広い線形モデルと深いニューラルネットワークを共同で学習します。
 However, expertise feature engineering is still needed on the input to the wide part of Wide & Deep model.
 しかし、Wide & DeepモデルのWide部分への入力には、まだ専門的なフィーチャーエンジニアリングが必要である。
 To alleviate manual efforts in feature engineering, DeepFM[6] replaces the wide part of Wide & Deep model with FM and shares the feature embedding between the FM and deep component.

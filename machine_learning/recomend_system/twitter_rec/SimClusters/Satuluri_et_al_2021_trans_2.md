@@ -342,68 +342,63 @@ The computation in this step can be scaled to our requirements easily by impleme
 # 4. Stage 2: Item Representations Stage 2: アイテム表現
 
 In this section, we describe how to compute representations for different items, such as Tweets, Hashtags, or users - which can be the targets for different recommendation problems.
-本節では、ツイート、ハッシュタグ、ユーザーなど、様々な推薦問題の対象となりうるアイテムに対する表現を計算する方法について説明する。
+本節では、**ツイート、ハッシュタグ、ユーザなど、様々な推薦問題の対象となりうるアイテムに対する表現(=embedding)を計算する方法**について説明する.
 Along with the user interest representations U from Stage 1, this stage also relies on a user–item bipartite graph that is formed from historical or on-going user engagements with those items on the platform.
-ステージ1のユーザー関心表現Uとともに、このステージは、プラットフォーム上のアイテムに対する歴史的または継続的なユーザーの関与から形成されるユーザー-アイテム二部グラフにも依拠する。
+ステージ1の user interest representations U とともに、このステージは、プラットフォーム上のアイテムに対する歴史的または継続的なユーザの関与から形成される**ユーザ-アイテム二部グラフ**にも依拠する.
 
 Our general framework is to compute an item’s representation by aggregating the representations of all the users who engaged with it, i.e., the representation for item 𝑗 is
-私たちの一般的な枠組みは、アイテムに関わったすべてのユーザーの表現を集約してアイテムの表現を計算することです。つまり、アイテムᑗの表現は
+私たちの**一般的な枠組みは、アイテムに関わったすべてのユーザの表現を集約してアイテムの表現を計算すること**(なるほど...!シンプル!). つまり、アイテム $j$ の表現は、
 
 $$
+W(j) = aggregate({U(u), \forall u \in N(j)})
 \tag{3}
 $$
 
-where N (𝑗) denotes all the users who engaged with item 𝑗 in the corresponding user–item bipartite graph, and W(𝑗) and U(𝑢) are both vectors.
-ここで、N（↪Ll457↩）は、対応するユーザー-アイテム二部グラフにおいてアイテム↪Ll457↩に関与したすべてのユーザーを示し、W（↪Ll457↩）とU（↪Ll462↩）はいずれもベクトルとする。
-The 𝑎𝑔𝑔𝑟𝑒𝑔𝑎𝑡𝑒 function can be chosen based on different applications, and can also be learned from a specific supervised task [13].
-𝑎𝑔𝑒関数は、さまざまなアプリケーションに基づいて選択することができ、特定の教師付きタスクから学習することも可能です[13]。
+where $N(j)$ denotes all the users who engaged with item 𝑗 in the corresponding user–item bipartite graph, and $W(j)$ and $U(u)$ are both vectors.
+ここで、$N(j)$は、対応するユーザ-アイテム二部グラフにおいてアイテム$j$に関与したすべてのユーザを示し、$W(j)$ と $U(u)$ はいずれもベクトルとする.
+The $𝑎𝑔𝑔𝑟𝑒𝑔𝑎𝑡𝑒$ function can be chosen based on different applications, and can also be learned from a specific supervised task [13].
+$aggregate$関数は、さまざまなアプリケーションに基づいて選択することができ、特定の教師付きタスクから学習することも可能[13].
 In our case, we opt for a relatively simple, interpretable 𝑎𝑔𝑔𝑟𝑒𝑔𝑎𝑡𝑒 function with the goal that W(𝑗, 𝑐) can be interpreted as the level of interest an average user of the community 𝑐 currently has in this item 𝑗.
-この場合、W(ᵅ,ᵅ)をコミュニティ𝑐の平均的なユーザーがこのアイテムᵅに現在抱いている興味のレベルと解釈できるように、比較的単純で解釈しやすい𝑎𝑒関数を選択することになる。
+この場合、$W(j,c)$ を**コミュニティ$c$の平均的なユーザがこのアイテム$j$に現在抱いている興味のレベル**と解釈できるように、比較的単純で解釈しやすい$aggregate$関数を選択することになる.
 We choose to use “exponentially time-decayed average” as our 𝑎𝑔𝑔𝑟𝑒𝑔𝑎𝑡𝑒 function, which exponentially decays the contribution of a user who interacted with the item based on how long ago that user engaged with the item.
-私たちは、𝑎𝑔𝑔関数として「指数関数的時間減衰平均」を選択しました。これは、アイテムに関わったユーザーの貢献度を、そのユーザーがアイテムに関わった時間に基づいて指数関数的に減衰させます。
+私たちは、**aggregate関数として"exponentially time-decayed average(指数関数的時間減衰平均)"を選択**した. これは、アイテムに関わったユーザの貢献度を、そのユーザがアイテムに関わった時間に基づいて指数関数的に減衰させる.
 The half-life used for the exponential decay is item-dependent – where the shelf-life of those items is longer (such as Topics), we set longer half-lives, while for shorter shelf life items such as Tweets, we set shorter half-lives.
-指数関数的減衰に使用する半減期はアイテムに依存し、賞味期限が長いもの（トピックスなど）には長い半減期を設定し、賞味期限が短いもの（ツイートなど）には短い半減期を設定しています。
+**指数関数的減衰に使用する半減期はアイテムに依存**し、賞味期限(shelf-lifeって表現されるんだ...!)が長いもの(トピックスなど)には長い半減期を設定し、賞味期限が短いもの(ツイートなど)には短い半減期を設定している.
 
 The resulting matrix W is much denser than U and it is not useful to save all its non-zero values at scale.
-結果として得られる行列WはUよりもはるかに密度が高く、その非ゼロ値をすべてスケールで保存することは有益ではありません。
+結果として得られる行列WはUよりもはるかに密度が高く(=>$U$の要素はbinary?で離散的だけど、$W$の場合は連続的な数値だから?)、その非ゼロ値をすべてスケールで保存することは有益ではない.
 Instead, we maintain two additional views or indexes of W, each of which keeps a top-k view.
-その代わりに、Wのビューまたはインデックスを2つ追加し、それぞれがトップkビューを保持する。
+その代わりに、$W$のビューまたはインデックスを2つ追加し、それぞれがトップ$k$ビューを保持する. (値が大きい要素のみを記録する、みたいな?)
 The first view is R and R (𝑗) tracks the top communities for the item 𝑗.
-ファーストビューはRで、R（↪Ll457↩）はアイテム↪Ll457↩のトップコミュニティを追跡します。
-The second view is C and C (𝑐) tracks the top items for the community 𝑐.
-第二のビューはCで、C（𝑐）はコミュニティ𝑐のトップアイテムを追跡します。
-In the case of items with a long shelf life, the calculation of W, R, and C is straightforwardly done in a batch setting using e.g.
-賞味期限が長いものの場合、W、R、Cの計算は、例えば、バッチ式で行うのが素直である。
-Hadoop MapReduce.
-Hadoop MapReduceです。
+ファーストビューは$R$で、$R(j)$は**アイテム$j$のトップコミュニティを追跡する**.
+The second view is C and C (𝑐) tracks the top items for the community $c$.
+第二のビューは$C$で、$C(c)$ は**コミュニティ$c$のトップアイテムを追跡する**.
+In the case of items with a long shelf life, the calculation of W, R, and C is straightforwardly done in a batch setting using e.g. Hadoop MapReduce.
+賞味期限が長いものの場合、W、R、Cの計算は、例えば、Hadoop MapReduceを使ってバッチ式で行うのが素直である.
 
 However, handling items with short shelf life is more interesting.
-しかし、賞味期限が短いものを扱うとなると、もっと面白い。
-In this case, we realize a major advantage of an exponentially time-decayed average (as opposed to e.g.
-この場合、指数関数的に時間減衰する平均の大きな利点が実現されます（例えば、次のようなものです）。
-time-windowed average), which is that it lends itself to easy incremental updates for W.
-time-windowed average）、つまりWのインクリメンタルな更新が容易であることに適している。
+しかし、賞味期限が短いものを扱うとなると、もっと面白い.
+In this case, we realize a major advantage of an exponentially time-decayed average (as opposed to e.g. time-windowed average), which is that it lends itself to easy incremental updates for W.
+この場合、指数関数的に時間的に減衰する平均の大きな利点(例えば時間窓付き平均とは異なる)が実現され、それは$W$のインクリメンタルな更新を容易にすることにつながる.
 Specifically, we just need to keep two summary statistics for each cell in W - the current average itself and the last timestamp when it was updated.
-具体的には、Wの各セルについて、現在の平均値そのものと、それが更新された最後のタイムスタンプという2つの要約統計量を保持すればよいのです。
+具体的には、Wの各セルについて、現在の平均値そのものと、それが更新された最後のタイムスタンプという2つの要約統計量を保持すればよい.
 As detailed in Algorithm 4 lines 4–7, when a new user–item engagement arrives, we are able to update W for the item by calculating a decay factor based on the time elapsed since the last update.
-アルゴリズム4行目から7行目に詳述するように、新しいユーザーとアイテムのエンゲージメントが到着すると、前回の更新からの経過時間に基づいて減衰係数を計算することで、アイテムのWを更新することができます。
+アルゴリズム4の4行目から7行目に詳述するように、**新しいユーザとアイテムのエンゲージメントが到着すると、前回の更新からの経過時間に基づいて減衰係数を計算することで、アイテムのWを更新することができる**.(online更新ができるのはいいね...!)
 In order to exactly track the row-wise and columnwise top-k views on W, it is necessary that we track the entirety of W - if it turns out that W is too big to be tracked in its entirety, then one can use sketches to keep a summary of W at the cost of introducing errors [4, 15], although we have found this unnecessary.
-もしWが大きすぎて全体を追跡できないことが判明した場合、エラーを導入する代償として、スケッチを使ってWの要約を保持することができる[4, 15]が、我々はこの必要がないと判断している。
-Another way of reducing the size of W is to reduce 𝑘 i.e.
-Wのサイズを小さくするもう一つの方法は、↪Ll458↩を小さくする、すなわち
-the dimensionality of the representations computed in Stage 1, or by further sparsifying the input user representations U.
-ステージ1で計算された表現の次元、または入力されたユーザー表現Uをさらにスパース化することである。
+もしWが大きすぎて全体を追跡できないことが判明した場合、エラーを導入する代償として、スケッチを使ってWの要約を保持することができる[4, 15]が、我々はこの必要がないと判断している.
+Another way of reducing the size of W is to reduce 𝑘 i.e. the dimensionality of the representations computed in Stage 1, or by further sparsifying the input user representations U.
+Wのサイズを小さくする別の方法は、$k$ すなわちステージ1で計算された表現の次元(=想定するcommunityの数??)を小さくすること、または入力されたユーザ表現$U$をさらにスパース化することである.
 Calculating streaming item representations in this manner can be implemented using frameworks such as Apache Storm/Heron/Spark/Flink.
-このようなストリーミングアイテム表現の計算は、Apache Storm/Heron/Spark/Flinkなどのフレームワークを用いて実装することが可能です。
+このようなストリーミングアイテム表現の計算は、Apache Storm/Heron/Spark/Flinkなどのフレームワークを用いて実装することが可能.
 
 The two top-k views R and C are stored in low-latency key-value stores.
-2つのtop-kビューRとCは、低遅延のキーバリューストアに保存されます。
+2つのtop-kビュー $R$ と $C$ は、低遅延のkey-valueストアに保存される.
 Using these two indices, it easy to retrieve nearest neighbors for any user or item – we simply look up the top communities that a user or item is active in, and for each of those communities, identify the top users or items.
-この2つの指標を用いると、任意のユーザーやアイテムの最近接者を簡単に検索することができます。ユーザーやアイテムが活動している上位のコミュニティを調べ、そのコミュニティごとに上位のユーザーやアイテムを特定するだけでよいのです。
+この2つの指標を用いると、**任意のユーザやアイテムの最近接者を簡単に検索することができる.** ユーザやアイテムと関連度の高い(=興味が近い=active inな) 上位のコミュニティを調べ、そのコミュニティごとに上位のユーザやアイテムを特定するだけでよいのである.
 These candidates can then be ranked by fetching their full representations and computing the similarity with the representation of the query object (either user or item).
-これらの候補は、その完全な表現を取得し、クエリーオブジェクト（ユーザーまたはアイテムのいずれか）の表現との類似性を計算することによってランク付けすることができます。
+これらの候補は、その完全な表現(=embeddingべｋ)を取得し、queryオブジェクト(ユーザまたはアイテムのいずれか)の表現(=embedding)との類似性を計算することによってランク付けすることができる.
 The upshot is that we neither need to brute-force scan through all users/items nor need to build specialized nearest neighbor indices.
-その結果、すべてのユーザーやアイテムを総当たりでスキャンする必要も、特別な最近傍インデックスを構築する必要もない。
+その結果、すべてのユーザやアイテムを総当たりでスキャンする必要も、特別な最近傍インデックスを構築する必要もない.
 
 # 5. Deployment Details 配置の詳細
 
