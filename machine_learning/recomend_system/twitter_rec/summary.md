@@ -3,7 +3,7 @@
 published date: hogehoge September 2022,
 authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
 url(paper): https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm
-url()
+url(github-repositoy): https://github.com/twitter/the-algorithm
 (勉強会発表者: morinota)
 
 ---
@@ -12,11 +12,7 @@ url()
 
 - twitter で稼働している 推薦システムに関する、techブログ 及び githubリポジトリが公開された.
 - twitterでは様々なパーソナライズ推薦のサービスが稼働しているとのこと. ex. ユーザフォローの推薦, トピックス(キーワードフォロー的な概念?)の推薦, トレンドやイベントの推薦, etc.
-- 今回公開されたサービスとしては、"**For Youフィード**"(おすすめフィード?)に表示されるtweetアイテムをユーザ毎にパーソナライズするアルゴリズムなのかな.
-- 推薦システムにおける推論処理は、以下の三段階に分かれているとのこと.
-  - Candidate Sources
-  - Ranking
-  - heuristics and filters
+- 今回主に公開されたサービスとしては"**For Youフィード**"(おすすめフィード?)に表示される **ツイートアイテムをユーザ毎にパーソナライズする機能**なのかな.
 
 ## 先行研究と比べて何がすごい？
 
@@ -24,24 +20,25 @@ url()
 
 ## 技術や手法の肝は？
 
+推薦システムにおける推論処理は、以下の三段階に分かれているとのこと.
+
+- Candidate Sources
+- Ranking
+- heuristics and filters
+
 ### 段階1: Candidate Sources
 
 この段階では、まず推薦アイテムの候補を取得する.
-推薦アイテムのCandidateのSource(出どころ?)は大きく二種類に分けられる: In-network source と Out-of-network source.
-現在、For Youフィードのタイムラインは、ユーザによって異なるかもしれないが、平均して50％のIn-Networkツイートと50％のOut-of-Networkツイートで構成されている.
+各リクエストに対して、以下のソースを通じて、数億ツイートのプールから推薦候補1500ツイートを抽出することを試みる.
+推薦アイテムのCandidate Source(出どころ?)は大きく二種類に分けられる: In-network source と Out-of-network source.
+現在、For Youフィードのタイムラインは、平均して50％のIn-Networkツイートと50％のOut-of-Networkツイートで構成されている.
 
 In-Network sourceからのcandidate生成では、ユーザ自身がフォローしているユーザのツイートから、最も関連性の高い最新のツイートを取得する事を目的としている.
+light-ranker(ロジスティック回帰モデル)を使って、フォローした人のツイートを関連性に基づいてランク付けする.
 
-Out-of-network sourceからのcandidate生成では、ユーザのネットワーク(i.e.フォロー関係)の外側にある、ユーザと関連度の高いツイートを取得する事を目的としている.
-
-以下の6つのアプローチで、推薦アイテムのCandidateを生成しているとの事.
-
-- GraphJet: ユーザとツイート間の二部構成グラフをリアルタイムに保持するグラフ処理エンジン.[論文link](http://www.vldb.org/pvldb/vol9/p1281-sharma.pdf)
-- SimClusters: コミュニティ検出とそのコミュニティへのスパース埋め込み. [論文link](https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio)
-- TwHIN: ユーザとツイートのための密な知識グラフの埋め込み
-- RealGraph: Twitterユーザが他のユーザと交流する可能性を予測するモデル。
-- TweepCred: Twitterユーザの評判を計算するためのPage-Rankアルゴリズム。
-- Trust & Safety: NSFWや虐待的なコンテンツを検出するためのモデル。
+Out-of-network sourceからのcandidate生成では、ユーザのネットワーク(i.e.フォロー関係)の外側にある、ユーザと関連度の高いツイートを取得する事を目的としている. 最終的には、In-Network source同様にlight-ranker(ロジスティック回帰モデル)を使ってランク付けし、上位ツイートを推薦アイテム候補として段階2に送る.
+Out-of-network sourceにおいて主に使用される特徴量は、ユーザ-ユーザネットワーク(ユーザフォローのネットワーク)から抽出された コミュニティ表現ベクトル. これは[SimClusters](https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio)にもとづいて生成される.
+(次週はこのSimClustesの手法をまとめる予定! このSimClustesによるユーザやアイテムのコミュニティ表現ベクトルは、**twitterのあらゆる推薦・パーソナライズ機能で共通利用されているembedding**らしい. **SNS特有のネットワークに基づく手法だが、使い勝手がかなり良さそうで興味深い**..!!)
 
 ### 段階2: Ranking
 
@@ -84,6 +81,15 @@ $$
 
 各エンゲージメントの平均確率はそれぞれ異なるため、当初は、重み付けされたエンゲージメントの確率が平均してスコアにほぼ等しく貢献するように設定されていた. その後、運用上のmetricsを最適化するために、定期的に重みを調整しているらしい.
 
+以下のサービスから特徴量を生成して、Heavy Rankerに入力する.
+
+- GraphJet: ユーザとツイート間の二部構成グラフをリアルタイムに保持するグラフ処理エンジン.[論文link](http://www.vldb.org/pvldb/vol9/p1281-sharma.pdf)
+- SimClusters: コミュニティ検出とそのコミュニティへのスパース埋め込み. [論文link](https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio)
+- TwHIN: ユーザとツイートのための密な知識グラフの埋め込み
+- RealGraph: Twitterユーザが他のユーザと交流する可能性を予測するモデル。
+- TweepCred: Twitterユーザの評判を計算するためのPage-Rankアルゴリズム。
+- Trust & Safety: NSFWや虐待的なコンテンツを検出するためのモデル。
+
 ### 段階3: Heuristics and Filters
 
 段階2でランク付した後、Heuristics とFiltersによる後処理的なプロセスを適用して、"for you"フィードを作る.
@@ -105,7 +111,7 @@ $$
 
 ## 感想
 
-推薦システムの流れ自体は王道というか、「推薦候補の用意-> ランク付 -> 後処理をして表示」ではあるが、推薦候補の用意の方法や、実行速度とか色々工夫がありそうだなという印象.
+推薦システムの流れ自体は王道というか、「推薦候補の用意-> ランク付 -> 後処理をして表示」ではあるが、グラフネットワークを活用した推薦候補や特徴量作成の方法や、実行速度とか分散処理とか色々工夫がありそうだなという印象.
 あと個人的には、ranking用のモデルで単にCTR的な指標のみを考慮するのではなく、ユーザがツイートを視聴する時間等を考慮して学習させている点は、「単にクリックさせてしまえばいい」というのではなくユーザ体験が良くなるような推薦を志している感があって良いと思った.
 (ただ実際、長期的なユーザ体験の向上に資するような推薦システムでないと、プロダクトを使い続けてもらえず利益が損なわれてしまうと思うので、当たり前といえば当たり前ではあるのかな...)
 
