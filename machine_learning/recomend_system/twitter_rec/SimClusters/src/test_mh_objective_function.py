@@ -24,7 +24,9 @@ def test_objective_function_calculator_get_neighbor_node_indices() -> None:
     )
 
     neigbors_expected = [1, 2]  # u=0と接しているのはv=1, 2
-    neigbors_actual = ObjectiveFunction._get_neigbor_node_indices(u, similarity_graph)
+
+    objective_func = ObjectiveFunction()
+    neigbors_actual = objective_func._get_neigbor_node_indices(u, similarity_graph)
     assert neigbors_actual == neigbors_expected
 
 
@@ -40,7 +42,9 @@ def test_objective_function_calculator_count_shared_community() -> None:
         ]
     )
     count_shared_community_expected = 1
-    count_shared_community_actual = ObjectiveFunction._count_shared_community(
+
+    objective_func = ObjectiveFunction()
+    count_shared_community_actual = objective_func._count_shared_community(
         assignments_vector_u=Z[u],
         assignments_vector_v=Z[v],
     )
@@ -67,7 +71,9 @@ def test_objective_function_calculator_calc_f_uZ() -> None:
         ]
     )
     f_uZ_expected = alpha * (0 + 1) + (0)
-    f_uZ_actual = ObjectiveFunction.calc_f_uZ(
+
+    objective_func = ObjectiveFunction(alpha)
+    f_uZ_actual = objective_func.calc_f_uZ(
         u,
         similarity_graph,
         Z,
