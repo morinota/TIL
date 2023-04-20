@@ -369,12 +369,12 @@ Instead, we maintain two additional views or indexes of W, each of which keeps a
 The first view is R and R (𝑗) tracks the top communities for the item 𝑗.
 ファーストビューは$R$で、$R(j)$は**アイテム$j$のトップコミュニティを追跡する**.
 The second view is C and C (𝑐) tracks the top items for the community $c$.
-第二のビューは$C$で、$C(c)$ は**コミュニティ$c$のトップアイテムを追跡する**.
+second viewは$C$で、$C(c)$ は**コミュニティ$c$のトップアイテムを追跡する**.
 In the case of items with a long shelf life, the calculation of W, R, and C is straightforwardly done in a batch setting using e.g. Hadoop MapReduce.
 賞味期限が長いものの場合、W、R、Cの計算は、例えば、Hadoop MapReduceを使ってバッチ式で行うのが素直である.
 
 However, handling items with short shelf life is more interesting.
-しかし、賞味期限が短いものを扱うとなると、もっと面白い.
+しかし、賞味期限が短いものを扱うとなると、更に興味深い.
 In this case, we realize a major advantage of an exponentially time-decayed average (as opposed to e.g. time-windowed average), which is that it lends itself to easy incremental updates for W.
 この場合、指数関数的に時間的に減衰する平均の大きな利点(例えば時間窓付き平均とは異なる)が実現され、それは$W$のインクリメンタルな更新を容易にすることにつながる.
 Specifically, we just need to keep two summary statistics for each cell in W - the current average itself and the last timestamp when it was updated.
@@ -434,9 +434,9 @@ Note that we store only the non-zeros in all our representations, and in all cas
 The user interest representations cover $∼10^9$ users while the user influence representations cover $∼10^8$ users, with both representations having on average 10−100 non-zeros.
 user interest表現は約$∼10^9$人のユーザをカバーし、user influence表現は約$∼10^8$人のユーザをカバーしており、どちらの表現も平均10~100個の非ゼロ要素を有している.(user influence表現の方がオーダーが小さいのは、user interest表現を元にaggregate計算する際に、ある一定数以上フォローされている必要があるから?)
 There are fewer recommendable Tweets and Trends at any given point in time (refer Table 1), but their representations are denser, having on average ∼102 non-zeros.
-ある時点で推薦されるツイートやトレンドの数は少ないが(表1参照)、その表現はより密で、平均して約102のノンゼロを持つ.
+ある時点で推薦されるツイートやトレンドの数は少ないが(表1参照)、その表現はより密で、平均して約 $10^2$ のノンゼロを持つ.
 Note that for the following four representations - user influence, Topic, Tweet, and Trend - we also maintain the inverted indices, i.e. given a community, what are the top-k users/Topics/Tweets/Trends for that community (denoted by C in Section 4).
-なお、以下の4つの表現(user influence、トピック、ツイート、トレンド)については、反転した指標も維持している: あるコミュニティが与えられたとき、そのコミュニティと関連度の高いトップkユーザー/トピック/ツイート/トレンドは何か（セクション4では$C$と表記している）.
+なお、以下の4つの表現(user influence、トピック、ツイート、トレンド)については、反転した指標も維持している: あるコミュニティが与えられたとき、そのコミュニティと関連度の高いトップkユーザー/トピック/ツイート/トレンドは何か(セクション4では$C$と表記している).
 Having C is essential to retrieving the items whose representation has the largest dot product or cosine similarity with another representation.
 $C$は、他の表現とのドット積やコサイン類似度が最も大きい表現を持つアイテムを検索するために不可欠である.
 
@@ -494,7 +494,7 @@ Showing top trending content (e.g., Hashtags, Events, breaking news) is an impor
 The implementation for Trends follows a two-stage process of Trends detection followed by ranking.
 Trendsの実装は、Trendsの検出とランキングの2段階を踏んでいる.
 Prior to SimClusters, the ranking of a Trend primarily depended on its volume and a small number of personalization features.
-SimClusters以前は、トレンドのランキングは主にそのボリューム(?)と少数のパーソナライズ機能によって決定されていた.
+SimClusters以前は、トレンドのランキングは主にそのボリューム(?)と少数のパーソナライズ特徴量によって決定されていた.
 We used Trends SimClusters representations to score Trends for a given user by using the dot-product of the user’s interest representation along with the real-time representation for a Trend.
 トレンドのSimClusters表現を使って、user interest表現とリアルタイムのtrend表現のドットプロダクト(内積!)を使用することで、与えられたユーザ-トレンドペアをスコア化した.
 A/B testing revealed that using these scores led to a 8% increase in user engagement with the Trends themselves, as well as a bigger 12% increase in engagement on the landing page subsequent to a click.
@@ -528,7 +528,7 @@ A crucial task on Twitter is to protect users from getting abusive or spammy rep
 Twitterの重要なタスクは、罵倒やスパム的なリプライやメンションを受けないようにユーザを保護することである.
 We developed new SimClusters representations for users based on the user–user block graph (i.e.when one user blocks another), and used these representations as features to train a model for filtering out abusive and spammy replies.
 **ユーザとユーザのブロックグラフ（あるユーザーが他のユーザーをブロックした場合）に基づく新しいユーザ表現をSimClustersで開発**し、この表現を特徴として、罵倒やスパムのような返信をフィルタリングするモデルを学習した.
-In offline tests, the model showed an impressive 4% lift in PR-AUC5 .
+In offline tests, the model showed an impressive 4% lift in PR-AUC.
 オフラインテストでは、PR-AUC5 が 4％向上するという素晴らしい結果を示した.
 
 ### 6.6.2.Supervised embeddings from feature combinations. 特徴の組み合わせから教師付き埋込を行う
@@ -557,12 +557,12 @@ Traditionally, approaches to recommender systems are categorized as either neigh
 In our experience of building recommendations at Twitter, we find that neighborhood-based methods are easier to scale, more accurate, more interpretable, and also more flexible in terms of accommodating new users and/or items [9, 11, 12, 31].
 **Twitterでレコメンデーションを構築した経験から、neighborhoodベースの手法は、スケールが簡単で、より正確で、より解釈しやすく、また新しいユーザやアイテムに対応する点で、より柔軟であることがわかった** [9, 11, 12, 31] .
 Recent research has also found that well-tuned neighborhood-based methods are not easy to beat in terms of accuracy [6].
-また、最近の研究では、よく調整された近傍領域ベースの手法は、精度の面で簡単には勝てないことが分かっている[6].
+また、最近の研究では、よく調整されたneighborhood-basedベースの手法は、精度の面で簡単には勝てないことが分かっている[6].
 However, neighborhoodbased approaches do not provide a general solution – we needed to build and maintain separate systems to solve each recommendation sub-problems at Twitter in the past (see Section 1 for more discussion of our past work).
 しかし、neighborhoodベースのアプローチは一般的な解決策を提供するものではなく、私たちは過去にTwitterでそれぞれの推薦サブ問題を解決するために別々のシステムを構築・維持する必要がありました(過去の研究についての詳細はセクション1を参照してください)
 
 Model-based approaches, such as factorized models [18], graph embedding [10, 26] or VAE [22], fit separate parameters for each user or item.
-因数分解モデル[18](factorization machineの事かと思ったらMFの事だった!)、グラフ埋め込み[10, 26]、VAE[22]などのモデルベースのアプローチは、各ユーザやアイテムに対して別々のパラメータを当てはめる.(ここでの"パラメータ"って、特徴量の事? 埋め込みベクトルの事でもあるのかな.)
+因数分解モデル[18](factorization machineの事かと思ったらMFの事だった!MFもモデルベースなのか)、グラフ埋め込み[10, 26]、VAE[22]などのモデルベースのアプローチは、各ユーザやアイテムに対して別々のパラメータを当てはめる.(ここでの"パラメータ"って、特徴量の事? 埋め込みベクトルの事でもあるのかな.)
 The number of model parameters that need to be learned in order to scale to a billion-user social network can easily approach 1012, necessitating unprecedentedly large systems for solving ML problems at that scale.
 10億人規模のソーシャルネットワークに対応するためには、学習すべきモデルパラメータの数が$10^{12}$個に達することもあり、そのような規模のML問題を解決するためには、これまでにない大規模なシステムが必要となる.
 Hybrid models, such as Factorization Machine [27] and Deep Neural Networks (DNNs) [5] have been introduced to reduce the parameter space by utilizing the side information as prior knowledge for users and items.
