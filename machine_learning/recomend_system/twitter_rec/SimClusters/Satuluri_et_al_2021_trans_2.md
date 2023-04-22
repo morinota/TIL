@@ -294,11 +294,11 @@ Neighborhood-aware MH(Metropolis-Hastings) の proposal functionは、以下の2
 We design a two-step proposal function that works as follows.
 次のような2段階のproposal function を設計している.
 In the first step, for a given node 𝑢 we iterate over all the neighbors of 𝑢, look up their community assignments in Z, and identify the set of communities which are represented at least once, call it 𝑆.
-最初のステップでは、与えられたノード $u$ について、$u$ のすべての近傍を繰り返し、$Z$で彼らのコミュニティ割り当てを検索し、**少なくとも一度は表されるコミュニティの集合**を識別し、それを$S$と呼ぶ.(まだ良く理解できてない.)
+最初のステップでは、与えられたノード $u$ について、$u$ のすべての近傍を繰り返し、$Z$で彼らのコミュニティ割り当てを検索し、**少なくとも一度は現れるコミュニティの集合**を識別し、それを 部分集合$S$と呼ぶ.
 In the second step, we iterate over all subsets of size ≤ 𝑙 of 𝑆 from the first step, where 𝑙 is a user-provided upper bound on how many communities a node can be assigned to.
-第2ステップでは、第1ステップで得られた $S$ のサイズ $\leq l$ のすべての部分集合について反復処理を行う. ここで、$l$ はノードが割り当てられるコミュニティの数に対するuser-provided(=要するに開発者が指定するハイパーパラメータの意味!)の上限値である.
+第2ステップでは、第1ステップで得られた $S$ のサイズ $\leq l$ のすべての部分集合について反復処理を行う. ここで、$l$ は、ある1ノードが割り当てられるコミュニティの数に対する上限値である.この値はuser-provided(=要するに開発者が指定するハイパーパラメータの意味!).
 For each subset 𝑠, we calculate the function $f(u, s)$ from Eqn 2, and finally sample the subset 𝑠 with probability proportional to $e^{f(u,s)}$ i.e. we apply the softmax.
-各サブセット $s$ について、式2より関数 $f(u, s)$を計算し、最後に $e^{f(u,s)}$ に比例する確率でサブセット $s$ をサンプルする. (i.e. ソフトマックスを適用する)
+各サブセット $s$ について、式2より関数 $f(u, s)$を計算し、最後に $e^{f(u,s)}$ に比例する確率でサブセット $s$ をサンプルする. (i.e. ソフトマックスを適用する) (要するに、コミュニティ集合Sからl個のアイテムをサンプリングするって意味?? この時、サンプリングはf(u, s)に基づく離散確率質量分布に基づくという事?)
 The result of the sampling is then either accepted or rejected, as specified in lines 6 and 7 of Algorithm 1.
 そして、アルゴリズム1の6行目と7行目に規定されているように、サンプリングの結果が受け入れられるか、拒否されるかのどちらかになる.
 As for initializing Z, we seed each community with the neighborhood for a randomly selected node in the graph.
@@ -578,7 +578,7 @@ Such approaches work less well in the absence of useful content features and can
 We see SimClusters as an approach to scalably learn user and item representations which can be fed to hybrid models like DNNs [5] or GCNs [37].
 SimClustersは、DNN [5]やGCN [37]のような**ハイブリッドモデルに供給できるユーザとアイテムの表現をスケーラブルに学習するアプローチだと考えている**.
 
-Our problem definition bears some similarity to the cross-domain or heterogeneous recommender systems problem [2, 38], where one can use a joint objective function to simultaneously learn the representations of users and items across multiple domains [8, 39].
+Our problem definition bears some similarity to the cross-domain or heterogeneous recommender systems problem [2, 38], where one can use a joint objective function to simultaneously learn the representations of users and items across multiple domains [8, 39].****
 我々の問題定義は、複数のドメインにまたがるユーザとアイテムの表現を同時に学習するために共同目的関数を使用できる、クロスドメインまたは異種推薦システム問題 [2, 38] に類似している [8, 39].
 It is unclear how these methods can support our requirements for scale, handling dynamic items and graphs, and intepretability.
 これらの方法は、スケール、動的なアイテムやグラフの扱い、インテプリタビリティといった我々の要求をどのようにサポートできるかは不明である.
