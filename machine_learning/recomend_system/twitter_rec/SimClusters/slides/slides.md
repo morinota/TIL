@@ -5,7 +5,7 @@ format:
     # theme: [default, custom_lab.scss]
     theme: [default, custom_lab.scss]
     logo: https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919
-    footer: "⇒ https://qiita.com/morinota"
+    footer: ⇒ [https://qiita.com/morinota](https://qiita.com/morinota)
 from: markdown+emoji
 
 fig-cap-location: bottom
@@ -72,10 +72,10 @@ title-slide-attributes:
 
 #### 解法
 
-- ユーザ-ユーザグラフからコミュニティ埋め込みベクトルを作る。
+- **ユーザ-ユーザグラフからコミュニティ埋め込みベクトル**を作る。
 - 各コミュニティは、そのコミュニティ内の多くのユーザがフォローしているインフルエンサー集合によって特徴づけられる。
-- 異質(Heterogeneous)な推薦コンテンツ(i.e. table 1のターゲット)のそれぞれは、**これらのコミュニティ空間におけるベクトルとして表され**、アイテム $j$ に対する $i$ 番目のコミュニティに対応する要素は、$i$番目のコミュニティがアイテム $j$ にどれだけ興味を持っているかを示している。
-- 最終的には、**異質な推薦対象を、同じ空間のスパースで解釈可能なベクトルとして表現することができ**、様々な推薦やパーソナライゼーションタスクに活用可能。
+- 異質(Heterogeneous)な推薦コンテンツ(i.e. table 1のターゲット)のそれぞれは、**コミュニティ空間におけるベクトル**として表され、アイテム $j$ に対する $i$ 番目のコミュニティに対応する要素は、$i$番目のコミュニティがアイテム $j$ にどれだけ興味を持っているかを示している。
+- 最終的には、**異質な推薦対象を、同じ空間のスパースで解釈可能なベクトルとして表現でき**、様々な推薦やパーソナライゼーションタスクに活用可能。
 
 # 技術や手法の肝は?
 
@@ -173,8 +173,11 @@ $$
 
 ## twitterにおける活用例
 
+## 感想. NewsPicks推薦機能への適用可能性:thinking:
+
 # 参考:
 
 - [SimClustersの論文](https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio)
 - [公開されたtechブログ](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm)
 - [公開されたgithub リポジトリ](https://github.com/twitter/the-algorithm)
+- n週連続 推薦システム関連の論文読んだシリーズ13週目(毎週水曜更新):[twitterの様々な推薦機能で活用されてるらしい、ユーザ-ユーザのフォローネットワークからコミュニティ埋め込み表現を生成するSimClustersの論文を読んだ](https://qiita.com/morinota/items/d36421df083df9394bad)
