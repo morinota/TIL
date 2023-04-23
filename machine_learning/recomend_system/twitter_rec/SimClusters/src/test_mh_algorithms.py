@@ -150,7 +150,12 @@ def test_neighborhood_aware_MH_proposal_Z_updated() -> None:
     upper_bound_assign_per_node = 1
 
     searcher = mh.NeighborhoodAwareMetropolisHastings(objective_func, num_communities)
-    Z_updated = searcher._proposal_Z_updated(u, similarity_graph, Z)
+    Z_updated = searcher._proposal_Z_updated(
+        u,
+        similarity_graph,
+        Z,
+        l=upper_bound_assign_per_node,
+    )
     assert Z_updated.shape == Z.shape
 
 
@@ -165,14 +170,56 @@ def test_neighborhood_aware_MH_get_neigbor_indices() -> None:
     )  # u=0と接しているのはv=1, 2. u=0と接してないのはv=3
 
     u = 0
-    neibor_indices_expected = [1, 2]
+    neighbor_indices_expected = [1, 2]
 
     searcher = mh.NeighborhoodAwareMetropolisHastings(ObjectiveFunction(alpha=10))
+    neighbor_indices_actual = searcher._get_neighbor_indices(similarity_graph, node_idx=u)
+
+    assert neighbor_indices_actual == neighbor_indices_expected
 
 
 def test_neighborhood_aware_MH_get_neighbors_communities() -> None:
-    pass
+    Z = np.array(
+        [
+            [0, 1],  # u=0と一つ以上同じコミュニティに所属してるのはv=2,3
+            [1, 0],
+            [1, 1],
+            [0, 1],
+        ]
+    )
+    u = 0
+    neighbor_indices = [1, 2]
+
+    S_expected = [0, 1]  # neighbor nodesが所属しているコミュニティのindices
+
+    searcher = mh.NeighborhoodAwareMetropolisHastings(ObjectiveFunction(alpha=10))
+    S_actual = searcher._get_neighbors_communities(Z, neighbor_indices)
+
+    assert S_actual == S_expected
 
 
 def test_neighborhood_aware_MH_get_Z_updated_by_s() -> None:
-    pass
+    Z = np.array(
+        [
+            [0, 1],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+        ]
+    )
+    u = 0
+    s_idx = 0
+
+    Z_updated_by_s_expected = np.array(
+        [
+            [1, 0],  # Z(u)をsで置き換える.
+            [1, 0],
+            [1, 1],
+            [0, 1],
+        ]
+    )
+
+    searcher = mh.NeighborhoodAwareMetropolisHastings(ObjectiveFunction(alpha=10))
+    Z_updated_by_s_actual = searcher._get_Z_updated_by_s(u, s_idx, Z)
+
+    np.testing.assert_array_almost_equal(Z_updated_by_s_actual, Z_updated_by_s_expected)

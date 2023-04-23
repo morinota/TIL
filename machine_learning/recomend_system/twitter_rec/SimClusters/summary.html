@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.168">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>summary</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="summary_files/libs/clipboard/clipboard.min.js"></script>
+<script src="summary_files/libs/quarto-html/quarto.js"></script>
+<script src="summary_files/libs/quarto-html/popper.min.js"></script>
+<script src="summary_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="summary_files/libs/quarto-html/anchor.min.js"></script>
+<link href="summary_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="summary_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="summary_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="summary_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="summary_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="simclusters-community-based-representations-for-heterogeneous-recommendations-at-twitter" class="level1">
+<h1>SimClusters: Community-Based Representations for Heterogeneous Recommendations at Twitter</h1>
+<p>published date: August 2020, authors: Wondo Rhee, Sung Min Cho, Bongwon Suh url(paper): https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio</p>
+<p>(勉強会発表者: morinota)</p>
+<hr>
+<section id="どんなもの" class="level2">
+<h2 class="anchored" data-anchor-id="どんなもの">どんなもの?</h2>
+<ul>
+<li>twitter の SimClusters (Similarity-based Clusters)というコミュニティ埋め込みベクトルを生成する手法の論文.</li>
+<li>「K-POP」や「機械学習」といった共通の話題や、「職場が一緒」「高校が一緒」といった社会的関係から構成されるTwitter上のコミュニティ（約 <span class="math inline">\(~10^5\)</span> 件）を発見し、ユーザやコンテンツと各コミュニティの関連を表す埋め込みベクトルを生成する.</li>
+<li>様々な推薦タスクに活用できる、汎用的な埋め込み表現であるとの事.(論文の後半のオンライン実験にて、活用法を紹介していた.)</li>
+<li>table 1は、Twitterにおける各パーソナライズド・レコメンデーション問題(サービス)の多様性をまとめたもの. それぞれ、推薦されるアイテムのカーディナリティ(=unique値の数だっけ?)と計算された推薦のshelf life(賞味期限)が異なっている.</li>
+<li>本論文の中心的な動機付けとなる問いは、<strong>パーソナライズやレコメンデーションが必要なTwitter製品のすべて、あるいはほとんどの精度を高めるのに役立つ一般的なシステムを構築できるか</strong>という事.</li>
+<li>SimClustersは、DNN [5]やGCN [37]のような<strong>ハイブリッドモデルに供給できるユーザとアイテムの表現(埋め込みベクトル)をスケーラブルに学習するアプローチである</strong>、と本論文は主張している.(特徴量としての使い方)</li>
+</ul>
+<p><img src="https://camo.qiitausercontent.com/b7c906436ebb895d6e39309eea2985113a40be85/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f62613035656666382d653438612d376130352d353837332d6462306262383939396564622e706e67.png" class="img-fluid"></p>
+</section>
+<section id="先行研究と比べて何がすごい" class="level2">
+<h2 class="anchored" data-anchor-id="先行研究と比べて何がすごい">先行研究と比べて何がすごい？</h2>
+<p>本論文で提案するソリューションは、<strong>ユーザ-ユーザグラフから、コミュニティ構造に基づく汎用的な表現を構築できる</strong>という洞察に基づいており、各コミュニティは、そのコミュニティ内の多くの人々がフォローしているインフルエンサーの集合によって特徴づけられる.</p>
+<p><strong>異なる種類のコンテンツ(i.e.&nbsp;表1の各ターゲット)のそれぞれは、これらのコミュニティの空間におけるベクトルとして表され</strong>、アイテム <span class="math inline">\(j\)</span> に対する <span class="math inline">\(i\)</span> 番目のコミュニティに対応するエントリは、<span class="math inline">\(i\)</span>番目のコミュニティがアイテム <span class="math inline">\(j\)</span> にどれだけ興味を持っているかを示している.</p>
+<p>本手法のデザインには、2つの特筆すべき点がある：</p>
+<ul>
+<li>大規模な数値最適化問題を解く必要がある従来の行列分解法を避け、代わりに、スケールアップが容易なSimilarity検索とコミュニティ発見の組み合わせに頼っている. 既存のベースラインと比較して、10倍から100倍高速で、3倍から4倍高精度であり、 <span class="math inline">\(∼10^9\)</span> 個のノードと <span class="math inline">\(∼10^{11}\)</span> 個のエッジを持つグラフに容易に拡張することができる. 「K-POP」や「機械学習」といった共通の話題や、「職場が一緒」「高校が一緒」といった社会的関係から構成されるTwitter上のコミュニティ（約 <span class="math inline">\(∼10^5\)</span> 件）を発見することができる.</li>
+<li>特定のコンポーネントに最も適したコンピューティングパラダイム(batch-distributed, batch-multicore, streaming-distributed)を使用できるように、全体的にモジュール式(=SimClustersの各stageが疎結合になってる?)で拡張可能な設計となっている</li>
+</ul>
+</section>
+<section id="技術や手法の肝は" class="level2">
+<h2 class="anchored" data-anchor-id="技術や手法の肝は">技術や手法の肝は？</h2>
+<p>SimClustersシステム(図1参照)は、2つのステージで構成されている：</p>
+<p><img src="https://camo.qiitausercontent.com/91062517c63bafedf6953cf10b1e3a74c62de8de/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32623466333165372d653361632d306639642d656431392d6361316535303763623534332e706e67.png" class="img-fluid"></p>
+<section id="段階1-communityの発見-user-interest-representationsの取得" class="level3">
+<h3 class="anchored" data-anchor-id="段階1-communityの発見-user-interest-representationsの取得">段階1: Communityの発見 (User Interest Representationsの取得)</h3>
+<p>この段階は、Twitterのユーザとユーザのグラフからコミュニティを発見することである. ここで言う”グラフ”とは、ユーザ間のフォロー関係を表す有向グラフ(directed graph)の事. 代表的な既存研究に習って、有向グラフを二部グラフ(bipartite graph)として再定義することが便利であることがわかっている.</p>
+<section id="メモ-bipartite-graph二部グラフってなんだっけ" class="level4">
+<h4 class="anchored" data-anchor-id="メモ-bipartite-graph二部グラフってなんだっけ">メモ: bipartite graph(二部グラフ)ってなんだっけ?</h4>
+<blockquote class="blockquote">
+<p>数学、とくにグラフ理論における2部グラフ(にぶグラフ、英: bipartite graph)とは、<strong>頂点集合を2つに分割</strong>して、各部分の頂点が互いに隣接しないようにできるグラフのこと. 一般に<strong>互いに隣接しない頂点からなる集合を独立集合</strong>といい、頂点集合を n 個の独立集合に分割可能なグラフのことを n 部グラフ (n-partite graph) という. 完全二部グラフ: 頂点集合を2つの独立集合 V1, V2 に分割したとき、V1 と V2 の任意の頂点が隣接するグラフ.(i.e.&nbsp;独立集合V_1のある一つの頂点は、もう一つの独立集合V_2内の全ての頂点と隣接している=繋がっている状況…! これは”完全”二部グラフの説明.)</p>
+</blockquote>
+</section>
+<section id="段階1における問題設定を定義" class="level4">
+<h4 class="anchored" data-anchor-id="段階1における問題設定を定義">段階1における問題設定を定義:</h4>
+<p>左パーティション <span class="math inline">\(L\)</span>(左の独立集合?) と右パーティション <span class="math inline">\(R\)</span> (=右の独立集合?)を持つbipartite user–user graph(=各頂点がユーザを意味するbi-partite graph)が与えられるとする. そのグラフから <span class="math inline">\(k\)</span>個の (おそらく重複する=独立な集合ではないって事?) bi-partite コミュニティを見つけ、各左ノード(=左の独立集合の各頂点)と右ノード(=右の独立集合の各頂点)にそのメンバーシップの強さ(=k個の各コミュニティに所属する度合いの強さ)を示す重みをつけてコミュニティに割り当てる.</p>
+</section>
+<section id="問題設定と-sparse-non-negative-matrix-factorizationの関連." class="level4">
+<h4 class="anchored" data-anchor-id="問題設定と-sparse-non-negative-matrix-factorizationの関連.">問題設定と sparse non-negative matrix factorizationの関連.</h4>
+<p>ユーザ-&gt;ユーザのフォロー関係を表す有向グラフを、二部グラフとして再定義するもう一つの利点は、ノードの右集合である <span class="math inline">\(R\)</span> をノードの左集合である <span class="math inline">\(L\)</span> と異なるように選択できること. 特に、<strong>典型的なソーシャルネットワークの大部分の辺は少数のユーザに向けられている(=多くの一般ユーザがインフルエンサー的なユーザをフォローしている状況??)ので</strong>、<span class="math inline">\(L\)</span> よりも小さな <span class="math inline">\(R\)</span> を選ぶことは理にかなっていると言える. Twitterの場合、最もフォローされている上位107人のユーザーを <span class="math inline">\(R\)</span> に含め、残りの全てのユーザを <span class="math inline">\(L\)</span> に含める(約 <span class="math inline">\(10^9\)</span> 個の頂点を左の独立集合に).</p>
+<p>また、問題定義では、コミュニティとの関連性の強さを示す非負のスコアを左右(=2つの独立集合R と L?)の各メンバー(=ノード=ユーザ)に割り当てることを求めている. そこで、左右のメンバーシップ(=2つの独立集合R と L の各頂点の、各コミュニティとの関連度合い)を疎な非負行列 <span class="math inline">\(U_{|L|\times k}\)</span> と <span class="math inline">\(V_{|R|\times k}\)</span> で表現する. ここで、<span class="math inline">\(k\)</span> はコミュニティ数である. したがって、<strong>bipartite community discoveryの問題(=上述した問題設定=bi-partite user-user graphから、各ユーザとk個の各コミュニティとの関連度合いを定量化する問題)は、sparse non-negative matrix factorization (NMF)の問題と密接な類似性を持っている</strong>のである.</p>
+</section>
+<section id="simclustersは問題をどんなアプローチで解く" class="level4">
+<h4 class="anchored" data-anchor-id="simclustersは問題をどんなアプローチで解く">SimClustersは問題をどんなアプローチで解く?</h4>
+<p>SimClustersでは、図2におもちゃの例で示すように、次の<strong>3ステップのアプローチ</strong>を採用している.</p>
+<p><img src="https://camo.qiitausercontent.com/194f3a26deb259e329da2e62437508f49aad755b/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f65613534653939372d656632322d366463372d626538302d6239333261626561376433632e706e67.png" class="img-fluid"></p>
+<ul>
+<li>Step 1. Similarity Graph of Right Nodes: 右の独立集合<span class="math inline">\(R\)</span>の類似度グラフを取得する.</li>
+<li>Step 2. Communities of Right Nodes: 右の独立集合<span class="math inline">\(R\)</span>の類似度グラフから、k個のコミュニティを計算する(=<span class="math inline">\(R\)</span>の各ユーザと各コミュニティとの関連度合いを定量化する).</li>
+<li>Step 3. Communities of Left Nodes: 左の独立集合<span class="math inline">\(L\)</span>の各ノード(=頂点=ユーザ)を、Step 2で発見した各コミュニティに割り当てる(=各コミュニティとの関連度合いを定量化する).</li>
+</ul>
+<p>行列因数分解の観点から、この3ステップのアプローチは、<span class="math inline">\(A^{T}A\)</span>の固有値分解を介した行列<span class="math inline">\(A\)</span>のSVDを実行する1つの方法とよく似ている.</p>
+</section>
+<section id="step-1-独立集合rのsimilarityグラフを作る" class="level4">
+<h4 class="anchored" data-anchor-id="step-1-独立集合rのsimilarityグラフを作る">Step 1: 独立集合<span class="math inline">\(R\)</span>のSimilarityグラフを作る</h4>
+<p>このステップの目的は、右の独立集合<span class="math inline">\(R\)</span>のノードを用いて、より小さな uni-partite(一部)の無向グラフ <span class="math inline">\(G\)</span> を構築する事.</p>
+<p><span class="math inline">\(R\)</span> 内の2つのユーザ(<span class="math inline">\(u\)</span>, <span class="math inline">\(v\)</span>)間の重み(=similarityとして表される)を、二部グラフの左側(独立集合 <span class="math inline">\(L\)</span>)の”フォロワーのコサイン類似度”に基づいて定義する. “フォロワーのコサイン類似度”について具体的には、ユーザuとvについての”フォロワーのbinary incidence vectors(入射ベクトル)“をそれぞれ <span class="math inline">\(\vec{x_u}\)</span> と <span class="math inline">\(\vec{x_v}\)</span> とする(=長さは左集合 <span class="math inline">\(L\)</span> の大きさ.もし<span class="math inline">\(L\)</span>のユーザiが<span class="math inline">\(u\)</span>をフォローしていれば i番目の要素が1, それ以外が0であるようなbinaryベクトル). そのcosine類似度は、以下のように定義される.</p>
+<p><span class="math display">\[
+similarity(u, v) = \vec{x_u} \cdot \vec{x_v} / \sqrt{|\vec{x_u}||\vec{x_v}|}
+\]</span></p>
+<p>この定義によれば、2つのユーザは、二部グラフにおいて一人以上の共通の隣人(フォロワー)を共有するだけで、ゼロではない類似度がある. すなわち similarityグラフ <span class="math inline">\(G\)</span> にエッジ(=ノード間の接続=辺)を持つことになる. 極端に密な similarityグラフ を生成しないために、similarityスコアがある閾値より低いエッジ(=接続)を破棄し、さらに各ユーザのsimilarityスコアが最も大きい隣人を最大で一定数のみ保持するようにする.</p>
+<p>難しいのは、この類似ユーザ問題の解決は、<strong>Twitterのスケールでは非常に困難である</strong>ということ.</p>
+<p>最終的に、このステップは、<span class="math inline">\(~10^9\)</span> 個のノードと<span class="math inline">\(∼10^{11}\)</span>個のエッジを持つ有向/二部グラフを入力とし、<span class="math inline">\(~10^7\)</span> 個のノード(入力された二部グラフにおける独立集合<span class="math inline">\(R\)</span>の要素数)と <span class="math inline">\(~10^9\)</span> 個のエッジを持つ無向のsimilarityグラフを出力する. つまり、shared-nothing のcluster-computing規模から、shared-memory のマルチコア規模になる、らしい.(=&gt;グラフのスケールが大幅に削減された事で、複数のリソースにまたがる分散処理ではなく、一つのリソース内で共有メモリを使用するようなマルチコア処理で計算可能になった、って事っぽい…!)</p>
+</section>
+<section id="step-2-独立集合rのsimilarityグラフからk個のコミュニティを発見する" class="level4">
+<h4 class="anchored" data-anchor-id="step-2-独立集合rのsimilarityグラフからk個のコミュニティを発見する">Step 2: 独立集合<span class="math inline">\(R\)</span>のSimilarityグラフから、k個のコミュニティを発見する</h4>
+<p>前のステップで得られた無向の(おそらくは重み付けされた)Similarityグラフを用いて、このステップでは、密に接続されたノード集合(=右のユーザ集合)のコミュニティを発見することを目的としている. 入力されたSimilarityグラフの構造を正確に保持するためには、<strong>ある1コミュニティ当たりのノード数(<span class="math inline">\(k\)</span>)が数千、数万ではなく、数百であることが重要</strong>であることが確認されている. つまり、ノード<span class="math inline">\(∼10^7\)</span>個、エッジ<span class="math inline">\(∼10^9\)</span>個の入力グラフを処理して、<span class="math inline">\(∼10^5\)</span> 個(=<span class="math inline">\(∼10^7\)</span>個で<span class="math inline">\(10^2\)</span>で割っている)のコミュニティを見つけることができるアルゴリズムが必要. しかし、コミュニティ発見アルゴリズムの長い歴史にもかかわらず、これらの規模要件を満たすことができる既存のソリューションを見つけることができなかった. 以下で、今回の要求を満たすために開発した <strong>Neighborhood-aware Metropolis Hastings(以下、Neighborhood-aware MH)</strong>と呼ばれるアルゴリズムについて説明する.</p>
+<section id="metropolis-hastings-sampling-approach" class="level5">
+<h5 class="anchored" data-anchor-id="metropolis-hastings-sampling-approach">Metropolis Hastings sampling approach</h5>
+<p>本アルゴリズムは、<strong>重複するコミュニティを発見するために[33]で発表されたMetropolis Hastings sampling approach</strong>を拡張したものであり、まず背景として説明する.</p>
+<p><span class="math inline">\(Z_{|R|\times k}\)</span> を疎なbinaryのコミュニティ割り当て行列(<strong>community assignments matrix</strong>)とし、 <span class="math inline">\(Z(u)\)</span> は頂点<span class="math inline">\(u\)</span>が割り当てられたコミュニティの集合を表す(言い換えれば、<span class="math inline">\(Z(u)\)</span> は、行列 <span class="math inline">\(Z\)</span> の <span class="math inline">\(u\)</span> 行目から非ゼロの列indicesを出力するfunctionみたいな感じ?)、と仮定する. 式1は、Zに対する目的関数を指定している.(Zが推定すべきパラメータなのか…!)</p>
+<p><span class="math display">\[
+F(Z) = \alpha \sum_{u, v \in E}  1(|Z(u) \cap Z(v)| &gt; 0)
++ \sum_{u, v \notin E}  1(|Z(u) \cap Z(v)| = 0)
+\tag{1}
+\]</span></p>
+<p>ここで、</p>
+<ul>
+<li>1 はindicator function(=特定の条件を満たす場合だけ1を返し、それ以外は0を返すfunction).</li>
+<li><span class="math inline">\(F(Z)\)</span>は2つの項の合計.(それぞれ 割り当てbinary行列<span class="math inline">\(Z\)</span>を入力として計算できる.)</li>
+<li>第一項は、グラフ内のノードの隣接するペアが少なくとも1つのコミュニティを共有する数をカウントする.</li>
+<li>第二項は、グラフ内のノードの非隣接ペアがコミュニティを共有しない数をカウントする.</li>
+<li><strong>実際の大規模ネットワークのほとんどは非常にスパースなので、パラメータ<span class="math inline">\(\alpha\)</span> を用いて最初の項の寄与を重み付けすることが有用</strong>. <span class="math inline">\(\alpha\)</span> の値が増加すると、目的関数はよりZの非ゼロ要素に基づいて最適化することになる.</li>
+</ul>
+<p>また、上記の目的関数は、<strong>全体の目的関数 <span class="math inline">\(F(Z)\)</span> が個々の頂点に対する関数 <span class="math inline">\(f(u, Z)\)</span> の和として表現できる</strong>意味で、分解可能である. (ここで、<span class="math inline">\(N(u)\)</span> はある頂点 <span class="math inline">\(u\)</span> のneighbors集合を表す.)</p>
+<p><span class="math display">\[
+f(u, Z) = \alpha \sum_{v \in N(u)} 1(|Z(u) \cap Z(v)| &gt; 0)
++ \sum_{v \notin N(u)} 1(|Z(u) \cap Z(v)| = 0)
+\tag{2}
+\]</span></p>
+<p>以上の背景を踏まえ、まずアルゴリズム1において、重複するコミュニティを一般的な方法で発見するアプローチを説明する.</p>
+<p><img src="https://camo.qiitausercontent.com/636b650123d6050e0ad7dd598d84f8e6dab0ff32/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f33613335616133642d316333332d346239652d303463392d3531303532653430303734332e706e67.png" class="img-fluid"></p>
+<ul>
+<li>binary割り当て行列 <span class="math inline">\(Z\)</span> を初期化した後、最大で <span class="math inline">\(T\)</span> epoch 回 最適化を実行し、各epoch ではグラフ内のすべての頂点をシャッフルした順序(?)で反復する.</li>
+<li>各頂点 <span class="math inline">\(u\)</span> について、proposal function(=コードの関数)を用いてコミュニティ割り当ての新しい集合 <span class="math inline">\(Z'(u)\)</span> をサンプリングし、新しく提案された<span class="math inline">\(Z'(u)\)</span> と現在のコミュニティ割り当てのセット <span class="math inline">\(Z(u)\)</span> の間の目的関数の違いを計算する.</li>
+<li>もし <span class="math inline">\(Z'(u)\)</span> の方が良ければ、<span class="math inline">\(Z\)</span>を置き換える. もしそうでなくても、アルゴリズム1の6行目で示されるように、ある確率で置き換える.
+<ul>
+<li>[33]で述べられているように，決定論的な最適化手順ではなく，ランダムな最適化手順を好む理由の1つは，局所最小値にはまるのを避けることが目的.</li>
+</ul></li>
+</ul>
+</section>
+<section id="既存研究33の手法-ランダムmhmetropolis-hastings" class="level5">
+<h5 class="anchored" data-anchor-id="既存研究33の手法-ランダムmhmetropolis-hastings">既存研究[33]の手法: ランダムMH(Metropolis-Hastings)</h5>
+<p>[33]で行われた<code>Initialize</code> function と<code>Proposal</code> function の具体的な選択方法は、アルゴリズム2に記載されている.</p>
+<p><img src="https://camo.qiitausercontent.com/d263bcb74e394587b46a57d75b88a06105c302ec/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f31656530393931352d656334662d346233332d353139652d3733353465613566343034342e706e67.png" class="img-fluid"></p>
+<p>これらの機能は、純粋にランダムなサンプリングで実装されているため、この手法を”<strong>ランダムMH(Metropolis-Hastings)</strong>”と呼んでいる. ランダムMHの主な実用上の欠点は、<span class="math inline">\(k\)</span> の値が適度であっても、満足のいく精度の解を得るのに非常に時間がかかるということである.(最適化戦略無しに、ランダムに、より良いパラメータを探索しているから…!) これは、<code>Proposal</code> function が各ステップで完全にランダムなコミュニティ割り当てベクトルを生成し、現在の割り当てベクトルと照らし合わせて評価することを考えれば、驚くべきことではない. <span class="math inline">\(k\)</span> が増加すると、コミュニティ割り当ての空間(=パラメータの選択肢のイメージ)は指数関数的に増加し、<code>Proposal</code> function が許容できるtransition (パラメータ更新)を生成できる可能性は非常に低くなる.</p>
+</section>
+<section id="提案手法-neighborhood-aware-metropolis-hastings" class="level5">
+<h5 class="anchored" data-anchor-id="提案手法-neighborhood-aware-metropolis-hastings">提案手法: Neighborhood-aware Metropolis Hastings</h5>
+<p>既存手法の代わりに、アルゴリズム3で規定される <strong>Neighborhood-aware MH(Metropolis-Hastings)</strong> を提案する.</p>
+<p><img src="https://camo.qiitausercontent.com/79362c9271640af7550a9c152c52728a49cc6559/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f37313061323631662d363433382d663137382d343864662d3462396362353639373839642e706e67.png" class="img-fluid"></p>
+<p>Neighborhood-aware MH(Metropolis-Hastings) の proposal functionは、以下の2つの洞察 &amp; 仮定に基づいている:</p>
+<ul>
+<li>1つ目は、あるノード(=頂点=ユーザ)が、その隣接するノードが現在所属していないコミュニティに所属する可能性は極めて低いということ.</li>
+<li>2つ目は、<strong>ほとんどの実用的なアプリケーションでは、ノードを少数のコミュニティ以上に所属させる必要はない(?)</strong>ということである.</li>
+</ul>
+<p>次のような2段階のproposal function を設計している.</p>
+<ul>
+<li>最初のステップでは、与えられたノード <span class="math inline">\(u\)</span> について、<span class="math inline">\(u\)</span> のすべてのneigborsを繰り返し、<span class="math inline">\(Z\)</span>で彼らのコミュニティ割り当てを検索し、<strong>少なくとも一度は現れるコミュニティ集合</strong>を識別し、それを 部分集合<span class="math inline">\(S\)</span>と呼ぶ.</li>
+<li>第2ステップでは、第1ステップで得られた <span class="math inline">\(S\)</span> のサイズ <span class="math inline">\(\leq l\)</span> のすべての部分集合について反復処理を行う.
+<ul>
+<li>ここで、<span class="math inline">\(l\)</span> は、<strong>ある1ノードが割り当てられるコミュニティの数に対する上限値</strong>である.この値はuser-provided(=要するに開発者が指定するハイパーパラメータの意味!).</li>
+<li>各サブセット <span class="math inline">\(s\)</span> について、式2より関数 <span class="math inline">\(f(u, s)\)</span>を計算し、最後に <span class="math inline">\(e^{f(u,s)}\)</span> に比例する確率でサブセット <span class="math inline">\(s\)</span> をサンプルする. (i.e.&nbsp;ソフトマックスを適用する)</li>
+<li>(要するに、<strong>近傍コミュニティ集合Sからl個のアイテムをサンプリングしてuの所属コミュニティとする</strong>、って意味? この時、サンプリングはf(u, s)に基づく離散確率質量分布に基づくという事??)</li>
+<li><span class="math inline">\(f(u, s)\)</span>の計算方法は、<span class="math inline">\(Z(u) = s\)</span>とした場合の目的関数f(u, Z)の値、という認識…!</li>
+</ul></li>
+</ul>
+<p>そして、アルゴリズム1の6行目と7行目に規定されているように、サンプリングの結果が受け入れられるか、拒否されるかのどちらかになる. <span class="math inline">\(Z\)</span>の初期化については、各コミュニティにグラフ内のランダムに選ばれたノードのneigbborhoodをシードする.(?)</p>
+</section>
+</section>
+<section id="step-3-独立集合lとk個の各コミュニティとの関連度を定量化する" class="level4">
+<h4 class="anchored" data-anchor-id="step-3-独立集合lとk個の各コミュニティとの関連度を定量化する">Step 3: 独立集合<span class="math inline">\(L\)</span>と、k個の各コミュニティとの関連度を定量化する</h4>
+<p>前のステップの出力は、左集合に対するコミュニティ割り当て行列 <span class="math inline">\(V_{|R| \times k}\)</span> である. (i.e.&nbsp;<span class="math inline">\(i\)</span> 番目の行が右ノード<span class="math inline">\(i\)</span>が割り当てられたコミュニティを指定する行列) 問題設定における残りの問題は、右集合に対するコミュニティ割り当て行列 <span class="math inline">\(U_{|L| \times k}\)</span> を取得する事. (i.e.&nbsp;i番目の行が、左ノードiが割り当てられたコミュニティを指定するような行列)</p>
+<p>この割り当てを行う簡単な方法は、左集合の各ノードのneighbors(=全て右集合のノードであるはず!)が割り当てられているコミュニティを見ることによって、左ノードをコミュニティに割り当てること. より正式には、<span class="math inline">\(A_{|L| \times |R|}\)</span> を<strong>入力二部グラフの隣接行列(adjacency matrix)</strong>(なるほど、二部グラフの入力も行列で表せば良いのか…!)とすると、<span class="math inline">\(U = truncate(A\cdot V)\)</span> とする事である. ここで、<span class="math inline">\(truncate()\)</span> 関数は、ストレージを節約するために、各行(=左の独立集合の各頂点=各ユーザ)に対してある一定の数までのnon-zero要素だけを保持する.(=任意の1ユーザが所属するコミュニティの数を制限するfunction…!)</p>
+<p>ちなみに、この<span class="math inline">\(U\)</span>の計算式は、「<span class="math inline">\(V\)</span>が正方直交行列(orthonormal matrix)であるケース(i.e.&nbsp;<span class="math inline">\(V^T V = I\)</span>であるケース)に、<span class="math inline">\(U = A \cdot V\)</span> は <span class="math inline">\(A = U \cdot V^T\)</span> の解になる.」という事実に動機づけられている. <span class="math inline">\(V\)</span>がorthonormal matrixの場合(これは、<strong>各右ノードを最大1つのコミュニティに割り当てることで実現できる</strong>)(=あ、じゃあ運用する上では基本的に、<span class="math inline">\(V\)</span> は正方直交行列になるのか…!)と、そうでない場合の両方で実験を行い、いずれの場合も、結果として得られる <span class="math inline">\(U\)</span> が左nodesを正確に表現することを発見した. (あ、じゃあ結局<span class="math inline">\(V\)</span>がorthonormal matrixではなくても問題なさそうなのか…!)</p>
+<p>上の計算式で得られた <span class="math inline">\(U\)</span>を<strong>User Interest Representations</strong> と呼び、以降のステップの主要な入力情報を形成する.(=UがSimClustersの段階2の入力情報になる…? <span class="math inline">\(V\)</span>はならない?) このステップの計算は、Hadoop MapReduce のようなバッチ分散コンピューティングパラダイムで実装することで、プロダクト運用上の要求に合わせて<strong>簡単にスケーリングすることができる</strong>.(処理の並列化に関しては、正直あまりイメージがついていない.)</p>
+</section>
+</section>
+<section id="段階2-item-representationsの取得" class="level3">
+<h3 class="anchored" data-anchor-id="段階2-item-representationsの取得">段階2: Item Representationsの取得</h3>
+<p>本節では、<strong>ツイート、ハッシュタグ、ユーザなど、様々な推薦問題の対象となりうるアイテムに対する表現(=embedding)を計算する方法</strong>について説明する.</p>
+<p>段階2の<strong>一般的な枠組みは、アイテムに関わったすべてのuser interest表現を集約してアイテムの表現を計算すること</strong>(なるほど…!シンプル!). つまり、アイテム <span class="math inline">\(j\)</span> のSimClusters表現は、</p>
+<p><span class="math display">\[
+W(j) = aggregate({U(u), \forall u \in N(j)})
+\tag{3}
+\]</span></p>
+<p>ここで、<span class="math inline">\(N(j)\)</span>は、対応するユーザ-アイテム二部グラフにおいてアイテム<span class="math inline">\(j\)</span>に関与したすべてのユーザを示し、<span class="math inline">\(W(j)\)</span> と <span class="math inline">\(U(u)\)</span> はいずれもベクトルとする. <span class="math inline">\(aggregate\)</span>関数は、さまざまなアプリケーションに基づいて選択することができ、特定の教師付きタスクから学習することも可能[13]. この場合、<span class="math inline">\(W(j,c)\)</span> を<strong>コミュニティ<span class="math inline">\(c\)</span>の平均的なユーザがこのアイテム<span class="math inline">\(j\)</span>に現在抱いている興味のレベル</strong>と解釈できるように、比較的単純で解釈しやすい<span class="math inline">\(aggregate\)</span>関数を選択することになる. 本手法では、<strong>aggregate関数として”exponentially time-decayed average(指数関数的時間減衰平均)“を選択</strong>した. これは、アイテムに関わったユーザの貢献度を、そのユーザがアイテムに関わった時間に基づいて指数関数的に減衰させる. <strong>指数関数的減衰に使用する半減期はアイテムに依存</strong>し、賞味期限(shelf-lifeって表現されるんだ…!)が長いもの(トピックスなど)には長い半減期を設定し、賞味期限が短いもの(ツイートなど)には短い半減期を設定している.</p>
+<p>結果として得られるベクトル<span class="math inline">\(W\)</span>は<span class="math inline">\(U\)</span>よりもはるかに密度が高く(=&gt;<span class="math inline">\(U\)</span>の要素はbinary?で離散的だけど、<span class="math inline">\(W\)</span>の場合は連続的な数値だから?)、その非ゼロ値をすべてスケールで保存することは有益ではない. その代わりに、<span class="math inline">\(W\)</span>のview (指標、サブセット、要約統計量的なイメージ?)を2つ追加し、それぞれがトップ<span class="math inline">\(k\)</span> viewを保持する. (値が大きい要素のみを記録する、みたいな?) first view は<span class="math inline">\(R\)</span>で、<span class="math inline">\(R(j)\)</span>は<strong>アイテム<span class="math inline">\(j\)</span>のトップコミュニティを追跡する</strong>. second viewは<span class="math inline">\(C\)</span>で、<span class="math inline">\(C(c)\)</span> は<strong>コミュニティ<span class="math inline">\(c\)</span>のトップアイテムを追跡する</strong>. 賞味期限が長いものの場合、W、R、Cの計算は、例えば、Hadoop MapReduceを使ってバッチ式で行うのが無難である.</p>
+<p>しかし、賞味期限が短いものを扱うとなると、更に興味深い. この場合、指数関数的に時間的に減衰する平均の大きな利点(例えば時間窓付き平均とは異なる)が実現され、それは<span class="math inline">\(W\)</span>のインクリメンタルな更新を容易にすることにつながる. 具体的には、Wの各セルについて、<strong>現在の平均値そのものと、それが更新された最後のタイムスタンプ、という2つの情報のみを保持すればよい</strong>. アルゴリズム4の4行目から7行目に詳述するように、<strong>新しいユーザとアイテムのエンゲージメントが到着すると、前回の更新からの経過時間に基づいて減衰係数を計算することで、アイテムのWを更新することができる</strong>.(online更新ができるのはいいね…!)</p>
+<p>運用上では、2つのtop-k ビュー <span class="math inline">\(R\)</span> と <span class="math inline">\(C\)</span> は、低遅延のkey-valueストアに保存される. この2つのview(指標?)を用いると、<strong>任意のユーザやアイテムの最近接者を簡単に検索することができる.</strong> ユーザやアイテムと関連度の高い(=興味が近い=active inな) 上位のコミュニティを調べ、そのコミュニティごとに上位のユーザやアイテムを特定するだけでよいのである. これらの候補は、その完全な表現(=embeddingベクトル)を取得し、queryオブジェクト(ユーザまたはアイテムのいずれか)の表現(=embeddingベクトル)との<strong>類似性を計算することによってランク付け</strong>することができる. その結果、すべてのユーザやアイテムを総当たりでスキャンする必要も、特別な最近傍インデックスを構築する必要もない.</p>
+</section>
+<section id="運用方法" class="level3">
+<h3 class="anchored" data-anchor-id="運用方法">運用方法:</h3>
+<p>SimClustersは、Twitter社で1年以上前から本番環境に導入されている. SimClustersシステムから出力されるすべての表現は、<strong>モデルバージョンでキーが設定されており、複数のモデルを並行して運用すること</strong>で、既存の生産に影響を与えずに新しいパラメータやコードの変更を試すことができる. 現在、本番稼働中のメインモデルでは、フォロワー数上位<span class="math inline">\(∼10^7\)</span>人のユーザのsimilarityグラフから発見された<span class="math inline">\(∼10^5\)</span>のコミュニティが表現されている. モデルによって発見されたbipartiteコミュニティは、入力されたbipartiteグラフのエッジの70%近くを含んでおり、グラフの構造のほとんどを捉えていることが示唆される.</p>
+<p>ステージ1のうち、<strong>ステップ1(類似度計算)は最もコストがかかるステップで、Hadoop MapReduceでエンドツーエンドで実行するのに約2日かかる</strong>が、このジョブはSimClusters以前から運用されていたため、SimClustersによる追加コストではない. (高い頻度でバッチ実行するような感じではないのかな…。一ヶ月に一度とか? まあこのステップで使用するユーザデータは上位ユーザのみだからすでにデータは十分揃っていて、短期間で傾向がかわる事はないだろうから問題なさそう…!) ステップ2はSimClustersの起動時に初めて実行された. その後、現在の<span class="math inline">\(V\)</span>で初期化した Neighborhood-aware MHの短縮版を実行することにより、ユーザとユーザの類似性グラフの変化を考慮し、<span class="math inline">\(V\)</span>行列を更新している. また、<strong>Step3は、最新版のユーザ-ユーザグラフとStep2の最新<span class="math inline">\(V\)</span>を使い、Hadoop MapReduce上でバッチアプリケーションとして定期的に実行される</strong>. ステップ3の出力(<span class="math inline">\(U\)</span>行列)(=一般ユーザのcommunity表現ベクトル)を得た後は、<span class="math inline">\(V\)</span>行列(=上位ユーザのcommunity表現ベクトル)を直接使用することはない。<span class="math inline">\(V\)</span>行列は一般的にスパースすぎて正確なモデリングができない.</p>
+<p>Stage2では、“user influence”表現(=ユーザがどのコミュニティで影響を発揮しているかを表すベクトル)と”Topic”表現の<strong>2つのバッチジョブ</strong>と、“ツイート”表現と”トレンド”表現(=これも単に人気度が高いトレンドを全員に見せている訳でなく、各communityと親和性の高いトレンドを探してるのか…!)の<strong>2つのストリーミングジョブ(=online更新的なジョブ.)</strong>の計4つのジョブを現在用意している. <strong>user influence表現の目的</strong>は、ユーザがどのようなコミュニティに興味を持っているかを表す為のuser interest表現(=ステージ1の出力)とは対照的に、<strong>ユーザがどのようなコミュニティで影響を発揮しているか</strong>を表すことである. user influence表現は、より多くのユーザをカバーし、またユーザの元のサブセットに対してより密であるため、この目的のために元の<span class="math inline">\(V\)</span>行列(=これって上位ユーザのcommunity表現じゃなかったっけ?)よりも優れている.(計算方法は、ステージ2の他のアイテムと同じなのかな…=“上位ユーザ”をアイテムとして計算する感じ?) トピック表現は、どのコミュニティがトピックに最も興味を持っているかを示すもので、これを計算するための入力は、ユーザinterest表現と、ユーザ-トピックの関係グラフの両方である.(アイテム=トピックとしたver.) ツイート表現とトレンド表現は、リアルタイムで発生するユーザとツイートのエンゲージメントを入力とするストリーミングジョブで計算・更新される.</p>
+<p>すべてのSimClusters表現において、ゼロでないものだけを保存し、すべての場合においてゼロに近いエントリーを切り捨てている点が、2種類のveiw <span class="math inline">\(R\)</span>と<span class="math inline">\(C\)</span>を使用する事のメリット. user interest表現は約<span class="math inline">\(∼10^9\)</span>人のユーザをカバーし、user influence表現は約<span class="math inline">\(∼10^8\)</span>人のユーザをカバーしており、どちらの表現も平均10~100個の非ゼロ要素を有している.(user influence表現の方がオーダーが小さいのは、user interest表現を元にaggregate計算する際に、ある一定数以上フォローされている必要があるから?) ある時点で推薦されるツイートやトレンドの数は少ないが(表1参照)、その表現はより密で、平均して約 <span class="math inline">\(10^2\)</span> の非ゼロ要素を持つ. なお、以下の4つの表現(user influence、トピック、ツイート、トレンド)については、反転した指標も維持している: あるコミュニティが与えられたとき、そのコミュニティと関連度の高いトップkユーザー/トピック/ツイート/トレンドは何か(セクション4では<span class="math inline">\(C\)</span>と表記している). <span class="math inline">\(C\)</span>は、他の表現とのドット積やコサイン類似度が最も大きい表現を持つアイテムを検索するために不可欠.</p>
+</section>
+</section>
+<section id="どうやって有効だと検証した" class="level2">
+<h2 class="anchored" data-anchor-id="どうやって有効だと検証した">どうやって有効だと検証した?</h2>
+<p>Twitterの各推薦機能にてオンラインテストを行い、いずれもcontrol群と比べてtreatment群の方が高いmetricsスコアを出したとの事.</p>
+<section id="ツイート詳細ページでの類似ツイートの推薦" class="level3">
+<h3 class="anchored" data-anchor-id="ツイート詳細ページでの類似ツイートの推薦">ツイート詳細ページでの類似ツイートの推薦:</h3>
+<p>メールやプッシュ通知でツイートにアクセスしたユーザに対して、Twitterは他のおすすめツイートと返信を並べたモジュールを表示する. このモジュールは、SimClustersの前に、作者の類似性(ページ上のメインツイートの作者と多くのフォロワーを共有するユーザーが書いたツイート)にのみ基づいてツイートを検索していた. オンラインA/Bテストでは、SimClustersから類似ツイートを追加した. つまり、SimClustersの表現(=どのcommunityと関連度が高いかを表すベクトル)がページ上のメインツイートの表現と高いコサイン類似度を持つツイートを取得した.</p>
+<p>その結果、ツイートに対するエンゲージメント率が25％高くなることがわかった.</p>
+<p>その後更に、SimClustersに基づくこのproductの第二のソース候補を追加した. SimClusters表現が、ページ上のメインツイートの著者のuser influence表現(=ユーザがどのコミュニティで影響を発揮しているかを表すベクトル)と高いコサイン類似性を持つツイートを検索する. このソースを追加することで、カバー率はさらに向上し、全体のエンゲージメント率が7%向上した.</p>
+</section>
+<section id="home-フィードにおけるおすすめツイート" class="level3">
+<h3 class="anchored" data-anchor-id="home-フィードにおけるおすすめツイート">Home フィードにおけるおすすめツイート</h3>
+<p><strong>Twitterのホームフィード</strong>は、直接フォローされているユーザのツイートと、フォローされていないユーザのおすすめツイート（以下「ネットワーク外ツイート」）の両方から構成される. SimClusters以前は、推薦ツイートの主なアルゴリズムは「ネットワークアクティビティ」と呼ばれるものだった. つまり、GraphJet [31]を使用して、閲覧ユーザのフォロー（つまりネットワーク）がどのツイートに「いいね」を付けているかを特定する. これが推薦アイテムの主なcandidate sourceだった.</p>
+<p><strong>SimClustersのツイート表現(ツイートがどのcommunityと関連度が高いか?を表すベクトル)</strong>を使って、ネットワークアクティビティツイートを補足する2つのcandidate sources を構築した. 第1のcandidate sources は、リアルタイム表現(=現時点でのツイートのcommunity表現)が閲覧ユーザのinterest表現とのドット積が最も高いツイートを特定する. 2つ目の候補は、アイテムベースの協調フィルタリングに基づくもので、セクション6.1で説明した「類似ツイート」アプリケーションと同じ基本的な実装を使用して、ユーザが最近「いいね！」を押したツイートと類似するツイートを特定する. (類似度の評価に使用するのは simclustersで作ったtweet表現.=&gt;関連するコミュニティに基づく類似度!)</p>
+<p>この2つの新しいcandidate sourceからの推薦アイテム候補を、本番の既存手法による推薦アイテム候補(Homeの特定のポジション)に置き換えて、オンラインでA/Bテストを実施した. 実験では、ネットワークアクティビティで生成されたcandidateと比較して、新しいcandidateのエンゲージメント率が33%高い結果となった.</p>
+<p>新しい候補とは別に、user interest表現やツイート表現を利用して、あらゆるソースから来る候補のランキングを改善することもある. ユーザとアイテムの表現は、エンゲージメント予測モデル(ランキングモデル)の入力において、既存のユーザ特徴、アイテム特徴、およびユーザとアイテムの相互作用特徴のセットを豊かにするために使用される. (=&gt;候補生成後のランキングモデルの特徴量として使用するみたいな感じ) A/Bテストでは、これらの特徴量で学習させたモデルは、推薦コンテンツのエンゲージメント率を4.7%相対的に高めることができ、成熟したモデルとしては大きなリフトアップ効果があった.</p>
+</section>
+<section id="personalized-trends-のランク付け" class="level3">
+<h3 class="anchored" data-anchor-id="personalized-trends-のランク付け">Personalized Trends のランク付け</h3>
+<p>トップトレンドのコンテンツ(ハッシュタグ、イベント、ニュース速報など)を表示することは、地域や世界で起こっていることをユーザに知らせる重要な方法. Trendsの実装は、Trendsの検出とランキングの2段階を踏んでいる.</p>
+<p>トレンドのSimClusters表現を使って、user interest表現とリアルタイムのtrend表現のdot product(内積!)を使用することで、与えられたユーザ-トレンドペアをスコア化した. A/Bテストでは、このスコアを使用することで、Trends自体のユーザエンゲージメントが8％増加し、さらにクリック後のランディングページのエンゲージメントが12％増加することがわかった.</p>
+<p>これらの改善は、この推薦機能で行われた他の実験と比較すると、大きなものである.</p>
+</section>
+<section id="topic-tweetの推薦" class="level3">
+<h3 class="anchored" data-anchor-id="topic-tweetの推薦">Topic Tweetの推薦</h3>
+<p>「ファッション」や「マーベル映画」など、あらかじめ定義されたトピック(=キーワードみたいなイメージ?)がある場合、そのトピックに関するコンテンツを表示する機能. ここでの推薦機能がリリースされる前は、主に人間の専門家がキュレーションしたテキストマッチングルールに依存して、トピックツイートを識別していた(ようするにルールベースの手法だった). この方法では、多くの誤検出(主にツイートのテキストがトピックのルールと偶然一致することによる)があることがわかったので、今回SimClustersを用いた推薦機能をテストした. まずSimClusters表現を用いて、対象のtopic表現と高いコサイン類似度を持つツイート表現を特定する. 次にテキストマッチング規則(??既存のアプローチ? 二段階にしたって事?)を適用した. 社内で評価したところ、2番目のアプローチの方がはるかに良い結果が得られたため、このアプローチでproductをlaunchしたとのこと. この推薦機能は、リリース以来、外部で好評を博し、より多くのユーザからツイートへのエンゲージメントを高めている.</p>
+</section>
+<section id="ユーザフォローの推薦" class="level3">
+<h3 class="anchored" data-anchor-id="ユーザフォローの推薦">ユーザフォローの推薦</h3>
+<p>Who To Followレコメンデーションの候補は、エンゲージメント予測モデルを用いてランク付けされる. このモデルには、<strong>閲覧ユーザと候補ユーザのSimClusters表現</strong>に基づく新しい特徴量が加えられている.(特徴量としての活用.) A/Bテストでは、これらの新たな特徴量を使用することで、フォロー率が7％向上することが確認された.</p>
+</section>
+</section>
+<section id="議論はある" class="level2">
+<h2 class="anchored" data-anchor-id="議論はある">議論はある？</h2>
+<p>今後のSimClusters表現の活用として以下の3つが挙げられていた.</p>
+<section id="通知品質フィルター" class="level3">
+<h3 class="anchored" data-anchor-id="通知品質フィルター">通知品質フィルター</h3>
+<p>Twitterプロダクトの重要なタスクとして、罵倒やスパム的なリプライやメンションを受けないようにユーザを保護することがある. <strong>ユーザとユーザのブロックグラフ（あるユーザーが他のユーザーをブロックした場合）に基づく新しいユーザ表現をSimClustersで開発</strong>し、この表現を特徴として、罵倒やスパムのような返信をフィルタリングするモデルを学習した. オフラインテストでは、PR-AUC が 4％向上するという素晴らしい結果を示した.</p>
+</section>
+<section id="特徴量の組み合わせから教師付き埋込を行う" class="level3">
+<h3 class="anchored" data-anchor-id="特徴量の組み合わせから教師付き埋込を行う">特徴量の組み合わせから教師付き埋込を行う</h3>
+<p>SimClustersの表現は、主に様々なエンゲージメントグラフから情報を取得するが、<strong>ユーザやアイテムに関する他の特徴(例えば、フォロワー数やジオ情報)と組み合わせるアプローチ</strong>も試している. 有望な初期結果を得ているアプローチの1つは、補助的な予測タスク(エンゲージメント予測など)でディープニューラルネットワークを訓練することで、入力特徴としてユーザとアイテムのSimClusters表現と、ユーザとアイテムのために以前に開発した特徴の両方を使用する. このニューラルネットに適切なアーキテクチャ、例えば2塔式DNNモデル[36]を選択することで、ユーザーとアイテムについて別々に密な埋め込みを学習することができるようになる.(説明変数にユーザやアイテムのsimClusters表現、目的変数にCTR等のengagementスコアで学習させ、中間層を新たなembeddingとして抜き出す、みたいなアプローチ?)</p>
+</section>
+<section id="リアルタイムイベント通知" class="level3">
+<h3 class="anchored" data-anchor-id="リアルタイムイベント通知">リアルタイムイベント通知</h3>
+<p>Twitterでの主な用途は、大きなニュースが起こったときに、興味を持ちそうなユーザに通知することである.(プッシュ通知みたいなことか…!) イベントのSimClusters表現(これは、そのイベントに関する人間が作成したツイート表現を集約することで得られる)を使って、<strong>そのイベントに興味を持つユーザのコミュニティを特定</strong>し、そのコミュニティに興味を持つユーザをターゲットにすることができる. (新規アイテムの場合はどうしたらいいんだろう… そのアイテムの属性情報と類似したツイート表現や、作成者のUser表現を使ったら、aggregateして新規イベント表現を作れるだろうか…?)</p>
+</section>
+</section>
+<section id="次に読むべき論文は" class="level2">
+<h2 class="anchored" data-anchor-id="次に読むべき論文は">次に読むべき論文は？</h2>
+<ul>
+<li>neighborhood-basedベースの手法 vs 最新のDNNによるモデルベースの手法の比較の論文 <a href="https://arxiv.org/abs/1907.06902">Are We Really Making Much Progress? A Worrying Analysis of Recent Neural Recommendation Approaches</a></li>
+</ul>
+</section>
+<section id="お気持ち実装" class="level2">
+<h2 class="anchored" data-anchor-id="お気持ち実装">お気持ち実装</h2>
+<section id="ステージ1のstep1-similarity-graphの算出処理." class="level3">
+<h3 class="anchored" data-anchor-id="ステージ1のstep1-similarity-graphの算出処理.">ステージ1のstep1: Similarity graphの算出処理.</h3>
+<p>テストコード:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python:test_similarity_graph.py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> similarity_graph <span class="im">import</span> SimilarityGraph</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_similarity_graph_build() <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 行:左の独立集合L, 列:右の独立集合Rを表す行列</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    bi_partite_graph <span class="op">=</span> np.array(</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>],</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>],</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>],</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    )  <span class="co"># 各要素:binary.行ユーザが列ユーザをフォローしているか否か</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    similarity_graph_expected <span class="op">=</span> np.array(</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">1.0</span>, <span class="fl">0.66666667</span>, <span class="fl">0.408248</span>],</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">0.66666667</span>, <span class="fl">1.0</span>, <span class="fl">0.408248</span>],</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">0.408248</span>, <span class="fl">0.408248</span>, <span class="fl">1.0</span>],</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    )  <span class="co"># (Rの数) * (Rの数)の正方行列. 無向グラフなので、対角線に対して線対称な値.</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    similarity_graph_actual <span class="op">=</span> SimilarityGraph.build(bi_partite_graph)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> similarity_graph_actual.shape <span class="op">==</span> similarity_graph_expected.shape</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    np.testing.assert_array_almost_equal(</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        similarity_graph_actual,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        similarity_graph_expected,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        decimal<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_similarity_calc_cosine_sim() <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    x_u <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    x_v <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    cosine_sim_expected <span class="op">=</span> np.dot(x_u, x_v) <span class="op">/</span> (np.linalg.norm(x_u) <span class="op">*</span> np.linalg.norm(x_v))</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    cosine_sim_actual <span class="op">=</span> SimilarityGraph._calc_cosine_sim(x_u, x_v)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.isclose(cosine_sim_actual, cosine_sim_expected)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>実装</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python:similarity_graph.py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> abc</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> colorama <span class="im">import</span> reinit</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimilarityGraphInterface(abc.ABC):</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">@abc.abstractclassmethod</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> build(cls, bi_partite_graph: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimilarityGraph(SimilarityGraphInterface):</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> build(cls, bi_partite_graph: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        len_R <span class="op">=</span> bi_partite_graph.shape[<span class="dv">1</span>]</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        similarity_graph <span class="op">=</span> np.zeros(shape<span class="op">=</span>(len_R, len_R))</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> u, v <span class="kw">in</span> itertools.combinations_with_replacement(<span class="bu">list</span>(<span class="bu">range</span>(len_R)), r<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> u <span class="op">==</span> v:</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                similarity_graph[u, u] <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>            x_u <span class="op">=</span> bi_partite_graph[:, u]</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            x_v <span class="op">=</span> bi_partite_graph[:, v]</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>            cosime_sim <span class="op">=</span> cls._calc_cosine_sim(x_u, x_v)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>            similarity_graph[u, v] <span class="op">=</span> cosime_sim</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            similarity_graph[v, u] <span class="op">=</span> cosime_sim</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> similarity_graph</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _calc_cosine_sim(cls, x_u: np.ndarray, x_v: np.ndarray) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        dot_product <span class="op">=</span> np.dot(x_u, x_v)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        norm_u <span class="op">=</span> np.linalg.norm(x_u)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        norm_v <span class="op">=</span> np.linalg.norm(x_v)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> dot_product <span class="op">/</span> (norm_u <span class="op">*</span> norm_v)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="ステージ1のstep-2-コミュニティ発見インフルエンサーのコミュニティ表現-vの取得" class="level3">
+<h3 class="anchored" data-anchor-id="ステージ1のstep-2-コミュニティ発見インフルエンサーのコミュニティ表現-vの取得">ステージ1のstep 2: コミュニティ発見(インフルエンサーのコミュニティ表現 <span class="math inline">\(V\)</span>の取得)</h3>
+<section id="metropolis-hastingsの損失関数のテストと実装" class="level4">
+<h4 class="anchored" data-anchor-id="metropolis-hastingsの損失関数のテストと実装">Metropolis-Hastingsの損失関数のテストと実装</h4>
+<p>明日追加します!</p>
+</section>
+<section id="既存手法-ランダムmhmetropolis-hastings-と-提案手法-neighborhood-aware-mhmetropolis-hastings" class="level4">
+<h4 class="anchored" data-anchor-id="既存手法-ランダムmhmetropolis-hastings-と-提案手法-neighborhood-aware-mhmetropolis-hastings">既存手法 ランダムMH(Metropolis-Hastings) と 提案手法 Neighborhood-aware MH(Metropolis-Hastings)</h4>
+<p>明日追加します!</p>
+</section>
+</section>
+<section id="ステージ2-ステージ1で算出したuser-interest-表現を用いて他のsimclusters表現を生成する" class="level3">
+<h3 class="anchored" data-anchor-id="ステージ2-ステージ1で算出したuser-interest-表現を用いて他のsimclusters表現を生成する">ステージ2 : ステージ1で算出したUser Interest 表現を用いて、他のSimClusters表現を生成する</h3>
+<p>近日中に追加します!</p>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

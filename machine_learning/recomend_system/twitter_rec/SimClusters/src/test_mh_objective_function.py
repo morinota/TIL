@@ -63,13 +63,13 @@ def test_objective_function_calculator_count_shared_community() -> None:
 
 def test_objective_function_calculator_calc_f_uZ() -> None:
     similarity_graph = np.array(
-        [
+       [
             [0, 1, 1, 0],
             [1, 0, 1, 1],
             [1, 1, 0, 1],
             [0, 1, 1, 0],
         ]
-    )  # u=0と接しているのはv=1, 2. u=0と接してないのはv=3
+    )  # u=0と接しているのはv=1, 2. u=0と接してないのはv=3 
 
     alpha = 10
     u = 0

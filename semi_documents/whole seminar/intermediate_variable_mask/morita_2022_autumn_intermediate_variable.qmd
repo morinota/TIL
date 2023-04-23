@@ -4,8 +4,8 @@ format:
         # incremental: false
         # theme: [default, custom_lab.scss]
         theme: [default, ../custom_lab.scss]
-        logo: https://i.imgur.com/EPc8Hur.png
-        footer: "⇒ https://www.urban.env.nagoya-u.ac.jp/ensap/"
+        logo: https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919
+        footer: "⇒ https://qiita.com/morinota"
 from: markdown+emoji
 
 fig-cap-location: bottom
