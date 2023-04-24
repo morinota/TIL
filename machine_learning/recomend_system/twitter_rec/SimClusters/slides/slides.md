@@ -40,7 +40,7 @@ title-slide-attributes:
 - ("for Heterogeneous Recommendations" 性質の異なる複数の推薦機能達の為の...:thinking:)
 - published date: August 2020,
 - authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
-- url(paper): https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio
+- url(paper): [https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio](https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio)
 
 ## どんなもの?
 
@@ -198,16 +198,16 @@ $$
 
 ## ## stage 2: 各種 Item Representationsの取得 ③最終的な成果物
 
-最終的には、stage1で得たuser interest表現に加えて以下のSimClusters表現$W$が得られる.
+最終的には、stage1で得た**user interest表現**に加えて以下のSimClusters表現$W$が得られる.(各$W$について、サブセットとして$R$や$C$も保持して活用する。)
 
-- ツイート表現: ツイートがどのコミュニティと関連性が強いかを表す埋め込みベクトル
-- トピック表現: (上に同じ)
-- トレンド表現: (上に同じ)
-- user influence表現: ユーザがどのコミュニティで影響を発揮しているかを表すベクトル.
+- **ツイート表現**: ツイートがどのコミュニティと関連性が強いかを表す埋め込みベクトル
+- **トピック表現**: (上に同じ)
+- **トレンド表現**: (上に同じ)
+- **user influence表現**: ユーザがどのコミュニティで影響を発揮しているかを表すベクトル.
   - user interest表現(=stage1の出力)は、ユーザがどのようなコミュニティに興味を持っているかを表すベクトル.
   - インフルエンサーのuser interest表現$V$よりも密である為、優れているらしい。
 
-(各$W$について、サブセットとして$R$や$C$も保持して活用する。)
+
 
 ## twitterにおける活用例 ①ツイート詳細ページでの類似ツイートの推薦
 

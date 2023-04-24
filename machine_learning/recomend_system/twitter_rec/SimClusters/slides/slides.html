@@ -355,7 +355,7 @@
 <li>(“for Heterogeneous Recommendations” 性質の異なる複数の推薦機能達の為の…<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 <li>published date: August 2020,</li>
 <li>authors: Wondo Rhee, Sung Min Cho, Bongwon Suh</li>
-<li>url(paper): https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio</li>
+<li>url(paper): <a href="https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio">https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio</a></li>
 </ul>
 </section>
 <section id="どんなもの" class="slide level2">
@@ -544,18 +544,17 @@ W(j) = aggregate({U(u), \forall u \in N(j)})
 </section>
 <section id="stage-2-各種-item-representationsの取得-③最終的な成果物" class="slide level2">
 <h2>## stage 2: 各種 Item Representationsの取得 ③最終的な成果物</h2>
-<p>最終的には、stage1で得たuser interest表現に加えて以下のSimClusters表現<span class="math inline">\(W\)</span>が得られる.</p>
+<p>最終的には、stage1で得た<strong>user interest表現</strong>に加えて以下のSimClusters表現<span class="math inline">\(W\)</span>が得られる.(各<span class="math inline">\(W\)</span>について、サブセットとして<span class="math inline">\(R\)</span>や<span class="math inline">\(C\)</span>も保持して活用する。)</p>
 <ul>
-<li>ツイート表現: ツイートがどのコミュニティと関連性が強いかを表す埋め込みベクトル</li>
-<li>トピック表現: (上に同じ)</li>
-<li>トレンド表現: (上に同じ)</li>
-<li>user influence表現: ユーザがどのコミュニティで影響を発揮しているかを表すベクトル.
+<li><strong>ツイート表現</strong>: ツイートがどのコミュニティと関連性が強いかを表す埋め込みベクトル</li>
+<li><strong>トピック表現</strong>: (上に同じ)</li>
+<li><strong>トレンド表現</strong>: (上に同じ)</li>
+<li><strong>user influence表現</strong>: ユーザがどのコミュニティで影響を発揮しているかを表すベクトル.
 <ul>
 <li>user interest表現(=stage1の出力)は、ユーザがどのようなコミュニティに興味を持っているかを表すベクトル.</li>
 <li>インフルエンサーのuser interest表現<span class="math inline">\(V\)</span>よりも密である為、優れているらしい。</li>
 </ul></li>
 </ul>
-<p>(各<span class="math inline">\(W\)</span>について、サブセットとして<span class="math inline">\(R\)</span>や<span class="math inline">\(C\)</span>も保持して活用する。)</p>
 </section>
 <section id="twitterにおける活用例-①ツイート詳細ページでの類似ツイートの推薦" class="slide level2">
 <h2>twitterにおける活用例 ①ツイート詳細ページでの類似ツイートの推薦</h2>
