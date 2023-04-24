@@ -5,7 +5,6 @@ from typing import Dict, List, Union
 
 import numpy as np
 from mh_objective_function import ObjectiveFunctionInterface
-from this import d
 
 
 class CommunitySearcherAbstruct(abc.ABC):

@@ -374,7 +374,7 @@
 <li>これまでTwitterは、<strong>これらの異なる推薦問題に個別に対応するシステムを構築しており、再利用や共通化はほとんど行われていなかった</strong>。</li>
 </ul>
 
-<img data-src="https://camo.qiitausercontent.com/b7c906436ebb895d6e39309eea2985113a40be85/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f62613035656666382d653438612d376130352d353837332d6462306262383939396564622e706e67.png" class="r-stretch"></section>
+<img data-src="https://imgur.com/5o4mPI5.png" class="r-stretch"></section>
 <section id="shelf-life-が異なるケースって例えばなんだっけ" class="slide level2">
 <h2>Shelf Life が異なるケースって例えばなんだっけ</h2>
 <ul>
@@ -393,22 +393,26 @@
 </ul>
 <h4 id="解法">解法</h4>
 <ul>
-<li>ユーザ-ユーザグラフからコミュニティ埋め込みベクトルを作る。</li>
+<li><strong>ユーザ-ユーザグラフからコミュニティ埋め込みベクトル</strong>を作る。</li>
 <li>各コミュニティは、そのコミュニティ内の多くのユーザがフォローしているインフルエンサー集合によって特徴づけられる。</li>
-<li>異質(Heterogeneous)な推薦コンテンツ(i.e.&nbsp;table 1のターゲット)のそれぞれは、<strong>これらのコミュニティ空間におけるベクトルとして表され</strong>、アイテム <span class="math inline">\(j\)</span> に対する <span class="math inline">\(i\)</span> 番目のコミュニティに対応する要素は、<span class="math inline">\(i\)</span>番目のコミュニティがアイテム <span class="math inline">\(j\)</span> にどれだけ興味を持っているかを示している。</li>
-<li>最終的には、<strong>異質な推薦対象を、同じ空間のスパースで解釈可能なベクトルとして表現することができ</strong>、様々な推薦やパーソナライゼーションタスクに活用可能。</li>
+<li>異質(Heterogeneous)な推薦コンテンツ(i.e.&nbsp;table 1のターゲット)のそれぞれは、<strong>コミュニティ空間におけるベクトル</strong>として表され、アイテム <span class="math inline">\(j\)</span> に対する <span class="math inline">\(i\)</span> 番目のコミュニティに対応する要素は、<span class="math inline">\(i\)</span>番目のコミュニティがアイテム <span class="math inline">\(j\)</span> にどれだけ興味を持っているかを示している。</li>
+<li>最終的には、<strong>異質な推薦対象を、同じ空間のスパースで解釈可能なベクトルとして表現でき</strong>、様々な推薦やパーソナライゼーションタスクに活用可能。</li>
 </ul>
 </section>
 <section>
 <section id="技術や手法の肝は" class="title-slide slide level1 center">
 <h1>技術や手法の肝は?</h1>
 <p>SimClustersシステム(図1参照)は、2つのstageで構成されている：</p>
-
-<img data-src="https://camo.qiitausercontent.com/91062517c63bafedf6953cf10b1e3a74c62de8de/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32623466333165372d653361632d306639642d656431392d6361316535303763623534332e706e67.png" class="r-stretch"><ul>
+<ul>
 <li>stage 1: Communityの発見 (User Interest Representationsの取得)</li>
 <li>stage 2: 各種 Item Representationsの取得</li>
 </ul>
 </section>
+<section id="技術や手法の肝は-1" class="slide level2">
+<h2>技術や手法の肝は?</h2>
+<p>SimClustersシステム(図1参照)は、2つのstageで構成されている：</p>
+
+<img data-src="https://imgur.com/z51bkNj.png" class="r-stretch"></section>
 <section id="stage-1-communityの発見-user-interest-representationsの取得" class="slide level2">
 <h2>stage 1: Communityの発見 (User Interest Representationsの取得)</h2>
 <ul>
@@ -428,7 +432,7 @@
 <h2>stage 1 における問題設定を定義:</h2>
 <ul>
 <li>左の独立集合<span class="math inline">\(L\)</span>と右の独立集合<span class="math inline">\(R\)</span>を持つ<strong>user–user二部グラフ</strong>(=各頂点がユーザを意味する二部グラフ)が与えられるとする.</li>
-<li>そのグラフから<strong><span class="math inline">\(k\)</span>個のコミュニティを発見</strong>し、各左ノード(=<span class="math inline">\(L\)</span>の各頂点)と右ノード(=<span class="math inline">\(R\)</span>の各頂点)にそのメンバーシップの強さ(=k個の各コミュニティに所属する度合いの強さ)を示す重みをつけてコミュニティに割り当てる。</li>
+<li>そのグラフから<strong><span class="math inline">\(k\)</span>個のコミュニティを発見</strong> し、各左ノード(=<span class="math inline">\(L\)</span>の各頂点)と右ノード(=<span class="math inline">\(R\)</span>の各頂点)にそのメンバーシップの強さ(=<strong>k個の各コミュニティに所属する度合いの強さ</strong>)を示す重みをつけてコミュニティに割り当てる。</li>
 </ul>
 </section>
 <section id="ユーザフォローの有向グラフを二部グラフとして再定義する利点" class="slide level2">
@@ -442,14 +446,17 @@
 </section>
 <section id="定義したstage1の問題をどんなアプローチで解く" class="slide level2">
 <h2>定義したstage1の問題をどんなアプローチで解く?</h2>
-<p>次の<strong>3 step</strong> のアプローチを採用している。</p>
+<p>user–user二部グラフからk個のコミュニティを発見し、各ユーザに対してk個のコミュニティに所属する度合いの強さを表す埋め込み表現を取得する為に、次の<strong>3 step</strong> のアプローチを採用している。</p>
 <ul>
 <li>Step 1. Similarity Graph of Right Nodes: 右の独立集合<span class="math inline">\(R\)</span>について、<strong>類似度グラフ(Similarity Graph)</strong>を取得する.</li>
-<li>Step 2. Communities of Right Nodes: <span class="math inline">\(R\)</span>の類似度グラフから、k個のコミュニティを発見する(=<span class="math inline">\(R\)</span>のユーザ達をk個のコミュニティに割り当てる).</li>
-<li>Step 3. Communities of Left Nodes: 左の独立集合<span class="math inline">\(L\)</span>の各ノード(=頂点=ユーザ)を、Step 2で発見した各コミュニティに割り当てる(=各コミュニティとの関連度合いを埋め込む).</li>
+<li>Step 2. Communities of Right Nodes: <span class="math inline">\(R\)</span>の類似度グラフから、<strong>k個のコミュニティを発見</strong>する(=<span class="math inline">\(R\)</span>のユーザ達をk個のコミュニティに割り当てる).</li>
+<li>Step 3. Communities of Left Nodes: 左の独立集合<span class="math inline">\(L\)</span>の各ノード(=頂点=ユーザ)を、Step 2で発見した各コミュニティに割り当てる(=<strong>ユーザと各コミュニティとの関連度合い</strong>を埋め込む).</li>
 </ul>
+</section>
+<section id="定義したstage1の問題をどんなアプローチで解く-1" class="slide level2">
+<h2>定義したstage1の問題をどんなアプローチで解く?</h2>
 
-<img data-src="https://camo.qiitausercontent.com/194f3a26deb259e329da2e62437508f49aad755b/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f65613534653939372d656632322d366463372d626538302d6239333261626561376433632e706e67.png" class="r-stretch"></section>
+<img data-src="https://imgur.com/fWXvC2z.png" class="r-stretch"></section>
 <section id="stage1-step1-右の独立集合rのsimilarityグラフを作る-①作り方" class="slide level2">
 <h2>stage1-step1: 右の独立集合<span class="math inline">\(R\)</span>のSimilarityグラフを作る ①作り方</h2>
 <ul>
@@ -510,14 +517,115 @@ U = truncate(A\cdot V)
 <p>ここで、<span class="math inline">\(A_{|L| \times |R|}\)</span> を<strong>入力二部グラフの隣接行列(adjacency matrix)</strong>(要素=1だと隣接してる事を示すbinary行列.)とする. <span class="math inline">\(truncate()\)</span> 関数は、<strong>任意の1ユーザが所属するコミュニティの数を制限するfunction</strong>(ストレージを節約するため).</p>
 <p>得られた<span class="math inline">\(U_{|L| \times k}\)</span>を <strong>User Interest Representations</strong> と呼び、<span class="math inline">\(U\)</span>を入力としてstage2にて、各種アイテムのSimClusters表現を取得する。</p>
 </section>
-<section id="stage-2-各種-item-representationsの取得" class="slide level2">
-<h2>stage 2: 各種 Item Representationsの取得</h2>
+<section id="stage-2-各種-item-representationsの取得①計算方法" class="slide level2">
+<h2>stage 2: 各種 Item Representationsの取得①計算方法</h2>
+<ul>
+<li>stage2では、ツイート、ハッシュタグ、ユーザなど、<strong>様々な推薦問題の対象となりうるアイテムに対するSimCluters表現</strong>を計算する。</li>
+<li>stage2の一般的な枠組みは、<strong>アイテムに関わったすべてのuser interest Representationsを集約</strong>してアイテムの表現を計算すること(なるほど…!シンプル!). つまり、アイテム <span class="math inline">\(j\)</span> のSimClusters表現は、以下.</li>
+</ul>
+<p><span class="math display">\[
+W(j) = aggregate({U(u), \forall u \in N(j)})
+\tag{3}
+\]</span></p>
+<p>ここで、<span class="math inline">\(N(j)\)</span> は、対応するユーザ-アイテム二部グラフにおいてアイテム<span class="math inline">\(j\)</span>に関与したすべてのユーザを示し、<span class="math inline">\(W(j)\)</span> と <span class="math inline">\(U(u)\)</span> はいずれもベクトルである。本手法では、<strong><span class="math inline">\(aggregate()\)</span>関数として”exponentially time-decayed average(指数関数的 時間減衰 平均)“を選択</strong>。これは、アイテムに関わったユーザの貢献度を、そのユーザがアイテムに関わった時間に基づいて指数関数的に減衰させる。(半減期はアイテムのshelf-lifeに応じて設定.)</p>
 </section>
-<section id="twitterにおける活用例" class="slide level2">
-<h2>twitterにおける活用例</h2>
+<section id="stage-2-各種-item-representationsの取得-②スケーラビリティの工夫" class="slide level2">
+<h2>stage 2: 各種 Item Representationsの取得 ②スケーラビリティの工夫</h2>
+<ul>
+<li>aggregateの結果として得られるベクトル<span class="math inline">\(W\)</span>は<span class="math inline">\(U\)</span>よりもはるかに密度が高く(=&gt;<span class="math inline">\(U\)</span>はsparseが、<span class="math inline">\(W\)</span>の場合はdenceになりうる<span class="emoji" data-emoji="thinking">🤔</span>)、その非ゼロ値をすべてスケールで保存することは有益ではない。</li>
+<li><span class="math inline">\(W\)</span>のview (指標、サブセット、要約統計量的なイメージ?)を2つ追加する。
+<ul>
+<li>first view は<span class="math inline">\(R\)</span>で、<span class="math inline">\(R(j)\)</span>は<strong>アイテム<span class="math inline">\(j\)</span>のトップ<span class="math inline">\(k\)</span>コミュニティを追跡する</strong>.</li>
+<li>second viewは<span class="math inline">\(C\)</span>で、<span class="math inline">\(C(c)\)</span>は<strong>コミュニティ<span class="math inline">\(c\)</span>のトップ<span class="math inline">\(k\)</span>アイテムを追跡する</strong>.</li>
+</ul></li>
+<li>賞味期限が長いものの場合、W、R、Cの計算はbatch処理で行える.</li>
+<li>賞味期限が短いものの場合、W、R、Cの計算は、incremental更新を行う.(時間減衰 平均的なアプローチなので、“現在の平均値”と”最後に更新されたtimestamp”さえ保存していれば、新しいユーザとアイテムのengagementログを受け取って<span class="math inline">\(W\)</span>を更新できる…!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul>
 </section>
-<section id="感想.-newspicks推薦機能への適用可能性" class="slide level2">
-<h2>感想. NewsPicks推薦機能への適用可能性<span class="emoji" data-emoji="thinking">🤔</span></h2>
+<section id="stage-2-各種-item-representationsの取得-③最終的な成果物" class="slide level2">
+<h2>## stage 2: 各種 Item Representationsの取得 ③最終的な成果物</h2>
+<p>最終的には、stage1で得たuser interest表現に加えて以下のSimClusters表現<span class="math inline">\(W\)</span>が得られる.</p>
+<ul>
+<li>ツイート表現: ツイートがどのコミュニティと関連性が強いかを表す埋め込みベクトル</li>
+<li>トピック表現: (上に同じ)</li>
+<li>トレンド表現: (上に同じ)</li>
+<li>user influence表現: ユーザがどのコミュニティで影響を発揮しているかを表すベクトル.
+<ul>
+<li>user interest表現(=stage1の出力)は、ユーザがどのようなコミュニティに興味を持っているかを表すベクトル.</li>
+<li>インフルエンサーのuser interest表現<span class="math inline">\(V\)</span>よりも密である為、優れているらしい。</li>
+</ul></li>
+</ul>
+<p>(各<span class="math inline">\(W\)</span>について、サブセットとして<span class="math inline">\(R\)</span>や<span class="math inline">\(C\)</span>も保持して活用する。)</p>
+</section>
+<section id="twitterにおける活用例-①ツイート詳細ページでの類似ツイートの推薦" class="slide level2">
+<h2>twitterにおける活用例 ①ツイート詳細ページでの類似ツイートの推薦</h2>
+<ul>
+<li>SimClustersの前は、作者の類似性(ページ上のメインツイートの作者と多くのフォロワーを共有するユーザーが書いたツイート)にのみ基づいてツイートを検索していた.</li>
+<li><strong>ツイートのSimClusters表現</strong>に基づく類似ツイートを追加した. i.e.&nbsp;SimClusters表現(=どのcommunityと関連度が高いかを表すベクトル)がページ上のメインツイートの表現と高いコサイン類似度を持つツイートを取得した. -&gt; ツイートに対するエンゲージメント率が25％高くなった。</li>
+<li>更に、SimClusters表現の２つ目の活用を追加: SimClusters表現が、ページ上のメインツイートの著者の<strong>user influence表現</strong>(=ユーザがどのコミュニティで影響を発揮しているかを表すベクトル)と高いコサイン類似性を持つツイートを検索する. -&gt; 更に全体のエンゲージメント率が7%向上。</li>
+</ul>
+</section>
+<section id="twitterにおける活用例-②home-フィードにおけるツイート推薦" class="slide level2">
+<h2>twitterにおける活用例 ②Home フィードにおけるツイート推薦</h2>
+<ul>
+<li>SimClusters以前は、閲覧ユーザのフォローユーザ達が「いいね」を付けているツイートを主なcandidate sourceとしていた。</li>
+<li><strong>ツイートのSimClusters表現</strong>を使って、新たに２つのcandidate sourcesを構築し、A/Bテストで新しいcandidateのエンゲージメント率が33%高い結果となった.
+<ul>
+<li>1つ目: ツイートのSimClusters表現が、<strong>閲覧ユーザのinterest表現</strong>とのドット積が最も高いツイートを特定する.</li>
+<li>2つ目: 閲覧ユーザが最近「いいね」したツイートと類似するツイートを特定する.(類似ツイートと同様のアプローチ.)</li>
+</ul></li>
+<li>candidateの生成とは別に、ユーザやツイートのSimClusters表現を、candidateをソートするDNNランキングモデルの<strong>特徴量として追加</strong>する事も有効だった。(CTR等を目的変数とした教師有りMLモデル)</li>
+</ul>
+</section>
+<section id="twitterにおける活用例-③トレンドランキングのパーソナライズ" class="slide level2">
+<h2>twitterにおける活用例 ③トレンドランキングのパーソナライズ</h2>
+<ul>
+<li>Trends(ハッシュタグ、イベント、ニュース速報等の表示)の実装は、Trends候補の検出とランキングの2段階を踏んでいる。</li>
+<li><strong>トレンドのSimClusters表現</strong>を使って、user interest表現とリアルタイムのtrend表現のdot product(内積!)を使用することで、与えられたユーザ-トレンドペアをスコア化した.</li>
+</ul>
+</section>
+<section id="twitterにおける活用例-④topic-tweetの推薦" class="slide level2">
+<h2>twitterにおける活用例 ④Topic Tweetの推薦</h2>
+<ul>
+<li>「ファッション」や「マーベル映画」など、あらかじめ定義されたトピック(NPにおけるキーワードの様な概念<span class="emoji" data-emoji="thinking">🤔</span>)に関するコンテンツを表示する機能。</li>
+<li>SimClusters以前は、人間の専門家がキュレーションしたテキストマッチングルールに依存して、トピックツイートを識別していた(要するにルールベースの手法だった<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>多くのご検出(主にツイートのテキストがトピックのルールと偶然一致することによる)があったらしい。</li>
+<li>-&gt;今回SimClusters表現を用いて、<strong>対象トピックのSimClusters表現</strong>と高いコサイン類似度を持つツイート表現を特定する. 次に既存のテキストマッチング規則を適用した. (<strong>二段階にしたって事か</strong><span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul>
+</section>
+<section id="twitterにおける活用例-⑤ユーザフォローの推薦" class="slide level2">
+<h2>twitterにおける活用例 ⑤ユーザフォローの推薦</h2>
+<ul>
+<li>Who To Followレコメンデーションの候補は、エンゲージメント予測モデルを用いてランク付けされる.</li>
+<li>このモデルには、<strong>閲覧ユーザと候補ユーザのSimClusters表現</strong>に基づく新しい特徴量が加えられている.(特徴量としての活用.)</li>
+<li>A/Bテストでは、これらの新たな特徴量を使用することで、フォロー率が7％向上することが確認された.</li>
+</ul>
+</section>
+<section id="twitterにおける今後の活用-①通知品質フィルター" class="slide level2">
+<h2>twitterにおける今後の活用 ①通知品質フィルター</h2>
+<ul>
+<li>Twitterプロダクトの重要なタスクとして、罵倒やスパム的なリプライやメンションを受けないようにユーザを保護することがある.</li>
+<li><strong>ユーザとユーザのブロックグラフ（あるユーザーが他のユーザーをブロックした場合）に基づく新しいユーザ表現をSimClustersで開発</strong>し、この表現を特徴として、罵倒やスパムのような返信をフィルタリングするモデルを学習した.</li>
+<li>オフラインテストでは、PR-AUC が 4％向上するという素晴らしい結果を示した.</li>
+</ul>
+</section>
+<section id="twitterにおける今後の活用-②リアルタイムイベント通知" class="slide level2">
+<h2>twitterにおける今後の活用 ②リアルタイムイベント通知</h2>
+<ul>
+<li>リアルタイムイベント通知とは、大きなニュースが起こったときに、興味を持ちそうなユーザに通知すること.(プッシュ通知みたいなこと?<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>イベントのSimClusters表現(これは、そのイベントに関する人間が作成したツイート表現をaggregateすることで得られる)を使って、<strong>そのイベントに興味を持つユーザのコミュニティを特定</strong>し、そのコミュニティに興味を持つユーザをターゲットにすることができる.</li>
+<li>(新規アイテムの場合は、そのアイテムの属性情報と類似したツイート表現や、作成者のUser表現を使ったら、aggregateして<strong>新規アイテムのSimCluters表現</strong>を作れるだろうか…?<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul>
+</section>
+<section id="まとめと感想" class="slide level2">
+<h2>まとめと感想</h2>
+<ul>
+<li>Twitterの多種の推薦機能で活躍してるらしい、SimClutersの論文読んだ。</li>
+<li>異質な推薦機能で使える、共通基盤的な埋め込みベクトルは便利そう…!<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>NPは経済ニュースサービスだけでなくSNSとしての側面もあるので、ユーザフォローの情報から”ユーザの嗜好”を抽出できるのでは?? <span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>特に、NPの場合は<strong>プロピッカー</strong>(公式コメンテータ的な専門家ユーザ)という概念があるので、「このプロピッカーをフォローしてる」情報は活用できるのでは…!<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>ただ、NPの場合はユーザフォロー機能を使ってるユーザが少ない印象. コメントへの”いいね”や”pick”のリアクションをユーザフォローの代替としてネットワークグラフを作成できるのでは…?<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul>
 </section></section>
 <section id="参考-1" class="title-slide slide level1 center">
 <h1>参考:</h1>
