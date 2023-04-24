@@ -171,7 +171,29 @@ $$
 
 ## stage 2: 各種 Item Representationsの取得
 
-## twitterにおける活用例
+- stage2では、ツイート、ハッシュタグ、ユーザなど、**様々な推薦問題の対象となりうるアイテムに対するSimCluters表現**を計算する。
+- 段階2の一般的な枠組みは、**アイテムに関わったすべてのuser interest Representationsを集約**してアイテムの表現を計算すること(なるほど...!シンプル!). つまり、アイテム $j$ のSimClusters表現は、以下.
+
+$$
+W(j) = aggregate({U(u), \forall u \in N(j)})
+\tag{3}
+$$
+
+ここで、$N(j)$ は、対応するユーザ-アイテム二部グラフにおいてアイテム$j$に関与したすべてのユーザを示し、$W(j)$ と $U(u)$ はいずれもベクトルである。
+
+## twitterにおける活用例 ①ツイート詳細ページでの類似ツイートの推薦
+
+## twitterにおける活用例 ②Home フィードにおけるツイート推薦
+
+## twitterにおける活用例 ③Personalized Trends のランク付け
+
+## twitterにおける活用例 ④Topic Tweetの推薦
+
+## twitterにおける活用例 ⑤ユーザフォローの推薦
+
+## twitterにおける今後の活用 ①通知品質フィルター
+
+## twitterにおける今後の活用 ②リアルタイムイベント通知
 
 ## 感想. NewsPicks推薦機能への適用可能性:thinking:
 
