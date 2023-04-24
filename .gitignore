@@ -13,5 +13,14 @@
 !*.ts
 !*.kt
 !*.scss
+!*.css
+!*.woff
+!*.js
+!*.eot
+!*.ttf
 # 明示的に除外.
 .venv
+!*.pdf
+!*.yml
+!*.map
+!machine_learning/recomend_system/twitter_rec/SimClusters/slides/slides_files

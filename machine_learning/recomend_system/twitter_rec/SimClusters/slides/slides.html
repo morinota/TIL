@@ -1,337 +1,82 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.168">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="NewsPicks Data/Algorithm unit インターン 森田大登">
+<meta name="dcterms.date" content="2023-04-24">
+
+<title>twitterの様々な推薦機能で活用されてるらしい、ユーザ-ユーザのフォローネットワークからコミュニティ埋め込み表現を生成するSimClustersの論文を読んだ</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
 <script src="slides_files/libs/clipboard/clipboard.min.js"></script>
-<script src="slides_files/libs/quarto-html/tabby.min.js"></script>
+<script src="slides_files/libs/quarto-html/quarto.js"></script>
 <script src="slides_files/libs/quarto-html/popper.min.js"></script>
 <script src="slides_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="slides_files/libs/quarto-html/anchor.min.js"></script>
 <link href="slides_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="slides_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="slides_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.1.168">
+<link href="slides_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="slides_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="slides_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="slides_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <meta name="author" content="NewsPicks Data/Algorithm unit インターン 森田大登">
-  <title>twitterの様々な推薦機能で活用されてるらしい、ユーザ-ユーザのフォローネットワークからコミュニティ埋め込み表現を生成するSimClustersの論文を読んだ</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="slides_files/libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="slides_files/libs/revealjs/dist/reveal.css">
-  <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-  </style>
-  <link rel="stylesheet" href="slides_files/libs/revealjs/dist/theme/quarto.css" id="theme">
-  <link href="slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="slides_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="slides_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="slides_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
-  <style type="text/css">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-  .callout {
-    margin-top: 1em;
-    margin-bottom: 1em;  
-    border-radius: .25rem;
-  }
-
-  .callout.callout-style-simple { 
-    padding: 0em 0.5em;
-    border-left: solid #acacac .3rem;
-    border-right: solid 1px silver;
-    border-top: solid 1px silver;
-    border-bottom: solid 1px silver;
-    display: flex;
-  }
-
-  .callout.callout-style-default {
-    border-left: solid #acacac .3rem;
-    border-right: solid 1px silver;
-    border-top: solid 1px silver;
-    border-bottom: solid 1px silver;
-  }
-
-  .callout .callout-body-container {
-    flex-grow: 1;
-  }
-
-  .callout.callout-style-simple .callout-body {
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  .callout.callout-style-default .callout-body {
-    font-size: 0.9rem;
-    font-weight: 400;
-  }
-
-  .callout.callout-captioned.callout-style-simple .callout-body {
-    margin-top: 0.2em;
-  }
-
-  .callout:not(.callout-captioned) .callout-body {
-      display: flex;
-  }
-
-  .callout:not(.no-icon).callout-captioned.callout-style-simple .callout-content {
-    padding-left: 1.6em;
-  }
-
-  .callout.callout-captioned .callout-header {
-    padding-top: 0.2em;
-    margin-bottom: -0.2em;
-  }
-
-  .callout.callout-captioned .callout-caption  p {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-  }
-    
-  .callout.callout-captioned.callout-style-simple .callout-content  p {
-    margin-top: 0;
-  }
-
-  .callout.callout-captioned.callout-style-default .callout-content  p {
-    margin-top: 0.7em;
-  }
-
-  .callout.callout-style-simple div.callout-caption {
-    border-bottom: none;
-    font-size: .9rem;
-    font-weight: 600;
-    opacity: 75%;
-  }
-
-  .callout.callout-style-default  div.callout-caption {
-    border-bottom: none;
-    font-weight: 600;
-    opacity: 85%;
-    font-size: 0.9rem;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-  }
-
-  .callout.callout-style-default div.callout-content {
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-  }
-
-  .callout.callout-style-simple .callout-icon::before {
-    height: 1rem;
-    width: 1rem;
-    display: inline-block;
-    content: "";
-    background-repeat: no-repeat;
-    background-size: 1rem 1rem;
-  }
-
-  .callout.callout-style-default .callout-icon::before {
-    height: 0.9rem;
-    width: 0.9rem;
-    display: inline-block;
-    content: "";
-    background-repeat: no-repeat;
-    background-size: 0.9rem 0.9rem;
-  }
-
-  .callout-caption {
-    display: flex
-  }
-    
-  .callout-icon::before {
-    margin-top: 1rem;
-    padding-right: .5rem;
-  }
-
-  .callout.no-icon::before {
-    display: none !important;
-  }
-
-  .callout.callout-captioned .callout-body > .callout-content > :last-child {
-    margin-bottom: 0.5rem;
-  }
-
-  .callout.callout-captioned .callout-icon::before {
-    margin-top: .5rem;
-    padding-right: .5rem;
-  }
-
-  .callout:not(.callout-captioned) .callout-icon::before {
-    margin-top: 1rem;
-    padding-right: .5rem;
-  }
-
-  /* Callout Types */
-
-  div.callout-note {
-    border-left-color: #4582ec !important;
-  }
-
-  div.callout-note .callout-icon::before {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
-  }
-
-  div.callout-note.callout-style-default .callout-caption {
-    background-color: #dae6fb
-  }
-
-  div.callout-important {
-    border-left-color: #d9534f !important;
-  }
-
-  div.callout-important .callout-icon::before {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
-  }
-
-  div.callout-important.callout-style-default .callout-caption {
-    background-color: #f7dddc
-  }
-
-  div.callout-warning {
-    border-left-color: #f0ad4e !important;
-  }
-
-  div.callout-warning .callout-icon::before {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
-  }
-
-  div.callout-warning.callout-style-default .callout-caption {
-    background-color: #fcefdc
-  }
-
-  div.callout-tip {
-    border-left-color: #02b875 !important;
-  }
-
-  div.callout-tip .callout-icon::before {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
-  }
-
-  div.callout-tip.callout-style-default .callout-caption {
-    background-color: #ccf1e3
-  }
-
-  div.callout-caution {
-    border-left-color: #fd7e14 !important;
-  }
-
-  div.callout-caution .callout-icon::before {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
-  }
-
-  div.callout-caution.callout-style-default .callout-caption {
-    background-color: #ffe5d0
-  }
-
-  </style>
-  <style type="text/css">
-    .reveal div.sourceCode {
-      margin: 0;
-      overflow: auto;
-    }
-    .reveal div.hanging-indent {
-      margin-left: 1em;
-      text-indent: -1em;
-    }
-    .reveal .slide:not(.center) {
-      height: 100%;
-    }
-    .reveal .slide.scrollable {
-      overflow-y: auto;
-    }
-    .reveal .footnotes {
-      height: 100%;
-      overflow-y: auto;
-    }
-    .reveal .slide .absolute {
-      position: absolute;
-      display: block;
-    }
-    .reveal .footnotes ol {
-      counter-reset: ol;
-      list-style-type: none; 
-      margin-left: 0;
-    }
-    .reveal .footnotes ol li:before {
-      counter-increment: ol;
-      content: counter(ol) ". "; 
-    }
-    .reveal .footnotes ol li > p:first-child {
-      display: inline-block;
-    }
-    .reveal .slide ul,
-    .reveal .slide ol {
-      margin-bottom: 0.5em;
-    }
-    .reveal .slide ul li,
-    .reveal .slide ol li {
-      margin-top: 0.4em;
-      margin-bottom: 0.2em;
-    }
-    .reveal .slide ul[role="tablist"] li {
-      margin-bottom: 0;
-    }
-    .reveal .slide ul li > *:first-child,
-    .reveal .slide ol li > *:first-child {
-      margin-block-start: 0;
-    }
-    .reveal .slide ul li > *:last-child,
-    .reveal .slide ol li > *:last-child {
-      margin-block-end: 0;
-    }
-    .reveal .slide .columns:nth-child(3) {
-      margin-block-start: 0.8em;
-    }
-    .reveal blockquote {
-      box-shadow: none;
-    }
-    .reveal .tippy-content>* {
-      margin-top: 0.2em;
-      margin-bottom: 0.7em;
-    }
-    .reveal .tippy-content>*:last-child {
-      margin-bottom: 0.2em;
-    }
-    .reveal .slide > img.stretch.quarto-figure-center,
-    .reveal .slide > img.r-stretch.quarto-figure-center {
-      display: block;
-      margin-left: auto;
-      margin-right: auto; 
-    }
-    .reveal .slide > img.stretch.quarto-figure-left,
-    .reveal .slide > img.r-stretch.quarto-figure-left  {
-      display: block;
-      margin-left: 0;
-      margin-right: auto; 
-    }
-    .reveal .slide > img.stretch.quarto-figure-right,
-    .reveal .slide > img.r-stretch.quarto-figure-right  {
-      display: block;
-      margin-left: auto;
-      margin-right: 0; 
-    }
-  </style>
 </head>
-<body class="quarto-light">
-  <div class="reveal">
-    <div class="slides">
 
-<section id="title-slide" data-background-opacity="0.5" data-background-size="contain" class="center">
-  <h1 class="title">twitterの様々な推薦機能で活用されてるらしい、ユーザ-ユーザのフォローネットワークからコミュニティ埋め込み表現を生成するSimClustersの論文を読んだ</h1>
-  <p class="subtitle">n週連続 推薦システム関連の論文読んだシリーズ13週目(毎週水曜更新)</p>
-  <p class="author">NewsPicks Data/Algorithm unit インターン 森田大登</p>
-  <p class="date">2023/04/24</p>
-</section>
+<body class="fullcontent">
 
-<section id="この論文を選んだ経緯" class="slide level2">
-<h2>この論文を選んだ経緯</h2>
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">twitterの様々な推薦機能で活用されてるらしい、ユーザ-ユーザのフォローネットワークからコミュニティ埋め込み表現を生成するSimClustersの論文を読んだ</h1>
+<p class="subtitle lead">n週連続 推薦システム関連の論文読んだシリーズ13週目(毎週水曜更新)</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>NewsPicks Data/Algorithm unit インターン 森田大登 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 24, 2023</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<section id="この論文を選んだ経緯" class="level2">
+<h2 class="anchored" data-anchor-id="この論文を選んだ経緯">この論文を選んだ経緯</h2>
 <ul>
 <li>2023/04/01頃に、twitterの推薦アルゴリズムの一部(“For Youフィード” -ツイート推薦の機能)が、ソースコード + techブログによる解説という形で公開されました。</li>
 <li>その中で今回は、twitterの様々な推薦機能で共通基盤として活用されているらしい <strong>SimClusters</strong> という手法によるユーザ + 各種コンテンツの埋め込みベクトルの生成手法に注目しました。</li>
@@ -340,16 +85,16 @@
 <li>また、現在NewsPicksでは関連記事やプッシュ通知パーソナライズ等、複数の推薦機能が稼働中or予定なので、“共通基盤”という言葉に惹かれました。</li>
 </ul>
 </section>
-<section id="参考" class="slide level2">
-<h2>参考:</h2>
+<section id="参考" class="level2">
+<h2 class="anchored" data-anchor-id="参考">参考:</h2>
 <ul>
 <li><a href="https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio">SimClustersの論文</a></li>
 <li><a href="https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm">公開されたtechブログ</a></li>
 <li><a href="https://github.com/twitter/the-algorithm">公開されたgithub リポジトリ</a></li>
 </ul>
 </section>
-<section id="simclusters論文の基本情報" class="slide level2">
-<h2>SimClusters論文の基本情報</h2>
+<section id="simclusters論文の基本情報" class="level2">
+<h2 class="anchored" data-anchor-id="simclusters論文の基本情報">SimClusters論文の基本情報</h2>
 <ul>
 <li>title: SimClusters: Community-Based Representations for Heterogeneous Recommendations at Twitter.</li>
 <li>(“for Heterogeneous Recommendations” 性質の異なる複数の推薦機能達の為の…<span class="emoji" data-emoji="thinking">🤔</span>)</li>
@@ -358,25 +103,25 @@
 <li>url(paper): <a href="https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio">https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio</a></li>
 </ul>
 </section>
-<section id="どんなもの" class="slide level2">
-<h2>どんなもの?</h2>
+<section id="どんなもの" class="level2">
+<h2 class="anchored" data-anchor-id="どんなもの">どんなもの?</h2>
 <ul>
 <li>twitter の <strong>SimClusters (Similarity-based Clusters)</strong>というコミュニティ埋め込みベクトルを生成する手法の論文.</li>
 <li>「K-POP」や「機械学習」といった共通の話題や、「職場が一緒」「高校が一緒」といった社会的関係から構成されるTwitter上のコミュニティ（約 10^5件）を発見し、ユーザやコンテンツと各コミュニティの関連を表す埋め込みベクトルを生成する.</li>
 <li>様々な推薦タスクに活用できる、汎用的な埋め込み表現であるとの事.(論文の後半のオンライン実験にて、活用法を紹介していた.)</li>
 </ul>
 </section>
-<section id="simclustersのモチベーション" class="slide level2">
-<h2>SimClustersのモチベーション</h2>
+<section id="simclustersのモチベーション" class="level2">
+<h2 class="anchored" data-anchor-id="simclustersのモチベーション">SimClustersのモチベーション</h2>
 <ul>
 <li>Twitterでは多種のアイテムに対して推薦機能がリリースされている:Tweet, Event, Topic(NPにおけるキーワード的な位置づけらしい), ハッシュタグ, ユーザ</li>
 <li>推薦アイテム達はそれぞれ異質(Heterogeneous)である：Item Cardinality(=計算のスケーラビリティに影響を与える)とShelf Life(推薦生成のlatencyに制約を与える. 賞味期限的なもの)が異なる(table 1参照)</li>
 <li>これまでTwitterは、<strong>これらの異なる推薦問題に個別に対応するシステムを構築しており、再利用や共通化はほとんど行われていなかった</strong>。</li>
 </ul>
-
-<img data-src="https://imgur.com/5o4mPI5.png" class="r-stretch"></section>
-<section id="shelf-life-が異なるケースって例えばなんだっけ" class="slide level2">
-<h2>Shelf Life が異なるケースって例えばなんだっけ</h2>
+<p><img src="https://imgur.com/5o4mPI5.png" class="img-fluid"></p>
+</section>
+<section id="shelf-life-が異なるケースって例えばなんだっけ" class="level2">
+<h2 class="anchored" data-anchor-id="shelf-life-が異なるケースって例えばなんだっけ">Shelf Life が異なるケースって例えばなんだっけ</h2>
 <ul>
 <li>フォロワーグラフ(フォロー関係のネットワーク)は比較的ゆっくりと変化するため、ユーザフォローの推薦は数週間にわたってユーザ嗜好との関連性を保つことができる(したがって、<strong>バッチ処理で計算することができる</strong>)</li>
 <li>一方で、ツイート推薦は陳腐化するのが早い(i.e.&nbsp;lifespanが短い<span class="emoji" data-emoji="thinking">🤔</span>)為<strong>オンラインシステムでリアルタイムに近い形で生成する必要があり</strong>、この場合、バッチ計算では要件を満たせない.</li>
@@ -385,13 +130,16 @@
 <li>ユーザやキーワードは更にshelf lifeが長いはず<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul>
 </section>
-<section id="simclustersのモチベーション-1" class="slide level2">
-<h2>SimClustersのモチベーション</h2>
-<h4 id="目的">目的:</h4>
+<section id="simclustersのモチベーション-1" class="level2">
+<h2 class="anchored" data-anchor-id="simclustersのモチベーション-1">SimClustersのモチベーション</h2>
+<section id="目的" class="level4">
+<h4 class="anchored" data-anchor-id="目的">目的:</h4>
 <ul>
 <li>異質(Heterogeneous)な全て or ほとんどの推薦機能の性能を高めるのに役立つ共通基盤的なシステムを構築したい…!</li>
 </ul>
-<h4 id="解法">解法</h4>
+</section>
+<section id="解法" class="level4">
+<h4 class="anchored" data-anchor-id="解法">解法</h4>
 <ul>
 <li><strong>ユーザ-ユーザグラフからコミュニティ埋め込みベクトル</strong>を作る。</li>
 <li>各コミュニティは、そのコミュニティ内の多くのユーザがフォローしているインフルエンサー集合によって特徴づけられる。</li>
@@ -399,44 +147,43 @@
 <li>最終的には、<strong>異質な推薦対象を、同じ空間のスパースで解釈可能なベクトルとして表現でき</strong>、様々な推薦やパーソナライゼーションタスクに活用可能。</li>
 </ul>
 </section>
-<section>
-<section id="技術や手法の肝は" class="title-slide slide level1 center">
+</section>
+<section id="技術や手法の肝は" class="level1">
 <h1>技術や手法の肝は?</h1>
 <p>SimClustersシステム(図1参照)は、2つのstageで構成されている：</p>
 <ul>
 <li>stage 1: Communityの発見 (User Interest Representationsの取得)</li>
 <li>stage 2: 各種 Item Representationsの取得</li>
 </ul>
-</section>
-<section id="技術や手法の肝は-1" class="slide level2">
-<h2>技術や手法の肝は?</h2>
+<section id="技術や手法の肝は-1" class="level2">
+<h2 class="anchored" data-anchor-id="技術や手法の肝は-1">技術や手法の肝は?</h2>
 <p>SimClustersシステム(図1参照)は、2つのstageで構成されている：</p>
-
-<img data-src="https://imgur.com/z51bkNj.png" class="r-stretch"></section>
-<section id="stage-1-communityの発見-user-interest-representationsの取得" class="slide level2">
-<h2>stage 1: Communityの発見 (User Interest Representationsの取得)</h2>
+<p><img src="https://imgur.com/z51bkNj.png" class="img-fluid"></p>
+</section>
+<section id="stage-1-communityの発見-user-interest-representationsの取得" class="level2">
+<h2 class="anchored" data-anchor-id="stage-1-communityの発見-user-interest-representationsの取得">stage 1: Communityの発見 (User Interest Representationsの取得)</h2>
 <ul>
 <li>stage 1 は、Twitterのユーザとユーザのグラフからコミュニティを発見する</li>
 <li>ここで言う”グラフ”とは、<strong>ユーザ間のフォロー関係を表す有向グラフ</strong>(directed graph)の事。</li>
 <li>代表的な既存研究に習って、有向グラフを<strong>二部グラフ(bi-partite graph)として再定義</strong>して扱う</li>
 </ul>
 </section>
-<section id="二部グラフbi-partite-graphってなんだっけ" class="slide level2">
-<h2>二部グラフ(bi-partite graph)ってなんだっけ?</h2>
-<blockquote>
+<section id="二部グラフbi-partite-graphってなんだっけ" class="level2">
+<h2 class="anchored" data-anchor-id="二部グラフbi-partite-graphってなんだっけ">二部グラフ(bi-partite graph)ってなんだっけ?</h2>
+<blockquote class="blockquote">
 <p>数学、とくにグラフ理論における2部グラフ(にぶグラフ、英: bipartite graph)とは、<strong>頂点集合を2つに分割</strong>して、<strong>各部分の頂点が互いに隣接しない</strong>ようにできるグラフのこと. 互いに隣接しない頂点からなる集合を<strong>独立集合</strong>といい、頂点集合を n 個の独立集合に分割可能なグラフのことを n 部グラフ (n-partite graph) という. (wikipediaより)</p>
 </blockquote>
-
-<img data-src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Simple-bipartite-graph.svg/330px-Simple-bipartite-graph.svg.png" class="r-stretch"></section>
-<section id="stage-1-における問題設定を定義" class="slide level2">
-<h2>stage 1 における問題設定を定義:</h2>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Simple-bipartite-graph.svg/330px-Simple-bipartite-graph.svg.png" class="img-fluid"></p>
+</section>
+<section id="stage-1-における問題設定を定義" class="level2">
+<h2 class="anchored" data-anchor-id="stage-1-における問題設定を定義">stage 1 における問題設定を定義:</h2>
 <ul>
 <li>左の独立集合<span class="math inline">\(L\)</span>と右の独立集合<span class="math inline">\(R\)</span>を持つ<strong>user–user二部グラフ</strong>(=各頂点がユーザを意味する二部グラフ)が与えられるとする.</li>
 <li>そのグラフから<strong><span class="math inline">\(k\)</span>個のコミュニティを発見</strong> し、各左ノード(=<span class="math inline">\(L\)</span>の各頂点)と右ノード(=<span class="math inline">\(R\)</span>の各頂点)にそのメンバーシップの強さ(=<strong>k個の各コミュニティに所属する度合いの強さ</strong>)を示す重みをつけてコミュニティに割り当てる。</li>
 </ul>
 </section>
-<section id="ユーザフォローの有向グラフを二部グラフとして再定義する利点" class="slide level2">
-<h2>ユーザフォローの有向グラフを二部グラフとして再定義する利点</h2>
+<section id="ユーザフォローの有向グラフを二部グラフとして再定義する利点" class="level2">
+<h2 class="anchored" data-anchor-id="ユーザフォローの有向グラフを二部グラフとして再定義する利点">ユーザフォローの有向グラフを二部グラフとして再定義する利点</h2>
 <ul>
 <li>ユーザ-&gt;ユーザのフォロー関係を表す有向グラフを、二部グラフとして再定義する一つの利点は、 <span class="math inline">\(R\)</span> を <span class="math inline">\(L\)</span> と異なるように選択できること。(i.e.&nbsp;全ユーザ集合を２つに集合に分けられる事?<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 <li>特に、典型的なソーシャルネットワークの<strong>大部分の辺は少数のユーザに向けられている</strong>(=多くの一般ユーザがインフルエンサー的なユーザをフォローしている状況<span class="emoji" data-emoji="thinking">🤔</span>)ので**、<span class="math inline">\(L\)</span> よりも小さな <span class="math inline">\(R\)</span> を選ぶことは理にかなっている(グラフからコミュニティを発見する上で<span class="emoji" data-emoji="thinking">🤔</span>).</li>
@@ -444,8 +191,8 @@
 <li>(文脈から判断すると”有向グラフ→二部グラフに再定義”というのは、まずフォロー関係の有向グラフから<span class="math inline">\(R\)</span>と<span class="math inline">\(L\)</span>の2つのユーザ集合を定義する。次に<span class="math inline">\(R\)</span>内 &amp; <span class="math inline">\(L\)</span>内のノード間のエッジ=辺を切り、二部グラフとして再定義させる、という方法っぽい<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul>
 </section>
-<section id="定義したstage1の問題をどんなアプローチで解く" class="slide level2">
-<h2>定義したstage1の問題をどんなアプローチで解く?</h2>
+<section id="定義したstage1の問題をどんなアプローチで解く" class="level2">
+<h2 class="anchored" data-anchor-id="定義したstage1の問題をどんなアプローチで解く">定義したstage1の問題をどんなアプローチで解く?</h2>
 <p>user–user二部グラフからk個のコミュニティを発見し、各ユーザに対してk個のコミュニティに所属する度合いの強さを表す埋め込み表現を取得する為に、次の<strong>3 step</strong> のアプローチを採用している。</p>
 <ul>
 <li>Step 1. Similarity Graph of Right Nodes: 右の独立集合<span class="math inline">\(R\)</span>について、<strong>類似度グラフ(Similarity Graph)</strong>を取得する.</li>
@@ -453,12 +200,12 @@
 <li>Step 3. Communities of Left Nodes: 左の独立集合<span class="math inline">\(L\)</span>の各ノード(=頂点=ユーザ)を、Step 2で発見した各コミュニティに割り当てる(=<strong>ユーザと各コミュニティとの関連度合い</strong>を埋め込む).</li>
 </ul>
 </section>
-<section id="定義したstage1の問題をどんなアプローチで解く-1" class="slide level2">
-<h2>定義したstage1の問題をどんなアプローチで解く?</h2>
-
-<img data-src="https://imgur.com/fWXvC2z.png" class="r-stretch"></section>
-<section id="stage1-step1-右の独立集合rのsimilarityグラフを作る-①作り方" class="slide level2">
-<h2>stage1-step1: 右の独立集合<span class="math inline">\(R\)</span>のSimilarityグラフを作る ①作り方</h2>
+<section id="定義したstage1の問題をどんなアプローチで解く-1" class="level2">
+<h2 class="anchored" data-anchor-id="定義したstage1の問題をどんなアプローチで解く-1">定義したstage1の問題をどんなアプローチで解く?</h2>
+<p><img src="https://imgur.com/fWXvC2z.png" class="img-fluid"></p>
+</section>
+<section id="stage1-step1-右の独立集合rのsimilarityグラフを作る-①作り方" class="level2">
+<h2 class="anchored" data-anchor-id="stage1-step1-右の独立集合rのsimilarityグラフを作る-①作り方">stage1-step1: 右の独立集合<span class="math inline">\(R\)</span>のSimilarityグラフを作る ①作り方</h2>
 <ul>
 <li>このステップの目的は、右の独立集合<span class="math inline">\(R\)</span>のノードを用いて、より小さな uni-partite(一部)の無向グラフ <span class="math inline">\(G\)</span> を構築する事.</li>
 <li><span class="math inline">\(R\)</span> 内の2つのユーザ(<span class="math inline">\(u\)</span>, <span class="math inline">\(v\)</span>)間の重み(=similarityとして表される)を、二部グラフの左側(独立集合 <span class="math inline">\(L\)</span>)の”フォロワーのコサイン類似度”に基づいて定義する.</li>
@@ -470,8 +217,8 @@ similarity(u, v) = \vec{x_u} \cdot \vec{x_v} / \sqrt{|\vec{x_u}||\vec{x_v}|}
 <li>“フォロワーのコサイン類似度”について具体的には、ユーザuとvについての”フォロワーのbinary incidence vectors(入射ベクトル)“をそれぞれ <span class="math inline">\(\vec{x_u}\)</span> と <span class="math inline">\(\vec{x_v}\)</span> とする(=長さは左集合 <span class="math inline">\(L\)</span> の大きさ.もし<span class="math inline">\(L\)</span>のユーザiが<span class="math inline">\(u\)</span>をフォローしていれば i番目の要素が1, それ以外が0であるようなbinaryベクトル).</li>
 </ul>
 </section>
-<section id="stage1-step1-右の独立集合rのsimilarityグラフを作る-②dense過ぎるsimilarityグラフを生成しない工夫" class="slide level2">
-<h2>stage1-step1: 右の独立集合<span class="math inline">\(R\)</span>のSimilarityグラフを作る ②dense過ぎるsimilarityグラフを生成しない工夫</h2>
+<section id="stage1-step1-右の独立集合rのsimilarityグラフを作る-②dense過ぎるsimilarityグラフを生成しない工夫" class="level2">
+<h2 class="anchored" data-anchor-id="stage1-step1-右の独立集合rのsimilarityグラフを作る-②dense過ぎるsimilarityグラフを生成しない工夫">stage1-step1: 右の独立集合<span class="math inline">\(R\)</span>のSimilarityグラフを作る ②dense過ぎるsimilarityグラフを生成しない工夫</h2>
 <ul>
 <li>定義によれば、2つのユーザは、二部グラフにおいて一人以上の共通の隣人(<span class="math inline">\(L\)</span>内のフォロワー)を共有するだけで、非ゼロの類似度がある.(=similarityグラフを行列で表した時の非ゼロ要素!)
 <ul>
@@ -481,16 +228,16 @@ similarity(u, v) = \vec{x_u} \cdot \vec{x_v} / \sqrt{|\vec{x_u}||\vec{x_v}|}
 <li>さらに、各ノードのsimilarityスコアが最も大きいノードを最大で一定数のみ保持するようにする。</li>
 </ul>
 </section>
-<section id="stage1-step1-右の独立集合rのsimilarityグラフを作る-③このステップの利点" class="slide level2">
-<h2>stage1-step1: 右の独立集合<span class="math inline">\(R\)</span>のSimilarityグラフを作る ③このステップの利点</h2>
+<section id="stage1-step1-右の独立集合rのsimilarityグラフを作る-③このステップの利点" class="level2">
+<h2 class="anchored" data-anchor-id="stage1-step1-右の独立集合rのsimilarityグラフを作る-③このステップの利点">stage1-step1: 右の独立集合<span class="math inline">\(R\)</span>のSimilarityグラフを作る ③このステップの利点</h2>
 <ul>
 <li>twitterでの運用においてstep1は、<span class="math inline">\(~10^9\)</span> 個のノードと<span class="math inline">\(∼10^{11}\)</span>個のエッジを持つ有向/二部グラフを入力とし、<span class="math inline">\(~10^7\)</span> 個のノード(=独立集合<span class="math inline">\(R\)</span>の要素数)と <span class="math inline">\(~10^9\)</span> 個のエッジを持つ無向のsimilarityグラフを出力する。</li>
 <li>つまり、<strong>shared-nothing のcluster-computingスケール</strong>から、<strong>shared-memory のmulti-coreスケール</strong>に変換する事ができた。</li>
 <li>(=&gt;step1によりグラフのスケールが大幅に削減された事で、複数のリソースにまたがる分散処理ではなく、一つのリソース内で共有メモリを使用するようなマルチコア処理で計算可能になった、って事か<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul>
 </section>
-<section id="stage1-step2-rのsimilarityグラフからk個のコミュニティを発見する" class="slide level2">
-<h2>stage1-step2: <span class="math inline">\(R\)</span>のSimilarityグラフから、k個のコミュニティを発見する</h2>
+<section id="stage1-step2-rのsimilarityグラフからk個のコミュニティを発見する" class="level2">
+<h2 class="anchored" data-anchor-id="stage1-step2-rのsimilarityグラフからk個のコミュニティを発見する">stage1-step2: <span class="math inline">\(R\)</span>のSimilarityグラフから、k個のコミュニティを発見する</h2>
 <ul>
 <li>step1で得られた無向のSimilarityグラフを用いて、step2では、<strong>密に接続されたノード集合のコミュニティを発見する</strong>ことを目的としている.</li>
 <li>コミュニティ発見アルゴリズムの長い歴史にもかかわらず、twitterのスケーラビリティ要件を満たすことができる既存のソリューションを見つけることができなかった.</li>
@@ -499,15 +246,15 @@ similarity(u, v) = \vec{x_u} \cdot \vec{x_v} / \sqrt{|\vec{x_u}||\vec{x_v}|}
 <li>(ベイジアンアプローチの文脈で聞いたことある”Metropolis-Hastings”なので、サンプリング的な事を行って目的関数を元に最適なk個のコミュニティを探索する…!みたいなアプローチ<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul>
 </section>
-<section id="stage1-step3-左の独立集合lの各ノード頂点ユーザをstep-2で発見した各コミュニティに割り当てる①" class="slide level2">
-<h2>stage1-step3: 左の独立集合<span class="math inline">\(L\)</span>の各ノード(=頂点=ユーザ)を、Step 2で発見した各コミュニティに割り当てる①</h2>
+<section id="stage1-step3-左の独立集合lの各ノード頂点ユーザをstep-2で発見した各コミュニティに割り当てる①" class="level2">
+<h2 class="anchored" data-anchor-id="stage1-step3-左の独立集合lの各ノード頂点ユーザをstep-2で発見した各コミュニティに割り当てる①">stage1-step3: 左の独立集合<span class="math inline">\(L\)</span>の各ノード(=頂点=ユーザ)を、Step 2で発見した各コミュニティに割り当てる①</h2>
 <ul>
 <li>step2の出力は、右集合<span class="math inline">\(R\)</span>(i.e.&nbsp;インフルエンサー達)に対するコミュニティ割り当て行列 <span class="math inline">\(V_{|R| \times k}\)</span> である. (<span class="math inline">\(i\)</span> 行目の行ベクトルは、右ノード<span class="math inline">\(i\)</span>に割り当てられたコミュニティを示すbinary要素のベクトル.)</li>
 <li>stage1の問題設定において残りの問題は、左集合<span class="math inline">\(L\)</span>に対するコミュニティ割り当て行列 <span class="math inline">\(U_{|L| \times k}\)</span> を取得する事.</li>
 </ul>
 </section>
-<section id="stage1-step3-左の独立集合lの各ノード頂点ユーザをstep-2で発見した各コミュニティに割り当てる②方法" class="slide level2">
-<h2>stage1-step3: 左の独立集合<span class="math inline">\(L\)</span>の各ノード(=頂点=ユーザ)を、Step 2で発見した各コミュニティに割り当てる②方法</h2>
+<section id="stage1-step3-左の独立集合lの各ノード頂点ユーザをstep-2で発見した各コミュニティに割り当てる②方法" class="level2">
+<h2 class="anchored" data-anchor-id="stage1-step3-左の独立集合lの各ノード頂点ユーザをstep-2で発見した各コミュニティに割り当てる②方法">stage1-step3: 左の独立集合<span class="math inline">\(L\)</span>の各ノード(=頂点=ユーザ)を、Step 2で発見した各コミュニティに割り当てる②方法</h2>
 <ul>
 <li>シンプルに、<span class="math inline">\(L\)</span>の各ノードの<strong>neighbors(=全て右集合<span class="math inline">\(R\)</span>のノードのはず!)が割り当てられているコミュニティを集約</strong>する事によって、各左ノード(=一般ユーザ)をコミュニティに割り当てる:</li>
 </ul>
@@ -517,8 +264,8 @@ U = truncate(A\cdot V)
 <p>ここで、<span class="math inline">\(A_{|L| \times |R|}\)</span> を<strong>入力二部グラフの隣接行列(adjacency matrix)</strong>(要素=1だと隣接してる事を示すbinary行列.)とする. <span class="math inline">\(truncate()\)</span> 関数は、<strong>任意の1ユーザが所属するコミュニティの数を制限するfunction</strong>(ストレージを節約するため).</p>
 <p>得られた<span class="math inline">\(U_{|L| \times k}\)</span>を <strong>User Interest Representations</strong> と呼び、<span class="math inline">\(U\)</span>を入力としてstage2にて、各種アイテムのSimClusters表現を取得する。</p>
 </section>
-<section id="stage-2-各種-item-representationsの取得①計算方法" class="slide level2">
-<h2>stage 2: 各種 Item Representationsの取得①計算方法</h2>
+<section id="stage-2-各種-item-representationsの取得①計算方法" class="level2">
+<h2 class="anchored" data-anchor-id="stage-2-各種-item-representationsの取得①計算方法">stage 2: 各種 Item Representationsの取得①計算方法</h2>
 <ul>
 <li>stage2では、ツイート、ハッシュタグ、ユーザなど、<strong>様々な推薦問題の対象となりうるアイテムに対するSimCluters表現</strong>を計算する。</li>
 <li>stage2の一般的な枠組みは、<strong>アイテムに関わったすべてのuser interest Representationsを集約</strong>してアイテムの表現を計算すること(なるほど…!シンプル!). つまり、アイテム <span class="math inline">\(j\)</span> のSimClusters表現は、以下.</li>
@@ -529,8 +276,8 @@ W(j) = aggregate({U(u), \forall u \in N(j)})
 \]</span></p>
 <p>ここで、<span class="math inline">\(N(j)\)</span> は、対応するユーザ-アイテム二部グラフにおいてアイテム<span class="math inline">\(j\)</span>に関与したすべてのユーザを示し、<span class="math inline">\(W(j)\)</span> と <span class="math inline">\(U(u)\)</span> はいずれもベクトルである。本手法では、<strong><span class="math inline">\(aggregate()\)</span>関数として”exponentially time-decayed average(指数関数的 時間減衰 平均)“を選択</strong>。これは、アイテムに関わったユーザの貢献度を、そのユーザがアイテムに関わった時間に基づいて指数関数的に減衰させる。(半減期はアイテムのshelf-lifeに応じて設定.)</p>
 </section>
-<section id="stage-2-各種-item-representationsの取得-②スケーラビリティの工夫" class="slide level2">
-<h2>stage 2: 各種 Item Representationsの取得 ②スケーラビリティの工夫</h2>
+<section id="stage-2-各種-item-representationsの取得-②スケーラビリティの工夫" class="level2">
+<h2 class="anchored" data-anchor-id="stage-2-各種-item-representationsの取得-②スケーラビリティの工夫">stage 2: 各種 Item Representationsの取得 ②スケーラビリティの工夫</h2>
 <ul>
 <li>aggregateの結果として得られるベクトル<span class="math inline">\(W\)</span>は<span class="math inline">\(U\)</span>よりもはるかに密度が高く(=&gt;<span class="math inline">\(U\)</span>はsparseが、<span class="math inline">\(W\)</span>の場合はdenceになりうる<span class="emoji" data-emoji="thinking">🤔</span>)、その非ゼロ値をすべてスケールで保存することは有益ではない。</li>
 <li><span class="math inline">\(W\)</span>のview (指標、サブセット、要約統計量的なイメージ?)を2つ追加する。
@@ -542,8 +289,8 @@ W(j) = aggregate({U(u), \forall u \in N(j)})
 <li>賞味期限が短いものの場合、W、R、Cの計算は、incremental更新を行う.(時間減衰 平均的なアプローチなので、“現在の平均値”と”最後に更新されたtimestamp”さえ保存していれば、新しいユーザとアイテムのengagementログを受け取って<span class="math inline">\(W\)</span>を更新できる…!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul>
 </section>
-<section id="stage-2-各種-item-representationsの取得-③最終的な成果物" class="slide level2">
-<h2>## stage 2: 各種 Item Representationsの取得 ③最終的な成果物</h2>
+<section id="stage-2-各種-item-representationsの取得-③最終的な成果物" class="level2">
+<h2 class="anchored" data-anchor-id="stage-2-各種-item-representationsの取得-③最終的な成果物">## stage 2: 各種 Item Representationsの取得 ③最終的な成果物</h2>
 <p>最終的には、stage1で得た<strong>user interest表現</strong>に加えて以下のSimClusters表現<span class="math inline">\(W\)</span>が得られる.(各<span class="math inline">\(W\)</span>について、サブセットとして<span class="math inline">\(R\)</span>や<span class="math inline">\(C\)</span>も保持して活用する。)</p>
 <ul>
 <li><strong>ツイート表現</strong>: ツイートがどのコミュニティと関連性が強いかを表す埋め込みベクトル</li>
@@ -556,16 +303,16 @@ W(j) = aggregate({U(u), \forall u \in N(j)})
 </ul></li>
 </ul>
 </section>
-<section id="twitterにおける活用例-①ツイート詳細ページでの類似ツイートの推薦" class="slide level2">
-<h2>twitterにおける活用例 ①ツイート詳細ページでの類似ツイートの推薦</h2>
+<section id="twitterにおける活用例-①ツイート詳細ページでの類似ツイートの推薦" class="level2">
+<h2 class="anchored" data-anchor-id="twitterにおける活用例-①ツイート詳細ページでの類似ツイートの推薦">twitterにおける活用例 ①ツイート詳細ページでの類似ツイートの推薦</h2>
 <ul>
 <li>SimClustersの前は、作者の類似性(ページ上のメインツイートの作者と多くのフォロワーを共有するユーザーが書いたツイート)にのみ基づいてツイートを検索していた.</li>
 <li><strong>ツイートのSimClusters表現</strong>に基づく類似ツイートを追加した. i.e.&nbsp;SimClusters表現(=どのcommunityと関連度が高いかを表すベクトル)がページ上のメインツイートの表現と高いコサイン類似度を持つツイートを取得した. -&gt; ツイートに対するエンゲージメント率が25％高くなった。</li>
 <li>更に、SimClusters表現の２つ目の活用を追加: SimClusters表現が、ページ上のメインツイートの著者の<strong>user influence表現</strong>(=ユーザがどのコミュニティで影響を発揮しているかを表すベクトル)と高いコサイン類似性を持つツイートを検索する. -&gt; 更に全体のエンゲージメント率が7%向上。</li>
 </ul>
 </section>
-<section id="twitterにおける活用例-②home-フィードにおけるツイート推薦" class="slide level2">
-<h2>twitterにおける活用例 ②Home フィードにおけるツイート推薦</h2>
+<section id="twitterにおける活用例-②home-フィードにおけるツイート推薦" class="level2">
+<h2 class="anchored" data-anchor-id="twitterにおける活用例-②home-フィードにおけるツイート推薦">twitterにおける活用例 ②Home フィードにおけるツイート推薦</h2>
 <ul>
 <li>SimClusters以前は、閲覧ユーザのフォローユーザ達が「いいね」を付けているツイートを主なcandidate sourceとしていた。</li>
 <li><strong>ツイートのSimClusters表現</strong>を使って、新たに２つのcandidate sourcesを構築し、A/Bテストで新しいcandidateのエンゲージメント率が33%高い結果となった.
@@ -576,15 +323,15 @@ W(j) = aggregate({U(u), \forall u \in N(j)})
 <li>candidateの生成とは別に、ユーザやツイートのSimClusters表現を、candidateをソートするDNNランキングモデルの<strong>特徴量として追加</strong>する事も有効だった。(CTR等を目的変数とした教師有りMLモデル)</li>
 </ul>
 </section>
-<section id="twitterにおける活用例-③トレンドランキングのパーソナライズ" class="slide level2">
-<h2>twitterにおける活用例 ③トレンドランキングのパーソナライズ</h2>
+<section id="twitterにおける活用例-③トレンドランキングのパーソナライズ" class="level2">
+<h2 class="anchored" data-anchor-id="twitterにおける活用例-③トレンドランキングのパーソナライズ">twitterにおける活用例 ③トレンドランキングのパーソナライズ</h2>
 <ul>
 <li>Trends(ハッシュタグ、イベント、ニュース速報等の表示)の実装は、Trends候補の検出とランキングの2段階を踏んでいる。</li>
 <li><strong>トレンドのSimClusters表現</strong>を使って、user interest表現とリアルタイムのtrend表現のdot product(内積!)を使用することで、与えられたユーザ-トレンドペアをスコア化した.</li>
 </ul>
 </section>
-<section id="twitterにおける活用例-④topic-tweetの推薦" class="slide level2">
-<h2>twitterにおける活用例 ④Topic Tweetの推薦</h2>
+<section id="twitterにおける活用例-④topic-tweetの推薦" class="level2">
+<h2 class="anchored" data-anchor-id="twitterにおける活用例-④topic-tweetの推薦">twitterにおける活用例 ④Topic Tweetの推薦</h2>
 <ul>
 <li>「ファッション」や「マーベル映画」など、あらかじめ定義されたトピック(NPにおけるキーワードの様な概念<span class="emoji" data-emoji="thinking">🤔</span>)に関するコンテンツを表示する機能。</li>
 <li>SimClusters以前は、人間の専門家がキュレーションしたテキストマッチングルールに依存して、トピックツイートを識別していた(要するにルールベースの手法だった<span class="emoji" data-emoji="thinking">🤔</span>)</li>
@@ -592,32 +339,32 @@ W(j) = aggregate({U(u), \forall u \in N(j)})
 <li>-&gt;今回SimClusters表現を用いて、<strong>対象トピックのSimClusters表現</strong>と高いコサイン類似度を持つツイート表現を特定する. 次に既存のテキストマッチング規則を適用した. (<strong>二段階にしたって事か</strong><span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul>
 </section>
-<section id="twitterにおける活用例-⑤ユーザフォローの推薦" class="slide level2">
-<h2>twitterにおける活用例 ⑤ユーザフォローの推薦</h2>
+<section id="twitterにおける活用例-⑤ユーザフォローの推薦" class="level2">
+<h2 class="anchored" data-anchor-id="twitterにおける活用例-⑤ユーザフォローの推薦">twitterにおける活用例 ⑤ユーザフォローの推薦</h2>
 <ul>
 <li>Who To Followレコメンデーションの候補は、エンゲージメント予測モデルを用いてランク付けされる.</li>
 <li>このモデルには、<strong>閲覧ユーザと候補ユーザのSimClusters表現</strong>に基づく新しい特徴量が加えられている.(特徴量としての活用.)</li>
 <li>A/Bテストでは、これらの新たな特徴量を使用することで、フォロー率が7％向上することが確認された.</li>
 </ul>
 </section>
-<section id="twitterにおける今後の活用-①通知品質フィルター" class="slide level2">
-<h2>twitterにおける今後の活用 ①通知品質フィルター</h2>
+<section id="twitterにおける今後の活用-①通知品質フィルター" class="level2">
+<h2 class="anchored" data-anchor-id="twitterにおける今後の活用-①通知品質フィルター">twitterにおける今後の活用 ①通知品質フィルター</h2>
 <ul>
 <li>Twitterプロダクトの重要なタスクとして、罵倒やスパム的なリプライやメンションを受けないようにユーザを保護することがある.</li>
 <li><strong>ユーザとユーザのブロックグラフ（あるユーザーが他のユーザーをブロックした場合）に基づく新しいユーザ表現をSimClustersで開発</strong>し、この表現を特徴として、罵倒やスパムのような返信をフィルタリングするモデルを学習した.</li>
 <li>オフラインテストでは、PR-AUC が 4％向上するという素晴らしい結果を示した.</li>
 </ul>
 </section>
-<section id="twitterにおける今後の活用-②リアルタイムイベント通知" class="slide level2">
-<h2>twitterにおける今後の活用 ②リアルタイムイベント通知</h2>
+<section id="twitterにおける今後の活用-②リアルタイムイベント通知" class="level2">
+<h2 class="anchored" data-anchor-id="twitterにおける今後の活用-②リアルタイムイベント通知">twitterにおける今後の活用 ②リアルタイムイベント通知</h2>
 <ul>
 <li>リアルタイムイベント通知とは、大きなニュースが起こったときに、興味を持ちそうなユーザに通知すること.(プッシュ通知みたいなこと?<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 <li>イベントのSimClusters表現(これは、そのイベントに関する人間が作成したツイート表現をaggregateすることで得られる)を使って、<strong>そのイベントに興味を持つユーザのコミュニティを特定</strong>し、そのコミュニティに興味を持つユーザをターゲットにすることができる.</li>
 <li>(新規アイテムの場合は、そのアイテムの属性情報と類似したツイート表現や、作成者のUser表現を使ったら、aggregateして<strong>新規アイテムのSimCluters表現</strong>を作れるだろうか…?<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul>
 </section>
-<section id="まとめと感想" class="slide level2">
-<h2>まとめと感想</h2>
+<section id="まとめと感想" class="level2">
+<h2 class="anchored" data-anchor-id="まとめと感想">まとめと感想</h2>
 <ul>
 <li>Twitterの多種の推薦機能で活躍してるらしい、SimClutersの論文読んだ。</li>
 <li>異質な推薦機能で使える、共通基盤的な埋め込みベクトルは便利そう…!<span class="emoji" data-emoji="thinking">🤔</span></li>
@@ -625,8 +372,9 @@ W(j) = aggregate({U(u), \forall u \in N(j)})
 <li>特に、NPの場合は<strong>プロピッカー</strong>(公式コメンテータ的な専門家ユーザ)という概念があるので、「このプロピッカーをフォローしてる」情報は活用できるのでは…!<span class="emoji" data-emoji="thinking">🤔</span></li>
 <li>ただ、NPの場合はユーザフォロー機能を使ってるユーザが少ない印象. コメントへの”いいね”や”pick”のリアクションをユーザフォローの代替としてネットワークグラフを作成できるのでは…?<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul>
-</section></section>
-<section id="参考-1" class="title-slide slide level1 center">
+</section>
+</section>
+<section id="参考-1" class="level1">
 <h1>参考:</h1>
 <ul>
 <li><a href="https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio">SimClustersの論文</a></li>
@@ -634,319 +382,110 @@ W(j) = aggregate({U(u), \forall u \in N(j)})
 <li><a href="https://github.com/twitter/the-algorithm">公開されたgithub リポジトリ</a></li>
 <li>n週連続 推薦システム関連の論文読んだシリーズ13週目(毎週水曜更新):<a href="https://qiita.com/morinota/items/d36421df083df9394bad">twitterの様々な推薦機能で活用されてるらしい、ユーザ-ユーザのフォローネットワークからコミュニティ埋め込み表現を生成するSimClustersの論文を読んだ</a></li>
 </ul>
-
-<img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
-<p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
-</div>
 </section>
-    </div>
-  </div>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="slides_files/libs/revealjs/dist/reveal.js"></script>
-  <!-- reveal.js plugins -->
-  <script src="slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="slides_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="slides_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="slides_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="slides_files/libs/revealjs/plugin/quarto-support/support.js"></script>
-  
-
-  <script src="slides_files/libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="slides_files/libs/revealjs/plugin/search/search.js"></script>
-  <script src="slides_files/libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="slides_files/libs/revealjs/plugin/math/math.js"></script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
-
-  <script>
-
-      // Full list of configuration options available at:
-      // https://revealjs.com/config/
-      Reveal.initialize({
-'controlsAuto': true,
-'previewLinksAuto': false,
-'smaller': false,
-'pdfSeparateFragments': false,
-'autoAnimateEasing': "ease",
-'autoAnimateDuration': 1,
-'autoAnimateUnmatched': true,
-'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
-'smaller': false,
- 
-        // Display controls in the bottom right corner
-        controls: false,
-
-        // Help the user learn the controls by providing hints, for example by
-        // bouncing the down arrow when they first encounter a vertical slide
-        controlsTutorial: false,
-
-        // Determines where controls appear, "edges" or "bottom-right"
-        controlsLayout: 'edges',
-
-        // Visibility rule for backwards navigation arrows; "faded", "hidden"
-        // or "visible"
-        controlsBackArrows: 'faded',
-
-        // Display a presentation progress bar
-        progress: true,
-
-        // Display the page number of the current slide
-        slideNumber: false,
-
-        // 'all', 'print', or 'speaker'
-        showSlideNumber: 'all',
-
-        // Add the current slide number to the URL hash so that reloading the
-        // page/copying the URL will return you to the same slide
-        hash: true,
-
-        // Start with 1 for the hash rather than 0
-        hashOneBasedIndex: false,
-
-        // Flags if we should monitor the hash and change slides accordingly
-        respondToHashChanges: true,
-
-        // Push each slide change to the browser history
-        history: true,
-
-        // Enable keyboard shortcuts for navigation
-        keyboard: true,
-
-        // Enable the slide overview mode
-        overview: true,
-
-        // Disables the default reveal.js slide layout (scaling and centering)
-        // so that you can use custom CSS layout
-        disableLayout: false,
-
-        // Vertical centering of slides
-        center: false,
-
-        // Enables touch navigation on devices with touch input
-        touch: true,
-
-        // Loop the presentation
-        loop: false,
-
-        // Change the presentation direction to be RTL
-        rtl: false,
-
-        // see https://revealjs.com/vertical-slides/#navigation-mode
-        navigationMode: 'linear',
-
-        // Randomizes the order of slides each time the presentation loads
-        shuffle: false,
-
-        // Turns fragments on and off globally
-        fragments: true,
-
-        // Flags whether to include the current fragment in the URL,
-        // so that reloading brings you to the same fragment position
-        fragmentInURL: false,
-
-        // Flags if the presentation is running in an embedded mode,
-        // i.e. contained within a limited portion of the screen
-        embedded: false,
-
-        // Flags if we should show a help overlay when the questionmark
-        // key is pressed
-        help: true,
-
-        // Flags if it should be possible to pause the presentation (blackout)
-        pause: true,
-
-        // Flags if speaker notes should be visible to all viewers
-        showNotes: false,
-
-        // Global override for autoplaying embedded media (null/true/false)
-        autoPlayMedia: null,
-
-        // Global override for preloading lazy-loaded iframes (null/true/false)
-        preloadIframes: null,
-
-        // Number of milliseconds between automatically proceeding to the
-        // next slide, disabled when set to 0, this value can be overwritten
-        // by using a data-autoslide attribute on your slides
-        autoSlide: 0,
-
-        // Stop auto-sliding after user input
-        autoSlideStoppable: true,
-
-        // Use this method for navigation when auto-sliding
-        autoSlideMethod: null,
-
-        // Specify the average time in seconds that you think you will spend
-        // presenting each slide. This is used to show a pacing timer in the
-        // speaker view
-        defaultTiming: null,
-
-        // Enable slide navigation via mouse wheel
-        mouseWheel: false,
-
-        // The display mode that will be used to show slides
-        display: 'block',
-
-        // Hide cursor if inactive
-        hideInactiveCursor: true,
-
-        // Time before the cursor is hidden (in ms)
-        hideCursorTime: 5000,
-
-        // Opens links in an iframe preview overlay
-        previewLinks: false,
-
-        // Transition style (none/fade/slide/convex/concave/zoom)
-        transition: 'none',
-
-        // Transition speed (default/fast/slow)
-        transitionSpeed: 'default',
-
-        // Transition style for full page slide backgrounds
-        // (none/fade/slide/convex/concave/zoom)
-        backgroundTransition: 'none',
-
-        // Number of slides away from the current that are visible
-        viewDistance: 3,
-
-        // Number of slides away from the current that are visible on mobile
-        // devices. It is advisable to set this to a lower number than
-        // viewDistance in order to save resources.
-        mobileViewDistance: 2,
-
-        // The "normal" size of the presentation, aspect ratio will be preserved
-        // when the presentation is scaled to fit different resolutions. Can be
-        // specified using percentage units.
-        width: 1050,
-
-        height: 700,
-
-        // Factor of the display size that should remain empty around the content
-        margin: 0.1,
-
-        math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
-          config: 'TeX-AMS_HTML-full',
-          tex2jax: {
-            inlineMath: [['\\(','\\)']],
-            displayMath: [['\\[','\\]']],
-            balanceBraces: true,
-            processEscapes: false,
-            processRefs: true,
-            processEnvironments: true,
-            preview: 'TeX',
-            skipTags: ['script','noscript','style','textarea','pre','code'],
-            ignoreClass: 'tex2jax_ignore',
-            processClass: 'tex2jax_process'
-          },
-        },
-
-        // reveal.js plugins
-        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
-
-          RevealMath,
-          RevealNotes,
-          RevealSearch,
-          RevealZoom
-        ]
-      });
-    </script>
-    <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-      const toggleBodyColorMode = (bsSheetEl) => {
-        const mode = bsSheetEl.getAttribute("data-mode");
-        const bodyEl = window.document.querySelector("body");
-        if (mode === "dark") {
-          bodyEl.classList.add("quarto-dark");
-          bodyEl.classList.remove("quarto-light");
-        } else {
-          bodyEl.classList.add("quarto-light");
-          bodyEl.classList.remove("quarto-dark");
-        }
-      }
-      const toggleBodyColorPrimary = () => {
-        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-        if (bsSheetEl) {
-          toggleBodyColorMode(bsSheetEl);
-        }
-      }
-      toggleBodyColorPrimary();  
-      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-      tabsets.forEach(function(tabset) {
-        const tabby = new Tabby('#' + tabset.id);
-      });
-      const clipboard = new window.ClipboardJS('.code-copy-button', {
-        target: function(trigger) {
-          return trigger.previousElementSibling;
-        }
-      });
-      clipboard.on('success', function(e) {
-        // button target
-        const button = e.trigger;
-        // don't keep focus
-        button.blur();
-        // flash "checked"
-        button.classList.add('code-copy-button-checked');
-        var currentTitle = button.getAttribute("title");
-        button.setAttribute("title", "Copied!");
-        setTimeout(function() {
-          button.setAttribute("title", currentTitle);
-          button.classList.remove('code-copy-button-checked');
-        }, 1000);
-        // clear code selection
-        e.clearSelection();
-      });
-      function tippyHover(el, contentFn) {
-        const config = {
-          allowHTML: true,
-          content: contentFn,
-          maxWidth: 500,
-          delay: 100,
-          arrow: false,
-          appendTo: function(el) {
-              return el.closest('section.slide') || el.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'quarto-reveal',
-          placement: 'bottom-start'
-        };
-          config['offset'] = [0,0];
-          config['maxWidth'] = 700;
-        window.tippy(el, config); 
-      }
-      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-      for (var i=0; i<noterefs.length; i++) {
-        const ref = noterefs[i];
-        tippyHover(ref, function() {
-          // use id or data attribute instead here
-          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-          try { href = new URL(href).hash; } catch {}
-          const id = href.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          return note.innerHTML;
-        });
-      }
-      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-      for (var i=0; i<bibliorefs.length; i++) {
-        const ref = bibliorefs[i];
-        const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-        tippyHover(ref, function() {
-          var popup = window.document.createElement('div');
-          cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
-            }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
-        });
-      }
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
     });
-    </script>
-    
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
 
 </body></html>
