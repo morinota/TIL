@@ -25,3 +25,4 @@ node_modules
 !*.yml
 !*.map
 !machine_learning/recomend_system/twitter_rec/SimClusters/slides/slides_files
+config.yml

@@ -28,85 +28,87 @@ The experiment results on three real-world datasets demonstrate that our propose
 
 # Introduction 序章
 
-Click-through rate (CTR) prediction is to predict the probability of a user clicking on the recommended items.
-クリックスルー率（CTR）予測は、ユーザーが推奨アイテムをクリックする確率を予測するものです。
+**Click-through rate (CTR) prediction** is to predict the probability of a user clicking on the recommended items.
+クリックスルー率（CTR）予測は、ユーザが推薦アイテムをクリックする確率を予測するもの.
 It plays important role in personalized advertising and recommender systems.
-パーソナライズド広告やレコメンダーシステムにおいて重要な役割を担っています。
+パーソナライズド広告やレコメンダーシステムにおいて重要な役割を担っている.
 Many models have been proposed to resolve this problem such as Logistic Regression (LR) [16], Polynomial-2 (Poly2) [17], tree-based models [7], tensor-based models [12], Bayesian models [5], and Field-aware Factorization Machines (FFMs) [11].
 この問題を解決するために、ロジスティック回帰（LR）[16]、多項式2（Poly2）[17]、木ベースモデル[7]、テンソルベースモデル[12]、ベイズモデル[5]、フィールドアウェア因子分解マシン（FFMs[11] など多くのモデルが提示されている。］
 In recent years, employing DNNs for CTR estimation has also been a research trend in this field and some deep learning based models have been introduced such as Factorization-Machine Supported Neural Networks(FNN)[24], Attentional Factorization Machine (AFM)[3], wide & deep(W&D)[22], DeepFM[6], xDeepFM[13] etc.
-近年、CTR推定にDNNを採用することもこの分野の研究動向であり、Factorization-Machine Supported Neural Networks（FNN）[24]、Attentional Factorization Machine（AFM）[3]、wide & deep（W&D）[22]、DeepFM（6）、xDeepFM（13）などの深層学習ベースのモデルが紹介されている。
+近年、**CTR推定にDNNを採用することもこの分野の研究動向**であり、Factorization-Machine Supported Neural Networks（FNN）[24]、Attentional Factorization Machine（AFM）[3]、wide & deep（W&D）[22]、DeepFM（6）、xDeepFM（13）などの深層学習ベースのモデルが紹介されている.
 
 Feature interaction is critical for CTR tasks and it’s important for ranking model to effectively capture these complex features.
-CTRタスクでは特徴の相互作用が重要であり、ランキングモデルはこれらの複雑な特徴を効果的に捉えることが重要である。
+**CTRタスクでは特徴量の相互作用が重要**であり、ランキングモデルはこれらの複雑な特徴を効果的に捉えることが重要である.
 Most DNN ranking models such as FNN , W&D, DeepFM and xDeepFM use the shallow MLP layers to model high-order interactions in an implicit way and it’s an important component in current state-ofthe-art ranking systems.
-FNN , W&D, DeepFM, xDeepFMなどのほとんどのDNNランキングモデルは、浅いMLP層を使って高次の相互作用を暗黙のうちにモデル化しており、現在の最新鋭のランキングシステムにおいて重要な要素となっています。
+FNN , W&D, DeepFM, xDeepFMなどのほとんどのDNNランキングモデルは、**浅いMLP層**(=Multi Layer Perceptron層=多層の全結合層)を使って高次の相互作用を暗黙のうちにモデル化しており、現在の最新鋭のランキングシステムにおいて重要な要素となっている.
 
 However, Alex Beutel et.al [2] have proved that addictive feature interaction, particular feed-forward neural networks, is inefficient in capturing common feature crosses.
 しかし、Alex Beutelら[2]は、中毒性のある特徴の相互作用、特にフィードフォワードニューラルネットワークは、共通の特徴の交差を捉えるのに効率が悪いことを証明しました。
 They proposed a simple but effective approach named "latent cross" which is a kind of multiplicative interactions between the context embedding and the neural network hidden states in RNN model.
-彼らは、RNNモデルにおけるコンテキスト埋め込みとニューラルネットワークの隠れ状態の間の一種の乗法的相互作用である「潜在クロス」というシンプルで効果的なアプローチを提案しました。
+彼らは、RNNモデルにおけるコンテキスト埋め込みとニューラルネットワークの隠れ状態の間の一種の乗法的相互作用である"潜在クロス"というシンプルで効果的なアプローチを提案しました。
 Recently, Rendle et.al’s work [18] also shows that a carefully configured dot product baseline largely outperforms the MLP layer in collaborative filtering.
-最近、Rendleらの研究[18]でも、**協調フィルタリングにおいて、注意深く設定されたドット積ベースライン(MFのやつかな?)がMLP層を大きく上回ることが示されています**。
+最近、Rendleらの研究[18]でも、**協調フィルタリングにおいて、注意深く設定されたドット積ベースライン(MFのやつかな?)がMLP層を大きく上回ることが示されている**.
 While a MLP can in theory approximate any function, they show that it is non-trivial to learn a dot product with an MLP and learning a dot product with high accuracy for a decently large embedding dimension requires a large model capacity as well as many training data.
-MLPは理論的にはあらゆる関数を近似できるが、MLPでドットプロダクトを学習することは非自明であり、そこそこ大きな埋め込み次元に対して高い精度でドットプロダクトを学習するには、多くの学習データと同様に大きなモデル容量が必要であることを示している。
+MLPは理論的にはあらゆる関数を近似できるが、MLPでドットプロダクトを学習することは非自明であり、そこそこ大きな埋め込み次元に対して高い精度でドットプロダクトを学習するには、多くの学習データと同様に大きなモデル容量が必要であることを示している.
 Their work also proves the inefficiency of MLP layer’s ability to model complex feature interactions.
-また、彼らの研究は、複雑な特徴の相互作用をモデル化するMLP層の能力が非効率であることを証明しています。
+また、彼らの研究は、複雑な特徴の相互作用をモデル化するMLP層の能力が非効率であることを証明している.
 
 Inspired by "latent cross"[2] and Rendle’s work [18], we care about the following question: Can we improve the DNN ranking systems by introducing specific multiplicative operation into it to make it efficiently capture complex feature interactions?
-潜在十字」[2]とRendleの研究[18]に触発され、我々は以下の問いを気にしている： DNNランキングシステムに特定の乗算演算を導入することで、複雑な特徴の相互作用を効率的に捉えられるように改善できないか？
+"latent cross"[2]とRendleの研究[18]に触発され、我々は以下の問いを気にしている： **DNNランキングシステムに特定の乗算演算を導入することで、複雑な特徴の相互作用を効率的に捉えられるように改善できないか**？
 
 In order to overcome the problem of inefficiency of feed-forward layer to capture complex feature cross, we introduce a special kind of multiplicative operation into DNN ranking system in this paper.
-フィードフォワード層が複雑な特徴量の交差を捉えるのに効率が悪いという問題を克服するために、本論文ではDNNランキングシステムに特殊な乗算演算を導入した。
+**feed-forward層**(=データの流れが一方向である構造。データが行ったり来たり、あるいはループ等をしない。)が複雑な特徴量の交差を捉えるのに効率が悪いという問題を克服するために、本論文ではDNNランキングシステムに特殊な乗算演算を導入した.
 First, we propose an instance-guided mask performing elementwise production on the feature embedding and feed-forward layer.
-まず、特徴埋め込み層とフィードフォワード層に対して、要素分解を行うインスタンス誘導型マスクを提案する。
+まず、特徴埋め込み層とフィードフォワード層に対して、**要素分解を行うインスタンス誘導型マスク**を提案する.(??)
 The instance-guided mask utilizes the global information collected from input instance to dynamically highlight the informative elements in feature embedding and hidden layer in a unified manner.
-インスタンスガイド型マスクは、入力インスタンスから収集したグローバルな情報を利用し、特徴埋込層と隠れ層の情報量の多い要素を統一的に動的にハイライトする。
-There are two main advantages for adopting the instance-guided mask: firstly, the element-wise product between the mask and hidden layer or feature embedding layer brings multiplicative operation into DNN ranking system in unified way to more efficiently capture complex feature interaction.
-第一に、マスクと隠れ層または特徴埋め込み層の間の要素ごとの積が、DNNランキングシステムに統一的な方法で乗算演算をもたらし、複雑な特徴の相互作用をより効率的に捕らえることができることです。
+インスタンスガイド型マスクは、入力インスタンスから収集したグローバルな情報を利用し、特徴量埋込層と隠れ層の**情報量の多い要素を統一的に動的にハイライト**する.(情報量を集約している、必要な情報のみをフィルタリングしてるイメージ??)
+There are two main advantages for adopting the instance-guided mask: 
+instance-guided maskを適用する事の利点は主に２つ.
+firstly, the element-wise product between the mask and hidden layer or feature embedding layer brings multiplicative operation into DNN ranking system in unified way to more efficiently capture complex feature interaction.
+第一に、マスクと隠れ層または特徴埋め込み層の間の要素ごとの積が、DNNランキングシステムに統一的な方法で乗算演算をもたらし、**複雑な特徴の相互作用をより効率的に捕らえることができる**こと.
 Secondly, it’s a kind of finegained bit-wise attention guided by input instance which can both weaken the influence of noise in feature embedding and MLP layers while highlight the informative signals in DNN ranking systems.
-第二に、DNNランキングシステムにおいて情報量の多い信号を強調しながら、特徴埋め込みやMLP層におけるノイズの影響を弱めることができる、入力インスタンスによって導かれる一種の細かいビットワイズアテンションであることです。
+第二に、DNNランキングシステムにおいて**情報量の多い信号を強調**しながら、特徴埋め込みやMLP層における**ノイズの影響を弱めることができる**、入力インスタンスによって導かれる一種の細かいbit-wise attention(??Attention層??)であることである.
 
 By combining instance-guided mask, a following feed-forward layer and layer normalization, MaskBlock is proposed by us to turn the commonly used feed-forward layer into a mixture of addictive and multiplicative feature interactions.
-インスタンス誘導型マスク、後続のフィードフォワード層、層の正規化を組み合わせることで、一般的に用いられるフィードフォワード層を加法的・乗法的な特徴量相互作用の混合に変えるMaskBlockが私たちによって提案されています。
+インスタンス誘導型マスク、後続のフィードフォワード層、層の正規化を組み合わせることで、**一般的に用いられるフィードフォワード層を加法的・乗法的な特徴量相互作用の混合に変えるMaskBlock**が私たちによって提案されている.
 The instance-guided mask introduces multiplicative interactions and the following feedforward hidden layer aggregates the masked information in order to better capture the important feature interactions.
-インスタンス誘導型マスクは乗算的な相互作用を導入し、次のフィードフォワード隠れ層は、重要な特徴の相互作用をよりよく捕らえるために、マスクされた情報を集約する。
+**インスタンス誘導型マスクは乗算的な相互作用を導入**し、次のフィードフォワード隠れ層は、重要な特徴の相互作用をよりよく捕らえるために、マスクされた情報を集約する.
 While the layer normalization can ease optimization of the network.
 レイヤーの正規化は、ネットワークの最適化を容易にすることができますが。
 
 MaskBlock can be regarded as a basic building block to design new ranking models under some kinds of configuration.
-MaskBlockは、ある種の構成のもとで新しいランキングモデルを設計するための基本的なビルディングブロックとみなすことができます。
+MaskBlockは、ある種の構成のもとで新しいランキングモデルを設計するための基本的なビルディングブロックとみなすことができる.
 The model consisting of MaskBlock is called MaskNet in this paper and two new MaskNet models are proposed to show the effectiveness of MaskBlock as basic building block for composing high performance ranking systems.
-本論文では、MaskBlockからなるモデルをMaskNetと呼び、MaskBlockが高性能なランキングシステムを構成するための基本構成要素としての有効性を示すために、2つの新しいMaskNetモデルを提案する。
+本論文では、**MaskBlockからなるモデルをMaskNetと呼び**、MaskBlockが高性能なランキングシステムを構成するための基本構成要素としての有効性を示すために、2つの新しいMaskNetモデルを提案する:
 
 The contributions of our work are summarized as follows:
 本研究の貢献は以下のように要約される：
 
-- (1) In this work, we propose an instance-guided mask performing element-wise product both on the feature embedding and feed-forward layers in DNN models. The global context information contained in the instance-guided mask is dynamically incorporated into the feature embedding and feed-forward layer to highlight the important elements. (1) 本論文では、DNNモデルの特徴埋め込み層とフィードフォワード層の両方において、要素ごとの積を行うインスタンス誘導型マスクを提案する。 インスタンス誘導型マスクに含まれるグローバルなコンテキスト情報を、特徴埋め込み層とフィードフォワード層に動的に取り込み、重要な要素を強調することができます。
+- (1) In this work, we propose an instance-guided mask performing element-wise product both on the feature embedding and feed-forward layers in DNN models. The global context information contained in the instance-guided mask is dynamically incorporated into the feature embedding and feed-forward layer to highlight the important elements. (1) 本論文では、DNNモデルの特徴埋め込み層(=入力層とは違う?自然言語テキストをembeddingに変換する層のようなイメージ?)とフィードフォワード層の両方において、要素ごとの積を行うインスタンス誘導型マスクを提案する. インスタンス誘導型マスクに含まれるグローバルなコンテキスト情報を、特徴埋め込み層とフィードフォワード層に動的に取り込み、重要な要素を強調することができる.
 
-- (2) We propose a basic building block named MaskBlock which consists of three key components: instance-guided mask, a following feed-forward hidden layer and layer normalization module. In this way, we turn the widely used feed-forward layer of a standard DNN model into a mixture of addictive and multiplicative feature interactions. (2) インスタンスガイド付きマスク、フィードフォワード隠れ層、層正規化モジュールの3つの主要コンポーネントからなるMaskBlockという基本構成ブロックを提案する。 このようにして、標準的なDNNモデルの広く使われているフィードフォワード層を、加法的・乗法的な特徴の相互作用の混合に変えるのです。
+- (2) We propose a basic building block named MaskBlock which consists of three key components: instance-guided mask, a following feed-forward hidden layer and layer normalization module. In this way, we turn the widely used feed-forward layer of a standard DNN model into a mixture of addictive and multiplicative feature interactions. (2) インスタンスガイド付きマスク、フィードフォワード隠れ層、層正規化モジュールの3つの主要コンポーネントからなるMaskBlockという基本構成ブロックを提案する. このようにして、標準的なDNNモデルの広く使われているフィードフォワード層を、**加法的・乗法的な特徴の相互作用の混合に変える**.
 
-- (3) We also propose a new ranking framework named MaskNet to compose new ranking system by utilizing MaskBlock as basic building unit. To be more specific, the serial MaskNet model and parallel MaskNet model are designed based on the MaskBlock in this paper. The serial rank model stacks MaskBlock block by block while the parallel rank model puts many MaskBlocks in parallel on a sharing feature embedding layer. (3) また、MaskBlockを基本構成単位として、新しいランキングシステムを構成するMaskNetという新しいランキングフレームワークを提案しています。 具体的には、本論文ではMaskBlockをベースにシリアルMaskNetモデル、パラレルMaskNetモデルを設計しています。 シリアルランクモデルでは、MaskBlockをブロックごとに積み重ね、パラレルランクモデルでは、多数のMaskBlockを共有機能埋め込み層上に並列に配置します。
+- (3) We also propose a new ranking framework named MaskNet to compose new ranking system by utilizing MaskBlock as basic building unit. To be more specific, the serial MaskNet model and parallel MaskNet model are designed based on the MaskBlock in this paper. The serial rank model stacks MaskBlock block by block while the parallel rank model puts many MaskBlocks in parallel on a sharing feature embedding layer. (3) また、MaskBlockを基本構成単位として、新しいランキングシステムを構成するMaskNetという新しいランキングフレームワークを提案している. 具体的には、本論文では**MaskBlockをベースにシリアルMaskNetモデル、パラレルMaskNetモデルを設計している**. シリアルランクモデルでは、MaskBlockをブロックごとに積み重ね、パラレルランクモデルでは、多数のMaskBlockを共有機能埋め込み層上に並列に配置する.
 
-- (4) Extensive experiments are conduct on three real-world datasets and the experiment results demonstrate that our proposed two MaskNet models outperform state-of-the-art models significantly. The results imply MaskBlock indeed enhance DNN model’s ability of capturing complex feature interactions through introducing multiplicative operation into DNN models by instance-guided mask. (4) 3つの実世界データセットで大規模な実験を行い、提案する2つのMaskNetモデルが、最先端モデルを大幅に上回ることを実証した。 その結果、MaskBlockは、インスタンス誘導型マスクによってDNNモデルに乗算演算を導入することで、複雑な特徴の相互作用を捉えるDNNモデルの能力を確かに向上させることが示唆された。
+- (4) Extensive experiments are conduct on three real-world datasets and the experiment results demonstrate that our proposed two MaskNet models outperform state-of-the-art models significantly. The results imply MaskBlock indeed enhance DNN model’s ability of capturing complex feature interactions through introducing multiplicative operation into DNN models by instance-guided mask. (4) 3つの実世界データセットで大規模な実験を行い、提案する2つのMaskNetモデルが、最先端モデルを大幅に上回ることを実証した. その結果、MaskBlockは、インスタンス誘導型マスクによってDNNモデルに乗算演算を導入することで、複雑な特徴の相互作用を捉えるDNNモデルの能力を確かに向上させることが示唆された.
 
 The rest of this paper is organized as follows.
-本稿の残りの部分は、以下のように構成されている。
+本稿の残りの部分は、以下のように構成されている.
 Section 2 introduces some related works which are relevant with our proposed model.
-第2節では、本提案モデルと関連性のあるいくつかの関連作品を紹介する。
+第2節では、本提案モデルと関連性のあるいくつかの関連作品を紹介する.
 We introduce our proposed models in detail in Section 3.
-セクション3では、提案するモデルを詳しく紹介する。
+セクション3では、提案するモデルを詳しく紹介する.
 The experimental results on three real world datasets are presented and discussed in Section 4.
-3つの実世界データセットでの実験結果を示し、セクション4で議論する。
+3つの実世界データセットでの実験結果を示し、セクション4で議論する.
 Section 5 concludes our work in this paper.
-第5節では、本論文における我々の研究を締めくくる。
+第5節では、本論文における我々の研究を締めくくる.
 
 # Related Work 関連作品
 
 ## State-Of-The-Art CTR Models 最先端のCTRモデル
 
 Many deep learning based CTR models have been proposed in recent years and it is the key factor for most of these neural network based models to effectively model the feature interactions.
-近年、多くの深層学習ベースのCTRモデルが提案されていますが、これらのニューラルネットワークベースのモデルの多くにとって、**特徴量の相互作用を効果的にモデル化することは重要な要素となっています**。
+近年、多くの深層学習ベースのCTRモデルが提案されていますが、これらのニューラルネットワークベースのモデルの多くにとって、**特徴量の相互作用を効果的にモデル化することは重要な要素となっている**.
 
 Factorization-Machine Supported Neural Networks (FNN)[24] is a feed-forward neural network using FM to pre-train the embedding layer.
 FNN（Factorization-Machine Supported Neural Networks）[24]は、FMを用いて埋め込み層の事前学習を行うフィードフォワードニューラルネットワークです。
