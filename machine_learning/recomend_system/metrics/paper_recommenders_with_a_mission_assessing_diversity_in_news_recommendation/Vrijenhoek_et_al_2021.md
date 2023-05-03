@@ -3,6 +3,7 @@
 - https://dl.acm.org/doi/10.1145/3406522.3446019
 
 ## title
+
 Recommenders with a Mission: Assessing Diversity in News Recommendations
 
 ## abstract
@@ -96,11 +97,13 @@ The Calibration metric reflects to what extent the issued recommendations reflec
 ### Explanation.
 
 Calibration is a well-known metric in traditional recommender system literature [47]. It is calculated by measuring the difference in distributions of categorical information, such as topics in the news domain or genres in the movie domain, between what is currently recommended to the user and what the user has consumed in the past. However, we extend our notion of calibration beyond topicality or genre. News recommendations can also be tailored to the user in terms of article style and complexity, allowing the reader to receive content that is attuned to their information needs and processing preferences. This may be split up within different topics; a user may be an expert in the field of politics but less so in the field of medicine, and may want to receive more complex articles in case of the first, and less in case of the second.
+
 ### In the context of democratic recommenders.
 
 The Calibration metric is most significant for recommenders following the Liberal and Participatory model. The aim of the Liberal model is to facilitate user specialization, and assumes that the user eventually knows best what they want to read. In these models, we expect the Calibration scores to be closer to 0. On the other hand, the Participatory model favors the common good over the individual. We therefore expect a higher degree of divergence in Calibration, at least when considered in light of topicality. Both models, but especially the Participatory model, require that the user receives content that is tailored to their needs in terms of article complexity, and in this context we expect a Calibration score that is closer to zero.
 
 ### Operationalization.
+
 For the operationalization of a recommender’s Calibration score it is important to have information on not only an article’s topic and complexity, which can potentially be automatically extracted from an article’s body (see for example Feng et al. [14] and Kim and Oh [28]), but also on the user’s preferences regarding this matter. Note that topicality can be both generic (politics, entertainment, sports, etc) and more specific (climate change, Arsenal). In light of democratic theory more fine-grained information is preferable, but this is not always available. Steck [47] uses the Kullback-Leibler divergence between two probability distributions as Calibration metric, as follows:
 
 $$
@@ -109,6 +112,7 @@ $$
 where 𝑟(𝑐|𝑢) is the distribution of categorical information 𝑐 across the articles consumed by the user in the past, and 𝑞˜(𝑐|𝑢) is an approximation of 𝑞(𝑐|𝑢) (necessary since KL divergence diverges if 𝑞(𝑐|𝑢) = 0), which is the distribution of the categories c across the current recommendation set. As mentioned before, a score of 0 indicates that there is no divergence between the two distributions, meaning they are identical. The higher the Calibration score, the larger the divergence. As KL divergence can yield very high scores when dividing by numbers close to zero, outliers can greatly influence the average outcome. Therefore, the aggregate Calibration score is calculated by taking the median of all the Calibration scores for individual users.
 
 ### Limitations.
+
 This approach is tailored to categorical data, but sometimes our data may be numerical rather than categorical, for example in the case of article complexity. In these cases, a simple distance measure may suffice over the more complex KullbackLeibler divergence.
 
 ## Fragmentation
@@ -128,6 +132,7 @@ Both the Participatory and Deliberative models favor a common public sphere, and
 This metric requires that individual articles can be aggregated into higher-level news story chains over time. This can be done through manual annotation or automated extraction process. Two unsupervised learning approaches for doing this automatically can be found in Nicholls and Bright [38] and Trilling and van Hoof [51]. Once the stories are identified, the Fragmentation score can be defined as the aggregate average distance between all sets of recommendations between all users. Dillahunt et al. [11], which aimed to detect filter bubbles in search engine results, defines this distance with the Kendall Tau Rank Distance (KDT), which measures the number of pairwise disagreements between two lists of ranked items. However, Kendall Tau is not suitable when the two lists can be (largely) disjointed. It also penalizes differences at the top of the list equally to those more at the bottom. Instead we base our approach on the Rank Biased Overlap used in Webber et al. [54]:
 
 $$
+
 
 $$
 
