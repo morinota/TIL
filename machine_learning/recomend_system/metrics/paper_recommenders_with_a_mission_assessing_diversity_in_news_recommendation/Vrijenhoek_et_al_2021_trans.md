@@ -1,234 +1,234 @@
-## link リンク
+## 0.1. link リンク
 
 - https://dl.acm.org/doi/10.1145/3406522.3446019 https://dl.acm.org/doi/10.1145/3406522.3446019
 
-## title タイトル
+## 0.2. title タイトル
 
 Recommenders with a Mission: Assessing Diversity in News Recommendations
 使命感を持ったレコメンダー： ニュースレコメンデーションにおける多様性の評価
 
-## abstract アブストラクト
+## 0.3. abstract アブストラクト
 
 News recommenders help users to find relevant online content and have the potential to fulfill a crucial role in a democratic society, directing the scarce attention of citizens towards the information that is most important to them.
-ニュースレコメンダーは、ユーザーが関連するオンラインコンテンツを見つけるのを助け、市民の乏しい注意を最も重要な情報に向けるという、民主主義社会における重要な役割を果たす可能性を持っています。
+ニュースレコメンダーは、ユーザが関連するオンラインコンテンツを見つけるのを助け、市民の乏しい注意を最も重要な情報に向けるという、民主主義社会における重要な役割を果たす可能性を持っている.
 Simultaneously, recent concerns about so-called filter bubbles, misinformation and selective exposure are symptomatic of the disruptive potential of these digital news recommenders.
-同時に、いわゆるフィルターバブル、誤報、選択的露出に関する最近の懸念は、こうしたデジタルニュースレコメンダーの破壊的可能性を示すものである。
+同時に、いわゆるフィルターバブル、誤報、選択的露出に関する最近の懸念は、こうしたデジタルニュースレコメンダーの破壊的可能性を示すものである.
 Recommender systems can make or break filter bubbles, and as such can be instrumental in creating either a more closed or a more open internet.
-レコメンダーシステムは、フィルターバブルを作ることも壊すこともできるため、より閉じたインターネット、より開かれたインターネットのどちらにも貢献することができます。
+**レコメンダーシステムは、フィルターバブルを作ることも壊すこともできるため、より閉じたインターネット、より開かれたインターネットのどちらにも貢献することができる**.
 Current approaches to evaluating recommender systems are often focused on measuring an increase in user clicks and short-term engagement, rather than measuring the user's longer term interest in diverse and important information.
-現在のレコメンダーシステムの評価アプローチは、多様で重要な情報に対するユーザーの長期的な興味を測定するのではなく、ユーザーのクリック数の増加や短期的なエンゲージメントを測定することに重点を置くことが多い。
+現在のレコメンダーシステムの評価アプローチは、多様で重要な情報に対するユーザーの長期的な興味を測定するのではなく、ユーザのクリック数の増加や短期的なエンゲージメントを測定することに重点を置くことが多い.
 
 This paper aims to bridge the gap between normative notions of diversity, rooted in democratic theory, and quantitative metrics necessary for evaluating the recommender system.
-本稿では、民主主義理論に根ざした多様性の規範的な概念と、レコメンダーシステムの評価に必要な定量的な指標とのギャップを埋めることを目的としています。
+本稿では、**民主主義理論に根ざした多様性の規範的な概念と、レコメンダーシステムの評価に必要な定量的な指標との、ギャップを埋めることを目的としている.**
 We propose a set of metrics grounded in social science interpretations of diversity and suggest ways for practical implementations.
-私たちは、社会科学的な多様性の解釈に基づいた一連の指標を提案し、実用化のための方法を提案する。
+私たちは、社会科学的な多様性の解釈に基づいた一連の指標を提案し、実用化のための方法を提案する.
 
-# Introduction 序章
+# 1. Introduction 序章
 
 News recommender algorithms have the potential to fulfill a crucial role in democratic society.
-ニュースレコメンダーアルゴリズムは、民主主義社会で重要な役割を果たす可能性がある。
+ニュースレコメンダーアルゴリズムは、民主主義社会で重要な役割を果たす可能性がある.
 By filtering and sorting information and news, recommenders can help users to overcome maybe the greatest challenge of the online information environment: finding　and selecting relevant online content - content they need to be informed citizens, be on top of relevant developments, and have their say [13].
-情報やニュースをフィルタリングして分類することで、レコメンダーは、ユーザーがオンライン情報環境の最大の課題である、関連するオンラインコンテンツ（市民として情報を得、関連する動向を把握し、発言するために必要なコンテンツ）を見つけて選択することを支援することができます [13].
+情報やニュースをフィルタリングして並び替えることで、レコメンダーは、ユーザがオンライン情報環境の最大の課題である、関連するオンラインコンテンツ（市民として情報を得、関連する動向を把握し、発言するために必要なコンテンツ）を見つけて選択することを支援することができる [13].
 Informed by data on what a user likes to read, what people similar to him or her like to read, what content sells best, etc., recommenders use machine learning and AI techniques to make ever smarter suggestions to their users [12, 29, 30, 50].
-レコメンダーは、ユーザーが好んで読むもの、同じような人が好んで読むもの、どのようなコンテンツが最も売れるかなどのデータから情報を得て、機械学習やAI技術を使って、ユーザーに対してよりスマートな提案を行います [12, 29, 30, 50]．
+レコメンダーは、ユーザが好んで読むもの、同じような人が好んで読むもの、どのようなコンテンツが最も売れるかなどのデータから情報を得て、機械学習やAI技術を使って、ユーザに対してよりスマートな提案を行う [12, 29, 30, 50]．
 For the news media, algorithmic recommendations offer a way to remain relevant on the global competition for attention, create higher levels of engagement with content, develop ways of informing citizens and offer services that people are actually willing to pay for [4].
-ニュースメディアにとって、アルゴリズムによるレコメンデーションは、世界的な注目度競争の中で関連性を保ち、コンテンツへの高いエンゲージメントを生み出し、市民に情報を提供する方法を開発し、人々が実際に喜んでお金を払うようなサービスを提供する方法を提供します [4].
+ニュースメディアにとって、アルゴリズムによるレコメンデーションは、世界的な注目度競争の中で関連性を保ち、コンテンツへの高いエンゲージメントを生み出し、市民に情報を提供する方法を開発し、人々が実際に喜んでお金を払うようなサービスを提供する方法を提供する [4].
 With this comes the power to channel attention and shape individual reading agendas and thus new risks and responsibilities.
-このことは、注目を集め、個々の読書の意図を形成する力をもたらし、その結果、新たなリスクと責任をもたらすことになります。
+このことは、注目を集め、個々の読書の意図を形成する力をもたらし、その結果、新たなリスクと責任をもたらすことになる.
 Recommender systems can be pivotal in deciding what kind of news the public does and does not see.
-リコメンダーシステムは、一般の人々がどのようなニュースを見るか、見ないかを決定する上で極めて重要な役割を果たします。
+リコメンダーシステムは、一般の人々がどのようなニュースを見るか、見ないかを決定する上で極めて重要な役割を果たす.
 Depending on their design, recommenders can either unlock the diversity of online information [19, 37] for their users, or lock them into routines of "more of the same", or in the most extreme case into so-called filter bubbles [42] and information sphericules.
-レコメンダーは、そのデザインによって、オンライン情報の多様性 [19, 37] をユーザーに開放することも、「同じことの繰り返し」のルーチンに閉じ込めることも、最も極端なケースでは、いわゆるフィルターバブル [42] や情報スフェリカルへと導くこともできる。
+**レコメンダーは、そのデザインによって、オンライン情報の多様性 [19, 37] をユーザに開放することも、「同じことの繰り返し」のルーチンに閉じ込めることも、最も極端なケースでは、いわゆるフィルターバブル [42] や情報スフェリカルへと導くこともできる.**
 
 The most frequently used key performance indicators, or KPIs, for optimizing recommender systems, assess and aim to maximize short-term user engagement, such as click-through rate or time spent on a page [23].
-レコメンダーシステムの最適化のために最も頻繁に使用される重要業績評価指標（KPI）は、クリックスルー率やページ滞在時間など、短期的なユーザーエンゲージメントを評価し、最大化することを目的としている[23]。
+レコメンダーシステムの最適化のために最も頻繁に使用される重要業績評価指標（KPI）は、クリックスルー率やページ滞在時間など、短期的なユーザーエンゲージメントを評価し、最大化することを目的としている[23].
 Often, these KPIs are defined by data limitations, and by technological and business demands rather than the societal and democratic mission of the media.
-多くの場合、これらのKPIは、データの制限や、メディアの社会的・民主的使命ではなく、技術的・ビジネス的要求によって定義されます。
+多くの場合、**これらのKPIは、データの制限や、メディアの社会的・民主的使命ではなく、技術的・ビジネス的要求によって定義される**.
 More recently however a process of re-thinking algorithmic recommender design has begun, in response to concerns from users [49], regulators (e.g., EU HLEG [39]), academics, and news organizations themselves [4, 32].
-しかし、最近では、ユーザー[49]、規制当局（EU HLEG [39]など）、学者、そして報道機関自身からの懸念に応えて、アルゴリズムの推奨デザインを再考するプロセスが始まっています[4、32]。
+しかし、最近では、ユーザー[49]、規制当局（EU HLEG [39]など）、学者、そして報道機関自身からの懸念に応えて、アルゴリズムの推薦デザインを再考するプロセスが始まっている[4、32].
 Finding ways to develop new metrics and models of more "diverse" recommendations has developed into a vibrant field of experimentation - in academia as well as in the data science and R&D departments of a growing number of media corporations.
-より多様なレコメンデーションのための新しい指標やモデルを開発する方法は、アカデミアだけでなく、増え続けるメディア企業のデータサイエンスや研究開発部門でも、活発に実験が行われています。
+より多様なレコメンデーションのための新しい指標やモデルを開発する方法は、アカデミアだけでなく、増え続けるメディア企業のデータサイエンスや研究開発部門でも、活発に実験が行われている.
 
 But what exactly does diverse mean, and how much diversity is ’enough’? As central as diversity (or pluralism, a notion that is often used interchangeably) is to many debates about the optimal design of news recommenders, as unclear it is what diverse recommender design actually entails [31].
-しかし、多様性とは一体何を意味し、どれくらいの多様性が「十分」なのだろうか。多様性（または多元主義、しばしば互換的に使用される概念）がニュース推薦者の最適設計に関する多くの議論の中心であるのと同様に、多様な推薦者設計が実際に何を意味するのかが不明である[31]。
+しかし、**多様性とは一体何を意味し、どれくらいの多様性が「十分」なのだろうか**. 多様性（または多元主義、しばしば互換的に使用される概念）がニュース推薦システムの最適設計に関する多くの議論の中心であるのと同様に、**多様なレコメンダー設計が実際に何を意味するのかが不明である**[31].
 In the growing literature that tries to conceptualise and translate diversity into specific design requirements, a gap between the computer science and the normative literature can be observed.
-多様性を概念化し、具体的な設計要件に変換しようとする文献が増加する中、コンピュータサイエンスと規範的な文献の間にギャップが見られるようになりました。
+**多様性を概念化し、具体的な設計要件に変換しようとする文献が増加する中、コンピュータサイエンスと規範的な文献の間にギャップが見られるようになった**.
 While diversity in the computer science literature is often defined as concrete technical metrics, such as the intra-list distance of recommended items [6, 53] (see also Section 2), diversity in the normative sense is about larger societal concepts: democracy, freedom of expressions, cultural inclusion, mutual respect and tolerance [19].
-コンピュータサイエンスの文献における多様性は、推奨項目のリスト内距離のような具体的な技術的指標として定義されることが多いが [6, 53] （セクション2も参照）、規範的意味での多様性は、民主主義、表現の自由、文化の受容、相互尊重、許容といった大きな社会的概念についてである [19]．
+**コンピュータサイエンスの文献における多様性は、推薦項目のリスト内距離のような具体的な技術的指標として定義されることが多い**が [6, 53] （セクション2も参照）、規範的意味での多様性は、民主主義、表現の自由、文化の受容、相互尊重、許容といった大きな社会的概念についてである [19].
 There is a mismatch between different theoretical understandings of the construct of diversity, similar to the one observed in Fairness research [22].
-多様性の構成要素に関する異なる理論的理解の間には、Fairness研究[22]で観察されたものと同様のミスマッチがある。
+多様性の構成要素に関する異なる理論的理解の間には、Fairness研究[22]で観察されたものと同様のミスマッチがある.
 For news recommenders to be truly able to unlock the abundance of information online and inform citizens better, it is imperative to find ways to overcome the fundamental differences in approaching diversity.
-ニュースレコメンダーが真にネット上の豊富な情報を解き放ち、市民により良い情報を提供できるようになるためには、多様性へのアプローチの根本的な違いを克服する方法を見つけることが不可欠である。
+ニュースレコメンダーが真にネット上の豊富な情報を解き放ち、市民により良い情報を提供できるようになるためには、多様性へのアプローチの根本的な違いを克服する方法を見つけることが不可欠である.
 There is a need to reconceptualise this central but also elusive concept in a way that both does justice to the goals and values that diversity must promote, as well as facilitates the translation of diversity into metrics that are concrete enough to inform algorithmic design.
-多様性が促進すべき目標や価値を正しく理解し、多様性をアルゴリズム設計に反映させるのに十分な具体的指標に変換することを容易にする方法で、この中心的だが捉えどころのない概念を再認識する必要があるのです。
+多様性が促進すべき目標や価値を正しく理解し、多様性をアルゴリズム設計に反映させるのに十分な具体的指標に変換することを容易にする方法で、この中心的だが捉えどころのない概念を再認識する必要がある.
 
 This paper describes the efforts of a team from computer science, communication science, and media law and policy experts, to bridge this gap between normative and computational approaches towards diversity, and translate diversity, as a normative concept, to a concrete set of metrics that can be used to evaluate and/or compare different news recommender designs.
-本論文では、コンピュータサイエンス、コミュニケーションサイエンス、メディア法・政策の専門家からなるチームが、多様性に関する規範的アプローチと計算機的アプローチの間のギャップを埋め、規範的概念としての多様性を、異なるニュース推薦デザインの評価や比較に使用可能な具体的メトリクスセットに変換する取り組みを説明します。
+本論文では、**コンピュータサイエンス、コミュニケーションサイエンス、メディア法・政策の専門家からなるチーム**が、多様性に関する規範的アプローチと計算機的アプローチの間のギャップを埋め、**規範的概念としての多様性を、異なるニュース推薦デザインの評価や比較に使用可能な具体的メトリクスセットに変換する取り組み**を説明する.
 
 We first conceptualise diversity from a technical point of view (Section 2) and from a social science interpretation, including its role in democratic models (Section 3).
-まず、技術的な観点から多様性を概念化し（第2節）、民主主義モデルにおける役割を含む社会科学的解釈から多様性を概念化する（第3節）。
+まず、技術的な観点から多様性を概念化し（第2節）、民主主義モデルにおける役割を含む社会科学的解釈から多様性を概念化する（第3節）.
 In Section 4 we expand upon the social science notion of diversity, and propose five metrics grounded in Information Retrieval that reflect our normative approach.
-第4章では、社会科学的な多様性の概念を拡張し、私たちの規範的なアプローチを反映した情報検索に基づく5つの指標を提案します。
+第4章では、社会科学的な多様性の概念を拡張し、私たちの規範的なアプローチを反映した情報検索に基づく5つの指標を提案する.
 We cover the limitations of the proposed metrics and this approach in Section 5.
-セクション5では、提案したメトリクスと本アプローチの限界について取り上げる。
+セクション5では、提案したメトリクスと本アプローチの限界について取り上げる.
 We conclude with detailing our implementation of the metrics and the steps to undertake as a media company when intending to adopt this normative notion of diversity in practice.
-最後に、このダイバーシティの規範となる概念を実際に採用しようとする場合、メディア企業としてどのような手順を踏めばよいのか、私たちが実施したメトリクスの詳細を説明します。
+最後に、このダイバーシティの規範となる概念を実際に採用しようとする場合、メディア企業としてどのような手順を踏めばよいのか、私たちが実施したメトリクスの詳細を説明する.
 
-# A technical conception of diversity in news recommenders ニュースレコメンダーにおける多様性の技術的概念
+# 2. A technical conception of diversity in news recommenders ニュースレコメンダーにおける多様性の技術的概念
 
 Typically, generating a recommendation is seen as a reranking problem.
-一般に、推薦文の生成は、リランキング問題として捉えられている。
+一般に、推薦の生成は、**reranking問題**として捉えられている.
 Given a set of candidate items, the goal is to present these items in such a way that the user finds the item he or she is most interested in at the top, followed by the second-most interesting one, and so on.
-候補となるアイテムのセットがある場合、ユーザーが最も興味のあるアイテムを一番上に見つけ、次に2番目に興味のあるアイテムが続くように、これらのアイテムを提示することが目標です。
+候補となるアイテムのセットがある場合、ユーザが最も興味のあるアイテムを一番上に見つけ、次に2番目に興味のあるアイテムが続くように、これらのアイテムを提示することが目標である.
 How well this recommendation reflects the actual interest of the user is called the accuracy of the recommendation.
-この推薦文がどれだけユーザーの実際の興味を反映しているかを、推薦文の精度と呼びます。
+**この推薦がどれだけユーザの実際の興味を反映しているかを、推薦文の精度と呼ぶ**.
 Content-based approaches aim to maximize this accuracy by looking at the type of items that the user has interacted with before and recommend similar ones.
-コンテンツベースのアプローチでは、ユーザーが以前に接したアイテムの種類を調べ、類似のものを推薦することで、この精度を最大化することを目指しています。
+コンテンツベースのアプローチでは、ユーザが以前に接したアイテムの種類を調べ、類似のものを推薦することで、この精度を最大化することを目指している.
 In the context of news recommendations, one could think of finding topics or overall texts that are similar to what is in the user’s reading history.
-ニュースレコメンデーションの文脈では、ユーザーの読書履歴にあるものに近いトピックやテキスト全体を見つけることが考えられる。
+ニュースレコメンデーションの文脈では、ユーザのreading historyにあるものに近いトピックやテキスト全体を見つけることが考えられる.
 On the other hand, in collaborative filtering approaches, the algorithm considers what other users similar to the user in question have liked, and recommends those.
-一方、協調フィルタリングアプローチでは、当該ユーザーに類似した他のユーザーがどのようなものを気に入っているかを考慮し、それらを推薦するアルゴリズムが採用されています。
+一方、協調フィルタリングアプローチでは、当該ユーザに類似した他のユーザがどのようなものを気に入っているかを考慮し、それらを推薦するアルゴリズムが採用されている.
 Most state-of-the-art systems are hybrids of these approaches.
-最新のシステムの多くは、これらのアプローチのハイブリッドです。
+最新のシステムの多くは、これらのアプローチのハイブリッドである.
 Evaluation of the system can be done in both an online and offline fashion; offline often includes testing the system on a piece of held-out data on its accuracy, whereas online evaluation monitors for increases or decreases of user interactions and clickthrough rates following the issued recommendations [2].
-システムの評価は、オンラインとオフラインの両方で行うことができます。オフラインでは、多くの場合、その精度について、保有するデータの一部でシステムをテストします。一方、オンライン評価は、発行された勧告に従ってユーザーのインタラクションとクリックスルー率が増加または減少することを監視します [2] 。
+システムの評価は、オンラインとオフラインの両方で行うことができる. オフラインでは、多くの場合、その精度について、保有するデータの一部でシステムをテストする. 一方、オンライン評価は、発行された勧告に従ってユーザのインタラクションとクリックスルー率が増加または減少することをモニタリングする [2] .
 However, this approach by its definition unduly promotes the items similar to what a user has seen before, locking the user in a feedback loop of "more of the same" [35].
-しかし、このアプローチは、その定義上、ユーザーが以前に見たものと似たものを不当に宣伝し、ユーザーを「同じものをもっと」というフィードバックループに閉じ込めることになります[35]。
+しかし、**このアプローチは、その定義上、ユーザが以前に見たものと似たものを不当に宣伝し、ユーザを「同じものをもっと」というフィードバックループに閉じ込めることになる[35].**
 It also introduces a so-called "confounding bias" [7], which happens when an algorithm attempts to model user behavior when the algorithm itself influences that behavior.
-また、アルゴリズムがユーザーの行動をモデル化しようとしたときに、アルゴリズム自体がその行動に影響を与える、いわゆる「交絡バイアス」[7]が発生することも指摘されています。
+また、アルゴリズムがユーザの行動をモデル化しようとしたときに、アルゴリズム自体がその行動に影響を与える、いわゆる"confounding bias(交絡バイアス)"[7]が発生することも指摘されている. (この文脈での"交絡"って、観測される学習データが現在稼働中の施策に依存する、みたいな意味合いだろうか...??)
 To tackle this in many currently operational systems "beyond-accuracy" metrics diversity, novelty, serendipity and coverage are introduced.
-そのため、現在運用されている多くのシステムでは、「精度を超える」指標として、多様性、新規性、セレンディピティ、カバレッジが導入されています。
+そのため、現在運用されている多くのシステムでは、**"beyond-accuracy"指標**として、多様性、新規性、セレンディピティ、カバレッジが導入されている.
 Diversity reflects how different the items within the recommendation set are from each other.
-多様性とは、推薦セット内のアイテムが互いにどれだけ異なるかを反映したものです。
+(コンピュータサイエンス的な意味合いでの?)多様性とは、推薦セット内のアイテムが互いにどれだけ異なるかを反映したものである.
 One intuitive usecase can be found in the context of ambiguous search queries.
-直感的な使用例としては、あいまいな検索クエリの文脈があります。
+直感的な使用例としては、あいまいな検索クエリの文脈がある.
 A user searching for "orange" should receive results about the color, the fruit, the telecom company, the Dutch royal family, and the river in Namibia, and not just about the one the system thinks he or she is most likely to be interested in.
-オレンジ」を検索したユーザーは、色、果物、通信会社、オランダ王室、ナミビアの川に関する結果を受け取るべきで、システムが最も興味を持ちそうだと思うものだけを受け取るべきではありません。
+"オレンジ"を検索したユーザーは、色、果物、通信会社、オランダ王室、ナミビアの川に関する結果を受け取るべきで、システムが最も興味を持ちそうだと思うものだけを受け取るべきではない.
 The challenge then lies in how to define this difference or distance.
-そして、この違いや距離をどのように定義するかが課題となる。
+そして、この違いや距離をどのように定義するかが課題となる.
 In the context of news recommendations many different approaches exist, such as using a cosine similarity on a bag of words model or by calculating the distance between the article’s topics [58].
-ニュース推薦の文脈では、Bag of wordsモデルのコサイン類似度を使用したり、記事のトピック間の距離を計算するなど、多くの異なるアプローチが存在する[58]。
+ニュース推薦の文脈では、Bag of wordsモデルのコサイン類似度を使用したり、記事のトピック間の距離を計算するなど、多くの異なるアプローチが存在する[58].
 The concepts of novelty and serendipity are strongly linked.
-ノベルティとセレンディピティという概念は強く結びついています。
+ノベルティとセレンディピティという概念は強く結びついている.
 Novelty reflects the likeliness that the user has never seen this item before, whereas serendipity reflects whether a user was positively surprised by the item in question.
-新規性は、ユーザーがそのアイテムを見たことがない可能性を、セレンディピティは、ユーザーがそのアイテムにポジティブな驚きを覚えたかどうかを反映します。
+新規性はユーザがそのアイテムを見たことがない可能性(ニュース推薦の場合は基本的には新しいアイテムを推薦するから問題ないのかな。記事単位ではなくジャンル単位とかカテゴリ単位とかの見方もありそう...! 同じ出来事に関する違う記事とか?)を、セレンディピティはユーザがそのアイテムにポジティブな驚きを覚えたかどうか(=like + didn't expect)を反映する.
 However, an item can be novel without being serendipitous (such as the weather forecast), and an item may also be serendipitous without being novel (such as an item that has been seen a long time ago, but becomes relevant again in light of recent events).
-しかし、セレンディピティでなくても新規性のあるもの（天気予報など）もあれば、新規性がなくてもセレンディピティであるもの（ずっと前に見たことがあるが、最近の出来事に照らし合わせて再び関連性が出てきたものなど）もあるのです。
+**しかし、セレンディピティでなくても新規性のあるもの（ex. 天気予報など）もあれば、新規性がなくてもセレンディピティであるもの（ex. ずっと前に見たことがあるが、最近の出来事に照らし合わせて再び関連性が出てきたものなど）もある**.
 A common approach to improving novelty and serendipity is by unlocking the "long tail" content of the system, while still optimizing for user accuracy.
-新規性やセレンディピティを向上させるための一般的なアプローチは、ユーザーの精度を最適化しつつ、システムの「ロングテール」コンテンツを解き放つことです。
+新規性やセレンディピティを向上させるための一般的なアプローチは、ユーザの精度を最適化しつつ、システムの"long tail"コンテンツを解き放つことである.
 The long tail refers to the "lesser known" content in the system, that is less popular and therefore seen by less users.
-ロングテールとは、システム内のコンテンツのうち、人気がなく、そのため見るユーザーも少ない、「あまり知られていない」コンテンツのことを指します。
+"long tail"とは、システム内のコンテンツのうち、人気がなく、そのため見るユーザも少ない、「あまり知られていない」コンテンツのことを指す.
 By recommending less popular content the recommender systems increase the chance that an item is actually novel to a user.
-レコメンダーシステムは、人気のないコンテンツを推薦することで、そのアイテムがユーザーにとって実際に目新しいものである確率を高めることができます。
+レコメンダーシステムは、**人気のないコンテンツを推薦することで、そのアイテムがユーザにとって実際に目新しいものである確率を高めることができる**.(Noveltyや serendipityを高める意味合いでのニッチなアイテムか...!)
 Lastly, coverage reflects to what extent all the items available in the system have been recommended to at least a certain number of users.
-最後に、カバレッジは、システムで利用可能なすべてのアイテムが、少なくとも一定数のユーザーにどの程度推奨されているかを反映するものです。
+最後に、カバレッジは、システムで利用可能なすべてのアイテムが、少なくとも一定数のユーザにどの程度推薦されているかを反映するものである.
 This metric is naturally strongly influenced by the novelty of the recommendations, as increasing the visibility of lesser-seen items increases the overall coverage of all items.
-この指標は当然ながらレコメンデーションの新規性に強く影響され、あまり見られていないアイテムの可視性を高めることで、全アイテムのカバー率を高めることができる。
+**この指標は当然ながらレコメンデーションの novelty に強く影響され**、あまり見られていないアイテムの可視性を高めることで、全アイテムのカバー率を高めることができる.
 
-# A democrative conception of diversity in news recommenders ニュースレコメンダーにおける多様性の民主主義的概念
+# 3. A democrative conception of diversity in news recommenders ニュースレコメンダーにおける多様性の民主主義的概念
 
 What becomes apparent from the overview in Section 2 is that although there are various attempts to conceptualize evaluation metrics beyond accuracy in the computer science literature, these metrics are constructed for the broad field of recommendation systems, and are therefore not only relevant in the context of news, but also for music, movies, web search queries and even online dating.
-第2節の概要から明らかになるのは、コンピュータサイエンスの文献では、精度を超えた評価指標を概念化する様々な試みがなされているが、これらの指標は推薦システムという広い分野に対して構築されているため、ニュースという文脈に限らず、音楽、映画、ウェブ検索クエリ、さらにはオンラインデートにも関連するということである。
+第2節の概要から明らかになるのは、コンピュータサイエンスの文献では、beyond-accuracyの evaluation metrics を概念化する様々な試みがなされているが、**これらの指標は推薦システムという広い分野に対して構築されているため、ニュースという文脈に限らず**、音楽、映画、ウェブ検索クエリ、さらにはオンラインデートにも関連するということである.
 However, what they win in generalizability, they lose in specificity.
-しかし、一般性では勝っていても、特異性では負けています。
+しかし、一般性では勝っていても、特異性では負けている.
 They are not grounded in, and do not refer back to the normative understanding of diversity in the media law, fundamental rights law, democratic theory and media studies/communication science literature, as is also demonstrated in Loecherbach et al.[31].
-また、Loecherbachら[31]が示すように、メディア法、基本権法、民主主義理論、メディア研究/コミュニケーション科学の文献における多様性の規範的理解に根拠がなく、言及もしない。
+また、Loecherbachら[31]が示すように、メディア法、基本権法、民主主義理論、メディア研究/コミュニケーション科学の文献における多様性の規範的理解に根拠がなく、言及もしない.
 
 Before we define more quantitative metrics to assess diversity in news recommendation, we first offer a conceptualization of diversity.
-ニュース推薦における多様性を評価するためのより定量的な指標を定義する前に、まず多様性の概念的な説明を行う。
+ニュース推薦における多様性を評価するためのより定量的な指標を定義する前に、まず**多様性の概念的な説明**を行う.
 Following the definition of the Council of Europe, diversity is not a goal in itself, it is a concept with a mission, and it has a pivotal role in promoting the values that define us as a democratic society.
-欧州評議会の定義に従えば、多様性はそれ自体が目的ではなく、使命を持った概念であり、民主主義社会として私たちを定義する価値観を促進する上で極めて重要な役割を担っているのです。
+欧州評議会の定義に従えば、**多様性はそれ自体が目的ではなく、使命(mission)を持った概念**であり、民主主義社会として私たちを定義する価値観を促進する上で極めて重要な役割を担っているのである.
 These values may differ according to different democratic approaches.
-これらの価値観は、民主主義のアプローチの違いによって異なる場合があります。
+**これらの価値観は、民主主義のアプローチの違いによって異なる**場合がある.
 This article builds on a conceptualisation of diversity in recommendations that has been developed by Helberger [19].
-本稿では、Helberger[19]が開発したレコメンデーションにおける多様性の概念に基づき説明する。
+本稿では、Helberger[19]が開発した**レコメンデーションにおける多様性の概念**に基づき説明する.
 Here, Helberger combines the normative understanding of diversity, meaning what should diverse recommendations look like, with more empirical conceptions, meaning what is the impact of diverse exposure on users.
-ここでヘルバーガーは、多様なレコメンデーションはどうあるべきかという規範的な理解と、多様な露出がユーザーに与える影響とは何かという、より実証的な概念を組み合わせている。
+ここでヘルバーガーは、**多様なレコメンデーションはどうあるべきか**という規範的な理解と、**多様な露出がユーザに与える影響とは何か**という、より実証的な概念を組み合わせている.
 There are many theories of democracy, but the paper by Helberger focuses on 4 of the most commonly used theories when talking about the democratic role of the media: Liberal, Participatory, Deliberative and Critical theories of democracy (see also [9, 10, 25, 48]).
-民主主義には多くの理論があるが、Helbergerの論文では、メディアの民主的役割について語る際に最もよく使われる4つの理論に焦点をあてている： 自由主義、参加主義、熟議主義、批判主義である（[9, 10, 25, 48]も参照）。
+民主主義には多くの理論があるが、Helbergerの論文では、**メディアの民主的役割**について語る際に最もよく使われる**4つの理論(メディアモデル?)**に焦点をあてている: 自由主義、参加主義、熟議主義、批判主義である([9, 10, 25, 48]も参照).
 
 It is important to note that no model is inherently better or worse than another.
-ここで重要なのは、どのモデルも他のモデルより本質的に優れている、あるいは劣っているということはないということです。
+ここで重要なのは、どのモデルも他のモデルより本質的に優れている、あるいは劣っているということはないということである.
 Which model is followed is something that should be decided by the media companies themselves, following their mission and dependent on the role they want to play in a democratic society.
-どのモデルに従うかは、メディア企業自身が、その使命に従い、民主主義社会で果たしたい役割に応じて決めるべきことである。
+**どのモデルに従うかは、メディア企業自身が、その使命に従い、民主主義社会で果たしたい役割に応じて決めるべきこと**である.
 
-## The Liberal model リベラルモデル
+## 3.1. The Liberal model リベラルモデル
 
 In liberal democratic theory, individual freedom, including fundamental rights such as the right to privacy and freedom of expression, dispersion of power but also personal development and autonomy of citizens stands central.
-自由民主主義理論では、プライバシー権や表現の自由などの基本的な権利を含む個人の自由、権力の分散だけでなく、市民の人格形成や自律が中心となっています。
+自由民主主義理論では、プライバシー権や表現の自由などの基本的な権利を含む個人の自由、権力の分散だけでなく、市民の人格形成や自律が中心となっている.
 The liberal model is in principal sympathetic to the idea of algorithmic recommendations and considers recommenders as tools to enable citizens to further their autonomy and find relevant content.
-リベラルモデルは、基本的にアルゴリズムによるレコメンデーションの考え方に共感し、レコメンダーを市民の自主性を高め、関連するコンテンツを見つけることを可能にするツールとみなしています。
+**リベラルモデルは、基本的にアルゴリズムによるレコメンデーションの考え方に共感**し、レコメンダーを市民の自主性を高め、関連するコンテンツを見つけることを可能にするツールとみなしている.
 The underlying premise is that citizens know for themselves best what they need in terms of self-fulfillment and exercising their fundamental rights to freedom of expression and freedom to hold opinions, and even if they do not, this is only to a limited extent a problem for democracy.
-大前提として、自己実現や表現の自由・意見表明の自由といった基本的権利の行使に必要なことは、市民が自分自身で一番よく知っており、たとえそうでなくても、それは民主主義の問題として限られた範囲に過ぎない。
+大前提として、自己実現や表現の自由・意見表明の自由といった基本的権利の行使に必要なことは、市民が自分自身で一番よく知っており、たとえそうでなくても、それは民主主義の問題として限られた範囲に過ぎない.
 This is because the normative expectations of what it means to be a good citizen are comparatively low and there is a strict division of tasks, in which "political elites [...] act, whereas citizens react"[48].
-それは、「良い市民とは何か」という規範的期待が比較的低く、「政治的エリートが[...]行動し、市民が反応する」という厳しい役割分担が存在するからである[48]。
+それは、「良い市民とは何か」という規範的期待が比較的低く、「政治的エリートが[...]行動し、市民が反応する」という厳しい役割分担が存在するからである[48].
 
 Under such liberal perspective, diversity would entail a userdriven approach to diversity that reflects citizens interests and preferences not only in terms of content, but also in terms of for example style, language and complexity.
-このようなリベラルな視点に立つと、多様性は、コンテンツだけでなく、例えばスタイルや言語、複雑さなど、市民の関心や好みを反映したユーザー主導のアプローチとなる。
+このようなリベラルな視点に立つと、多様性は、コンテンツだけでなく、例えばスタイルや言語、複雑さなど、市民の関心や好みを反映したユーザ主導のアプローチとなる.
 The liberal recommender is required to inform citizens about prominent issues, especially during key democratic moments such as election time, but else it is expected to take little distance from personal preferences.
-リベラルなレコメンダーは、特に選挙のような民主主義の重要な局面では、市民に目立つ問題を知らせることが求められるが、それ以外では個人の好みとは距離を置くことが期待される。
+リベラルなレコメンダーは、特に選挙のような民主主義の重要な局面では、市民に目立つ問題を知らせることが求められるが、それ以外では個人の好みとは距離を置くこと(=個人の好みに従ってaccuracyを重視して推薦する、という事?)が期待される.
 It is perfectly acceptable for citizens to be consuming primarily cat videos and celebrity news, as long as doing so is an expression of their autonomy.
-市民が猫の動画や有名人のニュースを中心に消費していても、それが市民の自律性の表現である限り、全く問題ありません。
+**市民が猫の動画や有名人のニュースを中心に消費していても、それが市民の自律性の表現である限り、全く問題ない**.
 
 Summary.
 概要
 The liberal model of democracy promotes self-development and autonomous decision making.
-自由主義的な民主主義のモデルは、自己啓発と自律的な意思決定を促進します。
+自由主義的な民主主義のモデルは、自己啓発と自律的な意思決定を促進する.
 As such, a news recommender following a liberal approach should focus on the following criteria:
-そのため、リベラルなアプローチによるニュースレコメンダーは、次のような基準を重視する必要があります：
+そのため、リベラルなアプローチによるニュースレコメンダーは、次のような基準を重視する必要がある：
 
-- Facilitating the specialization of a user in an area of his/her choosing ユーザーが選択した分野での専門性を高めること。
+- Facilitating the specialization of a user in an area of his/her choosing ユーザが選択した分野での専門性を高めること.
 
-- Tailored to a user’s preferences, both in terms of content and in terms of style コンテンツもスタイルも、ユーザーの好みに合わせてカスタマイズできる
+- Tailored to a user’s preferences, both in terms of content and in terms of style コンテンツもスタイルも、ユーザの好みに合わせてカスタマイズされる事. 
 
-## The Participatory model 参加型モデル
+## 3.2. The Participatory model 参加型モデル
 
 An important difference between the liberal and the participatory model of democracy is what it means to be a good citizen.
-民主主義のリベラルモデルと参加型モデルの重要な違いは、「良い市民であること」とは何かということです。
+民主主義のリベラルモデルと参加型モデルの重要な違いは、「良い市民であること」とは何かということである.
 Under participatory conceptions, the role of (personal) freedom and autonomy is to further the common good, rather than personal self-development [20].
-参加型の概念では、（個人の）自由と自律の役割は、個人の自己開発よりも、むしろ共通善を促進することである[20]。
+参加型の概念では、（個人の）自由と自律の役割は、個人の自己開発よりも、むしろ共通善を促進することである[20].
 Citizens cannot afford to be uninterested in politics because they have an active role to play in helping the community to thrive [48].
-市民は、地域社会の繁栄に貢献する積極的な役割を担っているのだから、政治に無関心でいるわけにはいかないのだ[48]。
+**市民は、地域社会の繁栄に貢献する積極的な役割を担っているのだから、政治に無関心でいるわけにはいかないのである**[48].
 Accordingly, the media, and by extension news recommenders must do more than to give citizens ’what they want’, and instead provide citizens with the information they need to play their role as active and engaged citizens [1, 16, 24, 26], and to further the participatory values, such as inclusiveness, equality, participation, tolerance.
-したがって、メディア、ひいてはニュース推薦者は、市民が「欲しいもの」を与えるだけでなく、市民が活動的で関与する市民としての役割を果たすために必要な情報を提供し [1, 16, 24, 26] 、包括性、平等、参加、寛容といった参加型の価値を促進することが必要であると言える。
+**したがって、メディア、ひいてはニュース推薦システムは、市民が「欲しいもの」を与えるだけでなく、市民が活動的で関与する市民としての役割を果たすために必要な情報を提供し [1, 16, 24, 26] 、包括性、平等、参加、寛容といった参加型の価値を促進することが必要**である、と言える.
 Participatory recommenders must also proactively address the fear of missing out on important information and depth, and the concerns about being left out.
-参加型レコメンダーは、重要な情報や深みを見逃す恐れや、取り残されることへの不安にも積極的に対処する必要があります。
+参加型レコメンダーは、**重要な情報や深みを見逃す恐れや、取り残されることへの不安にも積極的に対処する必要がある**.
 Here the challenge is to make a selection that gives a fair representation of different ideas and opinions in society, while also helping a user to gain a deeper understanding, and feeling engaged, rather than confused.
-ここでは、社会のさまざまな考えや意見を公平に表現しながら、ユーザーがより深く理解し、混乱することなく夢中になれるようなセレクションを作ることが課題です。
+ここでは、社会のさまざまな考えや意見を公平に表現しながら、ユーザがより深く理解し、混乱することなく夢中になれるようなセレクションを作ることが課題である.
 This also involves that recommenders are able to respond to the different needs of users in which information is being presented.
-これは、レコメンダーが、情報が提示されるユーザーのさまざまなニーズに対応できるようにすることにもつながります。
+これは、レコメンダーが、情報が提示されるユーザのさまざまなニーズに対応できるようにすることにもつながる.
 The form of presentation is an aspect that is often neglected in discussions around news recommender diversity, ignoring the fact that different people have different preferences and cognitive abilities to process information.
-プレゼンテーションの形態は、ニュースレコメンダーの多様性をめぐる議論において、人によって嗜好や情報を処理する認知能力が異なるという事実を無視して軽視されがちな側面がある。
+プレゼンテーションの形態(?対話的でなく一方的って意味...??)は、ニュースレコメンダーの多様性をめぐる議論において、人によって嗜好や情報を処理する認知能力が異なるという事実を無視して軽視されがちな側面がある.
 Accordingly, the media should ’frame politics in a way that mobilizes people’s interests and participation in politics’.
-従って、メディアは「人々の関心と政治への参加を動員するような形で政治を組み立てる」べきである。
+従って、メディアは「人々の関心と政治への参加を動員するような形で政治を組み立てる」べきである.
 Strömbäck [48] and Ferree et al.[15] speak of ’empowerment’: to be truly empowering, media content needs to be presented in different forms and styles [8, 15, 57].
-Strömbäck［48］とFerreeら［15］は「エンパワーメント」について述べている：真にエンパワーメントするためには、メディアコンテンツは異なる形態やスタイルで提示される必要がある［8、15、57］。
+Strömbäck［48］とFerreeら［15］は"empowerment"について述べている：真にエンパワーメントするためには、メディアコンテンツは異なる形態やスタイルで提示される必要がある［8、15、57］.
 By extension, this means that diversity is not only a matter of the diversity of content, but also of communicative styles.
-ひいては、多様性とは、コンテンツの多様性だけでなく、コミュニケーションスタイルの多様性でもあることを意味します。
+ひいては、**多様性とは、コンテンツの多様性だけでなく、コミュニケーションスタイルの多様性(ex. 対話的だったり一方的だったり?)でもあることを意味する**.
 What would then characterize diversity in a participatory recommender are, on the one hand, active editorial curation in the form of drawing attention to items that citizens ’should know’, taking into account inclusive and proportional representation of main political/ideological viewpoints in society; a focus on political content/news, but also: non-news content that speaks to broader public and, on the other hand, a heterogeneity of styles and tones, possibly also emotional, empathetic, galvanizing, reconciliatory.
-参加型レコメンダーの多様性を特徴づけるものは、一方では、社会の主要な政治的／思想的視点の包括的かつ比例的な代表性を考慮しながら、市民が「知るべき」項目に注意を向けるという形で、積極的に編集キュレーションを行うこと、政治コンテンツ／ニュースに焦点を当てつつ、より広い市民に語りかけるニュース以外のコンテンツも扱うこと、他方では、スタイルやトーンの異質さ、おそらく感情、共感、活気、和解も含まれます。
+参加型レコメンダーの多様性を特徴づけるものは、一方では、社会の主要な政治的／思想的視点の包括的かつ比例的な代表性を考慮しながら、**市民が「知るべき」項目に注意を向けるという形**で、積極的に編集キュレーションを行うこと、政治コンテンツ／ニュースに焦点を当てつつ、より広い市民に語りかけるニュース以外のコンテンツも扱うこと、他方では、スタイルやトーンの異質さ、おそらく感情、共感、活気、和解も含まれる.
 
 Summary.
 概要
 The participatory model of democracy aims to enable people to play an active role in society.
-参加型民主主義のモデルは、人々が社会で積極的な役割を果たすことができるようにすることを目的としています。
+参加型民主主義のモデルは、人々が社会で積極的な役割を果たすことができるようにすることを目的としている.
 It values the idea of the ‘common good’ over that of the individual.
-個人よりも「共通善」という考え方を大切にしています。
+個人よりも「**common good(共通善)**」という考え方を大切にしている.
 Therefore, a participatory recommender should follow the following principles:
 したがって、参加型レコメンダーは、以下の原則に従うべきである：
 
-- Different users do not necessarily see the same articles, but they do see the same topics. 異なるユーザーが必ずしも同じ記事を見るとは限りませんが、同じトピックを見ることはあります。
+- Different users do not necessarily see the same articles, but they do see the same topics. 異なるユーザが必ずしも同じ記事を見るとは限りませんが、同じトピックを見ることはある.
 
-- Article’s complexity is tailored to a user’s preference and capability 記事の複雑さは、ユーザーの好みや能力に合わせて調整される
+- Article’s complexity is tailored to a user’s preference and capability **記事のcomplexity(複雑さ)は、ユーザの好みや能力に合わせて調整される**.
 
-- Reflects the prevalent voices in society 社会に浸透している声を反映させる
+- Reflects the prevalent voices in society 社会に浸透している声を反映させる.
 
-- Empathetic writing style 共感できる文体
+- Empathetic writing style 共感できる文体(コミュニケーションスタイルと同義...??)
 
-## The Deliberative model デリバティブモデル
+## 3.3. The Deliberative model デリバティブモデル
 
 The participatory and the deliberative models of democracy have much in common (compare Ferree et al.[15]).
-民主主義の参加型モデルと熟議型モデルには多くの共通点がある（Ferreeら[15]を参照）。
+民主主義の参加型モデルと熟議型モデルには多くの共通点がある(Ferreeら[15]を参照).
 Also in the deliberative or discursive conceptions of democracy, community and active participation of virtuous citizens stands central.
 また、民主主義の熟議的概念や言説的概念では、コミュニティや徳の高い市民の積極的な参加が中心となっています。
 One of the major differences is that the deliberative model operates on the premise that ideas and preferences are not a given, but that instead we must focus more on the process of identifying and negotiating and, ultimately, agreeing on different values and issues [15, 25].
@@ -261,7 +261,7 @@ The focus of the deliberative recommender is on presenting different opinions an
 
 - Impartial and rational writing style 公平で合理的な文体
 
-## The Critical model クリティカルモデル
+## 3.4. The Critical model クリティカルモデル
 
 A main thrust of criticism of the deliberative model is that it is too much focused on rational choice, on drawing an artificial line between public and private, on overvaluing agreement and disregarding the importance of conflict and disagreement as a form of democratic exercise [26].
 熟議モデルに対する批判の主な柱は、合理的な選択に焦点を当てすぎ、公的と私的の間に人工的な線を引き、合意を過大評価し、民主主義の行使の一形態としての対立や不一致の重要性を軽視している、というものである[26]。
@@ -289,7 +289,7 @@ From a critical democracy perspective on diversity, recommenders should be optim
 
 - Emotional writing style エモーショナルな文体
 
-# Diversity metrics 多様性の指標
+# 4. Diversity metrics 多様性の指標
 
 The democratic models described in Section 3 lead to different conceptualizations of diversity as a value, which again translate into different diversity expectations for recommender systems.
 セクション3で説明した民主的なモデルは、価値としての多様性の異なる概念化をもたらし、それがまた推薦システムに対する異なる多様性の期待に変換される。
@@ -320,14 +320,14 @@ Before explaining the metrics, we define the following variables that are releva
 
 - 𝑟: The list of articles in a user’s reading history 𝑟: ユーザーの読書履歴にある記事のリスト
 
-## Calibration 
+## 4.1. Calibration
 
 The Calibration metric reflects to what extent the issued recommendations reflect the user’s preferences.
 Calibrationは、発行されたレコメンデーションがユーザーの好みをどの程度反映しているかを示す指標です。
 A score of 0 indicates a perfect Calibration, whereas a higher score indicates a larger divergence from the user’s preferences.
 スコア0は完璧なキャリブレーションを意味し、スコアが高いほどユーザーの好みとの乖離が大きいことを意味します。
 
-### Explanation. 説明があります。
+### 4.1.1. Explanation. 説明があります。
 
 Calibration is a well-known metric in traditional recommender system literature [47].
 キャリブレーションは、従来のレコメンダーシステムの文献ではよく知られた指標である[47]。
@@ -340,7 +340,7 @@ News recommendations can also be tailored to the user in terms of article style 
 This may be split up within different topics; a user may be an expert in the field of politics but less so in the field of medicine, and may want to receive more complex articles in case of the first, and less in case of the second.
 政治には詳しいが、医療にはあまり詳しくないというような場合、前者の場合はより複雑な記事を、後者の場合はより少ない記事を受け取りたいと考えるかもしれません。
 
-### In the context of democratic recommenders. 民主的な推薦者の文脈で。
+### 4.1.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 The Calibration metric is most significant for recommenders following the Liberal and Participatory model.
 Calibration」指標は、「Liberal」「Participatory」モデルのレコメンダーにおいて最も重要である。
@@ -355,7 +355,7 @@ We therefore expect a higher degree of divergence in Calibration, at least when 
 Both models, but especially the Participatory model, require that the user receives content that is tailored to their needs in terms of article complexity, and in this context we expect a Calibration score that is closer to zero.
 どちらのモデルも、特に参加型モデルでは、記事の複雑さという点でユーザーのニーズに合わせたコンテンツを受け取る必要があり、この文脈では、0に近いCalibrationスコアが予想されます。
 
-### Operationalization. オペレーション化。
+### 4.1.3. Operationalization. オペレーション化。
 
 For the operationalization of a recommender’s Calibration score it is important to have information on not only an article’s topic and complexity, which can potentially be automatically extracted from an article’s body (see for example Feng et al.[14] and Kim and Oh [28]), but also on the user’s preferences regarding this matter.
 レコメンダーのキャリブレーションスコアを運用するためには、記事の本文から自動的に抽出できる可能性のある、記事のトピックと複雑さに関する情報だけでなく（例えば、Fengら[14]とKim and Oh [28]を参照）、この問題に関するユーザーの好みに関する情報も重要である。
@@ -380,21 +380,21 @@ KLダイバージェンスは、ゼロに近い数値で割ると非常に高い
 Therefore, the aggregate Calibration score is calculated by taking the median of all the Calibration scores for individual users.
 そのため、個々のユーザーのCalibrationスコアの中央値を取ることで、Calibrationスコアの総和を算出します。
 
-### Limitations. 制限があります。
+### 4.1.4. Limitations. 制限があります。
 
 This approach is tailored to categorical data, but sometimes our data may be numerical rather than categorical, for example in the case of article complexity.
 このアプローチはカテゴリーデータに適していますが、例えば記事の複雑さのように、カテゴリーデータではなく数値データである場合もあります。
 In these cases, a simple distance measure may suffice over the more complex KullbackLeibler divergence.
 このような場合、より複雑なカルバックライブラー発散よりも、単純な距離測定で十分な場合があります。
 
-## Fragmentation フラグメンテーション
+## 4.2. Fragmentation フラグメンテーション
 
 The Fragmentation metric denotes the amount of overlap between news story chains shown to different users.
 Fragmentationメトリクスは、異なるユーザーに表示されるニュースストーリーチェーン間の重複の量を示す。
 A Fragmentation score of 0 indicates a perfect overlap between users, whereas a score of 1 indicates no overlap at all.
 Fragmentationのスコアが0であれば、ユーザー同士が完全に重なっていることを示し、スコアが1であれば、全く重なっていないことを示します。
 
-### Explanation. 説明があります。
+### 4.2.1. Explanation. 説明があります。
 
 News recommender systems create a recommendation by filtering from a large pool of available news items.
 ニュースレコメンダーシステムは、利用可能なニュースアイテムの大規模なプールからフィルタリングすることによって推薦を作成します。
@@ -407,7 +407,7 @@ Fragmentation specifically compares differences in recommended news story chains
 When the news story chains shown to the users differ significantly, the public sphere becomes more fragmented, hence the term Fragmentation.
 ユーザーに表示されるニュースストーリーの連鎖が大きく異なると、公共圏がより細分化されるため、Fragmentationと呼ばれるようになった。
 
-### In the context of democratic recommenders. 民主的な推薦者の文脈で。
+### 4.2.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 Both the Participatory and Deliberative models favor a common public sphere, and therefore a Fragmentation score that is closer to zero.
 参加型と熟議型の両モデルとも、共通の公共圏を好むため、フラグメンテーションのスコアはゼロに近くなります。
@@ -416,7 +416,7 @@ The Liberal model on the other hand promotes the specialization of the user in t
 Finally the Critical model, with its emphasis on drawing attention to power imbalances prevalent in society as a whole, calls for a low Fragmentation score.
 最後に、社会全体の力の不均衡に注目することに重点を置く「クリティカル」モデルは、「フラグメンテーション」のスコアを低く設定します。
 
-### Operationalization. オペレーション化。
+### 4.2.3. Operationalization. オペレーション化。
 
 This metric requires that individual articles can be aggregated into higher-level news story chains over time.
 この指標は、個々の記事が時間と共により高いレベルのニュースストーリーチェーンに集約されることを必要とします。
@@ -451,19 +451,19 @@ Rank-Biased Overlapは0と1の間のスコアで、0は2つのリストが完全
 Lastly, the aggregate Fragmentation score is calculated by averaging the Fragmentation score between each user and every other user.
 最後に、各ユーザーのFragmentationスコアを他のユーザーと平均して、Aggregate Fragmentation scoreを算出します。
 
-### Limitations. 制限があります。
+### 4.2.4. Limitations. 制限があります。
 
 Since this approach is computationally expensive (every user is compared to every other user, which is 𝑂(𝑛 2 ) complexity), some additional work is needed on its scalability in practice, for example through sampling methods.
 このアプローチは計算量が多いため（すべてのユーザーを他のすべてのユーザーと比較するため、ᵄ(𝑛 2 ) の複雑さになる）、サンプリング方法など、実際のスケーラビリティについて追加の作業が必要である。
 
-## Activation アクティベーション
+## 4.3. Activation アクティベーション
 
 The Activation metric expresses whether the issued recommendations are aimed at inspiring the users to take action.
 Activationは、発行されたレコメンデーションが、ユーザーの行動を喚起するものであるかどうかを表す指標です。
 A score close to 1 indicates a high amount of activating content, whereas a score close to 0 indicates more neutral content.
 スコアが1に近いほど活性化するコンテンツが多く、0に近いほど中立的なコンテンツが多いことを表しています。
 
-### Explanation. 説明があります。
+### 4.3.1. Explanation. 説明があります。
 
 The way in which an article is written may affect the reader in some way.
 記事の書き方は、読み手に何らかの影響を与える可能性があります。
@@ -480,7 +480,7 @@ The link between emotions, affect and activation is described well by Papacharis
 The Activation metric aims to capture this by measuring the strength of emotions expressed in an article.
 Activation指標は、記事中に表現された感情の強さを測定することで、これを把握することを目的としています。
 
-### In the context of democratic recommenders. 民主的な推薦者の文脈で。
+### 4.3.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 The Activation metric is relevant in three of the four different models.
 Activationの指標は、4種類のモデルのうち3種類で関連しています。
@@ -495,7 +495,7 @@ The Critical model however leaves more room for emotional and provocative conten
 Here high values of Activation should be expected.
 ここでは、Activationの高い値が期待される。
 
-### Operationalization. オペレーション化。
+### 4.3.3. Operationalization. オペレーション化。
 
 The Circumplex Model of Affect [43] describes a dimensional model where all types of emotions are expressed using the terms valence and arousal.
 感情のサーカムプレックスモデル[43]は、すべてのタイプの感情が価数と覚醒という用語を使って表現される次元モデルを説明している。
@@ -531,7 +531,7 @@ A value lower than zero indicates that the recommender system shows less activat
 Values higher than zero show the opposite; the recommendation sets contained proportionally more activating content than was available in the pool.
 ゼロより高い値は、その逆で、レコメンデーションセットには、プールで利用可能なものより比例して多くの活性化コンテンツが含まれていることを示しています。
 
-### Limitations. 制限があります。
+### 4.3.4. Limitations. 制限があります。
 
 Of principle importance is the impact that the article’s text has on the reader.
 原則的に重要なのは、記事の文章が読者に与える影響である。
@@ -542,14 +542,14 @@ It must also be noted that people may respond differently to different emotions 
 We therefore see this approach as an approximation of the concept of activation, affect and emotion in articles, until such a time when more research in the topic allows us to be more nuanced in our perceptions.
 したがって、このアプローチは、論文における活性化、影響、感情の概念の近似値であり、このテーマに関するより多くの研究によって、よりニュアンスのある認識ができるようになるまでの間、このようなアプローチになると考えています。
 
-## Representation 表現
+## 4.4. Representation 表現
 
 The Representation metric expresses whether the issued recommendations provide a balance of different opinions and perspectives, where one is not unduly more or less represented than others.
 代表性」指標は、発行された提言が、異なる意見や視点のバランスを保ち、ある意見が他の意見より不当に多く、あるいは少なくなっていないかどうかを表すものです。
 A score close to zero indicates a balance, where the model of democracy that is chosen determines what this balance entails, whereas a higher score indicates larger discrepancies.
 ゼロに近いほどバランスが取れていることを示し、そのバランスがどのようなものであるかは、選択された民主主義のモデルによって決定されます。一方、スコアが高いほど矛盾が大きいことを示します。
 
-### Explanation. 説明があります。
+### 4.4.1. Explanation. 説明があります。
 
 Representation is one of the more intuitive interpretations of diversity.
 Representationは、より直感的な多様性の解釈の一つです。
@@ -560,7 +560,7 @@ Here we care more about what is being said than who says it, which is the goal o
 In order to define what it means to provide a balance of opinions, one needs to refer back to the different models and their goals.
 意見のバランスを取るとはどういうことかを定義するためには、さまざまなモデルとその目的を参照する必要があります。
 
-### In the context of democratic recommenders. 民主的な推薦者の文脈で。
+### 4.4.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 The Participatory model aims to be reflective of "the real political world".
 参加型モデルは、「現実の政治世界」を反映することを目的としています。
@@ -573,7 +573,7 @@ The Critical model has a large focus on shifting power balances, and it does so 
 In doing this, the Critical model also strongly considers the characteristics of the opinion holder, specifically whether they are part of a minority group or not, though this is the goal of the last metric, Alternative Voices.
 この際、Criticalモデルでは、意見保有者の特性、具体的にはマイノリティグループに属しているかどうかも強く考慮されていますが、これは最後の指標であるAlternative Voicesが目指すところです。
 
-### Operationalization. オペレーション化。
+### 4.4.3. Operationalization. オペレーション化。
 
 Representation, and Alternative Voices as well, rely strongly on the correct and complete identification of the opinions and opinion holders mentioned in the news.
 Representation、そしてAlternative Voicesは、ニュースで言及された意見と意見保有者を正確かつ完全に特定することに強く依存しています。
@@ -617,19 +617,19 @@ This way, for each of the different approaches holds that the closer the diverge
 For each of the reflective, inverse and equal approaches, the aggregated Representation score is obtained by averaging the Representation score over all recommendations issued to all users.
 Reflective、Inverse、Equalの各アプローチにおいて、全ユーザーに発行されたすべての推薦文のRepresentationスコアを平均することで、集約されたRepresentationスコアが得られる。
 
-### Limitations. 制限があります。
+### 4.4.4. Limitations. 制限があります。
 
 Kullback-Leibler divergence treats each category as being independent, and does not account for opinions and standpoints that may be more or less similar to other categories.
 カルバック・ライブラーダイバージェンスは、各カテゴリーを独立したものとして扱い、他のカテゴリーと多かれ少なかれ類似している意見や立場は考慮しない。
 
-## Alternative Voices オルタナティブ・ヴォイス
+## 4.5. Alternative Voices オルタナティブ・ヴォイス
 
 The Alternative Voices metric measures the relative presence of people from a minority or marginalised group.
 オルタナティブ・ヴォイスの指標は、少数派または周縁化されたグループの人々の相対的な存在感を測定するものです。
 A higher score indicates a proportionally larger presence.
 スコアが高いほど、存在感が比例して大きくなることを示します。
 
-### Explanation. 説明があります。
+### 4.5.1. Explanation. 説明があります。
 
 Where Representation is largely focused on the explicit content of a perspective (the what), Alternative Voices is more concerned with the person holding it (the who), and specifically whether this person or organisation is one of a minority or an otherwise marginalised group that is more likely to be underrepresented in the mainstream media.
 Representationが視点の明確な内容（What）に主眼を置いているのに対し、Alternative Voicesは、その視点を持つ人物（Who）に関心があり、特にその人物や組織が、主流メディアで十分に表現されない可能性の高い少数派や疎外されたグループの一人であるかどうかを重視しています。
@@ -658,14 +658,14 @@ Following this both the identification and the way its algorithms use this infor
 However, for the remainder of this section we will assume that we do have a proper way of identifying people from a minority group, either through manual annotation or automatic extraction.
 しかし、このセクションの残りの部分では、手動アノテーションまたは自動抽出によって、少数派の人々を識別する適切な方法があることを仮定することにします。
 
-### In the context of democratic recommenders. 民主的な推薦者の文脈で。
+### 4.5.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 The Alternative Voices metric is naturally most significant in the Critical model, which aims to provide a platform to voices that would otherwise go unheard, and therefore has a large focus on the opinions and perspectives from minority groups.
 オルタナティブ・ヴォイス」の指標は、当然ながら、「クリティカル」モデルにおいて最も大きな意味を持ちます。「クリティカル」モデルは、通常では聞くことのできない声にプラットフォームを提供することを目的としているため、少数派の意見・見解に大きな焦点が当てられています。
 To a lesser extent, the same holds for the Participatory and Deliberative models, where the first aims to foster tolerance and empathy, and the second that they should be equally represented.
 程度の差こそあれ、「参加型」と「熟議型」についても同様で、前者は寛容と共感を育むことを目的とし、後者は平等に代表されるべきであるとするものです。
 
-### Operationalization. オペレーション化。
+### 4.5.3. Operationalization. オペレーション化。
 
 The discussion around Fairness in machine learning systems has lead, among others, to a number of definitions of the concept.
 機械学習システムにおける「公平性」をめぐる議論では、さまざまな定義がなされている。
@@ -689,7 +689,7 @@ When the value is larger than 1 more people from unprotected groups appear in th
 Again, the aggregate score consists of the average Alternative Voices score over all recommendations issued to all users.
 ここでも、集計スコアは、全ユーザーに発行されたすべての推薦文の平均的なAlternative Voicesスコアで構成されています。
 
-### Limitations. 制限があります。
+### 4.5.4. Limitations. 制限があります。
 
 A major caveat of this approach is that it assumes that the mere mentioning of minority people is enough to serve the goals of the Alternative Voices metric.
 このアプローチの大きな注意点は、マイノリティの人々について言及するだけで、オルタナティヴ・ヴォイスの指標の目的を果たすのに十分であると仮定していることです。
@@ -698,12 +698,12 @@ This disregards the fact that these people may be mentioned but from another per
 Further research should focus on not only identifying a person from a minority group, but also whether they are mentioned as an active or passive agent.
 マイノリティグループの人物を特定するだけでなく、その人物が能動的な存在として言及されているのか、受動的な存在として言及されているのかについても、さらなる研究が必要です。
 
-# General limitations 一般的な制限
+# 5. General limitations 一般的な制限
 
 Though all of the metrics described in Section 4 already mention the limitations of that metric specifically, this section describes a number of the limitations of this method as a whole.
 セクション4で説明されたすべてのメトリックは、すでに具体的にそのメトリックの限界に言及していますが、このセクションでは、全体としてこのメソッドのいくつかの限界について説明します。
 
-## Ordering ご注文はこちら
+## 5.1. Ordering ご注文はこちら
 
 Of the currently specified metrics, only Fragmentation takes the ordering of the items in the recommendation into account.
 現在規定されているメトリクスのうち、Fragmentationのみ推薦文の項目の順序を考慮しています。
@@ -712,7 +712,7 @@ However, the top result in a recommendation is of significantly more importance 
 In future work, the other metrics should be extended in such a way that they reflect this.
 今後、他の指標もこれを反映するように拡張していく必要があります。
 
-## Formalism Trap フォーマリズムの罠
+## 5.2. Formalism Trap フォーマリズムの罠
 
 Many of the concepts described here are susceptible to the Formalism Trap described in [45], which is defined as the "[f]ailure to account for the full meaning of social concepts [...], which can be procedural, contextual and contestable, and cannot be resolved through mathematical formalisms".
 ここで説明した概念の多くは、[45]で説明した「形式主義の罠」の影響を受けやすく、「手続き的、文脈的、論争的であり、数学的形式主義では解決できない社会概念の完全な意味を説明することができない」と定義されている。
@@ -723,7 +723,7 @@ To claim our approach comes close to covering these subtleties would be presumpt
 The pitfalls of this trap should be mitigated by always providing full transparency on how these concepts are implemented, on what kind of data they are based, and most importantly on how they should (and should not) be interpreted.
 このような落とし穴は、これらの概念がどのように実装されているか、どのようなデータに基づいているか、そして最も重要なことは、これらの概念をどのように解釈すべきか（そして解釈すべきでないか）についての完全な透明性を常に提供することによって軽減されるべきです。
 
-## Bias in the dataset データセットの偏り
+## 5.3. Bias in the dataset データセットの偏り
 
 The metrics presented in Section 4 typically rely on measuring a difference between the set of recommended items and the full set of articles that were available, the reading history of the user in question or among users.
 セクション4で紹介したメトリクスは、通常、推奨アイテムのセットと利用可能だった記事のフルセット、当該ユーザーの読書履歴、またはユーザー間の差分を測定することに依存している。
@@ -736,7 +736,7 @@ That means exposure diversity ultimately is dependent on external diversity.
 Detecting such a bias in the dataset rather than in the produced recommendations and undertaking steps to remedy this needs additional work.
 このようなバイアスを、作成されたレコメンデーションではなく、データセットから検出し、これを改善するための措置を講じることは、さらなる作業が必要です。
 
-## Nudging for more diverse news consumption より多様なニュース消費のためのナッジング
+## 5.4. Nudging for more diverse news consumption より多様なニュース消費のためのナッジング
 
 The metrics discussed here do not reflect on the process of getting users to actually consume more diverse content.
 ここで取り上げた指標は、ユーザーがより多様なコンテンツを実際に消費するようになるまでの過程を反映したものではありません。
@@ -747,14 +747,14 @@ Whether or not news recommenders can successfully motivate users to consume more
 Designing for more diverse news consumption also gives rise to a different discussion: is it ethical to nudge news consumption, even if it is for a commendable goal such as "more diversity" or "countering filter bubbles", and where do we draw the line between offering more diverse recommendations and manipulating the reader? The complexity and breadth of this topic are out of scope for this paper, but should be considered in future work.
 より多様なニュース消費をデザインすることは、また別の議論を生む。たとえそれが「より多様な」あるいは「フィルターバブルに対抗する」といった称賛に値する目標のためであっても、ニュース消費をナッジすることは倫理的なのか、より多様な推薦をすることと読者を操作することの線引きはどこにあるのか。このトピックの複雑さと広さは本稿の範囲外であるが、今後の研究において考慮されるべきであろう。
 
-## Broader institutional context 広い制度的背景
+## 5.5. Broader institutional context 広い制度的背景
 
 Efforts to develop more diverse and inclusive news recommendation metrics and models do not, on their own, mean that users will receive more diverse recommendations; that requires a combination of editorial judgement, the availability of internal workflows that translate this judgement into technology design, the room to implement alternative diversity metrics in third party software (which again depends on the degree of professional autonomy and negotiating power between the media and software providers), and users who engage with the algorithm when presented with a particular recommendation.
 より多様で包括的なニュース推薦の指標やモデルを開発する努力は、それだけでユーザーがより多様な推薦を受けることを意味しません。そのためには、編集者の判断、その判断を技術設計に反映させる内部ワークフローの利用、第三者のソフトウェアに別の多様性指標を実装する余地（これもメディアとソフトウェアプロバイダー間の専門家の自律性と交渉力の程度に依存します）、特定の推薦を提示されたときにアルゴリズムと関わるユーザーとの組み合わせが必要となります。
 The design approach must thus additionally consider how values are re-negotiated between stakeholders (e.g.editors, data scientists, regulators, external technology providers), how values are embedded in organizational practices of a news room, and how professional users, citizens, and society create control mechanisms and governance frameworks to realize public values, such as diversity.
 そのため、編集者、データサイエンティスト、規制当局、外部技術提供者などのステークホルダー間でどのように価値が再交渉されるのか、ニュースルームの組織的実践にどのように価値が埋め込まれるのか、プロフェッショナルユーザー、市民、社会が多様性などの公共価値を実現するための制御メカニズムやガバナンスの枠組みをどのように作るのか、などをデザインアプローチとして追加的に考慮する必要がある。
 
-## Inherent limits to value by design approaches バリュー・バイ・デザイン・アプローチに内在する限界
+## 5.6. Inherent limits to value by design approaches バリュー・バイ・デザイン・アプローチに内在する限界
 
 Finally, it is important to be mindful of another lesson from the general diversity by design debate, namely that there are also certain limits to value sensitive design, in our case the extent to which diversity as a normative concept can be operationalized in concrete recommender design.
 つまり、価値観に配慮したデザインには一定の限界があり、この場合、規範的な概念としての多様性を具体的なレコメンダーデザインでどの程度運用できるかが重要である。
@@ -763,14 +763,14 @@ This can have to do with the sheer difficulty of translating certain aspects of 
 Examples of this are commercial constraints and the need to optimize for profit rather than for diversity, but also the limited effectiveness of recommenders in actually steering user choices.
 その例として、商業的な制約や、多様性よりも利益のために最適化する必要性が挙げられますが、実際にユーザーの選択を誘導するレコメンダーの効果も限定的です。
 
-# Implementation インプリメンテーション
+# 6. Implementation インプリメンテーション
 
 We are working on the implementation of the concepts and metrics discussed here in an open source tool1 .
 ここで取り上げた概念や指標を、オープンソースのツールに実装する作業を行っています1。
 The goal of this tool is to implement the metrics described in this paper as evaluation metrics for recommender design, and in doing so enable media companies to evaluate the performance of their own recommendations against those of several baseline recommendations.
 本ツールの目的は、本稿で紹介した評価指標をレコメンダーデザインの評価指標として実装することで、メディア企業が自社のレコメンデーションのパフォーマンスを複数のベースラインのレコメンデーションと比較して評価できるようにすることです。
 
-## Approach アプローチ
+## 6.1. Approach アプローチ
 
 By making comparisons between the different recommender approaches, media companies should be able to draw conclusions about which recommender strategy fits their editorial mission best.
 メディア企業は、さまざまなレコメンダーアプローチを比較検討することで、どのレコメンダー戦略が自社の編集ミッションに最も適しているかという結論を導き出すことができるはずです。
@@ -785,7 +785,7 @@ We are in contact with multiple media companies, to inform them about the differ
 Simultaneously this topic is continuously being discussed with experts from many different disciplines, as happened for example during a Dagstuhl Workshop[3].
 同時にこのテーマは、例えばDagstuhlワークショップ[3]で起こったように、多くの異なる分野の専門家と継続的に議論されています。
 
-## Guidelines for adoption 採用に関するガイドライン
+## 6.2. Guidelines for adoption 採用に関するガイドライン
 
 The ultimate goal of this paper is to propose notions that could be incorporated in recommender system design.
 本稿の最終目標は、レコメンダーシステムの設計に組み込むことができる概念を提案することである。
@@ -803,7 +803,7 @@ We do not consider these metrics to be the final "truth" in the identification o
 The metrics and their operationalizations should serve as inspiration and a starting point for discussion, not as restrictions or set requirements for "good" recommender design.
 メトリックスとその運用は、インスピレーションと議論の出発点として役立つべきものであり、「良い」レコメンダーデザインの制限や要件として設定するものではない。
 
-# Discussion ディスカッション
+# 7. Discussion ディスカッション
 
 In this paper we have translated normative notions of diversity into five metrics.
 本稿では、多様性に関する規範的な概念を5つの指標に置き換えた。
