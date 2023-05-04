@@ -179,7 +179,7 @@ As such, a news recommender following a liberal approach should focus on the fol
 
 - Facilitating the specialization of a user in an area of his/her choosing ユーザが選択した分野での専門性を高めること.
 
-- Tailored to a user’s preferences, both in terms of content and in terms of style コンテンツもスタイルも、ユーザの好みに合わせてカスタマイズされる事. 
+- Tailored to a user’s preferences, both in terms of content and in terms of style コンテンツもスタイルも、ユーザの好みに合わせてカスタマイズされる事.
 
 ## 3.2. The Participatory model 参加型モデル
 
@@ -217,7 +217,7 @@ It values the idea of the ‘common good’ over that of the individual.
 Therefore, a participatory recommender should follow the following principles:
 したがって、参加型レコメンダーは、以下の原則に従うべきである：
 
-- Different users do not necessarily see the same articles, but they do see the same topics. 異なるユーザが必ずしも同じ記事を見るとは限りませんが、同じトピックを見ることはある.
+- Different users do not necessarily see the same articles, but they do see the same topics. 異なるユーザが必ずしも同じ記事を見るとは限らない、同じトピックを見ることはある.
 
 - Article’s complexity is tailored to a user’s preference and capability **記事のcomplexity(複雑さ)は、ユーザの好みや能力に合わせて調整される**.
 
@@ -230,141 +230,138 @@ Therefore, a participatory recommender should follow the following principles:
 The participatory and the deliberative models of democracy have much in common (compare Ferree et al.[15]).
 民主主義の参加型モデルと熟議型モデルには多くの共通点がある(Ferreeら[15]を参照).
 Also in the deliberative or discursive conceptions of democracy, community and active participation of virtuous citizens stands central.
-また、民主主義の熟議的概念や言説的概念では、コミュニティや徳の高い市民の積極的な参加が中心となっています。
+また、民主主義の熟議的概念や言説的概念では、コミュニティや徳の高い市民の積極的な参加が中心となっている.
 One of the major differences is that the deliberative model operates on the premise that ideas and preferences are not a given, but that instead we must focus more on the process of identifying and negotiating and, ultimately, agreeing on different values and issues [15, 25].
-大きな違いの一つは、熟議モデルが、アイデアや好みは所与のものではなく、代わりに、異なる価値観や問題点を特定し、交渉し、最終的に合意するプロセスにもっと焦点を当てなければならないという前提で運営されていることです［15、25］。
+大きな違いの一つは、熟議モデルが、アイデアや好みは所与のものではなく、代わりに、異なる価値観や問題点を特定し、交渉し、最終的に合意するプロセスにもっと焦点を当てなければならないという前提で運営されていることである［15、25］.
 Political and public will formation is not simply the result of who has the most votes or ’buyers’, but it is the result of a process of public scrutiny and intensive reflection [20].
-政治的・公的意志の形成は、単に誰が最も多くの票や「買い手」を持っているかという結果ではなく、国民の監視と集中的な考察のプロセスの結果である [20] 。
+政治的・公的意志の形成は、単に誰が最も多くの票や「買い手」を持っているかという結果ではなく、国民の監視と集中的な考察のプロセスの結果である [20].
 This involves a process of actively comparing and engaging with other also contrary and opposing ideas [34].
-これには、他の反対意見や対立意見と積極的に比較し、関与するプロセスが含まれます[34]。
+これには、他の反対意見や対立意見と積極的に比較し、関与するプロセスが含まれる[34].
 The epistemological shift from information to deliberation has important implications for the way the role of news recommenders can be conceptualised.
-情報から熟議への認識論の転換は、ニュースレコメンダーの役割を概念化する上で重要な意味を持つ。
+情報から熟議への認識論の転換は、ニュースレコメンダーの役割を概念化する上で重要な意味を持つ.(??)
 Under a deliberative perspective, it is not enough to ’simply’ inform people.
-熟議的な観点では、「単に」知らせるだけでは不十分である。
+**熟議的な観点では、「単に」知らせるだけでは不十分である**.
 The media need to do more, and has an important role in "promoting and indeed improving the quality of public life - and not merely reporting on and complaining about it" [9].
-メディアはより多くのことをする必要があり、「公共生活の質を促進し、実際に向上させる-単に報告したり文句を言ったりするだけではない-」という重要な役割を担っている[9]。
+メディアはより多くのことをする必要があり、「公共生活の質を促進し、実際に向上させる-単に報告したり文句を言ったりするだけではない-」という重要な役割を担っている[9].
 Strömbäck [48] goes even further and demands that the media should also "actively foster political discussions that are characterised by impartiality, rationality, intellectual honesty and equality among the participants".
-Strömbäck［48］はさらに踏み込んで、メディアは「公平性、合理性、知的誠実さ、参加者の平等性を特徴とする政治的議論を積極的に促進」することも要求している。
+Strömbäck［48］はさらに踏み込んで、メディアは「公平性、合理性、知的誠実さ、参加者の平等性を特徴とする政治的議論を積極的に促進」することも要求している.
 Diversity in the deliberative conception has the important task of confronting the audience with different and challenging viewpoints that they did not consider before, or not in this way [34].
-熟議概念における多様性は、聴衆に、以前は考えなかった、あるいはこのように考えなかった、異なる、挑戦的な視点を突きつけるという重要な任務を持つ[34]。
+**熟議概念における多様性は、聴衆に、以前は考えなかった、あるいはこのように考えなかった、異なる、挑戦的な視点を突きつけるという重要な任務を持つ[34].**
 Concretely, this means that a deliberative recommender should include a higher share of articles presenting various perspectives, diversity of emotions, range of different sources; it should strive for equal representation, as well as on recommending items of balanced content, commentary, discussion formats, background information; potentially some prominence for public service media content (as the mission of many public service media includes the creation of a deliberative public sphere), as well as a preference for rational tone, consensus seeking, inviting commentary and reflection.
-具体的には、審議型レコメンダーは、さまざまな視点、感情の多様性、さまざまなソースを提示する記事の比率を高め、平等な表現、バランスのとれたコンテンツ、解説、議論形式、背景情報のアイテムを推奨するよう努めるべきであるということである。
+具体的には、審議型レコメンダーは、さまざまな視点、感情の多様性、さまざまなソースを提示する記事の比率を高め、平等な表現、バランスのとれたコンテンツ、解説、議論形式、背景情報のアイテムを推奨するよう努めるべきであるということである. その場合、**公共サービスメディアのコンテンツが重視される可能性があり**（多くの公共サービスメディアの使命に審議的な公共圏の形成が含まれているため）、また、合理的なトーン、合意形成、コメントや考察の招聘が好まれる.
 
 Summary.
 概要
 The focus of the deliberative recommender is on presenting different opinions and values in society, with the goal of coming to a common consensus or agreeing on different values.
-審議型レコメンダーは、社会におけるさまざまな意見や価値観を提示し、共通のコンセンサスを得ること、あるいは異なる価値観に合意することを目的としています。
+審議型レコメンダーは、社会におけるさまざまな意見や価値観を提示し、共通のコンセンサスを得ること、あるいは異なる価値観に合意することを目的としている.
 
-- Focus on topics that are currently at the center of public debate 現在、社会的な議論の中心となっているトピックに焦点を当てる。
-
-- Within those topics, present a plurality of voices and opinions そのテーマの中で、複数の声や意見を提示すること
-
+- Focus on topics that are currently at the center of public debate 現在、**社会的な議論の中心となっているトピックに焦点を当てる.**
+- Within those topics, present a plurality of voices and opinions そのテーマの中で、複数の声や意見を提示すること.
 - Impartial and rational writing style 公平で合理的な文体
 
 ## 3.4. The Critical model クリティカルモデル
 
 A main thrust of criticism of the deliberative model is that it is too much focused on rational choice, on drawing an artificial line between public and private, on overvaluing agreement and disregarding the importance of conflict and disagreement as a form of democratic exercise [26].
-熟議モデルに対する批判の主な柱は、合理的な選択に焦点を当てすぎ、公的と私的の間に人工的な線を引き、合意を過大評価し、民主主義の行使の一形態としての対立や不一致の重要性を軽視している、というものである[26]。
+熟議モデルに対する批判の主な柱は、合理的な選択に焦点を当てすぎ、公的と私的の間に人工的な線を引き、合意を過大評価し、民主主義の行使の一形態としての対立や不一致の重要性を軽視している、というものである[26].
 The focus on reason and tolerance muffles away the stark, sometimes shrill contrasts and hidden inequalities that are present in society, or even discourage them from developing their identity in the first place.
-理性と寛容に焦点を当てることで、社会に存在する厳しい、時には耳障りなコントラストや隠れた不平等を消し去り、あるいは、そもそも自分のアイデンティティを確立することを思いとどまらせてしまうのです。
+理性と寛容に焦点を当てることで、社会に存在する厳しい、時には耳障りなコントラストや隠れた不平等を消し去り、あるいは、そもそも自分のアイデンティティを確立することを思いとどまらせてしまうのである.
 Accordingly, under more radical or critical perspectives, citizens should look beyond the paint of civil and rational deliberation.
-したがって、より急進的な、あるいは批判的な視点に立つと、市民は市民的で合理的な審議のペイントを超えたところに目を向けるべきである。
+したがって、より急進的な、あるいは批判的な視点に立つと、市民は市民的で合理的な審議のペイントを超えたところに目を向けるべきである.
 They should discover and experience the many marginalised voices of those "who are ’outsiders within’ the system"[15], and when doing so critically reflect on reigning elites and their ability to give these voices their rightful place in society.
-彼らは「システム内の "アウトサイダー "である人々」[15]の多くの周縁化された声を発見し経験し、そうすることで支配するエリートやこれらの声を社会における正当な位置に与える彼らの能力について批判的に考察するべきである。
+彼らは「システム内の "アウトサイダー "である人々」[15]の多くの周縁化された声を発見し経験し、そうすることで支配するエリートやこれらの声を社会における正当な位置に与える彼らの能力について批判的に考察するべきである.
 Diverse critical recommenders hence do not simply give people what they want.
-そのため、多様なクリティカル・レコメンダーは、人々が望むものをただ与えるだけではありません。
+そのため、**多様なクリティカル・レコメンダーは、人々が望むものをただ与えるだけではない.**
 Instead, they actively nudge readers to experience otherness, and draw attention to the marginalised, invisible or less powerful ideas and opinions in society.
-その代わりに、読者に他者性を体験するよう積極的に働きかけ、社会から疎外された、目に見えない、あるいは力のない考え方や意見に注意を向けさせる。
+その代わりに、**読者に他者性を体験するよう積極的に働きかけ、社会から疎外された、目に見えない、あるいは力のない考え方や意見に注意を向けさせる**.
 And again, it is not only the question of what kinds of content are presented but also the how: whereas in the deliberative and also the participatory model, much focus is on a rational, reconciliary and measured tone, critical recommenders would also offer room for alternative forms of presentations: narratives that appeal to the ’normal’ citizen because they tell an everyday life story, emotional and provocative content, even figurative and shrill tones - all with the objective to escape the standard of civility and the language of the stereotypical "middle-aged, educated, blank white man"[56].
-審議型や参加型では、理性的、調整的、慎重な表現が重視されるのに対して、批判的な推薦者は、別の表現形式を受け入れる余地も提供する： 日常生活の物語を語ることで「普通の」市民にアピールする物語、感情的で挑発的な内容、比喩的で荒々しいトーンなど、すべて礼節の基準やステレオタイプの「中年の、教育を受けた、無口な白人」の言葉から逃れることを目的とするものである[56]。
+審議型や参加型では、理性的、調整的、慎重な表現が重視されるのに対して、批判的な推薦者は、別の表現形式を受け入れる余地も提供する： 日常生活の物語を語ることで「普通の」市民にアピールする物語、感情的で挑発的な内容、比喩的で荒々しいトーンなど、すべて礼節の基準やステレオタイプの「中年の、教育を受けた、無口な白人」の言葉から逃れることを目的とするものである[56].
 
 Summary.
 概要
 The critical recommender aims to provide a platform to those voices and opinions that would otherwise go unheard.
-クリティカルレコメンダーは、普段は聞くことのできない声や意見に、プラットフォームを提供することを目的としています。
+クリティカルレコメンダーは、**普段は聞くことのできない声や意見に、プラットフォームを提供することを目的としている**.
 From a critical democracy perspective on diversity, recommenders should be optimized on the following principles:
-多様性に関する批判的民主主義の観点から、レコメンダーは以下の原則に基づき最適化されるべきです：
+多様性に関する批判的民主主義の観点から、レコメンダーは以下の原則に基づき最適化されるべきである：
 
-- Emphasis on voices from marginalized groups 限界集落からの声の重視
-
+- Emphasis on voices from marginalized groups 限界集落(=アウトサイダー的な少数派?)からの声の重視
 - Emotional writing style エモーショナルな文体
 
 # 4. Diversity metrics 多様性の指標
 
 The democratic models described in Section 3 lead to different conceptualizations of diversity as a value, which again translate into different diversity expectations for recommender systems.
-セクション3で説明した民主的なモデルは、価値としての多様性の異なる概念化をもたらし、それがまた推薦システムに対する異なる多様性の期待に変換される。
+セクション3で説明した民主的なモデルは、**価値としての多様性の異なる概念化**をもたらし、それがまた**推薦システムに対する異なる多様性の期待に変換される**.
 In this section, we propose five metrics that follow directly from these expectations, grounded in democratic theory and adapted from existing Information Retrieval metrics: Calibration, Fragmentation, Activation, Representation and Alternative Voices.
-このセクションでは、民主主義理論に基づき、既存の情報検索メトリクスを応用して、これらの期待から直接的に導かれる5つのメトリクスを提案します： Calibration、Fragmentation、Activation、Representation、Alternative Voicesである。
+このセクションでは、民主主義理論に基づき、**既存の情報検索メトリクスを応用して、これらの期待から直接的に導かれる5つのメトリクスを提案する**： Calibration、Fragmentation、Activation、Representation、Alternative Voicesである。
 For each of these metrics, we explain the concept and link to democratic theory.
-それぞれの指標について、その概念や民主主義理論との関連性を説明しています。
+それぞれの指標について、その概念や民主主義理論との関連性を説明している.
 Furthermore we make a suggestion for operationalization, but note that this work is an initial outline and that much work still needs to be done.
-さらに、運用のための提案を行いますが、この作業は初期のアウトラインであり、まだ多くの作業が必要であることに留意してください。
+さらに、運用のための提案を行いますが、この作業は初期のアウトラインであり、まだ多くの作業が必要であることに留意してください.
 Future work should include more work on the validity of the metrics, for example by following the measurement models specified in Jacobs and Wallach [22].
-今後の課題としては、例えばJacobs and Wallach [22]で規定されている測定モデルに従って、測定基準の妥当性についてさらに検討する必要があります。
+今後の課題としては、例えばJacobs and Wallach [22]で規定されている測定モデルに従って、測定基準の妥当性についてさらに検討する必要がある.(=distanc metricsの性質を満たすべき、みたいな話とかね...!)
 Lastly we mention a number of the limitations of the currently proposed metrics and their operationalizations.
-最後に、現在提案されているメトリクスとその運用の限界について言及します。
+最後に、現在提案されているメトリクスとその運用の限界について言及する.
 
 Table 1 provides an overview of the different models, metrics and their expected value ranges.
-表1は、さまざまなモデル、指標、およびそれらの期待値範囲の概要を示している。
+表1は、さまざまなモデル、指標、およびそれらの期待値範囲の概要を示している.
 Note that not all metrics are relevant to all models.
-なお、すべてのメトリクスがすべてのモデルに関連するわけではありません。
+なお、すべてのメトリクスがすべてのモデルに関連するわけではない.
 
 Before explaining the metrics, we define the following variables that are relevant to multiple metrics:
-メトリクスを説明する前に、複数のメトリクスに関連する以下の変数を定義します：
+メトリクスを説明する前に、複数のメトリクスに関連する以下の変数を定義する：
 
-- 𝑝: The list of articles the recommender system could make its selection from, also referred to as the ’pool’ 𝑝: 推薦システムが選択することができる記事のリストで、「プール」とも呼ばれます。
+- $p$: The list of articles the recommender system could make its selection from, also referred to as the ’pool’ 𝑝: 推薦システムが選択することができる記事のリストで、「プール」とも呼ばれる.
 
-- 𝑞: The unordered list of articles in the recommendation set 𝑞: 推薦セットに含まれる記事の順序不同のリスト
+- $q$: The unordered list of articles in the recommendation set 𝑞: 推薦セットに含まれる記事の順序不同のリスト(rank-awareではない! ほうほう...!)
 
-- 𝑄: The ordered list of articles in the recommendation set 𝑄: 推薦セットに含まれる記事の順序付きリスト
+- $Q$: The ordered list of articles in the recommendation set 𝑄: 推薦セットに含まれる記事の順序付きリスト
 
-- 𝑟: The list of articles in a user’s reading history 𝑟: ユーザーの読書履歴にある記事のリスト
+- $r$: The list of articles in a user’s reading history 𝑟: ユーザのreading historyにある記事のリスト
 
 ## 4.1. Calibration
 
 The Calibration metric reflects to what extent the issued recommendations reflect the user’s preferences.
-Calibrationは、発行されたレコメンデーションがユーザーの好みをどの程度反映しているかを示す指標です。
+Calibrationは、発行されたレコメンデーションがユーザの好みをどの程度反映しているかを示す指標である.
 A score of 0 indicates a perfect Calibration, whereas a higher score indicates a larger divergence from the user’s preferences.
-スコア0は完璧なキャリブレーションを意味し、スコアが高いほどユーザーの好みとの乖離が大きいことを意味します。
+スコア0は完璧なキャリブレーションを意味し、スコアが高いほどユーザの好みとの乖離が大きいことを意味する.
 
 ### 4.1.1. Explanation. 説明があります。
 
 Calibration is a well-known metric in traditional recommender system literature [47].
-キャリブレーションは、従来のレコメンダーシステムの文献ではよく知られた指標である[47]。
+**キャリブレーションは、従来のレコメンダーシステムの文献ではよく知られた指標**である[47].
 It is calculated by measuring the difference in distributions of categorical information, such as topics in the news domain or genres in the movie domain, between what is currently recommended to the user and what the user has consumed in the past.
-ニュース領域ではトピック、映画領域ではジャンルといったカテゴリー情報の分布において、現在ユーザーに推奨されているものと、過去にユーザーが消費したものとの差を測定することで算出されるものです。
+ニュース領域ではトピック、映画領域ではジャンルといったカテゴリー情報の分布において、現在ユーザに推薦されているものと、過去にユーザーが消費したものとの差を測定することで算出されるものである.
 However, we extend our notion of calibration beyond topicality or genre.
-しかし、私たちは、キャリブレーションの概念を、話題性やジャンルの枠を超えて拡張しています。
+しかし、私たちは、**キャリブレーションの概念を、話題性やジャンルの枠を超えて拡張している**.
 News recommendations can also be tailored to the user in terms of article style and complexity, allowing the reader to receive content that is attuned to their information needs and processing preferences.
-また、記事のスタイルや複雑さなど、ユーザーに合わせたニュース推薦が可能で、読者は自分の情報ニーズや処理の好みに合わせたコンテンツを受け取ることができるようになります。
+また、**記事のスタイル(=writing styleの事??)や複雑さなど**、ユーザに合わせたニュース推薦が可能で、読者は自分の情報ニーズや処理の好みに合わせたコンテンツを受け取ることができるようになる.
 This may be split up within different topics; a user may be an expert in the field of politics but less so in the field of medicine, and may want to receive more complex articles in case of the first, and less in case of the second.
-政治には詳しいが、医療にはあまり詳しくないというような場合、前者の場合はより複雑な記事を、後者の場合はより少ない記事を受け取りたいと考えるかもしれません。
+**政治には詳しいが、医療にはあまり詳しくないというような場合、前者の場合はより複雑な記事を、後者の場合はより単純な記事を受け取りたいと考えるかもしれない**.
 
 ### 4.1.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 The Calibration metric is most significant for recommenders following the Liberal and Participatory model.
-Calibration」指標は、「Liberal」「Participatory」モデルのレコメンダーにおいて最も重要である。
+Calibration」指標は、「Liberal」「Participatory」モデルのレコメンダーにおいて最も重要である.
 The aim of the Liberal model is to facilitate user specialization, and assumes that the user eventually knows best what they want to read.
-リベラルモデルの目的は、ユーザーの特殊化を促進することであり、最終的にユーザーが読みたいものを最もよく知っていることを前提としています。
+リベラルモデルの目的は、ユーザーの特殊化を促進することであり、最終的にユーザが読みたいものを最もよく知っていることを前提としている.
 In these models, we expect the Calibration scores to be closer to 0.
-これらのモデルでは、キャリブレーションのスコアが0に近くなることが予想されます。
+これらのモデルでは、キャリブレーションのスコアが0に近くなることが予想される.
 On the other hand, the Participatory model favors the common good over the individual.
-一方、「参加型」は、個人よりも共通の利益を優先するモデルです。
+一方、「参加型」は、個人よりも共通の利益を優先するモデルである.
 We therefore expect a higher degree of divergence in Calibration, at least when considered in light of topicality.
-したがって、少なくとも話題性を考慮すると、キャリブレーションではより高度な乖離が予想されます。
+したがって、少なくとも話題性を考慮すると、キャリブレーションではより高度な乖離が予想される.(1に近づくべき...!! この論文時点では0-1のvalue rangeではないが...!)
 Both models, but especially the Participatory model, require that the user receives content that is tailored to their needs in terms of article complexity, and in this context we expect a Calibration score that is closer to zero.
-どちらのモデルも、特に参加型モデルでは、記事の複雑さという点でユーザーのニーズに合わせたコンテンツを受け取る必要があり、この文脈では、0に近いCalibrationスコアが予想されます。
+どちらのモデルも、特に参加型モデルでは、**記事の複雑さという点でユーザのニーズに合わせたコンテンツを受け取る必要があり**、この文脈では、0に近いCalibrationスコアが予想される.(このtopicはcomplexity高く、このtopicはcomplexity低く、みたいな文脈で、ユーザの好みと推薦結果を類似させるべき、という話.)
 
 ### 4.1.3. Operationalization. オペレーション化。
 
 For the operationalization of a recommender’s Calibration score it is important to have information on not only an article’s topic and complexity, which can potentially be automatically extracted from an article’s body (see for example Feng et al.[14] and Kim and Oh [28]), but also on the user’s preferences regarding this matter.
-レコメンダーのキャリブレーションスコアを運用するためには、記事の本文から自動的に抽出できる可能性のある、記事のトピックと複雑さに関する情報だけでなく（例えば、Fengら[14]とKim and Oh [28]を参照）、この問題に関するユーザーの好みに関する情報も重要である。
+レコメンダーのキャリブレーションスコアを運用するためには、**記事の本文から自動的に抽出できる可能性のある、記事のトピックと複雑さに関する情報**だけでなく（例えば、Fengら[14]とKim and Oh [28]を参照）、この問題に関するユーザの好みに関する情報も重要である.
 Note that topicality can be both generic (politics, entertainment, sports, etc) and more specific (climate change, Arsenal).
-なお、話題性には一般的なもの（政治、娯楽、スポーツなど）と、より具体的なもの（気候変動、アーセナルなど）がある。
+なお、話題性には一般的なもの（政治、娯楽、スポーツなど）と、より具体的なもの（気候変動、アーセナルなど）がある.(これらは同じトピックでも、解像度が違いそう...! 大分類=カテゴリと小分類=トピック、みたいなイメージ??言葉の定義は違うかも...!)
 In light of democratic theory more fine-grained information is preferable, but this is not always available.
-民主主義の理論に照らせば、よりきめ細かい情報が望ましいのですが、必ずしもそうとは限りません。
+民主主義の理論に照らせば、よりきめ細かい情報が望ましいのですが、必ずしもそうとは限らない.(??)
 Steck [47] uses the Kullback-Leibler divergence between two probability distributions as Calibration metric, as follows:
-Steck [47]では、2つの確率分布間のKullback-Leibler divergenceをCalibration metricとして、以下のように使用しています：
+Steck [47]では、2つの確率分布間のKullback-Leibler divergenceをCalibration metricとして、以下のように使用している：
 
 $$
 $$
@@ -378,60 +375,60 @@ Calibrationスコアが高いほど、乖離は大きくなります。
 As KL divergence can yield very high scores when dividing by numbers close to zero, outliers can greatly influence the average outcome.
 KLダイバージェンスは、ゼロに近い数値で割ると非常に高いスコアが得られるため、異常値は平均的な結果に大きく影響します。
 Therefore, the aggregate Calibration score is calculated by taking the median of all the Calibration scores for individual users.
-そのため、個々のユーザーのCalibrationスコアの中央値を取ることで、Calibrationスコアの総和を算出します。
+そのため、**個々のユーザーのCalibrationスコアの中央値**を取ることで、Calibrationスコアの総和を算出する.
 
-### 4.1.4. Limitations. 制限があります。
+### 4.1.4. Limitations
 
 This approach is tailored to categorical data, but sometimes our data may be numerical rather than categorical, for example in the case of article complexity.
-このアプローチはカテゴリーデータに適していますが、例えば記事の複雑さのように、カテゴリーデータではなく数値データである場合もあります。
+このアプローチはカテゴリデータに適しているが、例えば、記事の複雑さのように、**categorical データではなく numerical データである場合もある**.
 In these cases, a simple distance measure may suffice over the more complex KullbackLeibler divergence.
-このような場合、より複雑なカルバックライブラー発散よりも、単純な距離測定で十分な場合があります。
+このような場合、より複雑なKullbackLeibler divergenceよりも、単純なdistance measure で十分な場合がある. (numerical分布のKLダイバージェンスの算出って手間かかりそう...)
 
 ## 4.2. Fragmentation フラグメンテーション
 
 The Fragmentation metric denotes the amount of overlap between news story chains shown to different users.
-Fragmentationメトリクスは、異なるユーザーに表示されるニュースストーリーチェーン間の重複の量を示す。
+Fragmentationメトリクスは、**異なるユーザに表示されるニュースストーリーチェーン間の重複の量**を示す.
 A Fragmentation score of 0 indicates a perfect overlap between users, whereas a score of 1 indicates no overlap at all.
-Fragmentationのスコアが0であれば、ユーザー同士が完全に重なっていることを示し、スコアが1であれば、全く重なっていないことを示します。
+Fragmentationのスコアが0であれば、ユーザ同士が完全に重なっていることを示し、スコアが1であれば、全く重なっていないことを示す.
 
 ### 4.2.1. Explanation. 説明があります。
 
 News recommender systems create a recommendation by filtering from a large pool of available news items.
-ニュースレコメンダーシステムは、利用可能なニュースアイテムの大規模なプールからフィルタリングすることによって推薦を作成します。
+ニュースレコメンダーシステムは、利用可能なニュースアイテムの大規模なプールからフィルタリングすることによって推薦を作成する.
 By doing so they may stimulate a common public sphere, or create smaller and more specialized ’bubbles’.
-そうすることで、共通の公共圏を刺激したり、より小さく、より専門的な「バブル」を作り出したりすることができる。
+そうすることで、共通の公共圏を刺激したり、より小さく、より専門的な「バブル」を作り出したりすることができる.
 This may occur both in terms of topics recommended, which is the focus of the Fragmentation metric, and in terms of presented perspectives, which will be later explained in the Representation metric.
-これは、Fragmentationの指標で注目される推奨トピックと、Representationの指標で後述する提示された視点の両面で発生する可能性があります。
+これは、Fragmentationの指標で注目される推薦されるトピックと、Representationの指標で後述する提示された視点の両面で発生する可能性があります。
 Fragmentation specifically compares differences in recommended news story chains, or sets of articles describing the same issue or event from different perspectives, writing styles or points in time [38], between users; the smaller the difference, the more aware the users are of the same events and issues in society, and the more we can speak of a joint agenda.
-フラグメンテーションとは、具体的には、ユーザー間で推奨されるニュースストーリーチェーン（同じ問題や出来事を異なる視点、書き方、時点から記述した記事の集合）[38]の違いを比較するもので、違いが小さいほど、ユーザーは社会における同じ出来事や問題をより認識しており、共同課題を語ることができるとしています。
+フラグメンテーションとは、具体的には、ユーザ間で推薦されるニュースストーリーチェーン（同じ問題や出来事を異なる視点、書き方、時点から記述した記事の集合）[38]の違いを比較するもので、**違いが小さいほど、ユーザは社会における同じ出来事や問題をより認識しており、共同課題を語ることができるとしている.**
 When the news story chains shown to the users differ significantly, the public sphere becomes more fragmented, hence the term Fragmentation.
-ユーザーに表示されるニュースストーリーの連鎖が大きく異なると、公共圏がより細分化されるため、Fragmentationと呼ばれるようになった。
+ユーザに表示されるニュースストーリーの連鎖が**大きく異なると、公共圏がより細分化される**ため、Fragmentationと呼ばれるようになった.
 
 ### 4.2.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 Both the Participatory and Deliberative models favor a common public sphere, and therefore a Fragmentation score that is closer to zero.
-参加型と熟議型の両モデルとも、共通の公共圏を好むため、フラグメンテーションのスコアはゼロに近くなります。
+参加型と熟議型の両モデルとも、共通の公共圏を好むため、フラグメンテーションのスコアはゼロに近くなる.
 The Liberal model on the other hand promotes the specialization of the user in their area of interest, which in turn causes a higher Fragmentation score.
-一方、Liberalモデルは、ユーザーの興味ある分野への特化を促進するため、Fragmentationスコアが高くなります。
+一方、**Liberalモデルは、ユーザの興味ある分野への特化を促進するため、Fragmentationスコアが高くなる**.
 Finally the Critical model, with its emphasis on drawing attention to power imbalances prevalent in society as a whole, calls for a low Fragmentation score.
-最後に、社会全体の力の不均衡に注目することに重点を置く「クリティカル」モデルは、「フラグメンテーション」のスコアを低く設定します。
+最後に、社会全体の力の不均衡に注目することに重点を置く「クリティカル」モデルは、「フラグメンテーション」のスコアを低く設定する.
 
 ### 4.2.3. Operationalization. オペレーション化。
 
 This metric requires that individual articles can be aggregated into higher-level news story chains over time.
-この指標は、個々の記事が時間と共により高いレベルのニュースストーリーチェーンに集約されることを必要とします。
+この指標は、個々の記事が時間と共により高いレベルのニュースストーリーチェーンに集約されることを必要する.
 This can be done through manual annotation or automated extraction process.
-これは、手動によるアノテーションや自動抽出処理によって行うことができます。
+これは、手動によるアノテーションや自動抽出処理によって行うことができる.
 Two unsupervised learning approaches for doing this automatically can be found in Nicholls and Bright [38] and Trilling and van Hoof [51].
-これを自動的に行うための教師なし学習のアプローチは、Nicholls and Bright [38]とTrilling and van Hoof [51]にある。
+これを自動的に行うための教師なし学習のアプローチは、Nicholls and Bright [38]とTrilling and van Hoof [51]にある.
 Once the stories are identified, the Fragmentation score can be defined as the aggregate average distance between all sets of recommendations between all users.
-ストーリーが特定されると、Fragmentationスコアは、すべてのユーザー間の推奨セット間の平均距離の総和として定義することができる。
+ストーリーが特定されると、Fragmentationスコアは、すべてのユーザ間の推薦セット間の平均距離の総和として定義することができる.
 Dillahunt et al.[11], which aimed to detect filter bubbles in search engine results, defines this distance with the Kendall Tau Rank Distance (KDT), which measures the number of pairwise disagreements between two lists of ranked items.
-検索エンジンの結果におけるフィルターバブルの検出を目的としたDillahuntら[11]は、この距離を、ランク付けされたアイテムの2つのリスト間の対の不一致の数を測定するKendall Tau Rank Distance（KDT）で定義しています。
+検索エンジンの結果におけるフィルターバブルの検出を目的としたDillahuntら[11]は、この距離を、ランク付けされたアイテムの2つのリスト間の対の不一致の数を測定するKendall Tau Rank Distance（KDT）で定義している.
 However, Kendall Tau is not suitable when the two lists can be (largely) disjointed.
-しかし、2つのリストが（大きく）ばらばらになる可能性がある場合、Kendall Tauは適さない。
+しかし、2つのリストが（大きく）ばらばらになる可能性がある場合、Kendall Tauは適さない.
 It also penalizes differences at the top of the list equally to those more at the bottom.
-また、上位の差は下位の差に等しくペナルティーを与えることになります。
+また、上位の差は下位の差に等しくペナルティーを与えることになる.
 Instead we base our approach on the Rank Biased Overlap used in Webber et al.[54]:
 その代わりに、Webberら[54]で使用されているRank Biased Overlapをベースとしたアプローチを採用しています：
 

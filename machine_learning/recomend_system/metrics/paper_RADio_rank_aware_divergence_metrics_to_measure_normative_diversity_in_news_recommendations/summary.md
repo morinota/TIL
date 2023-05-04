@@ -187,7 +187,7 @@ $$
 ここで、
 
 - $f_{KL}(t) = t \log{t}$
-- $f_{JS}(t) = \frac{1}{2}[(t+1)\log{frac{2}{t+1}} +t \log{t}]$
+- $f_{JS}(t) = \frac{1}{2}[(t+1)\log{\frac{2}{t+1}} +t \log{t}]$
 
 とする. ($t$は関数fの入力値.)
 

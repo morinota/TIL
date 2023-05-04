@@ -56,8 +56,9 @@ def calc_rank_aware_JS_divergence(
     P_asterisk: Dict[Any, float],
     Q_asterisk: Dict[Any, float],
 ) -> float:
+    x_candidates = set(P_asterisk.keys()).union(set(Q_asterisk.keys()))
     rank_aware_JS_div = 0
-    for x in P_asterisk.keys():
+    for x in x_candidates:
         P_x = P_asterisk.get(x, 0)
         Q_x = Q_asterisk.get(x, 0)
         if P_x <= 0 or Q_x <= 0:
