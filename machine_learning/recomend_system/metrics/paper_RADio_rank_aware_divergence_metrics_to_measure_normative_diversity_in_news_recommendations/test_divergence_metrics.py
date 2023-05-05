@@ -3,8 +3,6 @@ import math
 from diversity_metrics import JSDivergenceAbstract, KLDivergenceAbstract
 from sample import (
     calc_f_JS_t,
-    calc_JS_divergence,
-    calc_KL_divergence,
     calc_rank_aware_JS_divergence,
     calc_rank_aware_pmf,
     calc_rank_weight_MMR,
