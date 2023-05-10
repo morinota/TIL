@@ -1,11 +1,14 @@
-# Bayesian Personalized Ranking from Implicit Feedback
+# 施策デザインの為の機械学習入門 chapter 1を読んでまとめ.
 
-published date: hogehoge September 2022,
-authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
-url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
+published date: June 2021,
+authors: 齋藤優太，安井翔太　著，株式会社ホクソエム　監修
+url(paper): https://gihyo.jp/book/2021/978-4-297-12224-9
 (勉強会発表者: morinota)
 
 ---
+
+はじめに。本記事は自分の勉強用メモとして記入しています。
+技術書の内容を割りとガッツリ書いてしまっており、"引用"を超えて"転載"とも言える内容なので、限定共有投稿にします。
 
 ## どんなもの?
 
@@ -20,7 +23,7 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
 
 ## 技術や手法の肝は？
 
-本書では、**ビジネス*ML施策への実践手順**に有用なフレームワークを提案していました。
+本書では、**ビジネス\*ML施策への実践手順**に有用なフレームワークを提案していました。
 ステップは以下の5つ:
 
 - 1. KPIを設定する
