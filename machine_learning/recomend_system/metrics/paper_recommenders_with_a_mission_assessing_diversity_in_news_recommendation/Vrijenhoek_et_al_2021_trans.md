@@ -297,7 +297,7 @@ For each of these metrics, we explain the concept and link to democratic theory.
 Furthermore we make a suggestion for operationalization, but note that this work is an initial outline and that much work still needs to be done.
 さらに、運用のための提案を行いますが、この作業は初期のアウトラインであり、まだ多くの作業が必要であることに留意してください.
 Future work should include more work on the validity of the metrics, for example by following the measurement models specified in Jacobs and Wallach [22].
-今後の課題としては、例えばJacobs and Wallach [22]で規定されている測定モデルに従って、測定基準の妥当性についてさらに検討する必要がある.(=distanc metricsの性質を満たすべき、みたいな話とかね...!)
+今後の課題としては、例えばJacobs and Wallach [22]で規定されている測定モデルに従って、**測定基準の妥当性についてさらに検討する必要がある**.(=distanc metricsの性質を満たすべき、みたいな話とかね...!)
 Lastly we mention a number of the limitations of the currently proposed metrics and their operationalizations.
 最後に、現在提案されているメトリクスとその運用の限界について言及する.
 
@@ -333,7 +333,7 @@ It is calculated by measuring the difference in distributions of categorical inf
 However, we extend our notion of calibration beyond topicality or genre.
 しかし、私たちは、**キャリブレーションの概念を、話題性やジャンルの枠を超えて拡張している**.
 News recommendations can also be tailored to the user in terms of article style and complexity, allowing the reader to receive content that is attuned to their information needs and processing preferences.
-また、**記事のスタイル(=writing styleの事??)や複雑さなど**、ユーザに合わせたニュース推薦が可能で、読者は自分の情報ニーズや処理の好みに合わせたコンテンツを受け取ることができるようになる.
+また、**記事のスタイル(=writing style, 文体の事??)や複雑さなど**、ユーザに合わせたニュース推薦が可能で、読者は自分の情報ニーズや処理の好みに合わせたコンテンツを受け取ることができるようになる.
 This may be split up within different topics; a user may be an expert in the field of politics but less so in the field of medicine, and may want to receive more complex articles in case of the first, and less in case of the second.
 **政治には詳しいが、医療にはあまり詳しくないというような場合、前者の場合はより複雑な記事を、後者の場合はより単純な記事を受け取りたいと考えるかもしれない**.
 
@@ -364,6 +364,9 @@ Steck [47] uses the Kullback-Leibler divergence between two probability distribu
 Steck [47]では、2つの確率分布間のKullback-Leibler divergenceをCalibration metricとして、以下のように使用している：
 
 $$
+Calibration_{r, q} = \text{KL Divergence}(r(c|u), q(c|u))
+\\
+\sum_{c} r(c|u) log \frac{r(c|u)}{\tilde{q}(c|u)}
 $$
 
 where 𝑟(𝑐|𝑢) is the distribution of categorical information 𝑐 across the articles consumed by the user in the past, and 𝑞˜(𝑐|𝑢) is an approximation of 𝑞(𝑐|𝑢) (necessary since KL divergence diverges if 𝑞(𝑐|𝑢) = 0), which is the distribution of the categories c across the current recommendation set.
@@ -411,7 +414,7 @@ Both the Participatory and Deliberative models favor a common public sphere, and
 The Liberal model on the other hand promotes the specialization of the user in their area of interest, which in turn causes a higher Fragmentation score.
 一方、**Liberalモデルは、ユーザの興味ある分野への特化を促進するため、Fragmentationスコアが高くなる**.
 Finally the Critical model, with its emphasis on drawing attention to power imbalances prevalent in society as a whole, calls for a low Fragmentation score.
-最後に、社会全体の力の不均衡に注目することに重点を置く「クリティカル」モデルは、「フラグメンテーション」のスコアを低く設定する.
+最後に、**社会全体の力の不均衡に注目することに重点を置く**「クリティカル」モデルは、「フラグメンテーション」のスコアを低く設定する.
 
 ### 4.2.3. Operationalization. オペレーション化。
 
@@ -433,39 +436,38 @@ Instead we base our approach on the Rank Biased Overlap used in Webber et al.[54
 その代わりに、Webberら[54]で使用されているRank Biased Overlapをベースとしたアプローチを採用しています：
 
 $$
-
-
+RBO(Q_1, Q_2, s) = (1 - s) \sum_{d=1}^{\infty}s^{d-1} A_{d}
 $$
 
-where 𝑄1 and 𝑄2 denote two (potentially) infinite ordered lists, or two recommendations issued to users 1 and 2, and 𝑠 a parameter that generates a set of weights with a geometric progression starting at 1 and moving towards 0 that ensures the tail of the recommendation is counted less severely compared to its head.
-ここで、ᵄ1と𝑄2は、2つの（潜在的に）無限順序リスト、またはユーザー1と2に発行された2つの勧告を示し、↪Ll_1D460は、勧告の尾部がその頭部と比較してより厳しくカウントされるように、1から始まり0に向かって幾何級数で重みセットを生成するパラメーターです。
+where $Q_1$ and $Q_2$ denote two (potentially) infinite ordered lists, or two recommendations issued to users 1 and 2, and $s$ a parameter that generates a set of weights with a geometric progression starting at 1 and moving towards 0 that ensures the tail of the recommendation is counted less severely compared to its head.
+ここで、$Q_1$と$Q_2$は、2つの（潜在的に）無限順序リスト、またはユーザ1と2に発行された2つの勧告を示し、$s$は、推薦結果の尾部がその頭部と比較してより厳しくカウントされるように、1から始まり0に向かって幾何級数で重みセットを生成するパラメーターである.
 Because of this there is a natural cut-off point where the score stabilizes.
 そのため、スコアが安定する自然なカットオフポイントが存在するのです。
 We iterate over the ranks 𝑑 in the recommendation set, and at each rank we calculate the average overlap 𝐴𝑑 .
-推薦セットのランクᑑを繰り返し、各ランクで平均重複度ᑑを計算します。
+推薦セットのランク$d$を繰り返し、各ランクで平均重複度$A_d$を計算します。
 Because Rank-Biased Overlap yields a score between 0 and 1, with 0 indicating two completely disjoint lists and 1 a perfect overlap, and the score that is expressed is semantically opposite of what we aim to express with the Fragmentation metric, we obtain the Fragmentation score by calculating 1 minus the Rank-Biased Overlap.
-Rank-Biased Overlapは0と1の間のスコアで、0は2つのリストが完全に不連続、1は完全に重なることを示し、表現されるスコアはFragmentation指標で表現しようとするものと意味的に逆なので、1マイナスRank-Biased Overlapを計算してFragmentationスコアを求めることにします。
+**Rank-Biased Overlapは0と1の間のスコアで、0は2つのリストが完全に不連続、1は完全に重なることを示し**、表現されるスコアはFragmentation指標で表現しようとするものと意味的に逆なので、1 - Rank-Biased Overlapを計算してFragmentationスコアを求めることにします。
 Lastly, the aggregate Fragmentation score is calculated by averaging the Fragmentation score between each user and every other user.
-最後に、各ユーザーのFragmentationスコアを他のユーザーと平均して、Aggregate Fragmentation scoreを算出します。
+最後に、各ユーザのFragmentationスコアを他のユーザーと平均して、Aggregate Fragmentation scoreを算出します。
 
 ### 4.2.4. Limitations. 制限があります。
 
-Since this approach is computationally expensive (every user is compared to every other user, which is 𝑂(𝑛 2 ) complexity), some additional work is needed on its scalability in practice, for example through sampling methods.
-このアプローチは計算量が多いため（すべてのユーザーを他のすべてのユーザーと比較するため、ᵄ(𝑛 2 ) の複雑さになる）、サンプリング方法など、実際のスケーラビリティについて追加の作業が必要である。
+Since this approach is computationally expensive (every user is compared to every other user, which is O(n^2) complexity), some additional work is needed on its scalability in practice, for example through sampling methods.
+このアプローチは計算量が多いため（すべてのユーザーを他のすべてのユーザーと比較するため、O(n^2)の複雑さになる）、サンプリング方法など、実際のスケーラビリティについて追加の作業が必要である。
 
 ## 4.3. Activation アクティベーション
 
 The Activation metric expresses whether the issued recommendations are aimed at inspiring the users to take action.
-Activationは、発行されたレコメンデーションが、ユーザーの行動を喚起するものであるかどうかを表す指標です。
+Activationは、発行されたレコメンデーションが、**ユーザの行動を喚起するものであるかどうか**を表す指標です。
 A score close to 1 indicates a high amount of activating content, whereas a score close to 0 indicates more neutral content.
-スコアが1に近いほど活性化するコンテンツが多く、0に近いほど中立的なコンテンツが多いことを表しています。
+**スコアが1に近いほど活性化するコンテンツが多く、0に近いほど中立的なコンテンツが多い**ことを表しています。
 
 ### 4.3.1. Explanation. 説明があります。
 
 The way in which an article is written may affect the reader in some way.
 記事の書き方は、読み手に何らかの影響を与える可能性があります。
 An impartial article may foster understanding for different perspectives, whereas an emotional article may activate them to undertake action.
-公平な記事であれば、異なる視点への理解を深めることができ、感情的な記事であれば、行動を起こすきっかけとなる。
+**公平な記事であれば、異なる視点への理解を深めることができ、感情的な記事であれば、行動を起こすきっかけとなる**.
 A lot of work has been done on the effect of emotions and affect on the undertaking of collective group action.
 感情や影響が集団行動の引き受けに与える影響については、これまでにも多くの研究がなされてきた。
 This holds especially for anger, in combination with a sense of group efficacy [52].
@@ -480,15 +482,15 @@ Activation指標は、記事中に表現された感情の強さを測定する�
 ### 4.3.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 The Activation metric is relevant in three of the four different models.
-Activationの指標は、4種類のモデルのうち3種類で関連しています。
+**Activationの指標は、4種類のモデルのうち3種類で関連**しています。
 The Deliberative model aims for a common consensus and debate, and therefore would give a certain measure of prominence to impartial articles with low Activation scores.
-Deliberativeモデルは、共通のコンセンサスと議論を目指すため、Activationスコアが低い公平な記事を一定程度目立たせることになる。
+Deliberativeモデルは、共通のコンセンサスと議論を目指すため、**Activationスコアが低い公平な記事を一定程度目立たせる**ことになる。
 The Participatory model fosters the common good and understanding, and aims to facilitate users in fulfilling their roles as citizens, undertaking action when necessary.
 参加型モデルは、共通の利益と理解を促進し、ユーザーが市民としての役割を果たし、必要に応じて行動できるようにすることを目的としています。
 This leads to a slightly wider value range; some activating content is desirable, but nothing too extreme.
 そのため、数値の幅がやや広くなっています。活性化する成分があることが望ましいのですが、極端なものはありません。
 The Critical model however leaves more room for emotional and provocative content to challenge the status quo.
-しかし、クリティカルモデルでは、現状を打破するためのエモーショナルで挑発的なコンテンツがより多く存在することになります。
+しかし、**クリティカルモデルでは、現状を打破するためのエモーショナルで挑発的なコンテンツがより多く存在することになります。**
 Here high values of Activation should be expected.
 ここでは、Activationの高い値が期待される。
 
@@ -499,9 +501,9 @@ The Circumplex Model of Affect [43] describes a dimensional model where all type
 Valence indicates whether the emotion is positive or negative, while arousal refers to the strength of the emotion and to what extent it expresses action.
 Valenceは感情がポジティブかネガティブかを示し、Arousalは感情の強さ、行動をどの程度表すかを示す。
 Following this, for example, ’excitement’ has a positive valence and arousal, whereas ’bored’ is negative for both.
-これに従うと、例えば「興奮」は正の価数と覚醒度を持つのに対し、「退屈」は両者とも負の価数である。
+これに従うと、例えば’excitement’は正の価数と覚醒度を持つのに対し、’bored’は両者とも負の価数である。
 Based on the theory described above a number of "sentiment analysis" tools have been developed, which typically have the goal of identifying whether people have a positive or negative sentiment regarding a certain product or issue.
-このような理論に基づき、多くの「感情分析」ツールが開発され、ある製品や問題に対して人々がポジティブな感情を持っているかネガティブな感情を持っているかを特定することを目的としています。
+このような理論に基づき、多くの**"sentiment analysis"(感情分析)ツール**が開発され、ある製品や問題に対して人々がポジティブな感情を持っているかネガティブな感情を持っているかを特定することを目的としています。
 For example, Hutto and Gilbert [21] provides a lexicon-based tool that for each input piece of text outputs a compound score ranging from -1 (very negative) to 1 (very positive).
 例えば、Hutto and Gilbert [21]は、各入力テキストに対して、-1（非常にネガティブ）から1（非常にポジティブ）までの複合スコアを出力する、辞書ベースのツールを提供しています。
 The absolute values of these scores can be used as an approximation of the arousal and therefore be used to determine the Activation score of a single article.
@@ -509,24 +511,24 @@ The absolute values of these scores can be used as an approximation of the arous
 Then, the total Activation score of the recommender system should be calculated two-fold.
 そして、レコメンダーシステムのActivationスコアの合計は、2回に分けて計算する必要があります。
 The average Activation score of the items recommended to each user provides a baseline score for whether the articles overall tend to be activating or neutral.
-各ユーザーに推奨されたアイテムの平均活性化スコアは、記事全体が活性化する傾向にあるのか、中立的な傾向にあるのかの基準スコアとなります。
+各ユーザに推薦されたアイテムの平均活性化スコアは、記事全体が活性化する傾向にあるのか、中立的な傾向にあるのかの基準スコアとなります。
 Next, the issued recommendations are compared to the available pool of data as follows:
 次に、発行された提言と利用可能なデータプールを以下のように比較します：
 
 $$
-Activation
+Activation(p, q) = (|polarity(q)| - |polarity(p)|) / 2
 $$
 
 Here 𝑝 denotes the set of all available articles in the pool, and 𝑞 those in the recommendation.
-ここで、ᵅはプールにあるすべての利用可能な記事の集合を示し、↪Ll_1D45E は推薦にあるものを示す。
+ここで、$p$はプールにあるすべての利用可能な記事の集合を示し、q$$ は推薦にあるものを示す.
 For both sets we take the mean of the absolute polarity value of each article, which we use as an approximation for Activation.
-両セットとも、各記事の極性の絶対値の平均をとり、これをActivationの近似値として使用する。
+両セットとも、各記事のpolarity(中立か、positive/negativeの感情に依っているか?)の絶対値の平均をとり、これをActivationの近似値として使用する。
 We subtract the mean from the available pool of articles from the mean of the recommendation set, which maps to a range of [−1, 1].
-利用可能な記事のプールから、推薦セットの平均値を引くと、[-1, 1]の範囲にマッピングされるのです。
+利用可能な記事のプールから、推薦セットの平均値を引くと、[-1, 1]の範囲にマッピングされる。
 A value lower than zero indicates that the recommender system shows less activating content than was available in the pool of data, and therefore favors more neutral articles.
-ゼロより低い値は、レコメンダーシステムが、データプールで利用可能だったよりも活性化するコンテンツが少なく、より中立的な記事を優先して表示することを示します。
+ゼ**ロより低い値は、レコメンダーシステムが、データプールで利用可能だったよりも活性化するコンテンツが少なく、より中立的な記事を優先して表示することを示します。**
 Values higher than zero show the opposite; the recommendation sets contained proportionally more activating content than was available in the pool.
-ゼロより高い値は、その逆で、レコメンデーションセットには、プールで利用可能なものより比例して多くの活性化コンテンツが含まれていることを示しています。
+**ゼロより高い値は、その逆で、レコメンデーションセットには、プールで利用可能なものより比例して多くの活性化コンテンツが含まれていることを示しています。**
 
 ### 4.3.4. Limitations. 制限があります。
 
@@ -542,40 +544,40 @@ We therefore see this approach as an approximation of the concept of activation,
 ## 4.4. Representation 表現
 
 The Representation metric expresses whether the issued recommendations provide a balance of different opinions and perspectives, where one is not unduly more or less represented than others.
-代表性」指標は、発行された提言が、異なる意見や視点のバランスを保ち、ある意見が他の意見より不当に多く、あるいは少なくなっていないかどうかを表すものです。
+代表性」指標は、発行された推薦が、**異なる意見や視点のバランスを保ち、ある意見が他の意見より不当に多く、あるいは少なくなっていないかどうか**を表すものです。
 A score close to zero indicates a balance, where the model of democracy that is chosen determines what this balance entails, whereas a higher score indicates larger discrepancies.
-ゼロに近いほどバランスが取れていることを示し、そのバランスがどのようなものであるかは、選択された民主主義のモデルによって決定されます。一方、スコアが高いほど矛盾が大きいことを示します。
+**ゼロに近いほどバランスが取れていることを示し**、そのバランスがどのようなものであるかは、選択された民主主義のモデルによって決定されます。一方、スコアが高いほど矛盾が大きいことを示します。
 
 ### 4.4.1. Explanation. 説明があります。
 
 Representation is one of the more intuitive interpretations of diversity.
-Representationは、より直感的な多様性の解釈の一つです。
+Representationは、**より直感的な多様性の解釈の一つ**です。
 Depending on which model of democracy is chosen, news recommendations should contain a plurality of different opinions.
 民主主義のどのモデルを選択するかによって、ニュースレコメンデーションには複数の異なる意見が含まれるはずです。
 Here we care more about what is being said than who says it, which is the goal of the final metric, Alternative Voices.
-ここでは、誰が言っているのかよりも、何が言われているのかが重要であり、それが最後の指標であるAlternative Voicesの目標です。
+**ここでは、誰が言っているのかよりも、何が言われているのかが重要**であり、"誰が言っているのか"の方は最後のmetricであるAlternative Voicesの目標です。
 In order to define what it means to provide a balance of opinions, one needs to refer back to the different models and their goals.
 意見のバランスを取るとはどういうことかを定義するためには、さまざまなモデルとその目的を参照する必要があります。
 
 ### 4.4.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 The Participatory model aims to be reflective of "the real political world".
-参加型モデルは、「現実の政治世界」を反映することを目的としています。
+Participatoryモデルは、「現実の政治世界」を反映することを目的としています。
 Power relations that are therefore present in society should also be present in the news recommendations, with a larger share in the Representation for the more prevalent opinions.
-したがって、社会に存在する力関係は、ニュースレコメンデーションにも存在し、より優勢な意見ほどRepresentationでのシェアが大きくなるはずです。
+したがって、**社会に存在する力関係をニュースレコメンデーションにも反映し**、より優勢な意見ほどRepresentationでのシェアが大きくなるはずです。
 On the other hand, the Deliberative model aims to provide an equal overview of all opinions without one being more prevalent than the other.
-一方、Deliberativeモデルは、一つの意見が他の意見よりも優勢になることなく、すべての意見を平等に俯瞰することを目的としています。
+一方、Deliberativeモデルは、一つの意見が他の意見よりも優勢になることなく、**すべての意見を平等に俯瞰すること**を目的としています。
 The Critical model has a large focus on shifting power balances, and it does so by giving a platform to underrepresented opinions, thereby promoting an inverse point of view.
-クリティカルモデルは、パワーバランスを変えることに大きな重点を置いており、代表的でない意見にプラットフォームを与えることで、逆の視点を促進することでそれを実現しています。
+クリティカルモデルは、パワーバランスを変えることに大きな重点を置いており、**代表的でない意見にプラットフォームを与えることで、逆の視点を促進する**ことでそれを実現しています。
 In doing this, the Critical model also strongly considers the characteristics of the opinion holder, specifically whether they are part of a minority group or not, though this is the goal of the last metric, Alternative Voices.
 この際、Criticalモデルでは、意見保有者の特性、具体的にはマイノリティグループに属しているかどうかも強く考慮されていますが、これは最後の指標であるAlternative Voicesが目指すところです。
 
 ### 4.4.3. Operationalization. オペレーション化。
 
 Representation, and Alternative Voices as well, rely strongly on the correct and complete identification of the opinions and opinion holders mentioned in the news.
-Representation、そしてAlternative Voicesは、ニュースで言及された意見と意見保有者を正確かつ完全に特定することに強く依存しています。
+Representation、そしてAlternative Voicesを算出する為には、**ニュースで言及された意見と意見保有者を正確かつ完全に特定すること**に強く依存しています。
 Though there is research available on the usage of Natural Language patterns to extract opinion data from an article’s text [41], additional work is necessary on its applicability in this context.
-記事のテキストから意見データを抽出するための自然言語パターンの使用に関する研究はあるが[41]、この文脈での適用可能性についてはさらなる研究が必要である。
+**記事のテキストから意見データを抽出する**ための自然言語パターンの使用に関する研究はあるが[41]、この文脈での適用可能性についてはさらなる研究が必要である。
 For example, it is of significant importance that not one type of opinion or opinion holder is systematically missed.
 例えば、一種類の意見や意見保有者が組織的に見逃されないことが重要である。
 Once the quality of the extraction is relatively certain, additional work is also necessary on the placement of opinions relative to each other; for example, which opinions are in favor, against or neutral on a statement, and how are these represented in the recommendations.
@@ -590,29 +592,29 @@ To calculate the Representation score, we once again use the Kullback-Leibler Di
 Representationスコアの算出には、再びKullback-Leibler Divergenceを使用しますが、今回はレコメンデーションと利用可能なデータプールの異なる意見カテゴリについて使用します：
 
 $$
-Representation
+Representation_{p, q} = \text{KL Divergence}(p(o), q(o))
 $$
 
-This calculation is similar to the one in Section 4.1.However, 𝑜 indicates the different opinions in the data; 𝑝(𝑜) represents the proportion of the times this opinion was present in the overall pool of data, whereas 𝑞˜(𝑜 |𝑢) represents the proportion of times user 𝑢 has seen this opinion in their recommendations.
+This calculation is similar to the one in Section 4.1.However, 𝑜 indicates the different opinions in the data; 𝑝(𝑜) represents **the proportion of the times this opinion** was present in the overall pool of data, whereas 𝑞˜(𝑜 |𝑢) represents the proportion of times user 𝑢 has seen this opinion in their recommendations.
 𝑢) represents the proportion of times user 𝑢 has seen this opinion in their recommendations.
 A score of 0 means a perfect match between the two, which means that the opinions shown in the recommendations are perfectly representative of those in society.
 0点というのは、両者が完全に一致していることを意味し、推薦文に示された意見が社会を完全に代表していることを意味します。
 When following the Participatory model reflective point of view we want this value to be as close to zero as possible, as being representative of society is its main goal.
 参加型モデルの反射的な視点に従うと、社会を代表することが主な目的であるため、この値はできるだけゼロに近づけたい。
 However, when following one of the other models, we have to make some alterations on the distributions expressed by 𝑝.
-しかし、他のモデルに従う場合、ᵅで表される分布にいくつかの変更を加えなければならない。
+しかし、他のモデルに従う場合、推薦結果$q$の分布は、$p$で表される分布にいくつかの変更を加えなければならない.
 The Critical model’s inverse point of view aims for the recommendations to diverge as much from the power relations in society as possible.
-クリティカルモデルの逆視点は、提言が社会の力関係からできるだけ乖離することを目指すものである。
+クリティカルモデルの逆視点は、**推薦結果が社会の力関係からできるだけ乖離することを目指すもの**である。
 However, since very small differences in distributions can result in a very large KL divergence, simply maximizing the KL divergence is not sufficient.
 しかし、非常に小さな分布の違いが非常に大きなKLダイバージェンスをもたらすことがあるため、単にKLダイバージェンスを最大化するだけでは十分ではありません。
 Instead, we inverse the distribution of opinions present in 𝑝.
-その代わりに、ᑝに存在する意見の分布を逆算する。
+その代わりに、$p$に存在する意見の分布を逆算する。
 Similarly, when choosing the Deliberative model, we want all opinions in the recommendations to be equally represented, and therefore we choose 𝑝 as a uniform distribution of opinions.
-同様に、Deliberativeモデルを選択する場合、推薦文に含まれるすべての意見を均等に反映させたいので、意見の均一分布としてŅを選択します。
+同様に、Deliberativeモデルを選択する場合、推薦文に含まれるすべての意見を均等に反映させたいので、意見の均一分布として$p$を選択する.(poolをそのまま比較しないって意味?)
 This way, for each of the different approaches holds that the closer the divergence is to zero, the better the recommendations reflect the desired representation of different opinions.
 このように、異なるアプローチのそれぞれについて、ダイバージェンスがゼロに近ければ近いほど、レコメンデーションは異なる意見の望ましい表現を反映していることになります。
 For each of the reflective, inverse and equal approaches, the aggregated Representation score is obtained by averaging the Representation score over all recommendations issued to all users.
-Reflective、Inverse、Equalの各アプローチにおいて、全ユーザーに発行されたすべての推薦文のRepresentationスコアを平均することで、集約されたRepresentationスコアが得られる。
+Reflective(参加型)、Inverse(クリティカル)、Equal(=Deliberative model)の各アプローチにおいて、全ユーザーに発行されたすべての推薦文のRepresentationスコアを平均することで、集約されたRepresentationスコアが得られる。
 
 ### 4.4.4. Limitations. 制限があります。
 
@@ -622,14 +624,14 @@ Kullback-Leibler divergence treats each category as being independent, and does 
 ## 4.5. Alternative Voices オルタナティブ・ヴォイス
 
 The Alternative Voices metric measures the relative presence of people from a minority or marginalised group.
-オルタナティブ・ヴォイスの指標は、少数派または周縁化されたグループの人々の相対的な存在感を測定するものです。
+オルタナティブ・ヴォイスの指標は、**少数派または周縁化されたグループの人々の相対的な存在感を測定**するものです。
 A higher score indicates a proportionally larger presence.
 スコアが高いほど、存在感が比例して大きくなることを示します。
 
 ### 4.5.1. Explanation. 説明があります。
 
 Where Representation is largely focused on the explicit content of a perspective (the what), Alternative Voices is more concerned with the person holding it (the who), and specifically whether this person or organisation is one of a minority or an otherwise marginalised group that is more likely to be underrepresented in the mainstream media.
-Representationが視点の明確な内容（What）に主眼を置いているのに対し、Alternative Voicesは、その視点を持つ人物（Who）に関心があり、特にその人物や組織が、主流メディアで十分に表現されない可能性の高い少数派や疎外されたグループの一人であるかどうかを重視しています。
+Representationが視点の明確な内容（What）に主眼を置いているのに対し、**Alternative Voicesは、その視点を持つ人物（Who）に関心があり**、特にその人物や組織が、主流メディアで十分に表現されない可能性の高い少数派や疎外されたグループの一人であるかどうかを重視しています。
 What exactly entails a minority is rather vaguely defined.
 具体的に何をもってマイノリティとするかは、かなり曖昧な定義になっています。
 Article 1 from the 1992 United Nations Minorities Declaration refers to minorities “a non-dominant group of individuals who share certain national, ethnic, religious or linguistic characteristics which are different from those of the majority population", though there is no internationally agreed-upon definition.
@@ -639,7 +641,7 @@ In practice, this interpretation is often extended with gender identity, disabil
 A major challenge of the Alternative Voices metric lies in the actual identification of a minority voice.
 オルタナティブボイスの指標の大きな課題は、マイノリティボイスを実際に特定することにある。
 Though there are a number of studies that aim to detect certain characteristics of minorities from textual data, such as predicting a person’s ethnicity and gender based on their first and last name [46], there are no approaches that 1) model all minority characteristics or 2) perform well consistently.
-テキストデータからマイノリティの特定の特性を検出することを目的とした研究は数多くありますが、例えば、姓と名からその人の民族性と性別を予測する[46]など、1）すべてのマイノリティ特性をモデル化する、2）一貫して良い結果を出す、というアプローチは存在しないのです。
+**テキストデータからマイノリティの特定の特性を検出することを目的とした研究は数多くあります**が、例えば、姓と名からその人の民族性と性別を予測する[46]など、1）すべてのマイノリティ特性をモデル化する、2）一貫して良い結果を出す、というアプローチは存在しないのです。
 This process needs significant additional and most importantly multidisciplinary research, with a large focus on ensuring that doing this type of analysis does not lead to unintended stereotyping, exclusion or misrepresentation.
 このプロセスでは、この種の分析を行うことが意図しないステレオタイプ化、排除、誤った表現につながらないようにすることに大きな焦点を当てた、大幅な追加研究、最も重要な学際的研究が必要です。
 For example, Keyes [27] shows that current studies typically treat gender classification as a purely binary problem, thereby systematically leaving out and wrongly classifying transgender people.
@@ -647,18 +649,18 @@ For example, Keyes [27] shows that current studies typically treat gender classi
 Similarly, Hanna et al.[18] argue that race and ethnicity are strongly social constructs that should not be treated as objective differences between groups.
 同様に、Hannaら[18]は、人種や民族は強く社会的な構成要素であり、集団間の客観的な差異として扱うべきものではないと主張している。
 This topic, typically referred to as (algorithmic) Fairness, is an active research field that aims to counter bias and discrimination in data-driven computer systems.
-このテーマは、一般的に「（アルゴリズムによる）公平性」と呼ばれ、データ駆動型のコンピュータシステムにおける偏見や差別に対抗することを目的とした活発な研究分野である。
+このテーマは、一般的に「**(algorithmic) Fairness**」と呼ばれ、**データ駆動型のコンピュータシステムにおける偏見や差別に対抗することを目的とした活発な研究分野である。**
 One thing is for certain: any recommender system that actively promotes one type of voice over another should make very explicit on what criteria and following which methods it does this.
 ある音声を他の音声よりも積極的に推奨するレコメンダーシステムは、どのような基準で、どのような方法でそれを行うかを明確にする必要があります。
 Following this both the identification and the way its algorithms use this information must be fully transparent and auditable.
 その上で、識別とそのアルゴリズムが情報を使用する方法について、完全に透明で監査可能でなければなりません。
 However, for the remainder of this section we will assume that we do have a proper way of identifying people from a minority group, either through manual annotation or automatic extraction.
-しかし、このセクションの残りの部分では、手動アノテーションまたは自動抽出によって、少数派の人々を識別する適切な方法があることを仮定することにします。
+しかし、**このセクションの残りの部分では、手動アノテーションまたは自動抽出によって、少数派の人々を識別する適切な方法があることを仮定することにします。**
 
 ### 4.5.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
 The Alternative Voices metric is naturally most significant in the Critical model, which aims to provide a platform to voices that would otherwise go unheard, and therefore has a large focus on the opinions and perspectives from minority groups.
-オルタナティブ・ヴォイス」の指標は、当然ながら、「クリティカル」モデルにおいて最も大きな意味を持ちます。「クリティカル」モデルは、通常では聞くことのできない声にプラットフォームを提供することを目的としているため、少数派の意見・見解に大きな焦点が当てられています。
+オルタナティブ・ヴォイス」の指標は、**当然ながら、「クリティカル」モデルにおいて最も大きな意味を持ちます。**「クリティカル」モデルは、通常では聞くことのできない声にプラットフォームを提供することを目的としているため、少数派の意見・見解に大きな焦点が当てられています。
 To a lesser extent, the same holds for the Participatory and Deliberative models, where the first aims to foster tolerance and empathy, and the second that they should be equally represented.
 程度の差こそあれ、「参加型」と「熟議型」についても同様で、前者は寛容と共感を育むことを目的とし、後者は平等に代表されるべきであるとするものです。
 
@@ -670,7 +672,7 @@ For the operationalization of Alternative Voices we adapt Equation 10 of Burke e
 Alternative Voicesの運用については、Burkeら[5]の式10を本目的のために適用した：
 
 $$
-AlternativeVoices
+AlternativeVoices = \frac{q^{+} / p^{+}}{q^{-} / p^{-}}
 $$
 
 Here 𝑞 + denotes the number of mentions of people belonging to a protected group in the recommendations, whereas 𝑝 + denotes the number of mentions of people belonging to a protected group in all the available articles.
