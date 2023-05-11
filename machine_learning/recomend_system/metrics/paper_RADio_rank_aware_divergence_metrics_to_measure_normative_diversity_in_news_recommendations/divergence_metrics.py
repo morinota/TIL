@@ -1,6 +1,8 @@
 import abc
+import dataclasses
 import math
-from typing import Any, Dict
+from collections import defaultdict
+from typing import Any, Dict, List
 
 
 class DivergenceMetricAbstract(abc.ABC):
@@ -52,11 +54,38 @@ class DivergenceMetricAbstract(abc.ABC):
         raise NotImplementedError
 
 
-class KLDivergenceAbstract(DivergenceMetricAbstract):
+class KLDivergence(DivergenceMetricAbstract):
     def _function_t(self, t: float) -> float:
         return t * math.log2(t)
 
 
-class JSDivergenceAbstract(DivergenceMetricAbstract):
+class JSDivergence(DivergenceMetricAbstract):
     def _function_t(self, t: float) -> float:
         return 1 / 2 * ((t + 1) * math.log2(2 / (t + 1)) + t * math.log2(t))
+
+
+@dataclasses.dataclass
+class RankAwareProbabilityMassFunction:
+    dist: Dict[Any, float]
+
+    @classmethod
+    def from_ranking(cls, R: List[Any], method: str = "MMR") -> Dict[Any, float]:
+        rank_aware_pmf = defaultdict(float)
+        rank_weights_sum = sum(
+            [cls._calc_rank_weight(rank_idx + 1, method) for rank_idx in range(len(R))]
+        )
+        for rank_idx in range(len(R)):
+            rank = rank_idx + 1
+            rank_aware_pmf[R[rank_idx]] += (
+                cls._calc_rank_weight(rank, method) / rank_weights_sum
+            )
+            print(rank_aware_pmf[R[rank_idx]])
+        return rank_aware_pmf
+
+    @classmethod
+    def _calc_rank_weight(cls, rank: int, method: str = "MMR") -> float:
+        if method == "MMR":
+            return 1 / rank
+        elif method == "nDCG":
+            return 1 / (math.log2(rank + 1))
+        raise ValueError("please set method arguement. (MMR/nDCG)")

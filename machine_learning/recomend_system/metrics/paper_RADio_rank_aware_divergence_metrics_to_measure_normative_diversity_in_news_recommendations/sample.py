@@ -36,12 +36,14 @@ def calc_rank_weight_nDCG(rank: int) -> float:
 
 
 def calc_rank_weight_MMR(rank: int) -> float:
-    return 1 / (rank + 1)
+    return 1 / (rank)
 
 
 def calc_rank_aware_pmf(R: List[Any]) -> Dict[Any, float]:
     rank_aware_pmf = defaultdict(float)
-    rank_weights_sum = sum([calc_rank_weight_MMR(rank) for rank in range(1, len(R) + 1)])
+    rank_weights_sum = sum(
+        [calc_rank_weight_MMR(rank) for rank in range(1, len(R) + 1)]
+    )
     for rank_idx in range(len(R)):
         rank = rank_idx + 1
         rank_aware_pmf[R[rank_idx]] = calc_rank_weight_MMR(rank) / rank_weights_sum
