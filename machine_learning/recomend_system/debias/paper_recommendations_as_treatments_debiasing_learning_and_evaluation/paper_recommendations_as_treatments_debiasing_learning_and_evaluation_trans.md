@@ -116,7 +116,7 @@ However, both groups rate dramas as 3.
 The binary matrix $O ∈ {0, 1}^{U×I}$ in Figure 1 shows for which movies the users provided their rating to the system, [Ou,i = 1] ⇔ [Yu,i observed].
 図1の2値行列$O ∈ {0, 1}^{U×I}$は、ユーザがどの映画の評価をシステムに提供したかを示しており、$[O_{u,i} = 1] ⇔ [Y_{u,i} \text{observed}]$となる。
 Our toy example shows a strong correlation between liking and rating a movie, and the matrix P describes the marginal probabilities $P_{u,i} = P(O_{u,i} = 1)$ with which each rating is revealed.
-このおもちゃの例では、映画の好き嫌いと評価の間に強い相関があり、行列Pは、各評価が明らかになる限界確率 $P_{u,i} = P(O_{u,i} = 1)$ を記述しています。
+このおもちゃの例では、映画の好き嫌いと評価の間に強い相関があり、行列Pは、各評価が明らかになる周辺確率 $P_{u,i} = P(O_{u,i} = 1)$ を記述しています。
 For this data, consider the following two evaluation tasks.
 このデータについて、次の2つの評価作業を考えてみる。
 
@@ -233,53 +233,68 @@ This process is typically called the Assignment Mechanism in causal inference (I
 We differentiate the following two settings:
 以下の2つの設定を区別しています(実環境において、2種類の異なる観察パターン生成プロセスがある。)：
 
-- Experimental Setting. In this setting, the assignment mechanism is under the control of the recommendation system. An example is an ad-placement system that controls which ads to show to which user. 実験セッティング。 この設定では、割り当て機構は推薦システムの制御下にある。 例えば、どの広告をどのユーザに見せるかを制御するアドプレースメントシステムがあります。
+- **Experimental Setting**. In this setting, the assignment mechanism is under the control of the recommendation system. An example is an ad-placement system that controls which ads to show to which user. 実験セッティング。 この設定では、割り当て機構は推薦システムの制御下にある。 例えば、どの広告をどのユーザに見せるかを制御するアドプレースメントシステムがあります。
 
-- Observational Setting. In this setting, the users are part of the assignment mechanism that generates O. An example is an online streaming service for movies, where users self-select the movies they watch and rate. オブザベーションセッティング この設定では、ユーザはOを生成する割り当て機構の一部である。 例えば、映画のオンラインストリーミングサービスでは、ユーザが視聴する映画を自分で選んで評価します。
+- **Observational Setting**. In this setting, the users are part of the assignment mechanism that generates O. An example is an online streaming service for movies, where users self-select the movies they watch and rate. オブザベーションセッティング この設定では、ユーザはOを生成する割り当て機構の一部である。 例えば、映画のオンラインストリーミングサービスでは、ユーザが視聴する映画を自分で選んで評価します。
 
 In this paper, we assume that the assignment mechanism is probabilistic, meaning that the marginal probability Pu,i = P(Ou,i = 1) of observing an entry Yu,i is non-zero for all user/item pairs.
-本論文では、割り当てメカニズムが確率的であると仮定する。つまり、エントリYu,iを観察する限界確率Pu,i = P(Ou,i = 1)は、すべてのユーザとアイテムのペアに対して非ゼロであると仮定する。
+本論文では、割り当てメカニズムが確率的であると仮定する。つまり、エントリ$Y_{u,i}$を観察する周辺確率$P_{u,i} = P(O_{u,i} = 1)$は、**すべてのユーザとアイテムのペアに対して非ゼロであると仮定する**.
 This ensures that, in principle, every element of Y could be observed, even though any particular O reveals only a small subset.
-これにより、特定のOが小さな部分集合しか明らかにしないとしても、原理的にはYのすべての要素を観察することができる。
+これにより、特定のOが小さな部分集合しか明らかにしないとしても、原理的にはYのすべての要素を観察することができる.
 We refer to Pu,i as the propensity of observing Yu,i.
-Pu,iをYu,iを観察する傾向と呼ぶことにする。
+$P_{u,i}$を「**Y\_{u,i}を観察する傾向(propensity)**」と呼ぶことにする.
 In the experimental setting, we know the matrix P of all propensities, since we have implemented the assignment mechanism.
-実験環境では、割り当て機構を実装しているので、すべてのプロパティの行列Pを知ることができる。
+experimental setting では、割り当て機構を実装しているので、すべてのプロパティの行列Pを知ることができる.
 In the observational setting, we will need to estimate P from the observed matrix O.
-観測環境では、観測された行列OからPを推定する必要があります。
+**observational setting では、観測された行列OからPを推定する必要がある**.
 We defer the discussion of propensity estimation to Section 5, and focus on the experimental setting first.
-傾向推定の議論は第5節に譲り、まずは実験設定に焦点を当てる。
+(observational settingの際に必要な) propensity estimation の議論は第5節に譲り、まずはexperimental settingに焦点を当てる。
 
-IPS Estimator:
+**IPS Estimator**:
 IPS Estimatorです：
 
 The Inverse-Propensity-Scoring (IPS) estimator (Thompson, 2012; Little & Rubin, 2002; Imbens & Rubin, 2015), which applies equally to the task of rating prediction evaluation as to the task of recommendation quality estimation, is defined as,
-レコメンド品質推定のタスクと同様にレーティング予測評価のタスクにも適用されるInverse-Propensity-Scoring (IPS) estimator (Thompson, 2012; Little & Rubin, 2002; Imbens & Rubin, 2015) は、次のように定義されている、
+レコメンド品質推定のタスクと同様にレーティング予測評価のタスクにも適用される**Inverse-Propensity-Scoring (IPS)推定量** (Thompson, 2012; Little & Rubin, 2002; Imbens & Rubin, 2015) は、次のように定義されている、
 
 $$
+\hat{R}_{IPS}(\hat{Y}|P) = \frac{1}{U \cdot I} \sum_{(u,i):O_{u,i} = 1} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}}
+\\
+= \frac{1}{U \cdot I} \sum_{u} \sum_{i} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}} \cdot O_{u,i}
+\\
+\because \text{O_{u,i}はbinary変数なので...!}
 \tag{10}
 $$
 
 Unlike the naive estimator Rˆ naive(Yˆ ), the IPS estimator is unbiased for any probabilistic assignment mechanism.
-ナイーブ推定量Rˆ naive(Yˆ ) とは異なり、IPS推定量はどのような確率的割り当て機構に対しても不偏である。
+ナイーブ推定量Rˆ naive(Yˆ ) とは異なり、**IPS推定量はどのような確率的割り当て機構に対しても不偏である**.
 Note that the IPS estimator only requires the marginal probabilities Pu,i and unbiased-ness is not affected by dependencies within O:
 なお、IPS推定器は周辺確率Pu,iのみを必要とし、不偏性はO内の依存性には影響されない：
 
 $$
+E_{O}[\hat{R}_{IPS}(\hat{Y}|P)]
+= \frac{1}{U\cdot I} \sum_{u} \sum_{i}
+E_{O_{u,i}}[\frac{\delta_{u,i}(Y,\hat{Y})}{P_{u,i}} O_{u,i}]
+\\
+= \frac{1}{U\cdot I} \sum_{u} \sum_{i}
+\delta_{u,i}(Y,\hat{Y})
+\\
+\because \text{定義より...} P_{u,i} = E_{O_{u,i}}[O_{u,i}]
+\\
+= R(\hat{Y})
 \tag{10.5}
 $$
 
 To characterize the variability of the IPS estimator, however, we assume that observations are independent given P, which corresponds to a multivariate Bernoulli model where each Ou,i is a biased coin flip with probability Pu,i.
-しかし、IPS推定量のばらつきを特徴づけるために、観測値がPで独立であると仮定する。これは、多変量ベルヌーイモデルに相当し、各Ou,iは確率Pu,iで偏ったコインフリップとなる。
+しかし、IPS推定量のばらつきを特徴づけるために、観測値が$P$が与えられた時に独立であると仮定する(=条件付き独立)。これは、多変量ベルヌーイモデルに相当し、**各Ou,iは確率Pu,iで偏ったコインフリップ**となる.
 The following proposition (proof in appendix) provides some intuition about how the accuracy of the IPS estimator changes as the propensities become more “non-uniform”.
-次の命題（証明は付録）は、予感が「非一様」になるにつれてIPS推定器の精度がどのように変化するかについて、いくつかの直感を与える。
+次の命題（証明は付録）は、**propensities(傾向)が「非一様」になるにつれてIPS推定器の精度がどのように変化するか**について、いくつかの直感を与える.(おまけっぽい内容だから優先度は低そう...!)
 
 Proposition 3.1 (Tail Bound for IPS Estimator).
 命題3.1（IPS推定量のテールバウンド）。
 Let P be the independent Bernoulli probabilities of observing each entry.
 各エントリーを観察する独立したベルヌーイ確率をPとする。
 For any given Yˆ and Y , with probability 1 − η, the IPS estimator Rˆ IP S(Yˆ |P) does not deviate from the true R(Yˆ ) by more than:
-P) does not deviate from the true R(Yˆ ) by more than:
+任意の与えられたYˆとYに対して、確率$1 - η$で、IPS推定量Rˆ IP S(Yˆ |P) は、**真のR(Yˆ )からそれ以上乖離することはない**：
 
 $$
 \tag{10.6}
@@ -299,33 +314,38 @@ Pu,iが不均一な場合、明らかにされた要素の期待数PPu,iがnで�
 We are paying for the unbiased-ness of IPS in terms of variability, and we will evaluate whether this price is well spent throughout the paper.
 IPSのバラツキに対する不偏性という対価を払っているわけですが、この対価がうまく使われているかどうかは、論文を通して評価していきたいと思います。
 
-SNIPS Estimator.
+**SNIPS Estimator**.
 SNIPS Estimatorです。
 One technique that can reduce variability is the use of control variates (Owen, 2013).
-ばらつきを抑える手法として、制御変量の利用がある（Owen, 2013）。
+ばらつきを抑える手法として、**制御変量の利用**がある（Owen, 2013）。
 Applied to the IPS estimator, we know that EO hP (u,i):Ou,i=1 1 Pu,i i = U · I.
-IPS推定量に適用すると、EO hP (u,i):Ou,i=1 1 Pu,i i = U - Iとなることがわかる。
+IPS推定量に適用すると、$E_{O}[\sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}}]= U \cdot I$ となることがわかる.(これを使うと、推定量の分散を低減できる...??)
 This yields the SelfNormalized Inverse Propensity Scoring (SNIPS) estimator (Trotter & Tukey, 1956; Swaminathan & Joachims, 2015)
 これにより、SelfNormalized Inverse Propensity Scoring (SNIPS) estimator (Trotter & Tukey, 1956; Swaminathan & Joachims, 2015) が得られます。
 
 $$
+\hat{R}_{SNIPS}(\hat{Y}|P) = \frac{
+    \sum_{(u,i):O_{u,i} = 1} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}} % 分子=元のIPS推定量の式.
+}{
+    \sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}} % 制御変数?
+}
 \tag{11}
 $$
 
 The SNIPS estimator often has lower variance than the IPS estimator but has a small bias (Hesterberg, 1995).
-SNIPS推定器はIPS推定器よりも分散が小さいことが多いが、バイアスが小さい（Hesterberg, 1995）。
+SNIPS推定器はIPS推定器よりも分散が小さいことが多いが、小さいバイアスを持っている.（Hesterberg, 1995）。
 
 ## 3.4. Empirical Illustration of Estimators 推定量の経験則による説明
 
 To illustrate the effectiveness of the proposed estimators we conducted an experiment on the semi-synthetic ML100K dataset described in Section 6.2.For this dataset, Y is completely known so that we can compute true performance via Eq.(1).
-このデータセットでは、Yは完全に既知であるため、式(1)を用いて真の性能を計算することができる。
+提案する推定量の有効性を示すために、セクション6.2で説明した半合成のML100Kデータセットで実験を行った、 このデータセットでは、Yは完全に既知であるため、式(1)を用いて真の性能を計算することが可能である.
 The probability Pu,i of observing a rating Yu,i was chosen to mimic the observed marginal rating distribution in the original ML100K dataset (see Section 6.2) such that, on average, 5% of the Y matrix was revealed.
-評価Yu,iを観測する確率Pu,iは，ML100Kデータセット（セクション6.2参照）で観測された限界評価分布を模倣し，平均してY行列の5％が明らかになるように選択した．
+評価$Y_{u,i}$を観測する確率$P_{u,i}$は，ML100Kデータセット（セクション6.2参照）で観測された周辺評価分布(?)を模倣し，平均してY行列の5％が明らかになる(=観測される)ように選択した．
 
 Table 1 shows the results for estimating rating prediction accuracy via MAE and recommendation quality via DCG@50 for the following five prediction matrices Yˆ i .
 表1は，以下の5つの予測行列Yˆ i について，MAEによる視聴率予測精度とDCG@50による推薦品質を推定した結果である。
 Let |Y = r| be the number of r-star ratings in Y .
-Y = r
+Yに含まれるrつ星の評価の数を｜Y = r｜とする.(explicit feedbackの例なんだなー...)
 
 - REC ONES: The prediction matrix Yˆ is identical to the true rating matrix Y , except that |{(u, i) : Yu,i = 5}| randomly selected true ratings of 1 are flipped to 5. This means half of the predicted fives are true fives, and half are true ones. i) : Yu,i = 5} つまり、予測された5人のうち半分が真の5人であり、半分が真の1人である。
 
@@ -340,13 +360,13 @@ Y = r
 Rankings for DCG@50 were created by sorting items according to Yˆ i for each user.
 DCG@50のランキングは、各ユーザーのYˆiに従って項目をソートして作成しました。
 In Table 1, we report the average and standard deviation of estimates over 50 samples of O from P.
-表1では、PからOの50サンプルにわたる推定値の平均と標準偏差を報告する。
+表1では、PからO(観測)の50サンプルにわたる推定値の平均と標準偏差を報告する。
 We see that the mean IPS estimate perfectly matches the true performance for both MAE and DCG as expected.
-IPSの平均推定値は、予想通りMAEとDCGの両方で真の性能に完全に一致することがわかります。
+**IPSの平均推定値は、予想通りMAEとDCGの両方で真の性能に完全に一致する**ことがわかる.
 The bias of SNIPS is negligible as well.
 SNIPSのバイアスも無視できるほどです。
 The naive estimator is severely biased and its estimated MAE incorrectly ranks the prediction matrices Yˆ i (e.g.it ranks the performance of REC ONES higher than REC FOURS).
-ナイーブ推定器は著しく偏り、その推定MAEは予測行列Yˆiを誤ってランク付けする（例えば、REC ONESの性能をREC FOURSより高くランク付けしてしまう）。
+**ナイーブ推定器は著しく偏り**、その推定MAEは予測行列Yˆiを誤ってランク付けする（例えば、REC ONESの性能をREC FOURSより高くランク付けしてしまう）。
 The standard deviation of IPS and SNIPS is substantially smaller than the bias that Naive incurs.
 IPSとSNIPSの標準偏差は、Naiveが発生させるバイアスよりもかなり小さいです。
 Furthermore, SNIPS manages to reduce the standard deviation of IPS for MAE but not for DCG.
@@ -357,25 +377,26 @@ We will empirically study these estimators more comprehensively in Section 6.
 # 4. Propensity-Scored Recommendation Learning 傾向スコア付き推薦学習
 
 We will now use the unbiased estimators from the previous section in an Empirical Risk Minimization (ERM) framework for learning, prove generalization error bounds, and derive a matrix factorization method for rating prediction.
-ここでは、前節の不偏推定量をERM（Empirical Risk Minimization）の枠組みで学習に用い、汎化誤差の境界を証明し、格付け予測のための行列分解法を導出する。
+ここでは、前節の不偏推定量を**ERM（Empirical Risk Minimization）**の枠組み(=観測されたデータのみを使って誤差を最小化するように学習する方法だっけ?)で学習に用い、汎化誤差の境界を証明し、rating予測のための行列分解法を導出する。
 
 ## 4.1. ERM for Recommendation with Propensities プロペンシティを用いたレコメンデーションのためのERM
 
 Empirical Risk Minimization underlies many successful learning algorithms like SVMs (Cortes & Vapnik, 1995), Boosting (Schapire, 1990), and Deep Networks (Bengio, 2009).
-経験的リスク最小化は、SVM (Cortes & Vapnik, 1995), Boosting (Schapire, 1990), Deep Networks (Bengio, 2009) など多くの成功した学習アルゴリズムの基礎となっている。
+経験的リスク最小化は、SVM (Cortes & Vapnik, 1995), Boosting (Schapire, 1990), Deep Networks (Bengio, 2009) など多くの成功した学習アルゴリズムの基礎となっている.
 Weighted ERM approaches have been effective for cost-sensitive classification, domain adaptation and covariate shift (Zadrozny et al., 2003; Bickel et al., 2009; Sugiyama & Kawanabe, 2012).
-重み付けERMアプローチは、コスト重視の分類、ドメイン適応、共変量シフトに有効である（Zadrozny et al, 2003; Bickel et al, 2009; Sugiyama & Kawanabe, 2012）。
+**重み付けERMアプローチ**は、コスト重視の分類、ドメイン適応、共変量シフトに有効である（Zadrozny et al, 2003; Bickel et al, 2009; Sugiyama & Kawanabe, 2012）。
 We adapt ERM to our setting by realizing that Eq.(1) corresponds to an expected loss (i.e.risk) over the data generating process P(O|P).
-P).
+式(1)がデータ生成過程(=傾向スコアで条件付けられた、観測データOの確率分布)P(O|P)に対する期待損失（＝リスク）に相当することを理解することで、ERMを我々の設定に適応する.
 Given a sample from P(O|P), we can think of the IPS estimator from Eq.(10) as the Empirical Risk Rˆ(Yˆ ) that estimates R(Yˆ ) for any Yˆ .
-P), we can think of the IPS estimator from Eq.(10) as the Empirical Risk Rˆ(Yˆ ) that estimates R(Yˆ ) for any Yˆ .
+P(O|P)からのサンプルが与えられたとき、式(10)のIPS推定量は、任意のYˆに対してR(Yˆ )を推定するEmpirical Risk Rˆ(Yˆ )と考えることができます。
 
 Definition 4.1 (Propensity-Scored ERM for Recommendation).
 定義 4.1 (Propensity-Scored ERM for Recommendation)。
 Given training observations O from Y with marginal propensities P, given a hypothesis space H of predictions Yˆ , and given a loss function δu,i(Y, Yˆ ), ERM selects the Yˆ ∈ H that optimizes:
-Yから限界予感Pを持つ訓練観測Oが与えられ、予測Yˆの仮説空間Hが与えられ、損失関数δu,i（Y, Yˆ ）が与えられると、ERMは最適化するYˆ∈Hを選択する：
+$Y$ から周辺傾向確率 $P$ を持つ学習観測 $O$ が与えられ、予測 $\hat{Y}$ の仮説空間 $H$ が与えられ、損失関数 $\delta_{u,i}(Y, \hat{Y})$ が与えられると、ERMは最適化する $\hat{Y} \in H$ を選択する：
 
 $$
+\hat{Y}^{ERM} = \argmin_{\hat{Y} \in H} (\hat{R}_{IPS}(\hat{Y}|P))
 \tag{12}
 $$
 
@@ -389,7 +410,7 @@ We consider only finite H for the sake of conciseness.
 Theorem 4.2 (Propensity-Scored ERM Generalization Error Bound).
 定理4.2（傾向スコア付きERMの一般化誤差の境界）。
 For any finite hypothesis space of predictions H = {Yˆ 1, ..., Yˆ |H|} and loss 0 ≤ δu,i(Y, Yˆ ) ≤ ∆, the true risk R(Yˆ ) of the empirical risk minimizer Yˆ ERM from H using the IPS estimator, given training observations O from Y with independent Bernoulli propensities P, is bounded with probability 1 − η by:
-H
+任意の有限の予測仮説空間 $H＝{\hat{Y}_1, ..., \hat{Y}_{|H|}}$ と損失0≦δu,i（Y, Yˆ ）≦△ に対して、独立したベルヌーイ予言Pを持つYからの訓練観測Oが与えられたとき、IPS推定器を用いたHからの経験的リスク最小化器Yˆ ERMの真のリスクR（Yˆ ）が確率1 - ηで次によって境界されます：
 
 $$
 \tag{13}
@@ -398,18 +419,19 @@ $$
 ## 4.2. Propensity-Scored Matrix Factorization 傾向スコア化行列因子法
 
 We now use propensity-scored ERM to derive a matrix factorization method for the problem of rating prediction.
-次に、傾向スコア付きERMを用いて、格付け予測の問題に対する行列分解法を導出する。
+次に、傾向スコア付きERMを用いて、格付け予測の問題に対する行列分解法を導出する.
 Assume a standard rank-d-restricted and L2-regularized matrix factorization model Yˆ u,i = v T u wi+au+bi+c with user, item, and global offsets as our hypothesis space H.
-仮説空間Hとして、ユーザー、アイテム、グローバルオフセットを持つ標準的なランクd制限・L2正則化行列分解モデルYˆ u,i = v T u wi+au+bi+c を仮定する。
+仮説空間Hとして、ユーザ、アイテム、グローバルオフセットを持つ標準的なランクd制限・L2正則化行列分解モデル $\hat{Y}_{u,i} = v^T_{u} w_{i} + a_{u} + b_{i} + c$ を仮定する.
 Under this model, propensity-scored ERM leads to the following training objective:
 このモデルの下では、傾向スコア付きERMは次のようなトレーニング目的を導く：
 
 $$
+\argmin_{V,W,A}[\sum_{O_{u,i}=1} \frac{\delta_{u,i}(Y, V^TW+A)}{P_{u,i}} + \lambda(|V|^2_F + |W|^2_F)]
 \tag{14}
 $$
 
 where A encodes the offset terms and Yˆ ERM = V T W+A.
-ここで、Aはオフセット項を符号化し、Yˆ ERM = V T W+Aである。
+ここで、Aはオフセット項(定数項、bais項)を符号化し、Yˆ ERM = V T W+Aである.
 Except for the propensities Pu,i that act like weights for each loss term, the training objective is identical to the standard incomplete matrix factorization objective (Koren, 2008; Steck, 2010; Hu et al., 2008) with MSE (using Eq.(3)) or MAE (using Eq.(2)).
 各損失項の重みのように働く予感Pu,iを除いて、学習目的は、MSE（式（3）を使用）またはMAE（式（2）を使用）による標準的な不完全行列分解目的（Koren、2008；Steck、2010；Hu et al、2008）と同一である。
 So, we can readily draw upon existing optimization algorithms (i.e., Gemulla et al., 2011; Yu et al., 2012) that can efficiently solve the training problem at scale.
