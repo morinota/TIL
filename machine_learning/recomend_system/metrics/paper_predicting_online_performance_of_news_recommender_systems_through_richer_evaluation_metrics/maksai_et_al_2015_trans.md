@@ -207,141 +207,130 @@ The regression model will use not only offline accuracy, as it is something diff
 
 To verify the finding that multiple groups of metrics, such as Diversity and Coverage, are important for predicting online performance metrics, we carried out feature selection using the Least Angle Regression (LAR, [4]).
 オンラインパフォーマンス指標の予測には、DiversityやCoverageといった複数の指標群が重要であるという知見を検証するため、Least Angle Regression（LAR、[4]）を用いた特徴選択を実施しました。
-The LAR assumes a linear model of the relationship between independent variable y and n dependent variables x = (x1, .
-LARは、独立変数yとn個の従属変数x＝（x1、...）の関係の線形モデルを想定している。
-..
-..
-, xn) | , with an L1 regularizer:
-, with an L1 regularizer:
+The LAR assumes a linear model of the relationship between independent variable y and n dependent variables $x = (x_1,\cdots ,x_n)^T$, with an $L_{1}$ regularizer:
+LARは、独立変数yとn個の従属変数$x = (x_1,\cdots ,x_n)^T$の関係の線形モデルを仮定し、$L_{1}$正則化する：
 
 $$
 y = \beta^T x + \lambda \sum_{j=1}^{n} |x_{j}|
 $$
 
 The L1 regularizer promotes sparsity in β.
-L1正則化により、βのスパース性が促進される。
+L1正則化により、βのスパース性が促進される.(不要なパラメータが落とされる様な仕組み...!)
 By decreasing λ, it is possible to assign each predictor a value of λ at which it first enters the model with a non-zero weight.
-λを減少させることで、各予測変数に、それが最初にゼロ以外の重みでモデルに入るλの値を割り当てることが可能である。
+ハイパーパラメータλを減少させることで、各predictor(回帰分析の文脈なので、予測対象はパラメータ $\beta$ の事?) に、それが最初にゼロ以外の重みでモデルに入るλの値を割り当てることが可能である.(?)
 The order of the predictors given by these λ values serves as a proxy for their importance.
-これらのλ値によって与えられる予測因子の順序は、それらの重要性の代理として機能する。
+これらのλ値によって与えられる predictors(推論すべきパラメータって意味?)の順序は、それらの重要性の代理として機能する。
 The LAR allows efficient computation of this value for each regressor [4].
 LARは、各レグレッサーについてこの値を効率的に計算することができます[4]。
 
 The average order position among folds was calculated using average metric values in time intervals of length ∆t as predictors and average CTR as responses.
-長さΔtの時間間隔における平均的な指標値を予測因子とし、平均的なCTRを応答として、フォールド間の平均的な順序位置を算出した。
+長さΔtの時間間隔におけるmetricsの平均値を predictors(=説明変数?) とし、平均的なCTRをresponses(=目的変数)として、folds間(?)の平均的な順序位置を算出した.
 Details of this approach are given in Alg.1.Several ∆t interval sizes were tested, but all values of ten minutes or longer were found to work reasonably well.
-この方法の詳細はAlg.1に記載されている。∆t間隔の大きさはいくつかテストされたが、10分以上のすべての値が合理的に機能することがわかった。
+この方法の詳細はAlg.1に記載されている。∆t間隔の大きさはいくつかテストされたが、10分以上のすべての値が合理的に機能することがわかった.
 Ten minute intervals were chosen as shorter intervals gave results with very high variance and longer intervals meant fewer data points and, therefore, less significant results.
-10分間隔にしたのは、これより短い間隔では分散が大きく、長い間隔ではデータポイントが少なくなり、有意な結果が得られないからです。
+$\Delta t$ を**10分間隔**にしたのは、これより短い間隔では分散が大きく、長い間隔ではデータポイントが少なくなり、有意な結果が得られないからである.
 We used F = 100 folds.
-F＝100倍を使用しました。
+F＝100倍を使用しました.(fold=パラメータ推論のサンプリング回数?)
 
 ## 3.2. Regression model 回帰モデル
 
 After identifying the best predictors, we used the multiple linear regression y = β |x.
-x.
+最適な予測因子を特定した後、重回帰 $y =  \beta |x$ を用いた.
 This simple model allowed us to interpret coefficients of β as trade-offs between different metrics for a particular model, or as derivatives of the performance with respect to metrics.
-このシンプルなモデルにより、βの係数を、特定のモデルに対する異なるメトリクス間のトレードオフとして、あるいはメトリクスに関する性能の微分として解釈することができました。
+このシンプルなモデルにより、βの係数を、特定のモデルに対する異なるメトリクス間のトレードオフ(=同じCTRを得る場合に、あるmetricsを増やしたらあるmetricsを減らす必要がある、みたいな...??)として、あるいは**メトリクスに関する性能の微分**(=あるmetricが1単位増えたら、オンライン性能は...)として解釈することができました.
 We expand on this idea in Sec.4.More complex models, such as Gaussian process regression or penalized linear regression, do not allow such a simple interpretation.
-ガウス過程回帰や罰則付き線形回帰など、より複雑なモデルでは、このような単純な解釈はできない。
+ガウス過程回帰や罰則付き線形回帰など、より複雑なモデルでは、このような単純な解釈はできない.
 Nevertheless, the results obtained using simple linear regression were compared to those of more complex methods.
-それでも、単純な線形回帰で得られた結果を、より複雑な手法で得られた結果と比較しました。
+それでも、**単純な線形回帰で得られた結果を、より複雑な手法で得られた結果と比較**しました.
 To build such a model, a limited amount of training data is required.
-このようなモデルを構築するためには、限られた量の学習データが必要です。
+このようなモデルを構築するためには、限られた量の学習データが必要.
 Features should be collected simultaneously using the metrics from a recsys run on a log of offline data (user browsing without the recsys), and the online performance metric should be collected from the live website that is using a recsys.
-機能は、オフラインデータ（recsysを使用しないユーザーのブラウジング）のログで実行されたrecsysからのメトリクスを使用して同時に収集し、オンラインのパフォーマンスメトリクスは、recsysを使用しているライブウェブサイトから収集する必要があります。
+機能は、オフラインデータ(recsysを使用しないユーザーのブラウジング)のログで学習された推薦システムからのmetricsを使用して同時に収集し(説明変数側)、オンラインのパフォーマンスメトリクス(目的変数側)は、recsysを使用しているライブウェブサイトから収集する必要がある.
 
 # 4. Algorithm Optimization アルゴリズムの最適化
 
 In this section we discuss two possible ways of using the model of online performance metric.
-このセクションでは、オンラインパフォーマンスメトリクスのモデルの使用方法として考えられる2つの方法について説明します。
+このセクションでは、前セクションで作成した、オンラインパフォーマンスメトリクスの推論モデルの使用方法として考えられる**2つの方法**について説明します。
 The first allows an effective comparison between several variations of the algorithm, without the need for lengthy access to online data, and the selection of the optimal hyperparameters.
-1つ目は、オンラインデータに長時間アクセスすることなく、アルゴリズムのいくつかのバリエーションを効果的に比較し、最適なハイパーパラメータを選択することができます。
+1つ目は、オンラインデータに長時間アクセスすることなく、**アルゴリズムのいくつかのバリエーションを効果的に比較**し、最適なハイパーパラメータを選択することができます。
 The second describes an algorithm able to rebuild the model over time, continually aiming for optimal online performance.
-2つ目は、時間の経過とともにモデルを再構築し、常に最適なオンラインパフォーマンスを目指すアルゴリズムについて説明します。
+2つ目は、時間の経過とともにモデル(=推薦モデル?それともオンライン性能予測モデル?)を再構築し、常に最適なオンラインパフォーマンスを目指すアルゴリズムについて説明します。(?)
 
 ## 4.1. Optimal algorithm selection 最適なアルゴリズム選択
 
 A typical task for recsys designers is the comparison of several variations of an algorithm, and the selection of the hyperparameter value and algorithm that perform best.
-recsys設計者の典型的なタスクは、あるアルゴリズムのいくつかのバリエーションを比較し、最も良いパフォーマンスを発揮するハイパーパラメータ値とアルゴリズムを選択することです。
+recsys設計者の典型的なタスクは、**あるアルゴリズムのいくつかのバリエーションを比較し、最も良いパフォーマンスを発揮するハイパーパラメータ値とアルゴリズムを選択**することです.
 An obvious solution would be to evaluate each of the algorithms online using several values of hyperparameter.
 明らかな解決策は、ハイパーパラメータのいくつかの値を用いて、各アルゴリズムをオンラインで評価することである。
 
 In our model, online performance can be approximated by a weighted combination of two offline metrics (i.e.Accuracy and Coverage).
-本モデルでは、オンライン性能は、2つのオフライン指標（AccuracyとCoverage）の重み付けされた組み合わせで近似することができる。
+**本モデルでは、オンライン性能は、2つのオフライン指標（AccuracyとCoverage）の重み付けされた組み合わせで近似**することができる.(結局この２つなのか...!)
 To simplify the argument below, we assume that weights are positive but approach trivially extends to the case when they are negative.
-以下の議論を簡単にするため、重みは正であると仮定するが、アプローチは重みが負である場合にも些か拡張される。
+以下の議論を簡単にするため、重みは正であると仮定する(=以下の解説を読む上で重要な仮定!!)が、アプローチは重みが負である場合にも些か拡張される.
 Such a model is learned by evaluating one of the algorithm variations online and is assumed to be similar for other variations.
-このようなモデルは、アルゴリズムのバリエーションの一つをオンラインで評価することで学習され、他のバリエーションでも同様であると仮定される。
+このようなモデルは、アルゴリズムの**バリエーションの一つをオンラインで評価することで学習され**、他のバリエーションでも同様であると仮定される。
 
 As described in Sec.2.3, varying an algorithm’s hyperparameter produces the metrics trade-off curve.
-2.3節で説明したように、アルゴリズムのハイパーパラメータを変化させると、メトリクスのトレードオフ曲線が生成される。
+2.3節で説明したように、アルゴリズムのハイパーパラメータを変化させると、メトリクスのトレードオフ曲線が生成される.
 When the curve for one algorithm is located above the curve for a second, the first algorithm is strictly better in terms of performance.
-あるアルゴリズムの曲線が、あるアルゴリズムの曲線よりも上に位置する場合、最初のアルゴリズムの方が性能的に厳密には優れていることになります。
+**あるアルゴリズムの曲線が、あるアルゴリズムの曲線よりも上に位置する場合、最初のアルゴリズムの方が性能的に厳密には優れていることになります**(<-CTR推論モデルのパラメータが全てpositiveと仮定しているから!)。
 Note that curves are produced using offline data.
-なお、曲線はオフラインのデータを使用して作成しています。
+なお、曲線はオフラインのデータを使用して作成している.
 
 Given the trade-off curves, there is no need for an online evaluation of all the combinations of algorithms and hyperparameters, but only those that produce points on the upper envelope of the curves.
-トレードオフ曲線があれば、アルゴリズムとハイパーパラメータのすべての組み合わせをオンラインで評価する必要はなく、曲線の上側のエンベロープにポイントを生成するものだけを評価すればよいのです。
+**トレードオフ曲線があれば、アルゴリズムとハイパーパラメータのすべての組み合わせをオンラインで評価する必要はなく**、曲線の上側のエンベロープにポイントを生成するものだけを評価すればよい.
 Furthermore, by inspecting the model coefficients it is possible to select an algorithm without evaluating it: if a model gives a much larger weight to one of the metrics, this can be used as a proxy for performance and the best algorithm is the one reaching the highest values for that metric.
-さらに、モデルの係数を調べることで、アルゴリズムを評価せずに選択することも可能です。モデルがあるメトリクスに大きなウェイトを与えている場合、これをパフォーマンスの代理として使用することができ、そのメトリクスで最高値に達したアルゴリズムが最良のアルゴリズムとなります。
+さらに、モデルの係数を調べることで、アルゴリズムを評価せずに選択することも可能である. **モデルがあるmetricsに大きなウェイトを与えている場合、これをオンラインパフォーマンスの代理として使用することができ**、そのメトリクスで最高値に達したアルゴリズムが最良のアルゴリズムとなる.
 
 Examples of real trade-off curves are shown in Fig.4.We used several variations of the CT recommender as a source of recommendations ordered by Accuracy [5].
-私たちは、CTレコメンダーのいくつかのバリエーションを、Accuracy [5]で並べたレコメンデーションのソースとして使用しました。
+私たちは、CTレコメンダーのいくつかのバリエーションを、Accuracy [5]で並べたレコメンデーションのソースとして使用した.
 The standard CT algorithm makes predictions based on a count of the items viewed.
-標準的なCTアルゴリズムでは、閲覧されたアイテムのカウントに基づいて予測を行います。
+標準的なCTアルゴリズムでは、閲覧されたアイテムのカウントに基づいて予測を行う.
 CT with additional experts exploit the item click count and the last time an item was clicked.
-CT with additional experts exploit item click count and last time an item was clicked.
+CT with additional expertsは、アイテムクリック数とアイテムが最後にクリックされた時刻を考慮して推薦する.
 We used the items’ Shannon’s Entropy as a coverage score.
-項目のシャノンエントロピーをカバレッジスコアとして使用しました。
+我々は**アイテムのシャノンエントロピーを coverage スコアとして使用**した.
 Items were ordered by the weighted combinations of Accuracy and Coverage, and we varied the weight ratio, which was thus regarded as a hyperparameter for the algorithms.
-項目はAccuracyとCoverageの組み合わせで重み付けされ、その重み比を変化させることで、アルゴリズムのハイパーパラメータと見なした。
+アイテムはAccuracyとCoverageの組み合わせで重み付けされ、その重み比を変化させることで、アルゴリズムのハイパーパラメータと見なした.(これはCTアルゴリズムの特徴量の工夫か...!)
 Curves were computed using the Yahoo dataset, described later.
-曲線は、後述するYahooデータセットを用いて計算した。
+曲線は、後述するYahooデータセットを用いて計算した.
 
 Results such as these can be used for tuning a recommendation algorithm to a new site by picking the optimal value of a hyperparameter and the best algorithm.
 このような結果は、ハイパーパラメータの最適値や最適なアルゴリズムを選ぶことで、新しいサイトへの推薦アルゴリズムのチューニングに利用することができます。
 For example, for a site where the learned model gives a significant coefficient to coverage, the plain CT algorithm will be the best, whereas in cases where the accuracy coefficient dominates strongly, the ”fresh” expert will be useful.
-例えば、学習したモデルがカバレッジに大きな係数を与えるサイトでは、プレーンCTアルゴリズムが最適となり、一方、精度係数が強く支配するケースでは、「フレッシュ」エキスパートが有用となります。
+例えば(Figure4の結果を見ると...!)、学習した**オンライン性能予測モデルがカバレッジに大きな係数を与える**サイトでは、プレーンCTアルゴリズムが最適となり、一方、精度係数が強く支配するケースでは、”fresh” expert ver.が有用となる.
 Note also that the ”popular” expert is never going to be best.
-また、「人気のある」専門家がベストであることは決してないことに注意してください。
+また、”popular” expert ver.がベストであることは決してないことに注意してください.
 The trade-off curves obtained from offline data can therefore be used to save on online experiments to determine the optimal algorithm and hyperparameter.
-したがって、オフラインデータから得られたトレードオフ曲線は、最適なアルゴリズムとハイパーパラメータを決定するためのオンライン実験の省力化に利用することができます。
+したがって、**オフラインデータから得られたトレードオフ曲線**は、最適なアルゴリズムとハイパーパラメータを決定するための**オンライン実験の省力化**に利用することができる。
 
-## 4.2. Self-adjusting algorithm blend Self-adjusting algorithm blend
+## 4.2. Self-adjusting algorithm blend
 
 We applied the online performance model to a setting where we wanted to optimize the blend of several algorithms over time, given full access to the online environment.
-オンライン性能モデルを、オンライン環境に完全にアクセスできる状態で、複数のアルゴリズムのブレンドを時間経過とともに最適化したいという設定に適用しました。
-Let the algorithm give each item a rating based on the weighted combination of ratings assigned by several base recommenders: F(i) = W| (F1(i), .
-(F1(i), .
-..
-..
-, Fm(i)).
-, Fm(i))である。
+オンライン性能モデルを、オンライン環境に完全にアクセスできる状態で、**複数のアルゴリズムの(推薦結果の)ブレンドを時間経過とともに最適化したいという設定**に適用しました.
+Let the algorithm give each item a rating based on the weighted combination of ratings assigned by several base recommenders: $F(i) = W^{T}(F_{1}(i), \cdots, F_m(i))$.
+$F(i)=W^{T}(F_{1}(i), \cdots, F_m(i))$ のように、複数のベース推薦システムの評価を加味して各アイテムを評価するようにする. (推薦モデル1 ~ mの推薦結果を、Wで重み付けしてブレンドして、一つの推薦結果を作るケースを想定...!)
 For each recommender Fa, we introduce a latent variable Za.
-各推薦者Faに対して、潜在変数Zaを導入する。
+各推薦システム $F_a$ に対して、**潜在変数 $Z_a$ を導入**する.
 Za(t) measures how close the items, recommended at time t by the main algorithm, are to the top items recommended by Fa(t).
-Za(t)は、メインアルゴリズムによって時刻tに推薦されたアイテムが、Fa(t)によって推薦されたトップアイテムにどれだけ近いかを測定します。
-Alternatively, Za(t) can measure how high this recommender rates them.
-あるいは、Za(t)は、このレコメンダーがどれだけ高く評価しているかを測ることができる。
+$Z_a(t)$ は、メインアルゴリズム(現在稼働中の推薦システムのこと?)によって時刻$t$ に推薦されたアイテムが、$F_a(t)$ によって推薦されたトップアイテムに**どれだけ近いか**(=現在稼働中のrecommenderの推薦結果と、評価したいrecommenderの推薦結果の距離指標??)を測定する.
+Alternatively, $Z_a(t)$ can measure how high this recommender rates them.
+あるいは、$Z_a(t)$ は、このレコメンダーがどれだけ高く評価しているかを測ることができる.
 We build a regression model of online performance at each time t, based on the regressors Z1(t), .
-各時刻tにおけるオンライン性能の回帰モデルを、回帰子Z1(t)、...に基づいて構築する。
-..
-..
-, Zm(t).
-, Zm(t)である。
+各時刻tにおけるオンライン性能の回帰モデルを、regressors(=説明変数) $Z_1(t), \cdots, F_{m}(t)$ に基づいて構築する.
 In this model, the positive weight of a regressor Za suggests that giving recommendations with increased Za in the future would improve online performance.
-このモデルでは、回帰変数Zaの重みが正であれば、将来Zaを増やしたレコメンデーションを与えることでオンラインパフォーマンスが向上することが示唆される。
+このモデルでは、回帰変数 $Z_a$ の重みが正であれば、将来 $Z_b$ を増やした推薦を与えることでオンラインパフォーマンスが向上することが示唆される. (推論されたパラメータが高いrecommdner aを 強く採用すべきって意味?)
 Coefficients of linear regression β | effectively form a gradient of online performance with respect to the latent variables.
-effectively form a gradient of online performance with respect to the latent variables.
+線形回帰の係数 $\beta^T$ は、潜在変数に対するオンラインパフォーマンスの勾配を効果的に形成する.
 We can therefore perform a gradient descent, updating the weights, with which we mix different base recommenders: WT +1 = WT + λ ∗ βT , with T and T + 1 corresponding to two consecutive time frames, and βT being the coefficients of LR model, fitted on the data from frame T.
-そこで，勾配降下を行い，異なるベースレコメンダーを混合した重みを更新することができる： WT +1 = WT + λ ∗ βT 、TとT + 1は連続する2つの時間フレームに対応し、βTはフレームTのデータに適合したLRモデルの係数である。
+そこで，勾配降下を行い，異なるベースレコメンダーを混合する重み $W$ を更新することができる: $W{T +1} = W_{T} + λ ∗ \beta_{T}$ 、TとT + 1は連続する2つの時間フレームに対応し、 $\beta_{T}$ はフレーム$T$のデータから学習させたLRモデルの係数である.
 This could be an effective alternative to A–B testing, which is analogous to a grid search in the space of all possible weight coefficients.
-これは、すべての可能な重み係数の空間におけるグリッド検索に類似しているA-Bテストの効果的な代替となる可能性があります。
+これは、**すべての可能な重み係数の空間におけるグリッド検索に類似しているA-Bテスト**(そうなの...??)の効果的な代替となる可能性があある.
 In a simple case where Za are ratings given by base recommenders to the items recommended by the main algorithm, and recommenders Fa optimize a particular set of metrics, this approach is equivalent to modeling CTR using the set of metrics as regressors over time.
-Zaがメインアルゴリズムによって推薦されたアイテムに対してベース推薦者が与える評価であり、推薦者Faが特定のメトリクスセットを最適化するという単純なケースでは、このアプローチは、メトリクスセットを時間的なリグレッサーとして使用してCTRをモデル化することと同等である。
+$Z_a$ がメインアルゴリズムによって推薦されたアイテムに対して各ベース recommender が与える評価であり、recommender $F_a$ が特定の metrics セットを最適化するという単純なケースでは、このアプローチは、 metrics セットを時間的な regressors として使用してCTRをモデル化することと同等である.(=>あるmetricを元に最適化させた推薦結果がオンライン性能に強い影響を与えた! =>即ち、あるmetricの大小はオンライン性能に強い影響を与える、といえる...!)
 This is especially important for sites with a dynamic user base, that, for example, prefers fresh news in the morning and a more diverse set in the evening.
-特に、朝は新鮮なニュースを、夕方はより多様なニュースを好むなど、ダイナミックなユーザー層を持つサイトでは重要です。
+特に、**朝は新鮮なニュースを、夕方はより多様なニュースを好むなど、ダイナミックなユーザ層を持つサイトでは重要**である.
+(そうか! 時間frame $T$ の結果を使って、時刻 $T+1$ の重み付け$W$を更新する...!)
 
 # 5. Results 結果
 
