@@ -43,7 +43,7 @@ Finally, users often view recommendations concerning a variety of different topi
 All of the above factors indicate that optimizing the accuracy of recommendations using offline data, gathered from past behavior without a running recommender algorithm, is neither an effective nor efficient way to select the best algorithm [13, 19].
 以上のことから、**推薦アルゴリズムが稼働していない過去の行動から収集したオフラインデータを用いて推薦の精度を最適化することは、最適なアルゴリズムを選択する方法として有効でも効率的でもないことがわかる**[13, 19].
 The fairest way to compare algorithms is to launch them online and compare the actual reactions of users to the recommendations.
-アルゴリズムを比較する最も公平な方法は、オンラインでアルゴリズムを公開し、レコメンデーションに対するユーザの実際の反応を比較することである.
+アルゴリズムを比較する最も公平な方法は、オンラインでアルゴリズムを公開し、推薦に対するユーザの実際の反応を比較することである.
 However, this requires the existence of an online environment and a set of dedicated users, and it takes a long time.
 しかし、そのためには、オンライン環境の存在と熱心なユーザの存在が必要であり、長い時間がかかる.
 Another problem is the need of constant re-evaluation of algorithms, especially if they are sensitive to changes in the item or user set over time [2, 10].
@@ -53,12 +53,14 @@ Simulation of an online environment is a potential alternative [11, 27].
 We discuss these solutions later in the paper.
 これらの解決策については、後述する.
 
+![](https://d3i71xaburhd42.cloudfront.net/96b00351da3e0c281ce8c26b45bbba328b3d5f21/1-Figure1-1.png)
+
 In this work, we leverage recommendations from real news websites to model their CTR (Fig.1).
-本研究では、実際のニュースサイトのレコメンデーションを活用し、そのCTRをモデル化した(図1).
+本研究では、実際のニュースサイトのレコメンデーションを活用し、その**CTRをモデル化**した(図1).
 Our main contributions are threefold.
 私たちの主な貢献は3つある.
 First, in Sec.2, we review the different metrics, find those that are most likely to affect online performance, and indicate the presence of a trade-off between them.
-まず、Sec.2では、様々なメトリクスをレビューし、オンラインパフォーマンスに最も影響を与えそうなメトリクスを見つけ出し、それらの間のトレードオフの存在を示す.
+まず、Sec.2では、様々なメトリクスをレビューし、**オンラインパフォーマンスに最も影響を与えそうなメトリクスを見つけ出し**、それらの間のトレードオフの存在を示す.
 Next, in Sec.3, we combine a selected subset of metrics into a prediction model of online performance.
 次に、Sec.3では、選択したメトリクスのサブセットを組み合わせて、**オンラインパフォーマンスの予測モデルを作成**します。
 Finally, in Sec.4, using this model and the metric trade-offs, we show how to select the best version of an algorithm and its parameters using limited online evaluation, and how to create a blend of several recommender algorithms that adjusts over time for optimal performance.
@@ -93,7 +95,7 @@ This “intra-list” diversity has been presented and used in several forms [29
 Lathia et al.[10] proposed a definition of the temporal diversity of a recsys which was dependent on the number of new items a user was shown during different visits.
 Lathiaら[10]は、ユーザが異なる訪問時に表示された新しいアイテムの数に依存する、レクシスの時間的多様性の定義を提案した。
 For news recommendations where users are often anonymous, we modified the definition to compute the amount of new items the system recommends to all users at a later time.
-ユーザーが匿名であることが多いニュースレコメンデーションについては、システムが後日全ユーザーに推奨する新しいアイテムの量を計算するように定義を変更しました。
+ユーザが匿名であることが多いニュースレコメンデーションについては、システムが後日全ユーザーに推奨する新しいアイテムの量を計算するように定義を変更しました。
 Zhou et al.[30] proposed a metric called “personalization” that is effectively the normalized pairwise Jaccard similarity between items recommended to each pair of users; it can be viewed as the “extra-list” diversity.
 Zhouら[30]は，パーソナライゼーションと呼ばれる指標を提案したが，これは，各ユーザーのペアに推奨されたアイテム間の正規化ペアワイズJaccard類似度であり，「エクストラリスト」の多様性と見なすことができる．
 
@@ -103,7 +105,7 @@ A variation of such a metric, called “surprisal”, is a weighted sum of negat
 このようなメトリックのバリエーションとして、"surprisal "と呼ばれる、推薦リストの項目の負の対数頻度の加重和がある [30]．
 
 Coverage is defined as the percentage of items that are ever recommended, and prediction coverage is the number of users for whom a recommendation can be made.
-カバレッジとは、これまでに推奨されたことのあるアイテムの割合のことで、予測カバレッジとは、推奨が可能なユーザー数のことです。
+カバレッジとは、これまでに推薦されたことのあるアイテムの割合のことで、予測カバレッジとは、推奨が可能なユーザー数のことです。
 We also considered the Gini Index and Shannon’s Entropy [17].
 また、ジニ指数やシャノンのエントロピー[17]も考慮しました。
 
@@ -132,30 +134,36 @@ There was no strong agreement between metric groups (except for Coverage and Ser
 This indicates that different metric groups all express different features of the recommendations and therefore at least one representative of each group should be used as a feature of the performance model.
 これは、異なるメトリックグループがすべてレコメンデーションの異なる特徴を表現していることを示しており、したがって、各グループの少なくとも1つの代表をパフォーマンスモデルの特徴として使用する必要があることを示しています。
 
+![](https://d3i71xaburhd42.cloudfront.net/96b00351da3e0c281ce8c26b45bbba328b3d5f21/2-Figure2-1.png)
+
 Points often formed three distinct clusters.
 ポイントは3つのクラスターを形成していることが多い。
 The clusters corresponded to recommendations given by the different algorithms, indicating that the relationship between metrics might be different for recommendations given by different algorithms.
 このクラスターは、異なるアルゴリズムによるレコメンデーションに対応しており、異なるアルゴリズムによるレコメンデーションでは、指標間の関係が異なる可能性があることを示しています。
 
 The results in Fig.2 were obtained from the recommendation lists comprising three items.
-図2の結果は、3つの項目からなるレコメンドリストの結果である。
+図2の結果は、3つのアイテムからなるレコメンドリストの結果である。
 We studied the effect of the length of recommendation lists on metric correlations (Fig.3).
 推薦リストの長さが指標相関に与える影響を調査した（図3）。
 For all metric pairs, we first observed a drop, and then almost no change in the absolute value of correlations.
-すべての指標ペアについて、まず相関の絶対値が低下し、その後ほとんど変化がないことが確認された。
+すべての指標ペアについて、推薦リストの長さが大きくなるにつれて、まず相関の絶対値が低下し、その後ほとんど変化がないことが確認された。
 This indicates that different sets of metrics might be important for domains with different numbers of items to be recommended.
-これは、推奨するアイテムの数が異なるドメインでは、異なるメトリクスセットが重要である可能性を示しています。
+これは、推薦アイテムの数が異なるドメインでは、異なるメトリクスセットが重要である可能性を示しています。
+
+![](https://d3i71xaburhd42.cloudfront.net/96b00351da3e0c281ce8c26b45bbba328b3d5f21/2-Figure3-1.png)
 
 ## 2.3. Metric trade-off メトリックトレードオフ
+
+![](https://d3i71xaburhd42.cloudfront.net/96b00351da3e0c281ce8c26b45bbba328b3d5f21/3-Figure4-1.png)
 
 Algorithms often have hyperparameters that affect their performance, and by varying the values of such hyperparameters different sets of recommendations can be obtained.
 アルゴリズムは、その性能に影響を与えるハイパーパラメーターを持つことが多く、そのようなハイパーパラメーターの値を変えることで、異なるレコメンデーションセットを得ることができます。
 The average metric values for all the sets of recommendations given can be computed in order to observe how they change when varying a hyperparameter.
-ハイパーパラメータを変化させたときにどのように変化するかを観察するために、与えられた推薦文のすべてのセットの平均メトリック値を計算することができる。
+ハイパーパラメータを変化させたときにどのように変化するかを観察するために、与えられた推薦結果のすべてのセットの平均メトリック値を計算することができる。
 The example shown in Fig.4 was obtained using the Yahoo dataset and several variations of the Context Tree (CT) algorithm, described later in the paper.
 図4の例は、Yahooデータセットと後述するCT（Context Tree）アルゴリズムのいくつかのバリエーションを用いて得られたものです。
 Each of the algorithms produced a curve that clearly indicated the trade-off between metrics – in this case, Accuracy and Coverage.
-各アルゴリズムは、測定基準（この場合はAccuracyとCoverage）の間のトレードオフを明確に示す曲線を作成しました。
+各アルゴリズムは、測定基準(この場合はAccuracyとCoverage)の間のトレードオフを明確に示す曲線を作成しました。
 We also observed these tradeoffs using other datasets and algorithms.
 また、他のデータセットやアルゴリズムを用いて、これらのトレードオフを観察しました。
 Getting the best performance requires selecting which metrics to optimize.
@@ -182,18 +190,18 @@ Click-through rate (CTR) is the percentage of clicks made on recommendations.
 クリックスルー率（CTR）は、レコメンデーションでクリックされた割合のことです。
 
 For any random user, the model assumes that all the items she visits without a recsys are included in the set of items she would visit with one.
-任意のランダムなユーザーについて、このモデルは、彼女がリクシスを使わずに訪問したすべてのアイテムが、リクシスがあれば訪問するアイテムの集合に含まれると仮定している。
+任意のランダムなユーザについて、このモデルは、彼女が推薦システムを使わずに訪問したすべてのアイテムが、推薦システムがあれば訪問するアイテムの集合に含まれると仮定している.
 This means that if the user visits an item when using the recsys, that she would visit anyway when the recsys was absent, then that click should not be taken into account when measuring the impact of the recsys.
-つまり、リクシスを使用しているときに、リクシスがないときにも訪問するようなアイテムをユーザーが訪問した場合、そのクリックはリクシスの影響を測定する際に考慮されるべきではないということです。
+つまり、推薦システムを使用しているときに、推薦システムがないときにも訪問するようなアイテムをユーザが訪問した場合、**そのクリックは推薦システムの効果を測定する際に考慮されるべきではない**ということです.(ん? でもオンライン精度は考慮してしまっている、という事だよね...?! )
 A broader discussion of this topic is presented by Garcin et al.[6].
 このトピックに関するより広範な議論は、Garcinら[6]によって紹介されています。
 
 CTR and online accuracy are both important metrics for recsys.
-CTRとオンライン精度は、どちらもrecsysにとって重要な指標です。
+CTRとオンライン精度は、どちらもrecsysにとって重要な指標である.
 Therefore, we build a regression model for each of them.
 そこで、それぞれについて回帰モデルを構築する。
 The regression model will use not only offline accuracy, as it is something different from the two above.
-回帰モデルは、上記の2つとは異なるものであるため、オフラインの精度だけでなく、オフラインの精度も使用します。
+回帰モデルは、上記の2つとは異なるものであるため、オフライン精度以外のオフラインmetricsも使用します。
 
 ## 3.1. Feature selection 特徴の選択
 

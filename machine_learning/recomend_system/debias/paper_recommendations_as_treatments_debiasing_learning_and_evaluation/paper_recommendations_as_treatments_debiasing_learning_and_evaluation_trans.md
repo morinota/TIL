@@ -431,9 +431,9 @@ $$
 $$
 
 where A encodes the offset terms and Yˆ ERM = V T W+A.
-ここで、Aはオフセット項(定数項、bais項)を符号化し、Yˆ ERM = V T W+Aである.
+ここで、Aはオフセット項(定数項、bais項)を符号化し、 $\hat{Y}^{ERM} = V^TW + A$ である.
 Except for the propensities Pu,i that act like weights for each loss term, the training objective is identical to the standard incomplete matrix factorization objective (Koren, 2008; Steck, 2010; Hu et al., 2008) with MSE (using Eq.(3)) or MAE (using Eq.(2)).
-各損失項の重みのように働く予感Pu,iを除いて、学習目的は、MSE（式（3）を使用）またはMAE（式（2）を使用）による標準的な不完全行列分解目的（Koren、2008；Steck、2010；Hu et al、2008）と同一である。
+各損失項の重みのように働く傾向 $P_{u,i}$ を除いて、学習目的は、MSE（式（3）を使用）またはMAE（式（2）を使用）による**標準的な不完全行列分解の目的関数（Koren、2008；Steck、2010；Hu et al、2008）と同一**である.
 So, we can readily draw upon existing optimization algorithms (i.e., Gemulla et al., 2011; Yu et al., 2012) that can efficiently solve the training problem at scale.
 そのため、スケールアップしたトレーニング問題を効率的に解決できる既存の最適化アルゴリズム（Gemulla et al.
 For the experiments reported in this paper, we use Limited-memory BFGS (Byrd et al., 1995).
@@ -442,103 +442,110 @@ Our implementation is available online3 .
 私たちの実装はオンラインで公開されています3 。
 
 Conventional incomplete matrix factorization is a special case of Eq.(14) for MCAR (Missing Completely At Random) data, i.e., all propensities Pu,i are equal.
-従来の不完全行列分解は、MCAR（Missing Completely At Random）データに対する式（14）の特殊な場合、すなわち、すべての予感Pu,iが等しい場合である。
+従来の不完全行列分解は、MCAR（Missing Completely At Random）データに対する式（14）の特殊な場合、すなわち、**すべての傾向 P\_{u,i} が等しい場合**である。
 Solving this training objective for other δu,i(Y, Yˆ ) that are nondifferentiable is more challenging, but possible avenues exist (Joachims, 2005; Chapelle & Wu, 2010).
-非微分である他のδu,i(Y, Yˆ )に対してこの訓練目的を解くことはより困難であるが、可能な道は存在する（Joachims, 2005; Chapelle & Wu, 2010.）
+非微分である他の $\delta_{u,i}(Y, \hat{Y})$ に対してこの訓練目的を解くことはより困難であるが、可能な道は存在する（Joachims, 2005; Chapelle & Wu, 2010.）
 Finally, note that other recommendation methods (e.g., Weimer et al., 2007; Lin, 2007) can in principle be adapted to propensity scoring as well.
-最後に、他の推薦法（例えばWeimer et al., 2007; Lin, 2007）も原理的には傾向性スコアリングに適応できることに留意してください。
+最後に、**他の推薦法（例えばWeimer et al., 2007; Lin, 2007）も原理的には傾向性スコアリングに適応できること**に留意してください。
 
 # 5. Propensity Estimation for Observational Data 観察データに対する傾向推定法
 
 We now turn to the Observational Setting where propensities need to be estimated.
-次に、予感の推定が必要な観測設定に移ります。
+次に、**propensities の推定が必要なObservational Setting**に移ります。
 One might be worried that we need to perfectly reconstruct all propensities for effective learning.
 効果的な学習のために、すべての性質を完璧に再構築する必要があるのではないかと心配されるかもしれません。
 However, as we will show, we merely need estimated propensities that are “better” than the naive assumption of observations being revealed uniformly, i.e., P = |{(u, i) : Ou,i = 1}|/ (U · I) for all users and items.
-{(u, i) : Ou,i = 1}
+しかし、これから示すように、我々は、**観測結果が一様に明らかになるという素朴(naive)な仮定よりも「良い」推定されたpropensitiesを必要としているだけ**である。(i.e. 全てのユーザとアイテムについて $P = |{(u, i) : O_{u,i} = 1}|/ (U \cdot I)$)
 The following characterizes “better” propensities in terms of the bias they induce and their effect on the variability of the learning process.
 以下では、「より良い」性質について、それが誘発するバイアスと、学習プロセスの変動に対する効果の観点から特徴付ける。
 
 Lemma 5.1 (Bias of IPS Estimator under Inaccurate Propensities).
-レンマ5.1（不正確なプロペンシティの下でのIPS推定器のバイアス）。
+レンマ5.1（**不正確なPropensities の下でのIPS推定器のバイアス**）。
 Let P be the marginal probabilities of observing an entry of the rating matrix Y , and let Pˆ be the estimated propensities such that Pˆ u,i > 0 for all u, i.
-評価行列Yのエントリを観測する限界確率をPとし、すべてのu, iに対してPˆ u,i > 0となるような推定予感をPˆとする。
+評価行列Yのエントリを観測する周辺確率をPとし、すべてのu, iに対して$\hat{P}_{u,i} > 0$となるような推定propensityを$\hat{P}$とする.
 The bias of the IPS estimator Eq.(10) using Pˆ is
 Pˆを用いたIPS推定量式(10)のバイアスは、以下の通り。
 
 $$
+bias(\hat{R}_{IPS}(\hat{Y}|\hat{P})) = \sum_{u,i} \frac{\delta_{u,i}(Y, \hat{Y})}{UI} [1 - \frac{P_{u,i}}{\hat{P}_{u,i}}]
 \tag{15}
 $$
 
 In addition to bias, the following generalization error bound (proof in appendix) characterizes the overall impact of the estimated propensities on the learning process.
-バイアスに加えて、以下の一般化誤差境界（証明は付録）は、推定された予感が学習過程に与える全体的な影響を特徴づける。
+バイアスに加えて、以下の一般化誤差境界（証明は付録）は、推定された傾向が学習過程に与える全体的な影響を特徴づける.
 
 Theorem 5.2 (Propensity-Scored ERM Generalization Error Bound under Inaccurate Propensities).
 定理5.2（不正確な予感の下での傾向スコア付きERM汎化誤差の境界）。
 For any finite hypothesis space of predictions H = {Yˆ 1, ..., Yˆ |H|}, the transductive prediction error of the empirical risk minimizer Yˆ ERM, using the IPS estimator with estimated propensities Pˆ (Pˆ u,i > 0) and given training observations O from Y with independent Bernoulli propensities P, is bounded by:
-H
+予測値H＝｛Yˆ 1, ..., Yˆ |H｝の任意の有限仮説空間に対して、推定傾向 Pˆ（Pˆ u,i > 0）を有するIPS推定器を用い、独立ベルヌーイ予兆Pを有するYからの訓練観測値Oが与えられた場合の経験的リスク最小化器Yˆ ERMの伝達予測誤差は、次式で境界付けられる：
 
 $$
+R(\hat{Y}^{ERM}) \leq \hat{R}_{IPS}(\hat{Y}^{ERM}|\hat{P}) + \frac{\Delta}{UI}\sum_{u,i} |1 - \frac{P_{u,i}}{\hat{P}_{u,i}}|
+\\
++ \frac{\Delta}{UI} \sqrt{\frac{log(2|H| / \nu)}{2}} \sqrt{\sum_{u,i}\frac{1}{\hat{P}_{u,i}^2}}
 \tag{16}
 $$
 
 The bound shows a bias-variance trade-off that does not occur in conventional ERM.
-このバウンドは、従来のERMでは生じなかったバイアスとバリアンスのトレードオフを示すものである。
+このバウンドは、従来のERMでは生じなかったバイアスとバリアンスのトレードオフを示すものである。(biasを小さくしようとするとbarianceが大きくなる?)
 In particular, the bound suggests that it may be beneficial to overestimate small propensities, if this reduces the variability more than it increases the bias.
 特に、この境界は、バイアスを増加させるよりも変動を減少させる方が、小さな予感を過大評価することが有益であることを示唆する。
 
 ## 5.1. Propensity Estimation Models. プロペンシティ・エスティメーション・モデル
 
 Recall that our goal is to estimate the probabilities Pu,i with which ratings for user u and item i will be observed.
-我々の目的は、ユーザーuとアイテムiの評価が観測される確率Pu,iを推定することであることを思い出してください。
+**我々の目的は、ユーザーuとアイテムiの評価が観測される確率Pu,iを推定すること**であることを思い出してください。
 In general, the propensities
 一般に、プロペンシティは
 
 $$
+P_{u,i} = P(O_{u,i} = 1| X, X^{hid}, Y)
 \tag{17}
 $$
 
 can depend on some observable features X (e.g., the predicted rating displayed to the user), unobservable features Xhid (e.g., whether the item was recommended by a friend), and the ratings Y .
-は、観測可能な特徴X（例えば、ユーザーに表示される予測評価）、観測不可能な特徴Xhid（例えば、アイテムが友人によって推薦されたかどうか）、および評価Yに依存することができます。
+は、観測可能な特徴X（例えば、ユーザに表示される予測評価）、観測不可能な特徴$X^{hid}$（例えば、アイテムが友人によって推薦されたかどうか）、および評価$Y$に依存している可能性がある。
 It is reasonable to assume that Ou,i is independent of the new predictions Yˆ (and therefore independent of δu,i(Y, Yˆ )) once the observable features are taken into account.
-観測可能な特徴が考慮されれば、Ou,iは新しい予測値Yˆに依存しない（したがって、δu,i（Y, Yˆ ）にも依存しない）と考えるのが妥当である。
+観測可能な特徴が考慮されれば、$O_{u,i}$は新しい予測値$\hat{Y}$に依存しない（したがって、δu,i（Y, Yˆ ）にも依存しない）と考えるのが妥当である。(??)
 The following outlines two simple propensity estimation methods, but there is a wide range of other techniques available (e.g., McCaffrey et al., 2004) that can cater to domain-specific needs.
-以下では2つの簡単な傾向推定法を概説するが、ドメイン固有のニーズに対応できる他の技法も幅広く存在する（例：McCaffrey et al, 2004）。
+以下では**2つの簡単な傾向推定法**を概説するが、ドメイン固有のニーズに対応できる他の技法も幅広く存在する（例：McCaffrey et al, 2004）。
 
 ### 5.1.1. Propensity Estimation via Naive Bayes. ナイーブベイズによる傾向推定を行う。
 
 The first approach estimates P(Ou,i|X, Xhid, Y ) by assuming that dependencies between covariates X, Xhid and other ratings are negligible.
-X, Xhid, Y ) by assuming that dependencies between covariates X, Xhid and other ratings are negligible.
+最初のアプローチは、共変量X、Xhidと他の評価との間の依存関係が無視できると仮定して、P(Ou,i|X, Xhid, Y )を推定する。
 Eq.(17) then reduces to P(Ou,i|Yu,i) similar to Marlin & Zemel (2009).
-Yu,i) similar to Marlin & Zemel (2009).
+式(17)は、Marlin & Zemel (2009)と同様に、P(Ou,i|Yu,i)に還元されます。
 We can treat Yu,i as observed, since we only need the propensities for observed entries to compute IPS and SNIPS.
-IPSとSNIPSの計算には、観測されたエントリーの予感だけが必要なので、Yu,iは観測されたものとして扱うことができる。
+IPSとSNIPSの計算には、**観測されたエントリーの傾向スコアのみが必要**なので、**Yu,iは観測されたものとして扱うことができる**.
 This yields the Naive Bayes propensity estimator:
 これにより、ナイーブベイズの傾向推定器が得られる：
 
+
 $$
+P(O_{u,i} = 1|Y_{u,i} = r) = \frac{P(Y=r|O=1)P(O=1)}{P(Y=r)}
 \tag{18}
 $$
 
 We dropped the subscripts to reflect that parameters are tied across all u and i.
 パラメータがすべてのuとiで結ばれていることを反映するために、添え字を削除した。
 Maximum likelihood estimates for P(Y = r | O = 1) and P(O = 1) can be obtained by counting observed ratings in MNAR data.
-O = 1) and P(O = 1) can be obtained by counting observed ratings in MNAR data.
+P(Y=r｜O=1)とP(O=1)の最尤推定値は、MNARデータで観測された評価を数えることで得ることができる。
 However, to estimate P(Y = r), we need a small sample of MCAR data.
 しかし、P(Y = r)を推定するためには、MCARデータの少量サンプルが必要です。
 
 ### 5.1.2. Propensity Estimation via Logistic Regression ロジスティック回帰による傾向推定
 
 The second propensity estimation approach we explore (which does not require a sample of MCAR data) is based on logistic regression and is commonly used in causal inference (Rosenbaum, 2002).
-私たちが探求する2つ目の傾向推定アプローチ（MCARデータのサンプルを必要としない）は、ロジスティック回帰に基づくもので、因果関係推論によく使われるものです（Rosenbaum, 2002）。
+私たちが探求する**2つ目の傾向推定アプローチ（MCARデータのサンプルを必要としない）は、ロジスティック回帰に基づくもの**で、**因果推論によく使われる**ものです（Rosenbaum, 2002）。
 It also starts from Eq.(17), but aims to find model parameters φ such that O becomes independent of unobserved Xhid and Y , i.e., P(Ou,i|X, Xhid, Y ) = P(Ou,i|X, φ).
-X, Xhid, Y ) = P(Ou,i
-The main modeling assumption is that there exists a φ = (w, β, γ) such that Pu,i = σ w T Xu,i + βi + γu  .
-主なモデリングの仮定は、Pu,i = σ w T Xu,i + βi + γu となるようなφ = (w, β, γ) が存在することです。
+これも式(17)から出発するが、**Oが未観測のXhidとYに依存しなくなるようなモデルパラメータφ**、すなわち $P(O_{u,i}|X, X_{hid}, Y) = P(O_{u,i}|X, φ)$ を見つけることを目的としている.
+The main modeling assumption is that there exists a φ = (w, β, γ) such that $P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})$.
+主なモデリングの仮定は、$P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})$ となるようなφ = (w, β, γ) が存在することである.
 Here, Xu,i is a vector encoding all observable information about a user-item pair (e.g., user demographics, whether an item was promoted, etc.), and σ(·) is the sigmoid function.
-ここで、Xu,iはユーザーとアイテムのペアに関するすべての観測可能な情報（例えば、ユーザーのデモグラフィック、アイテムがプロモーションされたかどうかなど）を符号化したベクトルで、σ（-）はシグモイド関数です。
+ここで、X_{u,i}はユーザーとアイテムのペアに関するすべての観測可能な情報（例えば、ユーザーのデモグラフィック、アイテムがプロモーションされたかどうかなど）を符号化したベクトルで、σ（-）はシグモイド関数です。
 βi and γu are peritem and per-user offsets.
-βi、γuは、アイテム単位、ユーザー単位のオフセットです。
+βi、γuは、アイテム単位、ユーザー単位のオフセットである.
 
 # 6. Empirical Evaluation 実証的評価
 

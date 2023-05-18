@@ -405,7 +405,7 @@ This may occur both in terms of topics recommended, which is the focus of the Fr
 Fragmentation specifically compares differences in recommended news story chains, or sets of articles describing the same issue or event from different perspectives, writing styles or points in time [38], between users; the smaller the difference, the more aware the users are of the same events and issues in society, and the more we can speak of a joint agenda.
 フラグメンテーションとは、具体的には、ユーザ間で推薦されるニュースストーリーチェーン（同じ問題や出来事を異なる視点、書き方、時点から記述した記事の集合）[38]の違いを比較するもので、**違いが小さいほど、ユーザは社会における同じ出来事や問題をより認識しており、共同課題を語ることができるとしている.**
 When the news story chains shown to the users differ significantly, the public sphere becomes more fragmented, hence the term Fragmentation.
-ユーザに表示されるニュースストーリーの連鎖が**大きく異なると、公共圏がより細分化される**ため、Fragmentationと呼ばれるようになった.
+ユーザに表示されるニュースストーリーの連鎖が**大きく異なると、公共圏がよりfragment(細分化)される**ため、Fragmentationと呼ばれるようになった.
 
 ### 4.2.2. In the context of democratic recommenders. 民主的な推薦者の文脈で。
 
@@ -440,7 +440,7 @@ RBO(Q_1, Q_2, s) = (1 - s) \sum_{d=1}^{\infty}s^{d-1} A_{d}
 $$
 
 where $Q_1$ and $Q_2$ denote two (potentially) infinite ordered lists, or two recommendations issued to users 1 and 2, and $s$ a parameter that generates a set of weights with a geometric progression starting at 1 and moving towards 0 that ensures the tail of the recommendation is counted less severely compared to its head.
-ここで、$Q_1$と$Q_2$は、2つの（潜在的に）無限順序リスト、またはユーザ1と2に発行された2つの勧告を示し、$s$は、推薦結果の尾部がその頭部と比較してより厳しくカウントされるように、1から始まり0に向かって幾何級数で重みセットを生成するパラメーターである.
+ここで、$Q_1$と$Q_2$は、2つの（潜在的に）無限順序リスト、またはユーザ1と2に発行された2つの推薦を示し、$s$は、推薦結果の尾部がその頭部と比較してより厳しくカウントされるように、1から始まり0に向かって幾何級数で重みセットを生成するパラメーターである.
 Because of this there is a natural cut-off point where the score stabilizes.
 そのため、スコアが安定する自然なカットオフポイントが存在するのです。
 We iterate over the ranks 𝑑 in the recommendation set, and at each rank we calculate the average overlap 𝐴𝑑 .
@@ -496,10 +496,10 @@ Here high values of Activation should be expected.
 
 ### 4.3.3. Operationalization. オペレーション化。
 
-The Circumplex Model of Affect [43] describes a dimensional model where all types of emotions are expressed using the terms valence and arousal.
-感情のサーカムプレックスモデル[43]は、すべてのタイプの感情が価数と覚醒という用語を使って表現される次元モデルを説明している。
+The Circumplex Model of Affect [43] describes a dimensional model where all types of emotions are expressed using the terms **valence** and **arousal**.
+感情のサーカムプレックスモデル[43]は、すべてのタイプの感情が**valence**(価数)と**arousal**(覚醒)という用語を使って表現される次元モデルを説明している.
 Valence indicates whether the emotion is positive or negative, while arousal refers to the strength of the emotion and to what extent it expresses action.
-Valenceは感情がポジティブかネガティブかを示し、Arousalは感情の強さ、行動をどの程度表すかを示す。
+**Valenceは感情がポジティブかネガティブかを示し、Arousalは感情の強さ、行動をどの程度表すかを示す**。
 Following this, for example, ’excitement’ has a positive valence and arousal, whereas ’bored’ is negative for both.
 これに従うと、例えば’excitement’は正の価数と覚醒度を持つのに対し、’bored’は両者とも負の価数である。
 Based on the theory described above a number of "sentiment analysis" tools have been developed, which typically have the goal of identifying whether people have a positive or negative sentiment regarding a certain product or issue.
@@ -513,7 +513,7 @@ Then, the total Activation score of the recommender system should be calculated 
 The average Activation score of the items recommended to each user provides a baseline score for whether the articles overall tend to be activating or neutral.
 各ユーザに推薦されたアイテムの平均活性化スコアは、記事全体が活性化する傾向にあるのか、中立的な傾向にあるのかの基準スコアとなります。
 Next, the issued recommendations are compared to the available pool of data as follows:
-次に、発行された提言と利用可能なデータプールを以下のように比較します：
+次に、発行された推薦結果と利用可能なデータプールを以下のように比較しす.：
 
 $$
 Activation(p, q) = (|polarity(q)| - |polarity(p)|) / 2
@@ -528,7 +528,7 @@ We subtract the mean from the available pool of articles from the mean of the re
 A value lower than zero indicates that the recommender system shows less activating content than was available in the pool of data, and therefore favors more neutral articles.
 ゼ**ロより低い値は、レコメンダーシステムが、データプールで利用可能だったよりも活性化するコンテンツが少なく、より中立的な記事を優先して表示することを示します。**
 Values higher than zero show the opposite; the recommendation sets contained proportionally more activating content than was available in the pool.
-**ゼロより高い値は、その逆で、レコメンデーションセットには、プールで利用可能なものより比例して多くの活性化コンテンツが含まれていることを示しています。**
+ゼロより高い値は、その逆で、レコメンデーションセットには、プールで利用可能なものより比例して多くの活性化コンテンツが含まれていることを示しています。
 
 ### 4.3.4. Limitations. 制限があります。
 
@@ -676,7 +676,7 @@ AlternativeVoices = \frac{q^{+} / p^{+}}{q^{-} / p^{-}}
 $$
 
 Here 𝑞 + denotes the number of mentions of people belonging to a protected group in the recommendations, whereas 𝑝 + denotes the number of mentions of people belonging to a protected group in all the available articles.
-ここで、ᑞはレコメンデーションにおける保護団体に属する人々の言及数を示し、一方、ᑝ +は利用可能なすべての記事における保護団体に属する人々の言及数を示している。
+ここで、$q^{+}$はレコメンデーションにおける保護団体に属する人々の言及数を示し、一方、$p^{+}$ は利用可能なすべての記事における保護団体に属する人々の言及数を示している.
 𝑞 − and 𝑝 − denote similar mentions, but for people belonging to the unprotected group.
 ᵅ - とᵅ - は、同様の言及を示しますが、保護されていないグループに属する人々についてです。
 Though the example given in Burke et al.[5] describes the equation being used to identify whether loans from protected and unprotected regions appear equally often, it is also directly applicable to our notion of Alternative Voices; however, rather than counting regions being recommended, we count the number of times that people from minority (protected) versus majority (unprotected) groups are being mentioned in the news.
@@ -707,7 +707,7 @@ Though all of the metrics described in Section 4 already mention the limitations
 Of the currently specified metrics, only Fragmentation takes the ordering of the items in the recommendation into account.
 現在規定されているメトリクスのうち、Fragmentationのみ推薦文の項目の順序を考慮しています。
 However, the top result in a recommendation is of significantly more importance than the result in place 10.
-しかし、レコメンデーションの上位の結果は、10位の結果よりも重要度が格段に高いのです。
+しかし、**レコメンデーションの上位の結果は、10位の結果よりも重要度が格段に高い**のです。
 In future work, the other metrics should be extended in such a way that they reflect this.
 今後、他の指標もこれを反映するように拡張していく必要があります。
 
@@ -805,7 +805,7 @@ The metrics and their operationalizations should serve as inspiration and a star
 # 7. Discussion ディスカッション
 
 In this paper we have translated normative notions of diversity into five metrics.
-本稿では、多様性に関する規範的な概念を5つの指標に置き換えた。
+本稿では、**多様性に関する規範的な概念を5つの指標に置き換えた**。
 Each of the metrics proposed here is relevant in the context of democratic news recommenders, and combined they form a picture that aims to be expressive of the nuances in the different models.
 ここで提案する各メトリクスは、民主的なニュースレコメンダーの文脈に関連しており、それらを組み合わせることで、異なるモデルのニュアンスを表現することを目指した画像を形成する。
 However there is still a lot of work to be done, both in terms of technical feasibility and in undertaking steps to make diversity of central importance for recommender system development.
