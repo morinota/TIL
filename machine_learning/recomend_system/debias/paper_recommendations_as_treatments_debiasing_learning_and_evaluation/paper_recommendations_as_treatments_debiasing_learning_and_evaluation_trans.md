@@ -496,7 +496,7 @@ In particular, the bound suggests that it may be beneficial to overestimate smal
 Recall that our goal is to estimate the probabilities Pu,i with which ratings for user u and item i will be observed.
 **我々の目的は、ユーザーuとアイテムiの評価が観測される確率Pu,iを推定すること**であることを思い出してください。
 In general, the propensities
-一般に、プロペンシティは
+一般に、propensities は
 
 $$
 P_{u,i} = P(O_{u,i} = 1| X, X^{hid}, Y)
@@ -512,15 +512,14 @@ The following outlines two simple propensity estimation methods, but there is a 
 
 ### 5.1.1. Propensity Estimation via Naive Bayes. ナイーブベイズによる傾向推定を行う。
 
-The first approach estimates P(Ou,i|X, Xhid, Y ) by assuming that dependencies between covariates X, Xhid and other ratings are negligible.
-最初のアプローチは、共変量X、Xhidと他の評価との間の依存関係が無視できると仮定して、P(Ou,i|X, Xhid, Y )を推定する。
+The first approach estimates $P(O_{u,i}|X, Xhid, Y)$ by assuming that dependencies between covariates X, Xhid and other ratings are negligible.
+最初のアプローチは、**共変量X、Xhidと他の評価との間の依存関係が無視できると仮定**(=> i.e.)して、$P(O_{u,i}|X, Xhid, Y)$を推定する。(要するにMCARなデータ?とは違うか...!)
 Eq.(17) then reduces to P(Ou,i|Yu,i) similar to Marlin & Zemel (2009).
-式(17)は、Marlin & Zemel (2009)と同様に、P(Ou,i|Yu,i)に還元されます。
+式(17)は、Marlin & Zemel (2009)と同様に、$P(O_{u,i}|Y_{u,i})$に還元されます。
 We can treat Yu,i as observed, since we only need the propensities for observed entries to compute IPS and SNIPS.
-IPSとSNIPSの計算には、**観測されたエントリーの傾向スコアのみが必要**なので、**Yu,iは観測されたものとして扱うことができる**.
+IPSとSNIPSの計算には、**観測されたエントリーの傾向スコアのみが必要**なので、**(全ての!)Yu,iは観測されたものとして扱うことができる**.
 This yields the Naive Bayes propensity estimator:
 これにより、ナイーブベイズの傾向推定器が得られる：
-
 
 $$
 P(O_{u,i} = 1|Y_{u,i} = r) = \frac{P(Y=r|O=1)P(O=1)}{P(Y=r)}
@@ -528,9 +527,9 @@ P(O_{u,i} = 1|Y_{u,i} = r) = \frac{P(Y=r|O=1)P(O=1)}{P(Y=r)}
 $$
 
 We dropped the subscripts to reflect that parameters are tied across all u and i.
-パラメータがすべてのuとiで結ばれていることを反映するために、添え字を削除した。
+パラメータがすべてのuとiで結ばれていることを反映するために、添え字を削除した。(i.e. MNARデータにおいて、全ての{u,i}ペアで$P(Y=r|O=1)$も$P(O=1)$も等しいはずだから...??)
 Maximum likelihood estimates for P(Y = r | O = 1) and P(O = 1) can be obtained by counting observed ratings in MNAR data.
-P(Y=r｜O=1)とP(O=1)の最尤推定値は、MNARデータで観測された評価を数えることで得ることができる。
+$P(Y=r｜O=1)$とP(O=1)の最尤推定値は、**MNARデータで観測された評価を数えることで得ることができる**.(シンプルに割り算で推定できる?)
 However, to estimate P(Y = r), we need a small sample of MCAR data.
 しかし、P(Y = r)を推定するためには、MCARデータの少量サンプルが必要です。
 
@@ -543,9 +542,9 @@ It also starts from Eq.(17), but aims to find model parameters φ such that O be
 The main modeling assumption is that there exists a φ = (w, β, γ) such that $P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})$.
 主なモデリングの仮定は、$P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})$ となるようなφ = (w, β, γ) が存在することである.
 Here, Xu,i is a vector encoding all observable information about a user-item pair (e.g., user demographics, whether an item was promoted, etc.), and σ(·) is the sigmoid function.
-ここで、X_{u,i}はユーザーとアイテムのペアに関するすべての観測可能な情報（例えば、ユーザーのデモグラフィック、アイテムがプロモーションされたかどうかなど）を符号化したベクトルで、σ（-）はシグモイド関数です。
+ここで、$X_{u,i}$は、ユーザとアイテムのペアに関するすべての観測可能な情報（例えば、ユーザーのデモグラフィック、アイテムがプロモーションされたかどうかなど）を符号化したベクトルで、$\sigma()$はシグモイド関数です。
 βi and γu are peritem and per-user offsets.
-βi、γuは、アイテム単位、ユーザー単位のオフセットである.
+$\beta_{i}$、$\gamma_{u}$は、アイテム単位、ユーザ単位のオフセットである.
 
 # 6. Empirical Evaluation 実証的評価
 
