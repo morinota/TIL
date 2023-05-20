@@ -230,7 +230,7 @@ Details of this approach are given in Alg.1.Several ∆t interval sizes were tes
 Ten minute intervals were chosen as shorter intervals gave results with very high variance and longer intervals meant fewer data points and, therefore, less significant results.
 $\Delta t$ を**10分間隔**にしたのは、これより短い間隔では分散が大きく、長い間隔ではデータポイントが少なくなり、有意な結果が得られないからである.
 We used F = 100 folds.
-F＝100倍を使用しました.(fold=パラメータ推論のサンプリング回数?)
+F＝100を使用しました.(fold=パラメータ推論のサンプリング回数?)
 
 ## 3.2. Regression model 回帰モデル
 
@@ -264,7 +264,7 @@ An obvious solution would be to evaluate each of the algorithms online using sev
 明らかな解決策は、ハイパーパラメータのいくつかの値を用いて、各アルゴリズムをオンラインで評価することである。
 
 In our model, online performance can be approximated by a weighted combination of two offline metrics (i.e.Accuracy and Coverage).
-**本モデルでは、オンライン性能は、2つのオフライン指標（AccuracyとCoverage）の重み付けされた組み合わせで近似**することができる.(結局この２つなのか...!)
+**本モデルでは、オンライン性能は、2つのオフライン指標（AccuracyとCoverage）の重み付けされた組み合わせで近似**することができる.(結局この２つなのか...?例えばの話っぽい?)
 To simplify the argument below, we assume that weights are positive but approach trivially extends to the case when they are negative.
 以下の議論を簡単にするため、重みは正であると仮定する(=以下の解説を読む上で重要な仮定!!)が、アプローチは重みが負である場合にも些か拡張される.
 Such a model is learned by evaluating one of the algorithm variations online and is assumed to be similar for other variations.
@@ -402,7 +402,7 @@ LARの性質上、いくつかの相関予測変数がある場合、そのう�
 However, the order in which correlated predictors will enter the model, is unknown.
 しかし、相関のある予測変数がどのような順序でモデルに入るかは不明である。
 As we are not interested in the predictors themselves, but rather in showing the importance of metric groups (Accuracy, Coverage, Diversity, Serendipity, and Novelty), we calculated the average time for the first metric of each metric group to enter the model (Tab.1).
-予測因子そのものに興味があるのではなく、**メトリックグループ（Accuracy、Coverage、Diversity、Serendipity、Novelty）の重要性を示したい**ので、**各メトリックグループの最初のmetricがモデルに入るまでの平均時間**を計算した（Tab.1）。
+今回は各説明変数そのものに興味があるのではなく、**メトリックグループ（Accuracy、Coverage、Diversity、Serendipity、Novelty）の重要性を示したい**ので、**各メトリックグループの最初のmetricがモデルに入るまでの平均時間**を計算した（Tab.1）。
 
 ![](https://d3i71xaburhd42.cloudfront.net/96b00351da3e0c281ce8c26b45bbba328b3d5f21/5-Table1-1.png)
 
@@ -434,7 +434,7 @@ We divided the time interval into parts of 30%, 50% and 20%.
 The first 30% were used for training the algorithm itself and were not used in the regression model.
 最初の30%はアルゴリズム自体のトレーニングに使用され、回帰モデルには使用されませんでした。
 The recommendations made by the algorithm on the next 50% were used to train the model, and the last 20% were used to test the model’s performance.
-次の50%についてアルゴリズムが行った推薦は、モデル(=オンライン性能予測モデル)のトレーニングに使用され、最後の20%はモデルの性能テストに使用されました.
+次の50%については、アルゴリズムが出力した推薦結果と共にモデル(=オンライン性能予測モデル)のトレーニングに使用され、最後の20%はモデルの性能テストに使用されました.
 
 ### 5.3.1. CTR prediction.
 
@@ -443,7 +443,7 @@ The recommendations made by the algorithm on the next 50% were used to train the
 For CTR prediction (Tab.2), the lowest average error was indeed obtained using one predictor from each of the four metric groups (we omitted novelty here and later on due to its poor results in feature selection).
 CTR予測（Tab.2）では、4つの指標群からそれぞれ1つずつpredictorを用いることで、確かに平均誤差が最も小さくなりました（**noveltyは特徴選択の結果が悪いため、ここでも後述でも割愛**）。
 The error for the full set of metrics was much higher, probably due to overfitting.
-metricsの全セットの誤差は、おそらくオーバーフィッティングのため、より高い値を示しました。(17個の説明変数?)
+metricsの全セットの誤差は、おそらくオーバーフィッティングのため、より高い値を示しました。
 Diversity seemed to be very important in the first dataset, since it gave the best individual result as a predictor.
 最初のデータセットでは、 Diversity が非常に重要であったようです。なぜなら、多様性は predictor として最も良い個人結果を与えたからです.(individual resultは相関係数的な意味だろうか? )
 Combinations of different groups including diversity also gave better results than combinations that did not.
@@ -451,7 +451,7 @@ Combinations of different groups including diversity also gave better results th
 More complex models, such as penalized LR (All+L2) or the Gaussian process with an RBF kernel (GP+RBF), gave even better results, however these models are more difficult to interpret and use.
 ペナルティ付きLR（All+L2）やRBFカーネル付きガウスプロセス（GP+RBF）など、より複雑なモデルはさらに良い結果(MSE?)を示したが、これらのモデルの解釈や使用はより困難である。
 Note that results were consistent among datasets and that the best ones significantly outperformed the baseline model, which assumes constant CTR through time (Const).
-なお、結果はデータセット間で一貫(diversity metricを含むとCTR予測のスコアは高くなる結果...!)しており、最も優れたものは、時間を通じて一定のCTRを仮定したベースラインモデルを大幅に上回っています（Const）。
+なお、結果はデータセット間で一貫しており、**最も優れたmetricsの組み合わせの予測結果は、時間を通じて一定のCTRを仮定したベースラインモデルを大幅に上回って**います（Const）。
 
 ![](https://camo.qiitausercontent.com/269f70a0ec79a22088733bd22b77bf063b3edde2/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32303931313066382d653631362d383962302d616531352d3862393463393164303065302e706e67)
 
@@ -505,7 +505,7 @@ We examined whether changing the algorithm weighting in the direction indicated 
 ![](https://camo.qiitausercontent.com/9d6e133271d568b8dca988aa4a83cd7eed03039c/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f31333466663762652d336434662d663733632d336565312d3835333036326237656666612e706e67)
 
 In the third, fifth and seventh periods – during daytime – all coefficients suggested increasing the weight of the CT algorithm.
-**第3期、第5期、第7期（日中）では、すべての係数がCTアルゴリズムのウェイトを高めることを示唆**しました。(i.e. 日中は、CTアルゴリズムの重み付けを高めるような予測結果になった)
+**第3期、第5期、第7期（日中）では、すべての係数がCTアルゴリズムのウェイトを高めることを示唆**しました。(i.e. 日中は、CTアルゴリズムの重み付けを高めるようなself-adjusting結果になった)
 At night, the algorithm with 20% of Most Popular was still best, but by a smaller margin, and the magnitude of the coefficients agreed with these results.
 夜間では、Most Popularを20%使用したアルゴリズムが、より小さな差ではありますが、依然として最良であり、係数の大きさもこの結果と一致しました。
 
@@ -572,16 +572,16 @@ The work presented here concentrates on using different metrics to predict the o
 Several recommender systems have been implemented and evaluated on live news websites [3, 12, 20, 21].
 いくつかの推薦システムが、ライブのニュースサイトで実装され、評価されている [3, 12, 20, 21]。
 A number of previous works have advocated the use of multiple metrics for these evaluations [13, 17].
-これらの評価には、多くの先行研究が複数のメトリクスの使用を提唱している[13, 17]。
+**これらの評価には、多くの先行研究が複数のメトリクスの使用を提唱**している[13, 17]。
 Below, we describe separately works that introduced and optimized new metrics, and works that combined existing metrics into multi-objective optimization.
-以下、新たな指標を導入して最適化した作品と、既存の指標を組み合わせて多目的最適化した作品に分けて説明する。
+以下、新たなmetricsを導入して最適化した作品と、既存の指標を組み合わせて多目的最適化した作品に分けて説明する。
 
-## 6.1. Recommendations using multiple metrics. 複数の指標を用いた推奨事項
+## 6.1. Recommendations using multiple metrics. 複数の指標を用いた推薦
 
 The need to provide more diverse and unexpected recommendations that cover the items from the ’long tail’ was identified early in the history of recsys.
-ロングテール」のアイテムをカバーする、より多様で意外性のあるレコメンデーションを提供する必要性は、recsysの歴史の中で早くから認識されていました。
+**ロングテールのアイテムをカバーする、より多様で意外性のあるレコメンデーションを提供する必要性**は、recsysの歴史の中で早くから認識されていました。
 Zhang et al.[29, 28] proposed optimizing the trade-off between the average accuracy of the recommendations and the average diversity between each pair of recommended items.
-Zhangら[29, 28]は，推薦の平均精度と推薦項目の各ペア間の平均多様性のトレードオフを最適化することを提案した．
+Zhangら[29, 28]は，推薦の平均精度と推薦アイテムの各ペア間の平均多様性のトレードオフを最適化することを提案した.
 They pose this as a quadratic programming problem with binary variables that they relaxed by solving in the continuous domain.
 彼らはこれを2値変数を持つ2次計画問題として提起し、連続領域で解くことで緩和しています。
 However, they only measured the results via their newly introduced novelty metric and, they performed neither an online evaluation nor a user study.
@@ -591,9 +591,9 @@ Zieglerら[31]は、類似問題を解くために、以前に選択した項目
 The subsequent user survey and, as well as the regression model built on the top of it, indicated that both diversity and accuracy contributed positively to user satisfaction.
 その後のユーザーアンケートと、その上に構築された回帰モデルから、多様性と精度の両方がユーザー満足度にプラスに寄与することが示されました。
 To the best of our our knowledge, this work is the only one to have built a regression model to study how performance depends on metrics.
-私たちの知る限り、パフォーマンスがメトリクスにどのように依存するかを研究するために回帰モデルを構築したのは、この作品だけです。
+私たちの知る限り、**パフォーマンスがメトリクスにどのように依存するかを研究するために回帰モデルを構築したのは、この作品だけ**です。
 Two serendipity metrics [7, 14] have been proposed for the domains of music and TV show recommendation.
-音楽とテレビ番組の推薦の領域では、2つのセレンディピティメトリクス[7, 14]が提案されています。
+音楽とテレビ番組の推薦の領域では、**2つのセレンディピティメトリクス[7, 14]が提案**されています。
 The authors compared different algorithms with respect to a newly introduced metric, without any attempt to draw a relationship between the desired performance metric and the serendipity metric.
 著者らは、新たに導入された指標に関して異なるアルゴリズムを比較したが、望ましい性能指標とセレンディピティの指標との間に関係を描く試みは全くなかった。
 Vargas et al.[24] proposed multiple probabilistic definitions of novelty and diversity metrics that incorporate certain previous definitions.
@@ -610,9 +610,9 @@ The actual selection of tuning parameters, however, was done by hand.
 ## 6.2. Multi-objective optimization. 多目的最適化を行う。
 
 Multi-objective optimization of a list of items has been well investigated in the field of information retrieval [22, 25].
-情報検索の分野では、項目リストの多目的最適化がよく研究されている[22, 25]。
+情報検索の分野では、**アイテムリストの多目的最適化**がよく研究されている[22, 25]。
 In the area of recsys, one of the first attempts at multiobjective optimization [28] used a quadratic objective function that involved a linear combination of Accuracy and Diversity.
-Recsysの分野では、多目的最適化の最初の試みの1つ[28]は、精度と多様性の線形結合を含む2次目的関数を使用しました。
+**Recsysの分野では、多目的最適化の最初の試みの1つ[28]は、精度と多様性の線形結合を含む2次目的関数**を使用しました。
 Jambor et al.[9] enhanced this idea by adding the variance of ratings to the objective function in order to promote items from the “long tail”.
 Jamborら[9]は、「ロングテール」からアイテムを促進するために、評価の分散を目的関数に加えることで、この考えを強化しました。
 Rodriguez et al.[18] optimized a smoothed version of the average precision and normalized discounted cumulative gain (NDCG) metrics by using gradient-based methods.

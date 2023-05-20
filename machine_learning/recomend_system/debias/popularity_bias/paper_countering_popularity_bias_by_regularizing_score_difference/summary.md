@@ -50,7 +50,7 @@ $$
 model-biasを測定するために２つの評価指標を採用.
 一つ目は、 PopularityRank correlation for items (PRI, アイテムの人気度順位相関)
 
-- アイテムの人気度と平均ランキング位置の**Spearman rank correlation coefficient(SRC, スピアマン順位相関係数)**
+- アイテムの人気度と推薦結果の平均ランキング位置の**Spearman rank correlation coefficient(SRC, スピアマン順位相関係数)**
 - SRC(スピアマンの順位相関係数):
   - 順位データから求められる相関の指標.(初めて聞いた...!)
   - $\rho = 1 - \frac{6 \sum D^2}{N^3 - N}$ で定義される.
