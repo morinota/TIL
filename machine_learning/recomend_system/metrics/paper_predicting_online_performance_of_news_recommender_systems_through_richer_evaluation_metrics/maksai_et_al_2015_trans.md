@@ -351,15 +351,15 @@ We use two news datasets which have online and offline browsing logs and online 
 オンラインとオフラインの閲覧ログとニュースサイトでのオンライン評価を持つ2つのニュースデータセットを使用します。
 
 Swissinfo dataset is a combination of three weeks’ worth of offline and online browsing logs from the live news website swissinfo.ch.
-Swissinfoデータセットは、ライブニュースサイトswissinfo.chの3週間分のオフラインおよびオンライン閲覧ログを組み合わせたものです。
+Swissinfoデータセットは、**ライブニュースサイトswissinfo.chの3週間分のオフラインおよびオンライン閲覧ログ**を組み合わせたものです。
 The offline data includes more than 227k clicks on 28,525 stories by around 188k users.
 オフラインデータには、約188kのユーザーが28,525のストーリーを227k以上クリックしたものが含まれています。
 The online data was gathered in the presence of three recommendation algorithms – random recommendations, most popular recommendations, and Context Tree (CT, [5]).168k clicks were distributed almost equally between the three algorithms.
-オンラインデータは、ランダムレコメンデーション、最も人気のあるレコメンデーション、コンテキストツリー（CT、[5]）の3つの推薦アルゴリズムが存在する状態で収集された。168kクリックは、3つのアルゴリズムにほぼ均等に分配された。
+オンラインデータは、ランダムレコメンデーション、最も人気のあるレコメンデーション、コンテキストツリー（CT、[5]）の**3つの推薦アルゴリズムが存在する状態で収集**された。168kクリックは、3つのアルゴリズムにほぼ均等に分配された。
 Three recommendations were made to each user, and items to be recommended were selected from the pool of the last 200 unique articles visited.
-各ユーザーに3つのレコメンドを行い、レコメンドするアイテムは、過去に訪れた200のユニークな記事の中から選択されました。
+各ユーザに3つのレコメンドを行い、レコメンドするアイテムは、過去に訪れた200のユニークな記事の中から選択されました.
 All users were identified solely by their browsing session, and the only information gathered about the users was from their browsing behavior.
-すべてのユーザーは、閲覧セッションによってのみ識別され、ユーザーに関する情報は閲覧行動からしか収集されませんでした。
+すべてのユーザは、閲覧セッションによってのみ識別され、ユーザーに関する情報は閲覧行動からしか収集されませんでした。
 
 Yahoo! Front page dataset is specifically tailored for unbiased offline evaluation [11].
 Yahoo! Front pageのデータセットは、偏りのないオフライン評価用に特別に調整されています[11]。
@@ -373,16 +373,16 @@ The log consists of nearly 28M visits to a total of 653 items.
 このログは、合計653のアイテムに対する約28Mの訪問で構成されています。
 
 To make the dataset more suitable for news recommendations, we identified visits belonging to the same browsing session by selecting only visits with at least 50 binary features present.
-ニュース推薦に適したデータセットにするため、少なくとも50個の二値特徴が存在する訪問のみを選択することで、同じブラウジングセッションに属する訪問を識別しました。
+ニュース推薦に適したデータセットにするため、少なくとも50個の二値特徴が存在する訪問のみ(=50人のユーザからの訪問があるアイテム?)を選択することで、同じブラウジングセッションに属する訪問を識別しました。
 For visits with the same binary features, we assumed that visits were same session if the time between visits did not exceed 10 minutes.
-同じ二値特徴を持つ訪問については、訪問間の時間が10分を超えない場合、同一セッションであるとした。
+同じ二値特徴を持つ訪問については、訪問間の時間が10分を超えない場合、同一セッションであるとした。(セッション識別子の情報をmetricsの算出にどこかで使ってる？？)
 Otherwise, we assumed that these were visits from different sessions.
 それ以外は、別のセッションからの訪問とみなしました。
 This procedure decreased the total number of clicks in the log to ≈ 5.7M.
-この手順により、ログの総クリック数は≈5.7M∽に減少しました。
+この手順により、ログの総クリック数は≈5.7M∽に減少しました。(単にログ情報を減らすためだけにsession情報を使った?)
 
 With sessions established, online browsing logs were generated using the algorithm from [11] (Section 5.5).
-セッションを確立した上で、[11]のアルゴリズムを用いてオンラインブラウジングログを生成した（5.5項）。
+セッションを確立した上で、[11]のアルゴリズムを用いて**オンラインブラウジングログ**を生成した（5.5項）。
 For each algorithm, the number of clicks in the simulated browsing logs was around ≈ 285k.
 各アルゴリズムとも、シミュレーションした閲覧ログのクリック数は≈285k∽程度でした。
 To generate offline browsing logs, we took a random 10% of user sessions; they contained 573k clicks by 401k users.
@@ -393,7 +393,7 @@ LePointデータセットには、ライブニュースサイトlepoint.frの3.5
 Sessions that did not result in clicks on recommendations were used as offline data.
 レコメンドのクリックに至らなかったセッションはオフラインデータとして使用しました。
 
-## 5.2. Feature selection 特徴の選択
+## 5.2. Feature selection 特徴量の選択
 
 The procedure for feature selection described in Section 3 was applied to the Swissinfo dataset using the CT algorithm.
 セクション3で説明した特徴選択の手順を、CTアルゴリズムを用いてSwissinfoデータセットに適用した。
@@ -402,26 +402,28 @@ LARの性質上、いくつかの相関予測変数がある場合、そのう�
 However, the order in which correlated predictors will enter the model, is unknown.
 しかし、相関のある予測変数がどのような順序でモデルに入るかは不明である。
 As we are not interested in the predictors themselves, but rather in showing the importance of metric groups (Accuracy, Coverage, Diversity, Serendipity, and Novelty), we calculated the average time for the first metric of each metric group to enter the model (Tab.1).
-予測因子そのものに興味があるのではなく、メトリックグループ（Accuracy、Coverage、Diversity、Serendipity、Novelty）の重要性を示したいので、各メトリックグループの最初のメトリックがモデルに入るまでの平均時間を計算した（Tab.1）。
+予測因子そのものに興味があるのではなく、**メトリックグループ（Accuracy、Coverage、Diversity、Serendipity、Novelty）の重要性を示したい**ので、**各メトリックグループの最初のmetricがモデルに入るまでの平均時間**を計算した（Tab.1）。
+
+![](https://d3i71xaburhd42.cloudfront.net/96b00351da3e0c281ce8c26b45bbba328b3d5f21/5-Table1-1.png)
 
 Metrics from the Serendipity, Accuracy and Diversity groups are usually the first three to enter the model.
-Serendipity、Accuracy、Diversityの3つのグループのメトリクスは、通常、モデルに入る最初の3つである。
+**Serendipity、Accuracy、Diversityの3つのグループのメトリクスは、通常、モデルに入る最初の3つ**である。
 This is a strong indicator that these three groups relate to different parts of performance metric and are all important for predicting it.
-これは、これら3つのグループがパフォーマンス指標の異なる部分に関係し、いずれもそれを予測するために重要であることを示す強い指標です。
+これは、**これら3つのグループが(オンライン)パフォーマンス指標の異なる部分に関係し、いずれもそれを予測するために重要であることを示す強い指標**である.
 
 We also noticed that if we removed the Diversity or Serendipity predictors, then Coverage metrics showed a low average first entry time.
-また、DiversityやSerendipityの予測因子を取り除いた場合、Cverageの指標では平均初回入力時間が短くなることに気づきました。
+また、**DiversityやSerendipityのpredictorsを取り除いた場合**、**Cverageの指標は平均初回入力時間が短くなる**ことに気づきました。
 This indicates that two out of three groups from Diversity, Serendipity and Coverage might be enough.
-これは、Diversity、Serendipity、Coverageの3つのグループのうち、2つで十分かもしれないということを示しています。
+これは、Diversity、Serendipity、Coverageの3つのグループのうち、2つで十分かもしれないということを示しています。(->結果と示唆の関係がよくわかってない...)
 For Accuracy metrics, it did not matter which predictor was used, and Markedness was easily replaceable by precision or any of the other Accuracy metrics.
-Accuracyの指標では、どの予測器を使っても問題なく、Markednessはprecisionや他のAccuracyの指標に簡単に置き換えることができました。
+**Accuracyの指標では、どのpredictorを使っても問題なく**、Markednessはprecisionや他のAccuracyの指標に簡単に置き換えることができました。
 A very strong correlation was seen to exist between different Accuracy group metrics.
-異なるAccuracyグループの指標間には、非常に強い相関があることが確認された。
+異なるAccuracyグループ内のmetric間には、非常に強い相関があることが確認された.
 
 The results obtained with the other two algorithms were similar to those above.
 他の2つのアルゴリズムで得られた結果は、上記と同様であった。
 In all of the results below, when we say that we have used a predictor from a certain metric group, we mean that we used the predictor that was first to enter in the LAR model from this metric group.
-以下のすべての結果において、あるメトリックグループからの予測因子を使用したと言う場合、このメトリックグループからLARモデルで最初に入力された予測因子を使用したことを意味します。
+以下のすべての結果において、あるメトリックグループからの予測因子を使用したと言う場合、このメトリックグループからLARモデルで最初に入力された予測因子を使用したことを意味します。(あるmetrics group当たり、最速な一つのmetricのみがモデルに入る...!)
 
 ## 5.3. Regression model performance 回帰モデルの性能
 
@@ -432,60 +434,67 @@ We divided the time interval into parts of 30%, 50% and 20%.
 The first 30% were used for training the algorithm itself and were not used in the regression model.
 最初の30%はアルゴリズム自体のトレーニングに使用され、回帰モデルには使用されませんでした。
 The recommendations made by the algorithm on the next 50% were used to train the model, and the last 20% were used to test the model’s performance.
-次の50%についてアルゴリズムが行った推奨は、モデルのトレーニングに使用され、最後の20%はモデルの性能テストに使用されました。
+次の50%についてアルゴリズムが行った推薦は、モデル(=オンライン性能予測モデル)のトレーニングに使用され、最後の20%はモデルの性能テストに使用されました.
 
-### 5.3.1. CTR prediction. CTRの予測。
+### 5.3.1. CTR prediction.
+
+![](https://camo.qiitausercontent.com/fbaf88b0075e1ce297b5e445d172a65ca59b7e4f/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32646561373135392d366335622d363730372d646338642d3063646335636632396235352e706e67)
 
 For CTR prediction (Tab.2), the lowest average error was indeed obtained using one predictor from each of the four metric groups (we omitted novelty here and later on due to its poor results in feature selection).
-CTR予測（Tab.2）では、4つの指標群からそれぞれ1つずつ予測器を用いることで、確かに平均誤差が最も小さくなりました（新規性は特徴選択の結果が悪いため、ここでも後述でも割愛）。
+CTR予測（Tab.2）では、4つの指標群からそれぞれ1つずつpredictorを用いることで、確かに平均誤差が最も小さくなりました（**noveltyは特徴選択の結果が悪いため、ここでも後述でも割愛**）。
 The error for the full set of metrics was much higher, probably due to overfitting.
-メトリクスの全セットの誤差は、おそらくオーバーフィッティングのため、より高い値を示しました。
+metricsの全セットの誤差は、おそらくオーバーフィッティングのため、より高い値を示しました。(17個の説明変数?)
 Diversity seemed to be very important in the first dataset, since it gave the best individual result as a predictor.
-最初のデータセットでは、多様性が非常に重要であったようです。なぜなら、多様性は予測因子として最も良い個人結果を与えたからです。
+最初のデータセットでは、 Diversity が非常に重要であったようです。なぜなら、多様性は predictor として最も良い個人結果を与えたからです.(individual resultは相関係数的な意味だろうか? )
 Combinations of different groups including diversity also gave better results than combinations that did not.
-また、多様性を含む異なるグループの組み合わせは、そうでない組み合わせよりも良い結果をもたらしました。
+また、 **diversity を含む異なるグループの組み合わせは、そうでない組み合わせよりも良い結果(MSE?)**をもたらしました.
 More complex models, such as penalized LR (All+L2) or the Gaussian process with an RBF kernel (GP+RBF), gave even better results, however these models are more difficult to interpret and use.
-ペナルティ付きLR（All+L2）やRBFカーネル付きガウスプロセス（GP+RBF）など、より複雑なモデルはさらに良い結果を示したが、これらのモデルの解釈や使用はより困難である。
+ペナルティ付きLR（All+L2）やRBFカーネル付きガウスプロセス（GP+RBF）など、より複雑なモデルはさらに良い結果(MSE?)を示したが、これらのモデルの解釈や使用はより困難である。
 Note that results were consistent among datasets and that the best ones significantly outperformed the baseline model, which assumes constant CTR through time (Const).
-なお、結果はデータセット間で一貫しており、最も優れたものは、時間を通じて一定のCTRを仮定したベースラインモデルを大幅に上回っています（Const）。
+なお、結果はデータセット間で一貫(diversity metricを含むとCTR予測のスコアは高くなる結果...!)しており、最も優れたものは、時間を通じて一定のCTRを仮定したベースラインモデルを大幅に上回っています（Const）。
+
+![](https://camo.qiitausercontent.com/269f70a0ec79a22088733bd22b77bf063b3edde2/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32303931313066382d653631362d383962302d616531352d3862393463393164303065302e706e67)
 
 Fig.5 shows that the aforementioned metrics indeed have a predictive power.
-図5から、前述の指標が確かに予測力を持つことがわかる。
+図5から、前述のmetricsが確かにオンライン性能の予測力を持つことがわかる.
 The shape of the curve of the performance metric over time was repeated in the predicted results, indicating that there was high probability that the model would be able to predict the behavior and approximate values of the performance metric over time.
-予測結果では、パフォーマンスメトリクスの経時的な曲線の形状が繰り返され、モデルがパフォーマンスメトリクスの経時的な挙動やおおよその値を予測できる可能性が高いことが示されました。
+予測結果では、パフォーマンスメトリクスの経時的な曲線の形状が繰り返され、**モデルがパフォーマンスメトリクスの経時的な挙動やおおよその値を予測できる可能性が高い**ことが示されました.
 
 The p-values associated with the regression coefficients of different metrics indicated that these predictors were significant for the model.
-異なる指標の回帰係数に関連するp値は、これらの予測因子がモデルにとって有意であることを示した。
+異なる指標の回帰係数に関連するp値は、これらのpredictorsがモデルにとって有意であることを示した。
 A possible explanation for the only exception to this (Serendipity was not found to be an important predictor for Most Popular algorithm) is that all the Serendipity values for recommendations made by the Most Popular algorithm were 0 or close to 0.
-唯一の例外（SerendipityはMost Popularアルゴリズムの重要な予測因子であることが判明しなかった）については、Most Popularアルゴリズムによる推薦のSerendipity値がすべて0または0に近かったという説明が可能である。
+**唯一の例外（SerendipityはMost Popularアルゴリズムの重要な予測因子であることが判明しなかった）**については、**Most Popularアルゴリズムによる推薦のSerendipity値がすべて0または0に近かったという説明が可能**である。
 According to definitions of Serendipity, its values are high for items not recommended by the “naive” recommender, which is precisely the Most Popular recommender.
-Serendipityの定義によれば、その値は「素朴な」レコメンダー、つまりMost Popularレコメンダーが推薦しないアイテムに対して高くなる。
+**Serendipityの定義によれば、その値は“naive”レコメンダー、つまりMost Popularレコメンダーが推薦しないアイテムに対して高くなる**。
 
 Inspection of the coefficients revealed that the models were different for different datasets and algorithms.
 係数を点検すると、データセットやアルゴリズムによって、モデルが異なることがわかった。
 That is an expected indicator that a linear model made to predict the performance regardless of the algorithm, would perform worse than a set of models specifically trained for each algorithm.
-これは、アルゴリズムに関係なく性能を予測するために作られた線形モデルは、各アルゴリズムに特化して訓練されたモデルのセットよりも性能が低下することを示す予想指標である。
+これは、**アルゴリズムに関係なく性能を予測するために作られた線形モデルは、各アルゴリズムに特化して訓練されたモデルのセットよりも性能が低下する**ことを示す予想指標である。
 
 ### 5.3.2. Online accuracy prediction. オンライン精度予測。
 
+(オンライン性能予測モデルの目的変数をCTRからオンライン精度に置き換えたもの.)
 The results above were obtained assuming that the target online metric was CTR.
 上記の結果は、対象となるオンライン指標をCTRと仮定して得られたものです。
 We also trained a model to predict success, also called online accuracy (Tab.3).
 また、オンライン精度とも呼ばれる成功予測モデルを学習させました（Tab.3）。
 
+![](https://camo.qiitausercontent.com/4c8a1da25a386bf7995170daf2ad5a06ef1081f2/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f61336330386663642d363361622d333361662d333064302d3134326131626238383735392e706e67)
+
 Prediction errors were less consistent among datasets, but a combination of Accuracy, Coverage, and Diversity predictors obtained high results for all datasets.
-予測誤差はデータセット間であまり一致しなかったが、Accuracy、Coverage、Diversityの予測子の組み合わせは、すべてのデータセットで高い結果を得た。
+予測誤差はデータセット間であまり一致しなかったが、**Accuracy、Coverage、Diversityのpredictorsの組み合わせは、すべてのデータセットで高い結果を得た**.
 On the Swissinfo dataset, best predictors came from three groups that did not include Diversity; on Yahoo, Diversity is the single best predictor (possibly due to the imperfect the visits were identified); and on the LePoint dataset the best predictors did not include Serendipity.
 Swissinfoデータセットでは、最良の予測因子はDiversityを含まない3つのグループから得られた。Yahooでは、Diversityが唯一最良の予測因子であり（おそらく訪問の特定が不完全なため）、LePointデータセットでは、最良の予測因子にはSerendipityが含まれていない。
 Note that the predicted results for the Random algorithm are more accurate than for the Most Popular algorithm – an expected result, as Random performance does not change much over time.
 ランダムアルゴリズムの予測結果は、最も人気のあるアルゴリズムよりも正確であることに注意してください - ランダム性能は時間の経過とともにあまり変化しないので、これは予想された結果です。
 
-## 5.4. Self-adjusting algorithm blend Self-adjusting algorithm blend
+## 5.4. Self-adjusting algorithm blend
 
 For this experiment, we ran algorithms on a live news website.
-今回の実験では、ライブのニュースサイトでアルゴリズムを実行しました。
+今回の実験では、**ライブのニュースサイトでアルゴリズムを実行**しました。
 We used four algorithms based on the linear combination of recommendations given by the Context Tree and Most Popular recommenders, as described in Section 4.2.We had two latent metrics, ZCT and Zpop, that measured the closeness of the recommendation to that of the two algorithms.
-4.2節で説明したように，Context TreeとMost Popularの推薦者が与える推薦の線形結合に基づく4つのアルゴリズムを使用した。2つのアルゴリズムによる推薦に近いかどうかを測定するZCTとZpopという潜在的なメトリクスを用意した．
+4.2節で説明したように，Context TreeとMost Popularの推薦者が与える**推薦の線形結合**に基づく**4つのアルゴリズム**(重み付け設定が異なる4種)を使用した。2つのアルゴリズムによる推薦に近いかどうかを測定する$Z_{CT}$と$Z_{pop}$という潜在的なメトリクスを用意した．
 Weights for the recommendations from the Most Popular algorithm varied from 20% to 80% in steps of 20%.
 Most Popularアルゴリズムによる推薦文の重みは、20%から80%まで20%刻みで変化しています。
 In each time frame and for each recommender, the updated weight increased or decreased the trade-off.
@@ -493,35 +502,37 @@ In each time frame and for each recommender, the updated weight increased or dec
 We examined whether changing the algorithm weighting in the direction indicated by the gradient really did give higher CTR (Fig.6).
 そこで、アルゴリズムの重み付けをグラデーションで示す方向に変更することで、本当にCTRが高くなるのかどうかを検証しました（図6）。
 
+![](https://camo.qiitausercontent.com/9d6e133271d568b8dca988aa4a83cd7eed03039c/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f31333466663762652d336434662d663733632d336565312d3835333036326237656666612e706e67)
+
 In the third, fifth and seventh periods – during daytime – all coefficients suggested increasing the weight of the CT algorithm.
-第3期、第5期、第7期（日中）では、すべての係数がCTアルゴリズムのウェイトを高めることを示唆しました。
+**第3期、第5期、第7期（日中）では、すべての係数がCTアルゴリズムのウェイトを高めることを示唆**しました。(i.e. 日中は、CTアルゴリズムの重み付けを高めるような予測結果になった)
 At night, the algorithm with 20% of Most Popular was still best, but by a smaller margin, and the magnitude of the coefficients agreed with these results.
 夜間では、Most Popularを20%使用したアルゴリズムが、より小さな差ではありますが、依然として最良であり、係数の大きさもこの結果と一致しました。
 
 For the first two time periods the results were different, probably due to a lack of data.
-最初の2つの期間については、データが不足しているためか、結果が異なっていました。
+最初の2つの期間については、データが不足しているためか、結果が異なっていました.
 However, the changes suggested for increasing CTR were still consistent and correct – the regression coefficient for the algorithm using 40% of Most Popular was positive, suggesting an increase in weight, which lead to the algorithm using 60% of Most Popular, that did indeed obtain a higher CTR in this time frame.
 しかし、CTRを向上させるために示唆された変化は、依然として一貫して正しいものでした。Most Popularの40%を使用するアルゴリズムの回帰係数はプラスで、重みの増加を示唆し、Most Popularの60%を使用するアルゴリズムにつながり、この時間枠で実際に高いCTRを得ることができました。
 
 The performance clearly changed over time, but followed a periodic pattern.
-性能は明らかに経年変化しているが、周期的なパターンを踏襲している。
+性能は明らかに経年変化しているが、**周期的なパターン**を踏襲している。
 This suggests that coefficients from the current time frame should provide suggestions to the same time frame next day, rather than the next chronological time frame.
-これは、現在の時間軸の係数が、次の時系列の時間軸ではなく、次の日の同じ時間軸への示唆を与えるべきであることを示唆しています。
+これは、**現在の時間軸の係数が**、次の時系列の時間軸ではなく、**次の日の同じ時間軸への示唆を与えるべき**(i.e. 重み付け調整結果を次のtime frameではなく、次の日の同じ時間帯のtime frameの重み付けへ活用すべき...!)であることを示唆しています。
 
 ## 5.5. Unbiased offline evaluation オフラインでの偏りのない評価
 
 In this subsection, we discuss and apply the unbiased offline evaluation procedure [11]; this is another approach to predicting an algorithm’s online performance.
-このサブセクションでは、アルゴリズムのオンライン性能を予測するための別のアプローチである、不偏のオフライン評価手順[11]について説明し、適用します。
+このサブセクションでは、アルゴリズムのオンライン性能を予測するための別のアプローチである、**不偏のオフライン評価手順**[11]について説明し、適用します.
 This procedure was developed for contextual bandit algorithms and requires the log of interaction with the world of an algorithm that recommends articles at random with equal probability.
-この手順はコンテクストバンディットアルゴリズムのために開発されたもので、等確率でランダムに記事を推薦するアルゴリズムの世界との対話のログが必要です。
+この手順はコンテクストバンディットアルゴリズムのために開発されたもので、**等確率でランダムに記事を推薦するアルゴリズムの世界との対話のログが必要**です。
 Based on this log, a simulation of online execution can be made for any other algorithm.
 このログを元に、他のアルゴリズムでもオンライン実行のシミュレーションを行うことができます。
-If the original log from the random algorithm had I events, then the simulation will contain approximately I H events, where H is the number of items available for recommendation.
-ランダムアルゴリズムによる元のログがI個のイベントであった場合、シミュレーションでは約I H個のイベントが含まれることになる（Hは推薦可能なアイテムの数）。
+If the original log from the random algorithm had I events, then the simulation will contain approximately I/H events, where H is the number of items available for recommendation.
+ランダムアルゴリズムによる元のログがI個のイベントであった場合、シミュレーションでは約$I/H$個のイベントが含まれることになる（$H$は推薦可能なアイテムの数）。
 In the Yahoo dataset, which is specifically tailored to this procedure, H = 20.
 この手順に特化したYahooのデータセットでは、H=20です。
 However, in more realistic scenarios of news recommendations, such as the Swissinfo dataset, three out of 200 candidate items should be recommended, giving H = 2003 = 8M.
-しかし、Swissinfoデータセットのような、より現実的なニュース推薦のシナリオでは、200の候補アイテムのうち3つを推薦する必要があり、H = 2003 = 8Mとなります。
+しかし、Swissinfoデータセットのような、より現実的なニュース推薦のシナリオでは、200の候補アイテムのうち3つを推薦する必要があり、$H = 200^3 = 8M$となります。
 This does not produce enough events in the simulation to give significant results.
 これでは、シミュレーションで十分なイベントが発生せず、有意な結果を得ることができません。
 
@@ -530,20 +541,22 @@ We used the Swissinfo dataset to test this algorithm.
 We used the output of the random algorithm to create a log and tested the CT algorithm on it.
 ランダムアルゴリズムの出力を使ってログを作成し、その上でCTアルゴリズムをテストしました。
 Due to the limitations described above, we were only able to compare algorithms for the task of top-1 recommendation.
-上記の制限により、トップ1レコメンデーションタスクのアルゴリズムのみを比較することができました。
+上記の制限により、**トップ1レコメンデーションタスクのアルゴリズムのみを比較することができました**。
 Even in the case of top-1 recommendation, after sampling we were left with only 266 points, compared to 55,587 points in the log.
 トップ1推薦の場合でも、ログが55,587点であるのに対し、サンプリング後は266点しか残らなかった。
 Fig.7 (bottom part) shows the plot using the real and predicted CTR values.
 図7（下段）は、CTRの実測値と予測値を用いたプロットです。
 If we ignore a slight bias, probably due to the small number of points sampled, the shapes of the curves are quite similar, which proves the effectiveness of the unbiased offline evaluation for single-item recommendation.
-サンプリング点数の少なさに起因するわずかな偏りを無視すれば、曲線の形状は非常によく似ており、単項目推薦における不偏のオフライン評価の有効性が証明された。
+サンプリング点数の少なさに起因するわずかな偏りを無視すれば、曲線の形状は非常によく似ており、**single item推薦における不偏のオフライン評価の有効性**が証明された。
 However, when we tried to use it for top-2 or top-3 recommendations, the number of sampled points decreased exponentially.
 しかし、トップ2やトップ3の推薦に使おうとすると、サンプリング点数が指数関数的に減少してしまうのです。
+
+![](https://camo.qiitausercontent.com/14c948970e81d36470e4cae8bdac19f2ec7a9ff6/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f30626563353037342d323862662d616231342d653634622d3231306630613463663336372e706e67)
 
 To overcome this problem, we applied the same technique in order to predict the third recommendation only: all the algorithms returned their third best prediction and we computed a CTR using this data.
 この問題を解決するために、同じ手法を3番目のレコメンデーションの予測にのみ適用しました。すべてのアルゴリズムが3番目に良い予測を返し、このデータを使ってCTRを計算しました。
 However, it is clearly visible that there was little correlation between real and predicted values (Fig.7, top).
-しかし、実測値と予測値の間にはほとんど相関がないことがよくわかる（Fig.7、上）。
+しかし、**実測値と予測値の間にはほとんど相関がない**ことがよくわかる（Fig.7、上）。(top-3推薦のうち3番目にのみ適用するのは無理そう...)
 This was caused by the fact that the presence or absence of clicks on the third item depends on the first two items in the recommendation list, and this is not taken into consideration in this approach.
 これは、3つ目の項目のクリックの有無が、レコメンドリストの最初の2つの項目に依存するため、このアプローチでは考慮されていないことが原因でした。
 Statistical tests showed the significance of our findings (Student’s ttest, p-value < 0.05).
@@ -616,19 +629,19 @@ Another line of research has been finding a Pareto-optimal frontier among multip
 # 7. Conclustion (ブックライブ)は月額制ではなくて、購入するConclustionを購入する際にお支払する方式になってます。
 
 We investigated predicting the online performance of news recommendation algorithms by a regression model using offline metrics.
-オフラインの指標を用いた回帰モデルにより、ニュース推薦アルゴリズムのオンライン性能を予測することを検討した。
+**オフラインの指標を用いた回帰モデルにより、ニュース推薦アルゴリズムのオンライン性能を予測することを検討**した。
 Our results confirmed that there is more to online performance than just offline Accuracy.
-この結果から、オンラインのパフォーマンスには、オフラインのAccuracy以上のものがあることが確認できました。
+この結果から**、オンラインのパフォーマンスには、オフラインのAccuracy以上のものがあることが確認できました**。
 Other metrics, such as Coverage or Serendipity, play important roles in predicting or optimizing online metrics such as click-through rates.
 また、カバレッジやセレンディピティといった指標は、クリックスルー率などのオンライン指標の予測や最適化において重要な役割を果たします。
 The model can then be applied to trade-off curves for each algorithm constructed from offline data to select the optimal algorithm and parameters.
 そして、オフラインデータから構築した各アルゴリズムのトレードオフ曲線にこのモデルを適用することで、最適なアルゴリズムとパラメータを選択することができます。
 
 Regression models are best constructed for the particular user and item population; we did not find a universal formula for predicting online performance that would work for all settings.
-回帰モデルは、特定のユーザーとアイテムの集団に対して構築するのが最適です。すべての設定に通用するオンラインパフォーマンス予測の普遍的な公式は見つかりませんでした。
+**回帰モデルは、特定のユーザとアイテムの集団に対して構築するのが最適**です。すべての設定に通用するオンラインパフォーマンス予測の普遍的な公式は見つかりませんでした。
 However, training a model separately from the algorithms still saves a lot of effort over blind A–B testing.
-しかし、アルゴリズムとは別にモデルをトレーニングすることで、ブラインドA-Bテストよりも多くの労力を節約することができます。
+しかし、アルゴリズムとは別にモデルをトレーニングすることで、**ブラインドA-Bテストよりも多くの労力を節約することができます**。
 Another application is to adapt parameters continuously in response to changes in user characteristics.
-また、ユーザー特性の変化に応じて、パラメータを連続的に適応させるという応用もあります。
+また、ユーザ特性の変化に応じて、**パラメータを連続的に適応させる**という応用もあります。(=複数の推薦アルゴリズムのブレンドの重み付けの事? もしくは単一の推薦アルゴリズムのハイパーパラメータを動的に変化させる事？多分次の文を見るに、前者の意味.)
 In a setting where recommendations are obtained by mixing different algorithms, we proposed a method using latent metrics defined by the algorithms themselves, and showed that it correctly predicted the right adaptations in a live recommender system.
 異なるアルゴリズムを混在させて推薦を得るという設定において、アルゴリズム自体が定義する潜在的なメトリクスを用いる方法を提案し、ライブ推薦システムにおいて正しい適応を正しく予測することを示しました。
