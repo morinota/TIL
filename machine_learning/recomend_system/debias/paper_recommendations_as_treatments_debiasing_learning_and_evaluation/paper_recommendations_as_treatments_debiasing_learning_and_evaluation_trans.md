@@ -549,29 +549,29 @@ $\beta_{i}$、$\gamma_{u}$は、アイテム単位、ユーザ単位のオフセ
 # 6. Empirical Evaluation 実証的評価
 
 We conduct semi-synthetic experiments to explore the empirical performance and robustness of the proposed methods in both the experimental and the observational setting.
-半合成実験を行い、実験と観測の両方で提案手法の経験的性能と頑健性を探る。
+半合成実験を行い、experimental setting と observational setting の両方で提案手法の経験的性能とロバスト性を探る.
 Furthermore, we compare against the state-of-theart joint-likelihood method for MNAR data (Hernandez- ´ Lobato et al., 2014) on real-world datasets.
-さらに、実世界のデータセットにおいて、MNARデータに対する最先端の共同尤度法（Hernandez- ´ Lobato et al, 2014）と比較しました。
+さらに、実世界のデータセットにおいて、**MNAR(Missing Not At Random)データに対する最先端の共同尤度法**（Hernandez- ´ Lobato et al, 2014）と比較しました.
 
 ## 6.1. Experiment Setup 実験セットアップ
 
-In all experiments, we perform model selection for the regularization parameter λ and/or the rank of the factorization d via cross-validation as follows.
-すべての実験において、正則化パラメータλおよび/または因数分解のランクdのモデル選択を、以下のようにクロスバリデーションで行う。
+In all experiments, we perform model selection for the regularization parameter λ and/or the rank of the factorization $d$ via cross-validation as follows.
+すべての実験において、正則化パラメータ**λ**および/または因数分解のランク**d**のモデル選択を、以下のようにクロスバリデーションで行う.(２つのハイパーパラメータを最適化する問題っぽい.)
 We randomly split the observed MNAR ratings into k folds (k = 4 in all experiments), training on k − 1 and evaluating on the remaining one using the IPS estimator.
-観測されたMNAR評価をランダムにk個のフォールド（すべての実験でk = 4）に分割し、k - 1で訓練し、残りの1つでIPS推定器を用いて評価した。
+観測されたMNAR評価をランダムにk個のフォールド（すべての実験でk = 4）に分割し、k - 1で訓練し、残りの1つでIPS推定量を用いて評価した. (あ、foldってk分割交差検証の1ブロックの事だったのかな.)
 Reflecting this additional split requires scaling the propensities in the training folds by k−1 k and those in the validation fold by 1 k .
-この追加分割を反映させるためには，訓練フォールドの予感をk-1 k倍，検証フォールドの予感を1 k倍でスケーリングする必要があります．
+この追加分割を反映させるためには，訓練フォールドのpropensitiesをk-1/k倍，検証フォールドのpropensitiesを1/k倍で**スケーリング**する必要があります.
 The parameters with the best validation set performance are then used to retrain on all MNAR data.
-その後、検証セットのパフォーマンスが最も良いパラメータを使用して、すべてのMNARデータで再トレーニングを行います。
+その後、**検証セットのパフォーマンスが最も良いパラメータを使用して、すべてのMNARデータで再トレーニングを行い**ます。
 We finally report performance on the MCAR test set for the real-world datasets, or using Eq.(1) for our semi-synthetic dataset.
-最後に、実世界のデータセットについてはMCARテストセット、半合成データセットについては式(1)を用いた性能を報告します。
+最後に、実世界のデータセットについてはMCAR(Missing Completely At Random)テストセット、半合成データセットについては式(1)を用いた性能を報告します。
 
 ## 6.2. How does sampling bias severity affect evaluation? サンプリングバイアスの厳しさは評価にどう影響するのか？
 
 First, we evaluate how different observation models impact the accuracy of performance estimates.
-まず、観測モデルの違いが性能推定精度にどのような影響を与えるかを評価します。
+まず、observationモデルの違いが性能推定精度にどのような影響を与えるかを評価します。
 We compare the Naive estimator of Eq.(5) for MSE, MAE and DCG with their propensity-weighted analogues, IPS using Eq.(10) and SNIPS using Eq.(11) respectively.
-式(5)のナイーブ推定器を、MSE、MAE、DCGについて、それぞれ式(10)を用いたIPS、式(11)を用いたSNIPSのような傾向性重み付けをしたものと比較する。
+式(5)のナイーブ推定器を、MSE、MAE、DCG(精度指標)について、それぞれ式(10)を用いたIPS、式(11)を用いたSNIPSのような傾向性重み付けをしたものと比較する。
 Since this experiment requires experimental control of sampling bias, we created a semi-synthetic dataset and observation model.
 この実験ではサンプリングバイアスを実験的に制御する必要があるため、半合成データセットと観測モデルを作成しました。
 
@@ -579,7 +579,7 @@ ML100K Dataset.
 ML100K Dataset。
 
 The ML100K dataset4 provides 100K MNAR ratings for 1683 movies by 944 users.
-ML100Kデータセット4は、944人のユーザーによる1683本の映画に対する100KのMNARレーティングを提供します。
+ML100Kデータセット4は、944人のユーザーによる1683本の映画に対する100KのMNAR(Missing Not At Random)レーティングを提供します。
 To allow ground-truth evaluation against a fully known rating matrix, we complete these partial ratings using standard matrix factorization.
 完全に既知の評価行列に対する真実の評価を可能にするため、標準的な行列分解を用いてこれらの部分評価を完成させます。
 The completed matrix, however, give unrealistically high ratings to almost all movies.
@@ -593,38 +593,42 @@ ML100K Observation Model.
 ML100K観察モデル。
 
 If the underlying rating is 4 or 5, the propensity for observing the rating is equal to k.
-基礎となる評価が4または5であれば、その評価を観察する傾向はkに等しい。
+基礎となる評価が4または5であれば、その評価を観察する propensity はkに等しい.
 For ratings r < 4, the corresponding propensity is kα4−r .
-視聴率 r < 4 の場合、対応する傾向性は kα4-r です。
+rating r < 4 の場合、対応する propensity は $k \alpha^{4-r}$ です.
 For each α, k is set so that the expected number of ratings we observe is 5% of the entire matrix.
-各αについて、観察する評価の期待数が行列全体の5％となるようにkを設定する。
+各 $\alpha$ について、観察する評価の期待数が行列全体の5％となるようにkを設定する.
 By varying α > 0, we vary the MNAR effect: α = 1 is missing uniformly at random (MCAR), while α → 0 only reveals 4 and 5 rated items.
-α＞0を変化させることで、MNAR効果を変化させている。α＝1は一様にランダムに欠落し（MCAR）、α→0は4と5の評価項目のみを明らかにする。
+α＞0を変化させることで、MNAR効果を変化させている。α＝1は一様にランダムに欠落した状態（MCAR）、α→0は4と5の評価項目のみを明らかにする。
 Note that α = 0.25 gives a marginal distribution of observed ratings that reasonably matches the observed MNAR rating marginals on ML100K ([0.06, 0.11, 0.27, 0.35, 0.21] in the real data vs.
-なお、α=0.25は、ML100Kで観測されたMNARの評価マージン（実データでは[0.06, 0.11, 0.27, 0.35, 0.21] vs. ML100K）と適度に一致する評価マージン分布を与える。
+なお、α=0.25は、ML100Kで観測されたMNARの評価マージン（実データでは[0.06, 0.11, 0.27, 0.35, 0.21] vs. ML100K）と適度に一致する評価マージン分布を与える.
 [0.06, 0.10, 0.25, 0.42, 0.17] in our model).
 [我々のモデルでは［0.06, 0.10, 0.25, 0.42, 0.17］）。
 
 Results.
 結果が出ました。
 
+![](https://camo.qiitausercontent.com/762bf0e8c16917dec2cf1992fc2c9c9e61791624/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f39383535356361352d396637612d633465342d666266662d3531363531653231393536332e706e67)
+
 Table 1, described in Section 3.4, shows the estimated MAE and DCG@50 when α = 0.25.
 3.4節で説明した表1は、α=0.25のときのMAEとDCG@50の推定値である。
 Next, we vary the severity of the sampling bias by changing α ∈ (0, 1].
-次に、α∈(0, 1)を変化させることで、サンプリングバイアスの深刻度を変化させます。
+次に、**α∈(0, 1)を変化させることで、サンプリングバイアスの深刻度を変化させます**。($\alpha$は人工データ生成のバイアスをコントロールする実験用のパラメータか...!!)
 Figure 2 reports how accurately (in terms of root mean squared estimation error (RMSE)) each estimator predicts the true MSE and DCG respectively.
 図2は、各推定器が真のMSEとDCGをそれぞれどの程度正確に（二乗平均平方根推定誤差（RMSE）で）予測したかを報告している。
 These results are for the Experimental Setting where propensities are known.
-この結果は、プロペンシティがわかっている実験環境での結果です。
+**この結果は、propensities がわかっているExperimental Setting での結果**です。
 They are averages over the five prediction matrices Yˆ i given in Section 3.4 and across 50 trials.
-これらは、3.4節で示した5つの予測行列Yˆiの平均値であり、50回の試行にわたる平均値である。
+これらは、3.4節で示した5つの予測行列Yˆiの平均値であり、50回の試行にわたる平均値である.
 Shaded regions indicate a 95% confidence interval.
 斜線部は95％信頼区間を示す。
 
+![](https://camo.qiitausercontent.com/e1e3490d7c9d39dc058b5e07bb11686e38684f36/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f38373061353636352d633538632d306532612d643031642d6339663537353265646334332e706e67)
+
 Over most of the range of α, in particular for the realistic value of α = 0.25, the IPS and SNIPS estimators are orders-of-magnitude more accurate than the Naive estimator.
-αのほとんどの範囲において、特に現実的な値であるα=0.25では、IPSとSNIPSの推定値はNaive推定値よりも桁違いに高い精度を示しています。
+αのほとんどの範囲において、特に現実的な値であるα=0.25では、**IPSとSNIPSの推定値はNaive推定値よりも桁違いに高い精度を示しています**。
 Even for severely low choices of α, the gain due to bias reduction of IPS and SNIPS still outweighs the added variability compared to Naive.
-αを極端に小さくした場合でも、IPSとSNIPSのバイアス低減による利得は、Naiveと比較して追加された変動を上回った。
+αを極端に小さくした場合でも(バイアスがほとんどない場合でも)、IPSとSNIPSのバイアス低減による利得は、Naiveと比較して追加された変動を上回った。
 When α = 1 (MCAR), SNIPS is algebraically equivalent to Naive, while IPS pays a small penalty due to increased variability from propensity weighting.
 α=1（MCAR）の場合、SNIPSは代数的にNaiveと同等であるが、IPSは傾向重み付けによる変動が大きくなるため、小さなペナルティを支払う。
 For MSE, SNIPS consistently reduces estimation error over IPS while both are tied for DCG.
@@ -632,10 +636,12 @@ MSEについては、SNIPSはIPSよりも一貫して推定誤差を低減して
 
 ## 6.3. How does sampling bias severity affect learning? サンプリングバイアスの厳しさは学習にどう影響するのか？
 
+![](https://camo.qiitausercontent.com/a0297beaca6d40d6a737d171be3c849b91b9e101/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32636334646664632d346464612d623964642d626235662d6231313562663637363435352e706e67)
+
 Now we explore whether these gains in risk estimation accuracy translate into improved learning via ERM, again in the Experimental Setting.
-次に、このようなリスク推定精度の向上が、ERMによる学習効果の向上につながるかどうかを、再び実験的な設定で検証してみる。
+次に、このようなリスク推定精度の向上が、**ERMによる学習効果の向上につながるかどうか**を、再びExperimental Setting で検証してみる。
 Using the same semi-synthetic ML100K dataset and observation model as above, we compare our matrix factorization MF-IPS with the traditional unweighted matrix factorization MF-Naive.
-上記と同じ半合成ML100Kデータセットと観測モデルを用いて、我々の行列分解MF-IPSと従来の重み付けなし行列分解MF-Naiveを比較します。
+上記と同じ半合成ML100Kデータセットと観測モデルを用いて、我々の**行列分解MF-IPSと従来の重み付けなし行列分解MF-Naiveを比較**します。
 Both methods use the same factorization model with separate λ selected via cross-validation and d = 20.
 両手法とも、クロスバリデーションによって選択された別々のλと、d = 20を持つ同じ因数分解モデルを使用する。
 The results are plotted in Figure 3 (left), where shaded regions indicate 95% confidence intervals over 30 trials.
@@ -648,47 +654,49 @@ We also conducted experiments for MAE, with similar results.
 ## 6.4. How robust is evaluation and learning to inaccurately learned propensities?
 
 We now switch from the Experimental Setting to the Observational Setting, where propensities need to be estimated.
-ここで、実験的設定から観察的設定に切り替え、予感を推定する必要がある。
+ここで、実験的設定から Observational Setting に切り替える. この場合、propensities を推定する必要がある.
 To explore robustness to propensity estimates of varying accuracy, we use the ML100K data and observation model with α = 0.25.
-様々な精度の傾向推定に対する頑健性を調べるために、ML100Kデータとα=0.25の観測モデルを使用した。
+様々な精度の propensity 推定に対する頑健性を調べるために、ML100Kデータとα=0.25の観測モデルを使用した.
 To generate increasingly bad propensity estimates, we use the Naive Bayes model from Section 5.1, but vary the size of the MCAR sample for estimating the marginal ratings P(Y = r) via the Laplace estimator.
-ますます悪い傾向推定値を生成するために，5.1節のナイーブベイズモデルを使用するが，ラプラス推定量による限界視聴率P（Y = r）を推定するためのMCARサンプルの大きさを変える。
+ますます悪い propensity 推定値を生成するために，5.1節のナイーブベイズモデルを使用するが，ラプラス推定量による限界視聴率P（Y = r）を推定するためのMCARサンプルの大きさを変える.
 
 Figure 4 shows how the quality of the propensity estimates impacts evaluation using the same setup as in Section 6.2.Under no condition do the IPS and SNIPS estimator perform worse than Naive.
-図4は、6.2節と同じ設定を用いて、傾向推定の品質が評価にどのような影響を与えるかを示したものである。
+図4は、6.2節と同じ設定を用いて、propensity 推定の品質が評価にどのような影響を与えるかを示したものである。
 Interestingly, IPS-NB with estimated propensities can perform even better than IPS-KNOWN with known propensities, as can be seen for MSE.
-興味深いことに、予感を推定したIPS-NBは、MSEでわかるように、予感がわかっているIPS-KNOWNよりもさらに優れた性能を発揮することができます。
+興味深いことに、propensities 推定したIPS-NBは、MSEでわかるように、予感がわかっているIPS-KNOWNよりもさらに優れた性能を発揮することができます。
 This is a known effect, partly because the estimated propensities can provide an effect akin to stratification (Hirano et al., 2003; Wooldridge, 2007).
-これは、推定された予感が層別化のような効果をもたらすこともあり、知られている効果である（Hirano et al, 2003; Wooldridge, 2007）。
+これは、**推定された propensities が層別化のような効果をもたらす**こともあり、知られている効果である（Hirano et al, 2003; Wooldridge, 2007）。
 
 Figure 3 (right) shows how learning performance is affected by inaccurate propensities using the same setup as in Section 6.3.We compare the MSE prediction error of MFIPS-NB with estimated propensities to that of MF-Naive and MF-IPS with known propensities.
-図3（右）は、6.3節と同じ設定で、予言が不正確な場合に学習性能にどのような影響があるかを示している。予言を推定したMFIPS-NBのMSE予測誤差を、予言が分かっているMF-NaiveとMF-IPSと比較している。
+図3（右）は、6.3節と同じ設定で、propensities が不正確な場合に学習性能にどのような影響があるかを示している。propensities を推定したMFIPS-NBのMSE予測誤差を、propensities が分かっているMF-NaiveとMF-IPSと比較している。
 The shaded area shows the 95% confidence interval over 30 trials.
 網掛け部分は、30回の試行における95％信頼区間を示しています。
 Again, we see that MF-IPS-NB outperforms MF-Naive even for severely degraded propensity estimates, demonstrating the robustness of the approach.
-ここでも、MF-IPS-NBは、著しく劣化した傾向推定値に対してもMF-Naiveを上回り、アプローチの頑健性を実証していることがわかる。
+ここでも、MF-IPS-NBは、著しく劣化した(MCARの観測データ数が少ない為...!)propensities推定値に対してもMF-Naiveを上回り、アプローチの頑健性を実証していることがわかる。
 
 ## 6.5. Performance on Real-World Data 実世界のデータにおける性能
 
 Our final experiment studies performance on real-world datasets.
-最後の実験では、実世界のデータセットにおけるパフォーマンスを調査します。
+最後の実験では、実世界のデータセットにおけるパフォーマンスを調査します.(ついにオンライン実験)
 We use the following two datasets, which both have a separate test set where users were asked to rate a uniformly drawn sample of items.
-以下の2つのデータセットを使用する。これらはどちらも、ユーザーに一様に描かれたアイテムのサンプルを評価するよう求められた別のテストセットを持っている。
+以下の2つのデータセットを使用する。これらはどちらも、ユーザに一様に描かれたアイテムのサンプルを評価するよう求められた別のテストセットを持っている。
 
-Yahoo! R3 Dataset.
+### Yahoo! R3 Dataset.
+
 Yahoo! R3 Datasetを使用しています。
 This dataset5 (Marlin & Zemel, 2009) contains user-song ratings.
 このデータセット5 (Marlin & Zemel, 2009) は、ユーザーによる楽曲の評価を含んでいる。
 The MNAR training set provides over 300K ratings for songs that were selfselected by 15400 users.
-MNARのトレーニングセットは、15400人のユーザーによって自選された楽曲に対する30万件以上の評価を提供しています。
+MNARのトレーニングセットは、15400人のユーザーによって自選された楽曲に対する30万件以上の評価を提供しています。(学習データはMNARなデータ)
 The test set contains ratings by a subset of 5400 users who were asked to rate 10 randomly chosen songs.
-テストセットは、ランダムに選ばれた10曲を評価するよう求められた5400人のユーザーのサブセットによる評価を含んでいます。
+テストセットは、ランダムに選ばれた10曲を評価するよう求められた5400人のユーザーのサブセットによる評価を含んでいます。(即ち、テストデータは完全なMCARデータ)
 For this data, we estimate propensities via Naive Bayes.
-このデータに対して、ナイーブベイズで予感を推定しています。
+このデータに対して、ナイーブベイズでpropensitiesを推定しています。
 As a MCAR sample for eliciting the marginal rating distribution, we set aside 5% of the test set and only report results on the remaining 95% of the test set.
-限界評価分布を引き出すためのMCARサンプルとして、テストセットの5%を確保し、残りの95%のテストセットについてのみ結果を報告します。
+marginal rating distribution(周辺評価分布?)を引き出すためのMCARサンプルとして、テストセットの5%を確保し、残りの95%のテストセットについてのみ結果を報告します。(現実世界でこの5%をどうやって確保したら良いんだろう...)
 
-Coat Shopping Dataset.
+### Coat Shopping Dataset.
+
 コートショッピングのデータセット。
 We collected a new dataset6 simulating MNAR data of customers shopping for a coat in an online store.
 オンラインストアでコートを購入する顧客のMNARデータをシミュレートした新しいデータセット6を収集しました。
@@ -703,11 +711,14 @@ The dataset contains ratings from 290 Turkers on an inventory of 300 items.
 The self-selected ratings are the training set and the uniformly selected ratings are the test set.
 自己選択した評価をトレーニングセット、一律に選択した評価をテストセットとする。
 We learn propensities via logistic regression based on user covariates (gender, age group, location, and fashion-awareness) and item covariates (gender, coat type, color, and was it promoted).
-ユーザーの共変量（性別、年齢層、場所、ファッション意識）とアイテムの共変量（性別、コートの種類、色、昇進したか）に基づき、ロジスティック回帰で性向を学習します。
+ユーザーの共変量（性別、年齢層、場所、ファッション意識）とアイテムの共変量（性別、コートの種類、色、昇進したか）に基づき、ロジスティック回帰でpropensitiesを学習します。
 A standard regularized logistic regression (Pedregosa et al., 2011) was trained using all pairs of user and item covariates as features and cross-validated to optimize log-likelihood of the self-selected observations.
-標準的な正則化ロジスティック回帰（Pedregosa et al, 2011）は、ユーザーとアイテムの共変量のすべてのペアを特徴として使用して訓練し、自己選択した観測の対数尤度を最適化するためにクロスバリデーションを行いました。
+標準的な正則化ロジスティック回帰（Pedregosa et al, 2011）は、ユーザーとアイテムの共変量のすべてのペアを特徴として使用して訓練し、自己選択した観測の対数尤度(ハイパーパラメータだっけ?)を最適化するためにクロスバリデーションを行いました。
 
-Results.
+### Results.
+
+![](https://camo.qiitausercontent.com/37bd3505292d250c39b84dd3d246171271029c6f/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f65623231363364642d633531342d383136352d373666352d3235333830626234326564362e706e67)
+
 結果が出ました。
 Table 2 shows that our propensity-scored matrix factorization MF-IPS with learnt propensities substantially and significantly outperforms the conventional matrix factorization approach, as well as the Bayesian imputation models from (Hernandez-Lobato et al.´ , 2014), abbreviated as HL-MNAR and HL-MAR (paired t-test, p < 0.001 for all).
 表2より，学習させた傾向スコアを用いた行列分解MF-IPSは，従来の行列分解アプローチや，HL-MNARやHL-MARと略される（Hernandez-Lobato et al.´ , 2014）のベイズインピュテーションモデルを大幅に上回った（paired t-test, p < 0.001 for all）．
@@ -723,16 +734,16 @@ Note that our performance numbers for HL on Yahoo closely match the values repor
 なお、YahooでのHLのパフォーマンス数値は、(Hernandez-Lobato et al.´ , 2014)の報告値とほぼ一致しています。
 
 Compared to the complex generative HL models, we conclude that our discriminative MF-IPS performs robustly and efficiently on real-world data.
-複雑な生成HLモデルと比較して、我々の識別MF-IPSは実世界のデータにおいて頑健かつ効率的な性能を発揮すると結論付けている。
+**複雑な生成HLモデルと比較して、我々の識別MF-IPSは実世界のデータにおいて頑健かつ効率的な性能を発揮すると結論付けている。**
 We conjecture that this strength is a result of not requiring any generative assumptions about the validity of the rating model.
 この強みは、レーティングモデルの妥当性に関する生成的な仮定を必要としない結果であると推測しています。
 Furthermore, note that there are several promising directions for further improving performance, like propensity clipping (Strehl et al., 2010), doubly-robust estimation (Dud´ık et al., 2011), and the use of improved methods for propensity estimation (McCaffrey et al., 2004).
-さらに、傾向クリッピング（Strehl et al., 2010）、ダブルロバスト推定（Dud´ık et al., 2011）、傾向推定のための改良された手法の使用（McCaffrey et al., 2004）など、さらなる性能向上のための有望な方向性がいくつか存在することに留意してください。
+さらに、propensity クリッピング（Strehl et al., 2010）、ダブルロバスト推定（Dud´ık et al., 2011）、**propensity推定のための改良された手法**の使用（McCaffrey et al., 2004）など、**さらなる性能向上のための有望な方向性がいくつか存在する**ことに留意してください。
 
 # 7. Conclusions 結論
 
 We proposed an effective and robust approach to handle selection bias in the evaluation and training of recommender systems based on propensity scoring.
-傾向スコアリングに基づく推薦システムの評価・学習において、選択バイアスを効果的かつ頑健に扱うアプローチを提案した。
+**傾向スコアリングに基づく推薦システムの評価・学習**において、選択バイアスを効果的かつ頑健に扱うアプローチを提案した。
 The approach is a discriminative alternative to existing joint-likelihood methods which are generative.
 このアプローチは、生成的である既存の合同尤度法に代わる識別的な方法である。
 It therefore inherits many of the advantages (e.g., efficiency, predictive performance, no need for latent variables, fewer modeling assumptions) of discriminative methods.
@@ -740,4 +751,4 @@ It therefore inherits many of the advantages (e.g., efficiency, predictive perfo
 The modularity of the approach— separating the estimation of the assignment model from the rating model—also makes it very practical.
 また、割り当てモデルの推定と評価モデルの推定を分離したモジュール方式を採用しているため、非常に実用的です。
 In particular, any conditional probability estimation method can be plugged in as the propensity estimator, and we conjecture that many existing rating models can be retrofit with propensity weighting without sacrificing scalability.
-特に、どのような条件付き確率推定法でも傾向推定器として差し込むことができ、既存の多くのレーティングモデルが拡張性を犠牲にすることなく傾向重み付けを後付けできることが推測されます。
+特に、どのような条件付き確率推定法(=任意のXからP(y|X)を推定するモデル?)でもprobability推定器として差し込むことができ、既存の多くのレーティングモデルが拡張性を犠牲にすることなく傾向重み付けを後付けできることが推測されます。
