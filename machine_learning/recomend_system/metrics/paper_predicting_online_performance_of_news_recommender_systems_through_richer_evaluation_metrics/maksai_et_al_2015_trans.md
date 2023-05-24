@@ -317,17 +317,17 @@ $Z_a(t)$ は、メインアルゴリズム(現在稼働中の推薦システム�
 Alternatively, $Z_a(t)$ can measure how high this recommender rates them.
 あるいは、$Z_a(t)$ は、このレコメンダーがどれだけ高く評価しているかを測ることができる.
 We build a regression model of online performance at each time t, based on the regressors Z1(t), .
-各時刻tにおけるオンライン性能の回帰モデルを、regressors(=説明変数) $Z_1(t), \cdots, F_{m}(t)$ に基づいて構築する.
+各時刻tにおけるオンライン性能の回帰モデルを、regressors(=説明変数) $Z_1(t)$ に基づいて構築する.
 In this model, the positive weight of a regressor Za suggests that giving recommendations with increased Za in the future would improve online performance.
-このモデルでは、回帰変数 $Z_a$ の重みが正であれば、将来 $Z_b$ を増やした推薦を与えることでオンラインパフォーマンスが向上することが示唆される. (推論されたパラメータが高いrecommdner aを 強く採用すべきって意味?)
+このモデルでは、回帰変数 $Z_a$ の重みが正であれば、将来 $Z_b$ を増やした推薦を与えることでオンライン性能が向上することが示唆される. (推論されたパラメータが高いrecommdner aを 強く採用すべきって意味?)
 Coefficients of linear regression β | effectively form a gradient of online performance with respect to the latent variables.
 線形回帰の係数 $\beta^T$ は、潜在変数に対するオンラインパフォーマンスの勾配を効果的に形成する.
 We can therefore perform a gradient descent, updating the weights, with which we mix different base recommenders: WT +1 = WT + λ ∗ βT , with T and T + 1 corresponding to two consecutive time frames, and βT being the coefficients of LR model, fitted on the data from frame T.
-そこで，勾配降下を行い，異なるベースレコメンダーを混合する重み $W$ を更新することができる: $W{T +1} = W_{T} + λ ∗ \beta_{T}$ 、TとT + 1は連続する2つの時間フレームに対応し、 $\beta_{T}$ はフレーム$T$のデータから学習させたLRモデルの係数である.
+そこで，勾配降下を行い，異なるベースレコメンダーを混合する重み $W$ を更新することができる: $W{t +1} = W_{t} + λ ∗ \beta_{t}$ 、$t$ と $t+1$ は連続する2つの時間フレームに対応し、 $\beta_{T}$ はフレーム$T$のデータから学習させたLRモデルの係数である.
 This could be an effective alternative to A–B testing, which is analogous to a grid search in the space of all possible weight coefficients.
 これは、**すべての可能な重み係数の空間におけるグリッド検索に類似しているA-Bテスト**(そうなの...??)の効果的な代替となる可能性があある.
 In a simple case where Za are ratings given by base recommenders to the items recommended by the main algorithm, and recommenders Fa optimize a particular set of metrics, this approach is equivalent to modeling CTR using the set of metrics as regressors over time.
-$Z_a$ がメインアルゴリズムによって推薦されたアイテムに対して各ベース recommender が与える評価であり、recommender $F_a$ が特定の metrics セットを最適化するという単純なケースでは、このアプローチは、 metrics セットを時間的な regressors として使用してCTRをモデル化することと同等である.(=>あるmetricを元に最適化させた推薦結果がオンライン性能に強い影響を与えた! =>即ち、あるmetricの大小はオンライン性能に強い影響を与える、といえる...!)
+$Z_a$ がメインアルゴリズムによって推薦されたアイテムに対して各ベース recommender が与える評価であり、recommender $F_a$ が特定の metrics セットを最適化するという単純なケースでは、このアプローチは、 metrics セットを時間的に変化する 説明変数 として使用してCTRをモデル化することと同等である.(=>あるmetricを元に最適化させた推薦結果がオンライン性能に強い影響を与えた! =>即ち、あるmetricの大小はオンライン性能に強い影響を与える、といえる...!)
 This is especially important for sites with a dynamic user base, that, for example, prefers fresh news in the morning and a more diverse set in the evening.
 特に、**朝は新鮮なニュースを、夕方はより多様なニュースを好むなど、ダイナミックなユーザ層を持つサイトでは重要**である.
 (そうか! 時間frame $T$ の結果を使って、時刻 $T+1$ の重み付け$W$を更新する...!)
