@@ -10,15 +10,15 @@ Debiased offline evaluation of recommender systems: a weighted-sampling approach
 ## abstract アブストラクト
 
 Offline evaluation of recommender systems mostly relies on historical data, which is often biased by many confounders.
-レコメンダーシステムのオフライン評価は、多くの場合、多くの交絡因子によって偏りがある過去のデータに依存しています。
+レコメンダーシステムのオフライン評価は、多くの場合、多くの**交絡因子**によって偏りがある過去のデータに依存しています。
 In such data, user-item interactions are Missing Not At Random (MNAR).
-このようなデータでは、ユーザーとアイテムの相互作用はMNAR（Missing Not At Random）である。
+このようなデータでは、**ユーザとアイテムの interactions はMNAR（Missing Not At Random）**である。
 Measures of recommender system performance on MNAR test data are unlikely to be reliable indicators of real-world performance unless something is done to mitigate the bias.
-MNARテストデータによる推薦システムの性能測定は、バイアスを軽減するための工夫がない限り、実世界の性能の信頼できる指標にはなりにくい。
+**MNARテストデータによる**推薦システムの性能測定は、バイアスを軽減するための工夫がない限り、実世界の性能の信頼できる指標にはなりにくい。(**やっぱり学習ではなく評価の話なのかな...!!**)
 One way that researchers try to obtain less biased offline evaluation is by designing new supposedly unbiased performance estimators for use on MNAR test data.
-研究者がより偏りの少ないオフライン評価を得ようとする一つの方法は、MNARテストデータで使用するための、新しい不偏の性能推定器を設計することです。
+研究者がより偏りの少ないオフライン評価を得ようとする一つの方法は、**MNARテストデータで使用するための、新しい不偏の性能推定器**を設計することです。
 We investigate an alternative solution, a sampling approach.
-私たちは、別の解決策であるサンプリング・アプローチについて調査しています。
+私たちは、**別の解決策であるサンプリング・アプローチ**について調査しています。
 The general idea is to use a sampling strategy on MNAR data to generate an intervened test set with less bias --- one in which interactions are Missing At Random (MAR) or, at least, one that is more MAR-like.
 一般的なアイデアは、MNARデータのサンプリング戦略を用いて、よりバイアスの少ない介入テストセット（相互作用がMAR（Missing At Random）であるもの、あるいは少なくともよりMARに近いもの）を生成することです。
 An example of this is SKEW, a sampling strategy that aims to adjust for the confounding effect that an item's popularity has on its likelihood of being observed.
@@ -31,18 +31,18 @@ SKEWと、MNARデータに対してランダムな介入を行う2つのベー�
 We empirically validate for the first time the effectiveness of SKEW and we show our approach to be a better estimator of the performance one would obtain on (unbiased) MAR test data.
 SKEWの有効性を初めて実証的に検証し、我々のアプローチが（不偏の）MARテストデータで得られる性能のより良い推定者であることを示すことができました。
 Our strategy benefits from high generality properties (e.g.it can also be employed for training a recommender) and low overheads (e.g.it does not require any learning).
-本戦略は、高い汎用性（例：レコメンダーの学習にも利用可能）と低いオーバーヘッド（例：学習を必要としない）の利点があります。
+本戦略は、**高い汎用性(例：レコメンダーの学習にも利用可能)**と**低いオーバーヘッド(例：学習を必要としない)**の利点があります。
 
 # Introduction 序章
 
 Offline evaluation of a recommender system is done using an observed dataset, which records interactions (e.g.clicks, purchases, ratings) that occur between users and items during a given period in the operation of the recommender system.
 推薦システムのオフライン評価は、推薦システムの運用期間中にユーザーとアイテムの間で発生したインタラクション（クリック、購入、評価など）を記録した観測データセットを用いて行われます。
 However, this dataset is biased, not only due to the freedom that users have in choosing which items to interact with, but also due to other factors, known as confounders ([5, 27]).
-しかし，このデータセットは，ユーザーがどのアイテムと対話するかを自由に選べるだけでなく，交絡因子と呼ばれる他の要因によって，偏りがある（[5, 27]）。
+しかし，このデータセットは，ユーザがどのアイテムと対話するかを自由に選べるだけでなく，交絡因子と呼ばれる他の要因によって，偏りがある（[5, 27]）。
 For example, the user-interface plays an important role: differences in the ways that items are exposed to users (e.g.position on the screen) influence the likelihood of a user interacting with those items [14].
-例えば、ユーザーインターフェースは重要な役割を果たします。アイテムがユーザーに露出される方法（画面上の位置など）の違いは、ユーザーがそのアイテムと対話する可能性に影響します[14]。
+例えば、ユーザインターフェースは重要な役割を果たします。アイテムがユーザに露出される方法（画面上の位置など）の違いは、ユーザがそのアイテムと対話する可能性に影響する[14]。
 The recommender itself sets up a feedback loop, which results in another confounder: users are typically more likely to interact with the recommender’s suggestions than with other items.
-レコメンダー自体がフィードバックループを構築しているため、別の交絡要因が発生します。ユーザーは通常、他のアイテムよりもレコメンダーの提案に接する可能性が高いのです。
+レコメンダー自体がフィードバックループを構築しているため(i.e. 推薦システムが推薦したアイテムはユーザに見られやすく、)、別の交絡要因が発生します。ユーザは通常、他のアイテムよりもレコメンダーの提案に接する可能性が高いのです。
 The user’s preferences are also a confounder: for example, Marlin et al.demonstrate that, in a dataset of numeric ratings, the probability of not observing a specific user-item interaction depends on the value associated with that particular interaction (i.e.the rating value): informally, users tend to rate items that they like [18].
 例えば、Marlinらは、数値評価のデータセットにおいて、特定のユーザーとアイテムの相互作用を観察しない確率が、その特定の相互作用に関連する値（すなわち、評価値）に依存することを実証している：非公式に、ユーザーは自分が好きなアイテムを評価する傾向がある [18] 。
 Because of these and other confounders, interactions that are missing from an observed dataset are Missing Not At Random (MNAR) [18].
@@ -51,7 +51,7 @@ Because of these and other confounders, interactions that are missing from an ob
 Classical offline evaluations using such an observed dataset are in effect making the assumption that interactions that are missing from the observed dataset are either Missing Completely At Random (MCAR) or Missing At Random (MAR) [18].
 このような観測データセットを用いた古典的なオフライン評価は、実質的に、観測データセットから欠落した相互作用はMCAR（Missing Completely At Random）またはMAR（Missing At Random）のいずれかであると仮定している [18].
 (For the distinction between MCAR and MAR, see Section 2.) Using MNAR data in an evaluation as if it were MCAR or MAR, results in biased estimates of a recommender’s performance [18]: for example, such experiments tend to incorrectly reward recommenders that recommend popular items or that make recommendations to the more active users [8, 21].
-(MCARとMARの区別については、セクション2を参照）MCARやMARであるかのようにMNARデータを評価で使用すると、推薦者の性能の偏った推定になります[18]。例えば、このような実験は、人気のアイテムを推薦する推薦者やよりアクティブなユーザーに推薦する推薦者を不正に評価する傾向があります[8、 21]。
+(MCARとMARの区別については、セクション2を参照）MCARやMARであるかのようにMNARデータを評価で使用すると、推薦システムの性能の偏った推定結果になります[18]。例えば、このような実験は、人気のアイテムを推薦する推薦者やよりアクティブなユーザーに推薦する推薦者を不正に評価する傾向があります[8、 21]。
 
 There are three ways of addressing this problem.
 この問題に対しては、3つの方法があります。
@@ -71,9 +71,11 @@ One way of doing this is to design estimators (i.e.evaluation metrics) which com
 Although this achieves the desired goal to some extent, unbiased estimators suffer from two potential drawbacks.
 これはある程度望ましい目標を達成するものであるが、不偏推定量には2つの潜在的な欠点がある。
 The first is that they may not be general enough to overcome all sources of bias, i.e.they are often designed to compensate for a specific kind of bias: for example, the accuracy metric that is proposed in [24] is able to correct only for the long-tail popularity bias in a dataset.
-例えば、[24]で提案されている精度評価指標は、データセットのロングテール人気バイアスのみを補正することができるものです。
+第一に，バイアスのすべての原因を克服するのに十分な汎用性がない可能性があることである．
+例えば、[24]で提案されている精度指標は、データセットのロングテール人気バイアスのみを補正することができます。
 The second drawback that affects unbiased estimators is that their unbiasedness might be proven only if the data satisfies some specific conditions: the ATOP estimator proposed in [23], for example, is unbiased only if the data satisfies two conditions.
-例えば，[23]で提案されたATOP推定器は，データが2つの条件を満たす場合にのみ不偏推定となる．
+不偏推定量に影響を与える2つ目の欠点は，データがいくつかの特定の条件を満たす場合にのみ不偏性が証明される可能性があるということである．
+例えば，[23]で提案されたATOP推定器は，データが2つの条件を満たした場合にのみ不偏であることが証明されている．
 
 The third approach is to intervene on MNAR test data before using it for the evaluation.
 3つ目のアプローチは、評価に使う前にMNARのテストデータに介入することです。
@@ -95,7 +97,7 @@ Our experiments allow us: to empirically evaluate for the first time the effecti
 この実験により、SKEWの有効性を初めて実証的に評価することができました。また、両戦略が望ましいデビアス動作を正常に行うことを検証し、さらに、我々の戦略が異なる推薦アルゴリズムの不偏性能により近いことを実証することができました。
 
 Although in this paper we employ our technique to generate a test set for offline recommender evaluation, our approach is general and can also be employed to debias the data used for training a recommender.
-本論文では、オフラインでのレコメンダー評価のためのテストセットを生成するために本手法を採用していますが、本手法は一般的であり、レコメンダーのトレーニングに使用するデータをデビアスするためにも採用できます。
+本論文では、オフラインでのレコメンダー評価のためのテストセットを生成するために本手法を採用していますが、本手法は一般的であり、**レコメンダーのトレーニングに使用するデータをデビアスするためにも採用できます**。
 
 The rest of this paper is organized as follows.
 本稿の残りの部分は、以下のように構成されている。
@@ -123,7 +125,7 @@ Indeed, MCAR, MAR and MNAR are terms used to denote different missing data mecha
 In work on causal inference, the same process is typically called the assignment mechanism instead [10].
 因果推論に関する研究では、同じプロセスは通常、代わりに割り当てメカニズムと呼ばれる[10]。
 In [16, 18], MCAR means that whether a user-item interaction is missing does not depend on interaction values (such as ratings in a recommender) at all, i.e.it depends neither on the observed interaction values nor the missing interaction values.
-16,18]では、MCARとは、ユーザーとアイテムの相互作用が欠損しているかどうかは、相互作用値（レコメンダーにおける評価など）に全く依存しない、つまり、観測された相互作用値にも欠損した相互作用値にも依存しないことを意味します。
+[16,18]では、MCARとは、ユーザーとアイテムの相互作用が欠損しているかどうかは、相互作用値（レコメンダーにおける評価など）に全く依存しない、つまり、観測された相互作用値にも欠損した相互作用値にも依存しないことを意味します。
 MAR, on the other hand, means that whether a user-item interaction is missing may depend on the observed interaction values, but is independent of the missing interaction values.
 一方、MARは、ユーザーとアイテムのインタラクションが欠損しているかどうかは、観測されたインタラクション値に依存するかもしれないが、欠損したインタラクション値には依存しないことを意味します。
 
@@ -579,7 +581,7 @@ FULLは、評価における古典的なテストセット生成を表し、テ�
 Note that, in each of SKEW, WTD and WTD_H, if the distribution PS does not sum to 1 (necessary for a probability distribution), we include a normalization step on PS to ensure that this property is achieved.
 なお、SKEW、WTD、WTD_Hのそれぞれにおいて、分布PSの和が1にならない場合（確率分布として必要）、この性質が得られるようにPSの正規化ステップを含むようにしています。
 
-## Recommender systems 
+## Recommender systems
 
 We train five recommender models, all of them producing a ranked list of recommended items.
 5つのレコメンダーモデルを学習し、すべてのモデルが推奨アイテムのランク付けリストを生成する。
