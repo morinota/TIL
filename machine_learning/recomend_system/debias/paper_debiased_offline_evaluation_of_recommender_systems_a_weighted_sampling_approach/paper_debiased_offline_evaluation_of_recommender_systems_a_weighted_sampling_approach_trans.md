@@ -1,13 +1,13 @@
-## link リンク
+## 0.1. link リンク
 
 - https://dl.acm.org/doi/10.1145/3341105.3375759 https://dl.acm.org/doi/10.1145/3341105.3375759
 
-## title タイトル
+## 0.2. title タイトル
 
 Debiased offline evaluation of recommender systems: a weighted-sampling approach
 推薦システムの偏ったオフライン評価：加重サンプリングアプローチ
 
-## abstract アブストラクト
+## 0.3. abstract アブストラクト
 
 Offline evaluation of recommender systems mostly relies on historical data, which is often biased by many confounders.
 レコメンダーシステムのオフライン評価は、多くの場合、多くの**交絡因子**によって偏りがある過去のデータに依存しています。
@@ -33,7 +33,7 @@ SKEWの有効性を初めて実証的に検証し、我々のアプローチが�
 Our strategy benefits from high generality properties (e.g.it can also be employed for training a recommender) and low overheads (e.g.it does not require any learning).
 本戦略は、**高い汎用性(例：レコメンダーの学習にも利用可能)**と**低いオーバーヘッド(例：学習を必要としない)**の利点があります。
 
-# Introduction 序章
+# 1. Introduction 序章
 
 Offline evaluation of a recommender system is done using an observed dataset, which records interactions (e.g.clicks, purchases, ratings) that occur between users and items during a given period in the operation of the recommender system.
 推薦システムのオフライン評価は、推薦システムの運用期間中にユーザーとアイテムの間で発生したインタラクション（クリック、購入、評価など）を記録した観測データセットを用いて行われます。
@@ -114,7 +114,7 @@ We analyse the results of the experiments in Section 6.
 We discuss our findings in Section 7.
 第7節でその結果について述べる。
 
-# Related Work 関連作品
+# 2. Related Work 関連作品
 
 A distinction is sometimes drawn between Missing Completely At Random (MCAR) and Missing At Random (MAR).
 MCAR（Missing Completely At Random）とMAR（Missing At Random）は区別されることがあります。
@@ -125,7 +125,7 @@ Indeed, MCAR, MAR and MNAR are terms used to denote different missing data mecha
 In work on causal inference, the same process is typically called the assignment mechanism instead [10].
 因果推論に関する研究では、同じプロセスは通常、代わりに割り当てメカニズムと呼ばれる[10]。
 In [16, 18], MCAR means that whether a user-item interaction is missing does not depend on interaction values (such as ratings in a recommender) at all, i.e.it depends neither on the observed interaction values nor the missing interaction values.
-[16,18]では、MCARとは、ユーザーとアイテムの相互作用が欠損しているかどうかは、相互作用値（レコメンダーにおける評価など）に全く依存しない、つまり、観測された相互作用値にも欠損した相互作用値にも依存しないことを意味します。
+[16,18]では、MCARとは、ユーザーとアイテムの相互作用が欠損しているかどうかは、interaction values(レコメンダーにおける評価など)に全く依存しない、つまり、観測された相互作用値にも欠損した相互作用値にも依存しないことを意味する.
 MAR, on the other hand, means that whether a user-item interaction is missing may depend on the observed interaction values, but is independent of the missing interaction values.
 一方、MARは、ユーザーとアイテムのインタラクションが欠損しているかどうかは、観測されたインタラクション値に依存するかもしれないが、欠損したインタラクション値には依存しないことを意味します。
 
@@ -137,35 +137,36 @@ Although these more informal usages are not properly in line with the categoriza
 これらの非公式な使い方は、[16]や[18]の分類と正しく一致していませんが、我々の選択は、推薦システムの文献における他の仕事と広く一致しています：我々がMARと呼ぶものは、[4、23]などの論文でMARとも呼ばれ、我々がMARと呼ぶものは、[22]などでMCADと呼ばれています。
 
 A substantial body of work has been done in the last few years to cope with bias in recommenders, both for their training and their offline evaluation.
-ここ数年、推薦者の訓練とオフライン評価の両方で、推薦者のバイアスに対処するための相当な研究が行われている。
+ここ数年、レコメンダーの訓練とオフライン評価の両方で、推薦者のバイアスに対処するための相当な研究が行われている。
 We focus here more on the latter, as it is more relevant to our work in this paper.
-本稿では、より後者に焦点を当てます。なぜなら、後者の方が本論文での研究に関連するからです。
+**本稿では、より後者に焦点を当てます**。なぜなら、後者の方が本論文での研究に関連するからです。
 
 As we mentioned in Section 1, one approach is to collect a separate MAR-like dataset (i.e.one that is as devoid of bias as possible) to use for the evaluation of the recommender’s performance.
 セクション1で述べたように、推薦者の性能評価に使用するMARのようなデータセット（できるだけ偏りのないもの）を別途収集するのも一つの方法です。
 This is usually done by means of what we will call a “forced rating approach” [4].
-これは通常、「強制格付けアプローチ」と呼ばれる方法によって行われる[4]。
+これは通常、**“forced rating approach”(強制格付けアプローチ)**と呼ばれる方法によって行われる[4]。
 User-item pairs are chosen uniformly at random and for each user-item pair that gets selected the user is required (forced) to provide a rating for the item.
-ユーザーとアイテムのペアは一様にランダムに選択され、選択された各ユーザーとアイテムのペアに対して、ユーザーはアイテムに対する評価を提供することを要求される（強制される）。
+ユーザとアイテムのペアは一様にランダムに選択され、選択された各ユーザーとアイテムのペアに対して、ユーザーはアイテムに対する評価を提供することを要求される（強制される）。
 In this way, from the data that we collect we remove biases such as the item discovery bias (because items are randomly chosen for users), item consumption bias (because users are forced to consume or interact with the item so that they can rate it, unless the item was already known to the user) and rating decision bias (because users are not free whether to rate the chosen item or not, they are forced to do it) [4].
-このようにして、収集したデータから、アイテム発見バイアス（アイテムがユーザーのためにランダムに選ばれるため）、アイテム消費バイアス（アイテムがすでにユーザーに知られていた場合を除き、ユーザーがアイテムを評価できるようにアイテムを消費または対話することを強いられるため）、評価決定バイアス（選ばれたアイテムを評価するかどうかはユーザーの自由ではなく、それを強いられるため）などのバイアスを除去します[4]。
+このようにして、収集したデータから、アイテム発見バイアス（アイテムがユーザのためにランダムに選ばれるため）、アイテム消費バイアス（アイテムがすでにユーザに知られていた場合を除き、ユーザがアイテムを評価できるようにアイテムを消費または対話することを強いられるため）、評価決定バイアス（選ばれたアイテムを評価するかどうかはユーザーの自由ではなく、それを強いられるため）などのバイアスを除去します[4]。
 
 Datasets collected by the “forced rating approach” are MAR-like, rather than MAR: they may still carry some bias.
-強制評価アプローチ」で収集されたデータセットは、MARというよりMAR的なものです。
+強制評価アプローチ」で収集されたデータセットは、MARというよりMAR的なもの(少しbiasを含んでいるって意味?)です。
 When building such a dataset, for example, although invitations are sent to users who are chosen uniformly at random, those who agree to participate may be atypical, thus introducing bias.
-例えば、このようなデータセットを構築する場合、ランダムに選ばれた一様なユーザーに招待状を送るものの、参加に同意したユーザーが非典型的である可能性があり、バイアスが発生することがあります。
+例えば、このようなデータセットを構築する場合、ランダムに選ばれた一様なユーザーに招待状を送るものの、**参加に同意したユーザが非典型的である可能性があり**、バイアスが発生することがあります。
 Equally, the fact that, for each user, items to rate are presented sequentially introduces bias: the rating a user assigns to a particular item may be influenced by the items she has rated so far.
-また、各ユーザーの評価項目が順次表示されるため、ある項目に対する評価が、それまでに評価した項目の影響を受けてしまうというバイアスが発生します。
+また、各ユーザの評価項目が順次表示されるため、ある項目に対する評価が、それまでに評価した項目の影響を受けてしまうというバイアスが発生します。
 Although this means that these datasets are less biased, rather than unbiased, to the best of our knowledge, this is still the best way of collecting this type of data.
 これは、これらのデータセットが、私たちの知る限りでは、偏りがないどころか、むしろ偏りが少ないことを意味しますが、それでもこの種のデータを収集するには、これが最良の方法です。
 
 Datasets of this kind include Webscope R3 [18] and cm100k [4] in the music domain, and CoatShopping [22] in the clothing domain.
 この種のデータセットとしては、音楽分野ではWebscope R3[18]やcm100k[4]、衣服分野ではCoatShopping[22]などがある。
 The “forced rating approach” can only work in certain domains; for example, it requires that a user who is presented with an item can quickly consume that item so as to provide a rating.
-強制レーティングアプローチ」は、例えば、アイテムを提示されたユーザーが、そのアイテムを素早く消費してレーティングを提供できることが必要であるなど、特定の領域でしか機能しない。
+強制レーティングアプローチ」は、例えば、アイテムを提示されたユーザが、そのアイテムを素早く消費してレーティングを提供できることが必要であるなど、特定の領域でしか機能しない。
 In the movie domain, for example, we almost certainly cannot require a user to watch an entire movie (although we could require them to watch a movie trailer).
 例えば映画の領域では、ユーザーに映画全体を見ることを要求することはほぼ不可能です（映画の予告編を見ることを要求することは可能です）。
 
+(ここからアプローチ2の既存研究の説明)
 Therefore, because in some domains obtaining a MAR-like dataset may be impractical, most work on unbiased offline evaluation of recommenders still relies on the use of MNAR datasets.
 そのため、ドメインによってはMARのようなデータセットを得ることが現実的でない場合もあり、推薦者の公平なオフライン評価に関する研究の多くは、依然としてMNARデータセットの使用に依存しています。
 The majority of the literature tries to overcome the bias in an MNAR test set by proposing new estimators (i.e.evaluation metrics) which provide unbiased or nearly unbiased measures of performance on the MNAR test data.
@@ -183,16 +184,17 @@ They show ADG allows unbiased estimation with respect to their missing data mode
 Other work uses Inverse-Propensity-Scoring (IPS) techniques (e.g.[22, 28]).
 他の研究では、Inverse-Propensity-Scoring（IPS）技術を使用しています（例：[22, 28]）。
 A propensity is the probability that a particular user-item pair is observed.
-傾向とは、特定のユーザーとアイテムのペアが観察される確率のことである。
+propensity(傾向)とは、特定のユーザとアイテムのペアが観察される確率のことである。
 This work on IPS uses propensities as a proxy to build unbiased estimators on explicit ([22]) and implicit ([28]) data respectively.
 IPSに関するこの研究は、プロペンシティをプロキシとして使用し、陽的データ（[22]）と陰的データ（[28]）それぞれについて不偏推定量を構築する。
 One drawback of propensities is that their estimation might require an expensive learning step (e.g.[22, 28]).
-予感の欠点は、その推定に高価な学習ステップが必要な場合があることである（例えば[22, 28]）。
+propensityの欠点は、その推定に高価な学習ステップが必要な場合があることである（例えば[22, 28]）。
 
+(ここからアプローチ3の既存研究の説明)
 There are those who use what we are calling an intervention approach.
 私たちが介入アプローチと呼んでいるものを使っている人たちがいます。
 They sample from the MNAR test set to produce a smaller MAR-like test set (the intervened set), which they use in the evaluation in place of the MNAR test set.
-MNARテストセットからサンプリングして、より小さなMARのようなテストセット（intervened set）を作成し、MNARテストセットの代わりに評価で使用するのです。
+**MNARテストセットからサンプリングして、より小さなMARのようなテストセット（intervened set）を作成**し、MNARテストセットの代わりに評価で使用するのです。
 One such method is Lang et al.’s SKEW method, which samples user-item pairs in inverse proportion to the item popularity.
 その一つがLangらのSKEW法で、アイテムの人気度に反比例してユーザーとアイテムのペアをサンプリングする。
 This generates an intervened test set which has roughly uniform exposure distribution across items, thus reducing the item popularity bias in the test set [13].
@@ -213,10 +215,11 @@ Their first approach is a form of stratification, in which test items are sample
 Their second approach builds a test set with the same number of ratings for each item.
 第二のアプローチは、各項目について同じ数の評価を持つテストセットを構築するものである。
 Compared with our work, their approaches are more limited since both have the goal only of reducing popularity bias.
-私たちの研究と比較すると、両者とも人気の偏りを減らすことだけを目的としているため、より限定的なアプローチとなっています。
+私たちの研究と比較すると、**両者とも人気の偏りを減らすことだけを目的としているため、より限定的なアプローチ**となっています。
 Their approaches may also result in quite small tests sets, especially if the popularity curve in the original dataset is quite steep.
 また、これらのアプローチでは、特に元のデータセットの人気曲線が非常に急な場合、非常に小さなテストセットになることがあります。
 
+(最後に、MNARデータを使った学習の話。)
 To conclude this review, and for completeness, we mention some of the work that has applied debiasing techniques when training recommender systems.
 このレビューの締めくくりとして、また完全性を期すために、推薦システムのトレーニングにデビアス技術を適用した研究のいくつかを紹介する。
 In [9, 12, 17], for example, existing algorithms are adapted to include explicit MNAR data models.
@@ -224,116 +227,127 @@ In [9, 12, 17], for example, existing algorithms are adapted to include explicit
 Others employ unbiased estimators as a loss function to train their model and therefore correct for the bias in the training set (e.g.[15, 23, 24]), while others take a causal inference perspective (e.g.[11, 13, 14, 26]).
 また、モデルを訓練するための損失関数として不偏推定量を採用することで、訓練セットのバイアスを補正するもの（[15, 23, 24]など）や、因果推論の視点を持つもの（[11, 13, 14, 26]など）などがある。
 
-# Properties of Datasets: A Probabilistic Framework データセットの特性 確率論的な枠組み
+# 3. Properties of Datasets: A Probabilistic Framework データセットの特性 確率論的な枠組み
 
 In this section, we define a probabilistic framework to analyse properties of MAR and MNAR datasets.
 本節では、MARとMNARのデータセットの特性を分析するための確率的フレームワークを定義する。
 Then, in Section 4, we use these properties to design our approach that generates intervened test sets for ‘unbiased’ evaluation.
-そして、セクション4では、これらの特性を利用して、「不偏」な評価のために介在するテストセットを生成する我々のアプローチを設計する。
+そして、セクション4では、これらの特性を利用して、**「‘unbiased’(不偏)」な評価**のために介在するテストセットを生成する我々のアプローチを設計する.
 
-We consider a user-item space, U × I, of size |U | · |I |.
+We consider a user-item space, $U × I$, of size |U | · |I |.
 U
 We denote with u ∈ U = {1, .., |U |} a generic user and with i ∈ I = {1, .., |I |} a generic item.
 U
 We denote with D = {O ∈ {0, 1} U ×I ,Y ∈ R U ×I } a generic observed dataset.
-一般的な観測データセットをD = {O∈{0, 1} U ×I ,Y∈R U ×I }と表記する。
+一般的な観測データセットを$D = {O \in {0, 1}^{U \times I}, Y \in \mathbb{R}^{U \times I}}$と表記する。
 The binary matrix O records which interactions between users and items have been observed: Ou,i = 1 if an interaction is observed and Ou,i = 0 otherwise.
-二値行列Oには、ユーザとアイテムの間のどのようなインタラクションが観察されたかが記録される： 相互作用が観測された場合はOu,i = 1、そうでない場合はOu,i = 0である。
+二値行列$O$には、ユーザとアイテムの間のどのようなインタラクションが観察されたかが記録される： interactionが観測された場合はO*{u,i} = 1、そうでない場合はO*{u,i} = 0である。
 We also define the associated matrix Y ∈ R U ×I which records the value of the interactions of the corresponding observed entries in O: we have Yu,i , 0 where Ou,i = 1, Yu,i = 0 otherwise.
-また、Oの対応する観測項目の相互作用の値を記録する関連行列Y∈R U ×I を定義する：Ou,i = 1のときYu,i , 0、それ以外はYu,i = 0とする。
+また、Oの対応する観測項目のinteractionの値を記録する関連行列 $Y \in R^{U \times I}$ を定義する：O*{u,i} = 1のとき$Y*{u,i} \neq 0$、それ以外は $Y\_{u,i} = 0$ とする。
 When discussing Y, we use the general term “interaction value”, rather than “rating”, to emphasize the generality of our framework: Y can take values of any kind in R whether they denote ratings, number of clicks, number of views, listening frequencies, etc.
-Yについて議論するとき、本フレームワークの一般性を強調するために、「評価」ではなく、「相互作用値」という一般的な用語を使用する： Yは、評価、クリック数、閲覧数、聴取頻度など、Rのあらゆる種類の値を取ることができます。
+$Y$ について議論するとき、**本フレームワークの一般性を強調するため**に、「評価」ではなく、「**interaction value(相互作用値)**」という一般的な用語を使用する： Yは、評価、クリック数、閲覧数、聴取頻度など、 $\mathbb{R}$ のあらゆる種類の値を取ることができます。(フレームワークの一般性、素晴らしい...!!)
 We also define the binary random variable O : U ×I → {0, 1} over the set of user-item pairs in O as O = 1 if the user-item interaction is observed and O = 0 otherwise.
-また、Oに含まれるユーザーアイテム対の集合を対象とした二値確率変数O : U ×I → {0, 1}を、ユーザーアイテム間の相互作用が観測された場合にO = 1、それ以外の場合にO = 0と定義する。
-(But later we will use abbreviation P(O) in place of P(O = 1).) Using this notation, we can refer to two kinds of datasets over the same U ×I space, Dmnar = {O mnar ,Y mnar } and Dmar = {O mar ,Y mar }, which have MNAR and MAR properties respectively.
-(ただし、後にP(O = 1)の代わりにP(O)という略語を使う)。この表記を用いると、同じU×I空間上の2種類のデータセット、Dmnar = {O mnar ,Y mnar }とDmar = {O mar ,Y mar }を、それぞれMNARとMARの特性を持つものとして参照することができます。
+また、**Oに含まれるユーザアイテム対の集合を対象とした二値確率変数** $Q: U \times I → {0, 1}$を、ユーザアイテム間のinteractionが観測された場合にQ = 1、それ以外の場合にQ = 0と定義する。(**Oとの違いが難しい...?**)
+(But later we will use abbreviation P(O) in place of P(O = 1).)
+(ただし、後にP(Q = 1)の代わりにP(Q)という略語を使う)。
+Using this notation, we can refer to two kinds of datasets over the same U ×I space, Dmnar = {O mnar ,Y mnar } and Dmar = {O mar ,Y mar }, which have MNAR and MAR properties respectively.
+これらの表記(notation)を用いると、同じU×I空間上の2種類のデータセット、$D_{mnar} = {O^{mnar},Y^{mna}}$と $D_{mar} = {O^{mar} ,Y^{mar}}$ を、それぞれMNARとMARの特性を持つものとして参照することができます。
 
-## Properties of a MAR dataset MARデータセットの特性
+## 3.1. Properties of a MAR dataset MARデータセットの特性
 
 We will formally describe how D mar is generated.
-D marの生成方法について正式に説明します。
+$D_{mar}$ の生成方法について正式に説明します。
 We make use of the forced ratings approach that we described in Section 2.
-2章で説明した強制視聴率という手法を活用しています。
+2章で説明した**forced ratings approach**(あれ?アプローチ1だっけ...?)という手法を活用しています。
 First, we need to randomly sample a set of user-item pairs in order to generate O mar .
-まず、ユーザーとアイテムのペアをランダムにサンプリングして、O mar を生成する必要があります。
+まず、ユーザとアイテムのペアをランダムにサンプリングして、$O^{mar}$を生成する必要があります。
 Then, a preference (interaction value) for each pair in O mar is collected so that Y mar is obtained.
-そして、O marの各ペアのプリファレンス（相互作用値）を収集し、Y marを得ることができる。
+そして、$O^{mar}$の各ペアのプリファレンス(Interaction value)を収集し、$Y^{mar}$を得ることができる.
 Note that, in order to satisfy the MAR property, the generation ofO mar is totally independent fromY mar and from the particular user-item pair (u,i) as well.
-なお、MAR特性を満たすために、O marの生成はY marから完全に独立しており、特定のユーザーとアイテムのペア（u,i）からも独立していることを特徴とする。
+なお、**MAR特性を満たすために、$O^{mar}$の生成は$Y^{mar}$から完全に独立しており、特定のユーザとアイテムのペア（u,i）からも独立していることを特徴とする。**
 We also assume that, once O mar is determined, we can obtain interaction values Y mar for all user-item pairs in O mar .
-また、O marが決まれば、O marに含まれるすべてのユーザーとアイテムのペアの相互作用値Y marを得ることができると仮定する。
+また、O marが決まれば、O marに含まれるすべてのユーザとアイテムのペアのinteraction value $Y^{mar}$を得ることができると仮定する。
 (In practice, of course, users may decline the invitation to participate or may refuse to give some ratings, which is one reason why in reality these datasets are MAR-like and not MAR.)
-(もちろん実際には、ユーザーは参加の誘いを断ったり、一部の評価を拒否したりすることがあり、これが現実にはこれらのデータセットがMAR的でありMARではない理由の一つである)。
+(もちろん実際には、ユーザーは参加の誘いを断ったり、一部の評価を拒否したりすることがあり、これが現実にはこれらのデータセットがMAR的でありMARではない理由の一つである)。(=これは現実の話だよね...!!アプローチ1の!)
 
 To achieve the goal, we make use of the probability distribution Pmar (O|u,i), defined over the space U × I, that leads to O mar .
-u,i), defined over the space U × I, that leads to O mar .
+この目的を達成するために、空間U×I上で定義される確率分布$P_{mar}(Q|u,i)$ を利用し、$O^{mar}$を導きます。
 A straightforward choice is to set Pmar (O|u,i) = P(O) = ρmar , where ρmar represents the desired ratio of observed entries from U × I.
-u,i) = P(O) = ρmar , where ρmar represents the desired ratio of observed entries from U × I.
+素直な選択は、$P_{mar}(Q|u,i) = P(Q) = \rho_{mar}$ とすること. ここで$\rho_{mar}$ は、U×Iから観測されたエントリーの望ましい比率を表す.
 Now, assuming that a dataset D mar has been collected using such an approach, we should empirically verify that user and item posterior probabilities are (roughly) uniformly distributed:
-さて、このような手法で収集されたデータセットD marを想定して、ユーザーとアイテムの事後確率が（ほぼ）一様に分布していることを経験的に検証する必要があります：
+さて、このような手法で収集されたデータセット $D_{mar}$ を想定して、**ユーザとアイテムの事後確率が（ほぼ）一様に分布していることを経験的に検証する**必要があります：
 
 $$
+P_{mar}(u|Q) = \frac{|O_{u}^{mar}|}{O^{mar}} \sim \frac{1}{|U|}, \forall u \in U
 \tag{1}
 $$
 
 $$
+P_{mar}(i|Q) = \frac{|O_{i}^{mar}|}{O^{mar}} \sim \frac{1}{|I|}, \forall i \in I
 \tag{2}
 $$
 
 where O mar u and O mar i are the observed interactions in O mar for user u and item i respectively.
-ここで、O mar uとO mar iはそれぞれ、ユーザーuとアイテムiのO marで観測されたインタラクションである。
+ここで、$O^{mar}_{u}$と$O^{mar}_{i}$はそれぞれ、ユーザuとアイテムiのO marで観測されたInteractionである. (ということはbinary値?)
 
 Also, because users and items are drawn independently, we have that their posteriors are independent and we can write:
-また、ユーザーとアイテムは独立に描かれるため、それらの後置は独立であることがわかり、こう書くことができる：
+また、ユーザとアイテムは独立に描かれるため、それらの事後分布は独立であることがわかり、こう書くことができる：
 
 $$
+P_{mar}(u,i|Q) = P_{mar}(u|Q) \cdot P_{mar}(i|Q) \in \frac{1}{|U||I|}, \forall(u,i) \in U \times I
 \tag{3}
 $$
 
 for the joint posterior of a specific user-item pair.
-は、特定のユーザーとアイテムのペアの共同事後分布を表す。
+$P_{mar}(u,i|Q)$は、特定のユーザとアイテムのペアの共同事後分布(=事後分布の同時分布、みたいな?)を表す。
 
-## Properties of an MNAR dataset MNARデータセットの特性
+## 3.2. Properties of an MNAR dataset MNARデータセットの特性
 
 MNAR data is, of course, usually collected during the operation of a recommender system.
 MNARデータは、もちろん、通常、レコメンダーシステムの運用中に収集されます。
 But, similarly to the way we modelled the generation of MAR data, we can model the generation of a MNAR dataset Dmnar = {O mnar ,Y mnar } in terms of a drawing process which determines O mnar first and Y mnar subsequently.
-しかし、MARデータの生成をモデル化したのと同様に、MNARデータセットDmnar = {O mnar ,Y mnar }の生成を、最初にO mnar、その後にY mnarを決定する描画プロセスでモデル化することができます。
+しかし、MARデータの生成をモデル化したのと同様に、MNARデータセット $D_{mnar} = {O^{mnar},Y^{mnar}}$ の生成を、最初にO mnar、その後にY mnarを決定する描画プロセスでモデル化することができます。
 
 Differently from the MAR scenario, due to the presence of bias, we cannot assume the sampling distribution Pmnar to be independent from the interaction values Y mnar (or from other confounders too, including, e.g., the specific user and item (u,i)).
-MARシナリオとは異なり，バイアスが存在するため，サンプリング分布Pmnarが相互作用値Y mnar（あるいは特定のユーザーとアイテム（u,i）を含む他の交絡因子からも）から独立していると仮定することはできない．
+MARシナリオとは異なり，バイアスが存在するため，**サンプリング分布**$P_{mnar}$がinteraction value $Y^{mnar}$（あるいは特定のユーザーとアイテム（u,i）を含む他の交絡因子からも）から独立していると仮定することはできない．
 In other words, in an MNAR dataset the draw is generally guided by some unknown probability Pmnar (O|u,i,Y, X), where Y ⊃ Y mnar represents the complete set of user-item interactions and X represents a set of features (covariates, confounders) which influences the sampling probability (e.g.user demographics, item features, characteristics of the system such as the way it exposes items to users, and so on).
-u,i,Y, X), where Y ⊃ Y mnar represents the complete set of user-item interactions and X represents a set of features (covariates, confounders) which influences the sampling probability (e.g.user demographics, item features, characteristics of the system such as the way it exposes items to users, and so on).
+つまり、MNARデータセットでは、一般的に未知の確率 $P_{mnar}(Q|u,i,Y,X)$ によって抽選が導かれる.
+ここで、$Y⊃Y^{mnar}$は**ユーザとアイテムのinteractionの完全なセット**(答えって事だろうか...??ゼロ要素が存在しない評価行列)を表し、Xはサンプリング確率に影響を与える特徴(共変量、交絡因子)のセット(例えば、ユーザのデモグラフィック、アイテムの特徴、アイテムをユーザーに公開する方法などのシステムの特徴など)を表します。
 
 If a MNAR dataset D mnar has been collected, we can examine user and item posterior probabilities in O mnar , as we did for the MAR dataset but now, in general, we will find:
-MNARデータセットD mnarが収集されている場合、MARデータセットで行ったように、O mnarのユーザーとアイテムの事後確率を調べることができるが、今度は一般的に、次のことが分かる：
+MNARデータセット $D_{mnar}$ が収集されている場合、MARデータセットで行ったように、 $O^{mnar}$ のユーザとアイテムの事後確率を調べることができるが、今度は一般的に、次のことが分かる：
+(ここでいう事後確率は、O=1のinteractionをランダムに取得した時に、それがユーザuのinteractionである確率、みたいなイメージ...??)
 
 $$
+P_{mnar}(u|Q) = \frac{|O^{mnar}_{u}|}{O^{mnar}} \neq = \frac{1}{|U|}, \forall u \in U
 \tag{4}
 $$
 
 $$
+P_{mnar}(i|Q) = \frac{|O^{mnar}_{u}|}{O^{mnar}} \neq = \frac{1}{|U|}, \forall u \in U
 \tag{5}
 $$
 
 In general, the users and items are not uniformly distributed and thus, given that a specific entry is observed, i.e.O = 1, we cannot assume the user and item posterior independence for the joint posterior Pmnar (u,i|O), i.e.
-O), i.e.
+**一般に、ユーザとアイテムは一様に分布しているわけではない**ので、特定のエントリーが観測された場合、すなわち$Q = 1$の場合、共同事後確率$P_{mnar}(u,i|Q)$ に対してユーザとアイテムの事後独立性は仮定できない、すなわち
 
 $$
+P_{mnar}(u,i|Q) \neq P_{mnar}(u|Q) \cdot P_{mnar}(i|Q), \forall (u,i) \in U \times I
 \tag{6}
 $$
 
 However, the formulation that we have given here provides us with a solid framework to design our debiasing strategy in the next section.
-しかし、ここで示した定式化は、次のセクションでデビアス戦略を設計するための強固な枠組みを提供します。
+しかし、**ここで示した定式化は、次のセクションでデビアス戦略を設計するための強固なフレームワークを提供します**。(なるほど...?これらの事後確率の定式化をサンプリング戦略で使うのか!)
+(このセクションは、MARデータやMNARデータの性質はかくあるべき、というような話だっけ??)
 
-# Intervened Test Sets 介在型テストセット
+# 4. Intervened Test Sets 介在型テストセット
 
 To conduct unbiased evaluation from biased data, we generate and use intervened test sets in place of classical random heldout test sets.
-偏ったデータから偏りのない評価を行うために、古典的なランダムホールドアウトテストセットの代わりに、介在テストセットを生成して使用します。
+**偏ったデータから偏りのない評価を行うため**に、古典的なランダムホールドアウトテストセットの代わりに、**intervenedテストセット**を生成して使用します。
 We begin by presenting this approach in general (Section 4.1), and then we present the specifics of our approach (Sections 4.2 and 4.3).
 まず、このアプローチを一般的に紹介し（4.1節）、次に我々のアプローチの具体的な内容を紹介する（4.2節と4.3節）。
 
-## The sampling approach サンプリングアプローチ
+## 4.1. The sampling approach サンプリングアプローチ
 
 The sampling approach consists in performing a debiasing intervention on MNAR data D mnar by means of a given sampling strategy, denoted with S.
 サンプリングアプローチは、Sで示される所定のサンプリング戦略によって、MNARデータD mnarに対してデビアス介入を行うことからなる。
@@ -357,7 +371,7 @@ We present our sampling approach in the next subsection.
 In Section 5, we will also define PS for SKEW and for two baseline approaches that we compare against in the experiments.
 セクション 5 では、SKEW の PS と、実験で比較した 2 つのベースラインアプローチの PS も定義します。
 
-## Our approach: weights for the sampling Our approach: サンプリングのための重み付け
+## 4.2. Our approach: weights for the sampling Our approach: サンプリングのための重み付け
 
 In the presentation of our approach, we will start by assuming the availability of some MAR-like data O mar in addition to MNAR data O mnar .
 本アプローチでは、MNARデータO mnarに加えて、MAR的なデータO marがあることを前提に説明します。
@@ -449,7 +463,7 @@ Specifically, (wi) 2 will be bigger than wi if wi is greater than one, and (wi) 
 This choice makes sense in the light of previous research reported in the literature which identifies item popularity as one of the most impactful confounders in MNAR data, e.g.[21, 24].
 この選択は、MNARデータにおいてアイテムの人気が最も影響力のある交絡因子の1つであるとする文献で報告された先行研究（例：[21, 24]）に照らして理にかなっています。
 
-## Hypothesized distributions for the weights 重みの分布の仮説
+## 4.3. Hypothesized distributions for the weights 重みの分布の仮説
 
 Up to this point, we assumed the availability of some MAR-like data in order to give us the posteriors that we need to approximate.
 ここまでは、近似に必要な後置を与えるために、MARのようなデータがあることを想定していました。
@@ -469,12 +483,12 @@ Therefore, we can use this hypothesized distribution when calculating the weight
 We call this strategy, WTD_H (where the H stands for “hypothesized”).
 この戦略をWTD_H（Hは "hypothesized "の略）と呼んでいます。
 
-# Experiments 実験
+# 5. Experiments 実験
 
 We have assessed WTD and WTD_H in offline experiments, which we describe in this section.
 WTDとWTD_Hをオフライン実験で評価しましたので、本項で説明します。
 
-## Datasets データセット
+## 5.1. Datasets データセット
 
 We use two publicly available datasets: CoatShopping2 from the clothing domain [22] and Webscope R33 from the music domain [18].
 我々は2つの一般に公開されているデータセットを使用する： CoatShopping2（衣服領域）[22]とWebscope R33（音楽領域）[18]である．
@@ -496,10 +510,10 @@ For each dataset, we apply a preprocessing step to ensure both Dmar and Dmnar ha
 Table 1 gives statistics of the final resulting datasets that we used in the experiments.
 表1は、実験に使用した最終的な結果のデータセットの統計です。
 
-## Methodology 方法論
+## 5.2. Methodology 方法論
 
 The goal of the experiments is to assess the ‘goodness’ of different ways of producing intervened test sets.
-実験の目的は、介在するテストセットを作成するさまざまな方法の「良さ」を評価することです。
+実験の目的は、介入テストセットを作成するさまざまな方法の「良さ」を評価することです。
 The measure of ‘goodness’ is how much results obtained by evaluating a recommender on an intervened test set resemble the results we would obtain on an unbiased test set.
 良さ」の指標は、介入したテストセットでレコメンダーを評価した結果が、偏りのないテストセットで得られるであろう結果にどれだけ似ているかということです。
 
@@ -555,7 +569,7 @@ We have computed Precision, Recall, MAP and NDCG on the top-10 recommendations.
 Results are averaged over 10 runs with different random splits.
 結果は、異なるランダム分割で10回実行した平均値です。
 
-## Sampling strategies サンプリング戦略
+## 5.3. Sampling strategies サンプリング戦略
 
 We formally present here the sampling strategies that we use to produce the intervened test sets in our experiments.
 ここでは、実験に介在するテストセットを作成するために使用するサンプリング戦略を正式に紹介する。
@@ -581,10 +595,10 @@ FULLは、評価における古典的なテストセット生成を表し、テ�
 Note that, in each of SKEW, WTD and WTD_H, if the distribution PS does not sum to 1 (necessary for a probability distribution), we include a normalization step on PS to ensure that this property is achieved.
 なお、SKEW、WTD、WTD_Hのそれぞれにおいて、分布PSの和が1にならない場合（確率分布として必要）、この性質が得られるようにPSの正規化ステップを含むようにしています。
 
-## Recommender systems
+## 5.4. Recommender systems
 
 We train five recommender models, all of them producing a ranked list of recommended items.
-5つのレコメンダーモデルを学習し、すべてのモデルが推奨アイテムのランク付けリストを生成する。
+5つのレコメンダーモデルを学習し、すべてのモデルが推薦アイテムのランク付けリストを生成する。
 AvgRating and PosPop are non-personalized recommenders which rank items in descending order of their mean rating and number of positive ratings in the training set, respectively.
 AvgRatingとPosPopは、それぞれトレーニングセットにおける平均評価とポジティブ評価の数の降順でアイテムをランク付けする非個人化レコメンダーです。
 UB_KNN and IB_KNN are user-based and item-based nearest-neighbour algorithms [8].
@@ -605,7 +619,7 @@ UB_KNN, IB_KNNについては、{10, 20, ..., 100}の中から近傍数を選択
 For MF, we choose the number of latent factors from {20, 40, .., 200} and the regularization term from {0.001, 0.006, 0.01, 0.06, 0.1, 0.6}.
 MFでは、潜在因子数を{20, 40, ..., 200}から、正則化項を{0.001, 0.006, 0.01, 0.06, 0.1, 0.6} から選択した。
 
-# Results 結果
+# 6. Results 結果
 
 We report the results of our experiments in Table 2.
 実験結果を表2に報告する。
@@ -677,7 +691,7 @@ But we have a completely different scenario for CoatShopping: SKEW, WTD and WTD_
 Low τ values for CoatShopping in Table 3 are a consequence of the fact that all test sets incorrectly rank MF to be one of the best-performing models, while it is the worst according to the ground truth.
 表3のCoatShoppingのτ値が低いのは、すべてのテストセットで、MFを最も性能の良いモデルの1つと誤認した結果であり、真実では最も悪いモデルである。
 
-# Conclustions コンクルージョン
+# 7. Conclustions コンクルージョン
 
 In this paper, we presented new sampling strategies that generate intervened test sets with MAR-like properties from MNAR data.
 本論文では、MNARデータからMAR的な性質を持つ介在テストセットを生成する新しいサンプリング戦略を提示した。
