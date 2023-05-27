@@ -245,7 +245,7 @@ The binary matrix O records which interactions between users and items have been
 We also define the associated matrix Y ∈ R U ×I which records the value of the interactions of the corresponding observed entries in O: we have Yu,i , 0 where Ou,i = 1, Yu,i = 0 otherwise.
 また、Oの対応する観測項目のinteractionの値を記録する関連行列 $Y \in R^{U \times I}$ を定義する：O*{u,i} = 1のとき$Y*{u,i} \neq 0$、それ以外は $Y\_{u,i} = 0$ とする。
 When discussing Y, we use the general term “interaction value”, rather than “rating”, to emphasize the generality of our framework: Y can take values of any kind in R whether they denote ratings, number of clicks, number of views, listening frequencies, etc.
-$Y$ について議論するとき、**本フレームワークの一般性を強調するため**に、「評価」ではなく、「**interaction value(相互作用値)**」という一般的な用語を使用する： Yは、評価、クリック数、閲覧数、聴取頻度など、 $\mathbb{R}$ のあらゆる種類の値を取ることができます。(フレームワークの一般性、素晴らしい...!!)
+$Y$ について議論するとき、**本フレームワークの一般性を強調するため**に、"rating"ではなく、「**interaction value(相互作用値)**」という一般的な用語を使用する： Yは、評価、クリック数、閲覧数、聴取頻度など、 $\mathbb{R}$ のあらゆる種類の値を取ることができます。(フレームワークの一般性、素晴らしい...!!)
 We also define the binary random variable O : U ×I → {0, 1} over the set of user-item pairs in O as O = 1 if the user-item interaction is observed and O = 0 otherwise.
 また、**Oに含まれるユーザアイテム対の集合を対象とした二値確率変数** $Q: U \times I → {0, 1}$を、ユーザアイテム間のinteractionが観測された場合にQ = 1、それ以外の場合にQ = 0と定義する。(**Oとの違いが難しい...?**)
 (But later we will use abbreviation P(O) in place of P(O = 1).)
@@ -306,7 +306,7 @@ $P_{mar}(u,i|Q)$は、特定のユーザとアイテムのペアの共同事後�
 MNAR data is, of course, usually collected during the operation of a recommender system.
 MNARデータは、もちろん、通常、レコメンダーシステムの運用中に収集されます。
 But, similarly to the way we modelled the generation of MAR data, we can model the generation of a MNAR dataset Dmnar = {O mnar ,Y mnar } in terms of a drawing process which determines O mnar first and Y mnar subsequently.
-しかし、MARデータの生成をモデル化したのと同様に、MNARデータセット $D_{mnar} = {O^{mnar},Y^{mnar}}$ の生成を、最初にO mnar、その後にY mnarを決定する描画プロセスでモデル化することができます。
+しかし、MARデータの生成をモデル化したのと同様に、MNARデータセット $D_{mnar} = {O^{mnar},Y^{mnar}}$ の生成過程を、最初にO mnar、その後にY mnarを決定する描画プロセスでモデル化することができます。
 
 Differently from the MAR scenario, due to the presence of bias, we cannot assume the sampling distribution Pmnar to be independent from the interaction values Y mnar (or from other confounders too, including, e.g., the specific user and item (u,i)).
 MARシナリオとは異なり，バイアスが存在するため，**サンプリング分布**$P_{mnar}$がinteraction value $Y^{mnar}$（あるいは特定のユーザーとアイテム（u,i）を含む他の交絡因子からも）から独立していると仮定することはできない．
