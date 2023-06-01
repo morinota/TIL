@@ -384,6 +384,14 @@ kotlinのversionの問題でpackageをinstallできないんだろうか??:think
 
 ## 終わりに...
 
+- **推薦システム × kotlin × LLM(OpenAI API)** をテーマに、ユーザとの対話で推薦結果を変化させる**Interactive Recommender**をfeed-serverに実装を試みました!
+  - 具体的には、「ユーザの自然言語を受け取る -> SQLクエリに変換 -> 推薦記事候補をフィルタリングする」処理をテスト・実装してみた.
+  - feed-serverに組み込むプロセスでタイムアップし断念...!
+- 得られた知見・感想:
+  - 最近読んでる"単体テストの考え方/使い方"を参考にテストを書いてみたが、"観察可能な振る舞い"のみをテストする事を意識できた.
+  - kotlinはpublicなmethodとprivateなmethodを明示的に定義できて嬉しいな...(Pythonが特殊なのかな)
+  -
+
 ## 参考資料
 
 - 1. [推薦システム実践入門](https://www.oreilly.co.jp/books/9784873119663/)

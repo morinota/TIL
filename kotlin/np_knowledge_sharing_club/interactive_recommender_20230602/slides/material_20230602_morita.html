@@ -761,6 +761,19 @@
 </section>
 <section id="終わりに" class="slide level2">
 <h2>終わりに…</h2>
+<ul>
+<li><strong>推薦システム × kotlin × LLM(OpenAI API)</strong> をテーマに、ユーザとの対話で推薦結果を変化させる<strong>Interactive Recommender</strong>をfeed-serverに実装を試みました!
+<ul>
+<li>具体的には、「ユーザの自然言語を受け取る -&gt; SQLクエリに変換 -&gt; 推薦記事候補をフィルタリングする」処理をテスト・実装してみた.</li>
+<li>feed-serverに組み込むプロセスでタイムアップし断念…!</li>
+</ul></li>
+<li>得られた知見・感想:
+<ul>
+<li>最近読んでる”単体テストの考え方/使い方”を参考にテストを書いてみたが、“観察可能な振る舞い”のみをテストする事を意識できた.</li>
+<li>kotlinはpublicなmethodとprivateなmethodを明示的に定義できて嬉しいなぁ…(Pythonが特殊なのかな)</li>
+<li></li>
+</ul></li>
+</ul>
 </section>
 <section id="参考資料" class="slide level2">
 <h2>参考資料</h2>
