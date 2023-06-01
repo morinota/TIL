@@ -427,11 +427,51 @@
 </ul></li>
 </ul>
 </section>
-<section id="feed-server-に-interactive-recommenderを実現するとしたら" class="slide level2">
-<h2>feed-server に Interactive Recommenderを実現するとしたら…</h2>
+<section id="feed-server-に-interactive-recommenderを実現するとしたら" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">feed-server に Interactive Recommenderを実現するとしたら…</h2>
 <p>今回は”あなたへのおすすめ”に表示する記事リストを、ユーザとの対話を通して変化(調整)させる機能を想定します.</p>
+<p>現在は以下の様な手順で記事リストを生成しています.</p>
 <ul>
-<li>“あなたへのおすすめ”の記事リストを取得する為に</li>
+<li><ol type="1">
+<li>np-serverからfeed-serverの<code>hogehoge</code> endpointにリクエストが送られる.</li>
+</ol></li>
+<li><ol start="2" type="1">
+<li>指定されたユーザの推薦記事候補(<code>List&lt;FeedUpdate&gt;</code>)を取得する.</li>
+</ol></li>
+<li><ol start="3" type="1">
+<li>推薦システムのコアロジックによって推薦記事候補を並び替えて、推薦記事ランキングを作る.</li>
+</ol></li>
+<li><ol start="4" type="1">
+<li>ヒューリスティックなランキング調整(ex. 過去に閲読した記事、古い記事のランクを下げる、etc.)</li>
+</ol></li>
+<li><ol start="5" type="1">
+<li>np-serverに推薦記事ランキングのレスポンスを返す.</li>
+</ol></li>
+</ul>
+</section>
+<section id="feed-server-に-interactive-recommenderを実現するとしたら-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">feed-server に Interactive Recommenderを実現するとしたら…</h2>
+<p>今回は”あなたへのおすすめ”に表示する記事リストを、ユーザとの対話を通して変化(調整)させる機能を想定します.</p>
+<p>Interactive Recommenderを実現する為に、ココをこうしてこうじゃ!</p>
+<ul>
+<li><ol type="1">
+<li>np-serverからfeed-serverの<code>hogehoge</code> endpointにリクエストが送られる.</li>
+</ol></li>
+<li><ol start="2" type="1">
+<li>指定されたユーザの推薦記事候補(<code>List&lt;FeedUpdate&gt;</code>)を取得する.</li>
+</ol></li>
+<li><ol start="3" type="1">
+<li><strong>リクエストに含まれるユーザからのメッセージ<code>userChat</code>を用いて、推薦記事候補をフィルタリングする</strong>.</li>
+</ol></li>
+<li><ol start="4" type="1">
+<li>推薦システムのコアロジックによって推薦記事候補を並び替えて、推薦記事ランキングを作る.</li>
+</ol></li>
+<li><ol start="5" type="1">
+<li>ヒューリスティックなランキング調整(ex. 過去に閲読した記事、古い記事のランクを下げる、etc.)</li>
+</ol></li>
+<li><ol start="6" type="1">
+<li>np-serverに推薦記事ランキングのレスポンスを返す.</li>
+</ol></li>
 </ul>
 </section>
 <section>
@@ -770,7 +810,7 @@
 <li>得られた知見・感想:
 <ul>
 <li>最近読んでる”単体テストの考え方/使い方”を参考にテストを書いてみたが、“観察可能な振る舞い”のみをテストする事を意識できた.</li>
-<li>kotlinはpublicなmethodとprivateなmethodを明示的に定義できて嬉しいなぁ…(Pythonが特殊なのかな)</li>
+<li>kotlinはpublicなmethodとprivateなmethodを明示的に定義できて嬉しいな…(Pythonが特殊なのかな)</li>
 <li></li>
 </ul></li>
 </ul>
