@@ -12,6 +12,7 @@
 !*.qmd
 !*.ts
 !*.kt
+!*.kts
 !*.scss
 !*.css
 !*.woff

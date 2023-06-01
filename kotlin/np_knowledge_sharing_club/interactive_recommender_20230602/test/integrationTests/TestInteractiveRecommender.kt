@@ -1,9 +1,7 @@
 package integrationTests
 
 import InteractiveRecommender
-import ItemFilter
 import Item
-import TextToQueryConverter
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
