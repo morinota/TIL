@@ -1,0 +1,4 @@
+- source: material_20230602_morita.qmd
+  quarto-pub:
+    - id: 91fbae86-890f-4c95-bcf5-c56691b0c4cb
+      url: 'https://quartopub.com/sites/morinota/ユーザとの対話で推薦結果を変化させるinteractive-recommenderをfeed-serverに実装してみようとした話'
