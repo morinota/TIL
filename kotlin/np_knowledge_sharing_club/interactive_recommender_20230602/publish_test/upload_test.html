@@ -5,11 +5,13 @@
 <script src="upload_test_files/libs/quarto-html/popper.min.js"></script>
 <script src="upload_test_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="upload_test_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="upload_test_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="upload_test_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="upload_test_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.1.168">
+  <meta name="generator" content="quarto-1.3.336">
 
   <meta name="author" content="NewsPicks Data/Algorithm unit インターン 森田大登">
+  <meta name="dcterms.date" content="2023-06-02">
   <title>ユーザとの対話で推薦結果を変化させるInteractive Recommenderをfeed-serverに実装してみようとした話</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -25,9 +27,10 @@
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
       width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -136,44 +139,44 @@
     font-weight: 400;
   }
 
-  .callout.callout-captioned.callout-style-simple .callout-body {
+  .callout.callout-titled.callout-style-simple .callout-body {
     margin-top: 0.2em;
   }
 
-  .callout:not(.callout-captioned) .callout-body {
+  .callout:not(.callout-titled) .callout-body {
       display: flex;
   }
 
-  .callout:not(.no-icon).callout-captioned.callout-style-simple .callout-content {
+  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
     padding-left: 1.6em;
   }
 
-  .callout.callout-captioned .callout-header {
+  .callout.callout-titled .callout-header {
     padding-top: 0.2em;
     margin-bottom: -0.2em;
   }
 
-  .callout.callout-captioned .callout-caption  p {
+  .callout.callout-titled .callout-title  p {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
   }
     
-  .callout.callout-captioned.callout-style-simple .callout-content  p {
+  .callout.callout-titled.callout-style-simple .callout-content  p {
     margin-top: 0;
   }
 
-  .callout.callout-captioned.callout-style-default .callout-content  p {
+  .callout.callout-titled.callout-style-default .callout-content  p {
     margin-top: 0.7em;
   }
 
-  .callout.callout-style-simple div.callout-caption {
+  .callout.callout-style-simple div.callout-title {
     border-bottom: none;
     font-size: .9rem;
     font-weight: 600;
     opacity: 75%;
   }
 
-  .callout.callout-style-default  div.callout-caption {
+  .callout.callout-style-default  div.callout-title {
     border-bottom: none;
     font-weight: 600;
     opacity: 85%;
@@ -205,7 +208,7 @@
     background-size: 0.9rem 0.9rem;
   }
 
-  .callout-caption {
+  .callout-title {
     display: flex
   }
     
@@ -218,16 +221,16 @@
     display: none !important;
   }
 
-  .callout.callout-captioned .callout-body > .callout-content > :last-child {
+  .callout.callout-titled .callout-body > .callout-content > :last-child {
     margin-bottom: 0.5rem;
   }
 
-  .callout.callout-captioned .callout-icon::before {
+  .callout.callout-titled .callout-icon::before {
     margin-top: .5rem;
     padding-right: .5rem;
   }
 
-  .callout:not(.callout-captioned) .callout-icon::before {
+  .callout:not(.callout-titled) .callout-icon::before {
     margin-top: 1rem;
     padding-right: .5rem;
   }
@@ -242,7 +245,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
   }
 
-  div.callout-note.callout-style-default .callout-caption {
+  div.callout-note.callout-style-default .callout-title {
     background-color: #dae6fb
   }
 
@@ -254,7 +257,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
   }
 
-  div.callout-important.callout-style-default .callout-caption {
+  div.callout-important.callout-style-default .callout-title {
     background-color: #f7dddc
   }
 
@@ -266,7 +269,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
   }
 
-  div.callout-warning.callout-style-default .callout-caption {
+  div.callout-warning.callout-style-default .callout-title {
     background-color: #fcefdc
   }
 
@@ -278,7 +281,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
   }
 
-  div.callout-tip.callout-style-default .callout-caption {
+  div.callout-tip.callout-style-default .callout-title {
     background-color: #ccf1e3
   }
 
@@ -290,7 +293,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
   }
 
-  div.callout-caution.callout-style-default .callout-caption {
+  div.callout-caution.callout-style-default .callout-title {
     background-color: #ffe5d0
   }
 
@@ -387,13 +390,20 @@
   <div class="reveal">
     <div class="slides">
 
-<section id="title-slide" data-background-opacity="0.5" data-background-size="contain" class="center">
+<section id="title-slide" data-background-opacity="0.5" data-background-size="contain" class="quarto-title-block center">
   <h1 class="title">ユーザとの対話で推薦結果を変化させるInteractive Recommenderをfeed-serverに実装してみようとした話</h1>
   <p class="subtitle">(推薦システム × kotlin × OpenAI API の話)</p>
-  <p class="author">NewsPicks Data/Algorithm unit インターン 森田大登</p>
-  <p class="date">2023/06/02</p>
-</section>
 
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+NewsPicks Data/Algorithm unit インターン 森田大登 
+</div>
+</div>
+</div>
+
+  <p class="date">2023-06-02</p>
+</section>
 <section id="このテーマを選んだ経緯" class="slide level2">
 <h2>このテーマを選んだ経緯</h2>
 <ul>
@@ -413,7 +423,7 @@
 <blockquote>
 <p>複数の候補からユーザにとって価値のあるものを選び出し、意思決定を支援するシステム (引用元: <a href="https://www.oreilly.co.jp/books/9784873119663/">推薦システム実践入門</a>)</p>
 </blockquote>
-<p>「価値あるものを選び出すこと」「意思決定の支援」のどちらでも、LLMの活用で新たな価値創出ができるのでは?? <a href="">参考資料2</a>では以下のアイデアを紹介…!</p>
+<p>「価値あるものを選び出すこと」「意思決定の支援」のどちらでも、LLMの活用で新たな価値創出ができるのでは?? <a href="">参考資料2</a>では以下のアイデアを紹介してました…!</p>
 <ul>
 <li>「価値あるものを選び出すこと」
 <ul>
@@ -481,6 +491,10 @@
 </section>
 <section id="interactiverecommender-のtestはこんな感じ" class="slide level2">
 <h2><code>InteractiveRecommender</code> のtestはこんな感じ?</h2>
+<div class="columns">
+<div class="column" style="width:30%;">
+<p>InteractiveRecommenderの”観察可能な振る舞い”は、ユーザから入力される自然言語(<code>userChat</code>)を考慮して、推薦記事候補(<code>feedUpdates</code>)をフィルタリングする事です.</p>
+</div><div class="column" style="width:70%;">
 <div class="sourceCode" id="cb1"><pre class="sourceCode numberSource kotlin:testinteractiverecommender.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">package</span> <span class="im">integrationTests</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="kw">import</span> <span class="im">InteractiveRecommender</span></span>
@@ -521,80 +535,64 @@
 <span id="cb1-38"><a href="#cb1-38"></a>        assertEquals<span class="op">(</span>filteredUpdatesExpected<span class="op">,</span> filteredUpdates<span class="op">)</span></span>
 <span id="cb1-39"><a href="#cb1-39"></a>    <span class="op">}</span></span>
 <span id="cb1-40"><a href="#cb1-40"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="interactiverecommender-の実装はこんな感じ" class="slide level2">
+<h2><code>InteractiveRecommender</code> の実装はこんな感じ?</h2>
+<ul>
+<li><code>InteractiveRecommender</code>内では、<code>TextToQueryConverter</code>と<code>ItemFilterByQuery</code>が処理を実行します.(外側と内側のレイヤーのイメージ)</li>
+<li><code>ItemFilterByQuery</code>や<code>TextToQueryConverter</code>の初期化の仕方はどうすべきだろう…?:
+<ul>
+<li><code>InteractiveRecommender</code> の中で初期化すべき?</li>
+<li>それともInterfaceをコンストラクタの引数として渡すべき?</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource kotlin:interactiverecommender.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">class</span> InteractiveRecommender <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>    <span class="kw">private</span> <span class="kw">val</span> <span class="va">itemFilter</span> <span class="op">=</span> ItemFilterByQuery<span class="op">()</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">private</span> <span class="kw">val</span> <span class="va">textToQueryConverter</span> <span class="op">=</span> TextToQueryConverter<span class="op">()</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>    <span class="kw">fun</span> <span class="fu">recommend</span><span class="op">(</span><span class="va">items</span><span class="op">:</span> <span class="dt">List</span>&lt;<span class="va">Item</span>&gt;<span class="op">,</span> <span class="va">userChat</span><span class="op">:</span> <span class="dt">String</span><span class="op">):</span> <span class="dt">List</span><span class="op">&lt;</span><span class="dt">Item</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>        <span class="kw">val</span> <span class="va">sqlQuery</span> <span class="op">=</span> textToQueryConverter<span class="op">.</span>convert<span class="op">(</span>userChat<span class="op">)</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>        sqlQuery <span class="op">?:</span> <span class="kw">return</span> items</span>
+<span id="cb2-7"><a href="#cb2-7"></a>        <span class="kw">return</span> itemFilter<span class="op">.</span>filter<span class="op">(</span>sqlQuery<span class="op">,</span> items<span class="op">)</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>    <span class="op">}</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="texttoqueryconverter-のtestはこんな感じ" class="slide level2">
 <h2><code>TextToQueryConverter</code> のtestはこんな感じ?</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource kotlin:texttoqueryconvertertest.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">package</span> <span class="im">integrationTests</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">import</span> <span class="im">TextToQueryConverter</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">import</span> <span class="im">kotlin</span><span class="op">.</span><span class="im">test</span><span class="op">.</span><span class="im">Test</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">import</span> <span class="im">kotlin</span><span class="op">.</span><span class="im">test</span><span class="op">.</span><span class="im">assertEquals</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a></span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">class</span> TestTextToQueryConverter <span class="op">{</span></span>
-<span id="cb2-8"><a href="#cb2-8"></a>    <span class="at">@Test</span></span>
-<span id="cb2-9"><a href="#cb2-9"></a>    <span class="kw">fun</span> <span class="fu">whenUserSayRequestAboutCategoryItConvertToSQLQuery</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-10"><a href="#cb2-10"></a>        <span class="co">// Arrange</span></span>
-<span id="cb2-11"><a href="#cb2-11"></a>        <span class="kw">val</span> <span class="va">userChat</span> <span class="op">=</span> <span class="st">"私は金融の記事を読みたいです...!"</span></span>
-<span id="cb2-12"><a href="#cb2-12"></a>        <span class="kw">val</span> <span class="va">sut</span> <span class="op">=</span> TextToQueryConverter<span class="op">()</span></span>
-<span id="cb2-13"><a href="#cb2-13"></a></span>
-<span id="cb2-14"><a href="#cb2-14"></a>        <span class="co">// Act</span></span>
-<span id="cb2-15"><a href="#cb2-15"></a>        <span class="kw">val</span> <span class="va">query</span> <span class="op">=</span> sut<span class="op">.</span>convert<span class="op">(</span>userChat<span class="op">)</span></span>
-<span id="cb2-16"><a href="#cb2-16"></a></span>
-<span id="cb2-17"><a href="#cb2-17"></a>        <span class="co">// Assert</span></span>
-<span id="cb2-18"><a href="#cb2-18"></a>        assertEquals<span class="op">(</span><span class="st">"SELECT * FROM items WHERE category = 'finance'"</span><span class="op">,</span> query<span class="op">)</span></span>
-<span id="cb2-19"><a href="#cb2-19"></a>    <span class="op">}</span></span>
-<span id="cb2-20"><a href="#cb2-20"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="itemfilterfromquery-のtestはこんな感じ" class="slide level2">
-<h2><code>ItemFilterFromQuery</code> のtestはこんな感じ?</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource kotlin:testitemfilterfromquery.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">package</span> <span class="im">integrationTests</span></span>
+<div class="columns">
+<div class="column" style="width:70%;">
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource kotlin:texttoqueryconvertertest.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">package</span> <span class="im">integrationTests</span></span>
 <span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="kw">import</span> <span class="im">InteractiveRecommender</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">import</span> <span class="im">Item</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">junit</span><span class="op">.</span><span class="im">jupiter</span><span class="op">.</span><span class="im">api</span><span class="op">.</span><span class="im">Test</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="kw">import</span> <span class="im">kotlin</span><span class="op">.</span><span class="im">test</span><span class="op">.</span><span class="im">assertEquals</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="kw">class</span> TestInteractiveRecommender <span class="op">{</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a>    <span class="kw">private</span> <span class="kw">val</span> <span class="va">feedUpdates</span> <span class="op">=</span> listOf<span class="op">(</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a>        Item<span class="op">(</span><span class="st">"1"</span><span class="op">,</span> <span class="st">"政府、地方自治体に対しデジタル化支援金を交付"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.6</span><span class="op">),</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a>        Item<span class="op">(</span><span class="st">"2"</span><span class="op">,</span> <span class="st">"日銀、マイナス金利を維持"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.7</span><span class="op">),</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a>        Item<span class="op">(</span><span class="st">"3"</span><span class="op">,</span> <span class="st">"日本株式市場、急落"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.8</span><span class="op">),</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a>        Item<span class="op">(</span><span class="st">"4"</span><span class="op">,</span> <span class="st">"米中貿易戦争の影響、新興市場に拡大"</span><span class="op">,</span> <span class="st">"business"</span><span class="op">,</span> <span class="fl">0.5</span><span class="op">),</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a>        Item<span class="op">(</span><span class="st">"5"</span><span class="op">,</span> <span class="st">"企業間の競争激化、IT業界にも波及"</span><span class="op">,</span> <span class="st">"technology"</span><span class="op">,</span> <span class="fl">0.8</span><span class="op">),</span></span>
-<span id="cb3-15"><a href="#cb3-15"></a>        Item<span class="op">(</span><span class="st">"6"</span><span class="op">,</span> <span class="st">"景気減速、デフレリスク増加"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.4</span><span class="op">),</span></span>
-<span id="cb3-16"><a href="#cb3-16"></a>        Item<span class="op">(</span><span class="st">"7"</span><span class="op">,</span> <span class="st">"ブロックチェーン技術、急速に普及"</span><span class="op">,</span> <span class="st">"technology"</span><span class="op">,</span> <span class="fl">0.6</span><span class="op">),</span></span>
-<span id="cb3-17"><a href="#cb3-17"></a>        Item<span class="op">(</span><span class="st">"8"</span><span class="op">,</span> <span class="st">"日本、TPPに復帰"</span><span class="op">,</span> <span class="st">"business"</span><span class="op">,</span> <span class="fl">0.7</span><span class="op">),</span></span>
-<span id="cb3-18"><a href="#cb3-18"></a>        Item<span class="op">(</span><span class="st">"9"</span><span class="op">,</span> <span class="st">"ロボット革命により雇用機会が減少"</span><span class="op">,</span> <span class="st">"industry"</span><span class="op">,</span> <span class="fl">0.4</span><span class="op">),</span></span>
-<span id="cb3-19"><a href="#cb3-19"></a>        Item<span class="op">(</span><span class="st">"10"</span><span class="op">,</span> <span class="st">"新しい産業革命の波が到来"</span><span class="op">,</span> <span class="st">"technology"</span><span class="op">,</span> <span class="fl">0.8</span><span class="op">)</span></span>
-<span id="cb3-20"><a href="#cb3-20"></a>    <span class="op">)</span></span>
-<span id="cb3-21"><a href="#cb3-21"></a></span>
-<span id="cb3-22"><a href="#cb3-22"></a>    <span class="at">@Test</span></span>
-<span id="cb3-23"><a href="#cb3-23"></a>    <span class="kw">fun</span> <span class="fu">filteringRecommendationItemsByCategoryWhenGotRequestAboutCategory</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb3-24"><a href="#cb3-24"></a>        <span class="co">// Arrange</span></span>
-<span id="cb3-25"><a href="#cb3-25"></a>        <span class="kw">val</span> <span class="va">userComment</span> <span class="op">=</span> <span class="st">"金融に関するニュースに興味があります!"</span></span>
-<span id="cb3-26"><a href="#cb3-26"></a>        <span class="kw">val</span> <span class="va">sut</span> <span class="op">=</span> InteractiveRecommender<span class="op">()</span></span>
-<span id="cb3-27"><a href="#cb3-27"></a></span>
-<span id="cb3-28"><a href="#cb3-28"></a>        <span class="co">// Act</span></span>
-<span id="cb3-29"><a href="#cb3-29"></a>        <span class="kw">val</span> <span class="va">filteredUpdates</span> <span class="op">=</span> sut<span class="op">.</span>recommend<span class="op">(</span>feedUpdates<span class="op">,</span> userComment<span class="op">)</span></span>
-<span id="cb3-30"><a href="#cb3-30"></a></span>
-<span id="cb3-31"><a href="#cb3-31"></a>        <span class="co">// Assert</span></span>
-<span id="cb3-32"><a href="#cb3-32"></a>        <span class="kw">val</span> <span class="va">filteredUpdatesExpected</span> <span class="op">=</span> listOf<span class="op">(</span></span>
-<span id="cb3-33"><a href="#cb3-33"></a>            Item<span class="op">(</span><span class="st">"1"</span><span class="op">,</span> <span class="st">"政府、地方自治体に対しデジタル化支援金を交付"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.6</span><span class="op">),</span></span>
-<span id="cb3-34"><a href="#cb3-34"></a>            Item<span class="op">(</span><span class="st">"2"</span><span class="op">,</span> <span class="st">"日銀、マイナス金利を維持"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.7</span><span class="op">),</span></span>
-<span id="cb3-35"><a href="#cb3-35"></a>            Item<span class="op">(</span><span class="st">"3"</span><span class="op">,</span> <span class="st">"日本株式市場、急落"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.8</span><span class="op">),</span></span>
-<span id="cb3-36"><a href="#cb3-36"></a>            Item<span class="op">(</span><span class="st">"6"</span><span class="op">,</span> <span class="st">"景気減速、デフレリスク増加"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.4</span><span class="op">)</span></span>
-<span id="cb3-37"><a href="#cb3-37"></a>        <span class="op">)</span></span>
-<span id="cb3-38"><a href="#cb3-38"></a>        assertEquals<span class="op">(</span>filteredUpdatesExpected<span class="op">,</span> filteredUpdates<span class="op">)</span></span>
-<span id="cb3-39"><a href="#cb3-39"></a>    <span class="op">}</span></span>
-<span id="cb3-40"><a href="#cb3-40"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section></section>
-<section>
-<section id="さあ実装を作るぞ" class="title-slide slide level1 center">
-<h1>さあ実装を作るぞ!</h1>
-
+<span id="cb3-3"><a href="#cb3-3"></a><span class="kw">import</span> <span class="im">TextToQueryConverter</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">import</span> <span class="im">kotlin</span><span class="op">.</span><span class="im">test</span><span class="op">.</span><span class="im">Test</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="kw">import</span> <span class="im">kotlin</span><span class="op">.</span><span class="im">test</span><span class="op">.</span><span class="im">assertEquals</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">class</span> TestTextToQueryConverter <span class="op">{</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>    <span class="at">@Test</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a>    <span class="kw">fun</span> <span class="fu">whenUserSayRequestAboutCategoryItConvertToSQLQuery</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a>        <span class="co">// Arrange</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>        <span class="kw">val</span> <span class="va">userChat</span> <span class="op">=</span> <span class="st">"私は金融の記事を読みたいです...!"</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>        <span class="kw">val</span> <span class="va">sut</span> <span class="op">=</span> TextToQueryConverter<span class="op">()</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a></span>
+<span id="cb3-14"><a href="#cb3-14"></a>        <span class="co">// Act</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a>        <span class="kw">val</span> <span class="va">query</span> <span class="op">=</span> sut<span class="op">.</span>convert<span class="op">(</span>userChat<span class="op">)</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a></span>
+<span id="cb3-17"><a href="#cb3-17"></a>        <span class="co">// Assert</span></span>
+<span id="cb3-18"><a href="#cb3-18"></a>        assertEquals<span class="op">(</span><span class="st">"SELECT * FROM items WHERE category = 'finance'"</span><span class="op">,</span> query<span class="op">)</span></span>
+<span id="cb3-19"><a href="#cb3-19"></a>    <span class="op">}</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column" style="width:30%;">
+<p><code>TextToQueryConverter</code> の”観察可能な振る舞い”は、ユーザから入力される自然言語(<code>userChat</code>)をsqlクエリに変換する事です.</p>
+</div>
+</div>
 </section>
-<section id="texttoqueryconverter-を実装するぞ" class="slide level2">
-<h2><code>TextToQueryConverter</code> を実装するぞ!</h2>
+<section id="texttoqueryconverter-の実装はこんな感じ" class="slide level2">
+<h2><code>TextToQueryConverter</code> の実装はこんな感じ?</h2>
+<div class="columns">
+<div class="column" style="width:30%;">
+<p>ユーザから入力される自然言語(<code>userChat</code>)をクエリに変換する処理は、OpenAI APIの <code>chat</code> endpointに任せます. 特にpromptを練ることはなく、zero shot learning で推論してもらいました. 受け取ったレスポンスは<code>kotlinx.serialization</code>パッケージを用いてparseして変換後のクエリを取得しています.</p>
+</div><div class="column" style="width:70%;">
 <div class="sourceCode" id="cb4"><pre class="sourceCode numberSource kotlin:texttoqueryconverter.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">import</span> <span class="im">kotlinx</span><span class="op">.</span><span class="im">serialization</span><span class="op">.</span><span class="im">Serializable</span></span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="kw">import</span> <span class="im">kotlinx</span><span class="op">.</span><span class="im">serialization</span><span class="op">.</span><span class="im">decodeFromString</span></span>
 <span id="cb4-3"><a href="#cb4-3"></a><span class="kw">import</span> <span class="im">kotlinx</span><span class="op">.</span><span class="im">serialization</span><span class="op">.</span><span class="im">json</span><span class="op">.</span><span class="im">Json</span></span>
@@ -673,118 +671,148 @@
 <span id="cb4-76"><a href="#cb4-76"></a></span>
 <span id="cb4-77"><a href="#cb4-77"></a>@Serializable</span>
 <span id="cb4-78"><a href="#cb4-78"></a><span class="kw">private</span> <span class="kw">data</span> <span class="kw">class</span> Message<span class="op">(</span><span class="kw">val</span> <span class="va">content</span><span class="op">:</span> <span class="dt">String</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="itemfilterfromquery-のtestはこんな感じ" class="slide level2">
+<h2><code>ItemFilterFromQuery</code> のtestはこんな感じ?</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource kotlin:testitemfilterfromquery.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">package</span> <span class="im">integrationTests</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">import</span> <span class="im">InteractiveRecommender</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="kw">import</span> <span class="im">Item</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">junit</span><span class="op">.</span><span class="im">jupiter</span><span class="op">.</span><span class="im">api</span><span class="op">.</span><span class="im">Test</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="kw">import</span> <span class="im">kotlin</span><span class="op">.</span><span class="im">test</span><span class="op">.</span><span class="im">assertEquals</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="kw">class</span> TestInteractiveRecommender <span class="op">{</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>    <span class="kw">private</span> <span class="kw">val</span> <span class="va">feedUpdates</span> <span class="op">=</span> listOf<span class="op">(</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a>        Item<span class="op">(</span><span class="st">"1"</span><span class="op">,</span> <span class="st">"政府、地方自治体に対しデジタル化支援金を交付"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.6</span><span class="op">),</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a>        Item<span class="op">(</span><span class="st">"2"</span><span class="op">,</span> <span class="st">"日銀、マイナス金利を維持"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.7</span><span class="op">),</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a>        Item<span class="op">(</span><span class="st">"3"</span><span class="op">,</span> <span class="st">"日本株式市場、急落"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.8</span><span class="op">),</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a>        Item<span class="op">(</span><span class="st">"4"</span><span class="op">,</span> <span class="st">"米中貿易戦争の影響、新興市場に拡大"</span><span class="op">,</span> <span class="st">"business"</span><span class="op">,</span> <span class="fl">0.5</span><span class="op">),</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a>        Item<span class="op">(</span><span class="st">"5"</span><span class="op">,</span> <span class="st">"企業間の競争激化、IT業界にも波及"</span><span class="op">,</span> <span class="st">"technology"</span><span class="op">,</span> <span class="fl">0.8</span><span class="op">),</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a>        Item<span class="op">(</span><span class="st">"6"</span><span class="op">,</span> <span class="st">"景気減速、デフレリスク増加"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.4</span><span class="op">),</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a>        Item<span class="op">(</span><span class="st">"7"</span><span class="op">,</span> <span class="st">"ブロックチェーン技術、急速に普及"</span><span class="op">,</span> <span class="st">"technology"</span><span class="op">,</span> <span class="fl">0.6</span><span class="op">),</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a>        Item<span class="op">(</span><span class="st">"8"</span><span class="op">,</span> <span class="st">"日本、TPPに復帰"</span><span class="op">,</span> <span class="st">"business"</span><span class="op">,</span> <span class="fl">0.7</span><span class="op">),</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a>        Item<span class="op">(</span><span class="st">"9"</span><span class="op">,</span> <span class="st">"ロボット革命により雇用機会が減少"</span><span class="op">,</span> <span class="st">"industry"</span><span class="op">,</span> <span class="fl">0.4</span><span class="op">),</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a>        Item<span class="op">(</span><span class="st">"10"</span><span class="op">,</span> <span class="st">"新しい産業革命の波が到来"</span><span class="op">,</span> <span class="st">"technology"</span><span class="op">,</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a>    <span class="op">)</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a></span>
+<span id="cb5-22"><a href="#cb5-22"></a>    <span class="at">@Test</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a>    <span class="kw">fun</span> <span class="fu">filteringRecommendationItemsByCategoryWhenGotRequestAboutCategory</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a>        <span class="co">// Arrange</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a>        <span class="kw">val</span> <span class="va">userComment</span> <span class="op">=</span> <span class="st">"金融に関するニュースに興味があります!"</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a>        <span class="kw">val</span> <span class="va">sut</span> <span class="op">=</span> InteractiveRecommender<span class="op">()</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a></span>
+<span id="cb5-28"><a href="#cb5-28"></a>        <span class="co">// Act</span></span>
+<span id="cb5-29"><a href="#cb5-29"></a>        <span class="kw">val</span> <span class="va">filteredUpdates</span> <span class="op">=</span> sut<span class="op">.</span>recommend<span class="op">(</span>feedUpdates<span class="op">,</span> userComment<span class="op">)</span></span>
+<span id="cb5-30"><a href="#cb5-30"></a></span>
+<span id="cb5-31"><a href="#cb5-31"></a>        <span class="co">// Assert</span></span>
+<span id="cb5-32"><a href="#cb5-32"></a>        <span class="kw">val</span> <span class="va">filteredUpdatesExpected</span> <span class="op">=</span> listOf<span class="op">(</span></span>
+<span id="cb5-33"><a href="#cb5-33"></a>            Item<span class="op">(</span><span class="st">"1"</span><span class="op">,</span> <span class="st">"政府、地方自治体に対しデジタル化支援金を交付"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.6</span><span class="op">),</span></span>
+<span id="cb5-34"><a href="#cb5-34"></a>            Item<span class="op">(</span><span class="st">"2"</span><span class="op">,</span> <span class="st">"日銀、マイナス金利を維持"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.7</span><span class="op">),</span></span>
+<span id="cb5-35"><a href="#cb5-35"></a>            Item<span class="op">(</span><span class="st">"3"</span><span class="op">,</span> <span class="st">"日本株式市場、急落"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.8</span><span class="op">),</span></span>
+<span id="cb5-36"><a href="#cb5-36"></a>            Item<span class="op">(</span><span class="st">"6"</span><span class="op">,</span> <span class="st">"景気減速、デフレリスク増加"</span><span class="op">,</span> <span class="st">"finance"</span><span class="op">,</span> <span class="fl">0.4</span><span class="op">)</span></span>
+<span id="cb5-37"><a href="#cb5-37"></a>        <span class="op">)</span></span>
+<span id="cb5-38"><a href="#cb5-38"></a>        assertEquals<span class="op">(</span>filteredUpdatesExpected<span class="op">,</span> filteredUpdates<span class="op">)</span></span>
+<span id="cb5-39"><a href="#cb5-39"></a>    <span class="op">}</span></span>
+<span id="cb5-40"><a href="#cb5-40"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section></section>
+<section>
+<section id="さあ実装を作るぞ" class="title-slide slide level1 center">
+<h1>さあ実装を作るぞ!</h1>
+
 </section>
 <section id="itemfilterbyquery-を実装するぞ" class="slide level2">
 <h2><code>ItemFilterByQuery</code> を実装するぞ!</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource kotlin:itemfilterbyquery.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">Expression</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">conditional</span><span class="op">.</span><span class="im">AndExpression</span></span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">conditional</span><span class="op">.</span><span class="im">OrExpression</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">conditional</span><span class="op">.</span><span class="im">XorExpression</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">relational</span><span class="op">.</span><span class="im">ComparisonOperator</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">relational</span><span class="op">.</span><span class="im">EqualsTo</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">relational</span><span class="op">.</span><span class="im">GreaterThanEquals</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">relational</span><span class="op">.</span><span class="im">MinorThanEquals</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">parser</span><span class="op">.</span><span class="im">CCJSqlParserUtil</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">statement</span><span class="op">.</span><span class="im">select</span><span class="op">.</span><span class="im">PlainSelect</span></span>
-<span id="cb5-11"><a href="#cb5-11"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">statement</span><span class="op">.</span><span class="im">select</span><span class="op">.</span><span class="im">Select</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">statement</span><span class="op">.</span><span class="im">select</span><span class="op">.</span><span class="im">SelectBody</span></span>
-<span id="cb5-13"><a href="#cb5-13"></a></span>
-<span id="cb5-14"><a href="#cb5-14"></a><span class="kw">class</span> ItemFilterByQuery <span class="op">{</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a>    <span class="kw">fun</span> <span class="fu">filter</span><span class="op">(</span><span class="va">sqlQuery</span><span class="op">:</span> <span class="dt">String</span><span class="op">,</span> <span class="va">items</span><span class="op">:</span> <span class="dt">List</span>&lt;<span class="va">Item</span>&gt;<span class="op">):</span> <span class="dt">List</span><span class="op">&lt;</span><span class="dt">Item</span><span class="op">&gt;</span> <span class="op">{</span></span>
-<span id="cb5-16"><a href="#cb5-16"></a>        <span class="kw">val</span> <span class="va">statement</span> <span class="op">=</span> CCJSqlParserUtil<span class="op">.</span>parse<span class="op">(</span>sqlQuery<span class="op">)</span></span>
-<span id="cb5-17"><a href="#cb5-17"></a>        <span class="kw">val</span> <span class="va">select</span> <span class="op">=</span> statement <span class="kw">as</span><span class="op">?</span> Select</span>
-<span id="cb5-18"><a href="#cb5-18"></a>        <span class="kw">val</span> <span class="va">selectBody</span> <span class="op">=</span> select<span class="op">?.</span>selectBody</span>
-<span id="cb5-19"><a href="#cb5-19"></a></span>
-<span id="cb5-20"><a href="#cb5-20"></a>        <span class="kw">val</span> <span class="va">whereClauseExpression</span> <span class="op">=</span> extractWhereClause<span class="op">(</span>selectBody<span class="op">)</span></span>
-<span id="cb5-21"><a href="#cb5-21"></a>        <span class="cf">if</span> <span class="op">(</span>whereClauseExpression <span class="op">==</span> <span class="kw">null</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-22"><a href="#cb5-22"></a>            println<span class="op">(</span><span class="st">"This query doesn't include Comparison Operator. so return pure items."</span><span class="op">)</span></span>
-<span id="cb5-23"><a href="#cb5-23"></a>            <span class="kw">return</span> items</span>
-<span id="cb5-24"><a href="#cb5-24"></a>        <span class="op">}</span></span>
-<span id="cb5-25"><a href="#cb5-25"></a></span>
-<span id="cb5-26"><a href="#cb5-26"></a>        println<span class="op">(</span><span class="st">"This query include Comparison Operator. so conduct items filtering."</span><span class="op">)</span></span>
-<span id="cb5-27"><a href="#cb5-27"></a>        <span class="kw">return</span> items<span class="op">.</span>filter <span class="op">{</span> isValidItemByExpression<span class="op">(</span>it<span class="op">,</span> whereClauseExpression<span class="op">)</span> <span class="op">}</span></span>
-<span id="cb5-28"><a href="#cb5-28"></a>    <span class="op">}</span></span>
-<span id="cb5-29"><a href="#cb5-29"></a></span>
-<span id="cb5-30"><a href="#cb5-30"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">isValidItemByExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">whereClause</span><span class="op">:</span> <span class="dt">Expression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
-<span id="cb5-31"><a href="#cb5-31"></a>        <span class="kw">return</span> <span class="cf">when</span> <span class="op">(</span>whereClause<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-32"><a href="#cb5-32"></a>            <span class="kw">is</span> AndExpression <span class="op">-&gt;</span> filterItemByAndExpression<span class="op">(</span>item<span class="op">,</span> whereClause<span class="op">)</span></span>
-<span id="cb5-33"><a href="#cb5-33"></a>            <span class="kw">is</span> OrExpression <span class="op">-&gt;</span> filterItemByOrExpression<span class="op">(</span>item<span class="op">,</span> whereClause<span class="op">)</span></span>
-<span id="cb5-34"><a href="#cb5-34"></a>            <span class="kw">is</span> XorExpression <span class="op">-&gt;</span> filterItemByXorExpression<span class="op">(</span>item<span class="op">,</span> whereClause<span class="op">)</span></span>
-<span id="cb5-35"><a href="#cb5-35"></a>            <span class="cf">else</span> <span class="op">-&gt;</span> filterItemBySingleExpression<span class="op">(</span>item<span class="op">,</span> whereClause<span class="op">)</span></span>
-<span id="cb5-36"><a href="#cb5-36"></a>        <span class="op">}</span></span>
-<span id="cb5-37"><a href="#cb5-37"></a>    <span class="op">}</span></span>
-<span id="cb5-38"><a href="#cb5-38"></a></span>
-<span id="cb5-39"><a href="#cb5-39"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">filterItemByAndExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">andExpression</span><span class="op">:</span> <span class="dt">AndExpression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
-<span id="cb5-40"><a href="#cb5-40"></a>        <span class="kw">val</span> <span class="va">isValidLeft</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> andExpression<span class="op">.</span>leftExpression<span class="op">)</span></span>
-<span id="cb5-41"><a href="#cb5-41"></a>        <span class="kw">val</span> <span class="va">isValidRight</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> andExpression<span class="op">.</span>rightExpression<span class="op">)</span></span>
-<span id="cb5-42"><a href="#cb5-42"></a>        <span class="kw">return</span> isValidLeft and isValidRight</span>
-<span id="cb5-43"><a href="#cb5-43"></a>    <span class="op">}</span></span>
-<span id="cb5-44"><a href="#cb5-44"></a></span>
-<span id="cb5-45"><a href="#cb5-45"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">filterItemByOrExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">orExpression</span><span class="op">:</span> <span class="dt">OrExpression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
-<span id="cb5-46"><a href="#cb5-46"></a>        <span class="kw">val</span> <span class="va">isValidLeft</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> orExpression<span class="op">.</span>leftExpression<span class="op">)</span></span>
-<span id="cb5-47"><a href="#cb5-47"></a>        <span class="kw">val</span> <span class="va">isValidRight</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> orExpression<span class="op">.</span>rightExpression<span class="op">)</span></span>
-<span id="cb5-48"><a href="#cb5-48"></a>        <span class="kw">return</span> isValidLeft or isValidRight</span>
-<span id="cb5-49"><a href="#cb5-49"></a>    <span class="op">}</span></span>
-<span id="cb5-50"><a href="#cb5-50"></a></span>
-<span id="cb5-51"><a href="#cb5-51"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">filterItemByXorExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">xorExpression</span><span class="op">:</span> <span class="dt">XorExpression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
-<span id="cb5-52"><a href="#cb5-52"></a>        <span class="kw">val</span> <span class="va">isValidLeft</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> xorExpression<span class="op">.</span>leftExpression<span class="op">)</span></span>
-<span id="cb5-53"><a href="#cb5-53"></a>        <span class="kw">val</span> <span class="va">isValidRight</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> xorExpression<span class="op">.</span>rightExpression<span class="op">)</span></span>
-<span id="cb5-54"><a href="#cb5-54"></a>        <span class="kw">return</span> isValidLeft xor isValidRight</span>
-<span id="cb5-55"><a href="#cb5-55"></a>    <span class="op">}</span></span>
-<span id="cb5-56"><a href="#cb5-56"></a></span>
-<span id="cb5-57"><a href="#cb5-57"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">filterItemBySingleExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">singleExpression</span><span class="op">:</span> <span class="dt">Expression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
-<span id="cb5-58"><a href="#cb5-58"></a>        <span class="cf">if</span> <span class="op">(</span>singleExpression <span class="op">!</span><span class="kw">is</span> ComparisonOperator<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-59"><a href="#cb5-59"></a>            <span class="kw">return</span> <span class="kw">true</span></span>
-<span id="cb5-60"><a href="#cb5-60"></a>        <span class="op">}</span></span>
-<span id="cb5-61"><a href="#cb5-61"></a>        <span class="co">// ここにカラム名や演算子に基づいたフィルタリング処理を実装する</span></span>
-<span id="cb5-62"><a href="#cb5-62"></a>        <span class="kw">val</span> <span class="va">columnName</span> <span class="op">=</span> singleExpression<span class="op">.</span>leftExpression<span class="op">.</span>toString<span class="op">()</span></span>
-<span id="cb5-63"><a href="#cb5-63"></a>        <span class="kw">val</span> <span class="va">value</span> <span class="op">=</span> singleExpression<span class="op">.</span>rightExpression<span class="op">.</span>toString<span class="op">().</span>replace<span class="op">(</span><span class="st">"'"</span><span class="op">,</span> <span class="st">""</span><span class="op">)</span> <span class="co">// 文字列に''が含まれてるので取り除く.</span></span>
-<span id="cb5-64"><a href="#cb5-64"></a></span>
-<span id="cb5-65"><a href="#cb5-65"></a>        <span class="cf">if</span> <span class="op">(</span>singleExpression <span class="kw">is</span> EqualsTo<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-66"><a href="#cb5-66"></a>            <span class="cf">when</span> <span class="op">(</span>columnName<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-67"><a href="#cb5-67"></a>                <span class="st">"category"</span> <span class="op">-&gt;</span> <span class="kw">return</span> <span class="op">(</span>item<span class="op">.</span>category <span class="op">==</span> value<span class="op">)</span></span>
-<span id="cb5-68"><a href="#cb5-68"></a>            <span class="op">}</span></span>
-<span id="cb5-69"><a href="#cb5-69"></a>        <span class="op">}</span></span>
-<span id="cb5-70"><a href="#cb5-70"></a>        <span class="cf">if</span> <span class="op">(</span>singleExpression <span class="kw">is</span> GreaterThanEquals<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-71"><a href="#cb5-71"></a>            <span class="cf">when</span> <span class="op">(</span>columnName<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-72"><a href="#cb5-72"></a>                <span class="st">"complexity"</span> <span class="op">-&gt;</span> <span class="kw">return</span> <span class="op">(</span>item<span class="op">.</span>complexity <span class="op">&gt;=</span> value<span class="op">.</span>toDouble<span class="op">())</span></span>
-<span id="cb5-73"><a href="#cb5-73"></a>            <span class="op">}</span></span>
-<span id="cb5-74"><a href="#cb5-74"></a>        <span class="op">}</span></span>
-<span id="cb5-75"><a href="#cb5-75"></a>        <span class="cf">if</span> <span class="op">(</span>singleExpression <span class="kw">is</span> MinorThanEquals<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-76"><a href="#cb5-76"></a>            <span class="cf">when</span> <span class="op">(</span>columnName<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-77"><a href="#cb5-77"></a>                <span class="st">"complexity"</span> <span class="op">-&gt;</span> <span class="kw">return</span> <span class="op">(</span>item<span class="op">.</span>complexity <span class="op">&lt;=</span> value<span class="op">.</span>toDouble<span class="op">())</span></span>
-<span id="cb5-78"><a href="#cb5-78"></a>            <span class="op">}</span></span>
-<span id="cb5-79"><a href="#cb5-79"></a>        <span class="op">}</span></span>
-<span id="cb5-80"><a href="#cb5-80"></a>        <span class="kw">return</span> <span class="kw">true</span></span>
-<span id="cb5-81"><a href="#cb5-81"></a>    <span class="op">}</span></span>
-<span id="cb5-82"><a href="#cb5-82"></a></span>
-<span id="cb5-83"><a href="#cb5-83"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">extractWhereClause</span><span class="op">(</span><span class="va">selectBody</span><span class="op">:</span> <span class="dt">SelectBody</span><span class="op">?):</span> <span class="dt">Expression</span><span class="op">?</span> <span class="op">{</span></span>
-<span id="cb5-84"><a href="#cb5-84"></a>        <span class="cf">if</span> <span class="op">(</span>selectBody <span class="op">!</span><span class="kw">is</span> PlainSelect<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-85"><a href="#cb5-85"></a>            <span class="kw">return</span> <span class="kw">null</span></span>
-<span id="cb5-86"><a href="#cb5-86"></a>        <span class="op">}</span></span>
-<span id="cb5-87"><a href="#cb5-87"></a>        <span class="kw">return</span> selectBody<span class="op">.</span><span class="kw">where</span></span>
-<span id="cb5-88"><a href="#cb5-88"></a>    <span class="op">}</span></span>
-<span id="cb5-89"><a href="#cb5-89"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="interactiverecommender-を実装するぞ" class="slide level2">
-<h2><code>InteractiveRecommender</code> を実装するぞ!</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource kotlin:interactiverecommender.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">class</span> InteractiveRecommender <span class="op">{</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>    <span class="kw">private</span> <span class="kw">val</span> <span class="va">itemFilter</span> <span class="op">=</span> ItemFilterByQuery<span class="op">()</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a>    <span class="kw">private</span> <span class="kw">val</span> <span class="va">textToQueryConverter</span> <span class="op">=</span> TextToQueryConverter<span class="op">()</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a>    <span class="kw">fun</span> <span class="fu">recommend</span><span class="op">(</span><span class="va">items</span><span class="op">:</span> <span class="dt">List</span>&lt;<span class="va">Item</span>&gt;<span class="op">,</span> <span class="va">userChat</span><span class="op">:</span> <span class="dt">String</span><span class="op">):</span> <span class="dt">List</span><span class="op">&lt;</span><span class="dt">Item</span><span class="op">&gt;</span> <span class="op">{</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>        <span class="kw">val</span> <span class="va">sqlQuery</span> <span class="op">=</span> textToQueryConverter<span class="op">.</span>convert<span class="op">(</span>userChat<span class="op">)</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a>        sqlQuery <span class="op">?:</span> <span class="kw">return</span> items</span>
-<span id="cb6-7"><a href="#cb6-7"></a>        <span class="kw">return</span> itemFilter<span class="op">.</span>filter<span class="op">(</span>sqlQuery<span class="op">,</span> items<span class="op">)</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a>    <span class="op">}</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>思った事:</p>
-<ul>
-<li><code>ItemFilterByQuery</code>や<code>TextToQueryConverter</code>の初期化の仕方はどうすべきだろう…?:
-<ul>
-<li><code>InteractiveRecommender</code> の中で初期化すべき?</li>
-<li>それとも外部で初期化してコンストラクタの引数として渡すべき?</li>
-</ul></li>
-</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource kotlin:itemfilterbyquery.kt number-lines code-with-copy"><code class="sourceCode kotlin"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">Expression</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">conditional</span><span class="op">.</span><span class="im">AndExpression</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">conditional</span><span class="op">.</span><span class="im">OrExpression</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">conditional</span><span class="op">.</span><span class="im">XorExpression</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">relational</span><span class="op">.</span><span class="im">ComparisonOperator</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">relational</span><span class="op">.</span><span class="im">EqualsTo</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">relational</span><span class="op">.</span><span class="im">GreaterThanEquals</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">expression</span><span class="op">.</span><span class="im">operators</span><span class="op">.</span><span class="im">relational</span><span class="op">.</span><span class="im">MinorThanEquals</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">parser</span><span class="op">.</span><span class="im">CCJSqlParserUtil</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">statement</span><span class="op">.</span><span class="im">select</span><span class="op">.</span><span class="im">PlainSelect</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">statement</span><span class="op">.</span><span class="im">select</span><span class="op">.</span><span class="im">Select</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">sf</span><span class="op">.</span><span class="im">jsqlparser</span><span class="op">.</span><span class="im">statement</span><span class="op">.</span><span class="im">select</span><span class="op">.</span><span class="im">SelectBody</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="kw">class</span> ItemFilterByQuery <span class="op">{</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a>    <span class="kw">fun</span> <span class="fu">filter</span><span class="op">(</span><span class="va">sqlQuery</span><span class="op">:</span> <span class="dt">String</span><span class="op">,</span> <span class="va">items</span><span class="op">:</span> <span class="dt">List</span>&lt;<span class="va">Item</span>&gt;<span class="op">):</span> <span class="dt">List</span><span class="op">&lt;</span><span class="dt">Item</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>        <span class="kw">val</span> <span class="va">statement</span> <span class="op">=</span> CCJSqlParserUtil<span class="op">.</span>parse<span class="op">(</span>sqlQuery<span class="op">)</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a>        <span class="kw">val</span> <span class="va">select</span> <span class="op">=</span> statement <span class="kw">as</span><span class="op">?</span> Select</span>
+<span id="cb6-18"><a href="#cb6-18"></a>        <span class="kw">val</span> <span class="va">selectBody</span> <span class="op">=</span> select<span class="op">?.</span>selectBody</span>
+<span id="cb6-19"><a href="#cb6-19"></a></span>
+<span id="cb6-20"><a href="#cb6-20"></a>        <span class="kw">val</span> <span class="va">whereClauseExpression</span> <span class="op">=</span> extractWhereClause<span class="op">(</span>selectBody<span class="op">)</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a>        <span class="cf">if</span> <span class="op">(</span>whereClauseExpression <span class="op">==</span> <span class="kw">null</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a>            println<span class="op">(</span><span class="st">"This query doesn't include Comparison Operator. so return pure items."</span><span class="op">)</span></span>
+<span id="cb6-23"><a href="#cb6-23"></a>            <span class="kw">return</span> items</span>
+<span id="cb6-24"><a href="#cb6-24"></a>        <span class="op">}</span></span>
+<span id="cb6-25"><a href="#cb6-25"></a></span>
+<span id="cb6-26"><a href="#cb6-26"></a>        println<span class="op">(</span><span class="st">"This query include Comparison Operator. so conduct items filtering."</span><span class="op">)</span></span>
+<span id="cb6-27"><a href="#cb6-27"></a>        <span class="kw">return</span> items<span class="op">.</span>filter <span class="op">{</span> isValidItemByExpression<span class="op">(</span>it<span class="op">,</span> whereClauseExpression<span class="op">)</span> <span class="op">}</span></span>
+<span id="cb6-28"><a href="#cb6-28"></a>    <span class="op">}</span></span>
+<span id="cb6-29"><a href="#cb6-29"></a></span>
+<span id="cb6-30"><a href="#cb6-30"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">isValidItemByExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">whereClause</span><span class="op">:</span> <span class="dt">Expression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
+<span id="cb6-31"><a href="#cb6-31"></a>        <span class="kw">return</span> <span class="cf">when</span> <span class="op">(</span>whereClause<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-32"><a href="#cb6-32"></a>            <span class="kw">is</span> AndExpression <span class="op">-&gt;</span> filterItemByAndExpression<span class="op">(</span>item<span class="op">,</span> whereClause<span class="op">)</span></span>
+<span id="cb6-33"><a href="#cb6-33"></a>            <span class="kw">is</span> OrExpression <span class="op">-&gt;</span> filterItemByOrExpression<span class="op">(</span>item<span class="op">,</span> whereClause<span class="op">)</span></span>
+<span id="cb6-34"><a href="#cb6-34"></a>            <span class="kw">is</span> XorExpression <span class="op">-&gt;</span> filterItemByXorExpression<span class="op">(</span>item<span class="op">,</span> whereClause<span class="op">)</span></span>
+<span id="cb6-35"><a href="#cb6-35"></a>            <span class="cf">else</span> <span class="op">-&gt;</span> filterItemBySingleExpression<span class="op">(</span>item<span class="op">,</span> whereClause<span class="op">)</span></span>
+<span id="cb6-36"><a href="#cb6-36"></a>        <span class="op">}</span></span>
+<span id="cb6-37"><a href="#cb6-37"></a>    <span class="op">}</span></span>
+<span id="cb6-38"><a href="#cb6-38"></a></span>
+<span id="cb6-39"><a href="#cb6-39"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">filterItemByAndExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">andExpression</span><span class="op">:</span> <span class="dt">AndExpression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
+<span id="cb6-40"><a href="#cb6-40"></a>        <span class="kw">val</span> <span class="va">isValidLeft</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> andExpression<span class="op">.</span>leftExpression<span class="op">)</span></span>
+<span id="cb6-41"><a href="#cb6-41"></a>        <span class="kw">val</span> <span class="va">isValidRight</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> andExpression<span class="op">.</span>rightExpression<span class="op">)</span></span>
+<span id="cb6-42"><a href="#cb6-42"></a>        <span class="kw">return</span> isValidLeft and isValidRight</span>
+<span id="cb6-43"><a href="#cb6-43"></a>    <span class="op">}</span></span>
+<span id="cb6-44"><a href="#cb6-44"></a></span>
+<span id="cb6-45"><a href="#cb6-45"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">filterItemByOrExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">orExpression</span><span class="op">:</span> <span class="dt">OrExpression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
+<span id="cb6-46"><a href="#cb6-46"></a>        <span class="kw">val</span> <span class="va">isValidLeft</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> orExpression<span class="op">.</span>leftExpression<span class="op">)</span></span>
+<span id="cb6-47"><a href="#cb6-47"></a>        <span class="kw">val</span> <span class="va">isValidRight</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> orExpression<span class="op">.</span>rightExpression<span class="op">)</span></span>
+<span id="cb6-48"><a href="#cb6-48"></a>        <span class="kw">return</span> isValidLeft or isValidRight</span>
+<span id="cb6-49"><a href="#cb6-49"></a>    <span class="op">}</span></span>
+<span id="cb6-50"><a href="#cb6-50"></a></span>
+<span id="cb6-51"><a href="#cb6-51"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">filterItemByXorExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">xorExpression</span><span class="op">:</span> <span class="dt">XorExpression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
+<span id="cb6-52"><a href="#cb6-52"></a>        <span class="kw">val</span> <span class="va">isValidLeft</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> xorExpression<span class="op">.</span>leftExpression<span class="op">)</span></span>
+<span id="cb6-53"><a href="#cb6-53"></a>        <span class="kw">val</span> <span class="va">isValidRight</span> <span class="op">=</span> isValidItemByExpression<span class="op">(</span>item<span class="op">,</span> xorExpression<span class="op">.</span>rightExpression<span class="op">)</span></span>
+<span id="cb6-54"><a href="#cb6-54"></a>        <span class="kw">return</span> isValidLeft xor isValidRight</span>
+<span id="cb6-55"><a href="#cb6-55"></a>    <span class="op">}</span></span>
+<span id="cb6-56"><a href="#cb6-56"></a></span>
+<span id="cb6-57"><a href="#cb6-57"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">filterItemBySingleExpression</span><span class="op">(</span><span class="va">item</span><span class="op">:</span> <span class="dt">Item</span><span class="op">,</span> <span class="va">singleExpression</span><span class="op">:</span> <span class="dt">Expression</span><span class="op">):</span> <span class="dt">Boolean</span> <span class="op">{</span></span>
+<span id="cb6-58"><a href="#cb6-58"></a>        <span class="cf">if</span> <span class="op">(</span>singleExpression <span class="op">!</span><span class="kw">is</span> ComparisonOperator<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-59"><a href="#cb6-59"></a>            <span class="kw">return</span> <span class="kw">true</span></span>
+<span id="cb6-60"><a href="#cb6-60"></a>        <span class="op">}</span></span>
+<span id="cb6-61"><a href="#cb6-61"></a>        <span class="co">// ここにカラム名や演算子に基づいたフィルタリング処理を実装する</span></span>
+<span id="cb6-62"><a href="#cb6-62"></a>        <span class="kw">val</span> <span class="va">columnName</span> <span class="op">=</span> singleExpression<span class="op">.</span>leftExpression<span class="op">.</span>toString<span class="op">()</span></span>
+<span id="cb6-63"><a href="#cb6-63"></a>        <span class="kw">val</span> <span class="va">value</span> <span class="op">=</span> singleExpression<span class="op">.</span>rightExpression<span class="op">.</span>toString<span class="op">().</span>replace<span class="op">(</span><span class="st">"'"</span><span class="op">,</span> <span class="st">""</span><span class="op">)</span> <span class="co">// 文字列に''が含まれてるので取り除く.</span></span>
+<span id="cb6-64"><a href="#cb6-64"></a></span>
+<span id="cb6-65"><a href="#cb6-65"></a>        <span class="cf">if</span> <span class="op">(</span>singleExpression <span class="kw">is</span> EqualsTo<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-66"><a href="#cb6-66"></a>            <span class="cf">when</span> <span class="op">(</span>columnName<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-67"><a href="#cb6-67"></a>                <span class="st">"category"</span> <span class="op">-&gt;</span> <span class="kw">return</span> <span class="op">(</span>item<span class="op">.</span>category <span class="op">==</span> value<span class="op">)</span></span>
+<span id="cb6-68"><a href="#cb6-68"></a>            <span class="op">}</span></span>
+<span id="cb6-69"><a href="#cb6-69"></a>        <span class="op">}</span></span>
+<span id="cb6-70"><a href="#cb6-70"></a>        <span class="cf">if</span> <span class="op">(</span>singleExpression <span class="kw">is</span> GreaterThanEquals<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-71"><a href="#cb6-71"></a>            <span class="cf">when</span> <span class="op">(</span>columnName<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-72"><a href="#cb6-72"></a>                <span class="st">"complexity"</span> <span class="op">-&gt;</span> <span class="kw">return</span> <span class="op">(</span>item<span class="op">.</span>complexity <span class="op">&gt;=</span> value<span class="op">.</span>toDouble<span class="op">())</span></span>
+<span id="cb6-73"><a href="#cb6-73"></a>            <span class="op">}</span></span>
+<span id="cb6-74"><a href="#cb6-74"></a>        <span class="op">}</span></span>
+<span id="cb6-75"><a href="#cb6-75"></a>        <span class="cf">if</span> <span class="op">(</span>singleExpression <span class="kw">is</span> MinorThanEquals<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-76"><a href="#cb6-76"></a>            <span class="cf">when</span> <span class="op">(</span>columnName<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-77"><a href="#cb6-77"></a>                <span class="st">"complexity"</span> <span class="op">-&gt;</span> <span class="kw">return</span> <span class="op">(</span>item<span class="op">.</span>complexity <span class="op">&lt;=</span> value<span class="op">.</span>toDouble<span class="op">())</span></span>
+<span id="cb6-78"><a href="#cb6-78"></a>            <span class="op">}</span></span>
+<span id="cb6-79"><a href="#cb6-79"></a>        <span class="op">}</span></span>
+<span id="cb6-80"><a href="#cb6-80"></a>        <span class="kw">return</span> <span class="kw">true</span></span>
+<span id="cb6-81"><a href="#cb6-81"></a>    <span class="op">}</span></span>
+<span id="cb6-82"><a href="#cb6-82"></a></span>
+<span id="cb6-83"><a href="#cb6-83"></a>    <span class="kw">private</span> <span class="kw">fun</span> <span class="fu">extractWhereClause</span><span class="op">(</span><span class="va">selectBody</span><span class="op">:</span> <span class="dt">SelectBody</span><span class="op">?):</span> <span class="dt">Expression</span><span class="op">?</span> <span class="op">{</span></span>
+<span id="cb6-84"><a href="#cb6-84"></a>        <span class="cf">if</span> <span class="op">(</span>selectBody <span class="op">!</span><span class="kw">is</span> PlainSelect<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-85"><a href="#cb6-85"></a>            <span class="kw">return</span> <span class="kw">null</span></span>
+<span id="cb6-86"><a href="#cb6-86"></a>        <span class="op">}</span></span>
+<span id="cb6-87"><a href="#cb6-87"></a>        <span class="kw">return</span> selectBody<span class="op">.</span><span class="kw">where</span></span>
+<span id="cb6-88"><a href="#cb6-88"></a>    <span class="op">}</span></span>
+<span id="cb6-89"><a href="#cb6-89"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section></section>
 <section>
 <section id="いざfeed-serverにinteractive-recommenderを組み込むぞ" class="title-slide slide level1 center">
@@ -862,7 +890,7 @@
 'autoAnimateEasing': "ease",
 'autoAnimateDuration': 1,
 'autoAnimateUnmatched': true,
-'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
 'smaller': false,
  
         // Display controls in the bottom right corner
@@ -1066,9 +1094,23 @@
       tabsets.forEach(function(tabset) {
         const tabby = new Tabby('#' + tabset.id);
       });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
       const clipboard = new window.ClipboardJS('.code-copy-button', {
-        target: function(trigger) {
-          return trigger.previousElementSibling;
+        text: function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
         }
       });
       clipboard.on('success', function(e) {
@@ -1080,7 +1122,24 @@
         button.classList.add('code-copy-button-checked');
         var currentTitle = button.getAttribute("title");
         button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
         setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
           button.setAttribute("title", currentTitle);
           button.classList.remove('code-copy-button-checked');
         }, 1000);
@@ -1099,7 +1158,7 @@
           },
           interactive: true,
           interactiveBorder: 10,
-          theme: 'quarto-reveal',
+          theme: 'light-border',
           placement: 'bottom-start'
         };
           config['offset'] = [0,0];
@@ -1118,24 +1177,42 @@
           return note.innerHTML;
         });
       }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
       var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
       for (var i=0; i<bibliorefs.length; i++) {
         const ref = bibliorefs[i];
-        const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-        tippyHover(ref, function() {
-          var popup = window.document.createElement('div');
-          cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
-            }
-            popup.appendChild(citeDiv);
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
           });
-          return popup.innerHTML;
-        });
+        }
       }
     });
     </script>

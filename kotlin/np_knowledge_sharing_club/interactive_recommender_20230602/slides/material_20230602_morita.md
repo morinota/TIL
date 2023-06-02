@@ -31,7 +31,6 @@ title-slide-attributes:
 
 これらを踏まえて、**推薦システム × kotlin × LLM(OpenAI API)** という事で、「ユーザとの対話で推薦結果を変化させるInteractive Recommenderをfeed-serverに実装してみようとした話」にしました!
 
-
 ## 推薦システム × LLM で何ができそう??
 
 推薦システムとは...
@@ -39,7 +38,7 @@ title-slide-attributes:
 > 複数の候補からユーザにとって価値のあるものを選び出し、意思決定を支援するシステム
 > (引用元: [推薦システム実践入門](https://www.oreilly.co.jp/books/9784873119663/))
 
-「価値あるものを選び出すこと」「意思決定の支援」のどちらでも、LLMの活用で新たな価値創出ができるのでは?? [参考資料2]()では以下のアイデアを紹介してました...!
+「価値あるものを選び出すこと」「意思決定の支援」のどちらでも、LLMの活用で新たな価値創出ができるのでは?? [参考資料2]()では以下のアイデアを紹介...!
 
 - 「価値あるものを選び出すこと」
   - 自然言語による対話を通じた**Interactiveな推薦結果の調節**.
@@ -54,11 +53,11 @@ title-slide-attributes:
 
 現在は以下の様な手順で記事リストを生成しています.
 
-- 1. feed-serverの`ranking` endpointにリクエストが送られる.
-- 2. 指定されたユーザの推薦記事候補(`List<FeedUpdate>`)を取得する.(インスタンス上にメモリキャッシュされてる認識)
+- 1. np-serverからfeed-serverの`hogehoge` endpointにリクエストが送られる.
+- 2. 指定されたユーザの推薦記事候補(`List<FeedUpdate>`)を取得する.
 - 3. 推薦システムのコアロジックによって推薦記事候補を並び替えて、推薦記事ランキングを作る.
 - 4. ヒューリスティックなランキング調整(ex. 過去に閲読した記事、古い記事のランクを下げる、etc.)
-- 5. 推薦記事ランキングのレスポンスを返す.
+- 5. np-serverに推薦記事ランキングのレスポンスを返す.
 
 ## feed-server に Interactive Recommenderを実現するとしたら...{auto-animate=true}
 
@@ -66,27 +65,16 @@ title-slide-attributes:
 
 Interactive Recommenderを実現する為に、ココをこうしてこうじゃ!
 
-- 1. feed-serverの`ranking` endpointにリクエストが送られる.
-- 2. 指定されたユーザの推薦記事候補(`List<FeedUpdate>`)を取得する.(インスタンス上にメモリキャッシュされてる認識)
+- 1. np-serverからfeed-serverの`hogehoge` endpointにリクエストが送られる.
+- 2. 指定されたユーザの推薦記事候補(`List<FeedUpdate>`)を取得する.
 - 3. **リクエストに含まれるユーザからのメッセージ`userChat`を用いて、推薦記事候補をフィルタリングする**.
 - 4. 推薦システムのコアロジックによって推薦記事候補を並び替えて、推薦記事ランキングを作る.
 - 5. ヒューリスティックなランキング調整(ex. 過去に閲読した記事、古い記事のランクを下げる、etc.)
-- 6. 推薦記事ランキングのレスポンスを返す.
-
+- 6. np-serverに推薦記事ランキングのレスポンスを返す.
 
 # さあやってみよう! まずはunit testを書くところから!
 
 ## `InteractiveRecommender` のtestはこんな感じ?
-
-:::: {.columns}
-
-::: {.column width="30%"}
-
-InteractiveRecommenderの"観察可能な振る舞い"は、ユーザから入力される自然言語(`userChat`)を考慮して、推薦記事候補(`feedUpdates`)をフィルタリングする事です.
-
-:::
-
-::: {.column width="70%"}
 
 ```kotlin:TestInteractiveRecommender.kt
 package integrationTests
@@ -130,41 +118,8 @@ class TestInteractiveRecommender {
     }
 }
 ```
-:::
-
-::::
-
-
-
-
-
-## `InteractiveRecommender` の実装はこんな感じ?
-
-- `InteractiveRecommender`内では、`TextToQueryConverter`と`ItemFilterByQuery`が処理を実行します.(外側と内側のレイヤーのイメージ)
-- `ItemFilterByQuery`や`TextToQueryConverter`の初期化の仕方はどうすべきだろう...?:
-  - `InteractiveRecommender` の中で初期化すべき?
-  - それともInterfaceをコンストラクタの引数として渡すべき?
-
-```kotlin:InteractiveRecommender.kt
-class InteractiveRecommender {
-    private val itemFilter = ItemFilterByQuery()
-    private val textToQueryConverter = TextToQueryConverter()
-    fun recommend(items: List<Item>, userChat: String): List<Item> {
-        val sqlQuery = textToQueryConverter.convert(userChat)
-        sqlQuery ?: return items
-        return itemFilter.filter(sqlQuery, items)
-    }
-}
-```
-
-
-
 
 ## `TextToQueryConverter` のtestはこんな感じ?
-
-:::: {.columns}
-
-::: {.column width="70%"}
 
 ```kotlin:TextToQueryConverterTest.kt
 package integrationTests
@@ -189,30 +144,54 @@ class TestTextToQueryConverter {
 }
 ```
 
-:::
+## `ItemFilterFromQuery` のtestはこんな感じ?
 
-::: {.column width="30%"}
+```kotlin:TestItemFilterFromQuery.kt
+package integrationTests
 
-`TextToQueryConverter` の"観察可能な振る舞い"は、ユーザから入力される自然言語(`userChat`)をsqlクエリに変換する事です.
+import InteractiveRecommender
+import Item
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
-:::
+class TestInteractiveRecommender {
+    private val feedUpdates = listOf(
+        Item("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
+        Item("2", "日銀、マイナス金利を維持", "finance", 0.7),
+        Item("3", "日本株式市場、急落", "finance", 0.8),
+        Item("4", "米中貿易戦争の影響、新興市場に拡大", "business", 0.5),
+        Item("5", "企業間の競争激化、IT業界にも波及", "technology", 0.8),
+        Item("6", "景気減速、デフレリスク増加", "finance", 0.4),
+        Item("7", "ブロックチェーン技術、急速に普及", "technology", 0.6),
+        Item("8", "日本、TPPに復帰", "business", 0.7),
+        Item("9", "ロボット革命により雇用機会が減少", "industry", 0.4),
+        Item("10", "新しい産業革命の波が到来", "technology", 0.8)
+    )
 
-::::
+    @Test
+    fun filteringRecommendationItemsByCategoryWhenGotRequestAboutCategory() {
+        // Arrange
+        val userComment = "金融に関するニュースに興味があります!"
+        val sut = InteractiveRecommender()
 
-## `TextToQueryConverter` の実装はこんな感じ?
+        // Act
+        val filteredUpdates = sut.recommend(feedUpdates, userComment)
 
-:::: {.columns}
+        // Assert
+        val filteredUpdatesExpected = listOf(
+            Item("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
+            Item("2", "日銀、マイナス金利を維持", "finance", 0.7),
+            Item("3", "日本株式市場、急落", "finance", 0.8),
+            Item("6", "景気減速、デフレリスク増加", "finance", 0.4)
+        )
+        assertEquals(filteredUpdatesExpected, filteredUpdates)
+    }
+}
+```
 
-::: {.column width="30%"}
+# さあ実装を作るぞ!
 
-ユーザから入力される自然言語(`userChat`)をクエリに変換する処理は、OpenAI APIの `chat` endpointに任せます.
-特にpromptを練ることはなく、zero shot learning で推論してもらいました.
-受け取ったレスポンスは`kotlinx.serialization`パッケージを用いてparseして変換後のクエリを取得しています.
-
-:::
-
-::: {.column width="70%"}
-
+## `TextToQueryConverter` を実装するぞ!
 
 ```kotlin:TextToQueryConverter.kt
 import kotlinx.serialization.Serializable
@@ -293,77 +272,8 @@ private data class Choice(val message: Message)
 
 @Serializable
 private data class Message(val content: String)
+
 ```
-
-:::
-
-::::
-
-
-## `ItemFilterFromQuery` のtestはこんな感じ?
-
-:::: {.columns}
-
-::: {.column width="70%"}
-
-```kotlin:TestItemFilterFromQuery.kt
-package integrationTests
-
-import InteractiveRecommender
-import Item
-import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-
-class TestInteractiveRecommender {
-    private val feedUpdates = listOf(
-        Item("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
-        Item("2", "日銀、マイナス金利を維持", "finance", 0.7),
-        Item("3", "日本株式市場、急落", "finance", 0.8),
-        Item("4", "米中貿易戦争の影響、新興市場に拡大", "business", 0.5),
-        Item("5", "企業間の競争激化、IT業界にも波及", "technology", 0.8),
-        Item("6", "景気減速、デフレリスク増加", "finance", 0.4),
-        Item("7", "ブロックチェーン技術、急速に普及", "technology", 0.6),
-        Item("8", "日本、TPPに復帰", "business", 0.7),
-        Item("9", "ロボット革命により雇用機会が減少", "industry", 0.4),
-        Item("10", "新しい産業革命の波が到来", "technology", 0.8)
-    )
-
-    @Test
-    fun filteringRecommendationItemsByCategoryWhenGotRequestAboutCategory() {
-        // Arrange
-        val userComment = "金融に関するニュースに興味があります!"
-        val sut = InteractiveRecommender()
-
-        // Act
-        val filteredUpdates = sut.recommend(feedUpdates, userComment)
-
-        // Assert
-        val filteredUpdatesExpected = listOf(
-            Item("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
-            Item("2", "日銀、マイナス金利を維持", "finance", 0.7),
-            Item("3", "日本株式市場、急落", "finance", 0.8),
-            Item("6", "景気減速、デフレリスク増加", "finance", 0.4)
-        )
-        assertEquals(filteredUpdatesExpected, filteredUpdates)
-    }
-}
-```
-
-:::
-
-::: {.column width="30%"}
-
-`TextToQueryConverter` の"観察可能な振る舞い"は、ユーザから入力される自然言語(`userChat`)をsqlクエリに変換する事です.
-
-:::
-
-::::
-
-
-
-# さあ実装を作るぞ!
-
-
 
 ## `ItemFilterByQuery` を実装するぞ!
 
@@ -459,9 +369,25 @@ class ItemFilterByQuery {
 }
 ```
 
+## `InteractiveRecommender` を実装するぞ!
 
+```kotlin:InteractiveRecommender.kt
+class InteractiveRecommender {
+    private val itemFilter = ItemFilterByQuery()
+    private val textToQueryConverter = TextToQueryConverter()
+    fun recommend(items: List<Item>, userChat: String): List<Item> {
+        val sqlQuery = textToQueryConverter.convert(userChat)
+        sqlQuery ?: return items
+        return itemFilter.filter(sqlQuery, items)
+    }
+}
+```
 
+思った事:
 
+- `ItemFilterByQuery`や`TextToQueryConverter`の初期化の仕方はどうすべきだろう...?:
+  - `InteractiveRecommender` の中で初期化すべき?
+  - それとも外部で初期化してコンストラクタの引数として渡すべき?
 
 # いざfeed-serverにInteractive Recommenderを組み込むぞ!
 
