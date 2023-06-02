@@ -11,8 +11,8 @@ import net.sf.jsqlparser.statement.select.PlainSelect
 import net.sf.jsqlparser.statement.select.Select
 import net.sf.jsqlparser.statement.select.SelectBody
 
-class ItemFilter() {
-    fun filterByQuery(sqlQuery: String, items: List<Item>): List<Item> {
+class ItemFilterByQuery {
+    fun filter(sqlQuery: String, items: List<Item>): List<Item> {
         val statement = CCJSqlParserUtil.parse(sqlQuery)
         val select = statement as? Select
         val selectBody = select?.selectBody
@@ -20,14 +20,21 @@ class ItemFilter() {
         val whereClauseExpression = extractWhereClause(selectBody)
         if (whereClauseExpression == null) {
             println("This query doesn't include Comparison Operator. so return pure items.")
-            return items // sqlQueryにwhere句が含まれていない場合はそのまま返す.
+            return items
         }
+
         println("This query include Comparison Operator. so conduct items filtering.")
-        return items.filter { isValidByExpression(it, whereClauseExpression) }
+        return items.filter { isValidItemByExpression(it, whereClauseExpression) }
     }
 
-    private fun isValidByExpression(item: Item, whereClause: Expression): Boolean {
-        // あるitem情報とwhereClauseを受け取って、booleanを返すfunciton
+    private fun extractWhereClause(selectBody: SelectBody?): Expression? {
+        if (selectBody !is PlainSelect) {
+            return null
+        }
+        return selectBody.where
+    }
+
+    private fun isValidItemByExpression(item: Item, whereClause: Expression): Boolean {
         return when (whereClause) {
             is AndExpression -> filterItemByAndExpression(item, whereClause)
             is OrExpression -> filterItemByOrExpression(item, whereClause)
@@ -37,20 +44,20 @@ class ItemFilter() {
     }
 
     private fun filterItemByAndExpression(item: Item, andExpression: AndExpression): Boolean {
-        val isValidLeft = isValidByExpression(item, andExpression.leftExpression)
-        val isValidRight = isValidByExpression(item, andExpression.rightExpression)
+        val isValidLeft = isValidItemByExpression(item, andExpression.leftExpression)
+        val isValidRight = isValidItemByExpression(item, andExpression.rightExpression)
         return isValidLeft and isValidRight
     }
 
     private fun filterItemByOrExpression(item: Item, orExpression: OrExpression): Boolean {
-        val isValidLeft = isValidByExpression(item, orExpression.leftExpression)
-        val isValidRight = isValidByExpression(item, orExpression.rightExpression)
+        val isValidLeft = isValidItemByExpression(item, orExpression.leftExpression)
+        val isValidRight = isValidItemByExpression(item, orExpression.rightExpression)
         return isValidLeft or isValidRight
     }
 
     private fun filterItemByXorExpression(item: Item, xorExpression: XorExpression): Boolean {
-        val isValidLeft = isValidByExpression(item, xorExpression.leftExpression)
-        val isValidRight = isValidByExpression(item, xorExpression.rightExpression)
+        val isValidLeft = isValidItemByExpression(item, xorExpression.leftExpression)
+        val isValidRight = isValidItemByExpression(item, xorExpression.rightExpression)
         return isValidLeft xor isValidRight
     }
 
@@ -58,32 +65,26 @@ class ItemFilter() {
         if (singleExpression !is ComparisonOperator) {
             return true
         }
-        // ここにカラム名や演算子に基づいたフィルタリング処理を実装する
-        val columnName = singleExpression.leftExpression.toString()
+        val column = singleExpression.leftExpression.toString()
         val value = singleExpression.rightExpression.toString().replace("'", "") // 文字列に''が含まれてるので取り除く.
 
-        if (singleExpression is EqualsTo) {
-            when (columnName) {
-                "category" -> return (item.category == value)
+        when (singleExpression) {
+            is EqualsTo -> return item.getProperty(column) == value
+
+            is GreaterThanEquals -> {
+                val property = item.getProperty(column)
+                if (property !is Double) return false
+                return property >= value.toDouble()
             }
-        }
-        if (singleExpression is GreaterThanEquals) {
-            when (columnName) {
-                "complexity" -> return (item.complexity >= value.toDouble())
-            }
-        }
-        if (singleExpression is MinorThanEquals) {
-            when (columnName) {
-                "complexity" -> return (item.complexity <= value.toDouble())
+
+            is MinorThanEquals -> {
+                val property = item.getProperty(column)
+                if (property !is Double) return false
+                return property <= value.toDouble()
             }
         }
         return true
     }
 
-    private fun extractWhereClause(selectBody: SelectBody?): Expression? {
-        if (selectBody !is PlainSelect) {
-            return null
-        }
-        return selectBody.where
-    }
+
 }
