@@ -73,6 +73,19 @@ Interactive Recommenderを実現する為に、ココをこうしてこうじゃ
 - 5. ヒューリスティックなランキング調整(ex. 過去に閲読した記事、古い記事のランクを下げる、etc.)
 - 6. 推薦記事ランキングのレスポンスを返す.
 
+## 今回は推薦記事候補に以下の情報が含まれていると仮定しました!
+
+ここは自分の妄想が入るのですが、記事のカテゴリと記事の複雑度(専門性の高さ)の属性情報が含まれているケースを想定しました.
+(実際の今のfeed-serverでは、推薦記事候補にそれらの属性情報は含まれていません...!)
+
+```kotlin
+data class Item(
+    val id: String,
+    val title: String,
+    val category: String, // 記事カテゴリ(business, finance, career, eduacition, technology, industry の6種)
+    val complexity: Double,
+)
+```
 
 # さあやってみよう! まずはunit testを書くところから!
 
@@ -134,10 +147,6 @@ class TestInteractiveRecommender {
 
 ::::
 
-
-
-
-
 ## `InteractiveRecommender` の実装はこんな感じ?
 
 - `InteractiveRecommender`内では、`TextToQueryConverter`と`ItemFilterByQuery`が処理を実行します.(外側と内側のレイヤーのイメージ)
@@ -156,9 +165,6 @@ class InteractiveRecommender {
     }
 }
 ```
-
-
-
 
 ## `TextToQueryConverter` のtestはこんな感じ?
 
@@ -307,15 +313,15 @@ private data class Message(val content: String)
 ::: {.column width="70%"}
 
 ```kotlin:TestItemFilterFromQuery.kt
-package integrationTests
+package unitTests
 
-import InteractiveRecommender
+import ItemFilterByQuery
 import Item
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class TestInteractiveRecommender {
-    private val feedUpdates = listOf(
+class TestItemFilterByQuery {
+    private val updates = listOf(
         Item("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
         Item("2", "日銀、マイナス金利を維持", "finance", 0.7),
         Item("3", "日本株式市場、急落", "finance", 0.8),
@@ -329,13 +335,27 @@ class TestInteractiveRecommender {
     )
 
     @Test
-    fun filteringRecommendationItemsByCategoryWhenGotRequestAboutCategory() {
+    fun itemsAreStableWhenSqlQueryDontIncludeWhereClause() {
         // Arrange
-        val userComment = "金融に関するニュースに興味があります!"
-        val sut = InteractiveRecommender()
+        val sqlQuery = "SELECT * FROM items"
+        val sut = ItemFilterByQuery()
 
         // Act
-        val filteredUpdates = sut.recommend(feedUpdates, userComment)
+        val filteredUpdates = sut.filter(sqlQuery, this.updates)
+
+        // Assert
+        val filteredUpdatesExpected = this.updates
+        assertEquals(filteredUpdatesExpected, filteredUpdates)
+    }
+
+    @Test
+    fun itemsAreFilteredWhenSqlQueryIncludeWhereClauseAndEqualOperator() {
+        // Arrange
+        val sqlQuery = "SELECT * FROM items WHERE category = 'finance'"
+        val sut = ItemFilterByQuery()
+
+        // Act
+        val filteredUpdates = sut.filter(sqlQuery, this.updates)
 
         // Assert
         val filteredUpdatesExpected = listOf(
@@ -346,26 +366,70 @@ class TestInteractiveRecommender {
         )
         assertEquals(filteredUpdatesExpected, filteredUpdates)
     }
+
+    @Test
+    fun itemsAreFilteredBySqlQueryIncludingWhereClauseAndGreaterthanEqualsOperator() {
+        // Arrange
+        val sqlQuery = "SELECT * FROM items WHERE complexity <=0.5"
+        val sut = ItemFilterByQuery()
+
+        // Act
+        val processedItems = sut.filter(sqlQuery, this.updates)
+
+        // Assert
+        val processedItemsExpected = listOf(
+            "米中貿易戦争の影響、新興市場に拡大",
+            "景気減速、デフレリスク増加",
+            "ロボット革命により雇用機会が減少",
+        )
+        assertEquals(processedItemsExpected, processedItems.map { it.title })
+    }
+
+    @Test
+    fun itemsAreFilteredBySqlQueryIncludingWhereClauseAndMultiOperators() {
+        // Arrange
+        val sqlQuery = "SELECT * FROM items WHERE category = 'finance' and complexity <=0.5 and complexity>=0.3"
+        val sut = ItemFilterByQuery()
+
+        // Act
+        val processedItems = sut.filter(sqlQuery, this.updates)
+
+        // Assert
+        val processedItemsExpected = listOf(
+            "景気減速、デフレリスク増加",
+        )
+        assertEquals(processedItemsExpected, processedItems.map { it.title })
+    }
 }
+
 ```
 
 :::
 
 ::: {.column width="30%"}
 
-`TextToQueryConverter` の"観察可能な振る舞い"は、ユーザから入力される自然言語(`userChat`)をsqlクエリに変換する事です.
+`ItemFilterByQuery` の"観察可能な振る舞い"は、sqlクエリに従って、メモリ上の推薦アイテム候補(`feedUpdats`)をフィルタリングする事です.
 
 :::
 
 ::::
 
+## `ItemFilterByQuery` の実装はこんな感じ?
+
+:::: {.columns}
+
+::: {.column width="30%"}
+
+推薦アイテム候補(`feedUpdats:List<Item>`)にsqlクエリを適用する為に、`jsqlparser`でクエリを構文解析する点が、この実装の頑張りポイントでした.
+where句が複数の式の組み合わせのケースにも対応しています.
+(今思えばnot演算子への対応を忘れてました...)
 
 
-# さあ実装を作るぞ!
 
+:::
 
+::: {.column width="70%"}
 
-## `ItemFilterByQuery` を実装するぞ!
 
 ```kotlin:ItemFilterByQuery.kt
 import net.sf.jsqlparser.expression.Expression
@@ -395,6 +459,13 @@ class ItemFilterByQuery {
 
         println("This query include Comparison Operator. so conduct items filtering.")
         return items.filter { isValidItemByExpression(it, whereClauseExpression) }
+    }
+
+    private fun extractWhereClause(selectBody: SelectBody?): Expression? {
+        if (selectBody !is PlainSelect) {
+            return null
+        }
+        return selectBody.where
     }
 
     private fun isValidItemByExpression(item: Item, whereClause: Expression): Boolean {
@@ -428,48 +499,56 @@ class ItemFilterByQuery {
         if (singleExpression !is ComparisonOperator) {
             return true
         }
-        // ここにカラム名や演算子に基づいたフィルタリング処理を実装する
-        val columnName = singleExpression.leftExpression.toString()
+        val column = singleExpression.leftExpression.toString()
         val value = singleExpression.rightExpression.toString().replace("'", "") // 文字列に''が含まれてるので取り除く.
 
-        if (singleExpression is EqualsTo) {
-            when (columnName) {
-                "category" -> return (item.category == value)
+        when (singleExpression) {
+            is EqualsTo -> return item.getProperty(column) == value
+
+            is GreaterThanEquals -> {
+                val property = item.getProperty(column)
+                if (property !is Double) return false
+                return property >= value.toDouble()
             }
-        }
-        if (singleExpression is GreaterThanEquals) {
-            when (columnName) {
-                "complexity" -> return (item.complexity >= value.toDouble())
-            }
-        }
-        if (singleExpression is MinorThanEquals) {
-            when (columnName) {
-                "complexity" -> return (item.complexity <= value.toDouble())
+
+            is MinorThanEquals -> {
+                val property = item.getProperty(column)
+                if (property !is Double) return false
+                return property <= value.toDouble()
             }
         }
         return true
     }
-
-    private fun extractWhereClause(selectBody: SelectBody?): Expression? {
-        if (selectBody !is PlainSelect) {
-            return null
-        }
-        return selectBody.where
-    }
 }
 ```
 
+:::
 
-
-
+::::
 
 # いざfeed-serverにInteractive Recommenderを組み込むぞ!
 
 ## 計画はこうだ!
 
+今回は"あなたへのおすすめ"に表示する記事リストを、ユーザとの対話を通して変化(調整)させる機能を想定します.
+
+Interactive Recommenderを実現する為に、ココをこうしてこうじゃ!
+
+- 1. feed-serverの`ranking` endpointにリクエストが送られる.
+- 2. 指定されたユーザの推薦記事候補(`List<FeedUpdate>`)を取得する.(インスタンス上にメモリキャッシュされてる認識)
+- 3. **リクエストに含まれるユーザからのメッセージ`userChat`を用いて、推薦記事候補をフィルタリングする**.
+- 4. 推薦システムのコアロジックによって推薦記事候補を並び替えて、推薦記事ランキングを作る.
+- 5. ヒューリスティックなランキング調整(ex. 過去に閲読した記事、古い記事のランクを下げる、etc.)
+- 6. 推薦記事ランキングのレスポンスを返す.
+
 ## と思ったが、あれ?
 
 feed-serverの`gradle.build.kts`に必要なpackageの依存関係を定義してbuildを試みると...あれ?
+
+```
+Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 1.8.0, expected version is 1.4.0.
+```
+
 kotlinのversionの問題でpackageをinstallできないんだろうか??:thinking:
 
 という感じで、ココでタイムアップでした...!
@@ -482,8 +561,7 @@ kotlinのversionの問題でpackageをinstallできないんだろうか??:think
   - feed-serverに組み込むプロセスでタイムアップし断念...!
 - 得られた知見・感想:
   - 最近読んでる"単体テストの考え方/使い方"を参考にテストを書いてみたが、"観察可能な振る舞い"のみをテストする事を意識できた.
-  - kotlinはpublicなmethodとprivateなmethodを明示的に定義できて嬉しいな...(Pythonが特殊なのかな)
-  -
+  - kotlinはpublicなmethod(観察可能な振る舞い)とprivateなmethod(実装の詳細)を明示的に定義できて嬉しいな...(Pythonが特殊なのかな)
 
 ## 参考資料
 
