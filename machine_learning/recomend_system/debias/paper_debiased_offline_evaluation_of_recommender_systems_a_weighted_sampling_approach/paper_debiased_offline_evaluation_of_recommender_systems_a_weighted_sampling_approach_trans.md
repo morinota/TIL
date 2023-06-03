@@ -509,55 +509,55 @@ WTDとWTD_Hをオフライン実験で評価しましたので、本項で説明
 We use two publicly available datasets: CoatShopping2 from the clothing domain [22] and Webscope R33 from the music domain [18].
 我々は2つの一般に公開されているデータセットを使用する： CoatShopping2（衣服領域）[22]とWebscope R33（音楽領域）[18]である.
 Both of them are ideal for our purposes because they are composed of two parts, one having MAR properties (Dmar = {O mar ,Y mar }), and the other having MNAR properties (Dmar = {O mnar ,Y mnar }).
-どちらもMAR特性を持つ部分（Dmar = {O mar ,Y mar }）とMNAR特性を持つ部分（Dmar = {O mnar ,Y mnar }）で構成されているので、今回の目的にはぴったりです。
+**どちらもMAR特性を持つ部分（Dmar = {O mar ,Y mar }）とMNAR特性を持つ部分（Dmar = {O mnar ,Y mnar }）で構成されている**ので、今回の目的にはぴったりです。
 For both of them, interactions are in the form of ratings, so that Y ∈ {1, 2, 3, 4, 5} U ×I .
-両者ともインタラクションは視聴率という形で、Y∈{1,2,3,4,5}となるように。U ×I となる。
+両者ともインタラクションはratingという形で、Y∈{1,2,3,4,5}となるように。U ×I となる。
 We consider a rating to be positive if it is above 3, and negative otherwise.
 3以上の場合はポジティブ、それ以外の場合はネガティブと判断しています。
 Both the Dmar parts are collected using the forced ratings approach described earlier, therefore they are almost but not completely unbiased, for the reasons we gave earlier.
-Dmarパートは、いずれも前述の強制評価方式で収集されているため、先に述べた理由により、ほぼ偏りのないものとなっています。
+D*{mar}パートは、いずれも前述のforced ratings approachで収集されているため、先に述べた理由により、ほぼ偏りのないものとなっています。
 The Dmnar portions are collected during the operation of a recommender system.
-Dmnar部分は、レコメンダーシステムの運用中に収集されます。
+D*{mnar}部分は、レコメンダーシステムの運用中に収集されます。
 Note that we did mention earlier that we know of one other MAR-like dataset, collected by the forced ratings approach, namely cm100k from the music domain [4], but we cannot use this in our experiments because it does not have any corresponding MNAR data.
-なお、強制評価アプローチによって収集されたMAR類似のデータセットとして、音楽領域のcm100k [4]を知っていることを先に述べましたが、対応するMNARデータがないため、今回の実験では使用することはできません。
+なお、forced ratings approachによって収集されたMAR類似のデータセットとして、音楽領域のcm100k [4]を知っていることを先に述べましたが、対応するMNARデータがないため、今回の実験では使用することはできません。
 
 For each dataset, we apply a preprocessing step to ensure both Dmar and Dmnar having a common user-item space U × I: specifically, we keep those users and items that belong to the intersection of the two portions.
-各データセットについて、DmarとDmnarが共通のユーザー・アイテム空間U×Iを持つように、前処理を施す。
+各データセットについて、D_marとD_mnarが共通のユーザー・アイテム空間U×Iを持つように、前処理を施す.
 Table 1 gives statistics of the final resulting datasets that we used in the experiments.
 表1は、実験に使用した最終的な結果のデータセットの統計です。
 
 ## 5.2. Methodology 方法論
 
 The goal of the experiments is to assess the ‘goodness’ of different ways of producing intervened test sets.
-実験の目的は、介入テストセットを作成するさまざまな方法の「良さ」を評価することです。
+実験の目的は、介**入テストセットを作成するさまざまな方法の「良さ」を評価すること**です。
 The measure of ‘goodness’ is how much results obtained by evaluating a recommender on an intervened test set resemble the results we would obtain on an unbiased test set.
-良さ」の指標は、介入したテストセットでレコメンダーを評価した結果が、偏りのないテストセットで得られるであろう結果にどれだけ似ているかということです。
+「良さ」の指標は、介入したテストセットでレコメンダーを評価した結果が、偏りのないテストセットで得られるであろう結果にどれだけ似ているかということです。
 
 In order to do that, in our experiments, we randomly splitO mnar in each dataset into a training set O t r and a heldout set O he with proportions 60%-40% respectively.
-そのため、実験では、各データセットのO mnarを訓練セットO t rとホールドアウトセットO heにそれぞれ60%～40%の割合でランダムに分割しました。
+そのため、実験では、各データセットのO^{mnar}を訓練セットO^{tr}とホールドアウトセット$O^{he}$にそれぞれ60%～40%の割合でランダムに分割しました。
 Since the split is random, MNAR distributions are preserved.
 分割はランダムに行われるため、MNARの分布は保たれます。
 For both of them, we take the corresponding ratings from Y mnar and we produce Y t r and Y he .
-その両方について、Y mnarから対応する評価を取り出し、Y t rとY heを作成します。
+その両方について、Y*{mnar}から対応する評価を取り出し、Y*{tr}と$Y_{he}$を作成します。
 Y he is what one would use as a traditional test set.
-Yは、従来のテストセットとして使用されていたものです。
+$Y_{he}$は、従来のテストセットとして使用されていたものです。
 In our case, we use O he as the sampling space: we sample it to obtain intervened test sets.
-我々の場合、O heをサンプリング空間として使用し、それをサンプリングして介在するテストセットを取得します。
-There is one intervened test set per sampling strategy (REG, SKEW, WTD, WTD_H, explained in Section 5.3).
+我々の場合、**$O_{he}$をサンプリング空間として使用し、それをサンプリングして介在するテストセットを取得**します。
+There is one intervened test set per sampling strategy (REG, SKEW, WTD, WTD\*H, explained in Section 5.3).
 サンプリング戦略（REG、SKEW、WTD、WTD_H、5.3節で説明）ごとに1つの介在するテストセットがある。
 We make the REG, SKEW, WTD, WTD_H intervened test sets to be 50% of the size of O he .
-REG、SKEW、WTD、WTD_Hが介在するテストセットは、O heの50%のサイズになるようにする。
+REG、SKEW、WTD、WTD_Hが介在するテストセットは、\*\*$O^{he}$の50%のサイズ\*\*になるようにする.
 (Smaller values than 50% can result in intervened test sets that are too small to give reliable results; larger values than 50% can mean that intervened test sets are not appreciably different from O he .)
-(50%より小さい値は、介在するテストセットが小さすぎて信頼できる結果が得られないことを意味し、50%より大きい値は、介在するテストセットがO heと有意な差がないことを意味する。)
+(50%より小さい値は、介在するテストセットが小さすぎて信頼できる結果が得られないことを意味し、50%より大きい値は、介在するテストセットが$O\_{he}$と有意な差がないことを意味する。)(この"50%"は経験的に得られた値なのかな...!)
 
 We also randomly split O mar into three, i.e.O w , O val and O дt with proportions 15%-15%-70% respectively.
-また、O marをランダムに3つ、すなわちO w、O val、O дtにそれぞれ15%-15%-70%の割合で分割しました。
+また、$O^{mar}$をランダムに3つ、すなわち$O^w$、$O^{val}$、$O^{gt}$にそれぞれ15%-15%-70%の割合で分割しました.
 Since the split is random, MAR distributions are preserved.
 分割はランダムに行われるため、MARの分布は保たれます。
 We obtain Y w , Y val and Y дt accordingly, as before.
 これに応じて、従来と同様に、Y w、Y val、Y дtを求める。
 O w is used to calculate the weights for WTD (see Section 5.3 for more details of the calculation).
-O wは、WTDの重みの計算に使用される（計算の詳細は5.3節を参照）。
+$O^{w}$は、WTDの重みの計算に使用される（計算の詳細は5.3節を参照）。
 We use Y val as the validation set to optimize recommender system hyperparameter values (Section 5.4).
 Y valを検証セットとして、レコメンダーシステムのハイパーパラメータ値を最適化する（5.4項）。
 (In reality, the ratings one would use to optimize hyperparameter values would either be a portion of Y t r or a portion of an intervened test set produced from Y he .
@@ -565,19 +565,19 @@ Y valを検証セットとして、レコメンダーシステムのハイパー
 We decided it was better in the experiments that we report in this paper to minimise the effect of hyperparameter selection on our results.
 この論文で報告する実験では、ハイパーパラメータの選択が結果に与える影響を最小限に抑える方が良いと判断しました。
 Hence, we selected hyperparameter values using ‘unbiased’ data, Y val .)
-そこで、「不偏」データであるY val を用いてハイパーパラメータ値を選択した...。）
+そこで、「不偏」データであるY val を用いてハイパーパラメータ値を選択した...。）(今回の実験ではサンプリング戦略を評価したいので...!!)(実際にはハイパーパラメータ調整にもMNARなデータを使う必要があるんだろうけど...!)
 
 We use Y дt as an unbiased test set.
-Y дtを不偏のテストセットとして使用する。
+$Y^{gt}$を不偏のテストセットとして使用する。
 In other words, the performance of a given recommender on Y дt can be considered to be its “true”, unbiased performance (the ground-truth).
-つまり、Y дtに対する推薦者の性能は、その「真の」不偏性能（ground-truth）であると考えることができる。
+つまり、$Y^{gt}$に対する推薦者の性能は、その「真の」不偏性能（ground-truth）であると考えることができる。
 We want the performance of a recommender on an intervened test set to be close to its performance on this unbiased test set.
 介在するテストセットでの推薦者の性能が、この偏りのないテストセットでの性能に近くなることを望んでいるのです。
 The best intervention strategy is the one that produces test sets where performance most closely resembles performance on Y дt .
-最適な介入戦略は、性能がY дtの性能に最も近いテストセットを作成するものである。
+**最適な介入戦略は、性能が$Y^{gt}$の性能に最も近いテストセット$Y^{S-hogehoge}$を作成するもの**である。
 
 We train the five recommender systems presented in Section 5.4 using ratings in Y t r .
-Y t r の評価を用いて、5.4 節で紹介した 5 つのレコメンダーシステムを学習させる。
+$Y^{tr}$ のratingを用いて、5.4 節で紹介した 5 つのレコメンダーシステムを学習させる.
 Each recommender produces a ranked list of recommendations which are tested on the unbiased test set Y дt and the intervened test sets.
 各推薦者は、非バイアスのテストセットY дtと介在するテストセットでテストされる推奨のランク付けされたリストを生成する。
 We have computed Precision, Recall, MAP and NDCG on the top-10 recommendations.
@@ -590,7 +590,7 @@ Results are averaged over 10 runs with different random splits.
 We formally present here the sampling strategies that we use to produce the intervened test sets in our experiments.
 ここでは、実験に介在するテストセットを作成するために使用するサンプリング戦略を正式に紹介する。
 Each strategy samples an intervened test setO S from O he (and the corresponding ratings from Y he , i.e.Y S ).
-各戦略は、O heから介在するテストセットO Sをサンプリングする（そして、Y heから対応するレーティング、すなわち、Y Sを）。
+各戦略は、O^heから介在するテストセットO^Sをサンプリングする（そして、Y_heから対応するレーティング、すなわち、Y_Sを）。
 For each strategy we give the corresponding probability sampling distribution, i.e.PS (S|u,i).
 u,i).
 In addition to SKEW, WTD and WTD_H, we also employ two baselines.
