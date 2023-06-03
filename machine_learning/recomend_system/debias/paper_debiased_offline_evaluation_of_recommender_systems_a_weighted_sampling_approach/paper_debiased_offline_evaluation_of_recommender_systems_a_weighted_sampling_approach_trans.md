@@ -153,7 +153,7 @@ In this way, from the data that we collect we remove biases such as the item dis
 Datasets collected by the “forced rating approach” are MAR-like, rather than MAR: they may still carry some bias.
 強制評価アプローチ」で収集されたデータセットは、MARというよりMAR的なもの(少しbiasを含んでいるって意味?)です。
 When building such a dataset, for example, although invitations are sent to users who are chosen uniformly at random, those who agree to participate may be atypical, thus introducing bias.
-例えば、このようなデータセットを構築する場合、ランダムに選ばれた一様なユーザーに招待状を送るものの、**参加に同意したユーザが非典型的である可能性があり**、バイアスが発生することがあります。
+例えば、このようなデータセットを構築する場合、ランダムに選ばれた一様なユーザに招待状を送るものの、**参加に同意したユーザが非典型的(=要は何らかの傾向がある?)である可能性があり**、バイアスが発生することがあります。
 Equally, the fact that, for each user, items to rate are presented sequentially introduces bias: the rating a user assigns to a particular item may be influenced by the items she has rated so far.
 また、各ユーザの評価項目が順次表示されるため、ある項目に対する評価が、それまでに評価した項目の影響を受けてしまうというバイアスが発生します。
 Although this means that these datasets are less biased, rather than unbiased, to the best of our knowledge, this is still the best way of collecting this type of data.
@@ -343,145 +343,161 @@ However, the formulation that we have given here provides us with a solid framew
 # 4. Intervened Test Sets 介在型テストセット
 
 To conduct unbiased evaluation from biased data, we generate and use intervened test sets in place of classical random heldout test sets.
-**偏ったデータから偏りのない評価を行うため**に、古典的なランダムホールドアウトテストセットの代わりに、**intervenedテストセット**を生成して使用します。
+**偏ったデータから偏りのない評価を行うため**に、古典的なランダムなhold-out テストセットの代わりに、**intervenedテストセット**を生成して使用します。
 We begin by presenting this approach in general (Section 4.1), and then we present the specifics of our approach (Sections 4.2 and 4.3).
 まず、このアプローチを一般的に紹介し（4.1節）、次に我々のアプローチの具体的な内容を紹介する（4.2節と4.3節）。
 
-## 4.1. The sampling approach サンプリングアプローチ
+## 4.1. The sampling approach サンプリングアプローチ(一般的な紹介)
 
 The sampling approach consists in performing a debiasing intervention on MNAR data D mnar by means of a given sampling strategy, denoted with S.
-サンプリングアプローチは、Sで示される所定のサンプリング戦略によって、MNARデータD mnarに対してデビアス介入を行うことからなる。
+サンプリングアプローチは、$S$で示される所定のサンプリング戦略によって、MNARデータ$D^{mnar}$に対してデビアス介入を行うことからなる。
 The result of the intervention is the dataset DS = {O S ⊂ O mnar ,Y S ⊂ Y mnar }, with the objective that DS has unbiased-like properties.
-介入の結果、データセットDS = {O S ⊂ O mnar ,Y S ⊂ Y mnar }となり、DSが不偏的な性質を持つことが目的となる。
+介入の結果、データセット$D_S = {O^S \cap O^{mnar},Y^S \cap Y^{mnar}}$となり、$D_s$が不偏的な性質を持つことが目的となる.(ふむふむ...!)
 We follow the same reasoning adopted to study properties of MAR and MNAR datasets.
-MARとMNARのデータセットの特性を研究するために採用したのと同じ推論に従う。
+MARとMNARのデータセットの特性を研究するために採用したのと同じreasoning(方法論?)に従う.
 Thus, we generate O S first and then we obtain Y S accordingly.
-したがって、まずO Sを生成し、それに応じてY Sを得ることになります。
+したがって、まず$O_S$を生成し、それに応じて$Y_S$を得ることになります。
 
 The sampling is performed on the space O mnar , ignoring interaction values in Y mnar .
-サンプリングは空間O mnarに対して行われ，Y mnarの相互作用値は無視される．
+サンプリングは空間$O^{mnar}$に対して行われ，$Y^{mnar}$のinteraction valueは無視される.
 We denote with S : U × I → {0, 1} the binary random variable that guides the sampling.
-サンプリングを導く二値確率変数をS : U × I → {0, 1}とする。
+**サンプリングを導く二値確率変数**を$\mathcal{S} : U × I → {0, 1}$とする。
 S = 1 when a particular user-item pair is sampled from O mnar , 0 otherwise.
-S = O mnarから特定のユーザとアイテムのペアがサンプリングされている場合は1、そうでない場合は0とする。
-(Again, we will use abbreviation P(S) in place of P(S = 1).) In practice, a particular strategy S is characterized by the expression of the probability PS (S|u,i), ∀(u,i) ∈ O mnar , which is the probability distribution responsible for guiding the sampling on O mnar .
-u,i), ∀(u,i) ∈ O mnar , which is the probability distribution responsible for guiding the sampling on O mnar .
+$O^{mnar}$から特定のユーザとアイテムのペアがサンプリングされている場合はS = 1、そうでない場合は0とする. (i.e. あるi&uペアがサンプリングされるか否かのbinaryの確率変数=bernouli分布に従うやつか...!)
+(Again, we will use abbreviation P(S) in place of P(S = 1).)
+(ここでも$P(S=1)$の代わりに $P(S)$ という略語を使う).
+In practice, a particular strategy S is characterized by the expression of the probability PS (S|u,i), ∀(u,i) ∈ O mnar , which is the probability distribution responsible for guiding the sampling on O mnar .
+実際には、特定の戦略S は、確率$P_S(\mathcal{S}|u,i) \forall(u,i) \in O^{mnar}$ の表現によって特徴付けられ、これは$O^{mnar}$上の**サンプリングを誘導する役割を持つ確率分布**である.
+(i.e. u,iを条件づけた時にS=1となる確率が決定される関数みたいな?? つまりこの関数の出力値はbernouli分布のパラメータlambda...!!)
 We present our sampling approach in the next subsection.
-次のサブセクションで、サンプリングのアプローチを紹介する。
+次のサブセクションで、本論文が提案するサンプリングのアプローチを紹介する.
 In Section 5, we will also define PS for SKEW and for two baseline approaches that we compare against in the experiments.
-セクション 5 では、SKEW の PS と、実験で比較した 2 つのベースラインアプローチの PS も定義します。
+セクション 5 では、SKEW の $P_S$ と、実験で比較した 2 つのベースラインアプローチの $P_S$ も定義する.
 
 ## 4.2. Our approach: weights for the sampling Our approach: サンプリングのための重み付け
 
 In the presentation of our approach, we will start by assuming the availability of some MAR-like data O mar in addition to MNAR data O mnar .
-本アプローチでは、MNARデータO mnarに加えて、MAR的なデータO marがあることを前提に説明します。
+本アプローチでは、MNARデータ$O^{mnar}$に加えて、MAR的なデータ$O^{mar}$があることを前提に説明します。(え! debiasアプローチ1で取得する様なMAR-likeなデータも必要なの??)
 In fact, we will see in Section 4.3 that we can use our approach even in cases where we do not have any MAR data.
-実際、4.3節では、MARデータがない場合でも、本アプローチを使用できることを確認する。
+実際、4.3節では、**MARデータがない場合でも、本アプローチを使用できることを確認する。**(良かったー...!)
 
 Our main idea is to make the posterior probability distribution of each user-item pair in the sampled O S , i.e.PS (u,i|S), approximately the same as the posterior probability distribution observed for the corresponding user-item pair in O mar , i.e.Pmar (u,i|O).
-S), approximately the same as the posterior probability distribution observed for the corresponding user-item pair in O mar , i.e.Pmar (u,i
+我々の主なアイデアは、サンプリングされた$O^S$の各ユーザ・アイテムペアの事後確率分布、すなわち$P_S(u，i|\mathcal{S})$を、**$O^mar$の対応するユーザ・アイテム・ペアについて観測された事後確率分布、すなわち $P_{mar}(u, i|O)$とほぼ同じにすること**である.
 In other words, we want to make O S similar to O mar in terms of its posteriors.
-つまり、O SをO marに後付けで似せたいのです。
+つまり、$O^S$を$O^{mar}$に**後付けで似せたい**のです。
 Writing this as a formula, we want:
 これを数式で書くと、次のようになります：
 
 $$
+P_S(u,i|\mathcal{S}) \sim P_{mar}(u,i|\mathcal{O}), \forall(u,i) \in O^S
 \tag{7}
 $$
 
 To obtain this approximation, we adjust the posterior distributions of the sampling space O mnar , i.e.Pmnar (u,i|O), using useritem weights w = (wui)u ∈U ,i ∈I (similarly to [19]).
-O), using useritem weights w = (wui)u ∈U ,i ∈I (similarly to [19]).
+この近似を得るために，ユーザアイテムの重み $w = (w_{ui})_{u \in U ,i \in I}$ を用いて，サンプリング空間 $O^{mnar}$ の事後分布，すなわち $P_{mnar}(u,i|\mathcal{O})$ を調整する（ [19] と同様である）．
 We denote the modified weighted MNAR posteriors by Pmnar (u,i|O,w).
-O,w).
+修正された**重み付きMNAR事後分布**を $P_{mnar}(u,i|\mathcal{O},w)$ と表記することにする。
 The goal is to find weights w so that:
-となるように重みwを見つけることが目的です：
+以下の等式を満たせるように重みwを見つけることが目的です：
 
 $$
+P_{mnar}(u,i|\mathcal{O},w) = P_{mar}(u,i|\mathcal{O}), \forall(u,i) \in O^{mnar}
 \tag{8}
 $$
 
 From the fact that a typical MAR dataset is uniformly distributed over users and items, we use the independence of formula 3 to re-write the right-hand side of formula 8 to obtain:
-典型的なMARデータセットがユーザーとアイテムに一様に分布していることから、数式3の独立性を利用して数式8の右辺を書き換えて求める：
+**典型的なMARデータセットがユーザとアイテムに一様に分布していること**から、数式(3)の独立性を利用して数式8の右辺を書き換えて求める：
 
 $$
+P_{mnar}(u,i|\mathcal{O},w) = P_{mar}(i|\mathcal{O}) \times P_{mar}(u|\mathcal{O})
 \tag{9}
 $$
 
 Similarly to formula 6 which considers user and item MNAR posteriors, user and item weighted MNAR posteriors will not in general be independent.
-ユーザとアイテムのMNAR後代を考慮した式6と同様に、ユーザとアイテムの重み付けMNAR後代は一般に独立ではない。
+ユーザとアイテムのMNAR事後分布を検討した式(6)と同様に、重み付けMNAR事後分布においてもユーザとアイテムは一般に独立ではない.
 However, we are going to treat them as if they were independent, to obtain the following:
-しかし、ここではそれらを独立したものとして扱い、次のように求めます：
+しかし、**ここではそれらを独立したものとして扱い**、次のように求めます：
 
 $$
+P_{mnar}(u,i|\mathcal{O},w)
+= P_{mnar}(i|\mathcal{O},w) \times P_{mnar}(u|\mathcal{O},w)
+, \forall(u,i) \in O^{mnar}
 \tag{10}
 $$
 
 While formula 10 is not true in general, we justify it by showing empirically in Section 6 that it does obtain good results.
-式10は一般的には正しくないが、第6節で経験的に良い結果が得られることを示し、これを正当化する。
+**式10は一般的には正しくないが、第6節で経験的に良い結果が得られることを示し、これを正当化する**.(理論的には不当な式変形だけど、経験的に効果あるから採用！って話...!)
 Now, using 10, we can split formula 9 into the two following equations:
-さて、10を使って、式9を次の2つの式に分割することができます：
+さて、式10を使って、式9を次の2つの式に分割することができます：
 
 $$
+P_{mnar}(u|\mathcal{O},w) = P_{mar}(u|\mathcal{O})
 \tag{11}
 $$
 
 $$
+P_{mnar}(u|\mathcal{O},w) = P_{mar}(u|\mathcal{O})
 \tag{12}
 $$
 
 As a consequence of formulas 11 and 12 for the weighted MNAR posteriors, we can define and calculate user-specific weights w = (wu )u ∈U and item-specific weights w = (wi)i ∈I instead of weights that are user-item specific.1
-重み付き MNAR ポステリオルに関する式 11 と式 12 の結果として、ユーザーとアイテムに特化した重みの代わりに、ユーザー固有の重み w = (wu )u∈U とアイテム固有の重み w = (wi)i∈I を定義して計算することができる1。
+重み付き MNAR 事後分布に関する式 11 と式 12 の結果として、ユーザ&アイテムペアに特化した重みの代わりに、ユーザ固有の重み $w = (w_{u})_{u \in U}$ とアイテム固有の重み $w = (w_i)_{i \in I}$ を定義して計算することができる.
+(Having independent user and item weights also has an advantage in terms of scalability. We need to calculate only |U | + |I | weights instead of |U × I |. This is good for scalability because |U × I | >> |U | + |I | for the values of |U | and |I | that we find in recommender domains.)
+(また、ユーザとアイテムの重みが独立していることは、スケーラビリティの面でも有利である. $|U \times I|$の代わりに、$|U| + |I|$の重みだけを計算すればよいのです。これはスケーラビリティの点でも良いことで、レコメンダー領域で見られるような｜U｜と｜I｜の値に対しては、$|U×I| > |U|+|I|$となるので...!)
 
 We propose the most straightforward solution to model the weighted MNAR posteriors, i.e.Pmnar (.|O,w) = w.Pmnar (.|O).
-O,w) = w.Pmnar (.
+我々は、重み付けされたMNARの後置をモデル化する最も簡単な解決策、すなわち.$P_{mnar}(.|\mathcal{O},w) = w_{.} \cdot P_{mnar}(.|\mathcal{O})$ を提案します。(**元々の事後確率を重み付けする...!シンプルな作戦**!)
 We plug this into formulas 11 and 12 and we obtain wuPmnar (u|O) = Pmar (u|O), wiPmnar (i|O) = Pmar (i|O) for each user and item weighted distribution respectively.
-O) = Pmar (u
+これを数式11及び数式12に当てはめると、各ユーザ及びアイテムの重み付け分布について、それぞれ$w_u \cdot P_{mnar}(u|\mathcal{O})＝P_{mar}(u|\mathcal{O})$、$w_i \cdot P_{mnar}(i｜\mathcal{O})＝P_{mar}(i｜\mathcal{O})$が得られる.
+(重み計算の為には、どうしても$P_{mar}(.|\mathcal{O})$の値が必要になる気がするんだけど...、理想的なMARデータとみなして理論値$1/|.|$を使えばいいのかな...!)
 Simply reversing these last two formulas, we have the expressions for calculating the weights:
 この2つの式を逆にすれば、重みの計算式ができあがります：
 
 $$
+w_{u} = \frac{P_{mar}(u｜\mathcal{O})}{P_{mnar}(u｜\mathcal{O})}, \forall u \in U
 \tag{13}
 $$
 
 $$
+w_{i} = \frac{P_{mar}(i｜\mathcal{O})}{P_{mnar}(i｜\mathcal{O})}, \forall i \in I
 \tag{14}
 $$
 
 We can think of the calculated weights as quantities that measure the divergence between the MNAR distributions of the sampling space and the target MAR distribution.
-算出された重みは、サンプリング空間のMNAR分布と目標のMAR分布との乖離を測る量と考えることができます。
+算出された重みは、**サンプリング空間のMNAR分布と目標のMAR分布との乖離を測る量**と考えることができます。
 Because a specific weight adjusts the corresponding MNAR distribution, we directly use weights to model the sampling distribution, i.e.PS (S|u,i) = wuwi .
-u,i) = wuwi .
+特定のウェイトが対応するユーザorアイテムのMNAR分布を調整するため、ウェイトを直接使用してサンプリング分布をモデル化する、すなわち$P_S(\mathcal{S}|u,i) = w_u \cdot w_i$ 。
 During the sampling, the effect of the weights is to increase or decrease the probability that a particular user-item pair is sampled depending on how divergent are the user and item posterior probabilities in the MNAR sampling space with respect to the MAR distributions.
-サンプリング中、重みの効果は、MAR分布に対するMNARサンプリング空間のユーザーとアイテムの事後確率がどれだけ乖離しているかによって、特定のユーザーとアイテムのペアがサンプリングされる確率が増減することである。
+サンプリング中、重みの効果は、**MAR分布に対するMNARサンプリング空間のユーザとアイテムの事後確率がどれだけ乖離しているか**によって、**特定のユーザとアイテムのペアがサンプリングされる確率が増減する**ことである.
 
 In fact, based on preliminary experiments, we use PS (S|u,i) = wu (wi) 2 instead.
-u,i) = wu (wi) 2 instead.
+実際には、予備実験に基づき、$P_S(\mathcal{S}|u,i) = w_u \cdot (w_i)^2$ を代わりに使用する.(アイテムのbias対処により重きを置いた方が経験的に結果が良かった??)
 This variant, denoted by WTD in the rest of this paper, raises the importance of the item-weight relative to the user weight.
-この変形は、本論文の残りの部分ではWTDと表記され、ユーザーウェイトに対してアイテムウェイトの重要性を高めています。
+この変形は、本論文の残りの部分では **WTD** と表記され、**ユーザウェイトに対してアイテムウェイトの重要性を高めて**います。(WTDはなんの略だろう...)
 Specifically, (wi) 2 will be bigger than wi if wi is greater than one, and (wi) 2 will be smaller than wi if wi is less than one.
-具体的には、wiが1より大きい場合は（wi）2がwiより大きくなり、wiが1より小さい場合は（wi）2がwiより小さくなります。
+具体的には、$w_i$が1より大きい場合は$w_i^2$がw_iより大きくなり、w_iが1より小さい場合はw_i^2がw_iより小さくなります。
 This choice makes sense in the light of previous research reported in the literature which identifies item popularity as one of the most impactful confounders in MNAR data, e.g.[21, 24].
-この選択は、MNARデータにおいてアイテムの人気が最も影響力のある交絡因子の1つであるとする文献で報告された先行研究（例：[21, 24]）に照らして理にかなっています。
+この選択は、**MNARデータにおいてアイテムの人気が最も影響力のある交絡因子の1つであるとする文献で報告された先行研究**（例：[21, 24]）に照らして理にかなっています。(popularity biasが最も影響のある交絡因子の一つ...!)
 
 ## 4.3. Hypothesized distributions for the weights 重みの分布の仮説
 
 Up to this point, we assumed the availability of some MAR-like data in order to give us the posteriors that we need to approximate.
-ここまでは、近似に必要な後置を与えるために、MARのようなデータがあることを想定していました。
+ここまでは、近似に必要な事後分布(=$P_{mar}(u,i|\mathcal{O})$)を与えるために、MAR-likeデータがあることを想定していました。
 But MAR-like data is expensive or impossible to collect, as we discussed when presenting the “forced rating approach” earlier.
-しかし、MARのようなデータは、先ほどの「強制格付けアプローチ」の提示の際に述べたように、高価であったり、収集不可能であったりします。
+**しかし、MARのようなデータは、先ほどの“forced rating approach”の提示の際に述べたように、高価であったり、収集不可能であったりします**。(ウンウン.)
 Furthermore, in those cases where we do have a reasonable amount of MAR-like data at hand, we could use it directly as an unbiased test set.
 さらに、手元にそれなりの量のMARのようなデータがある場合には、それをそのまま不偏のテストセットとして使用することも可能です。
 Using it to calculate weights so that we can intervene on MNAR data to produce a more MAR-like test set would then be pointless.
-MNARのデータに介入して、よりMARに近いテストセットを作るために、重みを計算するために使うのは無意味なことです。
+MNARのデータに介入して、よりMARに近いテストセットを作るために、重みを計算するために使うのは無意味なことです。(うんうん確かに...!そもそも...!)
 
 In fact, when we do not have any MAR-like data, we can still use our approach.
-実際、MARのようなデータがない場合でも、私たちのアプローチを使うことは可能です。
+実際、**MARのようなデータがない場合でも、私たちのアプローチを使うことは可能**です。
 We know that the posterior probability distribution for MAR data is uniform (Pmar (u|O) = 1/|U |, Pmar (i|O) = 1/|I |), and this is all we need for our sampling approach.
-O) = 1/
+MARデータの事後確率分布は一様($P_{mar}(u|\mathcal{O}) = 1/|U|, P_{mar}(i|\mathcal{O}) = 1/|I|$)であることが分かっており、これがサンプリングアプローチに必要なすべてである.(うんうん!やっぱり!)
 Therefore, we can use this hypothesized distribution when calculating the weights, avoiding the need for a MAR-like dataset.
-そのため、ウェイトを計算する際にこの仮説の分布を利用することで、MARのようなデータセットが不要になります。
+そのため、**ウェイトを計算する際にこの仮説通りの分布を利用することで、MARのようなデータセットが不要になります。**
 We call this strategy, WTD_H (where the H stands for “hypothesized”).
-この戦略をWTD_H（Hは "hypothesized "の略）と呼んでいます。
+この戦略を **WTD_H（Hは "hypothesized "の略）**と呼んでいます。
 
 # 5. Experiments 実験
 
@@ -491,7 +507,7 @@ WTDとWTD_Hをオフライン実験で評価しましたので、本項で説明
 ## 5.1. Datasets データセット
 
 We use two publicly available datasets: CoatShopping2 from the clothing domain [22] and Webscope R33 from the music domain [18].
-我々は2つの一般に公開されているデータセットを使用する： CoatShopping2（衣服領域）[22]とWebscope R33（音楽領域）[18]である．
+我々は2つの一般に公開されているデータセットを使用する： CoatShopping2（衣服領域）[22]とWebscope R33（音楽領域）[18]である.
 Both of them are ideal for our purposes because they are composed of two parts, one having MAR properties (Dmar = {O mar ,Y mar }), and the other having MNAR properties (Dmar = {O mnar ,Y mnar }).
 どちらもMAR特性を持つ部分（Dmar = {O mar ,Y mar }）とMNAR特性を持つ部分（Dmar = {O mnar ,Y mnar }）で構成されているので、今回の目的にはぴったりです。
 For both of them, interactions are in the form of ratings, so that Y ∈ {1, 2, 3, 4, 5} U ×I .

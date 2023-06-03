@@ -11,10 +11,10 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: ユーザとの対話で推薦結果を変化させるInteractive Recommenderをfeed-serverに実装してみようとした話
+title: ユーザとの対話で推薦結果を変化させるInteractive RecommenderをREST APIで実装してみようとした話
 subtitle: (推薦システム × kotlin × OpenAI API の話)
 date: 2023/06/02
-author: NewsPicks Data/Algorithm unit インターン 森田大登
+author: Masato Morita(Data/Algorithm unit)
 title-slide-attributes:
   #   data-background-image: https://i.imgur.com/nTazczH.png
   data-background-size: contain
