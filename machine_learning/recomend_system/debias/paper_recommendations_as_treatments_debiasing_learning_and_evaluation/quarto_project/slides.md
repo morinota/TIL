@@ -11,7 +11,7 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: hogehogeな論文を読んだ
+title: 推薦システムにおけるMNARデータを使った学習 & 検証において、因果推論の傾向スコアを用いて誤差関数を調整する事でbiasに対処する論文を読んだ
 subtitle: n週連続推薦システム系論文読んだシリーズ 17週目
 # date: 2023/06/02
 author: morinota
@@ -236,7 +236,7 @@ SNIPS推定量はIPS推定量よりも分散が小さいことが多いが、小
 
 # Observational Settingにおいて、どうMNARデータのbiasに対応する?
 
-## propensity $P$ の推定のモチベーション
+<!-- ## propensity $P$ の推定のモチベーション -->
 
 Observational Settingの場合、前述した通り、propensity $P$ の推定から始める必要がある. ($P$を推定した後は、experimental settingと同様にIPS推定量やSNIPS推定量を使える.)
 
@@ -256,7 +256,7 @@ $$
 
 ## propensity 推定モデルの活用
 
-復習だがここでの我々の目的は、ユーザ$u$とアイテム$i$の評価値が観測される確率$P_{u,i}$を推定する事.
+復習だが、ここでの我々の目的は、ユーザ$u$とアイテム$i$の評価値が観測される確率$P_{u,i}$を推定する事.
 
 一般にpropensityは以下に依存している可能性がある.
 
@@ -305,4 +305,71 @@ $$
 
 # 実験方法・結果
 
+合成データを用いて、experimental setting と observational setting の両方で提案手法の経験的性能とロバスト性を探る.
+
+また、実世界のデータセットにおいて、MNAR(Missing Not At Random)データに対する最先端の共同尤度法(Hernandez- ´ Lobato et al, 2014)と比較した.
+
 ## 実験方法
+
+- 全ての実験において、行列因子分解モデル(MFモデル)を使用.(ハイパーパラメータは、正則化の強さを決める$\lambda$とベクトル次元数$d$)
+- モデル性能の評価方法に関しては、実世界データセットの場合はMCARテストセット、合成データの場合は式(1)を用いた評価をする.
+- 合成データにおいて、{u,i}ペアを**サンプリングする事でMNARデータによる選択バイアスを再現**する.
+  - $\alpha \in (0,1)$ を変化させる事で、選択バイアスの厳しさをコントロールする. ($\alpha = 1$ はMCARデータ. $\alpha =0$ は 4~5点の評価のみが観測される厳しめのMNARデータ)
+
+## 実験1: 選択バイアスの厳しさは推薦モデルの**検証**にどう影響するか?
+
+表1は、$\alpha = 0.25$ (=結構MNARなデータ)の場合のMAEとDCG@50の推定値の結果.
+
+![](https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/4-Table1-1.png)
+
+## 実験1: 選択バイアスの厳しさは推薦モデルの**検証**にどう影響するか?
+
+図2は、各推定量が"真のMSEとDCGをそれぞれどの程度正確に推定できたか"をRMSEを用いて表したもの.
+
+![](https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/7-Figure2-1.png){fig-align="center"}
+
+- αのほとんどの範囲において、特に現実的な値であるα=0.25では、**IPSとSNIPSの推定値はNaive推定値よりも桁違いに高い精度**を示している.(真の誤差関数の値に対する精度...!)
+
+## 実験2: 選択バイアスの厳しさは推薦モデルの**学習**にどう影響するか?
+
+次に、このような誤差関数(=モデルの性能)の推定精度の向上が、**ERMによる学習効果の向上につながるかどうか**を、再びExperimental Setting で検証してみた.
+
+![](https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/7-Figure3-1.png){fig-align="center"}
+
+図3 左図は、MF-IPSとMF-naiveの真の予測性能(真の評価行列$Y$に対する誤差関数)をMSEで算出した結果. MF-IPSは従来のMF-naiveを常に上回る.
+
+## 実験3: 不正確に学習されたpropensityに対して、評価や学習はどの程度ロバストなのか?
+
+図4は、**propensity推定が必要なObservational Setting**において、propensity 推定の不正確さが推薦モデルの**検証**にどのような影響を与えるかを示したもの. (propensity推定にはナイーブベイズを採用)
+
+![](https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/8-Figure4-1.png){fig-align="center"}
+
+- 興味深いことに、propensities 推定したIPS-NBは、propensityが既知のIPS-KNOWNよりもさらに優れた性能を発揮した.
+  - **推定された propensities が層別化のような効果をもたらす**こともあり、知られている効果らしい.(Hirano et al, 2003; Wooldridge, 2007)
+
+## 実験3: 不正確に学習されたpropensityに対して、評価や学習はどの程度ロバストなのか?
+
+また図3 右図は、propensity が不正確な場合に推薦モデルの**学習**にどのような影響があるかを示している.
+propensitiyを推定したMF-IPS-NBのMSE予測誤差を、propensityが既知のMF-NaiveとMF-IPSと比較したもの.
+
+![](https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/7-Figure3-1.png){fig-align="center"}
+
+ここでも、**MF-IPS-NBは、著しく劣化した(MCARの観測データ数が少ない為...!)propensity推定値においてもMF-Naiveを上回り**、本アプローチのロバスト性を実証している. (そもそもMF-naiveが超絶劣化したpropensity推定と見なせるから...!)
+
+## 実験4: 実世界データにおける性能はどう?
+
+MCARデータとMNARデータの両方を含んだベンチマークデータセットを用いて性能を評価(オンライン実験をした訳では無い).
+MF-IPSにおいてpropensity推定はロジスティック回帰を用いた.
+
+![](https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/8-Table2-1.png){fig-align="center"}
+
+表2は、各推薦モデルのMCARテストセットに対する評価値の予測精度を評価したもの.
+MF-IPSは、MF-naiveやHL-MNARやHL-MARを大幅に上回った.
+更にMF-IPSの性能は、**YahooデータセットのSOTAに近い結果だった**との事.
+
+## 議論
+
+- 提案したMF-IPSは、更に拡張が可能っぽい:
+  - propensity推定のための改良された手法を適用できる.
+- propensity推定モデルと推薦モデル(rating予測モデル)を分離している為、実用的.
+  - -> 既存の推薦システムの運用において、propensity推定モデルを差し込むのみで良いので導入しやすい...??

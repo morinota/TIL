@@ -628,7 +628,7 @@ Shaded regions indicate a 95% confidence interval.
 Over most of the range of α, in particular for the realistic value of α = 0.25, the IPS and SNIPS estimators are orders-of-magnitude more accurate than the Naive estimator.
 αのほとんどの範囲において、特に現実的な値であるα=0.25では、**IPSとSNIPSの推定値はNaive推定値よりも桁違いに高い精度を示しています**。
 Even for severely low choices of α, the gain due to bias reduction of IPS and SNIPS still outweighs the added variability compared to Naive.
-αを極端に小さくした場合でも(バイアスがほとんどない場合でも)、IPSとSNIPSのバイアス低減による利得は、Naiveと比較して追加された変動を上回った。
+αを極端に小さくした場合でも(=バイアスがやばい存在する場合)、IPSとSNIPSのバイアス低減による利得は、Naiveと比較して追加された変動を上回った。
 When α = 1 (MCAR), SNIPS is algebraically equivalent to Naive, while IPS pays a small penalty due to increased variability from propensity weighting.
 α=1（MCAR）の場合、SNIPSは代数的にNaiveと同等であるが、IPSは傾向重み付けによる変動が大きくなるため、小さなペナルティを支払う。
 For MSE, SNIPS consistently reduces estimation error over IPS while both are tied for DCG.
@@ -639,7 +639,7 @@ MSEについては、SNIPSはIPSよりも一貫して推定誤差を低減して
 ![](https://camo.qiitausercontent.com/a0297beaca6d40d6a737d171be3c849b91b9e101/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32636334646664632d346464612d623964642d626235662d6231313562663637363435352e706e67)
 
 Now we explore whether these gains in risk estimation accuracy translate into improved learning via ERM, again in the Experimental Setting.
-次に、このようなリスク(=誤差関数の事?)推定精度の向上が、**ERMによる学習効果の向上につながるかどうか**を、再びExperimental Setting で検証してみる。
+次に、このような誤差関数(=モデルの性能)の推定精度の向上が、**ERMによる学習効果の向上につながるかどうか**を、再びExperimental Setting で検証してみる。
 Using the same semi-synthetic ML100K dataset and observation model as above, we compare our matrix factorization MF-IPS with the traditional unweighted matrix factorization MF-Naive.
 上記と同じ半合成ML100Kデータセットと観測モデルを用いて、我々の**行列分解MF-IPSと従来の重み付けなし行列分解MF-Naiveを比較**します。
 Both methods use the same factorization model with separate λ selected via cross-validation and d = 20.
@@ -651,7 +651,7 @@ The propensity-weighted matrix factorization MF-IPS consistently outperforms con
 We also conducted experiments for MAE, with similar results.
 また、MAEについても実験を行いましたが、同様の結果が得られました。
 
-## 6.4. How robust is evaluation and learning to inaccurately learned propensities?
+## 6.4. How robust is evaluation and learning to inaccurately learned propensities? 不正確に学習されたpropensityに対して、評価や学習はどの程度頑健なのか？
 
 We now switch from the Experimental Setting to the Observational Setting, where propensities need to be estimated.
 ここで、Experimental Settingから Observational Setting に切り替える. この場合、propensities を推定する必要がある.
@@ -663,12 +663,12 @@ To generate increasingly bad propensity estimates, we use the Naive Bayes model 
 Figure 4 shows how the quality of the propensity estimates impacts evaluation using the same setup as in Section 6.2.Under no condition do the IPS and SNIPS estimator perform worse than Naive.
 図4は、6.2節と同じ設定を用いて、propensity 推定の品質が評価にどのような影響を与えるかを示したものである。
 Interestingly, IPS-NB with estimated propensities can perform even better than IPS-KNOWN with known propensities, as can be seen for MSE.
-興味深いことに、propensities 推定したIPS-NBは、MSEでわかるように、予感がわかっているIPS-KNOWNよりもさらに優れた性能を発揮することができます。
+興味深いことに、propensities 推定したIPS-NBは、MSEでわかるように、propensityがわかっているIPS-KNOWNよりもさらに優れた性能を発揮することができます。
 This is a known effect, partly because the estimated propensities can provide an effect akin to stratification (Hirano et al., 2003; Wooldridge, 2007).
 これは、**推定された propensities が層別化のような効果をもたらす**こともあり、知られている効果である（Hirano et al, 2003; Wooldridge, 2007）。
 
 Figure 3 (right) shows how learning performance is affected by inaccurate propensities using the same setup as in Section 6.3.We compare the MSE prediction error of MFIPS-NB with estimated propensities to that of MF-Naive and MF-IPS with known propensities.
-図3（右）は、6.3節と同じ設定で、propensities が不正確な場合に学習性能にどのような影響があるかを示している。propensities を推定したMFIPS-NBのMSE予測誤差を、propensities が分かっているMF-NaiveとMF-IPSと比較している。
+図3（右）は、6.3節と同じ設定で、propensities が不正確な場合に学習性能にどのような影響があるかを示している。propensities を推定したMF-IPS-NBのMSE予測誤差を、propensities が分かっているMF-NaiveとMF-IPSと比較している。
 The shaded area shows the 95% confidence interval over 30 trials.
 網掛け部分は、30回の試行における95％信頼区間を示しています。
 Again, we see that MF-IPS-NB outperforms MF-Naive even for severely degraded propensity estimates, demonstrating the robustness of the approach.
@@ -677,9 +677,9 @@ Again, we see that MF-IPS-NB outperforms MF-Naive even for severely degraded pro
 ## 6.5. Performance on Real-World Data 実世界のデータにおける性能
 
 Our final experiment studies performance on real-world datasets.
-最後の実験では、実世界のデータセットにおけるパフォーマンスを調査します.(ついにオンライン実験)
+最後の実験では、実世界のデータセットにおけるパフォーマンスを調査します.(ついにオンライン実験?)
 We use the following two datasets, which both have a separate test set where users were asked to rate a uniformly drawn sample of items.
-以下の2つのデータセットを使用する。これらはどちらも、ユーザに一様に描かれたアイテムのサンプルを評価するよう求められた別のテストセットを持っている。
+以下の2つのデータセットを使用する。これらはどちらも、ユーザに一様に描かれたアイテムのサンプルを評価するよう求められた別のテストセット(MCARなテストデータ)を持っている。
 
 ### Yahoo! R3 Dataset.
 
