@@ -51,7 +51,7 @@ Second, with these estimators in hand, we propose an Empirical Risk Minimization
 Third, we use the ERM framework to derive a matrix factorization method that can account for selection bias while remaining conceptually simple and highly scalable.
 第三に、ERMフレームワークを用いて、選択バイアスを考慮しつつ、**概念的にシンプルで拡張性の高い行列分解法**を導出する。
 Fourth, we explore methods to estimate propensities in observational settings where selection bias is due to selfselection by the users, and we characterize the robustness of the framework against mis-specified propensities.
-第四に、選択バイアスがユーザの自己選択によるものである観察設定において、予感を推定する方法を探求し、予感の誤特定に対する枠組みの頑健性を特徴付けるものである。
+第四に、選択バイアスがユーザの自己選択によるものである観察設定において、propensityを推定する方法を探求し、予感の誤特定に対する枠組みの頑健性を特徴付けるものである。
 
 Our conceptual and theoretical contributions are validated in an extensive empirical evaluation.
 私たちの概念的・理論的な貢献は、広範な実証評価で検証されています。
@@ -108,7 +108,7 @@ Steck(2010)から引用したおもちゃの例で、選択バイアスが従来
 Denote with u ∈ {1, ..., U} the users and with i ∈ {1, ..., I} the movies.
 u∈｛1，...，U｝をユーザ、i∈｛1，...，I｝を映画とする.
 Figure 1 shows the matrix of true ratings $Y \in \mathbf{R}^{U \times I}$ for our toy example, where a sub set of users are “horror lovers” who rate all horror movies 5 and all romance movies 1.
-図1は、"ホラー好き "のユーザのサブセットが、すべてのホラー映画を5、すべてのロマンス映画を1と評価する場合における、真の評価の行列$Y \in \mathbf{R}^{U \times I}$を示したものである。
+図1は、"ホラー好き"のユーザのサブセットが、すべてのホラー映画を5、すべてのロマンス映画を1と評価する場合における、真の評価の行列$Y \in \mathbf{R}^{U \times I}$を示したものである。
 Similarly, there is a subset of “romance lovers” who rate just the opposite way.
 同様に、「ロマンス好き」の中にも、正反対の評価をする人がいます。
 However, both groups rate dramas as 3.
@@ -180,15 +180,15 @@ $\hat{R}_{naive}(\hat{Y})$ を置き換える改良型推定器を設計する�
 ## 3.2. Task 2: Estimating Recommendation Quality タスク2：レコメンデーション品質の見積もり
 
 Instead of evaluating the accuracy of predicted ratings, we may want to more directly evaluate the quality of a particular recommendation.
-予測された評価の精度を評価するのではなく、**より直接的に特定の推薦の質を評価したい場合**がある。
+予測された評価値の精度を評価するのではなく、**より直接的に特定の推薦の質を評価したい場合**がある。
 To this effect, let’s redefine Yˆ to now encode recommendations as a binary matrix analogous to O, where [Yˆ u,i = 1] ⇔ [i is recommended to u], limited to a budget of k recommendations per user.
-このため、$\hat{Y}$を再定義し、Oに類似した二値行列として**推薦結果を符号化**する。ここで、[Yˆ u,i = 1] ⇔ [i が u に推薦される]とし、1ユーザあたりk件の推薦文を予算として限定する.
+このため、$\hat{Y}$を再定義し、Oに類似した二値行列として**推薦結果を符号化**する。ここで、$[\hat{Y}_{u,i} = 1]$ ⇔ [i が u に推薦される]とし、1ユーザあたりk件の推薦文を予算として限定する.
 An example is Yˆ 3 in Figure 1.
 例として、図1のYˆ3が挙げられる。
 A reasonable way to measure the quality of a recommendation is the Cumulative Gain (CG) that the user derives from the recommended movies, which we define as the average star-rating of the recommended movies in our toy example.(More realistically, Y would contain quality scores derived from indicators like “clicked” and “watched to the end”.)
 推薦の質を測る合理的な方法は、**ユーザが推薦された映画から得るCumulative Gain(累積利益, CG)**であり、我々はおもちゃの例で推薦された映画の平均星評価と定義する。(より現実的には、Yには「クリック」「最後まで見た」などの指標から得られる品質スコア クリックした」「最後まで見た」などの指標に基づく品質スコアを含む。)
 CG can again be written in the form of Eq.(1) with
-CGは、再び式(1)の形で、次のように書くことができます。(真の嗜好Y\_{u,i}がより高いアイテムを推薦しているか否か.)
+CGは、再び式(1)の形で、次のように書くことができます。(真の嗜好$Y_{u,i}$Yがより高いアイテムを推薦しているか否か.)
 
 $$
 CG: \delta_{u,i}(Y, \hat{Y}) = (I/k) \hat{Y} \cdot Y_{u,i}
