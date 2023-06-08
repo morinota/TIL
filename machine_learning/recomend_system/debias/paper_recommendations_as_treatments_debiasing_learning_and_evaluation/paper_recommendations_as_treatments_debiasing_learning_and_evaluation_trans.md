@@ -242,9 +242,9 @@ In this paper, we assume that the assignment mechanism is probabilistic, meaning
 This ensures that, in principle, every element of Y could be observed, even though any particular O reveals only a small subset.
 これにより、特定のOが小さな部分集合しか明らかにしないとしても、原理的にはYのすべての要素を観察することができる.
 We refer to Pu,i as the propensity of observing Yu,i.
-$P_{u,i}$を「**Y\_{u,i}を観察する傾向(propensity)**」と呼ぶことにする.
+$P_{u,i}$を「**$Y_{u,i}$ を観察する傾向(propensity)**」と呼ぶことにする.
 In the experimental setting, we know the matrix P of all propensities, since we have implemented the assignment mechanism.
-experimental setting では、割り当て機構を実装しているので、すべてのプロパティの行列Pを知ることができる.
+experimental setting では、割り当て機構を実装しているので、すべてのpropensitiesの行列Pを知ることができる.
 In the observational setting, we will need to estimate P from the observed matrix O.
 **observational setting では、観測された行列OからPを推定する必要がある**.
 We defer the discussion of propensity estimation to Section 5, and focus on the experimental setting first.
@@ -266,7 +266,7 @@ $$
 $$
 
 Unlike the naive estimator Rˆ naive(Yˆ ), the IPS estimator is unbiased for any probabilistic assignment mechanism.
-ナイーブ推定量Rˆ naive(Yˆ ) とは異なり、**IPS推定量はどのような確率的割り当て機構に対しても不偏である**.
+ナイーブ推定量$\hat{R(\hat{Y})}_{naive}$ とは異なり、**IPS推定量はどのような確率的割り当て機構に対しても不偏である**.
 Note that the IPS estimator only requires the marginal probabilities Pu,i and unbiased-ness is not affected by dependencies within O:
 なお、IPS推定器は周辺確率Pu,iのみを必要とし、不偏性はO内の依存性には影響されない：
 
@@ -285,7 +285,7 @@ E_{O_{u,i}}[\frac{\delta_{u,i}(Y,\hat{Y})}{P_{u,i}} O_{u,i}]
 $$
 
 To characterize the variability of the IPS estimator, however, we assume that observations are independent given P, which corresponds to a multivariate Bernoulli model where each Ou,i is a biased coin flip with probability Pu,i.
-しかし、IPS推定量のばらつきを特徴づけるために、観測値が$P$が与えられた時に独立であると仮定する(=条件付き独立)。これは、多変量ベルヌーイモデルに相当し、**各Ou,iは確率Pu,iで偏ったコインフリップ**となる.
+しかし、IPS推定量のばらつきを特徴づけるために、観測値($O$の各要素)は$P$が与えられた時に独立であると仮定する(=条件付き独立?)。これは、多変量ベルヌーイモデルに相当し、**各Ou,iは確率Pu,iで偏ったコインフリップ**となる.
 The following proposition (proof in appendix) provides some intuition about how the accuracy of the IPS estimator changes as the propensities become more “non-uniform”.
 次の命題（証明は付録）は、**propensities(傾向)が「非一様」になるにつれてIPS推定器の精度がどのように変化するか**について、いくつかの直感を与える.(おまけっぽい内容だから優先度は低そう...!)
 
@@ -319,15 +319,15 @@ SNIPS Estimatorです。
 One technique that can reduce variability is the use of control variates (Owen, 2013).
 ばらつきを抑える手法として、**制御変量の利用**がある（Owen, 2013）。
 Applied to the IPS estimator, we know that EO hP (u,i):Ou,i=1 1 Pu,i i = U · I.
-IPS推定量に適用すると、$E_{O}[\sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}}]= U \cdot I$ となることがわかる.(これを使うと、推定量の分散を低減できる...??)
+IPS推定量に適用すると、$E_{O}[\sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}}]= U \cdot I$ となることがわかる.(これを使うと、IPS推定量の分散を低減できる...??)
 This yields the SelfNormalized Inverse Propensity Scoring (SNIPS) estimator (Trotter & Tukey, 1956; Swaminathan & Joachims, 2015)
-これにより、SelfNormalized Inverse Propensity Scoring (SNIPS) estimator (Trotter & Tukey, 1956; Swaminathan & Joachims, 2015) が得られます。
+これにより、**Self Normalized Inverse Propensity Scoring (SNIPS)** estimator (Trotter & Tukey, 1956; Swaminathan & Joachims, 2015) が得られます。
 
 $$
 \hat{R}_{SNIPS}(\hat{Y}|P) = \frac{
     \sum_{(u,i):O_{u,i} = 1} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}} % 分子=元のIPS推定量の式.
 }{
-    \sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}} % 制御変数?
+    \sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}} % 制御変量?
 }
 \tag{11}
 $$
@@ -457,12 +457,12 @@ One might be worried that we need to perfectly reconstruct all propensities for 
 However, as we will show, we merely need estimated propensities that are “better” than the naive assumption of observations being revealed uniformly, i.e., P = |{(u, i) : Ou,i = 1}|/ (U · I) for all users and items.
 しかし、これから示すように、我々は、**観測結果が一様に明らかになるという素朴(naive)な仮定よりも「良い」推定されたpropensitiesを必要としているだけ**である。(i.e. 全てのユーザとアイテムについて $P = |{(u, i) : O_{u,i} = 1}|/ (U \cdot I)$)
 The following characterizes “better” propensities in terms of the bias they induce and their effect on the variability of the learning process.
-以下では、「より良い」性質について、それが誘発するバイアスと、学習プロセスの変動に対する効果の観点から特徴付ける。
+以下では、「より良い」propensities について、それが誘発するバイアスと、学習プロセスの変動に対する効果の観点から特徴付ける。
 
-Lemma 5.1 (Bias of IPS Estimator under Inaccurate Propensities).
+Lemma(補足) 5.1 (Bias of IPS Estimator under Inaccurate Propensities).
 レンマ5.1（**不正確なPropensities の下でのIPS推定器のバイアス**）。
 Let P be the marginal probabilities of observing an entry of the rating matrix Y , and let Pˆ be the estimated propensities such that Pˆ u,i > 0 for all u, i.
-評価行列Yのエントリを観測する周辺確率をPとし、すべてのu, iに対して$\hat{P}_{u,i} > 0$となるような推定propensityを$\hat{P}$とする.
+評価行列Yのエントリを観測する周辺確率をPとし、すべてのu, iに対して$\hat{P}_{u,i} > 0$となるようなpropensity推定量を$\hat{P}$とする.
 The bias of the IPS estimator Eq.(10) using Pˆ is
 Pˆを用いたIPS推定量式(10)のバイアスは、以下の通り。
 
@@ -513,11 +513,11 @@ The following outlines two simple propensity estimation methods, but there is a 
 ### 5.1.1. Propensity Estimation via Naive Bayes. ナイーブベイズによる傾向推定を行う。
 
 The first approach estimates $P(O_{u,i}|X, Xhid, Y)$ by assuming that dependencies between covariates X, Xhid and other ratings are negligible.
-最初のアプローチは、**共変量X、Xhidと他の評価との間の依存関係が無視できると仮定**(=> i.e.)して、$P(O_{u,i}|X, Xhid, Y)$を推定する。(要するにMCARなデータ?とは違うか...!)
+最初のアプローチは、**共変量 X、Xhidと他の評価Yとの間の依存関係が無視できると仮定**(=> i.e.)して、$P(O_{u,i}|X, Xhid, Y)$を推定する。(要するにMCARなデータ?とは違うか...!)
 Eq.(17) then reduces to P(Ou,i|Yu,i) similar to Marlin & Zemel (2009).
 式(17)は、Marlin & Zemel (2009)と同様に、$P(O_{u,i}|Y_{u,i})$に還元されます。
 We can treat Yu,i as observed, since we only need the propensities for observed entries to compute IPS and SNIPS.
-IPSとSNIPSの計算には、**観測されたエントリーの傾向スコアのみが必要**なので、**(全ての!)Yu,iは観測されたものとして扱うことができる**.
+IPSとSNIPSの計算には、**観測されたエントリ{u,i}の傾向スコアのみが必要**なので、**(全ての!)Yu,iは観測されたものとして扱うことができる**.
 This yields the Naive Bayes propensity estimator:
 これにより、ナイーブベイズの傾向推定器が得られる：
 
@@ -536,13 +536,13 @@ However, to estimate P(Y = r), we need a small sample of MCAR data.
 ### 5.1.2. Propensity Estimation via Logistic Regression ロジスティック回帰による傾向推定
 
 The second propensity estimation approach we explore (which does not require a sample of MCAR data) is based on logistic regression and is commonly used in causal inference (Rosenbaum, 2002).
-私たちが探求する**2つ目の傾向推定アプローチ（MCARデータのサンプルを必要としない）は、ロジスティック回帰に基づくもの**で、**因果推論によく使われる**ものです（Rosenbaum, 2002）。
+私たちが探求する**2つ目の傾向推定アプローチ（MCARデータのサンプルを必要としない）は、ロジスティック回帰に基づくもの**で、**因果推論によく使われる**ものです。
 It also starts from Eq.(17), but aims to find model parameters φ such that O becomes independent of unobserved Xhid and Y , i.e., P(Ou,i|X, Xhid, Y ) = P(Ou,i|X, φ).
 これも式(17)から出発するが、**Oが未観測のXhidとYに依存しなくなるようなモデルパラメータφ**、すなわち $P(O_{u,i}|X, X_{hid}, Y) = P(O_{u,i}|X, φ)$ を見つけることを目的としている.
 The main modeling assumption is that there exists a φ = (w, β, γ) such that $P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})$.
 主なモデリングの仮定は、$P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})$ となるようなφ = (w, β, γ) が存在することである.
 Here, Xu,i is a vector encoding all observable information about a user-item pair (e.g., user demographics, whether an item was promoted, etc.), and σ(·) is the sigmoid function.
-ここで、$X_{u,i}$は、ユーザとアイテムのペアに関するすべての観測可能な情報（例えば、ユーザーのデモグラフィック、アイテムがプロモーションされたかどうかなど）を符号化したベクトルで、$\sigma()$はシグモイド関数です。
+ここで、$X_{u,i}$は、ユーザとアイテムのペアに関するすべての観測可能な情報(例えば、ユーザーのデモグラフィック、アイテムがプロモーションされたかどうかなど)を符号化したベクトルで、$\sigma()$はシグモイド関数です。
 βi and γu are peritem and per-user offsets.
 $\beta_{i}$、$\gamma_{u}$は、アイテム単位、ユーザ単位のオフセットである.
 
@@ -639,7 +639,7 @@ MSEについては、SNIPSはIPSよりも一貫して推定誤差を低減して
 ![](https://camo.qiitausercontent.com/a0297beaca6d40d6a737d171be3c849b91b9e101/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f313639373237392f32636334646664632d346464612d623964642d626235662d6231313562663637363435352e706e67)
 
 Now we explore whether these gains in risk estimation accuracy translate into improved learning via ERM, again in the Experimental Setting.
-次に、このようなリスク推定精度の向上が、**ERMによる学習効果の向上につながるかどうか**を、再びExperimental Setting で検証してみる。
+次に、このようなリスク(=誤差関数の事?)推定精度の向上が、**ERMによる学習効果の向上につながるかどうか**を、再びExperimental Setting で検証してみる。
 Using the same semi-synthetic ML100K dataset and observation model as above, we compare our matrix factorization MF-IPS with the traditional unweighted matrix factorization MF-Naive.
 上記と同じ半合成ML100Kデータセットと観測モデルを用いて、我々の**行列分解MF-IPSと従来の重み付けなし行列分解MF-Naiveを比較**します。
 Both methods use the same factorization model with separate λ selected via cross-validation and d = 20.
@@ -654,7 +654,7 @@ We also conducted experiments for MAE, with similar results.
 ## 6.4. How robust is evaluation and learning to inaccurately learned propensities?
 
 We now switch from the Experimental Setting to the Observational Setting, where propensities need to be estimated.
-ここで、実験的設定から Observational Setting に切り替える. この場合、propensities を推定する必要がある.
+ここで、Experimental Settingから Observational Setting に切り替える. この場合、propensities を推定する必要がある.
 To explore robustness to propensity estimates of varying accuracy, we use the ML100K data and observation model with α = 0.25.
 様々な精度の propensity 推定に対する頑健性を調べるために、ML100Kデータとα=0.25の観測モデルを使用した.
 To generate increasingly bad propensity estimates, we use the Naive Bayes model from Section 5.1, but vary the size of the MCAR sample for estimating the marginal ratings P(Y = r) via the Laplace estimator.

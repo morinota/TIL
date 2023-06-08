@@ -154,10 +154,155 @@ $Y$の観測値が欠損している状況で推薦システムの性能の不�
 
 ## 選択バイアスを処理する鍵
 
+選択バイアスを処理する鍵は、Observed Matrix $O$の**観察パターンを生成するプロセス**を理解することにある.
+このプロセスは、一般的に因果推論におけるAssignment Mechanism、欠損データ分析におけるMissing Data Mechanismと呼ばれる.
+
 ## 2種類の観察パターン生成プロセス
+
+論文では"観察パターン生成プロセス"を理解する為に、以下の2つの設定を区別して考える.
+
+- Experimental Setting: "観察パターン生成プロセス"が推薦システムの制御下にある設定. ex. 広告配信システムは、どの広告をどのユーザに見せるかを完全に制御する.
+- Observational Setting: "観察パターン生成プロセス"の一部にユーザの意志が含まれる設定. ex. 映画のオンライン配信では、ユーザが視聴する映画を自分で選ぶ.
 
 ## Propensity Score(傾向スコア)を使って推定量を調整する
 
-## IPS Estimator
+- 本論文では、"観察パターン生成プロセス"が**確率的**であると仮定する.
+  (i.e. 任意のユーザ-アイテムペアの評価値 $Y_{u,i}$ を観察する周辺確率 $P_{u,i} = P(O_{u,i} = 1)$ は非ゼロである.)
+  - -> 真の評価行列 $Y$ の全ての要素が観察され得る、という仮定...!
+- $P_{u,i}$を「**$Y_{u,i}$ を観察する傾向(propensity)**」と呼ぶ.
+- Experimental Settingの場合、"観察パターン生成プロセス"は推薦システムの制御下にあるので、開発者は**propensity matrix $P$の全ての要素を把握できる**.
+- Observational Settingの場合、**$P$ を observed matrix $O$ から推定する**必要がある.
 
-## 
+(observational settingに必要な) propensity $P$の推定の議論は後回しとし、まずはexperimental setting($P$が明らかになっているケース)に焦点を当てる.
+
+# Experimental Settingにおいて、どうMNARデータのbiasに対応する?
+
+## IPS(Inverse-Propensity-Scoring) 推定量
+
+推薦タスクや予測タスクにも適用される**Inverse-Propensity-Scoring (IPS)推定量** (Thompson, 2012; Little & Rubin, 2002; Imbens & Rubin, 2015) は、次のように定義される(名前通り、**propensityの逆数を乗じてscoring**してる...!):
+
+$$
+\hat{R}_{IPS}(\hat{Y}|P) = \frac{1}{U \cdot I} \sum_{(u,i):O_{u,i} = 1} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}}
+\\
+= \frac{1}{U \cdot I} \sum_{u} \sum_{i} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}} \cdot O_{u,i}
+\\
+\because O_{u,i} \text{は観察されたか否かのbinary変数なので...!}
+\tag{10}
+$$
+
+naive推定量 $\hat{R(\hat{Y})}_{naive}$ とは異なり、IPS推定量は**あらゆる確率的な"観察パターン生成プロセス"において不偏推定量**である. (正しい $P$さえ分かっていれば...!)
+experimental settingの場合は真の$P$が分かるので、IPS推定量を活用できる.
+
+## (補足)IPS推定量の不偏性が実際の観測行列$O$に影響されない話
+
+IPS推定量は周辺確率$P_{u,i}$のみを必要とし、その不偏性は 実際の観測結果 $O$ には影響されない.
+
+(証明)$O$に対するIPS推定量の期待値を算出してみる.
+
+$$
+E_{O}[\hat{R}_{IPS}(\hat{Y}|P)]
+= \frac{1}{U\cdot I} \sum_{u} \sum_{i}
+E_{O_{u,i}}[\frac{\delta_{u,i}(Y,\hat{Y})}{P_{u,i}} O_{u,i}]
+\\
+= \frac{1}{U\cdot I} \sum_{u} \sum_{i}
+\delta_{u,i}(Y,\hat{Y})
+\\
+\because \text{propensityの定義より...} P_{u,i} = E_{O_{u,i}}[O_{u,i}]
+\\
+= R(\hat{Y})
+\tag{10.5}
+$$
+
+## (補足)IPS推定量の分散(variability)について
+
+## IPS推定量のばらつきを抑える為に...SNIPS推定量の活用
+
+IPS推定量のばらつきを抑える手法として、**制御変量(control variates)の利用**がある(Owen, 2013).
+IPS推定量に適用すると、$E_{O}[\sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}}]= U \cdot I$ となることがわかる.(これを使うと、IPS推定量の分散を低減できる...??)
+これにより、以下の**SNIPS(Self Normalized Inverse Propensity Scoring)推定量**が得られる:
+
+$$
+\hat{R}_{SNIPS}(\hat{Y}|P) = \frac{
+    \sum_{(u,i):O_{u,i} = 1} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}} % 分子=元のIPS推定量の式.
+}{
+    \sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}} % 制御変量?
+}
+\tag{11}
+$$
+
+分子は元のIPS推定量の式. 分母は制御変量?
+
+SNIPS推定量はIPS推定量よりも分散が小さいことが多いが、小さいバイアスを持っている.
+
+# Observational Settingにおいて、どうMNARデータのbiasに対応する?
+
+## propensity $P$ の推定のモチベーション
+
+Observational Settingの場合、前述した通り、propensity $P$ の推定から始める必要がある. ($P$を推定した後は、experimental settingと同様にIPS推定量やSNIPS推定量を使える.)
+
+ここで重要なのは、**我々は $P$ を完璧に推定する必要はない**、という事である.
+なぜなら我々は、$P$が一様であるという仮説に基づくnaive推定量よりも"良い(マシな)"$P$を推定できれば良いのである...!
+
+## (補足) $P$の推定が、誤差関数のIPS推定量に与えるバイアス
+
+真の評価行列$Y$の各要素を観測する周辺確率を$P$とし、すべてのu, iに対して$\hat{P}_{u,i} > 0$となるようなpropensity推定量を$\hat{P}$とする.
+
+$\hat{P}$ を用いたIPS推定量(10)のバイアスは、以下:
+
+$$
+bias(\hat{R}_{IPS}(\hat{Y}|\hat{P})) = \sum_{u,i} \frac{\delta_{u,i}(Y, \hat{Y})}{UI} [1 - \frac{P_{u,i}}{\hat{P}_{u,i}}]
+\tag{15}
+$$
+
+## propensity 推定モデルの活用
+
+復習だがここでの我々の目的は、ユーザ$u$とアイテム$i$の評価値が観測される確率$P_{u,i}$を推定する事.
+
+一般にpropensityは以下に依存している可能性がある.
+
+- 観測可能な特徴量 $X$: ex. アイテムのUIへの表示頻度, etc.
+- 観測不可能な特徴量 $X^{hid}$: ex. アイテムが友人によって推薦された,etc.
+- 真の評価$Y$ : ユーザがアイテムを好きか嫌いか.
+
+式にするとこう:
+
+$$
+P_{u,i} = P(O_{u,i} = 1| X, X^{hid}, Y)
+\tag{17}
+$$
+
+<!-- $X$が考慮された場合、$O_{u,i}$ は予測値 $\hat{Y}$ には(誤差 $\delta_{u,i}(Y, \hat{Y})$ )にも依存しないはず. (予測値は$X$から推定されるはずだから?). -->
+
+続いて、2つのシンプルなpropensity推定モデルをざっと紹介するが、ドメイン固有のニーズに対応できる技法も幅広く存在する(例：McCaffrey et al, 2004)
+
+## propensity 推定モデル1: ナイーブベイズによる推定
+
+この方法では、$P_{u,i}$ と $X$、$X^{hid}$ との間の依存関係が無視できると仮定することで、$P(O_{u,i}|X, Xhid, Y)$ を推定する.(かなりラフな推定...!)
+
+この仮定により、以下のnaive bayes推定量が得られる:
+
+$$
+P(O_{u,i} = 1|Y_{u,i} = r) = \frac{P(Y=r|O=1)P(O=1)}{P(Y=r)}
+\tag{18}
+$$
+
+- なおIPSとSNIPSの計算には、**観測されたエントリ{u,i}のpropensityのみが必要**なので、上式における$Y_{u,i}$は観測されたものとして扱うことができる.
+- $P(Y=r｜O=1)$とP(O=1)の最尤推定値は、**MNARデータで観測された評価を数えることで得ることができる**.(シンプルに割り算で推定できる?)
+- しかし、$P(Y=r)$を推定するためには、MCARデータの少量サンプルが必要.(ここは更にひと工夫する必要がありそう...!)
+
+## propensity 推定モデル2: ロジスティック回帰による推定
+
+- この方法はロジスティック回帰に基づくもので、因果推論分野でよく使われる(Rosenbaum, 2002).
+- この方法の目的は、**$O$ が $X^{hid}$ と $Y$ に独立となる様なモデルパラメータ$\phi$を見つける事**. (i.e. $P(O_{u,i}|X, X_{hid}, Y) = P(O_{u,i}|X, \phi)$ を満たす様な$\phi$)
+- 以下のモデル式を満たす様な$\phi = (w, \beta, \gamma)$が存在する、と仮定する.
+
+$$
+P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})
+$$
+
+- ここで、$X_{u,i}$は、{u,i}ペアに関する全ての観測可能な特徴量をベクトル化したもの. $\sigma()$はsigmoid関数.
+- $\beta_{i}$、$\gamma_{u}$は、それぞれアイテム毎、ユーザ毎にユニークなoffset項.
+
+# 実験方法・結果
+
+## 実験方法
