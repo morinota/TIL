@@ -24,7 +24,7 @@ title-slide-attributes:
 ## 論文の基本情報
 
 - title: Recommendations as Treatments: Debiasing Learning and Evaluation
-- published date: hogehoge September 2022,
+- published date: 17 Feb 2016,
 - authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
 - url(paper): [https://arxiv.org/abs/1602.05352](https://arxiv.org/abs/1602.05352)
 
