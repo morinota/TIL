@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.1.168">
 
   <meta name="author" content="morinota">
-  <title>hogehogeな論文を読んだ</title>
+  <title>推薦システムにおけるMNARデータを使った学習 &amp; 検証において、因果推論の傾向スコアを用いて誤差関数を調整する事でbiasに対処する論文を読んだ</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -324,7 +324,7 @@
     <div class="slides">
 
 <section id="title-slide" data-background-opacity="0.5" data-background-size="contain" class="center">
-  <h1 class="title">hogehogeな論文を読んだ</h1>
+  <h1 class="title">推薦システムにおけるMNARデータを使った学習 &amp; 検証において、因果推論の傾向スコアを用いて誤差関数を調整する事でbiasに対処する論文を読んだ</h1>
   <p class="subtitle">n週連続推薦システム系論文読んだシリーズ 17週目</p>
   <p class="author">morinota</p>
 </section>
@@ -333,13 +333,20 @@
 <h2>論文の基本情報</h2>
 <ul>
 <li>title: Recommendations as Treatments: Debiasing Learning and Evaluation</li>
-<li>published date: hogehoge September 2022,</li>
+<li>published date: 17 Feb 2016,</li>
 <li>authors: Wondo Rhee, Sung Min Cho, Bongwon Suh</li>
 <li>url(paper): <a href="https://arxiv.org/abs/1602.05352">https://arxiv.org/abs/1602.05352</a></li>
 </ul>
 </section>
 <section id="ざっくり論文概要" class="slide level2">
 <h2>ざっくり論文概要</h2>
+<ul>
+<li>本論文は、推薦システムにおける<strong>MNAR(Missing Not at Random)データ</strong>を使った<strong>学習 &amp; 評価(検証)</strong>において、因果推論の傾向スコアを用いて誤差関数を調整する事でbiasに対処しよう！という話だった.</li>
+<li>MNARデータに対する”学習のみ”や、“評価のみ”に焦点を当てた論文も多いが、本論文は両方に焦点を当てて汎用的なアプローチの提案を試みている印象.</li>
+<li>MNARデータを使ってそのままモデル性能(誤差関数)を推定しようとすると、真のモデル性能の値に対してbiasが発生してしまう. (不偏推定量でなくなってしまう.)</li>
+<li>そこで因果推論分野の<strong>propensity score(傾向スコア)</strong>を用いて、モデル性能の推定量を調整して、真のモデル性能の不偏推定量を作ろう…!!という話.</li>
+<li>↑で作ったモデル性能の不偏推定量をモデル性能の評価(検証)や学習時の目的関数に使う事で、MNARデータにおいても<strong>良い感じの推薦モデルを作れる・選べる</strong>ようになるぞ…!という話.</li>
+</ul>
 </section>
 <section>
 <section id="introduction" class="title-slide slide level1 center">
@@ -348,22 +355,23 @@
 </section>
 <section id="推薦システムにおける選択バイアスとmnarデータ" class="slide level2">
 <h2>推薦システムにおける選択バイアスとMNARデータ</h2>
+<ul>
+<li>推薦システムの学習用データ・検証用データは、実環境において多くの場合、<strong>選択バイアス</strong>がかかっている.
+<ul>
+<li>ex.1) 映画推薦システムにおいて、ユーザは自分の好きな映画を観て評価し、自分の嫌いな映画を評価する事はほぼない. -&gt;<strong>ユーザ自身の選択行動による選択バイアス</strong></li>
+<li>ex.2) 広告配信システムにおいて、ユーザが興味を持ちそうな広告を表示するが、それ以外の広告を表示する頻度は低くなる. -&gt; <strong>推薦システムの動作による選択バイアス</strong></li>
+</ul></li>
+<li>様々な選択バイアスに伴い開発者が得られるのは、観測/未観測の傾向が偏ったデータ = <strong>MNAR(Missing Not At Random)</strong>と呼ばれるデータになる.(Little &amp; Rubin, 2002)</li>
+</ul>
 </section>
-<section id="本論文の目的" class="slide level2">
-<h2>本論文の目的</h2>
-</section>
-<section id="mnarデータの扱いに関する既存研究" class="slide level2">
-<h2>MNARデータの扱いに関する既存研究</h2>
-</section>
-<section id="propensity-based-アプローチに関して" class="slide level2">
-<h2>Propensity-based アプローチに関して</h2>
-<p>V</p>
+<section id="本論文の目的-アプローチの概要" class="slide level2">
+<h2>本論文の目的 &amp; アプローチの概要</h2>
+<ul>
+<li>本論文の目的は、<strong>選択バイアスによるMNARデータの元で</strong>、原理的、実用的かつ効果的に推薦システムを評価(検証)・学習できるアプローチを開発する事.</li>
+<li><strong>推薦を因果推論の観点から見る</strong>と、推薦システムでユーザにアイテムを見せることは、医学研究において患者に治療法を見せるのと同じような介入(intervention)である.</li>
+<li><strong>推薦と実験・観測データに対する因果推論を結びつけること</strong>で、選択バイアス下での推薦システムの公平な評価と学習のための原則的なフレームワークを導き出す.</li>
+</ul>
 </section></section>
-<section id="推薦システムの為のunbiasedな性能推定" class="title-slide slide level1 center">
-<h1>推薦システムの為のunbiasedな性能推定</h1>
-
-</section>
-
 <section>
 <section id="mnarデータが従来の学習検証に与える影響" class="title-slide slide level1 center">
 <h1>MNARデータが従来の学習・検証に与える影響</h1>
@@ -462,6 +470,219 @@ CG: \delta_{u,i}(Y, \hat{Y}) = (I/k) \hat{Y} \cdot Y_{u,i}
 <p><span class="math inline">\(Y\)</span>の観測値が欠損している状況で推薦システムの性能の不偏推定値を得る為に、本論文では、因果推論の<strong>average treatment effects</strong>の推定方法を活用するアプローチを採用する.</p>
 <p>推薦タスクを、ある薬で患者を治療するような介入(intervention)と同様に考えると、新しい治療方針(ex. 女性には薬Aを、男性には薬Bを与える = 新しい推薦結果<span class="math inline">\(\hat{Y}\)</span>) の効果を推定したい.</p>
 <p>どちらの場合も、<strong>ある患者(i.e.&nbsp;ユーザ)がある治療(i.e.&nbsp;映画)からどれだけ恩恵を受けたかについては部分的な知識しかなく</strong>(すなわち、<span class="math inline">\(O_{u,i} = 1\)</span>の <span class="math inline">\(Y_{u,i}\)</span>のみ…!)、<span class="math inline">\(Y\)</span>における潜在的な結果の大部分は未観測である、という課題がある.</p>
+</section>
+<section id="選択バイアスを処理する鍵" class="slide level2">
+<h2>選択バイアスを処理する鍵</h2>
+<p>選択バイアスを処理する鍵は、Observed Matrix <span class="math inline">\(O\)</span>の<strong>観察パターンを生成するプロセス</strong>を理解することにある. このプロセスは、一般的に因果推論におけるAssignment Mechanism、欠損データ分析におけるMissing Data Mechanismと呼ばれる.</p>
+</section>
+<section id="種類の観察パターン生成プロセス" class="slide level2">
+<h2>2種類の観察パターン生成プロセス</h2>
+<p>論文では”観察パターン生成プロセス”を理解する為に、以下の2つの設定を区別して考える.</p>
+<ul>
+<li><strong>Experimental Setting</strong>: “観察パターン生成プロセス”が推薦システムの制御下にある設定. ex. 広告配信システムは、どの広告をどのユーザに見せるかを完全に制御する.</li>
+<li><strong>Observational Setting</strong>: “観察パターン生成プロセス”の一部にユーザの意志が含まれる設定. ex. 映画のオンライン配信では、ユーザが視聴する映画を自分で選ぶ.</li>
+</ul>
+</section>
+<section id="propensity-score傾向スコアを使って推定量を調整する" class="slide level2">
+<h2>Propensity Score(傾向スコア)を使って推定量を調整する</h2>
+<ul>
+<li>本論文では、“観察パターン生成プロセス”が<strong>確率的</strong>であると仮定する. (i.e.&nbsp;任意のユーザ-アイテムペアの評価値 <span class="math inline">\(Y_{u,i}\)</span> を観察する周辺確率 <span class="math inline">\(P_{u,i} = P(O_{u,i} = 1)\)</span> は非ゼロである.)
+<ul>
+<li>-&gt; 真の評価行列 <span class="math inline">\(Y\)</span> の全ての要素が観察され得る、という仮定…!</li>
+</ul></li>
+<li><span class="math inline">\(P_{u,i}\)</span>を「<strong><span class="math inline">\(Y_{u,i}\)</span> を観察する傾向(propensity)</strong>」と呼ぶ.</li>
+<li>Experimental Settingの場合、“観察パターン生成プロセス”は推薦システムの制御下にあるので、開発者は<strong>propensity matrix <span class="math inline">\(P\)</span>の全ての要素を把握できる</strong>.</li>
+<li>Observational Settingの場合、<strong><span class="math inline">\(P\)</span> を observed matrix <span class="math inline">\(O\)</span> から推定する</strong>必要がある.</li>
+</ul>
+<p>(observational settingに必要な) propensity <span class="math inline">\(P\)</span>の推定の議論は後回しとし、まずはexperimental setting(<span class="math inline">\(P\)</span>が明らかになっているケース)に焦点を当てる.</p>
+</section></section>
+<section>
+<section id="experimental-settingにおいてどうmnarデータのbiasに対応する" class="title-slide slide level1 center">
+<h1>Experimental Settingにおいて、どうMNARデータのbiasに対応する?</h1>
+
+</section>
+<section id="ipsinverse-propensity-scoring-推定量" class="slide level2">
+<h2>IPS(Inverse-Propensity-Scoring) 推定量</h2>
+<p>推薦タスクや予測タスクにも適用される<strong>Inverse-Propensity-Scoring (IPS)推定量</strong> (Thompson, 2012; Little &amp; Rubin, 2002; Imbens &amp; Rubin, 2015) は、次のように定義される(名前通り、<strong>propensityの逆数を乗じてscoring</strong>してる…!):</p>
+<p><span class="math display">\[
+\hat{R}_{IPS}(\hat{Y}|P) = \frac{1}{U \cdot I} \sum_{(u,i):O_{u,i} = 1} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}}
+\\
+= \frac{1}{U \cdot I} \sum_{u} \sum_{i} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}} \cdot O_{u,i}
+\\
+\because O_{u,i} \text{は観察されたか否かのbinary変数なので...!}
+\tag{10}
+\]</span></p>
+<p>naive推定量 <span class="math inline">\(\hat{R(\hat{Y})}_{naive}\)</span> とは異なり、IPS推定量は<strong>あらゆる確率的な”観察パターン生成プロセス”において不偏推定量</strong>である. (正しい <span class="math inline">\(P\)</span>さえ分かっていれば…!) <strong>experimental settingの場合は真の<span class="math inline">\(P\)</span>が分かる</strong>ので、IPS推定量を活用できる.</p>
+</section>
+<section id="補足ips推定量の不偏性が実際の観測行列oに影響されない話" class="slide level2">
+<h2>(補足)IPS推定量の不偏性が実際の観測行列<span class="math inline">\(O\)</span>に影響されない話</h2>
+<p>IPS推定量は周辺確率<span class="math inline">\(P_{u,i}\)</span>のみを必要とし、その不偏性は 実際の観測結果 <span class="math inline">\(O\)</span> には影響されない.</p>
+<p>(証明)<span class="math inline">\(O\)</span>に対するIPS推定量の期待値を算出してみる.</p>
+<p><span class="math display">\[
+E_{O}[\hat{R}_{IPS}(\hat{Y}|P)]
+= \frac{1}{U\cdot I} \sum_{u} \sum_{i}
+E_{O_{u,i}}[\frac{\delta_{u,i}(Y,\hat{Y})}{P_{u,i}} O_{u,i}]
+\\
+= \frac{1}{U\cdot I} \sum_{u} \sum_{i}
+\delta_{u,i}(Y,\hat{Y})
+\\
+\because \text{propensityの定義より...} P_{u,i} = E_{O_{u,i}}[O_{u,i}]
+\\
+= R(\hat{Y})
+\tag{10.5}
+\]</span></p>
+</section>
+<section id="ips推定量のばらつきを抑える為にsnips推定量の活用" class="slide level2">
+<h2>IPS推定量のばらつきを抑える為に…SNIPS推定量の活用</h2>
+<p>IPS推定量のばらつきを抑える手法として、<strong>制御変量(control variates)の利用</strong>がある(Owen, 2013). IPS推定量に適用すると、<span class="math inline">\(E_{O}[\sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}}]= U \cdot I\)</span> となることがわかる.(これを使うと、IPS推定量の分散を低減できる…??) これにより、以下の<strong>SNIPS(Self Normalized Inverse Propensity Scoring)推定量</strong>が得られる:</p>
+<p><span class="math display">\[
+\hat{R}_{SNIPS}(\hat{Y}|P) = \frac{
+    \sum_{(u,i):O_{u,i} = 1} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}} % 分子=元のIPS推定量の式.
+}{
+    \sum_{(u,i):O_{u,i}=1} \frac{1}{P_{u,i}} % 制御変量?
+}
+\tag{11}
+\]</span></p>
+<p>分子は元のIPS推定量の式. 分母は制御変量?</p>
+<p>SNIPS推定量はIPS推定量よりも分散が小さいことが多いが、小さいバイアスを持っている.</p>
+</section></section>
+<section>
+<section id="observational-settingにおいてどうmnarデータのbiasに対応する" class="title-slide slide level1 center">
+<h1>Observational Settingにおいて、どうMNARデータのbiasに対応する?</h1>
+<!-- ## propensity $P$ の推定のモチベーション -->
+<p>Observational Settingの場合、前述した通り、propensity <span class="math inline">\(P\)</span> の推定から始める必要がある. (<span class="math inline">\(P\)</span>を推定した後は、experimental settingと同様にIPS推定量やSNIPS推定量を使える.)</p>
+<p>ここで重要なのは、<strong>我々は <span class="math inline">\(P\)</span> を完璧に推定する必要はない</strong>、という事である. なぜなら我々は、<span class="math inline">\(P\)</span>が一様であるという仮説に基づくnaive推定量よりも”良い(マシな)“<span class="math inline">\(P\)</span>を推定できれば良いのである…!</p>
+</section>
+<section id="補足-pの推定が誤差関数のips推定量に与えるバイアス" class="slide level2">
+<h2>(補足) <span class="math inline">\(P\)</span>の推定が、誤差関数のIPS推定量に与えるバイアス</h2>
+<p>真の評価行列<span class="math inline">\(Y\)</span>の各要素を観測する周辺確率を<span class="math inline">\(P\)</span>とし、すべてのu, iに対して<span class="math inline">\(\hat{P}_{u,i} &gt; 0\)</span>となるようなpropensity推定量を<span class="math inline">\(\hat{P}\)</span>とする.</p>
+<p><span class="math inline">\(\hat{P}\)</span> を用いたIPS推定量(10)のバイアスは、以下:</p>
+<p><span class="math display">\[
+bias(\hat{R}_{IPS}(\hat{Y}|\hat{P})) = \sum_{u,i} \frac{\delta_{u,i}(Y, \hat{Y})}{UI} [1 - \frac{P_{u,i}}{\hat{P}_{u,i}}]
+\tag{15}
+\]</span></p>
+</section>
+<section id="propensity-推定モデルの活用" class="slide level2">
+<h2>propensity 推定モデルの活用</h2>
+<p>復習だが、ここでの我々の目的は、ユーザ<span class="math inline">\(u\)</span>とアイテム<span class="math inline">\(i\)</span>の評価値が観測される確率<span class="math inline">\(P_{u,i}\)</span>を推定する事.</p>
+<p>一般にpropensityは以下に依存している可能性がある.</p>
+<ul>
+<li>観測可能な特徴量 <span class="math inline">\(X\)</span>: ex. アイテムのUIへの表示頻度, etc.</li>
+<li>観測不可能な特徴量 <span class="math inline">\(X^{hid}\)</span>: ex. アイテムが友人によって推薦された,etc.</li>
+<li>真の評価<span class="math inline">\(Y\)</span> : ユーザがアイテムを好きか嫌いか.</li>
+</ul>
+<p>式にするとこう:</p>
+<p><span class="math display">\[
+P_{u,i} = P(O_{u,i} = 1| X, X^{hid}, Y)
+\tag{17}
+\]</span></p>
+<!-- $X$が考慮された場合、$O_{u,i}$ は予測値 $\hat{Y}$ には(誤差 $\delta_{u,i}(Y, \hat{Y})$ )にも依存しないはず. (予測値は$X$から推定されるはずだから?). -->
+<p>続いて、2つのシンプルなpropensity推定モデルをざっと紹介するが、ドメイン固有のニーズに対応できる技法も幅広く存在する(例：McCaffrey et al, 2004)</p>
+</section>
+<section id="propensity-推定モデル1-ナイーブベイズによる推定" class="slide level2">
+<h2>propensity 推定モデル1: ナイーブベイズによる推定</h2>
+<p>この方法では、<span class="math inline">\(P_{u,i}\)</span> と <span class="math inline">\(X\)</span>、<span class="math inline">\(X^{hid}\)</span> との間の依存関係が無視できると仮定することで、<span class="math inline">\(P(O_{u,i}|X, Xhid, Y)\)</span> を推定する.(かなりラフな推定…!)</p>
+<p>この仮定により、以下のnaive bayes推定量が得られる:</p>
+<p><span class="math display">\[
+P(O_{u,i} = 1|Y_{u,i} = r) = \frac{P(Y=r|O=1)P(O=1)}{P(Y=r)}
+\tag{18}
+\]</span></p>
+<ul>
+<li>なおIPSとSNIPSの計算には、<strong>観測されたエントリ{u,i}のpropensityのみが必要</strong>なので、上式における<span class="math inline">\(Y_{u,i}\)</span>は観測されたものとして扱うことができる.</li>
+<li><span class="math inline">\(P(Y=r｜O=1)\)</span>とP(O=1)の最尤推定値は、<strong>MNARデータで観測された評価を数えることで得ることができる</strong>.(シンプルに割り算で推定できる?)</li>
+<li>しかし、<span class="math inline">\(P(Y=r)\)</span>を推定するためには、MCARデータの少量サンプルが必要.(ここは更にひと工夫する必要がありそう…!)</li>
+</ul>
+</section>
+<section id="propensity-推定モデル2-ロジスティック回帰による推定" class="slide level2">
+<h2>propensity 推定モデル2: ロジスティック回帰による推定</h2>
+<ul>
+<li>この方法はロジスティック回帰に基づくもので、因果推論分野でよく使われる(Rosenbaum, 2002).</li>
+<li>この方法の目的は、<strong><span class="math inline">\(O\)</span> が <span class="math inline">\(X^{hid}\)</span> と <span class="math inline">\(Y\)</span> に独立となる様なモデルパラメータ<span class="math inline">\(\phi\)</span>を見つける事</strong>. (i.e.&nbsp;<span class="math inline">\(P(O_{u,i}|X, X_{hid}, Y) = P(O_{u,i}|X, \phi)\)</span> を満たす様な<span class="math inline">\(\phi\)</span>)</li>
+<li>以下のモデル式を満たす様な<span class="math inline">\(\phi = (w, \beta, \gamma)\)</span>が存在する、と仮定する.</li>
+</ul>
+<p><span class="math display">\[
+P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})
+\]</span></p>
+<ul>
+<li>ここで、<span class="math inline">\(X_{u,i}\)</span>は、{u,i}ペアに関する全ての観測可能な特徴量をベクトル化したもの. <span class="math inline">\(\sigma()\)</span>はsigmoid関数.</li>
+<li><span class="math inline">\(\beta_{i}\)</span>、<span class="math inline">\(\gamma_{u}\)</span>は、それぞれアイテム毎、ユーザ毎にユニークなoffset項.</li>
+</ul>
+</section></section>
+<section>
+<section id="実験方法結果" class="title-slide slide level1 center">
+<h1>実験方法・結果</h1>
+<p>合成データを用いて、experimental setting と observational setting の両方で提案手法の経験的性能とロバスト性を探る.</p>
+<p>また、実世界のデータセットにおいて、MNAR(Missing Not At Random)データに対する最先端の共同尤度法(Hernandez- ´ Lobato et al, 2014)と比較した.</p>
+</section>
+<section id="実験方法" class="slide level2">
+<h2>実験方法</h2>
+<ul>
+<li>全ての実験において、行列因子分解モデル(MFモデル)を使用.(ハイパーパラメータは、正則化の強さを決める<span class="math inline">\(\lambda\)</span>とベクトル次元数<span class="math inline">\(d\)</span>)</li>
+<li>モデル性能の評価方法に関しては、実世界データセットの場合はMCARテストセット、合成データの場合は式(1)を用いた評価をする.</li>
+<li>合成データにおいて、{u,i}ペアを<strong>サンプリングする事でMNARデータによる選択バイアスを再現</strong>する.
+<ul>
+<li><span class="math inline">\(\alpha \in (0,1)\)</span> を変化させる事で、選択バイアスの厳しさをコントロールする. (<span class="math inline">\(\alpha = 1\)</span> はMCARデータ. <span class="math inline">\(\alpha =0\)</span> は 4~5点の評価のみが観測される厳しめのMNARデータ)</li>
+</ul></li>
+</ul>
+</section>
+<section id="実験1-選択バイアスの厳しさは推薦モデルの検証にどう影響するか" class="slide level2">
+<h2>実験1: 選択バイアスの厳しさは推薦モデルの<strong>検証</strong>にどう影響するか?</h2>
+<p>表1は、<span class="math inline">\(\alpha = 0.25\)</span> (=結構MNARなデータ)の場合のMAEとDCG@50の推定値の結果.</p>
+
+<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/4-Table1-1.png" class="r-stretch"><ul>
+<li>IPS推定量の平均値は、MAEとDCGの両方で真の性能に完全に一致する.</li>
+<li>naive推定量は著しく偏り、<strong>推薦モデルの良し悪しの誤ったランク付け</strong>を導く.(ex. REC ONESの性能をREC FOURSよりも高くランク付けしてしまう.)</li>
+</ul>
+</section>
+<section id="実験1-選択バイアスの厳しさは推薦モデルの検証にどう影響するか-1" class="slide level2">
+<h2>実験1: 選択バイアスの厳しさは推薦モデルの<strong>検証</strong>にどう影響するか?</h2>
+<p>図2は、各推定量が”真のMSEとDCGをそれぞれどの程度正確に推定できたか”をRMSEを用いて表したもの.</p>
+
+<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/7-Figure2-1.png" class="r-stretch quarto-figure-center"><ul>
+<li>αのほとんどの範囲において、特に現実的な値であるα=0.25では、<strong>IPSとSNIPSの推定値はNaive推定値よりも桁違いに高い精度</strong>を示している.(真の誤差関数の値に対する精度…!)</li>
+</ul>
+</section>
+<section id="実験2-選択バイアスの厳しさは推薦モデルの学習にどう影響するか" class="slide level2">
+<h2>実験2: 選択バイアスの厳しさは推薦モデルの<strong>学習</strong>にどう影響するか?</h2>
+<p>次に、このような誤差関数(=モデルの性能)の推定精度の向上が、<strong>ERMによる学習効果の向上につながるかどうか</strong>を、再びExperimental Setting で検証してみた.</p>
+
+<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/7-Figure3-1.png" class="r-stretch quarto-figure-center"><p>図3 左図は、MF-IPSとMF-naiveの真の予測性能(真の評価行列<span class="math inline">\(Y\)</span>に対する誤差関数)をMSEで算出した結果. MF-IPSは従来のMF-naiveを常に上回る.</p>
+</section>
+<section id="実験3-不正確に学習されたpropensityに対して評価や学習はどの程度ロバストなのか" class="slide level2">
+<h2>実験3: 不正確に学習されたpropensityに対して、評価や学習はどの程度ロバストなのか?</h2>
+<p>図4は、<strong>propensity推定が必要なObservational Setting</strong>において、propensity 推定の不正確さが推薦モデルの<strong>検証</strong>にどのような影響を与えるかを示したもの. (propensity推定にはナイーブベイズを採用)</p>
+
+<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/8-Figure4-1.png" class="r-stretch quarto-figure-center"><ul>
+<li>興味深いことに、propensities 推定したIPS-NBは、propensityが既知のIPS-KNOWNよりもさらに優れた性能を発揮した.
+<ul>
+<li><strong>推定された propensities が層別化のような効果をもたらす</strong>こともあり、知られている効果らしい.(Hirano et al, 2003; Wooldridge, 2007)</li>
+</ul></li>
+</ul>
+</section>
+<section id="実験3-不正確に学習されたpropensityに対して評価や学習はどの程度ロバストなのか-1" class="slide level2">
+<h2>実験3: 不正確に学習されたpropensityに対して、評価や学習はどの程度ロバストなのか?</h2>
+<p>また図3 右図は、propensity が不正確な場合に推薦モデルの<strong>学習</strong>にどのような影響があるかを示している. propensitiyを推定したMF-IPS-NBのMSE予測誤差を、propensityが既知のMF-NaiveとMF-IPSと比較したもの.</p>
+
+<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/7-Figure3-1.png" class="r-stretch quarto-figure-center"><p>ここでも、<strong>MF-IPS-NBは、著しく劣化した(MCARの観測データ数が少ない為…!)propensity推定値においてもMF-Naiveを上回り</strong>、本アプローチのロバスト性を実証している. (そもそもMF-naiveが超絶劣化したpropensity推定と見なせるから…!)</p>
+</section>
+<section id="実験4-実世界データにおける性能はどう" class="slide level2">
+<h2>実験4: 実世界データにおける性能はどう?</h2>
+<p>MCARデータとMNARデータの両方を含んだベンチマークデータセットを用いて性能を評価(オンライン実験をした訳では無い). MF-IPSにおいてpropensity推定はロジスティック回帰を用いた.</p>
+
+<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/8-Table2-1.png" class="r-stretch quarto-figure-center"><p>表2は、各推薦モデルのMCARテストセットに対する評価値の予測精度を評価したもの. MF-IPSは、MF-naiveやHL-MNARやHL-MARを大幅に上回った. 更にMF-IPSの性能は、<strong>YahooデータセットのSOTAに近い結果だった</strong>との事.</p>
+</section>
+<section id="議論" class="slide level2">
+<h2>議論</h2>
+<ul>
+<li>提案したMF-IPSは、更に拡張が可能っぽい:
+<ul>
+<li>propensity推定のための改良された手法を適用できる.</li>
+</ul></li>
+<li>propensity推定モデルと推薦モデル(rating予測モデル)を分離している為、実用的.
+<ul>
+<li>-&gt; 既存の推薦システムの運用において、propensity推定モデルを差し込むのみで良いので導入しやすい…??</li>
+</ul></li>
+</ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>

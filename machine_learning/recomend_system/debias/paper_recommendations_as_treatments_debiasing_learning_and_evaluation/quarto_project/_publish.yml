@@ -1,0 +1,4 @@
+- source: slides.md
+  quarto-pub:
+    - id: 61625df5-1a9e-4257-ba39-89da96ead990
+      url: 'https://quartopub.com/sites/morinota/week17'
