@@ -297,10 +297,10 @@ We chose the sinusoidal version because it may allow the model to extrapolate to
 
 # 4. Why Self-Attention ♪ なぜ、セルフアテンションなのか
 
-In this section we compare various aspects of self-attention layers to the recurrent and convolutional layers commonly used for mapping one variable-length sequence of symbol representations (x1, ..., xn) to another sequence of equal length (z1, ..., zn), with xi , zi ∈ R d , such as a hidden layer in a typical sequence transduction encoder or decoder.
-このセクションでは、典型的なシーケンス変換エンコーダやデコーダの隠れ層のように、ある可変長の記号表現列（x1、...、xn）を、同じ長さの別の列（z1、...、zn）にマッピングするために一般的に使用されるリカレント層や畳み込み層の様々な側面を比較する。
+In this section we compare various aspects of self-attention layers to the recurrent and convolutional layers commonly used for mapping one variable-length sequence of symbol representations $(x1, ..., xn)$ to another sequence of equal length $(z1, ..., zn)$, with xi , zi ∈ R d , such as a hidden layer in a typical sequence transduction encoder or decoder.
+このセクションでは、典型的なシーケンス変換エンコーダやデコーダの隠れ層のように、ある可変長の記号表現列 $(x1, ..., xn)$ を、同じ長さの別の列 $(z1, ..., zn)$ にマッピングするために一般的に使用されるリカレント層や畳み込み層の様々な側面を比較する。ここで、$x_i, z_i \in \mathbb{R}^{d}$.
 Motivating our use of self-attention we consider three desiderata.
-私たちが「セルフアテンションズ」を使う動機として、3つの望みを考えています。
+私たちが Self-Attention を使う動機として、3つの望みを考えている.
 
 One is the total computational complexity per layer.
 1つは、1層あたりの総計算量です。
@@ -308,9 +308,9 @@ Another is the amount of computation that can be parallelized, as measured by th
 もう一つは、必要な逐次処理の最小数によって測定される、並列化できる計算の量である。
 
 The third is the path length between long-range dependencies in the network.
-3つ目は、ネットワーク内の長距離依存関係間の経路長である。
+3つ目は、ネットワーク内のlong-range dependencies(長距離依存関係)間の経路長である。
 Learning long-range dependencies is a key challenge in many sequence transduction tasks.
-長距離の依存関係を学習することは、多くの配列伝達タスクにおける重要な課題である。
+**長距離の依存関係を学習することは、多くの配列伝達タスクにおける重要な課題である**。
 One key factor affecting the ability to learn such dependencies is the length of the paths forward and backward signals have to traverse in the network.
 このような依存関係を学習する能力に影響を与える重要な要因の1つは、前方および後方の信号がネットワーク内で通過しなければならない経路の長さです。
 The shorter these paths between any combination of positions in the input and output sequences, the easier it is to learn long-range dependencies [12].
@@ -319,9 +319,9 @@ Hence we also compare the maximum path length between any two input and output p
 そこで、異なる層タイプで構成されるネットワークにおいて、任意の2つの入出力位置間の最大経路長を比較します。
 
 As noted in Table 1, a self-attention layer connects all positions with a constant number of sequentially executed operations, whereas a recurrent layer requires O(n) sequential operations.
-表1にあるように、セルフアテンションレイヤーは一定回数の逐次実行操作で全てのポジションを接続するのに対し、リカレントレイヤーはO(n)の逐次実行操作を必要とします。
+表1にあるように、self-attention layer は一定回数の逐次実行操作で全てのポジションを接続するのに対し、リカレントレイヤーは $O(n)$ の逐次実行操作を必要とします。(これはなんとなくイメージつくかも...!鎖みたいなイメージ)
 In terms of computational complexity, self-attention layers are faster than recurrent layers when the sequence length n is smaller than the representation dimensionality d, which is most often the case with sentence representations used by state-of-the-art models in machine translations, such as word-piece [38] and byte-pair [31] representations.
-計算量の点では、配列長nが表現次元dより小さい場合、自己注目層はリカレント層より高速である。これは、機械翻訳の最先端モデルで用いられる文表現、例えばワードピース［38］やバイトペア［31］表現で最もよく見られるケースである。
+計算量の点では、配列長$n$が表現次元$d$より小さい場合、self-attention層はリカレント層より高速である。これは、機械翻訳の最先端モデルで用いられる文表現、例えばワードピース［38］やバイトペア［31］表現で最もよく見られるケースである。(という事はこれはよくあるケースなのか...!)
 To improve computational performance for tasks involving very long sequences, self-attention could be restricted to considering only a neighborhood of size r in the input sequence centered around the respective output position.
 非常に長いシーケンスを含むタスクの計算性能を向上させるために、自己注意を、それぞれの出力位置を中心とした入力シーケンスのサイズrの近傍のみを考慮するように制限することができる。
 This would increase the maximum path length to O(n/r).
