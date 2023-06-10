@@ -1,20 +1,20 @@
-## link リンク
+## 0.1. link リンク
 
 - https://arxiv.org/abs/1706.03762 https://arxiv.org/abs/1706.03762
 
-## title タイトル
+## 0.2. title タイトル
 
 Attention Is All You Need
 アテンション・イズ・オール・ユー・ニード
 
-## abstract アブストラクト
+## 0.3. abstract アブストラクト
 
 The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration.
 支配的な配列の伝達モデルは、エンコーダー・デコーダー構成の複雑なリカレントまたは畳み込みニューラルネットワークをベースにしています。
 The best performing models also connect the encoder and decoder through an attention mechanism.
 また、性能の良いモデルでは、エンコーダーとデコーダーをアテンション機構で接続しています。
 We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.
-私たちは、注意のメカニズムにのみ基づき、再帰や畳み込みを完全に排除した新しいシンプルなネットワークアーキテクチャ「トランスフォーマー」を提案します。
+私たちは、**attention のメカニズムにのみ基づき**、再帰や畳み込みを完全に排除した新しい**シンプルな**ネットワークアーキテクチャ "**Transformer**"を提案します。(attentionってrecurrenceの一種だと思ってた...)
 Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train.
 2つの機械翻訳タスクで実験した結果、これらのモデルは、並列化可能で訓練に要する時間が大幅に短縮される一方で、品質が優れていることがわかりました。
 Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU.
@@ -24,221 +24,250 @@ WMT 2014の英仏翻訳タスクにおいて、我々のモデルは、8台のGP
 We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.
 我々は、Transformerが他のタスクにうまく汎化することを、大規模な訓練データと限られた訓練データの両方で英語の構成語構文解析にうまく適用することによって示す。
 
-# Introduction 序章
+# 1. Introduction 序章
 
 Recurrent neural networks, long short-term memory [13] and gated recurrent [7] neural networks in particular, have been firmly established as state of the art approaches in sequence modeling and transduction problems such as language modeling and machine translation [35, 2, 5].
-リカレントニューラルネットワーク、特に長短期記憶型 [13] とゲート型リカレント [7] ニューラルネットワークは、言語モデリングや機械翻訳などのシーケンスモデリングやトランスダクション問題における最先端のアプローチとして確固たる地位を築いている [35, 2, 5].
+リカレントニューラルネットワーク、特にlong short-term memory(LSTM)型 [13] とゲート型リカレント [7] ニューラルネットワークは、言語モデリングや機械翻訳などのシーケンスモデリングやトランスダクション問題における最先端のアプローチとして確固たる地位を築いている [35, 2, 5].
 Numerous efforts have since continued to push the boundaries of recurrent language models and encoder-decoder architectures [38, 24, 15].
 その後、リカレント言語モデルやエンコーダ・デコーダ・アーキテクチャの限界に挑戦する数多くの努力が続けられている[38, 24, 15]。
 
 Recurrent models typically factor computation along the symbol positions of the input and output sequences.
 リカレントモデルは、通常、入力と出力シーケンスのシンボル位置に沿って計算を行う。
 Aligning the positions to steps in computation time, they generate a sequence of hidden states ht, as a function of the previous hidden state ht−1 and the input for position t.
-位置を計算時間のステップに合わせ、前の隠れ状態ht-1と位置tの入力の関数として、一連の隠れ状態htを生成する。
+位置を計算時間のステップに合わせ、前の隠れ状態$h_{t-1}$と位置$t$の入力の関数として、一連の隠れ状態$h_{t}$を生成する。
 This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.
-この本質的に逐次的な性質は、トレーニング例内での並列化を妨げます。これは、メモリ制約により例間でのバッチ処理が制限されるため、シーケンス長が長くなるにつれて重要になります。
+この本質的に**逐次的な性質は、トレーニングデータ内での並列化を妨げます**。これは、メモリ制約により例間でのバッチ処理が制限されるため、シーケンス長が長くなるにつれて重要になります。
 Recent work has achieved significant improvements in computational efficiency through factorization tricks [21] and conditional computation [32], while also improving model performance in case of the latter.
 最近の研究では、因数分解のトリック[21]や条件付き計算[32]によって計算効率の大幅な向上を達成し、後者の場合はモデルの性能も向上しています。
 The fundamental constraint of sequential computation, however, remains.
 しかし、逐次計算の基本的な制約が残っています。
 
 Attention mechanisms have become an integral part of compelling sequence modeling and transduction models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences [2, 19].
-注意メカニズムは、様々なタスクにおける説得力のあるシーケンスモデリングや伝達モデルに不可欠な要素となっており、入力シーケンスや出力シーケンスにおける距離に関係なく依存関係をモデリングすることができます[2, 19]。
+Attentionメカニズムは、様々なタスクにおける説得力のあるシーケンスモデリングや伝達(transduction)モデルに不可欠な要素となっており、入力シーケンスや出力シーケンスにおける距離に関係なく依存関係をモデリングすることができます[2, 19]。
 In all but a few cases [27], however, such attention mechanisms are used in conjunction with a recurrent network.
-しかし、一部の事例[27]を除いて、このような注意メカニズムはリカレントネットワークと組み合わせて使用されている。
+しかし、一部の事例[27]を除いて、**このような attention メカニズムはリカレントネットワークと組み合わせて使用**されている.
 
 In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output.
-本研究では、再帰性を排除し、代わりに入力と出力の間のグローバルな依存関係を描く注意メカニズムに完全に依存するモデルアーキテクチャであるTransformerを提案します。
+本研究では、**recurrence を排除**し、代わりに入力と出力の間のグローバルな依存関係を描く attention メカニズムに完全に依存するモデルアーキテクチャであるTransformerを提案します。
 The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.
-Transformerは、大幅に並列化することができ、8つのP100 GPUでわずか12時間の学習で、翻訳品質の新たな境地に達することができます。
+Transformerは、**大幅に並列化**することができ、8つのP100 GPUでわずか12時間の学習で、翻訳品質の新たな境地に達することができます。
 
-# Background その背景
+# 2. Background
 
 The goal of reducing sequential computation also forms the foundation of the Extended Neural GPU [16], ByteNet [18] and ConvS2S [9], all of which use convolutional neural networks as basic building block, computing hidden representations in parallel for all input and output positions.
-逐次計算を減らすという目標は、Extended Neural GPU [16], ByteNet [18], ConvS2S [9]の基礎にもなっています。これらはすべて、畳み込みニューラルネットワークを基本構成要素として、すべての入力と出力位置に対して並行して隠れ表現を計算しています。
+**逐次計算を減らすという目標**は、Extended Neural GPU [16], ByteNet [18], ConvS2S [9]の基礎にもなっています。これらはすべて、畳み込みニューラルネットワークを基本構成要素として、すべての入力と出力位置に対して並行して隠れ表現を計算しています。
 In these models, the number of operations required to relate signals from two arbitrary input or output positions grows in the distance between positions, linearly for ConvS2S and logarithmically for ByteNet.
 これらのモデルでは、任意の2つの入出力位置からの信号を関連付けるために必要な演算数は、位置間の距離に応じて、ConvS2Sでは線形に、ByteNetでは対数的に増加する。
 This makes it more difficult to learn dependencies between distant positions [12].
-そのため、離れた位置同士の依存関係を学習することが難しくなっています[12]。
+そのため、**離れた位置同士の依存関係を学習することが難しくなっています**[12]。
 In the Transformer this is reduced to a constant number of operations, albeit at the cost of reduced effective resolution due to averaging attention-weighted positions, an effect we counteract with Multi-Head Attention as described in section 3.2.
-Transformerでは、注意の重み付けされた位置が平均化されるため、有効解像度が低下する代償として、この操作は一定の回数に抑えられますが、この効果は3.2節で述べたように、マルチヘッドアテンションで打ち消されています。
+Transformerでは、この操作は一定の回数に抑えられます。attention の重み付けされた位置が平均化されるため、有効解像度が低下する事を代償とするが。この効果は3.2節で述べたように、マルチヘッドアテンションで打ち消されています。
 
 Self-attention, sometimes called intra-attention is an attention mechanism relating different positions of a single sequence in order to compute a representation of the sequence.
-自己注意（イントラ注意と呼ばれることもある）は、1つの配列の異なる位置を関連付け、配列の表現を計算するための注意機構である。
+**Self-attention**(intra-attentionと呼ばれることもある)は、1つの配列の異なる位置を関連付け、配列の表現を計算するためのattention機構である。
 Self-attention has been used successfully in a variety of tasks including reading comprehension, abstractive summarization, textual entailment and learning task-independent sentence representations [4, 27, 28, 22].
-自己注意は、読解、抽象的要約、テキストの含意、タスクに依存しない文表現の学習など、さまざまなタスクでうまく利用されている[4, 27, 28, 22]．
+Self-attention は、読解、抽象的要約、テキストの含意、タスクに依存しない文表現の学習など、さまざまなタスクでうまく利用されている[4, 27, 28, 22]．
 
 End-to-end memory networks are based on a recurrent attention mechanism instead of sequencealigned recurrence and have been shown to perform well on simple-language question answering and language modeling tasks [34].
 エンドツーエンドメモリーネットワークは、配列に沿った再帰性ではなく、再帰性注意メカニズムに基づいており、単純な言語の質問応答や言語モデリングタスクで優れた性能を示すことが示されている[34]。
 
 To the best of our knowledge, however, the Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequencealigned RNNs or convolution.
-しかし、私たちの知る限り、Transformerは、配列整列したRNNや畳み込みを使用せずに、入力と出力の表現を計算するために、完全に自己注意に依存する最初のトランスダクションモデルです。
+しかし、私たちの知る限り、Transformerは、配列整列したRNNや畳み込みを使用せずに、入力と出力の表現を計算するために、**完全にself-attentionに依存**する最初のtransduction(伝達)モデルです。
 In the following sections, we will describe the Transformer, motivate self-attention and discuss its advantages over models such as [17, 18] and [9].
-以下のセクションでは、Transformerについて説明し、自己注意を動機付け、[17, 18]や[9]のようなモデルに対する優位性を議論することにする。
+以下のセクションでは、Transformerについて説明し、self-attentionをを動機付け、[17, 18]や[9]のようなモデルに対する優位性を議論することにする。
 
-# Model Architecture モデル・アーキテクチャ
+# 3. Model Architecture モデル・アーキテクチャ
 
 Most competitive neural sequence transduction models have an encoder-decoder structure [5, 2, 35].
-競合する神経配列伝達モデルの多くは、エンコーダ-デコーダ構造を持っている [5, 2, 35]．
-Here, the encoder maps an input sequence of symbol representations (x1, ..., xn) to a sequence of continuous representations z = (z1, ..., zn).
-ここで、エンコーダは、入力された記号表現列（x1、・・・、xn）を連続表現列z＝（z1、・・・、zn）にマッピングする。
-Given z, the decoder then generates an output sequence (y1, ..., ym) of symbols one element at a time.
-zが与えられると、次にデコーダはシンボルの出力シーケンス（y1、...、ym）を一度に1要素ずつ生成する。
+競合する neural sequence 伝達モデルの多くは、**エンコーダ-デコーダ構造**を持っている [5, 2, 35].
+Here, the encoder maps an input sequence of symbol representations $(x1, ..., xn)$ to a sequence of continuous representations $z = (z1, ..., zn)$.
+ここで、エンコーダは、入力された記号表現列$(x1, ..., xn)$を連続(連続値って事?)表現列$z = (z1, ..., zn)$にマッピングする.
+Given z, the decoder then generates an output sequence $(y1, ..., ym)$ of symbols one element at a time.
+zが与えられると、次にデコーダはシンボルの出力シーケンス$(y1, ..., ym)$を一度に1要素ずつ生成する。
 At each step the model is auto-regressive [10], consuming the previously generated symbols as additional input when generating the next.
-各ステップにおいて、モデルは自動回帰的であり[10]、次のシンボルを生成する際に、以前に生成されたシンボルを追加入力として消費します。
+各ステップにおいて、モデルは自動回帰的であり[10]、**次のシンボルを生成する際に、以前に生成されたシンボルを追加入力として消費します**。(これはrecurciveのイメージ)
 
 The Transformer follows this overall architecture using stacked self-attention and point-wise, fully connected layers for both the encoder and decoder, shown in the left and right halves of Figure 1, respectively.
-Transformerは、図1の左半分と右半分にそれぞれ示すように、エンコーダーとデコーダーの両方に、積層自己アテンションとポイントワイズ完全接続層を使用するこの全体的なアーキテクチャに従います。
+Transformerは、図1の左半分と右半分にそれぞれ示すように、エンコーダーとデコーダーの両方に、積層self-attentionとpoint-wiseなfully connected layersを使用する、というこの全体的なアーキテクチャに従います。
 
-## Encoder and Decoder Stacks 
+## 3.1. Encoder and Decoder Stacks
 
-### Encoder: エンコーダー
+### 3.1.1. Encoder: エンコーダー
 
 The encoder is composed of a stack of N = 6 identical layers.
-エンコーダは、N＝6個の同一の層を積み重ねたものである。
+エンコーダは、$N =6$個の同一の層を積み重ねたものである。
 Each layer has two sub-layers.
-各レイヤーには2つのサブレイヤーがあります。
+各層には**2つのサブレイヤー**があります。
 The first is a multi-head self-attention mechanism, and the second is a simple, positionwise fully connected feed-forward network.
-1つ目は、多頭の自己アテンション機構、2つ目は、位置的に完全接続されたシンプルなフィードフォワードネットワークです。
+1つ目は、multi-headなself-attention機構、2つ目は、位置的に完全接続されたシンプルなフィードフォワードネットワーク(=全結合層?)です。
 We employ a residual connection [11] around each of the two sub-layers, followed by layer normalization [1].
 2つのサブレイヤーそれぞれの周囲に残留接続[11]を採用し、その後、レイヤー正規化[1]を行います。
 That is, the output of each sub-layer is LayerNorm(x + Sublayer(x)), where Sublayer(x) is the function implemented by the sub-layer itself.
-つまり、各サブレイヤーの出力はLayerNorm(x + Sublayer(x))となり、Sublayer(x)はサブレイヤー自身が実装する関数である。
+つまり、各サブレイヤーの出力は $LayerNorm(x + Sublayer(x))$ となり、$Sublayer(x)$ はサブレイヤー自身が実装する関数である。
 To facilitate these residual connections, all sub-layers in the model, as well as the embedding layers, produce outputs of dimension dmodel = 512.
-このような残差接続を容易にするため、埋め込み層だけでなく、モデルのすべてのサブ層は、dmodel = 512の次元の出力を生成します。
+このような残差接続(residual connections)を容易にするため、埋め込み層だけでなく、モデルのすべてのサブ層は、$d_{model} = 512$の次元の出力を生成します。
 
-### Decoder: デコーダー
+### 3.1.2. Decoder: デコーダー
 
 The decoder is also composed of a stack of N = 6 identical layers.
-また、デコーダはN＝6個の同一の層を積み重ねることで構成されています。
+デコーダもN＝6個の同一の層を積み重ねることで構成されています。
 In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer, which performs multi-head attention over the output of the encoder stack.
-デコーダは、各エンコーダ層の2つのサブレイヤに加えて、エンコーダスタックの出力に対してマルチヘッドアテンションを実行する第3のサブレイヤを挿入する。
+デコーダは、各エンコーダ層の2つのサブレイヤーに加えて、エンコーダスタックの出力に対してmulti-head attentionを実行する**第3のサブレイヤー**を挿入する。
 Similar to the encoder, we employ residual connections around each of the sub-layers, followed by layer normalization.
-エンコーダーと同様に、各サブレイヤーの周辺に残差接続を採用し、その後レイヤー正規化を行います。
+エンコーダーと同様に、**各サブレイヤーの周辺に残差接続(residual connections)を採用し、その後レイヤー正規化を行います**。
 We also modify the self-attention sub-layer in the decoder stack to prevent positions from attending to subsequent positions.
-また、デコーダスタックのセルフアテンションサブレイヤーを変更し、ポジションが後続のポジションにアテンションするのを防ぐ。
+また、デコーダスタックのself-attention sub-layerを変更し、positionsが後続のpositonsに attention するのを防ぐ. ("positions"って系列データの位置の事だよね?)
 This masking, combined with fact that the output embeddings are offset by one position, ensures that the predictions for position i can depend only on the known outputs at positions less than i.
-このマスキングは、出力埋め込みが1位置分オフセットされていることと相まって、位置iの予測はiより小さい位置の既知の出力にのみ依存できることを保証します。
+このmaskingは、出力埋め込みが1位置分オフセットされていることと相まって、**位置iの予測はiより小さい位置の既知の出力にのみ依存できる**ことを保証します。
 
-## Attention アテンション
+## 3.2. Attention アテンション
 
 An attention function can be described as mapping a query and a set of key-value pairs to an output, where the query, keys, values, and output are all vectors.
-アテンション機能は、クエリとキーと値のペアのセットを出力にマッピングするものとして記述することができ、クエリ、キー、値、および出力はすべてベクトルである。
+attention機能は、**"query" と "key-valueペアの集合" (=これらが入力?)をoutputにマッピングするもの**として記述することができ、**query、key、value、およびoutputはすべてベクトル**である.
 The output is computed as a weighted sum of the values, where the weight assigned to each value is computed by a compatibility function of the query with the corresponding key.
-出力は値の重み付き合計として計算され、各値に割り当てられた重みは、対応するキーとクエリの互換性関数によって計算される。
+出力はvalueの重み付き合計として計算され、各valueに割り当てられた重みは、対応するkeyとqueryの互換性関数(compatibility function)によって計算される。
 
-### Scaled Dot-Product Attention スケールドドットプロダクトアテンション
+### 3.2.1. Scaled Dot-Product Attention スケールドドットプロダクトアテンション
 
 We call our particular attention "Scaled Dot-Product Attention" (Figure 2).
-私たちは、このこだわりを「スケールドットプロダクトアテンション」と呼んでいます（図2）。
+私たちは、このattentionを"**Scaled Dot-Product Attention**"と呼んでいます（図2）。
 The input consists of queries and keys of dimension dk, and values of dimension dv.
-入力はクエリーと次元dkのキー、次元dvの値で構成される。
+入力はqueryと次元$d_k$のkey、次元$d_v$のvalueで構成される。
 We compute the dot products of the query with all keys, divide each by √ dk, and apply a softmax function to obtain the weights on the values.
-クエリとすべてのキーのドット積を計算し、それぞれを√dkで割り、ソフトマックス関数を適用して値の重みを求める。
+queryとすべてのkeyのドット積を計算し、それぞれを$\sqrt{d_k}$で割り、ソフトマックス関数を適用して各valueの重みを求める.
 
 In practice, we compute the attention function on a set of queries simultaneously, packed together into a matrix Q.
-実際には、行列Qにまとめられたクエリの集合に対して同時に注意関数を計算する。
+実際には、行列$Q$にまとめられたqueryの集合に対して同時にattention関数を計算する。
 The keys and values are also packed together into matrices K and V .
-また、キーとバリューは、マトリックスKとVにまとめられている。
+また、keyとvalueは、マトリックス$K$と$V$にまとめられている。
 We compute the matrix of outputs as:
 として、出力の行列を計算する：
 
 $$
-Attention
+Attention(Q, K, V) = softmax(\frac{Q K^{T}}{\sqrt{d_k}})V
+\tag{1}
 $$
+
+(↑によると、$Attention(Q,K,V) \in \mathbb{R}^{}$)
 
 The two most commonly used attention functions are additive attention [2], and dot-product (multiplicative) attention.
-最もよく使われる注意機能は、加法注意[2]とドットプロダクトア注意（乗法注意）の2つです。
+最もよく使われるattention関数は、**additive(加法) attention[2]**と**dot-product (multiplicative=乗法) attention**の2つです。
 Dot-product attention is identical to our algorithm, except for the scaling factor of √ 1 dk .
-ドットプロダクトアテンションは、スケーリングファクターが√ 1 dkであることを除けば、我々のアルゴリズムと同じである。
+dot-product attentionは、スケーリングファクターが $\frac{1}{\sqrt{d_k}}$ であることを除けば、**我々のアルゴリズムと同じ**である.
 Additive attention computes the compatibility function using a feed-forward network with a single hidden layer.
-付加的注意は、1つの隠れ層を持つフィードフォワードネットワークを使用して互換性関数を計算します。
+Additive attentionは、1つの隠れ層を持つフィードフォワードネットワーク(=全結合層?)を使用してcompatibility function(互換性関数?何それ?)を計算します。
+(互換性関数=入力として与えられた**queryとkeyのペアの間の関連性や適合度を計算する**為に使用される関数... = dot-product attention関数の場合は、単にqueryベクトルとkeyベクトル間の内積を取って関連性を計算しているのか...!! それに対してadditive attention関数の場合は、わざわざ関連性を出力する全結合層を使ってるって事?)
 While the two are similar in theoretical complexity, dot-product attention is much faster and more space-efficient in practice, since it can be implemented using highly optimized matrix multiplication code.
-両者は理論的な複雑さでは似ていますが、高度に最適化された行列乗算コードを用いて実装できるため、実際にはドットプロダクトアテンションの方がはるかに高速でスペース効率に優れています。
+両者は理論的な複雑さでは似ていますが、高度に最適化された行列乗算コードを用いて実装できるため、実際には dot-product attention の方がはるかに高速でスペース効率に優れています。
 
 While for small values of dk the two mechanisms perform similarly, additive attention outperforms dot product attention without scaling for larger values of dk [3].
-dkの値が小さいうちは2つの機構は同様の性能を発揮するが、dkの値が大きくなると加法的注意はスケーリングなしでドット積注意に勝る[3]。
+$d_k$ の値が小さいうちは2つの機構は同様の性能を発揮するが、$d_k$の値が大きくなると加法的注意はスケーリングなしでドット積注意に勝る[3]。
 We suspect that for large values of dk, the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients 4 .
-dkの値が大きい場合、ドット積の大きさが大きくなり、ソフトマックス関数の勾配が極端に小さくなる領域に押し込まれるのではないかと推測される4 。
+$d_k$の値が大きい場合、**ドット積の大きさが大きくなり**、ソフトマックス関数の勾配が極端に小さくなる領域に押し込まれるのではないかと推測される4 。
 To counteract this effect, we scale the dot products by √ 1 dk .
-この効果を打ち消すために、ドットプロダクトを √ 1 dk だけスケーリングします。
+この効果を打ち消すために、ドットプロダクトを $\sqrt{d_k}$ だけスケーリングします.
 
-### Multi-Head Attention マルチヘッドアテンション
+### 3.2.2. Multi-Head Attention マルチヘッドアテンション
 
 Instead of performing a single attention function with dmodel-dimensional keys, values and queries, we found it beneficial to linearly project the queries, keys and values h times with different, learned linear projections to dk, dk and dv dimensions, respectively.
-dmodel次元のキー、値、クエリで単一の注意機能を実行する代わりに、クエリ、キー、値をそれぞれdk、dk、dv次元に異なる、学習済みの線形投影でh回行うことが有益であることがわかった。
+$d_{model}$ 次元のkey、value、queryで単一のattention関数を実行する代わりに、query、key、valueをそれぞれ $d_k$ 、$d_k$ 、$d_v$ 次元に異なる、学習済みの**線形投影(=linearly project)**で $h$ 回行うことが有益であることがわかった. (ここがmulti-head! h個のdot-product attention関数の出力を使う、って意味??)
 On each of these projected versions of queries, keys and values we then perform the attention function in parallel, yielding dv-dimensional output values.
-これらの投影されたクエリ、キー、値のそれぞれに対して、注意機能を並行して実行し、dv次元の出力値を得ます。
+これらの投影されたquery、value、valueのそれぞれに対して、attention機能を**並行**して実行し、**$d_v$次元の出力値**を得る.
 These are concatenated and once again projected, resulting in the final values, as depicted in Figure 2.
-これを連結して再度投影すると、図2に示すような最終的な値が得られる。
+これを連結(concat, $d_v \times h$ 次元になる?)して再び投影(=linearly project)すると、図2に示すような最終的な値が得られる.
+
+(メモ)
+
+- 線形投影(linear projection):
+  - ベクトルを**低次元の部分空間**に射影する操作.
+- 線形変換(linear transformation):
+  - 同ベクトル空間にて、ベクトルの向きと長さを変換する操作.
 
 Multi-head attention allows the model to jointly attend to information from different representation subspaces at different positions.
-マルチヘッドアテンションは、モデルが異なる位置の異なる表現部分空間からの情報に共同してアテンションすることを可能にします。
+Multi-head attention は、モデルが異なる位置の異なる表現部分空間からの情報に共同してattentionすることを可能にする.
 With a single attention head, averaging inhibits this.
-シングルアテンションヘッドでは、平均化することでこれを抑制しています。
+single attention headでは、平均化することでこれを抑制しています。
 
 $$
+MultiHead(Q,K,V) = Concat(head_{1}, \cdots, head_{h}) W^{O}
+\\
+\text{where } head_{i} = Attention(QW^{Q}_{i}, KW^{K}_{i}, VW^{V}_{i})
 \tag{2}
 $$
 
 Where the projections are parameter matrices W Q i ∈ R dmodel×dk , W K i ∈ R dmodel×dk , WV i ∈ R dmodel×dv and WO ∈ R hdv×dmodel .
-ここで、投影はパラメータ行列W Q i∈R dmodel×dk 、W K i∈R dmodel×dk 、WV i∈R dmodel×dv 、WO∈R hdv×dmodel とする。
+ここで、各投影(linear projection)に用いるパラメータ行列は以下:
+
+- $W^{Q}_{i} \in \mathbb{R}^{d_{model} \times d_k}$、
+- $W^{K}_{i} \in \mathbb{R}^{d_{model} \times d_k}$、
+- $W^{V}_{i} \in \mathbb{R}^{d_{model} \times d_v}$、
+- $W^{O} \in \mathbb{R}^{h d_{v}\times d_{model}}$
+
+(queryは系列データのある一つの位置の入力データ、keysは系列データの全位置の入力データ、valuesは系列データの全位置の出力データというか教師ラベル的なイメージ? そして $d_{model}$ は系列データの長さ??)
+
+(メモ)
+上の定義を見ると、入力となる各行列の次元数は以下:
+
+- $Q \in \mathbb{R}^{d_k \times d_{model}}$
+- $K \in \mathbb{R}^{d_k \times d_{model}}$
+- $V \in \mathbb{R}^{d_v \times d_{model}}$
 
 In this work we employ h = 8 parallel attention layers, or heads.
-この作品では、h = 8個の並列注意層（ヘッド）を採用しています。
+本研究では、h = 8個のparallel attention layers(i.e. head)を採用しています。
 For each of these we use dk = dv = dmodel/h = 64.
-それぞれ、dk＝dv＝dmodel/h＝64としています。
+それぞれ、$d_k = d_v = \frac{d_{model}}{h} = 64$ としています。
 Due to the reduced dimension of each head, the total computational cost is similar to that of single-head attention with full dimensionality.
-各ヘッドの次元が小さくなるため、総計算コストは、完全な次元を持つシングルヘッドアテンションのものと同様です。
+各ヘッドの次元が小さくなるため(線形投影して行列の次元数が$d_k \times d_{model}$ -> $d_k × d_k$ に低次元になるから...!!)、総計算コストは、完全な次元を持つシングルヘッドアテンションのものと同様です。
 
-### Applications of Attention in our Model アテンションの応用モデル
+### 3.2.3. Applications of Attention in our Model アテンションの応用モデル
 
 The Transformer uses multi-head attention in three different ways:
-トランスフォーマーは、3種類の方法でマルチヘッドアテンションを使用します：
+トランスフォーマーは、3種類の方法で multi-head attention を使用します：
 
-- In "encoder-decoder attention" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder. This allows every position in the decoder to attend over all positions in the input sequence. This mimics the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38, 2, 9]. エンコーダー・デコーダー・アテンション」層では、クエリーは前のデコーダー層から、メモリのキーと値はエンコーダーの出力からやってきます。 これにより、デコーダーの各ポジションは、入力シーケンスのすべてのポジションに出席することができます。 これは、[38, 2, 9]などの配列対配列モデルにおける典型的なエンコーダ・デコーダの注意メカニズムを模倣しています。
+- In "encoder-decoder attention" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder. This allows every position in the decoder to attend over all positions in the input sequence. This mimics the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38, 2, 9]. **"encoder-decoder attention"層**では、queriesは前のデコーダー層から、メモリのkeysとvaluesはエンコーダーの出力からやってきます。 これにより、**デコーダーの各positionは、入力シーケンスのすべてのpositionに出席することができます**。 これは、[38, 2, 9]などの配列対配列モデルにおける典型的なエンコーダ・デコーダの注意メカニズムを模倣しています。
 
-- The encoder contains self-attention layers. In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder. Each position in the encoder can attend to all positions in the previous layer of the encoder. エンコーダーには、自己アテンション層が含まれています。 自己アテンション層では、すべてのキー、値、クエリーは同じところから来る、この場合、エンコーダの前の層の出力である。 エンコーダーの各ポジションは、エンコーダーの前のレイヤーのすべてのポジションにアテンションすることができます。
+- The encoder contains self-attention layers. In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder. Each position in the encoder can attend to all positions in the previous layer of the encoder. **エンコーダーには、self-attention層**が含まれています。 self-attention層では、すべてのkeys、values、queriesは同じところ(=同じposition?)から来る、この場合、エンコーダの前の層の出力である。 エンコーダーの各positionは、エンコーダーの前のレイヤーのすべてのpositonにアテンションすることができます。
 
-- Similarly, self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. We need to prevent leftward information flow in the decoder to preserve the auto-regressive property. We implement this inside of scaled dot-product attention by masking out (setting to −∞) all values in the input of the softmax which correspond to illegal connections. See Figure 2. 同様に、デコーダの自己アテンション層は、デコーダ内の各位置が、その位置までのデコーダ内のすべての位置にアテンションすることを可能にします。 自動回帰性を維持するために、デコーダで左向きの情報フローを防ぐ必要があります。 ソフトマックスの入力のうち、不正な接続に対応するすべての値をマスクする（-∞に設定する）ことで、スケールドドットプロダクトアテンションの内部でこれを実装しています。 図2参照。
+- Similarly, self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. We need to prevent leftward information flow in the decoder to preserve the auto-regressive property. We implement this inside of scaled dot-product attention by masking out (setting to −∞) all values in the input of the softmax which correspond to illegal connections. See Figure 2. 同様に、**デコーダのself-attention層**は、デコーダ内の各positionが、**そのpositionまでのデコーダ内のすべての位置**にattentionすることを可能にします。 自動回帰性を維持するために、デコーダで左向き(=逆向き? 時間を逆戻り的なイメージ?)の情報フローを防ぐ必要があります. ソフトマックスの入力のうち、不正な接続に対応するすべてのvaluesをマスクする(-∞に設定する)ことで、scaled-dot-product attentionの内部でこれを実装しています。 図2参照。
 
-## Position-wise Feed-Forward Networks ポジションワイズフィードフォワードネットワーク
+## 3.3. Position-wise Feed-Forward Networks ポジションワイズフィードフォワードネットワーク
 
 In addition to attention sub-layers, each of the layers in our encoder and decoder contains a fully connected feed-forward network, which is applied to each position separately and identically.
-注目のサブレイヤーに加え、エンコーダーとデコーダーの各レイヤーには完全接続のフィードフォワードネットワークが含まれており、各ポジションに別々に同じように適用されます。
+attention sub-layersに加え、エンコーダーとデコーダーの各レイヤーには完全接続のフィードフォワードネットワーク(=全結合層!)が含まれており、各ポジションに別々に同じように適用されます。
 This consists of two linear transformations with a ReLU activation in between.
-これは、2つの線形変換とその間のReLU活性化で構成されています。
+これは、2つの線形変換(=つまり中間層は一つ!)とその間のReLU活性化で構成されています.
 
 $$
+FFN(x) = \max(0, xW_{1} + b_{1})W_{2} + b_{2}
 \tag{2}
 $$
 
 While the linear transformations are the same across different positions, they use different parameters from layer to layer.
-線形変換は異なる位置で同じですが、レイヤーごとに異なるパラメータを使用します。
+線形変換は異なるpositionで同じですが(同じparametersを使用)、レイヤーごとに異なるparametersを使用します。(そりゃそうじゃ...!)
 Another way of describing this is as two convolutions with kernel size 1.
-別の表現では、カーネルサイズ1の2つのコンボリューションとして表現されます。
+別の表現では、カーネルサイズ1の2つの convolutions(畳み込み) として表現されます。
 The dimensionality of input and output is dmodel = 512, and the inner-layer has dimensionality df f = 2048.
-入出力の次元はdmodel = 512、内層の次元はdf f = 2048である。
+入出力層の次元は $d_{model} = 512$、中間層の次元は $d_{ff} = 2048$ である。
 
-## Embeddings and Softmax エンベッディングとソフトマックス
+## 3.4. Embeddings and Softmax エンベッディングとソフトマックス
 
 Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension dmodel.
-他の配列変換モデルと同様に、学習済み埋め込みを用いて、入力トークンと出力トークンを次元dmodelのベクトルに変換する。
+他の配列変換モデルと同様に、学習済み埋め込みを用いて、入力tokensと出力トークンを次元tokensのベクトルに変換する.
 We also use the usual learned linear transformation and softmax function to convert the decoder output to predicted next-token probabilities.
-また、デコーダ出力を予測されるネクストトークン確率に変換するために、通常の学習済み線形変換とソフトマックス関数を使用します。
+また、デコーダ出力を予測される**next-token確率**に変換するために、通常の学習済み線形変換とソフトマックス関数を使用します。(**次のtokenを予測するタスク...!!?? LLMと同じか...!!!???**)
 In our model, we share the same weight matrix between the two embedding layers and the pre-softmax linear transformation, similar to [30].
-本モデルでは、[30]と同様に、2つの埋め込み層とプレソフトマックス線形変換の間で同じ重み行列を共有しています。
+本モデルでは、[30]と同様に、2つの埋め込み層(=これもFFNなのかな?)とプレソフトマックス線形変換の間で**同じ重み行列(parameter?)を共有**しています。
 In the embedding layers, we multiply those weights by √ dmodel.
-埋め込み層では、それらの重みに√dmodelを乗算する。
+埋め込み層では、それらの重みに $\sqrt{d_{model}}$ を乗算する.
 
-## Positional Encoding 位置エンコード
+## 3.5. Positional Encoding 位置エンコード
 
 Since our model contains no recurrence and no convolution, in order for the model to make use of the order of the sequence, we must inject some information about the relative or absolute position of the tokens in the sequence.
-このモデルには再帰も畳み込みもないので、モデルがシーケンスの順序を利用するためには、シーケンス内のトークンの相対位置または絶対位置に関する何らかの情報を注入する必要があります。
+このモデルには再帰も畳み込みもないので、**モデルがシーケンスの順序を利用するためには、シーケンス内のtokensの相対位置または絶対位置に関する何らかの情報を注入する必要があります。**
 To this end, we add "positional encodings" to the input embeddings at the bottoms of the encoder and decoder stacks.
-そのため、エンコーダとデコーダのスタックの底にある入力埋め込みに「位置エンコーディング」を追加します。
+そのため、エンコーダとデコーダのスタックの底にある入力埋め込みに"**positional encodings**"を追加する.
 The positional encodings have the same dimension dmodel as the embeddings, so that the two can be summed.
-位置エンコーディングはエンベッディングと同じ次元dmodelを持つので、両者を合計することができる。
+**positional encodingsは(tokenの)エンベッディングと同じ次元 $d_{model}$ を持つ**ので、両者を合計することができる. ($d_{model}$は文章の長さ、という認識であってるかな)
 There are many choices of positional encodings, learned and fixed [9].
 位置エンコーディングには、学習型と固定型という多くの選択肢がある[9]。
 
@@ -246,24 +275,27 @@ In this work, we use sine and cosine functions of different frequencies:
 本作品では、周波数の異なる正弦関数と余弦関数を使用しています：
 
 $$
+PE_{pos, 2i} = \sin(pos/10000^{2i/d_{model}})
+\\
+PE_{pos, 2i+1} = \cos(pos/10000^{2i/d_{model}})
 \tag{2.2}
 $$
 
 where pos is the position and i is the dimension.
-ここで、posは位置、iは次元である。
+ここで、$pos$ は位置(sequenceデータの中の対象tokenの座標, **絶対的な位置座標**)である. $i$ は、位置エンコーディングベクトルの各次元を表すindexである.(このiは、モデルが**相対的な位置関係**を学習する為の情報源になる...!)
 That is, each dimension of the positional encoding corresponds to a sinusoid.
-つまり、位置エンコードの各次元は、正弦波に対応する。
+つまり、位置エンコードの各次元は、正弦波に対応する.
 The wavelengths form a geometric progression from 2π to 10000 · 2π.
-波長は2πから10000 - 2πまでの幾何学的な進行を形成しています。
+波長は2πから $10000 \cdot 2π$ までの幾何学的な進行を形成しています.
 We chose this function because we hypothesized it would allow the model to easily learn to attend by relative positions, since for any fixed offset k, P Epos+k can be represented as a linear function of P Epos.
-この関数を選んだのは、任意の固定オフセットkに対して、P Epos+kはP Eposの一次関数として表現できるため、相対位置による出席をモデルが容易に学習できると仮定したからです。
+この関数を選んだのは、任意の固定オフセット(=定数?) $k$ に対して、$PE_{pos+k}$ は $PE_{pos}$ の **線形関数 として表現できる**(i.e. $PE_{pos}$をなんらかの形で線形変換したら $PE_{pos+k}$ Fに変形できる...!)ため、相対位置による出席をモデルが容易に学習できると仮定したからです。
 
 We also experimented with using learned positional embeddings [9] instead, and found that the two versions produced nearly identical results (see Table 3 row (E)).
-また、代わりに学習済みの位置埋め込み[9]を使う実験も行い、2つのバージョンでほぼ同じ結果が得られることがわかりました（表3の行（E）参照）。
+また、代わりに学習済みのpositional embeddings[9]を使う実験も行い、2つのバージョンでほぼ同じ結果が得られることがわかりました（表3の行（E）参照）。
 We chose the sinusoidal version because it may allow the model to extrapolate to sequence lengths longer than the ones encountered during training.
 正弦波バージョンを選択したのは、トレーニング中に遭遇したシーケンスよりも長いシーケンス長にモデルを外挿できるようにするためです。
 
-# Why Self-Attention ♪ なぜ、セルフアテンションなのか
+# 4. Why Self-Attention ♪ なぜ、セルフアテンションなのか
 
 In this section we compare various aspects of self-attention layers to the recurrent and convolutional layers commonly used for mapping one variable-length sequence of symbol representations (x1, ..., xn) to another sequence of equal length (z1, ..., zn), with xi , zi ∈ R d , such as a hidden layer in a typical sequence transduction encoder or decoder.
 このセクションでは、典型的なシーケンス変換エンコーダやデコーダの隠れ層のように、ある可変長の記号表現列（x1、...、xn）を、同じ長さの別の列（z1、...、zn）にマッピングするために一般的に使用されるリカレント層や畳み込み層の様々な側面を比較する。
@@ -315,12 +347,12 @@ We inspect attention distributions from our models and present and discuss examp
 Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic and semantic structure of the sentences.
 個々のアテンションヘッドは明らかに異なるタスクを学習するだけでなく、多くは文の構文や意味構造に関連する行動を示すようです。
 
-# Training トレーニング
+# 5. Training トレーニング
 
 This section describes the training regime for our models.
 このセクションでは、我々のモデルのためのトレーニング体制について説明する。
 
-## Training Data and Batching 学習データとバッチング
+## 5.1. Training Data and Batching 学習データとバッチング
 
 We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs.
 約450万文対からなる標準的なWMT 2014英独データセットで学習を行いました。
@@ -333,7 +365,7 @@ Sentence pairs were batched together by approximate sequence length.
 Each training batch contained a set of sentence pairs containing approximately 25000 source tokens and 25000 target tokens.
 各トレーニングバッチには、約25000のソーストークンと25000のターゲットトークンを含む文ペアのセットが含まれています。
 
-## Hardware and Schedule ハードウェアとスケジュール
+## 5.2. Hardware and Schedule ハードウェアとスケジュール
 
 We trained our models on one machine with 8 NVIDIA P100 GPUs.
 8台のNVIDIA P100 GPUを搭載した1台のマシンでモデルの学習を行いました。
@@ -346,7 +378,7 @@ For our big models,(described on the bottom line of table 3), step time was 1.0 
 The big models were trained for 300,000 steps (3.5 days).
 大きなモデルは30万歩（3.5日）分学習させました。
 
-## Optimizer オプティマイザー
+## 5.3. Optimizer オプティマイザー
 
 We used the Adam optimizer [20] with β1 = 0.9, β2 = 0.98 and  = 10−9 .
 Adam optimizer [20] を使用し、β1 = 0.9, β2 = 0.98, = 10-9 としました。
@@ -362,12 +394,12 @@ This corresponds to increasing the learning rate linearly for the first warmup_s
 We used warmup_steps = 4000.
 warmup_steps = 4000を使用しました。
 
-## Regularization 正規化
+## 5.4. Regularization 正規化
 
 We employ three types of regularization during training:
 学習時に3種類の正則化を採用しています：
 
-### Residual Dropout 残留ドロップアウト
+### 5.4.1. Residual Dropout 残留ドロップアウト
 
 We apply dropout [33] to the output of each sub-layer, before it is added to the sub-layer input and normalized.
 各サブレイヤーの出力は、サブレイヤー入力に加算され正規化される前に、ドロップアウト[33]を適用しています。
@@ -376,16 +408,16 @@ In addition, we apply dropout to the sums of the embeddings and the positional e
 For the base model, we use a rate of Pdrop = 0.1.
 ベースモデルでは、Pdrop=0.1のレートを使用しています。
 
-### Label Smoothing レーベルスムージング
+### 5.4.2. Label Smoothing レーベルスムージング
 
 During training, we employed label smoothing of value ls = 0.1 [36].
 学習時には、ls = 0.1 [36]の値のラベルスムージングを採用した。
 This hurts perplexity, as the model learns to be more unsure, but improves accuracy and BLEU score.
 これは、モデルがより不確実であることを学習するため、複雑さを損ないますが、精度とBLEUスコアを向上させます。
 
-# Results 結果
+# 6. Results 結果
 
-## Machine Translation 機械翻訳
+## 6.1. Machine Translation 機械翻訳
 
 On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2.0 BLEU, establishing a new state-of-the-art BLEU score of 28.4.The configuration of this model is listed in the bottom line of Table 3.
 WMT 2014英語-ドイツ語翻訳タスクにおいて、big transformerモデル（表2のTransformer (big)）は、過去に報告された最高のモデル（アンサンブルを含む）を2.0 BLEU以上上回り、新しい最先端のBLEUスコア28.4を確立しました。このモデルの構成を表3の下段に記載します。
@@ -413,7 +445,7 @@ Table 2 summarizes our results and compares our translation quality and training
 We estimate the number of floating point operations used to train a model by multiplying the training time, the number of GPUs used, and an estimate of the sustained single-precision floating-point capacity of each GPU 5 .
 トレーニング時間，使用した GPU の数，各 GPU の持続的な単精度浮動小数点演算能力の推定値 5 を掛け合わせることで，モデルのトレーニングに使用した浮動小数点演算の数を推定した．
 
-## Model Variations モデルバリエーション
+## 6.2. Model Variations モデルバリエーション
 
 To evaluate the importance of different components of the Transformer, we varied our base model in different ways, measuring the change in performance on English-to-German translation on the development set, newstest2013.
 Transformerのさまざまなコンポーネントの重要性を評価するために、ベースモデルをさまざまに変化させ、開発セットであるnewstest2013の英語からドイツ語への翻訳性能の変化を測定しました。
@@ -436,7 +468,7 @@ We further observe in rows (C) and (D) that, as expected, bigger models are bett
 In row (E) we replace our sinusoidal positional encoding with learned positional embeddings [9], and observe nearly identical results to the base model.
 (E)の行では、正弦波位置エンコーディングを学習済み位置埋め込み[9]に置き換えていますが、ベースモデルとほぼ同じ結果が得られています。
 
-## English Constituency イギリスの選挙区
+## 6.3. English Constituency イギリスの選挙区
 
 Parsing To evaluate if the Transformer can generalize to other tasks we performed experiments on English constituency parsing.
 構文解析 Transformerが他のタスクに汎化できるかどうかを評価するために、英語の構文解析の実験を行った。
@@ -465,7 +497,7 @@ Our results in Table 4 show that despite the lack of task-specific tuning our mo
 In contrast to RNN sequence-to-sequence models [37], the Transformer outperforms the BerkeleyParser [29] even when training only on the WSJ training set of 40K sentences.
 RNNのsequence-to-sequenceモデル[37]とは対照的に、Transformerは、40K文のWSJトレーニングセットのみでトレーニングした場合でも、BerkeleyParser[29]よりも優れた性能を発揮しています。
 
-# Conclusion 結論
+# 7. Conclusion 結論
 
 In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers most commonly used in encoder-decoder architectures with multi-headed self-attention.
 本研究では、エンコーダー・デコーダーアーキテクチャで最もよく使われるリカレント層を多頭の自己注意に置き換えた、完全に注意に基づく最初の配列変換モデルであるトランスフォーマーを発表しました。

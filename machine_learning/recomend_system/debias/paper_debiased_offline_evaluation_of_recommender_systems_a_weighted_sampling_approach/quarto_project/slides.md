@@ -11,7 +11,7 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: hogehogeな論文を読んだ
+title: MNARデータを使った推薦モデルのオフライン評価において、データを重み付けサンプリングしてMARデータに近づける事でbias軽減を試みる論文を読んだ
 subtitle: n週連続推薦システム系論文読んだシリーズ 18週目
 # date: 2023/06/02
 author: morinota
