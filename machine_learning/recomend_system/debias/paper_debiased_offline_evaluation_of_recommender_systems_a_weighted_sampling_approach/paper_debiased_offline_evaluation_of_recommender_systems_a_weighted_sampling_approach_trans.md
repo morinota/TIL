@@ -519,7 +519,7 @@ D*{mar}パートは、いずれも前述のforced ratings approachで収集さ�
 The Dmnar portions are collected during the operation of a recommender system.
 D*{mnar}部分は、レコメンダーシステムの運用中に収集されます。
 Note that we did mention earlier that we know of one other MAR-like dataset, collected by the forced ratings approach, namely cm100k from the music domain [4], but we cannot use this in our experiments because it does not have any corresponding MNAR data.
-なお、forced ratings approachによって収集されたMAR類似のデータセットとして、音楽領域のcm100k [4]を知っていることを先に述べましたが、対応するMNARデータがないため、今回の実験では使用することはできません。
+なお、forced ratings approachによって収集されたMAR類似のデータセットとして、音楽領域のcm100k [4]を知っていることを先に述べましたが、対応するMNARデータがないため、今回の実験では使用することはできません。F
 
 For each dataset, we apply a preprocessing step to ensure both Dmar and Dmnar having a common user-item space U × I: specifically, we keep those users and items that belong to the intersection of the two portions.
 各データセットについて、D_marとD_mnarが共通のユーザー・アイテム空間U×Iを持つように、前処理を施す.
@@ -534,9 +534,9 @@ The measure of ‘goodness’ is how much results obtained by evaluating a recom
 「良さ」の指標は、介入したテストセットでレコメンダーを評価した結果が、偏りのないテストセットで得られるであろう結果にどれだけ似ているかということです。
 
 In order to do that, in our experiments, we randomly splitO mnar in each dataset into a training set O t r and a heldout set O he with proportions 60%-40% respectively.
-そのため、実験では、各データセットのO^{mnar}を訓練セットO^{tr}とホールドアウトセット$O^{he}$にそれぞれ60%～40%の割合でランダムに分割しました。
+そのため、実験では、各データセットの$O^{mnar}$を訓練セット$O^{tr}$とホールドアウトセット$O^{he}$にそれぞれ60%～40%の割合でランダムに分割しました。
 Since the split is random, MNAR distributions are preserved.
-分割はランダムに行われるため、MNARの分布は保たれます。
+分割はランダムに行われるため、MNARの分布は保たれる。
 For both of them, we take the corresponding ratings from Y mnar and we produce Y t r and Y he .
 その両方について、Y*{mnar}から対応する評価を取り出し、Y*{tr}と$Y_{he}$を作成します。
 Y he is what one would use as a traditional test set.
@@ -577,68 +577,68 @@ The best intervention strategy is the one that produces test sets where performa
 **最適な介入戦略は、性能が$Y^{gt}$の性能に最も近いテストセット$Y^{S-hogehoge}$を作成するもの**である。
 
 We train the five recommender systems presented in Section 5.4 using ratings in Y t r .
-$Y^{tr}$ のratingを用いて、5.4 節で紹介した 5 つのレコメンダーシステムを学習させる.
+$Y^{tr}$ のratingを用いて、5.4 節で紹介した 5 つの推薦システムを学習させる.
 Each recommender produces a ranked list of recommendations which are tested on the unbiased test set Y дt and the intervened test sets.
-各推薦者は、非バイアスのテストセットY дtと介在するテストセットでテストされる推奨のランク付けされたリストを生成する。
+各推薦システムは、推薦結果(ランク付けされたリスト)を生成し、非バイアスのテストセット$Y^{gt}$とintervened test setsでテストされる.
 We have computed Precision, Recall, MAP and NDCG on the top-10 recommendations.
-トップ10のレコメンデーションについて、Precision、Recall、MAP、NDCGを算出した。
+**トップ10のレコメンデーション**について、Precision、Recall、MAP、NDCGを算出した.
 Results are averaged over 10 runs with different random splits.
-結果は、異なるランダム分割で10回実行した平均値です。
+結果は、異なるランダム分割で10回実行した平均値です.
 
 ## 5.3. Sampling strategies サンプリング戦略
 
 We formally present here the sampling strategies that we use to produce the intervened test sets in our experiments.
-ここでは、実験に介在するテストセットを作成するために使用するサンプリング戦略を正式に紹介する。
+ここでは、実験にてintervened test setsを作成するために使用するサンプリング戦略を正式に紹介する.
 Each strategy samples an intervened test setO S from O he (and the corresponding ratings from Y he , i.e.Y S ).
-各戦略は、O^heから介在するテストセットO^Sをサンプリングする（そして、Y_heから対応するレーティング、すなわち、Y_Sを）。
+各戦略は、$O^{he}$から介在するテストセット$O^{S}$をサンプリングする(そして、$Y^{he}$から$O^{s}$に対応するrating、すなわち、$Y^{S}$をサンプリングする).
 For each strategy we give the corresponding probability sampling distribution, i.e.PS (S|u,i).
-u,i).
+各戦略に対応する確率サンプリング分布、すなわち$P_{S}(\mathcal{S}|u,i)$ を与える.
 In addition to SKEW, WTD and WTD_H, we also employ two baselines.
-SKEW、WTD、WTD_H に加えて、2 つのベースラインを採用しています。
+**SKEW、WTD、WTD_H に加えて、2 つのベースライン(REGとFULL)を採用**しています。
 REG is a random sample from O he , corresponding to an intervention that does not try to compensate for bias.
-REGは、偏りを補正しようとしない介入に対応する、O heからのランダムなサンプルである。
+REGは、偏りを補正しようとしないinterventionに対応する、$O^{he}$からのランダムなサンプルである。
 FULL represents the classical test set generation in the evaluation, where the test set is O he (therefore no intervention).
-FULLは、評価における古典的なテストセット生成を表し、テストセットはO he（したがって介入なし）である。
+FULLは、評価における古典的なテストセット生成を表し、テストセットは$O^{he}$(したがってinterventionなし)である.
 
-- FULL: PS (S|u,i) = 1 so that O he is fully sampled and no intervention is performed. = 1 so that O he is fully sampled and no intervention is performed.
+- FULL: $P_S(\mathcal{S}|u,i)$ = 1 so that $O^{he}$ is fully sampled and no intervention is performed.
 
-- REG: PS (S|u,i) = 1/|O he |. Every (u,i) has a constant probability to be sampled and we obtain a test set that is a random subset ofO he . We would expect this to behave very similarly to FULL. = 1/ すべての (u,i) は一定の確率でサンプリングされ、O he のランダムな部分集合であるテストセットが得られます。 FULLと非常に似た挙動になることが予想されます。
+- REG: $P_S(\mathcal{S}|u,i) = 1/|O^{he}|$. Every (u,i) has a constant probability to be sampled and we obtain a test set that is a random subset ofO he . We would expect this to behave very similarly to FULL. すべての (u,i) は一定の確率でサンプリングされ、$O^{he}$ のランダムな部分集合であるテストセットが得られます。 **FULLと非常に似た挙動になることが予想されます**。
 
-- SKEW: PS (S|u,i) = 1/pop(i), where pop(i) counts the number of ratings that item i has in O t r [3, 27]. = 1/pop(i), where pop(i) counts the number of ratings that item i has in O t r [3, 27].
+- SKEW: $P_S(\mathcal{S}|u,i) = 1/pop(i)$, where $pop(i)$ counts the number of ratings that item $i$ has in $O^{tr}$ [3, 27].
 
-- WTD, WTD_H: PS (S|u,i) = wu (wi) 2 . These are the two alternatives of our approach, presented in Sections 4.2 and 4.3. Weights are calculated using formulas 13 and 14. WTD uses formulas 1 and 2 to calculate the actual MAR posteriors from O w . WTD_H uses the hypothesized MAR posteriors instead. They both use formulas 4 and 5 to calculate exact MNAR posteriors from O t r . = wu (wi) 2 . これらは、4.2節と4.3節で紹介した我々のアプローチの2つの選択肢です。重みは、数式13と14を用いて計算します。 WTD は，式 1 と式 2 を用いて，O w から実際の MAR 後因子を計算する． WTD_Hは、代わりに仮説のMAR後置を使用します。 両者とも数式4と5を用いて、O t r から正確なMNARの後置を計算する。
+- WTD, WTD*H: $P_S(\mathcal{S}|u,i) = w*{u}(w\_{i})^2$ . These are the two alternatives of our approach, presented in Sections 4.2 and 4.3. Weights are calculated using formulas 13 and 14. WTD uses formulas 1 and 2 to calculate the actual MAR posteriors from O w . WTD_H uses the hypothesized MAR posteriors instead. They both use formulas 4 and 5 to calculate exact MNAR posteriors from $O^{tr}$.これらは、4.2節と4.3節で紹介した我々のアプローチの2つの選択肢です。重みは、数式13と14を用いて計算します。 WTD は，式 1 と式 2 を用いて，$O^w$ から実際の MAR 事後分布を計算する． WTD_Hは、代わりに仮説のMAR 事後分布を使用します。 両者とも数式4と5を用いて、$O^{tr}$ から正確なMNARの事後分布を計算する。
 
 Note that, in each of SKEW, WTD and WTD_H, if the distribution PS does not sum to 1 (necessary for a probability distribution), we include a normalization step on PS to ensure that this property is achieved.
-なお、SKEW、WTD、WTD_Hのそれぞれにおいて、分布PSの和が1にならない場合（確率分布として必要）、この性質が得られるようにPSの正規化ステップを含むようにしています。
+**なお、SKEW、WTD、WTD_Hのそれぞれにおいて、分布$P_S$の和が1にならない場合(確率分布として必要な性質)、この性質が得られるようにPSの正規化ステップを含むようにしている**.
 
 ## 5.4. Recommender systems
 
 We train five recommender models, all of them producing a ranked list of recommended items.
-5つのレコメンダーモデルを学習し、すべてのモデルが推薦アイテムのランク付けリストを生成する。
+5つのレコメンダーモデルを学習し、すべてのモデルが推薦アイテムのランク付けリストを生成する.(AvgRating, PosPop, UB_KNN, IB_KNN, MF)
 AvgRating and PosPop are non-personalized recommenders which rank items in descending order of their mean rating and number of positive ratings in the training set, respectively.
-AvgRatingとPosPopは、それぞれトレーニングセットにおける平均評価とポジティブ評価の数の降順でアイテムをランク付けする非個人化レコメンダーです。
+AvgRating と PosPop は、それぞれトレーニングセットにおける平均評価とポジティブ評価の数の降順でアイテムをランク付けする**非個人化レコメンダー**です。
 UB_KNN and IB_KNN are user-based and item-based nearest-neighbour algorithms [8].
-UB_KNNとIB_KNNは、ユーザーベースとアイテムベースの最近傍アルゴリズムです[8]。
+UB_KNNとIB_KNNは、ユーザベースとアイテムベースの**最近傍アルゴリズム**です[8]。
 MF is the Matrix Factorization algorithm proposed by Pilaszy and Tikk [20].
 MFはPilaszy and Tikk [20]が提案したMatrix Factorizationアルゴリズムです。
 For UB_KNN, IB_KNN and MF we use the implementations available in the RankSys library4 .
-UB_KNN、IB_KNN、MFについては、RankSysライブラリ4で利用可能な実装を使用しています。
+UB_KNN、IB_KNN、MFについては、**RankSysライブラリ**で利用可能な実装を使用しています。
 We used our own implementations of AvgRating and PosPop.
 AvgRatingとPosPopは独自に実装したものを使用しました。
 
 The UB_KNN, IB_KNN and MF algorithms have hyperparameters.
-UB_KNN、IB_KNN、MFの各アルゴリズムはハイパーパラメータを持つ。
+UB_KNN、IB_KNN、MFの各アルゴリズムはハイパーパラメータを持つ. (実験においてどのハイパーパラメータ設定を使用するか、という話.)
 We select hyperparameter values that maximize Recall for top10 recommendations on Y val (Section 5.2).
-Y valのトップ10レコメンデーションのRecallを最大化するハイパーパラメータ値を選択する（セクション5.2）。
+$Y^{val}$のトップ10レコメンデーションのRecallを最大化するハイパーパラメータ値を選択する(セクション5.2)
 For UB_KNN, IB_KNN, we choose the number of neighbors from {10, 20, .., 100}.
-UB_KNN, IB_KNNについては、{10, 20, ..., 100}の中から近傍数を選択する。
+UB_KNN, IB_KNNについては、{10, 20, ..., 100}の中から近傍数kを選択する。
 For MF, we choose the number of latent factors from {20, 40, .., 200} and the regularization term from {0.001, 0.006, 0.01, 0.06, 0.1, 0.6}.
 MFでは、潜在因子数を{20, 40, ..., 200}から、正則化項を{0.001, 0.006, 0.01, 0.06, 0.1, 0.6} から選択した。
 
 # 6. Results 結果
 
 We report the results of our experiments in Table 2.
-実験結果を表2に報告する。
+実験結果を表2に報告する.
 For each recommender, we show its ground-truth Recall@10 performance on the unbiased test set Y дt and the relative performance (in terms of percentage difference) for the baselines and intervened test sets with respect to this ground-truth.
 各レコメンダーについて、バイアスのかかっていないテストセットY дtに対するグランドトゥルースのRecall@10性能と、このグランドトゥルースに対するベースラインと介在するテストセットの相対性能（差分百分率）を示す。
 Results for Precision, NDCG and MAP are omitted because the percentage differences are very similar to the Recall ones.
@@ -651,7 +651,7 @@ In general, our new approaches are superior in approximating groundtruth perform
 WTD is very close for non-personalized recommenders performances, while WTD_H is the best for the personalized ones.
 WTDは非パーソナライズド推薦者の性能に非常に近く、WTD_Hはパーソナライズド推薦者の性能に最も優れている。
 Although both of them outperform all the other strategies, WTD_H would probably be the best choice due to its ‘balance’, i.e.its percentage differences are not more than around 50% from the ground-truth for all the recommenders except MF, which anyway has the best approximation on WTD_H among all the strategies.
-WTD_Hは、MFを除くすべてのレコメンダーにおいて、その「バランス」、すなわち、グランドトゥルースとの差の割合が約50%以下であることから、おそらく最良の選択となるであろう（MFは、すべての戦略の中でWTD_Hに最も近似している）。
+WTD_Hは、MFを除くすべてのレコメンダーにおいて、その「バランス」、すなわち、グランドトゥルースとの差の割合が約50%以下であることから、おそらく最良の選択となるであろう(MFは、すべての戦略の中でWTD_Hに最も近似している)
 
 Results on Webscope R3 show something slightly different.
 Webscope R3での結果では、少し違うことがわかります。
@@ -673,14 +673,14 @@ Finally, FULL and REG are very far from the ground-truth, showing that ‘intell
 Indeed, FULL and REG have very similar results, regardless of the fact that REG is 50% smaller in size.
 実際、FULLとREGは、REGの方がサイズが50％小さいという事実にもかかわらず、非常によく似た結果となっています。
 This means that what matters is the strategy that performs the sampling, rather than the sampling itself.
-つまり、重要なのはサンプリングそのものではなく、サンプリングを行う戦略なのです。
+**つまり、重要なのはサンプリングそのものではなく、"サンプリングを行う"という戦略(というか意思決定?)なのです。**
 
 Table 3 reports an additional investigation on the results of Table 2.
 表3は、表2の結果に対する追加調査の報告である。
 An offline evaluation typically ranks recommender algorithms from best to worst.
 オフライン評価では、通常、レコメンダーアルゴリズムをベストからワーストにランク付けします。
 This helps to narrow the number of different recommender algorithms that needs to be evaluated in costly user trials and online experiments.
-これにより、コストのかかるユーザートライアルやオンライン実験で評価する必要のある、さまざまなレコメンダーアルゴリズムの数を絞ることができます。
+これにより、コストのかかるユーザートライアルやオンライン実験で評価する必要のある、さまざまなレコメンダーアルゴリズムの**数を絞ることができます。**
 In our case then, it is important that performance estimates on intervened test sets, not only get close to the ground truth performance, but also rank different recommenders in the same way they would be ranked by performance estimates on the unbiased test set.
 この場合、介在するテストセットでの性能推定が、真実の性能に近いだけでなく、公平なテストセットでの性能推定によってランク付けされるのと同じように、異なるレコメンダーをランク付けすることが重要である。
 We use Kendall’s concordance coefficient (τ ) to compare the ground truth recommender ranking obtained on the unbiased test set with the ones produced by the different interventions.
@@ -697,7 +697,7 @@ Also, the ‘intelligent’ intervention strategies improve the τ values (τ = 
 The concordance coefficients for CoatShopping seem to advise against using ‘intelligent’ intervention approaches such as SKEW, WTD or WTD_H.
 CoatShoppingのコンコーダンス係数は、SKEW、WTD、WTD_Hのような「インテリジェント」な介入アプローチを使用しないことを勧めているようです。
 However, we note that τ values are subject to great variability, depending on the set of recommenders being compared.
-しかし、τの値は、比較する推薦者の集合によって、大きく変動することに注意する。
+しかし、τの値は**、比較する推薦モデルの集合によって、大きく変動する**ことに注意する。
 In fact, simply dropping the MF model from the comparison, we get very different τ values; see Table 4.
 実際、MFモデルを比較対象から外しただけで、τの値が大きく異なることがわかる；表4参照。
 Now τ values for Webscope are all the same (τ = 0.68).
@@ -705,7 +705,7 @@ Now τ values for Webscope are all the same (τ = 0.68).
 But we have a completely different scenario for CoatShopping: SKEW, WTD and WTD_H improve concordance (from τ = 0 to τ = 0.7) and they outperform FULL and REG (which slightly improve from τ = 0.2 to τ = 0.3).
 しかし、CoatShoppingでは全く異なるシナリオが描かれています： SKEW、WTD、WTD_Hは、コンコーダンス（τ=0からτ=0.7へ）を改善し、FULLとREG（τ=0.2からτ=0.3へわずかに改善）を上回りました。
 Low τ values for CoatShopping in Table 3 are a consequence of the fact that all test sets incorrectly rank MF to be one of the best-performing models, while it is the worst according to the ground truth.
-表3のCoatShoppingのτ値が低いのは、すべてのテストセットで、MFを最も性能の良いモデルの1つと誤認した結果であり、真実では最も悪いモデルである。
+**表3のCoatShoppingのτ値が低いのは、すべてのテストセットで、MFを最も性能の良いモデルの1つと誤認した結果であり、真実では最も悪いモデルである**。
 
 # 7. Conclustions コンクルージョン
 
@@ -721,33 +721,33 @@ The other strategy, WTD_H, approximates the probabilities that we expect MAR dat
 The paper assesses the effectiveness of these two strategies and it assesses, for the first time, the effectiveness of an existing intervention strategy from the literature, namely SKEW, which samples in inverse proportion to item popularity.
 本論文では、これら2つの戦略の有効性を評価するとともに、文献にある既存の介入戦略、すなわちアイテムの人気度に反比例してサンプリングするSKEWの有効性を初めて評価した。
 With the use of an essentially unbiased test set as a ground-truth, we showed these three sampling approaches to be successful in mitigating the biases found in a classical random test set.
-基本的に偏りのないテストセットを真実として使用することで、これら3つのサンプリングアプローチが、古典的なランダムテストセットに見られるバイアスを軽減することに成功することを示しました。
+基本的に偏りのないテストセットをground-truthとして使用することで、これら3つの**サンプリングアプローチが、古典的なランダムテストセットに見られるバイアスを軽減することに成功することを示しました**。
 We found SKEW to be particularly good at reducing the bias for a popularity-based recommender (which is related to the popularity bias of the items for which SKEW was designed).
 SKEWは、特に人気度ベースのレコメンダーのバイアス（これはSKEWが設計されたアイテムの人気度のバイアスに関係している）を低減するのに優れていることがわかった。
 But our new strategies are the most robust across various recommenders since they most closely approximate the unbiased ground-truth performances.
-しかし、我々の新しい戦略は、バイアスのかかっていない真実のパフォーマンスに最も近いため、様々な推薦者において最も堅牢である。
+しかし、**我々の新しい戦略は、バイアスのかかっていない真実のパフォーマンスに最も近いため、様々な推薦モデルにおいて最も堅牢(roubust)**である。
 The WTD strategy requires MAR data, which is rarely available, but we found that WTD_H, which uses a hypothesized MAR distribution, does work well, so MAR data is not necessary.
-WTD戦略ではMARデータが必要で、その入手は稀ですが、仮説のMAR分布を使うWTD_Hはうまくいくことがわかったので、MARデータは必要ありません。
+WTD戦略ではMARデータが必要で、その入手は稀ですが、**仮説のMAR分布を使うWTD_Hはうまくいくことがわかったので、MARデータは必要ありません。**
 
 Our approach brings several intrinsic benefits.
 私たちのアプローチは、いくつかの本質的な利点をもたらします。
 First of all, it enjoys low overheads.
 まず、オーバーヘッドが少ないことがあげられます。
 
-- Its design is simple and easy to implement and it does not require any learning phase for the weights, contrary to some unbiased estimators which might require expensive learning (e.g. [22], where propensities are found via logistic regression). その設計はシンプルで実装が容易であり、高価な学習を必要とする可能性のあるいくつかの不偏推定器（例えば[22]、予感はロジスティック回帰によって求められる）とは逆に、重みのための学習段階を必要としない。
+- Its design is simple and easy to implement and it does not require any learning phase for the weights, contrary to some unbiased estimators which might require expensive learning (e.g. [22], where propensities are found via logistic regression). その**設計はシンプルで実装が容易**であり、高価な学習を必要とする可能性のあるいくつかの不偏推定器（例えば[22]、propensityはロジスティック回帰によって求められる）とは逆に、重みのための学習段階を必要としない。
 
-- Moreover, intervention reduces the computational costs of testing a recommender because it generates smaller test sets. さらに、介入はより小さなテストセットを生成するため、レコメンダーのテストにかかる計算コストを削減することができます。
+- Moreover, intervention reduces the computational costs of testing a recommender because it generates smaller test sets. さらに、介入はより小さなテストセットを生成するため、推薦モデルのオフラインテストにかかる計算コストを削減することができます。(オフラインテストってそんな計算コストかかるイメージないけど、どうなんだろう...! 学習だったら計算コスト下げられそう...!)
 
 Another advantage of our approach is that it has high generality.
-また、本アプローチのもう一つの利点は、高い汎用性を持っていることです。
+また、本アプローチのもう一つの利点は、**高い汎用性**を持っていることです。
 
-- It works for both implicit and explicit datasets because it is independent of the interaction values (e.g. ratings) in the dataset. データセット中の相互作用値（例えば評価）に依存しないため、暗黙的なデータセットでも明示的なデータセットでも機能します。
+- It works for both implicit and explicit datasets because it is independent of the interaction values (e.g. ratings) in the dataset. **データセット中の相互作用値(例えば評価)に依存しないため、暗黙的なデータセットでも明示的なデータセットでも機能します**。
 
 - Despite the fact that WTD and WTD_H are very close to SKEW, our way of calculating weights is less heuristic than the one of SKEW and, unlike SKEW, it is not tailored to item popularity bias. WTD と WTD_H は SKEW に非常に近いにもかかわらず、我々の重みの計算方法は SKEW のものよりも発見的でなく、SKEW とは異なり、アイテムの人気バイアスに合わせたものではありません。
 
-- It can be extended to training a recommender, without any modification. Training a recommender on an intervened training set instead of on a classical biased training set, might improve the recommender’s model and therefore boost prediction or ranking performances. For this reason, at the time of writing we are investigating using our approach to debias training sets to complement this work on debiasing test sets. そのままレコメンダーの学習に拡張することも可能です。 従来の偏った訓練セットではなく、介入した訓練セットでレコメンダーを訓練することで、レコメンダーのモデルが改善され、予測やランキングの性能が向上する可能性があります。 このため、本稿執筆時点では、テストセットのデビアスに関するこの作業を補完するために、トレーニングセットのデビアスに関する我々のアプローチを使用することを検討しています。
+- It can be extended to training a recommender, without any modification. Training a recommender on an intervened training set instead of on a classical biased training set, might improve the recommender’s model and therefore boost prediction or ranking performances. For this reason, at the time of writing we are investigating using our approach to debias training sets to complement this work on debiasing test sets. **そのままレコメンダーの学習に拡張することも可能**です。 従来の偏った訓練セットではなく、介入した訓練セットでレコメンダーを訓練することで、レコメンダーのモデルが改善され、予測やランキングの性能が向上する可能性があります。 このため、本稿執筆時点では、テストセットのデビアスに関するこの作業を補完するために、トレーニングセットのデビアスに関する我々のアプローチを使用することを検討しています。
 
-- Intervened data can be used to train existing recommender systems and to test recommender systems using existing metrics. Debiased training and testing hence become widely applicable without designing special models and special metrics. 介入されたデータは、既存のレコメンダーシステムのトレーニングや、既存のメトリクスを用いたレコメンダーシステムのテストに使用することができます。 そのため、特別なモデルや指標を設計することなく、偏ったトレーニングやテストが広く適用できるようになります。
+- Intervened data can be used to train existing recommender systems and to test recommender systems using existing metrics. Debiased training and testing hence become widely applicable without designing special models and special metrics. 介入されたデータは、既存のレコメンダーシステムのトレーニングや、既存のメトリクスを用いたレコメンダーシステムのテストに使用することができます。 そのため、**特別なモデルや指標を設計することなく、偏ったトレーニングやテストが広く適用できるようになります**。
 
 Apart from the use of our approach for training a recommender, our aim for the future is to investigate other ways of calculating the weights for the sampling.
 レコメンダーのトレーニングに本アプローチを使用する以外にも、サンプリングの重みを計算する他の方法を調査することが今後の目標です。

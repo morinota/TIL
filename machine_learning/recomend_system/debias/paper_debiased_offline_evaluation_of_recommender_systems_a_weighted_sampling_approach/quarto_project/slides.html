@@ -357,6 +357,48 @@
 <ul>
 <li>本論文の目的は、hogehogeする事.</li>
 </ul>
+</section></section>
+<section>
+<section id="実験方法-結果" class="title-slide slide level1 center">
+<h1>実験方法 &amp; 結果</h1>
+<p><strong>MNARデータから介入テストセットを作成する様々なサンプリング戦略の良し悪し</strong>を評価し、本論文で提案された WTD と WTD_H の活用可能性を探る為に、オフライン実験を行った.</p>
+</section>
+<section id="実験設定" class="slide level2">
+<h2>実験設定</h2>
+<ul>
+<li><strong>MARデータ部分(<span class="math inline">\(D^{mar} = \{O^{mar} ,Y^{mar}\}\)</span>)とMNARデータ部分(<span class="math inline">\(D^{mar} = \{O^{mnar},Y^{mnar}\}\)</span>)</strong>の両方を持つ、公開データセット(2種)を使用した.</li>
+<li>ある推薦モデルのオフライン評価において、<strong>MNARデータから作る介入テストセットによる評価結果</strong>が、<strong>MARな(unbiasedな)テストセットによる評価結果(今回のground-truth!)</strong>とどれだけ<strong>似ているか</strong>という観点から、様々な戦略の良し悪しを評価した.</li>
+<li>シンプルな5種の推薦モデル(AveRating, PosPop, UB_KNN, IB_KNN, MF)に対して、5種のサンプリング戦略(FULL, REG, SKEW, WTD, WTD_H)を適用した.</li>
+<li>介入テストデータのサイズが、<strong>元のMNARテストデータの50%のサイズ</strong>になる様にサンプリングした.</li>
+</ul>
+</section>
+<section id="補足使用するデータセット" class="slide level2">
+<h2>(補足)使用するデータセット:</h2>
+<ul>
+<li>2つの公開データセットを使用: CoatShopping(衣服) と Webscope R3(音楽)</li>
+<li>どちらも<strong>MARデータ部分(<span class="math inline">\(D^{mar} = \{O^{mar} ,Y^{mar}\}\)</span>)とMNARデータ部分(<span class="math inline">\(D^{mar} = \{O^{mnar},Y^{mnar}\}\)</span>)で構成される</strong>. -&gt; 今回の目的にぴったり…!</li>
+<li><span class="math inline">\(D^{mar}\)</span> 部分は、いずれもforced ratings approachで収集されているため、ほぼbiasのないMARデータなはず.</li>
+<li><span class="math inline">\(D^{mnar}\)</span> 部分は、推薦システムの運用中に収集されたもの.</li>
+</ul>
+</section>
+<section id="補足サンプリング戦略の良し悪しの評価方法" class="slide level2">
+<h2>(補足)サンプリング戦略の良し悪しの評価方法:</h2>
+<ul>
+<li>実験の目的は、<strong>介入テストセットを作成する様々な戦略の良し悪し</strong>を評価すること.</li>
+<li>“良し悪し”の基準は、ある推薦システムのオフライン評価において、介入テストセットによる評価結果が、<strong>unbiasedなテストセットによる評価結果とどれだけ似ているか</strong>.</li>
+</ul>
+</section>
+<section id="補足シンプルな5種の推薦モデル" class="slide level2">
+<h2>(補足)シンプルな5種の推薦モデル</h2>
+</section>
+<section id="補足5種のサンプリング戦略" class="slide level2">
+<h2>(補足)5種のサンプリング戦略</h2>
+</section>
+<section id="実験結果①" class="slide level2">
+<h2>実験結果①:</h2>
+</section>
+<section id="実験結果②" class="slide level2">
+<h2>実験結果②:</h2>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
