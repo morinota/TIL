@@ -721,18 +721,18 @@ The other strategy, WTD_H, approximates the probabilities that we expect MAR dat
 The paper assesses the effectiveness of these two strategies and it assesses, for the first time, the effectiveness of an existing intervention strategy from the literature, namely SKEW, which samples in inverse proportion to item popularity.
 本論文では、これら2つの戦略の有効性を評価するとともに、文献にある既存の介入戦略、すなわちアイテムの人気度に反比例してサンプリングするSKEWの有効性を初めて評価した。
 With the use of an essentially unbiased test set as a ground-truth, we showed these three sampling approaches to be successful in mitigating the biases found in a classical random test set.
-基本的に偏りのないテストセットをground-truthとして使用することで、これら3つの**サンプリングアプローチが、古典的なランダムテストセットに見られるバイアスを軽減することに成功することを示しました**。
+偏りのないMARテストセットをground-truthとして使用することで、これら3つの**サンプリングアプローチが、古典的なランダムテストセットに見られるバイアスを軽減することに成功することを示しました**。
 We found SKEW to be particularly good at reducing the bias for a popularity-based recommender (which is related to the popularity bias of the items for which SKEW was designed).
 SKEWは、特に人気度ベースのレコメンダーのバイアス（これはSKEWが設計されたアイテムの人気度のバイアスに関係している）を低減するのに優れていることがわかった。
 But our new strategies are the most robust across various recommenders since they most closely approximate the unbiased ground-truth performances.
-しかし、**我々の新しい戦略は、バイアスのかかっていない真実のパフォーマンスに最も近いため、様々な推薦モデルにおいて最も堅牢(roubust)**である。
+しかし、**我々の新しい戦略は、バイアスのかかっていないground-truthのパフォーマンスに最も近いため、様々な推薦モデルにおいて最も堅牢(robust)**である。
 The WTD strategy requires MAR data, which is rarely available, but we found that WTD_H, which uses a hypothesized MAR distribution, does work well, so MAR data is not necessary.
-WTD戦略ではMARデータが必要で、その入手は稀ですが、**仮説のMAR分布を使うWTD_Hはうまくいくことがわかったので、MARデータは必要ありません。**
+WTD戦略ではMARデータが必要で、その入手は稀ですが、**仮説のMAR分布を使うWTD_Hが上手く機能する事わかったので、MARデータは必要ありません。**
 
 Our approach brings several intrinsic benefits.
 私たちのアプローチは、いくつかの本質的な利点をもたらします。
 First of all, it enjoys low overheads.
-まず、オーバーヘッドが少ないことがあげられます。
+まず、オーバーヘッド(事業を営むのにかかる経常的な費用)が少ないことがあげられます。
 
 - Its design is simple and easy to implement and it does not require any learning phase for the weights, contrary to some unbiased estimators which might require expensive learning (e.g. [22], where propensities are found via logistic regression). その**設計はシンプルで実装が容易**であり、高価な学習を必要とする可能性のあるいくつかの不偏推定器（例えば[22]、propensityはロジスティック回帰によって求められる）とは逆に、重みのための学習段階を必要としない。
 

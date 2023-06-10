@@ -394,11 +394,51 @@
 <section id="補足5種のサンプリング戦略" class="slide level2">
 <h2>(補足)5種のサンプリング戦略</h2>
 </section>
-<section id="実験結果①" class="slide level2">
-<h2>実験結果①:</h2>
+<section id="実験①-ground-truth-との差" class="slide level2">
+<h2>実験①: ground-truth との差</h2>
+<p>table2は、hogehoge.</p>
 </section>
-<section id="実験結果②" class="slide level2">
-<h2>実験結果②:</h2>
+<section id="実験②-オフライン評価による推薦モデル達の順位づけ" class="slide level2">
+<h2>実験②: オフライン評価による推薦モデル達の順位づけ</h2>
+<ul>
+<li>オフライン評価は複数の推薦モデルを順位づけ、<strong>“良さそう”なモデルを絞り込む</strong>. これによりオンライン実験(ex. ABテスト)のコストを節約できる.</li>
+<li>-&gt; モデル性能の推定値がground-truthと近いだけでなく、<strong>複数のモデルの順位付け結果がground-truthとどの程度合致しているか</strong>も重要…!!</li>
+<li>ランキング類似度の評価指標(kendall’s tau)を用いて、ground-truthによる順位付けの結果と比較した.</li>
+</ul>
+<p>table3は、hogehoge…</p>
+<p>table4は、hogehoge…</p>
+</section></section>
+<section>
+<section id="まとめ" class="title-slide slide level1 center">
+<h1>まとめ</h1>
+
+</section>
+<section id="結論" class="slide level2">
+<h2>結論</h2>
+<ul>
+<li>本論文では、MNARデータからMAR的な性質を持つ介在テストセットを生成する新しいサンプリング戦略 <strong>WTD</strong>, <strong>WTD_H</strong> を提案した.</li>
+<li>偏りのないMARテストセットをground-truthとして使用した実験により、サンプリング戦略が、MNARデータがモデルのオフライン性能評価に与えるbiasを軽減できる事を示した.</li>
+<li>既存のサンプリング戦略 SKEW と比較して、本戦略は<strong>様々な推薦モデルにおいて最も堅牢(robust)</strong>という結果だった.</li>
+<li>WTD戦略ではMARデータが必要だが、<strong>仮説のMAR分布を使うWTD_H</strong>が上手く機能する事わかったので、本戦略の適用においてMARデータは必要ない.</li>
+</ul>
+</section>
+<section id="提案手法の利点" class="slide level2">
+<h2>提案手法の利点:</h2>
+<p>提案手法の利点:</p>
+<ul>
+<li>low overhead:
+<ul>
+<li>重みの複雑な学習ステップが不要で、シンプルな設計-&gt;実装が簡単.</li>
+<li>介入によりデータセットのサイズが小さくなる-&gt; 評価(や学習)にかかる<strong>計算コストを削減</strong>できる.</li>
+</ul></li>
+<li>high generality:
+<ul>
+<li>データセット中のinteraction valueに依存しない-&gt;<strong>explicitデータにもimplicitデータにも</strong>適用可能.</li>
+<li>推薦モデルの評価(検証)のみでなく、<strong>学習に拡張</strong>する事も可能.</li>
+<li>既存のモデルの学習や、既存のmetricによるオフライン評価に適用可能. (特別なモデルやmetricの設計が不要.)</li>
+</ul></li>
+<li>サンプリング重みの算出方法に、因果推論的な手法を使うのもありかも…!(それこそpropensity scoreとか?でもlow overheadの利点を失うか…!)</li>
+</ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
