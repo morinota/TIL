@@ -349,14 +349,71 @@
 <h1>Introduction</h1>
 
 </section>
-<section id="hogehoge" class="slide level2">
-<h2>Hogehoge</h2>
+<section id="推薦システムのオフライン評価-と-様々な交絡因子" class="slide level2">
+<h2>推薦システムのオフライン評価 と 様々な交絡因子</h2>
+<p>推薦システムのオフライン評価には、ユーザ-アイテム間のinteraction(ex. クリック, 購入, 評価, etc.)の観測データを用いる.しかし様々な<strong>交絡因子(Confounding factor)</strong>によってbias(選択bias)が含まれる. (因果推論の用語だが、推薦の文脈で言えば、“interactionの観測” -&gt; “ユーザのアイテムへの嗜好度合い” の因果関係の観測に影響を与えうる第三の因子.)</p>
+<ul>
+<li>例1. UI上で目立つ位置に露出されたアイテムは、interactionが発生しやすい.</li>
+<li>例2. 推薦システム自身が露出したアイテムは、ユーザとinteractionが発生しやすい.(feedback loop)</li>
+<li>例3. 映画の星1~5の様な明示的評価において、ユーザは自分が好きなアイテムを評価しやすい.</li>
+</ul>
+<p>これにより観測データにて欠損したinteractionは<strong>MNAR(Missing Not At Random)</strong>となる. (MNARデータと呼ぶ…!)</p>
+</section>
+<section id="mnarデータが与える影響" class="slide level2">
+<h2>MNARデータが与える影響</h2>
+<ul>
+<li>古典的なオフライン評価は、観測データが<strong>MCAR(Missing Completely At Random)</strong>データまたは<strong>MAR(Missing At Random)</strong>データのいずれかである、という仮定に基づいている.</li>
+<li>MCARやMARであるかのようにMNARデータを評価すると、推薦モデル性能の推定にてbiasが発生する. (ex. 人気アイテムを推薦するモデルや、activeなユーザに過度に特化したモデルを不正に評価する.)</li>
+<li>MNARデータの問題に対応する為に、<strong>3種</strong>のアプローチがある.
+<ul>
+<li><ol type="1">
+<li>MNARテストデータの代わりにMARデータを収集する.</li>
+</ol></li>
+<li><ol start="2" type="1">
+<li>MNARテストデータのbiasを補正できるように、真のモデル性能の不偏推定量を設計する.</li>
+</ol></li>
+<li><ol start="3" type="1">
+<li>MNARテストデータからデータをサンプリングし、<strong>MARに近い性質を持つ介入テストデータ</strong>を作る.</li>
+</ol></li>
+</ul></li>
+</ul>
+<p>本論文は、<strong>3つ目のアプローチ</strong>に焦点を当てている.</p>
 </section>
 <section id="本論文の目的-アプローチの概要" class="slide level2">
 <h2>本論文の目的 &amp; アプローチの概要</h2>
 <ul>
-<li>本論文の目的は、hogehogeする事.</li>
+<li>本論文の目的: MNARテストデータから MARデータに近い介入テストデータを作る為の、<strong>新しいサンプリング戦略</strong>を調査する事.</li>
+<li>そのために…
+<ul>
+<li>MNARデータにおけるユーザとアイテムの分布と、unbiasedなMAR分布との間の乖離を考慮して重みを計算する、<strong>重み付けサンプリング戦略</strong>を提案する.</li>
+<li>オフライン実験を行い、提案したサンプリング手法と既存のサンプリング戦略 SKEW を比較した.</li>
+</ul></li>
+<li></li>
 </ul>
+</section></section>
+<section>
+<section id="mnarデータに対処する為の三種のアプローチ" class="title-slide slide level1 center">
+<h1>MNARデータに対処する為の三種のアプローチ</h1>
+<ul>
+<li><ol type="1">
+<li>MNARテストデータの代わりに<strong>MARデータを収集</strong>する.</li>
+</ol></li>
+<li><ol start="2" type="1">
+<li>MNARテストデータのbiasを補正できるように、<strong>真のモデル性能の不偏推定量を設計</strong>する.</li>
+</ol></li>
+<li><ol start="3" type="1">
+<li>MNARテストデータからデータをサンプリングし、<strong>MARに近い性質を持つ介入テストデータ</strong>を作る.</li>
+</ol></li>
+</ul>
+</section>
+<section id="方法1.-mnarテストデータの代わりにmarデータを収集する." class="slide level2">
+<h2>方法1. MNARテストデータの代わりにMARデータを収集する.</h2>
+</section>
+<section id="方法2.-biasを補正できるような推定量を設計する." class="slide level2">
+<h2>方法2. biasを補正できるような推定量を設計する.</h2>
+</section>
+<section id="方法3.-mnarデータから介入データをサンプリングする." class="slide level2">
+<h2>方法3. MNARデータから介入データをサンプリングする.</h2>
 </section></section>
 <section>
 <section id="実験方法-結果" class="title-slide slide level1 center">
@@ -390,13 +447,34 @@
 </section>
 <section id="補足シンプルな5種の推薦モデル" class="slide level2">
 <h2>(補足)シンプルな5種の推薦モデル</h2>
+<p>実験において5種の推薦モデルを学習させ、全てのモデルが推薦アイテムのランク付けリストを生成する.</p>
+<ul>
+<li>AvgRating: 非個別化推薦1. 評価値の平均値が高いアイテム順に推薦.</li>
+<li>PosPop: 非個別化推薦2. positive評価値の数が多いアイテム順に推薦.</li>
+<li>UB_KNN: 個別化推薦1. ユーザベースの最近傍アルゴリズム. (評価値傾向が似てるユーザを探す)</li>
+<li>IB_KNN: 個別化推薦2. アイテムベースの最近傍アルゴリズム. (評価値傾向が似てるアイテムを探す)</li>
+<li>MF: 個別化推薦3. 一般的なMatrix Factorizationアルゴリズム.(UB_KNNとIB_KNNのハイブリッド的なイメージ)</li>
+</ul>
 </section>
-<section id="補足5種のサンプリング戦略" class="slide level2">
-<h2>(補足)5種のサンプリング戦略</h2>
+<section id="補足比較対象の5種のサンプリング戦略" class="slide level2">
+<h2>(補足)比較対象の5種のサンプリング戦略</h2>
+<p>各戦略はサンプリング確率分布 <span class="math inline">\(P_{S}(\mathcal{S}|u,i)\)</span> を定義し、元のMNARテストセット <span class="math inline">\(O^{he}\)</span> (i.e.&nbsp;<span class="math inline">\(Y^{he}\)</span>)から介在テストセット <span class="math inline">\(O^{S}\)</span> (i.e.&nbsp;<span class="math inline">\(Y^{S}\)</span>)をサンプリングする.</p>
+<ul>
+<li>FULL: サンプリング無しの戦略. <span class="math inline">\(P_S(\mathcal{S}|u,i) = 1\)</span>.</li>
+<li>REG: <span class="math inline">\(O^{he}\)</span>からの一様ランダムなサンプリング. <span class="math inline">\(P_S(\mathcal{S}|u,i) = 1/|O^{he}|\)</span>.</li>
+<li>SKEW: 既存のアイテム人気度に基づくサンプリング戦略. <span class="math inline">\(P_S(\mathcal{S}|u,i) = 1/pop(i)\)</span>. <span class="math inline">\(pop(i)\)</span> は<span class="math inline">\(O^{he}\)</span>におけるアイテムiのinteractionの観測数.</li>
+<li><strong>WTD: 提案された戦略1</strong>. <span class="math inline">\(P_S(\mathcal{S}|u,i) = w_{u}(w_{i})^2\)</span>. 実際のMARデータ <span class="math inline">\(O^{w}\)</span> からMAR事後分布を推定して <span class="math inline">\(w_u, w_i\)</span> を計算.</li>
+<li><strong>WTD_H: 提案された戦略1</strong>. <span class="math inline">\(P_S(\mathcal{S}|u,i)\)</span>はWTDと同じ. 実際のMARデータ <span class="math inline">\(O^{w}\)</span> を使用せず、仮説のMAR事後分布から <span class="math inline">\(w_{u}, w_{i}\)</span> を計算.</li>
+</ul>
 </section>
-<section id="実験①-ground-truth-との差" class="slide level2">
-<h2>実験①: ground-truth との差</h2>
-<p>table2は、hogehoge.</p>
+<section id="実験①-モデル精度指標のground-truth-との差" class="slide level2">
+<h2>実験①: モデル精度指標のground-truth との差</h2>
+<p>table2は、各推薦モデルに関する<strong>モデル精度指標(Recall@10)のground-truth</strong>(=MARテストセット <span class="math inline">\(Y^gt\)</span> による評価結果)と、各サンプリング戦略による<strong>介在テストセットを使った推定値</strong>のpercentage difference.</p>
+
+<img data-src=".png" class="r-stretch"><ul>
+<li>一般に提案手法(WTD, WTD_H)は、<strong>ground-truthのモデル性能を最も良く近似</strong>できている.</li>
+<li>FULL戦略とREG戦略の結果はよく似ており、ground-truthから非常に離れている. -&gt; debias効果に重要なのは”サンプリングする事”そのものではなく、<strong>“いかにサンプリングするか”という戦略</strong>である.</li>
+</ul>
 </section>
 <section id="実験②-オフライン評価による推薦モデル達の順位づけ" class="slide level2">
 <h2>実験②: オフライン評価による推薦モデル達の順位づけ</h2>

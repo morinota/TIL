@@ -46,12 +46,12 @@ The recommender itself sets up a feedback loop, which results in another confoun
 The user’s preferences are also a confounder: for example, Marlin et al.demonstrate that, in a dataset of numeric ratings, the probability of not observing a specific user-item interaction depends on the value associated with that particular interaction (i.e.the rating value): informally, users tend to rate items that they like [18].
 例えば、Marlinらは、数値評価のデータセットにおいて、特定のユーザーとアイテムの相互作用を観察しない確率が、その特定の相互作用に関連する値（すなわち、評価値）に依存することを実証している：非公式に、ユーザーは自分が好きなアイテムを評価する傾向がある [18] 。
 Because of these and other confounders, interactions that are missing from an observed dataset are Missing Not At Random (MNAR) [18].
-これらや他の交絡因子のために、観測されたデータセットから欠落している相互作用はMNAR（Missing Not At Random）[18]となる。
+これらや他の交絡因子のために、観測されたデータセットから欠落している相互作用は**MNAR（Missing Not At Random）**[18]となる。
 
 Classical offline evaluations using such an observed dataset are in effect making the assumption that interactions that are missing from the observed dataset are either Missing Completely At Random (MCAR) or Missing At Random (MAR) [18].
 このような観測データセットを用いた古典的なオフライン評価は、実質的に、観測データセットから欠落した相互作用はMCAR（Missing Completely At Random）またはMAR（Missing At Random）のいずれかであると仮定している [18].
 (For the distinction between MCAR and MAR, see Section 2.) Using MNAR data in an evaluation as if it were MCAR or MAR, results in biased estimates of a recommender’s performance [18]: for example, such experiments tend to incorrectly reward recommenders that recommend popular items or that make recommendations to the more active users [8, 21].
-(MCARとMARの区別については、セクション2を参照）MCARやMARであるかのようにMNARデータを評価で使用すると、推薦システムの性能の偏った推定結果になります[18]。例えば、このような実験は、人気のアイテムを推薦する推薦者やよりアクティブなユーザーに推薦する推薦者を不正に評価する傾向があります[8、 21]。
+(MCARとMARの区別については、セクション2を参照)MCARやMARであるかのようにMNARデータを評価で使用すると、推薦システムの性能の偏った推定結果になります[18]。例えば、このような実験は、人気のアイテムを推薦する推薦者やよりアクティブなユーザの為に推薦する推薦者を不正に評価する傾向があります[8、 21]。
 
 There are three ways of addressing this problem.
 この問題に対しては、3つの方法があります。
@@ -89,7 +89,7 @@ One such sampling strategy is known as SKEW [13]: it samples user-item interacti
 In this paper we investigate a new alternative to the SKEW sampling strategy for generating intervened data.
 本論文では、介入データを生成するためのSKEWサンプリング戦略に代わる新しい方法を調査する。
 We propose a weighted sampling strategy in which the weights are calculated by considering the divergence between the distribution of users and items in the MNAR data and their corresponding target (unbiased) MAR distributions.
-MNARデータにおけるユーザーとアイテムの分布と、それらに対応するターゲット（不偏）のMAR分布との間の乖離を考慮して重みを計算する、重み付けサンプリング戦略を提案する。
+MNARデータにおけるユーザとアイテムの分布と、それらに対応するターゲット（不偏）のMAR分布との間の乖離を考慮して重みを計算する、重み付けサンプリング戦略を提案する。
 
 We compare our sampling approach with SKEW.
 このサンプリング手法をSKEWと比較します。
@@ -590,7 +590,7 @@ Results are averaged over 10 runs with different random splits.
 We formally present here the sampling strategies that we use to produce the intervened test sets in our experiments.
 ここでは、実験にてintervened test setsを作成するために使用するサンプリング戦略を正式に紹介する.
 Each strategy samples an intervened test setO S from O he (and the corresponding ratings from Y he , i.e.Y S ).
-各戦略は、$O^{he}$から介在するテストセット$O^{S}$をサンプリングする(そして、$Y^{he}$から$O^{s}$に対応するrating、すなわち、$Y^{S}$をサンプリングする).
+各戦略は、$O^{he}$から介在するテストセット$O^{S}$をサンプリングする(そして、$Y^{he}$から$O^{s}$に対応するrating、すなわち、$Y^{S}$ をサンプリングする).
 For each strategy we give the corresponding probability sampling distribution, i.e.PS (S|u,i).
 各戦略に対応する確率サンプリング分布、すなわち$P_{S}(\mathcal{S}|u,i)$ を与える.
 In addition to SKEW, WTD and WTD_H, we also employ two baselines.
@@ -600,7 +600,7 @@ REGは、偏りを補正しようとしないinterventionに対応する、$O^{h
 FULL represents the classical test set generation in the evaluation, where the test set is O he (therefore no intervention).
 FULLは、評価における古典的なテストセット生成を表し、テストセットは$O^{he}$(したがってinterventionなし)である.
 
-- FULL: $P_S(\mathcal{S}|u,i)$ = 1 so that $O^{he}$ is fully sampled and no intervention is performed.
+- FULL: $P_S(\mathcal{S}|u,i) = 1$ so that $O^{he}$ is fully sampled and no intervention is performed.
 
 - REG: $P_S(\mathcal{S}|u,i) = 1/|O^{he}|$. Every (u,i) has a constant probability to be sampled and we obtain a test set that is a random subset ofO he . We would expect this to behave very similarly to FULL. すべての (u,i) は一定の確率でサンプリングされ、$O^{he}$ のランダムな部分集合であるテストセットが得られます。 **FULLと非常に似た挙動になることが予想されます**。
 
@@ -673,7 +673,7 @@ Finally, FULL and REG are very far from the ground-truth, showing that ‘intell
 Indeed, FULL and REG have very similar results, regardless of the fact that REG is 50% smaller in size.
 実際、FULLとREGは、REGの方がサイズが50％小さいという事実にもかかわらず、非常によく似た結果となっています。
 This means that what matters is the strategy that performs the sampling, rather than the sampling itself.
-**つまり、重要なのはサンプリングそのものではなく、"サンプリングを行う"という戦略(というか意思決定?)なのです。**
+**つまり、重要なのはサンプリングする事そのものではなく、"いかにサンプリングを行うか"という戦略(というか意思決定?)なのです。**
 
 Table 3 reports an additional investigation on the results of Table 2.
 表3は、表2の結果に対する追加調査の報告である。
