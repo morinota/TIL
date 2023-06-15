@@ -323,14 +323,14 @@ As noted in Table 1, a self-attention layer connects all positions with a consta
 In terms of computational complexity, self-attention layers are faster than recurrent layers when the sequence length n is smaller than the representation dimensionality d, which is most often the case with sentence representations used by state-of-the-art models in machine translations, such as word-piece [38] and byte-pair [31] representations.
 計算量の点では、配列長$n$が表現次元$d$より小さい場合、self-attention層はリカレント層より高速である。これは、機械翻訳の最先端モデルで用いられる文表現、例えばワードピース［38］やバイトペア［31］表現で最もよく見られるケースである。(という事はこれはよくあるケースなのか...!)
 To improve computational performance for tasks involving very long sequences, self-attention could be restricted to considering only a neighborhood of size r in the input sequence centered around the respective output position.
-非常に長いシーケンスを含むタスクの計算性能を向上させるために、自己注意を、それぞれの出力位置を中心とした入力シーケンスのサイズrの近傍のみを考慮するように制限することができる。
+非常に長いシーケンスを含むタスクの計算性能を向上させるために、self-attentionを、それぞれの出力位置を中心とした入力シーケンスのサイズ$r$の近傍のみを考慮するように制限することができる.
 This would increase the maximum path length to O(n/r).
 これにより、最大パス長はO(n/r)に増加する。
 We plan to investigate this approach further in future work.
 このアプローチについては、今後さらに調査していく予定です。
 
 A single convolutional layer with kernel width k < n does not connect all pairs of input and output positions.
-カーネル幅k＜nの単一の畳み込み層は、入力と出力の位置のすべてのペアを接続しない。
+カーネル幅 $k \leq n$ の単一の畳み込み層は、入力と出力の位置のすべてのペアを接続しない.(これは分かる. 周囲k個の要素を畳み込むので...!)
 Doing so requires a stack of O(n/k) convolutional layers in the case of contiguous kernels, or O(logk(n)) in the case of dilated convolutions [18], increasing the length of the longest paths between any two positions in the network.
 そのためには、連続カーネルの場合はO(n/k)、拡張コンボリューションの場合はO(logk(n))の畳み込み層を積み上げる必要があり[18]、ネットワーク内の任意の2位置間の最長経路の長さを増加させることになる。
 Convolutional layers are generally more expensive than recurrent layers, by a factor of k.
@@ -338,10 +338,10 @@ Convolutional layers are generally more expensive than recurrent layers, by a fa
 Separable convolutions [6], however, decrease the complexity considerably, to O(k · n · d + n · d 2 ).
 しかし、分離可能な畳み込み[6]は、複雑さを大幅に減らし、O(k - n - d + n - d 2 )とする。
 Even with k = n, however, the complexity of a separable convolution is equal to the combination of a self-attention layer and a point-wise feed-forward layer, the approach we take in our model.
-しかし、k = nであっても、分離可能な畳み込みの複雑さは、本モデルで採用している自己注意層とポイントワイズフィードフォワード層の組み合わせと同等です。
+しかし、k = nであっても、分離可能な畳み込みの複雑さは、本モデルで採用しているself-attention層とpoint-wise(1レコード毎に独立、みたいなイメージ?) feed-forward layer層の組み合わせと同等です。
 
 As side benefit, self-attention could yield more interpretable models.
-副次的な効果として、自己アテンションによって、より解釈しやすいモデルが得られるかもしれません。
+副次的な効果として、self-attention によって、より解釈しやすいモデルが得られるかもしれません。
 We inspect attention distributions from our models and present and discuss examples in the appendix.
 私たちのモデルから注目分布を検査し、付録で例を提示して議論します。
 Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic and semantic structure of the sentences.
@@ -355,9 +355,9 @@ This section describes the training regime for our models.
 ## 5.1. Training Data and Batching 学習データとバッチング
 
 We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs.
-約450万文対からなる標準的なWMT 2014英独データセットで学習を行いました。
+約450万文対からなる標準的なWMT 2014英-独データセットで学習を行いました。
 Sentences were encoded using byte-pair encoding [3], which has a shared sourcetarget vocabulary of about 37000 tokens.
-文はバイトペアエンコーディング[3]を用いて符号化され、約37000個のトークンからなるソースとターゲットの語彙が共有されています。
+文はbyte-pair encoding[3]を用いて符号化され、約37000個のトークンからなるソース(英語?)とターゲット(ドイツ語?)の語彙(これらがkey-value??)が共有されています。
 For English-French, we used the significantly larger WMT 2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece vocabulary [38].
 英語-フランス語については、36Mの文からなる著しく大規模なWMT 2014 English-Frenchデータセットを使用し、トークンを32000ワード-ピースの語彙に分割しました[38]。
 Sentence pairs were batched together by approximate sequence length.
@@ -380,17 +380,19 @@ The big models were trained for 300,000 steps (3.5 days).
 
 ## 5.3. Optimizer オプティマイザー
 
-We used the Adam optimizer [20] with β1 = 0.9, β2 = 0.98 and  = 10−9 .
-Adam optimizer [20] を使用し、β1 = 0.9, β2 = 0.98, = 10-9 としました。
+We used the Adam optimizer [20] with $\beta_{1} = 0.9$, $\beta_{2} = 0.98$ and $\epsilon= 10−9$.
+Adam optimizer [20] を使用し、$\beta_{1} = 0.9$, $\beta_{2} = 0.98$, $\epsilon= 10−9$ としました。
 We varied the learning rate over the course of training, according to the formula:
-計算式に従って、トレーニングの過程で学習率を変化させた：
+計算式に従って、トレーニングの過程で**学習率を変化**させた:(adamってそうなんだっけ...!)
 
 $$
+lrate = d^{-0.5}_{model} \cdot
+min(step_num^{-0.5}, step_num \cdot warmup_steps^{-1.5})
 \tag{3}
 $$
 
 This corresponds to increasing the learning rate linearly for the first warmup_steps training steps, and decreasing it thereafter proportionally to the inverse square root of the step number.
-これは、最初のwarmup_stepsの学習ステップでは学習率を直線的に増加させ、それ以降はステップ数の逆平方根に比例して減少させることに相当します。
+これは、**最初のwarmup_stepsの学習ステップでは学習率を直線的に増加**させ、それ以降はステップ数の逆平方根に比例して**減少させる**ことに相当します。
 We used warmup_steps = 4000.
 warmup_steps = 4000を使用しました。
 
@@ -405,13 +407,13 @@ We apply dropout [33] to the output of each sub-layer, before it is added to the
 各サブレイヤーの出力は、サブレイヤー入力に加算され正規化される前に、ドロップアウト[33]を適用しています。
 In addition, we apply dropout to the sums of the embeddings and the positional encodings in both the encoder and decoder stacks.
 また、エンコーダスタックとデコーダスタックの両方において、埋め込みと位置エンコーディングの和にドロップアウトを適用しています。
-For the base model, we use a rate of Pdrop = 0.1.
+For the base model, we use a rate of $P_{drop} = 0.1$.
 ベースモデルでは、Pdrop=0.1のレートを使用しています。
 
 ### 5.4.2. Label Smoothing レーベルスムージング
 
-During training, we employed label smoothing of value ls = 0.1 [36].
-学習時には、ls = 0.1 [36]の値のラベルスムージングを採用した。
+During training, we employed label smoothing of value $\epsilon_{ls} = 0.1$ [36].
+学習時には、$\epsilon_{ls} = 0.1$ [36]の値のラベルスムージングを採用した。
 This hurts perplexity, as the model learns to be more unsure, but improves accuracy and BLEU score.
 これは、モデルがより不確実であることを学習するため、複雑さを損ないますが、精度とBLEUスコアを向上させます。
 
@@ -500,7 +502,7 @@ RNNのsequence-to-sequenceモデル[37]とは対照的に、Transformerは、40K
 # 7. Conclusion 結論
 
 In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers most commonly used in encoder-decoder architectures with multi-headed self-attention.
-本研究では、エンコーダー・デコーダーアーキテクチャで最もよく使われるリカレント層を多頭の自己注意に置き換えた、完全に注意に基づく最初の配列変換モデルであるトランスフォーマーを発表しました。
+本研究では、エンコーダー・デコーダーアーキテクチャで最もよく使われるリカレント層を多頭の自己注意に置き換えた、完全にattentionに基づく最初の**配列変換モデル**であるトランスフォーマーを発表しました。
 
 For translation tasks, the Transformer can be trained significantly faster than architectures based on recurrent or convolutional layers.
 翻訳タスクの場合、Transformerはリカレント層や畳み込み層に基づくアーキテクチャよりも大幅に速く学習させることができます。

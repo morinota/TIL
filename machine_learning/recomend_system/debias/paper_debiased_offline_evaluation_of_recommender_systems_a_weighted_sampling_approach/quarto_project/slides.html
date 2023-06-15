@@ -341,7 +341,10 @@
 <section id="ざっくり論文概要" class="slide level2">
 <h2>ざっくり論文概要</h2>
 <ul>
-<li>最後に書く!</li>
+<li>MNAR(Missing Not At Random)データをテストデータに使用する場合の推薦モデルのオフライン評価において、テストデータを<strong>重み付けサンプリングしてMARデータに近づける</strong>事でbias軽減を試みる…!という論文.</li>
+<li>MNAR(Missing Not At Random)データの特性を気にせずにnaiveにモデル評価に使用してしまうと、<strong>biasによってモデル性能を誤解してしまい</strong>、本番プロダクトに適用した後に思った通りの効果が出ない可能性があるので……!みたいなモチベーション</li>
+<li>個人的には、MNARデータに対応する他のアプローチ(ex. 不偏な損失関数を設計)と比較して、学習や評価に使うデータに対する前処理(データを削る)を追加する様なアプローチなので、<strong>既存の学習フローや評価フローをいじる事なく低コストで導入できそうな点</strong>が素敵ポイント…!</li>
+<li>また、先週読んだ論文ではPropensity score(傾向スコア)を用いていたアプローチを提案していたが、この論文でも”交絡因子”という用語が良く使われており、<strong>推薦システムのdebiasの研究分野と因果推論の結びつきを感じた</strong>…!</li>
 </ul>
 </section>
 <section>
@@ -388,7 +391,6 @@
 <li>MNARデータにおけるユーザとアイテムの分布と、unbiasedなMAR分布との間の乖離を考慮して重みを計算する、<strong>重み付けサンプリング戦略</strong>を提案する.</li>
 <li>オフライン実験を行い、提案したサンプリング手法と既存のサンプリング戦略 SKEW を比較した.</li>
 </ul></li>
-<li></li>
 </ul>
 </section></section>
 <section>
@@ -408,12 +410,208 @@
 </section>
 <section id="方法1.-mnarテストデータの代わりにmarデータを収集する." class="slide level2">
 <h2>方法1. MNARテストデータの代わりにMARデータを収集する.</h2>
+<p>hoge</p>
 </section>
 <section id="方法2.-biasを補正できるような推定量を設計する." class="slide level2">
 <h2>方法2. biasを補正できるような推定量を設計する.</h2>
+<p>hoge</p>
 </section>
 <section id="方法3.-mnarデータから介入データをサンプリングする." class="slide level2">
 <h2>方法3. MNARデータから介入データをサンプリングする.</h2>
+<p>piyo.</p>
+</section></section>
+<section>
+<section id="提案手法の準備-marデータとmnarデータの特性を紐解く." class="title-slide slide level1 center">
+<h1>提案手法の準備: MARデータとMNARデータの特性を紐解く.</h1>
+<p>MARとMNARのデータセットの特性を分析するための確率的フレームワークを定義する. このセクションで定義した両データセットの特性を利用して、unbiasedなオフライン評価の為のアプローチを提案する.</p>
+</section>
+<section id="表記法notationの定義" class="slide level2">
+<h2>表記法(notation)の定義</h2>
+<ul>
+<li>user-item 空間 : <span class="math inline">\(U \times I\)</span>, サイズは<span class="math inline">\(|U| \cdot |I|\)</span>
+<ul>
+<li>user idx: <span class="math inline">\(u \in U = {1, \cdots, |U|}\)</span>, item idx: <span class="math inline">\(i \in I = {1, \cdots, |I|}\)</span></li>
+</ul></li>
+<li>一般的な観測データセットを <span class="math inline">\(D = {O \in {0, 1}^{U \times I}, Y \in \mathbb{R}^{U \times I}}\)</span> と表記.
+<ul>
+<li>binary行列<span class="math inline">\(O\)</span>には、user-item間にinteractionが観察されたか否か.</li>
+<li>行列 <span class="math inline">\(Y\)</span> には、<span class="math inline">\(O\)</span>の観測要素に対応するinteraction value が記録：<span class="math inline">\(O_{u,i} = 1 \rightarrow Y_{u,i} \neq 0\)</span> , <span class="math inline">\(O_{u,i} = 0K \rightarrow Y_{u,i} = 0\)</span>.</li>
+<li>“rating”ではなく、“<strong>interaction value(相互作用値)</strong>”という一般的な用語を使用する.(<span class="math inline">\(Y\)</span>には評価, クリック, 閲覧, 視聴時間などを適用できる.)</li>
+</ul></li>
+<li>各user-itemペアが観測されるか否かを表す、binary確率変数 <span class="math inline">\(\mathcal{O}: U \times I → \{0, 1\}\)</span>を定義する. 観測確率を<span class="math inline">\(P(\mathcal{O} = 1|u,i) = P(\mathcal{O}|u,i)\)</span> と表す.</li>
+<li>↑の表記を用いて、同じU×I空間上の2種類のデータセット、<strong><span class="math inline">\(D_{mnar} = \{O^{mnar},Y^{mna}\}\)</span></strong>と <strong><span class="math inline">\(D_{mar} = \{O^{mar} ,Y^{mar}\}\)</span></strong> の特性を表現する.</li>
+</ul>
+</section>
+<section id="marデータセットの特性①-生成過程を整理" class="slide level2">
+<h2>MARデータセットの特性① 生成過程を整理</h2>
+<p><span class="math inline">\(D_{mar}\)</span> の生成過程を述べる.(既存手法のforced ratings approachを想定.)</p>
+<ul>
+<li>ユーザ-アイテムのペアをランダムサンプリングして, <span class="math inline">\(O^{mar}\)</span> を生成.</li>
+<li><span class="math inline">\(O^{mar}\)</span> の各非ゼロ要素の Interaction value を収集し、<span class="math inline">\(Y^{mar}\)</span> を取得.</li>
+</ul>
+<p>生成過程を U×I空間上で定義される確率分布<span class="math inline">\(P_{mar}(\mathcal{O}|u,i)\)</span> を利用して導出する.</p>
+</section>
+<section id="marデータセットの特性②-uとiそれぞれの事後確率を定式化" class="slide level2">
+<h2>MARデータセットの特性② uとiそれぞれの事後確率を定式化</h2>
+<p>このような手法で収集されたデータセット <span class="math inline">\(D_{mar}\)</span> を想定すると、<strong>ユーザとアイテムの事後確率</strong>の経験的な推定値は <strong>(ほぼ)一様に分布している</strong> はずである:</p>
+<p><span class="math display">\[
+P_{mar}(u|\mathcal{O}) = \frac{|O_{u}^{mar}|}{O^{mar}} \sim \frac{1}{|U|}, \forall u \in U
+\tag{1}
+\]</span></p>
+<p><span class="math display">\[
+P_{mar}(i|\mathcal{O}) = \frac{|O_{i}^{mar}|}{O^{mar}} \sim \frac{1}{|I|}, \forall i \in I
+\tag{2}
+\]</span></p>
+<p>ここで、<span class="math inline">\(O^{mar}_{u}\)</span>と<span class="math inline">\(O^{mar}_{i}\)</span>はそれぞれ、ユーザuとアイテムiの<span class="math inline">\(O^{mar}\)</span>で観測されたInteractionである.</p>
+</section>
+<section id="marデータセットの特性③-uとiの同時事後確率を定式化" class="slide level2">
+<h2>MARデータセットの特性③ uとiの同時事後確率を定式化</h2>
+<p>また、観測されるユーザとアイテムは独立のはずなので、(u,i)の事後分布も独立であることがわかり、以下のように書ける：</p>
+<p><span class="math display">\[
+P_{mar}(u,i|Q) = P_{mar}(u|Q) \cdot P_{mar}(i|Q) \in \frac{1}{|U||I|}, \forall(u,i) \in U \times I
+\tag{3}
+\]</span></p>
+<p>ここで、<span class="math inline">\(P_{mar}(u,i|Q)\)</span>は、特定のユーザとアイテムのペアの同時事後分布(=事後分布の同時分布、みたいな?)を表す。 よって、MARデータ <span class="math inline">\(D_{mar}\)</span> の特性として、式(3)の性質を満たしているはずである.</p>
+</section>
+<section id="mnarデータセットの特性①-生成過程を整理" class="slide level2">
+<h2>MNARデータセットの特性① 生成過程を整理</h2>
+<p>同様に、MNARデータセット <span class="math inline">\(D_{mnar} = {O^{mnar},Y^{mnar}}\)</span> の生成過程をモデル化する.</p>
+<ul>
+<li>MARシナリオとは異なりbiasが存在するため，<strong>サンプリング分布 <span class="math inline">\(P_{mnar}\)</span></strong> が、interaction value <span class="math inline">\(Y^{mnar}\)</span>(あるいは特定のユーザとアイテム(u,i)を含む他の交絡因子からも)から独立していると仮定できない.</li>
+<li>つまりMNARデータセットでは、一般的に<strong>未知のサンプリング確率 <span class="math inline">\(P_{mnar}(\mathcal{O}|u,i,Y,X)\)</span></strong> によって生成される.
+<ul>
+<li>ここで <span class="math inline">\(Y⊃Y^{mnar}\)</span>は、ユーザとアイテムのinteraction valueの完全なセット(i.e.&nbsp;答えの様なデータ. ゼロ要素が存在しない真の評価行列).</li>
+<li><span class="math inline">\(X\)</span> はサンプリング確率に影響を与える特徴量(共変量、交絡因子)のセット(ex. ユーザのデモグラフィック、アイテムの特徴、アイテムをユーザに公開する方法などのシステム由来の特徴量など).</li>
+</ul></li>
+</ul>
+</section>
+<section id="mnarデータセットの特性②-uとiそれぞれの事後確率を定式化" class="slide level2">
+<h2>MNARデータセットの特性② uとiそれぞれの事後確率を定式化</h2>
+<p>MNARデータセット <span class="math inline">\(D_{mnar}\)</span> が収集されている場合、MARデータセットで行ったように、 <span class="math inline">\(O^{mnar}\)</span> のユーザとアイテムの事後確率を推定する事ができる. 今度は一般的に、以下の性質があるはず. (ここでいう事後確率は、O=1のinteractionをランダムに取得した時に、それがユーザuのinteractionである確率、みたいなイメージ…!)</p>
+<p><span class="math display">\[
+P_{mnar}(u|\mathcal{O}) = \frac{|O^{mnar}_{u}|}{O^{mnar}} \neq  \frac{1}{|U|}, \forall u \in U
+\tag{4}
+\]</span></p>
+<p><span class="math display">\[
+P_{mnar}(i|\mathcal{O}) = \frac{|O^{mnar}_{u}|}{O^{mnar}} \neq  \frac{1}{|U|}, \forall u \in U
+\tag{5}
+\]</span></p>
+</section>
+<section id="mnarデータセットの特性③-uとiの同時事後確率を定式化" class="slide level2">
+<h2>MNARデータセットの特性③ uとiの同時事後確率を定式化</h2>
+<p><strong>一般に、ユーザとアイテムは一様に分布しているわけではない</strong>ので、特定のエントリーが観測された場合、すなわち<span class="math inline">\(\mathcal{O} = 1\)</span>の場合、同時事後確率 <span class="math inline">\(P_{mnar}(u,i|\mathcal{O})\)</span> に対してユーザとアイテムの事後独立性は仮定できない. よって…</p>
+<p><span class="math display">\[
+P_{mnar}(u,i|Q) \neq P_{mnar}(u|Q) \cdot P_{mnar}(i|Q), \forall (u,i) \in U \times I
+\tag{6}
+\]</span></p>
+<p>本セクションで示した定式化(式(3)と式(6))を使って、次のセクションでdebiasの為のサンプリング戦略を設計する. (なるほど…?これらの事後確率の定式化をサンプリング戦略で使うのか!) (このセクションは、<strong>MARデータやMNARデータの性質はかくあるべき</strong>、というような話…!!)</p>
+</section></section>
+<section>
+<section id="提案手法-重み付けサンプリングによる介入テストセットの作成" class="title-slide slide level1 center">
+<h1>提案手法: 重み付けサンプリングによる介入テストセットの作成</h1>
+<p><strong>偏ったデータから偏りのない評価を行うため</strong>に、伝統的なランダム hold-out テストセットの代わりに、<strong>介入テストセット(Intervened test set)</strong>を生成して使用する.</p>
+</section>
+<section id="一般的なサンプリングアプローチの概要" class="slide level2">
+<h2>一般的なサンプリングアプローチの概要</h2>
+<ul>
+<li>サンプリングアプローチは、<span class="math inline">\(S\)</span>で示されるサンプリング戦略によって、MNARデータ<span class="math inline">\(D^{mnar}\)</span>に対してdebias介入を行う事.</li>
+<li>目的は、介入の結果、データセット<span class="math inline">\(D_S = {O^S \subset O^{mnar},Y^S \subset Y^{mnar}}\)</span>となり、<strong><span class="math inline">\(D_s\)</span>が不偏的な性質を持つこと</strong>.(ふむふむ…!)</li>
+<li>前のセクションのデータ生成過程と同様に、まず<span class="math inline">\(O_S\)</span>を生成し、それに応じて<span class="math inline">\(Y_S\)</span>を得る.</li>
+<li><strong>サンプリングを導くbinary確率変数</strong>を<span class="math inline">\(\mathcal{S} : U × I → {0, 1}\)</span>とする. (i.e.&nbsp;あるユーザ-アイテムペアがサンプリングされるか否かのbinaryの確率変数=bernouli分布に従うやつ…!) (<span class="math inline">\(\mathcal{O}\)</span>と同様に、<span class="math inline">\(P(\mathcal{S}=1)\)</span>の代わりに <span class="math inline">\(P(\mathcal{S})\)</span> という略語表記を使う)</li>
+<li>サンプリング戦略 <span class="math inline">\(S\)</span> は、<strong>確率分布関数 <span class="math inline">\(P_S(\mathcal{S}|u,i) \forall(u,i) \in O^{mnar}\)</span></strong> に基づいて実行される. (i.e.&nbsp;u,iを条件づけた時にS=1となる確率が決定される関数のイメージ. つまりこの関数の出力値はbernouli分布のパラメータlambda…!!)</li>
+</ul>
+</section>
+<section id="提案手法-wtd-①-本戦略のアイデア" class="slide level2">
+<h2>提案手法 WTD ① 本戦略のアイデア</h2>
+<ul>
+<li>本アプローチでは、MNARデータ<span class="math inline">\(O^{mnar}\)</span>に加えて、MAR的なデータ<span class="math inline">\(O^{mar}\)</span>があることを前提に説明する. (え! debiasアプローチ1で取得する様なMAR-likeなデータも必要なの??)
+<ul>
+<li>ただし後述する実験結果にて、<strong>MARデータがない場合でも、本アプローチを使用できること</strong>を確認した.(良かったー…!)</li>
+</ul></li>
+<li>本戦略の主なアイデアは、サンプリング後の <span class="math inline">\(O^S\)</span> の各ユーザ・アイテムペアの事後確率分布、すなわち <strong><span class="math inline">\(P_S(u，i|\mathcal{S})\)</span> を, <span class="math inline">\(O^{mar}\)</span> のユーザ・アイテム・ペアの観測された事後確率分布、すなわち <span class="math inline">\(P_{mar}(u, i|\mathcal{O})\)</span> とほぼ同じにすること</strong> である. つまり、<strong><span class="math inline">\(O^S\)</span>を<span class="math inline">\(O^{mar}\)</span>に後付けで似せたい</strong>…!!</li>
+</ul>
+<p>数式で表すと以下:</p>
+<p><span class="math display">\[
+P_S(u,i|\mathcal{S}) \approx P_{mar}(u,i|\mathcal{O}), \forall(u,i) \in O^S
+\tag{7}
+\]</span></p>
+</section>
+<section id="提案手法-wtd-②-重み付けmnar事後分布の定義" class="slide level2">
+<h2>提案手法 WTD ② 重み付けMNAR事後分布の定義</h2>
+<p><span class="math display">\[
+P_S(u,i|\mathcal{S}) \approx P_{mar}(u,i|\mathcal{O}), \forall(u,i) \in O^S
+\tag{7}
+\]</span></p>
+<p>この近似を得るために，<strong>ユーザアイテムの重み</strong> <span class="math inline">\(w = (w_{ui})_{u \in U ,i \in I}\)</span> を用いて，サンプリング空間 <span class="math inline">\(O^{mnar}\)</span> の事後分布，すなわち <span class="math inline">\(P_{mnar}(u,i|\mathcal{O})\)</span> を調整する. 調整された<strong>重み付けMNAR事後分布</strong>を <span class="math inline">\(P_{mnar}(u,i|\mathcal{O},w)\)</span> と表記する. つまり、以下の等式を満たせるような<strong>重みw</strong>を見つけたい:</p>
+<p><span class="math display">\[
+P_{mnar}(u,i|\mathcal{O},w) = P_{mar}(u,i|\mathcal{O}), \forall(u,i) \in O^{mnar}
+\tag{8}
+\]</span></p>
+<p>MARデータセットがユーザとアイテムに一様に分布している事から、式(3)の独立性を利用して式(8)の右辺を書き換える:</p>
+<p><span class="math display">\[
+P_{mnar}(u,i|\mathcal{O},w) = P_{mar}(i|\mathcal{O}) \times P_{mar}(u|\mathcal{O})
+\tag{9}
+\]</span></p>
+</section>
+<section id="提案手法-wtd-②-重み付けmnar事後分布の定義-1" class="slide level2">
+<h2>提案手法 WTD ② 重み付けMNAR事後分布の定義</h2>
+<p>ユーザとアイテムのMNAR事後分布を検討した式(6)と同様に、重み付けMNAR事後分布においても <strong>ユーザとアイテムは一般に独立ではない</strong>. しかし、<strong>ここではユーザとアイテムを独立したものとして扱い</strong>、次のように求める:</p>
+<p><span class="math display">\[
+P_{mnar}(u,i|\mathcal{O},w)
+= P_{mnar}(i|\mathcal{O},w) \times P_{mnar}(u|\mathcal{O},w)
+\\
+, \forall(u,i) \in O^{mnar}
+\tag{10}
+\]</span></p>
+<p><strong>式10は一般的には正しくないが、第6節で経験的に良い結果が得られることを示し、これを正当化する</strong>.(理論的には不当な式変形だけど、経験的に効果あるから採用！って話…!)</p>
+</section>
+<section id="提案手法-wtd-②-重み付けmnar事後分布の定義-2" class="slide level2">
+<h2>提案手法 WTD ② 重み付けMNAR事後分布の定義</h2>
+<p>さて、式(10)を使って、式(9)を次の2つの式に分割することができる:</p>
+<p><span class="math display">\[
+P_{mnar}(u|\mathcal{O},w) = P_{mar}(u|\mathcal{O})
+\tag{11}
+\]</span></p>
+<p><span class="math display">\[
+P_{mnar}(i|\mathcal{O},w) = P_{mar}(i|\mathcal{O})
+\tag{12}
+\]</span></p>
+<p>重み付き MNAR 事後分布に関する式(11)と式(12)の結果として、ユーザ-アイテムペアでユニークな重みの代わりに、<strong>ユーザ固有の重み <span class="math inline">\(w = (w_{u})_{u \in U}\)</span></strong> と<strong>アイテム固有の重み <span class="math inline">\(w = (w_i)_{i \in I}\)</span></strong> を定義して計算できる.</p>
+<p>(ユーザとアイテムの重みが独立していることは、スケーラビリティの面でも有利. <span class="math inline">\(|U \times I|\)</span>の代わりに、<span class="math inline">\(|U| + |I|\)</span>の重みだけを計算すればよいから. そして推薦システムの領域では<span class="math inline">\(|U \times I| &gt; |U|+|I|\)</span> となるので…!)</p>
+</section>
+<section id="提案手法-wtd-③-重みwを導出" class="slide level2">
+<h2>提案手法 WTD ③ 重み<span class="math inline">\(w\)</span>を導出</h2>
+<p>本論文では、重み付けMNAR事後分布をモデル化する最も簡単な解決策として, <strong><span class="math inline">\(P_{mnar}(.|\mathcal{O},w) = w_{.} \cdot P_{mnar}(.|\mathcal{O})\)</span></strong> を提案している (元々の事後確率を重み付けする…!シンプルな作戦!). これを式(11)及び式(12)に当てはめると、各ユーザ及びアイテムの重み付け分布について、それぞれ<strong><span class="math inline">\(w_u \cdot P_{mnar}(u|\mathcal{O})＝P_{mar}(u|\mathcal{O})\)</span></strong> と <strong><span class="math inline">\(w_i \cdot P_{mnar}(i｜\mathcal{O})＝P_{mar}(i｜\mathcal{O})\)</span></strong> が得られる.</p>
+<p>この2つの式を逆にすれば、重み<span class="math inline">\(w\)</span>の計算式ができあがる:</p>
+<p><span class="math display">\[
+w_{u} = \frac{P_{mar}(u｜\mathcal{O})}{P_{mnar}(u｜\mathcal{O})}, \forall u \in U
+\tag{13}
+\]</span></p>
+<p><span class="math display">\[
+w_{i} = \frac{P_{mar}(i｜\mathcal{O})}{P_{mnar}(i｜\mathcal{O})}, \forall i \in I
+\tag{14}
+\]</span></p>
+<p>算出された重みは、<strong>サンプリング空間のMNAR分布と目標のMAR分布との乖離を測る量</strong>と考えることができる.</p>
+</section>
+<section id="提案手法-wtd-④-重みwを用いてサンプリング確率分布をモデル化" class="slide level2">
+<h2>提案手法 WTD ④ 重み<span class="math inline">\(w\)</span>を用いてサンプリング確率分布をモデル化</h2>
+<p>特定の重み<span class="math inline">\(w_u, w_i\)</span>が対応するユーザorアイテムのMNAR分布を調整するため、ウェイトを直接使用してサンプリング確率分布をモデル化する. すなわち…</p>
+<p><span class="math display">\[
+P_S(\mathcal{S}|u,i) = w_u \cdot w_i
+\]</span></p>
+<p>サンプリングにおける重みの効果は、<strong>MAR分布に対するMNARサンプリング空間のユーザとアイテムの事後確率がどれだけ乖離しているか</strong>によって、<strong>特定のユーザとアイテムのペアがサンプリングされる確率が増減する</strong>こと.</p>
+<p>本サンプリング戦略を<strong>WTD</strong>と呼び、実際には上式の代わりに、<strong><span class="math inline">\(P_S(\mathcal{S}|u,i) = w_u \cdot (w_i)^2\)</span></strong> を採用する.(アイテムのbias対処により重きを置いた方が経験的に結果が良かったみたい…)</p>
+<p>(この変形は、<strong>MNARデータにおいてアイテムの人気が最も影響力のある交絡因子の1つであるとする文献で報告された先行研究</strong>[21, 24]に照らして理にかなっている.)(popularity biasが最も影響のある交絡因子の一つなのか…!)</p>
+</section>
+<section id="提案手法-wtd_h-①-wtdは-marデータが必要だよなぁ" class="slide level2">
+<h2>提案手法 WTD_H ① WTDは MARデータが必要だよなぁ…</h2>
+<p>WTDでは、近似に必要な事後分布(=<span class="math inline">\(P_{mar}(u,i|\mathcal{O})\)</span>)を与えるために、<strong>MAR-likeデータを必要としていた</strong>. しかし“forced rating approach”の説明の際に述べたように、<strong>MARデータは高価であったり、収集不可能だったり</strong>する. さらに、手元にそれなりの量のMARのようなデータがある場合には、そもそもそのままunbiasedなテストセットとして使用すれば良い.</p>
+<p>本論文では、WTDを <strong>MAR-likeデータが無い場合でも適用できる</strong>様に拡張した.</p>
+</section>
+<section id="提案手法-wtd_h-②-仮説のmar事後分布を利用" class="slide level2">
+<h2>提案手法 WTD_H ② 仮説のMAR事後分布を利用</h2>
+<p><strong>MARデータの事後確率分布はユーザ &amp; アイテムに対して一様</strong>である(i.e.&nbsp;<span class="math inline">\(P_{mar}(u|\mathcal{O}) = 1/|U|, P_{mar}(i|\mathcal{O}) = 1/|I|\)</span>)ことが分かっており、この情報が本サンプリングアプローチに必要なすべてである(うんうん!やっぱり!). そのため、重み<span class="math inline">\(w_u, w_i\)</span>を計算する際にこの<strong>仮説のMAR事後分布</strong>を利用することで、MAR-likeデータセットが不要になる.</p>
+<p>このWTDをMARデータ不要ver.に拡張したサンプリング戦略を、<strong>WTD_H（Hは “hypothesized”の略）</strong>と命名する.</p>
 </section></section>
 <section>
 <section id="実験方法-結果" class="title-slide slide level1 center">
@@ -483,7 +681,13 @@
 <li>-&gt; モデル性能の推定値がground-truthと近いだけでなく、<strong>複数のモデルの順位付け結果がground-truthとどの程度合致しているか</strong>も重要…!!</li>
 <li>ランキング類似度の評価指標(kendall’s tau)を用いて、ground-truthによる順位付けの結果と比較した.</li>
 </ul>
+</section>
+<section id="実験②-オフライン評価による推薦モデル達の順位づけ-1" class="slide level2">
+<h2>実験②: オフライン評価による推薦モデル達の順位づけ</h2>
 <p>table3は、hogehoge…</p>
+</section>
+<section id="実験②-オフライン評価による推薦モデル達の順位づけ-2" class="slide level2">
+<h2>実験②: オフライン評価による推薦モデル達の順位づけ</h2>
 <p>table4は、hogehoge…</p>
 </section></section>
 <section>

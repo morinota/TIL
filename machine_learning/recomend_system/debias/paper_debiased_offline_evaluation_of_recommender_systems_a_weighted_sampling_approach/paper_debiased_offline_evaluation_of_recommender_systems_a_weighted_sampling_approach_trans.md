@@ -239,7 +239,7 @@ U
 We denote with u ∈ U = {1, .., |U |} a generic user and with i ∈ I = {1, .., |I |} a generic item.
 U
 We denote with D = {O ∈ {0, 1} U ×I ,Y ∈ R U ×I } a generic observed dataset.
-一般的な観測データセットを$D = {O \in {0, 1}^{U \times I}, Y \in \mathbb{R}^{U \times I}}$と表記する。
+一般的な観測データセット を $D = {O \in {0, 1}^{U \times I}, Y \in \mathbb{R}^{U \times I}}$と表記する。
 The binary matrix O records which interactions between users and items have been observed: Ou,i = 1 if an interaction is observed and Ou,i = 0 otherwise.
 二値行列$O$には、ユーザとアイテムの間のどのようなインタラクションが観察されたかが記録される： interactionが観測された場合はO*{u,i} = 1、そうでない場合はO*{u,i} = 0である。
 We also define the associated matrix Y ∈ R U ×I which records the value of the interactions of the corresponding observed entries in O: we have Yu,i , 0 where Ou,i = 1, Yu,i = 0 otherwise.
@@ -271,7 +271,7 @@ We also assume that, once O mar is determined, we can obtain interaction values 
 (もちろん実際には、ユーザーは参加の誘いを断ったり、一部の評価を拒否したりすることがあり、これが現実にはこれらのデータセットがMAR的でありMARではない理由の一つである)。(=これは現実の話だよね...!!アプローチ1の!)
 
 To achieve the goal, we make use of the probability distribution Pmar (O|u,i), defined over the space U × I, that leads to O mar .
-この目的を達成するために、空間U×I上で定義される確率分布$P_{mar}(Q|u,i)$ を利用し、$O^{mar}$を導きます。
+この目的を達成するために、U×I空間上で定義される確率分布$P_{mar}(Q|u,i)$ を利用し、$O^{mar}$を導きます。
 A straightforward choice is to set Pmar (O|u,i) = P(O) = ρmar , where ρmar represents the desired ratio of observed entries from U × I.
 素直な選択は、$P_{mar}(Q|u,i) = P(Q) = \rho_{mar}$ とすること. ここで$\rho_{mar}$ は、U×Iから観測されたエントリーの望ましい比率を表す.
 Now, assuming that a dataset D mar has been collected using such an approach, we should empirically verify that user and item posterior probabilities are (roughly) uniformly distributed:
@@ -288,7 +288,7 @@ P_{mar}(i|Q) = \frac{|O_{i}^{mar}|}{O^{mar}} \sim \frac{1}{|I|}, \forall i \in I
 $$
 
 where O mar u and O mar i are the observed interactions in O mar for user u and item i respectively.
-ここで、$O^{mar}_{u}$と$O^{mar}_{i}$はそれぞれ、ユーザuとアイテムiのO marで観測されたInteractionである. (ということはbinary値?)
+ここで、$O^{mar}_{u}$と$O^{mar}_{i}$はそれぞれ、ユーザuとアイテムiの$O^{mar}$で観測されたInteractionである.
 
 Also, because users and items are drawn independently, we have that their posteriors are independent and we can write:
 また、ユーザとアイテムは独立に描かれるため、それらの事後分布は独立であることがわかり、こう書くことができる：
@@ -299,7 +299,7 @@ P_{mar}(u,i|Q) = P_{mar}(u|Q) \cdot P_{mar}(i|Q) \in \frac{1}{|U||I|}, \forall(u
 $$
 
 for the joint posterior of a specific user-item pair.
-$P_{mar}(u,i|Q)$は、特定のユーザとアイテムのペアの共同事後分布(=事後分布の同時分布、みたいな?)を表す。
+$P_{mar}(u,i|Q)$は、特定のユーザとアイテムのペアの同時事後分布(=事後分布の同時分布、みたいな?)を表す。
 
 ## 3.2. Properties of an MNAR dataset MNARデータセットの特性
 
@@ -312,11 +312,11 @@ Differently from the MAR scenario, due to the presence of bias, we cannot assume
 MARシナリオとは異なり，バイアスが存在するため，**サンプリング分布**$P_{mnar}$がinteraction value $Y^{mnar}$（あるいは特定のユーザーとアイテム（u,i）を含む他の交絡因子からも）から独立していると仮定することはできない．
 In other words, in an MNAR dataset the draw is generally guided by some unknown probability Pmnar (O|u,i,Y, X), where Y ⊃ Y mnar represents the complete set of user-item interactions and X represents a set of features (covariates, confounders) which influences the sampling probability (e.g.user demographics, item features, characteristics of the system such as the way it exposes items to users, and so on).
 つまり、MNARデータセットでは、一般的に未知の確率 $P_{mnar}(Q|u,i,Y,X)$ によって抽選が導かれる.
-ここで、$Y⊃Y^{mnar}$は**ユーザとアイテムのinteractionの完全なセット**(答えって事だろうか...??ゼロ要素が存在しない評価行列)を表し、Xはサンプリング確率に影響を与える特徴(共変量、交絡因子)のセット(例えば、ユーザのデモグラフィック、アイテムの特徴、アイテムをユーザーに公開する方法などのシステムの特徴など)を表します。
+ここで、$Y⊃Y^{mnar}$は**ユーザとアイテムのinteraction valueの完全なセット**(答えって事だろうか...??ゼロ要素が存在しない評価行列)を表し、Xはサンプリング確率に影響を与える特徴(共変量、交絡因子)のセット(例えば、ユーザのデモグラフィック、アイテムの特徴、アイテムをユーザーに公開する方法などのシステムの特徴など)を表します。
 
 If a MNAR dataset D mnar has been collected, we can examine user and item posterior probabilities in O mnar , as we did for the MAR dataset but now, in general, we will find:
 MNARデータセット $D_{mnar}$ が収集されている場合、MARデータセットで行ったように、 $O^{mnar}$ のユーザとアイテムの事後確率を調べることができるが、今度は一般的に、次のことが分かる：
-(ここでいう事後確率は、O=1のinteractionをランダムに取得した時に、それがユーザuのinteractionである確率、みたいなイメージ...??)
+(ここでいう事後確率は、O=1のinteractionをランダムに取得した時に、それがユーザuのinteractionである確率、みたいなイメージ...!)
 
 $$
 P_{mnar}(u|Q) = \frac{|O^{mnar}_{u}|}{O^{mnar}} \neq = \frac{1}{|U|}, \forall u \in U
@@ -363,7 +363,7 @@ The sampling is performed on the space O mnar , ignoring interaction values in Y
 We denote with S : U × I → {0, 1} the binary random variable that guides the sampling.
 **サンプリングを導く二値確率変数**を$\mathcal{S} : U × I → {0, 1}$とする。
 S = 1 when a particular user-item pair is sampled from O mnar , 0 otherwise.
-$O^{mnar}$から特定のユーザとアイテムのペアがサンプリングされている場合はS = 1、そうでない場合は0とする. (i.e. あるi&uペアがサンプリングされるか否かのbinaryの確率変数=bernouli分布に従うやつか...!)
+$O^{mnar}$から特定のユーザとアイテムのペアがサンプリングされている場合はS = 1、そうでない場合は0とする. (i.e. ある(u,i)ペアがサンプリングされるか否かのbinaryの確率変数=bernouli分布に従うやつか...!)
 (Again, we will use abbreviation P(S) in place of P(S = 1).)
 (ここでも$P(S=1)$の代わりに $P(S)$ という略語を使う).
 In practice, a particular strategy S is characterized by the expression of the probability PS (S|u,i), ∀(u,i) ∈ O mnar , which is the probability distribution responsible for guiding the sampling on O mnar .
@@ -436,7 +436,7 @@ P_{mnar}(u|\mathcal{O},w) = P_{mar}(u|\mathcal{O})
 $$
 
 $$
-P_{mnar}(u|\mathcal{O},w) = P_{mar}(u|\mathcal{O})
+P_{mnar}(i|\mathcal{O},w) = P_{mar}(i|\mathcal{O})
 \tag{12}
 $$
 
@@ -446,7 +446,7 @@ As a consequence of formulas 11 and 12 for the weighted MNAR posteriors, we can 
 (また、ユーザとアイテムの重みが独立していることは、スケーラビリティの面でも有利である. $|U \times I|$の代わりに、$|U| + |I|$の重みだけを計算すればよいのです。これはスケーラビリティの点でも良いことで、レコメンダー領域で見られるような｜U｜と｜I｜の値に対しては、$|U×I| > |U|+|I|$となるので...!)
 
 We propose the most straightforward solution to model the weighted MNAR posteriors, i.e.Pmnar (.|O,w) = w.Pmnar (.|O).
-我々は、重み付けされたMNARの後置をモデル化する最も簡単な解決策、すなわち.$P_{mnar}(.|\mathcal{O},w) = w_{.} \cdot P_{mnar}(.|\mathcal{O})$ を提案します。(**元々の事後確率を重み付けする...!シンプルな作戦**!)
+我々は、重み付けされたMNAR事後分布をモデル化する最も簡単な解決策、すなわち.$P_{mnar}(.|\mathcal{O},w) = w_{.} \cdot P_{mnar}(.|\mathcal{O})$ を提案します。(**元々の事後確率を重み付けする...!シンプルな作戦**!)
 We plug this into formulas 11 and 12 and we obtain wuPmnar (u|O) = Pmar (u|O), wiPmnar (i|O) = Pmar (i|O) for each user and item weighted distribution respectively.
 これを数式11及び数式12に当てはめると、各ユーザ及びアイテムの重み付け分布について、それぞれ$w_u \cdot P_{mnar}(u|\mathcal{O})＝P_{mar}(u|\mathcal{O})$、$w_i \cdot P_{mnar}(i｜\mathcal{O})＝P_{mar}(i｜\mathcal{O})$が得られる.
 (重み計算の為には、どうしても$P_{mar}(.|\mathcal{O})$の値が必要になる気がするんだけど...、理想的なMARデータとみなして理論値$1/|.|$を使えばいいのかな...!)
@@ -468,7 +468,7 @@ We can think of the calculated weights as quantities that measure the divergence
 Because a specific weight adjusts the corresponding MNAR distribution, we directly use weights to model the sampling distribution, i.e.PS (S|u,i) = wuwi .
 特定のウェイトが対応するユーザorアイテムのMNAR分布を調整するため、ウェイトを直接使用してサンプリング分布をモデル化する、すなわち$P_S(\mathcal{S}|u,i) = w_u \cdot w_i$ 。
 During the sampling, the effect of the weights is to increase or decrease the probability that a particular user-item pair is sampled depending on how divergent are the user and item posterior probabilities in the MNAR sampling space with respect to the MAR distributions.
-サンプリング中、重みの効果は、**MAR分布に対するMNARサンプリング空間のユーザとアイテムの事後確率がどれだけ乖離しているか**によって、**特定のユーザとアイテムのペアがサンプリングされる確率が増減する**ことである.
+サンプリングにおける重みの効果は、**MAR分布に対するMNARサンプリング空間のユーザとアイテムの事後確率がどれだけ乖離しているか**によって、**特定のユーザとアイテムのペアがサンプリングされる確率が増減する**ことである.
 
 In fact, based on preliminary experiments, we use PS (S|u,i) = wu (wi) 2 instead.
 実際には、予備実験に基づき、$P_S(\mathcal{S}|u,i) = w_u \cdot (w_i)^2$ を代わりに使用する.(アイテムのbias対処により重きを置いた方が経験的に結果が良かった??)
@@ -493,7 +493,7 @@ MNARのデータに介入して、よりMARに近いテストセットを作る�
 In fact, when we do not have any MAR-like data, we can still use our approach.
 実際、**MARのようなデータがない場合でも、私たちのアプローチを使うことは可能**です。
 We know that the posterior probability distribution for MAR data is uniform (Pmar (u|O) = 1/|U |, Pmar (i|O) = 1/|I |), and this is all we need for our sampling approach.
-MARデータの事後確率分布は一様($P_{mar}(u|\mathcal{O}) = 1/|U|, P_{mar}(i|\mathcal{O}) = 1/|I|$)であることが分かっており、これがサンプリングアプローチに必要なすべてである.(うんうん!やっぱり!)
+MARデータの事後確率分布はユーザ & アイテムに対して一様である(i.e. $P_{mar}(u|\mathcal{O}) = 1/|U|, P_{mar}(i|\mathcal{O}) = 1/|I|$)ことが分かっており、この情報が本サンプリングアプローチに必要なすべてである.(うんうん!やっぱり!)
 Therefore, we can use this hypothesized distribution when calculating the weights, avoiding the need for a MAR-like dataset.
 そのため、**ウェイトを計算する際にこの仮説通りの分布を利用することで、MARのようなデータセットが不要になります。**
 We call this strategy, WTD_H (where the H stands for “hypothesized”).
