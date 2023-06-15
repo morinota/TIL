@@ -121,11 +121,11 @@ MCAR（Missing Completely At Random）とMAR（Missing At Random）は区別さ�
 The distinction is based on missing data analysis theory and is first proposed by [16] and later introduced into the recommender systems literature by [18].
 この区別は、欠損データ分析理論に基づいており、最初に[16]によって提案され、後に[18]によって推薦者システムの文献に紹介されました。
 Indeed, MCAR, MAR and MNAR are terms used to denote different missing data mechanisms which describe the process that generates the observation pattern in the data.
-実際、MCAR、MAR、MNARは、データの観察パターンを生成するプロセスを記述する異なる欠落データメカニズムを示すために使用される用語である。
+実際、MCAR、MAR、MNARは、データの観察パターンを生成するプロセスを記述する異なる欠損データメカニズム(missing data mechanisms)を示すために使用される用語である。
 In work on causal inference, the same process is typically called the assignment mechanism instead [10].
 因果推論に関する研究では、同じプロセスは通常、代わりに割り当てメカニズムと呼ばれる[10]。
 In [16, 18], MCAR means that whether a user-item interaction is missing does not depend on interaction values (such as ratings in a recommender) at all, i.e.it depends neither on the observed interaction values nor the missing interaction values.
-[16,18]では、MCARとは、ユーザーとアイテムの相互作用が欠損しているかどうかは、interaction values(レコメンダーにおける評価など)に全く依存しない、つまり、観測された相互作用値にも欠損した相互作用値にも依存しないことを意味する.
+[16,18]では、MCARとは、ユーザとアイテムの相互作用が欠損しているかどうかは、interaction values(レコメンダーにおける評価など)に全く依存しない、つまり、観測された相互作用値にも欠損した相互作用値にも依存しないことを意味する.
 MAR, on the other hand, means that whether a user-item interaction is missing may depend on the observed interaction values, but is independent of the missing interaction values.
 一方、MARは、ユーザーとアイテムのインタラクションが欠損しているかどうかは、観測されたインタラクション値に依存するかもしれないが、欠損したインタラクション値には依存しないことを意味します。
 
@@ -134,7 +134,7 @@ In this paper, we use MNAR and MAR in a more informal and general way.
 We use MNAR to indicate that data is biased (missing interactions depend on some confounders in the data), and we use MAR to mean that data is unbiased (missing interactions do not depend on any confounder in the data, whether it is observed or not).
 MNARはデータが偏っている（欠損相互作用がデータ中のある交絡因子に依存している）ことを意味し、MARはデータが偏っていない（欠損相互作用がデータ中の交絡因子に依存していない、それが観測されているかどうかに関わらず）ことを意味する。
 Although these more informal usages are not properly in line with the categorization in [16] and [18], our choice is broadly in line with other work in the recommender systems literature: what we refer to as MAR is also called MAR in papers such as [4, 23] and what we call MAR is referred to as MCAR in, e.g., [22].
-これらの非公式な使い方は、[16]や[18]の分類と正しく一致していませんが、我々の選択は、推薦システムの文献における他の仕事と広く一致しています：我々がMARと呼ぶものは、[4、23]などの論文でMARとも呼ばれ、我々がMARと呼ぶものは、[22]などでMCADと呼ばれています。
+これらの非公式な使い方は、[16]や[18]の分類と正しく一致していませんが、我々の選択は、推薦システムの文献における他の仕事と広く一致しています：我々がMARと呼ぶものは、[4、23]などの論文でMARとも呼ばれ、我々がMARと呼ぶものは、[22]などでMCARと呼ばれています。
 
 A substantial body of work has been done in the last few years to cope with bias in recommenders, both for their training and their offline evaluation.
 ここ数年、レコメンダーの訓練とオフライン評価の両方で、推薦者のバイアスに対処するための相当な研究が行われている。

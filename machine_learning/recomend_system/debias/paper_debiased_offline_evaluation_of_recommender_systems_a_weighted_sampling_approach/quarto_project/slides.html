@@ -360,7 +360,7 @@
 <li>例2. 推薦システム自身が露出したアイテムは、ユーザとinteractionが発生しやすい.(feedback loop)</li>
 <li>例3. 映画の星1~5の様な明示的評価において、ユーザは自分が好きなアイテムを評価しやすい.</li>
 </ul>
-<p>これにより観測データにて欠損したinteractionは<strong>MNAR(Missing Not At Random)</strong>となる. (MNARデータと呼ぶ…!)</p>
+<p>これにより観測データにて欠損したinteractionは<strong>MNAR(Missing Not At Random)</strong>となる. (このような観測データをMNARデータと呼ぶ…!)</p>
 </section>
 <section id="mnarデータが与える影響" class="slide level2">
 <h2>MNARデータが与える影響</h2>
@@ -407,18 +407,50 @@
 <li>MNARテストデータからデータをサンプリングし、<strong>MARに近い性質を持つ介入テストデータ</strong>を作る.</li>
 </ol></li>
 </ul>
+<p>本論文では3つ目のアプローチに焦点を当てている.</p>
 </section>
-<section id="方法1.-mnarテストデータの代わりにmarデータを収集する." class="slide level2">
-<h2>方法1. MNARテストデータの代わりにMARデータを収集する.</h2>
-<p>hoge</p>
+<section id="補足-mcarデータとmarデータの定義" class="slide level2">
+<h2>(補足) MCARデータとMARデータの定義</h2>
+<p>MCAR(Missing Completely At Random)とMAR(Missing At Random)は区別される事がある. (ただし本論文ではよりシンプルに、)</p>
+<ul>
+<li>MCAR: ユーザ-アイテムのinteractionが欠損しているか否かは、interaction valueに全く依存しない.</li>
+<li>MAR: ユーザ-アイテムのinteractionが欠損しているか否かは、観測されたinteraction valueに依存し得るが、欠損したinteraction valueには依存しない.</li>
+</ul>
+<p>この区別は、<strong>欠損データ分析理論(missing data analysis theory)</strong>に基づいており、最初に[16]によって提案され、後に[18]によって推薦者システムの文献に紹介された.</p>
+<ul>
+<li>MCAR、MAR、MNARは、データの観察パターンを生成するプロセスを記述する為の、異なる<strong>欠損データメカニズム(missing data mechanisms)</strong>を示すために使用される用語.</li>
+<li>因果推論の文脈では、<strong>割り当てメカニズム(assignment mechanism)</strong>と呼ばれるらしい.</li>
+</ul>
+</section>
+<section id="方法1.-marデータを収集する." class="slide level2">
+<h2>方法1. MARデータを収集する.</h2>
+<p>この方法は通常、<strong>“forced rating approach”(強制格付けアプローチ)</strong>と呼ばれる方法によって実施される.</p>
+<ul>
+<li>ユーザとアイテムのペアを一様にランダムサンプリングし、選択された各ユーザ-アイテムのペアに対して、評価を提供することを要求する(強制する).</li>
+<li>この方法で収集したデータは、様々な交絡因子によるbiasを除去できる.</li>
+<li>ただし、この方法で収集されるデータは多くの場合、<strong>MAR-likeなデータ</strong>(MARと比べて少しbiasを含む.) -&gt; 参加に同意するユーザに何らかの傾向がある可能性があるから.</li>
+<li>“forced rating approach”は適用可能 or 適用困難な分野がある.
+<ul>
+<li>アイテムを提示されたユーザが、<strong>そのアイテムを素早く消費してratingを提供できる</strong>様な分野では可能. (ex. 音楽、衣服ショッピング)</li>
+<li>アイテム消費にかかる時間が長い場合は困難(ex. 映画.)(映画の予告編を見せる事は可能…!)</li>
+</ul></li>
+</ul>
 </section>
 <section id="方法2.-biasを補正できるような推定量を設計する." class="slide level2">
 <h2>方法2. biasを補正できるような推定量を設計する.</h2>
-<p>hoge</p>
+<p>多くの文献は、MNARテストデータにおける<strong>真の性能に対して不偏な新しい推定量</strong>(i.e.&nbsp;評価metricや損失関数)を設計することを提案している.</p>
+<ul>
+<li>ex.) [24]にて、データ内の人気バイアスを補正できる様な損失関数の提案.</li>
+<li>ex.2) [22, 28]にて、Inverse-Propensity-Scoring (IPS)を用いて、誤差を重み付ける新たな損失関数を提案. (propensityとは、特定のユーザとアイテムのペアが観察される確率の意味.)</li>
+</ul>
 </section>
 <section id="方法3.-mnarデータから介入データをサンプリングする." class="slide level2">
 <h2>方法3. MNARデータから介入データをサンプリングする.</h2>
-<p>piyo.</p>
+<p>“<strong>intervention approach(介入アプローチ)</strong>”とも呼ばれる.</p>
+<ul>
+<li><strong>MNARテストセットからサンプリングして、より小さなMARのような介入テストセット(intervened test set)を作成</strong>し、MNARテストセットの代わりに評価で使用する、という方法.</li>
+<li>ex.) Lange et al のSKEW法で、アイテムの人気度に反比例してユーザとアイテムのペアをサンプリングする. -&gt; アイテム間の露出分布がほぼ均一な介在テストセットが生成され、テストセットにおけるアイテムの人気バイアスが軽減される.</li>
+</ul>
 </section></section>
 <section>
 <section id="提案手法の準備-marデータとmnarデータの特性を紐解く." class="title-slide slide level1 center">
@@ -509,7 +541,7 @@ P_{mnar}(u,i|Q) \neq P_{mnar}(u|Q) \cdot P_{mnar}(i|Q), \forall (u,i) \in U \tim
 <section>
 <section id="提案手法-重み付けサンプリングによる介入テストセットの作成" class="title-slide slide level1 center">
 <h1>提案手法: 重み付けサンプリングによる介入テストセットの作成</h1>
-<p><strong>偏ったデータから偏りのない評価を行うため</strong>に、伝統的なランダム hold-out テストセットの代わりに、<strong>介入テストセット(Intervened test set)</strong>を生成して使用する.</p>
+<p><strong>偏ったデータから偏りのない評価を行うため</strong>に、伝統的なランダム hold-out テストセットの代わりに、<strong>介入テストセット(Intervened test set)</strong>を生成して使用する. 本論文では、<strong>WTD</strong> と <strong>WTD_H</strong> の2つのサンプリング戦略を提案している.</p>
 </section>
 <section id="一般的なサンプリングアプローチの概要" class="slide level2">
 <h2>一般的なサンプリングアプローチの概要</h2>
