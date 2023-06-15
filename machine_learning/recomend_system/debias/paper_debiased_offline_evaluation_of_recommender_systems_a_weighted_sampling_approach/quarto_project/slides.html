@@ -701,9 +701,9 @@ P_S(\mathcal{S}|u,i) = w_u \cdot w_i
 <h2>実験①: モデル精度指標のground-truth との差</h2>
 <p>table2は、各推薦モデルに関する<strong>モデル精度指標(Recall@10)のground-truth</strong>(=MARテストセット <span class="math inline">\(Y^gt\)</span> による評価結果)と、各サンプリング戦略による<strong>介在テストセットを使った推定値</strong>のpercentage difference.</p>
 
-<img data-src=".png" class="r-stretch"><ul>
+<img data-src="https://imgur.com/kIAHdl0.png" class="r-stretch"><ul>
 <li>一般に提案手法(WTD, WTD_H)は、<strong>ground-truthのモデル性能を最も良く近似</strong>できている.</li>
-<li>FULL戦略とREG戦略の結果はよく似ており、ground-truthから非常に離れている. -&gt; debias効果に重要なのは”サンプリングする事”そのものではなく、<strong>“いかにサンプリングするか”という戦略</strong>である.</li>
+<li><strong>FULL戦略とREG戦略の結果は似ておりground-truthから非常に離れている</strong>. -&gt; debias効果に重要なのは”サンプリングする事”そのものではなく、<strong>“いかにサンプリングするか”という戦略</strong>…!</li>
 </ul>
 </section>
 <section id="実験②-オフライン評価による推薦モデル達の順位づけ" class="slide level2">
@@ -716,11 +716,21 @@ P_S(\mathcal{S}|u,i) = w_u \cdot w_i
 </section>
 <section id="実験②-オフライン評価による推薦モデル達の順位づけ-1" class="slide level2">
 <h2>実験②: オフライン評価による推薦モデル達の順位づけ</h2>
-<p>table3は、hogehoge…</p>
+<p>table3は、2種類のデータセットに対する5種のMNARサンプリング戦略によるモデルの順位付け結果の、ground-truthとの類似度の結果.</p>
+
+<img data-src="https://imgur.com/WGETlym.png" class="r-stretch"><ul>
+<li>CoatShoppingデータの場合、いずれもgroud-truthとはかけ離れた順位付け結果.</li>
+<li><span class="math inline">\(\tau\)</span> 値が低い原因は、MFを最も性能の良いモデルの1つと誤認した結果であり、<strong>ground-truthでは最も悪いモデルだった</strong>. (<strong>学習時も介入データを使ったら</strong>、MFはもっと良いモデルになったりするだろうか…?)</li>
+</ul>
 </section>
 <section id="実験②-オフライン評価による推薦モデル達の順位づけ-2" class="slide level2">
 <h2>実験②: オフライン評価による推薦モデル達の順位づけ</h2>
-<p>table4は、hogehoge…</p>
+<p>table4は、MFモデルを順位付け対象から除いたver.の結果.</p>
+
+<img data-src="https://imgur.com/0b7IiVw.png" class="r-stretch"><ul>
+<li>MFモデルを比較対象から外しただけで、τの値が大きく異なった.</li>
+<li>モデル順位付けの正解度合い(<span class="math inline">\(\tau\)</span>)は、比較する推薦モデルの集合によって、大きく変動した.</li>
+</ul>
 </section></section>
 <section>
 <section id="まとめ" class="title-slide slide level1 center">
