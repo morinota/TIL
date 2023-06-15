@@ -513,7 +513,7 @@ We begin by presenting this approach in general (Section 3.3.1), and then we pre
 The goal of the offline experiments presented in this section is to assess the ‘goodness’ of different ways of producing intervened test sets.
 このセクションで紹介するオフライン実験の目的は、介在するテストセットを作成するさまざまな方法の「良さ」を評価することである。
 The measure of ‘goodness’ is how much results obtained by evaluating a recommender on an intervened test set resemble the results we would obtain on an unbiased test set.
-良さ」の指標は、介入したテストセットでレコメンダーを評価した結果が、偏りのないテストセットで得られる結果にどれだけ似ているかということです。
+良さ」の指標は、**介入したテストセットでレコメンダーを評価した結果が、偏りのないテストセットで得られる結果にどれだけ似ているか**ということです。
 We assess our solutions, i.e.WTD and WTD_H, and compare them to SKEW (Liang et al., 2016a) and to two baselines, FULL and REG.
 我々は、我々のソリューション、すなわちWTDとWTD_Hを評価し、SKEW（Liang et al, 2016a）および2つのベースライン（FULLとREG）と比較する。
 We consider SKEW, which we presented in Section 2.5, to be the state-of-the-art strategy that most closely relates to our approach; FULL and REG perform a non intervention and a random intervention (which, in practice, is equivalent to no intervention) on MNAR data, respectively.
@@ -558,7 +558,7 @@ It follows, for the reasons we gave earlier (see Section 2.5), that the Dmar por
 先に述べた理由（2.5節参照）から、WBR3とCOATのDmarの部分は、ほぼ不偏であるが完全ではないことがわかる。
 
 For both datasets, ratings are on a 1 to 5 scale and we consider an item as relevant to a user if the item has a rating above 3, non-relevant otherwise.
-両データセットとも、評価は1～5段階であり、項目が3以上の場合、ユーザーにとって関連性があるとみなし、それ以外の場合は非関連であるとみなします。
+両データセットとも、**評価は1～5段階であり、項目が3以上の場合、ユーザーにとって関連性があるとみなし、それ以外の場合は非関連**であるとみなします。
 
 For each dataset, we applied a preprocessing step to ensure that both Dmar and Dmnar have a common user-item space U × I: specifically, we keep those users and items that belong to the intersection of the two portions.
 各データセットについて、DmarとDmnarの両方が共通のユーザー・アイテム空間U×Iを持つようにする前処理ステップを適用した：具体的には、2つの部分の交点に属するユーザーとアイテムを残すようにした。
@@ -641,32 +641,32 @@ We report the results of our experiments in Figs.3 and 4 and Tables 2 and 3.
 実験結果を図3、図4、表2、表3に報告します。
 
 To analyse the difference between the various sampling strategies, we plot the distribution of the rating values of each of the intervened test sets and we compare them with the unbiased test set Dgt (similarly to the analysis in Marlin et al.(2007)).
-様々なサンプリング戦略の違いを分析するために、介在する各テストセットの評価値の分布をプロットし、不偏のテストセットDgtと比較する（Marlin et al(2007)の分析と同様である）。
+**様々なサンプリング戦略の違いを分析するために、介在する各テストセットの評価値の分布をプロット**し、不偏のテストセットDgtと比較する（Marlin et al(2007)の分析と同様である）。
 
 Firstly, Fig.3 confirms the difference between unbiased (i.e.Dgt) and biased distributions (i.e.FULL and REG) for both datasets.
 まず、Fig.3では、両データセットにおいて、非バイアス分布（Dgt）とバイアス分布（FULLとREG）の違いを確認することができます。
 In general, unbiased distributions show a much higher proportion of low ratings than high ratings, confirming that in biased datasets users tend to rate items that they like (Marlin et al., 2007).
-一般に、偏りのない分布では、高評価よりも低評価の割合が非常に高く、偏ったデータセットでは、ユーザーは自分が気に入ったアイテムを評価する傾向があることが確認された（Marlin et al, 2007）。
+一般に、偏りのない分布(=真のY)では、高評価よりも低評価の割合が非常に高く、**偏ったデータセットでは、ユーザーは自分が気に入ったアイテムを評価する傾向がある**ことが確認された（Marlin et al, 2007）。
 This difference is less evident in COAT than WBR3 and we argue that this is due to the more artificial conditions under which COAT’s MNAR portion was collected (Schnabel et al., 2016) compared with the MNAR portion of WBR3.
 この違いは、WBR3よりもCOATの方が顕著ではなく、COATのMNAR部分がWBR3のMNAR部分と比較してより人工的な条件で収集されたため（Schnabel et al, 2016）であると主張しています。
 WBR3’s users experienced a standard recommender scenario (see Section 4.1) whereas COAT’s users were not influenced by a recommender.
-WBR3のユーザーは標準的なレコメンダーシナリオ（4.1節参照）を経験したのに対し，COATのユーザーはレコメンダーの影響を受けていない．
+WBR3のユーザーは標準的なレコメンダーシナリオ（4.1節参照）を経験したのに対し，**COATのユーザはレコメンダーの影響を受けていない**．
 The COAT users, being Mechanical Turkers, are mere executors of a task and therefore less likely to care about their experience of using the system; therefore, we argue that COAT is more randomized and accordingly less biased (i.e.more similar to an unbiased dataset).
-COATの利用者はメカニカルターカーであり、単なるタスクの実行者であるため、システムを利用した経験を気にする可能性は低い。したがって、COATはよりランダムであり、それゆえより偏りのない（すなわち、より不偏のデータセットに近い）データであると主張されるのです。
+COATの利用者はメカニカルターカーであり、単なるタスクの実行者であるため、システムを利用した経験を気にする可能性は低い。したがって、**COATはよりランダムであり、それゆえより偏りのない（すなわち、より不偏のデータセットに近い）データである**と主張されるのです。
 To confirm those findings, we observe values for FULL and REG in Table 2 where we report Kullback-Leibler (KL) divergence scores between the intervened sets and the ground truth for both datasets.
-これらの結果を確認するため、表2のFULLとREGの値を観察し、両データセットの介在セットとグランドトゥルースの間のKL（Kullback-Leibler）ダイバージェンススコアを報告しています。
+これらの結果を確認するため、表2のFULLとREGの値を観察し、両データセットの介入セットとグランドトゥルースの間のKL（Kullback-Leibler）ダイバージェンススコアを報告しています。
 This KL divergence is much greater for WBR3 (approximately 0.4) than it is for COAT (approximately 0.07).
-このKLダイバージェンスは、COAT（約0.07）よりもWBR3（約0.4）の方がはるかに大きい。
+このKLダイバージェンスは、COAT（約0.07）よりもWBR3（約0.4）の方がはるかに大きい。(COATのMNARデータはMARデータに比較的近い.)
 
 Compared with FULL and REG, the distributions of rating values in the intervened test sets (i.e.SKEW, WTD and WTD_H) are closer to the distribution in the unbiased ground truth for both datasets (although only to a limited extent): this can be observed in both Fig.3 and Table 2.
-FULLとREGに比べ、介在するテストセット（SKEW、WTD、WTD_H）の評価値の分布は、どちらのデータセットでも（限られた範囲ではあるが）不偏のグランドトゥルースの分布に近くなっている。これは図3と表2の両方で観察できる。
+FULLとREGに比べ、**介入テストセット（SKEW、WTD、WTD_H）の評価値の分布は、どちらのデータセットでも（限られた範囲ではあるが）不偏のグランドトゥルースの分布に近くなっている**。これは図3と表2の両方で観察できる。
 Such results show the first evidence that intervention might be a good solution to unbiased evaluation.
-このような結果は、介入が公平な評価のための良い解決策になるかもしれないという最初の証拠を示しています。
+このような結果は、**介入が公平な評価のための良い解決策になるかもしれないという最初の証拠**を示しています。
 Indeed, the results we present in detail later (i.e.Table 3 and Fig.4) confirm that the relatively small increase in similarity between the SKEW, WTD and WTD_H test sets and the unbiased ground truth in terms of posteriors leads to a greater and much more appreciable similarity in the accuracy of the recommendations.
-実際、後で詳しく紹介する結果（表 3 と図 4）では、SKEW、WTD、WTD_H テストセットと不偏のグランドトゥルースの間の後置の類似度が比較的小さくなることで、推薦の精度がより高く評価できる類似度になることが確認されました。
+実際、後で詳しく紹介する結果（表 3 と図 4）では、**SKEW、WTD、WTD_H テストセットと不偏のグランドトゥルースの間の事後分布の類似度が比較的小さくなることで、推薦の精度がより高く評価できる類似度になる**ことが確認されました。
 
 In Table 3, for each recommender, we show its ground-truth Recall@10 performance on the unbiased test set Dgt and its relative performance (in terms of percentage difference) on the baselines and intervened test sets with respect to this ground-truth.
-表3では、各レコメンダーについて、バイアスのかかっていないテストセットDgtにおけるグランドトゥルースのRecall@10性能と、このグランドトゥルースに対するベースラインと介在するテストセットでの相対性能（差分パーセント）を示している。
+表3では、各レコメンダーについて、バイアスのかかっていないテストセットDgtにおけるグランドトゥルースのRecall@10性能と、このグランドトゥルースに対するベースラインと介在するテストセットでの相対性能（差分パーセント）を示している。(2020の論文におけるtable 2と同じ...!)
 For each of REG, SKEW, WTD and WTD_H, we show the best performance among the ones obtained in the 10 different test sets (one for each different ρp) and we show in brackets the test set size ρp for which this best performance is achieved.
 REG、SKEW、WTD、WTD_Hのそれぞれについて、10種類のテストセット（異なるρpごとに1つずつ）で得られたものの中で最も優れた性能を示し、この最高の性能が達成されたテストセットサイズρpを括弧内に示します。
 Results for Precision, NDCG and MAP are omitted because the percentage differences have a very similar trend to the Recall ones.
@@ -679,7 +679,7 @@ For such tests, we use a two-tailed Wilcoxon signed rank testFootnote5 with p <�
 Results on WBR3 show that WTD and WTD_H outperform SKEW only for the MF recommender (where all differences are statistically significant).
 WBR3での結果は、MFレコメンダーにおいてのみ、WTDとWTD_HがSKEWを上回った（すべての差が統計的に有意である場合）。
 This is however a good result if we consider that WTD and WTD_H are best at debiasing the evaluation of one of the most successful and widely-used recommenders in the literature (Koren et al., 2009).
-しかし、WTDとWTD_Hが、文献上最も成功し、広く使われている推薦者の1つ（Koren et al, 2009）の評価を落とすのに最適であることを考えれば、これは良い結果であると言えます。
+しかし、WTDとWTD_Hが、文献上最も成功し、広く使われている推薦者の1つ(**MFの事...!**)（Koren et al, 2009）の評価を落とすのに最適であることを考えれば、これは良い結果であると言えます。
 SKEW is superior to WTD and WTD_H for the PosPop and IB_KNN recommenders (with statistically significant differences).
 PosPopとIB_KNNのレコメンダーでは、SKEWがWTDとWTD_Hよりも優れている（統計的に有意な差がある）。
 For the UB_KNN recommender, WTD_H and SKEW are equally good (their performances are not statistically significantly different) and superior to WTD; for the AvgRating recommender, all three are equally good because performances are not statistically significantly different from each other.
@@ -688,7 +688,7 @@ The superiority of SKEW for PosPop is somehow expected because SKEW is an interv
 PosPopに対するSKEWの優位性は，SKEWが人気バイアスに特化した介入であることから何となく予想される。UB_KNNに対する優位性は，同様の理由，すなわち，UB_KNNも人気バイアスによるリコメンダであることが証明されている（Cañamares and Castells, 2017）ことから説明可能である．
 
 We also observe that SKEW obtains its best performances on intervened sets that are smaller than the ones of WTD and WTD_H.
-また、SKEWは、WTDやWTD_Hよりも小さい介在物集合で最高の性能を発揮することが確認された。
+また、SKEWは、WTDやWTD_Hよりも小さい介入データ集合(=サンプリングのサイズが小さい状況で...!)で最高の性能を発揮することが確認された。
 However, this fact could raise questions about the reliability of SKEW’s results due to discarding the majority of the available test data.
 しかし、この事実は、入手可能なテストデータの大半を破棄したことによるSKEWの結果の信頼性に疑問を抱かせる可能性があります。
 
@@ -698,12 +698,12 @@ WTDとWTD_Hの性能のみを比較すると、一般的にWTDがWTD_Hよりも�
 The results for COAT in the lower half of Table 3 show that WTD and WTD_H are equally good because performances are not statistically significantly different from each other.
 表3の下半分のCOATの結果は、WTDとWTD_Hの性能が統計的に有意な差がないため、同等の性能であることを示しています。
 Also, they more closely approximate the ground truth for the personalised recommenders but not for the non-personalised recommenders.
-また、パーソナライズド・レコメンダーでは、より真実の状態に近くなっていますが、ノンパーソナライズド・レコメンダーでは、そうではありません。
+**また、パーソナライズド・レコメンダーでは、より真実の状態に近くなっていますが、ノンパーソナライズド・レコメンダーでは、そうではありません。**
 Indeed, their performances are not statistically significantly different to the one of SKEW for PosPop and the ones of REG and SKEW for AvgRating.
 実際、PosPopではSKEW、AvgRatingではREGとSKEWの性能に統計的に有意な差はない。
 
 Finally, in both datasets, baselines FULL and REG are very far from the ground-truth, showing that ‘intelligent’ intervention strategies provide an effective debiasing technique in offline evaluations.
-最後に、両データセットにおいて、ベースラインFULLとREGはグランドトゥルースから非常に離れており、「インテリジェント」な介入戦略がオフライン評価において有効なデビアス手法を提供することを示している。
+最後に、両データセットにおいて、**ベースラインFULLとREGはグランドトゥルースから非常に離れており**、「インテリジェント」な介入戦略がオフライン評価において有効なデビアス手法を提供することを示している。
 Indeed, SKEW, WTD, WTD_H achieve statistically significantly different performances with respect to FULL and REG with the exception of SKEW for MF on COAT.
 実際，SKEW，WTD，WTD_Hは，COAT上のMFではSKEWを除いて，FULLとREGに関して統計的に有意に異なる性能を達成した．
 In general, FULL and REG have similar results, regardless of the fact that the best performances of REG is generally achieved on a test set which is much smaller than FULL (except for the one of AvgRating in WBR3).
@@ -712,18 +712,18 @@ This means that what matters is the strategy that performs the sampling, rather 
 つまり、重要なのはサンプリングそのものではなく、サンプリングを行う戦略なのです。
 
 Figure 4 reports an additional investigation on the results of Table 3.
-図4は、表3の結果に対する追加調査の報告である。
+図4は、表3の結果に対する追加調査の報告である。(2020年の論文のtable 3, table 4に当たる.)
 An offline evaluation typically ranks recommender algorithms from best to worst.
 オフライン評価では、通常、レコメンダーアルゴリズムをベストからワーストにランク付けします。
 This helps to narrow the number of different recommender algorithms that needs to be evaluated in costly user trials and online experiments.
 これにより、コストのかかるユーザートライアルやオンライン実験で評価する必要のある、さまざまなレコメンダーアルゴリズムの数を絞ることができます。
 In our case then, it is important that performance estimates on intervened test sets, not only get close to the ground truth performance, but also rank different recommenders in the same way they would be ranked by performance estimates on the unbiased test set.
-この場合、介在するテストセットでの性能推定が、真実の性能に近いだけでなく、公平なテストセットでの性能推定によってランク付けされるのと同じように、異なるレコメンダーをランク付けすることが重要である。
+この場合、介在テストセットでの性能推定が、真実の性能に近いだけでなく、公平なテストセットでの性能推定によってランク付けされるのと同じように、異なるレコメンダーをランク付けすることが重要である。
 
 Before seeing whether the ranking of the recommenders on intervened sets corresponds to their ranking on the ground truth, we wanted to make sure that the ground truth ranking was reliable.
-介入した集合における推薦者の順位が、真実の集合における順位と一致するかどうかを見る前に、真実の集合の順位が信頼できるかどうかを確認したかったのです。
+介入した集合における推薦者の順位が、ground-truthにおける順位と一致するかどうかを見る前に、**ground-truthの順位が信頼できるかどうかを確認したかった**のです。
 Thus, we first computed statistical significance tests on the ground truth ranking.
-そこで、まず、グランドトゥルースのランキングについて統計的有意差検定を行った。
+そこで、まず、groud-truthのランキングについて統計的有意差検定を行った。
 The statistical significance of the results is assessed by performing a pairwise comparison test between the performances of the recommenders on the unbiased test set Dgt, again using the two-tailed Wilcoxon signed rank test described earlier.
 結果の統計的有意性は、偏りのないテストセットDgtにおける推薦者の性能の間で、再び前述の両側Wilcoxon符号付き順位検定を用いて一対比較検定を行うことで評価される。
 Results of these tests are reported in Table 5.
@@ -731,18 +731,18 @@ Results of these tests are reported in Table 5.
 We found that, for WBR3, recommender performances are statistically significantly different from each other, except for the pair UB_KNN & IB_KNN.
 その結果、WBR3では、UB_KNNとIB_KNNのペアを除き、推薦者の性能は統計的に有意に異なることがわかりました。
 Unfortunately, for COAT, no recommender performance is statistically significantly different from any other, except for the pair MF & IB_KNN.
-残念ながら、COATでは、MFとIB_KNNのペアを除いて、どのレコメンダーの性能も他と統計的に有意な差はありませんでした。
+**残念ながら、COATでは、MFとIB_KNNのペアを除いて、どのレコメンダーの性能も他と統計的に有意な差はありませんでした。**
 We argue that this is due to the small size of the COAT training set.
 これは、COATのトレーニングセットのサイズが小さいためであると主張しています。
 This means that for COAT there is no point in comparing the rankings produced by the different intervened test sets, because all recommenders are roughly equivalent according to the ground truth test set.
-つまり、COATでは、介入したテストセットの違いによるランキングの比較は意味がなく、すべてのレコメンダーは、グランドトゥルーステストセットによればほぼ同等であることがわかります。
+つまり**COATでは、介入したテストセットの違いによるランキングの比較は意味がなく、すべてのレコメンダーは、グランドトゥルーステストセットによればほぼ同等であることがわかります。**
 
 We use Kendall’s concordance coefficient (τ) to compare the ground truth recommender ranking obtained on the unbiased test set with the ones produced by the different interventions.
-Kendallの一致係数(τ)を用いて、偏りのないテストセットで得られた真実の推薦者ランキングと、異なる介入によって生成されたランキングを比較する。
+Kendallの一致係数(τ)を用いて、偏りのないテストセットで得られたground-truthの推薦者ランキングと、異なる介入によって生成されたランキングを比較する。
 For the reasons above, Fig.4 reports the results for WBR3 only: for each of the intervention approaches we show concordance coefficients obtained in their 10 different intervened test sets.
-図4は，上記の理由から，WBR3のみの結果である。それぞれの介入アプローチについて，10種類の介入テストセットで得られたコンコーダンス係数を示している。
+**図4は，上記の理由から，WBR3のみの結果で**ある。それぞれの介入アプローチについて，10種類の介入テストセットで得られたコンコーダンス係数を示している。
 The figure shows that the ‘intelligent’ interventions are superior to FULL and REG, i.e.SKEW, WTD and WTD_H have values no smaller than the ones of REG (with the only exception of WTD & WTD_H when ρp = 0.1).
-すなわち，SKEW，WTD，WTD_H は REG の値より小さくない（ρp = 0.1 のときの WTD & WTD_H のみが例外）．
+すなわち，**SKEW，WTD，WTD_H は REG の値より小さくない**（ρp = 0.1 のときの WTD & WTD_H のみが例外）．
 
 In more detail, FULL, REG and SKEW have constant τ values (0.6, 0.6 and 0.8, respectively), with SKEW being the best of the three.
 より詳細には、FULL、REG、SKEWはそれぞれ一定のτ値（0.6、0.6、0.8）を持ち、SKEWは3つの中で最も優れています。
@@ -751,13 +751,13 @@ WTDとWTD_Hは、そのテストセットの大きさによって、異なる値
 In general, both are superior to SKEW from ρp = 0.9 down to ρp = 0.6, achieving perfect correlation (τ = 1) when ρp = 0.8 (WTD_H), ρp = 0.7 (WTD & WTD_H) and ρp = 0.6 (WTD).
 一般に、ρp = 0.9 からρp = 0.6 までは、両者は SKEW よりも優れており、ρp = 0.8 (WTD_H), ρp = 0.7 (WTD & WTD_H), ρp = 0.6 (WTD) では完全相関（τ = 1）を達成しました。
 SKEW, WTD and WTD_H have τ = 0.8 for ρp = 0.6, but SKEW is superior to all the other strategies from ρp = 0.1 up to ρp = 0.4 inclusive.
-SKEW，WTD，WTD_Hはρp=0.6でτ=0.8となるが，SKEWはρp=0.1からρp=0.4まで含めて他のすべての戦略よりも優れている．
+SKEW，WTD，WTD_Hはρp=0.6でτ=0.8となるが，**SKEWはρp=0.1からρp=0.4まで含めて他のすべての戦略よりも優れている．**
 We would argue that, in general, the results obtained by our debiasing strategies are more valuable than those of SKEW and REG because they are superior when sampling most of the data available for testing (except for when ρp = 0.9, where SKEW, WTD and WTD_H achieve the same correlation value).
 一般的に、我々のデビアス戦略によって得られた結果は、テストに利用可能なデータのほとんどをサンプリングした場合に優れているため、SKEW や REG の結果よりも価値があると言えるでしょう（ただし、ρp = 0.9 の場合は SKEW、WTD、WTD_H が同じ相関値を達成しています）。
 Indeed, ρp values smaller than 0.5 can result in intervened test sets that are too small to give reliable results.
-実際、ρpの値が0.5より小さいと、介在するテストセットが小さすぎて信頼できる結果が得られないことがあります。
+実際、**ρpの値が0.5より小さいと、介入テストセットが小さすぎて信頼できる結果が得られない**ことがあります。
 At the same time, ρp values greater than 0.8 can result in intervened test sets that are too similar to a biased test set to provide substantially different results with respect to a biased evaluation.
-同時に、0.8より大きいρp値は、偏った評価に関して実質的に異なる結果を提供するために、偏ったテストセットにあまりにも類似している介在テストセットをもたらすことができる。
+同時に、**0.8より大きいρp値は**、偏った評価に関して実質的に異なる結果を提供するために、**偏ったテストセットにあまりにも類似している介在テストセットをもたらしうる**.
 
 # Conclusions 結論
 
@@ -812,7 +812,7 @@ Our work focuses on helping researchers to build reliable offline experiments.
 A future step to reinforce the validity of our debiasing strategies is to run more experiments with different datasets, for example datasets that are larger or ones that come from other recommendation domains.
 今後の課題として、より大きなデータセットや他の推薦領域からのデータセットなど、異なるデータセットを用いてより多くの実験を行うことで、我々のデビアス戦略の有効性を強化する。
 However, even so, it is well-known that online experiments, such as A/B tests and user trials, are essential to give authentic insights into what has been investigated offline.
-しかし、そうはいっても、オフラインで調査したものに本物のインサイトを与えるためには、A/Bテストやユーザートライアルなどのオンライン実験が不可欠であることはよく知られていることです。
+**しかし、そうはいっても、オフラインで調査したものに本物のインサイトを与えるためには、A/Bテストやユーザートライアルなどのオンライン実験が不可欠であることはよく知られていること**です。
 Therefore, our studies should be extended with online experiments.
 したがって、我々の研究はオンライン実験によって拡張されるべきです。
 This is work for the future.
@@ -823,7 +823,7 @@ In Section 2.3 we described how to collect unbiased-like datasets by using the f
 We also highlighted that those datasets are usually small and that this collection approach can only work in specific domains.
 また、それらのデータセットは通常小規模であり、この収集方法は特定のドメインでしか機能しないことを強調しました。
 Despite our work on debiasing data and other works in the literature too, we argue there is still the need for more unbiased data, allowing for more experiments on the testing (and, eventually, the training) of RSs.
-私たちが行ったデータの偏り解消や他の文献での研究にもかかわらず、私たちは、RSのテスト（そして最終的にはトレーニング）に関するより多くの実験を可能にする、より偏りのないデータが必要であると主張しています。
+私たちが行ったデータの偏り解消や他の文献での研究にもかかわらず、**私たちは、RSのテスト（そして最終的にはトレーニング）に関するより多くの実験を可能にする、より偏りのないデータが必要であると主張しています**。
 When evaluating an RS, bigger unbiased datasets would give a more grounded reference of unbiased performance.
 RSを評価する場合、より大きな不偏のデータセットがあれば、不偏の性能についてより根拠のあるリファレンスが得られるでしょう。
 Alternatives to the forced ratings approach that are applicable across more domains and that generate bigger unbiased datasets might be investigated too.
@@ -832,9 +832,9 @@ Additionally, similar approaches to collecting unbiased implicit datasets might 
 さらに、偏りのない暗黙のデータセットを収集するための同様のアプローチも有用であろう。
 
 Given the availability of a dataset collected by the forced ratings approach, there is still room for discussion to what extent this dataset can be considered an unbiased ground-truth for an RS evaluation.
-強制評価手法で収集されたデータセットが、どの程度RS評価のための不偏の根拠となりうるかについては、まだ議論の余地があるようです。
+**強制評価手法で収集されたデータセットが、どの程度RS評価のための不偏の根拠となりうるかについては、まだ議論の余地があるようです。**
 As we have emphasized in this paper (see Section 2.3 in particular), such a dataset might still carry some bias which might affect findings of studies like ours.
-本稿で強調してきたように（特に2.3節参照）、このようなデータセットには、我々のような研究の結果に影響を与える可能性のあるバイアスが残っている可能性があります。
+本稿で強調してきたように（特に2.3節参照）、このようなデータセットには、我々のような研究の結果に影響を与える可能性のある**バイアスが残っている可能性があります。**
 There is bias, for example, when a user rates an item she already knows (Loepp et al., 2018) or when items are rated in sequence.
 例えば、ユーザーが既に知っている項目を評価する場合（Loepp et al, 2018）や、項目が順番に評価される場合など、偏りがある。
 Even if we were able to remove many (if not all) of the effects of confounders from a dataset collection process in a real-world scenario, the rFesulting unbiased dataset still might not display a uniform rating probability in practice.
@@ -843,7 +843,7 @@ For these reasons, we believe further research on bias and its intrinsic mechani
 これらの理由から、RSシナリオにおけるバイアスとその本質的なメカニズムについて、今後さらに適切に研究する必要があると考えています。
 
 Finally, another aim for the future is to investigate other ways of calculating the weights for WTD.
-最後に、WTDのウェイトを計算する他の方法を検討することも、今後の目的のひとつです。
+最後に、**WTDのウェイトを計算する他の方法を検討することも**、今後の目的のひとつです。
 An alternative might be using techniques developed for causal inference, e.g.Cortes et al.(2008, 2010).
 また、Cortes et al. (2008, 2010) のような因果関係推論のために開発された技術を利用することも考えられる。
 Also, given the generality of our approach, it would be interesting to assess the effectiveness of WTD and WTD_H at debiasing implicit datasets, to complement the investigation performed in this paper.

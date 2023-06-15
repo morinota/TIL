@@ -697,7 +697,7 @@ Also, the ‘intelligent’ intervention strategies improve the τ values (τ = 
 The concordance coefficients for CoatShopping seem to advise against using ‘intelligent’ intervention approaches such as SKEW, WTD or WTD_H.
 CoatShoppingのコンコーダンス係数は、SKEW、WTD、WTD_Hのような「インテリジェント」な介入アプローチを使用しないことを勧めているようです。
 However, we note that τ values are subject to great variability, depending on the set of recommenders being compared.
-しかし、τの値は**、比較する推薦モデルの集合によって、大きく変動する**ことに注意する。
+しかし、τの値は、**比較する推薦モデルの集合によって、大きく変動する**ことに注意する。
 In fact, simply dropping the MF model from the comparison, we get very different τ values; see Table 4.
 実際、MFモデルを比較対象から外しただけで、τの値が大きく異なることがわかる；表4参照。
 Now τ values for Webscope are all the same (τ = 0.68).
