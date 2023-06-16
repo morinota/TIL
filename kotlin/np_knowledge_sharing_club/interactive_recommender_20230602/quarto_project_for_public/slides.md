@@ -58,7 +58,7 @@ title-slide-attributes:
 
 推薦サーバはリクエストを受けとった後、以下の様な手順でレスポンスを生成します.(一般的な推薦システムの構成ってこんな感じの印象...! 少し前に公開されたTwitterの推薦システムとかも...!)
 
-- 1. 指定されたユーザの推薦アイテム候補(`List<Candidate>`)を取得する.(`Map<userId to List<Candidate>>`の形式でメモリキャッシュされてる)
+- 1. 指定されたユーザの推薦アイテム候補(`List<Candidate>`)を取得する.(`Map<userId, List<Candidate>>`の形式でメモリキャッシュされてる)
 - 2. 推薦システムのコアロジックによって推薦アイテム候補を並び替えて、推薦アイテムランキングを作る.
 - 3. ヒューリスティックなランキング調整(ex. 過去に推薦済みのアイテム、古いアイテムのランクを下げる、etc.)
 - 4. 推薦アイテムランキングをレスポンスとして返す.
@@ -69,19 +69,18 @@ Interactive Recommenderを実現する為に、ココをこうしてこうじゃ
 
 変更された手順が以下じゃ!
 
-- 1. 指定されたユーザの推薦アイテム候補(`List<Candidate>`)を取得する.(`Map<userId to List<Candidate>>`の形式でメモリキャッシュされてる)
+- 1. 指定されたユーザの推薦アイテム候補(`List<Candidate>`)を取得する.(`Map<userId, List<Candidate>>`の形式でメモリキャッシュされてる)
 - 2. **リクエストに含まれるユーザからのメッセージ`userChat`を用いて、推薦アイテム候補をフィルタリングする**.
 - 3. 推薦システムのコアロジックによって推薦アイテム候補を並び替えて、推薦アイテムランキングを作る.
 - 4. ヒューリスティックなランキング調整(ex. 過去に推薦済みのアイテム、古いアイテムのランクを下げる、etc.)
 - 5. 推薦アイテムランキングをレスポンスとして返す.
 
-## 今回は推薦アイテム候補に以下の情報が含まれていると仮定しました!
+## 推薦アイテム候補の属性情報の設定
 
-ここは自分の妄想が入るのですが、記事のカテゴリと記事の複雑度(専門性の高さ)の属性情報が含まれているケースを想定しました.
-(実際の今のfeed-serverでは、推薦記事候補にそれらの属性情報は含まれていません...!)
+今回は推薦アイテム候補に、記事のカテゴリと記事の複雑度(専門性の高さ)の属性情報が含まれているケースを想定しました.
 
 ```kotlin
-data class Item(
+data class Candidate(
     val id: String,
     val title: String,
     val category: String, // 記事カテゴリ(business, finance, career, eduacition, technology, industry の6種)
@@ -90,6 +89,8 @@ data class Item(
 ```
 
 # さあやってみよう! まずはunit testを書くところから!
+
+追加された手順「リクエストに含まれるユーザからのメッセージ`userChat`を用いて、推薦アイテム候補(`List<Candidate>`)をフィルタリングする.」処理のテスト & 実装を試みます...!
 
 ## `InteractiveRecommender` のtestはこんな感じ?
 
@@ -107,39 +108,39 @@ InteractiveRecommenderの"観察可能な振る舞い"は、ユーザから入�
 package integrationTests
 
 import InteractiveRecommender
-import Item
+import Candidate
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class TestInteractiveRecommender {
-    private val feedUpdates = listOf(
-        Item("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
-        Item("2", "日銀、マイナス金利を維持", "finance", 0.7),
-        Item("3", "日本株式市場、急落", "finance", 0.8),
-        Item("4", "米中貿易戦争の影響、新興市場に拡大", "business", 0.5),
-        Item("5", "企業間の競争激化、IT業界にも波及", "technology", 0.8),
-        Item("6", "景気減速、デフレリスク増加", "finance", 0.4),
-        Item("7", "ブロックチェーン技術、急速に普及", "technology", 0.6),
-        Item("8", "日本、TPPに復帰", "business", 0.7),
-        Item("9", "ロボット革命により雇用機会が減少", "industry", 0.4),
-        Item("10", "新しい産業革命の波が到来", "technology", 0.8)
+    private val candidates = listOf(
+        Candidate("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
+        Candidate("2", "日銀、マイナス金利を維持", "finance", 0.7),
+        Candidate("3", "日本株式市場、急落", "finance", 0.8),
+        Candidate("4", "米中貿易戦争の影響、新興市場に拡大", "business", 0.5),
+        Candidate("5", "企業間の競争激化、IT業界にも波及", "technology", 0.8),
+        Candidate("6", "景気減速、デフレリスク増加", "finance", 0.4),
+        Candidate("7", "ブロックチェーン技術、急速に普及", "technology", 0.6),
+        Candidate("8", "日本、TPPに復帰", "business", 0.7),
+        Candidate("9", "ロボット革命により雇用機会が減少", "industry", 0.4),
+        Candidate("10", "新しい産業革命の波が到来", "technology", 0.8)
     )
 
     @Test
-    fun filteringRecommendationItemsByCategoryWhenGotRequestAboutCategory() {
+    fun filteringRecommendCandidatesByCategoryWhenGotRequestAboutCategory() {
         // Arrange
         val userComment = "金融に関するニュースに興味があります!"
         val sut = InteractiveRecommender()
 
         // Act
-        val filteredUpdates = sut.recommend(feedUpdates, userComment)
+        val filteredUpdates = sut.recommend(candidates, userComment)
 
         // Assert
         val filteredUpdatesExpected = listOf(
-            Item("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
-            Item("2", "日銀、マイナス金利を維持", "finance", 0.7),
-            Item("3", "日本株式市場、急落", "finance", 0.8),
-            Item("6", "景気減速、デフレリスク増加", "finance", 0.4)
+            Candidate("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
+            Candidate("2", "日銀、マイナス金利を維持", "finance", 0.7),
+            Candidate("3", "日本株式市場、急落", "finance", 0.8),
+            Candidate("6", "景気減速、デフレリスク増加", "finance", 0.4)
         )
         assertEquals(filteredUpdatesExpected, filteredUpdates)
     }
@@ -152,19 +153,19 @@ class TestInteractiveRecommender {
 
 ## `InteractiveRecommender` の実装はこんな感じ?
 
-- `InteractiveRecommender`内では、`TextToQueryConverter`と`ItemFilterByQuery`が処理を実行します.(外側と内側のレイヤーのイメージ)
-- `ItemFilterByQuery`や`TextToQueryConverter`の初期化の仕方はどうすべきだろう...?:
+- `InteractiveRecommender`内では、`TextToQueryConverter`と`CandidateFilterByQuery`が処理を実行します.(アプリケーションサービスとドメインモデルみたいな感じ)
+- `CandidateFilterByQuery`や`TextToQueryConverter`の初期化の仕方はどうすべきだろう...?:
   - `InteractiveRecommender` の中で初期化すべき?
   - それともInterfaceをコンストラクタの引数として渡すべき?
 
 ```kotlin:InteractiveRecommender.kt
 class InteractiveRecommender {
-    private val itemFilter = ItemFilterByQuery()
+    private val candidateFilter = CandidateFilterByQuery()
     private val textToQueryConverter = TextToQueryConverter()
-    fun recommend(items: List<Item>, userChat: String): List<Item> {
+    fun recommend(candidates: List<Candidate>, userChat: String): List<Candidate> {
         val sqlQuery = textToQueryConverter.convert(userChat)
-        sqlQuery ?: return items
-        return itemFilter.filter(sqlQuery, items)
+        sqlQuery ?: return candidates
+        return candidateFilter.filter(sqlQuery, candidates)
     }
 }
 ```
@@ -307,121 +308,120 @@ private data class Message(val content: String)
 
 ::::
 
-## `ItemFilterFromQuery` のtestはこんな感じ?
+## `CandidateFilterByQuery` のtestはこんな感じ?
 
 :::: {.columns}
 
 ::: {.column width="70%"}
 
-```kotlin:TestItemFilterFromQuery.kt
+```kotlin:TestCandidateFilterByQuery.kt
 package unitTests
 
-import ItemFilterByQuery
-import Item
+import CandidateFilterByQuery
+import Candidate
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class TestItemFilterByQuery {
-    private val updates = listOf(
-        Item("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
-        Item("2", "日銀、マイナス金利を維持", "finance", 0.7),
-        Item("3", "日本株式市場、急落", "finance", 0.8),
-        Item("4", "米中貿易戦争の影響、新興市場に拡大", "business", 0.5),
-        Item("5", "企業間の競争激化、IT業界にも波及", "technology", 0.8),
-        Item("6", "景気減速、デフレリスク増加", "finance", 0.4),
-        Item("7", "ブロックチェーン技術、急速に普及", "technology", 0.6),
-        Item("8", "日本、TPPに復帰", "business", 0.7),
-        Item("9", "ロボット革命により雇用機会が減少", "industry", 0.4),
-        Item("10", "新しい産業革命の波が到来", "technology", 0.8)
+class TestCandidateFilterByQuery {
+    private val candidates = listOf(
+        Candidate("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
+        Candidate("2", "日銀、マイナス金利を維持", "finance", 0.7),
+        Candidate("3", "日本株式市場、急落", "finance", 0.8),
+        Candidate("4", "米中貿易戦争の影響、新興市場に拡大", "business", 0.5),
+        Candidate("5", "企業間の競争激化、IT業界にも波及", "technology", 0.8),
+        Candidate("6", "景気減速、デフレリスク増加", "finance", 0.4),
+        Candidate("7", "ブロックチェーン技術、急速に普及", "technology", 0.6),
+        Candidate("8", "日本、TPPに復帰", "business", 0.7),
+        Candidate("9", "ロボット革命により雇用機会が減少", "industry", 0.4),
+        Candidate("10", "新しい産業革命の波が到来", "technology", 0.8)
     )
 
     @Test
-    fun itemsAreStableWhenSqlQueryDontIncludeWhereClause() {
+    fun candidatesAreStableWhenSqlQueryDontIncludeWhereClause() {
         // Arrange
         val sqlQuery = "SELECT * FROM items"
-        val sut = ItemFilterByQuery()
+        val sut = CandidateFilterByQuery()
 
         // Act
-        val filteredUpdates = sut.filter(sqlQuery, this.updates)
+        val filteredCandidates = sut.filter(sqlQuery, this.candidates)
 
         // Assert
-        val filteredUpdatesExpected = this.updates
-        assertEquals(filteredUpdatesExpected, filteredUpdates)
+        val filteredCandidatesExpected = this.candidates
+        assertEquals(filteredCandidatesExpected, filteredCandidates)
     }
 
     @Test
-    fun itemsAreFilteredWhenSqlQueryIncludeWhereClauseAndEqualOperator() {
+    fun candidatesAreFilteredWhenSqlQueryIncludeWhereClauseAndEqualOperator() {
         // Arrange
         val sqlQuery = "SELECT * FROM items WHERE category = 'finance'"
-        val sut = ItemFilterByQuery()
+        val sut = CandidateFilterByQuery()
 
         // Act
-        val filteredUpdates = sut.filter(sqlQuery, this.updates)
+        val filteredCandidates = sut.filter(sqlQuery, this.candidates)
 
         // Assert
-        val filteredUpdatesExpected = listOf(
-            Item("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
-            Item("2", "日銀、マイナス金利を維持", "finance", 0.7),
-            Item("3", "日本株式市場、急落", "finance", 0.8),
-            Item("6", "景気減速、デフレリスク増加", "finance", 0.4)
+        val filteredCandidatesExpected = listOf(
+            Candidate("1", "政府、地方自治体に対しデジタル化支援金を交付", "finance", 0.6),
+            Candidate("2", "日銀、マイナス金利を維持", "finance", 0.7),
+            Candidate("3", "日本株式市場、急落", "finance", 0.8),
+            Candidate("6", "景気減速、デフレリスク増加", "finance", 0.4)
         )
-        assertEquals(filteredUpdatesExpected, filteredUpdates)
+        assertEquals(filteredCandidatesExpected, filteredCandidates)
     }
 
     @Test
-    fun itemsAreFilteredBySqlQueryIncludingWhereClauseAndGreaterthanEqualsOperator() {
+    fun candidatesAreFilteredBySqlQueryIncludingWhereClauseAndGreaterthanEqualsOperator() {
         // Arrange
         val sqlQuery = "SELECT * FROM items WHERE complexity <=0.5"
-        val sut = ItemFilterByQuery()
+        val sut = CandidateFilterByQuery()
 
         // Act
-        val processedItems = sut.filter(sqlQuery, this.updates)
+        val filteredCandidates = sut.filter(sqlQuery, this.candidates)
 
         // Assert
-        val processedItemsExpected = listOf(
+        val filteredCandidatesExpected = listOf(
             "米中貿易戦争の影響、新興市場に拡大",
             "景気減速、デフレリスク増加",
             "ロボット革命により雇用機会が減少",
         )
-        assertEquals(processedItemsExpected, processedItems.map { it.title })
+        assertEquals(filteredCandidatesExpected, filteredCandidates.map { it.title })
     }
 
     @Test
-    fun itemsAreFilteredBySqlQueryIncludingWhereClauseAndMultiOperators() {
+    fun candidatesAreFilteredBySqlQueryIncludingWhereClauseAndMultiOperators() {
         // Arrange
         val sqlQuery = "SELECT * FROM items WHERE category = 'finance' and complexity <=0.5 and complexity>=0.3"
-        val sut = ItemFilterByQuery()
+        val sut = CandidateFilterByQuery()
 
         // Act
-        val processedItems = sut.filter(sqlQuery, this.updates)
+        val filteredCandidates = sut.filter(sqlQuery, this.candidates)
 
         // Assert
-        val processedItemsExpected = listOf(
+        val filteredCandidatesExpected = listOf(
             "景気減速、デフレリスク増加",
         )
-        assertEquals(processedItemsExpected, processedItems.map { it.title })
+        assertEquals(filteredCandidatesExpected, filteredCandidates.map { it.title })
     }
 }
-
 ```
 
 :::
 
 ::: {.column width="30%"}
 
-`ItemFilterByQuery` の"観察可能な振る舞い"は、sqlクエリに従って、メモリ上の推薦アイテム候補(`feedUpdats`)をフィルタリングする事です.
+`CandidateFilterByQuery` の"観察可能な振る舞い"は、sqlクエリに従って、メモリ上の推薦アイテム候補(`List<Candidate>`)をフィルタリングする事です.
 
 :::
 
 ::::
 
-## `ItemFilterByQuery` の実装はこんな感じ?
+## `CandidateFilterByQuery` の実装はこんな感じ?
 
 :::: {.columns}
 
 ::: {.column width="30%"}
 
-推薦アイテム候補(`feedUpdats:List<Item>`)にsqlクエリを適用する為に、`jsqlparser`でクエリを構文解析する点が、この実装の頑張りポイントでした.
+推薦アイテム候補(`List<Candidate>`)にsqlクエリを適用する為に、`jsqlparser`でクエリを構文解析する点が、この実装の頑張りポイントでした.
 where句が複数の式の組み合わせのケースにも対応しています.
 (今思えばnot演算子への対応を忘れてました...)
 
@@ -429,7 +429,7 @@ where句が複数の式の組み合わせのケースにも対応しています
 
 ::: {.column width="70%"}
 
-```kotlin:ItemFilterByQuery.kt
+```kotlin:CandidateFilterByQuery.kt
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression
@@ -443,20 +443,20 @@ import net.sf.jsqlparser.statement.select.PlainSelect
 import net.sf.jsqlparser.statement.select.Select
 import net.sf.jsqlparser.statement.select.SelectBody
 
-class ItemFilterByQuery {
-    fun filter(sqlQuery: String, items: List<Item>): List<Item> {
+class CandidateFilterByQuery {
+    fun filter(sqlQuery: String, candidates: List<Candidate>): List<Candidate> {
         val statement = CCJSqlParserUtil.parse(sqlQuery)
         val select = statement as? Select
         val selectBody = select?.selectBody
 
         val whereClauseExpression = extractWhereClause(selectBody)
         if (whereClauseExpression == null) {
-            println("This query doesn't include Comparison Operator. so return pure items.")
-            return items
+            println("This query doesn't include Comparison Operator. so return pure candidates.")
+            return candidates
         }
 
-        println("This query include Comparison Operator. so conduct items filtering.")
-        return items.filter { isValidItemByExpression(it, whereClauseExpression) }
+        println("This query include Comparison Operator. so conduct candidates filtering.")
+        return candidates.filter { isValidCandidateByExpression(it, whereClauseExpression) }
     }
 
     private fun extractWhereClause(selectBody: SelectBody?): Expression? {
@@ -466,51 +466,52 @@ class ItemFilterByQuery {
         return selectBody.where
     }
 
-    private fun isValidItemByExpression(item: Item, whereClause: Expression): Boolean {
+    private fun isValidCandidateByExpression(candidate: Candidate, whereClause: Expression): Boolean {
         return when (whereClause) {
-            is AndExpression -> filterItemByAndExpression(item, whereClause)
-            is OrExpression -> filterItemByOrExpression(item, whereClause)
-            is XorExpression -> filterItemByXorExpression(item, whereClause)
-            else -> filterItemBySingleExpression(item, whereClause)
+            is AndExpression -> filterCandidateByAndExpression(candidate, whereClause)
+            is OrExpression -> filterCandidateByOrExpression(candidate, whereClause)
+            is XorExpression -> filterCandidateByXorExpression(candidate, whereClause)
+            else -> filterCandidateBySingleExpression(candidate, whereClause)
         }
     }
 
-    private fun filterItemByAndExpression(item: Item, andExpression: AndExpression): Boolean {
-        val isValidLeft = isValidItemByExpression(item, andExpression.leftExpression)
-        val isValidRight = isValidItemByExpression(item, andExpression.rightExpression)
+    private fun filterCandidateByAndExpression(candidate: Candidate, andExpression: AndExpression): Boolean {
+        val isValidLeft = isValidCandidateByExpression(candidate, andExpression.leftExpression)
+        val isValidRight = isValidCandidateByExpression(candidate, andExpression.rightExpression)
         return isValidLeft and isValidRight
     }
 
-    private fun filterItemByOrExpression(item: Item, orExpression: OrExpression): Boolean {
-        val isValidLeft = isValidItemByExpression(item, orExpression.leftExpression)
-        val isValidRight = isValidItemByExpression(item, orExpression.rightExpression)
+    private fun filterCandidateByOrExpression(candidate: Candidate, orExpression: OrExpression): Boolean {
+        val isValidLeft = isValidCandidateByExpression(candidate, orExpression.leftExpression)
+        val isValidRight = isValidCandidateByExpression(candidate, orExpression.rightExpression)
         return isValidLeft or isValidRight
     }
 
-    private fun filterItemByXorExpression(item: Item, xorExpression: XorExpression): Boolean {
-        val isValidLeft = isValidItemByExpression(item, xorExpression.leftExpression)
-        val isValidRight = isValidItemByExpression(item, xorExpression.rightExpression)
+    private fun filterCandidateByXorExpression(candidate: Candidate, xorExpression: XorExpression): Boolean {
+        val isValidLeft = isValidCandidateByExpression(candidate, xorExpression.leftExpression)
+        val isValidRight = isValidCandidateByExpression(candidate, xorExpression.rightExpression)
         return isValidLeft xor isValidRight
     }
 
-    private fun filterItemBySingleExpression(item: Item, singleExpression: Expression): Boolean {
+    private fun filterCandidateBySingleExpression(candidate: Candidate, singleExpression: Expression): Boolean {
         if (singleExpression !is ComparisonOperator) {
             return true
         }
+        // ここにカラム名や演算子に基づいたフィルタリング処理を実装する
         val column = singleExpression.leftExpression.toString()
         val value = singleExpression.rightExpression.toString().replace("'", "") // 文字列に''が含まれてるので取り除く.
 
         when (singleExpression) {
-            is EqualsTo -> return item.getProperty(column) == value
+            is EqualsTo -> return candidate.getProperty(column) == value
 
             is GreaterThanEquals -> {
-                val property = item.getProperty(column)
+                val property = candidate.getProperty(column)
                 if (property !is Double) return false
                 return property >= value.toDouble()
             }
 
             is MinorThanEquals -> {
-                val property = item.getProperty(column)
+                val property = candidate.getProperty(column)
                 if (property !is Double) return false
                 return property <= value.toDouble()
             }
@@ -524,39 +525,12 @@ class ItemFilterByQuery {
 
 ::::
 
-# いざfeed-serverにInteractive Recommenderを組み込むぞ!
-
-## 計画はこうだ!
-
-今回は"あなたへのおすすめ"に表示する記事リストを、ユーザとの対話を通して変化(調整)させる機能を想定します.
-
-Interactive Recommenderを実現する為に、ココをこうしてこうじゃ!
-
-- 1. feed-serverの`ranking` endpointにリクエストが送られる.
-- 2. 指定されたユーザの推薦記事候補(`List<FeedUpdate>`)を取得する.(インスタンス上にメモリキャッシュされてる認識)
-- 3. **リクエストに含まれるユーザからのメッセージ`userChat`を用いて、推薦記事候補をフィルタリングする**.
-- 4. 推薦システムのコアロジックによって推薦記事候補を並び替えて、推薦記事ランキングを作る.
-- 5. ヒューリスティックなランキング調整(ex. 過去に閲読した記事、古い記事のランクを下げる、etc.)
-- 6. 推薦記事ランキングのレスポンスを返す.
-
-## と思ったが、あれ?
-
-feed-serverの`gradle.build.kts`に必要なpackageの依存関係を定義してbuildを試みると...あれ?
-
-```
-Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 1.8.0, expected version is 1.4.0.
-```
-
-kotlinのversionの問題でpackageをinstallできないんだろうか??:thinking:
-
-という感じで、ココでタイムアップでした...!
-(本当はdev環境にデプロイして、実際にranking endpointに`userChat` parameterを指定してリクエスト投げて...みたいなデモンストレーションがしたかったが...kotlin力 or gradle力不足...!)
+# 妄想の問題設定でしたが、とりあえず単体テストが通る様になったのでヨシ！！
 
 ## 終わりに...
 
-- **推薦システム × kotlin × LLM(OpenAI API)** をテーマに、ユーザとの対話で推薦結果を変化させる**Interactive Recommender**をfeed-serverに実装を試みました!
+- **推薦システム × kotlin × LLM(OpenAI API)** をテーマに、ユーザとの対話で推薦結果を変化させる**Interactive Recommender**をkotlinで実装を試みました!
   - 具体的には、「ユーザの自然言語を受け取る -> SQLクエリに変換 -> 推薦記事候補をフィルタリングする」処理をテスト・実装してみた.
-  - feed-serverに組み込むプロセスでタイムアップし断念...!
 - 得られた知見・感想:
   - 最近読んでる"単体テストの考え方/使い方"を参考にテストを書いてみたが、"観察可能な振る舞い"のみをテストする事を意識できた.
   - kotlinはpublicなmethod(観察可能な振る舞い)とprivateなmethod(実装の詳細)を明示的に定義できて嬉しいな...(Pythonが特殊なのかな)
@@ -565,4 +539,3 @@ kotlinのversionの問題でpackageをinstallできないんだろうか??:think
 
 - 1. [推薦システム実践入門](https://www.oreilly.co.jp/books/9784873119663/)
 - 2. 「推薦システムに力を入れている」で私の中で有名なWantedlyさんのData Scientistの方のLT資料: [LLMを活用した推薦システムの改善:課題と初期導入のアプローチ](https://speakerdeck.com/zerebom/llmwohuo-yong-sitatui-jian-sisutemunogai-shan-ke-ti-tochu-qi-dao-ru-noapuroti)
--
