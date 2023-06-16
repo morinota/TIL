@@ -1,0 +1,4 @@
+- source: slides.md
+  quarto-pub:
+    - id: 17315ca4-02ef-4509-b9b7-eb9ef3be8d43
+      url: 'https://quartopub.com/sites/morinota/debias_weigheted_sampling'
