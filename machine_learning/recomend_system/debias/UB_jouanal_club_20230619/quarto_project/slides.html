@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.1.168">
 
   <meta name="author" content="morinota">
-  <title>推薦システムにおけるMNARデータを使った学習 &amp; 検証において、因果推論の傾向スコアを用いて誤差関数を調整する事でbiasに対処する論文を読んだ</title>
+  <title>推薦モデルの学習 &amp; オフライン評価においてMNAR(Missing Not at Random)データを使う事の影響と、その影響への対処法を提案する論文を2本読んだ</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -324,131 +324,124 @@
     <div class="slides">
 
 <section id="title-slide" data-background-opacity="0.5" data-background-size="contain" class="center">
-  <h1 class="title">推薦システムにおけるMNARデータを使った学習 &amp; 検証において、因果推論の傾向スコアを用いて誤差関数を調整する事でbiasに対処する論文を読んだ</h1>
-  <p class="subtitle">n週連続推薦システム系論文読んだシリーズ 17週目</p>
+  <h1 class="title">推薦モデルの学習 &amp; オフライン評価においてMNAR(Missing Not at Random)データを使う事の影響と、その影響への対処法を提案する論文を2本読んだ</h1>
+  <p class="subtitle">論文読み会</p>
   <p class="author">morinota</p>
+  <p class="date">2023/06/18</p>
 </section>
 
-<section id="論文の基本情報" class="slide level2">
-<h2>論文の基本情報</h2>
+<section id="今回のテーマを選んだ経緯" class="slide level2">
+<h2>今回のテーマを選んだ経緯</h2>
 <ul>
-<li>title: Recommendations as Treatments: Debiasing Learning and Evaluation</li>
-<li>published date: 17 Feb 2016,</li>
-<li>authors: Wondo Rhee, Sung Min Cho, Bongwon Suh</li>
-<li>url(paper): <a href="https://arxiv.org/abs/1602.05352">https://arxiv.org/abs/1602.05352</a></li>
+<li>実務において、推薦モデルの<strong>オフライン評価では良いモデルと判断したのに、実プロダクトに組み込んだオンライン評価(ABテスト)ではイマイチ</strong>、というケースに遭遇しております. (“推薦モデル”=“推薦システムのコアロジックとして適用する機械学習モデル”という意味合いで使わせてください)</li>
+<li><a href="https://gihyo.jp/book/2021/978-4-297-12224-9">施策デザインのための機械学習入門</a>を読んで、学習やオフライン評価に使うデータ由来のbiasによって、我々の意思決定が影響を受けてるかもと思いました.</li>
+<li>また、<a href="https://linedevday.linecorp.com/2020/ja/sessions/9641/">2020年のLINEさんの登壇</a>を観て、推薦モデルの”オフライン評価時にMNAR(Missing Not at Random)データ由来のbias除去を試みてる”旨の話があったので、その元論文を2本読みました.</li>
+<li>学習&amp;評価用データのbiasへの対処は、推薦モデルのみならず<strong>他の教師ありMLタスクにも一般化できる内容なのでは</strong>と思い、今回テーマに選びました!</li>
 </ul>
 </section>
-<section id="ざっくり論文概要" class="slide level2">
-<h2>ざっくり論文概要</h2>
-<ul>
-<li>本論文は、推薦システムにおける<strong>MNAR(Missing Not at Random)データ</strong>を使った<strong>学習 &amp; 評価(検証)</strong>において、因果推論の傾向スコアを用いて誤差関数を調整する事でbiasに対処しよう！という話だった.</li>
-<li>MNARデータに対する”学習のみ”や、“評価のみ”に焦点を当てた論文も多いが、本論文は両方に焦点を当てて汎用的なアプローチの提案を試みている印象.</li>
-<li>MNARデータを使ってそのままモデル性能(誤差関数)を推定しようとすると、真のモデル性能の値に対してbiasが発生してしまう. (不偏推定量でなくなってしまう.)</li>
-<li>そこで因果推論分野の<strong>propensity score(傾向スコア)</strong>を用いて、モデル性能の推定量を調整して、真のモデル性能の不偏推定量を作ろう…!!という話.</li>
-<li>↑で作ったモデル性能の不偏推定量をモデル性能の評価(検証)や学習時の目的関数に使う事で、MNARデータにおいても<strong>良い感じの推薦モデルを作れる・選べる</strong>ようになるぞ…!という話.</li>
-</ul>
-</section>
-<section>
-<section id="introduction" class="title-slide slide level1 center">
-<h1>Introduction</h1>
+<section id="今回はココの領域に関して喋りたい" class="slide level2">
+<h2>今回はココの領域に関して喋りたい…!</h2>
+<p>以下は、おそらく一般的(?)な推薦システムにおける教師有りMLモデル適用までの流れです.</p>
 
+<img data-src="recommender_release_process.png" class="r-stretch quarto-figure-center"><p class="caption">自分で作った画像. データ収集から ABテスト等によるオンライン評価まで.推薦システム実践入門を参考に…!</p></section>
+<section id="補足推薦モデルのオフライン-オンライン評価" class="slide level2">
+<h2>(補足)推薦モデルのオフライン &amp; オンライン評価</h2>
+<p>今回はオフライン評価のbiasを取り除く話をしているが、推薦モデルの場合は<strong>オフライン評価 とオンライン評価 が必ずしも一致しない(乖離がある)問題</strong>もあるので少し紹介. 各用語の定義の概要は以下.(引用元:<a href="">推薦システム実践入門</a>)</p>
+<ul>
+<li>“オフライン評価”: 実際のサービス上での閲覧や購買などのユーザの行動履歴から得られた過去のログ(サービスログ)を用いてモデルの予測精度などを評価する.(ex. hold-out法でMSEを評価する)</li>
+<li>“オンライン評価”: 新しいテスト対象の推薦モデルや新しいUIを一部のユーザへ実際に提出する事を通して評価を行う. (ex. ABテストでCTRを評価する)</li>
+</ul>
+<p>どうしてもオフライン評価とオンライン評価における<strong>“精度”の意味合いが異なってしまう</strong>ので乖離が発生し得る. (ex. 誰もが買う様な無難なアイテムを推薦. ユーザにとって既知の退屈なアイテムを推薦.)</p>
+<p>なので、オフライン評価時に予測精度だけでなく<strong>beyond-accuracyなmetrics</strong>を評価する方法も多く提案されている. (ex. 推薦結果の多様性, 新規性, etc.)</p>
 </section>
-<section id="推薦システムにおける選択バイアスとmnarデータ" class="slide level2">
-<h2>推薦システムにおける選択バイアスとMNARデータ</h2>
+<section id="推薦システムの選択バイアスとmnarデータ" class="slide level2">
+<h2>推薦システムの選択バイアスとMNARデータ</h2>
 <ul>
 <li>推薦システムの学習用データ・検証用データは、実環境において多くの場合、<strong>選択バイアス</strong>がかかっている.
 <ul>
 <li>ex.1) 映画推薦システムにおいて、ユーザは自分の好きな映画を観て評価し、自分の嫌いな映画を評価する事はほぼない. -&gt;<strong>ユーザ自身の選択行動による選択バイアス</strong></li>
 <li>ex.2) 広告配信システムにおいて、ユーザが興味を持ちそうな広告を表示するが、それ以外の広告を表示する頻度は低くなる. -&gt; <strong>推薦システムの動作による選択バイアス</strong></li>
 </ul></li>
-<li>様々な選択バイアスに伴い開発者が得られるのは、観測/未観測の傾向が偏ったデータ = <strong>MNAR(Missing Not At Random)</strong>と呼ばれるデータになる.(Little &amp; Rubin, 2002)</li>
+<li>様々な選択バイアスに伴い実際に開発者が得られるのは、観測/未観測の傾向が偏ったデータ = <strong>MNAR(Missing Not At Random)</strong>と呼ばれるデータになる.</li>
 </ul>
 </section>
-<section id="本論文の目的-アプローチの概要" class="slide level2">
-<h2>本論文の目的 &amp; アプローチの概要</h2>
+<section id="参考文献" class="slide level2">
+<h2>参考文献</h2>
 <ul>
-<li>本論文の目的は、<strong>選択バイアスによるMNARデータの元で</strong>、原理的、実用的かつ効果的に推薦システムを評価(検証)・学習できるアプローチを開発する事.</li>
-<li><strong>推薦を因果推論の観点から見る</strong>と、推薦システムでユーザにアイテムを見せることは、医学研究において患者に治療法を見せるのと同じような介入(intervention)である.</li>
-<li><strong>推薦と実験・観測データに対する因果推論を結びつけること</strong>で、選択バイアス下での推薦システムの公平な評価と学習のための原則的なフレームワークを導き出す.</li>
+<li><a href="https://www.oreilly.co.jp/books/9784873119663/">推薦システム実践入門</a></li>
+<li>各々のビジネス施策に合わせて機械学習を設計し直そう、みたいな内容の本: <a href="https://gihyo.jp/book/2021/978-4-297-12224-9">施策デザインの為の機械学習入門</a></li>
+<li>2020年のLINEさんの登壇:<a href="https://linedevday.linecorp.com/2020/ja/sessions/9641/">LINEサービス向けの効率的かつ効果的な推薦システム開発に向けて</a></li>
+<li>論文1.MNARデータを使っても不偏な誤差関数を設計し直すやつ:<a href="https://arxiv.org/abs/1602.05352">Recommendations as Treatments: Debiasing Learning and Evaluation</a></li>
+<li>論文2:MNARデータを重み付けサンプリングしてMARデータに近づけるやつ:<a href="https://dl.acm.org/doi/10.1145/3341105.3375759">Debiased offline evaluation of recommender systems: a weighted-sampling approach</a></li>
+<li>オフライン評価可能なmetricsからオンライン精度を予測する回帰モデルを推定して良い感じに推薦モデル改善しよう、って論文:<a href="https://dl.acm.org/doi/10.1145/2792838.2800184">Predicting Online Performance of News Recommender Systems Through Richer Evaluation Metrics</a></li>
 </ul>
-</section></section>
+</section>
 <section>
-<section id="mnarデータが従来の学習検証に与える影響" class="title-slide slide level1 center">
-<h1>MNARデータが従来の学習・検証に与える影響</h1>
+<section id="mnarmissing-not-at-randomデータが推薦モデルの学習オフライン評価に与える影響" class="title-slide slide level1 center">
+<h1>MNAR(Missing Not At Random)データが推薦モデルの学習・オフライン評価に与える影響</h1>
 
 </section>
-<section id="映画の例の説明1" class="slide level2">
-<h2>映画の例の説明1</h2>
-<p>映画の例で、選択バイアスが従来の評価に与える悲惨な影響について考えてみる. <span class="math inline">\(u \in {1，...，U}\)</span>をユーザidx、<span class="math inline">\(i \in {1，...，I}\)</span> を映画idxとする.</p>
+<section id="映画の例データの説明1" class="slide level2">
+<h2>映画の例:データの説明1</h2>
+<p>映画の例で、MNARデータがオフライン評価に与える影響について考えてみる. <span class="math inline">\(u \in {1，...，U}\)</span>をユーザidx、<span class="math inline">\(i \in {1，...，I}\)</span> を映画idxとする.</p>
 
 <img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/2-Figure1-1.png" class="r-stretch quarto-figure-center"><ul>
-<li>図1 左上の<span class="math inline">\(Y\)</span>は、“ホラー好き”ユーザ集合は全てのホラー映画を5点、全てのロマンス映画を1点と評価する様な<strong>真の評価行列</strong> <span class="math inline">\(Y \in \mathbf{R}^{U \times I}\)</span> (“ロマンス好き”ユーザ集合は逆)</li>
+<li>図1 左上の<span class="math inline">\(Y\)</span>は、“ホラー好き”ユーザ集合は全てのホラー映画を5点、全てのロマンス映画を1点と評価する(“ロマンス好き”ユーザ集合は逆)様な<strong>真の評価行列</strong> <span class="math inline">\(Y \in \mathbf{R}^{U \times I}\)</span></li>
 </ul>
 </section>
-<section id="映画の例の説明2" class="slide level2">
-<h2>映画の例の説明2</h2>
+<section id="映画の例データの説明2" class="slide level2">
+<h2>映画の例:データの説明2</h2>
 
 <img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/2-Figure1-1.png" class="r-stretch quarto-figure-center"><ul>
 <li>図1 右上のbinary行列 <span class="math inline">\(O \in \{0, 1\}^{U \times I}\)</span> は実際に評価が観測された{u,i}ペア. <span class="math inline">\([O_{u,i} = 1] ⇔ [Y_{u,i} \text{observed}]\)</span> を意味する. (<span class="math inline">\(O\)</span>はobservationの意味)</li>
 </ul>
 </section>
-<section id="映画の例の説明3" class="slide level2">
-<h2>映画の例の説明3</h2>
+<section id="映画の例データの説明3" class="slide level2">
+<h2>映画の例:データの説明3</h2>
 
 <img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/2-Figure1-1.png" class="r-stretch quarto-figure-center"><ul>
-<li>図1 中央上の行列 <span class="math inline">\(P\)</span>は、各{u,i}の評価が実際に観測される確率 <span class="math inline">\(P_{u,i} = P(O_{u,i} = 1)\)</span> を意味する. この映画の例では、<strong>映画ジャンルの好き嫌いと評価値の観測されやすさに強い相関</strong>がある。</li>
+<li>図1 中央上の行列 <span class="math inline">\(P\)</span>は、各{u,i}の評価が実際に観測される確率 <span class="math inline">\(P_{u,i} = P(O_{u,i} = 1)\)</span> を意味する. この映画の例では、<strong>映画ジャンルの好き嫌いと評価値の観測されやすさに強い相関</strong>がある.</li>
 </ul>
 </section>
-<section id="映画の例の説明4" class="slide level2">
-<h2>映画の例の説明4</h2>
-
-<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/2-Figure1-1.png" class="r-stretch quarto-figure-center"><p>このデータについて、以下の二つのタスクの評価を考えてみる.</p>
-<ul>
-<li>タスク1: 評価値の予測精度の推定</li>
-<li>タスク2: 推薦の精度の推定</li>
-</ul>
-</section>
-<section id="タスク1-評価値の予測精度の推定" class="slide level2">
-<h2>タスク1: 評価値の予測精度の推定</h2>
+<section id="映画の例データの説明4" class="slide level2">
+<h2>映画の例:データの説明4</h2>
 
 <img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/2-Figure1-1.png" class="r-stretch quarto-figure-center"><ul>
-<li>図1の左下 <span class="math inline">\(\hat{Y}_1\)</span> と中央下 <span class="math inline">\(\hat{Y}_2\)</span> は、ある推薦モデル1と2によって予測された評価行列を表す。</li>
+<li>図1の左下 <span class="math inline">\(\hat{Y}_1\)</span> と中央下 <span class="math inline">\(\hat{Y}_2\)</span> は、ある推薦モデル1と2によって予測された評価行列を表す.</li>
 </ul>
-<p>タスク1では，これらの予測された評価行列 <span class="math inline">\(\hat{Y}\)</span>が，真の評価行列<span class="math inline">\(Y\)</span>をどれだけ反映(予測)できたかを推定(評価)したい…!</p>
+<p>今回の例では、推薦モデルによって<strong>予測された評価行列 <span class="math inline">\(\hat{Y}\)</span></strong>が，<strong>真の評価行列<span class="math inline">\(Y\)</span>をどれだけ予測できるか</strong>を推定(評価)したい…!</p>
 </section>
-<section id="タスク1-評価値の予測精度の推定-1" class="slide level2">
-<h2>タスク1: 評価値の予測精度の推定</h2>
-<p>標準的な予測誤差の場合、次のように書くことができる. (<strong>学習の場合は損失関数</strong>として、<strong>検証の場合は評価指標</strong>として使用するイメージ…!)</p>
+<section id="推薦モデルの予測誤差の推定真の予測誤差関数" class="slide level2">
+<h2>推薦モデルの予測誤差の推定:真の予測誤差関数</h2>
+<p>標準的な予測誤差の場合、次のように書くことができる. (<strong>学習の場合は損失関数</strong>として、<strong>オフライン評価の場合は精度指標</strong>として使用するイメージ…!)</p>
 <p><span class="math display">\[
 R(\hat{Y}) = \frac{1}{U \cdot I} \sum_{u=1}^{U} \sum_{i=1}^{I} \delta_{u,i}(Y, \hat{Y})
 \tag{1}
 \]</span></p>
-<p>ここで、<span class="math inline">\(\delta_{u,i}(Y, \hat{Y})\)</span> は真の値 <span class="math inline">\(Y\)</span> と予測値 <span class="math inline">\(\hat{Y}\)</span> の差を表し、具体的な <span class="math inline">\(\delta()\)</span> 関数は採用するmetricによって異なる. 例えば hogehoge と fugafugaの場合は以下.</p>
+<p>ここで、<span class="math inline">\(\delta_{u,i}(Y, \hat{Y})\)</span> は真の値 <span class="math inline">\(Y\)</span> と予測値 <span class="math inline">\(\hat{Y}\)</span> の差を表し、具体的な <span class="math inline">\(\delta()\)</span> 関数は採用するmetricによって異なる. 例えば MSE と accuracy の場合は以下.</p>
 <p><span class="math display">\[
-\delta_{u,i}(Y, \hat{Y}) = hogehoge()
+MSE: \delta_{u,i}(Y, \hat{Y}) = (Y_{u,i} - \hat{Y}_{u,i})^2
 \\
-\delta_{u,i}(Y, \hat{Y}) = fugafuga()
-\\
-\delta_{u,i}(Y, \hat{Y}) = piyopiyo()
+Accuracy: \delta_{u,i}(Y, \hat{Y}) = \mathbf{1}(Y_{u,i} = \hat{Y}_{u,i})
 \]</span></p>
 </section>
-<section id="タスク1-評価値の予測精度の推定-2" class="slide level2">
-<h2>タスク1: 評価値の予測精度の推定</h2>
-<p>しかし実環境では真の評価行列<span class="math inline">\(Y\)</span>は一部の要素しか観測されない為、従来は以下の様に、<strong>観測済みエントリ{u,i}のみを用いて</strong> 予測誤差 <span class="math inline">\(R(\hat{Y})\)</span> を推定する.</p>
+<section id="推薦モデルの予測誤差の推定naive推定量" class="slide level2">
+<h2>推薦モデルの予測誤差の推定:naive推定量</h2>
+<p>しかし実環境では真の評価行列<span class="math inline">\(Y\)</span>は一部の要素しか観測されない為、従来は以下の様に、<strong>観測済み要素{u,i}のみを用いて</strong> 予測誤差 <span class="math inline">\(R(\hat{Y})\)</span> を推定する.</p>
 <p><span class="math display">\[
 \hat{R}_{naive}(\hat{Y})
 = \frac{1}{|{(u,i):O_{u,i} = 1}|} \sum_{(u,i):O_{u,i}=1} \delta_{u,i}(Y,\hat{Y})
 \tag{5}
 \]</span></p>
-<p>ここで、<span class="math inline">\(O_{u,i}\)</span> は… を表すbinary確率変数とする.</p>
+<p>ここで、<span class="math inline">\(O_{u,i}\)</span> は観測されたか否かを表すbinary確率変数とする.</p>
 <p><span class="math display">\[
-O(u,i)
+E_{O}[O_{u,i}] = P(O_{u,i} = 1)
 \]</span></p>
 <p>式(5)を、予測誤差 <span class="math inline">\(R(\hat{Y})\)</span> の<strong>naive推定量</strong>と呼ぶ. 実はこのnaiveさが、図1の <span class="math inline">\(\hat{Y}_1\)</span>、<span class="math inline">\(\hat{Y}_2\)</span> に対する重大な誤判定を招いてしまう.</p>
 </section>
-<section id="naive推定量のbiasを確認する." class="slide level2">
-<h2>naive推定量のbiasを確認する.</h2>
-<p>予測誤差 <span class="math inline">\(R(\hat{Y})\)</span> のnaive推定量の期待値を導出して、biasの発生を確認します!</p>
+<section id="推薦モデルの予測誤差の推定naive推定量のbias" class="slide level2">
+<h2>推薦モデルの予測誤差の推定:naive推定量のbias</h2>
+<p>予測誤差 <span class="math inline">\(R(\hat{Y})\)</span> のnaive推定量の<strong>期待値を導出</strong>して、biasの発生を確認します!</p>
 <p><span class="math display">\[
 E_{O}[\hat{R}_{naive}(\hat{Y})] = E_{O}[\frac{1}{|{(u,i):O_{u,i} = 1}|} \sum_{(u,i):O_{u,i}=1} \delta_{u,i}(Y,\hat{Y})]
 \\
@@ -458,48 +451,160 @@ E_{O}[\hat{R}_{naive}(\hat{Y})] = E_{O}[\frac{1}{|{(u,i):O_{u,i} = 1}|} \sum_{(u
 \\
 = \frac{1}{|{(u,i):O_{u,i} = 1}|} \sum_{(u,i)} E_{O}[O_{u,i}] \cdot \delta_{u,i}(Y,\hat{Y})
 \]</span></p>
+<p>(参考: <a href="https://gihyo.jp/book/2021/978-4-297-12224-9">施策デザインの為の機械学習入門</a>)</p>
 </section>
-<section id="naive推定量のbiasを確認する.-1" class="slide level2">
-<h2>naive推定量のbiasを確認する.</h2>
+<section id="推薦モデルの予測誤差の推定naive推定量のbias-1" class="slide level2">
+<h2>推薦モデルの予測誤差の推定:naive推定量のbias</h2>
 <p><span class="math display">\[
 E_{O}[\hat{R}_{naive}(\hat{Y})] = \frac{1}{|{(u,i):O_{u,i} = 1}|} \sum_{(u,i)} E_{O}[O_{u,i}] \cdot \delta_{u,i}(Y,\hat{Y})
 \]</span></p>
-<p>この導出結果から、naive推定量の期待値 <span class="math inline">\(E_{O}[\hat{R}_{naive}(\hat{Y})]\)</span> は、ある特殊ケースを除いて、真の予測誤差 <span class="math inline">\(R(\hat{Y})\)</span> に比例しない事が分かりました…!</p>
-<p>特殊ケース: 全ての観測ペア(u,i)の観測されやすさ(観測確率)が一様なケース. すなわち…!</p>
+<p>この導出結果から、naive推定量の期待値 <span class="math inline">\(E_{O}[\hat{R}_{naive}(\hat{Y})]\)</span> は、<strong>ある特殊ケースを除いて、真の予測誤差 <span class="math inline">\(R(\hat{Y})\)</span> に比例しない</strong>事が分かりました…!</p>
+<p>特殊ケース: <strong>全ての観測ペア(u,i)の観測されやすさ(観測確率)が一様なケース</strong>:</p>
 <p><span class="math display">\[
 E_{O}[O_{u,i}] = const \in (0, 1] , \forall {(u,i):O_{u,i} = 1}
 \]</span></p>
+<p>↑はまさにデータがMAR(Missing at Random)であるケース. (しかし前述した選択バイアスの影響により、実サービスで得られるデータは多くの場合MNAR…)</p>
+<p>そして <span class="math inline">\(E_{O}[O_{u,i}] = P(O_{u,i} = 1)\)</span> なので、naive推定量は<strong>観測されやすい{u,i}ペアに関する誤差を重視する</strong>様な設計になっている.</p>
 </section>
-<section id="タスク1-評価値の予測精度の推定-3" class="slide level2">
-<h2>タスク1: 評価値の予測精度の推定</h2>
-
-<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/2-Figure1-1.png" class="r-stretch quarto-figure-center"><p>図1の例を見ると、<span class="math inline">\(\hat{Y}_1\)</span> の方が <span class="math inline">\(\hat{Y}_2\)</span> よりも予測精度が優れているはず. しかしnaive推定量<span class="math inline">\(\hat{R}_{naive}(\hat{Y})\)</span>は、<span class="math inline">\(\hat{Y}_2\)</span>の方が予測誤差が小さいと判断してしまう… これは<strong>選択バイアスによるもの</strong>であり、1点の評価は観測されにくい為、誤差関数のnaive推定量では過小評価される。 より一般的に言えば、選択バイアス(MNARデータ)下では、<strong>naive推定量は真の誤差関数の不偏推定量ではない</strong>(Steck, 2013). すなわち：</p>
-<p><span class="math display">\[
-E_{O}[\hat{R}_{naive}(\hat{Y})] \neq R(\hat{Y})
-\tag{6}
-\]</span></p>
-</section>
-<section id="タスク2-推薦の精度の推定" class="slide level2">
-<h2>タスク2: 推薦の精度の推定</h2>
-
-<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/2-Figure1-1.png" class="r-stretch quarto-figure-center"><p>タスク2では、予測評価値の精度ではなく、より直感的に<strong>推薦するか否か</strong>の意思決定の精度を評価する. この為に<span class="math inline">\(\hat{Y}\)</span>を再定義し、図1 右下の <span class="math inline">\(\hat{Y}_3\)</span> では、<span class="math inline">\(O\)</span> に類似したbinary行列として推薦結果を符号化している. ここで、<span class="math inline">\([\hat{Y}_{u,i} = 1]\)</span> ⇔ [i が u に推薦される]とし、1ユーザあたりk件のみ推薦する.</p>
-</section>
-<section id="タスク2-推薦の精度の推定-1" class="slide level2">
-<h2>タスク2: 推薦の精度の推定</h2>
-<p>推薦の精度を評価するmetricsとして一般的なのは、ユーザが推薦された映画から得るCumulative Gain(累積利益, CG). 図1の例では、推薦映画リストの平均評価として定義する. 以下の <span class="math inline">\(delta()\)</span> を用いて、再び式(1)の誤差関数を定義する事ができる.</p>
-<p><span class="math display">\[
-CG: \delta_{u,i}(Y, \hat{Y}) = (I/k) \hat{Y} \cdot Y_{u,i}
-\tag{7}
-\]</span></p>
+<section id="mnarデータのbiasを何とかするアプローチ達" class="slide level2">
+<h2>MNARデータのbiasを何とかするアプローチ達</h2>
+<p>MNARデータを推薦モデルの学習 &amp; オフライン評価に使う上で、大きく<strong>3種</strong>のアプローチがあるらしい.(参考:<a href="https://dl.acm.org/doi/10.1145/3341105.3375759">論文2</a>より)</p>
 <ul>
-<li>しかし、ユーザが<span class="math inline">\(\hat{Y}\)</span>の全ての映画を視聴していない限り、式(1)を用いて直接CGを計算することはできない. (真の目的関数は計算できない。観測データから近似する他ない…)</li>
-<li>従って、実際に観測された映画を見ていた(消費した)代わりに、推薦<span class="math inline">\(\hat{Y}\)</span>に従って映画を消費した場合、ユーザは(CGの面で)どの程度楽しめただろうか、という<strong>反実仮想的な問い</strong>に直面する.</li>
-<li>CGの様に推薦結果を集合を見なすmetricだけでなく、割引累積利益(DCG)、DCG@k、Precision at k(PREC@k)などのranking metricsも同様の設定が当てはまる.</li>
+<li><ol type="1">
+<li>なんとか<strong>MARデータを収集</strong>する. “forced rating approach”(強制評価アプローチ)と呼ばれる方法. (i.e.&nbsp;ユーザに評価してくれと協力をお願いする方法)</li>
+</ol></li>
+<li><ol start="2" type="1">
+<li>MNARデータのbiasを補正できるように、モデルの<strong>真の予測誤差の不偏推定量</strong>となるような<strong>新しい推定量</strong>を設計する.</li>
+</ol>
+<ul>
+<li>(今回読んだ論文1つ目はこっちに該当. <a href="https://gihyo.jp/book/2021/978-4-297-12224-9">“施策デザインの為の機械学習入門”</a>でも主にこっち系の手法を紹介してた)</li>
+</ul></li>
+<li><ol start="3" type="1">
+<li>MNARデータからデータをサンプリングし、<strong>MARデータに近い性質を持つ介入テストデータ</strong>を作る.</li>
+</ol>
+<ul>
+<li>(今回読んだ論文2つ目はこっちに該当. <a href="https://linedevday.linecorp.com/2020/ja/sessions/9641/">LINEさん</a>はオフライン評価時にこちらを採用してるとの事.)</li>
+</ul></li>
 </ul>
-<p>タスク1と同様に式(5)のnaive推定量を用いる方法もあるが、タスク2においてもnaive推定量は<span class="math inline">\(R(\hat{Y})\)</span>の不偏推定量ではない.</p>
+</section></section>
+<section>
+<section id="読んだ論文1-推薦システムにおけるmnarデータを使った学習-検証において因果推論の傾向スコアを用いて誤差関数を調整する事でbiasに対処する論文" class="title-slide slide level1 center">
+<h1>読んだ論文1: 推薦システムにおけるMNARデータを使った学習 &amp; 検証において、因果推論の傾向スコアを用いて誤差関数を調整する事でbiasに対処する論文</h1>
+<p>詳しくは、<a href="https://arxiv.org/abs/1602.05352">元論文</a>か、<a href="https://morinota.quarto.pub/week17/#/title-slide">別途まとめたスライド</a>にて.</p>
 </section>
-<section id="section" class="slide level2">
-<h2></h2>
+<section id="提案手法の概要①" class="slide level2">
+<h2>提案手法の概要①</h2>
+<p>予測誤差関数のnaive推定量が”観測されやすさ”に関するbiasを含むと分かったので、<strong>予め、“観測されやすさ”の逆数で{u,i}を重み付け</strong>しておく様な <strong>IPS(Inverse Propensity Score)推定量</strong>を設計しよう! それを学習時の損失関数やオンライン評価時の精度指標に使おう！って話.</p>
+<p><span class="math display">\[
+\hat{R}_{IPS}(\hat{Y}|P) = \frac{1}{U \cdot I} \sum_{(u,i):O_{u,i} = 1} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}}
+\\
+= \frac{1}{U \cdot I} \sum_{u} \sum_{i} \frac{\delta_{u,i}(Y, \hat{Y})}{P_{u,i}} \cdot O_{u,i}
+\\
+\because \text{O_{u,i}はbinary変数なので...!}
+\]</span></p>
+<p>ここで、<span class="math inline">\(P_{u,i} = P(O_{u,i} = 1)\)</span> は <strong>嗜好データ <span class="math inline">\(Y_{u,i}\)</span> を観測する傾向(propensity)</strong> と呼ぶ. (因果推論の文脈では、control群/treatment群に割り当てられる確率=<strong>傾向スコア(propensity score)</strong>の意味合いが一般的な印象<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+</section>
+<section id="提案手法の概要②" class="slide level2">
+<h2>提案手法の概要②</h2>
+<p>予測誤差のIPS推定量 <span class="math inline">\(\hat{R}_{IPS}(\hat{Y}|P)\)</span> の場合、推薦モデルの学習 or オフライン評価時に、傾向スコア(propensity score) <span class="math inline">\(P_{u,i} = P(O_{u,i} = 1)\)</span> が必要.</p>
+<p>推薦システムの運用方法に応じて、以下の2種類の設定がある:</p>
+<ul>
+<li><strong>Experimental Setting</strong>: “観察パターンの生成メカニズム”が推薦システムの制御下にある設定. (ex. 広告配信システムは、どの広告をどのユーザに見せるかを完全に制御している.)
+<ul>
+<li>-&gt; 開発者にとって <strong><span class="math inline">\(P_{u,i}\)</span> は既知</strong>.</li>
+</ul></li>
+<li><strong>Observational Setting</strong>: 観察パターンの生成メカニズムの一部にユーザの意志が含まれる設定. (ex. 映画のオンライン配信では、ユーザが視聴する映画をユーザ自身が選ぶ.)
+<ul>
+<li>-&gt; 開発者にとって <strong><span class="math inline">\(P_{u,i}\)</span> は未知. 別途、<span class="math inline">\(P_{u,i}\)</span> を推定する必要がある.</strong></li>
+</ul></li>
+</ul>
+<p>傾向スコア推定モデルの活用(シンプルなやつだけ!)も紹介していました.</p>
+</section>
+<section id="実験結果の概要①-mnarデータを使った推薦モデルのオフライン評価における提案手法の効果は" class="slide level2">
+<h2>実験結果の概要① MNARデータを使った推薦モデルの<strong>オフライン評価</strong>における提案手法の効果は?</h2>
+<p>表1は、<span class="math inline">\(\alpha = 0.25\)</span> (=かなりMNARなデータ)の場合のMAEとDCG@50の推定値の結果.(行:各推薦モデル, 列: 真の値 及び 各推定量による予測誤差)</p>
+
+<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/4-Table1-1.png" class="r-stretch"><ul>
+<li>IPS推定量の平均値は、MAEとDCGの両方で真の性能に完全に一致する.</li>
+<li>naive推定量は著しく偏り、<strong>推薦モデルの良し悪しの誤ったランク付け</strong>を導く.(ex. REC ONESの性能をREC FOURSよりも高くランク付けしてしまう.)</li>
+</ul>
+</section>
+<section id="実験結果の概要②-mnarデータを使った推薦モデルの学習における提案手法の効果は" class="slide level2">
+<h2>実験結果の概要② MNARデータを使った推薦モデルの<strong>学習</strong>における提案手法の効果は?</h2>
+<p><strong>MCARデータとMNARデータの両方を含んだベンチマークデータセット</strong>においてMNARデータを使って推薦モデルを学習させ、提案した損失関数の性能を評価した. 表2は、MCARテストセットに対する予測精度を評価したもの.</p>
+
+<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/8-Table2-1.png" class="r-stretch quarto-figure-center"><p>MF-IPSは、MF-naiveや既存debias手法(HL-MNARやHL-MAR)を大幅に上回った. 更にMF-IPSの性能は、<strong>YahooデータセットのSOTAに近い結果だった</strong>との事.</p>
+</section></section>
+<section>
+<section id="読んだ論文2-mnarデータを使った推薦モデルのオフライン評価においてデータを重み付けサンプリングしてmarデータに近づける事でbias軽減を試みる論文" class="title-slide slide level1 center">
+<h1>読んだ論文2: MNARデータを使った推薦モデルのオフライン評価において、データを重み付けサンプリングしてMARデータに近づける事でbias軽減を試みる論文</h1>
+<p>詳しくは、<a href="https://arxiv.org/abs/1602.05352">元論文</a>か、<a href="https://morinota.quarto.pub/debias_weigheted_sampling/#/title-slide">別途まとめたスライド</a>にて.</p>
+</section>
+<section id="提案手法の概要①-1" class="slide level2">
+<h2>提案手法の概要①</h2>
+<p>本論文は主に”MNARデータを使ったオフライン評価”に焦点を当ててる(“学習”にも一般化可能). MNARデータ <span class="math inline">\(D_{mnar}\)</span> からサンプリングして<strong>MARデータ <span class="math inline">\(D_{mar}\)</span> に近い性質を持つ介入データ <span class="math inline">\(D_{S}\)</span> を作る</strong>、新しいサンプリング戦略を提案している.</p>
+<p>MARデータとMNARデータが満たすべき性質の違いを、<strong>観測された{u,i}ペアの事後確率</strong> <span class="math inline">\(P(u,i|\mathcal{O} = 1) = P(u,i|\mathcal{O})\)</span> の観点から以下の様に定義する:</p>
+<p><span class="math display">\[
+P_{mar}(u,i|\mathcal{O}) = P_{mar}(u|\mathcal{O}) \cdot P_{mar}(i|\mathcal{O}) \approx \frac{1}{|U|} \cdot \frac{1}{|I|} = \frac{1}{|U||I|}, \forall(u,i) \in U \times I
+\]</span></p>
+<p><span class="math display">\[
+P_{mnar}(u,i|\mathcal{O}) \neq P_{mnar}(u|\mathcal{O}) \cdot P_{mnar}(i|\mathcal{O}), \forall (u,i) \in U \times I
+\]</span></p>
+<p>ここで、<span class="math inline">\(\mathcal{O}\)</span> は “観測されたか否か”を表すbinary確率変数.</p>
+</section>
+<section id="提案手法の概要②-1" class="slide level2">
+<h2>提案手法の概要②</h2>
+<!-- - サンプリングアプローチは、添字 $S$ で示されるサンプリング戦略によってMNARデータ $D_{mnar}$ に対して介入を行い、**不偏的な性質を持つ介入データ $D_S$** を得る事を試みる. -->
+<ul>
+<li>サンプリング戦略 <span class="math inline">\(S\)</span> は<strong>確率分布関数 <span class="math inline">\(P_S(\mathcal{S}=1|u,i), \forall(u,i) \in D_{mnar}\)</span></strong> に基づいて実行される. ここで、<span class="math inline">\(\mathcal{S}\)</span>は<span class="math inline">\(D_{mnar}\)</span> 中の任意の{u,i}ペアをサンプリングするか否かを表すbinary確率変数. (i.e.&nbsp;{u,i}を条件づけた時に <span class="math inline">\(\mathcal{S} = 1\)</span> となる確率が決定される関数のイメージ <span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>提案手法のアイデアは、介入データ <span class="math inline">\(D_S\)</span> 中の{u,i}事後確率分布 <strong><span class="math inline">\(P_S(u，i|\mathcal{S})\)</span> を<span class="math inline">\(P_{mar}(u, i|\mathcal{O})\)</span> と同じにする</strong>事.(i.e.&nbsp;MARデータに後付けで似せたい<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>２つのサンプリング戦略 WTD (少量のMARデータが必要ver.)と WTD_H (少量のMARデータが不要ver.).</li>
+</ul>
+</section>
+<section id="提案手法の概要③" class="slide level2">
+<h2>提案手法の概要③</h2>
+<p>サンプリング用のユーザ重み <span class="math inline">\(w_u\)</span> とアイテム重み <span class="math inline">\(w_i\)</span> を以下の様に定義.</p>
+<p><span class="math display">\[
+w_{u} = \frac{P_{mar}(u｜\mathcal{O})}{P_{mnar}(u｜\mathcal{O})},
+w_{i} = \frac{P_{mar}(i｜\mathcal{O})}{P_{mnar}(i｜\mathcal{O})}
+\]</span></p>
+<p>重みを使って以下のサンプリング確率分布関数をモデル化: (サンプリングにおける重みの効果は、<strong>サンプリング空間のMNAR分布とMAR分布がどれだけ乖離してるか</strong>に基づいて、{u,i}ペアの<strong>サンプリング確率が増減</strong>すること)</p>
+<p><span class="math display">\[
+P_S(\mathcal{S}|u,i) = w_u \cdot w_i
+\\
+\text{実際には経験的にこっちを採用:} P_S(\mathcal{S}|u,i) = w_u \cdot (w_i)^2
+\]</span></p>
+<p><span class="math inline">\(P_{mar}(u,i|\mathcal{O})\)</span> に関して、観測値から推定する場合は本戦略を <strong>WTD</strong> と呼び、<strong>仮説のMAR事後分布</strong>(i.e.&nbsp;<span class="math inline">\(P_{mar}(u|\mathcal{O}) = 1/|U|, P_{mar}(i|\mathcal{O}) = 1/|I|\)</span>)を用いる場合は <strong>WTD_H</strong> と呼ぶ.</p>
+</section>
+<section id="実験結果の概要①-モデル精度指標のground-truth-との差" class="slide level2">
+<h2>実験結果の概要① モデル精度指標のground-truth との差</h2>
+<p>表2は、各推薦モデルに関するオフライン評価精度(Recall@10)のにおいて、<strong>ground-truth(=MARテストセットによる評価結果)</strong>と各サンプリング戦略による<strong>介在テストセットによる推定値</strong>の差を表したもの.</p>
+
+<img data-src="https://imgur.com/kIAHdl0.png" class="r-stretch"><ul>
+<li>提案手法(WTD, WTD_H)は、<strong>ground-truthのモデル性能を最も良く近似</strong>できている.</li>
+<li>FULL戦略(<span class="math inline">\(D_{mnar}\)</span>そのまま使う戦略)とREG戦略(<span class="math inline">\(D_{mnar}\)</span>からランダムサンプリングする戦略)の結果は似ておりground-truthから非常に離れている. -&gt; debias効果に重要なのは”サンプリングする事”そのものではなく、<strong>“いかにサンプリングするか”という戦略</strong>である.</li>
+</ul>
+</section>
+<section id="最後に読んだ感想" class="slide level2">
+<h2>最後に…読んだ感想</h2>
+<ul>
+<li>実務において、推薦モデルの<strong>オフライン評価では良いモデルと判断したのに、実プロダクトに組み込んだオンライン評価(ABテスト)ではイマイチ</strong>、というケースに遭遇したので、何とか改善できればと思っている.</li>
+<li>論文1と論文2で提案された手法はどちらも、“学習”と”オフライン評価”の両方に適用可能であり、またモデルフリーというかMLモデルの種類に依存せず適用可能な点は好印象…!</li>
+<li>導入時の開発コスト的には、論文2のサンプリングアプローチの方が容易そう.(論文1の手法ではPropensity scoreを推定するプロセスを追加する必要があるので…)</li>
+<li>今回の内容は”オフラインでの精度評価を正しく推定しよう”というモチベーションの話だが、これだけでオフライン評価-オンライン評価の乖離が必ずしも埋まるとは限らないと思っている.</li>
+<li>オフライン評価可能なmetrics と オンライン評価値の両方をモニタリングして、それらの相関関係を見たり回帰モデルを推定したりする試みもあるので、実務での運用を検討してみたい.( <a href="https://dl.acm.org/doi/10.1145/2792838.2800184">参考論文</a>)</li>
+</ul>
+</section>
+<section id="参考文献-1" class="slide level2">
+<h2>参考文献</h2>
+<ul>
+<li><a href="https://www.oreilly.co.jp/books/9784873119663/">推薦システム実践入門</a></li>
+<li>各々のビジネス施策に合わせて機械学習を設計し直そう、みたいな内容の本: <a href="https://gihyo.jp/book/2021/978-4-297-12224-9">施策デザインの為の機械学習入門</a></li>
+<li>2020年のLINEさんの登壇:<a href="https://linedevday.linecorp.com/2020/ja/sessions/9641/">LINEサービス向けの効率的かつ効果的な推薦システム開発に向けて</a></li>
+<li>論文1.MNARデータを使っても不偏な誤差関数を設計し直すやつ:<a href="https://arxiv.org/abs/1602.05352">Recommendations as Treatments: Debiasing Learning and Evaluation</a></li>
+<li>論文2:MNARデータを重み付けサンプリングしてMARデータに近づけるやつ:<a href="https://dl.acm.org/doi/10.1145/3341105.3375759">Debiased offline evaluation of recommender systems: a weighted-sampling approach</a></li>
+<li>オフライン評価可能なmetricsからオンライン精度を予測する回帰モデルを推定して良い感じに推薦モデル改善しよう、って論文:<a href="https://dl.acm.org/doi/10.1145/2792838.2800184">Predicting Online Performance of News Recommender Systems Through Richer Evaluation Metrics</a></li>
+</ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>

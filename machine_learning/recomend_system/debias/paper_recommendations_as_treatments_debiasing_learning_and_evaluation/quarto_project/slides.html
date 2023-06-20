@@ -573,7 +573,7 @@ bias(\hat{R}_{IPS}(\hat{Y}|\hat{P})) = \sum_{u,i} \frac{\delta_{u,i}(Y, \hat{Y})
 </ul>
 <p>式にするとこう:</p>
 <p><span class="math display">\[
-P_{u,i} = P(O_{u,i} = 1| X, X^{hid}, Y)
+P_{u,i} = P(O_{u,i} = 1| X, X^{hidden}, Y)
 \tag{17}
 \]</span></p>
 <!-- $X$が考慮された場合、$O_{u,i}$ は予測値 $\hat{Y}$ には(誤差 $\delta_{u,i}(Y, \hat{Y})$ )にも依存しないはず. (予測値は$X$から推定されるはずだから?). -->
@@ -627,7 +627,7 @@ P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})
 </section>
 <section id="実験1-選択バイアスの厳しさは推薦モデルの検証にどう影響するか" class="slide level2">
 <h2>実験1: 選択バイアスの厳しさは推薦モデルの<strong>検証</strong>にどう影響するか?</h2>
-<p>表1は、<span class="math inline">\(\alpha = 0.25\)</span> (=結構MNARなデータ)の場合のMAEとDCG@50の推定値の結果.</p>
+<p>表1は、<span class="math inline">\(\alpha = 0.25\)</span> (=結構MNARなデータ)の場合のMAEとDCG@50の推定値の結果.(行:各推薦モデル, 列: 真の値 及び 各推定量による予測誤差)</p>
 
 <img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/4-Table1-1.png" class="r-stretch"><ul>
 <li>IPS推定量の平均値は、MAEとDCGの両方で真の性能に完全に一致する.</li>
@@ -669,7 +669,7 @@ P_{u,i} = \sigma(w^T X_{u,i} + \beta_{i} + \gamma_{u})
 <h2>実験4: 実世界データにおける性能はどう?</h2>
 <p>MCARデータとMNARデータの両方を含んだベンチマークデータセットを用いて性能を評価(オンライン実験をした訳では無い). MF-IPSにおいてpropensity推定はロジスティック回帰を用いた.</p>
 
-<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/8-Table2-1.png" class="r-stretch quarto-figure-center"><p>表2は、各推薦モデルのMCARテストセットに対する評価値の予測精度を評価したもの. MF-IPSは、MF-naiveやHL-MNARやHL-MARを大幅に上回った. 更にMF-IPSの性能は、<strong>YahooデータセットのSOTAに近い結果だった</strong>との事.</p>
+<img data-src="https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/8-Table2-1.png" class="r-stretch quarto-figure-center"><p>表2は、各推薦モデルのMCARテストセットに対する評価値の予測精度を評価したもの. MF-IPSは、MF-naiveや既存debias手法(HL-MNARやHL-MAR)を大幅に上回った. 更にMF-IPSの性能は、2016年時点の<strong>YahooデータセットのSOTAに近い結果だった</strong>との事.</p>
 </section>
 <section id="議論" class="slide level2">
 <h2>議論</h2>

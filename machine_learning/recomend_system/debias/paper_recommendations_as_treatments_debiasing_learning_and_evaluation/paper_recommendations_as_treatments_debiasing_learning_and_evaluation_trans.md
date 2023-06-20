@@ -167,7 +167,7 @@ Even though Yˆ 1 is clearly better than Yˆ 2 by any reasonable measure of perf
 This error is due to selection bias, since 1-star ratings are under-represented in the observed data and δu,i(Y, Yˆ ) is correlated with Yu,i.
 **この誤差は選択バイアスによるもの**で、1つ星の評価は観測データでは過小評価されており、δu,i(Y, Yˆ )はYu,iと相関があるためである.
 More generally, under selection bias, Rˆ naive(Yˆ ) is not an unbiased estimate of the true performance R(Yˆ ) (Steck, 2013):
-より一般的には、選択バイアスの下では、ナイーブ推定量は、真の性能の不偏推定値ではない（Steck, 2013）：
+**より一般的には、選択バイアスの下では、ナイーブ推定量は、真の性能の不偏推定値ではない**（Steck, 2013）：
 
 $$
 E_{O}[\hat{R}_{naive}(\hat{Y})] \neq R(\hat{Y})
@@ -231,7 +231,7 @@ The key to handling selection bias in both of the abovementioned evaluation task
 This process is typically called the Assignment Mechanism in causal inference (Imbens & Rubin, 2015) or the Missing Data Mechanism in missing data analysis (Little & Rubin, 2002).
 このプロセスは、一般的に**因果推論におけるAssignment Mechanism** (Imbens & Rubin, 2015)、**欠損データ分析におけるMissing Data Mechanism** (Little & Rubin, 2002)と呼ばれている.
 We differentiate the following two settings:
-以下の2つの設定を区別しています(実環境において、2種類の異なる観察パターン生成プロセスがある。)：
+以下の2つの設定を区別しています(実環境での推薦システムの運用において、2種類の異なる観察パターン生成プロセスがある。)：
 
 - **Experimental Setting**. In this setting, the assignment mechanism is under the control of the recommendation system. An example is an ad-placement system that controls which ads to show to which user. 実験セッティング。 この設定では、割り当て機構は推薦システムの制御下にある。 例えば、どの広告をどのユーザに見せるかを制御するアドプレースメントシステムがあります。
 

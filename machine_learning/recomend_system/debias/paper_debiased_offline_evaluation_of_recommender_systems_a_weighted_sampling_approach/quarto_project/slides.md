@@ -87,7 +87,7 @@ MCAR(Missing Completely At Random)とMAR(Missing At Random)は区別される事
 
 ## 方法1. MARデータを収集する.
 
-この方法は通常、**“forced rating approach”(強制格付けアプローチ)**と呼ばれる方法によって実施される.
+この方法は通常、**“forced rating approach”(強制評価アプローチ)**と呼ばれる方法によって実施される.
 
 - ユーザとアイテムのペアを一様にランダムサンプリングし、選択された各ユーザ-アイテムのペアに対して、評価を提供することを要求する(強制する).
 - この方法で収集したデータは、様々な交絡因子によるbiasを除去できる.
@@ -140,12 +140,12 @@ $D_{mar}$ の生成過程を述べる.(既存手法のforced ratings approachを
 このような手法で収集されたデータセット $D_{mar}$ を想定すると、**ユーザとアイテムの事後確率**の経験的な推定値は **(ほぼ)一様に分布している** はずである:
 
 $$
-P_{mar}(u|\mathcal{O}) = \frac{|O_{u}^{mar}|}{O^{mar}} \sim \frac{1}{|U|}, \forall u \in U
+P_{mar}(u|\mathcal{O}) = \frac{|O_{u}^{mar}|}{O^{mar}} \approx \frac{1}{|U|}, \forall u \in U
 \tag{1}
 $$
 
 $$
-P_{mar}(i|\mathcal{O}) = \frac{|O_{i}^{mar}|}{O^{mar}} \sim \frac{1}{|I|}, \forall i \in I
+P_{mar}(i|\mathcal{O}) = \frac{|O_{i}^{mar}|}{O^{mar}} \approx \frac{1}{|I|}, \forall i \in I
 \tag{2}
 $$
 
@@ -156,7 +156,7 @@ $$
 また、観測されるユーザとアイテムは独立のはずなので、(u,i)の事後分布も独立であることがわかり、以下のように書ける：
 
 $$
-P_{mar}(u,i|Q) = P_{mar}(u|Q) \cdot P_{mar}(i|Q) \in \frac{1}{|U||I|}, \forall(u,i) \in U \times I
+P_{mar}(u,i|\mathcal{O}) = P_{mar}(u|\mathcal{O}) \cdot P_{mar}(i|\mathcal{O}) \approx \frac{1}{|U||I|}, \forall(u,i) \in U \times I
 \tag{3}
 $$
 
@@ -192,7 +192,7 @@ $$
 **一般に、ユーザとアイテムは一様に分布しているわけではない**ので、特定のエントリーが観測された場合、すなわち$\mathcal{O} = 1$の場合、同時事後確率 $P_{mnar}(u,i|\mathcal{O})$ に対してユーザとアイテムの事後独立性は仮定できない. よって...
 
 $$
-P_{mnar}(u,i|Q) \neq P_{mnar}(u|Q) \cdot P_{mnar}(i|Q), \forall (u,i) \in U \times I
+P_{mnar}(u,i|\mathcal{O}) \neq P_{mnar}(u|\mathcal{O}) \cdot P_{mnar}(i|Q), \forall (u,i) \in U \times I
 \tag{6}
 $$
 
@@ -211,7 +211,7 @@ $$
 - 目的は、介入の結果、データセット$D_S = {O^S \subset O^{mnar},Y^S \subset Y^{mnar}}$となり、**$D_s$が不偏的な性質を持つこと**.(ふむふむ...!)
 - 前のセクションのデータ生成過程と同様に、まず$O_S$を生成し、それに応じて$Y_S$を得る.
 - **サンプリングを導くbinary確率変数**を$\mathcal{S} : U × I → {0, 1}$とする. (i.e. あるユーザ-アイテムペアがサンプリングされるか否かのbinaryの確率変数=bernouli分布に従うやつ...!) ($\mathcal{O}$と同様に、$P(\mathcal{S}=1)$の代わりに $P(\mathcal{S})$ という略語表記を使う)
-- サンプリング戦略 $S$ は、**確率分布関数 $P_S(\mathcal{S}|u,i) \forall(u,i) \in O^{mnar}$** に基づいて実行される. (i.e. u,iを条件づけた時にS=1となる確率が決定される関数のイメージ. つまりこの関数の出力値はbernouli分布のパラメータlambda...!!)
+- サンプリング戦略 $S$ は、**確率分布関数 $P_S(\mathcal{S}|u,i), \forall(u,i) \in O^{mnar}$** に基づいて実行される. (i.e. u,iを条件づけた時にS=1となる確率が決定される関数のイメージ. つまりこの関数の出力値はbernouli分布のパラメータlambda...!!)
 
 ## 提案手法 WTD ① 本戦略のアイデア
 
@@ -374,12 +374,12 @@ WTDでは、近似に必要な事後分布(=$P_{mar}(u,i|\mathcal{O})$)を与え
 
 ## 実験①: モデル精度指標のground-truth との差
 
-table2は、各推薦モデルに関する**モデル精度指標(Recall@10)のground-truth**(=MARテストセット $Y^gt$ による評価結果)と、各サンプリング戦略による**介在テストセットを使った推定値**のpercentage difference.
+表2は、各推薦モデルに関する**モデル精度指標(Recall@10)のground-truth**(=MARテストセット $Y^gt$ による評価結果)と、各サンプリング戦略による**介在テストセットを使った推定値**のpercentage difference.
 
 ![](https://imgur.com/kIAHdl0)
 
 - 一般に提案手法(WTD, WTD_H)は、**ground-truthのモデル性能を最も良く近似**できている.
-- **FULL戦略とREG戦略の結果は似ておりground-truthから非常に離れている**. -> debias効果に重要なのは"サンプリングする事"そのものではなく、**"いかにサンプリングするか"という戦略**...!
+- **FULL戦略とREG戦略の結果は似ておりground-truthから非常に離れている**.(サンプリング戦略大事!)
 
 ## 実験②: オフライン評価による推薦モデル達の順位づけ
 

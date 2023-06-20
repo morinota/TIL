@@ -272,7 +272,7 @@ $$
 式にするとこう:
 
 $$
-P_{u,i} = P(O_{u,i} = 1| X, X^{hid}, Y)
+P_{u,i} = P(O_{u,i} = 1| X, X^{hidden}, Y)
 \tag{17}
 $$
 
@@ -323,7 +323,7 @@ $$
 
 ## 実験1: 選択バイアスの厳しさは推薦モデルの**検証**にどう影響するか?
 
-表1は、$\alpha = 0.25$ (=結構MNARなデータ)の場合のMAEとDCG@50の推定値の結果.
+表1は、$\alpha = 0.25$ (=結構MNARなデータ)の場合のMAEとDCG@50の推定値の結果.(行:各推薦モデル, 列: 真の値 及び 各推定量による予測誤差)
 
 ![](https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/4-Table1-1.png)
 
@@ -372,8 +372,8 @@ MF-IPSにおいてpropensity推定はロジスティック回帰を用いた.
 ![](https://d3i71xaburhd42.cloudfront.net/e108e3925e5abf9423ec95fd634a3a9417fcc3eb/8-Table2-1.png){fig-align="center"}
 
 表2は、各推薦モデルのMCARテストセットに対する評価値の予測精度を評価したもの.
-MF-IPSは、MF-naiveやHL-MNARやHL-MARを大幅に上回った.
-更にMF-IPSの性能は、**YahooデータセットのSOTAに近い結果だった**との事.
+MF-IPSは、MF-naiveや既存debias手法(HL-MNARやHL-MAR)を大幅に上回った.
+更にMF-IPSの性能は、2016年時点の**YahooデータセットのSOTAに近い結果だった**との事.
 
 ## 議論
 

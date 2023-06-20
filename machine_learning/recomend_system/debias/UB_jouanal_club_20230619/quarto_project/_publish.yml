@@ -1,0 +1,4 @@
+- source: slides.md
+  quarto-pub:
+    - id: a29871c7-e782-4b5c-83b6-47cc40a56c87
+      url: 'https://quartopub.com/sites/morinota/jouanal_club_20230619'

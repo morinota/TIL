@@ -424,7 +424,7 @@
 </section>
 <section id="方法1.-marデータを収集する." class="slide level2">
 <h2>方法1. MARデータを収集する.</h2>
-<p>この方法は通常、<strong>“forced rating approach”(強制格付けアプローチ)</strong>と呼ばれる方法によって実施される.</p>
+<p>この方法は通常、<strong>“forced rating approach”(強制評価アプローチ)</strong>と呼ばれる方法によって実施される.</p>
 <ul>
 <li>ユーザとアイテムのペアを一様にランダムサンプリングし、選択された各ユーザ-アイテムのペアに対して、評価を提供することを要求する(強制する).</li>
 <li>この方法で収集したデータは、様々な交絡因子によるbiasを除去できる.</li>
@@ -487,11 +487,11 @@
 <h2>MARデータセットの特性② uとiそれぞれの事後確率を定式化</h2>
 <p>このような手法で収集されたデータセット <span class="math inline">\(D_{mar}\)</span> を想定すると、<strong>ユーザとアイテムの事後確率</strong>の経験的な推定値は <strong>(ほぼ)一様に分布している</strong> はずである:</p>
 <p><span class="math display">\[
-P_{mar}(u|\mathcal{O}) = \frac{|O_{u}^{mar}|}{O^{mar}} \sim \frac{1}{|U|}, \forall u \in U
+P_{mar}(u|\mathcal{O}) = \frac{|O_{u}^{mar}|}{O^{mar}} \approx \frac{1}{|U|}, \forall u \in U
 \tag{1}
 \]</span></p>
 <p><span class="math display">\[
-P_{mar}(i|\mathcal{O}) = \frac{|O_{i}^{mar}|}{O^{mar}} \sim \frac{1}{|I|}, \forall i \in I
+P_{mar}(i|\mathcal{O}) = \frac{|O_{i}^{mar}|}{O^{mar}} \approx \frac{1}{|I|}, \forall i \in I
 \tag{2}
 \]</span></p>
 <p>ここで、<span class="math inline">\(O^{mar}_{u}\)</span>と<span class="math inline">\(O^{mar}_{i}\)</span>はそれぞれ、ユーザuとアイテムiの<span class="math inline">\(O^{mar}\)</span>で観測されたInteractionである.</p>
@@ -500,7 +500,7 @@ P_{mar}(i|\mathcal{O}) = \frac{|O_{i}^{mar}|}{O^{mar}} \sim \frac{1}{|I|}, \fora
 <h2>MARデータセットの特性③ uとiの同時事後確率を定式化</h2>
 <p>また、観測されるユーザとアイテムは独立のはずなので、(u,i)の事後分布も独立であることがわかり、以下のように書ける：</p>
 <p><span class="math display">\[
-P_{mar}(u,i|Q) = P_{mar}(u|Q) \cdot P_{mar}(i|Q) \in \frac{1}{|U||I|}, \forall(u,i) \in U \times I
+P_{mar}(u,i|\mathcal{O}) = P_{mar}(u|\mathcal{O}) \cdot P_{mar}(i|\mathcal{O}) \approx \frac{1}{|U||I|}, \forall(u,i) \in U \times I
 \tag{3}
 \]</span></p>
 <p>ここで、<span class="math inline">\(P_{mar}(u,i|Q)\)</span>は、特定のユーザとアイテムのペアの同時事後分布(=事後分布の同時分布、みたいな?)を表す。 よって、MARデータ <span class="math inline">\(D_{mar}\)</span> の特性として、式(3)の性質を満たしているはずである.</p>
@@ -533,7 +533,7 @@ P_{mnar}(i|\mathcal{O}) = \frac{|O^{mnar}_{u}|}{O^{mnar}} \neq  \frac{1}{|U|}, \
 <h2>MNARデータセットの特性③ uとiの同時事後確率を定式化</h2>
 <p><strong>一般に、ユーザとアイテムは一様に分布しているわけではない</strong>ので、特定のエントリーが観測された場合、すなわち<span class="math inline">\(\mathcal{O} = 1\)</span>の場合、同時事後確率 <span class="math inline">\(P_{mnar}(u,i|\mathcal{O})\)</span> に対してユーザとアイテムの事後独立性は仮定できない. よって…</p>
 <p><span class="math display">\[
-P_{mnar}(u,i|Q) \neq P_{mnar}(u|Q) \cdot P_{mnar}(i|Q), \forall (u,i) \in U \times I
+P_{mnar}(u,i|\mathcal{O}) \neq P_{mnar}(u|\mathcal{O}) \cdot P_{mnar}(i|Q), \forall (u,i) \in U \times I
 \tag{6}
 \]</span></p>
 <p>本セクションで示した定式化(式(3)と式(6))を使って、次のセクションでdebiasの為のサンプリング戦略を設計する. (なるほど…?これらの事後確率の定式化をサンプリング戦略で使うのか!) (このセクションは、<strong>MARデータやMNARデータの性質はかくあるべき</strong>、というような話…!!)</p>
@@ -550,7 +550,7 @@ P_{mnar}(u,i|Q) \neq P_{mnar}(u|Q) \cdot P_{mnar}(i|Q), \forall (u,i) \in U \tim
 <li>目的は、介入の結果、データセット<span class="math inline">\(D_S = {O^S \subset O^{mnar},Y^S \subset Y^{mnar}}\)</span>となり、<strong><span class="math inline">\(D_s\)</span>が不偏的な性質を持つこと</strong>.(ふむふむ…!)</li>
 <li>前のセクションのデータ生成過程と同様に、まず<span class="math inline">\(O_S\)</span>を生成し、それに応じて<span class="math inline">\(Y_S\)</span>を得る.</li>
 <li><strong>サンプリングを導くbinary確率変数</strong>を<span class="math inline">\(\mathcal{S} : U × I → {0, 1}\)</span>とする. (i.e.&nbsp;あるユーザ-アイテムペアがサンプリングされるか否かのbinaryの確率変数=bernouli分布に従うやつ…!) (<span class="math inline">\(\mathcal{O}\)</span>と同様に、<span class="math inline">\(P(\mathcal{S}=1)\)</span>の代わりに <span class="math inline">\(P(\mathcal{S})\)</span> という略語表記を使う)</li>
-<li>サンプリング戦略 <span class="math inline">\(S\)</span> は、<strong>確率分布関数 <span class="math inline">\(P_S(\mathcal{S}|u,i) \forall(u,i) \in O^{mnar}\)</span></strong> に基づいて実行される. (i.e.&nbsp;u,iを条件づけた時にS=1となる確率が決定される関数のイメージ. つまりこの関数の出力値はbernouli分布のパラメータlambda…!!)</li>
+<li>サンプリング戦略 <span class="math inline">\(S\)</span> は、<strong>確率分布関数 <span class="math inline">\(P_S(\mathcal{S}|u,i), \forall(u,i) \in O^{mnar}\)</span></strong> に基づいて実行される. (i.e.&nbsp;u,iを条件づけた時にS=1となる確率が決定される関数のイメージ. つまりこの関数の出力値はbernouli分布のパラメータlambda…!!)</li>
 </ul>
 </section>
 <section id="提案手法-wtd-①-本戦略のアイデア" class="slide level2">
@@ -699,11 +699,11 @@ P_S(\mathcal{S}|u,i) = w_u \cdot w_i
 </section>
 <section id="実験①-モデル精度指標のground-truth-との差" class="slide level2">
 <h2>実験①: モデル精度指標のground-truth との差</h2>
-<p>table2は、各推薦モデルに関する<strong>モデル精度指標(Recall@10)のground-truth</strong>(=MARテストセット <span class="math inline">\(Y^gt\)</span> による評価結果)と、各サンプリング戦略による<strong>介在テストセットを使った推定値</strong>のpercentage difference.</p>
+<p>表2は、各推薦モデルに関する<strong>モデル精度指標(Recall@10)のground-truth</strong>(=MARテストセット <span class="math inline">\(Y^gt\)</span> による評価結果)と、各サンプリング戦略による<strong>介在テストセットを使った推定値</strong>のpercentage difference.</p>
 
 <img data-src="https://imgur.com/kIAHdl0.png" class="r-stretch"><ul>
 <li>一般に提案手法(WTD, WTD_H)は、<strong>ground-truthのモデル性能を最も良く近似</strong>できている.</li>
-<li><strong>FULL戦略とREG戦略の結果は似ておりground-truthから非常に離れている</strong>. -&gt; debias効果に重要なのは”サンプリングする事”そのものではなく、<strong>“いかにサンプリングするか”という戦略</strong>…!</li>
+<li><strong>FULL戦略とREG戦略の結果は似ておりground-truthから非常に離れている</strong>.(サンプリング戦略大事!)</li>
 </ul>
 </section>
 <section id="実験②-オフライン評価による推薦モデル達の順位づけ" class="slide level2">
