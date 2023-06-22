@@ -24,11 +24,6 @@ class PositionalEncodingInterface(abc.ABC):
         -------
         Tensor
             positional encoding (d_model, )のベクトル.
-
-        Raises
-        ------
-        NotImplementedError
-            _description_
         """
         raise NotImplementedError
 
