@@ -14,11 +14,11 @@ Personalized news recommendation systems have become essential tools for users t
 Previous works have typically followed an inflexible routine to address a particular challenge through model design, but are limited in their ability to understand news content and capture user interests.
 これまでの研究は、モデル設計を通じて特定の課題に対処するための柔軟性に欠けるルーチンに従うのが一般的であったが、ニュースの内容を理解し、ユーザーの関心を捉える能力には限界があった。
 In this paper, we introduce GENRE, an LLM-powered generative news recommendation framework, which leverages pretrained semantic knowledge from large language models to enrich news data.
-本稿では、LLMを活用した生成的ニュース推薦フレームワークであるGENREを紹介する。GENREは、大規模な言語モデルから事前に学習された意味知識を活用し、ニュースデータを充実させる。
+本稿では、**LLMを活用した生成的ニュース推薦フレームワークであるGENRE**を紹介する。GENREは、大規模な言語モデルから事前に学習された意味知識を活用し、ニュースデータを充実させる.
 Our aim is to provide a flexible and unified solution for news recommendation by moving from model design to prompt design.
 モデル設計からプロンプト設計に移行することで、ニュース推薦のための柔軟で統一されたソリューションを提供することを目的としています。
 We showcase the use of GENRE for personalized news generation, user profiling, and news summarization.
-パーソナライズされたニュースの生成、ユーザーのプロファイリング、ニュースの要約にGENREを使用した例を紹介する。
+パーソナライズされたニュースの生成、ユーザのプロファイリング、ニュースの要約にGENREを使用した例を紹介する。
 Extensive experiments with various popular recommendation models demonstrate the effectiveness of GENRE.
 様々な一般的な推薦モデルを用いた広範な実験により、GENREの有効性が実証されている。
 We will publish our code and data for other researchers to reproduce our work.
@@ -45,7 +45,7 @@ Due to limited and unaligned text information in news datasets, it can be challe
 For instance, in an article (in the MIND [48] dataset) with the title “Here’s Exactly When To Cook Every Dish For Thanksgiving Dinner”, the main idea may be “guidance” or “instructions” rather than the specific terms mentioned in the title.
 例えば、「Here's Exactly When To Cook Every Dish For Thanksgiving Dinner」というタイトルの記事（MIND [48]データセット内）では、タイトルで言及されている特定の用語ではなく、「ガイダンス」や「指示」が主なアイデアかもしれない。
 However, accurately identifying key concepts or themes in news articles can be challenging, which in turn affects the ability of news recommender systems to provide personalized recommendations to users.
-しかし、ニュース記事中の主要な概念やテーマを正確に特定することは困難であり、それはニュース推薦システムがユーザーにパーソナライズされた推薦を提供する能力に影響する。
+しかし、**ニュース記事中の主要な概念やテーマを正確に特定すること**は困難であり、それはニュース推薦システムがユーザーにパーソナライズされた推薦を提供する能力に影響する。
 Previous works [19, 41, 45] have proposed various recommendation models to tackle the aforementioned challenges.
 先行研究[19, 41, 45]では、前述の課題に取り組むために様々な推薦モデルが提案されている。
 However, due to the limited data and knowledge available in the training dataset, these models are limited in their ability to understand news content and capture user interests.
@@ -63,10 +63,12 @@ As powerful few-shot learners, they can quickly learn the distribution of news d
 強力な数発学習者として、ニュースデータの分布を素早く学習し、関連する文脈情報を取り入れてデータの理解を深めることができる。
 This makes LLMs a suitable tool for addressing the challenges of news recommendation systems, including the cold-start problem, user profile modeling, and news content understanding.
 このためLLMは、コールドスタート問題、ユーザープロファイルのモデリング、ニュース内容の理解など、ニュース推薦システムの課題に取り組むのに適したツールとなっている。
+
 In this work, we introduce a novel perspective for news recommendation by using LLMs to generate informative knowledge and news data such as synthetic news content tailored to cold-start users, user profiles, and refined news titles, which can be utilized to enhance the original dataset and tackle the aforementioned challenges.
-本研究では、LLMを用いて、コールドスタートユーザーに合わせた合成ニュースコンテンツ、ユーザープロファイル、洗練されたニュースタイトルなど、有益な知識とニュースデータを生成することで、オリジナルのデータセットを拡張し、前述の課題に取り組むために利用できる、ニュース推薦のための新しい視点を紹介する。
+本研究では、LLMを用いて、コールドスタートユーザに合わせた合成ニュースコンテンツ、ユーザプロファイル、洗練されたニュースタイトルなど、有益な知識とニュースデータを生成することで、**オリジナルのデータセットを拡張**し、前述の課題に取り組むために利用できる、ニュース推薦のための新しい視点を紹介する。
+
 Figure 1 illustrates our proposed LLM-powered GEnerative News REcommendation (GENRE) framework.
-図1は、我々が提案するLLMを利用したGEnerative News REcommendation（GENRE）フレームワークを示している。
+図1は、我々が提案するLLMを利用した**GEnerative News REcommendation（GENRE）フレームワーク**を示している。
 The main idea is to utilize the available news data, such as the title, abstract, and category of each news article, to construct prompts or guidelines, which can then be fed into an LLM for producing informative news information.
 主なアイデアは、各ニュース記事のタイトル、抄録、カテゴリなどの利用可能なニュースデータを利用して、プロンプトやガイドラインを構築し、それをLLMに入力して有益なニュース情報を作成することである。
 Due to its extensive pretrained semantic knowledge, the LLM can comprehend the underlying distribution of news data, even with very limited information provided in the original dataset, and generate enriched news data and information.
@@ -74,15 +76,15 @@ LLMは、事前に訓練された広範な意味的知識により、元のデ�
 These generated news data and information can be integrated back into the original dataset for the next round of knowledge generation in an iterative fashion, or utilized to train downstream news recommendation models.
 これらの生成されたニュースデータや情報は、次の知識生成のために元のデータセットに繰り返し統合したり、下流のニュース推薦モデルの学習に利用したりすることができる。
 In this study, we explore GENRE for 1) personalized news generation, 2) user profiling, and 3) news summarization, to address the three challenges mentioned above.
-本研究では、上記の3つの課題を解決するために、1）パーソナライズされたニュースの生成、2）ユーザーのプロファイリング、3）ニュースの要約のためのGENREを探求する。
+本研究では、上記の3つの課題を解決するために、1）パーソナライズされたニュースの生成、2）ユーザのプロファイリング、3）ニュースの要約のためのGENREを探求する。
 To validate the effectiveness of our proposed GENRE framework, we perform comprehensive experiments on IM-MIND [50], a multimodal news recommendation dataset derived from MIND [48].
 提案するGENREフレームワークの有効性を検証するために、MIND [48]から派生したマルチモーダルニュース推薦データセットであるIM-MIND [50]を用いて包括的な実験を行った。
 We employ GPT-3.5 as the LLM and collect the generated data through API calls.
-LLMとしてGPT-3.5を採用し、APIコールによって生成データを収集する。
+**LLMとしてGPT-3.5を採用し、APIコールによって生成データを収集**する。(お金たくさんかかりそう...!)
 Our evaluation involves four matching-based news recommendation models and four ranking-based CTR models, all of which are typical and widely used in industrial recommender systems.
 我々の評価では、4つのマッチングベースのニュース推薦モデルと4つのランキングベースのCTRモデルを評価した。
 We observe that GENRE improves the performance of the base models significantly.
-我々は、GENREがベースモデルのパフォーマンスを大幅に向上させることを確認した。
+我々は、**GENREがベースモデルのパフォーマンスを大幅に向上させる**ことを確認した。
 To summarize, our contributions are listed as follows:
 要約すると、我々の貢献は以下の通りである：
 
@@ -94,36 +96,37 @@ To summarize, our contributions are listed as follows:
 
 # Preliminaries 前哨戦
 
-## Notations and Problem Statement 
+## Notations and Problem Statement
 
 Before delving into the details of our proposed method, we first introduce basic notations and formally define the news recommendation task.
 提案手法の詳細に入る前に、まず基本的な記法を紹介し、ニュース推薦タスクを正式に定義する。
 Let N be a set of news articles, where each news 𝑛 ∈ N is represented by a multi-modal feature set including the title, category, and cover image.
-Nをニュース記事の集合とし、各ニュース𝑛∈Nはタイトル、カテゴリ、カバー画像を含むマルチモーダル特徴セットで表される。
+$N$ をニュース記事の集合とし、各ニュース $n \in N$ はタイトル、カテゴリ、カバー画像を含むマルチモーダル特徴量セットで表される.
 Let U be a set of users, where each user 𝑢 ∈ U has a history of reading news articles ℎ (𝑢) .
-Uをユーザーの集合とし、各ユーザー𝑢∈Uはニュース記事ℎ (𝑢)を読んだ履歴を持つ。
+$U$ をユーザ集合とし、各ユーザ $u \in U$ はニュース記事を読んだ履歴 $h (u)$ を持つ.
 Let D be a set of click data, where each click 𝑑 ∈ D is a tuple (𝑢, 𝑛, 𝑦) indicating whether user 𝑢 clicked on news article 𝑛 with label 𝑦 ∈ {0, 1}.
-各クリック𝑑∈Dは、ラベル𝑦∈｛0, 1｝を持つニュース記事𝑛をユーザ𝑢がクリックしたかどうかを示すタプル(𝑢, 𝑛, 𝑦)である。
+各クリック $d \in D$ は、ラベル $y \in {0, 1}$ を持つニュース記事 $n$ をユーザ $u$ がクリックしたかどうかを示すタプル $(u, n, y)$ である。
 The task of the news recommendation is to infer the user’s interest in a candidate news article.
-ニュース推薦のタスクは、候補となるニュース記事に対するユーザーの関心を推測することである。
+ニュース推薦のタスクは、**候補となるニュース記事に対するユーザのinterestを推測すること**である。
 
 ## General News Recommendation Model 一般ニュース推薦モデル
 
 A news recommendation model generally involves three modules: a news encoder, a user encoder, and an interaction module.
-ニュース推薦モデルには一般的に、ニュースエンコーダ、ユーザーエンコーダ、インタラクションモジュールの3つのモジュールが含まれる。
+ニュース推薦モデルには一般的に、**ニュースエンコーダ、ユーザーエンコーダ、インタラクションモジュールの3つのモジュール**が含まれる。
 The news encoder, as depicted in Figure 2, is designed to encode the multimodal features of each news article into a unified 𝑑-dimension news vector v𝑛.
-図2に示すように、ニュースエンコーダは、各ニュース記事のマルチモーダルな特徴を統一された𝑑次元のニュースベクトルv𝑛にエンコードするように設計されている。
+図2に示すように、ニュースエンコーダは、各ニュース記事のマルチモーダルな特徴を統一された $d$ 次元のニュースベクトル $v_n$ にエンコードするように設計されている.
 The user encoder, as shown in Figure 3a, is designed on the top of the news encoder, generating a unified 𝑑-dimension user vector v𝑢 from the sequence of browsed news vectors.
-図3aに示すように、ユーザーエンコーダはニュースエンコーダの上に設計されており、閲覧されたニュースのベクトル列から統一された↪L_1D451↩次元のユーザーベクトルv𝑢を生成する。
+図3aに示すように、**ユーザエンコーダはニュースエンコーダの上に設計(はいはい確かに...基本的にはそう)**されており、閲覧されたニュースのベクトル列から統一された $d$ 次元のユーザベクトル $v_u$ を生成する。
 Finally, the interaction modules in ranking models (such as DCN [39]) and matching models (such as NAML [43]) have some differences.
-最後に、ランキングモデル（DCN [39]など）とマッチングモデル（NAML [43]など）の相互作用モジュールにはいくつかの違いがある。
+最後に、ランキングモデル(DCN [39]など)とマッチングモデル(NAML [43]など)の相互作用モジュールにはいくつかの違いがある.
 For ranking models, the click-through probability is directly calculated based on the candidate news vector v𝑐 and the user vector v𝑢, which is a regression problem.
-ランキングモデルの場合、クリックスルー確率はニュース候補ベクトルv𝑐とユーザーベクトルv𝑢に基づいて直接計算されるが、これは回帰問題である。
+ランキングモデルの場合、クリックスルー確率はニュース候補ベクトル$v_c$とユーザーベクトル $v_u$ に基づいて直接計算されるが、これは回帰問題である.
 In contrast, for matching models, the interaction module needs to identify the positive sample that best matches the user vector v𝑢 among multiple candidate news vectors V𝑐 = [v (1) 𝑐 , ..., v (𝑘+1) 𝑐 ] where 𝑘 is the number of negative samples, which is a classification problem.
-対照的に、マッチング・モデルの場合、相互作用モジュールは、複数の候補ニュース・ベクトルV𝑐 = [v (1) 𝑐 , ..., v (ᵅ+1) 𝑐 ]（ᵅはネガティブ・サンプルの数）の中から、ユーザー・ベクトルv𝑢に最もマッチするポジティブ・サンプルを特定する必要があり、これは分類問題である。
+対照的に、マッチング・モデルの場合、相互作用モジュールは、複数の候補ニュース・ベクトル $V_{c} = [v(1)_c, \cdots, v(k+1)_c]$ (kはネガティブ・サンプルの数)の中から、ユーザ・ベクトル $v_u$ に最もマッチするポジティブ・サンプルを特定する必要があり、これは分類問題である.
+(最もシンプルなmatching modelが、ベクトル間の類似度で特定する方法なのかな.)
 
 The design of the news encoder, user encoder, and interaction module varies across different news recommendation models.
-ニュースエンコーダ、ユーザーエンコーダ、インタラクションモジュールの設計は、ニュース推薦モデルによって異なる。
+ニュースエンコーダ、ユーザエンコーダ、インタラクションモジュールの設計は、ニュース推薦モデルによって異なる.
 
 # Proprsed Framework: GENRE ジャンル
 
@@ -194,6 +197,7 @@ $$
 \tag{2}
 \tag{2}タグ
 
+
 $$
 
 where MLP is a multi-layer perceptron with ReLU activation.
@@ -215,6 +219,7 @@ $$
 \tag{3}
 \tag{3}タグ
 
+
 $$
 
 where 𝑧 is the batch size, 𝑦𝑖 is the label of the 𝑖-th sample (can be 0 or 1), and 𝑦ˆ𝑖 is the predicted probability of the 𝑖-th sample. In contrast, matching-based models concentrate on capturing semantic information from news features and user interests. Therefore, they prioritize the design of news encoder and user encoder and use a relatively simple interaction module (Table 2). These models are trained using the cross-entropy loss:
@@ -223,3 +228,4 @@ $$
 
 \tag{4}
 \4}タグ
+$$
