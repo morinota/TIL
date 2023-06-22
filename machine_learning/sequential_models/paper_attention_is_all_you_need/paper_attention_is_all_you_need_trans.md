@@ -105,7 +105,7 @@ We employ a residual connection [11] around each of the two sub-layers, followed
 That is, the output of each sub-layer is LayerNorm(x + Sublayer(x)), where Sublayer(x) is the function implemented by the sub-layer itself.
 つまり、各サブレイヤーの出力は $LayerNorm(x + Sublayer(x))$ となり、$Sublayer(x)$ はサブレイヤー自身が実装する関数である。
 To facilitate these residual connections, all sub-layers in the model, as well as the embedding layers, produce outputs of dimension dmodel = 512.
-このような残差接続(residual connections)を容易にするため、埋め込み層だけでなく、モデルのすべてのサブ層は、$d_{model} = 512$の次元の出力を生成します。
+このような残差接続(residual connections)を容易にするため、埋め込み層だけでなく、モデルのすべてのサブ層は、$d_{model} = 512$ の次元の出力を生成します。
 
 ### 3.1.2. Decoder: デコーダー
 
@@ -169,8 +169,8 @@ To counteract this effect, we scale the dot products by √ 1 dk .
 
 ### 3.2.2. Multi-Head Attention マルチヘッドアテンション
 
-Instead of performing a single attention function with dmodel-dimensional keys, values and queries, we found it beneficial to linearly project the queries, keys and values h times with different, learned linear projections to dk, dk and dv dimensions, respectively.
-$d_{model}$ 次元のkey、value、queryで単一のattention関数を実行する代わりに、query、key、valueをそれぞれ $d_k$ 、$d_k$ 、$d_v$ 次元に異なる、学習済みの**線形投影(=linearly project)**で $h$ 回行うことが有益であることがわかった. (ここがmulti-head! h個のdot-product attention関数の出力を使う、って意味??)
+Instead of performing a single attention function with $d_{model}$-dimensional keys, values and queries, we found it beneficial to linearly project the queries, keys and values $h$ times with different, learned linear projections to $d_k$, $d_k$ and $d_v$ dimensions, respectively.
+$d_{model}$ 次元(=埋め込みベクトルの次元数?)のkey、value、queryで**単一のattention関数を実行する代わり**に、query、key、valueをそれぞれ $d_k$ 、$d_k$ 、$d_v$ 次元に線形投影する様な、学習した**線形投影(=linearly project)** を $h$ 回行うことが有益であることがわかった. (ここがmulti-head! h個のdot-product attention関数の出力を使う、って意味??)(元々queryやkeyの埋め込みベクトル次元数は$d_{model}$で、それをd_kに投影するって事?)
 On each of these projected versions of queries, keys and values we then perform the attention function in parallel, yielding dv-dimensional output values.
 これらの投影されたquery、value、valueのそれぞれに対して、attention機能を**並行**して実行し、**$d_v$次元の出力値**を得る.
 These are concatenated and once again projected, resulting in the final values, as depicted in Figure 2.
@@ -179,7 +179,7 @@ These are concatenated and once again projected, resulting in the final values, 
 (メモ)
 
 - 線形投影(linear projection):
-  - ベクトルを**低次元の部分空間**に射影する操作.
+  - ベクトルを**低次元の部分空間**に投影する操作.
 - 線形変換(linear transformation):
   - 同ベクトル空間にて、ベクトルの向きと長さを変換する操作.
 
@@ -201,16 +201,16 @@ Where the projections are parameter matrices W Q i ∈ R dmodel×dk , W K i ∈ 
 - $W^{Q}_{i} \in \mathbb{R}^{d_{model} \times d_k}$、
 - $W^{K}_{i} \in \mathbb{R}^{d_{model} \times d_k}$、
 - $W^{V}_{i} \in \mathbb{R}^{d_{model} \times d_v}$、
-- $W^{O} \in \mathbb{R}^{h d_{v}\times d_{model}}$
+- $W^{O} \in \mathbb{R}^{h * d_{v}\times d_{model}}$
 
-(queryは系列データのある一つの位置の入力データ、keysは系列データの全位置の入力データ、valuesは系列データの全位置の出力データというか教師ラベル的なイメージ? そして $d_{model}$ は系列データの長さ??)
+($d_{model}$ は 元々の埋め込みベクトルの次元数. d_kやd_vはlinear projection後の埋め込みベクトルの次元数. $i$ は各headを意味する添字.)
 
 (メモ)
 上の定義を見ると、入力となる各行列の次元数は以下:
 
-- $Q \in \mathbb{R}^{d_k \times d_{model}}$
-- $K \in \mathbb{R}^{d_k \times d_{model}}$
-- $V \in \mathbb{R}^{d_v \times d_{model}}$
+- $Q \in \mathbb{R}^{n \times d_{model}}$
+- $K \in \mathbb{R}^{n \times d_{model}}$
+- $V \in \mathbb{R}^{n \times d_{model}}$
 
 In this work we employ h = 8 parallel attention layers, or heads.
 本研究では、h = 8個のparallel attention layers(i.e. head)を採用しています。
@@ -336,14 +336,14 @@ Doing so requires a stack of O(n/k) convolutional layers in the case of contiguo
 Convolutional layers are generally more expensive than recurrent layers, by a factor of k.
 畳み込み層は一般に、リカレント層よりもk倍ほど高価である。
 Separable convolutions [6], however, decrease the complexity considerably, to O(k · n · d + n · d 2 ).
-しかし、分離可能な畳み込み[6]は、複雑さを大幅に減らし、O(k - n - d + n - d 2 )とする。
+しかし、分離可能な畳み込み[6]は、複雑さを大幅に減らし、$O(k \cdot n \cdot d + n \cdot d^2)$ とする.
 Even with k = n, however, the complexity of a separable convolution is equal to the combination of a self-attention layer and a point-wise feed-forward layer, the approach we take in our model.
-しかし、k = nであっても、分離可能な畳み込みの複雑さは、本モデルで採用しているself-attention層とpoint-wise(1レコード毎に独立、みたいなイメージ?) feed-forward layer層の組み合わせと同等です。
+しかし、$k = n$ であっても、分離可能な畳み込みの複雑さは、本モデルで採用しているself-attention層とpoint-wise(1レコード毎に独立、みたいなイメージ?) feed-forward layer層の組み合わせと同等です.
 
 As side benefit, self-attention could yield more interpretable models.
 副次的な効果として、self-attention によって、より解釈しやすいモデルが得られるかもしれません。
 We inspect attention distributions from our models and present and discuss examples in the appendix.
-私たちのモデルから注目分布を検査し、付録で例を提示して議論します。
+私たちのモデルから attention分布を検査し、付録で例を提示して議論します。
 Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic and semantic structure of the sentences.
 個々のアテンションヘッドは明らかに異なるタスクを学習するだけでなく、多くは文の構文や意味構造に関連する行動を示すようです。
 
