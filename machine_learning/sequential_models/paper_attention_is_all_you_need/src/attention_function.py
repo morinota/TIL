@@ -8,6 +8,13 @@ from torch import Tensor
 class AttentionInterface(abc.ABC):
     """attention function内には学習可能なparametersは存在しない.
     内積と荷重平均のみで構成されている.
+    - Attention(Q, K, V) は、基本的には Atteniton(Q, X, X)である.(Keys=Values)
+        - Q = X の場合、 self-attention と呼ぶ.
+        - Q != X の場合、source-to-target atteniton と呼ぶ.
+    - 機械翻訳タスクにおいては、以下の3通りのAttentionの使われ方が存在する(Transformerにおいてもこの三種が組み合わされている.):
+        - Q = X = 翻訳元の文章 としたself attention(in Encoder)
+        - Q = X = 翻訳対象の文章 としたself attention(in Decoder)
+        - Q = 翻訳対象の文章, X = 翻訳元の文章 とした source-to-target-atteniton (in Decoder)
     """
 
     @abc.abstractmethod

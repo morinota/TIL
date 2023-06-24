@@ -1,13 +1,13 @@
-## link リンク
+## 0.1. link リンク
 
 - https://arxiv.org/abs/2305.06566 https://arxiv.org/abs/2305.06566
 
-## title タイトル
+## 0.2. title タイトル
 
 A First Look at LLM-Powered Generative News Recommendation
 LLMによる生成的ニュース推薦の初見
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 Personalized news recommendation systems have become essential tools for users to navigate the vast amount of online news content, yet existing news recommenders face significant challenges such as the cold-start problem, user profile modeling, and news content understanding.
 パーソナライズされたニュース推薦システムは、ユーザーが膨大なオンラインニュースコンテンツをナビゲートするために不可欠なツールとなっているが、既存のニュース推薦システムは、コールドスタート問題、ユーザープロファイルのモデリング、ニュースコンテンツの理解など、大きな課題に直面している。
@@ -24,7 +24,7 @@ Extensive experiments with various popular recommendation models demonstrate the
 We will publish our code and data for other researchers to reproduce our work.
 我々は、他の研究者が我々の研究を再現できるように、コードとデータを公開する。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 Online news platforms, such as Google News, play a vital role in disseminating information worldwide.
 グーグルニュースのようなオンラインニュースプラットフォームは、世界中に情報を発信する上で重要な役割を果たしている。
@@ -94,9 +94,9 @@ To summarize, our contributions are listed as follows:
 
 - We demonstrate the effectiveness of GENRE through extensive experimentation and evaluation on three tasks: 1) personalized news generation, 2) user profiling, and 3) news summarization. GENREの有効性を、3つのタスクに関する広範な実験と評価を通じて実証する： 1）パーソナライズされたニュースの生成、2）ユーザーのプロファイリング、3）ニュースの要約である。
 
-# Preliminaries 前哨戦
+# 2. Preliminaries 前哨戦
 
-## Notations and Problem Statement
+## 2.1. Notations and Problem Statement
 
 Before delving into the details of our proposed method, we first introduce basic notations and formally define the news recommendation task.
 提案手法の詳細に入る前に、まず基本的な記法を紹介し、ニュース推薦タスクを正式に定義する。
@@ -109,7 +109,7 @@ Let D be a set of click data, where each click 𝑑 ∈ D is a tuple (𝑢, 𝑛
 The task of the news recommendation is to infer the user’s interest in a candidate news article.
 ニュース推薦のタスクは、**候補となるニュース記事に対するユーザのinterestを推測すること**である。
 
-## General News Recommendation Model 一般ニュース推薦モデル
+## 2.2. General News Recommendation Model 一般ニュース推薦モデル
 
 A news recommendation model generally involves three modules: a news encoder, a user encoder, and an interaction module.
 ニュース推薦モデルには一般的に、**ニュースエンコーダ、ユーザーエンコーダ、インタラクションモジュールの3つのモジュール**が含まれる。
@@ -128,18 +128,23 @@ In contrast, for matching models, the interaction module needs to identify the p
 The design of the news encoder, user encoder, and interaction module varies across different news recommendation models.
 ニュースエンコーダ、ユーザエンコーダ、インタラクションモジュールの設計は、ニュース推薦モデルによって異なる.
 
-# Proprsed Framework: GENRE ジャンル
+# 3. Proprsed Framework: GENRE ジャンル
 
-## Overview 概要
+## 3.1. Overview 概要
 
 Figure 1 illustrate the our proposed GENRE framework for LLMpowered generative news recommendation, which consists of the following four steps.1) Prompting: create prompts or instructions to harness the capability of a LLM for data generation for diverse objectives.2) Generating: the LLM generates new knowledge and data based on the designed prompts.3) Updating: use the LLMgenerated data to update the current data for the next round of prompting and generation, which is optional.4) Training: leverage the LLM-generated data to train news recommendation models.
-図1は、LLMを活用した生成的ニュース推薦のためのGENREフレームワークの提案であり、以下の4つのステップから構成される。1）プロンプティング：多様な目的のためのデータ生成のためにLLMの能力を活用するプロンプトや指示を作成する。2）ジェネレーティング：LLMは設計されたプロンプトに基づいて新しい知識とデータを生成する。3）アップデーティング：LLMが生成したデータを使用して、次のプロンプティングと生成のラウンドのために現在のデータを更新する。
+図1は、LLMを活用した生成的ニュース推薦のためのGENREフレームワークの提案であり、以下の4つのステップから構成される。
+
+- 1）プロンプティング：多様な目的のためのデータ生成のためにLLMの能力を活用するプロンプトや指示を作成する。
+- 2）ジェネレーティング：LLMは設計されたプロンプトに基づいて新しい知識とデータを生成する。
+- 3）アップデーティング：LLMが生成したデータを使用して、次のプロンプティングと生成のラウンドのために現在のデータを更新する。
+
 Prompt design forms the foundation of GENRE, and the iterative generation and updating mechanism allows for an expansive and complex design space.
 プロンプト・デザインはGENREの基礎を形成し、反復的な生成と更新のメカニズムが広大で複雑なデザイン空間を可能にする。
 In the following, we show examples of prompts designed under GENRE for news summarization, user profile modeling, and personalized news generation.
 以下では、ニュースの要約、ユーザプロファイルのモデリング、およびパーソナライズされたニュースの生成のためにGENREの下で設計されたプロンプトの例を示す。
 
-## LLM as News Summarizer ニュース要約としてのLLM
+## 3.2. LLM as News Summarizer ニュース要約としてのLLM
 
 Large language models are capable of summarizing news content into concise phrases or sentences, due to their training on vast amounts of natural language data and summarization tasks.
 大規模な言語モデルは、膨大な量の自然言語データと要約タスクに対する学習により、ニュースコンテンツを簡潔なフレーズやセンテンスに要約することができる。
@@ -158,11 +163,11 @@ As shown by the provided sample, the enhanced title not only summarizes the news
 提供されたサンプルで示されているように、強化されたタイトルはニュース情報を要約するだけでなく、ニュースの主要なトピックである「ガイド」を強調している。
 
 During the training of the recommendation model, the enhanced news title will replace the original title and be used as one of the input features, together with other multi-modal features, for the news encoder (Figure 2).
-推薦モデルの学習中、強化されたニュースタイトルは元のタイトルに置き換えられ、他のマルチモーダル特徴とともに、ニュースエンコーダの入力特徴の1つとして使用される（図2）。
+推薦モデルの学習中、**強化されたニュースタイトルは元のタイトルに置き換えられ**、他のマルチモーダル特徴とともに、ニュースエンコーダの入力特徴の1つとして使用される（図2）。
 The green news vectors in Figure 3b represent the news vectors with the enhanced titles.
 図3bの緑色のニュース・ベクトルは、タイトルが強調されたニュース・ベクトルである。
 
-## LLM as User Profiler ユーザー・プロファイラとしてのLLM
+## 3.3. LLM as User Profiler ユーザー・プロファイラとしてのLLM
 
 The user profile generally refers to their preferences and characteristics, such as age, gender, topics of interest, and geographic location.
 ユーザープロファイルとは一般的に、年齢、性別、興味のある話題、地理的な場所など、ユーザーの嗜好や特徴を指す。
@@ -171,11 +176,11 @@ These explicit preferences often serve as important features for click-through r
 However, these information are usually not provided in the anonymized dataset for training recommendation models, due to privacy policies.
 しかし、推薦モデルを学習するための匿名化されたデータセットでは、プライバシーポリシーのため、これらの情報は通常提供されない。
 Large language models are capable of understanding a user’s reading history through their ability to model long sequences, enabling them to analyze and create an outline of the user’s profile.
-大規模な言語モデルは、長いシーケンスをモデル化する能力を通じて、ユーザーの読書履歴を理解することができ、ユーザーのプロファイルを分析し、概要を作成することができます。
+大規模な言語モデルは、**長いシーケンスをモデル化する能力**を通じて、ユーザの読書履歴を理解することができ、ユーザのプロファイルを分析し、概要を作成することができます。
 Hence, we design a prompt for user profiles modeling, as depicted in Figure 4b.
 そこで、図4bに示すように、ユーザープロファイルをモデリングするためのプロンプトをデザインする。
 Given a user’s reading history, the large language model produces a user profile that includes his/her interested topics and regions.
-ユーザーの読書履歴が与えられると、大規模な言語モデルは、そのユーザーが興味を持っているトピックや地域を含むユーザープロファイルを作成する。
+**ユーザの読書履歴が与えられると、大規模な言語モデルは、そのユーザーが興味を持っているトピックや地域を含むユーザープロファイルを作成**する。
 In this example, the LLM infers that the user may be interested in the region of Florida, based on the word “Miami” in the news.
 この例では、LLMはニュースの中の「マイアミ」という単語から、ユーザーがフロリダという地域に興味があるのではないかと推測する。
 Although “Miami” may have a low occurrence in the dataset, “Florida” is more frequently represented and therefore more likely to be connected to other news or users for collaborative filtering.
@@ -202,15 +207,15 @@ $$
 
 where MLP is a multi-layer perceptron with ReLU activation.
 
-## LLM as Personalized News Generator
+## 3.4. LLM as Personalized News Generator
 
 The cold-start problem, which is well-known for its difficulties, occurs when new users3 have limited interaction data, making it difficult for the user encoder to capture their characteristics and ultimately weakening its ability to model warm users 4 . Recent studies [7, 33] have shown that LLMs possess exceptional capabilities to learn from few examples. Hence, we propose to use an LLM to model the distribution of user-interested news given very limited user historical data. Specifically, we use it as a personalized news generator to generate synthetic news that may be of interest to new users, enhancing their historical interactions and allowing the user encoder to learn effective user representations. The prompt displayed in Figure 4c serves as a guide for the personalized news generator, allowing the LLM to create synthetic news pieces tailored to the user’s interests. The generated news pieces (indicated by the yellow news vectors in Figure 3d) are incorporated into the user historical sequence, which will be encoded and fed to the user encoder to generate the user vector.
 
-## Chain-based Generation
+## 3.5. Chain-based Generation
 
 While we have shown several examples of “one-pass generation” (Figure 4) under our GENRE framework, it is worth noting that the design space of GENRE is vast and of a high-order complexity. As illustrated by the diagram in Figure 1, GENRE enables iterative generation and updating. The data generated by the LLM can be leveraged to enhance the quality of current data, which can subsequently be utilized in the next round of generation and prompting in an iterative fashion. We refer to this type of generation as “chainbased generation”, in contrast to “one-pass generation”. We design a chain-based personalized news generator by combining the one-pass user profiler and personalized news generator. As illustrated in Figure 5, we first use the LLM to generate the interested topics and regions of a user, which are then combined with the user history news list to prompt the LLM to generate synthetic news pieces. The user profile helps the LLM to engage in chain thinking, resulting in synthetic news that better matches the user’s interests than the one-pass generator. The prompt for the chain-based generator is provided in the supplementary materials.
 
-## Downstream Training
+## 3.6. Downstream Training
 
 Our GENRE framework can be applied with any news recommendation model. Existing news recommendation models mainly include matching-based models such as NAML [43], LSTUR [1], NRMS [45], and PLMNR [46], and ranking-based deep CTR models, such as BST [4], DCN [39], PNN [26], and DIN [55]. Since ranking-based models directly calculate the click-through rate, they place greater emphasis on the design of multiple feature interactions, compared to the relatively straightforward design of the news encoder and user encoder (Table 2). These models are trained with the binary cross-entropy loss defined as:
 

@@ -72,7 +72,7 @@ End-to-end memory networks are based on a recurrent attention mechanism instead 
 エンドツーエンドメモリーネットワークは、配列に沿った再帰性ではなく、再帰性注意メカニズムに基づいており、単純な言語の質問応答や言語モデリングタスクで優れた性能を示すことが示されている[34]。
 
 To the best of our knowledge, however, the Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequencealigned RNNs or convolution.
-しかし、私たちの知る限り、Transformerは、配列整列したRNNや畳み込みを使用せずに、入力と出力の表現を計算するために、**完全にself-attentionに依存**する最初のtransduction(伝達)モデルです。
+しかし、私たちの知る限り、Transformerは、配列整列したRNNや畳み込みを使用せずに、入力と出力の表現を計算するために、**完全にself-attentionに依存する最初のtranduction(伝達)モデル**です。
 In the following sections, we will describe the Transformer, motivate self-attention and discuss its advantages over models such as [17, 18] and [9].
 以下のセクションでは、Transformerについて説明し、self-attentionをを動機付け、[17, 18]や[9]のようなモデルに対する優位性を議論することにする。
 
@@ -222,9 +222,9 @@ Due to the reduced dimension of each head, the total computational cost is simil
 ### 3.2.3. Applications of Attention in our Model アテンションの応用モデル
 
 The Transformer uses multi-head attention in three different ways:
-トランスフォーマーは、3種類の方法で multi-head attention を使用します：
+トランスフォーマーは、**3種類の方法で multi-head attention を使用**します：
 
-- In "encoder-decoder attention" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder. This allows every position in the decoder to attend over all positions in the input sequence. This mimics the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38, 2, 9]. **"encoder-decoder attention"層**では、queriesは前のデコーダー層から、メモリのkeysとvaluesはエンコーダーの出力からやってきます。 これにより、**デコーダーの各positionは、入力シーケンスのすべてのpositionに出席することができます**。 これは、[38, 2, 9]などの配列対配列モデルにおける典型的なエンコーダ・デコーダの注意メカニズムを模倣しています。
+- In "encoder-decoder attention" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder. This allows every position in the decoder to attend over all positions in the input sequence. This mimics the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38, 2, 9]. **"encoder-decoder attention"層**では、queriesは前のデコーダー層から、メモリのkeysとvaluesはエンコーダーの出力からやってきます。 これにより、**デコーダーの各positionは、入力シーケンスのすべてのpositionに出席することができます**。 これは、[38, 2, 9]などの配列対配列モデルにおける典型的なエンコーダ・デコーダの注意メカニズムを模倣しています。(これはself-attentionではなく、source-to-target-attentionの運用っぽい...!)
 
 - The encoder contains self-attention layers. In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder. Each position in the encoder can attend to all positions in the previous layer of the encoder. **エンコーダーには、self-attention層**が含まれています。 self-attention層では、すべてのkeys、values、queriesは同じところ(=同じposition?)から来る、この場合、エンコーダの前の層の出力である。 エンコーダーの各positionは、エンコーダーの前のレイヤーのすべてのpositonにアテンションすることができます。
 

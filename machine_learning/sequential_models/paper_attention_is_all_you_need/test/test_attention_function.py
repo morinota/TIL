@@ -1,6 +1,6 @@
 import torch
 
-from machine_learning.sequential_models.paper_attention_is_all_you_need.attention_function import (
+from machine_learning.sequential_models.paper_attention_is_all_you_need.src.attention_function import (
     ScaledDotProductAttention,
 )
 
