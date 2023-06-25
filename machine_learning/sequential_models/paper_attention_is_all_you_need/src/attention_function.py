@@ -1,11 +1,11 @@
 import abc
-from typing import Tuple
+from typing import Optional, Tuple
 
 import torch
-from torch import Tensor
+from torch import Tensor, nn
 
 
-class AttentionInterface(abc.ABC):
+class AttentionInterface(nn.Module):
     """attention function内には学習可能なparametersは存在しない.
     内積と荷重平均のみで構成されている.
     - Attention(Q, K, V) は、基本的には Atteniton(Q, X, X)である.(Keys=Values)
@@ -18,7 +18,7 @@ class AttentionInterface(abc.ABC):
     """
 
     @abc.abstractmethod
-    def calc(
+    def forward(
         self,
         query: Tensor,
         key: Tensor,
@@ -46,22 +46,34 @@ class AttentionInterface(abc.ABC):
 
 
 class ScaledDotProductAttention(AttentionInterface):
-    def calc(
+    def __init__(self, d_k: int) -> None:
+        super().__init__()
+        self.d_k = d_k
+
+    def forward(
         self,
         query: Tensor,
         key: Tensor,
         value: Tensor,
+        mask: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor]:
         attention_weights = self._calc_attention_weights(query, key)
-        attention_output = torch.matmul(attention_weights, value)
-        return attention_output, attention_weights
+
+        if mask is None:
+            return torch.matmul(attention_weights, value), attention_weights
+
+        if mask.dim() != attention_weights.dim():
+            raise ValueError(
+                f"mask.dim != attention_weight.dim, mask.dim={mask.dim()}, attention_weight.dim={attention_weights.dim()}"
+            )
+
+        attention_weights_masked = attention_weights.data.masked_fill_(mask, -torch.finfo(torch.float).max)
+        return torch.matmul(attention_weights_masked, value), attention_weights_masked
 
     def _calc_attention_weights(self, query: Tensor, key: Tensor) -> Tensor:
-        d_k = query.size(-1)
-        print(d_k)
         Q_K_T = torch.matmul(
             query,
             key.transpose(-2, -1),
         )
-        sqrt_d_k = torch.sqrt(torch.tensor(d_k, dtype=torch.float32))
+        sqrt_d_k = torch.sqrt(torch.tensor(self.d_k, dtype=torch.float32))
         return torch.softmax(Q_K_T / sqrt_d_k, dim=-1)

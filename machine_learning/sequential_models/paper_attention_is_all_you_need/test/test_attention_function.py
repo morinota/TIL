@@ -15,7 +15,7 @@ def test_query_and_key_and_value_are_inputted_to_attention_function() -> None:
     sut = ScaledDotProductAttention()
 
     # Act
-    output, weights = sut.calc(query, key, value)
+    output, weights = sut.forward(query, key, value)
 
     # Assert
     expected_output = torch.tensor([[1.2000, 1.5000, 1.8000], [3.0000, 3.7500, 4.5000]])

@@ -11,7 +11,42 @@ from torch import Tensor
 
 class PositionalEncodingInterface(abc.ABC):
     @abc.abstractmethod
-    def calc(self, position_idx: int, d_model: int) -> Tensor:
+    def forward(self, x: Tensor) -> Tensor:
+        raise NotImplementedError
+
+
+class PositionalEncoding(PositionalEncodingInterface):
+    def __init__(
+        self,
+        d_model: int,
+        max_len: int,
+        device: torch.device = torch.device("cpu"),
+    ) -> None:
+        """
+        Parameters
+        ----------
+        d_model : int
+            モデルの埋め込みベクトルの次元数
+        max_len : int
+            sequential データの最大長.
+        device : torch.device, optional
+            by default torch.device("cpu")
+        """
+        super().__init__()
+        self.d_model = d_model
+        self.max_len = max_len
+        self.positional_encoding_weights = self._initialize_weight().to(device)
+
+    def forward(self, x: Tensor) -> Tensor:
+        seq_len = x.size(1)
+        positional_encoding_weights = self.positional_encoding_weights[:seq_len, :]
+        return x + positional_encoding_weights.unsqueeze(0)  # 次元をあわせて追加.
+
+    def _initialize_weight(self) -> torch.Tensor:
+        positional_encoding_weights = [self._calc_positional_encoding_vector(pos) for pos in range(1, self.d_model + 1)]
+        return torch.tensor(positional_encoding_weights).float()
+
+    def _calc_positional_encoding_vector(self, position_idx: int) -> Tensor:
         """_summary_
 
         Parameters
@@ -25,14 +60,9 @@ class PositionalEncodingInterface(abc.ABC):
         Tensor
             positional encoding (d_model, )のベクトル.
         """
-        raise NotImplementedError
-
-
-class PositionalEncoding(PositionalEncodingInterface):
-    def calc(self, position_idx: int, d_model: int) -> Tensor:
-        pe = torch.zeros(d_model)
-        odd_indices = torch.arange(0, d_model, 2)
-        even_indices = torch.arange(1, d_model, 2)
-        pe[odd_indices] = torch.cos(position_idx / (10000 ** (odd_indices.float() / d_model)))
-        pe[even_indices] = torch.sin(position_idx / (10000 ** (even_indices.float() / d_model)))
+        pe = torch.zeros(self.d_model)
+        odd_indices = torch.arange(0, self.d_model, 2)
+        even_indices = torch.arange(1, self.d_model, 2)
+        pe[odd_indices] = torch.cos(position_idx / (10000 ** (odd_indices.float() / self.d_model)))
+        pe[even_indices] = torch.sin(position_idx / (10000 ** (even_indices.float() / self.d_model)))
         return pe

@@ -46,14 +46,14 @@ class TransformderEncoderBlock(TransformderEncoderBlockInterface):
     def __init__(
         self,
         d_model: int,
-        multi_head_attention: MultiHeadAttentionInterface,
+        self_attention: MultiHeadAttentionInterface,
         feed_forward_network: PositionWiseFFNInterface,
         dropout_rate: float,
         layer_norm_epsilon: float,
     ) -> None:
         super().__init__()
 
-        self.multi_head_attention = multi_head_attention
+        self.multi_head_attention = self_attention
         self.dropout_self_attention = nn.Dropout(dropout_rate)
         self.layer_norm_self_attention = nn.LayerNorm(d_model, layer_norm_epsilon)
 
@@ -80,7 +80,7 @@ class TransformerEncoder(TransformerEncoderInterface):
         d_model: int,
         N: int,
         positional_encoding: PositionalEncodingInterface,
-        multi_head_attention: MultiHeadAttentionInterface,
+        self_attention: MultiHeadAttentionInterface,
         feed_forward_network: PositionWiseFFNInterface,
         vocab_size: int,
         max_len: int,
@@ -97,7 +97,7 @@ class TransformerEncoder(TransformerEncoderInterface):
         self.encoder_blocks = nn.ModuleList(
             [
                 TransformderEncoderBlock(
-                    d_model, multi_head_attention, feed_forward_network, dropout_rate, layer_norm_epsilon
+                    d_model, self_attention, feed_forward_network, dropout_rate, layer_norm_epsilon
                 )
                 for _ in range(N)
             ]
@@ -105,7 +105,7 @@ class TransformerEncoder(TransformerEncoderInterface):
 
     def calc(self, x: torch.Tensor) -> torch.Tensor:
         x = self.embedding(x)
-        x = self.positional_encoding.calc(x)  # TODO:元の埋め込みベクトルにpositional encoding vectorを追加する様な実装にする必要あり.
+        x = self.positional_encoding.forward(x)
         for encoder_block in self.encoder_blocks:
             x = encoder_block.forward(x)
         return x
