@@ -86,7 +86,7 @@ class TransformerDecoderBlock(TransformerDecoderBlockInterface):
     ) -> Tensor:
         # input to self-attention function
         tgt_self_attentioned = self.dropout_self_attention(
-            self.self_attention.calc(tgt, tgt, tgt, mask_self),
+            self.self_attention.forward(tgt, tgt, tgt, mask_self),
         )
         tgt_self_attentioned_norm = self.layer_norm_self_attention(
             tgt + tgt_self_attentioned,
@@ -94,7 +94,7 @@ class TransformerDecoderBlock(TransformerDecoderBlockInterface):
 
         # input to src-to-tgt-attention function
         x_src_to_tgt_attentioned = self.dropout_src_to_tgt_attention(
-            self.src_to_tgt_attention.calc(tgt_self_attentioned_norm, src, src, mask_src_to_tgt)
+            self.src_to_tgt_attention.forward(tgt_self_attentioned_norm, src, src, mask_src_to_tgt)
         )
         x_src_to_tgt_attentioned_norm = self.layer_norm_src_to_tgt_attention(
             tgt_self_attentioned + x_src_to_tgt_attentioned

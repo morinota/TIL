@@ -94,8 +94,34 @@ class Transformer(TransformerInterface):
         self.linear = nn.Linear(d_model, tgt_vocab_size)
 
     def forward(self, src: Tensor, tgt: Tensor) -> Tensor:
-        src_encoded = self.encoder.forward(src)
+        pad_mask_src = self._pad_mask(src)
+        src_encoded = self.encoder.forward(src, pad_mask_src)
 
+        mask_for_self_attn = torch.logical_or(
+            self.
+        )
         decode_output = self.decoder.forward(tgt, src_encoded)
 
         return self.linear(decode_output)
+
+    def _pad_mask(self, sequences: Tensor) -> Tensor:
+        """単語のid列(ex:[[4,1,9,11,0,0,0...],[4,1,9,11,0,0,0...],[4,1,9,11,0,0,0...]...])からmaskを作成する.
+        Parameters:
+        ----------
+        sequences : torch.Tensor
+            単語のid列. [batch_size, max_len]
+        """
+        seq_len = sequences.size(1)
+        mask = sequences.eq(self.pad_idx)  # 0 is <pad> in vocab
+        mask = mask.unsqueeze(1)
+        mask = mask.repeat(1, seq_len, 1)  # (batch_size, max_len, max_len)
+        return mask.to(self.device)
+
+    def _subsequent_mask(self, embedded_sequences:Tensor)->Tensor:
+        """DecoderのMasked-Attentionに使用するmaskを作成する.
+        Parameters:
+        ----------
+        embedded_sequences : torch.Tensor
+            単語のトークン列. [batch_size, max_len, d_model]
+        """
+        batch_size = embedded_sequences.size(0)

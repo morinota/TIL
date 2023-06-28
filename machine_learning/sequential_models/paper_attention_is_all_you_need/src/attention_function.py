@@ -25,22 +25,19 @@ class AttentionInterface(nn.Module):
         value: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         """
-        「入力されたqueryに最も近しいkeyを選び、対応するvalueを得る」イメージ.
         Parameters
         ----------
         query : Tensor
-            query集合の行列. (n * d_k 行列)
+            Query行列. (seq_len * d_embed 行列)
         key : Tensor
-            key行列. (n * d_k 行列)
+            Key行列. (seq_len * d_embed 行列)
         value : Tensor
-            value行列. (n * d_v 行列)
-        ここで、nはtoken長. d_kはクエリベクトルの長さ. d_vはhogehoge.
+            Value行列. (seq_len * d_embed 行列)
 
         Returns
+        Tensor
+            attention_output: atteniton functionの出力 (seq_len * d_embed 行列)
         -------
-        Tuple[Tensor, Tensor]
-            - attention_output: atteniton functionの出力. (n * d_v 行列)
-            - attention_weights: queryとkeyの類似度. (n * n 行列)
         """
         raise NotImplementedError
 

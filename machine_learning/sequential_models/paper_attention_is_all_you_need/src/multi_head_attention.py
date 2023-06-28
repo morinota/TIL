@@ -11,7 +11,7 @@ from machine_learning.sequential_models.paper_attention_is_all_you_need.src.atte
 
 class MultiHeadAttentionInterface(nn.Module):
     @abc.abstractmethod
-    def calc(
+    def forward(
         self,
         query: Tensor,
         key: Tensor,
@@ -35,7 +35,7 @@ class MultiHeadAttention(MultiHeadAttentionInterface):
         self.value_linear_projectors = [nn.Linear(d_model, self.d_v) for _ in range(self.num_heads)]
         self.output_linear_projector = nn.Linear(self.num_heads * self.d_v, d_model)
 
-    def calc(
+    def forward(
         self,
         query: Tensor,
         key: Tensor,

@@ -28,6 +28,70 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="slides_files/libs/revealjs/dist/theme/quarto.css" id="theme">
   <link href="slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -332,32 +396,229 @@
 
 <section id="ざっくり論文概要" class="slide level2">
 <h2>ざっくり論文概要</h2>
+<ul>
+<li>hogehoge</li>
+</ul>
 </section>
 <section id="この論文を読むモチベーション" class="slide level2">
 <h2>この論文を読むモチベーション</h2>
+<ul>
+<li>Sequential なモデルを使った推薦手法の論文を理解するのに必要になりそう.</li>
+<li>SentenceBERT等を用いたContent base系の推薦手法を開発・運用する上で、まずはAttention functionやTransformerが何をやってるかくらいは理解しておきたい.</li>
+</ul>
 </section>
 <section>
 <section id="transformerの各パーツを確認していく." class="title-slide slide level1 center">
 <h1>Transformerの各パーツを確認していく.</h1>
 
 </section>
-<section id="attention-function" class="slide level2">
-<h2>Attention function</h2>
+<section id="attention-function-について1" class="slide level2">
+<h2>Attention function について1</h2>
+<ul>
+<li><span class="math inline">\(Attention(Q, K, V)\)</span> で表される関数.
+<ul>
+<li><strong>Query行列</strong>, <strong>Key行列</strong>, <strong>Value行列</strong> を引数に取る.(行数がsequenceデータの長さ. 列数が各tokenの特徴量ベクトルの長さのイメージ.)</li>
+<li>出力値は、value行列 を 重みづけ合計したもの.(形状はvalue行列と同じ.)</li>
+<li>各valueに割り当てられた重みは、対応する key と query の compatibility function(親和性関数?)によって計算される.</li>
+<li>各queryに最も親和性があるkeysを選び、対応するvaluesを取得するイメージ??<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul></li>
+<li><span class="math inline">\(Attention(Q, K, V)\)</span> は、基本的には <span class="math inline">\(Atteniton(Q, X, X)\)</span> らしい.(i.e.&nbsp;Keys=Values)
+<ul>
+<li><span class="math inline">\(Q = X\)</span> の場合、 <strong>self-attention</strong> と呼ぶ.</li>
+<li><span class="math inline">\(Q \neq X\)</span> の場合、<strong>source-to-target atteniton</strong> と呼ぶ.</li>
+</ul></li>
+</ul>
+</section>
+<section id="attention-function-について2" class="slide level2">
+<h2>Attention function について2</h2>
+<ul>
+<li>ちなみに、機械翻訳タスクにおいては、以下の<strong>3通りのAttentionの使われ方</strong>が存在するらしい(Transformer内においてもこの3通りの使われ方が組み合わされている.):
+<ul>
+<li>Q = X = 翻訳元の文章 とした self attention(in Encoder)</li>
+<li>Q = X = 翻訳対象の文章 とした self attention(in Decoder)</li>
+<li>Q = 翻訳対象の文章, X = 翻訳元の文章 とした source-to-target-atteniton (in Decoder)</li>
+</ul></li>
+</ul>
 </section>
 <section id="attention-functionのお気持ち実装" class="slide level2">
 <h2>Attention functionのお気持ち実装</h2>
+<p>Attention functionには、何種類かあるようなので、今回はInterfaceとしてお気持ち実装します.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">class</span> AttentionInterface(nn.Module):</span>
+<span id="cb1-2"><a href="#cb1-2"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>    <span class="kw">def</span> forward(</span>
+<span id="cb1-4"><a href="#cb1-4"></a>        <span class="va">self</span>,</span>
+<span id="cb1-5"><a href="#cb1-5"></a>        query: Tensor,</span>
+<span id="cb1-6"><a href="#cb1-6"></a>        key: Tensor,</span>
+<span id="cb1-7"><a href="#cb1-7"></a>        value: Tensor,</span>
+<span id="cb1-8"><a href="#cb1-8"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb1-9"><a href="#cb1-9"></a>        <span class="co">"""</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">        Parameters</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">        ----------</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">        query : Tensor</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">            Query行列. (seq_len * d_embed 行列)</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">        key : Tensor</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">            Key行列. (seq_len * d_embed 行列)</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">        value : Tensor</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">            Value行列. (seq_len * d_embed 行列)</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">        Returns</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">        Tensor</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="co">            Atteniton functionの出力 (seq_len * d_embed 行列)</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">        -------</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">        """</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="scaled-dot-product-attention" class="slide level2">
 <h2>Scaled-dot-product Attention</h2>
+<p>以下で定義されるattention functionの一種.(Transformer内で採用されている)</p>
+<p><span class="math display">\[
+Attention(Q, K, V) = softmax(\frac{Q K^{T}}{\sqrt{d_k}}) V
+\tag{1}
+\]</span></p>
+<ul>
+<li>ここで, <span class="math inline">\(d_k\)</span> をQuery行列 <span class="math inline">\(Q\)</span> とKey行列 <span class="math inline">\(K\)</span> の列数, <span class="math inline">\(d_v\)</span> を Value行列の列数とする. (どちらも i.e.&nbsp;各tokenの特徴量ベクトルの次元数のイメージ).</li>
+<li>各queryと全てのkeyのdot productを計算し、それぞれを <span class="math inline">\(\sqrt{d_k}\)</span> で割り、softmax関数を適用して各valueの重みを求めている.</li>
+<li>(このattention function内には、<strong>学習可能なパラメータは存在しないっぽい?</strong>. 内積と重み付け和のみで構成されてる<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>論文執筆時点で最も一般的なattention functionは、additive(加法) attention と dot-product (multiplicative=乗法) attention とのこと.</li>
+<li>dot-product attention の場合、<span class="math inline">\(d_k\)</span> の大きさに依って出力値が影響を受ける為、その性質を打ち消す為に <span class="math inline">\(\sqrt{d_k}\)</span> でscaling(正規化みたいな)している.</li>
+</ul>
 </section>
 <section id="scaled-dot-product-attention-のお気持ち実装" class="slide level2">
 <h2>Scaled-dot-product Attention のお気持ち実装</h2>
+<p><code>AttentionInterface</code>を継承した<code>ScaledDotProductAttention</code>をお気持ち実装してみた.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">class</span> ScaledDotProductAttention(AttentionInterface):</span>
+<span id="cb2-2"><a href="#cb2-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, d_k: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb2-3"><a href="#cb2-3"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb2-4"><a href="#cb2-4"></a>        <span class="va">self</span>.d_k <span class="op">=</span> d_k</span>
+<span id="cb2-5"><a href="#cb2-5"></a></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="kw">def</span> forward(</span>
+<span id="cb2-7"><a href="#cb2-7"></a>        <span class="va">self</span>,</span>
+<span id="cb2-8"><a href="#cb2-8"></a>        query: Tensor,</span>
+<span id="cb2-9"><a href="#cb2-9"></a>        key: Tensor,</span>
+<span id="cb2-10"><a href="#cb2-10"></a>        value: Tensor,</span>
+<span id="cb2-11"><a href="#cb2-11"></a>        mask: Optional[Tensor] <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb2-12"><a href="#cb2-12"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb2-13"><a href="#cb2-13"></a>        attention_weights <span class="op">=</span> <span class="va">self</span>._calc_attention_weights(query, key)</span>
+<span id="cb2-14"><a href="#cb2-14"></a></span>
+<span id="cb2-15"><a href="#cb2-15"></a>        <span class="cf">if</span> mask <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb2-16"><a href="#cb2-16"></a>            <span class="cf">return</span> torch.matmul(attention_weights, value)</span>
+<span id="cb2-17"><a href="#cb2-17"></a></span>
+<span id="cb2-18"><a href="#cb2-18"></a>        <span class="cf">if</span> mask.dim() <span class="op">!=</span> attention_weights.dim():</span>
+<span id="cb2-19"><a href="#cb2-19"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(</span>
+<span id="cb2-20"><a href="#cb2-20"></a>                <span class="ss">f"mask.dim != attention_weight.dim, mask.dim=</span><span class="sc">{</span>mask<span class="sc">.</span>dim()<span class="sc">}</span><span class="ss">, attention_weight.dim=</span><span class="sc">{</span>attention_weights<span class="sc">.</span>dim()<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb2-21"><a href="#cb2-21"></a>            )</span>
+<span id="cb2-22"><a href="#cb2-22"></a></span>
+<span id="cb2-23"><a href="#cb2-23"></a>        attention_weights_masked <span class="op">=</span> attention_weights.data.masked_fill_(mask, <span class="op">-</span>torch.finfo(torch.<span class="bu">float</span>).<span class="bu">max</span>)</span>
+<span id="cb2-24"><a href="#cb2-24"></a>        <span class="cf">return</span> torch.matmul(attention_weights_masked, value)</span>
+<span id="cb2-25"><a href="#cb2-25"></a></span>
+<span id="cb2-26"><a href="#cb2-26"></a>    <span class="kw">def</span> _calc_attention_weights(<span class="va">self</span>, query: Tensor, key: Tensor) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb2-27"><a href="#cb2-27"></a>        Q_K_T <span class="op">=</span> torch.matmul(</span>
+<span id="cb2-28"><a href="#cb2-28"></a>            query,</span>
+<span id="cb2-29"><a href="#cb2-29"></a>            key.transpose(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>),</span>
+<span id="cb2-30"><a href="#cb2-30"></a>        )</span>
+<span id="cb2-31"><a href="#cb2-31"></a>        sqrt_d_k <span class="op">=</span> torch.sqrt(torch.tensor(<span class="va">self</span>.d_k, dtype<span class="op">=</span>torch.float32))</span>
+<span id="cb2-32"><a href="#cb2-32"></a>        <span class="cf">return</span> torch.softmax(Q_K_T <span class="op">/</span> sqrt_d_k, dim<span class="op">=-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="multi-head-attention" class="slide level2">
-<h2>Multi-head Attention</h2>
+<section id="multi-head-attention-について1" class="slide level2">
+<h2>Multi-head Attention について1</h2>
+<ul>
+<li><span class="math inline">\(d_{model}\)</span> 次元の Query, Key, Value で単一のattention関数を実行するのではなく、<strong>学習した重み(線形モデル)を用いて</strong> Query, Key, Value をそれぞれ <span class="math inline">\(d_k\)</span> 、<span class="math inline">\(d_k\)</span> 、<span class="math inline">\(d_v\)</span> に<strong>線形投影(=linearly project)</strong>する事を<span class="math inline">\(h\)</span> 回行うのが有効だと判明しているらしい. これを実現するのが<strong>Multi-head attention</strong>.</li>
+<li>投影された Query, Key, Value に対して、<strong><span class="math inline">\(h\)</span> 個のattention functionを並行して適用</strong>し、<span class="math inline">\(h\)</span> 個の <span class="math inline">\(n \times d_v\)</span> 次元の出力値を得る.</li>
+<li>これをconcatenate(<span class="math inline">\(n \times h d_v\)</span> 次元になる?)して再び線形投影すると、最終的な <span class="math inline">\(n \times d_{model}\)</span> 次元の出力値が得られる.</li>
+</ul>
+<p><span class="math display">\[
+MultiHead(Q,K,V) = Concat(head_{1}, \cdots, head_{h}) W^{O}
+\\
+\text{where } head_{i} = Attention(QW^{Q}_{i}, KW^{K}_{i}, VW^{V}_{i})
+\tag{2}
+\]</span></p>
+<p>ここで、各線形投影に用いるパラメータ行列は以下:</p>
+<p><span class="math display">\[
+W^{Q}_{i} \in \mathbb{R}^{d_{model} \times d_k},
+W^{K}_{i} \in \mathbb{R}^{d_{model} \times d_k},
+W^{V}_{i} \in \mathbb{R}^{d_{model} \times d_v},
+W^{O} \in \mathbb{R}^{h * d_{v}\times d_{model}}
+\]</span></p>
+</section>
+<section id="multi-head-attention-について2" class="slide level2">
+<h2>Multi-head Attention について2</h2>
+<ul>
+<li>論文のTransformerでは、 <span class="math inline">\(h = 8\)</span> のparallel attention layers(i.e.&nbsp;head)を採用してる.</li>
+<li><span class="math inline">\(d_{model} = 512\)</span> として、<span class="math inline">\(d_k = d_v = \frac{d_{model}}{h} = 64\)</span> と設定している.</li>
+<li>各headsの扱う次元数が小さくなる為、総計算コストは元々のQ, K, Vにsingle head のattentionを適用する場合と同じになる. (線形投影して行列の次元数が<span class="math inline">\(n \times d_{model}\)</span> -&gt; <span class="math inline">\(n × d_k\)</span> と低次元になるから…!!)</li>
+<li>本論文で提案されているTransformerでは、前述した3通りFのattentionの使い方で multi-head attention を使用している.</li>
+</ul>
 </section>
 <section id="multi-head-attention-のお気持ち実装" class="slide level2">
 <h2>Multi-head Attention のお気持ち実装</h2>
+<p><code>ScaledDotProductAttention</code>に依存する<code>MultiHeadAttention</code>をお気持ち実装してみた.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="im">import</span> abc</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="im">from</span> typing <span class="im">import</span> Optional</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="im">import</span> torch</span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="im">from</span> torch <span class="im">import</span> Tensor, nn</span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="im">from</span> src.attention_function <span class="im">import</span> ScaledDotProductAttention</span>
+<span id="cb3-8"><a href="#cb3-8"></a></span>
+<span id="cb3-9"><a href="#cb3-9"></a></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="kw">class</span> MultiHeadAttentionInterface(nn.Module):</span>
+<span id="cb3-11"><a href="#cb3-11"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>    <span class="kw">def</span> calc(</span>
+<span id="cb3-13"><a href="#cb3-13"></a>        <span class="va">self</span>,</span>
+<span id="cb3-14"><a href="#cb3-14"></a>        query: Tensor,</span>
+<span id="cb3-15"><a href="#cb3-15"></a>        key: Tensor,</span>
+<span id="cb3-16"><a href="#cb3-16"></a>        value: Tensor,</span>
+<span id="cb3-17"><a href="#cb3-17"></a>        mask_3d: Optional[Tensor] <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb3-18"><a href="#cb3-18"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb3-19"><a href="#cb3-19"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a></span>
+<span id="cb3-21"><a href="#cb3-21"></a></span>
+<span id="cb3-22"><a href="#cb3-22"></a><span class="kw">class</span> MultiHeadAttention(MultiHeadAttentionInterface):</span>
+<span id="cb3-23"><a href="#cb3-23"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, d_model: <span class="bu">int</span>, num_heads: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb3-24"><a href="#cb3-24"></a>        <span class="va">self</span>.num_heads <span class="op">=</span> num_heads</span>
+<span id="cb3-25"><a href="#cb3-25"></a>        <span class="va">self</span>.d_k <span class="op">=</span> d_model <span class="op">//</span> num_heads  <span class="co"># Query &amp; Keyもvalueも同じ埋め込み次元数の想定.</span></span>
+<span id="cb3-26"><a href="#cb3-26"></a>        <span class="va">self</span>.d_v <span class="op">=</span> d_model <span class="op">//</span> num_heads</span>
+<span id="cb3-27"><a href="#cb3-27"></a></span>
+<span id="cb3-28"><a href="#cb3-28"></a>        <span class="va">self</span>.attention_func <span class="op">=</span> ScaledDotProductAttention(<span class="va">self</span>.d_k)</span>
+<span id="cb3-29"><a href="#cb3-29"></a></span>
+<span id="cb3-30"><a href="#cb3-30"></a>        <span class="co"># 以下のW^{Q}_{i}, W^{K}_{i}, W^{V}_{i}, W^{O}は学習すべきパラメータ.</span></span>
+<span id="cb3-31"><a href="#cb3-31"></a>        <span class="va">self</span>.query_linear_projectors <span class="op">=</span> [nn.Linear(d_model, <span class="va">self</span>.d_k) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads)]</span>
+<span id="cb3-32"><a href="#cb3-32"></a>        <span class="va">self</span>.key_linear_projectors <span class="op">=</span> [nn.Linear(d_model, <span class="va">self</span>.d_k) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads)]</span>
+<span id="cb3-33"><a href="#cb3-33"></a>        <span class="va">self</span>.value_linear_projectors <span class="op">=</span> [nn.Linear(d_model, <span class="va">self</span>.d_v) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads)]</span>
+<span id="cb3-34"><a href="#cb3-34"></a>        <span class="va">self</span>.output_linear_projector <span class="op">=</span> nn.Linear(<span class="va">self</span>.num_heads <span class="op">*</span> <span class="va">self</span>.d_v, d_model)</span>
+<span id="cb3-35"><a href="#cb3-35"></a></span>
+<span id="cb3-36"><a href="#cb3-36"></a>    <span class="kw">def</span> calc(</span>
+<span id="cb3-37"><a href="#cb3-37"></a>        <span class="va">self</span>,</span>
+<span id="cb3-38"><a href="#cb3-38"></a>        query: Tensor,</span>
+<span id="cb3-39"><a href="#cb3-39"></a>        key: Tensor,</span>
+<span id="cb3-40"><a href="#cb3-40"></a>        value: Tensor,</span>
+<span id="cb3-41"><a href="#cb3-41"></a>        mask_3d: Optional[Tensor] <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb3-42"><a href="#cb3-42"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb3-43"><a href="#cb3-43"></a>        batch_size, seq_len <span class="op">=</span> query.size(<span class="dv">0</span>), query.size(<span class="dv">1</span>)</span>
+<span id="cb3-44"><a href="#cb3-44"></a></span>
+<span id="cb3-45"><a href="#cb3-45"></a>        <span class="cf">if</span> mask_3d <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb3-46"><a href="#cb3-46"></a>            mask_3d <span class="op">=</span> mask_3d.repeat(<span class="va">self</span>.num_heads, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb3-47"><a href="#cb3-47"></a></span>
+<span id="cb3-48"><a href="#cb3-48"></a>        heads <span class="op">=</span> []</span>
+<span id="cb3-49"><a href="#cb3-49"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads):</span>
+<span id="cb3-50"><a href="#cb3-50"></a>            <span class="co"># linear projection for getting the inputs of each heads.</span></span>
+<span id="cb3-51"><a href="#cb3-51"></a>            query_projected <span class="op">=</span> <span class="va">self</span>.query_linear_projectors[i].forward(query)</span>
+<span id="cb3-52"><a href="#cb3-52"></a>            key_projected <span class="op">=</span> <span class="va">self</span>.key_linear_projectors[i].forward(key)</span>
+<span id="cb3-53"><a href="#cb3-53"></a>            value_projected <span class="op">=</span> <span class="va">self</span>.value_linear_projectors[i].forward(value)</span>
+<span id="cb3-54"><a href="#cb3-54"></a></span>
+<span id="cb3-55"><a href="#cb3-55"></a>            attention_output, _ <span class="op">=</span> <span class="va">self</span>.attention_func.forward(</span>
+<span id="cb3-56"><a href="#cb3-56"></a>                query_projected,</span>
+<span id="cb3-57"><a href="#cb3-57"></a>                key_projected,</span>
+<span id="cb3-58"><a href="#cb3-58"></a>                value_projected,</span>
+<span id="cb3-59"><a href="#cb3-59"></a>                mask_3d,</span>
+<span id="cb3-60"><a href="#cb3-60"></a>            )</span>
+<span id="cb3-61"><a href="#cb3-61"></a>            heads.append(attention_output)</span>
+<span id="cb3-62"><a href="#cb3-62"></a></span>
+<span id="cb3-63"><a href="#cb3-63"></a>        <span class="co"># concat heads</span></span>
+<span id="cb3-64"><a href="#cb3-64"></a>        concatted_output <span class="op">=</span> torch.cat(heads, dim<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb3-65"><a href="#cb3-65"></a></span>
+<span id="cb3-66"><a href="#cb3-66"></a>        <span class="co"># linear projection for output</span></span>
+<span id="cb3-67"><a href="#cb3-67"></a>        <span class="cf">return</span> <span class="va">self</span>.output_linear_projector.forward(concatted_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="positional-encoder" class="slide level2">
 <h2>Positional Encoder</h2>
@@ -378,6 +639,7 @@
 </section>
 <section id="tranformer-のお気持ち実装" class="slide level2">
 <h2>Tranformer のお気持ち実装</h2>
+<pre><code></code></pre>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>

@@ -174,7 +174,7 @@ $d_{model}$ 次元(=埋め込みベクトルの次元数?)のkey、value、query
 On each of these projected versions of queries, keys and values we then perform the attention function in parallel, yielding dv-dimensional output values.
 これらの投影されたquery、value、valueのそれぞれに対して、attention機能を**並行**して実行し、**$d_v$次元の出力値**を得る.
 These are concatenated and once again projected, resulting in the final values, as depicted in Figure 2.
-これを連結(concat, $d_v \times h$ 次元になる?)して再び投影(=linearly project)すると、図2に示すような最終的な値が得られる.
+これをconcatenate($d_v \times h$ 次元になる?)して再び線形投影(=linearly project)すると、図2に示すような最終的な値が得られる.
 
 (メモ)
 
@@ -219,7 +219,7 @@ For each of these we use dk = dv = dmodel/h = 64.
 Due to the reduced dimension of each head, the total computational cost is similar to that of single-head attention with full dimensionality.
 各ヘッドの次元が小さくなるため(線形投影して行列の次元数が$d_k \times d_{model}$ -> $d_k × d_k$ に低次元になるから...!!)、総計算コストは、完全な次元を持つシングルヘッドアテンションのものと同様です。
 
-### 3.2.3. Applications of Attention in our Model アテンションの応用モデル
+### 3.2.3. Applications of Attention in our Model 我々のモデルにおけるアテンションの適用
 
 The Transformer uses multi-head attention in three different ways:
 トランスフォーマーは、**3種類の方法で multi-head attention を使用**します：

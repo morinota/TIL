@@ -66,7 +66,7 @@ class TransformderEncoderBlock(TransformderEncoderBlockInterface):
         return self.layer_norm_ffn(self._feed_forward_block(x_middle))
 
     def _self_attention_block(self, x: torch.Tensor) -> torch.Tensor:
-        x_middle = self.multi_head_attention.calc(x, x, x)
+        x_middle = self.multi_head_attention.forward(x, x, x)
         return self.dropout_self_attention.forward(x_middle)
 
     def _feed_forward_block(self, x: torch.Tensor) -> torch.Tensor:

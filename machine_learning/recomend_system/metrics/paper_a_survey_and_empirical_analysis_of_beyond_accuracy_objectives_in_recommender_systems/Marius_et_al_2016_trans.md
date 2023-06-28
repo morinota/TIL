@@ -1,15 +1,15 @@
-## Link リンク
+## 0.1. Link リンク
 
 - http://old-eclass.uop.gr/modules/document/file.php/DIT104/%CE%92%CE%B9%CE%B2%CE%BB%CE%B9%CE%BF%CE%B3%CF%81%CE%B1%CF%86%CE%AF%CE%B1%202017-2018/Diversity%2C%20Serendipity%2C%20Novelty%2C%20and%20Coverage.pdf http://old-eclass.uop.gr/modules/document/file.php/DIT104/%CE%92%CE%B9%CE%B2%CE%BB%CE%B9%CE%BF%CE%B3%CF%81%CE%B1%CF%86%CE%AF%CE%B1%202017-2018/Diversity%2C%20Serendipity%2C%20Novelty%2C%20and%20Coverage.pdf
 
 - https://dl.acm.org/doi/abs/10.1145/2926720 https://dl.acm.org/doi/abs/10.1145/2926720
 
-## title タイトル
+## 0.2. title タイトル
 
 Diversity, Serendipity, Novelty, and Coverage: A Survey and Empirical Analysis of Beyond-Accuracy Objectives in Recommender Systems
 多様性、セレンディピティ、新規性、カバレッジ： 推薦システムにおける精度を超える目標のサーベイと実証分析
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 What makes a good recommendation or good list of recommendations?
 良い推薦文、良い推薦リストとは何か？
@@ -39,14 +39,14 @@ For each reranking strategy, we measure the effects on the other beyond-accuracy
 For instance, we find that rating-based diversity is positively correlated with novelty, and we demonstrate the positive influence of novelty on recommendation coverage.
 例えば、レーティングベースの多様性は新規性と正の相関があり、新規性がレコメンデーションカバレッジに正の影響を与えることを実証している。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 Traditionally, the focus of recommender systems (RS) research has been the accurate prediction of users’ ratings for unseen items.
 従来、レコメンダーシステム（RS）研究の焦点は、未見のアイテムに対するユーザーの評価を正確に予測することであった。
 However, accuracy is not the only important objective of recommendation [McNee et al.2006].
 しかし、推薦の重要な目的は正確さだけではない[McNee et al.2006]。
 In recent years, the focus of RS research has shifted to such objectives as correctly ranking a set of items (known as the learning-to-rank problem [Shi et al.2010]) as well as ensuring that the set of recommended items is diverse [Vargas et al.2014] and that it contains novel items [Oh et al.2011].
-近年、RS研究の焦点は、アイテムの集合を正しくランク付けすること（学習ランク付け問題[Shi et al.2010]として知られている）、推奨アイテムの集合が多様であること[Vargas et al.2014]や新規のアイテムが含まれていること[Oh et al.2011]を保証することなどにシフトしている。
+**近年、RS研究の焦点は、アイテムの集合を正しくランク付けすること（学習ランク付け問題[Shi et al.2010]として知られている）、推奨アイテムの集合が多様であること[Vargas et al.2014]や新規のアイテムが含まれていること[Oh et al.2011]を保証することなどにシフトしている**。
 These qualities are of particular importance in real-life systems since users are most likely to consider only a small set of top-N recommendations.
 このような性質は、現実のシステムにおいて特に重要である。なぜなら、ユーザーはトップNの推薦文の小さなセットしか考慮しない可能性が高いからである。
 It is therefore crucial to make sure that this set is as interesting and engaging as possible.
@@ -58,9 +58,9 @@ RS研究で注目される以前、多様性とその正確さとの関係は、
 Markowitz [1952] introduced the Modern Portfolio Theory where investment is modeled as a tradeoff between risk and expected return.
 マーコウィッツ[1952]は、投資がリスクと期待リターンのトレードオフとしてモデル化される現代ポートフォリオ理論を導入した。
 Maximizing the expected return results in higher investment risk, while diversification of stock portfolios reduces the risk.
-期待リターンを最大化すれば投資リスクは高くなるが、株式ポートフォリオを分散すればリスクは軽減される。
+期待リターンを最大化すれば投資リスクは高くなるが、**株式ポートフォリオを分散すればリスクは軽減される**。
 This idea has been adopted in IR [Carbonell and Goldstein 1998; Clarke et al.2008; Wang and Zhu 2009; Agrawal et al.2009], where it is argued that ranking retrieved items by only their predicted relevance (i.e., maximizing retrieval accuracy) increases the risk of producing results that do not satisfy users because the items tend to be too similar to each other.
-この考え方はIRでも採用されており[Carbonell and Goldstein 1998; Clarke et al.2008; Wang and Zhu 2009; Agrawal et al.2009]、検索されたアイテムを予測される関連性だけでランク付けする（つまり、検索精度を最大化する）ことは、アイテムが互いに類似しすぎる傾向があるため、ユーザーを満足させない結果を生み出すリスクを高めると論じられている。
+この考え方はIRでも採用されており[Carbonell and Goldstein 1998; Clarke et al.2008; Wang and Zhu 2009; Agrawal et al.2009]、検索されたアイテムを予測される関連性だけでランク付けする（つまり、検索精度を最大化する）ことは、**アイテムが互いに類似しすぎる傾向があるため、ユーザーを満足させない結果を生み出すリスクを高める**と論じられている。
 Conversely, diversifying the retrieval results reduces this risk by increasing the chance of introducing items the user will be interested in.
 逆に、検索結果を多様化することで、ユーザーが興味を持つアイテムが紹介される可能性が高くなり、このリスクを減らすことができる。
 In RS research, diversity is becoming an increasingly important topic, with a growing consensus that users are more satisfied with diverse recommendation lists, even if the diversity comes at a cost of some loss of accuracy [Ziegler et al.2005; Shi et al.2012; Vargas et al.2014].
@@ -74,46 +74,49 @@ This objective is frequently mentioned in the IR and RS research literature [Tom
 Until recently, however, few works provided formal definitions of metrics for measuring the serendipity of recommended items.
 しかし最近まで、推奨アイテムのセレンディピティを測定するメトリクスの正式な定義を提供した研究はほとんどなかった。
 This is not surprising, as the notion of an item being surprising or unexpected is difficult to define and measure.
-これは驚くべきことではなく、ある項目が意外であるとか、予期せぬものであるといった概念を定義し、測定することは難しいからである。
+これは驚くべきことではなく、**ある項目が意外であるとか、予期せぬものであるといった概念を定義し、測定することは難しいから**である。
 Novelty is a recommendation quality that seems to be closely related to serendipity [McNee et al.2006].
 新規性は、セレンディピティと密接な関係があると思われる推薦の質である[McNee et al.2006]。
 A novel recommended item is one that is previously unknown to the user.
 斬新なおすすめアイテムとは、ユーザーにとって未知のアイテムである。
 While the definitions may overlap [Zhang 2013], several authors distinguish novelty from serendipity.
-定義は重複しているかもしれないが[Zhang 2013]、いくつかの著者は新規性とセレンディピティを区別している。
+**定義は重複しているかもしれないが[Zhang 2013]、いくつかの著者は新規性とセレンディピティを区別している。**
 Herlocker et al.[2004] argued that an item that is novel to a user is not necessarily serendipitous for that user (it needs only to be unknown to the user), while a serendipitous item must be both novel and surprising; hence, the set of items that are serendipitous to a user is a subset of the set of items that are novel to that user.
-Herlockerら[2004]は、あるユーザーにとって斬新なアイテムは、必ずしもそのユーザーにとってセレンディピティである必要はない（ユーザーにとって未知であればよい）が、セレンディピティなアイテムは斬新であると同時に驚くべきものでなければならないと主張した。したがって、あるユーザーにとってセレンディピティなアイテムの集合は、そのユーザーにとって斬新なアイテムの集合の部分集合である。
+Herlockerら[2004]は、あるユーザーにとって斬新な(novelな)アイテムは、必ずしもそのユーザーにとってセレンディピティである必要はない(ユーザーにとって未知であればよい)が、セレンディピティなアイテムは斬新であると同時に驚くべきものでなければならないと主張した。したがって、**あるユーザにとってセレンディピティなアイテムの集合は、そのユーザにとって斬新な(novelな)アイテムの集合の部分集合**である。
 Adamopoulos and Tuzhilin [2014], on the other hand, defined a new objective (closely related to serendipity)—unexpectedness—and did not require an unexpected item to be novel.
-一方、Adamopoulos and Tuzhilin [2014]は、（セレンディピティと密接に関連する）新しい目的である「意外性」を定義し、意外なアイテムが新規であることを必要としなかった。
+一方、Adamopoulos and Tuzhilin [2014]は、（セレンディピティと密接に関連する）新しい目的である「**意外性(unexpectedness)**」を定義し、意外なアイテムが新規であることを必要としなかった。
 To better distinguish these two objectives, it is increasingly common to define the novelty of an item in a user-independent way, rather than the novelty of a recommended item to a target user.
-この2つの目的をよりよく区別するために、ターゲットユーザーに対する推奨アイテムの新規性ではなく、ユーザーに依存しない方法でアイテムの新規性を定義することが一般的になってきている。
+この2つの目的をよりよく区別するために、**ターゲットユーザに対する推薦アイテムの新規性ではなく、ユーザに依存しない方法でアイテムの新規性を定義することが一般的になってきている**。
 Typically, the novelty of an item is estimated by the inverse of its popularity (e.g., measured by the number of ratings it has received): items with low popularity are more likely to be new to target users [Celma 2009; Zhou et al.2010].
-通常、アイテムの新規性は、そのアイテムの人気度（例えば、そのアイテムが獲得した評価数によって測定される）の逆数によって推定される：人気の低いアイテムは、ターゲットユーザーにとって新しいものである可能性が高い[Celma 2009; Zhou et al.2010]。
+**通常、アイテムの新規性は、そのアイテムの人気度（例えば、そのアイテムが獲得した評価数によって測定される）の逆数によって推定される**：人気の低いアイテムは、ターゲットユーザーにとって新しいものである可能性が高い[Celma 2009; Zhou et al.2010]。
 By this definition, an item with high novelty will not necessarily be serendipitous for a user, and a serendipitous recommendation will not necessarily be novel.
-この定義によれば、新規性の高いアイテムが必ずしもユーザーにとってセレンディピティであるとは限らず、セレンディピティな推薦が必ずしも新規性の高いものであるとは限らない。
+この定義によれば、新規性の高いアイテムが必ずしもユーザーにとってセレンディピティであるとは限らず、セレンディピティな推薦が必ずしも新規性の高いものであるとは限らない。(この定義ではnoveltyはユーザに依存しないから??)
 
 Coverage reflects the degree to which the generated recommendations cover the catalog of available items [Herlocker et al.2004; Ge et al.2010; Adomavicius and Kwon 2012].
-カバレッジは、生成された推奨が利用可能なアイテムのカタログをカバーする度合いを反映する[Herlocker et al.2004; Ge et al.2010; Adomavicius and Kwon 2012]。
+カバレッジは、生成された推薦が利用可能なアイテムのカタログをカバーする度合いを反映する[Herlocker et al.2004; Ge et al.2010; Adomavicius and Kwon 2012]。
 Higher coverage may benefit both system users and business owners—exposing the users to a wider range of recommended items may increase their satisfaction with the system [Adomavicius and Kwon 2012] and also increase overall product sales [Anderson 2006].
-カバレッジが高ければ、システム・ユーザーとビジネス・オーナーの双方にメリットがある。ユーザーに幅広い推奨アイテムを提供することで、システムに対するユーザーの満足度が高まり[Adomavicius and Kwon 2012]、製品全体の売上も増加する[Anderson 2006]。
+**カバレッジが高ければ、システム・ユーザとビジネス・オーナの双方にメリットがある**。ユーザに幅広い推薦アイテムを提供することで、システムに対するユーザの満足度が高まり[Adomavicius and Kwon 2012]、製品全体の売上も増加する[Anderson 2006]。
 In the literature, coverage is often linked to other beyond-accuracy objectives, particularly to novelty [Anderson 2006; Fleder and Hosanagar 2009; Adomavicius and Kwon 2012].
-文献では、カバレッジはしばしば、他の精度以外の目的、特に新規性と関連している［Anderson 2006; Fleder and Hosanagar 2009; Adomavicius and Kwon 2012］。
+文献では、カバレッジはしばしば、他の精度以外の目的、特にnoveltyと関連している［Anderson 2006; Fleder and Hosanagar 2009; Adomavicius and Kwon 2012］。
 However, the relation between these objectives has not been extensively studied.
 しかし、これらの目的間の関係については、これまであまり研究されてこなかった。
+
 It is important to note that beyond-accuracy objectives may be pursued to a different extent in different recommendation scenarios, since the need for diversity, novelty, or serendipity may vary depending on the system’s domain or user’s needs.
-多様性、新規性、セレンディピティの必要性は、システムのドメインやユーザーのニーズによって異なる可能性があるため、異なる推薦シナリオでは、精度を超える目的が異なる程度まで追求される可能性があることに注意することが重要である。
+**多様性、新規性、セレンディピティの必要性は、システムのドメインやユーザーのニーズによって異なる可能性がある**ため、異なる推薦シナリオでは、精度を超える目的が異なる程度まで追求される可能性があることに注意することが重要である.
 For instance, when recommending music, it is not always desirable to recommend unknown or surprising artists, as it may be important to include artists the user is familiar with but has not listened to in a while [Kapoor et al.2015].
-例えば、音楽を推薦する場合、ユーザーがよく知っているがしばらく聴いていないアーティストを含めることが重要な場合があるため、未知のアーティストや意外なアーティストを推薦することが常に望ましいとは限らない[Kapoor et al.2015]。
+例えば、音楽を推薦する場合、ユーザがよく知っているがしばらく聴いていないアーティストを含めることが重要な場合があるため、未知のアーティストや意外なアーティストを推薦することが常に望ましいとは限らない[Kapoor et al.2015]。(ふむふむ、確かに...)
 Indeed, in many domains, including a few familiar items among the recommendations may build trust in the system [Swearingen and Sinha 2001].
-実際、多くの領域において、推薦文の中に馴染みのある項目をいくつか含めることで、システムに対する信頼が高まる可能性がある[Swearingen and Sinha 2001]。
+実際、多くの領域において、推薦文の中に馴染みのあるアイテムをいくつか含めることで、システムに対する信頼が高まる可能性がある[Swearingen and Sinha 2001]。
+
 Moreover, the extent to which these objectives should be pursued may need to be adapted to each user’s needs or preferences.
-さらに、これらの目的をどの程度追求するかは、各ユーザーのニーズや好みに合わせる必要があるかもしれない。
+さらに、**これらの目的をどの程度追求するかは、各ユーザのニーズや好みに合わせる必要があるかもしれない。**
 For instance, when recommending movies, the level of diversity may be adapted to the user’s range of tastes [Shi et al.2012].
-例えば、映画を推薦する場合、多様性のレベルはユーザーの好みの範囲に合わせることができる[Shi et al.2012]。
+例えば、映画を推薦する場合、多様性のレベルはユーザの好みの範囲に合わせることができる[Shi et al.2012]。
 Likewise, the level of recommendation novelty may reflect the extent to which the user is interested in novel items [Oh et al.2011].
-同様に、レコメンデーションの新規性のレベルは、ユーザーが新規のアイテムにどの程度興味を持っているかを反映しているかもしれない[Oh et al.2011]。
+同様に、レコメンデーションの新規性のレベルは、ユーザが新規のアイテムにどの程度興味を持っているかを反映しているかもしれない[Oh et al.2011]。
+
 While the adaptive aspect of beyondaccuracy objectives has not been extensively researched, in the following sections we highlight works that address this important problem.
-beyondaccuracy目標の適応的な側面はあまり研究されていないが、以下のセクションでは、この重要な問題に取り組んでいる作品を紹介する。
+beyond-accuracy目標の適応的な側面はあまり研究されていないが、以下のセクションでは、この重要な問題に取り組んでいる作品を紹介する。
 In this article, we survey the definitions and optimization strategies for each of the objectives, and, using an empirical analysis, we investigate the relationships between them.
 本稿では、各目標の定義と最適化戦略についてサーベイし、実証的分析を用いて各目標間の関係を調査する。
 Our work complements other surveys that cover various topics in RS research, such as recommendation algorithms [Ekstrand et al.2011; Cacheda et al.2011], side information in rating-based recommender systems [Shi et al.2014], and evaluation metrics [Gunawardana and Shani 2009; Bellog´ın et al.2011].
@@ -121,81 +124,89 @@ Our work complements other surveys that cover various topics in RS research, suc
 Recently, Castells et al.[2015] presented a survey closely related to ours.
 最近、Castellsら[2015]が我々の調査と密接に関連する調査を発表した。
 They reviewed different formulations of the diversity and novelty objectives found in the RS literature and analyzed the corresponding metrics.
-彼らは、RSの文献に見られる多様性と新規性の目標のさまざまな定式化をレビューし、対応する指標を分析した。
+彼らは、**RSの文献に見られる多様性と新規性の目標のさまざまな定式化をレビューし、対応する指標を分析した**。
 Compared to the work of Castells et al., we extend the analysis of beyond-accuracy objectives with experiments demonstrating how optimizing one beyond-accuracy criterion affects the other objectives.
-Castellsらの研究と比較して、我々は、精度を超えた目標の分析を拡張し、1つの精度を超えた基準を最適化することが他の目標にどのような影響を与えるかを実証する実験を行った。
+Castellsらの研究と比較して、我々は、精度を超えた目標の分析を拡張し、1つのbeyond-accuracy基準を最適化することが他の目標にどのような影響を与えるかを実証する実験を行った。
 Thus, the contribution of our work is twofold: (1) we provide an extensive review of definitions and optimization techniques for the beyond-accuracy objectives, and (2) we conduct a number of experiments that demonstrate important insights into relationships between diversity, serendipity, novelty, and coverage.
+したがって、我々の研究の貢献は2つある：
+(1)beyond-accuracy目標の定義と最適化技術に関する広範なレビューを提供する、
 (2)多様性、セレンディピティ、新規性、カバレッジの関係について重要な洞察を示す実験を数多く行った。
 We hope that this work will become a useful reference for both researchers and practitioners working on beyond-accuracy objectives in recommender systems and will contribute to further growth of this research area.
-本研究が、推薦システムにおける精度を超えた目標に取り組む研究者と実務家の双方にとって有用な参考文献となり、この研究領域のさらなる発展に寄与することを期待している。
+本研究が、**推薦システムにおけるbeyond-accuracy目標に取り組む研究者と実務家の双方にとって有用な参考文献となり**、この研究領域のさらなる発展に寄与することを期待している。
+
 Finally, we note that the terminology concerning beyond-accuracy objectives in the RS literature is not consistent.
-最後に、RSの文献における精度を超える目標に関する用語は一貫していないことに注意したい。
+最後に、**RSの文献におけるbeyond-accuracy目標に関する用語は一貫していない**ことに注意したい。
 For instance, the term diversity is often used in reference to the system’s ability to recommend different items to different users, or to the portion of the item catalog recommended across all users (i.e., coverage).
-例えば、多様性という用語は、異なるユーザーに異なるアイテムを推奨するシステムの能力、またはすべてのユーザーにわたって推奨されるアイテムカタログの部分（すなわち、カバレッジ）に関して使用されることが多い。
+例えば、多様性という用語は、異なるユーザに異なるアイテムを推薦するシステムの能力、またはすべてのユーザにわたって推薦されるアイテムカタログの部分(すなわち、カバレッジ)に関して使用されることが多い。
 In the ensuing sections, we cite existing works in the places where they best fit conceptually, regardless of the terminology used by the authors.
 以下のセクションでは、著者の使用する用語に関係なく、概念的に最も適している箇所で既存の作品を引用する。
 
-# Diversity 多様性
+# 2. Diversity 多様性
 
 In this section, we first discuss the definition of diversity and the metrics proposed for measuring the diversity of recommendations.
-このセクションでは、まず多様性の定義と、推奨の多様性を測定するために提案された指標について説明する。
+このセクションでは、まず多様性の定義と、推薦の多様性を測定するために提案された指標について説明する。
 Subsequently, we review the techniques for increasing diversity.
 続いて、多様性を高めるためのテクニックをレビューする。
 
-## Defining and Measuring Diversity 多様性の定義と測定
+## 2.1. Defining and Measuring Diversity 多様性の定義と測定
 
 The notion of diversity in recommender systems originates from ideas in information retrieval research.
 レコメンダーシステムにおける多様性という概念は、情報検索研究のアイデアに由来する。
 In the IR literature, it has been acknowledged that the value of a retrieved document is influenced not just by the document’s similarity to a query (its relevance), but also by its similarity to other documents retrieved with it [Carbonell and Goldstein 1998].
-IRの文献では、検索された文書の価値は、クエリに対する文書の類似性（関連性）だけでなく、一緒に検索された他の文書との類似性にも影響されることが認められている[Carbonell and Goldstein 1998]。
+IRの文献では、検索された文書の価値は、**クエリに対する文書の類似性（関連性）だけでなく、一緒に検索された他の文書との類似性にも影響される**ことが認められている[Carbonell and Goldstein 1998]。(i.e. 検索文書間の類似性もユーザ体験には重要って意味か...!)
 In information retrieval, the role of diversity is typically associated with possible ambiguity in a user’s query—a search term jaguar may refer to the car, the animal, or the classic Fender guitar, for example [Clarke et al.2008].
-情報検索において、多様性の役割は一般的に、ユーザーのクエリに含まれる可能性のある曖昧さと関連している。例えば、検索語のジャガーは、車、動物、またはクラシックなフェンダーギターを指すかもしれない[Clarke et al.2008]。
+情報検索において、多様性の役割は一般的に、**ユーザのクエリに含まれる可能性のある曖昧さと関連**している。例えば、検索語のジャガーは、車、動物、またはクラシックなフェンダーギターを指すかもしれない[Clarke et al.2008].
 In the absence of disambiguating information, it is impossible to know which topic the user is interested in.
-曖昧さをなくす情報がない場合、ユーザーがどのトピックに興味があるのかを知ることは不可能である。
+曖昧さをなくす情報がない場合、ユーザがどのトピックに興味があるのかを知ることは不可能である。
 Thus, ensuring that the list of retrieved documents covers a broad area of the information space increases the chance of satisfying the user’s information need.
-このように、検索された文書のリストが情報空間の広い領域をカバーするようにすることで、ユーザーの情報ニーズを満たす可能性が高まる。
+このように、検索された文書のリストが情報空間の広い領域をカバーするようにすることで、ユーザの情報ニーズを満たす可能性が高まる。
 This can be achieved by optimizing the diversity of the document list, which can be measured in terms of features (e.g., document types, information facts, topics) that the documents in the list possess [Carbonell and Goldstein 1998; Clarke et al.2008; Wang and Zhu 2009; Agrawal et al.2009].
 これは、文書リストの多様性を最適化することで達成できる。多様性は、リスト内の文書が持つ特徴（文書の種類、情報ファクト、トピックなど）で測ることができる[Carbonell and Goldstein 1998; Clarke et al.2008; Wang and Zhu 2009; Agrawal et al.2009]。
 
-In recommender systems research, Smyth and McClave [2001] suggested measuring the diversity of a recommendation list R (|R| > 1) as the average pairwise distance between items in the list:
-R| > 1) as the average pairwise distance between items in the list:
+In recommender systems research, Smyth and McClave [2001] suggested measuring the diversity of a recommendation list $R(|R| > 1)$ as the average pairwise distance between items in the list:
+推薦システムの研究において、SmythとMcClave [2001]は、推薦リストの多様性 $R(|R| > 1)$ をリスト内のアイテム間の平均ペア間距離として測定することを提案した:
 
 $$
+Diversity(R) = \frac{
+    \sum_{i \in R} \sum_{j \in R\setminus {i}} dist(i, j)
+    }{
+        |R|(|R| - 1)
+    }
 \tag{1}
 $$
 
 Similarly, Ziegler et al.[2005] defined the “intra-list similarity” metric as the aggregate (rather than the average) pairwise similarity of items in the list, with higher scores denoting lower diversity of the list.
-同様に、Zieglerら[2005]は「リスト内類似度」指標をリスト内の項目の（平均ではなく）ペアワイズ類似度の総和と定義し、スコアが高いほどリストの多様性が低いことを示す。
+同様に、Zieglerら[2005]は**intra-list similarity(リスト内類似度)**指標をリスト内のアイテムの(平均ではなく)ペアワイズ類似度の総和と定義し、スコアが高いほどリストの多様性が低いことを示す.(まあ算出方法が違うだけで、意味合いとしては同じなのかな.)
 
 Measuring diversity as the average or aggregate dissimilarity of items in the recommendation list has been widely adopted in the RS literature.
-多様性の測定は、推奨リスト内の項目の平均的または集約的な非類似度として、RSの文献で広く採用されている。
+多様性の測定は、推薦リスト内の項目の平均的または集約的な非類似度として、RSの文献で広く採用されている。
 What often differs is the item distance function that is used (dist(i, j) in Equation (1)).
-しばしば異なるのは、使用される項目距離関数である（式（1）のdist(i, j)）。
+しばしば異なるのは、使用されるアイテム距離関数である（式（1）の $dist(i, j)$ ）.
 For instance, where items are represented by content descriptors, the distance between items has been measured using a taxonomy-based metric [Ziegler et al.2005], the complement of Jaccard similarity [Vargas and Castells 2011], or the complement of cosine similarity on term vectors [Ekstrand et al.2014].
-例えば、項目がコンテンツ記述子によって表現される場合、項目間の距離は、分類法に基づくメトリック[Ziegler et al.2005]、Jaccard類似度の補数[Vargas and Castells 2011]、または用語ベクトル上の余弦類似度の補数[Ekstrand et al.2014]を使用して測定されている。
+例えば、**アイテムがcontent descriptors(なんだろう...?)によって表現される場合**、アイテム間の距離は、分類法に基づくメトリック[Ziegler et al.2005]、Jaccard類似度の補数[Vargas and Castells 2011]、または用語ベクトル上のcosine類似度の補数[Ekstrand et al.2014]を使用して測定されている。
 Alternatively, where items are represented by rating vectors, item distance has been measured using Hamming distance [Kelly and Bridge 2006], the complement of Pearson correlation [Vargas and Castells 2011], or the complement of cosine similarity [Ribeiro et al.2012].
-あるいは、項目が評価ベクトルで表現されている場合、項目距離はハミング距離[Kelly and Bridge 2006]、ピアソン相関の補数[Vargas and Castells 2011]、コサイン類似度の補数[Ribeiro et al.2012]を使って測定されている。
+あるいは、**アイテムが評価ベクトルで表現されている場合**、アイテム距離はハミング距離[Kelly and Bridge 2006]、ピアソン相関の補数[Vargas and Castells 2011]、コサイン類似度の補数[Ribeiro et al.2012]を使って測定されている。
 
 Yu et al.[2009] suggested measuring item distance using the neighborhoods that are used for rating prediction in collaborative filtering (CF).
-Yuら[2009]は協調フィルタリング(CF)の評価予測に用いられる近傍領域を用いて項目距離を測定することを提案している。
+Yuら[2009]は協調フィルタリング(CF)の評価予測に用いられる近傍領域を用いてアイテム距離を測定することを提案している。
 In the case of item-based CF, each recommended item is represented by a neighborhood of items, while in the case of user-based CF, an item is represented by a neighborhood of users who rated the item.
-アイテムベースCFの場合、各推奨アイテムはアイテムの近傍によって表現され、ユーザーベースCFの場合、アイテムはそのアイテムを評価したユーザーの近傍によって表現される。
+アイテムベースCFの場合、各推薦アイテムベクトルはアイテムの近傍によって表現され、ユーザベースCFの場合、アイテムベクトルはそのアイテムを評価したユーザの近傍によって表現される.
 Item distance can then be computed as, for example, the complement of Jaccard or cosine similarity between the two items’ neighborhoods.
 アイテム距離は、例えば、2つのアイテムの近傍間のJaccardまたはcosine類似度の補数として計算することができる。
 
 Finally, item distance can also be obtained from the latent feature vectors in matrix factorization approaches [Vargas et al.2011; Willemsen et al.2011; Shi et al.2012; Su et al.2013].
-最後に、項目距離は行列因数分解アプローチで潜在特徴ベクトルから求めることもできる[Vargas et al.2011; Willemsen et al.2011; Shi et al.2012; Su et al.2013]。
+最後に、アイテム距離は行列因数分解アプローチで潜在特徴ベクトルから求めることもできる[Vargas et al.2011; Willemsen et al.2011; Shi et al.2012; Su et al.2013]。
 
 Diversity metrics based on item dissimilarity were criticized by Vargas et al.[2014], who argued that the metrics fail to ensure that lists with high metric values will also be perceived by users as diverse.
-項目の非類似度に基づく多様性メトリクスは、Vargasら[2014]によって批判され、メトリクス値が高いリストも多様であるとユーザーに認識されることを保証できないと主張した。
+**アイテムの非類似度に基づく多様性メトリクスは、Vargasら[2014]によって批判され、メトリクス値が高いリストも多様であるとユーザに認識されることを保証できない**と主張した。(お！なるほど...!)
 In domains where items can be described by sets of genres, Vargas et al.suggested using the genres for defining the diversity of an item list, arguing that genre diversity better corresponds to users’ perception of diverse recommendations.
-アイテムがジャンルのセットで記述できるドメインでは、Vargasらは、ジャンルの多様性が多様なレコメンデーションに対するユーザーの知覚によりよく対応するとして、アイテムリストの多様性を定義するためにジャンルを使用することを提案した。
+アイテムがジャンルの集合で記述できるドメインでは、Vargasらは、ジャンルの多様性が多様なレコメンデーションに対するユーザの知覚によりよく対応するとして、**アイテムリストの多様性を定義するためにジャンルを使用すること**を提案した.
 They proposed three criteria that a genre-based diversity metric should capture—coverage, redundancy, and size awareness.
-彼らは、ジャンルに基づく多様性指標が捉えるべき3つの基準（網羅性、冗長性、サイズ認識）を提案した。
+彼らは、**ジャンルに基づく多様性指標が捉えるべき3つの基準**を提案した:coverage(網羅性), redundancy(冗長性), size awareness(サイズ認識)を提案した。
 In other words, a diversity metric value should reflect how well a list of items covers the genres a user is interested in and how well genre redundancies are avoided.
-言い換えれば、多様性メトリックの値は、アイテムのリストがユーザーの関心のあるジャンルをどれだけカバーしているか、ジャンルの冗長性がどれだけ回避されているかを反映するものでなければならない。
+言い換えれば、多様性メトリックの値は、**アイテムのリストがユーザの関心のあるジャンルをどれだけカバーしているか**、**ジャンルの冗長性がどれだけ回避されているか**を反映するものでなければならない。(この文脈での冗長性ってどういう意味だろう...??)
 Moreover, it should be sensitive to the size of the recommendation list, since coverage and redundancy need to be treated differently for lists of different length.
-さらに、推薦リストの長さが異なると、カバー率と冗長性の扱いが異なるため、推薦リストのサイズに敏感でなければならない。
+さらに、推薦リストの長さが異なると、カバー率と冗長性の扱いが異なるため、推薦リストのサイズに敏感でなければならない。(なるほど.**推薦リストのサイズを考慮したジャンル多様性metricである必要がある**、と...!)
 Vargas et al.claimed that the optimal distribution of genres (in terms of diversity) is achieved when sampling items randomly.
 Vargasらは、アイテムを無作為にサンプリングすることで、（多様性の点で）最適なジャンル分布が達成されると主張している。
 This idea is similar to the “diversity by proportionality” information retrieval approach by Dang and Croft [2012], who considered a list of retrieved documents most diverse when the number of documents covering each topic is proportional to the topic’s popularity in the document corpus.
@@ -205,82 +216,86 @@ Vargasらは、推薦リストにおけるジャンルの多様性を測定す�
 They proposed a “binomial diversity” metric that captures how closely the genre distribution in the item list matches the distribution that would be obtained by randomly sampling items from the dataset.
 彼らは、アイテムリストのジャンル分布が、データセットからランダムにアイテムをサンプリングした場合に得られる分布にどれだけ近いかを捉える「二項多様性」メトリックを提案した。
 Since the balance between the diversity and accuracy of results is a widely discussed topic in information retrieval and recommender systems research, some works defined metrics that combine diversity and relevance.
-情報検索や推薦システムの研究において、結果の多様性と正確性のバランスは広く議論されているトピックであるため、多様性と関連性を組み合わせたメトリクスを定義した研究もある。
+情報検索や推薦システムの研究において、結果の多様性と正確性のバランスは広く議論されているトピックであるため、**多様性と関連性(=relevance=accuracy-likeなmetric)を組み合わせたメトリクスを定義した研究もある**。
 For instance, in IR research, Clarke et al.[2008] described α-nDCG—a diversity-aware ranking measure, where the score of retrieved documents is penalized if they share features with documents ranked higher in the list.
 例えば、IR研究において、Clarkeら[2008]はα-nDCGという多様性を考慮したランキング尺度を提案している。
 In RS research, Vargas and Castells [2011] proposed a framework in which the diversity of a recommendation list can be computed with a relevance and ranking discount.
-RS研究では、VargasとCastells [2011]が、推薦リストの多様性を関連性とランキング割引で計算できるフレームワークを提案した。
+RS研究では、VargasとCastells [2011]が、推薦リストの多様性をrelevanceとranking discount で計算できるフレームワークを提案した。
 The authors argued that irrelevant recommendations add little to the perceived diversity of a recommender, making it necessary to weight the diversity score with the items’ relevance.
-著者らは、関連性のないレコメンデーションはレコメンデーションの多様性にほとんど寄与しないため、アイテムの関連性で多様性スコアを重み付けする必要があると主張した。
+著者らは、relevanceのないレコメンデーションはレコメンデーションの多様性にほとんど寄与しないため、**アイテムのrelevanceで多様性スコアを重み付けする必要があると主張した**。
 
 Other diversity definitions, not referring to the quality of a single recommendation list, can also be found in the RS literature.
 単一の推薦リストの品質に言及しない多様性の定義は、RSの文献にも見られる。
 For instance, Lathia et al.[2010] analyzed how recommendations generated for the same user change over time.
 例えば、Lathiaら[2010]は、同じユーザーに対して生成されたレコメンデーションが時間とともにどのように変化するかを分析した。
 They defined “temporal diversity” as the normalized set theoretic difference between top-N recommendation lists received by the same user at two different time points.
-彼らは「時間的多様性」を、2つの異なる時点で同じユーザーが受け取ったトップNの推薦リスト間の正規化された集合論的差異と定義した。
+彼らは「**temporal diversity(時間的多様性)**」を、2つの異なる時点で同じユーザが受け取ったトップNの推薦リスト間の正規化された集合論的差異と定義した。
 Averaging the values across all users gives an estimate of the system’s ability to provide users with diverse recommendations over time.
-全ユーザーの値を平均することで、システムがユーザーに多様なレコメンデーションを提供する能力の推定値が得られる。
+全ユーザの値を平均することで、システムがユーザーに多様なレコメンデーションを提供する能力の推定値が得られる。
 Diversity has also been defined from a system-centric perspective, for example, as the average pairwise distance between recommendation lists generated for different users [Zhou et al.2010; Liu et al.2012].
-多様性は、システム中心の観点からも定義されており、例えば、異なるユーザーに対して生成された推薦リスト間の平均ペアワイズ距離として定義されている[Zhou et al.2010; Liu et al.2012]。
+多様性は、**system-centric perspective(システム中心の観点)からも定義されており**、例えば、異なるユーザに対して生成された推薦リスト間の平均ペアワイズ距離として定義されている[Zhou et al.2010; Liu et al.2012]。
 These definitions do not fit the view of diversity that we adopt in this article.
 これらの定義は、本稿で採用するダイバーシティの考え方にはそぐわない。
 Therefore, in the next section, we focus on works that optimize the diversity of an individual user’s recommendation list.
-そこで次のセクションでは、個々のユーザーの推薦リストの多様性を最適化する研究に焦点を当てる。
+そこで次のセクションでは、個々のユーザの推薦リストの多様性を最適化する研究に焦点を当てる。
 
-## Increasing Diversity 多様性を高める
+## 2.2. Increasing Diversity 多様性を高める
 
 Most diversification techniques in the RS (and also IR) literature are based on reranking the result lists generated by existing recommendation (and retrieval) algorithms to increase their diversity while maintaining relevance.
-RS（およびIR）の文献における多様化技術のほとんどは、既存の推薦（および検索）アルゴリズムによって生成された結果リストを、関連性を維持しながら多様性を高めるために再ランク付けすることに基づいている。
+RS（およびIR）の文献における多様化技術のほとんどは、既存の推薦（および検索）アルゴリズムによって生成された結果リストを、**関連性を維持しながら多様性を高めるために再ランク付けする**ことに基づいている。
 Another group of approaches includes works that define new models for diversity-oriented recommendation.
 また、多様性を重視した推薦のための新しいモデルを定義した研究もある。
 We discuss both groups of techniques in detail.
 この2つのテクニックについて詳しく説明する。
 
-### Recommendation Reranking for Diversity. 多様性のための再ランキング
+### 2.2.1. Recommendation Reranking for Diversity. 多様性のための再ランキング
 
 The reranking diversification approaches produce a list of recommended items R of size N from a larger set of candidate recommendations C (|C| > N).
-C| > N).
+リランキング多様化アプローチは、より大きな推薦候補の集合 $C(|C| > N)$ から、サイズNの推薦項目のリストRを生成する。
 The candidates C are generated by an existing recommendation algorithm (e.g., user-based collaborative filtering), and hence have been chosen for their relevance.
-候補Cは、既存の推薦アルゴリズム（例えば、ユーザーベースの協調フィルタリング）によって生成され、したがって、その関連性のために選択されている。
+候補Cは、既存の推薦アルゴリズム(例えば、ユーザーベースの協調フィルタリング)によって生成され、したがって、そのrelevanceのために選択されている。($C$ は relevanceのみに基づいて生成された推薦アイテムリスト...!)
 Reranking typically follows a greedy strategy: at each iteration, the item in C that maximizes an objective function is moved from C to result list R.
-各反復において、目的関数を最大化するCの項目がCから結果リストRに移動される。
+各反復において、目的関数を最大化する様に$C$の項目が$C$から結果リスト$R$に移動される。
 The objective function is defined as a combination of an item’s relevance and its relative diversity with respect to items already in the result list R.
-目的関数は、アイテムの関連性と、すでに結果リストRにあるアイテムに対する相対的な多様性の組み合わせとして定義される。
+**目的関数は、アイテムのrelevanceと、すでに結果リストRにあるアイテムに対する相対的な多様性の組み合わせとして定義される**。
 The greedy reranking is illustrated in Algorithm 1.
-貪欲なリランキングはアルゴリズム1に示されている。
+貪欲な reranking はアルゴリズム1に示されている.
+
+![figure 1]()
 
 One of the early diversification techniques to use greedy reranking is the Maximal Marginal Relevance (MMR) approach proposed by Carbonell and Goldstein [1998] in the IR literature.
-貪欲な再ランク付けを使用する初期の多様化手法の1つは、IRの文献でCarbonellとGoldstein [1998]によって提案された最大限界関連性（MMR）アプローチである。
+貪欲な再ランク付けを使用する初期の多様化手法の1つは、IRの文献でCarbonellとGoldstein [1998]によって提案された**最大限界関連性(Maximal Marginal Relevance, MMR)アプローチ**である。
 The MMR approach defined the objective function fobj as a linear combination of the item’s relevance and the negative of its maximum similarity to items already in the result list.
-MMRアプローチでは、目的関数fobjをアイテムの関連性と、すでに結果リストにあるアイテムとの最大類似度の負の線形結合として定義した。
+MMRアプローチでは、目的関数 $f_{obj}$ をアイテムの関連性と、すでに結果リストにあるアイテムとの最大類似度の負の線形結合として定義した。
 The greedy reranking technique has been adopted by a number of recommendation approaches [Smyth and McClave 2001; Ziegler et al.2005; Kelly and Bridge 2006], which defined the objective reranking function as a linear combination of the item’s relevance and its average distance to items already in the result list:
-SmythとMcClave 2001; Ziegler et al.2005; Kelly and Bridge 2006]は、アイテムの関連性と、すでに結果リストにあるアイテムとの平均距離の線形結合として、目的の再ランク関数を定義した：
+貪欲なリランキング技術は、多くの推薦アプローチで採用されている [Smyth and McClave 2001; Ziegler et al.2005; Kelly and Bridge 2006]、
+これは、アイテムのrelevanceと、すでに結果リストにあるアイテムとの平均距離の線形結合として、客観的な再ランク関数を定義した：
 
 $$
+f_{obj}(i, R) = \alpha \cdot rel(i) + (1 - \alpha) \frac{1}{|R|} \sum_{j \in R} dist(i,j)
 \tag{2}
 $$
 
 In the equation, rel(i) denotes the item’s relevance and parameter α controls the tradeoff between the influence of relevance and diversity in the reranking procedure.
-式中、rel(i)は項目の関連性を表し、パラメータαは再ランク付け手順における関連性と多様性の影響のトレードオフを制御する。
+式中、$rel(i)$ は項目の関連性を表し、パラメータ $\alpha$ は再ランク付け手順における関連性と多様性の影響のトレードオフを制御する。
 Similarly to the diversity metric (see Section 2.1, Equation (1)), the distance between two items dist(i, j) can be computed using a variety of approaches.
-多様性メトリック（セクション2.1、式(1)参照）と同様に、2つのアイテム間の距離dist(i, j)は、様々なアプローチを用いて計算することができる。
+多様性メトリック（セクション2.1、式(1)参照）と同様に、2つのアイテム間の距離 $dist(i, j)$ は、様々なアプローチを用いて計算することができる。
 Smyth and McClave [2001] applied the technique in a case-based recommender where, given a user’s query, the database of cases is searched to retrieve the most relevant cases.
 Smyth and McClave [2001]は、ユーザのクエリが与えられると、最も関連性の高いケースを検索するためにケースのデータベースが検索されるケースベースのレコメンダーにこの技術を適用した。
 In this setting, rel(i) represents the similarity between the user’s query and a case, while dist(i, j) is the complement of the similarity between two cases.
 この設定において、rel(i)はユーザーのクエリとケースの類似度を表し、dist(i, j)は2つのケースの類似度の補数である。
 Ziegler et al.[2005] applied the reranking technique for book recommendation, where the list of recommendations is generated based on the user’s rating profile (i.e., using a CF algorithm).
-Zieglerら[2005]は書籍推薦にリランキング技術を応用し、ユーザーの評価プロファイルに基づいて推薦リストを生成している（つまりCFアルゴリズムを使っている）。
+Zieglerら[2005]は書籍推薦にリランキング技術を応用し、ユーザの評価プロファイルに基づいて推薦リストを生成している(つまりCFアルゴリズムを使っている).
 The authors defined rel(i) as the item’s relevance predicted by the recommender, and dist(i, j) as the distance between two items, this being obtained from a genre taxonomy-based metric.
-著者らはrel(i)をレコメンダーによって予測されたアイテムの関連性と定義し、dist(i, j)を2つのアイテム間の距離と定義した。
+著者らは $rel(i)$ をレコメンダーによって予測されたアイテムの関連性と定義し、 $dist(i, j)$ を2つのアイテム間の距離と定義した。
 Ziegler et al.were also the first to conduct a user study analyzing the impact of diversification on user satisfaction with the recommendation list (see Section 6).
-また、Zieglerらは、多様化が推奨リストに対するユーザーの満足度に与える影響を分析した最初のユーザー研究を行った（セクション6参照）。
+また、Zieglerらは、多様化が推薦リストに対するユーザの満足度に与える影響を分析した最初のユーザー研究を行った（セクション6参照）。
 Kelly and Bridge [2006] applied the greedy reranking strategy in a conversational CF recommender, where recommendations are presented to a user through a series of interaction cycles—after receiving a set of recommendations, the user provides feedback, which influences the next set of recommendations.
-KellyとBridge [2006]は、会話型CFレコメンダーに貪欲な再ランク戦略を適用し、レコメンデーションが一連のインタラクションサイクルを通じてユーザーに提示される。
+KellyとBridge [2006]は、会話型CFレコメンダーに貪欲な再ランク戦略を適用し、レコメンデーションが一連のインタラクションサイクルを通じてユーザに提示される。
 The dialog is repeated until the user is satisfied with the provided recommendations.
-このダイアログは、ユーザーが提供された推薦文に満足するまで繰り返される。
+このダイアログは、ユーザが提供された推薦文に満足するまで繰り返される。
 The authors proposed to diversify the set of recommendations at each interaction cycle, with rel(i) as the predicted item’s relevance and dist(i, j) computed as the normalized Hamming distance of the two items’ binary rating vectors.
-著者らは、rel(i)を予測されたアイテムの関連性、dist(i, j)を2つのアイテムの2値評価ベクトルの正規化ハミング距離として計算し、各交流サイクルで推薦のセットを多様化することを提案した。
+著者らは、rel(i)を予測されたアイテムの関連性、$dist(i, j)$ を2つのアイテムの2値評価ベクトルの正規化ハミング距離()として計算し、各交流サイクルで推薦のセットを多様化することを提案した。
 The setting of conversational recommendations poses additional challenges for result diversification.
 会話型レコメンデーションの設定は、結果の多様化にとってさらなる課題となる。
 McGinty and Smyth [2003] pointed out that the level of diversity can be varied in different recommendation cycles.
@@ -293,8 +308,9 @@ If the user selects the carry-over item again, the system concludes that no prog
 ユーザーがキャリーオーバーの項目を再度選択した場合、システムはユーザーの目標に向けた進展がなかったと判断し、次のサイクルでさらに多様性を注入する。
 If, however, the user selects a recommendation different from the carry-over item, the system assumes positive progress has been made and generates more similar recommendations for the next cycle.
 しかし、ユーザーが繰り越し項目とは異なる推薦を選択した場合、システムは積極的な進歩があったとみなし、次のサイクルに向けてより類似した推薦を生成する。
+
 Recent work on recommendation reranking for diversity has focused on designing more advanced objective functions that combine item relevance and diversity.
-多様性を考慮したレコメンデーション・リランキングに関する最近の研究では、アイテムの関連性と多様性を組み合わせた、より高度な目的関数の設計に焦点が当てられている。
+多様性を考慮したレコメンデーション・リランキングに関する最近の研究では、**アイテムの関連性と多様性を組み合わせた、より高度な目的関数の設計に焦点が当てられている**。
 For example, Vargas et al.[2011] suggested applying diversification techniques and metrics from IR research to the recommender systems domain.
 例えば、Vargasら[2011]は、IR研究の多様化技術や指標をレコメンダーシステム領域に適用することを提案している。
 They adopted the objective function from the IA-Select approach proposed by Agrawal et al.[2009].
@@ -308,11 +324,12 @@ IA-Selectモデルをレコメンダー設定に適応させるために、Varga
 Other recent reranking work by Vargas et al.[2014] proposed a “binomial diversity” metric to measure genre diversity in a recommendation list (see previous section).
 その他、Vargasら[2014]による最近のリランキング研究では、推薦リストにおけるジャンルの多様性を測定する「二項多様性」メトリックが提案されている（前節参照）。
 The authors used greedy reranking with an objective function that combines item relevance with its relative binomial diversity (i.e., the difference in the binomial diversity of the result set before and after adding the item).
-著者らは、項目の関連性と相対的な二項多様性（すなわち、項目を追加する前と後の結果集合の二項多様性の差）を組み合わせた目的関数を持つ貪欲な再ランク付けを使用した。
+著者らは、項目の関連性と相対的な二項多様性（すなわち、アイテムを追加する前と後の結果集合の二項多様性の差）を組み合わせた目的関数を持つ貪欲な再ランク付けを使用した.(reranking前後で比較するようなイメージ...??)
+
 Barraza-Urbina et al.[2015] proposed another formulation of the objective function for the greedy reranking strategy.
 Barraza-Urbinaら[2015]は、貪欲なリランキング戦略に対する目的関数の別の定式化を提案した。
 They suggested explicitly controlling the level to which diversification promotes items that are dissimilar to the user’s profile items.
-彼らは、多様化がユーザーのプロファイル項目と異なる項目を促進するレベルを明示的に制御することを提案した。
+彼らは、多様化がユーザーのプロファイルと異なる項目を促進するレベルを明示的に制御することを提案した。
 This was achieved by multiplying the diversity component ( 1 |R| j∈R dist(i, j) in Equation (2)) by a weighted combination of exploration and exploitation scores for item i: β · xploit(i) + (1 − β) · xplore(i).
 R| j∈R dist(i, j) in Equation (2)) by a weighted combination of exploration and exploitation scores for item i: β · xploit(i) + (1 − β) · xplore(i).
 The exploitation score xploit(i) measures the probability that items in the user’s profile that are similar to i have been highly rated by the user, and the exploration score xplore(i) captures the item’s average dissimilarity from the items in the user’s profile.
@@ -324,13 +341,13 @@ There are also reranking techniques that do not use a greedy reranking strategy.
 Typically, they rely on solving optimization problems to find the optimal ranking for a list of candidate recommendations.
 一般的には、最適化問題を解くことで、推薦候補リストの最適なランキングを見つける。
 For instance, Zhang and Hurley [2008] used an item-based CF approach to compute an item-to-item similarity matrix and then solved a number of optimization problems to find the set of recommended items that maximizes the diversity while maintaining a certain level of accuracy.
-例えば、ZhangとHurley [2008]は、項目ベースのCFアプローチを使って項目間の類似度行列を計算し、その後、一定の精度を維持しながら多様性を最大化する推奨項目の集合を見つけるために多くの最適化問題を解いた。
+例えば、ZhangとHurley [2008]は、項目ベースのCFアプローチを使って項目間の類似度行列を計算し、その後、一定の精度を維持しながら多様性を最大化する推薦項目の集合を見つけるために多くの最適化問題を解いた。
 The authors used the term “item novelty” to denote the amount of additional diversity that an item brings to the recommendation set.
-著者らは、あるアイテムが推薦セットにもたらす追加的な多様性の量を示すために、「アイテムの新規性」という用語を使用した。
+著者らは、あるアイテムが推薦セットにもたらす追加的な多様性の量を示すために、“item novelty"という用語を使用した。
 Jambor and Wang [2010] proposed a generic constrained optimization framework that supports multiple beyond-accuracy objectives.
 Jambor and Wang [2010]は、複数の精度を超える目標をサポートする汎用的な制約付き最適化フレームワークを提案した。
 The authors suggested predicting item relevance scores using existing recommendation techniques and weighting them with utility weights.
-著者らは、既存の推薦技術を用いて項目の関連性スコアを予測し、効用重みで重み付けすることを提案した。
+著者らは、既存の推薦技術を用いて項目の関連性スコアを予測し、utility weights(効用重み)で重み付けすることを提案した。
 Item relevance is specified as the main objective in the framework, and additional constraints can be defined for the utility weights to optimize for diversity or novelty (Section 4).
 アイテムの関連性は、フレームワークの主な目的として指定され、多様性や新規性を最適化するために、ユーティリティの重みに追加の制約を定義することができる（セクション4）。
 
@@ -347,18 +364,18 @@ Since the three objectives are potentially conflicting, the approach selected th
 Diversity and novelty were defined using the rank-aware metrics proposed by Vargas and Castells [2011].
 多様性と新規性は、Vargas and Castells [2011]によって提案されたランクを意識した測定基準を用いて定義された。
 
-### Diversity Modeling. 多様性のモデリング。
+### 2.2.2. Diversity Modeling. 多様性のモデリング。
 
 The reranking techniques described in the previous section treat recommendation algorithms as a “black box.” They work by postprocessing lists of items that are generated by the recommendation algorithms.
 前節で説明したリランキング技術は、推薦アルゴリズムを "ブラックボックス "として扱う。それらは、推薦アルゴリズムによって生成されたアイテムのリストを後処理することによって機能する。
 An obvious advantage of the reranking techniques is their ease of deployment in existing recommender systems, where a diversification component may be incorporated alongside existing recommendation algorithms and the level of diversification can be explicitly controlled.
-リランキング技術の明らかな利点は、既存の推薦システムに容易に導入できることであり、多様化要素を既存の推薦アルゴリズムと一緒に組み込むことができ、多様化のレベルを明示的に制御することができる。
+**リランキング技術の明らかな利点は、既存の推薦システムに容易に導入できることであり、多様化要素を既存の推薦アルゴリズムと一緒に組み込むことができ、多様化のレベルを明示的に制御することができる**。
 However, there is a growing body of research that addresses the diversification problem by defining new recommendation algorithms that directly optimize for diversity when generating recommendations.
-しかし、推奨を生成する際に多様性を直接的に最適化する新しい推奨アルゴリズムを定義することで、多様化問題に取り組む研究が増えている。
+しかし、推薦を生成する際に多様性を直接的に最適化する新しい推薦アルゴリズムを定義することで、多様化問題に取り組む研究が増えている。(なんで?? rerankingアプローチで良くない?)
 These approaches mostly extend matrix factorization techniques, which have become the state-of-the-art recommendation methods in recent years.
 これらのアプローチは、近年最先端の推薦手法となっている行列分解法を拡張したものである。
 For instance, Shi et al.[2012] combined matrix factorization with the portfolio theory from IR proposed by Wang and Zhu [2009] (whose work in turn was inspired by the Modern Portfolio Theory from economics [Markowitz 1952]).
-例えば、Shiら[2012]は、WangとZhu[2009]によって提案されたIRからのポートフォリオ理論（その研究は、経済学からの現代ポートフォリオ理論[Markowitz 1952]に触発されている）に行列分解を組み合わせた。
+例えば、Shiら[2012]は、WangとZhu[2009]によって提案された**IRからのポートフォリオ理論**（その研究は、経済学からの現代ポートフォリオ理論[Markowitz 1952]に触発されている）に行列分解を組み合わせた。
 The IR portfolio theory considers the predicted document relevance as an uncertain outcome whose expected value may be over- or underestimated (due to query ambiguity, incomplete user profile, imperfect retrieval algorithm, etc.).Given the uncertainty of document retrieval, a probabilistic model is used to represent the expected overall relevance of the retrieved document list and its variance.
 IRポートフォリオ理論では、予測される文書の関連性は、（クエリの曖昧さ、不完全なユーザプロファイル、不完全な検索アルゴリズムなどのために）期待値が過大または過小評価される可能性のある不確実な結果と考えられている。
 The variance of the list represents the likelihood that the relevance of the documents was estimated incorrectly and is computed using the covariance of document relevance scores for each document pair in the list.
@@ -401,9 +418,9 @@ Diversity of a set is included in the model through a “diversity bias” compo
 The similarity of an item pair is computed as the product of the two items’ latent factor vectors.
 項目ペアの類似度は、2つの項目の潜在因子ベクトルの積として計算される。
 
-# Serendipity セレンディピティ
+# 3. Serendipity セレンディピティ
 
-## Defining and Measuring Serendipity セレンディピティの定義と測定
+## 3.1. Defining and Measuring Serendipity セレンディピティの定義と測定
 
 Defining serendipity largely relies on the definition of its core component—surprise.
 セレンディピティの定義は、その核となる要素である「驚き」の定義に大きく依存している。
@@ -455,7 +472,7 @@ In our experiments (see Section 7), we adopt the idea of measuring an item’s u
 Furthermore, we follow the idea of Nakatsuji et al.to measure an item’s surprise as the minimum distance from the user’s profile items and we hypothesize that, by contrast, averaging the distances between items results in a loss of information, particularly for users with diverse profiles [Kaminskas and Bridge 2014].
 さらに、我々は中辻らの考えに従い、アイテムの驚きをユーザーのプロファイル・アイテムからの最小距離として測定し、対照的に、アイテム間の距離を平均化すると、特に多様なプロファイルを持つユーザーにとって、情報の損失につながるという仮説を立てる[Kaminskas and Bridge 2014]。
 
-## Increasing Serendipity セレンディピティを高める
+## 3.2. Increasing Serendipity セレンディピティを高める
 
 The first attempts to increase the serendipity of retrieved results were reported in the IR literature.
 検索結果のセレンディピティを高める最初の試みは、IRの文献で報告されている。
@@ -508,7 +525,7 @@ Both rating- and contentbased distance metrics were evaluated.
 Given the target user and a set of the user’s expected items, the proposed recommendation approach computes the utility score for each candidate item and recommends those with the highest utility values.
 ターゲットユーザとユーザが期待するアイテムの集合が与えられると、提案された推薦アプローチは、各候補アイテムの効用スコアを計算し、最も高い効用値を持つアイテムを推薦する。
 
-## Novelty ノベルティ
+## 3.3. Novelty ノベルティ
 
 Novelty is closely related to serendipity, discussed in the previous section.
 新規性は、前節で述べたセレンディピティと密接な関係がある。
@@ -517,7 +534,7 @@ Here, we first discuss the relation between these two objectives and motivate ou
 Subsequently, we discuss research that addressed novelty optimization in recommender systems.
 続いて、レコメンダーシステムにおける新規性最適化を扱った研究について述べる。
 
-## Defining and Measuring Novelty 目新しさの定義と測定
+## 3.4. Defining and Measuring Novelty 目新しさの定義と測定
 
 Similarly to other objectives discussed in this work, the definition of novelty in the RS literature is inspired by IR research.
 本作品で論じた他の目的と同様に、RS文献における新規性の定義はIR研究に触発されたものである。
@@ -599,7 +616,7 @@ Celmaは、アイテムの人気度のロングテール分布とアイテムの
 Conversely, in the CB system, item connections in the graph are independent of their popularity, therefore making CB recommendations more novelty oriented.
 逆に、CBシステムでは、グラフ内のアイテムのつながりはその人気度とは無関係であるため、CBレコメンデーションはより新規性重視のものとなる。
 
-## Increasing Novelty 目新しさを増す
+## 3.5. Increasing Novelty 目新しさを増す
 
 Based on the definition of novelty adopted in this work (i.e., based on item popularity), in this section, we focus on works that increase recommendation novelty by promoting rare items (also known as the “long tail” items).
 このセクションでは、この研究で採用された新規性の定義（すなわち、アイテムの人気度に基づく）に基づき、レアアイテム（「ロングテール」とも呼ばれる）を促進することでレコメンデーションの新規性を高める作品に焦点を当てる。
@@ -667,7 +684,7 @@ Interuser diversity measures the difference between recommendations across diffe
 In this article, we do not discuss the interuser diversity but focus on the more popular system-level objective—coverage.
 この記事では、ユーザー間の多様性については議論せず、より一般的なシステムレベルの目的-カバレッジに焦点を当てる。
 
-# Coverage カバレッジ
+# 4. Coverage カバレッジ
 
 Unlike the beyond-accuracy objectives that we have discussed so far, coverage is not defined at the level of an individual user, but rather at the level of the system.
 これまで議論してきた精度を超える目標とは異なり、カバレッジは個々のユーザーのレベルではなく、システムのレベルで定義される。
@@ -680,7 +697,7 @@ Since measures of coverage show how well the system’s recommendations cover th
 For instance, Anderson [2006] argued that aggregate sales of the long-tail products may match (or even outnumber) the sales of the top-selling products.
 例えば、アンダーソン[2006]は、ロングテール商品の総売上高は、トップセラー商品の売上高に匹敵する（あるいは上回る）可能性があると論じている。
 
-## Defining and Measuring Coverage カバレッジの定義と測定
+## 4.1. Defining and Measuring Coverage カバレッジの定義と測定
 
 As with other beyond-accuracy objectives, the terminology used to identify the coverage objective varies across different works.
 他の精度を超える目標と同様に、カバレッジ目標を特定するために使用される用語は、作品によって異なる。
@@ -760,7 +777,7 @@ However, there is a lack of experiments that study the relationships between the
 We contribute to the analysis of this research problem with experiments presented in Section 7.
 我々は、セクション7で紹介する実験によって、この研究課題の分析に貢献する。
 
-## Increasing Coverage カバレッジの拡大
+## 4.2. Increasing Coverage カバレッジの拡大
 
 As discussed earlier, coverage can be linked to the novelty of recommendations.
 前述したように、カバー率は推薦の新規性と連動することがある。
@@ -793,7 +810,7 @@ NetflixデータとMillion Song Datasetを用いたオフライン実験では�
 The inverted user-based approach showed better coverage results but did not outperform the standard user-based technique in terms of accuracy.
 逆ユーザーベースの手法は、より良いカバレッジ結果を示したが、精度の点では標準的なユーザーベースの手法を上回らなかった。
 
-# Measuring the User's Perception of beryond-accuracy objectives 
+# 5. Measuring the User's Perception of beryond-accuracy objectives
 
 Any evaluation of recommendation diversity, serendipity, or novelty not involving user feedback is limited in terms of the reliability of the findings.
 ユーザーからのフィードバックを伴わない推薦の多様性、セレンディピティ、新規性の評価は、調査結果の信頼性という点で限界がある。
@@ -822,7 +839,7 @@ Besides the perceived accuracy, diversity, and novelty, user studies often also 
 Although satisfaction is a concept easily understood by users, we consider it as a higher-level quality that can be influenced by many perceived qualities (relevance, diversity, novelty, serendipity) and therefore do not analyze it in this article.
 満足度はユーザーにとって理解しやすい概念であるが、私たちはそれを多くの知覚品質（関連性、多様性、新規性、セレンディピティ）に影響されうる高次の品質と考え、本稿では分析しない。
 
-## Beyond-Accuracy Objectives in Multicriteria User Studies 多基準ユーザー研究における超越精度目標
+## 5.1. Beyond-Accuracy Objectives in Multicriteria User Studies 多基準ユーザー研究における超越精度目標
 
 Pu et al.[2011] conducted a user study to determine a set of recommendation quality criteria that accurately reflect the users’ perception of a recommender system’s usefulness.
 Puら[2011]は、推薦システムの有用性に対するユーザの認識を正確に反映する推薦品質基準のセットを決定するためのユーザ研究を行った。
@@ -869,7 +886,7 @@ Puらは "The recommender system helped me discover new products"（レコメン
 This example shows the impact that the formulation of survey questions may have on the outcome of studies measuring users’ perception of multiple recommendation qualities.
 この例は、ユーザーの複数の推奨品質に対する認識を測定する研究の結果に、調査質問の定式化が影響を与える可能性があることを示している。
 
-## Beyond-Accuracy Objectives in Targeted User Studies ターゲットユーザー調査におけるビヨンド・アキュラシー目標
+## 5.2. Beyond-Accuracy Objectives in Targeted User Studies ターゲットユーザー調査におけるビヨンド・アキュラシー目標
 
 Targeted user studies are conducted to validate the usefulness of a certain technique, for example, a diversity-oriented algorithm, or a modification of the user interface optimized for diversity perception.
 例えば、多様性志向のアルゴリズムや、多様性を認識するために最適化されたユーザー・インターフェースの修正など、特定の手法の有用性を検証するために、ターゲットを絞ったユーザー・スタディが実施される。
@@ -962,7 +979,7 @@ While such studies may reveal important findings, they can only offer an approxi
 There is a lack of reported A/B evaluation studies (i.e., online experiments where the users are unaware of their participation) that analyze the impact of beyond-accuracy objectives on user behavior.
 精度を超えた目標がユーザーの行動に与える影響を分析したA/B評価研究（つまり、ユーザーが参加したことを意識しないオンライン実験）が報告されていない。
 
-# Offline Analysis of Beyond-accuracy objectives ビヨンド精度目標のオフライン分析
+# 6. Offline Analysis of Beyond-accuracy objectives ビヨンド精度目標のオフライン分析
 
 Having reviewed research that addresses the definition, optimization, and measurement of the different beyond-accuracy objectives, we aim to further contribute to the beyond-accuracy recommendation research with a novel analysis of relationships between the different objectives.
 精度を超える様々な目標の定義、最適化、測定に取り組む研究をレビューしてきたが、我々は、異なる目標間の関係の斬新な分析によって、精度を超える推薦研究にさらに貢献することを目指す。
@@ -1034,7 +1051,7 @@ Our approach to measure metric correlations differs from that of Maksai et al.�
 We address this problem by evaluating a number of greedy reranking approaches against the different beyond-accuracy metrics.
 我々はこの問題に対処するため、様々な貪欲なリランキングアプローチを様々な精度を超えるメトリクスに対して評価する。
 
-## Reranking Approaches 再ランキングのアプローチ
+## 6.1. Reranking Approaches 再ランキングのアプローチ
 
 In earlier sections of this article, we reviewed a number of the different approaches that have been proposed to enable recommender systems to generate not only accurate but also novel and surprising recommendations and diverse lists of recommendations.
 本稿の前のセクションでは、レコメンダーシステムが正確なだけでなく、斬新で驚くべきレコメンデーションや多様なレコメンデーションリストを生成できるようにするために提案されてきた様々なアプローチについてレビューした。
@@ -1058,7 +1075,7 @@ To control the balance between accuracy and the alternative objectives, the rel(
 In the following, we describe the different implementations of obj(i, R) that were used in the experiments.
 以下では、実験に使われたobj(i, R)のさまざまな実装について説明する。
 
-### Diversity Reranking. 多様性の再ランキング
+### 6.1.1. Diversity Reranking. 多様性の再ランキング
 
 We adopted the definition of diversity that is based on the average pairwise item distance, which is widely accepted in the RS literature [Smyth and McClave 2001; Ziegler et al.2005; Kelly and Bridge 2006; Vargas and Castells 2011] (see Section 2.2.1, Equation (2)):
 多様性の定義として、RSの文献で広く受け入れられている平均対項目間距離に基づく定義を採用した [Smyth and McClave 2001; Ziegler et al.2005; Kelly and Bridge 2006; Vargas and Castells 2011]。(セクション2.2.1の式(2)を参照）：
@@ -1099,7 +1116,7 @@ where ¯ri and ¯rj are the average rating values for items i and j, respectivel
 Only users who rated both items are considered for the diversity computation.
 多様性の計算には、両方の項目を評価したユーザーのみが考慮される。
 
-### Surprise Reranking. サプライズ再ランキング
+### 6.1.2. Surprise Reranking. サプライズ再ランキング
 
 Our approach to measuring surprise is based on the intuition that a recommendation is surprising if it is unlike any item the user has seen before.
 驚きを測定するための我々のアプローチは、推薦が、ユーザーが以前に見たどのアイテムとも異なっている場合、驚きであるという直感に基づいている。
@@ -1170,7 +1187,7 @@ Similarly to the co-occurrence-based definition, the distance is computed for al
 Taking the minimum distance value as the overall surprise represents the lower bound of how surprising the item is with respect to the seen items.
 距離の最小値を総合的な驚きとすることで、そのアイテムが見たアイテムに対してどの程度驚くかの下限を表す。
 
-### Novelty Reranking. ノベルティ再ランキング
+### 6.1.3. Novelty Reranking. ノベルティ再ランキング
 
 For novelty, we use the item’s self-information or inverse user frequency [Zhou et al.2010; Vargas and Castells 2011], which is the fraction of users in the dataset who rated the item i:
 新規性については、項目の自己情報または逆ユーザー頻度[Zhou et al.2010; Vargas and Castells 2011]を使用する：
@@ -1182,7 +1199,7 @@ $$
 The logarithm is used to emphasize the novelty of the most rare items.
 対数は、最も希少なアイテムの目新しさを強調するために使われる。
 
-## Experimental Setup 実験セットアップ
+## 6.2. Experimental Setup 実験セットアップ
 
 To study the relationships between the different beyond-accuracy objectives, we conducted a number of offline experiments using four state-of-the-art recommendation algorithms and the five variants of the greedy reranking approach described previously— two variants for both diversity (Equations (8) and (9)) and surprise (Equations (11) and (12)) and one for novelty (Equation (13)).
 様々な精度を超える目的間の関係を調べるために、4つの最新の推薦アルゴリズムと、前述の貪欲な再ランク付けアプローチの5つのバリエーション（多様性（式(8)と(9)）と驚き（式(11)と(12)）の両方に対応する2つのバリエーションと、新規性（式(13)）に対応する1つのバリエーション）を用いて、多くのオフライン実験を行った。
@@ -1199,7 +1216,7 @@ Using the value of α = 0.5 allowed a good balance between the predicted relevan
 Next, we describe the evaluation methodology, performance metrics, datasets, and recommendation algorithms that were employed in the experiments.
 次に、実験に採用した評価方法、パフォーマンス指標、データセット、推薦アルゴリズムについて説明する。
 
-### Evaluation Methodology. 評価方法
+### 6.2.1. Evaluation Methodology. 評価方法
 
 In recent years, rating-based accuracy metrics for offline RS evaluations have been replaced by precision-oriented metrics that more closely reflect the users’ interaction with the system—considering only a small set of topranked recommendations, ignoring the lower-ranked items [Bellog´ın et al.2011].
 近年、オフラインのRS評価における評価ベースの精度メトリクスは、ユーザーのシステムとのインタラクションをより忠実に反映する精度指向のメトリクスに取って代わられている-つまり、ランキング下位のアイテムを無視して、ランキング上位の推奨アイテムの小さなセットのみを考慮するのである[Bellog´ın et al.2011]。
@@ -1227,12 +1244,12 @@ However, we believe this methodology to be appropriate when measuring the beyond
 All experiment results reported in the following sections were computed using fivefold cross-validation with 80%/20% training/probe set split.
 以下のセクションで報告されるすべての実験結果は、80%/20%のトレーニング/プローブセット分割による5重クロスバリデーションを用いて計算された。
 
-### Performance Metrics. パフォーマンス指標。
+### 6.2.2. Performance Metrics. パフォーマンス指標。
 
 In addition to the Recall metric, for each test user’s top-N recommendation list R, we compute the following beyond-accuracy metrics:
 Recall指標に加えて、各テストユーザーのトップN推薦リストRについて、以下のbeyond-accuracy指標を計算する：
 
-#### Two variants of the diversity metric—the rating-based diversity and the contentbased diversity: 評価ベースの多様性とコンテンツベースの多様性である：
+#### 6.2.2.1. Two variants of the diversity metric—the rating-based diversity and the contentbased diversity: 評価ベースの多様性とコンテンツベースの多様性である：
 
 $$
 \tag{14}
@@ -1241,7 +1258,7 @@ $$
 where for Divcont, dist(i, j) is computed based on item content labels (Equation (8)), and for Divratings, dist(i, j) is computed using the rating-based item distance (Equation (9))
 ここで、Divcontの場合、dist(i, j)は項目内容ラベルに基づいて計算され（式(8)）、Divratingsの場合、dist(i, j)は評価に基づく項目距離を使って計算される（式(9)）。
 
-#### Two variants of the surprise metric—the co-occurrence-based surprise and the content-based surprise: 共起ベースのサプライズとコンテンツベースのサプライズである：
+#### 6.2.2.2. Two variants of the surprise metric—the co-occurrence-based surprise and the content-based surprise: 共起ベースのサプライズとコンテンツベースのサプライズである：
 
 $$
 \tag{15}
@@ -1254,7 +1271,7 @@ $$
 where P is the target user’s profile (i.e., the set of rated items), PMI(i, j) is computed using Equation (10), and dist(i, j) uses Equation (8)
 ここで、Pはターゲットユーザーのプロファイル（すなわち、評価されたアイテムのセット）であり、PMI(i, j)は式(10)を使用して計算され、dist(i, j)は式(8)を使用します。
 
-#### The Novelty metric computed as the average item self-information: 平均的な項目の自己情報として計算される新規性の指標：
+#### 6.2.2.3. The Novelty metric computed as the average item self-information: 平均的な項目の自己情報として計算される新規性の指標：
 
 $$
 \tag{17}
@@ -1282,7 +1299,7 @@ RecallとCoverageのメトリクスには、対応するリランキング・ア
 Thus, in total, we have seven metrics and five reranking approaches.
 したがって、合計で7つのメトリクスと5つのリランキング・アプローチがある。
 
-### Datasets. データセット
+### 6.2.3. Datasets. データセット
 
 We tested the proposed beyond-accuracy reranking approaches on two benchmark datasets for offline recommender system evaluation—the MovieLens 1M dataset5 and the Last.fm 1K dataset.6 The MovieLens dataset contains ∼1 million ratings, 6,040 users, and 3,706 movies.
 MovieLensデータセットには、約100万件の評価、6,040人のユーザー、3,706本の映画が含まれている。
@@ -1305,7 +1322,7 @@ To avoid noisy data, we retrieved a maximum of the 10 most popular labels for ev
 This resulted in eight labels per artist on average.
 その結果、1人のアーティストにつき平均8つのレーベルに所属することになった。
 
-### Recommendation Algorithms. 推薦アルゴリズム
+### 6.2.4. Recommendation Algorithms. 推薦アルゴリズム
 
 The reranking approaches described in Section 7.1 were evaluated with four state-of-the-art recommendation algorithms: a pairwise learning-to-rank algorithm [Weston et al.2010] (LTR), a PureSVD [Cremonesi et al.2010] matrix factorization algorithm implemented using the sparsesvd library8 (MF), and two k-nearest-neighbor algorithms—a user-based collaborative filtering method (UB) and an item-based collaborative filtering method (IB) [Desrosiers and Karypis 2011].
 セクション7.1で説明したリランキングアプローチは、4つの最先端の推薦アルゴリズムで評価された。ペアワイズ学習ランクアルゴリズム[Weston et al.2010](LTR)、sparsesvdライブラリ8を使用して実装されたPureSVD[Cremonesi et al.2010]行列分解アルゴリズム(MF)、2つのk-nearest-neighborアルゴリズム、ユーザーベース協調フィルタリング法(UB)とアイテムベース協調フィルタリング法(IB)[Desrosiers and Karypis 2011]である。
@@ -1345,7 +1362,7 @@ Consequently, optimizing a recommendation algorithm’s parameters using this me
 However, we believe that the possible popularity biases of individual algorithms do not invalidate the findings of this research since we focus on the relative comparison of reranking strategies applied to the output of individual algorithms.
 しかし、我々は、個々のアルゴリズムの出力に適用されるリランキング戦略の相対的な比較に焦点を当てているため、個々のアルゴリズムの人気のバイアスの可能性は、この研究の結果を無効にしないと信じています。
 
-## Results and Discussion 結果と考察
+## 6.3. Results and Discussion 結果と考察
 
 We conducted two main sets of experiments.
 主に2つの実験を行った。
@@ -1356,7 +1373,7 @@ The other was aimed at evaluating the five reranking approaches: we used each re
 Furthermore, we report initial observations regarding the influence of algorithm parameters on the performance metrics and reranking effectiveness (Section 7.3.3).
 さらに、アルゴリズム・パラメータが性能指標とリランキング効果に及ぼす影響に関する初期的な観察結果を報告する（セクション7.3.3）。
 
-### Comparison of Recommendation Algorithms. 推薦アルゴリズムの比較。
+### 6.3.1. Comparison of Recommendation Algorithms. 推薦アルゴリズムの比較。
 
 Figures 1 and 2 show the results obtained for each of the four recommendation algorithms on the MovieLens and Last.fm datasets, respectively.
 図1と図2は、それぞれMovieLensとLast.fmデータセットにおける4つの推薦アルゴリズムそれぞれの結果を示している。
@@ -1410,7 +1427,7 @@ However, the authors also report the user-based k-NN algorithm to achieve second
 As said earlier, this result can be explained by their small neighborhood size (k = 15).
 先に述べたように、この結果は近傍サイズが小さい（k = 15）ことで説明できる。
 
-### Comparison of Reranking Approaches. 再ランキング手法の比較。
+### 6.3.2. Comparison of Reranking Approaches. 再ランキング手法の比較。
 
 Figure 3 shows the performance measure values obtained using the different reranking approaches with the MF algorithm on the MovieLens dataset.
 図3は、MovieLensデータセットにおいて、MFアルゴリズムによるさまざまなリランキング・アプローチを使用して得られたパフォーマンス測定値を示している。
@@ -1468,7 +1485,7 @@ To conduct a cross-algorithm comparison of reranking strategies, additional popu
 We leave this to future work.
 これは今後の研究に委ねたい。
 
-### The Impact of Algorithm Parameters. アルゴリズム・パラメータの影響。
+### 6.3.3. The Impact of Algorithm Parameters. アルゴリズム・パラメータの影響。
 
 We also conducted experiments aimed at investigating the influence of recommendation algorithm parameters on the different performance metrics.
 また、推薦アルゴリズムのパラメータが様々なパフォーマンス指標に与える影響を調査することを目的とした実験も行った。
@@ -1510,7 +1527,7 @@ A detailed analysis of the impact of algorithm parameters on beyond-accuracy obj
 We refer interested readers to Jannach et al.[2015b], where a number of state-of-the-art algorithms (with different parameter configurations) are analyzed with respect to various recommendation metrics (including popularity and concentration bias).
 Jannachら[2015b]では、様々な推薦指標（人気度や集中度バイアスなど）に関して、（様々なパラメータ構成を持つ）多くの最先端アルゴリズムが分析されている。
 
-# Discussion and Conclustions 討論と結論
+# 7. Discussion and Conclustions 討論と結論
 
 In this article, we have reviewed the state-of-the-art research on beyond-accuracy objectives in recommender systems.
 本稿では、推薦システムにおける精度を超える目標に関する最先端の研究をレビューした。
@@ -1531,7 +1548,7 @@ There are still many interesting challenges to address in this research area.
 We believe the following research directions to be of particular importance:
 私たちは、以下の研究の方向性が特に重要であると考えている：
 
-## Evaluation of Beyond-Accuracy Objectives. Beyond-Accuracy Objectives の評価。
+## 7.1. Evaluation of Beyond-Accuracy Objectives. Beyond-Accuracy Objectives の評価。
 
 As stated in Section 6, offline evaluation is limited when it comes to understanding the real impact of beyond-accuracy objectives on the users’ experience.
 セクション6で述べたように、精度を超えた目標がユーザーの経験に与える実際の影響を理解する上で、オフラインでの評価は限界がある。
@@ -1544,7 +1561,7 @@ For instance, it has been shown that item familiarity has a strong correlation w
 Ultimately, no results will be complete without conducting A/B experiments, where the users would be unaware of their involvement in the evaluation.
 結局のところ、A/B実験を実施しなければ、ユーザーが評価に関与していることに気づかないような結果は得られない。
 
-## Adaptivity of Beyond-Accuracy Objectives. Beyond-Accuracy Objectives の適応性.
+## 7.2. Adaptivity of Beyond-Accuracy Objectives. Beyond-Accuracy Objectives の適応性.
 
 Another important challenge in beyondaccuracy research is developing optimization solutions that are adapted to specific recommendation domains, since different items may require different levels of recommendation diversity or novelty.
 beyondaccuracy研究におけるもう一つの重要な課題は、特定の推薦ドメインに適応した最適化ソリューションを開発することである。
