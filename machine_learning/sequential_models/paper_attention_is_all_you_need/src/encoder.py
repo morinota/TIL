@@ -23,7 +23,7 @@ class TransformerEncoderInterface(nn.Module):
     """
 
     @abc.abstractmethod
-    def calc(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         - まずEmbedding
         - 次にPositional Encoding
@@ -38,7 +38,11 @@ class TransformderEncoderBlockInterface(nn.Module):
     """
 
     @abc.abstractmethod
-    def calc(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """sequential特徴量ベクトル(n * d_{model} 行列)を受け取り、
+        multi-head attention -> FFNに通して、
+        同じ形状の(n * d_{model} 行列)を返す.
+        """
         raise NotImplementedError
 
 
@@ -61,17 +65,17 @@ class TransformderEncoderBlock(TransformderEncoderBlockInterface):
         self.dropout_ffn = nn.Dropout(dropout_rate)
         self.layer_norm_ffn = nn.LayerNorm(d_model, layer_norm_epsilon)
 
-    def calc(self, x: torch.Tensor) -> torch.Tensor:
-        x_middle = self.layer_norm_self_attention(self._self_attention_block)
-        return self.layer_norm_ffn(self._feed_forward_block(x_middle))
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.layer_norm_self_attention(self._self_attention_block)
+        return self.layer_norm_ffn(self._feed_forward_block(x))
 
     def _self_attention_block(self, x: torch.Tensor) -> torch.Tensor:
-        x_middle = self.multi_head_attention.forward(x, x, x)
-        return self.dropout_self_attention.forward(x_middle)
+        x = self.multi_head_attention.forward(x, x, x)
+        return self.dropout_self_attention.forward(x)
 
     def _feed_forward_block(self, x: torch.Tensor) -> torch.Tensor:
-        x_middle = self.ffn.forward(x)
-        return self.dropout_ffn.forward(x_middle)
+        x = self.ffn.forward(x)
+        return self.dropout_ffn.forward(x)
 
 
 class TransformerEncoder(TransformerEncoderInterface):
@@ -103,7 +107,7 @@ class TransformerEncoder(TransformerEncoderInterface):
             ]
         )
 
-    def calc(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.embedding(x)
         x = self.positional_encoding.forward(x)
         for encoder_block in self.encoder_blocks:

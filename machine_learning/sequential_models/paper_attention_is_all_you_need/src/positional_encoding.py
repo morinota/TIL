@@ -12,6 +12,9 @@ from torch import Tensor
 class PositionalEncodingInterface(abc.ABC):
     @abc.abstractmethod
     def forward(self, x: Tensor) -> Tensor:
+        """元のsequential特徴量ベクトル(n * d_{model} 行列)を受け取り、
+        positional encoding ベクトルを足し合わせた ベクトル(n * d_{model} 行列)を返す.
+        """
         raise NotImplementedError
 
 
@@ -40,7 +43,7 @@ class PositionalEncoding(PositionalEncodingInterface):
     def forward(self, x: Tensor) -> Tensor:
         seq_len = x.size(1)
         positional_encoding_weights = self.positional_encoding_weights[:seq_len, :]
-        return x + positional_encoding_weights.unsqueeze(0)  # 次元をあわせて追加.
+        return x + positional_encoding_weights.unsqueeze(0)  # 次元をあわせて足し算.
 
     def _initialize_weight(self) -> torch.Tensor:
         positional_encoding_weights = [self._calc_positional_encoding_vector(pos) for pos in range(1, self.d_model + 1)]

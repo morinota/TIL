@@ -408,9 +408,36 @@
 </ul>
 </section>
 <section>
+<section id="まず-transformerの全体像はこうだ" class="title-slide slide level1 center">
+<h1>まず Transformerの全体像はこうだ!</h1>
+
+</section>
+<section id="transformerの全体像" class="slide level2">
+<h2>Transformerの全体像</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="transformer_model_architecture.PNG" style="width:100.0%"></p>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
+<p>hogehoge</p>
+</div>
+</div>
+</section></section>
+<section>
 <section id="transformerの各パーツを確認していく." class="title-slide slide level1 center">
 <h1>Transformerの各パーツを確認していく.</h1>
-
+<ul>
+<li>Attention function</li>
+<li>Scaled-dot-product Attention</li>
+<li>Multi-head Attention</li>
+<li>Position-wise Feed-Forward Networks</li>
+<li>Positional Encoding</li>
+<li>Transformer Encoder</li>
+<li>Transformer Decoder</li>
+</ul>
 </section>
 <section id="attention-function-について1" class="slide level2">
 <h2>Attention function について1</h2>
@@ -468,8 +495,10 @@
 <span id="cb1-23"><a href="#cb1-23"></a><span class="co">        """</span></span>
 <span id="cb1-24"><a href="#cb1-24"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="scaled-dot-product-attention" class="slide level2">
-<h2>Scaled-dot-product Attention</h2>
+<section id="scaled-dot-product-attentionについて1" class="slide level2">
+<h2>Scaled-dot-product Attentionについて1</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <p>以下で定義されるattention functionの一種.(Transformer内で採用されている)</p>
 <p><span class="math display">\[
 Attention(Q, K, V) = softmax(\frac{Q K^{T}}{\sqrt{d_k}}) V
@@ -478,10 +507,37 @@ Attention(Q, K, V) = softmax(\frac{Q K^{T}}{\sqrt{d_k}}) V
 <ul>
 <li>ここで, <span class="math inline">\(d_k\)</span> をQuery行列 <span class="math inline">\(Q\)</span> とKey行列 <span class="math inline">\(K\)</span> の列数, <span class="math inline">\(d_v\)</span> を Value行列の列数とする. (どちらも i.e.&nbsp;各tokenの特徴量ベクトルの次元数のイメージ).</li>
 <li>各queryと全てのkeyのdot productを計算し、それぞれを <span class="math inline">\(\sqrt{d_k}\)</span> で割り、softmax関数を適用して各valueの重みを求めている.</li>
+</ul>
+</div><div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="scaled_dot_product_attention.PNG" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="scaled-dot-product-attentionについて2" class="slide level2">
+<h2>Scaled-dot-product Attentionについて2</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><span class="math display">\[
+Attention(Q, K, V) = softmax(\frac{Q K^{T}}{\sqrt{d_k}}) V
+\tag{1}
+\]</span></p>
+<ul>
 <li>(このattention function内には、<strong>学習可能なパラメータは存在しないっぽい?</strong>. 内積と重み付け和のみで構成されてる<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 <li>論文執筆時点で最も一般的なattention functionは、additive(加法) attention と dot-product (multiplicative=乗法) attention とのこと.</li>
 <li>dot-product attention の場合、<span class="math inline">\(d_k\)</span> の大きさに依って出力値が影響を受ける為、その性質を打ち消す為に <span class="math inline">\(\sqrt{d_k}\)</span> でscaling(正規化みたいな)している.</li>
 </ul>
+</div><div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="scaled_dot_product_attention.PNG" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="scaled-dot-product-attention-のお気持ち実装" class="slide level2">
 <h2>Scaled-dot-product Attention のお気持ち実装</h2>
@@ -521,32 +577,58 @@ Attention(Q, K, V) = softmax(\frac{Q K^{T}}{\sqrt{d_k}}) V
 </section>
 <section id="multi-head-attention-について1" class="slide level2">
 <h2>Multi-head Attention について1</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <ul>
-<li><span class="math inline">\(d_{model}\)</span> 次元の Query, Key, Value で単一のattention関数を実行するのではなく、<strong>学習した重み(線形モデル)を用いて</strong> Query, Key, Value をそれぞれ <span class="math inline">\(d_k\)</span> 、<span class="math inline">\(d_k\)</span> 、<span class="math inline">\(d_v\)</span> に<strong>線形投影(=linearly project)</strong>する事を<span class="math inline">\(h\)</span> 回行うのが有効だと判明しているらしい. これを実現するのが<strong>Multi-head attention</strong>.</li>
-<li>投影された Query, Key, Value に対して、<strong><span class="math inline">\(h\)</span> 個のattention functionを並行して適用</strong>し、<span class="math inline">\(h\)</span> 個の <span class="math inline">\(n \times d_v\)</span> 次元の出力値を得る.</li>
-<li>これをconcatenate(<span class="math inline">\(n \times h d_v\)</span> 次元になる?)して再び線形投影すると、最終的な <span class="math inline">\(n \times d_{model}\)</span> 次元の出力値が得られる.</li>
+<li><span class="math inline">\(d_{model}\)</span> 次元の Query, Key, Value で単一のattention関数を実行するのではなく、<strong>学習した重み(線形モデル)を用いて</strong> Query, Key, Value をそれぞれ <span class="math inline">\(d_k\)</span> 、<span class="math inline">\(d_k\)</span> 、<span class="math inline">\(d_v\)</span> に<strong>線形投影(=linearly project)</strong>する事を<span class="math inline">\(h\)</span> 回行ってからattentionに入力する方法が有効だと判明しているらしい. これを実現するのが<strong>Multi-head attention</strong>.</li>
 </ul>
+</div><div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="multi_head_attention.PNG" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="multi-head-attention-について2" class="slide level2">
+<h2>Multi-head Attention について2</h2>
 <p><span class="math display">\[
 MultiHead(Q,K,V) = Concat(head_{1}, \cdots, head_{h}) W^{O}
 \\
 \text{where } head_{i} = Attention(QW^{Q}_{i}, KW^{K}_{i}, VW^{V}_{i})
 \tag{2}
 \]</span></p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<ul>
+<li>線形投影された Query, Key, Value に対して、<strong><span class="math inline">\(h\)</span> 個のattention functionを並行して適用</strong>し、<span class="math inline">\(h\)</span> 個の <span class="math inline">\(n \times d_v\)</span> 次元の出力値を得る.</li>
+<li>これをconcatenate(<span class="math inline">\(n \times h d_v\)</span> 次元になる?)して再び線形投影すると、最終的な <span class="math inline">\(n \times d_{model}\)</span> 次元の出力値が得られる.</li>
+</ul>
 <p>ここで、各線形投影に用いるパラメータ行列は以下:</p>
 <p><span class="math display">\[
 W^{Q}_{i} \in \mathbb{R}^{d_{model} \times d_k},
 W^{K}_{i} \in \mathbb{R}^{d_{model} \times d_k},
+\\
 W^{V}_{i} \in \mathbb{R}^{d_{model} \times d_v},
 W^{O} \in \mathbb{R}^{h * d_{v}\times d_{model}}
 \]</span></p>
+</div><div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="multi_head_attention.PNG" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="multi-head-attention-について2" class="slide level2">
-<h2>Multi-head Attention について2</h2>
+<section id="multi-head-attention-について3" class="slide level2">
+<h2>Multi-head Attention について3</h2>
 <ul>
 <li>論文のTransformerでは、 <span class="math inline">\(h = 8\)</span> のparallel attention layers(i.e.&nbsp;head)を採用してる.</li>
 <li><span class="math inline">\(d_{model} = 512\)</span> として、<span class="math inline">\(d_k = d_v = \frac{d_{model}}{h} = 64\)</span> と設定している.</li>
 <li>各headsの扱う次元数が小さくなる為、総計算コストは元々のQ, K, Vにsingle head のattentionを適用する場合と同じになる. (線形投影して行列の次元数が<span class="math inline">\(n \times d_{model}\)</span> -&gt; <span class="math inline">\(n × d_k\)</span> と低次元になるから…!!)</li>
-<li>本論文で提案されているTransformerでは、前述した3通りFのattentionの使い方で multi-head attention を使用している.</li>
+<li>本論文で提案されているTransformerでは、前述した3通りのattentionの使い方で multi-head attention を使用している.</li>
 </ul>
 </section>
 <section id="multi-head-attention-のお気持ち実装" class="slide level2">
@@ -560,71 +642,184 @@ W^{O} \in \mathbb{R}^{h * d_{v}\times d_{model}}
 <span id="cb3-6"><a href="#cb3-6"></a></span>
 <span id="cb3-7"><a href="#cb3-7"></a><span class="im">from</span> src.attention_function <span class="im">import</span> ScaledDotProductAttention</span>
 <span id="cb3-8"><a href="#cb3-8"></a></span>
-<span id="cb3-9"><a href="#cb3-9"></a></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="kw">class</span> MultiHeadAttentionInterface(nn.Module):</span>
-<span id="cb3-11"><a href="#cb3-11"></a>    <span class="at">@abc.abstractmethod</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a>    <span class="kw">def</span> calc(</span>
-<span id="cb3-13"><a href="#cb3-13"></a>        <span class="va">self</span>,</span>
-<span id="cb3-14"><a href="#cb3-14"></a>        query: Tensor,</span>
-<span id="cb3-15"><a href="#cb3-15"></a>        key: Tensor,</span>
-<span id="cb3-16"><a href="#cb3-16"></a>        value: Tensor,</span>
-<span id="cb3-17"><a href="#cb3-17"></a>        mask_3d: Optional[Tensor] <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb3-18"><a href="#cb3-18"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
-<span id="cb3-19"><a href="#cb3-19"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="kw">class</span> MultiHeadAttentionInterface(nn.Module):</span>
+<span id="cb3-10"><a href="#cb3-10"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>    <span class="kw">def</span> forward(</span>
+<span id="cb3-12"><a href="#cb3-12"></a>        <span class="va">self</span>,</span>
+<span id="cb3-13"><a href="#cb3-13"></a>        query: Tensor,</span>
+<span id="cb3-14"><a href="#cb3-14"></a>        key: Tensor,</span>
+<span id="cb3-15"><a href="#cb3-15"></a>        value: Tensor,</span>
+<span id="cb3-16"><a href="#cb3-16"></a>        mask_3d: Optional[Tensor] <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb3-17"><a href="#cb3-17"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb3-18"><a href="#cb3-18"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb3-19"><a href="#cb3-19"></a></span>
 <span id="cb3-20"><a href="#cb3-20"></a></span>
-<span id="cb3-21"><a href="#cb3-21"></a></span>
-<span id="cb3-22"><a href="#cb3-22"></a><span class="kw">class</span> MultiHeadAttention(MultiHeadAttentionInterface):</span>
-<span id="cb3-23"><a href="#cb3-23"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, d_model: <span class="bu">int</span>, num_heads: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb3-24"><a href="#cb3-24"></a>        <span class="va">self</span>.num_heads <span class="op">=</span> num_heads</span>
-<span id="cb3-25"><a href="#cb3-25"></a>        <span class="va">self</span>.d_k <span class="op">=</span> d_model <span class="op">//</span> num_heads  <span class="co"># Query &amp; Keyもvalueも同じ埋め込み次元数の想定.</span></span>
-<span id="cb3-26"><a href="#cb3-26"></a>        <span class="va">self</span>.d_v <span class="op">=</span> d_model <span class="op">//</span> num_heads</span>
-<span id="cb3-27"><a href="#cb3-27"></a></span>
-<span id="cb3-28"><a href="#cb3-28"></a>        <span class="va">self</span>.attention_func <span class="op">=</span> ScaledDotProductAttention(<span class="va">self</span>.d_k)</span>
-<span id="cb3-29"><a href="#cb3-29"></a></span>
-<span id="cb3-30"><a href="#cb3-30"></a>        <span class="co"># 以下のW^{Q}_{i}, W^{K}_{i}, W^{V}_{i}, W^{O}は学習すべきパラメータ.</span></span>
-<span id="cb3-31"><a href="#cb3-31"></a>        <span class="va">self</span>.query_linear_projectors <span class="op">=</span> [nn.Linear(d_model, <span class="va">self</span>.d_k) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads)]</span>
-<span id="cb3-32"><a href="#cb3-32"></a>        <span class="va">self</span>.key_linear_projectors <span class="op">=</span> [nn.Linear(d_model, <span class="va">self</span>.d_k) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads)]</span>
-<span id="cb3-33"><a href="#cb3-33"></a>        <span class="va">self</span>.value_linear_projectors <span class="op">=</span> [nn.Linear(d_model, <span class="va">self</span>.d_v) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads)]</span>
-<span id="cb3-34"><a href="#cb3-34"></a>        <span class="va">self</span>.output_linear_projector <span class="op">=</span> nn.Linear(<span class="va">self</span>.num_heads <span class="op">*</span> <span class="va">self</span>.d_v, d_model)</span>
-<span id="cb3-35"><a href="#cb3-35"></a></span>
-<span id="cb3-36"><a href="#cb3-36"></a>    <span class="kw">def</span> calc(</span>
-<span id="cb3-37"><a href="#cb3-37"></a>        <span class="va">self</span>,</span>
-<span id="cb3-38"><a href="#cb3-38"></a>        query: Tensor,</span>
-<span id="cb3-39"><a href="#cb3-39"></a>        key: Tensor,</span>
-<span id="cb3-40"><a href="#cb3-40"></a>        value: Tensor,</span>
-<span id="cb3-41"><a href="#cb3-41"></a>        mask_3d: Optional[Tensor] <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb3-42"><a href="#cb3-42"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
-<span id="cb3-43"><a href="#cb3-43"></a>        batch_size, seq_len <span class="op">=</span> query.size(<span class="dv">0</span>), query.size(<span class="dv">1</span>)</span>
-<span id="cb3-44"><a href="#cb3-44"></a></span>
-<span id="cb3-45"><a href="#cb3-45"></a>        <span class="cf">if</span> mask_3d <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
-<span id="cb3-46"><a href="#cb3-46"></a>            mask_3d <span class="op">=</span> mask_3d.repeat(<span class="va">self</span>.num_heads, <span class="dv">1</span>, <span class="dv">1</span>)</span>
-<span id="cb3-47"><a href="#cb3-47"></a></span>
-<span id="cb3-48"><a href="#cb3-48"></a>        heads <span class="op">=</span> []</span>
-<span id="cb3-49"><a href="#cb3-49"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads):</span>
-<span id="cb3-50"><a href="#cb3-50"></a>            <span class="co"># linear projection for getting the inputs of each heads.</span></span>
-<span id="cb3-51"><a href="#cb3-51"></a>            query_projected <span class="op">=</span> <span class="va">self</span>.query_linear_projectors[i].forward(query)</span>
-<span id="cb3-52"><a href="#cb3-52"></a>            key_projected <span class="op">=</span> <span class="va">self</span>.key_linear_projectors[i].forward(key)</span>
-<span id="cb3-53"><a href="#cb3-53"></a>            value_projected <span class="op">=</span> <span class="va">self</span>.value_linear_projectors[i].forward(value)</span>
-<span id="cb3-54"><a href="#cb3-54"></a></span>
-<span id="cb3-55"><a href="#cb3-55"></a>            attention_output, _ <span class="op">=</span> <span class="va">self</span>.attention_func.forward(</span>
-<span id="cb3-56"><a href="#cb3-56"></a>                query_projected,</span>
-<span id="cb3-57"><a href="#cb3-57"></a>                key_projected,</span>
-<span id="cb3-58"><a href="#cb3-58"></a>                value_projected,</span>
-<span id="cb3-59"><a href="#cb3-59"></a>                mask_3d,</span>
-<span id="cb3-60"><a href="#cb3-60"></a>            )</span>
-<span id="cb3-61"><a href="#cb3-61"></a>            heads.append(attention_output)</span>
-<span id="cb3-62"><a href="#cb3-62"></a></span>
-<span id="cb3-63"><a href="#cb3-63"></a>        <span class="co"># concat heads</span></span>
-<span id="cb3-64"><a href="#cb3-64"></a>        concatted_output <span class="op">=</span> torch.cat(heads, dim<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb3-65"><a href="#cb3-65"></a></span>
-<span id="cb3-66"><a href="#cb3-66"></a>        <span class="co"># linear projection for output</span></span>
-<span id="cb3-67"><a href="#cb3-67"></a>        <span class="cf">return</span> <span class="va">self</span>.output_linear_projector.forward(concatted_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-21"><a href="#cb3-21"></a><span class="kw">class</span> MultiHeadAttention(MultiHeadAttentionInterface):</span>
+<span id="cb3-22"><a href="#cb3-22"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, d_model: <span class="bu">int</span>, num_heads: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb3-23"><a href="#cb3-23"></a>        <span class="va">self</span>.num_heads <span class="op">=</span> num_heads</span>
+<span id="cb3-24"><a href="#cb3-24"></a>        <span class="va">self</span>.d_k <span class="op">=</span> d_model <span class="op">//</span> num_heads  <span class="co"># query&amp;keyもvalueも同じ埋め込み次元数の想定?</span></span>
+<span id="cb3-25"><a href="#cb3-25"></a>        <span class="va">self</span>.d_v <span class="op">=</span> d_model <span class="op">//</span> num_heads</span>
+<span id="cb3-26"><a href="#cb3-26"></a></span>
+<span id="cb3-27"><a href="#cb3-27"></a>        <span class="va">self</span>.attention_func <span class="op">=</span> ScaledDotProductAttention(<span class="va">self</span>.d_k)</span>
+<span id="cb3-28"><a href="#cb3-28"></a></span>
+<span id="cb3-29"><a href="#cb3-29"></a>        <span class="co"># 以下のW^{Q}_{i}, W^{K}_{i}, W^{V}_{i}, W^{O}は学習すべきパラメータ.</span></span>
+<span id="cb3-30"><a href="#cb3-30"></a>        <span class="va">self</span>.query_linear_projectors <span class="op">=</span> [nn.Linear(d_model, <span class="va">self</span>.d_k) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads)]</span>
+<span id="cb3-31"><a href="#cb3-31"></a>        <span class="va">self</span>.key_linear_projectors <span class="op">=</span> [nn.Linear(d_model, <span class="va">self</span>.d_k) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads)]</span>
+<span id="cb3-32"><a href="#cb3-32"></a>        <span class="va">self</span>.value_linear_projectors <span class="op">=</span> [nn.Linear(d_model, <span class="va">self</span>.d_v) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads)]</span>
+<span id="cb3-33"><a href="#cb3-33"></a>        <span class="va">self</span>.output_linear_projector <span class="op">=</span> nn.Linear(<span class="va">self</span>.num_heads <span class="op">*</span> <span class="va">self</span>.d_v, d_model)</span>
+<span id="cb3-34"><a href="#cb3-34"></a></span>
+<span id="cb3-35"><a href="#cb3-35"></a>    <span class="kw">def</span> forward(</span>
+<span id="cb3-36"><a href="#cb3-36"></a>        <span class="va">self</span>,</span>
+<span id="cb3-37"><a href="#cb3-37"></a>        query: Tensor,</span>
+<span id="cb3-38"><a href="#cb3-38"></a>        key: Tensor,</span>
+<span id="cb3-39"><a href="#cb3-39"></a>        value: Tensor,</span>
+<span id="cb3-40"><a href="#cb3-40"></a>        mask_3d: Optional[Tensor] <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb3-41"><a href="#cb3-41"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb3-42"><a href="#cb3-42"></a>        batch_size, seq_len <span class="op">=</span> query.size(<span class="dv">0</span>), query.size(<span class="dv">1</span>)</span>
+<span id="cb3-43"><a href="#cb3-43"></a></span>
+<span id="cb3-44"><a href="#cb3-44"></a>        <span class="cf">if</span> mask_3d <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb3-45"><a href="#cb3-45"></a>            mask_3d <span class="op">=</span> mask_3d.repeat(<span class="va">self</span>.num_heads, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb3-46"><a href="#cb3-46"></a></span>
+<span id="cb3-47"><a href="#cb3-47"></a>        heads <span class="op">=</span> []</span>
+<span id="cb3-48"><a href="#cb3-48"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.num_heads):</span>
+<span id="cb3-49"><a href="#cb3-49"></a>            <span class="co"># linear projection for getting the inputs of each heads.</span></span>
+<span id="cb3-50"><a href="#cb3-50"></a>            query_projected <span class="op">=</span> <span class="va">self</span>.query_linear_projectors[i].forward(query)</span>
+<span id="cb3-51"><a href="#cb3-51"></a>            key_projected <span class="op">=</span> <span class="va">self</span>.key_linear_projectors[i].forward(key)</span>
+<span id="cb3-52"><a href="#cb3-52"></a>            value_projected <span class="op">=</span> <span class="va">self</span>.value_linear_projectors[i].forward(value)</span>
+<span id="cb3-53"><a href="#cb3-53"></a></span>
+<span id="cb3-54"><a href="#cb3-54"></a>            attention_output, _ <span class="op">=</span> <span class="va">self</span>.attention_func.forward(</span>
+<span id="cb3-55"><a href="#cb3-55"></a>                query_projected,</span>
+<span id="cb3-56"><a href="#cb3-56"></a>                key_projected,</span>
+<span id="cb3-57"><a href="#cb3-57"></a>                value_projected,</span>
+<span id="cb3-58"><a href="#cb3-58"></a>                mask_3d,</span>
+<span id="cb3-59"><a href="#cb3-59"></a>            )</span>
+<span id="cb3-60"><a href="#cb3-60"></a>            heads.append(attention_output)</span>
+<span id="cb3-61"><a href="#cb3-61"></a></span>
+<span id="cb3-62"><a href="#cb3-62"></a>        <span class="co"># concat heads</span></span>
+<span id="cb3-63"><a href="#cb3-63"></a>        concatted_output <span class="op">=</span> torch.cat(heads, dim<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb3-64"><a href="#cb3-64"></a></span>
+<span id="cb3-65"><a href="#cb3-65"></a>        <span class="co"># linear projection for output</span></span>
+<span id="cb3-66"><a href="#cb3-66"></a>        <span class="cf">return</span> <span class="va">self</span>.output_linear_projector.forward(concatted_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="positional-encoder" class="slide level2">
-<h2>Positional Encoder</h2>
+<section id="position-wise-feed-forward-networks-について" class="slide level2">
+<h2>Position-wise Feed-Forward Networks について</h2>
+<ul>
+<li>TransformerにおけるEncoder及びDecoder内では、multi-head attentionとセットでPosition-wise Feed-Forward Networks が採用されている.(multi-head attentionの出力がFFNの入力になる.)</li>
+<li>これは、2つの線形変換(=つまり中間層は一つ!)とその間のReLU活性化関数で構成される.</li>
+<li>論文においては、入出力層の次元は <span class="math inline">\(d_{model} = 512\)</span>、中間層の次元は <span class="math inline">\(d_{ff} = 2048\)</span>.</li>
+</ul>
+<p><span class="math display">\[
+FFN(x) = \max(0, xW_{1} + b_{1})W_{2} + b_{2}
+\tag{2}
+\]</span></p>
+</section>
+<section id="position-wise-feed-forward-networks-のお気持ち実装" class="slide level2">
+<h2>Position-wise Feed-Forward Networks のお気持ち実装</h2>
+<p><code>PositionWiseFFN</code>クラスを、シンプルに中間層一つのfully conected layerとして実装しました.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">class</span> PositionWiseFFNInterface(nn.Module):</span>
+<span id="cb4-2"><a href="#cb4-2"></a>    <span class="co">"""</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co">    - Position-wise Feed-Forward Networks(FFN)は、2つの全結合層を重ねただけのシンプルな層.(中間層は一つだけ.)</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">    - 活性化関数はRelu.</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co">    - 定式化: FFN(x) = max(0, xW_1 + b_1)W_2 + b_2</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">        - max(0, 1つ目の層の出力)の意味が気になる...。普通付いてないっけ?</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">    """</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a></span>
+<span id="cb4-9"><a href="#cb4-9"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor):</span>
+<span id="cb4-11"><a href="#cb4-11"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a></span>
+<span id="cb4-13"><a href="#cb4-13"></a></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="kw">class</span> PositionWiseFFN(PositionWiseFFNInterface):</span>
+<span id="cb4-15"><a href="#cb4-15"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, d_model: <span class="bu">int</span>, d_ff: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb4-16"><a href="#cb4-16"></a>        <span class="co">"""入力層と出力層の次元数が同じなので、linear transformation?"""</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb4-18"><a href="#cb4-18"></a>        <span class="va">self</span>.linear_1 <span class="op">=</span> nn.Linear(d_model, d_ff)</span>
+<span id="cb4-19"><a href="#cb4-19"></a>        <span class="va">self</span>.linear_2 <span class="op">=</span> nn.Linear(d_ff, d_model)</span>
+<span id="cb4-20"><a href="#cb4-20"></a>        <span class="va">self</span>.activate_func <span class="op">=</span> nn.functional.relu</span>
+<span id="cb4-21"><a href="#cb4-21"></a></span>
+<span id="cb4-22"><a href="#cb4-22"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb4-23"><a href="#cb4-23"></a>        middle_output <span class="op">=</span> <span class="va">self</span>.activate_func(<span class="va">self</span>.linear_1.forward(x))</span>
+<span id="cb4-24"><a href="#cb4-24"></a>        <span class="cf">return</span> <span class="va">self</span>.linear_2.forward(middle_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="positional-encoder-について" class="slide level2">
+<h2>Positional Encoder について</h2>
+<ul>
+<li>multi-head attention はsequential(系列)データの要素間の関係を学習できるが、再起(recurrence)も畳み込み(convolution)も含まれないので<strong>sequentialデータの順序は考慮されない</strong>.</li>
+<li>そこで <strong>positional encoding</strong> を用いて、<strong>sequential データ内の position 情報</strong> を 各tokenの特徴量ベクトルへ追加する.
+<ul>
+<li>ここで”追加”というのは、sequentianlデータ内の各tokenの特徴量ベクトルに対して、positonal encodingで作った 同次元 (<span class="math inline">\(d_{model}\)</span>)のベクトルを足し算する事. (単に足し算以外のアプローチもあるのかな<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul></li>
+<li>positional encodingには 学習型(i.e.&nbsp;学習すべきparametersを持つ) と 固定型(i.e.&nbsp;持たない) で多くの選択肢がある. (論文では以下の固定型を採用)</li>
+</ul>
+<p><span class="math display">\[
+PE_{pos, 2i} = \sin(pos/10000^{2i/d_{model}}),
+PE_{pos, 2i+1} = \cos(pos/10000^{2i/d_{model}})
+\]</span></p>
+<p>ここで、<span class="math inline">\(pos\)</span> は sequenceデータにおける対象tokenのposition, <span class="math inline">\(2i, 2i+1\)</span> は、positonal encoding ベクトルの各要素indexを意味する.</p>
 </section>
 <section id="positional-encoder-のお気持ち実装" class="slide level2">
 <h2>Positional Encoder のお気持ち実装</h2>
+<p>元のsequential特徴量ベクトル(<span class="math inline">\(n \times d_{model}\)</span> 行列)を受け取り、positional encoding ベクトルを足し合わせた ベクトル(<span class="math inline">\(n \times d_{model}\)</span> 行列)を返すような、<code>PositionalEncoding</code>クラスをお気持ち実装した.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">class</span> PositionalEncodingInterface(abc.ABC):</span>
+<span id="cb5-2"><a href="#cb5-2"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: Tensor) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb5-4"><a href="#cb5-4"></a>        <span class="co">"""元のsequential特徴量ベクトル(n * d_{model} 行列)を受け取り、</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">        positional encoding ベクトルを足し合わせた ベクトル(n * d_{model} 行列)を返す.</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">        """</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a></span>
+<span id="cb5-9"><a href="#cb5-9"></a></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="kw">class</span> PositionalEncoding(PositionalEncodingInterface):</span>
+<span id="cb5-11"><a href="#cb5-11"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb5-12"><a href="#cb5-12"></a>        <span class="va">self</span>,</span>
+<span id="cb5-13"><a href="#cb5-13"></a>        d_model: <span class="bu">int</span>,</span>
+<span id="cb5-14"><a href="#cb5-14"></a>        max_len: <span class="bu">int</span>,</span>
+<span id="cb5-15"><a href="#cb5-15"></a>        device: torch.device <span class="op">=</span> torch.device(<span class="st">"cpu"</span>),</span>
+<span id="cb5-16"><a href="#cb5-16"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb5-17"><a href="#cb5-17"></a>        <span class="co">"""</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co">        Parameters</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co">        ----------</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a><span class="co">        d_model : int</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a><span class="co">            モデルの埋め込みベクトルの次元数</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">        max_len : int</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">            sequential データの最大長.</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">        device : torch.device, optional</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">            by default torch.device("cpu")</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a><span class="co">        """</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb5-28"><a href="#cb5-28"></a>        <span class="va">self</span>.d_model <span class="op">=</span> d_model</span>
+<span id="cb5-29"><a href="#cb5-29"></a>        <span class="va">self</span>.max_len <span class="op">=</span> max_len</span>
+<span id="cb5-30"><a href="#cb5-30"></a>        <span class="va">self</span>.positional_encoding_weights <span class="op">=</span> <span class="va">self</span>._initialize_weight().to(device)</span>
+<span id="cb5-31"><a href="#cb5-31"></a></span>
+<span id="cb5-32"><a href="#cb5-32"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: Tensor) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb5-33"><a href="#cb5-33"></a>        seq_len <span class="op">=</span> x.size(<span class="dv">1</span>)</span>
+<span id="cb5-34"><a href="#cb5-34"></a>        positional_encoding_weights <span class="op">=</span> <span class="va">self</span>.positional_encoding_weights[:seq_len, :]</span>
+<span id="cb5-35"><a href="#cb5-35"></a>        <span class="cf">return</span> x <span class="op">+</span> positional_encoding_weights.unsqueeze(<span class="dv">0</span>)  <span class="co"># 次元をあわせて足し算.</span></span>
+<span id="cb5-36"><a href="#cb5-36"></a></span>
+<span id="cb5-37"><a href="#cb5-37"></a>    <span class="kw">def</span> _initialize_weight(<span class="va">self</span>) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb5-38"><a href="#cb5-38"></a>        positional_encoding_weights <span class="op">=</span> [<span class="va">self</span>._calc_positional_encoding_vector(pos) <span class="cf">for</span> pos <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="va">self</span>.d_model <span class="op">+</span> <span class="dv">1</span>)]</span>
+<span id="cb5-39"><a href="#cb5-39"></a>        <span class="cf">return</span> torch.tensor(positional_encoding_weights).<span class="bu">float</span>()</span>
+<span id="cb5-40"><a href="#cb5-40"></a></span>
+<span id="cb5-41"><a href="#cb5-41"></a>    <span class="kw">def</span> _calc_positional_encoding_vector(<span class="va">self</span>, position_idx: <span class="bu">int</span>) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb5-42"><a href="#cb5-42"></a>        <span class="co">"""_summary_</span></span>
+<span id="cb5-43"><a href="#cb5-43"></a></span>
+<span id="cb5-44"><a href="#cb5-44"></a><span class="co">        Parameters</span></span>
+<span id="cb5-45"><a href="#cb5-45"></a><span class="co">        ----------</span></span>
+<span id="cb5-46"><a href="#cb5-46"></a><span class="co">        position_idx : int</span></span>
+<span id="cb5-47"><a href="#cb5-47"></a><span class="co">            sequentialデータにおける位置</span></span>
+<span id="cb5-48"><a href="#cb5-48"></a><span class="co">        d_model : int</span></span>
+<span id="cb5-49"><a href="#cb5-49"></a><span class="co">            特徴量ベクトルの次元数</span></span>
+<span id="cb5-50"><a href="#cb5-50"></a><span class="co">        Returns</span></span>
+<span id="cb5-51"><a href="#cb5-51"></a><span class="co">        -------</span></span>
+<span id="cb5-52"><a href="#cb5-52"></a><span class="co">        Tensor</span></span>
+<span id="cb5-53"><a href="#cb5-53"></a><span class="co">            positional encoding (d_model, )のベクトル.</span></span>
+<span id="cb5-54"><a href="#cb5-54"></a><span class="co">        """</span></span>
+<span id="cb5-55"><a href="#cb5-55"></a>        pe <span class="op">=</span> torch.zeros(<span class="va">self</span>.d_model)</span>
+<span id="cb5-56"><a href="#cb5-56"></a>        odd_indices <span class="op">=</span> torch.arange(<span class="dv">0</span>, <span class="va">self</span>.d_model, <span class="dv">2</span>)</span>
+<span id="cb5-57"><a href="#cb5-57"></a>        even_indices <span class="op">=</span> torch.arange(<span class="dv">1</span>, <span class="va">self</span>.d_model, <span class="dv">2</span>)</span>
+<span id="cb5-58"><a href="#cb5-58"></a>        pe[odd_indices] <span class="op">=</span> torch.cos(position_idx <span class="op">/</span> (<span class="dv">10000</span> <span class="op">**</span> (odd_indices.<span class="bu">float</span>() <span class="op">/</span> <span class="va">self</span>.d_model)))</span>
+<span id="cb5-59"><a href="#cb5-59"></a>        pe[even_indices] <span class="op">=</span> torch.sin(position_idx <span class="op">/</span> (<span class="dv">10000</span> <span class="op">**</span> (even_indices.<span class="bu">float</span>() <span class="op">/</span> <span class="va">self</span>.d_model)))</span>
+<span id="cb5-60"><a href="#cb5-60"></a>        <span class="cf">return</span> pe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section></section>
 <section>
 <section id="transformer-を組み立てていく" class="title-slide slide level1 center">
@@ -633,13 +828,313 @@ W^{O} \in \mathbb{R}^{h * d_{v}\times d_{model}}
 </section>
 <section id="transformer-encoder" class="slide level2">
 <h2>Transformer Encoder</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Transformer における Encoder は以下の層で構成される.
+<ul>
+<li>Embedding層</li>
+<li>positional Encoding層</li>
+<li>Transformer Encoder Block × N個
+<ul>
+<li>各blockは multi-head attention層(self-attention) + feed forward network層 で構成される.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="transformer_encoder.PNG" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="transformer-encoder-blockのお気持ち実装" class="slide level2">
+<h2>Transformer Encoder Blockのお気持ち実装</h2>
+<p>まずは、multi-head attention層(self-attention) + feed forward network層で構成される.<code>TransformderEncoderBlock</code>クラスを、<code>MultiHeadAttention</code>と<code>PositionWiseFFN</code>をDIしてお気持ち実装する. Transformer Encoder 内で N個 直列に繋がっているやつ…!</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">class</span> TransformderEncoderBlockInterface(nn.Module):</span>
+<span id="cb6-2"><a href="#cb6-2"></a>    <span class="co">"""</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co">    multi-head attention層(self-attention) + feed forward network層で構成される.</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co">    """</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb6-7"><a href="#cb6-7"></a>        <span class="co">"""sequential特徴量ベクトル(n * d_{model} 行列)を受け取り、</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co">        multi-head attention -&gt; FFNに通して、</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">        同じ形状の(n * d_{model} 行列)を返す.</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">        """</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="kw">class</span> TransformderEncoderBlock(TransformderEncoderBlockInterface):</span>
+<span id="cb6-14"><a href="#cb6-14"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb6-15"><a href="#cb6-15"></a>        <span class="va">self</span>,</span>
+<span id="cb6-16"><a href="#cb6-16"></a>        d_model: <span class="bu">int</span>,</span>
+<span id="cb6-17"><a href="#cb6-17"></a>        self_attention: MultiHeadAttentionInterface,</span>
+<span id="cb6-18"><a href="#cb6-18"></a>        feed_forward_network: PositionWiseFFNInterface,</span>
+<span id="cb6-19"><a href="#cb6-19"></a>        dropout_rate: <span class="bu">float</span>,</span>
+<span id="cb6-20"><a href="#cb6-20"></a>        layer_norm_epsilon: <span class="bu">float</span>,</span>
+<span id="cb6-21"><a href="#cb6-21"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb6-22"><a href="#cb6-22"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb6-23"><a href="#cb6-23"></a></span>
+<span id="cb6-24"><a href="#cb6-24"></a>        <span class="va">self</span>.multi_head_attention <span class="op">=</span> self_attention</span>
+<span id="cb6-25"><a href="#cb6-25"></a>        <span class="va">self</span>.dropout_self_attention <span class="op">=</span> nn.Dropout(dropout_rate)</span>
+<span id="cb6-26"><a href="#cb6-26"></a>        <span class="va">self</span>.layer_norm_self_attention <span class="op">=</span> nn.LayerNorm(d_model, layer_norm_epsilon)</span>
+<span id="cb6-27"><a href="#cb6-27"></a></span>
+<span id="cb6-28"><a href="#cb6-28"></a>        <span class="va">self</span>.ffn <span class="op">=</span> feed_forward_network</span>
+<span id="cb6-29"><a href="#cb6-29"></a>        <span class="va">self</span>.dropout_ffn <span class="op">=</span> nn.Dropout(dropout_rate)</span>
+<span id="cb6-30"><a href="#cb6-30"></a>        <span class="va">self</span>.layer_norm_ffn <span class="op">=</span> nn.LayerNorm(d_model, layer_norm_epsilon)</span>
+<span id="cb6-31"><a href="#cb6-31"></a></span>
+<span id="cb6-32"><a href="#cb6-32"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb6-33"><a href="#cb6-33"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_self_attention(<span class="va">self</span>._self_attention_block)</span>
+<span id="cb6-34"><a href="#cb6-34"></a>        <span class="cf">return</span> <span class="va">self</span>.layer_norm_ffn(<span class="va">self</span>._feed_forward_block(x))</span>
+<span id="cb6-35"><a href="#cb6-35"></a></span>
+<span id="cb6-36"><a href="#cb6-36"></a>    <span class="kw">def</span> _self_attention_block(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb6-37"><a href="#cb6-37"></a>        x <span class="op">=</span> <span class="va">self</span>.multi_head_attention.forward(x, x, x) <span class="co"># self-attention</span></span>
+<span id="cb6-38"><a href="#cb6-38"></a>        <span class="cf">return</span> <span class="va">self</span>.dropout_self_attention.forward(x)</span>
+<span id="cb6-39"><a href="#cb6-39"></a></span>
+<span id="cb6-40"><a href="#cb6-40"></a>    <span class="kw">def</span> _feed_forward_block(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb6-41"><a href="#cb6-41"></a>        x <span class="op">=</span> <span class="va">self</span>.ffn.forward(x)</span>
+<span id="cb6-42"><a href="#cb6-42"></a>        <span class="cf">return</span> <span class="va">self</span>.dropout_ffn.forward(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="transformer-encoderのお気持ち実装" class="slide level2">
+<h2>Transformer Encoderのお気持ち実装</h2>
+<p>続いて、Embedding層 + Positional Encoding層 + Transformer Encoder Block × N個 で形成される<code>TransformerEncoder</code>クラスをお気持ち実装する.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">class</span> TransformerEncoderInterface(nn.Module):</span>
+<span id="cb7-2"><a href="#cb7-2"></a>    <span class="co">"""</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co">    - Transformer における Encoder は以下の層で構成される.</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co">        - Embedding層</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co">        - positional Encoding層</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co">        - (multi-head attention層 + feed forward network層) = TransformerEncoderBlock層をn層重ねた層.</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">    """</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a></span>
+<span id="cb7-9"><a href="#cb7-9"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb7-11"><a href="#cb7-11"></a>        <span class="co">"""</span></span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="co">        - まずEmbedding</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a><span class="co">        - 次にPositional Encoding</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a><span class="co">        - TransformerEncoderBlock層 × n</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a><span class="co">        """</span></span>
+<span id="cb7-16"><a href="#cb7-16"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a></span>
+<span id="cb7-18"><a href="#cb7-18"></a></span>
+<span id="cb7-19"><a href="#cb7-19"></a><span class="kw">class</span> TransformerEncoder(TransformerEncoderInterface):</span>
+<span id="cb7-20"><a href="#cb7-20"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb7-21"><a href="#cb7-21"></a>        <span class="va">self</span>,</span>
+<span id="cb7-22"><a href="#cb7-22"></a>        d_model: <span class="bu">int</span>,</span>
+<span id="cb7-23"><a href="#cb7-23"></a>        N: <span class="bu">int</span>,</span>
+<span id="cb7-24"><a href="#cb7-24"></a>        positional_encoding: PositionalEncodingInterface,</span>
+<span id="cb7-25"><a href="#cb7-25"></a>        self_attention: MultiHeadAttentionInterface,</span>
+<span id="cb7-26"><a href="#cb7-26"></a>        feed_forward_network: PositionWiseFFNInterface,</span>
+<span id="cb7-27"><a href="#cb7-27"></a>        vocab_size: <span class="bu">int</span>,</span>
+<span id="cb7-28"><a href="#cb7-28"></a>        max_len: <span class="bu">int</span>,</span>
+<span id="cb7-29"><a href="#cb7-29"></a>        padding_idx: <span class="bu">int</span>,</span>
+<span id="cb7-30"><a href="#cb7-30"></a>        dropout_rate: <span class="bu">float</span>,</span>
+<span id="cb7-31"><a href="#cb7-31"></a>        layer_norm_epsilon: <span class="bu">float</span>,</span>
+<span id="cb7-32"><a href="#cb7-32"></a>        device: torch.device <span class="op">=</span> torch.device(<span class="st">"cpu"</span>),</span>
+<span id="cb7-33"><a href="#cb7-33"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb7-34"><a href="#cb7-34"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb7-35"><a href="#cb7-35"></a>        <span class="va">self</span>.embedding <span class="op">=</span> nn.Embedding(vocab_size, d_model, padding_idx)</span>
+<span id="cb7-36"><a href="#cb7-36"></a></span>
+<span id="cb7-37"><a href="#cb7-37"></a>        <span class="va">self</span>.positional_encoding <span class="op">=</span> positional_encoding</span>
+<span id="cb7-38"><a href="#cb7-38"></a></span>
+<span id="cb7-39"><a href="#cb7-39"></a>        <span class="va">self</span>.encoder_blocks <span class="op">=</span> nn.ModuleList(</span>
+<span id="cb7-40"><a href="#cb7-40"></a>            [</span>
+<span id="cb7-41"><a href="#cb7-41"></a>                TransformderEncoderBlock(</span>
+<span id="cb7-42"><a href="#cb7-42"></a>                    d_model, self_attention, feed_forward_network, dropout_rate, layer_norm_epsilon</span>
+<span id="cb7-43"><a href="#cb7-43"></a>                )</span>
+<span id="cb7-44"><a href="#cb7-44"></a>                <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(N)</span>
+<span id="cb7-45"><a href="#cb7-45"></a>            ]</span>
+<span id="cb7-46"><a href="#cb7-46"></a>        )</span>
+<span id="cb7-47"><a href="#cb7-47"></a></span>
+<span id="cb7-48"><a href="#cb7-48"></a>    <span class="co"># ↓流れがわかりやす～い!</span></span>
+<span id="cb7-49"><a href="#cb7-49"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb7-50"><a href="#cb7-50"></a>        x <span class="op">=</span> <span class="va">self</span>.embedding(x)</span>
+<span id="cb7-51"><a href="#cb7-51"></a>        x <span class="op">=</span> <span class="va">self</span>.positional_encoding.forward(x)</span>
+<span id="cb7-52"><a href="#cb7-52"></a>        <span class="cf">for</span> encoder_block <span class="kw">in</span> <span class="va">self</span>.encoder_blocks:</span>
+<span id="cb7-53"><a href="#cb7-53"></a>            x <span class="op">=</span> encoder_block.forward(x)</span>
+<span id="cb7-54"><a href="#cb7-54"></a>        <span class="cf">return</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="transformer-decoder" class="slide level2">
 <h2>Transformer Decoder</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Transformer Decoderは以下の層で構成される:
+<ul>
+<li>Embedding層:</li>
+<li>Positional Encoding層:</li>
+<li>Transformer Decoder Block × N個
+<ul>
+<li>各blockは masked multi-head attention層(self-attention) + multi-head attention層(source-to-target-attention) + feed forward network層 で構成される.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="transformer_decoder.PNG" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="tranformer-のお気持ち実装" class="slide level2">
-<h2>Tranformer のお気持ち実装</h2>
-<pre><code></code></pre>
+<section id="transformer-decoder-blockのお気持ち実装" class="slide level2">
+<h2>Transformer Decoder Blockのお気持ち実装</h2>
+<p>まずは、masked multi-head attention層(self-attention) + multi-head attention層(source-to-target-attention) + feed forward network層 で構成される.<code>TransformderDecoderBlock</code>クラスを、<code>MultiHeadAttention</code>と<code>PositionWiseFFN</code>をDIしてお気持ち実装する. Transformer Decoder 内で N個 直列に繋がっているやつ…!</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">class</span> TransformerDecoderBlockInterface(nn.Module):</span>
+<span id="cb8-2"><a href="#cb8-2"></a>    <span class="co">"""</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">    masked multi-head attention層(self-attention) + multi-head attention層(source-to-target-attention) + feed forward network層 で構成される</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">    """</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a></span>
+<span id="cb8-6"><a href="#cb8-6"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a>    <span class="kw">def</span> forward(</span>
+<span id="cb8-8"><a href="#cb8-8"></a>        <span class="va">self</span>,</span>
+<span id="cb8-9"><a href="#cb8-9"></a>        tgt: Tensor,  <span class="co"># Decoder input</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a>        src: Tensor,  <span class="co"># Encoder output</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a>        mask_src_to_tgt: Tensor,</span>
+<span id="cb8-12"><a href="#cb8-12"></a>        mask_self: Tensor,</span>
+<span id="cb8-13"><a href="#cb8-13"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb8-14"><a href="#cb8-14"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a></span>
+<span id="cb8-16"><a href="#cb8-16"></a></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="kw">class</span> TransformerDecoderBlock(TransformerDecoderBlockInterface):</span>
+<span id="cb8-18"><a href="#cb8-18"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb8-19"><a href="#cb8-19"></a>        <span class="va">self</span>,</span>
+<span id="cb8-20"><a href="#cb8-20"></a>        d_model: <span class="bu">int</span>,</span>
+<span id="cb8-21"><a href="#cb8-21"></a>        self_attention: MultiHeadAttentionInterface,</span>
+<span id="cb8-22"><a href="#cb8-22"></a>        src_to_tgt_attention: MultiHeadAttentionInterface,</span>
+<span id="cb8-23"><a href="#cb8-23"></a>        feed_forward_network: PositionWiseFFNInterface,</span>
+<span id="cb8-24"><a href="#cb8-24"></a>        dropout_rate: <span class="bu">float</span>,</span>
+<span id="cb8-25"><a href="#cb8-25"></a>        layer_norm_epsilon: <span class="bu">float</span>,</span>
+<span id="cb8-26"><a href="#cb8-26"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb8-27"><a href="#cb8-27"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb8-28"><a href="#cb8-28"></a></span>
+<span id="cb8-29"><a href="#cb8-29"></a>        <span class="co"># self-attention</span></span>
+<span id="cb8-30"><a href="#cb8-30"></a>        <span class="va">self</span>.self_attention <span class="op">=</span> self_attention</span>
+<span id="cb8-31"><a href="#cb8-31"></a>        <span class="va">self</span>.dropout_self_attention <span class="op">=</span> nn.Dropout(dropout_rate)</span>
+<span id="cb8-32"><a href="#cb8-32"></a>        <span class="va">self</span>.layer_norm_self_attention <span class="op">=</span> nn.LayerNorm(d_model, layer_norm_epsilon)</span>
+<span id="cb8-33"><a href="#cb8-33"></a></span>
+<span id="cb8-34"><a href="#cb8-34"></a>        <span class="co"># source-to-target attention</span></span>
+<span id="cb8-35"><a href="#cb8-35"></a>        <span class="va">self</span>.src_to_tgt_attention <span class="op">=</span> src_to_tgt_attention</span>
+<span id="cb8-36"><a href="#cb8-36"></a>        <span class="va">self</span>.dropout_src_to_tgt_attention <span class="op">=</span> nn.Dropout(dropout_rate)</span>
+<span id="cb8-37"><a href="#cb8-37"></a>        <span class="va">self</span>.layer_norm_src_to_tgt_attention <span class="op">=</span> nn.LayerNorm(d_model, layer_norm_epsilon)</span>
+<span id="cb8-38"><a href="#cb8-38"></a></span>
+<span id="cb8-39"><a href="#cb8-39"></a>        <span class="co"># feed forward network</span></span>
+<span id="cb8-40"><a href="#cb8-40"></a>        <span class="va">self</span>.ffn <span class="op">=</span> feed_forward_network</span>
+<span id="cb8-41"><a href="#cb8-41"></a>        <span class="va">self</span>.dropout_ffn <span class="op">=</span> nn.Dropout(dropout_rate)</span>
+<span id="cb8-42"><a href="#cb8-42"></a>        <span class="va">self</span>.layer_norm_ffn <span class="op">=</span> nn.LayerNorm(d_model, layer_norm_epsilon)</span>
+<span id="cb8-43"><a href="#cb8-43"></a></span>
+<span id="cb8-44"><a href="#cb8-44"></a>    <span class="kw">def</span> forward(</span>
+<span id="cb8-45"><a href="#cb8-45"></a>        <span class="va">self</span>,</span>
+<span id="cb8-46"><a href="#cb8-46"></a>        tgt: Tensor,</span>
+<span id="cb8-47"><a href="#cb8-47"></a>        src: Tensor,</span>
+<span id="cb8-48"><a href="#cb8-48"></a>        mask_src_to_tgt: Tensor,</span>
+<span id="cb8-49"><a href="#cb8-49"></a>        mask_self: Tensor,</span>
+<span id="cb8-50"><a href="#cb8-50"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb8-51"><a href="#cb8-51"></a>        <span class="co"># input to self-attention function</span></span>
+<span id="cb8-52"><a href="#cb8-52"></a>        tgt_self_attentioned <span class="op">=</span> <span class="va">self</span>.dropout_self_attention(</span>
+<span id="cb8-53"><a href="#cb8-53"></a>            <span class="va">self</span>.self_attention.forward(tgt, tgt, tgt, mask_self),</span>
+<span id="cb8-54"><a href="#cb8-54"></a>        )</span>
+<span id="cb8-55"><a href="#cb8-55"></a>        tgt_self_attentioned_norm <span class="op">=</span> <span class="va">self</span>.layer_norm_self_attention(</span>
+<span id="cb8-56"><a href="#cb8-56"></a>            tgt <span class="op">+</span> tgt_self_attentioned,</span>
+<span id="cb8-57"><a href="#cb8-57"></a>        )</span>
+<span id="cb8-58"><a href="#cb8-58"></a></span>
+<span id="cb8-59"><a href="#cb8-59"></a>        <span class="co"># input to src-to-tgt-attention function</span></span>
+<span id="cb8-60"><a href="#cb8-60"></a>        x_src_to_tgt_attentioned <span class="op">=</span> <span class="va">self</span>.dropout_src_to_tgt_attention(</span>
+<span id="cb8-61"><a href="#cb8-61"></a>            <span class="va">self</span>.src_to_tgt_attention.forward(tgt_self_attentioned_norm, src, src, mask_src_to_tgt)</span>
+<span id="cb8-62"><a href="#cb8-62"></a>        )</span>
+<span id="cb8-63"><a href="#cb8-63"></a>        x_src_to_tgt_attentioned_norm <span class="op">=</span> <span class="va">self</span>.layer_norm_src_to_tgt_attention(</span>
+<span id="cb8-64"><a href="#cb8-64"></a>            tgt_self_attentioned <span class="op">+</span> x_src_to_tgt_attentioned</span>
+<span id="cb8-65"><a href="#cb8-65"></a>        )</span>
+<span id="cb8-66"><a href="#cb8-66"></a></span>
+<span id="cb8-67"><a href="#cb8-67"></a>        <span class="co"># input to feed forward network</span></span>
+<span id="cb8-68"><a href="#cb8-68"></a>        x_ffn <span class="op">=</span> <span class="va">self</span>.dropout_ffn(<span class="va">self</span>.ffn.forward(x_src_to_tgt_attentioned_norm))</span>
+<span id="cb8-69"><a href="#cb8-69"></a>        <span class="cf">return</span> <span class="va">self</span>.layer_norm_ffn(x_src_to_tgt_attentioned_norm <span class="op">+</span> x_ffn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="transformer-decoderのお気持ち実装" class="slide level2">
+<h2>Transformer Decoderのお気持ち実装</h2>
+<p>続いて、Embedding層 + Positional Encoding層 + Transformer Decoder Block × N個 で形成される<code>TransformerDecoder</code>クラスをお気持ち実装する.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">class</span> TranformerDecoderInterface(nn.Module):</span>
+<span id="cb9-2"><a href="#cb9-2"></a>    <span class="co">"""</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="co">    - Transformer Decoderは以下の層で構成される:</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co">        - Embedding Layer:</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">        - Positional Encoding Layer:</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co">        - Transformer Decoder Block × N:</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co">            - 各blockは(Masked multi-head attention + Multi-head attention + Feed Forward Network)で構成.</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">    """</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a></span>
+<span id="cb9-10"><a href="#cb9-10"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a>    <span class="kw">def</span> calc(</span>
+<span id="cb9-12"><a href="#cb9-12"></a>        <span class="va">self</span>,</span>
+<span id="cb9-13"><a href="#cb9-13"></a>        tgt: Tensor,</span>
+<span id="cb9-14"><a href="#cb9-14"></a>        src: Tensor,</span>
+<span id="cb9-15"><a href="#cb9-15"></a>        mask_src_tgt: Tensor,</span>
+<span id="cb9-16"><a href="#cb9-16"></a>        mask_self: Tensor,</span>
+<span id="cb9-17"><a href="#cb9-17"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb9-18"><a href="#cb9-18"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb9-19"><a href="#cb9-19"></a></span>
+<span id="cb9-20"><a href="#cb9-20"></a></span>
+<span id="cb9-21"><a href="#cb9-21"></a><span class="kw">class</span> TransformerDecoder(TranformerDecoderInterface):</span>
+<span id="cb9-22"><a href="#cb9-22"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb9-23"><a href="#cb9-23"></a>        <span class="va">self</span>,</span>
+<span id="cb9-24"><a href="#cb9-24"></a>        d_model: <span class="bu">int</span>,</span>
+<span id="cb9-25"><a href="#cb9-25"></a>        N: <span class="bu">int</span>,</span>
+<span id="cb9-26"><a href="#cb9-26"></a>        positional_encoding: PositionalEncodingInterface,</span>
+<span id="cb9-27"><a href="#cb9-27"></a>        self_attention: MultiHeadAttentionInterface,</span>
+<span id="cb9-28"><a href="#cb9-28"></a>        src_to_tgt_attention: MultiHeadAttentionInterface,</span>
+<span id="cb9-29"><a href="#cb9-29"></a>        feed_forward_network: PositionWiseFFNInterface,</span>
+<span id="cb9-30"><a href="#cb9-30"></a>        vocab_size: <span class="bu">int</span>,</span>
+<span id="cb9-31"><a href="#cb9-31"></a>        max_len: <span class="bu">int</span>,</span>
+<span id="cb9-32"><a href="#cb9-32"></a>        padding_idx: <span class="bu">int</span>,</span>
+<span id="cb9-33"><a href="#cb9-33"></a>        dropout_rate: <span class="bu">float</span>,</span>
+<span id="cb9-34"><a href="#cb9-34"></a>        layer_norm_epsilon: <span class="bu">float</span>,</span>
+<span id="cb9-35"><a href="#cb9-35"></a>        device: torch.device <span class="op">=</span> torch.device(<span class="st">"cpu"</span>),</span>
+<span id="cb9-36"><a href="#cb9-36"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb9-37"><a href="#cb9-37"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb9-38"><a href="#cb9-38"></a>        <span class="va">self</span>.embedding <span class="op">=</span> nn.Embedding(vocab_size, d_model, padding_idx)</span>
+<span id="cb9-39"><a href="#cb9-39"></a></span>
+<span id="cb9-40"><a href="#cb9-40"></a>        <span class="va">self</span>.positional_encoding <span class="op">=</span> positional_encoding</span>
+<span id="cb9-41"><a href="#cb9-41"></a></span>
+<span id="cb9-42"><a href="#cb9-42"></a>        <span class="va">self</span>.decoder_blocks <span class="op">=</span> nn.ModuleList(</span>
+<span id="cb9-43"><a href="#cb9-43"></a>            [</span>
+<span id="cb9-44"><a href="#cb9-44"></a>                TransformerDecoderBlock(</span>
+<span id="cb9-45"><a href="#cb9-45"></a>                    d_model,</span>
+<span id="cb9-46"><a href="#cb9-46"></a>                    self_attention,</span>
+<span id="cb9-47"><a href="#cb9-47"></a>                    src_to_tgt_attention,</span>
+<span id="cb9-48"><a href="#cb9-48"></a>                    feed_forward_network,</span>
+<span id="cb9-49"><a href="#cb9-49"></a>                    dropout_rate,</span>
+<span id="cb9-50"><a href="#cb9-50"></a>                    layer_norm_epsilon,</span>
+<span id="cb9-51"><a href="#cb9-51"></a>                )</span>
+<span id="cb9-52"><a href="#cb9-52"></a>                <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(N)</span>
+<span id="cb9-53"><a href="#cb9-53"></a>            ]</span>
+<span id="cb9-54"><a href="#cb9-54"></a>        )</span>
+<span id="cb9-55"><a href="#cb9-55"></a></span>
+<span id="cb9-56"><a href="#cb9-56"></a>    <span class="co"># ↓流れがわかりやす～い!</span></span>
+<span id="cb9-57"><a href="#cb9-57"></a>    <span class="kw">def</span> forward(</span>
+<span id="cb9-58"><a href="#cb9-58"></a>        <span class="va">self</span>,</span>
+<span id="cb9-59"><a href="#cb9-59"></a>        tgt: Tensor,</span>
+<span id="cb9-60"><a href="#cb9-60"></a>        src: Tensor,</span>
+<span id="cb9-61"><a href="#cb9-61"></a>        mask_src_tgt: Tensor,</span>
+<span id="cb9-62"><a href="#cb9-62"></a>        mask_self: Tensor,</span>
+<span id="cb9-63"><a href="#cb9-63"></a>    ) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb9-64"><a href="#cb9-64"></a>        tgt <span class="op">=</span> <span class="va">self</span>.embedding(tgt)</span>
+<span id="cb9-65"><a href="#cb9-65"></a>        tgt <span class="op">=</span> <span class="va">self</span>.positional_encoding.forward(tgt)</span>
+<span id="cb9-66"><a href="#cb9-66"></a>        <span class="cf">for</span> decoder_block <span class="kw">in</span> <span class="va">self</span>.decoder_blocks:</span>
+<span id="cb9-67"><a href="#cb9-67"></a>            tgt <span class="op">=</span> decoder_block.forward(</span>
+<span id="cb9-68"><a href="#cb9-68"></a>                tgt,</span>
+<span id="cb9-69"><a href="#cb9-69"></a>                src,</span>
+<span id="cb9-70"><a href="#cb9-70"></a>                mask_src_tgt,</span>
+<span id="cb9-71"><a href="#cb9-71"></a>                mask_self,</span>
+<span id="cb9-72"><a href="#cb9-72"></a>            )</span>
+<span id="cb9-73"><a href="#cb9-73"></a>        <span class="cf">return</span> tgt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="transformer-の全体像はこんな感じだった." class="slide level2">
+<h2>Transformer の全体像はこんな感じだった.</h2>
+
+<img data-src="transformer_model_architecture.PNG" style="width:60.0%" class="r-stretch quarto-figure-center"></section>
+<section id="transformer-のお気持ち実装" class="slide level2">
+<h2>Transformer のお気持ち実装</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>hoge</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>

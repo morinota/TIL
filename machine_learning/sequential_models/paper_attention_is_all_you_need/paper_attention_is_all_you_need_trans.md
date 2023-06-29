@@ -267,7 +267,7 @@ Since our model contains no recurrence and no convolution, in order for the mode
 To this end, we add "positional encodings" to the input embeddings at the bottoms of the encoder and decoder stacks.
 そのため、エンコーダとデコーダのスタックの底にある入力埋め込みに"**positional encodings**"を追加する.
 The positional encodings have the same dimension dmodel as the embeddings, so that the two can be summed.
-**positional encodingsは(tokenの)エンベッディングと同じ次元 $d_{model}$ を持つ**ので、両者を合計することができる. ($d_{model}$は文章の長さ、という認識であってるかな)
+**positional encodingsは(tokenの)エンベッディングと同じ次元 $d_{model}$ を持つ**ので、両者を合計することができる. ($d_{model}$は特徴量ベクトルの次元数)
 There are many choices of positional encodings, learned and fixed [9].
 位置エンコーディングには、学習型と固定型という多くの選択肢がある[9]。
 

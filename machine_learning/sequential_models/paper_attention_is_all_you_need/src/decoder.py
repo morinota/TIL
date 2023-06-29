@@ -24,7 +24,7 @@ class TranformerDecoderInterface(nn.Module):
     """
 
     @abc.abstractmethod
-    def calc(
+    def forward(
         self,
         tgt: Tensor,
         src: Tensor,
@@ -101,7 +101,7 @@ class TransformerDecoderBlock(TransformerDecoderBlockInterface):
         )
 
         # input to feed forward network
-        x_ffn = self.dropout_ffn(self.ffn.calc(x_src_to_tgt_attentioned_norm))
+        x_ffn = self.dropout_ffn(self.ffn.forward(x_src_to_tgt_attentioned_norm))
         return self.layer_norm_ffn(x_src_to_tgt_attentioned_norm + x_ffn)
 
 
@@ -140,7 +140,7 @@ class TransformerDecoder(TranformerDecoderInterface):
             ]
         )
 
-    def calc(
+    def forward(
         self,
         tgt: Tensor,
         src: Tensor,

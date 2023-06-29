@@ -13,7 +13,7 @@ class PositionWiseFFNInterface(nn.Module):
     """
 
     @abc.abstractmethod
-    def calc(self, x: torch.Tensor):
+    def forward(self, x: torch.Tensor):
         raise NotImplementedError
 
 
@@ -25,6 +25,6 @@ class PositionWiseFFN(PositionWiseFFNInterface):
         self.linear_2 = nn.Linear(d_ff, d_model)
         self.activate_func = nn.functional.relu
 
-    def calc(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         middle_output = self.activate_func(self.linear_1.forward(x))
         return self.linear_2.forward(middle_output)
