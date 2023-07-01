@@ -21,14 +21,23 @@ title-slide-attributes:
   data-background-opacity: "0.5"
 ---
 
+## 論文の基本情報
+
+- title: Attention Is All You Need
+- published date: 6 Dec 2017,
+- authors: Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin
+- url(paper): [https://arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762)
+
 ## ざっくり論文概要
 
-- hogehoge
+- 言わずと知れた"Transformer"を提案する論文.
+- Transformerのモデルアーキテクチャと各パーツをある程度きちんと説明してくれている点がありがたかった.
+- 基本的には 機械翻訳タスク を想定した内容.
 
 ## この論文を読むモチベーション
 
 - Sequential なモデルを使った推薦手法の論文を理解するのに必要になりそう.
-- SentenceBERT等を用いたContent base系の推薦手法を開発・運用する上で、まずはAttention functionやTransformerが何をやってるかくらいは理解しておきたい.
+- SentenceBERT等を用いたContent base系の推薦手法を開発・運用する上で、まずは**Attention functionやTransformerが何をやってるか**くらいは理解しておきたい.
 
 # まず Transformerの全体像はこうだ!
 
@@ -36,15 +45,19 @@ title-slide-attributes:
 
 :::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="35%"}
 
 ![](transformer_model_architecture.PNG){width=100% fig-align="center"}
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="65%"}
 
-hogehoge
+- **Transformerの入力は、source と target の2つの sequential データ**みたいです. 翻訳前のsentenceと 翻訳後のsentenceのイメージ:thinking:
+  - **encoder-decoder 構造**をしており、encoder(図左)にsourceを、decoder(図右)にtargetを入力します.
+  - 入力データの形状は、(batch_size $\times$ max_sequence_length 2次元配列で各要素はtoken idx)みたいなイメージ.
+- Transformerの最終的な出力は、**next-token確率**.
+  - 出力データの形状は (batch_size $\times$ max_sequence_length $\times$ target_vocablary_size の3次元配列で、各要素がnext-token確率)って感じだろうか:thinking:
 
 :::
 
@@ -764,9 +777,20 @@ class TransformerDecoder(TranformerDecoderInterface):
         return tgt
 ```
 
-## Transformer の全体像はこんな感じだった.
+## Transformer の全体像はこんな感じでした.
+
+:::: {.columns}
+::: {.column width="50%"}
+
+すでにEncoder部分とDecoder部分は実装済みなので、あとは**Decoderの出力値に対する 線形変換の層**($d_{model}$ -> target_vocablary_numに次元数を増やすような変換. この場合は線形変換と言って良いのか...?)と、各要素の値をnext-token確率に変換する **softmax関数の層**を追加すればOKのはず...!
+
+:::
+::: {.column width="50%"}
 
 ![](transformer_model_architecture.PNG){width=60% fig-align="center"}
+
+:::
+::::
 
 ## Transformer のお気持ち実装
 
@@ -869,8 +893,16 @@ class Transformer(TransformerInterface):
 
 ## 感想
 
+- Attention, Self-Attention, Transformer等、NLPを始めとした機械学習界隈で良く聞く関数(モデル?)がどんな構造で、どんな入力を受け取って、どんなパラメータを持っていて、どんな出力をするのか、ざっくり把握できた気がする. (なぜこの構造が性能が良いのか、等はよくわかってない.)
+- これで、Sequentialなモデルを使った推薦手法へのアレルギーが減ると良いなと思う. あと、論文読み会でこれらの用語が出てきた時に「うんうん、あれね」となんとなく想像できるようになるはず...
+- ただ、"All You Need"具合は良くわかってない...!
+
 ## 次に読むべき論文
 
-- 2022 RecSysのベストペーパーの一つ. [paper name](paper url)
-- BERTの論文. [paper name](paper url)
-- SentenceBERTの論文. [paper name](paper url)
+- 2022 RecSysのベストペーパーの一つ. [Denoising Self-Attentive Sequential Recommendation](https://arxiv.org/abs/2212.04120)
+- BERTの元論文. [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)
+- SentenceBERTの論文. [Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)
+
+論文の理解やお気持ち実装の際に以下のtechブログを参考にさせていただきました! ありがたい...:wave: (↓のブログの実装と異なり、自分のお気持ち実装はおそらく動作しません...!)
+
+- [Python(PyTorch)で自作して理解するTransformer](https://zenn.dev/yukiyada/articles/59f3b820c52571#1.-%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB)

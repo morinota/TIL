@@ -329,11 +329,11 @@ The authors used greedy reranking with an objective function that combines item 
 Barraza-Urbina et al.[2015] proposed another formulation of the objective function for the greedy reranking strategy.
 Barraza-Urbinaら[2015]は、貪欲なリランキング戦略に対する目的関数の別の定式化を提案した。
 They suggested explicitly controlling the level to which diversification promotes items that are dissimilar to the user’s profile items.
-彼らは、多様化がユーザーのプロファイルと異なる項目を促進するレベルを明示的に制御することを提案した。
-This was achieved by multiplying the diversity component ( 1 |R| j∈R dist(i, j) in Equation (2)) by a weighted combination of exploration and exploitation scores for item i: β · xploit(i) + (1 − β) · xplore(i).
-R| j∈R dist(i, j) in Equation (2)) by a weighted combination of exploration and exploitation scores for item i: β · xploit(i) + (1 − β) · xplore(i).
+彼らは、**多様化がユーザのプロファイルと異なるアイテムを推薦するレベルを明示的に制御すること**を提案した。
+This was achieved by multiplying the diversity component ($\frac{1}{|R|} \sum_{j \in R} dist(i, j)$ in Equation (2)) by a weighted combination of exploration and exploitation scores for item i: β · xploit(i) + (1 − β) · xplore(i).
+これは、diversity成分(式(2)の$\frac{1}{|R|} \sum_{j \in R} dist(i, j)$)に、アイテム$i$の**exploration(探索)スコアとexploitation(利用)スコアの加重組み合わせを乗じる**ことで達成された: $\beta \cdot xploit(i) + (1 - \beta) \cdot xplore(i)$.
 The exploitation score xploit(i) measures the probability that items in the user’s profile that are similar to i have been highly rated by the user, and the exploration score xplore(i) captures the item’s average dissimilarity from the items in the user’s profile.
-エクスプロイトスコアxploit(i)は、iに類似するユーザーのプロファイル内のアイテムがユーザーによって高く評価されている確率を測定し、エクスプロアスコアxplore(i)は、ユーザーのプロファイル内のアイテムからのアイテムの平均的な非類似度をキャプチャする。
+エクスプロイトスコアxploit(i)は、iに類似するユーザのプロファイル内のアイテムがユーザーによって高く評価されている確率を測定し、エクスプロアスコアxplore(i)は、ユーザーのプロファイル内のアイテムからのアイテムの平均的な非類似度をキャプチャする。
 The β parameter thus controls the balance between a more “safe” diversification, picking diverse items that are within the user’s known taste range, and a more “explorative” diversification, promoting serendipitous items (see Section 3).
 βパラメータは、このように、ユーザーの既知の味覚の範囲内にある多様なアイテムを選ぶ、より「安全な」多様化と、セレンディピティアイテムを促進する、より「探索的な」多様化の間のバランスを制御する（セクション3参照）。
 There are also reranking techniques that do not use a greedy reranking strategy.

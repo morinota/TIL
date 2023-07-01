@@ -12,41 +12,41 @@ Denoising Self-Attentive Sequential Recommendation
 ## 0.3. abstract 0.3. 抽象的
 
 Transformer-based sequential recommenders are very powerful for capturing both short-term and long-term sequential item dependencies.
-トランスフォーマーに基づく逐次推薦器は、短期的および長期的な逐次項目の依存関係を捉えるのに非常に強力である.
+トランスフォーマーに基づくsequential推薦器は、短期的および長期的な**sequentialなアイテム間の依存関係**を捉えるのに非常に強力である.
 This is mainly attributed to their unique self-attention networks to exploit pairwise item-item interactions within the sequence.
-これは主に、シーケンス内のペアワイズアイテム-アイテム相互作用を利用するための、独自の自己注意ネットワークに起因している.
+これは主に、sequence内のペアワイズアイテム-アイテム相互作用を利用するための、独自のself-attention ネットワークに起因している.
 However, real-world item sequences are often noisy, which is particularly true for implicit feedback.
-しかし、実世界のアイテム列はしばしばノイズが多く、特に暗黙的なフィードバックにはそれが当てはまる。
+しかし、**実世界のitem sequencesはしばしばノイズが多く、特に暗黙的なフィードバックにはそれが当てはまる**。
 For example, a large portion of clicks do not align well with user preferences, and many products end up with negative reviews or being returned.
-例えば、クリックの大部分はユーザの嗜好に合わないし、多くの製品は否定的なレビューを受けたり、返品されることになる。
+例えば、**クリックの大部分はユーザの嗜好に合わないし**、多くの購入した製品は否定的なレビューを受けたり、返品されることになる.
 As such, the current user action only depends on a subset of items, not on the entire sequences.
-このように、現在のユーザーアクションはシーケンス全体ではなく、アイテムのサブセットにのみ依存する。
+このように、現在のユーザーアクションはシーケンス全体ではなく、アイテムのsubset(部分集合)にのみ依存する。
 Many existing Transformer-based models use full attention distributions, which inevitably assign certain credits to irrelevant items.
-既存のTransformerベースのモデルの多くは、完全な注意の分布を使用しており、必然的に無関係なアイテムに一定のクレジットを割り当てることになる。
+既存のTransformerベースのモデルの多くは、完全なattention分布を使用しており、必然的に無関係なアイテムに一定のクレジットを割り当てることになる。
 This may lead to sub-optimal performance if Transformers are not regularized properly.
-これはTransformerが適切に正則化されない場合、最適でない性能につながる可能性がある。
+これはTransformerが適切に正則化されない場合、最適でない性能につながる可能性がある.
 
 Here we propose the Rec-denoiser model for better training of self-attentive recommender systems.
-本論文では、自己調整型推薦システムのより良い学習のために、Rec-denoiserモデルを提案する。
+本論文では、自己調整型推薦システムのより良い学習のために、**Rec-denoiserモデルを提案**する。
 In Rec-denoiser, we aim to adaptively prune noisy items that are unrelated to the next item prediction.
-Rec-denoiserでは、次のアイテム予測に関係のないノイズの多いアイテムを適応的に刈り取ることを目的とする。
+Rec-denoiserでは、**next item prediction**に関係のないノイズの多いアイテムを適応的に刈り取ることを目的とする.(そっか、NLPのnext-token predictionみたいな感じ...!)
 To achieve this, we simply attach each self-attention layer with a trainable binary mask to prune noisy attentions, resulting in sparse and clean attention distributions.
-そのため、各自己注意層に学習可能なバイナリマスクを付加し、ノイズの多い注意を除去することで、スパースでクリーンな注意分布が得られる。
+そのため、**各self-attention層に学習可能なbinary maskを付加**し、ノイズの多いattentionを除去することで、スパースでクリーンなattention分布が得られる。
 This largely purifies item-item dependencies and provides better model interpretability.
-これにより、項目-項目依存性がほぼ除去され、モデルの解釈可能性が向上する。
+これにより、item-itemの依存性(の多く??)がほぼ除去され、モデルの解釈可能性が向上する。
 In addition, the self-attention network is typically not Lipschitz continuous and is vulnerable to small perturbations.
-さらに、自己注意ネットワークは一般的にリプシッツ連続ではなく、小さな摂動に弱い。
+さらに、self-attentionネットワークは一般的にリプシッツ連続ではなく、小さな摂動に弱い.(このへんよくわからん...!)
 Jacobian regularization is further applied to the Transformer blocks to improve the robustness of Transformers for noisy sequences.
-さらにヤコビアン正則化をTransformerブロックに適用し、ノイズの多いシーケンスに対するTransformerの頑健性を向上させる。
+**さらにヤコビアン正則化をTransformerブロックに適用し、ノイズの多いシーケンスに対するTransformerの頑健性を向上させる**。
 Our Rec-denoiser is a general plugin that is compatible to many Transformers.
-我々のRec-denoiserは多くのTransformerに対応する汎用プラグインである。
+**我々のRec-denoiserは多くのTransformerに対応する汎用プラグインである**. (general plugin、素晴らしい...!!)
 Quantitative results on real-world datasets show that our Rec-denoiser outperforms the state-of-the-art baselines.
-実世界のデータセットにおける定量的な結果は、我々のRec-denoiserが最先端のベースラインを凌駕することを示している。
+実世界のデータセットにおける定量的な結果は、我々のRec-denoiserが最先端のベースラインを凌駕することを示している.
 
 # 1. introduction 1.はじめに
 
 Sequential recommendation aims to recommend the next item based on a user’s historical actions [20, 35, 39, 44, 47], e.g., to recommend a bluetooth headphone after a user purchases a smart phone.
-**Sequential recommendationの目的は，ユーザの過去の行動に基づいて次のアイテムを推薦すること**である[20, 35, 39, 44, 47]．例えば，**ユーザがスマートフォンを購入した後にBluetoothヘッドホンを推薦するような場合**である.
+**Sequential recommendationの目的は，ユーザの過去の行動に基づいて次のアイテムを推薦すること(next-item-prediction)**である[20, 35, 39, 44, 47]．例えば，**ユーザがスマートフォンを購入した後にBluetoothヘッドホンを推薦するような場合**である.
 Learning sequential user behaviors is, however, challenging since a user’s choices on items generally depend on both long-term and short-term preferences.
 しかし，一般にユーザのアイテム選択は**長期的嗜好(long-term preference)**と**短期的嗜好(short-term preference)**の両方に依存するため，逐次的(sequential)なユーザ行動の学習は困難である.
 Early Markov Chain models [19, 39] have been proposed to capture short-term item transitions by assuming that a user’s next decision is derived from a few preceding actions, while neglecting long-term preferences.

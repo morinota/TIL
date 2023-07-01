@@ -1,0 +1,4 @@
+- source: slides.md
+  quarto-pub:
+    - id: 07dcedb2-3ef8-439d-b011-4e803a37b07b
+      url: 'https://quartopub.com/sites/morinota/week-19'

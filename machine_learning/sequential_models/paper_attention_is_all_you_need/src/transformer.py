@@ -3,16 +3,20 @@ import abc
 import torch
 from torch import Tensor, nn
 
-from machine_learning.sequential_models.paper_attention_is_all_you_need.src.decoder import \
-    TransformerDecoder
-from machine_learning.sequential_models.paper_attention_is_all_you_need.src.encoder import \
-    TransformerEncoder
+from machine_learning.sequential_models.paper_attention_is_all_you_need.src.decoder import TransformerDecoder
+from machine_learning.sequential_models.paper_attention_is_all_you_need.src.encoder import TransformerEncoder
 from machine_learning.sequential_models.paper_attention_is_all_you_need.src.multi_head_attention import (
-    MultiHeadAttention, MultiHeadAttentionInterface)
+    MultiHeadAttention,
+    MultiHeadAttentionInterface,
+)
 from machine_learning.sequential_models.paper_attention_is_all_you_need.src.position_wise_feed_forward_newwork import (
-    PositionWiseFFN, PositionWiseFFNInterface)
+    PositionWiseFFN,
+    PositionWiseFFNInterface,
+)
 from machine_learning.sequential_models.paper_attention_is_all_you_need.src.positional_encoding import (
-    PositionalEncoding, PositionalEncodingInterface)
+    PositionalEncoding,
+    PositionalEncodingInterface,
+)
 
 
 class TransformerInterface(nn.Module):

@@ -394,17 +394,28 @@
   <p class="date">2023/06/28</p>
 </section>
 
+<section id="論文の基本情報" class="slide level2">
+<h2>論文の基本情報</h2>
+<ul>
+<li>title: Attention Is All You Need</li>
+<li>published date: 6 Dec 2017,</li>
+<li>authors: Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin</li>
+<li>url(paper): <a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a></li>
+</ul>
+</section>
 <section id="ざっくり論文概要" class="slide level2">
 <h2>ざっくり論文概要</h2>
 <ul>
-<li>hogehoge</li>
+<li>言わずと知れた”Transformer”を提案する論文.</li>
+<li>Transformerのモデルアーキテクチャと各パーツをある程度きちんと説明してくれている点がありがたかった.</li>
+<li>基本的には 機械翻訳タスク を想定した内容.</li>
 </ul>
 </section>
 <section id="この論文を読むモチベーション" class="slide level2">
 <h2>この論文を読むモチベーション</h2>
 <ul>
 <li>Sequential なモデルを使った推薦手法の論文を理解するのに必要になりそう.</li>
-<li>SentenceBERT等を用いたContent base系の推薦手法を開発・運用する上で、まずはAttention functionやTransformerが何をやってるかくらいは理解しておきたい.</li>
+<li>SentenceBERT等を用いたContent base系の推薦手法を開発・運用する上で、まずは<strong>Attention functionやTransformerが何をやってるか</strong>くらいは理解しておきたい.</li>
 </ul>
 </section>
 <section>
@@ -415,14 +426,24 @@
 <section id="transformerの全体像" class="slide level2">
 <h2>Transformerの全体像</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
+<div class="column" style="width:35%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="transformer_model_architecture.PNG" style="width:100.0%"></p>
 </figure>
 </div>
-</div><div class="column" style="width:50%;">
-<p>hogehoge</p>
+</div><div class="column" style="width:65%;">
+<ul>
+<li><strong>Transformerの入力は、source と target の2つの sequential データ</strong>みたいです. 翻訳前のsentenceと 翻訳後のsentenceのイメージ<span class="emoji" data-emoji="thinking">🤔</span>
+<ul>
+<li><strong>encoder-decoder 構造</strong>をしており、encoder(図左)にsourceを、decoder(図右)にtargetを入力します.</li>
+<li>入力データの形状は、(batch_size <span class="math inline">\(\times\)</span> max_sequence_length 2次元配列で各要素はtoken idx)みたいなイメージ.</li>
+</ul></li>
+<li>Transformerの最終的な出力は、<strong>next-token確率</strong>.
+<ul>
+<li>出力データの形状は (batch_size <span class="math inline">\(\times\)</span> max_sequence_length <span class="math inline">\(\times\)</span> target_vocablary_size の3次元配列で、各要素がnext-token確率)って感じだろうか<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul></li>
+</ul>
 </div>
 </div>
 </section></section>
@@ -1128,13 +1149,136 @@ PE_{pos, 2i+1} = \cos(pos/10000^{2i/d_{model}})
 <span id="cb9-72"><a href="#cb9-72"></a>            )</span>
 <span id="cb9-73"><a href="#cb9-73"></a>        <span class="cf">return</span> tgt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="transformer-の全体像はこんな感じだった." class="slide level2">
-<h2>Transformer の全体像はこんな感じだった.</h2>
-
-<img data-src="transformer_model_architecture.PNG" style="width:60.0%" class="r-stretch quarto-figure-center"></section>
+<section id="transformer-の全体像はこんな感じでした." class="slide level2">
+<h2>Transformer の全体像はこんな感じでした.</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>すでにEncoder部分とDecoder部分は実装済みなので、あとは<strong>Decoderの出力値に対する 線形変換の層</strong>(<span class="math inline">\(d_{model}\)</span> -&gt; target_vocablary_numに次元数を増やすような変換. この場合は線形変換と言って良いのか…?)と、各要素の値をnext-token確率に変換する <strong>softmax関数の層</strong>を追加すればOKのはず…!</p>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="transformer_model_architecture.PNG" style="width:60.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
 <section id="transformer-のお気持ち実装" class="slide level2">
 <h2>Transformer のお気持ち実装</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>hoge</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">class</span> TransformerInterface(nn.Module):</span>
+<span id="cb10-2"><a href="#cb10-2"></a>    <span class="at">@abc.abstractmethod</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, src: Tensor, tgt: Tensor) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb10-4"><a href="#cb10-4"></a>        <span class="co">"""</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co">        Parameters</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="co">        ----------</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="co">        src : Tensor</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="co">            翻訳元のsequential データ(各要素はtokenのid)</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="co">        tgt : Tensor</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="co">            翻訳先のsequential データ(各要素はtokenのid)</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="co">        Return</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="co">        Tensor</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="co">        """</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a></span>
+<span id="cb10-18"><a href="#cb10-18"></a></span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="kw">class</span> Transformer(TransformerInterface):</span>
+<span id="cb10-20"><a href="#cb10-20"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb10-21"><a href="#cb10-21"></a>        <span class="va">self</span>,</span>
+<span id="cb10-22"><a href="#cb10-22"></a>        src_vocab_size: <span class="bu">int</span>,</span>
+<span id="cb10-23"><a href="#cb10-23"></a>        tgt_vocab_size: <span class="bu">int</span>,</span>
+<span id="cb10-24"><a href="#cb10-24"></a>        mask_for_src_to_tgt: Tensor,</span>
+<span id="cb10-25"><a href="#cb10-25"></a>        mask_for_self_attn: Tensor,</span>
+<span id="cb10-26"><a href="#cb10-26"></a>        max_len: <span class="bu">int</span>,</span>
+<span id="cb10-27"><a href="#cb10-27"></a>        d_model: <span class="bu">int</span> <span class="op">=</span> <span class="dv">512</span>,</span>
+<span id="cb10-28"><a href="#cb10-28"></a>        heads_num: <span class="bu">int</span> <span class="op">=</span> <span class="dv">8</span>,</span>
+<span id="cb10-29"><a href="#cb10-29"></a>        d_ff: <span class="bu">int</span> <span class="op">=</span> <span class="dv">2048</span>,</span>
+<span id="cb10-30"><a href="#cb10-30"></a>        N: <span class="bu">int</span> <span class="op">=</span> <span class="dv">6</span>,</span>
+<span id="cb10-31"><a href="#cb10-31"></a>        dropout_rate: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span id="cb10-32"><a href="#cb10-32"></a>        layer_norm_epsilon: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1e-5</span>,</span>
+<span id="cb10-33"><a href="#cb10-33"></a>        pad_idx: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span>,</span>
+<span id="cb10-34"><a href="#cb10-34"></a>        device: torch.device <span class="op">=</span> torch.device(<span class="st">"cpu"</span>),</span>
+<span id="cb10-35"><a href="#cb10-35"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb10-36"><a href="#cb10-36"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb10-37"><a href="#cb10-37"></a></span>
+<span id="cb10-38"><a href="#cb10-38"></a>        <span class="va">self</span>.src_vocab_size <span class="op">=</span> src_vocab_size</span>
+<span id="cb10-39"><a href="#cb10-39"></a>        <span class="va">self</span>.tgt_vocab_size <span class="op">=</span> tgt_vocab_size</span>
+<span id="cb10-40"><a href="#cb10-40"></a>        <span class="va">self</span>.d_model <span class="op">=</span> d_model</span>
+<span id="cb10-41"><a href="#cb10-41"></a>        <span class="va">self</span>.max_len <span class="op">=</span> max_len</span>
+<span id="cb10-42"><a href="#cb10-42"></a>        <span class="va">self</span>.heads_num <span class="op">=</span> heads_num</span>
+<span id="cb10-43"><a href="#cb10-43"></a>        <span class="va">self</span>.d_ff <span class="op">=</span> d_ff</span>
+<span id="cb10-44"><a href="#cb10-44"></a>        <span class="va">self</span>.N <span class="op">=</span> N</span>
+<span id="cb10-45"><a href="#cb10-45"></a>        <span class="va">self</span>.dropout_rate <span class="op">=</span> dropout_rate</span>
+<span id="cb10-46"><a href="#cb10-46"></a>        <span class="va">self</span>.layer_norm_epsilon <span class="op">=</span> layer_norm_epsilon</span>
+<span id="cb10-47"><a href="#cb10-47"></a>        <span class="va">self</span>.pad_idx <span class="op">=</span> pad_idx</span>
+<span id="cb10-48"><a href="#cb10-48"></a>        <span class="va">self</span>.device <span class="op">=</span> device</span>
+<span id="cb10-49"><a href="#cb10-49"></a>        <span class="va">self</span>.mask_for_src_to_tgt <span class="op">=</span> mask_for_src_to_tgt</span>
+<span id="cb10-50"><a href="#cb10-50"></a>        <span class="va">self</span>.mask_self_attn <span class="op">=</span> mask_for_self_attn</span>
+<span id="cb10-51"><a href="#cb10-51"></a></span>
+<span id="cb10-52"><a href="#cb10-52"></a>        <span class="va">self</span>.encoder <span class="op">=</span> TransformerEncoder(</span>
+<span id="cb10-53"><a href="#cb10-53"></a>            <span class="va">self</span>.d_model,</span>
+<span id="cb10-54"><a href="#cb10-54"></a>            <span class="va">self</span>.N,</span>
+<span id="cb10-55"><a href="#cb10-55"></a>            PositionalEncoding(<span class="va">self</span>.d_model, <span class="va">self</span>.max_len, <span class="va">self</span>.device),</span>
+<span id="cb10-56"><a href="#cb10-56"></a>            MultiHeadAttention(<span class="va">self</span>.d_model, <span class="va">self</span>.heads_num),</span>
+<span id="cb10-57"><a href="#cb10-57"></a>            PositionWiseFFN(<span class="va">self</span>.d_model, <span class="va">self</span>.d_ff),</span>
+<span id="cb10-58"><a href="#cb10-58"></a>            <span class="va">self</span>.src_vocab_size,</span>
+<span id="cb10-59"><a href="#cb10-59"></a>            <span class="va">self</span>.max_len,</span>
+<span id="cb10-60"><a href="#cb10-60"></a>            <span class="va">self</span>.pad_idx,</span>
+<span id="cb10-61"><a href="#cb10-61"></a>            <span class="va">self</span>.dropout_rate,</span>
+<span id="cb10-62"><a href="#cb10-62"></a>            <span class="va">self</span>.layer_norm_epsilon,</span>
+<span id="cb10-63"><a href="#cb10-63"></a>            <span class="va">self</span>.device,</span>
+<span id="cb10-64"><a href="#cb10-64"></a>        )</span>
+<span id="cb10-65"><a href="#cb10-65"></a></span>
+<span id="cb10-66"><a href="#cb10-66"></a>        <span class="va">self</span>.decoder <span class="op">=</span> TransformerDecoder(</span>
+<span id="cb10-67"><a href="#cb10-67"></a>            <span class="va">self</span>.d_model,</span>
+<span id="cb10-68"><a href="#cb10-68"></a>            <span class="va">self</span>.N,</span>
+<span id="cb10-69"><a href="#cb10-69"></a>            PositionalEncoding(<span class="va">self</span>.d_model, <span class="va">self</span>.max_len, <span class="va">self</span>.device),</span>
+<span id="cb10-70"><a href="#cb10-70"></a>            MultiHeadAttention(<span class="va">self</span>.d_model, <span class="va">self</span>.heads_num),</span>
+<span id="cb10-71"><a href="#cb10-71"></a>            MultiHeadAttention(<span class="va">self</span>.d_model, <span class="va">self</span>.heads_num),</span>
+<span id="cb10-72"><a href="#cb10-72"></a>            PositionWiseFFN(<span class="va">self</span>.d_model, <span class="va">self</span>.d_ff),</span>
+<span id="cb10-73"><a href="#cb10-73"></a>            <span class="va">self</span>.src_vocab_size,</span>
+<span id="cb10-74"><a href="#cb10-74"></a>            <span class="va">self</span>.max_len,</span>
+<span id="cb10-75"><a href="#cb10-75"></a>            <span class="va">self</span>.pad_idx,</span>
+<span id="cb10-76"><a href="#cb10-76"></a>            <span class="va">self</span>.dropout_rate,</span>
+<span id="cb10-77"><a href="#cb10-77"></a>            <span class="va">self</span>.layer_norm_epsilon,</span>
+<span id="cb10-78"><a href="#cb10-78"></a>            <span class="va">self</span>.device,</span>
+<span id="cb10-79"><a href="#cb10-79"></a>        )</span>
+<span id="cb10-80"><a href="#cb10-80"></a></span>
+<span id="cb10-81"><a href="#cb10-81"></a>        <span class="va">self</span>.linear_trans <span class="op">=</span> nn.Linear(d_model, tgt_vocab_size)</span>
+<span id="cb10-82"><a href="#cb10-82"></a>        <span class="va">self</span>.softmax_func <span class="op">=</span> nn.Softmax(dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-83"><a href="#cb10-83"></a></span>
+<span id="cb10-84"><a href="#cb10-84"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, src: Tensor, tgt: Tensor) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb10-85"><a href="#cb10-85"></a>        encode_output <span class="op">=</span> <span class="va">self</span>.encoder.forward(src)</span>
+<span id="cb10-86"><a href="#cb10-86"></a></span>
+<span id="cb10-87"><a href="#cb10-87"></a>        decode_output <span class="op">=</span> <span class="va">self</span>.decoder.forward(</span>
+<span id="cb10-88"><a href="#cb10-88"></a>            tgt,</span>
+<span id="cb10-89"><a href="#cb10-89"></a>            encode_output,</span>
+<span id="cb10-90"><a href="#cb10-90"></a>            <span class="va">self</span>.mask_for_src_to_tgt,</span>
+<span id="cb10-91"><a href="#cb10-91"></a>            <span class="va">self</span>.mask_self_attn,</span>
+<span id="cb10-92"><a href="#cb10-92"></a>        )</span>
+<span id="cb10-93"><a href="#cb10-93"></a>        linear_output <span class="op">=</span> <span class="va">self</span>.linear_trans.forward(decode_output)</span>
+<span id="cb10-94"><a href="#cb10-94"></a>        <span class="cf">return</span> <span class="va">self</span>.softmax_func.forward(linear_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="感想" class="slide level2">
+<h2>感想</h2>
+<ul>
+<li>Attention, Self-Attention, Transformer等、NLPを始めとした機械学習界隈で良く聞く関数(モデル?)がどんな構造で、どんな入力を受け取って、どんなパラメータを持っていて、どんな出力をするのか、ざっくり把握できた気がする. (なぜこの構造が性能が良いのか、等はよくわかってない.)</li>
+<li>これで、Sequentialなモデルを使った推薦手法へのアレルギーが減ると良いなと思う. あと、論文読み会でこれらの用語が出てきた時に「うんうん、あれね」となんとなく想像できるようになるはず…</li>
+<li>ただ、“All You Need”具合は良くわかってない…!</li>
+</ul>
+</section>
+<section id="次に読むべき論文" class="slide level2">
+<h2>次に読むべき論文</h2>
+<ul>
+<li>2022 RecSysのベストペーパーの一つ. <a href="https://arxiv.org/abs/2212.04120">Denoising Self-Attentive Sequential Recommendation</a></li>
+<li>BERTの元論文. <a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></li>
+<li>SentenceBERTの論文. <a href="https://arxiv.org/abs/1908.10084">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a></li>
+</ul>
+<p>論文の理解やお気持ち実装の際に以下のtechブログを参考にさせていただきました! ありがたい…<span class="emoji" data-emoji="wave">👋</span> (↓のブログの実装と異なり、自分のお気持ち実装はおそらく動作しません…!)</p>
+<ul>
+<li><a href="https://zenn.dev/yukiyada/articles/59f3b820c52571#1.-%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB">Python(PyTorch)で自作して理解するTransformer</a></li>
+</ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>

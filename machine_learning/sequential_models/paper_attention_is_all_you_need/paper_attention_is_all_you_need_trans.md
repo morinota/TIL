@@ -251,8 +251,8 @@ The dimensionality of input and output is dmodel = 512, and the inner-layer has 
 
 ## 3.4. Embeddings and Softmax エンベッディングとソフトマックス
 
-Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension dmodel.
-他の配列変換モデルと同様に、学習済み埋め込みを用いて、入力tokensと出力トークンを次元tokensのベクトルに変換する.
+Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension $d_{model}$.
+他の配列変換モデルと同様に、学習済み埋め込みを用いて、入力tokensと出力tokensを $d_{model}$ 次元のベクトルに変換する.
 We also use the usual learned linear transformation and softmax function to convert the decoder output to predicted next-token probabilities.
 また、デコーダ出力を予測される**next-token確率**に変換するために、通常の学習済み線形変換とソフトマックス関数を使用します。(**次のtokenを予測するタスク...!!?? LLMと同じか...!!!???**)
 In our model, we share the same weight matrix between the two embedding layers and the pre-softmax linear transformation, similar to [30].
@@ -502,7 +502,7 @@ RNNのsequence-to-sequenceモデル[37]とは対照的に、Transformerは、40K
 # 7. Conclusion 結論
 
 In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers most commonly used in encoder-decoder architectures with multi-headed self-attention.
-本研究では、エンコーダー・デコーダーアーキテクチャで最もよく使われるリカレント層を多頭の自己注意に置き換えた、完全にattentionに基づく最初の**配列変換モデル**であるトランスフォーマーを発表しました。
+本研究では、エンコーダー・デコーダーアーキテクチャで最もよく使われるリカレント層を多頭の自己注意に置き換えた、完全にattentionに基づく最初の**sequence 変換モデル**であるトランスフォーマーを発表しました。
 
 For translation tasks, the Transformer can be trained significantly faster than architectures based on recurrent or convolutional layers.
 翻訳タスクの場合、Transformerはリカレント層や畳み込み層に基づくアーキテクチャよりも大幅に速く学習させることができます。
