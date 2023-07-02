@@ -198,7 +198,7 @@ $$
   - full attention分布はitem-itemの依存関係を複雑にし、学習の難易度を上げ、モデルの性能を低下させる.
 - 言語モデリングタスクでは、この問題に対処する為の試みが提案されている(ex. sparse attention schemas の活用, attentionのごく一部だけを残すdropout技術の活用, etc.)
 
-本論文は、**微分可能なmaskを用いて無関係なattentionのノイズを除去する**、シンプルかつ効果的なdata-driven method(=確かに、固定的でもランダムでもない:thinking:)を提案している.
+本論文は、**微分可能なmaskを用いて無関係なattentionのノイズを除去する**、シンプルかつ効果的な data-driven method(=確かに、固定的でもランダムでもない:thinking:)を提案している.
 
 # 提案手法: Rec-Denoiserについて
 

@@ -391,29 +391,29 @@ In contrast, we propose a simple yet effective data-driven method to mask out ir
 # 4. Rec-Denoiser
 
 In this section, we present our Rec-Denoiser that consists of two parts: differentiable masks for self-attention layers and Jacobian regularization for Transformer blocks.
-このセクションでは、Rec-Denoiserを紹介する。Rec-Denoiserは、self-attention層のための微分可能なマスクと、Transformerブロックのためのヤコビアン正則化の2つの部分から構成される.
+このセクションでは、Rec-Denoiserを紹介する。Rec-Denoiserは、**self-attention層のための微分可能なmask**と、**Transformerブロックのためのヤコビアン正則化**の2つの部分から構成される.
 
 ## 4.1. Differentiable Masks
 
 The self-attention layer is the cornerstone of Transformers to capture long-range dependencies.
-セルフ・アテンション・レイヤーは、長距離の依存関係を捉えるトランスフォーマーの要である。
+セルフ・アテンション・レイヤーは、長距離の依存関係を捉えるトランスフォーマーの要である.
 As shown in Eq.(2), the softmax operator assigns a non-zero weight to every item.
-式(2)に示すように、ソフトマックス演算子はすべての項目に0でない重みを割り当てる。
+**式(2)に示すように、softmax演算子はすべてのitemにnon-zeroの重みを割り当てる**. (なるほど. これがfull attention分布か...!:thinking:)
 However, full attention distributions may not always be advantageous since they may cause irrelevant dependencies, unnecessary computation, and unexpected explanation.
-しかし、完全な注目度分布は、無関係な依存関係、不必要な計算、予期せぬ説明を引き起こす可能性があるため、必ずしも有利とは限らない。
+しかし、full attention分布は、無関係な依存関係、不必要な計算、予期せぬ説明を引き起こす可能性があるため、必ずしも有利とは限らない.
 We next put forward differentiable masks to address this concern.
-次に、この懸念に対処するために、微分可能なマスクを提案する。
+次に、この懸念に対処するために、微分可能なマスクを提案する.
 
 ### 4.1.1. Learnable Sparse Attentions 4.1.1. 学習可能なスパース・アテンション
 
 Not every item in a sequence is aligned well with user preferences in the same sense that not all attentions are strictly needed in self-attention layers.
-セルフ・アテンション・レイヤーにおいて、すべてのアテンションが厳密に必要とされるわけではないのと同じ意味で、シーケンス内のすべてのアイテムがユーザーの嗜好にうまく合致しているわけではない。
+**self-attention層において全てのattentionが厳密に必要とされるわけではないのと同じ意味で、sequence内のすべてのアイテムがユーザの嗜好にうまく合致しているわけではない**.
 Therefore, we attach each self-attention layer with a trainable binary mask to prune noisy or task-irrelevant attentions.
-そこで、各自己注意層に学習可能なバイナリ・マスクを付加し、ノイズの多い注意やタスクと無関係な注意を除去する。
-Formally, for the 𝑙-th self-attention layer in Eq.(2), we introduce a binary matrix $Z^{(l)} \in {0, 1}^{n\times n}$, where $Z^{(l)}_{u,v}$ denotes whether the connection between query $u$ and key $v$ is present.
-ここで、$Z^{(l)}_{u,v}$はクエリ$u$とキー$v$の接続の有無を表す。
-As such, the $l$-th self-attention layer becomes:
-このように、$l$番目の自己注意層は次のようになる：
+そこで、各self-attention層に学習可能な binary mask を付加し、ノイズの多い attention やタスクと無関係な attention を除去する.
+Formally, for the $l$-th self-attention layer in Eq.(2), we introduce a binary matrix $Z^{(l)} \in {0, 1}^{n \times n}$, where $Z^{(l)}_{u,v}$ denotes whether the connection between query $u$ and key $v$ is present.
+形式的には、式(2)の $l$ 番目のself-attention層に対して、$Z^{(l)} \in {0, 1}^{n \times n}$ の**binary行列 $Z^{(l)}$ を導入**する. ここで、$Z^{(l)}_{u,v}$ は query $u$ と key $v$ のconnectionの有無(??:thinking:)を表す.
+As such, the $l$ -th self-attention layer becomes:
+よって、$l$ 番目のself-attention層は次のように改良される:
 
 $$
 A^{(l)} = \text{softmax}(\frac{Q^{(l)} K^{(l)T}}{\sqrt{d}}),
@@ -425,18 +425,19 @@ M^{(l)} = A^{(l)} \odot Z^{(l)},
 $$
 
 where $A^{(l)}$ is the original full attentions, $M^{(l)}$ denotes the sparse attentions, and $\odot$ is the element-wise product.
-ここで、$A^{(l)}$は元の完全注目度、$M^{(l)}$は疎注目度、$modot$は要素ごとの積である。
+ここで、$A^{(l)}$は元のfull attention、$M^{(l)}$は sparse attention, $\odot$ は 要素ごとの積.(=確か"アダマール積"だっけ??:thinking:)
 Intuitively, the mask $Z^{(l)}$ (e.g., 1 is kept and 0 is dropped) requires minimal changes to the original self-attention layer.
-直感的には、マスク$Z^{(l)}$（例えば、1を残して0を落とす）は、元の自己注意層に最小限の変更を加えるだけで済む。
+直感的には、mask $Z^{(l)}$ (ex. 1を残して0を落とす)は、元のself-attention層に最小限の変更を加えるだけで済む.
 More importantly, they are capable of yielding exactly zero attention scores for irrelevant dependencies, resulting in better interpretability.
-さらに重要なのは、無関係な依存関係に対して注意スコアを正確にゼロにすることができるため、解釈しやすくなるということだ。
+さらに重要なのは、**無関係な依存関係に対してattentionスコアを正確にゼロにすることができるため、解釈しやすくなる**ということだ.
 The idea of differentiable masks is not new.
-微分可能なマスクというアイデアは新しいものではない。
+微分可能なmaskというアイデアは新しいものではない.(なるほど. LMの世界で既存研究があるんだ...!:thinking:)
 In the language modeling, differentiable masks have been shown to be very powerful to extract short yet sufficient sentences, which achieves better performance [1, 13].
-言語モデリングにおいて、微分可能なマスクは、短くても十分なセンテンスを抽出するのに非常に強力であり、より良いパフォーマンスを達成することが示されている[1, 13]。
+言語モデリングにおいて、微分可能なmaskは、短くても十分なsentencesを抽出するのに非常に強力であり、より良いパフォーマンスを達成することが示されている[1, 13].
 
 One way to encourage sparsity of $M^{(l)}$ is to explicitly penalize the number of non-zero entries of $Z^{(l)}$, for $1 \leq l \leq L$, by minimizing:
-M^{(l)}$のスパース性を奨励する一つの方法は、$Z^{(l)}$のゼロでないエントリーの数を、$1 ￢l ￢L$に対して、最小化することで明示的にペナルティを課すことである：
+$M^{(l)}$ のsparsity(sparse性)を奨励する一つの方法は、$Z^{(l)}$ 内のnon-zero entry(=要素)の数に対して明示的にペナルティを課すことである.
+そのために、以下の $R_M$ を $1 \leq l \leq L$ の間で最小化する:
 
 $$
 R_M = \sum_{l=1}^{L}||Z^{l}||_{0}
@@ -444,32 +445,34 @@ R_M = \sum_{l=1}^{L}||Z^{l}||_{0}
 \tag{6}
 $$
 
+(要は、L個のmask binary行列内の非ゼロ要素の数を最小する項を、学習時の損失関数に組み込むって事...??)
+
 where $I[c]$ is an indicator that is equal to 1 if the condition $c$ holds and 0 otherwise; and $||\cdot||_{0}$ denotes the $L_0$ norm that is able to drive irrelevant attentions to be exact zeros.
-|\cdot
+ここで、 $I[c]$ は条件 $c$ が成立すれば1、成立しなければ0に等しい indicator function である. $||\cdot||_{0}$ は、無関係なattentionを正確な 0 に追い込むことができる $L_0$ ノルムを表す.
 
 However, there are two challenges for optimizing $Z^{(l)}$: non-differentiability and large variance.
-しかし、$Z^{(l)}$の最適化には、微分不可能性と分散の大きさという2つの課題がある。
+しかし、$Z^{(l)}$ の最適化には、**微分不可能性と分散の大きさという2つの課題**がある.
 $L_0$ is discontinuous and has zero derivatives almost everywhere.
-L_0$は不連続であり、ほとんどどこでもゼロ導関数を持つ。
+$L_0$ は不連続(binaryだから?)であり、ほとんどどこでもゼロ導関数を持つ.
 Additionally, there are $2^{n^2}$ possible states for the binary mask $Z^{(l)}$ with large variance.
-さらに、2値マスク$Z^{(l)}$には大きな分散を持つ$2^{n^2}$個の可能な状態がある。
+さらに、binary mask行列 $Z^{(l)}$ には大きな分散を持つ $2^{n^2}$ 個の可能な状態がある.
 Next, we propose an efficient estimator to solve this stochastic binary optimization problem.
-次に、この確率的二元最適化問題を解くための効率的な推定器を提案する。
+次に、この**確率的binary最適化問題を解くための効率的な推定器**を提案する.
 
 ### 4.1.2. Efficient Gradient Computation 4.1.2. 効率的な勾配計算
 
-Since Z (𝑙) is jointly optimized with the original Transformer-based models, we combine Eq.(4) and Eq.(6) into one unified objective:
-Z (↪Ll_1459) はオリジナルのTransformerベースのモデルと共同で最適化されるので、式(4)と式(6)を1つの統一された目的にまとめる：
+Since $Z^{(l)}$ is jointly optimized with the original Transformer-based models, we combine Eq.(4) and Eq.(6) into one unified objective:
+$Z^{(l)}$ はオリジナルのTransformerベースのモデルと共同で最適化されるので、式(4)と式(6)を1つの統一された目的関数にまとめる:
 
 $$
 L(Z, \Theta) = L_{BCE}({A^{(l)} \odot Z^{(l)}}, \Theta) + \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0]
 \tag{7}
 $$
 
-where 𝛽 controls the sparsity of masks and we denote Z as Z := {Z (1) , · · · , Z (𝐿) }.
-ここで ↪L_1FD はマスクのスパース性を制御し、Z を Z := {Z (1) , - - , Z (↪Lu_1D43F) } とする。
-We further consider each Z (𝑙) 𝑢,𝑣 is drawn from a Bernoulli distribution parameterized by Π (𝑙) 𝑢,𝑣 such that Z (𝑙) 𝑢,𝑣 ∼ Bern(Π (𝑙) 𝑢,𝑣 ) [34].
-さらに、Z (𝑙) ∼ Bern(Π (𝑙) 𝑢,↪Ll_1D463 ) のようなΠ (𝑙) ∼ Bern(Π (𝑢),↪Ll_1D463 ) でパラメータ化されたBernoulli分布からZ (𝑙) ∼ 𝑢,↪Ll_1D463) が引かれると考える。[34].
+where $\beta$ controls the sparsity of masks and we denote $Z$ as $Z := \{Z^{(1)}, \cdots, Z^{(L)}\}$.
+ここで $\beta$ はmaskのsparse性を制御し、$Z$ を $Z := \{Z^{(1)}, \cdots, Z^{(L)}\}$とする.
+We further consider each $Z^{(l)}_{u,v}$ is drawn from a Bernoulli distribution parameterized by $\prod^{(l)}_{u,v}$ such that $Z^{(l)}_{u,v} \sim Bern(\prod^{(l)}_{u,v})$ [34].
+さらに、$Z^{(l)}_{u,v} \sim Bern(\prod^{(l)}_{u,v})$ のような $\prod^{(l)}_{u,v}$ でパラメータ化されたBernoulli分布から それぞれの $Z^{(l)}_{u,v}$ が生成される(=サンプリングされる?)と考える[34].
 As the parameter Π (𝑙) 𝑢,𝑣 is jointly trained with the downstream tasks, a small value of Π (𝑙) 𝑢,𝑣 suggests that the attention A (𝑙) 𝑢,𝑣 is more likely to be irrelevant, and could be removed without side effects.
 パラメータΠ (𝑙) 𝑢,𝑣は下流タスクと共同で学習されるため、Π (𝑙) 𝑢,𝑣の値が小さいと、注目A (𝑙) 𝑢,𝑣は無関係である可能性が高く、副作用なく削除できる。
 By doing this, Eq.(7) becomes:
