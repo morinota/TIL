@@ -152,8 +152,8 @@ where $A^{(l)}$ is the original full attentions, $M^{(l)}$ denotes the sparse at
 One way to encourage sparsity of $M^{(l)}$ is to explicitly penalize the number of non-zero entries of $Z^{(l)}$, for $1 \leq l \leq L$, by minimizing:
 
 $$
-R_M = \sum_{l=1}^{L}||Z^{l}||_{0} 
-= \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0], 
+R_M = \sum_{l=1}^{L}||Z^{l}||_{0}
+= \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0],
 \tag{6}
 $$
 
@@ -163,34 +163,132 @@ However, there are two challenges for optimizing $Z^{(l)}$: non-differentiabilit
 
 ### 4.1.2. Efficient Gradient Computation
 
+Since Z (𝑙) is jointly optimized with the original Transformer-based models, we combine Eq. (4) and Eq. (6) into one unified objective:
+
 $$
 L(Z, \Theta) = L_{BCE}({A^{(l)} \odot Z^{(l)}}, \Theta) + \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0]
 \tag{7}
 $$
 
+where 𝛽 controls the sparsity of masks and we denote Z as Z := {Z (1) , · · · , Z (𝐿) }. We further consider each Z (𝑙) 𝑢,𝑣 is drawn from a Bernoulli distribution parameterized by Π (𝑙) 𝑢,𝑣 such that Z (𝑙) 𝑢,𝑣 ∼ Bern(Π (𝑙) 𝑢,𝑣 ) [34]. As the parameter Π (𝑙) 𝑢,𝑣 is jointly trained with the downstream tasks, a small value of Π (𝑙) 𝑢,𝑣 suggests that the attention A (𝑙) 𝑢,𝑣 is more likely to be irrelevant, and could be removed without side effects. By doing this, Eq. (7) becomes:
+
+$$
+\tag{8}
+$$
+
+where E(·) is the expectation. The regularization term is now continuous, but the first term L𝐵𝐶𝐸 (Z, Θ) still involves the discrete variables Z (𝑙) . One can address this issue by using existing gradient estimators, such as REINFORCE [48] and Straight Through Estimator [3], etc. These approaches, however, suffer from either biased gradients or high variance. Alternatively, we directly optimize discrete variables using the recently proposed augment-REINFORCEmerge (ARM) [15, 16, 56], which is unbiased and has low variance. In particular, we adopt the reparameterization trick [25], which reparameterizes Π (𝑙) 𝑢,𝑣 ∈ [0, 1] to a deterministic function 𝑔(·) with parameter Φ (𝑙) 𝑢,𝑣 , such that:
+
+$$
+\tag{9}
+$$
+
+since the deterministic function 𝑔(·) should be bounded within [0, 1], we simply choose the standard sigmoid function as our deterministic function: 𝑔(𝑥) = 1/(1 + 𝑒 −𝑥 ). As such, the second term in Eq. (8) becomes differentiable with the continuous function 𝑔(·). We next present the ARM estimator for computing the gradients of binary variables in the first term of Eq. (8) [15, 16, 56]. According to Theorem 1 in ARM [56], we can compute the gradients for Eq. (8) as:
+
+$$
+\tag{10}
+$$
+
+where Uni(0, 1) denotes the Uniform distribution within [0, 1], and L𝐵𝐶𝐸 (I[U > 𝑔(−Φ)], Θ) is the cross-entropy loss obtained by setting the binary masks Z (𝑙) to 1 if U (𝑙) > 𝑔(−Φ (𝑙) ) in the forward pass, and 0 otherwise. The same strategy is applied to L𝐵𝐶𝐸 (I[U < 𝑔(Φ)], Θ). Moreover, ARM is an unbiased estimator due to the linearity of expectations. Note that we need to evaluate L𝐵𝐶𝐸 (·) twice to compute gradients in Eq. (10). Given the fact that 𝑢 ∼ Uni(0, 1) implies (1 − 𝑢) ∼ Uni(0, 1), we can replace U with (1 − U) in the indicator function inside L𝐵𝐶𝐸 (I[U > 𝑔(−Φ)], Θ):
+
+$$
+\tag{}
+$$
+
+To this end, we can further reduce the complexity by considering the variants of ARM – Augment-Reinforce (AR) [56]:
+
+$$
+\tag{11}
+$$
+
+where only requires one-forward pass. The gradient estimator ∇ 𝐴𝑅 Φ L (Φ, Θ) is still unbiased but may pose higher variance, comparing to ∇ 𝐴𝑅𝑀 Φ L (Φ, Θ). In the experiments, we can trade off the variance of the estimator with complexity.
+
+In the training stage, we update ∇ΦL (Φ, Θ) (either Eq. (10) or Eq. (11)) and ∇ΘL (Φ, Θ) 3 during the back propagation. In the inference stage, we can use the expectation of Z (𝑙) 𝑢,𝑣 ∼ Bern(Π (𝑙) 𝑢,𝑣 ) as the mask in Eq. (5), i.e., E(Z (𝑙) 𝑢,𝑣 ) = Π (𝑙) 𝑢,𝑣 = 𝑔(𝚽 (𝑙) 𝑢,𝑣 ). Nevertheless, this will not yield a sparse attention M(𝑙) since the sigmoid function is smooth unless the hard sigmoid function is used in Eq. (9). Here we simply clip those values 𝑔(𝚽 (𝑙) 𝑢,𝑣 ) ≤ 0.5 to zeros such that a sparse attention matrix is guaranteed and the corresponding noisy attentions are eventually eliminated.
+
 ## 4.2. Jacobian Regularization
+
+As recently proved by [28], the standard dot-product self-attention is not Lipschitz continuous and is vulnerable to the quality of input sequences. Let 𝑓 (𝑙) be the 𝑙-th Transformer block (Sec 3.2.2) that contains both a self-attention layer and a point-wise feed-forward layer, and x be the input. We can measure the robustness of the Transformer block using the residual error: 𝑓 (𝑙) (x + 𝝐) − 𝑓 (𝑙) (x), where 𝝐 is a small perturbation vector and the norm of 𝝐 is bounded by a small scalar 𝛿, i.e., ∥𝝐 ∥2 ≤ 𝛿. Following the Taylor expansion, we have:
+
+$$
+\tag{}
+$$
+
+Let J (𝑙) (x) represent the Jacobian matrix at x where J (𝑙) 𝑖𝑗 = 𝜕 𝑓 (𝑙) 𝑖 (x) 𝜕𝑥𝑗 . Then, we set J (𝑙) 𝑖 (x) = 𝜕 𝑓 (𝑙) 𝑖 (x) 𝜕x to denote the 𝑖-th row of J (𝑙) (x). According to Hölder’s inequality4 , we have:
+
+$$
+\tag{}
+$$
+
+Above inequality indicates that regularizing the 𝐿2 norm on the Jacobians enforces a Lipschitz constraint at least locally, and the residual error is strictly bounded. Thus, we propose to regularize Jacobians with Frobenius norm for each Transformer block as:
+
+$$
+\tag{12}
+$$
+
+Importantly, ∥J (𝑙) ∥ 2 𝐹 can be approximated via various Monte-Carlo estimators [23, 37]. In this work, we adopt the classical Hutchinson estimator [23]. For each Jocobian matrix J (𝑙) ∈ R 𝑛×𝑛 , we have:
+
+$$
+\tag{}
+$$
+
+where 𝜼 ∈ N (0, I𝑛) is the normal distribution vector. We further make use of random projections to compute the norm of Jacobians R𝐽 and its gradient ∇ΘR𝐽 (Θ) [21], which significantly reduces the running time in practice.
 
 ## 4.3. Optimization
 
 ### 4.3.1. Joint Training
 
+Putting together loss in Eq. (4), Eq. (6), and Eq. (12), the overall objective of Rec-Denoiser is:
+
+$$
+\tag{13}
+$$
+
+where 𝛽 and 𝛾 are regularizers to control the sparsity and robustness of self-attention networks, respectively. Algorithm 1 summarizes the overall training of Rec-Denoiser with the AR estimator.
+
+Lastly, it is worth mentioning that our Rec-Denoiser is compatible to many Transformer-based sequential recommender models since our differentiable masks and gradient regularizations will not change their main architectures. If we simply set all masks Z (𝑙) to be all-ones matrix and 𝛽 = 𝛾 = 0, our model boils down to their original designs. If we randomly set subset of masks Z (𝑙) to be zeros, it is equivalent to structured Dropout like LayerDrop [17], DropHead [60]. In addition, our Rec-Denoiser can work together with linearized self-attention networks [27, 59] to further reduce the complexity of attentions. We leave this extension in the future.
+
 ### 4.3.2. Model Complexity
 
+The complexity of Rec-Denoiser comes from three parts: a basic Transformer, differentiable masks, and Jacobian regularization. The complexity of basic Transformer keeps the same as SASRec [26] or BERT4Rec [41]. The complexity of differentiable masks requires either one-forward pass (e.g., AR with high variance) or two-forward pass (e.g., ARM with low variance) of the model. In sequential recommenders, the number of Transformer blocks is often very small (e.g., 𝐿 = 2 in SASRec [26] and BERT4Rec [41] ). It is thus reasonable to use the ARM estimator without heavy computations. Besides, we compare the performance of AR and ARM estimators in Sec 5.3. Moreover, the random project techniques are surprisingly efficient to compute the norms of Jacobians [21]. As a result, the overall computational complexity remains the same order as the original Transformers during the training. However, during the inference, our attention maps are very sparse, which enables much faster feed-forward computations.
+
 # 5. Experiments
+
+Here we present our empirical results. Our experiments are designed to answer the following research questions:
+
+- RQ1: How effective is the proposed Rec-Denoiser compared to the state-of-the-art sequential recommenders?
+- RQ2: How can Rec-Denoiser reduce the negative impacts of noisy items in a sequence?
+- RQ3: How do different components (e.g., differentiable masks and Jacobian regularization) affect the overall performance of Rec-Denoiser?
 
 ## 5.1. Experimental Setting
 
 ### 5.1.1. Dataset
 
+We evaluate our models on five benchmark datasets: Movielens5 , Amazon6 (we choose the three commonly used categories: Beauty, Games, and Movies&TV), and Steam7 [30]. Their statistics are shown in Table 1. Among different datasets, MovieLens is the most dense one while Beauty has the fewest actions per user. We use the same procedure as [26, 30, 39] to perform preprocessing and split data into train/valid/test sets, i.e., the last item of each user’s sequence for testing, the second-to-last for validation, and the remaining items for training.
+
 ### 5.1.2. Baselines
+
+Here we include two groups of baselines. The first group includes general sequential methods (Sec 5.2): 1) FPMC [39]: a mixture of matrix factorization and first-order Markov chains model; 2) GRU4Rec [20]: a RNN-based method that models user action sequences; 3) Caser [42]: a CNN-based framework that captures high-order relationships via convolutional operations; 4) SASRec [26]: a Transformer-based method that uses left-to-right selfattention layers; 5) BERT4Rec [41]: an architecture that is similar to SASRec, but using bidirectional self-attention layers; 6) TiSASRec [30]: a time-aware self-attention model that further considers the relative time intervals between any two items; 7) SSE-PT [50]: a framework that introduces personalization into self-attention layers; 8) Rec-Denoiser: our proposed Rec-Denoiser that can choose any self-attentive models as its backbone. The second group contains sparse Transformers (Sec 5.3): 1) Sparse Transformer [10]: it uses a fixed attention pattern, where only specific cells summarize previous locations in the attention layers; 2) 𝛼-entmax sparse attention [12]: it simply replaces softmax with 𝛼-entmax to achieve sparsity. Note that we do not compare with other popular sparse Transformers like Star Transformer [18], Longformer [2], and BigBird [58]. These Transformers are specifically designed for thousands of tokens or longer in the language modeling tasks. We leave their explorations for recommendations in the future. We also do not compare with LayerDrop [17] and DropHead [60] since the number of Transformer blocks and heads are often very small (e.g., 𝐿 = 2 in SARRec) in sequential recommendation. Other sequential architectures like memory networks [9, 22] and graph neural networks [4, 51] have been outperformed by the above baselines, we simply omit these baselines and focus on Transformer-based models. The goal of experiments is to see whether the proposed differentiable mask techniques can reduce the negative impacts of noisy items in the self-attention layers.
 
 ### 5.1.3. Evaluation metrics
 
+For easy comparison, we adopt two common Top-N metrics, Hit@𝑁 and NDCG@𝑁 (with default value 𝑁 = 10), to evaluate the performance of sequential models [26, 30, 41]. Typically, Hit@𝑁 counts the rates of the ground-truth items among top-𝑁 items, while NDCG@𝑁 considers the position and assigns higher weights to higher positions. Following the work [26, 30], for each user, we randomly sample 100 negative items, and rank these items with the ground-truth item. We calculate Hit@10 and NDCG@10 based on the rankings of these 101 items.
+
 ### 5.1.4. Parameter settings
+
+For all baselines, we initialize the hyper-parameters as the ones suggested by their original work. They are then well tuned on the validation set to achieve optimal performance. The final results are conducted on the test set. We search the dimension size of items within {10, 20, 30, 40, 50}. As our Rec-Denoiser is a general plugin, we use the same hyper-parameters as the basic Transformers, e.g., number of Transformer blocks, batch size, learning rate in Adam optimizer, etc. According to Table 1, we set the maximum length of item sequence 𝑛 = 50 for dense datasets MovieLens and Movies&TV, and 𝑛 = 25 for sparse datasets Beauty, Games, and Steam. In addition, we set the number of Transformer blocks 𝐿 = 2, and the number of heads 𝐻 = 2 for self-attentive models. For Rec-Denoiser, two extra regularizers 𝛽 and 𝛾 are both searched within {10−1 , 10−2 , . . . , 10−5 }. We choose ARM estimator due to the shallow structures of self-attentive recommenders.
 
 ## 5.2. Overall Performance(RQ1)
 
+Table 2 presents the overall recommendation performance of all methods on the five datasets. Our proposed Recdenoisers consistently obtain the best performance for all datasets. Additionally, we have the following observations:
+
+- The self-attentive sequential models (e.g., SASRec, BERT4Rec, TiSASRec, and SSE-PT) generally outperform FPMC, GRU4Rec, and Caser with a large margin, verifying that the self-attention networks have good ability of capture long-range item dependencies for the task of sequential recommendation.
+- Comparing the original SASRec and its variants BERT4Rec, TiSASRec and SSE-PT, we find that the self-attentive models can gets benefit from incorporating additional information such as bi-directional attentions, time intervals, and user personalization. Such auxiliary information is important to interpret the dynamic behaviors of users.
+- The relative improvements of Rec-denoisers over their backbones are significant for all cases. For example, SASRec+Denoiser has on average 8.04% improvement with respect to Hit@10 and over 12.42% improvements with respect to NDCG@10. Analogously, BERT4Rec+Denoiser outperforms the vanilla BERT4Rec by average 7.47% in Hit@10 and 11.64% in NDCG@10. We also conduct the significant test between Rec-denoisers and their backbones, where all 𝑝-values< 1𝑒 −6 , showing that the improvements of Rec-denoisers are statistically significant in all cases.
+
+These improvements of our proposed models are mainly attributed to the following reasons: 1) Rec-denoisers inherit full advantages of the self-attention networks as in SASRec, BERT4Rec, TiSASRec, and SSE-PT; 2) Through differentiable masks, irrelevant item-item dependencies are removed, which could largely reduce the negative impacts of noisy data; 3) Jacobian regularization enforces the smoothness of gradients, limiting quick changes of the output against input perturbations. In general, smoothness improves the generalization of sequential recommendation. Overall, the experimental results demonstrate the superiority of our Rec-Denoisers.
+
 ## 5.3. Robustness to Noises(RQ2)
+
+As discussed before, the observed item sequences often contain some noisy items that are uncorrelated to each other. Generally, the performance of self-attention networks is sensitive to noisy input. Here we analyze how robust our training strategy is for noisy sequences. To achieve this, we follow the strategy [35] that corrupts the training data by randomly replacing a portion of the observed items in the training set with uniformly sampled items that are not in the validation or test set. We range the ratio of the corrupted training data from 0% to 25%. We only report the results of SASRec and SASRec-Denoiser in terms of Hit@10. The performance of other self-attentive models is the same and omitted here due to page limitations. In addition, we compare with two recent sparse Transformers: Sparse Transformer [10] and 𝛼-entmax sparse attention [12]. All the simulated experiments are repeated five times and the average results are shown in Figure 2. Clearly, the performance of all models degrades with the increasing noise ratio. We observe that our Rec-denoiser (use either ARM or AR estimators) consistently outperforms 𝛼-entmax and Sparse Transformer under different ratios of noise on all datasets. 𝛼-entmax heavily relies on one trainable parameter 𝛼 to filter out the noise, which may be over tuned during the training, while Sparse Transformer adopts a fixed attention pattern, which may lead to uncertain results, especially for short item sequences like Beauty and Games. In contrast, our differentaible masks have much more flexibility to adapt to noisy sequences. The Jacobian regularization further encourages the smoothness of our gradients, leading to better generalization. From the results, the AR estimator performs better than 𝛼-entmax but worse than ARM. This result is expected since ARM has much low variance. In summary, both ARM and AR estimators are able to reduce the negative impacts of noisy sequences, which could improve the robustness of self-attentive models.
 
 ## 5.4. Study of Rec-Denoiser(RQ3)
 

@@ -81,21 +81,124 @@ Rec-Denoiserでは、2つの大きな課題がある.
 
 ## Sparse Transformer
 
-# Sequential Recommendationの定式化
+# Sequential Recommendation タスクの定式化
 
-## Sequential Recommendationタスクの定式化
+## Sequential Recommendation タスクにおける notation
 
-# self-attentive recommender モデルの再検討
+- sequential推薦において、$U$ をユーザ集合、$I$ をアイテム集合、$S= \{S^1,S^2, \cdots, S^{|U|} \}$ をユーザ行動の集合とする.
+- $S^u = (S^{u}_{1}, S^{u}_{2}, \cdots, S^{u}_{|S^u|})$ は、あるユーザ $u \in U$ の時系列に並んだ行動履歴(=item sequence)を表す.
+  - $S^{u}_{t} \in I$ は time step $t$ (=sequence内の要素の識別子的な意味合い)にユーザ $u$ がinteractしたアイテム.
+  - $|S^u|$ はsequenceの長さを表す.
+
+## Sequential Recommendation タスクの定式化
+
+- sequential推薦のタスクは、interaction history $S^u$ が与えられた状態で、time step $|S^{u}+1|$ における next item $S^u_{|S^{u}+1|}$ を予測する事.
+- モデルの学習プロセス[26, 41]では、モデルの入力sequenceを $(S^{u}_{1}, S^{u}_{2}, \cdots, S^{u}_{|S^u - 1|})$ とし、入力sequence を1 time step分後ろにシフトしたもの $(S^{u}_{2}, S^{u}_{3}, \cdots, S^{u}_{|S^{u}|})$ を expected output(i.e. 正解ラベル!) とみなす事が多い.
+
+# self-attentive recommender モデルを見直そう.
+
+Transformerアーキテクチャ[43]は長いsequenceを学習することができるため、sequential推薦において**SASRec** [26], BERT4Rec [41], TiSASRec [30] など広く利用されている.
+ここでは、SASRecの設計を簡単に紹介し、その限界について考察する.
 
 ## Embedding Layer
 
-## Transformer Block 1: Self-attention 層
+- Transformerベースのレコメンダーは、アイテムの **embedding table $T \in R^{|I| \times d}$** を保持する. ここで、$d$ は embeddingのサイズ. (embedding tableは、アイテムid -> embedding vector のmapみたいなイメージ:thinking:).
+- 各sequence $(S^u_1, S^u_2, \cdots, S^u_{|S^u - 1|})$ に対して、**fixed-length(固定長)のsequence $(s_1, s_2, \cdots s_n)$ に変換**する. ここで、$n$は、sequenceの最大長. (ex. sequenceを truncating したりpadding したりして、各sequence長を最新の$n$個のアイテムにする)
+- **$(s_1, s_2, \cdots s_n)$ の embedding を $E \in R^{n \times d}$** と表す.(= 埋め込みベクトル行列 ...!)(各埋め込みベクトルは embedding table $T$ から取得する)
 
-## Transformer Block 2: Point-wise Feed-forward 層
+## Positional Encoding
 
-## Transformer Block 3: 学習の目的関数
+- sequence内の順序情報を捉えるために、学習可能な(固定値もあるよな～:thinking:) positonal embedding $P \in R^{n \times d}$ を入力 $E$ にinject(注入)する(i.e. positional encoding vector):
 
-## noisy attention問題
+$$
+\hat{E} = E + P \tag{1}
+$$
+
+- ここで、$\hat{E} \in R^{n \times d}$ は order-awareな(=sequence内の順序を考慮した) 埋め込みベクトル行列.
+
+## Transformer Block 1: Self-attention 層(scaled-dot-product attentionの話, etc.)
+
+- Transformer Block は、self-attention 層 と point-wise feed-forward 層で構成される.
+- self-attention層は、sequentialな依存関係を捉える為に効果的であり、Transformerブロックの重要なcomponent. (scaled-dot-product attentionのmulti-head attentionを採用)
+
+$$
+\text{Attention}(Q, K, V) = \text{softmax}(\frac{QK^T}{\sqrt{d}}) V
+\tag{2}
+$$
+
+- ここで、$\text{Attention}(Q, K, V) \in R^{n \times d}$ は output item representations.
+- $Q = \hat{E} W^Q$, $K =\hat{E} W^K$, and $V = \hat{E} W^V$ はそれぞれ Query, Key, Value. (QもKもVも、埋め込みベクトル行列Eを元にしてるので、attention関数のself-attention的な使い方...!). ${W^Q, W^K, W^V} \in R^{d \times d}$ は3つのprojection行列.
+- $\sqrt{d}$ はscale-factor.(正規化的なイメージ!)
+
+## Transformer Block 2: Self-attention 層(multi-head attentionの話, etc.)
+
+- sequential推薦では、**left-to-right uni-directional attentions(左から右への一方向のattention)**(ex. SASRec [26]やTiSASRec [30])や、もしくは**bi-directional attention(双方向のattention)** (ex. BERT4Rec [41])を利用して、次のアイテムを予測することができる.
+- さらに、$H$ 個のattention関数を並列に適用することで、表現力を高めることができる：$\mathbf{H} \leftarrow \text{MultiHead}(\hat{E})$ [43]. (元のtransformerでも採用してる、multi-head attentionね:thinking:)
+
+## Transformer Block 3: Point-wise Feed-forward 層
+
+- self-attention層はlinear projectionで構築されているので、**Point-wise Feed-forward層を導入することで、非線形性を付与する(モデルの表現力を高める為の非線形変換!)**ことができる(あ、そういうモチベーションなのか...!中間層１つのやつ! :thinking:):
+
+$$
+F_i = FFN(H_i) = \text{ReLU}(H_i W^{(1)} + b^{(1)})W^{(2)} + b^{(2)}
+\tag{3}
+$$
+
+ここで、$W^{(\ast)} \in R^{d \times d}$, $b^{(\ast)} \in R^d$ は FFN層内の学習可能なparameters(重みとバイアス).
+
+## Transformer Block 4: Point-wise Feed-forward 層の補足
+
+- (補足: "point-wise" -> **要素毎に独立して操作を行う**、という意味. Transformerの場合はSequenceデータを入力に取るが、この層は、sequenceデータの各要素に対して個別に処理が行われる. つまり、sequenceデータの各要素に対して同じ操作が行われる.:thinking:)
+  - (確かランク学習でも、point-wise, pair-wise, list-wiseってあったなー:thinking:)
+- (補足: "feed-forward" -> データの入出力の流れが1方向=前方方向にのみ進む事を意味する.)
+  - 逆に、"feed-forward"ではない層はRNNとか! CNNは"point-wise"ではないが"feed-forward"である気はする:thinking:
+
+## Transformer Block 5
+
+- 実際には、より多くのTransformerブロックを積み重ねることによって、階層的なアイテムの依存関係を学習することが通常有益.(元祖Transformerでも、$N$個のブロックを重ねるよね...:thinking:)
+- また、**residual connection(残差接続), dropout, layer normalization(レイヤー正則化) などのトリックを採用することで、学習の安定化と高速化を図ることができる**.(そういう目的なんだ...!:thinking:)
+- 本論文では、$L$ 個のTransformerブロックの出力(=L個のブロックが連結した最終的な出力の意味:thinking:)を単純に次のように表現する:
+
+$$
+F^{(L)} \leftarrow \text{Transformer}(\hat{E})
+$$
+
+## 学習の目的関数 1
+
+- $L$ 個のTransformerブロックを積み重ねた後、最初の$t$個のitemが与えられると $F_t^{(L)}$ に基づいてnext-itemを予測できる.
+- 内積を使ってアイテム $i$ の relevance(ユーザの行動履歴との) を次のように予測する.
+
+$$
+r_{i, t} = <F_{t}^{(L)}, T_i>,
+$$
+
+ここで $T_i \in R^d$ は、アイテム $i$ の埋め込みベクトル.
+
+## 学習の目的関数 2
+
+学習時にて、モデルは sequence $s = (s_{1}, s_{2}, \cdots, s_{n})$ を入力とし、出力の教師ラベルは同じ sequence をシフトしたもの $o = (o_{1}, o_{2}, \cdots, o_{n})$ である. なので、binary cross-entropy lossを適用できる:
+
+(= $o_2$ は $s = (s_1, s_2)$ が与えられた時のnext-item predictionの正解ラベル、という認識. ~~$r_{i,t}$が最も高いアイテムを$o_2$として採用する、みたいなイメージ??~~ これは推論時ではなく学習時の話なので、$o_2 = s_3$ って事かな.:thinking:)
+
+$$
+L_{BCE} = - \sum_{S^{u} \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1 - \sigma (r_{o_t', t})}]} + \alpha \cdot ||\theta||^2_F
+\tag{4}
+$$
+
+- ここで、$\theta$はmodel parameters. $sigma(\cdot)$ はシグモイド関数.
+- $\alpha$はオーバーフィットを防ぐためのreqularizer(正則化パラメータ).
+- $o_{t}' \notin S^{u}$ は $o_t$ に対応するnegative sample(??:thinking:).
+
+(詳細は、SASRec[26]およびBERT4Rec[41]に記載)
+
+## SASRecの noisy attention 問題
+
+- 本論文では、SASRecではsequence中のノイズに十分に対処できないと主張している.
+  - 理由は、**full attention分布（例えば式(2)）は密度が高く、無関係なitemに一定のcredit(=attention weight)を割り当ててしまうから**.
+  - full attention分布はitem-itemの依存関係を複雑にし、学習の難易度を上げ、モデルの性能を低下させる.
+- 言語モデリングタスクでは、この問題に対処する為の試みが提案されている(ex. sparse attention schemas の活用, attentionのごく一部だけを残すdropout技術の活用, etc.)
+
+本論文は、**微分可能なmaskを用いて無関係なattentionのノイズを除去する**、シンプルかつ効果的なdata-driven method(=確かに、固定的でもランダムでもない:thinking:)を提案している.
 
 # 提案手法: Rec-Denoiserについて
 

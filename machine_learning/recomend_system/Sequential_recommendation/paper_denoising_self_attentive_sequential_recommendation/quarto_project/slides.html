@@ -392,7 +392,7 @@
 <li>利点1: sequenceからより情報量の多いアイテムのsubsetを抜き出し、明示的にnext-token-predictionを実行できる.</li>
 <li>利点2: Transformerのアーキテクチャを変更せず、<strong>attention分布のみを変更する</strong>為、実装が容易 &amp; あらゆるTransformerに適用可能で、その解釈可能性を向上できる.</li>
 </ul></li>
-<li>実世界のベンチマークデータセットを使った実験で、手法の有効性を検証</li>
+<li>実世界のベンチマークデータセットを使った実験で、手法の有効性を検証.</li>
 </ul>
 </section>
 <section id="提案手法-rec-denoiser-の２つの大きな課題-とその対応" class="slide level2">
@@ -404,22 +404,200 @@
 <li>-&gt;本論文では、probabilistic reparameterization(確率的再パラメータ化?)[25]により、離散変数を連続的な近似値で緩和する.(ここが結構頑張りどころっぽい<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 <li>この工夫によって、提案手法の微分可能なmaskは、Transformerとend-to-endで一緒に学習可能.</li>
 </ul></li>
-<li>課題2: scaled dot-product attention は Lipschitz連続(?)ではない為、input perturbations(入力摂動?)に対して脆弱[28].
+<li>課題2: scaled dot-product attention は Lipschitz連続(?)ではない為、input perturbations(入力摂動?ノイズ??)に対して脆弱[28].
 <ul>
 <li>-&gt;本論文では、Transformerブロック全体にヤコビアン正則化[21, 24]を適用.</li>
 </ul></li>
 </ul>
+</section></section>
+<section>
+<section id="sequential-recommender-と-sparse-transformer-に関する既存研究" class="title-slide slide level1 center">
+<h1>Sequential Recommender と Sparse Transformer に関する既存研究</h1>
+
 </section>
-<section id="感想" class="slide level2">
-<h2>感想</h2>
+<section id="sequential-recommender" class="slide level2">
+<h2>Sequential Recommender</h2>
+</section>
+<section id="sparse-transformer" class="slide level2">
+<h2>Sparse Transformer</h2>
+</section></section>
+<section>
+<section id="sequential-recommendation-タスクの定式化" class="title-slide slide level1 center">
+<h1>Sequential Recommendation タスクの定式化</h1>
+
+</section>
+<section id="sequential-recommendation-タスクにおける-notation" class="slide level2">
+<h2>Sequential Recommendation タスクにおける notation</h2>
 <ul>
-<li>hogehoge</li>
+<li>sequential推薦において、<span class="math inline">\(U\)</span> をユーザ集合、<span class="math inline">\(I\)</span> をアイテム集合、<span class="math inline">\(S= \{S^1,S^2, \cdots, S^{|U|} \}\)</span> をユーザ行動の集合とする.</li>
+<li><span class="math inline">\(S^u = (S^{u}_{1}, S^{u}_{2}, \cdots, S^{u}_{|S^u|})\)</span> は、あるユーザ <span class="math inline">\(u \in U\)</span> の時系列に並んだ行動履歴(=item sequence)を表す.
+<ul>
+<li><span class="math inline">\(S^{u}_{t} \in I\)</span> は time step <span class="math inline">\(t\)</span> (=sequence内の要素の識別子的な意味合い)にユーザ <span class="math inline">\(u\)</span> がinteractしたアイテム.</li>
+<li><span class="math inline">\(|S^u|\)</span> はsequenceの長さを表す.</li>
+</ul></li>
 </ul>
+</section>
+<section id="sequential-recommendation-タスクの定式化-1" class="slide level2">
+<h2>Sequential Recommendation タスクの定式化</h2>
+<ul>
+<li>sequential推薦のタスクは、interaction history <span class="math inline">\(S^u\)</span> が与えられた状態で、time step <span class="math inline">\(|S^{u}+1|\)</span> における next item <span class="math inline">\(S^u_{|S^{u}+1|}\)</span> を予測する事.</li>
+<li>モデルの学習プロセス[26, 41]では、モデルの入力sequenceを <span class="math inline">\((S^{u}_{1}, S^{u}_{2}, \cdots, S^{u}_{|S^u - 1|})\)</span> とし、入力sequence を1 time step分後ろにシフトしたもの <span class="math inline">\((S^{u}_{2}, S^{u}_{3}, \cdots, S^{u}_{|S^{u}|})\)</span> を expected output(i.e.&nbsp;正解ラベル!) とみなす事が多い.</li>
+</ul>
+</section></section>
+<section>
+<section id="self-attentive-recommender-モデルを見直そう." class="title-slide slide level1 center">
+<h1>self-attentive recommender モデルを見直そう.</h1>
+<p>Transformerアーキテクチャ[43]は長いsequenceを学習することができるため、sequential推薦において<strong>SASRec</strong> [26], BERT4Rec [41], TiSASRec [30] など広く利用されている. ここでは、SASRecの設計を簡単に紹介し、その限界について考察する.</p>
+</section>
+<section id="embedding-layer" class="slide level2">
+<h2>Embedding Layer</h2>
+<ul>
+<li>Transformerベースのレコメンダーは、アイテムの <strong>embedding table <span class="math inline">\(T \in R^{|I| \times d}\)</span></strong> を保持する. ここで、<span class="math inline">\(d\)</span> は embeddingのサイズ. (embedding tableは、アイテムid -&gt; embedding vector のmapみたいなイメージ<span class="emoji" data-emoji="thinking">🤔</span>).</li>
+<li>各sequence <span class="math inline">\((S^u_1, S^u_2, \cdots, S^u_{|S^u - 1|})\)</span> に対して、<strong>fixed-length(固定長)のsequence <span class="math inline">\((s_1, s_2, \cdots s_n)\)</span> に変換</strong>する. ここで、<span class="math inline">\(n\)</span>は、sequenceの最大長. (ex. sequenceを truncating したりpadding したりして、各sequence長を最新の<span class="math inline">\(n\)</span>個のアイテムにする)</li>
+<li><strong><span class="math inline">\((s_1, s_2, \cdots s_n)\)</span> の embedding を <span class="math inline">\(E \in R^{n \times d}\)</span></strong> と表す.(= 埋め込みベクトル行列 …!)(各埋め込みベクトルは embedding table <span class="math inline">\(T\)</span> から取得する)</li>
+</ul>
+</section>
+<section id="positional-encoding" class="slide level2">
+<h2>Positional Encoding</h2>
+<ul>
+<li>sequence内の順序情報を捉えるために、学習可能な(固定値もあるよな～<span class="emoji" data-emoji="thinking">🤔</span>) positonal embedding <span class="math inline">\(P \in R^{n \times d}\)</span> を入力 <span class="math inline">\(E\)</span> にinject(注入)する(i.e.&nbsp;positional encoding vector):</li>
+</ul>
+<p><span class="math display">\[
+\hat{E} = E + P \tag{1}
+\]</span></p>
+<ul>
+<li>ここで、<span class="math inline">\(\hat{E} \in R^{n \times d}\)</span> は order-awareな(=sequence内の順序を考慮した) 埋め込みベクトル行列.</li>
+</ul>
+</section>
+<section id="transformer-block-1-self-attention-層scaled-dot-product-attentionの話-etc." class="slide level2">
+<h2>Transformer Block 1: Self-attention 層(scaled-dot-product attentionの話, etc.)</h2>
+<ul>
+<li>Transformer Block は、self-attention 層 と point-wise feed-forward 層で構成される.</li>
+<li>self-attention層は、sequentialな依存関係を捉える為に効果的であり、Transformerブロックの重要なcomponent. (scaled-dot-product attentionのmulti-head attentionを採用)</li>
+</ul>
+<p><span class="math display">\[
+\text{Attention}(Q, K, V) = \text{softmax}(\frac{QK^T}{\sqrt{d}}) V
+\tag{2}
+\]</span></p>
+<ul>
+<li>ここで、<span class="math inline">\(\text{Attention}(Q, K, V) \in R^{n \times d}\)</span> は output item representations.</li>
+<li><span class="math inline">\(Q = \hat{E} W^Q\)</span>, <span class="math inline">\(K =\hat{E} W^K\)</span>, and <span class="math inline">\(V = \hat{E} W^V\)</span> はそれぞれ Query, Key, Value. (QもKもVも、埋め込みベクトル行列Eを元にしてるので、attention関数のself-attention的な使い方…!). <span class="math inline">\({W^Q, W^K, W^V} \in R^{d \times d}\)</span> は3つのprojection行列.</li>
+<li><span class="math inline">\(\sqrt{d}\)</span> はscale-factor.(正規化的なイメージ!)</li>
+</ul>
+</section>
+<section id="transformer-block-2-self-attention-層multi-head-attentionの話-etc." class="slide level2">
+<h2>Transformer Block 2: Self-attention 層(multi-head attentionの話, etc.)</h2>
+<ul>
+<li>sequential推薦では、<strong>left-to-right uni-directional attentions(左から右への一方向のattention)</strong>(ex. SASRec [26]やTiSASRec [30])や、もしくは<strong>bi-directional attention(双方向のattention)</strong> (ex. BERT4Rec [41])を利用して、次のアイテムを予測することができる.</li>
+<li>さらに、<span class="math inline">\(H\)</span> 個のattention関数を並列に適用することで、表現力を高めることができる：<span class="math inline">\(\mathbf{H} \leftarrow \text{MultiHead}(\hat{E})\)</span> [43]. (元のtransformerでも採用してる、multi-head attentionね<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul>
+</section>
+<section id="transformer-block-3-point-wise-feed-forward-層" class="slide level2">
+<h2>Transformer Block 3: Point-wise Feed-forward 層</h2>
+<ul>
+<li>self-attention層はlinear projectionで構築されているので、<strong>Point-wise Feed-forward層を導入することで、非線形性を付与する(モデルの表現力を高める為の非線形変換!)</strong>ことができる(あ、そういうモチベーションなのか…!中間層１つのやつ! <span class="emoji" data-emoji="thinking">🤔</span>):</li>
+</ul>
+<p><span class="math display">\[
+F_i = FFN(H_i) = \text{ReLU}(H_i W^{(1)} + b^{(1)})W^{(2)} + b^{(2)}
+\tag{3}
+\]</span></p>
+<p>ここで、<span class="math inline">\(W^{(\ast)} \in R^{d \times d}\)</span>, <span class="math inline">\(b^{(\ast)} \in R^d\)</span> は FFN層内の学習可能なparameters(重みとバイアス).</p>
+</section>
+<section id="transformer-block-4-point-wise-feed-forward-層の補足" class="slide level2">
+<h2>Transformer Block 4: Point-wise Feed-forward 層の補足</h2>
+<ul>
+<li>(補足: “point-wise” -&gt; <strong>要素毎に独立して操作を行う</strong>、という意味. Transformerの場合はSequenceデータを入力に取るが、この層は、sequenceデータの各要素に対して個別に処理が行われる. つまり、sequenceデータの各要素に対して同じ操作が行われる.<span class="emoji" data-emoji="thinking">🤔</span>)
+<ul>
+<li>(確かランク学習でも、point-wise, pair-wise, list-wiseってあったなー<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul></li>
+<li>(補足: “feed-forward” -&gt; データの入出力の流れが1方向=前方方向にのみ進む事を意味する.)
+<ul>
+<li>逆に、“feed-forward”ではない層はRNNとか! CNNは”point-wise”ではないが”feed-forward”である気はする<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="transformer-block-5" class="slide level2">
+<h2>Transformer Block 5</h2>
+<ul>
+<li>実際には、より多くのTransformerブロックを積み重ねることによって、階層的なアイテムの依存関係を学習することが通常有益.(元祖Transformerでも、<span class="math inline">\(N\)</span>個のブロックを重ねるよね…<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>また、<strong>residual connection(残差接続), dropout, layer normalization(レイヤー正則化) などのトリックを採用することで、学習の安定化と高速化を図ることができる</strong>.(そういう目的なんだ…!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>本論文では、<span class="math inline">\(L\)</span> 個のTransformerブロックの出力(=L個のブロックが連結した最終的な出力の意味<span class="emoji" data-emoji="thinking">🤔</span>)を単純に次のように表現する:</li>
+</ul>
+<p><span class="math display">\[
+F^{(L)} \leftarrow \text{Transformer}(\hat{E})
+\]</span></p>
+</section>
+<section id="学習の目的関数-1" class="slide level2">
+<h2>学習の目的関数 1</h2>
+<ul>
+<li><span class="math inline">\(L\)</span> 個のTransformerブロックを積み重ねた後、最初の<span class="math inline">\(t\)</span>個のitemが与えられると <span class="math inline">\(F_t^{(L)}\)</span> に基づいてnext-itemを予測できる.</li>
+<li>内積を使ってアイテム <span class="math inline">\(i\)</span> の relevance(ユーザの行動履歴との) を次のように予測する.</li>
+</ul>
+<p><span class="math display">\[
+r_{i, t} = &lt;F_{t}^{(L)}, T_i&gt;,
+\]</span></p>
+<p>ここで <span class="math inline">\(T_i \in R^d\)</span> は、アイテム <span class="math inline">\(i\)</span> の埋め込みベクトル.</p>
+</section>
+<section id="学習の目的関数-2" class="slide level2">
+<h2>学習の目的関数 2</h2>
+<p>学習時にて、モデルは sequence <span class="math inline">\(s = (s_{1}, s_{2}, \cdots, s_{n})\)</span> を入力とし、出力の教師ラベルは同じ sequence をシフトしたもの <span class="math inline">\(o = (o_{1}, o_{2}, \cdots, o_{n})\)</span> である. なので、binary cross-entropy lossを適用できる:</p>
+<p>(= <span class="math inline">\(o_2\)</span> は <span class="math inline">\(s = (s_1, s_2)\)</span> が与えられた時のnext-item predictionの正解ラベル、という認識. <del><span class="math inline">\(r_{i,t}\)</span>が最も高いアイテムを<span class="math inline">\(o_2\)</span>として採用する、みたいなイメージ??</del> これは推論時ではなく学習時の話なので、<span class="math inline">\(o_2 = s_3\)</span> って事かな.<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<p><span class="math display">\[
+L_{BCE} = - \sum_{S^{u} \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1 - \sigma (r_{o_t', t})}]} + \alpha \cdot ||\theta||^2_F
+\tag{4}
+\]</span></p>
+<ul>
+<li>ここで、<span class="math inline">\(\theta\)</span>はmodel parameters. <span class="math inline">\(sigma(\cdot)\)</span> はシグモイド関数.</li>
+<li><span class="math inline">\(\alpha\)</span>はオーバーフィットを防ぐためのreqularizer(正則化パラメータ).</li>
+<li><span class="math inline">\(o_{t}' \notin S^{u}\)</span> は <span class="math inline">\(o_t\)</span> に対応するnegative sample(??<span class="emoji" data-emoji="thinking">🤔</span>).</li>
+</ul>
+<p>(詳細は、SASRec[26]およびBERT4Rec[41]に記載)</p>
+</section>
+<section id="sasrecの-noisy-attention-問題" class="slide level2">
+<h2>SASRecの noisy attention 問題</h2>
+<ul>
+<li>本論文では、SASRecではsequence中のノイズに十分に対処できないと主張している.
+<ul>
+<li>理由は、<strong>full attention分布（例えば式(2)）は密度が高く、無関係なitemに一定のcredit(=attention weight)を割り当ててしまうから</strong>.</li>
+<li>full attention分布はitem-itemの依存関係を複雑にし、学習の難易度を上げ、モデルの性能を低下させる.</li>
+</ul></li>
+<li>言語モデリングタスクでは、この問題に対処する為の試みが提案されている(ex. sparse attention schemas の活用, attentionのごく一部だけを残すdropout技術の活用, etc.)</li>
+</ul>
+<p>本論文は、<strong>微分可能なmaskを用いて無関係なattentionのノイズを除去する</strong>、シンプルかつ効果的なdata-driven method(=確かに、固定的でもランダムでもない<span class="emoji" data-emoji="thinking">🤔</span>)を提案している.</p>
+</section></section>
+<section>
+<section id="提案手法-rec-denoiserについて" class="title-slide slide level1 center">
+<h1>提案手法: Rec-Denoiserについて</h1>
+
+</section>
+<section id="differentiableな微分可能な-mask" class="slide level2">
+<h2>differentiableな(微分可能な) mask</h2>
+</section>
+<section id="学習可能なsparse-attention" class="slide level2">
+<h2>学習可能なsparse Attention</h2>
+</section>
+<section id="効率的な勾配計算" class="slide level2">
+<h2>効率的な勾配計算</h2>
+</section>
+<section id="jacobian-regularizationヤコビアン正則化" class="slide level2">
+<h2>Jacobian Regularization(ヤコビアン正則化)</h2>
+</section>
+<section id="損失関数の最適化1" class="slide level2">
+<h2>損失関数の最適化1</h2>
+</section>
+<section id="損失関数の最適化2-end-to-endの学習" class="slide level2">
+<h2>損失関数の最適化2: end-to-endの学習</h2>
+</section>
+<section id="モデルのcomplexity計算量" class="slide level2">
+<h2>モデルのcomplexity(計算量?)</h2>
+</section></section>
+<section id="実験" class="title-slide slide level1 center">
+<h1>実験</h1>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
 </div>
-</section></section>
+</section>
     </div>
   </div>
 
