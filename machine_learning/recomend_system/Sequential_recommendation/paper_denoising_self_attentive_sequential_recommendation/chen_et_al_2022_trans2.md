@@ -448,7 +448,10 @@ $$
 (要は、L個のmask binary行列内の非ゼロ要素の数を最小する項を、学習時の損失関数に組み込むって事...??)
 
 where $I[c]$ is an indicator that is equal to 1 if the condition $c$ holds and 0 otherwise; and $||\cdot||_{0}$ denotes the $L_0$ norm that is able to drive irrelevant attentions to be exact zeros.
-ここで、 $I[c]$ は条件 $c$ が成立すれば1、成立しなければ0に等しい indicator function である. $||\cdot||_{0}$ は、無関係なattentionを正確な 0 に追い込むことができる $L_0$ ノルムを表す.
+ここで、
+
+- $I[c]$ は条件 $c$ が成立すれば1、成立しなければ0に等しい indicator function である.
+- $||\cdot||_{0}$ は、無関係な attention を正確な 0 に追い込むことができる $L_0$ ノルムを表す.
 
 However, there are two challenges for optimizing $Z^{(l)}$: non-differentiability and large variance.
 しかし、$Z^{(l)}$ の最適化には、**微分不可能性と分散の大きさという2つの課題**がある.
@@ -470,102 +473,127 @@ L(Z, \Theta) = L_{BCE}({A^{(l)} \odot Z^{(l)}}, \Theta) + \beta \cdot \sum_{l=1}
 $$
 
 where $\beta$ controls the sparsity of masks and we denote $Z$ as $Z := \{Z^{(1)}, \cdots, Z^{(L)}\}$.
-ここで $\beta$ はmaskのsparse性を制御し、$Z$ を $Z := \{Z^{(1)}, \cdots, Z^{(L)}\}$とする.
+ここで $\beta$ はmaskのsparse性を制御し、$Z$ を $Z := \{Z^{(1)}, \cdots, Z^{(L)}\}$ とする.
 We further consider each $Z^{(l)}_{u,v}$ is drawn from a Bernoulli distribution parameterized by $\prod^{(l)}_{u,v}$ such that $Z^{(l)}_{u,v} \sim Bern(\prod^{(l)}_{u,v})$ [34].
 さらに、$Z^{(l)}_{u,v} \sim Bern(\prod^{(l)}_{u,v})$ のような $\prod^{(l)}_{u,v}$ でパラメータ化されたBernoulli分布から それぞれの $Z^{(l)}_{u,v}$ が生成される(=サンプリングされる?)と考える[34].
-As the parameter Π (𝑙) 𝑢,𝑣 is jointly trained with the downstream tasks, a small value of Π (𝑙) 𝑢,𝑣 suggests that the attention A (𝑙) 𝑢,𝑣 is more likely to be irrelevant, and could be removed without side effects.
-パラメータΠ (𝑙) 𝑢,𝑣は下流タスクと共同で学習されるため、Π (𝑙) 𝑢,𝑣の値が小さいと、注目A (𝑙) 𝑢,𝑣は無関係である可能性が高く、副作用なく削除できる。
+As the parameter $\prod^{(l)}_{u,v}$ is jointly trained with the downstream tasks, a small value of $\prod^{(l)}_{u,v}$ suggests that the attention $A^{(l)}_{u,v}$ is more likely to be irrelevant, and could be removed without side effects.
+パラメータ $\prod^{(l)}_{u,v}$ は下流タスクと共同で学習されるため、$\prod^{(l)}_{u,v}$ の値が小さいと、attention $A^{(l)}_{u,v}$ は無関係である可能性が高く、副作用なく削除できる。
 By doing this, Eq.(7) becomes:
 こうすることで、式(7)は次のようになる：
 
 $$
+L(Z, \Theta) =
+E_{Z \in \prod_{l=1}^{L} Bert(Z^{(l)}; \prod^{l})}[L_{BCE}(Z, \Theta)]
++ \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} Z_{u,v}^{(l)}
 \tag{8}
 $$
 
-where E(·) is the expectation.
-ここでE(-)は期待値である。
-The regularization term is now continuous, but the first term L𝐵𝐶𝐸 (Z, Θ) still involves the discrete variables Z (𝑙) .
-正則化項は連続になったが、第一項L𝐵𝐸 (Z, Θ)はまだ離散変数Z (↪Ll_1D459) を含んでいる。
+where $E(\cdot)$ is the expectation.
+ここで $E(\cdot)$ は期待値である。
+The regularization term is now continuous, but the first term $L_{BCE}(Z, \Theta)$ still involves the discrete variables $Z^{(l)}$.
+正則化項は連続になったが、第一項 $L_{BCE}(Z, \Theta)$ はまだ離散変数 $Z^{(l)}$ を含んでいる.
 One can address this issue by using existing gradient estimators, such as REINFORCE [48] and Straight Through Estimator [3], etc.
-REINFORCE [48]やStraight Through Estimator [3]などの既存の勾配推定器を使用することで、この問題に対処することができる。
+REINFORCE [48]やStraight Through Estimator [3]などの既存の勾配推定器を使用することで、この問題に対処することができる.
 These approaches, however, suffer from either biased gradients or high variance.
-しかし、これらのアプローチは、偏った勾配や高い分散に悩まされている。
+しかし、これらのアプローチは、偏った勾配や高い分散に悩まされている.
 Alternatively, we directly optimize discrete variables using the recently proposed augment-REINFORCEmerge (ARM) [15, 16, 56], which is unbiased and has low variance.
-あるいは、最近提案されたaugment-REINFORCEmerge（ARM）[15, 16, 56]を使って直接離散変数を最適化する。
-In particular, we adopt the reparameterization trick [25], which reparameterizes Π (𝑙) 𝑢,𝑣 ∈ [0, 1] to a deterministic function 𝑔(·) with parameter Φ (𝑙) 𝑢,𝑣 , such that:
-特に、Π (𝑙) 𝑢,↪Ll_1D463 ∈ [0, 1]をパラメータΦ (𝑙) ↪Ll_1D463 を持つ決定論的関数𝑔(-)に再パラメータ化する再パラメータ化トリック[25]を採用する：
+あるいは、最近提案されたaugment-REINFORCEmerge（ARM）[15, 16, 56]を使って直接離散変数を最適化する.
+
+In particular, we adopt the reparameterization trick [25], which reparameterizes $\prod_{u,v}^{(l)} \in [0, 1]$ to a deterministic function $g(\cdot)$ with parameter $\Phi_{u,v}^{(l)}$, such that:
+特に、$\prod_{u,v}^{(l)} \in [0, 1]$ をパラメータ $\Phi_{u,v}^{(l)}$ を持つ決定論的関数 $g(\cdot)$ に再パラメータ化する再パラメータ化トリック[25]を採用する：
 
 $$
+\prod_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})
 \tag{9}
 $$
 
-since the deterministic function 𝑔(·) should be bounded within [0, 1], we simply choose the standard sigmoid function as our deterministic function: 𝑔(𝑥) = 1/(1 + 𝑒 −𝑥 ).
-決定論的関数 ᑔ(-) は[0, 1]内で有界であるべきなので、決定論的関数として標準シグモイド関数を選ぶ： ᑔ = 1/(1 + 𝑒 -↪Ll_1D465 ).
-As such, the second term in Eq.(8) becomes differentiable with the continuous function 𝑔(·).
-そのため、式(8)の第2項は連続関数ᑔ(-)で微分可能になる。
+since the deterministic function $g(\cdot)$ should be bounded within [0, 1], we simply choose the standard sigmoid function as our deterministic function: $g(x) = \frac{1}{(1 + e^{-x})}$.
+決定論的関数(=閾値以上であれば陽性、みたいな?) $g(\cdot)$ は[0, 1]内で有界であるべきなので、決定論的関数として標準シグモイド関数を選ぶ： $g(x) = \frac{1}{(1 + e^{-x})}$.
+As such, the second term in Eq.(8) becomes differentiable with the continuous function $g(\cdot)$.
+そのため、式(8)の第2項は連続関数 $g(\cdot)$ で微分可能になる.
 We next present the ARM estimator for computing the gradients of binary variables in the first term of Eq.(8) [15, 16, 56].
-次に、式(8)の第1項のバイナリ変数の勾配を計算するためのARM推定器を示す[15, 16, 56]。
+次に、式(8)の第1項のbinary変数(= L個のbinary mask行列 $\mathbf{Z}$ の事!)の勾配を計算するためのARM推定器を示す[15, 16, 56].
+
 According to Theorem 1 in ARM [56], we can compute the gradients for Eq.(8) as:
-ARM [56]の定理1によれば、式(8)の勾配は次のように計算できる：
+ARM [56]の定理1によれば、式(8)の勾配は次のように計算できる(難しい...!!:thinking:):
 
 $$
+\Delta_{\Theta}^{ARM} L(\Phi, \Theta)
+\\
+= E_{\mathbf{U} \in \prod_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
+[L_{BCE}(I[\mathbf{U} > g(-\Phi)], \Theta) - L_{BCE}(I[\mathbf{U} < g(\Phi)], \Theta) \cdot (\mathbf{U} - \frac{1}{2})]
+\\
++ \beta \Delta_{\Phi} g(\Phi)
+
 \tag{10}
 $$
 
-where Uni(0, 1) denotes the Uniform distribution within [0, 1], and L𝐵𝐶𝐸 (I[U > 𝑔(−Φ)], Θ) is the cross-entropy loss obtained by setting the binary masks Z (𝑙) to 1 if U (𝑙) > 𝑔(−Φ (𝑙) ) in the forward pass, and 0 otherwise.
-ここでUni(0, 1)は[0, 1]内の一様分布を表し、L𝐵𝐸 (I[U > 𝑔(-Φ)])、 Θ) は、フォワードパスにおいて、U (↪Ll_1D459) > Φ (-Φ (↪Ll_1D459) の場合にバイナリマスクZ (↪Ll_1D459) を1に設定し、それ以外の場合に0に設定することで得られるクロスエントロピー損失。
+where $Uni(0, 1)$ denotes the Uniform distribution within [0, 1], and $L_{BCE}(I[\mathbf{U} > g(-\Phi)], \Theta)$ is the cross-entropy loss obtained by setting the binary masks $\mathbf{Z}^{(l)}$ to 1 if $\mathbf{U}^{(l)} > g(- \Phi^{(l)})$ in the forward pass, and 0 otherwise.
+ここで $Uni(0, 1)$ は[0, 1]内の一様分布を表し、$L_{BCE}(I[\mathbf{U} > g(-\Phi)], \Theta)$ は、フォワードパスにおいて、$\mathbf{U}^{(l)} > g(- \Phi^{(l)})$ の場合にバイナリマスク $\mathbf{Z}^{(l)}$ を1に設定し、それ以外の場合に0に設定することで得られるクロスエントロピー損失. ($L_{BCE}[hoge, fuga]$ がクロスエントロピー損失関数か...!:thinking:)
 The same strategy is applied to L𝐵𝐶𝐸 (I[U < 𝑔(Φ)], Θ).
-同じ戦略をL𝐵𝐸 (I[U < ǔ], Θ)にも適用する。
+同じ戦略を $L_{BCE}(I[\mathbf{U} < g(\Phi)], \Theta)$ にも適用している.
 Moreover, ARM is an unbiased estimator due to the linearity of expectations.
-さらに、ARMは期待値の線形性により不偏推定量となる。
-Note that we need to evaluate L𝐵𝐶𝐸 (·) twice to compute gradients in Eq.(10).
-式(10)の勾配を計算するために、L𝐵𝐸 (-)を2回評価する必要があることに注意。
-Given the fact that 𝑢 ∼ Uni(0, 1) implies (1 − 𝑢) ∼ Uni(0, 1), we can replace U with (1 − U) in the indicator function inside L𝐵𝐶𝐸 (I[U > 𝑔(−Φ)], Θ):
-↪Ll_1D462 ∼ Uni(0, 1)が(1 - ↪Ll_1D462) ∼ Uni(0, 1)を意味することから、L𝐶𝐸 (I[U > 𝑔(-Φ)], Θ)内の指標関数において、Uを(1 - U)に置き換えることができる：
+さらに、ARM は期待値の線形性により不偏推定量となる. (真の導関数の?:thinking:)
+
+Note that we need to evaluate L𝐵𝐶𝐸 $L_{BCE}(\cdot)$ twice to compute gradients in Eq.(10).
+式(10)の勾配を計算するために、$L_{BCE}(\cdot)$ を2回評価する必要があることに注意。
+Given the fact that $u \sim Uni(0, 1)$ implies $(1 − u) \sim Uni(0, 1)$, we can replace $\mathbf{U}$ with $(1 − \mathbf{U})$ in the indicator function inside $L_{BCE}(I[\mathbf{U} > g(-\Phi)],  \Theta)$:
+$u \sim Uni(0, 1)$ が $(1 − u) \sim Uni(0, 1)$ を意味することから、$L_{BCE}(I[\mathbf{U} > g(-\Phi)],  \Theta)$ 内の indicator function において、$\mathbf{U}$ を $(1 − \mathbf{U})$ に置き換えることができる:
 
 $$
-\tag{}
+I[\mathbf{U} > g(-\Phi)]
+\rightleftarrows I[1 - \mathbf{U} > g(-\Phi)]
+\\
+\rightleftarrows I[\mathbf{U} < 1 - g(-\Phi)]
+\\
+\rightleftarrows I[\mathbf{U} < g(\Phi)]
 $$
 
 To this end, we can further reduce the complexity by considering the variants of ARM – Augment-Reinforce (AR) [56]:
-このため、ARMの変形であるAugment-Reinforce（AR）[56]を考慮することで、さらに複雑さを軽減することができる：
+このため、ARMの変形である**Augment-Reinforce(AR)**[56]を考慮することで、さらに複雑さを軽減することができる:
 
 $$
+\Delta_{\Theta}^{AR} L(\Phi, \Theta)
+\\
+= E_{\mathbf{U} \in \prod_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
+[L_{BCE}(I[\mathbf{U} < g(\Phi)], \Theta) \cdot (1 - 2 \mathbf{U})]
+\\
++ \beta \Delta_{\Phi} g(\Phi)
 \tag{11}
 $$
 
 where only requires one-forward pass.
-ここで必要なのはワンフォワードパスだけだ。
-The gradient estimator ∇ 𝐴𝑅 Φ L (Φ, Θ) is still unbiased but may pose higher variance, comparing to ∇ 𝐴𝑅𝑀 Φ L (Φ, Θ).
-勾配推定量∇ Φ 𝐴 L (Φ, Θ)は依然として不偏であるが、∇ Φ 𝐴 Φ L (Φ, Θ)に比べて分散が大きくなる可能性がある。
+ここで必要なのは **one-forward pass** だけだ.(なにそれ?:thinking:)
+The gradient estimator $\Delta_{\Theta}^{AR} L(\Phi, \Theta)$ is still unbiased but may pose higher variance, comparing to $\Delta_{\Theta}^{ARM} L(\Phi, \Theta)$.
+勾配推定量 $\Delta_{\Theta}^{AR} L(\Phi, \Theta)$ は依然として不偏であるが、$\Delta_{\Theta}^{ARM} L(\Phi, \Theta)$ に比べて分散が大きくなる可能性がある。
 In the experiments, we can trade off the variance of the estimator with complexity.
-実験では、推定量の分散と複雑さをトレードオフにすることができる。
+実験では、推定量の分散と複雑さをトレードオフにすることができる.(ARM推定量の方が分散が小さい、AR推定量の方が複雑性が低い.)
 
 In the training stage, we update ∇ΦL (Φ, Θ) (either Eq.(10) or Eq.(11)) and ∇ΘL (Φ, Θ) 3 during the back propagation.
-学習段階では、逆伝播中に∇ΦL（Φ，Θ）（式（10）または式（11））と∇ΘL（Φ，Θ）3を更新する。
-In the inference stage, we can use the expectation of Z (𝑙) 𝑢,𝑣 ∼ Bern(Π (𝑙) 𝑢,𝑣 ) as the mask in Eq.(5), i.e., E(Z (𝑙) 𝑢,𝑣 ) = Π (𝑙) 𝑢,𝑣 = 𝑔(𝚽 (𝑙) 𝑢,𝑣 ).
-推論段階では、Z (𝑙) 𝑢,𝑣 ∼ Bern(Π (𝑢),𝑣 )の期待値を式(5)のマスクとして使うことができる、すなわち、E(Z (𝑙) 𝑢,𝑣 = Π(𝑙) 𝑢,𝑣 = 𝑔(𝑢 (𝑙) 𝑣 )。
+学習段階では、逆伝播中に $\Delta_{\Phi} L(\Phi, \Theta)$ (式（10) または式（11））と $\Delta_{\Theta} L(\Phi, \Theta)^{3}$ を更新する.($\Phi$ と $\Theta$ をそれぞれ更新する為か...:thinking:)
+In the inference stage, we can use the expectation of $Z_{u,v}^{(l)} \sim Bern(\prod_{u,v}^{(l)})$ as the mask in Eq.(5), i.e., $E(Z_{u,v}^{(l)}) = \prod_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$.
+推論段階では、$Z_{u,v}^{(l)} \sim Bern(\prod_{u,v}^{(l)})$ の期待値を式(5)のマスクとして使うことができる、すなわち、$E(Z_{u,v}^{(l)}) = \prod_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$.
 Nevertheless, this will not yield a sparse attention M(𝑙) since the sigmoid function is smooth unless the hard sigmoid function is used in Eq.(9).
-とはいえ、式(9)でハードシグモイド関数を使わない限り、シグモイド関数は平滑なので、これではスパース注意M(↪Ll459)は得られない。
-Here we simply clip those values 𝑔(𝚽 (𝑙) 𝑢,𝑣 ) ≤ 0.5 to zeros such that a sparse attention matrix is guaranteed and the corresponding noisy attentions are eventually eliminated.
-ここでは、疎な注意行列が保証され、対応するノイジーな 注意が最終的に排除されるように、単に値𝑔(𝚽) ≤ 0.5 をゼロに切り取る。
+とはいえ、式(9)でhard sigmoid関数(hardとは??:thinking:)を使わない限り、シグモイド関数は平滑なので、これではsparse attention $M(l)$ は得られない.(=なめらかなattention weight 分布になってしまう、って意味...!)
+Here we simply clip those values $g(\Phi_{u,v}^{(l)}) \leq 0.5$ to zeros such that a sparse attention matrix is guaranteed and the corresponding noisy attentions are eventually eliminated.
+ここでは、sparse attetnion行列が保証され、対応するノイジーな attentionが最終的に排除されるように、単に値 $g(\Phi_{u,v}^{(l)}) \leq 0.5$ をゼロに切り取る.(**閾値で0 or 1を決める**、まさに決定論的??:thinking:)
 
 ## 4.2. Jacobian Regularization
 
 As recently proved by [28], the standard dot-product self-attention is not Lipschitz continuous and is vulnerable to the quality of input sequences.
-最近[28]によって証明されたように、標準的なドット積自己アテンションはリプシッツ連続ではなく、入力シーケンスの品質に弱い。
-Let 𝑓 (𝑙) be the 𝑙-th Transformer block (Sec 3.2.2) that contains both a self-attention layer and a point-wise feed-forward layer, and x be the input.
-𝑓を𝑙番目のTransformerブロック(第3.2.2節)とし、自己注意層とポイント単位のフィードフォワード層を含むとする。
-We can measure the robustness of the Transformer block using the residual error: 𝑓 (𝑙) (x + 𝝐) − 𝑓 (𝑙) (x), where 𝝐 is a small perturbation vector and the norm of 𝝐 is bounded by a small scalar 𝛿, i.e., ∥𝝐 ∥2 ≤ 𝛿.
-ここで、𝝐は小さな摂動ベクトルであり、𝝐のノルムは小さなスカラー𝝐で境界付けられている、 ∥𝝐 ∥2 ≤ 𝛿。
+最近[28]によって証明されたように、**標準的なdot-product self-attentionはLipschitz continuous(リプシッツ連続?)ではなく**、入力sequenceの品質に弱い.
+Let $f^{(l)}$ be the $l$-th Transformer block (Sec 3.2.2) that contains both a self-attention layer and a point-wise feed-forward layer, and x be the input.
+$f^{(l)}$ を $l$ 番目のTransformerブロック(第3.2.2節)とし、self-attention層とpoint-wise フィードフォワード層を含むとする.
+We can measure the robustness of the Transformer block using the residual error: $f^{(𝑙)}(x + \epsilon) − f^{(𝑙)}(x)$, where $\epsilon$ is a small perturbation vector and the norm of $\epsilon$ is bounded by a small scalar $\delta$, i.e., $|\epsilon|_{2} \leq \delta$.
+$f^{(𝑙)}(x + \epsilon) − f^{(𝑙)}(x)$ を使って、Transformerブロックのロバスト性を測ることができる. ここで、$\epsilon$ は小さな摂動ベクトルであり、𝝐のノルム(i.e. 大きさ!)は小さなスカラー $\delta$ で境界付けられている. i.e. $|\epsilon|_{2} \leq \delta$.
 Following the Taylor expansion, we have:
-テイラー展開に従うと、次のようになる：
+テイラー展開に従うと、次のようになる:
 
 $$
-\tag{}
+f^{(𝑙)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x) \eqsim [\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}]^{T} \epsilon
 $$
 
-Let J (𝑙) (x) represent the Jacobian matrix at x where J (𝑙) 𝑖𝑗 = 𝜕 𝑓 (𝑙) 𝑖 (x) 𝜕𝑥𝑗 .
+Let $J^{(𝑙)}(x)$ represent the Jacobian matrix at $x$ where J (𝑙) 𝑖𝑗 = 𝜕 𝑓 (𝑙) 𝑖 (x) 𝜕𝑥𝑗 .
 J (𝑙) (x)はxにおけるヤコビアン行列を表し、J (𝑙) 𝑖 (𝑗) = 𝜕 𝑓 (𝑙) (x) 𝜕とする。
 Then, we set J (𝑙) 𝑖 (x) = 𝜕 𝑓 (𝑙) 𝑖 (x) 𝜕x to denote the 𝑖-th row of J (𝑙) (x).
 そして、J (↪Ll_1D459) (x) の𝑖番目の行を表すために、J (↪Ll_1D459) (x) = 𝑖 (𝜕) 𝜕x とする。
@@ -579,18 +607,19 @@ $$
 Above inequality indicates that regularizing the 𝐿2 norm on the Jacobians enforces a Lipschitz constraint at least locally, and the residual error is strictly bounded.
 上記の不等式は、ヤコビアンのᵃ2ノルムを正則化することで、少なくとも局所的にはリプシッツ制約が強制され、残差は厳密に有界であることを示している。
 Thus, we propose to regularize Jacobians with Frobenius norm for each Transformer block as:
-そこで、各トランスフォーマーブロックのヤコビアンをフロベニウスノルムで正則化することを提案する：
+そこで、各トランスフォーマーブロックのヤコビアンを **Frobenius norm(?) で正則化**することを提案する：
 
 $$
+R_{J} = \sum_{l=1}^{L} |J^{(l)}|^{2}_{F}
 \tag{12}
 $$
 
-Importantly, ∥J (𝑙) ∥ 2 𝐹 can be approximated via various Monte-Carlo estimators [23, 37].
-重要なことは、∥J (↪Ll459) ∥ 2 ǔは様々なモンテカルロ推定量[23, 37]によって近似できることです。
+Importantly, $|J^{(l)}|^{2}_{F}$ can be approximated via various Monte-Carlo estimators [23, 37].
+重要なことは、$|J^{(l)}|^{2}_{F}$ は様々なモンテカルロ推定量[23, 37]によって近似できることです。
 In this work, we adopt the classical Hutchinson estimator [23].
 本研究では、古典的なHutchinson推定量[23]を採用する。
 For each Jocobian matrix J (𝑙) ∈ R 𝑛×𝑛 , we have:
-各ヨコビア行列J (↪Ll_1D459) ∈ R 𝑛×𝑛 に対して、次のようになる：
+各ヤコビアン行列 $J^{(l)} \in \mathbb{R}^{n \times n}$ に対して、次のようになる：
 
 $$
 \tag{}
@@ -609,6 +638,7 @@ Putting together loss in Eq.(4), Eq.(6), and Eq.(12), the overall objective of R
 式(4)、式(6)、式(12)の損失をまとめると、Rec-Denoiserの全体的な目的は次のようになる：
 
 $$
+L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 \tag{13}
 $$
 
