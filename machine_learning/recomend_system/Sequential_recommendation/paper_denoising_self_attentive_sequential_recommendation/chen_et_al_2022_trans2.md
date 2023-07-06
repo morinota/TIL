@@ -604,8 +604,8 @@ $$
 \tag{}
 $$
 
-Above inequality indicates that regularizing the 𝐿2 norm on the Jacobians enforces a Lipschitz constraint at least locally, and the residual error is strictly bounded.
-上記の不等式は、ヤコビアンのᵃ2ノルムを正則化することで、少なくとも局所的にはリプシッツ制約が強制され、残差は厳密に有界であることを示している。
+Above inequality indicates that regularizing the L2 norm on the Jacobians enforces a Lipschitz constraint at least locally, and the residual error is strictly bounded.
+上記の不等式は、ヤコビアンのL2ノルムを正則化することで、少なくとも局所的には**リプシッツ制約が強制され**、残差は厳密に有界であることを示している。
 Thus, we propose to regularize Jacobians with Frobenius norm for each Transformer block as:
 そこで、各トランスフォーマーブロックのヤコビアンを **Frobenius norm(?) で正則化**することを提案する：
 
@@ -617,18 +617,20 @@ $$
 Importantly, $|J^{(l)}|^{2}_{F}$ can be approximated via various Monte-Carlo estimators [23, 37].
 重要なことは、$|J^{(l)}|^{2}_{F}$ は様々なモンテカルロ推定量[23, 37]によって近似できることです。
 In this work, we adopt the classical Hutchinson estimator [23].
-本研究では、古典的なHutchinson推定量[23]を採用する。
+本研究では、古典的なHutchinson推定量[23](??)を採用する.
 For each Jocobian matrix J (𝑙) ∈ R 𝑛×𝑛 , we have:
 各ヤコビアン行列 $J^{(l)} \in \mathbb{R}^{n \times n}$ に対して、次のようになる：
 
 $$
+||J^{(l)}||^{2}_{F} = Tr(J^{(l)} J^{(l)}^{T})
+= E_{\nu \in N(0, I_{n})} [|| \nu^{T} J^{(l)}||^{2}_{F}]
 \tag{}
 $$
 
-where 𝜼 ∈ N (0, I𝑛) is the normal distribution vector.
-ここで、↪Ll_1∈N (0, I𝑛)は正規分布ベクトルである。
-We further make use of random projections to compute the norm of Jacobians R𝐽 and its gradient ∇ΘR𝐽 (Θ) [21], which significantly reduces the running time in practice.
-さらに、ヤコビアンのノルムR𝐽とその勾配∇ΘR𝐽 (Θ)[21]を計算するためにランダム射影を利用する。
+where $\nu \in N(0, I_{n})$ is the normal distribution vector.
+ここで、$\nu \in N(0, I_{n})$ は正規分布ベクトルである.(共分散行列が単位行列なので、各要素は独立...!:thinking:)
+We further make use of random projections to compute the norm of Jacobians $R_{j}$ and its gradient $\Delta_{\Theta} R_{j}(\Theta)$ [21], which significantly reduces the running time in practice.
+さらに、ヤコビアンのノルム $R_{j}$ とその勾配 $\Delta_{\Theta} R_{j}(\Theta)$ [21]を計算するためにrandom projections(ランダムな重みによるlinear projectionの意味??:thinking:)を利用する.
 
 ## 4.3. Optimization
 
@@ -642,40 +644,45 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 \tag{13}
 $$
 
-where 𝛽 and 𝛾 are regularizers to control the sparsity and robustness of self-attention networks, respectively.
-ここで↪Ll_1D6FD と↪L_1D6FE↩は、それぞれ自己注意ネットワークのスパース性とロバスト性を制御する正則化子である。
+where $\beta$ and $\gamma$ are regularizers to control the sparsity and robustness of self-attention networks, respectively.
+ここで $\beta$ と $\gamma$ は、**それぞれself-attentionネットワークのスパース性とロバスト性を制御する regularizer(正則化パラメータ) である**.
 Algorithm 1 summarizes the overall training of Rec-Denoiser with the AR estimator.
 アルゴリズム1は、AR推定器を用いたRec-Denoiserの全体的なトレーニングをまとめたものである。
 
+![]()
+
 Lastly, it is worth mentioning that our Rec-Denoiser is compatible to many Transformer-based sequential recommender models since our differentiable masks and gradient regularizations will not change their main architectures.
-最後に、我々のRec-Denoiserは、微分可能なマスクと勾配正則化は、それらの主要なアーキテクチャを変更しないので、多くのTransformerベースの逐次推薦モデルと互換性があることを言及する価値がある。
-If we simply set all masks Z (𝑙) to be all-ones matrix and 𝛽 = 𝛾 = 0, our model boils down to their original designs.
-単純にすべてのマスクZ (↪Ll_1D459) をオール1の行列とし、𝛽 = ↪Ll_1D6FE = 0とすると、モデルは元の設計に帰着する。
+最後に、我々のRec-Denoiserは、微分可能なmask と 勾配正則化は、それらの主要なアーキテクチャを変更しないので、**多くのTransformerベースの逐次推薦モデルと互換性がある**ことを言及する価値がある.
+If we simply set all masks $Z^{(l)}$ to be all-ones matrix and $\beta = \gamma = 0$, our model boils down to their original designs.
+単純にすべてのマスク $Z^{(l)}$ ($\forall l=1, \cdots, L$ :thinking:)をオール1の行列とし、$\beta = \gamma = 0$ とすると、**モデルは元の設計に帰着する**.(分かる分かる...!)
 If we randomly set subset of masks Z (𝑙) to be zeros, it is equivalent to structured Dropout like LayerDrop [17], DropHead [60].
-マスクのサブセットZ (↪Ll45↩)をランダムにゼロに設定すると、LayerDrop [17]やDropHead [60]のような構造化Dropoutと等価になる。
+マスクのサブセット(i.e. L個のbinary mask matrixのうちのいくつか) $Z^{(l)}$ をランダムにゼロに設定すると、LayerDrop [17]やDropHead [60]のような **structured Dropout と等価**になる.
 In addition, our Rec-Denoiser can work together with linearized self-attention networks [27, 59] to further reduce the complexity of attentions.
-さらに、私たちのRec-Denoiserは、線形化された自己注意ネットワーク[27, 59]と連携することができ、注意の複雑さをさらに軽減することができる。
+さらに、私たちのRec-Denoiserは、線形化されたself-attentionネットワーク[27, 59]と連携(よくイメージが湧いてない...?)することができ、attentionの複雑さをさらに軽減することができる。
 We leave this extension in the future.
-私たちはこの延長を将来に残す。
+私たちはこの延長を将来に残す.
 
 ### 4.3.2. Model Complexity 4.3.2. モデルの複雑さ
 
 The complexity of Rec-Denoiser comes from three parts: a basic Transformer, differentiable masks, and Jacobian regularization.
-Rec-Denoiserの複雑さは、基本的な変換器、微分可能なマスク、ヤコビアンの正則化という3つの部分から来ている。
+Rec-Denoiserのcomplexity(計算量?)は、基本的なTransformer、微分可能なmask、Jacobian正則化という3つの部分から来ている。
 The complexity of basic Transformer keeps the same as SASRec [26] or BERT4Rec [41].
-基本的なTransformerの複雑さは、SASRec [26]やBERT4Rec [41]と同じである。
+基本的なTransformerのcomplexity(計算量?)は、SASRec [26]やBERT4Rec [41]と同じである。
 The complexity of differentiable masks requires either one-forward pass (e.g., AR with high variance) or two-forward pass (e.g., ARM with low variance) of the model.
-微分可能なマスクの複雑さは、モデルのワン・フォワード・パス（高分散のARなど）またはツー・フォワード・パス（低分散のARMなど）を必要とする。
+微分可能なマスクの計算量は、モデルのone-forward pass(高分散のARなど)またはtwo-forward pass(低分散のARMなど)を必要とする.(n-forward passの意味がわかってない...:thinking:)
 In sequential recommenders, the number of Transformer blocks is often very small (e.g., 𝐿 = 2 in SASRec [26] and BERT4Rec [41] ).
-逐次レコメンダーでは、Transformerブロックの数は非常に少ないことが多い（例えば、SASRec [26]とBERT4Rec [41] では 𝐿 = 2 ）。
+**逐次レコメンダーでは、Transformerブロックの数は非常に少ないことが多い**（例えば、SASRec [26]とBERT4Rec [41] では L = 2 ）。
 It is thus reasonable to use the ARM estimator without heavy computations.
 従って、重い計算をせずにARM推定量を使用することは合理的である。
-Besides, we compare the performance of AR and ARM estimators in Sec 5.3.Moreover, the random project techniques are surprisingly efficient to compute the norms of Jacobians [21].
-さらに、ランダム・プロジェクト技法はヤコビアンのノルムを計算するのに驚くほど効率的である[21]。
+Besides, we compare the performance of AR and ARM estimators in Sec 5.3.
+加えて、5.3章でAR推定量とARM推定量を用いる場合のperformanceを比較した.
+
+Moreover, the random project techniques are surprisingly efficient to compute the norms of Jacobians [21].
+さらに、random project技法はヤコビアンのノルムを計算するのに驚くほど効率的である[21].
 As a result, the overall computational complexity remains the same order as the original Transformers during the training.
-その結果、全体的な計算量は、トレーニング中のオリジナルのTransformersと同じオーダーのままである。
+その結果、**全体的な計算量は、トレーニング中のオリジナルのTransformersと同じオーダーのまま**である.
 However, during the inference, our attention maps are very sparse, which enables much faster feed-forward computations.
-しかし、推論中の注意マップは非常に疎なため、フィードフォワード計算をより高速に行うことができる。
+しかし、推論中の attention map は非常に疎なため、フィードフォワード計算をより高速に行うことができる. (推論は元々のTransformerよりも高速ってことね...!)
 
 # 5. Experiments 5. 実験
 
