@@ -611,7 +611,7 @@ Thus, we propose to regularize Jacobians with Frobenius norm for each Transforme
 そこで、各Transformerブロックのヤコビアンを **Frobenius norm(?) で正則化**することを提案する: 
 
 $$
-R_{J} = \sum_{l=1}^{L} |J^{(l)}|^{2}_{F}
+R_{J} = \sum_{l=1}^{L} ||J^{(l)}||^{2}_{F}
 \tag{12}
 $$
 
