@@ -202,13 +202,136 @@ $$
 
 # 提案手法: Rec-Denoiserについて
 
-## differentiableな(微分可能な) mask
+Rec-Denoiserは、以下の2つのpartsから構成される.
+
+- self-attention層の微分可能なmaskを導入
+- Transformerブロックのヤコビアン正則化項を損失関数に追加
+
+## differentiableな(微分可能な) maskの導入
+
+- attention関数は全てのitemにnon-zero weightが割り当てる. (i.e. full attention分布か...!:thinking:) そこでRec-Denoiserは、**各self-attention層に学習可能な binary mask 行列 $Z^{(l)} \in \{0, 1\}^{n \times n}$ を追加**し、相対的 or 絶対的にnoisyなitemのattentionを除去する. ($l$は 各self-attention層の添字)
+- $l$ 番目のself-attention層は以下の様に改良される:
+
+$$
+A^{(l)} = \text{softmax}(\frac{Q^{(l)} K^{(l)T}}{\sqrt{d}}),
+\\
+M^{(l)} = A^{(l)} \odot Z^{(l)},
+\\
+\text{Attention}(Q^{(l)}, K^{(l)}, V^{(l)}) = M^{(l)} V^{(l)},
+\tag{5}
+$$
+
+ここで、$A^{(l)}$ は元のfull attention、$M^{(l)}$ は sparse attention.
+$\odot$ は 要素ごとの積.(=確か"アダマール積"ってやつ:thinking:)
 
 ## 学習可能なsparse Attention
 
-## 効率的な勾配計算
+$M^{(l)}$ がdenoisedなattention行列になるような binary mask 行列 $Z^{(l)}$ を学習させる為に、non-zero 要素の数に対して明示的にペナルティを課す様な $R_M$ を損失関数に追加する:
 
-## Jacobian Regularization(ヤコビアン正則化)
+$$
+R_M = \sum_{l=1}^{L}||Z^{(l)}||_{0}
+= \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0],
+\tag{6}
+$$
+
+ここで、$I[c]$ は条件 $c$ が成立すれば1、成立しなければ0に等しい indicator function. $||\cdot||_{0}$ は L0ノルム(配列内の非ゼロ要素の数を表す).
+
+しかし、$Z^{(l)}$ の最適化には、**微分不可能性と分散の大きさという2つの課題**がある.
+
+- L0ノルム は不連続(離散値だしなぁ:thinking:)であり、ほぼどこでも勾配0.
+- binary mask行列 $Z^{(l)}$ は $2^{n^2}$ 個の可能な状態があり、大きな分散を持つ.
+
+## binary mask行列を含む目的関数の導出①
+
+次に、Rec-denoiserの目的関数を導出する.
+$Z^{(l)}$ はオリジナルのTransformerベースのモデルと共同で最適化されるので、式(4)と式(6)を1つの目的関数にまとめる:
+
+$$
+L(\mathbf{Z}, \Theta) = L_{BCE}({A^{(l)} \odot Z^{(l)}}, \Theta) + \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0]
+\\
+here, \mathbf{Z} := \{Z^{(1)}, \cdots, Z^{(L)}\}
+\tag{7}
+$$
+
+ここで $\beta$ は mask の sparsity(i.e. denoiseの強さ)を制御するハイパーパラメータ.
+
+## binary mask行列を含む目的関数の導出②
+
+続いて、**mask行列の各要素 $Z^{(l)}_{u,v}$ は パラメータ $\Pi^{(l)}_{u,v} \in [0, 1]$ のBernoulli分布(コイントスのやつ!)から生成される**、と仮定する. i.e. $Z^{(l)}_{u,v} \sim Bern(\Pi^{(l)}_{u,v})$. (ちなみに今回の $\Pi$ は、総乗記号`\product`ではなく`\Pi`. Bernoulli分布のパラメータは`\pi`で表される事があるので:thinking:)
+
+各 $\Pi^{(l)}_{u,v}$ は学習すべきパラメータ.
+よって目的関数 式(7)を以下の様に変形する:
+
+$$
+L(\mathbf{Z}, \Theta) =
+E_{\mathbf{Z} \in \Pi_{l=1}^{L} Bern(Z^{(l)}; \Pi^{(l)})}[L_{BCE}({A^{(l)} \odot Z^{(l)}}, \Theta)
++ \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0]]
+\\
+= E_{\mathbf{Z} \in \Pi_{l=1}^{L} Bern(Z^{(l)}; \Pi^{(l)})}[L_{BCE}(\mathbf{Z}, \Theta)]
++ \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} \Pi_{u,v}^{(l)}
+\tag{8}
+$$
+
+ここで $E(\cdot)$ は期待値.
+この変形により**第二項は連続になった!** しかし、第一項 $L_{BCE}(Z, \Theta)$ はまだ離散変数(i.e. binary parameters) $Z^{(l)}$ を含む.
+
+## binary mask行列を含む目的関数の導出③
+
+目的関数の第一項の離散parametersを学習可能にする為に、**勾配推定量**としてAugment-REINFORCE Merge(ARM)推定量を採用する.
+
+まず, Bernoulli分布のパラメータ $\Pi_{u,v}^{(l)} \in [0, 1]$ を、**パラメータ $\Phi_{u,v}^{(l)}$ を持つdeterministic function(決定論的関数) $g(\cdot)$ に再パラメータ化**する ("reparameterization trick"[25]と言うらしい:thinking:):
+
+$$
+\Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})
+\tag{9}
+$$
+
+$g(\cdot)$ にはsigmoid関数($g(x) = \frac{1}{(1 + e^{-x})}$)を用いる.
+
+## binary mask行列を含む目的関数の導出④
+
+次に、式(8)の第1項の離散変数(= L個のbinary mask行列 $\mathbf{Z}$ の事!)に関する勾配を計算するためのARM推定量を示す[15, 16, 56].
+ARM [56] の定理1によれば、目的関数の $\Phi$ に関する勾配は次のように計算できる(よくわかってない...!!:thinking:):
+
+$$
+\Delta_{\Phi}^{ARM} L(\Phi, \Theta) =
+\\
+E_{\mathbf{U} \in \Pi_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
+[L_{BCE}(I[\mathbf{U} > g(-\Phi)], \Theta) - L_{BCE}(I[\mathbf{U} < g(\Phi)], \Theta) \cdot (\mathbf{U} - \frac{1}{2})]
+\\
++ \beta \Delta_{\Phi} g(\Phi)
+\tag{10}
+$$
+
+ここで、$\mathbf{U}$ は [0, 1]の一様分布($Uni(0, 1)$)から**サンプリングされた乱数配列**.
+学習時において各binary mask $Z^{(l)}_{u,v}$ は、 一様乱数 $U^{(l)}_{u,v}$ と $\Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$ の大小関係によってサンプリングされる.
+(要するに、**モンテカルロ法的な事をして勾配を推定してる**:thinking:)
+(ちなみに、$g(-\Phi)$ と $g(\Phi)$ の使い方の意味は、ARMの論文読まないと分からなさそう...:thinking:)
+
+(式(10)の勾配を1回推定するために、**$L_{BCE}(\cdot)$ を2回計算する必要がある**...!:thinking:)
+
+## binary mask行列を含む目的関数の最適化
+
+- 学習時には、**$\Delta_{\Phi} L(\Phi, \Theta)$** と **$\Delta_{\Theta} L(\Phi, \Theta)$** を計算して、勾配降下で各種パラメータを更新する.
+  - $\Delta_{\Theta} L(\Phi, \Theta)$ に関しては、元々のTransformerの最適化なので問題なし!
+- 推論時には、$Z_{u,v}^{(l)} \sim Bern(\Pi_{u,v}^{(l)})$ の**期待値(i.e. $E(Z_{u,v}^{(l)}) = \Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$)をbinary maskとして使用**する.
+  - -> **でも期待値 $\Pi_{u,v}^{(l)}$ は $[0,1]$ であり binary でないので、これではsparse attention $M^{(l)}$ が取得できない**(あれ? 結局 full attention 分布になっちゃうじゃん:thinking:)
+  - -> 本論文では、シンプルに $g(\Phi_{u,v}^{(l)}) \leq 0.5$ の場合に $0$ とする(**閾値で0 or 1を決める**:thinking:)方法を採用し、noisyなattentionの除去を試みる.
+
+## 補足:Lipschitz constraint(リプシッツ制約) と Lipschitz continuous(連続)
+
+**標準的なdot-product self-attentionはLipschitz continuous(リプシッツ連続?)ではなく**、入力sequenceの品質に弱い.[28]
+
+- どちらも、関数やprojectionの性質に関する概念
+- Lipschitz制約: 関数やprojectionの振る舞いを制限する条件の一つ.
+  - 「ある関数 $f(\cdot)$ がLipschitz制約を満たす」事は、「ある正の定数 $L$ が存在し、任意の2つの入力値 $x_1$ と $x_2$ に対して $||f(x_1) - f(x_2)|| \leq L \times ||x_1 - x_2||$ を満たす」事を意味する.
+- Lipschitz連続性: 関数やprojection が Lipschitz制約を満たしている事.
+  - 「ある関数がLipschitz連続である」事は、「ある関数がLipschitz制約を満たす様な定数 $L$ が存在する」事を意味する.
+- つまり、関数やprojectionがLipschitz連続である(i.e. Lipschitz制約を満たす)という事は、**入力値が近い範囲であれば出力値も近い範囲に制約されるという性質を持つこと**を意味する.
+
+## Jacobian Regularization(ヤコビアン正則化)について
+
+- Trans
 
 ## 損失関数の最適化1
 
@@ -216,11 +339,14 @@ $$
 
 ## モデルのcomplexity(計算量?)
 
-## 補足:ARM推定量 や AR推定量 ってなんだ?
+## 補足:Augment-REINFORCE Merge(ARM)推定量 ってなんだ?
+
+- 学習すべきparametersに binary 変数を含むNNモデルの学習において、損失関数のparametersに対する導関数を近似的に推定する方法として、["Augment-REINFORCE Merge(ARM)推定量"](https://arxiv.org/pdf/1807.11143.pdf)というのがあるらしい.
+- 他にも色んなgradient estimator(勾配推定量)がある(ex. REINFORCE[48], Straight Through Estimator)
+
+## 補足:Augment-Reinforce(AR)推定量 ってなんだ?
 
 ## 補足:one-forward pass や two-forward passってなんだ?
-
-## 補足:Lipschitz constraint (リプシッツ制約) ってなんだ?
 
 ## 補足:Hutchinson推定量 ってなんだ?
 
@@ -253,6 +379,7 @@ $$
   - $\alpha$-entmax sparse attention [12]: softmax 関数を $\alpha$-entmax で代用.
 
 ## 結果: Overall Performance(RQ1)
-## 結果: Overall Performance(RQ1)
-## 結果: Overall Performance(RQ1)
-  
+
+## 結果: Robustness to Noises(RQ2)
+
+## 結果: Hypyr-parameters Sensitivity(RQ3)

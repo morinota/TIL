@@ -568,19 +568,130 @@ L_{BCE} = - \sum_{S^{u} \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1
 <section>
 <section id="提案手法-rec-denoiserについて" class="title-slide slide level1 center">
 <h1>提案手法: Rec-Denoiserについて</h1>
-
+<p>Rec-Denoiserは、以下の2つのpartsから構成される.</p>
+<ul>
+<li>self-attention層の微分可能なmaskを導入</li>
+<li>Transformerブロックのヤコビアン正則化項を損失関数に追加</li>
+</ul>
 </section>
-<section id="differentiableな微分可能な-mask" class="slide level2">
-<h2>differentiableな(微分可能な) mask</h2>
+<section id="differentiableな微分可能な-maskの導入" class="slide level2">
+<h2>differentiableな(微分可能な) maskの導入</h2>
+<ul>
+<li>attention関数は全てのitemにnon-zero weightが割り当てる. (i.e.&nbsp;full attention分布か…!<span class="emoji" data-emoji="thinking">🤔</span>) そこでRec-Denoiserは、<strong>各self-attention層に学習可能な binary mask 行列 <span class="math inline">\(Z^{(l)} \in \{0, 1\}^{n \times n}\)</span> を追加</strong>し、相対的 or 絶対的にnoisyなitemのattentionを除去する. (<span class="math inline">\(l\)</span>は 各self-attention層の添字)</li>
+<li><span class="math inline">\(l\)</span> 番目のself-attention層は以下の様に改良される:</li>
+</ul>
+<p><span class="math display">\[
+A^{(l)} = \text{softmax}(\frac{Q^{(l)} K^{(l)T}}{\sqrt{d}}),
+\\
+M^{(l)} = A^{(l)} \odot Z^{(l)},
+\\
+\text{Attention}(Q^{(l)}, K^{(l)}, V^{(l)}) = M^{(l)} V^{(l)},
+\tag{5}
+\]</span></p>
+<p>ここで、<span class="math inline">\(A^{(l)}\)</span> は元のfull attention、<span class="math inline">\(M^{(l)}\)</span> は sparse attention. <span class="math inline">\(\odot\)</span> は 要素ごとの積.(=確か”アダマール積”ってやつ<span class="emoji" data-emoji="thinking">🤔</span>)</p>
 </section>
 <section id="学習可能なsparse-attention" class="slide level2">
 <h2>学習可能なsparse Attention</h2>
+<p><span class="math inline">\(M^{(l)}\)</span> がdenoisedなattention行列になるような binary mask 行列 <span class="math inline">\(Z^{(l)}\)</span> を学習させる為に、non-zero 要素の数に対して明示的にペナルティを課す様な <span class="math inline">\(R_M\)</span> を損失関数に追加する:</p>
+<p><span class="math display">\[
+R_M = \sum_{l=1}^{L}||Z^{(l)}||_{0}
+= \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0],
+\tag{6}
+\]</span></p>
+<p>ここで、<span class="math inline">\(I[c]\)</span> は条件 <span class="math inline">\(c\)</span> が成立すれば1、成立しなければ0に等しい indicator function. <span class="math inline">\(||\cdot||_{0}\)</span> は L0ノルム(配列内の非ゼロ要素の数を表す).</p>
+<p>しかし、<span class="math inline">\(Z^{(l)}\)</span> の最適化には、<strong>微分不可能性と分散の大きさという2つの課題</strong>がある.</p>
+<ul>
+<li>L0ノルム は不連続(離散値だしなぁ<span class="emoji" data-emoji="thinking">🤔</span>)であり、ほぼどこでも勾配0.</li>
+<li>binary mask行列 <span class="math inline">\(Z^{(l)}\)</span> は <span class="math inline">\(2^{n^2}\)</span> 個の可能な状態があり、大きな分散を持つ.</li>
+</ul>
 </section>
-<section id="効率的な勾配計算" class="slide level2">
-<h2>効率的な勾配計算</h2>
+<section id="binary-mask行列を含む目的関数の導出①" class="slide level2">
+<h2>binary mask行列を含む目的関数の導出①</h2>
+<p>次に、Rec-denoiserの目的関数を導出する. <span class="math inline">\(Z^{(l)}\)</span> はオリジナルのTransformerベースのモデルと共同で最適化されるので、式(4)と式(6)を1つの目的関数にまとめる:</p>
+<p><span class="math display">\[
+L(\mathbf{Z}, \Theta) = L_{BCE}({A^{(l)} \odot Z^{(l)}}, \Theta) + \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0]
+\\
+here, \mathbf{Z} := \{Z^{(1)}, \cdots, Z^{(L)}\}
+\tag{7}
+\]</span></p>
+<p>ここで <span class="math inline">\(\beta\)</span> は mask の sparsity(i.e.&nbsp;denoiseの強さ)を制御するハイパーパラメータ.</p>
 </section>
-<section id="jacobian-regularizationヤコビアン正則化" class="slide level2">
-<h2>Jacobian Regularization(ヤコビアン正則化)</h2>
+<section id="binary-mask行列を含む目的関数の導出②" class="slide level2">
+<h2>binary mask行列を含む目的関数の導出②</h2>
+<p>続いて、<strong>mask行列の各要素 <span class="math inline">\(Z^{(l)}_{u,v}\)</span> は パラメータ <span class="math inline">\(\Pi^{(l)}_{u,v} \in [0, 1]\)</span> のBernoulli分布(コイントスのやつ!)から生成される</strong>、と仮定する. i.e.&nbsp;<span class="math inline">\(Z^{(l)}_{u,v} \sim Bern(\Pi^{(l)}_{u,v})\)</span>. (ちなみに今回の <span class="math inline">\(\Pi\)</span> は、総乗記号<code>\product</code>ではなく<code>\Pi</code>. Bernoulli分布のパラメータは<code>\pi</code>で表される事があるので<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<p>各 <span class="math inline">\(\Pi^{(l)}_{u,v}\)</span> は学習すべきパラメータ. よって目的関数 式(7)を以下の様に変形する:</p>
+<p><span class="math display">\[
+L(\mathbf{Z}, \Theta) =
+E_{\mathbf{Z} \in \Pi_{l=1}^{L} Bern(Z^{(l)}; \Pi^{(l)})}[L_{BCE}({A^{(l)} \odot Z^{(l)}}, \Theta)
++ \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} I[Z_{u,v}^{(l)} \neq 0]]
+\\
+= E_{\mathbf{Z} \in \Pi_{l=1}^{L} Bern(Z^{(l)}; \Pi^{(l)})}[L_{BCE}(\mathbf{Z}, \Theta)]
++ \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} \Pi_{u,v}^{(l)}
+\tag{8}
+\]</span></p>
+<p>ここで <span class="math inline">\(E(\cdot)\)</span> は期待値. この変形により<strong>第二項は連続になった!</strong> しかし、第一項 <span class="math inline">\(L_{BCE}(Z, \Theta)\)</span> はまだ離散変数(i.e.&nbsp;binary parameters) <span class="math inline">\(Z^{(l)}\)</span> を含む.</p>
+</section>
+<section id="binary-mask行列を含む目的関数の導出③" class="slide level2">
+<h2>binary mask行列を含む目的関数の導出③</h2>
+<p>目的関数の第一項の離散parametersを学習可能にする為に、<strong>勾配推定量</strong>としてAugment-REINFORCE Merge(ARM)推定量を採用する.</p>
+<p>まず, Bernoulli分布のパラメータ <span class="math inline">\(\Pi_{u,v}^{(l)} \in [0, 1]\)</span> を、<strong>パラメータ <span class="math inline">\(\Phi_{u,v}^{(l)}\)</span> を持つdeterministic function(決定論的関数) <span class="math inline">\(g(\cdot)\)</span> に再パラメータ化</strong>する (“reparameterization trick”[25]と言うらしい<span class="emoji" data-emoji="thinking">🤔</span>):</p>
+<p><span class="math display">\[
+\Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})
+\tag{9}
+\]</span></p>
+<p><span class="math inline">\(g(\cdot)\)</span> にはsigmoid関数(<span class="math inline">\(g(x) = \frac{1}{(1 + e^{-x})}\)</span>)を用いる.</p>
+</section>
+<section id="binary-mask行列を含む目的関数の導出④" class="slide level2">
+<h2>binary mask行列を含む目的関数の導出④</h2>
+<p>次に、式(8)の第1項の離散変数(= L個のbinary mask行列 <span class="math inline">\(\mathbf{Z}\)</span> の事!)に関する勾配を計算するためのARM推定量を示す[15, 16, 56]. ARM [56] の定理1によれば、目的関数の <span class="math inline">\(\Phi\)</span> に関する勾配は次のように計算できる(よくわかってない…!!<span class="emoji" data-emoji="thinking">🤔</span>):</p>
+<p><span class="math display">\[
+\Delta_{\Phi}^{ARM} L(\Phi, \Theta) =
+\\
+E_{\mathbf{U} \in \Pi_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
+[L_{BCE}(I[\mathbf{U} &gt; g(-\Phi)], \Theta) - L_{BCE}(I[\mathbf{U} &lt; g(\Phi)], \Theta) \cdot (\mathbf{U} - \frac{1}{2})]
+\\
++ \beta \Delta_{\Phi} g(\Phi)
+\tag{10}
+\]</span></p>
+<p>ここで、<span class="math inline">\(\mathbf{U}\)</span> は [0, 1]の一様分布(<span class="math inline">\(Uni(0, 1)\)</span>)から<strong>サンプリングされた乱数配列</strong>. 学習時において各binary mask <span class="math inline">\(Z^{(l)}_{u,v}\)</span> は、 一様乱数 <span class="math inline">\(U^{(l)}_{u,v}\)</span> と <span class="math inline">\(\Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})\)</span> の大小関係によってサンプリングされる. (要するに、<strong>モンテカルロ法的な事をして勾配を推定してる</strong><span class="emoji" data-emoji="thinking">🤔</span>) (ちなみに、<span class="math inline">\(g(-\Phi)\)</span> と <span class="math inline">\(g(\Phi)\)</span> の使い方の意味は、ARMの論文読まないと分からなさそう…<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<p>(式(10)の勾配を1回推定するために、<strong><span class="math inline">\(L_{BCE}(\cdot)\)</span> を2回計算する必要がある</strong>…!<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+</section>
+<section id="binary-mask行列を含む目的関数の最適化" class="slide level2">
+<h2>binary mask行列を含む目的関数の最適化</h2>
+<ul>
+<li>学習時には、<strong><span class="math inline">\(\Delta_{\Phi} L(\Phi, \Theta)\)</span></strong> と <strong><span class="math inline">\(\Delta_{\Theta} L(\Phi, \Theta)\)</span></strong> を計算して、勾配降下で各種パラメータを更新する.
+<ul>
+<li><span class="math inline">\(\Delta_{\Theta} L(\Phi, \Theta)\)</span> に関しては、元々のTransformerの最適化なので問題なし!</li>
+</ul></li>
+<li>推論時には、<span class="math inline">\(Z_{u,v}^{(l)} \sim Bern(\Pi_{u,v}^{(l)})\)</span> の<strong>期待値(i.e.&nbsp;<span class="math inline">\(E(Z_{u,v}^{(l)}) = \Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})\)</span>)をbinary maskとして使用</strong>する.
+<ul>
+<li>-&gt; <strong>でも期待値 <span class="math inline">\(\Pi_{u,v}^{(l)}\)</span> は <span class="math inline">\([0,1]\)</span> であり binary でないので、これではsparse attention <span class="math inline">\(M^{(l)}\)</span> が取得できない</strong>(あれ? 結局 full attention 分布になっちゃうじゃん<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>-&gt; 本論文では、シンプルに <span class="math inline">\(g(\Phi_{u,v}^{(l)}) \leq 0.5\)</span> の場合に <span class="math inline">\(0\)</span> とする(<strong>閾値で0 or 1を決める</strong><span class="emoji" data-emoji="thinking">🤔</span>)方法を採用し、noisyなattentionの除去を試みる.</li>
+</ul></li>
+</ul>
+</section>
+<section id="jacobian-regularizationヤコビアン正則化について" class="slide level2">
+<h2>Jacobian Regularization(ヤコビアン正則化)について</h2>
+<ul>
+<li><strong>標準的なdot-product self-attentionはLipschitz continuous(リプシッツ連続?)ではなく</strong>、入力sequenceの品質に弱い.[28]</li>
+<li></li>
+</ul>
+</section>
+<section id="補足lipschitz-constraintリプシッツ制約-と-lipschitz-continuous連続" class="slide level2">
+<h2>補足:Lipschitz constraint(リプシッツ制約) と Lipschitz continuous(連続)</h2>
+<p><strong>標準的なdot-product self-attentionはLipschitz continuous(リプシッツ連続?)ではなく</strong>、入力sequenceの品質に弱い.[28]</p>
+<ul>
+<li>どちらも、関数やprojectionの性質に関する概念</li>
+<li>Lipschitz制約: 関数やprojectionの振る舞いを制限する条件の一つ.
+<ul>
+<li>「ある関数 <span class="math inline">\(f(\cdot)\)</span> がLipschitz制約を満たす」事は、「ある正の定数 <span class="math inline">\(L\)</span> が存在し、任意の2つの入力値 <span class="math inline">\(x_1\)</span> と <span class="math inline">\(x_2\)</span> に対して <span class="math inline">\(||f(x_1) - f(x_2)|| \leq L \times ||x_1 - x_2||\)</span> を満たす」事を意味する.</li>
+</ul></li>
+<li>Lipschitz連続性: 関数やprojection が Lipschitz制約を満たしている事.
+<ul>
+<li>「ある関数がLipschitz連続である」事は、「ある関数がLipschitz制約を満たす様な定数 <span class="math inline">\(L\)</span> が存在する」事を意味する.</li>
+</ul></li>
+<li>つまり、関数やprojectionがLipschitz連続である(i.e.&nbsp;Lipschitz制約を満たす)という事は、<strong>入力値が近い範囲であれば出力値も近い範囲に制約されるという性質を持つこと</strong>を意味する.</li>
+</ul>
 </section>
 <section id="損失関数の最適化1" class="slide level2">
 <h2>損失関数の最適化1</h2>
@@ -591,14 +702,18 @@ L_{BCE} = - \sum_{S^{u} \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1
 <section id="モデルのcomplexity計算量" class="slide level2">
 <h2>モデルのcomplexity(計算量?)</h2>
 </section>
-<section id="補足arm推定量-や-ar推定量-ってなんだ" class="slide level2">
-<h2>補足:ARM推定量 や AR推定量 ってなんだ?</h2>
+<section id="補足augment-reinforce-mergearm推定量-ってなんだ" class="slide level2">
+<h2>補足:Augment-REINFORCE Merge(ARM)推定量 ってなんだ?</h2>
+<ul>
+<li>学習すべきparametersに binary 変数を含むNNモデルの学習において、損失関数のparametersに対する導関数を近似的に推定する方法として、<a href="https://arxiv.org/pdf/1807.11143.pdf">“Augment-REINFORCE Merge(ARM)推定量”</a>というのがあるらしい.</li>
+<li>他にも色んなgradient estimator(勾配推定量)がある(ex. REINFORCE[48], Straight Through Estimator)</li>
+</ul>
+</section>
+<section id="補足augment-reinforcear推定量-ってなんだ" class="slide level2">
+<h2>補足:Augment-Reinforce(AR)推定量 ってなんだ?</h2>
 </section>
 <section id="補足one-forward-pass-や-two-forward-passってなんだ" class="slide level2">
 <h2>補足:one-forward pass や two-forward passってなんだ?</h2>
-</section>
-<section id="補足lipschitz-constraint-リプシッツ制約-ってなんだ" class="slide level2">
-<h2>補足:Lipschitz constraint (リプシッツ制約) ってなんだ?</h2>
 </section>
 <section id="補足hutchinson推定量-ってなんだ" class="slide level2">
 <h2>補足:Hutchinson推定量 ってなんだ?</h2>
@@ -640,6 +755,15 @@ L_{BCE} = - \sum_{S^{u} \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1
 <li><span class="math inline">\(\alpha\)</span>-entmax sparse attention [12]: softmax 関数を <span class="math inline">\(\alpha\)</span>-entmax で代用.</li>
 </ul></li>
 </ul>
+</section>
+<section id="結果-overall-performancerq1" class="slide level2">
+<h2>結果: Overall Performance(RQ1)</h2>
+</section>
+<section id="結果-robustness-to-noisesrq2" class="slide level2">
+<h2>結果: Robustness to Noises(RQ2)</h2>
+</section>
+<section id="結果-hypyr-parameters-sensitivityrq3" class="slide level2">
+<h2>結果: Hypyr-parameters Sensitivity(RQ3)</h2>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>

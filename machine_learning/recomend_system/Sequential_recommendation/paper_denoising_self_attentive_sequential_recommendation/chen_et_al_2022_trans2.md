@@ -400,7 +400,7 @@ The self-attention layer is the cornerstone of Transformers to capture long-rang
 As shown in Eq.(2), the softmax operator assigns a non-zero weight to every item.
 **式(2)に示すように、softmax演算子はすべてのitemにnon-zeroの重みを割り当てる**. (なるほど. これがfull attention分布か...!:thinking:)
 However, full attention distributions may not always be advantageous since they may cause irrelevant dependencies, unnecessary computation, and unexpected explanation.
-しかし、full attention分布は、無関係な依存関係、不必要な計算、予期せぬ説明を引き起こす可能性があるため、必ずしも有利とは限らない.
+しかし、full attention分布は、無関係な依存関係、不必要な計算、予期せぬ(解釈困難な)説明を引き起こす可能性があるため、必ずしも有利とは限らない.
 We next put forward differentiable masks to address this concern.
 次に、この懸念に対処するために、微分可能なマスクを提案する.
 
@@ -474,16 +474,16 @@ $$
 
 where $\beta$ controls the sparsity of masks and we denote $Z$ as $Z := \{Z^{(1)}, \cdots, Z^{(L)}\}$.
 ここで $\beta$ はmaskのsparse性を制御し、$Z$ を $Z := \{Z^{(1)}, \cdots, Z^{(L)}\}$ とする.
-We further consider each $Z^{(l)}_{u,v}$ is drawn from a Bernoulli distribution parameterized by $\prod^{(l)}_{u,v}$ such that $Z^{(l)}_{u,v} \sim Bern(\prod^{(l)}_{u,v})$ [34].
-さらに、$Z^{(l)}_{u,v} \sim Bern(\prod^{(l)}_{u,v})$ のような $\prod^{(l)}_{u,v}$ でパラメータ化されたBernoulli分布から それぞれの $Z^{(l)}_{u,v}$ が生成される(=サンプリングされる?)と考える[34].
-As the parameter $\prod^{(l)}_{u,v}$ is jointly trained with the downstream tasks, a small value of $\prod^{(l)}_{u,v}$ suggests that the attention $A^{(l)}_{u,v}$ is more likely to be irrelevant, and could be removed without side effects.
-パラメータ $\prod^{(l)}_{u,v}$ は下流タスクと共同で学習されるため、$\prod^{(l)}_{u,v}$ の値が小さいと、attention $A^{(l)}_{u,v}$ は無関係である可能性が高く、副作用なく削除できる。
+We further consider each $Z^{(l)}_{u,v}$ is drawn from a Bernoulli distribution parameterized by $\Pi^{(l)}_{u,v}$ such that $Z^{(l)}_{u,v} \sim Bern(\Pi^{(l)}_{u,v})$ [34].
+さらに、$Z^{(l)}_{u,v} \sim Bern(\Pi^{(l)}_{u,v})$ のような $\Pi^{(l)}_{u,v}$ でパラメータ化されたBernoulli分布から それぞれの $Z^{(l)}_{u,v}$ が生成される(=サンプリングされる?)と考える[34].
+As the parameter $\Pi^{(l)}_{u,v}$ is jointly trained with the downstream tasks, a small value of $\Pi^{(l)}_{u,v}$ suggests that the attention $A^{(l)}_{u,v}$ is more likely to be irrelevant, and could be removed without side effects.
+パラメータ $\Pi^{(l)}_{u,v}$ は下流タスクと共同で学習されるため、$\Pi^{(l)}_{u,v}$ の値が小さいと、attention $A^{(l)}_{u,v}$ は無関係である可能性が高く、副作用なく削除できる。
 By doing this, Eq.(7) becomes:
 こうすることで、式(7)は次のようになる：
 
 $$
 L(Z, \Theta) =
-E_{Z \in \prod_{l=1}^{L} Bert(Z^{(l)}; \prod^{l})}[L_{BCE}(Z, \Theta)]
+E_{Z \in \Pi_{l=1}^{L} Bern(Z^{(l)}; \Pi^{(l)})}[L_{BCE}(Z, \Theta)]
 + \beta \cdot \sum_{l=1}^{L} \sum_{u=1}^{n} \sum_{v=1}^{n} Z_{u,v}^{(l)}
 \tag{8}
 $$
@@ -491,19 +491,19 @@ $$
 where $E(\cdot)$ is the expectation.
 ここで $E(\cdot)$ は期待値である。
 The regularization term is now continuous, but the first term $L_{BCE}(Z, \Theta)$ still involves the discrete variables $Z^{(l)}$.
-正則化項は連続になったが、第一項 $L_{BCE}(Z, \Theta)$ はまだ離散変数 $Z^{(l)}$ を含んでいる.
+正則化項は連続になったが、第一項 $L_{BCE}(Z, \Theta)$ はまだ離散変数(i.e. binary parameters) $Z^{(l)}$ を含んでいる.
 One can address this issue by using existing gradient estimators, such as REINFORCE [48] and Straight Through Estimator [3], etc.
-REINFORCE [48]やStraight Through Estimator [3]などの既存の勾配推定器を使用することで、この問題に対処することができる.
+REINFORCE [48]や Straight Through Estimator [3]などの既存の勾配推定器を使用することで、この問題に対処することができる.
 These approaches, however, suffer from either biased gradients or high variance.
 しかし、これらのアプローチは、偏った勾配や高い分散に悩まされている.
 Alternatively, we directly optimize discrete variables using the recently proposed augment-REINFORCEmerge (ARM) [15, 16, 56], which is unbiased and has low variance.
 あるいは、最近提案されたaugment-REINFORCEmerge（ARM）[15, 16, 56]を使って直接離散変数を最適化する.
 
-In particular, we adopt the reparameterization trick [25], which reparameterizes $\prod_{u,v}^{(l)} \in [0, 1]$ to a deterministic function $g(\cdot)$ with parameter $\Phi_{u,v}^{(l)}$, such that:
-特に、$\prod_{u,v}^{(l)} \in [0, 1]$ をパラメータ $\Phi_{u,v}^{(l)}$ を持つ決定論的関数 $g(\cdot)$ に再パラメータ化する再パラメータ化トリック[25]を採用する：
+In particular, we adopt the reparameterization trick [25], which reparameterizes $\Pi_{u,v}^{(l)} \in [0, 1]$ to a deterministic function $g(\cdot)$ with parameter $\Phi_{u,v}^{(l)}$, such that:
+特に、$\Pi_{u,v}^{(l)} \in [0, 1]$ をパラメータ $\Phi_{u,v}^{(l)}$ を持つ決定論的関数 $g(\cdot)$ に再パラメータ化する **reparameterization trick**[25]を採用する:
 
 $$
-\prod_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})
+\Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})
 \tag{9}
 $$
 
@@ -518,18 +518,17 @@ According to Theorem 1 in ARM [56], we can compute the gradients for Eq.(8) as:
 ARM [56]の定理1によれば、式(8)の勾配は次のように計算できる(難しい...!!:thinking:):
 
 $$
-\Delta_{\Theta}^{ARM} L(\Phi, \Theta)
+\Delta_{\Phi}^{ARM} L(\Phi, \Theta) =
 \\
-= E_{\mathbf{U} \in \prod_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
+E_{\mathbf{U} \in \Pi_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
 [L_{BCE}(I[\mathbf{U} > g(-\Phi)], \Theta) - L_{BCE}(I[\mathbf{U} < g(\Phi)], \Theta) \cdot (\mathbf{U} - \frac{1}{2})]
 \\
 + \beta \Delta_{\Phi} g(\Phi)
-
 \tag{10}
 $$
 
 where $Uni(0, 1)$ denotes the Uniform distribution within [0, 1], and $L_{BCE}(I[\mathbf{U} > g(-\Phi)], \Theta)$ is the cross-entropy loss obtained by setting the binary masks $\mathbf{Z}^{(l)}$ to 1 if $\mathbf{U}^{(l)} > g(- \Phi^{(l)})$ in the forward pass, and 0 otherwise.
-ここで $Uni(0, 1)$ は[0, 1]内の一様分布を表し、$L_{BCE}(I[\mathbf{U} > g(-\Phi)], \Theta)$ は、フォワードパスにおいて、$\mathbf{U}^{(l)} > g(- \Phi^{(l)})$ の場合にバイナリマスク $\mathbf{Z}^{(l)}$ を1に設定し、それ以外の場合に0に設定することで得られるクロスエントロピー損失. ($L_{BCE}[hoge, fuga]$ がクロスエントロピー損失関数か...!:thinking:)
+ここで $Uni(0, 1)$ は[0, 1]内の一様分布を表し、$L_{BCE}(I[\mathbf{U} > g(-\Phi)], \Theta)$ は、フォワードパス(i.e. 推論時の順伝搬の事??)において、$\mathbf{U}^{(l)} > g(- \Phi^{(l)})$ の場合にバイナリマスク $\mathbf{Z}^{(l)}$ を1に設定しそれ以外の場合に0に設定する(=要はindicator functionを使ってるだけね!)ことで得られるクロスエントロピー損失. ($L_{BCE}[hoge, fuga]$ がクロスエントロピー損失関数か...!:thinking:)
 The same strategy is applied to L𝐵𝐶𝐸 (I[U < 𝑔(Φ)], Θ).
 同じ戦略を $L_{BCE}(I[\mathbf{U} < g(\Phi)], \Theta)$ にも適用している.
 Moreover, ARM is an unbiased estimator due to the linearity of expectations.
@@ -555,7 +554,7 @@ To this end, we can further reduce the complexity by considering the variants of
 $$
 \Delta_{\Theta}^{AR} L(\Phi, \Theta)
 \\
-= E_{\mathbf{U} \in \prod_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
+= E_{\mathbf{U} \in \Pi_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
 [L_{BCE}(I[\mathbf{U} < g(\Phi)], \Theta) \cdot (1 - 2 \mathbf{U})]
 \\
 + \beta \Delta_{\Phi} g(\Phi)
@@ -570,13 +569,13 @@ In the experiments, we can trade off the variance of the estimator with complexi
 実験では、推定量の分散と複雑さをトレードオフにすることができる.(ARM推定量の方が分散が小さい、AR推定量の方が複雑性が低い.)
 
 In the training stage, we update ∇ΦL (Φ, Θ) (either Eq.(10) or Eq.(11)) and ∇ΘL (Φ, Θ) 3 during the back propagation.
-学習段階では、逆伝播中に $\Delta_{\Phi} L(\Phi, \Theta)$ (式（10) または式（11））と $\Delta_{\Theta} L(\Phi, \Theta)^{3}$ を更新する.($\Phi$ と $\Theta$ をそれぞれ更新する為か...:thinking:)
-In the inference stage, we can use the expectation of $Z_{u,v}^{(l)} \sim Bern(\prod_{u,v}^{(l)})$ as the mask in Eq.(5), i.e., $E(Z_{u,v}^{(l)}) = \prod_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$.
-推論段階では、$Z_{u,v}^{(l)} \sim Bern(\prod_{u,v}^{(l)})$ の期待値を式(5)のマスクとして使うことができる、すなわち、$E(Z_{u,v}^{(l)}) = \prod_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$.
+学習段階では、逆伝播中に $\Delta_{\Phi} L(\Phi, \Theta)$ (式（10) または式（11））と $\Delta_{\Theta} L(\Phi, \Theta)$ を更新する.($\Phi$ と $\Theta$ をそれぞれ更新する為か...:thinking:)
+In the inference stage, we can use the expectation of $Z_{u,v}^{(l)} \sim Bern(\Pi_{u,v}^{(l)})$ as the mask in Eq.(5), i.e., $E(Z_{u,v}^{(l)}) = \Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$.
+推論段階では、$Z_{u,v}^{(l)} \sim Bern(\Pi_{u,v}^{(l)})$ の期待値を式(5)のマスクとして使うことができる、すなわち、$E(Z_{u,v}^{(l)}) = \Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$.
 Nevertheless, this will not yield a sparse attention M(𝑙) since the sigmoid function is smooth unless the hard sigmoid function is used in Eq.(9).
 とはいえ、式(9)でhard sigmoid関数(hardとは??:thinking:)を使わない限り、シグモイド関数は平滑なので、これではsparse attention $M(l)$ は得られない.(=なめらかなattention weight 分布になってしまう、って意味...!)
 Here we simply clip those values $g(\Phi_{u,v}^{(l)}) \leq 0.5$ to zeros such that a sparse attention matrix is guaranteed and the corresponding noisy attentions are eventually eliminated.
-ここでは、sparse attetnion行列が保証され、対応するノイジーな attentionが最終的に排除されるように、単に値 $g(\Phi_{u,v}^{(l)}) \leq 0.5$ をゼロに切り取る.(**閾値で0 or 1を決める**、まさに決定論的??:thinking:)
+ここでは、sparse attetnion行列が保証され、対応するノイジーな attentionが最終的に排除されるように、単に $g(\Phi_{u,v}^{(l)}) \leq 0.5$ をゼロに切り取る.(**閾値で0 or 1を決める**:thinking:)
 
 ## 4.2. Jacobian Regularization
 
@@ -585,29 +584,31 @@ As recently proved by [28], the standard dot-product self-attention is not Lipsc
 Let $f^{(l)}$ be the $l$-th Transformer block (Sec 3.2.2) that contains both a self-attention layer and a point-wise feed-forward layer, and x be the input.
 $f^{(l)}$ を $l$ 番目のTransformerブロック(第3.2.2節)とし、self-attention層とpoint-wise フィードフォワード層を含むとする.
 We can measure the robustness of the Transformer block using the residual error: $f^{(𝑙)}(x + \epsilon) − f^{(𝑙)}(x)$, where $\epsilon$ is a small perturbation vector and the norm of $\epsilon$ is bounded by a small scalar $\delta$, i.e., $|\epsilon|_{2} \leq \delta$.
-$f^{(𝑙)}(x + \epsilon) − f^{(𝑙)}(x)$ を使って、Transformerブロックのロバスト性を測ることができる. ここで、$\epsilon$ は小さな摂動ベクトルであり、𝝐のノルム(i.e. 大きさ!)は小さなスカラー $\delta$ で境界付けられている. i.e. $|\epsilon|_{2} \leq \delta$.
+$f^{(l)}(x + \epsilon) − f^{(l)}(x)$ (=関数の出力値の差)を使って、Transformerブロックのロバスト性を測ることができる. ここで、$\epsilon$ は小さな摂動ベクトルであり、𝝐のノルム(i.e. 大きさ!)は小さなスカラー $\delta$ で境界付けられている. i.e. $|\epsilon|_{2} \leq \delta$.
 Following the Taylor expansion, we have:
 テイラー展開に従うと、次のようになる:
 
 $$
-f^{(𝑙)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x) \eqsim [\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}]^{T} \epsilon
+f^{(l)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x) \eqsim [\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}]^{T} \epsilon
 $$
 
-Let $J^{(𝑙)}(x)$ represent the Jacobian matrix at $x$ where J (𝑙) 𝑖𝑗 = 𝜕 𝑓 (𝑙) 𝑖 (x) 𝜕𝑥𝑗 .
-J (𝑙) (x)はxにおけるヤコビアン行列を表し、J (𝑙) 𝑖 (𝑗) = 𝜕 𝑓 (𝑙) (x) 𝜕とする。
-Then, we set J (𝑙) 𝑖 (x) = 𝜕 𝑓 (𝑙) 𝑖 (x) 𝜕x to denote the 𝑖-th row of J (𝑙) (x).
-そして、J (↪Ll_1D459) (x) の𝑖番目の行を表すために、J (↪Ll_1D459) (x) = 𝑖 (𝜕) 𝜕x とする。
+Let $J^{(𝑙)}(x)$ represent the Jacobian matrix at $x$ where $\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}$.
+$J^{(l)}(x)$ は 入力 $x$ におけるヤコビアン行列を表し、$\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}$ とする.
+Then, we set $J^{(l)}_{i}(x) = \frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}$ to denote the $i$-th row of $J^{(𝑙)}(x)$.
+そして、$J^{(𝑙)}(x)$ の$i$番目の行を表すために、$J^{(l)}_{i}(x) = \frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}$ とする.
 According to Hölder’s inequality4 , we have:
-Hölderの不等式4 によれば、次のようになる：
+[Hölderの不等式](https://en.wikipedia.org/wiki/Hölder’s_inequality)によれば、次のようになる:
 
 $$
-\tag{}
+||f^{(l)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x)||_{2}
+\eqsim
+||f^{(𝑙)}_{i}(x)^T \epsilon||_{2} \leq ||f^{(𝑙)}_{i}(x)^T \epsilon||_{2} \cdot ||\epsilon||_{2}
 $$
 
 Above inequality indicates that regularizing the L2 norm on the Jacobians enforces a Lipschitz constraint at least locally, and the residual error is strictly bounded.
-上記の不等式は、ヤコビアンのL2ノルムを正則化することで、少なくとも局所的には**リプシッツ制約が強制され**、残差は厳密に有界であることを示している。
+上記の不等式は、**ヤコビアンのL2ノルムを正則化することで、少なくとも局所的にはリプシッツ制約が強制され**、残差(=関数の出力値の差)は厳密に有界(=定数 $L$ 以下!)であることを示している.(この場合の正の定数Lって $||f^{(𝑙)}_{i}(x)^T \epsilon||_{2} \cdot ||\epsilon||_{2}$ か...!:thinking:)
 Thus, we propose to regularize Jacobians with Frobenius norm for each Transformer block as:
-そこで、各トランスフォーマーブロックのヤコビアンを **Frobenius norm(?) で正則化**することを提案する：
+そこで、各Transformerブロックのヤコビアンを **Frobenius norm(?) で正則化**することを提案する: 
 
 $$
 R_{J} = \sum_{l=1}^{L} |J^{(l)}|^{2}_{F}
@@ -902,5 +903,5 @@ Our experimental results on multiple real-world sequential recommendation tasks 
 
 Our proposed Rec-Denoiser framework (e.g., differentiable masks and Jacobian regularization) can be easily applied to any Transformer-based models in many tasks besides sequential recommendation.
 **我々の提案するRec-Denoiserフレームワーク（微分可能マスクやヤコビアン正則化など）は、逐次推薦以外の多くのタスクにおいて、あらゆるTransformerベースのモデルに容易に適用**できる.(推薦以外にも、Transformerを用いる汎ゆるタスク?? next-token predictionとかにも??:thinking:)
-In the future, we will continue to demonstrate the contributions of our design in many real-world applications.
+In the future, we will continue to dmonstrate the contributions of our design in many real-world applications.
 将来的には、多くの実世界のアプリケーションにおいて、我々の設計の貢献を実証していくつもりである。
