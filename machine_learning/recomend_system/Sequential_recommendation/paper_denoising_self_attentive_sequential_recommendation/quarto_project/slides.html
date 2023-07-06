@@ -563,7 +563,7 @@ L_{BCE} = - \sum_{S^{u} \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1
 </ul></li>
 <li>言語モデリングタスクでは、この問題に対処する為の試みが提案されている(ex. sparse attention schemas の活用, attentionのごく一部だけを残すdropout技術の活用, etc.)</li>
 </ul>
-<p>本論文は、<strong>微分可能なmaskを用いて無関係なattentionのノイズを除去する</strong>、シンプルかつ効果的なdata-driven method(=確かに、固定的でもランダムでもない<span class="emoji" data-emoji="thinking">🤔</span>)を提案している.</p>
+<p>本論文は、<strong>微分可能なmaskを用いて無関係なattentionのノイズを除去する</strong>、シンプルかつ効果的な data-driven method(=確かに、固定的でもランダムでもない<span class="emoji" data-emoji="thinking">🤔</span>)を提案している.</p>
 </section></section>
 <section>
 <section id="提案手法-rec-denoiserについて" class="title-slide slide level1 center">
@@ -590,14 +590,61 @@ L_{BCE} = - \sum_{S^{u} \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1
 </section>
 <section id="モデルのcomplexity計算量" class="slide level2">
 <h2>モデルのcomplexity(計算量?)</h2>
+</section>
+<section id="補足arm推定量-や-ar推定量-ってなんだ" class="slide level2">
+<h2>補足:ARM推定量 や AR推定量 ってなんだ?</h2>
+</section>
+<section id="補足one-forward-pass-や-two-forward-passってなんだ" class="slide level2">
+<h2>補足:one-forward pass や two-forward passってなんだ?</h2>
+</section>
+<section id="補足lipschitz-constraint-リプシッツ制約-ってなんだ" class="slide level2">
+<h2>補足:Lipschitz constraint (リプシッツ制約) ってなんだ?</h2>
+</section>
+<section id="補足hutchinson推定量-ってなんだ" class="slide level2">
+<h2>補足:Hutchinson推定量 ってなんだ?</h2>
 </section></section>
+<section>
 <section id="実験" class="title-slide slide level1 center">
 <h1>実験</h1>
+<p>実験の目的は、<strong>提案された微分可能なmaskが、self-attention層におけるnoisyなitemの悪影響を軽減できるか否か</strong>を確認すること.具体的には、以下のresearch questionsを明らかにする為に実験を行った.</p>
+<ul>
+<li>RQ1: 提案手法 Rec-Denoiserは、最新の逐次推薦器と比較してどの程度有効か？</li>
+<li>RQ2：Rec-Denoiserは、sequence内のnoisyなアイテムの悪影響をどのように軽減できるか？</li>
+<li>RQ3：異なる構成要素(微分可能 mask や Jacobian 正則化など)は、Rec-Denoiserの全体的な性能にどのような影響を与えるか？</li>
+</ul>
+</section>
+<section id="実験の設定" class="slide level2">
+<h2>実験の設定</h2>
+<ul>
+<li>5つのbenchmarkデータを用いて推薦モデルを評価する: Movielens5, Amazon6(うち3種のカテゴリを選択), Steam7.</li>
+<li>データをtrain/valid/testセットに分割: 各ユーザのsequenceの最後のアイテムをtestingに、最後から2番目のアイテムをvalidationに、残りのアイテムをtrainingに使用.</li>
+</ul>
+</section>
+<section id="補足-比較対象のbaselines2つのbaselines-group" class="slide level2">
+<h2>補足: 比較対象のbaselines(2つのbaselines group)</h2>
+<ul>
+<li>group1: 一般的なsequential手法群.
+<ul>
+<li>FPMC [39]: 行列分解と一次マルコフ連鎖モデルの混合.</li>
+<li>GRU4Rec [20]: RNNベースの手法.</li>
+<li>Caser [42]: CNNベースの手法.</li>
+<li>SASRec [26]: left-to-right selfattentionのTransformerベースの手法.</li>
+<li>BERT4Rec [41]: bidirectional self-attentionのTransformerベースの手法.</li>
+<li>TiSASRec [30]: 要素間の時間間隔を考慮したself-attentionモデル.</li>
+<li>SSE-PT [50]: self-attention層にパーソナライズを導入したモデル.</li>
+<li>Rec-Denoiser: 提案手法. 任意のself-attentionモデルに適用可能.</li>
+</ul></li>
+<li>group2: sparse Transformersの手法群.
+<ul>
+<li>Sparse Transformer [10]: 固定されたatteniton maskパターンを使用.</li>
+<li><span class="math inline">\(\alpha\)</span>-entmax sparse attention [12]: softmax 関数を <span class="math inline">\(\alpha\)</span>-entmax で代用.</li>
+</ul></li>
+</ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
 </div>
-</section>
+</section></section>
     </div>
   </div>
 

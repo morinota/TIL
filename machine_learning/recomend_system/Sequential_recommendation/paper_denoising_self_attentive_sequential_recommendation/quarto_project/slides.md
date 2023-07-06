@@ -216,4 +216,43 @@ $$
 
 ## モデルのcomplexity(計算量?)
 
+## 補足:ARM推定量 や AR推定量 ってなんだ?
+
+## 補足:one-forward pass や two-forward passってなんだ?
+
+## 補足:Lipschitz constraint (リプシッツ制約) ってなんだ?
+
+## 補足:Hutchinson推定量 ってなんだ?
+
 # 実験
+
+実験の目的は、**提案された微分可能なmaskが、self-attention層におけるnoisyなitemの悪影響を軽減できるか否か**を確認すること.具体的には、以下のresearch questionsを明らかにする為に実験を行った.
+
+- RQ1: 提案手法 Rec-Denoiserは、最新の逐次推薦器と比較してどの程度有効か？
+- RQ2：Rec-Denoiserは、sequence内のnoisyなアイテムの悪影響をどのように軽減できるか？
+- RQ3：異なる構成要素(微分可能 mask や Jacobian 正則化など)は、Rec-Denoiserの全体的な性能にどのような影響を与えるか？
+
+## 実験の設定
+
+- 5つのbenchmarkデータを用いて推薦モデルを評価する: Movielens5, Amazon6(うち3種のカテゴリを選択), Steam7.
+- データをtrain/valid/testセットに分割: 各ユーザのsequenceの最後のアイテムをtestingに、最後から2番目のアイテムをvalidationに、残りのアイテムをtrainingに使用.
+
+## 補足: 比較対象のbaselines(2つのbaselines group)
+
+- group1: 一般的なsequential手法群.
+  - FPMC [39]: 行列分解と一次マルコフ連鎖モデルの混合.
+  - GRU4Rec [20]: RNNベースの手法.
+  - Caser [42]: CNNベースの手法.
+  - SASRec [26]: left-to-right selfattentionのTransformerベースの手法.
+  - BERT4Rec [41]: bidirectional self-attentionのTransformerベースの手法.
+  - TiSASRec [30]: 要素間の時間間隔を考慮したself-attentionモデル.
+  - SSE-PT [50]: self-attention層にパーソナライズを導入したモデル.
+  - Rec-Denoiser: 提案手法. 任意のself-attentionモデルに適用可能.
+- group2: sparse Transformersの手法群.
+  - Sparse Transformer [10]: 固定されたatteniton maskパターンを使用.
+  - $\alpha$-entmax sparse attention [12]: softmax 関数を $\alpha$-entmax で代用.
+
+## 結果: Overall Performance(RQ1)
+## 結果: Overall Performance(RQ1)
+## 結果: Overall Performance(RQ1)
+  

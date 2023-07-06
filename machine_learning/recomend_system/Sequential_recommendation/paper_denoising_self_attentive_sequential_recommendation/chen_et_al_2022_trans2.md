@@ -687,15 +687,14 @@ However, during the inference, our attention maps are very sparse, which enables
 # 5. Experiments 5. 実験
 
 Here we present our empirical results.
-ここでは実証的な結果を紹介する。
+ここでは実証的な結果を紹介する
 Our experiments are designed to answer the following research questions:
 我々の実験は、以下の研究課題に答えるためにデザインされた：
 
-- RQ1: How effective is the proposed Rec-Denoiser compared to the state-of-the-art sequential recommenders? RQ1: 提案するRec-Denoiserは、最新の逐次推薦器と比較してどの程度有効か？
+- RQ1: How effective is the proposed Rec-Denoiser compared to the state-of-the-art sequential recommenders? RQ1: 提案するRec-Denoiserは、**最新の逐次推薦器と比較してどの程度有効**か？
+- RQ2: How can Rec-Denoiser reduce the negative impacts of noisy items in a sequence? RQ2：Rec-Denoiserは、**sequence内のノイズの多いアイテムの悪影響をどのように軽減できますか**？
 
-- RQ2: How can Rec-Denoiser reduce the negative impacts of noisy items in a sequence? RQ2：Rec-Denoiserは、シーケンス内のノイズの多いアイテムの悪影響をどのように軽減できますか？
-
-- RQ3: How do different components (e.g., differentiable masks and Jacobian regularization) affect the overall performance of Rec-Denoiser? RQ3：異なる構成要素（微分可能マスクやヤコビアン正則化など）は、Rec-Denoiserの全体的な性能にどのような影響を与えるか？
+- RQ3: How do different components (e.g., differentiable masks and Jacobian regularization) affect the overall performance of Rec-Denoiser? RQ3：**異なる構成要素(微分可能 mask や Jacobian 正則化など）は、Rec-Denoiserの全体的な性能にどのような影響を与えるか**？
 
 ## 5.1. Experimental Setting # 5.1.Experimental Setting
 
@@ -708,151 +707,174 @@ Their statistics are shown in Table 1.
 Among different datasets, MovieLens is the most dense one while Beauty has the fewest actions per user.
 異なるデータセットの中で、MovieLensは最も密度が高く、Beautyはユーザーあたりのアクション数が最も少ない。
 We use the same procedure as [26, 30, 39] to perform preprocessing and split data into train/valid/test sets, i.e., the last item of each user’s sequence for testing, the second-to-last for validation, and the remaining items for training.
-26,30,39]と同じ手順で前処理を行い、データをtrain/valid/testセットに分割する。つまり、各ユーザーのシーケンスの最後のアイテムをtestingに、最後から2番目のアイテムをvalidationに、残りのアイテムをtrainingに使用する。
+26,30,39]と同じ手順で前処理を行い、データをtrain/valid/testセットに分割する。つまり、各ユーザのsequenceの最後のアイテムをtestingに、最後から2番目のアイテムをvalidationに、残りのアイテムをtrainingに使用する。
 
 ### 5.1.2. Baselines 5.1.2. ベースライン
 
 Here we include two groups of baselines.
 ここでは、2つのベースライン・グループが含まれている。
 The first group includes general sequential methods (Sec 5.2): 1) FPMC [39]: a mixture of matrix factorization and first-order Markov chains model; 2) GRU4Rec [20]: a RNN-based method that models user action sequences; 3) Caser [42]: a CNN-based framework that captures high-order relationships via convolutional operations; 4) SASRec [26]: a Transformer-based method that uses left-to-right selfattention layers; 5) BERT4Rec [41]: an architecture that is similar to SASRec, but using bidirectional self-attention layers; 6) TiSASRec [30]: a time-aware self-attention model that further considers the relative time intervals between any two items; 7) SSE-PT [50]: a framework that introduces personalization into self-attention layers; 8) Rec-Denoiser: our proposed Rec-Denoiser that can choose any self-attentive models as its backbone.
-最初のグループには、一般的な逐次的手法が含まれる（Sec.5.2）： 1) FPMC [39]：行列分解と一次マルコフ連鎖モデルの混合、2) GRU4Rec [20]：ユーザーの行動シーケンスをモデル化するRNNベースの手法、3) Caser [42]：畳み込み演算によって高次の関係を捉えるCNNベースのフレームワーク、4) SASRec [26]：左から右への自己注意層を使用するTransformerベースの手法、5) BERT4Rec [41]： 6) TiSASRec [30]：任意の2つのアイテムの間の相対的な時間間隔をさらに考慮する、時間を考慮した自己注意モデル、7) SSE-PT [50]：自己注意層にパーソナライズを導入するフレームワーク、8) Rec-Denoiser：バックボーンとして任意の自己注意モデルを選択できる、我々の提案するRec-Denoiser。
-The second group contains sparse Transformers (Sec 5.3): 1) Sparse Transformer [10]: it uses a fixed attention pattern, where only specific cells summarize previous locations in the attention layers; 2) 𝛼-entmax sparse attention [12]: it simply replaces softmax with 𝛼-entmax to achieve sparsity.
-番目のグループにはスパース変換器（Sec.5.3）が含まれる： 2) 𝛼-entmax sparse attention [12]: スパース性を達成するためにソフトマックスを 𝛼-entmax に置き換えたもの。
+最初のグループには、一般的な逐次的手法が含まれる（Sec.5.2）：
+
+- 1. FPMC [39]：行列分解と一次マルコフ連鎖モデルの混合
+- 2. GRU4Rec [20]：ユーザーの行動シーケンスをモデル化するRNNベースの手法
+- 3. Caser [42]：畳み込み演算によって高次の関係を捉えるCNNベースのフレームワーク、
+- 4. SASRec [26]：左から右への自己注意層を使用するTransformerベースの手法、
+- 5. BERT4Rec [41]：
+- 6. TiSASRec [30]：任意の2つのアイテムの間の相対的な時間間隔をさらに考慮する、時間を考慮した自己注意モデル、
+- 7. SSE-PT [50]：self-attention層にパーソナライズを導入するフレームワーク、
+- 8. Rec-Denoiser：バックボーンとして任意のself-attentionモデルを選択できる、我々の提案するRec-Denoiser。
+
+The second group contains sparse Transformers (Sec 5.3):
+2番目のグループにはスパース変換器（Sec.5.3）が含まれる：
+
+- 1. Sparse Transformer [10]: it uses a fixed attention pattern, where only specific cells summarize previous locations in the attention layers; **固定されたatteniton パターンを使用**し、特定のセルだけがattetnion層の前の位置を要約する；
+- 2. 𝛼-entmax sparse attention [12]: it simply replaces softmax with 𝛼-entmax to achieve sparsity. スパース性を達成するためにソフトマックスを 𝛼-entmax に置き換えたもの。
+
 Note that we do not compare with other popular sparse Transformers like Star Transformer [18], Longformer [2], and BigBird [58].
 なお、Star Transformer [18]、Longformer [2]、BigBird [58]のような他の有名なスパース変換器とは比較していない。
 These Transformers are specifically designed for thousands of tokens or longer in the language modeling tasks.
-これらのトランスフォーマーは、言語モデリングタスクにおける数千以上のトークン用に特別に設計されている。
+これらのトランスフォーマーは、言語モデリングタスクにおける数千以上のトークン用に特別に設計されている。(だからね!)
 We leave their explorations for recommendations in the future.
 彼らの探求は今後の提言に委ねたい。
 We also do not compare with LayerDrop [17] and DropHead [60] since the number of Transformer blocks and heads are often very small (e.g., 𝐿 = 2 in SARRec) in sequential recommendation.
-また、LayerDrop[17]やDropHead[60]との比較は行わない。なぜなら、逐次推薦では、Transformerブロックやヘッドの数が非常に少ない（例えば、SARRecでは𝐿 = 2）ことが多いからである。
+また、LayerDrop[17]やDropHead[60]との比較は行わない。なぜなら、逐次推薦では、Transformerブロックやヘッドの数が非常に少ない(例えば、SARRecでは𝐿 = 2)ことが多いからである。
 Other sequential architectures like memory networks [9, 22] and graph neural networks [4, 51] have been outperformed by the above baselines, we simply omit these baselines and focus on Transformer-based models.
-メモリ・ネットワーク[9, 22]やグラフ・ニューラル・ネットワーク[4, 51]のような他の逐次アーキテクチャは、上記のベースラインよりも優れている。
+メモリ・ネットワーク[9, 22]やグラフ・ニューラル・ネットワーク[4, 51]のような他の逐次アーキテクチャは、上記のベースラインよりも優れている.
 The goal of experiments is to see whether the proposed differentiable mask techniques can reduce the negative impacts of noisy items in the self-attention layers.
-実験の目的は、提案された微分可能なマスク技術が、自己アテンション層におけるノイズアイテムの悪影響を軽減できるかどうかを確認することである。
+**実験の目的は、提案された微分可能なマスク技術が、self-attention層におけるノイズアイテムの悪影響を軽減できるかどうかを確認すること**である。
 
 ### 5.1.3. Evaluation metrics 5.1.3. 評価指標
 
-For easy comparison, we adopt two common Top-N metrics, Hit@𝑁 and NDCG@𝑁 (with default value 𝑁 = 10), to evaluate the performance of sequential models [26, 30, 41].
-比較を容易にするために、逐次モデルのパフォーマンスを評価するために、2つの一般的なTop-Nメトリクス、Hit@\_141とNDCG@\_441（デフォルト値ǔ = 10）を採用する[26, 30, 41]。
+For easy comparison, we adopt two common Top-N metrics, Hit@𝑁 and NDCG@𝑁 (with default value $N = 10$), to evaluate the performance of sequential models [26, 30, 41].
+比較を容易にするために、逐次モデルのパフォーマンスを評価するために、2つの一般的なTop-Nメトリクス、**Hit@N**と**NDCG@N**(デフォルト値ǔ = 10)を採用する[26, 30, 41].
 Typically, Hit@𝑁 counts the rates of the ground-truth items among top-𝑁 items, while NDCG@𝑁 considers the position and assigns higher weights to higher positions.
-一般的に、Hit@\_141は、トップ\_1アイテムの中でグランドトゥルースアイテムの割合をカウントし、NDCG@\_441は位置を考慮し、高い位置に高い重みを割り当てる。
+一般的に、Hit@N は、top-Nアイテムの中でグランドトゥルースアイテムの割合をカウントし、NDCG@N は位置(ランキング内)を考慮し、高い位置に高い重みを割り当てる.
 Following the work [26, 30], for each user, we randomly sample 100 negative items, and rank these items with the ground-truth item.
-26,30]に従い、各ユーザーについて100個のネガティブアイテムをランダムにサンプリングし、これらのアイテムをグランドトゥルースアイテムと順位付けする。
+[26,30]に従い、各ユーザについて100個のネガティブアイテム(ex. まだ購入してないアイテム)をランダムにサンプリングし、これらのアイテムをground-truthアイテム(=testデータの1 item)と一緒に順位付けする.
 We calculate Hit@10 and NDCG@10 based on the rankings of these 101 items.
-この101項目のランキングをもとにHit@10とNDCG@10を算出した。
+この**101項目のランキング**をもとにHit@10とNDCG@10を算出した.
 
-### 5.1.4. Parameter settings 5.1.4. パラメータ設定
+### 5.1.4. Parameter settings 5.1.4. パラメータ設定(ハイパーパラメータ設定)
 
 For all baselines, we initialize the hyper-parameters as the ones suggested by their original work.
 すべてのベースラインについて、ハイパーパラメータを彼らのオリジナル研究で提案されたものとして初期化した。
 They are then well tuned on the validation set to achieve optimal performance.
-そして、最適なパフォーマンスを達成するために、検証セット上で十分に調整される。
+They are then well tuned on the validation set to achieve optimal performance.
+そして、最適なパフォーマンスを達成するために、セット上で十分に調整される。
 The final results are conducted on the test set.
-最終的な結果はテストセットで実施される。
+最終的な結果はtestセットで実施される.
 We search the dimension size of items within {10, 20, 30, 40, 50}.
-項目の次元サイズを{10, 20, 30, 40, 50}の範囲で検索する。
+itemの(embeddingの?)次元サイズを{10, 20, 30, 40, 50}の範囲で検索する。
 As our Rec-Denoiser is a general plugin, we use the same hyper-parameters as the basic Transformers, e.g., number of Transformer blocks, batch size, learning rate in Adam optimizer, etc.
-我々のRec-Denoiserは一般的なプラグインであるため、基本的なTransformerと同じハイパーパラメーターを使用する。例えば、Transformerブロックの数、バッチサイズ、Adamオプティマイザーの学習率などである。
-According to Table 1, we set the maximum length of item sequence 𝑛 = 50 for dense datasets MovieLens and Movies&TV, and 𝑛 = 25 for sparse datasets Beauty, Games, and Steam.
-表1によると、密なデータセットであるMovieLensとMovies&TVにはアイテム列の最大長𝑛 = 50を、疎なデータセットであるBeauty、Games、Steamには𝑛 = 25を設定した。
+我々のRec-Denoiserは一般的なプラグインであるため、基本的なTransformerと同じハイパーパラメータを使用する。例えば、Transformerブロックの数、バッチサイズ、Adamオプティマイザーの学習率などである。
+According to Table 1, we set the maximum length of item sequence $n = 50$ for dense datasets MovieLens and Movies&TV, and $n = 25$ for sparse datasets Beauty, Games, and Steam.
+表1によると、アイテム列の最大長を、密なデータセットであるMovieLensとMovies&TVには $n = 50$ を、疎なデータセットであるBeauty、Games、Steamには $n = 25$ を設定した.
 In addition, we set the number of Transformer blocks 𝐿 = 2, and the number of heads 𝐻 = 2 for self-attentive models.
-さらに、トランスフォーマーブロックの数𝐿 = 2、自己注意モデルのヘッド数𝐻 = 2とした。
-For Rec-Denoiser, two extra regularizers 𝛽 and 𝛾 are both searched within {10−1 , 10−2 , .
-Rec-Denoiserでは、2つの正則化子ǽと𝛾が{10-1 , 10-2 , .
-..
-..
-, 10−5 }.
-, 10-5 }.
+さらに、トランスフォーマーブロックの数 $L = 2$、self-attentionモデルのヘッド数$H = 2$とした. (LもHもnext-token predictionタスクと比較して少なめなんだな...!:thinking:)
+For Rec-Denoiser, two extra regularizers 𝛽 and 𝛾 are both searched within {10−1 , 10−2 , . . . , 10−5 }
+Rec-Denoiserでは、2つの正則化子 $\beta$ と $\gamma$ が ${10-1 , 10-2 , ... , 10-5}$ 内で探索される.
 We choose ARM estimator due to the shallow structures of self-attentive recommenders.
-我々は、自己アテンション型推薦者の浅い構造からARM推定器を選択した。
+我々は、self-attention型推薦者の構造が浅いことから、ARM推定器を選択した.
 
 ## 5.2. Overall Performance(RQ1) 5.2.総合成績（RQ1）
+
+![table2]()
 
 Table 2 presents the overall recommendation performance of all methods on the five datasets.
 表2は、5つのデータセットにおけるすべての手法の総合的な推薦性能を示している。
 Our proposed Recdenoisers consistently obtain the best performance for all datasets.
-我々の提案するRecdenoisersは、すべてのデータセットで一貫して最高の性能を得た。
+我々の提案する**Recdenoisersは、すべてのデータセットで一貫して最高の性能を得た**。
 Additionally, we have the following observations:
 さらに、次のような見解もある：
 
-- The self-attentive sequential models (e.g., SASRec, BERT4Rec, TiSASRec, and SSE-PT) generally outperform FPMC, GRU4Rec, and Caser with a large margin, verifying that the self-attention networks have good ability of capture long-range item dependencies for the task of sequential recommendation. 自己注意型逐次推薦モデル（SASRec、BERT4Rec、TiSASRec、SSE-PTなど）は、一般にFPMC、GRU4Rec、Caserを大きなマージンをもって上回り、自己注意型ネットワークが逐次推薦のタスクに対して長距離項目依存性を捕捉する優れた能力を持つことが検証された。
+- The self-attentive sequential models (e.g., SASRec, BERT4Rec, TiSASRec, and SSE-PT) generally outperform FPMC, GRU4Rec, and Caser with a large margin, verifying that the self-attention networks have good ability of capture long-range item dependencies for the task of sequential recommendation. self-attention型逐次推薦モデル（SASRec、BERT4Rec、TiSASRec、SSE-PTなど）は、一般にFPMC、GRU4Rec、Caserを大きなマージンをもって上回る結果だった. **self-attention型ネットワークが逐次推薦のタスクに対して長距離項目依存性を捕捉する優れsた能力を持つことが検証された**.
 
-- Comparing the original SASRec and its variants BERT4Rec, TiSASRec and SSE-PT, we find that the self-attentive models can gets benefit from incorporating additional information such as bi-directional attentions, time intervals, and user personalization. Such auxiliary information is important to interpret the dynamic behaviors of users. オリジナルのSASRecとその変種であるBERT4Rec、TiSASRec、SSE-PTを比較すると、自己注意モデルは、双方向の注意、時間間隔、ユーザーのパーソナライゼーションなどの追加情報を取り入れることで利益を得ることができることがわかる。 このような補助情報は、ユーザーのダイナミックな行動を解釈するために重要である。
+- Comparing the original SASRec and its variants BERT4Rec, TiSASRec and SSE-PT, we find that the self-attentive models can gets benefit from incorporating additional information such as bi-directional attentions, time intervals, and user personalization. Such auxiliary information is important to interpret the dynamic behaviors of users. オリジナルのSASRecとその変種であるBERT4Rec、TiSASRec、SSE-PTを比較すると、**self-attentionsモデルは、bi-directional attentions、time intervals、user personalizationなどの追加情報を取り入れることで利益を得る**ことができることがわかる。 このような補助情報は、ユーザのダイナミックな行動を解釈するために重要である.
 
-- The relative improvements of Rec-denoisers over their backbones are significant for all cases. For example, SASRec+Denoiser has on average 8.04% improvement with respect to Hit@10 and over 12.42% improvements with respect to NDCG@10. Analogously, BERT4Rec+Denoiser outperforms the vanilla BERT4Rec by average 7.47% in Hit@10 and 11.64% in NDCG@10. We also conduct the significant test between Rec-denoisers and their backbones, where all 𝑝-values< 1𝑒 −6 , showing that the improvements of Rec-denoisers are statistically significant in all cases. Rec-denoisersのバックボーンに対する相対的な向上は、すべてのケースで顕著である。 例えば、SASRec+Denoiserは、Hit@10に対して平均8.04%、NDCG@10に対して平均12.42%以上の改善が見られる。 同様に、BERT4Rec+Denoiserは、Hit@10では平均7.47%、NDCG@10では平均11.64%で、バニラBERT4Recを上回っている。 また、Rec-denoiserとそのバックボーンとの間の有意差検定も行った。ここでは、すべての ↪L_1D45↩値< 1𝑒 -6であり、Rec-denoiserの改善がすべてのケースで統計的に有意であることが示された。
+- The relative improvements of Rec-denoisers over their backbones are significant for all cases. For example, SASRec+Denoiser has on average 8.04% improvement with respect to Hit@10 and over 12.42% improvements with respect to NDCG@10. Analogously, BERT4Rec+Denoiser outperforms the vanilla BERT4Rec by average 7.47% in Hit@10 and 11.64% in NDCG@10. We also conduct the significant test between Rec-denoisers and their backbones, where all 𝑝-values< 1𝑒 −6 , showing that the improvements of Rec-denoisers are statistically significant in all cases. **Rec-denoisersのバックボーンに対する相対的な向上は、すべてのケースで顕著である**。 例えば、SASRec+Denoiserは、Hit@10に対して平均8.04%、NDCG@10に対して平均12.42%以上の改善が見られる。 同様に、BERT4Rec+Denoiserは、Hit@10では平均7.47%、NDCG@10では平均11.64%で、バニラBERT4Recを上回っている。 また、Rec-denoiserとそのバックボーンとの間の有意差検定も行った。ここでは、すべての p < 1𝑒 -6であり、Rec-denoiserの改善がすべてのケースで統計的に有意であることが示された.
 
 These improvements of our proposed models are mainly attributed to the following reasons: 1) Rec-denoisers inherit full advantages of the self-attention networks as in SASRec, BERT4Rec, TiSASRec, and SSE-PT; 2) Through differentiable masks, irrelevant item-item dependencies are removed, which could largely reduce the negative impacts of noisy data; 3) Jacobian regularization enforces the smoothness of gradients, limiting quick changes of the output against input perturbations.
-提案モデルのこれらの改善は主に以下の理由による： 1）Rec-denoisersは、SASRec、BERT4Rec、TiSASRec、SSE-PTのような自己注意ネットワークの利点を完全に受け継いでいる、2）微分可能なマスクを通して、無関係な項目-項目依存性が除去され、ノイズの多いデータの悪影響を大幅に軽減できる、3）ヤコビアの正則化は勾配の滑らかさを強制し、入力摂動に対する出力の素早い変化を制限する。
-In general, smoothness improves the generalization of sequential recommendation.
-一般的に、滑らかさは逐次推薦の一般性を向上させる。
+提案モデルのこれらの改善は主に以下の理由による：
+
+- 1）Rec-denoisersは、SASRec、BERT4Rec、TiSASRec、SSE-PTのような**self-attentionネットワークの利点を完全に受け継いでいる** (だから性能が下がるはずがないか:thinking:)
+- 2）微分可能なマスクを通して、無関係なitem-item依存性が除去され、ノイズの多いデータの悪影響を大幅に軽減できる
+- 3）Jacobian正則化は勾配の滑らかさを強制し、入力摂動に対する出力の素早い変化を制限する。(Jacobian正則化を導入しないと、勾配が急になるってことだろうか??)In general, smoothness improves the generalization of sequential recommendation.一般的に、滑らかさは逐次推薦の一般性を向上させる。
+
 Overall, the experimental results demonstrate the superiority of our Rec-Denoisers.
 全体として、実験結果は我々のRec-Denoisersの優位性を示している。
 
 ## 5.3. Robustness to Noises(RQ2)
 
 As discussed before, the observed item sequences often contain some noisy items that are uncorrelated to each other.
-前述したように、観測された項目列には、しばしば互いに無相関なノイズ項目が含まれる。
+前述したように、観測されたitem sequence には、しばしば**互いに無相関なノイズitem**が含まれる.(=絶対的にnoisyなitemというよりは、相対的にnoisyなitemの意味合い:thiking:)
 Generally, the performance of self-attention networks is sensitive to noisy input.
-一般に、自己注意ネットワークの性能はノイズの多い入力に敏感である。
+一般に、self-attentionネットワークの性能はノイズの多い入力に敏感である。
 Here we analyze how robust our training strategy is for noisy sequences.
-ここでは、ノイズの多いシーケンスに対して、我々のトレーニング戦略がどの程度ロバストであるかを分析する。
+ここでは、**ノイズの多いsequenceに対して、我々のトレーニング戦略がどの程度ロバストであるか**を分析する。
 To achieve this, we follow the strategy [35] that corrupts the training data by randomly replacing a portion of the observed items in the training set with uniformly sampled items that are not in the validation or test set.
-これを達成するために、我々は、トレーニングセットで観測された項目の一部を、検証セットやテストセットにはない一様にサンプリングされた項目でランダムに置き換えることによって、トレーニングデータを破損させる戦略[35]に従う。
+これを達成するために、我々は、**トレーニングセットで観測されたitemの一部を、検証セットやテストセットにはない一様にサンプリングされたitemでランダムに置き換える**ことによって、トレーニングデータを破損させる戦略[35]に従う.
 We range the ratio of the corrupted training data from 0% to 25%.
-破損したトレーニングデータの比率は、0%から25%の範囲である。
+**破損したトレーニングデータの比率は、0%から25%の範囲**である.
 We only report the results of SASRec and SASRec-Denoiser in terms of Hit@10.
 SASRecとSASRec-Denoiserの結果は、Hit@10でのみ報告する。
 The performance of other self-attentive models is the same and omitted here due to page limitations.
-他の自己アテンションモデルのパフォーマンスも同様で、ここではページの都合上省略した。
+他のself-attentionモデルのパフォーマンスも同様で、ここではページの都合上省略した。
 In addition, we compare with two recent sparse Transformers: Sparse Transformer [10] and 𝛼-entmax sparse attention [12].
-さらに、最近の2つのスパース変換器と比較する： Sparse Transformer [10]と ↪L_1D6FC↩-entmax sparse attention [12]である。
+さらに、最近の2つのスパース変換器と比較する： Sparse Transformer [10]と ↪L_1D6FC↩-entmax sparse attention [12]である.
+
+![figure2]()
+
 All the simulated experiments are repeated five times and the average results are shown in Figure 2.
 すべての模擬実験を5回繰り返し、その平均結果を図2に示す。
 Clearly, the performance of all models degrades with the increasing noise ratio.
-明らかに、すべてのモデルの性能は、ノイズ比率の増加とともに低下する。
+明らかに、**すべてのモデルの性能は、ノイズ比率の増加とともに低下する**。
 We observe that our Rec-denoiser (use either ARM or AR estimators) consistently outperforms 𝛼-entmax and Sparse Transformer under different ratios of noise on all datasets.
-我々は、我々のRec-denoiser（ARMまたはAR推定量を使用）が、全てのデータセットにおいて、異なるノイズ比率の下で一貫して↪L_1D6FC↩-entmaxとSparse Transformerを上回ることを観察した。
+我々は、我々の**Rec-denoiser(ARMまたはAR推定量を使用)が、全てのデータセットにおいて、異なるノイズ比率の下で一貫して $\alpha$-entmaxとSparse Transformerを上回ることを観察した**。
 𝛼-entmax heavily relies on one trainable parameter 𝛼 to filter out the noise, which may be over tuned during the training, while Sparse Transformer adopts a fixed attention pattern, which may lead to uncertain results, especially for short item sequences like Beauty and Games.
-𝛼-entmax は、ノイズをフィルタリングするための1つの訓練可能なパラメータ𝛼に大きく依存しており、訓練中に過剰に調整される可能性があります。一方、Sparse Transformerは固定された注意パターンを採用しており、特にBeautyやGamesのような短いアイテムシーケンスでは、不確実な結果につながる可能性があります。
+𝛼-entmax は、ノイズをフィルタリングするための1つの訓練可能なパラメータ𝛼に大きく依存しており、訓練中に過剰に調整される可能性があります. 一方、Sparse Transformerは固定されたattenitionパターン(maskパターン)を採用しており、特にBeautyやGamesのような短いアイテムシーケンスでは、不確実な結果につながる可能性があります。
 In contrast, our differentaible masks have much more flexibility to adapt to noisy sequences.
-対照的に、我々の異種マスクは、ノイズの多いシーケンスに適応する柔軟性がはるかに高い。
+対照的に、我々の**微分可能マスクは、ノイズの多いシーケンスに適応する柔軟性がはるかに高い**。
 The Jacobian regularization further encourages the smoothness of our gradients, leading to better generalization.
-ヤコビアン正則化は、勾配の滑らかさをさらに促進し、より良い汎化をもたらす。
+**ヤコビアン正則化は、勾配の滑らかさをさらに促進し**、より良い汎化をもたらす。
 From the results, the AR estimator performs better than 𝛼-entmax but worse than ARM.
 その結果、AR推定器は𝛼-entmaxよりは良いが、ARMよりは悪い。
 This result is expected since ARM has much low variance.
-ARMは分散が少ないので、この結果は予想通りである。
+**ARMは分散が少ないので、この結果は予想通り**である。
 In summary, both ARM and AR estimators are able to reduce the negative impacts of noisy sequences, which could improve the robustness of self-attentive models.
-まとめると、ARMとARの両推定器は、ノイズの多いシーケンスの悪影響を軽減することができ、自己注意モデルの頑健性を向上させることができる。
+まとめると、ARMとARの両推定器は、ノイズの多いシーケンスの悪影響を軽減することができ、self-attentionモデルの頑健性を向上させることができる。
 
 ## 5.4. Study of Rec-Denoiser(RQ3)
 
 We further investigate the parameter sensitivity of Rec-Denoiser.
-さらにRec-Denoiserのパラメータ感度を調べた。
-For the number of blocks 𝐿 and the number of heads 𝐻, we find that self-attentive models typically benefit from small values (e.g., 𝐻, 𝐿 ≤ 4), which is similar to [31, 41].
-ブロック数ᵃとヘッド数ᵃについては、自己注意モデルは一般的に小さな値（例えば、ᵃ≦4）が有効であることがわかり、これは[31, 41]と同様である。
+さらに**Rec-Denoiserのparameter sensitivity**を調べた.
+For the number of blocks $L$ and the number of heads $H$, we find that self-attentive models typically benefit from small values (e.g., $H, L \leq 4$), which is similar to [31, 41].
+**ブロック数 $L$ とヘッド数 $H$ については、self-attentionモデルは一般的に小さな値（例えば、$H, L \leq 4$）が有効であることがわかり**、これは[31, 41]と同様である。
 In this section, we mainly study the following hyper-parameters: 1) the maximum length 𝑛, 2) the regularizers 𝛽 and 𝛾 to control the sparsity and smoothness.
-本節では、主に以下のハイパーパラメータを研究する： 1)最大長𝑛、2)スパース性と平滑性を制御する正則化子ǽと↪L_1FE↩。
+本節では、主に以下のハイパーパラメータを研究する： 1)sequence最大長$n$、2)スパース性と平滑性を制御する正則化子$\beta$と$\gamma$.
 Here we only study the SASRec and SASRec-Denoiser due to page limitations.
 ここでは、ページの都合上、SASRecとSASRec-Denoiserについてのみ述べる。
 
+![figure3]()
+
 Fig.3.Effect of maximum length 𝑛 on ranking performance (Hit@10).
-図3.最大長𝑛がランキング性能に与える影響（Hit@10）。
+図3.最大長𝑛がランキング性能に与える影響（Hit@10）.
+
+![figure4]()
 
 Fig.4.Effect of regularizers 𝛽 and 𝛾 on ranking performance (Hit@10).
 図4.正則化量ǽとǖがランキング性能に与える影響(Hit@10FE6)。
 
-### 5.4.1. Maximum Length $n$ 5.4.1. 最大長 $n$
+### 5.4.1. Maximum Length $n$ 5.4.1. sequence の 最大長 $n$
 
 Figure 3 shows the Hit@10 for maximum length 𝑛 from 20 to 80 while keeping other optimal hyper-parameters unchanged.
-図3は、他の最適ハイパーパラメータを変えずに、最大長𝑛を20から80まで変化させた場合のHit@10を示している。
+図3は、他の最適ハイパーパラメータを変えずに、最大長$n$を20から80まで変化させた場合のHit@10を示している。
 We only test on the densest and sparsest datasets: MovieLeans and Beauty.
 最も高密度で疎なデータセットでのみテストする： MovieLeansとBeautyである。
 Intuitively, the larger sequence we have, the larger probability that the sequence contains noisy items.
-直観的には、シーケンスが大きければ大きいほど、そのシーケンスにノイズのある項目が含まれる確率が高くなる。
-FWe observed that our SASRec-Denoiser improves the performance dramatically with longer sequences.
-F我々のSASRec-Denoiserは、長いシーケンスで劇的に性能が向上することが確認された。
+直観的には、**シーケンスが大きければ大きいほど、そのシーケンスにノイズのあるitemが含まれる確率が高くなる**。
+We observed that our SASRec-Denoiser improves the performance dramatically with longer sequences.
+**我々のSASRec-Denoiserは、長いシーケンスで劇的に性能が向上する**ことが確認された。
 This demonstrates that our design is more suitable for longer inputs, without worrying about the quality of sequences.
 これは、我々の設計がシーケンスの質を気にすることなく、より長い入力に適していることを示している。
 
@@ -861,24 +883,24 @@ This demonstrates that our design is more suitable for longer inputs, without wo
 There are two major regularization parameters 𝛽 and 𝛾 for sparsity and gradient smoothness, respectively.
 正則化パラメータǽと𝛾は、それぞれスパース性と勾配平滑性を表す。
 Figure 4 shows the performance by changing one parameter while fixing the other as 0.01.
-図4は、一方のパラメーターを0.01に固定し、もう一方のパラメーターを変更した場合のパフォーマンスを示している。
+図4は、一方のパラメーターを0.01に固定し、もう一方のパラメーターを変更した場合のパフォーマンスを示している
 As can be seen, our performance is relatively stable with respect to different settings.
-見てわかるように、我々のパフォーマンスは異なる設定に対して比較的安定している。
+見てわかるように、**我々のパフォーマンスは異なるハイパーパラメータ設定に対して比較的安定している**
 In the experiments, the best performance can be achieved at 𝛽 = 0.01 and 𝛾 = 0.001 for the MovieLens dataset.
 実験では、MovieLensデータセットに対して、↪Ll_1D6FD = 0.01とǖ = 0.001で最高の性能を達成することができた。
 
 # 6. Conclusion and Fture Work 6. 結論と今後の課題
 
 In this work, we propose Rec-Denoiser to adaptively eliminate the negative impacts of the noisy items for self-attentive recommender systems.
-本研究では、Rec-Denoiserを提案し、自己アテンション型レコメンダーシステムにおけるノイズアイテムの悪影響を適応的に除去する。
+本研究では、Rec-Denoiserを提案し、self-attention型レコメンダーシステムにおけるノイズアイテムの悪影響を適応的に除去する。
 The proposed Rec-Denoiser employs differentiable masks for the self-attention layers, which can dynamically prune irrelevant information.
-提案するRec-Denoiserは、自己注意層に微分可能なマスクを採用し、無関係な情報を動的に除去することができる。
+提案するRec-Denoiserは、self-attention層に微分可能なマスクを採用し、無関係な情報を動的に除去することができる。
 To further tackle the vulnerability of self-attention networks to small perturbations, Jacobian regularization is applied to the Transformer blocks to improve the robustness.
-小さな摂動に対する自己アテンション・ネットワークの脆弱性にさらに取り組むため、ロバスト性を向上させるヤコビアン正則化がトランスフォーマー・ブロックに適用される。
+小さな摂動に対するself-attentionネットワークの脆弱性にさらに取り組むため、ロバスト性を向上させるヤコビアン正則化がトランスフォーマー・ブロックに適用される.
 Our experimental results on multiple real-world sequential recommendation tasks illustrate the effectiveness of our design.
 実世界の複数の逐次推薦タスクに関する実験結果は、我々の設計の有効性を示している。
 
 Our proposed Rec-Denoiser framework (e.g., differentiable masks and Jacobian regularization) can be easily applied to any Transformer-based models in many tasks besides sequential recommendation.
-我々の提案するRec-Denoiserフレームワーク（微分可能マスクやヤコビアン正則化など）は、逐次推薦以外の多くのタスクにおいて、あらゆるTransformerベースのモデルに容易に適用できる。
+**我々の提案するRec-Denoiserフレームワーク（微分可能マスクやヤコビアン正則化など）は、逐次推薦以外の多くのタスクにおいて、あらゆるTransformerベースのモデルに容易に適用**できる.(推薦以外にも、Transformerを用いる汎ゆるタスク?? next-token predictionとかにも??:thinking:)
 In the future, we will continue to demonstrate the contributions of our design in many real-world applications.
 将来的には、多くの実世界のアプリケーションにおいて、我々の設計の貢献を実証していくつもりである。
