@@ -10,7 +10,7 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: hogehogeな論文を読んだ
+title: RecSys2022 Best Papers の一つ：学習可能なattention mask を用いてTransformer ベースの Sequential 推薦モデルをnoiseに強くする論文を読んだ
 subtitle: n週連続推薦システム系論文読んだシリーズ 20週目
 date: 2023/07/05
 author: morinota
@@ -204,8 +204,10 @@ $$
 
 Rec-Denoiserは、以下の2つのpartsから構成される.
 
-- self-attention層の微分可能なmaskを導入
+- self-attention層に微分可能なmaskを導入
 - Transformerブロックのヤコビアン正則化項を損失関数に追加
+
+# 工夫1: self-attention層に微分可能なmaskを導入
 
 ## differentiableな(微分可能な) maskの導入
 
@@ -316,9 +318,11 @@ $$
   - $\Delta_{\Theta} L(\Phi, \Theta)$ に関しては、元々のTransformerの最適化なので問題なし!
 - 推論時には、$Z_{u,v}^{(l)} \sim Bern(\Pi_{u,v}^{(l)})$ の**期待値(i.e. $E(Z_{u,v}^{(l)}) = \Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$)をbinary maskとして使用**する.
   - -> **でも期待値 $\Pi_{u,v}^{(l)}$ は $[0,1]$ であり binary でないので、これではsparse attention $M^{(l)}$ が取得できない**(あれ? 結局 full attention 分布になっちゃうじゃん:thinking:)
-  - -> 本論文では、シンプルに $g(\Phi_{u,v}^{(l)}) \leq 0.5$ の場合に $0$ とする(**閾値で0 or 1を決める**:thinking:)方法を採用し、noisyなattentionの除去を試みる.
+  - -> 本論文では、シンプルに $g(\Phi_{u,v}^{(l)}) \leq 0.5$ の場合に $0$ とする(**閾値で0 or 1を決める**:thinking:)方法を採用し、noisyなattentionを除去する.
 
-## 補足:Lipschitz constraint(リプシッツ制約) と Lipschitz continuous(連続)
+# 工夫2: Jacobian 正則化を用いて、Transformer をLipschitz continuous(連続)にする.
+
+## 補足:Lipschitz constraint(リプシッツ制約) と Lipschitz continuous(連続)とは.
 
 **標準的なdot-product self-attentionはLipschitz continuous(リプシッツ連続?)ではなく**、入力sequenceの品質に弱い.[28]
 
@@ -329,13 +333,83 @@ $$
   - 「ある関数がLipschitz連続である」事は、「ある関数がLipschitz制約を満たす様な定数 $L$ が存在する」事を意味する.
 - つまり、関数やprojectionがLipschitz連続である(i.e. Lipschitz制約を満たす)という事は、**入力値が近い範囲であれば出力値も近い範囲に制約されるという性質を持つこと**を意味する.
 
+## Transformer ブロックのロバスト性を測る
+
+続いて $l$ 番目のTransformer ブロックを $f^{(lK)}(\cdot)$ とみなし、 **residual error(残差?) $f^{(l)}(x + \epsilon) − f^{(l)}(x), (||\epsilon||_{2} \leq \delta)$ (=関数の出力値の差)** を用いてそのロバスト性を測る.
+(ここで、$\epsilon$ は微小な摂動ベクトル. $\delta$ はsmall scalar.)
+
+Taylor展開すると... (単に入力値の変化が微小な場合に、出力値の変化を**線形な変化として近似してる**...!:thinking:)
+
+$$
+f^{(l)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x) \approx [\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}]^{T} \epsilon
+$$
+
+## ヤコビアン行列とHölderの不等式を用いて、残差の有界を導出
+
+$$
+f^{(l)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x) \approx [\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}]^{T} \epsilon
+$$
+
+関数 $f^{(𝑙)}(\cdot)$ の入力 $x$ におけるヤコビアン行列 $J^{(l)}(x)$ ($J^{(𝑙)}_{i,j}(x) = \frac{\partial f^{(𝑙)}_{i}(x)}{\partial x_{j}}$) を用いると、[Hölderの不等式](https://en.wikipedia.org/wiki/Hölder’s_inequality)によって以下の様に変形できる.
+
+$$
+||f^{(l)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x)||_{2}
+\approx
+||J^{(𝑙)}_{i}(x)^T \epsilon||_{2} \leq ||J^{(𝑙)}_{i}(x)^T||_{2} \cdot ||\epsilon||_{2}
+$$
+
+この不等式は、**ヤコビアンのL2ノルム $||J^{(𝑙)}_{i}(x)^T||_{2}$ を正則化する(i.e. 大きくならない様に制御する:thinking:)ことで、少なくとも局所的にはリプシッツ制約が強制される**事を示している.
+
+(正則化する事で、$||f^{(𝑙)}_{i}(x)^T \epsilon||_{2} \cdot ||\epsilon||_{2} \leq K \cdot ||\epsilon||_{2}$ を満たす様な正の定数 $K$ が存在する様になるはずって事か...!!:thinking:)
+
 ## Jacobian Regularization(ヤコビアン正則化)について
 
-- Trans
+ヤコビアンのL2ノルム $||J^{(𝑙)}_{i}(x)^T||_{2}$ を正則化する(i.e. 大きくならない様に制御する:thinking:)ことで、局所的(=入力値差が小さい範囲:thinking:)にはリプシッツ制約を満たす事がわかったので、Rec-Denoiserでは、**各Transformerブロックのヤコビアン $J^{(𝑙)}$ を Frobenius norm で正則化**することを提案する:
 
-## 損失関数の最適化1
+$$
+R_{J} = \sum_{l=1}^{L} ||J^{(l)}||^{2}_{F}
+\tag{12}
+$$
 
-## 損失関数の最適化2: end-to-endの学習
+Frobenius norm (フロベニウスノルム): 行列の全要素を一列に並べてベクトルとみなした時のベクトルの長さ(L2ノルム).:thinking:
+
+## ヤコビアン行列のノルムの推定方法
+
+$|J^{(l)}|^{2}_{F}$ は様々なモンテカルロ推定量[23, 37]によって近似できる、らしい(厳密に計算すると時間かかるから推定量を使うんだろうか:thinking:)
+
+本論文では、古典的なHutchinson推定量[23]を採用する.
+(Hutchinson推定量: ランダムサンプリングで得たベクトルと対象の行列の積の期待値を用いて、行列のトレース(対角成分の総和)を推定する手法、らしい:thinking:)
+
+**各ヤコビアン行列 $J^{(l)} \in \mathbb{R}^{n \times n}$ を以下の様に推定(i.e. 近似?)**する.
+
+$$
+||J^{(l)}||^{2}_{F}
+= Tr(J^{(l)} J^{(l)T})
+= E_{\eta \in N(0, I_{n})} [|| \eta^{T} J^{(l)}||^{2}_{F}]
+$$
+
+ここで、$\eta \in N(0, I_{n})$ は正規分布ベクトル(共分散行列が単位行列なので、各要素は独立...!:thinking:).
+
+さらに、ヤコビアンのノルム $R_{j}$ とその勾配 $\Delta_{\Theta} R_{j}(\Theta)$ [21]を計算するためにrandom projections(ランダムな重みによるlinear projectionの意味??:thinking:)を利用する. これは、実用上の実行時間を大幅に短縮する.
+
+# Rec-Denoiserの全体の目的関数
+
+式(4)、式(6)、式(12)の損失をまとめると、Rec-Denoiserの全体的な目的関数は以下:
+
+$$
+L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
+\tag{13}
+$$
+
+ここで $\beta$ と $\gamma$ は、それぞれself-attentionネットワークのスパース性とロバスト性を制御する**regularizer(i.e. 正則化ハイパーパラメータ)**.
+
+## 目的関数の最適化1
+
+以下のアルゴリズム1は、AR推定量を用いたRec-Denoiserの全体的な学習過程をまとめたもの.(ただ本論文では、AR推定量よりARM推定量を推奨してる.)
+
+![]()
+
+## 目的関数の最適化2: 
 
 ## モデルのcomplexity(計算量?)
 

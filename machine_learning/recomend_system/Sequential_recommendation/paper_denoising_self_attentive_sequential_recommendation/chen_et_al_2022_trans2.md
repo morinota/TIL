@@ -584,16 +584,16 @@ As recently proved by [28], the standard dot-product self-attention is not Lipsc
 Let $f^{(l)}$ be the $l$-th Transformer block (Sec 3.2.2) that contains both a self-attention layer and a point-wise feed-forward layer, and x be the input.
 $f^{(l)}$ を $l$ 番目のTransformerブロック(第3.2.2節)とし、self-attention層とpoint-wise フィードフォワード層を含むとする.
 We can measure the robustness of the Transformer block using the residual error: $f^{(𝑙)}(x + \epsilon) − f^{(𝑙)}(x)$, where $\epsilon$ is a small perturbation vector and the norm of $\epsilon$ is bounded by a small scalar $\delta$, i.e., $|\epsilon|_{2} \leq \delta$.
-$f^{(l)}(x + \epsilon) − f^{(l)}(x)$ (=関数の出力値の差)を使って、Transformerブロックのロバスト性を測ることができる. ここで、$\epsilon$ は小さな摂動ベクトルであり、𝝐のノルム(i.e. 大きさ!)は小さなスカラー $\delta$ で境界付けられている. i.e. $|\epsilon|_{2} \leq \delta$.
+残差 $f^{(l)}(x + \epsilon) − f^{(l)}(x)$ (=関数の出力値の差)を使って、Transformerブロックのロバスト性を測ることができる. ここで、$\epsilon$ は小さな摂動ベクトルであり、𝝐のノルム(i.e. 大きさ!)は小さなスカラー $\delta$ で境界付けられている. i.e. $|\epsilon|_{2} \leq \delta$.
 Following the Taylor expansion, we have:
-テイラー展開に従うと、次のようになる:
+テイラー展開に従うと、次のようになる:(単に入力値の変化が微小な場合に、出力値の変化を**線形な変化として近似してる**...!:thinking:)
 
 $$
-f^{(l)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x) \eqsim [\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}]^{T} \epsilon
+f^{(l)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x) \approx [\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}]^{T} \epsilon
 $$
 
-Let $J^{(𝑙)}(x)$ represent the Jacobian matrix at $x$ where $\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}$.
-$J^{(l)}(x)$ は 入力 $x$ におけるヤコビアン行列を表し、$\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}$ とする.
+Let $J^{(𝑙)}(x)$ represent the Jacobian matrix at $x$ where $J^{(𝑙)}_{i,j}(x) = \frac{\partial f^{(𝑙)}_{i}(x)}{\partial x_{j}}$.
+$J^{(l)}(x)$ は 入力 $x$ におけるヤコビアン行列を表し、$J^{(𝑙)}_{i,j}(x) = \frac{\partial f^{(𝑙)}_{i}(x)}{\partial x_{j}}$ とする.
 Then, we set $J^{(l)}_{i}(x) = \frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}$ to denote the $i$-th row of $J^{(𝑙)}(x)$.
 そして、$J^{(𝑙)}(x)$ の$i$番目の行を表すために、$J^{(l)}_{i}(x) = \frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}$ とする.
 According to Hölder’s inequality4 , we have:
@@ -601,14 +601,14 @@ According to Hölder’s inequality4 , we have:
 
 $$
 ||f^{(l)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x)||_{2}
-\eqsim
-||f^{(𝑙)}_{i}(x)^T \epsilon||_{2} \leq ||f^{(𝑙)}_{i}(x)^T \epsilon||_{2} \cdot ||\epsilon||_{2}
+\approx
+||J^{(𝑙)}_{i}(x)^T \epsilon||_{2} \leq ||J^{(𝑙)}_{i}(x)^T||_{2} \cdot ||\epsilon||_{2}
 $$
 
 Above inequality indicates that regularizing the L2 norm on the Jacobians enforces a Lipschitz constraint at least locally, and the residual error is strictly bounded.
 上記の不等式は、**ヤコビアンのL2ノルムを正則化することで、少なくとも局所的にはリプシッツ制約が強制され**、残差(=関数の出力値の差)は厳密に有界(=定数 $L$ 以下!)であることを示している.(この場合の正の定数Lって $||f^{(𝑙)}_{i}(x)^T \epsilon||_{2} \cdot ||\epsilon||_{2}$ か...!:thinking:)
 Thus, we propose to regularize Jacobians with Frobenius norm for each Transformer block as:
-そこで、各Transformerブロックのヤコビアンを **Frobenius norm(?) で正則化**することを提案する: 
+そこで、各Transformerブロックのヤコビアンを **Frobenius norm(?) で正則化**することを提案する:
 
 $$
 R_{J} = \sum_{l=1}^{L} ||J^{(l)}||^{2}_{F}
@@ -623,15 +623,15 @@ For each Jocobian matrix J (𝑙) ∈ R 𝑛×𝑛 , we have:
 各ヤコビアン行列 $J^{(l)} \in \mathbb{R}^{n \times n}$ に対して、次のようになる：
 
 $$
-||J^{(l)}||^{2}_{F} = Tr(J^{(l)} J^{(l)}^{T})
-= E_{\nu \in N(0, I_{n})} [|| \nu^{T} J^{(l)}||^{2}_{F}]
-\tag{}
+||J^{(l)}||^{2}_{F}
+= Tr(J^{(l)} J^{(l)T})
+= E_{\eta \in N(0, I_{n})} [|| \eta^{T} J^{(l)}||^{2}_{F}]
 $$
 
-where $\nu \in N(0, I_{n})$ is the normal distribution vector.
-ここで、$\nu \in N(0, I_{n})$ は正規分布ベクトルである.(共分散行列が単位行列なので、各要素は独立...!:thinking:)
+where $\eta \in N(0, I_{n})$ is the normal distribution vector.
+ここで、$\eta \in N(0, I_{n})$ は正規分布ベクトルである.(共分散行列が単位行列なので、各要素は独立...!:thinking:)
 We further make use of random projections to compute the norm of Jacobians $R_{j}$ and its gradient $\Delta_{\Theta} R_{j}(\Theta)$ [21], which significantly reduces the running time in practice.
-さらに、ヤコビアンのノルム $R_{j}$ とその勾配 $\Delta_{\Theta} R_{j}(\Theta)$ [21]を計算するためにrandom projections(ランダムな重みによるlinear projectionの意味??:thinking:)を利用する.
+さらに、ヤコビアンのノルム $R_{j}$ とその勾配 $\Delta_{\Theta} R_{j}(\Theta)$ [21]を計算するためにrandom projections(ランダムな重みによるlinear projectionの意味??:thinking:)を利用する. これは、実用上の実行時間を大幅に短縮する.
 
 ## 4.3. Optimization
 
@@ -648,7 +648,7 @@ $$
 where $\beta$ and $\gamma$ are regularizers to control the sparsity and robustness of self-attention networks, respectively.
 ここで $\beta$ と $\gamma$ は、**それぞれself-attentionネットワークのスパース性とロバスト性を制御する regularizer(正則化パラメータ) である**.
 Algorithm 1 summarizes the overall training of Rec-Denoiser with the AR estimator.
-アルゴリズム1は、AR推定器を用いたRec-Denoiserの全体的なトレーニングをまとめたものである。
+アルゴリズム1は、AR推定器を用いたRec-Denoiserの全体的なトレーニングをまとめたものである.
 
 ![]()
 
