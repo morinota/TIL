@@ -411,17 +411,6 @@
 </ul>
 </section></section>
 <section>
-<section id="sequential-recommender-と-sparse-transformer-に関する既存研究" class="title-slide slide level1 center">
-<h1>Sequential Recommender と Sparse Transformer に関する既存研究</h1>
-
-</section>
-<section id="sequential-recommender" class="slide level2">
-<h2>Sequential Recommender</h2>
-</section>
-<section id="sparse-transformer" class="slide level2">
-<h2>Sparse Transformer</h2>
-</section></section>
-<section>
 <section id="sequential-recommendation-タスクの定式化" class="title-slide slide level1 center">
 <h1>Sequential Recommendation タスクの定式化</h1>
 
@@ -753,12 +742,20 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 <section id="目的関数の最適化1" class="slide level2">
 <h2>目的関数の最適化1</h2>
 <p>以下のアルゴリズム1は、AR推定量を用いたRec-Denoiserの全体的な学習過程をまとめたもの.(ただ本論文では、AR推定量よりARM推定量を推奨してる.)</p>
-</section>
-<section id="損失関数の最適化2-end-to-endの学習" class="slide level2">
-<h2>損失関数の最適化2: end-to-endの学習</h2>
-</section>
-<section id="モデルのcomplexity計算量" class="slide level2">
-<h2>モデルのcomplexity(計算量?)</h2>
+
+<img data-src=".png" class="r-stretch"></section>
+<section id="目的関数の最適化2" class="slide level2">
+<h2>目的関数の最適化2:</h2>
+<ul>
+<li>Rec-Denoiserの微分可能な mask と ヤコビアン正則化は、self-attentionの主要なアーキテクチャを変更しないので、<strong>多くのTransformerベースの逐次推薦モデルと互換性</strong>がある</li>
+<li>単純にすべてのマスク <span class="math inline">\(Z^{(l)}\)</span> (<span class="math inline">\(\forall l=1, \cdots, L\)</span> <span class="emoji" data-emoji="thinking">🤔</span>)をオール1の行列とし、<span class="math inline">\(\beta = \gamma = 0\)</span> とすると、<strong>モデルは元の設計に帰着する</strong>.</li>
+<li>maskのsubset(i.e.&nbsp;L個のbinary mask matrixのうちのいくつか) <span class="math inline">\(Z^{(l)}\)</span> をランダムにゼロに設定すると、LayerDrop [17]やDropHead [60]のような <strong>structured Dropout と等価</strong>になる.</li>
+<li>Rec-Denoiserの計算量:
+<ul>
+<li>学習時は、オリジナルのTransformersと同じオーダーのまま.</li>
+<li>推論時は、attention map がsparceなので、より高速.</li>
+</ul></li>
+</ul>
 </section>
 <section id="補足augment-reinforce-mergearm推定量-ってなんだ" class="slide level2">
 <h2>補足:Augment-REINFORCE Merge(ARM)推定量 ってなんだ?</h2>
@@ -767,19 +764,13 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 <li>他にも色んなgradient estimator(勾配推定量)がある(ex. REINFORCE[48], Straight Through Estimator)</li>
 </ul>
 </section>
-<section id="補足augment-reinforcear推定量-ってなんだ" class="slide level2">
-<h2>補足:Augment-Reinforce(AR)推定量 ってなんだ?</h2>
-</section>
-<section id="補足one-forward-pass-や-two-forward-passってなんだ" class="slide level2">
-<h2>補足:one-forward pass や two-forward passってなんだ?</h2>
-</section>
 <section id="補足hutchinson推定量-ってなんだ" class="slide level2">
 <h2>補足:Hutchinson推定量 ってなんだ?</h2>
 </section></section>
 <section>
 <section id="実験" class="title-slide slide level1 center">
 <h1>実験</h1>
-<p>実験の目的は、<strong>提案された微分可能なmaskが、self-attention層におけるnoisyなitemの悪影響を軽減できるか否か</strong>を確認すること.具体的には、以下のresearch questionsを明らかにする為に実験を行った.</p>
+<p>実験の目的は、Rec-Denoiserの<strong>微分可能なmaskが、self-attention層におけるnoisyなitemの悪影響を軽減できるか否か</strong>を確認すること.具体的には、以下のresearch questionsを明らかにする為に実験を行った.</p>
 <ul>
 <li>RQ1: 提案手法 Rec-Denoiserは、最新の逐次推薦器と比較してどの程度有効か？</li>
 <li>RQ2：Rec-Denoiserは、sequence内のnoisyなアイテムの悪影響をどのように軽減できるか？</li>
@@ -791,6 +782,8 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 <ul>
 <li>5つのbenchmarkデータを用いて推薦モデルを評価する: Movielens5, Amazon6(うち3種のカテゴリを選択), Steam7.</li>
 <li>データをtrain/valid/testセットに分割: 各ユーザのsequenceの最後のアイテムをtestingに、最後から2番目のアイテムをvalidationに、残りのアイテムをtrainingに使用.</li>
+<li>各ユーザについて100個のネガティブアイテム(ex. まだ購入してないアイテム)をランダムにサンプリングし、これらのアイテムをground-truthアイテム(=testデータの1 item)と一緒に順位付けする.</li>
+<li>この<strong>101 items のランキング</strong>をもとにHit@10とNDCG<span class="citation" data-cites="10を算出">@10を算出</span>.</li>
 </ul>
 </section>
 <section id="補足-比較対象のbaselines2つのbaselines-group" class="slide level2">
@@ -810,18 +803,86 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 <li>group2: sparse Transformersの手法群.
 <ul>
 <li>Sparse Transformer [10]: 固定されたatteniton maskパターンを使用.</li>
-<li><span class="math inline">\(\alpha\)</span>-entmax sparse attention [12]: softmax 関数を <span class="math inline">\(\alpha\)</span>-entmax で代用.</li>
+<li><span class="math inline">\(\alpha\)</span>-entmax sparse attention [12]: softmax 関数を <span class="math inline">\(\alpha\)</span>-entmax で置き換えたもの.</li>
 </ul></li>
 </ul>
 </section>
 <section id="結果-overall-performancerq1" class="slide level2">
 <h2>結果: Overall Performance(RQ1)</h2>
+<p>table2は、5つのデータセットにおける全手法の性能を示す.</p>
+
+<img data-src=".png" class="r-stretch"><ul>
+<li>Recdenoisersは、全てのデータセットで一貫して最高の性能を得た.</li>
+<li>self-attention型のsequential推薦モデル(ex. SASRec、BERT4Rec、TiSASRec、SSE-PT)は、一般に他のsequential推薦モデル(FPMC、GRU4Rec、Caser)を上回った.</li>
+<li>SASRecとその変種(BERT4Rec、TiSASRec、SSE-PT)を比較すると、self-attentionsモデルは、bi-directional attentions、time intervals、user personalizationなどの<strong>追加情報を適用する事で性能が向上</strong>する.</li>
+</ul>
+</section>
+<section id="結果-overall-performancerq1-1" class="slide level2">
+<h2>結果: Overall Performance(RQ1)</h2>
+<p>table2は、5つのデータセットにおける全手法の性能を示す.</p>
+
+<img data-src=".png" class="r-stretch"><ul>
+<li>self-attention型推薦モデルへのRec-denoiserの適用による性能向上は、全ケースで顕著だった. 以下の理由が考えられる:
+<ul>
+<li>Rec-denoiserは、各self-attention型推薦モデルの利点を完全に継承する.(性能が下がるはずがないか…<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>微分可能なマスクを通して、無関係なitem-item 依存関係が除去され、ノイズの多いデータの悪影響を大幅に軽減できる.</li>
+<li><strong>Jacobian正則化は”勾配の滑らかさ”を強制する</strong>. 一般的に、“勾配の滑らかさ”はsequential推薦の汎化を向上させる.</li>
+</ul></li>
+</ul>
 </section>
 <section id="結果-robustness-to-noisesrq2" class="slide level2">
 <h2>結果: Robustness to Noises(RQ2)</h2>
+<p><strong>ノイズの多いsequenceに対して Rec-Denoiser がどの程度ロバストであるか</strong>を分析する. 図2は、学習sequenceデータの一部(比率は、0% ~ 25%の範囲)を一様サンプリングされたitemでランダムに置き換える事で<strong>ノイズを含ませ</strong>、モデルの予測性能を評価した結果.</p>
+
+<img data-src=".png" class="r-stretch quarto-figure-center"><p class="caption">figure2</p><ul>
+<li><strong>推薦モデルの性能は、ノイズ比率の増加とともに低下する</strong></li>
+<li>全データセットや全ノイズ比率の状態において、Rec-denoiserは他のdenoise手法(<span class="math inline">\(\alpha\)</span>-entmaxとSparse Transformer)を上回った.</li>
+</ul>
 </section>
 <section id="結果-hypyr-parameters-sensitivityrq3" class="slide level2">
 <h2>結果: Hypyr-parameters Sensitivity(RQ3)</h2>
+<p>Rec-Denoiserの<strong>parameter sensitivity</strong>を調べた結果.</p>
+<ul>
+<li>ブロック数 <span class="math inline">\(L\)</span> とヘッド数 <span class="math inline">\(H\)</span> : self-attention型モデルは一般的に小さな値(ex. <span class="math inline">\(H, L \leq 4\)</span>)が有効だった. この結果は既存研究[31, 41]と同様.</li>
+<li>sequence最大長 <span class="math inline">\(n\)</span> :</li>
+<li>sparsity reqularizer <span class="math inline">\(\beta\)</span> :</li>
+<li>smoothness regularizer <span class="math inline">\(\gamma\)</span> :</li>
+</ul>
+<p>他の最適ハイパーパラメータを変えずに、最大長<span class="math inline">\(n\)</span>を20から80まで変化させた場合のHit@10を示す.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src=".png"></p>
+<p></p><figcaption>figure3</figcaption><p></p>
+</figure>
+</div>
+<ul>
+<li>直観的には、<strong>sequenceが大きいほど、sequence内にnoisyなitemが含まれる確率が高くなる</strong>.</li>
+<li>SASRec-Denoiserは、<strong>長いsequenceで劇的に性能が向上する</strong>ことが確認された.</li>
+</ul>
+<p>図4は、sparsity reqularizer <span class="math inline">\(\beta\)</span> と smoothness regularizer <span class="math inline">\(\gamma\)</span> のうち一方の値を0.01に固定し、もう一方の値を変更した場合のモデル性能の結果.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src=".png"></p>
+<p></p><figcaption>figure4</figcaption><p></p>
+</figure>
+</div>
+<ul>
+<li>異なるハイパーパラメータ設定に対して、モデル性能は比較的安定している.</li>
+</ul>
+</section></section>
+<section>
+<section id="最後に感想" class="title-slide slide level1 center">
+<h1>最後に感想</h1>
+
+</section>
+<section id="最後に感想-1" class="slide level2">
+<h2>最後に感想</h2>
+<ul>
+<li>next-token predictionタスクと比べて next-item predictionは明らかにノイズが多いだろうから、何かしら工夫が必要だろうなとは感じた</li>
+<li><strong>ノイズ除去の為のbinary mask行列を微分可能にする</strong>為に、ARM推定量やreparameterization trick 等の様々な工夫をしながら導出していて、この手法の大変ポイント(且つ重要ポイント!)だと感じた.</li>
+<li>self-attention型の様々なモデルに適用可能なのは良い!</li>
+<li>微分可能なbinary mask やヤコビアン正則化は、推薦タスクに限らず、他のself-attentionを使ったタスクにも適用可能なのかも.</li>
+</ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>

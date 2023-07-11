@@ -75,12 +75,6 @@ Rec-Denoiserでは、2つの大きな課題がある.
 - 課題2: scaled dot-product attention は Lipschitz連続(?)ではない為、input perturbations(入力摂動?ノイズ??)に対して脆弱[28].
   - ->本論文では、Transformerブロック全体にヤコビアン正則化[21, 24]を適用.
 
-# Sequential Recommender と Sparse Transformer に関する既存研究
-
-## Sequential Recommender
-
-## Sparse Transformer
-
 # Sequential Recommendation タスクの定式化
 
 ## Sequential Recommendation タスクにおける notation
@@ -409,24 +403,25 @@ $$
 
 ![]()
 
-## 目的関数の最適化2: 
+## 目的関数の最適化2:
 
-## モデルのcomplexity(計算量?)
+- Rec-Denoiserの微分可能な mask と ヤコビアン正則化は、self-attentionの主要なアーキテクチャを変更しないので、**多くのTransformerベースの逐次推薦モデルと互換性**がある
+- 単純にすべてのマスク $Z^{(l)}$ ($\forall l=1, \cdots, L$ :thinking:)をオール1の行列とし、$\beta = \gamma = 0$ とすると、**モデルは元の設計に帰着する**.
+- maskのsubset(i.e. L個のbinary mask matrixのうちのいくつか) $Z^{(l)}$ をランダムにゼロに設定すると、LayerDrop [17]やDropHead [60]のような **structured Dropout と等価**になる.
+- Rec-Denoiserの計算量:
+  - 学習時は、オリジナルのTransformersと同じオーダーのまま.
+  - 推論時は、attention map がsparceなので、より高速.
 
 ## 補足:Augment-REINFORCE Merge(ARM)推定量 ってなんだ?
 
 - 学習すべきparametersに binary 変数を含むNNモデルの学習において、損失関数のparametersに対する導関数を近似的に推定する方法として、["Augment-REINFORCE Merge(ARM)推定量"](https://arxiv.org/pdf/1807.11143.pdf)というのがあるらしい.
 - 他にも色んなgradient estimator(勾配推定量)がある(ex. REINFORCE[48], Straight Through Estimator)
 
-## 補足:Augment-Reinforce(AR)推定量 ってなんだ?
-
-## 補足:one-forward pass や two-forward passってなんだ?
-
 ## 補足:Hutchinson推定量 ってなんだ?
 
 # 実験
 
-実験の目的は、**提案された微分可能なmaskが、self-attention層におけるnoisyなitemの悪影響を軽減できるか否か**を確認すること.具体的には、以下のresearch questionsを明らかにする為に実験を行った.
+実験の目的は、Rec-Denoiserの**微分可能なmaskが、self-attention層におけるnoisyなitemの悪影響を軽減できるか否か**を確認すること.具体的には、以下のresearch questionsを明らかにする為に実験を行った.
 
 - RQ1: 提案手法 Rec-Denoiserは、最新の逐次推薦器と比較してどの程度有効か？
 - RQ2：Rec-Denoiserは、sequence内のnoisyなアイテムの悪影響をどのように軽減できるか？
@@ -436,6 +431,8 @@ $$
 
 - 5つのbenchmarkデータを用いて推薦モデルを評価する: Movielens5, Amazon6(うち3種のカテゴリを選択), Steam7.
 - データをtrain/valid/testセットに分割: 各ユーザのsequenceの最後のアイテムをtestingに、最後から2番目のアイテムをvalidationに、残りのアイテムをtrainingに使用.
+- 各ユーザについて100個のネガティブアイテム(ex. まだ購入してないアイテム)をランダムにサンプリングし、これらのアイテムをground-truthアイテム(=testデータの1 item)と一緒に順位付けする.
+- この**101 items のランキング**をもとにHit@10とNDCG@10を算出.
 
 ## 補足: 比較対象のbaselines(2つのbaselines group)
 
@@ -450,10 +447,66 @@ $$
   - Rec-Denoiser: 提案手法. 任意のself-attentionモデルに適用可能.
 - group2: sparse Transformersの手法群.
   - Sparse Transformer [10]: 固定されたatteniton maskパターンを使用.
-  - $\alpha$-entmax sparse attention [12]: softmax 関数を $\alpha$-entmax で代用.
+  - $\alpha$-entmax sparse attention [12]: softmax 関数を $\alpha$-entmax で置き換えたもの.
 
 ## 結果: Overall Performance(RQ1)
 
+table2は、5つのデータセットにおける全手法の性能を示す.
+
+![]()
+
+- Recdenoisersは、全てのデータセットで一貫して最高の性能を得た.
+- self-attention型のsequential推薦モデル(ex. SASRec、BERT4Rec、TiSASRec、SSE-PT)は、一般に他のsequential推薦モデル(FPMC、GRU4Rec、Caser)を上回った.
+- SASRecとその変種(BERT4Rec、TiSASRec、SSE-PT)を比較すると、self-attentionsモデルは、bi-directional attentions、time intervals、user personalizationなどの**追加情報を適用する事で性能が向上**する.
+
+## 結果: Overall Performance(RQ1)
+
+table2は、5つのデータセットにおける全手法の性能を示す.
+
+![]()
+
+- self-attention型推薦モデルへのRec-denoiserの適用による性能向上は、全ケースで顕著だった. 以下の理由が考えられる:
+  - Rec-denoiserは、各self-attention型推薦モデルの利点を完全に継承する.(性能が下がるはずがないか...:thinking:)
+  - 微分可能なマスクを通して、無関係なitem-item 依存関係が除去され、ノイズの多いデータの悪影響を大幅に軽減できる.
+  - **Jacobian正則化は"勾配の滑らかさ"を強制する**. 一般的に、"勾配の滑らかさ"はsequential推薦の汎化を向上させる.
+
 ## 結果: Robustness to Noises(RQ2)
 
+**ノイズの多いsequenceに対して Rec-Denoiser がどの程度ロバストであるか**を分析する.
+図2は、学習sequenceデータの一部(比率は、0% ~ 25%の範囲)を一様サンプリングされたitemでランダムに置き換える事で**ノイズを含ませ**、モデルの予測性能を評価した結果.
+
+![figure2]()
+
+- **推薦モデルの性能は、ノイズ比率の増加とともに低下する**
+- 全データセットや全ノイズ比率の状態において、Rec-denoiserは他のdenoise手法($\alpha$-entmaxとSparse Transformer)を上回った.
+
 ## 結果: Hypyr-parameters Sensitivity(RQ3)
+
+Rec-Denoiserの**parameter sensitivity**を調べた結果.
+
+- ブロック数 $L$ とヘッド数 $H$ : self-attention型モデルは一般的に小さな値(ex. $H, L \leq 4$)が有効だった. この結果は既存研究[31, 41]と同様.
+- sequence最大長 $n$ :
+- sparsity reqularizer $\beta$ :
+- smoothness regularizer $\gamma$ :
+
+他の最適ハイパーパラメータを変えずに、最大長$n$を20から80まで変化させた場合のHit@10を示す.
+
+![figure3]()
+
+- 直観的には、**sequenceが大きいほど、sequence内にnoisyなitemが含まれる確率が高くなる**.
+- SASRec-Denoiserは、**長いsequenceで劇的に性能が向上する**ことが確認された.
+
+図4は、sparsity reqularizer $\beta$ と smoothness regularizer $\gamma$ のうち一方の値を0.01に固定し、もう一方の値を変更した場合のモデル性能の結果.
+
+![figure4]()
+
+- 異なるハイパーパラメータ設定に対して、モデル性能は比較的安定している.
+
+# 最後に感想
+
+## 最後に感想
+
+- next-token predictionタスクと比べて next-item predictionは明らかにノイズが多いだろうから、何かしら工夫が必要だろうなとは感じた
+- **ノイズ除去の為のbinary mask行列を微分可能にする**為に、ARM推定量やreparameterization trick 等の様々な工夫をしながら導出していて、この手法の大変ポイント(且つ重要ポイント!)だと感じた.
+- self-attention型の様々なモデルに適用可能なのは良い!
+- 微分可能なbinary mask やヤコビアン正則化は、推薦タスクに限らず、他のself-attentionを使ったタスクにも適用可能なのかも.

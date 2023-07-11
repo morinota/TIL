@@ -657,7 +657,7 @@ Lastly, it is worth mentioning that our Rec-Denoiser is compatible to many Trans
 If we simply set all masks $Z^{(l)}$ to be all-ones matrix and $\beta = \gamma = 0$, our model boils down to their original designs.
 単純にすべてのマスク $Z^{(l)}$ ($\forall l=1, \cdots, L$ :thinking:)をオール1の行列とし、$\beta = \gamma = 0$ とすると、**モデルは元の設計に帰着する**.(分かる分かる...!)
 If we randomly set subset of masks Z (𝑙) to be zeros, it is equivalent to structured Dropout like LayerDrop [17], DropHead [60].
-マスクのサブセット(i.e. L個のbinary mask matrixのうちのいくつか) $Z^{(l)}$ をランダムにゼロに設定すると、LayerDrop [17]やDropHead [60]のような **structured Dropout と等価**になる.
+maskのsubset(i.e. L個のbinary mask matrixのうちのいくつか) $Z^{(l)}$ をランダムにゼロに設定すると、LayerDrop [17]やDropHead [60]のような **structured Dropout と等価**になる.
 In addition, our Rec-Denoiser can work together with linearized self-attention networks [27, 59] to further reduce the complexity of attentions.
 さらに、私たちのRec-Denoiserは、線形化されたself-attentionネットワーク[27, 59]と連携(よくイメージが湧いてない...?)することができ、attentionの複雑さをさらに軽減することができる。
 We leave this extension in the future.
@@ -670,7 +670,7 @@ Rec-Denoiserのcomplexity(計算量?)は、基本的なTransformer、微分可�
 The complexity of basic Transformer keeps the same as SASRec [26] or BERT4Rec [41].
 基本的なTransformerのcomplexity(計算量?)は、SASRec [26]やBERT4Rec [41]と同じである。
 The complexity of differentiable masks requires either one-forward pass (e.g., AR with high variance) or two-forward pass (e.g., ARM with low variance) of the model.
-微分可能なマスクの計算量は、モデルのone-forward pass(高分散のARなど)またはtwo-forward pass(低分散のARMなど)を必要とする.(n-forward passの意味がわかってない...:thinking:)
+微分可能なマスクの計算量は、モデルのone-forward pass(高分散のARなど.)またはtwo-forward pass(低分散のARMなど)を必要とする.(n-forward passの意味がわかってない...:thinking:)
 In sequential recommenders, the number of Transformer blocks is often very small (e.g., 𝐿 = 2 in SASRec [26] and BERT4Rec [41] ).
 **逐次レコメンダーでは、Transformerブロックの数は非常に少ないことが多い**（例えば、SASRec [26]とBERT4Rec [41] では L = 2 ）。
 It is thus reasonable to use the ARM estimator without heavy computations.
@@ -748,7 +748,7 @@ The goal of experiments is to see whether the proposed differentiable mask techn
 ### 5.1.3. Evaluation metrics 5.1.3. 評価指標
 
 For easy comparison, we adopt two common Top-N metrics, Hit@𝑁 and NDCG@𝑁 (with default value $N = 10$), to evaluate the performance of sequential models [26, 30, 41].
-比較を容易にするために、逐次モデルのパフォーマンスを評価するために、2つの一般的なTop-Nメトリクス、**Hit@N**と**NDCG@N**(デフォルト値ǔ = 10)を採用する[26, 30, 41].
+比較を容易にするために、逐次モデルのパフォーマンスを評価するために、2つの一般的なTop-Nメトリクス、**Hit@N**と**NDCG@N**(デフォルト値$N = 10$)を採用する[26, 30, 41].
 Typically, Hit@𝑁 counts the rates of the ground-truth items among top-𝑁 items, while NDCG@𝑁 considers the position and assigns higher weights to higher positions.
 一般的に、Hit@N は、top-Nアイテムの中でグランドトゥルースアイテムの割合をカウントし、NDCG@N は位置(ランキング内)を考慮し、高い位置に高い重みを割り当てる.
 Following the work [26, 30], for each user, we randomly sample 100 negative items, and rank these items with the ground-truth item.
@@ -800,7 +800,7 @@ These improvements of our proposed models are mainly attributed to the following
 
 - 1）Rec-denoisersは、SASRec、BERT4Rec、TiSASRec、SSE-PTのような**self-attentionネットワークの利点を完全に受け継いでいる** (だから性能が下がるはずがないか:thinking:)
 - 2）微分可能なマスクを通して、無関係なitem-item依存性が除去され、ノイズの多いデータの悪影響を大幅に軽減できる
-- 3）Jacobian正則化は勾配の滑らかさを強制し、入力摂動に対する出力の素早い変化を制限する。(Jacobian正則化を導入しないと、勾配が急になるってことだろうか??)In general, smoothness improves the generalization of sequential recommendation.一般的に、滑らかさは逐次推薦の一般性を向上させる。
+- 3）Jacobian正則化は勾配の滑らかさを強制し、入力摂動(微小なノイズ?)に対する出力の素早い変化を制限する。(Jacobian正則化を導入しないと、勾配が急になるってことだろうか??)In general, smoothness improves the generalization of sequential recommendation.一般的に、滑らかさは逐次推薦の一般性を向上させる。
 
 Overall, the experimental results demonstrate the superiority of our Rec-Denoisers.
 全体として、実験結果は我々のRec-Denoisersの優位性を示している。
@@ -877,7 +877,7 @@ Intuitively, the larger sequence we have, the larger probability that the sequen
 We observed that our SASRec-Denoiser improves the performance dramatically with longer sequences.
 **我々のSASRec-Denoiserは、長いシーケンスで劇的に性能が向上する**ことが確認された。
 This demonstrates that our design is more suitable for longer inputs, without worrying about the quality of sequences.
-これは、我々の設計がシーケンスの質を気にすることなく、より長い入力に適していることを示している。
+これは、我々の設計がシーケンスの質を気にすることなく、より長い入力に適していることを示している.
 
 ### 5.4.2. The regularizers $\beta$ and $\gamma$ 5.4.2. 正則化記号$beta$と$gamma$。
 
