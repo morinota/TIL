@@ -349,8 +349,11 @@
 </section>
 <section id="sequential-推薦の発展" class="slide level2">
 <h2>sequential 推薦の発展</h2>
+</section>
+<section id="sequential-推薦の頑健さについて" class="slide level2">
+<h2>sequential 推薦の頑健さについて</h2>
 <ul>
-<li>しかし、<strong>sequential推薦器のrobustness</strong>についてはあまり研究されていない.</li>
+<li><strong>sequential推薦器のrobustness</strong>についてはあまり研究されていない.</li>
 <li>実世界の多くのitem sequences(特にimplicit feedback!)は自然にノイズが多く、<strong>真陽性(true-positive)と偽陽性(false-positive) の両方のinteractionを含む</strong> [6, 45, 46].
 <ul>
 <li>偽陽性の例: 好きじゃないけどクリックしてしまった. 購入してみたが嫌いだった.</li>
@@ -360,16 +363,24 @@
 <li>そのため、<strong>ノイズに強いアルゴリズムを開発することは、sequential推薦において大きな意義がある</strong>.</li>
 </ul>
 </section>
-<section id="self-atteniton-networkがノイズの多いsequenceに弱い問題" class="slide level2">
-<h2>self-atteniton networkがノイズの多いsequenceに弱い問題</h2>
+<section id="sequential-推薦におけるノイズの例" class="slide level2">
+<h2>sequential 推薦におけるノイズの例</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <ul>
-<li>残念ながら、vanillaなself-attention networkは、<strong>Lipschitz連続ではなく(?)</strong>、<strong>入力sequenceの質に弱いという問題</strong>がある[28]</li>
-<li>図1は、左から右へのsequential recommendationの一例.</li>
-<li>ex.) ある父親が息子に(携帯電話、ヘッドフォン、ノートパソコン)、娘に(カバン、ズボン)を購入する場合、(携帯電話、カバン、ヘッドフォン、ズボン、ノートPC)という順序になったとする.</li>
-<li>sequential recommendation の設定では、<strong>ユーザの以前の行動(ex. 電話、カバン、ヘッドホン、ズボン)から、次のアイテム(ex. ノートPC)を推論すること</strong>を意図している.</li>
-<li>しかし、アイテム間のcorrelationsが不明確であり、<strong>直感的にパンツとノートPCの関連を納得できない</strong>ため、この予測はuntrustworthyである.</li>
-<li>trustworthyなモデルは、sequence内の無関係なアイテムを無視し、相関のあるアイテムのみを捉えることができるはず.</li>
+<li>図1は sequential推薦におけるノイズの例: 父親が息子に(携帯電話、ヘッドフォン、ノートパソコン)、娘に(カバン、ズボン)を購入する場合、図1の様な順序になったとする.</li>
+<li>sequential推薦の設定では、<strong>ユーザの以前の行動(ex. 電話、カバン、ヘッドホン、ズボン)から、次のアイテム(ex. ノートPC)を推論すること</strong>を意図している.</li>
+<li>しかし<strong>直感的にズボンとノートPCの関連を納得できない</strong>ため、この予測はuntrustworthyである.</li>
+<li>trustworthyなモデルは、<strong>sequence内の無関係なアイテムを無視し、関連のあるアイテムのみを捉える</strong>ことができるはず.</li>
 </ul>
+</div><div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://d3i71xaburhd42.cloudfront.net/beec9c8657d370efdb1b259cc27fcbf5697282c9/2-Figure1-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="ノイズの多いsequenceにどう対応すべきか" class="slide level2">
 <h2>ノイズの多いsequenceにどう対応すべきか?</h2>
@@ -743,7 +754,7 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 <h2>目的関数の最適化1</h2>
 <p>以下のアルゴリズム1は、AR推定量を用いたRec-Denoiserの全体的な学習過程をまとめたもの.(ただ本論文では、AR推定量よりARM推定量を推奨してる.)</p>
 
-<img data-src=".png" class="r-stretch"></section>
+<img data-src="algorithm_1.png" class="r-stretch"></section>
 <section id="目的関数の最適化2" class="slide level2">
 <h2>目的関数の最適化2:</h2>
 <ul>
@@ -810,65 +821,83 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 <section id="結果-overall-performancerq1" class="slide level2">
 <h2>結果: Overall Performance(RQ1)</h2>
 <p>table2は、5つのデータセットにおける全手法の性能を示す.</p>
-
-<img data-src=".png" class="r-stretch"><ul>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="table_2.PNG" style="width:100.0%"></p>
+</div><div class="column" style="width:40%;">
+<ul>
 <li>Recdenoisersは、全てのデータセットで一貫して最高の性能を得た.</li>
 <li>self-attention型のsequential推薦モデル(ex. SASRec、BERT4Rec、TiSASRec、SSE-PT)は、一般に他のsequential推薦モデル(FPMC、GRU4Rec、Caser)を上回った.</li>
+</ul>
+</div>
+</div>
+<ul>
 <li>SASRecとその変種(BERT4Rec、TiSASRec、SSE-PT)を比較すると、self-attentionsモデルは、bi-directional attentions、time intervals、user personalizationなどの<strong>追加情報を適用する事で性能が向上</strong>する.</li>
 </ul>
 </section>
 <section id="結果-overall-performancerq1-1" class="slide level2">
 <h2>結果: Overall Performance(RQ1)</h2>
-<p>table2は、5つのデータセットにおける全手法の性能を示す.</p>
-
-<img data-src=".png" class="r-stretch"><ul>
-<li>self-attention型推薦モデルへのRec-denoiserの適用による性能向上は、全ケースで顕著だった. 以下の理由が考えられる:
+<p>また、self-attention型推薦モデルへのRec-denoiserの適用による性能向上は、全ケースで顕著だった. 以下の理由が考えられる:</p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="table_2.PNG" style="width:100.0%"></p>
+</div><div class="column" style="width:40%;">
 <ul>
 <li>Rec-denoiserは、各self-attention型推薦モデルの利点を完全に継承する.(性能が下がるはずがないか…<span class="emoji" data-emoji="thinking">🤔</span>)</li>
-<li>微分可能なマスクを通して、無関係なitem-item 依存関係が除去され、ノイズの多いデータの悪影響を大幅に軽減できる.</li>
+<li>微分可能なmaskによって無関係な item-item 依存関係が除去され、ノイズの多いデータの悪影響を軽減できる.</li>
+</ul>
+</div>
+</div>
+<ul>
 <li><strong>Jacobian正則化は”勾配の滑らかさ”を強制する</strong>. 一般的に、“勾配の滑らかさ”はsequential推薦の汎化を向上させる.</li>
-</ul></li>
 </ul>
 </section>
 <section id="結果-robustness-to-noisesrq2" class="slide level2">
 <h2>結果: Robustness to Noises(RQ2)</h2>
 <p><strong>ノイズの多いsequenceに対して Rec-Denoiser がどの程度ロバストであるか</strong>を分析する. 図2は、学習sequenceデータの一部(比率は、0% ~ 25%の範囲)を一様サンプリングされたitemでランダムに置き換える事で<strong>ノイズを含ませ</strong>、モデルの予測性能を評価した結果.</p>
 
-<img data-src=".png" class="r-stretch quarto-figure-center"><p class="caption">figure2</p><ul>
+<img data-src="figure_2.PNG" class="r-stretch"><ul>
 <li><strong>推薦モデルの性能は、ノイズ比率の増加とともに低下する</strong></li>
 <li>全データセットや全ノイズ比率の状態において、Rec-denoiserは他のdenoise手法(<span class="math inline">\(\alpha\)</span>-entmaxとSparse Transformer)を上回った.</li>
 </ul>
 </section>
 <section id="結果-hypyr-parameters-sensitivityrq3" class="slide level2">
 <h2>結果: Hypyr-parameters Sensitivity(RQ3)</h2>
-<p>Rec-Denoiserの<strong>parameter sensitivity</strong>を調べた結果.</p>
+<p>Rec-Denoiserの各hyper-parameter の感度を調べた</p>
 <ul>
-<li>ブロック数 <span class="math inline">\(L\)</span> とヘッド数 <span class="math inline">\(H\)</span> : self-attention型モデルは一般的に小さな値(ex. <span class="math inline">\(H, L \leq 4\)</span>)が有効だった. この結果は既存研究[31, 41]と同様.</li>
-<li>sequence最大長 <span class="math inline">\(n\)</span> :</li>
-<li>sparsity reqularizer <span class="math inline">\(\beta\)</span> :</li>
-<li>smoothness regularizer <span class="math inline">\(\gamma\)</span> :</li>
+<li>ブロック数 <span class="math inline">\(L\)</span> とヘッド数 <span class="math inline">\(H\)</span></li>
+<li>sequence最大長 <span class="math inline">\(n\)</span></li>
+<li>sparsity reqularizer <span class="math inline">\(\beta\)</span></li>
+<li>smoothness regularizer <span class="math inline">\(\gamma\)</span></li>
 </ul>
-<p>他の最適ハイパーパラメータを変えずに、最大長<span class="math inline">\(n\)</span>を20から80まで変化させた場合のHit@10を示す.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src=".png"></p>
-<p></p><figcaption>figure3</figcaption><p></p>
-</figure>
-</div>
+<p>ブロック数 <span class="math inline">\(L\)</span> とヘッド数 <span class="math inline">\(H\)</span> に関して、self-attention型モデルは一般的に小さな値(ex. <span class="math inline">\(H, L \leq 4\)</span>)が有効だった. この結果は既存研究[31, 41]と同様.</p>
+</section>
+<section id="結果-hypyr-parameters-sensitivityrq3-sequence最大長-n" class="slide level2">
+<h2>結果: Hypyr-parameters Sensitivity(RQ3): sequence最大長 <span class="math inline">\(n\)</span></h2>
+<p>図3は、他の最適ハイパーパラメータを変えずに、sequence最大長<span class="math inline">\(n\)</span>を20から80まで変化させた場合のHit@10の推移.</p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="figure_3.PNG"></p>
+</div><div class="column" style="width:40%;">
 <ul>
 <li>直観的には、<strong>sequenceが大きいほど、sequence内にnoisyなitemが含まれる確率が高くなる</strong>.</li>
 <li>SASRec-Denoiserは、<strong>長いsequenceで劇的に性能が向上する</strong>ことが確認された.</li>
 </ul>
-<p>図4は、sparsity reqularizer <span class="math inline">\(\beta\)</span> と smoothness regularizer <span class="math inline">\(\gamma\)</span> のうち一方の値を0.01に固定し、もう一方の値を変更した場合のモデル性能の結果.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src=".png"></p>
-<p></p><figcaption>figure4</figcaption><p></p>
-</figure>
 </div>
+</div>
+</section>
+<section id="結果-hypyr-parameters-sensitivityrq3-2つの正則化係数" class="slide level2">
+<h2>結果: Hypyr-parameters Sensitivity(RQ3): 2つの正則化係数</h2>
+<p>図4は、sparsity reqularizer <span class="math inline">\(\beta\)</span> と smoothness regularizer <span class="math inline">\(\gamma\)</span> のうち一方の値を0.01に固定し、もう一方の値を変更した場合のモデル性能の結果.</p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="figure_4.PNG"></p>
+</div><div class="column" style="width:40%;">
 <ul>
 <li>異なるハイパーパラメータ設定に対して、モデル性能は比較的安定している.</li>
 </ul>
+</div>
+</div>
 </section></section>
 <section>
 <section id="最後に感想" class="title-slide slide level1 center">
@@ -881,7 +910,7 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 <li>next-token predictionタスクと比べて next-item predictionは明らかにノイズが多いだろうから、何かしら工夫が必要だろうなとは感じた</li>
 <li><strong>ノイズ除去の為のbinary mask行列を微分可能にする</strong>為に、ARM推定量やreparameterization trick 等の様々な工夫をしながら導出していて、この手法の大変ポイント(且つ重要ポイント!)だと感じた.</li>
 <li>self-attention型の様々なモデルに適用可能なのは良い!</li>
-<li>微分可能なbinary mask やヤコビアン正則化は、推薦タスクに限らず、他のself-attentionを使ったタスクにも適用可能なのかも.</li>
+<li>微分可能なbinary mask やヤコビアン正則化は、それぞれ他のself-attentionを使ったタスク(推薦タスクに限らず…!)にも適用可能性があるのも素敵そう.</li>
 </ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
