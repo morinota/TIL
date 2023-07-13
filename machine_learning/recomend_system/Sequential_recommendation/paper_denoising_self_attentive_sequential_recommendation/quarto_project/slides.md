@@ -29,9 +29,16 @@ title-slide-attributes:
 
 ## ざっくり論文概要
 
+- hogehoge
+
 # Introduction
 
-## sequential 推薦の発展
+## sequential 推薦
+
+- Sequential 推薦の目的は，ユーザの過去の行動に基づいて次のアイテムを推薦すること(next-item-prediction). (ex.ユーザがスマートフォンを購入した後にBluetoothヘッドホンを推薦)
+- 一般にユーザのアイテム選択は**長期的嗜好(long-term preference)**と**短期的嗜好(short-term preference)**の両方に依存するため，逐次的(sequential)なユーザ行動の学習は困難.
+- 初期のマルコフ連鎖モデル[19, 39]で短期的嗜好を捉える -> RNN[20, 53] や CNN[42, 54, 57]で長期的嗜好に対応
+- ->機械翻訳タスクでのTransformersの成功を経て、self-attention型のsequential推薦モデルが提案され、SOTAを達成[26, 41, 49, 50]
 
 ## sequential 推薦の頑健さについて
 
@@ -74,7 +81,7 @@ title-slide-attributes:
 - 本論文の目的は、**ノイズの多いimplicit feedbackからのnext-item-predictionタスク**において、self-attention型sequential推薦モデルをより良く学習させるための**ノイズ除去戦略(Rec-Denoiser)**を提案する事.
 - 提案手法のアイデアは、**全てのattentionは必要ではなく、冗長なattentionを刈り取ることでさらに性能が向上する**、という最近の知見に由来[10, 12, 40, 55, 58].
 - Rec-Denoiserは、タスクと無関係なattentionをself-attention layersで削除する様な、学習可能なmaskを導入する.
-  - 利点1: sequenceからより情報量の多いアイテムのsubsetを抜き出し、明示的にnext-token-predictionを実行できる.
+  - 利点1: sequenceからより情報量の多いアイテムのsubsetを抜き出し、解釈性の高いnext-item-predictionを実行できる.
   - 利点2: Transformerのアーキテクチャを変更せず、**attention分布のみを変更する**為、実装が容易 & あらゆるTransformerに適用可能で、その解釈可能性を向上できる.
 - 実世界のベンチマークデータセットを使った実験で、手法の有効性を検証.
 
