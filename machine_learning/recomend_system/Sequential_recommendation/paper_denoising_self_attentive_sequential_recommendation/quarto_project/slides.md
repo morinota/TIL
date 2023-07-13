@@ -29,7 +29,12 @@ title-slide-attributes:
 
 ## ざっくり論文概要
 
-- hogehoge
+- next-token predictionならぬ **next-item prediction** タスクを解くことで推薦すべきアイテムを選択する sequential 推薦モデルに関する論文.
+- next-token predictionで使用するテキストデータと比較して、**next-item predictionで使用する履歴データはノイズが多い**(=特にimplicit feedback).
+- ノイズ問題に対処する為に、本論文では、**Rec-Denoiser** という手法を提案している. 本手法は、任意のself-attention型モデルに適用できる.
+- Rec-Denoiser では、"**微分可能な attention mask**"と"**ヤコビアン正則化項**"という２つのトリックを含む.
+  - "微分可能な attention mask"は、**関連が無いattention weightがゼロとなる様なsparse attention分布**を出力できるように推薦モデルと共に学習される.
+  - "ヤコビアン正則化項"を損失関数に含めて学習することで、**Transformerブロックの勾配を滑らかにし**、頑健性を向上させる.
 
 # Introduction
 
@@ -80,20 +85,19 @@ title-slide-attributes:
 
 - 本論文の目的は、**ノイズの多いimplicit feedbackからのnext-item-predictionタスク**において、self-attention型sequential推薦モデルをより良く学習させるための**ノイズ除去戦略(Rec-Denoiser)**を提案する事.
 - 提案手法のアイデアは、**全てのattentionは必要ではなく、冗長なattentionを刈り取ることでさらに性能が向上する**、という最近の知見に由来[10, 12, 40, 55, 58].
-- Rec-Denoiserは、タスクと無関係なattentionをself-attention layersで削除する様な、学習可能なmaskを導入する.
+- Rec-Denoiserは、タスクと無関係なattentionをself-attention層で削除する様な、**学習可能な(i.e. 微分可能な)mask**を導入する.
   - 利点1: sequenceからより情報量の多いアイテムのsubsetを抜き出し、解釈性の高いnext-item-predictionを実行できる.
-  - 利点2: Transformerのアーキテクチャを変更せず、**attention分布のみを変更する**為、実装が容易 & あらゆるTransformerに適用可能で、その解釈可能性を向上できる.
-- 実世界のベンチマークデータセットを使った実験で、手法の有効性を検証.
+  - 利点2: Transformerのアーキテクチャを変更せず、**attention分布のみを変更する**為、実装が容易 & **あらゆるTransformerに適用可能**.
 
 ## 提案手法 Rec-Denoiser の２つの大きな課題 とその対応
 
 Rec-Denoiserでは、2つの大きな課題がある.
 
-- 課題1: binary mask(i.e. 0は削除され、1は保持される)は、その離散性に依ってback-propropagation実行不可能.
+- 課題1: binary mask(i.e. 0は削除され、1は保持される)は**離散的なパラメータ**なので、back-propropagationができない.
   - ->本論文では、probabilistic reparameterization(確率的再パラメータ化?)[25]により、離散変数を連続的な近似値で緩和する.(ここが結構頑張りどころっぽい:thinking:)
-  - この工夫によって、提案手法の微分可能なmaskは、Transformerとend-to-endで一緒に学習可能.
-- 課題2: scaled dot-product attention は Lipschitz連続(?)ではない為、input perturbations(入力摂動?ノイズ??)に対して脆弱[28].
-  - ->本論文では、Transformerブロック全体にヤコビアン正則化[21, 24]を適用.
+  - この工夫によって、提案手法の微分可能なmaskは、**通常のTransformerとend-to-endで一緒に学習可能**.
+- 課題2: scaled dot-product attention は Lipschitz連続ではない為、input perturbations(=入力値の微小な変動)に対して脆弱[28].
+  - ->本論文では、Transformerブロック全体にヤコビアン正則化[21, 24]を適用し、**勾配が滑らかになる様に制御する事で頑健性を高める**.
 
 # Sequential Recommendation タスクの定式化
 
@@ -130,9 +134,9 @@ $$
 
 - ここで、$\hat{E} \in R^{n \times d}$ は order-awareな(=sequence内の順序を考慮した) 埋め込みベクトル行列.
 
-## Transformer Block 1: Self-attention 層(scaled-dot-product attentionの話, etc.)
+## Transformer Block 1: Self-attention 層
 
-- Transformer Block は、self-attention 層 と point-wise feed-forward 層で構成される.
+- Transformer Block は、self-attention 層 と point-wise feed-forward 層で構成
 - self-attention層は、sequentialな依存関係を捉える為に効果的であり、Transformerブロックの重要なcomponent. (scaled-dot-product attentionのmulti-head attentionを採用)
 
 $$
@@ -141,10 +145,10 @@ $$
 $$
 
 - ここで、$\text{Attention}(Q, K, V) \in R^{n \times d}$ は output item representations.
-- $Q = \hat{E} W^Q$, $K =\hat{E} W^K$, and $V = \hat{E} W^V$ はそれぞれ Query, Key, Value. (QもKもVも、埋め込みベクトル行列Eを元にしてるので、attention関数のself-attention的な使い方...!). ${W^Q, W^K, W^V} \in R^{d \times d}$ は3つのprojection行列.
+- $Q = \hat{E} W^Q$, $K =\hat{E} W^K$, and $V = \hat{E} W^V$ はそれぞれ Query, Key, Value. (QもKもVも、埋め込みベクトル行列Eを元にしてるので、attention関数のself-attention的な使い方...!). ${W^Q, W^K, W^V} \in R^{d \times d}$ は3つの投射行列.
 - $\sqrt{d}$ はscale-factor.(正規化的なイメージ!)
 
-## Transformer Block 2: Self-attention 層(multi-head attentionの話, etc.)
+## Transformer Block 2: Self-attention 層
 
 - sequential推薦では、**left-to-right uni-directional attentions(左から右への一方向のattention)**(ex. SASRec [26]やTiSASRec [30])や、もしくは**bi-directional attention(双方向のattention)** (ex. BERT4Rec [41])を利用して、次のアイテムを予測することができる.
 - さらに、$H$ 個のattention関数を並列に適用することで、表現力を高めることができる：$\mathbf{H} \leftarrow \text{MultiHead}(\hat{E})$ [43]. (元のtransformerでも採用してる、multi-head attentionね:thinking:)
@@ -192,7 +196,7 @@ $$
 
 学習時にて、モデルは sequence $s = (s_{1}, s_{2}, \cdots, s_{n})$ を入力とし、出力の教師ラベルは同じ sequence をシフトしたもの $o = (o_{1}, o_{2}, \cdots, o_{n})$ である. なので、binary cross-entropy lossを適用できる:
 
-(= $o_2$ は $s = (s_1, s_2)$ が与えられた時のnext-item predictionの正解ラベル、という認識. ~~$r_{i,t}$が最も高いアイテムを$o_2$として採用する、みたいなイメージ??~~ これは推論時ではなく学習時の話なので、$o_2 = s_3$ って事かな.:thinking:)
+(= $o_2$ は $s = (s_1, s_2)$ が与えられた時のnext-item predictionの正解ラベル、という認識. これは推論時ではなく学習時の話なので、$o_2 = s_3$ って事かな.:thinking:)
 
 $$
 L_{BCE} = - \sum_{S^{u} \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1 - \sigma (r_{o_t', t})}]} + \alpha \cdot ||\theta||^2_F
@@ -273,7 +277,9 @@ $$
 
 ## binary mask行列を含む目的関数の導出②
 
-続いて、**mask行列の各要素 $Z^{(l)}_{u,v}$ は パラメータ $\Pi^{(l)}_{u,v} \in [0, 1]$ のBernoulli分布(コイントスのやつ!)から生成される**、と仮定する. i.e. $Z^{(l)}_{u,v} \sim Bern(\Pi^{(l)}_{u,v})$. (ちなみに今回の $\Pi$ は、総乗記号`\product`ではなく`\Pi`. Bernoulli分布のパラメータは`\pi`で表される事があるので:thinking:)
+続いて、**mask行列の各要素 $Z^{(l)}_{u,v}$ は パラメータ $\Pi^{(l)}_{u,v} \in [0, 1]$ のBernoulli分布(コイントスのやつ!)から生成される確率変数(i.e. $Z^{(l)}_{u,v} \sim Bern(\Pi^{(l)}_{u,v})$)**と仮定.
+
+(ちなみに今回の $\Pi$ は、総乗記号`\product`ではなく`\Pi`. Bernoulli分布のパラメータは`\pi`で表される事があるので:thinking:)
 
 各 $\Pi^{(l)}_{u,v}$ は学習すべきパラメータ.
 よって目的関数 式(7)を以下の様に変形する:
@@ -295,7 +301,7 @@ $$
 
 目的関数の第一項の離散parametersを学習可能にする為に、**勾配推定量**としてAugment-REINFORCE Merge(ARM)推定量を採用する.
 
-まず, Bernoulli分布のパラメータ $\Pi_{u,v}^{(l)} \in [0, 1]$ を、**パラメータ $\Phi_{u,v}^{(l)}$ を持つdeterministic function(決定論的関数) $g(\cdot)$ に再パラメータ化**する ("reparameterization trick"[25]と言うらしい:thinking:):
+そのためにまず, Bernoulli分布のパラメータ $\Pi_{u,v}^{(l)} \in [0, 1]$ を、**パラメータ $\Phi_{u,v}^{(l)}$ を持つdeterministic function(決定論的関数) $g(\cdot)$ に再パラメータ化**する ("reparameterization trick"[25]と言うらしい:thinking:):
 
 $$
 \Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})
@@ -307,7 +313,7 @@ $g(\cdot)$ にはsigmoid関数($g(x) = \frac{1}{(1 + e^{-x})}$)を用いる.
 ## binary mask行列を含む目的関数の導出④
 
 次に、式(8)の第1項の離散変数(= L個のbinary mask行列 $\mathbf{Z}$ の事!)に関する勾配を計算するためのARM推定量を示す[15, 16, 56].
-ARM [56] の定理1によれば、目的関数の $\Phi$ に関する勾配は次のように計算できる(よくわかってない...!!:thinking:):
+ARM [56] の定理1によれば、**目的関数の $\Phi$ に関する勾配**は次のように計算できる(よくわかってない...!!:thinking:):
 
 $$
 \Delta_{\Phi}^{ARM} L(\Phi, \Theta) =
@@ -321,10 +327,15 @@ $$
 
 ここで、$\mathbf{U}$ は [0, 1]の一様分布($Uni(0, 1)$)から**サンプリングされた乱数配列**.
 学習時において各binary mask $Z^{(l)}_{u,v}$ は、 一様乱数 $U^{(l)}_{u,v}$ と $\Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})$ の大小関係によってサンプリングされる.
-(要するに、**モンテカルロ法的な事をして勾配を推定してる**:thinking:)
+(**要するにモンテカルロ法的にコイントスをして勾配を推定してる?**:thinking:)
 (ちなみに、$g(-\Phi)$ と $g(\Phi)$ の使い方の意味は、ARMの論文読まないと分からなさそう...:thinking:)
 
 (式(10)の勾配を1回推定するために、**$L_{BCE}(\cdot)$ を2回計算する必要がある**...!:thinking:)
+
+## 補足:Augment-REINFORCE Merge(ARM)推定量 ってなんだ?
+
+- 学習すべきparametersに binary 変数を含むNNモデルの学習において、損失関数のparametersに対する導関数を近似的に推定する方法として、["Augment-REINFORCE Merge(ARM)推定量"](https://arxiv.org/pdf/1807.11143.pdf)というのがあるらしい.
+- 他にも色んなgradient estimator(勾配推定量)がある(ex. REINFORCE[48], Straight Through Estimator)
 
 ## binary mask行列を含む目的関数の最適化
 
@@ -338,18 +349,18 @@ $$
 
 ## 補足:Lipschitz constraint(リプシッツ制約) と Lipschitz continuous(連続)とは.
 
-**標準的なdot-product self-attentionはLipschitz continuous(リプシッツ連続?)ではなく**、入力sequenceの品質に弱い.[28]
+self-attentionは**Lipschitz continuousではなく**、入力sequenceの品質に弱い.[28]
 
 - どちらも、関数やprojectionの性質に関する概念
 - Lipschitz制約: 関数やprojectionの振る舞いを制限する条件の一つ.
   - 「ある関数 $f(\cdot)$ がLipschitz制約を満たす」事は、「ある正の定数 $L$ が存在し、任意の2つの入力値 $x_1$ と $x_2$ に対して $||f(x_1) - f(x_2)|| \leq L \times ||x_1 - x_2||$ を満たす」事を意味する.
 - Lipschitz連続性: 関数やprojection が Lipschitz制約を満たしている事.
   - 「ある関数がLipschitz連続である」事は、「ある関数がLipschitz制約を満たす様な定数 $L$ が存在する」事を意味する.
-- つまり、関数やprojectionがLipschitz連続である(i.e. Lipschitz制約を満たす)という事は、**入力値が近い範囲であれば出力値も近い範囲に制約されるという性質を持つこと**を意味する.
+- つまり、関数やprojectionがLipschitz連続である(i.e. Lipschitz制約を満たす)という事は、**入力値が近い範囲であれば出力値もある程度近い範囲に制約される**、よって入力値の質に頑健である、みたいな.:thinking:
 
-## Transformer ブロックのロバスト性を測る
+## Transformer ブロックの頑健性を考える
 
-続いて $l$ 番目のTransformer ブロックを $f^{(lK)}(\cdot)$ とみなし、 **residual error(残差?) $f^{(l)}(x + \epsilon) − f^{(l)}(x), (||\epsilon||_{2} \leq \delta)$ (=関数の出力値の差)** を用いてそのロバスト性を測る.
+続いて $l$ 番目のTransformer ブロックを $f^{(l)}(\cdot)$ とみなし、 **residual error(残差?) $f^{(l)}(x + \epsilon) − f^{(l)}(x), (||\epsilon||_{2} \leq \delta)$ (=関数の出力値の差)** を用いてそのロバスト性を測る.
 (ここで、$\epsilon$ は微小な摂動ベクトル. $\delta$ はsmall scalar.)
 
 Taylor展開すると... (単に入力値の変化が微小な場合に、出力値の変化を**線形な変化として近似してる**...!:thinking:)
@@ -389,9 +400,9 @@ Frobenius norm (フロベニウスノルム): 行列の全要素を一列に並�
 
 ## ヤコビアン行列のノルムの推定方法
 
-$|J^{(l)}|^{2}_{F}$ は様々なモンテカルロ推定量[23, 37]によって近似できる、らしい(厳密に計算すると時間かかるから推定量を使うんだろうか:thinking:)
+**$|J^{(l)}|^{2}_{F}$ は様々なモンテカルロ推定量[23, 37]によって近似できる**、らしい(厳密に計算すると時間かかるから推定量を使うんだろうか:thinking:)
 
-本論文では、古典的なHutchinson推定量[23]を採用する.
+本論文では、古典的なHutchinson推定量[23]を採用.
 (Hutchinson推定量: ランダムサンプリングで得たベクトルと対象の行列の積の期待値を用いて、行列のトレース(対角成分の総和)を推定する手法、らしい:thinking:)
 
 **各ヤコビアン行列 $J^{(l)} \in \mathbb{R}^{n \times n}$ を以下の様に推定(i.e. 近似?)**する.
@@ -404,18 +415,18 @@ $$
 
 ここで、$\eta \in N(0, I_{n})$ は正規分布ベクトル(共分散行列が単位行列なので、各要素は独立...!:thinking:).
 
-さらに、ヤコビアンのノルム $R_{j}$ とその勾配 $\Delta_{\Theta} R_{j}(\Theta)$ [21]を計算するためにrandom projections(ランダムな重みによるlinear projectionの意味??:thinking:)を利用する. これは、実用上の実行時間を大幅に短縮する.
+さらに、ヤコビアンのノルム $R_{j}$ とその勾配 $\Delta_{\Theta} R_{j}(\Theta)$ [21]を計算するために**random projections**(ランダムな重みによるlinear projectionの意味??:thinking:)を利用する. これは、実用上の実行時間を大幅に短縮する.
 
 # Rec-Denoiserの全体の目的関数
 
-式(4)、式(6)、式(12)の損失をまとめると、Rec-Denoiserの全体的な目的関数は以下:
+式(4)、式(6)、式(12)の損失をまとめると、**Rec-Denoiserの全体的な目的関数**は以下:
 
 $$
 L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 \tag{13}
 $$
 
-ここで $\beta$ と $\gamma$ は、それぞれself-attentionネットワークのスパース性とロバスト性を制御する**regularizer(i.e. 正則化ハイパーパラメータ)**.
+ここで $\beta$ と $\gamma$ は、それぞれself-attentionネットワークのsparce性と頑健性を制御するregularizer(i.e. 正則化ハイパーパラメータ).
 
 ## 目的関数の最適化1
 
@@ -431,13 +442,6 @@ $$
 - Rec-Denoiserの計算量:
   - 学習時は、オリジナルのTransformersと同じオーダーのまま.
   - 推論時は、attention map がsparceなので、より高速.
-
-## 補足:Augment-REINFORCE Merge(ARM)推定量 ってなんだ?
-
-- 学習すべきparametersに binary 変数を含むNNモデルの学習において、損失関数のparametersに対する導関数を近似的に推定する方法として、["Augment-REINFORCE Merge(ARM)推定量"](https://arxiv.org/pdf/1807.11143.pdf)というのがあるらしい.
-- 他にも色んなgradient estimator(勾配推定量)がある(ex. REINFORCE[48], Straight Through Estimator)
-
-## 補足:Hutchinson推定量 ってなんだ?
 
 # 実験
 
@@ -577,3 +581,4 @@ Rec-Denoiserの各hyper-parameter の感度を調べた
 - **ノイズ除去の為のbinary mask行列を微分可能にする**為に、ARM推定量やreparameterization trick 等の様々な工夫をしながら導出していて、この手法の大変ポイント(且つ重要ポイント!)だと感じた.
 - self-attention型の様々なモデルに適用可能なのは良い!
 - 微分可能なbinary mask やヤコビアン正則化は、それぞれ他のself-attentionを使ったタスク(推薦タスクに限らず...!)にも適用可能性があるのも素敵そう.
+- 関連動画や関連アイテム推薦のようなタスクに使えないだろうか:thinking:

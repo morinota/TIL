@@ -342,7 +342,14 @@
 <section id="ざっくり論文概要" class="slide level2">
 <h2>ざっくり論文概要</h2>
 <ul>
-<li>hogehoge</li>
+<li>next-token predictionならぬ <strong>next-item prediction</strong> タスクを解くことで推薦すべきアイテムを選択する sequential 推薦モデルに関する論文.</li>
+<li>next-token predictionで使用するテキストデータと比較して、<strong>next-item predictionで使用する履歴データはノイズが多い</strong>(=特にimplicit feedback).</li>
+<li>ノイズ問題に対処する為に、本論文では、<strong>Rec-Denoiser</strong> という手法を提案している. 本手法は、任意のself-attention型モデルに適用できる.</li>
+<li>Rec-Denoiser では、“<strong>微分可能な attention mask</strong>”と”<strong>ヤコビアン正則化項</strong>”という２つのトリックを含む.
+<ul>
+<li>“微分可能な attention mask”は、<strong>関連が無いattention weightがゼロとなる様なsparse attention分布</strong>を出力できるように推薦モデルと共に学習される.</li>
+<li>“ヤコビアン正則化項”を損失関数に含めて学習することで、<strong>Transformerブロックの勾配を滑らかにし</strong>、頑健性を向上させる.</li>
+</ul></li>
 </ul>
 </section>
 <section>
@@ -356,7 +363,7 @@
 <li>Sequential 推薦の目的は，ユーザの過去の行動に基づいて次のアイテムを推薦すること(next-item-prediction). (ex.ユーザがスマートフォンを購入した後にBluetoothヘッドホンを推薦)</li>
 <li>一般にユーザのアイテム選択は<strong>長期的嗜好(long-term preference)</strong>と<strong>短期的嗜好(short-term preference)</strong>の両方に依存するため，逐次的(sequential)なユーザ行動の学習は困難.</li>
 <li>初期のマルコフ連鎖モデル[19, 39]で短期的嗜好を捉える -&gt; RNN[20, 53] や CNN[42, 54, 57]で長期的嗜好に対応</li>
-<li>-&gt;機械翻訳タスクでのTransformersの成功を経て、self-attention型のsequential推薦モデルが提案された</li>
+<li>-&gt;機械翻訳タスクでのTransformersの成功を経て、self-attention型のsequential推薦モデルが提案され、SOTAを達成[26, 41, 49, 50]</li>
 </ul>
 </section>
 <section id="sequential-推薦の頑健さについて" class="slide level2">
@@ -407,26 +414,25 @@
 <ul>
 <li>本論文の目的は、<strong>ノイズの多いimplicit feedbackからのnext-item-predictionタスク</strong>において、self-attention型sequential推薦モデルをより良く学習させるための<strong>ノイズ除去戦略(Rec-Denoiser)</strong>を提案する事.</li>
 <li>提案手法のアイデアは、<strong>全てのattentionは必要ではなく、冗長なattentionを刈り取ることでさらに性能が向上する</strong>、という最近の知見に由来[10, 12, 40, 55, 58].</li>
-<li>Rec-Denoiserは、タスクと無関係なattentionをself-attention layersで削除する様な、学習可能なmaskを導入する.
+<li>Rec-Denoiserは、タスクと無関係なattentionをself-attention層で削除する様な、<strong>学習可能な(i.e.&nbsp;微分可能な)mask</strong>を導入する.
 <ul>
 <li>利点1: sequenceからより情報量の多いアイテムのsubsetを抜き出し、解釈性の高いnext-item-predictionを実行できる.</li>
-<li>利点2: Transformerのアーキテクチャを変更せず、<strong>attention分布のみを変更する</strong>為、実装が容易 &amp; あらゆるTransformerに適用可能で、その解釈可能性を向上できる.</li>
+<li>利点2: Transformerのアーキテクチャを変更せず、<strong>attention分布のみを変更する</strong>為、実装が容易 &amp; <strong>あらゆるTransformerに適用可能</strong>.</li>
 </ul></li>
-<li>実世界のベンチマークデータセットを使った実験で、手法の有効性を検証.</li>
 </ul>
 </section>
 <section id="提案手法-rec-denoiser-の２つの大きな課題-とその対応" class="slide level2">
 <h2>提案手法 Rec-Denoiser の２つの大きな課題 とその対応</h2>
 <p>Rec-Denoiserでは、2つの大きな課題がある.</p>
 <ul>
-<li>課題1: binary mask(i.e.&nbsp;0は削除され、1は保持される)は、その離散性に依ってback-propropagation実行不可能.
+<li>課題1: binary mask(i.e.&nbsp;0は削除され、1は保持される)は<strong>離散的なパラメータ</strong>なので、back-propropagationができない.
 <ul>
 <li>-&gt;本論文では、probabilistic reparameterization(確率的再パラメータ化?)[25]により、離散変数を連続的な近似値で緩和する.(ここが結構頑張りどころっぽい<span class="emoji" data-emoji="thinking">🤔</span>)</li>
-<li>この工夫によって、提案手法の微分可能なmaskは、Transformerとend-to-endで一緒に学習可能.</li>
+<li>この工夫によって、提案手法の微分可能なmaskは、<strong>通常のTransformerとend-to-endで一緒に学習可能</strong>.</li>
 </ul></li>
-<li>課題2: scaled dot-product attention は Lipschitz連続(?)ではない為、input perturbations(入力摂動?ノイズ??)に対して脆弱[28].
+<li>課題2: scaled dot-product attention は Lipschitz連続ではない為、input perturbations(=入力値の微小な変動)に対して脆弱[28].
 <ul>
-<li>-&gt;本論文では、Transformerブロック全体にヤコビアン正則化[21, 24]を適用.</li>
+<li>-&gt;本論文では、Transformerブロック全体にヤコビアン正則化[21, 24]を適用し、<strong>勾配が滑らかになる様に制御する事で頑健性を高める</strong>.</li>
 </ul></li>
 </ul>
 </section></section>
@@ -478,10 +484,10 @@
 <li>ここで、<span class="math inline">\(\hat{E} \in R^{n \times d}\)</span> は order-awareな(=sequence内の順序を考慮した) 埋め込みベクトル行列.</li>
 </ul>
 </section>
-<section id="transformer-block-1-self-attention-層scaled-dot-product-attentionの話-etc." class="slide level2">
-<h2>Transformer Block 1: Self-attention 層(scaled-dot-product attentionの話, etc.)</h2>
+<section id="transformer-block-1-self-attention-層" class="slide level2">
+<h2>Transformer Block 1: Self-attention 層</h2>
 <ul>
-<li>Transformer Block は、self-attention 層 と point-wise feed-forward 層で構成される.</li>
+<li>Transformer Block は、self-attention 層 と point-wise feed-forward 層で構成</li>
 <li>self-attention層は、sequentialな依存関係を捉える為に効果的であり、Transformerブロックの重要なcomponent. (scaled-dot-product attentionのmulti-head attentionを採用)</li>
 </ul>
 <p><span class="math display">\[
@@ -490,12 +496,12 @@
 \]</span></p>
 <ul>
 <li>ここで、<span class="math inline">\(\text{Attention}(Q, K, V) \in R^{n \times d}\)</span> は output item representations.</li>
-<li><span class="math inline">\(Q = \hat{E} W^Q\)</span>, <span class="math inline">\(K =\hat{E} W^K\)</span>, and <span class="math inline">\(V = \hat{E} W^V\)</span> はそれぞれ Query, Key, Value. (QもKもVも、埋め込みベクトル行列Eを元にしてるので、attention関数のself-attention的な使い方…!). <span class="math inline">\({W^Q, W^K, W^V} \in R^{d \times d}\)</span> は3つのprojection行列.</li>
+<li><span class="math inline">\(Q = \hat{E} W^Q\)</span>, <span class="math inline">\(K =\hat{E} W^K\)</span>, and <span class="math inline">\(V = \hat{E} W^V\)</span> はそれぞれ Query, Key, Value. (QもKもVも、埋め込みベクトル行列Eを元にしてるので、attention関数のself-attention的な使い方…!). <span class="math inline">\({W^Q, W^K, W^V} \in R^{d \times d}\)</span> は3つの投射行列.</li>
 <li><span class="math inline">\(\sqrt{d}\)</span> はscale-factor.(正規化的なイメージ!)</li>
 </ul>
 </section>
-<section id="transformer-block-2-self-attention-層multi-head-attentionの話-etc." class="slide level2">
-<h2>Transformer Block 2: Self-attention 層(multi-head attentionの話, etc.)</h2>
+<section id="transformer-block-2-self-attention-層" class="slide level2">
+<h2>Transformer Block 2: Self-attention 層</h2>
 <ul>
 <li>sequential推薦では、<strong>left-to-right uni-directional attentions(左から右への一方向のattention)</strong>(ex. SASRec [26]やTiSASRec [30])や、もしくは<strong>bi-directional attention(双方向のattention)</strong> (ex. BERT4Rec [41])を利用して、次のアイテムを予測することができる.</li>
 <li>さらに、<span class="math inline">\(H\)</span> 個のattention関数を並列に適用することで、表現力を高めることができる：<span class="math inline">\(\mathbf{H} \leftarrow \text{MultiHead}(\hat{E})\)</span> [43]. (元のtransformerでも採用してる、multi-head attentionね<span class="emoji" data-emoji="thinking">🤔</span>)</li>
@@ -550,7 +556,7 @@ r_{i, t} = &lt;F_{t}^{(L)}, T_i&gt;,
 <section id="学習の目的関数-2" class="slide level2">
 <h2>学習の目的関数 2</h2>
 <p>学習時にて、モデルは sequence <span class="math inline">\(s = (s_{1}, s_{2}, \cdots, s_{n})\)</span> を入力とし、出力の教師ラベルは同じ sequence をシフトしたもの <span class="math inline">\(o = (o_{1}, o_{2}, \cdots, o_{n})\)</span> である. なので、binary cross-entropy lossを適用できる:</p>
-<p>(= <span class="math inline">\(o_2\)</span> は <span class="math inline">\(s = (s_1, s_2)\)</span> が与えられた時のnext-item predictionの正解ラベル、という認識. <del><span class="math inline">\(r_{i,t}\)</span>が最も高いアイテムを<span class="math inline">\(o_2\)</span>として採用する、みたいなイメージ??</del> これは推論時ではなく学習時の話なので、<span class="math inline">\(o_2 = s_3\)</span> って事かな.<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<p>(= <span class="math inline">\(o_2\)</span> は <span class="math inline">\(s = (s_1, s_2)\)</span> が与えられた時のnext-item predictionの正解ラベル、という認識. これは推論時ではなく学習時の話なので、<span class="math inline">\(o_2 = s_3\)</span> って事かな.<span class="emoji" data-emoji="thinking">🤔</span>)</p>
 <p><span class="math display">\[
 L_{BCE} = - \sum_{S^{u} \in S} \sum_{t=1}^{n}{[\log{\sigma(r_{o_t, t})} + \log{1 - \sigma (r_{o_t', t})}]} + \alpha \cdot ||\theta||^2_F
 \tag{4}
@@ -632,7 +638,8 @@ here, \mathbf{Z} := \{Z^{(1)}, \cdots, Z^{(L)}\}
 </section>
 <section id="binary-mask行列を含む目的関数の導出②" class="slide level2">
 <h2>binary mask行列を含む目的関数の導出②</h2>
-<p>続いて、<strong>mask行列の各要素 <span class="math inline">\(Z^{(l)}_{u,v}\)</span> は パラメータ <span class="math inline">\(\Pi^{(l)}_{u,v} \in [0, 1]\)</span> のBernoulli分布(コイントスのやつ!)から生成される</strong>、と仮定する. i.e.&nbsp;<span class="math inline">\(Z^{(l)}_{u,v} \sim Bern(\Pi^{(l)}_{u,v})\)</span>. (ちなみに今回の <span class="math inline">\(\Pi\)</span> は、総乗記号<code>\product</code>ではなく<code>\Pi</code>. Bernoulli分布のパラメータは<code>\pi</code>で表される事があるので<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<p>続いて、<strong>mask行列の各要素 <span class="math inline">\(Z^{(l)}_{u,v}\)</span> は パラメータ <span class="math inline">\(\Pi^{(l)}_{u,v} \in [0, 1]\)</span> のBernoulli分布(コイントスのやつ!)から生成される確率変数(i.e.&nbsp;<span class="math inline">\(Z^{(l)}_{u,v} \sim Bern(\Pi^{(l)}_{u,v})\)</span>)</strong>と仮定.</p>
+<p>(ちなみに今回の <span class="math inline">\(\Pi\)</span> は、総乗記号<code>\product</code>ではなく<code>\Pi</code>. Bernoulli分布のパラメータは<code>\pi</code>で表される事があるので<span class="emoji" data-emoji="thinking">🤔</span>)</p>
 <p>各 <span class="math inline">\(\Pi^{(l)}_{u,v}\)</span> は学習すべきパラメータ. よって目的関数 式(7)を以下の様に変形する:</p>
 <p><span class="math display">\[
 L(\mathbf{Z}, \Theta) =
@@ -648,7 +655,7 @@ E_{\mathbf{Z} \in \Pi_{l=1}^{L} Bern(Z^{(l)}; \Pi^{(l)})}[L_{BCE}({A^{(l)} \odot
 <section id="binary-mask行列を含む目的関数の導出③" class="slide level2">
 <h2>binary mask行列を含む目的関数の導出③</h2>
 <p>目的関数の第一項の離散parametersを学習可能にする為に、<strong>勾配推定量</strong>としてAugment-REINFORCE Merge(ARM)推定量を採用する.</p>
-<p>まず, Bernoulli分布のパラメータ <span class="math inline">\(\Pi_{u,v}^{(l)} \in [0, 1]\)</span> を、<strong>パラメータ <span class="math inline">\(\Phi_{u,v}^{(l)}\)</span> を持つdeterministic function(決定論的関数) <span class="math inline">\(g(\cdot)\)</span> に再パラメータ化</strong>する (“reparameterization trick”[25]と言うらしい<span class="emoji" data-emoji="thinking">🤔</span>):</p>
+<p>そのためにまず, Bernoulli分布のパラメータ <span class="math inline">\(\Pi_{u,v}^{(l)} \in [0, 1]\)</span> を、<strong>パラメータ <span class="math inline">\(\Phi_{u,v}^{(l)}\)</span> を持つdeterministic function(決定論的関数) <span class="math inline">\(g(\cdot)\)</span> に再パラメータ化</strong>する (“reparameterization trick”[25]と言うらしい<span class="emoji" data-emoji="thinking">🤔</span>):</p>
 <p><span class="math display">\[
 \Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})
 \tag{9}
@@ -657,7 +664,7 @@ E_{\mathbf{Z} \in \Pi_{l=1}^{L} Bern(Z^{(l)}; \Pi^{(l)})}[L_{BCE}({A^{(l)} \odot
 </section>
 <section id="binary-mask行列を含む目的関数の導出④" class="slide level2">
 <h2>binary mask行列を含む目的関数の導出④</h2>
-<p>次に、式(8)の第1項の離散変数(= L個のbinary mask行列 <span class="math inline">\(\mathbf{Z}\)</span> の事!)に関する勾配を計算するためのARM推定量を示す[15, 16, 56]. ARM [56] の定理1によれば、目的関数の <span class="math inline">\(\Phi\)</span> に関する勾配は次のように計算できる(よくわかってない…!!<span class="emoji" data-emoji="thinking">🤔</span>):</p>
+<p>次に、式(8)の第1項の離散変数(= L個のbinary mask行列 <span class="math inline">\(\mathbf{Z}\)</span> の事!)に関する勾配を計算するためのARM推定量を示す[15, 16, 56]. ARM [56] の定理1によれば、<strong>目的関数の <span class="math inline">\(\Phi\)</span> に関する勾配</strong>は次のように計算できる(よくわかってない…!!<span class="emoji" data-emoji="thinking">🤔</span>):</p>
 <p><span class="math display">\[
 \Delta_{\Phi}^{ARM} L(\Phi, \Theta) =
 \\
@@ -667,8 +674,15 @@ E_{\mathbf{U} \in \Pi_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
 + \beta \Delta_{\Phi} g(\Phi)
 \tag{10}
 \]</span></p>
-<p>ここで、<span class="math inline">\(\mathbf{U}\)</span> は [0, 1]の一様分布(<span class="math inline">\(Uni(0, 1)\)</span>)から<strong>サンプリングされた乱数配列</strong>. 学習時において各binary mask <span class="math inline">\(Z^{(l)}_{u,v}\)</span> は、 一様乱数 <span class="math inline">\(U^{(l)}_{u,v}\)</span> と <span class="math inline">\(\Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})\)</span> の大小関係によってサンプリングされる. (要するに、<strong>モンテカルロ法的な事をして勾配を推定してる</strong><span class="emoji" data-emoji="thinking">🤔</span>) (ちなみに、<span class="math inline">\(g(-\Phi)\)</span> と <span class="math inline">\(g(\Phi)\)</span> の使い方の意味は、ARMの論文読まないと分からなさそう…<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<p>ここで、<span class="math inline">\(\mathbf{U}\)</span> は [0, 1]の一様分布(<span class="math inline">\(Uni(0, 1)\)</span>)から<strong>サンプリングされた乱数配列</strong>. 学習時において各binary mask <span class="math inline">\(Z^{(l)}_{u,v}\)</span> は、 一様乱数 <span class="math inline">\(U^{(l)}_{u,v}\)</span> と <span class="math inline">\(\Pi_{u,v}^{(l)} = g(\Phi_{u,v}^{(l)})\)</span> の大小関係によってサンプリングされる. (<strong>要するにモンテカルロ法的にコイントスをして勾配を推定してる?</strong><span class="emoji" data-emoji="thinking">🤔</span>) (ちなみに、<span class="math inline">\(g(-\Phi)\)</span> と <span class="math inline">\(g(\Phi)\)</span> の使い方の意味は、ARMの論文読まないと分からなさそう…<span class="emoji" data-emoji="thinking">🤔</span>)</p>
 <p>(式(10)の勾配を1回推定するために、<strong><span class="math inline">\(L_{BCE}(\cdot)\)</span> を2回計算する必要がある</strong>…!<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+</section>
+<section id="補足augment-reinforce-mergearm推定量-ってなんだ" class="slide level2">
+<h2>補足:Augment-REINFORCE Merge(ARM)推定量 ってなんだ?</h2>
+<ul>
+<li>学習すべきparametersに binary 変数を含むNNモデルの学習において、損失関数のparametersに対する導関数を近似的に推定する方法として、<a href="https://arxiv.org/pdf/1807.11143.pdf">“Augment-REINFORCE Merge(ARM)推定量”</a>というのがあるらしい.</li>
+<li>他にも色んなgradient estimator(勾配推定量)がある(ex. REINFORCE[48], Straight Through Estimator)</li>
+</ul>
 </section>
 <section id="binary-mask行列を含む目的関数の最適化" class="slide level2">
 <h2>binary mask行列を含む目的関数の最適化</h2>
@@ -691,7 +705,7 @@ E_{\mathbf{U} \in \Pi_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
 </section>
 <section id="補足lipschitz-constraintリプシッツ制約-と-lipschitz-continuous連続とは." class="slide level2">
 <h2>補足:Lipschitz constraint(リプシッツ制約) と Lipschitz continuous(連続)とは.</h2>
-<p><strong>標準的なdot-product self-attentionはLipschitz continuous(リプシッツ連続?)ではなく</strong>、入力sequenceの品質に弱い.[28]</p>
+<p>self-attentionは<strong>Lipschitz continuousではなく</strong>、入力sequenceの品質に弱い.[28]</p>
 <ul>
 <li>どちらも、関数やprojectionの性質に関する概念</li>
 <li>Lipschitz制約: 関数やprojectionの振る舞いを制限する条件の一つ.
@@ -702,12 +716,12 @@ E_{\mathbf{U} \in \Pi_{l=1}^{L} Uni(\mathbf{U}^{(l)}; 0, 1)}
 <ul>
 <li>「ある関数がLipschitz連続である」事は、「ある関数がLipschitz制約を満たす様な定数 <span class="math inline">\(L\)</span> が存在する」事を意味する.</li>
 </ul></li>
-<li>つまり、関数やprojectionがLipschitz連続である(i.e.&nbsp;Lipschitz制約を満たす)という事は、<strong>入力値が近い範囲であれば出力値も近い範囲に制約されるという性質を持つこと</strong>を意味する.</li>
+<li>つまり、関数やprojectionがLipschitz連続である(i.e.&nbsp;Lipschitz制約を満たす)という事は、<strong>入力値が近い範囲であれば出力値もある程度近い範囲に制約される</strong>、よって入力値の質に頑健である、みたいな.<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul>
 </section>
-<section id="transformer-ブロックのロバスト性を測る" class="slide level2">
-<h2>Transformer ブロックのロバスト性を測る</h2>
-<p>続いて <span class="math inline">\(l\)</span> 番目のTransformer ブロックを <span class="math inline">\(f^{(lK)}(\cdot)\)</span> とみなし、 <strong>residual error(残差?) <span class="math inline">\(f^{(l)}(x + \epsilon) − f^{(l)}(x), (||\epsilon||_{2} \leq \delta)\)</span> (=関数の出力値の差)</strong> を用いてそのロバスト性を測る. (ここで、<span class="math inline">\(\epsilon\)</span> は微小な摂動ベクトル. <span class="math inline">\(\delta\)</span> はsmall scalar.)</p>
+<section id="transformer-ブロックの頑健性を考える" class="slide level2">
+<h2>Transformer ブロックの頑健性を考える</h2>
+<p>続いて <span class="math inline">\(l\)</span> 番目のTransformer ブロックを <span class="math inline">\(f^{(l)}(\cdot)\)</span> とみなし、 <strong>residual error(残差?) <span class="math inline">\(f^{(l)}(x + \epsilon) − f^{(l)}(x), (||\epsilon||_{2} \leq \delta)\)</span> (=関数の出力値の差)</strong> を用いてそのロバスト性を測る. (ここで、<span class="math inline">\(\epsilon\)</span> は微小な摂動ベクトル. <span class="math inline">\(\delta\)</span> はsmall scalar.)</p>
 <p>Taylor展開すると… (単に入力値の変化が微小な場合に、出力値の変化を<strong>線形な変化として近似してる</strong>…!<span class="emoji" data-emoji="thinking">🤔</span>)</p>
 <p><span class="math display">\[
 f^{(l)}_{i}(x + \epsilon) − f^{(𝑙)}_{i}(x) \approx [\frac{\partial f^{(𝑙)}_{i}(x)}{\partial x}]^{T} \epsilon
@@ -738,8 +752,8 @@ R_{J} = \sum_{l=1}^{L} ||J^{(l)}||^{2}_{F}
 </section>
 <section id="ヤコビアン行列のノルムの推定方法" class="slide level2">
 <h2>ヤコビアン行列のノルムの推定方法</h2>
-<p><span class="math inline">\(|J^{(l)}|^{2}_{F}\)</span> は様々なモンテカルロ推定量[23, 37]によって近似できる、らしい(厳密に計算すると時間かかるから推定量を使うんだろうか<span class="emoji" data-emoji="thinking">🤔</span>)</p>
-<p>本論文では、古典的なHutchinson推定量[23]を採用する. (Hutchinson推定量: ランダムサンプリングで得たベクトルと対象の行列の積の期待値を用いて、行列のトレース(対角成分の総和)を推定する手法、らしい<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<p><strong><span class="math inline">\(|J^{(l)}|^{2}_{F}\)</span> は様々なモンテカルロ推定量[23, 37]によって近似できる</strong>、らしい(厳密に計算すると時間かかるから推定量を使うんだろうか<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<p>本論文では、古典的なHutchinson推定量[23]を採用. (Hutchinson推定量: ランダムサンプリングで得たベクトルと対象の行列の積の期待値を用いて、行列のトレース(対角成分の総和)を推定する手法、らしい<span class="emoji" data-emoji="thinking">🤔</span>)</p>
 <p><strong>各ヤコビアン行列 <span class="math inline">\(J^{(l)} \in \mathbb{R}^{n \times n}\)</span> を以下の様に推定(i.e.&nbsp;近似?)</strong>する.</p>
 <p><span class="math display">\[
 ||J^{(l)}||^{2}_{F}
@@ -747,17 +761,17 @@ R_{J} = \sum_{l=1}^{L} ||J^{(l)}||^{2}_{F}
 = E_{\eta \in N(0, I_{n})} [|| \eta^{T} J^{(l)}||^{2}_{F}]
 \]</span></p>
 <p>ここで、<span class="math inline">\(\eta \in N(0, I_{n})\)</span> は正規分布ベクトル(共分散行列が単位行列なので、各要素は独立…!<span class="emoji" data-emoji="thinking">🤔</span>).</p>
-<p>さらに、ヤコビアンのノルム <span class="math inline">\(R_{j}\)</span> とその勾配 <span class="math inline">\(\Delta_{\Theta} R_{j}(\Theta)\)</span> [21]を計算するためにrandom projections(ランダムな重みによるlinear projectionの意味??<span class="emoji" data-emoji="thinking">🤔</span>)を利用する. これは、実用上の実行時間を大幅に短縮する.</p>
+<p>さらに、ヤコビアンのノルム <span class="math inline">\(R_{j}\)</span> とその勾配 <span class="math inline">\(\Delta_{\Theta} R_{j}(\Theta)\)</span> [21]を計算するために<strong>random projections</strong>(ランダムな重みによるlinear projectionの意味??<span class="emoji" data-emoji="thinking">🤔</span>)を利用する. これは、実用上の実行時間を大幅に短縮する.</p>
 </section></section>
 <section>
 <section id="rec-denoiserの全体の目的関数" class="title-slide slide level1 center">
 <h1>Rec-Denoiserの全体の目的関数</h1>
-<p>式(4)、式(6)、式(12)の損失をまとめると、Rec-Denoiserの全体的な目的関数は以下:</p>
+<p>式(4)、式(6)、式(12)の損失をまとめると、<strong>Rec-Denoiserの全体的な目的関数</strong>は以下:</p>
 <p><span class="math display">\[
 L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 \tag{13}
 \]</span></p>
-<p>ここで <span class="math inline">\(\beta\)</span> と <span class="math inline">\(\gamma\)</span> は、それぞれself-attentionネットワークのスパース性とロバスト性を制御する<strong>regularizer(i.e.&nbsp;正則化ハイパーパラメータ)</strong>.</p>
+<p>ここで <span class="math inline">\(\beta\)</span> と <span class="math inline">\(\gamma\)</span> は、それぞれself-attentionネットワークのsparce性と頑健性を制御するregularizer(i.e.&nbsp;正則化ハイパーパラメータ).</p>
 </section>
 <section id="目的関数の最適化1" class="slide level2">
 <h2>目的関数の最適化1</h2>
@@ -776,16 +790,6 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 <li>推論時は、attention map がsparceなので、より高速.</li>
 </ul></li>
 </ul>
-</section>
-<section id="補足augment-reinforce-mergearm推定量-ってなんだ" class="slide level2">
-<h2>補足:Augment-REINFORCE Merge(ARM)推定量 ってなんだ?</h2>
-<ul>
-<li>学習すべきparametersに binary 変数を含むNNモデルの学習において、損失関数のparametersに対する導関数を近似的に推定する方法として、<a href="https://arxiv.org/pdf/1807.11143.pdf">“Augment-REINFORCE Merge(ARM)推定量”</a>というのがあるらしい.</li>
-<li>他にも色んなgradient estimator(勾配推定量)がある(ex. REINFORCE[48], Straight Through Estimator)</li>
-</ul>
-</section>
-<section id="補足hutchinson推定量-ってなんだ" class="slide level2">
-<h2>補足:Hutchinson推定量 ってなんだ?</h2>
 </section></section>
 <section>
 <section id="実験" class="title-slide slide level1 center">
@@ -920,6 +924,7 @@ L_{Rec-Denoiser} = L_{BCE} + \beta \cdot R_{M} + \gamma \cdot R_{J}
 <li><strong>ノイズ除去の為のbinary mask行列を微分可能にする</strong>為に、ARM推定量やreparameterization trick 等の様々な工夫をしながら導出していて、この手法の大変ポイント(且つ重要ポイント!)だと感じた.</li>
 <li>self-attention型の様々なモデルに適用可能なのは良い!</li>
 <li>微分可能なbinary mask やヤコビアン正則化は、それぞれ他のself-attentionを使ったタスク(推薦タスクに限らず…!)にも適用可能性があるのも素敵そう.</li>
+<li>関連動画や関連アイテム推薦のようなタスクに使えないだろうか<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
