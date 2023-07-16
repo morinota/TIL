@@ -12,7 +12,7 @@ Groundhog Day, 1993
 グラウンドホッグ・デイ（1993年
 
 In this chapter, I will go through the creation of an HTTP endpoint for the room list use case.
-この章では、部屋リストのユースケースのためのHTTPエンドポイントの作成について説明します。
+この章では、**部屋リストのユースケースのためのHTTPエンドポイントの作成**について説明します。
 An HTTP endpoint is a URL exposed by a Web server that runs a specific logic and returns values in a standard format.
 HTTPエンドポイントは、ウェブ・サーバーが公開するURLで、特定のロジックを実行し、標準フォーマットで値を返す。
 
@@ -35,8 +35,21 @@ Let us start updating the requirements files.
 The file requirements/prod.txt shall mention Flask, as this package contains a script that runs a local webserver that we can use to expose the endpoint
 requirements/prod.txtファイルでは、Flaskについて触れている。このパッケージには、エンドポイントを公開するために使用できる、ローカルのウェブサーバーを実行するスクリプトが含まれているからだ。
 
+```
+Flask
+```
+
 The file requirements/test.txt will contain the pytest extension to work with Flask (more on this later)
-requirements/test.txtファイルには、Flaskで動作するための拡張子pytestが含まれます。
+requirements/test.txtファイルには、Flaskで動作するためのpytest extensionが含まれます。
+
+```
+-r prod.txt
+pytest
+tox
+coverage
+pytest-cov
+pytest-flask
+```
 
 Remember to run pip install -r requirements/dev.txt again after those changes to install the new packages in your virtual environment.
 仮想環境に新しいパッケージをインストールするために、変更後に再度pip install -r requirements/dev.txtを実行することを忘れないでください。
@@ -46,7 +59,7 @@ Flaskアプリケーションのセットアップは複雑ではないが、多
 I will provide links to the Flask documentation for every concept, though.
 すべてのコンセプトについて、Flaskのドキュメントへのリンクを提供します。
 If you want to dig a bit deeper in this matter you can read my series of posts Flask Project Setup: TDD, Docker, Postgres and more.
-この件についてもう少し掘り下げたい場合は、私の一連の投稿Flask Project Setupをお読みください： TDD、Docker、Postgresなど。
+この件についてもう少し掘り下げたい場合は、私の一連の投稿[Flask Project Setup： TDD、Docker、Postgres等](https://www.thedigitalcatonline.com/blog/2020/07/05/flask-project-setup-tdd-docker-postgres-and-more-part-1/)をお読みください。
 
 The Flask application can be configured using a plain Python object (documentation), so I created the file application/config.py that contains this code
 Flaskアプリケーションは、プレーンなPythonオブジェクト（ドキュメント）を使って設定できるので、次のコードを含むapplication/config.pyファイルを作成した。
