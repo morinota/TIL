@@ -10,7 +10,7 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: RecSys2022 Best Papers の一つ：学習可能なattention mask を用いてTransformer ベースの Sequential 推薦モデルをnoiseに強くする論文を読んだ
+title: RecSys2022 Best Papers：データのノイズが多いnext-item predictionにて、self-attention型モデルをノイズに強くするプラグイン的手法の論文
 subtitle: n週連続推薦システム系論文読んだシリーズ 20週目
 date: 2023/07/05
 author: morinota

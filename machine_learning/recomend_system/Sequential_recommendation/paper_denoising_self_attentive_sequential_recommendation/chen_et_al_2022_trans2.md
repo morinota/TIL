@@ -850,7 +850,7 @@ In summary, both ARM and AR estimators are able to reduce the negative impacts o
 We further investigate the parameter sensitivity of Rec-Denoiser.
 さらに**Rec-Denoiserのparameter sensitivity**を調べた.
 For the number of blocks $L$ and the number of heads $H$, we find that self-attentive models typically benefit from small values (e.g., $H, L \leq 4$), which is similar to [31, 41].
-**ブロック数 $L$ とヘッド数 $H$ については、self-attentionモデルは一般的に小さな値（例えば、$H, L \leq 4$）が有効であることがわかり**、これは[31, 41]と同様である。
+**ブロック数 $L$ とヘッド数 $H$ については、self-attentionモデルは一般的に小さな値（例えば、$H, L \leq 4$）が有効であることがわかり**、これは[31, 41]と同様である.
 In this section, we mainly study the following hyper-parameters: 1) the maximum length 𝑛, 2) the regularizers 𝛽 and 𝛾 to control the sparsity and smoothness.
 本節では、主に以下のハイパーパラメータを研究する： 1)sequence最大長$n$、2)スパース性と平滑性を制御する正則化子$\beta$と$\gamma$.
 Here we only study the SASRec and SASRec-Denoiser due to page limitations.

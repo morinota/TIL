@@ -128,7 +128,7 @@ Again, dataclasses make this very simple, as they provide an implementation of *
 If you implement the class without using dataclasses you have to define this method to make it pass the test.
 データクラスを使わずにクラスを実装する場合は、テストをパスするためにこのメソッドを定義しなければならない。
 
-## Serializers 
+## Serializers
 
 Outer layers can use the model Room, but if you want to return the model as a result of an API call you need a serializer.
 アウターレイヤーはモデルRoomを使用できますが、API呼び出しの結果としてモデルを返したい場合は、シリアライザーが必要です。
