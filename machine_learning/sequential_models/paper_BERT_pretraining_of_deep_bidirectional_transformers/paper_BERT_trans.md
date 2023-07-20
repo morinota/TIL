@@ -11,7 +11,7 @@ https://arxiv.org/abs/1810.04805
 ## abstract 抄録
 
 We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers.
-私たちは、BERT（Bidirectional Encoder Representations from Transformersの略）と呼ばれる新しい言語表現モデルを紹介する。
+私たちは、**BERT（Bi-directional Encoder Representations from Transformers）**と呼ばれる新しい言語表現モデルを紹介する。
 Unlike recent language representation models (Peters et al., 2018a; Radford et al., 2018), BERT is designed to pretrain deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers.
 最近の言語表現モデル（Peters et al, 2018a; Radford et al, 2018）とは異なり、BERTは、すべての層で左右両方の文脈を共同で条件付けることによって、ラベル付けされていないテキストから深い双方向表現を事前学習するように設計されている。
 As a result, the pre-trained BERT model can be finetuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial taskspecific architecture modifications.
@@ -33,88 +33,89 @@ There are two existing strategies for applying pre-trained language representati
 The feature-based approach, such as ELMo (Peters et al., 2018a), uses task-specific architectures that include the pre-trained representations as additional features.
 ELMo（Petersら、2018a）のような特徴ベースのアプローチは、事前に訓練された表現を追加特徴として含むタスク固有のアーキテクチャを使用する。
 The fine-tuning approach, such as the Generative Pre-trained Transformer (OpenAI GPT) (Radford et al., 2018), introduces minimal task-specific parameters, and is trained on the downstream tasks by simply fine-tuning all pretrained parameters.
-Generative Pre-trained Transformer (OpenAI GPT) (Radford et al., 2018)のような微調整アプローチは、最小限のタスク固有のパラメータを導入し、すべての事前学習済みパラメータを微調整するだけで下流のタスクで学習される。
+**Generative Pre-trained Transformer (OpenAI GPT)** (Radford et al., 2018)のような微調整アプローチは、最小限のタスク固有のパラメータを導入し、すべての事前学習済みパラメータを微調整するだけで下流のタスクで学習される。
 The two approaches share the same objective function during pre-training, where they use unidirectional language models to learn general language representations.
 この2つのアプローチは、事前学習において同じ目的関数を共有し、一般的な言語表現を学習するために一方向性言語モデルを使用する。
 We argue that current techniques restrict the power of the pre-trained representations, especially for the fine-tuning approaches.
 我々は、現在の技術では、特にファインチューニングアプローチにおいて、事前に訓練された表現の力が制限されることを主張する。
 The major limitation is that standard language models are unidirectional, and this limits the choice of architectures that can be used during pre-training.
-主な制限は、標準的な言語モデルは一方向性であるため、事前学習時に使用できるアーキテクチャの選択肢が制限されることである。
+主な制限は、標準的な言語モデルは一方向性(=next-token-predictionって意味?)であるため、事前学習時に使用できるアーキテクチャの選択肢が制限されることである。
 For example, in OpenAI GPT, the authors use a left-toright architecture, where every token can only attend to previous tokens in the self-attention layers of the Transformer (Vaswani et al., 2017).
-例えば、OpenAI GPTでは、著者らは左-右アーキテクチャを使用しており、各トークンはトランスフォーマーの自己アテンション層で前のトークンにしかアテンションできない（Vaswani et al, 2017）。
+例えば、OpenAI GPTでは、著者らは**left-torightアーキテクチャ**を使用しており、各トークンはTransformerのself-attention層で前のトークンにしかattentionできない（Vaswani et al, 2017）.(確かattention weightの計算時に対象tokenよりも time step の古いtokenのみを使う様にmaskを導入してた...!. でもこれはnext-token-predictionタスクとしては自然なarchitectureに思える...!)
 Such restrictions are sub-optimal for sentence-level tasks, and could be very harmful when applying finetuning based approaches to token-level tasks such as question answering, where it is crucial to incorporate context from both directions.
-このような制限は文レベルのタスクには最適ではなく、質問応答のようなトークンレベルのタスクにファインチューニングに基づくアプローチを適用する場合、双方向からのコンテキストを取り込むことが重要であるため、非常に有害である可能性がある。
+**このような制限は文レベルのタスクには最適ではなく**、質問応答のようなトークンレベルのタスクにファインチューニングに基づくアプローチを適用する場合、**双方向(both directions)からのコンテキストを取り込むことが重要**であるため、非常に有害である可能性がある.
 In this paper, we improve the fine-tuning based approaches by proposing BERT: Bidirectional Encoder Representations from Transformers.
-本稿では、BERT（Bidirectional Encoder Representations from Transformers）を提案することで、微調整ベースのアプローチを改善する。
+本稿では、**BERT（Bidirectional Encoder Representations from Transformers）**を提案することで、fine-tuningベースのアプローチを改善する。
 BERT alleviates the previously mentioned unidirectionality constraint by using a “masked language model” (MLM) pre-training objective, inspired by the Cloze task (Taylor, 1953).
-BERT は、Cloze 課題（Taylor, 1953）に着想を得た「マスク言語モデル」（MLM）事前学習目的を使用することで、前述の単方向性制約を緩和している。
+BERT は、Cloze 課題（Taylor, 1953）に着想を得た “masked language model”（MLM）事前学習目的(=事前学習時の目的関数の意味??)を使用することで、前述の単方向性制約を緩和している.
 The masked language model randomly masks some of the tokens from the input, and the objective is to predict the original vocabulary id of the masked word based only on its context.
-マスク言語モデルは、入力からいくつかのトークンをランダムにマスクし、その文脈のみに基づいてマスクされた単語の元の語彙IDを予測することを目的とする。
+マスク言語モデルは、**入力からいくつかのトークンをランダムにマスク**し、その文脈のみに基づいてマスクされた単語の元の語彙IDを予測することを目的とする.(next-token-predictionではなく、masked-token-predictionみたいな...??)
 Unlike left-toright language model pre-training, the MLM objective enables the representation to fuse the left and the right context, which allows us to pretrain a deep bidirectional Transformer.
-左右の言語モデルの事前学習とは異なり、MLMの目的は左右の文脈を融合する表現を可能にし、深い双方向変換器の事前学習を可能にする。
+left-torightの言語モデルの事前学習とは異なり、**MLMの目的関数は左右の文脈を融合する表現を可能にし、deep bi-directional Transformerの事前学習を可能にする**.
 In addition to the masked language model, we also use a “next sentence prediction” task that jointly pretrains text-pair representations.
-マスクされた言語モデルに加え、テキストペア表現を共同で事前学習する「次の文予測」タスクも使用する。
+マスクされた言語モデルに加え、テキストペア表現を共同で事前学習する“next sentence prediction”タスクも使用する. (i.e. 2つの目的関数を使って、事前学習するって事...??)
 The contributions of our paper are as follows:
 本稿の貢献は以下の通りである：
 
-- We demonstrate the importance of bidirectional pre-training for language representations. Unlike Radford et al. (2018), which uses unidirectional language models for pre-training, BERT uses masked language models to enable pretrained deep bidirectional representations. This is also in contrast to Peters et al. (2018a), which uses a shallow concatenation of independently trained left-to-right and right-to-left LMs. 言語表現における双方向の事前学習の重要性を示す。 事前学習に一方向性言語モデルを使用するRadford et al(2018)とは異なり、BERTはマスクされた言語モデルを使用し、深い双方向表現の事前学習を可能にする。 これは、独立に訓練された左から右へのLMと右から左へのLMの浅い連結を使用するPetersら(2018a)とも対照的である。
+- We demonstrate the importance of bidirectional pre-training for language representations. Unlike Radford et al. (2018), which uses unidirectional language models for pre-training, BERT uses masked language models to enable pretrained deep bidirectional representations. This is also in contrast to Peters et al. (2018a), which uses a shallow concatenation of independently trained left-to-right and right-to-left LMs. **言語表現(=言語から特徴量を良い感じに抽出する事??)における双方向の事前学習の重要性**を示す。 事前学習に一方向性言語モデル(i.e. next-token-predictionタスクを学習させる...!)を使用するRadford et al(2018)とは異なり、BERTはmasked言語モデル(i.e. masked-token-predictionタスクを学習させる...!)を使用し、深い双方向表現の事前学習を可能にする。 これは、独立に訓練された左から右へのLMと右から左へのLMの浅い連結を使用するPetersら(2018a)とも対照的である。
 
-- We show that pre-trained representations reduce the need for many heavily-engineered taskspecific architectures. BERT is the first finetuning based representation model that achieves state-of-the-art performance on a large suite of sentence-level and token-level tasks, outperforming many task-specific architectures. 我々は、事前に訓練された表現が、多くの重く設計されたタスク固有のアーキテクチャの必要性を減らすことを示す。 BERTは、文レベルおよびトークンレベルの大規模なタスク群で最先端の性能を達成し、多くのタスク固有のアーキテクチャを凌駕する、微調整に基づく初の表現モデルである。
+- We show that pre-trained representations reduce the need for many heavily-engineered taskspecific architectures. BERT is the first finetuning based representation model that achieves state-of-the-art performance on a large suite of sentence-level and token-level tasks, outperforming many task-specific architectures. 我々は、**事前に訓練された表現(=token表現?sentence表現?)が、多くの重く設計されたタスク固有のアーキテクチャの必要性を減らすこと**を示す。 BERTは、文レベルおよびトークンレベルの大規模なタスク群で最先端の性能を達成し、多くのタスク固有のアーキテクチャを凌駕する、fine-tuningに基づく初の表現モデルである.
 
 - BERT advances the state of the art for eleven NLP tasks. The code and pre-trained models are available at https://github.com/ google-research/bert. BERT は、11 の NLP タスクの最先端技術を前進させる。 コードと訓練済みモデルは、https://github.com/ google-research/bertで入手できる。
 
 # Related Work 関連作品
 
 Related Work There is a long history of pre-training general language representations, and we briefly review the most widely-used approaches in this section.
-関連作品 一般的な言語表現の事前学習には長い歴史があり、このセクションでは最も広く使われているアプローチを簡単にレビューする。
+関連作品 **一般的な言語表現の事前学習には長い歴史**があり、このセクションでは最も広く使われているアプローチを簡単にレビューする。
 
-## Unsupervised Feature-based Approaches 教師なし特徴ベースのアプローチ
+## Unsupervised Feature-based Approaches 教師なし特徴ベース(?)のアプローチ (feature-based = 単語の埋め込みベクトルを使うって意味...??:thinking:)
 
 Learning widely applicable representations of words has been an active area of research for decades, including non-neural (Brown et al., 1992; Ando and Zhang, 2005; Blitzer et al., 2006) and neural (Mikolov et al., 2013; Pennington et al., 2014) methods.
-非ニューラル（Brown et al, 1992; Ando and Zhang, 2005; Blitzer et al, 2006）やニューラル（Mikolov et al, 2013; Pennington et al, 2014）の方法を含め、単語の広く適用可能な表現を学習することは、数十年にわたり活発な研究分野である。
+非ニューラル（Brown et al, 1992; Ando and Zhang, 2005; Blitzer et al, 2006）やニューラル（Mikolov et al, 2013; Pennington et al, 2014）の方法を含め、単語の広く適用可能な表現を学習すること(=あ、基本的には単語表現の学習なんだ...!)は、数十年にわたり活発な研究分野である。
 Pre-trained word embeddings are an integral part of modern NLP systems, offering significant improvements over embeddings learned from scratch (Turian et al., 2010).
-事前に学習された単語埋め込みは、最新の自然言語処理システムに不可欠な要素であり、ゼロから学習した埋め込みよりも大幅に改善される（Turian et al.）
+**事前に学習された単語埋め込みは、最新の自然言語処理システムに不可欠な要素**であり、ゼロから学習した埋め込みよりも大幅に改善される（Turian et al.）
 To pretrain word embedding vectors, left-to-right language modeling objectives have been used (Mnih and Hinton, 2009), as well as objectives to discriminate correct from incorrect words in left and right context (Mikolov et al., 2013).
-単語埋め込みベクトルの事前学習には、左から右への言語モデリング目標（Mnih and Hinton, 2009）や、左右の文脈で正しい単語と正しくない単語を識別する目標（Mikolov et al.）
+単語埋め込みベクトルの事前学習には、左から右への言語モデリング目標（Mnih and Hinton, 2009）や、左右の文脈で正しい単語と正しくない単語を識別する目標（Mikolov et al. 2013）
 
 These approaches have been generalized to coarser granularities, such as sentence embeddings (Kiros et al., 2015; Logeswaran and Lee, 2018) or paragraph embeddings (Le and Mikolov, 2014).
-これらのアプローチは、文埋め込み（Kiros et al, 2015; Logeswaran and Lee, 2018）や段落埋め込み（Le and Mikolov, 2014）など、より粗い粒度に一般化されている。
+**これらのアプローチは、文埋め込み（Kiros et al, 2015; Logeswaran and Lee, 2018）や段落埋め込み（Le and Mikolov, 2014）など、より粗い粒度に一般化されている**. (このあたりはNLP -> RecSys の応用にも関連してそう.)
 To train sentence representations, prior work has used objectives to rank candidate next sentences (Jernite et al., 2017; Logeswaran and Lee, 2018), left-to-right generation of next sentence words given a representation of the previous sentence (Kiros et al., 2015), or denoising autoencoder derived objectives (Hill et al., 2016).
-文の表現を訓練するために、先行研究では、次の文の候補をランク付けする目的語（Jernite et al, 2017; Logeswaran and Lee, 2018）、前の文の表現を与えられた次の文の単語の左から右への生成（Kiros et al, 2015）、またはノイズ除去オートエンコーダ由来の目的語（Hill et al, 2016）が使用されている。
+文の表現を訓練するために、先行研究では、次の文の候補をランク付けする目的関数（Jernite et al, 2017; Logeswaran and Lee, 2018）、前の文の表現を与えられた次の文の単語の左から右への生成（Kiros et al, 2015）、または**ノイズ除去オートエンコーダ由来**(これはたぶんYahooさんの論文みたいな話だと思う...!)の目的関数（Hill et al, 2016）が使用されている。
+
 ELMo and its predecessor (Peters et al., 2017, 2018a) generalize traditional word embedding research along a different dimension.
 ELMoとその前身（Peters et al, 2017, 2018a）は、従来の単語埋め込み研究を異なる次元で一般化したものである。
 They extract context-sensitive features from a left-to-right and a right-to-left language model.
-左から右、右から左の言語モデルから文脈に応じた特徴を抽出する。
+left-to-right、right-to-left(i.e. previous-token-predictionタスク...??)の言語モデルから文脈に応じた特徴を抽出する。
 The contextual representation of each token is the concatenation of the left-to-right and right-to-left representations.
-各トークンの文脈表現は、左から右への表現と右から左への表現の連結である。
+各トークンの文脈表現は、左から右への表現と右から左への表現の連結(=ベクトルをシンプルにconcatenateした感じ...??)である。
 When integrating contextual word embeddings with existing task-specific architectures, ELMo advances the state of the art for several major NLP benchmarks (Peters et al., 2018a) including question answering (Rajpurkar et al., 2016), sentiment analysis (Socher et al., 2013), and named entity recognition (Tjong Kim Sang and De Meulder, 2003).
-文脈に基づく単語埋め込みを既存のタスク固有のアーキテクチャと統合する場合、ELMoは、質問応答（Rajpurkar et al., 2016）、感情分析（Socher et al., 2013）、および名前付きエンティティ認識（Tjong Kim Sang and De Meulder, 2003）を含む、いくつかの主要なNLPベンチマーク（Peters et al.）
+文脈に基づく単語埋め込みを既存のタスク固有のアーキテクチャと統合する場合、ELMoは、質問応答（Rajpurkar et al., 2016）、感情分析（Socher et al., 2013）、および名前付きエンティティ認識（Tjong Kim Sang and De Meulder, 2003）を含む、いくつかの主要なNLPベンチマーク（Peters et al.）でSOTAを進歩させた.
 Melamud et al.(2016) proposed learning contextual representations through a task to predict a single word from both left and right context using LSTMs.
 Melamudら(2016)は、LSTMを用いて左右両方の文脈から一つの単語を予測する課題を通して文脈表現を学習することを提案した。
 Similar to ELMo, their model is feature-based and not deeply bidirectional.
-ELMoと同様、彼らのモデルは特徴ベースであり、深い双方向性はない。
+ELMoと同様、彼らのモデルは特徴ベースであり、深い双方向性はない.(双方向だがBERTとは違う、と...??)
 Fedus et al.(2018) shows that the cloze task can be used to improve the robustness of text generation models.
 Fedusら(2018)は、クローズ課題がテキスト生成モデルの頑健性を向上させるために利用できることを示している。
 
-## Unsupervised Fine-tuning Approaches 教師なし微調整アプローチ
+## Unsupervised Fine-tuning Approaches 教師なしfine-tuningアプローチ
 
 As with the feature-based approaches, the first works in this direction only pre-trained word embedding parameters from unlabeled text (Collobert and Weston, 2008).
 特徴ベースのアプローチと同様に、この方向での最初の研究は、ラベル付けされていないテキストから単語埋め込みパラメータを事前に訓練したのみである（Collobert and Weston, 2008）。
 More recently, sentence or document encoders which produce contextual token representations have been pre-trained from unlabeled text and fine-tuned for a supervised downstream task (Dai and Le, 2015; Howard and Ruder, 2018; Radford et al., 2018).
-最近では、文脈トークン表現を生成する文や文書のエンコーダーが、ラベル付けされていないテキストから事前に訓練され、教師ありの下流タスクのために微調整されている（Dai and Le, 2015; Howard and Ruder, 2018; Radford et al.）
+最近では、文脈トークン表現を生成する文や文書のエンコーダーが、ラベル付けされていないテキストから事前に訓練され、教師ありの下流タスクのためにfine-tuningされている（Dai and Le, 2015; Howard and Ruder, 2018; Radford et al.）
 The advantage of these approaches is that few parameters need to be learned from scratch.
-これらのアプローチの利点は、パラメータをゼロから学習する必要がほとんどないことだ。
+**これらのアプローチの利点は、パラメータをゼロから学習する必要がほとんどないこと**だ。
 At least partly due to this advantage, OpenAI GPT (Radford et al., 2018) achieved previously state-of-the-art results on many sentencelevel tasks from the GLUE benchmark (Wang et al., 2018a).
-少なくとも部分的にはこの利点により、OpenAI GPT (Radford et al, 2018)はGLUEベンチマーク(Wang et al, 2018a)の多くの文レベルタスクで、以前最先端の結果を達成した。
+**少なくとも部分的にはこの利点により、OpenAI GPT (Radford et al, 2018)はGLUEベンチマーク(Wang et al, 2018a)の多くの文レベルタスクで、以前最先端の結果を達成**した。
 Left-to-right language model-ing and auto-encoder objectives have been used for pre-training such models (Howard and Ruder, 2018; Radford et al., 2018; Dai and Le, 2015).
-左から右への言語モデル化とオートエンコーダの目的は、このようなモデルの事前学習に使用されてきた（Howard and Ruder, 2018; Radford et al, 2018; Dai and Le, 2015）。
+左から右への言語モデル化とオートエンコーダの目的関数は、このようなモデルの事前学習に使用されてきた（Howard and Ruder, 2018; Radford et al, 2018; Dai and Le, 2015）。
 
-## Transfer Learning from Supervised Data 
+## Transfer Learning from Supervised Data
 
 There has also been work showing effective transfer from supervised tasks with large datasets, such as natural language inference (Conneau et al., 2017) and machine translation (McCann et al., 2017).
-また、自然言語推論（Conneau et al, 2017）や機械翻訳（McCann et al, 2017）のように、大規模なデータセットを持つ教師ありタスクからの効果的な移行を示す研究もある。
+また、自然言語推論（Conneau et al, 2017）や機械翻訳（McCann et al, 2017）のように、大規模なデータセットを持つ**教師ありタスクからの効果的な転移学習**を示す研究もある. (事前学習されたパラメータをfine-tuning = 転移学習 で認識あってる...??:thinking:)
 Computer vision research has also demonstrated the importance of transfer learning from large pre-trained models, where an effective recipe is to fine-tune models pre-trained with ImageNet (Deng et al., 2009; Yosinski et al., 2014).
-コンピュータビジョンの研究では、事前に訓練された大規模なモデルからの転移学習の重要性も実証されており、効果的なレシピは、ImageNetで事前に訓練されたモデルを微調整することである（Deng et al, 2009; Yosinski et al, 2014）。
+コンピュータビジョンの研究では、事前に訓練された大規模なモデルからの転移学習の重要性も実証されており、効果的なレシピは、ImageNetで事前に訓練されたモデルを微調整することである（Deng et al, 2009; Yosinski et al, 2014）.(確かに、CVの分野では教師有り学習で得られたパラメータを使って、個別のタスクに転移学習させる印象があるかも...!:thinking:)
 
 # BERT バート
 
