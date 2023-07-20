@@ -15,7 +15,7 @@ We introduce a new language representation model called BERT, which stands for B
 Unlike recent language representation models (Peters et al., 2018a; Radford et al., 2018), BERT is designed to pretrain deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers.
 最近の言語表現モデル（Peters et al, 2018a; Radford et al, 2018）とは異なり、BERTは、すべての層で左右両方の文脈を共同で条件付けることによって、ラベル付けされていないテキストから深い双方向表現を事前学習するように設計されている。
 As a result, the pre-trained BERT model can be finetuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial taskspecific architecture modifications.
-その結果、事前に訓練されたBERTモデルは、タスク固有のアーキテクチャを大幅に変更することなく、質問応答や言語推論などの広範なタスクのための最先端のモデルを作成するために、出力層を1つ追加するだけで微調整することができる。
+その結果、事前に訓練されたBERTモデルは、タスク固有のアーキテクチャを大幅に変更することなく、質問応答や言語推論などの広範なタスクのための最先端のモデルを作成するために、出力層を1つ追加するだけでfine-tuningすることができる。
 BERT is conceptually simple and empirically powerful.
 BERTは概念的にシンプルで、経験的に強力である。
 It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5% (7.7% point absolute improvement), MultiNLI accuracy to 86.7% (4.6% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).
@@ -29,11 +29,11 @@ These include sentence-level tasks such as natural language inference (Bowman et
 これには、自然言語推論（Bowman et al, 2015; Williams et al, 2018）や言い換え（Dolan and Brockett, 2005）のような文レベルのタスクがあり、これらは文を全体的に分析することによって文間の関係を予測することを目的としている。
 
 There are two existing strategies for applying pre-trained language representations to downstream tasks: feature-based and fine-tuning.
-事前に訓練された言語表現を下流のタスクに適用するための既存の戦略には、特徴ベースと微調整の2つがある。
+事前に訓練された言語表現を下流のタスクに適用するための既存の戦略には、特徴ベースとfine-tuningの2つがある。
 The feature-based approach, such as ELMo (Peters et al., 2018a), uses task-specific architectures that include the pre-trained representations as additional features.
 ELMo（Petersら、2018a）のような特徴ベースのアプローチは、事前に訓練された表現を追加特徴として含むタスク固有のアーキテクチャを使用する。
 The fine-tuning approach, such as the Generative Pre-trained Transformer (OpenAI GPT) (Radford et al., 2018), introduces minimal task-specific parameters, and is trained on the downstream tasks by simply fine-tuning all pretrained parameters.
-**Generative Pre-trained Transformer (OpenAI GPT)** (Radford et al., 2018)のような微調整アプローチは、最小限のタスク固有のパラメータを導入し、すべての事前学習済みパラメータを微調整するだけで下流のタスクで学習される。
+**Generative Pre-trained Transformer (OpenAI GPT)** (Radford et al., 2018)のようなfine-tuningアプローチは、最小限のタスク固有のパラメータを導入し、すべての事前学習済みパラメータをfine-tuningするだけで下流のタスクで学習される。
 The two approaches share the same objective function during pre-training, where they use unidirectional language models to learn general language representations.
 この2つのアプローチは、事前学習において同じ目的関数を共有し、一般的な言語表現を学習するために一方向性言語モデルを使用する。
 We argue that current techniques restrict the power of the pre-trained representations, especially for the fine-tuning approaches.
@@ -53,7 +53,7 @@ The masked language model randomly masks some of the tokens from the input, and 
 Unlike left-toright language model pre-training, the MLM objective enables the representation to fuse the left and the right context, which allows us to pretrain a deep bidirectional Transformer.
 left-torightの言語モデルの事前学習とは異なり、**MLMの目的関数は左右の文脈を融合する表現を可能にし、deep bi-directional Transformerの事前学習を可能にする**.
 In addition to the masked language model, we also use a “next sentence prediction” task that jointly pretrains text-pair representations.
-マスクされた言語モデルに加え、テキストペア表現を共同で事前学習する“next sentence prediction”タスクも使用する. (i.e. 2つの目的関数を使って、事前学習するって事...??)
+マスクされた言語モデルに加え、テキストペア表現を共同で事前学習する **“next sentence prediction”タスク** も使用する. (i.e. 2つの目的関数を使って、事前学習するって事...??)
 The contributions of our paper are as follows:
 本稿の貢献は以下の通りである：
 
@@ -115,35 +115,43 @@ Left-to-right language model-ing and auto-encoder objectives have been used for 
 There has also been work showing effective transfer from supervised tasks with large datasets, such as natural language inference (Conneau et al., 2017) and machine translation (McCann et al., 2017).
 また、自然言語推論（Conneau et al, 2017）や機械翻訳（McCann et al, 2017）のように、大規模なデータセットを持つ**教師ありタスクからの効果的な転移学習**を示す研究もある. (事前学習されたパラメータをfine-tuning = 転移学習 で認識あってる...??:thinking:)
 Computer vision research has also demonstrated the importance of transfer learning from large pre-trained models, where an effective recipe is to fine-tune models pre-trained with ImageNet (Deng et al., 2009; Yosinski et al., 2014).
-コンピュータビジョンの研究では、事前に訓練された大規模なモデルからの転移学習の重要性も実証されており、効果的なレシピは、ImageNetで事前に訓練されたモデルを微調整することである（Deng et al, 2009; Yosinski et al, 2014）.(確かに、CVの分野では教師有り学習で得られたパラメータを使って、個別のタスクに転移学習させる印象があるかも...!:thinking:)
+コンピュータビジョンの研究では、事前に訓練された大規模なモデルからの転移学習の重要性も実証されており、効果的なレシピは、ImageNetで事前に訓練されたモデルをfine-tuningすることである（Deng et al, 2009; Yosinski et al, 2014）.(確かに、CVの分野では教師有り学習で得られたパラメータを使って、個別のタスクに転移学習させる印象があるかも...!:thinking:)
 
 # BERT バート
 
 We introduce BERT and its detailed implementation in this section.
 このセクションでは、BERT およびその詳細な実装について紹介する。
 There are two steps in our framework: pre-training and fine-tuning.
-私たちのフレームワークには、事前学習と微調整という2つのステップがある。
+私たちのフレームワークには、**事前学習とfine-tuningという2つのステップ**がある。
 During pre-training, the model is trained on unlabeled data over different pre-training tasks.
-事前学習では、モデルは異なる事前学習タスクのラベルなしデータで学習される。
+事前学習では、モデルは**異なる事前学習タスク**のラベルなしデータで学習される。(masked-token-prediction タスクと next-sentence-predictionタスク??)
 For finetuning, the BERT model is first initialized with the pre-trained parameters, and all of the parameters are fine-tuned using labeled data from the downstream tasks.
-微調整のために、BERT モデルは、まず事前に訓練されたパラメータで初期化され、下流タスクからのラベル 付きデータを使用してすべてのパラメータが微調整される。
+fine-tuningのために、**BERT モデルは、まず事前に訓練されたパラメータで初期化され、下流タスクからのラベル付きデータを使用してすべてのパラメータがfine-tuningされる**. (やっぱりfine-tuning = 転移学習なのかな)
 Each downstream task has separate fine-tuned models, even though they are initialized with the same pre-trained parameters.
-それぞれの下流タスクは、同じ事前訓練されたパラメータで初期化されているにもかかわらず、別々の微調整されたモデルを持っている。
+それぞれの下流タスクは、同じ事前訓練されたパラメータで初期化されているにもかかわらず、別々のfine-tuningされたモデルを持っている。
 The question-answering example in Figure 1 will serve as a running example for this section.
-図1の質問応答例が、このセクションの実行例となる。
+図1の質問応答例(=ある下流タスク?)が、このセクションの実行例となる。
 A distinctive feature of BERT is its unified architecture across different tasks.
-BERTの特徴は、異なるタスクにわたって統一されたアーキテクチャである。
+**BERTの特徴は、異なるタスクにわたって統一されたアーキテクチャ**である.
 There is minimal difference between the pre-trained architecture and the final downstream architecture.
-事前に訓練されたアーキテクチャと最終的なダウンストリーム・アーキテクチャの差はほとんどない。
+事前に訓練されたアーキテクチャと最終的なダウンストリーム・アーキテクチャの差はほとんどない.(違いは最終的な出力層の形くらい??)
 
 ### Model Architecture モデル・アーキテクチャ
 
-BERT’s model architecture is a multi-layer bidirectional Transformer encoder based on the original implementation described in Vaswani et al.(2017) and released in the tensor2tensor library.1 Because the use of Transformers has become common and our implementation is almost identical to the original, we will omit an exhaustive background description of the model architecture and refer readers to Vaswani et al.(2017) as well as excellent guides such as “The Annotated Transformer.”2 In this work, we denote the number of layers (i.e., Transformer blocks) as L, the hidden size as H, and the number of self-attention heads as A.3 We primarily report results on two model sizes: BERTBASE (L=12, H=768, A=12, Total Parameters=110M) and BERTLARGE (L=24, H=1024, A=16, Total Parameters=340M).
-BERTのモデルアーキテクチャは、Vaswani et al.(2017)で説明され、tensor2tensorライブラリでリリースされたオリジナルの実装に基づく多層双方向Transformerエンコーダである1。Transformerの使用は一般的になっており、我々の実装はオリジナルとほぼ同じであるため、モデルアーキテクチャの徹底的な背景説明は省略し、Vaswani et al.(2017) や、"The Annotated Transformer "のような優れたガイドを読者に紹介する2： BERTBASE (L=12, H=768, A=12, Total Parameters=110M)とBERTLARGE (L=24, H=1024, A=16, Total Parameters=340M)である。
+BERT’s model architecture is a multi-layer bidirectional Transformer encoder based on the original implementation described in Vaswani et al.(2017) and released in the tensor2tensor library.1
+BERTのモデルアーキテクチャは、Vaswani et al.(2017)(=Transformerの元論文)で説明され、tensor2tensorライブラリでリリースされたオリジナルの実装に基づく**multi-layer bidirectional Transformer encoder(多層双方向Transformerエンコーダ)**である。
+Because the use of Transformers has become common and our implementation is almost identical to the original, we will omit an exhaustive background description of the model architecture and refer readers to Vaswani et al.(2017) as well as excellent guides such as “The Annotated Transformer.”2
+Transformerの使用は一般的になっており、我々の実装はオリジナルとほぼ同じであるため、モデルアーキテクチャの徹底的な背景説明は省略し、Vaswani et al.(2017) や、"The Annotated Transformer "のような優れたガイドを読者に紹介する.
+
+In this work, we denote the number of layers (i.e., Transformer blocks) as L, the hidden size as H, and the number of self-attention heads as A.
+本研究では、the number of layers (i.e., Transformer blocks)を$L$、hidden size(=なんだろう...FFNの隠れ層の次元数??)を $H$、self-attentionのhead数を $A$ と定義する.
+We primarily report results on two model sizes: BERTBASE (L=12, H=768, A=12, Total Parameters=110M) and BERTLARGE (L=24, H=1024, A=16, Total Parameters=340M).
+本研究は、2つのモデルサイズの結果を報告する: BERTBASE (L=12, H=768, A=12, Total Parameters=110M)とBERTLARGE (L=24, H=1024, A=16, Total Parameters=340M)である.
+
 BERTBASE was chosen to have the same model size as OpenAI GPT for comparison purposes.
 BERTBASEは、比較のためにOpenAI GPTと同じモデルサイズを選択した。
 Critically, however, the BERT Transformer uses bidirectional self-attention, while the GPT Transformer uses constrained self-attention where every token can only attend to context to its left.4
-しかし、決定的に重要なのは、BERTトランスフォーマーは双方向の自己注意を使用するのに対して、GPTトランスフォーマーは制約された自己注意を使用することである。
+しかし、決定的に重要なのは、BERTトランスフォーマーは双方向のself-attentionを使用するのに対して、GPTトランスフォーマーは制約された(i.e. left-to-rightの...!)self-attentionを使用することである。(この違いを本論文では評価したい...!って事:thinking:)
 
 ### Input/Output Representations 入出力表現
 
@@ -201,7 +209,7 @@ In all of our experiments, we mask 15% of all WordPiece tokens in each sequence 
 In contrast to denoising auto-encoders (Vincent et al., 2008), we only predict the masked words rather than reconstructing the entire input.
 ノイズ除去オートエンコーダ（Vincent et al, 2008）とは対照的に、入力全体を再構成するのではなく、マスクされた単語のみを予測する。
 Although this allows us to obtain a bidirectional pre-trained model, a downside is that we are creating a mismatch between pre-training and fine-tuning, since the [MASK] token does not appear during fine-tuning.
-これによって双方向の事前学習済みモデルを得ることができるが、欠点は、事前学習と微調整の間にミスマッチが生じることである。
+これによって双方向の事前学習済みモデルを得ることができるが、欠点は、事前学習とfine-tuningの間にミスマッチが生じることである。
 To mitigate this, we do not always replace “masked” words with the actual [MASK] token.
 これを軽減するため、「マスク」された単語を実際の[MASK]トークンに置き換えるとは限らない。
 The training data generator chooses 15% of the token positions at random for prediction.
@@ -240,22 +248,22 @@ For Wikipedia we extract only the text passages and ignore lists, tables, and he
 It is critical to use a document-level corpus rather than a shuffled sentence-level corpus such as the Billion Word Benchmark (Chelba et al., 2013) in order to extract long contiguous sequences.
 長い連続シーケンスを抽出するためには、Billion Word Benchmark (Chelba et al., 2013)のようなシャッフルされた文レベルのコーパスではなく、文書レベルのコーパスを使用することが重要である。
 
-## Fine-tuning BERT BERTの微調整
+## Fine-tuning BERT BERTのfine-tuning
 
 Fine-tuning is straightforward since the selfattention mechanism in the Transformer allows BERT to model many downstream tasks— whether they involve single text or text pairs—by swapping out the appropriate inputs and outputs.
-Transformer の自己注 意メカニズムにより、BERT は、適切な入力と出力を入れ替えることによって、単一のテキストまたはテキストペアを含むかどうかに関係なく、 多くの下流タスクをモデル化することができるため、微調整は簡単です。
+Transformer の自己注 意メカニズムにより、BERT は、適切な入力と出力を入れ替えることによって、単一のテキストまたはテキストペアを含むかどうかに関係なく、 多くの下流タスクをモデル化することができるため、fine-tuningは簡単です。
 For applications involving text pairs, a common pattern is to independently encode text pairs before applying bidirectional cross attention, such as Parikh et al.(2016); Seo et al.(2017).
 テキストペアを含むアプリケーションの場合、Parikhら(2016); Seoら(2017)のように、双方向交差注意を適用する前にテキストペアを独立してエンコードするのが一般的なパターンである。
 BERT instead uses the self-attention mechanism to unify these two stages, as encoding a concatenated text pair with self-attention effectively includes bidirectional cross attention between two sentences.
 BERT は、自己注意を用いて連結されたテキストペアを符号化することで、2 つの文の間の双方向の相互注意を効果的に含むため、代わりに自己注意メカニズムを使用して、これらの 2 つの段階を統一する。
 For each task, we simply plug in the taskspecific inputs and outputs into BERT and finetune all the parameters end-to-end.
-各タスクについて、タスク固有の入出力をBERTに単純にプラグインし、すべてのパラメーターをエンドツーエンドで微調整する。
+各タスクについて、タスク固有の入出力をBERTに単純にプラグインし、すべてのパラメーターをエンドツーエンドでfine-tuningする。
 At the input, sentence A and sentence B from pre-training are analogous to (1) sentence pairs in paraphrasing, (2) hypothesis-premise pairs in entailment, (3) question-passage pairs in question answering, and (4) a degenerate text-∅ pair in text classification or sequence tagging.
 入力において、事前学習による文Aと文Bは、(1)言い換えにおける文のペア、(2)含意における仮説と前提のペア、(3)質問応答における質問とパッセージのペア、(4)テキスト分類や配列タグ付けにおける退化したテキストとφのペアに類似している。
 At the output, the token representations are fed into an output layer for tokenlevel tasks, such as sequence tagging or question answering, and the [CLS] representation is fed into an output layer for classification, such as entailment or sentiment analysis.
 出力では、トークン表現は、シーケンス・タグ付けや質問応答などのトークン・レベルのタスクのための出力層に供給され、[CLS]表現は、含意分析やセンチメント分析などの分類のための出力層に供給される。
 Compared to pre-training, fine-tuning is relatively inexpensive.
-事前トレーニングに比べ、微調整は比較的安価である。
+事前トレーニングに比べ、fine-tuningは比較的安価である。
 All of the results in the paper can be replicated in at most 1 hour on a single Cloud TPU, or a few hours on a GPU, starting from the exact same pre-trained model.7 We describe the task-specific details in the corresponding subsections of Section 4.
 本稿の結果はすべて、全く同じ事前学習済みモデルから始めて、1つのCloud TPUで最大1時間、GPUで数時間で再現できる7。
 More details can be found in Appendix A.5.
@@ -264,27 +272,27 @@ More details can be found in Appendix A.5.
 # Experiments 実験
 
 In this section, we present BERT fine-tuning results on 11 NLP tasks.
-このセクションでは、11 の NLP タスクに関する BERT の微調整結果を示す。
+このセクションでは、11 の NLP タスクに関する BERT のfine-tuning結果を示す。
 
 ## GLUE ♪グルー
 
 The General Language Understanding Evaluation (GLUE) benchmark (Wang et al., 2018a) is a collection of diverse natural language understanding tasks.
 一般言語理解評価（GLUE）ベンチマーク（Wang et al, 2018a）は、多様な自然言語理解タスクを集めたものである。
 Detailed descriptions of GLUE datasets are included in Appendix B.1.To fine-tune on GLUE, we represent the input sequence (for single sentence or sentence pairs) as described in Section 3, and use the final hidden vector C ∈ R H corresponding to the first input token ([CLS]) as the aggregate representation.
-GLUEデータセットの詳細な説明は付録B.1に含まれている。GLUEで微調整を行うために、セクション3で説明したように入力シーケンス（単一センテンスまたはセンテンスペア）を表現し、最初の入力トークン（[CLS]）に対応する最終的な隠れベクトルC∈R Hを集約表現として使用する。
+GLUEデータセットの詳細な説明は付録B.1に含まれている。GLUEでfine-tuningを行うために、セクション3で説明したように入力シーケンス（単一センテンスまたはセンテンスペア）を表現し、最初の入力トークン（[CLS]）に対応する最終的な隠れベクトルC∈R Hを集約表現として使用する。
 The only new parameters introduced during fine-tuning are classification layer weights W ∈ R K×H, where K is the number of labels.
-微調整の際に導入される唯一の新しいパラメータは、分類層の重みW∈R K×H（K はラベルの数）である。
+fine-tuningの際に導入される唯一の新しいパラメータは、分類層の重みW∈R K×H（K はラベルの数）である。
 We compute a standard classification loss with C and W, i.e., log(softmax(CWT )).
 CとWによる標準的な分類損失、すなわちlog(softmax(CWT ))を計算する。
 
 We use a batch size of 32 and fine-tune for 3 epochs over the data for all GLUE tasks.
-バッチサイズ32を使用し、すべてのGLUEタスクのデータに対して3エポックで微調整を行う。
+バッチサイズ32を使用し、すべてのGLUEタスクのデータに対して3エポックでfine-tuningを行う。
 For each task, we selected the best fine-tuning learning rate (among 5e-5, 4e-5, 3e-5, and 2e-5) on the Dev set.
-各タスクについて、Devセットで最適な微調整学習率（5e-5、4e-5、3e-5、2e-5の中から）を選択した。
+各タスクについて、Devセットで最適なfine-tuning学習率（5e-5、4e-5、3e-5、2e-5の中から）を選択した。
 Additionally, for BERTLARGE we found that finetuning was sometimes unstable on small datasets, so we ran several random restarts and selected the best model on the Dev set.
 さらにBERTLARGEでは、小さなデータセットではファインチューニングが不安定になることがあることがわかったので、何度かランダムな再スタートを実行し、Devセットで最良のモデルを選択した。
 With random restarts, we use the same pre-trained checkpoint but perform different fine-tuning data shuffling and classifier layer initialization.9 Results are presented in Table 1.
-ランダム再スタートでは、同じ事前学習済みチェックポイントを使用するが、異なる微調整データシャッフリングと分類器レイヤーの初期化を実行する9。
+ランダム再スタートでは、同じ事前学習済みチェックポイントを使用するが、異なるfine-tuningデータシャッフリングと分類器レイヤーの初期化を実行する9。
 Both BERTBASE and BERTLARGE outperform all systems on all tasks by a substantial margin, obtaining 4.5% and 7.0% respective average accuracy improvement over the prior state of the art.
 BERTBASEとBERTLARGEは、すべてのタスクにおいてすべてのシステムを大幅に凌駕し、従来の技術水準に対してそれぞれ4.5%と7.0%の平均精度向上を達成した。
 Note that BERTBASE and OpenAI GPT are nearly identical in terms of model architecture apart from the attention masking.
@@ -307,7 +315,7 @@ Given a question and a passage from Wikipedia containing the answer, the task is
 As shown in Figure 1, in the question answering task, we represent the input question and passage as a single packed sequence, with the question using the A embedding and the passage using the B embedding.
 図1に示すように、質問回答タスクでは、入力された質問と文章を1つのパックされたシーケンスとして表現し、質問にはAエンベッディングを、文章にはBエンベッディングを使用する。
 We only introduce a start vector S ∈ R H and an end vector E ∈ R H during fine-tuning.
-微調整の際には、開始ベクトルS（R H）と終了ベクトルE（R H）のみを導入する。
+fine-tuningの際には、開始ベクトルS（R H）と終了ベクトルE（R H）のみを導入する。
 The probability of word i being the start of the answer span is computed as a dot product between Ti and S followed by a softmax over all of the words in the paragraph: Pi = e S·Ti P j e S·Tj .
 単語 i が回答スパンの開始である確率は、Ti と S の間のドット積として計算され、段落内のすべての単語に対するソフトマックスが続きます： Pi = e S-Ti P j e S-Tj .
 The analogous formula is used for the end of the answer span.
@@ -317,13 +325,13 @@ The score of a candidate span from position i to position j is defined as S·Ti 
 The training objective is the sum of the log-likelihoods of the correct start and end positions.
 訓練目標は、正しい開始位置と終了位置の対数尤度の和である。
 We fine-tune for 3 epochs with a learning rate of 5e-5 and a batch size of 32.
-学習率5e-5、バッチサイズ32で3エポック微調整。
+学習率5e-5、バッチサイズ32で3エポックfine-tuning。
 Table 2 shows top leaderboard entries as well as results from top published systems (Seo et al., 2017; Clark and Gardner, 2018; Peters et al., 2018a; Hu et al., 2018).
 表2は、リーダーボードの上位エントリーと、公表された上位システムの結果（Seo et al.）
 The top results from the SQuAD leaderboard do not have up-to-date public system descriptions available,11 and are allowed to use any public data when training their systems.
 SQuADのリーダーボードで上位にランクインした選手は、最新の公開システムに関する記述がない11。
 We therefore use modest data augmentation in our system by first fine-tuning on TriviaQA (Joshi et al., 2017) befor fine-tuning on SQuAD.
-したがって、私たちのシステムでは、SQuADで微調整を行う前に、まずTriviaQA（Joshi et al.
+したがって、私たちのシステムでは、SQuADでfine-tuningを行う前に、まずTriviaQA（Joshi et al.
 Our best performing system outperforms the top leaderboard system by +1.5 F1 in ensembling and +1.3 F1 as a single system.
 我々の最高性能のシステムは、アンサンブルで+1.5 F1、単一システムとして+1.3 F1、トップリーダーボードシステムを上回った。
 In fact, our single BERT model outperforms the top ensemble system in terms of F1 score.
@@ -348,7 +356,7 @@ sˆi,j＞snull＋τのとき、非ヌル回答を予測する。閾値τは、F1
 We did not use TriviaQA data for this model.
 このモデルにはTriviaQAのデータは使用していない。
 We fine-tuned for 2 epochs with a learning rate of 5e-5 and a batch size of 48.
-学習率5e-5、バッチサイズ48で2エポック微調整した。
+学習率5e-5、バッチサイズ48で2エポックfine-tuningした。
 The results compared to prior leaderboard entries and top published work (Sun et al., 2018; Wang et al., 2018b) are shown in Table 3, excluding systems that use BERT as one of their components.
 BERTをコンポーネントの1つとして使用するシステムを除き、先行するリーダーボードエントリーおよびトップ公開研究（Sun et al, 2018; Wang et al, 2018b）と比較した結果を表3に示す。
 We observe a +5.1 F1 improvement over the previous best system.
@@ -361,11 +369,11 @@ Situations With Adversarial Generations（SWAG）データセットには、接�
 Given a sentence, the task is to choose the most plausible continuation among four choices.
 ある文章が与えられたら、4つの選択肢の中から最も妥当な続きを選ぶ。
 When fine-tuning on the SWAG dataset, we construct four input sequences, each containing the concatenation of the given sentence (sentence A) and a possible continuation (sentence B).
-SWAGデータセットで微調整を行う場合、与えられた文（文A）と可能性のある続き（文B）を連結した4つの入力シーケンスを構築する。
+SWAGデータセットでfine-tuningを行う場合、与えられた文（文A）と可能性のある続き（文B）を連結した4つの入力シーケンスを構築する。
 The only task-specific parameters introduced is a vector whose dot product with the [CLS] token representation C denotes a score for each choice which is normalized with a softmax layer.
 タスク固有のパラメータとして導入されるのは、[CLS]トークン表現Cとの内積が各選択肢のスコアを示すベクトルだけで、これはソフトマックス層で正規化される。
 We fine-tune the model for 3 epochs with a learning rate of 2e-5 and a batch size of 16.
-学習率2e-5、バッチサイズ16のモデルを3エポックで微調整。
+学習率2e-5、バッチサイズ16のモデルを3エポックでfine-tuning。
 Results are presented in Table 4.
 結果を表4に示す。
 BERTLARGE outperforms the authors’ baseline ESIM+ELMo system by +27.1% and OpenAI GPT by 8.3%.
@@ -381,7 +389,7 @@ Additional ablation studies can be found in Appendix C.
 ## 5.1 Effect of Pre-training Tasks 5.1 事前トレーニング課題の効果
 
 We demonstrate the importance of the deep bidirectionality of BERT by evaluating two pretraining objectives using exactly the same pretraining data, fine-tuning scheme, and hyperparameters as BERTBASE:
-BERTBASEと全く同じ事前学習データ、微調整スキーム、およびハイパーパラメータを使用して、2つの事前学習目標を評価することにより、BERTの深い双方向性の重要性を実証する：
+BERTBASEと全く同じ事前学習データ、fine-tuningスキーム、およびハイパーパラメータを使用して、2つの事前学習目標を評価することにより、BERTの深い双方向性の重要性を実証する：
 
 ### No NSP: NSPはない：
 
@@ -397,7 +405,7 @@ The left-only constraint was also applied at fine-tuning, because removing it in
 Additionally, this model was pre-trained without the NSP task.
 さらに、このモデルはNSPタスクなしで事前訓練された。
 This is directly comparable to OpenAI GPT, but using our larger training dataset, our input representation, and our fine-tuning scheme.
-これはOpenAIのGPTに直接匹敵しますが、我々のより大きなトレーニングデータセット、入力表現、微調整スキームを使用しています。
+これはOpenAIのGPTに直接匹敵しますが、我々のより大きなトレーニングデータセット、入力表現、fine-tuningスキームを使用しています。
 
 We first examine the impact brought by the NSP task.
 まず、NSPのタスクがもたらした影響を検証する。
@@ -421,13 +429,13 @@ However: (a) this is twice as expensive as a single bidirectional model; (b) thi
 ## Effect of Model Size モデルサイズの効果
 
 In this section, we explore the effect of model size on fine-tuning task accuracy.
-このセクションでは、モデルのサイズが微調整タスクの精度に与える影響を探る。
+このセクションでは、モデルのサイズがfine-tuningタスクの精度に与える影響を探る。
 We trained a number of BERT models with a differing number of layers, hidden units, and attention heads, while otherwise using the same hyperparameters and training procedure as described previously.
 我々は、層数、隠れユニット数、および注意ヘッド数が異なる多数の BERT モデルを訓練したが、それ以外は、前述と同じハイパーパラメータと訓練手順を使用した。
 Results on selected GLUE tasks are shown in Table 6.
 GLUEタスクの結果を表6に示す。
 In this table, we report the average Dev Set accuracy from 5 random restarts of fine-tuning.
-この表では、5回のランダムな微調整の再スタートから得られた平均Dev Set精度を報告する。
+この表では、5回のランダムなfine-tuningの再スタートから得られた平均Dev Set精度を報告する。
 We can see that larger models lead to a strict accuracy improvement across all four datasets, even for MRPC which only has 3,600 labeled training examples, and is substantially different from the pre-training tasks.
 より大きなモデルは、4つのデータセットすべてにおいて厳密な精度向上につながることがわかります。MRPCの場合は、3,600のラベル付き訓練例しかなく、訓練前のタスクとは大きく異なります。
 It is also perhaps surprising that we are able to achieve such significant improvements on top of models which are already quite large relative to the existing literature.
@@ -443,12 +451,12 @@ However, we believe that this is the first work to demonstrate convincingly that
 Peters et al.(2018b) presented mixed results on the downstream task impact of increasing the pre-trained bi-LM size from two to four layers and Melamud et al.(2016) mentioned in passing that increasing hidden dimension size from 200 to 600 helped, but increasing further to 1,000 did not bring further improvements.
 Petersら(2018b)は、事前に訓練されたbi-LMのサイズを2層から4層に増やした場合の下流タスクへの影響について、さまざまな結果を示しており、Melamudら(2016)は、隠れ次元サイズを200から600に増やすことは助けになったが、さらに1,000に増やしてもそれ以上の改善はもたらさなかったと一応言及している。
 Both of these prior works used a featurebased approach — we hypothesize that when the model is fine-tuned directly on the downstream tasks and uses only a very small number of randomly initialized additional parameters, the taskspecific models can benefit from the larger, more expressive pre-trained representations even when downstream task data is very small.
-これらの先行研究はいずれも特徴ベースのアプローチを用いている。我々は、モデルが下流のタスク上で直接微調整され、非常に少数のランダムに初期化された追加パラメータのみを使用する場合、下流のタスクデータが非常に少ない場合でも、タスク固有のモデルは、より大きく、より表現力の高い事前訓練された表現から恩恵を受けることができるという仮説を立てている。
+これらの先行研究はいずれも特徴ベースのアプローチを用いている。我々は、モデルが下流のタスク上で直接fine-tuningされ、非常に少数のランダムに初期化された追加パラメータのみを使用する場合、下流のタスクデータが非常に少ない場合でも、タスク固有のモデルは、より大きく、より表現力の高い事前訓練された表現から恩恵を受けることができるという仮説を立てている。
 
 ## Feature-based Approach with BERT BERTによる特徴ベースのアプローチ
 
 All of the BERT results presented so far have used the fine-tuning approach, where a simple classification layer is added to the pre-trained model, and all parameters are jointly fine-tuned on a downstream task.
-これまでに発表された BERT の結果はすべて、事前に訓練されたモデルに単純な分類層を追加し、すべてのパ ラメータを下流のタスク上で共同で微調整する、微調整アプローチを使用している。
+これまでに発表された BERT の結果はすべて、事前に訓練されたモデルに単純な分類層を追加し、すべてのパ ラメータを下流のタスク上で共同でfine-tuningする、fine-tuningアプローチを使用している。
 However, the feature-based approach, where fixed features are extracted from the pretrained model, has certain advantages.
 しかし、事前に訓練されたモデルから固定的な特徴を抽出する特徴ベースのアプローチには、一定の利点がある。
 First, not all tasks can be easily represented by a Transformer encoder architecture, and therefore require a task-specific model architecture to be added.
@@ -464,7 +472,7 @@ Following standard practice, we formulate this as a tagging task but do not use 
 We use the representation of the first sub-token as the input to the token-level classifier over the NER label set.
 最初のサブ・トークンの表現を、NERラベル・セットに対するトークン・レベル分類器の入力として使用する。
 To ablate the fine-tuning approach, we apply the feature-based approach by extracting the activations from one or more layers without fine-tuning any parameters of BERT.
-微調整アプローチを排除するために、BERT のパラメータを微調整することなく、1 つまたは複数の層からアクティ ブを抽出することによって、特徴ベースのアプローチを適用する。
+fine-tuningアプローチを排除するために、BERT のパラメータをfine-tuningすることなく、1 つまたは複数の層からアクティ ブを抽出することによって、特徴ベースのアプローチを適用する。
 These contextual embeddings are used as input to a randomly initialized two-layer 768-dimensional BiLSTM before the classification layer.
 これらの文脈埋め込みは、分類層の前にランダムに初期化された768次元の2層BiLSTMの入力として使われる。
 Results are presented in Table 7.
@@ -472,9 +480,9 @@ Results are presented in Table 7.
 BERTLARGE performs competitively with state-of-the-art methods.
 BERTLARGEは、最先端の手法と遜色ない性能を発揮する。
 The best performing method concatenates the token representations from the top four hidden layers of the pre-trained Transformer, which is only 0.3 F1 behind fine-tuning the entire model.
-最もパフォーマンスの高い方法は、事前に訓練されたTransformerの上位4つの隠れ層からトークン表現を連結するもので、モデル全体を微調整するのと0.3F1しか変わらない。
+最もパフォーマンスの高い方法は、事前に訓練されたTransformerの上位4つの隠れ層からトークン表現を連結するもので、モデル全体をfine-tuningするのと0.3F1しか変わらない。
 This demonstrates that BERT is effective for both finetuning and feature-based approaches.
-このことは、BERTが微調整と特徴ベースのアプローチの両方に有効であることを示している。
+このことは、BERTがfine-tuningと特徴ベースのアプローチの両方に有効であることを示している。
 
 # Conclusion 結論
 
