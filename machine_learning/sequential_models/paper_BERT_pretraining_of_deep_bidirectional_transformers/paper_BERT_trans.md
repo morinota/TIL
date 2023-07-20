@@ -236,18 +236,18 @@ We compare variations of this procedure in Appendix C.2.
 ### 3.1.2. Task #2: Next Sentence Prediction (NSP) タスク #2: 次の文の予測 (NSP)
 
 Many important downstream tasks such as Question Answering (QA) and Natural Language Inference (NLI) are based on understanding the relationship between two sentences, which is not directly captured by language modeling.
-質問応答（QA）や自然言語推論（NLI）のような多くの重要な下流タスクは、言語モデリングでは直接捉えられない2つの文の関係を理解することに基づいている。
+質問応答（QA）や自然言語推論（NLI）のような多くの重要な下流タスクは、**言語モデリング(=next-token-predictionタスク??)では直接捉えられない2つの文の関係**を理解することに基づいている.
 In order to train a model that understands sentence relationships, we pre-train for a binarized next sentence prediction task that can be trivially generated from any monolingual corpus.
-文の関係を理解するモデルを訓練するために、任意のモノリンガルコーパスから些細なことで生成できる二値化された次文予測タスクの事前訓練を行う。
+文の関係を理解するモデルを訓練するために、任意のモノリンガルコーパスから些細なことで生成できる**binarized next sentence prediction(二値化された次文予測)タスク**の事前訓練を行う。
 Specifically, when choosing the sentences A and B for each pretraining example, 50% of the time B is the actual next sentence that follows A (labeled as IsNext), and 50% of the time it is a random sentence from the corpus (labeled as NotNext).
-具体的には、各予習例で文Aと文Bを選択する際、50％の確率で文BはAに続く実際の次の文（IsNextとラベル付け）であり、50％の確率でコーパスからのランダムな文（NotNextとラベル付け）である。
+具体的には、事前学習に使用する各ペア文Aと文Bを選択する際、50％の確率で文BはAに続く実際の次の文(`IsNext`とラベル付け)であり、50％の確率でコーパスからのランダムな文(`NotNext`とラベル付け)である.
 As we show in Figure 1, C is used for next sentence prediction (NSP).5 Despite its simplicity, we demonstrate in Section 5.1 that pre-training towards this task is very beneficial to both QA and NLI.6
-図1に示すように、Cは次文予測（NSP）に使用される5。その単純さにもかかわらず、このタスクに向けた事前学習がQAとNLIの両方にとって非常に有益であることをセクション5.1で示す6。
+図1に示すように、$C$ (特殊なtokenのhidden state) は次文予測（NSP）に使用される。**その単純さにもかかわらず、このタスク(NSP)の事前学習がQAとNLIの両方にとって非常に有益である**ことをセクション5.1で示す6。
 
 The NSP task is closely related to representationlearning objectives used in Jernite et al.(2017) and Logeswaran and Lee (2018).
 NSPタスクは、Jerniteら(2017)やLogeswaran and Lee(2018)で用いられた表現学習目標と密接に関連している。
 However, in prior work, only sentence embeddings are transferred to down-stream tasks, where BERT transfers all parameters to initialize end-task model parameters.
-しかし、先行研究では、文埋め込みのみがダウンストリームタスクに転送されるのに対し、BERT はエンドタスクモデルパラメータを初期化するためにすべてのパラメータを転送する。
+しかし、先行研究では、文埋め込みのみが下流タスクに転送されるのに対し、**BERT は下流モデルパラメータを初期化するためにすべてのパラメータを転送する**.
 
 ### 3.1.3. Pre-training data 事前学習データ
 
