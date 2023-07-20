@@ -247,14 +247,14 @@ As we show in Figure 1, C is used for next sentence prediction (NSP).5 Despite i
 The NSP task is closely related to representationlearning objectives used in Jernite et al.(2017) and Logeswaran and Lee (2018).
 NSPタスクは、Jerniteら(2017)やLogeswaran and Lee(2018)で用いられた表現学習目標と密接に関連している。
 However, in prior work, only sentence embeddings are transferred to down-stream tasks, where BERT transfers all parameters to initialize end-task model parameters.
-しかし、先行研究では、文埋め込みのみが下流タスクに転送されるのに対し、**BERT は下流モデルパラメータを初期化するためにすべてのパラメータを転送する**.
+しかし、先行研究では、文埋め込みのみが下流タスクに転送される(モデルに入力する特徴量的な使い方??)のに対し、**BERT は下流モデルパラメータを初期化するためにすべてのパラメータを転送する**.(転移学習的には、そりゃそうって感じがする...!)
 
 ### 3.1.3. Pre-training data 事前学習データ
 
 The pre-training procedure largely follows the existing literature on language model pre-training.
 事前学習手順は、言語モデルの事前学習に関する既存の文献にほぼ従っている。
 For the pre-training corpus we use the BooksCorpus (800M words) (Zhu et al., 2015) and English Wikipedia (2,500M words).
-事前学習コーパスには、BooksCorpus（800M語）（Zhu et al, 2015）と英語版ウィキペディア（2,500M語）を使用する。
+事前学習コーパスには、BooksCorpus（800M語）（Zhu et al, 2015）と英語版ウィキペディア（2,500M語）を使用する.
 For Wikipedia we extract only the text passages and ignore lists, tables, and headers.
 ウィキペディアの場合、テキスト部分のみを抽出し、リスト、表、ヘッダーは無視する。
 It is critical to use a document-level corpus rather than a shuffled sentence-level corpus such as the Billion Word Benchmark (Chelba et al., 2013) in order to extract long contiguous sequences.
@@ -263,19 +263,21 @@ It is critical to use a document-level corpus rather than a shuffled sentence-le
 ## 3.2. Fine-tuning BERT BERTのfine-tuning
 
 Fine-tuning is straightforward since the selfattention mechanism in the Transformer allows BERT to model many downstream tasks— whether they involve single text or text pairs—by swapping out the appropriate inputs and outputs.
-Transformer の自己注 意メカニズムにより、BERT は、適切な入力と出力を入れ替えることによって、単一のテキストまたはテキストペアを含むかどうかに関係なく、 多くの下流タスクをモデル化することができるため、fine-tuningは簡単です。
+Transformer の self-attention メカニズムにより、BERT は、**適切な入力と出力を入れ替える(i.e. 入力層と出力層の形のみを変形する...!)ことによって**、単一のテキストまたはテキストペアを含むかどうかに関係なく、 多くの下流タスクをモデル化することができるため、fine-tuningは簡単です。
 For applications involving text pairs, a common pattern is to independently encode text pairs before applying bidirectional cross attention, such as Parikh et al.(2016); Seo et al.(2017).
-テキストペアを含むアプリケーションの場合、Parikhら(2016); Seoら(2017)のように、双方向交差注意を適用する前にテキストペアを独立してエンコードするのが一般的なパターンである。
+テキストペアを含むアプリケーションの場合、Parikhら(2016); Seoら(2017)のように、bidirectional cross attention(双方向交差attention)を適用する前にテキストペアを独立してエンコードするのが一般的なパターンである。
 BERT instead uses the self-attention mechanism to unify these two stages, as encoding a concatenated text pair with self-attention effectively includes bidirectional cross attention between two sentences.
-BERT は、自己注意を用いて連結されたテキストペアを符号化することで、2 つの文の間の双方向の相互注意を効果的に含むため、代わりに自己注意メカニズムを使用して、これらの 2 つの段階を統一する。
+BERT は、self-attention を用いて連結されたテキストペアを符号化することで、2つの文の間のbidirectional cross attentionを効果的に含むため、代わりにself-attentionメカニズムを使用して、これらの 2つの段階を統一する。
+
 For each task, we simply plug in the taskspecific inputs and outputs into BERT and finetune all the parameters end-to-end.
-各タスクについて、タスク固有の入出力をBERTに単純にプラグインし、すべてのパラメーターをエンドツーエンドでfine-tuningする。
+各タスクについて、**タスク固有の入出力をBERTに単純にプラグイン**し、すべてのパラメータをエンドツーエンドでfine-tuningする.
 At the input, sentence A and sentence B from pre-training are analogous to (1) sentence pairs in paraphrasing, (2) hypothesis-premise pairs in entailment, (3) question-passage pairs in question answering, and (4) a degenerate text-∅ pair in text classification or sequence tagging.
 入力において、事前学習による文Aと文Bは、(1)言い換えにおける文のペア、(2)含意における仮説と前提のペア、(3)質問応答における質問とパッセージのペア、(4)テキスト分類や配列タグ付けにおける退化したテキストとφのペアに類似している。
 At the output, the token representations are fed into an output layer for tokenlevel tasks, such as sequence tagging or question answering, and the [CLS] representation is fed into an output layer for classification, such as entailment or sentiment analysis.
-出力では、トークン表現は、シーケンス・タグ付けや質問応答などのトークン・レベルのタスクのための出力層に供給され、[CLS]表現は、含意分析やセンチメント分析などの分類のための出力層に供給される。
+出力では、token表現は、シーケンス・タグ付けや質問応答などのトークン・レベルのタスクのための出力層に供給され、[CLS]表現は、含意分析やセンチメント分析などの分類のための出力層に供給される。
+
 Compared to pre-training, fine-tuning is relatively inexpensive.
-事前トレーニングに比べ、fine-tuningは比較的安価である。
+事前学習に比べ、fine-tuningは比較的安価である。
 All of the results in the paper can be replicated in at most 1 hour on a single Cloud TPU, or a few hours on a GPU, starting from the exact same pre-trained model.7 We describe the task-specific details in the corresponding subsections of Section 4.
 本稿の結果はすべて、全く同じ事前学習済みモデルから始めて、1つのCloud TPUで最大1時間、GPUで数時間で再現できる7。
 More details can be found in Appendix A.5.
@@ -284,18 +286,20 @@ More details can be found in Appendix A.5.
 # 4. Experiments 実験
 
 In this section, we present BERT fine-tuning results on 11 NLP tasks.
-このセクションでは、11 の NLP タスクに関する BERT のfine-tuning結果を示す。
+このセクションでは、11 個の NLP タスクに関する BERT のfine-tuning結果を示す。
 
 ## 4.1. GLUE ♪グルー
 
-The General Language Understanding Evaluation (GLUE) benchmark (Wang et al., 2018a) is a collection of diverse natural language understanding tasks.
-一般言語理解評価（GLUE）ベンチマーク（Wang et al, 2018a）は、多様な自然言語理解タスクを集めたものである。
-Detailed descriptions of GLUE datasets are included in Appendix B.1.To fine-tune on GLUE, we represent the input sequence (for single sentence or sentence pairs) as described in Section 3, and use the final hidden vector C ∈ R H corresponding to the first input token ([CLS]) as the aggregate representation.
-GLUEデータセットの詳細な説明は付録B.1に含まれている。GLUEでfine-tuningを行うために、セクション3で説明したように入力シーケンス（単一センテンスまたはセンテンスペア）を表現し、最初の入力トークン（[CLS]）に対応する最終的な隠れベクトルC∈R Hを集約表現として使用する。
+The **General Language Understanding Evaluation (GLUE)** benchmark (Wang et al., 2018a) is a collection of diverse natural language understanding tasks.
+**General Language Understanding Evaluation (GLUE)** ベンチマーク（Wang et al, 2018a）は、**多様な自然言語理解タスクを集めたもの**である. (GLUEってそういう感じなんだ! 評価フレームワークみたいな...!)
+Detailed descriptions of GLUE datasets are included in Appendix B.1.
+
+To fine-tune on GLUE, we represent the input sequence (for single sentence or sentence pairs) as described in Section 3, and use the final hidden vector C ∈ R H corresponding to the first input token ([CLS]) as the aggregate representation.
+GLUEデータセットの詳細な説明は付録B.1に含まれている。GLUEでfine-tuningを行うために、セクション3で説明したように入力シーケンス（単一 sentence または sentence ペア）を表現し、最初の入力トークン（[CLS]）に対応する最終的な隠れベクトル $C \in \mathbb{R}^{H}$をaggregate representation(集約表現, sequenceの埋め込み表現??)として使用する.
 The only new parameters introduced during fine-tuning are classification layer weights W ∈ R K×H, where K is the number of labels.
-fine-tuningの際に導入される唯一の新しいパラメータは、分類層の重みW∈R K×H（K はラベルの数）である。
+fine-tuningの際に導入される唯一の新しいパラメータは、分類層の重み$W \in \mathbb{R}^{K \times H}$（K はラベルの数）である。
 We compute a standard classification loss with C and W, i.e., log(softmax(CWT )).
-CとWによる標準的な分類損失、すなわちlog(softmax(CWT ))を計算する。
+$C$ と $W$ による標準的な分類損失、すなわち $\log(softmax(C W^{T}))$ を計算する。
 
 We use a batch size of 32 and fine-tune for 3 epochs over the data for all GLUE tasks.
 バッチサイズ32を使用し、すべてのGLUEタスクのデータに対して3エポックでfine-tuningを行う。
@@ -318,22 +322,23 @@ We find that BERTLARGE significantly outperforms BERTBASE across all tasks, espe
 The effect of model size is explored more thoroughly in Section 5.2.
 モデル・サイズの効果については、セクション5.2で詳しく説明する。
 
-## 4.2. SQuAD v1.1 SQuAD v1.1
+## 4.2. SQuAD v1.1 (質問 -> 回答を出力するタスク)
 
 The Stanford Question Answering Dataset (SQuAD v1.1) is a collection of 100k crowdsourced question/answer pairs (Rajpurkar et al., 2016).
-Stanford Question Answering Dataset (SQuAD v1.1)は、100kのクラウドソースされた質問と回答のペアのコレクションである（Rajpurkar et al, 2016）。
+Stanford Question Answering Dataset (SQuAD v1.1)は、100kのクラウドソースされた質問と回答のペアのコレクションである（Rajpurkar et al, 2016）.
 Given a question and a passage from Wikipedia containing the answer, the task is to predict the answer text span in the passage.
 質問と答えを含むウィキペディアの文章が与えられたら、その文章中の答えを予測する。
+
 As shown in Figure 1, in the question answering task, we represent the input question and passage as a single packed sequence, with the question using the A embedding and the passage using the B embedding.
-図1に示すように、質問回答タスクでは、入力された質問と文章を1つのパックされたシーケンスとして表現し、質問にはAエンベッディングを、文章にはBエンベッディングを使用する。
+図1に示すように、質問回答タスクでは、入力された質問と文章を1つのパックされたシーケンスとして表現し、質問にはA embedding を、文章には B embedding を使用する。
 We only introduce a start vector S ∈ R H and an end vector E ∈ R H during fine-tuning.
-fine-tuningの際には、開始ベクトルS（R H）と終了ベクトルE（R H）のみを導入する。
+fine-tuningの際には、開始ベクトル $S \in \mathbb{R}^{H}$ と終了ベクトル $E \in \mathbb{R}^{H}$ のみを導入する。
 The probability of word i being the start of the answer span is computed as a dot product between Ti and S followed by a softmax over all of the words in the paragraph: Pi = e S·Ti P j e S·Tj .
-単語 i が回答スパンの開始である確率は、Ti と S の間のドット積として計算され、段落内のすべての単語に対するソフトマックスが続きます： Pi = e S-Ti P j e S-Tj .
+単語 i が回答スパンの開始である確率は、$T_{i}$ と $S$ の間のドット積として計算され、段落内のすべての単語に対するソフトマックスが続きます: $P_{i} = \frac{e^{S \cdot T_{i}}}{\sum_{j}e^{S \cdot T_{j}}}$.
 The analogous formula is used for the end of the answer span.
-同様の式が、解答スパンの終わりにも使われる。
+同様の式が、解答スパンの終わりにも使われる.
 The score of a candidate span from position i to position j is defined as S·Ti + E·Tj , and the maximum scoring span where j ≥ i is used as a prediction.
-位置iから位置jまでのスパン候補のスコアは、S-Ti＋E-Tjと定義され、j≧iとなる最大スコアのスパンが予測値として使用される。
+位置iから位置jまでのスパン候補のスコアは、$S \cdot T_{i} + E \cdot T_{j}$ と定義され、$j \geq i$ となる最大スコアのスパンが予測値として使用される.
 The training objective is the sum of the log-likelihoods of the correct start and end positions.
 訓練目標は、正しい開始位置と終了位置の対数尤度の和である。
 We fine-tune for 3 epochs with a learning rate of 5e-5 and a batch size of 32.
@@ -351,7 +356,7 @@ In fact, our single BERT model outperforms the top ensemble system in terms of F
 Without TriviaQA fine tuning data, we only lose 0.1-0.4 F1, still outperforming all existing systems by a wide margin.12
 TriviaQAのファインチューニングデータがなければ、0.1～0.4 F1しか失わない。
 
-## 4.3. SQuAD v2.0 SQuAD v2.0
+## 4.3. SQuAD v2.0 (記述式の回答方式の問題を解くタスク)
 
 The SQuAD 2.0 task extends the SQuAD 1.1 problem definition by allowing for the possibility that no short answer exists in the provided paragraph, making the problem more realistic.
 SQuAD 2.0タスクはSQuAD 1.1の問題定義を拡張し、提供された段落に短い答えが存在しない可能性を許容することで、問題をより現実的なものにしています。
@@ -468,13 +473,13 @@ Both of these prior works used a featurebased approach — we hypothesize that w
 ## 5.3. Feature-based Approach with BERT BERTによる特徴ベースのアプローチ
 
 All of the BERT results presented so far have used the fine-tuning approach, where a simple classification layer is added to the pre-trained model, and all parameters are jointly fine-tuned on a downstream task.
-これまでに発表された BERT の結果はすべて、事前に訓練されたモデルに単純な分類層を追加し、すべてのパ ラメータを下流のタスク上で共同でfine-tuningする、fine-tuningアプローチを使用している。
+これまでに発表された BERT の結果はすべて、事前に訓練されたモデルに単純な分類層を追加し、すべてのパラメータを下流のタスク上で共同でfine-tuningする、fine-tuningアプローチを使用している。
 However, the feature-based approach, where fixed features are extracted from the pretrained model, has certain advantages.
-しかし、事前に訓練されたモデルから固定的な特徴を抽出する特徴ベースのアプローチには、一定の利点がある。
+しかし、**事前に訓練されたモデルから固定的な特徴を抽出する特徴ベースのアプローチ**(ex. BERTで得たtokenやsequence埋め込みベクトルを特徴量として使うみたいな感じ...???)には、一定の利点がある。
 First, not all tasks can be easily represented by a Transformer encoder architecture, and therefore require a task-specific model architecture to be added.
-まず、すべてのタスクがTransformerエンコーダーアーキテクチャで簡単に表現できるわけではないため、タスク固有のモデルアーキテクチャを追加する必要がある。
+まず、**すべてのタスクがTransformerエンコーダーアーキテクチャで簡単に表現できるわけではない**ため、タスク固有のモデルアーキテクチャを追加する必要がある。
 Second, there are major computational benefits to pre-compute an expensive representation of the training data once and then run many experiments with cheaper models on top of this representation.
-第二に、学習データの高価な表現を一度事前に計算し、その上でより安価なモデルで多くの実験を行うことは、計算上大きなメリットがある。
+第二に、学習データの高価な表現を一度事前に計算し、その上でより安価なモデルで多くの実験を行うことは、計算上大きなメリットがある.
 In this section, we compare the two approaches by applying BERT to the CoNLL-2003 Named Entity Recognition (NER) task (Tjong Kim Sang and De Meulder, 2003).
 このセクションでは、CoNLL-2003 Named Entity Recognition（NER）タスク（Tjong Kim Sang and De Meulder, 2003）に BERT を適用して、2 つのアプローチを比較する。
 In the input to BERT, we use a case-preserving WordPiece model, and we include the maximal document context provided by the data.
@@ -492,9 +497,9 @@ Results are presented in Table 7.
 BERTLARGE performs competitively with state-of-the-art methods.
 BERTLARGEは、最先端の手法と遜色ない性能を発揮する。
 The best performing method concatenates the token representations from the top four hidden layers of the pre-trained Transformer, which is only 0.3 F1 behind fine-tuning the entire model.
-最もパフォーマンスの高い方法は、事前に訓練されたTransformerの上位4つの隠れ層からトークン表現を連結するもので、モデル全体をfine-tuningするのと0.3F1しか変わらない。
+最もパフォーマンスの高い方法は、**事前学習されたTransformerの上位4つの隠れ層からtoken表現を連結する方法**(=4 × H次元のtoken表現を特徴量として使うって事だろうか...??)で、モデル全体をfine-tuningするのと0.3F1しか変わらない。
 This demonstrates that BERT is effective for both finetuning and feature-based approaches.
-このことは、BERTがfine-tuningと特徴ベースのアプローチの両方に有効であることを示している。
+このことは、**BERTがfine-tuningと特徴ベースのアプローチの両方に有効**であることを示している。
 
 # 6. Conclusion 結論
 
