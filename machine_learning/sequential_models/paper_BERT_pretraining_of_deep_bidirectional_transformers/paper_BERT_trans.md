@@ -189,39 +189,47 @@ A visualization of this construction can be seen in Figure 2.
 ## 3.1. Pre-training BERT
 
 Unlike Peters et al.(2018a) and Radford et al.(2018), we do not use traditional left-to-right or right-to-left language models to pre-train BERT.
-Petersら(2018a)やRadfordら(2018)とは異なり、BERTの事前学習に従来の左から右、あるいは右から左の言語モデルは使わない。
+Petersら(2018a)やRadfordら(2018)とは異なり、BERTの事前学習に従来の左から右、あるいは右から左の言語モデルは使わない.(=この文脈では"言語モデル"を"事前学習タスク"と言い換えても良さそう??:thinking:)
 Instead, we pre-train BERT using two unsupervised tasks, described in this section.
-その代わりに、このセクションで説明する 2 つの教師なしタスクを使用して、BERT を事前訓練する。
+その代わりに、このセクションで説明する **2つの教師なしタスク(=masked-token-prediction と next-sentence-predictionだよね...!)**を使用して、BERT を事前訓練する.
 This step is presented in the left part of Figure 1.
-このステップは図1の左側に示されている。
+このステップは図1の左側に示されている.
 
-### 3.1.1. Task #1: Masked LM タスク#1： マスクLM
+![figure1: left]()
+
+### 3.1.1. Task 1: Masked LM
 
 Intuitively, it is reasonable to believe that a deep bidirectional model is strictly more powerful than either a left-to-right model or the shallow concatenation of a left-toright and a right-to-left model.
-直感的には、深い双方向モデルは、左から右へのモデルや、左から右へのモデルと右から左へのモデルの浅い連結よりも、厳密に強力であると考えるのが妥当である。
+直感的には、深い(i.e. sequence内の距離が長いって意味??)双方向モデルは、左から右へのモデルや、左から右へのモデルと右から左へのモデルの浅い連結よりも、厳密に強力であると考えるのが妥当である.
 Unfortunately, standard conditional language models can only be trained left-to-right or right-to-left, since bidirectional conditioning would allow each word to indirectly “see itself”, and the model could trivially predict the target word in a multi-layered context.
-残念ながら、標準的な条件付き言語モデルは、左から右、または右から左にしか学習できない。双方向の条件付けを行えば、各単語が間接的に「自分自身を見る」ことができ、モデルは多層的な文脈の中でターゲットとなる単語を些細なことでも予測できるようになるからだ。
+残念ながら、標準的な条件付き言語モデルは、左から右、または右から左にしか学習できない。**双方向の条件付けを行えば、各単語が間接的に「自分自身を見る」ことができ**、モデルは多層的な文脈の中でターゲットとなる単語を些細なことでも予測できるようになるからだ。
 
 In order to train a deep bidirectional representation, we simply mask some percentage of the input tokens at random, and then predict those masked tokens.
-深い双方向表現を訓練するためには、入力トークンの何割かをランダムにマスクし、マスクされたトークンを予測すればよい。
+深い双方向表現を訓練するためには、入力トークンの何割かをランダムにマスクし、マスクされたトークンを予測すればよい.
 We refer to this procedure as a “masked LM” (MLM), although it is often referred to as a Cloze task in the literature (Taylor, 1953).
-文献ではCloze課題（Taylor, 1953）と呼ばれることが多いが、我々はこの手順を "masked LM"（MLM）と呼んでいる。
+文献ではCloze課題（Taylor, 1953）と呼ばれることが多いが、**我々はこの手順を "masked LM"（MLM）と呼んでいる**.(LMはlanguage modelだよね. task的な意味あいだな...!)
 In this case, the final hidden vectors corresponding to the mask tokens are fed into an output softmax over the vocabulary, as in a standard LM.
-この場合、マスクトークンに対応する最終的な隠れベクトルは、標準的なLMと同様に、語彙に対する出力ソフトマックスに供給される。
+この場合、**マスクトークンに対応する最終的な隠れベクトル**は、標準的なLMと同様に、**語彙(=vocabulary table, 長さが $H$?)に対する出力ソフトマックス**に供給される.(i.e. masked-tokenにどのtokenが入るかの確率)
 In all of our experiments, we mask 15% of all WordPiece tokens in each sequence at random.
-すべての実験において、各シーケンスに含まれるWordPieceトークンの15%をランダムにマスクした。
+すべての実験において、**各シーケンスに含まれるWordPieceトークンの15%をランダムにマスクした**。
 In contrast to denoising auto-encoders (Vincent et al., 2008), we only predict the masked words rather than reconstructing the entire input.
-ノイズ除去オートエンコーダ（Vincent et al, 2008）とは対照的に、入力全体を再構成するのではなく、マスクされた単語のみを予測する。
+ノイズ除去オートエンコーダ（Vincent et al, 2008）とは対照的に、**入力全体を再構成するのではなく、マスクされた単語のみを予測する**.
+
 Although this allows us to obtain a bidirectional pre-trained model, a downside is that we are creating a mismatch between pre-training and fine-tuning, since the [MASK] token does not appear during fine-tuning.
-これによって双方向の事前学習済みモデルを得ることができるが、欠点は、事前学習とfine-tuningの間にミスマッチが生じることである。
+**これによって双方向の事前学習済みモデルを得ることができるが、欠点は、事前学習とfine-tuningの間にミスマッチが生じる**ことである。
 To mitigate this, we do not always replace “masked” words with the actual [MASK] token.
-これを軽減するため、「マスク」された単語を実際の[MASK]トークンに置き換えるとは限らない。
+これを軽減するため、"マスク"された単語を実際の[MASK]tokenに置き換えるとは限らない。
 The training data generator chooses 15% of the token positions at random for prediction.
-学習データ生成器は、トークンの位置の15％をランダムに選んで予測する。
+学習データ生成器は、トークンの位置の15％をランダムに選んで予測する.
 If the i-th token is chosen, we replace the i-th token with (1) the [MASK] token 80% of the time (2) a random token 10% of the time (3) the unchanged i-th token 10% of the time.
-i番目のトークンが選択された場合、i番目のトークンを(1)80％の確率で[MASK]トークンに置き換える(2)10％の確率でランダムなトークンに置き換える(3)10％の確率で変更前のi番目のトークンに置き換える。
+$i$ 番目のトークンが選択された場合、以下の3パターンの処理が行われる:
+
+- (1) 80％の確率で[MASK]トークンに置き換える
+- (2) **10％の確率でランダムなトークンに置き換える**(vocabulary tableから??)
+- (3) 10％の確率で変更前の $i$ 番目のトークンに置き換える(i.e. maskもしないし置き換えもしない! そのまま!)。
+
 Then, Ti will be used to predict the original token with cross entropy loss.
-そして、Tiはクロスエントロピー損失で元のトークンを予測するために使われる。
+そして、**(選択された 15%の!) $T_{i}$ はクロスエントロピー損失で元のトークンを予測するために使われる**.
 We compare variations of this procedure in Appendix C.2.
 付録C.2でこの手順のバリエーションを比較する。
 
