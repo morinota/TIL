@@ -1,14 +1,14 @@
-## link リンク
+## 0.1. link リンク
 
 https://arxiv.org/abs/1810.04805
 https://arxiv.org/abs/1810.04805
 
-## title タイトル
+## 0.2. title タイトル
 
 https://arxiv.org/abs/1810.04805
 https://arxiv.org/abs/1810.04805
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers.
 私たちは、**BERT（Bi-directional Encoder Representations from Transformers）**と呼ばれる新しい言語表現モデルを紹介する。
@@ -21,7 +21,7 @@ BERTは概念的にシンプルで、経験的に強力である。
 It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5% (7.7% point absolute improvement), MultiNLI accuracy to 86.7% (4.6% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).
 GLUEスコアは80.5%（絶対値で7.7%の向上）、MultiNLI精度は86.7%（絶対値で4.6%の向上）、SQuAD v1.1質問応答テストF1は93.2（絶対値で1.5%の向上）、SQuAD v2.0テストF1は83.1（絶対値で5.1%の向上）と、11の自然言語処理タスクで新たな最先端の結果を得ています。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 Language model pre-training has been shown to be effective for improving many natural language processing tasks (Dai and Le, 2015; Peters et al., 2018a; Radford et al., 2018; Howard and Ruder, 2018).
 言語モデルの事前トレーニングは、多くの自然言語処理タスクの改善に有効であることが示されている（Dai and Le, 2015; Peters et al., 2018a; Radford et al.）
@@ -63,12 +63,12 @@ The contributions of our paper are as follows:
 
 - BERT advances the state of the art for eleven NLP tasks. The code and pre-trained models are available at https://github.com/ google-research/bert. BERT は、11 の NLP タスクの最先端技術を前進させる。 コードと訓練済みモデルは、https://github.com/ google-research/bertで入手できる。
 
-# Related Work 関連作品
+# 2. Related Work 関連作品
 
 Related Work There is a long history of pre-training general language representations, and we briefly review the most widely-used approaches in this section.
 関連作品 **一般的な言語表現の事前学習には長い歴史**があり、このセクションでは最も広く使われているアプローチを簡単にレビューする。
 
-## Unsupervised Feature-based Approaches 教師なし特徴ベース(?)のアプローチ (feature-based = 単語の埋め込みベクトルを使うって意味...??:thinking:)
+## 2.1. Unsupervised Feature-based Approaches 教師なし特徴ベース(?)のアプローチ (feature-based = 単語の埋め込みベクトルを使うって意味...??:thinking:)
 
 Learning widely applicable representations of words has been an active area of research for decades, including non-neural (Brown et al., 1992; Ando and Zhang, 2005; Blitzer et al., 2006) and neural (Mikolov et al., 2013; Pennington et al., 2014) methods.
 非ニューラル（Brown et al, 1992; Ando and Zhang, 2005; Blitzer et al, 2006）やニューラル（Mikolov et al, 2013; Pennington et al, 2014）の方法を含め、単語の広く適用可能な表現を学習すること(=あ、基本的には単語表現の学習なんだ...!)は、数十年にわたり活発な研究分野である。
@@ -97,7 +97,7 @@ ELMoと同様、彼らのモデルは特徴ベースであり、深い双方向�
 Fedus et al.(2018) shows that the cloze task can be used to improve the robustness of text generation models.
 Fedusら(2018)は、クローズ課題がテキスト生成モデルの頑健性を向上させるために利用できることを示している。
 
-## Unsupervised Fine-tuning Approaches 教師なしfine-tuningアプローチ
+## 2.2. Unsupervised Fine-tuning Approaches 教師なしfine-tuningアプローチ
 
 As with the feature-based approaches, the first works in this direction only pre-trained word embedding parameters from unlabeled text (Collobert and Weston, 2008).
 特徴ベースのアプローチと同様に、この方向での最初の研究は、ラベル付けされていないテキストから単語埋め込みパラメータを事前に訓練したのみである（Collobert and Weston, 2008）。
@@ -110,14 +110,14 @@ At least partly due to this advantage, OpenAI GPT (Radford et al., 2018) achieve
 Left-to-right language model-ing and auto-encoder objectives have been used for pre-training such models (Howard and Ruder, 2018; Radford et al., 2018; Dai and Le, 2015).
 左から右への言語モデル化とオートエンコーダの目的関数は、このようなモデルの事前学習に使用されてきた（Howard and Ruder, 2018; Radford et al, 2018; Dai and Le, 2015）。
 
-## Transfer Learning from Supervised Data
+## 2.3. Transfer Learning from Supervised Data
 
 There has also been work showing effective transfer from supervised tasks with large datasets, such as natural language inference (Conneau et al., 2017) and machine translation (McCann et al., 2017).
 また、自然言語推論（Conneau et al, 2017）や機械翻訳（McCann et al, 2017）のように、大規模なデータセットを持つ**教師ありタスクからの効果的な転移学習**を示す研究もある. (事前学習されたパラメータをfine-tuning = 転移学習 で認識あってる...??:thinking:)
 Computer vision research has also demonstrated the importance of transfer learning from large pre-trained models, where an effective recipe is to fine-tune models pre-trained with ImageNet (Deng et al., 2009; Yosinski et al., 2014).
 コンピュータビジョンの研究では、事前に訓練された大規模なモデルからの転移学習の重要性も実証されており、効果的なレシピは、ImageNetで事前に訓練されたモデルをfine-tuningすることである（Deng et al, 2009; Yosinski et al, 2014）.(確かに、CVの分野では教師有り学習で得られたパラメータを使って、個別のタスクに転移学習させる印象があるかも...!:thinking:)
 
-# BERT バート
+# 3. BERT バート
 
 We introduce BERT and its detailed implementation in this section.
 このセクションでは、BERT およびその詳細な実装について紹介する。
@@ -136,7 +136,7 @@ A distinctive feature of BERT is its unified architecture across different tasks
 There is minimal difference between the pre-trained architecture and the final downstream architecture.
 事前に訓練されたアーキテクチャと最終的なダウンストリーム・アーキテクチャの差はほとんどない.(違いは最終的な出力層の形くらい??)
 
-### Model Architecture モデル・アーキテクチャ
+### 3.0.1. Model Architecture モデル・アーキテクチャ
 
 BERT’s model architecture is a multi-layer bidirectional Transformer encoder based on the original implementation described in Vaswani et al.(2017) and released in the tensor2tensor library.1
 BERTのモデルアーキテクチャは、Vaswani et al.(2017)(=Transformerの元論文)で説明され、tensor2tensorライブラリでリリースされたオリジナルの実装に基づく**multi-layer bidirectional Transformer encoder(多層双方向Transformerエンコーダ)**である。
@@ -144,45 +144,49 @@ Because the use of Transformers has become common and our implementation is almo
 Transformerの使用は一般的になっており、我々の実装はオリジナルとほぼ同じであるため、モデルアーキテクチャの徹底的な背景説明は省略し、Vaswani et al.(2017) や、"The Annotated Transformer "のような優れたガイドを読者に紹介する.
 
 In this work, we denote the number of layers (i.e., Transformer blocks) as L, the hidden size as H, and the number of self-attention heads as A.
-本研究では、the number of layers (i.e., Transformer blocks)を$L$、hidden size(=なんだろう...FFNの隠れ層の次元数??)を $H$、self-attentionのhead数を $A$ と定義する.
+本研究では、the number of layers (i.e., Transformer blocks)を$L$、hidden size(=なんだろう...FFNの隠れ層の次元数?? いや多分出力される各tokenのhidden stateの次元数!)を $H$、self-attentionのhead数を $A$ と定義する.
 We primarily report results on two model sizes: BERTBASE (L=12, H=768, A=12, Total Parameters=110M) and BERTLARGE (L=24, H=1024, A=16, Total Parameters=340M).
 本研究は、2つのモデルサイズの結果を報告する: BERTBASE (L=12, H=768, A=12, Total Parameters=110M)とBERTLARGE (L=24, H=1024, A=16, Total Parameters=340M)である.
 
 BERTBASE was chosen to have the same model size as OpenAI GPT for comparison purposes.
 BERTBASEは、比較のためにOpenAI GPTと同じモデルサイズを選択した。
 Critically, however, the BERT Transformer uses bidirectional self-attention, while the GPT Transformer uses constrained self-attention where every token can only attend to context to its left.4
-しかし、決定的に重要なのは、BERTトランスフォーマーは双方向のself-attentionを使用するのに対して、GPTトランスフォーマーは制約された(i.e. left-to-rightの...!)self-attentionを使用することである。(この違いを本論文では評価したい...!って事:thinking:)
+しかし、決定的に重要なのは、BERTトランスフォーマーは双方向のself-attentionを使用するのに対して、GPTトランスフォーマーは制約された(i.e. left-to-rightの...!)self-attentionを使用することである。(この違いを本論文では評価して、双方向の方が一方向よりも効果的である事を主張したい...!:thinking:)
 
-### Input/Output Representations 入出力表現
+### 3.0.2. Input/Output Representations 入出力表現
 
 To make BERT handle a variety of down-stream tasks, our input representation is able to unambiguously represent both a single sentence and a pair of sentences (e.g., h Question, Answeri) in one token sequence.
-BERT が様々なダウンストリームタスクを処理できるようにするために、我々の入力表現は、1 つのトークン列で単一文と文のペア（例えば、h Question、 Answeri）の両方を明確に表現することができる。
+BERT が様々なダウンストリームタスクを処理できるようにするために、我々の入力表現は、1つのtoken sequenceとして、"単一文" と "文のペア(例えば、Question、 Answer)" の両方を明確に表現することができる.(どっちでも良いって話...!)
 Throughout this work, a “sentence” can be an arbitrary span of contiguous text, rather than an actual linguistic sentence.
-この作品を通して、「文」は実際の言語文ではなく、連続したテキストの任意のスパンであることがある。
+本論文を通して、**"sentence"は必ずしも実際の言語文ではなく、連続したテキストの任意のスパン**を意味する.
 A “sequence” refers to the input token sequence to BERT, which may be a single sentence or two sentences packed together.
-シーケンス」とは、BERT への入力トークン列を指し、1 つの文または 2 つの文が一緒になっている場合がある。
-We use WordPiece embeddings (Wu et al., 2016) with a 30,000 token vocabulary.
-30,000トークンの語彙を持つWordPiece埋め込み（Wu et al, 2016）を使用する。
-The first token of every sequence is always a special classification token ([CLS]).
-すべてのシーケンスの最初のトークンは常に特別な分類トークン([CLS])である。
-The final hidden state corresponding to this token is used as the aggregate sequence representation for classification tasks.
-このトークンに対応する最終的な隠れ状態は、分類タスクのための集約シーケンス表現として使用される。
-Sentence pairs are packed together into a single sequence.
-文のペアは1つのシーケンスにまとめられている。
-We differentiate the sentences in two ways.
-我々は2つの方法で文章を区別している。
-First, we separate them with a special token ([SEP]).
-まず、特別なトークン（[SEP]）で区切る。
-Second, we add a learned embedding to every token indicating whether it belongs to sentence A or sentence B.
-次に、すべてのトークンに、それが文Aに属するか文Bに属するかを示す学習済みの埋め込みを追加する。
-As shown in Figure 1, we denote input embedding as E, the final hidden vector of the special [CLS] token as C ∈ R H, and the final hidden vector for the i th input token as Ti ∈ R H.
-図1に示すように、入力埋め込みをE、特殊[CLS]トークンの最終隠れベクトルをC∈R H、i番目の入力トークンの最終隠れベクトルをTi∈R Hとする。
-For a given token, its input representation is constructed by summing the corresponding token, segment, and position embeddings.
-与えられたトークンに対して、その入力表現は、対応するトークン、セグメント、および位置の埋め込みを合計することによって構築される。
-A visualization of this construction can be seen in Figure 2.
-この構造を視覚化したものが図2である。
+**“sequence”とは、BERT への入力トークン列**を指し、**1つの文または 2 つの文が一緒になっている場合がある**。
 
-## Pre-training BERT プレトレーニングBERT
+We use WordPiece embeddings (Wu et al., 2016) with a 30,000 token vocabulary.
+我々は 30,000トークンの語彙を持つWordPiece埋め込み（Wu et al, 2016）を使用する. (i.e. sequence内の各tokenの特徴量としての単語埋め込み表現)
+The first token of every sequence is always a special classification token ([CLS]).
+**すべてのシーケンスの最初のトークンは常に特別な分類トークン([CLS])**である. (ほうほう...??)
+The final hidden state corresponding to this token is used as the aggregate sequence representation for classification tasks.
+**このトークンに対応する最終的な隠れ状態(=encoderの最終的な出力って意味かな...??)は、分類タスクのための集約sequence表現として使用される**.
+Sentence pairs are packed together into a single sequence.
+文のペアは1つのシーケンスにまとめられている.
+We differentiate the sentences in two ways.
+我々は**2つの方法で文章を区別**している.(i.e. sequence内のtokenが文Aのものか文Bのものか!)
+First, we separate them with a special token ([SEP]).
+まず、特別なトークン（[SEP]）で区切る.
+Second, we add a learned embedding to every token indicating whether it belongs to sentence A or sentence B.
+次に、すべてのトークンに、それが文Aに属するか文Bに属するかを示す学習済みの埋め込みを追加する. (tokenの埋め込みにconcatenateする感じ??)
+As shown in Figure 1, we denote input embedding as E, the final hidden vector of the special [CLS] token as C ∈ R H, and the final hidden vector for the i th input token as Ti ∈ R H.
+図1に示すように、入力埋め込みをE、特殊[CLS]トークンの最終隠れベクトルを$C \in \mathbb{R}^{H}$ 、i番目の入力トークンの最終隠れベクトルを$T_{i} \in \mathbb{R}^{H}$ とする。
+
+For a given token, its input representation is constructed by summing the corresponding token, segment, and position embeddings.
+与えられたトークン に対して、その**入力表現は、対応するトークン(=単語の意味表現 $E_{token}$)、segment(=文Aか文Bかの埋め込み. $E_{A}$ or $E_{B}$)、および positon embeddings($E_{idx}$) を合計(=concatenateではなくsum!!)する**ことによって構築される.
+A visualization of this construction can be seen in Figure 2.
+この構造を視覚化したものが図2である.(わかりやす！)
+
+![figure2]()
+
+## 3.1. Pre-training BERT
 
 Unlike Peters et al.(2018a) and Radford et al.(2018), we do not use traditional left-to-right or right-to-left language models to pre-train BERT.
 Petersら(2018a)やRadfordら(2018)とは異なり、BERTの事前学習に従来の左から右、あるいは右から左の言語モデルは使わない。
@@ -191,7 +195,7 @@ Instead, we pre-train BERT using two unsupervised tasks, described in this secti
 This step is presented in the left part of Figure 1.
 このステップは図1の左側に示されている。
 
-### Task #1: Masked LM タスク#1： マスクLM
+### 3.1.1. Task #1: Masked LM タスク#1： マスクLM
 
 Intuitively, it is reasonable to believe that a deep bidirectional model is strictly more powerful than either a left-to-right model or the shallow concatenation of a left-toright and a right-to-left model.
 直感的には、深い双方向モデルは、左から右へのモデルや、左から右へのモデルと右から左へのモデルの浅い連結よりも、厳密に強力であると考えるのが妥当である。
@@ -221,7 +225,7 @@ Then, Ti will be used to predict the original token with cross entropy loss.
 We compare variations of this procedure in Appendix C.2.
 付録C.2でこの手順のバリエーションを比較する。
 
-### Task #2: Next Sentence Prediction (NSP) タスク #2: 次の文の予測 (NSP)
+### 3.1.2. Task #2: Next Sentence Prediction (NSP) タスク #2: 次の文の予測 (NSP)
 
 Many important downstream tasks such as Question Answering (QA) and Natural Language Inference (NLI) are based on understanding the relationship between two sentences, which is not directly captured by language modeling.
 質問応答（QA）や自然言語推論（NLI）のような多くの重要な下流タスクは、言語モデリングでは直接捉えられない2つの文の関係を理解することに基づいている。
@@ -237,7 +241,7 @@ NSPタスクは、Jerniteら(2017)やLogeswaran and Lee(2018)で用いられた�
 However, in prior work, only sentence embeddings are transferred to down-stream tasks, where BERT transfers all parameters to initialize end-task model parameters.
 しかし、先行研究では、文埋め込みのみがダウンストリームタスクに転送されるのに対し、BERT はエンドタスクモデルパラメータを初期化するためにすべてのパラメータを転送する。
 
-### Pre-training data 事前学習データ
+### 3.1.3. Pre-training data 事前学習データ
 
 The pre-training procedure largely follows the existing literature on language model pre-training.
 事前学習手順は、言語モデルの事前学習に関する既存の文献にほぼ従っている。
@@ -248,7 +252,7 @@ For Wikipedia we extract only the text passages and ignore lists, tables, and he
 It is critical to use a document-level corpus rather than a shuffled sentence-level corpus such as the Billion Word Benchmark (Chelba et al., 2013) in order to extract long contiguous sequences.
 長い連続シーケンスを抽出するためには、Billion Word Benchmark (Chelba et al., 2013)のようなシャッフルされた文レベルのコーパスではなく、文書レベルのコーパスを使用することが重要である。
 
-## Fine-tuning BERT BERTのfine-tuning
+## 3.2. Fine-tuning BERT BERTのfine-tuning
 
 Fine-tuning is straightforward since the selfattention mechanism in the Transformer allows BERT to model many downstream tasks— whether they involve single text or text pairs—by swapping out the appropriate inputs and outputs.
 Transformer の自己注 意メカニズムにより、BERT は、適切な入力と出力を入れ替えることによって、単一のテキストまたはテキストペアを含むかどうかに関係なく、 多くの下流タスクをモデル化することができるため、fine-tuningは簡単です。
@@ -269,12 +273,12 @@ All of the results in the paper can be replicated in at most 1 hour on a single 
 More details can be found in Appendix A.5.
 詳細は付録A.5を参照されたい。
 
-# Experiments 実験
+# 4. Experiments 実験
 
 In this section, we present BERT fine-tuning results on 11 NLP tasks.
 このセクションでは、11 の NLP タスクに関する BERT のfine-tuning結果を示す。
 
-## GLUE ♪グルー
+## 4.1. GLUE ♪グルー
 
 The General Language Understanding Evaluation (GLUE) benchmark (Wang et al., 2018a) is a collection of diverse natural language understanding tasks.
 一般言語理解評価（GLUE）ベンチマーク（Wang et al, 2018a）は、多様な自然言語理解タスクを集めたものである。
@@ -306,7 +310,7 @@ We find that BERTLARGE significantly outperforms BERTBASE across all tasks, espe
 The effect of model size is explored more thoroughly in Section 5.2.
 モデル・サイズの効果については、セクション5.2で詳しく説明する。
 
-## SQuAD v1.1 SQuAD v1.1
+## 4.2. SQuAD v1.1 SQuAD v1.1
 
 The Stanford Question Answering Dataset (SQuAD v1.1) is a collection of 100k crowdsourced question/answer pairs (Rajpurkar et al., 2016).
 Stanford Question Answering Dataset (SQuAD v1.1)は、100kのクラウドソースされた質問と回答のペアのコレクションである（Rajpurkar et al, 2016）。
@@ -339,7 +343,7 @@ In fact, our single BERT model outperforms the top ensemble system in terms of F
 Without TriviaQA fine tuning data, we only lose 0.1-0.4 F1, still outperforming all existing systems by a wide margin.12
 TriviaQAのファインチューニングデータがなければ、0.1～0.4 F1しか失わない。
 
-## SQuAD v2.0 SQuAD v2.0
+## 4.3. SQuAD v2.0 SQuAD v2.0
 
 The SQuAD 2.0 task extends the SQuAD 1.1 problem definition by allowing for the possibility that no short answer exists in the provided paragraph, making the problem more realistic.
 SQuAD 2.0タスクはSQuAD 1.1の問題定義を拡張し、提供された段落に短い答えが存在しない可能性を許容することで、問題をより現実的なものにしています。
@@ -362,7 +366,7 @@ BERTをコンポーネントの1つとして使用するシステムを除き、
 We observe a +5.1 F1 improvement over the previous best system.
 その結果、以前の最良システムより+5.1 F1向上した。
 
-## SWAG SWAG
+## 4.4. SWAG SWAG
 
 The Situations With Adversarial Generations (SWAG) dataset contains 113k sentence-pair completion examples that evaluate grounded commonsense inference (Zellers et al., 2018).
 Situations With Adversarial Generations（SWAG）データセットには、接地されたコモンセンス推論を評価する113k文対補完例が含まれている（Zellers et al, 2018）。
@@ -379,24 +383,24 @@ Results are presented in Table 4.
 BERTLARGE outperforms the authors’ baseline ESIM+ELMo system by +27.1% and OpenAI GPT by 8.3%.
 BERTLARGEは著者のベースラインESIM+ELMoシステムを+27.1%、OpenAI GPTを8.3%上回った。
 
-# Ablation Studies アブレーション研究
+# 5. Ablation Studies アブレーション研究
 
 In this section, we perform ablation experiments over a number of facets of BERT in order to better understand their relative importance.
 本セクションでは、BERTの多くの側面についてアブレーション実験を行い、それらの相対的重要性をよりよく理解する。
 Additional ablation studies can be found in Appendix C.
 その他のアブレーション研究は付録Cにある。
 
-## 5.1 Effect of Pre-training Tasks 5.1 事前トレーニング課題の効果
+## 5.1. 5.1 Effect of Pre-training Tasks 5.1 事前トレーニング課題の効果
 
 We demonstrate the importance of the deep bidirectionality of BERT by evaluating two pretraining objectives using exactly the same pretraining data, fine-tuning scheme, and hyperparameters as BERTBASE:
 BERTBASEと全く同じ事前学習データ、fine-tuningスキーム、およびハイパーパラメータを使用して、2つの事前学習目標を評価することにより、BERTの深い双方向性の重要性を実証する：
 
-### No NSP: NSPはない：
+### 5.1.1. No NSP: NSPはない：
 
 A bidirectional model which is trained using the “masked LM” (MLM) but without the “next sentence prediction” (NSP) task.
 マスクされたLM」（MLM）を用いて学習されるが、「次文予測」（NSP）タスクは含まない双方向モデル。
 
-### LTR & No NSP: LTR＆NSPなし：
+### 5.1.2. LTR & No NSP: LTR＆NSPなし：
 
 A left-context-only model which is trained using a standard Left-to-Right (LTR) LM, rather than an MLM.
 MLM ではなく、標準的な Left-to-Right (LTR) LM を用いて学習された左文脈のみのモデル。
@@ -426,7 +430,7 @@ ELMoのように、LTRモデルとRTLモデルを別々に訓練し、各トー�
 However: (a) this is twice as expensive as a single bidirectional model; (b) this is non-intuitive for tasks like QA, since the RTL model would not be able to condition the answer on the question; (c) this it is strictly less powerful than a deep bidirectional model, since it can use both left and right context at every layer.
 (b)RTLモデルは質問に対する答えを条件付けることができないため、QAのようなタスクには直感的でない。(c)すべてのレイヤーで左右両方のコンテキストを使用できるため、ディープ双方向モデルよりも厳密には劣る。
 
-## Effect of Model Size モデルサイズの効果
+## 5.2. Effect of Model Size モデルサイズの効果
 
 In this section, we explore the effect of model size on fine-tuning task accuracy.
 このセクションでは、モデルのサイズがfine-tuningタスクの精度に与える影響を探る。
@@ -453,7 +457,7 @@ Petersら(2018b)は、事前に訓練されたbi-LMのサイズを2層から4層
 Both of these prior works used a featurebased approach — we hypothesize that when the model is fine-tuned directly on the downstream tasks and uses only a very small number of randomly initialized additional parameters, the taskspecific models can benefit from the larger, more expressive pre-trained representations even when downstream task data is very small.
 これらの先行研究はいずれも特徴ベースのアプローチを用いている。我々は、モデルが下流のタスク上で直接fine-tuningされ、非常に少数のランダムに初期化された追加パラメータのみを使用する場合、下流のタスクデータが非常に少ない場合でも、タスク固有のモデルは、より大きく、より表現力の高い事前訓練された表現から恩恵を受けることができるという仮説を立てている。
 
-## Feature-based Approach with BERT BERTによる特徴ベースのアプローチ
+## 5.3. Feature-based Approach with BERT BERTによる特徴ベースのアプローチ
 
 All of the BERT results presented so far have used the fine-tuning approach, where a simple classification layer is added to the pre-trained model, and all parameters are jointly fine-tuned on a downstream task.
 これまでに発表された BERT の結果はすべて、事前に訓練されたモデルに単純な分類層を追加し、すべてのパ ラメータを下流のタスク上で共同でfine-tuningする、fine-tuningアプローチを使用している。
@@ -484,7 +488,7 @@ The best performing method concatenates the token representations from the top f
 This demonstrates that BERT is effective for both finetuning and feature-based approaches.
 このことは、BERTがfine-tuningと特徴ベースのアプローチの両方に有効であることを示している。
 
-# Conclusion 結論
+# 6. Conclusion 結論
 
 Recent empirical improvements due to transfer learning with language models have demonstrated that rich, unsupervised pre-training is an integral part of many language understanding systems.
 近年の言語モデルによる転移学習による経験的な改善により、多くの言語理解システムにおいて、教師なしでの豊富な事前学習が不可欠であることが実証されている。
