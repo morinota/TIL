@@ -640,7 +640,7 @@ Otherwise, it returns a ResponseFailure built with the same request object.
 Then the actual business logic is implemented, calling the repository and returning a successful response.
 その後、実際のビジネスロジックが実装され、リポジトリを呼び出し、成功したレスポンスを返す.
 If something goes wrong in this phase the exception is caught and returned as an aptly formatted ResponseFailure.
-**このフェーズで何か問題が発生すると、Execptionがキャッチされ、適切な形式の ResponseFailure として返される**. (例外処理の王道パターンなのかな...!)
+**このフェーズで何か問題が発生すると、Execptionがキャッチされ、適切な形式の ResponseFailure として返される**. (これが例外処理の王道パターンなのかな...!)
 
 ## Integrating external systems 外部システムとの統合
 

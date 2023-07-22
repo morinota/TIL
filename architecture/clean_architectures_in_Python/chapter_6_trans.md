@@ -17,46 +17,82 @@ Die Hard, 1988
 ダイ・ハード, 1988
 
 The basic in-memory repository I implemented for the project is enough to show the concept of the repository layer abstraction.
-私がプロジェクト用に実装した基本的なインメモリーリポジトリは、リポジトリ層の抽象化の概念を示すのに十分である。
+私がプロジェクト用に実装した基本的なインメモリーリポジトリは、**repository層の抽象化(外部システムのDBのInterface的な??)の概念**を示すのに十分である.
 It is not enough to run a production system, though, so we need to implement a connection with a real storage like a database.
-しかし、本番システムを動かすにはこれだけでは不十分なので、データベースのような実際のストレージとの接続を実装する必要がある。
+しかし、本番システムを動かすにはこれだけでは不十分なので、**データベースのような実際のストレージとの接続を実装する必要がある**。
 Whenever we use an external system and we want to test the interface we can use mocks, but at a certain point we need to ensure that the two systems actually work together, and this is when we need to start creating integration tests.
 しかし、ある時点で、2つのシステムが実際に一緒に動作することを確認する必要がある。
 
 In this chapter I will show how to set up and run integration tests between our application and a real database.
-この章では、アプリケーションと実際のデータベースとの統合テストをセットアップして実行する方法を紹介する。
+この章では、アプリケーションと実際のデータベースとの統合テストをセットアップして実行する方法を紹介する.
 At the end of the chapter I will have a repository that allows the application to interface with PostgreSQL, and a battery of tests that run using a real database instance running in Docker.
-この章の終わりには、アプリケーションがPostgreSQLとインターフェースするためのリポジトリと、Dockerで動作する実際のデータベースインスタンスを使って実行する一連のテストを用意する予定です。
+この章の終わりには、**アプリケーションがPostgreSQLとinterfaceする(=接する?)ための Repositoryクラス と**、Dockerで動作する実際のデータベースインスタンスを使って実行する一連のテスト(=共有依存であるDBを使う統合テスト?)を用意する予定です。
 
 This chapter will show you one of the biggest advantages of a clean architecture, namely the simplicity with which you can replace existing components with others, possibly based on a completely different technology.
-この章では、クリーン・アーキテクチャの最大の利点のひとつである、既存のコンポーネントを、場合によってはまったく異なるテクノロジーをベースにした他のコンポーネントに置き換えることができるシンプルさについて紹介する。
+この章では、**クリーン・アーキテクチャの最大の利点のひとつ**である、**既存のcomponentを、場合によってはまったく異なるテクノロジーをベースにした他のcomponentに置き換えることができるシンプルさ**について紹介する.
 
 ## Decoupling with interfaces インターフェイスによるデカップリング
 
 The clean architecture we devised in the previous chapters defines a use case that receives a repository instance as an argument and uses its list method to retrieve the contained entries.
-前の章で考案したクリーンなアーキテクチャでは、リポジトリインスタンスを引数として受け取り、そのリストメソッドを使って含まれるエントリーを取得するユースケースを定義しています。
+前の章で考案したクリーンなアーキテクチャでは、Repositoryインスタンスを引数として受け取り、そのリストメソッドを使って含まれるエントリーを取得するusecaseを定義しています。
 This allows the use case to form a very loose coupling with the repository, being connected only through the API exposed by the object and not to the real implementation.
-これにより、ユースケースはリポジトリと非常に緩い結合を形成することができ、オブジェクトによって公開されたAPIを通じてのみ接続され、実際の実装には接続されない。
+これにより、ユースケースはリポジトリと非常に緩い結合を形成することができ、オブジェクトによって公開されたAPIを通じてのみ接続され、実際の実装には接続されない.
 In other words, the use cases are polymorphic with respect to the method list.
-言い換えれば、ユースケースはメソッドリストに関して多相的である。
+言い換えれば、usecaseは`list`methodに関して **polymorphic(多相的. 同じInterfaceに基づく具象クラスを同じ様に扱える事...!)**である。
 
 This is very important and it is the core of the clean architecture design.
 これは非常に重要なことで、クリーン・アーキテクチャ・デザインの核となるものだ。
 Being connected through an API, the use case and the repository can be replaced by different implementations at any time, given that the new implementation provides the requested interface.
-APIを介して接続されているため、ユースケースとリポジトリは、新しい実装が要求されたインターフェースを提供する限り、いつでも異なる実装に置き換えることができる。
+APIを介して接続されているため、usecase と Repository は、新しい実装が要求されたインターフェースを提供する限り、いつでも異なる実装に置き換えることができる。
 
 It is worth noting, for example, that the initialisation of the object is not part of the API that the use cases are using since the repository is initialised in the main script and not in each use case.
-例えば、リポジトリはメインスクリプトで初期化され、各ユースケースでは初期化されないため、オブジェクトの初期化はユースケースが使用しているAPIの一部ではないことは注目に値する。
-The method __init__, thus, doesn't need to be the same among the repository implementations, which gives us a great deal of flexibility, as different storage systems may need different initialisation values.
-このため、__init__メソッドは、リポジトリの実装間で同じである必要はありません。
+例えば、**リポジトリはメインスクリプトで初期化され、各usecase内では初期化されない**ため、オブジェクトの初期化はユースケースが使用しているAPIの一部ではないことは注目に値する。
+The method **init**, thus, doesn't need to be the same among the repository implementations, which gives us a great deal of flexibility, as different storage systems may need different initialisation values.
+このため、`__init__`メソッドは、リポジトリの実装間(i.e. 具象クラス間)で同じである必要はありません。
 
 The simple repository we implemented in one of the previous chapters is
 前の章で実装したシンプルなリポジトリは次のとおりだ。
 
+```python
+from rentomatic.domain.room import Room
+
+
+class MemRepo:
+    def __init__(self, data):
+        self.data = data
+
+    def list(self, filters=None):
+
+        result = [Room.from_dict(i) for i in self.data]
+
+        if filters is None:
+            return result
+
+        if "code__eq" in filters:
+            result = [r for r in result if r.code == filters["code__eq"]]
+
+        if "price__eq" in filters:
+            result = [
+                r for r in result if r.price == int(filters["price__eq"])
+            ]
+
+        if "price__lt" in filters:
+            result = [
+                r for r in result if r.price < int(filters["price__lt"])
+            ]
+
+        if "price__gt" in filters:
+            result = [
+                r for r in result if r.price > int(filters["price__gt"])
+            ]
+
+        return result
+```
+
 whose interface is made of two parts: the initialisation and the method list.
 そのインターフェイスは、初期化とメソッドリストの2つの部分から構成されている。
-The method __init__ accepts values because this specific object doesn't act as long-term storage, so we are forced to pass some data every time we instantiate the class.
-メソッド__init__は値を受け付けるが、これはこの特定のオブジェクトが長期記憶として機能しないからで、クラスをインスタンス化するたびに何らかのデータを渡さざるを得ない。
+The method **init** accepts values because this specific object doesn't act as long-term storage, so we are forced to pass some data every time we instantiate the class.
+メソッド**init**は値を受け付けるが、これはこの特定のオブジェクトが長期記憶として機能しないからで、クラスをインスタンス化するたびに何らかのデータを渡さざるを得ない。
 
 A repository based on a proper database will not need to be filled with data when initialised, its main job being that of storing data between sessions, but will nevertheless need to be initialised at least with the database address and access credentials.
 適切なデータベースをベースにしたリポジトリは、初期化時にデータで満たされる必要はなく、主な仕事はセッション間のデータの保存ですが、それでも少なくともデータベースのアドレスとアクセス認証情報で初期化される必要があります。
@@ -69,38 +105,48 @@ Remember that we are creating a specific implementation of a repository, so ever
 ## A repository based on PostgreSQL PostgreSQLベースのリポジトリ
 
 Let's start with a repository based on a popular SQL database, PostgreSQL.
-一般的なSQLデータベースであるPostgreSQLをベースにしたリポジトリから始めましょう。
+一般的なSQLデータベースである**PostgreSQLをベースにしたRepositoryクラス**から始めましょう。
 It can be accessed from Python in many ways, but the best one is probably through the SQLAlchemy interface.
-Python からはいろいろな方法でアクセスできますが、一番よいのは SQLAlchemy インタフェースでしょう。
+**Python からはいろいろな方法でアクセスできますが、一番よいのは SQLAlchemy インタフェースでしょう.**(bestとは大きく出たな...!)
 SQLAlchemy is an ORM, a package that maps objects (as in object-oriented) to a relational database.
-SQLAlchemyはORMであり、（オブジェクト指向のように）オブジェクトをリレーショナルデータベースにマッピングするパッケージです。
+**SQLAlchemyはORMであり、(オブジェクト指向のように)オブジェクトをリレーショナルデータベースにマッピングするパッケージ**です。
 ORMs can normally be found in web frameworks like Django or in standalone packages like the one we are considering.
 ORMは通常、DjangoのようなWebフレームワークや、私たちが検討しているようなスタンドアロンパッケージで見つけることができます。
 
 The important thing about ORMs is that they are very good examples of something you shouldn't try to mock.
-ORMについて重要なことは、モックを試みてはいけないものの非常に良い例だということだ。
+ORMについて重要なことは、**モックを試みてはいけない**ものの非常に良い例だということだ。
 Properly mocking the SQLAlchemy structures that are used when querying the DB results in very complex code that is difficult to write and almost impossible to maintain, as every single change in the queries results in a series of mocks that have to be written again[1].
 DBに問い合わせるときに使われるSQLAlchemyの構造を適切にモックすると、非常に複雑なコードになり、書くのが難しく、保守もほとんど不可能になります。
 
 We need therefore to set up an integration test.
-したがって、統合テストを設定する必要がある。
+したがって、統合テストを設定する必要がある.
 The idea is to create the DB, set up the connection with SQLAlchemy, test the condition we need to check, and destroy the database.
 アイデアは、DB を作成し、SQLAlchemy で接続をセットアップし、チェックする必要のある 条件をテストし、データベースを破棄することです。
 Since the action of creating and destroying the DB can be expensive in terms of time, we might want to do it just at the beginning and at the end of the whole test suite, but even with this change, the tests will be slow.
 DBを作成したり破棄したりする動作は時間的に高くつく可能性があるので、テスト・スイート全体の最初と最後だけに行いたいかもしれないが、この変更でもテストは遅くなる。
 This is why we will also need to use labels to avoid running them every time we run the suite.
-このため、スイートを実行するたびにラベルが実行されるのを避けるために、ラベルも使用する必要がある。
+このため、スイートを実行するたびにラベル(??)が実行されるのを避けるために、ラベルも使用する必要がある。
 Let's face this complex task one step at a time.
 この複雑な仕事に一歩ずつ向き合っていこう。
 
 ## Label integration tests¶ ラベル統合テスト
 
 The first thing we need to do is to label integration tests, exclude them by default and create a way to run them.
-最初にやるべきことは、統合テストにラベルを付け、デフォルトで除外し、実行する方法を作ることだ。
+最初にやるべきことは、**統合テストにラベルを付け(=単体テストと区別する為??)**、デフォルトで除外し、実行する方法を作ることだ。
 Since pytest supports labels, called marks, we can use this feature to add a global mark to a whole module.
-pytestはマークと呼ばれるラベルをサポートしているので、この機能を使ってモジュール全体にグローバルマークを追加することができます。
+pytestは**マークと呼ばれるラベル**をサポートしているので、この機能を使ってモジュール全体にグローバルマークを追加することができます.
 Create the file tests/repository/postgres/test_postgresrepo.py and put in it this code
 tests/repository/postgres/test_postgresrepo.pyファイルを作成し、次のコードを記述します。
+
+```python
+import pytest
+
+pytestmark = pytest.mark.integration
+
+
+def test_dummy():
+    pass
+```
 
 The module attribute pytestmark labels every test in the module with the tag integration.
 モジュール属性の pytestmark は、モジュール内のすべてのテストに integration というタグを付けます。
@@ -110,20 +156,58 @@ To verify that this works I added a test_dummy test function which always passes
 The marker should be registered in pytest.ini
 マーカーはpytest.iniに登録する必要があります。
 
+```
+[pytest]
+minversion = 2.0
+norecursedirs = .git .tox requirements*
+python_files = test*.py
+markers =
+        integration: integration tests
+```
+
 You can now run pytest -svv -m integration to ask pytest to run only the tests marked with that label.
-pytest -svv -m integrationを実行すると、そのラベルが付いたテストだけを実行するようにpytestに指示できます。
+`pytest -svv -m integration`を実行すると、**そのラベルが付いたテストだけを実行するようにpytestに指示できます**。
 The option -m supports a rich syntax that you can learn by reading the documentation.
-mオプションは豊富なシンタックスをサポートしており、ドキュメントを読めば学ぶことができる。
+mオプションは豊富なシンタックスをサポートしており、[ドキュメント](https://docs.pytest.org/en/latest/example/markers.html)を読めば学ぶことができる.
+
+```
+$ pytest -svv -m integration
+========================= test session starts ===========================
+platform linux -- Python XXXX, pytest-XXXX, py-XXXX, pluggy-XXXX --
+cabook/venv3/bin/python3
+cachedir: .cache
+rootdir: cabook/code/calc, inifile: pytest.ini
+plugins: cov-XXXX
+collected 36 items / 35 deselected / 1 selected
+
+tests/repository/postgres/test_postgresrepo.py::test_dummy PASSED
+
+=================== 1 passed, 35 deselected in 0.20s ====================
+```
 
 While this is enough to run integration tests selectively, it is not enough to skip them by default.
-統合テストを選択的に実行するにはこれで十分だが、デフォルトでスキップするには不十分だ。
+統合テストを選択的に実行するにはこれで十分だが、デフォルトでスキップするには不十分だ。(`pytest`コマンドで単体テストだけ実行したいってことか.)
 To do this, we can alter the pytest setup to label all those tests as skipped, but this will give us no means to run them.
-これを行うには、pytestのセットアップを変更して、これらのテストをすべてskippedとラベル付けすることができますが、これではテストを実行する手段がありません。
+これを行うには、pytestのセットアップを変更して、これらのテストをすべてskippedとラベル付けすることができますが、これではテストを実行する手段がありません.
 The standard way to implement this is to define a new command-line option and to process each marked test according to the value of this option.
 これを実装する標準的な方法は、新しいコマンドラインオプションを定義し、このオプションの値に従って各マーク付きテストを処理することである。
 
 To do it open the file tests/conftest.py that we already created and add the following code
 これを行うには、既に作成した tests/conftest.py ファイルを開き、以下のコードを追加します。
+
+```python
+def pytest_addoption(parser):
+    parser.addoption(
+        "--integration", action="store_true", help="run integration tests"
+    )
+
+
+def pytest_runtest_setup(item):
+    if "integration" in item.keywords and not item.config.getvalue(
+        "integration"
+    ):
+        pytest.skip("need --integration option to run")
+```
 
 The first function is a hook into the pytest CLI parser that adds the option --integration.
 最初の関数は、--integrationオプションを追加するpytest CLIパーサへのフックです。
@@ -132,68 +216,151 @@ When this option is specified on the command line the pytest setup will contain 
 
 The second function is a hook into the pytest setup of every single test.
 2番目の関数は、すべてのテストのpytestセットアップにフックします。
-The variable item contains the test itself (actually a _pytest.python.Function object), which in turn contains two useful pieces of information.
-変数itemはテストそのもの（実際には_pytest.python.Functionオブジェクト）を含み、その中に2つの有用な情報が含まれています。
+The variable item contains the test itself (actually a \_pytest.python.Function object), which in turn contains two useful pieces of information.
+変数itemはテストそのもの（実際には`_pytest.python.Function`オブジェクト）を含み、その中に2つの有用な情報が含まれています。
 The first is the attribute item.keywords, that contains the test marks, alongside many other interesting things like the name of the test, the file, the module, and also information about the patches that happen inside the test.
 1つ目はitem.keywords属性で、テストのマークと、テスト名、ファイル名、モジュール名、テスト内で発生するパッチに関する情報など、多くの興味深い情報が含まれている。
 The second is the attribute item.config that contains the parsed pytest command line.
 2つ目は、解析されたpytestコマンドラインを含むitem.config属性です。
 
 So, if the test is marked with integration ('integration' in item.keywords) and the option --integration is not present (not item.config.getvalue("integration")) the test is skipped.
-そのため、テストにintegration（item.keywordsの'integration'）が指定されていて、--integrationオプションが指定されていない（item.config.getvalue("integration")ではない）場合、テストはスキップされます。
+そのため、**テストにintegration（item.keywordsの'integration'）ラベルが指定されていて、--integrationオプションが指定されていない（item.config.getvalue("integration")ではない）場合、テストはスキップされます。**
 
 This is the output with --integration
 これは--integrationの出力である。
 
+```
+$ pytest -svv --integration
+========================= test session starts ===========================
+platform linux -- Python XXXX, pytest-XXXX, py-XXXX, pluggy-XXXX --
+cabook/venv3/bin/python3
+cachedir: .cache
+rootdir: cabook/code/calc, inifile: pytest.ini
+plugins: cov-XXXX
+collected 36 items
+
+...
+tests/repository/postgres/test_postgresrepo.py::test_dummy PASSED
+...
+
+========================= 36 passed in 0.26s ============================
+```
+
 and this is the output without the custom option
 そしてこれがカスタムオプションなしの出力です。
+
+```
+$ pytest -svv
+========================= test session starts ===========================
+platform linux -- Python XXXX, pytest-XXXX, py-XXXX, pluggy-XXXX --
+cabook/venv3/bin/python3
+cachedir: .cache
+rootdir: cabook/code/calc, inifile: pytest.ini
+plugins: cov-XXXX
+collected 36 items
+
+...
+tests/repository/postgres/test_postgresrepo.py::test_dummy SKIPPED
+...
+
+=================== 35 passed, 1 skipped in 0.27s =======================
+```
 
 ## Create SQLAlchemy classes SQLAlchemy クラスの作成
 
 Creating and populating the test database with initial data will be part of the test suite, but we need to define somewhere the tables that will be contained in the database.
-テスト用データベースの作成と初期データの投入はテスト・スイートの一部となるが、データベースに含まれるテーブルをどこかで定義する必要がある。
+テスト用データベースの作成と初期データの投入はテスト・スイートの一部となるが、**データベースに含まれるテーブルをどこかで定義する必要がある**。
 This is where SQLAlchemy's ORM comes into play, as we will define those tables in terms of Python objects.
 ここで SQLAlchemy の ORM が活躍します。テーブルを Python オブジェクトで定義します。
 
 Add the packages SQLAlchemy and psycopg2 to the requirements file prod.txt
 SQLAlchemy と psycopg2 のパッケージを prod.txt に追加してください。
 
+```
+Flask
+SQLAlchemy
+psycopg2
+```
+
 and update the installed packages with
 でインストールされたパッケージを更新する。
 
+```
+$ pip install -r requirements/dev.txt
+```
+
 Create the file rentomatic/repository/postgres_objects.py with the following content
-以下の内容でrentomatic/repository/postgres_objects.pyファイルを作成します。
+以下の内容で rentomatic/repository/postgres_objects.py ファイルを作成します。
+
+```
+from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+
+class Room(Base):
+    __tablename__ = 'room'
+
+    id = Column(Integer, primary_key=True)
+
+    code = Column(String(36), nullable=False)
+    size = Column(Integer)
+    price = Column(Integer)
+    longitude = Column(Float)
+    latitude = Column(Float)
+```
 
 Let's comment it section by section
 セクションごとにコメントしよう
 
+```python
+from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+```
+
 We need to import many things from the SQLAlchemy package to set up the database and to create the table.
 データベースをセットアップし、テーブルを作成するために、SQLAlchemy パッケージから多くのものをインポートする必要があります。
 Remember that SQLAlchemy has a declarative approach, so we need to instantiate the object Base and then use it as a starting point to declare the tables/objects.
-SQLAlchemy は宣言的なアプローチなので、オブジェクト Base をインスタンス化し、それを起点としてテーブルやオブジェクトを宣言する必要があることを覚えておいてください。
+SQLAlchemy は宣言的なアプローチなので、**オブジェクト `Base` をインスタンス化し、それを起点としてテーブルやオブジェクトを宣言する必要がある**ことを覚えておいてください。
+
+```python
+class Room(Base):
+    __tablename__ = 'room'
+
+    id = Column(Integer, primary_key=True)
+
+    code = Column(String(36), nullable=False)
+    size = Column(Integer)
+    price = Column(Integer)
+    longitude = Column(Float)
+    latitude = Column(Float)
+```
 
 This is the class that represents the room in the database.
 これはデータベース内の部屋を表すクラスです。
 It is important to understand that this is not the class we are using in the business logic, but the class that defines the table in the SQL database that we will use to map the Room entity.
-これはビジネスロジックで使用するクラスではなく、ルーム・エンティティをマッピングするために使用するSQLデータベースのテーブルを定義するクラスであることを理解することが重要です。
+**これはビジネスロジックで使用するクラスではなく、ルーム・エンティティをマッピングするために使用するSQLデータベースのテーブルを定義するクラスである**ことを理解することが重要です。(Entities層のDomain Modelとは別物だって話...!)
 The structure of this class is thus dictated by the needs of the storage layer, and not by the use cases.
-したがって、このクラスの構造は、ユースケースではなく、ストレージ層のニーズによって決まる。
+したがって、**このクラスの構造は、usecaseではなく、Storage層のニーズによって決まる**。
 You might want for instance to store longitude and latitude in a JSON field, to allow for easier extendibility, without changing the definition of the domain model.
-例えば、ドメインモデルの定義を変更することなく、より簡単に拡張できるように、経度と緯度をJSONフィールドに格納したいと思うかもしれません。
+例えば、ドメインモデルの定義を変更することなく、より簡単に拡張できるように、**経度と緯度をJSONフィールドに格納したいと思うかも**しれません.
 In the simple case of the Rent-o-matic project, the two classes almost overlap, but this is not the case generally speaking.
-レント・オ・マティック・プロジェクトの単純なケースでは、この2つのクラスはほぼ重なっているが、一般的にはそうではない。
+レント・オ・マティック・プロジェクトの**今回の例のような単純なケースでは、この2つのクラスはほぼ重なっているが、一般的にはそうではない**.(i.e. Domain Modelクラスと、DBへのmapping用に定義されるORMクラスは、重なっている必要はないし、異なる事も多い...!!)
 
 Obviously, this means that you have to keep the storage and the domain levels in sync and that you need to manage migrations on your own.
-これは明らかに、ストレージとドメインのレベルを同期させておく必要があり、移行を自分で管理する必要があることを意味する。
+これは明らかに、**ストレージとドメインのレベルを同期させておく必要があり**(i.e. Domain Modelとテーブルの1レコードの単位を一致させておく?? fieldは別に一致してなくてもよいが...!)、移行を自分で管理する必要があることを意味する。
 You can use tools like Alembic, but the migrations will not come directly from domain model changes.
 Alembicのようなツールを使うこともできるが、移行はドメインモデルの変更から直接もたらされるものではない。
 
 ## Orchestration management¶ オーケストレーション管理
 
 When we run the integration tests the Postgres database engine must be already running in the background, and it must be already configured, for example, with a pristine database ready to be used.
-統合テストを実行するとき、Postgres データベースエンジンはすでにバックグラウンドで動作している必要があり、例えば、原始的なデータベースを使用できるように設定済みでなければなりません。
+**統合テストを実行するとき、Postgres データベースエンジンはすでにバックグラウンドで動作している必要があり**(うんうん...!テストダブルを使わないから!)、例えば、原始的なデータベースを使用できるように設定済みでなければなりません.
 Moreover, when all the tests have been executed the database should be removed and the database engine stopped.
-さらに、すべてのテストが実行されたら、データベースを削除し、データベースエンジンを停止しなければならない。
+さらに、すべてのテストが実行されたら、データベースを削除し、データベースエンジンを停止しなければならない.(clean-up的な動作...!)
 
 This is a perfect job for Docker, which can run complex systems in isolation with minimal configuration.
 これは、複雑なシステムを最小限の構成で分離して実行できるDockerにとって完璧な仕事だ。
@@ -207,31 +374,277 @@ As I explained in the posts I mentioned the plan is to create a management scrip
 The management script can be used also to run the application itself, or to create development setups, but in this case I will simplify it to manage only the tests.
 管理スクリプトは、アプリケーション自体の実行や開発セットアップの作成にも使用できるが、今回はテストだけを管理するために簡略化する。
 I highly recommend that you read those posts if you want to get the big picture behind the setup I will use.
-私が使うセットアップの全体像を知りたければ、これらの記事を読むことを強くお勧めする。
+私が使うセットアップの全体像を知りたければ、これらの記事を読むことを強くお勧めする.
 
 The first thing we have to do if we plan to use Docker Compose is to add the requirement to requirements/test.txt
 Docker Composeを使用する場合、最初にしなければならないことは、requirements/test.txtに要件を追加することです。
+
+```
+-r prod.txt
+tox
+coverage
+pytest
+pytest-cov
+pytest-flask
+docker-compose
+```
 
 and install it running pip install -r requirements/dev.txt.
 を実行し、pip install -r requirements/dev.txtを実行してインストールする。
 The management script is the following
 管理スクリプトは以下の通り。
 
+```python
+#! /usr/bin/env python
+
+import os
+import json
+import subprocess
+import time
+
+import click
+import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
+
+# Ensure an environment variable exists and has a value
+def setenv(variable, default):
+    os.environ[variable] = os.getenv(variable, default)
+
+
+APPLICATION_CONFIG_PATH = "config"
+DOCKER_PATH = "docker"
+
+
+def app_config_file(config):
+    return os.path.join(APPLICATION_CONFIG_PATH, f"{config}.json")
+
+
+def docker_compose_file(config):
+    return os.path.join(DOCKER_PATH, f"{config}.yml")
+
+
+def read_json_configuration(config):
+    # Read configuration from the relative JSON file
+    with open(app_config_file(config)) as f:
+        config_data = json.load(f)
+
+    # Convert the config into a usable Python dictionary
+    config_data = dict((i["name"], i["value"]) for i in config_data)
+
+    return config_data
+
+
+def configure_app(config):
+    configuration = read_json_configuration(config)
+
+    for key, value in configuration.items():
+        setenv(key, value)
+
+
+@click.group()
+def cli():
+    pass
+
+
+def docker_compose_cmdline(commands_string=None):
+    config = os.getenv("APPLICATION_CONFIG")
+    configure_app(config)
+
+    compose_file = docker_compose_file(config)
+
+    if not os.path.isfile(compose_file):
+        raise ValueError(f"The file {compose_file} does not exist")
+
+    command_line = [
+        "docker-compose",
+        "-p",
+        config,
+        "-f",
+        compose_file,
+    ]
+
+    if commands_string:
+        command_line.extend(commands_string.split(" "))
+
+    return command_line
+
+
+def run_sql(statements):
+    conn = psycopg2.connect(
+        dbname=os.getenv("POSTGRES_DB"),
+        user=os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PASSWORD"),
+        host=os.getenv("POSTGRES_HOSTNAME"),
+        port=os.getenv("POSTGRES_PORT"),
+    )
+
+    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    cursor = conn.cursor()
+    for statement in statements:
+        cursor.execute(statement)
+
+    cursor.close()
+    conn.close()
+
+
+def wait_for_logs(cmdline, message):
+    logs = subprocess.check_output(cmdline)
+    while message not in logs.decode("utf-8"):
+        time.sleep(1)
+        logs = subprocess.check_output(cmdline)
+
+
+@cli.command()
+@click.argument("args", nargs=-1)
+def test(args):
+    os.environ["APPLICATION_CONFIG"] = "testing"
+    configure_app(os.getenv("APPLICATION_CONFIG"))
+
+    cmdline = docker_compose_cmdline("up -d")
+    subprocess.call(cmdline)
+
+    cmdline = docker_compose_cmdline("logs postgres")
+    wait_for_logs(cmdline, "ready to accept connections")
+
+    run_sql([f"CREATE DATABASE {os.getenv('APPLICATION_DB')}"])
+
+    cmdline = [
+        "pytest",
+        "-svv",
+        "--cov=application",
+        "--cov-report=term-missing",
+    ]
+    cmdline.extend(args)
+    subprocess.call(cmdline)
+
+    cmdline = docker_compose_cmdline("down")
+    subprocess.call(cmdline)
+
+
+if __name__ == "__main__":
+    cli()
+```
+
 Let's see what it does block by block.
 ブロックごとに見てみよう。
+
+```python
+#! /usr/bin/env python
+
+import os
+import json
+import subprocess
+import time
+
+import click
+import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
+
+# Ensure an environment variable exists and has a value
+def setenv(variable, default):
+    os.environ[variable] = os.getenv(variable, default)
+
+
+APPLICATION_CONFIG_PATH = "config"
+DOCKER_PATH = "docker"
+```
 
 Some Docker containers (like the PostgreSQL one that we will use shortly) depend on environment variables to perform the initial setup, so we need to define a function to set environment variables if they are not already initialised.
 いくつかのDockerコンテナ（まもなく使用するPostgreSQLのような）は、初期設定を行うために環境変数に依存しているため、環境変数がまだ初期化されていない場合は、環境変数を設定する関数を定義する必要がある。
 We also define a couple of paths for configuration files.
 また、コンフィギュレーション・ファイル用のパスもいくつか定義する。
 
+```python
+def app_config_file(config):
+    return os.path.join(APPLICATION_CONFIG_PATH, f"{config}.json")
+
+
+def docker_compose_file(config):
+    return os.path.join(DOCKER_PATH, f"{config}.yml")
+
+
+def read_json_configuration(config):
+    # Read configuration from the relative JSON file
+    with open(app_config_file(config)) as f:
+        config_data = json.load(f)
+
+    # Convert the config into a usable Python dictionary
+    config_data = dict((i["name"], i["value"]) for i in config_data)
+
+    return config_data
+
+
+def configure_app(config):
+    configuration = read_json_configuration(config)
+
+    for key, value in configuration.items():
+        setenv(key, value)
+```
+
 As in principle I expect to have a different configuration at least for development, testing, and production, I introduced app_config_file and docker_compose_file that return the specific file for the environment we are working in.
 原則的には、少なくとも開発、テスト、本番で異なるコンフィギュレーションを持つことを想定しているので、作業環境に応じた特定のファイルを返すapp_config_fileとdocker_compose_fileを導入した。
 The function read_json_configuration has been isolated from configure_app as it will be imported by the tests to initialise the database repository.
 関数 read_json_configuration は、データベースリポジトリを初期化するためにテストによってインポートされるため、configure_app から分離された。
 
+```python
+@click.group()
+def cli():
+    pass
+
+
+def docker_compose_cmdline(commands_string=None):
+    config = os.getenv("APPLICATION_CONFIG")
+    configure_app(config)
+
+    compose_file = docker_compose_file(config)
+
+    if not os.path.isfile(compose_file):
+        raise ValueError(f"The file {compose_file} does not exist")
+
+    command_line = [
+        "docker-compose",
+        "-p",
+        config,
+        "-f",
+        compose_file,
+    ]
+
+    if commands_string:
+        command_line.extend(commands_string.split(" "))
+
+    return command_line
+```
+
 This is a simple function that creates the Docker Compose command line that avoids repeating long lists of options whenever we need to orchestrate the containers.
 これは、Docker Composeコマンドラインを作成するシンプルな関数で、コンテナのオーケストレーションが必要なときに、オプションの長いリストを繰り返すのを避けることができます。
+
+```python
+def run_sql(statements):
+    conn = psycopg2.connect(
+        dbname=os.getenv("POSTGRES_DB"),
+        user=os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PASSWORD"),
+        host=os.getenv("POSTGRES_HOSTNAME"),
+        port=os.getenv("POSTGRES_PORT"),
+    )
+
+    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    cursor = conn.cursor()
+    for statement in statements:
+        cursor.execute(statement)
+
+    cursor.close()
+    conn.close()
+
+
+def wait_for_logs(cmdline, message):
+    logs = subprocess.check_output(cmdline)
+    while message not in logs.decode("utf-8"):
+        time.sleep(1)
+        logs = subprocess.check_output(cmdline)
+```
 
 The function run_sql allows us to run SQL commands on a running Postgres database, and will come in handy when we will create the empty test database.
 run_sql関数を使用すると、実行中のPostgresデータベース上でSQLコマンドを実行することができます。
@@ -239,6 +652,38 @@ The second function, wait_for_logs is a simple way to monitor the Postgres conta
 番目の関数 wait_for_logs は、Postgres コンテナを監視し、使用可能な状態にあることを確認する簡単な方法である。
 Whenever you spin up containers programmatically you need to be aware that they have a certain startup time before they are ready, and act accordingly.
 プログラムでコンテナをスピンアップするときは常に、準備が整うまでに一定の起動時間があることを認識し、それに従って行動する必要がある。
+
+```python
+@cli.command()
+@click.argument("args", nargs=-1)
+def test(args):
+    os.environ["APPLICATION_CONFIG"] = "testing"
+    configure_app(os.getenv("APPLICATION_CONFIG"))
+
+    cmdline = docker_compose_cmdline("up -d")
+    subprocess.call(cmdline)
+
+    cmdline = docker_compose_cmdline("logs postgres")
+    wait_for_logs(cmdline, "ready to accept connections")
+
+    run_sql([f"CREATE DATABASE {os.getenv('APPLICATION_DB')}"])
+
+    cmdline = [
+        "pytest",
+        "-svv",
+        "--cov=application",
+        "--cov-report=term-missing",
+    ]
+    cmdline.extend(args)
+    subprocess.call(cmdline)
+
+    cmdline = docker_compose_cmdline("down")
+    subprocess.call(cmdline)
+
+
+if __name__ == "__main__":
+    cli()
+```
 
 This function is the last that we define, and the only command provided by our management script.
 この関数は最後に定義するもので、管理スクリプトが提供する唯一のコマンドである。
@@ -258,8 +703,59 @@ After this it runs Pytest with a default set of options, adding all the options 
 To complete the setup we need to define a configuration file for Docker Compose
 セットアップを完了するには、Docker Compose用の設定ファイルを定義する必要があります。
 
+```yml
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+```
+
 And finally a JSON configuration file
 最後にJSON設定ファイル
+
+```json
+[
+  {
+    "name": "FLASK_ENV",
+    "value": "production"
+  },
+  {
+    "name": "FLASK_CONFIG",
+    "value": "testing"
+  },
+  {
+    "name": "POSTGRES_DB",
+    "value": "postgres"
+  },
+  {
+    "name": "POSTGRES_USER",
+    "value": "postgres"
+  },
+  {
+    "name": "POSTGRES_HOSTNAME",
+    "value": "localhost"
+  },
+  {
+    "name": "POSTGRES_PORT",
+    "value": "5433"
+  },
+  {
+    "name": "POSTGRES_PASSWORD",
+    "value": "postgres"
+  },
+  {
+    "name": "APPLICATION_DB",
+    "value": "test"
+  }
+]
+```
 
 A couple of notes about this configuration.
 このコンフィギュレーションについて、いくつか注意点がある。
@@ -274,8 +770,8 @@ For testing purposes we set FLASK_ENV to production as we don't need the interna
 This class sets the internal Flask parameter TESTING to True.
 このクラスは、Flask の内部パラメータ TESTING を True に設定します。
 
-The rest of the JSON configuration initialises variables whose names start with the prefix POSTGRES_.
-JSONコンフィギュレーションの残りの部分は、プレフィックスPOSTGRES_で始まる名前の変数を初期化する。
+The rest of the JSON configuration initialises variables whose names start with the prefix POSTGRES*.
+JSONコンフィギュレーションの残りの部分は、プレフィックスPOSTGRES*で始まる名前の変数を初期化する。
 These are variables required by the Postgres Docker container.
 これらは Postgres Docker コンテナが必要とする変数である。
 When the container is run, it automatically creates a database with the name specified by POSTGRES_DB.
