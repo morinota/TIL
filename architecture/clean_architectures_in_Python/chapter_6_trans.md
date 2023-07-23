@@ -552,7 +552,7 @@ DOCKER_PATH = "docker"
 ```
 
 Some Docker containers (like the PostgreSQL one that we will use shortly) depend on environment variables to perform the initial setup, so we need to define a function to set environment variables if they are not already initialised.
-いくつかのDockerコンテナ（まもなく使用するPostgreSQLのような）は、初期設定を行うために環境変数に依存しているため、環境変数がまだ初期化されていない場合は、環境変数を設定する関数を定義する必要がある。
+いくつかのDockerコンテナ（まもなく使用するPostgreSQLのような）は、初期設定を行うために環境変数に依存しているため、環境変数がまだ初期化されていない場合は、**環境変数を設定する関数を定義する必要がある**。
 We also define a couple of paths for configuration files.
 また、コンフィギュレーション・ファイル用のパスもいくつか定義する。
 
@@ -647,9 +647,9 @@ def wait_for_logs(cmdline, message):
 ```
 
 The function run_sql allows us to run SQL commands on a running Postgres database, and will come in handy when we will create the empty test database.
-run_sql関数を使用すると、実行中のPostgresデータベース上でSQLコマンドを実行することができます。
+`run_sql`関数を使用すると、実行中のPostgresデータベース上でSQLコマンドを実行することができます。
 The second function, wait_for_logs is a simple way to monitor the Postgres container and to be sure it's ready to be used.
-番目の関数 wait_for_logs は、Postgres コンテナを監視し、使用可能な状態にあることを確認する簡単な方法である。
+番目の関数 `wait_for_logs` は、Postgres コンテナを監視し、使用可能な状態にあることを確認する簡単な方法である。
 Whenever you spin up containers programmatically you need to be aware that they have a certain startup time before they are ready, and act accordingly.
 プログラムでコンテナをスピンアップするときは常に、準備が整うまでに一定の起動時間があることを認識し、それに従って行動する必要がある。
 

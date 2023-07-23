@@ -3,6 +3,7 @@
 https://www.thedigitalcatbooks.com/pycabook-chapter-08/
 
 # Chapter 8 - Run a production-ready system
+
 Vilos Cohaagen said troops would be used to ensure full production.
 
 Total Recall, 1990
@@ -11,6 +12,7 @@ Now that we developed a repository that connects with PostgreSQL we can discuss 
 Clearly, the definition "production-ready" refers to many different configuration that ultimately depend on the load and the business requirements of the system. As the goal is to show a complete example and not to cover real production requirements I will show a solution that uses real external systems like PostgreSQL and Nginx, without being too concerned about performances.
 
 ## Build a web stack
+
 Now that we successfully containerised the tests we might try to devise a production-ready setup of the whole application, running both a web server and a database in Docker containers. Once again, I will follow the approach that I show in the series of posts I mentioned in one of the previous sections.
 
 To run a production-ready infrastructure we need to put a WSGI server in front of the web framework and a Web server in front of it. We will also need to run a database container that we will initialise only once.
@@ -66,6 +68,7 @@ At this point we can open http://localhost:8080/rooms with our browser and see t
 The application is not actually using the database yet, as the Flask endpoint room_list in application/rest/room.py initialises the class MemRepo and loads it with some static values, which are the ones we see in our browser.
 
 ## Connect to a production-ready database
+
 Before we start changing the code of the application remember to tear down the system running
 
 Thanks to the common interface between repositories, moving from the memory-based MemRepo to PostgresRepo is very simple. Clearly, as the external database will not contain any data initially, the response of the use case will be empty.
@@ -97,6 +100,7 @@ As you can see there are no tables yet. This is no surprise as we didn't do anyt
 As you remember, we mapped entities to storage objects, and since we are using Postgres we leveraged SQLAlchemy classes, so now we need to create the database tables that correspond to them.
 
 ## Migrations
+
 We need a way to create the tables that correspond to the objects that we defined in rentomatic/repository/postgres_objects.py. The best strategy, when we use an ORM like SQLAlchemy, is to create and run migrations, and for this we can use Alembic.
 
 If you are still connected with psql please exit with \q, then edit requirements/prod.txt and add alembic
