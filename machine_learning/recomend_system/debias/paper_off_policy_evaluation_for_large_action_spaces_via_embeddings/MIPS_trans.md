@@ -1,13 +1,13 @@
-## link リンク
+## 0.1. link リンク
 
 - https://arxiv.org/pdf/2202.06317.pdf https://arxiv.org/pdf/2202.06317.pdf
 
-## title タイトル
+## 0.2. title タイトル
 
 Off-Policy Evaluation for Large Action Spaces via Embeddings
 埋め込みによる大規模行動空間のオフポリシー評価
 
-## Abstruct アブストラクト
+## 0.3. Abstruct アブストラクト
 
 Off-policy evaluation (OPE) in contextual bandits has seen rapid adoption in real-world systems, since it enables offline evaluation of new policies using only historic log data.
 コンテクスチュアル・バンディット(i.e. 決定論的ではなく確率的な推薦アルゴリズム)におけるオフポリシー評価（OPE）は、過去のログデータのみを使用して新しいポリシーをオフラインで評価できるため、実世界のシステムで急速に採用が進んでいる。
@@ -22,7 +22,7 @@ We characterize the bias, variance, and mean squared error of the proposed estim
 In addition to the theoretical analysis, we find that the empirical performance improvement can be substantial, enabling reliable OPE even when existing estimators collapse due to a large number of actions.
 理論的な分析に加え、経験的な性能の向上はかなりのものであり、多数のアクションによって既存の推定器が崩壊した場合でも、信頼性の高いOPEを可能にすることがわかった。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 Many intelligent systems (e.g., recommender systems, voice assistants, search engines) interact with the environment through a contextual bandit process where a policy observes a context, takes an action, and obtains a reward.
 **多くの知的システム（推薦システム、音声アシスタント、検索エンジンなど）は、ポリシーがコンテキストを観察し、行動を起こし、報酬を得るというコンテキスト・バンディット過程を通じて環境と相互作用する。**
@@ -44,7 +44,7 @@ In such a situation, the existing estimators based on inverse propensity score (
 First, a large action space makes it challenging for the logging policy to have common support with the target policies, and IPS is biased under support deficiency (Sachdeva et al., 2020).
 第一に、**行動空間が大きいと、ロギング・ポリシーがターゲット・ポリシーと共通の支持を持つことが難しくなり**、IPSは支持不足の下でバイアスがかかる（Sachdeva et al, 2020）。
 Second, a large number of actions typically leads to high variance of IPS due to large importance weights.
-第二に、アクションの数が多いと、一般的に重要度の重みが大きくなるため、IPSの分散が大きくなる。
+第二に、**アクションの数が多いと、一般的に重要度の重み(の絶対値??)が大きくなるため、IPSの分散が大きくなる**。
 To illustrate, we find in our experiments that the variance and mean squared error of IPS inflate by a factor of over 300 when the number of actions increases from 10 to 5000 given a fixed sample size.
 例を挙げると、サンプルサイズが固定されている場合、アクション数が10から5000に増加すると、IPSの分散と平均二乗誤差が300倍以上に膨れ上がることが実験でわかった。
 While doubly robust (DR) estimators can somewhat reduce the variance by introducing a reward estimator as a control variate (Dud´ık et al., 2014), they do not address the fundamental issues that come with large action spaces.
@@ -61,227 +61,260 @@ We should then be able to utilize these supplemental data to infer the value of 
 We first provide the conditions under which action embeddings provide another path for unbiased OPE, even with support deficient actions.
 我々はまず、**サポート不足のアクションであっても、アクション埋め込みが不偏OPEのための別の道を提供する条件**を提供する。
 We then propose the Marginalized IPS (MIPS) estimator, which uses the marginal distribution of action embeddings, rather than actual actions, to define a new type of importance weights.
-これは、実際の行動ではなく、行動の埋め込みのマージナル分布を利用して、新しいタイプの重要度重みを定義する。
+これは、**実際の行動(=アイテム毎に一意なid)ではなく、行動の埋め込み(=actionの特徴量的なイメージ!)のマージナル分布を利用**して、新しいタイプの重要度重みを定義する.
 We show that MIPS is unbiased under an alternative condition, which states that the action embeddings should mediate every causal effect of the action on the reward.
-MIPSは、アクションの埋め込みが報酬に対するアクションの因果効果をすべて媒介する、という別の条件下では不偏であることを示す。
+MIPSは、**アクションの埋め込みが報酬に対するアクションの因果効果をすべて媒介する、という条件下では不偏**であることを示す。
 Moreover, we show that MIPS has a lower variance than IPS, especially when there is a large number of actions, and thus the vanilla importance weights have a high variance.
-さらに、MIPSはIPSよりも分散が小さく、特にアクション数が多い場合、バニラ重要度重みが高い分散を持つことを示す。
+さらに、MIPSはIPSよりも分散が小さいことを示す。特にバニラ重要度重みが高い分散を持つ様なアクション数が多い時に...!
 We also characterize the gain in MSE provided by MIPS, which implies an interesting bias-variance trade-off with respect to the quality of the action embeddings.
-また、MIPSによって得られるMSEの利得の特徴も明らかにする。これは、アクションの埋め込みの質に関して、興味深いバイアスと分散のトレードオフを意味する。
+また、MIPSによって得られるMSEのgain(??)の特徴も明らかにする。これは、**アクションの埋め込みの質に関して、興味深いバイアスと分散のトレードオフ**を意味する。
 Including many embedding dimensions captures the causal effect better, leading to a smaller bias of MIPS.
 多くの埋め込み次元を含めることで、因果効果をよりよく捉え、MIPSのバイアスをより小さくすることができる。
 In contrast, using only a subset of the embedding dimensions reduces the variance more.
 対照的に、埋め込み次元のサブセットのみを使用することで、分散はより小さくなる。
 We thus propose a strategy to intentionally violate the assumption about the action embeddings by discarding less relevant embedding dimensions for achieving a better MSE at the cost of introducing some bias.
-そこで我々は、多少のバイアスを導入する代償として、より良いMSEを達成するために、関連性の低い埋め込み次元を破棄することによって、アクション埋め込みに関する仮定を意図的に破る戦略を提案する。
+そこで我々は、**多少のバイアスを導入する代償として、より良いMSEを達成するために、関連性の低い埋め込み次元を破棄することによって、アクション埋め込みに関する仮定を意図的に破る戦略**を提案する.
 Comprehensive experiments on synthetic and real-world bandit data verify the theoretical findings, indicating that MIPS can provide an effective bias-variance trade-off in the presence of many actions.
 合成データおよび実世界のバンディットデータを用いた包括的な実験により、理論的な知見が検証され、MIPSが多くのアクションが存在する場合に効果的なバイアスと分散のトレードオフを提供できることが示された。
 
-# Off-Policy Evaluation
+# 2. Off-Policy Evaluation
 
 We follow the general contextual bandit setup, and an extensive discussion of related work is given in Appendix A.
-我々は一般的なコンテクスト・バンディットの設定に従う。関連する研究の広範な議論は付録Aに示す。
-Let x ∈ X ⊆ R dx be a dx-dimensional context vector drawn i.i.d.
-x∈X⊆Rのdxをi.i.d.描画されたdx次元の文脈ベクトルとする。
-from an unknown distribution p(x).
-未知の分布p(x)から
+我々は**一般的なコンテクスト・バンディットの設定に従う**. 関連する研究の広範な議論は付録Aに示す。(確率論的か決定論的かは関係ないのかな、ようは強化学習的な=行動を選択 -> 報酬を受け取る -> モデルを更新する、みたいなモデル??)
+Let x ∈ X ⊆ R dx be a dx-dimensional context vector drawn i.i.d.from an unknown distribution p(x).
+x∈X⊆Rのdxを未知のi.i.d.の分布p(x)から描画されたdx次元のcontextベクトル(=特徴量)とする.
+
 Given context x, a possibly stochastic policy π(a|x) chooses action a from a finite action space denoted as A.
 コンテキストxが与えられたとき、確率的な政策π(a|x)は、Aとして示される有限の行動空間から行動aを選択する。
 The reward r ∈ [0, rmax] is then sampled from an unknown conditional distribution p(r|x, a).
 報酬r∈[0, rmax]は、未知の条件付き分布p(r|x, a)からサンプリングされる。
 We measure the effectiveness of a policy π through its value
-我々は、政策πの有効性をその値によって測定する。
+我々は、政策πの有効性をその値によって測定する。 (context $x$ は強化学習における state $s$ に該当するのかな:thinking:)
 
 $$
+V(\pi) := \mathbb{E}_{p(x)\pi(a|x)p(r|x,a)}[r] = \mathbb{E}_{p(x)\pi(a|x)}[q(x,a)]
 \tag{1}
 $$
 
 where q(x, a) := E[r|x, a] denotes the expected reward given context x and action a.
-x, a] denotes the expected reward given context x and action a.
+ここで $q(x, a) := E[r|x, a]$ は、context $x$ において action $a$ を実行した場合の期待報酬。
 
 In OPE, we are given logged bandit data collected by a logging policy π0.
-OPEでは、ロギングポリシーπ0によって収集されたロギングされたバンディットデータが与えられる。
-Specifically, let D := {(xi , ai , ri)} n i=1 be a sample of logged bandit data containing n independent observations drawn from the logging policy as (x, a, r) ∼ p(x)π0(a|x)p(r|x, a).
-x)p(r|x, a).
+OPEでは、ロギングポリシーπ0によって収集されたロギングされた**bandit data**(contextと行動と報酬のセット?)が与えられる.
+Specifically, let **$D := {(x_i , a_i , r_i)}_{i=1}^{n}$** be a sample of logged bandit data containing n independent observations drawn from the logging policy as $(x, a, r) \sim p(x) \pi_{0}(a|x) p(r|x, a)$.(=同時確率の式!)
+
 We aim to develop an estimator Vˆ for the value of a target policy π (which is different from π0) using only the logged data in D.
-Dに記録されたデータのみを用いて、（π0とは異なる）目標ポリシーの値πの推定量Vˆを開発することを目指す。
+**Dに記録されたデータのみ**を用いて、（π0とは異なる）目標ポリシーの値πの推定量Vˆを開発することを目指す.
 The accuracy of Vˆ is quantified by its mean squared error (MSE)
 Vˆの精度は、平均二乗誤差（MSE）によって定量化される。
 
 $$
+MSE(\hat{V}(\pi)) = \mathbb{E}_{D} [(V(\pi) - \hat{V}(\pi;D))^2]
+\\
+= Bias(\hat{V}(\pi))^2 + \mathbb{V}_{D}[\hat{V}(\pi;D)]
 \tag{}
 $$
 
+($\hat{V}(\pi;D)$ の意味は、$D$ を用いた $V(\pi)$ の近似関数。推定量。
+$\mathbb{E}_{D}$ はデータセット $D$ に関する期待値)
+(真の値 - 推定量の期待値は、推定量のbias^2 と 推定量の variance に分解できる...!)
+
 where ED[·] takes the expectation over the logged data and
-ここで、ED[-]は記録されたデータに対する期待値をとり
+ここで、ED[-]は記録されたデータ $D$ に対する期待値をとり
 
 $$
+Bias(\hat{V}(\pi)) := \mathbb{E}_{D}[\hat{V}(\pi;D)] - V(\pi)
+\\
+\mathbb{V}_{D}[\hat{V}(\pi;D)] := \mathbb{E}_{D}[(\hat{V}(\pi;D) - \mathbb{E}_{D}[\hat{V}(\pi;D)])^2]
 \tag{}
 $$
 
 In the following theoretical analysis, we focus on the IPS estimator, since most advanced OPE estimators are based on IPS weighting (Dud´ık et al., 2014; Wang et al., 2017; Su et al., 2019; 2020a; Metelli et al., 2021).
-以下の理論的分析では、先進的なOPE推定器のほとんどがIPS重み付けに基づいているため、IPS推定器に焦点を当てる（Dud´ık et al., 2014; Wang et al., 2017; Su et al., 2019; 2020a; Metelli et al., 2021）。
+以下の理論的分析では、**先進的なOPE推定器のほとんどがIPS重み付けに基づいているため、IPS推定器に焦点を当てる**（Dud´ık et al., 2014; Wang et al., 2017; Su et al., 2019; 2020a; Metelli et al., 2021）。
 IPS estimates the value of π by re-weighting the observed rewards as follow
-IPSは、観測された報酬を以下のように再重み付けすることでπの値を推定する。
+IPSは、**観測された報酬を以下のように再重み付けする**ことでπの性能を推定する.
 
 $$
-\tag{}
+\hat{V}_{IPS}(\pi; D)
+:= \frac{1}{n} \sum_{i}^{n} \frac{\pi(a_i|x_i)}{\pi_{0}(a_i|x_i)} r_{i}
+\\
+= \frac{1}{n} \sum_{i}^{n} w(x_i, a_i) r_{i}
 $$
 
-where w(x, a) := π(a|x)/π0(a|x) is called the (vanilla) importance weight.
+where $w(x, a) := π(a|x)/π0(a|x)$ is called the **(vanilla) importance weight**(重要度重み).
 x)/π0(a|x) is called the (vanilla) importance weight.
 This estimator is unbiased (i.e., ED[Vˆ IPS(π; D)] = V (π)) under the following common support assumption.
-この推定量は、以下の共通支持の仮定の下では不偏である（すなわち、ED[Vˆ IPS(π; D)] = V (π)）。
+この推定量は、以下の **common support assumption(共通支持の仮定)**の下では不偏である（すなわち、ED[Vˆ IPS(π; D)] = V (π)）。
 
-Assumption 2.1.(Common Support) The logging policy π0 is said to have common support for policy π if π(a|x) > 0 → π0(a|x) > 0 for all a ∈ A and x ∈ X .
-x) > 0 → π0(a|x) > 0 for all a ∈ A and x ∈ X .
+**Assumption 2.1.(Common Support)** The logging policy π0 is said to have common support for policy π if $\pi(a|x) > 0 → \pi_{0}(a|x) > 0 for all a \in A and x \in X$.
 
 The unbiasedness of IPS is desirable, making this simple re-weighting technique so popular.
-IPSの不偏性は望ましいものであり、この単純な再重み付け技術を非常に人気のあるものにしている。
+IPSの不偏性は望ましいものであり、この単純な再重み付け技術を非常に人気のあるものにしている.
 However, IPS can still be highly biased, particularly when the action space is large.
-しかし、IPSは、特にアクション空間が大きい場合、非常に偏ったものになる可能性がある。
+**しかし、IPSは、特にアクション空間が大きい場合、非常に偏ったものになる可能性がある。**
 Sachdeva et al.(2020) indicate that IPS has the following bias when Assumption 2.1 is not true.
 Sachdevaら(2020)は、仮定2.1が真でない場合、IPSは以下のようなバイアスを持つことを示している。
 
 $$
-\tag{}
+|Bias(\hat{V}_{IPS}(\pi))| = \mathbb{E}_{p(x)}[\sum_{a \in U_{0}(x, \pi_0)} \pi(a|x) q(x,a)]
 $$
 
-where U0(x, π0) := {a ∈ A | π0(a|x) = 0} is the set of unsupported or deficient actions for context x under π0.
-π0(a|x) = 0} is the set of unsupported or deficient actions for context x under π0.
+where $U_{0}(x, \pi_0) := {a \in A | \pi_{0}(a|x) = 0}$ is the set of unsupported or deficient actions for context x under π0.
+ここで、$U_{0}(x, \pi_0) := {a｜in A｜｜pi_{0}(a|x) = 0}$は、π0の下での context $x$ に対してサポートされていない、または不足するアクションの集合である。
+
 Note that U0(x, π0) can be large especially when A is large.
-U0(x,π0)は、特にAが大きいときに大きくなる可能性があることに注意。
+**U0(x,π0)は、特にAが大きいときに大きくなる可能性がある**ことに注意。
 This bias is due to the fact that the logged dataset D does not contain any information about the unsupported actions.
-このバイアスは、ログに記録されたデータセットDに、サポートされていないアクションに関する情報が含まれていないことに起因する。
+このバイアスは、ログに記録されたデータセット $D$ に、($\pi_0$ に)サポートされていないアクションに関する情報が含まれていないことに起因する.
+
 Another critical issue of IPS is that its variance can be large, which is given as follows (Dud´ık et al., 2014)
 IPSのもう一つの重大な問題は、その分散が大きくなりうることで、それは以下のように与えられる（Dud´ık et al, 2014）。
 
 $$
+n \mathbb{V}_{D}[\hat{V}_{IPS}(\pi;D)]
+= \mathbb{E}_{p(x) \pi_{0}(a|x)}[w(x,a)^2 \sigma^2(x,a)]
+\\
++ \mathbb{V}_{p(x)} [\mathbb{E}_{\pi_{0}(a|x)}[w(x,a) q(x,a)]]
+\\
++ \mathbb{E}_{p(x)} [\mathbb{V}_{\pi_{0}(a|x)}[w(x,a) q(x,a)]]
 \tag{2}
 $$
 
-where σ 2 (x, a) := V[r|x, a].
-x, a].
+where $\sigma^2(x, a) := V[r|x, a]$.
 The variance consists of three terms.
-分散は3つの項から成り立っている。
+**IPS推定量の分散は3つの項から成り立っている**。
 The first term reflects the randomness in the rewards.
-第1項は報酬のランダム性を反映している。
+**第1項は報酬のランダム性**を反映している。
 The second term represents the variance due to the randomness over the contexts.
-第2項はコンテクストのランダム性に起因する分散を表す。
+**第2項は context のランダム性**に起因する分散を表す。
 The final term is the penalty arising from the use of IPS weighting, and it is proportional to the weights and the true expected reward.
-最後の項は、IPS重み付けの使用から生じるペナルティであり、重みと真の期待報酬に比例する。
+最後の項は、**IPS重み付けの使用から生じるペナルティ**であり、重みと真の期待報酬(の分散??)に比例する.
 The variance contributed by the first and third terms can be extremely large when the weights w(x, a) have a wide range, which occurs when π assigns large probabilities to actions that have low probability under π0.
-第1項と第3項が寄与する分散は、重みw(x, a)の範囲が広い場合に非常に大きくなる。
+第1項と第3項が寄与する分散は、**重みw(x, a)の範囲(=絶対値の値域??)が広い場合に非常に大きくなる**。
 The latter can be expected when the action space A is large and the logging policy π0 aims to have universal support (i.e., π0(a|x) > 0 for all a and x).
-後者は、行動空間Aが大きく、ロギング方針π0が普遍的な支持（すなわち、すべてのaとxに対してπ0(a|x)>0）を持つことを目指している場合に予想される。
+後者(第三項)は、行動空間Aが大きく、且つ logging policy $\pi_0$ が普遍的な支持(すなわち、すべてのaとxに対して $\pi_0(a|x)>0$ )を持とうとしている場合に(大きくなると)予想される.
 Swaminathan et al.(2017) also point out that the variance of IPS grows linearly with w(x, a), which can be Ω(|A|).
-A|).
-
+Swaminathanら(2017)は、IPSの分散がw(x, a)と線形に成長することも指摘しており、これはΩ(|A|)となりうる。
 This variance issue can be lessened by incorporating a reward estimator qˆ(x, a) ≈ q(x, a) as a control variate, resulting in the DR estimator (Dud´ık et al., 2014).
-この分散の問題は，報酬推定量qˆ(x, a) ≈ q(x, a)を制御変量として組み込むことで軽減でき，DR推定量となる(Dud´ık et al., 2014)。
+この分散の問題は，報酬推定量 $\hat{q}(x, a) \approx q(x, a)$ を制御変量として組み込むことで軽減でき，DR推定量となる(Dud´ık et al., 2014).(そうそう、DR推定量はDM推定量の特性を引き継いで低分散になるんだった!)
 DR often improves the MSE of IPS due to its variance reduction property.
-DRは、その分散削減特性により、IPSのMSEを改善することが多い。
+DRは、その分散削減特性により、IPSのMSEを改善することが多い.
 However, DR still suffers when the number of actions is large, and it can experience substantial performance deterioration as we demonstrate in our experiments.
-しかし、DRはアクションの数が多い場合、依然として問題を抱えており、我々の実験で実証したように、パフォーマンスが大幅に低下する可能性がある。
+しかし、**DRはアクションの数が多い場合、依然として問題を抱えており**、我々の実験で実証したように、パフォーマンスが大幅に低下する可能性がある。
 
-# The Marginalized IPS Estimator 限界化IPS推定量
+# 3. The Marginalized IPS Estimator 限界化IPS推定量
 
 The following proposes a new estimator that circumvents the challenges of IPS for large action spaces.
 以下では、大きな行動空間に対するIPSの課題を回避する新しい推定器を提案する。
 Our approach is to bring additional structure into the estimation problem, providing a path forward despite the minimax optimality of IPS and DR.
-我々のアプローチは、IPSとDRのミニマックス最適性にもかかわらず、推定問題にさらなる構造を持ち込み、前進する道を提供することである。
+我々のアプローチは、IPSとDRのミニマックス最適性(=行動空間が小さい場合の最適な推定量であるって意味??)にもかかわらず、推定問題にさらなる構造を持ち込み、前進する道を提供することである.
 In particular, IPS and DR achieve the minimax optimal MSE of at most O(n −1 (Eπ0 [w(x, a) 2σ 2 (x, a) + w(x, a) 2 r 2 max])), which means that they are impossible to improve upon in the worst case beyond constant factors (Wang et al., 2017; Swaminathan et al., 2017), unless we bring in additional structure.
-特に、IPSとDRは、最大でもO(n -1 (Eπ0 [w(x, a) 2σ 2 (x, a) + w(x, a) 2 r 2 max])の最小最適MSEを達成し、これは、追加の構造を持ち込まない限り、最悪の場合、定数因子を超えて改善することが不可能であることを意味する(Wang et al., 2017; Swaminathan et al., 2017)。
+特に、IPSとDRは、最大でも $O(n -1 (Eπ0 [w(x, a) 2σ 2 (x, a) + w(x, a) 2 r 2 max])$ の最小最適MSEを達成し、これは、追加の構造を持ち込まない限り、最悪の場合、定数因子を超えて改善することが不可能であることを意味する(Wang et al., 2017; Swaminathan et al., 2017)。
+
 Our key idea for overcoming the limits of IPS and DR is to assume the existence of action embeddings as prior information.
-IPSとDRの限界を克服するための我々の重要なアイデアは、事前情報としてアクションの埋め込みの存在を仮定することである。
+**IPSとDRの限界を克服するための我々の重要なアイデアは、事前情報としてアクションの埋め込みの存在を仮定すること**である。
 The intuition is that this can help the estimator transfer information between similar actions.
-直感的には、これは推定者が類似のアクション間で情報を伝達するのに役立つ。
-More formally, suppose we are given a de-dimensional action embedding e ∈ E ⊆ R de for each action a, where we merely assume that the embedding is drawn i.i.d.
-より正式には、各アクションaについて、単に埋め込みがi.i.d.描画されると仮定する、非次元のアクション埋め込みe（E⊆Rデ）が与えられたとする。
-from some unknown distribution p(e|x, a).
-ある未知の分布p(e|x, a)から。
+直感的には、これは**推定量が類似のアクション間で情報を伝達するのに役立つ**。
+More formally, suppose we are given a $d_e$-dimensional action embedding e ∈ E ⊆ R de for each action a, where we merely assume that the embedding is drawn i.i.d. from some unknown distribution p(e|x, a).
+より正式には、**各アクションaについて、単に埋め込み $e$ がある未知のi.i.d.分布 p(e|x, a)から描画されると仮定する**、d_e$次元のアクション埋め込み $e \in \Epsilon \cap \mathbb{R}^{d_e}$ が与えられたとする。
+。
 The simplest example is to construct action embeddings using predefined category information (e.g., product category).
-最も単純な例は、あらかじめ定義されたカテゴリ情報（例えば、商品カテゴリ）を使ってアクション埋め込みを構築することである。
+最も単純な例は、あらかじめ定義されたカテゴリ情報（例えば、商品カテゴリ）を使ってアクション埋め込みを構築することである.
 Then, the embedding distribution is independent of the context and it is deterministic given the action.
-その場合、埋め込み分布は文脈に依存せず、アクションが与えられれば決定論的である。
+その場合、**埋め込み分布はcontextに依存せず、且つアクションが与えられれば決定論的**である。(i.e. $p(e|x, a) = p(e|a) = 1 or 0$)
 Our framework is also applicable to the most general case of continuous, stochastic, and context-dependent action embeddings.
-我々のフレームワークは、連続的、確率的、文脈依存的なアクションの埋め込みという最も一般的な場合にも適用可能である。
+我々のフレームワークは、**連続的、確率的、context依存的なアクションの埋め込みという最も一般的な場合にも適用可能**である。(上の例は最もシンプルな、離散的、決定論的、context非依存的なaction embeddingの例.)
 For example, product prices may be generated by a personalized pricing algorithm running behind the system.
-例えば、商品価格は、システムの背後で実行されるパーソナライズされた価格設定アルゴリズムによって生成される。
+例えば、商品価格は、システムの背後で実行されるパーソナライズされた価格設定アルゴリズムによって生成される.
 In this case, the embedding is continuous, depends on the user context, and can be stochastic if there is some randomness in the pricing algorithm.
-この場合、エンベッディングは連続的で、ユーザーのコンテキストに依存し、プライシングアルゴリズムにランダム性があれば確率的である。
+この場合、エンベッディングは連続的で、ユーザのcontextに依存し、プライシングアルゴリズムにランダム性があれば確率的である.
+
 Using the action embeddings, we now refine the definition of the policy value as:
-アクションの埋め込みを用いて、政策値の定義を次のように洗練する：
+アクションの埋め込みを用いて、policy の性能の定義を次のように再定義する：
 
 $$
-
-
+V(\pi) = \mathbb{E}_{p(x) \pi(a|x) p(e|x, a) p(r|x, a, e)}[r]
 $$
 
-Note here that q(x, a) = Ep(e|x,a) [q(x, a, e)] where q(x, a, e) := E[r|x, a, e], so the above refinement does not contradict the original definition given in Eq.(1).
-x,a) [q(x, a, e)] where q(x, a, e) := E[r|x, a, e], so the above refinement does not contradict the original definition given in Eq.(1).
-A logged bandit dataset now contains action embeddings for each observation in D = {(xi , ai , ei , ri)} n i=1, where each tuple is generated by the logging policy as (x, a, e, r) ∼ p(x)π0(a|x)p(e|x, a)p(r|x, a, e).
-x)p(e
+Note here that $q(x, a) = E_{p(e|x,a)}[q(x, a, e)]$ where $q(x, a, e) := E[r|x, a, e]$, so the above refinement does not contradict the original definition given in Eq.(1).
+ここで、期待報酬 $q(x, a) = E_{p(e|x,a)}[q(x, a, e)]$ であり、$q(x, a, e) := E[r|x, a, e]$ であるから、上記の改良は式(1)で与えられた元の定義と矛盾しないことに注意.
+
+A logged bandit dataset now contains action embeddings for each observation in $D = {(x_{i}, a_{i}, e_{i}, r_{i})}_{i=1}^{n}$, where each tuple is generated by the logging policy as $(x, a, e, r) \sim p(x) \pi_0(a|x) p(e|x, a) p(r|x, a, e)$.
+ロギングされたバンディットデータセットは、各オブザベーションのアクション埋め込みを含み $D = {(x_{i}, a_{i}, e_{i}, r_{i})}_{i=1}^{n}$ となり、各tupleはロギングポリシーによって $(x, a, e, r) \sim p(x) \pi_0(a|x) p(e|x, a) p(r|x, a, e)$ として生成される.
 Our strategy is to leverage this additional information for achieving a more accurate OPE for large action spaces.
-私たちの戦略は、この追加情報を活用して、大きな作用空間に対してより正確なOPEを達成することです。
-To motivate our approach, we introduce two properties characterizing an action embedding.
-我々のアプローチを動機づけるために、アクションの埋め込みを特徴づける2つの性質を紹介する。
+私たちの戦略は、この追加情報を活用して、**大きな作用空間に対してより正確なOPEを達成する**ことです。
 
-Assumption 3.1.(Common Embedding Support) The logging policy π0 is said to have common embedding support for policy π if p(e|x, π) > 0 → p(e|x, π0) > 0 for all e ∈ E and x ∈ X , where p(e|x, π) := P a∈A p(e|x, a)π(a|x) is the marginal distribution over the action embedding space given context x and policy π.
-x, π) > 0 → p(e
+To motivate our approach, we introduce two properties characterizing an action embedding.
+我々のアプローチを動機づけるために、アクションの埋め込みを特徴づける2つの性質を紹介する.
+
+Assumption 3.1.(Common Embedding Support) The logging policy π0 is said to have common embedding support for policy π if $p(e|x, \pi) > 0 → p(e|x, \pi_{0}) > 0 for all e \in E and x \in X$,
+仮定3.1(共通埋め込みサポート)ロギングポリシーπ0は、$p(e|x, ˶pi > 0 → p(e|x, ˶pi_{0}) > 0ならば、ポリシーπに対して共通埋め込みサポートを持つという.
+where $p(e|x, \pi) := \sum_{a \in A} p(e|x, a) \pi(a|x)$ is the marginal distribution over the action embeddin g space given context x and policy π.
+ここで、$p(e|x, \pi) := \sum_{a \in A} p(e|x, a) \pi(a|x)$ は、文脈xと政策πが与えられたときの行動埋め込み空間上の周辺分布である。
 
 Assumption 3.1 is analogous to Assumption 2.1, but requires only the common support with respect to the action embedding space, which can be substantially more compact than the action space itself.
-仮定3.1は仮定2.1に類似しているが、作用埋め込み空間に関する共通サポートのみを必要とし、作用空間そのものよりも実質的にコンパクトになりうる。
-Indeed, Assumption 3.1 is weaker than common support of IPS (Assumption 2.1).1 Next, we characterize the expressiveness of the embedding in the ideal case, but we will relax this assumption later.
-実際、仮定3.1はIPSの共通サポート（仮定2.1）よりも弱い1。次に、理想的な場合の埋め込みの表現力を特徴付けるが、この仮定は後で緩和する。
+**仮定3.1は仮定2.1に類似している**が、**action embedding space(行動埋め込み空間)に関する共通サポートのみを必要とし、行動空間そのものよりも実質的にコンパクトになりうる**.
+Indeed, Assumption 3.1 is weaker than common support of IPS (Assumption 2.1).
+実際、仮定3.1はIPSの共通サポート（仮定2.1）よりも弱い1。
+(仮定2.1が真であれば、仮定3.1も真である。なぜなら、**p(e|x, a)はターゲットとロギングポリシーで同じだから**である。表1は、その逆の例である。すなわち、仮定3.1は仮定2.1を意味しない)
+Next, we characterize the expressiveness of the embedding in the ideal case, but we will relax this assumption later.
+次に、理想的な場合の埋め込みの表現力を特徴付けるが、この仮定は後で緩和する.
 
-Assumption 3.2.(No Direct Effect) Action a has no direct effect on the reward r, i.e., a ⊥ r | x, e.
-x, e.
+Assumption 3.2.(**No Direct Effect**) Action $a$ has no direct effect on the reward $r$, i.e., $a \perp r | x, e$. (xとeで条件づけた時に、$r$ と $a$ は独立になる...!:thinking:)
+
 As illustrated in Figure 1, Assumption 3.2 requires that every possible effect of a on r be fully mediated by the observed embedding e.
-図1に示されているように、仮定3.2は、rに対するaのすべての可能な効果が、観測された埋め込みeによって完全に媒介されることを要求している。
+図1に示されているように、仮定3.2は、**rに対するaのすべての可能な効果が、観測された埋め込みeによって完全に媒介されること**を要求している。
 For now, we rely on the validity of Assumption 3.2, as it is convenient for introducing the proposed estimator.
-今のところ，仮定3.2は提案する推定量を導入するのに便利なので，この仮定3.2の妥当性に依拠する。
+今のところ，仮定3.2は提案する推定量を導入するのに便利なので，この仮定3.2の妥当性(=この仮定を満たしている事)に依存する.
 However, we later show that it is often beneficial to strategically discard some embedding dimensions and violate the assumption to achieve a better MSE.
-しかし、より良いMSEを達成するためには、戦略的にいくつかの埋め込み次元を捨て、仮定に違反することが有益である場合が多いことを後で示す。
+しかし、**より良いMSEを達成するためには、戦略的にいくつかの埋め込み次元を捨て、仮定に違反することが有益である**場合が多いことを後で示す。
+
 We start the derivation of our new estimator with the observation that Assumption 3.2 gives us another path to unbiased estimation of the policy value without Assumption 2.1.
-仮定3.2が、仮定2.1によらない政策価値の不偏推定への別の道を与えてくれるという観察から、新しい推定量の導出を始める。
+仮定3.2が、仮定2.1によらない policy value の不偏推定への別の道を与えてくれるという観察から、新しい推定量の導出を始める.
 
 Proposition 3.3.Under Assumption 3.2, we have
-命題3.3.前提3.2の下では、次のようになる。
+命題3.3.前提3.2の下では、次のようになる.
 
 $$
-\tag{}
+V(\pi) = \mathbb{E}_{p(x) p(e|x, \pi) p(r|x, e)}[r]
 $$
+
+($a$ がなくとも、性能を計算できるようになった!)
 
 See Appendix B.1 for the proof.
 証明は付録B.1を参照。
+
 Proposition 3.3 provides another expression of the policy value without explicitly relying on the action variable a.
-命題3.3は、行動変数aに明示的に依存することなく、政策値を表す別の表現を提供する。
+命題3.3は、**行動変数aに明示的に依存することなく、policy性能を表す別の表現を提供する**。
 This new expression naturally leads to the following marginalized inverse propensity score (MIPS) estimator, which is our main proposal.
-この新しい式は、自然に次のようなMIPS（marginalized inverse propensity score）推定量につながります。
+この新しい式は、自然に次のような**MIPS（marginalized inverse propensity score）推定量**につながります。
 
 $$
-\tag{}
+\hat{V}_{MIPS}(\pi;D)
+:= \frac{1}{n} \sum_{i=1}^{n}\frac{p(e_i|x_i,\pi)}{e_i|x_i, \pi_0} r_i
+\\
+= \frac{1}{n} \sum_{i=1}^{n} w(x_i, e_i) r_i
 $$
 
-where w(x, e) := p(e|x, π)/p(e|x, π0) is the marginal importance weight defined with respect to the marginal distribution over the action embedding space.
-x, π)/p(e|x, π0) is the marginal importance weight defined with respect to the marginal distribution over the action embedding space.
+where $w(x, e) := p(e|x, π)/p(e|x, π0)$ is the marginal importance weight defined with respect to the marginal distribution over the action embedding space.
+ここで$w(x, e) := p(e|x, π)/p(e|x, π0)$は、行動埋め込み空間上の周辺分布に関して定義された周辺重要度重みである。
+
 To obtain an intuition for the benefits of MIPS, we provide a toy example in Table 1 with X = {x1}, A = {a1, a2, a3}, and E = {e1, e2, e3} (a special case of our formulation with a discrete embedding space).
-MIPSの利点を直感的に理解するために、X＝｛x1｝、A＝｛a1、a2、a3｝、E＝｛e1、e2、e3｝（離散埋め込み空間を持つ我々の定式化の特別な場合）のおもちゃの例を表1に示す。
+MIPSの利点を直感的に理解するために、$X = {x1}, A= {a_1, a_2, a_3}, E={e_1, e_2, e_3}$ (離散埋め込み空間を持つ我々の定式化の特別な場合)のおもちゃの例を表1に示す.
 The left table describes the logging and target policies with respect to A and implies that Assumption 2.1 is violated (π0(a1|x1) = 0.0).
-左の表は、Aに関するロギングとターゲット・ポリシーを記述し、仮定2.1が破られることを意味する（π0(a1|x1) = 0.0）。
+左の表は、Aに関するロギングとターゲット・ポリシーを記述し、**仮定2.1が破られること**を意味する(π0(a1|x1) = 0.0).
 The middle table describes the conditional distribution of the action embedding e given action a (e.g., probability of a movie a belonging to a genre e).
-真ん中の表は、アクションaが与えられたときのアクション埋め込みeの条件付き分布（例えば、映画aがジャンルeに属する確率）を記述している。
+真ん中の表は、アクション $a$ が与えられたときのアクション埋め込み $e$ の条件付き分布（例えば、映画aがジャンルeに属する確率）を記述している.
 The right table describes the marginal distributions over E, which are calculable from the other two tables.
 右の表は、E上の周辺分布を記述したもので、他の2つの表から計算できる。
 By considering the marginal distribution, Assumption 3.1 is ensured in the right table, even if Assumption 2.1 is not true in the left table.
-限界分布を考慮すれば、左の表で仮定2.1が真でなくても、右の表で仮定3.1が保証される。
+周辺分布を考慮すれば、**左の表で仮定2.1が真でなくても、右の表で仮定3.1が保証される**。
 Moreover, the maximum importance weight is smaller for the right table (maxe∈E w(x1, e) < maxa∈A w(x1, a)), which may contribute to a variance reduction of the resulting estimator.
-さらに、最大重要度ウェイトは右のテーブルの方が小さく（maxe∈E w(x1, e) < maxa∈A w(x1, a)）、これは結果として得られる推定量の分散低減に寄与する可能性がある。
+さらに、最大重要度ウェイトは右のテーブルの方が小さく（maxe∈E w(x1, e) < maxa∈A w(x1, a)）、これは結果として得られる**推定量の分散低減**に寄与する可能性がある。
 Below, we formally analyze the key statistical properties of MIPS and compare them with those of IPS, including the realistic case where Assumption 3.2 is violated.
-以下では、MIPSの主要な統計的性質を正式に分析し、仮定3.2に違反する現実的な場合を含め、IPSのそれと比較する。
+以下では、**MIPSの主要な統計的性質**を正式に分析し、仮定3.2に違反する現実的な場合を含め、IPSのそれと比較する.
 
-## Theoretical Analysis 理論的分析
+## 3.1. Theoretical Analysis 理論的分析
 
 First, the following proposition shows that MIPS is unbiased under assumptions different from those of IPS.
 まず、以下の命題は、MIPSがIPSとは異なる仮定のもとでは不偏であることを示している。
@@ -373,7 +406,7 @@ See Appendix B.5 for the proof.
 Note that IPS can have some bias when Assumption 2.1 is not true, possibly producing a greater MSE gain for MIPS
 仮定2.1が真でない場合、IPSに偏りが生じ、MIPSのMSE利得が大きくなる可能性がある。
 
-## Data-Driven Embedding Selection データ駆動型埋め込み選択
+## 3.2. Data-Driven Embedding Selection データ駆動型埋め込み選択
 
 The analysis in the previous section implies a clear biasvariance trade-off with respect to the quality of the action embeddings.
 前節の分析は、アクションの埋め込みの質に関して、バイアスと分散のトレードオフが明確であることを示唆している。
@@ -398,7 +431,7 @@ SLOPEの利点は、OPEと同様に困難な推定値のバイアスの推定を
 Appendix C describes how to apply SLOPE to the action embedding selection in our setup, and Section 4 evaluates its benefit empirically.
 付録Cでは、我々のセットアップにおけるアクション埋め込み選択にSLOPEを適用する方法を説明し、セクション4ではその利点を実証的に評価する。
 
-## Estimating the Marginal Importance Weights 限界重要度重みの推定
+## 3.3. Estimating the Marginal Importance Weights 限界重要度重みの推定
 
 When using MIPS, we might have to estimate w(x, e) depending on how the embeddings are given.
 MIPSを使う場合、埋め込みがどのように与えられるかによって、w(x, e)を推定しなければならないかもしれない。
@@ -416,25 +449,25 @@ We can then estimate w(x, e) as wˆ(x, e) = Eπˆ0(a|x,e) [w(x, a)].3 This proce
 Note that, even if there are some deficient actions, we can directly estimate w(x, e) by solving density ratio estimation as binary classification as done in Sondhi et al.(2020).
 なお、欠損アクションがあったとしても、Sondhiら(2020)のように密度比推定を二値分類として解くことで、w(x, e)を直接推定することができる。
 
-# Empirical Evaluation 実証的評価
+# 4. Empirical Evaluation 実証的評価 (実験)
 
 We first evaluate MIPS on synthetic data to identify the situations where it enables a more accurate OPE.
-まずMIPSを合成データで評価し、MIPSがより正確なOPEを可能にする状況を特定する。
+まずMIPSを合成データで評価し、MIPSがより正確なOPEを可能にする状況を特定する.
 Second, we validate real-world applicability on data from an online fashion store.
-第二に、オンライン・ファッション・ストアのデータを用いて、実世界での適用可能性を検証する。
+第二に、オンライン・ファッション・ストアのデータを用いて、実世界での適用可能性を検証する.
 Our experiments are conducted using the OpenBanditPipeline (OBP)4 , an open-source software for OPE provided by Saito et al.(2020).
-我々の実験は、Saitoら(2020)が提供するOPE用のオープンソースソフトウェアであるOpenBanditPipeline(OBP)4を用いて行われた。
+我々の実験は、Saitoら(2020)が提供するOPE用のオープンソースソフトウェアである**OpenBanditPipeline(OBP)**4を用いて行われた。
 Our experiment implementation is available at https://github.com/usaito/icml2022-mips
 我々の実験の実装は https://github.com/usaito/icml2022-mips にある。
 
-## Synthetic Data 合成データ
+## 4.1. Synthetic Data 合成データ
 
 For the first set of experiments, we create synthetic data to be able to compare the estimates to the ground-truth value of the target policies.
 最初の実験セットでは、ターゲット・ポリシーのグランド・トゥルース値と推定値を比較できるように、合成データを作成する。
 To create the data, we sample 10- dimensional context vectors x from the standard normal distribution.
 データを作成するために、標準正規分布から10次元のコンテキスト・ベクトルxをサンプリングする。
 We also sample de-dimensional categorical action embedding e ∈ E from the following conditional distribution given action a.
-また、アクションaが与えられたときの以下の条件分布から、非次元のカテゴリー的アクション埋め込みe∈Eをサンプリングする。
+また、アクションaが与えられたときの以下の条件分布から、$d_e$ 次元のカテゴリー的アクション埋め込みe∈Eをサンプリングする。
 
 $$
 \tag{4}
@@ -500,7 +533,7 @@ Given action a, we sample categorical action embedding e based on Eq.(4).
 Finally, we sample the reward from a normal distribution with mean q(x, e) and standard deviation σ = 2.5.Iterating this procedure n times generates logged data D with n independent copies of (x, a, e, r).
 最後に、平均q(x, e)、標準偏差σ = 2.5を持つ正規分布から報酬をサンプリングする。この手順をn回繰り返すと、(x, a, e, r)のn個の独立したコピーを持つログデータDが生成される。
 
-### BASELINES ベースライン
+### 4.1.1. BASELINES ベースライン
 
 We compare our estimator with Direct Method (DM), IPS, and DR.5 We use the Random Forest (Breiman, 2001) implemented in scikit-learn (Pedregosa et al., 2011) along with 2-fold cross-fitting (Newey & Robins, 2018) to obtain qˆ(x, e) for DR and DM.
 我々は，DRとDMのqˆ(x, e)を求めるために，scikit-learn (Pedregosa et al, 2011)に実装されたRandom Forest (Breiman, 2001)と2-fold cross-fitting (Newey & Robins, 2018)を使用する。
@@ -511,12 +544,12 @@ We also report the results of MIPS with the true importance weights as “MIPS (
 MIPS (true) provides the best performance we could achieve by improving the procedure for estimating the importance weights of MIPS
 MIPS（true）は、MIPSの重要度重みを推定する手順を改善することで達成できる最高のパフォーマンスを提供する。
 
-### RESULTS 結果
+### 4.1.2. RESULTS 結果
 
 The following reports and discusses the MSE, squared bias, and variance of the estimators computed over 100 different sets of logged data replicated with different seeds.
 以下では、異なるシードで再現された100セットのログデータに対して計算された推定量のMSE、二乗バイアス、分散を報告し、議論する。
 
-#### How does MIPS perform with varying numbers of actions? MIPSは様々なアクション数でどのようなパフォーマンスを発揮するか？
+#### 4.1.2.1. How does MIPS perform with varying numbers of actions? MIPSは様々なアクション数でどのようなパフォーマンスを発揮するか？
 
 First, we evaluate the estimators’ performance when we vary the number of actions from 10 to 5000.
 まず、アクション数を10から5000まで変化させたときの推定値の性能を評価する。
@@ -533,7 +566,7 @@ The figure also shows that MIPS (true) is even better than MIPS in large action 
 This observation implies that there is room for further improvement in how to estimate the marginal importance weights.
 この観察結果は、限界重要度ウエイトの推定方法にさらなる改善の余地があることを示唆している。
 
-#### How does MIPS perform with varying sample sizes? サンプルサイズを変化させた場合のMIPSの性能は？
+#### 4.1.2.2. How does MIPS perform with varying sample sizes? サンプルサイズを変化させた場合のMIPSの性能は？
 
 Next, we compare the estimators under varying numbers of samples (n ∈ {800, 1600, 3200, 6400, 12800, 25600}).
 次に、サンプル数（n∈{800, 1600, 3200, 6400, 12800, 25600}）を変化させて推定量を比較する。
@@ -552,7 +585,7 @@ In contrast, MIPS is better than DM except for n = 800, as the bias of MIPS is m
 Moreover, MIPS becomes increasingly better than DM with the growing sample size, as the variance of MIPS decreases while DM remains highly biased.
 さらに、MIPSの分散が減少する一方で、DMは非常に偏ったままであるため、サンプルサイズが大きくなるにつれて、MIPSはDMよりもますます良くなる。
 
-#### How does MIPS perform with varying numbers of deficient actions? MIPSは欠陥アクションの数を変化させた場合、どのようなパフォーマンスを発揮するのだろうか。
+#### 4.1.2.3. How does MIPS perform with varying numbers of deficient actions? MIPSは欠陥アクションの数を変化させた場合、どのようなパフォーマンスを発揮するのだろうか。
 
 We also compare the estimators under varying numbers of deficient actions (|U0| ∈ {0, 100, 300, 500, 700, 900}) with a fixed action set (|A| = 1000).
 U0
@@ -567,7 +600,7 @@ However, we also observe that the gap between MIPS and MIPS (true) increases for
 Note that the MSE of IPS and DR decreases with increasing number of deficient actions, because their variance becomes smaller with a smaller number of supported actions, even though their bias increases as suggested by Sachdeva et al.(2020).
 Sachdevaら(2020)が示唆するように、IPSとDRのバイアスは増加するが、その分散はサポートされるアクションの数が少ないほど小さくなるため、IPSとDRのMSEは欠陥アクションの数が増えるほど減少することに注意。
 
-#### How does MIPS perform when Assumption 3.2 is violated? 仮定3.2が破られたとき、MIPSはどのような性能を発揮するか？
+#### 4.1.2.4. How does MIPS perform when Assumption 3.2 is violated? 仮定3.2が破られたとき、MIPSはどのような性能を発揮するか？
 
 Here, we evaluate the accuracy of MIPS when Assumption 3.2 is violated.
 ここでは、仮定3.2に違反した場合のMIPSの精度を評価する。
@@ -598,7 +631,7 @@ The third column of Figure 5 implies that the variance of MIPS and MIPS (true) d
 These observations suggest that MIPS can be highly effective despite the violated assumption.
 これらの観察結果は、MIPSが前提に違反しているにもかかわらず、高い効果を発揮できることを示唆している。
 
-#### How does data-driven embedding selection perform combined with MIPS? データ駆動型エンベッディング選択はMIPSとどのように組み合わされるのか？
+#### 4.1.2.5. How does data-driven embedding selection perform combined with MIPS? データ駆動型エンベッディング選択はMIPSとどのように組み合わされるのか？
 
 The previous section showed that there is a potential to improve the accuracy of MIPS by selecting a subset of dimensions for estimating the marginal importance weights.
 前節では、限界重要度重みを推定するために次元のサブセットを選択することで、MIPSの精度を向上させる可能性があることを示した。
@@ -613,7 +646,7 @@ The results suggest that the data-driven embedding selection provides a substant
 As shown in the second and third columns in Figure 6, the embedding selection significantly reduces the variance at the cost of introducing some bias by strategically violating the assumption, which results in a better MSE.
 図6の2列目と3列目に示されているように、埋め込み選択は、戦略的に仮定に違反することによって多少のバイアスを導入する代償として、分散を大幅に削減し、その結果、MSEが改善される。
 
-#### Other benefits of MIPS. MIPSのその他の利点
+#### 4.1.2.6. Other benefits of MIPS. MIPSのその他の利点
 
 MIPS has additional benefits over the conventional estimators.
 MIPSには、従来の推定量よりもさらに大きな利点がある。
@@ -624,7 +657,7 @@ Appendix D.2 empirically investigates the additional benefits of MIPS with varyi
 We observe that MIPS is substantially more robust to the changes in policies and added noise than IPS or DR, which provides further arguments for the applicability of MIPS.
 我々は、MIPSがIPSやDRよりも、ポリシーの変更やノイズの付加に対してロバストであることを観察した。
 
-## Real-World Data 実世界のデータ
+## 4.2. Real-World Data 実世界のデータ
 
 To assess the real-world applicability of MIPS, we now evaluate MIPS on real-world bandit data.
 MIPSの実世界での適用性を評価するため、次にMIPSを実世界のバンディットデータで評価する。
@@ -643,7 +676,7 @@ We regard uniform random and Thompson sampling as logging and target policies, r
 Appendix D.3 describes the detailed experimental procedure to evaluate the accuracy of the estimators on real-world bandit data.
 付録D.3では、実際のバンディットデータを用いて推定値の精度を評価するための詳細な実験手順を説明する。
 
-#### Results. 結果
+#### 4.2.0.1. Results. 結果
 
 We evaluate MIPS (w/o SLOPE) and MIPS (w/ SLOPE) in comparison to DM, IPS, DR, Switch-DR, More Robust DR (Farajtabar et al., 2018), DRos, and DR-λ.
 MIPS（SLOPEなし）とMIPS（SLOPEあり）を、DM、IPS、DR、Switch-DR、More Robust DR（Farajtabar et al, 2018）、DRos、DR-λと比較して評価する。
@@ -660,7 +693,7 @@ This result demonstrates the real-world applicability of our estimator as well a
 We report qualitatively similar results for other sample sizes (from 10,000 to 500,000) in Appendix D.3.
 付録D.3では、他のサンプルサイズ（10,000から500,000まで）についても定性的には同様の結果を報告している。
 
-# Conclusion and Future Work 結論と今後の課題
+# 5. Conclusion and Future Work 結論と今後の課題
 
 We explored the problem of OPE for large action spaces.
 我々は、大規模な行動空間に対するOPEの問題を探求した。

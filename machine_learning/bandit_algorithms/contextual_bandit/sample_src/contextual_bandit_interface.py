@@ -7,7 +7,7 @@ from typing import Any
 class Arm:
     _reward: int
 
-    def is_new(self) -> bool:
+    def is_new(self)->bool:
         pass
 
 
