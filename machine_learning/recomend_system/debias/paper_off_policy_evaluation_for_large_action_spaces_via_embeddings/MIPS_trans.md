@@ -579,13 +579,13 @@ Finally, we sample the reward from a normal distribution with mean q(x, e) and s
 ### 4.1.1. BASELINES ベースライン
 
 We compare our estimator with Direct Method (DM), IPS, and DR.5 We use the Random Forest (Breiman, 2001) implemented in scikit-learn (Pedregosa et al., 2011) along with 2-fold cross-fitting (Newey & Robins, 2018) to obtain qˆ(x, e) for DR and DM.
-我々は，DRとDMのqˆ(x, e)を求めるために，scikit-learn (Pedregosa et al, 2011)に実装されたRandom Forest (Breiman, 2001)と2-fold cross-fitting (Newey & Robins, 2018)を使用する。
+我々は，DRとDMの $\hat{q}(x, e)$ を求めるために，scikit-learn (Pedregosa et al, 2011)に実装されたRandom Forest (Breiman, 2001)と2-fold cross-fitting (Newey & Robins, 2018)を使用する。
 We use the Logistic Regression of scikit-learn to estimate πˆ0(a|x, e) for MIPS.
-scikit-learnのロジスティック回帰を用いて、MIPSのπˆ0(a|x, e)を推定する。
+scikit-learnのロジスティック回帰を用いて、MIPSの $\hat{0}(a|x, e)$ を推定する。
 We also report the results of MIPS with the true importance weights as “MIPS (true)”.
 また、真の重要度重みを用いたMIPSの結果も「MIPS（真の）」として報告する。
 MIPS (true) provides the best performance we could achieve by improving the procedure for estimating the importance weights of MIPS
-MIPS（true）は、MIPSの重要度重みを推定する手順を改善することで達成できる最高のパフォーマンスを提供する。
+MIPS(true)は、MIPSの重要度重みを推定する手順を改善することで達成可能な最高のパフォーマンスを提供する。(完璧に周辺重要度重みを推定できたら、MIPS(true)になるよ、という話。)
 
 ### 4.1.2. RESULTS 結果
 
@@ -601,9 +601,9 @@ The sample size is fixed at n = 10000.
 Figure 2 shows how the number of actions affects the estimators’ MSE (both on linear- and log-scale).
 図2は、アクション数が推定値のMSE（線形スケールと対数スケールの両方）にどのように影響するかを示している。
 We observe that MIPS provides substantial improvements over IPS and DR particularly for larger action sets.
-我々は、MIPSがIPSやDRよりも、特に大規模なアクションセットにおいて大幅に改善されることを確認した。
+我々は、**MIPSがIPSやDRよりも、特に大規模なアクションセットにおいて大幅に改善される**ことを確認した。
 More specifically, when |A| = 10, MSE(VˆIPS) MSE(VˆMIPS) = 1.38, while MSE(VˆIPS) MSE(VˆMIPS) = 12.38 for |A| = 5000, indicating a significant performance improvement of MIPS for larger action spaces as suggested in Theorem 3.6.MIPS is also consistently better than DM, which suffers from high bias.
-A
+より具体的には、｜A｜ = 10のとき、MSE(VˆIPS) MSE(VˆMIPS) = 1.38であるのに対し、｜A｜ = 5000のとき、MSE(VˆIPS) MSE(VˆMIPS) = 12.38であり、定理3.6で示唆されているように、より大きな行動空間に対してMIPSの著しい性能向上が示されている。
 The figure also shows that MIPS (true) is even better than MIPS in large action sets, mostly due to the reduced bias when using the true marginal importance weights.
 また、MIPS(true)は、大規模なアクションセットにおいて、MIPSよりも優れている。
 This observation implies that there is room for further improvement in how to estimate the marginal importance weights.
@@ -612,7 +612,7 @@ This observation implies that there is room for further improvement in how to es
 #### 4.1.2.2. How does MIPS perform with varying sample sizes? サンプルサイズを変化させた場合のMIPSの性能は？
 
 Next, we compare the estimators under varying numbers of samples (n ∈ {800, 1600, 3200, 6400, 12800, 25600}).
-次に、サンプル数（n∈{800, 1600, 3200, 6400, 12800, 25600}）を変化させて推定量を比較する。
+次に、サンプル数（$n \in \{800, 1600, 3200, 6400, 12800, 25600\}$）を変化させて推定量を比較する。
 The number of actions is fixed at |A| = 1000.
 A
 Figure 3 reports how the estimators’ MSE changes with the size of logged bandit data.
@@ -622,7 +622,7 @@ MIPSは特にサンプルサイズが小さい場合に魅力的であり、サ�
 With the growing sample size, MIPS, IPS, and DR improve their MSE as their variance decreases.
 サンプルサイズが大きくなるにつれて、MIPS、IPS、DRは分散が小さくなるにつれてMSEが向上する。
 In contrast, the accuracy of DM does not change across different sample sizes, but it performs better than IPS and DR because they converge very slowly in the presence of many actions.
-対照的に、DMの精度はサンプルサイズが異なっても変わらないが、多くのアクションが存在する場合には収束が非常に遅くなるため、IPSやDRよりも優れている。
+対照的に、DMの精度はサンプルサイズが異なっても変わらないが、多くのアクションが存在する場合にはIPSやDRは収束が非常に遅くなるため、IPSやDRよりも優れている。
 In contrast, MIPS is better than DM except for n = 800, as the bias of MIPS is much smaller than that of DM.
 一方、MIPSのバイアスはDMのバイアスよりもはるかに小さいため、n = 800を除いてMIPSはDMよりも優れている。
 Moreover, MIPS becomes increasingly better than DM with the growing sample size, as the variance of MIPS decreases while DM remains highly biased.
@@ -631,7 +631,7 @@ Moreover, MIPS becomes increasingly better than DM with the growing sample size,
 #### 4.1.2.3. How does MIPS perform with varying numbers of deficient actions? MIPSは欠陥アクションの数を変化させた場合、どのようなパフォーマンスを発揮するのだろうか。
 
 We also compare the estimators under varying numbers of deficient actions (|U0| ∈ {0, 100, 300, 500, 700, 900}) with a fixed action set (|A| = 1000).
-U0
+また、固定されたアクションセット（｜A｜ = 1000）を用いて、欠損アクション(??)の数を変化させた場合（｜U0｜∈{0, 100, 300, 500, 700, 900}）の推定量も比較する。
 Figure 4 shows how the number of deficient actions affects the estimators’ MSE, squared bias, and variance.
 図4は、欠陥アクションの数が推定値のMSE、二乗バイアス、分散にどのように影響するかを示している。
 The results suggest that MIPS (true) is robust and not affected by the existence of deficient actions.
@@ -694,7 +694,7 @@ As shown in the second and third columns in Figure 6, the embedding selection si
 MIPS has additional benefits over the conventional estimators.
 MIPSには、従来の推定量よりもさらに大きな利点がある。
 In fact, in addition to the case with many actions, IPS is also vulnerable when logging and target policies differ substantially and the reward is noisy (see Eq.(2)).
-実際、アクションが多い場合だけでなく、**ログとターゲットのポリシーが大きく異なり、報酬がノイジーな場合にもIPSは脆弱である**（式(2)参照）。
+実際、アクションが多い場合だけでなく、**ログとターゲットのポリシーが大きく異なり、報酬がノイジー(=欠損ばっかりって意味??)な場合にもIPSは脆弱である**（式(2)参照）。
 Appendix D.2 empirically investigates the additional benefits of MIPS with varying logging/target policies and varying noise levels with a fixed action set.
 付録D.2では、ロギング／ターゲットポリシーを変化させ、アクションセットを固定してノイズレベルを変化させた場合のMIPSの付加的な利点を実証的に調査している。
 We observe that MIPS is substantially more robust to the changes in policies and added noise than IPS or DR, which provides further arguments for the applicability of MIPS.
@@ -709,13 +709,13 @@ In particular, we use the Open Bandit Dataset (OBD)6 (Saito et al., 2020), a pub
 We use 100,000 observations that are randomly sub-sampled from the “ALL” campaign of OBD.
 我々は、OBDの "ALL "キャンペーンから無作為にサブサンプリングされた100,000のオブザベーションを使用する。
 The dataset contains user contexts x, fashion items to recommend as action a ∈ A where |A| = 240, and resulting clicks as reward r ∈ {0, 1}.
-A
+データセットには、ユーザー・コンテキストx、アクションa∈A（｜A｜＝240）として推薦するファッション・アイテム、報酬r∈｛0，1｝として結果のクリックが含まれる。
 OBD also includes 4-dimensional action embedding vectors such as hierarchical category information about the fashion items.
 OBDはまた、ファッションアイテムに関する階層的なカテゴリー情報のような4次元のアクション埋め込みベクトルを含む。
 The dataset consists of two sets of logged bandit data collected by two different policies (uniform random and Thompson sampling) during an A/B test of these policies.
-データセットは、2つの異なるポリシー（一様ランダムサンプリングとトンプソンサンプリング）のA/Bテストで収集された2セットのログバンディットデータから構成される。
+データセットは、**2つの異なるポリシー（一様ランダムサンプリングとトンプソンサンプリング）のA/Bテストで収集された2セットのログバンディットデータ**から構成される。
 We regard uniform random and Thompson sampling as logging and target policies, respectively, to perform an evaluation of OPE estimators.
-一様無作為サンプリングとトンプソンサンプリングをそれぞれロギング政策とターゲット政策とみなして、OPE推定量の評価を行う。
+一様無作為サンプリングとトンプソンサンプリングをそれぞれ loggint policy とtarget policy とみなして、OPE推定量の評価を行う。
 Appendix D.3 describes the detailed experimental procedure to evaluate the accuracy of the estimators on real-world bandit data.
 付録D.3では、実際のバンディットデータを用いて推定値の精度を評価するための詳細な実験手順を説明する。
 
