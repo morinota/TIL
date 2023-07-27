@@ -95,7 +95,7 @@ $$
 
 ## action embedding の活用
 
-## action embedding を用いてV()を再定義
+## action embedding を用いて性能関数 $V(\pi)$ を再定義
 
 アクションの埋め込みを用いて、policy の性能の定義を次のように再定義する:
 
@@ -104,7 +104,7 @@ V(\pi) = \mathbb{E}_{p(x) \pi(a|x) p(e|x, a) p(r|x, a, e)}[r]
 $$
 
 - ここで、期待報酬 $q(x, a) = E_{p(e|x,a)}[q(x, a, e)]$ であり、$q(x, a, e) := E[r|x, a, e]$ であるから、上記の改良は式(1)で与えられた元の定義と矛盾しないことに注意.
-- logged bandit dataset: $D = {(x_{i}, a_{i}, e_{i}, r_{i})}_{i=1}^{n}$
+- logged bandit datasetにも $e$ を追加: $D = {(x_{i}, a_{i}, e_{i}, r_{i})}_{i=1}^{n}$
 - $D$ の各tupleはlogging policy $\pi_0$ によって $(x, a, e, r) \sim p(x) \pi_0(a|x) p(e|x, a) p(r|x, a, e)$ として生成される.
 
 # action embedding を特徴づける2つの性質
@@ -131,3 +131,5 @@ $$
 
 - (xとeで条件づけた時に、$r$ と $a$ は独立になる...!:thinking:)
 -
+
+## 補足(命題3.4): 2つの仮定の元でMIPS推定量が不偏になる証明

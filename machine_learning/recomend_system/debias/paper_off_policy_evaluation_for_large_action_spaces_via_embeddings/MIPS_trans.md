@@ -272,22 +272,22 @@ However, we later show that it is often beneficial to strategically discard some
 We start the derivation of our new estimator with the observation that Assumption 3.2 gives us another path to unbiased estimation of the policy value without Assumption 2.1.
 仮定3.2が、仮定2.1によらない policy value の不偏推定への別の道を与えてくれるという観察から、新しい推定量の導出を始める.
 
-Proposition 3.3.Under Assumption 3.2, we have
-命題3.3.前提3.2の下では、次のようになる.
+Proposition 3.3.
+命題3.3.
+Under Assumption 3.2, we have
+前提3.2の下では、性能関数 V は以下のようになる。($a$ がなくとも、policy性能を計算できるようになった!)
 
 $$
 V(\pi) = \mathbb{E}_{p(x) p(e|x, \pi) p(r|x, e)}[r]
 $$
 
-($a$ がなくとも、性能を計算できるようになった!)
-
 See Appendix B.1 for the proof.
 証明は付録B.1を参照。
 
 Proposition 3.3 provides another expression of the policy value without explicitly relying on the action variable a.
-命題3.3は、**行動変数aに明示的に依存することなく、policy性能を表す別の表現を提供する**。
+命題3.3は、**行動変数 $a$ に明示的に依存することなく、policy性能を表す別の表現を提供する**。
 This new expression naturally leads to the following marginalized inverse propensity score (MIPS) estimator, which is our main proposal.
-この新しい式は、自然に次のような**MIPS（marginalized inverse propensity score）推定量**につながります。
+この新しい式(=新しいpolicy性能の表現!)は、自然に次のような**MIPS（marginalized inverse propensity score）推定量**につながる。
 
 $$
 \hat{V}_{MIPS}(\pi;D)
@@ -297,72 +297,97 @@ $$
 $$
 
 where $w(x, e) := p(e|x, π)/p(e|x, π0)$ is the marginal importance weight defined with respect to the marginal distribution over the action embedding space.
-ここで$w(x, e) := p(e|x, π)/p(e|x, π0)$は、行動埋め込み空間上の周辺分布に関して定義された周辺重要度重みである。
+ここで $w(x, e) := p(e|x, \pi)/p(e|x, \pi_{0})$ は、行動埋め込み空間上の周辺分布に関して定義された**周辺重要度重み**である。
 
 To obtain an intuition for the benefits of MIPS, we provide a toy example in Table 1 with X = {x1}, A = {a1, a2, a3}, and E = {e1, e2, e3} (a special case of our formulation with a discrete embedding space).
 MIPSの利点を直感的に理解するために、$X = {x1}, A= {a_1, a_2, a_3}, E={e_1, e_2, e_3}$ (離散埋め込み空間を持つ我々の定式化の特別な場合)のおもちゃの例を表1に示す.
 The left table describes the logging and target policies with respect to A and implies that Assumption 2.1 is violated (π0(a1|x1) = 0.0).
-左の表は、Aに関するロギングとターゲット・ポリシーを記述し、**仮定2.1が破られること**を意味する(π0(a1|x1) = 0.0).
+左の表は、Aに関するロギングとターゲット・ポリシーを記述し、**仮定2.1が破られること**を意味する($\pi(a_1|x_1) \neq 0$ だけど $\pi_{0}(a_1|x_1) = 0.0$ ...!).
 The middle table describes the conditional distribution of the action embedding e given action a (e.g., probability of a movie a belonging to a genre e).
-真ん中の表は、アクション $a$ が与えられたときのアクション埋め込み $e$ の条件付き分布（例えば、映画aがジャンルeに属する確率）を記述している.
+真ん中の表は、**アクション $a$ が与えられたときのアクション埋め込み $e$ の条件付き分布**(例えば、映画aがジャンル $e$ に属する確率. ジャンルは確率変数ではない気がしているが、一般化した例なのかな:thinking:)を記述している.
 The right table describes the marginal distributions over E, which are calculable from the other two tables.
-右の表は、E上の周辺分布を記述したもので、他の2つの表から計算できる。
+右の表は、**E上の周辺分布**を記述したもので、**他の2つの表から計算できる**.(ふむふむ)
 By considering the marginal distribution, Assumption 3.1 is ensured in the right table, even if Assumption 2.1 is not true in the left table.
-周辺分布を考慮すれば、**左の表で仮定2.1が真でなくても、右の表で仮定3.1が保証される**。
+周辺分布を考慮すれば、**左の表で仮定2.1(=common support assumption)が真でなくても、右の表で仮定3.1(=common embedding support assumption)が保証される**。
 Moreover, the maximum importance weight is smaller for the right table (maxe∈E w(x1, e) < maxa∈A w(x1, a)), which may contribute to a variance reduction of the resulting estimator.
-さらに、最大重要度ウェイトは右のテーブルの方が小さく（maxe∈E w(x1, e) < maxa∈A w(x1, a)）、これは結果として得られる**推定量の分散低減**に寄与する可能性がある。
+さらに、**重要度重みの最大値**は右のテーブルの方が小さく（maxe∈E w(x1, e) < maxa∈A w(x1, a)）、これは結果として得られる**推定量の分散低減**に寄与する可能性がある.
 Below, we formally analyze the key statistical properties of MIPS and compare them with those of IPS, including the realistic case where Assumption 3.2 is violated.
-以下では、**MIPSの主要な統計的性質**を正式に分析し、仮定3.2に違反する現実的な場合を含め、IPSのそれと比較する.
+以下では、**MIPSの主要な統計的性質**を正式に分析し、仮定3.2(=No Direct Effect)に違反する現実的な場合を含め、IPSのそれと比較する.
 
 ## 3.1. Theoretical Analysis 理論的分析
 
 First, the following proposition shows that MIPS is unbiased under assumptions different from those of IPS.
 まず、以下の命題は、MIPSがIPSとは異なる仮定のもとでは不偏であることを示している。
 
-Proposition 3.4.Under Assumptions 3.1 and 3.2, MIPS is unbiased, i.e., ED[VˆMIPS(π; D)] = V (π) for any π.
-すなわち、ED[VˆMIPS(π; D)] = V (π)である。
+### Proposition 3.4. MIPSが不偏推定量である件
+
+Under Assumptions 3.1 and 3.2, MIPS is unbiased, i.e., $E_{D}[\hat{V}_{MIPS}(\pi; D)] = V(\pi)$ for any $\pi$.
 See Appendix B.2 for the proof.
-証明は付録B.2を参照。
+証明は付録B.2を参照.
+
 Proposition 3.4 states that, even when π0 fails to provide common support over A such that IPS is biased, MIPS can still be unbiased if π0 provides common support over E (Assumption 3.1) and e fully captures the causal effect of a on r (Assumption 3.2).
-命題3.4は、IPSが偏るようなA上の共通支持をπ0が提供できない場合でも、π0がE上の共通支持を提供し（仮定3.1）、eがr上のaの因果効果を完全に捕らえるならば（仮定3.2）、MIPSは依然として不偏であり得ることを述べている。
+命題3.4は、**IPSが偏るようなA上の common support をπ0が提供できない場合でも、π0がE上のcommon support を提供し（仮定3.1）、eがr上のaの因果効果を完全に捕らえるならば（仮定3.2）、MIPSは依然として不偏であり得ること**を述べている.
 
 Having multiple estimators that enable unbiased OPE under different assumptions is in itself desirable, as we can choose the appropriate estimator depending on the data generating process.
-異なる仮定の下で不偏OPEを可能にする複数の推定量を持つことは、それ自体望ましいことであり、データ生成プロセスに応じて適切な推定量を選択できるからである。
+**異なる仮定の下で不偏OPEを可能にする複数の推定量を持つことは、それ自体望ましいこと**(ふむふむ確かに...!)であり、データ生成プロセスに応じて適切な推定量を選択できるからである。
 However, it is also helpful to understand how violations of the assumptions influence the bias of the resulting estimator.
-しかし，仮定の違反が結果の推定量のバイアスにどのように影響するかを理解することも有益である。
+しかし，**仮定の違反が結果の推定量のバイアスにどのように影響するかを理解することも有益**である。
 In particular, for MIPS, it is difficult to verify whether Assumption 3.2 is true in practice.
-特にMIPSの場合、仮定3.2が実際に正しいかどうかを検証するのは難しい。
+**特にMIPSの場合、仮定3.2が実際に正しいかどうかを検証するのは難しい。**(うんうん。)
 The following theorem characterizes the bias of MIPS.
-次の定理は、MIPSのバイアスを特徴づけるものである。
-Theorem 3.5.(Bias of MIPS) If Assumption 3.1 is true, but Assumption 3.2 is violated, MIPS has the following bias.
-定理3.5.(MIPSのバイアス) 仮定3.1が真で、仮定3.2が破れている場合、MIPSは次のようなバイアスを持つ。
+次の定理は、MIPSのバイアスを特徴づけるものである.
+
+### Theorem 3.5.(Bias of MIPS) 定理3.5.(MIPSのバイアス)
+
+If Assumption 3.1 is true, but Assumption 3.2 is violated, MIPS has the following bias.
+仮定3.1が真で、仮定3.2が破れている場合、MIPSは次のようなバイアスを持つ。
 
 $$
-\tag{}
+Bias[\hat{V}_{MIPS}(\pi)]
+\\
+= \mathbb{E}_{p(x)p(e|x, \pi_0)}
+[
+    \sum_{a \leq b} \pi_0(a|x,e) \pi_0(b|x,e)
+\\
+    \times (q(x,a,e) - q(x,b,e))
+\\
+    \times (w(x,b) - w(x, a))
+]
 $$
 
 where a, b ∈ A.
 ここでa、bはAである。
 See Appendix B.3 for the proof.
 証明は付録B.3を参照のこと。
+
 Theorem 3.5 suggests that three factors contribute to the bias of MIPS when Assumption 3.2 is violated.
-定理3.5は、仮定3.2に違反した場合、3つの要因がMIPSの偏りに寄与することを示唆している。
+定理3.5は、**仮定3.2に違反した場合、3つの要因がMIPSの偏りに寄与することを示唆**している。
 The first factor is the predictivity of the action embeddings with respect to the actual actions.
-第一の要因は、実際のアクションに対するアクションの埋め込みの予測性である。
+第一の要因は、実際のアクションに対する action embedding の予測性である。
 When action a is predictable given context x and embedding e, π0(a|x, e) is close to zero or one (deterministic), meaning that π0(a|x, e)π0(b|x, e) is close to zero.
-x, e) is close to zero or one (deterministic), meaning that π0(a
+行動aが文脈xと埋め込みeを与えられて予測可能である場合、$\pi_{0}(a|x, e)$ は 0 か 1 に近い(=決定論的)、つまり 第一成分 $\pi_0(a|x, e) \pi_0(b|x, e)$ はゼロに近い。
 This suggests that even if Assumption 3.2 is violated, action embeddings that identify the actions well still enable a nearly unbiased estimation of MIPS.
-このことは、仮に仮定3.2に違反したとしても、アクションをうまく識別するアクション埋め込みによって、MIPSをほぼ不偏に推定できることを示唆している。
+このことは、**仮に仮定3.2に違反したとしても、アクションをうまく識別する(=$a$ が $x$ と $e$ から一意に定まる?)アクション埋め込みによって**、MIPSをほぼ不偏に推定できることを示唆している。
+
 The second factor is the amount of direct effect of the action on the reward, which is quantified by q(x, a, e) − q(x, b, e).
-2つ目の要因は、報酬に対する行動の直接的効果の大きさで、q(x, a, e) - q(x, b, e)で定量化される。
+2つ目の要因は、報酬に対するactionの direct effect の大きさで、$q(x, a, e) - q(x, b, e)$ で定量化される. (なるほど...! No Direct Effect仮定が満たされていれば第二の成分は0になるのか...!)
 When the direct effect of a on r is small, q(x, a, e) − q(x, b, e) also becomes small and so is the bias of MIPS.
-rに対するaの直接効果が小さい場合、q(x, a, e) - q(x, b, e)も小さくなり、MIPSのバイアスも小さくなる。
-In an ideal situation where Assumption 3.2 is satisfied, we have q(x, a, e) = q(x, b, e) = q(x, e), thus MIPS is unbiased, which is consistent with Proposition 3.4.Note that the first two factors suggest that, to reduce the bias, the action embeddings should be informative so that they are either predictive of the actions or mediate a large amount of the causal effect.
+rに対するaの直接効果が小さい場合、$q(x, a, e) - q(x, b, e) $も小さくなり、MIPSのバイアスも小さくなる.
+In an ideal situation where Assumption 3.2 is satisfied, we have q(x, a, e) = q(x, b, e) = q(x, e), thus MIPS is unbiased,
 仮定3.2が満たされる理想的な状況では、q(x, a, e) = q(x, b, e) = q(x, e)となり、MIPSは不偏である。
+which is consistent with Proposition 3.4.
+これは命題3.4と一致する。
+
+Note that the first two factors suggest that, to reduce the bias, the action embeddings should be informative so that they are either predictive of the actions or mediate a large amount of the causal effect.
+最初の2つの要因は、バイアスを減らすために、アクションの埋め込みは、アクションを予測するか(=第一成分の話)、因果効果の大部分を媒介するような情報量が必要であること(=第二成分の話)を示唆していることに注意。
+
 The final factor is the similarity between logging and target policies quantified by w(x, a) − w(x, b).
-最後の要因は、w(x, a) - w(x, b)で定量化されるロギングとターゲットポリシーの類似性である。
+**最後の要因は、$w(x, a) - w(x, b)$ で定量化されるlogging policy とtarget policy の類似性**である。
 When Assumption 3.2 is satisfied, MIPS is unbiased for any target policy, however, Theorem 3.5 suggests that if the assumption is not true, MIPS produces a larger bias for target policies dissimilar from the logging policy.2
-仮定3.2が満たされる場合、MIPSはどのようなターゲットポリシーに対しても不偏であるが、定理3.5は仮定が真でない場合、MIPSはロギングポリシーと異なるターゲットポリシーに対してより大きなバイアスを生成することを示唆している2。
+仮定3.2が満たされる場合、MIPSはどのような target policy に対しても不偏であるが、定理3.5は仮定(=3.2??)が真でない場合、**MIPSはロギングポリシーと異なるターゲットポリシーに対してより大きなバイアスを生成すること**を示唆している。(3.1を満たしていても??)
+($\pi = \pi_0$ の場合は、$w(x, a) = w(x, b) = 1$なのでbiasは0。)
+
+### Theorem 3.6 MIPSの分散
 
 Next, we analyze the variance of MIPS, which we show is never worse than that of IPS and can be substantially lower.
 次に、MIPSの分散を分析する。MIPSの分散はIPSの分散よりも決して悪くなく、大幅に小さくなる可能性があることを示す。
@@ -370,27 +395,37 @@ Theorem 3.6.(Variance Reduction of MIPS) Under Assumptions 2.1, 3.1, and 3.2, we
 定理3.6(MIPSの分散削減) 仮定2.1、3.1、3.2の下で、次が成り立つ。
 
 $$
+n(\mathbb{V}_{D}[\hat{V}_{IPS}(\pi; D)] - \mathbb{V}_{D}[\hat{V}_{MIPS}(\pi;D)])
+\\
+= \mathbb{E}_{p(x)p(e|x,\pi_0)}[
+    \mathbb{E}_{p(r|x,e)}[r^2] \mathbb{V}_{\pi_0(a|x,e)}[w(x,a)]
+    ]
 \tag{}
 $$
 
 which is non-negative.
-これは非負である。
+これは非負である。(i.e. 3つの仮定を満たす場合、IPSよりMIPSの方が常に分散が小さい)
 Note that the variance reduction is also lower bounded by zero even when Assumption 3.2 is not true.
-仮定3.2が真でない場合でも、分散の減少はゼロで下界されることに注意。
+**仮定3.2が真でない場合でも、分散の減少はゼロでlower boundされる**ことに注意。(i.e. MIPSよりもIPSの分散が小さくなる事はない)
 See Appendix B.4 for the proof.
 証明は付録B.4を参照のこと。
+
 There are two factors that affect the amount of variance reduction.
-分散の減少量に影響を与える要因は2つある。
+**分散の減少量に影響を与える要因は2つ**ある。
 The first factor is the second moment of the reward with respect to p(r|x, e).
-最初の要因は、p(r|x, e)に対する報酬の二次モーメントである。
+最初の要因は、$p(r|x, e)$ に対する報酬の二次モーメントである。
 This term becomes large when, for example, the reward is noisy even after conditioning on the action embedding e.
-この項が大きくなるのは、例えば、行動埋め込みeを条件付けした後でも報酬にノイズがある場合である。
+この項が大きくなるのは、例えば、**行動埋め込みeを条件付けした後でも報酬にノイズがある場合**である.(i.e. 仮定3.2が満たせてない場合??)
+
 The second factor is the variance of w(x, a) with respect to the conditional distribution π0(a|x, e), which becomes large when (i) w(x, a) has a wide range or (ii) there remain large variations in a even after conditioning on action embedding e so that π0(a|x, e) remains stochastic.
-x, e), which becomes large when (i) w(x, a) has a wide range or (ii) there remain large variations in a even after conditioning on action embedding e so that π0(a|x, e) remains stochastic.
+第二の要因は、条件付き分布 $\pi_{0}(a|x, e)$ (これは、x->a も a->eも決定論的な場合には 0 or 1 の離散確率質量分布になるはず...!) に関する $w(x, a)$ の分散であり、これは、(i)$w(x, a)$ が広い範囲を持つか、(ii) $\pi_{0}(a|x, e)$ が確率的なままであるように、**アクション埋め込みeを条件付けた後でもaに大きな変動が残る場合**(i.e. $\pi_{0}(a|x, e)$ が広い範囲を持つ=非ゼロ要素が多い場合?)に大きくなる.
 Therefore, MIPS becomes increasingly favorable compared to IPS for larger action spaces where the variance of w(x, a) becomes larger.
-したがって、w(x, a)の分散が大きくなるような大きな行動空間では、MIPSはIPSに比べてますます有利になる。
+したがって、$w(x, a)$ の分散が大きくなるような**大きな行動空間では、MIPSの分散はIPSに比べてますます有利になる**。
 Moreover, to obtain a large variance reduction, the action embedding should ideally not be unnecessarily predictive of the actions.
-さらに、大きな分散削減を得るためには、アクションの埋め込みは、アクションを不必要に予測しないことが理想的である。
+さらに、**大きな分散削減を得るためには、アクションの埋め込みは、アクションを不必要に予測しないことが理想的**である。($\pi_{0}(a|x, e)$ の分布が広くなって第二成分が大きくなるから??)
+
+### Theorem 3.7 仮定3.2に違反した場合にMIPSが得る推定量としての性能差
+
 Finally, the next theorem describes the gain in MSE we can obtain from MIPS when Assumption 3.2 is violated.
 最後に、次の定理は、仮定3.2に違反した場合にMIPSから得られるMSEの利得を記述している。
 
@@ -398,54 +433,62 @@ Theorem 3.7.(MSE Gain of MIPS) Under Assumptions 2.1 and 3.1, we have
 定理3.7.(MIPSのMSE利得) 仮定2.1と3.1の下で、次が成り立つ。
 
 $$
+n(MSE(\hat{V}_{IPS}(\pi)) - MSE(\hat{V}_{MIPS}(\pi)))
+\\
+= \mathbb{E}_{x, a, e \in \pi_{0}}[(w(x,a)^2 - w(x,e)^2)]
 \tag{}
 $$
 
 See Appendix B.5 for the proof.
 証明は付録B.5を参照のこと。
 Note that IPS can have some bias when Assumption 2.1 is not true, possibly producing a greater MSE gain for MIPS
-仮定2.1が真でない場合、IPSに偏りが生じ、MIPSのMSE利得が大きくなる可能性がある。
+仮定2.1が真でない場合、IPSに偏りが生じ、MIPSのMSE利得が大きくなりうる。(そりゃそうじゃ！)
 
 ## 3.2. Data-Driven Embedding Selection データ駆動型埋め込み選択
 
 The analysis in the previous section implies a clear biasvariance trade-off with respect to the quality of the action embeddings.
-前節の分析は、アクションの埋め込みの質に関して、バイアスと分散のトレードオフが明確であることを示唆している。
+前節の分析は、**action embedding の質に関して、バイアスと分散のトレードオフが明確であること**を示唆している。
 Specifically, Theorem 3.5 suggests that the action embeddings should be as informative as possible to reduce the bias when Assumption 3.2 is violated.
-具体的には、定理3.5は、仮定3.2に違反した場合のバイアスを減らすために、アクションの埋め込みは可能な限り情報的であるべきであることを示唆している。
+具体的には、**定理3.5は、仮定3.2に違反した場合のbiasを減らすために、action embedding は可能な限り情報的であるべきであること**を示唆している。
 On the other hand, Theorem 3.6 suggests that the action embeddings should be as coarse as possible to gain a greater variance reduction.
-一方、定理3.6は、より大きな分散削減を得るためには、アクションの埋め込みをできるだけ粗くすべきことを示唆している。
+**一方、定理3.6は、より大きな分散削減を得るためには、action embeddingをできるだけ粗くすべきことを示唆している.**
 Theorem 3.7 summarizes the bias-variance trade-off in terms of MSE.
-定理3.7は、バイアスと分散のトレードオフをMSEの観点からまとめたものである。
+**定理3.7は、バイアスと分散のトレードオフをMSEの観点からまとめたもの**である。(そっか...! MSE = bias ^2 + varianceだった!)
+
 A possible criticism to MIPS is Assumption 3.2, as it is hard to verify whether this assumption is satisfied using only the observed logged data.
-MIPSに対する批判として考えられるのは、仮定3.2である。なぜなら、観測されたログデータだけでは、この仮定が満たされているかどうかを検証するのが難しいからである。
+**MIPSに対する批判として考えられるのは、仮定3.2である。なぜなら、観測されたログデータだけでは、この仮定が満たされているかどうかを検証するのが難しいから**である。
 However, the above discussion about the bias-variance trade-off implies that it might be effective to strategically violate Assumption 3.2 by discarding some embedding dimensions.
-しかし、バイアスと分散のトレードオフに関する上記の議論は、いくつかの埋め込み次元を捨てることによって、戦略的に仮定3.2に違反することが効果的である可能性があることを示唆している。
+しかし、バイアスと分散のトレードオフに関する上記の議論は、**いくつかの埋め込み次元を捨てることによって、戦略的に仮定3.2に違反することが効果的である可能性**があることを示唆している。
 This action embedding selection can lead to a large variance reduction at the cost of introducing some bias, possibly improving the MSE of MIPS.
-このアクション・エンベッディング・セレクションは、多少のバイアスを導入する代償として、大きな分散削減をもたらし、MIPSのMSEを改善する可能性がある。
+このaction embedidng 選択は、多少のバイアスを導入する代償として、大きな分散削減をもたらし、MIPSのMSEを改善する可能性がある。
 To implement the action embedding selection, we can adapt the estimator selection method called SLOPE proposed in Su et al.(2020b) and Tucker & Lee (2021).
-アクション埋め込み選択を実装するには、Su et al.(2020b)やTucker & Lee(2021)で提案されているSLOPEと呼ばれる推定量選択法を適応すればよい。
+**action embedding selection を実装するには、Su et al.(2020b)やTucker & Lee(2021)で提案されているSLOPEと呼ばれる推定量選択法**を適応すればよい。
 SLOPE is based on Lepski’s principle for bandwidth selection in nonparametric statistics (Lepski & Spokoiny, 1997) and is used to tune the hyperparameters of OPE estimators.
-SLOPEは、ノンパラメトリック統計における帯域幅選択のためのLepskiの原理(Lepski & Spokoiny, 1997)に基づいており、OPE推定量のハイパーパラメータを調整するために使用される。
+SLOPEは、ノンパラメトリック統計における帯域幅選択のためのLepskiの原理(Lepski & Spokoiny, 1997)に基づいており、**OPE推定量のハイパーパラメータを調整するために使用される**。(なるほど...!!)
 A benefit of SLOPE is that it avoids estimating the bias of the estimator, which is as difficult as OPE.
-SLOPEの利点は、OPEと同様に困難な推定値のバイアスの推定を回避できることである。
+SLOPEの利点は、OPEと同様に困難な推定値のバイアスの推定を回避できることである.
 Appendix C describes how to apply SLOPE to the action embedding selection in our setup, and Section 4 evaluates its benefit empirically.
 付録Cでは、我々のセットアップにおけるアクション埋め込み選択にSLOPEを適用する方法を説明し、セクション4ではその利点を実証的に評価する。
 
 ## 3.3. Estimating the Marginal Importance Weights 限界重要度重みの推定
 
 When using MIPS, we might have to estimate w(x, e) depending on how the embeddings are given.
-MIPSを使う場合、埋め込みがどのように与えられるかによって、w(x, e)を推定しなければならないかもしれない。
+MIPSを使う場合、埋め込みがどのように与えられるかによって、$w(x, e)$を推定しなければならないかもしれない。
+(場合によっては、action $a$ に対する埋め込み $e$ が確率的だったり、$x$ に依存するケースを想定している:thinking:)
 A simple approach to this is to utilize the following transformation
 これに対する簡単なアプローチは、以下の変換を利用することである。
 
 $$
+w(x,e) = \mathbb{E}_{\pi_0(a|x,e)}[w(x,a)]
 \tag{3}
 $$
 
 Eq.(3) implies that we need an estimate of π0(a|x, e), which we compute by regressing a on (x, e).
-式(3)は、π0(a|x, e)の推定値が必要であることを意味し、これはaを(x, e)に回帰することによって計算される。
-We can then estimate w(x, e) as wˆ(x, e) = Eπˆ0(a|x,e) [w(x, a)].3 This procedure is easy to implement and tractable, even when the embedding space is high-dimensional and continuous.
-そして、w(x,e)をwˆ(x,e)=Eπˆ0(a|x,e) [w(x, a)]として推定することができる。3 この手続きは、埋め込み空間が高次元で連続的な場合でも、簡単に実行でき、扱いやすい。
+式(3)は、$\pi_0(a|x,e)$ の推定値が必要であることを意味し、これはaを(x, e)に回帰することによって計算される.
+We can then estimate w(x, e) as wˆ(x, e) = Eπˆ0(a|x,e) [w(x, a)].3
+そして、w(x,e)をwˆ(x,e)=Eπˆ0(a|x,e) [w(x, a)]として推定することができる。3
+This procedure is easy to implement and tractable, even when the embedding space is high-dimensional and continuous.
+この手続きは、埋め込み空間が高次元で連続的な場合でも、簡単に実行でき、扱いやすい。
 Note that, even if there are some deficient actions, we can directly estimate w(x, e) by solving density ratio estimation as binary classification as done in Sondhi et al.(2020).
 なお、欠損アクションがあったとしても、Sondhiら(2020)のように密度比推定を二値分類として解くことで、w(x, e)を直接推定することができる。
 
@@ -651,7 +694,7 @@ As shown in the second and third columns in Figure 6, the embedding selection si
 MIPS has additional benefits over the conventional estimators.
 MIPSには、従来の推定量よりもさらに大きな利点がある。
 In fact, in addition to the case with many actions, IPS is also vulnerable when logging and target policies differ substantially and the reward is noisy (see Eq.(2)).
-実際、アクションが多い場合だけでなく、ログとターゲットのポリシーが大きく異なり、報酬がノイジーな場合にもIPSは脆弱である（式(2)参照）。
+実際、アクションが多い場合だけでなく、**ログとターゲットのポリシーが大きく異なり、報酬がノイジーな場合にもIPSは脆弱である**（式(2)参照）。
 Appendix D.2 empirically investigates the additional benefits of MIPS with varying logging/target policies and varying noise levels with a fixed action set.
 付録D.2では、ロギング／ターゲットポリシーを変化させ、アクションセットを固定してノイズレベルを変化させた場合のMIPSの付加的な利点を実証的に調査している。
 We observe that MIPS is substantially more robust to the changes in policies and added noise than IPS or DR, which provides further arguments for the applicability of MIPS.
@@ -706,7 +749,7 @@ To achieve an accurate OPE for large action spaces, we propose the MIPS estimato
 We characterize the important statistical properties of the proposed estimator and discuss when it is superior to the conventional ones.
 提案する推定量の重要な統計的性質を明らかにし、どのような場合に従来の推定量より優れているかを議論する。
 Extensive experiments demonstrate that MIPS provides a significant gain in MSE when the vanilla importance weights become large due to large action spaces, substantially outperforming IPS and related estimators.
-広範な実験により、行動空間が大きいためにバニラ重要度重みが大きくなった場合、MIPSはMSEにおいて有意な利得を提供し、IPSや関連推定量を大幅に上回ることが実証された。
+広範な実験により、**行動空間が大きいためにバニラ重要度重みが大きくなった場合、MIPSはMSEにおいて有意な利得を提供し、IPSや関連推定量を大幅に上回る**ことが実証された。
 
 Our work raises several interesting research questions.
 私たちの研究は、いくつかの興味深い研究課題を提起している。
@@ -715,6 +758,6 @@ For example, this work assumes the existence of some predefined action embedding
 Even though we discussed how to choose which embedding dimensions to use for OPE (Section 3.2), it would be intriguing to develop a more principled method to optimize or learn (possibly continuous) action embeddings from the logged data for further improving MIPS.
 OPEに使用する埋め込み次元を選択する方法（セクション3.2）について説明したが、MIPSをさらに向上させるために、ログデータから行動埋め込みを最適化または学習する（おそらく連続的な）より原理的な方法を開発することは興味深い。
 Developing a method for accurately estimating the marginal importance weight would also be crucial to fill the gap between MIPS and MIPS (true) observed in our experiments.
-また、限界重要度ウェイトを正確に推定する方法を開発することは、我々の実験で観察されたMIPSとMIPS（真）の間のギャップを埋めるために極めて重要である。
+また、**周辺重要度ウェイトを正確に推定する方法を開発する**ことは、我々の実験で観察されたMIPSとMIPS（真）の間のギャップを埋めるために極めて重要である。
 It would also be interesting to explore off-policy learning using action embeddings and possible applications of marginal importance weighting to other estimators that depend on the vanilla importance weight such as DR.
 また、アクションの埋め込みを用いたオフポリシー学習や、DRのようなバニラ重要度ウェイトに依存する他の推定量への限界重要度ウェイトの応用の可能性を探ることも興味深い。
