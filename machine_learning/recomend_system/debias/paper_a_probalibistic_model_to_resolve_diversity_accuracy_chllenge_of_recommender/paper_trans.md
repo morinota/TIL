@@ -8,7 +8,7 @@ https://elicit.org/search?q=Are+there+any+papers+that+discuss+deterministic+vs+p
 A probabilistic model to resolve diversity–accuracy challenge of recommendation systems
 推薦システムの多様性と精度の課題を解決する確率モデル
 
-## Abstract 
+## Abstract
 
 Recommendation systems have wide-spread applications in both academia and industry.
 レコメンデーション・システムは、学界と産業界の両方に広く応用されている。
@@ -21,7 +21,7 @@ Precision and novelty of recommendation are not in the same direction, and pract
 Thus, it is an important feature of a recommender system to make it possible to adjust diversity and accuracy of the recommendations by tuning the model.
 したがって、モデルをチューニングすることによって、推薦の多様性と精度を調整できるようにすることは、推薦システムの重要な機能である。
 In this paper, we introduce a probabilistic structure to resolve the diversity–accuracy dilemma in recommender systems.
-本稿では、推薦システムにおける多様性と精度のジレンマを解決するために、確率的構造を導入する。
+本稿では、推薦システムにおける多様性と精度のジレンマを解決するために、**確率的構造を導入する**。
 We propose a hybrid model with adjustable level of diversity and precision such that one can perform this by tuning a single parameter.
 我々は、多様性と精度のレベルを調整可能なハイブリッドモデルを提案する。
 The proposed recommendation model consists of two models: one for maximization of the accuracy and the other one for specification of the recommendation list to tastes of users.
@@ -52,16 +52,16 @@ Algorithms based on collaborative filtering make recommendations for any user by
 Hybrid methods use both the information available from previous user-item interactions and contents of the purchased items [1,6].
 ハイブリッド手法は、過去のユーザーとアイテムのインタラクションから得られる情報と、購入したアイテムのコンテンツの両方を使用する[1,6]。
 In many applications, content-based features are not easy to extract, and thus collaborative filtering approaches are the preferred ones.
-多くのアプリケーションでは、コンテンツベースの特徴を抽出するのは容易ではないため、協調フィルタリングアプローチが好まれる。
+**多くのアプリケーションでは、コンテンツベースの特徴を抽出するのは容易ではないため、協調フィルタリングアプローチが好まれる**。(news domainの場合は特徴抽出が容易なんだなぁ...)
 
 Recommendation problem can be formulated as follows.
 推薦問題は次のように定式化できる。
 There are a set of users U, a set of items I and a set of possible ratings R from U to I.
 ユーザーの集合U、アイテムの集合I、UからIへの可能な評価の集合Rがある。
 Each user gives ratings on some items, which represents its utility value on the items.
-各ユーザは、項目に対する効用値を表すいくつかの項目に評価を与える。
+各ユーザは、アイテムに対する utility value を表すいくつかのアイテムに評価を与える。
 Since each user just experienced a small sector of the item space, the goal of a recommender system is to recommend a set of items for that user such that the user is likely to purchase them in near future and is satisfied by them.
-各ユーザーはアイテム空間の小さな領域を経験しただけなので、レコメンダー・システムの目標は、そのユーザーが近い将来に購入する可能性が高く、満足するようなアイテム・セットをそのユーザーに推薦することである。
+**各ユーザーはアイテム空間の小さな領域を経験しただけなので、レコメンダー・システムの目標は、そのユーザーが近い将来に購入する可能性が高く、満足するようなアイテム・セットをそのユーザーに推薦することである**。
 In some basic settings of the problem, the ratings have just values 0 or 1 that are extracted based on co-occurrence of users and items, i.e., if the user has purchased the item, the rating is 1, and 0 otherwise.
 この問題のいくつかの基本的な設定では、評価は、ユーザーとアイテムの共起に基づいて抽出される値0または1を持つだけである。つまり、ユーザーがアイテムを購入した場合、評価は1となり、そうでない場合は0となる。
 For example, users' click on items in a website can be considered as co-occurrence.
@@ -99,17 +99,17 @@ A practical recommender system should not only have a good accuracy but also pro
 Novelty and diversity of recommendations describes the ability of the recommender models to suggest items which the users would not discover them by themselves [22].
 レコメンデーションの新規性と多様性は、ユーザーが自分では発見しないようなアイテムを提案するレコメンダーモデルの能力を表す[22]。
 In contrast to content-based algorithms which almost do not suffer from low diversity problem, most of the algorithms based on crowd preferences are biased towards popular items.
-多様性の低い問題にほとんど悩まされないコンテンツベースのアルゴリズムとは対照的に、群衆の嗜好に基づくアルゴリズムのほとんどは、人気のあるアイテムに偏っている。
+多様性の低い問題にほとんど悩まされないコンテンツベースのアルゴリズムとは対照的に、**群衆の嗜好に基づくアルゴリズムのほとんどは、人気のあるアイテムに偏っている**。
 This focus of recommendations on a small set of items happens since the classic recommendation models are designed to maximize precision of recommendations.
 古典的な推薦モデルは、推薦の精度を最大化するように設計されているため、このような小さなアイテムセットへの推薦の集中が起こる。
 Recommendation of popular items has lower risk in terms of precision [22].
-人気アイテムの推奨は、精度の点でリスクが低い[22]。
+**人気アイテムの推奨は、精度の点でリスクが低い**[22]。
 On the other hand, regarding the diversity problem, we are interested to give same chance for all items to appear in the recommendation list.
-一方、多様性の問題については、すべてのアイテムが推薦リストに表示されるチャンスを同じにすることに関心がある。
+一方、多様性の問題については、**すべてのアイテムが推薦リストに表示されるチャンスを同じにすること**に関心がある。
 Thus, it could be argued that maximizing accuracy and diversity of the recommendation list are not in the same direction.
 このように、精度の最大化と推薦リストの多様性は同じ方向ではないと言える。
 Higher accuracy can be obtained by recommending some popular items; whereas personalized and diverse recommendations can be achieved by covering homogenously the whole items set without any focus on items with specific popularity interval.
-一方、パーソナライズされた多様なレコメンデーションは、特定の人気区間を持つアイテムに焦点を当てることなく、アイテムセット全体を均質にカバーすることで達成できる。
+**一方、パーソナライズされた多様なレコメンデーションは、特定の人気区間を持つアイテムに焦点を当てることなく、アイテムセット全体を均質にカバーすることで達成できる**。
 Thus, there should be a tradeoff between accuracy and diversity in recommendations [24].
 したがって、推奨の精度と多様性はトレードオフの関係にあるはずである[24]。
 Obviously, different frameworks may expect different levels of accuracy and diversity from their recommender systems.
