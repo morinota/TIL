@@ -129,7 +129,7 @@ In trial $t$:
 - 1. The algorithm observes the current user $u_t$ and a set $A_t$ of arms or actions together with their feature vectors $x_{t,a}$ for $a \in A_{t}$. The vector xt,a summarizes information of both the user ut and arm a, and will be referred to as the context.
 - このアルゴリズムは、現在のユーザーutと、アームまたはアクションの集合Atを、その特徴ベクトルxt,aとともに、a∈Atについて観察する。 ベクトルxt,aは、ユーザーutとアームaの両方の情報を要約しており、コンテキストと呼ばれる。
 - 2. Based on observed payoffs in previous trials, A chooses an arm at ∈ At, and receives payoff rt,a t whose expectation depends on both the user ut and the arm at.
-- 2.以前の試行で観察されたペイオフに基づいて、Aはアームat∈Atを選択し、期待値がユーザーutとアームatの両方に依存するペイオフrt,a tを受け取る。
+- 2.以前の試行で観察されたペイオフ(=報酬?)に基づいて、Aはアームat∈Atを選択し、期待値がユーザ $u_t$ とアーム $a_t$ の両方に依存するペイオフ $r_{t,a_t}$ を受け取る。
 - 3. The algorithm then improves its arm-selection strategy with the new observation, (xt,a t , at, rt,a t ). It is important to em-phasize here that no feedback (namely, the payoff rt,a) is observed for unchosen arms a = at. The consequence of this fact is discussed in more details in the next subsection.
 - 3. その後、アルゴリズムは、新しい観測値（xt,a t 、at、rt,a t ）でアーム選択戦略を改善する。 ここで重要なことは、選ばれていない腕a=atにはフィードバック（すなわちペイオフrt,a）が観測されないということである。 この事実の結果については、次のサブセクションで詳しく説明する。
 
