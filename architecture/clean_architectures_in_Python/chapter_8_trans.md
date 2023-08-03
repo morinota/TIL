@@ -19,12 +19,12 @@ This part is not strictly related to the clean architecture, but I think it's wo
 Clearly, the definition "production-ready" refers to many different configuration that ultimately depend on the load and the business requirements of the system.
 明らかに、"production-ready "の定義は、最終的にはシステムの負荷とビジネス要件に依存する多くの異なる構成を指す。
 As the goal is to show a complete example and not to cover real production requirements I will show a solution that uses real external systems like PostgreSQL and Nginx, without being too concerned about performances.
-目標は完全な例を示すことであり、実際の生産要件をカバーすることではないので、パフォーマンスにあまりこだわらず、PostgreSQLやNginxのような実際の外部システムを使用するソリューションを示します。
+目標は完全な例を示すことであり、実際の生産要件をカバーすることではないので、パフォーマンスにあまりこだわらず、PostgreSQLやNginxのような実際のexternal system を使用するソリューションを示します。
 
 ## Build a web stack ウェブスタックの構築
 
 Now that we successfully containerised the tests we might try to devise a production-ready setup of the whole application, running both a web server and a database in Docker containers.
-さて、テストのコンテナ化に成功したので、Dockerコンテナでウェブサーバとデータベースの両方を実行する、アプリケーション全体の本番環境でのセットアップを考案してみよう。
+さて、**テストのコンテナ化**に成功したので、Dockerコンテナでウェブサーバとデータベースの両方を実行する、アプリケーション全体の本番環境でのセットアップを考案してみよう。
 Once again, I will follow the approach that I show in the series of posts I mentioned in one of the previous sections.
 もう一度、前のセクションで紹介した一連の投稿で示したアプローチに従おう。
 
@@ -38,17 +38,54 @@ The steps towards a production-ready configuration are not complicated and the f
 We need to
 そのためには
 
-- Create a JSON configuration with environment variables suitable for production 本番環境に適した環境変数を含むJSONコンフィギュレーションを作成する。
+- Create a JSON configuration with environment variables suitable for production **本番環境に適した環境変数を含むJSONコンフィギュレーション**を作成する。
 
 - Create a suitable configuration for Docker Compose and configure the containers Docker Composeに適した設定を作成し、コンテナを設定する。
 
 - Add commands to manage.py that allow us to control the processes プロセスをコントロールするコマンドを manage.py に追加する。
 
 Let's create the file config/production.json, which is very similar to the one we created for the tests
-config/production.jsonファイルを作成しよう。テスト用に作成したものとよく似ている。
+`config/production.json`ファイルを作成しよう。テスト用に作成したものとよく似ている。
+
+```python
+[
+  {
+    "name": "FLASK_ENV",
+    "value": "production"
+  },
+  {
+    "name": "FLASK_CONFIG",
+    "value": "production"
+  },
+  {
+    "name": "POSTGRES_DB",
+    "value": "postgres"
+  },
+  {
+    "name": "POSTGRES_USER",
+    "value": "postgres"
+  },
+  {
+    "name": "POSTGRES_HOSTNAME",
+    "value": "localhost"
+  },
+  {
+    "name": "POSTGRES_PORT",
+    "value": "5432"
+  },
+  {
+    "name": "POSTGRES_PASSWORD",
+    "value": "postgres"
+  },
+  {
+    "name": "APPLICATION_DB",
+    "value": "application"
+  }
+]
+```
 
 Please note that now both FLASK_ENV and FLASK_CONFIG are set to production.
-FLASK_ENVとFLASK_CONFIGの両方がproductionに設定されていることに注意してください。
+FLASK_ENVとFLASK_CONFIGの両方が`production`に設定されていることに注意してください。
 Please remember that the first is an internal Flask variable with two possible fixed values (development and production), while the second one is an arbitrary name that has the final effect of loading a specific configuration object (ProductionConfig in this case).
 1つ目は2つの固定値（developmentとproduction）を持つFlaskの内部変数で、2つ目は特定の設定オブジェクト（この場合はProductionConfig）をロードする最終的な効果を持つ任意の名前であることを覚えておいてください。
 I also changed POSTGRES_PORT back to the default 5432 and APPLICATION_DB to application (an arbitrary name).
@@ -61,13 +98,53 @@ We need a production-ready database and I will use Postgres, as I already did du
 Then we need to wrap Flask with a production HTTP server, and for this job I will use gunicorn.
 それから、Flaskを本番のHTTPサーバーでラップする必要がある。
 Last, we need a Web Server to act as load balancer.
-最後に、ロードバランサーとして機能するウェブサーバーが必要だ。
+最後に、**ロードバランサーとして機能するウェブサーバー**が必要だ。
 
 The file docker/production.yml will contain the Docker Compose configuration, according to the convention we defined in manage.py
-docker/production.ymlファイルには、manage.pyで定義した規約に従って、Docker Composeの設定を記述します。
+`docker/production.yml`ファイルには、manage.pyで定義した規約に従って、Docker Composeの設定を記述します。
+
+```yaml
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  web:
+    build:
+      context: ${PWD}
+      dockerfile: docker/web/Dockerfile.production
+    environment:
+      FLASK_ENV: ${FLASK_ENV}
+      FLASK_CONFIG: ${FLASK_CONFIG}
+      APPLICATION_DB: ${APPLICATION_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_HOSTNAME: "db"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    command: gunicorn -w 4 -b 0.0.0.0 wsgi:app
+    volumes:
+      - ${PWD}:/opt/code
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:8080
+
+volumes:
+  pgdata:
+```
 
 As you can see the Postgres configuration is not different from the one we used in the file testing.yml, but I added the option volumes (both in db and at the end of the file) that allows me to create a stable volume.
-ご覧の通り、Postgresのコンフィギュレーションはtesting.ymlで使用したものと変わりませんが、安定したボリュームを作成するためのオプションvolumes（db内とファイル末尾の両方）を追加しました。
+ご覧の通り、Postgresのコンフィギュレーションは`testing.yml`で使用したものと変わりませんが、安定したボリュームを作成するためのオプションvolumes（db内とファイル末尾の両方）を追加しました。
 If you don't do it, the database will be destroyed once you shut down the container.
 そうしないと、コンテナをシャットダウンした時点でデータベースが破壊されてしまう。
 
@@ -76,27 +153,76 @@ The container web runs the Flask application through gunicorn.
 The environment variables come once again from the JSON configuration, and we need to define them because the application needs to know how to connect with the database and how to run the web framework.
 環境変数は再びJSONコンフィギュレーションから来たもので、アプリケーションはデータベースとの接続方法とウェブ・フレームワークの実行方法を知る必要があるため、定義する必要がある。
 The command gunicorn -w 4 -b 0.0.0.0 wsgi:app loads the WSGI application we created in wsgi.py and runs it in 4 concurrent processes.
-gunicorn -w 4 -b 0.0.0.0 wsgi:app コマンドは wsgi.py で作成した WSGI アプリケーションをロードし、4 つの同時プロセスで実行します。
+`gunicorn -w 4 -b 0.0.0.0 wsgi:app` コマンドは wsgi.py で作成した WSGI アプリケーションをロードし、4 つの同時プロセスで実行します。
 This container is created using docker/web/Dockerfile.production which I still have to define.
-このコンテナはdocker/web/Dockerfile.productionを使って作成される。
+このコンテナは`docker/web/Dockerfile.production`を使って作成される。
 
 The last container is nginx, which we will use as it is directly from the Docker Hub.
 最後のコンテナはnginxで、Docker Hubから直接入手できるのでこれを使う。
 The container runs Nginx with the configuration stored in /etc/nginx/nginx.conf, which is the file we overwrite with the local one ./nginx/nginx.conf.
-コンテナは/etc/nginx/nginx.confに保存されたコンフィギュレーションでNginxを実行します。このファイルはローカルの./nginx/nginx.confで上書きします。
+コンテナは`/etc/nginx/nginx.conf`に保存されたコンフィギュレーションでNginxを実行します。このファイルはローカルの./nginx/nginx.confで上書きします。
 Please note that I configured it to use port 8080 instead of the standard port 80 for HTTP to avoid clashing with other software that you might be running on your computer.
 お使いのコンピューターで実行中の他のソフトウェアとの衝突を避けるため、HTTPの標準ポート80ではなく8080を使用するように設定したことにご注意ください。
 
 The Dockerfile for the web application is the following
 ウェブ・アプリケーションのDockerfileは以下の通り。
 
+```dockerfile
+FROM python:3
+
+ENV PYTHONUNBUFFERED 1
+
+RUN mkdir /opt/code
+RUN mkdir /opt/requirements
+WORKDIR /opt/code
+
+ADD requirements /opt/requirements
+RUN pip install -r /opt/requirements/prod.txt
+```
+
 This is a very simple container that uses the standard python:3 image, where I added the production requirements contained in requirements/prod.txt.
 これは標準のpython:3イメージを使った非常にシンプルなコンテナで、requirements/prod.txtに含まれるプロダクション要件を追加した。
 To make the Docker container work we need to add gunicorn to this last file
 Dockerコンテナを動作させるには、この最後のファイルにgunicornを追加する必要がある。
 
+```
+Flask
+SQLAlchemy
+psycopg2
+pymongo
+gunicorn
+```
+
 The configuration for Nginx is
 Nginxの設定は
+
+```
+worker_processes 1;
+
+events { worker_connections 1024; }
+
+http {
+
+    sendfile on;
+
+    upstream app {
+        server web:8000;
+    }
+
+    server {
+        listen 8080;
+
+        location / {
+            proxy_pass         http://app;
+            proxy_redirect     off;
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Host $server_name;
+        }
+    }
+}
+```
 
 As for the rest of the project, this configuration is very basic and lacks some important parts that are mandatory in a real production environment, such as HTTPS.
 プロジェクトの他の部分に関しては、この構成は非常に基本的なもので、HTTPSのような実際の本番環境で必須となる重要な部分が欠けている。
@@ -106,12 +232,47 @@ In its essence, though, it is however not too different from the configuration o
 As we will use Docker Compose, the script manage.py needs a simple change, which is a command that wraps docker-compose itself.
 Docker Composeを使うので、manage.pyスクリプトには簡単な変更が必要です。それはdocker-compose自身をラップするコマンドです。
 We need the script to just initialise environment variables according to the content of the JSON configuration file and then run Docker Compose.
-JSON設定ファイルの内容に従って環境変数を初期化し、Docker Composeを実行するだけのスクリプトが必要です。
+**JSON設定ファイルの内容に従って環境変数を初期化し、Docker Composeを実行するだけのスクリプト**が必要です。
 As we already have the function docker_compose_cmdline the job is pretty simple
-すでに関数 docker_compose_cmdline があるので、作業はとても簡単です。
+すでに関数 `docker_compose_cmdline` があるので、作業はとても簡単です。
+
+```python
+# Ensure an environment variable exists and has a value
+import os
+import json
+import signal
+import subprocess
+import time
+
+...
+
+def setenv(variable, default):
+    os.environ[variable] = os.getenv(variable, default)
+
+
+setenv("APPLICATION_CONFIG", "production")
+
+APPLICATION_CONFIG_PATH = "config"
+DOCKER_PATH = "docker"
+
+...
+
+@cli.command(context_settings={"ignore_unknown_options": True})
+@click.argument("subcommand", nargs=-1, type=click.Path())
+def compose(subcommand):
+    configure_app(os.getenv("APPLICATION_CONFIG"))
+    cmdline = docker_compose_cmdline() + list(subcommand)
+
+    try:
+        p = subprocess.Popen(cmdline)
+        p.wait()
+    except KeyboardInterrupt:
+        p.send_signal(signal.SIGINT)
+        p.wait()
+```
 
 As you can see I forced the variable APPLICATION_CONFIG to be production if not specified.
-ご覧のように、APPLICATION_CONFIG変数が指定されていなければ、強制的にproductionになるようにした。
+ご覧のように、`APPLICATION_CONFIG`変数が指定されていなければ、強制的にproductionになるようにした。
 Usually, my default configuration is the development one, but in this simple case I haven't defined one, so this will do for now.
 通常、私のデフォルトのコンフィギュレーションは開発用のものだが、この単純なケースでは定義していない。
 
@@ -123,17 +284,63 @@ I also use the signal library, which I added to the imports, to control keyboard
 When all this changes are in place we can test the application Dockerfile building the container.
 すべての変更が完了したら、アプリケーションのDockerfileをテストしてコンテナを構築することができる。
 
+```
+./manage.py compose build web
+```
+
 This command runs the Click command compose that first reads environment variables from the file config/production.json, and then runs docker-compose passing it the subcommand build web.
-このコマンドは、まずconfig/production.jsonファイルから環境変数を読み込み、build webサブコマンドを渡してdocker-composeを実行するClickコマンドcomposeを実行する。
+このコマンドは、**まずconfig/production.jsonファイルから環境変数を読み込み、build webサブコマンドを渡してdocker-composeを実行する**Clickコマンドcomposeを実行する。
 
 You output should be the following (with different image IDs)
 出力は以下のようになるはずだ（画像IDは異なる）。
 
+```
+Building web
+Step 1/7 : FROM python:3
+ ---> 768307cdb962
+Step 2/7 : ENV PYTHONUNBUFFERED 1
+ ---> Using cache
+ ---> 0f2bb60286d3
+Step 3/7 : RUN mkdir /opt/code
+ ---> Using cache
+ ---> e1278ef74291
+Step 4/7 : RUN mkdir /opt/requirements
+ ---> Using cache
+ ---> 6d23f8abf0eb
+Step 5/7 : WORKDIR /opt/code
+ ---> Using cache
+ ---> 8a3b6ae6d21c
+Step 6/7 : ADD requirements /opt/requirements
+ ---> Using cache
+ ---> 75133f765531
+Step 7/7 : RUN pip install -r /opt/requirements/prod.txt
+ ---> Using cache
+ ---> db644df9ba04
+
+Successfully built db644df9ba04
+Successfully tagged production_web:latest
+```
+
 If this is successful you can run Docker Compose
 これが成功したら、Docker Composeを実行できます。
 
+```
+$ ./manage.py compose up -d
+Creating production_web_1   ... done
+Creating production_db_1    ... done
+Creating production_nginx_1 ... done
+```
+
 and the output of docker ps should show three containers running
 docker psの出力には、以下の3つのコンテナが稼働していることが示されている。
+
+```
+docker ps
+IMAGE          PORTS                            NAMES
+nginx          80/tcp, 0.0.0.0:8080->8080/tcp   production_nginx_1
+postgres       0.0.0.0:5432->5432/tcp           production_db_1
+production_web                                  production_web_1
+```
 
 Note that I removed several columns to make the output readable.
 出力を読みやすくするために、いくつかの列を削除したことに注意してほしい。
