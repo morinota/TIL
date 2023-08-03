@@ -1,4 +1,4 @@
-## references
+## references: https://qiita.com/nkriskeeic/items/db3b4b5e835e63a7f243
 
 
 import numpy as np

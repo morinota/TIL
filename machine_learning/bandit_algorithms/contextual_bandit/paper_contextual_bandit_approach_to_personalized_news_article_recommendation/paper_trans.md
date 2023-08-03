@@ -127,82 +127,90 @@ In trial $t$:
 トライアルTで：
 
 - 1. The algorithm observes the current user $u_t$ and a set $A_t$ of arms or actions together with their feature vectors $x_{t,a}$ for $a \in A_{t}$. The vector xt,a summarizes information of both the user ut and arm a, and will be referred to as the context.
-- このアルゴリズムは、現在のユーザーutと、アームまたはアクションの集合Atを、その特徴ベクトルxt,aとともに、a∈Atについて観察する。 ベクトルxt,aは、ユーザーutとアームaの両方の情報を要約しており、コンテキストと呼ばれる。
-- 2. Based on observed payoffs in previous trials, A chooses an arm at ∈ At, and receives payoff rt,a t whose expectation depends on both the user ut and the arm at.
-- 2.以前の試行で観察されたペイオフ(=報酬?)に基づいて、Aはアームat∈Atを選択し、期待値がユーザ $u_t$ とアーム $a_t$ の両方に依存するペイオフ $r_{t,a_t}$ を受け取る。
+- このアルゴリズムは、現在のユーザーutと、アームまたはアクションの集合Atを、その特徴ベクトルxt,aとともに、a∈Atについて観察する。 **ベクトルxt,aは、ユーザーutとアームaの両方の情報を要約しており、コンテキストと呼ばれる**。
+- 2. Based on observed payoffs in previous trials, A chooses an arm at ∈ At, and **receives** payoff rt,a t whose expectation depends on both the user ut and the arm at.
+- 2.以前の試行で観察されたペイオフ(=報酬?)に基づいて、アルゴリズムはアームat∈Atを選択し、期待値がユーザ $u_t$ とアーム $a_t$ の両方に依存するペイオフ $r_{t,a_t}$ を受け取る。
 - 3. The algorithm then improves its arm-selection strategy with the new observation, (xt,a t , at, rt,a t ). It is important to em-phasize here that no feedback (namely, the payoff rt,a) is observed for unchosen arms a = at. The consequence of this fact is discussed in more details in the next subsection.
-- 3. その後、アルゴリズムは、新しい観測値（xt,a t 、at、rt,a t ）でアーム選択戦略を改善する。 ここで重要なことは、選ばれていない腕a=atにはフィードバック（すなわちペイオフrt,a）が観測されないということである。 この事実の結果については、次のサブセクションで詳しく説明する。
+- 3. その後アルゴリズムは、新しい観測値 $(x_{t, a_t}, a_t, r_{t, a_t})$ でaction選択戦略を改善する。ここで重要な事は、選ばれてないarms $a \neq a_{t}$ にはfeedback(=報酬 $r_{t, a}$)が観測されない、という事。
 
-In the process above, the total T -trial payoff of A is defined as T t=1 rt,a t . Similarly, we define the optimal expected T -trial payoff as E T t=1 r t,a _ t , where a _ t is the arm with maximum expected payoff at trial t. Our goal is to design A so that the expected total payoff above is maximized. Equivalently, we may find an algorithm so that its regret with respect to the optimal arm-selection strategy is minimized. Here, the T -trial regret R A (T ) of algorithm A is defined formally by
-上記のプロセスにおいて、Aの総T試行ペイオフはT t=1 rt,a tと定義される。 ここで、a \_ tは試行tで最大の期待ペイオフを持つアームである。 我々の目標は、上記の期待総ペイオフが最大になるようにAを設計することである。 同様に、最適な腕選択戦略に対する後悔が最小になるようなアルゴリズムを見つけることもできる。 ここで、アルゴリズムAのT試行後悔R A (T ) は、形式的に次式で定義される。
+In the process above, the total T -trial payoff of A is defined as T t=1 rt,a t .
+上記のプロセスにおいて、Aの総T試行ペイオフは $\sum_{t=1}^{T}r_{t,a_t}$ と定義される。
+Similarly, we define the optimal expected T -trial payoff as E T t=1 r t,a _ t , where a _ t is the arm with maximum expected payoff at trial t.
+同様に、T-trialsの総報酬の最適な期待値を $\mathbb{E}[\sum_{t=1}^{T} r_{t, a_{t}^*}]$ として定義する。ここで $a_{t}^*$ は、試行tで最大の期待ペイオフを持つアームである。
+Our goal is to design A so that the expected total payoff above is maximized.
+我々の目標は、上記の期待総ペイオフが最大になるようにアルゴリズムAを設計することである。
+Equivalently, we may find an algorithm so that its regret with respect to the optimal arm-selection strategy is minimized.
+同様に、**最適な腕選択戦略に対するregret(後悔)が最小になるようなアルゴリズム**を見つけることもできる。
+Here, the T -trial regret $R_{A}(T)$ of algorithm $A$ is defined formally by
+ここで、アルゴリズムAのT試行後悔R A (T ) は、形式的に次式で定義される。(理想的なarmを選択し続けた場合の総報酬と、実際の総報酬の差分??)
 
-An important special case of the general contextual bandit problem is the well-known K-armed bandit in which (i) the arm set At remains unchanged and contains K arms for all t, and (ii) the user ut (or equivalently, the context
-一般的なコンテキスト・バンディット問題の重要な特殊ケースは、よく知られたKアームド・バンディットであり、(i)アームセットAtは変化せず、すべてのtに対してKアームが含まれる。
+$$
+R_{A}(T) := $\mathbb{E}[\sum_{t=1}^{T} r_{t, a_{t}^*}]$ - $\mathbb{E}[\sum_{t=1}^{T} r_{t, a_{t}}]$
+$$
 
-is the same for all t.
-はすべてのtについて同じである。
+An important special case of the general contextual bandit problem is the well-known K-armed bandit in which (i) the arm set At remains unchanged and contains K arms for all t, and (ii) the user ut (or equivalently, the context) is the same for all t.
+一般的なコンテキスト・バンディット問題の重要な特殊ケースは、よく知られたKアームド・バンディットである: (i)arm集合 $A_t$ は変化せず、すべての$t$に対して $K$ アームが含まれる。そして ユーザ $u_t$ (同様にcontext) が全ての $t$ で同じケース。(=要はcontextを気にしない)
+
 Since both the arm set and contexts are constant at every trial, they make no difference to a bandit algorithm, and so we will also refer to this type of bandit as a context-free bandit.
-アームセットもコンテキストも試行ごとに一定であるため、バンディット・アルゴリズムに違いはない。
+**アームセットもコンテキストも試行ごとに一定**であるため、バンディット・アルゴリズムに違いはない。
 
 In the context of article recommendation, we may view articles in the pool as arms.
-記事推薦の文脈では、プール内の記事を武器とみなすことができる。
+記事推薦の文脈では、**プール内の記事をarmとみなす**ことができる。
 When a presented article is clicked, a payoff of 1 is incurred; otherwise, the payoff is 0.
-提示された記事がクリックされた場合、1のペイオフが発生し、そうでない場合は0のペイオフが発生する。
+**提示された記事がクリックされた場合、1の報酬が発生し、そうでない場合は0の報酬が発生する**。
 With this definition of payoff, the expected payoff of an article is precisely its clickthrough rate (CTR), and choosing an article with maximum CTR is equivalent to maximizing the expected number of clicks from users, which in turn is the same as maximizing the total expected payoff in our bandit formulation.
-このペイオフの定義では、記事の期待ペイオフは正確にそのクリック率（CTR）であり、最大のCTRを持つ記事を選択することは、ユーザーからの期待クリック数を最大化することと同じである。
+このペイオフの定義では、**記事の期待報酬は正確にそのクリック率（CTR）**であり、最大のCTRを持つ記事を選択することは、ユーザーからの期待クリック数を最大化することと同じである。
 
 Furthermore, in web services we often have access to user information which can be used to infer a user's interest and to choose news articles that are probably most interesting to her.
-さらに、ウェブサービスでは、ユーザーの興味を推測し、そのユーザーが最も興味を持つであろうニュース記事を選択するために使用できるユーザー情報にアクセスできることが多い。
+さらに、ウェブサービスでは、ユーザの興味を推測し、そのユーザが最も興味を持つであろうニュース記事を選択するために使用できるユーザ情報にアクセスできることが多い。
 For example, it is much more likely for a male teenager to be interested in an article about iPod products rather than retirement plans.
 たとえば、ティーンエイジャーの男性は、退職金プランよりもiPod製品の記事に興味を持つ可能性が高い。
 Therefore, we may "summarize" users and articles by a set of informative features that describe them compactly.
-したがって、ユーザーや記事をコンパクトに記述する情報量の多い特徴によって「要約」することができる。
+したがって、**ユーザや記事をコンパクトに記述する情報量の多い特徴量によって「要約」することができる**。(i.e. 低次元に投射する...!)
 By doing so, a bandit algorithm can generalize CTR information from one article/user to another, and learn to choose good articles more quickly, especially for new users and articles.
-そうすることで、バンディットアルゴリズムは、ある記事/ユーザーから別の記事/ユーザーへのCTR情報を一般化し、特に新しいユーザーや記事に対して、より迅速に良い記事を選択することを学ぶことができる。
+そうすることで、バンディットアルゴリズムは、**ある記事/ユーザから別の記事/ユーザへのCTR情報を一般化**し、**特に新しいユーザや記事に対して**、より迅速に良い記事を選択することを学ぶことができる。(記事の特徴量はテキストを使えばOKだけど、新規でも入手できるユーザの特徴量なんかあるかなぁ...:thinking:)
 
 ## 2.2 Existing Bandit Algorithms 2.2 既存のバンディット・アルゴリズム
 
 The fundamental challenge in bandit problems is the need for balancing exploration and exploitation.
 バンディット問題における基本的な課題は、探索と搾取のバランスをとる必要性である。
-To minimize the regret in Eq.
-式の後悔を最小化する。
-( 1), an algorithm A exploits its past experience to select the arm that appears best.
-( 1)の場合、アルゴリズムAは過去の経験を利用し、最適と思われる腕を選択する。
+To minimize the regret in Eq.(1), an algorithm A exploits its past experience to select the arm that appears best.
+式(1)のregretを最小化する場合、アルゴリズムAは過去の経験を利用し、最適と思われる腕を選択する。
 On the other hand, this seemingly optimal arm may in fact be suboptimal, due to imprecision in A's knowledge.
-一方、この一見最適に見える腕は、Aの知識が不正確であるため、実際には最適でない可能性がある。
+**一方、この一見最適に見える腕は、Aの知識が不正確であるため、実際には最適でない可能性がある**。(うんうん、そりゃそう...!)
 In order to avoid this undesired situation, A has to explore by actually choosing seemingly suboptimal arms so as to gather more information about them (c.f., step 3 in the bandit process defined in the previous subsection).
-このような望ましくない状況を避けるために、Aは、より多くの情報を収集するために、一見最適でないように見える武器を実際に選択して探索しなければならない（前節で定義したバンディット・プロセスのステップ3を参照）。
+このような望ましくない状況を避けるために、**Aは、より多くの情報を収集するために、一見最適でないように見える武器を実際に選択して探索しなければならない**（前節で定義したバンディット・プロセスのステップ3を参照）。
 Exploration can increase short-term regret since some suboptimal arms may be chosen.
-探索は、最適でないアームが選択される可能性があるため、短期的な後悔を増大させる可能性がある。
+探索は、最適でないarmが選択される可能性があるため、短期的なregretを増大させる可能性がある。(うんうん)
 However, obtaining information about the arms' average payoffs (i.e., exploration) can refine A's estimate of the arms' payoffs and in turn reduce long-term regret.
-しかし、両腕の平均的なペイオフに関する情報を得ること（すなわち、探索）は、Aの両腕のペイオフの見積もりを洗練させ、ひいては長期的な後悔を減らすことができる。
+しかし、**各armの平均的な報酬に関する情報を得ること（すなわち、探索）**は、**アルゴリズムAの各armの報酬の見積もりを洗練させ**、ひいては長期的なregretを減らすことができる。
 Clearly, neither a purely exploring nor a purely exploiting algorithm works best in general, and a good tradeoff is needed.
-明らかに、純粋に探索するアルゴリズムも、純粋に利用するアルゴリズムも、一般的に最もうまく機能するものではなく、適切なトレードオフが必要である。
+明らかに、**純粋に探索するアルゴリズムも、純粋に利用するアルゴリズムも、一般的に最もうまく機能するものではなく、適切なトレードオフが必要である**。(purely exploiting algorithm って 要は決定論的なアルゴリズムだよなぁ...:thinking:)
 
 The context-free K-armed bandit problem has been studied by statisticians for a long time [9,24,26].
-文脈自由K武装バンディット問題は、統計学者によって長い間研究されてきた[9,24,26]。
+**context-freeなK-armdedバンディット問題**は、統計学者によって長い間研究されてきた[9,24,26]。
 One of the simplest and most straightforward algorithms is ǫ-greedy.
-最も単純で簡単なアルゴリズムのひとつがǫ-greedyである。
+最も単純で簡単なアルゴリズムのひとつがepsilon-greedyである。
 In each trial t, this algorithm first estimates the average payoff μt,a of each arm a.
-各試行tにおいて、このアルゴリズムはまず各アームaの平均ペイオフμt,aを推定する。
+各試行tにおいて、このアルゴリズムはまず各アームaの報酬期待値 $\hat{\mu_{t,a}}$ を推定する。
 Then, with probability 1 − ǫ, it chooses the greedy arm (i.e., the arm with highest payoff estimate); with probability ǫ, it chooses a random arm.
-そして、確率1 - ↪Ll_1 で、貪欲なアーム（すなわち、ペイオフの推定値が最も高いアーム）を選択し、確率↪Ll_1 で、ランダムなアームを選択する。
+そして、**確率1 - $\epsilon$ で、貪欲なアーム（すなわち、ペイオフの推定値が最も高いアーム）を選択し、確率 $\epsilon$ で、ランダムなアームを選択する。**
 In the limit, each arm will be tried infinitely often, and so the payoff estimate μt,a converges to the true value µa with probability 1.
-極限では、各アームは無限に試行されるので、ペイオフ推定値μt,aは確率1で真値μaに収束する。
+極限では、各 arm は無限に試行されるので、ペイオフ推定値 $\hat{\mu_{t, a}}$ は確率1で**真値 $\mu_{a}$ に収束**する。
 Furthermore, by decaying ǫ appropriately (e.g., [24]), the per-step regret, R A (T )/T , converges to 0 with probability 1.
-さらに、(例えば[24]のように)↪Ll_1EB を適切に減衰させることで、ステップごとの後悔、R A (T )/T は確率1で0に収束する。
+さらに、(例えば[24]のように) **$\epsilon$ を適切に減衰させる**ことで、1ステップあたりのregret、$R_{A}(T)/T$ は確率1で0に収束する。(そっか、減衰させない場合は、報酬の真の値を得たとしても一定確率で最適じゃないarmを選択するのか...!)
 
 In contrast to the unguided exploration strategy adopted by ǫgreedy, another class of algorithms generally known as upper confidence bound algorithms [4,7,17] use a smarter way to balance exploration and exploitation.
-↪L_1legreedyが採用する非誘導探索戦略とは対照的に、一般に上部信頼境界アルゴリズム[4,7,17]として知られる別のクラスのアルゴリズムでは、探索と搾取のバランスをとるために、よりスマートな方法を用います。
+$\epsilon$ が採用する**unguided exploration strategy(非誘導探索戦略)**とは対照的に、一般に**upper confidence bound algorithms(上部信頼境界アルゴリズム)**[4,7,17]として知られる別のクラスのアルゴリズムでは、探索と搾取のバランスをとるために、よりスマートな方法を用います。
 Specifically, in trial t, these algorithms estimate both the mean payoff μt,a of each arm a as well as a corresponding confidence interval ct,a, so that |μt,a − µa| < ct,a holds with high probability.
-μt,a − µa
+具体的には、試行tにおいて、これらのアルゴリズムは、各アーム $a$ の報酬期待値μt,aと、それに対応する**信頼区間 c\_{t,a} の両方を推定**し、$|\hat{\mu*{t,a}} - \mu*{a}| < c\_{t,a} $が高確率(=90%とか??)で成立するようにする。(期待値と信頼区間、統計学っぽい...!:thinking:)
 They then select the arm that achieves a highest upper confidence bound (UCB for short): at = arg maxa (μt,a + ct,a).
-そして、最も高い上限信頼区間（略してUCB）を達成するアームを選択する：at = arg maxa (μt,a + ct,a)。
+そして、**最も高いupper confidence bound(略してUCB)を達成する arm を選択**する: $a_{t} = \argmax*{a}(\hat{\mu*{t,a}} + c*{t,a})$。
 With appropriately defined confidence intervals, it can be shown that such algorithms have a small total Ttrial regret that is only logarithmic in the total number of trials T , which turns out to be optimal [17].
 適切に定義された信頼区間を用いると、このようなアルゴリズ ムは、総試行数Tの対数だけ小さい総試行後悔を持つことが示され、これが 最適であることが判明する[17]。
 
 While context-free K-armed bandits are extensively studied and well understood, the more general contextual bandit problem has remained challenging.
-文脈自由なK武装バンディットは広く研究され、よく理解されているが、より一般的な文脈バンディット問題は依然として難題である。
+文脈自由なK武装バンディットは広く研究され、よく理解されているが、より一般的な**contextualバンディット問題は依然として難題**である。
 The EXP4 algorithm [8] uses the exponential weighting technique to achieve an Õ( √ T ) regret, 2 but the computational complexity may be exponential in the number of features.
 EXP4アルゴリズム[8]は、指数関数的な重み付け技法を使用し、Õ( √ T ) 後悔を達成する2が、計算複雑さは特徴数の指数関数になる可能性がある。
 Another general contextual bandit algorithm is the epochgreedy algorithm [18] that is similar to ǫ-greedy with shrinking ǫ.
