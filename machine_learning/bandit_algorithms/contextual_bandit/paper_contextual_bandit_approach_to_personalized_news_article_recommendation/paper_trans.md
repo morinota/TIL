@@ -203,25 +203,27 @@ Furthermore, by decaying ǫ appropriately (e.g., [24]), the per-step regret, R A
 In contrast to the unguided exploration strategy adopted by ǫgreedy, another class of algorithms generally known as upper confidence bound algorithms [4,7,17] use a smarter way to balance exploration and exploitation.
 $\epsilon$ が採用する**unguided exploration strategy(非誘導探索戦略)**とは対照的に、一般に**upper confidence bound algorithms(上部信頼境界アルゴリズム)**[4,7,17]として知られる別のクラスのアルゴリズムでは、探索と搾取のバランスをとるために、よりスマートな方法を用います。
 Specifically, in trial t, these algorithms estimate both the mean payoff μt,a of each arm a as well as a corresponding confidence interval ct,a, so that |μt,a − µa| < ct,a holds with high probability.
-具体的には、試行tにおいて、これらのアルゴリズムは、各アーム $a$ の報酬期待値μt,aと、それに対応する**信頼区間 c\_{t,a} の両方を推定**し、$|\hat{\mu*{t,a}} - \mu*{a}| < c\_{t,a} $が高確率(=90%とか??)で成立するようにする。(期待値と信頼区間、統計学っぽい...!:thinking:)
+具体的には、試行tにおいて、これらのアルゴリズムは、各アーム $a$ の報酬期待値 $\mu_{t,a}$と、それに対応する**信頼区間 $c_{t,a}$ の両方を推定**し、$|\hat{\mu_{t,a}} - \mu_{a}| < c_{t,a}$ が高確率(=90%とか??)で成立するようにする。(期待値と信頼区間、統計学っぽい...!:thinking:)
 They then select the arm that achieves a highest upper confidence bound (UCB for short): at = arg maxa (μt,a + ct,a).
-そして、**最も高いupper confidence bound(略してUCB)を達成する arm を選択**する: $a_{t} = \argmax*{a}(\hat{\mu*{t,a}} + c*{t,a})$。
+そして、**最も高いupper confidence bound(略してUCB)を達成する arm を選択**する: $a_{t} = \argmax_{a}(\hat{\mu_{t,a}} + c_{t,a})$。
 With appropriately defined confidence intervals, it can be shown that such algorithms have a small total Ttrial regret that is only logarithmic in the total number of trials T , which turns out to be optimal [17].
-適切に定義された信頼区間を用いると、このようなアルゴリズ ムは、総試行数Tの対数だけ小さい総試行後悔を持つことが示され、これが 最適であることが判明する[17]。
+適切に定義された信頼区間を用いると、このようなアルゴリズムは、総試行数 $T$ の対数だけ小さい total T trial regret を持つことが示され、これが 最適であることが判明する[17]。
+
+(contextual banditの既存研究)
 
 While context-free K-armed bandits are extensively studied and well understood, the more general contextual bandit problem has remained challenging.
-文脈自由なK武装バンディットは広く研究され、よく理解されているが、より一般的な**contextualバンディット問題は依然として難題**である。
+context-free な K-armsバンディットは広く研究され、よく理解されているが、より一般的な**contextualバンディット問題は依然として難題**である。
 The EXP4 algorithm [8] uses the exponential weighting technique to achieve an Õ( √ T ) regret, 2 but the computational complexity may be exponential in the number of features.
-EXP4アルゴリズム[8]は、指数関数的な重み付け技法を使用し、Õ( √ T ) 後悔を達成する2が、計算複雑さは特徴数の指数関数になる可能性がある。
+EXP4アルゴリズム[8]は、指数関数的な重み付け技法を使用し、Õ( √ T ) regret を達成する2が、**計算量は特徴量数の指数関数になる可能性**がある。
 Another general contextual bandit algorithm is the epochgreedy algorithm [18] that is similar to ǫ-greedy with shrinking ǫ.
-もう1つの一般的なコンテキスト・バンディット・アルゴリズムは、↪Ll_1- グリーディに似たエポックグリーディ・アルゴリズム[18]である。
+もう1つの一般的なコンテキスト・バンディット・アルゴリズムは、$\epsilon$ グリーディに似た epoch-greedy アルゴリズム[18]である.
 This algorithm is computationally efficient given an oracle optimizer but has the weaker regret guarantee of Õ(T 2/3 ).
-このアルゴリズムは、オラクル・オプティマイザがあれば計算効率は良いが、Õ(T 2/3 )の後悔保証は弱い。
+このアルゴリズムは、オラクル・オプティマイザがあれば計算効率は良いが、Õ(T 2/3 )のregret保証は弱い.(計算量は小さいがパフォーマンスが微妙...!)
 
 Algorithms with stronger regret guarantees may be designed under various modeling assumptions about the bandit.
-より強い後悔の保証を持つアルゴリズムは、バンディットに関する様々なモデル化の仮定の下で設計することができる。
+より強いregret保証を持つアルゴリズムは、バンディットに関する様々なモデル化の仮定の下で設計することができる。
 Assuming the expected payoff of an arm is linear in its features, Auer [6] describes the LinRel algorithm that is essentially a UCB-type approach and shows that one of its variants has a regret of Õ( √ T ), a significant improvement over earlier algorithms [1].
-あるアームの期待ペイオフがその特徴量に対して線形であると仮定すると、Auer [6]は本質的にUCBタイプのアプローチであるLinRelアルゴリズムについて説明し、その変形の1つがÕ( √ T )の後悔を持つことを示し、以前のアルゴリズム[1]よりも大幅に改善されている。
+**ある arm の期待報酬がその特徴量に対して線形であると仮定**すると、Auer [6] は本質的にUCBタイプのアプローチであるLinRelアルゴリズムについて説明し、その変形の1つが $\tilde{O}(\sqrt{T})$ の後悔を持つことを示し、以前のアルゴリズム[1]よりも大幅に改善されている.
 
 Finally, we note that there exist another class of bandit algorithms based on Bayes rule, such as Gittins index methods [15].
 最後に、Gittins指数法[15]のような、ベイズルールに基づくバンディットアルゴリズムの別のクラスが存在することに注意する。
@@ -229,153 +231,128 @@ With appropriately defined prior distributions, Bayesian approaches may have goo
 適切に定義された事前分布があれば、ベイズ的アプローチは優れた性能を発揮する可能性がある。
 These methods require extensive offline engineering to obtain good prior models, and are often computationally prohibitive without coupling with approximation techniques [2].
 これらの方法は、良い事前モデルを得るために大規模なオフラインエンジニアリングを必要とし、近似技術との結合なしでは、しばしば計算量が膨大になる[2]。
+(=ベイズ系のbandit algorithmは良い事前分布を用意できれば性能は良いが、事前分布を得るための準備と計算量の大きさがネック。)
 
 # 3. ALGORITHM 3. アルゴリズム
 
 Given asymptotic optimality and the strong regret bound of UCB methods for context-free bandit algorithms, it is tempting to devise similar algorithms for contextual bandit problems.
-文脈自由バンディット・アルゴリズムに対するUCB法の漸近的最適性と強い後悔境界を考えると、文脈バンディット問題に対しても同様のアルゴリズムを考案したくなる。
+context-free バンディット・アルゴリズムに対するUCB法の漸近的最適性と強いregret境界(=達成できるregretの最悪値?)を考えると、contexutalバンディット問題に対しても同様のアルゴリズムを考案したくなる。(=UCB法が結構良いので、contextual banditに適用したいよね...!)
 Given some parametric form of payoff function, a number of methods exist to estimate from data the confidence interval of the parameters with which we can compute a UCB of the estimated arm payoff.
-ペイオフ関数のパラメトリックな形式が与えられた場合、推定されたアームペイオフのUCBを計算することができるパラメータの信頼区間をデータから推定する方法が数多く存在する。
+**報酬関数のパラメトリックな形式(報酬のモデル式?)**が与えられた場合、推定された arm 報酬のUCBを計算することができるパラメータの信頼区間をデータから推定する方法が数多く存在する。
 Such an approach, however, is expensive in general.
-しかし、このようなアプローチは一般的に高価である。
+しかし、このようなアプローチは一般的に高価(=計算量多い?)である。
 
 In this work, we show that a confidence interval can be computed efficiently in closed form when the payoff model is linear, and call this algorithm LinUCB.
-本研究では、ペイオフモデルが線形である場合に、信頼区間を閉じた形で効率的に計算できることを示し、このアルゴリズムをLinUCBと呼ぶ。
+本研究では、**報酬モデルが線形である場合に、信頼区間を閉じた形で効率的に計算できること**を示し、このアルゴリズムを**LinUCB**と呼ぶ。
 For convenience of exposition, we first describe the simpler form for disjoint linear models, and then consider the general case of hybrid models in Section 3.2.We note LinUCB is a generic contextual bandit algorithms which applies to applications other than personalized news article recommendation.
-説明の便宜上、まず不連続線形モデルのより単純な形式を説明し、次にセクション3.2でハイブリッドモデルの一般的なケースを考察する。LinUCBは、パーソナライズされたニュース記事推薦以外のアプリケーションにも適用可能な汎用コンテキストバンディットアルゴリズムであることに注意されたい。
+説明の便宜上、まず不連続線形モデルのより単純な形式を説明し、次にセクション3.2でハイブリッドモデルの一般的なケースを考察する。LinUCBは、パーソナライズされたニュース記事推薦以外のアプリケーションにも適用可能な汎用contextual banditアルゴリズムであることに注意されたい。
 
 ## 3.1 LinUCB with Disjoint Linear Models 3.1 分離線形モデルによるLinUCB
 
 Using the notation of Section 2.1, we assume the expected payoff of an arm a is linear in its d-dimensional feature xt,a with some unknown coefficient vector θ θ θ \* a ; namely, for all t,
-セクション2.1の表記法を用いて、ある腕aの期待ペイオフが、そのd次元特徴量xt,aに、ある未知の係数ベクトルθ θ θ θ\* a を持つ線形なものであると仮定する、
+セクション2.1の表記法を用いて、あるarm $a$ の期待報酬が、その $d$ 次元特徴量 $x_{t,a}$ に、ある未知の係数ベクトル $\mathbf{\theta}_{a}^{*}$ を持つ線形なものであると仮定する。係数ベクトル $\mathbf{\theta}_{a}^{*}$ は即ち、全ての $t$ において、
 
-This model is called disjoint since the parameters are not shared 2 Note Õ(•) is the same as O(•) but suppresses logarithmic factors.
-2 Õ(-)はO(-)と同じであるが、対数因子を抑えたものである。
+$$
+\mathbb{E}[r_{t,a}|\mathbf{x}_{t,a}] = \mathbf{x}_{t,a}^{T} \mathbf{\theta}{a}^{*}
+$$
 
-among different arms.
-異なる腕の間で。
+を満たす様な係数ベクトルである。
+
+This model is called disjoint since the parameters are not shared among different arms.
+**このモデルは、異なるarm間でパラメータが共有されないため、"disjoint"と呼ばれる**。(=arm $a$ 毎にユニークなパラメータを持つ。)
 Let Da be a design matrix of dimension m × d at trial t, whose rows correspond to m training inputs (e.g., m contexts that are observed previously for article a), and ba ∈ R m be the corresponding response vector (e.g., the corresponding m click/no-click user feedback).
-試行tにおけるm×dの次元のデザイン行列をDaとし、その行はm個のトレーニング入力（例えば、アーティクルaについて以前に観察されたm個のコンテキスト）に対応し、ba∈R mは対応するレスポンスベクトル（例えば、対応するm個のクリック／クリックなしのユーザーフィードバック）である。
+試行 $t$ における m×d の次元のデザイン行列を $D_a$ とし、その行は $m$ 個のトレーニング入力(例えば、記事 $a$ について以前に観察された $m$ 個のコンテキスト)に対応し、 $\mathbf{b}_{a} \in \mathbb{R}^{m}$ は対応する**レスポンスベクトル(例えば、対応するm個のクリック／クリックなしのユーザーフィードバック)**である。
 Applying ridge regression to the training data (Da, ca) gives an estimate of the coefficients:
-訓練データ(Da, ca)にリッジ回帰を適用すると、係数の推定値が得られる：
+訓練データ $(D_a, \mathbf{b}_{c})$ にリッジ回帰を適用すると、係数の推定値が得られる:
+
+$$
+\hat{\mathbf{\theta}}_{a} = (D_{a}^T D_{a} + I_{d})^{-1} D_a^{T}
+\tag{3}
+$$
 
 where I d is the d × d identity matrix.
-ここでI dはd×dの恒等行列である。
+ここで $I_{d}$ はd×dのidentity matrix(単位行列)である。
 When components in ca are independent conditioned on corresponding rows in Da, it can be shown [27] that, with probability at least 1 − δ,
-caの成分がDaの対応する行を条件として独立であるとき、少なくとも1-δの確率で、以下のことが示される[27]、
+$\mathbf{b}_{a}$ の成分が $D_a$ の対応する行を条件として独立であるとき、少なくとも $1-\delta$ の確率で、以下のことが示される[27],
 
-for any δ > 0 and xt,a ∈ R d , where α = 1 + ln(2/δ)/2 is a constant.
-ここでα = 1 + ln(2/δ)/2 は定数である。
+$$
+|\mathbf{x}_{t,a}^{T} \hat{\mathbf{\theta}}_{a} - \mathbb{E}[r_{t,a}|\mathbf{x}_{t,a}]|
+\leq
+\alpha \sqrt{\mathbf{x}_{t,a}^T (D_a^T D_a + I_d)^{-1} \mathbf{x}_{t,a}}
+\tag{4}
+$$
+
+for any $\delta > 0$ and $x_{t,a} \in \mathbb{R}^{d}$, where $\alpha = 1 + ln(2/\delta)/2$ is a constant.
+全ての $\delta > 0$ と $x_{t,a} \in \mathbb{R}^{d}$ で上が満たされる。ここで $\alpha = 1 + ln(2/\delta)/2$ は定数である。
 In other words, the inequality above gives a reasonably tight UCB for the expected payoff of arm a, from which a UCBtype arm-selection strategy can be derived: at each trial t, choose
-言い換えれば、上記の不等式は、アームaの期待ペイオフに対する適度にタイトなUCBを与え、そこからUCBタイプのアーム選択戦略を導き出すことができる：各試行tで、以下を選択する。
+言い換えれば、上記の不等式は、アームaの期待報酬に対する適度にタイトなUCBを与え、そこからUCBタイプのアーム選択戦略を導き出すことができる: 各試行tで、以下を選択する,
 
-where
-どこ
+$$
+a_{t} := \argmax_{a \in A_t} (
+  \mathbf{x}_{t,a}^{T} \hat{\mathbf{\theta}}_{a}
+  + \alpha \sqrt{\mathbf{x}_{t,a}^T A_{a}^{-1} \mathbf{x}_{t,a}}
+  )
+  \tag{5}
+$$
 
-The confidence interval in Eq.
-式の信頼区間。
-( 4) may be motivated and derived from other principles.
-(4)は、他の原則から動機づけられ、導き出されるかもしれない。
+where $A_{a} := D_a^T D_a + I_d$.
+
+The confidence interval in Eq.(4) may be motivated and derived from other principles.
+式(4)の信頼区間は、他の原理から動機づけられ導き出されることもある。
 For instance, ridge regression can also be interpreted as a Bayesian point estimate, where the posterior distribution of the coefficient vector, denoted as p(θ θ θa), is Gaussian with mean θ θ θa and covariance A −1 a .
-例えば，リッジ回帰は，ベイズ点推定としても解釈でき，p(θ θa) と表記される係数ベクトルの事後分布は，平均 θ θa と共分散 A -1 a を持つガウス分布である．
+例えば，リッジ回帰は，ベイズ点推定としても解釈でき，$p(\theta_{a})$ と表記される係数ベクトルの事後分布は，平均 \theta*{a} と共分散 $A*{a}^{-1}$ を持つ多変量ガウス分布である.
 Given the current model, the predictive variance of the expected payoff x ⊤ t,a θ θ θ \* a is evaluated as x ⊤ t,a A −1 a xt,a, and then x ⊤ t,a A −1 a xt,a becomes the standard deviation.
-現在のモデルが与えられれば、期待ペイオフの予測分散x ⊤ t,a θ θ ⊤\* aはx ⊤ t,a A -1 a xt,aと評価され、x ⊤ t,a A -1 a xt,aは標準偏差となる。
+現在のモデルが与えられれば、期待報酬 $\mathbf{x}_{t,a}^{T} \hat{\mathbf{\theta}}_{a}$ の予測分散は $\mathbf{x}_{t,a}^T A_{a}^{-1} \mathbf{x}_{t,a}$ と評価され、$\sqrt{\mathbf{x}_{t,a}^T A_{a}^{-1} \mathbf{x}_{t,a}}$ は標準偏差(=予測分布の標準偏差?)となる.
 Furthermore, in information theory [19], the differential entropy of p(θ θ θa) is defined as − 1 2 ln((2π) d det Aa).
-さらに、情報理論[19]では、p(θ θa)の微分エントロピーは、-1 2 ln((2π) d det Aa)と定義される。
+さらに、情報理論[19]では、$p(\theta_{a})$ の微分エントロピーは、-1 2 ln((2π) d det Aa)と定義される。
 The entropy of p(θ θ θa) when updated by the inclusion of the new point xt,a then becomes − 1 2 ln((2π) d det (Aa + xt,ax ⊤ t,a )).
 新しい点xt,aを含めて更新したときのp(θ θa)のエントロピーは、-1 2 ln((2π) d det (Aa + xt,ax ⊤ t,a ))となる。
 The entropy reduction in the model posterior is 1 2 ln(1 + x ⊤ t,a A −1 a xt,a).
 モデル事後値のエントロピー削減は、1 2 ln(1 + x ↪Sm_22A t,a A -1 a xt,a)である。
 This quantity is often used to evaluate model improvement contributed from xt,a.
 この量は、xt,aから寄与されるモデルの改善を評価するためによく使われる。
-Therefore, the criterion for arm selection in Eq.
-したがって、式(1)の腕の選択基準は、「腕の選択」である。
-( 5) can also be regarded as an additive trade-off between the payoff estimate and model uncertainty reduction.
-( 5)は、ペイオフ推定とモデルの不確実性低減の間の相加的トレードオフとみなすこともできる。
+Therefore, the criterion for arm selection in Eq.(5) can also be regarded as an additive trade-off between the payoff estimate and model uncertainty reduction.
+したがって、**式(5)のアーム選択基準は、報酬推定値とモデルの不確実性低減の間の加算トレードオフとみなすこともできる**。
+
+![algorithm 1]()
 
 Algorithm 1 gives a detailed description of the entire LinUCB algorithm, whose only input parameter is α.
-アルゴリズム1は、LinUCBアルゴリズム全体の詳細な説明であり、唯一の入力パラメータはαである。
-Note the value of α given in Eq.
-式で与えられるαの値に注意。
-( 4) may be conservatively large in some applications, and so optimizing this parameter may result in higher total payoffs in practice.
-(4)はアプリケーションによっては保守的に大きくなる可能性があるため、このパラメーターを最適化することで、実際には総ペイオフが高くなる可能性がある。
-Like all UCB methods, LinUCB always chooses the arm with highest UCB (as in Eq.
-すべてのUCB手法と同様に、LinUCBは常に最も高いUCBを持つアームを選択する（式と同様）。
-( 5)).
-( 5)).
+アルゴリズム1は、LinUCBアルゴリズム全体の詳細な説明であり、唯一の入力パラメータ(=ハイパーパラメータ)は $\alpha$ である。
+Note the value of α given in Eq.(4) may be conservatively large in some applications, and so optimizing this parameter may result in higher total payoffs in practice.
+式(4)で与えられるαの値は、アプリケーションによっては保守的に大きくなる可能性があるため、このパラメータを最適化することで、実際には総ペイオフが高くなる可能性があることに注意。
+Like all UCB methods, LinUCB always chooses the arm with highest UCB (as in Eq.(5))
+**すべてのUCB手法と同様に、LinUCBは常に最も高いUCBを持つアームを選択する**(式5).
 
 This algorithm has a few nice properties.
 このアルゴリズムにはいくつかの優れた特性がある。
 First, its computational complexity is linear in the number of arms and at most cubic in the number of features.
-第一に、その計算量はアームの数に対して線形であり、特徴の数に対して最大でも三乗である。
-To decrease computation further, we may update Aa t in every step (which takes O(d 2 ) time), but compute and cache Qa
-さらに計算量を減らすために、ステップごとに Aa t を更新してもよい（これには O(d 2 ) 時間かかる）。
-
-(for all a) periodically instead of in realtime.
-(すべてのaについて）リアルタイムではなく、定期的に。
+**第一に、その計算量はarm数に対して線形**であり、特徴の数に対して最大でも三乗である.
+To decrease computation further, we may update Aa t in every step (which takes O(d2) time), but compute and cache $Q_a := A_{a}^{-1}$ (for all a) periodically instead of in realtime.
+さらに計算量を減らすために、$A_{a_t}$ を毎ステップ更新し（これにはO(d2)時間がかかる）、$Q_a := A_{a}^{-1}$ を（すべてのaについて）リアルタイムではなく定期的に計算し、キャッシュすることもできる。
 Second, the algorithm works well for a dynamic arm set, and remains efficient as long as the size of At is not too large.
-第二に、このアルゴリズムは動的なアームセットに対してうまく機能し、Atのサイズが大きすぎない限り効率的であり続ける。
+**第二に、このアルゴリズムは動的なアームセットに対してうまく機能し**、Atのサイズが大きすぎない限り効率的であり続ける.
 This case is true in many applications.
-このケースは多くの用途で当てはまる。
+このケースは多くの用途で当てはまる.
 In news article recommendation, for instance, editors add/remove articles to/from a pool and the pool size remains essentially constant.
-例えば、ニュース記事の推薦では、編集者はプールに記事を追加/削除し、プールのサイズは基本的に一定である。
-Third, although it is not the focus of the present paper, we can adapt the analysis from [6] to show the following: if the arm set At is fixed and contains K arms, then the confidence interval (i.e., the right-hand side of Eq.
-第3に、本論文の焦点ではないが、[6]の分析を適応して、以下のことを示すことができる：アームセットAtが固定でK個のアームを含む場合、信頼区間（すなわち、式（1）の右辺）は、K個のアームを含む。
-( 4)) decreases fast enough with more and more data, and then prove the strong regret bound of Õ( √ KdT ), matching the state-of-the-art result [6] for bandits satisfying Eq.
-((4))は、データが増えるにつれて十分速く減少し、式(5)を満たすバンディットに対する最先端の結果[6]と一致するÕ( √ KdT )の強い後悔境界を証明する。
-( 2).
-( 2).
+例えば、**ニュース記事の推薦では、編集者はプールに記事を追加/削除し、プールのサイズは基本的に一定**である。
+Third, although it is not the focus of the present paper, we can adapt the analysis from [6] to show the following: if the arm set At is fixed and contains K arms, then the confidence interval (i.e., the right-hand side of Eq.(4)) decreases fast enough with more and more data, and then prove the strong regret bound of Õ( √ KdT ), matching the state-of-the-art result [6] for bandits satisfying Eq.(2).
+第三に、本論文の焦点ではないが、我々は[6]の分析を適応して、次のことを示すことができる: **arm集合 $A_t$ が固定され**、K個のアームを含む場合、信頼区間(すなわち、式(4)の右辺)は、より多くのデータとともに十分に速く減少し、そして、式(2)を満たすバンディットのための最先端の結果[6]と一致する、Õ( √ KdT )の強い後悔の境界を証明する。
 These theoretical results indicate fundamental soundness and efficiency of the algorithm.
 これらの理論結果は、アルゴリズムの基本的な健全性と効率性を示している。
 
-Algorithm 1 LinUCB with disjoint linear models.0: Inputs: α ∈ R+ 1: for t = 1, 2, 3, .
-0: 入力：α∈R+ 1: for t = 1, 2, 3, .
-..
-..
-, T do 2:
-Tは2を行う：
-
-Observe features of all arms a ∈ At: xt,a ∈ R d 3:
-すべてのアームa（At）の特徴を観察する： xt,a∈R d 3：
-
-for all a ∈ At do 4:
-すべてのa（At）に対して4：
-
-if a is new then 5:
-a が新しい場合、5：
-
-Aa ← I d (d-dimensional identity matrix) 6:
-Aa ← I d (d次元の恒等行列) 6：
-
-ba ← 0 d×1 (d-dimensional zero vector) 7:
-ba ← 0 d×1 (d次元ゼロベクトル) 7：
-
-end for 11:
-11で終了：
-
-Choose arm at = arg maxa∈A t pt,a with ties broken arbitrarily, and observe a real-valued payoff rt 12:
-arm at = arg maxa∈A t pt,aを選択し、同点は任意に解消し、実数値のペイオフrt 12を観察する：
-
-13: ba t ← ba t + rtxt,a t 14: end for Finally, we note that, under the assumption that input features xt,a were drawn i.i.d.
-13: ba t ← ba t + rtxt,a t 14: end for 最後に、入力特徴量xt,aがi.i.d.であるという仮定の下で、以下のことに注意する。
-from a normal distribution (in addition to the modeling assumption in Eq.
-正規分布から（式（1）のモデル化仮定に加えて）。
-( 2)), Pavlidis et al.[22] came up with a similar algorithm that uses a least-squares solution θ θ θa instead of our ridge-regression solution ( θ θ θa in Eq.
-( 2))、Pavlidisら[22]は、我々のリッジ回帰解( 式中のθθθa)の代わりに最小二乗解θθaを使用する同様のアルゴリズムを考え出した。
-( 3)) to compute the UCB.
-( 3)) を使ってUCBを計算する。
+Finally, we note that, under the assumption that input features xt,a were drawn i.i.d.from a normal distribution (in addition to the modeling assumption in Eq.( 2)), Pavlidis et al.[22] came up with a similar algorithm that uses a least-squares solution θ θ θa instead of our ridge-regression solution ( θ θ θa in Eq.( 3)) to compute the UCB.
+最後に、（式(2)のモデリング仮定に加えて）入力特徴量 $x_{t,a}$ が正規分布からi.i.d.描画されたという仮定の下で、Pavlidisら[22]は、UCBを計算するために、我々のリッジ回帰解（式(3)の $\hat{\theta}_{a}$）の代わりに最小二乗解 $\tilde{\theta}_{a}$ を使用する同様のアルゴリズムを考え出したことに注目する。
 However, our approach (and theoretical analysis) is more general and remains valid even when input features are nonstationary.
-しかし、我々のアプローチ（および理論的分析）はより一般的であり、入力特徴が非定常であっても有効である。
+しかし、**我々のアプローチ（および理論的分析）はより一般的であり、入力特徴が非定常(=特徴量がi.i.d.正規分布からサンプリングされた仮定が満たせないケース??)であっても有効**である。
 More importantly, we will discuss in the next section how to extend the basic Algorithm 1 to a much more interesting case not covered by Pavlidis et al.
 さらに重要なのは、基本的なアルゴリズム1を、Pavlidisらによってカバーされていない、より興味深いケースに拡張する方法について、次のセクションで議論することである。
 
-3.2 LinUCB with Hybrid Linear Models
-3.2 ハイブリッド線形モデルによるLinUCB
+## 3.2 LinUCB with Hybrid Linear Models ハイブリッド線形モデルによるLinUCB
 
 Algorithm 1 (or the similar algorithm in [22]) computes the inverse of the matrix, D ⊤ a Da + I d (or D ⊤ a Da), where Da is again the design matrix with rows corresponding to features in the training data.
 アルゴリズム1（または[22]の類似アルゴリズム）は、行列の逆行列、D ⊤ a Da + I d（またはD ⊤ a Da）を計算する。
 These matrices of all arms have fixed dimension d × d, and can be updated efficiently and incrementally.
-すべてのアームのこれらの行列は、固定された次元d×dを持ち、効率的かつインクリメンタルに更新することができる。
+すべてのアームのこれらの行列は、固定された次元d×dを持ち、効率的かつインクリメンタルに更新することができる.
 Moreover, their inverses can be computed easily as the parameters in Algorithm 1 are disjoint: the solution θ θ θa in Eq.
 さらに、アルゴリズム1のパラメータは不連続であるため、それらの逆数は簡単に計算できる。
 ( 3) is not affected by training data of other arms, and so can be computed separately.
@@ -389,54 +366,37 @@ For example, in news article recommendation, a user may prefer only articles abo
 例えば、ニュース記事の推薦において、ユーザーは政治に関する記事だけを好むかもしれない。
 Hence, it is helpful to have features that have both shared and non-shared components.
 したがって、共有コンポーネントと非共有コンポーネントの両方を持つ機能があると便利だ。
-Formally, we adopt the following hybrid model by adding another linear term to the right-hand side of Eq.
-形式的には、式(1)の右辺に別の線形項を追加して、以下のハイブリッドモデルを採用する。
-( 2):
-( 2):
+Formally, we adopt the following hybrid model by adding another linear term to the right-hand side of Eq(2):.
+形式的には、式(2)の右辺に別の線形項を追加して、以下のハイブリッドモデルを採用する。
 
-where zt,a ∈ R k is the feature of the current user/article combination, and β β β * is an unknown coefficient vector common to all arms.
-ここで、zt,a∈R kは現在のユーザーとアーティクルの組み合わせの特徴であり、β β *はすべてのアームに共通する未知の係数ベクトルである。
-This model is hybrid in the sense that some of the coefficients β β β _ are shared by all arms, while others θ θ θ \* a are not.
-このモデルは、ある係数β β _ はすべてのアームに共有され、他の係数 θ θ \ \* a は共有されないという意味でハイブリッドである。
+$$
+\mathbb{E}[r_{t,a}|x_{t,a}]
+= \mathbf{z}_{t,a}^T \mathbf{\beta}^*
++ \mathbf{x}_{t,a}^T \mathbf{\theta}_{a}^*
+\tag{6}
+$$
+
+where zt,a ∈ R k is the feature of the current user/article combination, and β is an unknown coefficient vector common to all arms.
+ここで、**$z_{t,a} \in \mathbb{R}^k$ は現在 $t$ のユーザと記事の組み合わせの特徴であり、$\beta^{*}$はすべてのアームに共通する未知の係数ベクトル**である。
+This model is hybrid in the sense that some of the coefficients β are shared by all arms, while others θ a are not.
+このモデルは、ある係数 $\beta^{*}$ はすべてのアームに共有され、他の係数 $\theta_{a}^{*}$ は共有されないという意味でハイブリッドである。
+
+![algorithm 2]()
+
 For hybrid models, we can no longer use Algorithm 1 as the confidence intervals of various arms are not independent due to the shared features.
-ハイブリッドモデルの場合、様々なアームの信頼区間は、共有された特徴のために独立ではないので、アルゴリズム1はもはや使えない。
+ハイブリッドモデルの場合、、共有された特徴のため、様々なアームの信頼区間は独立ではないので、アルゴリズム1はもはや使えない。
 Fortunately, there is an efficient way to compute an UCB along the same line of reasoning as in the previous section.
 幸いなことに、前節と同じ理屈でUCBを計算する効率的な方法がある。
 The derivation relies heavily on block matrix inversion techniques.
 この導出は、ブロック行列の逆行列テクニックに大きく依存している。
 Due to space limitation, we only give the pseudocode in Algorithm 2 (where lines 5 and 12 compute the ridge-regression solution of the coefficients, and line 13 computes the confidence interval), and leave detailed derivations to a full paper.
 紙面の都合上、アルゴリズム2の擬似コード（5行目と12行目が係数のリッジ回帰解を計算し、13行目が信頼区間を計算する）のみを示し、詳細な導出は論文に譲る。
-Here, we Algorithm 2 LinUCB with hybrid linear models.0: Inputs: α ∈ R+ 1: A0 ← I k (k-dimensional identity matrix) 2: b0 ← 0 k (k-dimensional zero vector) 3: for t = 1, 2, 3, .
-0: 入力: α∈R+ 1: A0 ← I k (k次元恒等行列) 2: b0 ← 0 k (k次元ゼロベクトル) 3: for t = 1, 2, 3, .
-..
-..
-, T do 4:
-T do 4：
-
-Observe features of all arms a ∈ At: (zt,a, xt,a) ∈ R k+d 5:
-すべてのアームa∈Atの特徴を観察する： (zt,a, xt,a) ∈ R k+d 5：
-
-for all a ∈ At do 7:
-すべてのa（At）に対して7を行う：
-
-if a is new then 8:
-a が新しい場合、8：
-
-Aa ← I d (d-dimensional identity matrix) 9:
-Aa ← I d (d次元の恒等行列) 9：
-
-Ba ← 0 d×k (d-by-k zero matrix) 10:
-Ba ← 0 d×k (d行k列のゼロ行列) 10：
-
-ba ← 0 d×1 (d-dimensional zero vector) 11:
-ba ← 0 d×1 (d次元ゼロベクトル) 11：
-
-at ba t 24: end for only point out the important fact that the algorithm is computationally efficient since the building blocks in the algorithm (A0, b0, Aa, Ba, and ba) all have fixed dimensions and can be updated incrementally.
-at ba t 24: end for アルゴリズムの構成要素（A0、b0、Aa、Ba、ba）はすべて固定された次元を持ち、インクリメンタルに更新できるため、アルゴリズムが計算効率に優れているという重要な事実のみを指摘する。
+Here, we only point out the important fact that the algorithm is computationally efficient since the building blocks in the algorithm (A0, b0, Aa, Ba, and ba) all have fixed dimensions and can be updated incrementally.
+ここでは、アルゴリズムの構成要素 $(A_0, b_0, A_a, B_a, b_a)$ はすべて固定された次元を持ち、インクリメンタルに更新できるため、アルゴリズムが計算効率に優れているという重要な事実のみを指摘する。
 Furthermore, quantities associated with arms not existing in At no longer get involved in the computation.
-さらに、Atに存在しない腕に関連する量は、もはや計算に関与しない。
+さらに、$A_t$に存在しない arm に関連する量は、もはや計算に関与しない。
 Finally, we can also compute and cache the inverses (A −1 0 and A −1 a ) periodically instead of at the end of each trial to reduce the per-trial computational complexity to O(d 2 + k 2 ).
-最後に、各トライアル終了時ではなく、定期的に逆数（A -1 0 と A -1 a ）を計算しキャッシュすることで、トライアルごとの計算量をO(d 2 + k 2 )に減らすこともできる。
+最後に、各トライアル終了時ではなく、定期的に逆数 ($A_{0}^{-1}, A_{a}^{-1}$) を計算しキャッシュすることで、トライアルごとの計算量を $O(d^2+ k^2)$ に減らすこともできる。
 
 # 4. EVALUATION METHODOLOGY 4. 評価方法
 
