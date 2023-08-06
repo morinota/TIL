@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.168">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>summary</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="summary_files/libs/clipboard/clipboard.min.js"></script>
+<script src="summary_files/libs/quarto-html/quarto.js"></script>
+<script src="summary_files/libs/quarto-html/popper.min.js"></script>
+<script src="summary_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="summary_files/libs/quarto-html/anchor.min.js"></script>
+<link href="summary_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="summary_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="summary_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="summary_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="summary_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="a-contextual-bandit-approach-to-personalized-news-article-recommendation" class="level1">
+<h1>A contextual-bandit approach to personalized news article recommendation</h1>
+<p>published date: hogehoge September 2022, authors: Wondo Rhee, Sung Min Cho, Bongwon Suh url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf (勉強会発表者: morinota)</p>
+<hr>
+<section id="どんなもの" class="level2">
+<h2 class="anchored" data-anchor-id="どんなもの">どんなもの?</h2>
+</section>
+<section id="先行研究と比べて何がすごい" class="level2">
+<h2 class="anchored" data-anchor-id="先行研究と比べて何がすごい">先行研究と比べて何がすごい？</h2>
+<section id="個別化推薦における-contextual-multi-armed-bandit-の定式化" class="level3">
+<h3 class="anchored" data-anchor-id="個別化推薦における-contextual-multi-armed-bandit-の定式化">個別化推薦における contextual multi-armed bandit の定式化</h3>
+<p>試行<span class="math inline">\(t\)</span>において,</p>
+<ul>
+<li><ol type="1">
+<li>アルゴリズムは、ユーザ <span class="math inline">\(u_t\)</span> と action(arm)の集合 <span class="math inline">\(A_{t}\)</span> をその特徴量ベクトル <span class="math inline">\(x_{t,a}, a \in A_{t}\)</span> とともに観察する。ここで、<strong>ベクトル <span class="math inline">\(x_{t,a}\)</span> は、ユーザ <span class="math inline">\(u_{t}\)</span> と action <span class="math inline">\(a\)</span> の両方の情報を要約しており、contextと呼ばれる</strong>。</li>
+</ol></li>
+<li><ol start="2" type="1">
+<li>過去の試行で観察されたpayoffs(=報酬?)に基づいて、アルゴリズムはあるaction <span class="math inline">\(a \in A_{t}\)</span> を選択し、報酬 <span class="math inline">\(r_{t, a_t}\)</span> を受け取る。(報酬の期待値は <span class="math inline">\(u_t\)</span> と action <span class="math inline">\(a_t\)</span> の両方に依存する)</li>
+</ol></li>
+<li><ol start="3" type="1">
+<li>その後アルゴリズムは、新しい観測値 <span class="math inline">\((x_{t, a_t}, a_t, r_{t, a_t})\)</span> でaction選択戦略を改善する。ここで重要な事は、選ばれてないarms <span class="math inline">\(a \neq a_{t}\)</span> にはfeedback(=報酬 <span class="math inline">\(r_{t, a}\)</span>)が観測されない、という事。</li>
+</ol></li>
+</ul>
+</section>
+</section>
+<section id="技術や手法の肝は" class="level2">
+<h2 class="anchored" data-anchor-id="技術や手法の肝は">技術や手法の肝は？</h2>
+<p>context-freeなbanditアルゴリズムである UCB を、contextual banditアルゴリズムとして拡張したいが、既存の手法では<strong>各armの報酬推定値のUCBの推定コスト(=計算量)</strong>が高い…。 本論文では、<strong>報酬モデルが線形</strong>である場合(i.e.&nbsp;報酬と特徴量の関係が線形と仮定できる場合)に、<strong>報酬推定値のUCBをclosed-formで(=解析的に=計算コスト少なく!)計算できる</strong>事を示し、LinUCBアルゴリズムを提案する。</p>
+<p>論文では、まず<strong>disjointな線形モデルに対するLinUCBアルゴリズム</strong>を説明している。(=異なるarm間でパラメータが共有されないケース!) 続いて、より一般的な <strong>hyblidな線形モデルに対するLinUCBアルゴリズム</strong>を説明している。(=arm固有のパラメータに加えて、全てのarmで共有されるparameterも使用するケース!)</p>
+<section id="disjointな線形モデルに対するlinucbアルゴリズム" class="level3">
+<h3 class="anchored" data-anchor-id="disjointな線形モデルに対するlinucbアルゴリズム">disjointな線形モデルに対するLinUCBアルゴリズム</h3>
+<ul>
+<li>仮定:
+<ul>
+<li>ある arm <span class="math inline">\(a\)</span> の期待報酬が、その <span class="math inline">\(d\)</span> 次元特徴量 <span class="math inline">\(x_{t,a}\)</span> について線形な関係である。</li>
+<li>i.e.&nbsp;全ての試行 <span class="math inline">\(t\)</span> において、以下を満たす様なcoefficient vector <span class="math inline">\(\mathbf{\theta}_{a}^{*}\)</span> が存在する。</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+\mathbb{E}[r_{t,a}|\mathbf{x}_{t,a}] = \mathbf{x}_{t,a}^{T} \mathbf{\theta}_{a}^{*}
+\]</span></p>
+<p>このモデルは、<strong>異なるarm間でパラメータが共有されない(=arm <span class="math inline">\(a\)</span> 毎にユニークなパラメータを持つ:thinking:)</strong>ため、“disjoint”と呼ばれる。</p>
+<p>学習用データ (<span class="math inline">\(D_{a}, \mathbf{c}_{a}\)</span>) にridge回帰を適用すると、以下のparameter推定値が得られる(=OLS推定量とほぼ同じ形に見えるけど、どこが違うんだっけ?):</p>
+<p><span class="math display">\[
+\hat{\mathbf{\theta}}_{a} = (D_{a}^T D_{a} + I_{d})^{-1} D_a^{T} \mathbf{c}_{a}
+\tag{3}
+\]</span></p>
+<p>ここで、</p>
+<ul>
+<li><span class="math inline">\(D_{a} \in \mathbb{R}^{m \times d}\)</span> は <span class="math inline">\(m\)</span> 個のtraining input(ex. 記事 <span class="math inline">\(a\)</span> について過去に観察された <span class="math inline">\(m\)</span> 個の <span class="math inline">\(d\)</span> 次元のcontext)</li>
+<li><span class="math inline">\(\mathbf{c}_{a} \in \mathbb{R}^{m}\)</span> はresponce vector(ex. 記事 <span class="math inline">\(a\)</span> について過去に観察された <span class="math inline">\(m\)</span> 個のクリック/クリックなしのユーザフィードバック)</li>
+<li><span class="math inline">\(I_{d}\)</span> はd×dのidentity matrix(単位行列)。</li>
+</ul>
+<p>そして、<span class="math inline">\(\mathbf{c}_{a}\)</span> の成分が <span class="math inline">\(D_a\)</span> の対応する行を条件として独立である(i.e.&nbsp;contextで条件付けた場合に各feedbackの結果は独立になる?)時、少なくとも <span class="math inline">\(1-\delta\)</span> の確率(ex. 90%とか?)で以下が示される: (=これが<strong>期待報酬の推定値のUCBがclosed-formで計算できる</strong>って話!:thinking:)</p>
+<p><span class="math display">\[
+|\mathbf{x}_{t,a}^{T} \hat{\mathbf{\theta}}_{a} - \mathbb{E}[r_{t,a}|\mathbf{x}_{t,a}]|
+\leq
+\alpha \sqrt{\mathbf{x}_{t,a}^T (D_a^T D_a + I_d)^{-1} \mathbf{x}_{t,a}}
+\tag{4}
+\]</span></p>
+<p>上式は、全ての <span class="math inline">\(\delta &gt; 0\)</span> と <span class="math inline">\(x_{t,a} \in \mathbb{R}^{d}\)</span> で成立する。ここで、 <span class="math inline">\(\alpha = 1 + ln(2/\delta)/2\)</span> は定数である。(ユーザによって指定されるハイパーパラメータ)</p>
+<p>なお、式(4)の信頼区間のclosed-formに関しては、いくつか導出方法があるらしい。 (ex. ridge回帰をベイジアンアプローチによる点推定として解釈。微分エントロピー的に。etc. )</p>
+<p>式(4)の不等式を用いて、contextual bandit × UCBの arm 選択戦略を導出できる。即ち 各試行 <span class="math inline">\(t\)</span> において、以下のようにarm <span class="math inline">\(a_{t}\)</span> を選択する:</p>
+<p><span class="math display">\[
+a_{t} := \argmax_{a \in A_t} (
+  \mathbf{x}_{t,a}^{T} \hat{\mathbf{\theta}}_{a}
+  + \alpha \sqrt{\mathbf{x}_{t,a}^T A_{a}^{-1} \mathbf{x}_{t,a}}
+  )
+\\
+\text{where} A_{a} := D_a^T D_a + I_d
+\tag{5}
+\]</span></p>
+<p>(<span class="math inline">\(\argmax\)</span> の中身は、各arm の期待報酬のUCB。context-freeなUCB手法と同様に、LinUCBは常に最も高いUCBを持つアームを選択する)</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src=".png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">algorithm 1</figcaption><p></p>
+</figure>
+</div>
+<p>アルゴリズム1は、LinUCBアルゴリズム全体の詳細な説明であり、唯一の入力パラメータ(=ハイパーパラメータ)は <span class="math inline">\(\alpha\)</span>。</p>
+<p>(あと疑似コード中にて、たぶん <span class="math inline">\(\mathbf{b}_{a} \in \mathbb{R}^{d} := D_{a}^T \mathbf{c}_{a}\)</span> )</p>
+</section>
+<section id="hyblidな線形モデルに対するlinucbアルゴリズム" class="level3">
+<h3 class="anchored" data-anchor-id="hyblidな線形モデルに対するlinucbアルゴリズム">hyblidな線形モデルに対するLinUCBアルゴリズム</h3>
+<p>disjoint LinUCBの報酬モデルに別の線形項を追加する。</p>
+<p><span class="math display">\[
+\mathbb{E}[r_{t,a}|x_{t,a}]
+= \mathbf{z}_{t,a}^T \mathbf{\beta}^*
++ \mathbf{x}_{t,a}^T \mathbf{\theta}_{a}^*
+\tag{6}
+\]</span></p>
+<p>ここで、</p>
+<ul>
+<li><span class="math inline">\(z_{t,a} \in \mathbb{R}^{k}\)</span> は 試行 <span class="math inline">\(t\)</span> 時点でのユーザと記事の組み合わせの特徴量。</li>
+<li><span class="math inline">\(\beta^{*} \in \mathbb{R}^{k}\)</span> はすべてのアームに共通する未知のcoefficient vector。</li>
+</ul>
+<p>このモデルは、共有された係数 <span class="math inline">\(\beta^{*}\)</span> と 非共有の係数 <span class="math inline">\(\theta_{a}^{*}\)</span> の両方を持つ、という意味でhyblid。</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src=".png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">algorithm 2</figcaption><p></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="どうやって有効だと検証した" class="level2">
+<h2 class="anchored" data-anchor-id="どうやって有効だと検証した">どうやって有効だと検証した?</h2>
+<p>logging policyによって収集されたデータを使って、target policyの性能を推定する OPE をしてた!</p>
+</section>
+<section id="議論はある" class="level2">
+<h2 class="anchored" data-anchor-id="議論はある">議論はある？</h2>
+</section>
+<section id="次に読むべき論文は" class="level2">
+<h2 class="anchored" data-anchor-id="次に読むべき論文は">次に読むべき論文は？</h2>
+</section>
+<section id="お気持ち実装" class="level2">
+<h2 class="anchored" data-anchor-id="お気持ち実装">お気持ち実装</h2>
+<p><span class="math display">\[
+\]</span></p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

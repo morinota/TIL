@@ -243,17 +243,17 @@ Such an approach, however, is expensive in general.
 しかし、このようなアプローチは一般的に高価(=計算量多い?)である。
 
 In this work, we show that a confidence interval can be computed efficiently in closed form when the payoff model is linear, and call this algorithm LinUCB.
-本研究では、**報酬モデルが線形である場合に、信頼区間を閉じた形で効率的に計算できること**を示し、このアルゴリズムを**LinUCB**と呼ぶ。
+本研究では、**報酬モデルが線形である場合に、信頼区間をclosed-formで効率的に計算できること**を示し、このアルゴリズムを**LinUCB**と呼ぶ。
 For convenience of exposition, we first describe the simpler form for disjoint linear models, and then consider the general case of hybrid models in Section 3.2.We note LinUCB is a generic contextual bandit algorithms which applies to applications other than personalized news article recommendation.
-説明の便宜上、まず不連続線形モデルのより単純な形式を説明し、次にセクション3.2でハイブリッドモデルの一般的なケースを考察する。LinUCBは、パーソナライズされたニュース記事推薦以外のアプリケーションにも適用可能な汎用contextual banditアルゴリズムであることに注意されたい。
+説明の便宜上、まずdisjoint線形モデルのより単純な形式を説明し、次にセクション3.2でハイブリッドモデルの一般的なケースを考察する。LinUCBは、パーソナライズされたニュース記事推薦以外のアプリケーションにも適用可能な汎用contextual banditアルゴリズムであることに注意されたい。
 
-## 3.1 LinUCB with Disjoint Linear Models 3.1 分離線形モデルによるLinUCB
+## 3.1 LinUCB with Disjoint Linear Models 3.1 disjoint線形モデルによるLinUCB
 
 Using the notation of Section 2.1, we assume the expected payoff of an arm a is linear in its d-dimensional feature xt,a with some unknown coefficient vector θ θ θ \* a ; namely, for all t,
 セクション2.1の表記法を用いて、あるarm $a$ の期待報酬が、その $d$ 次元特徴量 $x_{t,a}$ に、ある未知の係数ベクトル $\mathbf{\theta}_{a}^{*}$ を持つ線形なものであると仮定する。係数ベクトル $\mathbf{\theta}_{a}^{*}$ は即ち、全ての $t$ において、
 
 $$
-\mathbb{E}[r_{t,a}|\mathbf{x}_{t,a}] = \mathbf{x}_{t,a}^{T} \mathbf{\theta}{a}^{*}
+\mathbb{E}[r_{t,a}|\mathbf{x}_{t,a}] = \mathbf{x}_{t,a}^{T} \mathbf{\theta}_{a}^{*}
 $$
 
 を満たす様な係数ベクトルである。
@@ -261,19 +261,19 @@ $$
 This model is called disjoint since the parameters are not shared among different arms.
 **このモデルは、異なるarm間でパラメータが共有されないため、"disjoint"と呼ばれる**。(=arm $a$ 毎にユニークなパラメータを持つ。)
 Let Da be a design matrix of dimension m × d at trial t, whose rows correspond to m training inputs (e.g., m contexts that are observed previously for article a), and ba ∈ R m be the corresponding response vector (e.g., the corresponding m click/no-click user feedback).
-試行 $t$ における m×d の次元のデザイン行列を $D_a$ とし、その行は $m$ 個のトレーニング入力(例えば、記事 $a$ について以前に観察された $m$ 個のコンテキスト)に対応し、 $\mathbf{b}_{a} \in \mathbb{R}^{m}$ は対応する**レスポンスベクトル(例えば、対応するm個のクリック／クリックなしのユーザーフィードバック)**である。
+試行 $t$ における m×d の次元のデザイン行列を $D_a$ とし、その行は $m$ 個のトレーニング入力(例えば、記事 $a$ について以前に観察された $m$ 個のコンテキスト)に対応し、 $\mathbf{c}_{a} \in \mathbb{R}^{m}$ は対応する**レスポンスベクトル(例えば、対応するm個のクリック／クリックなしのユーザーフィードバック)**である。
 Applying ridge regression to the training data (Da, ca) gives an estimate of the coefficients:
-訓練データ $(D_a, \mathbf{b}_{c})$ にリッジ回帰を適用すると、係数の推定値が得られる:
+訓練データ $(D_a, \mathbf{c}_{a})$ にリッジ回帰を適用すると、係数の推定値が得られる:
 
 $$
-\hat{\mathbf{\theta}}_{a} = (D_{a}^T D_{a} + I_{d})^{-1} D_a^{T}
+\hat{\mathbf{\theta}}_{a} = (D_{a}^T D_{a} + I_{d})^{-1} D_a^{T} \mathbf{c}_{a}
 \tag{3}
 $$
 
 where I d is the d × d identity matrix.
 ここで $I_{d}$ はd×dのidentity matrix(単位行列)である。
-When components in ca are independent conditioned on corresponding rows in Da, it can be shown [27] that, with probability at least 1 − δ,
-$\mathbf{b}_{a}$ の成分が $D_a$ の対応する行を条件として独立であるとき、少なくとも $1-\delta$ の確率で、以下のことが示される[27],
+When components in $\mathbf{c}_{a}$ ar e independent conditioned on corresponding rows in Da, it can be shown [27] that, with probability at least 1 − δ,
+$\mathbf{c}_{a}$ の成分が $D_a$ の対応する行を条件として独立(=contextで条件付けると、各feedbackの結果は独立になる?)であるとき、少なくとも $1-\delta$ の確率で、以下のことが示される[27],(=これが期待報酬の推定値のUCBがclosed-formで計算できる話!)
 
 $$
 |\mathbf{x}_{t,a}^{T} \hat{\mathbf{\theta}}_{a} - \mathbb{E}[r_{t,a}|\mathbf{x}_{t,a}]|
@@ -300,7 +300,7 @@ where $A_{a} := D_a^T D_a + I_d$.
 The confidence interval in Eq.(4) may be motivated and derived from other principles.
 式(4)の信頼区間は、他の原理から動機づけられ導き出されることもある。
 For instance, ridge regression can also be interpreted as a Bayesian point estimate, where the posterior distribution of the coefficient vector, denoted as p(θ θ θa), is Gaussian with mean θ θ θa and covariance A −1 a .
-例えば，リッジ回帰は，ベイズ点推定としても解釈でき，$p(\theta_{a})$ と表記される係数ベクトルの事後分布は，平均 \theta*{a} と共分散 $A*{a}^{-1}$ を持つ多変量ガウス分布である.
+例えば，リッジ回帰は，ベイジアンアプローチによる点推定としても解釈でき，$p(\theta_{a})$ と表記される係数ベクトルの事後分布は，平均 $\theta_{a}$ と共分散 $A_{a}^{-1}$ を持つ多変量ガウス分布である.
 Given the current model, the predictive variance of the expected payoff x ⊤ t,a θ θ θ \* a is evaluated as x ⊤ t,a A −1 a xt,a, and then x ⊤ t,a A −1 a xt,a becomes the standard deviation.
 現在のモデルが与えられれば、期待報酬 $\mathbf{x}_{t,a}^{T} \hat{\mathbf{\theta}}_{a}$ の予測分散は $\mathbf{x}_{t,a}^T A_{a}^{-1} \mathbf{x}_{t,a}$ と評価され、$\sqrt{\mathbf{x}_{t,a}^T A_{a}^{-1} \mathbf{x}_{t,a}}$ は標準偏差(=予測分布の標準偏差?)となる.
 Furthermore, in information theory [19], the differential entropy of p(θ θ θa) is defined as − 1 2 ln((2π) d det Aa).
@@ -350,22 +350,20 @@ More importantly, we will discuss in the next section how to extend the basic Al
 ## 3.2 LinUCB with Hybrid Linear Models ハイブリッド線形モデルによるLinUCB
 
 Algorithm 1 (or the similar algorithm in [22]) computes the inverse of the matrix, D ⊤ a Da + I d (or D ⊤ a Da), where Da is again the design matrix with rows corresponding to features in the training data.
-アルゴリズム1（または[22]の類似アルゴリズム）は、行列の逆行列、D ⊤ a Da + I d（またはD ⊤ a Da）を計算する。
+アルゴリズム1は、行列($D_{a}^{T} D_{a} + I_{d}$ or $D_{a}^{T} D_{a}$)の逆行列を計算する。
 These matrices of all arms have fixed dimension d × d, and can be updated efficiently and incrementally.
-すべてのアームのこれらの行列は、固定された次元d×dを持ち、効率的かつインクリメンタルに更新することができる.
-Moreover, their inverses can be computed easily as the parameters in Algorithm 1 are disjoint: the solution θ θ θa in Eq.
-さらに、アルゴリズム1のパラメータは不連続であるため、それらの逆数は簡単に計算できる。
-( 3) is not affected by training data of other arms, and so can be computed separately.
-( 3)は他のアームのトレーニングデータの影響を受けないため、個別に計算することができる。
+すべてのアームのこれらの行列は、固定された次元d×dを持ち、効率的かつインクリメンタルに更新することができる。
+Moreover, their inverses can be computed easily as the parameters in Algorithm 1 are disjoint: the solution θ θ θa in Eq.(3) is not affected by training data of other arms, and so can be computed separately.
+さらに、アルゴリズム1のパラメータは不連続であるため、それらの逆数を簡単に計算することができる： 式(3)の解 $\theta_{a}$ は、他のアームのトレーニングデータの影響を受けないため、別々に計算することができる.
 We now consider the more interesting case with hybrid models.
 次に、ハイブリッド・モデルを使った、より興味深いケースを考えてみよう。
 
 In many applications including ours, it is helpful to use features that are shared by all arms, in addition to the arm-specific ones.
-私たちを含む多くのアプリケーションでは、アーム固有の機能に加えて、すべてのアームで共有される機能を使用することが有用である。
+私たちを含む多くのアプリケーションでは、アーム固有の機能(parameter)に加えて、すべてのアームで共有される機能(parameter)を使用することが有用である。
 For example, in news article recommendation, a user may prefer only articles about politics for which this provides a mechanism.
 例えば、ニュース記事の推薦において、ユーザーは政治に関する記事だけを好むかもしれない。
 Hence, it is helpful to have features that have both shared and non-shared components.
-したがって、共有コンポーネントと非共有コンポーネントの両方を持つ機能があると便利だ。
+したがって、共有componentと非共有componentの両方を持つ機能があると便利だ。
 Formally, we adopt the following hybrid model by adding another linear term to the right-hand side of Eq(2):.
 形式的には、式(2)の右辺に別の線形項を追加して、以下のハイブリッドモデルを採用する。
 
@@ -384,13 +382,13 @@ This model is hybrid in the sense that some of the coefficients β are shared by
 ![algorithm 2]()
 
 For hybrid models, we can no longer use Algorithm 1 as the confidence intervals of various arms are not independent due to the shared features.
-ハイブリッドモデルの場合、、共有された特徴のため、様々なアームの信頼区間は独立ではないので、アルゴリズム1はもはや使えない。
+ハイブリッドモデルの場合、、共有された特徴量のため、様々なアームの信頼区間は独立ではないので、アルゴリズム1はもはや使えない。
 Fortunately, there is an efficient way to compute an UCB along the same line of reasoning as in the previous section.
 幸いなことに、前節と同じ理屈でUCBを計算する効率的な方法がある。
 The derivation relies heavily on block matrix inversion techniques.
-この導出は、ブロック行列の逆行列テクニックに大きく依存している。
+この導出は、ブロック行列(?)の逆行列テクニックに大きく依存している。
 Due to space limitation, we only give the pseudocode in Algorithm 2 (where lines 5 and 12 compute the ridge-regression solution of the coefficients, and line 13 computes the confidence interval), and leave detailed derivations to a full paper.
-紙面の都合上、アルゴリズム2の擬似コード（5行目と12行目が係数のリッジ回帰解を計算し、13行目が信頼区間を計算する）のみを示し、詳細な導出は論文に譲る。
+紙面の都合上、アルゴリズム2の擬似コード(5行目と12行目が係数のリッジ回帰解を計算し、13行目が信頼区間を計算する)のみを示し、詳細な導出は論文に譲る。
 Here, we only point out the important fact that the algorithm is computationally efficient since the building blocks in the algorithm (A0, b0, Aa, Ba, and ba) all have fixed dimensions and can be updated incrementally.
 ここでは、アルゴリズムの構成要素 $(A_0, b_0, A_a, B_a, b_a)$ はすべて固定された次元を持ち、インクリメンタルに更新できるため、アルゴリズムが計算効率に優れているという重要な事実のみを指摘する。
 Furthermore, quantities associated with arms not existing in At no longer get involved in the computation.
@@ -401,17 +399,17 @@ Finally, we can also compute and cache the inverses (A −1 0 and A −1 a ) per
 # 4. EVALUATION METHODOLOGY 4. 評価方法
 
 Compared to machine learning in the more standard supervised setting, evaluation of methods in a contextual bandit setting is frustratingly difficult.
-より標準的な教師あり設定の機械学習と比べると、コンテキスト・バンディット設定における手法の評価は苛立たしいほど難しい。
+より標準的な教師あり設定の機械学習と比べると、contextual bandit設定における手法の評価は苛立たしいほど難しい。(OPEの話してる??)
 Our goal here is to measure the performance of a bandit algorithm π, that is, a rule for selecting an arm at each time step based on the preceding interactions (such as the algorithms described above).
-ここでの目的は、バンディット・アルゴリズムπ、つまり、先行する相互作用に基づいて各時間ステップでアームを選択するルール（上述のアルゴリズムなど）の性能を測定することである。
+ここでの目的は、バンディット・アルゴリズム $\pi$, つまり、先行する相互作用に基づいて各時間ステップでアームを選択するルール(上述のアルゴリズムなど)の性能を測定することである。
 Because of the interactive nature of the problem, it would seem that the only way to do this is to actually run the algorithm on "live" data.
-この問題のインタラクティブな性質から、これを行う唯一の方法は、"ライブ "データで実際にアルゴリズムを実行することだと思われる。
+この問題のインタラクティブな性質から、**$\pi$ の性能を測定する唯一の方法は、"ライブ "データで実際にアルゴリズムを実行すること**だと思われる。
 However, in practice, this approach is likely to be infeasible due to the serious logistical challenges that it presents.
-しかし実際には、この方法はロジスティクス上の重大な問題があるため、実現不可能である可能性が高い。
+しかし実際には、この方法はロジスティクス上の重大な問題(??)があるため、実現不可能である可能性が高い。
 Rather, we may only have offline data available that was collected at a previous time using an entirely different logging policy.
-むしろ、まったく別のロギング・ポリシーを使って以前に収集されたオフライン・データしか利用できないかもしれない。
+むしろ、**まったく別の logging policy を使って以前に収集されたオフライン・データしか利用できない**かもしれない。
 Because payoffs are only observed for the arms chosen by the logging policy, which are likely to often differ from those chosen by the algorithm π being evaluated, it is not at all clear how to evaluate π based only on such logged data.
-ペイオフが観測されるのはロギングポリシーによって選択されたアームのみであり、評価対象のアルゴリズムπによって選択されたアームとは異なることが多いため、このようなロギングデータのみに基づいてπを評価する方法はまったく明確ではない。
+報酬が観測されるのは logging policy によって選択された arm のみであり、評価対象のアルゴリズム $\pi$ によって選択されたアームとは異なることが多いため、このようなロギングデータのみに基づいてπを評価する方法はまったく明確ではない。
 This evaluation problem may be viewed as a special case of the so-called "off-policy evaluation problem" in reinforcement learning (see, c.f., [23]).
 この評価問題は、強化学習におけるいわゆる「オフポリシー評価問題」の特殊なケースとみなすことができる（例えば、[23]を参照）。
 
