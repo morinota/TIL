@@ -2,7 +2,7 @@
 
 published date: hogehoge September 2022,
 authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
-url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
+url(paper): https://arxiv.org/pdf/1003.0146.pdf
 (勉強会発表者: morinota)
 
 ---

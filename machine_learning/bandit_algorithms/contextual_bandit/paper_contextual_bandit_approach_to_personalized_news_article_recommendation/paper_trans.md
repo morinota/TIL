@@ -403,7 +403,7 @@ Compared to machine learning in the more standard supervised setting, evaluation
 Our goal here is to measure the performance of a bandit algorithm π, that is, a rule for selecting an arm at each time step based on the preceding interactions (such as the algorithms described above).
 ここでの目的は、バンディット・アルゴリズム $\pi$, つまり、先行する相互作用に基づいて各時間ステップでアームを選択するルール(上述のアルゴリズムなど)の性能を測定することである。
 Because of the interactive nature of the problem, it would seem that the only way to do this is to actually run the algorithm on "live" data.
-この問題のインタラクティブな性質から、**$\pi$ の性能を測定する唯一の方法は、"ライブ "データで実際にアルゴリズムを実行すること**だと思われる。
+この問題のインタラクティブな性質から、**$\pi$ の性能を測定する唯一の方法は、"ライブ "データで実際にアルゴリズムを実行すること**だと思われる。(オンラインテスト)
 However, in practice, this approach is likely to be infeasible due to the serious logistical challenges that it presents.
 しかし実際には、この方法はロジスティクス上の重大な問題(??)があるため、実現不可能である可能性が高い。
 Rather, we may only have offline data available that was collected at a previous time using an entirely different logging policy.
@@ -411,126 +411,135 @@ Rather, we may only have offline data available that was collected at a previous
 Because payoffs are only observed for the arms chosen by the logging policy, which are likely to often differ from those chosen by the algorithm π being evaluated, it is not at all clear how to evaluate π based only on such logged data.
 報酬が観測されるのは logging policy によって選択された arm のみであり、評価対象のアルゴリズム $\pi$ によって選択されたアームとは異なることが多いため、このようなロギングデータのみに基づいてπを評価する方法はまったく明確ではない。
 This evaluation problem may be viewed as a special case of the so-called "off-policy evaluation problem" in reinforcement learning (see, c.f., [23]).
-この評価問題は、強化学習におけるいわゆる「オフポリシー評価問題」の特殊なケースとみなすことができる（例えば、[23]を参照）。
+この評価問題は、**強化学習におけるいわゆる"Off-policy evaluation problem"**の特殊なケースとみなすことができる（例えば、[23]を参照）。
 
 One solution is to build a simulator to model the bandit process from the logged data, and then evaluate π with the simulator.
-一つの解決策は、ログデータからバンディットプロセスをモデル化するシミュレータを構築し、そのシミュレータでπを評価することである。
+一つの解決策は、ログデータからバンディットプロセスをモデル化するシミュレータを構築し、そのシミュレータで $\pi$ を評価することである。
 However, the modeling step will introduce bias in the simulator and so make it hard to justify the reliability of this simulator-based evalu-ation approach.
 しかし、モデリング・ステップはシミュレータにバイアスをもたらすため、このシミュレータ・ベースの評価手法の信頼性を正当化するのは難しい。
 In contrast, we propose an approach that is simple to implement, grounded on logged data, and unbiased.
 対照的に、我々は、実装が簡単で、記録されたデータに基づき、偏りのないアプローチを提案する。
 
 In this section, we describe a provably reliable technique for carrying out such an evaluation, assuming that the individual events are i.i.d., and that the logging policy that was used to gather the logged data chose each arm at each time step uniformly at random.
-このセクションでは、個々のイベントがi.i.d.であり、ログデータを収集するために使用されたロギングポリシーが各タイムステップで一様にランダムに各アームを選択したと仮定して、このような評価を実施するための証明可能な信頼性の高い技術を説明します。
+このセクションでは、**個々のイベントがi.i.d.であり**、ログデータを収集するために使用された**logging policy が各タイムステップで一様にランダムに各アームを選択したと仮定して**(結構エグい仮定じゃない??)、このような評価を実施するための証明可能な信頼性の高い技術を説明します。
 Although we omit the details, this latter assumption can be weakened considerably so that any randomized logging policy is allowed and our solution can be modified accordingly using rejection sampling, but at the cost of decreased efficiency in using data.
-詳細は省略するが、この後者の仮定はかなり弱めることができるため、どのようなランダム化されたロギング方針も許容され、棄却サンプリングを用いて我々の解をそれに応じて修正することができるが、その代償としてデータの利用効率は低下する。
+詳細は省略するが、**この後者の仮定はかなり弱めることができるため**、どのようなランダム化されたlogging policyも許容され、棄却サンプリングを用いて我々の解をそれに応じて修正することができるが、その代償としてデータの利用効率は低下する。
 
-More precisely, we suppose that there is some unknown distribution D from which tuples are drawn i.i.d.
-より正確には、タプルがi.i.d.で引かれる未知の分布Dがあると仮定する。
-of the form (x1, ..., xK, r1, .
-の形式（x1, ..., xK, r1, .
-..
-..
-, rK), each consisting of observed feature vectors and hidden payoffs for all arms.
-rK）であり、それぞれは観測された特徴ベクトルと全アームに対する隠れペイオフからなる。
+More precisely, we suppose that there is some unknown distribution D from which tuples are drawn i.i.d. of the form (x1, ..., xK, r1, ..., rK), each consisting of observed feature vectors and hidden payoffs for all arms.
+より正確には、$(x_1, \cdots,  x_{K}, r_1, \cdots, r_K)$ という形のタプルがi.i.d.でサンプリングされる未知の分布 $D$ があると仮定する。各タプルは、観測された特徴量ベクトルと、すべてのアームに対する隠れ報酬から構成される。
 We also posit access to a large sequence of logged events resulting from the interaction of the logging policy with the world.
 我々はまた、ロギングポリシーと世界との相互作用の結果として生じる、ロギングされたイベントの大規模なシーケンスへのアクセスを仮定する。
 Each such event consists of the context vectors x1, ..., xK , a selected arm a and the resulting observed payoff ra.
-各イベントは、コンテキスト・ベクトルx1、...、xK、選択されたアームa、およびその結果観測されたペイオフraで構成される。
+各イベントは、コンテキスト・ベクトル$x1, \cdots, xK$、選択されたアーム$a$、およびその結果観測された報酬 $r_a$ で構成される.
 Crucially, only the payoff ra is observed for the single arm a that was chosen uniformly at random.
-重要なのは、一様に無作為に選ばれた単一のアームaについて、ペイオフraのみが観察されることである。
+重要なのは、**一様に無作為に選ばれた単一のアーム $a$ について、ペイオフ $r_a$ のみが観察されることである**.
 For simplicity of presentation, we take this sequence of logged events to be an infinitely long stream; however, we also give explicit bounds on the actual finite number of events required by our evaluation method.
 表示を簡単にするため、この一連のログイベントは無限に長いストリームであるとする。しかし、我々の評価方法が必要とする実際の有限イベント数についても、明示的な境界を与える。
 
 Our goal is to use this data to evaluate a bandit algorithm π.
 我々の目標は、このデータを使ってバンディット・アルゴリズムπを評価することである。
 Formally, π is a (possibly randomized) mapping for selecting the arm at at time t based on the history ht−1 of t−1 preceding events, together with the current context vectors xt1, ..., xtK.
-形式的には、πは、現在のコンテキストベクトルxt1、...、xtKとともに、t-1個前のイベントの履歴ht-1に基づいて、時刻tにおけるアームを選択するための（おそらくランダム化された）マッピングである。
+形式的には、πは、現在のコンテキストベクトル $x_{t1},\cdots, x_{tK}$ とともに、 $t-1$ 個前のイベントの履歴 $h_{t-1}$ に基づいて、時刻tにおけるアームを選択するための（おそらくランダム化された）mapping (key=arm, value=報酬推定値のUCB?)である。
+
+![algorithm3]()
 
 Our proposed policy evaluator is shown in Algorithm 3.
 我々の提案するポリシー評価器をアルゴリズム3に示す。
 The method takes as input a policy π and a desired number of "good" events T on which to base the evaluation.
-この方法は、ポリシーπと、評価の基礎となる「良い」イベントの望ましい数Tを入力とする。
+この方法は、ポリシーπと、評価の基礎となる「良い」イベントの望ましい数 $T$ を入力とする.
 We then step through the stream of logged events one by one.
 次に、ログに記録されたイベントのストリームをひとつずつ見ていく。
 If, given the current history ht−1, it happens that the policy π chooses the same arm a as the one that was selected by the logging policy, then the event is retained, that is, added to the history, and the total payoff Rt updated.
-もし、現在の履歴ht-1が与えられたとき、政策πがロギング政策によって選択されたものと同じ腕aを選択することが起これば、そのイベントは保持され、つまり履歴に追加され、総ペイオフRtは更新される。
+もし、現在の履歴 $h_{t-1}$ が与えられたとき、政策πが logging policy によって選択されたものと同じ腕 $a$ を選択することが起これば、そのイベントは保持され、つまり履歴に追加され、総ペイオフ $R_t$ は更新される.
 Otherwise, if the policy π selects a different arm from the one that was taken by the logging policy, then the event is entirely ignored, and the algorithm proceeds to the next event without any other change in its state.
-そうでない場合、ポリシーπが、ロギングポリシーによって取られたものとは異なるアームを選択した場合、そのイベントは完全に無視され、アルゴリズムは、その状態に他の変更を加えることなく、次のイベントに進みます。
+そうでない場合、**ポリシーπが、ロギングポリシーによって取られたものとは異なるアームを選択した場合、そのイベントは完全に無視され**、アルゴリズムは、その状態に他の変更を加えることなく、次のイベントに進みます。
+(logging policyのarmの選択傾向に影響を受けた評価結果になるはずだが、今回はlogging policyが一様ランダムにarmを選択する、という仮定なので...!!:thinking:)
 
 Note that, because the logging policy chooses each arm uniformly at random, each event is retained by this algorithm with probability exactly 1/K, independent of everything else.
 ロギング・ポリシーは各アームを一様にランダムに選択するため、各イベントはこのアルゴリズムによって、他のすべてから独立して、ちょうど1/Kの確率で保持されることに注意してください。
 This means that the events which are retained have the same distribution as if they were selected by D.
-つまり、保持されるイベントは、Dによって選択された場合と同じ分布を持つ。
+つまり、保持されるイベントは、$D$ によって選択された場合と同じ分布を持つ。(??)
 As a result, we can prove that two processes are equivalent: the first is evaluating the policy against T real-world events from D, and the second is evaluating the policy using the policy evaluator on a stream of logged events.
-その結果、2つのプロセスが等価であることを証明することができる。1つ目は、DからのT個の実世界イベントに対してポリシーを評価することであり、2つ目は、ログに記録されたイベントのストリームに対してポリシー評価器を使用してポリシーを評価することである。
+その結果、2つのプロセスが等価であることを証明することができる。**1つ目は、DからのT個の実世界イベントに対してポリシーを評価すること**(=オンライン評価??)であり、2つ目は、ログに記録されたイベントのストリームに対してポリシー評価器を使用してポリシーを評価すること(=オフライン評価??)である。
+
 THEOREM 1.
 理論1.
-For all distributions D of contexts, all policies π, all T , and all sequences of events hT ,
-コンテキストのすべての分布D、すべてのポリシーπ、すべてのT、およびすべてのイベントのシーケンスhT 、
+For all distributions D of contexts, all policies π, all T , and all sequences of events hT,
+コンテキストのすべての分布 $D$、すべてのポリシーπ、すべてのT、およびすべてのイベントのシーケンスhT で 以下が成立する:
 
-where S is a stream of events drawn i.i.d.
-ここで、Sはi.i.d.のイベントのストリームである。
-from a uniform random logging policy and D.
-均一なランダムロギングポリシーとD.
+$$
+Pr_{\text{Policy_Evaluator}(\pi, S)}(h_{T}) = Pr_{\pi, D}(h_{T})
+$$
+
+where S is a stream of events drawn i.i.d. from a uniform random logging policy and D.
+ここで、$S$ は、一様ランダムロギングポリシーとDによって集められた.i.i.d.のイベントのストリーム(=一様ランダムにarmを選択するlogging policyで集められたログデータ?)である。
+
 Furthermore, the expected number of events obtained from the stream to gather a history hT of length T is KT .
-さらに、長さTの履歴hTを収集するためにストリームから得られるイベントの期待数はKTである。
+さらに、長さTの履歴 $h_T$ を収集するためにストリームから得られるイベントの期待数は $KT$ である。
 
 This theorem says that every history hT has the identical probability in the real world as in the policy evaluator.
-この定理は、すべての履歴hTは、現実世界において、政策評価者におけるのと同じ確率を持つことを意味している。
+この定理は、すべての履歴hT (=の観測確率??)は、現実世界において、policy evaluator におけるのと同じ確率を持つことを意味している.
 Many statistics of these histories, such as the average payoff RT /T returned by Algorithm 3, are therefore unbiased estimates of the value of the algorithm π.
-アルゴリズム3が返す平均ペイオフRT /Tのような、これらの履歴の多くの統計は、したがって、アルゴリズムπの値の不偏推定値である。
+アルゴリズム3が返す平均ペイオフ $R_{T}/T$ のような、これらの履歴の多くの統計は、したがって、アルゴリズムπの値の不偏推定値である。
 Further, the theorem states that KT logged events are required, in expectation, to retain a sample of size T .
 さらに定理は、KT個の記録されたイベントは、期待値として、サイズTのサンプルを保持するために必要であることを示す。
 
 PROOF.
 証明する。
-The proof is by induction on t = 1, .
-証明は、t = 1, .
-..
-..
-, T starting with a base case of the empty history which has probability 1 when t = 0 Algorithm 3 Policy_Evaluator.0: Inputs: T > 0; policy π; stream of events Rt ← Rt−1 + ra 9: end for 10: Output: RT /T under both methods of evaluation.
-アルゴリズム3 Policy_Evaluator.0: 入力： T > 0; ポリシー π; イベントのストリーム Rt ← Rt-1 + ra 9: end for 10: 出力： 両方の評価方法の下での RT /T.
+The proof is by induction on $t = 1, \cdots, T$ starting with a base case of the empty history which has probability 1 when t = 0 under both methods of evaluation.
+証明は $t = 1, \cdots, T$ の帰納法で、どちらの評価法でもt = 0のときに確率1となる空の履歴の基本ケースから始める。
 In the inductive case, assume that we have for all t − 1:
-帰納的な場合、すべてのt - 1について次のように仮定する：
+帰納的な場合、すべての $t - 1$ について次のように仮定する:
 
-and want to prove the same statement for any history ht.
-そして、どのような歴史でも同じことを証明したい。
-Since the data is i.i.d.
-データはi.i.d.である。
-and any randomization in the policy is independent of randomization in the world, we need only prove that conditioned on the history ht−1 the distribution over the t-th event is the same for each process.
-そして、政策におけるいかなるランダム化も、世界におけるランダム化とは無関係であり、我々は、履歴ht-1を条件として、t番目の事象に対する分布が各プロセスで同じであることを証明するだけでよい。
+$$
+Pr_{\text{Policy_Evaluator(\pi, S)}}(h_{t-1}) = Pr_{\pi, D}(h_{t-1})
+$$
+
+and want to prove the same statement for any history $h_t$.
+そして、どのような歴史 $h_t$ でも同じことを証明したい。
+Since the data is i.i.d. and any randomization in the policy is independent of randomization in the world, we need only prove that conditioned on the history ht−1 the distribution over the t-th event is the same for each process.
+データはi.i.d.であり、policy におけるいかなるランダム化も、世界におけるランダム化とは無関係なので、我々は、履歴 $h_{t-1}$ を条件として、$t$ 番目の事象に対する分布が各プロセスで同じ (=全てのtで独立! マルコフchain的ではない! :thinking:) であることを証明するだけでよい。
 In other words, we must show:
-つまり、私たちは示さなければならない：
+つまり、私たちは以下を示さなければならない:
+
+$$
+Pr_{\text{Policy_Evaluator(\pi, S)}}
+((x_{t,1}, \cdots, x_{t,K}, a, r_{t,a})|h_{t-1})
+=
+Pr_{D}(x_{t,1}, \cdots, x_{t,K}, a, r_{t,a})
+Pr_{\pi (h_{t-1})} (a|x_{t,1}, \cdots, x_{t,K})
+$$
 
 Since the arm a is chosen uniformly at random in the logging policy, the probability that the policy evaluator exits the inner loop is identical for any policy, any history, any features, and any arm, implying this happens for the last event with the probability of the last event, PrD(xt,1, ..., xt,K, rt,a).
-アームaはロギングポリシーにおいて一様にランダムに選択されるため、ポリシー評価者が内部ループを抜ける確率は、どのポリシー、どの履歴、どの特徴、どのアームにおいても同一であり、これは最後のイベントの確率PrD(xt,1, ...,xt,K, rt,a)で起こることを意味する。
+アーム $a$ はロギングポリシーにおいて一様にランダムに選択されるため、policy evaluator が内部ループを抜ける確率は、どのtarget policy $\pi$、どの履歴 $t$、どの特徴量 $x_{t,a}$、どのアーム $a$ においても同一であり、これは最後のイベントの確率 $Pr_{D}(x_{t,1}, \cdots, x_{t,K}, a, r_{t,a})$ で起こることを意味する。
 Similarly, since the policy π's distribution over arms is independent conditioned on the history ht−1 and features (xt,1, ..., xt,K ), the probability of arm a is just Pr π(h t−1 ) (a|xt,1, ..., xt,K ).
-同様に、政策πの武器に対する分布は、履歴ht-1と特徴量(xt,1, ..., xt,K )に依存しないので、武器aの確率は、Pr π(h t-1 ) (a|xt,1, ..., xt,K )だけである。
+同様に、政策 $\pi$ によるarm選択の確率分布は、履歴 $h_{t-1}$ と特徴量(=各armの特徴量) $(x_{t,1}, \cdots, x_{t,K})$ にそれぞれ独立して依存するので、arm $a$ の確率は、$Pr_{\pi (h_{t-1})} (a|x_{t,1}, \cdots, x_{t,K})$ だけである。
 Finally, since each event from the stream is retained with probability exactly 1/K, the expected number required to retain T events is exactly KT .
-最後に、ストリームからの各イベントはちょうど1/Kの確率で保持されるので、T個のイベントを保持するのに必要な期待数はちょうどKT個である。
+最後に、ストリームからの各イベントはちょうど1/Kの確率で保持される(=$h_t$ と target policyの $a_t$ が一致する確率...??)ので、T個のイベントを保持するのに必要な期待数はちょうどKT個である。
 
 # 5. EXPERIMENTS 5. 実験
 
 In this section, we verify the capacity of the proposed LinUCB algorithm on a real-world application using the offline evaluation method of Section 4.
-本節では、セクション4のオフライン評価法を用いて、提案するLinUCBアルゴリズムの能力を実世界のアプリケーションで検証する。
+本節では、セクション4のオフライン評価法(=target policyが一様ランダムを仮定した naive OPE??)を用いて、提案するLinUCBアルゴリズムの能力を実世界のアプリケーションで検証する。
 We start with an introduction of the problem setting in Yahoo! Today-Module, and then describe the user/item attributes we used in experiments.
-Yahoo！Today-Moduleにおける問題設定の紹介から始まり、実験に使用したユーザー／アイテム属性について説明する。
+**Yahoo!Today-Module**における問題設定の紹介から始まり、実験に使用したユーザー/アイテム属性について説明する。
 Finally, we define performance metrics and report experimental results with comparison to a few standard (contextual) bandit algorithms.
-最後に、性能指標を定義し、いくつかの標準的な（文脈的な）バンディットアルゴリズムと比較した実験結果を報告する。
+最後に、性能指標を定義し、いくつかの標準的な(contexutal)バンディットアルゴリズムと比較した実験結果を報告する。
 
 ## 5.1 Yahoo! Today Module # 5.1 Yahoo!
+
+![fig1]()
 
 The Today Module is the most prominent panel on the Yahoo! Front Page, which is also one of the most visited pages on the Internet; see a snapshot in Figure 1 .
 Todayモジュールは、ヤフーのフロントページで最も目立つパネルであり、インターネット上で最も訪問者の多いページの一つでもある。
 The default "Featured" tab in the Today Module highlights one of four high-quality articles, mainly news, while the four articles are selected from an hourly-refreshed article pool curated by human editors.
-デフォルトの %C
+Todayモジュールのデフォルトの "Featured "タブは、**ニュースを中心に4つの高品質な記事の中から1つをハイライト**し、**4つの記事は人間の編集者によってキュレートされた1時間ごとに更新される記事プール**から選ばれる。(推薦候補は人間の手でcurateされる)
 As illustrated in Figure 1 , there are four articles at footer positions, indexed by F1-F4.
 図1に示すように、フッターの位置には4つの記事があり、F1-F4で索引付けされている。
 Each article is represented by a small picture and a title.
 各記事は小さな写真とタイトルで表されている。
 One of the four articles is highlighted at the story position, which is featured by a large picture, a title and a short summary along with related links.
-4つの記事のうち1つが、ストーリー位置でハイライトされ、大きな写真、タイトル、短い要約、関連リンクで紹介される。
+**4つの記事のうち1つが、ストーリ位置でハイライトされ**、大きな写真、タイトル、短い要約、関連リンクで紹介される。
 By default, the article at F1 is highlighted at the story position.
 デフォルトでは、F1の記事はストーリーの位置でハイライトされる。
 A user can click on the highlighted article at the story position to read more details if she is interested in the article.
@@ -538,7 +547,7 @@ A user can click on the highlighted article at the story position to read more d
 The event is recorded as a story click.
 イベントはストーリークリックとして記録される。
 To draw visitors' attention, we would like to rank available articles according to individual interests, and highlight the most attractive article for each visitor at the story position.
-訪問者の注意を引くために、個々の興味に応じて利用可能な記事をランク付けし、各訪問者にとって最も魅力的な記事をストーリーの位置に強調したい。
+訪問者の注意を引くために、個々の興味に応じて利用可能な記事をランク付けし、**各訪問者にとって最も魅力的な記事をストーリーの位置に強調したい**。
 
 ## 5.2 Experiment Setup 5.2 実験セットアップ
 
@@ -550,99 +559,93 @@ This subsection gives a detailed description of our experimental setup, includin
 We collected events from a random bucket in May 2009.
 2009年5月にランダムなバケツからイベントを収集した。
 Users were randomly selected to the bucket with a certain probability per visiting view.3 In this bucket, articles were randomly selected from the article pool to serve users.
-このバケツでは、記事が記事プールからランダムに選択され、ユーザーに提供される。
+このバケツでは、**記事が記事プールからランダムに選択され、ユーザーに提供される**。
 To avoid exposure bias at footer positions, we only focused on users' interactions with F1 articles at the story position.
-フッター位置での露出バイアスを避けるため、ストーリー位置でのF1記事に対するユーザーのインタラクションのみに注目した。
+フッター位置での露出バイアスを避けるため、**ストーリー位置でのF1記事に対するユーザのインタラクションのみに注目**した。(i.e. 一定期間、ランダムにF1枠に一様ランダムに記事を出すようにした?? 4つの記事の中から??)
 Each user interaction event consists of three components: (i) the random article chosen to serve the user, (ii) user/article information, and (iii) whether the user clicks on the article at the story position.
-各ユーザインタラクションイベントは3つの要素から構成される： (i)ユーザーにサービスを提供するために選ばれたランダムな記事、(ii)ユーザー/記事情報、(iii)ストーリーの位置でユーザーが記事をクリックしたかどうか。
+各ユーザインタラクションイベント(=1つのtuple!)は3つの要素から構成される: (i)ユーザにサービスを提供するために選ばれたランダムな記事、(ii)ユーザ/記事情報(=context)、(iii)ストーリーの位置でユーザが記事をクリックしたかどうか。
 Section 4 shows these random events can be used to reliably evaluate a bandit algorithm's expected payoff.
-セクション4では、バンディットアルゴリズムの期待ペイオフを確実に評価するために、これらのランダムイベントを使用できることを示す。
+セクション4では、バンディットアルゴリズムの期待報酬を確実に評価するために、**これらのランダムイベントを使用できる**ことを示す。(section 4では、一様ランダムなuser interactionイベントを仮定していた!)
 
 There were about 4.7 million events in the random bucket on May 01.
 5月1日のランダムバケットには約470万件のイベントがあった。
 We used this day's events (called "tuning data") for model validation to decide the optimal parameter for each competing bandit algorithm.
-この日の出来事（「チューニング・データ」と呼ばれる）をモデル検証に使用し、競合する各バンディット・アルゴリズムの最適なパラメータを決定した。
+この日の出来事(tuning dataと呼ばれる)をモデル検証に使用し、競合する各バンディット・アルゴリズムの最適なパラメータを決定した。(i.e. 5月1日のデータをモデルパラメータの学習に使用した!)
 Then we ran these algorithms with tuned parameters on a one-week event set (called "evaluation data") in the random bucket from May 03-09, which contained about 36 million events.
-次に、パラメータを調整したこれらのアルゴリズムを、5月03日～09日のランダムバケットに含まれる1週間のイベントセット（「評価データ」と呼ばれる）に対して実行した。
+次に、パラメータを調整したこれらのアルゴリズムを、5月03日～09日のランダムバケットに含まれる1週間のイベントセット(evaluation dataと呼ばれる)に対して実行した。
 
 ### 5.2.2 Feature Construction 5.2.2 フィーチャー構築
 
 We now describe the user/article features constructed for our experiments.
-次に、実験のために構築されたユーザー／記事の特徴について説明する。
+次に、実験のために構築されたユーザ/記事の特徴について説明する。
 Two sets of features for the disjoint and hybrid models, respectively, were used to test the two forms of LinUCB in Section 3 and to verify our conjecture that hybrid models can improve learning speed.
-セクション3でLinUCBの2つの形式をテストし、ハイブリッドモデルが学習速度を向上させるという我々の推測を検証するために、不連続モデルとハイブリッドモデルにそれぞれ2つの特徴セットを使用した。
+セクション3でLinUCBの2つの形式をテストし、ハイブリッドモデルが学習速度を向上させるという我々の推測を検証するために、disjointモデルとハイブリッドモデルにそれぞれ2つの特徴セットを使用した。
 
 We start with raw user features that were selected by "support".
-まずは、"サポート "によって選ばれた生のユーザーの特徴から。
+まずは、"サポート"によって選ばれた生のユーザの特徴から。(supportってなんだっけ? 特徴量選択の話? アソシエーションルールにそんな評価指標あった気もする...)
 The support of a feature is the fraction of users having that feature.
-ある機能の支持率は、その機能を持つユーザーの割合である。
+ある特徴量の支持率は、その特徴を持つユーザの割合である。
 To reduce noise in the data, we only selected features with high support.
-データのノイズを減らすため、支持率の高い特徴のみを選択した。
-Specifically, we used a feature when its support is at least 0.1.Then, each user was originally represented by a raw feature vector of over 1000 categorical components, which include: (i) demographic information: gender (2 classes) and age discretized into 10 segments; (ii) geographic features: about 200 metropolitan locations worldwide and U.S.states; and (iii) behavioral categories: about 1000 binary categories that summarize the user's consumption history within Yahoo! properties.
-具体的には、支持率が少なくとも0.1以上である場合に、その特徴量を使用した。次に、各ユーザは、元々、1000以上のカテゴリコンポーネントからなる生の特徴ベクトルで表現されていた： (i)人口統計学的情報：性別（2クラス）と10セグメントに離散化された年齢、(ii)地理的特徴：世界中の約200の大都市所在地と米国の州、(iii)行動カテゴリ：ヤフーのプロパティ内でのユーザーの消費履歴を要約する約1000のバイナリカテゴリ。
+データのノイズを減らすため、**支持率の高い特徴のみを選択**した。
+Specifically, we used a feature when its support is at least 0.1.
+具体的には、支持率が少なくとも0.1以上である場合に、その特徴量を使用した。
+Then, each user was originally represented by a raw feature vector of over 1000 categorical components, which include: (i) demographic information: gender (2 classes) and age discretized into 10 segments; (ii) geographic features: about 200 metropolitan locations worldwide and U.S.states; and (iii) behavioral categories: about 1000 binary categories that summarize the user's consumption history within Yahoo! properties.
+次に、各ユーザは、元々、1000以上のカテゴリコンポーネントからなる生の特徴ベクトルで表現されていた:(i)人口統計学的情報：性別（2クラス）と10セグメントに離散化された年齢、(ii)地理的特徴：世界中の約200の大都市所在地と米国の州、(iii)行動カテゴリ：**ヤフーのプロパティ内でのユーザの消費履歴を要約する約1000のバイナリカテゴリ**。(=たぶんembeddingというよりは、tf-idfみたいなsparseベクトル??, token空間)
 Other than these features, no other information was used to identify a user.
-これらの機能以外には、ユーザーを特定するための情報は使われていない。
+これらの特徴量以外には、ユーザを特定するための情報は使われていない。
 
 Similarly, each article was represented by a raw feature vector of about 100 categorical features constructed in the same way.
-同様に、各記事は同じ方法で構築された約100のカテゴリー特徴からなる生の特徴ベクトルで表された。
+同様に、各記事は同じ方法で構築された**約100のカテゴリー特徴量**からなる生の特徴ベクトルで表された。
 These features include: (i) URL categories: tens of classes inferred from the URL of the article resource; and (ii) editor categories: tens of topics tagged by human editors to summarize the article content.
-これらの特徴には以下が含まれる： (i) URLカテゴリ：記事リソースのURLから推測される数十のクラス、(ii) エディタカテゴリ：記事コンテンツを要約するために人間の編集者によってタグ付けされた数十のトピック。
+これらの特徴には以下が含まれる：(i) URLカテゴリ：記事リソースのURLから推測される数十のクラス、(ii) エディタカテゴリ: 記事コンテンツを要約するために人間の編集者によってタグ付けされた数十のトピック.(線形な報酬モデルなので全て、binary変数にしてると思う:thinking:)
 
 We followed a previous procedure [12] to encode categorical user/article features as binary vectors and then normalize each feature vector to unit length.
-我々は、カテゴリー化されたユーザー/記事の特徴をバイナリベクトルとして符号化し、各特徴ベクトルを単位長に正規化する以前の手順[12]に従った。
+我々は、**カテゴリー化されたユーザ/記事の特徴をバイナリベクトルとして符号化**し、**各特徴ベクトルを単位長に正規化する**既存の手順[12]に従った。
 We also augmented each feature vector with a constant feature of value 1.
-また、各特徴ベクトルを値1の定数特徴で補強した。
+また、各特徴ベクトルを値1の定数特徴量で補強した。(=constant項=bias項!)
 Now each article and user was represented by a feature vector of 83 and 1193 entries, respectively.
 ここで、各記事とユーザーは、それぞれ83と1193エントリーの特徴ベクトルで表現された。
 
 To further reduce dimensionality and capture nonlinearity in these raw features, we carried out conjoint analysis based on random exploration data collected in September 2008.
-さらに次元を減らし、これらの生特徴の非線形性を捉えるために、2008年9月に収集されたランダム探索データに基づいてコンジョイント分析を行った。
+さらに次元を減らし、これらの生特徴の非線形性を捉えるために、2008年9月に収集されたランダム探索データ(=tuning data?)に基づいてconjoint分析(共起分析的な??)を行った。
 Following a previous approach to dimensionality reduction [13], we projected user features onto article categories and then clustered users with similar preferences into groups.
-次元削減のための以前のアプローチ[13]に従って、ユーザーの特徴を記事のカテゴリーに投影し、類似した嗜好を持つユーザーをグループにクラスタリングした。
+次元削減のための以前のアプローチ[13]に従って、ユーザーの特徴を記事のカテゴリーに投影し、類似した嗜好を持つユーザをグループにクラスタリングした。
 More specifically:
 もっと具体的に言えば
 
-• We first used logistic regression (LR) to fit a bilinear model for click probability given raw user/article features so that φ φ φ ⊤ u Wφ φ φa approximated the probability that the user u clicks on article a, where φ φ φu and φ φ φa were the corresponding feature vectors, and W was a weight matrix optimized by LR.
+- We first used logistic regression (LR) to fit a bilinear model for click probability given raw user/article features so that $\phi_{u}^{T} W \phi_{a}$ approximated the probability that the user u clicks on article a, where φ φ φu and φ φ φa were the corresponding feature vectors, and W was a weight matrix optimized by LR.
+- 最初にロジスティック回帰(LR)を使って、$\phi_{u}^{T} W \phi_{a}$ がユーザ $u$ が記事 $a$ をクリックする確率を近似するように、未加工のユーザ/記事特徴を与えられたクリック確率の bi-linear モデルを当てはめた。
 
-- 最初にロジスティック回帰(LR)を使って、φ φ φ ⊤ u Wφ φ φa がユーザ u が記事 a をクリックする確率を近似するように、未加工のユーザ/記事特徴を与えられたクリック確率のバイリニアモデルを当てはめた。
+- Raw user features were then projected onto an induced space by computing $\psi_{u} := \phi_{u}^T W$. Here, the i th component in ψ ψ ψu for user u may be interpreted as the degree to which the user likes the i th category of articles. K-means was applied to group users in the induced ψ ψ ψu space into 5 clusters.
+- そして、生のユーザー特徴は、$\psi_{u} := \phi_{u}^T W$ を計算することによって誘導空間に投影された。ここで、ユーザuに対する $\psi_{u}$ のi番目の成分は、ユーザが記事のi番目のカテゴリを好む度合いとして解釈される。K-meansは、誘導された $\psi_{u}$ 空間内のユーザを5つのクラスターにグループ化するために適用された。
 
-• Raw user features were then projected onto an induced space by computing ψ ψ ψu
+- The final user feature was a six-vector: five entries corresponded to membership of that user in these 5 clusters (computed with a Gaussian kernel and then normalized so that they sum up to unity), and the sixth was a constant feature 1.
+- 最終的なユーザ 特徴量は6ベクトルであった: そのうち5つのエントリは、これらの5つのクラスターにおけるそのユーザーのメンバーシップに対応し(ガウスカーネルで計算され、それらの合計が1になるように正規化される)、6番目は定数特徴1であった。(5つの要素はone-hot encoding的なbinaryかと思ったけどそうでもない?)
 
-- 次に、生のユーザー特徴を、ψ ψu を計算することで誘導空間に投影した。
-
-Here, the i th component in ψ ψ ψu for user u may be interpreted as the degree to which the user likes the i th category of articles.
-ここで、ユーザーuに対するψ ψuのi番目の成分は、ユーザーが記事のi番目のカテゴリーを好む度合いとして解釈されるかもしれない。
-K-means was applied to group users in the induced ψ ψ ψu space into 5 clusters.
-K-meansを適用して、誘導されたψ ψu空間のユーザーを5つのクラスターにグループ化した。
-
-• The final user feature was a six-vector: five entries corresponded to membership of that user in these 5 clusters (computed with a Gaussian kernel and then normalized so that they sum up to unity), and the sixth was a constant feature 1.
-
-- 5つのエントリは、これらの5つのクラスターにおけるそのユーザーのメンバーシップに対応し（ガウスカーネルで計算され、それらの合計がユニティーになるように正規化される）、6番目は定数特徴1であった。
-  At trial t, each article a has a separate six-dimensional feature xt,a that is exactly the six-dimensional feature constructed as above for user ut.
-  試行tにおいて、各記事aは、ユーザーutについて上記のように構築された6次元特徴量xt,aを持つ。
-  Since these article features do not overlap, they are for disjoint linear models defined in Section 3.
-  これらの記事の特徴は重ならないので、セクション3で定義された不連続な線形モデルのためのものである。
+At trial t, each article a has a separate six-dimensional feature xt,a that is exactly the six-dimensional feature constructed as above for user ut.
+試行 $t$ において、各記事aは、ユーザ $u_t$ について上記のように構築された6次元特徴量 $x_{t,a}$ を持つ。
+Since these article features do not overlap, they are for disjoint linear models defined in Section 3.
+これらの記事の特徴量は重ならないので、セクション3で定義されたdisjointな線形モデルのためのものである。
 
 For each article a, we performed the same dimensionality reduction to obtain a six-dimensional article feature (including a constant 1 feature).
-各記事aについて、同じように次元削減を行い、6次元の記事特徴（定数1の特徴を含む）を得た。
-Its outer product with a user feature gave 6 × 6 = 36 features, denoted zt,a ∈ R 36 , that corresponded to the shared features in Eq.
-ユーザー特徴量との外積により、6×6＝36個の特徴量（zt,a∈R 36と表記）が得られ、式（1）の共有特徴量に対応する。
-( 6), and thus (zt,a, xt,a) could be used in the hybrid linear model.
-( 6)、したがって(zt,a, xt,a)はハイブリッド線形モデルで使用できる。
+各記事aについて、同じように次元削減を行い、6次元の記事特徴(定数1の特徴を含む)を得た。
+Its outer product with a user feature gave 6 × 6 = 36 features, denoted $z_{t,a} \in \mathbb{R}^{36}$, that corresponded to the shared features in Eq.(6), and thus (zt,a, xt,a) could be used in the hybrid linear model.
+そのユーザ特徴量との外積は6×6＝36個の特徴量を与え、$z_{t,a} \in \mathbb{R}^{36}$ と表される。これは、式(6)のshared特徴量に対応するため、$(z_{t,a}, x_{t,a})$ をハイブリッド線形モデルに用いることができる。
 Note the features zt,a contains user-article interaction information, while xt,a contains user information only.
-特徴量zt,aはユーザーと記事の相互作用情報を含み、xt,aはユーザー情報のみを含むことに注意。
+特徴量 $z_{t,a}$ はユーザと記事の相互作用情報を含み、$x_{t,a}$ はユーザ情報のみを含むことに注意。
 
 Here, we intentionally used five users (and articles) groups, which has been shown to be representative in segmentation analysis [13].
-ここでは、セグメンテーション分析において代表的であることが示されている5つのユーザー（および記事）グループを意図的に使用した[13]。
+**ここでは、セグメンテーション分析において代表的であることが示されている5つのユーザ(および記事)グループを意図的に使用した**[13]。(なにそれ??)
 Another reason for using a relatively small feature space is that, in online services, storing and retrieving large amounts of user/article information will be too expensive to be practical.
-比較的小さな特徴空間を使用するもう一つの理由は、オンラインサービスでは、大量のユーザー／記事情報を保存したり検索したりすることは、コストがかかりすぎて実用的ではないからである。
+**比較的小さな特徴量空間を使用するもう一つの理由は、オンラインサービスでは、大量のユーザ／記事情報を保存したり検索したりすることは、コストがかかりすぎて実用的ではないからである。**
 
-5.3 Compared Algorithms
-5.3 比較アルゴリズム
+## 5.3 Compared Algorithms
 
 The algorithms empirically evaluated in our experiments can be categorized into three groups: I.
-我々の実験で経験的に評価されたアルゴリズムは、3つのグループに分類できる： I.
-Algorithms that make no use of features.
+我々の実験で経験的に評価されたアルゴリズムは、**3つのグループ**に分類できる：
+
+### I. Algorithms that make no use of features.
+
 特徴を利用しないアルゴリズム。
 These correspond to the context-free K-armed bandit algorithms that ignore all contexts (i.e., user/article information).
 これらは、すべてのコンテキスト（すなわち、ユーザー/記事情報）を無視するコンテキストフリーのKアームドバンディットアルゴリズムに対応する。
@@ -668,30 +671,29 @@ These correspond to the context-free K-armed bandit algorithms that ignore all c
   まず、ログに記録されたイベントから各記事の経験的CTRを計算し、次に同じログに記録されたイベントを使って評価したときに、常に経験的CTRが最も高い記事を選択する。
   This algorithm requires no parameters and does not "learn" over time.
   このアルゴリズムはパラメーターを必要とせず、時間とともに「学習」することもない。
-  II.
-  II.
-  Algorithms with "warm start"-an intermediate step towards personalized services.
-  ウォーム・スタート」によるアルゴリズム-パーソナライズド・サービスへの中間ステップ。
-  The idea is to provide an offline-estimated user-specific adjustment on articles' context-free CTRs over the whole traffic.
-  このアイデアは、トラフィック全体にわたる記事の文脈自由CTRについて、オフラインで推定されたユーザー固有の調整を提供することである。
-  The offset serves as an initialization on CTR estimate for new content, a.k.a."warm start".
-  このオフセットは、新しいコンテンツのCTR推定値の初期化、つまり「ウォームスタート」の役割を果たす。
-  We re-trained the bilinear logistic regression model studied in [12] on Sept 2008 random traffic data, using features zt,a constructed above.
-  我々は，[12]で研究されたバイリニア・ロジスティック回帰モデルを，上記で構築した特徴量zt,aを用いて，2008年9月のランダム・トラフィック・データで再トレーニングした．
-  The selection criterion then becomes the sum of the context-free CTR estimate and a bilinear term for a user-specific CTR adjustment.
-  選択基準は、文脈のないCTR推定値と、ユーザー固有のCTR調整のためのバイリニア項の合計となる。
-  In training, CTR was estimated using the context-free ǫ-greedy with ǫ = 1.
-  訓練では、↪Ll_1EB = 1の文脈自由(context-free ↪L_1EB↩-greedy)を用いてCTRを推定した。
+
+### II. Algorithms with "warm start" "warm start"によるアルゴリズム
+
+an intermediate step towards personalized services.
+パーソナライズド・サービスへの中間ステップ。
+The idea is to provide an offline-estimated user-specific adjustment on articles' context-free CTRs over the whole traffic.
+このアイデアは、トラフィック全体にわたる記事のcontext-free CTRについて、オフラインで推定されたユーザ固有の調整を提供することである。
+The offset serves as an initialization on CTR estimate for new content, a.k.a."warm start".
+このオフセットは、新しいコンテンツのCTR推定値の初期化、つまり「ウォームスタート」の役割を果たす。
+We re-trained the bilinear logistic regression model studied in [12] on Sept 2008 random traffic data, using features zt,a constructed above.
+我々は，[12]で研究されたバイリニア・ロジスティック回帰モデルを，上記で構築した特徴量zt,aを用いて，2008年9月のランダム・トラフィック・データで再トレーニングした．
+The selection criterion then becomes the sum of the context-free CTR estimate and a bilinear term for a user-specific CTR adjustment.
+選択基準は、文脈のないCTR推定値と、ユーザー固有のCTR調整のためのバイリニア項の合計となる。
+In training, CTR was estimated using the context-free ǫ-greedy with ǫ = 1.
+訓練では、↪Ll_1EB = 1の文脈自由(context-free ↪L_1EB↩-greedy)を用いてCTRを推定した。
 
 • ǫ-greedy (warm): This algorithm is the same as ǫ-greedy except it adds the user-specific CTR correction to the article's context-free CTR estimate.
 
 - ↪L_1-greedy (warm)： このアルゴリズムは↪Ll_1-reedy と同じですが、ユーザー固有の CTR 補正を記事の文脈自由 CTR 推定値に加えます。
   • ucb (warm): This algorithm is the same as the previous one but replaces ǫ-greedy with ucb.
 - ucb (warm)： このアルゴリズムは前のものと同じだが、 ↪L_1-greedy を ucb に置き換えたものである。
-  III.
-  III.
-  Algorithms that learn user-specific CTRs online.
-  オンラインでユーザー固有のCTRを学習するアルゴリズム。
+
+### Algorithms that learn user-specific CTRs online オンラインでユーザー固有のCTRを学習するアルゴリズム。
 
 • ǫ-greedy (seg): Each user is assigned to the closest user cluster among the five constructed in Section 5.2.2, and so all users are partitioned into five groups (a.k.a.
 
@@ -713,127 +715,137 @@ These correspond to the context-free K-armed bandit algorithms that ignore all c
   • linucb (hybrid): This is Algorithm 2 with hybrid models.
 - linucb（ハイブリッド）： これはハイブリッドモデルを使ったアルゴリズム2である。
 
-  5.4 Performance Metric
-  5.4 パフォーマンス指標
+## 5.4 Performance Metric 5.4 パフォーマンス指標
 
 An algorithm's CTR is defined as the ratio of the number of clicks it receives and the number of steps it is run.
-アルゴリズムのCTRは、クリック数と実行ステップ数の比率として定義される。
+**アルゴリズムのCTRは、クリック数と実行ステップ数の比率**として定義される。
 We used all algorithms' CTRs on the random logged events for performance comparison.
 パフォーマンス比較のために、ランダムに記録されたイベントに対する全アルゴリズムのCTRを使用した。
 To protect business-sensitive information, we report an algorithm's relative CTR, which is the algorithm's CTR divided by the random policy's.
-ビジネス上の機密情報を保護するため、アルゴリズムのCTRをランダムポリシーのCTRで割った相対CTRを報告する。
+**ビジネス上の機密情報を保護するため、アルゴリズムのCTRを random policy のCTRで割った相対CTRを報告する**。(なるほど...!確かに。)
 Therefore, we will not report a random policy's relative CTR as it is always 1 by definition.
-したがって、ランダムなポリシーの相対CTRは定義上常に1であるため、報告しない。
+したがって、random policy の**relative CTRは定義上常に1**であるため、報告しない。
 For convenience, we will use the term "CTR" from now on instead of "relative CTR".
-便宜上、今後は「相対CTR」ではなく「CTR」という用語を使用する。
+**便宜上、今後は「相対CTR」ではなく「CTR」という用語を使用する**。(ふむふむ)
 
 For each algorithm, we are interested in two CTRs motivated by our application, which may be useful for other similar applications.
-各アルゴリズムについて、我々は、我々のアプリケーションによって動機づけられた2つのCTRに興味がある。
+各アルゴリズムについて、我々は、**我々のアプリケーションによって動機づけられた2つのCTR**に興味がある。
 When deploying the methods to Yahoo!'s front page, one reasonable way is to randomly split all traffic to this page into two buckets [3].
-ヤフー！のトップページにメソッドを展開する場合、1つの合理的な方法は、このページへのすべてのトラフィックをランダムに2つのバケツに分割することである[3]。
+ヤフー!のトップページにメソッドを展開する場合、1つの合理的な方法は、このページへのすべてのトラフィックをランダムに**2つのバケツに分割すること**である[3]。(=これって要はhold-out法的な意味??)
 The first, called "learning bucket", usually consists of a small fraction of traffic on which various bandit algorithms are run to learn/estimate article CTRs.
-学習バケツ "と呼ばれる最初のバケツは、通常、記事のCTRを学習/推定するために様々なバンディットアルゴリズムが実行されるトラフィックのごく一部で構成されています。
+"learning bucket"と呼ばれる最初のバケツは、通常、記事のCTRを学習/推定するために様々なバンディットアルゴリズムが実行されるトラフィックのごく一部で構成されています。
 The other, called "deployment bucket", is where Yahoo! Front Page greedily serves users using CTR estimates obained from the learning bucket.
-もうひとつは「デプロイメント・バケット」と呼ばれるもので、ヤフー・フロントページが学習バケットから得たCTR推定値を用いてユーザーに貪欲にサービスを提供する場所である。
+もうひとつは"deployment bucket"と呼ばれるもので、ヤフー・フロントページが学習バケットから得たCTR推定値を用いてユーザに貪欲に(??)サービスを提供する場所である。
 Note that "learning" and "deployment" are interleaved in this problem, and so in every view falling into the deployment bucket, the article with the highest current (user-specific) CTR estimate is chosen; this estimate may change later if the learning bucket gets more data.
-学習 "と "展開 "は、この問題ではインターリーブされているので、展開バケツに入るすべてのビューで、現在の（ユーザー固有の）CTR推定値が最も高い記事が選ばれる。
+"learning"と "deployment"は、この問題ではインターリーブ(=混ざっている??)されているので、deploymentバケツに入るすべてのビューで、現在の(ユーザー固有の)CTR推定値が最も高い記事が選ばれる。
 CTRs in both buckets were estimated with Algorithm 3.
 両方のバケツにおけるCTRはアルゴリズム3で推定された。
 Since the deployment bucket is often larger than the learning bucket, CTR in the deployment bucket is more important.
-デプロイメントバケットは学習バケットより大きいことが多いので、デプロイメントバケットでのCTRはより重要である。
+deploymentバケットは学習バケットより大きいことが多いので、deploymentバケットでのCTRはより重要である。
 However, a higher CTR in the learning bucket suggests a faster learning rate (or equivalently, smaller regret) for a bandit algorithm.
-しかし、学習バケツにおけるCTRが高いほど、バンディット・アルゴリズムの学習速度が速い（あるいは同等の意味で後悔が小さい）ことを示唆している。
+しかし、learningバケツにおけるCTRが高いほど、バンディット・アルゴリズムの学習速度が速い(or 同等の意味で、regretが小さい)ことを示唆している。
 Therefore, we chose to report algorithm CTRs in both buckets.
 したがって、両方のバケツでアルゴリズムCTRを報告することにした。
+(learning bubket と deployment bucket, まだ良くわかってない。hold-out法的な意味なんだろうか??)
+
+## Experimental Results
 
 ### 5.5.1 Results for Tuning Data 5.5.1 チューニング・データの結果
 
 Each of the competing algorithms (except random and omniscient) in Section 5.3 requires a single parameter: ǫ for ǫ-greedy algorithms and α for UCB ones.
-セクション5.3で競合するアルゴリズム（ランダムと全知全能を除く）は、それぞれ1つのパラメータを必要とする：↪Ll_1-greedy アルゴリズムは、UCB アルゴリズムはαである。
+セクション5.3で競合するアルゴリズム(ランダムと全知全能を除く)は、それぞれ1つのパラメータを必要とする：↪Ll_1-greedy アルゴリズムは、UCB アルゴリズムはαである。
 We used tuning data to optimize these parameters.
 これらのパラメーターを最適化するためにチューニングデータを使用した。
 Figure 2 shows how the CTR of each algorithm changes with respective parameters.
-図2は、各アルゴリズムのCTRがそれぞれのパラメータによってどのように変化するかを示している。
+**図2は、各アルゴリズムのCTRがそれぞれのハイパーパラメータによってどのように変化するかを示している。**
 All results were obtained by a single run, but given the size of our dataset and the unbiasedness result in Theorem 1, the reported numbers are statistically reliable.
 すべての結果は1回の実行で得られたものであるが、我々のデータセットのサイズと定理1の不偏性の結果を考えれば、報告された数字は統計的に信頼できるものである。
 
+![fig2]()
+
 First, as seen from Figure 2 , the CTR curves in the learning buckets often possess the inverted U-shape.
-まず、図2からわかるように、学習バケットのCTR曲線はしばしば逆U字型をしている。
+まず、図2からわかるように、**学習バケットのCTR曲線はしばしば逆U字型**をしている。
 When the parameter (ǫ or α) is too small, there was insufficient exploration, the algorithms failed to identify good articles, and had a smaller number of clicks.
-パラメータ(↪LlEB または α)が小さすぎる場合、探索が不十分で、アルゴリズムは良い記事を識別できず、クリック数も少ない。
+パラメータ($\epsilon$ または α)が小さすぎる場合、探索が不十分で、アルゴリズムは良い記事を識別できず、クリック数も少ない。
 On the other hand, when the parameter is too large, the algorithms appeared to and thus wasted some of the opportunities to increase the number of clicks.
-一方、パラメータが大きすぎる場合、アルゴリズムはクリック数を増加させる機会を無駄にしたように見える。
+一方、パラメータが大きすぎる(=活用よりも探索しまくる!)場合、アルゴリズムはクリック数を増加させる機会を無駄にしたように見える。
 Based on these plots on tuning data, we chose appropriate parameters for each algorithm and ran it once on the evaluation data in the next subsection.
 チューニングデータに対するこれらのプロットに基づいて、各アルゴリズムに適切なパラメータを選択し、次のサブセクションで評価データに対して1回実行した。
 
 Second, it can be concluded from the plots that warm-start information is indeed helpful for finding a better match between user interest and article content, compared to the no-feature versions of ǫ-greedy and UCB.
-第二に、ウォームスタートの情報は、↪Ll_1-greedy と UCB の特徴なしバージョンと比較して、ユーザーの興味と記事内容のより良い一致を見つけるのに役立つとプロットから結論づけることができる。
+第二に、**warm-startの情報は、epsilon-greedy と UCB の特徴なしバージョンと比較して、ユーザの興味と記事内容のより良い一致を見つけるのに役立つ**とプロットから結論づけることができる。
 Specifically, both ǫ-greedy (warm) and ucb (warm) were able to beat omniscient, the highest CTRs achievable by context-free policies in hindsight.
-具体的には、↪L_1-greedy (warm)とucb (warm)の両方が、後知恵で文脈自由ポリシーが達成可能な最高のCTRであるomiscientに勝つことができた。
+具体的には、epsilon-greedy (warm)とucb (warm)の両方が、後知恵で**context-free policy が達成可能な最高のCTRであるomiscientに勝つことができた**。
 However, performance of the two algorithms using warm-start information is not as stable as algorithms that learn the weights online.
-しかし、ウォームスタート情報を使用する2つのアルゴリズムの性能は、オンラインで重みを学習するアルゴリズムほど安定していない。
+しかし、warm-start情報を使用する2つのアルゴリズムの性能は、オンラインで重みを学習するアルゴリズム(=cotextual-bandit)ほど安定していない。
 Since the offline model for "warm start" was trained with article CTRs estimated on all random traffic [12], ǫ-greedy (warm) gets more stable performance in the deployment bucket when ǫ is close to 1.
-ウォーム・スタート」のオフライン・モデルは、すべてのランダムなトラフィックで推定された記事 CTR を使ってトレーニングされたので [12]、↪Ll_1-greedy (warm)は、↪Ll_1 が 1 に近いとき、デプロイメント・バケットでより安定したパフォーマンスを得る。
+warm-startのオフライン・モデルは、すべてのランダムなトラフィックで推定された記事 CTR を使ってトレーニングされたので [12]、epsilon-greedy (warm)は、epsilon が 1 に近いとき(=全部探索するケース!)、デプロイメント・バケットでより安定したパフォーマンスを得る。
 The warm start part also helps ucb (warm) in the learning bucket by selecting more attractive articles to users from scratch, but did not help ucb (warm) in determining the best online for deployment.
-ウォームスタートの部分は、ユーザーにとってより魅力的な記事をゼロから選択することによって、ucb (warm)の学習バケットにも役立つが、ucb (warm)が展開に最適なオンラインを決定するのには役立たなかった。
+warm-startの部分は、ユーザにとってより魅力的な記事をゼロから選択することによって、ucb (warm)の学習バケットでの性能にも役立つが、ucb (warm)がdeploymentバケットに最適なオンラインを決定するのには役立たなかった。
 Since ucb relies on the a confidence interval for exploration, it is hard to correct the initialization bias introduced by "warm start".
-ucbは信頼区間を用いて探索を行うため、"ウォーム・スタート "によって生じる初期化バイアスを修正することは難しい。
+**ucbは信頼区間を用いて探索を行うため、"warm-start"によって生じる初期化バイアスを修正することは難しい**。
 In contrast, all online-learning algorithms were able to consistently beat the omniscient policy.
-対照的に、すべてのオンライン学習アルゴリズムは、常に全知全能の方針を打ち負かすことができた。
+**対照的に、すべてのオンライン学習アルゴリズムは、常に全知全能のpolicyを打ち負かすことができた**。
 Therefore, we did not try the warm-start algorithms on the evaluation data.
 したがって、ウォームスタートアルゴリズムを評価データで試すことはしなかった。
 
 Third, ǫ-greedy algorithms (on the left of Figure 2 ) achieved similar CTR as upper confidence bound ones (on the right of Figure 2 ) in the deployment bucket when appropriate parameters were used.
-第三に、↪Ll_1- グリーディ・アルゴリズム（図2の左）は、適切なパラメータを使用した場合、デプロイメント・バケットにおいて上部信頼境界アルゴリズム（図2の右）と同様のCTRを達成した。
+第三に、**epsilon-greedy アルゴリズム達（図2の左）は、適切なパラメータ(epsilon)を使用した場合、deploymentバケットにおいてUCBアルゴリズム達（図2の右）と同様のCTRを達成した**。
 Thus, both types of algorithms appeared to learn comparable policies.
-したがって、どちらのタイプのアルゴリズムも、同等のポリシーを学習しているように見えた。
+したがって、どちらのタイプのアルゴリズムも、同等のpolicyを学習しているように見えた。
 However, they seemed to have lower CTR in the learning bucket, which is consistent with the empirical findings of contextfree algorithms [2] in real bucket tests.
-しかし、学習バケツではCTRが低いようで、これは実際のバケツテストにおけるコンテキストフリーアルゴリズム[2]の経験的知見と一致する。
+しかし、学習バケツではCTRが低いようで、これは実際のバケツテストにおけるcontext-free アルゴリズム[2]の経験的知見と一致する。(??)
 
 Finally, to compare algorithms when data are sparse, we repeated the same parameter tuning process for each algorithm with fewer data, at the level of 30%, 20%, 10%, 5%, and 1%.
 最後に、データがまばらな場合のアルゴリズムを比較するため、各アルゴリズムについて、30％、20％、10％、5％、1％のレベルで、少ないデータで同じパラメータチューニングプロセスを繰り返した。
 Note that we still used all data to evaluate an algorithm's CTR as done in Algorithm 3, but then only a fraction of available data were randomly chosen to be used by the algorithm to improve its policy.
-アルゴリズム3で行われたように、アルゴリズムのCTRを評価するためにすべてのデータを使用することに変わりはないが、その後、利用可能なデータの一部のみが、アルゴリズムがそのポリシーを改善するために使用するためにランダムに選択されたことに注意してください。
+アルゴリズム3で行われたように、**アルゴリズムのCTRを評価するためにすべてのデータを使用することに変わりはない**が、その後、利用可能なデータの一部のみが、アルゴリズムがそのpolicyを改善するために使用するためにランダムに選択されたことに注意してください。(=学習には少量のデータを使用したよ)
 
 ### 5.5.2 Results for Evaluation Data 5.5.2 評価データの結果
 
+![table1]()
+
 With parameters optimized on the tuning data (c.f., Figure 2 ), we ran the algorithms on the evaluation data and summarized the CTRs in Table 1 .
-チューニング・データで最適化されたパラメータ（図2参照）を用いて、評価データでアルゴリズムを実行し、CTRを表1にまとめた。
+チューニング・データで最適化されたパラメータ(図2参照)を用いて、評価データでアルゴリズムを実行し、CTR(relative CTR)を表1にまとめた。
 The table also reports the CTR lift compared to the baseline of ǫ-greedy.
-この表は、↪Ll_1-greedy のベースラインと比較した CTR リフトも示している。
+この表は、$\epsilon$-greedy のベースラインと比較した CTR lift(比率)も示している。
 The CTR of omniscient was 1.615, and so a significantly larger CTR of an algorithm indicates its effective use of user/article features for personalization.
-全知全能のCTRは1.615であり、アルゴリズムのCTRが著しく大きいことは、パーソナライゼーションのためにユーザー/記事の特徴を効果的に利用していることを示す。
+全知全能のCTRは1.615であり(table1にはない?)、アルゴリズムのCTRが著しく大きいことは、パーソナライゼーションのためにユーザ/記事の特徴を効果的に利用していることを示す。
 Recall that the reported CTRs were normalized by the random policy's CTR.
-報告されたCTRはランダムポリシーのCTRで正規化されたことを思い出してほしい。
+報告されたCTRはランダムポリシーのCTRで正規化されたことを思い出してほしい。(relative CTRだよ!)
 We examine the results more closely in the following subsections.
 以下のサブセクションで、その結果をさらに詳しく検証する。
 
-On the Use of Features.
+#### On the Use of Features.
+
 機能の使用について。
 
 We first investigate whether it helps to use features in article recommendation.
-まず、記事の推薦に特徴を使うことが役に立つかどうかを調査する。
+まず、記事の推薦に特徴量を使うことが役に立つかどうかを調査する。
 It is clear from Table 1 that, by considering user features, both ǫ-greedy (seg/disjoint/hybrid) and UCB methods (ucb (seg) and linucb (disjoint/hybrid)) were able to achieve a CTR lift of around 10%, compared to the baseline ǫ-greedy.
-表1から明らかなように、ユーザーの特徴を考慮することで、↪Ll_1-greedy (seg/disjoint/hybrid)とUCBメソッド(ucb (seg)とlinucb (disjoint/hybrid))の両方が、ベースラインの↪Ll_1-greedyと比較して、約10%のCTRリフトを達成することができました。
+表1から明らかなように、**ユーザの特徴を考慮することで**、$\epsilon$-greedy (seg/disjoint/hybrid)とUCBメソッド(ucb (seg)とlinucb (disjoint/hybrid))の両方が、**ベースラインの$\epsilon$-greedyと比較して、約10%のCTR lift を達成することができました**。
+
+![fig3]()
 
 To better visualize the effect of features, Figure 3 shows how an article's CTR (when chosen by an algorithm) was lifted compared to its base CTR (namely, the context-free CTR).4 Here, an article's base CTR measures how interesting it is to a random user, and was estimated from logged events.
-特徴の効果をよりよく視覚化するために、図3は、記事のCTR（アルゴリズムによって選択されたとき）がその基本CTR（すなわち、文脈自由CTR）と比較してどのように持ち上げられたかを示している4。ここで、記事の基本CTRは、それがランダムなユーザーにとってどの程度興味深いかを測定し、ログされたイベントから推定された。
+特徴量の効果をよりよく視覚化するために、**図3は、記事のCTR（アルゴリズムによって選択されたとき）がその基本CTR（すなわち、context-free CTR）と比較してどのように持ち上げられたか(=CTR lift)を示している**。ここで、記事の基本CTRは、それがランダムなユーザにとってどの程度興味深いかを測定し、logged イベントから推定された。
 Therefore, a high ratio of the lifted and base CTRs of an article is a strong indicator that an algorithm does recommend this article to potentially interested users.
-したがって、ある記事のリフトされたCTRとベースのCTRの高い比率は、アルゴリズムが潜在的に関心のあるユーザーにこの記事を推奨しているという強い指標となる。
+したがって、**ある記事(各plot点は記事か!)のリフトされたCTRとベースのCTRの比率が高い事(=plot点の原点からのx軸, y軸方向の距離が正方向に遠い事!:thinking:)は、アルゴリズムが潜在的に関心のあるユーザにこの記事を推薦しているという強い指標となる**。
 the other three plots show clear benefits by considering personalized recommendation.
-他の3つのプロットでは、パーソナライズされた推薦を考慮することで、明確な利点があることを示している。
+他の3つのプロットでは、**パーソナライズされた推薦を考慮することで、明確な利点があることを示している**。(3(a)では両方とも context-freeなアルゴリズムなので、ほぼ同程度の結果になっている事を示している.)
 In an extreme case (Figure 3 (c)), one of the article's CTR was lifted from 1.31 to 3.03-a 132% improvement.
 極端な例では（図3 (c)）、ある記事のCTRが1.31から3.03に上がり、これは132%の改善である。
 Furthermore, it is consistent with our previous results on tuning data that, compared to ǫ-greedy algorithms, UCB methods achieved higher CTRs in the deployment bucket, and the advantage was even greater in the learning bucket.
-さらに、↪Ll_1-greedy アルゴリズムと比較して、UCB 手法は展開バケツでより高い CTR を達成し、学習バケツではその優位性がさらに高まるという、チューニングデータに関する我々の以前の結果とも一致する。
+さらに、**$\epsilon$-greedy アルゴリズムと比較して、UCB 手法はdevelopmentバケツでより高い CTR を達成**し、学習バケツではその優位性がさらに高まるという、チューニングデータに関する我々の以前の結果とも一致する.
 As mentioned in Section 2.2, ǫgreedy approaches are unguided because they choose articles uniformly at random for exploration.
-セクション2.2で述べたように、↪Ll_1greedy アプローチは、探索のためにアーティクルを一様にランダムに選択するため、非ガイドである。
+セクション2.2で述べたように、$\epsilon$greedy アプローチは、探索のために記事を一様にランダムに選択するため、unguided(=誘導されない=ずっとそのまま?)である。
 In contrast, exploration in upper confidence bound methods are effectively guided by confidence intervals-a measure of uncertainty in an algorithm's CTR estimate.
-対照的に、上限信頼区間法の探索は、アルゴリズムのCTR推定値の不確実性の尺度である信頼区間によって効果的に導かれる。
+対照的に、UCBの探索は、アルゴリズムのCTR推定値の不確実性の尺度である信頼区間によって効果的に導かれる。
 Our experimental results imply the effectiveness of upper confidence bound methods and we believe they have similar benefits in many other applications as well.
-我々の実験結果は、上位信頼境界法の有効性を示唆しており、他の多くのアプリケーションにおいても同様の利点があると信じている。
+我々の実験結果は、UCBの有効性を示唆しており、他の多くのアプリケーションにおいても同様の利点があると信じている。
 
-On the Size of Data.
+#### On the Size of Data.
+
 データのサイズについて
 
 One of the challenges in personalized web services is the scale of the applications.
@@ -870,36 +882,41 @@ In contrast, in disjoint models, feedback of one article may not be utilized by 
 Figure 4 (a) shows transfer learning is indeed helpful when data are sparse.
 図4(a)は、データが疎な場合に転移学習が実際に役立つことを示している。
 
-Comparing ucb (seg) and linucb (disjoint).
+#### Comparing ucb (seg) and linucb (disjoint).
+
 ucb（seg）とlinucb（disjoint）の比較。
+
+![fig4]()
 
 From Figure 4 (a), it can be seen that ucb (seg) and linucb (disjoint) had similar performance.
 図4 (a)から、ucb (seg)とlinucb (disjoint)は同じようなパフォーマンスであることがわかる。
 We believe it was no coincidence.
 偶然ではないと信じている。
 Recall that features in our disjoint model are actually normalized membership measures of a user in the five clusters described in Section 5.2.2.
-我々の不連続モデルにおける特徴は、実際にはセクション5.2.2で説明した5つのクラスターにおけるユーザーの正規化されたメンバーシップ測定値であることを思い出してください。
+我々のdisjointモデルにおける特徴量は、実際にはセクション5.2.2で説明した5つのクラスターにおけるユーザの正規化されたメンバーシップ測定値であることを思い出してください。
 Hence, these features may be viewed as a "soft" version of the user assignment process adopted by ucb (seg).
-したがって、これらの機能は、ucb（seg）が採用したユーザー割り当てプロセスの「ソフト」バージョンとみなすことができる。
+したがって、これらの特徴量は、ucb(seg)が採用したユーザー割り当てプロセスの「ソフト」バージョンとみなすことができる。
+
+![fig5]()
 
 Figure 5 plots the histogram of a user's relative membership measure to the closest cluster, namely, the largest component of the user's five, non-constant features.
-図5は、最も近いクラスター、すなわちユーザーの5つの特徴量のうち最も大きい成分（一定でない特徴量）に対するユーザーの相対的なメンバーシップ尺度のヒストグラムをプロットしたものである。
+図5は、**最も近いクラスター**、すなわちユーザーの5つの特徴量のうち最も大きい成分(一定でない特徴量)に対するユーザーの相対的なメンバーシップ尺度のヒストグラムをプロットしたものである。
 It is clear that most users were quite close to one of the five cluster centers: the maximum membership of about 85% users were higher than 0.5, and about 40% of them were higher than 0.8.Therefore, many of these features have a highly dominating component, making the feature vector similar to the "hard" version of user group assignment.
-約85％のユーザーの最大メンバーシップは0.5より高く、約40％のユーザーは0.8より高かった。したがって、これらの特徴の多くは非常に支配的な成分を持ち、特徴ベクトルはユーザーグループ割り当ての「ハード」バージョンに似ている。
+約85％のユーザの最大メンバーシップは0.5より高く、約40％のユーザーは0.8より高かった。**したがって、これらの特徴量の多くは非常に支配的な成分を持ち、特徴量ベクトルはユーザーグループ割り当ての「ハード」バージョンに似ている**。
 
 We believe that adding more features with diverse components, such as those found by principal component analysis, would be necessary to further distinguish linucb (disjoint) from ucb (seg).
-我々は、linucb（disjoint）とucb（seg）をさらに区別するためには、主成分分析によって見出されるような多様な成分を持つ特徴をさらに加えることが必要だと考えている。
+我々は、linucb（disjoint）とucb（seg）をさらに区別するためには、主成分分析によって見出されるような多**様な成分を持つ特徴量をさらに加えることが必要**だと考えている。
 
 # 6. CONCLUSIONS 6. 結論
 
 This paper takes a contextual-bandit approach to personalized web-based services such as news article recommendation.
 本稿では、ニュース記事の推薦のようなパーソナライズされたウェブベースのサービスに対して、コンテクスチュアル・バンディット・アプローチを採用する。
 We proposed a simple and reliable method for evaluating bandit algorithms directly from logged events, so that the often problematic simulator-building step could be avoided.
-記録されたイベントから直接バンディット・アルゴリズムを評価するためのシンプルで信頼性の高い方法を提案し、しばしば問題となるシミュレータ構築のステップを回避できるようにした。
+**記録されたイベントから直接バンディット・アルゴリズムを評価するためのシンプルで信頼性の高い方法を提案**し、しばしば問題となるシミュレータ構築のステップを回避できるようにした。
 Based on real Yahoo! Front Page traffic, we found that upper confidence bound methods generally outperform the simpler yet unguided ǫ-greedy methods.
-実際のYahoo! Front Pageのトラフィックに基づき、我々は、上位信頼境界法が、一般的に、より単純であるがガイドのない↪L_1EB↩-greedy法を上回ることを発見した。
+実際のYahoo! Front Pageのトラフィックに基づき、我々は、UCBが、一般的に、より単純であるがガイドのないepsilon-greedy法を上回ることを発見した。
 Furthermore, our new algorithm LinUCB shows advantages when data are sparse, suggesting its effectiveness to personalized web services when the number of contents in the pool is large.
-さらに、我々の新しいアルゴリズムLinUCBは、データが疎な場合に優位性を示し、プール内のコンテンツ数が多い場合にパーソナライズされたウェブサービスに有効であることを示唆している。
+さらに、我々の新しいアルゴリズムLinUCBは、**データが疎な場合に優位性を示し、これはプール内のコンテンツ数が多い場合にパーソナライズされたウェブサービスに有効である**ことを示唆している。
 
 In the future, we plan to investigate bandit approaches to other similar web-based serviced such as online advertising, and compare our algorithms to related methods such as Banditron [16].
 将来的には、バンディット・アプローチをオンライン広告のような他の類似したウェブベースのサービスに対して調査し、我々のアルゴリズムをバンディトロン[16]のような関連する手法と比較する予定である。
@@ -908,10 +925,4 @@ A second direction is to extend the bandit formulation and algorithms in which a
 An example is ranking, where an arm corresponds to a permutation of retrieved webpages.
 例えば、アームが検索されたウェブページの並べ替えに対応するランキングである。
 Finally, user interests change over time, and so it is interesting to consider temporal information in bandit algorithms.
-最後に、ユーザーの興味は時間とともに変化するため、バンディット・アルゴリズムにおいて時間情報を考慮することは興味深い。
-
-acknowledgement
-承認
-
-We thank Deepak Agarwal, Bee-Chung Chen, Daniel Hsu, and Kishore Papineni for many helpful discussions, István Szita and Tom Walsh for clarifying their algorithm, and Taylor Xi and the anonymous reviewers for suggestions that improved the presentation of the paper.
-Deepak Agarwal、Bee-Chung Chen、Daniel Hsu、Kishore Papineniには多くの有益な議論を、István SzitaとTom Walshにはアルゴリズムを明確にしてもらい、Taylor Xiと匿名査読者には論文の体裁を改善する示唆をいただいた。
+最後に、ユーザの興味は時間とともに変化するため、バンディット・アルゴリズムにおいて時間情報を考慮することは興味深い。
