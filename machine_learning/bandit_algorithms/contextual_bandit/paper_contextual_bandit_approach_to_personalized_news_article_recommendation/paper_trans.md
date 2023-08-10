@@ -430,9 +430,9 @@ More precisely, we suppose that there is some unknown distribution D from which 
 We also posit access to a large sequence of logged events resulting from the interaction of the logging policy with the world.
 我々はまた、ロギングポリシーと世界との相互作用の結果として生じる、ロギングされたイベントの大規模なシーケンスへのアクセスを仮定する。
 Each such event consists of the context vectors x1, ..., xK , a selected arm a and the resulting observed payoff ra.
-各イベントは、コンテキスト・ベクトル$x1, \cdots, xK$、選択されたアーム$a$、およびその結果観測された報酬 $r_a$ で構成される.
+各イベントは、コンテキスト・ベクトル $x1, \cdots, xK$、選択されたアーム$a$、およびその結果観測された報酬 $r_a$ で構成される.
 Crucially, only the payoff ra is observed for the single arm a that was chosen uniformly at random.
-重要なのは、**一様に無作為に選ばれた単一のアーム $a$ について、ペイオフ $r_a$ のみが観察されることである**.
+重要なのは、**一様に無作為に選ばれた単一のアーム $a$ について、報酬 $r_a$ のみが観察されることである**.
 For simplicity of presentation, we take this sequence of logged events to be an infinitely long stream; however, we also give explicit bounds on the actual finite number of events required by our evaluation method.
 表示を簡単にするため、この一連のログイベントは無限に長いストリームであるとする。しかし、我々の評価方法が必要とする実際の有限イベント数についても、明示的な境界を与える。
 
@@ -689,7 +689,7 @@ In training, CTR was estimated using the context-free ǫ-greedy with ǫ = 1.
 
 • ǫ-greedy (warm): This algorithm is the same as ǫ-greedy except it adds the user-specific CTR correction to the article's context-free CTR estimate.
 
-- ↪L_1-greedy (warm)： このアルゴリズムは↪Ll_1-reedy と同じですが、ユーザー固有の CTR 補正を記事の文脈自由 CTR 推定値に加えます。
+- ↪L_1-greedy (warm)： このアルゴリズムは↪Ll_1-reedy と同じですが、ユーザー固有の CTR 補正を記事のcontext-fee CTR 推定値に加えます。
   • ucb (warm): This algorithm is the same as the previous one but replaces ǫ-greedy with ucb.
 - ucb (warm)： このアルゴリズムは前のものと同じだが、 ↪L_1-greedy を ucb に置き換えたものである。
 
@@ -801,7 +801,7 @@ Finally, to compare algorithms when data are sparse, we repeated the same parame
 Note that we still used all data to evaluate an algorithm's CTR as done in Algorithm 3, but then only a fraction of available data were randomly chosen to be used by the algorithm to improve its policy.
 アルゴリズム3で行われたように、**アルゴリズムのCTRを評価するためにすべてのデータを使用することに変わりはない**が、その後、利用可能なデータの一部のみが、アルゴリズムがそのpolicyを改善するために使用するためにランダムに選択されたことに注意してください。(=学習には少量のデータを使用したよ)
 
-### 5.5.2 Results for Evaluation Data 5.5.2 評価データの結果
+### 5.5.2 Results for Evaluation Data
 
 ![table1]()
 

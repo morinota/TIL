@@ -1,5 +1,4 @@
 from collections import defaultdict
-from operator import inv
 from typing import Any
 
 import numpy as np
