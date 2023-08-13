@@ -5,7 +5,7 @@ https://www.uber.com/en-JP/blog/innovative-recommendation-applications-using-two
 
 # Innovative Recommendation Applications Using Two Tower Embeddings at Uber Uber における2つのタワー埋め込みを用いた革新的なレコメンデーション・アプリケーション
 
-## Introduction 
+## Introduction
 
 The Machine Learning (ML) team at Uber is consistently developing new and innovative components to strengthen our ML Platform (Michelangelo).
 Uberの機械学習（ML）チームは、MLプラットフォーム（Michelangelo）を強化するために、常に新しく革新的なコンポーネントを開発しています。
