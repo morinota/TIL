@@ -307,7 +307,7 @@ The depth zero network is effectively a linear factorization scheme which perfor
 Width and depth were added until the incremental benefit diminished and convergence became difficult:
 幅と深さは、増分的な利益が減少し、収束が困難になるまで追加された：
 
-- Depth 0: A linear layer simply transforms the concatenation layer to match the softmax dimension of 256. 線形レイヤーは、単純に連結レイヤーを256のソフトマックス次元に合うように変換する。
+- Depth 0: A linear layer simply transforms the concatenation layer to match the softmax dimension of 256. 線形レイヤーは、単純に連結レイヤーを256のソフトマックス次元に合うように変換する。(Factorization machine的な?)
 - Depth 1: 256 ReLU
 - Depth 2: 512 ReLU → 256 ReLU
 - Depth 3: 1024 ReLU → 512 ReLU → 256 ReLU
@@ -316,7 +316,7 @@ Width and depth were added until the incremental benefit diminished and converge
 # 4. Ranking ランキング
 
 The primary role of ranking is to use impression data to specialize and calibrate candidate predictions for the particular user interface.
-ランキングの主な役割は、インプレッション・データを使って、特定のユーザー・インターフェースの予測候補を特化させ、較正することである。
+ランキングの主な役割は、**インプレッション・データを使って、特定のユーザ・インターフェースの予測候補を特化させ、candidate(較正, 調節, 校正)すること**である。
 For example, a user may watch a given video with high probability generally but is unlikely to click on the specific homepage impression due to the choice of thumbnail image.
 例えば、ユーザーはあるビデオを一般的に高い確率で見るかもしれないが、サムネイル画像の選択によって特定のホームページの印象をクリックする可能性は低い。
 During ranking, we have access to many more features describing the video and the user’s relationship to the video because only a few hundred videos are being scored rather than the millions scored in candidate generation.
