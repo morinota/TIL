@@ -318,166 +318,197 @@ Width and depth were added until the incremental benefit diminished and converge
 The primary role of ranking is to use impression data to specialize and calibrate candidate predictions for the particular user interface.
 ランキングの主な役割は、**インプレッション・データを使って、特定のユーザ・インターフェースの予測候補を特化させ、candidate(較正, 調節, 校正)すること**である。
 For example, a user may watch a given video with high probability generally but is unlikely to click on the specific homepage impression due to the choice of thumbnail image.
-例えば、ユーザーはあるビデオを一般的に高い確率で見るかもしれないが、サムネイル画像の選択によって特定のホームページの印象をクリックする可能性は低い。
+例えば、ユーザはあるビデオを一般的に高い確率で見るかもしれないが、サムネイル画像の選択によって特定のホームページの印象をクリックする可能性は低い。
 During ranking, we have access to many more features describing the video and the user’s relationship to the video because only a few hundred videos are being scored rather than the millions scored in candidate generation.
-ランキングの際には、ビデオとユーザーの関係を説明する、より多くの特徴にアクセスすることができる。
+ランキングの際には、**ビデオとユーザの関係を説明する、より多くの特徴量にアクセス**することができる。
 Ranking is also crucial for ensembling different candidate sources whose scores are not directly comparable.
-ランキングは、スコアが直接比較できない異なる候補ソースをアンサンブルするためにも重要である。
-We use a deep neural network with similar architecture as candidate generation to assign an independent score to each video impression using logistic regression (Figure 7).
-候補生成と同様のアーキテクチャを持つディープニューラルネットワークを使用し、ロジスティック回帰を用いて各映像の印象に独立したスコアを割り当てる（図7）。
-The list of videos is then sorted by this score and returned to the user.
-ビデオのリストはこのスコアでソートされ、ユーザーに返される。
-Our final ranking objective is constantly being tuned based on live A/B testing results but is generally a simple function of expected watch time per impression.
-最終的なランキングの目標は、ライブのA/Bテストの結果に基づいて常に調整されていますが、一般的には、インプレッションあたりの予想視聴時間の単純な関数です。
-Ranking by click-through rate often promotes deceptive videos that the user does not complete (“clickbait”) whereas watch time better captures engagement [13, 25].
-クリックスルー率によるランキングは、しばしばユーザーが完了しない偽の動画（「クリックベイト」）を促進するのに対し、視聴時間はエンゲージメントをよりよく捉える[13, 25]。
+ランキングは、**スコアが直接比較できない異なる候補ソースをアンサンブルするためにも重要**である。
 
-## 4.1. Feature Representation 特徴表現
+![fig7]()
+
+We use a deep neural network with similar architecture as candidate generation to assign an independent score to each video impression using logistic regression (Figure 7).
+候補生成と**同様のアーキテクチャを持つディープニューラルネットワークを使用**し、ロジスティック回帰を用いて各映像の印象に独立したスコアを割り当てる（図7）。
+The list of videos is then sorted by this score and returned to the user.
+ビデオのリストはこのスコアでソートされ、ユーザに返される。
+Our final ranking objective is constantly being tuned based on live A/B testing results but is generally a simple function of expected watch time per impression.
+最終的なランキングの目的関数は、ライブのA/Bテストの結果に基づいて常に調整されていますが、一般的には、インプレッションあたりの予想視聴時間の単純な関数です。
+Ranking by click-through rate often promotes deceptive videos that the user does not complete (“clickbait”) whereas watch time better captures engagement [13, 25].
+**クリックスルー率によるランキングは、しばしばユーザが完了しない偽の動画（「クリックベイト」）を促進するのに対し、視聴時間はengagementをよりよく捉える[13, 25]**。
+
+## 4.1. Feature Representation
 
 Our features are segregated with the traditional taxonomy of categorical and continuous/ordinal features.
-私たちの特徴は、伝統的な分類法であるカテゴリー的特徴と連続的／順序的特徴に分別される。
+私たちの特徴量は、伝統的な分類法である**categorical特徴量**と**continuous/ordinal特徴量**に分別される。
 The categorical features we use vary widely in their cardinality - some are binary (e.g.whether the user is logged-in) while others have millions of possible values (e.g.the user’s last search query).
-我々が使用するカテゴリカルな特徴は、そのカーディナリティが大きく異なる。あるものはバイナリであり（例：ユーザーがログインしているかどうか）、あるものは何百万もの可能な値を持つ（例：ユーザーの最後の検索クエリ）。
-Features are further split according to whether they contribute only a single value (“univalent”) or a set of values (“multivalent”).
-特徴量はさらに、単一の値（「一価」）だけを寄与するか、一連の値（「多価」）を寄与するかによって分けられる。
+我々が使用するカテゴリカルな特徴量は、そのカーディナリティが大きく異なる。あるものはバイナリであり（例：ユーザーがログインしているかどうか）、あるものは何百万もの可能な値を持つ（例：ユーザーの最後の検索クエリ）。
+Features are further split according to whether they contribute only a single value (“uni-valent”) or a set of values (“multivalent”).
+特徴量はさらに、単一の値（“uni-valent”）だけを寄与するか、一連の値（“multivalent”）を寄与するかによって分けられる。
 An example of a univalent categorical feature is the video ID of the impression being scored, while a corresponding multivalent feature might be a bag of the last N video IDs the user has watched.
-一価のカテゴリー的特徴の例としては、採点対象の印象のビデオIDがあり、対応する多価の特徴としては、ユーザーが視聴した直近のN個のビデオIDのバッグがある。
+**uni-valentのカテゴリカル特徴量の例としては、採点対象のimpressionのビデオID**があり、**対応するmulti-valentの特徴量としては、ユーザが視聴した直近のN個のビデオIDのbag**がある。
 We also classify features according to whether they describe properties of the item (“impression”) or properties of the user/context (“query”).
-また、アイテムの特性（「インプレッション」）を表すか、ユーザー／コンテキストの特性（「クエリ」）を表すかによって、特徴を分類する。
+また、アイテム(“impression”)の特性を表すか、ユーザ/コンテキスト("query")の特性を表すかによって、特徴量を分類する。
 Query features are computed once per request while impression features are computed for each item scored.
-クエリの特徴はリクエストごとに1回計算されるが、印象の特徴はスコアされたアイテムごとに計算される。
+**query特徴量はリクエストごとに1回計算される**が、impression特徴量はスコアされたアイテムごとに計算される。
 
 ### 4.1.1. Feature Engineering フィーチャーエンジニアリング
 
 We typically use hundreds of features in our ranking models, roughly split evenly between categorical and continuous.
 私たちは通常、ランキング・モデルで数百の特徴を使用し、カテゴリー的なものと連続的なものをほぼ均等に使い分けている。
 Despite the promise of deep learning to alleviate the burden of engineering features by hand, the nature of our raw data does not easily lend itself to be input directly into feedforward neural networks.
-ディープラーニングは、手作業で特徴を設計する負担を軽減することが期待されているにもかかわらず、生データの性質上、フィードフォワード・ニューラルネットワークに直接入力することは容易ではない。
+ディープラーニングは、**手作業で特徴量を設計する負担を軽減することが期待されているにもかかわらず、生データの性質上、フィードフォワード・ニューラルネットワークに直接入力することは容易ではない**。
 We still expend considerable engineering resources transforming user and video data into useful features.
-私たちは今でも、ユーザーやビデオのデータを有用な機能に変換するために、かなりのエンジニアリング・リソースを費やしている。
+私たちは今でも、ユーザやビデオのデータを有用な特徴量に変換するために、かなりのエンジニアリング・リソースを費やしている。
 The main challenge is in representing a temporal sequence of user actions and how these actions relate to the video impression being scored.
-主な課題は、ユーザーのアクションの時間的シーケンスを表現することと、これらのアクションがどのように採点されるビデオの印象と関連しているかを表現することである。
+主な課題は、ユーザのアクションの時間的sequenceを表現することと、これらのアクションがどのように採点されるビデオのimpressionと関連しているかを表現することである。
+
 We observe that the most important signals are those that describe a user’s previous interaction with the item itself and other similar items, matching others’ experience in ranking ads [7].
-最も重要なシグナルは、ユーザーのアイテム自体や他の類似アイテムとの過去のインタラクションを記述するものであり、広告のランキングにおける他の人の経験と一致することが観察される[7]。
-As an example, consider the user’s past history with the channel that uploaded the video being scored - how many videos has the user watched from this channel? When was the last time the user watched a video on this topic? These continuous features describing past user actions on related items are particularly powerful because they generalize well across disparate items.
-一例として、採点対象の動画をアップロードしたチャンネルでのユーザーの過去の履歴を考えてみましょう。ユーザーがこのトピックに関する動画を最後に見たのはいつですか？関連する項目に対する過去のユーザーの行動を記述するこれらの連続的な特徴は、異種の項目にわたってよく一般化されるため、特に強力です。
-We have also found it crucial to propagate information from candidate generation into ranking in the form of features, e.g.which sources nominated this video candidate? What scores did they assign? Features describing the frequency of past video impressions are also critical for introducing “churn” in recommendations (successive requests do not return identical lists).
-我々はまた、候補の生成から特徴という形でランキングに情報を伝達することが重要であることを発見した。どのソースがこの動画候補を推薦したのか？過去のビデオインプレッションの頻度を記述する特徴は、レコメンデーションに「チャーン」（連続したリクエストは同一のリストを返さない）を導入するためにも重要である。
+最も重要なシグナルは、**ユーザのアイテム自体や他の類似アイテムとの過去のinteractionを記述するもの**であり、広告のランキングにおける他の人の経験と一致することが観察される[7]。
+As an example, consider the user’s past history with the channel that uploaded the video being scored
+一例として、採点対象の動画をアップロードしたチャンネルでのユーザの過去の履歴を考えてみましょう。
+how many videos has the user watched from this channel?
+このチャンネルでユーザは何件のビデオを見ましたか？
+When was the last time the user watched a video on this topic?
+ユーザがこのトピックに関する動画を最後に見たのはいつですか？
+These continuous features describing past user actions on related items are particularly powerful because they generalize well across disparate items.
+**関連するアイテムに対する過去のユーザの行動を記述するこれらの連続的な特徴量は、異種のアイテムにわたってよく一般化されるため、特に強力**です。
+We have also found it crucial to propagate information from candidate generation into ranking in the form of features,
+我々はまた、**candidate generationから特徴量という形でランキングに情報を伝達することが重要である**ことを発見した。
+e.g.which sources nominated this video candidate?
+どのソースがこの動画候補を推薦したのか?
+What scores did they assign?
+各candidate sourcesがこのアイテムに対してどのような点数をつけたのか?
+
+Features describing the frequency of past video impressions are also critical for introducing “churn” in recommendations (successive requests do not return identical lists).
+過去のビデオインプレッションの頻度を記述する特徴量は、レコメンデーションに"churn"（連続したリクエストは同一のリストを返さない）を導入するためにも重要である。
 If a user was recently recommended a video but did not watch it then the model will naturally demote this impression on the next page load.
-もしユーザーが最近ビデオを薦められたが見なかった場合、モデルは次のページロードでこの印象を自然に下げる。
+もしユーザが最近ビデオを薦められたが見なかった場合、モデルは次のページロードでこのimpressionを自然に下げる。
 Serving up-to-the-second impression and watch history is an engineering feat onto itself outside the scope of this paper, but is vital for producing responsive recommendations.
-秒単位の印象と時計履歴を提供することは、それ自体、本稿の範囲外の技術的な偉業であるが、応答性の高い推薦文を作成するためには不可欠である。
+**秒単位のimpressionと視聴履歴を提供すること**は、それ自体、本稿の範囲外の技術的な偉業であるが、応答性の高い推薦結果を作成するためには不可欠である。
 
 ### 4.1.2. Embedding Categorical Features カテゴリー特徴の埋め込み
 
 Similar to candidate generation, we use embeddings to map sparse categorical features to dense representations suitable for neural networks.
-候補生成と同様に、埋め込みを使って、疎なカテゴリー特徴をニューラルネットワークに適した密な表現にマッピングする。
+候補生成と同様に、埋め込みを使って、疎なカテゴリー特徴量をニューラルネットワークに適した**密な表現にマッピング**する。
 Each unique ID space (“vocabulary”) has a separate learned embedding with dimension that increases approximately proportional to the logarithm of the number of unique values.
-それぞれのユニークなID空間（「語彙」）は、ユニークな値の数の対数にほぼ比例して増加する次元を持つ別々の学習された埋め込みを持つ。
+それぞれのユニークなID空間(“vocabulary”)は、ユニークな値の数の対数にほぼ比例して増加する次元を持つ別々の学習された埋め込みを持つ。
 These vocabularies are simple look-up tables built by passing over the data once before training.
-これらのボキャブラリーは、トレーニングの前に一度データを渡すことで構築される単純なルックアップテーブルである。
+これらのボキャブラリーは、トレーニングの前に一度データを渡すことで構築される単純な**look-up tables(=連想配列とか!dictとか!:thinking:)**である。
 Very large cardinality ID spaces (e.g.video IDs or search query terms) are truncated by including only the top N after sorting based on their frequency in clicked impressions.
-非常に大きなカーディナリティのIDスペース（ビデオIDや検索クエリ用語など）は、クリックされたインプレッションにおける頻度に基づいてソートした後、上位N件のみを含めることによって切り捨てられる。
+**非常に大きなカーディナリティのIDスペース(ビデオIDや検索クエリ用語など)は、クリックされたインプレッションにおける頻度に基づいてソートした後、上位N件のみを含めることによって切り捨てられる**。
 Out-of-vocabulary values are simply mapped to the zero embedding.
 ボキャブラリー外の値は、単純にゼロ埋め込みにマッピングされる。
 As in candidate generation, multivalent categorical feature embeddings are averaged before being fed in to the network.
-候補生成と同様に、多価のカテゴリー特徴埋め込みは、ネットワークに入力される前に平均化される。
+候補生成と同様に、multi-valentのカテゴリー特徴埋め込みは、ネットワークに入力される前に平均化される。
+
 Importantly, categorical features in the same ID space also share underlying emeddings.
-重要なのは、同じID空間内のカテゴリー特徴も、その根底にあるエメッジングを共有することである。
+重要なのは、同じID空間内のカテゴリカル特徴量も、その根底にあるembeddingを共有することである。
 For example, there exists a single global embedding of video IDs that many distinct features use (video ID of the impression, last video ID watched by the user, video ID that “seeded” the recommendation, etc.).Despite the shared embedding, each feature is fed separately into the network so that the layers above can learn specialized representations per feature.
-例えば、多くの異なる特徴が使用するビデオIDの単一のグローバルな埋め込みが存在する（印象のビデオID、ユーザーが視聴した最後のビデオID、推薦の「種」となったビデオIDなど）。共有された埋め込みにもかかわらず、各特徴は、上の層が特徴ごとに特化した表現を学習できるように、ネットワークに別々に供給される。
+例えば、多くの異なる特徴量が使用するビデオID(impressionのビデオID、ユーザが視聴した最後のビデオID、推薦の「種」となったビデオIDなど)の単一のグローバルな埋め込みが存在する。共有された埋め込みにもかかわらず、各特徴量は、上の層が特徴量ごとに特化した表現を学習できるように、**ネットワークに別々に供給される**。
 Sharing embeddings is important for improving generalization, speeding up training and reducing memory requirements.
-エンベッディングを共有することは、汎化を向上させ、トレーニングを高速化し、必要なメモリを削減するために重要である。
+**エンベッディングを共有することは、汎化性能を向上させ、トレーニングを高速化し、必要なメモリを削減するために重要である**。
 The overwhelming majority of model parameters are in these high-cardinality embedding spaces - for example, one million IDs embedded in a 32 dimensional space have 7 times more parameters than fully connected layers 2048 units wide.
 例えば、32次元空間に埋め込まれた100万個のIDは、2048ユニット幅の完全連結レイヤーの7倍のパラメーターを持つ。
 
 ### 4.1.3. Normalizing Continuous Features 連続特徴の正規化
 
 Neural networks are notoriously sensitive to the scaling and distribution of their inputs [9] whereas alternative approaches such as ensembles of decision trees are invariant to scaling of individual features.
-一方、決定木のアンサンブルのような代替アプローチは、個々の特徴のスケーリングに対して不変である。
+**ニューラルネットワークは、その入力のスケーリングと分布に敏感であることで有名である**[9]。
+一方、決定木のアンサンブルのような代替アプローチは、個々の特徴量のスケーリングに対して不変である。
 We found that proper normalization of continuous features was critical for convergence.
-我々は、連続特徴の適切な正規化が収束に重要であることを発見した。
-A continuous feature x with distribution f is transformed to ˜x by scaling the values such that the feature is equally distributed in [0, 1) using the cumulative distribution, ˜x = R x −∞ df.
-分布fを持つ連続特徴量xは、累積分布、〜x = R x -∞ dfを用いて、特徴量が[0, 1]に等しく分布するように値をスケーリングすることによって〜xに変換される。
+我々は、**連続特徴量の適切な正規化が収束に重要である**ことを発見した。
+A continuous feature x with distribution $f$ is transformed to $\tilde{x}$ by scaling the values such that the feature is equally distributed in $[0, 1)$ using the cumulative distribution, $\tilde{x} = \inf_{-\infty}^{x} df$.
+分布 $f$ を持つ連続特徴量 $x$ を、累積分布(=確率密度関数の累積分布関数) $\tilde{x} = \inf_{-\infty}^{x} df$ を用いて、$[0, 1]$ に等しく分布するようにスケーリングして $\tilde{x}$ に変換する。
 This integral is approximated with linear interpolation on the quantiles of the feature values computed in a single pass over the data before training begins.
-この積分は、学習開始前にデータに対して1回だけ計算された特徴量の分位数に対する線形補間で近似される。
-In addition to the raw normalized feature ˜x, we also input powers ˜x 2 and √ x˜, giving the network more expressive power by allowing it to easily form super- and sub-linear functions of the feature.
-生の正規化された特徴量〜xに加えて、べき乗〜x 2と√ x〜も入力し、特徴量の超線形関数や劣線形関数を簡単に形成できるようにすることで、ネットワークに表現力を与えている。
+**この積分は、学習開始前にデータに対して1回だけ計算された特徴量の分位数に対する線形補間で近似される**。(解析的に求めようとすると計算量が増える!)
+
+In addition to the raw normalized feature $\tilde{x}$, we also input powers $\tilde{x}^2$ and $\sqrt{\tilde{x}}$, giving the network more expressive power by allowing it to easily form super- and sub-linear functions of the feature.
+生の正規化された特徴量 $\tilde{x}$ に加えて、べき乗 $\tilde{x}^2$ と $\sqrt{\tilde{x}}$ も入力し、特徴量の**super-linear function（超線形関数, 入力値が増加するにつれて、出力値がそれ以上に速く増加する関数）**や**sub-linear function（亜線形関数, 入力値が増加するにつれて、出力値がそれよりも遅く増加する関数）**を簡単に形成できるようにすることで、ネットワークに表現力を与えている。
 Feeding powers of continuous features was found to improve offline accuracy.
 連続的な特徴量を投入することで、オフラインの精度が向上することがわかった。
 
-## 4.2. Modeling Expected Watch Time 時計の予想時間をモデル化する
+## 4.2. Modeling Expected Watch Time
 
-Our goal is to predict expected watch time given training examples that are either positive (the video impression was clicked) or negative (the impression was not clicked).
-私たちの目標は、肯定的（ビデオの印象がクリックされた）または否定的（印象がクリックされなかった）のどちらかであるトレーニング例を与えられた予想視聴時間を予測することです。
+Our goal is to predict **expected watch time** given training examples that are either positive (the video impression was clicked) or negative (the impression was not clicked).
+私たちの目標は、肯定的（ビデオのimpressionがクリックされた）または否定的（impressionがクリックされなかった）のどちらかであるトレーニング例にて、与えられた予想視聴時間を予測することです。
 Positive examples are annotated with the amount of time the user spent watching the video.
-肯定的な例には、ユーザーがビデオを見るのに費やした時間が注釈されている。
+肯定的な例には、ユーザがビデオを見るのに費やした時間がannotateされている。(negative exampleは、時間0なのかな。)
 To predict expected watch time we use the technique of weighted logistic regression, which was developed for this purpose.
 予想時計時間を予測するために、この目的のために開発された加重ロジスティック回帰の手法を用いる。
+
+![fig7]()
+
 The model is trained with logistic regression under crossentropy loss (Figure 7).
 このモデルは、クロスエントロピー損失の下でロジスティック回帰を用いて学習される（図7）。
 However, the positive (clicked) impressions are weighted by the observed watch time on the video.
-しかし、ポジティブ（クリックされた）インプレッションは、観察された動画の視聴時間によって重み付けされる。
+しかし、**ポジティブ（クリックされた）インプレッションは、観察された動画の視聴時間によって重み付けされる**。
 Negative (unclicked) impressions all receive unit weight.
-否定的な（クリックされていない）印象は、すべて単位ウェイトを受ける。
-In this way, the odds learned by the logistic regression are P Ti N−k where N is the number of training examples, k is the number of positive impressions, and Ti is the watch time of the ith impression.
-このようにして、ロジスティック回帰によって学習されたオッズは、P Ti N-kとなる。ここで、Nは学習例の数、kはポジティブな印象の数、Tiはi番目の印象の時計時間である。
+**否定的な(クリックされていない)impressionは、すべて単位ウェイトを受ける**。
+In this way, the odds learned by the logistic regression are $\frac{\sum T_{i}}{N - k}$ where $N$ is the number of training examples, k is the number of positive impressions, and Ti is the watch time of the ith impression.
+このようにして、ロジスティック回帰によって学習されたオッズは、$\frac{\sum T_{i}}{N - k}$ となる。ここで、Nはtraining exampleの数、$k$ はポジティブなimpressionの数、$T_i$ はi番目のimpressionの視聴時間である。
 Assuming the fraction of positive impressions is small (which is true in our case), the learned odds are approximately E[T](1 + P), where P is the click probability and E[T] is the expected watch time of the impression.
-ここで、Pはクリック確率、E[T]はインプレッションの予想視聴時間である。
+ポジティブ・インプレッションの割合が少ないと仮定すると（このケースではそうである）、学習されたオッズはおよそ $E[T](1 + P)$ となる。
+ここで、$P$ はクリック確率、$E[T]$ はインプレッションの視聴時間期待値である。
 Since P is small, this product is close to E[T].
-Pは小さいので、この積はE[T]に近い。
+$P$ は小さいので、この積はE[T]に近い。
 For inference we use the exponential function e x as the final activation function to produce these odds that closely estimate expected watch time.
-推論には、最終的な活性化関数として指数関数e xを使用し、予想される時計時間を厳密に推定するオッズを生成する。
+推論には、最終的な活性化関数として指数関数 $e^{x}$ を使用し、視聴時間期待値を厳密に推定するオッズを生成する。
 
 ## 4.3. Experiments with Hidden Layers 隠しレイヤーの実験
 
+![table1]()
+
 Table 1 shows the results we obtained on next-day holdout data with different hidden layer configurations.
-表1は、隠れ層の構成を変えた翌日保留データで得られた結果である。
+表1は、隠れ層の構成を変えた翌日hold-outデータで得られた結果である。
 The value shown for each configuration (“weighted, per-user loss”) was obtained by considering both positive (clicked) and negative (unclicked) impressions shown to a user on a single page.
-各構成で表示される値（「加重、ユーザーごとの損失」）は、1つのページでユーザーに表示されたポジティブ（クリックされた）インプレッションとネガティブ（クリックされていない）インプレッションの両方を考慮して得られた。
+各構成で表示される値(「加重、ユーザごとの損失」)は、1つのページでユーザーに表示されたポジティブ（クリックされた）インプレッションとネガティブ（クリックされていない）インプレッションの両方を考慮して得られた。
 We first score these two impressions with our model.
-まず、この2つの印象を我々のモデルで採点する。
+まず、この2つのimpressionsを我々のモデルでscore付けする。
 If the negative impression receives a higher score than the positive impression, then we consider the positive impression’s watch time to be mispredicted watch time.
-ネガティブな印象がポジティブな印象よりも高いスコアを獲得した場合、ポジティブな印象のウォッチタイムはミス予測されたウォッチタイムとみなす。
+**ネガティブな印象がポジティブな印象よりも高いスコアを獲得した場合、ポジティブな印象の視聴時間はミス予測された視聴時間とみなす。**
 Weighted, peruser loss is then the total amount mispredicted watch time as a fraction of total watch time over heldout impression pairs.
-加重されたユーザーごとの損失は、予測されたウォッチ時間の合計が、保持されたインプレッション・ペアのウォッチ時間の合計に占める割合となる。
+加重されたユーザごとの損失は、**誤って予測された視聴時間の合計が、保持されたimpressionペアの視聴時間の合計に占める割合**となる。
+
 These results show that increasing the width of hidden layers improves results, as does increasing their depth.
-これらの結果は、隠れ層の幅を広げると結果が改善されることを示している。
+これらの結果は、**隠れ層の幅を広げると結果が改善されること**を示している。
 The trade-off, however, is server CPU time needed for inference.
-しかし、そのトレードオフは、推論に必要なサーバーのCPU時間である。
+しかし、**そのトレードオフは、推論に必要なサーバーのCPU時間**である。
 The configuration of a 1024-wide ReLU followed by a 512- wide ReLU followed by a 256-wide ReLU gave us the best results while enabling us to stay within our serving CPU budget.
 1024ワイドのReLU、512ワイドのReLU、256ワイドのReLUという構成が、CPUの予算内で最良の結果をもたらした。
+
 For the 1024 → 512 → 256 model we tried only feeding the normalized continuous features without their powers, which increased loss by 0.2%.
 1024→512→256モデルでは、正規化された連続特徴量のみをべき乗なしで与えてみたが、損失は0.2%増加した。
 With the same hidden layer configuration, we also trained a model where positive and negative examples are weighted equally.
 同じ隠れ層構成で、正例と負例を等しく重み付けしたモデルも訓練した。
 Unsurprisingly, this increased the watch time-weighted loss by a dramatic 4.1%.
-当然のことながら、これによって時計の時間加重損失は4.1%も激増した。
+当然のことながら、これによって視聴時間の加重損失は4.1%も激増した。
+(要は、論文内で説明された各工夫がそれぞれ効果を発揮して、betterな結果を作ったよ、という意味かな...!)
 
 # 5. Conclusions 結論
 
 We have described our deep neural network architecture for recommending YouTube videos, split into two distinct problems: candidate generation and ranking.
-YouTube動画を推薦するためのディープ・ニューラル・ネットワーク・アーキテクチャを、2つの異なる問題に分けて説明した：
-候補の生成とランキングである。
-Our deep collaborative filtering model is able to effectively assimilate many signals and model their interaction with layers of depth, outperforming previous matrix factorization approaches used at YouTube [23].
+YouTube動画を推薦するためのディープ・ニューラル・ネットワーク・アーキテクチャを、2つの異なる問題に分けて説明した： 候補の生成とランキングである。
+
+Our **deep collaborative filtering model**(これがtwo tower modelなのかな??) is able to effectively assimilate many signals and model their interaction with layers of depth, outperforming previous matrix factorization approaches used at YouTube [23].
 私たちのディープ協調フィルタリングモデルは、多くの信号を効果的に同化し、深さのレイヤーでそれらの相互作用をモデル化することができ、YouTubeで使用されている以前の行列因数分解アプローチ[23]を凌駕している。
 There is more art than science in selecting the surrogate problem for recommendations and we found classifying a future watch to perform well on live metrics by capturing asymmetric co-watch behavior and preventing leakage of future information.
-レコメンデーションのためのサロゲート問題の選択には、科学よりも芸術が必要であり、我々は、非対称的な共同視聴行動を捕捉し、将来の情報の漏洩を防止することによって、ライブメトリクスのパフォーマンスを向上させるために、将来の視聴を分類することを発見した。
+**レコメンデーションのためのsurrogate問題の選択**には、科学よりも芸術が必要であり、我々は、**非対称的な共同視聴行動を捕捉**し、**将来の情報の漏洩を防止すること**によって、ライブメトリクスのパフォーマンスを向上させるために、将来の視聴を分類することを発見した。(**next-item prediction的なsurrogate問題を採用した**、って認識...!:thinking:)
 Withholding discrimative signals from the classifier was also essential to achieving good results - otherwise the model would overfit the surrogate problem and not transfer well to the homepage.
-そうでなければ、モデルはサロゲート問題にオーバーフィットしてしまい、ホームページへの移行がうまくいかないからだ。
+識別シグナルを分類器から除外すること(=ユーザの最後の検索クエリとかを、モデルに知られない様にする事!)も、良い結果を得るためには不可欠であった。そうでなければ、モデルはサロゲート問題にオーバーフィットしてしまい、ホームページにはうまく反映されない。
 We demonstrated that using the age of the training example as an input feature removes an inherent bias towards the past and allows the model to represent the time-dependent behavior of popular of videos.
-我々は、入力特徴として訓練例の年齢を使用することで、過去への固有のバイアスを取り除き、人気のあるビデオの時間依存的な挙動をモデルで表現できることを実証した。
+我々は、入力特徴量として**training exampleの年齢**を使用することで、過去への固有のバイアスを取り除き、**人気のあるビデオの時間依存的な挙動**をモデルで表現できることを実証した。
 This improved offline holdout precision results and increased the watch time dramatically on recently uploaded videos in A/B testing.
-これにより、オフラインでのホールドアウト精度が向上し、A/Bテストでは最近アップロードされた動画の視聴時間が劇的に伸びました。
+これにより、オフラインでのhold-out精度が向上し、**A/Bテストでは最近アップロードされた動画の視聴時間が劇的に伸びました**。
+
 Ranking is a more classical machine learning problem yet our deep learning approach outperformed previous linear and tree-based methods for watch time prediction.
-ランキングはより古典的な機械学習問題だが、我々のディープラーニング・アプローチは、腕時計の時刻予測において、これまでの線形手法や樹木ベースの手法を凌駕した。
+ランキングはより古典的な機械学習問題だが、我々のディープラーニング・アプローチは、視聴時刻の予測タスクとして、これまでの線形手法や樹木ベースの手法を凌駕した。
 Recommendation systems in particular benefit from specialized features describing past user behavior with items.
-特にレコメンデーションシステムは、アイテムに対する過去のユーザー行動を記述する特殊な特徴から恩恵を受ける。
+特にレコメンデーションシステムは、アイテムに対する過去のユーザ行動を記述する特殊な特徴量から恩恵を受ける。
 Deep neural networks require special representations of categorical and continuous features which we transform with embeddings and quantile normalization, respectively.
-ディープ・ニューラル・ネットワークは、カテゴリ特徴と連続特徴の特別な表現を必要とし、それぞれ埋め込みと分位正規化で変換する。
+ディープ・ニューラル・ネットワークは、カテゴリ特徴量と連続特徴の特別な表現を必要とし、**それぞれ埋め込み(=疎->密なベクトル)と分位正規化で変換する**。
 Layers of depth were shown to effectively model non-linear interactions between hundreds of features.
-深さのレイヤーは、何百もの特徴間の非線形相互作用を効果的にモデル化することが示された。
+深いレイヤーは、何百もの特徴量間の非線形相互作用を効果的にモデル化することが示された。
+
 Logistic regression was modified by weighting training examples with watch time for positive examples and unity for negative examples, allowing us to learn odds that closely model expected watch time.
-ロジスティック回帰は、肯定的な例では時計時間で訓練例を重み付けし、否定的な例では単一にすることで修正され、期待される時計時間を忠実にモデル化する確率を学習できるようにした。
+ロジスティック回帰は、**肯定的な例では視聴時間で training example を重み付け**し、否定的な例では単一にすることで修正され、視聴時間期待値を忠実にモデル化する確率を学習できるようにした。
 This approach performed much better on watch-time weighted ranking evaluation metrics compared to predicting click-through rate directly.
-このアプローチは、クリックスルー率を直接予測するのに比べ、ウォッチタイムで重み付けされたランキング評価指標においてはるかに優れた結果を示した。
+このアプローチは、クリックスルー率を直接予測するのに比べ、視聴時間で重み付けされたランキング評価指標においてはるかに優れた結果を示した。(これは、そもそも視聴時間予測で最適化しているモデルなのだから、tap予測で最適化しているモデルと比べて良い結果になるのは当然??:thinking:)
