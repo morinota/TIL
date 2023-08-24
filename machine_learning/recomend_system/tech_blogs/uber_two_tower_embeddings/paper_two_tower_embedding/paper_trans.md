@@ -22,6 +22,8 @@ We also provide practical lessons and insights derived from designing, iterating
 
 # 1. Introduction はじめに
 
+![fig]()
+
 YouTube is the world’s largest platform for creating, sharing and discovering video content.
 YouTubeは、ビデオコンテンツを作成、共有、発見するための世界最大のプラットフォームです。
 YouTube recommendations are responsible for helping more than a billion users discover personalized content from an ever-growing corpus of videos.
@@ -34,8 +36,7 @@ Recommending YouTube videos is extremely challenging from three major perspectiv
 YouTubeの動画をレコメンドすることは、3つの観点から非常に難しい：
 
 - Scale: Many existing recommendation algorithms proven to work well on small problems fail to operate on our scale.
-- 規模：
-  小さな問題でうまく機能することが証明されている既存の推薦アルゴリズムの多くは、私たちのスケールで動作しません。
+- 規模：小さな問題でうまく機能することが証明されている既存の推薦アルゴリズムの多くは、私たちのスケールで動作しません。
   Highly specialized distributed learning algorithms and efficient serving systems are essential for handling YouTube’s massive user base and corpus.
   YouTubeの膨大なユーザーベースとコーパスを扱うには、高度に専門化された分散学習アルゴリズムと効率的なサービングシステムが不可欠である。
 - Freshness: YouTube has a very dynamic corpus with many hours of video are uploaded per second.
@@ -44,7 +45,7 @@ YouTubeの動画をレコメンドすることは、3つの観点から非常に
   The recommendation system should be responsive enough to model newly uploaded content as well as the latest actions taken by the user.
   レコメンデーション・システムは、新しくアップロードされたコンテンツやユーザーによる最新のアクションをモデル化するのに十分な応答性を持つべきである。
   Balancing new content with well-established videos can be understood from an exploration/exploitation perspective.
-  新しいコンテンツと定評のある映像のバランスは、探索／搾取の観点から理解することができる。
+  新しいコンテンツと定評のある映像のバランスは、exploration/exploitationの観点から理解することができる。
 - Noise: Historical user behavior on YouTube is inherently difficult to predict due to sparsity and a variety of unobservable external factors.
 - ノイズ
   YouTubeの過去のユーザー行動は、スパース性と様々な観測不可能な外部要因のため、本質的に予測が困難である。
@@ -83,7 +84,7 @@ Section 3 describes the candidate generation model in more detail, including how
 Experimental results will show how the model benefits from deep layers of hidden units and additional heterogeneous signals.
 実験結果は、隠れユニットの深い層と追加的な異種信号が、このモデルにどのような利益をもたらすかを示すだろう。
 Section 4 details the ranking model, including how classic logistic regression is modified to train a model predicting expected watch time (rather than click probability).
-セクション4は、**どのように古典的なロジスティック回帰が（クリック確率ではなく）期待されるウォッチタイムを予測するモデルを訓練するために修正されるかを含む、ランキングモデルの詳細**である。(candidate rankingって古典的なロジスティック回帰でも十分なのか...!)
+セクション4は、**どのように古典的なロジスティック回帰が(クリック確率ではなく)期待されるウォッチタイムを予測するモデルを訓練するために修正されるかを含む、ランキングモデルの詳細**である。(candidate rankingって古典的なロジスティック回帰でも十分なのか...!)
 Experimental results will show that hidden layer depth is helpful as well in this situation.
 実験結果は、この状況では隠れ層の深さも役に立つことを示している。
 Finally, Section 5 presents our conclusions and lessons learned.
@@ -108,7 +109,7 @@ The similarity between users is expressed in terms of coarse features such as ID
 ユーザー間の類似性は、ビデオ視聴のID、検索クエリのトークン、デモグラフィックのような粗い特徴で表現される。
 
 Presenting a few “best” recommendations in a list requires a fine-level representation to distinguish relative importance among candidates with high recall.
-**リストの中で少数の「ベスト」な推薦を提示するには、高いrecallを持つ候補の中で相対的な重要性を区別するための細かいレベルの表現が必要**である。
+**リストの中で少数の「ベスト」な推薦を提示するには、高いrecallを持つ候補の中で相対的な重要性を区別するための細かいレベルの表現(=特徴量?)が必要**である。
 The ranking network accomplishes this task by assigning a score to each video according to a desired objective function using a rich set of features describing the video and user.
 ランキング・ネットワークは、ビデオとユーザを説明する豊富な特徴量セットを使用して、望ましい目的関数に従って各ビデオにスコアを割り当てることによって、このタスクを達成する。
 The highest scoring videos are presented to the user, ranked by their score.
@@ -143,7 +144,7 @@ From this perspective, our approach can be viewed as a nonlinear generalization 
 
 We pose recommendation as extreme multiclass classification where the prediction problem becomes accurately classifying a specific video watch wt at time t among millions of videos i (classes) from a corpus V based on a user U and context C,
 我々は、推薦を極端な多クラス分類とみなしている:
-ここで、予測問題は、ユーザーUとコンテキストCに基づいて、コーパスVから何百万ものビデオi（クラス）の中で、時間tで特定のビデオウォッチwtを正確に分類することになる:
+ここで、予測問題は、ユーザ $U$ とコンテキスト $C$ に基づいて、コーパス $V$ から何百万ものビデオ $i$ (=classes)の中で、時間tで特定のビデオ視聴 $w_t$ を正確に分類することになる:
 
 $$
 P(w_{i} = i|U,C) = \frac{e^{v_i u}}{\sum_{j \in V} e^{v_j u}}
@@ -152,13 +153,13 @@ $$
 (ユーザベクトルとアイテムベクトルの内積を、temperature無しのsoftmax関数に通して、確率にしてる感じ。)
 
 where u ∈ R N represents a high-dimensional “embedding” of the user, context pair and the vj ∈ R N represent embeddings of each candidate video.
-ここで、**u∈R Nはユーザーとコンテキストのペアの高次元の「埋め込み」**を表し、vj∈R Nは各候補ビデオの埋め込みを表す。(ユーザのembeddingではなく、user \* contextのembedding??)
+ここで、**$u \in \mathbb{R}^{N}$ はユーザーとコンテキストのペアの高次元の「埋め込み」**を表し、$v_{j} \in \mathbb{R}^{N}$ は各候補ビデオの埋め込みを表す。(ユーザのembeddingではなく、user \* contextのembedding??)
 In this setting, an embedding is simply a mapping of sparse entities (individual videos, users etc.) into a dense vector in R N .
 **この設定では、埋め込みとは、単に疎なエンティティ（個々のビデオ、ユーザーなど）を $\mathbb{R}^{N}$の密なベクトルにマッピングすること**である。(ふむふむ。sparce -> dense)
 The task of the deep neural network is to learn user embeddings u as a function of the user’s history and context that are useful for discriminating among videos with a softmax classifier.
 **ディープ・ニューラル・ネットワークのタスクは、ソフトマックス分類器で動画を識別するのに有用な、ユーザの履歴とコンテキストの関数としてのユーザー埋め込み $u$ を学習すること**である。(=たぶん分類問題を学習させたNNの、encoder的に、中間層の出力をembeddingとして抜き出してる感じっぽい...!)
 Although explicit feedback mechanisms exist on YouTube (thumbs up/down, in-product surveys, etc.) we use the implicit feedback [16] of watches to train the model, where a user completing a video is a positive example.
-YouTubeには、明示的なフィードバック・メカニズム（サムズアップ／ダウン、商品内アンケートなど）が存在するが、**私たちはモデルをトレーニングするために、ユーザーがビデオを完走したことをpositiveな例とする、時計の暗黙的フィードバック[16]を使用する**。(一部explicit feedbackもあるが、基本的にはimplicit feedbackを使う...!)
+YouTubeには、明示的なフィードバック・メカニズム（サムズアップ／ダウン、商品内アンケートなど）が存在するが、**私たちはモデルをトレーニングするために、ユーザーがビデオを完走したことをpositiveな例とする、視聴の暗黙的フィードバック[16]を使用する**。(一部explicit feedbackもあるが、基本的にはimplicit feedbackを使う...!)
 This choice is based on the orders of magnitude more implicit user history available, allowing us to produce recommendations deep in the tail where explicit feedback is extremely sparse.
 この選択は、**利用可能な暗黙のユーザ履歴が桁違いに多い**ことに基づいており、**明示的なフィードバックが極端に少ない様なlong-tailアイテムの奥深くまで**レコメンデーションを作成することを可能にしている。(確かに、explicit feedbackのみのモデルではlong-tailアイテムは考慮できなそう...! implicit feedbackを使ってもpopularity biasを対策しないとlong-tailアイテムの推薦はつくりにくいけど...!)
 
@@ -177,30 +178,33 @@ In hierarchical softmax, traversing each node in the tree involves discriminatin
 At serving time we need to compute the most likely N classes (videos) in order to choose the top N to present to the user.
 サービング時に、ユーザに提示するトップ $N$ を選択するために、最も可能性の高い $N$ 個のクラス(=ビデオ)を計算する必要がある。
 Scoring millions of items under a strict serving latency of tens of milliseconds requires an approximate scoring scheme sublinear in the number of classes.
-**数十ミリ秒の厳しい待ち時間の下で数百万のアイテムをスコアリングするには、クラス数(=ユニークアイテム数)に比例しない近似的なスコアリング方式が必要**である。
+**数十ミリ秒の厳しい待ち時間の下で数百万のアイテムをスコアリングするには、計算量がクラス数(=ユニークアイテム数)に比例しない様な、近似的なスコアリング方式が必要**である。
 Previous systems at YouTube relied on hashing [24] and the classifier described here uses a similar approach.
 YouTubeの以前のシステムはハッシュ[24]に依存しており、ここで説明する分類器も同様のアプローチを使っている。
 Since calibrated likelihoods from the softmax output layer are not needed at serving time, the scoring problem reduces to a nearest neighbor search in the dot product space for which general purpose libraries can be used [12].
-ソフトマックス出力層からの較正された尤度(=確率)は、**サービング時には必要ない**(=中間層の出力だけembeddingとして使えば良いので)ので、スコアリング問題は、汎用のライブラリを使用することができる**ドット積空間の最近傍探索に軽減される**[12]。
+ソフトマックス出力層からの較正された尤度(=確率)は、**serving time(=推論時?)には必要ない**(=中間層の出力だけembeddingとして使えば良いので)ので、スコアリング問題は、汎用のライブラリを使用することができる**ドット積空間の最近傍探索に軽減される**[12]。
 We found that A/B results were not particularly sensitive to the choice of nearest neighbor search algorithm.
-A/Bの結果は、最近傍探索アルゴリズムの選択に対して特に敏感ではないことがわかった。
+A/Bテストの結果は、最近傍探索アルゴリズムの選択に対して特に敏感ではないことがわかった。
 
 ## 3.2. Model Architecture モデル・アーキテクチャ
 
 Inspired by continuous bag of words language models [14], we learn high dimensional embeddings for each video in a fixed vocabulary and feed these embeddings into a feedforward neural network.
-連続的なBag of Word言語モデル[14]にヒントを得て、各動画の高次元の埋め込みを固定語彙(=fixed vocabulary)で学習し、これらの埋め込みをフィードフォワード・ニューラル・ネットワークに入力する。
+continuous bag of words言語モデル[14]にヒントを得て、**各動画の高次元の埋め込みを固定語彙(=fixed vocabulary)で学習し、これらの埋め込みをフィードフォワード・ニューラル・ネットワークに入力**する。(->これが一番下の入力??)
 A user’s watch history is represented by a variable-length sequence of sparse video IDs which is mapped to a dense vector representation via the embeddings.
 ユーザの視聴履歴は、**スパースなビデオIDの可変長sequence**で表現され、embeddingを介して**密なベクトル表現にマッピングされる**。
 The network requires fixed-sized dense inputs and simply averaging the embeddings performed best among several strategies (sum, component-wise max, etc.).
 このネットワークは、**固定サイズの密な入力を必要**とし、いくつかの戦略(合計、成分ごとの最大値など)の中で、単純に埋め込みを平均化することが最も良い結果を出した。
 Importantly, the embeddings are learned jointly with all other model parameters through normal gradient descent backpropagation updates.
-重要なことは、**embeddingは、通常の勾配降下バックプロパゲーション更新を通じて、他のすべてのモデルパラメータと共同で学習される**ことである。(じゃあ実際には、sparseなベクトルをdenseなembeddingに変換する処理もarchitectureに含まれる??)
+重要なことは、**embeddingは、通常の勾配降下バックプロパゲーション更新を通じて、他のすべてのモデルパラメータと共同で学習される**ことである。(じゃあ実際には、sparseなsequenceをdenseなembeddingに変換する処理もarchitectureに含まれる??)
 Features are concatenated into a wide first layer, followed by several layers of fully connected Rectified Linear Units (ReLU) [6].
 **特徴量は広い第1層に連結**され、その後に完全連結された整流線形ユニット(ReLU)[6]の数層が続く.
 Figure 3 shows the general network architecture with additional non-video watch features described below.
 図3は、一般的なネットワーク・アーキテクチャを示し、ビデオウォッチ以外の機能については後述する。
 
 ![fig3]()
+
+Figure 3: Deep candidate generation model architecture showing embedded sparse features concatenated with dense features. Embeddings are averaged before concatenation to transform variable sized bags of sparse IDs into fixed-width vectors suitable for input to the hidden layers. All hidden layers are fully connected. In training, a cross-entropy loss is minimized with gradient descent on the output of the sampled softmax. At serving, an approximate nearest neighbor lookup is performed to generate hundreds of candidate video recommendations.
+図3：ディープ候補生成モデルのアーキテクチャは、埋め込まれた疎な特徴を密な特徴と連結したものである。エンベッディングは連結前に平均化され、スパースIDの可変サイズのバッグを隠れ層への入力に適した固定幅のベクトルに変換する。すべての隠れ層は完全に接続されている。訓練では、サンプリングされたソフトマックスの出力に対して勾配降下法を用いてクロスエントロピー損失が最小化される。サービング時には、近似最近傍探索が実行され、何百ものビデオ推薦候補が生成される。
 
 ## 3.3. Heterogeneous Signals 異種シグナル
 
@@ -211,18 +215,18 @@ Search history is treated similarly to watch history - each query is tokenized i
 Once averaged, the user’s tokenized, embedded queries represent a summarized dense search history.
 一度平均化されると、**ユーザのトークン化された埋め込みクエリは、要約された高密度の検索履歴を表す**。
 Demographic features are important for providing priors so that the recommendations behave reasonably for new users.
-人口統計学的な特徴量(ex. 年齢、性別、地理的位置、言語、関心分野)は、レコメンデーションが新しいユーザーに対して合理的な振る舞いをするように、事前分布を提供するために重要である。
+人口統計学的な特徴量(ex. 年齢、性別、地理的位置、言語、関心分野)は、推薦モデルが新しいユーザに対して合理的な振る舞いをするように、事前情報を提供するために重要である。
 The user’s geographic region and device are embedded and concatenated.
 ユーザの地理的地域とデバイスが埋め込まれ、連結される。
 Simple binary and continuous features such as the user’s gender, logged-in state and age are input directly into the network as real values normalized to [0, 1].
-ユーザーの性別、ログイン状態、年齢のような単純なバイナリおよび連続的特徴は、[0, 1]に正規化された実数値としてネットワークに直接入力される。(embedされずに!)
+ユーザの性別、ログイン状態、年齢のような単純なバイナリおよび連続的特徴は、[0, 1]に正規化された実数値としてネットワークに直接入力される。(embedされずに!)
 
 ### 3.3.1. “Example Age” Feature
 
 Many hours worth of videos are uploaded each second to YouTube.
 YouTubeには毎秒何時間分もの動画がアップロードされている。
 Recommending this recently uploaded (“fresh”) content is extremely important for YouTube as a product.
-**最近アップロードされた（「新鮮な」）コンテンツを推薦することは、商品としてのYouTubeにとって非常に重要**である。
+**最近アップロードされた（「新鮮な」）コンテンツを推薦することは、YouTubeにとって非常に重要**である。
 We consistently observe that users prefer fresh content, though not at the expense of relevance.
 私たちは一貫して、ユーザが新鮮なコンテンツを好むことを観察しているが、relevanceを犠牲にしているわけではない。
 In addition to the first-order effect of simply recommending new videos that users want to watch, there is a critical secondary phenomenon of bootstrapping and propagating viral content [11].
@@ -232,7 +236,7 @@ Machine learning systems often exhibit an implicit bias towards the past because
 The distribution of video popularity is highly non-stationary but the multinomial distribution over the corpus produced by our recommender will reflect the average watch likelihood in the training window of several weeks.
 ビデオの人気度分布は非定常性が高い(=人気なアイテムが時間とともに変わりゆく=新しいアイテムが人気上位を置き換え続ける?)が、我々のレコメンダーが生成するコーパス上の多項分布は、数週間のトレーニングウィンドウにおける平均視聴可能性を反映する。(古めのアイテムのtraining exampleを優遇して学習しちゃう??)
 To correct for this, we feed the age of the training example as a feature during training.
-これを補正するために、**訓練中にtraining exampleの年齢を特徴量として与える**。
+これを補正するために、**訓練時にtraining exampleの年齢を特徴量として与える**。
 At serving time, this feature is set to zero (or slightly negative) to reflect that the model is making predictions at the very end of the training window.
 サービング時には、モデルがトレーニング・ウィンドウの最後の方で予測を行っている(=新しくuploadされたアイテムに対して予測スコアを出す?)ことを反映するため、この特徴量はゼロ（またはわずかにマイナス）に設定される。
 Figure 4 demonstrates the efficacy of this approach on an arbitrarily chosen video [26].
@@ -282,7 +286,7 @@ Episodic series are usually watched sequentially and users often discover artist
 We therefore found much better performance predicting the user’s next watch, rather than predicting a randomly held-out watch (Figure 5).
 そのため、**ランダムにhold-outされた視聴を予測するよりも、ユーザの次の視聴を予測する方がはるかに優れたパフォーマンスを示す**ことがわかった（図5）。
 Many collaborative filtering systems implicitly choose the labels and context by holding out a random item and predicting it from other items in the user’s history (5a).
-多くの協調フィルタリングシステムは、ランダムにアイテムを取り出し、ユーザーの履歴にある他のアイテムから予測することで、ラベルとコンテキストを暗黙的に選択している(5a)。
+多くの協調フィルタリングシステムは、ランダムにアイテムを取り出し、ユーザの履歴にある他のアイテムから予測することで、ラベルとコンテキストを暗黙的に選択している(5a)。
 This leaks future information and ignores any asymmetric consumption patterns.
 **これは将来の情報を漏らし、非対称な消費パターンを無視することになる**。
 In contrast, we “rollback” a user’s history by choosing a random watch and only input actions the user took before the held-out label watch (5b).
@@ -316,18 +320,18 @@ Width and depth were added until the incremental benefit diminished and converge
 # 4. Ranking ランキング
 
 The primary role of ranking is to use impression data to specialize and calibrate candidate predictions for the particular user interface.
-ランキングの主な役割は、**インプレッション・データを使って、特定のユーザ・インターフェースの予測候補を特化させ、candidate(較正, 調節, 校正)すること**である。
+ランキングの主な役割は、**インプレッション・データを使って、特定のユーザ・インターフェースの予測候補を特化させ、calibrate(較正, 調節, 校正)すること**である。
 For example, a user may watch a given video with high probability generally but is unlikely to click on the specific homepage impression due to the choice of thumbnail image.
 例えば、ユーザはあるビデオを一般的に高い確率で見るかもしれないが、サムネイル画像の選択によって特定のホームページの印象をクリックする可能性は低い。
 During ranking, we have access to many more features describing the video and the user’s relationship to the video because only a few hundred videos are being scored rather than the millions scored in candidate generation.
 ランキングの際には、**ビデオとユーザの関係を説明する、より多くの特徴量にアクセス**することができる。
 Ranking is also crucial for ensembling different candidate sources whose scores are not directly comparable.
-ランキングは、**スコアが直接比較できない異なる候補ソースをアンサンブルするためにも重要**である。
+ランキングは、**スコアが直接比較できない異なるcandidateソースをアンサンブルするためにも重要**である。
 
 ![fig7]()
 
 We use a deep neural network with similar architecture as candidate generation to assign an independent score to each video impression using logistic regression (Figure 7).
-候補生成と**同様のアーキテクチャを持つディープニューラルネットワークを使用**し、ロジスティック回帰を用いて各映像の印象に独立したスコアを割り当てる（図7）。
+候補生成と**同様のアーキテクチャを持つディープニューラルネットワークを使用**し、ロジスティック回帰を用いて各動画のimpressionに独立したスコアを割り当てる（図7）。
 The list of videos is then sorted by this score and returned to the user.
 ビデオのリストはこのスコアでソートされ、ユーザに返される。
 Our final ranking objective is constantly being tuned based on live A/B testing results but is generally a simple function of expected watch time per impression.
@@ -359,7 +363,7 @@ Despite the promise of deep learning to alleviate the burden of engineering feat
 We still expend considerable engineering resources transforming user and video data into useful features.
 私たちは今でも、ユーザやビデオのデータを有用な特徴量に変換するために、かなりのエンジニアリング・リソースを費やしている。
 The main challenge is in representing a temporal sequence of user actions and how these actions relate to the video impression being scored.
-主な課題は、ユーザのアクションの時間的sequenceを表現することと、これらのアクションがどのように採点されるビデオのimpressionと関連しているかを表現することである。
+主な課題は、ユーザアクションの時間的sequenceを表現することと、これらのアクションがどのように採点されるビデオのimpressionと関連しているかを表現することである。
 
 We observe that the most important signals are those that describe a user’s previous interaction with the item itself and other similar items, matching others’ experience in ranking ads [7].
 最も重要なシグナルは、**ユーザのアイテム自体や他の類似アイテムとの過去のinteractionを記述するもの**であり、広告のランキングにおける他の人の経験と一致することが観察される[7]。
@@ -370,7 +374,7 @@ how many videos has the user watched from this channel?
 When was the last time the user watched a video on this topic?
 ユーザがこのトピックに関する動画を最後に見たのはいつですか？
 These continuous features describing past user actions on related items are particularly powerful because they generalize well across disparate items.
-**関連するアイテムに対する過去のユーザの行動を記述するこれらの連続的な特徴量は、異種のアイテムにわたってよく一般化されるため、特に強力**です。
+**関連アイテムに対する過去のユーザの行動を記述するこれらの連続的な特徴量は、異種のアイテムにわたってよく一般化されるため、特に強力**です。
 We have also found it crucial to propagate information from candidate generation into ranking in the form of features,
 我々はまた、**candidate generationから特徴量という形でランキングに情報を伝達することが重要である**ことを発見した。
 e.g.which sources nominated this video candidate?
