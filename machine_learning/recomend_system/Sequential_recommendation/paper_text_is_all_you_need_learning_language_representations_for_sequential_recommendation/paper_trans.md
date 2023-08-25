@@ -1,221 +1,199 @@
-## link リンク
+## 0.1. link リンク
 
 https://arxiv.org/abs/2305.13731
 https://arxiv.org/abs/2305.13731
 
-## title タイトル
+## 0.2. title タイトル
 
 Text Is All You Need: Learning Language Representations for Sequential Recommendation
-テキストがあればいい： 
+テキストがあればいい：
 逐次推薦のための言語表現を学ぶ
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 Sequential recommendation aims to model dynamic user behavior from historical interactions.
-逐次レコメンデーションは、過去のインタラクションからダイナミックなユーザー行動をモデル化することを目的としている。
+逐次レコメンデーションは、過去のインタラクションからダイナミックなユーザ行動をモデル化することを目的としている。
 Existing methods rely on either explicit item IDs or general textual features for sequence modeling to understand user preferences.
-既存の方法は、ユーザーの嗜好を理解するためのシーケンスモデリングに、明示的なアイテムIDか一般的なテキスト特徴のどちらかに依存している。
+既存の方法は、ユーザの嗜好を理解するためのシーケンスモデリングに、明示的なアイテムIDか一般的なテキスト特徴量のどちらかに依存している。
 While promising, these approaches still struggle to model cold-start items or transfer knowledge to new datasets.
-有望ではあるが、これらのアプローチは、コールドスタート項目のモデル化や、新しいデータセットへの知識の移行にはまだ苦労している。
+有望ではあるが、これらのアプローチは、コールドスタートアイテムのモデル化や、新しいデータセットへの知識の移行(?online更新的な話だろうか??)にはまだ苦労している。
 In this paper, we propose to model user preferences and item features as language representations that can be generalized to new items and datasets.
-本論文では、ユーザーの嗜好とアイテムの特徴を、新しいアイテムやデータセットに汎化可能な言語表現としてモデル化することを提案する。
+本論文では、**ユーザの嗜好とアイテムの特徴量を、新しいアイテムやデータセットに汎化可能な言語表現としてモデル化すること**を提案する。
 To this end, we present a novel framework, named Recformer, which effectively learns language representations for sequential recommendation.
-この目的のために、我々は、逐次推薦のための言語表現を効果的に学習する、Recformerと名付けられた新しいフレームワークを提示する。
+この目的のために、我々は、**逐次推薦のための言語表現を効果的に学習する、Recformer**と名付けられた新しいフレームワークを提示する。
 Specifically, we propose to formulate an item as a "sentence" (word sequence) by flattening item key-value attributes described by text so that an item sequence for a user becomes a sequence of sentences.
-具体的には、テキストで記述されたアイテムのキー・バリュー属性を平坦化することで、ユーザーにとってのアイテム列が文の列になるように、アイテムを「文」（単語列）として定式化することを提案する。
+具体的には、テキストで記述されたアイテムのkey-value属性を平坦化することで、**各ユーザのアイテムsequence(=interaction history)が sequenceのsequenceになるように**、アイテムを"文"(単語sequence)として定式化することを提案する。(ニュース推薦の文脈だと普通な考え方な気がするけど、テキストを持たないアイテムの推薦問題にも適用できるって話だろうか??:thinking:)
 For recommendation, Recformer is trained to understand the "sentence" sequence and retrieve the next "sentence".
-推薦のために、Recformerは「文」の並びを理解し、次の「文」を検索するように訓練されている。
+推薦のために、Recformerは"sentence"の並びを理解し、次の"sentence"を検索するように訓練されている。(next-item-predictionならぬnext-sentence-predictionってこと??)
 To encode item sequences, we design a bi-directional Transformer similar to the model Longformer but with different embedding layers for sequential recommendation.
-アイテムのシーケンスをエンコードするために、我々は、モデルLongformerと同様の双方向トランスフォーマーを設計するが、シーケンシャル推薦のために異なるエンベッディングレイヤーを持つ。
+アイテムのシーケンスをエンコードするために、我々は、モデルLongformerと同様のbi-directionalトランスフォーマーを設計するが、シーケンシャル推薦のために異なるエンベッディングレイヤーを持つ。
 For effective representation learning, we propose novel pretraining and finetuning methods which combine language understanding and recommendation tasks.
 効果的な表現学習のために、言語理解と推薦タスクを組み合わせた新しい事前学習と微調整方法を提案する。
 Therefore, Recformer can effectively recommend the next item based on language representations.
-したがって、Recformerは、言語表現に基づいて次の項目を効果的に推薦することができる。
+したがって、Recformerは、言語表現に基づいて次のアイテムを効果的に推薦することができる。
 Extensive experiments conducted on six datasets demonstrate the effectiveness of Recformer for sequential recommendation, especially in low-resource and cold-start settings.
 6つのデータセットを用いて行われた広範な実験により、Recformerの逐次推薦の有効性が、特に低リソースかつコールドスタートな環境において実証された。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 Sequential recommender systems model historical user interactions as temporally-ordered sequences to recommend potential items that users are interested in.
-シーケンシャル・レコメンダー・システムは、過去のユーザーとのやりとりを時間的に順序付けられたシーケンスとしてモデル化し、ユーザーが興味を持っている潜在的なアイテムを推薦する。
+シーケンシャル・レコメンダー・システムは、過去のユーザーとのやりとりを時間的に順序付けられたシーケンスとしてモデル化し、ユーザが興味を持っている潜在的なアイテムを推薦する。
 Sequential recommenders [11, 14, 25, 27] can capture both short-term and long-term preferences of users and hence are widely used in different recommendation scenarios.
-逐次レコメンダー[11, 14, 25, 27]は、ユーザーの短期的嗜好と長期的嗜好の両方を捉えることができるため、様々なレコメンデーションシナリオで広く使われている。
+**逐次レコメンダー[11, 14, 25, 27]は、ユーザの短期的嗜好と長期的嗜好の両方を捉えることができるため、様々なレコメンデーションシナリオで広く使われている**。
+
 Various methods have been proposed to improve the performance of sequential recommendation, including Markov Chains [9, 25], RNN/CNN models [11, 17, 28, 34] and self-attentive models [14, 19, 27].
-逐次推薦のパフォーマンスを向上させるために、マルコフ連鎖[9, 25]、RNN/CNNモデル[11, 17, 28, 34]、自己注意モデル[14, 19, 27]など、様々な手法が提案されている。
+逐次推薦のパフォーマンスを向上させるために、マルコフ連鎖[9, 25]、RNN/CNNモデル[11, 17, 28, 34]、self-attention型モデル[14, 19, 27]など、様々な手法が提案されている。
 Traditional sequential recommendation models convert items into IDs and create item embedding tables for encoding.
 従来の逐次推薦モデルは、アイテムをIDに変換し、エンコーディングのためにアイテム埋め込みテーブルを作成する。
 Item embeddings are learned from sequences of user interactions.
-アイテム埋め込みは、ユーザーとのインタラクションのシーケンスから学習される。
+アイテム埋め込みは、ユーザとのインタラクションのシーケンスから学習される。
 To enrich item features, some approaches [4, 20, 37, 38] incorporate item contexts such as item textual information or categorical features into ID embeddings.
-項目の特徴を豊かにするために、いくつかのアプローチ[4, 20, 37, 38]は、項目のテキスト情報やカテゴリ的特徴などの項目のコンテキストをID埋め込みに組み込んでいる。
+**アイテムの特徴量を豊かにするために、いくつかのアプローチ[4, 20, 37, 38]は、アイテムのテキスト情報やカテゴリ的特徴などのアイテムのcontextをID埋め込みに組み込んでいる**。(だよな...!)
 While ID-based methods are promising, they struggle to understand cold-start items or conduct cross-domain recommendations where models are trained and then applied to different recommendation scenarios.
-IDベースの手法は有望ではあるが、コールドスタート項目の理解や、モデルを学習した後に異なる推薦シナリオに適用するクロスドメイン推薦の実施に苦戦している。
+IDベースの手法は有望ではあるが、コールドスタートアイテムの理解や、**モデルを学習した後に異なる推薦シナリオに適用するcross-domain推薦(??)**の実施に苦戦している。
 Item-specific IDs prevent models from learning transferable knowledge from training data for cold-start items and new datasets.
-項目固有のIDは、コールドスタート項目や新しいデータセットのトレーニングデータからモデルが移行可能な知識を学習することを妨げる。
+**アイテム固有のIDは、コールドスタートアイテムや新しいデータセットのトレーニングデータからモデルが移行可能な知識を学習することを妨げる**。(OPEのMIPS推定量の、actionを使わずにaction feature embeddingを使う、みたいな??)
 As a result, item IDs limit the performance of sequential recommenders on cold-start items and we have to re-train a sequential recommender for continually added new items.
-その結果、アイテムIDはコールドスタートアイテムに対する逐次レコメンダーの性能を制限し、継続的に追加される新しいアイテムに対して逐次レコメンダーを再トレーニングしなければならない。
+その結果、アイテムIDはコールドスタートアイテムに対する逐次レコメンダーの性能を制限し、**継続的に追加される新しいアイテムに対して逐次レコメンダーを再トレーニングしなければならない**。
 Therefore, transferable recommenders can benefit both cold-start items and new-domain datasets.
-したがって、転送可能なレコメンダーは、コールドスタートの項目と新しいドメインのデータセットの両方に利益をもたらすことができる。
+したがって、**転送可能(transferable)なレコメンダー**は、コールドスタートのアイテムと新しいドメインのデータセット(=cross domain推薦の話?)の両方に利益をもたらすことができる。
+
 To develop transferable recommender systems, previous studies usually assume shared information such as overlapping users/items [13, 26, 39] and common features [29] is available and then reduce the gap between source and target domains by learning either semantic mappings [39] or transferable components [16].
-転送可能な推薦システムを開発するために、先行研究では通常、重複するユーザー／アイテム[13, 26, 39]や共通の特徴[29]などの共有情報が利用可能であると仮定し、意味的マッピング[39]または転送可能なコンポーネント[16]のいずれかを学習することによって、ソースドメインとターゲットドメイン間のギャップを減らす。
+**転送可能(transferable)な推薦システムを開発するために**、先行研究では通常、重複するユーザ/アイテム[13, 26, 39]や共通の特徴量[29]などの共有情報が利用可能であると仮定し、意味的マッピング[39]または転送可能なコンポーネント[16]のいずれかを学習することによって、ソースドメインとターゲットドメイン間のギャップを減らす。
 Such assumptions are rarely true in real applications because items in different domains (e.g., Laptops and T-shirts) usually contain different features for recommendation.
-なぜなら、異なるドメインのアイテム（例えば、ノートパソコンとTシャツ）には、通常、推薦のための異なる特徴が含まれているからである。
+このような仮定は、実際のアプリケーションではほとんど当てはまらない。
+なぜなら、**異なるドメイン（例えば、ノートパソコンとTシャツ）のアイテムは、通常、推薦のための異なる特徴量を含んでいる**からである。(i.e. ノートPCの推薦で有効な特徴量と、Tシャツの推薦で有効な特徴量は異なる、って意味??:thinking:)
 Therefore, to have effective cross-domain transfer, recent works [7, 12] leverage the generality of natural language texts (e.g., titles, descriptions of items) for common knowledge in different domains.
-したがって、効果的なクロスドメイン転送を行うために、最近の研究[7, 12]では、異なるドメインで共通の知識を得るために、自然言語テキストの一般性（例：タイトル、アイテムの説明）を活用している。
+したがって、効果的なクロスドメイン転送を行うために、最近の研究[7, 12]では、**異なるドメインで共通の知識を得るために、自然言語テキスト(例：タイトル、アイテムの説明)の一般性を活用**している。
 The basic idea is to employ pre-trained language models such as BERT [6] to obtain text representations and then learn the transformation from text representations to item representations.
-基本的な考え方は、BERT [6]のような事前に訓練された言語モデルを採用してテキスト表現を取得し、テキスト表現から項目表現への変換を学習することである。
+基本的な考え方は、**BERT [6]のような事前に訓練された言語モデルを採用してテキスト表現を取得し、テキスト表現からアイテム表現への変換を学習すること**である。
 The knowledge of the transformation can be transferred across different domains and shows promising performance.
 変換の知識は、異なるドメインにまたがって転送することができ、有望な性能を示している。
-However, such frameworks of learning transformation from language to items have several limitations: (1) Pre-trained language models are usually trained on a general language corpus (e.g., Wikipedia) serving natural language tasks that have a different language domain from item texts (e.g., concatenation of item attributes), hence text representations from pretrained language models for items are usually sub-optimal.(2) Text representations from pre-trained language models are not able to learn the importance of different item attributes and only provide coarse-grained (sentence-level) textual features but cannot learn fine-grained (word-level) user preferences for recommendations (e.g., find the same color in recent interactions for clothing recommendations).(3) Due to the independent training of pre-trained language models (by language understanding tasks, e.g., Masked Language Modeling) and transformation models (by recommendation tasks, e.g., next item prediction), the potential ability of models to understand language for recommendations has not been fully developed (by joint training).
-しかし、言語から項目への変換を学習するこのような枠組みには、いくつかの限界がある： 
-(1)事前に学習された言語モデルは、通常、一般的な言語コーパス（Wikipediaなど）で学習される、 (2)事前訓練された言語モデルからのテキスト表現は、異なるアイテム属性の重要性を学習することができず、粗い粒度（文レベル）のテキスト特徴しか提供しない、 (3)事前に学習された言語モデル(例えば、マスクされた言語モデリングなどの言語理解タスク)と変換モデル(例えば、次のアイテム予測などの推薦タスク)の独立した学習により、推薦のための言語理解モデルの潜在的な能力は(共同学習により)完全には開発されていない。）
+However, such frameworks of learning transformation from language to items have several limitations:
+しかし、言語から項目への変換を学習するこのような枠組みには、いくつかの限界がある：
+(1) Pre-trained language models are usually trained on a general language corpus (e.g., Wikipedia) serving natural language tasks that have a different language domain from item texts (e.g., concatenation of item attributes), hence text representations from pretrained language models for items are usually sub-optimal.
+(1)事前に学習された言語モデルは、通常、一般的な言語コーパス（例えば、Wikipedia）で学習され、アイテムのテキストとは異なる言語ドメイン（例えば、アイテムの属性の連結）を持つ自然言語タスクを提供する。そのため、**事前に学習された言語モデルによるアイテムのテキスト表現は、通常、最適とは言えません**。
+(2) Text representations from pre-trained language models are not able to learn the importance of different item attributes and only provide coarse-grained (sentence-level) textual features but cannot learn fine-grained (word-level) user preferences for recommendations (e.g., find the same color in recent interactions for clothing recommendations).
+(2)事前に訓練された言語モデルからのテキスト表現は、異なるアイテムの属性の重要性を学習することができず、**粗い粒度(文レベル)のテキスト特徴を提供するだけ**で、推薦のための細かい粒度(単語レベル)のユーザの好み(ex. 服の推薦のために最近のインタラクションで同じ色を見つける)を学習することができない。
+(3) Due to the independent training of pre-trained language models (by language understanding tasks, e.g., Masked Language Modeling) and transformation models (by recommendation tasks, e.g., next item prediction), the potential ability of models to understand language for recommendations has not been fully developed (by joint training).
+(3)事前学習された言語モデル(ex. マスクされた言語モデリングなどの言語理解タスク)と変換モデル(ex. 次のアイテム予測などの推薦タスク)の、独立した学習により、**推薦のための言語理解モデル**の潜在的な能力は完全には開発されていない。(共同学習による)
+
 With the above limitations in mind, we aim to unify the frameworks of natural language understanding and recommendations in an ID-free sequential recommendation paradigm.
-以上のような制約を念頭に置き、我々は自然言語理解とレコメンデーションの枠組みをIDフリーの逐次レコメンデーション・パラダイムに統一することを目指している。
+以上のような制約を念頭に置き、我々は自然言語理解とレコメンデーションの枠組みを**ID-freeの逐次推薦・パラダイムに統一する**ことを目指している。
 The pre-trained language models [6, 15, 23, 24] benefit various downstream natural language processing tasks due to their transferable knowledge from pre-training.
-事前に訓練された言語モデル[6, 15, 23, 24]は、事前訓練から得られる知識の伝達が可能であるため、様々な自然言語処理タスクの下流に恩恵をもたらす。
+事前学習された言語モデル[6, 15, 23, 24]は、事前学習から得られる知識の伝達が可能であるため、様々な自然言語処理タスクの下流に恩恵をもたらす。(うん、fine-tuningだけで良いって言うよね。)
 The basic idea of this paper is to use the generality of language models through joint training of language understanding and sequential recommendations.
-本稿の基本的な考え方は、言語理解と逐次推薦の共同学習を通じて、言語モデルの汎用性を利用することである。
+本稿の基本的な考え方は、**言語理解と逐次推薦の共同学習を通じて、言語モデルの汎用性を利用すること**である。
 To this end, there are three major challenges to be solved.
 そのためには、解決すべき3つの大きな課題がある。
 First, previous text-based methods [7, 12] usually have their specific item texts (e.g., item descriptions, concatenation of item attributes).
-第一に、これまでのテキストベースの手法[7, 12]は、通常、特定の項目テキスト（例：項目の説明、項目属性の連結）を持っている。
+第一に、これまでのテキストベースの手法[7, 12]は、通常、特定のアイテムテキスト(ex. アイテムの説明、アイテム属性の連結)を持っている。
 Instead of specific data types, we need to find a universal input data format of items for language models that is flexible enough to different kinds of textual item information.
-特定のデータ型の代わりに、異なる種類のテキスト項目情報に対して十分に柔軟な、言語モデルのための項目の普遍的な入力データ形式を見つける必要がある。
+特定のデータ型の代わりに、異なる種類のテキストアイテム情報に対して十分に柔軟な、言語モデルのためのアイテムの普遍的な入力データ形式(??)を見つける必要がある。
 Second, it is not clear how to model languages and sequential transitions of items in one framework.
-第二に、言語とアイテムの逐次遷移を一つのフレームワークでモデル化する方法が明確でない。
+第二に、**言語とアイテムの逐次遷移を一つのフレームワークで(=joint training可能なやつ!:thinking:)モデル化する方法**が明確でない。
 Existing language models are not able to incorporate sequential patterns of items and cannot learn the alignment between items and item texts.
 既存の言語モデルは、アイテムの連続的なパターンを組み込むことができず、アイテムとアイテムのテキスト間のアラインメントを学習することができない。
 Third, a training and inference framework is necessary to bridge the gap between natural languages and recommendations like how to efficiently rank items based on language models without trained item embeddings.
 第三に、自然言語とレコメンデーションの間のギャップを埋めるために、学習と推論のフレームワークが必要である。例えば、学習済みのアイテム埋め込みなしで、言語モデルに基づいてアイテムを効率的にランク付けする方法などである。
+
+![fig]()
+
 To address the above problems, we propose Recformer, a framework that can learn language representations for sequential recommendation.
-上記の問題点を解決するために、我々は逐次推薦のための言語表現を学習するフレームワークであるRecformerを提案する。
+上記の問題点を解決するために、我々は**逐次推薦のための言語表現を学習するフレームワーク**であるRecformerを提案する。
 Overall, our approach takes a text sequence of historical items as input and predicts the next item based on language understanding.
-全体として、我々のアプローチは、歴史的項目のテキストシーケンスを入力とし、言語理解に基づいて次の項目を予測する。
+全体として、我々のアプローチは、**historical items のテキストシーケンス(sequences of sequence)を入力とし**、言語理解に基づいてnext-itemを予測する。
 Specifically, as shown in Figure 1, we first formulate an item as key-value attribute pairs which can include any textual information such as the title, color, brand of an item.
-具体的には、図1に示すように、まず、アイテムのタイトル、色、ブランドなどの任意のテキスト情報を含むことができるキーと値の属性ペアとしてアイテムを定式化します。
+具体的には、図1に示すように、まず、アイテムのタイトル、色、ブランドなどの任意のテキスト情報を含むことができる様な、**key-value attributeペア(ex. key="Title", value="具体的なtitle")としてアイテムを定式化**します。(図1を見るとわかりやすい)
 Different items can include different attributes as item texts.
 異なるアイテムは、アイテムのテキストとして異なる属性を含めることができます。
 Then, to encode a sequence of key-value attribute pairs, we propose a novel bi-directional Transformer [30] based on Longformer structure [2] but with different embeddings for item texts to learn item sequential patterns.
-次に、キーと値の属性ペアのシーケンスをエンコードするために、Longformer構造[2]に基づくが、アイテムのシーケンシャルパターンを学習するために、アイテムのテキストに対して異なるエンベッディングを持つ、新しい双方向トランスフォーマー[30]を提案する。
+次に、キーと値の属性ペアのシーケンスをエンコードするために、**Longformer構造[2]に基づく**(??)が、アイテムのsequentialパターンを学習するために、**アイテムのテキストの為の異なるエンベッディングを持つ、新しい双方向トランスフォーマー**[30]を提案する。(Transformerの論文読んでたらなんとか理解できるか...!)
 Finally, to effectively learn language representations for recommendation, we design the learning framework for the model including pre-training, finetuning and inference processes.
 最後に、推薦のための言語表現を効果的に学習するために、事前学習、微調整、推論プロセスを含むモデルの学習フレームワークを設計する。
 Based on the above methods, Recformer can effectively recommend the next items based on item text representations.
-以上の方法に基づいて、Recformerはアイテムのテキスト表現に基づいて次のアイテムを効果的に推薦することができる。
+以上の方法に基づいて、**Recformerはアイテムのテキスト表現に基づいて次のアイテムを効果的に推薦**することができる。
 Furthermore, the knowledge learned from training can be transferred to cold-start items or a new recommendation scenario.
-さらに、トレーニングから学んだ知識は、コールドスタートの項目や新しい推薦シナリオに移すことができる。
+さらに、**トレーニングから学んだ知識は、コールドスタートアイテムや新しい推薦シナリオ(=cross domain推薦!)に移すことができる**。
 
 To evaluate Recformer, we conduct extensive experiments on real-world datasets from different domains.
 Recformerを評価するために、我々は様々なドメインの実世界のデータセットで広範な実験を行った。
-Experimental results show that our method can achieve 15.83% and 39.78% (NDCG@10) performance improvements under fully-supervised and zero-shot sequential recommendation settings respectively.1 Our contributions in this paper can be summarized as follows:
-実験結果によれば、我々の手法は、完全教師あり推薦とゼロショット逐次推薦の設定において、それぞれ15.83％と39.78％（NDCG@10）の性能向上を達成できる：
+Experimental results show that our method can achieve 15.83% and 39.78% (NDCG@10) performance improvements under fully-supervised and zero-shot sequential recommendation settings respectively.1
+実験結果によれば、我々の手法は、完全教師あり推薦とゼロショット逐次推薦の設定において、それぞれ15.83％と39.78％（NDCG@10）の性能向上を達成できる。
 
-- We formulate items as key-value attribute pairs for the IDfree sequential recommendation and propose a novel bidirectional Transformer structure to encode sequences of key-value pairs. 我々は、IDフリーの逐次推薦のために、項目をキーと値の属性ペアとして定式化し、キーと値のペアのシーケンスを符号化するための新しい双方向トランスフォーマー構造を提案する。
+Our contributions in this paper can be summarized as follows:
+本論文の貢献は以下にまとめた:
 
-- We design the learning framework that helps the model learn users’ preferences and then recommend items based on language representations and transfer knowledge into different recommendation domains and cold-start items. 我々は、モデルがユーザーの嗜好を学習し、言語表現に基づいてアイテムを推薦し、異なる推薦ドメインやコールドスタートアイテムに知識を転送することを支援する学習フレームワークを設計する。
+- We formulate items as key-value attribute pairs for the IDfree sequential recommendation and propose a novel bidirectional Transformer structure to encode sequences of key-value pairs. 我々は、**ID-freeの逐次推薦**のために、**アイテムをkey-value attribute pairsとして定式化**し、**key-value pairsのsequenceをencodeするための新しい双方向トランスフォーマー構造**を提案する。
 
-- Extensive experiments are conducted to show the effectiveness of our method. Results show that Recformer outperforms baselines for sequential recommendation and largely improves knowledge transfer as shown by zero-shot and cold-start settings. 本手法の有効性を示すため、広範な実験を行った。 その結果、Recformerは逐次推薦においてベースラインを上回り、ゼロ・ショットとコールド・スタート設定によって示されるように、知識伝達を大きく改善することが示された。
+- We design the learning framework that helps the model learn users’ preferences and then recommend items based on language representations and transfer knowledge into different recommendation domains and cold-start items. 我々は、モデルがユーザの嗜好を学習し、言語表現に基づいてアイテムを推薦し、異なる推薦ドメインやコールドスタートアイテムに知識を転送することを支援する学習フレームワークを設計する。
 
-# Methodology 方法論
+- Extensive experiments are conducted to show the effectiveness of our method. Results show that Recformer outperforms baselines for sequential recommendation and largely improves knowledge transfer as shown by zero-shot and cold-start settings. 本手法の有効性を示すため、広範な実験を行った。 その結果、Recformerは逐次推薦においてベースラインを上回り、ゼロ・ショットとコールド・スタート設定によって示されるように、知識伝達(knowledge transfer)を大きく改善することが示された。(毎日full-batch学習をしなきゃいけないモデルは、既存の知識の応用が全然できないイメージなのかな:thinking:)
+
+# 2. Methodology 方法論
 
 In this section, we present Recformer which can learn language representations for sequential recommendation and effectively transfer and generalize to new recommendation scenarios.
 本節では、逐次推薦のための言語表現を学習し、新しい推薦シナリオに効果的に移行・汎化できるRecformerを紹介する。
 
-## Problem Setup and Formulation 問題の設定と定式化
+## 2.1. Problem Setup and Formulation 問題の設定と定式化
 
-In the setting of sequential recommendation, we are given an item set I and a user’s interaction sequence 𝑠 = {𝑖1,𝑖2, .
-逐次推薦の設定では、アイテム集合Iとユーザーの対話シーケンス𝑠 = {𝑖1,𝑖2, .
-..
-..
-,𝑖𝑛} in temporal order where 𝑛 is the length of𝑠 and 𝑖 ∈ I.
-𝑖𝑛}を時間順に並べたもので、𝑛は𝑠の長さ、𝑖∈Iである。
-Based on 𝑠, we seek to predict the next item.
-𝑠に基づいて、次の項目を予測する。
+In the setting of sequential recommendation, we are given an item set I and a user’s interaction sequence $s = {i_1, i_2,\cdos, i_n}$ in temporal order where $n$ is the length of $s$ and $i \in I$.
+逐次推薦の設定では、アイテム集合 $I$ とユーザのinteraction sequence $s = {i_1, i_2, ˶cdos, i_n}$ が時間順に与えられる。
+Based on $s$, we seek to predict the next item.
+$s$ に基づいて、次のアイテムを予測する。
 In previous sequential recommendation methods, each interacted item𝑖 is associated with a unique item ID.
-これまでの逐次推薦法では、各インタラクト項目𝑖は一意の項目IDと関連付けられている。
-In this paper, each item 𝑖 has a corresponding attribute dictionary 𝐷𝑖 containing key-value attribute pairs {(𝑘1, 𝑣1), (𝑘2, 𝑣2), .
-本稿では、各項目𝑖は、キーと値の属性ペア{(𝑘1, 𝑣2, (𝑘2), ...}を含む対応する属性辞書𝐷𝑖を持つ。
-..
-..
-, (𝑘𝑚, 𝑣𝑚)} where 𝑘 denotes an attribute name (e.g., Color) and 𝑣 is the corresponding value (e.g., Black).
-↪Ll_1D45A, (↪Ll_1D458, ↪Ll_1D45A)} ここで、↪Ll_1D458 は属性名（例：Color）、𝑣 は対応する値（例：Black）を表す。
-𝑘 and 𝑣 are both described by natural languages and contain words (𝑘, 𝑣) = {𝑤 𝑘 1 , .
-𝑘と↪Ll453↩はどちらも自然言語で記述され、単語 (𝑘, 𝑣) = {𝑘 1 , .
-..
-..
-,𝑤𝑘 𝑐 ,𝑤𝑣 1 , .
-𝑤𝑐 ,𝑤𝑣 1 , .
-..
-..
-,𝑤𝑣 𝑐 }, where 𝑤 𝑘 and 𝑤 𝑣 are words of 𝑘 and 𝑣 from a shared vocabulary in the language model and 𝑐 denotes the truncated length of text.
-ここで、𝑣 と 𝑣 は言語モデルで共有される語彙の𝑤 と 𝑤 の単語、𝑐 と 𝑣 はテキストの切り捨てられた長さを表す。
+これまでの逐次推薦法では、各インタラクトアイテム $i$ は一意のアイテムIDと関連付けられている。
+In this paper, each item $i$ has a corresponding attribute dictionary $D_i$ containing key-value attribute pairs ${(k_1, v_1), (k_2, v_2), \cdots, (k_m, v_m)}$ where $k$ denotes an attribute name (e.g., Color) and 𝑣 is the corresponding value (e.g., Black).
+本論文では、各アイテム $i$ は対応する attribute dictionary $D_i$ を持つ。 $D_i$ は key-value attribute pairs ${(k_1, v_1), (k_2, v_2), \cdots, (k_m, v_m)}$ を含んでいる。ここで $k$ はあるattribute名(ex. Color), $v$ は対応する値(ex. Black)である。
+$k$ and $v$ are both described by natural languages and contain words $(k, v) = {w_1^{k}, \cdots, w_c^{k}, w_1^{v}, \cdots, w_c^{v}}$, where $w^{k}$ and $w^{v}$ are words of $k$ and $v$ from a shared vocabulary in the language model and $c$ denotes the truncated length of text.
+**$k$ と $v$ は共に自然言語で記述され**、words $(k, v) = {w_1^{k}, \cdots, w_c^{k}, w_1^{v}, \cdots, w_c^{v}}$ を含む。
+ここで $w^{k}$ と $w^{v}$ は言語モデルの共有語彙にある $k$ と $v$ の各単語、$c$ はテキストの切り捨て(truncated)長さを表す。
 An attribute dictionary 𝐷𝑖 can include all kinds of item textual information such as titles, descriptions, colors, etc.
-属性辞書𝐷𝑖には、タイトル、説明、色など、あらゆる種類のアイテムのテキスト情報を含めることができます。
-As shown in Figure 2, to feed the attribute dictionary 𝐷𝑖 into a language model, we flatten key-value attribute pairs into 𝑇𝑖 = {𝑘1, 𝑣1, 𝑘2, 𝑣2, .
-図2に示すように、属性辞書𝐷𝑖を言語モデルに入力するために、キーと値の属性ペアを𝑇𝑖 = {𝑘1,𝑣2,𝑣2, .
-..
-..
-, 𝑘𝑚, 𝑣𝑚} to obtain an item “sentence” as the input data.
-, 𝑚, ↪Ll_1D45A} を入力データとして、項目「文」を得る。
+アイテム $i$ の属性辞書 $D_i$ には、タイトル、説明、色など、あらゆる種類のアイテムのテキスト情報を含めることができます。
+As shown in Figure 2, to feed the attribute dictionary $D_i$ into a language model, we flatten key-value attribute pairs into $T_{i} = {k_1, v_1, k_2, v_2, \cdots, k_m, v_m}$ to obtain an item “sentence” as the input data.
+図2で示す様に、attribute dictionary $D_i$を言語モデルに投入する為に、我々はkey-value attribute ペア達を $T_{i} = {k_1, v_1, k_2, v_2, \cdots, k_m, v_m}$ の様に平滑化して、入力データとして item "sentence"を得る。
 Unlike previous sequential recommenders [12, 37] using both text and item IDs, in this study, we use only text for the sequential recommendation.
-テキストとアイテムIDの両方を使用する以前の逐次推薦器[12, 37]とは異なり、本研究では逐次推薦にテキストのみを使用する。
+**テキストとアイテムIDの両方を使用する以前の逐次推薦器[12, 37]とは異なり、本研究では逐次推薦にテキストのみを使用する**。
 
-## Recformer ♪リフォーマー
+![fig2]()
+
+## 2.2. Recformer
+
+![fig]()
 
 Figure 3 (a) shows the architecture of Recformer.
 図3（a）はRecformerのアーキテクチャを示している。
 The model has a similar structure as Longformer [2] which adopts a multi-layer bidirectional Transformer [30] with an attention mechanism that scales linearly with sequence length.
-このモデルはLongformer[2]と同様の構造を持ち、多層双方向トランスフォーマー[30]を採用し、配列の長さに応じて線形にスケールするアテンションメカニズムを持つ。
+このモデルは**Longformer[2]と同様の構造を持ち**、**多層双方向トランスフォーマー[30]を採用**し、配列の長さに応じて線形にスケールする(=計算量が??)アテンションメカニズムを持つ。
 We consider only computing efficiency for using Longformer but our method is open to other bidirectional Transformer structures such as BERT [6] and BigBird [36].
-我々は、Longformerを使用する場合の計算効率のみを考慮するが、我々の方法は、BERT [6]やBigBird [36]のような他の双方向トランスフォーマー構造にもオープンである。
+我々は、Longformerを使用する場合の計算効率のみを考慮するが、我々の方法は、BERT [6]やBigBird [36]のような他の双方向トランスフォーマー構造にもオープン(適用可能)である。
 
-### Model Inputs. モデルの入力。
+### 2.2.1. Model Inputs. モデルの入力。
 
-As introduced in Section 2.1, for each item 𝑖 and corresponding attribute dictionary 𝐷𝑖 , we flatten the dictionary into an item “sentence”𝑇𝑖 = {𝑘1, 𝑣1, 𝑘2, 𝑣2, .
-セクション2.1で紹介したように、各項目𝑖と対応する属性辞書𝐷𝑖について、辞書を項目「文」𝑇𝑖 = {𝑘1,𝑣2,𝑣2, ...に平坦化する。
-..
-..
-, 𝑘𝑚, 𝑣𝑚} where 𝑘 and 𝑣 are described by words, formally (𝑘, 𝑣) = {𝑤 𝑘 1 , .
-𝑘, 𝑚, 𝑣, 𝑓}ここで、𝑘と𝑓は単語で記述され、形式的には (𝑘, 𝑣) = {𝑘 1 , .
-..
-..
-,𝑤𝑘 𝑐 ,𝑤𝑣 1 , .
-𝑤𝑐 ,𝑤𝑣 1 , .
-..
-..
-,𝑤𝑣 𝑐 }.
-𝑤𝑣 𝑐 }.
-To encode a user’s interaction sequence 𝑠 = {𝑖1,𝑖2, .
-ユーザーのインタラクションシーケンス𝑠 = {𝑖1,𝑖2, .
-..
-..
-,𝑖𝑛}, we first reverse items in a sequence to {𝑖𝑛,𝑖𝑛−1, .
-𝑖𝑛}とすると、まず、{𝑖𝑛,𝑖𝑛-1, .
-..
-..
-,𝑖1} because intuitively recent items (i.e., 𝑖𝑛,𝑖𝑛−1, .
-𝑖1}は、直感的に最近の項目（すなわち、𝑖𝑛,𝑖𝑛-1, .
-..
-..
-) are important for the next item prediction and reversed sequences can make sure recent items are included in the input data.
-)は次のアイテムの予測に重要であり、順序を逆にすることで最近のアイテムが入力データに含まれていることを確認することができる。
+As introduced in Section 2.1, for each item $i$ and corresponding attribute dictionary $D_i$, we flatten the dictionary into an **item “sentence”** $T_{i} = {k_1, v_1, k_2, v_2, \cdots, k_m, v_m}$ where $k$ and $v$ are described by words, formally $(k, v) = {w_1^{k}, \cdots, w_c^{k}, w_1^{v}, \cdots, w_c^{v}}$.
+読める。
+To encode a user’s interaction sequence $s = {i_{1}, i_{2}, \cdots, i_{n}}$, we first reverse items in a sequence to ${i_{n},i_{n-1}, \cdots, $i_{1}}$ because intuitively recent items (i.e.$, i_n, i_{n-1}, \cdots$) are important for the next item prediction and reversed sequences can make sure recent items are included in the input data.
+ユーザの対話シーケンス $s = {i_{1}, i_{2}, \cdots, i_{n}}$ を符号化するために、まずシーケンスのアイテムを ${i_{n},i_{n-1}, \cdots, $i_{1}}$ に逆変換する。
+これは直感的に最近のアイテム (i.e.$, i_n, i_{n-1}, \cdots$) は次のアイテム予測に重要であり、逆変換シーケンスにより最近のアイテムが入力データに確実に含まれる様にできるからである。(sequenceをtruncateするので、最新のinteractionが切れない様に!)
 Then, we use the item “sentences” to replace items and add a special token [CLS] at the beginning of sequences.
-そして、アイテムの置換にアイテム「センテンス」を使用し、シーケンスの先頭に特別なトークン[CLS]を追加する。
+そして、アイテムの置換にitem “sentences”を使用し、シーケンスの先頭に特別なトークン[CLS]を追加する。
 Hence, model inputs are denoted as:
 したがって、モデルの入力は次のように表記される：
 
 $$
+X = \{ [CLS], T_n, T_{n-1}, \cdots, T_{1}\}
 \tag{1}
 $$
 
 where 𝑋 is a sequence of words containing all items and corresponding attributes the user interacted with in the historical interactions.
-ここで𝑋は、過去の相互作用の中でユーザーが相互作用したすべての項目と対応する属性を含む単語のシーケンスである。
+ここで $X$ は、過去のinteractionの中でユーザがinteractしたすべてのアイテムと対応する属性を含む単語達(=sequence of words)のsequence(=**sequence of sequences**)である。
 
-### Embedding Layer. レイヤーを埋め込む。
+### 2.2.2. Embedding Layer
 
 The target of Recformer is to understand the model input 𝑋 from both language understanding and sequential patterns in recommendations.
-Recformerの目標は、言語理解とレコメンデーションの逐次的パターンの両方からモデル入力𝑋を理解することである。
+**Recformerの目標は、言語理解とレコメンデーションの逐次的パターンの両方からモデル入力 $X$ を理解すること**である。
 The key idea in our work is to combine the embedding layers from language models [6, 21] and self-attentive sequential recommenders [14, 27].
-我々の研究で重要なアイデアは、言語モデル[6, 21]と自己アテンション型逐次レコメンダー[14, 27]の埋め込みレイヤーを組み合わせることである。
+我々の研究で重要なアイデアは、言語モデル[6, 21]とself-attention型逐次レコメンダー[14, 27]の埋め込みレイヤーを組み合わせることである。
 Hence, Recformer contains four embeddings as follows:
 したがって、Recformerは以下の4つの埋め込みを含んでいる：
 
@@ -246,7 +224,7 @@ $$
 where E𝑋 ∈ R (𝑙+1)×𝑑 and 𝑙 is the maximum length of tokens in a user’s interaction sequence.
 ここで、E𝑋∈R (𝑙+1)×𝑙はユーザーの対話シーケンスにおけるトークンの最大長である。
 
-### Item or Sequence Representations. アイテムまたはシーケンスの表現。
+### 2.2.3. Item or Sequence Representations. アイテムまたはシーケンスの表現。
 
 To encode E𝑋 , we employ the bidirectional Transformer structure Longformer [2] as our encoder.
 E𝑋を符号化するために、双方向トランスフォーマー構造Longformer [2]をエンコーダーとして採用する。
@@ -272,7 +250,7 @@ Instead, we view the item as a special case of the interaction sequence with onl
 For each item 𝑖, we construct its item “sentence” 𝑇𝑖 and use 𝑋 = {[CLS],𝑇𝑖 } as the model input to get the sequence representation h[CLS] as the item representation h𝑖 .
 各項目𝑖について、その項目「文」𝑇𝑖を構成し、𝑋 = {[CLS],𝑇𝑖 }をモデル入力として、配列表現h[CLS]を項目表現h𝑖として得る。
 
-### Prediction. 予想
+### 2.2.4. Prediction. 予想
 
 We predict the next item based on the cosine similarity between a user’s interaction sequence 𝑠 and item 𝑖.
 ユーザーの対話シーケンス𝑠とアイテム𝑖の余弦類似度に基づいて次のアイテムを予測する。
@@ -295,19 +273,19 @@ $$
 where ˆ𝑖𝑠 is the predicted item given user interaction sequence 𝑠.
 ここで、ˆ𝑖𝑠はユーザー対話シーケンス𝑠から予測される項目である。
 
-## Learning Framework 学習フレームワーク
+## 2.3. Learning Framework 学習フレームワーク
 
 To have an effective and efficient language model for the sequential recommendation, we propose our learning framework for Recformer including pre-training and two-stage finetuning.
 逐次推薦のための効果的で効率的な言語モデルを持つために、事前学習と2段階の微調整を含むRecformerの学習フレームワークを提案する。
 
-### Pre-training. 事前トレーニング
+### 2.3.1. Pre-training. 事前トレーニング
 
 The target of pre-training is to obtain a highquality parameter initialization for downstream tasks.
 事前トレーニングの目的は、下流タスクのための高品質なパラメータ初期化を得ることである。
 Different from previous sequential recommendation pre-training methods which consider only recommendations, we need to consider both language understanding and recommendations.
 レコメンデーションのみを考慮した従来の逐次レコメンデーション事前学習法とは異なり、言語理解とレコメンデーションの両方を考慮する必要がある。
 Hence, to pre-train Recformer, we adopt two tasks: (1) Masked Language Modeling (MLM) and (2) an item-item contrastive task.
-そこで、Recformerを事前に学習させるために、2つのタスクを採用した： 
+そこで、Recformerを事前に学習させるために、2つのタスクを採用した：
 (1)マスク言語モデリング(MLM)と(2)項目-項目対照タスクである。
 Masked Language Modeling (MLM) [6] is an effective pre-training method for language understanding and has been widely used for various NLP pre-training tasks such as sentence understanding [8], phrase understanding [18].
 マスク言語モデリング（MLM）[6]は、言語理解のための効果的な事前学習手法であり、文の理解[8]、フレーズの理解[18]など、様々なNLPの事前学習タスクに広く利用されている。
@@ -376,7 +354,7 @@ where 𝜆 is a hyper-parameter to control the weight of MLM task loss.
 The pre-trained model will be fine-tuned for new scenarios.
 事前に訓練されたモデルは、新しいシナリオのために微調整される。
 
-### Two-Stage Finetuning. 2段階の微調整。
+### 2.3.2. Two-Stage Finetuning. 2段階の微調整。
 
 Similar to pre-training, we do not maintain an independent item embedding table.
 事前学習と同様に、独立したアイテム埋め込みテーブルは保持しない。
@@ -418,7 +396,7 @@ $$
 where I𝑖 is the item feature of item 𝑖.
 ここで、I𝑖は項目𝑖の項目特徴である。
 
-## Discussion 
+## 2.4. Discussion
 
 In this section, we briefly compare Recformer to other sequential recommendation methods to highlight the novelty of our method.
 このセクションでは、Recformerと他の逐次推薦法を簡単に比較し、我々の手法の新規性を強調する。
@@ -439,14 +417,14 @@ Instead of trainable item embeddings or fixed item features from language models
 We expect the generality of natural language can improve the transferability of recommenders in order to benefit new domain adaptation and cold-start item understanding
 自然言語の一般性は、新たなドメイン適応やコールドスタートの項目理解のために、レコメンダーの移植性を向上させることができると期待している。
 
-# Experiments 実験
+# 3. Experiments 実験
 
 In this section, we empirically show the effectiveness of our proposed model Recformer and learning framework.
 このセクションでは、我々の提案するモデルRecformerと学習フレームワークの有効性を実証的に示す。
 
-## Experimental Setup 実験セットアップ
+## 3.1. Experimental Setup 実験セットアップ
 
-### Datasets. データセット
+### 3.1.1. Datasets. データセット
 
 To evaluate the performance of Recformer, we conduct pre-training and finetuning on different categories of Amazon review datasets [22].
 Recformerの性能を評価するために、我々はAmazonレビューデータセットの異なるカテゴリーに対して事前学習と微調整を行った[22]。
@@ -465,27 +443,27 @@ Then we group the interactions by users and sort them by timestamp ascendingly.
 Following previous work [12], we select item attributes title, categories and brand as key-value pairs for items.
 先行研究[12]に従い、アイテムのタイトル、カテゴリー、ブランドの属性をアイテムのキーと値のペアとして選択する。
 
-### Baselines. ベースライン
+### 3.1.2. Baselines. ベースライン
 
 We compare three groups of works as our baselines which include methods with only item IDs; methods using item IDs and treating item text as side information; and methods using only item texts as inputs.
 アイテムIDのみを使用する方法、アイテムIDを使用し、アイテムテキストをサイド情報として扱う方法、アイテムテキストのみを入力として使用する方法の3つのグループをベースラインとして比較する。
 
-- (1) ID-Only methods: • GRU4Rec [11] adopts RNNs to model user action sequences for session-based recommendations. We treat each user’s interaction sequence as a session. • SASRec [14] uses a directional self-attentive model to capture item correlations within a sequence. • BERT4Rec [27] employs a bi-directional self-attentive model with the cloze objective for modeling user behavior sequences. • RecGURU [16] proposes to pre-train sequence representations with an autoencoder in an adversarial learning paradigm. We do not consider overlapped users for this method in our setting. (2) ID-Text methods: • FDSA [37] uses a self-attentive model to capture item and feature transition patterns.• S 3 -Rec [38] pre-trains sequential models with mutual information maximization to learn the correlations among attributes, items, subsequences, and sequences. (3) Text-Only methods: • ZESRec [7] encodes item texts with a pre-trained language model as item features. We pre-train this method and finetune the model on six downstream datasets. • UniSRec [12] uses textual item representations from a pretrained language model and adapts to a new domain using an MoE-enhance adaptor. We initialize the model with the pre-trained parameters provided by the authors and finetune the model on target domains. (1)IDのみの手法 
-- GRU4Rec [11]は、セッションベースの推薦のために、ユーザーの行動シーケンスをモデル化するためにRNNを採用する。 各ユーザーのインタラクション・シーケンスをセッションとして扱う。 - SASRec [14]は、シーケンス内の項目相関を捕捉するために、方向性自己注視モデルを使用している。 - BERT4Rec [27]は、ユーザーの行動シーケンスをモデル化するために、クロース目的による双方向自己注 意モデルを採用している。 - RecGURU[16]は、敵対的学習パラダイムにおいて、オートエンコーダでシーケンス表現を事前学習することを提案している。 (2)ID-Text法： 
-- FDSA[37]は、項目と特徴の遷移パターンを捉えるために、自己学習モデルを用いる。 - S 3 -Rec[38]は、属性、項目、部分列、シーケンス間の相関を学習するために、相互情報最大化で逐次モデルを事前学習する： 
+- (1) ID-Only methods: • GRU4Rec [11] adopts RNNs to model user action sequences for session-based recommendations. We treat each user’s interaction sequence as a session. • SASRec [14] uses a directional self-attentive model to capture item correlations within a sequence. • BERT4Rec [27] employs a bi-directional self-attentive model with the cloze objective for modeling user behavior sequences. • RecGURU [16] proposes to pre-train sequence representations with an autoencoder in an adversarial learning paradigm. We do not consider overlapped users for this method in our setting. (2) ID-Text methods: • FDSA [37] uses a self-attentive model to capture item and feature transition patterns.• S 3 -Rec [38] pre-trains sequential models with mutual information maximization to learn the correlations among attributes, items, subsequences, and sequences. (3) Text-Only methods: • ZESRec [7] encodes item texts with a pre-trained language model as item features. We pre-train this method and finetune the model on six downstream datasets. • UniSRec [12] uses textual item representations from a pretrained language model and adapts to a new domain using an MoE-enhance adaptor. We initialize the model with the pre-trained parameters provided by the authors and finetune the model on target domains. (1)IDのみの手法
+- GRU4Rec [11]は、セッションベースの推薦のために、ユーザーの行動シーケンスをモデル化するためにRNNを採用する。 各ユーザーのインタラクション・シーケンスをセッションとして扱う。 - SASRec [14]は、シーケンス内の項目相関を捕捉するために、方向性自己注視モデルを使用している。 - BERT4Rec [27]は、ユーザーの行動シーケンスをモデル化するために、クロース目的による双方向自己注 意モデルを採用している。 - RecGURU[16]は、敵対的学習パラダイムにおいて、オートエンコーダでシーケンス表現を事前学習することを提案している。 (2)ID-Text法：
+- FDSA[37]は、項目と特徴の遷移パターンを捉えるために、自己学習モデルを用いる。 - S 3 -Rec[38]は、属性、項目、部分列、シーケンス間の相関を学習するために、相互情報最大化で逐次モデルを事前学習する：
 - ZESRec [7]は、事前に学習された言語モデルを用いて、項目のテキストを項目の特徴としてエンコードする。 この方法を事前に訓練し、6つのダウンストリームデータセットでモデルを微調整する。 - UniSRec [12]は、事前に学習された言語モデルからテキスト項目表現を使用し、MoE-enhanceアダプターを使用して新しいドメインに適応する。 我々は、著者から提供された事前訓練されたパラメータでモデルを初期化し、ターゲットドメイン上でモデルを微調整する。
 
-### Evaluation Settings. 評価設定。
+### 3.1.3. Evaluation Settings. 評価設定。
 
 To evaluate the performance of sequential recommendation, we adopt three widely used metrics NDCG@N, Recall@N and MRR, where N is set to 10.
 逐次推薦の性能を評価するために、NDCG@N、Recall@N、MRRの3つの広く使われている指標を採用する。
 For data splitting of finetuning datasets, we apply the leave-one-out strategy [14] for evaluation: the most recent item in an interaction sequence is used for testing, the second most recent item for validation and the remaining data for training.
-ファインチューニングデータセットのデータ分割のために、評価のためにリーブワンアウト戦略[14]を適用する： 
+ファインチューニングデータセットのデータ分割のために、評価のためにリーブワンアウト戦略[14]を適用する：
 相互作用のシーケンスの中で最も新しい項目がテストに、2番目に新しい項目が検証に、そして残りのデータがトレーニングに使用される。
 We rank the ground-truth item of each sequence among all items for evaluation and report the average scores of all sequences in the test data.
 各シーケンスのグランドトゥルースアイテムを全アイテムの中でランク付けして評価し、テストデータに含まれる全シーケンスの平均スコアを報告する。
 
-### Implementation Details. 実施内容
+### 3.1.4. Implementation Details. 実施内容
 
 We build Recformer based on Longformer implemented by Huggingface 4 .
 Huggingface4で実装されたLongformerをベースにRecformerを構築する。
@@ -504,7 +482,7 @@ We optimize Recformer with Adam optimizer with learning rate 5e-5 and adopt earl
 For baselines, we use the suggested settings introduced in [12].
 ベースラインについては、[12]で紹介されている推奨設定を使用する。
 
-## Overall Performance 総合成績
+## 3.2. Overall Performance 総合成績
 
 We compare Recformer to baselines on six datasets across different recommendation domains.
 Recformerとベースラインとの比較を、異なる推薦領域にわたる6つのデータセットで行う。
@@ -529,9 +507,9 @@ With two-stage finetuning, Recformer can be effectively adapted to downstream do
 The results illustrate the effectiveness of the proposed Recformer.
 この結果は、提案するRecformerの有効性を示している。
 
-## Low-Resource Performance 低リソース・パフォーマンス
+## 3.3. Low-Resource Performance 低リソース・パフォーマンス
 
-### Zero-Shot. ゼロショット。
+### 3.3.1. Zero-Shot. ゼロショット。
 
 To show the effectiveness of pre-training, we evaluate the zero-shot recommendation performance of three TextOnly methods (i.e., UniSRec, ZESRec, Recformer) and compare results to the average scores of three ID-Only methods fully trained on downstream datasets.
 事前学習の有効性を示すために、3つのTextOnly手法（UniSRec、ZESRec、Recformer）のゼロショット推薦性能を評価し、ダウンストリームデータセットで完全に訓練された3つのID-Only手法の平均スコアと結果を比較する。
@@ -550,7 +528,7 @@ Scientificデータセットでは、Recformerは、完全な訓練セットで�
 These results show that (1) natural language is promising as a general item representation across different recommendation scenarios; (2) Recformer can effectively learn knowledge from pre-training and transfer learned knowledge to downstream tasks based on language understanding.
 これらの結果は、(1)自然言語が様々な推薦シナリオに渡る一般的な項目表現として有望であること、(2)Recformerは事前学習から知識を効果的に学習し、学習した知識を言語理解に基づいて下流のタスクに転送できることを示している。
 
-### Low-Resource. 低資源。
+### 3.3.2. Low-Resource. 低資源。
 
 We conduct experiments with SASRec, UniSRec and Recformer in low-resource settings.
 SASRec、UniSRec、Recformerを使った実験を低リソース環境で行った。
@@ -571,9 +549,9 @@ Recformerは、学習データの比率を変えても最高の性能を発揮�
 On the Scientific dataset, Recformer outperforms other methods by a large margin with 1% and 5% of training data.
 Scientificデータセットでは、Recformerは1%と5%の学習データで他の手法に大きな差をつけた。
 
-## Further Analysis さらなる分析
+## 3.4. Further Analysis さらなる分析
 
-### Performance w.r.t. Cold-Start Items. パフォーマンス コールドスタート・アイテム
+### 3.4.1. Performance w.r.t. Cold-Start Items. パフォーマンス コールドスタート・アイテム
 
 In this section, we simulate this scenario by splitting a dataset into two parts, i.e., an in-set dataset and cold-start dataset.
 この節では、データセットを2つの部分、すなわちインセット・データセットとコールドスタート・データセットに分割して、このシナリオをシミュレートする。
@@ -602,7 +580,7 @@ Hence, IDonly methods are not able to handle cold-start items and applying text 
 For Text-only methods, Recformer greatly improves performance on both in-set and cold-start datasets compared to UniSRec which indicates learning language representations is superior to obtaining text features for recommendations.
 テキストのみの手法の場合、RecformerはUniSRecと比較して、インセットとコールドスタートの両方のデータセットでパフォーマンスを大幅に向上させる。これは、推薦のためのテキスト特徴を得るよりも、言語表現を学習する方が優れていることを示している。
 
-### Ablation Study. アブレーション研究。
+### 3.4.2. Ablation Study. アブレーション研究。
 
 We analyze how our proposed components influence the final sequential recommendation performance.
 提案する構成要素が最終的な逐次推薦の性能にどのような影響を与えるかを分析する。
@@ -639,7 +617,7 @@ Finally, we explore the effectiveness of our proposed model structure (i.e., ite
 Variant (6) removes the two embeddings and results show that the model in (6) causes performance decay on the instruments dataset which indicates the two embeddings are necessary when the gap between pre-training and finetuning is large.
 変形(6)は、2つの埋め込みを削除し、結果は、(6)のモデルは、事前学習と微調整の間のギャップが大きい場合に2つの埋め込みが必要であることを示す、計器データセット上で性能減衰を引き起こすことを示している。
 
-### Pre-training Steps vs. Performance. トレーニング前のステップとトレーニング後のステップの比較 パフォーマンス
+### 3.4.3. Pre-training Steps vs. Performance. トレーニング前のステップとトレーニング後のステップの比較 パフォーマンス
 
 We investigate the zeroshot sequential recommendation performance on downstream tasks over different pre-training steps and results on four datasets are shown in Figure 6.
 ゼロショット逐次レコメンデーションの性能を、異なる事前学習ステップの下流タスクで調査し、4つのデータセットでの結果を図6に示す。
@@ -650,7 +628,7 @@ However, we have a different situation in sequential recommendation.
 From Figure 6, we can see that most datasets already achieve their best performance after around 4,000 training steps and further pre-training may hurt the knowledge transferability on downstream tasks.
 図6から、ほとんどのデータセットは4,000ステップ程度の学習ですでに最高の性能を達成しており、これ以上の事前学習は下流のタスクでの知識伝達性を損なう可能性があることがわかる。
 We think there are two possible reasons: (1) We initialize most parameters from a Longformer model pre-trained by the MLM task.
-考えられる理由は2つある： 
+考えられる理由は2つある：
 (1) MLMタスクによって事前に訓練されたLongformerモデルからほとんどのパラメータを初期化する。
 In this case, the model already has some essential knowledge of natural languages.
 この場合、モデルはすでに自然言語に関する本質的な知識を持っている。
@@ -659,9 +637,9 @@ The domain adaptation from a general language understanding to the item text und
 For instance, the category Electronics has quite different words in item text compared to the Pets category.
 例えば、「エレクトロニクス」カテゴリーと「ペット」カテゴリーでは、アイテムのテキストに含まれる単語がかなり異なっている。
 
-# Related Work 関連作品
+# 4. Related Work 関連作品
 
-## Sequential Recommendation 
+## 4.1. Sequential Recommendation
 
 Sequential recommendation [11, 14, 27] aims to predict the next item based on historical user interactions.
 逐次推薦[11, 14, 27]は、過去のユーザーインタラクションに基づいて次のアイテムを予測することを目的としている。
@@ -690,7 +668,7 @@ In this paper, we explore unifying the language understanding and sequential rec
 We aim to have a sequential recommendation method that can effectively model cold-start items and learn transferable sequential patterns for different recommendation scenarios.
 我々は、コールドスタート項目を効果的にモデル化し、様々な推薦シナリオに対して転送可能な順序パターンを学習できる逐次推薦手法を持つことを目指している。
 
-## Transfer Learning for Recommendation 推薦のための転移学習
+## 4.2. Transfer Learning for Recommendation 推薦のための転移学習
 
 Data sparsity and cold-start item understanding issues are challenging in recommender systems and recent studies [33, 39, 40] explore transferring knowledge across different domains to improve the recommendation at the target domain.
 最近の研究[33, 39, 40]では、ターゲットドメインでの推薦を改善するために、異なるドメイン間で知識を転送することを探求している。
@@ -705,7 +683,7 @@ In this work, we have the same target as previous transfer learning for recommen
 However, instead of relying on common users, items and attributes or encoding items with pre-trained language models, we directly learn language representations for sequential recommendation and hence transfer knowledge based on the generality of natural languages.
 しかし、一般的なユーザー、アイテム、属性に依存したり、事前に訓練された言語モデルでアイテムをエンコードしたりするのではなく、逐次推薦のための言語表現を直接学習することで、自然言語の一般性に基づく知識の伝達を行う。
 
-# Conclusion 結論
+# 5. Conclusion 結論
 
 In this paper, we propose Recformer, a framework that can effectively learn language representations for sequential recommendation.
 本稿では、逐次推薦のための言語表現を効果的に学習するフレームワークRecformerを提案する。
