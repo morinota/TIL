@@ -289,78 +289,87 @@ To have an effective and efficient language model for the sequential recommendat
 ### 2.3.1. Pre-training. 事前トレーニング
 
 The target of pre-training is to obtain a highquality parameter initialization for downstream tasks.
-事前トレーニングの目的は、下流タスクのための高品質なパラメータ初期化を得ることである。
+**事前トレーニングの目的は、下流タスクのための高品質なパラメータ初期化を得ること**である。
 Different from previous sequential recommendation pre-training methods which consider only recommendations, we need to consider both language understanding and recommendations.
-レコメンデーションのみを考慮した従来の逐次レコメンデーション事前学習法とは異なり、言語理解とレコメンデーションの両方を考慮する必要がある。
+推薦のみを考慮した従来の逐次レコメンデーション事前学習法とは異なり、言語理解とレコメンデーションの両方を考慮する必要がある。
 Hence, to pre-train Recformer, we adopt two tasks: (1) Masked Language Modeling (MLM) and (2) an item-item contrastive task.
 そこで、Recformerを事前に学習させるために、2つのタスクを採用した：
-(1)マスク言語モデリング(MLM)と(2)項目-項目対照タスクである。
+**(1)マスク言語モデリング(MLM)** と **(2)item-item contrastive**タスクである。
+
 Masked Language Modeling (MLM) [6] is an effective pre-training method for language understanding and has been widely used for various NLP pre-training tasks such as sentence understanding [8], phrase understanding [18].
-マスク言語モデリング（MLM）[6]は、言語理解のための効果的な事前学習手法であり、文の理解[8]、フレーズの理解[18]など、様々なNLPの事前学習タスクに広く利用されている。
+マスク言語モデリング(MLM)[6]は、言語理解のための効果的な事前学習手法であり、文の理解[8]、フレーズの理解[18]など、様々なNLPの事前学習タスクに広く利用されている。
 Adding MLM as an auxiliary task will prevent language models from forgetting the word semantics when models are jointly trained with other specific tasks.
-補助タスクとしてMLMを追加することで、モデルが他の特定のタスクと共同で学習される際に、言語モデルが単語の意味を忘れてしまうことを防ぐことができる。
+**補助タスクとしてMLMを追加することで、モデルが他の特定のタスクと共同で学習される際に、言語モデルが単語の意味を忘れてしまうことを防ぐことができる**。
 For recommendation tasks, MLM can also eliminate the language domain gap between a general language corpus and item texts.
 推薦タスクの場合、MLMは一般的な言語コーパスとアイテムテキストとの間の言語ドメインギャップをなくすこともできる。
 In particular, following BERT [6], the training data generator chooses 15% of the token positions at random for prediction.
-特に、BERT [6]に従い、訓練データ生成器はトークン位置の15%を予測用にランダムに選択する。
+**特に、BERT [6]に従い、訓練データ生成器はtoken positionsの15%を予測用にランダムに選択する。(ランダムにmaskする。masked-token-predictionタスク!)**
 If the token is selected, we replace the token with (1) the [MASK] with probability 80%; (2) a random token with probability 10%; (3) the unchanged token with probability 10%.
 トークンが選択された場合、トークンを(1) 80%の確率で[MASK]、(2) 10%の確率でランダムなトークン、(3) 10%の確率で変更前のトークンに置き換える。
 The MLM loss is calculated as:
 MLMの損失は次のように計算される：
 
 $$
+\mathbf{m} = LayerNorm(GELU(\mathbf{W}_h \mathbf{h}_w + \mathbf{b}_h))
 \tag{7}
 $$
 
 $$
+p = Softmax(\mathbf{W}_0 \mathbf{m} + \mathbf{b}_0)
 \tag{8}
 $$
 
 $$
+L_{MLM} = - \sum_{i=0}^{|V|} y_{i} \log(p_{i})
 \tag{9}
 $$
 
-where Wℎ ∈ R 𝑑×𝑑 , bℎ ∈ R 𝑑 , W0 ∈ R |V |×𝑑 , b0 ∈ R |V | , GELU is the GELU activation function [10] and V is the vocabulary used in the language model.
-V
+where $\mathbf{W}_h \in \mathbb{R}^{d \times d}$, $\mathbf{b}_h \in \mathbb{R}^{d}$ , $\mathbf{W}_0 \in \mathbb{R}^{|V| \times d}$, $\mathbf{b}_0 \in \mathbb{R}^{|V|}$ , GELU is the GELU activation function [10] and $V$ is the vocabulary used in the language model.
 
 Another pre-training task for Recformer is the item-item contrastive (IIC) task which is widely used in the next item prediction for recommendations.
-Recformerのもう一つの事前学習タスクは、レコメンデーションの次のアイテム予測に広く使われているIIC（item-item contrastive）タスクである。
+Recformerのもう一つの事前学習タスクは、**レコメンデーションの次のアイテム予測に広く使われているIIC（item-item contrastive）タスク**である。
 We use the ground-truth next items as positive instances following previous works [12, 14, 27].
-我々は、先行研究[12, 14, 27]に従い、グランド・トゥルースの次の項目をポジティブ・インスタンスとして使用する。
+我々は、先行研究[12, 14, 27](=有名なself-attention型逐次推薦の既存研究達!)に従い、**ground-truthであるnext-itemをポジティブ・インスタンス(=positive example)として使用**する。
 However, for negative instances, we adopt in-batch next items as negative instances instead of negative sampling [14] or fully softmax [12, 27].
-ただし、負インスタンスについては、負サンプリング[14]や完全ソフトマックス[12, 27]の代わりに、バッチ内次アイテムを負インスタンスとして採用する。
+ただし、負インスタンスについては、負サンプリング[14]や完全ソフトマックス[12, 27]の代わりに、**in-batch next itemsを負インスタンス(=negative example)として採用する**。(in-batch next-items = たぶん同じbatch内の他のtraining examplesのground truthの事??:thinking: 後述されてるけど、false negativeになる可能性はあるよね...!!)
 Previous recommenders maintain an item embedding table, hence they can easily retrieve item embeddings for training and update embeddings.
-これまでの推薦者は、項目埋め込みテーブルを保持しており、学習や埋め込み更新のために項目埋め込みを簡単に取り出すことができる。
+これまでの推薦システムは、item埋め込みテーブル(=ID-embeddingのvocabulary的な??)を保持しており、学習や埋め込み更新のためにitem埋め込みを簡単に取り出すことができる。
 In our case, item embeddings are from Recformer, so it is infeasible to re-encode items (from sampling or full set) per batch for training.
-私たちの場合、項目の埋め込みはRecformerによるものであるため、学習のためにバッチごとに（サンプリングまたはフルセットから）項目を再エンコードすることは不可能である。
+私たちの場合、item埋め込みはRecformerによるものであるため、学習のためにバッチごとに(サンプリングまたはフルセットから)item を再encodeすることは不可能である。
 In-batch negative instances [3] are using ground truth items of other instance sequences in the same batch as negative items.
 バッチ内負インスタンス[3]は、負アイテムとして、同じバッチ内の他のインスタンスシーケンスのグランドトゥルースアイテムを使用する。
 Although it is possible to provide false negatives, false negatives are less likely in the pre-training dataset with a large size.
-偽陰性を提供する可能性はあるが、サイズが大きい事前学習データセットでは偽陰性の可能性は低い。
+偽陰性(=本当はpositiveなのにnegativeとしてラベル付けしてしまうケース)を提供する可能性はあるが、サイズが大きい事前学習データセットでは偽陰性の可能性は低い。
 Furthermore, the target of pre-training is to provide high-quality initialized parameters and we have the finetuning with accurate supervision for downstream tasks.
-さらに、事前学習の目標は、高品質の初期化されたパラメータを提供することであり、下流のタスクのために正確な監視による微調整を行う。
+さらに、**事前学習の目標は、高品質の初期化されたパラメータを提供すること**であり、下流のタスクのために正確な監視によるfine-tuningを行う。
 Therefore, we claim that inbatch negatives will not hurt the recommendation performance but have much higher training efficiency than accurate supervision.
-したがって、インバッチネガティブは推薦性能を損なわず、正確な監視よりもはるかに高い学習効率が得られると主張する。
+したがって、**in-batch negatives は推薦性能を損なわず、正確な監視よりもはるかに高い学習効率が得られると主張**する。
 Formally, the item-item contrastive loss is calculated as:
-正式には、項目対比損失は次のように計算される：
+正式には、item-item contrastiveタスクの損失は次のように計算される：
 
 $$
+L_{IIC} = - \log \frac{
+    e^{sim(h_s, h_{i}^{+}) / \tau}
+    }{
+    \sum_{i \in \mathcal{B}} e^{sim(h_s, h_{i}) / \tau}
+}
 \tag{10}
 $$
 
 where sim is the similarity introduced in Equation (5); h + 𝑖 is the representation of the ground truth next item; B is the ground truth item set in one batch and 𝜏 is a temperature parameter.
-ここで、simは式(5)で導入された類似度であり、h +𝑖 は次の項目の表現であり、Bは1バッチで設定されたグランドトゥルース項目であり、↪L_1D70F↩は温度パラメータである。
+ここで、simは式(5)で導入された類似度であり、$h_{i}^{+}$ はground-truthのnext-item表現であり、$\mathcal{B}$ は1 batchで設定された ground-truth items であり、$\tau$ は**temperatureパラメータ**である。
 At the pre-training stage, we use a multi-task training strategy to jointly optimize Recformer:
-事前学習段階では、マルチタスク学習戦略を用いてRecformerを共同最適化する：
+事前学習段階では、**マルチタスク学習戦略を用いてRecformerを共同最適化する**:
 
 $$
+L_{pre-training} = L_{IIC} + \lambda L_{MLM}
 \tag{11}
 $$
 
 where 𝜆 is a hyper-parameter to control the weight of MLM task loss.
-ここで、↪Ll_1 はMLMタスクロスの重みを制御するハイパーパラメータである。
+ここで、$\lambda$ はMLMタスクlossの重みを制御するハイパーパラメータである。
 The pre-trained model will be fine-tuned for new scenarios.
-事前に訓練されたモデルは、新しいシナリオのために微調整される。
+事前に訓練されたモデルは、新しいシナリオのためにfine-tuningされる。
 
 ### 2.3.2. Two-Stage Finetuning. 2段階の微調整。
 
