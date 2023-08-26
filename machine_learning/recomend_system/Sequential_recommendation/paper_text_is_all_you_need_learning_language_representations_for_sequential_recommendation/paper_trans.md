@@ -358,6 +358,7 @@ $$
 
 where sim is the similarity introduced in Equation (5); h + 𝑖 is the representation of the ground truth next item; B is the ground truth item set in one batch and 𝜏 is a temperature parameter.
 ここで、simは式(5)で導入された類似度であり、$h_{i}^{+}$ はground-truthのnext-item表現であり、$\mathcal{B}$ は1 batchで設定された ground-truth items であり、$\tau$ は**temperatureパラメータ**である。
+
 At the pre-training stage, we use a multi-task training strategy to jointly optimize Recformer:
 事前学習段階では、**マルチタスク学習戦略を用いてRecformerを共同最適化する**:
 
@@ -373,66 +374,74 @@ The pre-trained model will be fine-tuned for new scenarios.
 
 ### 2.3.2. Two-Stage Finetuning. 2段階の微調整。
 
+![algo1]()
+
 Similar to pre-training, we do not maintain an independent item embedding table.
-事前学習と同様に、独立したアイテム埋め込みテーブルは保持しない。
+事前学習と同様に、独立したアイテム埋め込みテーブルは保持しない。(ID-freeな手法なので...!)
 Instead, we encode items by Recformer.
-その代わりに、Recformerによってアイテムをエンコードする。
+その代わりに、Recformerによってアイテムをencodeする。(item "sentence"を使うんだよね...!)
 However, in-batch negatives cannot provide accurate supervision in a small dataset because it is likely to have false negatives which undermine recommendation performance.
-しかし、バッチ内否定は、推薦性能を損なう偽否定が発生する可能性が高いため、小さなデータセットでは正確な監視を提供できない。
+しかし、in-batch negative(手法)は、推薦性能を損なうfalse-negativeが発生する可能性が高いため、小さなデータセットでは正確な監視を提供できない。(pre-trainingではデータが多いからOKだけど...!)
 To solve this problem, we propose two-stage finetuning as shown in Algorithm 1.
 この問題を解決するために、アルゴリズム1に示すような2段階の微調整を提案する。
-The key idea is to maintain an item feature matrix I ∈ R | I |×𝑑 .
-I
+The key idea is to maintain an item feature matrix $I \in \mathbb{R}^{|I| \times d}$.
+重要なアイデアは、item feature matrix $\mathbf{I} \in \mathbb{R}^{|I| \times d}$ を維持する事である。
 Different from the item embedding table, I is not learnable and all item features are encoded from Recformer.
-アイテム埋め込みテーブルとは異なり、Iは学習可能ではなく、すべてのアイテムの特徴はRecformerからエンコードされる。
+アイテム埋め込みテーブルとは異なり、$I$ は学習可能ではなく、すべてのitem featureはRecformerからエンコードされる。
 As shown in Algorithm 1, our proposed finetuning method has two stages.
 アルゴリズム1に示すように、我々の提案するファインチューニング法には2つの段階がある。
 In stage 1, I is updated (line 4) per epoch,3 whereas, in stage 2 we freeze I and update only parameters in model 𝑀.
-ステージ1では、Iはエポックごとに更新される（4行目）3が、ステージ2ではIを凍結し、モデルǔのパラメータのみを更新する。
+ステージ1では、$\mathbf{I}$ はepochごとに更新される(4行目)が、ステージ2では $\mathbf{I}$ を凍結し、モデルのパラメータ $M$ のみを更新する。
+(ここで更新とは、全てのitemをRecformerでencodeすることを意味する)
 The basic idea is that although the model is already pre-trained, item representations from the pre-trained model can still be improved by further training on downstream datasets.
-基本的な考え方は、モデルはすでに事前訓練されているが、事前訓練されたモデルからの項目表現は、下流のデータセットでさらに訓練することで改善できるということである。
+基本的な考え方は、モデルはすでに事前訓練されているが、**事前訓練されたモデルからのitem表現は、下流のデータセットでさらに訓練することで改善できる**ということである。
 It is expensive to re-encode all items in every batch hence we re-encode all items in every epoch to update I (line 4) and use I as supervision for item-item contrastive learning (line 5).
-バッチごとに全項目を再エンコードするのはコストがかかるので、エポックごとに全項目を再エンコードしてIを更新し（4行目）、Iを項目-項目対比学習のスーパービジョンとして使用する（5行目）。
+batchごとに全itemを再encodeするのはコストがかかるので、epochごとに全itemを再encodeして $\mathbf{I}$ を更新し(4行目)、$\mathbf{I}$ をitem-item contrastive学習のsupervisionとして使用する(5行目)(supervisionって何?)。
 After obtaining the best item representations, we re-initialize the model with the corresponding parameters (line 12) and start stage 2.
-最適な項目表現が得られたら、対応するパラメータでモデルを再初期化し（12行目）、ステージ2を開始する。
+最適なitem表現が得られたら、対応するパラメータでモデルを再初期化し(12行目)、ステージ2を開始する。
 Since I keeps updating in stage 1, the supervision for finetuning is also changing.
-第1ステージでアップデートを繰り返しているので、微調整のための監督も変わってきている。
+第1ステージでアップデートを繰り返しているので、fine-tuningのためのsupervisionも変わってきている。
 In this case, the model is hard to be optimized to have the best performance.
-この場合、モデルを最適化するのは難しい。
+この場合、bestな性能を持つようにモデルを最適化するのは難しい。(supervision=監督がその都度変わるから??)
 Therefore, we freeze I and continue training the model until achieving the best performance on the validation dataset.
-そこで、Iを凍結し、検証データセットで最高の性能を達成するまでモデルの訓練を続ける。
+そこで、$\mathbf{I}$ を凍結し、**検証データセットで最高の性能を達成するまでモデルの訓練を続ける**。
+
 The learning task used in finetuning is item-item contrastive learning which is the same as pre-training but with fully softmax instead of in-batch negatives.
-ファインチューニングで使用される学習タスクは項目対比学習であり、これは事前学習と同じであるが、バッチ内否定の代わりに完全なソフトマックスを使用する。
+ファインチューニングで使用される学習タスクはitem-item contrastive学習であり、これは事前学習と同じであるが、in-batch negative手法の代わりにfully softmax(=negative exampleを得る為の別の手法??)を使用する。
 The finetuning loss is calculated as:
 微調整ロスは次のように計算される：
 
 $$
+L_{fine-tuning} = - \log \frac{e^{sim(h_s, \mathbf{I}_{i}^{+}) / \tau}}{\sum_{i \in \mathcal{I}} e^{sim(h_s, \mathbf{I}_{i}) / \tau}}
 \tag{12}
 $$
 
 where I𝑖 is the item feature of item 𝑖.
-ここで、I𝑖は項目𝑖の項目特徴である。
+ここで、$\mathbf{I}_{i}$ はitem $i$ のitem featureである。(Recformerによってencodeされた各item sentence??)
 
 ## 2.4. Discussion
 
 In this section, we briefly compare Recformer to other sequential recommendation methods to highlight the novelty of our method.
 このセクションでは、Recformerと他の逐次推薦法を簡単に比較し、我々の手法の新規性を強調する。
-Traditional sequential recommenders such as GRU4Rec [11], SASRec [14] and BERT4Rec [27] rely on item IDs and corresponding trainable item embeddings to train a sequential model for recommendations.
-GRU4Rec [11]、SASRec [14]、BERT4Rec [27]のような従来の逐次レコメンダーは、レコメンデーションのための逐次モデルを学習するために、アイテムIDと対応する学習可能なアイテム埋め込みに依存している。
+
+**Traditional sequential recommenders** such as GRU4Rec [11], SASRec [14] and BERT4Rec [27] rely on item IDs and corresponding trainable item embeddings to train a sequential model for recommendations.
+GRU4Rec [11]、SASRec [14]、BERT4Rec [27]のような従来の逐次レコメンダーは、レコメンデーションのための逐次モデルを学習するために、**アイテムIDと対応する学習可能なアイテム埋め込みに依存している**。
 These item embeddings are learned from sequential patterns of user interactions.
-これらのアイテム埋め込みは、ユーザーとのインタラクションの連続パターンから学習される。
+これらのアイテム埋め込みは、ユーザとのインタラクションの連続パターンから学習される。
 However, as mentioned in [20], these approaches suffer from data sparsity and can not perform well with cold-start items.
-しかし、[20]で述べられているように、これらのアプローチはデータのスパース性に悩まされ、コールドスタートアイテムではうまく機能しない。
-To reduce the dependence on item IDs, some context-aware sequential recommenders such as UniSRec [12], S3 -Rec [38], ZESRec [7] are proposed to incorporate side information (e.g., categories, titles) as prior knowledge for recommendations.
-アイテムIDへの依存を減らすために、UniSRec [12]、S3 -Rec [38]、ZESRec [7]のようなコンテキストを考慮した逐次推薦器が提案されている。
+しかし、[20]で述べられているように、これらのアプローチはデータのsparse性に悩まされ、コールドスタートアイテムではうまく機能しない。
+
+To reduce the dependence on item IDs, **some context-aware sequential recommenders** such as UniSRec [12], S3-Rec [38], ZESRec [7] are proposed to incorporate side information (e.g., categories, titles) as prior knowledge for recommendations.
+**アイテムIDへの依存を減らすために**、UniSRec [12]、S3 -Rec [38]、ZESRec [7]のような**context-awareな逐次推薦器**が提案されている。
 All of these approaches rely on a feature extractor such as BERT [6] to obtain item feature vectors and then fuse these vectors into item representations with an independent sequential model.
-これらのアプローチはすべて、BERT [6]のような特徴抽出器に依存して、項目特徴ベクトルを取得し、次 にこれらのベクトルを独立逐次モデルで項目表現に融合する。
+これらのアプローチはすべて、**BERT [6]のような特徴抽出器に依存**して、item特徴ベクトルを取得し、次にこれらのベクトルを独立逐次モデルでitem表現に融合する。
+
 In this paper, we explore conducting sequential recommendations in a new paradigm that learns language representations for the next item recommendations.
-本稿では、次のアイテムを推薦するための言語表現を学習する新しいパラダイムで、逐次推薦を行うことを探求する。
+本稿では、**next-itemを推薦するための言語表現を学習する新しいパラダイム**で、逐次推薦を行うことを探求する。
 Instead of trainable item embeddings or fixed item features from language models, we bridge the gap between natural language understanding and sequential recommendation to directly learn representations of items and user sequences based on words.
-学習可能な項目埋め込みや言語モデルからの固定項目特徴の代わりに、自然言語理解とシーケンシャル・レコメンデーションのギャップを埋め、単語に基づいて項目とユーザーシーケンスの表現を直接学習する。
+学習可能なitem埋め込みや言語モデルからの固定item特徴の代わりに、自然言語理解とシーケンシャル・レコメンデーションのギャップを埋め、単語に基づいてitemとユーザーシーケンスの表現を直接学習する。
 We expect the generality of natural language can improve the transferability of recommenders in order to benefit new domain adaptation and cold-start item understanding
-自然言語の一般性は、新たなドメイン適応やコールドスタートの項目理解のために、レコメンダーの移植性を向上させることができると期待している。
+自然言語の一般性は、新たなドメイン適応やコールドスタートのitem理解のために、**レコメンダーの移植性(transferability)を向上(cross-domain推薦の話...!)**させることができると期待している。
 
 # 3. Experiments 実験
 
