@@ -452,63 +452,87 @@ In this section, we empirically show the effectiveness of our proposed model Rec
 
 ### 3.1.1. Datasets. データセット
 
+![table1]()
+
 To evaluate the performance of Recformer, we conduct pre-training and finetuning on different categories of Amazon review datasets [22].
 Recformerの性能を評価するために、我々はAmazonレビューデータセットの異なるカテゴリーに対して事前学習と微調整を行った[22]。
 The statistics of datasets after preprocessing are shown in Table 1.
 前処理後のデータセットの統計を表1に示す。
-For pre-training, seven categories are selected as training data including “Automotive”, “Cell Phones and Accessories”, “Clothing Shoes and Jewelry”, “Electronics”, “Grocery and Gourmet Food”, “Home and Kitchen”, “Movies and TV”, and one category “CDs and Vinyl” is left out as validation data.
-事前学習では、「自動車」、「携帯電話・アクセサリー」、「衣類・靴・宝飾品」、「電子機器」、「食料品・グルメ食品」、「家庭・台所」、「映画・テレビ」の7カテゴリを学習データとして選択し、検証データとして「CD・レコード」の1カテゴリを除外した。
+
+**For pre-training**, seven categories are selected as training data including “Automotive”, “Cell Phones and Accessories”, “Clothing Shoes and Jewelry”, “Electronics”, “Grocery and Gourmet Food”, “Home and Kitchen”, “Movies and TV”, and one category “CDs and Vinyl” is left out as validation data.
+事前学習では、「自動車」、「携帯電話・アクセサリー」、「衣類・靴・宝飾品」、「電子機器」、「食料品・グルメ食品」、「家庭・台所」、「映画・テレビ」の**7カテゴリを学習データとして選択**し、検証データとして「CD・レコード」の1カテゴリを除外した。
 Datasets from these categories are used as source domain datasets.
 これらのカテゴリのデータセットが、ソース・ドメインのデータセットとして使用される。
-For finetuning, we select six categories including “Industrial and Scientific”, “Musical Instruments”, “Arts, Crafts and Sewing”, “Office Products”, “Video Games”, “Pet Supplies”, as target domain datasets to evaluate Recformer.
+
+**For fine-tuning**, we select six categories including “Industrial and Scientific”, “Musical Instruments”, “Arts, Crafts and Sewing”, “Office Products”, “Video Games”, “Pet Supplies”, as target domain datasets to evaluate Recformer.
 Recformerを評価するために、"Industrial and Scientific"、"Musical Instruments"、"Arts, Crafts and Sewing"、"Office Products"、"Video Games"、"Pet Supplies "の6つのカテゴリーをターゲット・ドメイン・データセットとして選択する。
+
 For pre-training and finetuning, we use the five-core datasets provided by the data source and filter items whose title is missing.
-事前学習と微調整には、データソースから提供された5コアのデータセットを使用し、タイトルが欠落しているアイテムをフィルタリングする。
+事前学習とfine-tuningには、データソースから提供された5コアのデータセットを使用し、タイトルが欠落しているアイテムをフィルタリングする。
 Then we group the interactions by users and sort them by timestamp ascendingly.
-次に、ユーザーごとにインタラクションをグループ化し、タイムスタンプの昇順でソートする。
+次に、ユーザごとにinteractionをグループ化し、タイムスタンプの昇順でソートする。
 Following previous work [12], we select item attributes title, categories and brand as key-value pairs for items.
-先行研究[12]に従い、アイテムのタイトル、カテゴリー、ブランドの属性をアイテムのキーと値のペアとして選択する。
+先行研究[12]に従い、**アイテムのタイトル、カテゴリー、ブランドの属性をアイテムのkey-valueペアとして選択**する。
 
 ### 3.1.2. Baselines. ベースライン
 
 We compare three groups of works as our baselines which include methods with only item IDs; methods using item IDs and treating item text as side information; and methods using only item texts as inputs.
-アイテムIDのみを使用する方法、アイテムIDを使用し、アイテムテキストをサイド情報として扱う方法、アイテムテキストのみを入力として使用する方法の3つのグループをベースラインとして比較する。
+我々は**3つのグループ**をベースラインとして比較する: アイテムIDのみを使用する方法、アイテムIDを使用しitem textをサイド情報として扱う方法、アイテムテキストのみを入力として使用する方法。
 
-- (1) ID-Only methods: • GRU4Rec [11] adopts RNNs to model user action sequences for session-based recommendations. We treat each user’s interaction sequence as a session. • SASRec [14] uses a directional self-attentive model to capture item correlations within a sequence. • BERT4Rec [27] employs a bi-directional self-attentive model with the cloze objective for modeling user behavior sequences. • RecGURU [16] proposes to pre-train sequence representations with an autoencoder in an adversarial learning paradigm. We do not consider overlapped users for this method in our setting. (2) ID-Text methods: • FDSA [37] uses a self-attentive model to capture item and feature transition patterns.• S 3 -Rec [38] pre-trains sequential models with mutual information maximization to learn the correlations among attributes, items, subsequences, and sequences. (3) Text-Only methods: • ZESRec [7] encodes item texts with a pre-trained language model as item features. We pre-train this method and finetune the model on six downstream datasets. • UniSRec [12] uses textual item representations from a pretrained language model and adapts to a new domain using an MoE-enhance adaptor. We initialize the model with the pre-trained parameters provided by the authors and finetune the model on target domains. (1)IDのみの手法
-- GRU4Rec [11]は、セッションベースの推薦のために、ユーザーの行動シーケンスをモデル化するためにRNNを採用する。 各ユーザーのインタラクション・シーケンスをセッションとして扱う。 - SASRec [14]は、シーケンス内の項目相関を捕捉するために、方向性自己注視モデルを使用している。 - BERT4Rec [27]は、ユーザーの行動シーケンスをモデル化するために、クロース目的による双方向自己注 意モデルを採用している。 - RecGURU[16]は、敵対的学習パラダイムにおいて、オートエンコーダでシーケンス表現を事前学習することを提案している。 (2)ID-Text法：
-- FDSA[37]は、項目と特徴の遷移パターンを捉えるために、自己学習モデルを用いる。 - S 3 -Rec[38]は、属性、項目、部分列、シーケンス間の相関を学習するために、相互情報最大化で逐次モデルを事前学習する：
-- ZESRec [7]は、事前に学習された言語モデルを用いて、項目のテキストを項目の特徴としてエンコードする。 この方法を事前に訓練し、6つのダウンストリームデータセットでモデルを微調整する。 - UniSRec [12]は、事前に学習された言語モデルからテキスト項目表現を使用し、MoE-enhanceアダプターを使用して新しいドメインに適応する。 我々は、著者から提供された事前訓練されたパラメータでモデルを初期化し、ターゲットドメイン上でモデルを微調整する。
+#### (1) ID-Only methods:
+
+- GRU4Rec [11] adopts RNNs to model user action sequences for session-based recommendations. We treat each user’s interaction sequence as a session.
+- GRU4Rec [11]は、セッションベースの推薦のために、ユーザーの行動シーケンスをモデル化するためにRNNを採用する。各ユーザの対話シーケンスをセッションとして扱う。
+- SASRec [14] uses a directional self-attentive model to capture item correlations within a sequence.
+- SASRec [14]は、シーケンス内のアイテムの相関を捕捉するために、方向性のある自己注視モデルを用いる。
+- BERT4Rec [27] employs a bi-directional self-attentive model with the cloze objective for modeling user behavior sequences.
+- BERT4Rec [27]は、ユーザの行動シーケンスをモデル化するために、クローズ目的による双方向自己注意モデルを採用している。
+- RecGURU [16] proposes to pre-train sequence representations with an autoencoder in an adversarial learning paradigm. We do not consider overlapped users for this method in our setting.
+- RecGURU[16]は、敵対的学習パラダイムにおいて、オートエンコーダを用いてシーケンス表現を事前学習することを提案している。この方法では、重複ユーザは考慮しない。
+
+#### (2) ID-Text methods:
+
+- FDSA [37] uses a self-attentive model to capture item and feature transition patterns. FDSA[37]は、itemとfeatureの遷移パターンを捕捉するために自己注意モデルを使用する。
+- S3 -Rec [38] pre-trains sequential models with mutual information maximization to learn the correlations among attributes, items, subsequences, and sequences. S3-Rec [38] は、属性、アイテム、サブシーケンス、シーケンス間の相関を学習するために、相互情報最大化で逐次モデルを事前学習する。
+
+#### (3) Text-Only methods:
+
+- ZESRec [7] encodes item texts with a pre-trained language model as item features. We pre-train this method and finetune the model on six downstream datasets. ZESRec [7]は**事前学習された言語モデル(sentence BERTとか?)をitem featureとしてアイテムのテキストをエンコードする**(これは楽そう...!OpenAIのAPIを使って作ったembeddingでも良いのかな)。我々はこの手法を事前学習し、6つのダウンストリームデータセットでモデルを微調整している。
+- UniSRec [12] uses textual item representations from a pretrained language model and adapts to a new domain using an MoE-enhance adaptor. We initialize the model with the pre-trained parameters provided by the authors and finetune the model on target domains. UniSRec[12]は**事前学習された言語モデル(sentence BERTとか?)からアイテムテキスト表現を使用**し、MoE-enhanceアダプタを使用して**新しいドメインに適応**(fine-tuningするってことかな?)する。我々は、著者によって提供された事前訓練されたパラメータでモデルを初期化し、ターゲットドメイン上でモデルを微調整する。
 
 ### 3.1.3. Evaluation Settings. 評価設定。
 
 To evaluate the performance of sequential recommendation, we adopt three widely used metrics NDCG@N, Recall@N and MRR, where N is set to 10.
 逐次推薦の性能を評価するために、NDCG@N、Recall@N、MRRの3つの広く使われている指標を採用する。
 For data splitting of finetuning datasets, we apply the leave-one-out strategy [14] for evaluation: the most recent item in an interaction sequence is used for testing, the second most recent item for validation and the remaining data for training.
-ファインチューニングデータセットのデータ分割のために、評価のためにリーブワンアウト戦略[14]を適用する：
-相互作用のシーケンスの中で最も新しい項目がテストに、2番目に新しい項目が検証に、そして残りのデータがトレーニングに使用される。
+ファインチューニングデータセットのデータ分割のために、評価のために**leave-one-out戦略**[14]を適用する:
+interaction sequenceの中で最も新しいitemがテストに、2番目に新しいitemが検証に、そして残りのデータがトレーニングに使用される。(なるほど、わかりやすい...!)
 We rank the ground-truth item of each sequence among all items for evaluation and report the average scores of all sequences in the test data.
-各シーケンスのグランドトゥルースアイテムを全アイテムの中でランク付けして評価し、テストデータに含まれる全シーケンスの平均スコアを報告する。
+各sequenceのground-truthアイテムを全アイテムの中でランク付けして評価し、テストデータに含まれる全sequenceの平均スコアを報告する。
 
-### 3.1.4. Implementation Details. 実施内容
+### 3.1.4. Implementation Details. 実装の詳細
 
-We build Recformer based on Longformer implemented by Huggingface 4 .
-Huggingface4で実装されたLongformerをベースにRecformerを構築する。
+We build Recformer based on Longformer implemented by Huggingface.
+Huggingface4で実装されたLongformerをベースにRecformerを構築する。(https://huggingface.co/docs/transformers/index)
 For efficient computing, we set the size of the local attention windows in Longformer to 64.
-効率的な計算のために、Longformerのローカルアテンションウィンドウのサイズを64に設定した。
+効率的な計算のために、Longformerのlocal attention windowのサイズを64に設定した。
 The maximum number of tokens is 32 for each attribute and 1,024 for each interaction sequence (i.e., 𝑋 in Equation (1)).
-トークンの最大数は、各属性について32個、各相互作用シーケンスについて1,024個である（すなわち、式（1）の𝑋）。
+**トークンの最大数**(= $l$ だっけ?)は、各属性(=attribute)について32個、各interaction sequence(i.e. 式（1）の$X$)について1,024個である。
 The maximum number of items in a user sequence is 50 for all baselines and Recformer.
-ユーザー・シーケンスの最大アイテム数は、すべてのベースラインとRecformerで50である。
+**ユーザ・シーケンスの最大アイテム数**(= $n$ だっけ??)は、すべてのベースラインとRecformerで50である。
 The temperature parameter 𝜏 is 0.05 and the weight of MLM loss 𝜆 is 0.1.Other than token type embedding and item position embedding in Recformer, other parameters are initialized with pre-trained parameters of Longformer 5 before pre-training.
-温度パラメータᵰは0.05、MLM損失の重み𝜆は0.1である。Recformerのトークン型埋め込みとアイテム位置埋め込み以外のパラメータは、事前学習前にLongformer 5の事前学習済みパラメータで初期化されている。
+温度パラメータ $\tau$ は0.05、MLM損失の重み $\lambda$ は0.1である。Recformerの**token type埋め込み とitem position埋め込み以外のパラメータは、事前学習前にLongformerの事前学習済みパラメータ (https://huggingface.co/allenai/longformer-base-4096) で初期化されている**。
+(あ、なるほど。それをfine-tuningする的なイメージなのかな??)
 The batch size is 64 for pre-training and 16 for finetuning.
-バッチサイズは、事前学習用に64、微調整用に16である。
+batch sizeは、事前学習用に64、微調整用に16である。
 We optimize Recformer with Adam optimizer with learning rate 5e-5 and adopt early stop with the patience of 5 epochs to prevent overfitting.
-学習率5e-5のアダム・オプティマイザでRecformerを最適化し、オーバーフィッティングを防ぐために5エポックの忍耐で早期停止を採用する。
+学習率5e-5のアダム・オプティマイザでRecformerを最適化し、オーバーフィッティングを防ぐために5 epochの忍耐で早期停止を採用する。
 For baselines, we use the suggested settings introduced in [12].
 ベースラインについては、[12]で紹介されている推奨設定を使用する。
 
 ## 3.2. Overall Performance 総合成績
+
+![table2]()
 
 We compare Recformer to baselines on six datasets across different recommendation domains.
 Recformerとベースラインとの比較を、異なる推薦領域にわたる6つのデータセットで行う。
