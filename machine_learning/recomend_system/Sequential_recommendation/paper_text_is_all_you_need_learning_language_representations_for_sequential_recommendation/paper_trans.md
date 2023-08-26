@@ -538,20 +538,22 @@ We compare Recformer to baselines on six datasets across different recommendatio
 Recformerとベースラインとの比較を、異なる推薦領域にわたる6つのデータセットで行う。
 Results are shown in Table 2.
 結果を表2に示す。
+
 For baselines, ID-Text methods (i.e., FDSA and S3 -Rec) achieve better results compared to ID-Only and Text-Only methods in general.
-ベースラインについては、ID-Text法（すなわち、FDSAとS3 -Rec）は、一般的にID-Only法やText-Only法よりも良い結果を達成している。
+ベースラインについては、**ID-Text法（すなわち、FDSAとS3 -Rec）は、一般的にID-Only法やText-Only法よりも良い結果を達成している**。
 Because ID-Text methods include item IDs and content features, they can learn both content-based information and sequential patterns from finetuning.
-ID-Textメソッドは、アイテムIDとコンテンツ特徴を含むため、コンテンツベースの情報と、微調整によるシーケンシャルパターンの両方を学習することができる。
+ID-Textメソッドは、アイテムIDとコンテンツ特徴を含むため、**コンテンツベースの情報と、fine-tuningによるシーケンシャルパターンの両方を学習することができる**。
 Comparing Text-Only methods and ID-Only methods, we can find that on the Scientific, Instruments, and Pet datasets, Text-Only methods perform better than ID-Only methods.
-テキストのみのメソッドとIDのみのメソッドを比較すると、科学、機器、ペットのデータセットでは、テキストのみのメソッドの方がIDのみのメソッドよりも性能が良いことがわかる。
+テキストのみのメソッドとIDのみのメソッドを比較すると、**科学、機器、ペットのデータセットでは、テキストのみのメソッドの方がIDのみのメソッドよりも性能が良い**ことがわかる。
 A possible reason is that the item transitions in these three datasets are highly related to item texts (i.e., title, brand) hence text-only methods can recommend the next item based on content similarity.
-考えられる理由としては、これら3つのデータセットにおけるアイテム遷移は、アイテムのテキスト（タイトルやブランドなど）と関連性が高いため、テキストのみの手法では、内容の類似性に基づいて次のアイテムを推薦することができる。
+考えられる理由としては、**これら3つのデータセットにおけるアイテム遷移は、アイテムのテキスト(タイトルやブランドなど)と関連性が高い**ため、テキストのみの手法では、内容の類似性に基づいて次のアイテムを推薦することができる。
+
 Our proposed method Recformer, achieves the best overall performance on all datasets except the Recall@10 of Instruments.
-提案手法Recformerは、InstrumentsのRecall@10を除く全てのデータセットで最高の総合性能を達成した。
+提案手法Recformerは、InstrumentsのRecall@10を除く**全てのデータセットで最高の総合性能を達成した**。
 Recformer improves the NDCG@10 by 15.83% and MRR by 15.99% on average over the second best results.
 RecformerはNDCG@10を15.83%改善し、MRRを15.99%改善した。
 Different from baselines, Recformer learns language representations for sequential recommendation without pre-trained language models or item IDs.
-ベースラインとは異なり、Recformerは事前に学習した言語モデルやアイテムIDを使わずに、逐次推薦のための言語表現を学習する。
+ベースラインとは異なり、**Recformerは事前学習した言語モデルやアイテムIDを使わずに、逐次推薦のための言語表現を学習する**。
 With two-stage finetuning, Recformer can be effectively adapted to downstream domains and transferred knowledge from pre-training can consistently benefit finetuning tasks.
 2段階の微調整により、Recformerは下流のドメインに効果的に適応することができ、事前学習から伝達された知識は微調整タスクに一貫して役立つ。
 The results illustrate the effectiveness of the proposed Recformer.
@@ -559,12 +561,14 @@ The results illustrate the effectiveness of the proposed Recformer.
 
 ## 3.3. Low-Resource Performance 低リソース・パフォーマンス
 
-### 3.3.1. Zero-Shot. ゼロショット。
+### 3.3.1. Zero-Shot. ゼロショット。(fine-tuningしないって事?)
+
+![fig4]()
 
 To show the effectiveness of pre-training, we evaluate the zero-shot recommendation performance of three TextOnly methods (i.e., UniSRec, ZESRec, Recformer) and compare results to the average scores of three ID-Only methods fully trained on downstream datasets.
-事前学習の有効性を示すために、3つのTextOnly手法（UniSRec、ZESRec、Recformer）のゼロショット推薦性能を評価し、ダウンストリームデータセットで完全に訓練された3つのID-Only手法の平均スコアと結果を比較する。
+事前学習の有効性を示すために、3つのTextOnly手法(UniSRec、ZESRec、Recformer)のゼロショット推薦性能を評価し、下流データセットで完全に訓練された3つのID-Only手法の平均スコアと結果を比較する。
 The zero-shot recommendation setting requires models to learn knowledge from pre-training datasets and directly test on downstream datasets without further training.
-ゼロショット推薦の設定では、モデルが事前学習データセットから知識を学習し、さらに学習することなく下流のデータセットで直接テストする必要がある。
+**ゼロショット推薦の設定では、モデルが事前学習データセットから知識を学習し、さらに学習(=fine-tuning!)することなく下流のデータセットで直接テストする必要がある**。
 Hence, traditional ID-based methods cannot be evaluated in this setting.
 したがって、従来のIDベースの手法は、この設定では評価できない。
 We evaluate the knowledge transferability of Text-Only methods in different recommendation scenarios.
@@ -576,61 +580,68 @@ Overall, Recformer improves the zero-shot recommendation performance compared to
 On the Scientific dataset, Recformer performs better than the average performance of three ID-Only methods trained with full training sets.
 Scientificデータセットでは、Recformerは、完全な訓練セットで訓練された3つのID-Only手法の平均性能よりも優れている。
 These results show that (1) natural language is promising as a general item representation across different recommendation scenarios; (2) Recformer can effectively learn knowledge from pre-training and transfer learned knowledge to downstream tasks based on language understanding.
-これらの結果は、(1)自然言語が様々な推薦シナリオに渡る一般的な項目表現として有望であること、(2)Recformerは事前学習から知識を効果的に学習し、学習した知識を言語理解に基づいて下流のタスクに転送できることを示している。
+これらの結果は、**(1)自然言語が様々な推薦シナリオに渡る一般的なitem表現として有望であること**、**(2)Recformerは事前学習から知識を効果的に学習し、学習した知識を言語理解に基づいて下流のタスクに転送できること**を示している。
 
 ### 3.3.2. Low-Resource. 低資源。
 
+![fig5]()
+
 We conduct experiments with SASRec, UniSRec and Recformer in low-resource settings.
-SASRec、UniSRec、Recformerを使った実験を低リソース環境で行った。
+SASRec、UniSRec、Recformerを使った実験を**低リソース環境**で行った。
 In this setting, we train models on downstream datasets with different ratios of training data and results are shown in Figure 5.
-この設定で、学習データの比率を変えたダウンストリームデータセットでモデルを学習し、結果を図5に示す。
+この設定で、学習データの比率を変えた下流データセットでモデルを学習し、結果を図5に示す。
 We can see that methods with item text (i.e., UniSRec and Recformer) outperform ID-only method SASRec especially when less training data is available.
-特に学習データが少ない場合、項目テキストを含む方法（すなわちUniSRecとRecformer）がIDのみの方法SASRecを上回ることがわかる。
+**特に学習データが少ない場合、itemテキストを含む方法（すなわちUniSRecとRecformer）がIDのみの方法SASRecを上回ることがわかる**。
 This indicates UniSRec and Recformer can incorporate prior knowledge and do recommendations based on item texts.
-これは、UniSRecとRecformerが事前知識を取り入れ、アイテムのテキストに基づいたレコメンデーションを行えることを示している。
+これは、UniSRecとRecformerが事前知識を取り入れ、アイテムのテキストに基づいた推薦を行えることを示している。
 In low-resource settings, most items in the test set are unseen during training for SASRec.
-低リソース環境では、SASRecの学習中にテストセットのほとんどの項目が未見となる。
+低リソース環境では、SASRecの学習中にテストセットのほとんどのitemが未見(unseen)となる。
 Therefore, the embeddings of unseen items are randomly initialized and cannot provide high-quality representations for recommendations.
-そのため、未見のアイテムの埋め込みはランダムに初期化され、レコメンデーションのための高品質な表現を提供することはできない。
+そのため、**未見のアイテムの埋め込みはランダムに初期化され、レコメンデーションのための高品質な表現を提供することはできない**。(IDベースの手法はどうしても、学習データが少ないというか、sparse性が高いケースでは力を発揮しずらいのかな。ただ後述の様に、**sparse性が下がってくると急激に効果が上がる感じ**??評価行列のsparse性を下げる様に、ユーザ & アイテムを調整したら、もっと高品質なembeddingを作れるだろうか...??)
 After being trained with adequate data, SASRec could rapidly improve its performance.
-適切なデータで訓練された後、SASRecは急速に性能を向上させることができた。
+適切なデータで訓練された後、**SASRecは急速に性能を向上させることができた**。
 Recformer achieves the best performance over different ratios of training data.
 Recformerは、学習データの比率を変えても最高の性能を発揮する。
 On the Scientific dataset, Recformer outperforms other methods by a large margin with 1% and 5% of training data.
-Scientificデータセットでは、Recformerは1%と5%の学習データで他の手法に大きな差をつけた。
+Scientificデータセットでは、Recformerは1%と5%の学習データ(=凄く低リソース環境)で他の手法に大きな差をつけた。
 
 ## 3.4. Further Analysis さらなる分析
 
 ### 3.4.1. Performance w.r.t. Cold-Start Items. パフォーマンス コールドスタート・アイテム
 
 In this section, we simulate this scenario by splitting a dataset into two parts, i.e., an in-set dataset and cold-start dataset.
-この節では、データセットを2つの部分、すなわちインセット・データセットとコールドスタート・データセットに分割して、このシナリオをシミュレートする。
+この節では、データセットを2つの部分、すなわち**in-setデータセットとcold-startデータセットに分割して**、このシナリオをシミュレートする。
 Specifically, for the in-set dataset, we make sure all test items appear in the training data and all other test items (never appearing in training data) will be sent to the cold-start dataset.
-具体的には、インセット・データセットでは、すべてのテスト項目がトレーニング・データに現れるようにし、それ以外のテスト項目（トレーニング・データに現れることはない）はコールドスタート・データセットに送られるようにする。
+具体的には、**in-setデータセットではすべてのテストitemがトレーニング・データに現れる**ようにし、それ以外のテストitem(トレーニングデータに現れないtest item)はcold-startデータセットに送られるようにする。
 We train models on in-set datasets and test on both in-set and cold-start datasets.
-インセット・データセットでモデルを学習し、インセット・データセットとコールドスタート・データセットの両方でテストする。
+**in-setデータセットでモデルを学習し、in-setデータセットとcold-startデータセットの両方でテストする**。
 In this case, models never see the cold-start items during training and item embedding tables do not contain cold-start items.
-この場合、モデルは学習中にコールドスタートのアイテムを見ることはなく、アイテム埋め込みテーブルにはコールドスタートのアイテムは含まれない。
+この場合、モデルは学習中にコールドスタートのアイテムを見ることはなく、アイテム埋め込みテーブル(=そもそもRecformerはこの情報を使わない認識...!)にはコールドスタートのアイテムは含まれない。
 We compare the ID-only method SASRec and the Text-only method UniSRec to Recformer.
 IDのみのSASRecとテキストのみのUniSRecをRecformerと比較する。
-For ID-based SASRec, we substitute items appearing only once in the training set with a cold token and after training, we add this cold token embedding to cold-start item embeddings to provide prior knowledge 6 .
-IDベースのSASRecでは、学習セットに一度だけ出現するアイテムをコールドトークンで置き換え、学習後、このコールドトークンの埋め込みをコールドスタートのアイテム埋め込みに追加し、事前知識を提供する6 。
+For ID-based SASRec, we substitute items appearing only once in the training set with a cold token and after training, we add this cold token embedding to cold-start item embeddings to provide prior knowledge. (We try to provide a reasonable method for ID-based baselines with cold-start items)
+IDベースのSASRecでは、**学習セットに一度だけ出現するアイテムをコールドトークンで置き換え**、学習後、このコールドトークンの埋め込みをコールドスタートのアイテム埋め込みに追加し、事前知識を提供する。(私たちは、コールドスタート項目を持つIDベースのベースラインについて、合理的な方法を提供しようと試みている)
 For UniSRec, cold-start items are represented by item texts and encoded by BERT which is identical to seen items.
-UniSRecでは、コールドスタート項目は項目テキストで表現され、BERTで符号化される。
+**UniSRecでは、コールドスタートitemはitemテキストで表現され、BERTで符号化される**。(この手法はContent-based手法とも言えそう)
 Recformer directly encode item texts to represent cold-start items.
 Recformerは、コールドスタートのアイテムを表現するために、アイテムのテキストを直接エンコードする。
+
+![fig3]()
+
 Experimental results are shown in Table 3.
 実験結果を表3に示す。
 We can see that Text-Only methods significantly outperform SASRec, especially on datasets with a large size (i.e., Arts, Pet).
 特にサイズの大きいデータセット（ArtsやPetなど）では、テキストのみの手法がSASRecを大きく上回ることがわかる。
 Because of randomly initialized cold-start item representations, the performance of SASRec is largely lower on cold-start items than in-set items.
-コールドスタート項目の表現がランダムに初期化されるため、SASRecの性能はインセット項目よりもコールドスタート項目で大きく低下する。
+コールドスタートitemの表現がランダムに初期化されるため、**SASRecの性能はインセットitemsよりもコールドスタートitemsで大きく低下する**。
 Hence, IDonly methods are not able to handle cold-start items and applying text is a promising direction.
-したがって、IDのみの方法ではコールドスタートのアイテムを扱うことができず、テキストを適用することが有望な方向性である。
+**したがって、IDのみの方法ではコールドスタートのアイテムを扱うことができず、テキストを適用することが有望な方向性である**。
 For Text-only methods, Recformer greatly improves performance on both in-set and cold-start datasets compared to UniSRec which indicates learning language representations is superior to obtaining text features for recommendations.
-テキストのみの手法の場合、RecformerはUniSRecと比較して、インセットとコールドスタートの両方のデータセットでパフォーマンスを大幅に向上させる。これは、推薦のためのテキスト特徴を得るよりも、言語表現を学習する方が優れていることを示している。
+テキストのみの手法の場合、RecformerはUniSRecと比較して、インセットとコールドスタートの両方のデータセットでパフォーマンスを大幅に向上させる。これは、**推薦のためのテキスト特徴を得るよりも、言語表現を学習する方が優れている**ことを示している。(固定の学習済みテキストembeddingを単に特徴量として使うよりも、推薦モデルの一部として言語表現を学習させる方がよりrichで効果的な表現になる、ってこと??:thinking:)
 
-### 3.4.2. Ablation Study. アブレーション研究。
+### 3.4.2. Ablation(=切除) Study. アブレーション研究。
+
+![table4]()
 
 We analyze how our proposed components influence the final sequential recommendation performance.
 提案する構成要素が最終的な逐次推薦の性能にどのような影響を与えるかを分析する。
@@ -638,52 +649,62 @@ The results are shown in Table 4.
 結果を表4に示す。
 We introduce the variants and analyze their results respectively.
 それぞれの変種を紹介し、その結果を分析する。
+
 We first test the effectiveness of our proposed two-stage finetuning.
-まず、我々の提案する2段階のファインチューニングの有効性をテストする。
+まず、我々の提案する**2段階のファインチューニングの有効性**をテストする。
 In variant (1) w/o two-stage finetuning, we do not update item feature matrix I and only conduct finetuning based on I from pre-trained parameters.
-2段階の微調整を行わないバリエーション(1)では、項目特徴行列Iの更新は行わず、事前に学習したパラメータからIに基づく微調整のみを行う。
+2段階の微調整を行わないバリエーション(1)では、item feature 行列 $\mathbf{I}$ の更新は行わず、事前に学習したパラメータから得られる 固定の $\mathbf{I}$ に基づくfine-tuningのみを行う。
 We find that compared to (0) Recformer, (1) has similar results on Scientific but has a large margin on Instruments since the pre-trained model has better pre-trained item representations on Scientific compared to Instruments (shown in Figure 4).
 その結果、(0)のRecformerと比較して、(1)はScientificでは同じような結果を示すが、Instrumentsでは大きなマージンを持つことがわかった（図4）。
 Hence, our proposed two-stage finetuning can effectively improve the sub-optimal item representations from pre-training and further improve performance on downstream datasets.
-従って、我々の提案する2段階のファインチューニングは、事前学習による最適でない項目表現を効果的に改善し、下流のデータセットでの性能をさらに向上させることができる。
+従って、我々の提案する**2段階のファインチューニングは、事前学習による最適でないitem表現を効果的に改善し、下流のデータセットでの性能をさらに向上させることができる**。
+
 Then, we investigate the effects of freezing/trainable word embeddings and item embeddings.
-次に、凍結/学習可能な単語埋め込みと項目埋め込みの効果を調べる。
+次に、**凍結(freezing)/学習可能(trainable)なword埋め込みとitem埋め込みの効果**を調べる。
 In our default setting (1), we freeze the item feature matrix I and train word embeddings of Recformer.
-デフォルトの設定(1)では、項目特徴行列Iを凍結し、Recformerの単語埋め込みを学習する。
+デフォルトの設定(1)では、item feature行列 $\mathbf{I}$ を凍結し、Recformerのword埋め込みを学習する。
 In variants (2)(3)(4), we try to train the item feature matrix or freeze word embeddings.
-バリエーション(2)(3)(4)では、項目特徴行列または凍結単語埋め込みを学習しようとする。
+バリエーション(2)(3)(4)では、item feature行列を学習、または単語埋め込みをfreezeさせる。(両方ともfreeze、どちらかtrainableの計3patterns)
 Overall, on the Scientific dataset, the model with fixed item embeddings performs better than the model with trainable item embeddings, whereas on the Instruments dataset, our model performs well when item embeddings are trainable.
-全体として、Scientificデータセットでは、項目埋め込みを固定したモデルの方が、項目埋め込みを学習可能なモデルよりも性能が良いが、Instrumentsデータセットでは、項目埋め込みが学習可能な場合、我々のモデルの方が性能が良い。
+全体として、Scientificデータセットでは、item埋め込みを固定したモデルの方が、item埋め込みを学習可能なモデルよりも性能が良いが、Instrumentsデータセットでは、item埋め込みが学習可能な場合、我々のモデルの方が性能が良い。
 The divergence can be eliminated by our two-stage finetuning strategy.
-この発散は、2段階の微調整戦略によって解消できる。
+**この多様性は、2段階のfine-tuning戦略によって解消できる**。(データセットによって結果が違うけど、この問題はfine-tuningしたら解決するってことか)
+
 Variant (5) w/o pre-training finetunes Recformer from scratch.
-バリエーション(5) プリ・トレーニングなし ゼロからリコンストラクターを調整する。
+バリエーション(5) pre-trainingなし ゼロからRecformerを調整する。
 We can see that (0) Recformer significantly outperforms Variant (5) in both datasets because without pre-training, the item feature matrix I is not trained and cannot provide informative supervision during finetuning even if we update I by two-stage finetuning.
-これは、事前学習なしでは、項目特徴行列Iが学習されていないため、2段階のファインチューニングによってIを更新しても、ファインチューニング中に有益な監視を提供できないからである。
+これは、事前学習なしでは、item特徴行列 $\mathbf{I}$ が学習されていないため、2段階のファインチューニングによって $\mathbf{I}$ を更新しても、ファインチューニング中に有益な監視を提供できないからである。
 These results show the effectiveness of pre-training.
-これらの結果は、事前トレーニングの有効性を示している。
+これらの結果は、**事前トレーニングの有効性**を示している。
+
 Finally, we explore the effectiveness of our proposed model structure (i.e., item position embeddings and token type embeddings).
-最後に、提案するモデル構造（すなわち、項目位置埋め込みとトークン型埋め込み）の有効性を探る。
+最後に、提案するモデル構造(すなわち、**item position埋め込みとtoken type埋め込み)の有効性**を探る。
 Variant (6) removes the two embeddings and results show that the model in (6) causes performance decay on the instruments dataset which indicates the two embeddings are necessary when the gap between pre-training and finetuning is large.
-変形(6)は、2つの埋め込みを削除し、結果は、(6)のモデルは、事前学習と微調整の間のギャップが大きい場合に2つの埋め込みが必要であることを示す、計器データセット上で性能減衰を引き起こすことを示している。
+変形(6)は2つの埋め込みを削除したもの。結果は、(6)のモデルは、instrumentデータセット上で性能減衰を引き起こす。この結果は、**事前学習と微調整の間のギャップが大きい場合に2つの埋め込みが必要**であることを示す。
 
 ### 3.4.3. Pre-training Steps vs. Performance. トレーニング前のステップとトレーニング後のステップの比較 パフォーマンス
 
+![fig6]()
+
 We investigate the zeroshot sequential recommendation performance on downstream tasks over different pre-training steps and results on four datasets are shown in Figure 6.
-ゼロショット逐次レコメンデーションの性能を、異なる事前学習ステップの下流タスクで調査し、4つのデータセットでの結果を図6に示す。
+ゼロショット(=fine-tuningなし)逐次レコメンデーションの性能を、異なる事前学習ステップの下流タスクで調査し、4つのデータセットでの結果を図6に示す。
 The pre-training of natural language understanding usually requires a large number of training steps to achieve a promising result.
-自然言語理解の事前学習は通常、有望な結果を得るために多くの学習ステップを必要とする。
+**自然言語理解の事前学習は通常、有望な結果を得るために多くの学習ステップを必要とする**。
 However, we have a different situation in sequential recommendation.
-しかし、逐次推薦では事情が異なる。
+**しかし、逐次推薦では事情が異なる**。
 From Figure 6, we can see that most datasets already achieve their best performance after around 4,000 training steps and further pre-training may hurt the knowledge transferability on downstream tasks.
-図6から、ほとんどのデータセットは4,000ステップ程度の学習ですでに最高の性能を達成しており、これ以上の事前学習は下流のタスクでの知識伝達性を損なう可能性があることがわかる。
-We think there are two possible reasons: (1) We initialize most parameters from a Longformer model pre-trained by the MLM task.
+図6から、**ほとんどのデータセットは4,000ステップ程度の学習ですでに最高の性能を達成しており**、これ以上の事前学習は下流のタスクでの知識伝達性を損なう可能性があることがわかる。
+
+We think there are two possible reasons:
 考えられる理由は2つある：
-(1) MLMタスクによって事前に訓練されたLongformerモデルからほとんどのパラメータを初期化する。
+(1) We initialize most parameters from a Longformer model pre-trained by the MLM task.
+(1) **MLMタスクによって事前に訓練されたLongformerモデルからほとんどのパラメータを初期化する**。
 In this case, the model already has some essential knowledge of natural languages.
-この場合、モデルはすでに自然言語に関する本質的な知識を持っている。
-The domain adaptation from a general language understanding to the item text understanding for recommendations should be fast.(2) Even if we include seven categories in the training data, there is still a language domain difference between pre-training data and downstream data since different item categories have their own specific vocabularies.
-一般的な言語理解からレコメンデーションのためのアイテムテキスト理解へのドメイン適応は高速であるべきである。(2) 学習データに7つのカテゴリを含めたとしても、アイテムカテゴリにはそれぞれ固有の語彙があるため、事前学習データと下流データには言語ドメインの違いがある。
+この場合、**モデルはすでに自然言語に関する本質的な知識を持っている**。
+The domain adaptation from a general language understanding to the item text understanding for recommendations should be fast.
+**一般的な言語理解から推薦のためのアイテムテキスト理解へのドメイン適応**は高速であるべきである。
+(2) Even if we include seven categories in the training data, there is still a language domain difference between pre-training data and downstream data since different item categories have their own specific vocabularies.
+(2) 学習データに7つのカテゴリを含めたとしても、アイテムカテゴリにはそれぞれ固有の語彙があるため、事前学習データと下流データには言語ドメインの違いがある。(だから頭打ちになるってこと??)
 For instance, the category Electronics has quite different words in item text compared to the Pets category.
 例えば、「エレクトロニクス」カテゴリーと「ペット」カテゴリーでは、アイテムのテキストに含まれる単語がかなり異なっている。
 
@@ -729,25 +750,25 @@ To learn common item features from different domains, pre-trained language model
 Based on pre-trained item features, several methods [7, 12] are proposed to learn universal item representations by applying additional layers.
 事前に学習された項目特徴に基づき、追加レイヤーを適用することで普遍的な項目表現を学習する方法[7, 12]がいくつか提案されている。
 In this work, we have the same target as previous transfer learning for recommendation (i.e., alleviate data sparsity and cold-start item issues).
-本研究では、これまでの推薦のための転移学習と同じ目標を掲げている（すなわち、データのスパース性とコールドスタート項目の問題を緩和する）。
+**本研究では、これまでの推薦のための転移学習と同じ目標を掲げている（すなわち、データのスパース性とコールドスタート項目の問題を緩和する）**。
 However, instead of relying on common users, items and attributes or encoding items with pre-trained language models, we directly learn language representations for sequential recommendation and hence transfer knowledge based on the generality of natural languages.
-しかし、一般的なユーザー、アイテム、属性に依存したり、事前に訓練された言語モデルでアイテムをエンコードしたりするのではなく、逐次推薦のための言語表現を直接学習することで、自然言語の一般性に基づく知識の伝達を行う。
+しかし、一般的なユーザ、アイテム、属性に依存したり、**事前に訓練された言語モデルでアイテムをエンコードしたりするのではなく、逐次推薦のための言語表現を直接学習すること**で、自然言語の一般性に基づく知識の伝達を行う。
 
 # 5. Conclusion 結論
 
 In this paper, we propose Recformer, a framework that can effectively learn language representations for sequential recommendation.
 本稿では、逐次推薦のための言語表現を効果的に学習するフレームワークRecformerを提案する。
 To recommend the next item based on languages, we first formulate items as key-value attribute pairs instead of item IDs.
-言語に基づいて次のアイテムを推薦するために、まずアイテムをアイテムIDではなく、キーと値の属性ペアとして定式化する。
+言語に基づいて次のアイテムを推薦するために、**まずアイテムをアイテムIDではなく、キーと値の属性ペアとして定式化**する。
 Then, we propose a novel bi-directional Transformer model for sequence and item representations.
 次に、シーケンス表現とアイテム表現のための新しい双方向変換モデルを提案する。
 The proposed structure can learn both natural languages and sequential patterns for recommendations.
-提案された構造は、推薦のための自然言語と逐次パターンの両方を学習することができる。
+提案された構造は、**推薦のための自然言語と逐次パターンの両方を学習する**ことができる。
 Furthermore, we design a learning framework including pretraining and finetuning that helps the model learn to recommend based on languages and transfer knowledge into different recommendation scenarios.
 さらに、事前学習と微調整を含む学習フレームワークを設計し、言語に基づいて推薦することを学習し、異なる推薦シナリオに知識を伝達することを支援する。
 Finally, extensive experiments are conducted to evaluate the effectiveness of Recformer under full-supervised and low-resource settings.
 最後に、Recformerの有効性を評価するために、完全教師ありの設定と低リソース設定の下で広範な実験を行った。
 Results show that Recformer largely outperforms existing methods in different settings, especially for the zero-shot and cold-start items recommendation which indicates Recformer can effectively transfer knowledge from training.
-その結果、Recformerは様々な設定において既存の手法を大きく上回った。特に、ゼロショットとコールドスタートの推薦項目においては、Recformerが訓練から効果的に知識を伝達できることを示している。
+その結果、Recformerは様々な設定において既存の手法を大きく上回った。**特に、ゼロショットとコールドスタートitemsの推薦においては、Recformerが訓練から効果的に知識を伝達できることを示している**。
 An ablation study is conducted to show the effectiveness of our proposed components.
-提案したコンポーネントの有効性を示すため、アブレーション試験を実施した。
+提案したコンポーネントの有効性を示すため、アブレーション(=切除)試験を実施した。
