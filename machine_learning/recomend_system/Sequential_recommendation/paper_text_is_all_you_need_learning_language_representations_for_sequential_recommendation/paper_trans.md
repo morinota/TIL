@@ -44,7 +44,7 @@ Sequential recommenders [11, 14, 25, 27] can capture both short-term and long-te
 Various methods have been proposed to improve the performance of sequential recommendation, including Markov Chains [9, 25], RNN/CNN models [11, 17, 28, 34] and self-attentive models [14, 19, 27].
 逐次推薦のパフォーマンスを向上させるために、マルコフ連鎖[9, 25]、RNN/CNNモデル[11, 17, 28, 34]、self-attention型モデル[14, 19, 27]など、様々な手法が提案されている。
 Traditional sequential recommendation models convert items into IDs and create item embedding tables for encoding.
-従来の逐次推薦モデルは、アイテムをIDに変換し、エンコーディングのためにアイテム埋め込みテーブルを作成する。
+従来の逐次推薦モデルは、アイテムをIDに変換し、エンコーディングのためにitem埋め込みテーブルを作成する。(ID-basedな手法)
 Item embeddings are learned from sequences of user interactions.
 アイテム埋め込みは、ユーザとのインタラクションのシーケンスから学習される。
 To enrich item features, some approaches [4, 20, 37, 38] incorporate item contexts such as item textual information or categorical features into ID embeddings.
@@ -72,7 +72,7 @@ The knowledge of the transformation can be transferred across different domains 
 However, such frameworks of learning transformation from language to items have several limitations:
 しかし、言語から項目への変換を学習するこのような枠組みには、いくつかの限界がある：
 (1) Pre-trained language models are usually trained on a general language corpus (e.g., Wikipedia) serving natural language tasks that have a different language domain from item texts (e.g., concatenation of item attributes), hence text representations from pretrained language models for items are usually sub-optimal.
-(1)事前に学習された言語モデルは、通常、一般的な言語コーパス（例えば、Wikipedia）で学習され、アイテムのテキストとは異なる言語ドメイン（例えば、アイテムの属性の連結）を持つ自然言語タスクを提供する。そのため、**事前に学習された言語モデルによるアイテムのテキスト表現は、通常、最適とは言えません**。
+(1)事前に学習された言語モデルは、通常、一般的な言語コーパス（例えば、Wikipedia）で学習され、アイテムのテキスト(ex. アイテムの属性の連結。本論文の手法のケース!!)とは異なる言語ドメインを持つ自然言語タスクを提供する。そのため、**事前に学習された言語モデルによるアイテムのテキスト表現は、通常、最適とは言えません**。
 (2) Text representations from pre-trained language models are not able to learn the importance of different item attributes and only provide coarse-grained (sentence-level) textual features but cannot learn fine-grained (word-level) user preferences for recommendations (e.g., find the same color in recent interactions for clothing recommendations).
 (2)事前に訓練された言語モデルからのテキスト表現は、異なるアイテムの属性の重要性を学習することができず、**粗い粒度(文レベル)のテキスト特徴を提供するだけ**で、推薦のための細かい粒度(単語レベル)のユーザの好み(ex. 服の推薦のために最近のインタラクションで同じ色を見つける)を学習することができない。
 (3) Due to the independent training of pre-trained language models (by language understanding tasks, e.g., Masked Language Modeling) and transformation models (by recommendation tasks, e.g., next item prediction), the potential ability of models to understand language for recommendations has not been fully developed (by joint training).
@@ -89,7 +89,7 @@ To this end, there are three major challenges to be solved.
 First, previous text-based methods [7, 12] usually have their specific item texts (e.g., item descriptions, concatenation of item attributes).
 第一に、これまでのテキストベースの手法[7, 12]は、通常、特定のアイテムテキスト(ex. アイテムの説明、アイテム属性の連結)を持っている。
 Instead of specific data types, we need to find a universal input data format of items for language models that is flexible enough to different kinds of textual item information.
-特定のデータ型の代わりに、異なる種類のテキストアイテム情報に対して十分に柔軟な、言語モデルのためのアイテムの普遍的な入力データ形式(??)を見つける必要がある。
+特定のデータ型の代わりに、異なる種類のテキストアイテム情報に対して十分に柔軟な、言語モデルのためのアイテムの普遍的な入力データ形式(??)を見つける必要がある。(=これが後述されるkey-value attributesのやつ!!)
 Second, it is not clear how to model languages and sequential transitions of items in one framework.
 第二に、**言語とアイテムの逐次遷移を一つのフレームワークで(=joint training可能なやつ!:thinking:)モデル化する方法**が明確でない。
 Existing language models are not able to incorporate sequential patterns of items and cannot learn the alignment between items and item texts.
