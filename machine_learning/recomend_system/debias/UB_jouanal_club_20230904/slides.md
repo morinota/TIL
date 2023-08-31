@@ -186,15 +186,16 @@ hoge
 
 ::: {.column width="60%"}
 
-DM推定量をベースラインとしつつ、報酬期待値の予測誤差をIPS重み付けで補正したOPE推定量
+DMとIPSを組み合わせた推定量。
+DM推定量をベースラインとしつつ、報酬期待値予測モデル $\hat{q}$ の誤差をIPS重み付けで補正している。
 
 $$
 \hat{V}_{DR}(\pi;D) = \hat{V}_{DR}(\pi;D)
 \\
-+ \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
++ \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)}
 $$
 
-- 特徴: データが少ない時はDM推定量の性質によりvarianceを抑えつつ、データが多い時はIPS推定量の性質(=仮定を満たせば不偏)を受けて真の性能に近づく。
+- 特徴: DM推定量の性質によりvarianceを抑えつつ、IPS推定量の性質(=仮定を満たせば不偏)を受けてbiasを小さくしている。
 
 :::
 
