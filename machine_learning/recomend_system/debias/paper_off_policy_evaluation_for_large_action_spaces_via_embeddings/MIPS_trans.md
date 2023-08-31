@@ -10,7 +10,7 @@ Off-Policy Evaluation for Large Action Spaces via Embeddings
 ## 0.3. Abstruct アブストラクト
 
 Off-policy evaluation (OPE) in contextual bandits has seen rapid adoption in real-world systems, since it enables offline evaluation of new policies using only historic log data.
-コンテクスチュアル・バンディット(i.e. 決定論的ではなく確率的な推薦アルゴリズム)におけるオフポリシー評価（OPE）は、過去のログデータのみを使用して新しいポリシーをオフラインで評価できるため、実世界のシステムで急速に採用が進んでいる。
+コンテクスチュアル・バンディットにおけるオフポリシー評価（OPE）は、過去のログデータのみを使用して新しいポリシーをオフラインで評価できるため、実世界のシステムで急速に採用が進んでいる。
 Unfortunately, when the number of actions is large, existing OPE estimators – most of which are based on inverse propensity score weighting – degrade severely and can suffer from extreme bias and variance.
 **残念なことに、行動数が多い場合、既存のOPE推定量-そのほとんどは逆傾向スコア重み付けに基づく-は著しく劣化**し、極端なバイアスと分散に悩まされることがある。
 This foils the use of OPE in many applications from recommender systems to language models.
@@ -34,7 +34,7 @@ However, OPE is challenging, since the logs contain only partial-information fee
 しかし、OPEは困難である。なぜなら、ログには部分的な情報のフィードバックしか含まれていないからである。具体的には、選択された行動の報酬であるが、別の政策が選択するかもしれない他のすべての行動の反事実的報酬ではない。
 
 When the action space is small, recent advances in the design of OPE estimators have led to a number of reliable methods with good theoretical guarantees (Dud´ık et al., 2014; Swaminathan & Joachims, 2015a; Wang et al., 2017; Farajtabar et al., 2018; Su et al., 2019; 2020a; Metelli et al., 2021).
-行動空間が小さい場合、OPE推定量の設計における最近の進歩により、理論的に保証された信頼性の高い手法が数多く登場している（Dud´ık et al., 2014; Swaminathan & Joachims, 2015a; Wang et al., 2017; Farajtabar et al., 2018; Su et al., 2019; 2020a; Metelli et al., 2021）。
+**行動空間が小さい場合、OPE推定量の設計における最近の進歩により、理論的に保証された信頼性の高い手法が数多く登場している**（Dud´ık et al., 2014; Swaminathan & Joachims, 2015a; Wang et al., 2017; Farajtabar et al., 2018; Su et al., 2019; 2020a; Metelli et al., 2021）。
 Unfortunately, these estimators can degrade severely when the number of available actions is large.
 残念ながら、**利用可能なアクションの数が多い場合、これらの推定量は著しく低下する可能性がある**。
 Large action spaces are prevalent in many potential applications of OPE, such as recommender systems where policies have to handle thousands or millions of items (e.g., movies, songs, products).
@@ -131,7 +131,7 @@ $$
 
 In the following theoretical analysis, we focus on the IPS estimator, since most advanced OPE estimators are based on IPS weighting (Dud´ık et al., 2014; Wang et al., 2017; Su et al., 2019; 2020a; Metelli et al., 2021).
 以下の理論的分析では、**先進的なOPE推定器のほとんどがIPS重み付けに基づいているため、IPS推定器に焦点を当てる**（Dud´ık et al., 2014; Wang et al., 2017; Su et al., 2019; 2020a; Metelli et al., 2021）。
-IPS estimates the value of π by re-weighting the observed rewards as follow
+IPS estimates the value of π by re-weighting the observed rewards as follow.
 IPSは、**観測された報酬を以下のように再重み付けする**ことでπの性能を推定する.
 
 $$

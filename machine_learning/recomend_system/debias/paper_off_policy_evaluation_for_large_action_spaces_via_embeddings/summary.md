@@ -36,6 +36,11 @@ $$
 
 - 本論文では、大規模行動空間を持つ意思決定タスクに適用可能なIPS推定量のaction $a$ を action embedding(i.e. action の特徴量的な認識) $e$ で置き換えた **Marginalized IPS(MIPS)推定量**を提案している。
 
+$$
+\hat{V}_{MIPS}(\pi:D)
+= \frac{1}{n} \sum_{i=1}^{n} \frac{p(e_i|x_i, \pi)}{p(e_i|x_i, \pi_{0})} r_{i}
+$$
+
 ## 技術や手法の肝は？
 
 ![image](https://github.com/wantedly/machine-learning-round-table/assets/72015657/c98ae013-4f9e-4472-81a6-359530cc0e07)

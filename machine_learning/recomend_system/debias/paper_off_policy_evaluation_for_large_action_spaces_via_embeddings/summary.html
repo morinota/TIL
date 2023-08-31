@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.168">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>summary</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="summary_files/libs/clipboard/clipboard.min.js"></script>
+<script src="summary_files/libs/quarto-html/quarto.js"></script>
+<script src="summary_files/libs/quarto-html/popper.min.js"></script>
+<script src="summary_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="summary_files/libs/quarto-html/anchor.min.js"></script>
+<link href="summary_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="summary_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="summary_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="summary_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="summary_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="off-policy-evaluation-for-large-action-spaces-via-embeddings" class="level1">
+<h1>Off-Policy Evaluation for Large Action Spaces via Embeddings</h1>
+<p>published date: 16 June 2022 authors: Yuta Saito, Thorsten Joachims url(paper): https://arxiv.org/pdf/2202.06317.pdf (勉強会発表者: morinota)</p>
+<hr>
+<section id="どんなもの" class="level2">
+<h2 class="anchored" data-anchor-id="どんなもの">どんなもの?</h2>
+<ul>
+<li>オンライン環境で稼働中の意思決定システム(ex. 推薦システム) logging policy <span class="math inline">\(\pi_{0}\)</span> のログを使って、開発中のtarget policy <span class="math inline">\(\pi\)</span> のオンライン性能を推定する Off-Policy Evaluation(OPE)に関する論文。</li>
+<li>先々週のwantedlyさん主催の勉強会に参加させていただいた際に、登壇者の斉藤さんが紹介されていたので興味を持って読んでみました!</li>
+<li>人気なOPE推定量である IPS(Inverse Propensity Score)推定量は、大規模行動空間であるほど真の target policy の性能に対する Bias と Variance がどんどん増える可能性がある。</li>
+<li>なので本論文では、<strong>大規模行動空間に耐えうるOPE推定量</strong>として、<strong>IPS推定量のaction を action embedding(i.e.&nbsp;action の特徴量?) で置き換えた Marginalized IPS(MIPS)推定量</strong>を提案している。</li>
+<li>行動空間が大きい場合の実証実験にて、MIPS推定量はIPSや関連推定量よりも大幅に良いパフォーマンスを示した。</li>
+<li>行動空間が大きい場合だけでなく、<strong>logging policy と target policy が大きく異なっている場合</strong>にもIPSよりも有効みたい。(IPSの仮定よりもMIPSの仮定の方がだいぶ成立しやすいもんなぁ…:thinking:)</li>
+<li>(特に確率論的な意思決定モデルを採用してるケースでは、MIPS推定量はオフライン評価の方法として有効なのでは…!:thinking:)</li>
+</ul>
+</section>
+<section id="先行研究と比べて何がすごい" class="level2">
+<h2 class="anchored" data-anchor-id="先行研究と比べて何がすごい">先行研究と比べて何がすごい？</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://github.com/wantedly/machine-learning-round-table/assets/72015657/bbb3660e-6959-495f-8bec-453629e0e24e.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">image</figcaption><p></p>
+</figure>
+</div>
+<ul>
+<li>人気なOPE推定量である IPS推定量は、以下の <strong>Common Support Assumption</strong> を満たす場合に 真の性能に対して不偏になる:</li>
+</ul>
+<p><span class="math display">\[
+\pi(a|x) &gt; 0 → \pi_{0}(a|x) &gt; 0, \forall a \in A, x \in X
+\]</span></p>
+<ul>
+<li><p>ここで、<span class="math inline">\(a\)</span> はaction(ex. 推薦アイテムの選択肢), <span class="math inline">\(x\)</span> は context (ex. ユーザの特徴量)</p>
+<ul>
+<li>(なるほど…!この仮定は、決定論的な推薦モデルよりも確率論的な推薦モデルの方が遥かに満たしやすいよなぁ…。というか、決定論的なモデルでこの仮定を満たせるのって <span class="math inline">\(\pi = \pi_{0}\)</span> だけじゃないか…?:thinking:)</li>
+</ul></li>
+<li><p><strong>でも大規模行動空間であるほど Common Support Assumption が成立しづらくなり、IPS推定量の真の性能に対するBiasとVarianceがどんどん増えていく…</strong>!</p>
+<ul>
+<li>-&gt; これは、logged dataset <span class="math inline">\(D\)</span> に(i.e.&nbsp;<span class="math inline">\(\pi_0\)</span> に)サポートされていないactionの情報が含まれなくなる事に起因する。</li>
+<li>(i.e.&nbsp;context <span class="math inline">\(x\)</span> を受け取った際に target policy <span class="math inline">\(\pi\)</span> では選択され得るが、logging policy <span class="math inline">\(pi_0\)</span> では選択され得ないアイテムの情報が <span class="math inline">\(D\)</span> 内で欠如するので…:thinking:)</li>
+</ul></li>
+<li><p>本論文では、大規模行動空間を持つ意思決定タスクに適用可能なIPS推定量のaction <span class="math inline">\(a\)</span> を action embedding(i.e.&nbsp;action の特徴量的な認識) <span class="math inline">\(e\)</span> で置き換えた <strong>Marginalized IPS(MIPS)推定量</strong>を提案している。</p></li>
+</ul>
+<p><span class="math display">\[
+\hat{V}_{MIPS}(\pi:D)
+= \frac{1}{n} \sum_{i=1}^{n} \frac{p(e_i|x_i, \pi)}{p(e_i|x_i, \pi_{0})} r_{i}
+\]</span></p>
+</section>
+<section id="技術や手法の肝は" class="level2">
+<h2 class="anchored" data-anchor-id="技術や手法の肝は">技術や手法の肝は？</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://github.com/wantedly/machine-learning-round-table/assets/72015657/c98ae013-4f9e-4472-81a6-359530cc0e07.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">image</figcaption><p></p>
+</figure>
+</div>
+<p>MIPS推定量が不偏になる為の条件として、以下の “<strong>Common Embedding Support Assumption</strong>” を満たす必要がある。</p>
+<p><span class="math display">\[
+p(e|x, \pi) &gt; 0 → p(e|x, \pi_{0}) &gt; 0, \forall e \in E,  x \in X
+\]</span></p>
+<ul>
+<li>大規模行動空間において common support assumption は厳しいけど、common embedding support assumption の方が遥かに成立させやすいので、MIPS推定量は有効。</li>
+<li>(やっぱり common embedding support assumption も確率論的な推薦モデルの方が遥かに満たしやすいよなぁ…。OPEの観点では決定論的な推薦モデルはご法度というか、かなり扱いづらそう…。:thinking:)</li>
+</ul>
+<p>MIPS推定量が不偏になる条件としてもう一つ “No Direct Effect Assumption” を満たす必要もある: <span class="math inline">\(a \perp r | x, e\)</span></p>
+<p>ただ論文内では、<strong>意図的にno direct effect assumptionを破るような action embedding <span class="math inline">\(e\)</span> を選択すること</strong>で、推定量のbiasはやや増えるが variance を減らす事ができて、真の性能に対するMSEを減らす事ができる、という戦略を提案していた。</p>
+</section>
+<section id="どうやって有効だと検証した" class="level2">
+<h2 class="anchored" data-anchor-id="どうやって有効だと検証した">どうやって有効だと検証した?</h2>
+<ul>
+<li>synthetic data と real-world data (Open Bandit Dataset) を使用して、MIPS推定量の性能を検証している。</li>
+</ul>
+<section id="synthetic-data-擬似的な合成データの実験" class="level3">
+<h3 class="anchored" data-anchor-id="synthetic-data-擬似的な合成データの実験">synthetic data (擬似的な合成データ)の実験</h3>
+<p>target policy の ground truth 値とOPE推定値を比較できるように、合成データを作成。</p>
+<p>図2は、action数を10から5000まで変化させたときの推定値の性能を評価。(logged dataset <span class="math inline">\(D\)</span> のサンプルサイズは <span class="math inline">\(n = 10000\)</span> に固定。)</p>
+<p><img src=".png" class="img-fluid"></p>
+<ul>
+<li>特に大規模なaction集合において、MIPS は IPS や DR よりも MSE が優れていた。</li>
+<li>また大規模なaction集合において、<code>MIPS(true)</code>(=周辺重要度重みが既知の場合のMIPS) は <code>MIPS</code>(=周辺重要度重みが未知で、ロジスティック回帰で推定した場合のMIPS) よりも優れていた。</li>
+</ul>
+<p>図3は、logged dataset <span class="math inline">\(D\)</span> のサンプル数(<span class="math inline">\(n \in \{800, 1600, 3200, 6400, 12800, 25600\}\)</span>)を変化させた場合の各種OPE推定量のパフォーマンス。</p>
+<p><img src=".png" class="img-fluid"></p>
+<ul>
+<li>MIPSは特にサンプルサイズが小さい場合に、IPSやDRよりも大きく優れている。</li>
+<li>サンプルサイズが大きくなるにつれて、MIPS、IPS、DRは分散が小さくなりMSEが改善される。</li>
+<li>DM(=唯一IPS系の推定量ではないbaseline)の精度はサンプルサイズが異なっても変わらない。(DM推定量は<strong>低variance 高biasの特徴を持つ推定量</strong>だから…! 高biasというか 報酬予測モデル <span class="math inline">\(\hat{q}(x, a)\)</span> の精度に依存するって感じ)。大規模行動空間においては、分散が爆発するIPSやDRよりも優れているといえる。</li>
+<li>MIPSのバイアスはDMのバイアスよりもはるかに小さいため、MIPSはDMよりも優れた性能。サンプルサイズが大きくなるほど、MIPSはDMよりもどんどん良くなる。
+<ul>
+<li>(IPS系のOPE推定量の特徴は、仮定を満たせば 低bias 高variance なので、サンプルサイズが増えると variance が減少して性能が上がっていく。)</li>
+</ul></li>
+</ul>
+<p>No Direct Effect Assumption を満たしているか否かが、MIPSの性能(MSE)にどう影響を与えるかの実験の話。 図5は、<strong>action embedding の未観測の次元数</strong>を変えることによって、MIPS推定量のMSE &amp; Bias^2 &amp; Variance が、どのように変化するかを示した結果。</p>
+<p><img src=".png" class="img-fluid"></p>
+<ul>
+<li>MIPSとMIPS(true)は、action embedding が多少欠落した状態でも、他の推定量と比べて良い性能を発揮した。(no direct effect assumptionが破られた事により、Biasが大きくなってもVarianceが減少したから??:thinking:)</li>
+<li>未観測の次元数が増えるにつれて、<strong>MIPSとMIPS(true)の Variance が大幅に減少する</strong>一方、Bias は仮定に違反するにつれて(i.e.&nbsp;仮定の違反度合いが大きくなるに連れて)増加する.</li>
+</ul>
+</section>
+<section id="open-bandit-datasetを使った実験" class="level3">
+<h3 class="anchored" data-anchor-id="open-bandit-datasetを使った実験">Open Bandit Datasetを使った実験</h3>
+<ul>
+<li>Open Bandit Datasetは、<strong>2つの異なる policy(一様ランダムサンプリングとトンプソンサンプリング)のA/Bテストで収集された2セットの logged dataset</strong> から構成される。
+<ul>
+<li>logged datasetには、 user context <span class="math inline">\(x\)</span>, action(推薦アイテム) <span class="math inline">\(a \in A (|A| = 240)\)</span>, reward(クリック有無) <span class="math inline">\(r \in \{0, 1\}\)</span> が含まれる。
+<ul>
+<li>(行動空間の大きさ的にはまあまあなのかな:thinking:)</li>
+</ul></li>
+<li>加えて、推薦アイテムのカテゴリ情報っぽい4次元の action embedding <span class="math inline">\(e\)</span> を含む。</li>
+</ul></li>
+<li>一様無作為サンプリングとトンプソンサンプリングをそれぞれ loggint policy とtarget policy とみなして、OPE推定量の評価を行う。</li>
+</ul>
+<p><img src=".png" class="img-fluid"></p>
+<ul>
+<li><code>MIPS(w/ SLOPE)</code>(=SLOPEという手法で action embedding 選択を行った場合のMIPS) はシミュレーションの約80%でIPSを上回り、<code>MIPS(w/o SLOPE)</code>(action embedding 選択無しの場合のMIPS)を含む他の推定量はIPSと同様に機能した。</li>
+<li>MIPS推定量の実世界での適用可能性あり! action embedding selectionを適用する事の重要性!</li>
+</ul>
+</section>
+</section>
+<section id="議論はある" class="level2">
+<h2 class="anchored" data-anchor-id="議論はある">議論はある?</h2>
+<p>今後の研究課題。</p>
+<ul>
+<li>action embedding <span class="math inline">\(e\)</span> の選択・最適化方法。</li>
+<li>周辺重要度重みがhogehogeな場合の、周辺重要度重みのより正確な推定方法の開発。</li>
+<li>action embedding を用いて off-policy learning</li>
+<li>DR推定量のようなIPS推定量の派生系に関連して、MIPS推定量の応用の可能性。</li>
+</ul>
+</section>
+<section id="次に読むべき論文は" class="level2">
+<h2 class="anchored" data-anchor-id="次に読むべき論文は">次に読むべき論文は？</h2>
+<ul>
+<li>決定論的な推薦モデルでは common support assumption も common embedding support assumption も厳しい気がするので、決定論的な推薦モデルをシンプルに確率論的な推薦モデルに拡張する手法か、決定論的な推薦モデルでも適用しやすいオフライン評価手法を探したいな…。もしオススメの解法等があれば教えていただきたいです…!</li>
+</ul>
+</section>
+<section id="お気持ち実装" class="level2">
+<h2 class="anchored" data-anchor-id="お気持ち実装">お気持ち実装</h2>
+<p>今回はスキップです! コードも公開してくださってるので後で触ってみたい。</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

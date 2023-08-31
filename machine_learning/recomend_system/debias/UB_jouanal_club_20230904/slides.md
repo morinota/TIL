@@ -62,14 +62,14 @@ title-slide-attributes:
 
 ## 色々調べたオフライン評価の確度をあげるアプローチ達
 
-- 1. Off-Policy Evaluation手法を用いて過去のログデータからオンライン性能を推定(@ ファッションアイテムの推薦)
-- 2. 力技っぽい!: オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る(@ ニュース記事の推薦)
+- 1. 理論的に保証されてる!: Off-Policy Evaluation手法を用いて過去のログデータからオンライン性能を推定(@ ファッションアイテムの推薦)
+- 2. 力技!: オフライン観測可能なmetricsからオンライン性能の予測モデルを作る(@ ニュース記事の推薦)
 - 3. naiveだけど導入しやすさと効果は高そう: 一定期間のみ、一様ランダムなモデルを本番適用してログデータ収集 (@ ニュース記事の推薦)
 - 4. より高速なオンライン評価手法 Interleaving をABテストの前に導入する(@ 動画の推薦)
 
 今日は主にアプローチ1について紹介し、アプローチ2 ~ 4はさらっと紹介程度の予定。
 
-# 調べた方法1. Off-Policy Evaluation 手法を用いて過去のログデータからオンライン性能を推定(@ ファッションアイテムの推薦)
+# 調べた方法1. 理論的に保証されてる!: Off-Policy Evaluation手法を用いて過去のログデータからオンライン性能を推定(@ ファッションアイテムの推薦)
 
 - 自分はusaitoさん & wantedlyさんの勉強会に参加してこのOff-Policy Evaluation(以下、OPE) 分野を知った。
 - 今回は概要紹介 & 自分の感想を話すので、更に詳しくはusaitoさんの資料やOPE関連の論文を読むと良さそう!
@@ -129,6 +129,8 @@ $$
 - IPS(Inverse Propensity Scoring)推定量
 - DR(Doubly Robust)推定量
 
+この3つのOPE推定量さえ抑えておけば、他の多くのOPE論文が読みやすいはず...!
+
 ## 代表的なOPE推定量① DM(Direct Method)
 
 :::: {.columns}
@@ -148,7 +150,7 @@ $$
 
 ::: {.column width="40%"}
 
-hoge
+横軸=観測データ数 n, 縦軸=MSE(& bias^2 と variance)の図
 
 :::
 
@@ -160,21 +162,21 @@ hoge
 
 ::: {.column width="60%"}
 
-logging policy による**行動の選ばれやすさ(=propensity score) の逆数で観測報酬を重み付け**して、naiveな推定量のbiasを取り除く。
+観測された各報酬 $r_i$ を、logging policy による**行動の選ばれやすさ(=propensity score) の逆数で観測報酬を重み付け**したOPE推定量。
 
 $$
 \hat{V}_{IPS}(\pi;D) = \frac{1}{n} \sum_{i=1}^{n} \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
 $$
 
-- biasは小さい(=仮定を満たせば不偏)。
-- varianceは大きく、データ $n$ が増える程小さくなっていく。
+- biasは小さい(=仮定を満たせば不偏: $\mathbb{E}_{D} [\hat{V}_{IPS}(\pi)] = V(\pi)$)。
+- varianceは大きめ、データ $n$ が増える程小さくなっていく。
 - 先進的なOPE推定量の多くが、このIPS推定量に基づいている。
 
 :::
 
 ::: {.column width="40%"}
 
-hoge
+横軸=観測データ数 n, 縦軸=MSE(& bias^2 と variance)の図
 
 :::
 
@@ -187,7 +189,7 @@ hoge
 ::: {.column width="60%"}
 
 DMとIPSを組み合わせた推定量。
-DM推定量をベースラインとしつつ、報酬期待値予測モデル $\hat{q}$ の誤差をIPS重み付けで補正している。
+**DM推定量をベースライン**としつつ、報酬期待値予測モデル $\hat{q}$ の誤差を**IPS重み付けで補正**している。
 
 $$
 \hat{V}_{DR}(\pi;D) = \hat{V}_{DR}(\pi;D)
@@ -201,7 +203,7 @@ $$
 
 ::: {.column width="40%"}
 
-hoge
+横軸=観測データ数 n, 縦軸=MSE(& bias^2 と variance)の図
 
 :::
 
@@ -209,11 +211,48 @@ hoge
 
 ## 大規模行動空間を持つ意思決定タスクでOPEが難しい問題
 
-## IPS推定量の満たすべき仮定: Common Support Assumption
+行動空間が小さい(=行動の選択肢が少ない)場合、IPS推定量に基づく信頼性の高い手法が多く登場した。しかしこれらの手法は、**行動空間が大きい程、真のpolicy性能に対する Bias と Variance がどんどん増える可能性**がある。(=後述するIPSの仮定を満たせなくなるから!)
+(論文読んでた感じでは、行動数が1000を超えたくらいから"大規模行動空間"と言える印象:thinking:)
+
+よって、**大規模行動空間に耐えうるOPE推定量**は最近のOPE研究の主要なトピックらしい。
+先日の勉強会でusaitoさんが紹介されてた[「大規模行動空間に耐えうるOPE推定量の開発」の論文]()を読み、概要と感想を紹介します..!
+
+## IPS推定量が不偏推定量になる為の仮定
+
+IPS推定量 $\hat{V}_{IPS}(\pi;D)$ は、以下の**Common Support Assumption**を満たした場合に真の性能 $V(\pi)$ に対して不偏になる:
+
+$$
+\pi(a|\mathbf{x}) > 0 \rightarrow \pi_{0}(a|\mathbf{x}) > 0, \forall a \in A, \mathbf{x} \in X
+$$
+
+(i.e. target policy $\pi$ がsupportする全ての行動を、logging policy $\pi_{0}$ もsupportしている必要がある)
+
+**大規模行動空間であるほどこの仮定が成立しづらくなり**、IPS推定量の bias & variance が増大していく。
+
+この仮定って、 **$\pi_{0}$ が決定論的な意思決定policyの場合**(= context $\mathbf{x}$ が定まると選択する行動 $a$ が一意に定まるpolicy)、**基本的には成立できないよなぁ**:thinking:
+
+逆に、 $\pi_{0}$ が全てのcontext $\mathbf{x}$ に対して全ての行動 $a$ を選び得る場合(ex. 一様ランダムに行動を選ぶpolicy)は仮定が成立するので、観察データさえ増やせばIPS推定量で真の性能を確度高く推定できるはず...!:thinking:
+
+## 大規模行動空間に耐えうるOPE推定量: MIPS推定量の提案
+
+論文では、大規模行動空間に耐えうるOPE推定量として、**IPS推定量のaction を action embedding(i.e. action の特徴量) で置き換えた Marginalized IPS(MIPS)推定量**を提案。
+
+$$
+\hat{V}_{MIPS}(\pi:D)
+= \frac{1}{n} \sum_{i=1}^{n} \frac{p(e_i|x_i, \pi)}{p(e_i|x_i, \pi_{0})} r_{i}
+$$
+
+## MIPS推定量が不偏推定量になる為の仮定
+
+MIPS推定量が不偏になる為の条件として、以下の "**Common Embedding Support Assumption**" を満たす必要がある:
+
+$$
+p(e|x, \pi) > 0 → p(e|x, \pi_{0}) > 0, \forall e \in E,  x \in X
+$$
+
+大規模行動空間において common support assumption よりも common embedding support assumption の方が遥かに成立させやすいので、MIPS推定量は有効。
 
 # 調べた方法2. 力技っぽい!: オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る(@ ニュース記事の推薦)
-
-- hoge
 
 # 調べた方法3. naiveだけど導入しやすさと効果は高そう: 一定期間のみ、一様ランダムなモデルを本番適用してログデータ収集 (@ ニュース記事の推薦)
 
