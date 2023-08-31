@@ -65,7 +65,7 @@ We then propose the Marginalized IPS (MIPS) estimator, which uses the marginal d
 We show that MIPS is unbiased under an alternative condition, which states that the action embeddings should mediate every causal effect of the action on the reward.
 MIPSは、**アクションの埋め込みが報酬に対するアクションの因果効果をすべて媒介する、という条件下では不偏**であることを示す。
 Moreover, we show that MIPS has a lower variance than IPS, especially when there is a large number of actions, and thus the vanilla importance weights have a high variance.
-さらに、MIPSはIPSよりも分散が小さいことを示す。特にバニラ重要度重みが高い分散を持つ様なアクション数が多い時に...!
+さらに、MIPSはIPSよりも分散が小さいことを示す。特にバニラ重要度重みが高い分散を持つ様な アクション数が多い時に...!
 We also characterize the gain in MSE provided by MIPS, which implies an interesting bias-variance trade-off with respect to the quality of the action embeddings.
 また、MIPSによって得られるMSEのgain(??)の特徴も明らかにする。これは、**アクションの埋め込みの質に関して、興味深いバイアスと分散のトレードオフ**を意味する。
 Including many embedding dimensions captures the causal effect better, leading to a smaller bias of MIPS.
@@ -81,8 +81,8 @@ Comprehensive experiments on synthetic and real-world bandit data verify the the
 
 We follow the general contextual bandit setup, and an extensive discussion of related work is given in Appendix A.
 我々は**一般的なコンテクスト・バンディットの設定に従う**. 関連する研究の広範な議論は付録Aに示す。(確率論的か決定論的かは関係ないのかな、ようは強化学習的な=行動を選択 -> 報酬を受け取る -> モデルを更新する、みたいなモデル??)
-Let x ∈ X ⊆ R dx be a dx-dimensional context vector drawn i.i.d.from an unknown distribution p(x).
-x∈X⊆Rのdxを未知のi.i.d.の分布p(x)から描画されたdx次元のcontextベクトル(=特徴量)とする.
+Let $x \in X \in \mathbb{R}^{d_x}$ be a dx-dimensional context vector drawn i.i.d.from an unknown distribution p(x).
+$x \in X \in \mathbb{R}^{d_x}$ を未知のi.i.d.の分布 $p(x)$ から描画された $dx$ 次元のcontextベクトル(=特徴量)とする.
 
 Given context x, a possibly stochastic policy π(a|x) chooses action a from a finite action space denoted as A.
 コンテキストxが与えられたとき、確率的な政策π(a|x)は、Aとして示される有限の行動空間から行動aを選択する。
@@ -111,7 +111,7 @@ Vˆの精度は、平均二乗誤差（MSE）によって定量化される。
 $$
 MSE(\hat{V}(\pi)) = \mathbb{E}_{D} [(V(\pi) - \hat{V}(\pi;D))^2]
 \\
-= Bias(\hat{V}(\pi))^2 + \mathbb{V}_{D}[\hat{V}(\pi;D)]
+= Bias[\hat{V}(\pi)]^2 + \mathbb{V}_{D}[\hat{V}(\pi;D)]
 \tag{}
 $$
 
