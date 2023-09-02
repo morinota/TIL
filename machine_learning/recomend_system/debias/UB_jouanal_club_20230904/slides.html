@@ -374,7 +374,7 @@
 <li>理論的に保証されてる!: Off-Policy Evaluation手法を用いて過去のログデータからオンライン性能を推定(@ ファッションアイテムの推薦)</li>
 </ol></li>
 <li><ol start="2" type="1">
-<li>力技っぽい!: オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る(@ ニュース記事の推薦)</li>
+<li>力技!: オフライン観測可能なmetricsからオンライン性能の予測モデルを作る(@ ニュース記事の推薦)</li>
 </ol></li>
 <li><ol start="3" type="1">
 <li>naiveだけど導入しやすさと効果は高そう: 一定期間のみ、一様ランダムなモデルを本番適用してログデータ収集 (@ ニュース記事の推薦)</li>
@@ -495,8 +495,9 @@ MSE(\hat{V}(\pi)) = \mathbb{E}_{D} [(V(\pi) - \hat{V}(\pi;D))^2]
 </section>
 <section id="大規模行動空間を持つ意思決定タスクでopeが難しい問題" class="slide level2">
 <h2>大規模行動空間を持つ意思決定タスクでOPEが難しい問題</h2>
-<p>行動空間が小さい(=行動の選択肢が少ない)場合、IPS推定量に基づく信頼性の高い手法が多く登場した。しかしこれらの手法は、<strong>行動空間が大きい程、真のpolicy性能に対する Bias と Variance がどんどん増える可能性</strong>がある。(=後述するIPSの仮定を満たせなくなるから!) (論文読んでた感じでは、行動数が1000を超えたくらいから”大規模行動空間”と言える印象<span class="emoji" data-emoji="thinking">🤔</span>)</p>
-<p>よって、<strong>大規模行動空間に耐えうるOPE推定量</strong>は最近のOPE研究の主要なトピックらしい。 先日の勉強会でusaitoさんが紹介されてた<a href="">「大規模行動空間に耐えうるOPE推定量の開発」の論文</a>を読み、概要と感想を紹介します..!</p>
+<p>行動空間が小さい(=行動の選択肢が少ない)場合、IPS推定量に基づく信頼性の高い手法が多く登場した。しかしこれらの手法は、<strong>行動空間が大きい程、真のpolicy性能に対する Bias と Variance がどんどん増える可能性</strong>がある。(=後述するIPSの仮定を満たせなくなるから!)</p>
+<p>(論文読んでた感じでは、行動数が1000を超えたくらいから”大規模行動空間”と言える印象<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<p>よって、<strong>大規模行動空間に耐えうるOPE推定量</strong>は最近のOPE研究の主要なトピックらしい。 先日の勉強会でusaitoさんが紹介されてた<a href="https://arxiv.org/pdf/2202.06317.pdf">「大規模行動空間に耐えうるOPE推定量の開発」の論文</a>を読み、概要と感想を紹介します..!</p>
 </section>
 <section id="ips推定量が不偏推定量になる為の仮定" class="slide level2">
 <h2>IPS推定量が不偏推定量になる為の仮定</h2>
@@ -504,14 +505,14 @@ MSE(\hat{V}(\pi)) = \mathbb{E}_{D} [(V(\pi) - \hat{V}(\pi;D))^2]
 <p><span class="math display">\[
 \pi(a|\mathbf{x}) &gt; 0 \rightarrow \pi_{0}(a|\mathbf{x}) &gt; 0, \forall a \in A, \mathbf{x} \in X
 \]</span></p>
-<p>(i.e.&nbsp;target policy <span class="math inline">\(\pi\)</span> がsupportする全ての行動を、logging policy <span class="math inline">\(\pi_{0}\)</span> もsupportしている必要がある)</p>
+<p>つまり、「<strong>target policy <span class="math inline">\(\pi\)</span> がsupportする(=選択し得る)全ての行動を、logging policy <span class="math inline">\(\pi_{0}\)</span> もsupportしていてくれ！</strong>」という仮定…!</p>
 <p><strong>大規模行動空間であるほどこの仮定が成立しづらくなり</strong>、IPS推定量の bias &amp; variance が増大していく。</p>
 <p>この仮定って、 <strong><span class="math inline">\(\pi_{0}\)</span> が決定論的な意思決定policyの場合</strong>(= context <span class="math inline">\(\mathbf{x}\)</span> が定まると選択する行動 <span class="math inline">\(a\)</span> が一意に定まるpolicy)、<strong>基本的には成立できないよなぁ</strong><span class="emoji" data-emoji="thinking">🤔</span></p>
 <p>逆に、 <span class="math inline">\(\pi_{0}\)</span> が全てのcontext <span class="math inline">\(\mathbf{x}\)</span> に対して全ての行動 <span class="math inline">\(a\)</span> を選び得る場合(ex. 一様ランダムに行動を選ぶpolicy)は仮定が成立するので、観察データさえ増やせばIPS推定量で真の性能を確度高く推定できるはず…!<span class="emoji" data-emoji="thinking">🤔</span></p>
 </section>
 <section id="大規模行動空間に耐えうるope推定量-mips推定量の提案" class="slide level2">
 <h2>大規模行動空間に耐えうるOPE推定量: MIPS推定量の提案</h2>
-<p>論文では、大規模行動空間に耐えうるOPE推定量として、<strong>IPS推定量のaction を action embedding(i.e.&nbsp;action の特徴量) で置き換えた Marginalized IPS(MIPS)推定量</strong>を提案。</p>
+<p>論文では、大規模行動空間に耐えうるOPE推定量として、<strong>IPS推定量のaction を action embedding(i.e.&nbsp;action の特徴量みたいな!<span class="emoji" data-emoji="thinking">🤔</span>) で置き換えた Marginalized IPS(MIPS)推定量</strong>を提案。</p>
 <p><span class="math display">\[
 \hat{V}_{MIPS}(\pi:D)
 = \frac{1}{n} \sum_{i=1}^{n} \frac{p(e_i|x_i, \pi)}{p(e_i|x_i, \pi_{0})} r_{i}
@@ -523,30 +524,74 @@ MSE(\hat{V}(\pi)) = \mathbb{E}_{D} [(V(\pi) - \hat{V}(\pi;D))^2]
 <p><span class="math display">\[
 p(e|x, \pi) &gt; 0 → p(e|x, \pi_{0}) &gt; 0, \forall e \in E,  x \in X
 \]</span></p>
-<p>大規模行動空間において common support assumption よりも common embedding support assumption の方が遥かに成立させやすいので、MIPS推定量は有効。</p>
+<p>大規模行動空間では、前述のcommon support assumption よりも common embedding support assumption の方が遥かに成立させやすい(<strong>部分一致がOK</strong>なので…!<span class="emoji" data-emoji="thinking">🤔</span>)。</p>
+<p>(MIPSが不偏推定量になる為の条件はもう一つあるが割愛:No Direct Effect仮定)</p>
+<p>(ただ結局この仮定も、logging policy <span class="math inline">\(\pi_{0}\)</span> が決定論的なモデルの場合はかなり厳しいんだよなぁ…。OPEの観点では決定論的な推薦モデルはご法度というか、かなり扱いづらそうな印象<span class="emoji" data-emoji="thinking">🤔</span>)</p>
 </section></section>
-<section id="調べた方法2.-力技っぽい-オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る-ニュース記事の推薦" class="title-slide slide level1 center">
-<h1>調べた方法2. 力技っぽい!: オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る(@ ニュース記事の推薦)</h1>
+<section>
+<section id="調べた方法2.-力技-オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る-ニュース記事の推薦" class="title-slide slide level1 center">
+<h1>調べた方法2. 力技!: オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る(@ ニュース記事の推薦)</h1>
 
 </section>
-
+<section id="力技オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る" class="slide level2">
+<h2>力技!オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る</h2>
+<ul>
+<li>この論文では、accuracy metricsもbeyond-accuracy metricsも含めてオフライン算出可能なmerticsをたくさん使って、推薦システムのオンライン性能(論文ではCTR と online accuracy という指標を定義していた) を予測する回帰モデルを教師あり学習的に作る、という手法を提案していた。</li>
+<li>OPE推定量とは別のアプローチ。シンプル。決定論的な推薦モデルでも適用しやすい気はする<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>OPE推定量を使うアプローチと組み合わせても良いのでは?? その場合は、低bias高varianceな推定量よりも高bias低varianceな推定量を説明変数として有効そう<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>また本論文では、オンライン性能予測モデルを用いて、推薦アルゴリズムのハイパーパラメータを自動調整する手法も提案していた。(論文の例では、複数の推薦結果のブレンドの際の重み付け設定をself-adjustingしていました)</li>
+</ul>
+</section></section>
+<section>
 <section id="調べた方法3.-naiveだけど導入しやすさと効果は高そう-一定期間のみ一様ランダムなモデルを本番適用してログデータ収集-ニュース記事の推薦" class="title-slide slide level1 center">
 <h1>調べた方法3. naiveだけど導入しやすさと効果は高そう: 一定期間のみ、一様ランダムなモデルを本番適用してログデータ収集 (@ ニュース記事の推薦)</h1>
 <ul>
-<li>hoge</li>
+<li>2011年のyahooさんの論文。(<a href="https://qiita.com/morinota/items/eb92c63d9ad15f24182b">自分のまとめ記事</a>)</li>
+<li>論文の内容はOPE関連ではないが、実験方法がオフライン評価方法としてnaiveだが効果的だと思い紹介。</li>
 </ul>
 </section>
-
+<section id="一定期間一様ランダムなモデルを本番適用" class="slide level2">
+<h2>一定期間、一様ランダムなモデルを本番適用</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>推薦枠の内の1箇所に、選択ロジックとして一様ランダムなpolicyを適用し(=logging policy <span class="math inline">\(\pi_{0}\)</span>)、評価用データを収集してた。</li>
+<li>オフライン評価難しい問題の、一番シンプルな解決策かも??複数の推薦アイテムのうち、1つだけ一様ランダムにしてもユーザへの悪影響は大きくない気がするし…!<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>1週間とか1ヶ月とかのみ、推薦枠の1箇所のみ、であれば実際に適用可能性あるのでは…?<span class="emoji" data-emoji="thinking">🤔</span> その試用期間で得られたlog dataをオフライン評価で使い続ければ良いし。</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.ap-northeast-1.amazonaws.com%2F0%2F1697279%2Faab2e050-057b-789e-a277-2b6f50a89376.png?ixlib=rb-4.0.0&amp;auto=format&amp;gif-q=60&amp;q=75&amp;w=1400&amp;fit=max&amp;s=6952430697b2b90fd04518ac8a9e7e4a"></p>
+<p></p><figcaption>論文より引用。4つの推薦枠の内、F1のみに適用</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</section></section>
+<section>
 <section id="調べた方法4.-より高速なオンライン評価手法-interleaving-をabテストの前に導入する-動画の推薦" class="title-slide slide level1 center">
 <h1>調べた方法4. より高速なオンライン評価手法 Interleaving をABテストの前に導入する(@ 動画の推薦)</h1>
+
+</section>
+<section id="interleaving-をabテストの前に導入する" class="slide level2">
+<h2>Interleaving をABテストの前に導入する</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <ul>
-<li>hoge $$</li>
+<li>Netflixの推薦システムでは、<strong>Interleaving -&gt; ABテストの2段階のオンライン実験プロセス</strong>を採用してるという話。</li>
+<li>本内容はオフライン評価ではないが、「<strong>短期間で多くのモデル候補の中から、ABテストするに値するモデルを絞り込む</strong>」という点が共通している為、紹介。(Netflixさんがオフライン評価してないとは言ってない)</li>
+<li>Interleavingは、推薦や検索などのランキングモデルに対するオンライン評価方法の一種。複数のモデルが出力したランキングを Interleaveする(交互に混ぜ合わせ)。同一ユーザに対して複数のモデル出力を表示させ、性能を相対評価する。</li>
 </ul>
+</div><div class="column" style="width:50%;">
+<p>Interleaving の説明の図。</p>
+</div>
+</div>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
 </div>
-</section>
+</section></section>
     </div>
   </div>
 
