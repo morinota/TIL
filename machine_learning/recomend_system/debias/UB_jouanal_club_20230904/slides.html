@@ -553,11 +553,22 @@ p(e|x, \pi) &gt; 0 → p(e|x, \pi_{0}) &gt; 0, \forall e \in E,  x \in X
 </section>
 <section id="決定論的なモデルは無理かと思いつつも" class="slide level2">
 <h2>決定論的なモデルは無理かと思いつつも…</h2>
-<p>hoge(決定論的なモデル用のIPS推定量の式も紹介し、無理じゃないんだろうけど、仮定を満たせないよなぁ。。。みたいな話をしたい)</p>
+<p>決定論的なモデル用のIPS推定量の式もあるので無理じゃないんだろうけど、仮定を満たせないよなぁ。。。</p>
+<ul>
+<li></li>
+</ul>
 </section>
 <section id="ちなみにopeの実験はこんなデータがあればいいらしい" class="slide level2">
 <h2>ちなみにOPEの実験はこんなデータがあればいいらしい！</h2>
-<p>hoge(Open bandit datasetを紹介しつつ、こんなデータがあれば自社データで、自社の環境に適したOPE推定量を探したり実験できそう!みたいな内容を紹介)</p>
+<p>(再掲)</p>
+<blockquote>
+<p>OPEは、logging policy <span class="math inline">\(\pi_{0}\)</span> で収集した過去の <span class="math inline">\(n\)</span> 個のログデータ <span class="math inline">\(D := {(\mathbf{x}_i, a_i , r_i)}_{i=1}^{n}\)</span> のみを用いて、(<span class="math inline">\(\pi_{0}\)</span> とは異なる) target policy <span class="math inline">\(\pi\)</span> の性能を推定する。</p>
+</blockquote>
+<ul>
+<li>→ policy A で収集した <span class="math inline">\(D_{A}\)</span> と policy B で収集した <span class="math inline">\(D_{B}\)</span> さえ用意できれば、推定値 = <span class="math inline">\(\hat{V}(\pi_{A}; D_{B})\)</span> と真の値= <span class="math inline">\(V(\pi_{A};D_{A})\)</span> を比較してOPE推定量の精度評価ができる!</li>
+<li>→ <strong>ABテストの際に得られるログデータを使えば、自社の環境に適したOPE推定量を探したりできそう</strong>!</li>
+<li>ちなみに、オープンソースのOPE実験用データセットには<a href="https://github.com/st-tech/zr-obp/blob/master/obd/README_JN.md">Open Bandit Dataset</a>がある: ZOZOTOWNの推薦枠で収集されたオンライン実験データ</li>
+</ul>
 </section></section>
 <section>
 <section id="調べた方法2.-力技-オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る-ニュース記事の推薦" class="title-slide slide level1 center">

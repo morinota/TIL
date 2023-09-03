@@ -273,7 +273,13 @@ $$
 
 ## ちなみにOPEの実験はこんなデータがあればいいらしい！
 
-hoge(Open bandit datasetを紹介しつつ、こんなデータがあれば自社データで、自社の環境に適したOPE推定量を探したり実験できそう!みたいな内容を紹介)
+(再掲)
+
+> OPEは、logging policy $\pi_{0}$ で収集した過去の $n$ 個のログデータ $D := {(\mathbf{x}_i, a_i , r_i)}_{i=1}^{n}$ のみを用いて、($\pi_{0}$ とは異なる) target policy $\pi$ の性能を推定する。
+
+- → policy A で収集した $D_{A}$ と policy B で収集した $D_{B}$ さえ用意できれば、推定値 = $\hat{V}(\pi_{A}; D_{B})$ と真の値= $V(\pi_{A};D_{A})$ を比較してOPE推定量の精度評価ができる!
+- → **ABテストの際に得られるログデータを使えば、自社の環境に適したOPE推定量を探したりできそう**!
+- ちなみに、オープンソースのOPE実験用データセットには[Open Bandit Dataset](https://github.com/st-tech/zr-obp/blob/master/obd/README_JN.md)がある: ZOZOTOWNの推薦枠で収集されたオンライン実験データ
 
 # 調べた方法2. 力技!: オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る(@ ニュース記事の推薦)
 
