@@ -5,6 +5,7 @@ format:
     # theme: [default, custom_lab.scss]
     theme: [default, custom_lab.scss]
     slide-number: true
+    scrollable: true
     logo: https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919
     footer: ⇒ [https://qiita.com/morinota](https://qiita.com/morinota)
 from: markdown+emoji
@@ -267,12 +268,27 @@ hoge(Open bandit datasetを紹介しつつ、こんなデータがあれば自�
 
 # 調べた方法2. 力技!: オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る(@ ニュース記事の推薦)
 
-## 力技!オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る
+## オフライン指標 -> オンライン性能の予測モデルを作る
 
-- この論文では、accuracy metricsもbeyond-accuracy metricsも含めてオフライン算出可能なmerticsをたくさん使って、推薦システムのオンライン性能(論文ではCTR と online accuracy という指標を定義していた) を予測する回帰モデルを教師あり学習的に作る、という手法を提案していた。
-- OPE推定量とは別のアプローチ。シンプル。決定論的な推薦モデルでも適用しやすい気はする:thinking:
-- OPE推定量を使うアプローチと組み合わせても良いのでは?? その場合は、低bias高varianceな推定量よりも高bias低varianceな推定量を説明変数として有効そう:thinking:
-- また本論文では、オンライン性能予測モデルを用いて、推薦アルゴリズムのハイパーパラメータを自動調整する手法も提案していた。(論文の例では、複数の推薦結果のブレンドの際の重み付け設定をself-adjustingしていました)
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- 推薦タスクでは、MAPやnDCG等のランキング精度指標に加えて、beyond-accuracyな指標も多く提案される(ex. Diversity, Coverage, Novelty)
+- 上記のオフライン指標郡からオンライン性能(ex. CTR)の予測モデルを作るオフライン評価方法を提案。
+- オンライン性能の予測と、対象製品において**オンライン性能の向上に寄与するオフライン指標(i.e. どんな性質を持つ推薦結果を出してあげたらユーザは嬉しいの?) の探索**を目的とする。
+
+:::
+
+::: {.column width="50%"}
+
+![オンライン性能予測モデルを用いた最良アルゴリズム選択ワークフロー(論文より引用)](https://d3i71xaburhd42.cloudfront.net/96b00351da3e0c281ce8c26b45bbba328b3d5f21/1-Figure1-1.png)
+
+- 力技でシンプル。決定論的な推薦モデルでも適用しやすい気はする:thinking:
+
+:::
+
+::::
 
 # 調べた方法3. naiveだけど導入しやすさと効果は高そう: 一定期間のみ、一様ランダムなモデルを本番適用してログデータ収集 (@ ニュース記事の推薦)
 
@@ -301,21 +317,26 @@ hoge(Open bandit datasetを紹介しつつ、こんなデータがあれば自�
 
 # 調べた方法4. より高速なオンライン評価手法 Interleaving をABテストの前に導入する(@ 動画の推薦)
 
+- 詳細は[netflixさんのtech blog](https://netflixtechblog.com/interleaving-in-online-experiments-at-netflix-a04ee392ec55)
+
 ## Interleaving をABテストの前に導入する
 
 :::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="40%"}
 
-- Netflixの推薦システムでは、**Interleaving -> ABテストの2段階のオンライン実験プロセス**を採用してるという話。
-- 本内容はオフライン評価ではないが、「**短期間で多くのモデル候補の中から、ABテストするに値するモデルを絞り込む**」という点が共通している為、紹介。(Netflixさんがオフライン評価してないとは言ってない)
-- Interleavingは、推薦や検索などのランキングモデルに対するオンライン評価方法の一種。複数のモデルが出力したランキングを Interleaveする(交互に混ぜ合わせ)。同一ユーザに対して複数のモデル出力を表示させ、性能を相対評価する。
+- Netflixの推薦システムでは、ABテスト前に**Interleavingによる初期絞り込みオンライン実験**を採用してる話。
+- 本内容はオフライン評価ではないが、「**短期間で多くのモデル候補の中から、ABテストするに値するモデルを絞り込む(刈り込む)**」という点が共通しているので紹介。
+<!-- (Netflixさんがオフライン評価してないとは言ってない) -->
+- Interleavingは、推薦や検索などのランキングモデルに対するオンライン評価方法の一種。**複数のモデルが出力したランキングを Interleaveする(交互に混ぜ合わせる)。**同一ユーザに対して複数のモデルの比較が可能で、性能を**相対評価**する。
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="60%"}
 
-Interleaving の説明の図。
+![(ブログより引用, 図2)Interleavingによるアルゴリズム改善の高速化](https://miro.medium.com/v2/resize:fit:1400/0*Gw_KOdbFTvBlzQaN.)
+
+![(ブログより引用, 図3)ABテストとInterleavingの比較](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*i9VwKzBJewkRsz3oNAfUvQ.png)
 
 :::
 

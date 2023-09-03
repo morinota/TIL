@@ -242,6 +242,7 @@
     }
     .reveal .slide:not(.center) {
       height: 100%;
+      overflow-y: auto;
     }
     .reveal .slide.scrollable {
       overflow-y: auto;
@@ -527,20 +528,41 @@ p(e|x, \pi) &gt; 0 → p(e|x, \pi_{0}) &gt; 0, \forall e \in E,  x \in X
 <p>大規模行動空間では、前述のcommon support assumption よりも common embedding support assumption の方が遥かに成立させやすい(<strong>部分一致がOK</strong>なので…!<span class="emoji" data-emoji="thinking">🤔</span>)。</p>
 <p>(MIPSが不偏推定量になる為の条件はもう一つあるが割愛:No Direct Effect仮定)</p>
 <p>(ただ結局この仮定も、logging policy <span class="math inline">\(\pi_{0}\)</span> が決定論的なモデルの場合はかなり厳しいんだよなぁ…。OPEの観点では決定論的な推薦モデルはご法度というか、かなり扱いづらそうな印象<span class="emoji" data-emoji="thinking">🤔</span>)</p>
+</section>
+<section id="決定論的なモデルは無理かと思いつつも" class="slide level2">
+<h2>決定論的なモデルは無理かと思いつつも…</h2>
+<p>hoge(決定論的なモデル用のIPS推定量の式も紹介し、無理じゃないんだろうけど、仮定を満たせないよなぁ。。。みたいな話をしたい)</p>
+</section>
+<section id="ちなみにopeの実験はこんなデータがあればいいらしい" class="slide level2">
+<h2>ちなみにOPEの実験はこんなデータがあればいいらしい！</h2>
+<p>hoge(Open bandit datasetを紹介しつつ、こんなデータがあれば自社データで、自社の環境に適したOPE推定量を探したり実験できそう!みたいな内容を紹介)</p>
 </section></section>
 <section>
 <section id="調べた方法2.-力技-オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る-ニュース記事の推薦" class="title-slide slide level1 center">
 <h1>調べた方法2. 力技!: オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る(@ ニュース記事の推薦)</h1>
 
 </section>
-<section id="力技オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る" class="slide level2">
-<h2>力技!オフライン観測可能なmetricsからオンライン性能を予測する回帰モデルを作る</h2>
+<section id="オフライン指標---オンライン性能の予測モデルを作る" class="slide level2">
+<h2>オフライン指標 -&gt; オンライン性能の予測モデルを作る</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <ul>
-<li>この論文では、accuracy metricsもbeyond-accuracy metricsも含めてオフライン算出可能なmerticsをたくさん使って、推薦システムのオンライン性能(論文ではCTR と online accuracy という指標を定義していた) を予測する回帰モデルを教師あり学習的に作る、という手法を提案していた。</li>
-<li>OPE推定量とは別のアプローチ。シンプル。決定論的な推薦モデルでも適用しやすい気はする<span class="emoji" data-emoji="thinking">🤔</span></li>
-<li>OPE推定量を使うアプローチと組み合わせても良いのでは?? その場合は、低bias高varianceな推定量よりも高bias低varianceな推定量を説明変数として有効そう<span class="emoji" data-emoji="thinking">🤔</span></li>
-<li>また本論文では、オンライン性能予測モデルを用いて、推薦アルゴリズムのハイパーパラメータを自動調整する手法も提案していた。(論文の例では、複数の推薦結果のブレンドの際の重み付け設定をself-adjustingしていました)</li>
+<li>推薦タスクでは、MAPやnDCG等のランキング精度指標に加えて、beyond-accuracyな指標も多く提案される(ex. Diversity, Coverage, Novelty)</li>
+<li>上記のオフライン指標郡からオンライン性能(ex. CTR)の予測モデルを作るオフライン評価方法を提案。</li>
+<li>オンライン性能の予測と、対象製品において<strong>オンライン性能の向上に寄与するオフライン指標(i.e.&nbsp;どんな性質を持つ推薦結果を出してあげたらユーザは嬉しいの?) の探索</strong>を目的とする。</li>
 </ul>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://d3i71xaburhd42.cloudfront.net/96b00351da3e0c281ce8c26b45bbba328b3d5f21/1-Figure1-1.png"></p>
+<p></p><figcaption>オンライン性能予測モデルを用いた最良アルゴリズム選択ワークフロー(論文より引用)</figcaption><p></p>
+</figure>
+</div>
+<ul>
+<li>力技でシンプル。決定論的な推薦モデルでも適用しやすい気はする<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul>
+</div>
+</div>
 </section></section>
 <section>
 <section id="調べた方法3.-naiveだけど導入しやすさと効果は高そう-一定期間のみ一様ランダムなモデルを本番適用してログデータ収集-ニュース記事の推薦" class="title-slide slide level1 center">
@@ -556,8 +578,8 @@ p(e|x, \pi) &gt; 0 → p(e|x, \pi_{0}) &gt; 0, \forall e \in E,  x \in X
 <div class="column" style="width:50%;">
 <ul>
 <li>推薦枠の内の1箇所に、選択ロジックとして一様ランダムなpolicyを適用し(=logging policy <span class="math inline">\(\pi_{0}\)</span>)、評価用データを収集してた。</li>
-<li>オフライン評価難しい問題の、一番シンプルな解決策かも??複数の推薦アイテムのうち、1つだけ一様ランダムにしてもユーザへの悪影響は大きくない気がするし…!<span class="emoji" data-emoji="thinking">🤔</span></li>
-<li>1週間とか1ヶ月とかのみ、推薦枠の1箇所のみ、であれば実際に適用可能性あるのでは…?<span class="emoji" data-emoji="thinking">🤔</span> その試用期間で得られたlog dataをオフライン評価で使い続ければ良いし。</li>
+<li>オフライン評価難しい問題の、一番シンプルな解決策かも??<strong>複数の推薦枠のうち、1つだけ一様ランダムにしてもユーザへの悪影響は大きくない気がするし</strong>…!<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>1週間とか1ヶ月とかのみ、推薦枠の1箇所のみ、であれば実際に適用可能性あるのでは…?<span class="emoji" data-emoji="thinking">🤔</span> その試用期間で得られたログデータをオフライン評価で使い続ければ良いし。</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
@@ -572,23 +594,36 @@ p(e|x, \pi) &gt; 0 → p(e|x, \pi_{0}) &gt; 0, \forall e \in E,  x \in X
 <section>
 <section id="調べた方法4.-より高速なオンライン評価手法-interleaving-をabテストの前に導入する-動画の推薦" class="title-slide slide level1 center">
 <h1>調べた方法4. より高速なオンライン評価手法 Interleaving をABテストの前に導入する(@ 動画の推薦)</h1>
-
+<ul>
+<li>詳細は<a href="https://netflixtechblog.com/interleaving-in-online-experiments-at-netflix-a04ee392ec55">netflixさんのtech blog</a></li>
+</ul>
 </section>
 <section id="interleaving-をabテストの前に導入する" class="slide level2">
 <h2>Interleaving をABテストの前に導入する</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
+<div class="column" style="width:40%;">
 <ul>
-<li>Netflixの推薦システムでは、<strong>Interleaving -&gt; ABテストの2段階のオンライン実験プロセス</strong>を採用してるという話。</li>
-<li>本内容はオフライン評価ではないが、「<strong>短期間で多くのモデル候補の中から、ABテストするに値するモデルを絞り込む</strong>」という点が共通している為、紹介。(Netflixさんがオフライン評価してないとは言ってない)</li>
-<li>Interleavingは、推薦や検索などのランキングモデルに対するオンライン評価方法の一種。複数のモデルが出力したランキングを Interleaveする(交互に混ぜ合わせ)。同一ユーザに対して複数のモデル出力を表示させ、性能を相対評価する。</li>
+<li>Netflixの推薦システムでは、ABテスト前に<strong>Interleavingによる初期絞り込みオンライン実験</strong>を採用してる話。</li>
+<li>本内容はオフライン評価ではないが、「<strong>短期間で多くのモデル候補の中から、ABテストするに値するモデルを絞り込む(刈り込む)</strong>」という点が共通しているので紹介。 <!-- (Netflixさんがオフライン評価してないとは言ってない) --></li>
+<li>Interleavingは、推薦や検索などのランキングモデルに対するオンライン評価方法の一種。<strong>複数のモデルが出力したランキングを Interleaveする(交互に混ぜ合わせる)。</strong>同一ユーザに対して複数のモデルの比較が可能で、性能を<strong>相対評価</strong>する。</li>
 </ul>
-</div><div class="column" style="width:50%;">
-<p>Interleaving の説明の図。</p>
+</div><div class="column" style="width:60%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://miro.medium.com/v2/resize:fit:1400/0*Gw_KOdbFTvBlzQaN."></p>
+<p></p><figcaption>(ブログより引用, 図2)Interleavingによるアルゴリズム改善の高速化</figcaption><p></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://miro.medium.com/v2/resize:fit:1400/format:webp/1*i9VwKzBJewkRsz3oNAfUvQ.png"></p>
+<p></p><figcaption>(ブログより引用, 図3)ABテストとInterleavingの比較</figcaption><p></p>
+</figure>
 </div>
 </div>
-
-<img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
+</div>
+<p><img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo"></p>
+<div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
 </div>
 </section></section>
