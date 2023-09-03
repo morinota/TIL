@@ -141,7 +141,9 @@ $$
 過去の観測データから**事前に報酬期待値 $q(\mathbf{x}, a) := \mathbb{E}[r|\mathbf{x}, a]$ の予測モデル $\hat{q}(\mathbf{x}, a)$ を学習しておき**、それをOPEに用いる。
 
 $$
-\hat{V}_{DM}(\pi;D) = \frac{1}{n} \sum_{i=1}^{n} \hat{q}(\mathbf{x}_{i}, \pi(\mathbf{x}_{i});D)
+\hat{V}_{DM}(\pi;D) = \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}_{\pi}[\hat{q}(\mathbf{x}_{i}, a)]
+\\
+= \frac{1}{n} \sum_{i=1}^{n} \hat{q}(\mathbf{x}_{i}, \pi(\mathbf{x}_{i}))
 $$
 
 - 特徴: OPEの精度が報酬予測モデル $\hat{q}$ に大きく依存する為、biasは大きい。一方でvarianceは小さい。
@@ -151,7 +153,7 @@ $$
 
 ::: {.column width="40%"}
 
-横軸=観測データ数 n, 縦軸=MSE(& bias^2 と variance)の図
+![([usaitoさんの資料](https://speakerdeck.com/usaito/off-policy-evaluationfalseji-chu-toopen-bandit-dataset-and-pipelinefalseshao-jie?slide=38)より引用)横軸=観測データ数 $n$, 縦軸=真の値とのMSE(bias^2 + variance)の図](comparison_performance_OPE.PNG)
 
 :::
 
@@ -166,18 +168,22 @@ $$
 観測された各報酬 $r_i$ を、logging policy による**行動の選ばれやすさ(=propensity score) の逆数で観測報酬を重み付け**したOPE推定量。
 
 $$
-\hat{V}_{IPS}(\pi;D) = \frac{1}{n} \sum_{i=1}^{n} \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
+\hat{V}_{IPS}(\pi;D)
+= \frac{1}{n} \sum_{i=1}^{n} \frac{\pi(a_i|\mathbf{x}_i)}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
+\\
+= \frac{1}{n} \sum_{i=1}^{n} \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
 $$
 
 - biasは小さい(=仮定を満たせば不偏: $\mathbb{E}_{D} [\hat{V}_{IPS}(\pi)] = V(\pi)$)。
-- varianceは大きめ、データ $n$ が増える程小さくなっていく。
-- 先進的なOPE推定量の多くが、このIPS推定量に基づいている。
+- データ数nが小さい時は分散が大きく不安定だが、nが大きくなるにつれ真の値に収束。
+- 先進的なOPE推定量の多くがこのIPS推定量に基づいており、重要なOPE推定量。
+- $\frac{\pi(a_i|\mathbf{x}_i)}{\pi_{0}(a_i|\mathbf{x}_i)}$ を重要度重みと呼ぶ。
 
 :::
 
 ::: {.column width="40%"}
 
-横軸=観測データ数 n, 縦軸=MSE(& bias^2 と variance)の図
+![([usaitoさんの資料](https://speakerdeck.com/usaito/off-policy-evaluationfalseji-chu-toopen-bandit-dataset-and-pipelinefalseshao-jie?slide=38)より引用)横軸=観測データ数 $n$, 縦軸=真の値とのMSE(bias^2 + variance)の図](comparison_performance_OPE.PNG)
 
 :::
 
@@ -195,16 +201,17 @@ DMとIPSを組み合わせた推定量。
 $$
 \hat{V}_{DR}(\pi;D) = \hat{V}_{DR}(\pi;D)
 \\
-+ \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)}
++ \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\pi(a_i|\mathbf{x}_i)}{\pi_{0}(a_i|\mathbf{x}_i)}
+% + \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)}
 $$
 
-- 特徴: DM推定量の性質によりvarianceを抑えつつ、IPS推定量の性質(=仮定を満たせば不偏)を受けてbiasを小さくしている。
+- 特徴: DM推定量の性質により $n$ が小さい時のvarianceを抑えつつ、IPS推定量の性質(=仮定を満たせば不偏)を受けて真の値に収束していく。
 
 :::
 
 ::: {.column width="40%"}
 
-横軸=観測データ数 n, 縦軸=MSE(& bias^2 と variance)の図
+![([usaitoさんの資料](https://speakerdeck.com/usaito/off-policy-evaluationfalseji-chu-toopen-bandit-dataset-and-pipelinefalseshao-jie?slide=38)より引用)横軸=観測データ数 $n$, 縦軸=真の値とのMSE(bias^2 + variance)の図](comparison_performance_OPE.PNG)
 
 :::
 
@@ -260,7 +267,9 @@ $$
 
 ## 決定論的なモデルは無理かと思いつつも...
 
-hoge(決定論的なモデル用のIPS推定量の式も紹介し、無理じゃないんだろうけど、仮定を満たせないよなぁ。。。みたいな話をしたい)
+決定論的なモデル用のIPS推定量の式もあるので無理じゃないんだろうけど、仮定を満たせないよなぁ。。。
+
+-
 
 ## ちなみにOPEの実験はこんなデータがあればいいらしい！
 
@@ -304,12 +313,13 @@ hoge(Open bandit datasetを紹介しつつ、こんなデータがあれば自�
 - 推薦枠の内の1箇所に、選択ロジックとして一様ランダムなpolicyを適用し(=logging policy $\pi_{0}$)、評価用データを収集してた。
 - オフライン評価難しい問題の、一番シンプルな解決策かも??**複数の推薦枠のうち、1つだけ一様ランダムにしてもユーザへの悪影響は大きくない気がするし**...!:thinking:
 - 1週間とか1ヶ月とかのみ、推薦枠の1箇所のみ、であれば実際に適用可能性あるのでは...?:thinking: その試用期間で得られたログデータをオフライン評価で使い続ければ良いし。
+- $\pi_{0}$ が全ての行動を一様ランダムに選択するならば、IPSもMIPSも不偏推定量になる仮定を満たせるし、そもそもこれらのOPE推定量でbiasを取り除く必要すらない:thinking:
 
 :::
 
 ::: {.column width="50%"}
 
-![論文より引用。4つの推薦枠の内、F1のみに適用](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.ap-northeast-1.amazonaws.com%2F0%2F1697279%2Faab2e050-057b-789e-a277-2b6f50a89376.png?ixlib=rb-4.0.0&auto=format&gif-q=60&q=75&w=1400&fit=max&s=6952430697b2b90fd04518ac8a9e7e4a)
+![(論文より引用, 図2)4つの推薦枠の内、F1のみに一様ランダムな意思決定policyを適用](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.ap-northeast-1.amazonaws.com%2F0%2F1697279%2Faab2e050-057b-789e-a277-2b6f50a89376.png?ixlib=rb-4.0.0&auto=format&gif-q=60&q=75&w=1400&fit=max&s=6952430697b2b90fd04518ac8a9e7e4a)
 
 :::
 

@@ -447,14 +447,21 @@ MSE(\hat{V}(\pi)) = \mathbb{E}_{D} [(V(\pi) - \hat{V}(\pi;D))^2]
 <div class="column" style="width:60%;">
 <p>過去の観測データから<strong>事前に報酬期待値 <span class="math inline">\(q(\mathbf{x}, a) := \mathbb{E}[r|\mathbf{x}, a]\)</span> の予測モデル <span class="math inline">\(\hat{q}(\mathbf{x}, a)\)</span> を学習しておき</strong>、それをOPEに用いる。</p>
 <p><span class="math display">\[
-\hat{V}_{DM}(\pi;D) = \frac{1}{n} \sum_{i=1}^{n} \hat{q}(\mathbf{x}_{i}, \pi(\mathbf{x}_{i});D)
+\hat{V}_{DM}(\pi;D) = \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}_{\pi}[\hat{q}(\mathbf{x}_{i}, a)]
+\\
+= \frac{1}{n} \sum_{i=1}^{n} \hat{q}(\mathbf{x}_{i}, \pi(\mathbf{x}_{i}))
 \]</span></p>
 <ul>
 <li>特徴: OPEの精度が報酬予測モデル <span class="math inline">\(\hat{q}\)</span> に大きく依存する為、biasは大きい。一方でvarianceは小さい。</li>
 <li>ただそもそも精度の良い報酬予測モデル <span class="math inline">\(\hat{q}\)</span> を作れる時点で、それを使った意思決定policyを運用すれば良いので、OPEとしての実用性は低め。</li>
 </ul>
 </div><div class="column" style="width:40%;">
-<p>横軸=観測データ数 n, 縦軸=MSE(&amp; bias^2 と variance)の図</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="comparison_performance_OPE.PNG"></p>
+<p></p><figcaption>(<a href="https://speakerdeck.com/usaito/off-policy-evaluationfalseji-chu-toopen-bandit-dataset-and-pipelinefalseshao-jie?slide=38">usaitoさんの資料</a>より引用)横軸=観測データ数 <span class="math inline">\(n\)</span>, 縦軸=真の値とのMSE(bias^2 + variance)の図</figcaption><p></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -464,15 +471,24 @@ MSE(\hat{V}(\pi)) = \mathbb{E}_{D} [(V(\pi) - \hat{V}(\pi;D))^2]
 <div class="column" style="width:60%;">
 <p>観測された各報酬 <span class="math inline">\(r_i\)</span> を、logging policy による<strong>行動の選ばれやすさ(=propensity score) の逆数で観測報酬を重み付け</strong>したOPE推定量。</p>
 <p><span class="math display">\[
-\hat{V}_{IPS}(\pi;D) = \frac{1}{n} \sum_{i=1}^{n} \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
+\hat{V}_{IPS}(\pi;D)
+= \frac{1}{n} \sum_{i=1}^{n} \frac{\pi(a_i|\mathbf{x}_i)}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
+\\
+= \frac{1}{n} \sum_{i=1}^{n} \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
 \]</span></p>
 <ul>
 <li>biasは小さい(=仮定を満たせば不偏: <span class="math inline">\(\mathbb{E}_{D} [\hat{V}_{IPS}(\pi)] = V(\pi)\)</span>)。</li>
-<li>varianceは大きめ、データ <span class="math inline">\(n\)</span> が増える程小さくなっていく。</li>
-<li>先進的なOPE推定量の多くが、このIPS推定量に基づいている。</li>
+<li>データ数nが小さい時は分散が大きく不安定だが、nが大きくなるにつれ真の値に収束。</li>
+<li>先進的なOPE推定量の多くがこのIPS推定量に基づいており、重要なOPE推定量。</li>
+<li><span class="math inline">\(\frac{\pi(a_i|\mathbf{x}_i)}{\pi_{0}(a_i|\mathbf{x}_i)}\)</span> を重要度重みと呼ぶ。</li>
 </ul>
 </div><div class="column" style="width:40%;">
-<p>横軸=観測データ数 n, 縦軸=MSE(&amp; bias^2 と variance)の図</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="comparison_performance_OPE.PNG"></p>
+<p></p><figcaption>(<a href="https://speakerdeck.com/usaito/off-policy-evaluationfalseji-chu-toopen-bandit-dataset-and-pipelinefalseshao-jie?slide=38">usaitoさんの資料</a>より引用)横軸=観測データ数 <span class="math inline">\(n\)</span>, 縦軸=真の値とのMSE(bias^2 + variance)の図</figcaption><p></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -484,13 +500,19 @@ MSE(\hat{V}(\pi)) = \mathbb{E}_{D} [(V(\pi) - \hat{V}(\pi;D))^2]
 <p><span class="math display">\[
 \hat{V}_{DR}(\pi;D) = \hat{V}_{DR}(\pi;D)
 \\
-+ \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)}
++ \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\pi(a_i|\mathbf{x}_i)}{\pi_{0}(a_i|\mathbf{x}_i)}
+% + \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)}
 \]</span></p>
 <ul>
-<li>特徴: DM推定量の性質によりvarianceを抑えつつ、IPS推定量の性質(=仮定を満たせば不偏)を受けてbiasを小さくしている。</li>
+<li>特徴: DM推定量の性質により <span class="math inline">\(n\)</span> が小さい時のvarianceを抑えつつ、IPS推定量の性質(=仮定を満たせば不偏)を受けて真の値に収束していく。</li>
 </ul>
 </div><div class="column" style="width:40%;">
-<p>横軸=観測データ数 n, 縦軸=MSE(&amp; bias^2 と variance)の図</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="comparison_performance_OPE.PNG"></p>
+<p></p><figcaption>(<a href="https://speakerdeck.com/usaito/off-policy-evaluationfalseji-chu-toopen-bandit-dataset-and-pipelinefalseshao-jie?slide=38">usaitoさんの資料</a>より引用)横軸=観測データ数 <span class="math inline">\(n\)</span>, 縦軸=真の値とのMSE(bias^2 + variance)の図</figcaption><p></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -580,12 +602,13 @@ p(e|x, \pi) &gt; 0 → p(e|x, \pi_{0}) &gt; 0, \forall e \in E,  x \in X
 <li>推薦枠の内の1箇所に、選択ロジックとして一様ランダムなpolicyを適用し(=logging policy <span class="math inline">\(\pi_{0}\)</span>)、評価用データを収集してた。</li>
 <li>オフライン評価難しい問題の、一番シンプルな解決策かも??<strong>複数の推薦枠のうち、1つだけ一様ランダムにしてもユーザへの悪影響は大きくない気がするし</strong>…!<span class="emoji" data-emoji="thinking">🤔</span></li>
 <li>1週間とか1ヶ月とかのみ、推薦枠の1箇所のみ、であれば実際に適用可能性あるのでは…?<span class="emoji" data-emoji="thinking">🤔</span> その試用期間で得られたログデータをオフライン評価で使い続ければ良いし。</li>
+<li><span class="math inline">\(\pi_{0}\)</span> が全ての行動を一様ランダムに選択するならば、IPSもMIPSも不偏推定量になる仮定を満たせるし、そもそもこれらのOPE推定量でbiasを取り除く必要すらない<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.ap-northeast-1.amazonaws.com%2F0%2F1697279%2Faab2e050-057b-789e-a277-2b6f50a89376.png?ixlib=rb-4.0.0&amp;auto=format&amp;gif-q=60&amp;q=75&amp;w=1400&amp;fit=max&amp;s=6952430697b2b90fd04518ac8a9e7e4a"></p>
-<p></p><figcaption>論文より引用。4つの推薦枠の内、F1のみに適用</figcaption><p></p>
+<p></p><figcaption>(論文より引用, 図2)4つの推薦枠の内、F1のみに一様ランダムな意思決定policyを適用</figcaption><p></p>
 </figure>
 </div>
 </div>
