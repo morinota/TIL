@@ -1,4 +1,4 @@
 - source: slides.md
   quarto-pub:
     - id: 4f896a3d-22c0-489b-b941-176c0feee97c
-      url: 'https://quartopub.com/sites/morinota/journal_club_20230904'
+      url: 'https://morinota.quarto.pub/journal_club_20230904'

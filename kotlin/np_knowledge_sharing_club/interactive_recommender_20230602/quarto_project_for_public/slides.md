@@ -27,7 +27,7 @@ title-slide-attributes:
 - 私のkotlin歴は4ヶ月程です.(元々はML周りでPythonとRを嗜んでました.)
 - また、**LLMやOpenAI API**が最近話題なので、関連した話だと皆さん楽しいかも...?
 
-これらを踏まえて、**推薦システム × kotlin × LLM(OpenAI API)** という事で、「ユーザとの対話で推薦結果を変化させるInteractive Recommenderをkotlin実装してみようとした話」にしました!
+これらを踏まえて、**推薦システム × kotlin × LLM(OpenAI API)** という事で、「ユーザとの対話で推薦結果を変化させるInteractive Recommenderをkotlin実装してみようとした話」をテーマに選びました.
 
 ## 推薦システム × LLM で何ができそう??
 
@@ -47,7 +47,7 @@ title-slide-attributes:
 
 # 架空のケーススタディ
 
-今回は「**user_idを指定してリクエストを投げると、そのユーザにPersonalizeされた推薦アイテムリストを返す**」様な推薦サーバがkotlinで実装されていると、想定しましょう.
+今回は「**user_idを指定してリクエストを投げると、そのユーザにPersonalizeされた推薦アイテムリストを返す**」様な推薦サーバがkotlinで実装されている、と想定しましょう.
 
 そして、推薦サーバに新たに「**ユーザとの対話を通して推薦アイテムを変化(調整)させる**」interactive recommender APIを追加する事を妄想しましょう...!
 

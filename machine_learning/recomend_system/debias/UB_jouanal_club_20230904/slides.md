@@ -29,11 +29,36 @@ title-slide-attributes:
 - 複数のオフラインmetricsからオンライン性能を予測する論文: [Predicting Online Performance of News Recommender Systems Through Richer Evaluation Metrics](https://dl.acm.org/doi/10.1145/2792838.2800184)
 - netflixのtechブログ: [Innovating Faster on Personalization Algorithms at Netflix Using Interleaving](https://netflixtechblog.com/interleaving-in-online-experiments-at-netflix-a04ee392ec55)
 - naiveだけど有効なオフライン評価方法をしてた contextual bandit の論文: [A contextual-bandit approach to personalized news article recommendation](https://arxiv.org/pdf/1003.0146.pdf)
+- 宿泊予約サービスbooking.comの機械学習モデルの開発運用で得た教訓をまとめた論文(KDD2019) [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
 
 ## 今回のテーマを選んだ経緯
 
-- 推薦や広告配信等の意思決定タスクに機械学習を適用する上で、オフライン評価とオンライン評価の結果の乖離問題がある。
--
+:::: {.columns}
+
+::: {.column width="50%"}
+
+
+
+- ビジネス上のタスクに機械学習を適用する上で、**オフライン評価とオンライン評価の結果が乖離しがち問題**。(ex. 推薦や検索、広告配信等の意思決定タスク)
+- [booking.comの論文](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)でも、機械学習モデルの開発運用で得た教訓の1つとして以下の様に言っていた:
+
+> A very interesting finding is that increasing the performance of a model, does not necessarily translates to a gain in value.
+
+:::
+
+::: {.column width="50%"}
+
+![([booking.comの論文](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)より引用) 図4. Relative difference in a business metric vs relative performance difference between a baseline model and a new one.](https://nryotaro.dev/150_successful_machine_learning_models/fig4.png)
+
+「オフラインでのモデル性能の推定値(横軸)」と「RCTで観察されたビジネス指標(縦軸)」に相関がない。
+
+:::
+
+::::
+
+ただやっぱり、"オフライン評価できると嬉しい"...!
+
+
 
 ## ABテストする前に機械学習モデルの性能を確度高く評価できたらどんな点が嬉しい?
 
@@ -63,7 +88,7 @@ title-slide-attributes:
 
 ## 色々調べたオフライン評価の確度をあげるアプローチ達
 
-- 1. 理論的に保証されてる!: Off-Policy Evaluation手法を用いて過去のログデータからオンライン性能を推定(@ ファッションアイテムの推薦)
+- 1. 理論的に保証されてる!: **Off-Policy Evaluation手法**を用いて過去のログデータからオンライン性能を推定(@ ファッションアイテムの推薦)
 - 2. 力技!: オフライン観測可能なmetricsからオンライン性能の予測モデルを作る(@ ニュース記事の推薦)
 - 3. naiveだけど導入しやすさと効果は高そう: 一定期間のみ、一様ランダムなモデルを本番適用してログデータ収集 (@ ニュース記事の推薦)
 - 4. より高速なオンライン評価手法 Interleaving をABテストの前に導入する(@ 動画の推薦)
@@ -124,7 +149,7 @@ $$
 
 ## 代表的な3つのOPE推定量
 
-基本的にこれら3つのOPE推定量が、OPE研究の基礎になっているらしい:
+基本的にこれら**3つのOPE推定量**が、OPE研究の基礎になっているらしい:
 
 - DM(Direct Method)推定量
 - IPS(Inverse Propensity Scoring)推定量
@@ -142,8 +167,6 @@ $$
 
 $$
 \hat{V}_{DM}(\pi;D) = \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}_{\pi}[\hat{q}(\mathbf{x}_{i}, a)]
-\\
-= \frac{1}{n} \sum_{i=1}^{n} \hat{q}(\mathbf{x}_{i}, \pi(\mathbf{x}_{i}))
 $$
 
 - 特徴: OPEの精度が報酬予測モデル $\hat{q}$ に大きく依存する為、biasは大きい。一方でvarianceは小さい。
@@ -170,8 +193,6 @@ $$
 $$
 \hat{V}_{IPS}(\pi;D)
 = \frac{1}{n} \sum_{i=1}^{n} \frac{\pi(a_i|\mathbf{x}_i)}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
-\\
-= \frac{1}{n} \sum_{i=1}^{n} \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
 $$
 
 - biasは小さい(=仮定を満たせば不偏: $\mathbb{E}_{D} [\hat{V}_{IPS}(\pi)] = V(\pi)$)。
@@ -199,10 +220,9 @@ DMとIPSを組み合わせた推定量。
 **DM推定量をベースライン**としつつ、報酬期待値予測モデル $\hat{q}$ の誤差を**IPS重み付けで補正**している。
 
 $$
-\hat{V}_{DR}(\pi;D) = \hat{V}_{DR}(\pi;D)
+\hat{V}_{DR}(\pi;D) = \hat{V}_{DM}(\pi;D)
 \\
 + \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\pi(a_i|\mathbf{x}_i)}{\pi_{0}(a_i|\mathbf{x}_i)}
-% + \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)}
 $$
 
 - 特徴: DM推定量の性質により $n$ が小さい時のvarianceを抑えつつ、IPS推定量の性質(=仮定を満たせば不偏)を受けて真の値に収束していく。
@@ -219,9 +239,10 @@ $$
 
 ## 大規模行動空間を持つ意思決定タスクでOPEが難しい問題
 
-行動空間が小さい(=行動の選択肢が少ない)場合、IPS推定量に基づく信頼性の高い手法が多く登場した。しかしこれらの手法は、**行動空間が大きい程、真のpolicy性能に対する Bias と Variance がどんどん増える可能性**がある。(=後述するIPSの仮定を満たせなくなるから!)
+行動空間が小さい(=行動の選択肢が少ない)場合、IPS推定量に基づく信頼性の高い手法が多く登場した。
 
-(論文読んでた感じでは、行動数が1000を超えたくらいから"大規模行動空間"と言える印象:thinking:)
+しかしこれらの手法は、**行動空間が大きい程、真のpolicy性能に対する Bias と Variance がどんどん増える可能性**がある。(=後述するIPSの仮定を満たせなくなるから!)
+(論文読んでた感じでは、行動数が1000を超えたくらいから"大規模行動空間"と言えるのかな:thinking:)
 
 よって、**大規模行動空間に耐えうるOPE推定量**は最近のOPE研究の主要なトピックらしい。
 先日の勉強会でusaitoさんが紹介されてた[「大規模行動空間に耐えうるOPE推定量の開発」の論文](https://arxiv.org/pdf/2202.06317.pdf)を読み、概要と感想を紹介します..!
@@ -244,12 +265,14 @@ $$
 
 ## 大規模行動空間に耐えうるOPE推定量: MIPS推定量の提案
 
-論文では、大規模行動空間に耐えうるOPE推定量として、**IPS推定量のaction を action embedding(i.e. action の特徴量みたいな!:thinking:) で置き換えた Marginalized IPS(MIPS)推定量**を提案。
+論文では、大規模行動空間に耐えうるOPE推定量として、**IPS推定量の行動 $a$ を action embedding $\mathbf{e}$ (i.e. 行動の特徴量みたいな!:thinking:) で置き換えた Marginalized IPS(MIPS)推定量**を提案。
 
 $$
 \hat{V}_{MIPS}(\pi:D)
 = \frac{1}{n} \sum_{i=1}^{n} \frac{p(e_i|x_i, \pi)}{p(e_i|x_i, \pi_{0})} r_{i}
 $$
+
+(IPSではlogging policy $\pi_{0}$ が行動 $a$ を選ぶ確率で重み付けしていたが、MIPSでは 行動の特徴 $\mathbf{e}$ を選ぶ確率で重み付けする...!)
 
 ## MIPS推定量が不偏推定量になる為の仮定
 
@@ -259,17 +282,33 @@ $$
 p(e|x, \pi) > 0 → p(e|x, \pi_{0}) > 0, \forall e \in E,  x \in X
 $$
 
-大規模行動空間では、前述のcommon support assumption よりも common embedding support assumption の方が遥かに成立させやすい(**部分一致がOK**なので...!:thinking:)。
+大規模行動空間では、前述のcommon support assumption よりも common embedding support assumption の方が遥かに成立させやすい。
+(**全く同じ行動をsupportしてなくても、特徴が似た行動をsupportしていればOK!**)
 
 (MIPSが不偏推定量になる為の条件はもう一つあるが割愛:No Direct Effect仮定)
 
 (ただ結局この仮定も、logging policy $\pi_{0}$ が決定論的なモデルの場合はかなり厳しいんだよなぁ...。OPEの観点では決定論的な推薦モデルはご法度というか、かなり扱いづらそうな印象:thinking:)
 
-## 決定論的なモデルは無理かと思いつつも...
+## (ぼやき)決定論的なモデルはなぁ...
 
-決定論的なモデル用のIPS推定量の式もあるので無理じゃないんだろうけど、仮定を満たせないよなぁ。。。
+決定論的なモデル用のIPS推定量の式もあるので無理じゃないんだろうけど、logging policy $\pi_{0}$ とtarget policy $\pi$ が相当似てる場合を除いて、IPSが不偏推定量になる仮定を満たせないよなぁ。。。
 
--
+(以下は、$\pi$ が決定論的モデルver.の各種OPE推定量の式。元の式の特殊なケース)
+$$
+\hat{V}_{DM}(\pi;D)
+= \frac{1}{n} \sum_{i=1}^{n} \hat{q}(\mathbf{x}_{i}, \pi(\mathbf{x}_{i}))
+$$
+
+$$
+\hat{V}_{IPS}(\pi;D)
+= \frac{1}{n} \sum_{i=1}^{n} \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)} r_{i}
+$$
+
+$$
+\hat{V}_{DR}(\pi;D) = \hat{V}_{DM}(\pi;D)
+\\
++ \frac{1}{n} \sum_{i=1}^{n} (r_{i} - \hat{q}(\mathbf{x}_i, a_i)) \frac{\mathbb{I}[\pi(\mathbf{x}_{i}) = a_i]}{\pi_{0}(a_i|\mathbf{x}_i)}
+$$
 
 ## ちなみにOPEの実験はこんなデータがあればいいらしい！
 
@@ -277,7 +316,7 @@ $$
 
 > OPEは、logging policy $\pi_{0}$ で収集した過去の $n$ 個のログデータ $D := {(\mathbf{x}_i, a_i , r_i)}_{i=1}^{n}$ のみを用いて、($\pi_{0}$ とは異なる) target policy $\pi$ の性能を推定する。
 
-- → policy A で収集した $D_{A}$ と policy B で収集した $D_{B}$ さえ用意できれば、推定値 = $\hat{V}(\pi_{A}; D_{B})$ と真の値= $V(\pi_{A};D_{A})$ を比較してOPE推定量の精度評価ができる!
+- → policy A で収集した $D_{A}$ と policy B で収集した $D_{B}$ さえ用意できれば、推定値 = $\hat{V}(\pi_{A}; D_{B})$ と真の値= $V(\pi_{A};D_{A})$ を比較してOPE推定量の実験ができる!
 - → **ABテストの際に得られるログデータを使えば、自社の環境に適したOPE推定量を探したりできそう**!
 - ちなみに、オープンソースのOPE実験用データセットには[Open Bandit Dataset](https://github.com/st-tech/zr-obp/blob/master/obd/README_JN.md)がある: ZOZOTOWNの推薦枠で収集されたオンライン実験データ
 
@@ -325,7 +364,7 @@ $$
 
 ::: {.column width="50%"}
 
-![(論文より引用, 図2)4つの推薦枠の内、F1のみに一様ランダムな意思決定policyを適用](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.ap-northeast-1.amazonaws.com%2F0%2F1697279%2Faab2e050-057b-789e-a277-2b6f50a89376.png?ixlib=rb-4.0.0&auto=format&gif-q=60&q=75&w=1400&fit=max&s=6952430697b2b90fd04518ac8a9e7e4a)
+![(論文より引用, 図2)4つの推薦枠の内、一箇所(F1)のみに一様ランダムな意思決定policyを適用](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.ap-northeast-1.amazonaws.com%2F0%2F1697279%2Faab2e050-057b-789e-a277-2b6f50a89376.png?ixlib=rb-4.0.0&auto=format&gif-q=60&q=75&w=1400&fit=max&s=6952430697b2b90fd04518ac8a9e7e4a)
 
 :::
 
@@ -357,3 +396,15 @@ $$
 :::
 
 ::::
+
+## まとめ
+
+- ABテストする前に機械学習モデルの性能を確度高く評価できたら色々嬉しいけど、皆どうやってるんだろう?について色々調べている。
+  - OPE推定量を使う -> **logging policy が確率的なモデルだったらかなり効果的そう...!!**
+  - 決定論的なモデルの場合は、OPE推定量の活用はむずそう...?:thinking:
+  - 検索や推薦タスクの場合は、ABテスト前にInterleavingの導入もあり。
+- 今後論文を読む上で思ったこと。
+  - 論文のオフライン実験結果を過信しない方がいいかも。
+  - オンライン実験の結果が載っていたとしても、それはその会社のビジネスの特定のusecaseにおいて良い結果だった、というだけなので、自社への適用可能性はまた別の話。
+  - 結局は、自社のusecaseのデータを用いてシミュレーションしたりオンライン実験したりして、自社にとって良いモデルを作り上げていくしかないよなぁ...。
+  - **高速にモデルを評価できる基盤**と、**有効そうな手法を取捨選択できる嗅覚**がほしい...!
