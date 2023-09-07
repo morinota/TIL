@@ -174,7 +174,7 @@ As introduced in Section 2.1, for each item $i$ and corresponding attribute dict
 読める。
 To encode a user’s interaction sequence $s = {i_{1}, i_{2}, \cdots, i_{n}}$, we first reverse items in a sequence to ${i_{n},i_{n-1}, \cdots, $i_{1}}$ because intuitively recent items (i.e.$, i_n, i_{n-1}, \cdots$) are important for the next item prediction and reversed sequences can make sure recent items are included in the input data.
 ユーザの対話シーケンス $s = {i_{1}, i_{2}, \cdots, i_{n}}$ を符号化するために、まずシーケンスのアイテムを ${i_{n},i_{n-1}, \cdots, $i_{1}}$ に逆変換する。
-これは直感的に最近のアイテム (i.e.$, i_n, i_{n-1}, \cdots$) は次のアイテム予測に重要であり、逆変換シーケンスにより最近のアイテムが入力データに確実に含まれる様にできるからである。(sequenceをtruncateするので、最新のinteractionが切れない様に!)
+これは直感的に最近のアイテム (i.e.$, i_n, i_{n-1}, \cdots$) は次のアイテム予測に重要であり、逆変換シーケンスにより最近のアイテムが入力データに確実に含まれる様にできるからである。(要するに、sequenceをtruncateするので、最新のinteractionが切れない様に!)
 Then, we use the item “sentences” to replace items and add a special token [CLS] at the beginning of sequences.
 そして、アイテムの置換にitem “sentences”を使用し、シーケンスの先頭に特別なトークン[CLS]を追加する。
 Hence, model inputs are denoted as:
@@ -185,8 +185,8 @@ X = \{ [CLS], T_n, T_{n-1}, \cdots, T_{1}\}
 \tag{1}
 $$
 
-where 𝑋 is a sequence of words containing all items and corresponding attributes the user interacted with in the historical interactions.
-ここで $X$ は、過去のinteractionの中でユーザがinteractしたすべてのアイテムと対応する属性を含む単語達(=sequence of words)のsequence(=**sequence of sequences**)である。
+where 𝑋 is a **sequence of words** containing all items and corresponding attributes the user interacted with in the historical interactions.
+ここで $X$ は、過去のinteractionの中でユーザがinteractしたすべてのアイテムと対応する属性辞書を含む単語達のsequence(=**sequence of sequences**)である。
 
 ### 2.2.2. Embedding Layer
 
@@ -201,12 +201,12 @@ Hence, Recformer contains four embeddings as follows:
 
 - **Token position embedding** represents the position of tokens in a sequence. A word appearing at the 𝑖-th position in the sequence $X$ is represented as $B_{i} \in \mathbb{R}^{d}$ . Similar to language models, token position embedding is designed to help Transformer understand the sequential patterns of words. トークン位置埋め込みは、シーケンス内のトークンの位置を表現する。 sequence $X$ の $i$ 番目の位置に現れる単語(=実際には $T_{n-i+1}$ ??)は、$B_{i} \in \mathbb{R}^{d}$ と表される。 **言語モデルと同様に、トークン位置埋め込みは、Transformerが単語の連続パターンを理解するのを助ける**ように設計されている。(このposition embeddingは、通常のTransformerと同じ意味合い...!)
 
-- **Token type embedding** represents where a token comes from. Specifically, the token type embedding totally contains three vectors C[CLS], CKey, CValue ∈ R 𝑑 to represent if a token comes from [CLS], attribute keys, or attribute values respectively. Different types of tokens usually have different importance for the next item prediction. For example, because most items usually have the same attribute keys in a recommendation dataset, models with token type embedding will recognize repeated words from the same attribute keys. トークン型の埋め込みは、**トークンがどこから来たか**を表す。 具体的には、token type embedding は、3つのベクトル $C_{[CLS]}, C_{Key}, C_{Value} \in \mathbb{R}^{d}$ を含み、トークンがそれぞれ[CLS]、属性キー、属性値から来るかどうかを表します。 異なるtoken typeは通常、next-item-predictionの為の異なる重要性を持つ。 例えば、推薦データセットでは、ほとんどのアイテムが同じ属性キーを持っているので、token type embeddingを行うモデルは、同じ属性キーから繰り返される単語を認識する。(??)
+- **Token type embedding** represents where a token comes from. Specifically, the token type embedding totally contains three vectors C[CLS], CKey, CValue ∈ R 𝑑 to represent if a token comes from [CLS], attribute keys, or attribute values respectively. Different types of tokens usually have different importance for the next item prediction. For example, because most items usually have the same attribute keys in a recommendation dataset, models with token type embedding will recognize repeated words from the same attribute keys. トークン型の埋め込みは、**トークンがどこから来たか**を表す。 具体的には、token type embedding は、3つのベクトル $C_{[CLS]}, C_{Key}, C_{Value} \in \mathbb{R}^{d}$ を含み、tokenがそれぞれ[CLS]、属性キー、属性値から来るかどうかを表します。 異なるtoken typeは通常、next-item-predictionの為の異なる重要性を持つ。 例えば、推薦データセットでは、ほとんどのアイテムが同じ属性keyを持っているので、token type embeddingを行うモデルは、同じ属性keyから繰り返される単語を認識する。(=これは意味ないよって情報かを認識する為??)
 
 - **Item position embedding** represents the position of items in a sequence. A word from attributes of the 𝑘-th item in the sequence 𝑋 is represented as $D_{k} \in \mathbb{R}^{d}$ and $D \in \mathbb{n \times d}$ where 𝑛 is the maximum length of a user’s interaction sequence 𝑠. Same as previous self-attentive sequential recommenders [14, 27], the item position embedding is a key component for item sequential pattern learning. In Recformer, the item position embedding can also help the model learn the alignment between word tokens and items アイテム位置埋め込みは、**sequence内のアイテムの位置**を表現する。 sequence $X$ の $k$ 番目のアイテムの属性からの単語は、$D_{k} \in \mathbb{R}^{d}$ と $D \in \mathbb{n \times d}$ として表現される ($n$ はユーザのinteraction sequence $s$ の最大長)。**これまでのself-attention型逐次推薦器[14, 27]と同様に、アイテム位置埋め込みはアイテム逐次パターン学習の重要な要素**である。 Recformerでは、アイテム位置埋め込みは、word tokensとアイテムの間のalignment(連携?)を学習するのにも役立つ。
 
 Therefore, given a word 𝑤 from the input sequence 𝑋, the input embedding is calculated as the summation of four different embeddings followed by layer normalization [1]:
-したがって、入力シーケンス $X$ から単語 $w$ が与えられると、input embeddng は、4つの異なるembeggings の layer 正規化後の和として計算される[1]：
+したがって、入力シーケンス $X$ から単語token $w$ が与えられると、input embeddng は、4つの異なるembeggings の layer 正規化後の和として計算される[1]：
 (ここでのword $w$ は、itemを意味するのではなく、あるitemの"item sentence" $T_i$ に含まれる一つの単語、という認識であってるだろうか??:thinking:)
 
 $$
@@ -215,7 +215,7 @@ $$
 $$
 
 where $\mathbf{E}_{w} \in \mathbb{R}^{d}$.
-ここで、E𝑤∈ R𝑑 。
+ここで、$\mathbf{E}_{w} \in \mathbb{R}^{d}$。
 The embedding of model inputs 𝑋 is a sequence of E𝑤,
 モデル入力 $X$ のembedding は、$\mathbf{E}_{w}$ のsequenceである、
 
@@ -225,14 +225,14 @@ $$
 $$
 
 where $\mathbf{E}_{X} \in \mathbb{R}^{(l+1) \times d}$ and $l$ is the maximum length of tokens in a user’s interaction sequence.
-ここで、$\mathbf{E}_{X} \in \mathbb{R}^{(l+1) \times d}$ であり、$l$ はユーザのinteraction sequence におけるtokenの最大長である。(itemの最大長ではなく、word tokenの最大長...!)
+ここで、$\mathbf{E}_{X} \in \mathbb{R}^{(l+1) \times d}$ であり、$l$ はユーザのinteraction sequence におけるtokenの最大長である。($s$ の最大長ではなく、$X$ の最大長...!)
 
 ### 2.2.3. Item or Sequence Representations. アイテムまたはシーケンスの表現。
 
 To encode E𝑋 , we employ the bidirectional Transformer structure Longformer [2] as our encoder.
 $E_{X}$ を符号化するために、**双方向トランスフォーマー構造Longformer [2]をencoderとして採用**する。(Longformer = Long Document Transformer...!)
 Because 𝑋 is usually a long sequence, the local windowed attention in Longformer can help us efficiently encode E𝑋 .
-$X$ は通常長いsequenceなので、Longformerのlocal windowed attention(?)は、$E_{x}$ を効率的にencodeするのに役立つ。
+**$X$ は通常長いsequenceなので、Longformerのlocal windowed attention(?)は、$E_{x}$ を効率的にencodeするのに役立つ**。(=対象tokenのすぐ近くのtoken達に対するattention weightのみを保持するattention pattern。要はsparceなattention weight distributionになる工夫!)
 As the standard settings in Longformer for document understanding, the special token [CLS] has global attention but other tokens use the local windowed attention.
 文書理解のためのLongformerの標準設定として、特別なトークン[CLS]はグローバルなアテンションを持つが、他のトークンはlocal windowed attentionを使う。
 Hence, Recformer computes 𝑑-dimensional word representations as follows:
@@ -245,15 +245,15 @@ $$
 $$
 
 where $\mathbf{h}_{w_1} \in \mathbb{R}^{d}$.
-ここで $\mathbf{h}_{w_1} \in \mathbb{R}^{d}$ である。
+ここで $\mathbf{h}_{w} \in \mathbb{R}^{d}$ である。
 Similar to the language models used for sentence representations, the representation of the first token h[CLS] is used as the sequence representation.
 **sentence表現に使用される言語モデルと同様に、最初のトークンh[CLS]の表現がsequence表現として使用される**。
 In Recformer, we do not maintain an embedding table for items.
 Recformerでは、**アイテムの埋め込みテーブルを保持しない**。(RecformerはID-freeなモデルだから...!:thinking:)
 Instead, we view the item as a special case of the interaction sequence with only one item.
-その代わりに、**我々はアイテムを「1つしかないinteraction sequenceにitemが一つしか無い」特別なケースとみなす**。
+その代わりに、**我々はアイテムを「interaction sequence $s$ にitemが一つしか無い」特別なケースとみなす**。
 For each item $i$, we construct its item “sentence” $T_{i}$ and use $X = \{[CLS],T_i\}$ as the model input to get the sequence representation h[CLS] as the item representation h𝑖 .
-各アイテム $i$ について、そのitem sentence $T_i$ を構成し、$T_{i}$ and use $X = \{[CLS],T_i\}$ をモデル入力として、sequence表現 $h_{[CLS]}$ をアイテム表現 $\mathbf{h}_{i}$ として得る。
+各アイテム $i$ について、そのitem sentence $T_i$ を構成し、$X = \{[CLS],T_i\}$ をモデル入力として、sequence表現 $h_{[CLS]}$ をアイテム表現 $\mathbf{h}_{i}$ として得る。
 
 ### 2.2.4. Prediction. 推論
 
