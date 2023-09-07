@@ -37,8 +37,6 @@ title-slide-attributes:
 
 ::: {.column width="50%"}
 
-
-
 - ビジネス上のタスクに機械学習を適用する上で、**オフライン評価とオンライン評価の結果が乖離しがち問題**。(ex. 推薦や検索、広告配信等の意思決定タスク)
 - [booking.comの論文](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)でも、機械学習モデルの開発運用で得た教訓の1つとして以下の様に言っていた:
 
@@ -57,8 +55,6 @@ title-slide-attributes:
 ::::
 
 ただやっぱり、"オフライン評価できると嬉しい"...!
-
-
 
 ## ABテストする前に機械学習モデルの性能を確度高く評価できたらどんな点が嬉しい?
 
@@ -294,6 +290,7 @@ $$
 決定論的なモデル用のIPS推定量の式もあるので無理じゃないんだろうけど、logging policy $\pi_{0}$ とtarget policy $\pi$ が相当似てる場合を除いて、IPSが不偏推定量になる仮定を満たせないよなぁ。。。
 
 (以下は、$\pi$ が決定論的モデルver.の各種OPE推定量の式。元の式の特殊なケース)
+
 $$
 \hat{V}_{DM}(\pi;D)
 = \frac{1}{n} \sum_{i=1}^{n} \hat{q}(\mathbf{x}_{i}, \pi(\mathbf{x}_{i}))
