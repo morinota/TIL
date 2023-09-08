@@ -86,3 +86,7 @@ Consolidating multiple use cases into a single model prompts a flexible design w
 # Final Thoughts
 
 Though ML system consolidation is not a silver bullet and may not be appropriate in all cases, we believe there are many scenarios where such consolidation simplifies code, allows faster innovation and increases the maintainability of systems. Our experience shows that consolidating models that rank similar targets leads to many benefits, but it’s unclear whether models that rank completely different targets and have very different input features would benefit from such consolidation. In future work, we plan to establish more concrete guidelines for when ML model consolidation is most suitable. Finally, large foundation models for NLP and recommendations might have significant impact on ML system design and could lead to even more consolidation at systems level.
+
+# Acknowledgements
+
+We thank Vito Ostuni, Moumita Bhattacharya, Justin Basilico, Weidong Zhang, and Xinran Waibel for their contributions to the ML system. Thanks also to Anne Cocos for her valuable feedback on a previous draft.
