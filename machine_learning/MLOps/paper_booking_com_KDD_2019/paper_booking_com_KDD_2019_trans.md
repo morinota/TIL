@@ -291,53 +291,49 @@ Each point represents the comparison of a successful model that proved its value
 The horizontal coordinate is given by the relative difference between the new model and the current baseline according to an offline estimation of the performance of the models.
 水平座標は、モデルの性能のオフライン推定による、新しいモデルと現在のベースラインとの相対的な差で与えられる。
 This data is only about classifiers and rankers, evaluated by ROC AUC and Mean Reciprocal Rank respectively.
-このデータはクラシファイアとランカーに関するもので、それぞれROC AUCと平均逆順位で評価される。
+このデータはclassifiers(分類モデル)とrankers(ランキングモデル)に関するもので、それぞれROC AUCと Mean Reciprocal Rank(平均逆順位)で評価される。
 The vertical coordinate is given by the relative difference in a business metric of interest as observed in a RCT where both models are compared (all models aim for the same business metric).
-縦座標は、両モデルを比較したRCTで観察された、関心のあるビジネス指標の相対的な差で与えられる（すべてのモデルは同じビジネス指標を目指している）。
+縦座標は、両モデルを比較したRCTで観察された、関心のあるビジネス指標の相対的な差で与えられる(すべてのモデルは同じビジネス指標を目指している)。
 We include a total of 23 comparisons (46 models).
 合計23の比較（46モデル）を含む。
 Visual inspection already shows a lack of correlation, deeper analysis shows that the Pearson correlation is -0.1 with 90% confidence interval (-0.45, 0.27), and Spearman correlation is -0.18 with 90% confidence interval (-0.5, 0.19).
-目視ではすでに相関がないことがわかるが、より深く分析すると、ピアソン相関は-0.1、90％信頼区間（-0.45、0.27）、スピアマン相関は-0.18、90％信頼区間（-0.5、0.19）である。
+目視ではすでに相関がないことがわかるが、より深く分析すると、**ピアソン相関は-0.1**、90％信頼区間（-0.45、0.27）、**スピアマン相関は-0.18**、90％信頼区間（-0.5、0.19）である。
 We stress that this lack of correlation is not between offline and online performance, but between offline performance gain and business value gain.
-この相関性の欠如は、オフラインとオンラインのパフォーマンスではなく、オフラインでのパフォーマンス向上とビジネス価値向上の間にあることを強調する。
+この相関性の欠如は、**オフラインとオンラインのパフォーマンスではなく、オフラインでのパフォーマンス向上とビジネス価値向上の間にあることを強調する**。
 At the same time we do not want to overstate the generality of this result, the external validity can be easily challenged by noting that these models work in a specific context, for a specific system, they are built in specific ways, they all target the same business metric, and furthermore they are all trying to improve it after a previous model already did it.
-同時に、我々はこの結果の一般性を誇張したくはない。これらのモデルは特定の文脈、特定のシステムで動作し、特定の方法で構築され、すべて同じビジネス指標をターゲットにしており、さらに、それらはすべて以前のモデルがすでにそれを行った後にそれを改善しようとしていることに注目することで、外的妥当性は容易に異議を唱えることができる。
+同時に、**我々はこの結果の一般性を誇張したくはない**。これらのモデルは特定の文脈、特定のシステムで動作し、特定の方法で構築され、すべて同じビジネス指標をターゲットにしており、さらに、それらはすべて以前のモデルがすでにそれを行った後にそれを改善しようとしていることに注目することで、外的妥当性は容易に異議を唱えることができる。
 Nevertheless we still find the lack of correlation a remarkable finding.
 とはいえ、相関がないことは注目に値する。
 In fact, such finding led us to investigate other areas of Booking.com and consistently found the same pattern.
 実際、このような発見をきっかけに、Booking.comの他のエリアも調査したところ、一貫して同じパターンが見つかりました。
 For example [8] highlights that the standard performance metric for Machine Translation (BLEU) exhibits a “rather tenuous” correlation with human metrics.
-例えば、[8]は、機械翻訳の標準的なパフォーマンス指標（BLEU）は、人間のメトリックと "むしろ微妙な "相関性を示すことを強調している。
+例えば、[8]は、機械翻訳の標準的なパフォーマンス指標(BLEU)は、人間のメトリックと "むしろ微妙な "相関性を示すことを強調している。
 Only where the offline metric is almost exactly the business metric, a correlation can be observed.
-オフライン指標がビジネス指標とほぼ一致する場合のみ、相関関係が観察される。
+**オフライン指標がビジネス指標とほぼ一致する場合のみ、相関関係が観察される**。
 
 This phenomenon can be explained by different factors, we list the ones we found most relevant to share:
 この現象は、さまざまな要因によって説明することができる：
 
-- Value Performance Saturation: It is clear that there are business problems for which it is not possible to drive value from model performance gains indefinitely, at some point the value vs performance curve saturates, and gains in performance produce no value gain, or too small gains, impossible to detect in an RCT in reasonable time. バリュー・パフォーマンスの飽和：
-  ある時点で、価値対パフォーマンス曲線は飽和し、パフォーマンスの向上は価値の向上をもたらさないか、あるいは小さすぎる向上しかもたらさないため、妥当な時間内にRCTで検出することは不可能である。
+- Value Performance Saturation: It is clear that there are business problems for which it is not possible to drive value from model performance gains indefinitely, at some point the value vs performance curve saturates, and gains in performance produce no value gain, or too small gains, impossible to detect in an RCT in reasonable time. バリュー・パフォーマンスの飽和: ある時点で、価値対パフォーマンス曲線は飽和し、パフォーマンスの向上は価値の向上をもたらさないか、あるいは小さすぎる向上しかもたらさないため、妥当な時間内にRCTで検出することは不可能である。
 
-- Segment Saturation: when testing a new model against a baseline we apply triggered analysis to make sure we only consider the users exposed to a change, that is, users for which the models disagree. As models improve on each other, this disagreement rate goes down, reducing the population of users that are actually exposed to a treatment, and with that, the power to detect gains in value. More details about how we test competing models can be found in Section 7.4. セグメントの飽和：
-  ベースラインに対して新しいモデルをテストする場合、トリガー分析を適用して、変化にさらされたユーザー、つまりモデルが不一致のユーザーのみを考慮するようにする。 モデルが改良されるにつれて、この不一致率は低下し、実際に治療にさらされるユーザーの母集団が減少し、それに伴って価値の向上を検出する力も低下する。 競合モデルのテスト方法についての詳細は、セクション7.4にある。
+- Segment Saturation: when testing a new model against a baseline we apply triggered analysis to make sure we only consider the users exposed to a change, that is, users for which the models disagree. As models improve on each other, this disagreement rate goes down, reducing the population of users that are actually exposed to a treatment, and with that, the power to detect gains in value. More details about how we test competing models can be found in Section 7.4. セグメントの飽和:ベースラインに対して新しいモデルをテストする場合、トリガー分析を適用して、変化にさらされたユーザ、つまりモデルが不一致のユーザーのみを考慮するようにする。 モデルが改良されるにつれて、この不一致率は低下し、実際に治療にさらされるユーザーの母集団が減少し、それに伴って価値の向上を検出する力も低下する。 競合モデルのテスト方法についての詳細は、セクション7.4にある。
 
-- Uncanny Valley effect: as models become better and better, they seem to know more and more about our users, or can predict very well what the user is about to do. This can be unsettling for some of our customers (see Figure 5 and [10]), which likely translates to a negative effect on value. 不気味の谷効果：
-  モデルがだんだん良くなるにつれて、ユーザーのことがだんだんわかるようになったり、ユーザーが何をしようとしているのかよく予測できるようになったりする。 これは、一部の顧客にとっては不安なことであり（図5と[10]を参照）、価値に悪影響を及ぼす可能性が高い。
+- Uncanny Valley effect: as models become better and better, they seem to know more and more about our users, or can predict very well what the user is about to do. This can be unsettling for some of our customers (see Figure 5 and [10]), which likely translates to a negative effect on value. 不気味の谷効果: モデルがだんだん良くなるにつれて、ユーザのことがだんだんわかるようになったり、ユーザーが何をしようとしているのかよく予測できるようになったりする。 これは、一部の顧客にとっては不安なことであり（図5と[10]を参照）、価値に悪影響を及ぼす可能性が高い。
 
-- Proxy Over-optimization: Usually, our Machine Learned models are supervised models that maximize certain observed variable, but not necessarily the specific objective business metric. For example, we might build a recommender system based on Click Through Rate because we know that CTR has a strong correlation or even causation with Conversion Rate, the business metric we really care about in this case. But as models get better and better, they might end up “just driving clicks”, without any actual effect on conversion. An example of this is a model that learned to recommend very similar hotels to the one a user is looking at, encouraging the user to click (presumably to compare all the very similar hotels), eventually drowning them into the paradox of choice and hurting conversion. In general, over-optimizing proxies leads to distracting the user away from their goal. プロキシの過剰最適化：
-  通常、機械学習モデルは特定の観測変数を最大化する教師ありモデルであるが、必ずしも特定の目的ビジネス指標を最大化するものではない。 例えば、クリック率（Click Through Rate）に基づいてレコメンダー・システムを構築するかもしれません。なぜなら、CTRはコンバージョン率（Conversion Rate）と強い相関関係、あるいは因果関係があることがわかっているからです。 しかし、モデルがどんどん良くなるにつれて、コンバージョンに実際の効果がないまま、「クリックを促すだけ」で終わってしまうかもしれない。 この例としては、ユーザーが見ているホテルと非常によく似たホテルを推薦することを学習したモデルがあり、ユーザーにクリックを促し（おそらく非常によく似たホテルをすべて比較するため）、最終的には選択のパラドックスに溺れさせ、コンバージョンを阻害する。 一般的に、プロキシを過剰に最適化することは、ユーザーを目的から遠ざけることにつながる。
+- Proxy Over-optimization: Usually, our Machine Learned models are supervised models that maximize certain observed variable, but not necessarily the specific objective business metric. For example, we might build a recommender system based on Click Through Rate because we know that CTR has a strong correlation or even causation with Conversion Rate, the business metric we really care about in this case. But as models get better and better, they might end up “just driving clicks”, without any actual effect on conversion. An example of this is a model that learned to recommend very similar hotels to the one a user is looking at, encouraging the user to click (presumably to compare all the very similar hotels), eventually drowning them into the paradox of choice and hurting conversion. In general, over-optimizing proxies leads to distracting the user away from their goal. プロキシの過剰最適化: 通常、機械学習モデルは特定の観測変数を最大化する教師ありモデルであるが、必ずしも特定の目的ビジネス指標を最大化するものではない。 例えば、クリック率（Click Through Rate）に基づいてレコメンダー・システムを構築するかもしれません。なぜなら、CTRはコンバージョン率（Conversion Rate）と強い相関関係、あるいは因果関係があることがわかっているからです。 しかし、モデルがどんどん良くなるにつれて、コンバージョンに実際の効果がないまま、「クリックを促すだけ」で終わってしまうかもしれない。 この例としては、ユーザが見ているホテルと非常によく似たホテルを推薦することを学習したモデルがあり、ユーザにクリックを促し（おそらく非常によく似たホテルをすべて比較するため）、最終的には選択のパラドックスに溺れさせ、コンバージョンを阻害する。 一般的に、プロキシを過剰に最適化することは、ユーザを目的から遠ざけることにつながる。
 
 It is challenging to address each of this issues on its own.
 それぞれの問題に単独で取り組むのは難しい。
 Our approach relies on a fast cycle of developing hypotheses, building minimum models to test them in experiments, and using the results to keep iterating.
-私たちのアプローチは、仮説を立て、それを実験で検証するための最小限のモデルを構築し、その結果を使って反復を続けるという高速サイクルに依存している。
+**私たちのアプローチは、仮説を立て、それを実験で検証するための最小限のモデルを構築し、その結果を使って反復を続けるという高速サイクルに依存している。**
 Offline model performance metrics are only a health check, to make sure the algorithm does what we want to.
-オフラインモデルのパフォーマンス測定基準は、アルゴリズムが私たちの望むことを行っているかどうかを確認するための、健康チェックに過ぎない。
+**オフラインモデルのパフォーマンス測定基準は、アルゴリズムが私たちの望むことを行っているかどうかを確認するための、健康チェックに過ぎない**。
 This cycle drives us to focus on many aspects of the product development process besides the offline model performance, multiplying the iterative process along many dimensions.
 このサイクルによって、私たちはオフラインモデルの性能以外にも、製品開発プロセスの多くの側面に焦点を当てるようになり、反復プロセスが多次元に及ぶことになる。
 These include the Problem Construction Process described in the following section, qualitative aspects of a model (like diversity, transparency, adaptability, etc.), experiment design and latency.
-これには、次のセクションで説明する問題構築プロセス、モデルの質的側面（多様性、透明性、適応性など）、実験デザイン、レイテンシーなどが含まれる。
+これには、次のセクションで説明する問題構築プロセス、モデルの質的側面(多様性、透明性、適応性など)、実験デザイン、レイテンシーなどが含まれる。
 As an example consider a recommender system that predicts the rating a user would give to an accommodation.
-例として、ユーザーが宿泊施設に与えるであろう評価を予測する推薦システムを考えてみよう。
+例として、ユーザが宿泊施設に与えるであろう評価を予測する推薦システムを考えてみよう。
 Minimizing RMSE looks like a reasonable approach.
 RMSEを最小化するのは合理的なアプローチに見える。
 After a few successful iterations we hypothesize that the model is lacking diversity, so we create a challenger model that although still minimizes RMSE, somehow produces higher diversity.
@@ -356,58 +352,56 @@ Positive results on the other hand, will encourage diversity related changes, no
 The Modeling phase involves building a Machine Learning model that can contribute in solving the business case at hand.
 モデリング・フェーズでは、目の前のビジネス・ケースの解決に貢献できる機械学習モデルを構築する。
 A basic first step is to “set up” a Machine Learning Problem, and we learned that focusing on this step is key.
-基本的な最初のステップは、機械学習問題を「設定」することであり、このステップに集中することが重要であることを学んだ。
+**基本的な最初のステップは、機械学習問題を「設定」すること**であり、このステップに集中することが重要であることを学んだ。
 The Problem Construction Process takes as input a business case or concept and outputs a well defined modeling problem (usually a supervised machine learning problem), such that a good solution effectively models the given business case or concept.
-問題構築プロセスは、ビジネスケースやコンセプトを入力とし、優れたソリューションが与えられたビジネスケースやコンセプトを効果的にモデル化するような、明確に定義されたモデリング問題（通常は教師あり機械学習問題）を出力する。
+問題構築プロセスは、ビジネスケースやコンセプトを入力とし、優れたソリューションが与えられたビジネスケースやコンセプトを効果的にモデル化するような、明確に定義されたモデリング問題(通常は教師あり機械学習問題)を出力する。
 The point(s) at which the prediction needs to be made are often given, which fixes the feature space universe, yet the target variable and the observation space are not always given and they need to be carefully constructed.
-予測が必要とされるポイントはしばしば与えられ、特徴空間ユニバースが固定されるが、ターゲット変数と観測空間は常に与えられるわけではないので、注意深く構築する必要がある。
+予測が必要とされるポイントはしばしば与えられ、特徴空間ユニバースが固定されるが、ターゲット変数と観測空間は常に与えられるわけではないので、注意深く構築する必要がある。(??場合によっては最適化したい値が観測できず、代理学習問題を設計する必要がある、みたいな??:thinking:)
 As an example, consider the Dates Flexibility model mentioned before, where we want to know the dates flexibility of the users every time a search request is submitted.
-例として、前述の「日付の柔軟性」モデルを考えてみましょう。ここでは、検索リクエストが送信されるたびに、ユーザーの日付の柔軟性を知りたいのです。
+例として、前述の「日付の柔軟性」モデルを考えてみましょう。ここでは、検索リクエストが送信されるたびに、ユーザの日付の柔軟性を知りたいのです。
 It is not obvious what flexibility means: does it mean that a user is considering more alternative dates than a typical user? or that the dates they will end up booking are different to the ones they are looking at right now?; or maybe it means that a visitor is willing to change dates but only for a much better deal, etc.
-柔軟性が何を意味するかは明らかではない：
-ユーザーが一般的なユーザーよりも多くの代替日を検討していることを意味するのか、最終的に予約する日程が今見ている日程と異なることを意味するのか、あるいは、訪問者が日程を変更することを望んでいるが、より良い条件のためにのみ変更することを意味するのか、などである。
+柔軟性が何を意味するかは明らかではない: ユーザが一般的なユーザよりも多くの代替日を検討していることを意味するのか、最終的に予約する日程が今見ている日程と異なることを意味するのか、あるいは、訪問者が日程を変更することを望んでいるが、より良い条件のためにのみ変更することを意味するのか、などである。
 For each of these definitions of flexibility a different learning setup can be used.
-これらの柔軟性の定義それぞれについて、異なる学習設定を用いることができる。
+これらの柔軟性の定義それぞれについて、**異なる学習設定を用いることができる**。(あるusecaseに対して)
 For example, we could learn to predict how many different dates the user will consider applying regression to a specific dataset composed by users as observations, or to estimate the probability of changing dates by solving a classification problem, where the observations are searches, and so on.
-例えば、ユーザーをオブザベーションとして構成された特定のデータセットに回帰を適用して、ユーザーがいくつの異なる日付を考慮するかを予測する学習や、オブザベーションが検索である分類問題を解くことによって日付を変更する確率を推定する学習などができる。
+例えば、ユーザをオブザベーションとして構成された特定のデータセットに回帰を適用して、ユーザがいくつの異なる日付を考慮するかを予測する学習や、オブザベーションが検索である分類問題を解くことによって日付を変更する確率を推定する学習などができる。
 These are all constructed machine learning problems, that, when solved, output a model of the Dates Flexibility of a user.
 これらはすべて機械学習の問題で、それを解くと、ユーザーのデイトスの柔軟性のモデルが出力される。
 
 To compare alternative problems we follow simple heuristics, that consider among others, the following aspects:
-代替問題を比較するために、特に以下の点を考慮した単純なヒューリスティックに従う：
+alternative problems(代替問題)を比較するために、特に以下の点を考慮した単純なヒューリスティックに従う:
 
-- Learning Difficulty: when modeling these very subjective concepts, target variables are not given as ground truth, they are constructed. Therefore, some setups are harder than others from a learning perspective. Quantifying learnability is not straightforward. For classification problems the Bayes Error is a good estimate since it only depends on the data set, we apply methods from the work of Tumer & Ghosh [12]. Another popular approach that works well for ranking problems is to compare the performance of simple models against trivial baselines like random and popularity. Setups where simple models can do significantly better than trivial models are preferred. 学習の難しさ：
-  このような非常に主観的な概念をモデル化する場合、ターゲット変数はグランドトゥルースとして与えられるのではなく、構築される。 そのため、セットアップによっては、学習の観点から他のものより難しいものもある。 学習可能性を定量化するのは簡単ではない。 分類問題では、ベイズ誤差はデータセットに依存するだけなので、良い推定値である。 ランキング問題で有効なもうひとつのよく使われるアプローチは、ランダムや人気のような些細なベースラインと単純なモデルの性能を比較することである。 単純なモデルの方が些細なモデルよりもはるかに良い結果を出せるようなセットアップが好まれる。
+- **Learning Difficulty**: when modeling these very subjective concepts, target variables are not given as ground truth, they are constructed. Therefore, some setups are harder than others from a learning perspective. Quantifying learnability is not straightforward. For classification problems the Bayes Error is a good estimate since it only depends on the data set, we apply methods from the work of Tumer & Ghosh [12]. Another popular approach that works well for ranking problems is to compare the performance of simple models against trivial baselines like random and popularity. Setups where simple models can do significantly better than trivial models are preferred. 学習の難しさ: このような**非常に主観的な概念をモデル化する場合、ターゲット変数はground-truthとして与えられるのではなく、構築される**。 そのため、セットアップによっては、学習の観点から他のものより難しいものもある。 学習可能性を定量化するのは簡単ではない。 分類問題では、ベイズ誤差はデータセットに依存するだけなので、良い推定値である。 **ランキング問題で有効なもうひとつのよく使われるアプローチは、ランダムや人気のような些細なベースラインと単純なモデルの性能を比較することである**。 単純なモデルの方が些細なモデルよりもはるかに良い結果を出せるようなセットアップが好まれる。
 
-- Data to Concept Match: some setups use data that is closer to the concept we want to model. For example, for the Dates Flexibility case we could create a data set asking users themselves if they know the dates they want to travel on, and then build a model to predict the answer. This would give a very straightforward classification problem, that, compared to the other options, sits much closer to the idea of Dates Flexibility. On the other hand, the data would suffer from severe selection Bias since labels are only available for respondents. データとコンセプトの一致：
-  モデル化したい概念に近いデータを使うセットアップもある。 例えば、「日程の柔軟性」のケースでは、ユーザー自身に旅行したい日程を知っているかどうかを尋ねるデータセットを作成し、その答えを予測するモデルを構築することができる。 これは、他の選択肢に比べ、デイトスの柔軟性の考えに非常に近い、非常に単純な分類問題を与えるだろう。 一方、ラベルは回答者のみしか入手できないため、データは深刻な選択バイアスに苦しむことになる。
+- **Data to Concept Match**: some setups use data that is closer to the concept we want to model. For example, for the Dates Flexibility case we could create a data set asking users themselves if they know the dates they want to travel on, and then build a model to predict the answer. This would give a very straightforward classification problem, that, compared to the other options, sits much closer to the idea of Dates Flexibility. On the other hand, the data would suffer from severe selection Bias since labels are only available for respondents. データとコンセプトの一致：モデル化したい概念に近いデータを使うセットアップもある。 例えば、「日程の柔軟性」のケースでは、ユーザ自身に旅行したい日程を知っているかどうかを尋ねるデータセットを作成し、その答えを予測するモデルを構築することができる。 これは、他の選択肢に比べ、デイトスの柔軟性の考えに非常に近い、非常に単純な分類問題を与えるだろう。 一方、ラベルは回答者のみしか入手できないため、データは深刻な選択バイアスに苦しむことになる。
 
-- Selection Bias: As just described, constructing label and observation spaces can easily introduce selection bias. An unbiased problem would be based on observations that map 1 to 1 to predictions made when serving, but this is not always possible or optimal. Diagnosing selection bias is straightforward: consider a sample of the natural observation space (users or sessions in the dates flexibility case), we can then construct a classification problem that classifies each observation into the class of the observations for which a target variable can be computed and the class of the observations for which a target variable cannot be computed. If this classification problem is easy (in the sense that a simple algorithm performs significantly better than random) then the bias is severe and must be addressed. Correcting for this type of bias is not obvious. Techniques like Inverse Propensity Weighting [11] and Doubly Robust [4] are helpful in some cases, but they require at least one extra model to build (the propensity model). Other approaches that have been applied successfully but not systematically are methods from the PU-Learning [9] and Semi Supervised Learning fields. 選択バイアス：
-  先ほど説明したように、ラベル空間と観測空間を構築すると、選択バイアスが発生しやすい。 不偏不党の問題は、サーブ時の予測と1対1に対応するオブザベーションに基づくだろうが、これは常に可能であるわけでも、最適であるわけでもない。 選択バイアスの診断は簡単です：
-  自然なオブザベーション空間（日付の柔軟性のケースでは、ユーザーまたはセッション）のサンプルを考え、そして、各オブザベーションを、ターゲット変数が計算できるオブザベーションのクラスと、ターゲット変数が計算できないオブザベーションのクラスに分類する分類問題を構築できます。 もしこの分類問題が簡単であるならば（単純なアルゴリズムがランダムよりも有意に良い結果を出すという意味で）、バイアスは深刻であり、対処しなければならない。 この種のバイアスを補正することは自明ではない。 Inverse Propensity Weighting [11]やDoubly Robust [4]のような技法は、場合によっては有用ですが、少なくとも1つの追加モデル（傾向モデル）を構築する必要があります。 その他のアプローチとして、PU-Learning [9]やSemi Supervised Learning（半教師付き学習）の分野からの手法が、体系的ではないがうまく適用されている。
+- **Selection Bias**: As just described, constructing label and observation spaces can easily introduce selection bias. An unbiased problem would be based on observations that map 1 to 1 to predictions made when serving, but this is not always possible or optimal. Diagnosing selection bias is straightforward: consider a sample of the natural observation space (users or sessions in the dates flexibility case), we can then construct a classification problem that classifies each observation into the class of the observations for which a target variable can be computed and the class of the observations for which a target variable cannot be computed. If this classification problem is easy (in the sense that a simple algorithm performs significantly better than random) then the bias is severe and must be addressed. Correcting for this type of bias is not obvious. Techniques like Inverse Propensity Weighting [11] and Doubly Robust [4] are helpful in some cases, but they require at least one extra model to build (the propensity model). Other approaches that have been applied successfully but not systematically are methods from the PU-Learning [9] and Semi Supervised Learning fields. 選択バイアス: 先ほど説明したように、ラベル空間と観測空間を構築する(??)と、選択バイアスが発生しやすい。 不偏不党の問題は、サーブ時の予測と1対1に対応するオブザベーションに基づくだろうが、これは常に可能であるわけでも、最適であるわけでもない。 選択バイアスの診断は簡単です: 自然なオブザベーション空間(日付の柔軟性のケースでは、ユーザまたはセッション)のサンプルを考え、そして、**各オブザベーションを、ターゲット変数が計算できるオブザベーションのクラスと、ターゲット変数が計算できないオブザベーションのクラスに分類する分類問題**を構築できます(こうやって学習データとテストデータ間のbiasを評価する方法って名前なんだっけ...??:thinking:)。 もしこの分類問題が簡単であるならば(単純なアルゴリズムがランダムよりも有意に良い結果を出すという意味で)、バイアスは深刻であり、対処しなければならない。 この種のバイアスを補正することは自明ではない。 Inverse Propensity Weighting [11]やDoubly Robust [4]のような技法は、場合によっては有用ですが、少なくとも1つの追加モデル（傾向モデル）を構築する必要があります。 その他のアプローチとして、PU-Learning [9]やSemi Supervised Learning（半教師付き学習）の分野からの手法が、体系的ではないがうまく適用されている。
 
 The Problem Construction process opens an iteration dimension.
 問題構築プロセスは、反復の次元を開く。
 For a given business case and a chosen problem setup, improving the model is the most obvious way of generating value, but we can also change the setup itself.
-与えられたビジネスケースと選択された問題設定の場合、モデルを改善することが価値を生み出す最も明白な方法だが、設定そのものを変えることもできる。
+与えられたビジネスケースと選択された問題設定の場合、モデルを改善することが価値を生み出す最も明白な方法だが、**設定そのものを変えることもできる**。
 A simple example is a regression predicting the length of a stay, turned in to a multiclass classification problem; and a more involved example is a user preferences model based on click data switched to a Natural Language Processing problem on guest review data.
-単純な例としては、滞在時間の長さを予測する回帰が、多クラス分類問題に変化したものであり、より複雑な例としては、クリックデータに基づくユーザー嗜好モデルが、宿泊客のレビューデータに関する自然言語処理問題に変化したものである。
+単純な例としては、滞在時間の長さを予測する回帰が、多クラス分類問題に変化したものであり、より複雑な例としては、クリックデータに基づくユーザ嗜好モデルが、宿泊客のレビューデータに関する自然言語処理問題に変化したものである。
 Figure 3 shows a more concrete example.
 図3は、より具体的な例を示している。
 There are 6 successful algorithm iterations and 4 different setups: Pr(Last Minute) classifies users into Last Minute or not, Pr(Booking) is a conversion model, Pr(Overlap) models the probability of a user making 2 reservations with overlapping stay dates and Unsupervised Similarity models the similarity of destinations.
-6つの成功したアルゴリズム反復と4つの異なるセットアップがある：
-Pr(Last Minute)はユーザーをLast Minuteか否かに分類し、Pr(Booking)はコンバージョンモデルであり、Pr(Overlap)はユーザーが宿泊日が重なる2つの予約をする確率をモデル化し、教師なし類似性は目的地の類似性をモデル化する。
+6つの成功したアルゴリズム反復と4つの異なるセットアップがある:
+Pr(Last Minute)はユーザをLast Minuteか否かに分類し、Pr(Booking)はコンバージョンモデルであり、Pr(Overlap)はユーザが宿泊日が重なる2つの予約をする確率をモデル化し、教師なし類似性は目的地の類似性をモデル化する。
+
+![fig3]()
+
 In general we found that often the best problem is not the one that comes to mind immediately and that changing the set up is a very effective way to unlock value.
-一般的に、最良の問題はすぐに思い浮かぶものではなく、セットアップを変えることが価値を引き出す非常に効果的な方法であることがわかった。
+一般的に、**最良の問題はすぐに思い浮かぶものではなく、セットアップを変えることが価値を引き出す非常に効果的な方法であることがわかった**。
 
-# 5. Deployment: Time Is Money 配備
+# 5. Deployment: Time Is Money 配備: 時は金なり!
 
-時は金なり
+![fig6]()
 
 In the context of Information Retrieval and Recommender Systems, it is well known that high latency has a negative impact on user behavior [1].
-情報検索やレコメンダーシステムの文脈では、遅延が大きいとユーザーの行動に悪影響を与えることがよく知られている[1]。
+情報検索やレコメンダーシステムの文脈では、遅延が大きいとユーザの行動に悪影響を与えることがよく知られている[1]。
 We quantified the business impact that latency has in our platform by running a multiple-armed RCT where users assigned to each arm were exposed to synthetic latency.
-私たちは、各群に割り当てられたユーザーが合成レイテンシにさらされる多群RCTを実行することによって、私たちのプラットフォームでレイテンシが持つビジネス上の影響を定量化した。
+私たちは、各群に割り当てられたユーザがsynthetic latency(=実験用の疑似的な応答時間??)にさらされる多群RCTを実行することによって、**私たちのプラットフォームでレイテンシが持つビジネス上の影響を定量化した**。
 Results are depicted in Figure 6 (bottom right quadrant).
 結果は図6（右下）に示されている。
 Each point is one arm of the experiment, the horizontal coordinate is the relative difference in observed (mean) latency between the arm and the control group, and the vertical coordinate is the relative difference in conversion rate.
@@ -417,87 +411,77 @@ Crosses correspond to arms that did not show statistical significance and circle
 This is a single experiment with 4 arms (plus a control group), so we use Šidák correction to account for multiple testing.
 これは4群（＋対照群）の単一実験なので、多重検定を考慮するためにŠidák補正を用いている。
 Visual inspection shows a clear trend, in which an increase of about 30% in latency costs more than 0.5% in conversion rate (a relevant cost for our business).
-目視検査では、遅延が約30％増加すると、コンバージョン率が0.5％以上（私たちのビジネスに関連するコスト）低下するという明確な傾向が見られます。
+目視検査では、**遅延が約30％増加すると、コンバージョン率が0.5％以上（私たちのビジネスに関連するコスト）低下するという明確な傾向が見られます**。
 This finding led us to hypothesize that decreasing latency can produce a gain in conversion.
-この発見から、待ち時間を短くすることでコンバージョンを向上させることができるという仮説が導かれた。
+この発見から、**待ち時間を短くすることでコンバージョンを向上させることができるという仮説が導かれた**。
 On the top left quadrant of Figure 6 we can see the effect of decreasing the latency, in 4 individual experiments in different devices and different pages of the site.
 図6の左上の象限では、異なるデバイスとサイトの異なるページにおける4つの個別の実験において、レイテンシを減少させる効果を見ることができる。
 All results are statistically significant, supporting the hypothesis.
 すべての結果は統計的に有意であり、仮説を裏付けている。
 
 This is particularly relevant for machine learned models since they require significant computational resources when making predictions.
-機械学習モデルは予測を行う際に多大な計算資源を必要とするため、これは特に機械学習モデルに関連する。
+**機械学習モデルは予測を行う際に多大な計算資源を必要とするため、これ(=time is money問題!)は特に機械学習モデルに関連する**。
 Even mathematically simple models have the potential of introducing relevant latency.
 数学的に単純なモデルでさえ、関連する待ち時間をもたらす可能性がある。
 A linear model, for example, might require to compute many (hundreds of thousands), and complicated features, or require to be evaluated on thousands of accommodations.
-例えば線形モデルは、多くの（何十万もの）複雑な特徴を計算する必要があったり、何千もの宿泊施設で評価する必要があるかもしれない。
+例えば線形モデルは、多くの(何十万もの)複雑な特徴を計算する必要があったり、何千もの宿泊施設で評価する必要があるかもしれない。
 Many pages in our site contain several Machine Learned models, some of them computed at the user level, others at the item level (destination, accommodation, attraction, etc.) or even at UI widget level.
-私たちのサイトの多くのページには、ユーザーレベルで計算されたもの、アイテムレベル（目的地、宿泊施設、アトラクションなど）で計算されたもの、あるいはUIウィジェットレベルで計算されたものなど、複数の機械学習モデルが含まれています。
+私たちのサイトの多くのページには、ユーザレベルで計算されたもの、アイテムレベル(目的地、宿泊施設、アトラクションなど)で計算されたもの、あるいはUIウィジェットレベルで計算されたものなど、複数の機械学習モデルが含まれています。
 Even if each model is fast enough, the overall effect must be considered carefully.
 各モデルが十分に速いとしても、全体的な効果は注意深く考慮しなければならない。
 
 To minimize the latency introduced by our models we use several techniques:
-モデルによってもたらされる待ち時間を最小化するために、私たちはいくつかのテクニックを使っている：
+**モデルによってもたらされる待ち時間を最小化するために、私たちはいくつかのテクニックを使っている**：
 
-- Model Redundancy: Copies of our models are distributed across a cluster to make sure we can respond to as many predictions as requested, scale horizontally and deal with large traffic. モデルの冗長性：
-  私たちのモデルのコピーはクラスタに分散され、要求された多くの予測に対応し、水平方向に拡張し、大規模なトラフィックに対処できるようにしています。
+- **Model Redundancy**: Copies of our models are distributed across a cluster to make sure we can respond to as many predictions as requested, scale horizontally and deal with large traffic. モデルの冗長性：私たちのモデルのコピーはクラスタに分散され、要求された多くの予測に対応し、水平方向に拡張し、大規模なトラフィックに対処できるようにしています。
 
-- In-house developed Linear Prediction engine: We developed our own implementation of linear predictions, highly tuned to minimize prediction time. It can serve all models reducible to inner products, such as Naive Bayes, Generalized Linear Models, k-NN with cosine or euclidean distance, Matrix Factorization models and more. 自社開発の線形予測エンジン：
-  予測時間を最小化するために高度に調整された線形予測の実装を独自に開発しました。 ナイーブ・ベイズ、一般化線形モデル、コサインまたはユークリッド距離によるk-NN、行列因数分解モデルなど、内積に還元可能なすべてのモデルに対応できる。
+- In-house developed Linear Prediction engine: We developed our own implementation of linear predictions, highly tuned to minimize prediction time. It can serve all models reducible to inner products, such as Naive Bayes, Generalized Linear Models, k-NN with cosine or euclidean distance, Matrix Factorization models and more. **自社開発の線形予測エンジン**: 予測時間を最小化するために高度に調整された線形予測の実装を独自に開発しました。 ナイーブ・ベイズ、一般化線形モデル、コサインまたはユークリッド距離によるk-NN、行列因数分解モデルなど、内積に還元可能なすべてのモデルに対応できる。(どんな方法なんだろう。気になる...!:thinking:)
 
-- Sparse models: The less parameters a model has, the less computation is needed at prediction time. 疎なモデル：
-  モデルのパラメータが少ないほど、予測時の計算量が少なくて済む。
+- Sparse models: The less parameters a model has, the less computation is needed at prediction time. 疎なモデル: モデルのパラメータが少ないほど、予測時の計算量が少なくて済む。
 
-- Precomputation and caching: When the feature space is small we can simply store all predictions in a distributed key-value store. When the feature space is too big we can still cache frequent requests in memory. 事前計算とキャッシュ：
-  特徴空間が小さい場合、すべての予測を分散キーバリューストアに格納することができる。 特徴空間が大きすぎる場合でも、頻繁にリクエストされるものをメモリにキャッシュすることができる。
+- Precomputation and caching: When the feature space is small we can simply store all predictions in a distributed key-value store. When the feature space is too big we can still cache frequent requests in memory. **事前計算とキャッシュ**:特徴空間が小さい場合、すべての予測を分散キーバリューストアに格納することができる。 特徴空間が大きすぎる場合でも、頻繁にリクエストされるものをメモリにキャッシュすることができる。
 
-- Bulking: Some products require many requests per prediction. To minimize network load, we bulk them together in one single request. バルク化：
-  商品によっては、1回の予測に多くのリクエストを必要とするものもある。 ネットワーク負荷を最小限にするため、1つのリクエストにまとめている。
+- Bulking: Some products require many requests per prediction. To minimize network load, we bulk them together in one single request. バルク化: 商品によっては、1回の予測に多くのリクエストを必要とするものもある。 ネットワーク負荷を最小限にするため、1つのリクエストにまとめている。
 
-- Minimum Feature Transformations: Sometimes features require transformations that introduce more computation, for example, we might cluster destinations geographically, and then learn parameters of a linear model for each cluster. At prediction time one could compute the cluster given the destination, and then invoke the model. We save one step by just expressing the model in terms of the destination, mapping the weight of a cluster to all the cities in it. 最小限の特徴変換：
-  例えば、目的地を地理的にクラスタリングし、各クラスタに対して線形モデルのパラメータを学習する。 予測時には、目的地からクラスターを計算し、モデルを呼び出すことができる。 クラスターの重みをそのクラスターに含まれるすべての都市にマッピングし、目的地の観点からモデルを表現するだけで、1ステップを節約できる。
+- Minimum Feature Transformations: Sometimes features require transformations that introduce more computation, for example, we might cluster destinations geographically, and then learn parameters of a linear model for each cluster. At prediction time one could compute the cluster given the destination, and then invoke the model. We save one step by just expressing the model in terms of the destination, mapping the weight of a cluster to all the cities in it. 最小限の特徴量変換(=推論時の前処理を減らす工夫??:thinking:): 例えば、目的地を地理的にクラスタリングし、各クラスタに対して線形モデルのパラメータを学習する。 予測時には、目的地からクラスターを計算し、モデルを呼び出すことができる。 クラスターの重みをそのクラスターに含まれるすべての都市にマッピングし、目的地の観点からモデルを表現するだけで、1ステップを節約できる。
 
 Most of these techniques are implemented by our Machine Learning Production service, which provides a simple interface to deploy and consume models in a variety of formats.
 これらのテクニックのほとんどは、私たちの機械学習プロダクション・サービスによって実装されており、様々な形式でモデルをデプロイし、利用するためのシンプルなインターフェースを提供しています。
 This service abstracts away many challenging aspects of model deployment, including prediction latency, but also high availability, fault tolerance, monitoring, etc.
 このサービスは、予測レイテンシーだけでなく、高可用性、フォールトトレランス、モニタリングなど、モデル展開の多くの困難な側面を抽象化する。
 Although these techniques are usually very successful at achieving low latency on an individual model level, there could always be the case where adding a fast model is “the last straw” that breaks our system.
-これらのテクニックは通常、個々のモデルレベルで低遅延を達成することに非常に成功しているが、高速モデルを追加することが、システムを壊す「最後の藁」になるケースは常にあり得る。
+これらのテクニックは通常、個々のモデルレベルで低遅延を達成することに非常に成功しているが、高速モデルを追加することが、システムを壊す「最後の藁」になるケースは常にあり得る。(??)
 To detect this situation we use a method described in detail in section 7.3.The idea is to disentangle the effects of latency and the model itself on the business metric, so that we can decide whether there is a need to improve the latency or the model itself in one single RCT.
 この状況を検出するために、7.3節で詳述する方法を用いる。このアイデアは、ビジネス指標に対するレイテンシーとモデル自体の影響を切り離すことで、1回のRCTでレイテンシーを改善する必要があるか、モデル自体を改善する必要があるかを判断できるようにすることである。
 
-# 6. Monitoring: Unsupervised Red Flags モニタリング
-
-監視されないレッドフラッグ
+# 6. Monitoring: Unsupervised Red Flags モニタリング: 監視されないレッドフラッグ
 
 When models are serving requests, it is crucial to monitor the quality of their output but this poses at least two challenges:
-モデルがリクエストに応えるとき、その出力の質をモニターすることは極めて重要だが、これには少なくとも2つの課題がある：
+モデルがリクエストに応えるとき、**その出力の質をモニターすることは極めて重要**だが、これには少なくとも**2つの課題**がある:
 
-Incomplete feedback: In many situations true labels cannot be observed.
-不完全なフィードバック：
-多くの状況では、真のラベルを観察することはできない。
+**Incomplete feedback**: In many situations true labels cannot be observed.
+不完全なフィードバック: 多くの状況では、真のラベルを観察することはできない。
 For example, consider a model that predicts whether a customer will ask for a “special request”.
 例えば、顧客が「特別なリクエスト」を求めるかどうかを予測するモデルを考えてみよう。
 Its predictions are used while the user shops (search results page and hotel page), but we can only assign a true label to predictions that were made for users that actually booked, since it is at booking time when the special request can be filled in.
-その予測は、ユーザーが買い物をする間（検索結果ページとホテルページ）使用されるが、特別なリクエストを記入できるのは予約時であるため、実際に予約したユーザーに対して行われた予測にのみ真のラベルを割り当てることができる。
+その予測は、ユーザが買い物をする間（検索結果ページとホテルページ）使用されるが、特別なリクエストを記入できるのは予約時であるため、実際に予約したユーザに対して行われた予測にのみ真のラベルを割り当てることができる。
 Predictions that were made for users that did not book, will not have an associated true label.
-予約しなかったユーザーに対して行われた予測は、関連する真のラベルを持たない。
+予約しなかったユーザに対して行われた予測は、関連する真のラベルを持たない。
 
-Delayed feedback: In other cases the true label is only observed many days or even weeks after the prediction is made.
-フィードバックの遅れ：
-予測が行われてから何日も、あるいは何週間も経ってから、真のラベルが観測される場合もある。
+**Delayed feedback**: In other cases the true label is only observed many days or even weeks after the prediction is made.
+フィードバックの遅れ:**予測が行われてから何日も、あるいは何週間も経ってから、真のラベルが観測される場合もある**。
 Consider a model that predicts whether a user will submit a review or not.
-ユーザーがレビューを投稿するかどうかを予測するモデルを考えてみよう。
+ユーザがレビューを投稿するかどうかを予測するモデルを考えてみよう。
 We might make use of this model at shopping time, but the true label will be only observed after the guest completes the stay, which can be months later.
 買い物時にこのモデルを利用することもあるが、本当のラベルが表示されるのは、ゲストが滞在を終えてからで、数ヶ月後になることもある。
 
 Therefore, in these situations, label-dependent metrics like precision, recall, etc, are inappropriate, which led us to the following question: what can we say about the quality of a model by just looking at the predictions it makes when serving? To answer this question for the case of binary classifiers we apply what we call Response Distribution Analysis, which is a set of heuristics that point to potential pathologies in the model.
-したがって、このような状況では、精度やリコールなどのラベルに依存した指標は不適切である：
-このことから、我々は次のような問いを持つことになりました：モデルの品質について、それがサービスを提供するときに行う予測を見るだけで、何が言えるのだろうか？バイナリ分類器のケースでこの質問に答えるために、我々は応答分布分析と呼ぶものを適用します。
+したがって、**このような状況(=推論してから真のラベルの観測までに期間があくケース)では、精度やリコールなどのラベルに依存した指標は不適切**である:
+このことから、我々は次のような問いを持つことになりました：**モデルの品質について、それがサービスを提供するときに行う予測を見るだけで、何が言えるのだろうか**？バイナリ分類器のケースでこの質問に答えるために、**我々は応答分布分析(=Response Distribution Analysis)**と呼ぶものを適用します。
 The method is based on the Response Distribution Chart (RDC), which is simply a histogram of the output of the model.
-この方法は、応答分布図（RDC）に基づいており、これは単にモデルの出力のヒストグラムである。
+この方法は、**応答分布図(Response Distribution Chart, RDC)に基づいており、これは単にモデルの出力のヒストグラム**である。
 The simple observation that the RDC of an ideal model should have one peak at 0 and one peak at 1 (with heights given by the class proportion) allows us to characterize typical patterns that signal potential issues in the model, a few examples are:
-理想的なモデルのRDCは、0に1つのピークがあり、1に1つのピークがあるはずだという単純な観察（高さはクラスの割合で与えられる）により、モデルの潜在的な問題を知らせる典型的なパターンを特徴付けることができる：
+理想的なモデルのRDCは、0に1つのピークがあり、1に1つのピークがあるはずだという単純な観察（高さはクラスの割合で与えられる）により、モデルの潜在的な問題を知らせる典型的なパターンを特徴付けることができる(**RDCはかくあるべき、という仮定を用意しておく必要がある**:thinking:):
 
 - A smooth unimodal distribution with a central mode might indicate high bias in the model or high Bayes error in the data 中央モードがある滑らかな単峰分布は、モデルの偏りが大きいか、データのベイズ誤差が大きいことを示すかもしれない。
 
@@ -509,10 +493,14 @@ The simple observation that the RDC of an ideal model should have one peak at 0 
 
 - Smooth bimodal distributions with one clear stable point are signs of a model that successfully distinguishes two classes 1つの明確な安定点を持つ滑らかな二峰性分布は、2つのクラスをうまく区別するモデルの兆候である。
 
+![fig7]()
+
+Figure 7: Examples of Response Distribution Charts
+
 Figure 7 illustrate these heuristics.
-図7はこれらのヒューリスティックを示している。
+図7はこれらのヒューリスティック(??)を示している。
 The rationale behind these heuristic is that if a model cannot assign different scores to different classes then it is most likely failing at discriminating one from another, small changes in the score should not change the predicted class.
-これらのヒューリスティックの根拠は、モデルが異なるクラスに異なるスコアを割り当てることができない場合、そのモデルはクラスと別のクラスの識別に失敗している可能性が高く、スコアのわずかな変化では予測されるクラスは変わらないはずだからである。
+これらのヒューリスティックの根拠は、モデルが異なるクラスに異なるスコアを割り当てることができない場合、そのモデルはクラスと別のクラスの識別に失敗している可能性が高く、スコアのわずかな変化では予測されるクラスは変わらないはずだからである。(ラベル1の確率=45%, ラベル2の確率=55%みたいな感じじゃ自信無さそうだしダメだよね、みたいな仮定:thinking:)
 It is not important where the stable point is (which could indicate calibration problems), it only matters that there is one, since the goal is to clearly separate two classes, one that will receive a treatment and one that will not.
 安定点がどこにあるかは重要ではなく（キャリブレーションに問題があることを示す可能性がある）、2つのクラス（治療を受けるクラスとそうでないクラス）を明確に分けることが目的なのだから、安定点があることだけが重要なのだ。
 These are the advantages this method offers:
@@ -520,7 +508,7 @@ These are the advantages this method offers:
 
 - It can be applied to any scoring classifier どのような得点分類器にも適用できる
 
-- It is robust to class distribution. In extreme cases, the logarithm of the frequency in the RDC is used to make the cues more obvious クラス分布にロバストである。 極端な場合は、RDCの周波数の対数を使用して、キューをより明確にする。
+- It is robust to class distribution. In extreme cases, the logarithm of the frequency in the RDC is used to make the cues more obvious. クラス分布にロバストである。 極端な場合は、RDCの周波数の対数を使用して、キューをより明確にする。
 
 - It addresses the Incomplete Feedback issue providing Global Feedback since the RDC is computed considering all predictions RDCはすべての予測を考慮して計算されるため、グローバルフィードバックを提供し、不完全なフィードバックの問題に対処する。
 
@@ -528,26 +516,24 @@ These are the advantages this method offers:
 
 - It is sensitive to both class distribution and feature space changes, since it requires very few data points to be constructed 構築するデータポイントが非常に少ないので、クラス分布と特徴空間の変化の両方に敏感です。
 
-- It can be used for multi-class classification when the number of classes is small by just constructing one binary classifier per class that discriminates between one class and the others (one vs all or one vs rest) クラス数が少ない場合、クラスごとに1つの2値分類器を構成し、1つのクラスと他のクラス（1対すべて、または1対その他）を識別するだけで、多クラス分類に使用できます。
+- It can be used for multi-class classification when the number of classes is small by just constructing one binary classifier per class that discriminates between one class and the others (one vs all or one vs rest) クラス数が少ない場合、クラスごとに1つの2値分類器を構成し、1つのクラスと他のクラス(1対すべて、または1対その他)を識別するだけで、多クラス分類に使用できます。
 
-- It offers a label-free criterion to choose a threshold for turning a score into a binary output. The criterion is to simply use a minimum of the RDC in between the 2 class-representative modes. If the region is large, then one can choose to maximize recall or precision using the lower and upper bound of that region respectively. This is very useful when the same model is used in various points of the system like hotel page or search results page, since they have different populations with different class distributions. スコアを2値出力に変換するための閾値を選択するラベルフリーの基準を提供する。 その基準は、2つのクラスを代表するモードの中間のRDCの最小値を単純に使用することである。 もしその領域が大きければ、その領域の下限と上限を使って、それぞれ再現率か精度を最大化することを選択できる。 これは、ホテルのページや検索結果のページなど、システムのさまざまな場所で同じモデルが使用される場合に非常に便利です。
+- It offers a label-free criterion to choose a threshold for turning a score into a binary output. The criterion is to simply use a minimum of the RDC in between the 2 class-representative modes. If the region is large, then one can choose to maximize recall or precision using the lower and upper bound of that region respectively. This is very useful when the same model is used in various points of the system like hotel page or search results page, since they have different populations with different class distributions. **スコアを2値出力に変換するための閾値を選択するラベルフリーの基準を提供する**(最適な閾値を探せる??:thinking:)。 その基準は、2つのクラスを代表するモードの中間のRDCの最小値を単純に使用することである。 もしその領域が大きければ、その領域の下限と上限を使って、それぞれ再現率(recall)か精度(precision)を最大化することを選択できる。 これは、ホテルのページや検索結果のページなど、システムのさまざまな場所で同じモデルが使用される場合に非常に便利です。
 
 The main drawbacks are:
 主な欠点は以下の通りだ：
 
-- It is a heuristic method, it cannot prove or disprove a model has high quality これは発見的な方法であり、モデルが高品質であることを証明することも反証することもできない。
+- It is a heuristic method, it cannot prove or disprove a model has high quality これは**発見的な(=heuristic)方法**であり、モデルが高品質であることを証明することも反証することもできない。
 
-- It does not work for estimators or rankers 推定者やランカーには使えない
+- It does not work for estimators or rankers 推定モデルやrankingモデルには使えない
 
 In practice, Response Distribution Analysis has proven to be a very useful tool that allows us to detect defects in the models very early.
-実際、応答分布分析は、モデルの欠陥を早期に発見できる非常に有用なツールであることが証明されている。
+実際、**応答分布分析は、モデルの欠陥を早期に発見できる非常に有用なツールである**ことが証明されている。
 
-# 7. Evaluation: Experiment Design Sophistication Pays Off
-
-洗練された実験計画が功を奏す
+# 7. Evaluation: Experiment Design Sophistication Pays Off 評価:洗練された実験計画が功を奏す
 
 Experimentation through Randomized Controlled Trials is ingrained into Booking.com culture.
-無作為化比較試験による実験は、Booking.comの文化に根付いている。
+**無作為化比較試験(RCT)による実験は、Booking.comの文化に根付いている**。
 We have built our own experimentation platform which democratizes experimentation, enabling everybody to run experiments to test hypotheses and assess the impact of our ideas [6].
 私たちは、実験を民主化する独自の実験プラットフォームを構築し、誰もが実験を実行して仮説を検証し、私たちのアイデアの影響を評価できるようにした[6]。
 Machine Learning products are also tested through experiments.
