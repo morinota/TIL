@@ -535,7 +535,7 @@ In practice, Response Distribution Analysis has proven to be a very useful tool 
 Experimentation through Randomized Controlled Trials is ingrained into Booking.com culture.
 **無作為化比較試験(RCT)による実験は、Booking.comの文化に根付いている**。
 We have built our own experimentation platform which democratizes experimentation, enabling everybody to run experiments to test hypotheses and assess the impact of our ideas [6].
-私たちは、実験を民主化する独自の実験プラットフォームを構築し、誰もが実験を実行して仮説を検証し、私たちのアイデアの影響を評価できるようにした[6]。
+**私たちは、実験を民主化する独自の実験プラットフォームを構築し、誰もが実験を実行して仮説を検証し、私たちのアイデアの影響を評価できるようにした**[6]。(ABテストの話だよね。これのオフライン実験ver.を作りたい。2実験を民主化する"って表現いいなぁ...:thinking:)
 Machine Learning products are also tested through experiments.
 機械学習製品も実験を通じてテストされる。
 The large majority of the successful use cases of machine learning studied in this work have been enabled by sophisticated experiment designs, either to guide the development process or in order to detect their impact.
@@ -546,55 +546,59 @@ In this section we show examples of how we use a combination of triggered analys
 ## 7.1. Selective triggering 選択的トリガー
 
 In a standard RCT, the population is divided into control and treatment groups, all subjects in the treatment group are exposed to the change, and all subjects in the control group are exposed to no change.
-標準的なRCTでは、集団を対照群と治療群に分け、治療群の被験者全員が変化にさらされ、対照群の被験者全員が変化なしにさらされる。
+標準的なRCTでは、集団をcotrol群とtreatment群に分け、treatment群の被験者全員が変化にさらされ、controll群の被験者全員が変化なしにさらされる。(うんうん...!)
 However, in many cases, not all subjects are eligible to be treated, and the eligibility criteria are unknown at assignment time.
-しかし、多くの場合、すべての被験者が治療を受けられるわけではなく、割り付け時点では適格基準は不明である。
+しかし、多くの場合、すべての被験者がtreatmentを受けられるわけではなく、割り付け時点では適格基準は不明である。
 In the case of machine learning models, this is often the case since models may require specific features to be available.
-機械学習モデルの場合、モデルが特定の機能を必要とすることがあるため、このようなケースはよくある。
+機械学習モデルの場合、モデルが特定の特徴量を必要とすることがあるため、このようなケースはよくある。
 The subjects assigned to a group but not treated add noise to the sample, diluting the observed effect, reducing statistical power and inflating the False Discovery Rate.
-あるグループに割り付けられたが治療を受けなかった被験者は、サンプルにノイズを加え、観察された効果を希釈し、統計的検出力を低下させ、偽発見率を上昇させる。
+あるグループに割り付けられたがtreatmentを受けなかった被験者は、サンプルにノイズを加え、観察された効果を希釈し、統計的検出力を低下させ、偽発見率を上昇させる。
 To deal with this situation, we apply Triggered Analysis [3], where only the treatable (or triggered) subjects in both groups are analyzed.
-この状況に対処するため、トリガー分析[3]を適用し、両グループの治療可能な（またはトリガーされた）被験者だけを分析する。
+この状況に対処するため、トリガー分析[3]を適用し、両グループのtreatment可能な(またはtriggerされた)被験者だけを分析する。(triggerってなんだ?? fig8を見た感じでは、triggered = model availableって事っぽい!:thinking:)
 Figure 8 illustrates this setup.
 図8はこの設定を示している。
 
+![fig8]()
+
 ## 7.2. Model-output dependent triggering モデル出力に依存するトリガー
 
+![fig9]()
+
 Even when all the model requirements are met, the treatment criteria might depend on the model output.
-モデル要件がすべて満たされている場合でも、治療基準はモデル出力に依存する可能性がある。
+モデル要件がすべて満たされている場合でも、treatment基準はモデル出力に依存する可能性がある。
 This happens for instance when we show a block with alternative destinations only to users identified as destination-flexible by the model.
-これは例えば、モデルによって目的地の柔軟性があると識別されたユーザーにのみ、代替の目的地があるブロックを表示する場合に起こる。
+これは例えば、モデルによって「目的地の柔軟性がある」と識別されたユーザにのみ、代替の目的地があるブロックを表示する場合に起こる。(=要するに、特定の推論結果の場合にのみ、正解ラベルが得られる、みたいな??)
 It may also be the case that subsequent steps fail or succeed depending on the model output, like fetching relevant items which may not be available.
 また、利用できないかもしれない関連アイテムをフェッチするなど、モデル出力によって後続ステップが失敗したり成功したりする場合もある。
 In such cases, some users are not exposed to any treatment, once more diluting the observed effect.
-このような場合、何人かの利用者は治療を受けず、観察された効果がさらに薄れてしまう。
+このような場合、何人かの利用者はtreatmentを受けず、観察された効果がさらに薄れてしまう。
 Nevertheless, the setup of Figure 8 cannot be used since in the control group the output of the model is not known and therefore cannot condition the triggering.
 とはいえ、コントロールグループでは、モデルの出力が不明であるため、トリガーを条件付けることができないため、図8の設定は使用できない。
 Modifying the control group to call the model is not advised, since we also use this group as a safety net to detect problems with the experiment setup, and in such cases all the traffic can be directed to the control group while studying the issue.
 モデルを呼び出すためにコントロール・グループを変更することは推奨されない。なぜなら、実験セットアップの問題を検出するためのセーフティネットとしてこのグループも使用しており、そのような場合、問題を研究している間、すべてのトラフィックをコントロール・グループに向けることができるからである。
 The setup for model output dependent triggering requires an experiment with 3 groups as shown on Figure 9.
-モデル出力に依存するトリガーのセットアップには、図9に示すような3つのグループによる実験が必要である。
+**モデル出力に依存するtriggerのセットアップには、図9に示すような3つのグループによる実験が必要である**。
 The control group C is exposed to no change at all, the two treatment groups T 1 and T 2 invoke the model and check the triggering criteria (e.g.output > 0) but only in T 1 triggered users are exposed to a change.
-対照群Cは全く変化にさらされず、2つの治療群T 1とT 2はモデルを起動し、トリガー基準（例えば出力＞0）をチェックするが、トリガーされたT 1のユーザーだけが変化にさらされる。
+controll群Cは全く変化にさらされず、2つのtreatment群 $T_1$ と $T_2$ はモデルを起動し、トリガー基準（例えば出力＞0）をチェックするが、トリガーされた $T_1$ のユーザーだけが変化にさらされる。
 In T 2 users are not exposed to any change regardless of the model output.
-T 2では、モデルの出力に関係なく、ユーザーはいかなる変化にもさらされない。
+$T_2$ では、モデルの出力に関係なく、ユーザはいかなる変化にもさらされない。
 The statistical analysis is conducted using only triggered subjects from both T 1 and T 2.
-統計分析は、T1とT2の両方からトリガーされた被験者だけを用いて行われた。
+統計分析は、$T_1$ と $T_2$ の両方からトリガーされた被験者だけを用いて行われた。
 
 ## 7.3. Controlling performance impact パフォーマンスへの影響をコントロールする
 
 The setup described in the previous section serves also as a way to disentangle the causal effect of the functionality on the user experience - for instance, new recommendations - from that of any slow down due to model computation.
-前節で説明したセットアップは、ユーザーエクスペリエンスに対する機能の因果関係（例えば、新しいレコメンデーション）を、モデル計算による速度低下から切り離す方法としても役立つ。
+前節で説明したセットアップは、**ユーザエクスペリエンスに対する機能の因果関係(例えば、新しいレコメンデーション)を、モデル計算による速度低下から切り離す**方法としても役立つ。(ex. UX悪化が、推論結果によるものか、推論速度低下によるものか、を切り離せる??)
 A comparison of metrics betweenC andT 1 measures the overall effect of the new functionality, including any performance degradation.
-CとT 1のメトリクスの比較は、パフォーマンス低下を含む新機能の全体的な効果を測定する。
+Cと $T_1$ のメトリクスの比較は、パフォーマンス低下を含む**新機能の全体的な効果**(ex. 推論結果 & 推論速度を含めて総合的なUX!)を測定する。
 A positive result endorses the current implementation.
-肯定的な結果は、現在の実施を支持するものである。
+肯定的な結果は、現在の実施を支持するものである。(positiveな結果だったらこれだけでGOサインを出せる。)
 Otherwise, we can still learn from two more comparisons.
 そうでなければ、あと2つの比較から学ぶことができる。
 With C and T 2 we can isolate and measure both the slowdown and its impact on the metrics of interest, since there is no change on the functionality between these variants.
-CとT 2では、これらの変種間で機能に変化がないため、速度低下と、関心のある測定基準へのその影響の両方を分離して測定することができる。
+Cと $T_2$ では、これらの変種間で機能に変化がないため、**速度低下と、関心のある測定基準への影響の両方を分離して測定することができる**。
 Conversely, T 1 and T 2 share the same computational load due to model invocation and are only different on the exposure to the new functionality, allowing to measure its effect regardless of the computational cost associated to the model.
-逆に、T 1とT 2は、モデル呼び出しによる計算負荷を共有し、新機能への露出度だけが異なるため、モデルに関連する計算コストに関係なく、その効果を測定することができる。
+逆に、$T_1$ と $T_2$ は、**モデル呼び出しによる計算負荷を共有**(=推論時間の条件は同じはず)し、新機能への露出度だけが異なるため、モデルに関連する計算コストに関係なく、その効果を測定することができる。
 A positive result in this last comparison supports the new functionality, independently of the effect of the model on latency.
 この最後の比較で肯定的な結果が出たことは、遅延に対するモデルの効果とは無関係に、新機能を裏付けている。
 More details on this topic can be found in [7].
@@ -602,8 +606,12 @@ More details on this topic can be found in [7].
 
 ## 7.4. Comparing Models モデルの比較
 
+![fig10]()
+
+Figure 10: Experiment design for comparing models.
+
 When comparing treatments based on models which improve on one another, there are often high correlations.
-互いに改善し合うモデルに基づいて治療を比較すると、高い相関が見られることが多い。
+互いに改善し合うモデルに基づいてtreatmentを比較すると、高い相関が見られることが多い。
 As a toy example, consider a binary classification problem and consider model x, a successful solution with 80% accuracy.
 おもちゃの例として、2値分類問題を考え、80％の精度で成功した解であるモデルxを考える。
 Model y improves on this result by correcting half of the mistakes of model x, while introducing only 5% new mistakes.
@@ -611,7 +619,7 @@ Model y improves on this result by correcting half of the mistakes of model x, w
 These two models disagree only on at most 15% of the cases.
 この2つのモデルが一致しないのは、せいぜい15％程度である。
 For the other (at least) 85% of the cases, being on control or treatment does not result on a different experience, differences in metrics cannot be caused by difference in the model outputs, and therefore this traffic only adds noise.
-残りの（少なくとも）85％のケースについては、対照群と治療群のどちらを選んでも、異なる経験は得られず、測定基準の違いはモデル出力の違いによって引き起こされることはない。
+残りの（少なくとも）85％のケースについては、controll群とtreatment群のどちらを選んでも、異なる経験は得られず、測定基準の違いはモデル出力の違いによって引き起こされることはない。
 Figure 10 shows the setup for this situation, which is very similar to the previous one.
 図10は、この状況でのセットアップを示しており、前回と非常によく似ている。
 In this case the triggering condition is models disagree, which means that the outputs from both models are required in T 1 and T 2.
@@ -627,10 +635,19 @@ In this work we shared 6 lessons we have learned while developing 150 successful
 この仕事では、大規模なeコマースで機械学習の150の成功したアプリケーションを開発する間に学んだ6つの教訓を共有した。
 We covered all the phases of a Machine Learning project from the perspective of commercial impact delivery.
 商業的インパクトの提供という観点から、機械学習プロジェクトの全フェーズをカバーした。
-All our lessons are about improving the hypothesis-model-experiment cycle: the semantic layer and model families help us to initiate as many cycles as possible; the finding that offline metrics are poorly correlated to business gains led us to focus on other aspects, like for example, Problem Construction, which adds a very rich iteration dimension; the finding that latency has commercial value led us to implement methods to keep it low giving each model the best chance to be impactful, and led to experiment design techniques to isolate its effects on business metrics; Response Distribution Analysis improved our ability to detect model issues right after deployed; and finally, experiment sophistication improved the iteration cycle by giving fast, reliable and fine-grained estimations of the effect of our choices and the validity of our hypotheses.
-すべての教訓は、仮説-モデル-実験のサイクルを改善することです：
-セマンティックレイヤーとモデルファミリーは、可能な限り多くのサイクルを開始するのに役立ちます。オフラインのメトリクスはビジネス上の利益との相関性が低いという発見により、例えば、非常に豊かな反復の次元を追加する問題構築のような、他の側面に焦点を当てるようになりました； レスポンス分布分析により、導入直後のモデルの問題を検出する能力が向上しました。そして最後に、実験の高度化により、我々の選択の効果や仮説の妥当性を、迅速かつ信頼性の高い、きめ細かな推定を行うことで、反復サイクルが改善されました。
+All our lessons are about improving the hypothesis-model-experiment cycle:
+すべての教訓は、**仮説-モデル-実験のサイクルを改善すること**です：
+the semantic layer and model families help us to initiate as many cycles as possible;
+セマンティックレイヤーとモデルファミリーは、可能な限り多くのサイクルを開始するのに役立ちます。
+the finding that offline metrics are poorly correlated to business gains led us to focus on other aspects, like for example, Problem Construction, which adds a very rich iteration dimension;
+オフラインのメトリクスはビジネス上の利益との相関性が低いという発見により、例えば、非常に豊かな反復の次元を追加する問題構築(??)のような、他の側面に焦点を当てるようになりました；
+the finding that latency has commercial value led us to implement methods to keep it low giving each model the best chance to be impactful, and led to experiment design techniques to isolate its effects on business metrics;
+レイテンシーに商業的価値があることを発見したことで、各モデルにインパクトを与える最高のチャンスを与えるために、レイテンシーを低く抑える方法を導入することになり、また、ビジネス・メトリクスへの影響を切り分けるための実験デザイン手法につながった(section7のやつ!)；
+Response Distribution Analysis improved our ability to detect model issues right after deployed;
+レスポンス分布分析により、導入直後のモデルの問題を検出する能力が向上しました。
+and finally, experiment sophistication improved the iteration cycle by giving fast, reliable and fine-grained estimations of the effect of our choices and the validity of our hypotheses.
+そして最後に、実験の高度化により、我々の選択の効果や仮説の妥当性を、迅速かつ信頼性の高い、きめ細かな推定を行うことで、反復サイクルが改善されました。
 In order to turn these lessons into actions we integrated ideas from various disciplines like Product Development, User Experience, Computer Science, Software Engineering, Causal Inference among others.
-これらの教訓を行動に移すために、私たちは製品開発、ユーザー・エクスペリエンス、コンピューター・サイエンス、ソフトウェア工学、因果推論など、さまざまな分野のアイデアを統合した。
+これらの教訓を行動に移すために、私たちは製品開発、ユーザ・エクスペリエンス、コンピューター・サイエンス、ソフトウェア工学、因果推論など、さまざまな分野のアイデアを統合した。
 Hypothesis driven iteration and interdisciplinary integration are the core of our approach to deliver value with Machine Learning, and we wish this work can serve as a guidance to other Machine Learning practitioners and sparkle further investigations on the topic.
-仮説に基づいた反復と学際的な統合は、機械学習で価値を提供するための私たちのアプローチの中核であり、この研究が他の機械学習実践者のガイダンスとなり、このトピックに関するさらなる調査に火をつけることができればと願っている。
+**仮説に基づいた反復と学際的な統合は、機械学習で価値を提供するための私たちのアプローチの中核**であり、この研究が他の機械学習実践者のガイダンスとなり、このトピックに関するさらなる調査に火をつけることができればと願っている。
