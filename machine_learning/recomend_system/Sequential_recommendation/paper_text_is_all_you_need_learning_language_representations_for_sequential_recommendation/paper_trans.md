@@ -260,7 +260,7 @@ For each item $i$, we construct its item “sentence” $T_{i}$ and use $X = \{[
 We predict the next item based on the cosine similarity between a user’s interaction sequence 𝑠 and item 𝑖.
 ユーザのinteraction sequence $s$ とアイテム $i$ のcosine similarityに基づいて次のアイテムを予測する。
 Formally, after obtaining the sequence representation h𝑠 and the item representation h𝑖 as introduced in Section 2.2.3, we calculate the scores between 𝑠 and 𝑖 as follows:
-形式的には、2.2.3節で紹介したsequence表現 $\mathbf{h}_{s}$ とitem表現 $\mathbf{h}_{i}$ を得た後、𝑠と𝑖のスコアを以下のように計算する：
+形式的には、2.2.3節で紹介したsequence表現 $\mathbf{h}_{s}$ とitem表現 $\mathbf{h}_{i}$ を得た後、$s$ と $i$ のスコアを以下のように計算する:
 
 $$
 r_{i, s} = \frac{\mathbf{h}_{i}^T \mathbf{h}_{s}}{|\mathbf{h}_{i}| \cdot |\mathbf{h}_{s}|}
@@ -337,7 +337,7 @@ Previous recommenders maintain an item embedding table, hence they can easily re
 In our case, item embeddings are from Recformer, so it is infeasible to re-encode items (from sampling or full set) per batch for training.
 私たちの場合、item埋め込みはRecformerによるものであるため、学習のためにバッチごとに(サンプリングまたはフルセットから)item を再encodeすることは不可能である。
 In-batch negative instances [3] are using ground truth items of other instance sequences in the same batch as negative items.
-バッチ内負インスタンス[3]は、負アイテムとして、同じバッチ内の他のインスタンスシーケンスのグランドトゥルースアイテムを使用する。
+**バッチ内負インスタンス[3]は、負アイテムとして、同じバッチ内の他のインスタンスシーケンスのグランドトゥルースアイテムを使用する**。
 Although it is possible to provide false negatives, false negatives are less likely in the pre-training dataset with a large size.
 偽陰性(=本当はpositiveなのにnegativeとしてラベル付けしてしまうケース)を提供する可能性はあるが、サイズが大きい事前学習データセットでは偽陰性の可能性は低い。
 Furthermore, the target of pre-training is to provide high-quality initialized parameters and we have the finetuning with accurate supervision for downstream tasks.
@@ -387,14 +387,14 @@ To solve this problem, we propose two-stage finetuning as shown in Algorithm 1.
 The key idea is to maintain an item feature matrix $I \in \mathbb{R}^{|I| \times d}$.
 重要なアイデアは、item feature matrix $\mathbf{I} \in \mathbb{R}^{|I| \times d}$ を維持する事である。
 Different from the item embedding table, I is not learnable and all item features are encoded from Recformer.
-アイテム埋め込みテーブルとは異なり、$I$ は学習可能ではなく、すべてのitem featureはRecformerからエンコードされる。
+アイテム埋め込みテーブルとは異なり、$I$ は学習可能ではなく、すべてのitem featureはRecformerからエンコードされる。(item featureって $\mathbf{h}_{i}$ の事??)
 As shown in Algorithm 1, our proposed finetuning method has two stages.
 アルゴリズム1に示すように、我々の提案するファインチューニング法には2つの段階がある。
 In stage 1, I is updated (line 4) per epoch,3 whereas, in stage 2 we freeze I and update only parameters in model 𝑀.
 ステージ1では、$\mathbf{I}$ はepochごとに更新される(4行目)が、ステージ2では $\mathbf{I}$ を凍結し、モデルのパラメータ $M$ のみを更新する。
 (ここで更新とは、全てのitemをRecformerでencodeすることを意味する)
 The basic idea is that although the model is already pre-trained, item representations from the pre-trained model can still be improved by further training on downstream datasets.
-基本的な考え方は、モデルはすでに事前訓練されているが、**事前訓練されたモデルからのitem表現は、下流のデータセットでさらに訓練することで改善できる**ということである。
+基本的な考え方は、モデルはすでに事前学習されているが、**事前学習されたモデルからのitem表現は、下流のデータセットでさらに訓練することで改善できる**ということである。(うんうん。そりゃそうじゃない??:thinking:)
 It is expensive to re-encode all items in every batch hence we re-encode all items in every epoch to update I (line 4) and use I as supervision for item-item contrastive learning (line 5).
 batchごとに全itemを再encodeするのはコストがかかるので、epochごとに全itemを再encodeして $\mathbf{I}$ を更新し(4行目)、$\mathbf{I}$ をitem-item contrastive学習のsupervisionとして使用する(5行目)(supervisionって何?)。
 After obtaining the best item representations, we re-initialize the model with the corresponding parameters (line 12) and start stage 2.
@@ -412,12 +412,12 @@ The finetuning loss is calculated as:
 微調整ロスは次のように計算される：
 
 $$
-L_{fine-tuning} = - \log \frac{e^{sim(h_s, \mathbf{I}_{i}^{+}) / \tau}}{\sum_{i \in \mathcal{I}} e^{sim(h_s, \mathbf{I}_{i}) / \tau}}
+L_{fine-tuning} = - \log \frac{e^{sim(\mathbf{h}_s, \mathbf{I}_{i}^{+}) / \tau}}{\sum_{i \in \mathcal{I}} e^{sim(\mathbf{h}_s, \mathbf{I}_{i}) / \tau}}
 \tag{12}
 $$
 
 where I𝑖 is the item feature of item 𝑖.
-ここで、$\mathbf{I}_{i}$ はitem $i$ のitem featureである。(Recformerによってencodeされた各item sentence??)
+ここで、$\mathbf{I}_{i}$ はitem $i$ のitem featureである。(Recformerによってencodeされたアイテム表現 $\mathbf{h}_{i}$ という認識であってる?)
 
 ## 2.4. Discussion
 
@@ -439,7 +439,7 @@ All of these approaches rely on a feature extractor such as BERT [6] to obtain i
 In this paper, we explore conducting sequential recommendations in a new paradigm that learns language representations for the next item recommendations.
 本稿では、**next-itemを推薦するための言語表現を学習する新しいパラダイム**で、逐次推薦を行うことを探求する。
 Instead of trainable item embeddings or fixed item features from language models, we bridge the gap between natural language understanding and sequential recommendation to directly learn representations of items and user sequences based on words.
-学習可能なitem埋め込みや言語モデルからの固定item特徴の代わりに、自然言語理解とシーケンシャル・レコメンデーションのギャップを埋め、単語に基づいてitemとユーザーシーケンスの表現を直接学習する。
+学習可能なitem埋め込みや言語モデルからの固定item特徴の代わりに、自然言語理解とsequential推薦のギャップを埋め、**単語に基づいてitemとuser sequenceの表現を直接学習する**。
 We expect the generality of natural language can improve the transferability of recommenders in order to benefit new domain adaptation and cold-start item understanding
 自然言語の一般性は、新たなドメイン適応やコールドスタートのitem理解のために、**レコメンダーの移植性(transferability)を向上(cross-domain推薦の話...!)**させることができると期待している。
 
@@ -470,7 +470,7 @@ Recformerを評価するために、"Industrial and Scientific"、"Musical Instr
 For pre-training and finetuning, we use the five-core datasets provided by the data source and filter items whose title is missing.
 事前学習とfine-tuningには、データソースから提供された5コアのデータセットを使用し、タイトルが欠落しているアイテムをフィルタリングする。
 Then we group the interactions by users and sort them by timestamp ascendingly.
-次に、ユーザごとにinteractionをグループ化し、タイムスタンプの昇順でソートする。
+次に、ユーザごとにinteractionをグループ化し、タイムスタンプの昇順でソートする。(=sequentialデータを作る。)
 Following previous work [12], we select item attributes title, categories and brand as key-value pairs for items.
 先行研究[12]に従い、**アイテムのタイトル、カテゴリー、ブランドの属性をアイテムのkey-valueペアとして選択**する。
 
@@ -566,7 +566,7 @@ The results illustrate the effectiveness of the proposed Recformer.
 ![fig4]()
 
 To show the effectiveness of pre-training, we evaluate the zero-shot recommendation performance of three TextOnly methods (i.e., UniSRec, ZESRec, Recformer) and compare results to the average scores of three ID-Only methods fully trained on downstream datasets.
-事前学習の有効性を示すために、3つのTextOnly手法(UniSRec、ZESRec、Recformer)のゼロショット推薦性能を評価し、下流データセットで完全に訓練された3つのID-Only手法の平均スコアと結果を比較する。
+事前学習の有効性を示すために、3つのText-Only手法(UniSRec、ZESRec、Recformer)のゼロショット推薦性能を評価し、下流データセットで完全に訓練された3つのID-Only手法の平均スコアと結果を比較する。
 The zero-shot recommendation setting requires models to learn knowledge from pre-training datasets and directly test on downstream datasets without further training.
 **ゼロショット推薦の設定では、モデルが事前学習データセットから知識を学習し、さらに学習(=fine-tuning!)することなく下流のデータセットで直接テストする必要がある**。
 Hence, traditional ID-based methods cannot be evaluated in this setting.
@@ -637,7 +637,7 @@ Because of randomly initialized cold-start item representations, the performance
 Hence, IDonly methods are not able to handle cold-start items and applying text is a promising direction.
 **したがって、IDのみの方法ではコールドスタートのアイテムを扱うことができず、テキストを適用することが有望な方向性である**。
 For Text-only methods, Recformer greatly improves performance on both in-set and cold-start datasets compared to UniSRec which indicates learning language representations is superior to obtaining text features for recommendations.
-テキストのみの手法の場合、RecformerはUniSRecと比較して、インセットとコールドスタートの両方のデータセットでパフォーマンスを大幅に向上させる。これは、**推薦のためのテキスト特徴を得るよりも、言語表現を学習する方が優れている**ことを示している。(固定の学習済みテキストembeddingを単に特徴量として使うよりも、推薦モデルの一部として言語表現を学習させる方がよりrichで効果的な表現になる、ってこと??:thinking:)
+テキストのみの手法の場合、RecformerはUniSRecと比較して、インセットとコールドスタートの両方のデータセットでパフォーマンスを大幅に向上させる。これは、**推薦のためのテキスト特徴量を得るよりも、言語表現を学習する方が優れている**ことを示している。(固定の学習済みテキストembeddingを単に特徴量として使うよりも、推薦モデルの一部として言語表現を学習させる方がよりrichで効果的な表現になる、ってこと??:thinking:)
 
 ### 3.4.2. Ablation(=切除) Study. アブレーション研究。
 
@@ -704,7 +704,7 @@ In this case, the model already has some essential knowledge of natural language
 The domain adaptation from a general language understanding to the item text understanding for recommendations should be fast.
 **一般的な言語理解から推薦のためのアイテムテキスト理解へのドメイン適応**は高速であるべきである。
 (2) Even if we include seven categories in the training data, there is still a language domain difference between pre-training data and downstream data since different item categories have their own specific vocabularies.
-(2) 学習データに7つのカテゴリを含めたとしても、アイテムカテゴリにはそれぞれ固有の語彙があるため、事前学習データと下流データには言語ドメインの違いがある。(だから頭打ちになるってこと??)
+(2) 学習データに7つのカテゴリを含めたとしても、アイテムカテゴリにはそれぞれ固有の語彙があるため、事前学習データと下流データには言語ドメインの違いがある。(だからいくら事前学習頑張っても、頭打ちになるってこと??:thinking:)
 For instance, the category Electronics has quite different words in item text compared to the Pets category.
 例えば、「エレクトロニクス」カテゴリーと「ペット」カテゴリーでは、アイテムのテキストに含まれる単語がかなり異なっている。
 
@@ -742,13 +742,13 @@ We aim to have a sequential recommendation method that can effectively model col
 ## 4.2. Transfer Learning for Recommendation 推薦のための転移学習
 
 Data sparsity and cold-start item understanding issues are challenging in recommender systems and recent studies [33, 39, 40] explore transferring knowledge across different domains to improve the recommendation at the target domain.
-最近の研究[33, 39, 40]では、ターゲットドメインでの推薦を改善するために、異なるドメイン間で知識を転送することを探求している。
+最近の研究[33, 39, 40]では、**ターゲットドメインでの推薦を改善するために、異なるドメイン間で知識を転送すること**を探求している。
 Previous methods for knowledge transfer mainly rely on shared information between the source and target domains including common users [13, 31, 32, 35], items [26, 39] or attributes [29].
 これまでの知識移転の方法は、主に共通のユーザー[13, 31, 32, 35]、項目[26, 39]、属性[29]など、ソースとターゲットのドメイン間で共有される情報に依存している。
 To learn common item features from different domains, pre-trained language models [6, 21] provide high-quality item features by encoding item texts (e.g., title, brand).
 異なるドメインから共通のアイテム特徴を学習するために、事前に学習された言語モデル[6, 21]は、アイテムのテキスト（例：タイトル、ブランド）を符号化することにより、高品質のアイテム特徴を提供する。
 Based on pre-trained item features, several methods [7, 12] are proposed to learn universal item representations by applying additional layers.
-事前に学習された項目特徴に基づき、追加レイヤーを適用することで普遍的な項目表現を学習する方法[7, 12]がいくつか提案されている。
+**事前学習されたアイテム特徴量に基づき、追加レイヤーを適用することで普遍的なアイテム表現を学習する方法**[7, 12]がいくつか提案されている。
 In this work, we have the same target as previous transfer learning for recommendation (i.e., alleviate data sparsity and cold-start item issues).
 **本研究では、これまでの推薦のための転移学習と同じ目標を掲げている（すなわち、データのスパース性とコールドスタート項目の問題を緩和する）**。
 However, instead of relying on common users, items and attributes or encoding items with pre-trained language models, we directly learn language representations for sequential recommendation and hence transfer knowledge based on the generality of natural languages.
