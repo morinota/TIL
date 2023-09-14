@@ -21,7 +21,7 @@ We conducted an analysis on about 150 successful customer facing applications of
 Following the phases of a Machine Learning project we describe our approach, the many challenges we found, and the lessons we learned while scaling up such a complex technology across our organization.
 機械学習プロジェクトの段階を追って、私たちのアプローチ、私たちが発見した多くの課題、そして組織全体でこのような複雑なテクノロジーをスケールアップする際に学んだ教訓について説明します。
 Our main conclusion is that an iterative, hypothesis driven process, integrated with other disciplines was fundamental to build 150 successful products enabled by Machine Learning.
-我々の主な結論は、機械学習によって150の成功した製品を構築するためには、他の学問分野と統合された**反復的で仮説主導のプロセス**が基本であったということである。
+我々の主な結論は、機械学習によって150の成功した製品を構築するためには、他の学問分野と統合された**反復的で仮説主導のプロセス(an iterative, hypothesis driven process)**が基本であったということである。
 
 # 1. Introduction はじめに
 
@@ -97,7 +97,7 @@ Wagstaffのポジションペーパー[13]は、機械学習をどのように�
 In an example closer to our industry, Jannach et al.[5] explain how the field of recommender systems provides little guidance to impact metrics relevant to service providers, such as sales diversification, conversion rate or loyalty.
 我々の業界に近い例では、Jannachら[5]が、**レコメンダー・システムの分野が、売上の多様化、コンバージョン率、ロイヤリティといったサービス・プロバイダーに関連する指標に影響を与える指針をほとんど提供していない**ことを説明している。
 Many other publications have described specific use cases of machine learning and their impact on business metrics (e.g.[10]) but no previous work to our knowledge has studied the overall process of developing and testing products to obtain business and user value through Machine Learning.
-他の多くの出版物は、機械学習の特定のユースケースとビジネス・メトリクスへの影響を記述している（例えば[10]）が、我々の知る限り、機械学習を通じてビジネスとユーザーの価値を得るための製品開発とテストの全体的なプロセスを研究した先行研究はない。
+他の多くの出版物は、機械学習の特定のユースケースとビジネス・メトリクスへの影響を記述している（例えば[10]）が、我々の知る限り、機械学習を通じてビジネスとユーザの価値を得るための製品開発とテストの全体的なプロセスを研究した先行研究はない。
 
 In this work we analyze 150 successful customer facing applications of Machine Learning techniques (plus many associated failures), and share the challenges we found, how we addressed some of them, lessons that we got along the way, and general recommendations.
 この作品では、機械学習技術の顧客向けアプリケーションで成功した150の事例（それに付随する多くの失敗事例）を分析し、我々が発見した課題、そのいくつかにどのように対処したか、その過程で得た教訓、そして一般的な推奨事項を共有する。
@@ -113,7 +113,7 @@ Our contributions are:
 The rest of the paper is organized as a set of lessons associated to a specific phase of the development process of a Machine Learning project, namely Inception, Modeling, Deployment, Monitoring and Evaluation, and a final section where we present our conclusions.
 本稿の残りの部分は、機械学習プロジェクトの開発プロセスの特定のフェーズ、すなわち **Inception(開始)、Modeling、Deployment、Monitoring、Evaluation に関連する一連の教訓**として構成されており、最後のセクションでは結論を述べている。
 
-# 2. Inception: Machine Learning as a Swiss Knife for Product Development 開始: 製品開発のためのスイスナイフ(?)としての機械学習
+# 2. Inception: Machine Learning as a Swiss Knife for Product Development 開始: 製品開発のためのスイスナイフ(=多機能で色んな用途に使える例え)としての機械学習
 
 During the inception phase of a Machine Learning based project, a product team produces ideas, hypotheses, business cases, etc., where Machine Learning fits as part of the solution.
 機械学習ベースのプロジェクトの開始段階では、製品チームは、機械学習がソリューションの一部として適合するアイデア、仮説、ビジネスケースなどを作成する。
@@ -124,7 +124,7 @@ In practice, our models are tools that help different teams improve their produc
 At one extreme, we create models which are very specific for a use case.
 ある極端な例では、ユースケースに特化したモデルを作成する。
 For instance, they optimize the size of an specific element of the user interface, or provide recommendations tailored for one point on the funnel and one specific context.
-例えば、ユーザーインターフェースの特定の要素のサイズを最適化したり、ファネルのあるポイントや特定のコンテキストに合わせた推薦を提供したりする。
+例えば、ユーザインターフェースの特定の要素のサイズを最適化したり、ファネルのあるポイントや特定のコンテキストに合わせた推薦を提供したりする。
 Because of their specificity, we can design and tune them to achieve good performance, hoping to create a strong business impact.
 その特異性ゆえに、私たちは優れたパフォーマンスを達成するために設計し、調整することができる。
 The counterside is that their breadth of application is limited to a few use cases.
@@ -135,7 +135,7 @@ At the opposite end of the spectrum we also create models which act as a meaning
 They model understandable concepts, enabling everyone involved in product development to introduce new features, personalization, persuasion messages, etc., based on the output of the model.
 **理解しやすいコンセプトをモデル化すること(定量化できていないユーザの特徴を、MLモデルを使ってモデル化する、みたいな??:thinking:)**で、商品開発に携わるすべての人が、モデルの出力に基づいて新機能やパーソナライゼーション、説得力のあるメッセージなどを導入できるようになる。
 They could for instance indicate how flexible a user is with respect to the destination of their trip, giving product teams a concept of destination-flexibility that they can use to improve their products.
-例えば、ユーザが旅行の目的地に対してどの程度フレキシブルであるかを示し、製品チームに目的地-フレキシビリティの概念を与えることで、製品の改善に役立てることができる。
+例えば、ユーザが旅行の目的地に対してどの程度フレキシブルであるかを示し、プロダクトチームにdestination-flexibilityの概念を与えることで、プロダクトの改善に役立てることができる。
 Such models provide an interpretable signal, valid under all the contexts where the product teams would like to use them.
 このようなモデルは、製品チームが使用したいすべてのcontextで有効な、解釈可能なシグナル(=出力?)を提供する。(ユーザの特徴量を作るモデル、みたいな??:thinking:)
 This requirement limits the coupling between model prediction and specific target business metrics, but this is counteracted by the broad adoption such models have, generating often dozens of use cases all over the platform.
@@ -366,10 +366,10 @@ For each of these definitions of flexibility a different learning setup can be u
 For example, we could learn to predict how many different dates the user will consider applying regression to a specific dataset composed by users as observations, or to estimate the probability of changing dates by solving a classification problem, where the observations are searches, and so on.
 例えば、ユーザをオブザベーションとして構成された特定のデータセットに回帰を適用して、ユーザがいくつの異なる日付を考慮するかを予測する学習や、オブザベーションが検索である分類問題を解くことによって日付を変更する確率を推定する学習などができる。
 These are all constructed machine learning problems, that, when solved, output a model of the Dates Flexibility of a user.
-これらはすべて機械学習の問題で、それを解くと、ユーザーのデイトスの柔軟性のモデルが出力される。
+これらはすべて機械学習の問題で、それを解くと、ユーザのDates Flexibilityのモデルが出力される。
 
 To compare alternative problems we follow simple heuristics, that consider among others, the following aspects:
-alternative problems(代替問題)を比較するために、特に以下の点を考慮した単純なヒューリスティックに従う:
+alternative problemsを比較する(=複数の機械学習問題の設定の良し悪しを判断する事??)ために、特に以下の点を考慮した単純なヒューリスティックに従う:
 
 - **Learning Difficulty**: when modeling these very subjective concepts, target variables are not given as ground truth, they are constructed. Therefore, some setups are harder than others from a learning perspective. Quantifying learnability is not straightforward. For classification problems the Bayes Error is a good estimate since it only depends on the data set, we apply methods from the work of Tumer & Ghosh [12]. Another popular approach that works well for ranking problems is to compare the performance of simple models against trivial baselines like random and popularity. Setups where simple models can do significantly better than trivial models are preferred. 学習の難しさ: このような**非常に主観的な概念をモデル化する場合、ターゲット変数はground-truthとして与えられるのではなく、構築される**。 そのため、セットアップによっては、学習の観点から他のものより難しいものもある。 学習可能性を定量化するのは簡単ではない。 分類問題では、ベイズ誤差はデータセットに依存するだけなので、良い推定値である。 **ランキング問題で有効なもうひとつのよく使われるアプローチは、ランダムや人気のような些細なベースラインと単純なモデルの性能を比較することである**。 単純なモデルの方が些細なモデルよりもはるかに良い結果を出せるようなセットアップが好まれる。
 
@@ -541,7 +541,7 @@ Machine Learning products are also tested through experiments.
 The large majority of the successful use cases of machine learning studied in this work have been enabled by sophisticated experiment designs, either to guide the development process or in order to detect their impact.
 この研究で研究された機械学習の成功したユースケースの大部分は、開発プロセスを導くため、あるいはその影響を検出するために、洗練された実験デザインによって実現されている。
 In this section we show examples of how we use a combination of triggered analysis with treatments design to isolate the causal effect of specific modeling and implementation choices on business metrics.
-このセクションでは、特定のモデリングと実装の選択がビジネス指標に及ぼす因果効果を分離するために、トリガー分析と処理設計の組み合わせを使用する方法の例を示します。
+このセクションでは、特定のモデル(ex. 推論結果の違い)と実装の選択(ex. レイテンシーの違い)がビジネス指標に及ぼす因果効果を分離するために、トリガー分析とtreatments designの組み合わせを使用する方法の例を示します。
 
 ## 7.1. Selective triggering 選択的トリガー
 
