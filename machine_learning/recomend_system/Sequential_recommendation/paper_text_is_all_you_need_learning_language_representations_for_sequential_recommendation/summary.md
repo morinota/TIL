@@ -374,10 +374,12 @@ SASRec(ID-Only手法)、UniSRec(Text-Only手法)、Recformer(提案手法)を使
 ## 次に読むべき論文は？
 
 - Text-Only手法のベースライン(UniSRec, ZESRec)
+  - [Towards Universal Sequence Representation Learning for Recommender Systems](https://arxiv.org/abs/2206.05941)
+  - [Zero-Shot Recommender Systems](https://arxiv.org/abs/2105.08318)
 
 ## お気持ち実装
 
-2段階のfine-tuningをお気持ち実装した。
+2段階のfine-tuningssをお気持ち実装した。
 
 ```python
 from dataclasses import dataclass

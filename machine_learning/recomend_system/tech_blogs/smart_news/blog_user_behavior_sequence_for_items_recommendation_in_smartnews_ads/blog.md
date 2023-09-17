@@ -34,16 +34,15 @@ The diagram below shows the scenario we want to model. When we know the user’s
 
 ## Tech Detail / Trick
 
-
 ### Model Selection
 
 As mentioned before, there are a range of models in the recommendation domain that also attempt to deal with sequences. Here we have chosen SASRec as the basis for our experiments, which is a Self-Attention based model architecture with the clear idea of using the past N product sequences to predict the N+1th product. The overall structure is shown in the figure below, using the Multi-head Attention mechanism to obtain a vector of the first N items, hoping that the inner product of the vector with the next item is greater than the other negative sample items. The inference is made by putting the user’s historical behavior into the model, obtaining the vector, and using the ANN to find the next most likely TopK item from a pool of 10 million items.
 
 ![](https://miro.medium.com/v2/resize:fit:1400/0*YGRlGEFLL1p_wNj3)
 
-###  Improve Training Speed
+### Improve Training Speed
 
-In order to use sequential modeling, a common training framework resembles a double tower (as shown in Fig. 5), with the left tower being the User Representation, i.e. the past historical behavior of the user. The right tower is the next item, which is finally compared to the label (positive or negative), using dot or cosine. If there are 10M users, and each user takes 50 different historical behavior sequences, and 3 negative samples, then there are 2 billion (10M * 50 * (1+3)) samples in total, which is a very high training time and iteration cost.
+In order to use sequential modeling, a common training framework resembles a double tower (as shown in Fig. 5), with the left tower being the User Representation, i.e. the past historical behavior of the user. The right tower is the next item, which is finally compared to the label (positive or negative), using dot or cosine. If there are 10M users, and each user takes 50 different historical behavior sequences, and 3 negative samples, then there are 2 billion (10M _ 50 _ (1+3)) samples in total, which is a very high training time and iteration cost.
 
 An optimization point here is that much of the historical behavior data of the same user is calculated repeatedly. For example, the first sample sequence is T0 to T50, the second sample sequence is T1 to T51, and the middle sequence (T2 to T50) is actually the same. SASRec’s training approach solves this problem considerably. For each user, we take a sequence of historical behaviors (e.g. T0 to T50, then T0 predicts T1, T0 to T1 predicts T2, and so on). Since Self Attention looks at the entire sequence, a Mask is introduced to mask the items to the right of the Target Item in order to avoid message traversal due to future click behaviors. Thus, by walking through Attention, we actually get a vector of N different sequences and train N samples. This way of training makes the overall training speed shorter, for a billion levels of click data, it only takes 3~4 hours to get a good convergence result, and it is also convenient for us to do parameter fine-tuning and model iteration.
 
@@ -90,4 +89,3 @@ More features are better. However, adding all of the features doesn’t necessar
 ### PLM Model
 
 In the NLP domain, it is a common paradigm to use Bert to do large-scale training and then fine-tune for downstream tasks. In recommendation, if the amount of data is large enough, we can also try to train a base model by self-data and use self-supervised training to train the model as a pre-train model for downstream tasks, which can accelerate the convergence and also bring benefits to some small advertisers. For example, much new research in News Recommendation uses the NLP pre-train model to finetune, which can get better results.
-
