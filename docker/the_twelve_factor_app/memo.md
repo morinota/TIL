@@ -2,7 +2,7 @@
 
 - https://12factor.net/ja/
 
-# 1. Twelve-Factor Appって何?
+## 0.2. Twelve-Factor Appって何?
 
 - Twelve-Factor Appは、クラウドネイティブなアプリケーションの開発手法に関する方法論である。アプリケーションの設計や運用におけるベストプラクティスを提唱している。
   - 以下、各要素:
@@ -10,7 +10,7 @@
   - 2. クラウドプラットフォームに適したデプロイ
 - Twelve-Factorの方法論は、ど**のようなプログラミング言語で書かれたアプリケーションに**でも適用できる。また、**どのようなバックエンドサービス（データベース、メッセージキュー、メモリキャッシュなど）の組み合わせ**を使っていても適用できる。
 
-## 1.1. 背景:
+## 0.3. 背景:
 
 - Twelve-Factor appは、多種多様なSaaSアプリケーション開発現場での私たちの経験と観察をすべてまとめたもの。
   - 特に、以下の3点に注目している:
@@ -18,7 +18,7 @@
   - 2. アプリケーションのコードベースに取り組む開発者間のコラボレーションの力学
   - 3. ソフトウェア腐敗によるコストの回避に注目している。
 
-# 2. Codebase: バージョン管理されている1つのCodebaseと複数のDeploy
+# 1. Codebase: バージョン管理されている1つのCodebaseと複数のDeploy
 
 - Codebase=git等で管理されるコードリポジトリ。
 - **CodebaseとApplicationの間には、常に1対1の関係**。
@@ -31,7 +31,7 @@
   - ex) 開発者はstaging環境にまだデプロイされていないコミットを抱えているし、staging環境には本番環境にデプロイされていないコミットが含まれている。
   - しかし、これらのDeploy達はすべて同一のCodebaseを共有しているため、同一のApplicationの異なるデプロイである
 
-# 3. Dependency: 依存関係を明示的に宣言し分離する
+# 2. Dependency: 依存関係を明示的に宣言し分離する
 
 - 依存関係宣言(dependency declaration)と依存関係分離(dependency isolation)の話。
 - ほとんどのプログラミング言語は、サポートライブラリを配布するための**パッケージ管理システム**を提供している。
@@ -48,7 +48,7 @@
   - 仮に依存しているsystem-wide packagesが、Applicationが将来にかけて実行され得るすべてのシステム環境に存在するかどうか、何の保証もない。
   - Applicationが対象のpackageに依存すべきならば、その依存を明示的にApplication内に組み込むべき。
 
-# config: configを環境変数に格納する
+# 3. config: configを環境変数に格納する
 
 - (要はconfigration的な情報をハードコーディングするな、って話だろうか:thinking:)
 - ApplicationのConfigは、**Deploy(staging, 本番、開発環境, etc.)の間で異なり得る唯一のもの**。
@@ -78,4 +78,15 @@
     - -> Deployが増えるにつれて、新しい環境名が必要になる。プロジェクトが拡大すると、開発者は自分用の環境を追加したりする。
     - -> 結果としてconfigが組み合わせ的に爆発し、ApplicationのDeployの管理が非常に不安定になる。
 
-# backing(バックエンド)サービス: バックエンドサービスをattachされたリソースとして扱う
+# 4. backing(バックエンド)サービス: バックエンドサービスをattachされたリソースとして扱う
+
+- ここで"backing(バックエンド)サービス"は、Applicationが通常の動作の中でネットワーク越しに利用する全てのサービスの事を言う。
+  - datastore(ex. MySQL), messaging/queueing system, 電子メールを送信する為のSMTPサービス, caching system(ex. Memcached)
+- Twelve-Factor Appでは、ローカルサービスとサードパーティサービスを区別しない。
+  - **Applicationにとってはどちらもattachされたリソースであり、configに格納されたURLや認証情報でアクセスする**。
+    - ("attachされたリソース"という表現は、applicationとリソースが疎結合である、って意味っぽい...?:thinking:)
+  - Twelve-Factorを満たすApplicationのDeployは、**Applicationのコードを修正する事なく、configの中のresource handleを切り替えるだけで**、ローカルサービスのMySQLデータベースを、サードパーティサービスのAmazon RDSに切り替える事ができるべき...!!(なるほど...!:thinking:)
+
+# 5. Build, release, run: ビルド、リリース、実行の3つのステージを厳密に分離する
+
+-
