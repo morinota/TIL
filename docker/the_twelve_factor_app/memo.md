@@ -89,4 +89,27 @@
 
 # 5. Build, release, run: ビルド、リリース、実行の3つのステージを厳密に分離する
 
--
+# 6. Process: Applicationを1つもしくは複数のStatelessなProcessとして実行する
+
+# 7. Port binding: サービスはPort bindingを通して公開する
+
+# 8. Concurrency(並行性): Process ModelによってScale outする
+
+- Twelve-Factor AppではProcessは
+
+# 9. Disposability(廃棄しやすさ?): fast startup(高速な起動)と graceful shutdown(エレガントな段階的な?)によってrobust性を最大化する
+
+- Twelve-Factor AppはDisposableである。(i.e. 即座に起動・終了できる!)
+
+# 10. Dev/prod parity(=一致性?): dev, staging, prod環境をできるだけ一致させた状態に保つ
+
+- Twelve-Factor Appは、Continuous Deployしやすいように開発環境と本番環境のギャップを小さく保つ...!
+- backingサービスの違いは、僅かな非互換性が顕在化し、dev環境では正常に動作してテストを通過するコードが、prod環境でエラーを起こす事態を招き得る -> **この種のエラーはContinuous Deployを妨げる摩擦を生む**...!
+
+# 11. Logs: ログをevent streamとして扱う
+
+- 実行中のProcessはevent streamを**stdout(標準出力)に**バッファリングせずに書き出す
+
+# 12. Admin processes: admin/management(=管理)タスクをone-off(=一回限りの)プロセスとして実行する
+
+- 管理タスク用のコード(ex. デプロイ用のshell script)は、Applicationコードと一緒にDeployされるべき。
