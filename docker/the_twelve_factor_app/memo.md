@@ -89,27 +89,73 @@
 
 # 5. Build, release, run: ビルド、リリース、実行の3つのステージを厳密に分離する
 
+- Codebaseは(実際には"Codebaseでは"なのかな。一つのApplication、一つのCodebaseに対して、複数のDeployがあるはずだし:thinking:)、3つのstageを経て(たぶんprod環境の!)Deployへと変換される:
+  - build stage:
+    - code repositoryを"build"と呼ばれる実行可能な塊に変換する。
+  - release stage:
+    - build stageで生成されたbuildを受け取り、それをDeployの現在のconfigと結合する。
+    - できあがる"release"には"build"と"config"の両方が含まれ、実行環境の中ですぐにでも実行できるように準備が整った状態。
+  - run stage("runtime"とも呼ぶ):
+    - 選択された"release"に対して、ApplicationのいくつかのProcessを起動する事で、Applicationを実行環境の中で走らせる。
+- **Twelve-Factor Appでは、3つのstagesを厳密に分離する**!
+
 # 6. Process: Applicationを1つもしくは複数のStatelessなProcessとして実行する
+
+- "Process"=Applicationを実行する為の操作??:thinking:
+  - コンピュータプログラムが実行される際における基本的な操作単位。
+  - ex. コマンドラインから実行する`python app.py`(最もシンプルな例。実行の為に複数のProcessを持つApplicationもある。)
+  - i.e. コンピュータ上で実行されるプログラムの実体であり、アプリケーションの動作を担当するらしい。
+- **Twelve-Factor AppのProcessは、StatelessかつShare-nothingであるべき**。
+  - "状態を持たない"かつ"共有するものがない"
+  - i.e. Applicationの各実行は独立しており、1つの実行が終了しても次の実行には影響しない。
+  - しかし、Applicationのusecaseによっては状態を保持したいケースもある。(ex. userのセッション情報, userやitemの属性情報, etc.)
+  - ↑のような**persistしたい(i.e. 永続的に保持したい)データは、Applicationにではなく、データベース等の外部サービスに保存すべき**である...!
+    - i.e. persistしたいデータをApplicationのメモリ空間やファイルシステムに保存するな。(短い単一のTransaction内でのキャッシュとしてならOK)
+  - Applicationが状態を持たない事でScalabilityが向上し、より柔軟に運用できる...!
+- 一部のウェブシステムは"sticky sessions"を利用しているが、これはTwelve-Factor Appの設計原則に反している。
+  - sticky sessions: web applicationにおけるセッション管理の一種で、特定のユーザが同じサーバに送信されることを保証する管理方法。
 
 # 7. Port binding: サービスはPort bindingを通して公開する
 
+- "Port Binding"とは:
+  - Applicationとの通信の為のgateway(=入り口)として機能する特定の番号(=port, ex. 80)に、Applicationを関連付ける事。
+- Twelve-Factor Appでは、Application自身がportにbindし、リクエストを受け取る事を重要視してる。Application自身がHTTPサービスを提供する。
+- Port bindingにより、一つのApplicationが他のApplicationのbackingサービスになる事ができる。
+- この原則を満たさない例:
+  - Applicationが特定のPortにbindする代わりに、固定のAPIエンドポイントのみを介してのみアクセス可能であり、外部からのリクエストを直接受け取らないケース。(セキュリティ的には良さそうだけど...!:thinking:)
+
 # 8. Concurrency(並行性): Process ModelによってScale outする
 
-- Twelve-Factor AppではProcessは
+- Twelve-Factor AppではProcessはshare-nothingなので、水平に分割可能!
+  - より多くの同時実行を追加できる。
+-
 
 # 9. Disposability(廃棄しやすさ?): fast startup(高速な起動)と graceful shutdown(エレガントな段階的な?)によってrobust性を最大化する
 
-- Twelve-Factor AppはDisposableである。(i.e. 即座に起動・終了できる!)
+- Twelve-Factor AppのProcess(=Applicationの動作)はDisposableである。(i.e. 即座に起動・終了できる!)
+  - -> 迅速で柔軟なScaling、codeやconfigの高速なデプロイ、本番適用のrobust性!
+- fast startup:
+  - プロセスは起動時間を最小限に抑えるべき。
+- graceful shutdown(エレガントな段階的な?):
+- Twelve-Factor Appは予期せぬ、not gracefulな終了に対応できるように設計すべき。
 
 # 10. Dev/prod parity(=一致性?): dev, staging, prod環境をできるだけ一致させた状態に保つ
 
-- Twelve-Factor Appは、Continuous Deployしやすいように開発環境と本番環境のギャップを小さく保つ...!
+- Twelve-Factor Appは、**Continuous Deployしやすいように開発環境と本番環境のギャップを小さく保つ**...!(逆に、伝統的なApplicationはこれらのギャップが大きい...!)
+  - 時間のギャップを小さくすべき!:
+    - 開発者が書いたコードは数時間後、さらには数分後にはデプロイされるべき。
+  - 人材のギャップを小さくすべき!:
+    - コードを書いた開発者はそのコードのデプロイに深く関わり、そのコードの本番環境での挙動をモニタリングするべき。
+  - ツールのギャップを小さくすべき!:
+    - できるだけツールを一致させるべき。
 - backingサービスの違いは、僅かな非互換性が顕在化し、dev環境では正常に動作してテストを通過するコードが、prod環境でエラーを起こす事態を招き得る -> **この種のエラーはContinuous Deployを妨げる摩擦を生む**...!
 
 # 11. Logs: ログをevent streamとして扱う
 
-- 実行中のProcessはevent streamを**stdout(標準出力)に**バッファリングせずに書き出す
+- Twelve-Factor Appは自分のログを直接管理せず、各プロセスは自身のイベントをstdoutに書き出すべき。
 
 # 12. Admin processes: admin/management(=管理)タスクをone-off(=一回限りの)プロセスとして実行する
 
-- 管理タスク用のコード(ex. デプロイ用のshell script)は、Applicationコードと一緒にDeployされるべき。
+- 開発者はしばしば、データベースのマイグレーションやコンソールの実行など、アプリの管理やメンテナンス作業を行う必要がある。
+- **Twelve-Factor Appは、REPL(Read-Eval-Print Loop, i.e. 対話型環境!)を提供し、一時的なスクリプトを実行することが容易な言語を採用すべき**!
+  - 本番環境では、開発者は**ssh**やそのデプロイの実行環境で提供される他のリモートコマンド実行メカニズムを使う。
