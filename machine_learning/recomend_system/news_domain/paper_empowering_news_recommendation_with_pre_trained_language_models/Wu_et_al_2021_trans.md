@@ -103,12 +103,12 @@ The click prediction module takes the user embedding u and h𝑐 as inputs, and 
 It can also be implemented by various methods such as inner product [15], neural network [20] and factorization machine [7].
 また、内積[15]、ニューラルネットワーク[20]、因数分解マシン[7]など、さまざまな方法で実装することもできる。(**dot-product以外のclick prediction module気になる...!**:thinking:)
 
-## 2.2. PLM Empowered News Recommendation PLM Empowered News
+## 2.2. PLM Empowered News Recommendation PLM
 
 Next, we introduce the framework of PLM empowered news recommendation, as shown in Fig.2.
 次に、図2に示すように、PLMを活用したニュース推薦のフレームワークを紹介する。
 We instantiate the news encoder with a pre-trained language model to capture the deep contexts in news texts and an attention network to pool the output of PLM.
-ニュースエンコーダには、ニューステキストに含まれる深い文脈を捉えるために事前学習された言語モデルと、**PLMの出力をプールするためのattetionネットワーク**(PLMの出力を集約する為? そもそもPLMはどんな出力なんだっけ:thinking:)をインスタンス化する。
+ニュースエンコーダには、ニューステキストに含まれる深い文脈を捉えるために事前学習された言語モデルと、**PLMの出力をプールするためのattetionネットワーク**をインスタンス化する。(PLMで出力される word embedding達を集約してnews text embeddingを作る為という認識:thinking: この方法を採用した理由は実験セクションで後述されていた...!)
 We denote an input news text with $M$ tokens as $[w_1,w_2, \cdots,w_M]$.
 ここでは、$M$ 個のトークンを持つ入力ニューステキストを $[w_1,w_2, \cdots,w_M]$ とします。
 The PLM converts each token into its embedding, and then learns the hidden representations of words through several Transformer [18] layers.
@@ -117,7 +117,7 @@ We denote the hidden token representation sequence as $[r_1, r_2, \cdots, r_M]$.
 hiddenトークン表現sequenceを $[r_1, r_2, \cdots, r_M]$ とする。
 We use an attention [29] network to summarize the hidden token representations into a unified news embedding.
 アテンション[29]ネットワークを使って、hiddenトークン表現sequenceを統一されたニュース埋め込みに要約する。
-(なんとなく、特殊トークン $[CLS]$ のhiddenトークン表現を、文の埋め込みとみなしてそれをそのままニュース埋め込みとして使う想像だったが、事前学習モデルとは別でattentionに通してニュース埋め込みを作るのかな...?:thinking:)
+(なんとなく、特殊トークン $[CLS]$ のhiddenトークン表現を、文の埋め込みとみなしてそれをそのままニュース埋め込みとして使う想像だったが、事前学習モデルとは別でattentionに通してニュース埋め込みを作るのかな...?:thinking:この方法を採用した理由は後述されてた。)
 The news embeddings learned by the PLM and attention network are further used for user modeling and candidate matching.
 PLMとアテンション・ネットワークによって学習されたニュース埋め込みは、さらにユーザモデリング(=fig2の右側?)と候補マッチング(=fig2の左側?)に使用される。
 
@@ -126,7 +126,7 @@ PLMとアテンション・ネットワークによって学習されたニュ�
 Following [22, 23], we also use negative sampling techniques to build labeled samples from raw news impression logs, and we use the cross-entropy loss function for model training by classifying which candidate news is clicked.
 また、[22, 23]に倣い、ネガティブサンプリング技術(=教師あり学習におけるnegative exampleを作る手法。)を用いて生のニュースimpression (i.e. interaction?:thinking:) ログからラベル付きサンプルを作成し、どの候補のニュースがクリックされたかを分類することで、モデルの学習にクロスエントロピー損失関数を用いる。(=**next item prediction的なタスクを学習させる想定なのかな**??:thinking:)
 By optimizing the loss function via backward-propagation, the parameters in the recommendation model and PLMs can be tuned for the news recommendation task.
-逆伝搬法によって損失関数を最適化することで、**推薦モデル(=user encoderと click prediction module?) とPLMのパラメータをニュース推薦タスクに合わせてチューニング**することができる。
+逆誤差伝搬法によって損失関数を最適化することで、**推薦モデル(=user encoderと click prediction module?) とPLMのパラメータをニュース推薦タスクに合わせてチューニング**することができる。
 
 # 3. Experiments 実験
 
@@ -135,7 +135,7 @@ By optimizing the loss function via backward-propagation, the parameters in the 
 Our offline experiments are conducted on two real-world datasets.
 我々のオフライン実験は、2つの実世界データセットで行われた。
 The first one is MIND [27], which is an English dataset for monolingual news recommendation.
-最初のものはMIND [27]であり、**単言語ニュース推薦のための英語データセット**である。
+最初のものは MIND [27]であり、**単言語ニュース推薦のための英語データセット**である。
 It contains the news click logs of 1 million users on Microsoft News in six weeks.3
 マイクロソフトニュースの6週間における100万ユーザーのニュースクリックログが含まれている。
 
@@ -245,7 +245,7 @@ However, since huge PLMs are too cumbersome for online applications, we prefer t
 ## 3.4. Influence of Different Pooling Methods 異なるプーリング方法の影響
 
 We also explore using different pooling methods for learning news embeddings from the hidden states of PLMs.
-また、PLMの隠れトークン表現sequenceからニュースの埋め込みを学習するために、異なるプーリング方法を使用することも検討する。(PLMの出力をattentionで集約するやつ!:thinking:)
+また、PLMの隠れトークン表現のsequenceからニュースの埋め込みを学習するために、異なるプーリング方法を使用することも検討する。(PLMの出力をattentionで集約するやつ!:thinking:)
 We compare three methods, including:
 以下の3つの方法を比較する：
 
