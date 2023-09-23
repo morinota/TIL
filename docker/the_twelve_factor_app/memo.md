@@ -1,6 +1,7 @@
 ## 0.1. link
 
-- https://12factor.net/ja/
+- https://12factor.net/ja/ めちゃわかりにくい...!
+- https://qiita.com/supreme0110/items/17c58c660137e23ef713 わかりやすく噛み砕いてくれてそう...!
 
 ## 0.2. Twelve-Factor Appって何?
 
