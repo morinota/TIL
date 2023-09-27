@@ -1,25 +1,25 @@
-## link リンク
+## 0.1. link リンク
 
 - https://dl.acm.org/doi/pdf/10.1145/3604915.3608811 https://dl.acm.org/doi/pdf/10.1145/3604915.3608811
 
-## title タイトル
+## 0.2. title タイトル
 
 Augmented Negative Sampling for Collaborative Filtering
 協調フィルタリングのための拡張ネガティブサンプリング
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 Negative sampling is essential for implicit-feedback-based collaborative filtering, which is used to constitute negative signals from massive unlabeled data to guide supervised learning.
-ネガティブサンプリングは、教師あり学習を導くために、大量のラベルなしデータからネガティブシグナルを構成するために使用される、暗黙フィードバックベースの協調フィルタリングに不可欠である。
+**ネガティブサンプリングは、教師あり学習を導くために、大量のラベルなしデータからネガティブシグナルを構成するために使用される**、暗黙フィードバックベースの協調フィルタリングに不可欠である。
 The stateof-the-art idea is to utilize hard negative samples that carry more useful information to form a better decision boundary.
-最先端のアイデアは、より良い決定境界を形成するために、より有用な情報を持つハードネガティブサンプルを利用することである。
+最先端のアイデアは、より良い決定境界を形成するために、より有用な情報を持つ**ハードネガティブサンプル**を利用することである。
 To balance efficiency and effectiveness, the vast majority of existing methods follow the two-pass approach, in which the first pass samples a fixed number of unobserved items by a simple static distribution and then the second pass selects the final negative items using a more sophisticated negative sampling strategy.
 効率と有効性のバランスをとるため、既存の手法の大部分は2パス・アプローチに従っており、1パス目は単純な静的分布によって固定数の未観測項目をサンプリングし、2パス目はより洗練されたネガティブ・サンプリング戦略を用いて最終的なネガティブ項目を選択する。
 However, selecting negative samples from the original items in a dataset is inherently restricted due to the limited available choices, and thus may not be able to contrast positive samples well.
 しかし、データセットのオリジナル項目からネガティブサンプルを選択することは、利用可能な選択肢が限られているため、本質的に制約があり、ポジティブサンプルをうまく対比できない可能性がある。
 In this paper, we confirm this observation via carefully designed experiments and introduce two major limitations of existing solutions: ambiguous trap and information discrimination.
-本稿では、入念に設計された実験によってこの観察を確認し、既存の解決策の2つの大きな限界を紹介する： 
-曖昧な罠」と「情報の識別」である。
+本稿では、入念に設計された実験によってこの観察を確認し、既存の解決策の2つの大きな限界を紹介する：曖昧な罠」と「情報の識別」である。
+
 Our response to such limitations is to introduce “augmented” negative samples that may not exist in the original dataset.
 このような制限に対する我々の対応は、元のデータセットには存在しないかもしれない「増強された」ネガティブサンプルを導入することである。
 This direction renders a substantial technical challenge because constructing unconstrained negative samples may introduce excessive noise that eventually distorts the decision boundary.
@@ -29,8 +29,7 @@ To this end, we introduce a novel generic augmented negative sampling (ANS) para
 First, we disentangle hard and easy factors of negative items.
 まず、ネガティブ項目のハード要因とイージー要因を分離する。
 Next, we generate new candidate negative samples by augmenting only the easy factors in a regulated manner: the direction and magnitude of the augmentation are carefully calibrated.
-次に、調整された方法で簡単な因子のみを増強することにより、新しい負サンプル候補を生成する： 
-増強の方向と大きさは注意深く調整される。
+次に、調整された方法で簡単な因子のみを増強することにより、新しい負サンプル候補を生成する：増強の方向と大きさは注意深く調整される。
 Finally, we design an advanced negative sampling strategy to identify the final augmented negative samples, which considers not only the score function used in existing methods but also a new metric called augmentation gain.
 最後に、既存の手法で使用されているスコア関数だけでなく、オーグメンテーションゲインと呼ばれる新しい指標も考慮した、最終的なオーグメンテーションされたネガティブサンプルを特定するための高度なネガティブサンプリング戦略を設計する。
 Extensive experiments on real-world datasets demonstrate that our method significantly outperforms state-of-the-art baselines.
@@ -38,145 +37,147 @@ Extensive experiments on real-world datasets demonstrate that our method signifi
 Our code is publicly available at https://github.com/Asa9aoTK/ANS-Recbole.
 我々のコードは https://github.com/Asa9aoTK/ANS-Recbole で公開されている。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 Collaborative filtering (CF), as an important paradigm of recommender systems, leverages observed user-item interactions to model users’ potential preferences [13, 15, 35].
-協調フィルタリング（CF）は、推薦システムの重要なパラダイムとして、ユーザの潜在的な嗜好をモデル化するために、観察されたユーザとアイテムの相互作用を活用する[13, 15, 35]。
+協調フィルタリング（CF）は、推薦システムの重要なパラダイムとして、ユーザの潜在的な嗜好をモデル化するために、**観察されたユーザとアイテムのinteractionを活用する**[13, 15, 35]。
 In real-world scenarios, such interactions are normally in the form of implicit feedback (e.g., clicks or purchases), instead of explicit ratings [34].
-実世界のシナリオでは、このようなインタラクションは通常、明示的な評価ではなく、暗黙的なフィードバック（クリックや購入など）の形で行われる[34]。
+実世界のシナリオでは、このようなinteractionは通常、明示的な評価ではなく、暗黙的なフィードバック（クリックや購入など）の形で行われる[34]。
 Each observed interaction is normally considered a positive sample.
-観察された各交互作用は通常、陽性サンプルとみなされる。
+観察された各interactionは通常、**positive sample**とみなされる。
 As for negative samples, existing methods usually randomly select some uninteracted items.
-ネガティブサンプルに関しては、既存の方法は通常、いくつかの相互作用していない項目をランダムに選択する。
+ネガティブサンプルに関しては、既存の方法は通常、いくつかのinteractionしていないitemをランダムに選択する。
 Then a CF model is optimized to give positive samples higher scores than negative ones via, for example, the Bayesian personalized ranking (BPR) loss function [26], where a score function (e.g., inner product) is used to measure the similarity between a user and an item.
-そして、CFモデルは、例えば、スコア関数（例えば、内積）がユーザとアイテムの間の類似性を測定するために使用されるベイズパーソナライズドランキング（BPR）損失関数[26]を介して、肯定的なサンプルに否定的なサンプルよりも高いスコアを与えるように最適化される。
+そして、CFモデルは、例えば、スコア関数(例えば、内積)がユーザとアイテムの間の類似性を測定するために使用されるベイズパーソナライズドランキング（BPR）損失関数[26]を介して、**肯定的なサンプルに否定的なサンプルよりも高いスコアを与えるように最適化される**。
+
 Recent studies have shown that negative samples have a great impact on model performance [22, 41, 45].
 最近の研究では、負のサンプルがモデルの性能に大きな影響を与えることが示されている[22, 41, 45]。
 As the state of the art, hard negative sampling strategies whose general idea is to oversample high-score negative items have exhibited promising performance [4, 8, 9, 41, 44].
-一般的な考え方として、高得点のネガティブ項目をオーバーサンプリングするハードネガティブサンプリング戦略が、有望な性能を示している[4, 8, 9, 41, 44]。
+一般的な考え方として、高得点のネガティブitemをオーバーサンプリングする**ハードネガティブサンプリング戦略**が、有望な性能を示している[4, 8, 9, 41, 44]。
 While selecting a negative item with a high score makes it harder for a model to classify a user, it has the potential to bring more useful information and greater gradients, which are beneficial to model training [4, 25].
-高いスコアで否定的な項目を選択することは、モデルがユーザーを分類することを難しくする一方で、より有用な情報やより大きな勾配をもたらす可能性があり、モデルの学習に有益である[4, 25]。
+高いスコアでnegative itemを選択することは、モデルがユーザを分類することを難しくする一方で、より有用な情報やより大きな勾配をもたらす可能性があり、モデルの学習に有益である[4, 25]。
 Ideally, one would calculate the scores of all uninteracted items to identify the best negative samples.
-理想的なのは、最高のネガティブサンプルを特定するために、相互作用していないすべての項目のスコアを計算することである。
+理想的なのは、最高のネガティブサンプルを特定するために、interactしていないすべてのitemのスコアを計算することである。
 However, its time complexity is prohibitive.
-しかし、時間の複雑さは法外である。
+しかし、時間計算量は法外である。
 To balance efficiency and effectiveness, the two-pass approach has been widely adopted [1, 9, 16, 41, 44].
-効率と有効性のバランスをとるために、2パスアプローチが広く採用されている[1, 9, 16, 41, 44]。
+効率と有効性のバランスをとるために、**2パスアプローチ**が広く採用されている[1, 9, 16, 41, 44]。(ふむふむ:thinking:)
 The first pass samples a fixed number of unobserved items by a static distribution, and the second pass then selects the final negative items with a more sophisticated negative sampling method.
-最初のパスでは、固定数の未観測項目を静的分布でサンプリングし、2番目のパスでは、より洗練されたネガティブサンプリング法で最終的なネガティブ項目を選択する。
+最初のパスでは、固定数の未観測itemを静的分布でサンプリングし、2番目のパスでは、より洗練されたネガティブサンプリング法で最終的なnegative itemsを選択する。
 
 Despite the significant progress made by hard negative sampling, selecting negative samples from the original items in a dataset is inherently restricted due to the limited available choices.
-ハードネガティブサンプリングによって大きな進歩があったにもかかわらず、データセット内の元の項目からネガティブサンプルを選択することは、利用可能な選択肢が限られているため、本質的に制限されている。
+ハードネガティブサンプリングによって大きな進歩があったにもかかわらず、データセット内の元のitemからネガティブサンプルを選択することは、利用可能な選択肢が限られているため、本質的に制限されている。
 Such original items may not be able to contrast positive samples well.
 このようなオリジナルアイテムは、陽性サンプルをうまく対比できない可能性がある。
 Indeed, we design a set of intuitive experiments to show that existing works suffer from two major drawbacks.(1) Ambiguous trap.
-実際、我々は一連の直感的な実験をデザインし、既存の作品が2つの大きな欠点に苦しんでいることを示す。
+実際、我々は一連の直感的な実験をデザインし、**既存の手法が2つの大きな欠点に苦しんでいる**ことを示す。
 Since the vast majority of unobserved items have very low scores (i.e., they are easy negative samples), randomly sampling a small number of candidate negative items in the first pass is difficult to include useful hard negative samples, which, in turn, substantially limits the efficacy of the second pass.(2) Information discrimination.
-未観測項目の大部分は非常に低いスコア（すなわち、容易な陰性サンプル）であるため、第1パスで少数の陰性項目候補を無作為にサンプリングしても、有用なハード陰性サンプルを含めることは困難であり、ひいては第2パスの有効性を大幅に制限することになる(2)。
+未観測項目の大部分は非常に低いスコア(すなわち、easyな陰性サンプル)であるため、第1パスで少数のnegative item候補を無作為にサンプリングしても、有用なハードnegativeサンプルを含めることは困難であり、ひいては第2パスの有効性を大幅に制限することになる(2)。
 In the second pass, most existing studies overly focus on high-score negative items and largely neglect low-score negative items.
-2つ目のパスでは、既存の研究のほとんどが、高得点のネガティブ項目に過度に焦点を当て、低得点のネガティブ項目をほとんど無視している。
+2つ目のパスでは、既存の研究のほとんどが、高得点のネガティブitemに過度に焦点を当て、低得点のネガティブitemをほとんど無視している。
 We empirically show that such low-score negative items also contain critical, unique information that leads to better model performance.
-我々は、このような低得点のネガティブ項目にも、より良いモデル性能をもたらす重要でユニークな情報が含まれていることを実証的に示す。
+我々は、このような低得点のネガティブitemにも、より良いモデル性能をもたらす重要でユニークな情報が含まれていることを実証的に示す。
+
 Our response to such drawbacks is to introduce “augmented” negative samples (i.e., synthetic items) that are more similar to positive items while still being negative.
-このような欠点に対する我々の対応策は、否定的でありながら肯定的な項目により似ている「増強された」否定的なサンプル（すなわち合成項目）を導入することである。
+**このような欠点に対する我々の対応策は、negativeでありながらpositiveなitemにより似ている「増強された」否定的なサンプル(すなわち合成item)を導入すること**である。
 While data augmentation techniques have been proposed in other domains [17, 37, 38, 40], it is technically challenging to apply similar ideas to negative sampling for collaborative filtering.
-データ増強技術は他の領域でも提案されているが[17, 37, 38, 40]、協調フィルタリングのネガティブサンプリングに同様のアイデアを適用するのは技術的に困難である。
+データ増強技術は他の領域でも提案されているが[17, 37, 38, 40]、**協調フィルタリングのネガティブサンプリングに同様のアイデアを適用するのは技術的に困難**である。
 This is because all of them fail to carefully regulate and quantify the augmentation needed to approximate positive items while not introducing excessive noise or still being negative.
-なぜなら、そのどれもが、過剰なノイズを発生させたり、ネガティブなままであることを避けながら、ポジティブな項目を近似させるために必要な補強を注意深く調整し、定量化できていないからである。
+なぜなら、そのどれもが、過剰なノイズを発生させたり、ネガティブなままであることを避けながら、ポジティブなitemを近似させるために必要な補強を注意深く調整し、定量化できていないからである。
+
 To this end, we present a novel generic augmented negative sampling (ANS) paradigm and then provide a concrete instantiation.
 この目的のために、我々は新しい一般的な拡張ネガティブサンプリング（ANS）パラダイムを提示し、具体的なインスタンス化を提供する。
 Our insight is that it is imperative to understand a negative item’s hardness from a more fine-granular perspective.
 私たちの洞察は、ネガティブなアイテムの硬さをより細かい粒状の観点から理解することが不可欠であるということである。
 We propose to disentangle an item’s embedding into hard and easy factors (i.e., a set of dimensions of the embedding vector), where hardness is defined by whether a negative item has similar values to the corresponding user in the given factor.
-我々は、アイテムの埋め込みを、ハードな因子とイージーな因子（埋め込みベクトルの次元の集合）に分離することを提案する。ハードさは、ネガティブアイテムが、与えられた因子において、対応するユーザーと同様の値を持つかどうかによって定義される。
+我々は、**アイテムの埋め込みを、ハードな因子とイージな因子(埋め込みベクトルの次元の集合)に分離することを提案する**。ハードさは、ネガティブアイテムが、与えられた因子において、対応するユーザと同様の値を持つかどうかによって定義される。
 This definition is in line with the definition of hardness in hard negative sampling.
-この定義は、ハードネガティブサンプリングにおける硬度の定義と一致している。
+この定義は、ハードネガティブサンプリングにおける"hardness"の定義と一致している。
 Here the key technical challenge originates from the lack of supervision signals.
-ここで重要な技術的課題は、監督信号の欠如に起因する。
+ここで重要な技術的課題は、supervision signals(=教師ラベル?)の欠如に起因する。
 Consequently, we propose two learning tasks that combine contrastive learning (CL) [43] and disentanglement methods [12] to guarantee the credibility of the disentanglement.
-その結果、我々は、分離の信頼性を保証するために、対照学習（CL）[43]と分離手法[12]を組み合わせた2つの学習課題を提案する。
+その結果、我々は、分離の信頼性を保証するために、contrastive learning(対照学習, CL)[43]とdisentanglement methods(分離手法)[12]を組み合わせた2つの学習タスクを提案する。
 Since our goal is to create synthetic negative items similar to positive items, we keep the hard factor of a negative item unchanged and focus on augmenting the easy factor by controlling the direction and magnitude of added noise.
-われわれの目標は、ポジティブ項目と類似した合成ネガティブ項目を作成することであるため、ネガティブ項目のハードファクターは変更せず、付加されるノイズの方向と大きさを制御することによって、イージーファクターを増強することに集中する。
+**われわれの目標は、ポジティブitemと類似した合成ネガティブitemを作成すること**であるため、ネガティブ項目のハードファクターは変更せず、付加されるノイズの方向と大きさを制御することによって、イージーファクターを増強することに集中する。
 The augmentation mechanism needs to be carefully designed so that the augmented item will become more similar to the corresponding positive item, but will not cross the decision boundary.
-補強のメカニズムは、補強された項目が対応する正項目に似てくるが、判定境界を越えないように注意深く設計する必要がある。
+補強のメカニズムは、補強されたitemが対応するpositive itemに似てくるが、判定境界を越えないように注意深く設計する必要がある。
 Furthermore, we introduce a new metric called augmentation gain to measure the difference between the scores before and after the augmentation.
-さらに、オーグメンテーション・ゲインと呼ばれる新しい指標を導入し、オーグメンテーション前後のスコアの差を測定する。
+さらに、**オーグメンテーション・ゲイン**と呼ばれる新しい指標を導入し、オーグメンテーション前後のスコアの差を測定する。
 Our sampling strategy is guided by augmentation gain, which gives low-score items with higher augmentation gain a larger probability of being sampled.
-私たちのサンプリング戦略は、オーグメンテーションゲインによって導かれ、オーグメンテーションゲインの高い低スコア項目がサンプリングされる確率が高くなる。
+私たちのサンプリング戦略は、オーグメンテーションゲインによって導かれ、オーグメンテーションゲインの高い低スコアitemがサンプリングされる確率が高くなる。
 In this way, we can effectively mitigate information discrimination, leading to better performance.
 こうすることで、情報による差別を効果的に緩和し、より良いパフォーマンスにつなげることができる。
 We summarize our main contributions as follows:
 我々の主な貢献は以下の通りである：
 
-- We design a set of intuitive experiments to reveal two notable limitations of existing hard negative sampling methods, namely ambiguous trap and information discrimination. 我々は、既存のハードネガティブサンプリング法の2つの顕著な限界、すなわち曖昧な罠と情報の識別を明らかにするために、一連の直感的な実験をデザインする。
+- We design a set of intuitive experiments to reveal two notable limitations of existing hard negative sampling methods, namely ambiguous trap and information discrimination. 我々は、既存のハードネガティブサンプリング法の2つの顕著な限界、すなわちambiguous trap(曖昧な罠)とinformation discrimination(情報の識別)を明らかにするために、一連の直感的な実験をデザインする。
 
-- To the best of our knowledge, we are the first to propose to generate negative samples from a fine-granular perspective to improve 私たちの知る限り、ネガティブサンプルを生成することを提案したのは私たちが初めてである。
+- To the best of our knowledge, we are the first to propose to generate negative samples from a fine-granular perspective to improve implicit CF. In particular, we propose a new direction of generating regulated augmentation to address the unique challenges of CF. 我々の知る限り、暗黙的CFを改善するために、微細な粒度の観点からネガティブサンプルを生成することを提案したのは我々が初めてである。特に、CF特有の課題に対処するために、**調節された補強を生成するという新しい方向性**を提案する。
 
-- implicit CF. In particular, we propose a new direction of generating regulated augmentation to address the unique challenges of CF. 暗黙のCF。 特に、CF特有の課題に対処するために、調節された補強を生み出すという新たな方向性を提案する。
-
-- We propose a general paradigm called augmented negative sampling (ANS) that consists of three steps, including disentanglement, augmentation, and sampling. We also present a concrete implementation of ANS, which is not only performant but also efficient. 我々は、拡張ネガティブサンプリング(ANS)と呼ばれる一般的なパラダイムを提案する。ANSは、分離、拡張、サンプリングの3つのステップから構成される。 また、ANSの具体的な実装についても紹介する。
+- We propose a general paradigm called augmented negative sampling (ANS) that consists of three steps, including disentanglement, augmentation, and sampling. We also present a concrete implementation of ANS, which is not only performant but also efficient. 我々は、**拡張ネガティブサンプリング(ANS)**と呼ばれる一般的なパラダイムを提案する。ANSは、分離、拡張、サンプリングの3つのステップから構成される。 また、ANSの具体的な実装についても紹介する。
 
 - We conduct extensive experiments on five real-world datasets to demonstrate that ANS can achieve significant improvements over representative state-of-the-art negative sampling methods. 我々は5つの実世界のデータセットで大規模な実験を行い、ANSが代表的な最先端のネガティブサンプリング手法よりも大幅な改善を達成できることを実証する。
 
-# Related Work 関連作品
+# 2. Related Work 関連作品
 
-## Model-Agnostic Negative Sampling モデル無視ネガティブサンプリング
+## 2.1. Model-Agnostic Negative Sampling モデル無視ネガティブサンプリング
 
 A common type of negative sampling strategy selects negative samples based on a pre-determined static distribution [6, 36, 39].
-一般的なタイプのネガティブサンプリング戦略は、事前に決定された静的分布に基づいてネガティブサンプルを選択する[6, 36, 39]。
+一般的なタイプのネガティブサンプリング戦略は、事前に決定された静的分布(=固定された分布?)に基づいてネガティブサンプルを選択する[6, 36, 39]。
 Such a strategy is normally efficient since it does not need to be adjusted in the model training process.
 このような戦略は、モデルのトレーニング過程で調整する必要がないため、通常は効率的である。
 Random negative sampling (RNS) [5, 26, 35, 40] is a simple and representative model-agnostic sampling strategy, which selects negative samples from unobserved items according to a uniform distribution.
-ランダムネガティブサンプリング（RNS）[5, 26, 35, 40]は、一様分布に従って未観測項目からネガティブサンプルを選択する、シンプルで代表的なモデル不可知サンプリング戦略である。
+ランダムネガティブサンプリング（RNS）[5, 26, 35, 40]は、一様分布に従って未観測itemからネガティブサンプルを選択する、シンプルで代表的なモデル不可知サンプリング戦略である。
 However, the uniform distribution is difficult to guarantee the quality of negative samples.
-しかし、一様分布では陰性サンプルの品質を保証することは難しい。
+しかし、一様分布では陰性サンプルの品質を保証することは難しい。(たしかに:thinking:)
 Inspired by the word-frequency-based distribution [11] and node-degree-based distribution [23] in other domains, an itempopularity-based distribution [2, 6] has been introduced.
-他のドメインにおける単語頻度ベースの分布[11]やノード度ベースの分布[23]に触発され、アイテムポピュラリティベースの分布[2, 6]が導入された。
+他のドメインにおける単語頻度ベースの分布[11]やノード度ベースの分布[23]に触発され、**アイテムポピュラリティベースの分布**[2, 6]が導入された。(うんうん。アイテムの人気度に基づくのは想像しやすい:thinking:)
 Under this distribution, popular items are more likely to be sampled as negative items, which helps to mitigate the widespread popularity bias issue in recommender systems [3].
-この分布の下では、人気アイテムはネガティブアイテムとしてサンプリングされる可能性が高くなり、推薦システムで広く見られる人気バイアス問題を緩和するのに役立つ[3]。
+この分布の下では、人気アイテムはネガティブアイテムとしてサンプリングされる可能性が高くなり、推薦システムで広く見られる人気バイアス問題を緩和するのに役立つ[3]。(うんうん...!:thinking:)
 Although this kind of strategy is generally efficient, the pre-determined distributions are not customized for the underlying models and not adaptively adjusted during the training process.
-この種の戦略は一般的に効率的であるが、事前に決定された分布は基礎となるモデル用にカスタマイズされておらず、学習プロセス中に適応的に調整されることもない。
+この種の戦略は一般的に効率的であるが、事前に決定された分布は**基礎となるモデル用にカスタマイズされておらず**、**学習プロセス中に適応的に調整されることもない**。
 As a result, their performance is often sub-optimal.
 その結果、彼らのパフォーマンスはしばしば最適とは言えない。
 
-## Model-Aware Negative Sampling モデルを意識したネガティブサンプリング
+## 2.2. Model-Aware Negative Sampling モデルを意識したネガティブサンプリング
 
-These strategies take into consideration some information of the underlying model, denoted by 𝑓 , to guide the sampling process.
-これらの戦略は、↪Ll_1453 で示される基本モデルの情報を考慮して、サンプリングプロセスを導く。
-Given 𝑓 , the probability of sampling an item 𝑖 is defined as 𝑝(𝑖 | 𝑓 ) ∝ 𝑔(𝑓 , e𝑖), where 𝑔(·, ·) is a sampling function, and e𝑖 denotes the embedding of 𝑖.
-ここで、ᑔ(-, -)はサンプリング関数であり、e𝑖は𝑖の埋め込みを表す。
-Existing studies focus on choosing different 𝑓 and/or designing a proper 𝑔(·, ·) to achieve better performance.
-既存の研究は、より良いパフォーマンスを達成するために、異なる ᑓ を選択すること、および/または適切な ᑔ(-, -) を設計することに焦点を当てている。
+These strategies take into consideration some information of the underlying model, denoted by $f$, to guide the sampling process.
+これらの戦略は、$f$ で示される基本モデルの情報を考慮して、サンプリングプロセスを導く。
+Given $f$, the probability of sampling an item 𝑖 is defined as $p(i|f) \propto g(f, \mathbf{e}_{i})$, where $g(·, ·)$ is a sampling function, and $\mathbf{e}_{i}$ denotes the embedding of $i$.
+$f$ が与えられたとき、item $i$ をサンプリングする確率は $p(i|f) \propto g(f, \mathbf{e}_{i})$ と定義される、
+ここで、$g(-, -)$ はサンプリング関数、$mathbf{e}_{i}$ は $i$ の埋め込みを表す。
+Existing studies focus on choosing different $f$ and/or designing a proper $g(·, ·)$ to achieve better performance.
+既存の研究は、より良いパフォーマンスを達成するために、異なる$f$ を選択すること、および/または適切な $g(·, ·)$ を設計することに焦点を当てている。
 The most representative work is hard negative sampling, which defines 𝑔(·, ·) as a score function.
-最も代表的な研究は、𝑔(-, -)をスコア関数として定義するハードネガティブサンプリングである。
+最も代表的な研究は、$g(·, ·)$ をスコア関数として定義するハードネガティブサンプリングである。
 It assigns higher sampling probabilities to the negative items with larger prediction scores [8, 9, 16, 25, 41, 44].
-これは、予測スコアの大きい否定的な項目により高いサンプリング確率を割り当てる[8, 9, 16, 25, 41, 44]。
-For example, DNS [41] assumes that the high-score items should be more likely to be selected, and thus chooses 𝑔(·, ·) to be the inner product and 𝑓 to be user representations.
-例えば、DNS [41]は、高得点の項目が選択される可能性が高いと仮定し、ǔ(-, -)を内積、ᵅをユーザ表現とする。
-With the goal of mitigating false negative samples, SRNS [9] further incorporates the information about the last few epochs into 𝑓 and designs 𝑔(·, ·) to give false negative samples lower scores.
-SRNS[9]は、偽陰性サンプルを軽減する目的で、さらに直近の数エポックに関する情報をᑓに組み込み、偽陰性サンプルにより低いスコアを与えるようにᑔ(-, -)を設計する。
-IRGAN [33] integrates a generative adversarial network into 𝑔(·, ·) to determine the probabilities of negative samples through the min-max game.
-IRGAN [33]は、生成的な敵対的ネットワークをᑔ(-, -)に統合し、最小-最大ゲームを通して負サンプルの確率を決定する。
-ReinforcedNS [8] use reinforcement learning into 𝑔(·, ·).
-ReinforcedNS [8]は、強化学習をᑔ(-, -)に用いる。
-With well-designed 𝑓 and 𝑔(·, ·), we can generally achieve better performance.
-うまく設計された 𝑔 と 𝑓(-, -) があれば、一般に、より良いパフォーマンスを達成できる。
+これは、予測スコアの大きいnegative itemにより高いサンプリング確率を割り当てる[8, 9, 16, 25, 41, 44]。
+For example, DNS [41] assumes that the high-score items should be more likely to be selected, and thus chooses $g(·, ·)$ to be the inner product and $f$ to be user representations.
+例えば、DNS [41]は、高得点の項目が選択される可能性が高いと仮定し、$g(·, ·)$ を内積、$f$ をユーザ表現とする。
+With the goal of mitigating false negative samples, SRNS [9] further incorporates the information about the last few epochs into $f$ and designs $g(·, ·)$ to give false negative samples lower scores.
+SRNS[9]は、偽陰性サンプルを軽減する目的で、さらに直近の数エポックに関する情報を $f$ に組み込み、偽陰性サンプルにより低いスコアを与えるように $g(·, ·)$ を設計する。
+IRGAN [33] integrates a generative adversarial network into $g(·, ·)$ to determine the probabilities of negative samples through the min-max game.
+IRGAN [33]は、生成的な敵対的ネットワークを $g(·, ·)$ に統合し、最小-最大ゲームを通して負サンプルの確率を決定する。
+ReinforcedNS [8] use reinforcement learning into $g(·, ·)$.
+ReinforcedNS [8]は、強化学習を $g(·, ·)$ に用いる。
+With well-designed $f$ and $g(·, ·)$, we can generally achieve better performance.
+うまく設計された $f$ と $g(\cdot, \cdot)$ があれば、一般に、より良いパフォーマンスを達成できる。
 However, selecting suitable negative items need to compute 𝑔(·, ·) for all unobserved items, which is extremely timeconsuming and prohibitively expensive.
-しかし、適切な否定項目を選択するためには、すべての未観測項目についてᑔ(-, -)を計算する必要があり、これは非常に時間がかかり、法外に高価である。
+しかし、適切なnegative itemを選択するためには、すべての未観測itemについて $g(-, -)$ を計算する必要があり、これは非常に時間がかかり、法外に高価である。
 Take DNS as an example.
 DNSを例にとってみよう。
 Calculating the probability of sampling an item is equivalent to performing softmax on all unobserved samples, which is unacceptable in real-world applications [4, 24, 33].
-アイテムをサンプリングする確率を計算することは、すべての未観測サンプルに対してソフトマックスを実行することと等価であり、実際のアプリケーションでは受け入れられない[4, 24, 33]。
+**アイテムをサンプリングする確率を計算することは、すべての未観測サンプルに対してソフトマックスを実行することと等価であり、実際のアプリケーションでは受け入れられない**[4, 24, 33]。
 As a result, most model-aware sampling strategies adopt the two-pass approach or its variants.
 その結果、モデルを意識したサンプリング戦略のほとんどは、2パスアプローチまたはその変形を採用している。
-In this case, 𝑔(·, ·) is only applied to a small number of candidates sampled in the first pass.
-この場合、𝑔(-, -)は最初のパスでサンプリングされた少数の候補にのみ適用される。
+In this case, $g(·, ·)$ is only applied to a small number of candidates sampled in the first pass.
+この場合、$g(-, -)$ は最初のパスでサンプリングされた少数の候補にのみ適用される。
 While such two-pass-based negative sampling strategies have been the mainstream methods, they exhibit two notable limitations, namely ambiguous trap and information discrimination, which motivates us to propose an augmented negative sampling paradigm.
 このような2パスベースのネガティブサンプリング戦略は主流の手法であるが、曖昧トラップと情報識別という2つの顕著な限界がある。
 In the next section, we will explain these limitations via a set of intuitive experiments.
 次のセクションでは、一連の直感的な実験を通してこれらの限界を説明する。
 
-# Limitations of the Two-pass approach 2パス・アプローチの限界
+# 3. Limitations of the Two-pass approach 2パス・アプローチの限界
 
 In this section, we first formulate the problem of implicit CF and then explain ambiguous trap and information discrimination via intuitive experiments.
 本節では、まず暗黙のCFの問題を定式化し、次に曖昧な罠と情報の識別について直感的な実験を通して説明する。
@@ -185,9 +186,9 @@ We consider the Last.fm and Amazon-Baby datasets in experiments.
 A comprehensive description of the data is provided in Section 5.
 データの包括的な説明はセクション5に記載されている。
 
-## Implicit CF 暗黙のCF
+## 3.1. Implicit CF 暗黙のCF
 
-We denote the set of historical interactions by O + = {(𝑢,𝑖+ ) | 𝑢 ∈ U,𝑖+ ∈ I}, where U and I are the set of users and the set of items, respectively.
+We denote the set of historical interactions by $O^{+} = {(u,i^{+})|u \in \mathcal{U}, i^{+} \in \mathcal{I}}$, where U and I are the set of users and the set of items, respectively.
 𝑢 ∈ U,𝑖+ ∈ I}, where U and I are the set of users and the set of items, respectively.
 The most common implicit CF paradigm is to learn user and item representations (e𝑢 and e𝑖 ) from the historical interactions and then predict the scores of unobserved items to recommend the top-K items.
 最も一般的な暗黙的CFのパラダイムは、過去のインタラクションからユーザーとアイテムの表現（e𝑢とe𝑖）を学習し、トップKのアイテムを推薦するために未観測のアイテムのスコアを予測することである。
@@ -207,7 +208,7 @@ Our goal is to design a negative sampling strategy that is generic to different 
 Following previous studies [4, 26, 33], without loss of generality, we consider matrix factorization with Bayesian personalized ranking (MF-BPR) [26] as the basic CF model to illustrate ANS.
 先行研究[4,26,33]に従い，一般性を損なわない範囲で，ANS を説明する基本 CF モデルとして，ベ イジアンパーソナライズドランキングによる行列分解（MF-BPR）[26]を考える．
 
-## Ambiguous Trap ♪あいまいな罠
+## 3.2. Ambiguous Trap ♪あいまいな罠
 
 We choose DNS [41], which is the most representative hard negative sampling method, to train an MF-BPR model on the Last.fm dataset and calculate the scores of unobserved user-item pairs in different training periods.
 Last.fmデータセットでMF-BPRモデルを訓練するために、最も代表的なハードネガティブサンプリング法であるDNS [41]を選択し、異なる訓練期間における未観測のユーザーとアイテムのペアのスコアを計算する。
@@ -235,7 +236,7 @@ However, it is inevitably at the cost of substantial time and space overhead [4]
 Inspired by contrastive learning [17, 37, 40], we propose to augment the sampled negative items to increase their hardness.
 対照学習[17, 37, 40]にヒントを得て、私たちは、サンプリングされたネガティブ項目の硬度を上げるために、その項目を補強することを提案する。
 
-## Information Discrimination 情報差別
+## 3.3. Information Discrimination 情報差別
 
 In the second pass, most existing studies overly focus on high-score negative items and largely neglect low-score negative items, which also contain critical, unique information to improve model performance.
 2つ目のパスでは、既存の研究のほとんどが、高得点のネガティブ項目に過度に注目し、モデルのパフォーマンスを向上させるために重要でユニークな情報を含む低得点のネガティブ項目をほとんど無視している。
@@ -265,17 +266,17 @@ DNSは高得点のネガティブ項目を選択しやすく、RNSは得点に�
 The obtained results are depicted in Figure 2 (excluding HNS data for the current analysis).
 得られた結果を図2に示す（今回の分析ではHNSのデータを除く）。
 We can observe that: (1) the DNS strategy can indeed learn more information, confirming the benefits of leveraging hard negative samples to form a tighter decision boundary.(2) The values of PER(RNS, DNS) on two datasets (0.2 and 0.33) indicate that even the simple RNS strategy can still learn rich information that is not learned by DNS.
-その結果 
+その結果
 (2)2つのデータセットにおけるPER(RNS, DNS)の値(0.2と0.33)は、単純なRNS戦略でも、DNSでは学習されない豊富な情報を学習できることを示している。
 In other words, the easy negative items overlooked by DNS are still valuable for CF.
 つまり、DNSが見過ごしがちなネガティブな項目も、CFにとっては貴重なのだ。
 Such an information discrimination problem inspires us to understand a negative item’s hardness from a more fine-granular perspective in order to extract more useful information.
 このような情報識別の問題は、より有用な情報を抽出するために、ネガティブ項目の硬さをより細かな視点から理解することを促す。
 
-# Methodology 方法論
+# 4. Methodology 方法論
 
 Driven by the aforementioned limitations, we propose a novel generic augmented negative sampling (ANS) paradigm, which consists of three major steps: disentanglement, augmentation, and sampling.
-前述したような制約の中で、我々は3つの主要なステップからなる、新しい一般的な拡張ネガティブサンプリング（ANS）パラダイムを提案する： 
+前述したような制約の中で、我々は3つの主要なステップからなる、新しい一般的な拡張ネガティブサンプリング（ANS）パラダイムを提案する：
 このパラダイムは3つの主要なステップから構成される。
 The disentanglement step learns an item’s hard and easy factors; the augmentation step adds regulated noise to the easy factor so as to increase the item’s hardness; the sampling strategy selects the final negative samples based on a new metric we propose.
 補強ステップでは、アイテムの硬さを増加させるために、イージーファクターに調整ノイズを加える。
@@ -286,7 +287,7 @@ Note that these steps can be implemented by different methods and thus the overa
 We present a possible instantiation in the following sections.
 可能なインスタンス化を以下のセクションで紹介する。
 
-## Disentanglement #ディセンション
+## 4.1. Disentanglement #ディセンション
 
 To understand a negative item’s hardness from a more fine-granular perspective, we propose to disentangle its embedding into hard and easy factors (i.e., a set of dimensions of the embedding vector), where hardness is defined by whether a negative item has similar values to the corresponding user in the given factor.
 ネガティブアイテムの硬さをより細かく理解するために、その埋め込みを硬い因子と簡単な因子（埋め込みベクトルの次元の集合）に分離することを提案する。
@@ -330,7 +331,7 @@ $$
 $$
 
 However, optimizing only L𝑐 may lead to a trivial solution: including all dimensions as the hard factor.
-しかし、L_1Dのみを最適化すると、つまらない解になる可能性がある： 
+しかし、L_1Dのみを最適化すると、つまらない解になる可能性がある：
 すべての次元をハード・ファクターに含める。
 Therefore, we introduce another loss with the auxiliary information from positive items.
 そこで、正項目から得られる補助情報を使って、別の損失を導入する。
@@ -363,7 +364,7 @@ where the Euclidean distance is used to measure the similarity between e ′ �
 This is because we want to leverage only reliable hardness while we can be more lenient with the easy part.
 これは、信頼できる硬さだけを活用し、簡単な部分にはもっと甘くしてもいいからだ。
 
-## Augmentation 
+## 4.2. Augmentation
 
 Next, we propose an augmentation module to create synthetic negative items which are more similar to the corresponding positive items.
 次に、対応するポジティブアイテムにより類似した合成ネガティブアイテムを作成するオーグメンテーションモジュールを提案する。
@@ -374,8 +375,8 @@ Therefore, our goal is to augment the easy factor to improve model performance.
 However, existing augmentation techniques fail to carefully regulate and quantify the augmentation needed to approximate positive items while still being negative.
 しかし、既存のオーグメンテーション技術は、ネガティブでありながらポジティブな項目を近似するために必要なオーグメンテーションを注意深く調整し、定量化することに失敗している。
 To this end, we propose to regulate the augmentation from two different aspects: Direction: Intuitively, the direction of the augmentation on a negative item should be towards the corresponding positive item.
-この目的のために、我々は2つの異なる側面から補強を規制することを提案する： 
-方向： 
+この目的のために、我々は2つの異なる側面から補強を規制することを提案する：
+方向：
 直感的には、否定的な項目に対する補強の方向は、対応する肯定的な項目に向かうべきである。
 Therefore, we first calculate the difference e𝑑𝑖 𝑓 between the factor of the positive item e ′′ 𝑝 and the easy factor of the negative item e 𝑒𝑎𝑠𝑦 𝑛 :
 そこで、まず正項目の因子e 𝑓と負項目の易因子e 𝑒𝑦の差e𝑑𝑖を計算する：
@@ -398,7 +399,7 @@ $$
 The direction e𝑑𝑖𝑟 ∈ R 𝑑 effectively compresses the embedding augmentation space into a quadrant space, which provides essential direction information without having the aforementioned issues.
 方向e𝑑𝑖 𝑟∈ R𝑑は、埋め込み補強空間を四分円空間に効果的に圧縮し、前述の問題を抱えることなく本質的な方向情報を提供する。
 Magnitude: Magnitude determines the strength of augmentation.
-マグニチュード： 
+マグニチュード：
 マグニチュードはオーグメンテーションの強さを決定する。
 Several studies [14] have shown that when the perturbation to the embedding is overly large, it will dramatically change its original semantics.
 いくつかの研究[14]は、埋め込みに対する摂動が過度に大きくなると、元のセマンティクスが劇的に変化することを示している。
@@ -443,7 +444,7 @@ With our design, the augmented negative item becomes more similar to the corresp
 We apply the above operation to every item in the candidate negative set E and obtain the augmented negative set E 𝑎𝑢𝑔 .
 候補否定集合Eのすべての項目に上記の操作を適用し、拡張否定集合E 𝑎𝑄を得る。
 
-## Sampling サンプリング
+## 4.3. Sampling サンプリング
 
 After obtaining the augmented candidate negative set E 𝑎𝑢𝑔, we need to devise a sampling strategy to select the best negative item from E 𝑎𝑢𝑔 to facilitate model training.
 拡張された否定候補集合E𝑎が得られたら、モデル学習を容易にするために、E𝑎𝑔から最適な否定項目を選択するサンプリング戦略を考案する必要がある。
@@ -473,7 +474,7 @@ $$
 \tag{13}
 $$
 
-## Discussion 
+## 4.4. Discussion
 
 It is worth noting that most existing negative sampling methods can be considered as a special case of ANS.
 既存のほとんどのネガティブサンプリング法は、ANSの特殊なケースと考えることができることは注目に値する。
@@ -484,7 +485,7 @@ MixGCF[16]は、離散化ステップを削除し、グラフ構造情報と正�
 SRNS [9] can be obtained by removing the augmentation step and considering variance in the sampling strategy step.
 SRNS[9]は、オーグメンテーションのステップを削除し、サンプリング戦略のステップで分散を考慮することによって得ることができる。
 
-## Model Optimization モデル最適化
+## 4.5. Model Optimization モデル最適化
 
 Finally, we adopt the proposed ANS method as the negative sampling strategy and take into consideration also the recommendation loss L to optimize the parameters Θ of an implicit CF model (e.g., MF-BPR).
 最後に、暗黙的CFモデル（例えばMF-BPR）のパラメータΘを最適化するために、負のサンプリング戦略として提案されたANS法を採用し、推薦損失Lも考慮する。
@@ -498,24 +499,25 @@ where 𝜆 is a hyper-parameter controlling the strength of 𝐿2 regularization
 Observably, our negative sampling strategy paradigm can be seamlessly incorporated into mainstream models without the need for substantial modifications.
 観察によれば、我々のネガティブサンプリング戦略のパラダイムは、大幅な修正を必要とすることなく、主流のモデルにシームレスに組み込むことができる。
 
-# Experiment 実験
+# 5. Experiment 実験
 
 In this section, we conduct comprehensive experiments to answer the following key research questions: • RQ1: How does ANS perform compared to the baselines and integrating ANS into different mainstream CF models perform compared with the original ones? • RQ2: How accurate is the disentanglement step in the absence of ground truth? • RQ3: Can ANS alleviate ambiguous trap and information discrimination? • RQ4: How do different steps affect ANS’s performance? • RQ5: How do different hyper-parameter settings (i.e., 𝛾, 𝜖, and 𝑀) affect ANS’s performance? • RQ6: How does ANS perform in efficiency?
-このセクションでは、以下の主要な研究課題に答えるために包括的な実験を行う： 
-- RQ1： 
-ANSはベースラインと比較して、またANSを異なる主流CFモデルに統合した場合、元のモデルと比較してどのように機能するのか？- RQ2： 
-グランドトゥルースがない場合、ディスエンタングルメントステップはどの程度正確か？- RQ3： 
-ANSは曖昧トラップと情報識別を緩和できるか？- RQ4： 
-異なるステップはANSの性能にどのような影響を与えるか？- RQ5： 
-ハイパーパラメーターの設定（すなわち、↪Ll_1FE, ↪Ll_1FE, ↪Ll_1FE, 𝑀）の違いはANSの性能にどのような影響を与えるか？- RQ6： 
-ANSの効率性はどの程度か？
+このセクションでは、以下の主要な研究課題に答えるために包括的な実験を行う：
 
-## Experimental Setup 実験セットアップ
+- RQ1：
+  ANSはベースラインと比較して、またANSを異なる主流CFモデルに統合した場合、元のモデルと比較してどのように機能するのか？- RQ2：
+  グランドトゥルースがない場合、ディスエンタングルメントステップはどの程度正確か？- RQ3：
+  ANSは曖昧トラップと情報識別を緩和できるか？- RQ4：
+  異なるステップはANSの性能にどのような影響を与えるか？- RQ5：
+  ハイパーパラメーターの設定（すなわち、↪Ll_1FE, ↪Ll_1FE, ↪Ll_1FE, 𝑀）の違いはANSの性能にどのような影響を与えるか？- RQ6：
+  ANSの効率性はどの程度か？
 
-### Datasets. データセット
+## 5.1. Experimental Setup 実験セットアップ
+
+### 5.1.1. Datasets. データセット
 
 We consider five public benchmark datasets in the experiments: Amazon-Baby, Amazon-Beauty, Yelp2018, Gowalla, and Last.fm.
-実験では、5つのパブリック・ベンチマーク・データセットを検討する： 
+実験では、5つのパブリック・ベンチマーク・データセットを検討する：
 Amazon-Baby、Amazon-Beauty、Yelp2018、Gowalla、Last.fmである。
 In order to comprehensively showcase the efficacy of the proposed methodology, we have partitioned the dataset into two distinct categories for processing.
 提案手法の有効性を包括的に示すため、データセットを2つの異なるカテゴリーに分割して処理した。
@@ -532,40 +534,41 @@ These datasets have different statistical properties, which can reliably validat
 Table 1 summarizes the statistics of the datasets.
 表1にデータセットの統計をまとめた。
 
-### 2 Baseline Algorithms. 2 ベースライン・アルゴリズム
+### 5.1.2. 2 Baseline Algorithms. 2 ベースライン・アルゴリズム
 
 To demonstrate the effectiveness of the proposed ANS method, we compare it with several representative state-of-the-art negative sampling methods.
 提案するANS法の有効性を実証するために、代表的な最新のネガティブサンプリング法と比較する。
 • RNS [26]: Random negative sampling (RNS) adopts a uniform distribution to sample unobserved items.
-- RNS [26]： 
-ランダム・ネガティブ・サンプリング(RNS)は、未観測項目をサンプリングするために一様分布を採用する。
-• DNS [41]: Dynamic negative sampling (DNS) adaptively selects items with the highest score as the negative samples.
-- DNS [41]： 
-Dynamic negative sampling (DNS)は適応的に最も高いスコアを持つアイテムをネガティブサンプルとして選択する。
-• SRNS [9]: SRNS introduces variance to avoid the false negative item problem based on DNS.
-- SRNS [9]： 
-SRNSは、DNSに基づく偽陰性項目の問題を回避するために分散を導入する。
-• MixGCF [16]: MixGCF injects information from positive and graph to synthesizes harder negative samples.
-- MixGCF [16]： 
-MixGCFはポジティブとグラフから情報を注入し、より難しいネガティブサンプルを合成する。
-• DENS [21]: DENS disentangles relevant and irrelevant factors of items and designs a factor-aware sampling strategy.
-- DENS [21]： 
-DENSは項目の関連因子と非関連因子を分離し、因子を意識したサンプリング戦略を設計する。
-To further validate the effectiveness of our proposed methodology, we have integrated it with a diverse set of representative models.
-提案した手法の有効性をさらに検証するため、多様な代表的モデル群との統合を行った。
-• NGCF [35]: NGCF employs a message-passing scheme to effectively leverage the high-order information.
-- NGCF [35]： 
-NGCFは、高次情報を効果的に活用するためにメッセージパッシング方式を採用している。
-• LightGCN [13]: LightGCN adopts a simplified approach by eliminating the non-linear transformation and instead utilizing a sum-based pooling module to enhance its performance.
-- LightGCN [13]： 
-LightGCNは、非線形変換を排除し、その代わりに和ベースのプーリング・モジュールを利用して性能を向上させるという、簡素化されたアプローチを採用している。
-• SGL [37]: SGL incorporates contrastive learning.
-- SGL［37］： 
-SGLは対照学習を取り入れたものである。
-The objective is to enhance the agreement between various views of the same node, while minimizing the agreement between views of different nodes.
-目的は、同じノードの様々なビュー間の一致を高め、異なるノードのビュー間の一致を最小化することである。
 
-### Implementation Details. 実施内容
+- RNS [26]：
+  ランダム・ネガティブ・サンプリング(RNS)は、未観測項目をサンプリングするために一様分布を採用する。
+  • DNS [41]: Dynamic negative sampling (DNS) adaptively selects items with the highest score as the negative samples.
+- DNS [41]：
+  Dynamic negative sampling (DNS)は適応的に最も高いスコアを持つアイテムをネガティブサンプルとして選択する。
+  • SRNS [9]: SRNS introduces variance to avoid the false negative item problem based on DNS.
+- SRNS [9]：
+  SRNSは、DNSに基づく偽陰性項目の問題を回避するために分散を導入する。
+  • MixGCF [16]: MixGCF injects information from positive and graph to synthesizes harder negative samples.
+- MixGCF [16]：
+  MixGCFはポジティブとグラフから情報を注入し、より難しいネガティブサンプルを合成する。
+  • DENS [21]: DENS disentangles relevant and irrelevant factors of items and designs a factor-aware sampling strategy.
+- DENS [21]：
+  DENSは項目の関連因子と非関連因子を分離し、因子を意識したサンプリング戦略を設計する。
+  To further validate the effectiveness of our proposed methodology, we have integrated it with a diverse set of representative models.
+  提案した手法の有効性をさらに検証するため、多様な代表的モデル群との統合を行った。
+  • NGCF [35]: NGCF employs a message-passing scheme to effectively leverage the high-order information.
+- NGCF [35]：
+  NGCFは、高次情報を効果的に活用するためにメッセージパッシング方式を採用している。
+  • LightGCN [13]: LightGCN adopts a simplified approach by eliminating the non-linear transformation and instead utilizing a sum-based pooling module to enhance its performance.
+- LightGCN [13]：
+  LightGCNは、非線形変換を排除し、その代わりに和ベースのプーリング・モジュールを利用して性能を向上させるという、簡素化されたアプローチを採用している。
+  • SGL [37]: SGL incorporates contrastive learning.
+- SGL［37］：
+  SGLは対照学習を取り入れたものである。
+  The objective is to enhance the agreement between various views of the same node, while minimizing the agreement between views of different nodes.
+  目的は、同じノードの様々なビュー間の一致を高め、異なるノードのビュー間の一致を最小化することである。
+
+### 5.1.3. Implementation Details. 実施内容
 
 Similar to previous studies [4, 26, 33], we consider MF-BPR [26] as the basic CF model.
 先行研究[4, 26, 33]と同様に、MF-BPR[26]を基本的なCFモデルとして考える。
@@ -584,7 +587,8 @@ In order to guarantee the replicability, our approach is implemented by the RecB
 We conducted statistical tests to evaluate the significance of our experimental results.
 実験結果の有意性を評価するために統計的検定を行った。
 
-## RQ1: Overall Performance Comparison RQ1： 
+## 5.2. RQ1: Overall Performance Comparison RQ1：
+
 総合的なパフォーマンス比較
 
 Table 2 shows the results of training MF-BPR with different negative sampling methods.
@@ -599,27 +603,29 @@ We can make the following key observations:
 私たちは次のような重要な見解を示すことができる：
 
 • ANS yields the best performance on almost all datasets.
-- ANSは、ほとんどすべてのデータセットで最高の性能を発揮する。
-In particular, its highest improvements over the strongest baselines are 29.74%, 23.76%, and 31.06% in terms of 𝐻𝑖𝑡 𝑅𝑎𝑡𝑖𝑜@15, 𝑅𝑒𝑐𝑎𝑙𝑙@15, and 𝑁𝐷𝐶𝐺@15 in Beauty, respectively.
-特に、最強のベースラインに対する最高の改善は、𝐻𝑖𝑡 ᵍᵅ ᵍ@15, ᵍᵅ@15, ᵍᵍ@15, ᵍᵍ@15 で、それぞれ29.74%、23.76%、31.06%である。
-This demonstrates that ANS is capable of generating more informative negative samples.
-これは、ANSがより有益な陰性サンプルを生成できることを示している。
-• The ANS’s remarkable adaptability is a noteworthy feature that allows for its seamless integration into various models.
-- ANSの卓越した適応性は、さまざまなモデルへのシームレスな統合を可能にする特筆すべき特徴である。
-The results presented in Table 3 demonstrate that the incorporation of PAN into the base models leads to improvements across all datasets.
-表3に示す結果は、ベースモデルにPANを組み込むことで、すべてのデータセットで改善が見られることを示している。
-• The model-aware methods always outperform the model-agnostic methods (RNS).
-- モデルを考慮した方法は、モデルを無視した方法（RNS）よりも常に優れている。
-In general, model-agnostic methods are difficult to guarantee the quality of negative samples.
-一般的に、モデル診断的手法は陰性サンプルの質を保証することが難しい。
-Leveraging various information from the underlying model is indeed a promising research direction.
-基礎となるモデルから様々な情報を活用することは、実に有望な研究の方向性である。
-• Despite its simplicity, DNS is a strong baseline.
-- そのシンプルさにもかかわらず、DNSは強力なベースラインである。
-This fact justifies our motivation of studying the hardness from a more fine granularity.
-この事実は、より細かい粒度から硬さを研究するという我々の動機を正当化する。
 
-## RQ2: Disentanglement Performance RQ2： 
+- ANSは、ほとんどすべてのデータセットで最高の性能を発揮する。
+  In particular, its highest improvements over the strongest baselines are 29.74%, 23.76%, and 31.06% in terms of 𝐻𝑖𝑡 𝑅𝑎𝑡𝑖𝑜@15, 𝑅𝑒𝑐𝑎𝑙𝑙@15, and 𝑁𝐷𝐶𝐺@15 in Beauty, respectively.
+  特に、最強のベースラインに対する最高の改善は、𝐻𝑖𝑡 ᵍᵅ ᵍ@15, ᵍᵅ@15, ᵍᵍ@15, ᵍᵍ@15 で、それぞれ29.74%、23.76%、31.06%である。
+  This demonstrates that ANS is capable of generating more informative negative samples.
+  これは、ANSがより有益な陰性サンプルを生成できることを示している。
+  • The ANS’s remarkable adaptability is a noteworthy feature that allows for its seamless integration into various models.
+- ANSの卓越した適応性は、さまざまなモデルへのシームレスな統合を可能にする特筆すべき特徴である。
+  The results presented in Table 3 demonstrate that the incorporation of PAN into the base models leads to improvements across all datasets.
+  表3に示す結果は、ベースモデルにPANを組み込むことで、すべてのデータセットで改善が見られることを示している。
+  • The model-aware methods always outperform the model-agnostic methods (RNS).
+- モデルを考慮した方法は、モデルを無視した方法（RNS）よりも常に優れている。
+  In general, model-agnostic methods are difficult to guarantee the quality of negative samples.
+  一般的に、モデル診断的手法は陰性サンプルの質を保証することが難しい。
+  Leveraging various information from the underlying model is indeed a promising research direction.
+  基礎となるモデルから様々な情報を活用することは、実に有望な研究の方向性である。
+  • Despite its simplicity, DNS is a strong baseline.
+- そのシンプルさにもかかわらず、DNSは強力なベースラインである。
+  This fact justifies our motivation of studying the hardness from a more fine granularity.
+  この事実は、より細かい粒度から硬さを研究するという我々の動機を正当化する。
+
+## 5.3. RQ2: Disentanglement Performance RQ2：
+
 切断パフォーマンス
 
 To verify the disentanglement performance, we spot-check a user and use the T-SNE algorithm [30] to map the disentangled factors into a two-dimensional space.
@@ -647,10 +653,11 @@ PER(RNS、HNS)は小さく、これはHNSがRNSで学習した情報のほとん
 In summary, our disentanglement step can effectively disentangle a negative sample into hard and easy factors, which lays a solid foundation for the subsequent steps in ANS.
 まとめると、我々の逆接ステップは、ネガティブサンプルをハードファクターとイージーファクターに効果的に逆接できる。
 
-## RQ3: Ambiguous Trap and Information Discrimination RQ3： 
+## 5.4. RQ3: Ambiguous Trap and Information Discrimination RQ3：
+
 曖昧な罠と情報弁別
 
-### Ambiguous Trap. 曖昧な罠。
+### 5.4.1. Ambiguous Trap. 曖昧な罠。
 
 Demonstrating how ANS can mitigate the ambiguous trap is a challenging task.
 ANSが曖昧な罠をどのように緩和できるかを実証することは、挑戦的な課題である。
@@ -675,7 +682,7 @@ As the training process progresses (from epoch 30 to epoch 95), ANS demonstrates
 This proves that ANS can generate harder synthetic negative samples, which can largely mitigate the ambiguous trap issue.
 これは、ANSがより困難な合成ネガティブサンプルを生成できることを証明しており、曖昧なトラップの問題を大きく軽減することができる。
 
-### Information Discrimination. 情報差別。
+### 5.4.2. Information Discrimination. 情報差別。
 
 As for the information discrimination problem, we have shown that the disentanglement step can effectively extract the useful information from low-score items.
 情報識別問題に関しては、分離ステップが低得点項目から有用な情報を効果的に抽出できることを示した。
@@ -690,11 +697,12 @@ DNSは常に最もスコアの高いネガティブ項目をハードネガテ�
 A less than 50% overlapping indicates that ANS does sample more low-score negative items before the augmentation and effectively alleviates the information discrimination problem.
 オーバーラップが50％以下であることは、ANSがオーグメンテーションの前に低スコアのネガティブ項目をより多くサンプリングし、情報識別の問題を効果的に軽減していることを示している。
 
-## RQ4: Ablation Study RQ4： 
+## 5.5. RQ4: Ablation Study RQ4：
+
 アブレーション研究
 
 We analyze the effectiveness of different components in our model, and evaluate the performance of the following variants of our model: (1) ANS without disentanglement (ANS w/o dis).(2) ANS without augmentation gain (ANS w/o gain).(3) ANS without regulated direction (ANS w/o dir).(4) ANS without regulated magnitude (ANS w/o mag).
-我々は、我々のモデルにおける様々な構成要素の有効性を分析し、我々のモデルの以下の変種の性能を評価する： 
+我々は、我々のモデルにおける様々な構成要素の有効性を分析し、我々のモデルの以下の変種の性能を評価する：
 (1) ANS without disentanglement (ANS w/o dis) (2) ANS without augmentation gain (ANS w/o gain) (3) ANS without regulated direction (ANS w/o dir) (4) ANS without regulated magnitude (ANS w/o mag).
 It is noteworthy to state that the complete elimination of the augmentation step is not taken into consideration due to its equivalence to DNS.
 DNSと同等であるため、補強ステップの完全な排除は考慮されていないことは注目に値する。
@@ -707,10 +715,11 @@ In particular, the results show that unconstrained augmentation (e.g., ANS w/o m
 This fact confirms that the existing unconstrained augmentation techniques cannot be directly applied to CF.
 この事実は、既存の制約なしオーグメンテーション技術がCFに直接適用できないことを裏付けている。
 
-## RQ5: Hyper-Parameter Sensitivity RQ5： 
+## 5.6. RQ5: Hyper-Parameter Sensitivity RQ5：
+
 ハイパーパラメーターの感度
 
-### Impact of 𝛾. の影響。
+### 5.6.1. Impact of 𝛾. の影響。
 
 We present the effect of the weight of the contrastive loss and disentanglement loss, 𝛾, in Figure 6.
 図6に、コントラスト損失とディセンタングルメント損失の重み↪L_1FE↩の効果を示す。
@@ -723,7 +732,7 @@ This observation is expected because in this case the CF model considers the dis
 Nevertheless, ANS can achieve reasonable performance under a relatively wide range of 𝛾 values.
 とはいえ、ANSは比較的広い範囲の↪Ll_1FE 値の下で妥当な性能を達成することができる。
 
-### Impact of 𝜖. 𝜖 の影響。
+### 5.6.2. Impact of 𝜖. 𝜖 の影響。
 
 Recall that 𝜖 is the parameter to balance the importance between the score and the augmentation gain in the sampling step.
 ↪Ll_1D716 は、サンプリングステップにおけるスコアと増大ゲインの重要度のバランスをとるためのパラメータである。
@@ -734,7 +743,7 @@ A small 𝜖 value overlooks the importance of the augmentation gain and only ac
 But still, ANS can obtain good performance under a relatively wide range of 𝜖 values.
 しかしそれでも、ANSは比較的広い範囲の𝜖値の下で良好な性能を得ることができる。
 
-### Impact of 𝑀. 𝑀 の影響。
+### 5.6.3. Impact of 𝑀. 𝑀 の影響。
 
 𝑀 denotes the size of candidate negative set E.
 𝑀 は否定候補集合Eのサイズを表す。
@@ -745,7 +754,8 @@ It is evident that an increase in 𝑀 leads to more negative samples, we can ge
 Nevertheless, it is noteworthy that excessively large values of 𝑀 can considerably impede the efficiency of the models, and degrade performance due to noise (e.g., false negative samples).
 とはいえ、 ↪Lu_1D440 の値が大きすぎると、モデルの効率性が著しく損なわれ、ノイズ（偽陰性サンプルなど）により性能が低下する可能性があることは注目に値する。
 
-## RQ6: Efficiency Analysis RQ6： 
+## 5.7. RQ6: Efficiency Analysis RQ6：
+
 効率性分析
 
 Following the previous work [22, 31], we also examine the efficiency of different negative sampling methods in Table 6.
@@ -761,7 +771,7 @@ DNSと比較すると、我々の提案するANS法はより多くの実行時�
 However, considering the huge performance improvement ANS brings, the additional running time is well justified.
 しかし、ANSがもたらすパフォーマンスの大幅な向上を考えれば、追加される実行時間は十分に正当化できる。
 
-# Conclusion 結論
+# 6. Conclusion 結論
 
 Motivated by ambiguous trap and information discrimination, from which the state-of-the-art negative sampling methods suffer, for the first time, we proposed to introduce synthetic negative samples from a fine-granular perspective to improve implicit CF.
 最新のネガティブサンプリング法が苦しんでいる曖昧なトラップと情報識別に動機づけられ、我々は初めて、暗黙的CFを改善するために、細かい粒度の観点から合成ネガティブサンプルを導入することを提案した。

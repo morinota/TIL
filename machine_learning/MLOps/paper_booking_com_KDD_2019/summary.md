@@ -2,7 +2,7 @@
 
 published date: August, 2019
 authors: Lucas Bernardi , Themis Mavridis, Pablo Estevez
-url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
+url(paper): https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf
 (勉強会発表者: morinota)
 
 ---
