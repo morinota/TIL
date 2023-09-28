@@ -659,7 +659,8 @@ We encourage you to try this solution with a dataset relevant to your business K
 You can refer to the entire solution in this GitHub repository.
 このGitHubリポジトリでソリューション全体を参照できる。
 
-References
+Referencess
+
 参考文献
 
 Model hosting patterns in Amazon SageMaker
