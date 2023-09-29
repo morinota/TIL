@@ -160,6 +160,7 @@ IRGAN [33] integrates a generative adversarial network into $g(·, ·)$ to deter
 IRGAN [33]は、生成的な敵対的ネットワークを $g(·, ·)$ に統合し、最小-最大ゲームを通して負サンプルの確率を決定する。
 ReinforcedNS [8] use reinforcement learning into $g(·, ·)$.
 ReinforcedNS [8]は、強化学習を $g(·, ·)$ に用いる。
+
 With well-designed $f$ and $g(·, ·)$, we can generally achieve better performance.
 うまく設計された $f$ と $g(\cdot, \cdot)$ があれば、一般に、より良いパフォーマンスを達成できる。
 However, selecting suitable negative items need to compute 𝑔(·, ·) for all unobserved items, which is extremely timeconsuming and prohibitively expensive.
@@ -188,7 +189,7 @@ A comprehensive description of the data is provided in Section 5.
 
 ## 3.1. Implicit CF 暗黙のCF
 
-We denote the set of historical interactions by $O^{+} = {(u,i^{+})|u \in \mathcal{U}, i^{+} \in \mathcal{I}}$, where U and I are the set of users and the set of items, respectively.
+We denote the set of historical **interactions** by $O^{+} = {(u,i^{+})|u \in \mathcal{U}, i^{+} \in \mathcal{I}}$, where U and I are the set of users and the set of items, respectively.
 𝑢 ∈ U,𝑖+ ∈ I}, where U and I are the set of users and the set of items, respectively.
 The most common implicit CF paradigm is to learn user and item representations (e𝑢 and e𝑖 ) from the historical interactions and then predict the scores of unobserved items to recommend the top-K items.
 最も一般的な暗黙的CFのパラダイムは、過去のインタラクションからユーザーとアイテムの表現（e𝑢とe𝑖）を学習し、トップKのアイテムを推薦するために未観測のアイテムのスコアを予測することである。
