@@ -96,7 +96,7 @@ To build the first container, the featurizer container, we train a scikit-learn 
 The preprocessing script uses SimpleImputer for handling missing values, StandardScaler for normalizing numerical columns, and OneHotEncoder for transforming categorical columns.
 前処理スクリプトは、欠損値の処理にSimpleImputer、数値列の正規化にStandardScaler、カテゴリー列の変換にOneHotEncoderを使用しています。
 After fitting the transformer, we save the model in joblib format.
-トランスフォーマーをフィッティングした後、**モデルをjoblib形式で保存**します。(featurizerモデルをローカルで作っておくって事なのかな??:thinking:)
+変換器をfittingした後、**モデル(i.e. 変換器)をjoblib形式で保存**します。(featurizerモデルをローカルで作っておくって事なのかな??:thinking:)
 We then compress and upload this saved model artifact to an Amazon Simple Storage Service (Amazon S3) bucket.
 そして、この保存されたモデル・アーティファクトを圧縮してAmazon Simple Storage Service（Amazon S3）バケットにアップロードする。
 
