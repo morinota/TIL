@@ -52,13 +52,13 @@ Lastly, we deploy the featurizer and predictor in a serial-inference pipeline to
 Here are few different considerations as to why you may want to have separate containers within your inference application.
 **推論アプリケーションの中で、なぜコンテナを分けたほうがいいのか**、いくつか考えてみましょう。
 
-- Decoupling – Various steps of the pipeline have a clearly defined purpose and need to be run on separate containers due to the underlying dependencies involved. This also helps keep the pipeline well structured. デカップリング - パイプラインの**様々なステップには明確に定義された目的があり**(各ステップでそれぞれ目的が異なる:thinking:)、その根底には依存関係があるため、別々のコンテナで実行する必要がある。 これはまた、パイプラインをうまく構成しておくのにも役立つ。
+- **Decoupling** – Various steps of the pipeline have a clearly defined purpose and need to be run on separate containers due to the underlying dependencies involved. This also helps keep the pipeline well structured. デカップリング - パイプラインの**様々なステップには明確に定義された目的があり**(各ステップでそれぞれ目的が異なる:thinking:)、その根底には依存関係があるため、別々のコンテナで実行する必要がある。 これはまた、パイプラインをうまく構成しておくのにも役立つ。
 
-- Frameworks – Various steps of the pipeline use specific fit-for-purpose frameworks (such as scikit or Spark ML) and therefore need to be run on separate containers. フレームワーク - パイプラインの様々なステップでは、**特定の目的に合ったフレームワーク（scikitやSpark MLなど）を使用するため、別のコンテナで実行する必要がある**。
+- **Frameworks** – Various steps of the pipeline use specific fit-for-purpose frameworks (such as scikit or Spark ML) and therefore need to be run on separate containers. フレームワーク - パイプラインの様々なステップでは、**特定の目的に合ったフレームワーク（scikitやSpark MLなど）を使用するため、別のコンテナで実行する必要がある**。
 
-- Resource isolation – Various steps of the pipeline have varying resource consumption requirements and therefore need to be run on separate containers for more flexibility and control. リソースの分離 - パイプラインの**様々なステップには様々なリソース消費要件**があるため、柔軟性と制御性を高めるために別々のコンテナで実行する必要があります。(なるほど...!このこのステップはGPU不要で、このステップはGPU必要で...!みたいな感じか:thinking:)
+- **Resource isolation** – Various steps of the pipeline have varying resource consumption requirements and therefore need to be run on separate containers for more flexibility and control. リソースの分離 - パイプラインの**様々なステップには様々なリソース消費要件**があるため、柔軟性と制御性を高めるために別々のコンテナで実行する必要があります。(なるほど...!このステップはGPU不要/必要で、このステップはメモリ大きめのリソースで、みたいな感じか:thinking:)
 
-- Maintenance and upgrades – From an operational standpoint, this promotes functional isolation and you can continue to upgrade or modify individual steps much more easily, without affecting other models. メンテナンスとアップグレード - 運用面では、**機能的な分離(functional isolation)**が促進され、他のモデルに影響を与えることなく、**個々のステップのアップグレードや変更をより簡単に**続けることができます。
+- **Maintenance and upgrades** – From an operational standpoint, this promotes functional isolation and you can continue to upgrade or modify individual steps much more easily, without affecting other models. メンテナンスとアップグレード - 運用面では、**機能的な分離(functional isolation)**が促進され、他のモデルに影響を与えることなく、**個々のステップのアップグレードや変更をより簡単に**続けることができます。
 
 Additionally, local build of the individual containers helps in the iterative process of development and testing with favorite tools and Integrated Development Environments (IDEs).
 さらに、個々のコンテナのローカルビルドは、お気に入りのツールや統合開発環境(IDE)を使った開発とテストの反復プロセスに役立つ。
