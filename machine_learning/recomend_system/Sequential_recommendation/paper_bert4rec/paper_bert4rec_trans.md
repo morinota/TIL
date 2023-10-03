@@ -6,7 +6,7 @@ https://arxiv.org/abs/1904.06690
 ## title タイトル
 
 BERT4Rec: Sequential Recommendation with Bidirectional Encoder Representations from Transformer
-BERT4Rec： 
+BERT4Rec：
 トランスフォーマからの双方向エンコーダ表現による逐次推薦
 
 ## abstract 抄録
@@ -16,14 +16,15 @@ Modeling users’ dynamic preferences from their historical behaviors is challen
 Previous methods employ sequential neural networks to encode users’ historical interactions from left to right into hidden representations for making recommendations.
 これまでの手法では、逐次的なニューラルネットワークを採用し、ユーザーの過去のやりとりを左から右へとレコメンデーションするための隠れ表現にエンコードする。
 Despite their effectiveness, we argue that such left-to-right unidirectional models are sub-optimal due to the limitations including: a) unidirectional architectures restrict the power of hidden representation in users’ behavior sequences; b) they often assume a rigidly ordered sequence which is not always practical.
-その有効性にもかかわらず、我々はこのような左から右への一方向モデルは、以下のような制限のために最適ではないと主張する： 
+その有効性にもかかわらず、我々はこのような左から右への一方向モデルは、以下のような制限のために最適ではないと主張する：
 a)一方向アーキテクチャは、ユーザーの行動シーケンスにおける隠れた表現力を制限する。
+b)uni-directionalアーキテクチャは、hogehoge
 To address these limitations, we proposed a sequential recommendation model called BERT4Rec, which employs the deep bidirectional self-attention to model user behavior sequences.
 これらの限界に対処するために、我々は、BERT4Recと呼ばれる逐次レコメンデーションモデルを提案した。
 To avoid the information leakage and efficiently train the bidirectional model, we adopt the Cloze objective to sequential recommendation, predicting the random masked items in the sequence by jointly conditioning on their left and right context.
-情報漏洩を回避し、双方向モデルを効率的に学習するために、我々はCloze目的語を逐次推薦に採用する。
+情報漏洩を回避し、双方向モデルを効率的に学習するために、我々は**Cloze Objective**を逐次推薦に採用する。
 In this way, we learn a bidirectional representation model to make recommendations by allowing each item in user historical behaviors to fuse information from both left and right sides.
-このように、ユーザーの履歴行動の各項目に左右の情報を融合させることで、双方向表現モデルを学習し、レコメンデーションを行う。
+このように、ユーザの履歴行動の**各itemに左右の情報を融合させる**ことで、双方向表現モデルを学習し、レコメンデーションを行う。
 Extensive experiments on four benchmark datasets show that our model outperforms various state-of-the-art sequential models consistently
 4つのベンチマークデータセットを用いた広範な実験により、我々のモデルが様々な最新の逐次モデルを一貫して凌駕することが示された。
 
@@ -35,6 +36,7 @@ In many real-world applications, users’ current interests are intrinsically dy
 多くの実世界のアプリケーションでは、ユーザーの現在の興味は、過去の行動に影響され、本質的にダイナミックで進化している。
 For example, one may purchase accessories (e.g., Joy-Con controllers) soon after buying a Nintendo Switch, though she/he will not buy console accessories under normal circumstances.
 例えば、ニンテンドースイッチを買ってすぐにアクセサリー（Joy-Conコントローラーなど）を買うかもしれないが、通常であればゲーム機のアクセサリーを買うことはない。
+
 To model such sequential dynamics in user behaviors, various methods have been proposed to make sequential recommendations based on users’ historical interactions [15, 22, 40].
 ユーザー行動におけるこのような逐次的なダイナミクスをモデル化するために、ユーザーの過去のインタラクションに基づいて逐次的な推薦を行う様々な方法が提案されている[15, 22, 40]。
 They aim to predict the successive item(s) that a user is likely to interact with given her/his past interactions.
@@ -42,19 +44,21 @@ They aim to predict the successive item(s) that a user is likely to interact wit
 Recently, a surge of works employ sequential neural networks, e.g., Recurrent Neural Network (RNN), for sequential recommendation and obtain promising results [7, 14, 15, 56, 58].
 最近、逐次推薦にリカレント・ニューラル・ネットワーク（RNN）などの逐次ニューラルネットワークを採用する研究が急増し、有望な結果が得られている[7, 14, 15, 56, 58]。
 The basic paradigm of previous work is to encode a user’s historical interactions into a vector (i.e., representation of user’s preference) using a left-to-right sequential model and make recommendations based on this hidden representation.
-これまでの研究の基本的なパラダイムは、左から右への逐次モデルを使用して、ユーザーの過去のインタラクションをベクトル（すなわち、ユーザーの嗜好の表現）に符号化し、この隠された表現に基づいて推薦を行うことである。
+これまでの研究の基本的なパラダイムは、**左から右への逐次モデルを使用して、ユーザーの過去のインタラクションをベクトル（すなわち、ユーザーの嗜好の表現）に符号化**し、このhidden representationに基づいて推薦を行うことである。
+
 Despite their prevalence and effectiveness, we argue that such left-to-right unidirectional models are not sufficient to learn optimal representations for user behavior sequences.
-このような左から右への一方向的なモデルは、その普及率と有効性にもかかわらず、ユーザーの行動シーケンスに最適な表現を学習するには十分ではないと主張する。
+このような左から右への一方向的なモデルは、その普及率と有効性にもかかわらず、**ユーザーの行動シーケンスに最適な表現を学習するには十分ではないと主張する**。
 The major limitation, as illustrated in Figure 1c and 1d, is that such unidirectional models restrict the power of hidden representation for items in the historical sequences, where each item can only encode the information from previous items.
-図1cと1dに示されているように、このような一方向のモデルでは、各項目が前の項目からの情報しか符号化できないため、履歴シーケンスの項目に対する隠れ表現の力が制限されるという大きな限界がある。
+図1cと1dに示されているように、このような一方向のモデルでは、**各itemが前のitemからの情報しか符号化できないため、履歴シーケンスのitemに対する隠れ表現の力が制限されるという大きな限界**がある。
 Another limitation is that previous unidirectional models are originally introduced for sequential data with natural order, e.g., text and time series data.
 もう1つの限界は、これまでの一方向モデルはもともと、テキストや時系列データなど、自然な順序を持つ逐次データに対して導入されたものだということだ。
 They often assume a rigidly ordered sequence over data which is not always true for user behaviors in real-world applications.
-それらはしばしば、データ上の厳密な順序を想定しているが、実際のアプリケーションにおけるユーザー行動には必ずしも当てはまらない。
+それらはしばしば、データ上の厳密な順序を想定しているが、実際のアプリケーションにおけるユーザー行動には必ずしも当てはまらない。(推薦に有用な隠れ表現を作る事が目的なのだから、厳密にuni-directionalを守る事は重要ではない、みたいな??:thinking:)
 In fact, the choices of items in a user’s historical interactions may not follow a rigid order assumption [18, 54] due to various unobservable external factors [5].
 実際、ユーザーの過去のインタラクションにおけるアイテムの選択は、様々な観測不可能な外的要因 [5]のために、厳密な順序の仮定 [18, 54]に従わないかもしれない。
 In such a situation, it is crucial to incorporate context from both directions in user behavior sequence modeling.
 このような状況では、ユーザー行動シーケンスのモデリングにおいて、双方向からのコンテキストを組み込むことが極めて重要である。
+
 To address the limitations mentioned above, we seek to use a bidirectional model to learn the representations for users’ historical behavior sequences.
 上記の限界に対処するため、私たちは双方向モデルを使用して、ユーザーの過去の行動シーケンスに対する表現を学習することを目指している。
 Specifically, inspired by the success of BERT [6] in text understanding, we propose to apply the deep bidirectional self-attention model to sequential recommendation, as illustrated in Figure 1b.
@@ -63,30 +67,34 @@ For representation power, the superior results for deep bidirectional models on 
 表現力については、テキストシーケンスのモデリングタスクにおける深層双方向モデルの優れた結果が、シーケンス表現学習において双方からのコンテキストを取り入れることが有益であることを示している[6]。
 For rigid order assumption, our model is more suitable than unidirectional models in modeling user behavior sequences since all items in the bidirectional model can leverage the contexts from both left and right side.
 厳密な順序を仮定した場合、双方向モデルのすべての項目が左右両方のコンテキストを利用できるため、ユーザーの行動シーケンスをモデル化する上で、一方向モデルよりも我々のモデルの方が適している。
+
 However, it is not straightforward and intuitive to train the bidirectional model for sequential recommendation.
 しかし、逐次推薦のための双方向モデルを学習するのは、直感的で簡単なことではない。
 Conventional sequential recommendation models are usually trained left-to-right by predicting the next item for each position in the input sequence.
 従来の逐次推薦モデルは、通常、入力シーケンスの各位置に対して次のアイテムを予測することにより、左から右へと学習される。
 As shown in Figure 1, jointly conditioning on both left and right context in a deep bidirectional model would cause information leakage, i.e., allowing each item to indirectly “see the target item”.
-図1に示すように、深い双方向モデルにおいて左右両方の文脈を共同で条件付けすると、情報の漏れが生じる、つまり、各項目が間接的に「対象項目を見る」ことができるようになる。
+図1に示すように、深い双方向モデルにおいて左右両方の文脈を共同で条件付けすると、情報の漏れが生じる、つまり、各itemが間接的に「対象itemを見る」ことができるようになる。
 This could make predicting the future become trivial and the network would not learn anything useful.
 これでは、未来を予測することは些細なことになりかねず、ネットワークは何も有益なことを学べなくなる。
+
 To tackle this problem, we introduce the Cloze task [6, 50] to take the place of the objective in unidirectional models (i.e., sequentially predicting the next item).
-この問題に取り組むため、一方向モデル（つまり、次の項目を逐次予測する）における目的の代わりに、Clozeタスク[6, 50]を導入する。
+この問題に取り組むため、**一方向モデルにおける目的（つまり、次の項目を逐次予測する=next item prediction:thinking:）の代わりに、Clozeタスク[6, 50]**を導入する。(Clozeタスク??:thinking:)
 Specifically, we randomly mask some items (i.e., replace them with a special token [mask]) in the input sequences, and then predict the ids of those masked items based on their surrounding context.
-具体的には、入力シーケンス中のいくつかのアイテムをランダムにマスクし（つまり、特別なトークン[mask]で置き換える）、次にそれらの周囲のコンテキストに基づいて、マスクされたアイテムのIDを予測する。
+具体的には、入力シーケンス中のいくつかのアイテムをランダムにマスクし（つまり、特別なトークン[mask]で置き換える）、次にそれらの周囲のコンテキストに基づいて、マスクされたアイテムのIDを予測する。(要するにBERTのmasked-item-predictionか...!:thinking:)
 In this way, we avoid the information leakage and learn a bidirectional representation model by allowing the representation of each item in the input sequence to fuse both the left and right context.
 このようにして、入力シーケンスの各アイテムの表現が左と右のコンテキストの両方を融合するようにすることで、情報の漏れを回避し、双方向表現モデルを学習する。
 In addition to training a bidirectional model, another advantage of the Cloze objective is that it can produce more samples to train a more powerful model in multiple epochs.
-双方向モデルのトレーニングに加えて、Cloze目的語のもう一つの利点は、より強力なモデルを複数のエポックでトレーニングするために、より多くのサンプルを生成できることである。
+双方向モデルのトレーニングに加えて、**Cloze目的関数のもう一つの利点は、より強力なモデルを複数のエポックでトレーニングするために、より多くのサンプルを生成できること**である。(??)
 However, a downside of the Cloze task is that it is not consistent with the final task (i.e., sequential recommendation).
-しかし、クロース・タスクの欠点は、最終タスク（つまり逐次推薦）と整合性がないことである。
+しかし、**クロース・タスクの欠点は、最終タスク（つまり逐次推薦）と整合性がないこと**である。
 To fix this, during the test, we append the special token “[mask]” at the end of the input sequence to indicate the item that we need to predict, and then make recommendations base on its final hidden vector.
 これを解決するために、テスト中に、予測する必要がある項目を示すために、入力シーケンスの最後に特別なトークン"[mask]"を追加し、その最終的な隠れベクトルに基づいて推薦を行う。
 Extensive experiments on four datasets show that our model outperforms various state-of-the-art baselines consistently.
 4つのデータセットを用いた広範な実験により、我々のモデルが様々な最先端のベースラインを一貫して凌駕することが示された。
+
+
 The contributions of our paper are as follows: • We propose to model user behavior sequences with a bidirectional self-attention network through Cloze task.
-本稿の貢献は以下の通りである： 
+本稿の貢献は以下の通りである：
 - 我々は、Cloze課題を通して、双方向の自己注意ネットワークを用いてユーザの行動シーケンスをモデル化することを提案する。
 To the best of our knowledge, this is the first study to introduce deep bidirectional sequential model and Cloze objective into the field of recommendation systems.
 我々の知る限り、これは推薦システムの分野に深層双方向逐次モデルとCloze目的語を導入した最初の研究である。
@@ -100,7 +108,7 @@ To the best of our knowledge, this is the first study to introduce deep bidirect
 In this section, we will briefly review several lines of works closely related to ours, including general recommendation, sequential recommendation, and attention mechanism.
 このセクションでは、一般的な推薦、逐次的推薦、注意メカニズムなど、我々の研究と密接に関連するいくつかの研究を簡単にレビューする。
 
-## General Recommendation 
+## General Recommendation
 
 Early works on recommendation systems typically use Collaborative Filtering (CF) to model users’ preferences based on their interaction histories [26, 43].
 推薦システムに関する初期の研究では、一般的に協調フィルタリング（CF）を用いて、ユーザーの対話履歴に基づく嗜好をモデル化している[26, 43]。
@@ -110,6 +118,7 @@ Another line of work is item-based neighborhood methods [20, 25, 31, 43].
 もう一つの研究は、項目ベースの近傍法である[20, 25, 31, 43]。
 They estimate a user’s preference on an item via measuring its similarities with the items in her/his interaction history using a precomputed item-to-item similarity matrix.
 これは、あらかじめ計算されたアイテム間の類似度行列を使用して、ユーザーの対話履歴のアイテムとの類似度を測定することにより、アイテムに対するユーザーの嗜好を推定する。
+
 Recently, deep learning has been revolutionizing the recommendation systems dramatically.
 近年、ディープラーニングは推薦システムに劇的な革命をもたらしている。
 The early pioneer work is a two-layer Restricted Boltzmann Machines (RBM) for collaborative filtering, proposed by Salakhutdinov et al.[42] in Netflix Prize1 .
@@ -122,10 +131,11 @@ Another line of work seeks to take the place of conventional matrix factorizatio
 For example, Neural Collaborative Filtering (NCF) [12] estimates user preferences via Multi-Layer Perceptions (MLP) instead of inner product, while AutoRec [44] and CDAE [57] predict users’ ratings using Auto-encoder framework.
 例えば、ニューラル協調フィルタリング（NCF）[12]は、内積の代わりに多層知覚（MLP）を介してユーザーの嗜好を推定し、AutoRec[44]とCDAE[57]は、オートエンコーダーフレームワークを使用してユーザーの評価を予測する。
 
-## Sequential Recommendation 
+## Sequential Recommendation
 
 Unfortunately, none of the above methods is for sequential recommendation since they all ignore the order in users’ behaviors.
 残念ながら、上記の方法はどれもユーザーの行動の順序を無視しているため、逐次的な推薦には向いていない。
+
 Early works on sequential recommendation usually capture sequential patterns from user historical interactions using Markov chains (MCs).
 逐次レコメンデーションに関する初期の研究では、マルコフ連鎖（Markov Chain：MC）を用いて、ユーザーの過去のインタラクションから逐次パターンを捉えるのが一般的である。
 For example, Shani et al.[45] formalized recommendation generation as a sequential optimization problem and employ Markov Decision Processes (MDPs) to address it.
@@ -134,6 +144,7 @@ Later, Rendle et al.[40] combine the power of MCs and MF to model both sequentia
 その後、Rendleら[40]は、MCとMFのパワーを組み合わせて、因子化パーソナライズド・マルコフ連鎖（FPMC）により、逐次的行動と一般的興味の両方をモデル化した。
 Besides the first-order MCs, high-order MCs are also adopted to consider more previous items [10, 11].
 一次MCの他に、より多くの前の項目を考慮するために高次MCも採用されている[10, 11]。
+
 Recently, RNN and its variants, Gated Recurrent Unit (GRU) [4] and Long Short-Term Memory (LSTM) [17], are becoming more and more popular for modeling user behavior sequences [7, 14, 15, 28, 37, 56, 58].
 最近、RNNとその亜種であるGated Recurrent Unit（GRU）[4]とLong Short-Term Memory（LSTM）[17]は、ユーザーの行動シーケンスをモデル化するためにますます人気が高まっている[7, 14, 15, 28, 37, 56, 58]。
 The basic idea of these methods is to encode user’s previous records into a vector (i.e., representation of user’s preference which is used to make predictions) with various recurrent architectures and loss functions, including session-based GRU with ranking loss (GRU4Rec) [15], Dynamic REcurrent bAsket Model (DREAM) [58], user-based GRU [7], attention-based GRU (NARM) [28], and improved GRU4Rec with new loss function (i.e., BPR-max and TOP1-max) and an improved sampling strategy [14].
@@ -175,7 +186,7 @@ While we use a bidirectional model to encode users’ behavior sequences with th
 Before going into the details, we first introduce the research problem, the basic concepts, and the notations in this paper.
 詳細に入る前に、まず本稿における研究課題、基本概念、表記法を紹介する。
 
-## Problem Statement 
+## Problem Statement
 
 In sequential recommendation, let U={u1,u2, .
 逐次推薦では、U={u1,u2, .
@@ -389,7 +400,7 @@ A simple solution for this issue is to create t − 1 samples (subsequences with
 However, this approach is very time and resources consuming since we need to create a new sample for each position in the sequence and predict them separately.
 しかしこの方法では、配列の各位置ごとに新しいサンプルを作成し、それらを個別に予測する必要があるため、非常に時間とリソースを消費する。
 In order to efficiently train our proposed model, we apply a new objective: Cloze task [50] (also known as “Masked Language Model” in [6]) to sequential recommendation.
-提案モデルを効率的に学習するために、我々は新しい目的を適用する： 
+提案モデルを効率的に学習するために、我々は新しい目的を適用する：
 Clozeタスク[50]（[6]では "Masked Language Model "とも呼ばれる）を逐次推薦に適用する。
 It is a test consisting of a portion of language with some words removed, where the participant is asked to fill the missing words.
 これは、いくつかの単語が削除された言語の一部からなるテストであり、参加者は欠けている単語を埋めるように求められる。
@@ -430,7 +441,7 @@ To better match the sequential recommendation task (i.e., predict the last item)
 It works like fine-tuning for sequential recommendation and can further improve the recommendation performances.
 これは逐次推薦のファインチューニングのように機能し、推薦性能をさらに向上させることができる。
 
-## Discussion 
+## Discussion
 
 Here, we discuss the relation of our model with previous related work.
 ここでは、我々のモデルとこれまでの関連研究との関係について述べる。
@@ -461,7 +472,7 @@ On the contrary, we seek to learn a powerful behavior sequence representation mo
 BERT.
 バート
 Although our BERT4Rec is inspired by the BERT in NLP, it still has several differences from BERT: a) The most critical difference is that BERT4Rec is an end-to-end model for sequential recommendation, while BERT is a pre-training model for sentence representation.
-我々のBERT4Recは、自然言語処理におけるBERTにインスパイアされているが、BERTとはいくつかの違いがある： 
+我々のBERT4Recは、自然言語処理におけるBERTにインスパイアされているが、BERTとはいくつかの違いがある：
 a) 最も決定的な違いは、BERT4Recが逐次推薦のためのエンドツーエンドモデルであるのに対し、BERTは文表現のための事前学習モデルであることである。
 BERT leverages large-scale task-independent corpora to pre-train the sentence representation model for various text sequence tasks since these tasks share the same background knowledge about the language.
 BERT は、タスクに依存しない大規模なコーパスを活用して、さまざまなテキストシーケンスタスクの文表現モデルを事前学習します。
@@ -480,17 +491,17 @@ We evaluate the proposed model on four real-world representative datasets which 
 提案モデルを、ドメインとスパース性が大きく異なる4つの実世界の代表的なデータセットで評価する。
 
 • Amazon Beauty3 : This is a series of product review datasets crawled from Amazon.com by McAuley et al.[34].
-- Amazon Beauty3 ： 
+- Amazon Beauty3 ：
 これはMcAuleyら[34]によってAmazon.comからクロールされた一連の製品レビューデータセットである。
 They split the data into separate datasets according to the toplevel product categories on Amazon.
 アマゾンの商品カテゴリーごとにデータを分割した。
 In this work, we adopt the “Beauty” category.
 この作品では「ビューティー」カテゴリーを採用する。
 • Steam4 : This is a dataset collected from Steam, a large online video game distribution platform, by Kang and McAuley [22].
-- Steam4 ： 
+- Steam4 ：
 これは、KangとMcAuley[22]によって、大規模なオンライン・ビデオゲーム配信プラットフォームであるSteamから収集されたデータセットである。
 • MovieLens [8]: This is a popular benchmark dataset for evaluating recommendation algorithms.
-- MovieLens [8]： 
+- MovieLens [8]：
 これは推薦アルゴリズムを評価するための一般的なベンチマークデータセットである。
 In this work, we adopt two well-established versions, MovieLens 1m (ML1m) 5 and MovieLens 20m (ML-20m) 6 .
 この作品では、MovieLens 1m (ML1m) 5 と MovieLens 20m (ML-20m) 6 の 2 つの確立されたバージョンを採用している。
@@ -532,29 +543,29 @@ For all these metrics, the higher the value, the better the performance.
 ## Baselines & Implementation Details ベースラインと実施内容
 
 To verify the effectiveness of our method, we compare it with the following representative baselines: • POP: It is the simplest baseline that ranks items according to their popularity judged by the number of interactions.
-本手法の有効性を検証するため、以下の代表的なベースラインと比較した： 
-- POP： 
+本手法の有効性を検証するため、以下の代表的なベースラインと比較した：
+- POP：
 最も単純なベースラインで、インタラクションの数によって判断される人気度によってアイテムをランク付けする。
 • BPR-MF [39]: It optimizes the matrix factorization with implicit feedback using a pairwise ranking loss.
-- BPR-MF [39]： 
+- BPR-MF [39]：
 BPR-MF[39]：ペアワイズ・ランキング・ロスを用いた暗黙のフィードバックにより、行列分解を最適化する。
 • NCF [12]: It models userâĂŞitem interactions with a MLP instead of the inner product in matrix factorization.
-- NCF [12]： 
+- NCF [12]：
 これは、行列分解における内積の代わりにMLPを用いて、ユーザとアイテムの相互作用をモデル化する。
 • FPMC [40]: It captures users’ general taste as well as their sequential behaviors by combing MF with first-order MCs.
-- FPMC [40]： 
+- FPMC [40]：
 MFと一次MCを組み合わせることで、ユーザーの一般的な嗜好と逐次的な行動を捉える。
 • GRU4Rec [15]: It uses GRU with ranking based loss to model user sequences for session based recommendation.
-- GRU4Rec [15]： 
+- GRU4Rec [15]：
 GRU4Rec[15]は、セッション・ベースの推薦のために、GRUとランキング・ベースの損失を用いてユーザ・シーケンスをモデル化する。
 • GRU4Rec+ [14]: It is an improved version of GRU4Rec with a new class of loss functions and sampling strategy.
-- GRU4Rec+ [14]： 
+- GRU4Rec+ [14]：
 GRU4Recの改良版で、新しいクラスの損失関数とサンプリング戦略を持つ。
 • Caser [49]: It employs CNN in both horizontal and vertical way to model high-order MCs for sequential recommendation.
-- Caser [49]： 
+- Caser [49]：
 逐次推薦のための高次MCをモデル化するために、水平方向と垂直方向の両方でCNNを用いる。
 • SASRec [22]: It uses a left-to-right Transformer language model to capture users’ sequential behaviors, and achieves state-of-the-art performance on sequential recommendation.
-- SASRec [22]： 
+- SASRec [22]：
 SASRecは、左から右へのTransformer言語モデルを用いて、ユーザの逐次的な行動をとらえ、逐次推薦において最先端の性能を達成している。
 For NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , and SASRec10, we use code provided by the corresponding authors.
 NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , SASRec10 については、対応する著者から提供されたコードを使用している。
@@ -592,7 +603,7 @@ The last column is the improvements of BERT4Rec relative to the best baseline.
 We omit the NDCG@1 results since it is equal to HR@1 in our experiments.
 NDCG@1の結果は、我々の実験ではHR@1と等しいので省略する。
 It can be observed that: The non-personalized POP method gives the worst performance12 on all datasets since it does not model user’s personalized preference using the historical records.
-以下のことが観察される： 
+以下のことが観察される：
 非パーソナライズドPOP法は、過去の記録を使用してユーザーのパーソナライズされた嗜好をモデル化しないため、すべてのデータセットで最悪のパフォーマンス12を示す。
 Among all the baseline methods, sequential methods (e.g., FPMC and GRU4Rec+) outperforms non-sequential methods (e.g., BPR-MF and NCF) on all datasets consistently.
 すべてのベースライン手法の中で、逐次手法（FPMCやGRU4Rec+など）は、すべてのデータセットで一貫して非逐次手法（BPR-MFやNCFなど）を上回る。
@@ -613,7 +624,7 @@ According to the results, it is obvious that BERT4Rec performs best among all me
 It gains 7.24% HR@10, 11.03% NDCG@10, and 11.46% MRR improvements (on average) against the strongest baselines.
 最強のベースラインに対して、HR@10で7.24%、NDCG@10で11.03%、MRRで11.46%の改善（平均）を達成した。
 Question 1: Do the gains come from the bidirectional self-attention model or from the Cloze objective?
-質問1： 
+質問1：
 その利益は、双方向の自己注意モデルからもたらされるのか、それともCloze目的からもたらされるのか？
 
 To answer this question, we try to isolate the effects of these two factors by constraining the Cloze task to mask only one item at a time.
@@ -629,7 +640,7 @@ It demonstrates the importance of bidirectional representations for sequential r
 Besides, the last two rows indicate that the Cloze objective also improves the performances.
 さらに、最後の2行は、クロース目標もパフォーマンスを向上させることを示している。
 Detailed analysis of the mask proportion ρ in Cloze task can be found in § 4.6 Question 2: Why and how does bidirectional model outperform unidirectional models? To answer this question, we try to reveal meaningful patterns by visualizing the average attention weights of the last 10 items during the test on Beauty in Figure 2.
-クローズ課題におけるマスク割合ρの詳細な分析は§4.6 Question 2にある： 
+クローズ課題におけるマスク割合ρの詳細な分析は§4.6 Question 2にある：
 なぜ、どのように双方向モデルが一方向モデルを上回るのか？この問いに答えるため、図2にBeauty上のテスト中の最後の10項目の平均注目重みを可視化することで、意味のあるパターンを明らかにしようとする。
 Due to the space limitation, we only report four representative attention heat-maps in different layers and heads.
 紙面の都合上、異なるレイヤーとヘッドにおける代表的な4つの注目度ヒートマップのみを報告する。
@@ -709,7 +720,7 @@ ML-1mとBeautyを例にとると、ρ=0.6は、ML-1mでは1シーケンスあた
 The former is too hard for model training.
 前者はモデルトレーニングにはハードルが高すぎる。
 
-## Impact of Maximum Sequence Length N 
+## Impact of Maximum Sequence Length N
 
 We also investigate the effect of the maximum sequence length N on model’s recommendation performances and efficiency.
 また、最大配列長Nがモデルの推薦性能と効率に及ぼす影響についても調査した。
@@ -739,7 +750,7 @@ Finally, we perform ablation experiments over a number of key components of BERT
 Table 5 shows the results of our default version (L = 2,h = 2) and its eleven variants on all four datasets with dimensionality d = 64 while keeping other hyperparameters (e.g., ρ) at their optimal settings.
 表5は、他のハイパーパラメータ（例えば、ρ）を最適な設定に保ちながら、次元d = 64の4つのデータセットすべてについて、我々のデフォルトバージョン（L = 2,h = 2）とその11のバリエーションについての結果を示している。
 We introduce the variants and analyze their effects respectively: (1) PE.
-それぞれの変種を紹介し、その効果を分析する： 
+それぞれの変種を紹介し、その効果を分析する：
 (1) PE.
 The results show that removing positional embeddings causes BERT4Rec’s performances decreasing dramatically on long sequence datasets (i.e., ML-1m and ML-20m).
 その結果、位置埋め込みを削除すると、長配列データセット（ML-1mとML-20m）においてBERT4Recの性能が劇的に低下することがわかった。
