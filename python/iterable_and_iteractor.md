@@ -1,6 +1,7 @@
 ## link
 
 - https://utokyo-ipp.github.io/4/4-2.html
+- [Pythonのイテレータとジェネレータ](https://qiita.com/tomotaka_ito/items/35f3eb108f587022fa09)
 
 # for文とIterableとIterator
 
@@ -105,3 +106,13 @@ True
 - Iterator:
   - `next()`を適用可能。`__next__`メソッドを持つ。(両者は等価)
   - `iter()`を適用した時、引数のオブジェクトをそのまま返す。
+
+# IteratorとGenerator
+
+- Iterator:
+  - 要素を繰り返し取り出す事のできるもの。(Interfaceらしいので、たぶん色んな種類の具象クラスがある)
+- Generator:
+  - Iteratorの一種(Iteratorを継承した具象クラスの1つ??)。
+  - 1要素を取り出そうとする(=`next()`関数や`__next__()`メソッドを呼ぶ)度に処理を行い、要素をgenerateする。
+  - generate可能な要素がなくなると、Iterator同様に例外`StopIteration`を発生させる。
+  - Pythonでは`yield`文を使った実装を指す事が多い。
