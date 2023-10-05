@@ -307,7 +307,7 @@ ML エンジニアは、**実運用環境でバグが発生した場合、モデ
 ## 4.3. Machine Learning Engineering is Very Experimental, Even in Production 4.3. 機械学習エンジニアリングは、プロダクションでも非常に実験的である
 
 ML engineering, as a discipline, is highly experimental and iterative in nature, especially compared to typical software engineering.
-MLエンジニアリングは、一般的なソフトウェアエンジニアリングと比較して、非常に実験的で反復的な性質を持つ分野. 
+MLエンジニアリングは、一般的なソフトウェアエンジニアリングと比較して、非常に実験的で反復的な性質を持つ分野.
 Contrary to popular negative sentiment around the large numbers of experiments and models that don’t make it to production, we found that it’s actually okay for experiments and models not to make it to production.
 一般に、大量の実験やモデルが製品化されないという事はネガティブなイメージがある. しかし、私たちは、**実験やモデルが製品化されなくても構わない**ということを発見した.
 What matters is making sure ideas can be prototyped and validated quickly—so that bad ones can be pruned away immediately.
@@ -332,17 +332,17 @@ P11 said:
 P11 はこう言っています。
 
 - We really think it’s important to bridge that gap between what’s often, you know, a [subject matter expert] in one room annotating and then handing things over the wire to a data scientist—a scene where you have no communication. So we make sure there’s both data science and subject matter expertise representation [on our teams]. ある部屋で専門家がアノテーションを行い、それをデータサイエンティストに引き継ぐというような、**コミュニケーションのない現場とのギャップを埋めることが重要だ**と考えている. ですから、**私たちのチームにはデータサイエンスと専門知識の両方が存在するようにしている**.
-To foster a more collaborative culture, P16 discussed the concept of “building goodwill” with other teams through tedious tasks that weren’t always explicitly a part of company plans:
-P16は、より協力的な文化を醸成するために、会社の計画には必ずしも明示されていない面倒な仕事を通じて、他のチームと「親善を深める」というコンセプトを打ち出した.
+  To foster a more collaborative culture, P16 discussed the concept of “building goodwill” with other teams through tedious tasks that weren’t always explicitly a part of company plans:
+  P16は、より協力的な文化を醸成するために、会社の計画には必ずしも明示されていない面倒な仕事を通じて、他のチームと「親善を深める」というコンセプトを打ち出した.
 
 - Sometimes we’ll fix something [here and] there to like build some good goodwill, so that we can call on them in the future...I do this stuff as I have to do it, not because I’m really passionate about doing it. 時には、将来、彼らに声をかけることができるよう、好意を持ってもらうために、あちこちを修理することもあります...私は、本当に情熱を持ってやっているわけではなく、やらなければならないこととしてやっている.
 
 ### 4.3.2. 4.3.2 Iterate on the data, not necessarily the model. 4.3.2. 4.3.2 必ずしもモデルではなく、データに対して反復する。
 
 Several participants recommended focusing on experiments that provide additional context to the model, typically via new features (P5, P6, P11, P12, P14, P16, P17, P18, P19).
-何人かの参加者は、典型的には新機能によってモデルに追加のコンテキストを提供する実験に焦点を当てることを推奨した（P5, P6, P11, P12, P14, P16, P17, P18, P19）. 
+何人かの参加者は、典型的には新機能によってモデルに追加のコンテキストを提供する実験に焦点を当てることを推奨した（P5, P6, P11, P12, P14, P16, P17, P18, P19）.
 P17 mentioned that most ML projects at their organization centered around adding new features.
-P17は、組織内のほとんどのMLプロジェクトが新機能の追加を中心にしていると述べた. 
+P17は、組織内のほとんどのMLプロジェクトが新機能の追加を中心にしていると述べた.
 P14 mentioned that one of their current projects was to move feature engineering pipelines from Scala to SparkSQL (a language more familiar to ML engineers and data scientists), so experiment ideas could be coded and validated faster.
 P14は、現在のプロジェクトの1つは、機能エンジニアリングパイプラインをScalaからSparkSQL（MLエンジニアやデータ科学者に馴染みのある言語）に移行し、実験のアイデアをより速くコード化し、検証できるようにすることであると述べた.
 P11 noted that iterating on the data, not the model, was preferable because it resulted in faster velocity:
@@ -405,7 +405,7 @@ Many engineers reported processes to analyze live failure modes and update the v
 P1 described this process as a departure from what they had learned in academia:
 P1は、このプロセスを、彼らがアカデミアで学んだことからの逸脱であると述べている.
 “You have this classic issue where most researchers are evaluat[ing] against fixed data sets...[but] most industry methods change their datasets.”
-「**ほとんどの研究者は固定されたデータセットに対して評価を行っているが，産業界の手法ではデータセットを変更することが多いのである**」. 
+「**ほとんどの研究者は固定されたデータセットに対して評価を行っているが，産業界の手法ではデータセットを変更することが多いのである**」.
 We found that these dynamic validation sets served two purposes:
 この動的検証セットには、2つの目的があることがわかった:
 
