@@ -92,16 +92,14 @@ To fix this, during the test, we append the special token “[mask]” at the en
 Extensive experiments on four datasets show that our model outperforms various state-of-the-art baselines consistently.
 4つのデータセットを用いた広範な実験により、我々のモデルが様々な最先端のベースラインを一貫して凌駕することが示された。
 
-
-The contributions of our paper are as follows: • We propose to model user behavior sequences with a bidirectional self-attention network through Cloze task.
+The contributions of our paper are as follows:
 本稿の貢献は以下の通りである：
-- 我々は、Cloze課題を通して、双方向の自己注意ネットワークを用いてユーザの行動シーケンスをモデル化することを提案する。
-To the best of our knowledge, this is the first study to introduce deep bidirectional sequential model and Cloze objective into the field of recommendation systems.
-我々の知る限り、これは推薦システムの分野に深層双方向逐次モデルとCloze目的語を導入した最初の研究である。
-• We compare our model with state-of-the-art methods and demonstrate the effectiveness of both bidirectional architecture and the Cloze objective through quantitative analysis on four benchmark datasets.
-- 我々のモデルを最新の手法と比較し、4つのベンチマークデータセットの定量的分析を通じて、双方向アーキテクチャとCloze目的語の有効性を実証する。
-• We conduct a comprehensive ablation study to analyze the contributions of key components in the proposed model.
-- 我々は、提案モデルの主要な構成要素の寄与を分析するために、包括的なアブレーション研究を行った。
+
+- We propose to model user behavior sequences with a bidirectional self-attention network through Cloze task. 我々は、**Cloze taskを用いる双方向のself-attentionネットワーク**を用いてユーザの行動シーケンスをモデル化することを提案する。To the best of our knowledge, this is the first study to introduce deep bidirectional sequential model and Cloze objective into the field of recommendation systems. 我々の知る限り、これは推薦システムの分野に深層双方向逐次モデルとCloze objectiveを導入した最初の研究である。
+
+- We compare our model with state-of-the-art methods and demonstrate the effectiveness of both bidirectional architecture and the Cloze objective through quantitative analysis on four benchmark datasets. 我々のモデルを最新の手法と比較し、4つのベンチマークデータセットの定量的分析を通じて、双方向アーキテクチャとCloze objectiveの有効性を実証する。
+
+- We conduct a comprehensive ablation study to analyze the contributions of key components in the proposed model. 我々は、提案モデルの主要な構成要素の寄与を分析するために、包括的なアブレーション研究を行った。
 
 # Related Work 関連作品
 
@@ -134,52 +132,55 @@ For example, Neural Collaborative Filtering (NCF) [12] estimates user preference
 ## Sequential Recommendation
 
 Unfortunately, none of the above methods is for sequential recommendation since they all ignore the order in users’ behaviors.
-残念ながら、上記の方法はどれもユーザーの行動の順序を無視しているため、逐次的な推薦には向いていない。
+残念ながら、上記の方法はどれも**ユーザの行動の順序を無視**しているため、逐次的な推薦には向いていない。
 
 Early works on sequential recommendation usually capture sequential patterns from user historical interactions using Markov chains (MCs).
-逐次レコメンデーションに関する初期の研究では、マルコフ連鎖（Markov Chain：MC）を用いて、ユーザーの過去のインタラクションから逐次パターンを捉えるのが一般的である。
+逐次レコメンデーションに関する初期の研究では、マルコフ連鎖（Markov Chain：MC）を用いて、ユーザの過去のインタラクションから逐次パターンを捉えるのが一般的である。
 For example, Shani et al.[45] formalized recommendation generation as a sequential optimization problem and employ Markov Decision Processes (MDPs) to address it.
 例えば、Shaniら[45]は推薦生成を逐次最適化問題として定式化し、マルコフ決定過程(MDP)を用いて対処している。
 Later, Rendle et al.[40] combine the power of MCs and MF to model both sequential behaviors and general interests by Factorizing Personalized Markov Chains (FPMC).
 その後、Rendleら[40]は、MCとMFのパワーを組み合わせて、因子化パーソナライズド・マルコフ連鎖（FPMC）により、逐次的行動と一般的興味の両方をモデル化した。
 Besides the first-order MCs, high-order MCs are also adopted to consider more previous items [10, 11].
-一次MCの他に、より多くの前の項目を考慮するために高次MCも採用されている[10, 11]。
+一次MCの他に、より多くの前のitemを考慮するために高次MCも採用されている[10, 11]。
 
 Recently, RNN and its variants, Gated Recurrent Unit (GRU) [4] and Long Short-Term Memory (LSTM) [17], are becoming more and more popular for modeling user behavior sequences [7, 14, 15, 28, 37, 56, 58].
-最近、RNNとその亜種であるGated Recurrent Unit（GRU）[4]とLong Short-Term Memory（LSTM）[17]は、ユーザーの行動シーケンスをモデル化するためにますます人気が高まっている[7, 14, 15, 28, 37, 56, 58]。
+最近、RNNとその亜種であるGated Recurrent Unit（GRU）[4]とLong Short-Term Memory（LSTM）[17]は、ユーザの行動シーケンスをモデル化するためにますます人気が高まっている[7, 14, 15, 28, 37, 56, 58]。
 The basic idea of these methods is to encode user’s previous records into a vector (i.e., representation of user’s preference which is used to make predictions) with various recurrent architectures and loss functions, including session-based GRU with ranking loss (GRU4Rec) [15], Dynamic REcurrent bAsket Model (DREAM) [58], user-based GRU [7], attention-based GRU (NARM) [28], and improved GRU4Rec with new loss function (i.e., BPR-max and TOP1-max) and an improved sampling strategy [14].
-これらの手法の基本的な考え方は、様々なリカレント・アーキテ クチャと損失関数を用いて、ユーザーの過去の記録をベクトル（すなわち、 予測を行うために使用されるユーザーの嗜好表現）にエンコードするこ とである、 これらの手法の基本的な考え方は、様々なリカレントアーキテクチャと損失関数（ランキング損失を持つセッションベースのGRU（GRU4Rec）[15]、Dynamic REcurrent bAsket Model（DREAM）[58]、ユーザーベースのGRU[7]、注意ベースのGRU（NARM）[28]、および新しい損失関数（すなわち、BPR-maxとTOP1-max）と改善されたサンプリング戦略を持つ改良されたGRU4Rec[14]）を使用して、ユーザーの嗜好をベクトル（すなわち、予測を行うために使用されるユーザーの嗜好の表現）に符号化することである。
+これらの手法の基本的な考え方は、様々なリカレント・アーキテクチャと損失関数を用いて、ユーザの過去の記録をベクトル(すなわち、 予測を行うために使用されるユーザのpreference representation）にエンコードすることである。
+例えば、ランキング損失を持つセッションベースのGRU（GRU4Rec）[15]、Dynamic REcurrent bAsket Model（DREAM）[58]、user-based GRU[7]、attention-based GRU（NARM）[28]、および新しい損失関数(すなわち、BPR-maxとTOP1-max)と改善されたサンプリング戦略を持つ改良されたGRU4Rec[14]）が使用される。
+
 Other than recurrent neural networks, various deep learning models are also introduced for sequential recommendation [3, 22, 33, 49].
 リカレントニューラルネットワーク以外にも、逐次推薦のために様々なディープラーニングモデルが導入されている[3, 22, 33, 49]。
 For example, Tang and Wang [49] propose a Convolutional Sequence Model (Caser) to learn sequential patterns using both horizontal and vertical convolutional filters.
-例えば、TangとWang[49]は、水平と垂直の畳み込みフィルタを使用して連続パターンを学習する畳み込みシーケンスモデル（Caser）を提案している。
+例えば、TangとWang[49]は、水平と垂直の畳み込みフィルタを使用して連続パターンを学習する畳み込みシーケンスモデル(Caser)を提案している。(Caserは他のsequential recommenderの論文のベースラインとして出てきたかも:thinking:)
 Chen et al.[3] and Huang et al.[19] employ Memory Network to improve sequential recommendation.
-Chenら[3]とHuangら[19]は、逐次推薦を改善するためにメモリネットワークを採用している。
+Chenら[3]とHuangら[19]は、逐次推薦を改善するためにMemory Network(??)を採用している。
 STAMP captures both users’ general interests and current interests using an MLP network with attention [33].
-STAMPは、ユーザーの一般的な興味と現在の興味の両方を、注意を喚起するMLPネットワークを使って捉えている[33]。
+STAMPは、ユーザの一般的な(generalな)興味と現在の興味の両方を、attention機構を含んだMLPネットワークを使って捉えている[33]。
 
-## Attention Mechanism 注目のメカニズム
+## Attention Mechanism
 
 Attention mechanism has shown promising potential in modeling sequential data, e.g., machine translation [2, 52] and text classification [? ].
-アテンション・メカニズムは、機械翻訳[2, 52]やテキスト分類[？]など、逐次データのモデリングにおいて有望な可能性を示している。
+アテンション・メカニズムは、機械翻訳[2, 52]やテキスト分類[？]など、**sequentialデータのモデリングにおいて有望な可能性**を示している。
 Recently, some works try to employ the attention mechanism to improve recommendation performances and interpretability [28, 33].
 最近では、推薦のパフォーマンスと解釈可能性を向上させるために、アテンション・メカニズムを採用しようとする研究もある[28, 33]。
 For example, Li et al.[28] incorporate an attention mechanism into GRU to capture both the user’s sequential behavior and main purpose in session-based recommendation.
-例えば、Liら[28]は、セッションベースの推薦において、ユーザーの逐次的行動と主目的の両方を捕捉するために、GRUにアテンションメカニズムを組み込んでいる。
+例えば、Liら[28]は、セッションベースの推薦において、ユーザの逐次的行動と主目的(?)の両方を捕捉するために、GRUにアテンションメカニズムを組み込んでいる。
+
 The works mentioned above basically treat attention mechanism as an additional component to the original models.
-上述した作品は、基本的に注意メカニズムをオリジナルモデルの追加要素として扱っている。
+上述した作品は、基本的に注意メカニズムをオリジナルモデルのadditional componentとして扱っている。
 In contrast, Transformer [52] and BERT [6] are built solely on multi-head self-attention and achieve state-of-the-art results on text sequence modeling.
-対照的に、Transformer[52]とBERT[6]は、マルチヘッド自己アテンションのみに基づいて構築されており、テキストシーケンスのモデリングにおいて最先端の結果を達成している。
+対照的に、**Transformer[52]とBERT[6]は、multi-head self-attentionのみに基づいて構築されており**、テキストシーケンスのモデリングにおいて最先端の結果を達成している。
 Recently, there is a rising enthusiasm for applying purely attention-based neural networks to model sequential data for their effectiveness and efficiency [30, 32, 38, 46? ].
-最近、その有効性と効率性から、純粋に注意に基づくニューラルネットワークを逐次データのモデルに適用しようという熱意が高まっている[30, 32, 38, 46?］
+最近、その有効性と効率性から、純粋にattenitonに基づくニューラルネットワークをsequentialデータのモデルに適用しようという熱意が高まっている[30, 32, 38, 46?］
 For sequential recommendation, Kang and McAuley [22] introduce a two-layer Transformer decoder (i.e., Transformer language model) called SASRec to capture user’s sequential behaviors and achieve state-of-the-art results on several public datasets.
-逐次推薦のために、KangとMcAuley [22]は、SASRecと呼ばれる2層のTransformerデコーダ（すなわち、Transformer言語モデル）を導入し、ユーザーの逐次行動を捕捉し、いくつかの公開データセットで最先端の結果を達成している。
+逐次推薦のために、KangとMcAuley [22]は、**SASRec**と呼ばれる2層のTransformerデコーダ(すなわち、Transformer言語モデル)を導入し、ユーザの逐次行動を捕捉し、いくつかの公開データセットで最先端の結果を達成している。(SASRecはself-attentionを使ったsequential recommenderで有名なやつ!:thinking:)
 SASRec is closely related to our work.
 SASRecは我々の仕事と密接な関係がある。
 However, it is still a unidirectional model using a casual attention mask.
-とはいえ、さりげないアテンションマスクを使った一方向的なモデルであることに変わりはない。
+とはいえ、casual attention mask(??)を使ったuni-directionalな(一方向的な)モデルであることに変わりはない。
 While we use a bidirectional model to encode users’ behavior sequences with the help of Cloze task.
-一方、我々はClozeタスクの助けを借りて、ユーザーの行動シーケンスを符号化するために双方向モデルを使用しています。
+一方、我々は**Clozeタスク**の助けを借りて、**ユーザの行動シーケンスを符号化するために双方向モデルを使用**しています。
 
 # BERT4REC BERT4REC
 
@@ -491,20 +492,21 @@ We evaluate the proposed model on four real-world representative datasets which 
 提案モデルを、ドメインとスパース性が大きく異なる4つの実世界の代表的なデータセットで評価する。
 
 • Amazon Beauty3 : This is a series of product review datasets crawled from Amazon.com by McAuley et al.[34].
+
 - Amazon Beauty3 ：
-これはMcAuleyら[34]によってAmazon.comからクロールされた一連の製品レビューデータセットである。
-They split the data into separate datasets according to the toplevel product categories on Amazon.
-アマゾンの商品カテゴリーごとにデータを分割した。
-In this work, we adopt the “Beauty” category.
-この作品では「ビューティー」カテゴリーを採用する。
-• Steam4 : This is a dataset collected from Steam, a large online video game distribution platform, by Kang and McAuley [22].
+  これはMcAuleyら[34]によってAmazon.comからクロールされた一連の製品レビューデータセットである。
+  They split the data into separate datasets according to the toplevel product categories on Amazon.
+  アマゾンの商品カテゴリーごとにデータを分割した。
+  In this work, we adopt the “Beauty” category.
+  この作品では「ビューティー」カテゴリーを採用する。
+  • Steam4 : This is a dataset collected from Steam, a large online video game distribution platform, by Kang and McAuley [22].
 - Steam4 ：
-これは、KangとMcAuley[22]によって、大規模なオンライン・ビデオゲーム配信プラットフォームであるSteamから収集されたデータセットである。
-• MovieLens [8]: This is a popular benchmark dataset for evaluating recommendation algorithms.
+  これは、KangとMcAuley[22]によって、大規模なオンライン・ビデオゲーム配信プラットフォームであるSteamから収集されたデータセットである。
+  • MovieLens [8]: This is a popular benchmark dataset for evaluating recommendation algorithms.
 - MovieLens [8]：
-これは推薦アルゴリズムを評価するための一般的なベンチマークデータセットである。
-In this work, we adopt two well-established versions, MovieLens 1m (ML1m) 5 and MovieLens 20m (ML-20m) 6 .
-この作品では、MovieLens 1m (ML1m) 5 と MovieLens 20m (ML-20m) 6 の 2 つの確立されたバージョンを採用している。
+  これは推薦アルゴリズムを評価するための一般的なベンチマークデータセットである。
+  In this work, we adopt two well-established versions, MovieLens 1m (ML1m) 5 and MovieLens 20m (ML-20m) 6 .
+  この作品では、MovieLens 1m (ML1m) 5 と MovieLens 20m (ML-20m) 6 の 2 つの確立されたバージョンを採用している。
 
 For dataset preprocessing, we follow the common practice in [22, 40, 49].
 データセットの前処理については、[22, 40, 49]の一般的なやり方に従う。
@@ -544,55 +546,56 @@ For all these metrics, the higher the value, the better the performance.
 
 To verify the effectiveness of our method, we compare it with the following representative baselines: • POP: It is the simplest baseline that ranks items according to their popularity judged by the number of interactions.
 本手法の有効性を検証するため、以下の代表的なベースラインと比較した：
+
 - POP：
-最も単純なベースラインで、インタラクションの数によって判断される人気度によってアイテムをランク付けする。
-• BPR-MF [39]: It optimizes the matrix factorization with implicit feedback using a pairwise ranking loss.
+  最も単純なベースラインで、インタラクションの数によって判断される人気度によってアイテムをランク付けする。
+  • BPR-MF [39]: It optimizes the matrix factorization with implicit feedback using a pairwise ranking loss.
 - BPR-MF [39]：
-BPR-MF[39]：ペアワイズ・ランキング・ロスを用いた暗黙のフィードバックにより、行列分解を最適化する。
-• NCF [12]: It models userâĂŞitem interactions with a MLP instead of the inner product in matrix factorization.
+  BPR-MF[39]：ペアワイズ・ランキング・ロスを用いた暗黙のフィードバックにより、行列分解を最適化する。
+  • NCF [12]: It models userâĂŞitem interactions with a MLP instead of the inner product in matrix factorization.
 - NCF [12]：
-これは、行列分解における内積の代わりにMLPを用いて、ユーザとアイテムの相互作用をモデル化する。
-• FPMC [40]: It captures users’ general taste as well as their sequential behaviors by combing MF with first-order MCs.
+  これは、行列分解における内積の代わりにMLPを用いて、ユーザとアイテムの相互作用をモデル化する。
+  • FPMC [40]: It captures users’ general taste as well as their sequential behaviors by combing MF with first-order MCs.
 - FPMC [40]：
-MFと一次MCを組み合わせることで、ユーザーの一般的な嗜好と逐次的な行動を捉える。
-• GRU4Rec [15]: It uses GRU with ranking based loss to model user sequences for session based recommendation.
+  MFと一次MCを組み合わせることで、ユーザーの一般的な嗜好と逐次的な行動を捉える。
+  • GRU4Rec [15]: It uses GRU with ranking based loss to model user sequences for session based recommendation.
 - GRU4Rec [15]：
-GRU4Rec[15]は、セッション・ベースの推薦のために、GRUとランキング・ベースの損失を用いてユーザ・シーケンスをモデル化する。
-• GRU4Rec+ [14]: It is an improved version of GRU4Rec with a new class of loss functions and sampling strategy.
+  GRU4Rec[15]は、セッション・ベースの推薦のために、GRUとランキング・ベースの損失を用いてユーザ・シーケンスをモデル化する。
+  • GRU4Rec+ [14]: It is an improved version of GRU4Rec with a new class of loss functions and sampling strategy.
 - GRU4Rec+ [14]：
-GRU4Recの改良版で、新しいクラスの損失関数とサンプリング戦略を持つ。
-• Caser [49]: It employs CNN in both horizontal and vertical way to model high-order MCs for sequential recommendation.
+  GRU4Recの改良版で、新しいクラスの損失関数とサンプリング戦略を持つ。
+  • Caser [49]: It employs CNN in both horizontal and vertical way to model high-order MCs for sequential recommendation.
 - Caser [49]：
-逐次推薦のための高次MCをモデル化するために、水平方向と垂直方向の両方でCNNを用いる。
-• SASRec [22]: It uses a left-to-right Transformer language model to capture users’ sequential behaviors, and achieves state-of-the-art performance on sequential recommendation.
+  逐次推薦のための高次MCをモデル化するために、水平方向と垂直方向の両方でCNNを用いる。
+  • SASRec [22]: It uses a left-to-right Transformer language model to capture users’ sequential behaviors, and achieves state-of-the-art performance on sequential recommendation.
 - SASRec [22]：
-SASRecは、左から右へのTransformer言語モデルを用いて、ユーザの逐次的な行動をとらえ、逐次推薦において最先端の性能を達成している。
-For NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , and SASRec10, we use code provided by the corresponding authors.
-NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , SASRec10 については、対応する著者から提供されたコードを使用している。
-For BPR-MF and FPMC, we implement them using TensorFlow.
-BPR-MFとFPMCについては、TensorFlowを使って実装している。
-For common hyperparameters in all models, we consider the hidden dimension size d from {16, 32, 64, 128, 256}, the ℓ2 regularizer from {1, 0.1, 0.01, 0.001, 0.0001}, and dropout rate from {0, 0.1, 0.2, · · · , 0.9}.
-全モデル共通のハイパーパラメータとして、隠れ次元サイズdを｛16, 32, 64, 128, 256｝から、ℓ2正則化を｛1, 0.1, 0.01, 0.001, 0.0001｝から、ドロップアウト率を｛0, 0.1, 0.2, - -, 0.9｝から考える。
-All other hyper-parameters (e.g., Markov order in Caser) and initialization strategies are either followed the suggestion from the methods’ authors or tuned on the validation sets.
-その他のハイパーパラメータ（例えば、Caserのマルコフ次数）と初期化ストラテジーはすべて、メソッドの著者からの提案に従うか、検証セット上でチューニングされたものである。
-We report the results of each baseline under its optimal hyper-parameter settings.
-各ベースラインの最適なハイパーパラメータ設定の結果を報告する。
-We implement BERT4Rec11 with TensorFlow.
-BERT4Rec11をTensorFlowで実装する。
-All parameters are initialized using truncated normal distribution in the range [−0.02, 0.02].
-すべてのパラメータは、[-0.02, 0.02]の範囲で切り捨てられた正規分布を用いて初期化される。
-We train the model using Adam [24] with learning rate of 1e-4, β1 = 0.9, β2 = 0.999, ℓ2 weight decay of 0.01, and linear decay of the learning rate.
-Adam [24]を使用し、学習率1e-4、β1 = 0.9、β2 = 0.999、ℓ2重み減衰0.01、学習率線形減衰でモデルを訓練する。
-The gradient is clipped when its ℓ2 norm exceeds a threshold of 5.
-ℓ2ノルムが閾値5を超えると勾配が切り取られる。
-For fair comparison, we set the layer number L = 2 and head number h = 2 and use the same maximum sequence length as in [22], N = 200 for ML-1m and ML-20m, N = 50 for Beauty and Steam datasets.
-公平な比較のために、レイヤー数L = 2、ヘッド数h = 2とし、[22]と同じ最大配列長、ML-1mとML-20mではN = 200、BeautyとSteamデータセットではN = 50を使用する。
-For head setting, we empirically set the dimensionality of each head as 32 (single head if d < 32).
-ヘッドの設定については、経験的に各ヘッドの次元数を32とした（d＜32の場合はシングルヘッド）。
-We tune the mask proportion ρ using the validation set, resulting in ρ = 0.6 for Beauty, ρ = 0.4 for Steam, and ρ = 0.2 for ML-1m and ML-20m.
-検証セットを用いてマスクの割合ρを調整した結果、Beautyではρ=0.6、Steamではρ=0.4、ML-1mとML-20mではρ=0.2となった。
-All the models are trained from scratch without any pre-training on a single NVIDIA GeForce GTX 1080 Ti GPU with a batch size of 256.
-すべてのモデルは、バッチサイズ256のNVIDIA GeForce GTX 1080 Ti GPU1台で、事前学習なしでゼロから学習された。
+  SASRecは、左から右へのTransformer言語モデルを用いて、ユーザの逐次的な行動をとらえ、逐次推薦において最先端の性能を達成している。
+  For NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , and SASRec10, we use code provided by the corresponding authors.
+  NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , SASRec10 については、対応する著者から提供されたコードを使用している。
+  For BPR-MF and FPMC, we implement them using TensorFlow.
+  BPR-MFとFPMCについては、TensorFlowを使って実装している。
+  For common hyperparameters in all models, we consider the hidden dimension size d from {16, 32, 64, 128, 256}, the ℓ2 regularizer from {1, 0.1, 0.01, 0.001, 0.0001}, and dropout rate from {0, 0.1, 0.2, · · · , 0.9}.
+  全モデル共通のハイパーパラメータとして、隠れ次元サイズdを｛16, 32, 64, 128, 256｝から、ℓ2正則化を｛1, 0.1, 0.01, 0.001, 0.0001｝から、ドロップアウト率を｛0, 0.1, 0.2, - -, 0.9｝から考える。
+  All other hyper-parameters (e.g., Markov order in Caser) and initialization strategies are either followed the suggestion from the methods’ authors or tuned on the validation sets.
+  その他のハイパーパラメータ（例えば、Caserのマルコフ次数）と初期化ストラテジーはすべて、メソッドの著者からの提案に従うか、検証セット上でチューニングされたものである。
+  We report the results of each baseline under its optimal hyper-parameter settings.
+  各ベースラインの最適なハイパーパラメータ設定の結果を報告する。
+  We implement BERT4Rec11 with TensorFlow.
+  BERT4Rec11をTensorFlowで実装する。
+  All parameters are initialized using truncated normal distribution in the range [−0.02, 0.02].
+  すべてのパラメータは、[-0.02, 0.02]の範囲で切り捨てられた正規分布を用いて初期化される。
+  We train the model using Adam [24] with learning rate of 1e-4, β1 = 0.9, β2 = 0.999, ℓ2 weight decay of 0.01, and linear decay of the learning rate.
+  Adam [24]を使用し、学習率1e-4、β1 = 0.9、β2 = 0.999、ℓ2重み減衰0.01、学習率線形減衰でモデルを訓練する。
+  The gradient is clipped when its ℓ2 norm exceeds a threshold of 5.
+  ℓ2ノルムが閾値5を超えると勾配が切り取られる。
+  For fair comparison, we set the layer number L = 2 and head number h = 2 and use the same maximum sequence length as in [22], N = 200 for ML-1m and ML-20m, N = 50 for Beauty and Steam datasets.
+  公平な比較のために、レイヤー数L = 2、ヘッド数h = 2とし、[22]と同じ最大配列長、ML-1mとML-20mではN = 200、BeautyとSteamデータセットではN = 50を使用する。
+  For head setting, we empirically set the dimensionality of each head as 32 (single head if d < 32).
+  ヘッドの設定については、経験的に各ヘッドの次元数を32とした（d＜32の場合はシングルヘッド）。
+  We tune the mask proportion ρ using the validation set, resulting in ρ = 0.6 for Beauty, ρ = 0.4 for Steam, and ρ = 0.2 for ML-1m and ML-20m.
+  検証セットを用いてマスクの割合ρを調整した結果、Beautyではρ=0.6、Steamではρ=0.4、ML-1mとML-20mではρ=0.2となった。
+  All the models are trained from scratch without any pre-training on a single NVIDIA GeForce GTX 1080 Ti GPU with a batch size of 256.
+  すべてのモデルは、バッチサイズ256のNVIDIA GeForce GTX 1080 Ti GPU1台で、事前学習なしでゼロから学習された。
 
 ## Overall Performance Comparison 総合成績の比較
 
