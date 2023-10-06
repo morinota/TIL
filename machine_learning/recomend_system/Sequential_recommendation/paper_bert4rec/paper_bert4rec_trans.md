@@ -1,15 +1,15 @@
-## link リンク
+## 0.1. link リンク
 
 https://arxiv.org/abs/1904.06690
 https://arxiv.org/abs/1904.06690
 
-## title タイトル
+## 0.2. title タイトル
 
 BERT4Rec: Sequential Recommendation with Bidirectional Encoder Representations from Transformer
 BERT4Rec：
 トランスフォーマからの双方向エンコーダ表現による逐次推薦
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 Modeling users’ dynamic preferences from their historical behaviors is challenging and crucial for recommendation systems.
 ユーザーの過去の行動から動的な嗜好をモデル化することは、推薦システムにとって挑戦的かつ重要である。
@@ -28,7 +28,7 @@ In this way, we learn a bidirectional representation model to make recommendatio
 Extensive experiments on four benchmark datasets show that our model outperforms various state-of-the-art sequential models consistently
 4つのベンチマークデータセットを用いた広範な実験により、我々のモデルが様々な最新の逐次モデルを一貫して凌駕することが示された。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 Accurately characterizing users’ interests lives at the heart of an effective recommendation system.
 ユーザーの興味を正確に把握することは、効果的な推薦システムの中核をなす。
@@ -101,12 +101,12 @@ The contributions of our paper are as follows:
 
 - We conduct a comprehensive ablation study to analyze the contributions of key components in the proposed model. 我々は、提案モデルの主要な構成要素の寄与を分析するために、包括的なアブレーション研究を行った。
 
-# Related Work 関連作品
+# 2. Related Work 関連作品
 
 In this section, we will briefly review several lines of works closely related to ours, including general recommendation, sequential recommendation, and attention mechanism.
 このセクションでは、一般的な推薦、逐次的推薦、注意メカニズムなど、我々の研究と密接に関連するいくつかの研究を簡単にレビューする。
 
-## General Recommendation
+## 2.1. General Recommendation
 
 Early works on recommendation systems typically use Collaborative Filtering (CF) to model users’ preferences based on their interaction histories [26, 43].
 推薦システムに関する初期の研究では、一般的に協調フィルタリング（CF）を用いて、ユーザーの対話履歴に基づく嗜好をモデル化している[26, 43]。
@@ -129,7 +129,7 @@ Another line of work seeks to take the place of conventional matrix factorizatio
 For example, Neural Collaborative Filtering (NCF) [12] estimates user preferences via Multi-Layer Perceptions (MLP) instead of inner product, while AutoRec [44] and CDAE [57] predict users’ ratings using Auto-encoder framework.
 例えば、ニューラル協調フィルタリング（NCF）[12]は、内積の代わりに多層知覚（MLP）を介してユーザーの嗜好を推定し、AutoRec[44]とCDAE[57]は、オートエンコーダーフレームワークを使用してユーザーの評価を予測する。
 
-## Sequential Recommendation
+## 2.2. Sequential Recommendation
 
 Unfortunately, none of the above methods is for sequential recommendation since they all ignore the order in users’ behaviors.
 残念ながら、上記の方法はどれも**ユーザの行動の順序を無視**しているため、逐次的な推薦には向いていない。
@@ -158,7 +158,7 @@ Chenら[3]とHuangら[19]は、逐次推薦を改善するためにMemory Networ
 STAMP captures both users’ general interests and current interests using an MLP network with attention [33].
 STAMPは、ユーザの一般的な(generalな)興味と現在の興味の両方を、attention機構を含んだMLPネットワークを使って捉えている[33]。
 
-## Attention Mechanism
+## 2.3. Attention Mechanism
 
 Attention mechanism has shown promising potential in modeling sequential data, e.g., machine translation [2, 52] and text classification [? ].
 アテンション・メカニズムは、機械翻訳[2, 52]やテキスト分類[？]など、**sequentialデータのモデリングにおいて有望な可能性**を示している。
@@ -182,227 +182,238 @@ However, it is still a unidirectional model using a casual attention mask.
 While we use a bidirectional model to encode users’ behavior sequences with the help of Cloze task.
 一方、我々は**Clozeタスク**の助けを借りて、**ユーザの行動シーケンスを符号化するために双方向モデルを使用**しています。
 
-# BERT4REC BERT4REC
+# 3. BERT4REC BERT4REC
 
 Before going into the details, we first introduce the research problem, the basic concepts, and the notations in this paper.
 詳細に入る前に、まず本稿における研究課題、基本概念、表記法を紹介する。
 
-## Problem Statement
+## 3.1. Problem Statement
 
-In sequential recommendation, let U={u1,u2, .
-逐次推薦では、U={u1,u2, .
-..
-..
-,u|U | } denote a set of users, V={v1,v2, .
-U
-..
-..
-,v|V | } be a set of items, and list Su=[v (u) 1 , .
-V
-..
-..
-,v (u) t , .
-v (u) t , .
-..
-..
-,v (u) nu ] denote the interaction sequence in chronological order for user u ∈ U, where v (u) t ∈ V is the item that u has interacted with at time step2 t and nu is the the length of interaction sequence for user u.
-ここで、v (u) t∈V は、u が時間ステップ2 t で対話したアイテムであり、nu は、ユーザ u の対話シーケンスの長さである。
+In sequential recommendation, let $U=\{u_1,u_2, \cdots, u_{|U|}\}$ denote a set of users, $V=\{v_1,v_2, \cdots, v_{|V|}\}$ be a set of items, and list $S_u=[v^{(u)}_1, \cdots, v^{(u)}_{t}, \cdots, v^{(u)}_{n_u}]$ denote the interaction sequence in chronological order for user u ∈ U, where v (u) t ∈ V is the item that u has interacted with at time step2 t and nu is the the length of interaction sequence for user u.
+逐次推薦において、$U=\{u_1,u_2, \cdots, u_{|U|}\}$ をユーザの集合、$V=\{v_1,v_2, \cdots, v_{|V|}\}$ はアイテムの集合、リスト $S_u=[v^{(u)}_1, \cdots, v^{(u)}_{t}, \cdots, v^{(u)}_{n_u}]$ はユーザu∈Uの時系列での対話シーケンスを示す。
+ここで、$v^{(u)}_{t} \in V$ は、u が時間ステップ $t$ で相互作用したアイテムであり、nu は、ユーザーu の相互作用シーケンスの長さである。
+(2Here, following [22, 40], we use the relative time index instead of absolute time index for numbering interaction records.)
+(ここでは、[22, 40]に従い、交流記録の番号付けに絶対時間インデックスの代わりに相対時間インデックスを使用する。)
 Given the interaction history Su , sequential recommendation aims to predict the item that user u will interact with at time step nu + 1.
-インタラクション履歴Suが与えられると、逐次レコメンデーションは時間ステップnu + 1でユーザーuがインタラクションするアイテムを予測することを目的とする。
+インタラクション履歴 $S_u$ が与えられると、逐次推薦は時間ステップ $n_u + 1$ でユーザ $u$がインタラクションするアイテムを予測することを目的とする。
 It can be formalized as modeling the probability over all possible items for user u at time step nu+1:
-これは、時間ステップnu+1におけるユーザーuのすべての可能な項目にわたる確率をモデル化するものとして定式化することができる：
+これは、**時間ステップ $n_u +1$ におけるユーザ $u$ のすべてのinteraction可能なitemにわたる確率**をモデル化するものとして定式化することができる:(要は条件付き確率。これをどうにかモデル化しますよ、という話か。)
 
-## Model Architecture モデル・アーキテクチャ
+$$
+p(v^{(u)}_{n_u + 1} = v |\mathcal{S}_{u})
+$$
+
+## 3.2. Model Architecture モデル・アーキテクチャ
 
 Here, we introduce a new sequential recommendation model called BERT4Rec, which adopts Bidirectional Encoder Representations from Transformers to a new task, sequential Recommendation.
-ここでは、BERT4Recと呼ばれる新しい逐次推薦モデルを紹介する。BERT4Recは、新しいタスクである逐次推薦に、トランスフォーマからの双方向エンコーダ表現を採用したものである。
+ここでは、BERT4Recと呼ばれる新しい逐次推薦モデルを紹介する。BERT4Recは、新しいタスク(BERTにとって!)である逐次推薦に、トランスフォーマからの双方向エンコーダ表現を採用したものである。
 It is built upon the popular self-attention layer, “Transformer layer”.
-このレイヤーは、人気の高い自己アテンション・レイヤー「トランスフォーマー・レイヤー」の上に構築されている。
+これは、人気の高いself-attentionレイヤー「トランスフォーマー・レイヤー」の上に構築されている。
+
+![figure 1 b]()
+
 As illustrated in Figure 1b, BERT4Rec is stacked by L bidirectional Transformer layers.
 図1bに示すように、BERT4RecはL個の双方向トランスフォーマー層によって積層されている。
 At each layer, it iteratively revises the representation of every position by exchanging information across all positions at the previous layer in parallel with the Transformer layer.
-各レイヤーで、トランスフォーマーレイヤーと並行して、前のレイヤーのすべてのポジションの情報を交換することによって、すべてのポジションの表現を繰り返し修正する。
+各レイヤーで、トランスフォーマーレイヤーと並行して、前のレイヤーのすべてのポジションの情報を交換することによって(??)、すべてのポジションの表現を繰り返し修正する。
 Instead of learning to pass relevant information forward step by step as RNN based methods did in Figure 1d, self-attention mechanism endows BERT4Rec with the capability to directly capture the dependencies in any distances.
-図1dのRNNベースの手法のように、関連する情報を段階的に前方に渡すように学習する代わりに、自己注意メカニズムは、BERT4Recに、あらゆる距離の依存関係を直接捕捉する能力を与えている。
+図1dのRNNベースの手法のように、関連する情報を段階的に前方に渡すように学習する代わりに、self-attentionメカニズムは、BERT4Recに、あらゆる距離の依存関係を直接捕捉する能力を与えている。
 This mechanism results in a global receptive field, while CNN based methods like Caser usually have a limited receptive field.
-このメカニズムにより、グローバルな受容野が得られるが、CaserのようなCNNベースの手法は通常、受容野が限定される。
+このメカニズムにより、グローバルなreceptive fieldが得られるが、CaserのようなCNNベースの手法は通常、receptive fieldが限定される。(長期記憶と短期記憶的な話だろうか...??:thinking:)
 In addition, in contrast to RNN based methods, self-attention is straightforward to parallelize.
-また、RNNベースの手法とは対照的に、自己アテンションは並列化が容易である。
-Comparing Figure 1b, 1c, and 1d, the most noticeable difference is that SASRec and RNN based methods are all left-to-right unidirectional architecture, while our BERT4Rec uses bidirectional self-attention to model users’ behavior sequences.
-図1b、図1c、図1dを比較すると、最も顕著な違いは、SASRecとRNNベースの手法はすべて左から右への一方向アーキテクチャであるのに対し、我々のBERT4Recはユーザの行動シーケンスをモデル化するために双方向の自己注意を使用していることである。
-In this way, our proposed model can obtain more powerful representations of users’ behavior sequences to improve recommendation performances.
-このようにして、我々の提案するモデルは、推薦パフォーマンスを向上させるために、ユーザーの行動シーケンスのより強力な表現を得ることができる。
+また、RNNベースの手法とは対照的に、**自己アテンションは並列化が容易**である。(Transformerの論文に書いてあったかも)
 
-## Transformer Layer トランスフォーマーレイヤー
+Comparing Figure 1b, 1c, and 1d, the most noticeable difference is that SASRec and RNN based methods are all left-to-right unidirectional architecture, while our BERT4Rec uses bidirectional self-attention to model users’ behavior sequences.
+図1b、図1c、図1dを比較すると、最も顕著な違いは、SASRecとRNNベースの手法はすべて左から右への一方向アーキテクチャであるのに対し、我々のBERT4Recはユーザの行動シーケンスをモデル化するために**双方向の自己注意を使用**していることである。
+In this way, our proposed model can obtain more powerful representations of users’ behavior sequences to improve recommendation performances.
+このようにして、我々の提案するモデルは、推薦パフォーマンスを向上させるために、ユーザの行動シーケンスのより強力な表現を得ることができる。
+
+## 3.3. Transformer Layer トランスフォーマーレイヤー
 
 As illustrated in Figure 1b, given an input sequence of length t, we iteratively compute hidden representations h l i at each layer l for each position i simultaneously by applying the Transformer layer from [52].
-図1bに示すように、長さtの入力シーケンスが与えられると、[52]のTransformer層を適用することで、各位置iに対して各層lで隠れ表現h l iを同時に反復計算する。
-Here, we stack h l i ∈ R d together into matrix Hl ∈R t×d since we compute attention function on all positions simultaneously in practice.
-ここで、h l i ∈ R d を行列 Hl ∈R t×d に積み重ねるが、これは実際にはすべての位置で同時に注意関数を計算するためである。
+図1bに示すように、長さ $t$ の入力シーケンスが与えられると、[52]のTransformer層を適用することで、各位置 $i$ に対して各層 $l$ で隠れ表現 $\mathbf{h}^{l}_{i}$ を同時に反復計算する。
+Here, we stack $\mathbf{h}^{l}_{i} \in \mathbb{R}^{d}$ together into matrix Hl ∈R t×d since we compute attention function on all positions simultaneously in practice.
+ここで、$\mathbf{h}^{l}_{i} \in \mathbb{R}^{d}$ を行列 $\mathbf{H}^{l} \in \mathbb{R}^{t \times d}$ に積み重ねるが、これは実際にはすべての位置で同時にattention関数を計算するためである。
 As shown in Figure 1a, the Transformer layer Trm contains two sub-layers, a Multi-Head Self-Attention sub-layer and a Position-wise Feed-Forward Network.
-図1aに示すように、変圧器層Trmは2つのサブレイヤー、マルチヘッド自己保持サブレイヤーと位置ワイズフィードフォワードネットワークを含む。
-Multi-Head Self-Attention.
-マルチヘッドの自己アテンション。
+図1aに示すように、Trensformer層 Trm は2つのサブレイヤー、multi-head self-attention サブレイヤーと position-wise フィードフォワードネットワークを含む。
+
+### 3.3.1. Multi-Head Self-Attention.マルチヘッドの自己アテンション。
+
 Attention mechanisms have become an integral part of sequence modeling in a variety of tasks, allowing capturing the dependencies between representation pairs without regard to their distance in the sequences.
-注意メカニズムは、様々なタスクにおけるシーケンスモデリングの不可欠な要素となっており、シーケンス内の距離に関係なく、表現ペア間の依存関係を捉えることができる。
+注意メカニズムは、**様々なタスクにおけるシーケンスモデリングの不可欠な要素となっており、シーケンス内の距離に関係なく、表現ペア間の依存関係を捉えることができる**。
 Previous work has shown that it is beneficial to jointly attend to information from different representation subspaces at different positions [6, 29, 52].
-これまでの研究で、異なる位置にある異なる表現部分空間からの情報に共同で注意を向けることが有益であることが示されている[6, 29, 52]。
+これまでの研究で、異なる位置にある異なる表現部分空間からの情報に共同で注意を向けることが有益であることが示されている[6, 29, 52]。(これがmulti-head attetionを採用する理由なのか...!:thinking:)
 Thus, we here adopt the multi-head self-attention instead of performing a single attention function.
-したがって、ここでは単一の注意機能を実行する代わりに、多頭自己注意を採用する。
+したがって、ここでは単一の注意機能を実行する代わりに、multi-head self-attentionを採用する。
 Specifically, multi-head attention first linearly projects Hl into h subspaces, with different, learnable linear projections, and then apply h attention function in parallel to produce the output representations which are concatenated and once again projected:
-具体的には、マルチヘッド注意は、まずHlを異なる学習可能な線形投影でh個の部分空間に線形投影し、次にh個の注意関数を並列に適用して出力表現を生成し、それを連結してもう一度投影する：
+具体的には、マルチヘッド注意は、まず $\mathbf{H}^{l}$ を異なる学習可能な線形投影で $h$ 個の部分空間に線形投影し、次に $h$ 個のself-attetion関数を並列に適用して出力表現を生成し、それを連結してもう一度投影する(これはTransformerの論文でやったやつ:thinking:):
 
 $$
+MH(\mathbf{H}^l) = [head_1;head_2; \cdots, ;head_{h}] \mathbf{W}^O
+\\
+head_i = Attention(\mathbf{H}^l \mathbf{W}^Q_{i}, \mathbf{H}^l \mathbf{W}^K_{i}, \mathbf{H}^l \mathbf{W}^V_{i})
 \tag{1}
 $$
 
-where the projections matrices for each headW Q i ∈ R d×d/h ,W K i ∈ R d×d/h ,WV i ∈ R d×d/h , andW O i ∈ R d×d are learnable parameters.
-ここで、各ヘッドの投影行列W Q i∈R d×d/h ,W K i∈R d×d/h ,WV i∈R d×d/h ,W O i∈R d×dは学習可能なパラメータである。
+where the projections matrices for each head $\mathbf{W}^Q_i \in \mathbb{R}^{d×d/h}$, $\mathbf{W}^K_i \in \mathbb{R}^{d×d/h}$, $\mathbf{W}^V_i \in \mathbb{R}^{d×d/h}$, and $\mathbf{W}^O_i \in \mathbb{R}^{d×d}$ are learnable parameters.
+ここで、各ヘッドの投影行列 $\mathbf{W}^Q_i \in \mathbb{R}^{d×d/h}$, $\mathbf{W}^K_i \in \mathbb{R}^{d×d/h}$, $\mathbf{W}^V_i \in \mathbb{R}^{d×d/h}$, and $\mathbf{W}^O_i \in \mathbb{R}^{d×d}$ は学習可能なパラメータである。
 Here, we omit the layer subscript l for the sake of simplicity.
-ここでは簡略化のため、レイヤーの添え字lは省略する。
+ここでは簡略化のため、レイヤーの添え字 $l$ は省略する。
 In fact, these projection parameters are not shared across the layers.
-実際、これらの投影パラメータはレイヤー間で共有されることはない。
+実際、これらの投影パラメータはレイヤー間で共有されることはない。(各レイヤーが異なるパラメータを持つ。)
 Here, the Attention function is Scaled Dot-Product Attention:
 ここで、アテンション関数はScaled Dot-Product Attentionである：
 
 $$
+Attention(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = softmax(\frac{QK^T}{\sqrt{d/h}}) V
 \tag{2}
 $$
 
 where query Q, key K, and value V are projected from the same matrix Hl with different learned projection matrices as in Equation 1.
-ここで、クエリQ、キーK、値Vは、式1のように異なる学習された射影行列で同じ行列Hlから射影される。
-The temperature p d/h is introduced to produce a softer attention distribution for avoiding extremely small gradients [16, 52].
-温度p d/hは、極端に小さな勾配を避けるために、よりソフトな注目度分布を作り出すために導入されている[16, 52]。
-Position-wise Feed-Forward Network.
-ポジションごとのフィードフォワードネットワーク。
+ここで、クエリQ、キーK、値Vは、式1のように異なる学習された射影行列で、同じ行列 $H^l$ から射影される。
+The temperature $\sqrt{d/h}$ is introduced to produce a softer attention distribution for avoiding extremely small gradients [16, 52].
+温度 $\sqrt{d/h}$ は、極端に小さな勾配を避けるために、よりソフトなattention分布を作り出すために導入されている[16, 52]。(うんうん、Transformer論文でやったやつ。)
+
+### 3.3.2. Position-wise Feed-Forward Network. ポジションごとのフィードフォワードネットワーク。
+
 As described above, the self-attention sub-layer is mainly based on linear projections.
-上述したように、自己アテンションサブレイヤーは主に線形投影に基づいている。
+上述したように、self-attentionサブレイヤーは主に**線形投影に基づいている**。(このパートだけだと線形モデル...!)
 To endow the model with nonlinearity and interactions between different dimensions, we apply a Position-wise Feed-Forward Network to the outputs of the self-attention sub-layer, separately and identically at each position.
-モデルに非線形性と異なる次元間の相互作用を持たせるために、自己注意サブレイヤーの出力に、各位置で別々に、かつ同一に、位置ごとのフィード・フォワード・ネットワークを適用する。
+**モデルに非線形性と異なる次元間の相互作用を持たせるために**、自己注意サブレイヤーの出力に、各位置で別々に、かつ同一に、position-wise フィード・フォワード・ネットワークを適用する。
 It consists of two affine transformations with a Gaussian Error Linear Unit (GELU) activation in between:
-これは、2つのアフィン変換と、その間のGELU（Gaussian Error Linear Unit）活性化からなる：
+これは、2つのアフィン変換と、その間のGELU(Gaussian Error Linear Unit)活性化からなる：
 
 $$
+PFFN(\mathbf{H}^l) = [FFN(\mathbf{h}^l_1)^T; \cdots; FFN(\mathbf{h}^l_t)^T]^T
+\\
+FFN(\mathbf{x}) = GELU(\mathbf{x}\mathbf{W}^1 + \mathbf{b}^1)\mathbf{W}^2 + \mathbf{b}^2
+\\
+GELU(x) = x \Phi(x)
 \tag{3}
 $$
 
 where Φ(x) is the cumulative distribution function of the standard gaussian distribution, W (1) ∈ R d×4d , W (2) ∈ R 4d×d , b (1) ∈ R 4d and b (2) ∈ R d are learnable parameters and shared across all positions.
-ここで、Φ(x)は標準ガウス分布の累積分布関数であり、W (1) ∈ R d×4d 、W (2) ∈ R 4d×d 、b (1) ∈ R 4d および b (2) ∈ R d は学習可能なパラメータであり、すべてのポジションで共有される。
+ここで、$\Phi(x)$ は標準ガウス分布の累積分布関数(=じゃあ0 ~ 1になるやつか!たぶんsigmoidと近い形なのかな!)であり、$W^(1) \in \mathbb{R}^{d \times 4d}$, $W^(2) \in \mathbb{R}^{4d×\times d}$, $\mathbf{b}^(1) \in \mathbb{R}^{4d}$ および $\mathbf{b}^(2) \in \mathbb{R}^{d}$ は学習可能なパラメータであり、すべてのポジション(=**sequence内のposition $1 ~ t$!!**)で共有される。
 We omit the layer subscript l for convenience.
-便宜上、レイヤーの添え字lは省略する。
+便宜上、レイヤーの添え字 $l$ は省略する。(=Transformerブロックの数だっけ?? 確か推薦タスクだと2個くらいでイイっていう...!)
 In fact, these parameters are different from layer to layer.
 実際、これらのパラメータはレイヤーごとに異なる。
 In this work, following OpenAI GPT [38] and BERT [6], we use a smoother GELU [13] activation rather than the standard ReLu activation.
 この作品では、OpenAI GPT [38] と BERT [6] に従って、標準的な ReLu 活性化ではなく、より滑らかな GELU [13] 活性化を使用しています。
-Stacking Transformer Layer.
-スタッキング・トランスフォーマー・レイヤー。
+
+### 3.3.3. Stacking Transformer Layer. スタッキング・トランスフォーマー・レイヤー。
+
+![fig1a]()
+
 As elaborated above, we can easily capture item-item interactions across the entire user behavior sequence using self-attention mechanism.
-上述したように、自己アテンションメカニズムを使えば、ユーザーの行動シーケンス全体にわたって、項目と項目の相互作用を簡単に捉えることができる。
+上述したように、自己アテンションメカニズムを使えば、ユーザの行動シーケンス全体にわたって、itemとitemの相互作用を簡単に捉えることができる。
 Nevertheless, it is usually beneficial to learn more complex item transition patterns by stacking the self-attention layers.
-とはいえ、通常、自己注意のレイヤーを重ねることで、より複雑な項目遷移パターンを学習することは有益である。
+とはいえ、通常、self-attentionのレイヤーを重ねることで、より複雑なitem transition(遷移)パターンを学習することは有益である。
 However, the network becomes more difficult to train as it goes deeper.
 しかし、ネットワークは深くなるにつれて訓練が難しくなる。
 Therefore, we employ a residual connection [9] around each of the two sublayers as in Figure 1a, followed by layer normalization [1].
-そのため、図1aのように、2つのサブレイヤーそれぞれの周囲に残差接続[9]を採用し、続いてレイヤー正規化[1]を行う。
+そのため、図1aのように、2つのサブレイヤーそれぞれの周囲に残差接続(residual connection)[9]を採用し、続いてレイヤー正規化[1]を行う。(resnet的なやつ??)
 Moreover, we also apply dropout [47] to the output of each sub-layer, before it is normalized.
 さらに、正規化する前に、各サブレイヤーの出力にドロップアウト[47]を適用する。
 That is, the output of each sub-layer is LN(x + Dropout(sublayer(x))), where sublayer(·) is the function implemented by the sub-layer itself, LN is the layer normalization function defined in [1].
-ここで、sublayer(-)はサブレイヤー自身が実装する関数であり、LNは[1]で定義されたレイヤー正規化関数である。
+つまり、各サブレイヤの出力は $LN(x + Dropout(sublayer(x)))$ となる、
+ここで、$sublayer(-)$ はサブレイヤ自身によって実装された関数であり、$LN$ は [1] で定義されたレイヤ正規化関数である。
 We use LN to normalize the inputs over all the hidden units in the same layer for stabilizing and accelerating the network training.
-LNを使用して、同じレイヤーにあるすべての隠れユニットの入力を正規化し、ネットワーク学習を安定化・高速化する。
+$LN$ を使用して、同じレイヤーにあるすべての隠れユニットの入力を正規化し、ネットワーク学習を安定化・高速化する。(なるほど?レイヤー正規化はそういう効果なのか...!:thinking:)
 
 In summary, BERT4Rec refines the hidden representations of each layer as follows:
-要約すると、BERT4Rec は各層の隠れ表現を以下のように洗練する：
+要約すると、BERT4Rec は各層の隠れ表現を以下のように洗練する:
+($l$ は各Transformerブロックの添字)
 
 $$
+\mathbf{H}^{l} = Trm(\mathbf{H}^{l-1}), \forall i \in [1, \cdots, L]
 \tag{4}
 $$
 
+(↑前のTransformerブロックの出力が、次のTransformerブロックの入力になる)
+
 $$
+Trm(\mathbf{H}^{l-1}) = LN(A^{l-1} + Dropout(PFFN(A^{l-1})))
 \tag{5}
 $$
 
+(↑Residual connectionとPFFN)
+
 $$
+A^{l-1} = LN(\mathbf{H}^{l} + Dropout(MH(\mathbf{H}^{l-1})))
 \tag{6}
 $$
 
-## Embedding Layer エンベッディングレイヤー
+(↑Residual connectionとMulti-head attention)
+
+## 3.4. Embedding Layer エンベッディングレイヤー
 
 As elaborated above, without any recurrence or convolution module, the Transformer layer Trm is not aware of the order of the input sequence.
-上で詳しく説明したように、再帰や畳み込みモジュールを持たないトランスフォーマー層Trmは、入力シーケンスの順序を意識しない。
+上で詳しく説明したように、再帰や畳み込みモジュールを持たないトランスフォーマー層 Trm は、入力シーケンスの順序を意識しない。(あ、だからpositional encodingが必要、みたいなやつだっけ!!)
 In order to make use of the sequential information of the input, we inject Positional Embeddings into the input item embeddings at the bottoms of the Transformer layer stacks.
-入力の連続情報を利用するために、Transformerレイヤーのスタックの一番下にある入力項目の埋め込みに位置埋め込みを注入する。
+入力の連続情報を利用するために、Transformerレイヤーのスタックの一番下にある入力itemの埋め込みに位置埋め込み(positional embedding)を注入する。
 For a given item vi , its input representation h 0 i is constructed by summing the corresponding item and positional embedding.
-与えられた項目viに対して、その入力表現h 0 iは、対応する項目と位置の埋め込みを合計することによって構築される。
+与えられたitem $v_i$に対して、その入力表現 $\mathbf{h}^{0}_{i}$ は、対応するitem埋め込みと位置埋め込みを合計することによって構築される。
 
 $$
+\mathbf{h}^{0}_{i} = \mathbf{v}_{i} + \mathbf{p}_{i}
 \tag{}
 $$
 
-pi where vi ∈E is the d−dimensional embedding for item vi , pi ∈P is the d−dimensional positional embedding for position index i.
-piここで、vi∈Eは項目viのd次元埋め込み、pi∈Pは位置インデックスiのd次元位置埋め込みである。
+where vi ∈E is the d−dimensional embedding for item vi , pi ∈P is the d−dimensional positional embedding for position index i.
+ここで、vi∈Eは項目viのd次元埋め込み、pi∈Pは位置インデックスiのd次元位置埋め込みである。
 In this work, we use the learnable positional embeddings instead of the fixed sinusoid embeddings in [52] for better performances.
 本研究では、より良い性能を得るために、[52]の固定正弦波埋め込みに代えて、学習可能な位置埋め込みを用いる。
 The positional embedding matrix P ∈ R N ×d allows our model to identify which portion of the input it is dealing with.
-位置埋め込み行列P（R N ×d）は、我々のモデルが入力のどの部分を扱っているかを識別することを可能にする。
+位置埋め込み行列 $\mathbf{P} \in \mathbb{R}^{N \times d}$ は、我々のモデルが入力のどの部分を扱っているかを識別することを可能にする。
 However, it also imposes a restriction on the maximum sentence length N that our model can handle.
-しかし、これはまた、我々のモデルが扱える最大の文の長さNに制限を課すものでもある。
-Thus, we need to truncate the the input sequence [v1, .
-したがって、入力列[v1, .
-..
-..
-,vt ] to the last N items [v u t−N +1 , .
-vt ]から最後のN個の項目 [v u t-N +1 , .
-..
-..
-,vt ] if t > N.
-vt ]である。
+しかし、これはまた、我々のモデルが扱える最大の文の長さ $H$ に制限を課すものでもある。
+Thus, we need to truncate the the input sequence [v1, . . . ,vt ] to the last N items [v u t−N +1 , . . . ,vt ] if t > N.
+したがって、入力列[v1, ... ,vt ]は、t > Nの場合、最後のN個の項目[v u t-N +1 , ... ,vt ]まで切り捨てる必要がある。(古い要素を切り捨てるって話)
 
-## Output Layer 出力レイヤー
+## 3.5. Output Layer 出力レイヤー
+
+![fig1 b]()
 
 After L layers that hierarchically exchange information across all positions in the previous layer, we get the final output HL for all items of the input sequence.
-前の層のすべての位置の情報を階層的に交換するL層の後、入力シーケンスのすべての項目に対する最終的な出力HLが得られる。
+前の層のすべての位置の情報を階層的に交換するL個のTransformerブロックの後、入力シーケンスのすべてのitemに対する最終的な出力 $\mathbf{H}^{L}$ が得られる。
 Assuming that we mask the item vt at time step t, we then predict the masked items vt base on h L t as shown in Figure 1b.
-時間ステップtでアイテムvtをマスクすると仮定すると、図1bに示すように、h L tに基づいてマスクされたアイテムvtを予測する。
+時間ステップ $t$ でアイテム $v_{t}$ をマスクすると仮定すると、図1bに示すように、$\mathbf{h}^L_t$ に基づいてマスクされたアイテム $v_t$ を予測する。
 Specifically, we apply a two-layer feed-forward network with GELU activation in between to produce an output distribution over target items:
-具体的には、GELU活性化を挟んだ2層のフィードフォワードネットワークを適用し、ターゲット項目に対する出力分布を生成する：
+具体的には、GELU活性化を挟んだ2層のフィードフォワードネットワークを適用し、ターゲットitemsに対する出力分布を生成する:
 
 $$
+P(v) = softmax(GELU(\mathbf{h}^L_{t} W^P + \mathbf{b}^P) \mathbf{E}^T + \mathbf{b}^O)
 \tag{7}
 $$
 
 where W P is the learnable projection matrix, b P , and b O are bias terms, E ∈ R |V |×d is the embedding matrix for the item set V.
-V
+ここで、$W^P$ は学習可能な射影行列、$b^P$ 、$b^O$ はバイアス項、$\mathbf{E} \in \mathbb{R}^{|V|\times d$ はitem集合Vの埋め込み行列である。
 We use the shared item embedding matrix in the input and output layer for alleviating overfitting and reducing model size.
-我々は、オーバーフィッティングを緩和し、モデルサイズを小さくするために、入力層と出力層で共有項目埋め込み行列を使用する。
+我々は、オーバーフィッティングを緩和し、モデルサイズを小さくするために、**入力層と出力層で共有item埋め込み行列を使用する**。
 
-## Model Learning モデル学習
+## 3.6. Model Learning モデル学習
 
-Training.
-トレーニング
+### Training.トレーニング
+
 Conventional unidirectional sequential recommendation models usually train the model by predicting the next item for each position in the input sequence as illustrated in Figure 1c and 1d.
 従来の一方向順序推薦モデルは、図1cと1dに示すように、入力シーケンスの各位置に対して次のアイテムを予測することでモデルを学習するのが一般的である。
-Specifically, the target of the input sequence [v1, .
-具体的には、入力シーケンスのターゲット [v1, .
-..
-..
-,vt ] is a shifted version [v2, .
-vt ]は、[v2, .
-..
-..
-,vt+1].
-vt+1]。
+Specifically, the target of the input sequence [v1, . . . ,vt ] is a shifted version [v2, . . . ,v_t+1].
+具体的には、入力シーケンス[v1, ... ,vt]のターゲットは、シフトされたバージョン[v2, ... ,v_t+1]である。
 However, as shown in Figure 1b, jointly conditioning on both left and right context in a bidirectional model would cause the final output representation of each item to contain the information of the target item.
-しかし、図1bに示すように、双方向モデルで左右両方の文脈に条件付けを行うと、各項目の最終的な出力表現に対象項目の情報が含まれることになる。
+しかし、図1bに示すように、双方向モデルで左右両方の文脈に条件付けを行うと、各itemの最終的な出力表現に対象itemの情報が含まれることになる。
 This makes predicting the future become trivial and the network would not learn anything useful.
 これでは、未来を予測することは些細なことになり、ネットワークは何も有益なことを学べない。
-A simple solution for this issue is to create t − 1 samples (subsequences with next items like ([v1], v2) and ([v1,v2], v3)) from the original length t behavior sequence and then encode each histrical subsequence with the bidirectional model to predict the target item.
-この問題に対する簡単な解決策は、元の長さtの行動シーケンスからt-1個のサンプル（([v1], v2)や([v1,v2], v3)のような次の項目を持つ部分シーケンス）を作成し、次に各組織的部分シーケンスを双方向モデルで符号化してターゲット項目を予測することである。
+
+A simple solution for this issue is to create t − 1 samples (subsequences with next items like ([v1], v2) and ([v1,v2], v3)) from the original length t behavior sequence
+and then encode each histrical subsequence with the bidirectional model to predict the target item.
+この問題に対する簡単な解決策は、元の長さtの行動シーケンスからt-1個のサンプル(= ([v1], v2)や([v1,v2], v3)のような**next-itemを持つ部分シーケンス**)を作成し、次に各histricalシーケンスを双方向モデルで符号化してターゲットitemを予測することである。(後半が良くわかってない:thinking:)
 However, this approach is very time and resources consuming since we need to create a new sample for each position in the sequence and predict them separately.
 しかしこの方法では、配列の各位置ごとに新しいサンプルを作成し、それらを個別に予測する必要があるため、非常に時間とリソースを消費する。
+
 In order to efficiently train our proposed model, we apply a new objective: Cloze task [50] (also known as “Masked Language Model” in [6]) to sequential recommendation.
 提案モデルを効率的に学習するために、我々は新しい目的を適用する：
-Clozeタスク[50]（[6]では "Masked Language Model "とも呼ばれる）を逐次推薦に適用する。
+Clozeタスク[50]（[6]では "**Masked Language Model**"とも呼ばれる）を逐次推薦に適用する。
 It is a test consisting of a portion of language with some words removed, where the participant is asked to fill the missing words.
 これは、いくつかの単語が削除された言語の一部からなるテストであり、参加者は欠けている単語を埋めるように求められる。
 In our case, for each training step, we randomly mask ρ proportion of all items in the input sequence (i.e., replace with special token “[mask]”), and then predict the original ids of the masked items based solely on its left and right context.
@@ -411,38 +422,45 @@ For example:
 例えば、こうだ：
 
 $$
-\tag{}
+Input : [v_1, v_2, v_3, v_4, v_5] \rightarrow^{randomly_mask} [v_1, [mask]_1, v_3, [mask]_2, v_5]
+\\
+Labels:[mask]_1 = v_2, [mask]_2 = v_4
 $$
 
 The final hidden vectors corresponding to “[mask]” are fed into an output softmax over the item set, as in conventional sequential recommendation.
-マスク]」に対応する最終的な隠れベクトルは、従来の逐次推薦と同様に、アイテムセットに対する出力ソフトマックスに供給される。
+“[mask]”に対応する最終的な hidden vectors は、従来の逐次推薦と同様に、アイテムセットに対する出力ソフトマックスに供給される。
 Eventually, we define the loss for each masked input S ′ u as the negative log-likelihood of the masked targets:
-最終的に、各マスク入力S ′ uに対する損失を、マスクされたターゲットの負の対数尤度として定義する：
+最終的に、各マスク入力 $\mathcal{S}'_{u}$ に対する損失を、マスクされたターゲットの負の対数尤度として定義する:
 
 $$
+\mathcal{L}
+= \frac{1}{|\mathcal{S}^m_u|}
+\sum_{v_m \in \mathcal{S}^m_u} - log P(v_m = v^{*}_{m}|\mathcal{S}'_{u})
 \tag{8}
 $$
 
 where S ′ u is the masked version for user behavior history Su , S m u is the random masked items in it, v ∗ m is the true item for the masked item vm, and the probability P(·) is defined in Equation 7.
-ここで、S ′ uはユーザー行動履歴Suのマスクバージョンであり、S m uはその中のランダムなマスクされた項目であり、v ＊ mはマスクされた項目vmの真の項目であり、確率P（-）は式7で定義される。
+ここで、$\mathcal{S}'_{u}$ はユーザ行動履歴Suのマスクバージョンであり、$\mathcal{S}^{m}_{u}$ はその中のランダムなマスクされた項目であり、$v^{*}_{m}$ はマスクされたitem vmの真のitemであり、確率P（-）は式(7)で定義される。
+
 An additional advantage for Cloze task is that it can generate more samples to train the model.
-さらに、Clozeタスクの利点は、モデルを訓練するためのサンプルをより多く生成できることである。
-Assuming a sequence of length n, conventional sequential predictions in Figure 1c and 1d produce n unique samples for training, while BERT4Rec can obtain n k  samples (if we randomly mask k items) in multiple epochs.
-長さ n のシーケンスを想定すると、図 1c および 1d の従来の逐次予測では、訓練用に n 個のユニークなサンプルが生成されるのに対して、BERT4Rec では、複数回のエポックで n k 個のサンプル（ランダムに k 個のアイテムをマスクする場合）を得ることができる。
+さらに、**Clozeタスクの利点は、モデルを訓練するためのサンプルをより多く生成できること**である。(ランダムにmaskするから??)
+Assuming a sequence of length n, conventional sequential predictions in Figure 1c and 1d produce n unique samples for training, while BERT4Rec can obtain nCk samples (if we randomly mask k items) in multiple epochs.
+長さ n のシーケンスを想定すると、図 1c および 1d の従来の逐次予測では、訓練用に n 個のユニークなサンプルが生成されるのに対して、BERT4Rec では、複数回のエポックで nCk 個のサンプル（ランダムに k 個のアイテムをマスクする場合）を得ることができる。(ふむふむ...!)
 It allows us to train a more powerful bidirectional representation model.
 これにより、より強力な双方向表現モデルを訓練することができる。
-Test.
-テストだ。
+
+### Test.テストだ。
+
 As described above, we create a mismatch between the training and the final sequential recommendation task since the Cloze objective is to predict the current masked items while sequential recommendation aims to predict the future.
-上述したように、Clozeの目的は現在のマスク項目を予測することであるのに対し、逐次推薦の目的は将来の予測であるため、訓練と最終的な逐次推薦タスクの間にミスマッチが生じる。
+上述したように、Clozeの目的は現在のマスクitemを予測することであるのに対し、逐次推薦の目的は将来の予測であるため、**訓練と最終的な逐次推薦タスクの間にミスマッチが生じる**。(うんうんそうだよね。代理学習問題的な??)
 To address this, we append the special token “[mask]” to the end of user’s behavior sequence, and then predict the next item based on the final hidden representation of this token.
-これを解決するために、ユーザーの行動シーケンスの最後に特別なトークン「[mask]」を付加し、このトークンの最終的な隠された表現に基づいて次のアイテムを予測する。
+これを解決するために、**ユーザの行動シーケンスの最後に特別なトークン「[mask]」を付加**し、このトークンの最終的な隠された表現に基づいて次のアイテムを予測する。(clsトークンじゃないんだ...!!:thinking:)
 To better match the sequential recommendation task (i.e., predict the last item), we also produce samples that only mask the last item in the input sequences during training.
-逐次的な推薦タスク（すなわち、最後のアイテムを予測する）にうまくマッチさせるため、学習中に入力シーケンスの最後のアイテムだけをマスクするサンプルも作成する。
+逐次的な推薦タスク（すなわち、最後のアイテムを予測する）にうまくマッチさせるため、**学習中に入力シーケンスの最後のアイテムだけをマスクするサンプルも作成する**。(このサンプルだけmasked item prediction = next item predictionになるのか...!)
 It works like fine-tuning for sequential recommendation and can further improve the recommendation performances.
 これは逐次推薦のファインチューニングのように機能し、推薦性能をさらに向上させることができる。
 
-## Discussion
+## 3.7. Discussion
 
 Here, we discuss the relation of our model with previous related work.
 ここでは、我々のモデルとこれまでの関連研究との関係について述べる。
@@ -484,9 +502,9 @@ Thus we train BERT4Rec end-to-end for different sequential recommendation datase
 b) Different from BERT, we remove the next sentence loss and segment embeddings since BERT4Rec models a user’s historical behaviors as only one sequence in sequential recommendation task.
 b) BERT4Recは、逐次推薦タスクにおいて、ユーザの過去の行動を1つのシーケンスとしてのみモデル化するため、BERTとは異なり、次文損失とセグメント埋め込みを削除する。
 
-# Experiments 実験
+# 4. Experiments 実験
 
-## Datasets データセット
+## 4.1. Datasets データセット
 
 We evaluate the proposed model on four real-world representative datasets which vary significantly in domains and sparsity.
 提案モデルを、ドメインとスパース性が大きく異なる4つの実世界の代表的なデータセットで評価する。
@@ -519,7 +537,7 @@ To ensure the quality of the dataset, following the common practice [12, 22, 40,
 The statistics of the processed datasets are summarized in Table 1.
 処理したデータセットの統計を表1にまとめた。
 
-## Task Settings & Evaluation Metrics タスク設定と評価指標
+## 4.2. Task Settings & Evaluation Metrics タスク設定と評価指標
 
 To evaluate the sequential recommendation models, we adopted the leave-one-out evaluation (i.e., next item recommendation) task, which has been widely used in [12, 22, 49].
 逐次推薦モデルを評価するために、[12, 22, 49]で広く用いられている放置評価（次項目推薦）タスクを採用した。
@@ -542,7 +560,7 @@ In this work, we report HR and NDCG with k = 1, 5, 10.
 For all these metrics, the higher the value, the better the performance.
 これらの指標はすべて、数値が高いほどパフォーマンスが高いことを意味する。
 
-## Baselines & Implementation Details ベースラインと実施内容
+## 4.3. Baselines & Implementation Details ベースラインと実施内容
 
 To verify the effectiveness of our method, we compare it with the following representative baselines: • POP: It is the simplest baseline that ranks items according to their popularity judged by the number of interactions.
 本手法の有効性を検証するため、以下の代表的なベースラインと比較した：
@@ -597,7 +615,7 @@ To verify the effectiveness of our method, we compare it with the following repr
   All the models are trained from scratch without any pre-training on a single NVIDIA GeForce GTX 1080 Ti GPU with a batch size of 256.
   すべてのモデルは、バッチサイズ256のNVIDIA GeForce GTX 1080 Ti GPU1台で、事前学習なしでゼロから学習された。
 
-## Overall Performance Comparison 総合成績の比較
+## 4.4. Overall Performance Comparison 総合成績の比較
 
 Table 2 summarized the best results of all models on four benchmark datasets.
 表2は、4つのベンチマークデータセットにおける全モデルの最良の結果をまとめたものである。
@@ -675,7 +693,7 @@ We analyze one hyper-parameter at a time by fixing the remaining hyper-parameter
 Due to space limitation, we only report NDCG@10 and HR@10 for the follow-up experiments.
 紙面の都合上、追跡実験についてはNDCG@10とHR@10についてのみ報告する。
 
-## Impact of Hidden Dimensionality d d
+## 4.5. Impact of Hidden Dimensionality d d
 
 We now study how the hidden dimensionality d affects the recommendation performance.
 次に、隠れ次元dが推薦性能にどのような影響を与えるかを検討する。
@@ -698,7 +716,7 @@ Finally, our model consistently outperforms all other baselines on all datasets 
 Considering that our model achieves satisfactory performance with d≥64, we only report the results with d=64 in the following analysis.
 我々のモデルはd≧64で満足のいく性能を達成することを考慮し、以下の分析ではd=64での結果のみを報告する。
 
-## Impact of Mask Proportion ρ マスク比率の影響 ρ
+## 4.6. Impact of Mask Proportion ρ マスク比率の影響 ρ
 
 As described in § 3.6, mask proportion ρ is a key factor in model training, which directly affects the loss function (Equation 8).
 3.6節で説明したように、マスク割合ρはモデル学習における重要な要素であり、損失関数（式8）に直接影響する。
@@ -723,7 +741,7 @@ ML-1mとBeautyを例にとると、ρ=0.6は、ML-1mでは1シーケンスあた
 The former is too hard for model training.
 前者はモデルトレーニングにはハードルが高すぎる。
 
-## Impact of Maximum Sequence Length N
+## 4.7. Impact of Maximum Sequence Length N
 
 We also investigate the effect of the maximum sequence length N on model’s recommendation performances and efficiency.
 また、最大配列長Nがモデルの推薦性能と効率に及ぼす影響についても調査した。
@@ -746,7 +764,7 @@ BERT4Recのスケーラビリティに関する懸念は、1層あたりの計�
 Fortunately, the results in Table 4 shows that the self-attention layer can be effectively parallelized using GPUs.
 幸い、表4の結果は、自己アテンション層がGPUを使用して効果的に並列化できることを示している。
 
-## Ablation Study アブレーション研究
+## 4.8. Ablation Study アブレーション研究
 
 Finally, we perform ablation experiments over a number of key components of BERT4Rec in order to better understand their impacts, including positional embedding (PE), position-wise feed-forward network (PFFN), layer normalization (LN), residual connection (RC), dropout, the layer number L of self-attention, and the number of heads h in multi-head attention.
 最後に、BERT4Recの主要な構成要素である、位置埋め込み（PE）、位置ワイズフィードフォワードネットワーク（PFFN）、レイヤー正規化（LN）、残余接続（RC）、ドロップアウト、自己注意のレイヤー数L、マルチヘッドアテンションにおけるヘッド数hなどの影響をより理解するために、これらの要素のアブレーション実験を行った。
@@ -788,7 +806,7 @@ We observe that long sequence datasets (e.g., ML-20m) benefit from a larger h wh
 This phenomenon is consistent with the empirical result in [48] that large h is essential for capturing long distance dependencies with multi-head self-attention.
 この現象は、[48]の経験的な結果である、多ヘッド自己アテンションで長距離の依存関係を捉えるには、大きなhが不可欠であるという結果と一致する。
 
-# Conclusion and Future Work 結論と今後の課題
+# 5. Conclusion and Future Work 結論と今後の課題
 
 Deep bidirectional self-attention architecture has achieved tremendous success in language understanding.
 深い双方向の自己注意アーキテクチャは、言語理解において大きな成功を収めている。
