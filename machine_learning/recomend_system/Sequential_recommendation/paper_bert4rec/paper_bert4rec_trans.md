@@ -464,16 +464,18 @@ It works like fine-tuning for sequential recommendation and can further improve 
 
 Here, we discuss the relation of our model with previous related work.
 ここでは、我々のモデルとこれまでの関連研究との関係について述べる。
-SASRec.
-SASRec。
+
+### SASRec.
+
 Obviously, SASRec is a left-to-right unidirectional version of our BERT4Rec with single head attention and causal attention mask.
 明らかに、SASRecは、私たちのBERT4Recの左から右への一方向バージョンであり、単一頭部注意と因果的注意マスクを備えている。
 Different architectures lead to different training methods.
 アーキテクチャが異なれば、トレーニング方法も異なる。
 SASRec predicts the next item for each position in a sequence, while BERT4Rec predicts the masked items in the sequence using Cloze objective.
 SASRecは配列の各位置に対して次の項目を予測し、BERT4RecはCloze目的語を用いて配列中のマスクされた項目を予測する。
-CBOW & SG.
-CBOWとSG。
+
+### CBOW & SG.
+
 Another very similar work is Continuous Bag-ofWords (CBOW) and Skip-Gram (SG) [35].
 もう1つの非常に類似した研究は、CBOW(Continuous Bag-of-Words)とSG(Skip-Gram)[35]である。
 CBOW predicts a target word using the average of all the word vectors in its context (both left and right).
@@ -483,24 +485,28 @@ BERT4Recの自己注意層を1層とし、項目に対する注意の重みを�
 Similar to CBOW, SG can also be seen as a simplified case of BERT4Rec following similar reduction operations (mask all items except only one).
 CBOWと同様に、SGもまた、同様の削減操作（1つだけを除くすべての項目をマスクする）に従ったBERT4Recの簡略化されたケースと見なすことができる。
 From this point of view, Cloze can be seen as a general form for the objective of CBOW and SG.
-この観点から、クロースはCBOWとSGの目的を達成するための一般的な形式とみなすことができる。
+この観点から、 Cloze はCBOWとSGの目的を達成するための一般的な形式とみなすことができる。
 Besides, CBOW uses a simple aggregator to model word sequences since its goal is to learn good word representations, not sentence representations.
 その上、CBOWは単純なアグリゲータを使って単語列をモデル化する。なぜならば、CBOWの目標は良い単語表現を学習することであって、文の表現を学習することではないからだ。
 On the contrary, we seek to learn a powerful behavior sequence representation model (deep selfattention network in this work) for making recommendations.
 それとは逆に、我々は推薦を行うための強力な行動シーケンス表現モデル（この作品では深層自己注意ネットワーク）を学習することを目指している。
-BERT.
-バート
-Although our BERT4Rec is inspired by the BERT in NLP, it still has several differences from BERT: a) The most critical difference is that BERT4Rec is an end-to-end model for sequential recommendation, while BERT is a pre-training model for sentence representation.
+
+### BERT.
+
+Although our BERT4Rec is inspired by the BERT in NLP, it still has several differences from BERT:
 我々のBERT4Recは、自然言語処理におけるBERTにインスパイアされているが、BERTとはいくつかの違いがある：
+a) The most critical difference is that BERT4Rec is an end-to-end model for sequential recommendation, while BERT is a pre-training model for sentence representation.
+
 a) 最も決定的な違いは、BERT4Recが逐次推薦のためのエンドツーエンドモデルであるのに対し、BERTは文表現のための事前学習モデルであることである。
 BERT leverages large-scale task-independent corpora to pre-train the sentence representation model for various text sequence tasks since these tasks share the same background knowledge about the language.
-BERT は、タスクに依存しない大規模なコーパスを活用して、さまざまなテキストシーケンスタスクの文表現モデルを事前学習します。
+BERT は、**タスクに依存しない大規模なコーパスを活用**して、さまざまなテキストシーケンスタスクの文表現モデルを事前学習します。
 However, this assumption does not hold in the recommendation tasks.
 しかし、推薦タスクではこの仮定は成り立たない。
 Thus we train BERT4Rec end-to-end for different sequential recommendation datasets.
 このように、BERT4Rec を様々な逐次推薦データセットに対してエンドツーエンドで訓練する。
+
 b) Different from BERT, we remove the next sentence loss and segment embeddings since BERT4Rec models a user’s historical behaviors as only one sequence in sequential recommendation task.
-b) BERT4Recは、逐次推薦タスクにおいて、ユーザの過去の行動を1つのシーケンスとしてのみモデル化するため、BERTとは異なり、次文損失とセグメント埋め込みを削除する。
+b) BERT4Recは、逐次推薦タスクにおいて、ユーザの過去の行動を1つのシーケンスとしてのみモデル化するため、BERTとは異なり、次文損失(next-sentenceの学習タスクだっけ?)とセグメント埋め込み(なんだっけ...??)を削除する。
 
 # 4. Experiments 実験
 
@@ -509,48 +515,38 @@ b) BERT4Recは、逐次推薦タスクにおいて、ユーザの過去の行動
 We evaluate the proposed model on four real-world representative datasets which vary significantly in domains and sparsity.
 提案モデルを、ドメインとスパース性が大きく異なる4つの実世界の代表的なデータセットで評価する。
 
-• Amazon Beauty3 : This is a series of product review datasets crawled from Amazon.com by McAuley et al.[34].
-
-- Amazon Beauty3 ：
-  これはMcAuleyら[34]によってAmazon.comからクロールされた一連の製品レビューデータセットである。
-  They split the data into separate datasets according to the toplevel product categories on Amazon.
-  アマゾンの商品カテゴリーごとにデータを分割した。
-  In this work, we adopt the “Beauty” category.
-  この作品では「ビューティー」カテゴリーを採用する。
-  • Steam4 : This is a dataset collected from Steam, a large online video game distribution platform, by Kang and McAuley [22].
-- Steam4 ：
-  これは、KangとMcAuley[22]によって、大規模なオンライン・ビデオゲーム配信プラットフォームであるSteamから収集されたデータセットである。
-  • MovieLens [8]: This is a popular benchmark dataset for evaluating recommendation algorithms.
-- MovieLens [8]：
-  これは推薦アルゴリズムを評価するための一般的なベンチマークデータセットである。
-  In this work, we adopt two well-established versions, MovieLens 1m (ML1m) 5 and MovieLens 20m (ML-20m) 6 .
-  この作品では、MovieLens 1m (ML1m) 5 と MovieLens 20m (ML-20m) 6 の 2 つの確立されたバージョンを採用している。
+- Amazon Beauty3 : This is a series of product review datasets crawled from Amazon.com by McAuley et al.[34]. Amazon Beauty3: これはMcAuleyら[34]によってAmazon.comからクロールされた一連の製品レビューデータセットである。They split the data into separate datasets according to the toplevel product categories on Amazon. アマゾンの商品カテゴリーごとにデータを分割した. In this work, we adopt the “Beauty” category. この作品では「ビューティー」カテゴリーを採用する。
+- Steam4 : This is a dataset collected from Steam, a large online video game distribution platform, by Kang and McAuley [22]Steam4: これは、KangとMcAuley[22]によって、大規模なオンライン・ビデオゲーム配信プラットフォームであるSteamから収集されたデータセットである。
+- MovieLens [8]: This is a popular benchmark dataset for evaluating recommendation algorithms.MovieLens [8]：これは推薦アルゴリズムを評価するための一般的なベンチマークデータセットである。In this work, we adopt two well-established versions, MovieLens 1m (ML1m) 5 and MovieLens 20m (ML-20m) 6 . この作品では、MovieLens 1m (ML1m) 5 と MovieLens 20m (ML-20m) 6 の 2 つの確立されたバージョンを採用している。
 
 For dataset preprocessing, we follow the common practice in [22, 40, 49].
 データセットの前処理については、[22, 40, 49]の一般的なやり方に従う。
 For all datasets, we convert all numeric ratings or the presence of a review to implicit feedback of 1 (i.e., the user interacted with the item).
-すべてのデータセットについて、すべての数値評価またはレビューの存在を、暗黙のフィードバック1（すなわち、ユーザーがアイテムと相互作用した）に変換する。
+すべてのデータセットについて、すべての数値評価またはレビューの存在を、**暗黙のフィードバック1（すなわち、ユーザーがアイテムと相互作用した）に変換する**。(あ、implicit feedbackと見做しているのか...!)
 After that, we group the interaction records by users and build the interaction sequence for each user by sorting these interaction records according to the timestamps.
-その後、ユーザーごとに対話記録をグループ化し、タイムスタンプに従ってこれらの対話記録をソートすることで、各ユーザーの対話シーケンスを構築する。
+その後、ユーザごとに対話記録をグループ化し、タイムスタンプに従ってこれらの対話記録をソートすることで、各ユーザの対話シーケンスを構築する。
 To ensure the quality of the dataset, following the common practice [12, 22, 40, 49], we keep users with at least five feedbacks.
-データセットの質を保証するために、一般的な慣行[12, 22, 40, 49]に従って、少なくとも5つのフィードバックを持つユーザーを保持する。
+データセットの質を保証するために、一般的な慣行[12, 22, 40, 49]に従って、**少なくとも5つのフィードバックを持つユーザを保持する**。
 The statistics of the processed datasets are summarized in Table 1.
 処理したデータセットの統計を表1にまとめた。
+
+![table1]()
 
 ## 4.2. Task Settings & Evaluation Metrics タスク設定と評価指標
 
 To evaluate the sequential recommendation models, we adopted the leave-one-out evaluation (i.e., next item recommendation) task, which has been widely used in [12, 22, 49].
-逐次推薦モデルを評価するために、[12, 22, 49]で広く用いられている放置評価（次項目推薦）タスクを採用した。
+逐次推薦モデルを評価するために、[12, 22, 49]で広く用いられているleave-one-out 評価(i.e., next item recommendation)タスクを採用した。
 For each user, we hold out the last item of the behavior sequence as the test data, treat the item just before the last as the validation set, and utilize the remaining items for training.
-各ユーザーについて、行動シーケンスの最後の項目をテストデータとして取り出し、最後の項目の直前の項目を検証セットとして扱い、残りの項目を学習に利用する。
+各ユーザーについて、行動シーケンスの最後のitemをテストデータとして取り出し、最後のitemの直前のitemをvalidセットとして扱い、残りのitemを学習に利用する。
 For easy and fair evaluation, we follow the common strategy in [12, 22, 49], pairing each ground truth item in the test set with 100 randomly sampled negative items that the user has not interacted with.
-簡単で公平な評価のために、我々は[12, 22, 49]の一般的な戦略に従い、テストセット内の各基底真実アイテムと、ユーザーが相互作用していないランダムにサンプリングされた100個の否定的アイテムをペアリングする。
+簡単で公平な評価のために、我々は[12, 22, 49]の一般的な戦略に従い、テストセット内の各ground-truthアイテムと、ユーザが相互作用していないランダムにサンプリングされた100個のnegativeアイテムをペアリングする。
 To make the sampling reliable and representative [19], these 100 negative items are sampled according to their popularity.
-サンプリングの信頼性と代表性を高めるために[19]、これらの100のネガティブ項目は、その人気に従ってサンプリングされる。
+サンプリングの信頼性と代表性を高めるために[19]、これらの100のネガティブ項目は、その人気度合いに従ってサンプリングされる。
 Hence, the task becomes to rank these negative items with the ground truth item for each user.
-したがって、タスクは、各ユーザのためのグランドトゥルースアイテムとこれらの否定的な項目をランク付けすることになります。
-Evaluation Metrics.
-評価指標。
+したがって、タスクは、各ユーザのためのground-truth itemとこれらの否定的なitemsをランク付けすることになります。
+
+### Evaluation Metrics. 評価指標。
+
 To evaluate the ranking list of all the models, we employ a variety of evaluation metrics, including Hit Ratio (HR), Normalized Discounted Cumulative Gain (NDCG), and Mean Reciprocal Rank (MRR).
 すべてのモデルのランキングリストを評価するために、ヒット率（HR）、正規化割引累積利得（NDCG）、平均逆順位（MRR）など、さまざまな評価指標を採用する。
 Considering we only have one ground truth item for each user, HR@k is equivalent to Recall@k and proportional to Precision@k; MRR is equivalent to Mean Average Precision (MAP).
@@ -562,60 +558,49 @@ For all these metrics, the higher the value, the better the performance.
 
 ## 4.3. Baselines & Implementation Details ベースラインと実施内容
 
-To verify the effectiveness of our method, we compare it with the following representative baselines: • POP: It is the simplest baseline that ranks items according to their popularity judged by the number of interactions.
+To verify the effectiveness of our method, we compare it with the following representative baselines:
 本手法の有効性を検証するため、以下の代表的なベースラインと比較した：
 
-- POP：
-  最も単純なベースラインで、インタラクションの数によって判断される人気度によってアイテムをランク付けする。
-  • BPR-MF [39]: It optimizes the matrix factorization with implicit feedback using a pairwise ranking loss.
-- BPR-MF [39]：
-  BPR-MF[39]：ペアワイズ・ランキング・ロスを用いた暗黙のフィードバックにより、行列分解を最適化する。
-  • NCF [12]: It models userâĂŞitem interactions with a MLP instead of the inner product in matrix factorization.
-- NCF [12]：
-  これは、行列分解における内積の代わりにMLPを用いて、ユーザとアイテムの相互作用をモデル化する。
-  • FPMC [40]: It captures users’ general taste as well as their sequential behaviors by combing MF with first-order MCs.
-- FPMC [40]：
-  MFと一次MCを組み合わせることで、ユーザーの一般的な嗜好と逐次的な行動を捉える。
-  • GRU4Rec [15]: It uses GRU with ranking based loss to model user sequences for session based recommendation.
-- GRU4Rec [15]：
-  GRU4Rec[15]は、セッション・ベースの推薦のために、GRUとランキング・ベースの損失を用いてユーザ・シーケンスをモデル化する。
-  • GRU4Rec+ [14]: It is an improved version of GRU4Rec with a new class of loss functions and sampling strategy.
-- GRU4Rec+ [14]：
-  GRU4Recの改良版で、新しいクラスの損失関数とサンプリング戦略を持つ。
-  • Caser [49]: It employs CNN in both horizontal and vertical way to model high-order MCs for sequential recommendation.
-- Caser [49]：
-  逐次推薦のための高次MCをモデル化するために、水平方向と垂直方向の両方でCNNを用いる。
-  • SASRec [22]: It uses a left-to-right Transformer language model to capture users’ sequential behaviors, and achieves state-of-the-art performance on sequential recommendation.
-- SASRec [22]：
-  SASRecは、左から右へのTransformer言語モデルを用いて、ユーザの逐次的な行動をとらえ、逐次推薦において最先端の性能を達成している。
-  For NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , and SASRec10, we use code provided by the corresponding authors.
-  NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , SASRec10 については、対応する著者から提供されたコードを使用している。
-  For BPR-MF and FPMC, we implement them using TensorFlow.
-  BPR-MFとFPMCについては、TensorFlowを使って実装している。
-  For common hyperparameters in all models, we consider the hidden dimension size d from {16, 32, 64, 128, 256}, the ℓ2 regularizer from {1, 0.1, 0.01, 0.001, 0.0001}, and dropout rate from {0, 0.1, 0.2, · · · , 0.9}.
-  全モデル共通のハイパーパラメータとして、隠れ次元サイズdを｛16, 32, 64, 128, 256｝から、ℓ2正則化を｛1, 0.1, 0.01, 0.001, 0.0001｝から、ドロップアウト率を｛0, 0.1, 0.2, - -, 0.9｝から考える。
-  All other hyper-parameters (e.g., Markov order in Caser) and initialization strategies are either followed the suggestion from the methods’ authors or tuned on the validation sets.
-  その他のハイパーパラメータ（例えば、Caserのマルコフ次数）と初期化ストラテジーはすべて、メソッドの著者からの提案に従うか、検証セット上でチューニングされたものである。
-  We report the results of each baseline under its optimal hyper-parameter settings.
-  各ベースラインの最適なハイパーパラメータ設定の結果を報告する。
-  We implement BERT4Rec11 with TensorFlow.
-  BERT4Rec11をTensorFlowで実装する。
-  All parameters are initialized using truncated normal distribution in the range [−0.02, 0.02].
-  すべてのパラメータは、[-0.02, 0.02]の範囲で切り捨てられた正規分布を用いて初期化される。
-  We train the model using Adam [24] with learning rate of 1e-4, β1 = 0.9, β2 = 0.999, ℓ2 weight decay of 0.01, and linear decay of the learning rate.
-  Adam [24]を使用し、学習率1e-4、β1 = 0.9、β2 = 0.999、ℓ2重み減衰0.01、学習率線形減衰でモデルを訓練する。
-  The gradient is clipped when its ℓ2 norm exceeds a threshold of 5.
-  ℓ2ノルムが閾値5を超えると勾配が切り取られる。
-  For fair comparison, we set the layer number L = 2 and head number h = 2 and use the same maximum sequence length as in [22], N = 200 for ML-1m and ML-20m, N = 50 for Beauty and Steam datasets.
-  公平な比較のために、レイヤー数L = 2、ヘッド数h = 2とし、[22]と同じ最大配列長、ML-1mとML-20mではN = 200、BeautyとSteamデータセットではN = 50を使用する。
-  For head setting, we empirically set the dimensionality of each head as 32 (single head if d < 32).
-  ヘッドの設定については、経験的に各ヘッドの次元数を32とした（d＜32の場合はシングルヘッド）。
-  We tune the mask proportion ρ using the validation set, resulting in ρ = 0.6 for Beauty, ρ = 0.4 for Steam, and ρ = 0.2 for ML-1m and ML-20m.
-  検証セットを用いてマスクの割合ρを調整した結果、Beautyではρ=0.6、Steamではρ=0.4、ML-1mとML-20mではρ=0.2となった。
-  All the models are trained from scratch without any pre-training on a single NVIDIA GeForce GTX 1080 Ti GPU with a batch size of 256.
-  すべてのモデルは、バッチサイズ256のNVIDIA GeForce GTX 1080 Ti GPU1台で、事前学習なしでゼロから学習された。
+- POP: It is the simplest baseline that ranks items according to their popularity judged by the number of interactions.POP: 最も単純なベースラインで、インタラクションの数によって判断される人気度によってアイテムをランク付けする。
+- BPR-MF [39]: It optimizes the matrix factorization with implicit feedback using a pairwise ranking loss.BPR-MF [39]：BPR-MF[39]：ペアワイズ・ランキング・ロスを用いた暗黙のフィードバックにより、行列分解を最適化する。
+- NCF [12]: It models userâĂŞitem interactions with a MLP instead of the inner product in matrix factorization.NCF [12]: これは、行列分解における内積の代わりにMLPを用いて、ユーザとアイテムの相互作用をモデル化する。
+- FPMC [40]: It captures users’ general taste as well as their sequential behaviors by combing MF with first-order MCs. FPMC [40]： MFと一次MCを組み合わせることで、ユーザーの一般的な嗜好と逐次的な行動を捉える。
+- GRU4Rec [15]: It uses GRU with ranking based loss to model user sequences for session based recommendation. GRU4Rec [15]：GRU4Rec[15]は、セッション・ベースの推薦のために、GRUとランキング・ベースの損失を用いてユーザ・シーケンスをモデル化する。
+- GRU4Rec+ [14]: It is an improved version of GRU4Rec with a new class of loss functions and sampling strategy. GRU4Rec+ [14]：GRU4Recの改良版で、新しいクラスの損失関数とサンプリング戦略を持つ。
+- Caser [49]: It employs CNN in both horizontal and vertical way to model high-order MCs for sequential recommendation. Caser [49]： 逐次推薦のための高次MCをモデル化するために、水平方向と垂直方向の両方でCNNを用いる。
+- SASRec [22]: It uses a left-to-right Transformer language model to capture users’ sequential behaviors, and achieves state-of-the-art performance on sequential recommendation. SASRec [22]: SASRecは、左から右へのTransformer言語モデルを用いて、ユーザの逐次的な行動をとらえ、逐次推薦において最先端の性能を達成している。
+
+For NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , and SASRec10, we use code provided by the corresponding authors.
+NCF7 , GRU4Rec8 , GRU4Rec+8 , Caser9 , SASRec10 については、対応する著者から提供されたコードを使用している。
+For BPR-MF and FPMC, we implement them using TensorFlow.
+BPR-MFとFPMCについては、TensorFlowを使って実装している。
+For common hyperparameters in all models, we consider the hidden dimension size d from {16, 32, 64, 128, 256}, the ℓ2 regularizer from {1, 0.1, 0.01, 0.001, 0.0001}, and dropout rate from {0, 0.1, 0.2, · · · , 0.9}.
+全モデル共通のハイパーパラメータとして、隠れ次元サイズdを｛16, 32, 64, 128, 256｝から、ℓ2正則化を｛1, 0.1, 0.01, 0.001, 0.0001｝から、ドロップアウト率を｛0, 0.1, 0.2, - -, 0.9｝から考える。
+All other hyper-parameters (e.g., Markov order in Caser) and initialization strategies are either followed the suggestion from the methods’ authors or tuned on the validation sets.
+その他のハイパーパラメータ（例えば、Caserのマルコフ次数）と初期化ストラテジーはすべて、メソッドの著者からの提案に従うか、検証セット上でチューニングされたものである。
+We report the results of each baseline under its optimal hyper-parameter settings.
+各ベースラインの最適なハイパーパラメータ設定の結果を報告する。
+
+We implement BERT4Rec11 with TensorFlow.
+BERT4Rec11をTensorFlowで実装する。
+All parameters are initialized using truncated normal distribution in the range [−0.02, 0.02].
+すべてのパラメータは、[-0.02, 0.02]の範囲で切り捨てられた正規分布を用いて初期化される。(正規分布の分散は??)
+We train the model using Adam [24] with learning rate of 1e-4, β1 = 0.9, β2 = 0.999, ℓ2 weight decay of 0.01, and linear decay of the learning rate.
+Adam [24]を使用し、学習率1e-4、β1 = 0.9、β2 = 0.999、ℓ2重み減衰0.01、学習率線形減衰でモデルを訓練する。
+The gradient is clipped when its ℓ2 norm exceeds a threshold of 5.
+ℓ2ノルムが閾値5を超えると勾配が切り取られる。
+For fair comparison, we set the layer number L = 2 and head number h = 2 and use the same maximum sequence length as in [22], N = 200 for ML-1m and ML-20m, N = 50 for Beauty and Steam datasets.
+公平な比較のために、レイヤー数L = 2(うんうん、sequential推薦は少なくて良いんだよね:thinking:)、ヘッド数h = 2とし、[22]と同じ最大配列長、ML-1mとML-20mではN = 200、BeautyとSteamデータセットではN = 50を使用する。
+For head setting, we empirically set the dimensionality of each head as 32 (single head if d < 32).
+ヘッドの設定については、経験的に各ヘッドの次元数を32とした（d＜32の場合はシングルヘッド）。
+We tune the mask proportion ρ using the validation set, resulting in ρ = 0.6 for Beauty, ρ = 0.4 for Steam, and ρ = 0.2 for ML-1m and ML-20m.
+検証セットを用いてマスクの割合ρを調整した結果、Beautyではρ=0.6、Steamではρ=0.4、ML-1mとML-20mではρ=0.2となった。
+All the models are trained from scratch without any pre-training on a single NVIDIA GeForce GTX 1080 Ti GPU with a batch size of 256.
+すべてのモデルは、バッチサイズ256のNVIDIA GeForce GTX 1080 Ti GPU1台で、**事前学習なしでゼロから**学習された。
 
 ## 4.4. Overall Performance Comparison 総合成績の比較
+
+![table2]()
 
 Table 2 summarized the best results of all models on four benchmark datasets.
 表2は、4つのベンチマークデータセットにおける全モデルの最良の結果をまとめたものである。
@@ -623,15 +608,18 @@ The last column is the improvements of BERT4Rec relative to the best baseline.
 最後の列は、最良のベースラインに対する BERT4Rec の改善点である。
 We omit the NDCG@1 results since it is equal to HR@1 in our experiments.
 NDCG@1の結果は、我々の実験ではHR@1と等しいので省略する。
-It can be observed that: The non-personalized POP method gives the worst performance12 on all datasets since it does not model user’s personalized preference using the historical records.
-以下のことが観察される：
+It can be observed that:
+以下のことが観察される:
+
+The non-personalized POP method gives the worst performance12 on all datasets since it does not model user’s personalized preference using the historical records.
 非パーソナライズドPOP法は、過去の記録を使用してユーザーのパーソナライズされた嗜好をモデル化しないため、すべてのデータセットで最悪のパフォーマンス12を示す。
 Among all the baseline methods, sequential methods (e.g., FPMC and GRU4Rec+) outperforms non-sequential methods (e.g., BPR-MF and NCF) on all datasets consistently.
 すべてのベースライン手法の中で、逐次手法（FPMCやGRU4Rec+など）は、すべてのデータセットで一貫して非逐次手法（BPR-MFやNCFなど）を上回る。
 Compared with BPR-MF, the main improvement of FPMC is that it models users’ historical records in a sequential way.
-BPR-MFと比較して、FPMCの主な改善点は、ユーザーの履歴記録を逐次的にモデル化することである。
+BPR-MFと比較して、FPMCの主な改善点は、ユーザの履歴記録を逐次的にモデル化することである。
 This observation verifies that considering sequential information is beneficial for improving performances in recommendation systems.
-この観察から、逐次的な情報を考慮することが推薦システムのパフォーマンス向上に有益であることが検証された。
+この観察から、**逐次的な情報を考慮することが推薦システムのパフォーマンス向上に有益である**ことが検証された。
+
 Among sequential recommendation baselines, Caser outperforms FPMC on all datasets especially for the dense dataset ML-1m, suggesting that high-order MCs is beneficial for sequential recommendation.
 逐次推薦ベースラインの中で、Caserは全てのデータセット、特に高密度データセットML-1mにおいてFPMCを凌駕しており、高次MCが逐次推薦に有効であることを示唆している。
 However, high-order MCs usually use very small order L since they do not scale well with the order L.
@@ -639,103 +627,126 @@ However, high-order MCs usually use very small order L since they do not scale w
 This causes Caser to perform worse than GRU4Rec+ and SASRec, especially on sparse datasets.
 このため、CaserはGRU4Rec+やSASRecよりも、特にスパースなデータセットではパフォーマンスが悪くなる。
 Furthermore, SASRec performs distinctly better than GRU4Rec and GRU4Rec+, suggesting that self-attention mechanism is a more powerful tool for sequential recommendation.
-さらに、SASRecはGRU4RecやGRU4Rec+よりも明らかに良い結果を示し、自己注意メカニズムが逐次推薦においてより強力なツールであることを示唆している。
+さらに、SASRecはGRU4RecやGRU4Rec+よりも明らかに良い結果を示し、**自己注意メカニズムが逐次推薦においてより強力なツールであることを示唆している**。
+
 According to the results, it is obvious that BERT4Rec performs best among all methods on four datasets in terms of all evaluation metrics.
 結果によると、BERT4Recは、4つのデータセットにおいて、すべての評価指標において、すべての手法の中で最も良好な結果を示していることが明らかである。
 It gains 7.24% HR@10, 11.03% NDCG@10, and 11.46% MRR improvements (on average) against the strongest baselines.
 最強のベースラインに対して、HR@10で7.24%、NDCG@10で11.03%、MRRで11.46%の改善（平均）を達成した。
-Question 1: Do the gains come from the bidirectional self-attention model or from the Cloze objective?
-質問1：
-その利益は、双方向の自己注意モデルからもたらされるのか、それともCloze目的からもたらされるのか？
+
+### Question 1: Do the gains come from the bidirectional self-attention model or from the Cloze objective?
+
+質問1：その利益は、双方向の自己注意モデルからもたらされるのか、それともCloze目的からもたらされるのか？
 
 To answer this question, we try to isolate the effects of these two factors by constraining the Cloze task to mask only one item at a time.
-この疑問に答えるため、一度に1つの項目だけをマスクするようにクローズ課題を制約することで、これら2つの要因の影響を分離しようと試みた。
+この疑問に答えるため、一度に1つのitemだけをマスクするようにクローズ課題を制約することで、これら2つの要因の影響を分離しようと試みた。
 In this way, the main difference between our BERT4Rec (with 1 mask) and SASRec is that BERT4Rec predicts the target item jointly conditioning on both left and right context.
-このように、我々のBERT4Rec（マスク1つ）とSASRecの主な違いは、BERT4Recが左右両方の文脈を条件として、ターゲット項目を共同で予測することである。
+このように、我々のBERT4Rec（マスク1つ）とSASRecの主な違いは、BERT4Recが左右両方の文脈を条件として、ターゲットitemを共同で予測することである。
 We report the results on Beauty and ML-1m with d = 256 in Table 3 due to the space limitation.
 紙面の都合上、表3ではd=256のBeautyとML-1mの結果を報告する。
 The results show that BERT4Rec with 1 mask significantly outperforms SASRec on all metrics.
 その結果、マスクを1つ使用したBERT4Recは、すべての測定基準においてSASRecを大幅に上回ることがわかった。
 It demonstrates the importance of bidirectional representations for sequential recommendation.
-これは、逐次推薦における双方向表現の重要性を示している。
+これは、**逐次推薦における双方向表現の重要性**を示している。
 Besides, the last two rows indicate that the Cloze objective also improves the performances.
-さらに、最後の2行は、クロース目標もパフォーマンスを向上させることを示している。
-Detailed analysis of the mask proportion ρ in Cloze task can be found in § 4.6 Question 2: Why and how does bidirectional model outperform unidirectional models? To answer this question, we try to reveal meaningful patterns by visualizing the average attention weights of the last 10 items during the test on Beauty in Figure 2.
-クローズ課題におけるマスク割合ρの詳細な分析は§4.6 Question 2にある：
-なぜ、どのように双方向モデルが一方向モデルを上回るのか？この問いに答えるため、図2にBeauty上のテスト中の最後の10項目の平均注目重みを可視化することで、意味のあるパターンを明らかにしようとする。
+さらに、最後の2行は、Cloze目標もパフォーマンスを向上させることを示している。
+Detailed analysis of the mask proportion ρ in Cloze task can be found in § 4.6
+クローズ課題におけるマスク割合ρの詳細な分析は§4.6
+
+### Question 2: Why and how does bidirectional model outperform unidirectional models?
+
+なぜ、どのように双方向モデルが一方向モデルを上回るのか？
+
+![figure2]()
+
+To answer this question, we try to reveal meaningful patterns by visualizing the average attention weights of the last 10 items during the test on Beauty in Figure 2.
+この問いに答えるため、図2にBeauty上のテスト中の最後の10itemの平均attention wwightを可視化することで、意味のあるパターンを明らかにしようとする。
 Due to the space limitation, we only report four representative attention heat-maps in different layers and heads.
-紙面の都合上、異なるレイヤーとヘッドにおける代表的な4つの注目度ヒートマップのみを報告する。
+紙面の都合上、異なるレイヤーとヘッドにおける代表的な4つのattentionヒートマップのみを報告する。
 
 We make several observations from the results.
 この結果から、いくつかの見解を得ることができた。
+
 a) Attention varies across different heads.
-a) 注意力は頭によって異なる。
+a) attentionは各headによって異なる。
 For example, in layer 1, head 1 tends to attend on items at the left side while head 2 prefers to attend on items on the right side.
 例えば、レイヤー1では、ヘッド1は左側のアイテムに注目し、ヘッド2は右側のアイテムに注目する傾向がある。
+
 b) Attention varies across different layers.
-b) 注意は層によって異なる。
+b) attentionは各layerによって異なる。
 Apparently, attentions in layer 2 tend to focus on more recent items.
 どうやら、レイヤー2では、より新しいものに関心が集中する傾向があるようだ。
 This is because layer 2 is directly connected to the output layer and the recent items play a more important role in predicting the future.
 これは、レイヤー2が出力レイヤーに直結しており、未来を予測する上で最近の項目がより重要な役割を果たすからである。
-Another interesting pattern is that heads in Figure 2a and 2b also tend to attend on [mask]13.
-もうひとつの興味深いパターンは、図2aと図2bのヘッドもまた、[マスク]13に参加する傾向があることだ。
+Another interesting pattern is that heads in Figure 2a and 2b also tend to attend on [mask]13.(This phenomenon also exists in text sequence modeling using BERT)
+もうひとつの興味深いパターンは、図2aと図2bのヘッドもまた、[mask]に参加する傾向があることだ。(この傾向はBERTによるtext sequence modelingでもあるらしい。)
 It may be a way for self-attention to propagate sequence-level state to the item level.
 これは、自己アテンションがシーケンスレベルの状態をアイテムレベルに伝播させる方法かもしれない。
+
 c) Finally and most importantly, unlike unidirectional model can only attend on items at the left side, items in BERT4Rec tend to attend on the items at both sides.
 c)最後に最も重要なことは、一方向モデルが左側のアイテムにしかアテンションできないのとは異なり、BERT4Recのアイテムは両側のアイテムにアテンションする傾向があるということである。
 This indicates that bidirectional is essential and beneficial for user behavior sequence modeling.
-このことは、双方向性がユーザー行動シーケンスのモデリングに不可欠であり、有益であることを示している。
+このことは、**双方向性がユーザ行動シーケンスのモデリングに不可欠**であり、有益であることを示している。
+
 In the following studies, we examine the impact of the hyperparameters, including the hidden dimensionality d, the mask proportion ρ, and the maximum sequence length N.
-以下の研究では、隠れ次元d、マスク割合ρ、最大配列長Nなどのハイパーパラメータの影響を検証する。
+以下の研究では、隠れ次元d、マスク割合ρ、最大配列長Nなどの**ハイパーパラメータの影響を検証**する。
 We analyze one hyper-parameter at a time by fixing the remaining hyper-parameters at their optimal settings.
-残りのハイパーパラメーターを最適な設定に固定し、一度に1つのハイパーパラメーターを分析する。
+残りのハイパーパラメータを最適な設定に固定し、一度に1つのハイパーパラメータを分析する。
 Due to space limitation, we only report NDCG@10 and HR@10 for the follow-up experiments.
 紙面の都合上、追跡実験についてはNDCG@10とHR@10についてのみ報告する。
 
 ## 4.5. Impact of Hidden Dimensionality d d
 
+![figure3]()
+
 We now study how the hidden dimensionality d affects the recommendation performance.
-次に、隠れ次元dが推薦性能にどのような影響を与えるかを検討する。
+次に、**隠れ次元(hidden dimensionality) $d$ が推薦性能にどのような影響を与えるか**を検討する。
 Figure 3 shows NDCG@10 and HR@10 for neural sequential methods with the hidden dimensionality d varying from 16 to 256 while keeping other optimal hyper-parameters unchanged.
 図3は、隠れ次元dを16から256まで変化させたニューラル逐次法のNDCG@10とHR@10を示し、他の最適ハイパーパラメータは変化させない。
 We make some observations from this figure.
 この図からいくつかの考察をする。
+
 The most obvious observation from these sub-figures is that the performance of each model tends to converge as the dimensionality increases.
-これらの図から最も明らかなのは、各モデルの性能は、次元が大きくなるにつれて収束する傾向があるということである。
+これらの図から最も明らかなのは、**各モデルの性能は、次元が大きくなるにつれて収束する傾向がある**ということである。
 A larger hidden dimensionality does not necessarily lead to better model performance, especially on sparse datasets like Beauty and Steam.
-特にBeautyやSteamのような疎なデータセットでは、隠れ次元が大きいほどモデルの性能が向上するとは限らない。
+特にBeautyやSteamのような**疎なデータセットでは、隠れ次元が大きいほどモデルの性能が向上するとは限らない**。
 This is probably caused by overfitting.
 これはおそらくオーバーフィッティングによるものだろう。
 In terms of details, Caser performs unstably on four datasets, which might limit its usefulness.
 詳細については、Caserは4つのデータセットで不安定なパフォーマンスを示しており、その有用性が制限される可能性がある。
 Self-attention based methods (i.e., SASRec and BERT4Rec) achieve superior performances on all datasets.
-自己注意に基づく手法（すなわち、SASRecとBERT4Rec）は、すべてのデータセットで優れた性能を達成している。
+self-attentionに基づく手法（すなわち、SASRecとBERT4Rec）は、すべてのデータセットで優れた性能を達成している。
 Finally, our model consistently outperforms all other baselines on all datasets even with a relatively small hidden dimensionality.
 最後に、我々のモデルは、隠れ次元が比較的小さい場合でも、全てのデータセットにおいて他の全てのベースラインを一貫して上回る。
 Considering that our model achieves satisfactory performance with d≥64, we only report the results with d=64 in the following analysis.
-我々のモデルはd≧64で満足のいく性能を達成することを考慮し、以下の分析ではd=64での結果のみを報告する。
+**我々のモデルはd≧64で満足のいく性能を達成することを考慮し、以下の分析ではd=64での結果のみを報告する**。(d=64、小さい...! ID-basedの手法はそれくらいで良いのかも...!)
 
 ## 4.6. Impact of Mask Proportion ρ マスク比率の影響 ρ
+
+![figure4]()
 
 As described in § 3.6, mask proportion ρ is a key factor in model training, which directly affects the loss function (Equation 8).
 3.6節で説明したように、マスク割合ρはモデル学習における重要な要素であり、損失関数（式8）に直接影響する。
 Obviously, mask proportion ρ should not be too small or it is not enough to learn a strong model.
 明らかに、マスクの割合ρは小さすぎてはならない。
 Meanwhile, it should not be too large, otherwise, it would be hard to train since there are too many items to guess based on a few contexts in such case.
-そうでなければ、数個のコンテキストから推測する項目が多すぎるため、学習が困難になる。
+そうでなければ、数個のコンテキストから推測するitemが多すぎるため、学習が困難になる。
 To examine this, we study how mask proportion ρ affects the recommendation performances on different datasets.
 これを検証するために、マスクの割合ρが推薦性能にどのような影響を与えるかを、異なるデータセットについて研究する。
+
 Figure 4 shows the results with varying mask proportion ρ from 0.1 to 0.9.Considering the results with ρ > 0.6 on all datasets, a general pattern emerges, the performances decreasing as ρ increases.
-図4は、マスク比率ρを0.1から0.9まで変化させた結果を示している。すべてのデータセットでρ＞0.6の結果を考慮すると、ρが大きくなるにつれて性能が低下するという一般的なパターンが浮かび上がってくる。
+図4は、マスク比率ρを0.1から0.9まで変化させた結果を示している。すべてのデータセットで**ρ＞0.6の結果を考慮すると、ρが大きくなるにつれて性能が低下するという一般的なパターン**が浮かび上がってくる。
 From the results of the first two columns, it is easy to see that ρ = 0.2 performs better than ρ = 0.1 on all datasets.
 最初の2列の結果から、すべてのデータセットでρ=0.2がρ=0.1よりも性能が良いことが容易にわかる。
 These results verify what we claimed above.
 これらの結果は、我々が上記で主張したことを検証するものである。
+
 In addition, we observe that the optimal ρ is highly dependent on the sequence length of the dataset.
-さらに、最適なρはデータセットの配列長に大きく依存することがわかる。
-For the datasets with short sequence length (e.g., Beauty and Steam), the best performances are achieved at ρ=0.6 (Beauty) and ρ=0.4 (Steam), while the datasets with long sequence length (e.g., ML-1m and ML-20m) prefer a small ρ=0.2.This is reasonable since, compared with short sequence datasets, a large ρ in long sequence datasets means much more items that need to be predicted.
-配列長が短いデータセット（例えば、BeautyとSteam）では、ρ=0.6（Beauty）とρ=0.4（Steam）で最高の性能が達成されるが、配列長が長いデータセット（例えば、ML-1mとML-20m）では、小さなρ=0.2が好まれる。短い配列のデータセットと比較して、長い配列のデータセットで大きなρは、予測する必要がある項目がはるかに多いことを意味するので、これは合理的である。
+さらに、**最適なρはデータセットの配列長に大きく依存する**ことがわかる。(うんうん、そりゃそうな感じ...!:thinking:)
+For the datasets with short sequence length (e.g., Beauty and Steam), the best performances are achieved at ρ=0.6 (Beauty) and ρ=0.4 (Steam), while the datasets with long sequence length (e.g., ML-1m and ML-20m) prefer a small ρ=0.2.
+配列長が短いデータセット（例えば、BeautyとSteam）では、ρ=0.6（Beauty）とρ=0.4（Steam）で最高の性能が達成されるが、配列長が長いデータセット（例えば、ML-1mとML-20m）では、小さなρ=0.2が好まれる。(あれ、長いほうが$\rho$ 大きくすべきかと思ってた...!:thinking:)
+This is reasonable since, compared with short sequence datasets, a large ρ in long sequence datasets means much more items that need to be predicted.
+短い配列のデータセットと比較して、長い配列のデータセットで大きなρは、予測する必要がある項目がはるかに多いことを意味するので、これは合理的である。(??)
 Take ML-1m and Beauty as example, ρ=0.6 means we need to predict 98=⌊163.5×0.6⌋ items on average per sequence for ML-1m, while it is only 5=⌊8.8×0.6⌋ items for Beauty.
 ML-1mとBeautyを例にとると、ρ=0.6は、ML-1mでは1シーケンスあたり平均98=⌊163.5×0.6⌋アイテムを予測する必要があることを意味し、Beautyではわずか5=⌊8.8×0.6⌋アイテムを予測する必要があることを意味する。
 The former is too hard for model training.
@@ -744,7 +755,10 @@ The former is too hard for model training.
 ## 4.7. Impact of Maximum Sequence Length N
 
 We also investigate the effect of the maximum sequence length N on model’s recommendation performances and efficiency.
-また、最大配列長Nがモデルの推薦性能と効率に及ぼす影響についても調査した。
+また、**最大配列長Nがモデルの推薦性能と効率に及ぼす影響**についても調査した。
+
+![table4]()
+
 Table 4 shows recommendation performances and training speed with different maximum length N on Beauty and ML-1m.
 表4は、BeautyとML-1mで最大長Nを変えた場合の推薦性能と学習速度を示している。
 We observe that the proper maximum length N is also highly dependent on the average sequence length of the dataset.
@@ -752,59 +766,77 @@ We observe that the proper maximum length N is also highly dependent on the aver
 Beauty prefers a smaller N = 20, while ML-1m achieves the best performances on N = 200.
 ML-1mはN = 200で最高のパフォーマンスを達成する一方で、Beautyはより小さなN = 20を好む。
 This indicates that a user’s behavior is affected by more recent items on short sequence datasets and less recent items for long sequence datasets.
-これは、ユーザーの行動が、短い配列データセットではより新しいアイテムに影響され、長い配列データセットではより新しいアイテムに影響されないことを示している。
+これは、ユーザの行動が、**短い配列データセットではより新しいアイテムに影響され、長い配列データセットではより新しいアイテムに影響されないこと**を示している。(??)
 The model does not consistently benefit from a larger N since a larger N tends to introduce both extra information and more noise.
 Nを大きくすると、余分な情報とノイズが増える傾向があるため、Nを大きくしてもモデルは一貫して恩恵を受けない。
 However, our model performs very stably as the length N becomes larger.
 しかし、我々のモデルは長さNが大きくなるにつれて非常に安定した性能を発揮する。
 This indicates that our model can attend to the informative items from the noisy historical records.
-これは、我々のモデルがノイズの多い過去の記録から有益な項目を抽出できることを示している。
+これは、我々のモデルがノイズの多い過去の記録から有益なitemを抽出できることを示している。
+
 A scalability concern about BERT4Rec is that its computational complexity per layer is O(n 2d), quadratic with the length n.
-BERT4Recのスケーラビリティに関する懸念は、1層あたりの計算量がO(n 2d)であり、長さnの2次関数であることである。
+BERT4Recのスケーラビリティに関する懸念は、1層あたりの計算量がO(n 2d)であり、長さnの2次関数であることである。(full attention distributionだからか!:thinking:)
 Fortunately, the results in Table 4 shows that the self-attention layer can be effectively parallelized using GPUs.
 幸い、表4の結果は、自己アテンション層がGPUを使用して効果的に並列化できることを示している。
 
-## 4.8. Ablation Study アブレーション研究
+## 4.8. Ablation Study アブレーション(切除)研究
 
 Finally, we perform ablation experiments over a number of key components of BERT4Rec in order to better understand their impacts, including positional embedding (PE), position-wise feed-forward network (PFFN), layer normalization (LN), residual connection (RC), dropout, the layer number L of self-attention, and the number of heads h in multi-head attention.
 最後に、BERT4Recの主要な構成要素である、位置埋め込み（PE）、位置ワイズフィードフォワードネットワーク（PFFN）、レイヤー正規化（LN）、残余接続（RC）、ドロップアウト、自己注意のレイヤー数L、マルチヘッドアテンションにおけるヘッド数hなどの影響をより理解するために、これらの要素のアブレーション実験を行った。
 Table 5 shows the results of our default version (L = 2,h = 2) and its eleven variants on all four datasets with dimensionality d = 64 while keeping other hyperparameters (e.g., ρ) at their optimal settings.
 表5は、他のハイパーパラメータ（例えば、ρ）を最適な設定に保ちながら、次元d = 64の4つのデータセットすべてについて、我々のデフォルトバージョン（L = 2,h = 2）とその11のバリエーションについての結果を示している。
-We introduce the variants and analyze their effects respectively: (1) PE.
-それぞれの変種を紹介し、その効果を分析する：
-(1) PE.
+
+![table5]()
+
+それぞれの変種を紹介し、その効果を分析する:
+We introduce the variants and analyze their effects respectively:
+
+### (1) PE.
+
 The results show that removing positional embeddings causes BERT4Rec’s performances decreasing dramatically on long sequence datasets (i.e., ML-1m and ML-20m).
 その結果、位置埋め込みを削除すると、長配列データセット（ML-1mとML-20m）においてBERT4Recの性能が劇的に低下することがわかった。
 Without the positional embeddings, the hidden representation HL for each item vi depends only on item embeddings.
 位置の埋め込みがなければ、各アイテムviの隠れ表現HLはアイテムの埋め込みのみに依存する。
 In this situation, we predict different target items using the same hidden representation of “[mask]”.
-この状況では、「[マスク]」という同じ隠された表現を使って、異なるターゲット項目を予測する。
+この状況では、同じ“[mask]”のhidden representationを使って、異なるターゲット項目を予測する。
 This makes the model illposed.
-これではモデルのポーズが悪い。
-This issue is more serious on long sequence datasets since they have more masked items to predict.(2) PFFN.
-この問題は、長い配列データセットでは予測すべきマスク項目が多くなるため、より深刻になる(2) PFFN。
+これではモデルのポーズが悪い。(??)
+This issue is more serious on long sequence datasets since they have more masked items to predict.
+この問題は、長い配列データセットでは予測すべきマスク項目が多くなるため、より深刻になる
+
+### (2) PFFN。
+
 The results show that long sequence datasets (e.g., ML-20m) benefit more from PFFN.
 その結果、長い配列データセット（例えばML-20m）はPFFNの恩恵をより多く受けることがわかった。
-This is reasonable since a purpose of PFFN is to integrate information from many heads which are preferred by long sequence datasets as discussed in the analysis about head number h in ablation study (5).(3) LN, RC, and Dropout.
-PFFNの目的は、アブレーション研究におけるヘッド数hに関する解析(5)で述べたように、長いシーケンスデータセットが好む多くのヘッドからの情報を統合することであるため、これは合理的である(3)。
+This is reasonable since a purpose of PFFN is to integrate information from many heads which are preferred by long sequence datasets as discussed in the analysis about head number h in ablation study (5).
+PFFNの目的は、アブレーション研究におけるヘッド数hに関する解析(5)で述べたように、長いシーケンスデータセットが好む多くのヘッドからの情報を統合することであるため、これは合理的である。
+
+### (3) LN, RC, and Dropout.
+
 These components are introduced mainly to alleviate overfitting.
-これらのコンポーネントは、主にオーバーフィッティングを緩和するために導入された。
+**これらのコンポーネントは、主にオーバーフィッティングを緩和するために導入**された。
 Obviously, they are more effective on small datasets like Beauty.
-明らかに、ビューティのような小さなデータセットには効果的だ。
+明らかに、ビューティのような**小さなデータセットには効果的**だ。(overfitを緩和するcomponent群が!)
 To verify their effectiveness on large datasets, we conduct an experiment on ML-20m with layer L=4.
 大規模データセットでの有効性を検証するため、レイヤーL=4のML-20mで実験を行った。
-The results show that NDCG@10 decreases about 10% w/o RC.(4) Number of layers L.
+The results show that NDCG@10 decreases about 10% w/o RC.
 その結果、NDCG@10はRCを使用しない場合、約10%減少することがわかった。
+
+### (4) Number of layers L.
+
 The results show that stacking Transformer layer can boost performances especially on large datasets (e.g, ML-20m).
 その結果、Transformerレイヤーを積み重ねることで、特に大規模なデータセット（例えばML-20m）において性能を向上できることが示された。
 This verifies that it is helpful to learn more complex item transition patterns via deep self-attention architecture.
 これは、深い自己注意アーキテクチャによって、より複雑な項目遷移パターンを学習することが有用であることを検証している。
-The decline in Beauty with L = 4 is largely due to overfitting.(5) Head number h.
+The decline in Beauty with L = 4 is largely due to overfitting.
 L = 4でのビューティーの低下は、オーバーフィッティングによるところが大きい。
+
+### (5) Head number h.
+
 We observe that long sequence datasets (e.g., ML-20m) benefit from a larger h while short sequence datasets (e.g., Beauty) prefer a smaller h.
 我々は、長い配列データセット（例えばML-20m）はより大きなhが有益である一方、短い配列データセット（例えばBeauty）はより小さなhを好むことを観察している。
 This phenomenon is consistent with the empirical result in [48] that large h is essential for capturing long distance dependencies with multi-head self-attention.
-この現象は、[48]の経験的な結果である、多ヘッド自己アテンションで長距離の依存関係を捉えるには、大きなhが不可欠であるという結果と一致する。
+この現象は、[48]の経験的な結果である、**multi-head self-attentionで長距離の依存関係を捉えるには、大きなhが不可欠である**という結果と一致する。
 
 # 5. Conclusion and Future Work 結論と今後の課題
 
@@ -816,9 +848,10 @@ For model training, we introduce the Cloze task which predicts the masked items 
 モデルの学習には、左右両方の文脈を用いてマスク項目を予測するCloze課題を導入する。
 Extensive experimental results on four real-world datasets show that our model outperforms state-of-the-art baselines.
 4つの実世界データセットを用いた広範な実験結果は、我々のモデルが最先端のベースラインを上回ることを示している。
+
 Several directions remain to be explored.
 いくつかの方向性が残されている。
 A valuable direction is to incorporate rich item features (e.g., category and price for products, cast for movies) into BERT4Rec instead of just modeling item ids.
-貴重な方向性は、アイテム ID をモデル化するだけでなく、豊富なアイテム特徴（例えば、商品であればカテゴリと価格、映画であればキャスト）を BERT4Rec に組み込むことである。
+貴重な方向性は、アイテム ID をモデル化するだけでなく、**豊富なアイテム特徴を BERT4Rec に組み込むこと**である。(例えば、商品であればカテゴリと価格、映画であればキャスト)
 Another interesting direction for the future work would be introducing user component into the model for explicit user modeling when the users have multiple sessions.
-将来的な研究のもう一つの興味深い方向性は、ユーザーが複数のセッションを持っている場合、明示的なユーザーモデリングのために、ユーザーコンポーネントをモデルに導入することであろう。
+将来的な研究のもう一つの興味深い方向性は、**ユーザが複数のセッションを持っている場合**、明示的なユーザモデリングのために、ユーザコンポーネントをモデルに導入することであろう。(同一ユーザの複数のsessionの関連性を考慮するって事か...!:thinking:)
