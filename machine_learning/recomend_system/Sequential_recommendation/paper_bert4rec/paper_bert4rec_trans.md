@@ -12,7 +12,7 @@ BERT4Rec：
 ## 0.3. abstract 抄録
 
 Modeling users’ dynamic preferences from their historical behaviors is challenging and crucial for recommendation systems.
-ユーザーの過去の行動から動的な嗜好をモデル化することは、推薦システムにとって挑戦的かつ重要である。
+ユーザの過去の行動から動的な嗜好をモデル化することは、推薦システムにとって挑戦的かつ重要である。
 Previous methods employ sequential neural networks to encode users’ historical interactions from left to right into hidden representations for making recommendations.
 これまでの手法では、逐次的なニューラルネットワークを採用し、ユーザーの過去のやりとりを左から右へとレコメンデーションするための隠れ表現にエンコードする。
 Despite their effectiveness, we argue that such left-to-right unidirectional models are sub-optimal due to the limitations including: a) unidirectional architectures restrict the power of hidden representation in users’ behavior sequences; b) they often assume a rigidly ordered sequence which is not always practical.
@@ -33,7 +33,7 @@ Extensive experiments on four benchmark datasets show that our model outperforms
 Accurately characterizing users’ interests lives at the heart of an effective recommendation system.
 ユーザーの興味を正確に把握することは、効果的な推薦システムの中核をなす。
 In many real-world applications, users’ current interests are intrinsically dynamic and evolving, influenced by their historical behaviors.
-多くの実世界のアプリケーションでは、ユーザーの現在の興味は、過去の行動に影響され、本質的にダイナミックで進化している。
+多くの実世界のアプリケーションでは、**ユーザの現在の興味は、過去の行動に影響され、本質的にダイナミックで進化している**。
 For example, one may purchase accessories (e.g., Joy-Con controllers) soon after buying a Nintendo Switch, though she/he will not buy console accessories under normal circumstances.
 例えば、ニンテンドースイッチを買ってすぐにアクセサリー（Joy-Conコントローラーなど）を買うかもしれないが、通常であればゲーム機のアクセサリーを買うことはない。
 
@@ -44,10 +44,10 @@ They aim to predict the successive item(s) that a user is likely to interact wit
 Recently, a surge of works employ sequential neural networks, e.g., Recurrent Neural Network (RNN), for sequential recommendation and obtain promising results [7, 14, 15, 56, 58].
 最近、逐次推薦にリカレント・ニューラル・ネットワーク（RNN）などの逐次ニューラルネットワークを採用する研究が急増し、有望な結果が得られている[7, 14, 15, 56, 58]。
 The basic paradigm of previous work is to encode a user’s historical interactions into a vector (i.e., representation of user’s preference) using a left-to-right sequential model and make recommendations based on this hidden representation.
-これまでの研究の基本的なパラダイムは、**左から右への逐次モデルを使用して、ユーザーの過去のインタラクションをベクトル（すなわち、ユーザーの嗜好の表現）に符号化**し、このhidden representationに基づいて推薦を行うことである。
+これまでの研究の基本的なパラダイムは、**左から右への逐次モデルを使用して、ユーザーの過去のインタラクションをベクトル（すなわち、ユーザの嗜好の表現）に符号化**し、このhidden representationに基づいて推薦を行うことである。
 
 Despite their prevalence and effectiveness, we argue that such left-to-right unidirectional models are not sufficient to learn optimal representations for user behavior sequences.
-このような左から右への一方向的なモデルは、その普及率と有効性にもかかわらず、**ユーザーの行動シーケンスに最適な表現を学習するには十分ではないと主張する**。
+このような左から右への一方向的なモデルは、その普及率と有効性にもかかわらず、**ユーザの行動シーケンスに最適な表現を学習するには十分ではないと主張する**。
 The major limitation, as illustrated in Figure 1c and 1d, is that such unidirectional models restrict the power of hidden representation for items in the historical sequences, where each item can only encode the information from previous items.
 図1cと1dに示されているように、このような一方向のモデルでは、**各itemが前のitemからの情報しか符号化できないため、履歴シーケンスのitemに対する隠れ表現の力が制限されるという大きな限界**がある。
 Another limitation is that previous unidirectional models are originally introduced for sequential data with natural order, e.g., text and time series data.
@@ -55,9 +55,9 @@ Another limitation is that previous unidirectional models are originally introdu
 They often assume a rigidly ordered sequence over data which is not always true for user behaviors in real-world applications.
 それらはしばしば、データ上の厳密な順序を想定しているが、実際のアプリケーションにおけるユーザー行動には必ずしも当てはまらない。(推薦に有用な隠れ表現を作る事が目的なのだから、厳密にuni-directionalを守る事は重要ではない、みたいな??:thinking:)
 In fact, the choices of items in a user’s historical interactions may not follow a rigid order assumption [18, 54] due to various unobservable external factors [5].
-実際、ユーザーの過去のインタラクションにおけるアイテムの選択は、様々な観測不可能な外的要因 [5]のために、厳密な順序の仮定 [18, 54]に従わないかもしれない。
+実際、ユーザーの過去のインタラクションにおけるアイテムの選択は、様々な観測不可能な外的要因 [5]のために、**rigid order assumption(厳密な順序の仮定) [18, 54]**に従わないかもしれない。
 In such a situation, it is crucial to incorporate context from both directions in user behavior sequence modeling.
-このような状況では、ユーザー行動シーケンスのモデリングにおいて、双方向からのコンテキストを組み込むことが極めて重要である。
+このような状況では、ユーザ行動シーケンスのモデリングにおいて、双方向からのコンテキストを組み込むことが極めて重要である。
 
 To address the limitations mentioned above, we seek to use a bidirectional model to learn the representations for users’ historical behavior sequences.
 上記の限界に対処するため、私たちは双方向モデルを使用して、ユーザーの過去の行動シーケンスに対する表現を学習することを目指している。
@@ -115,7 +115,7 @@ Among various CF methods, Matrix Factorization (MF) is the most popular one, whi
 Another line of work is item-based neighborhood methods [20, 25, 31, 43].
 もう一つの研究は、項目ベースの近傍法である[20, 25, 31, 43]。
 They estimate a user’s preference on an item via measuring its similarities with the items in her/his interaction history using a precomputed item-to-item similarity matrix.
-これは、あらかじめ計算されたアイテム間の類似度行列を使用して、ユーザーの対話履歴のアイテムとの類似度を測定することにより、アイテムに対するユーザーの嗜好を推定する。
+これは、あらかじめ計算されたアイテム間の類似度行列を使用して、ユーザの対話履歴のアイテムとの類似度を測定することにより、アイテムに対するユーザの嗜好を推定する。(=Content-based filteringと言って良い?:thinking: CFと対をなして紹介されてるし...!)
 
 Recently, deep learning has been revolutionizing the recommendation systems dramatically.
 近年、ディープラーニングは推薦システムに劇的な革命をもたらしている。
@@ -123,11 +123,11 @@ The early pioneer work is a two-layer Restricted Boltzmann Machines (RBM) for co
 初期の先駆的な研究は、Salakhutdinovら[42]がNetflix Prize1で提案した協調フィルタリングのための2層制限ボルツマンマシン（RBM）である。
 
 One line of deep learning based methods seeks to improve the recommendation performance by integrating the distributed item representations learned from auxiliary information, e.g., text [23, 53], images [21, 55], and acoustic features [51] into CF models.
-ディープラーニングに基づく手法の一系統は、補助情報、例えばテキスト[23, 53]、画像[21, 55]、音響特徴[51]から学習された分散アイテム表現をCFモデルに統合することで、推薦性能を向上させようとしている。
+ディープラーニングに基づく手法の一系統は、補助情報、例えばテキスト[23, 53]、画像[21, 55]、音響特徴[51]から学習された**distributed item representations(分散アイテム表現)をCFモデルに統合することで、推薦性能を向上**させようとしている。(CF + CBのhybrid手法)
 Another line of work seeks to take the place of conventional matrix factorization.
 また、従来の行列分解に取って代わろうとする研究もある。
 For example, Neural Collaborative Filtering (NCF) [12] estimates user preferences via Multi-Layer Perceptions (MLP) instead of inner product, while AutoRec [44] and CDAE [57] predict users’ ratings using Auto-encoder framework.
-例えば、ニューラル協調フィルタリング（NCF）[12]は、内積の代わりに多層知覚（MLP）を介してユーザーの嗜好を推定し、AutoRec[44]とCDAE[57]は、オートエンコーダーフレームワークを使用してユーザーの評価を予測する。
+例えば、ニューラル協調フィルタリング（NCF）[12]は、内積の代わりに多層知覚（MLP）を介してユーザの嗜好を推定し、AutoRec[44]とCDAE[57]は、オートエンコーダーフレームワークを使用してユーザの評価を予測する。
 
 ## 2.2. Sequential Recommendation
 
@@ -178,7 +178,7 @@ For sequential recommendation, Kang and McAuley [22] introduce a two-layer Trans
 SASRec is closely related to our work.
 SASRecは我々の仕事と密接な関係がある。
 However, it is still a unidirectional model using a casual attention mask.
-とはいえ、casual attention mask(??)を使ったuni-directionalな(一方向的な)モデルであることに変わりはない。
+とはいえ、casual attention mask(=シンプルにnext-itemをmaskして、next-item-prediction問題を学習させるやつ??:thinking:)を使ったuni-directionalな(一方向的な)モデルであることに変わりはない。
 While we use a bidirectional model to encode users’ behavior sequences with the help of Cloze task.
 一方、我々は**Clozeタスク**の助けを借りて、**ユーザの行動シーケンスを符号化するために双方向モデルを使用**しています。
 
