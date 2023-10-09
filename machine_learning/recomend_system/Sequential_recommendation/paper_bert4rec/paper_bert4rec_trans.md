@@ -472,7 +472,7 @@ Obviously, SASRec is a left-to-right unidirectional version of our BERT4Rec with
 Different architectures lead to different training methods.
 アーキテクチャが異なれば、トレーニング方法も異なる。
 SASRec predicts the next item for each position in a sequence, while BERT4Rec predicts the masked items in the sequence using Cloze objective.
-SASRecは配列の各位置に対して次の項目を予測し、BERT4RecはCloze目的語を用いて配列中のマスクされた項目を予測する。
+SASRecは配列の各位置に対して次の項目を予測し、BERT4RecはCloze目的(=masked-item-prediction)を用いて配列中のマスクされた項目を予測する。
 
 ### CBOW & SG.
 
