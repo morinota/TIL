@@ -167,19 +167,70 @@ $$
 
 - ここで、$W^P$ は学習可能な投影行列、$b^P$ と $b^O$ はbias項である。
 - $\mathbf{E} \in \mathbb{R}^{|V|\times d}$ は推薦候補アイテム集合 $V$ の埋め込み行列。
-  - BERT4Recでは、overfittingを緩和し、モデルサイズを小さくするために、**入力層と出力層で共有item埋め込み行列を使用する**。($\mathbf{E}$ は基本的にはSequential推薦とは共同で学習しない固定値なのかな。)
+  - BERT4Recでは、overfittingを緩和し、モデルサイズを小さくするために、**入力層と出力層で共有item埋め込み行列を使用する**。($\mathbf{E}$ は基本的にはSequential推薦とは共同で学習しないような、固定値なのかな:thinking: 入力層と出力層で同じパラメータを使うと言っているだけで、一緒に学習する想定なのかな。)
 
 ### BERT4Recの学習(Clozeタスクについて)
 
-- BERT4Recは、SASRec等のnext-item-predictionタスクではなく、Clozeタスクによって学習される。
+- bi-directionalなモデルなので、next-item-predictionタスクが有効でない話:
 
-- Clozeタスクの利点:
-- ## BERTと異なる点:
+  - RNNやSASRec等のuni-directionalなSequential推薦モデルは、図1cや図1dの様に、入力Sequenceの各positionに対してnext-item-predictionタスクを学習させるのが一般的。
+  - ex) 入力sequence $[v_1, \cdots ,v_t]$ のターゲットは、シンプルにshiftされた $[v_2, \cdots, v_{t+1}]$ になる。
+  - その一方で、bi-directionalなモデルであるBERT4Recは、これは非常に簡単なタスクとなり、学習が意味をなさない。(双方向なので未来の情報を使えてしまうので! 無意味なパラメータに最適化されてしまう!)
+
+- BERT4Recを効率的に学習させる為に、新しい学習タスクとしてClozeタスクを適用する (i.e. **Masked Language Model**。要はmasked-item-predictionってことか!:thinking:) (BERTの事前学習タスクの一つ!)
+
+  - まず各学習stepにおいて、入力sequenceの全itemのうち $\rho$ の割合をランダムにmaskする。(i.e. 特別なトークン"[mask]"で置き換える)
+  - 次に、maskされたitemの元のIDを、その左右のcontextのみに基づいて予測する。
+
+- 例えば以下。
+
+$$
+Input : [v_1, v_2, v_3, v_4, v_5] \rightarrow^{randomly_mask} [v_1, [mask]_1, v_3, [mask]_2, v_5]
+\\
+Labels:[mask]_1 = v_2, [mask]_2 = v_4
+$$
+
+- “[mask]”に対応する最終的な隠れ表現は、従来のSequential推薦と同様に、推薦候補アイテム集合に対する出力ソフトマックスに供給される。
+- 最終的に、mask済みの入力Sequence $\mathcal{S}'_{u}$ (=あるユーザ $u$ の一部mask済みの行動sequence) に対する損失を、maskされたターゲットの負の対数尤度として定義する(これがClozeタスクの損失関数):
+
+$$
+\mathcal{L}
+= \frac{1}{|\mathcal{S}^m_u|}
+\sum_{v_m \in \mathcal{S}^m_u} - log P(v_m = v^{*}_{m}|\mathcal{S}'_{u})
+\tag{8}
+$$
+
+- ここで、
+
+  - $\mathcal{S}'_{u}$ は、あるユーザ $u$ の行動sequence $\mathcal{S}_u$ の一部がmaskされたversion。
+  - $\mathcal{S}^{m}_{u}$ は、その中のランダムにmaskされたitem集合。
+  - $v^{*}_{m}$ は、maskされたitem $v_m$ の真のitem。
+  - 確率 $P(\cdot)$ は式(7)で定義したやつ。
+
+#### Clozeタスクの利点
+
+- モデルを訓練するためのサンプルをより多く生成できること(ランダムにmaskするから??)
+- 長さ $n$ の入力sequenceを想定すると...
+  - 従来のnext-item-predictionタスクを学習させる場合は、学習用に $n$ 個のユニークなサンプルが生成される。(epoch毎に学習サンプルは基本同じ?)
+  - BERT4Recのようなmasked-item-predictionタスクを学習させる場合、複数回のepochで、nCk 個のサンプルを得られる。(ランダムに$k$ 個のitemをmaskする場合)
 
 ### BERT4Recの推論
 
-- BERT4Recの学習に用いるClozeタスクの欠点: 最終タスク(=Sequential推薦=next-item-prediction的なタスク)と整合性がない事。
-- 推論時は sequenceの最後尾に[]tokenを追加し、
+- Clozeタスクの欠点: 最終タスクと整合性がない事。
+  - BERT4Recの学習はmasked-item-predictionで行うのに対し、実アプリケーション上で運用させたいのはnext-item-predictionであり、**学習と最終的なusecaseの間にミスマッチが生じる**。
+  - (うんうん、代理学習問題的な??:thinking:)
+- 対応策:
+  - 推論時は、ユーザの行動sequenceの最後尾に特別なtoken “[mask]” を追加し、このtokenの最終的な隠れ表現 $\mathbf{h}_{t} = \mathbf{h}_{[mask]}$ に基づいてnext-itemを予測する。(sequenceの先頭の"[cls]"トークンじゃなくて最後尾なんだ...!!:thinking:)
+  - 学習時にも、ミスマッチを緩和させる為、**入力sequenceの最後のitemだけをmaskするサンプルも作り、学習データに含ませる**。(このサンプルだけmasked item prediction = next item predictionになるのか...!:thinking:)
+    - これは**Sequential推薦のfine-tuningのように機能**し、推薦性能をさらに向上させることができる。
+
+### NLPタスクにおけるBERTと異なる点:
+
+- BERT4Recは、NLPタスクにおけるBERTに関連しているが、いくつか違いがある:
+- 違い1: 「BERTはsentence表現の為の事前学習モデルだが、BERT4RecはSequential推薦のためのend-to-endなモデルである」
+  - BERT は、**タスクに依存しない大規模なコーパスを活用**して、様々な下流タスクの為の初期値となるsentence表現モデルを学習する。
+- 違い2: 「BERTと比較して、BERT4Recは next-sentence-predictionタスク を学習しない。また segment embeddingを使用しない。」
+  - ユーザの過去の行動を1つのsequenceとしてモデル化するので、↑が意味をなさない?:thinking:
 
 ## どうやって有効だと検証した?
 
