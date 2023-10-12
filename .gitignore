@@ -19,7 +19,7 @@
 !*.js
 !*.eot
 !*.ttf
-!*.PNG
+# !*.PNG
 # 明示的に除外.
 .venv
 node_modules
@@ -28,4 +28,4 @@ node_modules
 !*.map
 !machine_learning/recomend_system/twitter_rec/SimClusters/slides/slides_files
 config.yml
-!:slides/*.PNG
+!*slides/*.PNG
