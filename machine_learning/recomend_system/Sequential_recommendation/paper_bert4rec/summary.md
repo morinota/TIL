@@ -149,6 +149,26 @@ $$
 
 (↑MHサブレイヤーの出力表現に、DropoutとResidual Connectionとレイヤー正規化を適用したものが、PFFNサブレイヤーへの入力表現になる)
 
+#### Embedding LayerとPositional Embeddingの話
+
+#### Output Layerの話
+
+[fig1b]()
+
+- L個のTransformerブロックの後、入力sequenceのすべてのpositionのitemに対する最終的な出力表現 $\mathbf{H}^{L}$ が得られる。
+- 図1bに示すように、マスクされたアイテム $v_t$ (i.e. $v_{[mask]}$) の出力表現 $\mathbf{h}^L_t$ に基づいて、time step $t$ のアイテムを予測する。
+  - 入力sequenceの最後尾に $v_{[mask]}$ を追加するのはBERT4Recの推論の為の工夫!
+- 具体的には、GELU活性化関数を挟んだ2層のFFNを適用し、推薦候補アイテムに対する出力分布(=確率質量関数みたいなやつ!)を生成する:
+
+$$
+P(v) = softmax(GELU(\mathbf{h}^L_{t} W^P + \mathbf{b}^P) \mathbf{E}^T + \mathbf{b}^O)
+\tag{7}
+$$
+
+- ここで、$W^P$ は学習可能な投影行列、$b^P$ と $b^O$ はbias項である。
+- $\mathbf{E} \in \mathbb{R}^{|V|\times d}$ は推薦候補アイテム集合 $V$ の埋め込み行列。
+  - BERT4Recでは、overfittingを緩和し、モデルサイズを小さくするために、**入力層と出力層で共有item埋め込み行列を使用する**。($\mathbf{E}$ は基本的にはSequential推薦とは共同で学習しない固定値なのかな。)
+
 ### BERT4Recの学習(Clozeタスクについて)
 
 - BERT4Recは、SASRec等のnext-item-predictionタスクではなく、Clozeタスクによって学習される。

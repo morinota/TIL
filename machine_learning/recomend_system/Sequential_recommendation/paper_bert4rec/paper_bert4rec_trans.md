@@ -378,7 +378,7 @@ Thus, we need to truncate the the input sequence [v1, . . . ,vt ] to the last N 
 After L layers that hierarchically exchange information across all positions in the previous layer, we get the final output HL for all items of the input sequence.
 前の層のすべての位置の情報を階層的に交換するL個のTransformerブロックの後、入力シーケンスのすべてのitemに対する最終的な出力 $\mathbf{H}^{L}$ が得られる。
 Assuming that we mask the item vt at time step t, we then predict the masked items vt base on h L t as shown in Figure 1b.
-時間ステップ $t$ でアイテム $v_{t}$ をマスクすると仮定すると、図1bに示すように、$\mathbf{h}^L_t$ に基づいてマスクされたアイテム $v_t$ を予測する。
+時間ステップ $t$ でアイテム $v_{t}$ をマスクすると仮定すると、図1bに示すように、$\mathbf{h}^L_t$ に基づいてマスクされたアイテム $v_t$ ($v_{[mask]}$) を予測する。
 Specifically, we apply a two-layer feed-forward network with GELU activation in between to produce an output distribution over target items:
 具体的には、GELU活性化を挟んだ2層のフィードフォワードネットワークを適用し、ターゲットitemsに対する出力分布を生成する:
 
@@ -388,7 +388,7 @@ P(v) = softmax(GELU(\mathbf{h}^L_{t} W^P + \mathbf{b}^P) \mathbf{E}^T + \mathbf{
 $$
 
 where W P is the learnable projection matrix, b P , and b O are bias terms, E ∈ R |V |×d is the embedding matrix for the item set V.
-ここで、$W^P$ は学習可能な射影行列、$b^P$ 、$b^O$ はバイアス項、$\mathbf{E} \in \mathbb{R}^{|V|\times d$ はitem集合Vの埋め込み行列である。
+ここで、$W^P$ は学習可能な射影行列、$b^P$ 、$b^O$ はバイアス項、$\mathbf{E} \in \mathbb{R}^{|V|\times d}$ はitem集合Vの埋め込み行列である。
 We use the shared item embedding matrix in the input and output layer for alleviating overfitting and reducing model size.
 我々は、オーバーフィッティングを緩和し、モデルサイズを小さくするために、**入力層と出力層で共有item埋め込み行列を使用する**。
 
