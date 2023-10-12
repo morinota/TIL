@@ -215,7 +215,7 @@ It is built upon the popular self-attention layer, “Transformer layer”.
 As illustrated in Figure 1b, BERT4Rec is stacked by L bidirectional Transformer layers.
 図1bに示すように、BERT4RecはL個の双方向トランスフォーマー層によって積層されている。
 At each layer, it iteratively revises the representation of every position by exchanging information across all positions at the previous layer in parallel with the Transformer layer.
-各レイヤーで、トランスフォーマーレイヤーと並行して、前のレイヤーのすべてのポジションの情報を交換することによって(??)、すべてのポジションの表現を繰り返し修正する。
+各レイヤーで、トランスフォーマーレイヤーと並行して、前のレイヤーのすべてのポジション(=sequence内のposition)の情報を交換することによって(??)、すべてのポジションの表現を繰り返し修正する。
 Instead of learning to pass relevant information forward step by step as RNN based methods did in Figure 1d, self-attention mechanism endows BERT4Rec with the capability to directly capture the dependencies in any distances.
 図1dのRNNベースの手法のように、関連する情報を段階的に前方に渡すように学習する代わりに、self-attentionメカニズムは、BERT4Recに、あらゆる距離の依存関係を直接捕捉する能力を与えている。
 This mechanism results in a global receptive field, while CNN based methods like Caser usually have a limited receptive field.
@@ -256,7 +256,7 @@ head_i = Attention(\mathbf{H}^l \mathbf{W}^Q_{i}, \mathbf{H}^l \mathbf{W}^K_{i},
 $$
 
 where the projections matrices for each head $\mathbf{W}^Q_i \in \mathbb{R}^{d×d/h}$, $\mathbf{W}^K_i \in \mathbb{R}^{d×d/h}$, $\mathbf{W}^V_i \in \mathbb{R}^{d×d/h}$, and $\mathbf{W}^O_i \in \mathbb{R}^{d×d}$ are learnable parameters.
-ここで、各ヘッドの投影行列 $\mathbf{W}^Q_i \in \mathbb{R}^{d×d/h}$, $\mathbf{W}^K_i \in \mathbb{R}^{d×d/h}$, $\mathbf{W}^V_i \in \mathbb{R}^{d×d/h}$, and $\mathbf{W}^O_i \in \mathbb{R}^{d×d}$ は学習可能なパラメータである。
+ここで、各ヘッドの投影行列 $\mathbf{W}^Q_i \in \mathbb{R}^{d × d/h}$, $\mathbf{W}^K_i \in \mathbb{R}^{d × d/h}$, $\mathbf{W}^V_i \in \mathbb{R}^{d × d/h}$, and $\mathbf{W}^O \in \mathbb{R}^{d×d}$ は学習可能なパラメータである。
 Here, we omit the layer subscript l for the sake of simplicity.
 ここでは簡略化のため、レイヤーの添え字 $l$ は省略する。
 In fact, these projection parameters are not shared across the layers.
@@ -319,7 +319,7 @@ That is, the output of each sub-layer is LN(x + Dropout(sublayer(x))), where sub
 つまり、各サブレイヤの出力は $LN(x + Dropout(sublayer(x)))$ となる、
 ここで、$sublayer(-)$ はサブレイヤ自身によって実装された関数であり、$LN$ は [1] で定義されたレイヤ正規化関数である。
 We use LN to normalize the inputs over all the hidden units in the same layer for stabilizing and accelerating the network training.
-$LN$ を使用して、同じレイヤーにあるすべての隠れユニットの入力を正規化し、ネットワーク学習を安定化・高速化する。(なるほど?レイヤー正規化はそういう効果なのか...!:thinking:)
+$LN$ を使用して、同じレイヤーにあるすべての隠れユニットの入力を正規化し(大きさを揃えるってこと??)、ネットワーク学習を安定化・高速化する。(なるほど?レイヤー正規化はそういう効果なのか...!:thinking:)
 
 In summary, BERT4Rec refines the hidden representations of each layer as follows:
 要約すると、BERT4Rec は各層の隠れ表現を以下のように洗練する:
@@ -337,14 +337,14 @@ Trm(\mathbf{H}^{l-1}) = LN(A^{l-1} + Dropout(PFFN(A^{l-1})))
 \tag{5}
 $$
 
-(↑Residual connectionとPFFN)
+(PFFNサブレイヤーの出力表現に、DropoutとResidual Connectionとレイヤー正規化を適用したものが、ある1つのTransformerブロックの出力表現になる。)
 
 $$
 A^{l-1} = LN(\mathbf{H}^{l} + Dropout(MH(\mathbf{H}^{l-1})))
 \tag{6}
 $$
 
-(↑Residual connectionとMulti-head attention)
+(MHサブレイヤーの出力表現に、DropoutとResidual Connectionとレイヤー正規化を適用したものが、PFFNサブレイヤーへの入力表現になる)
 
 ## 3.4. Embedding Layer エンベッディングレイヤー
 
