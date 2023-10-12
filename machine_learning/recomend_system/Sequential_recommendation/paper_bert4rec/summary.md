@@ -151,6 +151,17 @@ $$
 
 #### Embedding LayerとPositional Embeddingの話
 
+- RNNやCNNと異なり、attention自体は入力sequenceの順序を意識しない。
+- だからpositional embeddingが必要!
+- 与えられたitem $v_i$ に対して、その入力表現 $\mathbf{h}^{0}_{i}$ は、対応するitem埋め込みと位置埋め込みを合計することによって構築される。
+
+$$
+\mathbf{h}^{0}_{i} = \mathbf{v}_{i} + \mathbf{p}_{i}
+$$
+
+- ここで、$\mathbf{v}_i \in \mathbf{E}$ はitem $v_i$ の $d$ 次元埋め込み、$\mathbf{p}_i \in \mathbf{P}$ はposition index $i$ の$d$ 次元位置埋め込み。
+- BERT4Recでは、より良い性能を得るために、固定正弦波埋め込みに代えて、学習可能な位置埋め込みを採用しているらしい。
+
 #### Output Layerの話
 
 [fig1b]()
@@ -235,14 +246,55 @@ $$
 ## どうやって有効だと検証した?
 
 - 4種のベンチマークデータセットによる、オフライン実験で評価してた。
+  - Amazon Beauty
+  - Steam
+  - MovieLens 1m
+  - MovieLens 20m
+
+> For all datasets, we convert all numeric ratings or the presence of a review to implicit feedback of 1 (i.e., the user interacted with the item).
+
+各データセットはexplicitなデータだが、やや強引(?)にimplicit feedbackと見做して実験してる感じ...!:thinking:
+
+- 評価方法:
+
+  - Sequential推薦で広く知られる **leave-one-out 評価(i.e., next item recommendation)タスク**を採用した。
+    - leave-one-out = 各ユーザについて、行動sequenceの最後のitemをテストデータセットとして抜き出し、最後のitemの直前のitemを検証データセットとして扱い、残りのitemを学習に利用する。
+
+- 評価指標:
+
+  - 推薦タスクで一般的なaccuracy-metrics: Hit Ratio (HR), Normalized Discounted Cumulative Gain (NDCG), Mean Reciprocal Rank (MRR), etc.
+
+- ベースラインのモデル:
+  - 非パーソナライズ手法: most popular items (POP)
+  - パーソナライズ 且つ 非Sequential手法: BPR-MF と NCF (ともに協調フィルタリング手法)
+  - パーソナライズ 且つ Sequentialモデル: FPMC (MC系手法), GRU4Rec(RNN系手法), Caser(CNN系手法), SASRec(uni-directionalなself-attention系手法. Sequential推薦のSOTA)
 
 ## 議論はある？
 
 ### BERT4Rec vs ベースライン手法の推薦性能の比較
 
-#### 疑問1: BERT4Recの性能の高さはbi-directionalモデルだから? それともClozeタスクを学習させてるから?
+![table2]()
 
-#### 疑問2: なぜ、どのようにbi-directionalモデルはuni-directionalモデルよりも性能が良い??
+- 表2は、4つのベンチマークデータセットにおける全モデルの最良の結果をまとめたもの。
+- 結果1: 非パーソナライズ手法(POP) は、一貫して最低の性能だった。
+- 結果2: Sequential手法は、一貫して非Sequential手法を上回る。
+  - (まあleave-one-outの評価方法が、Sequenttial手法に有利な評価方法だからだよなぁ...。:thinking:)
+- 結果3: Sequential手法の中で、SASRecは他のMC, RNN, CNN系手法よりも良い結果を示した。
+  - ->self-attentionメカニズムは、sequential推薦タスクにおいて有効...!
+- 結果4: BERT4Recは、一貫して全ての手法の中で最も優れた結果を示した。
+  - sequential推薦タスクbi-directionalなモデルの有効性...!
+  - (論文では、BERT4Recの性能の高さはbi-directionalモデルだから? それともClozeタスクを学習させてるから? のablation実験もやってた。)
+
+#### なぜ、どのようにbi-directionalモデルはuni-directionalモデルよりも性能が良いのか??
+
+![figure2]()
+
+- 図2は、Beautyデータセットの実験にて、入力sequenceの最後の10item(=最後のitemは"[mask]"token)の平均attention wwightを可視化したもの。(見解、なんとなくしか分からなかった...!:thinking:)
+- 見解1: attentionは各headによって異なる。
+  - ex) 1つ目のTransformer層では、head1は左側のitemに注目し、head2は右側のitemに注目していた。
+- 見解2: attentionは各layerによって異なる。
+  - ex) 2つ目のTransformer層では、より右側(i.e. 最近の)のitemに注目する傾向がある。
+- 見解3: uni-directionalモデルが左側のitemにしかattentionできないのと異なり、BERT4Recのitemは左右両側のitemにattentionする傾向がある。
 
 ### 各ハイパーパラメータの影響
 

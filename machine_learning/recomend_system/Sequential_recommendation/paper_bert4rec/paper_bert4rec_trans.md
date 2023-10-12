@@ -584,7 +584,7 @@ We report the results of each baseline under its optimal hyper-parameter setting
 We implement BERT4Rec11 with TensorFlow.
 BERT4Rec11をTensorFlowで実装する。
 All parameters are initialized using truncated normal distribution in the range [−0.02, 0.02].
-すべてのパラメータは、[-0.02, 0.02]の範囲で切り捨てられた正規分布を用いて初期化される。(正規分布の分散は??)
+すべてのパラメータは、[-0.02, 0.02]の範囲で切り捨てられた正規分布を用いて初期化される。(正規分布の分散は??) (埋め込み行列と投影行列とFFNのbias項??)
 We train the model using Adam [24] with learning rate of 1e-4, β1 = 0.9, β2 = 0.999, ℓ2 weight decay of 0.01, and linear decay of the learning rate.
 Adam [24]を使用し、学習率1e-4、β1 = 0.9、β2 = 0.999、ℓ2重み減衰0.01、学習率線形減衰でモデルを訓練する。
 The gradient is clipped when its ℓ2 norm exceeds a threshold of 5.
@@ -675,7 +675,7 @@ For example, in layer 1, head 1 tends to attend on items at the left side while 
 b) Attention varies across different layers.
 b) attentionは各layerによって異なる。
 Apparently, attentions in layer 2 tend to focus on more recent items.
-どうやら、レイヤー2では、より新しいものに関心が集中する傾向があるようだ。
+どうやら、レイヤー2では、より新しいitemに関心が集中する傾向があるようだ。
 This is because layer 2 is directly connected to the output layer and the recent items play a more important role in predicting the future.
 これは、レイヤー2が出力レイヤーに直結しており、未来を予測する上で最近の項目がより重要な役割を果たすからである。
 Another interesting pattern is that heads in Figure 2a and 2b also tend to attend on [mask]13.(This phenomenon also exists in text sequence modeling using BERT)
