@@ -796,7 +796,7 @@ We introduce the variants and analyze their effects respectively:
 The results show that removing positional embeddings causes BERT4Rec’s performances decreasing dramatically on long sequence datasets (i.e., ML-1m and ML-20m).
 その結果、位置埋め込みを削除すると、長配列データセット（ML-1mとML-20m）においてBERT4Recの性能が劇的に低下することがわかった。
 Without the positional embeddings, the hidden representation HL for each item vi depends only on item embeddings.
-位置の埋め込みがなければ、各アイテムviの隠れ表現HLはアイテムの埋め込みのみに依存する。
+位置の埋め込みがなければ、各アイテム $v_i$ の隠れ表現 $H^L$ はアイテムの埋め込みのみに依存する。
 In this situation, we predict different target items using the same hidden representation of “[mask]”.
 この状況では、同じ“[mask]”のhidden representationを使って、異なるターゲット項目を予測する。
 This makes the model illposed.

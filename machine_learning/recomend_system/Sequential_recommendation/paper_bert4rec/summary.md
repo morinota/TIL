@@ -9,8 +9,10 @@ url(paper): https://arxiv.org/abs/1904.06690
 
 ## どんなもの?
 
-- Amazonの2019年のhogehoge。
+- RecSys2023の[AmazonのBERT4Recを継承した事前学習済み推薦モデルの論文](https://dl.acm.org/doi/10.1145/3604915.3608868)が読みたかったので、先に読んでみた。
+- Amazonの2019年のbi-directionalなSequential推薦モデル BERT4Rec を提案した論文。
 - sequential推薦タスクにおけるいくつかのベンチマークデータセットで、当時のSOTAを達成。
+- Transformer Encoderのモデルアーキテクチャや、既存研究との関連性も丁寧に述べてくれていて、長いけど有り難い論文だった感。
 
 ## 先行研究と比べて何がすごい?
 
@@ -285,7 +287,7 @@ $$
   - sequential推薦タスクbi-directionalなモデルの有効性...!
   - (論文では、BERT4Recの性能の高さはbi-directionalモデルだから? それともClozeタスクを学習させてるから? のablation実験もやってた。)
 
-#### なぜ、どのようにbi-directionalモデルはuni-directionalモデルよりも性能が良いのか??
+### なぜ、どのようにbi-directionalモデルはuni-directionalモデルよりも性能が良いのか??
 
 ![figure2]()
 
@@ -296,31 +298,37 @@ $$
   - ex) 2つ目のTransformer層では、より右側(i.e. 最近の)のitemに注目する傾向がある。
 - 見解3: uni-directionalモデルが左側のitemにしかattentionできないのと異なり、BERT4Recのitemは左右両側のitemにattentionする傾向がある。
 
-### 各ハイパーパラメータの影響
+### その他の実験
 
-#### hidden representation の次元数 $d$ の影響
+各種ハイパーパラメータの影響の検証や、モデルアーキテクチャの各componentの影響を調査するablation実験の結果が論文で報告されていた。
 
-![figure3]()
-
-#### Clozeタスクのmask proprtion $\rho$ の影響
-
-![figure4]()
-
-#### sequence最大長 $N$ の影響
-
-![table4]()
-
-### Ablation(切除)実験
-
-#### PE(positional embedding)の有無の影響
-
-#### PFFN(Position-wise Feed Forward Network)の有無の影響
-
-#### LN(), RC(), Dropoutの有無の影響
-
-#### Transformer Layerの数 $L$ の影響
-
-#### multi-head attettionのhead数 $h$ の影響
+- 各種ハイパーパラメータの影響:
+  - 隠れ表現の次元数 $d$:
+    - モデル性能は、$d$ が大きくなるにつれて収束する傾向にあった。
+    - 特に疎なデータセットでは、$d$ を大きくしてもモデル性能は必ずしも工場しなかった。(たぶんoverfittingが原因)
+    - 特にBERT4Recの場合は、$d$ が比較的小さい( $d \geq 64$)場合でも、一貫して他のベースラインを上回った。->BERT4Recは $d = 64$ で満足のいく性能を達成できる。(d=64、小さい...! ID-basedの手法はそれくらいで良いのかも...! でも以前、「MFをハイパラチューニングすればdeep系手法にも負けない」旨の論文を見た際には $d =300$ とかにしてた気もする:thinking:)
+  - Clozeタスク学習時のmask比率 $\rho$:
+    - mask比率 $\rho$ はモデル学習における重要な要素であり、損失関数(式8)に直接影響する。
+    - 全てのケースで、$\rho=0.2$ が $\rho=0.1$ よりも性能が良かった. -> まず $\rho$ は小さすぎてはならない。
+    - sequence長が短いデータセットでは $\rho = 0.4 ~0.6$ がベストの性能だった。一方で、長いデータセットでは 小さな $\rho$ (0.2) が適していた。
+    - $\rho > 0.6$ の範囲では $\rho$ が大きくなるにつれて性能が低下する一般的なパターンがあった。
+  - sequence最大長 $N$:
+    - 適切な最大長Nは、データセットの平均配列長に大きく依存する。
+    - Nを大きくすると、余分な情報とノイズが増える傾向があるため、Nを大きくしてもモデル性能は必ずしも向上しない。
+- ablation実験:
+  - positional embedding:
+    - PEを削除すると、特にsequence長が長いデータセットにおいて、BERT4Recの性能が劇的に低下した。
+  - PFFN:
+    - sequence長が長いようなデータセットで特に効果的だった。
+  - レイヤー正規化、residual connection, Dropout:
+    - これら3つの工夫は、主にoverfittingを緩和する為に導入されたもの。
+    - 小さなデータセットで特に有効だった。
+  - Transformer層の数 $L$:
+    - $L$ を大きくするほど、特に大規模なデータセットで性能を向上できた。
+    - (大きくすると言っても、NLPのタスクと異なり、Sequential推薦においては $L = 2$ 前後で十分飽和する、という結果が他の論文で主張してた気がする。本論文でFも $L = 1 ~ 4$ の範囲での実験だし:thinking:)
+  - multi-head attentionのhead数 $h$:
+    - sequenceが長いデータセットほど大きな $h$ が有効。
+    - **multi-head self-attentionで長距離の依存関係を捉えるには、大きなhが不可欠である**という既存研究の経験的な結果と一致。
 
 ### 今後の拡張性:
 
@@ -328,5 +336,7 @@ $$
 - 2. **ユーザが複数のセッションを持っている場合**、user componentをモデルに導入する事で、ユーザモデリングの能力の向上が見込める。(同一ユーザの複数のsessionの関連性を考慮するって事か...!:thinking:)
 
 ## 次に読むべき論文は？
+
+- [RecSys2023のAmazonのBERT4Recを継承した事前学習済み推薦モデルの論文](https://dl.acm.org/doi/10.1145/3604915.3608868)
 
 ## お気持ち実装
