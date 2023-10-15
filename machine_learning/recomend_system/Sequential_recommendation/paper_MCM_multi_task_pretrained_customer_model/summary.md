@@ -2,7 +2,7 @@
 
 published date: hogehoge September 2023,
 authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
-url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
+url(paper): https://www.amazon.science/publications/mcm-a-multi-task-pre-trained-customer-model-for-personalization
 (勉強会発表者: morinota)
 
 ---
@@ -74,12 +74,34 @@ $$
 
 最終的な分布(=next-itemの確率質量分布関数:thinking:)を生成するために、スコア $s(w)$ に対してソフトマックス演算が実行される。
 
-### prefix-augmentationによるMCMの事前学習
+### prefix-augmentationによるMCMの事前学習(どうやって事前学習させるかの話)
+
+- 先行研究 BERT4Recでは、**masked languamge model** というNLPでよく使われるaugumentation手法を採用している。
+  - (=要はmasked-item-predictionの学習タスク。元論文だとClozeタスクと呼ばれてたやつ:thinking:)
+  - (next-item(token)-predictionやnext-sentence-predictionと同様に「学習タスクの種類」という認識だけど、augumentation手法と表現するのか。確かに、いずれの手法も入力sequenceからtraining exampleを作ってるので、data augumentationと言えるのか...??:thinking:)
+  - masked languamge model(i.e. masked-item-prediction)は、言語モデリングには適しているが、**推薦タスクでは将来の情報が漏れてしまう為、問題がある**と本論文では主張。(=要は、bi-directionalなモデルであるBERT4Recの場合は、将来の情報が漏れてしまうので学習タスクを簡単に解けてしまい、有効なパラメータを見つけられない、って話:thinking:)
+    - (この件は確かBERT4Recの論文では、まずmasked-item-predictionタスクで学習させて、その後にfine-tuningとして最後尾のnext-item-predictionタスクを学習させる事で対処を試みてた:thinking:)
+- MCMでは、masked-item-predictionに変わる新しいaugmentation手法(i.e. 学習タスク)を提案する = "**random prefix augmentation**"
+  - 具体的には、入力sequence全体からランダムに prefix (=部分sequence)をサンプリングし、モデルに最後のitem (=入力sequenceの最後? それともサンプリングした部分sequenceの最後??:thinking:)を予測させる。
+  - ex) 元の入力sequenceが $[i_1,i_2,i_3]$ の場合、有効なprefixは $[i_1]$ と $[i_1,i_2]$ になる。(つまり予測すべきラベル = 入力sequenceの最後のitem $i_3$ ってこと?:thinking:)
+  - メモリを節約するため、augumentation処理はデータの前処理中ではなく、batch時(=mini batch学習の各batch実行時:thinking:)に実行される。
+
+random prefix augmentationにおける各prefixの損失関数は、label item(=入力sequenceの最後のitem)の負の対数尤度として定義される:
+
+$$
+\mathcal{L} = - \log P(i = i_{gt}|S)
+\tag{4}
+$$
+
+ここで、
+
+- $i_{gt}$ は ground-truth item (=つまり入力sequenceの最後のアイテムの正解アイテム)
+- $S$ は、最後のアイテム以外の全てのアイテムを含む入力Sequence(=これは実際にはprefixであり、入力sequenceの部分sequenceなのかな。モデルに入力するのはprefixだけだと思うけど、表記する上では$S$ を書く??:thinking:)
+- $P(i|S)$ は、モデルに $S$ を入力した際に出力される item $i$ のnext item確率。(式(3)で得られるやつ)
+- muiti-task trainingでは、全てのタスクの損失が合計される。
 
 ## どうやって有効だと検証した?
 
 ## 議論はある？
 
 ## 次に読むべき論文は？
-
-## お気持ち実装

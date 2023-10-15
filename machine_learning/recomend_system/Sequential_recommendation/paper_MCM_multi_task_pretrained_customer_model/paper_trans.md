@@ -1,6 +1,7 @@
 ## 0.1. Link リンク
 
 - https://dl.acm.org/doi/10.1145/3604915.3608868 https://dl.acm.org/doi/10.1145/3604915.3608868
+- https://www.amazon.science/publications/mcm-a-multi-task-pre-trained-customer-model-for-personalization
 
 ## 0.2. title タイトル
 
@@ -144,9 +145,9 @@ We propose a new augmentation method called random prefix augmentation, which ra
 In this case, the input will only include the items before the last item, so that our augmentation avoids leaking future information.
 この場合、入力には最後のitemより前のitemsしか含まれないので、我々のaugumentation手法は**将来の情報が漏れるのを避ける**ことができる。
 For example, suppose the original input sequence is [𝑖1,𝑖2,𝑖3], valid prefixes include [𝑖1] and [𝑖1,𝑖2].
-例えば、元の入力シーケンスが[𝑖1,𝑖2,𝑖3]だとすると、有効な接頭辞は[𝑖1]と[𝑖1,𝑖2]である。
+例えば、元の入力シーケンスが $[i_1,i_2,i_3]$ だとすると、有効なprefixは $[i_1]$ と $[i_1,i_2]$ である。
 The augmentation is performed at batch time rather than during data pre-processing, in order to save memory.
-メモリを節約するため、augumentationはデータの前処理中ではなく、batch時に実行される。
+メモリを節約するため、augumentationはデータの前処理中ではなく、batch時(=mini batch学習の各batch実行時:thinking:)に実行される。
 
 The loss function for each prefix is defined as the negative loglikelihood of the label item (the last item):
 各prefixの損失関数は、label item(=最後のitem)の負の対数尤度として定義される:
@@ -157,7 +158,7 @@ $$
 $$
 
 where $i_{gt}$ denotes the ground truth item, S denotes the input sequence, which contains all items but the last one.
-ここで、$i_{gt}$ はground truth itemを表し、$S$ は最後のitem以外のすべてのitemを含む入力シーケンスを表す。(leave-one-out的なやつだ!:thinking:)
+ここで、$i_{gt}$ はground truth itemを表し、$S$ は最後のitem以外のすべてのitemを含む入力シーケンスを表す。
 For multi-task training, the loss of all tasks are summed together.
 マルチタスク・トレーニングでは、すべてのタスクの損失が合計される。
 
