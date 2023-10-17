@@ -199,13 +199,13 @@ We first compare the performance between our model and a SOTA sequential recomme
 As illustrated in Table.1, MCM_final significantly outperforms bert4rec by about 11%.
 表.1に示すように、MCM_finalはbert4recを約11%大幅に上回る。
 We also conduct ablation experiments with variants of MCM model MCM_Single and MCM_MTL.
-また、MCMモデルMCM_SingleとMCM_MTLの変異体を用いたアブレーション実験も行った。
+また、MCMモデルMCM_SingleとMCM_MTLという2つのvariantを用いたablation実験も行った。
 Compared to Bert4rec, MCM_Single utilizs heterogeneous interaction sequence and contextual features to train each single task, and MCM_MTL utilizs attentional readout and MTL.
 Bert4recと比較して、MCM_Singleは各単一タスクの学習に異種interactionシーケンスとcontexutual特徴量を利用し、MCM_MTLはattenional readoutとMTLを利用する。(というか、Bert4Recはid-Onlyな手法だっけ??:thinking:)
 MCM-Final utilizes heterogeneous data, attentional readout and pre-fix data augmentation.
 MCM-Finalは、異種データ、attenitional readout、prefix data augumentationを利用する。
 The results show that richer input signals contribute to the incrementality the most, while MTL and prefix augmentation are also helpful.
-その結果、豊富な入力信号がインクリメンタリティに最も寄与することが示され、MTLと接頭辞補強も有効であることがわかった。
+その結果、豊富な入力信号(工夫1のheterogeneous interactionの使用)がインクリメンタリティに最も寄与することが示され、MTLと接頭辞補強も有効であることがわかった。
 
 ## 3.3. Extensibility of MCM MCMの拡張性
 
@@ -219,7 +219,7 @@ There are in total 28 tasks, including purchasing from a new product line (i.e.,
 The multi-task prediction scores from MCM model have covered the tasks and can be directly utilized, however it may not reflect customers’ behaviors with incentives.
 MCMモデルによるマルチタスク予測スコアは、タスクをカバーしており、直接活用することができるが、インセンティブによる顧客の行動を反映していない可能性がある。
 So we add a new head on top of the sequential encoder to predict the incentive effect and fine-tune the model with customer behavior data under incentives: 30K action clicks and completion(conversion) records.
-そこで、sequential encoderの上に新しいヘッドを追加し、インセンティブ効果を予測し、インセンティブ下の顧客行動データ(30Kアクションのクリックと完了（コンバージョン）の記録)を使ってモデルをfine-tuningする。
+そこで、sequential encoderの上に新しいヘッドを追加し、インセンティブ効果を予測し、インセンティブ下の顧客行動データ(30Kアクションのクリックとconversionの記録)を使ってモデルをfine-tuningする。
 From the results, MCM significantly outperforms a tree-based GBDT task prediction model by 25% on conversion NDCG, and fine-tuned model (MCM_finetuned) outperforms the MCM model without fine-tuning by 35% on conversion NDCG, which in total drives over 60% improvement on conversion rate as compared to tree-based GBDT model.
 その結果、MCMは木ベースのGBDTタスク予測モデルを変換NDCGで25%大きく上回り、微調整モデル（MCM_finetuned）は微調整なしのMCMモデルを変換NDCGで35%上回り、合計で木ベースのGBDTモデルと比較して変換率を60%以上改善した。
 

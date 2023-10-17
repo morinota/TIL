@@ -23,7 +23,7 @@ url(paper): https://www.amazon.science/publications/mcm-a-multi-task-pre-trained
 
 ## 技術や手法の肝は？
 
-### Heterogeneous(異種の) Embedding Module
+### 工夫1: Heterogeneous(異種の) Embedding Module
 
 - 要するに、「ユーザAがアイテムXを購入した」「ユーザBがアイテムYを検索した」等のheterogeneousな各user-item interactionの生の入力情報(raw input)を、embedding lookupに通して、分散表現(distributed representation=embedding=latent vector=hidden representation?)に変換するmodule。
   - (embedding lookup=sparseベクトルをdenceベクトルに変換するプロセス。"lookup" = あるデータセットやテーブルから特定の情報を探し出す操作。じゃあ、embedding lookupは、embedding table的なものから対象entityのembeddingを探し出す操作、みたいなイメージ??:thinking:)
@@ -43,7 +43,7 @@ url(paper): https://www.amazon.science/publications/mcm-a-multi-task-pre-trained
     - (BERTなどのself-attention-basedなモデルは、sequenceの順番を参照する為に position embedding を必要とするので...!)
     - position embedding sequence $\mathbf{P}$ は学習可能なパラメータ(ランダムに初期化)。
 
-### Task-AwareなAttentional Readout Module
+### 工夫2: Task-AwareなAttentional Readout Module
 
 - Embedding Module と Readout Module(i.e. score prediction module?:thinking:) の中間に位置するモジュール Sequential Encoding Module は BERT4Recと同じなので割愛する。
   - (Sequential Encoding Moduleについては、BERT4Recの元論文 or [n週連続hogehoge]()等 を参照)
@@ -84,7 +84,7 @@ $$
 
 最終的な分布(=next-itemの確率質量分布関数:thinking:)を生成するために、スコア $s(w)$ に対してソフトマックス演算が実行される。
 
-### prefix-augmentationによるMCMの事前学習(どうやって事前学習させるかの話)
+### 工夫3: prefix-augmentationによるMCMの事前学習(どうやって事前学習させるかの話)
 
 - 先行研究 BERT4Recでは、**masked languamge model** というNLPでよく使われるaugumentation手法を採用している。
   - (=要はmasked-item-predictionの学習タスク。元論文だとClozeタスクと呼ばれてたやつ:thinking:)
@@ -119,7 +119,7 @@ $$
     - アイテムの購入, クリック, valuable actions(=たぶん検索とか、その他のアクション:thinking:)
     - 各interactionには、アイテムのカテゴリカルな特徴量を含む。
       - なお、これらの特徴量はモデルを訓練するタスクでも使用する(next-item-predictionだけでなく、next-category-predictionでも学習するってことっぽい:thinking:)
-- モデルの評価方法:
+- モデル性能の評価方法:
   - データセットを**時間毎に**(大事:thinking:)学習用、検証用、テスト用に分割する。
   - 評価指標には ランキングmetricsを使用(主にNDCG, recall, precision)
 - モデルの実装:
@@ -128,8 +128,30 @@ $$
 
 ## 議論はある？
 
-### 精度指標の結果
+### モデル性能の比較結果
+
+![figure1]()
+
+- MCMとBERT4Recの性能比較の結果:
+  - MCM_final はbert4recを約11%大幅に上回った。
+- また、 MCM_Single と MCM_MTL という2つのvariantを用いて、MCMモデルのablation実験も行った。
+  - MCM_final: 工夫1 ~ 3の全てを採用したMCMモデル。
+  - MCM_Single: 工夫1のみ採用したMCMモデル。
+  - MCM_MTL: 工夫1と工夫2を採用したMCMモデル。
+- 結果として、特に工夫1が最も性能向上に寄与する事が示された。工夫2のMTL(multi-task learning)と工夫3のprefix augumentationも性能向上に寄与している事がわかった。
+  - (各モデルの性能の差分を取っての判断かな。BERT4RecとMCM_Singleの差が最も大きいので:thinking:)
 
 ### MCMの拡張性の実験結果
+
+- MCMの柔軟性と拡張性を実証するために、next-action推薦のusecaseについて、MCMをfine-tuningする事で、どのような性能を発揮するか実験を行った。
+  - このタスクは、インセンティブ(ex. キャッシュバックなど)を提供することで、顧客に1つのアクションタスクを推薦することを目的としている。
+- 3つを比較:
+  - GBDT: treeベースのタスク予測モデル(分類モデル的な?)
+  - MCM: 事前学習しただけのやつ。
+  - MCM_finetuned: 事前学習 + fine-tuningしたやつ。
+    - 具体的には、sequential encoderの上に新しいヘッドを追加し、インセンティブ効果を予測し、インセンティブ下の顧客行動データ(30Kアクションのクリックとconversionの記録)を使ってモデルをfine-tuningする。
+- 結果:
+  - MCM は GBDT の conversion NDCG を25% 上回り、MCM_finetunedはMCMのconversion NDCG を35% 上回った。
+  - MCM_finetuned は GBDTモデルをconversion rateを60%以上改善した。(あれ?これは本番環境でのABテストっぽい??:thinking:)
 
 ## 次に読むべき論文は？
