@@ -9,7 +9,17 @@ url(paper): https://www.amazon.science/publications/mcm-a-multi-task-pre-trained
 
 ## どんなもの?
 
+- パーソナライズ推薦は、各usecaseによって推薦するコンテンツ、推薦対象のユーザ、UI等の条件が異なるが、
+
 ## 先行研究と比べて何がすごい？
+
+- GPTの様なBERTベースの事前学習済みモデルは、NLPやCVの領域で成功している。
+- 推薦分野では、Sequential推薦の設定下で、session-based推薦のような特定のタスクにおいてBERTベースのモデルが提案されている。しかし、**BERTをつかった大規模な事前学習は、推薦システムの分野ではまだほとんど研究されてない**。
+  - (様々な下流タスクにfine-tuning可能な汎用的な事前学習済みモデル、ではなく、特定のタスクに特化したend-to-endなモデルとしての活用 :thinking:)
+- 本論文では、**Multi-task pre-trained Customer Model(MCM, マルチタスク事前学習済み顧客モデル?)**を提案している。
+  - BERT4Recをベースとしたマルチタスク事前学習済みモデル。
+  - Amazonの膨大な行動データを用いて事前学習され、1000万個のパラメータを持つ。
+  - オフライン実験の結果、MCMはマルチタスクにおいて、SOTAであるBERT4Recを平均17%上回った。
 
 ## 技術や手法の肝は？
 
@@ -102,6 +112,24 @@ $$
 
 ## どうやって有効だと検証した?
 
+- オフライン実験のデータセット:
+  - Amazonの6年間の顧客履歴からサンプリングしたユーザ行動データを使用。
+  - 40Mのユーザと10Bのinteractionで構成される。
+  - 行動sequenceには3種類のheterogeneous interactionが含まれる:
+    - アイテムの購入, クリック, valuable actions(=たぶん検索とか、その他のアクション:thinking:)
+    - 各interactionには、アイテムのカテゴリカルな特徴量を含む。
+      - なお、これらの特徴量はモデルを訓練するタスクでも使用する(next-item-predictionだけでなく、next-category-predictionでも学習するってことっぽい:thinking:)
+- モデルの評価方法:
+  - データセットを**時間毎に**(大事:thinking:)学習用、検証用、テスト用に分割する。
+  - 評価指標には ランキングmetricsを使用(主にNDCG, recall, precision)
+- モデルの実装:
+  - BERT encoderの設定: Transformerブロック数 $L = 3$, ヘッダー数 $h = 4$, 最大sequence長 $N=3$
+    - (うんうん、推薦用のarchitectureは小さくて良いんだよね!:thinking:)
+
 ## 議論はある？
+
+### 精度指標の結果
+
+### MCMの拡張性の実験結果
 
 ## 次に読むべき論文は？
