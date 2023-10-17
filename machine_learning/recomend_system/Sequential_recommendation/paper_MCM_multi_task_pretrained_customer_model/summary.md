@@ -57,7 +57,7 @@ url(paper): https://www.amazon.science/publications/mcm-a-multi-task-pre-trained
 - 提案手法MCMでは、task-awareな新しいattentional readout modulを提案。
   - (task-awareな = 各タスクの特徴に合わせて調整可能な?:thinking:)
   - 各タスクに特化した隠れ表現を生成する為に、attentionメカニズムを採用する。
-    - attentionによって、各タスクと各タスクの推薦候補アイテムが、**隠れ表現sequence(=Readout Moduleの入力sequence = Sequential Encoding Moduleの出力sequence)の異なる部分sequenceに注目できるように**する。
+    - attentionによって、各タスクと 各タスクの推薦候補アイテムが、**隠れ表現sequence(=Readout Moduleの入力sequence = Sequential Encoding Moduleの出力sequence)の異なる部分sequenceに注目できるように**する。
 
 具体的には、attentional readout (=attentionによるscore prediction ...!:thinking:)操作は以下のように行われる。
 
@@ -108,7 +108,7 @@ $$
 - $i_{gt}$ は ground-truth item (=つまり入力sequenceの最後のアイテムの正解アイテム)
 - $S$ は、最後のアイテム以外の全てのアイテムを含む入力Sequence(=これは実際にはprefixであり、入力sequenceの部分sequenceなのかな。モデルに入力するのはprefixだけだと思うけど、表記する上では$S$ を書く??:thinking:)
 - $P(i|S)$ は、モデルに $S$ を入力した際に出力される item $i$ のnext item確率。(式(3)で得られるやつ)
-- muiti-task trainingでは、全てのタスクの損失が合計される。
+- muiti-task learningでは、全てのタスクの損失が合計される。(予測すべきラベルがitem_idのタスクと、categoryのタスクと、subcategoryのタスクの損失が合計される?)
 
 ## どうやって有効だと検証した?
 
@@ -145,6 +145,9 @@ $$
 
 - MCMの柔軟性と拡張性を実証するために、next-action推薦のusecaseについて、MCMをfine-tuningする事で、どのような性能を発揮するか実験を行った。
   - このタスクは、インセンティブ(ex. キャッシュバックなど)を提供することで、顧客に1つのアクションタスクを推薦することを目的としている。
+    - (じゃあこのタスクの推薦コンテンツは、「〇〇アクションをしてくれたら△△を提供するよ!」という内容であり、ユーザが実際にそのアクションをしたか否か = conversionしたかどうかが正解ラベルとしてある、ようなケースかな:thinking:)
+    - 推薦候補のアクションタスクは全部で28種類(=next-action推薦の行動空間の大きさ:thinking:)
+      - ex. 新しい商品ラインから商品を購入する、カメラ検索を試す、ビデオ配信サービスを試す、etc.
 - 3つを比較:
   - GBDT: treeベースのタスク予測モデル(分類モデル的な?)
   - MCM: 事前学習しただけのやつ。
