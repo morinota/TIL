@@ -9,7 +9,11 @@ url(paper): https://www.amazon.science/publications/mcm-a-multi-task-pre-trained
 
 ## どんなもの?
 
-- パーソナライズ推薦は、各usecaseによって推薦するコンテンツ、推薦対象のユーザ、UI等の条件が異なるが、
+- RecSys2023でのAmazonによる、様々な下流タスクにfine-tuning可能で汎用的な事前学習済みモデルを提案する論文。(proceeding 的なものなので、結構ざっくりとした内容っぽい:thinking:)
+- パーソナライズ推薦は、各usecaseによって推薦するコンテンツ、推薦対象のユーザ、UI等の条件が異なるが、とにかく**ユーザの嗜好や行動意図をモデル化して理解することは共通して必要**のはず。(要はユーザモデリングが共通して大事だよねって話:thinking:)
+- そこで論文では、BERT4Recをベースとした大規模なMulti-task pre-trained Customer Model(MCM, マルチタスク事前学習済み顧客モデル?)を提案している。
+- オフライン実験によるnext-item-predictionタスクにおいてMCMは、SOTAのBERT4Recを17%改善した。
+- また、next-action推薦のusecaseについてMCMをfine-tuningする事で、end-to-endのGBDTモデルと比較して、conversion予測タスクで60%性能が改善された。(これはオフライン実験かA/Bテストかよくわからん:thinking:)
 
 ## 先行研究と比べて何がすごい？
 
@@ -152,9 +156,13 @@ $$
   - GBDT: treeベースのタスク予測モデル(分類モデル的な?)
   - MCM: 事前学習しただけのやつ。
   - MCM_finetuned: 事前学習 + fine-tuningしたやつ。
-    - 具体的には、sequential encoderの上に新しいヘッドを追加し、インセンティブ効果を予測し、インセンティブ下の顧客行動データ(30Kアクションのクリックとconversionの記録)を使ってモデルをfine-tuningする。
+    - 具体的には、sequential encoding moduleの上(=つまりReadout module)に新しいヘッドを追加し、インセンティブ効果を予測し、インセンティブ下の顧客行動データ(30Kアクションのclickとconversionの記録)を使ってモデルをfine-tuningする。(正解ラベルはclickとconversionの2種類があるってことか:thinking:)
 - 結果:
   - MCM は GBDT の conversion NDCG を25% 上回り、MCM_finetunedはMCMのconversion NDCG を35% 上回った。
   - MCM_finetuned は GBDTモデルをconversion rateを60%以上改善した。(あれ?これは本番環境でのABテストっぽい??:thinking:)
 
 ## 次に読むべき論文は？
+
+- パーソナライズ推薦タスクにおける事前学習済みモデルの研究や、マルチタスクへの適用を前提とした手法の研究があったら読んでみたい。
+  - あるプロダクト上に複数のusecaseの推薦タスクがあったとして、各usecaseがそれぞれend-to-endモデルで動いているよりも、単一の事前学習済みモデルに基づいてそれを各usecaseに合わせてfine-tuningして動かす方が、保守や新機能導入の開発が楽そう?:thinking:
+  - [Netflixの推薦MLモデルの統合の話を読んで](https://twitter.com/moritama7431/status/1702155758849438175a)ぼんやりと考えてるけど、今後は色んなプロダクトが徐々に、複数のusecaseへの適用を前提とした手法を採用するようになったりするのかな:thinking:
