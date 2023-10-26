@@ -33,18 +33,20 @@ title-slide-attributes:
 ## どんな論文??
 
 - 宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)
-- 教訓1は、プロダクト開発において機械学習を色んな用途・文脈で活用できている話。
-- 教訓2は、機械学習モデルのオフライン評価指標とオンラインでのビジネス指標との間に相関がなかった話。
-- 教訓3は、機械学習で解かせるべき問題設定をよく考え続けよう、という話。
-- 教訓4は、レイテンシー大事という話。
-- 教訓5は、モデルの推論結果の品質のモニタリングの話。(応答分布分析良いね...!:thinking:)
-- 教訓6は、RCTの実験デザイン頑張ってる話。
+- 教訓1: Inception: Machine Learning as a Swiss Knife for Product Development (機械学習はプロダクト開発におけるスイスナイフである)
+- 教訓2: Modeling: Offline Model Performance Is Just A Health Check(オフラインでのモデルのパフォーマンスは健康診断に過ぎない)
+- 教訓3: Modeling:Before Solving A Problem, Design It (問題を解かせる前に、解かせるべき問題をデザインする)
+- 教訓4: Deployment: Time Is Money (時は金なり)
+- 教訓5: Monitoring: Unsupervised Red Flag (監視されないレッドフラッグ)
+- 教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験計画が功を奏す)
+
+## 本論文の貢献
 
 # 教訓1: Inception: Machine Learning as a Swiss Knife for Product Development
 
 - 機械学習は、プロダクト開発におけるスイスナイフである(=多機能で色んな用途に使える例えらしい...:thinking:)
 
-## 教訓1の感想: spmantic modelいいなぁ...:thinking:
+## 教訓1の概要と感想: semantic modelいいなぁ...:thinking:
 
 - プロダクトの異なる機能の開発/改善の為に、機械学習を様々な文脈で活用できたという話。
   - 特定のusecaseに特化した specialized model
@@ -53,12 +55,138 @@ title-slide-attributes:
     - ex) 「ユーザが旅行の目的地に対してどの程度flexibleであるか」を定量化するモデルを作り、**プロダクトチーム全体にdestination-flexibilityの概念を与える**ことで、プロダクトの改善に役立てることができた。(MLチーム以外も理解・活用可能な汎用的な特徴量を作る、みたいなイメージかな...めちゃいいね!:thinking:)
   - semanticモデルにより、**商品開発に携わる全ての人がモデルの出力に基づいて**、新機能やパーソナライゼーション、説得力のある意思決定などに導入できるようになる。(semanticなモデルいいなぁ...:thinking:)
 
+## 教訓1の概要と感想
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+- hogehoge
+
+:::
+
+::: {.column width="60%"}
+
+![](https://i.imgur.com/egM372v.png)
+(論文より引用)
+
+:::
+
+::::
+
 # 教訓2: Modeling: Offline Model Performance Is Just A Health Check(オフラインでのモデルのパフォーマンスは健康診断に過ぎない)
+
+## 教訓2の概要と感想
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+- hogehoge
+
+:::
+
+::: {.column width="60%"}
+
+![](https://i.imgur.com/TZEaYJu.png)
+(論文より引用)
+
+:::
+
+::::
 
 # 教訓3: Modeling:Before Solving A Problem, Design It (問題を解かせる前に、解かせるべき問題をデザインする)
 
+## 教訓3の概要と感想
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+- hogehoge
+
+:::
+
+::: {.column width="60%"}
+
+![](https://i.imgur.com/neUw25S.png)
+(論文より引用)
+
+:::
+
+::::
+
 # 教訓4: Deployment: Time Is Money (時は金なり)
+
+## 教訓4の概要と感想
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+- hogehoge
+
+:::
+
+::: {.column width="60%"}
+
+![](https://i.imgur.com/w5cUyEr.png)
+(論文より引用)
+
+:::
+
+::::
 
 # 教訓5: Monitoring: Unsupervised Red Flag (監視されないレッドフラッグ)
 
+## 教訓5の概要と感想
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+- hogehoge
+
+:::
+
+::: {.column width="60%"}
+
+![](https://i.imgur.com/ZcdTVDi.png)
+(論文より引用)
+
+:::
+
+::::
+
 # 教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験計画が功を奏す)
+
+## 教訓6の概要と感想
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+- hogehoge
+
+:::
+
+::: {.column width="60%"}
+
+![](https://i.imgur.com/b501FJx.png)
+![](https://i.imgur.com/UdXXsQ5.png)
+![](https://i.imgur.com/J4tmi1g.png)
+(いづれも論文より引用)
+
+:::
+
+::::
+
+# まとめ
+
+- 宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)
+- 教訓1は、プロダクト開発において機械学習を色んな用途・文脈で活用できている話だった。(特定のusecaseに特化した**specializedなモデル** と 様々なusecaseで活用可能性がある**semanticなモデル**... semanticなモデル良いね:thinking:)
+- 教訓2は、機械学習モデルのオフライン評価指標とオンラインでのビジネス指標との間に相関がなかった話。
+- 教訓3は、機械学習で解かせるべき問題設定をよく考え続けよう、という話。
+- 教訓4は、レイテンシー大事という話。
+- 教訓5は、モデルの推論結果の品質のモニタリングの話。(応答分布分析良いね...!:thinking:)
+- 教訓6は、RCTの実験デザイン頑張ってる話。

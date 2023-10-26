@@ -347,13 +347,16 @@
 <h2>どんな論文??</h2>
 <ul>
 <li>宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)</li>
-<li>教訓1は、プロダクト開発において機械学習を色んな用途・文脈で活用できている話。</li>
-<li>教訓2は、機械学習モデルのオフライン評価指標とオンラインでのビジネス指標との間に相関がなかった話。</li>
-<li>教訓3は、機械学習で解かせるべき問題設定をよく考え続けよう、という話。</li>
-<li>教訓4は、レイテンシー大事という話。</li>
-<li>教訓5は、モデルの推論結果の品質のモニタリングの話。(応答分布分析良いね…!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
-<li>教訓6は、RCTの実験デザイン頑張ってる話。</li>
+<li>教訓1: Inception: Machine Learning as a Swiss Knife for Product Development (機械学習はプロダクト開発におけるスイスナイフである)</li>
+<li>教訓2: Modeling: Offline Model Performance Is Just A Health Check(オフラインでのモデルのパフォーマンスは健康診断に過ぎない)</li>
+<li>教訓3: Modeling:Before Solving A Problem, Design It (問題を解かせる前に、解かせるべき問題をデザインする)</li>
+<li>教訓4: Deployment: Time Is Money (時は金なり)</li>
+<li>教訓5: Monitoring: Unsupervised Red Flag (監視されないレッドフラッグ)</li>
+<li>教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験計画が功を奏す)</li>
 </ul>
+</section>
+<section id="本論文の貢献" class="slide level2">
+<h2>本論文の貢献</h2>
 </section>
 <section>
 <section id="教訓1-inception-machine-learning-as-a-swiss-knife-for-product-development" class="title-slide slide level1 center">
@@ -362,8 +365,8 @@
 <li>機械学習は、プロダクト開発におけるスイスナイフである(=多機能で色んな用途に使える例えらしい…<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul>
 </section>
-<section id="教訓1の感想-spmantic-modelいいなぁ" class="slide level2">
-<h2>教訓1の感想: spmantic modelいいなぁ…<span class="emoji" data-emoji="thinking">🤔</span></h2>
+<section id="教訓1の概要と感想-semantic-modelいいなぁ" class="slide level2">
+<h2>教訓1の概要と感想: semantic modelいいなぁ…<span class="emoji" data-emoji="thinking">🤔</span></h2>
 <ul>
 <li>プロダクトの異なる機能の開発/改善の為に、機械学習を様々な文脈で活用できたという話。
 <ul>
@@ -376,11 +379,52 @@
 <li>semanticモデルにより、<strong>商品開発に携わる全ての人がモデルの出力に基づいて</strong>、新機能やパーソナライゼーション、説得力のある意思決定などに導入できるようになる。(semanticなモデルいいなぁ…<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul></li>
 </ul>
+</section>
+<section id="教訓1の概要と感想" class="slide level2">
+<h2>教訓1の概要と感想</h2>
+
+<img data-src="https://i.imgur.com/w5cUyEr.png" class="r-stretch"></section></section>
+<section id="教訓2-modeling-offline-model-performance-is-just-a-health-checkオフラインでのモデルのパフォーマンスは健康診断に過ぎない" class="title-slide slide level1 center">
+<h1>教訓2: Modeling: Offline Model Performance Is Just A Health Check(オフラインでのモデルのパフォーマンスは健康診断に過ぎない)</h1>
+
+</section>
+
+<section id="教訓3-modelingbefore-solving-a-problem-design-it-問題を解かせる前に解かせるべき問題をデザインする" class="title-slide slide level1 center">
+<h1>教訓3: Modeling:Before Solving A Problem, Design It (問題を解かせる前に、解かせるべき問題をデザインする)</h1>
+
+</section>
+
+<section id="教訓4-deployment-time-is-money-時は金なり" class="title-slide slide level1 center">
+<h1>教訓4: Deployment: Time Is Money (時は金なり)</h1>
+
+</section>
+
+<section id="教訓5-monitoring-unsupervised-red-flag-監視されないレッドフラッグ" class="title-slide slide level1 center">
+<h1>教訓5: Monitoring: Unsupervised Red Flag (監視されないレッドフラッグ)</h1>
+
+</section>
+
+<section id="教訓6-evaluation-experiment-design-sophistication-pays-off-洗練された実験計画が功を奏す" class="title-slide slide level1 center">
+<h1>教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験計画が功を奏す)</h1>
+
+</section>
+
+<section id="まとめ" class="title-slide slide level1 center">
+<h1>まとめ</h1>
+<ul>
+<li>宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)</li>
+<li>教訓1は、プロダクト開発において機械学習を色んな用途・文脈で活用できている話だった。(特定のusecaseに特化した<strong>specializedなモデル</strong> と 様々なusecaseで活用可能性がある<strong>semanticなモデル</strong>… semanticなモデル良いね<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>教訓2は、機械学習モデルのオフライン評価指標とオンラインでのビジネス指標との間に相関がなかった話。</li>
+<li>教訓3は、機械学習で解かせるべき問題設定をよく考え続けよう、という話。</li>
+<li>教訓4は、レイテンシー大事という話。</li>
+<li>教訓5は、モデルの推論結果の品質のモニタリングの話。(応答分布分析良いね…!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>教訓6は、RCTの実験デザイン頑張ってる話。</li>
+</ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
 </div>
-</section></section>
+</section>
     </div>
   </div>
 

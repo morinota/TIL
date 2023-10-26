@@ -261,7 +261,7 @@ Each bar represents a successful iteration starting from the top and focusing on
 各バーは、製品の1つの側面に焦点を当て、上から始めて成功した反復を表しています：
 ユーザインターフェース、ターゲットオーディエンス、コピー（キャプション、説明文、メッセージなど）、またはアルゴリズムそのものです。
 The length of the bar indicates the relative (all statistical significant) impact relative to the first iteration.
-棒の長さは、最初の反復に対する相対的な（すべて統計的に有意な）影響を示す。
+棒の長さは、最初のiterationに対する相対的な（すべて統計的に有意な）影響を示す。
 All these improvements were enabled by the first algorithm, illustrating the indirect impact of Machine Learning projects through other disciplines.
 これらの改善はすべて最初のアルゴリズムによって可能になったものであり、機械学習プロジェクトが他の分野を通じて間接的に影響を及ぼしていることを示している。
 
@@ -386,8 +386,8 @@ A simple example is a regression predicting the length of a stay, turned in to a
 Figure 3 shows a more concrete example.
 図3は、より具体的な例を示している。
 There are 6 successful algorithm iterations and 4 different setups: Pr(Last Minute) classifies users into Last Minute or not, Pr(Booking) is a conversion model, Pr(Overlap) models the probability of a user making 2 reservations with overlapping stay dates and Unsupervised Similarity models the similarity of destinations.
-6つの成功したアルゴリズム反復と4つの異なるセットアップがある:
-Pr(Last Minute)はユーザをLast Minuteか否かに分類し、Pr(Booking)はコンバージョンモデルであり、Pr(Overlap)はユーザが宿泊日が重なる2つの予約をする確率をモデル化し、教師なし類似性は目的地の類似性をモデル化する。
+6つの成功したアルゴリズムiteracionと4つの異なるセットアップ(代理問題)がある:
+Pr(Last Minute)はユーザをLast Minuteか否かに分類(=分類問題として解く。last minute="ギリギリ", "土壇場"などの意味)し、Pr(Booking)はコンバージョンモデル(=予約するか否かを予測するタスク)であり、Pr(Overlap)はユーザが宿泊日が重なる2つの予約をする確率をモデル化(=よくわからないが別の代理問題)し、Unsupervised Similarityは目的地の類似性をモデル化(CB filtering的な問題設定)する。(それぞれ代理問題の設定が異なる.)
 
 ![fig3]()
 
