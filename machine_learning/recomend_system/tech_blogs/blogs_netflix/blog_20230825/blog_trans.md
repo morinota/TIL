@@ -25,7 +25,7 @@ We describe the trade-offs we made for achieving this consolidation and lessons 
 
 # Background 背景
 
-![]()
+![](https://miro.medium.com/v2/resize:fit:1400/0*y_4rboMNZHFb9Fmn)
 
 Figure 1: Multiple use cases in a typical recommendation system
 図1：
@@ -40,7 +40,9 @@ However, this can rapidly result in systems management overhead and hidden techn
 This complexity can lead to increased long-term costs, and reduce the reliability and effectiveness of ML systems (Ehsan & Basillico, 2022).
 **この複雑さは長期的なコスト増につながり、MLシステムの信頼性と有効性を低下させる**（Ehsan & Basillico, 2022）。
 
-![]()
+![](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*gv5s3OasfIg7Gv1dRX4x1g.png)
+
+Figure 2: Model Proliferation in ML Systems MLシステムにおけるモデルの増殖
 
 Figure 2 shows how such an ML system with model proliferation might look.
 図2は、このような**モデル拡散(model proliferation)を伴うMLシステム**がどのように見えるかを示している。
@@ -52,10 +54,6 @@ On the online side, different models might be hosted in different services with 
 オンライン側では、異なるモデルが異なる推論APIを持つ異なるサービスにホストされているかもしれない。(クライアント側からみたら、そんなにmodel proliferationは感じない...:thinking:)
 However, there are a number of commonalities in both offline pipelines and online infrastructure, which such a design does not leverage.
 しかし、オフラインのパイプラインとオンラインのインフラストラクチャーには多くの共通点があり、このような設計では活用できない。
-
-Figure 2: Model Proliferation in ML Systems
-図2：
-MLシステムにおけるモデルの増殖
 
 In this blog, we describe our efforts to leverage the commonalities across these tasks to consolidate the offline and online stacks for these models.
 このブログでは、これらのタスクの共通点を活用し、これらのモデルのオフライン・スタックとオンライン・スタックを統合する取り組みについて説明する。
@@ -69,13 +67,12 @@ Additionally, we noticed advantages in terms of efficiently implementing innovat
 Figure 3 shows the consolidated system design.
 図3は、統合されたシステム設計を示している。
 After an initial step of use-case-specific label preparation, we unify the rest of the offline pipeline and train a single multi-task model.
-ユースケースに特化したラベル準備の最初のステップの後、残りのオフラインパイプラインを統一し、単一のマルチタスクモデルを訓練する。
+各ユースケースに特化したラベル(=教師ラベル)準備の最初のステップの後、残りのオフラインパイプラインを統一し、**単一のマルチタスクモデルを訓練**する。
 On the online side, a flexible inference pipeline hosts models in different environments based on the latency, data freshness and other requirements, and the model is exposed via a unified canvas-agnostic API.
 オンライン側では、柔軟な推論パイプラインがレイテンシー、データの鮮度、その他の要件に基づいて異なる環境でモデルをホストし、モデルはキャンバスにとらわれない統一されたAPIを介して公開される。
 
 Figure 3: Consolidated ML System
-図3：
-統合MLシステム
+図3: 統合MLシステム
 
 ## Offline Design オフラインデザイン
 

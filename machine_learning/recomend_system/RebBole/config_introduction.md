@@ -14,7 +14,8 @@
 
 ## Data settings
 
--
+- Atomic File Formatに関するconfigs
+- Basic Informationに関するconfigs
 
 ## Training Settings
 

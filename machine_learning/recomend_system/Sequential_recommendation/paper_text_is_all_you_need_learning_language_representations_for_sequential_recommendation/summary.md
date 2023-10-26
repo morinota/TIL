@@ -450,5 +450,4 @@ class TwoStageFinetune:
     def _evaluate(self, M: RecformerParams, I: ItemFeatureTable, D_valid: Any) -> float:
         # 精度指標(損失関数の逆数?)を検証用データで算出?
         pass
-
 ```

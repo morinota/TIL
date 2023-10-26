@@ -9,7 +9,7 @@ url(paper): https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Expe
 
 ## どんなもの?
 
-- 宿泊予約サービスbooking.comの機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)
+- 宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)
 - 教訓1は、プロダクト開発において機械学習を色んな用途・文脈で活用できている話: 特定のusecaseに特化した**specializedなモデル** と 様々なusecaseで活用可能性がある**semanticなモデル**。(semanticなモデル良いね...!:thinking:)
 - 教訓2は、機械学習モデルのオフライン評価指標とオンラインでのビジネス指標との間に相関がなかった話。
 - 教訓3は、機械学習で解かせるべき問題設定をよく考え続けよう、という話。
@@ -82,7 +82,7 @@ url(paper): https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Expe
   - 自社開発の線形予測エンジン(i.e. 推論処理をラフにする手法??)
   - 事前計算とキャッシュ
   - 最小限の特徴量変換(=推論時の前処理を減らす工夫??:thinking:)
-  - Sparse models
+  - Sparse models(=パラメータの少ないモデル)
 
 ### 教訓5: モデルの出力の質をモニターすることは極めて重要
 

@@ -50,7 +50,7 @@ Item embeddings are learned from sequences of user interactions.
 To enrich item features, some approaches [4, 20, 37, 38] incorporate item contexts such as item textual information or categorical features into ID embeddings.
 **アイテムの特徴量を豊かにするために、いくつかのアプローチ[4, 20, 37, 38]は、アイテムのテキスト情報やカテゴリ的特徴などのアイテムのcontextをID埋め込みに組み込んでいる**。(だよな...!)
 While ID-based methods are promising, they struggle to understand cold-start items or conduct cross-domain recommendations where models are trained and then applied to different recommendation scenarios.
-IDベースの手法は有望ではあるが、コールドスタートアイテムの理解や、**モデルを学習した後に異なる推薦シナリオに適用するcross-domain推薦(??)**の実施に苦戦している。
+IDベースの手法は有望ではあるが、コールドスタートアイテムの理解や、**モデルを学習した後に異なる推薦シナリオに適用するcross-domain推薦(??)**の実施に苦戦している。(cross-domain推薦=domainを横断した推薦ロジック。映画のrating履歴で学習したモデルで、家電を推薦するなど。)
 Item-specific IDs prevent models from learning transferable knowledge from training data for cold-start items and new datasets.
 **アイテム固有のIDは、コールドスタートアイテムや新しいデータセットのトレーニングデータからモデルが移行可能な知識を学習することを妨げる**。(OPEのMIPS推定量の、actionを使わずにaction feature embeddingを使う、みたいな??)
 As a result, item IDs limit the performance of sequential recommenders on cold-start items and we have to re-train a sequential recommender for continually added new items.
