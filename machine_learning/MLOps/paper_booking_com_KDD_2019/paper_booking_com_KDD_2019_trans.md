@@ -245,14 +245,14 @@ To illustrate this idea, we give two examples:
 Each family of Machine Learned Models provides business value.
 機械学習モデルの各ファミリーは、ビジネス上の価値を提供する。
 This is reflected in Figure 2 where each bar represents the relation between the median improvement on one of our core metrics by a model family and a baseline computed as the median improvement on the same metric for of all the successful projects (machine learning based or not), on a comparable period.
-これは図2に反映されており、各バーは、モデルファミリーによるコアメトリクスの1つに関する改善の中央値と、比較可能な期間において成功したすべてのプロジェクト(機械学習ベースかどうかにかかわらず)の同じメトリクスに関する改善の中央値として計算されたベースラインとの関係を表している。
+これは図2に反映されており、各バーは、各model familyによるコアメトリクスの1つに関する改善の**中央値**と、比較可能な期間において成功したすべてのプロジェクト(機械学習ベースかどうかにかかわらず)の同じメトリクスに関する改善の**中央値**として計算されたベースライン(1.0)との関係を表している。
 Most of the families contribution are above the benchmark, one is below, but all of them make a significant contribution, and the collective effect is clearly positive.
-ほとんどの model family の貢献度はベンチマークを上回っており、1つのmodel family は下回っているが、どの家庭も大きな貢献をしており、総合的な効果は明らかにプラスである。
+ほとんどの model family の貢献度はベンチマークを上回っており、1つのmodel family は下回っているが、どのmodel familyも大きな貢献をしており、総合的な効果は明らかにプラスである。
 
 The graph mentioned above shows the direct impact of Machine Learning based projects, measured at their introduction or when improving the model behind them.
-上述したグラフは、機械学習ベースのプロジェクトがもたらす直接的な影響を、その導入時またはその背後にあるモデルの改善時に測定したものである。
+上述したグラフは、機械学習ベースのプロジェクトがもたらす直接的な影響を、その**導入時またはその背後にあるモデルの改善時に測定したもの**である。
 We have also observed models becoming the foundation of a new product, enabling value generation through other product development disciplines.
-また、機械学習モデルが新製品の基礎となり、他の製品開発分野を通じて価値創造を可能にすることも観察されている。
+また、機械学習モデルが新製品の基礎となり、他の製品開発分野を通じて価値創造を可能にすることも観察されている。(semantic modelの話だと思う)
 Such indirect impact is hard to quantify, but the multiplying effect is clear and it is a concept that product teams exploit.
 このような間接的な影響を定量化するのは難しいが、乗数効果は明らかであり、製品チームが利用する概念である。
 As an example, Figure 3 illustrates the iterative process of the development of a destinations recommendations system.
@@ -405,15 +405,15 @@ We quantified the business impact that latency has in our platform by running a 
 Results are depicted in Figure 6 (bottom right quadrant).
 結果は図6（右下）に示されている。
 Each point is one arm of the experiment, the horizontal coordinate is the relative difference in observed (mean) latency between the arm and the control group, and the vertical coordinate is the relative difference in conversion rate.
-各ポイントは実験の1群であり、横座標はその群と対照群との間で観察された（平均）潜時の相対差、縦座標は変換率の相対差である。
+各ポイントは実験の1群であり、横座標はその群とcontroll群との間で観察された（平均）latencyの相対差、縦座標はconversion rateの相対差である。
 Crosses correspond to arms that did not show statistical significance and circles to arms that did.
 十字は統計的有意性を示さなかった群、丸は統計的有意性を示した群に対応する。
 This is a single experiment with 4 arms (plus a control group), so we use Šidák correction to account for multiple testing.
 これは4群（＋対照群）の単一実験なので、多重検定を考慮するためにŠidák補正を用いている。
 Visual inspection shows a clear trend, in which an increase of about 30% in latency costs more than 0.5% in conversion rate (a relevant cost for our business).
-目視検査では、**遅延が約30％増加すると、コンバージョン率が0.5％以上（私たちのビジネスに関連するコスト）低下するという明確な傾向が見られます**。
+目視検査では、**遅延が約30％増加すると、コンバージョン率が0.5％以上低下するという明確な傾向が見られます**。
 This finding led us to hypothesize that decreasing latency can produce a gain in conversion.
-この発見から、**待ち時間を短くすることでコンバージョンを向上させることができるという仮説が導かれた**。
+この発見から、**latencyを短くすることでコンバージョンを向上させることができるという仮説が導かれた**。
 On the top left quadrant of Figure 6 we can see the effect of decreasing the latency, in 4 individual experiments in different devices and different pages of the site.
 図6の左上の象限では、異なるデバイスとサイトの異なるページにおける4つの個別の実験において、レイテンシを減少させる効果を見ることができる。
 All results are statistically significant, supporting the hypothesis.
@@ -433,9 +433,12 @@ Even if each model is fast enough, the overall effect must be considered careful
 To minimize the latency introduced by our models we use several techniques:
 **モデルによってもたらされる待ち時間を最小化するために、私たちはいくつかのテクニックを使っている**：
 
-- **Model Redundancy**: Copies of our models are distributed across a cluster to make sure we can respond to as many predictions as requested, scale horizontally and deal with large traffic. モデルの冗長性：私たちのモデルのコピーはクラスタに分散され、要求された多くの予測に対応し、水平方向に拡張し、大規模なトラフィックに対処できるようにしています。
+- **Model Redundancy**: Copies of our models are distributed across a cluster to make sure we can respond to as many predictions as requested, scale horizontally and deal with large traffic. モデルの冗長性：私たちのモデルのコピーはクラスタに分散され、要求された多くの予測に対応し、水平方向に拡張し、大規模なトラフィックに対処できるようにしています。(=分散処理)
 
-- In-house developed Linear Prediction engine: We developed our own implementation of linear predictions, highly tuned to minimize prediction time. It can serve all models reducible to inner products, such as Naive Bayes, Generalized Linear Models, k-NN with cosine or euclidean distance, Matrix Factorization models and more. **自社開発の線形予測エンジン**: 予測時間を最小化するために高度に調整された線形予測の実装を独自に開発しました。 ナイーブ・ベイズ、一般化線形モデル、コサインまたはユークリッド距離によるk-NN、行列因数分解モデルなど、内積に還元可能なすべてのモデルに対応できる。(どんな方法なんだろう。気になる...!:thinking:)
+  - 分散処理(Distributed Processing): 複数のシステム(コンピュータ)によるタスクの同時実行。
+  - 並列処理(Parallel Processing): 一つのシステム内でのタスクの同時実行。
+
+- In-house developed Linear Prediction engine: We developed our own implementation of linear predictions, highly tuned to minimize prediction time. It can serve all models reducible to inner products, such as Naive Bayes, Generalized Linear Models, k-NN with cosine or euclidean distance, Matrix Factorization models and more. **自社開発の線形予測エンジン**: 予測時間を最小化するために高度に調整された線形予測の実装を独自に開発しました。 ナイーブ・ベイズ、一般化線形モデル、コサインまたはユークリッド距離によるk-NN、行列因数分解モデルなど、**内積に還元可能なすべてのモデル**に対応できる。(どんな方法なんだろう。気になる...!:thinking:)
 
 - Sparse models: The less parameters a model has, the less computation is needed at prediction time. 疎なモデル: モデルのパラメータが少ないほど、予測時の計算量が少なくて済む。
 
@@ -448,11 +451,11 @@ To minimize the latency introduced by our models we use several techniques:
 Most of these techniques are implemented by our Machine Learning Production service, which provides a simple interface to deploy and consume models in a variety of formats.
 これらのテクニックのほとんどは、私たちの機械学習プロダクション・サービスによって実装されており、様々な形式でモデルをデプロイし、利用するためのシンプルなインターフェースを提供しています。
 This service abstracts away many challenging aspects of model deployment, including prediction latency, but also high availability, fault tolerance, monitoring, etc.
-このサービスは、予測レイテンシーだけでなく、高可用性、フォールトトレランス、モニタリングなど、モデル展開の多くの困難な側面を抽象化する。
+このサービスは、予測レイテンシーだけでなく、高いavailability(可用性)、フォールトトレランス、モニタリングなど、モデル展開の多くの困難な側面を抽象化する。
 Although these techniques are usually very successful at achieving low latency on an individual model level, there could always be the case where adding a fast model is “the last straw” that breaks our system.
-これらのテクニックは通常、個々のモデルレベルで低遅延を達成することに非常に成功しているが、高速モデルを追加することが、システムを壊す「最後の藁」になるケースは常にあり得る。(??)
+これらのテクニックは通常、個々のモデルレベルで低遅延を達成することに非常に成功しているが、高速モデルを追加することが、システムを壊す「最後の藁」(最後のきっかけみたいな??:thinking:)になるケースは常にあり得る。(ex. sparceなモデルに変更して、latencyは下がったけど予測性能も下がって、conversionが下がる、みたいな...?)
 To detect this situation we use a method described in detail in section 7.3.The idea is to disentangle the effects of latency and the model itself on the business metric, so that we can decide whether there is a need to improve the latency or the model itself in one single RCT.
-この状況を検出するために、7.3節で詳述する方法を用いる。このアイデアは、ビジネス指標に対するレイテンシーとモデル自体の影響を切り離すことで、1回のRCTでレイテンシーを改善する必要があるか、モデル自体を改善する必要があるかを判断できるようにすることである。
+この状況を検出するために、7.3節で詳述する方法を用いる(RCTのデザインの工夫)。このアイデアは、ビジネス指標に対するレイテンシーとモデル自体(の予測性能)の影響を切り離すことで、1回のRCTでレイテンシーを改善する必要があるか、モデル自体を改善する必要があるかを判断できるようにすることである。
 
 # 6. Monitoring: Unsupervised Red Flags モニタリング: 監視されないレッドフラッグ
 
@@ -510,9 +513,9 @@ These are the advantages this method offers:
 
 - It is robust to class distribution. In extreme cases, the logarithm of the frequency in the RDC is used to make the cues more obvious. クラス分布にロバストである。 極端な場合は、RDCの周波数の対数を使用して、キューをより明確にする。
 
-- It addresses the Incomplete Feedback issue providing Global Feedback since the RDC is computed considering all predictions RDCはすべての予測を考慮して計算されるため、グローバルフィードバックを提供し、不完全なフィードバックの問題に対処する。
+- It addresses the Incomplete Feedback issue providing Global Feedback since the RDC is computed considering all predictions RDCはすべての予測を考慮して計算されるため、grobal feedbackを提供し、incompete feedback の問題に対処する。
 
-- It addresses the Delayed Feedback issue providing Immediate Feedback, since the RDC can be constructed as soon as a few predictions are made RDCは、いくつかの予測がなされるとすぐに構築することができるため、即時フィードバックを提供し、フィードバックの遅れの問題に対処する。
+- It addresses the Delayed Feedback issue providing Immediate Feedback, since the RDC can be constructed as soon as a few predictions are made RDCは、いくつかの推論がなされるとすぐに構築することができるため、即時フィードバックを提供し、 delayed feedback の問題に対処する。
 
 - It is sensitive to both class distribution and feature space changes, since it requires very few data points to be constructed 構築するデータポイントが非常に少ないので、クラス分布と特徴空間の変化の両方に敏感です。
 
@@ -541,12 +544,12 @@ Machine Learning products are also tested through experiments.
 The large majority of the successful use cases of machine learning studied in this work have been enabled by sophisticated experiment designs, either to guide the development process or in order to detect their impact.
 この研究で研究された機械学習の成功したユースケースの大部分は、開発プロセスを導くため、あるいはその影響を検出するために、洗練された実験デザインによって実現されている。
 In this section we show examples of how we use a combination of triggered analysis with treatments design to isolate the causal effect of specific modeling and implementation choices on business metrics.
-このセクションでは、特定のモデル(ex. 推論結果の違い)と実装の選択(ex. レイテンシーの違い)がビジネス指標に及ぼす因果効果を分離するために、トリガー分析とtreatments designの組み合わせを使用する方法の例を示します。
+このセクションでは、特定のモデル(ex. 推論結果の違い)と実装の選択(ex. レイテンシーの違い)がビジネス指標に及ぼす因果効果を分離するために、trigger分析(triggered analysis)とtreatments designの組み合わせを使用する方法の例を示します。
 
 ## 7.1. Selective triggering 選択的トリガー
 
 In a standard RCT, the population is divided into control and treatment groups, all subjects in the treatment group are exposed to the change, and all subjects in the control group are exposed to no change.
-標準的なRCTでは、集団をcotrol群とtreatment群に分け、treatment群の被験者全員が変化にさらされ、controll群の被験者全員が変化なしにさらされる。(うんうん...!)
+標準的なRCTでは、集団をcotrol群とtreatment群に分け、treatment群の被験者全員が変化(ex. 新モデル)にさらされ、controll群の被験者全員が変化なし(ex. 旧モデル)にさらされる。(うんうん...!)
 However, in many cases, not all subjects are eligible to be treated, and the eligibility criteria are unknown at assignment time.
 しかし、多くの場合、すべての被験者がtreatmentを受けられるわけではなく、割り付け時点では適格基準は不明である。
 In the case of machine learning models, this is often the case since models may require specific features to be available.
@@ -554,9 +557,10 @@ In the case of machine learning models, this is often the case since models may 
 The subjects assigned to a group but not treated add noise to the sample, diluting the observed effect, reducing statistical power and inflating the False Discovery Rate.
 あるグループに割り付けられたがtreatmentを受けなかった被験者は、サンプルにノイズを加え、観察された効果を希釈し、統計的検出力を低下させ、偽発見率を上昇させる。
 To deal with this situation, we apply Triggered Analysis [3], where only the treatable (or triggered) subjects in both groups are analyzed.
-この状況に対処するため、トリガー分析[3]を適用し、両グループのtreatment可能な(またはtriggerされた)被験者だけを分析する。(triggerってなんだ?? fig8を見た感じでは、triggered = model availableって事っぽい!:thinking:)
+この状況に対処するため、**トリガー分析[3]**を適用し、**両グループのtreatment可能な(またはtriggerされた)被験者だけを分析**する。(triggered = model availableって事っぽい! 要はtreatment群のうち、実際にtreatmentを受けたユーザのみをちゃんと分析するってことかな:thinking:)
+(参考文献: https://alexdeng.github.io/public/files/wsdm2015-dilution.pdf)
 Figure 8 illustrates this setup.
-図8はこの設定を示している。
+図8はこの設定を示している。(ex. 推薦機能の新旧モデルを比較するRCTの場合、treatment群/controll群にユーザを分けるが、実際に推薦機能を利用した=triggerされたユーザのビジネス指標を使って評価しようってことかな。)
 
 ![fig8]()
 
@@ -567,23 +571,24 @@ Figure 8 illustrates this setup.
 Even when all the model requirements are met, the treatment criteria might depend on the model output.
 モデル要件がすべて満たされている場合でも、treatment基準はモデル出力に依存する可能性がある。
 This happens for instance when we show a block with alternative destinations only to users identified as destination-flexible by the model.
-これは例えば、モデルによって「目的地の柔軟性がある」と識別されたユーザにのみ、代替の目的地があるブロックを表示する場合に起こる。(=要するに、特定の推論結果の場合にのみ、正解ラベルが得られる、みたいな??)
+これは例えば、モデルによって「目的地の柔軟性がある」と識別されたユーザにのみ、代替の目的地があるブロックを表示する場合に起こる。(=要するに、特定の推論結果の場合にのみ、ユーザにtreatmentイベントが発生して、正解ラベルが得られる、みたいなケース??)
+(ex. 「ユーザの目的地の柔軟性を定量化するMLモデル」の改善のRCT。MLモデルが「柔軟性がある」と判定したユーザにのみ、代替の目的地が推薦される。)
 It may also be the case that subsequent steps fail or succeed depending on the model output, like fetching relevant items which may not be available.
 また、利用できないかもしれない関連アイテムをフェッチするなど、モデル出力によって後続ステップが失敗したり成功したりする場合もある。
 In such cases, some users are not exposed to any treatment, once more diluting the observed effect.
-このような場合、何人かの利用者はtreatmentを受けず、観察された効果がさらに薄れてしまう。
+このような場合、何人かのユーザはtreatmentを受けず、観察された効果がさらに薄れてしまう。
 Nevertheless, the setup of Figure 8 cannot be used since in the control group the output of the model is not known and therefore cannot condition the triggering.
-とはいえ、コントロールグループでは、モデルの出力が不明であるため、トリガーを条件付けることができないため、図8の設定は使用できない。
+とはいえ、controllグループでは、モデルの出力が不明(=新モデルの出力が不明)であるため、Triggerを条件付けることができないため、図8の設定は使用できない。(図8は、新旧モデルが推論する前の情報を元にTriggerを条件づけていたのでOKだった。)
 Modifying the control group to call the model is not advised, since we also use this group as a safety net to detect problems with the experiment setup, and in such cases all the traffic can be directed to the control group while studying the issue.
 モデルを呼び出すためにコントロール・グループを変更することは推奨されない。なぜなら、実験セットアップの問題を検出するためのセーフティネットとしてこのグループも使用しており、そのような場合、問題を研究している間、すべてのトラフィックをコントロール・グループに向けることができるからである。
 The setup for model output dependent triggering requires an experiment with 3 groups as shown on Figure 9.
-**モデル出力に依存するtriggerのセットアップには、図9に示すような3つのグループによる実験が必要である**。
+**モデル出力に依存するtriggerのセットアップ(=treatmentされるかがモデル出力値に依存するケース)には、図9に示すような3つのグループによる実験が必要である**。
 The control group C is exposed to no change at all, the two treatment groups T 1 and T 2 invoke the model and check the triggering criteria (e.g.output > 0) but only in T 1 triggered users are exposed to a change.
-controll群Cは全く変化にさらされず、2つのtreatment群 $T_1$ と $T_2$ はモデルを起動し、トリガー基準（例えば出力＞0）をチェックするが、トリガーされた $T_1$ のユーザーだけが変化にさらされる。
+controll群Cは全く変化にさらされず、2つのtreatment群 $T_1$ と $T_2$ はモデル(=新モデル)を起動し、トリガー基準 (例えば出力 >0 )をチェックするが、トリガーされた $T_1$ のユーザだけが変化にさらされる。
 In T 2 users are not exposed to any change regardless of the model output.
-$T_2$ では、モデルの出力に関係なく、ユーザはいかなる変化にもさらされない。
+$T_2$ では、モデルの出力に関係なく、ユーザはいかなる変化にもさらされない。(=新モデルでtrigger基準を満たしているか否かは判定されるが、旧モデルが適用される。)
 The statistical analysis is conducted using only triggered subjects from both T 1 and T 2.
-統計分析は、$T_1$ と $T_2$ の両方からトリガーされた被験者だけを用いて行われた。
+統計分析は、$T_1$ と $T_2$ の両方からtriggerされた(=新モデルのtrigger基準を満たした) 被験者だけを用いて行われた。
 
 ## 7.3. Controlling performance impact パフォーマンスへの影響をコントロールする
 
@@ -596,7 +601,7 @@ A positive result endorses the current implementation.
 Otherwise, we can still learn from two more comparisons.
 そうでなければ、あと2つの比較から学ぶことができる。
 With C and T 2 we can isolate and measure both the slowdown and its impact on the metrics of interest, since there is no change on the functionality between these variants.
-Cと $T_2$ では、これらの変種間で機能に変化がないため、**速度低下と、関心のある測定基準への影響の両方を分離して測定することができる**。
+Cと $T_2$ では、これらのvariant間で機能に変化がないため、**速度低下と、関心のある測定基準への影響の両方を分離して測定することができる**。
 Conversely, T 1 and T 2 share the same computational load due to model invocation and are only different on the exposure to the new functionality, allowing to measure its effect regardless of the computational cost associated to the model.
 逆に、$T_1$ と $T_2$ は、**モデル呼び出しによる計算負荷を共有**(=推論時間の条件は同じはず)し、新機能への露出度だけが異なるため、モデルに関連する計算コストに関係なく、その効果を測定することができる。
 A positive result in this last comparison supports the new functionality, independently of the effect of the model on latency.
