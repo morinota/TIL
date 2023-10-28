@@ -486,13 +486,13 @@ The method is based on the Response Distribution Chart (RDC), which is simply a 
 The simple observation that the RDC of an ideal model should have one peak at 0 and one peak at 1 (with heights given by the class proportion) allows us to characterize typical patterns that signal potential issues in the model, a few examples are:
 理想的なモデルのRDCは、0に1つのピークがあり、1に1つのピークがあるはずだという単純な観察（高さはクラスの割合で与えられる）により、モデルの潜在的な問題を知らせる典型的なパターンを特徴付けることができる(**RDCはかくあるべき、という仮定を用意しておく必要がある**:thinking:):
 
-- A smooth unimodal distribution with a central mode might indicate high bias in the model or high Bayes error in the data 中央モードがある滑らかな単峰分布は、モデルの偏りが大きいか、データのベイズ誤差が大きいことを示すかもしれない。
+- A smooth unimodal distribution with a central mode might indicate high bias in the model or high Bayes error in the data 中央にmode(最頻値)がある滑らかな単峰分布は、モデルの偏りが大きいか、データのベイズ誤差が大きいことを示すかもしれない。
 
-- An extreme, high frequency mode might indicate defects in the feature layer like wrong scaling or false outliers in the training data 極端な高頻度モードは、間違ったスケーリングやトレーニングデータの偽の外れ値など、特徴層の欠陥を示すかもしれない。
+- An extreme, high frequency mode might indicate defects in the feature layer like wrong scaling or false outliers in the training data 極端な高頻度のmode(最頻値)は、間違ったスケーリングやトレーニングデータの偽の外れ値など、特徴層の欠陥を示すかもしれない。
 
 - Non-smooth, very noisy distributions point to too excessively sparse models 非平滑で非常にノイジーな分布は、モデルが過度にスパースであることを示している。
 
-- Difference in distributions between training and serving data may indicate concept drift, feature drift, bias in the training set, or other forms of training-serving skew. 訓練データと使用データの間の分布の違いは、コンセプトドリフト、特徴ドリフト、訓練セットの偏り、または他の形態の訓練と使用のスキューを示す可能性があります。
+- Difference in distributions between training and serving data may indicate concept drift, feature drift, bias in the training set, or other forms of training-serving skew. 訓練データと推論データの間の分布の違いは、コンセプトドリフト、特徴ドリフト、訓練セットの偏り、または他の形態の訓練と推論のスキューを示す可能性があります。
 
 - Smooth bimodal distributions with one clear stable point are signs of a model that successfully distinguishes two classes 1つの明確な安定点を持つ滑らかな二峰性分布は、2つのクラスをうまく区別するモデルの兆候である。
 
@@ -517,7 +517,7 @@ These are the advantages this method offers:
 
 - It addresses the Delayed Feedback issue providing Immediate Feedback, since the RDC can be constructed as soon as a few predictions are made RDCは、いくつかの推論がなされるとすぐに構築することができるため、即時フィードバックを提供し、 delayed feedback の問題に対処する。
 
-- It is sensitive to both class distribution and feature space changes, since it requires very few data points to be constructed 構築するデータポイントが非常に少ないので、クラス分布と特徴空間の変化の両方に敏感です。
+- It is sensitive to both class distribution and feature space changes, since it requires very few data points to be constructed 構築するデータポイントが非常に少ないので、クラス分布と特徴空間(入力特徴量の分布??)の変化の両方に敏感です。
 
 - It can be used for multi-class classification when the number of classes is small by just constructing one binary classifier per class that discriminates between one class and the others (one vs all or one vs rest) クラス数が少ない場合、クラスごとに1つの2値分類器を構成し、1つのクラスと他のクラス(1対すべて、または1対その他)を識別するだけで、多クラス分類に使用できます。
 
@@ -544,14 +544,14 @@ Machine Learning products are also tested through experiments.
 The large majority of the successful use cases of machine learning studied in this work have been enabled by sophisticated experiment designs, either to guide the development process or in order to detect their impact.
 この研究で研究された機械学習の成功したユースケースの大部分は、開発プロセスを導くため、あるいはその影響を検出するために、洗練された実験デザインによって実現されている。
 In this section we show examples of how we use a combination of triggered analysis with treatments design to isolate the causal effect of specific modeling and implementation choices on business metrics.
-このセクションでは、特定のモデル(ex. 推論結果の違い)と実装の選択(ex. レイテンシーの違い)がビジネス指標に及ぼす因果効果を分離するために、trigger分析(triggered analysis)とtreatments designの組み合わせを使用する方法の例を示します。
+このセクションでは、特定のモデル(ex. 推論性能)と実装の選択(ex. レイテンシーの違い)がビジネス指標に及ぼす因果効果を分離するために、trigger分析(triggered analysis)とtreatments designの組み合わせを使用する方法の例を示します。
 
 ## 7.1. Selective triggering 選択的トリガー
 
 In a standard RCT, the population is divided into control and treatment groups, all subjects in the treatment group are exposed to the change, and all subjects in the control group are exposed to no change.
 標準的なRCTでは、集団をcotrol群とtreatment群に分け、treatment群の被験者全員が変化(ex. 新モデル)にさらされ、controll群の被験者全員が変化なし(ex. 旧モデル)にさらされる。(うんうん...!)
 However, in many cases, not all subjects are eligible to be treated, and the eligibility criteria are unknown at assignment time.
-しかし、多くの場合、すべての被験者がtreatmentを受けられるわけではなく、割り付け時点では適格基準は不明である。
+しかし、多くの場合、すべての被験者がtreatmentを受けられるわけではなく、割り付け時点では適格基準(i.e. triggered基準)は不明である。
 In the case of machine learning models, this is often the case since models may require specific features to be available.
 機械学習モデルの場合、モデルが特定の特徴量を必要とすることがあるため、このようなケースはよくある。
 The subjects assigned to a group but not treated add noise to the sample, diluting the observed effect, reducing statistical power and inflating the False Discovery Rate.
@@ -572,7 +572,7 @@ Even when all the model requirements are met, the treatment criteria might depen
 モデル要件がすべて満たされている場合でも、treatment基準はモデル出力に依存する可能性がある。
 This happens for instance when we show a block with alternative destinations only to users identified as destination-flexible by the model.
 これは例えば、モデルによって「目的地の柔軟性がある」と識別されたユーザにのみ、代替の目的地があるブロックを表示する場合に起こる。(=要するに、特定の推論結果の場合にのみ、ユーザにtreatmentイベントが発生して、正解ラベルが得られる、みたいなケース??)
-(ex. 「ユーザの目的地の柔軟性を定量化するMLモデル」の改善のRCT。MLモデルが「柔軟性がある」と判定したユーザにのみ、代替の目的地が推薦される。)
+(ex. 「ユーザの目的地の柔軟性」を定量化するMLモデルの改善のRCT。MLモデルが「柔軟性がある」と判定したユーザにのみ、代替の目的地が推薦される。)
 It may also be the case that subsequent steps fail or succeed depending on the model output, like fetching relevant items which may not be available.
 また、利用できないかもしれない関連アイテムをフェッチするなど、モデル出力によって後続ステップが失敗したり成功したりする場合もある。
 In such cases, some users are not exposed to any treatment, once more diluting the observed effect.
@@ -580,9 +580,9 @@ In such cases, some users are not exposed to any treatment, once more diluting t
 Nevertheless, the setup of Figure 8 cannot be used since in the control group the output of the model is not known and therefore cannot condition the triggering.
 とはいえ、controllグループでは、モデルの出力が不明(=新モデルの出力が不明)であるため、Triggerを条件付けることができないため、図8の設定は使用できない。(図8は、新旧モデルが推論する前の情報を元にTriggerを条件づけていたのでOKだった。)
 Modifying the control group to call the model is not advised, since we also use this group as a safety net to detect problems with the experiment setup, and in such cases all the traffic can be directed to the control group while studying the issue.
-モデルを呼び出すためにコントロール・グループを変更することは推奨されない。なぜなら、実験セットアップの問題を検出するためのセーフティネットとしてこのグループも使用しており、そのような場合、問題を研究している間、すべてのトラフィックをコントロール・グループに向けることができるからである。
+モデルを呼び出すためにコントロール・グループを変更すること(=Cに新モデルを推論させること)は推奨されない。なぜなら、実験セットアップの問題を検出するためのセーフティネットとしてこのグループも使用しており、そのような場合、問題を研究している間、すべてのトラフィックをコントロール・グループに向けることができるからである。
 The setup for model output dependent triggering requires an experiment with 3 groups as shown on Figure 9.
-**モデル出力に依存するtriggerのセットアップ(=treatmentされるかがモデル出力値に依存するケース)には、図9に示すような3つのグループによる実験が必要である**。
+**モデル出力に依存するtriggerのセットアップ(=treatableがモデル出力値に依存するケース)には、図9に示すような3つのグループによる実験が必要である**。
 The control group C is exposed to no change at all, the two treatment groups T 1 and T 2 invoke the model and check the triggering criteria (e.g.output > 0) but only in T 1 triggered users are exposed to a change.
 controll群Cは全く変化にさらされず、2つのtreatment群 $T_1$ と $T_2$ はモデル(=新モデル)を起動し、トリガー基準 (例えば出力 >0 )をチェックするが、トリガーされた $T_1$ のユーザだけが変化にさらされる。
 In T 2 users are not exposed to any change regardless of the model output.
@@ -593,7 +593,7 @@ The statistical analysis is conducted using only triggered subjects from both T 
 ## 7.3. Controlling performance impact パフォーマンスへの影響をコントロールする
 
 The setup described in the previous section serves also as a way to disentangle the causal effect of the functionality on the user experience - for instance, new recommendations - from that of any slow down due to model computation.
-前節で説明したセットアップは、**ユーザエクスペリエンスに対する機能の因果関係(例えば、新しいレコメンデーション)を、モデル計算による速度低下から切り離す**方法としても役立つ。(ex. UX悪化が、推論結果によるものか、推論速度低下によるものか、を切り離せる??)
+前節で説明したセットアップは、**ユーザエクスペリエンスに対する機能の因果関係(例えば、新しいレコメンデーション)を、モデル計算による速度低下から切り離す**方法としても役立つ。(i.e. UX悪化が、推論結果によるものか、推論速度低下によるものか、を切り離せる)
 A comparison of metrics betweenC andT 1 measures the overall effect of the new functionality, including any performance degradation.
 Cと $T_1$ のメトリクスの比較は、パフォーマンス低下を含む**新機能の全体的な効果**(ex. 推論結果 & 推論速度を含めて総合的なUX!)を測定する。
 A positive result endorses the current implementation.

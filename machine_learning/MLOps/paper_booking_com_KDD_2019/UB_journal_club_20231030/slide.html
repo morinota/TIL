@@ -500,16 +500,25 @@
 <section id="教訓5の概要-booking.comがどのように課題に対応しているか" class="slide level2">
 <h2>教訓5の概要: Booking.comがどのように課題に対応しているか</h2>
 <ul>
-<li>上記の課題から、<strong>precisionやrecallなどの正解ラベルに依存した指標は不適切</strong>-&gt; 正解ラベルに依存しない指標で推論結果の品質を監視したい…!
+<li>上記の課題から、precisionやrecallなどの正解ラベルに依存した指標は不適切-&gt; <strong>正解ラベルに依存しない指標</strong>で推論結果の品質を監視したい…!
 <ul>
 <li>「モデルの品質について、それがサービスを提供するときに行う推論結果を見るだけで、何が言えるのだろうか?」 -&gt; Booking.comでは<strong>応答分布分析(=Response Distribution Analysis)</strong>を採用。</li>
-<li>応答分布図(Response Distribution Chart, RDC, 要はモデル出力のヒストグラムっぽい)に基づいた手法。(正常なRDCはこうあるべき、という仮定をヒューリスティックに用意しておく必要がありそう?<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>応答分布図(Response Distribution Chart, RDC, 要はモデル出力のヒストグラムっぽい)に基づいた手法。</li>
+<li>(<strong>正常なRDCはこうあるべき、という仮定をヒューリスティックに用意しておく必要がありそう</strong><span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul></li>
+<li>-&gt; 経験的に、応答分布分析は、<strong>モデルの欠陥を早期に発見</strong>できる非常に有用なツールだった。</li>
 </ul>
+</section>
+<section id="教訓5の概要-応答分布分析の例2値分類モデル" class="slide level2">
+<h2>教訓5の概要: 応答分布分析の例(2値分類モデル)</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>hogehoge</li>
+<li>理想的なモデルの応答分布図の典型的なパターン:
+<ul>
+<li>単峰分布(図7左上) -&gt; 学習時と推論時のデータの分布に大きく違いがある可能性。</li>
+<li>極端な高頻度のmodeを持つ分布(図7右上) -&gt; 学習データに想定外の外れ値が含まれている可能性。</li>
+</ul></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
@@ -520,23 +529,87 @@
 </div>
 </div>
 </div>
+<ul>
+<li>平滑ではない非常にnoisyな分布(図7左下)-&gt; 予測が安定しない。モデルがsparce過ぎる可能性。</li>
+<li>滑らかな二峰性分布(図7右下) -&gt; 2クラスを上手く区別できていそう。(完璧なモデルは0と1に２つのピークがある想定)</li>
+</ul>
 </section></section>
 <section>
-<section id="教訓6-evaluation-experiment-design-sophistication-pays-off-洗練された実験計画が功を奏す" class="title-slide slide level1 center">
-<h1>教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験計画が功を奏す)</h1>
-
+<section id="教訓6-evaluation-experiment-design-sophistication-pays-off-洗練された実験デザインが功を奏す" class="title-slide slide level1 center">
+<h1>教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験デザインが功を奏す)</h1>
+<ul>
+<li>RCT(ランダム比較試験)による実験はBooking.comの文化に根付いている。</li>
+<li>MLプロジェクトも同様にRCTを通して実験され、その効果を検出し、改善のiterationに役立てている。</li>
+<li>MLのRCTを行う際、<strong>モデリング(ex. 推論精度??<span class="emoji" data-emoji="thinking">🤔</span>)と実装の選択(ex. latencyとか??<span class="emoji" data-emoji="thinking">🤔</span>)がビジネス指標に及ぼす因果効果を分離</strong>する為に、実験デザインを工夫してる話。</li>
+</ul>
 </section>
-<section id="教訓6の概要と感想" class="slide level2">
-<h2>教訓6の概要と感想</h2>
+<section id="教訓6の概要-triggered-analysisの適用" class="slide level2">
+<h2>教訓6の概要: Triggered Analysisの適用</h2>
+<ul>
+<li>RCTは、ユーザ集合をcontrol群とtreatment群に分け、それぞれ”変化”と”変化なし”に晒される。</li>
+<li>しかし、必ずしも全ユーザがtreatment可能(treatable)ではない。(MLモデルの場合、特定の特徴量を必要とすることがある為、よくある)</li>
+<li>-&gt; treatableではないユーザは、サンプルにノイズを加え、観察された効果を希釈してしまう -&gt; Triggered Analysisの適用</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>両群のtreatableな(or triggeredな)ユーザだけを分析する。(treatment群のtreatableなユーザは実際にtriggerされるので…!<span class="emoji" data-emoji="thinking">🤔</span>) (図8参照)</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><img data-src="https://i.imgur.com/b501FJx.png"></p>
+</div>
+</div>
+<ul>
+<li>(ex. 旧モデル=ランダムな旅行先推薦、新モデル=パーソナライズされた旅行先推薦のケース。直近1年間の旅行履歴を特徴量に使用するとして、履歴がないユーザは、treatableではない。よって、分析時にはcontrol群とtreatment群両方から除外する、みたいな??<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul>
+</section>
+<section id="教訓6の概要-triggerがmlモデル出力値に依存するケースの実験デザイン" class="slide level2">
+<h2>教訓6の概要: TriggerがMLモデル出力値に依存するケースの実験デザイン</h2>
+<ul>
+<li>ex)「ユーザの目的地の柔軟性」を定量化するMLモデルのRCT。MLモデルが「柔軟性がある」と判定したユーザにのみ、代替の目的地が推薦される。
+<ul>
+<li>controll群では新モデルの出力が不明であるため、trigger基準(treatableか否か)を条件付けられず図8の設定は適用できない。</li>
+</ul></li>
+<li>-&gt; 図9のような3群(<span class="math inline">\(C, T_1, T_2\)</span>)による実験デザインを採用。</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:60%;">
+<ul>
+<li><span class="math inline">\(C\)</span> は旧モデルを適用。</li>
+<li>2つのtreatment群 <span class="math inline">\(T_1\)</span> と <span class="math inline">\(T_2\)</span> は新モデルを走らせ、Trigger基準(ex. 出力&gt;0.5)をチェックするが、triggerされた <span class="math inline">\(T_1\)</span> のユーザだけが変化にさらされる。</li>
+<li><span class="math inline">\(T_2\)</span> には新モデルの出力に関係なく、旧モデルが適用される。</li>
+</ul>
+</div><div class="column" style="width:40%;">
+<p><img data-src="https://i.imgur.com/UdXXsQ5.png"></p>
+</div>
+</div>
+<ul>
+<li>統計分析は、<span class="math inline">\(T_1\)</span> と <span class="math inline">\(T_2\)</span> の両方からtriggerされた(=新モデルのtrigger基準を満たした)ユーザだけを用いて実施する。</li>
+</ul>
+</section>
+<section id="教訓6の概要-モデル精度と計算性能の因果効果を分離する実験デザイン" class="slide level2">
+<h2>教訓6の概要: モデル精度と計算性能の因果効果を分離する実験デザイン</h2>
+<ul>
+<li>前述の3群のRCTデザインは、MLモデルの<strong>推論精度がユーザ体験に与える因果効果を、latency等の影響から切り離す</strong>方法としても役立つ。</li>
+</ul>
 <div class="columns">
 <div class="column" style="width:40%;">
 <ul>
-<li>hogehoge</li>
+<li><span class="math inline">\(C\)</span> と <span class="math inline">\(T_1\)</span> の比較: パフォーマンス低下を含む<strong>新機能の全体的な効果</strong> を測定する。(i.e.&nbsp;推論結果の精度 &amp; latencyを含めて総合的なUX!<span class="emoji" data-emoji="thinking">🤔</span>)(positiveな結果だったらこれだけでGOサインを出せる。)</li>
 </ul>
-</div><div class="column" style="width:60%;">
-<p><img data-src="https://i.imgur.com/b501FJx.png"> <img data-src="https://i.imgur.com/UdXXsQ5.png"> <img data-src="https://i.imgur.com/J4tmi1g.png"> (いづれも論文より引用)</p>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://i.imgur.com/J4tmi1g.png"></p>
+<p></p><figcaption>(論文より引用)</figcaption><p></p>
+</figure>
 </div>
 </div>
+</div>
+<ul>
+<li><span class="math inline">\(C\)</span> と <span class="math inline">\(T_2\)</span> の比較: 推論結果を共有(旧モデル)。新旧モデルでlatencyの違いの影響を測定できる。</li>
+<li><span class="math inline">\(T_1\)</span> と <span class="math inline">\(T_2\)</span> の比較: 推論時のlatencyを共有。新モデルの露出だけが異なる。新旧モデルの推論結果の精度の違いの効果を測定できる。</li>
+</ul>
 </section></section>
 <section id="まとめ" class="title-slide slide level1 center">
 <h1>まとめ</h1>
