@@ -33,12 +33,12 @@ title-slide-attributes:
 ## どんな論文??
 
 - 宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)
-- 教訓1: Inception: Machine Learning as a Swiss Knife for Product Development (機械学習はプロダクト開発におけるスイスナイフである)
-- 教訓2: Modeling: Offline Model Performance Is Just A Health Check(オフラインでのモデルのパフォーマンスは健康診断に過ぎない)
-- 教訓3: Modeling:Before Solving A Problem, Design It (問題を解かせる前に、解かせるべき問題をデザインする)
-- 教訓4: Deployment: Time Is Money (時は金なり)
-- 教訓5: Monitoring: Unsupervised Red Flag (監視されないレッドフラッグ)
-- 教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験計画が功を奏す)
+  - 教訓1: Inception: Machine Learning as a Swiss Knife for Product Development (機械学習はプロダクト開発におけるスイスナイフである)
+  - 教訓2: Modeling: Offline Model Performance Is Just A Health Check(オフラインでのモデルのパフォーマンスは健康診断に過ぎない)
+  - 教訓3: Modeling:Before Solving A Problem, Design It (問題を解かせる前に、解かせるべき問題をデザインする)
+  - 教訓4: Deployment: Time Is Money (時は金なり)
+  - 教訓5: Monitoring: Unsupervised Red Flag (監視されないレッドフラッグ)
+  - 教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験計画が功を奏す)
 
 ## 本論文の貢献
 
@@ -53,7 +53,7 @@ title-slide-attributes:
   - 様々なusecaseで活用可能性がある **semantic model**
     - 理解しやすい概念をモデル化する(定量化できていないユーザの特徴を、MLでモデル化する、みたいな??:thinking:)
     - ex) 「ユーザが旅行の目的地に対してどの程度flexibleであるか」を定量化するモデルを作り、**プロダクトチーム全体にdestination-flexibilityの概念を与える**ことで、プロダクトの改善に役立てることができた。(MLチーム以外も理解・活用可能な汎用的な特徴量を作る、みたいなイメージかな...めちゃいいね!:thinking:)
-  - semanticモデルにより、**商品開発に携わる全ての人がモデルの出力に基づいて**、新機能やパーソナライゼーション、説得力のある意思決定などに導入できるようになる。(semanticなモデルいいなぁ...:thinking:)
+  - semanticモデルにより、**開発に携わる全ての人がモデル出力に基づいて**、新機能やパーソナライゼーション、説得力のある意思決定などに導入できるようになる。(semanticなモデルいいなぁ...:thinking:)
 
 ## 教訓1の概要: MLプロジェクト
 
@@ -101,15 +101,24 @@ title-slide-attributes:
 
 # 教訓3: Modeling:Before Solving A Problem, Design It (問題を解かせる前に、解かせるべき問題をデザインする)
 
-## 教訓3の概要:
+- MLでビジネス課題の解決に貢献するための最初のステップは、**機械学習問題を「設定」すること**だった。
+  - モデルを改善するのが最も明白な方法だけど、**問題設定そのものを変える事も有効** という話:thinking:
+  - 特に主問題を直接最適化できずに代理問題を解くケース(ex. 推薦)や、主問題自体が曖昧なケース(ex. semantic model)では問題設定が重要:thinking:
+
+## 教訓3の概要: iterationで有効な問題設定を探す
+
+- -> 一般的に**最良の問題設定はすぐに思い浮かぶものではなく、実験のiterationの中で問題設定を変えること**が非常に効果的な方法だった。
 
 :::: {.columns}
 
 ::: {.column width="50%"}
 
-- MLでビジネス課題の解決に貢献するための最初のステップは、**機械学習問題を「設定」すること**だった。
-  - モデルを改善するのが最も明白な方法だけど、**問題設定そのものを変える事も有効** という話:thinking:
-- ex) 滞在時間の長さを予測する回帰問題->多クラス分類問題。clickログに基づくユーザ嗜好モデル -> 宿泊客のレビューデータに関するNLP問題
+- Booking.comでの問題設定の変更例:
+  - 滞在時間の長さを予測する回帰問題 $\rightarrow$ 多クラス分類問題。
+  - clickログに基づくユーザ嗜好予測 $\rightarrow$ レビューテキストに関するNLP問題。
+- 図3は観光地推薦のiterationの経緯:
+  - barの長さはビジネス指標の改善度合い(機能導入時との相対値)
+  - UI変更等も含めつつ、MLの問題設定(図中の`Algo: hogehoge`)を変更しながら機能を改善した。
 
 :::
 
@@ -120,8 +129,6 @@ title-slide-attributes:
 :::
 
 ::::
-
-- 一般的に、**最良の問題設定はすぐに思い浮かぶものではなく、問題設定を変えることが非常に効果的な方法だった**。
 
 # 教訓4: Deployment: Time Is Money (時は金なり)
 
