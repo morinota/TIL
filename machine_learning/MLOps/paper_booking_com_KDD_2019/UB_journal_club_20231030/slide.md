@@ -26,7 +26,7 @@ title-slide-attributes:
 
 - 元論文: [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
 
-## このテーマを選んだ理由
+## この論文を選んだモチベーション:
 
 - hogehoge
 
