@@ -11,7 +11,7 @@ from: markdown+emoji
 fig-cap-location: bottom
 
 title: twitterの様々な推薦機能で活用されてるらしい、user-userのネットワークからコミュニティ埋め込み表現を生成するSimClustersの論文を読んだ
-subtitle: n週連続 推薦システム関連の論文読んだシリーズ13週目(毎週水曜更新)
+subtitle: 論文読み会
 date: 2023/04/24
 author: morinota
 title-slide-attributes:

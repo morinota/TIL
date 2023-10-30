@@ -1,0 +1,6 @@
+- source: slides.md
+  quarto-pub:
+    - id: 1d774854-c12d-407e-baca-30da4b8399ae
+      url: 'https://morinota.quarto.pub/twitterの様々な推薦機能で活用されてるらしい、user-userのネットワークからコミュニティ埋め込み表現を生成するsimclustersの論文を読んだ'
+    - id: 6c21fa68-c275-4a09-afaf-56542deb7a94
+      url: 'https://morinota.quarto.pub/journal_club_ub_20230424'
