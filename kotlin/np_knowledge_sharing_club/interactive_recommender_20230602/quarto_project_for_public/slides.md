@@ -11,7 +11,7 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: ユーザとの対話で推薦結果を変化させるInteractive Recommenderをkotlinで実装してみようとした話
+title: ユーザとの対話で推薦結果を変化させるInteractiveなRecommenderをkotlinで実装してみようとした話
 subtitle: (推薦システム × kotlin × OpenAI API の話)
 date: 2023/06/02
 author: morinota
