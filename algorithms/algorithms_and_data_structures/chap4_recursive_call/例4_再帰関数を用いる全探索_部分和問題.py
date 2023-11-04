@@ -4,27 +4,36 @@
 """
 from collections import defaultdict
 
+MEMO: dict[tuple, bool] = defaultdict(lambda: -1)  # (注意! メモする答え自体がboolなので、memoしてない事を意味する-1を活用する)
+
 
 def can_combination_sum(
-    k: int,
+    i: int,
     A: list[int],
     W: int,
-    memo: dict[tuple, bool],
 ) -> bool:
+    """
+    - 配列Aからidx = 0 ~ i-1の整数を選んで Wを作れるか否かを返す。
+    - グローバル変数 MEMO[(i, W)] にcan_combination_sum(i, A, W)の結果を保存する。
+    """
     # ベースケース
-    if k == 0:
+    if i == 0:
         print(f"reach to k=0 and W={W}")
-        if W == 0:
-            return True
-        return False
+        MEMO[i, W] = W == 0
+        return MEMO[i, W]
 
     # メモをチェック(すでに計算済みなら答えをリターンする)
-    if memo.get((k, W), None):
-        return memo[(k, W)]
+    if MEMO[(i, W)] != -1:
+        return MEMO[(i, W)]
 
     # 答えをメモ化しながらrecursive call
-    memo[(k, W)] = can_combination_sum(k - 1, A, W, memo) or can_combination_sum(k - 1, A, W - A[k - 1], memo)
-    return memo[(k, W)]
+    if can_combination_sum(i - 1, A, W):
+        MEMO[(i, W)] = True
+    elif can_combination_sum(i - 1, A, W - A[i - 1]):
+        MEMO[(i, W)] = True
+    else:
+        MEMO[(i, W)] = False
+    return MEMO[(i, W)]
 
 
 def main(A: list[int], W: int) -> bool:
@@ -37,9 +46,9 @@ def main(A: list[int], W: int) -> bool:
     -> 最終的に「0個の整数を使って、ある整数を作れるか」という問題に帰着する。->0個の整数の総和は常に0なので、ある整数に0が含まれていれば答えはYesになる。
     """
     N = len(A)
-    return can_combination_sum(N, A, W, {})
+    return can_combination_sum(N, A, W)
 
 
 if __name__ == "__main__":
-    A = [num for num in range(100)]
-    print(main(A, 200))
+    A = [1 for _ in range(30)]
+    print(main(A, 20))
