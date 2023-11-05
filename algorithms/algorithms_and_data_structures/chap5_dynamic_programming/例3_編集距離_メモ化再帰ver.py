@@ -24,7 +24,7 @@
         - Tのj文字目が不要なケースなので dp[i][j] <- dp[i][j-1] + 1
 """
 
-# メモ化用の配列を定義
+
 from collections import defaultdict
 
 
