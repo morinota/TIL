@@ -118,10 +118,4 @@ url(paper): https://mlops.community/mlops-maturity-assessment/
 
 #### 4.4. data driftとoutlierのモニタリング ()
 
-## どうやって有効だと検証した?
-
-## 議論はある？
-
 ## 次に読むべき論文は？
-
-## お気持ち実装
