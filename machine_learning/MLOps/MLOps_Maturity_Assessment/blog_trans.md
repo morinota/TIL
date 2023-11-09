@@ -13,7 +13,7 @@ However, it can be hard to find structured information on what those best practi
 ![](https://mlops.community/wp-content/uploads/2023/04/image-4.png)
 
 Microsoft’s MLOps maturity model or Google’s definition of MLOps levels is a good start, but they don’t necessarily offer actionable insights on how a project can go from being MLOps immature to achieving 100% MLOps maturity.
-マイクロソフトの**MLOps maturity(成熟度) model**やグーグルの**MLOps levels**の定義は良いスタートだが、プロジェクトがMLOpsの未成熟な状態から100％のMLOps成熟度を達成する方法について、必ずしも実用的な洞察を提供してくれるわけではない。(maturityの度合いはわかるが、じゃあどのように高める事ができるのって話か:thinking:)
+マイクロソフトの**MLOps maturity(成熟度) model**やグーグルの**MLOps levels**の定義は良いスタートだが、プロジェクトがMLOpsの未成熟な状態から100％のMLOps成熟度を達成する方法について、必ずしも実用的な洞察を提供してくれるわけではない。(maturityの度合いはわかるが、じゃあどのように高める事ができるのって話か:thinking:)(あと、凄く大きなテック組織を前提としてる感があるらしい...?)
 That’s why we decided to create a questionnaire that can help evaluate MLOps maturity on a project level.
 そこで、プロジェクト・レベルでMLOpsの成熟度を評価するのに役立つアンケートを作成することにした。
 Our questionnaire covers a wide range of MLOps aspects, making it a valuable resource for teams looking to improve their MLOps practices.
@@ -84,15 +84,15 @@ This questionnaire makes MLOps actionable by clearly highlighting areas for impr
 
 5. Only CD pipelines can deploy changes, individual developers do not have rights to deploy infrastructure. 変更をデプロイできるのはCDパイプラインだけで、個々の開発者はインフラをデプロイする権限を持っていない。(ふむふむ...!)
 
-6. ML projects should have at least two environments (preproduction and production) which are exact copies of each other. MLプロジェクトは、少なくとも2つの環境(preproductionとproduction)を持つべきです。(pre-production = dev環境って見做して良いんだろうか??:thinking:)
+6. ML projects should have at least two environments (preproduction and production) which are exact copies of each other. MLプロジェクトは、少なくとも2つの環境(preproductionとproduction)を持つべきです。(pre-production = production環境に近い環境って見做して良いんだろうか??:thinking:)
 
-7. All environments related to a ML project should have (read and/or write) access to production data (data should be the same at any moment of time). MLプロジェクトに関連するすべての環境は、本番データ(データはどの時点でも同じであるべき)への(読み書き可能な)アクセス権を持っていなければならない。(そりゃそうではない??:thinking:)
+7. All environments related to a ML project should have (read and/or write) access to production data (data should be the same at any moment of time). MLプロジェクトに関連するすべての環境は、本番データ(データはどの時点でも同じであるべき)への(読み書き可能な)アクセス権を持っていなければならない。(dev環境でも本番のデータを使って学習できたら良いけど、write権限を与えるのは怖い気がする...!:thinking:)
 
 ## 2.2. ML code traceability and reproducibility
 
-1. Code for gathering, analyzing, and cleaning data should be stored in a version control system. データを収集、分析、クリーニングするためのコードは、バージョン管理システムに保存されるべきである。
+1. Code for gathering, analyzing, and cleaning data should be stored in a version control system. データ収集、分析、クリーニングするためのコードは、バージョン管理システムに保存されるべきである。
 
-2. ML model code is stored in the version control system, together with data preparation code and API code (if applicable). MLモデルコードは、データ準備コードやAPIコード（該当する場合）とともに、バージョン管理システムに保存されます。
+2. ML model code is stored in the version control system, together with data preparation code and API code (if applicable). MLモデルコードは、データ準備コードやAPIコードとともに、バージョン管理システムに保存されます。
 
 3. Pull requests (PR) are used to make changes in any code related to an ML project. プルリクエスト(PR)は、MLプロジェクトに関連するコードを変更するために使われます。
 
@@ -102,7 +102,7 @@ This questionnaire makes MLOps actionable by clearly highlighting areas for impr
 
 6. ML model code should not require changes to run in different environments. The processes of deployment of an ML model to all environments should be the same. MLモデルのコードは、異なる環境で実行するために変更を必要とすべきではない。 MLモデルをすべての環境に展開するプロセスは同じであるべきだ。
 
-7. For any given machine learning model run/deployment in any environment it is possible to look up unambiguously: 1. corresponding code/ commit on git, 2. infrastructure used for training and serving, 3. environment used for training and serving, 4. ML model artifacts, 5. what data was used to train the model. どのような環境でも、与えられた機械学習モデルの実行／展開について、**一義的に調べることが可能である**(ふむふむ): 1. 対応するコード/git上のコミット、2. トレーニングや給仕に使われるインフラ、3. トレーニングや給仕に使用される環境、4. MLモデルの成果物、5. どのようなデータがモデルの訓練に使われたのか。
+7. For any given machine learning model run/deployment in any environment it is possible to look up unambiguously: 1. corresponding code/ commit on git, 2. infrastructure used for training and serving, 3. environment used for training and serving, 4. ML model artifacts, 5. what data was used to train the model. どのような環境でも、与えられた機械学習モデルの実行/デプロイについて、**一義的に調べることが可能である**(ふむふむ): 1. 対応するコード/git上のコミット、2. トレーニングや推論に使われるインフラ、3. トレーニングや推論に使用される環境、4. MLモデルの成果物、5. どのようなデータがモデルの訓練に使われたのか。
 
 8. ML model retraining strategy is present and motivated. MLモデルの再トレーニング戦略(=たぶんモデルのオンライン更新ってこと?:thinking:)が存在し、その動機付けがある(?)
 
@@ -112,15 +112,15 @@ This questionnaire makes MLOps actionable by clearly highlighting areas for impr
 
 ## 3.1. Infrastructure code quality requirements インフラコードの品質要件
 
-1. CI pipeline that includes configuration files validation and running automated tests is triggered at pull request creation. 設定ファイルの検証や自動テストの実行を含むCIパイプラインは、プルリクエスト作成時にトリガーされる。(うんうんやりたい...!)
+1. CI pipeline that includes configuration files validation and running automated tests is triggered at pull request creation. 設定ファイルの検証や自動テストの実行を含むCIパイプラインは、プルリクエスト作成時にトリガー(i.e. 起動)される。(うんうんやりたい...!)
 
 2. Other team members (e.g., developers / security specialists) must review and approve changes before merging a pull request. プルリクエストをマージする前に、他のチームメンバー（開発者やセキュリティスペシャリストなど）が変更をレビューし、承認する必要があります。(うんうん...!)
 
 ## 3.2. ML model code quality requirements MLモデルコードの品質要件
 
-1. Pre-commit hooks are implemented to ensure that code follows the code quality guidelines before it is pushed to a version control system. **Pre-commit hook**(=commitが実行される前にコードの品質チェックを行う仕組み、らしい:thinking:)は、コードがバージョン管理システムにプッシュされる前に、コード品質ガイドラインに従っていることを確認するために実装されている。
+1. Pre-commit hooks are implemented to ensure that code follows the code quality guidelines before it is pushed to a version control system. **Pre-commit hook**(=commitが実行される前にコードの品質チェックを行う仕組み、らしい:thinking:)は、コードがバージョン管理システムにプッシュされる前に、コード品質ガイドラインに従っていることを確認するために実装されている。(linterとかの話??)
 
-2. ML model code contains tests for all steps in an ML process (data processing, ML model training, API deployment). MLモデルのコードには、MLプロセスのすべてのステップ（データ処理、MLモデルのトレーニング、APIのデプロイ）のテストが含まれています。(学習はどんなテストを用意すべきなんだろう...)
+2. ML model code contains tests for all steps in an ML process (data processing, ML model training, API deployment). MLモデルのコードには、MLプロセスのすべてのステップ（データ処理、MLモデルの学習、APIのデプロイ）のテストが含まれています。(学習はどんなテストを用意すべきなんだろう...)
 
 3. CI pipeline that includes running automated tests is triggered at pull request creation. 自動テストの実行を含むCIパイプラインは、プルリクエスト作成時にトリガーされる。
 
