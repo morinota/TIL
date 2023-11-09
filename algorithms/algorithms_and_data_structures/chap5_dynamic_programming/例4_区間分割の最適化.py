@@ -29,13 +29,13 @@ def main(
     scores: list[list[int]],  # 区間 [l, r)のスコア c_{l, r} = scores[l][r]
 ) -> int:
     # メモ化用の配列を定義
-    dp_table = defaultdict(lambda: 10**8)
+    dp_table = defaultdict(lambda: 10**8)  # 初期値はめちゃデカく。
 
     # 初期状態
     dp_table[0] = 0
 
     for right_edge_position in range(1, N + 1):
-        for separate_position in range(0, right_edge_position - 1):
+        for separate_position in range(0, right_edge_position):
             dp_table[right_edge_position] = choose_minimum(
                 dp_table[right_edge_position],
                 dp_table[separate_position] + scores[separate_position][right_edge_position],
