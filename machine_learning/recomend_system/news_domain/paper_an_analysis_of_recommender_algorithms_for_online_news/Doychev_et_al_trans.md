@@ -1,6 +1,6 @@
-## link 
+## link
 
-- [pdf](https://ceur-ws.org/Vol-1180/CLEF2014wn-Newsreel-DoychevEt2014.pdf) pdf](https:
+- [pdf](https://ceur-ws.org/Vol-1180/CLEF2014wn-Newsreel-DoychevEt2014.pdf)
 
 ## title タイトル
 
@@ -338,8 +338,6 @@ We use a simple average precision metric for evaluation, assuming that the order
 評価には、レコメンデーションの順番は関係ないと仮定し、単純な平均精度の指標を使用しています。
 Our offline precision calculation allows us to shed more light on the crudely averaged
 オフラインで精度を計算することで、平均化されたレコメンデーションをより明確にすることができます。
-
-
 
 (b) Histogram of number of users seen for the top 20 most common geolocations.
 (b)最も一般的な上位20の地理的位置のユーザー数のヒストグラム。

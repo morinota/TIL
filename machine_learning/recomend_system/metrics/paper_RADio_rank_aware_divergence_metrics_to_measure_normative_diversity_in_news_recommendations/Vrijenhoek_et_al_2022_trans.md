@@ -1,6 +1,8 @@
 ## 0.1. link
 
-- [pdf](https://arxiv.org/pdf/2209.13520.pdf) pdf](https:
+- [pdf](https://arxiv.org/pdf/2209.13520.pdf) pdf]
+
+- [概要を紹介してるブログもあった](https://note.com/yskn67/n/ndb753b038294)
 
 ## 0.2. title タイトル
 
