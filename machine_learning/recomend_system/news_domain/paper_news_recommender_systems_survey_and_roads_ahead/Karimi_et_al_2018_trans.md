@@ -151,11 +151,11 @@ Before we discuss the challenges of the domain in more detail along with algorit
 ## 3.1. Recommendation Paradigms in News Recommendation ニュース推薦における推薦パラダイム
 
 Recommender systems are often classified into four main categories [84, 108]: collaborative filtering (CF), contentbased filtering (CB), knowledge-based techniques (KB), and hybrid approaches.
-レコメンダーシステムは、協調フィルタリング（CF）、コンテンツベースフィルタリング（CB）、知識ベース技術（KB）、ハイブリッドアプローチの**4つ**に分類されることが多い [84, 108]。
+レコメンダーシステムは、協調フィルタリング（CF）、コンテンツベースフィルタリング（CB）、**知識ベース技術（KB）**、ハイブリッドアプローチの**4つ**に分類されることが多い [84, 108]。
 In academic settings, collaborative filtering is the most common approach in the recommender systems literature according to the survey presented in [85], while all other approaches are much less frequently employed.
 学術的には、[85]の調査によると、協調フィルタリングは推薦システムの文献で最も一般的なアプローチであり、他のすべてのアプローチはあまり採用されていない。
 The general dominance of collaborative filtering is in some sense not surprising because this method, whose recommendations are based on the “wisdom of the crowd”, is domain-independent and does not require detailed (and domain-specific) information about the recommendable items.
-**協調フィルタリングの優位性はある意味当然である。なぜなら、この手法は「群衆の知恵」に基づいて推薦されるため、ドメインに依存せず、推薦されるアイテムに関する詳細な（そしてドメイン固有の）情報を必要としないた**めである。
+**協調フィルタリングの優位性はある意味当然である。なぜなら、この手法は「群衆の知恵」に基づいて推薦されるため、ドメインに依存せず、推薦されるアイテムに関する詳細な（そしてドメイン固有の）情報を必要としないため**である。
 Furthermore, a number of public benchmark data sets, e.g., from MovieLens4 , are available, which has been a driving factor for the academic community.
 さらに、MovieLens4 などの公開ベンチマークデータセットが多数用意されており、これが学術界の推進力となっている。
 
@@ -172,28 +172,28 @@ This means that although collaborative filtering alone is not the method of choi
 Knowledge-based techniques, which are based on explicit domain knowledge to map user preferences to article features, were not applied in any of the analyzed papers, neither in isolation nor in combination with other techniques.
 **知識ベース技術とは、明示的なドメイン知識に基づいてユーザーの嗜好を記事の特徴に対応付ける技術であるが、分析したどの論文でも、単独でも他の技術との組み合わせでも、適用されていなかった**。
 This is, however, not very surprising, since such approaches are generally only employed in high-involvement product domains with a long life cycle.
-しかし、このようなアプローチは、**一般的にライフサイクルの長い高関与度の製品領域でのみ採用されているため**、あまり驚くべきことではありません。
+しかし、このようなアプローチは、**一般的にlifecycleの長い高関与度の製品領域でのみ採用されているため**、あまり驚くべきことではありません。
 
 Since the recommendable objects in the news domain are text documents, which can be automatically analyzed with standard techniques from Information Retrieval (IR), it is in fact not too surprising that many researchers rely on content-based techniques.
 ニュース領域で推奨される対象はテキスト文書であり、情報検索（IR）の標準的な技術で自動的に分析できるため、多くの研究者がコンテンツベースの技術に頼っていることは、実はそれほど驚くべきことではありません。
 However, in general, content-based techniques are considered not to be very accurate in offline experiments when using IR measures like precision and recall [80].
-**しかし、一般的に、コンテンツベースの技術は、オフラインの実験では、精度や想起などのIR指標を用いた場合、あまり正確ではないと考えられている**[80]。
+**しかし、一般的に、コンテンツベースの技術は、オフラインの実験では、precisionやrecallなどのIR指標を用いた場合、あまり正確ではないと考えられている**[80]。
 As in other domains, the main dilemma of academic research – and to some extent also for recommendation service providers – is that it is not always clear to what extent high accuracy in offline experiments translates into online success [60].
 他の領域と同様に、学術研究の主なジレンマは、そしてある程度は推薦サービスプロバイダーにとっても、**オフラインの実験での高い精度が、オンラインでの成功にどの程度結びつくかが必ずしも明確でないことである**[60]。
 Only very few studies are available that compare the offline and online performance of recommendation algorithms, e.g., [10] in the field of research paper recommendation.
 推薦アルゴリズムのオフラインとオンラインの性能を比較した研究は、研究論文推薦の分野では[10]など、ごくわずかしかありません。
 In the news domain, a comparative offline/online experiment was recently conducted by Garcin et al.[55], who also found that offline performance is not necessarily a predictor of online success.
-**ニュース領域では、最近、Garcinら[55]がオフライン／オンラインの比較実験を行い、オフラインの成績が必ずしもオンラインの成功の予測因子にはならないことも明らかにした。**
+**ニュース領域では、最近、Garcinら[55]がオフライン／オンラインの比較実験を行い、オフラインの成績が必ずしもオンラインの成功の予測因子にはならないことも明らかにした。**(読もうかな...!)
 In their case, a popularity-based method performed best offline, but, in the end, showed the worst results in an online test, placing far behind a more sophisticated algorithm.
 彼らの場合、オフラインでは人気に基づく方法が最も良い結果を示したが、結局オンラインテストでは最悪の結果を示し、より洗練されたアルゴリズムに大きく遅れをとった。
 
 As we will discuss later, the effectiveness of pure collaborative filtering methods might be overestimated in offline experiments, which calls for the design of novel hybrid approaches that combine multiple sources of preference signals and which are able to balance prediction accuracy with other quality factors like novelty or diversity.
-後述するように、**純粋な協調フィルタリング手法の有効性はオフライン実験では過大評価される可能性があり**、複数の嗜好信号源を組み合わせ、予測精度と新規性や多様性といった他の品質要因のバランスをとることができる新しいハイブリッドアプローチの設計が求められています。
+後述するように、**純粋な協調フィルタリング手法の有効性はオフライン実験では過大評価される可能性があり**、(うんうん...!) preference signalsの複数のソースを組み合わせ、予測精度と新規性や多様性といった他の品質要因のバランスをとることができる新しいハイブリッドアプローチの設計が求められています。
 
 ## 3.2. Challenges of User Modeling for News Recommendation ニュースレコメンデーションのためのユーザーモデリングへの挑戦
 
 To be able to personalize the reading suggestions, recommender systems have to create and maintain user profiles that capture each user’s reading preferences over time.
-読書提案をパーソナライズするために、推薦システムは、**各ユーザーの読書嗜好を長期にわたって把握するユーザープロファイル**を作成・維持する必要があります。
+読書提案をパーソナライズするために、推薦システムは、**各ユーザの読書嗜好を長期にわたって把握するユーザープロファイル**を作成・維持する必要があります。
 How these user profiles are built and which information is collected and used is usually related to the chosen recommendation paradigm.
 このようなユーザープロファイルをどのように構築し、どの情報を収集・使用するかは、通常、選択された推薦パラダイムと関連しています。
 Similar to other application domains of recommender systems, one can in general try to stimulate users to provide explicit preference information, e.g., in the form of “like” or “dislike” statements, or monitor and interpret the user’s past behavior (implicit feedback) over time.
@@ -215,9 +215,9 @@ An example of a system that relies mostly on content information is the Athena n
 New or not yet viewed articles are then ranked according to the similarity of their content with the aggregated user profile.
 そして、新しい記事やまだ閲覧されていない記事は、集約されたユーザープロファイルとの内容の類似性に従ってランク付けされる.
 A similar approach was used by Rao et al.[153], who employ user profiles that have a “bag-of-concepts” format with DBPedia as a knowledge base in the background.
-同様のアプローチはRaoら[153]によっても用いられており、彼らはDBPediaをバックグラウンドの知識ベースとした“bag-of-concepts”形式を持つユーザプロファイルを採用している。(???)
+同様のアプローチはRaoら[153]によっても用いられており、彼らはDBPediaをバックグラウンドの知識ベースとした“bag-of-concepts”形式を持つユーザプロファイルを採用している。(bag-of-words的な? ユーザが持つconceptsの埋め込みを線形結合する、みたいな??)
 Standard distance measures like cosine similarity or the Jaccard coefficient can then be used to assess the relevance of a news article for a given profile.
-コサイン類似度やジャカード係数のような標準的な距離尺度は、与えられたプロファイルに対するニュース記事の関連性を評価するために使用されます。(うんうん、推薦スコアの算出ね)
+コサイン類似度やジャカード係数のような標準的な距離尺度は、与えられたプロファイルに対するニュース記事の関連性を評価するために使用されます。(うんうん、score-prediction module的な)
 Similar to these approaches, Chu and Park [31] rely on the content of the read articles for profile construction, and additionally consider demographic aspects to assess the relevance of new articles for a user.
 これらのアプローチと同様に、Chu and Park [31]は、プロファイル構築のために読まれた記事の内容に依存し、さらに、ユーザにとっての新しい記事の関連性(新しく追加されたアイテムのこと?それともSerendipity的な新しさ?)を評価するために人口統計学的側面(??)を考慮する。
 Another work that considers demographic information as a key factor for user profiling is [103].
@@ -227,15 +227,15 @@ In this approach, the users were first segmented according to their demographics
 The relevance of a new article for a given user was then calculated based on various factors, including the estimated interest of the user’s segment in the topic of the article or the number of users in the segment who have already read the article.
 そして、あるユーザにとっての新しい記事の関連性は、その記事のトピックに対するそのユーザーのセグメントの推定関心度や、そのセグメントですでにその記事を読んでいるユーザ数など、さまざまな要因に基づいて算出されました。
 Instead of clustering the users, Li et al.[112] applied a graph-based model based on which the logical relationship and similarities between a newly posted article and user comments about the article on a social media site were calculated.
-Liら[112]は、ユーザをクラスタリングする代わりに、**グラフベースのモデルを適用し、新しく投稿された記事とソーシャルメディアサイト上のその記事に関するユーザーコメントとの論理的関係や類似性を算出した**.
+Liら[112]は、ユーザをクラスタリングする代わりに、**グラフベースのモデルを適用し、新しく投稿された記事とソーシャルメディアサイト上のその記事に関するユーザコメントとの論理的関係や類似性を算出した**.
 This topicbased model was then used to retrieve other relevant news articles.
 このトピックベースモデルは、その後、他の関連するニュース記事を検索するために使用されました。
 The basis for the user modeling approach in [5] is a weighted term vector, which is generated by considering the topics of the articles that were read by a user.
-[5]のユーザーモデリングアプローチの基礎は、ユーザーが読んだ記事のトピックを考慮して生成される重み付き用語ベクトルである。
+[5]のユーザモデリングアプローチの基礎は、ユーザが読んだ記事のトピック(=固有表現的な?)を考慮して生成される重み付きtermベクトルである。
 Different from other approaches, however, the authors propose to maintain a short-term and a long-term model, where the short-term model only considers the 20 most recently read articles of each user.
-しかし、他のアプローチとは異なり、著者らは短期モデルと長期モデルを維持することを提案し、短期モデルは各ユーザーの最近読んだ20件の記事のみを考慮する。
+しかし、他のアプローチとは異なり、著者らは短期モデルと長期モデルを維持することを提案し、短期モデルは各ユーザの最近読んだ20件の記事のみを考慮する。
 Besides being able to capture long-term and short-term interests for recommending, the topicbased approach of Ahn et al.[5] was designed in a way that users can be put in control of their recommendations.
-Ahnら[5]のトピックベースアプローチは、**推薦のための長期的・短期的な興味を把握できることに加え、ユーザーが推薦をコントロールできるように工夫されている**。(ほうほう...?)
+Ahnら[5]のトピックベースアプローチは、**推薦のための長期的・短期的な興味を把握できることに加え、ユーザが推薦をコントロールできるように工夫されている**。(ほうほう...?)
 For each recommended article, the relevant topics were displayed and users could then update their profile accordingly when they did not agree with the system’s assumptions about the preferences.
 **推薦された記事ごとに、関連するトピックが表示され、ユーザは、システムが想定した嗜好に同意できない場合、それに応じて自分のプロフィールを更新することができました**。
 
@@ -278,35 +278,35 @@ The problem of general data sparsity is often connected to this problem and in p
 In principle, many of the technical and domain-independent approaches that were proposed over the years to deal with cold-start situations can be applied in the news recommendation context.
 原理的には、コールドスタートの状況に対処するために長年提案されてきた技術的かつドメインに依存しないアプローチの多くが、ニュース推薦の文脈で適用可能である。
 One general approach is to try to incorporate additional information (e.g., about the user’s context) into the recommendation process when little is known about the current user.
-一般的なアプローチとしては、現在のユーザについてほとんど知られていない(=reading historyが殆どないケース)場合に、**追加情報（例えば、ユーザーのコンテキストに関する情報）を推薦プロセスに組み込む**ことを試みることが挙げられる。
+一般的なアプローチとしては、現在のユーザについてほとんど知られていない(=reading historyが殆どないケース)場合に、**追加情報（例えば、ユーザのcontextに関する情報）を推薦プロセスに組み込む**ことを試みることが挙げられる。
 In the news recommendation domain, for example, works exist that consider the user’s location [49, 132, 166], the time of the day [40, 49, 132], or demographic information [103].
-例えば、ニュース推薦の領域では、ユーザーの位置情報 [49, 132, 166]、時間帯 [40, 49, 132]、あるいは人口統計情報 [103] を考慮した作品が存在します。
+例えば、ニュース推薦の領域では、ユーザの位置情報 [49, 132, 166]、時間帯 [40, 49, 132]、あるいは人口統計情報 [103] を考慮した取り組みが存在します。(ふむふむ、こういうcontextね...!:thinking:)
 Other examples of contextual information explored in the literature include the website (or domain) that the user has visited before landing on the news page or the type of the device used to access the news [40, 168].
-文献で検討された文脈情報の他の例としては、ユーザーがニュースページにたどり着く前に訪れたウェブサイト（またはドメイン）、またはニュースへのアクセスに使用したデバイスのタイプなどがある[40, 168]。
+文献で検討されたcontext情報の他の例としては、ユーザがニュースページにたどり着く前に訪れたウェブサイト(またはドメイン)、またはニュースへのアクセスに使用したデバイスのタイプなどがある[40, 168]。
 Instead of considering only the limited information of the user’s history, Lin et al.[113] propose to construct an implicit social network of other users with similar reading behavior.
-Linら[113]は、**ユーザの履歴という限られた情報のみを考慮するのではなく、読書行動が似ている他のユーザーとの暗黙のソーシャルネットワークを構築することを提案している**。
+Linら[113]は、**ユーザの履歴という限られた情報のみを考慮するのではなく、読書行動が似ている他のユーザとの暗黙のソーシャルネットワークを構築することを提案している**。(CBだけじゃなくCF的な情報を使おうよって話??:thinking:)
 The authors then suggest to determine a set of “experts” whose opinion is used to make recommendations for users for which only a short reading history is available.
 そして、短い読書履歴しかないユーザに対して、その意見を参考に推薦する「専門家」のセットを決めることを提案している。(暗黙のソーシャル・ネットワークを使って、SimClustersと同じような事をするアプローチなのかな...)
 To identify these experts, they considered other users who have read the same articles in a given time frame, and they subsequently involved these users more heavily in the factorization process if they have a high probability of being a good proxy for a cold-start user.
 これらのエキスパートを特定するために、ある時間帯に同じ記事を読んだ他のユーザを考慮し、コールドスタートユーザの良い代理人となる確率が高い場合は、その後、これらのユーザを因数分解プロセスにより大きく関与させるようにした。
 Along the same lines, Zheng et al.[186] propose to enrich the profiles of cold-start users with the profiles of a group of similar other users based on the general news topics they seem to be interested in.
-同じ路線で、Zhengら[186]は、コールドスタートユーザーのプロファイルを、彼らが興味を持っていると思われる一般的なニューストピックに基づいて、類似した他のユーザーグループのプロファイルで豊かにすることを提案している。
+同じ路線で、Zhengら[186]は、コールドスタートユーザのプロファイルを、彼らが興味を持っていると思われる一般的なニューストピックに基づいて、類似した他のユーザーグループのプロファイルで豊かにする(=enrichする)ことを提案している。
 An alternative to incorporating additional aspects related to the user is to consider certain features of the news articles themselves when assessing their relevance for a cold-start user, e.g., the freshness of the article or its general popularity.
-ユーザに関連する追加的な側面を取り入れる事の代替案は、コールドスタートのユーザーに対する関連性を評価する際に、ニュース記事自体の特定の特徴、例えば、記事の新鮮さやその一般的な人気度を考慮することである。
+ユーザに関連する追加的な側面を取り入れる事の代替案は、コールドスタートのユーザに対する関連性を評価する際に、ニュース記事自体の特定の特徴量、例えば、記事の新鮮さやその一般的な人気度を考慮することである。
 Also, one can default to a non-personalized strategy in case of too little information.
 **また、情報が少なすぎる場合には、パーソナライズされない戦略をデフォルトにすることもできます**。
 The “YourNews” system [5], for example, first shows a list of recently published articles and starts the personalization process after the first article has been read.
 例えば、「YourNews」システム[5]では、まず最近発表された記事のリストを表示し、最初の記事が読まれた後にパーソナライズ処理を開始します。
 In another approach, Montes-Garc´ıa et al.[132] consider the geographical proximity of the news event to the user and the credibility of a news source as factors that can determine the relevance of an item to a cold-start user.
-別のアプローチでは、Montes-Garc´àaら[132]は、ニュースイベントのユーザへの地理的近接性とニュースソースの信頼性を、コールドスタートのユーザーに対するアイテムの関連性を決定できる要因として考慮しています。
+別のアプローチでは、Montes-Garc´àaら[132]は、ニュースイベントのユーザへの地理的近接性とニュースソースの信頼性(=こういう特徴量を作るsemantic model欲しい...!)を、コールドスタートのユーザに対するアイテムの関連性を決定できる要因として考慮しています。
 In their case, the credibility of the news source was determined manually by a team of journalists.
-彼らの場合、ニュースソースの信頼性は、ジャーナリストチームによって手動で判断されました。
+彼らの場合、**ニュースソースの信頼性は、ジャーナリストチームによって手動で判断されました。**(なるほど...!:thinking:笑)
 The context-tree approach by Garcin et al.[53] also takes the recency of the news items into account, but in addition factors the item’s popularity into the recommendation process.
 Garcinら[53]によるコンテキストツリーアプローチも、ニュースアイテムの新着度を考慮するが、それに加えてアイテムの人気度を推薦プロセスに反映する。
 By design, their method is also suitable for one-time or first-time users, which are not uncommon for news platforms.
 デザイン上、彼らの方法は、ニュースプラットフォームでは珍しくない、1回限りのユーザーや初めてのユーザーにも適しています。
 Finally, Tavakolifard et al.[166] propose to use external data sources – in their case Twitter – to estimate an item’s current popularity more precisely and correspondingly obtain a better picture of its potential relevance for the current user.
-最後に、Tavakolifardら[166]は、外部データソース（彼らの場合はTwitter）を使用して、アイテムの現在の人気をより正確に推定し、それに対応して、現在のユーザーに対する潜在的な関連性のより良い画像を得ることを提案する。
+最後に、Tavakolifardら[166]は、外部データソース(彼らの場合はTwitter)を使用して、アイテムの現在の人気をより正確に推定し、それに対応して、現在のユーザーに対する潜在的な関連性のより良い画像を得ることを提案する。
 
 For the item cold-start problem, adopting a content-based recommendation strategy already solves a major part of the problem.
 アイテムのコールドスタート問題については、**コンテンツベースのレコメンデーション戦略を採用することで、すでに問題の大部分を解決している**.

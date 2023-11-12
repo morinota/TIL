@@ -10,25 +10,56 @@ On the Democratic Role of News Recommenders
 
 ## abstract 抄録
 
-Are algorithmic news recommenders a threat to the democratic role of the media? Or are they an opportunity, and, if so, how would news recommenders need to be designed to advance values and goals that we consider essential in a democratic society? These are central questions in the ongoing academic and policy debate about the likely implications of data analytics and machine learning for the democratic role of the media and the shift from traditional mass-media modes of distribution towards more personalised news and platforms Building on democratic theory and the growing body of literature about the digital turn in journalism, this article offers a conceptual framework for assessing the threats and opportunities around the democratic role of news recommenders, and develops a typology of different ‘democratic recommenders’.
-アルゴリズムによるニュース推薦ツールは、メディアの民主的役割を脅かすものなのか？もしそうだとすれば、民主主義社会で不可欠と考えられる価値や目標を推進するために、ニュース推薦者はどのように設計される必要があるのだろうか。これらは、メディアの民主的役割や、伝統的なマスメディアの配信形態からよりパーソナライズされたニュースやプラットフォームへのシフトに対するデータ分析や機械学習の影響について、現在進行中の学術的・政策的議論における中心的な疑問である。民主主義理論や、ジャーナリズムにおけるデジタル・ターンに関する文献の増加に基づき、本稿では、ニュース推薦者の民主的役割をめぐる脅威と機会を評価するための概念的枠組みを提供し、さまざまな「民主的推薦者」の類型論を展開する。
+Are algorithmic news recommenders a threat to the democratic role of the media?
+アルゴリズムによるニュース推薦ツールは、メディアの民主的役割を脅かすものなのか？
+Or are they an opportunity, and, if so, how would news recommenders need to be designed to advance values and goals that we consider essential in a democratic society?
+もしそうだとすれば、民主主義社会で不可欠と考えられる価値や目標を推進するために、ニュース推薦システムはどのように設計される必要があるのだろうか。
+These are central questions in the ongoing academic and policy debate about the likely implications of data analytics and machine learning for the democratic role of the media and the shift from traditional mass-media modes of distribution towards more personalised news and platforms
+これらは、メディアの民主的役割や、伝統的なマスメディアの配信形態からよりパーソナライズされたニュースやプラットフォームへのシフトに対するデータ分析や機械学習の影響について、現在進行中の学術的・政策的議論における中心的な疑問である。
+Building on democratic theory and the growing body of literature about the digital turn in journalism, this article offers a conceptual framework for assessing the threats and opportunities around the democratic role of news recommenders, and develops a typology of different ‘democratic recommenders’.
+民主主義理論や、ジャーナリズムにおけるデジタル・ターンに関する文献の増加に基づき、本稿では、**ニュース推薦システムの民主的役割をめぐる脅威と機会を評価するための概念的フレームワーク**を提供し、さまざまな **"democratic recommenders"(=民主的推薦システム??)のtypology**(=分類化や類型化する事??)を展開する。
 
 # Introduction はじめに
 
 Are AI and algorithms a threat to, or an opportunity for, the democratic role of the media? Although it is clear that algorithmic news recommendations will have an important role in shaping the democratic contribution of the press, it is still subject to debate whether this development is for the better or the worse.
-AIとアルゴリズムは、メディアの民主的役割にとって脅威なのか、それとも好機なのか？アルゴリズムによるニュース推奨が、報道の民主的貢献を形成する上で重要な役割を果たすことは明らかだが、この発展が良い方向なのか悪い方向なのかは、まだ議論の余地がある。
+AIとアルゴリズムは、メディアの民主的役割にとって脅威なのか、それとも好機なのか？アルゴリズムによるニュース推薦が、報道の民主的貢献を形成する上で重要な役割を果たすことは明らかだが、**この発展が良い方向なのか悪い方向なのかは、まだ議論の余地がある**。
 There are those who warn about the potentially negative implications for democracy – filter bubbles, sphericules, polarisation, fragmentation and the general demise of the public sphere (Pariser Citation2011; Sunstein Citation2001).
-フィルター・バブル、スフェリキュール、分極化、分断化、そして公共圏の一般的な終焉といった、民主主義にとって潜在的にネガティブな影響について警告する人々がいる（Pariser Citation2011; Sunstein Citation2001）。
+フィルターバブル、スフェリキュール、分極化、分断化、そして公共圏の一般的な終焉といった、民主主義にとって潜在的にネガティブな影響について警告する人々がいる(Pariser Citation2011; Sunstein Citation2001)。
+
+- (以下は用語の整理)
+- Filter Bubbles(フィルターバブル):
+  - 概要: インターネット上での情報のフィルタリングにより、ユーザが**自分の既存の信念や興味に合った情報だけにさらされる**現象。
+  - 例: ソーシャルメディアや検索エンジンがユーザのクリック履歴や過去の行動に基づいて、そのユーザにとって好意的な情報を優先的に表示する。
+- Sphericules(スフェリキュール):
+  - 概要: 特定のトピックや意見に焦点を当て、その中で閉じた情報空間が形成される現象。
+  - 例: 特定の政治的立場や興味を共有するユーザが、**同じ情報源から同じ種類の情報を受け取り**、他の視点や情報にはあまり触れない状態。
+- Polarisation(ポーラリゼーション):
+  - 概要: 意見や立場が極端な対立に分かれる現象。
+  - 例: 社会的な議論が二極化し、中間の立場が減少することにより、対話が難しくなり、対立が激化する。(Polarisationはフィルターバブル等によって発生するような現象??:thinking:)
+- Fragmentation(フラグメンテーション):
+  - 概要: 情報や社会が小さな断片に分割される現象。
+  - 例: インターネット上の多くの情報源やコミュニティがあり、それぞれが異なる情報や価値観を提供することで、社会が断片化する。
+- Demise of the Public Sphere(公共領域の崩壊):
+  - 概要: 公共の討論や意思決定における共通の場所やプラットフォームが減少する現象。
+  - 例: インターネット上での情報の分断や極端な意見の対立が進むことにより、公共の領域が崩壊し、健全な議論が難しくなる。(これは最悪のシナリオにおける最終的な到達点、みたいな??:thinking:)
+
 Others are concerned about the “black box” character of recommenders and the difficulty of holding algorithms accountable for their public value implications (Diakopoulos and Koliska Citation2017).
 また、レコメンダーの「ブラックボックス」的性格や、アルゴリズムが持つ公共的価値への影響について説明責任を果たすことの難しさを懸念する人もいる（Diakopoulos and Koliska Citation2017）。
 Yet others emphasise the opportunities that arise for the news media – opportunities to rejuvenate the media, allow more responsiveness to the interests of readers, deploy exciting new business models and find smarter, data-driven ways to engage with their audiences.
-メディアの若返り、読者の関心へのさらなる対応、エキサイティングな新しいビジネスモデルの展開、よりスマートでデータに基づいた視聴者との関わり方の発見などである。
+しかし、ニュースメディアにとって次のような機会が生まれることを強調する人もいる: メディアの若返り、読者の関心へのさらなる対応、エキサイティングな新しいビジネスモデルの展開、よりスマートでデータに基づいた視聴者との関わり方の発見などである。
+
 In the 2018 Reuters Report, almost three quarters of the editors, CEOs and digital leaders interviewed indicated that they were already experimenting with AI or were planning to do so (or were planning to do more experimenting), and that the particular focus of their initiatives would be, in addition to robo-journalism, algorithmic news recommendations (Newman, Citation2018, 29).
-2018年のロイター・レポートでは、インタビューした編集者、最高経営責任者（CEO）、デジタル・リーダーのほぼ4分の3が、AIを使った実験をすでに行っているか、行う予定である（あるいは、さらに実験を行う予定である）と回答しており、特に注力する取り組みとしては、ロボ・ジャーナリズムに加えて、アルゴリズムによるニュースの推奨が挙げられている（Newman, Citation2018, 29）。
+2018年のロイター・レポートでは、インタビューした編集者、最高経営責任者（CEO）、デジタル・リーダーのほぼ4分の3が、AIを使った実験をすでに行っているか、行う予定である(あるいは、さらに実験を行う予定である)と回答しており、特に注力する取り組みとしては、ロボ・ジャーナリズムに加えて、アルゴリズムによるニュース推薦が挙げられている（Newman, Citation2018, 29）。(へぇー:thinking:)
 The task of algorithmic news recommenders is to filter the growing abundance of online information.
-アルゴリズム・ニュース・レコメンダーの仕事は、増え続けるオンライン情報をフィルタリングすることである。
+アルゴリズム・ニュース・レコメンダーの仕事は、**増え続けるオンライン情報をフィルタリングすること**である。(そういう意味では、パーソナライズしなくても、誤情報や、過剰な釣り記事を除外する事も、仕事の一つであると言える。)
 Generally, four types of news recommender algorithms can be distinguished, namely algorithms that make personalised recommendations on the basis of metadata (content based), insights into what other users like to read (collaborative filtering), data on their users (knowledge based), or a combination thereof (Karimi, Jannach, Jugovac, 2018).
-すなわち、メタデータ（コンテンツベース）、他のユーザーが好んで読むものに対する洞察（協調フィルタリング）、ユーザーに関するデータ（知識ベース）、またはそれらの組み合わせに基づいてパーソナライズされた推薦を行うアルゴリズムである（Karimi, Jannach, Jugovac, 2018）。
+一般に、**ニュース推薦アルゴリズムには次の4つのタイプがある**: すなわち、メタデータに基づくパーソナライズ推薦(コンテンツベース)、他のユーザが好んで読むものに対する洞察に基づくパーソナライズ推薦(協調フィルタリング)、ユーザに関するデータ(knowledge-based)、またはそれらの組み合わせに基づいてパーソナライズされた推薦を行うアルゴリズムである(Karimi, Jannach, Jugovac, 2018)。
+
+- (メモ)
+- knowledge-basedな手法: ユーザ自身が要求を推薦システムに明示的に入力し、適宜要求を修正しながら、最終的に満足のいくアイテムを見つける手法。lifecycleの短いニュース推薦ではあんまり使われてないらしい:thinking:
+  - 参考: https://speakerdeck.com/okukenta/recsys-text-intro04_knowledge-based_recommender_system?slide=4
+  - knowledge
+
 Another important distinction is that between self-selected recommendations (users determine the selection criteria and feed the system with their own preferences) and preselected recommendations (media determine the selection, based on volunteered or inferred data; Thurman and Schifferes Citation2012).
 もう一つの重要な区別は、自己選択型レコメンデーション（ユーザーが選択基準を決定し、自分の好みをシステムに与える）と事前選択型レコメンデーション（メディアが、ボランティアまたは推論されたデータに基づいて、選択を決定する；Thurman and Schifferes Citation2012）の違いである。
 Depending on the media outlet and the metrics that recommendation algorithms are being optimised for, news recommendations can be used to increase time spent, advertising revenues and user satisfaction, but also to actively guide readers and match individual readers with the news it is apt for them to receive.
@@ -107,7 +138,7 @@ Societal concerns about the lack of transparency and diversity and the danger of
 In addition, the ability to optimise for advertising (Newman Citation2018), paying readers and more efficient internal routines (Zamith Citation2018, 423) can help newsrooms both to make more sense of the media economy in which they operate and to survive in the “battle for audience attention” (Cherubini and Nielsen Citation2016, 9).
 さらに、広告（Newman Citation2018）、有料読者、より効率的な社内ルーチン（Zamith Citation2018, 423）に最適化する能力は、ニュースルームが活動するメディア経済をより理解し、「視聴者の注目をめぐる戦い」（Cherubini and Nielsen Citation2016, 9）で生き残るために役立つ。
 
-# Concerns about Surveillance, Manipulation and the Erosion of Intellectual Privacy 
+# Concerns about Surveillance, Manipulation and the Erosion of Intellectual Privacy
 
 If the task of the media is to inform citizens and provide a public forum, how much distance between the media and their audiences is actually needed to ensure that the media can fulfill this task? In other words, what is the role of data and privacy, and what are the potential dangers of the media knowing too much about their audience? Because many (though not all) news recommenders will use personal data to optimise their results and better match results with individual users, new concerns about this constant tracking and monitoring accompany the media’s quantitative turn.
 メディアの任務が市民に情報を提供し、公共の場を提供することだとすれば、メディアがこの任務を確実に果たすためには、メディアと視聴者の間に実際どれほどの距離が必要なのだろうか？言い換えれば、データとプライバシーの役割とは何か、メディアが視聴者について知りすぎることの潜在的な危険性とは何か。多くの（すべてではないが）ニュースレコメンダーは、その結果を最適化し、個々のユーザーと結果をよりマッチングさせるために個人データを使用するため、この絶え間ない追跡と監視に関する新たな懸念は、メディアの量的転換に伴うものである。
