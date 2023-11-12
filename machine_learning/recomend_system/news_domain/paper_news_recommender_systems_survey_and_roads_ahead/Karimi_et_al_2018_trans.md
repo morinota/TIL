@@ -302,24 +302,24 @@ In another approach, Montes-Garc´ıa et al.[132] consider the geographical prox
 In their case, the credibility of the news source was determined manually by a team of journalists.
 彼らの場合、**ニュースソースの信頼性は、ジャーナリストチームによって手動で判断されました。**(なるほど...!:thinking:笑)
 The context-tree approach by Garcin et al.[53] also takes the recency of the news items into account, but in addition factors the item’s popularity into the recommendation process.
-Garcinら[53]によるコンテキストツリーアプローチも、ニュースアイテムの新着度を考慮するが、それに加えてアイテムの人気度を推薦プロセスに反映する。
+Garcinら[53]によるcontext-treeアプローチも、ニュースアイテムの新着度を考慮するが、それに加えてアイテムの人気度を推薦プロセスに反映する。
 By design, their method is also suitable for one-time or first-time users, which are not uncommon for news platforms.
-デザイン上、彼らの方法は、ニュースプラットフォームでは珍しくない、1回限りのユーザーや初めてのユーザーにも適しています。
+デザイン上、彼らの方法は、ニュースプラットフォームでは珍しくない、1回限りのユーザや初めてのユーザも適しています。
 Finally, Tavakolifard et al.[166] propose to use external data sources – in their case Twitter – to estimate an item’s current popularity more precisely and correspondingly obtain a better picture of its potential relevance for the current user.
-最後に、Tavakolifardら[166]は、外部データソース(彼らの場合はTwitter)を使用して、アイテムの現在の人気をより正確に推定し、それに対応して、現在のユーザーに対する潜在的な関連性のより良い画像を得ることを提案する。
+最後に、Tavakolifardら[166]は、外部データソース(彼らの場合はTwitter)を使用して、アイテムの現在の人気をより正確に推定し、それに対応して、現在のユーザに対する潜在的な関連性のより良い画像を得ることを提案する。
 
 For the item cold-start problem, adopting a content-based recommendation strategy already solves a major part of the problem.
 アイテムのコールドスタート問題については、**コンテンツベースのレコメンデーション戦略を採用することで、すでに問題の大部分を解決している**.
 In content-based approaches, items are generally recommended based on the past content-wise preferences of individual users, which are usually determined by their past navigation or item rating behavior.
-コンテンツベースのアプローチでは、一般的に、アイテムは、個々のユーザーの過去のナビゲーションやアイテムの評価行動によって決定される、過去のコンテンツワイズプリファレンスに基づいて推薦されます。
+コンテンツベースのアプローチでは、一般的に、アイテムは、個々のユーザの過去のナビゲーションやアイテムの評価行動によって決定される、過去のcontent-wise preferences に基づいて推薦されます。
 Therefore, the required information about a news article can be extracted easily, e.g., from its keywords, making it instantly recommendable without the need for a detailed click history.
 そのため、ニュース記事のキーワードなどから必要な情報を簡単に抽出することができ、詳細なクリック履歴を必要とせず、即座に推薦できるようになります。
 Different alternative technical approaches are possible to infer the user preferences.
-ユーザーの嗜好を推測するためには、さまざまな代替技術的アプローチが可能です。
+ユーザの嗜好を推測するためには、さまざまな代替技術的アプローチが可能です。
 Li et al.[108], for example, propose a hybrid approach to construct the user profiles which considers factors such as similarities between access patterns for different news items.
 例えば、Liら[108]は、異なるニュース項目に対するアクセスパターンの類似性などを考慮したハイブリッドなアプローチでユーザプロファイルを構築することを提案している。
 In addition, their approach utilizes item properties that are specific to news, like the news content itself, as well as the user’s preferences for named entities appearing in the news item.
-さらに、ニュースの内容そのものや、ニュース中に登場する名前付きエンティティに対するユーザーの好みなど、ニュースに特化したアイテム特性を利用する。
+さらに、ニュースの内容そのものや、ニュース中に登場する名前付きentityに対するユーザの好みなど、ニュースに特化したアイテム特性を利用する。
 
 ### 3.3.2. Data Sparsity Issues データスパース性の問題
 
@@ -358,15 +358,15 @@ The authors use ontologies and Semantic Web technology to represent the knowledg
 To deal with the sparsity problem, they then propose a graph-based method to spread the information via the semantic relations of the network of concepts.
 そして、スパース性の問題に対処するために、概念のネットワークの意味関係を通じて情報を拡散するグラフベースの方法を提案している。
 Li et al.[105] address the data sparsity issue by framing the recommendation task as a so called contextual bandit problem.
-Liら[105]は、推薦タスクをいわゆる文脈的バンディット問題として構成することで、データスパース性の問題に対処している。
+Liら[105]は、推薦タスクをいわゆるcontextual bandit問題として構成することで、データスパース性の問題に対処している。
 In such a problem formulation [101], every recommendation task is represented as a choice between k possible “arms” of a multi-armed bandit.
 このような問題定式化 [101] では、すべての推薦タスクは、多腕バンディットのk個の可能な「腕」からの選択として表現される。
 The recommendation strategy makes this choice only based on a context vector, for which Li et al.[105] chose a compact representation of users and articles (e.g., based on demographic information, location, and news categories).
-推薦戦略は、この選択をコンテキストベクトルにのみ基づいて行うが、そのためにLiら[105]は、ユーザーと記事のコンパクトな表現（例えば、デモグラフィック情報、場所、ニュースカテゴリに基づく）を選択した。
+推薦戦略は、この選択をコンテキストベクトルにのみ基づいて行うが、そのためにLiら[105]は、ユーザと記事のコンパクトな表現（例えば、デモグラフィック情報、場所、ニュースカテゴリに基づく）を選択した。
 Afterwards, a reward is observed based on the user reaction (click).
-その後、ユーザーの反応（クリック）に応じて報酬が観測されます。
+その後、ユーザの反応（クリック）に応じて報酬が観測されます。
 The advantage of contextual bandit approaches is that they can be used to balance exploration of the item space and exploitation of previous knowledge even in sparse data situations.
-コンテキストバンディットアプローチの利点は、疎なデータ状況でもアイテム空間の探索と前知識の活用をバランスよく行うことができる点である。
+**コンテキストバンディットアプローチの利点は、疎なデータ状況でもアイテム空間の探索と前知識の活用をバランスよく行うことができる点**である。
 Generally, one of several well-studied optimization strategies can be used to optimize the expected reward, i.e., in this case, the overall number of clicks.
 一般に、よく研究されたいくつかの最適化戦略のうちの1つを使用して、期待報酬、すなわちこの場合、全体のクリック数を最適化することができる。
 To evaluate the usefulness of their approach, the authors tested it on data sets with various sparsity levels.
@@ -385,13 +385,13 @@ Since data sparsity is such a central problem in news recommendation, many paper
 Whatever algorithm is used for making personalized reading suggestions, the recency or “freshness” of an article will impact its relevance for the readers in many cases.
 パーソナライズされた読書提案を行うためにどのようなアルゴリズムが使われるにせよ、**記事の"recency"や“freshness”は、多くの場合、読者にとっての関連性に影響を与えます**。
 Clearly, there are recommendation scenarios where a reader might be interested in older news as well, e.g., when investigating the development of a story over time or when looking for articles related to the currently read one.
-例えば、ある記事の時間経過に伴う展開を調べる場合や、現在読んでいる記事に関連する記事を探す場合など、**読者が古いニュースにも興味を持つようなレコメンデーションシナリオがあることは明らか**である。
+例えば、ある記事の時間経過に伴う展開を調べる場合や、現在読んでいる記事に関連する記事を探す場合など、**読者が古いニュースにも興味を持つような推薦シナリオがあることは明らか**である。(うんうん...! このusecaseではCFの活用可能性があるのかな...! もちろん人気度バイアスは何らかの方法で除外する必要ありそう...!:thinking:)
 On typical landing pages of news sites, however, the recency of the articles is typically one important ranking criterion besides other factors such as the estimated general attractiveness of an article.
 しかし、一般的なニュースサイトのランディングページでは、記事の新しさは、記事の一般的な魅力度などの他の要素に加えて、重要なランキング基準の1つとなっているのが普通です。
 Technically, the recency of an article can be considered in the recommendation process at three stages.
-**技術的には、レコメンデーションプロセスにおいて、記事のrecencyを3段階で考慮することができます**。
+**技術的には、レコメンデーションプロセスにおいて、記事のrecencyを3段階で(=3つのタイミングで!)考慮することができます**。
 We can filter assumedly outdated news before computing relevance predictions or an item ranking (pre-filtering); we can incorporate the recency factor into the algorithms themselves (recency modeling); or we can filter or downrank articles after the main ranking process (post-filtering).
-関連性予測やアイテムのランキングを計算する前に、古いと思われるニュースをフィルタリングする（プリフィルタリング）、アルゴリズム自体に新着度要素を組み込む（新着度モデリング）、あるいはランキング処理の後で記事をフィルタリングしたりダウンランクしたりする（ポストフィルタリング）。
+関連性予測やアイテムのランキングを計算する前に、古いと思われるニュースをフィルタリングする(pre-filtering)、アルゴリズム自体に新着度要素を組み込む(recency modeling)、あるいはランキング処理の後で記事をフィルタリングしたりダウンランクしたりする(post-filtering)
 However, one key design question in this context is how we balance the possible trade-off between article freshness and assumed relevance for the individual user.
 しかし、この文脈における重要な設計上の問題は、記事のfreshnessと個々のユーザにとっての想定される関連性との間で起こりうる**トレードオフ**のバランスをどのようにとるかということです.(recencyの高いニュースか、古いがユーザとのrelevanceの高いニュースか、どちらを選ぶべきかのトレードオフ??)
 Examples of works that apply a pre-filtering strategy are [39, 41], and [159].

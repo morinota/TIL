@@ -36,6 +36,10 @@ title-slide-attributes:
 
 ## outline:
 
+# ニュース推薦の民主的役割を考慮した5つの多様性指標 RADio
+
+- hoge
+
 # RADioの活用例を考えた① 推論結果の品質モニタリング
 
 MLOps Maturity Assessmentや Booking.comの論文でも主張されているが、バッチ推論でもオンライン推論でも、推論結果の品質をモニタリングし、異常があれば早期に検知する事は重要。
@@ -48,15 +52,18 @@ MLOps Maturity Assessmentや Booking.comの論文でも主張されているが�
 
 ## オフライン評価難しい問題
 
-ニュース推薦の分野では、metadataとしてテキストが使える事と、推薦アイテムであるニュースのlifecycleが短く、新着のcold-start itemを推薦したいusecaseが多い事から、**content-based系の手法**が多く採用されてる。
+ニュース推薦の分野では、metadataとしてテキストが使える事と、推薦アイテムであるニュースのlifecycleが短く、新鮮なcold-start itemを推薦したいusecaseが多い事から、**content-based系の手法**が多く採用されてる。
 
 > However, in general, content-based techniques are considered not to be very accurate in offline experiments when using IR measures like precision and recall [80].
 > As we will discuss later, the effectiveness of pure collaborative filtering methods might be overestimated in offline experiments,
 
 しかし、content-based手法はオフライン実験においてprecisionやrecallなど(=要はaccuracy-basedな、教師ラベルに依存するmetrics??:thinking:)では正確に評価しづらく、一方でcollaborative filtering系やmost-popular itemsは過大評価されやすい傾向。
 (人気度バイアスとか、Off-Policy Evaluation分野で言うところのlogging policy由来のバイアスとかが原因??:thinking:)
+
 (もちろんunder samplingやOPE推定量等でバイアス除去を試みるアプローチもある。)
+(ただ、OPEのIPS推定量に基づくアプローチは、logging policyが探索的なモデルである必要があるので、決定論的な推薦システムでは活用が厳しい...!:thinking:)
 
 ## オフライン評価指標としてのRADio
 
-- hoge
+- RADioはいずれも、推薦後の教師ラベルに依存しないmetricsなので、バイアスの影響を受けづらい。(あ、でもユーザのreading historyは、バイアスの影響を受けているか...! under samplingアプローチと組み合わせるのはどうだろう...!:thinking:)
+-
