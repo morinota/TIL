@@ -297,34 +297,34 @@ $$
 here 𝑢 is the size of vector 𝑉𝑖 and 𝑉𝑗
 ここで、$u$はベクトルV_iとV_jの次元数。
 
-<!-- ここまで読んだ -->
-
 The instance-guided mask can be regarded as a special kind of bitwise attention or gating mechanism which uses the global context information contained in input instance to guide the parameter optimization during training.
-インスタンスガイドマスクは、入力インスタンスに含まれるグローバルなコンテキスト情報を用いて、学習中のパラメータ最適化をガイドする特殊な種類のビット単位の注意またはゲート機構とみなすことができます。
+instance-guidedマスクは、入力インスタンスに含まれるグローバルなコンテキスト情報を用いて、学習中のパラメータ最適化をガイドする特殊な種類のbit-wise attention (=特徴量埋め込みの各要素を1つの値と見做した系列データみたいな??:thinking:) またはgating mechanism(ゲート機構)とみなすことができます。
 The bigger value in𝑉𝑚𝑎𝑠𝑘 implies that the model dynamically identifies an important element in feature embedding or hidden layer.
-𝑉の値が大きいほど、モデルが特徴埋込や隠れ層の重要な要素を動的に識別していることを意味する。
+$V_{mask}$ の値が大きいほど、モデルが特徴量埋め込みや隠れ層の重要な要素を動的に(?=ガッツリ、みたいな意味合い??)識別していることを意味する。
 It is used to boost the element in vector 𝑉𝑒𝑚𝑏 or𝑉ℎ𝑖𝑑𝑑𝑒𝑛.
-ベクトル𝑉𝑒𝑉または𝑅𝑏の要素を高めるために使用されるものである。
+ベクトル $V_{emb}$ または $V_{hidden}$ の要素をboostする(??)ために使用されるものである。
 On the contrary, small value in𝑉𝑚𝑎𝑠𝑘 will suppress the uninformative elements or even noise by decreasing the values in the corresponding vector 𝑉𝑒𝑚𝑏 or 𝑉ℎ𝑖𝑑𝑑𝑒𝑛.
-逆に𝑉の値が小さいと、対応するベクトル𝑠𝑘の値が小さくなり、情報量の少ない要素やノイズまで抑制されます。
+逆に $V_{mask}$ の値が小さいと、対応するベクトル $V_{emb}$ や $V_{hidden}$ の値が小さくなり(まあアダマール積をとるしなぁ...:thinking:)、情報量の少ない要素やノイズが抑制されます。
 
-The two main advantages in adopting the instance-guided mask are: firstly, the element-wise product between the mask and hidden layer or feature embedding layer brings multiplicative operation into DNN ranking system in unified way to more efficiently capture complex feature interaction.
-第一に、マスクと隠れ層または特徴埋め込み層の間の要素ごとの積が、DNNランキングシステムに統一的な方法で乗算演算をもたらし、複雑な特徴の相互作用をより効率的に捕らえることができることです。
+The two main advantages in adopting the instance-guided mask are:
+instance-guidedマスクの採用により2つの主な利点があります:
+firstly, the element-wise product between the mask and hidden layer or feature embedding layer brings multiplicative operation into DNN ranking system in unified way to more efficiently capture complex feature interaction.
+第一に、マスクと隠れ層または特徴量埋め込み層の間の要素ごとの積(=アダマール積)が、DNNランキングシステムに統一的な方法で乗算演算をもたらし、複雑な特徴の相互作用をより効率的に捕らえることができることです。
 Secondly, this kind of fine-gained bit-wise attention guided by input instance can both weaken the influence of noise in feature embedding and MLP layers while highlight the informative signals in DNN ranking systems.
-第二に、入力インスタンスによって導かれるこのような細かいビット単位の注意は、特徴埋め込みとMLP層におけるノイズの影響を弱める一方で、DNNランキングシステムにおける有益な信号を強調することができます。
+第二に、入力インスタンスによって導かれるこのような細かいbit-wise(element-wiseって言っても同義なのかな??:thinking:)のattentionは、特徴量埋め込みとMLP層における**ノイズの影響を弱め**、DNNランキングシステムにおける**有益な信号を強調する**ことができます。
 
 ## 3.3. MaskBlock MaskBlock
 
 To overcome the problem of the inefficiency of feed-forward layer to capture complex feature interaction in DNN models, we propose a basic building block named MaskBlock for DNN ranking systems in this work, as shown in Figure 2 and Figure 3.
-DNNモデルにおける複雑な特徴の相互作用を捉えるにはフィードフォワード層が非効率であるという問題を克服するために、本研究では図2および図3に示すようなDNNランキングシステムのためのMaskBlockという基本構成ブロックを提案します。
+DNNモデルにおける複雑な特徴量の相互作用を捉えるにはfeed forward層が非効率であるという問題を克服するために、本研究では図2および図3に示すようなDNNランキングシステムのためのMaskBlockという基本構成ブロックを提案します。
 The proposed MaskBlock consists of three key components: layer normalization module ,instance-guided mask, and a feed-forward hidden layer.
-提案するMaskBlockは、層正規化モジュール、インスタンス誘導型マスク、フィードフォワード隠れ層の3つの主要コンポーネントで構成される。
+提案するMaskBlockは、レイヤー正規化モジュール、instance-guidedマスク、feed-forward隠れ層の**3つの主要components**で構成される。
 The layer normalization can ease optimization of the network.
-レイヤーの正規化により、ネットワークの最適化を容易にすることができます。
+レイヤー正規化により、ネットワークの最適化を容易にすることができます。(i.e. 学習速度を向上できる)
 The instance-guided mask introduces multiplicative interactions for feed-forward layer of a standard DNN model and feed-forward hidden layer aggregate the masked information in order to better capture the important feature interactions.
-インスタンス誘導型マスクは、標準的なDNNモデルのフィードフォワード層に乗算的な相互作用を導入し、フィードフォワード隠れ層は、重要な特徴の相互作用をよりよく捉えるために、マスクされた情報を集約するものである。
+instance-guidedマスクは、**標準的なDNNモデルのfeed-forward層に乗算的な相互作用を導入**し、feed-forward隠れ層は、重要な特徴量の相互作用をよりよく捉えるために、マスクされた情報を集約するものである。
 In this way, we turn the widely used feed-forward layer of a standard DNN model into a mixture of addictive and multiplicative feature interactions.
-このようにして、標準的なDNNモデルの広く使われているフィードフォワード層を、加法的・乗法的な特徴の相互作用の混合に変えるのです。
+このようにして、標準的なDNNモデルの広く使われているフィードフォワード層を、**加法的・乗法的な特徴量の相互作用の混合に変える**のです。
 
 First, we briefly review the formulation of LayerNorm.
 まず、LayerNormの定式化を簡単に説明する。
@@ -332,95 +332,111 @@ First, we briefly review the formulation of LayerNorm.
 ### 3.3.1. Layer Normalization: レイヤーの正規化：
 
 In general, normalization aims to ensure that signals have zero mean and unit variance as they propagate through a network to reduce "covariate shift" [10].
-一般に、正規化とは、信号がネットワークを伝搬する際に、平均値がゼロで分散が単位となるようにし、「共変量シフト」を減らすことを目的としています[10]。
+一般に、**正規化とは、信号がネットワークを伝搬する際に、平均値がゼロで分散が単位(=1.0)となるようにし**、"covariate(共変量) shift"を減らすことを目的としています[10]。(ふむふむ...!)
 As an example, layer normalization (Layer Norm or LN)[1] was proposed to ease optimization of recurrent neural networks.
-例えば、リカレントニューラルネットワークの最適化を容易にするために、レイヤーノーマライゼーション（Layer Norm、LN）[1]が提案されています。
+例えば、リカレントニューラルネットワークの最適化を容易にするために、レイヤー正規化(Layer Norm、LN)[1]が提案されています。
 Specifically, let 𝑥 = (𝑥1, 𝑥2, ..., 𝑥𝐻 ) denotes the vector representation of an input of size 𝐻 to normalization layers.
-具体的には、𝑥 = (𝑥2, ..., ↪Ll_1D43B) は、正規化層へのサイズᵃの入力のベクトル表現を示すとする。
+具体的には、$\mathbf{x} = (x_1, x_2,\cdots, x_{H})$ は、正規化層へのサイズ $H$ の入力のベクトル表現を示すとする。
 LayerNorm re-centers and re-scales input x as
-LayerNormは、入力されたxを再中心化し、再スケーリングする。
+LayerNormは、以下のように、入力された $\mathbf{x}$ を再中心化(re-centering)し、再スケーリング(re-scaling)する。
 
 $$
+\mathbf{h} = g \odot N(\mathbf{x}) + \mathbf{b}
+, N(\mathbf{x}) = \frac{\mathbf{x} - \mu}{\delta}
+\\
+\mu = \frac{1}{H} \sum_{i=1}^{H} x_{i}
+, \delta = \sqrt{\frac{1}{H} \sum_{i=1}^{H} (x_{i} - \mu)^2}
 \tag{8}
 $$
 
-where ℎ is the output of a LayerNorm layer.
-ここで、ℎはLayerNorm層の出力である。
+where $h$ is the output of a LayerNorm layer.
+ここで、$\mathbf{h}$ はLayerNorm層の出力である。
 ⊙ is an element-wise production operation.
-⊙は要素ごとの生産操作です。
+$\odot$ は要素ごとの乗算 操作です。(=アダマール積)
 𝜇 and 𝛿 are the mean and standard deviation of input.
-𝜇 と𝛿 は入力の平均と標準偏差である。
+$\mu$ と $\delta$ は入力の平均と標準偏差である。
 Bias b and gain g are parameters with the same dimension 𝐻.
-バイアスbとゲインgは同じ次元ᵃのパラメータである。
+バイアス $\mathbf{b}$ とゲイン $\mathbf{g}$ は同じ次元 $H$ のパラメータである。(ここでbiasとgainはスカラーだろうか?orベクトル??:thinking:)
+(なるほど、LayerNorm層は、入力ベクトルを正規化 + 線形変換してるのか...!:thinking:)
 
 As one of the key component in MaskBlock, layer normalization can be used on both feature embedding and feed- forward layer.
-MaskBlockの主要な構成要素の1つであるレイヤー正規化は、特徴埋め込み層とフィードフォワード層の両方で使用することができます。
+MaskBlockの主要な構成要素の1つであるレイヤー正規化は、特徴量埋め込み層とfeed-forward層の両方で使用することができます。
 For the feature embedding layer, we regard each feature’s embedding as a layer to compute the mean, standard deviation, bias and gain of LN as follows:
-特徴埋め込み層については、各特徴の埋め込みを1つの層とみなして、以下のようにLNの平均、標準偏差、バイアス、ゲインを計算することにしています：
+特徴量埋め込み層については、**各特徴量の埋め込み $\mathbf{e}_{i}$ を1つの層とみなして**(ふむふむ)、以下のようにLNの平均、標準偏差、バイアス、ゲインを計算することにしています:
 
 $$
+LN\_EMB(V_{emb})
+= concat(LN(\mathbf{e}_1), LN(\mathbf{e}_2),\cdots, LN(\mathbf{e}_{f}))
 \tag{9}
 $$
 
 As for the feed-forward layer in DNN model, the statistics of 𝐿𝑁 are estimated among neurons contained in the corresponding hidden layer as follows:
-DNNモデルのフィードフォワード層については、対応する隠れ層に含まれるニューロン間で、以下のように↪Lu43F↩の統計量を推定する：
+DNNモデルのフィードフォワード層については、対応する隠れ層に含まれるニューロン間で、以下のように$LN$ (=レイヤー正規化)の統計量を推定する:
 
 $$
+LN\_HID(V_{hidden}) = ReLU(LN(W_{i} X))
 \tag{10}
 $$
 
 where X ∈ R 𝑡 refers to the input of feed-forward layer, W𝑖 ∈ R 𝑚×𝑡 are parameters for the layer, 𝑡 and 𝑚 respectively denotes the size of input layer and neural number of feed-forward layer.
-ここで、X∈R 𝑡はフィードフォワード層の入力、W𝑖∈R 𝑚×𝑡は層のパラメータ、𝑡は入力層のサイズ、フィードフォワード層のニューラル数をそれぞれ示す。
+ここで、$X \in \mathbb{R}^{t}$ はフィードフォワード層の入力データ、$W_{i} \in \mathbb{R}^{m \times t}$ は層のパラメータ、$t$ は入力層のサイズ、フィードフォワード層のニューラル数をそれぞれ示す。(バイアス項はレイヤー正規化の中だけになるのか...!:thinking:)
 Notice that we have two places to put normalization operation on the MLP: one place is before non-linear operation and another place is after non-linear operation.
-MLPに正規化操作を入れる場所が2つあることに注目してください：1つは非線形操作の前、もう1つは非線形操作の後です。
+MLPに正規化操作を入れる場所が2つあることに注目してください: 1つはnon-linear operation(=活性化関数の役割...!!:thinking:)の前、もう1つは非線形操作の後です。(=LayerNorm層を活性化関数の前にかませるか、それとも後にかませるか、の話:thinking:)
 We find the performance of the normalization before non-linear consistently outperforms that of the normalization after non-linear operation.
-非線形前の正規化の性能が、非線形演算後の正規化の性能を一貫して上回っていることがわかります。
+非線形前の正規化の性能が、非線形演算後の正規化の性能を一貫して上回っていることがわかります。(=本論文の実験でわかった事なのかな。もしくは既存研究?:thinking:)
 So all the normalization used in MLP part is put before non-linear operation in our paper as formula (4) shows.
-そのため、MLP部分で使用される正規化は、式（4）が示すように、本論文ではすべて非線形演算の前に置かれます。
+そのため、MLP部分で使用される正規化は、式(4)が示すように、本論文ではすべてnon-linear operationの前に置かれます。
 
-### 3.3.2. MaskBlock on Feature Embedding: MaskBlock on Feature Embedding：
+### 3.3.2. MaskBlock on Feature Embedding:
 
 We propose MaskBlock by combining the three key elements: layer normalization, instance-guided mask and a following feed-forward layer.
-我々は、レイヤーの正規化、インスタンスガイド付きマスク、後続のフィードフォワード層という3つの重要な要素を組み合わせてMaskBlockを提案する。
+我々は、レイヤー正規化、instance-guidedマスク、後続のfeed-forward層という3つの重要な要素を組み合わせてMaskBlockを提案する。
 MaskBlock can be stacked to form deeper network.
-MaskBlockは積み重ねてより深いネットワークを形成することができます。
+MaskBlockは積み重ねてより深いネットワークを形成することができます。(Transformer Blockを積み重ねるのと同じ感じかな:thinking:)
 According to the different input of each MaskBlock, we have two kinds of MaskBlocks: MaskBlock on feature embedding and MaskBlock on Maskblock.
-各MaskBlockの入力の違いに応じて、2種類のMaskBlockを用意しました： MaskBlock on feature embeddingとMaskBlock on Maskblockである。
+各MaskBlockの入力の違いに応じて、**2種類のMaskBlocks**を用意しました: "MaskBlock on feature embedding"と"MaskBlock on Maskblock"
 We will firstly introduce the MaskBlock on feature embedding as depicted in Figure 2 in this subsection.
-本節では、まず図2に描かれた特徴埋め込みに関するMaskBlockを紹介する。
+本節では、まず図2に描かれたMaskBlock on feature embedding(=特徴量埋め込みに関するMaskBlock)を紹介する。
+
+![figure2]()
 
 The feature embedding V𝑒𝑚𝑏 is the only input for MaskBlock on feature embedding.
-特徴埋め込みVᑒは、特徴埋め込みのMaskBlockの唯一の入力です。
-After the layer normalization operation on embedding V𝑒𝑚𝑏.
-埋め込みV𝑒の層正規化演算を行った後。
-MaskBlock utilizes instance-guided mask to highlight the informative elements in V𝑒𝑚𝑏 by element-wise product, Formally,
-MaskBlockは、インスタンス誘導型マスクを利用して、Vᑒᑚの情報量の多い要素を要素別積でハイライトする、Formally、
+特徴量埋め込み $V_{emb}$ は、MaskBlock on feature embeddingの唯一の入力である。
+After the layer normalization operation on embedding V𝑒𝑚𝑏, MaskBlock utilizes instance-guided mask to highlight the informative elements in V𝑒𝑚𝑏 by element-wise product, Formally,
+埋め込み $V_{emb}$ のレイヤー正規化操作を行った後、MaskBlockは、instance-guidedマスクを利用して、$V_{emb}$ の情報量の多い要素をアダマール積で強調する。数式で表すと以下。
 
 $$
+V_{maskedEMB} = V_{mask} \odt LN\_EMB(V_{emb})
 \tag{11}
 $$
 
 where ⊙ means an element-wise production between the instanceguided mask and the normalized vector 𝐿𝑁𝐸𝑀𝐵(V𝑒𝑚𝑏), V𝑚𝑎𝑠𝑘𝑒𝑑𝐸𝑀𝐵 denote the masked feature embedding.
-ここで、⊙はインスタンスガイドされたマスクと正規化ベクトルᵃ(V𝑁)との間の要素ごとの生産、V𝑚ᵄ𝐵はマスクされた特徴埋込を表す。
+ここで、⊙はインスタンスガイドされたマスクとレイヤー正規化後の特徴量埋め込み $LN\_EMB(V_{emb})$ との間の要素積、$V_{maskedEMB}$ はマスクされた特徴量埋め込みを表す。
 Notice that the input of instance-guided mask V𝑚𝑎𝑠𝑘 is also the feature embedding 𝑉𝑒𝑚𝑏.
-インスタンス誘導型マスクVᑚᑘの入力は、特徴埋め込みᑔᑒᑔでもあることに注意してください。
+instance-guidedマスク $V_{mask}$ (を得る為の)の入力も、特徴量埋め込み $V_{emb}$ であることに注意してください。
 
 We introduce a feed-forward hidden layer and a following layer normalization operation in MaskBlock to better aggregate the masked information by a normalized non-linear transformation.
-MaskBlockにフィードフォワード隠れ層とそれに続く層の正規化操作を導入し、正規化された非線形変換によってマスクされた情報をよりよく集約させる。
+MaskBlockにfeed-forward隠れ層とそれに続くレイヤー正規化操作を導入し、正規化されたものを非線形変換によってマスクされた情報をよりよく集約させる。
 The output of MaskBlock can be calculated as follows:
 MaskBlockの出力は、以下のように計算できます：
+(あ、一層のfeed-forward層なんだ...!:thinking:)
 
 $$
+V_{output} = LN\_HID(W_{i} V_{maskedEMB})
+\\
+= ReLU(LN(W_i V_{maskedEMB}))
 \tag{12}
 $$
 
 where W𝑖 ∈ R 𝑞×𝑛 are parameters of the feed-forward layer in the 𝑖-th MaskBlock, 𝑛 denotes the size of V𝑚𝑎𝑠𝑘𝑒𝑑𝐸𝑀𝐵 and 𝑞 means the size of neural number of the feed-forward layer.
-ここで、W𝑖∈R 𝑞×𝑛は𝑖番目のMaskBlockにおけるフィードフォワード層のパラメータ、𝑛はV𝑚𝑎𝑒のサイズ、𝑞はフィードフォワード層のニューラル番号の大きさを表す。
+ここで、$W_{i} \in \mathbb{R}^{q \times n}$ は $i$ 番目のMaskBlockにおけるfeed-forward層のパラメータ(=投影行列:thinking:)、$n$ は$V_{maskedEMB}$ のサイズ、$q$ はフィードフォワード層のニューラル数の大きさ(=$V_{output}$ の次元数...??)を表す。
 
 The instance-guided mask introduces the element-wise product into feature embedding as a fine-grained attention while normalization both on feature embedding and hidden layer eases the network optimization.
-インスタンスガイド型マスクは、特徴埋め込みに要素ごとの積を導入し、特徴埋め込みと隠れ層の両方で正規化することで、ネットワークの最適化を容易にします。
+instance-guidedマスクは、特徴量埋め込みに要素積を導入することできめ細かいattentionを採用するとともに、特徴量埋め込みと隠れ層の両方でレイヤー正規化することで、ネットワークの最適化を容易にします。
 These key components in MaskBlock help the feedforward layer capture complex feature cross more efficiently.
-MaskBlockのこれらのキーコンポーネントは、フィードフォワード層が複雑な特徴的なクロスをより効率的に捉えることをサポートします。
+MaskBlockのこれらのキーコンポーネントは、feed-forward層が複雑な特徴量間のクロス(=相互作用?)をより効率的に捉えることをサポートします。
+
+<!-- ここまで読んだ -->
 
 ### 3.3.3. MaskBlock on MaskBlock: MaskBlock on MaskBlock：
 
