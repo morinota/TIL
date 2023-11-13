@@ -32,13 +32,51 @@ title-slide-attributes:
 
 ## どんな論文? 選んだモチベーションは??
 
-- hogehoge
+- 論文title:[RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
+- RecSys2022 Best Paper Awards
+- ニュース推薦やメディアの民主的役割を考慮した5つの多様性指標群を用いた推薦システムの評価フレームワーク RADio を提案する論文。
+  - 「〇〇を目的としたメディアを目指す場合、☓☓と△△のdiversity metricのスコアが高い推薦システムを選ぶと良い」みたいなdiversity metricsの使い方, モデルの選び方を提案する論文(とざっくり解釈してます...!:thinking:).
+- 多様性の指標として，よりニュース推薦の分野に特化した指標を提案していた。
+- この論文を読んだのは半年前なのですが、推論結果の品質モニタリングやオフライン評価に使えないかなと考え始め、皆さんに共有したく選択した。
 
-## outline:
+## 背景: メディアの役割を意識した推薦システムの概念モデル
 
-# ニュース推薦の民主的役割を考慮した5つの多様性指標 RADio
+既存研究では、メディアの民主主義的な役割を考慮して以下の4種類に分類:
+
+- The Liberal model(自由主義モデル): ユーザの好みに合わせて、トピックや文章のスタイルを選ぶ推薦システム。
+- The Participatory model(参加型モデル): ユーザがコミュニティで活動するために必要な共通認識をわかりやすい形で提供する推薦システム。
+- The Deliberative model(審議型モデル): 現在注目が集まっているトピックに対して異なる意見やさまざまな視点を与える推薦システム
+- The Critical model(批判モデル): マイノリティなコミュニティの声を強調させる推薦システム。
+
+## 5つの多様性指標の共通点
+
+- 順位付けされた推薦記事リストに対して適用可能。
+- rank-awareなmetrics。
+- value rangeは0~1。
+- JS-Divergenceの形式をしており、2つの分布間の距離を測る。
+
+## 5つの多様性指標
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- 5種類の多様性指標:
+- Calibration
+- Fragmentation
+- Activation
+- Representation
+- Alternative Voices
+
+:::
+
+::: {.column width="50%"}
 
 - hoge
+
+:::
+
+::::
 
 # RADioの活用例を考えた① 推論結果の品質モニタリング
 

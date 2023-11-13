@@ -61,60 +61,70 @@ Generally, four types of news recommender algorithms can be distinguished, namel
   - knowledge
 
 Another important distinction is that between self-selected recommendations (users determine the selection criteria and feed the system with their own preferences) and preselected recommendations (media determine the selection, based on volunteered or inferred data; Thurman and Schifferes Citation2012).
-もう一つの重要な区別は、自己選択型レコメンデーション（ユーザーが選択基準を決定し、自分の好みをシステムに与える）と事前選択型レコメンデーション（メディアが、ボランティアまたは推論されたデータに基づいて、選択を決定する；Thurman and Schifferes Citation2012）の違いである。
+もう一つの重要な区別は、**self-selected recommendations**(ユーザが選択基準を決定し、自分の好みをシステムに与える)と**preselected recommendations**(メディアが、ボランティアまたは推論されたデータに基づいて、選択を決定するThurman and Schifferes Citation2012)の違いである。
 Depending on the media outlet and the metrics that recommendation algorithms are being optimised for, news recommendations can be used to increase time spent, advertising revenues and user satisfaction, but also to actively guide readers and match individual readers with the news it is apt for them to receive.
-メディアや推薦アルゴリズムが最適化される指標にもよるが、ニュース推薦を利用することで、滞在時間、広告収入、ユーザー満足度を向上させるだけでなく、読者を積極的に誘導し、個々の読者が受け取るのに適したニュースをマッチングさせることもできる。
+メディアや推薦アルゴリズムが最適化される指標にもよるが、ニュース推薦を利用することで、滞在時間、広告収入、ユーザ満足度を向上させるだけでなく、読者を積極的に誘導し、個々の読者が受け取るのに適したニュースをマッチングさせることもできる。
 The focus of this article is on the latter, and it will be argued that the power to actively guide and shape individuals’ news exposure also brings with it new responsibilities and new very fundamental questions about the role of news recommenders in accomplishing the media’s democratic mission.
-本稿の焦点は後者であり、個人のニュース露出を積極的に誘導し形成する力は、メディアの民主的使命を達成する上でのニュース推薦者の役割について、新たな責任と非常に根本的な疑問をもたらすものでもあることを論じる。
-How diverse or not diverse, and how personally relevant and inclusive should recommendations be? How far should the media go in engaging with the audience, and what is the role of other values, such as participation, transparency, deliberation and privacy? What are the longer term societal implications of personalised information exposure? And more generally, what are the objectives and values that recommendations should be optimised for? In order to be able to answer these questions, we need more insights into the different values at stake and how personalised recommendations can positively or negatively affect the realisation of these values (Helberger, Karppinen, and D’acunto Citation2018; Helberger Citation2011).
-どの程度多様であるべきか、あるいは多様でないのか、また、どの程度個人的な関連性があり、包括的であるべきか。メディアはどこまで視聴者と関わるべきか、また、参加、透明性、熟慮、プライバシーといった他の価値観の役割は何か。また、参加、透明性、熟慮、プライバシーといった他の価値観はどのような役割を果たすのか？さらに一般的に言えば、レコメンデーションが最適化されるべき目的と価値とは何か？これらの問いに答えられるようになるには、問題となっているさまざまな価値観と、パーソナライズされたレコメンデーションがこれらの価値観の実現にどのようにプラスまたはマイナスの影響を与えるかについて、より深い洞察が必要である（Helberger, Karppinen, and D'acunto Citation2018; Helberger Citation2011）。
+本稿の焦点は後者(=preselected recommendations)であり、個人のニュース露出を積極的に誘導し形成する力は、メディアの民主的使命を達成する上でのニュース推薦システムの役割について、新たな責任と非常に根本的な疑問をもたらすものでもあることを論じる。
+How diverse or not diverse, and how personally relevant and inclusive should recommendations be?
+どの程度多様であるべきか、あるいは多様でないのか、また、どの程度個人的な関連性があり、包括的であるべきか。
+How far should the media go in engaging with the audience, and what is the role of other values, such as participation, transparency, deliberation and privacy?
+メディアはどこまで視聴者と関わるべきか、また、参加、透明性、熟慮、プライバシーといった他の価値観の役割は何か。
+What are the longer term societal implications of personalised information exposure?
+パーソナル化された情報露出は、長期的にはどのような社会的影響を及ぼすのだろうか？
+And more generally, what are the objectives and values that recommendations should be optimised for?
+さらに一般的に言えば、レコメンデーションが最適化されるべき目的と価値とは何か？
+
+In order to be able to answer these questions, we need more insights into the different values at stake and how personalised recommendations can positively or negatively affect the realisation of these values (Helberger, Karppinen, and D’acunto Citation2018; Helberger Citation2011).
+これらの問いに答えられるようになるには、問題となっているさまざまな価値観と、パーソナライズ推薦がこれらの価値観の実現にどのようにプラスまたはマイナスの影響を与えるかについて、より深い洞察が必要である（Helberger, Karppinen, and D'acunto Citation2018; Helberger Citation2011）。
 The objective of this article is therefore to explore how democratic theory can offer a useful frame for assessing the threats posed by news recommenders to the democratic role of the media, and the opportunities they present.
-そこで本稿の目的は、民主主義理論が、ニュース推薦者がメディアの民主的役割にもたらす脅威と、それらがもたらす機会を評価するために、いかに有用なフレームを提供できるかを探ることである。
+そこで本稿の目的は、民主主義理論が、ニュース推薦システムがメディアの民主的役割にもたらす脅威と、それらがもたらす機会を評価するために、いかに有用なフレームを提供できるかを探ることである。
 In so doing, the article hopes to prepare the ground for a more nuanced discussion of algorithmic recommenders, AI and filter bubbles, and help to explore how news recommenders can contribute to democratic goals and editorial missions.
-そうすることで、この記事は、アルゴリズムによるレコメンダー、AI、フィルターバブルについてのよりニュアンスに富んだ議論の土台を整え、ニュースレコメンダーが民主主義の目標や編集の使命にどのように貢献できるかを探る一助となることを期待している。
+そうすることで、この記事は、アルゴリズムによる推薦システム、AI、フィルターバブルについてのよりニュアンスに富んだ議論の土台を整え、ニュース推薦システムが民主主義の目標や編集の使命にどのように貢献できるかを探る一助となることを期待している。
 
 # News Recommenders and Democracy – Hopes and Concerns ニュースレコメンダーと民主主義 - 期待と懸念
 
 The media are a central institution in any democratic society (Balkin Citation2018) and they have at least two important roles to play.
-メディアは民主主義社会の中心的機関であり（Balkin Citation2018）、少なくとも2つの重要な役割を担っている。
+メディアは民主主義社会の中心的機関であり（Balkin Citation2018）、少なくとも**2つの重要な役割**を担っている。
 One is to inform citizens, to provide them with the information they need to make meaningful political choices and help to hold their democratically elected representatives accountable.
-ひとつは、市民に情報を提供し、有意義な政治的選択をするために必要な情報を提供し、民主的に選ばれた代表者の責任を追及する手助けをすることである。
+ひとつは、市民に情報を提供し、**有意義な政治的選択をするために必要な情報を提供し、民主的に選ばれた代表者の責任を追及する手助けをすること**である。
 Part of this information function is to critically investigate and report about important societal and political matters, and warn citizens about misconduct and problematic situations that require the attention of voters (the “watchdog function” of the media).
 この情報機能の一部は、社会的・政治的に重要な事柄を批判的に調査・報道し、有権者の注意を必要とする不祥事や問題状況について市民に警告することである（メディアの「番犬機能」）。
 The other is to create a diverse public forum where the different ideas and opinions in a democratic society can be articulated, encountered, debated and weighed.
-もうひとつは、民主主義社会におけるさまざまな考えや意見を明確にし、出会い、議論し、評価することができる多様な公共の場を作ることである。
+もうひとつは、民主主義社会におけるさまざまな考えや意見を明確にし、出会い、議論し、評価することができる**多様な公共の場を作ること**である。
 As we will see, the relative weight that the different theories of democracy attach to these two roles varies, and in the case of news recommenders the roles can even conflict, which is an important source of concerns about the democratic role of recommenders.
-後述するように、民主主義の異なる理論がこの2つの役割に与える相対的な重みはさまざまであり、ニュース推薦者の場合、この役割が対立することさえある。
+後述するように、民主主義の異なる理論がこの2つの役割に与える相対的な重みはさまざまであり、ニュース推薦システムの場合、この役割が対立することさえある。
 
-# Better Informed Citizens versus Concerns about the Demise of the Public Sphere より良い情報を持つ市民対公共圏の終焉への懸念
+## Better Informed Citizens versus Concerns about the Demise of the Public Sphere より良い情報を持つ市民対公共圏の終焉への懸念
 
 Many citizens consider recommenders a good way to get the news and to navigate their way through the growing abundance of information, and in some circumstances they even consider them preferable to journalistically curated choices (Thurman et al.Citation2018).
-多くの市民は、レコメンダーはニュースを入手し、増え続ける豊富な情報の中から自分の進むべき道をナビゲートしてくれる良い方法だと考えており、状況によっては、ジャーナリスティックにキュレーションされた選択肢よりも好ましいとさえ考えている（Thurman et al.Citation2018）。
+多くの市民は、推薦システムはニュースを入手し、増え続ける豊富な情報の中から自分の進むべき道をナビゲートしてくれる良い方法だと考えており、状況によっては、ジャーナリスティックにキュレーションされた選択肢(=編集者が選ぶ方法?:thinking:)よりも好ましいとさえ考えている（Thurman et al.Citation2018）。
 The ability to filter and customise the information offer enables the media to be more responsive to the concrete information needs of users, and brings journalists one step closer to truly engaging with their audience.
-提供する情報をフィルタリングし、カスタマイズする能力によって、メディアはユーザーの具体的な情報ニーズにより応えることができるようになり、ジャーナリストは視聴者との真のエンゲージメントに一歩近づくことができる。
+提供する情報をフィルタリングし、カスタマイズする能力によって、メディアはユーザの具体的な情報ニーズにより応えることができるようになり、ジャーナリストは視聴者との真のエンゲージメントに一歩近づくことができる。
 In so doing, algorithmic recommendations respond to an old criticism of liberal authors about the media patronising the user (Wentzel Citation2002) and the lack of media responsiveness, which some have even described as “one of the most difficult problems for media regulation” (Gibbons Citation1998).
-そうすることで、アルゴリズミック・レコメンデーションは、リベラル派の著者が昔から批判してきた、メディアはユーザーを見下し（Wentzel Citation2002）、メディアの応答性の欠如に応えるものであり、「メディア規制にとって最も困難な問題のひとつ」（Gibbons Citation1998）とさえ評される。
+そうすることで、アルゴリズミック・レコメンデーションは、メディアがユーザーを贔屓にしている（Wentzel Citation2002）というリベラル派の著者の古くからの批判や、メディアの応答性の欠如に応えることになる、
+これは、「メディア規制にとって最も困難な問題のひとつ」（Gibbons Citation1998）とさえ言われている。
 Usher (2010) predicts that audience tracking will “turn[…] journalism from elitism of writing for itself and back to writing what people are actually looking for.” Hindman goes one step further, arguing it is an obligation for journalists to use audience analytics, for exactly this reason (Hindman 2017).
 Usher（2010）は、視聴者追跡によって "ジャーナリズムは自分のために書くというエリート主義から、人々が実際に求めているものを書くことに立ち返るだろう "と予測している。Hindmanはさらに一歩踏み込んで、まさにこの理由から、オーディエンス分析を利用することはジャーナリストの義務であると主張している（Hindman 2017）。
 What is more, personalised news recommendations allow the media not only to help users find relevant information, but also to inform them better and more effectively.
-さらに、パーソナライズされたニュース推薦によって、メディアはユーザーが関連情報を見つけるのを助けるだけでなく、よりよく、より効果的に情報を提供することができる。
+さらに、パーソナライズされたニュース推薦によって、メディアはユーザが関連情報を見つけるのを助けるだけでなく、よりよく、より効果的に情報を提供することができる。
 ‘The audience’ is not homogenous but consists of a diversity of audiences, each with its own preferences, interests and information needs, as well as different levels of education and ways of processing information.
-視聴者」は均質なものではなく、それぞれが独自の嗜好、関心、情報ニーズを持ち、教育レベルや情報処理の方法も異なる多様な視聴者で構成されている。
+**「視聴者」は均質なものではなく、それぞれが独自の嗜好、関心、情報ニーズを持ち、教育レベルや情報処理の方法も異なる多様な視聴者で構成されている**。
 By using AI and algorithms, news recommenders can better accommodate these differences.
-AIとアルゴリズムを使うことで、ニュースレコメンダーはこうした違いにうまく対応できるようになる。
+AIとアルゴリズムを使うことで、ニュース推薦システムはこうした違いにうまく対応できるようになる。
 
 The ability to serve individual users better and more effectively is also the source of some of the most prominent concerns about the impact of recommenders on democracy.
-レコメンダーが民主主義に与える影響に関する最も顕著な懸念の根源は、個々のユーザーにより良く、より効果的にサービスを提供する能力でもある。
+**レコメンダーが民主主義に与える影響に関する最も顕著な懸念の根源**は、個々のユーザにより良く、より効果的にサービスを提供する能力でもある。
 In an environment in which each user gets the news she needs, will there still be a public forum where diverse ideas and opinions can meet? Not only academics but also regulators warn that there is at least “a risk that recommendations are used in a manner that narrows citizens’ exposure to different points of view, by reinforcing their past habits or those of their friends” (OFCOM Citation2012).
-各ユーザーが必要なニュースを入手する環境において、多様な考えや意見が集まる公共の場は存在するのだろうか？学者だけでなく規制当局も、少なくとも「過去の習慣や友人の習慣を強化することで、市民がさまざまな視点に触れる機会を狭めるような形でレコメンデーションが使われるリスクがある」と警告している（OFCOM Citation2012）。
+各ユーザが必要なニュースを入手する環境において、多様な考えや意見が集まる公共の場は存在するのだろうか？学者だけでなく規制当局も、少なくとも「過去の習慣や友人の習慣を強化することで、**市民がさまざまな視点に触れる機会を狭めるような形で推薦が使われるリスクがある**」と警告している（OFCOM Citation2012）。(まさにフィルターバブル的な話:thinking:)
 Lively debates about the extent to which news recommenders enclose users in filter bubbles (Pariser Citation2011) and echo chambers (Sunstein Citation2001) and about a public sphere that gradually dissolves into sphericules (Gitlin Citation1998) are essentially concerns about the tension between a media environment in which algorithms sort people into information profiles and interest bubbles, and the public forum function of the media.
-ニュース推薦ツールがどの程度ユーザーをフィルター・バブル（Pariser Citation2011）やエコーチェンバー（Sunstein Citation2001）に囲い込むか、また、徐々に球体に溶解していく公共圏（Gitlin Citation1998）について活発に議論されているが、これは本質的に、アルゴリズムが人々を情報プロファイルや関心バブルに選別するメディア環境と、メディアの公共フォーラム機能との間の緊張に関する懸念である。
+ニュース推薦ツールがどの程度ユーザをフィルター・バブル（Pariser Citation2011）やエコーチェンバー（Sunstein Citation2001）に囲い込むか、また、徐々に球体に溶解していく公共圏（Gitlin Citation1998）について活発に議論されているが、これは本質的に、アルゴリズムが人々を情報プロファイルや関心バブルに選別するメディア環境と、メディアの公共フォーラム機能との間の緊張に関する懸念である。
 Concerns about a fragmentation of the media landscape with the effect that people no longer encounter counter-attitudinal or unexpected information and therefore become less tolerant, more polarised or even radical existed before the arrival of news recommenders (Helberger, 2006).
 メディア状況の分断化によって、人々が反論的な情報や予期せぬ情報に遭遇しなくなり、その結果、寛容さが失われ、偏向的、あるいは過激になるのではないかという懸念は、ニュースレコメンダーが登場する以前からあった（Helberger, 2006）。
 What distinguishes the filter bubble scenario from more general concerns about the ongoing media fragmentation is the relative lack of user agency, particularly in instances of preselected recommendations, and the opacity of the process.
-フィルターバブルのシナリオが、現在進行中のメディアの断片化に関するより一般的な懸念と異なるのは、ユーザーの主体性が相対的に欠如していること、特に事前に選択された推薦の例では、そのプロセスが不透明であることだ。
+フィルターバブルのシナリオが、現在進行中のメディアの断片化に関するより一般的な懸念と異なるのは、ユーザの主体性が相対的に欠如していること、特にpre-selected recommendationsの例では、そのプロセスが不透明であることだ。
 Furthermore, with recommenders, stereotypes and prejudices can be reinforced through perpetual algorithmic feedback loops.
-さらに、レコメンダーを使えば、アルゴリズムによる永続的なフィードバックループを通じて、固定観念や偏見が強化される可能性がある。
+**さらに、レコメンダーを使えば、アルゴリズムによる永続的なフィードバックループを通じて、固定観念や偏見が強化される可能性がある**。
 As a consequence, the fault lines between the different groups or fragments in society deepen, and in the worst case become impossible to bridge.
 その結果、社会のさまざまなグループや断片の間の断層は深まり、最悪の場合、埋めることが不可能になる。
 
@@ -123,7 +133,7 @@ As a consequence, the fault lines between the different groups or fragments in s
 At a more structural level, scholars increasingly worry about the implications of AI and algorithms for the sustainable future of the media as an institution.
 より構造的なレベルでは、AIやアルゴリズムがメディアという組織の持続可能な未来に与える影響について、学者たちはますます心配するようになっている。
 Will the media still be able to independently observe and report what is worth reporting when it is no longer the editor who decides what is newsworthy, having been replaced by algorithms and the quantified interests and preferences of the audience? (Anderson Citation2011).
-何がニュースに値するかを決定するのはもはや編集者ではなく、アルゴリズムと数値化された視聴者の興味や嗜好に取って代わられたとき、メディアはまだ独自に観察し、報道する価値のあるものを報道できるだろうか？(アンダーソン引用2011）。
+**何がニュースに値するかを決定するのはもはや編集者ではなく、アルゴリズムと数値化された視聴者の興味や嗜好に取って代わられたとき、メディアはまだ独自に観察し、報道する価値のあるものを報道できるだろうか**?(アンダーソン引用2011)。
 Ferrer-Conill and Tandoc (Citation2018, 13) are among those who warn that “[a]vailable metrics then become proxies to … journalistic ideals, especially for overworked journalists.” An important factor in this context is the degree of internal and external commercial pressure (Coddington 2015) from advertisers (Turow Citation2005), and from other sources of “commercial optimalisation” such as search engines, social media platforms and web analytics companies (Newman Citation2018, 31; Belair-Gagnon and Holton Citation2018, 15; see also Lewis and Usher Citation2016).
 Ferrer-ConillとTandoc (Citation2018, 13)は、「利用可能な指標は、特に働き過ぎのジャーナリストにとって、...ジャーナリズムの理想に対するプロキシになる」と警告している。この文脈における重要な要因は、広告主（Turow Citation2005）や、検索エンジン、ソーシャルメディア・プラットフォーム、ウェブ分析会社といった「商業的最適化」の他の情報源からの、内外の商業的圧力（Coddington 2015）の程度である（Newman Citation2018, 31; Belair-Gagnon and Holton Citation2018, 15; Lewis and Usher Citation2016も参照）。
 The alleged opacity of algorithms (Diakopoulos and Koliska 2017) adds to these concerns, as this opacity can make it more difficult to identify external influences on the media, as well as to hold the media accountable for the way they carry out their democratic task and journalistic mission.
@@ -132,20 +142,20 @@ Finally, in the digital environment the traditional media find themselves in fie
 最後に、デジタル環境において、伝統的メディアは、ソーシャルメディア・プラットフォームや検索エンジンなど、真のデジタル・ネイティブとの激しい競争にさらされている。
 
 At the same time, data and data analytics offer the news media economic and strategic advantages, and could thus very well be a means for them to regain (and hold) both territory and the attention of their readers.
-同時に、データとデータ分析は、ニュースメディアに経済的・戦略的な利点を提供し、その結果、ニュースメディアが領土と読者の注目の両方を取り戻す（保持する）手段となる可能性も大いにある。
+同時に、**データとデータ分析は、ニュースメディアに経済的・戦略的な利点を提供し、その結果、ニュースメディアが領土と読者の注目の両方を取り戻す（保持する）手段となる可能性も大いにある**。
 Societal concerns about the lack of transparency and diversity and the danger of filter bubbles in the online environment also provide an opportunity for the traditional media to create a profile for themselves distinct from that of social media platforms that optimise for commercial goals that are very different from the goal of promoting better informed citizens and the public sphere.
-透明性と多様性の欠如や、オンライン環境におけるフィルターバブルの危険性についての社会的懸念は、伝統的メディアにとって、より良い情報を持つ市民や公共圏を促進するという目標とはまったく異なる商業的目標に最適化されたソーシャルメディア・プラットフォームとは一線を画す、自らのプロフィールを作成する機会にもなる。
+透明性と多様性の欠如や、オンライン環境におけるフィルターバブルの危険性についての社会的懸念は、伝統的メディアにとって、より良い情報を持つ市民や公共圏を促進するという目標とはまったく異なる商業的目標に最適化されたソーシャルメディア・プラットフォームとは一線を画す、自らのプロフィールを作成する機会にもなる。(メディア本来の目的を意識する事は、ユニークで魅力的なメディアになる機会でもあるよ！って話??:thinking:)
 In addition, the ability to optimise for advertising (Newman Citation2018), paying readers and more efficient internal routines (Zamith Citation2018, 423) can help newsrooms both to make more sense of the media economy in which they operate and to survive in the “battle for audience attention” (Cherubini and Nielsen Citation2016, 9).
 さらに、広告（Newman Citation2018）、有料読者、より効率的な社内ルーチン（Zamith Citation2018, 423）に最適化する能力は、ニュースルームが活動するメディア経済をより理解し、「視聴者の注目をめぐる戦い」（Cherubini and Nielsen Citation2016, 9）で生き残るために役立つ。
 
 # Concerns about Surveillance, Manipulation and the Erosion of Intellectual Privacy
 
 If the task of the media is to inform citizens and provide a public forum, how much distance between the media and their audiences is actually needed to ensure that the media can fulfill this task? In other words, what is the role of data and privacy, and what are the potential dangers of the media knowing too much about their audience? Because many (though not all) news recommenders will use personal data to optimise their results and better match results with individual users, new concerns about this constant tracking and monitoring accompany the media’s quantitative turn.
-メディアの任務が市民に情報を提供し、公共の場を提供することだとすれば、メディアがこの任務を確実に果たすためには、メディアと視聴者の間に実際どれほどの距離が必要なのだろうか？言い換えれば、データとプライバシーの役割とは何か、メディアが視聴者について知りすぎることの潜在的な危険性とは何か。多くの（すべてではないが）ニュースレコメンダーは、その結果を最適化し、個々のユーザーと結果をよりマッチングさせるために個人データを使用するため、この絶え間ない追跡と監視に関する新たな懸念は、メディアの量的転換に伴うものである。
+メディアの任務が**市民に情報を提供し、公共の場を提供すること**だとすれば、メディアがこの任務を確実に果たすためには、メディアと視聴者の間に実際どれほどの距離が必要なのだろうか？言い換えれば、データとプライバシーの役割とは何か、メディアが視聴者について知りすぎることの潜在的な危険性とは何か。多くの（すべてではないが）ニュースレコメンダーは、その結果を最適化し、個々のユーザーと結果をよりマッチングさせるために個人データを使用するため、この絶え間ない追跡と監視に関する新たな懸念は、メディアの量的転換に伴うものである。
 As Richards (Citation2008, 392) explains, a certain measure of intellectual privacy is “critical to the most basic operations of expression, because it gives new ideas the room they need to grow”.
 Richards (Citation2008, 392)が説明するように、一定の知的プライバシーは「表現の最も基本的な営みにとって重要である。
 The constant surveillance can also affect more directly the democratic role of the media, for example where there may be chilling repercussions for users’ exercise of their free speech rights, or where digital technology is used to manipulate opinions.
-例えば、言論の自由を行使するユーザーに対して冷ややかな反応があったり、デジタル技術が意見操作に使われたりするような場合だ。
+例えば、言論の自由を行使するユーザに対して冷ややかな反応があったり、デジタル技術が意見操作に使われたりするような場合だ。
 Put differently, protecting the privacy of their users can be a way of protecting the very activity we expect media users, as citizens, to engage in, namely critical and diverse thinking.
 別の言い方をすれば、メディア利用者のプライバシーを保護することは、私たちが市民としてメディア利用者に期待する活動、すなわち批判的で多様な思考を保護することにつながる。
 
@@ -154,7 +164,7 @@ As this brief overview shows, the debate about the role of news recommenders in 
 Some of these hopes and concerns contradict, others seem unconnected.
 これらの希望と懸念は矛盾するものもあれば、つながりがないように見えるものもある。
 What is missing is a conceptual framework for assessing the threats and opportunities of news recommenders that helps to critically question some of the assumptions made and, more generally, to understand news recommenders in the broader context of the democratic role of the media.
-欠けているのは、ニュースレコメンダーの脅威と機会を評価するための概念的枠組みであり、それによって、いくつかの仮定を批判的に問い直し、より一般的には、メディアの民主的役割というより広い文脈でニュースレコメンダーを理解することができる。
+**欠けているのは、ニュースレコメンダーの脅威と機会を評価するための概念的枠組み**であり、それによって、いくつかの仮定を批判的に問い直し、より一般的には、メディアの民主的役割というより広い文脈でニュースレコメンダーを理解することができる。
 This is why the next section takes a step back and, building on theories of democratic media, sets out to develop such a framework.
 だからこそ、次の章では一歩引いて、民主的メディアの理論に基づきながら、そのような枠組みを構築していくのである。
 
@@ -167,9 +177,9 @@ Their work forms the point of departure for the current investigation.
 Given the central role that the media play in a democratic society, democratic theories form a logical normative framework to concretise the societal role of the media, as well as to evaluate their performance.
 民主主義社会においてメディアが果たす中心的役割を考えれば、民主主義理論はメディアの社会的役割を具体化し、そのパフォーマンスを評価するための論理的な規範的枠組みを形成する。
 This article argues that, by extension, the same must be true for news recommenders, to the extent that news recommenders are a tool for the media to fulfill their roles.
-本稿は、ニュースレコメンダーがメディアの役割を果たすためのツールであるという点で、ニュースレコメンダーにも同じことが言えるはずだと主張する。
+本稿は、ニュースレコメンダーがメディアの役割を果たすためのツールであるという点で、ニュースレコメンダーにも同じことが言えるはずだと主張する。(民主主義社会においてメディアが果たすべき中心的役割 = ニュース推薦が果たすべき役割?)
 Since it would be impossible to recount all democratic theories within one article, this article focus on what are arguably the three main and most commonly used theories in academic work on the media (Karppinen Citation2013b): liberal, participatory and deliberative theories.
-1つの論文ですべての民主主義理論を回顧することは不可能であるため、本稿では、メディアに関する学術的研究において間違いなく主要かつ最も一般的に用いられている3つの理論に焦点を当てる（Karppinen Citation2013b）： 自由主義理論、参加型理論、熟議型理論である。
+1つの論文ですべての民主主義理論を回顧することは不可能であるため、本稿では、メディアに関する学術的研究において間違いなく主要かつ最も一般的に用いられている**3つの理論**に焦点を当てる（Karppinen Citation2013b）： 自由主義理論、参加型理論、熟議型理論である。
 Carving out the different theoretical approaches behind these theories will allow the development of three different perspectives on the democratic role of recommenders.
 これらの理論の背後にある異なる理論的アプローチを明らかにすることで、推薦者の民主的役割に関する3つの異なる視点を発展させることができる。
 Although it would undoubtedly be extremely interesting to discuss news recommenders against the background of a far richer and more differentiated approach to democratic theory (such as critical democratic theory, which this article only briefly touches upon), space is limited and the main point that this article wishes to make is that there are multiple ways in which recommenders can contribute to the democratic role of the media, provided they are developed out of a vision of the values that recommenders are used to serve.
