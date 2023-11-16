@@ -438,141 +438,157 @@ MaskBlockのこれらのキーコンポーネントは、feed-forward層が複�
 
 <!-- ここまで読んだ -->
 
-### 3.3.3. MaskBlock on MaskBlock: MaskBlock on MaskBlock：
+### 3.3.3. MaskBlock on MaskBlock:
+
+![fig3]()
 
 In this subsection, we will introduce MaskBlock on MaskBlock as depicted in Figure 3.
 この小節では、図3に描かれたMaskBlock on MaskBlockを紹介する。
 There are two different inputs for this MaskBlock: feature embedding 𝑉𝑒𝑚𝑏 and the output 𝑉 𝑝 𝑜𝑢𝑡𝑝𝑢𝑡 of the previous MaskBlock.
-このMaskBlockの入力は、特徴埋め込みǔ↪Ll452↩と、前のMaskBlockの出力𝑉↪Ll452↩↪Ll452↩の2種類です。
+このMaskBlockの入力は、特徴量埋め込み $V_{emb}$ と、前のMaskBlockの出力 $V_{output}^{p}$ の2種類です。
 The input of instance-guided mask for this kind of MaskBlock is always the feature embedding 𝑉𝑒𝑚𝑏.
-この種のMaskBlockのインスタンス誘導型マスクの入力は常に特徴埋め込みǔᑒᑚとなる。
+この種のMaskBlockのinstance-guidedマスクの入力は、常に特徴量埋め込み $V_{emb}$ となる。
 MaskBlock utilizes instance-guided mask to highlight the important feature interactions in previous MaskBlock’s output 𝑉 𝑝 𝑜𝑢𝑡𝑝𝑢𝑡 by element-wise product, Formally,
-MaskBlockはインスタンス誘導型マスクを利用して、以前のMaskBlockの出力𝑉𝑡𝑡を要素別積で強調し、Formally、
+MaskBlockはinstance-guidedマスクを利用して、以前のMaskBlockの出力 $V_{output}^{p}$ を要素別積で強調する。数式で表すと...
 
 $$
+V_{maskedHID} = V_{mask} \odot V_{output}^{p}
 \tag{13}
 $$
 
 where ⊙ means an element-wise production between the instanceguided mask 𝑉𝑚𝑎𝑠𝑘 and the previous MaskBlock’s output 𝑉 𝑝 𝑜𝑢𝑡𝑝𝑢𝑡, 𝑉𝑚𝑎𝑠𝑘𝑒𝑑𝐻 𝐼𝐷 denote the masked hidden layer.
-where ⊙ means an element-wise production between the instanceguided mask 𝑉𝑚𝑎𝑠𝑘 and the previous MaskBlock’s output 𝑉 𝑝 𝑜𝑢𝑡𝑝𝑢𝑡, 𝑉𝑚𝑎𝑠𝑘𝑒𝑑𝐻 𝐼𝐷 denote the masked hidden layer.
+$\odot$ は要素積。$V_{maskedHID}$ はmaskされたhidden layerの出力。(前のブロックのhidden layerの出力 $V_{output}^{p}$ をmaskしてるから??:thinking:)
 
 In order to better capture the important feature interactions, another feed-forward hidden layer and a following layer normalization are introduced in MaskBlock .
-重要な特徴の相互作用をよりよく捉えるために、MaskBlock では、もう一つのフィードフォワード隠れ層とそれに続く層の正規化を導入しています。
+重要な特徴量間の相互作用をよりよく捉えるために、MaskBlock では、もう一つのフィードフォワード隠れ層とそれに続くレイヤー正規化を導入しています。
 In this way, we turn the widely used feed-forward layer of a standard DNN model into a mixture of addictive and multiplicative feature interactions to avoid the ineffectiveness of those addictive feature cross models.
-このようにして、標準的なDNNモデルの広く使われているフィードフォワード層を、加法的特徴相互作用と乗法的特徴相互作用の混合に変え、それらの加法的特徴相互作用モデルの非効果を回避しているのです。
+このようにして、標準的なDNNモデルの広く使われているフィードフォワード層を、addictive(加法的)な特徴量相互作用とmultiplicative(乗法的)な特徴量相互作用の混合に変え、それらの加法的特徴相互作用モデルの非効率性を回避する。
 The output of MaskBlock can be calculated as follows:
 MaskBlockの出力は、以下のように計算できます：
 
 $$
+V_{output} = LN\_HID(W_{i} V_{maskedHID})
+\\
+= ReLU(LN(W_{i} (V_{mask} \odot V_{output}^{p})))
 \tag{14}
 $$
 
 where 𝑊𝑖 ∈ R 𝑞×𝑛 are parameters of the feed-forward layer in the 𝑖-th MaskBlock, 𝑛 denotes the size of V𝑚𝑎𝑠𝑘𝑒𝑑𝐻 𝐼𝐷 and 𝑞 means the size of neural number of the feed-forward layer.
-ここで、𝑊𝑖∈R↪L_1D45E↩×𝑛は𝑖番目のMaskBlockにおけるフィードフォワード層のパラメータ、𝑛はV𝑚𝑈𝑒ᵃ𝐷、𝑞はフィードフォワード層のニューラル番号の大きさを表す。
+ここで、$W_{i} \in \mathbb{R}^{q \times n}$ は $i$ 番目のMaskBlockにおけるフィードフォワード層のパラメータ、$n$ は $V_{maskedHID}$ のサイズ(=次元数)、$q$ はフィードフォワード層のニューラルノードの数を表す。(=)
 
 ## 3.4. MaskNet マスクネット
 
 Based on the MaskBlock, various new ranking models can be designed according to different configurations.
 MaskBlockをベースに、様々な構成で新しいランキングモデルを設計することができます。
 The rank model consisting of MaskBlock is called MaskNet in this work.
-MaskBlockで構成されるランクモデルを、本作品ではMaskNetと呼ぶ。
+**MaskBlockで構成されるランクモデルを、本論文ではMaskNetと呼ぶ。**
 We also propose two MaskNet models by utilizing the MaskBlock as the basic building block.
-また、MaskBlockを基本構成要素として、2つのMaskNetモデルを提案しています。
+また、MaskBlockを基本構成要素として、**2つのMaskNetモデ**ルを提案しています。
 
-### 3.4.1. Serial MaskNet: Serial MaskNet：
+![fig4]()
+
+### 3.4.1. Serial MaskNet:
 
 We can stack one MaskBlock after another to build the ranking system , as shown by the left model in Figure 4.
 図4の左のモデルのように、MaskBlockを次々に積み重ねてランキングシステムを構築することができます。
 The first block is a MaskBlock on feature embedding and all other blocks are MaskBlock on Maskblock to form a deeper network.
-最初のブロックは特徴埋め込みにMaskBlock、それ以外のブロックはMaskblockにMaskBlockしてより深いネットワークを形成します。
+最初のブロックは MaskBlock on feature embedding、それ以外のブロックは MaskBlock on Maskblock を積み重ねてより深いネットワークを形成します。
 The prediction layer is put on the final MaskBlock’s output vector.
-予測層は、最終的なMaskBlockの出力ベクトルにかける。
+予測層は、最終的なMaskBlockの出力ベクトルにつけられる。
 We call MaskNet under this serial configuration as SerMaskNet in our paper.
-本稿では、このようなシリアル構成のMaskNetをSerMaskNetと呼ぶことにする。
+本稿では、このようなserial(=連続, 直列 等の意味)構成のMaskNetを**SerMaskNet** と呼ぶことにする。
 All inputs of instance-guided mask in every MaskBlock come from the feature embedding layer V𝑒𝑚𝑏 and this makes the serial MaskNet model look like a RNN model with sharing input at each time step.
-全てのMaskBlockにおけるインスタンス誘導型マスクの入力は全て特徴埋め込み層Vᑒᑚから来るため、シリアルMaskNetモデルは各タイムステップで入力を共有するRNNモデルのように見える。
+**全てのMaskBlockにおけるinstance-guidedマスクの入力は全て特徴量埋め込み層 $V_{emb}$ から来る**ため、シリアルMaskNetモデルは各タイムステップで入力を共有するRNNモデルのように見える。(??:thinking:)
 
 ### 3.4.2. Parallel MaskNet: パラレルマスクネット
 
 We propose another MaskNet by placing several MaskBlocks on feature embedding in parallel on a sharing feature embedding layer, as depicted by the right model in Figure 4.
-図4の右のモデルのように、特徴埋め込みに関するMaskBlockを共有する特徴埋め込み層上に複数並列に配置することで、別のMaskNetを提案します。
+図4の右のモデルのように、**共有した特徴量埋め込み層上に、MaskBlocks on feature embedding を複数並列に配置する**ことで、別のMaskNetを提案します。
 The input of each block is only the shared feature embedding V𝑒𝑚𝑏 under this configuration.
-各ブロックの入力は、この構成では共有特徴埋め込みVᑒᑚのみである。
+各ブロックの入力は、この構成では共有した特徴量埋め込み $V_{emb}$ のみである。(各MaskedBlockには同じ入力が渡される:thinking:)
 We can regard this ranking model as a mixture of multiple experts just as MMoE[15] does.
-このランキングモデルは、MMoE[15]と同じように、複数の専門家の混合物とみなすことができる。
+このランキングモデルは、MMoE[15]と同じように、**複数の専門家の混合物とみなすことができる**。
 Each MaskBlock pays attention to specific kind of important features or feature interactions.
-各MaskBlockは、特定の種類の重要な機能や機能の相互作用に注目しています。
+各MaskBlockは、特定の種類の重要な特徴量や特徴量間の相互作用に注目しています。
 We collect the information of each expert by concatenating the output of each MaskBlock as follows:
-各MaskBlockの出力を以下のように連結することで、各エキスパートの情報を収集する：
+各MaskBlockの出力を以下のように連結することで、各エキスパートの情報を収集する:
 
 $$
+V_{merge} = concate(V^{1}_{output}, V^{2}_{output}, \cdots, V^{i}_{output}, \cdots, V^{u}_{output})
 \tag{15}
 $$
 
 where V𝑖 𝑜𝑢𝑡𝑝𝑢𝑡 ∈ R 𝑞 is the output of the 𝑖-th MaskBlock and 𝑞 means size of neural number of feed-forward layer in MaskBlock, 𝑢 is the MaskBlock number.
-ここで、V𝑖 𝑜𝑢 ∈ R 𝑞 は𝑖番目のMaskBlockの出力、𝑮 はMaskBlockのフィードフォワード層のニューラル数のサイズ、ᵆ はMaskBlock番号である。
+ここで、$V_{output}^{i} \in \mathbb{R}^{q}$ は $i$ 番目のMaskBlockの出力、$q$ はMaskBlockのフィードフォワード層のニューラル数(=出力される埋め込みの次元数:thinking:)、$i$ はMaskBlockの通し番号である。
+(じゃあ $V_{merge} \in \mathbb{R}^{uq}$ になるのかな:thinking:)
 
 To further merge the feature interactions captured by each expert, multiple feed-forward layers are stacked on the concatenation information V𝑚𝑒𝑟𝑔𝑒 .
-各エキスパートが捉えた特徴的な相互作用をさらに統合するために、連結情報V𝑚𝑒に複数のフィードフォワード層を積み重ねる。
+各エキスパートが捉えた特徴量間の相互作用をさらに統合するために、連結情報 $V_{merge}$ に複数のフィードフォワード層を積み重ねる。
 Let H0 = V𝑚𝑒𝑟𝑔𝑒 denotes the output of the concatenation layer, then H0 is fed into the deep neural network and the feed forward process is:
-H0 = V𝑚𝑒が連結層の出力を表すとすると、H0はディープニューラルネットワークに投入され、フィードフォワード処理は
+$H_0 = V_{merge}$ が連結層の出力を表すとすると、$H_0$ はディープニューラルネットワークに投入される。そのfeed-forward処理は以下。(活性化関数がReLUの何層かのfully-connectedのfeed-forward層か。線形変換 ->非線形変換を層の数分繰り返すやつ:thinking:)
 
 $$
+H_{l} = ReLU(W_{l} H_{l-1} + \beta_{l})
 \tag{16}
 $$
 
 where 𝑙 is the depth and ReLU is the activation function.
-ここで、↪L_1D459↩は深度、ReLUは活性化関数である。
+ここで、$l$ は深さ、ReLUは活性化関数である。
 W𝑡 , 𝛽𝑡 , H𝑙 are the model weight, bias and output of the 𝑙-th layer.
-W𝑡 ,𝑡 , H↪L_1D459↩ は、𝑙第1層のモデル重み、バイアス、出力である。
+$W_{l}, \beta_{l}, H_{l}$ は、$l$ 番目の層のモデル重み、バイアス、出力である。
 The prediction layer is put on the last layer of multiple feed-forward networks.
 予測層は、複数のフィードフォワードネットワークの最終層に置かれます。
 We call this version MaskNet as "ParaMaskNet" in the following part of this paper.
-本稿では、このMaskNetを "ParaMaskNet "と呼ぶことにする。
+本稿では、このMaskNetを "**ParaMaskNet**"と呼ぶことにする。
 
 ## 3.5. Prediction Layer プレディクションレイヤー
 
 To summarize, we give the overall formulation of our proposed model’ s output as:
-まとめると、提案モデルの出力の全体的な定式化は次のようになる：
+まとめると、提案モデルの出力の全体的な定式化は次のようになる:
 
 $$
+\hat{y} = \delta(w_0 + \sum_{i=1}^{n} w_{i} x_{i})
 \tag{17}
 $$
 
 where 𝑦^ ∈ (0, 1) is the predicted value of CTR, 𝛿 is the sigmoid function, 𝑛 is the size of the last MaskBlock’s output(SerMaskNet) or feed-forward layer(ParaMaskNet), 𝑥𝑖 is the bit value of feedforward layer and 𝑤𝑖 is the learned weight for each bit value.
-ここで、𝑦∈ (0, 1)はCTRの予測値、𝛿はシグモイド関数、𝑛は最後のMaskBlockの出力（SerMaskNet）またはフィードフォワード層（ParaMaskNet）のサイズ、𝑥𝑖はフィードフォワード層のビット値、↪L_1D464↩𝑖は各ビット値の学習重みです。
+ここで、$\hat{y} \in (0, 1)$ はCTRの予測値、$\delta$ はシグモイド関数(あ、そうなのか:thinking)、$n$ は最後のMaskBlockの出力(SerMaskNet)またはフィードフォワード層(ParaMaskNet)のサイズ(=出力されるベクトルの次元数)、$x_i$ はフィードフォワード層の各要素、$w_{i}$ は各要素に対する学習重みです。(最終的な出力をスカラーにしたいからこの層なのね。結局はこれもfeed-forward層。)
 
 For binary classifications, the loss function is the log loss:
-二値分類の場合、損失関数は対数損失となる：
+二値分類の場合、損失関数は対数損失となる(=クロスエントロピー損失関数だっけ?:thinking:):
 
 $$
+\mathcal{L} = - \frac{1}{N} \sum_{i=1}^{N}{
+    y_i log(\hat{y}_{i}) + (1 - y_i)
+}
 \tag{18}
 $$
 
 where 𝑁 is the total number of training instances, 𝑦𝑖 is the ground truth of 𝑖-th instance and 𝑦^𝑖 is the predicted CTR.
-ここで、𝑁は訓練インスタンスの総数、ᵆ𝑖は𝑖番目のインスタンスのground truth、𝑦^𝑖は予測CTRである。
+ここで、𝑁は訓練インスタンスの総数(=mini-batch1つあたりのtraining exampleの数)、$y_i$ は $i$ 番目のインスタンスのground truth、$\hat{y}_{i}$ は予測CTRである。
 The optimization process is to minimize the following objective function:
-最適化処理は、以下の目的関数を最小化することである：
+最適化処理は、以下の目的関数を最小化することである:
 
 $$
+L = \mathcal{L} + \lambda ||\Theta||
 \tag{19}
 $$
 
 where 𝜆 denotes the regularization term and Θ denotes the set of parameters, including those in feature embedding matrix, instanceguided mask matrix, feed-forward layer in MaskBlock, and prediction part.
-ここで、𝜆は正則化項、Θは特徴埋め込み行列、インスタンスガイド付きマスク行列、MaskBlockのフィードフォワード層、予測部のパラメータを含むパラメータの集合を示す。
+ここで、$\lambda$ は正則化項の強さを決めるハイパーパラメータ、$\Theta$はモデルのパラメータ集合 (特徴量埋め込み行列、instance-guidedマスク行列、MaskBlockのフィードフォワード層、予測moduleのパラメータ)を示す。
 
 # 4. Experimental Results 実験結果
 
 In this section, we evaluate the proposed approaches on three realworld datasets and conduct detailed ablation studies to answer the following research questions:
-本節では、以下の研究課題に答えるため、3つの実世界データセットで提案アプローチを評価し、詳細なアブレーションスタディを実施する：
+本節では、以下の研究課題に答えるため、3つの実世界データセットで提案アプローチを評価し、詳細なアブレーションスタディ(=各パーツの影響評価)を実施する:
 
 - RQ1 Does the proposed MaskNet model based on the MaskBlock perform better than existing state-of-the-art deep learning based CTR models? RQ1 MaskBlockに基づくMaskNetの提案モデルは、既存の最先端ディープラーニングに基づくCTRモデルより性能が高いか？
 
-- RQ2 What are the influences of various components in the MaskBlock architecture? Is each component necessary to build an effective ranking system? RQ2 MaskBlockアーキテクチャにおける様々なコンポーネントの影響力はどのようなものか？効果的なランキングシステムを構築するために、各コンポーネントは必要なのか？
+- RQ2 What are the influences of various components in the MaskBlock architecture? Is each component necessary to build an effective ranking system? RQ2 MaskBlockアーキテクチャにおける様々なコンポーネントの影響力はどのようなものか？**効果的なランキングシステムを構築するために、各コンポーネントは必要なのか？**
 
-- RQ3 How does the hyper-parameter of networks influence the performance of our proposed two MaskNet models? RQ3 ネットワークのハイパーパラメータは、我々が提案する2つのMaskNetモデルの性能にどのように影響するか？
+- RQ3 How does the hyper-parameter of networks influence the performance of our proposed two MaskNet models? RQ3 ネットワークのハイパーパラメータは、我々が提案する2つのMaskNetモデルの性能にどのように影響するか?
 
-- RQ4 Does instance-guided mask highlight the important elements in feature embedding and feed-forward layers according to the input instance? RQ4 インスタンスガイド型マスクは、入力インスタンスに応じて、特徴埋め込み層やフィードフォワード層の重要な要素を強調するのか？
+- RQ4 Does instance-guided mask highlight the important elements in feature embedding and feed-forward layers according to the input instance? RQ4 インスタンスガイド型マスクは、入力インスタンスに応じて、特徴量埋め込み層やフィードフォワード層の重要な要素を強調するのか？
 
 In the following, we will first describe the experimental settings, followed by answering the above research questions.
 以下では、まず実験設定について説明し、その後、上記のリサーチクエスチョンに回答する。
