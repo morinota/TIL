@@ -556,6 +556,7 @@ where 𝑦^ ∈ (0, 1) is the predicted value of CTR, 𝛿 is the sigmoid functi
 
 For binary classifications, the loss function is the log loss:
 二値分類の場合、損失関数は対数損失となる(=クロスエントロピー損失関数だっけ?:thinking:):
+(point-wiseの損失関数でも十分なのかもなぁ...! pair-wiseとかlist-wiseな損失関数でなくても。)
 
 $$
 \mathcal{L} = - \frac{1}{N} \sum_{i=1}^{N}{
@@ -600,73 +601,81 @@ In the following, we will first describe the experimental settings, followed by 
 The following three data sets are used in our experiments:
 実験では、以下の3つのデータセットを使用した：
 
-- (1) Criteo1 Dataset: As a very famous public real world display ad dataset with each ad display information and corresponding user click feedback, Criteo data set is widely used in many CTR model evaluation. There are 26 anonymous categorical fields and 13 continuous feature fields in Criteo data set. (1) Criteo1データセット： Criteoデータセットは、各広告表示情報とそれに対応するユーザークリックフィードバックを持つ非常に有名な公開実世界ディスプレイ広告データセットとして、多くのCTRモデル評価で広く使用されています。 Criteoのデータセットには、26の匿名カテゴリフィールドと13の連続特徴フィールドがあります。
+- (1) Criteo1 Dataset: As a very famous public real world display ad dataset with each ad display information and corresponding user click feedback, Criteo data set is widely used in many CTR model evaluation. There are 26 anonymous categorical fields and 13 continuous feature fields in Criteo data set.
+  - (1) Criteo1データセット： Criteoデータセットは、**各広告表示情報とそれに対応するユーザクリックフィードバック**を持つ非常に有名な公開実世界ディスプレイ広告データセットとして、多くのCTRモデル評価で広く使用されています。 Criteoのデータセットには、26の匿名カテゴリフィールドと13の連続特徴フィールドがあります。
+- (2) Malware2 Dataset: Malware is a dataset from Kaggle competitions published in the Microsoft Malware prediction. The goal of this competition is to predict a Windows machine’s probability of getting infected. The malware prediction task can be formulated as a binary classification problem like a typical CTR estimation task does.
+  - (2) Malware2 Dataset： Malwareは、MicrosoftのMalware予測で公開されたKaggleコンペティションのデータセットです。 この競技の目的は、Windowsマシンが感染する確率を予測することです。 **マルウェア予測タスクは、典型的なCTR推定タスクがそうであるように、二値分類問題として定式化**することができます。(あ、CTR予測タスクではないんだ!ランキング問題で解く意味があるのかな??)
+- (3) Avazu3 Dataset: The Avazu dataset consists of several days of ad click- through data which is ordered chronologically. For each click data, there are 23 fields which indicate elements of a single ad impression.
+  - (3) Avazu3データセット： Avazuのデータセットは、**数日分の広告クリックスルー・データを時系列に並べたもの**である。 各クリックデータには、1つの広告インプレッションの要素を示す23のフィールドが存在します。
 
-- (2) Malware2 Dataset: Malware is a dataset from Kaggle competitions published in the Microsoft Malware prediction. The goal of this competition is to predict a Windows machine’s probability of getting infected. The malware prediction task can be formulated as a binary classification problem like a typical CTR estimation task does. (2) Malware2 Dataset： Malwareは、MicrosoftのMalware予測で公開されたKaggleコンペティションのデータセットです。 この競技の目的は、Windowsマシンが感染する確率を予測することです。 マルウェア予測タスクは、典型的なCTR推定タスクがそうであるように、二値分類問題として定式化することができます。
-
-- (3) Avazu3 Dataset: The Avazu dataset consists of several days of ad click- through data which is ordered chronologically. For each click data, there are 23 fields which indicate elements of a single ad impression. (3) Avazu3データセット： Avazuのデータセットは、数日分の広告クリックスルー・データを時系列に並べたものである。 各クリックデータには、1つの広告インプレッションの要素を示す23のフィールドが存在します。
-
-We randomly split instances by 8 : 1 : 1 for training , validation and test while Table 1 lists the statistics of the evaluation datasets
+We randomly split instances by 8 : 1 : 1 for training , validation and test while Table 1 lists the statistics of the evaluation datasets(これは時系列に沿ってデータを分けたほうがいいね...!:thinking:)
 表1に評価用データセットの統計値を示す。
+
+![table1]()
 
 ### 4.1.2. Evaluation Metrics. 評価指標
 
 AUC (Area Under ROC) is used in our experiments as the evaluation metric.
 実験では、評価指標としてAUC（Area Under ROC）を用いています。
 AUC’s upper bound is 1 and larger value indicates a better performance.
-AUCの上限は1であり、値が大きいほど性能が優れていることを示す。
+AUCの上限は1であり、値が大きいほど性能が優れていることを示す。(そうか、CTR予測タスクだからAUCでもいいんだ)
 
 RelaImp is also as work [23] does to measure the relative AUC improvements over the corresponding baseline model as another evaluation metric.
-RelaImpはまた、別の評価指標として、対応するベースラインモデルに対する相対的なAUCの改善を測定する作業[23]と同様です。
+RelaImpはまた、別の評価指標として、**対応するベースラインモデルに対する相対的なAUCの改善を測定する**作業[23]と同様です。
 Since AUC is 0.5 from a random strategy, we can remove the constant part of the AUC score and formalize the RelaImp as:
 ランダム戦略からAUCは0.5なので、AUCスコアの定数部分を削除してRelaImpを次のように定式化することができる：
 
 $$
+RelaImp = \frac{AUC(Measured Model) - 0.5}{AUC(Base model) - 0.5} - 1
 \tag{20}
 $$
 
 ### 4.1.3. Models for Comparisons. 比較のためのモデル。
 
 We compare the performance of the following CTR estimation models with our proposed approaches: FM, DNN, DeepFM, Deep&Cross Network(DCN), xDeepFM and AutoInt Model, all of which are discussed in Section 2.
-以下のCTR推定モデルの性能を、我々の提案するアプローチと比較する： FM, DNN, DeepFM, Deep&Cross Network(DCN), xDeepFM, AutoInt Modelであり、これらはすべてセクション2で説明されている。
+以下のCTR推定モデルの性能を、我々の提案するアプローチと比較する: FM, DNN, DeepFM, Deep&Cross Network(DCN), xDeepFM, AutoInt Modelであり、これらはすべてセクション2で説明されている。
 FM is considered as the base model in evaluation.
 FMは評価のベースモデルとして位置づけられています。
 
-### 4.1.4. Implementation Details. 実施内容
+### 4.1.4. Implementation Details.
 
 We implement all the models with Tensorflow in our experiments.
 実験ではすべてのモデルをTensorflowで実装しています。
 For optimization method, we use the Adam with a mini-batch size of 1024 and a learning rate is set to 0.0001.
 最適化手法としては、ミニバッチサイズを1024、学習率を0.0001に設定したAdamを使用する。
 Focusing on neural networks structures in our paper, we make the dimension of field embedding for all models to be a fixed value of 10.
-本稿ではニューラルネットワークの構造に着目し、すべてのモデルでフィールドエンベッディングの次元を10という固定値にしている。
+本稿ではニューラルネットワークの構造に着目し、**すべてのモデルでフィールドエンベッディングの次元を10という固定値**にしている。
 For models with DNN part, the depth of hidden layers is set to 3, the number of neurons per layer is 400, all activation function is ReLU.
 DNN部分を持つモデルについては、隠れ層の深さを3、1層あたりのニューロン数を400、すべての活性化関数をReLUとした。
 For default settings in MaskBlock, the reduction ratio of instance-guided mask is set to 2.
-MaskBlockのデフォルト設定では、インスタンスガイドマスクの縮小率は2に設定されています。
+MaskBlockのデフォルト設定では、インスタンスガイドマスクの**縮小率は2**に設定されています。
 We conduct our experiments with 2 Tesla 𝐾40 GPUs.
-2台のTesla ᵃ40 GPUで実験を行っています。
+2台のTesla K40 GPUで実験を行っています。
 
 ## 4.2. Performance Comparison (RQ1) パフォーマンスの比較（RQ1）
+
+![table2]()
 
 The overall performances of different models on three evaluation datasets are show in the Table 2.
 3つの評価データセットにおける異なるモデルの総合的な性能を表2に示します。
 From the experimental results, we can see that:
 実験結果から、次のことがわかります：
 
-- (1) Both the serial model and parallel model achieve better performance on all three datasets and obtains significant improvements over the state-of-the-art methods. It can boost the accuracy over the baseline FM by 3.12% to 11.40%, baseline DeepFM by 1.55% to 5.23%, as well as xDeepFM baseline by 1.27% to 4.46%. We also conduct a significance test to verify that our proposed models outperforms baselines with the significance level 𝛼 = 0.01. Though maskNet model lacks similar module such as CIN in xDeepFM to explicitly capture high-order feature interaction, it still achieves better performance because of the existence of MaskBlock. The experiment results imply that MaskBlock indeed enhance DNN Model’s ability of capturing complex feature interactions through introducing multiplicative operation into DNN models by instance-guided mask on the normalized feature embedding and feed-forward layer. (1)シリアルモデル、パラレルモデルともに、3つのデータセットでより良い性能を達成し、最先端の手法と比較して大きな改善を得ることができました。 ベースラインFMを3.12%から11.40%、ベースラインDeepFMを1.55%から5.23%、xDeepFMベースラインを1.27%から4.46%の精度で向上させることができます。 また、有意水準𝛼= 0.01で、提案モデルがベースラインを上回ることを検証するために有意性検定を実施した。 maskNetモデルには、xDeepFMのCINのような高次特徴の相互作用を明示的に捉えるモジュールがありませんが、それでもMaskBlockの存在により、より高い性能を達成しています。 実験結果は、MaskBlockが、正規化された特徴埋め込み層とフィードフォワード層にインスタンスガイド付きマスクを適用し、DNNモデルに乗算演算を導入することで、複雑な特徴の相互作用を捉える能力を確かに向上させることを示唆しています。
+- (1) Both the serial model and parallel model achieve better performance on all three datasets and obtains significant improvements over the state-of-the-art methods. It can boost the accuracy over the baseline FM by 3.12% to 11.40%, baseline DeepFM by 1.55% to 5.23%, as well as xDeepFM baseline by 1.27% to 4.46%. We also conduct a significance test to verify that our proposed models outperforms baselines with the significance level 𝛼 = 0.01. Though maskNet model lacks similar module such as CIN in xDeepFM to explicitly capture high-order feature interaction, it still achieves better performance because of the existence of MaskBlock. The experiment results imply that MaskBlock indeed enhance DNN Model’s ability of capturing complex feature interactions through introducing multiplicative operation into DNN models by instance-guided mask on the normalized feature embedding and feed-forward layer. (1)**シリアルモデル、パラレルモデルともに、3つのデータセットでより良い性能を達成し、最先端の手法と比較して大きな改善を得ることができました。** ベースラインFMを3.12%から11.40%、ベースラインDeepFMを1.55%から5.23%、xDeepFMベースラインを1.27%から4.46%の精度で向上させることができます。 また、有意水準𝛼= 0.01で、提案モデルがベースラインを上回ることを検証するために有意性検定を実施した。 maskNetモデルには、xDeepFMのCINのような高次特徴の相互作用を明示的に捉えるモジュールがありませんが、それでもMaskBlockの存在により、より高い性能を達成しています。 実験結果は、MaskBlockが、正規化された特徴埋め込み層とフィードフォワード層にインスタンスガイド付きマスクを適用し、DNNモデルに乗算演算を導入することで、複雑な特徴の相互作用を捉える能力を確かに向上させることを示唆しています。
 
 - (2) As for the comparison of the serial model and parallel model, the experimental results show comparable performance on three evaluation datasets. It explicitly proves that MaskBlock is an effective basic building unit for composing various high performance ranking systems. (2) シリアルモデルとパラレルモデルの比較については、3つの評価データセットにおいて、実験結果は同等の性能を示しています。 MaskBlockが様々な高性能ランキングシステムを構成するための有効な基本構成単位であることを明示的に証明しています。
 
 ## 4.3. Ablation Study of MaskBlock (RQ2) MaskBlockのアブレーション研究 (RQ2)
 
 In order to better understand the impact of each component in MaskBlock, we perform ablation experiments over key components of MaskBlock by only removing one of them to observe the performance change, including mask module, layer normalization(LN) and feed-forward network(FFN).
-MaskBlockの各コンポーネントの影響をより理解するために、MaskBlockの主要コンポーネントであるマスクモジュール、レイヤー正規化（LN）、フィードフォワードネットワーク（FFN）のうち1つだけを削除するアブレーション実験を行い、性能変化を観察しました。
+MaskBlockの各コンポーネントの影響をより理解するために、MaskBlockの主要コンポーネントであるマスクモジュール、レイヤー正規化（LN）、フィードフォワードネットワーク（FFN）のうち**1つだけを削除するアブレーション実験**を行い、性能変化を観察しました。
 Table 3 shows the results of our two full version MaskNet models and its variants removing only one component.
 表3は、MaskNetの2つのフルモデルと、1つのコンポーネントだけを取り除いたバリエーションモデルの結果です。
 
+![table3]()
+
 From the results in Table 3, we can see that removing either instance-guided mask or layer normalization will decrease model’s performance and this implies that both the instance-guided mask and layer normalization are necessary components in MaskBlock for its effectiveness.
-表3の結果から、インスタンスガイド付きマスクとレイヤー正規化のどちらかを削除するとモデルの性能が低下することがわかり、インスタンスガイド付きマスクとレイヤー正規化の両方がMaskBlockの有効性を高めるために必要なコンポーネントであることが示唆されました。
+表3の結果から、**インスタンスガイド付きマスクとレイヤー正規化のどちらかを削除するとモデルの性能が低下することがわかり**、インスタンスガイド付きマスクとレイヤー正規化の両方がMaskBlockの有効性を高めるために必要なコンポーネントであることが示唆されました。
 As for the feed-forward layer in MaskBlock, its effect on serial model or parallel model shows difference.
 MaskBlockのフィードフォワード層については、シリアルモデルとパラレルモデルで効果が異なる。
 The Serial model’s performance dramatically degrades while it seems do no harm to parallel model if we remove the feed-forward layer in MaskBlock.
@@ -679,13 +688,15 @@ For parallel model, the multiple feed-forward layers above parallel MaskBlocks h
 ## 4.4. Hyper-Parameter Study(RQ3) ハイパーパラメーター研究(RQ3)
 
 In the following part of the paper, we study the impacts of hyperparameters on two MaskNet models, including 1) the number of feature embedding size; 2) the number of MaskBlock; and 3) the reduction ratio in instance-guided mask module.
-本論文の以下の部分では、2つのMaskNetモデルに対するハイパーパラメータの影響について、1）特徴埋め込みサイズの数、2）MaskBlockの数、3）インスタンス誘導型マスクモジュールの削減率について研究している。
+本論文の以下の部分では、2つのMaskNetモデルに対するハイパーパラメータの影響について、1）特徴量埋め込みサイズの数、2）MaskBlockの数、3）インスタンス誘導型マスクモジュールの**削減率**について研究している。
 The experiments are conducted on Criteo dataset via changing one hyper-parameter while holding the other settings.
 Criteoデータセットにおいて、1つのハイパーパラメータを変更し、他の設定を維持したまま実験を行った。
 The hyper-parameter experiments show similar trend in other two datasets.
-ハイパーパラメータの実験では、他の2つのデータセットでも同様の傾向が見られた。
+ハイパーパラメータの実験では、他の2つのデータセットでも同様の傾向が見られた。(ふむ)
 
 ### 4.4.1. Number of Feature Embedding Size. 特徴量埋め込みサイズの数。
+
+![table4]()
 
 The results in Table 4 show the impact of the number of feature embedding size on model performance.
 表4の結果は、特徴量埋め込みサイズの数がモデルの性能に与える影響を示している。
@@ -697,6 +708,8 @@ The experimental results tell us the models benefit from larger feature embeddin
 実験結果は、モデルがより大きな特徴量埋め込みサイズの恩恵を受けることを物語っています。
 
 ### 4.4.2. Number of MaskBlock. MaskBlockの数
+
+![table5]()
 
 For understanding the influence of the number of MaskBlock on model’s performance, we conduct experiments to stack MaskBlock from 1 to 9 blocks for both MaskNet models.
 MaskBlockの数がモデルの性能に与える影響を理解するため、MaskNetの両モデルについて、MaskBlockを1ブロックから9ブロックまで積み上げる実験を行いました。
@@ -711,22 +724,25 @@ This may indicates that more experts boost the ParaMaskNet model’s performance
 
 ### 4.4.3. Reduction Ratio in Instance-Guided Mask. インスタンス誘導マスクにおける削減率。
 
+![table6]()
+
 In order to explore the influence of the reduction ratio in instance-guided mask, We conduct some experiments to adjust the reduction ratio from 1 to 5 by changing the size of aggregation layer.
-インスタンス誘導型マスクにおける削減率の影響を探るため、集約層の大きさを変えて削減率を1～5まで調整する実験を行った。
+インスタンス誘導型マスクにおける削減率の影響を探るため、**集約層の大きさを変えて削減率**を1～5まで調整する実験を行った。
 Experimental results are shown in Table 6 and we can observe that various reduction ratio has little influence on model’s performance.
 実験結果を表6に示すが、様々な縮小率がモデルの性能にほとんど影響を与えないことがわかる。
 This indicates that we can adopt small reduction ratio in aggregation layer in real life applications for saving the computation resources.
-このことは、実際のアプリケーションにおいて、計算資源を節約するために、集約層の縮小率を小さくすることを採用できることを示しています。
+このことは、実際のアプリケーションにおいて、**計算資源を節約するために、集約層の縮小率を小さくすることを採用できる**ことを示しています。
 
 ## 4.5. Instance-Guided Mask Study(RQ4) インスタンス誘導型マスク研究(RQ4)
 
 As discussed in Section in 3.2, instance-guided mask can be regarded as a special kind of bit-wise attention mechanism to highlight important information based on the current input instance.
-3.2節で述べたように、インスタンス誘導型マスクは、現在の入力インスタンスに基づいて重要な情報を強調する特殊な種類のビット単位の注意メカニズムとしてみなすことができる。
+3.2節で述べたように、インスタンス誘導型マスクは、現在の入力インスタンスに基づいて重要な情報を強調する特殊な種類のbit単位(=特徴量埋め込みのelement単位?)のattentionメカニズムとしてみなすことができる。
 We can utilize instance-guided mask to boost the informative elements and suppress the uninformative elements or even noise in feature embedding and feed-forward layer.
-特徴埋め込みとフィードフォワード層で、情報量の多い要素を高め、情報量の少ない要素やノイズを抑制するために、インスタンスガイド付きマスクを利用することができます。
+**特徴量埋め込みとフィードフォワード層で、情報量の多い要素を高め、情報量の少ない要素やノイズを抑制するために、インスタンスガイド付きマスクを利用することができます**。
 
 To verify this, we design the following experiment: After training the SerMaskNet with 3 blocks, we input different instances into the model and observe the outputs of corresponding instance-guided masks.
-これを検証するために、次のような実験を計画した： SerMaskNetを3ブロック学習させた後、異なるインスタンスをモデルに入力し、対応するインスタンス誘導型マスクの出力を観察する。
+これを検証するために、次のような実験を計画した：
+SerMaskNetを3ブロック学習させた後、異なるインスタンスをモデルに入力し、対応するインスタンス誘導型マスクの出力を観察する。
 
 Firstly, we randomly sample 100000 different instances from Criteo dataset and observe the distributions of the produced values by instance-guided mask from different blocks.
 まず、Criteoデータセットから100000個の異なるインスタンスをランダムにサンプリングし、異なるブロックからインスタンス誘導型マスクによる生成値の分布を観察します。
@@ -737,22 +753,25 @@ We can see that the distribution of mask values follow normal distribution.
 Over 50% of the mask values are small number near zero and only little fraction of the mask value is a relatively larger number.
 マスク値の50％以上はゼロに近い小さな数で、相対的に大きな数のマスク値はごくわずかです。
 This implies that large fraction of signals in feature embedding and feed-forward layer is uninformative or even noise which is suppressed by the small mask values.
-このことは、特徴埋め込み層とフィードフォワード層の信号の大部分は、小さなマスク値によって抑制された情報量の少ない、あるいはノイズであることを意味する。
+このことは、**特徴量埋め込み層とフィードフォワード層の信号の大部分は、小さなマスク値によって抑制された情報量の少ない、あるいはノイズであることを意味する**。(??)
 However, there is some informative information boosted by larger mask values through instance-guided mask.
 しかし、インスタンスガイド型マスクにより、マスクの値を大きくすることで、情報量が増えることもある。
+
+![fig6]()
 
 Secondly, we randomly sample two instances and compare the difference of the produced values by instance-guided mask.
 次に、2つのインスタンスをランダムにサンプリングし、インスタンス誘導型マスクによる生成値の差を比較します。
 The results are shown in Figure 6.
 その結果を図6に示します。
 We can see that: As for the mask values for feature embedding, different input instances lead the mask to pay attention to various areas.
-ということがわかる： 特徴埋込のためのマスク値については、入力インスタンスの違いにより、マスクが様々な領域に注目するようになります。
+以下のことがわかる：
+特徴量埋込のためのマスク値については、入力インスタンスの違いにより、マスクが様々な領域に注目するようになります。
 The mask outputs of instance A pay more attention to the first few features and the mask values of instance B focus on some bits of other features.
 インスタンスAのマスク出力は最初の数個の特徴量に注目し、インスタンスBのマスク値は他の特徴量の一部のビットに注目する。
 We can observe the similar trend in the mask values in feed-forward layer.
 フィードフォワード層でのマスク値も同様の傾向が見られる。
 This indicates the input instance indeed guide the mask to pay attention to the different part of the feature embedding and feed-forward layer.
-これは、入力インスタンスが、特徴埋め込み層とフィードフォワード層の異なる部分に注意を払うよう、マスクを確かに誘導していることを示しています。
+これは、**入力インスタンスが、特徴量埋め込み層とフィードフォワード層の異なる部分に注意を払うよう、マスクを確かに誘導していることを示しています**。(??)
 
 # 5. Conclusion 結論
 

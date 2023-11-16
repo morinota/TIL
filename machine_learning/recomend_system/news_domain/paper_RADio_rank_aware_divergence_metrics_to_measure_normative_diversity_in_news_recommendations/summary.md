@@ -216,7 +216,7 @@ Learning To Rank (LTR) の文献 [67, 85]、ひいては従来のdescriptive div
 ランキング関連性指標であるMean Reciprocal Rank (MRR) と Normalized Discounted Cumulative Gain (NDCG) は，LTR [14, 36]，**特にニュース推薦 [80] でよく用いられるrank-aware metrics である**.
 
 rank-awareな$Q^∗$と任意でrank-awareな $P^∗$で、rank-awareなf-DivergenceメトリックであるRADioを定式化する.
-LTRの文献に沿って、まず、推薦リストRの各アイテム $i$ を与えて、ランク付けされた推薦セット$Q^*$の 離散確率分布(=確率質量関数?)を定義する.
+LTRの文献に沿って、まず、推薦リストRの各アイテム $i$ を与えて、ランク付けされた推薦セット$Q^*$の 離散確率分布(=確率質量関数?)を定義する. (アスタリスクはrank付けされた確率分布関数を意味する?)
 
 $$
 Q^*(x) = \frac{\sum_{i} w_{R_i} 1_{i \in x}}{\sum_{i} w_{R_i}}
@@ -299,7 +299,7 @@ off-the-shelf(市販?)のsentiment analysis(感情分析?)ツールの多くは�
 (Activationは 肯定的な記事ばっかり推薦してしまってないか、逆に否定的な記事ばっかり推薦してしまってないか、みたいな意味合いのmetric...??)
 値が極端であればあるほど、表現されたpositive/negativeの感情が強いことを意味する.
 [71]で提案されたように、本論文では1つの記事で表現された感情の高さ(?)、したがって activation のレベルを決定するための近似値として記事のabsolute sentiment score を使用する.
-$P(k|S)$ は、その時点で利用可能だったアイテムプール内の(ビン詰め)記事$S$(=推薦可能アイテムリスト?)のActivation Score $k$ の分布を示す.
+$P(k|S)$ は、その時点で利用可能だったアイテムプール内の記事$S$(=推薦可能アイテムリスト?)のActivation Score $k$ (ビン詰め) の分布を示す.
 $Q^*(k|R)$ は、同様に、rank-aware推薦リスト分布(=一方で、推薦されたアイテムリスト?)におけるbinned のActivation scores について表現するもの.
 
 $$
