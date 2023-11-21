@@ -2,7 +2,7 @@
 
 published date: 13 October 2022,
 authors: Sanne Vrijenhoek, Gabriel Bénédict, Mateo Gutierrez Granada, Daan Odijk, Maarten de Rijke
-url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
+url(paper): https://arxiv.org/abs/2209.13520
 (勉強会発表者: morinota)
 
 ---

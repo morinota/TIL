@@ -61,17 +61,19 @@ title-slide-attributes:
 
 ## 5種類のdiversity metrics
 
-4種のメディアモデルによって"目指すべき多様性"の価値と意味合いが異なる。本論文では、**各メディアモデルが推薦システムに期待する性質**から導出した、**5つのdiversity metrics**を提案:
+前述した4種のメディアモデルによって"目指すべき多様性"の価値と意味合いが異なる。本論文では、**各メディアモデルが推薦システムに期待する性質**から導出した、**5つのdiversity metrics**を提案:
 
 :::: {.columns}
 
 ::: {.column width="50%"}
 
-- Calibration: hogehoge
-- Fragmentation: hogehoge
-- Activation: hogehoge
-- Representation:
+- Calibration
+- Fragmentation
+- Activation
+- Representation
 - Alternative Voices
+
+(論文では、これらの性質を満たす為の導出過程とか考えが丁寧に記述されてた。JS-Divergenceを選ぶ理由とか、rank-awareにする上での重み付け方法の選択とか。)
 
 :::
 
@@ -79,16 +81,14 @@ title-slide-attributes:
 
 全metricsに共通する性質:
 
-- distance metric。
-- ２つの確率分布間のJS-Divergence。
+- distance metric(同一性, 対称性, 三角形の不等式)。
+- ２つの離散分布間のJS-Divergence。
 - 異なる推薦モデル間や異なるmetric間で比較したいので、全て値域が $[0; 1]$。(0に近いほど2つの分布の距離が近い)
-- rank付けした推薦に適用したいので、rank情報を持った離散分布に適用可能。(rank-awareな指標)
+- rank情報を持った離散分布に適用可能。(rank-awareな指標)
 
 :::
 
 ::::
-
-(論文では、これらの性質を満たす為の導出過程とか考えが丁寧に記述されてた。らrank-awareにする上での重み付け方法の選択とか。)
 
 ## 5種類のdiversity metrics ① Calibration
 
@@ -167,9 +167,7 @@ $$
 :::
 ::::
 
-ここで、$P$ と $Q$ は異なる2つの離散確率関数。添字 $*$ は、rankで重み付けされた確率関数である事を意味する。 $k$ は、記事のactivation score(=positiveかnegativeか)を表す確率変数。
-
-なお、記事のactivation scoreは、論文ではテキストのsentiment analysis(感情分析?)等で得る事を想定していた。
+ここで、$P$ と $Q$ は異なる2つの離散確率関数。添字 $*$ は、rankで重み付けされた確率関数である事を意味する。 $k$ は、記事のactivation score(=positiveかnegativeか)を表す確率変数。(論文ではテキストのsentiment analysisで得る事を想定)
 
 ## 5種類のdiversity metrics ④ Representation
 
@@ -177,7 +175,7 @@ $$
 
 ::: {.column width="50%"}
 
-- 「viewpoint(ex. 政治的トピックや政党の言及など)の多様性」の度合いを反映したもの。
+- 「視点(ex. 政治的トピックや政党の言及など)の多様性」の度合いを反映したもの。
   - 記事プール $S$ と、推薦記事リスト $R$ のviewpoint(離散値を想定) の分布間の距離を表す。
 
 $$
@@ -196,20 +194,53 @@ $$
 ::::
 
 ここで、$P$ と $Q$ は異なる2つの離散確率関数。添字 $*$ はrankで重み付けされた確率関数の意味。 $p$ は 記事のviewpointを表す離散変数。
+(記事のメタデータをNLPパイプラインに通してviewpointを作る)
 
-(どうやって記事のメタデータとしてviewpointを作れるだろう...:thinking:)
+## 5種類のdiversity metrics ⑤ Alternative Voices
 
-# NewsPicksにおけるRADioの活用可能性に思いを馳せてみた。
+:::: {.columns}
 
-# RADioの活用例を考えた① 推論結果の品質モニタリング
+::: {.column width="50%"}
 
-MLOps Maturity Assessmentや Booking.comの論文でも主張されているが、バッチ推論でもオンライン推論でも、推論結果の品質をモニタリングし、異常があれば早期に検知する事は重要。
+- 「意見の声の持ち主(Minority or Majority)の多様性」に着目してる。(Representationは意見の中身の多様性)
+  - 記事プール $S$ と、推薦記事リスト $R$ のviewpointの持ち主の分布間の距離を表す。
 
-## 推論結果の品質モニタリング指標としてのRADio
+$$
+AlternativeVoices = D_{JS}(P(m|S), Q^*(m|R))
+% = \sum_{m} Q^*(m|R) f(\frac{P(m|S)}{Q^*(m|R)})
+\tag{11}
+$$
 
-- hoge
+:::
 
-# RADioの活用例を考えた② 推薦モデルのオフライン評価
+::: {.column width="50%"}
+
+2つのbinary分布のイメージ図、みたいなやつ。
+
+:::
+::::
+
+ここで、$P$ と $Q$ は異なる2つの離散確率関数。添字 $*$ はrankで重み付けされた確率関数の意味。 $m \in \{Minority, Majority\}$ は離散変数。
+
+## メディアモデルとRADioの関係
+
+<!-- メディアモデルとmetricsの対応表 -->
+
+![](https://imgur.com/RZ46Wz5)
+
+- 表1はメディアモデルとRADioの各指標との関連性
+  - ex) 自由主義モデルはユーザの好みに合わせた情報を提供したい -> 低いCalibrationと高いFragmentationを持つアルゴリズム
+  - ex) 参加主義モデルは社会で必要な共通認識を各ユーザに分かりやすい形で提供したい -> 高いCalibration(complexity)と低いFragmentationを持つアルゴリズム
+
+異なるアルゴリズムのRADioの各値を比較する事で、開発者はどの手法が各メディアが求める機能に適しているか、定量評価できる。
+
+# ここからはRADioの活用可能性に思いを馳せてみた話
+
+## 推論結果の品質モニタリング
+
+- MLOps Maturity Assessmentや Booking.comの論文でも主張されているが、バッチ推論でもオンライン推論でも、推論結果の品質をモニタリングし、異常があれば早期に検知する事は重要。
+
+## 推薦モデルのオフライン評価
 
 ## オフライン評価難しい問題
 

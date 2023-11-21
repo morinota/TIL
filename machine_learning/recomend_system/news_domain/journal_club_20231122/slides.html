@@ -392,27 +392,27 @@
 </section>
 <section id="種類のdiversity-metrics" class="slide level2">
 <h2>5種類のdiversity metrics</h2>
-<p>4種のメディアモデルによって”目指すべき多様性”の価値と意味合いが異なる。本論文では、<strong>各メディアモデルが推薦システムに期待する性質</strong>から導出した、<strong>5つのdiversity metrics</strong>を提案:</p>
+<p>前述した4種のメディアモデルによって”目指すべき多様性”の価値と意味合いが異なる。本論文では、<strong>各メディアモデルが推薦システムに期待する性質</strong>から導出した、<strong>5つのdiversity metrics</strong>を提案:</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Calibration: hogehoge</li>
-<li>Fragmentation: hogehoge</li>
-<li>Activation: hogehoge</li>
-<li>Representation:</li>
+<li>Calibration</li>
+<li>Fragmentation</li>
+<li>Activation</li>
+<li>Representation</li>
 <li>Alternative Voices</li>
 </ul>
+<p>(論文では、これらの性質を満たす為の導出過程とか考えが丁寧に記述されてた。JS-Divergenceを選ぶ理由とか、rank-awareにする上での重み付け方法の選択とか。)</p>
 </div><div class="column" style="width:50%;">
 <p>全metricsに共通する性質:</p>
 <ul>
-<li>distance metric。</li>
-<li>２つの確率分布間のJS-Divergence。</li>
+<li>distance metric(同一性, 対称性, 三角形の不等式)。</li>
+<li>２つの離散分布間のJS-Divergence。</li>
 <li>異なる推薦モデル間や異なるmetric間で比較したいので、全て値域が <span class="math inline">\([0; 1]\)</span>。(0に近いほど2つの分布の距離が近い)</li>
-<li>rank付けした推薦に適用したいので、rank情報を持った離散分布に適用可能。(rank-awareな指標)</li>
+<li>rank情報を持った離散分布に適用可能。(rank-awareな指標)</li>
 </ul>
 </div>
 </div>
-<p>(論文では、これらの性質を満たす為の導出過程とか考えが丁寧に記述されてた。らrank-awareにする上での重み付け方法の選択とか。)</p>
 </section>
 <section id="種類のdiversity-metrics-①-calibration" class="slide level2">
 <h2>5種類のdiversity metrics ① Calibration</h2>
@@ -476,24 +476,76 @@ Activation = D_{JS}(P(k|S), Q^*(k|R))
 <p>分布のイメージ図、みたいなやつ。</p>
 </div>
 </div>
-<p>ここで、<span class="math inline">\(P\)</span> と <span class="math inline">\(Q\)</span> は異なる2つの離散確率関数。添字 <span class="math inline">\(*\)</span> は、rankで重み付けされた確率関数である事を意味する。 <span class="math inline">\(k\)</span> は、記事のactivation score(=positiveかnegativeか)を表す確率変数。</p>
-<p>記事のactivation scoreは、論文ではテキストのsentiment analysis(感情分析?)等で得る事を想定していた。</p>
+<p>ここで、<span class="math inline">\(P\)</span> と <span class="math inline">\(Q\)</span> は異なる2つの離散確率関数。添字 <span class="math inline">\(*\)</span> は、rankで重み付けされた確率関数である事を意味する。 <span class="math inline">\(k\)</span> は、記事のactivation score(=positiveかnegativeか)を表す確率変数。(論文ではテキストのsentiment analysisで得る事を想定)</p>
 </section>
-<section>
-<section id="radioの活用例を考えた①-推論結果の品質モニタリング" class="title-slide slide level1 center">
-<h1>RADioの活用例を考えた① 推論結果の品質モニタリング</h1>
-<p>MLOps Maturity Assessmentや Booking.comの論文でも主張されているが、バッチ推論でもオンライン推論でも、推論結果の品質をモニタリングし、異常があれば早期に検知する事は重要。</p>
-</section>
-<section id="推論結果の品質モニタリング指標としてのradio" class="slide level2">
-<h2>推論結果の品質モニタリング指標としてのRADio</h2>
+<section id="種類のdiversity-metrics-④-representation" class="slide level2">
+<h2>5種類のdiversity metrics ④ Representation</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <ul>
-<li>hoge</li>
+<li>「視点(ex. 政治的トピックや政党の言及など)の多様性」の度合いを反映したもの。
+<ul>
+<li>記事プール <span class="math inline">\(S\)</span> と、推薦記事リスト <span class="math inline">\(R\)</span> のviewpoint(離散値を想定) の分布間の距離を表す。</li>
+</ul></li>
 </ul>
-</section></section>
-<section>
-<section id="radioの活用例を考えた②-推薦モデルのオフライン評価" class="title-slide slide level1 center">
-<h1>RADioの活用例を考えた② 推薦モデルのオフライン評価</h1>
+<p><span class="math display">\[
+Representation = D_{JS}(P(p|S), Q^*(p|R))
+% = \sum_{p} Q^*(p|R) f(\frac{P(p|S)}{Q^*(p|R)})
+\tag{10}
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p>分布のイメージ図、みたいなやつ。</p>
+</div>
+</div>
+<p>ここで、<span class="math inline">\(P\)</span> と <span class="math inline">\(Q\)</span> は異なる2つの離散確率関数。添字 <span class="math inline">\(*\)</span> はrankで重み付けされた確率関数の意味。 <span class="math inline">\(p\)</span> は 記事のviewpointを表す離散変数。 (記事のメタデータをNLPパイプラインに通してviewpointを作る)</p>
+</section>
+<section id="種類のdiversity-metrics-⑤-alternative-voices" class="slide level2">
+<h2>5種類のdiversity metrics ⑤ Alternative Voices</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>「意見の声の持ち主(Minority or Majority)の多様性」に着目してる。(Representationは意見の中身の多様性)
+<ul>
+<li>記事プール <span class="math inline">\(S\)</span> と、推薦記事リスト <span class="math inline">\(R\)</span> のviewpointの持ち主の分布間の距離を表す。</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+AlternativeVoices = D_{JS}(P(m|S), Q^*(m|R))
+% = \sum_{m} Q^*(m|R) f(\frac{P(m|S)}{Q^*(m|R)})
+\tag{11}
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p>2つのbinary分布のイメージ図、みたいなやつ。</p>
+</div>
+</div>
+<p>ここで、<span class="math inline">\(P\)</span> と <span class="math inline">\(Q\)</span> は異なる2つの離散確率関数。添字 <span class="math inline">\(*\)</span> はrankで重み付けされた確率関数の意味。 <span class="math inline">\(m \in \{Minority, Majority\}\)</span> は離散変数。</p>
+</section>
+<section id="メディアモデルとradioの関係" class="slide level2">
+<h2>メディアモデルとRADioの関係</h2>
+<!-- メディアモデルとmetricsの対応表 -->
 
+<img data-src="https://imgur.com/RZ46Wz5.png" class="r-stretch"><ul>
+<li>表1はメディアモデルとRADioの各指標との関連性
+<ul>
+<li>ex) 自由主義モデルはユーザの好みに合わせた情報を提供したい -&gt; 低いCalibrationと高いFragmentationを持つアルゴリズム</li>
+<li>ex) 参加主義モデルは社会で必要な共通認識を各ユーザに分かりやすい形で提供したい -&gt; 高いCalibration(complexity)と低いFragmentationを持つアルゴリズム</li>
+</ul></li>
+</ul>
+<p>異なるアルゴリズムのRADioの各値を比較する事で、開発者はどの手法が各メディアが求める機能に適しているか、定量評価できる。</p>
+</section>
+<section>
+<section id="ここからはradioの活用可能性に思いを馳せてみた話" class="title-slide slide level1 center">
+<h1>ここからはRADioの活用可能性に思いを馳せてみた話</h1>
+
+</section>
+<section id="推論結果の品質モニタリング" class="slide level2">
+<h2>推論結果の品質モニタリング</h2>
+<ul>
+<li>MLOps Maturity Assessmentや Booking.comの論文でも主張されているが、バッチ推論でもオンライン推論でも、推論結果の品質をモニタリングし、異常があれば早期に検知する事は重要。</li>
+</ul>
+</section>
+<section id="推薦モデルのオフライン評価" class="slide level2">
+<h2>推薦モデルのオフライン評価</h2>
 </section>
 <section id="オフライン評価難しい問題" class="slide level2">
 <h2>オフライン評価難しい問題</h2>
