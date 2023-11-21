@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.336">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>summary</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="summary_files/libs/clipboard/clipboard.min.js"></script>
+<script src="summary_files/libs/quarto-html/quarto.js"></script>
+<script src="summary_files/libs/quarto-html/popper.min.js"></script>
+<script src="summary_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="summary_files/libs/quarto-html/anchor.min.js"></script>
+<link href="summary_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="summary_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="summary_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="summary_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="summary_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="successful-machine-learning-models-6-lessons-learned-at-booking.com" class="level1">
+<h1>150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com</h1>
+<p>published date: August, 2019 authors: Lucas Bernardi , Themis Mavridis, Pablo Estevez url(paper): https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf (勉強会発表者: morinota)</p>
+<hr>
+<section id="どんなもの" class="level2">
+<h2 class="anchored" data-anchor-id="どんなもの">どんなもの?</h2>
+<ul>
+<li>宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)</li>
+<li>教訓1は、プロダクト開発において機械学習を色んな用途・文脈で活用できている話: 特定のusecaseに特化した<strong>specializedなモデル</strong> と 様々なusecaseで活用可能性がある<strong>semanticなモデル</strong>。(semanticなモデル良いね…!:thinking:)</li>
+<li>教訓2は、機械学習モデルのオフライン評価指標とオンラインでのビジネス指標との間に相関がなかった話。</li>
+<li>教訓3は、機械学習で解かせるべき問題設定をよく考え続けよう、という話。</li>
+<li>教訓4は、レイテンシー大事という話。</li>
+<li>教訓5は、モデルの推論結果の品質のモニタリングの話。(応答分布分析良いね…!:thinking:)</li>
+<li>教訓6は、RCTの実験デザイン頑張ってる話。</li>
+</ul>
+</section>
+<section id="先行研究と比べて何がすごい" class="level2">
+<h2 class="anchored" data-anchor-id="先行研究と比べて何がすごい">先行研究と比べて何がすごい？</h2>
+<ul>
+<li>機械学習に関する文献のほとんどは、アルゴリズムや数学的な側面に焦点を当てている。</li>
+<li>しかし、<strong>商業的な利益が最優先される産業分野において、機械学習がどのように有意義なインパクトをもたらすことができるか</strong>については、あまり発表されていない。
+<ul>
+<li>さらにその中で、機械学習を通じてビジネスとユーザの価値を得るための製品開発とテストの全体的なプロセスを研究した先行研究はない。</li>
+</ul></li>
+<li>本論文では、Booking.comの何十ものチームによって開発され、世界中の何億人ものユーザに公開され、厳密なランダム化比較試験によって検証された、機械学習アプリケーションの成功例約150件の分析を行い、そこで得られた教訓を発表している。(まず機械学習サービスを開発するチームがいくつもある(?)の凄いな…!:thinking:)</li>
+<li>本論文の貢献:
+<ul>
+<li>商業製品における機械学習の影響に関する大規模な調査。</li>
+<li>機械学習プロジェクトの全段階を網羅した「教訓集」</li>
+<li>プロジェクトの各段階で見つかった課題に対処するための一連のテクニック</li>
+</ul></li>
+</ul>
+</section>
+<section id="技術や手法の肝は" class="level2">
+<h2 class="anchored" data-anchor-id="技術や手法の肝は">技術や手法の肝は？</h2>
+<p>以下に6つの各教訓で、個人的に気になった点をまとめていく。</p>
+<section id="教訓1-機械学習はプロダクト開発におけるスイスナイフである多機能で色んな用途に使える例え" class="level3">
+<h3 class="anchored" data-anchor-id="教訓1-機械学習はプロダクト開発におけるスイスナイフである多機能で色んな用途に使える例え">教訓1: 機械学習は、プロダクト開発におけるスイスナイフである(=多機能で色んな用途に使える例え)</h3>
+<ul>
+<li>機械学習は、多くの異なるプロダクトの開発や改善の為に、大きく異なる文脈(ex. 特定のusecaseに特化した<strong>specializedなモデル</strong>、様々なusecaseで活用可能性がある<strong>semanticなモデル</strong>)で利用する事ができる。</li>
+<li>特定のusecaseに特化したspecializedなモデル:</li>
+<li>様々なusecaseで活用可能性があるsemanticなモデル(=意味モデル?):
+<ul>
+<li><strong>理解しやすい概念をモデル化する</strong>
+<ul>
+<li>(定量化できていないユーザの特徴を、MLモデルを使ってモデル化する、みたいな??:thinking:)</li>
+<li>ex) 「ユーザが旅行の目的地に対してどの程度フレキシブルであるか」を定量化するモデルを作り、<strong>プロダクトチーム全体にdestination-flexibilityの概念を与える</strong>ことで、プロダクトの改善に役立てることができる。(MLチーム以外も理解・活用できる汎用的な特徴量を作る、みたいなイメージ…めちゃいいね!:thinking:)</li>
+</ul></li>
+<li>semanticモデルにより、<strong>商品開発に携わる全ての人がモデルの出力に基づいて</strong>、新機能やパーソナライゼーション、説得力のある意思決定などに導入できるようになる。(semanticなモデルいいなぁ…:thinking:)</li>
+<li>semanticモデルは、プロダクトチームが使用したいすべてのcontextで有効な、<strong>解釈可能なシグナル(=出力?)を提供</strong>する。</li>
+</ul></li>
+<li>論文の分析では、<strong>各semanticモデルは平均して、specializedなモデルよりも2倍のusecaseを生成していた</strong>とのこと。</li>
+</ul>
+</section>
+<section id="教訓2-モデルのオフライン評価は健康診断に過ぎない" class="level3">
+<h3 class="anchored" data-anchor-id="教訓2-モデルのオフライン評価は健康診断に過ぎない">教訓2: モデルのオフライン評価は健康診断に過ぎない</h3>
+<ul>
+<li>非常に興味深い発見: モデルの性能(=オフラインで測定できるやつ!)を上げても、必ずしもユーザとビジネスへの価値を向上できるとは限らない。なので<strong>Booking.comにおけるオフライン評価は、アルゴリズムが我々の望むことを行っているかどうかを確認するための、健康診断に過ぎない</strong>。</li>
+<li>図4を見ると、「オフラインでのモデル性能の推定値(横軸)」と「RCTで観察されたビジネス指標(縦軸)」に相関がない。(ピアソン相関は-0.1、スピアマン相関は-0.18)
+<ul>
+<li>論文では、この相関性の欠如は、「オフラインとオンラインの性能差」ではなく、「<strong>オフラインでのパフォーマンス向上とビジネス価値向上の差</strong>」にあることを強調している。</li>
+<li>また、この結果は特定のusecase、特定のcontext、特定のビジネス指標を対象にしたものなので、必ずしも<strong>この結果の一般性を主張しているわけではない</strong>。</li>
+<li>あくまで特定のusecaseにおける分析結果だと言いつつも、Booking.comの他のusecaseも調査したところ、一貫して同じパターンが観測されたとのこと。</li>
+</ul></li>
+<li><strong>オフライン指標がビジネス指標とほぼ一致する場合のみ、相関関係が観察される</strong>。(ex. オフライン評価ではnDCGを評価してて、ビジネス指標ではCTRを見ている場合は、どうなんだろう?:thinking:)</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src=".png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">fig4</figcaption>
+</figure>
+</div>
+</section>
+<section id="教訓3-問題を解かせる前に解かせるべき問題をデザインする" class="level3">
+<h3 class="anchored" data-anchor-id="教訓3-問題を解かせる前に解かせるべき問題をデザインする">教訓3: 問題を解かせる前に、解かせるべき問題をデザインする</h3>
+<ul>
+<li>目の前のusecaseの解決に貢献できる機械学習モデルを作る上で基本的な最初のステップは、<strong>機械学習問題を「設定」すること</strong>であり、このステップに集中することが重要。</li>
+<li>問題デザイン手順は、usecaseやconceptを入力とし、明確に定義されたモデリング問題(ex. 教師あり機械学習問題)を決定する。
+<ul>
+<li>しかしusecaseやconceptの内容によっては目的変数が観測されないケースもあるので、注意深くデザインする必要あり。(場合によっては予測したい値が観測できず、代理学習問題を設計する必要がある、みたいな??:thinking:)</li>
+<li>ex) ユーザの”日付の柔軟性”を出力するsemanticモデルの問題デザイン:
+<ul>
+<li>“日付の柔軟性”の定義によって、異なる学習問題が検討される
+<ul>
+<li>“日付の柔軟性” = ユーザが一般的なユーザよりも多くの代替日を検討する度合い -&gt; ユーザがいくつの代替日を検討するを予測する学習問題,</li>
+<li>“日付の柔軟性” = 最終的に予約する日程が今見ている日程と異なる度合い -&gt; 日付を変更する確率を推定する学習問題</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>特定のusecaseの機械学習モデルの価値を向上させる為に、モデルを改善するのが最も明白な方法だけど、<strong>問題設定そのものを変える事も有効</strong>。
+<ul>
+<li>Booking.comでの成功例
+<ul>
+<li>滞在時間の長さを予測する回帰問題 -&gt; 多クラス分類問題 (=ユーザが長期旅行しがち度合いを出力するsemanticモデル??)</li>
+<li>クリックデータに基づくユーザ嗜好モデル -&gt; 宿泊客のレビューデータに関する自然言語処理問題 (このusecaseはユーザの嗜好を予測する事?)</li>
+</ul></li>
+</ul></li>
+<li>一般的に、<strong>最良の問題設定はすぐに思い浮かぶものではなく、問題設定を変えることが価値を引き出す非常に効果的な方法だった</strong>。</li>
+</ul>
+</section>
+<section id="教訓4-時は金なり" class="level3">
+<h3 class="anchored" data-anchor-id="教訓4-時は金なり">教訓4: 時は金なり!</h3>
+<ul>
+<li>レイテンシーが遅いとユーザとビジネスに悪影響だったという話。</li>
+<li>論文では、各群に割り当てられたユーザがsynthetic latency(=実験用の疑似的な応答時間)にさらされる多群RCTを実行し、booking.comでレイテンシーがビジネス指標に与える影響を定量化してた。(結果は図6)
+<ul>
+<li>レイテンシーが約30％増加すると、コンバージョン率が0.5％以上（私たちのビジネスに関連するコスト）低下するという明確な傾向が見られた。</li>
+<li>-&gt; 仮説: 待ち時間を短くすることでコンバージョンを向上させることができる</li>
+</ul></li>
+<li>機械学習モデルは推論時に多大な計算資源を必要とする(=入力する特徴量の前処理も含む)ため、これ(=time is money問題!)は特に機械学習モデルに関連する。</li>
+<li>モデル由来の待ち時間を最小化するための工夫:
+<ul>
+<li>モデルのコピーをクラスタに分散させる。(i.e.&nbsp;推論処理を並列化させる?)</li>
+<li>自社開発の線形予測エンジン(i.e.&nbsp;推論処理をラフにする手法??)</li>
+<li>事前計算とキャッシュ</li>
+<li>最小限の特徴量変換(=推論時の前処理を減らす工夫??:thinking:)</li>
+<li>Sparse models(=パラメータの少ないモデル)</li>
+</ul></li>
+</ul>
+</section>
+<section id="教訓5-モデルの出力の質をモニターすることは極めて重要" class="level3">
+<h3 class="anchored" data-anchor-id="教訓5-モデルの出力の質をモニターすることは極めて重要">教訓5: モデルの出力の質をモニターすることは極めて重要</h3>
+<ul>
+<li><strong>モデル出力の質をモニタリングすることは極めて重要</strong>だが、これには少なくとも2つの課題がある:
+<ul>
+<li><strong>Incomplete feedback</strong>: 多くの状況では、完全な正解ラベルを観察することはできない。
+<ul>
+<li>ex.) あるユーザに2つのプッシュ通知A&amp;Bのどちらかを送るかを選択するモデルの場合、タップしたか否かの正解ラベルは、実際に送信した片方のみ観測できる。送信しなかった方の正解ラベルは観測されない。</li>
+</ul></li>
+<li><strong>Delayed feedback</strong>: 推論時から何日も、あるいは何週間も経ってから、真のラベルが観測される場合もある。
+<ul>
+<li>ex.) あるユーザに2つのプッシュ通知A&amp;Bのどちらかを送るかを選択するモデルの場合、実際にユーザがプッシュ通知を見るのは、推論してから1日後かもしれない。</li>
+</ul></li>
+</ul></li>
+<li>これらの課題がある状況では、<strong>precisionやrecallなどの教師ラベルに依存した指標は不適切</strong> -&gt; 教師ラベルに依存しない指標でモデル出力の質を監視したい…!
+<ul>
+<li>「モデルの品質について、それがサービスを提供するときに行う予測を見るだけで、何が言えるのだろうか?」 -&gt; booking.comでは<strong>応答分布分析(=Response Distribution Analysis)</strong>を適用してるとの事。
+<ul>
+<li>応答分布図(Response Distribution Chart, RDC)に基づいた手法。(<strong>RDCはかくあるべき、という仮定をヒューリスティックに用意しておく必要がある</strong>:thinking:)</li>
+<li>応答分布分析は、モデルの欠陥を早期に発見できる非常に有用なツール。</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="教訓6-洗練された実験計画が功を奏す" class="level3">
+<h3 class="anchored" data-anchor-id="教訓6-洗練された実験計画が功を奏す">教訓6: 洗練された実験計画が功を奏す</h3>
+<ul>
+<li>RCTによる実験は、Booking.comの文化に根付いている(いいね!:thinking:)
+<ul>
+<li>Booking.comの開発組織では、<strong>実験を民主化する独自の実験プラットフォームを構築し、誰もが実験を実行して仮説を検証し、私たちのアイデアの影響を評価できるようにした</strong>(個人的にはこれのオフライン実験ver.を作りたい。“<strong>実験を民主化する</strong>”って表現いいなぁ…:thinking:)</li>
+</ul></li>
+<li>実験デザインを頑張ってるらしい:
+<ul>
+<li>特定のモデル(ex. 推論結果の違い)と実装の選択(ex. レイテンシーの違い)がビジネス指標に及ぼす因果効果を分離するために、トリガー分析(?)とtreatments design(?)を組み合わせる。
+<ul>
+<li>トリガー分析: (triggerってなんだ?? fig8を見た感じでは、triggered = model availableって事っぽい!:thinking:) controll郡/treatment郡のtreatment可能な(またはtriggerされた)ユーザだけを分析する為の手法っぽい:thinking:</li>
+<li>treatments design: 特定のモデル(ex. 推論結果の違い)と実装の選択(ex. レイテンシーの違い)がビジネス指標に及ぼす因果効果を分離して正しく実験する為の<strong>RCTのユーザグループの分け方のデザイン手法</strong>??
+<ul>
+<li>ex.) 既存手法よりも精度高いがレイテンシーが遅いモデルを開発し、ABテストする場合、シンプルにcontroll/treatmentの2群だけでは、新モデルの評価が難しい。この場合、ユーザグループをcontroll/treatment_1/treatment_2の3群とし、推論精度の違いによる効果とレイテンシーの違いによる効果を分解して推定できる様にする。</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="どうやって有効だと検証した" class="level2">
+<h2 class="anchored" data-anchor-id="どうやって有効だと検証した">どうやって有効だと検証した?</h2>
+<p>今回はパス!</p>
+</section>
+<section id="議論はある" class="level2">
+<h2 class="anchored" data-anchor-id="議論はある">議論はある？</h2>
+</section>
+<section id="次に読むべき論文は" class="level2">
+<h2 class="anchored" data-anchor-id="次に読むべき論文は">次に読むべき論文は？</h2>
+</section>
+<section id="お気持ち実装" class="level2">
+<h2 class="anchored" data-anchor-id="お気持ち実装">お気持ち実装</h2>
+<p>今回はパス!</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

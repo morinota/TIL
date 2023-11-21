@@ -1,0 +1,4 @@
+- source: slide.md
+  quarto-pub:
+    - id: c7541067-fc6b-4666-9dfb-361996cd7104
+      url: 'https://morinota.quarto.pub/journal_club_20231030'

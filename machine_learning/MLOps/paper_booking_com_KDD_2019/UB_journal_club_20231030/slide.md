@@ -12,7 +12,7 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: 宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)を読んで概要と感想
+title: 宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)を読んだ
 subtitle: 論文読み会
 date: 2023/10/26
 author: morinota
@@ -26,34 +26,40 @@ title-slide-attributes:
 
 - 元論文: [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
 
-## この論文を選んだモチベーション:
-
-- hogehoge
 
 ## どんな論文??
 
-- 宿泊予約サービスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019)
-  - 教訓1: Inception: Machine Learning as a Swiss Knife for Product Development (機械学習はプロダクト開発におけるスイスナイフである)
-  - 教訓2: Modeling: Offline Model Performance Is Just A Health Check(オフラインでのモデルのパフォーマンスは健康診断に過ぎない)
-  - 教訓3: Modeling:Before Solving A Problem, Design It (問題を解かせる前に、解かせるべき問題をデザインする)
-  - 教訓4: Deployment: Time Is Money (時は金なり)
-  - 教訓5: Monitoring: Unsupervised Red Flag (監視されないレッドフラッグ)
-  - 教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験計画が功を奏す)
+<!-- - 宿泊予サー約ビスbooking.comの150個の機械学習モデルの開発運用で得た6つの教訓をまとめた論文(KDD2019) -->
+- Booking.comの何十ものチームによって開発され、世界中の何億人ものユーザに公開され、厳密なRCTによって検証された、機械学習アプリケーションの成功例約150件の分析を行い、そこで得られた**6つの教訓**を発表した論文:(まず機械学習サービスを開発するチームがいくつもある(?)の凄いな...!:thinking:)
+  - 教訓1: Inception: Machine Learning as a Swiss Knife for Product Development
+  - 教訓2: Modeling: Offline Model Performance Is Just A Health Check
+  - 教訓3: Modeling: Before Solving A Problem, Design It
+  - 教訓4: Deployment: Time Is Money
+  - 教訓5: Monitoring: Unsupervised Red Flag
+  - 教訓6: Evaluation: Experiment Design Sophistication Pays Off
 
-## 本論文の貢献
+## この論文を選んだモチベーション:
+
+- KDD2019で採択された論文で、どうやら各所で話題になったらしい。()
+  - (既に知ってる方もいるかも??)(当時、MLと出会う前の土木工学の学生だった私は全く知らず...!)
+- 本論文のユニークな点:
+  - MLに関する文献のほとんどは、アルゴリズムや数学的な側面に焦点を当ててる。(自分もこっち読むことが多い)
+  - 一方で本論文は、商業的な利益が最優先される産業分野において、どのようにしたらMLが有意義な効果をもたらすことができるかに焦点を当ててる。
+  - MLエンジニアとして経験が非常に浅い自分は、こういった「MLでいかにビジネスやプロダクト価値の向上に貢献するか」に関する論文も読んで経験不足を補うべきかもと思った...!:thinking:
 
 # 教訓1: Inception: Machine Learning as a Swiss Knife for Product Development
 
 - 機械学習は、プロダクト開発におけるスイスナイフである(=多機能で色んな用途に使える例えらしい...:thinking:)
+- プロダクトの様々な機能の開発/改善の為に、機械学習を様々な文脈(specialized/semantic)で活用し、ビジネス価値を提供できたという話。
 
 ## 教訓1の概要: semantic model いいなぁ...
 
-- プロダクトの異なる機能の開発/改善の為に、機械学習を様々な文脈で活用できたという話。
-  - 特定のusecaseに特化した specialized model
-  - 様々なusecaseで活用可能性がある **semantic model**
-    - 理解しやすい概念をモデル化する(定量化できていないユーザの特徴を、MLでモデル化する、みたいな??:thinking:)
-    - ex) 「ユーザが旅行の目的地に対してどの程度flexibleであるか」を定量化するモデルを作り、**プロダクトチーム全体にdestination-flexibilityの概念を与える**ことで、プロダクトの改善に役立てることができた。(MLチーム以外も理解・活用可能な汎用的な特徴量を作る、みたいなイメージかな...めちゃいいね!:thinking:)
-  - semanticモデルにより、**開発に携わる全ての人がモデル出力に基づいて**、新機能やパーソナライゼーション、説得力のある意思決定などに導入できるようになる。(semanticなモデルいいなぁ...:thinking:)
+- 特定のusecaseに特化した specialized model
+- 様々なusecaseで活用可能性がある **semantic model**
+  - 理解しやすい概念をモデル化する(ex. 定量化できていないユーザの特徴を、MLでモデル化する、みたいな??:thinking:)
+  - ex) 「ユーザが旅行の目的地に対してどの程度flexibleであるか」を定量化するモデルを作り、**プロダクトチーム全体にdestination-flexibilityの概念を与える**ことで、プロダクトの改善に役立てることができた。(MLチーム以外も理解・活用可能な汎用的な特徴量を作る、みたいなイメージかな...めちゃいいね!:thinking:)
+  - **開発に携わる全ての人がsemanticモデルの出力に基づいて**、新機能やパーソナライゼーション、説得力のある意思決定などに使用可能性がある。(semanticなモデルいいなぁ...:thinking:)
+- (specialized model と semantic modelはたぶん排反ではない:thinking:)
 
 ## 教訓1の概要: 各MLプロジェクトはビジネス価値を提供する
 
@@ -86,7 +92,9 @@ title-slide-attributes:
 
 ::: {.column width="40%"}
 
-- hogehoge
+- 「オフラインでのモデル性能の推定値(横軸)」と「RCTで観察されたビジネス指標(縦軸)」に相関がなかった話。
+- 前回発表時のイントロで引用してました!: [ABテストする前に機械学習モデルの性能を確度高く評価したいけど、皆どうやってるんだろう?について色々調べている話](https://morinota.quarto.pub/journal_club_20230904/#/%E4%BB%8A%E5%9B%9E%E3%81%AE%E3%83%86%E3%83%BC%E3%83%9E%E3%82%92%E9%81%B8%E3%82%93%E3%81%A0%E7%B5%8C%E7%B7%AF)
+- 今回は割愛します!
 
 :::
 
@@ -132,6 +140,8 @@ title-slide-attributes:
 
 # 教訓4: Deployment: Time Is Money (時は金なり)
 
+- レイテンシーが遅いとユーザとビジネス指標に悪影響だった話。
+
 ## 教訓4の概要:レイテンシーが遅いとユーザとビジネスに悪影響だった
 
 :::: {.columns}
@@ -162,14 +172,16 @@ title-slide-attributes:
 
 ## 教訓5の概要: 推論結果の品質モニタリングにおける2つの課題
 
-- 課題1:Incomplete(不完全な) feedback
-  - 多くの状況では、正解ラベルを観測することはできない。
-- 課題2:Delayed(遅れる) feedback
+- 課題1:Incomplete(不完全な) feedback:
+  - 多くの状況では、完全な正解ラベルを観察することはできない。
+  - ex.) あるユーザに2つのプッシュ通知A&Bのどちらかを送るかを選択するモデルの場合、タップしたか否かの正解ラベルは、実際に送信した片方のみ観測できる。送信しなかった方の正解ラベルは観測されない。
+- 課題2:Delayed(遅れる) feedback:
   - 推論が行われてから何日も、あるいは何週間も経ってから、正解ラベルが観測される場合もある。
+  - ex.) あるユーザに2つのプッシュ通知A&Bのどちらかを送るかを選択するモデルの場合、実際にユーザがプッシュ通知を見るのは、推論してから1日後かもしれない。
 
 ## 教訓5の概要: Booking.comがどのように課題に対応しているか
 
-- 上記の課題から、precisionやrecallなどの正解ラベルに依存した指標は不適切-> **正解ラベルに依存しない指標**で推論結果の品質を監視したい...!
+- 前述の課題から、precisionやrecallなどの正解ラベルに依存した指標は不適切-> **正解ラベルに依存しない指標**で推論結果の品質を監視したい...!
   - 「モデルの品質について、それがサービスを提供するときに行う推論結果を見るだけで、何が言えるのだろうか?」 -> Booking.comでは**応答分布分析(=Response Distribution Analysis)**を採用。
   - 応答分布図(Response Distribution Chart, RDC, 要はモデル出力のヒストグラムっぽい)に基づいた手法。
   - (**正常なRDCはこうあるべき、という仮定をヒューリスティックに用意しておく必要がありそう**:thinking:)
@@ -181,15 +193,15 @@ title-slide-attributes:
 
 ::: {.column width="50%"}
 
-- 理想的なモデルの応答分布図の典型的なパターン:
+- 応答分布図の典型的なパターン:
   - 単峰分布(図7左上) -> 学習時と推論時のデータの分布に大きく違いがある可能性。
-  - 極端な高頻度のmodeを持つ分布(図7右上) -> 学習データに想定外の外れ値が含まれている可能性。
+  - 極端な高頻度のmodeを持つ分布(図7右上) -> 学習データに想定外の外れ値が含まれてる可能性。
 
 :::
 
 ::: {.column width="50%"}
 
-![(論文より引用)](https://i.imgur.com/ZcdTVDi.png)
+![](https://i.imgur.com/ZcdTVDi.png)
 
 :::
 
@@ -197,6 +209,8 @@ title-slide-attributes:
 
 - 平滑ではない非常にnoisyな分布(図7左下)-> 予測が安定しない。モデルがsparce過ぎる可能性。
 - 滑らかな二峰性分布(図7右下) -> 2クラスを上手く区別できていそう。(完璧なモデルは0と1に２つのピークがある想定)
+
+このような感じで、推論結果の品質を、推論直後に、**正解ラベルに依存しない指標で**監視している。
 
 # 教訓6: Evaluation: Experiment Design Sophistication Pays Off (洗練された実験デザインが功を奏す)
 
@@ -207,8 +221,9 @@ title-slide-attributes:
 ## 教訓6の概要: Triggered Analysisの適用
 
 - RCTは、ユーザ集合をcontrol群とtreatment群に分け、それぞれ"変化"と"変化なし"に晒される。
-- しかし、必ずしも全ユーザがtreatment可能(treatable)ではない。(MLモデルの場合、特定の特徴量を必要とすることがある為、よくある)
-- -> treatableではないユーザは、サンプルにノイズを加え、観察された効果を希釈してしまう -> Triggered Analysisの適用
+- しかし、**必ずしも全ユーザがtreatment可能(treatable)ではない**。(MLモデルの場合、特定の特徴量を必要とすることがある為、よくある)
+  - (ex. 旧モデル=ランダムな旅行先推薦、新モデル=パーソナライズされた旅行先推薦のケース。直近1年間の旅行履歴を特徴量に使用するとして、履歴がないユーザは、treatableではない。よって、分析時にはcontrol群とtreatment群両方から除外する、みたいな??:thinking:)
+- -> treatableではないユーザは、サンプルにノイズを加え、観察された効果を希釈してしまう -> **Triggered Analysis**の適用
 
 :::: {.columns}
 
@@ -226,11 +241,11 @@ title-slide-attributes:
 
 ::::
 
-- (ex. 旧モデル=ランダムな旅行先推薦、新モデル=パーソナライズされた旅行先推薦のケース。直近1年間の旅行履歴を特徴量に使用するとして、履歴がないユーザは、treatableではない。よって、分析時にはcontrol群とtreatment群両方から除外する、みたいな??:thinking:)
+
 
 ## 教訓6の概要: TriggerがMLモデル出力値に依存するケースの実験デザイン
 
-- ex)「ユーザの目的地の柔軟性」を定量化するMLモデルのRCT。MLモデルが「柔軟性がある」と判定したユーザにのみ、代替の目的地が推薦される。
+- ex)「ユーザの目的地の柔軟性」を定量化するMLモデルのRCTのケース。MLモデルが「柔軟性がある」と判定したユーザにのみ、代替の目的地が推薦される。
   - controll群では新モデルの出力が不明であるため、trigger基準(treatableか否か)を条件付けられず図8の設定は適用できない。
 - -> 図9のような3群($C, T_1, T_2$)による実験デザインを採用。
 
