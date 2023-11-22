@@ -41,24 +41,24 @@ title-slide-attributes:
 :::
 ::::
 
-- 博士課程への入学時期に偶然Kaggleをきっかけに推薦システム分野と出会い、趣味で論文読んで実装してブログに上げてた。「推薦システムを趣味ではなく仕事として関わりたい」と思い、NewsPicksさんに機会をもらって休学してインターン中。([インターン1年の振り返りブログ書きましたー!](https://tech.uzabase.com/entry/2023/10/06/150603))
+- 博士課程への入学時期に偶然Kaggleをきっかけに推薦システム分野と出会い、趣味で論文読んで実装してブログに上げてた。「推薦システムを趣味ではなく仕事として関わりたい」と思い、NewsPicksさんに機会をもらってインターン中。([インターン1年の振り返りブログ書きました!](https://tech.uzabase.com/entry/2023/10/06/150603))
 - 興味ある事:
-  - 推薦システム周り(より確度の高いオフライン評価とか。最近はNetflixの推薦モデル統合のブログをきっかけに、multi-taskな推薦モデルとか。)
-  - MLシステムの設計・開発・運用改善(最近MLOps勉強会を経て、MLOps Maturity AssessmentとかRecSysOpsとかFTP Pipelinesとか気になって調べ中。今の業務もこちらの重みが強い印象なので...!)
+  - 推薦システム周り(より確度の高いオフライン評価とか。最近はNetflixの推薦モデル統合のブログをきっかけに、multi-taskな推薦モデルとか。)(趣味で[n週連続推薦システム論文読んだシリーズ](https://qiita.com/morinota/items/f504f306e7d31db80f08)やってます!)
+  - MLシステムの設計・開発・運用改善(最近MLOps勉強会を経て、MLOps Maturity AssessmentとかRecSysOpsとかFTP Pipelinesとか気になって調べ中。今の業務的にもこちらもcatch upせねばという気持ち)
 
 ## 参考文献:
 
 - 1. メインの論文: [RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
 - 2. メイン論文の元のやつ: [Recommenders with a Mission: Assessing Diversity in News Recommendations](https://dl.acm.org/doi/10.1145/3406522.3446019)
 - 3. (メイン論文の背景にあるやつ!)ニュース推薦の民主的役割のtypologyを提案した論文: [On the Democratic Role of News Recommenders](https://www.tandfonline.com/doi/full/10.1080/21670811.2019.1623700)
-- 4. Booking.comの論文: [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
-- 5. News推薦のサーベイ論文: [News Recommender Systems - Survey and Roads Ahead](https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf)
-- 6. MLOpsの成熟度を高める為のガイドライン: [MLOps Maturity Assessment](https://mlops.community/mlops-maturity-assessment/)
+- 4. MLOpsの成熟度を高める為のガイドライン: [MLOps Maturity Assessment](https://mlops.community/mlops-maturity-assessment/)
+- 5. Booking.comの論文: [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
+- 6. ニュース推薦のサーベイ論文: [News Recommender Systems - Survey and Roads Ahead](https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf)
 
 ## どんな論文? 選んだモチベーションは??
 
-- 論文title:[RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
-- RecSys2022 Best Paper Awards
+- 論文タイトル: [RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
+- RecSys2022 Best Paper Awardsの論文
 - 一般的な推薦システムにおける"多様性"は、シンプルに推薦アイテム間の距離指標として表される事が多いが、ニュース推薦における"多様性"を検討する上では、それでは不十分でしょ！(というか、目指すべき点はそれではないでしょ!)って話。
 - 本論文の目的は、コンピュータサイエンスにおける"多様性"と、メディアや民主主義の規範的な意味としての"多様性"のギャップを埋めること。
   - 規範的概念としての"多様性"を、異なるニュース推薦モデルの評価や比較に使用可能な5つのmetrics集合 RADio に落とし込む。
@@ -70,9 +70,9 @@ title-slide-attributes:
 
 - 推薦結果の"精度"のみを考慮した推薦システムは、ユーザが以前に見たものと似たものを不当に宣伝し、ユーザを"more of the same"のフィードバックループに閉じ込め得る。そのため**beyond-accuracy指標**として"多様性"の研究が進んでいる。
 - 多様性指標として一般的なのは、intra-list-diversity(ILD)(=推薦アイテムリスト間の非類似度)
-  - 様々な分野で活用可能だが、民主主義社会におけるメディアの役割を果たす為の"diverseなニュース推薦システム"のニュアンスを完全には表現できない。
+  - 様々な分野で活用可能だが、メディアが民主主義社会において役割を果たす為の"diverseなニュース推薦システム"のニュアンスを完全には表現できない。
 - そもそもニュース推薦アルゴリズムの仕事は、増え続けるオンライン情報を**フィルタリング**すること
-  - その**フィルタリングの方針は、各メディアの役割によって異なる**。
+  - その**フィルタリングの方針は、各メディアの役割によって異なる**し、求められる多様性も異なる。
 
 ## 4種のメディアモデルとニュース推薦方針
 
@@ -118,9 +118,9 @@ title-slide-attributes:
 
 ::::
 
-## 5種類のdiversity metrics: RADio
+## 5種類のdiversity metrics: RADioの全体像
 
-RADio = Rank-Aware Divergence metrics (ioは??:thinking:)
+RADio = Rank-Aware Divergence metrics (ioはどういう意味だろ?:thinking:)
 
 ![](https://imgur.com/c2eTjvh)
 
@@ -269,7 +269,7 @@ $$
 
 ## 推論結果の品質モニタリング
 
-- MLOps Maturity Assessmentの項目4や Booking.comの論文の教訓5でも主張されているが、バッチ推論でもオンライン推論でも推論結果の品質をモニタリングすることは重要
+- [MLOps Maturity Assessment](https://mlops.community/mlops-maturity-assessment/)の項目4や [Booking.comの論文](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)の教訓5でも主張されているが、バッチ推論でもオンライン推論でも推論結果の品質をモニタリングすることは重要
   - (データの分布の変化や、学習・推論パイプラインへのバグの混入などによって、**エラーやlatency等には現れない推論結果の品質の低下にいち早く気づきたい**…!)
 - 推薦システムの場合は Incomplete(不完全な) feedbackとDelayed(遅延) feedbackの問題があるので、precisionやrecallなどの正解ラベルに依存した指標は不適切-> **正解ラベルに依存しない指標**で推論結果の品質を監視したい…! -> Booking.comの論文では、応答分布分析を採用してた。
 - **RADioはいずれも正解ラベルに依存しない指標なので活用可能では??**(というかRADioは推薦結果の分布を他の分布と比較して評価してるので、応答分布分析と言えるのかも):thinking:
@@ -278,7 +278,7 @@ $$
 ## 推薦モデルのオフライン評価
 
 - ニュース推薦の分野では、metadataとしてテキストが使える事と、ニュースのlifecycleが短く新鮮なcold-start itemを推薦したいusecaseが多い事から、**content-based系の手法**(i.e. id-onlyでない手法)が多く採用されてる。
-- しかし、content-based手法はオフライン実験においてprecisionやrecallなどでは正確に評価しづらく、**一方でid-only手法やmost-popular itemsは過大評価されやすい傾向**がある。(参考文献5より)
+- しかし、content-based手法はオフライン実験においてprecisionやrecallなどでは正確に評価しづらく、**一方でid-only手法やmost-popular itemsは過大評価されやすい傾向**がある ([ニュース推薦のサーベイ論文](https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf)より)
   - 人気度バイアスとか、Off-Policy Evaluation分野で言うところのlogging policy由来のバイアスとかが原因??:thinking:
   - もちろんunder samplingやOPE推定量による重み付けにより、バイアス除去を試みるアプローチもあるよね:thinking: ただ、OPEのIPS推定量に基づくアプローチはlogging policyが探索的なモデルである必要があるので、決定論的な推薦システムでは活用が難しそう...!:thinking:
 - RADioはいずれも正解ラベルに依存しない指標なので、**少なくともid-only手法が過大評価されがち問題は解消できたりしないかな**? :thinking:
