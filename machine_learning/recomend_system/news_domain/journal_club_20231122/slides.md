@@ -12,7 +12,7 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: (RecSys2022 Best Papers)メディアモデルを考慮したニュース推薦の5つの多様性指標群の論文を読んで、活用可能性に思いを馳せた話
+title: (RecSys2022 Best Papers)メディアモデルを考慮したニュース推薦の5つの多様性指標群の論文を読んで、その活用可能性に思いを馳せた話
 subtitle: 2023/11/22 推薦システム論文読み会
 # date:
 author: morinota
@@ -36,7 +36,7 @@ title-slide-attributes:
 :::
 ::: {.column width="30%"}
 
-![](https://pbs.twimg.com/profile_images/1539885839173709824/3RqtaSyu_400x400.jpg){fig-align="center" width=150}
+![](https://pbs.twimg.com/profile_images/1727207125808713728/-oL3kkMD_400x400.jpg){fig-align="center" width=150}
 
 :::
 ::::
@@ -49,7 +49,7 @@ title-slide-attributes:
 ## 参考文献:
 
 - 1. メインの論文: [RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
-- 2. メイン論文の元のやつ: [Recommenders with a Mission: Assessing Diversity in News Recommendations](https://dl.acm.org/doi/10.1145/3406522.3446019)
+- 2. メイン論文の前身的な論文: [Recommenders with a Mission: Assessing Diversity in News Recommendations](https://dl.acm.org/doi/10.1145/3406522.3446019)
 - 3. (メイン論文の背景にあるやつ!)ニュース推薦の民主的役割のtypologyを提案した論文: [On the Democratic Role of News Recommenders](https://www.tandfonline.com/doi/full/10.1080/21670811.2019.1623700)
 - 4. MLOpsの成熟度を高める為のガイドライン: [MLOps Maturity Assessment](https://mlops.community/mlops-maturity-assessment/)
 - 5. Booking.comの論文: [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
@@ -60,11 +60,10 @@ title-slide-attributes:
 - 論文タイトル: [RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
 - RecSys2022 Best Paper Awardsの論文
 - 一般的な推薦システムにおける"多様性"は、シンプルに推薦アイテム間の距離指標として表される事が多いが、ニュース推薦における"多様性"を検討する上では、それでは不十分でしょ！(というか、目指すべき点はそれではないでしょ!)って話。
-- 本論文の目的は、コンピュータサイエンスにおける"多様性"と、メディアや民主主義の規範的な意味としての"多様性"のギャップを埋めること。
-  - 規範的概念としての"多様性"を、異なるニュース推薦モデルの評価や比較に使用可能な5つのmetrics集合 RADio に落とし込む。
+- 本論文の目的は、メディアが民主主義社会において役割を果たすために求められるニュース推薦の"多様性"を、異なる推薦モデルの評価や比較に使用可能な5つのmetrics集合 RADio に落とし込むこと。
 - この論文を読んだのは半年前なのですが、推薦モデルの推論品質の監視やオフライン評価に使えないかなーと思いを馳せ始め、皆さんと共有したく選択した。
 
-# 論文の概要紹介
+# ここからは論文の概要を紹介
 
 ## 導入: ニュース推薦の精度と多様性の話
 
@@ -89,7 +88,7 @@ title-slide-attributes:
 
 ## 5種類のdiversity metrics: RADio
 
-前述した4種のメディアモデルによって"目指すべき多様性"の価値と意味合いが異なる。本論文では、**各メディアモデルが推薦システムに期待する性質**から導出した、**5つのdiversity metrics RADio**を提案:
+前述した4種のメディアモデルによって"目指すべき多様性"の価値と意味合いが異なる。本論文では、**各メディアモデルが推薦システムに期待する性質**から導出した、**5つのdiversity metrics = RADio**を提案:
 
 :::: {.columns}
 
@@ -109,7 +108,7 @@ title-slide-attributes:
 
 全metricsに共通する性質:
 
-- distance metric(同一性, 対称性, 三角形の不等式)。
+- distance metric(同一性, 対称性, 三角形の不等式が成立する)。
 - ２つの離散分布間のJS-Divergence。
 - 異なる推薦モデル間や異なるmetric間で比較したいので、全て値域が $[0; 1]$。(0に近いほど2つの分布の距離が近い)
 - rank情報を持った離散分布に適用可能。(rank-awareな指標)
@@ -284,19 +283,21 @@ $$
 - RADioはいずれも正解ラベルに依存しない指標なので、**少なくともid-only手法が過大評価されがち問題は解消できたりしないかな**? :thinking:
   - (あ、でもユーザの閲読履歴は、人気度やlogging policy由来のバイアスの影響を受けているか...! under sampling的なアプローチと組み合わせるのはどうだろう...!:thinking:)
 
-## まとめ:
+## まとめと感想
 
-- ニュース推薦の民主的役割を考慮した5つの多様性指標RADioを提案する論文を読んだ:
-  - hoge
+- ニュース推薦の民主的役割を考慮した多様性指標群 RADioを提案する論文を読んだ:
+  - 5つの多様性指標(Calibration, Fragmentation, Activation, Representation, Alternative Voices)を用いて、4種類のメディアモデルにそれぞれ適した推薦モデルを選択できる。
+  - ただ指標の算出に重要な特徴量の難易度は高い。
 - 推論品質の監視とかオフライン評価とかで色々使えないかなーと思いを馳せた:
-  - 推薦結果の品質のモニタリング
-  - ニュース推薦モデルのオフライン評価
+  - 推薦結果の品質のモニタリング: 応答分布分析の一種として、推論結果の品質低下の検知等に使えるのでは?:thinking:
+  - 推薦モデルのオフライン評価: 記事の人気度やlogging policy由来のバイアスの影響を受けづらく、モデルの健康診断的な用途で使えるのでは?
+- 現在は自由主義モデル的な推薦のusecaseがほとんどだと思うので、例えば参加主義モデル的な推薦のusecaseができたらユニークな価値を発揮できるのかな...!:thinking:
 
 ## 参考文献:
 
 - 1. メインの論文: [RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
 - 2. メイン論文の元のやつ: [Recommenders with a Mission: Assessing Diversity in News Recommendations](https://dl.acm.org/doi/10.1145/3406522.3446019)
 - 3. (メイン論文の背景にあるやつ!)ニュース推薦の民主的役割のtypologyを提案した論文: [On the Democratic Role of News Recommenders](https://www.tandfonline.com/doi/full/10.1080/21670811.2019.1623700)
-- 4. Booking.comの論文: [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
-- 5. News推薦のサーベイ論文: [News Recommender Systems - Survey and Roads Ahead](https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf)
-- 6. MLOpsの成熟度を高める為のガイドライン: [MLOps Maturity Assessment](https://mlops.community/mlops-maturity-assessment/)
+- 4. MLOpsの成熟度を高める為のガイドライン: [MLOps Maturity Assessment](https://mlops.community/mlops-maturity-assessment/)
+- 5. Booking.comの論文: [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
+- 6. ニュース推薦のサーベイ論文: [News Recommender Systems - Survey and Roads Ahead](https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf)

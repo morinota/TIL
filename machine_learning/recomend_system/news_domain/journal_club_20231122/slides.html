@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.3.336">
 
   <meta name="author" content="morinota">
-  <title>(RecSys2022 Best Papers)メディアモデルを考慮したニュース推薦の5つの多様性指標群の論文を読んで、活用可能性に思いを馳せた話</title>
+  <title>(RecSys2022 Best Papers)メディアモデルを考慮したニュース推薦の5つの多様性指標群の論文を読んで、その活用可能性に思いを馳せた話</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -326,7 +326,7 @@
     <div class="slides">
 
 <section id="title-slide" data-background-opacity="0.5" data-background-size="contain" class="quarto-title-block center">
-  <h1 class="title">(RecSys2022 Best Papers)メディアモデルを考慮したニュース推薦の5つの多様性指標群の論文を読んで、活用可能性に思いを馳せた話</h1>
+  <h1 class="title">(RecSys2022 Best Papers)メディアモデルを考慮したニュース推薦の5つの多様性指標群の論文を読んで、その活用可能性に思いを馳せた話</h1>
   <p class="subtitle">2023/11/22 推薦システム論文読み会</p>
 
 <div class="quarto-title-authors">
@@ -351,7 +351,7 @@ morinota
 </div><div class="column" style="width:30%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="https://pbs.twimg.com/profile_images/1539885839173709824/3RqtaSyu_400x400.jpg" width="150"></p>
+<p><img data-src="https://pbs.twimg.com/profile_images/1727207125808713728/-oL3kkMD_400x400.jpg" width="150"></p>
 </figure>
 </div>
 </div>
@@ -372,7 +372,7 @@ morinota
 <li>メインの論文: <a href="https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf">RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations</a></li>
 </ol></li>
 <li><ol start="2" type="1">
-<li>メイン論文の元のやつ: <a href="https://dl.acm.org/doi/10.1145/3406522.3446019">Recommenders with a Mission: Assessing Diversity in News Recommendations</a></li>
+<li>メイン論文の前身的な論文: <a href="https://dl.acm.org/doi/10.1145/3406522.3446019">Recommenders with a Mission: Assessing Diversity in News Recommendations</a></li>
 </ol></li>
 <li><ol start="3" type="1">
 <li>(メイン論文の背景にあるやつ!)ニュース推薦の民主的役割のtypologyを提案した論文: <a href="https://www.tandfonline.com/doi/full/10.1080/21670811.2019.1623700">On the Democratic Role of News Recommenders</a></li>
@@ -394,16 +394,13 @@ morinota
 <li>論文タイトル: <a href="https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf">RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations</a></li>
 <li>RecSys2022 Best Paper Awardsの論文</li>
 <li>一般的な推薦システムにおける”多様性”は、シンプルに推薦アイテム間の距離指標として表される事が多いが、ニュース推薦における”多様性”を検討する上では、それでは不十分でしょ！(というか、目指すべき点はそれではないでしょ!)って話。</li>
-<li>本論文の目的は、コンピュータサイエンスにおける”多様性”と、メディアや民主主義の規範的な意味としての”多様性”のギャップを埋めること。
-<ul>
-<li>規範的概念としての”多様性”を、異なるニュース推薦モデルの評価や比較に使用可能な5つのmetrics集合 RADio に落とし込む。</li>
-</ul></li>
+<li>本論文の目的は、メディアが民主主義社会において役割を果たすために求められるニュース推薦の”多様性”を、異なる推薦モデルの評価や比較に使用可能な5つのmetrics集合 RADio に落とし込むこと。</li>
 <li>この論文を読んだのは半年前なのですが、推薦モデルの推論品質の監視やオフライン評価に使えないかなーと思いを馳せ始め、皆さんと共有したく選択した。</li>
 </ul>
 </section>
 <section>
-<section id="論文の概要紹介" class="title-slide slide level1 center">
-<h1>論文の概要紹介</h1>
+<section id="ここからは論文の概要を紹介" class="title-slide slide level1 center">
+<h1>ここからは論文の概要を紹介</h1>
 
 </section>
 <section id="導入-ニュース推薦の精度と多様性の話" class="slide level2">
@@ -439,7 +436,7 @@ morinota
 </section>
 <section id="種類のdiversity-metrics-radio" class="slide level2">
 <h2>5種類のdiversity metrics: RADio</h2>
-<p>前述した4種のメディアモデルによって”目指すべき多様性”の価値と意味合いが異なる。本論文では、<strong>各メディアモデルが推薦システムに期待する性質</strong>から導出した、<strong>5つのdiversity metrics RADio</strong>を提案:</p>
+<p>前述した4種のメディアモデルによって”目指すべき多様性”の価値と意味合いが異なる。本論文では、<strong>各メディアモデルが推薦システムに期待する性質</strong>から導出した、<strong>5つのdiversity metrics = RADio</strong>を提案:</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
@@ -453,7 +450,7 @@ morinota
 </div><div class="column" style="width:50%;">
 <p>全metricsに共通する性質:</p>
 <ul>
-<li>distance metric(同一性, 対称性, 三角形の不等式)。</li>
+<li>distance metric(同一性, 対称性, 三角形の不等式が成立する)。</li>
 <li>２つの離散分布間のJS-Divergence。</li>
 <li>異なる推薦モデル間や異なるmetric間で比較したいので、全て値域が <span class="math inline">\([0; 1]\)</span>。(0に近いほど2つの分布の距離が近い)</li>
 <li>rank情報を持った離散分布に適用可能。(rank-awareな指標)</li>
@@ -619,18 +616,20 @@ AlternativeVoices = D_{JS}(P(m|S), Q^*(m|R))
 </ul></li>
 </ul>
 </section>
-<section id="まとめ" class="slide level2">
-<h2>まとめ:</h2>
+<section id="まとめと感想" class="slide level2">
+<h2>まとめと感想</h2>
 <ul>
-<li>ニュース推薦の民主的役割を考慮した5つの多様性指標RADioを提案する論文を読んだ:
+<li>ニュース推薦の民主的役割を考慮した多様性指標群 RADioを提案する論文を読んだ:
 <ul>
-<li>hoge</li>
+<li>5つの多様性指標(Calibration, Fragmentation, Activation, Representation, Alternative Voices)を用いて、4種類のメディアモデルにそれぞれ適した推薦モデルを選択できる。</li>
+<li>ただ指標の算出に重要な特徴量の難易度は高い。</li>
 </ul></li>
 <li>推論品質の監視とかオフライン評価とかで色々使えないかなーと思いを馳せた:
 <ul>
-<li>推薦結果の品質のモニタリング</li>
-<li>ニュース推薦モデルのオフライン評価</li>
+<li>推薦結果の品質のモニタリング: 応答分布分析の一種として、推論結果の品質低下の検知等に使えるのでは?<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>推薦モデルのオフライン評価: 記事の人気度やlogging policy由来のバイアスの影響を受けづらく、モデルの健康診断的な用途で使えるのでは?</li>
 </ul></li>
+<li>現在は自由主義モデル的な推薦のusecaseがほとんどだと思うので、例えば参加主義モデル的な推薦のusecaseができたらユニークな価値を発揮できるのかな…!<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul>
 </section>
 <section id="参考文献-1" class="slide level2">
@@ -646,13 +645,13 @@ AlternativeVoices = D_{JS}(P(m|S), Q^*(m|R))
 <li>(メイン論文の背景にあるやつ!)ニュース推薦の民主的役割のtypologyを提案した論文: <a href="https://www.tandfonline.com/doi/full/10.1080/21670811.2019.1623700">On the Democratic Role of News Recommenders</a></li>
 </ol></li>
 <li><ol start="4" type="1">
-<li>Booking.comの論文: <a href="https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf">150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com</a></li>
+<li>MLOpsの成熟度を高める為のガイドライン: <a href="https://mlops.community/mlops-maturity-assessment/">MLOps Maturity Assessment</a></li>
 </ol></li>
 <li><ol start="5" type="1">
-<li>News推薦のサーベイ論文: <a href="https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf">News Recommender Systems - Survey and Roads Ahead</a></li>
+<li>Booking.comの論文: <a href="https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf">150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com</a></li>
 </ol></li>
 <li><ol start="6" type="1">
-<li>MLOpsの成熟度を高める為のガイドライン: <a href="https://mlops.community/mlops-maturity-assessment/">MLOps Maturity Assessment</a></li>
+<li>ニュース推薦のサーベイ論文: <a href="https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf">News Recommender Systems - Survey and Roads Ahead</a></li>
 </ol></li>
 </ul>
 
