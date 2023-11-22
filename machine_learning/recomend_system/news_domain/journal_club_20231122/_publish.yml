@@ -1,0 +1,4 @@
+- source: slides.md
+  quarto-pub:
+    - id: ae9dd85a-65b2-429d-a44a-91e0443cd0ca
+      url: 'https://quartopub.com/sites/morinota/recsys_journal_club_20231122'
