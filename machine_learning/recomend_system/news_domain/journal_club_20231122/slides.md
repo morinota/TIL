@@ -22,6 +22,30 @@ title-slide-attributes:
   data-background-opacity: "0.5"
 ---
 
+## 最初に自己紹介
+
+:::: {.columns}
+
+::: {.column width="70%"}
+
+- 発表者: モーリタ (twitter @moritama7431)
+- 所属: 株式会社ユーザベース NewsPicks インターン
+- Qiita: https://qiita.com/morinota
+- github: https://github.com/morinotaK
+
+:::
+::: {.column width="30%"}
+
+![](https://pbs.twimg.com/profile_images/1539885839173709824/3RqtaSyu_400x400.jpg){fig-align="center" width=150}
+
+:::
+::::
+
+- 博士課程への入学時期に偶然Kaggleをきっかけに推薦システム分野と出会い、趣味で論文読んで実装してブログに上げてた。「推薦システムを趣味ではなく仕事として関わりたい」と思い、NewsPicksさんに機会をもらって休学してインターン中。([インターン1年の振り返りブログ書きましたー!](https://tech.uzabase.com/entry/2023/10/06/150603))
+- 興味ある事:
+  - 推薦システム周り(より確度の高いオフライン評価とか。最近はNetflixの推薦モデル統合のブログをきっかけに、multi-taskな推薦モデルとか。)
+  - MLシステムの設計・開発・運用改善(最近MLOps勉強会を経て、MLOps Maturity AssessmentとかRecSysOpsとかFTP Pipelinesとか気になって調べ中。今の業務もこちらの重みが強い印象なので...!)
+
 ## 参考文献:
 
 - 1. メインの論文: [RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
@@ -40,11 +64,15 @@ title-slide-attributes:
   - 規範的概念としての"多様性"を、異なるニュース推薦モデルの評価や比較に使用可能な5つのmetrics集合 RADio に落とし込む。
 - この論文を読んだのは半年前なのですが、推薦モデルの推論品質の監視やオフライン評価に使えないかなーと思いを馳せ始め、皆さんと共有したく選択した。
 
+# 論文の概要紹介
+
 ## 導入: ニュース推薦の精度と多様性の話
 
-> ニュース推薦アルゴリズムの仕事は、増え続けるオンライン情報を**フィルタリング**すること (by文献2)
-
-フィルタリングの方針は、メディアが成したい使命によって異なる。
+- 推薦結果の"精度"のみを考慮した推薦システムは、ユーザが以前に見たものと似たものを不当に宣伝し、ユーザを"more of the same"のフィードバックループに閉じ込め得る。そのため**beyond-accuracy指標**として"多様性"の研究が進んでいる。
+- 多様性指標として一般的なのは、intra-list-diversity(ILD)(=推薦アイテムリスト間の非類似度)
+  - 様々な分野で活用可能だが、民主主義社会におけるメディアの役割を果たす為の"diverseなニュース推薦システム"のニュアンスを完全には表現できない。
+- そもそもニュース推薦アルゴリズムの仕事は、増え続けるオンライン情報を**フィルタリング**すること
+  - その**フィルタリングの方針は、各メディアの役割によって異なる**。
 
 ## 4種のメディアモデルとニュース推薦方針
 
@@ -59,9 +87,9 @@ title-slide-attributes:
 
 (各メディアモデルに優劣はなくて、どのモデルに従うかは、メディア企業自身が、そのmissionに従い、民主主義社会で果たしたい役割に応じて決めるべき)
 
-## 5種類のdiversity metrics
+## 5種類のdiversity metrics: RADio
 
-前述した4種のメディアモデルによって"目指すべき多様性"の価値と意味合いが異なる。本論文では、**各メディアモデルが推薦システムに期待する性質**から導出した、**5つのdiversity metrics**を提案:
+前述した4種のメディアモデルによって"目指すべき多様性"の価値と意味合いが異なる。本論文では、**各メディアモデルが推薦システムに期待する性質**から導出した、**5つのdiversity metrics RADio**を提案:
 
 :::: {.columns}
 
@@ -90,11 +118,17 @@ title-slide-attributes:
 
 ::::
 
+## 5種類のdiversity metrics: RADio
+
+RADio = Rank-Aware Divergence metrics (ioは??:thinking:)
+
+![](https://imgur.com/c2eTjvh)
+
 ## 5種類のdiversity metrics ① Calibration
 
 :::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="60%"}
 
 - 「推薦記事がユーザの好みとどの程度合っているか」を反映したもの。
   - 推薦記事リストの分布とユーザの閲読履歴の分布の間の距離を意味する。
@@ -102,26 +136,25 @@ title-slide-attributes:
 $$
 Calibration = D_{JS}(P^*(c|H), Q^*(c|R))
 \\
-% = \sum_{c} Q^*(c|R) f(\frac{P^*(c|H)}{Q^*(c|R)})
-\tag{7}
+% = \sum_{c} Q^*(c|R) f(\frac{P^*(c|H)}{Q^*(c|R)})\
 $$
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="40%"}
 
-分布のイメージ図、みたいなやつ。
+![](https://imgur.com/9SOsgiH)
 
 :::
 ::::
 
-ここで、$P$ と $Q$ は異なる2つの離散確率関数。添字 $*$ は、rankで重み付けされた確率関数である事を意味する。 $H$ は、あるユーザの閲読履歴にある記事集合。$R$ は、推薦記事リスト。$c$ は確率変数。(論文中では、記事categoryや記事のcomplexityを確率変数として提案してたので $c$ にしてるっぽい。)
+ここで、$P$ と $Q$ は異なる2つの離散確率関数。添字 $*$ は、rankで重み付けされた確率関数である事を意味する。 $H$ は、あるユーザの閲読履歴にある記事集合。$R$ は、推薦記事リスト。$c$ は確率変数。(論文中では、記事categoryや記事のcomplexityを確率変数として提案してたので $c$ にしてるっぽい?)
 
 ## 5種類のdiversity metrics ② Fragmentation
 
 :::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="60%"}
 
 - 「共通したトピックの記事を提供できているか」の度合いを反映したもの。
   - 複数ユーザの推薦記事リストの分布間の距離を意味する。(二人のユーザ $u$ と $v$ を比較する)
@@ -129,14 +162,13 @@ $$
 $$
 Fragmentation = D_{JS}(P^*(e|R^{u}), Q^*(e|R^{v}))
 % = \sum_{e} Q^*(e|R^v) f(\frac{P^*(e|R^u)}{Q^*(e|R^v)})
-\tag{8}
 $$
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="40%"}
 
-分布のイメージ図、みたいなやつ。
+![](https://imgur.com/83x6nBJ){width=50%}
 
 :::
 ::::
@@ -147,7 +179,7 @@ $$
 
 :::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="60%"}
 
 - 「肯定的な記事ばかり推薦してしまってないか、逆に否定的な記事ばかり推薦してしまってないか」の度合いを反映したもの。
   - 推薦可能な記事プール $S$ と、推薦記事リスト $R$ のactivation score(=positiveかnegativeか)の分布間の距離を表す。
@@ -155,14 +187,13 @@ $$
 $$
 Activation = D_{JS}(P(k|S), Q^*(k|R))
 % = \sum_{k} Q^*(k|R) f(\frac{P(k|S)}{Q^*(k|R)})
-\tag{9}
 $$
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="40%"}
 
-分布のイメージ図、みたいなやつ。
+![](https://imgur.com/68SdgQp){width=50%}
 
 :::
 ::::
@@ -173,7 +204,7 @@ $$
 
 :::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="60%"}
 
 - 「視点(ex. 政治的トピックや政党の言及など)の多様性」の度合いを反映したもの。
   - 記事プール $S$ と、推薦記事リスト $R$ のviewpoint(離散値を想定) の分布間の距離を表す。
@@ -181,14 +212,13 @@ $$
 $$
 Representation = D_{JS}(P(p|S), Q^*(p|R))
 % = \sum_{p} Q^*(p|R) f(\frac{P(p|S)}{Q^*(p|R)})
-\tag{10}
 $$
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="40%"}
 
-分布のイメージ図、みたいなやつ。
+![](https://imgur.com/H8tORYn){width=50%}
 
 :::
 ::::
@@ -200,22 +230,22 @@ $$
 
 :::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="60%"}
 
-- 「意見の声の持ち主(Minority or Majority)の多様性」に着目してる。(Representationは意見の中身の多様性)
+- 「意見の声の持ち主(Minority/Majority)の多様性」を反映したもの。(Representationは意見の中身の多様性)
+  - Minority/Majorityの例: 非白人/白人, 非男性/男性, etc.
   - 記事プール $S$ と、推薦記事リスト $R$ のviewpointの持ち主の分布間の距離を表す。
 
 $$
 AlternativeVoices = D_{JS}(P(m|S), Q^*(m|R))
 % = \sum_{m} Q^*(m|R) f(\frac{P(m|S)}{Q^*(m|R)})
-\tag{11}
 $$
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="40%"}
 
-2つのbinary分布のイメージ図、みたいなやつ。
+![](https://imgur.com/6UO7s2Z){width=50%}
 
 :::
 ::::
@@ -226,13 +256,14 @@ $$
 
 <!-- メディアモデルとmetricsの対応表 -->
 
-![](https://imgur.com/RZ46Wz5)
+![](https://imgur.com/RZ46Wz5){fig-align="center" width=600}
 
-- 表1はメディアモデルとRADioの各指標との関連性
-  - ex) 自由主義モデルはユーザの好みに合わせた情報を提供したい -> 低いCalibrationと高いFragmentationを持つアルゴリズム
-  - ex) 参加主義モデルは社会で必要な共通認識を各ユーザに分かりやすい形で提供したい -> 高いCalibration(complexity)と低いFragmentationを持つアルゴリズム
-
-異なるアルゴリズムのRADioの各値を比較する事で、開発者はどの手法が各メディアが求める機能に適しているか、定量評価できる。
+- 異なるアルゴリズムのRADioの各値を比較する事で、開発者はどの手法が各メディアが求める機能に適しているか、定量評価できる。
+  - ex) 自由主義モデルはユーザの好みに合わせた情報を提供したい -> 低いCalibrationと高いFragmentation
+  - ex) 参加主義モデルは社会で必要な共通認識を各ユーザに分かりやすい形で提供したい -> 高いCalibration(complexity)と低いFragmentation
+- 今後の課題:
+  - RADioに関連する多くの特徴量の抽出が難しい事(ここはLLMの普及で難易度低下?:thinking:)
+  - post-hocな評価ではなく、損失関数として活用可能なmetrics
 
 # ここからはRADioの活用可能性に思いを馳せてみた話
 
