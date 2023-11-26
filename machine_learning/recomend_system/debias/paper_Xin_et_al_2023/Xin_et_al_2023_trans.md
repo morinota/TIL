@@ -142,6 +142,8 @@ Our main contributions are as follows:
 
 - We conduct experiments on three datasets to demonstrate the effectiveness of the MBA method. MBA法の有効性を実証するため、3つのデータセットで実験を行った。One of these datasets is collected from an operational e-commerce platform, and includes clicks and purchase behavior data.これらのデータセットの1つは、運用中のeコマース・プラットフォームから収集されたもので、クリック数と購買行動データが含まれている。Experimental results show **state-of-the-art** recommendation performance of the proposed MBA method.実験結果は、提案されたMBA手法の最先端の推薦性能を示している。
 
+<!-- ここまで読んだ -->
+
 # 2. Related Work 関連作品
 
 We review prior work on multi-behavior recommendation and on denoising methods for recommendation from implicit feedback.
