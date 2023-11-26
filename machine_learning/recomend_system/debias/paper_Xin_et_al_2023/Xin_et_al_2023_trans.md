@@ -147,71 +147,80 @@ Our main contributions are as follows:
 # 2. Related Work 関連作品
 
 We review prior work on multi-behavior recommendation and on denoising methods for recommendation from implicit feedback.
-本稿では、複数行動の推薦に関する先行研究と、暗黙的フィードバックからの推薦のためのノイズ除去法に関する先行研究をレビューする。
+本稿では、multi-behavio推薦に関する先行研究と、暗黙的フィードバックからの推薦のためのノイズ除去法に関する先行研究をレビューする。(両方とも実務的に興味ある...!)
 
 ## 2.1. Multi-behavior recommendation
 
 Unlike conventional implicit feedback recommendation models [15, 21], which train a recommender on a single type of user behavior (e.g., clicks), multi-behavior recommendation models use multiple types of auxiliary behavior data to enhance the recommendation performance on target behavior [1, 7, 12, 18, 33, 37, 39].
-従来の暗黙的フィードバック推薦モデル[15, 21]が、単一のタイプのユーザー行動（例えばクリック）に基づいて推薦者を訓練するのとは異なり、複数行動推薦モデルは、複数のタイプの補助行動データを使用して、ターゲット行動に関する推薦性能を向上させる[1, 7, 12, 18, 33, 37, 39]。
+従来の暗黙的フィードバック推薦モデル[15, 21]が、単一のタイプのユーザ行動（例えばクリック）に基づいて推薦者を訓練するのとは異なり、複数行動推薦モデルは、複数のタイプの補助行動データを使用して、ターゲット行動に関する推薦性能を向上させる[1, 7, 12, 18, 33, 37, 39]。
 Recent studies use multi-task learning to perform joint optimization on learning auxiliary behavior and target behavior.
-最近の研究では、マルチタスク学習を用いて、補助動作と目標動作の学習に関する共同最適化を行う。
+最近の研究では、**マルチタスク学習を用いて、auxiliary behaviorとtarget behaviorの学習に関する共同最適化**を行う。
 For example, Gao et al.[12] propose a multi-task learning framework to learn user preferences from multi-behavior data based on a pre-defined relationship between different behavior.
-例えば、Gaoら[12]は、異なる行動間の事前に定義された関係に基づいて、複数の行動データからユーザーの嗜好を学習するマルチタスク学習フレームワークを提案している。
+例えば、Gaoら[12]は、異なる行動間の事前に定義された関係(=behaviorの種類ごとの重み付けとか??)に基づいて、複数の行動データからユーザの嗜好を学習するマルチタスク学習フレームワークを提案している。
 Since different behavioral interactions between users and items can form a heterogeneous graph, recent studies also focus on using graph neural network (GNN) to mine the correlations among different types of behavior.
-ユーザーとアイテムの間の異なる行動の相互作用は、異種グラフを形成することができるため、最近の研究では、グラフ・ニューラル・ネットワーク（GNN）を使用して、異なるタイプの行動間の相関関係をマイニングすることにも焦点を当てている。
+ユーザとアイテムの間の異なる行動の相互作用は、異種グラフを形成することができるため、最近の研究では、グラフ・ニューラル・ネットワーク(GNN)を使用して、異なるタイプの行動間の相関関係をマイニングすることにも焦点を当てている。
 For example, Wang et al.[33] uses the auxiliary behavior data to build global item-to-item relations and further improve the recommendation performance of target behavior.
-例えば、Wangら[33]は、補助行動データを用いて大域的な項目間関係を構築し、対象行動の推薦性能をさらに向上させている。
+例えば、Wangら[33]は、補助行動データを用いて大域的なアイテム間関係を構築し、対象行動の推薦性能をさらに向上させている。
 Jin et al.[18] propose a graph convolutional network (GCN) based model on capturing the diverse influence of different types of behavior and the various semantics of different types of behavior.
 Jinら[18]は、異なるタイプの行動の多様な影響と、異なるタイプの行動の多様なセマンティクスを捉える上で、グラフ畳み込みネットワーク（GCN）ベースのモデルを提案している。
 Xia et al.[39] incorporate multi-behavior signals through graph-based meta-learning.
 Xiaら[39]は、グラフベースのメタ学習によって、複数の行動シグナルを組み込んでいる。
 Chen et al.[1] regard the multi-behavior recommendation task as a multirelationship prediction task and train the recommender with an efficient non-sampling method.
-Chenら[1]は、多行動推薦タスクを多関係予測タスクとみなし、効率的な非サンプリング法を用いて推薦器を学習する。
+Chenら[1]は、multi-behavior推薦タスクを多関係予測タスク(?)とみなし、効率的な非サンプリング法を用いて推薦器を学習する。
 Additionally, some studies apply contrastive learning or a variational autoencoder (VAE) to improve the multi-behavior recommender.
 さらに、対照学習や変分オートエンコーダ（VAE）を適用して、複数行動レコメンダーを改善する研究もある。
 Xuan et al.[42] propose a knowledge graph enhanced contrastive learning framework to capture multi-behavioral dependencies better and solve the data sparsity problem of the target behavior, and Ma et al.[24] propose a VAEbased model to conduct multi-behavior recommendation.
-Xuanら[42]は、複数行動の依存関係をよりよく捉え、対象行動のデータ疎性の問題を解決するために、知識グラフを強化した対照学習フレームワークを提案しており、Maら[24]は、複数行動の推薦を行うためにVAEベースのモデルを提案している。
+Xuanら[42]は、複数行動の依存関係をよりよく捉え、対象行動のデータ疎性の問題を解決するために、**知識グラフを強化したcontractive learningフレームワークを提案**しており、Maら[24]は、複数行動の推薦を行うためにVAEベースのモデルを提案している。
+
 Another related research field is based on micro-behaviors [25, 44, 46], which utilize the micro-operation sequence in the process of user-item interactions to capture user preferences and predict the next item.
-別の関連する研究分野は、マイクロ行動 [25, 44, 46] に基づくもので、ユーザーとアイテムの相互作用の過程におけるマイクロ操作シーケンスを利用して、ユーザーの嗜好を把握し、次のアイテムを予測するものである。
+**別の関連する研究分野は、micro-behaviors(?)に基づくもの[25, 44, 46]**で、ユーザとアイテムの相互作用の過程における micro-operationシーケンスを利用して、ユーザの嗜好を把握し、next-itemを予測するものである。
 For example, Yuan et al.[44] focus on “sequential patterns” and “dyadic relational patterns” in micro-behaviors, and then use an extended self-attention network to mine the relationship between micro-behavior and user preferences.
-例えば、Yuanら[44]は、ミクロ行動における「逐次的パターン」と「ダイアド的関係パターン」に注目し、拡張自己注意ネットワークを用いて、ミクロ行動とユーザー嗜好の関係をマイニングしている。
+例えば、Yuanら[44]は、ミクロ行動における「逐次的パターン」と「ダイアド的関係パターン」に注目し、拡張自己注意ネットワークを用いて、micro-behaviorsとユーザ嗜好の関係をマイニングしている。
 This work focuses on mining user preferences from the micro-operation sequence.
-この研究では、マイクロ操作シーケンスからユーザーの嗜好をマイニングすることに焦点を当てている。
+この研究では、マイクロ操作シーケンスからユーザの嗜好をマイニングすることに焦点を当てている。
+
 However, existing studies still neglect the different data distributions across multiple types of user behavior, and thus fail to learn accurate and universal user preferences.
-しかし、既存の研究では、複数のタイプのユーザー行動にわたる異なるデータ分布が依然として無視されているため、正確で普遍的なユーザー嗜好を学習することができない。
+しかし、既存の研究では、複数のタイプのユーザ行動にわたる異なるデータ分布が依然として無視されているため、正確で普遍的なユーザ嗜好を学習することができない。
 Besides, prior work does not consider the noisy signals of user implicit feedback data, resulting in ineffective knowledge extraction and transfers.
-さらに、先行研究では、ユーザーの暗黙的フィードバックデータのノイズ信号を考慮していないため、効果的な知識抽出と転送ができない。
+さらに、**先行研究では、ユーザの暗黙的フィードバックデータのノイズ信号を考慮していないため**、効果的な知識抽出と転送ができない。
 
 ## 2.2. Recommendation denoising
 
 Existing recommender systems are usually trained with implicit feedback since it is much easier to collect than explicit ratings [28].
 既存の推薦システムは、明示的な評価よりもはるかに収集しやすいため、通常、暗黙的なフィードバックで訓練されている[28]。
 Recently, some research [17, 32, 36] has pointed out that implicit feedback can easily be corrupted by different factors, such as various kinds of bias [5] or users’ mistaken clicks.
-最近、いくつかの研究[17, 32, 36]は、暗黙のフィードバックは、様々な種類のバイアス[5]やユーザーの誤クリックなど、様々な要因によって容易に破損する可能性があることを指摘している。
+最近、いくつかの研究[17, 32, 36]は、**暗黙のフィードバックは、様々な種類のバイアス[5]やユーザの誤クリックなど、様々な要因によって容易に破損する可能性がある**ことを指摘している。
 Therefore, there have been efforts aimed at alleviating the noisy problem of implicit recommendation.
-そのため、暗黙の推薦というノイジーな問題を緩和するための努力がなされてきた。
+そのため、**implicit recommendation**というノイジーな問題を緩和するための努力がなされてきた。
 These efforts include sample selection methods [8– 11, 36, 43], re-weighting methods [3, 30, 32, 32, 35], methods using additional information [19, 22, 45], and methods designing specific denoising architectures [4, 13, 38, 40].
-これらの取り組みには、サンプル選択法[8-11, 36, 43]、再重み付け法[3, 30, 32, 35]、追加情報を利用する方法[19, 22, 45]、特定のノイズ除去アーキテクチャを設計する方法[4, 13, 38, 40]などがある。
+これらの取り組みには、サンプル選択法[8-11, 36, 43](=これはMNARデータに対するunder sampling手法も含まれる??:thinking:)、再重み付け法[3, 30, 32, 35] (=これはIPS重み付けとかが含まれる??:thinking:)、追加情報を利用する方法[19, 22, 45]、特定のノイズ除去アーキテクチャを設計する方法[4, 13, 38, 40](=これはdenoising sequential recommender的なやつ??:thinking:)などがある。
+
 Sample selection methods aim to design more effective samplers for model training.
 サンプル選択法は、モデルトレーニングのために、より効果的なサンプラーを設計することを目的としている。
 For example, Gantner et al.[11] consider popular but un-interacted items as items that are highly likely to be negative ones, while Ding et al.[8] consider clicked but not purchased items as likely to be negative samples.
 例えば、Gantnerら[11]は、人気があるがインタラクションのないアイテムをネガティブなアイテムである可能性が高いアイテムとしており、Dingら[8]は、クリックされたが購入されなかったアイテムをネガティブなサンプルである可能性が高いアイテムとしている。
+
 Re-weighting methods typically identify noisy samples as instances with higher loss values and then assign lower weights to them.
 再重み付け法は一般的に、ノイズの多いサンプルを損失値の高いインスタンスとして識別し、それらに低い重みを割り当てる。
 For example, Wang et al.[32] discard the large-loss samples with a dynamic threshold in each iteration.
 例えば、Wangら[32]は、各反復において、動的閾値で大損失サンプルを破棄している。
 Wang et al.[35] utilize the differences between model predictions as the denoising signals.
 Wangら[35]は、モデル予測間の差をノイズ除去信号として利用している。
+
 Additional information such as dwell time [19], gaze pattern [45] and auxiliary item features [22] can also be used to denoise implicit feedback.
 滞留時間[19]、視線パターン[45]、補助項目特徴[22]などの追加情報も、暗黙的フィードバックのノイズ除去に使用できる。
+
 Methods designing specific denoising architectures improve the robustness of recommender systems by designing special modules.
 特定のノイズ除去アーキテクチャを設計する方法は、特別なモジュールを設計することで推薦システムの頑健性を向上させる。
 Wu et al.[38] use self-supervised learning on user-item interaction graphs to improve the robustness of graph-based recommendation models.
 Wuら[38]は、グラフベースの推薦モデルの頑健性を向上させるために、ユーザーとアイテムの相互作用グラフの自己教師あり学習を使用している。
 Gao et al.[13] utilize the self-labeled memorized data as denoising signals to improve the robustness of recommendation models.
 Gaoら[13]は、推薦モデルの頑健性を向上させるために、自己ラベル化された記憶データをノイズ除去信号として利用している。
+
 Unlike the work listed above, which does not consider multiple types of user behavior, in this work, we focus on extracting underlying user preferences from (potentially) corrupted multi-behavior data and then conducting knowledge transfer to improve the recommendation performance.
-複数のタイプのユーザー行動を考慮しない上記の研究とは異なり、この研究では、（潜在的に）破損した複数の行動データから根本的なユーザー嗜好を抽出し、推薦性能を向上させるために知識移転を行うことに焦点を当てる。
+複数のタイプのユーザ行動を考慮しない上記の研究とは異なり、この研究では、**(潜在的に)破損した複数の行動データから根本的なユーザ嗜好を抽出**し、推薦性能を向上させるために知識移転を行うことに焦点を当てる。
+
+<!-- ここまで読んだ! -->
 
 # 3. Method メソッド
 
