@@ -231,90 +231,111 @@ We first introduce notations and the problem formulation in Section 3.1.After th
 
 ## 3.1. Notation and problem formulation
 
-We write 𝑢 ∈ U and 𝑖 ∈ I for a user and an item, where U and I indicate the user set and the item set, respectively.
+We write $u \in U$ and $i \in I$ for a user and an item, where U and I indicate the user set and the item set, respectively.
 Uはユーザー集合、Iはアイテム集合を表す。
 Without loss of generality, we regard click behavior as the auxiliary behavior and purchase behavior as the target behavior.
-一般性を損なわない範囲で、クリック行動を補助行動とし、購買行動を目標行動とする。
-We write R𝑓 ∈ R |U |× |I| for the observed purchase behavior data.
-U
+一般性を損なわない範囲で、**クリック行動をauxiliary behaviorとし、購買行動をtarget behaviorとする**。
+We write $R_f \in \mathbb{R}^{|U| \times |I|}$ for the observed purchase behavior data.
+ここで、観察された購買行動データを $R_f \in \mathbb{R}^{|U| \times |I|}$ と表記する。
 Specifically, each item 𝑟 𝑓 𝑢,𝑖 ∈ R𝑓 is set to 1 if there is a purchase behavior between user 𝑢 and item 𝑖; otherwise 𝑟 𝑓 𝑢,𝑖 is set as 0.
-具体的には、各項目𝑟 ↪Ll_1D453 は、ユーザ𝑢と項目𝑓の間に購買行動があれば1とされ、そうでなければ𝑟 𝑢,𝑓は0とされる。
+具体的には、各アイテム $r^{f}_{u,i}$ は、ユーザ $u$ とアイテム $i$ の間に購買行動があれば1とされ、そうでなければ0とされる。
 Similarly, we denote R𝑔 ∈ R |U |× |I | as the observed click behavior data, where each 𝑟 𝑔 𝑢,𝑖 ∈ R𝑔 is set as 1 if there is a click behavior between user 𝑢 and item 𝑖; otherwise 𝑟 𝑔 𝑢,𝑖 = 0.
-U
+同様に、$R_g \in \mathbb{R}^{|U| \times |I|}$ を観測されたクリック行動データとする。
 We use 𝑃 (R𝑓 ) and 𝑃 (R𝑔) to denote the user preference distribution learned from R𝑓 and R𝑔, respectively.
-R_1D453 と R_1D454 から学習されたユーザー選好分布を表すために、それぞれ ↪Lu_1D443 ) と 𝑄 を使用する。
-We assume that there is an underlying latent true user preference matrix R𝑡 with 𝑟 𝑡 𝑢,𝑖 ∈ R𝑡 as the true preference of user 𝑢 over item 𝑖.
-[empty]
+$R_f$ と $R_g$ から学習された**ユーザ嗜好分布**を表すために、それぞれ $P(R_f)$ と $P(R_g)$ を使用する。
+
+We assume that there is an underlying latent true user preference matrix $R_t$ with $r^{t}_{u,i}$ as the true preference of user 𝑢 over item 𝑖.
+$R_t$ を潜在的な真のユーザ嗜好の行列とする。
 The probabilistic distribution of R𝑡 is denoted as 𝑃 (R𝑡).
 R𝑡の確率分布を𝑃 (R𝑡)と表す。
 Both the data observation of R𝑓 and R𝑔 is motivated by the latent universal true user preference distribution 𝑃 (R𝑡) plus different kinds of noises or biases.
-R𝑓とR𝑔の両方のデータ観測は、潜在的で普遍的な真のユーザー嗜好分布𝑃 (R𝑡)と、異なる種類のノイズやバイアスによって動機づけられている。
+**$R_f$ と $R_g$ の両方のデータ観測は、潜在的で普遍的な真のユーザ嗜好分布 $P(R_t)$ と、異なる種類のノイズやバイアスによって動機づけられている**。(ふむふむ...!)
 Formally, we assume that 𝑃 (R𝑡) follows a Bernoulli distribution and can be approximated by a target recommender model 𝑡𝜃 with 𝜃 as the parameters:
-形式的には、↪Lu_1D443 (R_1D461) はベルヌーイ分布に従うと仮定し、 𝑡𝜃をパラメータとするターゲット推薦モデル𝑡𝜃で近似できる：
+形式的には、$P(R_t)$ はベルヌーイ分布に従うと仮定し、 $\theta$ をパラメータとするターゲット推薦モデル $t_{\theta}$ で近似できる:
 
 $$
+r^{t}_{u,i} \sim Bernoulli(t_{\theta}(u,i))
 \tag{1}
 $$
 
 Since the true user preferences 𝑟 𝑡 𝑢,𝑖 are intractable, we need to introduce the learning signals from the observed 𝑟 𝑓 𝑢,𝑖 and 𝑟 𝑔 𝑢,𝑖 to infer 𝑟 𝑡 𝑢,𝑖.
-真のユーザ嗜好𝑟は実行不可能であるため、観測された𝑢,𝑖と𝑟,𝑖から学習信号を導入して𝑢,𝑖を推論する必要がある。
+真のユーザ嗜好 $r^{t}$ は実行不可能であるため、観測された $r^{f}$ と$r^{g}$ から学習信号を導入して $r^{t}$ を推論する必要がある。(添字u, iを省略した)
 As a result, we introduce the following models to depict the correlations between the observed user implicit feedback (i.e., 𝑟 𝑓 𝑢,𝑖 and 𝑟 𝑔 𝑢,𝑖 ) and the latent true user preferences 𝑟 𝑡 𝑢,𝑖:
-その結果、観測されたユーザー暗黙フィードバック（すなわち、𝑟 𝑓）と潜在的な真のユーザー嗜好𝑟 𝑢,𝑖）との相関を表すために以下のモデルを導入する：
+その結果、**観測されたユーザ暗黙フィードバック(i.e. $r^{f}$ と $r^{g}$) と潜在的な真のユーザ嗜好 $r^{t}$ との相関を表す**ために以下のモデルを導入する:
+
+<!-- ここまで読んだ! -->
 
 $$
+r^{f}_{u,i} | r^{t}_{u,i} = 0 \sim Bernouli(h^{f}_{\phi}(u,i)) \\
+r^{f}_{u,i} | r^{t}_{u,i} = 1 \sim Bernouli(h^{f}_{\varphi}(u,i)) \\
+r^{g}_{u,i} | r^{t}_{u,i} = 0 \sim Bernouli(h^{g}_{\phi'}(u,i)) \\
+r^{g}_{u,i} | r^{t}_{u,i} = 1 \sim Bernouli(h^{g}_{\varphi'}(u,i)) \\
 \tag{2}
 $$
 
-where ℎ 𝑓 𝜙 (𝑢,𝑖) and ℎ 𝑓 𝜑 (𝑢,𝑖) are parameterized by 𝜙 and 𝜑 in the observed purchase behavior data, respectively, while ℎ 𝑔 𝜙′ (𝑢,𝑖) and ℎ 𝑔 𝜑′ (𝑢,𝑖) are parameterized by 𝜙 ′ and 𝜑 ′ in the observed click behavior data respectively.
-ここで、ℎ 𝑓 (𝑢,𝑖)と𝑓 𝑢 (𝑢,𝑖)は、それぞれ、観察された購買行動データの𝜙と𝜑でパラメータ化される、 一方、ℎ 𝑔 𝜙′ (𝑢,𝑖)は観測されたクリック行動データの𝜙と𝜑でそれぞれパラメータ化される。
+where $h^{f}_{\phi}(u,i)$ and $h^{f}_{\varphi}(u,i)$ are parameterized by 𝜙 and 𝜑 in the observed purchase behavior data, respectively, while $h^{g}_{\phi'}(u,i)$ and $h^{g}_{\varphi'}(u,i)$ are parameterized by 𝜙 ′ and 𝜑 ′ in the observed click behavior data respectively.
+ここで、$h^{f}_{\phi}(u,i)$ と $h^{f}_{\varphi}(u,i)$ は、それぞれ、観察された購買行動データにて𝜙と𝜑でパラメータ化される。
+一方、$h^{g}_{\phi'}(u,i)$ と $h^{g}_{\varphi'}(u,i)$ は観測されたクリック行動データの𝜙と𝜑でそれぞれパラメータ化される。
+
 The target of our task is formulated as follows: given the observed multi-behavior user implicit feedback, i.e., R𝑓 and R𝑔, we aim to train the latent true user preference model 𝑡𝜃 , and then use 𝑡𝜃 to improve the prediction performance on target behavior.
-我々のタスクの目標は以下のように定式化される： 観察された複数行動のユーザー暗黙フィードバック、すなわちR_1453とR_1454が与えられたとき、潜在的な真のユーザー嗜好モデルᑡᜃを訓練し、次にᑡᜃを用いてターゲット行動に関する予測性能を向上させることを目指す。
+我々のタスクの目標は以下のように定式化される： 観察された複数行動のユーザー暗黙フィードバック、すなわち $R_f$ と $R_g$ が与えられたとき、潜在的な真のユーザー嗜好モデル $t_{\theta}$ を訓練し(=ベルヌーイ分布のパラメータを出力するモデル)、次に $t_{\theta}$ を用いてターゲット行動に関する予測性能を向上させることを目指す。
 More precisely, during model inference, we introduce both 𝑃 (Rf ) and 𝑃 (Rt) to perform the target behavior recommendation and use a hyperparameter 𝛽 to balance the 𝑃 (Rt) and 𝑃 (Rf ), which is formulated as:
-より正確には、モデル推論中に、 𝑃 (Rf ) と 𝑃 (Rt ) の両方を導入し、 𝑃 (Rt ) と 𝑃 (Rf ) のバランスをとるためにハイパーパラメータ 𝑃 (Rt ) と 𝑃 (Rf ) を使用します：
+より正確には、モデル推論時に、targer behavior推薦の性能を向上させる為に $P(R_f)$ と $P(R_t)$ の両方を導入し、$P(R_f)$ と $P(R_t)$のバランスをとるためにハイパーパラメータ $\beta$ を使用する。数式にすると以下:
 
 $$
+score = \beta P(R_t) + (1 - \beta)P(R_f)
 \tag{3}
 $$
 
+(ここで、target behavior の分布 $P(R_f)$ だけを使わないのは、target ehaviorの分布も必ずしも真のユーザ嗜好と一致してるわけじゃないからかな...!:thinking:)
 We select items with the highest score as the target behavior recommendation results.
-最もスコアの高い項目を対象行動推薦結果として選択する。
+最もスコアの高いitemをtarget behavior推薦の結果として選択する。
 
-## 3.2. Multi-behavior alignment on noisy data ノイズデータに対するマルチビヘイビアアライメント
+## 3.2. Multi-behavior alignment on noisy data ノイズデータに対する
 
 The key motivation for MBA is that multiple types of user behavior should reflect similar user preferences.
-MBAの主な動機は、複数のタイプのユーザー行動が、類似したユーザー嗜好を反映しているはずだということだ。
+MBAの主な動機は、**複数のタイプのユーザ行動が、類似したユーザ嗜好を反映しているはずだ**ということだ。
 Hence, Eq.4 is expected to be achieved with the convergence of the training models:
-したがって、式.4は学習モデルの収束とともに達成されることが期待される：
+したがって、学習モデルの収束とともに、式.4が達成されることが期待される:
 
 $$
+P(R_f) \approx P(R_g) \approx P(R_t)
 \tag{4}
 $$
 
+(P(R_f)とかはいずれも、モデルによって推論されるやつだよね...!:thinking:)
 Therefore, 𝑃 (R𝑓 ) and 𝑃 (R𝑡) should have a relatively small KLdivergence, which is formulated as follows:
-したがって、 𝑃 (R_1D443) と𝑃 (R_1D461) は比較的小さなKLdivergenceを持つべきであり、これは以下のように定式化される：
+したがって、 P(R_f) と $P(R_t)$ は比較的小さなKLdivergenceを持つべきであり、これは以下のように定式化される:
 
 $$
+KL[P(R_f) || P(R_t)] = E_{P(R_f)}[log P(R_f) - log P(R_t)]
 \tag{5}
 $$
 
+(KL divergenceの式。そうそう、KL-divはJS-divと違って、対称性とかないんだった。)
+
 Similarly, we also have the KL-divergence between 𝑃 (R𝑔) and 𝑃 (R𝑡):
-同様に、𝑃と𝑁の間のKL-発散もある：
+P(R_g)とP(R_t)の間のKL-divも同様:
 
 $$
+KL[P(R_g) || P(R_t)] = E_{P(R_g)}[log P(R_g) - log P(R_t)]
 \tag{6}
 $$
 
 However, naively minimizing the above KL-divergence is not feasible since it overlooks the data distribution gaps and correlations between multiple types of behavior.
-しかし、上記のKLダイバージェンスを素朴に最小化することは、データ分布のギャップや複数種類の行動間の相関を見落としてしまうため、実行不可能である。
+しかし、**上記のKLダイバージェンスを素朴に最小化することは、データ分布のギャップや複数種類の行動間の相関を見落としてしまうため、実行不可能である**。
 To address this issue, we use Bayes’ theorem to rewrite 𝑃 (R𝑡) as follows:
-この問題に対処するため、ベイズの定理を用いて𝑃 (R_1D461) を以下のように書き換える：
+この問題に対処するため、ベイズの定理を用いて 真の嗜好分布 $P(R_t)$ を以下のように書き換える:
+(ベイズの定理って、同時確率が2通りの書き方ができる事から導出できるやつだよね...! ex. $P(R_t, R_f) = P(R_t)\cdot P(R_f|R_t) = P(R_f)\cdot P(R_t|R_f)$ これを使うと式7のようになる)
 
 $$
+P(R_t) = \frac{P(R_f) P(R_t|R_f)}{P(R_f|R_t)}
+= \frac{P(R_g) P(R_t|R_g)}{P(R_g|R_t)}
 \tag{7}
 $$
 
 By substituting the right part of Eq.7 into Eq.5 and rearranging erms, we obtain the following equation:
-式7の右辺を式5に代入し、両義を並べ替えると、以下の式が得られる：
+式7の右辺を式5に代入し、両側の式を並べ替えると、以下の式が得られる:
 
 $$
 \tag{8}
@@ -323,19 +344,21 @@ $$
 Since 𝐾𝐿[𝑃 (R𝑓 ) ∥𝑃 (R𝑡 | R𝑔)] ≥ 0, the left side of Eq.8 is an approximate lower bound of the logarithm log 𝑃 (R𝑔).
 𝐾𝐿[𝑃 (R𝑓)] ∥ (R𝑃 | R𝑓) ≥ 0なので、式.8の左辺は対数log 𝑃 (R𝑔)の近似下界となる。
 The bound is satisfied if, and only if, 𝑃 (R𝑓 ) perfectly recovers 𝑃 (R𝑡 | R𝑔), which means 𝑃 (R𝑓 ) trained on the observed target behavior can perfectly approximates the true user preference distribution captured from the auxiliary behavior data.
-この境界は、𝑃（R𝑓）が↪Lu_1D461｜R𝑔）を完全に復元する場合にのみ満たされます。これは、観察されたターゲット行動に対して学習された𝑃（R𝑓）が、補助行動データから取得された真のユーザー選好分布を完全に近似できることを意味します。
+この境界は、$P(R_f)$ が $P(R_t|R_g)$ を完全に復元する(=両分布が完全に一致する) 場合にのみ満たされます。これは、観察されたtarget behaviorのもとで学習された $P(R_f)$ が、補助行動データから取得された真のユーザ選好分布を完全に近似できることを意味します。
 The above condition is in line with the main motivation of the MBA, i.e., different behavior data should reflect similar user preferences.
-上記の条件は、MBAの主な動機に沿ったものである。つまり、異なる行動データは、類似したユーザーの嗜好を反映すべきである。
+上記の条件は、MBAの主な動機に沿ったものである。つまり、異なる行動データは、類似したユーザの嗜好を反映すべきである。
+
 We see that the left side of Eq.8 is based on the expectation over 𝑃 (R𝑓 ), which means that we are trying to train 𝑃 (R𝑓 ) with the given corrupted auxiliary behavior data R𝑔 (i.e., the term 𝐸𝑃 (R𝑓 ) [log 𝑃 (R𝑔 | R𝑡)]) and then to transmit the information from 𝑃 (R𝑓 ) to 𝑃 (R𝑡) via the term 𝐾𝐿[𝑃 (R𝑓 ) ∥𝑃 (R𝑡)].
-式.8の左辺が𝑃 (R_1D453) に対する期待値に基づいていることがわかる。これは、与えられた破損した補助行動データR𝑃（すなわちR𝑓）を用いて𝑃を訓練しようとしていることを意味する、 𝐸𝑃 (R𝑓 ) [log 𝑃 | R↪Ll_1D461)]) を用いて学習し、𝑃 (R𝑓 ) から 𝑃 (R𝑑) に𝑃 [𝑓 ∥𝑃 (R𝑡)] という項を経由して情報を伝達する。
+式.8の左辺が $P(R_f)$ に対する期待値に基づいていることがわかる。これは、与えられた破損した補助行動データ $R_g$ (i.e. hogehoge)を用いて $P(R_f)$ を訓練し、そして $P(R_f)$ から $P(R_t)$ に $KL[P(R_f)||P(R_t)]$ という項を経由して情報を伝達しようとしていることを意味する。
 Such a learning process is ineffective for learning the true user preference distribution 𝑃 (R𝑡) and the target recommender model 𝑡𝜃 .
-このような学習プロセスは、真のユーザー嗜好分布ᵄ (R_1D443) とターゲット・レコメンダー・モデル𝑡の学習には効果がありません。
+このような学習プロセスは、真のユーザ嗜好分布 $P(R_t)$ と対象のレコメンダー・モデル $t_{\theta}$ の学習には効果がありません。
 To overcome the above issue, according to Eq.4, when the training process has converged, the preference distributions 𝑃 (R𝑓 ) and 𝑃 (R𝑡) would be close to each other.
-上記の問題を克服するために、式.4によれば、学習過程が収束したとき、選好分布𝑃 (R_1D461) と𝑃 (R_1D461) は互いに近くなる。
+上記の問題を克服するために、式.4によれば、学習過程が収束したとき、選好分布 $P(R_f)$ と $P(R_t)$ は互いに近くなる。
 As a result, we can change the expectation over 𝑃 (R𝑓 ) to the expectation over 𝑃 (R𝑡) to learn 𝑃 (R𝑡) more effectively.
-その結果、↪Lu_1D443 に対する期待値を↪Lu_1D441 に対する期待値に変更することで、↪Lu_1D441 をより効果的に学習することができる。
-So we modify the left side of Eq.8 as
-そこで、式8の左辺を次のように修正する。
+その結果、$P(R_f)$ に対する期待値を $P(R_t)$ に対する期待値に変更することで、$P(R_t)$ をより効果的に学習することができる。(２つの分布は近くにあるはずだからってこと??:thinking:)
+So we modify the left side of Eq.8 as:
+そこで、式8の左辺を次のように修正する:
+(左辺を修正したので、$=$ が $\approx$ に変わってる...!)
 
 $$
 \tag{9}
@@ -343,6 +366,7 @@ $$
 
 Similarly, if we substitute the middle part of Eq.7 into Eq.6 and perform similar derivations, we can obtain:
 同様に、式7の中央部分を式6に代入し、同様の導出を行えば、次のようになる：
+(式9と同様に、$P(R_f)$ の箇所を $P(R_t)$ に近似したので、$=$ が $\approx$ に変わってる...!)
 
 $$
 \tag{10}
@@ -351,20 +375,25 @@ $$
 The left side of Eq.10 is an approximate lower bound of log 𝑃 (R𝑓 ).
 式10の左辺はlog 𝑃 (R_1D453 )の近似下界である。
 The bound is satisfied only if 𝑃 (R𝑔) perfectly recovers 𝑃 (R𝑡 | R𝑓 ), which means 𝑃 (R𝑔) trained on the observed auxiliary behaviors can perfectly approximate the true user preference distribution captured from the target behavior data.
-この境界は、𝑃が↪Lu_1D441 | R𝑃を完全に復元する場合にのみ満たされます。これは、観察された補助行動に対して学習された𝑃（R𝑔）が、ターゲット行動データから取得された真のユーザー嗜好分布を完全に近似できることを意味します。
+この境界は $P(R_g)$ が $P(R_t|R_f)$ を完全に復元する場合にのみ満たされます。これは、観察された補助行動に対して学習された𝑃（R𝑔）が、ターゲット行動データから取得された真のユーザ嗜好分布を完全に近似できることを意味します。
 Such condition further verifies the soundness of MBA, i.e., multiple types of user behavior are motivated by similar underlying user preferences.
-このような条件は、MBAの健全性をさらに検証する。つまり、複数のタイプのユーザー行動は、根底にあるユーザーの嗜好が類似していることが動機となっている。
+このような条件は、MBAの健全性をさらに検証する。つまり、複数のタイプのユーザ行動は、根底にあるユーザーの嗜好が類似していることが動機となっている。(この文またでてきた...!)
 Combining the left side of both Eq.9 and Eq.10 we obtain the loss function as:
 式9と式10の左辺を組み合わせると、損失関数は次のようになる：
 
 $$
+L
 \tag{11}
 $$
 
 We can see that the loss function aims to maximize the likelihood of data observation (i.e., 𝑃 (R𝑔 | R𝑡) and 𝑃 (R𝑓 | R𝑡)) and minimize the KL-divergence between distributions learned from different user behavior data.
-R𝑡) and 𝑃 (R𝑓 | R𝑡)) and minimize the KL-divergence between distributions learned from different user behavior data.
+損失関数は、データ観測の尤度(すなわち、$P(R_g|R_t)$ と $P(R_f|R_t)$)を最大化し、異なるユーザ行動データから学習された分布間のKL-発散を最小化することを目的としていることがわかる。
+(ここで尤度の意味って、ユーザの真の嗜好が1の時にclickが観測されたり、conversionが観測されたりする条件付き確率を、分布のパラメータ側を変数として見たやつ??)
+
 The learning process of MBA serves as a filter to simultaneously denoise multiple types of user behavior and conduct beneficial knowledge transfers to infer the true user preferences to enhance the prediction of the target behavior.
-MBAの学習プロセスは、複数のタイプのユーザー行動を同時にノイズ除去するフィルターとして機能し、ターゲット行動の予測を強化するために、真のユーザー嗜好を推論するために有益な知識移転を行う。
+MBAの学習プロセスは、複数のタイプのユーザ行動を同時にノイズ除去するフィルターとして機能し、ターゲット行動の予測を強化するために、真のユーザ嗜好を推論するために有益な知識移転を行う。
+
+<!-- ここまで読んだ -->
 
 ## 3.3. Training details トレーニングの詳細
 
