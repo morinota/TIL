@@ -382,12 +382,14 @@ Combining the left side of both Eq.9 and Eq.10 we obtain the loss function as:
 式9と式10の左辺を組み合わせると、損失関数は次のようになる：
 
 $$
-L
+L = - E_{P(R_t)}[log P(R_g|R_t)] + KL[P(R_f)||P(R_t)]
+\\
+- E_{P(R_t)}[log P(R_f|R_t)] + KL[P(R_g)||P(R_t)]
 \tag{11}
 $$
 
 We can see that the loss function aims to maximize the likelihood of data observation (i.e., 𝑃 (R𝑔 | R𝑡) and 𝑃 (R𝑓 | R𝑡)) and minimize the KL-divergence between distributions learned from different user behavior data.
-損失関数は、データ観測の尤度(すなわち、$P(R_g|R_t)$ と $P(R_f|R_t)$)を最大化し、異なるユーザ行動データから学習された分布間のKL-発散を最小化することを目的としていることがわかる。
+損失関数は、データ観測の尤度(すなわち、$P(R_g|R_t)$ と $P(R_f|R_t)$)を最大化し、異なるユーザ行動データから学習された分布間のKL-divを最小化することを目的としていることがわかる。
 (ここで尤度の意味って、ユーザの真の嗜好が1の時にclickが観測されたり、conversionが観測されたりする条件付き確率を、分布のパラメータ側を変数として見たやつ??)
 
 The learning process of MBA serves as a filter to simultaneously denoise multiple types of user behavior and conduct beneficial knowledge transfers to infer the true user preferences to enhance the prediction of the target behavior.
@@ -397,131 +399,150 @@ MBAの学習プロセスは、複数のタイプのユーザ行動を同時に�
 
 ## 3.3. Training details トレーニングの詳細
 
-As described in Section 3.1, we learn the user preference distributions 𝑃 (R𝑓 ) and 𝑃 (R𝑔) from R𝑓 and R𝑔, respectively.
-セクション3.1で説明したように、RᵅとR𝑔から、それぞれユーザの選好分布𝑃 (R_1D453) と𝑄 (R𝑔)を学習する。
-In order to enhance the learning stability, we pre-train 𝑃 (R𝑓 ) and 𝑃 (R𝑔) in R𝑓 and R𝑔, respectively.
-学習の安定性を高めるために、𝑃 (R_1D453) と𝑄 (R_1D454) をそれぞれ R_1D453 と R_1D454 で事前学習する。
+As described in Section 3.1, we learn the user preference distributions $P(R_f)$ and $P(R_g)$ from $R_f$ and $R_g$, respectively.
+セクション3.1で説明したように、$R_f$ と $R_g$ から、それぞれユーザの嗜好分布 $P(R_f)$ と $P(R_g)$ を学習する。
+In order to enhance the learning stability, we pre-train $P(R_f)$ and $P(R_g)$ in R𝑓 and R𝑔, respectively.
+学習の安定性を高めるために、$P(R_f)$ と $P(R_g)$ をそれぞれ $R_f$ と $R_g$ で事前学習する。(クリックモデルをクリックのログだけを使って事前学習する、みたいな...?)
 We use the same model structures of our target recommender 𝑡𝜃 as the pre-training model.
-学習前モデルとして、ターゲット・レコメンダー𝑡𝜃と同じモデル構造を使用する。
+事前学習モデルとして、ターゲット・レコメンダー $t_{\theta}$ と同じモデル構造を使用する。
 As the training converges, the KL-divergence will gradually approach 0.
 トレーニングが収束するにつれて、KLダイバージェンスは徐々に0に近づいていく。
 In order to enhance the role of the KL-divergence in conveying information, we set a hyperparameter 𝛼 to enhance the effectiveness of the KL-divergence.
-情報伝達におけるKL-ダイバージェンスの役割を強化するために、KL-ダイバージェンスの有効性を高めるハイパーパラメータǼを設定する。
+情報伝達におけるKL-ダイバージェンスの役割を強化するために、KL-ダイバージェンスの有効性を高めるハイパーパラメータ $\alpha$ を設定する。
 Then we obtain the following training loss function:
-すると、次のような学習損失関数が得られる：
+すると、次のような学習損失関数が得られる:
 
 $$
+L_{MBA} = - E_{P(R_t)}[log P(R_g|R_t)] + \alpha KL[P(R_f)||P(R_t)]
+\\
+- E_{P(R_t)}[log P(R_f|R_t)] + \alpha KL[P(R_g)||P(R_t)]
 \tag{12}
 $$
 
 ### 3.3.1. Expectation derivation. 期待値の導出。
 
 As described in Section 3.1, both R𝑓 and R𝑔 contain various kinds of noise and bias.
-セクション3.1で説明したように、R_1D45とR_1D454には様々な種類のノイズとバイアスが含まれている。
+セクション3.1で説明したように、$R_f$ と $R_g$ には様々な種類のノイズとバイアスが含まれている。
 In order to infer the latent true user preferences from the corrupted multi-behavior data, we use ℎ 𝑓 𝜙 (𝑢,𝑖) and ℎ 𝑓 𝜑 (𝑢,𝑖) to capture the correlations between the true user preferences and the observed purchase data.
-破損した複数行動データから潜在的な真のユーザー嗜好を推論するために、ℎ 𝑓 (𝑢,𝑖)と𝜑 (𝑢,𝑖)を用いて、真のユーザー嗜好と観測された購買データ間の相関を捉える。
-Similarly, ℎ 𝑔 𝜙′ (𝑢,𝑖) and ℎ 𝑔 𝜑′ (𝑢,𝑖) are used to capture the correlations between the true user preferences and the observed click data, as shown in Eq.2.Specifically, we expand 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑔 | R𝑡)] as:
-同様に、ℎ (↪Ll_1D454) と 𝑔 (↪Ll_1D462) は、式.2に示すように、真のユーザ嗜好と観測されたクリックデータとの相関を捉えるために使用される。 .具体的には、𝐸𝑃 (R𝑃 | R↪Ll_1D461) [log 𝑃 | R↪Ll_1D461] を次のように展開する：
+破損した複数行動データから潜在的な真のユーザ嗜好を推論するために、$h^{f}_{\phi}(u,i)$ と $h^{f}_{\varphi}(u,i)$ を用いて、真のユーザ嗜好と観測された購買(target behavior)データ間の相関を捉える。
+Similarly, ℎ 𝑔 𝜙′ (𝑢,𝑖) and ℎ 𝑔 𝜑′ (𝑢,𝑖) are used to capture the correlations between the true user preferences and the observed click data, as shown in Eq.2.
+同様に、$h^{g}_{\phi}(u,i)$ と $h^{g}_{\varphi}(u,i)$ を用いて、式.2に示すように、真のユーザ嗜好と観測されたクリックデータ(support behavior)との相関を捉えることを試みる。
+Specifically, we expand 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑔 | R𝑡)] as:
+具体的には、$E_{P(R_t)}[log P(R_g|R_t)]$ を次のように展開する:
 
 $$
+E_{P(R_t)}[log P(R_g|R_t)]
+= \sum_{u,i} E_{r^{t}_{u,i} \sim P(R_t)} [log P(r^{g}_{u,i}|r^{t}_{u,i})]
 \tag{13}
+= ...
 $$
 
 Similarly, the term 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)] can be expanded as:
-同様に、項𝐸𝑃 (R𝑁 ) [log 𝑃 | R↪Ll_1D461] は次のように展開できる：
+同様に、$E_{P(R_t)}[log P(R_f|R_t)]$ の項は次のように展開できる：
 
 $$
+E_{P(R_t)}[log P(R_f|R_t)] = ...
 \tag{14}
 $$
 
 By aligning and denoising the observed target behavior and auxiliary behavior data simultaneously, the target recommender 𝑡𝜃 is trained to learn the universal true user preference distribution.
-観測されたターゲット行動と補助行動データを同時に整列・ノイズ除去することで、ターゲット・レコメンダー𝑡𝜃は普遍的な真のユーザー嗜好分布を学習するように訓練される。
+観測されたtarget行動と auxiliary行動データを同時に整列・ノイズ除去することで、ターゲット・レコメンダー $t_{\theta}$ は普遍的な真のユーザ嗜好分布を学習するように訓練される。
 
 ### 3.3.2. Alternative model training. 代替モデルのトレーニング。
 
 In the learning stage, we find that directly training 𝑡𝜃 with Eq.12–Eq.14 does not yield satisfactory results, which is caused by the simultaneous update of five models (i.e., ℎ 𝑔 𝜙′ , ℎ 𝑔 𝜑′ , ℎ 𝑓 𝜙 , ℎ 𝑓 𝜑 and 𝑡𝜃 ) in such an optimization process.
-学習段階において、式.12-式.14を用いて𝑡-𝜃を直接学習しても満足のいく結果が得られないことがわかる、 ℎ ᑔ 𝜙′ , ℎ ᑔ 𝜑 ᑓ 𝜙 , ℎ ᑓ 𝜑 ↪Ll_1D703 ）が同時に更新されるためである。
+学習段階において、式.12-式.14を用いて $t_{\theta}$ を直接学習しても満足のいく結果が得られないことがわかる。(そうなの??) これは、5つのモデル達が同時に更新されるためである。(i.e. $h^{g}_{\phi'}, h^{g}_{\varphi'}, h^{f}_{\phi}, h^{f}_{\varphi}, t_{\theta}$)
 These five models may interfere with each other and prevent 𝑡𝜃 from learning well.
-これら5つのモデルは互いに干渉し合い、𝑡𝜃の学習を妨げる可能性がある。
+これら5つのモデルは互いに干渉し合い、$t_{\theta}$ (=真に得たいモデル) の学習を妨げる可能性がある。
 To address this problem, we set two alternative training steps to train the involved models iteratively.
 この問題に対処するため、2つの代替学習ステップを設定し、関係するモデルを反復的に学習する。
+
 In the first training step, we assume that a user tends to not click or purchase items that the user dislikes.
-最初の学習ステップでは、ユーザーが嫌いな商品はクリックしない、購入しない傾向があると仮定する。
-That is to say, given 𝑟 𝑡 𝑢,𝑖 = 0 we have 𝑟 𝑓 𝑢,𝑖 ≈ 0 and 𝑟 𝑔 𝑢,𝑖 ≈ 0, so we have ℎ 𝑓 𝜙 ≈ 0 and ℎ 𝑔 𝜙′ ≈ 0 according to Eq.2.Thus in this step, only the models ℎ 𝑓 𝜑 , ℎ 𝑔 𝜑′ and 𝑡𝜃 are trained.
-That is to say, given 𝑟 𝑡 𝑢,𝑖 = 0 we have 𝑟 𝑓 𝑢,𝑖 ≈ 0 and 𝑟 𝑔 𝑢,𝑖 ≈ 0, so we have ℎ 𝑓 𝜙 ≈ 0 and ℎ 𝑔 𝜙′ ≈ 0 according to Eq.2.Thus in this step, only the models ℎ 𝑓 𝜑 , ℎ 𝑔 𝜑′ and 𝑡𝜃 are trained.
+最初の学習ステップでは、**ユーザが嫌いな商品はクリックしない、購入しない傾向があると仮定**する。
+That is to say, given $r^{t}_{u,i}= 0$ we have $r^{f}_{u,i} \approx 0$ and $r^{g}_{u,i} \approx 0$, so we have ℎ 𝑓 𝜙 ≈ 0 and ℎ 𝑔 𝜙′ ≈ 0 according to Eq.2.
+これはつまり、真の嗜好 $r^{t}_{u,i}= 0$ の場合、$r^{f}_{u,i} \approx 0$ と $r^{g}_{u,i} \approx 0$ が成立する、つまり $h^{f}_{\varphi} \approx 0$ と $h^{g}_{\varphi'} \approx 0$ が成立するということである。
+Thus in this step, only the models ℎ 𝑓 𝜑 , ℎ 𝑔 𝜑′ and 𝑡𝜃 are trained.
+なのでこのステップでは、3つのモデル $h^{f}_{\varphi}, h^{g}_{\varphi'}, t_{\theta}$ のみを学習させる。
 Then Eq.13 can be reformulated as:
-そうすると、式.13は次のように定式化できる：
+そうすると、式.13は次のように定式化できる:
 
 $$
 \tag{15}
 $$
 
 where
-どこ
+ここで、
 
 $$
 \tag{}
 $$
 
 Meanwhile, Eq.14 can be reformulated as:
-一方、式.14は次のように定式化できる：
+一方、式.14は次のように定式化できる:
 
 $$
 \tag{16}
 $$
 
 where
-どこ
+ここで、
 
 $$
 \tag{}
 $$
 
 Here, we denote 𝐶1 as a large positive hyperparameter to replace − logℎ 𝑔 𝜙′ (𝑢,𝑖) and − logℎ 𝑓 𝜙 (𝑢,𝑖).
-ここでは、-logℎ ᑔ ↪Ll_1D719′ (𝑢,𝑖)と-logℎ 𝑓を置き換えるために、ǔ1を大きな正のハイパーパラメータとする。
+ここでは、-logℎ ᑔ ↪Ll_1D719′ (𝑢,𝑖)と-logℎ 𝑓を置き換えるために、$C_1$ を大きな正のハイパーパラメータとする。
+
 In the second training step, we assume that a user tends to click and purchase the items that the user likes.
-2つ目の学習ステップでは、ユーザーが気に入った商品をクリックして購入する傾向があると仮定する。
-That is to say, given 𝑟 𝑡 𝑢,𝑖 = 1 we have 𝑟 𝑓 𝑢,𝑖 ≈ 1 and 𝑟 𝑔 𝑢,𝑖 ≈ 1, so we have ℎ 𝑓 𝜑 ≈ 1 and ℎ 𝑔 𝜑′ ≈ 1 according to Eq.2.Thus in this step, only the models ℎ 𝑓 𝜙 , ℎ 𝑔 𝜙′ and 𝑡𝜃 will be updated.
-That is to say, given 𝑟 𝑡 𝑢,𝑖 = 1 we have 𝑟 𝑓 𝑢,𝑖 ≈ 1 and 𝑟 𝑔 𝑢,𝑖 ≈ 1, so we have ℎ 𝑓 𝜑 ≈ 1 and ℎ 𝑔 𝜑′ ≈ 1 according to Eq.2.Thus in this step, only the models ℎ 𝑓 𝜙 , ℎ 𝑔 𝜙′ and 𝑡𝜃 will be updated.
+2つ目の学習ステップでは、**ユーザが気に入った商品をクリックして購入する傾向があると仮定**する。
+That is to say, given 𝑟 𝑡 𝑢,𝑖 = 1 we have 𝑟 𝑓 𝑢,𝑖 ≈ 1 and 𝑟 𝑔 𝑢,𝑖 ≈ 1, so we have ℎ 𝑓 𝜑 ≈ 1 and ℎ 𝑔 𝜑′ ≈ 1 according to Eq.2.
+これはつまり、真の嗜好 $r^{t}_{u,i}= 1$ の場合、$r^{f}_{u,i} \approx 1$ と $r^{g}_{u,i} \approx 1$ が成立する、つまり $h^{f}_{\phi} \approx 1$ と $h^{g}_{\phi'} \approx 1$ が成立するということである。
+Thus in this step, only the models ℎ 𝑓 𝜙 , ℎ 𝑔 𝜙′ and 𝑡𝜃 will be updated.
+なのでこのステップでは、3つのモデル $h^{f}_{\phi}, h^{g}_{\phi'}, t_{\theta}$ のみを学習させる。
+
 Then Eq.13 can be reformulated as:
-そうすると、式.13は次のように定式化できる：
+そうすると、式.13は次のように定式化できる:
 
 $$
 \tag{17}
 $$
 
 where
-どこ
+ここで
 
 $$
 \tag{}
 $$
 
 Eq.14 can be reformulated as:
-式.14は次のように定式化できる：
+(同様に)式.14は次のように定式化できる:
 
 $$
 \tag{18}
 $$
 
 where
-どこ
+ここで、
 
 $$
 \tag{}
 $$
 
 𝐶2 is a large positive hyperparameter to replace − log(1−ℎ 𝑔 𝜑′ (𝑢,𝑖)) and − log(1 − ℎ 𝑓 𝜑 (𝑢,𝑖)).
-↪L_1D236 は、-log(1-Ȑ (↪Ll_1D46,𝑖)) と - log(1 - 𝜑 (↪Ll_1D462,𝑖)) を置き換える大きな正のハイパーパラメータである。
+$C_2$ は、-log(1-Ȑ (↪Ll_1D46,𝑖)) と - log(1 - 𝜑 (↪Ll_1D462,𝑖)) を置き換える大きな正のハイパーパラメータである。
+
+<!-- ここまで読んだ(一応) -->
 
 ### 3.3.3. Training procedure. トレーニングの手順
 
 In order to facilitate the description of sampling and training process, we divide 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑔 | R𝑡)] and 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)] into four parts (see Eq.15 to Eq.18), namely click positive loss (𝐿𝐶𝑃 and 𝐿 ′ 𝐶𝑃 ), click negative loss (𝐿𝐶𝑁 and 𝐿 ′ 𝐶𝑁 ), purchase positive loss (𝐿𝑃𝑃 and 𝐿 ′ 𝑃𝑃 ), and purchase negative loss (𝐿𝑃𝑁 and 𝐿 ′ 𝑃𝑁 ).
-R𝑡)] and 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)] into four parts (see Eq.15 to Eq.18), namely click positive loss (𝐿𝐶𝑃 and 𝐿 ′ 𝐶𝑃 ), click negative loss (𝐿𝐶𝑁 and 𝐿 ′ 𝐶𝑁 ), purchase positive loss (𝐿𝑃𝑃 and 𝐿 ′ 𝑃𝑃 ), and purchase negative loss (𝐿𝑃𝑁 and 𝐿 ′ 𝑃𝑁 ).
+サンプリングとトレーニングのプロセスの説明を容易にするために、𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑔 | R𝑡)] と 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)] を 4つの部分に分割する(式 15 ~ 式18)。
+hogehoge
 Each sample in the training set can be categorized into one of three situations: (i) clicked and purchased, (ii) clicked but not purchased, and (iii) not clicked and not purchased.
-トレーニングセットの各サンプルは、3つの状況のいずれかに分類される： (i) クリックされ購入された、(ii) クリックされたが購入されなかった、(iii) クリックされず購入されなかった。
+**トレーニングセットの各サンプルは、3つの状況のいずれかに分類される**(うんうん:thinking:) : (i) クリックされ購入された、(ii) クリックされたが購入されなかった、(iii) クリックされず購入されなかった。
 The three situations involve different terms in 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑔 | R𝑡)] and 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)].
-R𝑡)] and 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)].
+hogehoge
 In situation (i), each sample involves the 𝐿𝐶𝑃 and 𝐿𝑃𝑃 (or 𝐿 ′ 𝐶𝑃 and 𝐿 ′ 𝑃𝑃 in the alternative training step).
 状況(i)では、各サンプルは𝐿𝑃と𝑃（または代替学習ステップでは𝑃と𝐿）を含む。
 In situation (ii), each sample involves the 𝐿𝐶𝑃 and 𝐿𝑃𝑁 (or 𝐿 ′ 𝐶𝑃 and 𝐿 ′ 𝑃𝑁 in the alternative training step).
@@ -529,7 +550,7 @@ In situation (ii), each sample involves the 𝐿𝐶𝑃 and 𝐿𝑃𝑁 (or �
 In situation (iii), each sample involves the 𝐿𝐶𝑁 and 𝐿𝑃𝑁 (or 𝐿 ′ 𝐶𝑁 and 𝐿 ′ 𝑃𝑁 in the alternative training step).
 状況(iii)では、各サンプルは𝐿𝑁（または代替学習ステップでは𝑃𝐿）と𝑁（または𝑃𝑁）を含む。
 We then train MBA according to the observed multiple types of user behavior data in situations (i) and (ii), and use the samples in situation (iii) as our negative samples.
-そして、状況(i)と(ii)で観測された複数種類のユーザー行動データに従ってMBAを訓練し、状況(iii)のサンプルを負サンプルとして使用する。
+そして、状況(i)と(ii)で観測された複数種類のユーザ行動データに従ってMBAを訓練し、状況(iii)のサンプルを負サンプルとして使用する。
 Details of the training process for MBA are provided in Algorithm 1.
 MBAのトレーニングプロセスの詳細は、アルゴリズム1に記載されている。
 
