@@ -6,7 +6,7 @@ https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines
 ## 0.2. title タイトル
 
 From MLOps to ML Systems with Feature/Training/Inference Pipelines
-特徴/学習/推論パイプラインによるMLOpsからMLシステムへ
+MLOpsから特徴/学習/推論パイプラインによるMLシステムへ
 
 The Mental Map for MLOps to align your Data-ML-Product Teams
 データ-ML-プロダクト・チームを調整するMLOpsのためのメンタル・マップ
@@ -65,7 +65,7 @@ It was, more importantly, the clear mental map of what they needed to do (see Fi
 
 - write a training pipeline that reads training data from the Feature Store, trains your model and saves the trained model in the model registry, トレーニングパイプラインを作成し、Feature Storeからトレーニングデータを読み込み、モデルをトレーニングし、**トレーニング済みモデルをモデルレジストリに保存します**、
 
-- write a batch inference pipeline or online inference pipeline that downloads the trained model, then takes new feature data, either from the feature store or computes it from user requests, and makes predictions consumed by the ML-enabled product (often a simple UI written in Python using Streamlit or Gradio). バッチ推論パイプラインまたはオンライン推論パイプラインを作成し、学習済みモデルをダウンロードし、新しい特徴量データを特徴ストアから取得するか、ユーザリクエストから計算し、ML対応製品（多くの場合、StreamlitまたはGradioを使用してPythonで書かれたシンプルなUI）で消費される予測を行います。
+- write a batch inference pipeline or online inference pipeline that downloads the trained model, then takes new feature data, either from the feature store or computes it from user requests, and makes predictions consumed by the ML-enabled product (often a simple UI written in Python using Streamlit or Gradio). **バッチ推論パイプラインまたはオンライン推論パイプラインを作成**し、学習済みモデルをダウンロードし、新しい特徴量データを特徴ストアから取得するか、ユーザリクエストから計算し、ML対応製品（多くの場合、StreamlitまたはGradioを使用してPythonで書かれたシンプルなUI）で消費される予測を行います。
 
 After the students have built their first MVP (Minimum Viable Product), they could add automated unit tests for features, data validation tests, and versioning for their features and models.
 生徒たちは最初のMVP(Minimum Viable Product)を作った後、特徴量(作成処理)の自動ユニットテスト、データ検証テスト、特徴量やモデルのバージョニングを追加することができる。
@@ -95,7 +95,7 @@ Figure 3: This diagram from 2015 is from a canonical paper by Google on Hidden T
 (あ、よく引用されてる図だ!:thinking:)
 
 The diagram in Figure 3 spread fast and wide and the message was clear to Data Scientists - building ML systems is hard and much more than just training a model.
-図3の図は瞬く間に広まり、データサイエンティストへのメッセージは明確なものとなった。
+図3の図は瞬く間に広まり、データサイエンティストへのメッセージは明確なものとなった。**MLシステムの構築は難しく、単にモデルをトレーニングするだけでは済まない**。
 
 In the era before MLOps practices merged, the first generation of ML systems many different architecture patterns were proposed to help build batch and real-time ML systems.
 MLOpsのプラクティスが融合する前の時代、MLシステムの第一世代では、バッチおよびリアルタイムのMLシステムを構築するのに役立つ多くの異なるアーキテクチャパターンが提案された。(ふむふむ...!)
@@ -152,9 +152,10 @@ The user provides a query and the LLM provides a response, with the online infer
 ![figure6]()
 
 Figure 6: Many real-time ML systems also require history and context, and the feature store provides them as precomputed features to online models. This now requires three separate pipelines - feature creation, model training, and online model inference.
+図6：多くのリアルタイムMLシステムは、履歴とコンテキストも必要とするが、特徴ストアはそれらをオンラインモデルに事前計算された特徴として提供する。このため、特徴作成、モデル学習、オンラインモデル推論の3つの独立したパイプラインが必要になる。
 
 In our first real-time ML system, the online inference pipeline was stateless - it had no access to historical data or context data.
-私たちの最初のリアルタイムMLシステムでは、オンライン推論パイプラインはステートレスだった。
+私たちの最初のリアルタイムMLシステムでは、オンライン推論パイプラインはステートレスだった。ユーザ履歴やconxtextにアクセスしない。
 Figure 6 shows the architecture of a real-time ML System with the feature store providing history and context, enabling richer feature vectors for models.
 図6は、特徴量ストアが履歴とコンテキストを提供し、モデルのためのより豊富な特徴量ベクトルを可能にするリアルタイムMLシステムのアーキテクチャを示している。
 The feature store provides low-latency access to pre-computed features (historical and contextual information) by the online inference pipeline looking features up with entity IDs (userID, sessionID, productID, etc) provided by the client at request-time.
@@ -170,9 +171,9 @@ MLプラットフォームチームにとっての課題は、本番MLシステ�
 In 2020, the term MLOps came to be adopted as the set of patterns and processes that ML platforms teams should use to productionize ML systems.
 2020年には、MLプラットフォームチームがMLシステムをプロダクション化するために使用すべき一連のパターンとプロセスとして、MLOpsという用語が採用されるようになった。
 MLOps was inspired by the DevOps movement which brought software engineers closer to production by ensuring that they automate and test the deployment of their software in production environments.
-MLOpsはDevOpsムーブメントに触発されたもので、ソフトウェア・エンジニアが本番環境でのソフトウェアのデプロイを自動化し、テストすることで、より本番環境に近づけるようにした。
+MLOpsはDevOpsムーブメントに触発されたものである。DevOpsムーブメントは、本番環境でのソフトウェアのデプロイを自動化し、テストすることで、ソフトウェア・エンジニアがより本番環境に近づけるようにした。
 Wouldn’t it be great if we could do the same for ML systems? However, ML systems are more complex than classical software products - they have to manage both the code used to build them and the data used for training and inference.
-MLシステムでも同じことができれば素晴らしいと思わないだろうか？**しかし、MLシステムは古典的なソフトウェア製品よりも複雑で、構築するために使われるコードと、学習や推論に使われるデータの両方を管理しなければならない**。
+MLシステムでも同じことができれば素晴らしいと思わないだろうか？しかし、**MLシステムは古典的なソフトウェア製品よりも複雑**で、構築するために使われるコードと、学習や推論に使われるデータの**両方を管理しなければならない**。
 Our nascent MLOps Community badly needed some guidance on best practices and processes for teams - we needed a map to build ML systems.
 私たちの新興MLOpsコミュニティは、チームのベストプラクティスとプロセスに関するガイダンスをひどく必要としていた。
 
@@ -183,7 +184,7 @@ There is a long history of bad maps leading people astray.
 Figure 7: Mercator Projection Maps make Greenland look much bigger than it is. Mercator Projection Maps suck.
 
 Personally, since a very young age, I have had an unreasonable dislike for Mercator Projection maps (see figure 7).
-個人的には、幼い頃からメルカトル図法（図7参照）の地図が理不尽に嫌いだった。
+個人的には、幼い頃からメルカトル図法(図7参照)の地図が理不尽に嫌いだった。
 
 The first MLOps maps for building ML systems have similar deficiencies to Mercator Maps - they try to project a view of ML systems that doesn’t reflect the reality of building a ML system.
 **MLシステム構築のための最初のMLOpsマップには、メルカトル図法のような欠陥がある。MLシステム構築の現実を反映していないMLシステムの見方を投影しようとしているのだ**。
@@ -218,7 +219,7 @@ For other mortals - Data Scientists, Data Engineers, ML Engineers - the maps mig
 Figure 10: ML Systems are fed new data with pipelines enabling them to continually drive business value.
 
 Let’s take a step back and examine the problem of making ML systems from first principles.
-一歩引いて、第一原理からMLシステムを作る問題を検証してみよう。
+一歩引いて、**第一原理からMLシステムを作る問題**を検証してみよう。
 We will skip static datasets where you only make one-off predictions on a static dataset - this is not a ML System.
 静的なデータセットで1回きりの予測だけを行うような静的なデータセットはスキップします - これはMLシステムではありません。(うんうん...!:thinking:)
 
@@ -232,9 +233,9 @@ Pipelines also enable automation - to retrain models, to monitor model performan
 パイプラインはまた、モデルの再トレーニング、**モデルのパフォーマンスの監視**、デバッグのためのデータログなどの自動化を可能にする。
 
 Batch pipelines enable both batch ML Systems, such as dashboards, and operational ML systems, such as Spotify weekly, where recommendations for songs are updated once per week and consumed by the user when they login to Spotify.
-バッチ・パイプラインは、ダッシュボードのようなバッチMLシステムと、Spotify weeklyのような運用MLシステムの両方を可能にする。
+batchパイプラインは、ダッシュボードのようなバッチMLシステムと、Spotify weeklyのような運用MLシステムの両方を可能にする。
 Streaming feature pipelines and features computed at request-time (on-demand features) enable interactive ML systems that are updated in real-time, enabling systems such as personalized recommendations or search.
-ストリーミングフィーチャーパイプラインとリクエスト時に計算されるフィーチャー(オンデマンドフィーチャー)は、リアルタイムで更新されるインタラクティブなMLシステムを可能にし、パーソナライズされたレコメンデーションや検索などのシステムを実現する。
+streaming feature pipelines とリクエスト時に計算される特徴量(=on-demand features)は、リアルタイムで更新されるinteractiveなMLシステムを可能にし、パーソナライズされた推薦や検索などのシステムを実現する。
 
 # 4. Unified Architecture for ML Systems as Feature/Training/Inference Pipelines 特徴／学習／推論パイプラインとしてのMLシステムの統一アーキテクチャ
 
@@ -268,7 +269,7 @@ The feature pipeline can be a batch program or a streaming program.
 The training pipeline can output anything from a simple XGBoost model to a fine-tuned large-language model (LLM), trained on many GPUs.
 トレーニング・パイプラインは、単純なXGBoostモデルから、多数のGPUでトレーニングされた、微調整された大規模言語モデル（LLM）まで、何でも出力することができる。
 Finally, the inference pipeline can be a batch program that produces a batch of predictions to an online service that takes requests from clients and returns predictions in real-time.
-最後に、推論パイプラインは、クライアントからのリクエストを受けてリアルタイムで予測を返すオンラインサービスに対して、予測のバッチを生成するバッチプログラムとすることができる。
+最後に、推論パイプラインは、クライアントからのリクエストを受けてリアルタイムで予測を返すオンラインサービス、もしくは予測のバッチを生成するバッチプログラムとすることができる。
 
 One major advantage of FTI pipelines is it is an open architecture.
 FTIパイプラインの大きな利点は、オープン・アーキテクチャであることだ。(とは??)
@@ -313,7 +314,7 @@ Flink、Spark Streaming、Beamは、Kubernetes、Databricks、Hopsworksなどの
 Online inference pipelines are deployed with their model on model serving platforms, such as KServe (Hopsworks), Seldon, Sagemaker, and Ray.
 **オンライン推論パイプラインは、KServe（Hopsworks）、Seldon、Sagemaker、Rayなどのモデル提供プラットフォーム上にモデルとともに展開される。**
 The main takeaway here is that the ML pipelines are modular with clear interfaces, enabling you to choose the best technology for running your FTI pipelines.
-ここでの主なポイントは、**MLパイプライン達は明確なインターフェイスを備えたモジュール式であり、FTIパイプラインの実行に最適なテクノロジーを選択できるということ**です。
+ここでの主なポイントは、**MLパイプライン達は明確なインターフェイスを備えたモジュラーなものであり、FTIパイプラインの実行に最適なテクノロジーを選択できるということ**です。
 
 ![figure15]()
 Figure 15: Connect your ML pipelines with a Feature Store and Model Registry
@@ -358,8 +359,8 @@ Some of the questions that need to be answered for any given feature pipeline in
 - What framework/language is used to implement the feature pipeline?
   フィーチャー・パイプラインの実装には、どのようなフレームワーク／言語が使われていますか？
 
-Is there data validation performed on the feature data before ingestion?
-インジェストの前に、フィーチャーデータに対してデータバリデーションが行われているか。
+- Is there data validation performed on the feature data before ingestion?
+  インジェストの前に、フィーチャーデータに対してデータバリデーションが行われているか。
 
 - What orchestrator is used to schedule the feature pipeline?
   フィーチャー・パイプラインのスケジューリングには、どのオーケストレーターが使われていますか？(digdagとか??)
@@ -449,27 +450,27 @@ It takes significant engineering effort to test and validate ML Systems to make 
 MLシステムを安全なものにするためのテストと検証には、多大なエンジニアリングの労力を要する！
 
 At a high level, we need to test both the source-code and data for ML Systems.
-高いレベルでは、MLシステムのソースコードとデータの両方をテストする必要がある。
+高いレベルでは、**MLシステムのソースコードとデータの両方をテストする必要がある**。
 The features created by feature pipelines can have their logic tested with unit tests and their input data checked with data validation tests (e.g., Great Expectations).
-フィーチャー・パイプラインで作成されたフィーチャーは、そのロジックをユニットテストでテストし、入力データをデータ検証テスト（Great Expectationsなど）でチェックすることができる。
+フィーチャー・パイプラインで作成されたフィーチャーは、**そのロジックをユニットテストで**テストし、**入力データをデータ検証テスト（Great Expectationsなど）で**チェックすることができる。
 The models need to be tested for performance, but also for a lack of bias against known groups of vulnerable users.
 モデルの性能だけでなく、既知の弱者グループに対する偏りがないかどうかもテストする必要がある。
 Finally, at the top of the pyramid, ML-Systems need to test their performance with A/B tests before they can switch to use a new model.
 最後に、ピラミッドの頂点に位置するMLシステムは、新しいモデルの使用に切り替える前に、A/Bテストでパフォーマンスをテストする必要がある。
 
 When a ML system runs in production, you can also add feature monitoring and model monitoring support to it to try and identify and correct problems in their performance.
-MLシステムが本番稼動する際には、機能モニタリングやモデルモニタリングのサポートを追加して、パフォーマンスの問題を特定して修正することもできます。
+MLシステムが本番稼動する際には、特徴量モニタリングやモデルモニタリングのサポートを追加して、パフォーマンスの問題を特定して修正することもできます。
 For example, monitoring can identify issues such as drift in feature values or a changing prediction target for a ML model.
 例えば、モニタリングは、特徴量のドリフトやMLモデルの予測ターゲットの変化といった問題を特定することができる。
 
 Finally, we need to version ML artifacts so that the operators of ML systems can safely update and rollback versions of deployed models.
-最後に、MLシステムのオペレータが、配備されたモデルのバージョンを安全に更新したりロールバックしたりできるように、MLの成果物をバージョン管理する必要がある。
+最後に、MLシステムのオペレータが、**配備されたモデルのバージョンを安全に更新したりロールバックしたりできるように**、MLの成果物をバージョン管理する必要がある。
 System support for the push-button upgrade/downgrade of models is one of the holy grails of MLOps.
-プッシュボタンによるモデルのアップグレード／ダウングレードのシステムサポートは、MLOの聖杯のひとつである。
+プッシュボタンによるモデルのアップグレード／ダウングレードのシステムサポートは、MLOpsの聖杯のひとつである。
 But models need features to make predictions, so model versions are connected to feature versions and models and features need to be upgraded/downgraded synchronously.
-しかし、モデルは予測を行うためにフィーチャーを必要とする。そのため、モデルのバージョンはフィーチャーのバージョンと連動し、モデルとフィーチャーは同期してアップグレード／ダウングレードされる必要がある。
+しかし、モデルは予測を行うために特徴量を必要とする。そのため、モデルのバージョンは特徴量のバージョンと連動し、モデルと特徴量は同期してアップグレード／ダウングレードされる必要がある。(そうなの??)
 Luckily, you don’t need a year in rotation as a Google SRE to easily upgrade/downgrade models - platform support for versioned ML artifacts should make this a straightforward ML system maintenance operation.
-幸いなことに、モデルのアップグレードやダウングレードを簡単に行うために、Google SREとして1年間ローテーションを組む必要はない。
+幸いなことに、モデルのアップグレードやダウングレードを簡単に行うために、Google SREとして1年間ローテーションを組む必要はない。プラットフォームがバージョン管理されたML成果物をサポートすることで、MLシステムのメンテナンスが容易になるはずだ。
 
 # 6. Example ML Systems built with FTI Pipelines FTI パイプラインで構築された ML システムの例
 
@@ -514,9 +515,9 @@ In our experience, compared to MLOps 1.0, the architecture leads to reduced cogn
 In enterprise settings, the architecture enables better communication across teams by providing clear interfaces between teams, leading to better collaboration and higher quality ML systems, faster.
 企業環境では、このアーキテクチャはチーム間に明確なインターフェイスを提供することで、チーム間のより良いコミュニケーションを可能にし、より良いコラボレーションとより高品質なMLシステムの迅速な実現につながる。
 The architecture hides complexity at a high level, but you can easily drill down to the different feature/training/inference components to examine the details.
-アーキテクチャーは高いレベルで複雑さを隠しているが、異なる機能／トレーニング／推論のコンポーネントにドリルダウンして詳細を調べることは簡単にできる。
+アーキテクチャーは高いレベルで複雑さを隠しているが、異なる特徴量/トレーニング/推論のコンポーネントにドリルダウンして詳細を調べることは簡単にできる。
 Our hope is that the FTI pipeline architecture can help more teams work better together and get more models into production, quicker, accelerating the transformation of society by AI.
-私たちの願いは、FTIパイプライン・アーキテクチャが、より多くのチームがよりよく協力し、より多くのモデルをより早く生産に移し、AIによる社会の変革を加速させることです。
+私たちの願いは、**FTIパイプライン・アーキテクチャが、より多くのチームがよりよく協力し、より多くのモデルをより早くproductionに移し、AIによる社会の変革を加速させること**です。
 
 ## 7.1. Resources リソース
 
