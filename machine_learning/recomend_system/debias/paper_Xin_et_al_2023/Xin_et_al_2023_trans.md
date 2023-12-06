@@ -278,7 +278,7 @@ where $h^{f}_{\phi}(u,i)$ and $h^{f}_{\varphi}(u,i)$ are parameterized by 𝜙 a
 一方、$h^{g}_{\phi'}(u,i)$ と $h^{g}_{\varphi'}(u,i)$ は観測されたクリック行動データの𝜙と𝜑でそれぞれパラメータ化される。
 
 The target of our task is formulated as follows: given the observed multi-behavior user implicit feedback, i.e., R𝑓 and R𝑔, we aim to train the latent true user preference model 𝑡𝜃 , and then use 𝑡𝜃 to improve the prediction performance on target behavior.
-我々のタスクの目標は以下のように定式化される： 観察された複数行動のユーザー暗黙フィードバック、すなわち $R_f$ と $R_g$ が与えられたとき、潜在的な真のユーザー嗜好モデル $t_{\theta}$ を訓練し(=ベルヌーイ分布のパラメータを出力するモデル)、次に $t_{\theta}$ を用いてターゲット行動に関する予測性能を向上させることを目指す。
+我々のタスクの目標は以下のように定式化される： 観察された複数行動のユーザ暗黙フィードバック、すなわち $R_f$ と $R_g$ が与えられたとき、潜在的な真のユーザー嗜好モデル $t_{\theta}$ を訓練し(=ベルヌーイ分布のパラメータを出力するモデル)、次に $t_{\theta}$ を用いてターゲット行動に関する予測性能を向上させることを目指す。
 More precisely, during model inference, we introduce both 𝑃 (Rf ) and 𝑃 (Rt) to perform the target behavior recommendation and use a hyperparameter 𝛽 to balance the 𝑃 (Rt) and 𝑃 (Rf ), which is formulated as:
 より正確には、モデル推論時に、targer behavior推薦の性能を向上させる為に $P(R_f)$ と $P(R_t)$ の両方を導入し、$P(R_f)$ と $P(R_t)$のバランスをとるためにハイパーパラメータ $\beta$ を使用する。数式にすると以下:
 
@@ -382,13 +382,13 @@ log P(R_f) - KL[P(R_g)||P(R_t|R_f)]
 $$
 
 The left side of Eq.10 is an approximate lower bound of log 𝑃 (R𝑓 ).
-式10の左辺はlog 𝑃 (R_1D453 )の近似下界である。
+式10の左辺は $log P(R_f)$ の近似下界である。(式8の話と同様)
 The bound is satisfied only if 𝑃 (R𝑔) perfectly recovers 𝑃 (R𝑡 | R𝑓 ), which means 𝑃 (R𝑔) trained on the observed auxiliary behaviors can perfectly approximate the true user preference distribution captured from the target behavior data.
-この境界は $P(R_g)$ が $P(R_t|R_f)$ を完全に復元する場合にのみ満たされます。これは、観察された補助行動に対して学習された𝑃（R𝑔）が、ターゲット行動データから取得された真のユーザ嗜好分布を完全に近似できることを意味します。
+この境界は $P(R_g)$ が $P(R_t|R_f)$ を完全に復元する場合にのみ満たされます。これは、観察された補助行動に対して学習された $P(R_t)$ が、ターゲット行動データから取得された(i.e. 推定された?)真のユーザ嗜好分布を完全に近似できることを意味します。
 Such condition further verifies the soundness of MBA, i.e., multiple types of user behavior are motivated by similar underlying user preferences.
-このような条件は、MBAの健全性をさらに検証する。つまり、複数のタイプのユーザ行動は、根底にあるユーザーの嗜好が類似していることが動機となっている。(この文またでてきた...!)
+このような条件は、MBAの健全性をさらに検証する。つまり、複数のタイプのユーザ行動は、根底にあるユーザの嗜好が類似していることが動機となっている。(この文またでてきた...!)
 Combining the left side of both Eq.9 and Eq.10 we obtain the loss function as:
-式9と式10の左辺を組み合わせると、損失関数は次のようになる：
+式9の左辺と式10の左辺を組み合わせると、損失関数は次のようになる：
 
 $$
 L = - E_{P(R_t)}[log P(R_g|R_t)] + KL[P(R_f)||P(R_t)]
@@ -398,7 +398,7 @@ L = - E_{P(R_t)}[log P(R_g|R_t)] + KL[P(R_f)||P(R_t)]
 $$
 
 We can see that the loss function aims to maximize the likelihood of data observation (i.e., 𝑃 (R𝑔 | R𝑡) and 𝑃 (R𝑓 | R𝑡)) and minimize the KL-divergence between distributions learned from different user behavior data.
-損失関数は、データ観測の尤度(すなわち、$P(R_g|R_t)$ と $P(R_f|R_t)$)を最大化し、異なるユーザ行動データから学習された分布間のKL-divを最小化することを目的としていることがわかる。
+損失関数は、データ観測値の尤度(すなわち、$P(R_g|R_t)$ と $P(R_f|R_t)$)を最大化しつつ、異なるユーザ行動データから学習された分布間のKLダイバージェンスを最小化することを目的としていることがわかる。
 (ここで尤度の意味って、ユーザの真の嗜好が1の時にclickが観測されたり、conversionが観測されたりする条件付き確率を、分布のパラメータ側を変数として見たやつ??)
 
 The learning process of MBA serves as a filter to simultaneously denoise multiple types of user behavior and conduct beneficial knowledge transfers to infer the true user preferences to enhance the prediction of the target behavior.
@@ -411,7 +411,7 @@ MBAの学習プロセスは、複数のタイプのユーザ行動を同時に�
 As described in Section 3.1, we learn the user preference distributions $P(R_f)$ and $P(R_g)$ from $R_f$ and $R_g$, respectively.
 セクション3.1で説明したように、$R_f$ と $R_g$ から、それぞれユーザの嗜好分布 $P(R_f)$ と $P(R_g)$ を学習する。
 In order to enhance the learning stability, we pre-train $P(R_f)$ and $P(R_g)$ in R𝑓 and R𝑔, respectively.
-学習の安定性を高めるために、$P(R_f)$ と $P(R_g)$ をそれぞれ $R_f$ と $R_g$ で事前学習する。(クリックモデルをクリックのログだけを使って事前学習する、みたいな...?)
+学習の安定性を高めるために、$P(R_f)$ と $P(R_g)$ をそれぞれ観測データ $R_f$ と $R_g$ で事前学習する。(クリックモデルをクリックのログだけを使って事前学習する、みたいな...?)
 We use the same model structures of our target recommender 𝑡𝜃 as the pre-training model.
 事前学習モデルとして、ターゲット・レコメンダー $t_{\theta}$ と同じモデル構造を使用する。
 As the training converges, the KL-divergence will gradually approach 0.
