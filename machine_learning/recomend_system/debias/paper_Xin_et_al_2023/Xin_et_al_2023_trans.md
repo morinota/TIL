@@ -240,7 +240,7 @@ We write $R_f \in \mathbb{R}^{|U| \times |I|}$ for the observed purchase behavio
 Specifically, each item 𝑟 𝑓 𝑢,𝑖 ∈ R𝑓 is set to 1 if there is a purchase behavior between user 𝑢 and item 𝑖; otherwise 𝑟 𝑓 𝑢,𝑖 is set as 0.
 具体的には、各アイテム $r^{f}_{u,i}$ は、ユーザ $u$ とアイテム $i$ の間に購買行動があれば1とされ、そうでなければ0とされる。
 Similarly, we denote R𝑔 ∈ R |U |× |I | as the observed click behavior data, where each 𝑟 𝑔 𝑢,𝑖 ∈ R𝑔 is set as 1 if there is a click behavior between user 𝑢 and item 𝑖; otherwise 𝑟 𝑔 𝑢,𝑖 = 0.
-同様に、$R_g \in \mathbb{R}^{|U| \times |I|}$ を観測されたクリック行動データとする。
+同様に、$R_g \in \mathbb{R}^{|U| \times |I|}$ を観測されたクリック行動データとする。 行列の要素が1の場合はクリックされた、0の場合はクリックされていない。
 We use 𝑃 (R𝑓 ) and 𝑃 (R𝑔) to denote the user preference distribution learned from R𝑓 and R𝑔, respectively.
 $R_f$ と $R_g$ から学習された**ユーザ嗜好分布**を表すために、それぞれ $P(R_f)$ と $P(R_g)$ を使用する。
 
@@ -335,14 +335,17 @@ P(R_t) = \frac{P(R_f) P(R_t|R_f)}{P(R_f|R_t)}
 $$
 
 By substituting the right part of Eq.7 into Eq.5 and rearranging erms, we obtain the following equation:
-式7の右辺を式5に代入し、両側の式を並べ替えると、以下の式が得られる:
+式7(ベイズの定理のやつ)の右辺を式5に代入し、両側の式を並べ替えると、以下の式が得られる:
 
 $$
+E_{P(R_f)}[log P(R_g|R_t)] - KL[P(R_f)||P(R_t)]
+\\
+= log P(R_g) - KL(P(R_f)||P(R_t|R_g))
 \tag{8}
 $$
 
 Since 𝐾𝐿[𝑃 (R𝑓 ) ∥𝑃 (R𝑡 | R𝑔)] ≥ 0, the left side of Eq.8 is an approximate lower bound of the logarithm log 𝑃 (R𝑔).
-𝐾𝐿[𝑃 (R𝑓)] ∥ (R𝑃 | R𝑓) ≥ 0なので、式.8の左辺は対数log 𝑃 (R𝑔)の近似下界となる。
+KLダイバージェンスは常に0以上($KL(P(R_f)||P(R_t|R_g)) \geq 0$) なので、式.8の左辺は、対数 $log P(R_g)$ のlower boundである。(=つまり、$log P(R_g)$ は 式8の左辺よりも小さくならない、って意味か。)
 The bound is satisfied if, and only if, 𝑃 (R𝑓 ) perfectly recovers 𝑃 (R𝑡 | R𝑔), which means 𝑃 (R𝑓 ) trained on the observed target behavior can perfectly approximates the true user preference distribution captured from the auxiliary behavior data.
 この境界は、$P(R_f)$ が $P(R_t|R_g)$ を完全に復元する(=両分布が完全に一致する) 場合にのみ満たされます。これは、観察されたtarget behaviorのもとで学習された $P(R_f)$ が、補助行動データから取得された真のユーザ選好分布を完全に近似できることを意味します。
 The above condition is in line with the main motivation of the MBA, i.e., different behavior data should reflect similar user preferences.
@@ -361,14 +364,20 @@ So we modify the left side of Eq.8 as:
 (左辺を修正したので、$=$ が $\approx$ に変わってる...!)
 
 $$
+E_{P(R_t)}[log P(R_g|R_t)] - KL[P(R_f)||P(R_t)]
+\approx
+log P(R_g) - KL[P(R_f)||P(R_t|R_g)]
 \tag{9}
 $$
 
 Similarly, if we substitute the middle part of Eq.7 into Eq.6 and perform similar derivations, we can obtain:
-同様に、式7の中央部分を式6に代入し、同様の導出を行えば、次のようになる：
+同様に、式7の中央部分を式6に代入し、同様の導出を行えば、次のようになる:
 (式9と同様に、$P(R_f)$ の箇所を $P(R_t)$ に近似したので、$=$ が $\approx$ に変わってる...!)
 
 $$
+E_{P(R_t)}[log P(R_f|R_t)] - KL[P(R_g)||P(R_t)]
+\approx
+log P(R_f) - KL[P(R_g)||P(R_t|R_f)]
 \tag{10}
 $$
 
