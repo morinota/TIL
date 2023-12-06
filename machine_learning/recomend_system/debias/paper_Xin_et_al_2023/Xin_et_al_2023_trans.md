@@ -554,6 +554,8 @@ We then train MBA according to the observed multiple types of user behavior data
 Details of the training process for MBA are provided in Algorithm 1.
 MBAのトレーニングプロセスの詳細は、アルゴリズム1に記載されている。
 
+![algo1]()
+
 # 4. Experimental settings 実験的設定
 
 ## 4.1. Experimental questions 実験問題

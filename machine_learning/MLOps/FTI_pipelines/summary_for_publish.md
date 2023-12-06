@@ -1,10 +1,10 @@
-<!-- (番外編)MLOps勉強会で推薦システム関連の発表を聞いて知らない用語を調べる!:FTI Pipelines -->
+<!-- (番外編)FTI Pipelines Architectureってなんだ? MLOps勉強会で推薦システム関連の発表を聞いて知らない用語を調べた!: -->
 
 # From MLOps to ML Systems with Feature/Training/Inference Pipelines
 
-published date: 18 April 2023,
-authors: Vechtomova Maria
-url(paper): https://mlops.community/mlops-maturity-assessment/
+published date: 13 September 2023,
+authors: Jim Dowling
+url(paper): https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines
 (勉強会発表者: morinota)
 
 ---
@@ -14,18 +14,20 @@ url(paper): https://mlops.community/mlops-maturity-assessment/
 ## どんなもの?
 
 - 2023/10のMLOps勉強会の[発表](https://speakerdeck.com/masatakashiwagi/di-35hui-mlops-mian-qiang-hui-komiyuniteipuratutohuomunobatutirekomendowozhi-eruji-jie-xue-xi-ji-pan)にて FTI Pipelinesが引用されており気になったので、MLOps周りのcatch upとして読んでみました...! そのパート2です! [前回はMLOps Maturity Assessment](https://qiita.com/morinota/items/726103584287d8ec1795)
+- MLシステムのアーキテクチャとして、Feature(特徴量作成) pipelines, Training(学習) pipelines, Inference(推論) pipelinesの、**3種の独立したpipelinesを用いるFTI pipelines architectureが良いよ**！って話。
+- FTI pipelines architecture を単なるアーキテクチャパターンとしてのみでなく、MLシステムをプロダクト化する為に指針とすべきメンタルマップとしてもおすすめしてた。
 
 ## 先行研究と比べて何がすごい？
 
-- 2種類のMLシステム: batch MLシステムと online MLシステム
+### まず2種類のMLシステムがあるよねという話(batch MLシステムと online MLシステム)
 
-  - batch MLシステムの例: 「Spotify weekly」
-    - 週に一度、各ユーザにどんな曲を推薦するかの予測結果を作成する。
-    - 予測結果はkey-valueストアに保存され、Spotifyにログインした際に結果をclient側が取得しユーザに表示される。
-  - online MLシステムの例: 「TikTok」
-    - ユーザがclickやswipeをするたびに、ユーザ履歴とcontext(ex. 最近のトレンド)について、ほぼリアルタイムで特徴量を計算する。
+- batch MLシステムの例: 「Spotify weekly」
+  - 週に一度、各ユーザにどんな曲を推薦するかの予測結果を作成する。
+  - 予測結果はkey-valueストアに保存され、Spotifyにログインした際に結果をclient側が取得しユーザに表示される。
+- online MLシステムの例: 「TikTok」
+  - ユーザがclickやswipeをするたびに、ユーザ履歴とcontext(ex. 最近のトレンド)について、ほぼリアルタイムで特徴量を計算する。
 
-### MLシステムの既存のアーキテクチャ
+### MLシステムの既存のアーキテクチャの話
 
 MLシステムの第一世代では、batch及びonlineのMLシステムの為の多くの異なるアーキテクチャパターンが提案された。
 
@@ -59,19 +61,18 @@ MLシステムの第一世代では、batch及びonlineのMLシステムの為�
 
 ![fig6](https://assets-global.website-files.com/618399cd49d125734c8dec95/6502adf3ca2eceb7be5b949e_figure%206_lightbox.png)
 
-一方で本稿では、**3つの独立したML Pipelines = = Feature pipelines, Training pipelines, Inference pipelines = FTI Pipelines**を持つアーキテクチャを提示する。
+対して本稿では、**3つの独立したML Pipelines = = Feature pipelines, Training pipelines, Inference pipelines = FTI Pipelines**を持つアーキテクチャを提示する。
 図6も図5と同様に、online MLシステムのアーキテクチャ。(これがFTI Pipelinesアーキテクチャ)
 
 - 特徴:
-  - 特徴量作成・学習・online推論が、3つの独立したpipelineになっている。
-  - 多くのonline MLシステムでは**ユーザ履歴やcontextも使用するが、feature storeはそれらを事前に計算された特徴量の1つとして保存**し、学習・推論パイプラインに提供する。
-  -
+  - 特徴量作成・学習・online推論が、3つの独立したpipelinesになっている。
+  - 多くのonline MLシステムでは**ユーザ履歴やcontextも使用するが、feature storeはそれらを事前に計算された特徴量の1つとして保存**し、学習pipeline, 推論pipelineに提供する。
 - 長所:
   - 推論時に特徴量を作成する必要がない -> 低レイテンシー。
   - 学習と推論で、一貫した特徴量を保証できる。
   - モジュラー性が高い。
 - 短所:
-  - hoge
+  - ?
 
 ### メンタルマップの話
 
@@ -85,9 +86,11 @@ MLシステムの第一世代では、batch及びonlineのMLシステムの為�
   - 参入障壁が高すぎる。従来のMLOpsマップを指針として使いこなせるのは、ごく少数のソフトウェアエンジニアリング・オペレーション・データサイエンスの知識に精通した人間だけ。
 - 一方で本稿では、**FTI PipelinesをMLシステムのもっと簡単なメンタルマップ(=「何をすべきか」という明確な指針?:thinking:)として提示する**。
   - 各pipelineが生成・消費する成果物(ex. 特徴量、学習済みモデル)は、共通の永続化ストレージレイヤーを介して共有される。
-  - 既存のMLOpsアーキテクチャと比較して、FTI pipelinesアーキテクチャは、自動テスト、versioning, モニタリングのベストプラクティスに従いながら、iterativeに改善できる最小限の実用的なMLシステムに高速に到達するのにやくだつ。
+  - 既存のMLOpsアーキテクチャと比較して、FTI pipelinesアーキテクチャは、自動テスト、versioning, モニタリングのベストプラクティスに従いながら、iterativeに改善できる最小限の実用的なMLシステムに高速に到達するのに役立つ。
 
 ## 技術や手法の肝は？
+
+![](https://assets-global.website-files.com/618399cd49d125734c8dec95/6501bf916e9d382ecda67424_figure%201_lightbox.png)
 
 FTI Pipelinesアーキテクチャは、**独立に開発・運用される以下の3つのpipelines**から構成される:
 
@@ -136,7 +139,7 @@ FTI Pipelinesアーキテクチャは、**独立に開発・運用される以�
   - encoding/scalingは、学習と推論のpipelinesにおいて、一貫した方法で実行される必要がある。
 - モデルの評価(evaluation)・検証(validation)はどのように行う?
 - 学習済みモデルの保存には、どのようなモデルレジストリを使用する?
-  - S3? :thinking:
+  - 例えばS3? :thinking:
 
 ### Inference Pipelineについて検討すべきこと
 
