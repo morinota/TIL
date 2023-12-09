@@ -291,10 +291,10 @@ $$
 We select items with the highest score as the target behavior recommendation results.
 最もスコアの高いitemをtarget behavior推薦の結果として選択する。
 
-## 3.2. Multi-behavior alignment on noisy data ノイズデータに対する
+## 3.2. Multi-behavior alignment on noisy data ノイズデータに対するmulti--behaviorの調整
 
 The key motivation for MBA is that multiple types of user behavior should reflect similar user preferences.
-MBAの主な動機は、**複数のタイプのユーザ行動が、類似したユーザ嗜好を反映しているはずだ**ということだ。
+MBAの主な動機は、**複数のタイプのユーザ行動が、同じユーザ嗜好を反映しているはずだ**ということだ。
 Hence, Eq.4 is expected to be achieved with the convergence of the training models:
 したがって、学習モデルの収束とともに、式.4が達成されることが期待される:
 
@@ -305,7 +305,7 @@ $$
 
 (P(R_f)とかはいずれも、モデルによって推論されるやつだよね...!:thinking:)
 Therefore, 𝑃 (R𝑓 ) and 𝑃 (R𝑡) should have a relatively small KLdivergence, which is formulated as follows:
-したがって、 P(R_f) と $P(R_t)$ は比較的小さなKLdivergenceを持つべきであり、これは以下のように定式化される:
+したがって、 $P(R_f)$ と $P(R_t)$ は比較的小さなKLdivergenceを持つべきであり、これは以下のように定式化される:
 
 $$
 KL[P(R_f) || P(R_t)] = E_{P(R_f)}[log P(R_f) - log P(R_t)]
