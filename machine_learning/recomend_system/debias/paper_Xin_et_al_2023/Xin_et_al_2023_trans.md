@@ -347,12 +347,15 @@ $$
 Since 𝐾𝐿[𝑃 (R𝑓 ) ∥𝑃 (R𝑡 | R𝑔)] ≥ 0, the left side of Eq.8 is an approximate lower bound of the logarithm log 𝑃 (R𝑔).
 KLダイバージェンスは常に0以上($KL(P(R_f)||P(R_t|R_g)) \geq 0$) なので、式.8の左辺は、対数 $log P(R_g)$ のlower boundである。(=つまり、$log P(R_g)$ は 式8の左辺よりも小さくならない、って意味か。)
 The bound is satisfied if, and only if, 𝑃 (R𝑓 ) perfectly recovers 𝑃 (R𝑡 | R𝑔), which means 𝑃 (R𝑓 ) trained on the observed target behavior can perfectly approximates the true user preference distribution captured from the auxiliary behavior data.
-この境界は、$P(R_f)$ が $P(R_t|R_g)$ を完全に復元する(=両分布が完全に一致する) 場合にのみ満たされます。これは、観察されたtarget behaviorのもとで学習された $P(R_f)$ が、補助行動データから取得された真のユーザ選好分布を完全に近似できることを意味します。
+この境界は、$P(R_f)$ が $P(R_t|R_g)$ を完全に復元する(=両分布が完全に一致する) 場合にのみ満たされます。これは、観察されたtarget behaviorのもとで学習された $P(R_f)$ が、補助行動データから取得された真のユーザ選好分布を完全に近似できる場合を意味します。
 The above condition is in line with the main motivation of the MBA, i.e., different behavior data should reflect similar user preferences.
-上記の条件は、MBAの主な動機に沿ったものである。つまり、異なる行動データは、類似したユーザの嗜好を反映すべきである。
+上記の条件は、MBAの主な仮説(異なる行動データは、同じユーザの嗜好を反映すべき)に沿ったものである。
 
-We see that the left side of Eq.8 is based on the expectation over 𝑃 (R𝑓 ), which means that we are trying to train 𝑃 (R𝑓 ) with the given corrupted auxiliary behavior data R𝑔 (i.e., the term 𝐸𝑃 (R𝑓 ) [log 𝑃 (R𝑔 | R𝑡)]) and then to transmit the information from 𝑃 (R𝑓 ) to 𝑃 (R𝑡) via the term 𝐾𝐿[𝑃 (R𝑓 ) ∥𝑃 (R𝑡)].
-式.8の左辺が $P(R_f)$ に対する期待値に基づいていることがわかる。これは、与えられた破損した補助行動データ $R_g$ (i.e. hogehoge)を用いて $P(R_f)$ を訓練し、そして $P(R_f)$ から $P(R_t)$ に $KL[P(R_f)||P(R_t)]$ という項を経由して情報を伝達しようとしていることを意味する。
+We see that the left side of Eq.8 is based on the expectation over 𝑃 (R𝑓 ), which means that we are trying to train 𝑃 (R𝑓 ) with the given corrupted auxiliary behavior data R𝑔 (i.e., the term $E_{P(R_f)}[P(R_g|R_t)]$) and then to transmit the information from 𝑃 (R𝑓 ) to 𝑃 (R𝑡) via the term 𝐾𝐿[𝑃 (R𝑓 ) ∥𝑃 (R𝑡)].
+式.8の左辺が $P(R_f)$ に対する期待値に基づいていることがわかる。これは、与えられた破損した補助行動データ $R_g$ (i.e. $E_{P(R_f)}[P(R_g|R_t)]$ の項)を用いて $P(R_f)$ を訓練し、そして $P(R_f)$ から $P(R_t)$ に $KL[P(R_f)||P(R_t)]$ という項を経由して情報を伝達しようとしていることを意味する。
+
+<!-- この辺までまとめた -->
+
 Such a learning process is ineffective for learning the true user preference distribution 𝑃 (R𝑡) and the target recommender model 𝑡𝜃 .
 このような学習プロセスは、真のユーザ嗜好分布 $P(R_t)$ と対象のレコメンダー・モデル $t_{\theta}$ の学習には効果がありません。
 To overcome the above issue, according to Eq.4, when the training process has converged, the preference distributions 𝑃 (R𝑓 ) and 𝑃 (R𝑡) would be close to each other.
