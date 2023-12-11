@@ -12,7 +12,7 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: (RecSys2022 Best Papers)メディアモデルを考慮したニュース推薦の5つの多様性指標群の論文を読んで、その活用可能性に思いを馳せた話
+title: メディアモデルを考慮したニュース推薦の5つの多様性指標群の論文を読んで、その活用可能性に思いを馳せた話
 subtitle: 2023/11/22 推薦システム論文読み会
 # date:
 author: morinota
