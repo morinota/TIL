@@ -436,8 +436,6 @@ instance-guidedマスクは、特徴量埋め込みに要素積を導入する�
 These key components in MaskBlock help the feedforward layer capture complex feature cross more efficiently.
 MaskBlockのこれらのキーコンポーネントは、feed-forward層が複雑な特徴量間のクロス(=相互作用?)をより効率的に捉えることをサポートします。
 
-<!-- ここまで読んだ -->
-
 ### 3.3.3. MaskBlock on MaskBlock:
 
 ![fig3]()
@@ -685,6 +683,8 @@ We deem this implies that the feed-forward layer in MaskBlock is important for m
 For parallel model, the multiple feed-forward layers above parallel MaskBlocks have similar function as feed-forward layer in MaskBlock does and this may produce performance difference between two models when we remove this component.
 並列モデルの場合、並列MaskBlockの上にある複数のフィードフォワード層は、MaskBlockのフィードフォワード層と同様の機能を持つため、このコンポーネントを削除すると、2つのモデル間で性能差が生じる可能性があります。
 
+<!-- ここまで読んだ -->
+
 ## 4.4. Hyper-Parameter Study(RQ3) ハイパーパラメーター研究(RQ3)
 
 In the following part of the paper, we study the impacts of hyperparameters on two MaskNet models, including 1) the number of feature embedding size; 2) the number of MaskBlock; and 3) the reduction ratio in instance-guided mask module.
@@ -733,55 +733,67 @@ Experimental results are shown in Table 6 and we can observe that various reduct
 This indicates that we can adopt small reduction ratio in aggregation layer in real life applications for saving the computation resources.
 このことは、実際のアプリケーションにおいて、**計算資源を節約するために、集約層の縮小率を小さくすることを採用できる**ことを示しています。
 
+<!-- ここまで読んだ -->
+
 ## 4.5. Instance-Guided Mask Study(RQ4) インスタンス誘導型マスク研究(RQ4)
 
 As discussed in Section in 3.2, instance-guided mask can be regarded as a special kind of bit-wise attention mechanism to highlight important information based on the current input instance.
-3.2節で述べたように、インスタンス誘導型マスクは、現在の入力インスタンスに基づいて重要な情報を強調する特殊な種類のbit単位(=特徴量埋め込みのelement単位?)のattentionメカニズムとしてみなすことができる。
+3.2節で述べたように、インスタンス誘導型マスクは、現在の入力インスタンスに基づいて重要な情報を強調する特殊な種類の**bit単位(=特徴量埋め込みのelement単位?)のattentionメカニズムとしてみなすことができる**。
 We can utilize instance-guided mask to boost the informative elements and suppress the uninformative elements or even noise in feature embedding and feed-forward layer.
-**特徴量埋め込みとフィードフォワード層で、情報量の多い要素を高め、情報量の少ない要素やノイズを抑制するために、インスタンスガイド付きマスクを利用することができます**。
+**特徴量埋め込みとフィードフォワード層で、(予測の観点で)情報量の多い要素(=特徴量埋め込みの中の要素)を高め、情報量の少ない要素やノイズを抑制するために、インスタンスガイド付きマスクを利用することができます**。
 
 To verify this, we design the following experiment: After training the SerMaskNet with 3 blocks, we input different instances into the model and observe the outputs of corresponding instance-guided masks.
 これを検証するために、次のような実験を計画した：
-SerMaskNetを3ブロック学習させた後、異なるインスタンスをモデルに入力し、対応するインスタンス誘導型マスクの出力を観察する。
+3ブロックのSerMaskNetを学習させた後、異なるインスタンス(=学習に使ってないデータ??)をモデルに入力し、対応するインスタンス誘導型マスクの出力を観察する。
 
 Firstly, we randomly sample 100000 different instances from Criteo dataset and observe the distributions of the produced values by instance-guided mask from different blocks.
-まず、Criteoデータセットから100000個の異なるインスタンスをランダムにサンプリングし、異なるブロックからインスタンス誘導型マスクによる生成値の分布を観察します。
+まず、Criteoデータセットから100000個の異なるインスタンスをランダムにサンプリング(=これがテスト用データになる??)し、異なるブロック(=3つのブロックの各出力値?)からインスタンス誘導型マスクによる生成値(=出力値)の分布を観察します。
 Figure 5 shows the result.
 図5にその結果を示します。
+
+![figure5]()
+
 We can see that the distribution of mask values follow normal distribution.
-マスク値の分布は正規分布に従うことがわかる。
+**マスク値(=各maskブロックの出力値)の分布(i.e. 応答分布)は正規分布に従う**ことがわかる。
 Over 50% of the mask values are small number near zero and only little fraction of the mask value is a relatively larger number.
-マスク値の50％以上はゼロに近い小さな数で、相対的に大きな数のマスク値はごくわずかです。
+マスク値の50％以上はゼロに近い小さな数で、相対的に大きな数のマスク値はごくわずかです。(i.e. 正規分布の平均は0あたり:thinking:)
 This implies that large fraction of signals in feature embedding and feed-forward layer is uninformative or even noise which is suppressed by the small mask values.
-このことは、**特徴量埋め込み層とフィードフォワード層の信号の大部分は、小さなマスク値によって抑制された情報量の少ない、あるいはノイズであることを意味する**。(??)
+このことは、特徴量埋め込み層とフィードフォワード層の信号(=maskブロックの入力?)の大部分は、小さなマスク値(=maskブロックの出力が0に近い)によって抑制された情報量の少ない、あるいはノイズであることを意味する。
 However, there is some informative information boosted by larger mask values through instance-guided mask.
 しかし、インスタンスガイド型マスクにより、マスクの値を大きくすることで、情報量が増えることもある。
 
-![fig6]()
-
 Secondly, we randomly sample two instances and compare the difference of the produced values by instance-guided mask.
-次に、2つのインスタンスをランダムにサンプリングし、インスタンス誘導型マスクによる生成値の差を比較します。
+次に、2つのインスタンス(=入力データ, prediction example)をランダムにサンプリングし、インスタンス誘導型マスクによる生成値(=出力値)の差を比較します。
 The results are shown in Figure 6.
 その結果を図6に示します。
+
+![fig6]()
+
 We can see that: As for the mask values for feature embedding, different input instances lead the mask to pay attention to various areas.
 以下のことがわかる：
-特徴量埋込のためのマスク値については、入力インスタンスの違いにより、マスクが様々な領域に注目するようになります。
+特徴量埋め込みのためのマスク値(figure6 左)については、**入力インスタンス(prediction example)の違いにより、マスクが様々な領域に注目するようになります**。(maskブロックの出力値によって)
 The mask outputs of instance A pay more attention to the first few features and the mask values of instance B focus on some bits of other features.
 インスタンスAのマスク出力は最初の数個の特徴量に注目し、インスタンスBのマスク値は他の特徴量の一部のビットに注目する。
+
 We can observe the similar trend in the mask values in feed-forward layer.
-フィードフォワード層でのマスク値も同様の傾向が見られる。
+フィードフォワード層でのマスク値(figure 6右)も同様の傾向が見られる。
 This indicates the input instance indeed guide the mask to pay attention to the different part of the feature embedding and feed-forward layer.
-これは、**入力インスタンスが、特徴量埋め込み層とフィードフォワード層の異なる部分に注意を払うよう、マスクを確かに誘導していることを示しています**。(??)
+これは、入力インスタンス(の各prediction example??)が、特徴量埋め込み層とフィードフォワード層の異なる部分に注意を払うよう、マスクを確かに誘導していることを示しています。
+(全てのexampleで決まった特徴量に大きなattention weightを付与するのではなく、特徴量間の相互作用を考慮して、各exampleごとに異なる特徴量に対して大きなattention weightを付与している、みたいな??:thinking:)
+
+<!-- ここまで読んだ -->
 
 # 5. Conclusion 結論
 
 In this paper, we introduce multiplicative operation into DNN ranking system by proposing instance-guided mask which performs element-wise product both on the feature embedding and feedforward layers.
-本論文では、特徴埋め込み層とフィードフォワード層の両方で要素ごとの積を行うインスタンスガイドマスクを提案し、DNNランキングシステムに乗算演算を導入する。
+本論文では、特徴埋め込み層とフィードフォワード層の両方で要素ごとの積を行うinstance-guidedマスクを提案し、DNNランキングシステムに乗算演算を導入する。
 We also turn the feed-forward layer in DNN model into a mixture of addictive and multiplicative feature interactions by proposing MaskBlock by bombing the layer normalization, instanceguided mask, and feed-forward layer.
-また、層正規化、インスタンスガイド付きマスク、フィードフォワード層を爆撃してMaskBlockを提案することで、DNNモデルのフィードフォワード層を加法的・乗法的な特徴相互作用の混合に変えています。
+また、レイヤー正規化、instance-guidedマスク、フィードフォワード層を組み合わせたMaskBlockを提案することで、DNNモデルのフィードフォワード層を加法的・乗法的な特徴相互作用の混合に変えています。
 MaskBlock is a basic building block to be used to design new ranking model.
-MaskBlockは、新しいランキングモデルを設計するために使用する基本的な構成要素です。
+**MaskBlockは、新しいランキングモデルを設計するために使用する基本的な構成要素**です。
 We also propose two specific MaskNet models based on the MaskBlock.
 また、MaskBlockをベースにした2つの具体的なMaskNetモデルを提案しています。
 The experiment results on three real-world datasets demonstrate that our proposed models outperform state-of-the-art models such as DeepFM and xDeepFM significantly.
 3つの実世界データセットを用いた実験結果から、提案モデルがDeepFMやxDeepFMなどの最先端モデルを大幅に上回ることが実証された。
+
+<!-- ここまで読んだ -->
