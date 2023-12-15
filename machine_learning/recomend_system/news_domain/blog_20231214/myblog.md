@@ -1,20 +1,19 @@
-<!-- title: メディアのミッションによって"良い"ニュース推薦システムって違うのかも! メディアモデルと5つの多様性指標群の論文等を読んで思いを馳せた話-->
+<!-- title: メディアのミッションによって"良い"ニュース推薦システムって違うのかも! n週連続推薦システム系 論文読んだシリーズ32週目(番外編)メディアモデルと5つの多様性指標群の論文等を読んで思いを馳せた話-->
 
 こんにちは、ソーシャル経済メディア「NewsPicks」のアルゴチームインターンの森田( [@moritama7431](https://twitter.com/moritama7431) )です!
 
 この記事は [NewsPicks アドベントカレンダー 2023](https://qiita.com/advent-calendar/2023/newspicks) の14日目の記事です。
-昨日は高山周太郎さんによる『hogehoge』でした！
+昨日は高山周太郎さんによる[『5000万件のDynamoDBテーブルをダウンタイム無しで移行した話』](https://tech.uzabase.com/entry/2023/12/13/190231)でした！
 
 ---
 
 本日の記事は、ざっくりニュースメディアと推薦システムに関するお話です！少し具体的には、メディアのミッションによって"良い"ニュース推薦システムの性質が異なるかもしれなくて(パート1)、メディアに合った推薦システムをどのように選ぼうか(パート2)、という話になります。
 [先月の推薦システム勉強会](https://wantedly.connpass.com/event/301781/)にて共有させてもらった内容 + 時間なくて喋れなかった内容をカジュアルに記事にまとめてみました!
-
-もし感想や疑問や指摘などあれば、ぜひ気軽に絵文字をつけてコメントいただけたら嬉しいです! :pray:
-
 なお、本記事の読者層としては、ニュースメディアに関わる方、もしくは推薦システムに関わる方を想定しています。パート2は推薦システムに関わる方向けの内容になります!
 
-<!-- (フィルタリングの方針とは、例えば「ユーザの好みに合わせてニュースをパーソナライズする」か「ユーザの好みに合わせずに、社会で議論されているトピックを提供する」か、みたいな話ですね。) -->
+もし感想や疑問や指摘などコメントしたいことあれば、ぜひぜひ気軽に絵文字をつけて書いていただけたら嬉しいです! :pray:
+
+ちなみに、n週連続推薦システム系 論文読んだシリーズの前回の記事はこちらでした:[「31週目: (番外編) FTI Pipelines Architectureってなんだ? MLOps勉強会で推薦システム関連の発表を聞いて知らない用語を調べた」](https://qiita.com/morinota/items/055e9ffc30edcb727447)
 
 本記事の目次は以下の通りです。
 
@@ -45,10 +44,10 @@
   - [告知](#告知)
   - [参考文献:](#参考文献)
 
-ちなみに本記事の内容は、主に以下の資料を読んでいた際に個人的にNewsPicksでの活用可能性について思いを馳せた話になります...!
+ちなみに本記事の内容は、主に以下の論文を読んでいた際に個人的にNewsPicksでの活用可能性について思いを馳せた話になります...!
 
 - [RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
-- メイン論文の前身的な論文: [Recommenders with a Mission: Assessing Diversity in News Recommendations](https://dl.acm.org/doi/10.1145/3406522.3446019)
+- [Recommenders with a Mission: Assessing Diversity in News Recommendations](https://dl.acm.org/doi/10.1145/3406522.3446019)
 
 # はじめに
 
@@ -77,9 +76,16 @@
 
 要するに、メディア側が何も考えずに得た情報全てを垂れ流すと、ニュース・情報が多すぎてユーザが困ってしまうので、何らかの方法で**良い感じにユーザに届く情報を絞り込みましょう**ってことでしょうか...!
 
-そう考えると、アルゴリズムによってユーザの閲読履歴から表示記事をパーソナライズすることも、多くのユーザが読んでいる人気記事を表示することも、情報元が怪しいフェイクニュースを除外することも、編成記者の方が1面に載せる記事を選ぶことも、**いずれも情報をフィルタリングしている**わけなので、全てニュース推薦システムですね...!
+そう考えると、以下の方法は**いずれも情報をフィルタリングしている**わけなので、「全てニュース推薦システムですね!」と言っても怒られないかもしれません。
 
-(ちなみに推薦システムの方法論の名前には、Collaborative filtering や Content-based filtering など〇〇フィルタリングという名前がちょくちょく出てくるんですよね。情報とかアイテムを絞り込む、選び出す、みたいなニュアンスでしょうか。推薦システムに機械学習を適用する際は、よくアイテムをユーザにとって価値のある順に並び替える「ランキング問題」として扱う印象が強いのですが、そういえば本来やりたいことは価値のある一部のアイテムをフィルタリングすることなんだよなぁ:thinking:、って少ししみじみしました...!)
+- アルゴリズムによってユーザの閲読履歴から表示記事をパーソナライズする
+- 多くのユーザが読んでいる人気記事を表示する
+- 情報元が怪しいフェイクニュースを除外する
+- 編成記者の方が新聞の1面に載せる記事を選ぶ
+
+---
+
+ちなみに推薦システムの方法論の名前には、Collaborative filtering や Content-based filtering など〇〇フィルタリングという名前がちょくちょく出てくるんですよね。情報とかアイテムを絞り込む、選び出す、みたいなニュアンスでしょうか。推薦システムに機械学習を適用する際は、よくアイテムをユーザにとって価値のある順に並び替える「ランキング問題」として扱う印象が強いのですが、そういえば本来やりたいことは価値のある一部のアイテムをフィルタリングすることなんだよなぁ:thinking:、って少ししみじみしました...!
 
 # (パート1)メディアのミッションによって"良い"ニュース推薦システムって違うかも
 
@@ -311,7 +317,7 @@ $$
 やっぱりこのあたりの理由としては、人気度バイアスとか、Off-Policy Evaluation分野で言うところのlogging policy由来のバイアスとかが原因なのかな。
 
 前述の通りRADioはいずれも教師ラベルに依存しない指標なので、多少なりともバイアスの影響を受けづらくないだろうか、少なくともid-only手法が過大評価されがち問題は解消できたりしないかな...なんて思ったりしました。
-もちろん重み付けunder sampling や色々なOPE推定量など、バイアス除去を試みるアプローチも色々あるので、それらと組み合わせてモデルの取捨選択に使用するのが良いのかもしれません。
+もちろん重み付けサンプリング(例えば[参考文献7](https://dl.acm.org/doi/pdf/10.1145/3341105.3375759))や色々なOPE推定量(例えば[参考文献8](https://arxiv.org/pdf/2202.06317.pdf))など、バイアス除去を試みるアプローチも色々あるので、それらと組み合わせてモデルの取捨選択に使用するのが良いのかもしれません。
 (例えばCalibrationの算出に使用するユーザの閲読履歴は、人気度やlogging policy由来のバイアスの影響を受けているから、under sampling的なアプローチと組み合わせるのはどうだろう...! :thinking: )
 
 # おわりに
@@ -331,9 +337,11 @@ https://hrmos.co/pages/uzabase/jobs/NP_Eng004
 
 ## 参考文献:
 
-- 1. メインの論文: [RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
-- 2. メイン論文の前身的な論文: [Recommenders with a Mission: Assessing Diversity in News Recommendations](https://dl.acm.org/doi/10.1145/3406522.3446019)
-- 3. (メイン論文の背景にあるやつ!)ニュース推薦の民主的役割のtypologyを提案した論文: [On the Democratic Role of News Recommenders](https://www.tandfonline.com/doi/full/10.1080/21670811.2019.1623700)
-- 4. MLOpsの成熟度を高める為のガイドライン: [MLOps Maturity Assessment](https://mlops.community/mlops-maturity-assessment/)
-- 5. Booking.comの論文: [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
-- 6. ニュース推薦のサーベイ論文: [News Recommender Systems - Survey and Roads Ahead](https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf)
+1. メインの論文: [RADio – Rank-Aware Divergence Metrics to Measure Normative Diversity in News Recommendations](https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf)
+2. メイン論文の前身的な論文: [Recommenders with a Mission: Assessing Diversity in News Recommendations](https://dl.acm.org/doi/10.1145/3406522.3446019)
+3. (メイン論文の背景にあるやつ!)ニュース推薦の民主的役割のtypologyを提案した論文: [On the Democratic Role of News Recommenders](https://www.tandfonline.com/doi/full/10.1080/21670811.2019.1623700)
+4. MLOpsの成熟度を高める為のガイドライン: [MLOps Maturity Assessment](https://mlops.community/mlops-maturity-assessment/)
+5. Booking.comの論文: [150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)
+6. ニュース推薦のサーベイ論文: [News Recommender Systems - Survey and Roads Ahead](https://web-ainf.aau.at/pub/jannach/files/Journal_IPM_2018.pdf)
+7. 重み付けサンプリングアプローチの論文: [Debiased offline evaluation of recommender systems: a weighted-sampling approach](https://dl.acm.org/doi/10.1145/3341105.3375759)
+8. OPE推定量の1つ MIPS推定量の論文: [Off-Policy Evaluation for Large Action Spaces via Embeddings](https://arxiv.org/pdf/2202.06317.pdf)
