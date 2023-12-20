@@ -1,9 +1,10 @@
-## link リンク
+## 0.1. link リンク
 
 https://engineering.atspotify.com/2023/08/experimentation-at-spotify-three-lessons-for-maximizing-impact-in-innovation/
 https://engineering.atspotify.com/2023/08/experimentation-at-spotify-three-lessons-for-maximizing-impact-in-innovation/
 
-# Experimentation at Spotify: Three Lessons for Maximizing Impact in Innovation スポティファイにおける実験： 
+# 1. Experimentation at Spotify: Three Lessons for Maximizing Impact in Innovation スポティファイにおける実験：
+
 イノベーションにおけるインパクトを最大化する3つの教訓
 
 As companies mature, it’s easy to believe that the core experience and most user needs have been resolved, and all that’s left to work toward are the marginal benefits, the cherries on top.
@@ -23,7 +24,7 @@ However, it would be the wrong conclusion to think we have to write off experime
 しかし、実験を完全に否定しなければならないと考えるのは間違った結論だ。
 
 In order to make better use of the experimentation method and achieve more tangible impact for the business in a mature context, we ensure we are following three rather straightforward strategies:
-成熟した状況において、実験的手法をより有効に活用し、ビジネスにより具体的なインパクトをもたらすために、私たちは3つのわかりやすい戦略に従っている：
+**成熟した状況において、実験的手法をより有効に活用し、ビジネスにより具体的なインパクトをもたらす**ために、私たちは**3つのわかりやすい戦略**に従っている：
 
 1. Start with the decision that needs to be made. 決断すべきことから始める。
 
@@ -31,7 +32,7 @@ In order to make better use of the experimentation method and achieve more tangi
 
 3. Break the feature apart into its most critical pieces. その機能を最も重要な部分に分割する。
 
-## Starting with the decision that needs to be made ♪決断することから始めよう
+# 2. Starting with the decision that needs to be made ♪決断することから始めよう
 
 Our quest for information, as humans and as organizations, often stems from the need to make decisions.
 人間として、また組織として、私たちが情報を求めるのは、しばしば意思決定の必要性に起因する。
@@ -58,10 +59,10 @@ The key here is to approach experimentation, and research in general, with the q
 And in a case where experimentation is the right answer, this helps us design the test to be as useful as possible.
 そして、実験が正しい答えである場合、これは可能な限り有用なテストを設計するのに役立つ。
 
-## Utilizing localization to innovate for homogeneous populations ローカライゼーションを活用し、均質な人々のためにイノベーションを起こす
+# 3. Utilizing localization to innovate for homogeneous populations ローカライゼーションを活用し、均質な人々のためにイノベーションを起こす
 
 Experimentation at Spotify: Three Lessons for Maximizing Impact in Innovation
-スポティファイにおける実験： 
+スポティファイにおける実験：
 イノベーションにおけるインパクトを最大化するための3つの教訓
 
 August 16, 2023
@@ -135,7 +136,7 @@ Utilizing localization to innovate for homogeneous populations
 As a response to the difficulty of moving top-line metrics in a mature org, we often fall back on discussing alternative definitions of success and the tiering of metrics or user behavior changes to arrive at conclusions about a feature’s potential value.
 成熟した組織でトップラインのメトリクスを動かすことの難しさへの対応として、私たちはしばしば、機能の潜在的な価値についての結論を得るために、成功の代替定義やメトリクスの階層化やユーザー行動の変化について議論することに陥る。
 But that conversation overlooks another important dimension: the heterogeneous population of users and needs that we’re solving for as a global company.
-しかし、この会話はもうひとつの重要な側面を見落としている： 
+しかし、この会話はもうひとつの重要な側面を見落としている：
 それは、グローバル企業として解決すべき、異質なユーザーとニーズである。
 
 We recently set out to experiment on new features for the Japanese market.
@@ -170,7 +171,7 @@ To add to this, the quality of the localization, in terms of, for example, trans
 By having a targeted focus, and not building for a generic global user, we can greatly improve our chances of building and testing impactful products.
 一般的なグローバルユーザー向けに作るのではなく、ターゲットを絞ることで、インパクトのある製品を作り、テストする可能性を大幅に向上させることができる。
 
-## Breaking the feature apart into its most critical pieces 機能を最も重要な部分に分解する
+# 4. Breaking the feature apart into its most critical pieces 機能を最も重要な部分に分解する
 
 When starting new product development projects, we often fall into the trap of wanting to test the whole new experience against a control without it, because we’re expected to motivate investments through impact on business KPIs.
 新製品開発プロジェクトを開始するとき、私たちはしばしば、ビジネスKPIへの影響によって投資の動機付けを期待されるため、新しいエクスペリエンス全体を、それを含まないコントロールと比較テストしたいという罠に陥りがちだ。
@@ -197,7 +198,7 @@ What happened was that the entry point took up too much real estate in the app, 
 Had we spent time up front, when designing the experiment, we could have isolated the entry point aspect of it, to make sure we learned about that in particular, which could have helped us draw more definitive conclusions about top-line impact.
 実験を計画する際に、前もって時間を費やしていれば、エントリー・ポイントの側面を切り離して、特にその点について確実に学ぶことができただろう。
 
-## Conclusion 結論
+# 5. Conclusion 結論
 
 All in all, experimentation is a tool to help us find the innovative experiences that move the needle forward and contribute to the business.
 全体として、実験とは、針を前進させ、ビジネスに貢献する革新的な経験を見つけるためのツールである。
