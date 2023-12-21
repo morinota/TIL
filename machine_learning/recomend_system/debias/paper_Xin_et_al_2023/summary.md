@@ -1,6 +1,6 @@
-# Bayesian Personalized Ranking from Implicit Feedback
+# Improving Implicit Feedback-Based Recommendation through Multi-Behavior Alignment
 
-published date: hogehoge September 2022,
+published date: 9 May 2023,
 authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
 url(paper): https://arxiv.org/pdf/2305.05585.pdf
 (勉強会発表者: morinota)
@@ -347,7 +347,7 @@ $$
   - 入力値:観測されたmulti-bahaviorデータセット $R_f$ と $R_g$, ハイパーパラメータ $\alpha, \beta, C_1, C_2$
   - 出力値: 全てのモデルパラメータ $\theta, \phi, \phi', \varphi, \varphi'$
 - 実装の詳細:
-  - while coverage (=特定の学習目標が達成されるまで繰り返す)
+  - while coverage (=特定の学習目標が達成されたり、指定したepoch数に達したりするまで):
     - training exampleのサンプリング
     - 損失関数の項の一つ $L_{KL}$ を計算する。
     - alternative trianingのステップ1:

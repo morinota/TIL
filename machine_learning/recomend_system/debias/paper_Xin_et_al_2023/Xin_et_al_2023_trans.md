@@ -624,51 +624,47 @@ To demonstrate the effectiveness of our method, we compare MBA with several stat
 本手法の有効性を実証するため、MBAをいくつかの最新手法と比較する。
 The methods used for comparison include single-behavior models, multi-behavior models, and recommendation denoising methods.
 **比較に使用した手法には、単一行動モデル、複数行動モデル、推薦ノイズ除去法など**がある。
-The single-behavior models that we consider are: (i) MF-BPR [28], which uses bayesian personalized ranking (BPR) loss to optimize matrix factorization.
-我々が考慮する単一行動モデルは以下の通りである： (i) MF-BPR [28]、これは行列分解を最適化するためにベイジアンパーソナライズドランキング(BPR)損失を使用する。
-(ii) NGCF [34], which encodes collaborative signals into the embedding process through multiple graph convolutional layers and models higher-order connectivity in user-item graphs.
-(ii)NGCF[34]は、複数のグラフ畳み込み層を通して埋め込みプロセスに協調信号をエンコードし、ユーザー項目グラフの高次の接続性をモデル化する。
-(iii) LightGCN [15], which simplifies graph convolution by removing the matrix transformation and non-linear activation.
-(iii) LightGCN [15]は、行列変換と非線形活性化を除去することで、グラフ畳み込みを単純化する。
-We use the BPR loss to optimize LightGCN.
-BPRロスを利用してLightGCNを最適化する。
-The multi-behavior models that we consider are: (i) MB-GCN [18], which constructs a multi-behavior heterogeneous graph and uses GCN to perform behavior-aware embedding propagation.
-我々が検討する複数行動モデルは以下の通りである： (i)MB-GCN[18]は、マルチ行動異種グラフを構築し、GCNを使用して行動を意識した埋め込み伝搬を実行する。
-(ii) MB- GMN [39], which incorporates multi-behavior pattern modeling with the meta-learning paradigm.
-(ii)MB-GMN[39]は、メタ学習パラダイムによる複数行動パターン・モデリングを組み込んだものである。
-(iii) CML [37], which uses a new multi-behavior contrastive learning paradigm to capture the transferable user-item relationships from multi-behavior data.
-(iii)CML[37]は、新しい複数行動対照学習パラダイムを用い、複数行動データから伝達可能なユーザーとアイテムの関係を捉える。
-To verify that the proposed method improves performance by denoising implicit feedback, we also introduce the following denoising frameworks: (i) WBPR [11], which is a re-sampling-based method which considers popular, but un-interacted items are highly likely to be negative.
-提案手法が暗黙的フィードバックをノイズ除去することで性能が向上することを検証するために、以下のノイズ除去フレームワークも紹介する： (i)WBPR[11]は、再サンプリングに基づく手法であり、人気のある、しかし対話されていない項目は否定的である可能性が高いと考える。
-(ii) T-CE [32], which is a re-weighting based method which discards the large-loss samples with a dynamic threshold in each iteration.
-(ii)T-CE[32]は、各反復において動的な閾値で損失の大きいサンプルを破棄する、再重み付けに基づく手法である。
-(iii) DeCA [35], which is a newly proposed denoising method that utilizes the agreement predictions on clean examples across different models and minimizes the KL-divergence between the real user preference parameterized by two recommendation models.
-(iii) DeCA [35]は、新たに提案されたノイズ除去手法であり、異なるモデル間のクリーンな例における一致予測を利用し、2つの推薦モデルによってパラメータ化された実際のユーザの嗜好間のKLダイバージェンスを最小化する。
-(iv) SGDL [13], which is a new denoising paradigm that utilizes self-labeled memorized data as denoising signals to improve the robustness of recommendation models.
-(iv)SGDL[13]は、推薦モデルの頑健性を向上させるために、自己ラベル化された記憶データをノイズ除去信号として利用する新しいノイズ除去パラダイムである。
+The single-behavior models that we consider are:
+我々が考慮する単一行動モデルは以下の通りである：
+
+- (i) MF-BPR [28], which uses bayesian personalized ranking (BPR) loss to optimize matrix factorization. これは行列分解を最適化するためにベイジアンパーソナライズドランキング(BPR)損失を使用する。
+- (ii) NGCF [34], which encodes collaborative signals into the embedding process through multiple graph convolutional layers and models higher-order connectivity in user-item graphs. 複数のグラフ畳み込み層を通して埋め込みプロセスに協調信号をエンコードし、ユーザ-アイテムグラフの高次の接続性をモデル化する。
+- (iii) LightGCN [15], which simplifies graph convolution by removing the matrix transformation and non-linear activation. 行列変換と非線形活性化を除去することで、グラフ畳み込みを単純化する。We use the BPR loss to optimize LightGCN. 本論文ではBPRロスを利用してLightGCNを最適化する。
+
+The multi-behavior models that we consider are:
+我々が検討する複数行動モデルは以下の通りである：
+(i) MB-GCN [18], which constructs a multi-behavior heterogeneous graph and uses GCN to perform behavior-aware embedding propagation.マルチ行動異種グラフを構築し、GCNを使用して行動を意識した埋め込み伝搬を実行する。
+
+- (ii) MB- GMN [39], which incorporates multi-behavior pattern modeling with the meta-learning paradigm. メタ学習パラダイムによる複数行動パターン・モデリングを組み込んだもの。
+- (iii) CML [37], which uses a new multi-behavior contrastive learning paradigm to capture the transferable user-item relationships from multi-behavior data. 新しい複数行動対照学習パラダイムを用い、複数行動データから伝達可能なユーザとアイテムの関係を捉える。
+
+To verify that the proposed method improves performance by denoising implicit feedback, we also introduce the following denoising frameworks:
+提案手法が暗黙的フィードバックをノイズ除去することで性能が向上することを検証するために、以下のノイズ除去フレームワークも紹介する：
+
+- (i) WBPR [11], which is a re-sampling-based method which considers popular, but un-interacted items are highly likely to be negative. 再サンプリングに基づく手法であり、人気のある、しかし対話されていない項目は否定的である可能性が高いと考える。
+- (ii) T-CE [32], which is a re-weighting based method which discards the large-loss samples with a dynamic threshold in each iteration. 各iterationにおいて動的な閾値で損失の大きいサンプルを破棄する、再重み付けに基づく手法である。
+- (iii) DeCA [35], which is a newly proposed denoising method that utilizes the agreement predictions on clean examples across different models and minimizes the KL-divergence between the real user preference parameterized by two recommendation models. 新たに提案されたノイズ除去手法であり、異なるモデル間のクリーンな例における一致予測を利用し、2つの推薦モデルによってパラメータ化された実際のユーザの嗜好間のKLダイバージェンスを最小化する。
+- (iv) SGDL [13], which is a new denoising paradigm that utilizes self-labeled memorized data as denoising signals to improve the robustness of recommendation models. 推薦モデルの頑健性を向上させるために、自己ラベル化された記憶データをノイズ除去信号として利用する新しいノイズ除去パラダイムである。
 
 ## 4.5. Implementation details 実装の詳細
 
 We implement our method with PyTorch.3 Without special mention, we set MF as our base model 𝑡𝜃 since MF is still one of the best models for capturing user preferences for recommendations [29].
-特に言及することなく、MFをベースモデル𝑡として設定します。MFは、レコメンデーションのためのユーザの嗜好を捉えるための最良のモデルの1つです[29]。
+特に言及することなく、MFをベースモデル $t_{\theta}$ として設定します。MFは、レコメンデーションのためのユーザの嗜好を捉えるための最良のモデルの1つです[29]。
 The model is optimized by Adam [20] optimizer with a learning rate of 0.001, where the batch size is set as 2048.
 このモデルは、Adam [20]オプティマイザによって、学習率0.001、バッチサイズ2048で最適化される。
 The embedding size is set to 32.
 埋め込みサイズは32に設定されている。
 The hyperparameters 𝛼, 𝐶1 and 𝐶2 are search from { 1, 10, 100, 1000 }.
-ハイパーパラメータǖ, 𝐶1, 𝐶2は{ 1, 10, 100, 1000 }から探索される。
+ハイパーパラメータ 𝛼, 𝐶1, 𝐶2 は { 1, 10, 100, 1000 } から探索される。
 𝛽 is search from { 0.7, 0.8, 1 }.
-↪L_1FD↩は{ 0.7, 0.8, 1 }の中から探す。
-To avoid over-fitting, 𝐿2 normalization is searched in { 10−6 , 10−5 , .
-オーバーフィットを避けるため、 ↪Lu_1D43F の正規化は { 10-6 , 10-5 , .
-..
-..
-, 1 }.
-, 1 }.
+ベータは { 0.7, 0.8, 1 } から探索される。
+To avoid over-fitting, 𝐿2 normalization is searched in { 10−6 , 10−5}
+過学習を避けるために、L2正規化は { 10−6 , 10−5} で探索される。
+
 Each training step is formed by one interacted example, and one randomly sampled negative example for efficient computation.
 各訓練ステップは、効率的な計算のために、1つの相互作用のある例と1つのランダムにサンプリングされた負の例で形成される。
 We use Recall@20 on the test set for early stopping if the value does not increase after 20 epochs.
-20エポック後に値が増加しない場合は、テストセットのRecall@20を使用して早期停止を行う。
+テストセットのRecall@20を使用して、20エポック後に値が増加しない場合はearly stoppingを行う。
 For the hyperparameters of all recommendation baselines, we use the values suggested by the original papers with carefully finetuning on the three datasets.
 すべての推薦ベースラインのハイパーパラメータについては、3つのデータセットで慎重に微調整を行いながら、元の論文で示唆された値を使用している。
 For all graph-based methods, the number of graph-based message propagation layers is fixed at 3.
@@ -688,7 +684,7 @@ From the table, we have the following observations.
 表から、我々は次のような見解を得た。
 
 First, the proposed MBA method achieves the best performance and consistently outperforms all baselines across all datasets.
-まず、提案されたMBA法は最高の性能を達成し、すべてのデータセットにおいてすべてのベースラインを一貫して上回る。
+まず、**提案されたMBA法は最高の性能を達成し、すべてのデータセットにおいてすべてのベースラインを一貫して上回る**。
 For instance, the average improvement of MBA over the strongest baseline is approximately 6.3% on the Beibei dataset, 6.6% on the Taobao dataset and 1.5% on the MBD dataset.
 例えば、最強のベースラインに対するMBAの平均改善率は、Beibeiデータセットで約6.3%、Taobaoデータセットで6.6%、MBDデータセットで1.5%である。
 These improvements demonstrate the effectiveness of MBA.
