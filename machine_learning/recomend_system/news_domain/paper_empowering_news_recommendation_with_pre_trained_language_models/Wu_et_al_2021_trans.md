@@ -328,10 +328,10 @@ The online flight results show significant improvement in both click and pagevie
 ニュース推薦用のコンテンツベース推薦モデルをあんまり知らないので、年末年始でざっくり調べようと思ってる。
 2021のhttps://arxiv.org/pdf/2104.07413.pdf にて、最近のコンテンツベースのニュース推薦モデルとして以下の5つを挙げていたので、この辺りを漁ってみようかな。
 
-- [EBNR: Embedding-based news recommendation for millions of users](http://library.usc.edu.ph/ACM/KKD%202017/pdfs/p1933.pdf)
-- [NAML: Neural News Recommendation with Attentive Multi-View Learning.](https://arxiv.org/abs/1907.05576)
-- [NPA: Neural news recommendation with personalized attention.](https://arxiv.org/abs/1907.05559)
-- [LSTUR: Neural News Recommendation with Long-and Short-term User Representations.](https://aclanthology.org/P19-1033/)
-- [NRMS: Neural News Recommendation with Multi-Head Self-Attention.](https://aclanthology.org/D19-1671/)
+- 15 [EBNR: Embedding-based news recommendation for millions of users](http://library.usc.edu.ph/ACM/KKD%202017/pdfs/p1933.pdf)
+- 21 [NAML: Neural News Recommendation with Attentive Multi-View Learning.](https://arxiv.org/abs/1907.05576)
+- 22 [NPA: Neural news recommendation with personalized attention.](https://arxiv.org/abs/1907.05559)
+- 1 [LSTUR: Neural News Recommendation with Long-and Short-term User Representations.](https://aclanthology.org/P19-1033/)
+- 23[NRMS: Neural News Recommendation with Multi-Head Self-Attention.](https://aclanthology.org/D19-1671/)
 
 ニュースの埋め込みを作る部分というよりは、ユーザの埋め込みを作る部分 (i.e. user encoder) と、ニュースとユーザの埋め込みから推薦スコアを算出する部分 (i.e. click prediction module) を参考にしたい...!
