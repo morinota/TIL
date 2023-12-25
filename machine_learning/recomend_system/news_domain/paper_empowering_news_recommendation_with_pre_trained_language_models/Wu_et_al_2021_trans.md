@@ -315,3 +315,12 @@ In addition, our PLM-empowered news recommendation models have been deployed to 
 さらに、私たちのPLMを利用したニュース推薦モデルは、商業的なニュースプラットフォームに導入されており、これは、PLMを利用して実際の大規模なニュース推薦システムを強化する最初の取り組みとして公に報告されている。
 The online flight results show significant improvement in both click and pageview in a large number of markets with different languages.
 オンライン・フライトの結果は、クリック数、ページビュー数ともに、言語の異なる多くの市場で大幅な改善を示している。
+
+## 参考
+
+- EBNR: Embedding-based news recommendation for millions of users
+- NAML: Neural News Recommendation with Attentive Multi-View
+Learning. 
+- NPA: Neural news recommendation with personalized attention.
+- LSTUR: Neural News Recommendation with Long-and Short-term User Representations.
+- NRMS: Neural News Recommendation with Multi-Head Self-Attention.
