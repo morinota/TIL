@@ -445,8 +445,8 @@ Specifically, we expand 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑔 | R𝑡)] as:
 $$
 E_{P(R_t)}[log P(R_g|R_t)]
 = \sum_{u,i} E_{r^{t}_{u,i} \sim P(R_t)} [log P(r^{g}_{u,i}|r^{t}_{u,i})]
-\tag{13}
 = ...
+\tag{13}
 $$
 
 Similarly, the term 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)] can be expanded as:
@@ -467,10 +467,10 @@ In the learning stage, we find that directly training 𝑡𝜃 with Eq.12–Eq.1
 These five models may interfere with each other and prevent 𝑡𝜃 from learning well.
 これら5つのモデルは互いに干渉し合い、$t_{\theta}$ (=真に得たいモデル) の学習を妨げる可能性がある。
 To address this problem, we set two alternative training steps to train the involved models iteratively.
-この問題に対処するため、2つの代替学習ステップを設定し、関係するモデルを反復的に学習する。
+この問題に対処するため、**2つの代替学習ステップを設定し、関係するモデルを反復的に学習する**。(ALS的に、交互に学習する感じ?)
 
 In the first training step, we assume that a user tends to not click or purchase items that the user dislikes.
-最初の学習ステップでは、**ユーザが嫌いな商品はクリックしない、購入しない傾向があると仮定**する。
+最初の学習ステップでは、**ユーザが嫌いな商品はクリックしない、もしくは購入しない傾向があると仮定**する。
 That is to say, given $r^{t}_{u,i}= 0$ we have $r^{f}_{u,i} \approx 0$ and $r^{g}_{u,i} \approx 0$, so we have ℎ 𝑓 𝜙 ≈ 0 and ℎ 𝑔 𝜙′ ≈ 0 according to Eq.2.
 これはつまり、真の嗜好 $r^{t}_{u,i}= 0$ の場合、$r^{f}_{u,i} \approx 0$ と $r^{g}_{u,i} \approx 0$ が成立する、つまり $h^{f}_{\varphi} \approx 0$ と $h^{g}_{\varphi'} \approx 0$ が成立するということである。
 Thus in this step, only the models ℎ 𝑓 𝜑 , ℎ 𝑔 𝜑′ and 𝑡𝜃 are trained.
@@ -479,32 +479,32 @@ Then Eq.13 can be reformulated as:
 そうすると、式.13は次のように定式化できる:
 
 $$
-\tag{15}
-$$
-
+E_{P(R_t)}[log P(R_g|R_t)] = L_{CN} + L_{CP}
+\\
 where
-ここで、
-
-$$
-\tag{}
+\\
+L_{CN} = \sum_{(u,i)|r^{g}_{u,i}=0} log (1-h^{g}_{\varphi'}(u,i)) t_{\theta}(u,i)
+\\
+L_{CP} = \sum_{(u,i)|r^{g}_{u,i}=1} log h^{g}_{\varphi'}(u,i) t_{\theta}(u,i) - C_1 \cdot (1 - t_{\theta}(u,i))
+\tag{15}
 $$
 
 Meanwhile, Eq.14 can be reformulated as:
 一方、式.14は次のように定式化できる:
 
 $$
+E_{P(R_t)}[log P(R_f|R_t)] = L_{PN} + L_{PP}
+\\
+where
+\\
+L_{PN} = \sum_{(u,i)|r^{f}_{u,i}=0} log (1-h^{f}_{\varphi}(u,i)) t_{\theta}(u,i)
+\\
+L_{PP} = \sum_{(u,i)|r^{f}_{u,i}=1} log h^{f}_{\varphi}(u,i) t_{\theta}(u,i) - C_1 \cdot (1 - t_{\theta}(u,i))
 \tag{16}
 $$
 
-where
-ここで、
-
-$$
-\tag{}
-$$
-
 Here, we denote 𝐶1 as a large positive hyperparameter to replace − logℎ 𝑔 𝜙′ (𝑢,𝑖) and − logℎ 𝑓 𝜙 (𝑢,𝑖).
-ここでは、-logℎ ᑔ ↪Ll_1D719′ (𝑢,𝑖)と-logℎ 𝑓を置き換えるために、$C_1$ を大きな正のハイパーパラメータとする。
+ここでは、$- \log h^{g}_{\phi'}(u,i)$ と $- \log h^{f}_{\phi}(u,i)$ を置き換えるために、$C_1$ を大きな正のハイパーパラメータとする。(置き換える? どういうこと?)
 
 In the second training step, we assume that a user tends to click and purchase the items that the user likes.
 2つ目の学習ステップでは、**ユーザが気に入った商品をクリックして購入する傾向があると仮定**する。
@@ -517,52 +517,57 @@ Then Eq.13 can be reformulated as:
 そうすると、式.13は次のように定式化できる:
 
 $$
-\tag{17}
-$$
-
+E_{P(R_t)}[log P(R_g|R_t)] = L_{CP}' + L_{CN}'
+\\
 where
-ここで
-
-$$
-\tag{}
+\\
+L_{CP}' = \sum_{(u,i)|r^{g}_{u,i}=1} log h^{g}_{\phi'}(u,i) (1 - t_{\theta}(u,i))
+\\
+L_{CN}' = \sum_{(u,i)|r^{g}_{u,i}=0} C_2 \cdot t_{\theta}(u,i) + log (1 - h^{g}_{\phi'}(u,i)) (1 - t_{\theta}(u,i))
+\tag{17}
 $$
 
 Eq.14 can be reformulated as:
 (同様に)式.14は次のように定式化できる:
 
 $$
+E_{P(R_t)}[log P(R_f|R_t)] = L_{PP}' + L_{PN}'
+\\
+where
+\\
+L_{PP}' = \sum_{(u,i)|r^{f}_{u,i}=1} log h^{f}_{\phi}(u,i) (1 - t_{\theta}(u,i))
+\\
+L_{PN}' = \sum_{(u,i)|r^{f}_{u,i}=0} C_2 \cdot t_{\theta}(u,i) + log (1 - h^{f}_{\phi}(u,i)) (1 - t_{\theta}(u,i))
 \tag{18}
 $$
 
-where
-ここで、
-
-$$
-\tag{}
-$$
-
 𝐶2 is a large positive hyperparameter to replace − log(1−ℎ 𝑔 𝜑′ (𝑢,𝑖)) and − log(1 − ℎ 𝑓 𝜑 (𝑢,𝑖)).
-$C_2$ は、-log(1-Ȑ (↪Ll_1D46,𝑖)) と - log(1 - 𝜑 (↪Ll_1D462,𝑖)) を置き換える大きな正のハイパーパラメータである。
+$C_2$ は、$- \log (1 - h^{g}_{\varphi'}(u,i))$ と $- \log (1 - h^{f}_{\varphi}(u,i))$ を置き換えるための大きな正のハイパーパラメータである。(置き換える? どういうこと?)
 
 <!-- ここまで読んだ(一応) -->
 
 ### 3.3.3. Training procedure. トレーニングの手順
 
 In order to facilitate the description of sampling and training process, we divide 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑔 | R𝑡)] and 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)] into four parts (see Eq.15 to Eq.18), namely click positive loss (𝐿𝐶𝑃 and 𝐿 ′ 𝐶𝑃 ), click negative loss (𝐿𝐶𝑁 and 𝐿 ′ 𝐶𝑁 ), purchase positive loss (𝐿𝑃𝑃 and 𝐿 ′ 𝑃𝑃 ), and purchase negative loss (𝐿𝑃𝑁 and 𝐿 ′ 𝑃𝑁 ).
-サンプリングとトレーニングのプロセスの説明を容易にするために、𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑔 | R𝑡)] と 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)] を 4つの部分に分割する(式 15 ~ 式18)。
-hogehoge
+サンプリングとトレーニングのプロセスの説明を容易にするために、２つの期待値 $E_{P(R_t)}[log P(R_g|R_t)]$ と $E_{P(R_t)}[log P(R_f|R_t)]$ を4つの部分に分ける(式.15-式.18を参照):
+
+- click positive loss $L_{CP}$ と $L'_{CP}$
+- click negative loss $L_{CN}$ と $L'_{CN}$
+- purchase positive loss $L_{PP}$ と $L'_{PP}$
+- purchage negative loss $L_{PN}$ と $L'_{PN}$
+
 Each sample in the training set can be categorized into one of three situations: (i) clicked and purchased, (ii) clicked but not purchased, and (iii) not clicked and not purchased.
-**トレーニングセットの各サンプルは、3つの状況のいずれかに分類される**(うんうん:thinking:) : (i) クリックされ購入された、(ii) クリックされたが購入されなかった、(iii) クリックされず購入されなかった。
+**トレーニングセットの各サンプルは、3つの状況のいずれかに分類される**(うんうん:thinking:) : (i) クリックされかつ購入された、(ii) クリックされたが購入されなかった、(iii) クリックされず購入されなかった。
 The three situations involve different terms in 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑔 | R𝑡)] and 𝐸𝑃 (R𝑡 ) [log 𝑃 (R𝑓 | R𝑡)].
-hogehoge
+この3つの状況では、2つの期待値 $E_{P(R𝑡)}[log P(R_g|R_t)]$ と $E_{P(R_t)}[log P(R_f|R_t)]$ の項が異なる
 In situation (i), each sample involves the 𝐿𝐶𝑃 and 𝐿𝑃𝑃 (or 𝐿 ′ 𝐶𝑃 and 𝐿 ′ 𝑃𝑃 in the alternative training step).
-状況(i)では、各サンプルは𝐿𝑃と𝑃（または代替学習ステップでは𝑃と𝐿）を含む。
+状況(i)では、各サンプルは $L_{CP}$ と$L_{PP}$ を含む。(または代替学習ステップでは $L'_{CP}$ と $L'_{PP}$)
 In situation (ii), each sample involves the 𝐿𝐶𝑃 and 𝐿𝑃𝑁 (or 𝐿 ′ 𝐶𝑃 and 𝐿 ′ 𝑃𝑁 in the alternative training step).
-状況(ii)では、各サンプルは𝐿𝐶𝑃（または代替学習ステップでは 𝐿 𝑃 𝐿）を含む。
+状況(ii)では、各サンプルは $L_{CP}$ と$L_{PN}$ を含む。(または代替学習ステップでは $L'_{CP}$ と $L'_{PN}$)
 In situation (iii), each sample involves the 𝐿𝐶𝑁 and 𝐿𝑃𝑁 (or 𝐿 ′ 𝐶𝑁 and 𝐿 ′ 𝑃𝑁 in the alternative training step).
-状況(iii)では、各サンプルは𝐿𝑁（または代替学習ステップでは𝑃𝐿）と𝑁（または𝑃𝑁）を含む。
+状況(iii)では、各サンプルは $L_{CN}$ と$L_{PN}$ を含む。(または代替学習ステップでは $L'_{CN}$ と $L'_{PN}$)
 We then train MBA according to the observed multiple types of user behavior data in situations (i) and (ii), and use the samples in situation (iii) as our negative samples.
-そして、状況(i)と(ii)で観測された複数種類のユーザ行動データに従ってMBAを訓練し、状況(iii)のサンプルを負サンプルとして使用する。
+そして、**状況(i)と(ii)で観測された複数種類のユーザ行動データに従ってMBAを訓練し、状況(iii)のサンプルを負サンプルとして使用する**。
 Details of the training process for MBA are provided in Algorithm 1.
 MBAのトレーニングプロセスの詳細は、アルゴリズム1に記載されている。
 
@@ -580,34 +585,36 @@ Our experiments are conducted to answer the following research questions: (RQ1) 
 To evaluate the effectiveness of our method, we conduct a series of experiments on three real-world benchmark datasets, including Beibei1 [12], Taobao2 [47], and MBD (multi-behavior dataset), a dataset we collected from an operational e-commerce platform.
 本手法の有効性を評価するため、Beibei1 [12]、Taobao2 [47]、MBD (multi-behavior dataset)の3つの実世界ベンチマークデータセットで一連の実験を行った。
 The details are as follows: (i) The Beibei dataset is an open dataset collected from Beibei, the largest infant product e-commerce platform in China, which includes three types of behavior, click, add-to-cart and purchase.
-詳細は以下の通りである： (i)Beibeiデータセットは、中国最大の幼児向け商品ECプラットフォームであるBeibeiから収集されたオープンデータセットであり、クリック、カートに入れる、購入の3種類の行動が含まれる。
+詳細は以下の通りである： (i)Beibeiデータセットは、中国最大の幼児向け商品ECプラットフォームであるBeibeiから収集されたオープンデータセットであり、クリック、カートに入れる、購入の**3種類の行動データ**が含まれる。
 This work uses two kinds of behavioral data, clicks and purchases.
-この作品では、クリックと購入という2種類の行動データを使用している。
+この本研究では、クリックと購入という2種類の行動データを使用している。
 (ii) The Taobao dataset is an open dataset collected from Taobao, the largest e-commerce platform in China, which includes three types of behavior, click, add to cart and purchase.
-(ii)タオバオデータセットは、中国最大の電子商取引プラットフォームであるタオバオから収集されたオープンデータセットであり、クリック、カートに入れる、購入の3種類の行動を含む。
+(ii)タオバオデータセットは、中国最大の電子商取引プラットフォームであるタオバオから収集されたオープンデータセットであり、クリック、カートに入れる、購入の**3種類の行動データ**を含む。
 In this work, we use clicks and purchases of this dataset.
-本研究では、このデータセットのクリック数と購入数を使用する。
+本研究では、このデータセットのクリック数と購入数を使用する。(使用するのは2種類)
 (iii) The MBD dataset is collected from an operational e-commerce platform, and includes two types of behavior, click and purchase.
 (iii) MBDデータセットは、運用中のeコマース・プラットフォームから収集され、クリックと購入の2種類の行動を含む。
 For each dataset, we ensure that users have interactions on both types of behavior, and we set click data as auxiliary behavior data and purchase data as target behavior data.
-各データセットについて、ユーザーが両方の行動に関するインタラクションを持っていることを確認し、クリックデータを補助行動データ、購入データをターゲット行動データとする。
+各データセットについて、ユーザが両方の行動に関するインタラクションを持っていることを確認し、クリックデータを補助行動データ、購入データをターゲット行動データとする。
 Table 1 shows the statistics of our datasets
 表1にデータセットの統計を示す。
+
+![]()
 
 ## 4.3. Evaluation protocols 評価プロトコル
 
 We divide the datasets into training and test sets with a ratio of 4:1.
-データセットを訓練セットとテストセットに4:1の比率で分割する。
+データセットを**訓練セットとテストセットに4:1の比率で分割**する。(時間は気にしてるかな??)
 We adopt two widely used metrics Recall@𝑘 and NDCG@𝑘.
-我々は、広く使われている2つの指標Recall@\_1D458とNDCG@\_1D458を採用する。
+我々は、広く使われている2つの指標Recall@kとNDCG@kを採用する。
 Recall@𝑘 represents the coverage of true positive items that appear in the final top-𝑘 ranked list.
-Recall@↪Ll458↩は、最終的な上位↪Ll458位リストに表示される真正項目のカバー率を表す。
+Recall@kは、最終的な上位k位リストに表示されるtrue positive itemsのカバー率を表す。
 NDCG@𝑘 measures the ranking quality of the final recommended items.
-NDCG@\_1D458 は、最終的な推奨項目のランキング品質を測定する。
+NDCG@k は、最終的な推薦itemsのランキング品質を測定する。
 In our experiments, we use the setting of 𝑘 = 10, 20.
 実験では、𝑘 = 10, 20の設定を使用した。
 For our method and the baselines, the reported results are the average values over all users.
-我々の方法とベースラインについて、報告された結果は全ユーザーの平均値である。
+我々の方法とベースラインについて、報告された結果は**全ユーザの平均値**である。
 For every result, we conduct the experiments three times and report the average values.
 すべての結果について、実験を3回行い、その平均値を報告する。
 
@@ -616,52 +623,48 @@ For every result, we conduct the experiments three times and report the average 
 To demonstrate the effectiveness of our method, we compare MBA with several state-of-the-art methods.
 本手法の有効性を実証するため、MBAをいくつかの最新手法と比較する。
 The methods used for comparison include single-behavior models, multi-behavior models, and recommendation denoising methods.
-比較に使用した手法には、単一行動モデル、複数行動モデル、推薦ノイズ除去法などがある。
-The single-behavior models that we consider are: (i) MF-BPR [28], which uses bayesian personalized ranking (BPR) loss to optimize matrix factorization.
-我々が考慮する単一行動モデルは以下の通りである： (i) MF-BPR [28]、これは行列分解を最適化するためにベイジアンパーソナライズドランキング(BPR)損失を使用する。
-(ii) NGCF [34], which encodes collaborative signals into the embedding process through multiple graph convolutional layers and models higher-order connectivity in user-item graphs.
-(ii)NGCF[34]は、複数のグラフ畳み込み層を通して埋め込みプロセスに協調信号をエンコードし、ユーザー項目グラフの高次の接続性をモデル化する。
-(iii) LightGCN [15], which simplifies graph convolution by removing the matrix transformation and non-linear activation.
-(iii) LightGCN [15]は、行列変換と非線形活性化を除去することで、グラフ畳み込みを単純化する。
-We use the BPR loss to optimize LightGCN.
-BPRロスを利用してLightGCNを最適化する。
-The multi-behavior models that we consider are: (i) MB-GCN [18], which constructs a multi-behavior heterogeneous graph and uses GCN to perform behavior-aware embedding propagation.
-我々が検討する複数行動モデルは以下の通りである： (i)MB-GCN[18]は、マルチ行動異種グラフを構築し、GCNを使用して行動を意識した埋め込み伝搬を実行する。
-(ii) MB- GMN [39], which incorporates multi-behavior pattern modeling with the meta-learning paradigm.
-(ii)MB-GMN[39]は、メタ学習パラダイムによる複数行動パターン・モデリングを組み込んだものである。
-(iii) CML [37], which uses a new multi-behavior contrastive learning paradigm to capture the transferable user-item relationships from multi-behavior data.
-(iii)CML[37]は、新しい複数行動対照学習パラダイムを用い、複数行動データから伝達可能なユーザーとアイテムの関係を捉える。
-To verify that the proposed method improves performance by denoising implicit feedback, we also introduce the following denoising frameworks: (i) WBPR [11], which is a re-sampling-based method which considers popular, but un-interacted items are highly likely to be negative.
-提案手法が暗黙的フィードバックをノイズ除去することで性能が向上することを検証するために、以下のノイズ除去フレームワークも紹介する： (i)WBPR[11]は、再サンプリングに基づく手法であり、人気のある、しかし対話されていない項目は否定的である可能性が高いと考える。
-(ii) T-CE [32], which is a re-weighting based method which discards the large-loss samples with a dynamic threshold in each iteration.
-(ii)T-CE[32]は、各反復において動的な閾値で損失の大きいサンプルを破棄する、再重み付けに基づく手法である。
-(iii) DeCA [35], which is a newly proposed denoising method that utilizes the agreement predictions on clean examples across different models and minimizes the KL-divergence between the real user preference parameterized by two recommendation models.
-(iii) DeCA [35]は、新たに提案されたノイズ除去手法であり、異なるモデル間のクリーンな例における一致予測を利用し、2つの推薦モデルによってパラメータ化された実際のユーザの嗜好間のKLダイバージェンスを最小化する。
-(iv) SGDL [13], which is a new denoising paradigm that utilizes self-labeled memorized data as denoising signals to improve the robustness of recommendation models.
-(iv)SGDL[13]は、推薦モデルの頑健性を向上させるために、自己ラベル化された記憶データをノイズ除去信号として利用する新しいノイズ除去パラダイムである。
+**比較に使用した手法には、単一行動モデル、複数行動モデル、推薦ノイズ除去法など**がある。
+The single-behavior models that we consider are:
+我々が考慮する単一行動モデルは以下の通りである：
+
+- (i) MF-BPR [28], which uses bayesian personalized ranking (BPR) loss to optimize matrix factorization. これは行列分解を最適化するためにベイジアンパーソナライズドランキング(BPR)損失を使用する。
+- (ii) NGCF [34], which encodes collaborative signals into the embedding process through multiple graph convolutional layers and models higher-order connectivity in user-item graphs. 複数のグラフ畳み込み層を通して埋め込みプロセスに協調信号をエンコードし、ユーザ-アイテムグラフの高次の接続性をモデル化する。
+- (iii) LightGCN [15], which simplifies graph convolution by removing the matrix transformation and non-linear activation. 行列変換と非線形活性化を除去することで、グラフ畳み込みを単純化する。We use the BPR loss to optimize LightGCN. 本論文ではBPRロスを利用してLightGCNを最適化する。
+
+The multi-behavior models that we consider are:
+我々が検討する複数行動モデルは以下の通りである：
+(i) MB-GCN [18], which constructs a multi-behavior heterogeneous graph and uses GCN to perform behavior-aware embedding propagation.マルチ行動異種グラフを構築し、GCNを使用して行動を意識した埋め込み伝搬を実行する。
+
+- (ii) MB- GMN [39], which incorporates multi-behavior pattern modeling with the meta-learning paradigm. メタ学習パラダイムによる複数行動パターン・モデリングを組み込んだもの。
+- (iii) CML [37], which uses a new multi-behavior contrastive learning paradigm to capture the transferable user-item relationships from multi-behavior data. 新しい複数行動対照学習パラダイムを用い、複数行動データから伝達可能なユーザとアイテムの関係を捉える。
+
+To verify that the proposed method improves performance by denoising implicit feedback, we also introduce the following denoising frameworks:
+提案手法が暗黙的フィードバックをノイズ除去することで性能が向上することを検証するために、以下のノイズ除去フレームワークも紹介する：
+
+- (i) WBPR [11], which is a re-sampling-based method which considers popular, but un-interacted items are highly likely to be negative. 再サンプリングに基づく手法であり、人気のある、しかし対話されていない項目は否定的である可能性が高いと考える。
+- (ii) T-CE [32], which is a re-weighting based method which discards the large-loss samples with a dynamic threshold in each iteration. 各iterationにおいて動的な閾値で損失の大きいサンプルを破棄する、再重み付けに基づく手法である。
+- (iii) DeCA [35], which is a newly proposed denoising method that utilizes the agreement predictions on clean examples across different models and minimizes the KL-divergence between the real user preference parameterized by two recommendation models. 新たに提案されたノイズ除去手法であり、異なるモデル間のクリーンな例における一致予測を利用し、2つの推薦モデルによってパラメータ化された実際のユーザの嗜好間のKLダイバージェンスを最小化する。
+- (iv) SGDL [13], which is a new denoising paradigm that utilizes self-labeled memorized data as denoising signals to improve the robustness of recommendation models. 推薦モデルの頑健性を向上させるために、自己ラベル化された記憶データをノイズ除去信号として利用する新しいノイズ除去パラダイムである。
 
 ## 4.5. Implementation details 実装の詳細
 
 We implement our method with PyTorch.3 Without special mention, we set MF as our base model 𝑡𝜃 since MF is still one of the best models for capturing user preferences for recommendations [29].
-特に言及することなく、MFをベースモデル𝑡として設定します。MFは、レコメンデーションのためのユーザの嗜好を捉えるための最良のモデルの1つです[29]。
+特に言及することなく、MFをベースモデル $t_{\theta}$ として設定します。MFは、レコメンデーションのためのユーザの嗜好を捉えるための最良のモデルの1つです[29]。
 The model is optimized by Adam [20] optimizer with a learning rate of 0.001, where the batch size is set as 2048.
 このモデルは、Adam [20]オプティマイザによって、学習率0.001、バッチサイズ2048で最適化される。
 The embedding size is set to 32.
 埋め込みサイズは32に設定されている。
 The hyperparameters 𝛼, 𝐶1 and 𝐶2 are search from { 1, 10, 100, 1000 }.
-ハイパーパラメータǖ, 𝐶1, 𝐶2は{ 1, 10, 100, 1000 }から探索される。
+ハイパーパラメータ 𝛼, 𝐶1, 𝐶2 は { 1, 10, 100, 1000 } から探索される。
 𝛽 is search from { 0.7, 0.8, 1 }.
-↪L_1FD↩は{ 0.7, 0.8, 1 }の中から探す。
-To avoid over-fitting, 𝐿2 normalization is searched in { 10−6 , 10−5 , .
-オーバーフィットを避けるため、 ↪Lu_1D43F の正規化は { 10-6 , 10-5 , .
-..
-..
-, 1 }.
-, 1 }.
+ベータは { 0.7, 0.8, 1 } から探索される。
+To avoid over-fitting, 𝐿2 normalization is searched in { 10−6 , 10−5}
+過学習を避けるために、L2正規化は { 10−6 , 10−5} で探索される。
+
 Each training step is formed by one interacted example, and one randomly sampled negative example for efficient computation.
 各訓練ステップは、効率的な計算のために、1つの相互作用のある例と1つのランダムにサンプリングされた負の例で形成される。
 We use Recall@20 on the test set for early stopping if the value does not increase after 20 epochs.
-20エポック後に値が増加しない場合は、テストセットのRecall@20を使用して早期停止を行う。
+テストセットのRecall@20を使用して、20エポック後に値が増加しない場合はearly stoppingを行う。
 For the hyperparameters of all recommendation baselines, we use the values suggested by the original papers with carefully finetuning on the three datasets.
 すべての推薦ベースラインのハイパーパラメータについては、3つのデータセットで慎重に微調整を行いながら、元の論文で示唆された値を使用している。
 For all graph-based methods, the number of graph-based message propagation layers is fixed at 3.
@@ -671,22 +674,26 @@ For all graph-based methods, the number of graph-based message propagation layer
 
 ## 5.1. Performance comparison (RQ1) パフォーマンス比較（RQ1）
 
+![]()
+
 To answer RQ1, we conduct experiments on the Beibei, Taobao and MBD datasets.
 RQ1に答えるため、Beibei、Taobao、MBDのデータセットで実験を行った。
 The performance comparisons are reported in Table 2.
 性能比較を表2に示す。
 From the table, we have the following observations.
 表から、我々は次のような見解を得た。
+
 First, the proposed MBA method achieves the best performance and consistently outperforms all baselines across all datasets.
-まず、提案されたMBA法は最高の性能を達成し、すべてのデータセットにおいてすべてのベースラインを一貫して上回る。
+まず、**提案されたMBA法は最高の性能を達成し、すべてのデータセットにおいてすべてのベースラインを一貫して上回る**。
 For instance, the average improvement of MBA over the strongest baseline is approximately 6.3% on the Beibei dataset, 6.6% on the Taobao dataset and 1.5% on the MBD dataset.
 例えば、最強のベースラインに対するMBAの平均改善率は、Beibeiデータセットで約6.3%、Taobaoデータセットで6.6%、MBDデータセットで1.5%である。
 These improvements demonstrate the effectiveness of MBA.
 これらの改善は、MBAの有効性を証明している。
 We contribute the significant performance improvement to the following two reasons: (i) we align the user preferences based on two types of two behavior, transferring useful information from the auxiliary behavior data to enhance the performance of the target behavior predictions; (ii) noisy interactions are reduced through preference alignment, which helps to improve the learning of the latent universal true user preferences.
 性能の大幅な向上は、以下の2つの理由による： (i)2種類の2つの行動に基づくユーザ嗜好を整列させ、補助行動データから有用な情報を転送し、目標行動予測の性能を向上させる。(ii)嗜好の整列によりノイズの多い相互作用が減少し、潜在的で普遍的な真のユーザ嗜好の学習を向上させる。
+
 Second, except CML the multi-behavior models outperform the single-behavior models by a large margin.
-第二に、CMLを除いて、複数行動モデルは単一行動モデルを大きく上回っている。
+第二に、CMLを除いて、**複数行動モデルは単一行動モデルを大きく上回っている**。
 This reflects the fact that adding auxiliary behavior information can improve the recommendation performance of the target behavior.
 これは、補助的な行動情報を追加することで、対象行動の推薦性能が向上することを反映している。
 We conjecture that CML cannot achieve satisfactory performance because it incorporates the knowledge contained in auxiliary behavior through contrastive meta-learning, which introduces more noisy signals.
