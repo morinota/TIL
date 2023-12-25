@@ -122,33 +122,45 @@ We use the $h$ generated above in three applications as the representation of th
 ## 4. User Representations 4. ユーザ表現
 
 This section describes several variations of the method to calculate user preferences from the browsing history of the user. First, we formulate our problem and a simple word-based baseline method and discuss the issues that they have. We then describe some methods of using distributed representations of articles, as was explained in the previous section.
-ここでは、ユーザの閲覧履歴からユーザの嗜好を算出する方法について、いくつかのバリエーションを説明する. まず、我々の問題と単純なword-basedのベースライン法を定式化し、それらが持つ問題点を議論する. 次に、前節で説明したように、記事の分散表現(article embeddings)を利用するいくつかの方法について説明する.
+ここでは、**ユーザの閲覧履歴からユーザの嗜好を算出する方法**(=user encoder)について、いくつかのバリエーションを説明する. まず、我々の問題と単純なword-basedのベースライン法を定式化し、それらが持つ問題点を議論する. 次に、前節で説明したように、記事の分散表現(article embeddings)を利用するいくつかの方法について説明する.
 
-### 4.1. Notation 4.1. 表記方法
+### 4.1. Notation
 
-Let $A$ be the entire set of articles. Representation of element $a \in A$ depends on the method. The $a$ is a sparse vector in the word-based method described in Section 4.2, and each element of a vector corresponds to each word in the vocabulary (i.e., $x$ in Section 3). However, $a$ is a distributed representation vector of the article (i.e., $h$ in Section 3) in the method using distributed representations described in Sections 4.3 and 4.4.
-記事の全集合を$A$とする. article representationの各要素=各記事のembeddingベクトル $a \in A$は手法に依存する.
-aは4.2節で述べたword-basedの手法(=たぶんtf-idfとbag-of-wordを使ったベクトルの事?)ではスパースベクトルであり、ベクトルの各要素はvocabularyの各wordに対応する(すなわち、3節では$x$).
-しかし、セクション4.3および4.4で述べた分散表現を用いる方法では、$a$は記事の分散表現ベクトル(すなわち、セクション3では$h$)である.
+Let $A$ be the entire set of articles.
+記事の全集合を $A$ とする.
+Representation of element $a \in A$ depends on the method.
+article representationの各要素=各記事のembeddingベクトル $a \in A$ は手法に依存する。
+The $a$ is a sparse vector in the word-based method described in Section 4.2, and each element of a vector corresponds to each word in the vocabulary (i.e., $x$ in Section 3).
+$a$ は4.2節で述べたword-basedの手法(=たぶんtf-idfとbag-of-wordを使ったベクトルの事?)ではスパースベクトルであり、ベクトルの各要素はvocabularyの各wordに対応する(すなわち、3節では $x$ ).
+However, $a$ is a distributed representation vector of the article (i.e., $h$ in Section 3) in the method using distributed representations described in Sections 4.3 and 4.4.
+しかし、セクション4.3および4.4で述べた分散表現を用いる方法では、$a$は記事の分散表現ベクトル(すなわち、セクション3では $h$ )である.
 
-Browse means that the user visits the uniform resource locator (URL) of the page of an article. Let ${_t^u \in A}_{t=1,\cdots,T_u}$ be the browsing history of user $u \in U$.
-閲覧とは、ユーザが記事のページのURL(Uniform Resource Locator)を訪問することである. ここで、${_t^u \in A}_{t=1,\cdots,T_u}$ をユーザ $u \in U$ のブラウズ履歴とする.
+Browse means that the user visits the uniform resource locator (URL) of the page of an article. Let ${A_t^u \in A}_{t=1,\cdots,T_u}$ be the browsing history of user $u \in U$.
+"Browse(閲覧)"とは、ユーザが記事のページのURL(Uniform Resource Locator)を訪問することである. ここで、${A_t^u \in A}_{t=1,\cdots,T_u}$ をユーザ $u \in U$ のbrowse履歴とする.
 
 Session means that the user visits our recommendation service and clicks one of the articles in the recommended list.
-"Session"とは、ユーザーが当社のレコメンデーションサービスにアクセスし、**おすすめリストの記事をクリックすること**を指す.
+"Session"とは、ユーザが当社のレコメンデーションサービスにアクセスし、**おすすめリストの記事をクリックすること**を指す。
 
-When $u$ clicks an article in our recommendation service (a session occurs), he/she will immediately visit the URL of the clicked article (a browse occurs). Thus, there is never more than one session between browses $a_t^u$ and $a^u_{t+1}$ ; therefore, this session is referred to as $s_t^u$ . However, $u$ can visit the URL of an article without our service, e.g., by using a Web search. Therefore, $s_t^u$ does not always exist.
-$u$は推薦サービスにおいて記事をクリックすると（セッションが発生）、すぐにクリックした記事のURLにアクセスする（ブラウジングが発生）。したがって、$a_t^u$と$a^u_{t+1}$の間に複数のセッションが存在することはない；したがって、このセッションを$s_t^u$と呼ぶ。 しかし、$u$は我々のサービスを使わずに、例えばウェブ検索を使って記事のURLを訪れることができる。したがって、$s_t^u$は常に存在するとは限らない。
+When $u$ clicks an article in our recommendation service (a session occurs), he/she will immediately visit the URL of the clicked article (a browse occurs). Thus, there is never more than one session between browses $a_t^u$ and $a^u_{t+1}$ ; therefore, this session is referred to as $s_t^u$ .
+$u$ が当社のレコメンデーションサービスの記事をクリックすると(セッションが発生すると)、すぐにクリックされた記事のURLを訪問する(閲覧が発生する)。 したがって、閲覧 $a_t^u$ と $a^u_{t+1}$ の間には1つ以上のセッションはない。 したがって、このセッションは $s_t^u$ と呼ばれる。
+However, $u$ can visit the URL of an article without our service, e.g., by using a Web search. Therefore, $s_t^u$ does not always exist.
+しかし、$u$ は我々のサービスを使わずに、例えばウェブ検索を使って記事のURLを訪れることができる。したがって、$s_t^u$ は常に存在するとは限らない。
+(sessionが発生したら必ずbrowseも発生するけど、逆は必ずしも真ではない、って意味:thinking:)
 
-Since a session corresponds to the list presented to $u$, we express a session, $s^u_t$, by a list of articles ${s^u_{t,p} \in A}_{p \in P}$. The notation, $P \subseteq N$, is the set of positions of the recommended list that is actually displayed on the screen in this session. Let $P_{+} \subseteq P$ be the clicked positions and $P_{-} = P \ P_{+}$ be non-clicked positions. Although $P$, $P_{+}$, and $P_{-}$ depend on $u$ and $t$, we omit these subscripts to simplify the notation. Figure 3 outlines the relationships between these notations.
-セッションは$u$に提示されたリストに対応するので、セッション$s^u_t$を記事のリスト${s^u_{t,p}で表現する。 \のリストで表現する。 このとき、$P \subseteq N$という表記は、このセッションで実際に画面に表示される推奨リストの位置の集合である。 P_{+} \subseteq P$をクリックされた位置、$P_{-} = P \ P_{+}$を非クリックの位置とする。 P$、$P*{+}$、$P*{-}$は$u$、$t$に依存するが、表記を簡略化するためにこれらの添え字を省略する。 図3にこれらの表記の関係の概略を示す。
-
+Since a session corresponds to the list presented to $u$, we express a session, $s^u_t$, by a list of articles ${s^u_{t,p} \in A}_{p \in P}$.
+セッションは $u$ に提示されたリスト(=推薦記事リスト?)に対応するので、セッション $s^u_t$ を記事のリスト ${s^u_{t,p}}$ で表現する。
+The notation, $P \subseteq N$, is the set of positions of the recommended list that is actually displayed on the screen in this session.
+記号 $P \subseteq N$ は、このセッションで実際に画面に表示される推薦リストの位置の集合である。
+Let $P_{+} \subseteq P$ be the clicked positions and $P_{-} = P \ P_{+}$ be non-clicked positions.
+$P_{+} \subseteq P$ をクリックされた位置、$P_{-} = P \ P_{+}$ をクリックされなかった位置とする。
+Although $P$, $P_{+}$, and $P_{-}$ depend on $u$ and $t$, we omit these subscripts to simplify the notation. Figure 3 outlines the relationships between these notations.
+$P$, $P_{+}$, $P_{-}$ は $u$ と $t$ に依存するが、記号を簡略化するためにこれらの添字を省略する。 図3はこれらの記号の関係を概説している。
 
 Figure 3: Browsing history and session
 図3：閲覧履歴とセッション
 
 Let $u_t$ be the user state depending on $a_1^u , \cdots, a_t^u$, i.e., $u_t$ represents the preference of $u$ immediately after browsing $a_t^u$. Let $R(u_t, a)$ be the relevance between the user state, $u_t$, and the article, $a$, which represents the strength of $u$’s interest in a in time t. Our main objective is to constitute user-state function $F(·, . . . , ·)$ and relevance function $R(·, ·)$ that satisfy the property:
-u_t$を$a_1^u , \cdots, a_t^u$に依存するユーザ状態、すなわち$u_t$は$a_t^u$を閲覧した直後の$u$の嗜好を表すとする。 R(u_t, a)$はユーザ状態$u_t$と記事$a$の間の関連性で、時間tにおける$u$のaへの興味の強さを表す。我々の主な目的は、この性質を満たすユーザ状態関数$F(-, ... , -)$と関連性関数$R(-, -)$を構成することである。
+$u_t$ を $a_1^u, \cdots, a_t^u$ に依存するユーザ状態、すなわち$u_t$は$a_t^u$を閲覧した直後の$u$の嗜好を表すとする。 R(u_t, a)$はユーザ状態$u_t$と記事$a$の間の関連性で、時間tにおける$u$のaへの興味の強さを表す。我々の主な目的は、この性質を満たすユーザ状態関数$F(-, ... , -)$と関連性関数$R(-, -)$を構成することである。
 
 $$
 u_t = F(a_1^u, \cdots, a_t^u) \\
@@ -157,7 +169,7 @@ u_t = F(a_1^u, \cdots, a_t^u) \\
 \tag{2}
 $$
 
-($\forall$は"任意の、全称記号"を表す論理記号。全称量化子とも呼ばれる。)
+($\forall$は「任意の, 全称記号」を表す論理記号。全称量化子とも呼ばれる。)
 ($\forall$ is a logic symbol for "any, all symbol". Also called the full-symmetry quantifier)
 
 When considering the constrained response time of a real news distribution system with large traffic volumes, $R(·, ·)$ must be a simple function that can be quickly calculated. Because candidate articles are frequently replaced, it is impossible to pre-calculate the relevance score, $R(u_t, a)$, for all users ${u_t |u \in U }$ and all articles ${a \in A}$. Thus, it is necessary to calculate this in a very short time until the recommended list from visiting our service page is displayed. However, we have sufficient time to calculate the user state function, $F (·, \cdots, ·)$, until the next session occurs from browsing some article pages.

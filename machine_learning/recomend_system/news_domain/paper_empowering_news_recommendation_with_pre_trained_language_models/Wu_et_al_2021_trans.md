@@ -91,12 +91,12 @@ We assume a user has 𝑇 historical clicked news, which are denoted as $[D_1, D
 The news encoder processes these clicked news of a user and each candidate news $D_c$ to obtain their embeddings, which are denoted as $[h_1, h_2, \cdots, h_T]$ and $h_c$, respectively.
 ニュースエンコーダは、ユーザのクリックされたニュースと各候補ニュース $D_c$ を処理し、それらの埋め込みを求め、それぞれを $[h_1, h_2, \cdots, h_T]$ および $h_c$ とする。
 It can be implemented by various NLP models, such as CNN [10] and self-attention [18].
-(news encoderは)CNN[10]やself-attention[18]など、さまざまなNLPモデルによって実装できる。
+(news encoderは)CNN[10]やself-attention[18]など、さまざまなNLPモデルによって実装できる。()
 
 The user encoder receives the sequence of clicked news embeddings as input, and outputs a user embedding $\mathbf{u}$ that summarizes user interest information.
 ユーザエンコーダは、クリックされたニュースの埋め込み**シーケンス**(=setではなくsequenceとして扱う事を想定してるのかな...!)を入力として受け取り、ユーザの関心情報を要約したユーザ埋め込み $\mathbf{u}$ を出力する。
 It can also be implemented by various models, such as the GRU network used in [15], the attention network used in [21] and the combination of multi-head self-attention and additive attention networks used in [23].
-また、[15]で使用されているGRUネットワーク、[21]で使用されているattentionネットワーク、[23]で使用されているmulti-head self-attentionネットワークとadditive attentionネットワークの組み合わせなど、様々なモデルによって実装することができる。
+また、[15]で使用されているGRUネットワーク、[21]で使用されているattentionネットワーク、[23]で使用されているmulti-head self-attentionネットワークとadditive attentionネットワークの組み合わせなど、様々なモデルによって実装することができる。(この辺りを読んでおくと良さそう?:thinking:)
 
 The click prediction module takes the user embedding u and h𝑐 as inputs, and compute the click score 𝑦ˆ by evaluating their relevance.
 クリック予測モジュールは、ユーザ埋め込み $\mathbf{u}$ と $\mathbf{h}_{c}$ を入力とし、それらの関連性を評価することでクリックスコア $\hat{y}$ を計算する。
@@ -124,9 +124,9 @@ PLMとアテンション・ネットワークによって学習されたニュ�
 ## 2.3. Model Training モデルトレーニング
 
 Following [22, 23], we also use negative sampling techniques to build labeled samples from raw news impression logs, and we use the cross-entropy loss function for model training by classifying which candidate news is clicked.
-また、[22, 23]に倣い、ネガティブサンプリング技術(=教師あり学習におけるnegative exampleを作る手法。)を用いて生のニュースimpression (i.e. interaction?:thinking:) ログからラベル付きサンプルを作成し、どの候補のニュースがクリックされたかを分類することで、モデルの学習にクロスエントロピー損失関数を用いる。(=**next item prediction的なタスクを学習させる想定なのかな**??:thinking:)
+また、[22, 23]に倣い、**ネガティブサンプリング技術**(=教師あり学習におけるnegative exampleを作る手法。)を用いて生のニュースimpression (i.e. interaction?:thinking:) ログからラベル付きサンプルを作成し、どの候補のニュースがクリックされたかを分類することで、モデルの学習にクロスエントロピー損失関数を用いる。(=**next item prediction的なタスクを学習させる想定なのかな**??:thinking:)
 By optimizing the loss function via backward-propagation, the parameters in the recommendation model and PLMs can be tuned for the news recommendation task.
-逆誤差伝搬法によって損失関数を最適化することで、**推薦モデル(=user encoderと click prediction module?) とPLMのパラメータをニュース推薦タスクに合わせてチューニング**することができる。
+逆誤差伝搬法によって損失関数を最適化することで、**推薦モデル(=user encoderと click prediction module?) とPLMのパラメータをニュース推薦タスクに合わせてチューニング**することができる。(PLMはチューニングせずにuser encoderとclick prediction moduleだけチューニングする手法であれば、開発コスト低いなー...!:thinking:)
 
 # 3. Experiments 実験
 
@@ -172,7 +172,7 @@ We repeated each experiment 5 times independently and reported the average perfo
 We first compare the performance of several methods on the MIND dataset to validate the effectiveness of PLM-based models in monolingual news recommendation.
 まず、単言語ニュース推薦におけるPLMベースのモデルの有効性を検証するために、MINDデータセットでいくつかの手法のパフォーマンスを比較する。
 We compared several recent news recommendation methods including EBNR [15], NAML [21], NPA [22], LSTUR [1], NRMS [23] and their variants empowered by different pre-trained language models, including BERT [5], RoBERTa [14] and UniLM [2].
-EBNR[15]、NAML[21]、NPA[22]、LSTUR[1]、NRMS[23]、およびBERT[5]、RoBERTa[14]、UniLM[2]など、さまざまな事前学習済み言語モデルによって強化されたそれらの変種(=手法+news encoderをPLMに!)を含む、最近のニュース推薦手法を比較した。
+BERT[5]、RoBERTa[14]、UniLM[2]などさまざまな事前学習済み言語モデルによって強化されたそれらの変種(=手法+news encoderをPLMに!)を含む、**最近のニュース推薦手法 EBNR[15]、NAML[21]、NPA[22]、LSTUR[1]、NRMS[23]** を比較した。(このあたり読んでみるか...!:thinking:)
 
 ![table2]()
 
@@ -194,7 +194,7 @@ This may be due to UniLM can exploit the self-supervision information in both te
 In addition, we conduct experiments on the Multilingual dataset to validate the effectiveness of PLMs in multilingual news recommendation.
 さらに、多言語ニュース推薦におけるPLMの有効性を検証するため、多言語データセットを用いた実験を行う。
 We compare the performance of EBNR, NAML, NPA, LSTUR and NRMS with different multilingual text modeling methods, including:
-我々は、EBNR、NAML、NPA、LSTUR、NRMSの性能を、以下のような異なる**多言語テキストモデリング手法(=多言語対応のPLMって意味?:thinking:)**と比較する:
+我々は、最近のニュース推薦手法 EBNR、NAML、NPA、LSTUR、NRMSの性能を、PLMとして以下のような異なる**多言語テキストモデリング手法(=多言語対応のPLMって意味?:thinking:)**を採用して比較する:
 (1) MUSE [13], using modularizing unsupervised sense embeddings; (2) Unicoder [8], a universal language encoder pre-trained by cross-lingual self-supervision tasks; and (3) InfoXLM [4], a contrastively pre-trained cross-lingual language model based on information-theoretic framework.
 (1)教師なしセンス埋め込み(?)をモジュール化したMUSE [13]、
 (2)ユニコーダ[8]、クロスリンガル自己教師タスクで事前訓練されたユニバーサル言語エンコーダ、
@@ -290,7 +290,7 @@ This may be because the PLM-empowered model can disentangle different kinds of n
 These results demonstrate that deep PLMs have greater ability than shallow NLP models in learning discriminative text representations, which is usually beneficial for accurate news recommendation.
 これらの結果は、ディープPLMが浅いNLPモデルよりも**識別的なテキスト表現を学習する能力が高い**ことを示しており、これは通常、**正確なニュース推薦に有益**である。
 
-## 3.6. Online Flight Experiments オンライン飛行実験
+## 3.6. Online Flight Experiments オンライン実験
 
 We have deployed our PLM-empowered news recommendation models into the Microsoft News platform.
 私たちは、PLMを活用したニュース推薦モデルをMicrosoft Newsプラットフォームに導入しました。
@@ -301,9 +301,9 @@ The online flight experimental results have shown a gain of 8.53% in click and 2
 In addition, our NAML-InfoXLM model was used to serve users in other 43 markets with different languages.
 さらに、我々のNAML-InfoXLMモデルは、言語の異なる他の43の市場のユーザにサービスを提供するためにも使用された。
 The online flight results show an improvement of 10.68% in click and 6.04% in pageview.
-オンライン・フライトの結果は、クリック数で10.68%、ページビューで6.04%の改善を示している。
+オンライン・フライトの結果は、**クリック数で10.68%、ページビュー数で6.04%の改善**を示している。($treatment / control * 100$ で算出すると分かりやすいかな...!:thinking:)
 These results validate that incorporating pre-trained language models into news recommendation can effectively improve the recommendation performance and user experience of online news services.
-これらの結果は、PLMをニュース推薦に組み込むことで、オンラインニュースサービスの推薦パフォーマンスとユーザーエクスペリエンスを効果的に改善できることを検証している。
+これらの結果は、PLMをニュース推薦に組み込むことで、オンラインニュースサービスの推薦パフォーマンスとユーザ体験を効果的に改善できることを検証している。
 
 # 4. Conclusion 結論
 
@@ -320,7 +320,7 @@ The online flight results show significant improvement in both click and pagevie
 
 - EBNR: Embedding-based news recommendation for millions of users
 - NAML: Neural News Recommendation with Attentive Multi-View
-Learning. 
+  Learning.
 - NPA: Neural news recommendation with personalized attention.
 - LSTUR: Neural News Recommendation with Long-and Short-term User Representations.
 - NRMS: Neural News Recommendation with Multi-Head Self-Attention.
