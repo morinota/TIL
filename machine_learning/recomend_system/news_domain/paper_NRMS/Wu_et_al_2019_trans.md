@@ -5,7 +5,7 @@ https://aclanthology.org/D19-1671/
 
 ## 0.2. title タイトル
 
-Neural News Recommendation with Multi-Head Self-Attention
+(NRMS) Neural News Recommendation with Multi-Head Self-Attention
 多頭自己注意を用いたニューラル・ニュース推薦
 
 ## 0.3. abstract 抄録
