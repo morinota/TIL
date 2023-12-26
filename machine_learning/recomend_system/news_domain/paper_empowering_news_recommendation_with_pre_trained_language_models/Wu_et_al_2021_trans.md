@@ -116,7 +116,7 @@ PLMは各トークンを埋め込みに変換し、いくつかのTransformer [1
 We denote the hidden token representation sequence as $[r_1, r_2, \cdots, r_M]$.
 hiddenトークン表現sequenceを $[r_1, r_2, \cdots, r_M]$ とする。
 We use an attention [29] network to summarize the hidden token representations into a unified news embedding.
-アテンション[29]ネットワークを使って、hiddenトークン表現sequenceを統一されたニュース埋め込みに要約する。
+アテンション[29]ネットワークを使って、hiddenトークン表現sequenceを統一されたニュース埋め込みに要約する。(これはNRMSと同じ感じ?? self-attention + additive attentionのやつ)
 (なんとなく、特殊トークン $[CLS]$ のhiddenトークン表現を、文の埋め込みとみなしてそれをそのままニュース埋め込みとして使う想像だったが、事前学習モデルとは別でattentionに通してニュース埋め込みを作るのかな...?:thinking:この方法を採用した理由は後述されてた。)
 The news embeddings learned by the PLM and attention network are further used for user modeling and candidate matching.
 PLMとアテンション・ネットワークによって学習されたニュース埋め込みは、さらにユーザモデリング(=fig2の右側?)と候補マッチング(=fig2の左側?)に使用される。
@@ -124,7 +124,7 @@ PLMとアテンション・ネットワークによって学習されたニュ�
 ## 2.3. Model Training モデルトレーニング
 
 Following [22, 23], we also use negative sampling techniques to build labeled samples from raw news impression logs, and we use the cross-entropy loss function for model training by classifying which candidate news is clicked.
-また、[22, 23]に倣い、**ネガティブサンプリング技術**(=教師あり学習におけるnegative exampleを作る手法。)を用いて生のニュースimpression (i.e. interaction?:thinking:) ログからラベル付きサンプルを作成し、どの候補のニュースがクリックされたかを分類することで、モデルの学習にクロスエントロピー損失関数を用いる。(=**next item prediction的なタスクを学習させる想定なのかな**??:thinking:)
+また、[22, 23]に倣い、**ネガティブサンプリング技術**(=教師あり学習におけるnegative exampleを作る手法。)を用いて生のニュースimpression (i.e. interaction?:thinking:) ログからラベル付きサンプルを作成し、どの候補のニュースがクリックされたかを分類することで、モデルの学習にクロスエントロピー損失関数(=NRMSではmaximum likelihoodだったけど、同じ??)を用いる。(=**next item prediction的なタスクを学習させる想定なのかな**??:thinking:)
 By optimizing the loss function via backward-propagation, the parameters in the recommendation model and PLMs can be tuned for the news recommendation task.
 逆誤差伝搬法によって損失関数を最適化することで、**推薦モデル(=user encoderと click prediction module?) とPLMのパラメータをニュース推薦タスクに合わせてチューニング**することができる。(PLMはチューニングせずにuser encoderとclick prediction moduleだけチューニングする手法であれば、開発コスト低いなー...!:thinking:)
 
