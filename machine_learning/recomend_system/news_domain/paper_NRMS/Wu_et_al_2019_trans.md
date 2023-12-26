@@ -148,9 +148,13 @@ a^{w}_{i} = q^T_{w} tanh(V_{w} h^{w}_{i} + v_{w})
 \tag{3}
 $$
 
+(↑additive attentionの式。$q_{w}$ と $V_{w}$ と $v_{w}$ は学習可能なパラメータ。一層のFFNになってる。self-attentionと異なり、添字がiだけなのか...!)
+
 $$
 \alpha^{w}_{i} = \frac{exp(a^{w}_{i})}{\sum_{j=1}^{M} exp(a^{w}_{j})}
 $$
+
+(最終的なattention weightは上式のようにsoftmaxで正規化される)
 
 where Vw and vw are projection parameters, and qw is the query vector.
 ここで、$V_{w}$ と $v_{w}$ は線形投影パラメータであり、$q_{w}$ はクエリベクトルである。

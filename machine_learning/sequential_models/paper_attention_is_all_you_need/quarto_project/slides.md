@@ -160,7 +160,7 @@ Attention(Q, K, V) = softmax(\frac{Q K^{T}}{\sqrt{d_k}}) V
 $$
 
 - (このattention function内には、**学習可能なパラメータは存在しないっぽい?**. 内積と重み付け和のみで構成されてる:thinking:)
-- 論文執筆時点で最も一般的なattention functionは、additive(加法) attention と dot-product (multiplicative=乗法) attention とのこと.
+- 論文執筆時点で最も一般的なattention functionは、**additive(加法) attention** と **dot-product (multiplicative=乗法) attention** とのこと.
 - dot-product attention の場合、$d_k$ の大きさに依って出力値が影響を受ける為、その性質を打ち消す為に $\sqrt{d_k}$ でscaling(正規化みたいな)している.
 
 :::
@@ -172,6 +172,25 @@ $$
 :::
 
 ::::
+
+## (ちなみに) additive attentionについて
+
+> Additive Attention, also known as Bahdanau Attention, uses a one-hidden layer feed-forward network to calculate the attention alignment score:
+> 引用元:[Additive Attention Explained](https://paperswithcode.com/method/additive-attention)
+> (Addirive attentionは、Bahdanau Attentionとも呼ばれ、attention alignment scoreを計算する為に1層のfeed-forward networkを用いる)
+
+$$
+f_{att}(h_{i}, s_{j}) = v_{a}^{T} tanh(W_{a}[h_{i};s_{j}])
+$$
+
+ここで、
+
+- $v_{a}$, $W_{a}$ は学習可能なattentionのパラメータ。
+- $\mathbf{h}$ はエンコーダーの隠れ状態(hidden state)、$\mathbf{s}$ はデコーダーの隠れ状態(hidden state)。
+- $[\mathbf{h}; \mathbf{s}]$ は $\mathbf{h}$ と $\mathbf{s}$ をconcatしたもの。
+
+The function above is thus a type of alignment score function. We can use a matrix of alignment scores to show the correlation between source and target words, as the Figure to the right shows.
+(上記の関数は、alignment score functionの一種である。alignment scoreの行列を用いて、ソースとターゲットの単語間の相関を示すことができる。右の図に示すように。)
 
 ## Scaled-dot-product Attention のお気持ち実装
 
