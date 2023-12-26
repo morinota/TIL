@@ -12,23 +12,23 @@ NPA パーソナライズド・アテンションを備えたニューラル・�
 News recommendation is very important to help users find interested news and alleviate information overload.
 ニュースレコメンデーションは、ユーザーが興味のあるニュースを見つけ、情報過多を緩和するために非常に重要です。
 Different users usually have different interests and the same user may have various interests.
-通常、ユーザーによって興味は異なり、同じユーザーでも様々な興味を持つことがあります。
+通常、ユーザーによって興味は異なり、**同じユーザでも様々な興味を持つことがあります**。
 Thus, different users may click the same news article with attention on different aspects.
-このように、同じニュース記事でも、異なるユーザーが異なる側面に注目してクリックすることがあります。
+このように、同じニュース記事でも、異なるユーザが異なる側面に注目してクリックすることがあります。
 In this paper, we propose a neural news recommendation model with personalized attention (NPA).
 本論文では、パーソナライズド・アテンションを用いたニューラル・ニュース推薦モデル（NPA）を提案する。
 The core of our approach is a news representation model and a user representation model.
 このアプローチの核となるのは、**ニュース表現モデル**と**ユーザー表現モデル**です。
 In the news representation model we use a CNN network to learn hidden representations of news articles based on their titles.
-ニュース表現モデルでは、CNNネットワークを用いて、ニュース記事のタイトルに基づく隠れた表現を学習します。
+**ニュース表現モデルでは、CNNネットワークを用いて**、ニュース記事のタイトルに基づく隠れた表現を学習します。
 In the user representation model we learn the representations of users based on the representations of their clicked news articles.
-ユーザー表現モデルでは、クリックされたニュース記事の表現に基づいて、ユーザーの表現を学習します。
+ユーザ表現モデルでは、クリックされたニュース記事の表現に基づいて、ユーザーの表現を学習します。(こっちを知りたい)
 Since different words and different news articles may have different informativeness for representing news and users, we propose to apply both word- and news-level attention mechanism to help our model attend to important words and news articles.
-異なる単語や異なるニュース記事は、ニュースやユーザーを表現するための情報量が異なる可能性があるため、単語レベルとニュースレベルの注意メカニズムを適用することで、モデルが重要な単語やニュース記事に注意することを支援することを提案します。
+異なる単語や異なるニュース記事は、ニュースやユーザを表現するための情報量が異なる可能性があるため、**単語レベルとニュースレベルのattentionメカニズムを適用**することで、モデルが重要な単語やニュース記事に注意することを支援することを提案する。
 In addition, the same news article and the same word may have different informativeness for different users.
-また、同じニュース記事でも、同じ単語でも、ユーザーによって情報性が異なる場合があります。
+また、同じニュース記事でも、同じ単語でも、**ユーザによって情報性が異なる場合**があります。(この辺りはNRMSのadditive attentionを導入する動機と同じ:thinking:)
 Thus, we propose a personalized attention network which exploits the embedding of user ID to generate the query vector for the wordand news-level attentions.
-そこで、ユーザIDの埋め込みを利用し、単語やニュースレベルのアテンションに対するクエリベクトルを生成するパーソナライズド・アテンション・ネットワークを提案する。
+そこで、ユーザIDの埋め込みを利用し、単語やニュースレベルのアテンションに対するクエリベクトル(=additive attentionの?)を生成するパーソナライズド・アテンション・ネットワークを提案する。
 Extensive experiments are conducted on a real-world news recommendation dataset collected from MSN news, and the results validate the effectiveness of our approach on news recommendation.
 MSNニュースから収集した実世界のニュース推薦データセットを用いて広範な実験を行い、その結果、ニュース推薦における本アプローチの有効性が検証された。
 
@@ -40,52 +40,55 @@ However, massive news articles are emerged everyday, and it is impractical for u
 しかし，日々大量のニュース記事が出現しており，ユーザが膨大な量のオンラインニュース記事から興味のあるニュースを探すのは非現実的である [26, 34] ．
 Therefore, it is an important task for online news platforms to target user interests and make personalized news recommendation [1, 8, 14], which can help users to find their interested news articles and alleviate information overload [32, 35].
 したがって、オンラインニュースプラットフォームにとって、ユーザの興味をターゲットにして、パーソナライズされたニュース推薦を行うことは重要な課題であり [1, 8, 14] 、これにより、ユーザは興味のあるニュース記事を見つけ、情報過多を緩和することができます [32, 35] 。
+
 There are two common observations in the news recommendation scenario.
 ニュースレコメンデーションシナリオには、**2つの共通した見解**があります。
+
 First, not all news clicked by users can reflect the preferences of users.
-**まず、ユーザーがクリックしたすべてのニュースが、ユーザーの嗜好を反映できるわけではありません。**
+**まず、ユーザがクリックしたすべてのニュースが、ユーザの嗜好を反映できるわけではありません。**(うんうん、User Encoder部分にattentionを導入するモチベ...!)
 For example, as illustrated in Figure 1, user-1 clicked all the three news, but he/she was only interested in the first and the second news.
 例えば、図1に示すように、ユーザー1は3つのニュースをすべてクリックしたが、彼/彼女は1つ目と2つ目のニュースにしか興味がなかった。
 In addition, the same news should also have different informativeness for modeling different users.
-また、同じニュースでも、ユーザーのモデリングによって情報性が異なるはずです。(??)
+また、同じニュースは、異なるユーザをモデル化するためにも、異なる情報量を持つべきである。(うんうん)
 For example, if user-1 is very interested in sports news but user-2 rarely reads, the news “Dolphins May Have Found A Head Coach” is very informative for characterizing user-1, but less informative for user-2.
 例えば、ユーザー-1はスポーツニュースに非常に興味があるが、ユーザー-2はほとんど読まない場合、「Dolphins May Have Found A Head Coach」というニュースは、ユーザー-1を特徴付けるために非常に有益であるが、ユーザー-2にとってはあまり有益でない。
+
 Second, different words in news titles usually have different informativeness for learning news representations.
-第二に、ニュースのタイトルに含まれる単語は、通常、ニュース表現を学習するための情報量が異なる。
+**第二に、ニュースのタイトルに含まれる単語は、通常、ニュース表現を学習するための情報量が異なる**。(news encoder部分にattentionを導入するモチベ...!)
 For example, the word “Crazy” in the first news title is informative, while the word “That” is uninformative.
 例えば、最初のニュースタイトルの「Crazy」という言葉は情報的であり、「That」という言葉は情報的でない。
 Moreover, the same words within a news title may also have different informativeness for revealing preferences of different users.
-また、ニュースタイトルに含まれる同じ単語でも、ユーザーによって嗜好を明らかにする情報性が異なる場合があります。
+**また、ニュースタイトルに含まれる同じ単語でも、ユーザによって嗜好を明らかにする情報性が異なる場合があります**。(NRMSではこの点は考慮できてない気がする)
 For example, user-1 may be attracted by the word “Crazy”, and user-2 may pay more attention to the words “Actually Work”.
-例えば、ユーザー1は「Crazy」という言葉に惹かれ、ユーザー2は「Actually Work」という言葉に注目することがあるのではないでしょうか。
+例えば、ユーザ1は「Crazy」という言葉に惹かれ、ユーザ2は「Actually Work」という言葉に注目することがあるのではないでしょうか。
 Therefore, modeling the different informativeness of words and news for different users may be useful for learning better representations of users for accurate news recommendation.
 したがって、**ユーザーごとに異なる単語やニュースの情報性をモデル化すること**は、正確なニュース推薦のために、より良いユーザー表現を学習するのに有用であると考えられる。
 
 Existing news recommendation methods are usually based on collaborative filtering (CF) techniques and news content[20–22, 24].
 既存のニュース推薦手法は、通常、協調フィルタリング（CF）技術とニュースコンテンツに基づく[20-22, 24]。
 For example, Liu et al.[21] proposed a CF-based approach for news recommendation based on user interests.
-例えば、Liuら[21]は、**ユーザーの興味に基づくニュース推薦のためのCFベース**のアプローチを提案した。
+例えば、Liuら[21]は、**ユーザの興味に基づくニュース推薦のためのCFベース**のアプローチを提案した。
 They use a Bayesian model to extract the interest features of users based on the click distributions on news articles in different categories.
-彼らはベイズモデルを用いて、異なるカテゴリのニュース記事に対するクリック分布から、ユーザーの興味特徴を抽出しています。
+彼らはベイズモデルを用いて、異なるカテゴリのニュース記事に対するクリック分布から、ユーザの興味特徴を抽出しています。
 Okura et al.[24] proposed to first learn the distributed representations of news articles based on similarity and then use recurrent neural networks to learn user representations from browsing histories for click prediction.
-大倉ら[24]は、まず類似性に基づいてニュース記事の分散表現を学習し、次にリカレントニューラルネットワークを用いて閲覧履歴からユーザ表現を学習し、クリック予測に利用することを提案した。
+Okuraら[24]は、まず類似性に基づいてニュース記事の分散表現を学習し、次にRNNを用いて閲覧履歴からユーザ表現を学習し、クリック予測に利用することを提案した。
 Lian et al.[20] proposed a deep fusion model (DMF) to learn representations of users and news using combinations of fully connected networks with different depth.
 Lianら[20]は、深さの異なる完全連結ネットワークの組み合わせを用いて、ユーザーやニュースの表現を学習する深層融合モデル（DMF）を提案した。
 They also used attention mechanism to select important user features.
-また、重要なユーザー機能を選択するために、アテンション機構を使用した。
+また、重要なユーザ特徴量を選択するために、アテンション機構を使用した。
 However, all these existing methods cannot model the different informativeness of news and their words for different users, which may be useful for improving the quality of personalized news recommendation.
-しかし、これらの既存の手法はいずれも、ユーザーごとに異なるニュースやその単語の情報量をモデル化することができず、個人向けニュース推薦の質を向上させるのに有用であると考えられる。
+しかし、これらの既存手法は、**異なるユーザにとってのニュースとその単語の情報量の違いをモデル化することができていない**。(NRMSは前者は考慮できているが、後者は考慮できていない気がする:thinking:)そしてそれは、パーソナライズされたニュース推薦の品質を向上させるのに役立つ可能性がある。
 
 In this paper, we propose a neural approach with personalized attention (NPA) for news recommendation.
 本稿では、ニュース推薦のためのパーソナライズド・アテンションを用いたニューラル・アプローチ（NPA）を提案する。
 The core of our approach is a news representation model and a user representation model.
 **このアプローチの核となるのは、ニュース表現モデルとユーザー表現モデル**です。
 In the news representation model we use a CNN network to learn the contextual representations of news titles, and in the user representation model we learn representations of users from their clicked news.
-ニュース表現モデルでは、CNNネットワークを用いてニュースタイトルの文脈表現を学習し、ユーザー表現モデルでは、クリックしたニュースからユーザーの表現を学習しています。
+ニュース表現モデルでは、CNNネットワークを用いてニュースタイトルの文脈表現を学習し、ユーザ表現モデルでは、クリックしたニュースからユーザ表現を学習しています。
 Since different words and news articles usually have different informativeness for learning representations of news and users, we propose to apply attention mechanism at both word- and news-level to select and highlight informative words and news.
-通常、単語やニュース記事は、ニュースやユーザーに関する表現を学習するための情報量が異なるため、単語レベルとニュースレベルの両方で注意メカニズムを適用し、**情報量の多い単語やニュースを選択し強調すること**を提案します。
+通常、単語やニュース記事は、ニュースやユーザに関する表現を学習するための情報量が異なるため、単語レベルとニュースレベルの両方でattentionメカニズムを適用し、情報量の多い単語やニュースを選択して強調することを提案します。
 In addition, since the informativeness of the same words and news may be different for different users, we propose a personalized attention network by using the embedding of user ID as the query vector of the word- and news-level attention networks to differentially attend to important words and news according to user preferences.
-また、**同じ単語やニュースでもユーザによって情報量が異なる場合がある**ため、ユーザIDを単語レベル、ニュースレベルのアテンションネットワークのクエリベクトルとして埋め込むことで、ユーザの好みに応じて重要な単語やニュースに差をつけてアテンションするパーソナライズドアテンションネットワークを提案します。
+また、**同じ単語やニュースでもユーザによって情報量が異なる場合がある**ため、ユーザIDを埋め込みとして使用し、単語レベルとニュースレベルのアテンションネットワークのクエリベクトルとして使用することで、ユーザの好みに応じて重要な単語やニュースに差別的に注意を払うパーソナライズド・アテンション・ネットワークを提案します。(self-attentionじゃなくadditive attentionを使う箇所があるのかな??)
 Extensive experiments on a real-world dataset collected from MSN news validate the effectiveness of our approach on news recommendation.
 MSNニュースから収集した実世界のデータセットを用いた広範な実験により、ニュース推薦における本アプローチの有効性が検証された。
 
