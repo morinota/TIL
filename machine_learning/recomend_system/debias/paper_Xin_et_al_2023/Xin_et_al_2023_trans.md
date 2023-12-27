@@ -53,7 +53,7 @@ Meanwhile, only considering purchase data tends to lead to severe cold-start pro
 How can we use multiple types of auxiliary behavioral data (such as clicks) to enhance the prediction of sparse target user behavior (such as purchases) and thereby improve recommendation performance? Some prior work [2, 12] has used multi-task learning to train recommender systems on both target behavior and multiple types of auxiliary behavior.
 複数種類の補助行動データ(クリックなど)を使って、スパースなターゲットユーザー行動(購入など)の予測を強化し、推薦パフォーマンスを向上させるにはどうすればいいのだろうか？いくつかの先行研究[2, 12]では、multi-task学習(=click予測問題とconversion予測問題を学習させる、みたいな??:thinking:)を用いて、target behavior(ターゲット行動)と複数種類の auxiliary behavior(補助行動)の両方について推薦システムを学習している。
 Building on recent advances in graph neural networks, Jin et al.[18] encode target behavior and multiple types of auxiliary behavior into a heterogeneous graph and perform convolution operations on the constructed graph for recommendation.
-Jinら[18]は、グラフ・ニューラル・ネットワークの最近の進歩に基づき、ターゲット行動と複数種類の補助行動を異種グラフに符号化し、推薦のために構築されたグラフに対して畳み込み演算を行う。
+グラフニューラルネットワークの最近の進歩を基に、Jinら[18]は、ターゲット行動と複数の補助行動を異種グラフにエンコードし、構築されたグラフに対して畳み込み演算を行って推薦を行っている。
 In addition, recent research tries to integrate the micro-behavior of useritem interactions into representation learning in the sequential and session-based recommendation [25, 44, 46].
 さらに、最近の研究では、逐次推薦やセッションベースの推薦において、ユーザとアイテムの相互作用のミクロな行動を表現学習(??)に統合することが試みられている[25, 44, 46]。
 These publications focus on mining user preferences from user-item interactions, which is different from our task of predicting target behavior from multiple types of user behavior.
@@ -65,10 +65,11 @@ Prior work on using multiple types of behavioral data to improve the prediction 
 レコメンデーション設定において、ターゲット行動の予測を改善するために複数のタイプの行動データを使用する先行研究には、主に2つの限界がある。
 
 The first limitation concerns the gap between data distributions of different types of behavior.
-最初の限界は、異なるタイプの行動のデータ分布間のギャップに関するものである。
+最初の限界は、異種行動のデータ分布間のギャップに関するものである。
 This gap impacts the learning of universal and effective user preferences.
 このギャップは、普遍的で効果的なユーザ嗜好の学習に影響を与える。
 For example, users may have clicked on but not purchased items, resulting in different positive and negative instance distributions across auxiliary and target behaviors.
+例えば、
 例えば、ユーザはアイテムをクリックしたが購入しなかった可能性があり、その結果、補助行動とターゲット行動で正と負のインスタンス分布が異なる。
 Existing work typically learns separate user preferences for different types of behavior and then combines those preferences to obtain an aggregate user representation.
 既存の研究では、通常、異なるタイプの行動に対するユーザの嗜好を個別に学習し、次にそれらの嗜好を組み合わせて集約的なユーザ表現を得る。
@@ -639,7 +640,7 @@ The multi-behavior models that we consider are:
 - (iii) CML [37], which uses a new multi-behavior contrastive learning paradigm to capture the transferable user-item relationships from multi-behavior data. 新しい複数行動対照学習パラダイムを用い、複数行動データから伝達可能なユーザとアイテムの関係を捉える。
 
 To verify that the proposed method improves performance by denoising implicit feedback, we also introduce the following denoising frameworks:
-提案手法が暗黙的フィードバックをノイズ除去することで性能が向上することを検証するために、以下のノイズ除去フレームワークも紹介する：
+提案手法が暗黙的フィードバックのノイズ除去によってパフォーマンスを向上させることを検証するために、以下のノイズ除去フレームワークを導入する：
 
 - (i) WBPR [11], which is a re-sampling-based method which considers popular, but un-interacted items are highly likely to be negative. 再サンプリングに基づく手法であり、人気のある、しかし対話されていない項目は否定的である可能性が高いと考える。
 - (ii) T-CE [32], which is a re-weighting based method which discards the large-loss samples with a dynamic threshold in each iteration. 各iterationにおいて動的な閾値で損失の大きいサンプルを破棄する、再重み付けに基づく手法である。
@@ -723,14 +724,17 @@ This learning process facilitates knowledge transfer across multiple types of us
 (ii)比較されたノイズ除去ベースラインのオリジナル論文では、テストは明示的なユーザー項目の評価に基づいて実施されている。
 However, our method does not use any explicit information like ratings, only implicit interaction data is considered.
 しかし、我々の方法では、視聴率のような明示的な情報は一切使用せず、暗黙的な相互作用データのみを考慮する。
+
+![table3]()
+
 To further explore the generalization capability of MBA, we also adopt LightGCN as our base model (i.e., using LightGCN as𝑡𝜃 ).
-MBAの汎化能力をさらに探求するために、LightGCNもベースモデルとして採用します（つまり、LightGCNを𝑡𝜃として使用します）。
+MBAの汎化能力をさらに探求するために、LightGCNもベースモデルとして採用します(つまり、LightGCNを $t_{\theta}$ として使用する)。
 The results are also shown in Table 3.
 結果は表3にも示されている。
 We see that MBA is still more effective than the baseline methods.
 MBAは依然としてベースライン方式よりも効果的であることがわかる。
 We find that LightGCN-based MBA does not perform as well as MF-based MBA on the Beibei and Taobao datasets.
-LightGCNベースのMBAは、BeibeiとTaobaoのデータセットでは、MFベースのMBAほどのパフォーマンスを示さないことがわかった。
+**LightGCNベースのMBAは、BeibeiとTaobaoのデータセットでは、MFベースのMBAほどのパフォーマンスを示さない**ことがわかった。
 We think the possible reasons are as follows: (i) LightGCN is more complex than MF, making MBA more difficult to train; (ii) LightGCN may be more sensitive to noisy signals due to the aggregation of neighbourhoods, resulting in a decline in the MBA performance compared to using MF as the base model.
 考えられる理由は以下の通りである： (i)LightGCNはMFよりも複雑であるため、MBAの訓練がより困難である。(ii)LightGCNは近隣の集合体であるため、ノイズの多い信号に対してより敏感である可能性があり、その結果、MFをベースモデルとして使用する場合よりもMBAの性能が低下する。
 To conclude, the proposed MBA can generate more accurate recommendation compared with existing denoising frameworks.
@@ -739,62 +743,80 @@ To conclude, the proposed MBA can generate more accurate recommendation compared
 ## 5.3. User preferences visualization (RQ3) ユーザー嗜好の可視化（RQ3）
 
 To answer RQ3, we visualize the distribution of users’ interacted items.
-RQ3に答えるために、ユーザーの対話アイテムの分布を可視化する。
+RQ3に答えるために、ユーザのinteractedアイテムの分布を可視化する。
 We select two users in the Beibei, Taobao and MBD datasets and draw their behavior distributions using the parameters obtained from an MF model trained on the purchase behavior data and the parameters obtained from MBA, respectively.
-Beibei、Taobao、MBDのデータセットからそれぞれ2人のユーザーを選び、購買行動データで学習したMFモデルから得られたパラメータとMBAから得られたパラメータを用いて行動分布を描く。
+Beibei、Taobao、MBDのデータセットからそれぞれ2人のユーザを選び、購買行動データで学習したMFモデルから得られたパラメータとMBA(たぶんMFベース)から得られたパラメータ(=アイテム埋め込み)を用いて行動分布を描く。
 Figure 2 visualizes the results.
-図2はその結果を視覚化したものである。
+図2はその結果を視覚化したものである。(たぶんt-NSEなどで次元削減しているのかな?:thinking:)
+
+![figure2]()
+
 From the figure, we observe that for one user, the clicked items and purchased items distributions of MBA stay much closer than that of MF.
-図から、あるユーザーについて、MBAのクリックされたアイテムと購入されたアイテムの分布は、MFの分布よりもずっと近いことがわかる。
+図から、あるユーザについて、MBA(MFベース)のクリックされたアイテムと購入されたアイテムの分布は、MFの分布よりもずっと近いことがわかる。(これはぱっと判断つかないかも?)
 The observation indicates that MBA can successfully align multiple types of user behavior and infer universal and accurate user preferences.
-この観察結果は、MBAが複数のタイプのユーザー行動をうまく調整し、普遍的で正確なユーザー嗜好を推論できることを示している。
+この観察結果は、MBAが複数のタイプのユーザ行動をうまく調整し、普遍的で正確なユーザ嗜好を推論できることを示している。
+
 Besides, we see that different users in MBA have more obvious separations than users in MF, which implies that MBA provides more personalized user-specific recommendation than MF.
-さらに、MBAの異なるユーザーはMFのユーザーよりも明らかに分離しており、これはMBAがMFよりもパーソナライズされたユーザー別推薦を提供していることを示唆している。
+さらに、MBAでは**異なるユーザ行動分布はMFのユーザ行動分布と明らかに分離しており**、これはMBAがMFよりもユーザ毎にパーソナライズされた推薦を提供できることを示唆している。
+(埋め込みの質の高さを判断する根拠として、separationというかクラスターが形成されている話は、事前学習済みモデルでニュース推薦用CBモデルを拡張する論文でも出てきてたな...!:thinking:)
 
 ## 5.4. Model investigation (RQ4) モデル調査（RQ4）
 
-5.4.1 Ablation study.
-5.4.1 アブレーション研究。
+### 5.4.1 Ablation study.5.4.1 アブレーション研究。
+
+![table4]()
+
 Regarding RQ4, we conduct an ablation study (see Table 4) on the following two settings: (i) MBA-KL: we remove KL-divergence when training MBA; and (ii) MBA-PT: we co-train the 𝑃 (R𝑓 ) and 𝑃 (R𝑔) in MBA instead of pre-training.
-RQ4に関しては、以下の2つの設定でアブレーションスタディを行った（表4参照）： (i) MBA-KL： (i)MBA-KL：MBAを訓練する際にKL-発散を除去する： MBA-PT: 𝑃 (R_1D454) と 𝑃 (R_1D454)を事前学習の代わりにMBAで協調学習させる。
+RQ4に関しては、以下の2つの設定でアブレーションスタディを行った(表4参照):
+
+- (i)MBA-KL: MBAの訓練時に損失関数からKL-ダイバージェンスを除去する。
+- (ii)MBA-PT: 事前学習の代わりにMBAで $P(R_f)$ と $P(R_g)$ を共同で訓練する。
+
 The results show that both parts (KL-divergence and pre-trained models) are essential to MBA because removing either will lead to a performance decrease.
-その結果、KLダイバージェンスと事前訓練モデルの両方がMBAにとって不可欠であることがわかった。
+その結果、**KLダイバージェンスと事前訓練モデルの両方がMBAにとって不可欠**であることがわかった。
 Without KL-divergence, we see the performance drops substantially in terms of all metrics.
-KL-ダイバージェンスがないと、すべての測定基準においてパフォーマンスが大幅に低下することがわかる。
+**KL-ダイバージェンスがないと、すべての測定基準においてパフォーマンスが大幅に低下する**ことがわかる。
 Hence, the KL-divergence helps align the user preferences learned from different behaviors, thus improving the recommendation performance.
-したがって、KL-ダイバージェンスは、異なる行動から学習されたユーザーの嗜好を調整するのに役立ち、推薦性能を向上させる。
+したがって、**KL-ダイバージェンスは、異なる行動から学習されたユーザの嗜好を調整するのに役立ち**、推薦性能を向上させる。(損失関数のKLdivによって、補助行動由来の嗜好モデルとターゲット行動由来の嗜好モデルを近づけている事。これがMBAの本質っぽい?:thinking:)
 Without pre-trained models, the results drop dramatically, especially in the Taobao dataset, which indicates that it is hard to cotrain 𝑃 (R𝑓 ) and 𝑃 (R𝑔) with MBA.
-これは、MBAで𝑃 (R_1D443) と𝑃 (R_1D444) を共 訓練するのが難しいことを示している。
-Using a pre-trained model can reduce MBA’s complexity and provide prior knowledge so that it can more effectively extract the user’s real preferences from the different types of behavior distributions.5.4.2 Hyperparameter study.
-事前に訓練されたモデルを使用することで、MBAの複雑さを軽減し、事前知識を提供することができるため、さまざまなタイプの行動分布からユーザーの真の嗜好をより効果的に抽出することができる。
+事前学習モデルがないと、特にtaobaoデータセットでは、結果が劇的に低下する。これはMBAで $P(R_f)$ と $P(R_g)$ を共同で学習させるのは難しい事を示している。
+Using a pre-trained model can reduce MBA’s complexity and provide prior knowledge so that it can more effectively extract the user’s real preferences from the different types of behavior distributions.
+事前学習モデルを使用することで、MBAの複雑さを低減し事前知識を提供することができるため、異なるタイプの行動分布からユーザの実際の嗜好をより効果的に抽出することができる。
+
+### 5.4.2 Hyperparameter study.
+
+![figure3]()
+
 Next, we conduct experiments to examine the effect of different parameter settings on MBA.
 次に、さまざまなパラメータ設定がMBAに与える影響を調べる実験を行う。
 Figure 3 shows the effect of 𝛼, which is used to control the weight of the KL-divergence in conveying information.
-図3は、情報伝達におけるKLダイバージェンスの重みを制御するために使用される↪Ll_1FC の効果を示している。
+図3は、**情報伝達におけるKLダイバージェンスの重みを制御するために使用される 𝛼 の効果**を示している。
 On the Beibei dataset, the performance of MBA is affected when the 𝛼 is greater than or equal to 100.
-Beibeiデータセットでは、 ↪Ll_1D6FC が100以上の場合、MBAの性能に影響が出る。
+Beibeiデータセットでは、 𝛼 が100以上の場合、MBAの性能に影響を与える。
 Thus, when dominated by KL-divergence, MBA’s performance will be close to that of the pre-trained models.
 したがって、KL-ダイバージェンスに支配される場合、MBAの性能は事前学習済みモデルの性能に近くなる。
 On the Taobao and MBD datasets, when 𝛼 is greater than or equal to 100, MBA will gradually converge, with a relatively balanced state between the KL-divergence and the expectation term.
-タオバオとMBDのデータセットでは、Ǽが100以上の場合、MBAは徐々に収束し、KL-発散と期待項の間の比較的バランスのとれた状態になる。
+TaobaoとMBDのデータセットでは、 𝛼 が100以上の場合、MBAはKL-ダイバージェンスと期待値項の間で比較的バランスの取れた状態になり、徐々に収束する。
 Under this setting, MBA achieves the best performance.
 この設定では、MBAが最高のパフォーマンスを発揮する。
+
+(この値の設定は、データセットに依存する感じがする?:thinking:)
 
 # 6. Conclusion 結論
 
 In this work, we have focused on the task of multi-behavior recommendation.
 本研究では、複数の行動を推薦するタスクに焦点を当てた。
 We conjectured that multiple types of behavior from the same user reflect similar underlying user preferences.
-私たちは、同じユーザーの複数のタイプの行動は、根底にあるユーザーの好みを反映していると推測した。
+私たちは、**同じユーザの複数のタイプの行動は、根底にあるユーザの好みを反映していると推測**した。
 To tackle the challenges of the gap between data distributions of different types of behavior and the challenge of behavioral data being noisy and biased, we proposed a learning framework, namely multi-behavior alignment (MBA), which can infer universal user preferences from multiple types of observed behavioral data, while performing data denoising to achieve beneficial knowledge transfer.
 異なる行動タイプのデータ分布のギャップや、行動データにノイズや偏りがあるという課題に対して、我々は、データノイズ除去を行いながら、観測された複数種類の行動データから普遍的なユーザの嗜好を推論し、有益な知識伝達を実現する学習フレームワーク、マルチ行動アライメント(MBA)を提案した。
 Extensive experiments conducted on three real-world datasets showed the effectiveness of the proposed method.
 3つの実世界データセットで行った広範な実験により、提案手法の有効性が示された。
 Our method proves the value of mining the universal user preferences from multi-behavior data for the implicit feedback-based recommendation.
-本手法は、暗黙のフィードバックに基づく推薦のために、複数の行動データから普遍的なユーザの嗜好をマイニングすることの価値を証明する。
+**本手法は、暗黙のフィードバックに基づく推薦のために、複数の行動データから普遍的なユーザの嗜好をマイニングすることの価値**を証明する。
 However, a limitation of MBA is that it can only align between two types of behavioral data.
-しかし、MBAの限界は、2種類の行動データ間でしか整合が取れないことである。
+しかし、**MBAの限界は、2種類の行動データ間でしか整合が取れないこと**である。
 As to our future work, we aim to perform alignment on more types of user behavior.
-今後の課題としては、より多くの種類のユーザー行動に対してアライメントを行うことを目指している。
+**今後の課題としては、より多くの種類のユーザ行動に対してアライメントを行うこと**を目指している。
 In addition, we plan to develop ways of conducting more effective and efficient model training.
 さらに、より効果的で効率的なモデル・トレーニングの方法を開発する予定だ。
