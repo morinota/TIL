@@ -36,7 +36,7 @@ tags:    Python
 ## 2.2. User Modeling
 
 - ニュースのモデリングと同様に，ユーザモデリング手法もfeature-basedとdeep learning-basedの 2 種類に大別される．
-- 
+-
 
 ## 2.3. Personalized Ranking
 
