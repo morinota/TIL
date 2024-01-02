@@ -58,27 +58,77 @@ NRMSのアーキテクチャは、大きく **news encoder** と **user encoder*
 
 News encoderは以下の3層で構成されている:
 
-- word embedding層
-- word-level multi-head self-attention層
-- word-level additive attention層
+- 1. word embedding層
+- 2. word-level multi-head self-attention層
+- 3. word-level additive attention層
 
-1層目はword embedding層:
+#### 1層目はword embedding層:
 
 - 観察可能な振る舞い:
   - 入力: 記事タイトルのテキスト(単語のsequence) $[w_1, w_2, ..., w_M]$ (Mは単語数)
   - 出力: 単語埋め込みベクトルのsequence $[e_1, e_2, ..., e_M]$
+- 実装の詳細:
+  - 何らかのNLP手法や言語モデルによって各単語を埋め込む。
 
-2層目はword-level multi-head self-attention層:
+#### 2層目はword-level multi-head self-attention層:
 
-- 観察可能な振る舞い:
-  - 入力: 単語埋め込みベクトルのsequence $[e_1, e_2, ..., e_M]$
-  - 出力: 単語間の相互作用を考慮した単語表現ベクトルのsequence $[h^{w}_1, h^{w}_2, ..., h^{w}_M]$
+観察可能な振る舞い:
 
-3層目はword-level additive attention層:
+- 入力: 単語埋め込みベクトルのsequence $[e_1, e_2, ..., e_M]$
+- 出力: 単語間の相互作用を考慮した単語表現ベクトルのsequence $[h^{w}_1, h^{w}_2, ..., h^{w}_M]$
 
-- 観察可能な振る舞い:
-  - 入力: 単語間の相互作用を考慮した単語埋め込みベクトルのsequence $[h^{w}_1, h^{w}_2, ..., h^{w}_M]$
-  - 出力: 単語間の相互作用 & 各単語の重要度を考慮した最終的なニュース埋め込みベクトル $\mathbf{r}$
+実装の詳細:
+
+- k番目のattention headによって得られる、i番目の単語の隠れ表現 $h_{i,k}^{w}$ は以下のように計算される:
+
+$$
+\alpha^{k}_{i,j} = \frac{exp(e_{i}^T Q_{k}^{w} e_{j})}{\sum_{m=1}^{M} exp(e_{i}^T Q_{k}^{w} e_{m})}
+\tag{1}
+$$
+
+$$
+\mathbf{h}_{i,k}^{w} = V_{k}^{w} (\sum_{j=1}^{M} \alpha^{k}_{i,j} e_{j})
+\tag{2}
+$$
+
+- ここで...
+  - $Q_{k}^{w}$ と $V_{k}^{w}$ は、k番目のself-attention headの線形投影パラメータ。
+  - $alpha_{i,j}^{k}$ は、k番目のattention headによって得られる単語 $w_{i}$ と単語 $w_{j}$ 間のattention weight。
+- 最終的なi番目の単語の、単語間の相互作用を考慮した表現 $h_{i}^{w}$ は、h個の別々のself-attention headによって出力された単語表現 $\mathbf{h}_{i,k}^{w}$ のconcatになる。
+  - すなわち、 $h_{w}^{i} = [h_{w}^{i,1} ; h_{w}^{i,2} ; ...; h_{w}^{i,h}]$
+
+#### 3層目はword-level additive attention層:
+
+観察可能な振る舞い:
+
+- 入力: 単語間の相互作用を考慮した単語埋め込みベクトルのsequence $[h^{w}_1, h^{w}_2, ..., h^{w}_M]$
+- 出力: 単語間の相互作用 & 各単語の重要度を考慮した最終的なニュース埋め込みベクトル $\mathbf{r}$
+
+実装の詳細:
+
+- まずi番目の単語の attention weight $\alpha^{w}_{i}$ は以下のように計算される：
+  - (式3はadditive attentionの式。$q_{w}$ と $V_{w}$ と $v_{w}$ は学習可能なパラメータ。一層のFFNになってる。self-attentionと異なり、添字がiだけなのか...!:thinking:)
+  - (式4のように、最終的なattention weightはsoftmaxで正規化される)
+
+$$
+a^{w}_{i} = q^T_{w} tanh(V_{w} h^{w}_{i} + v_{w})
+\tag{3}
+$$
+
+$$
+\alpha^{w}_{i} = \frac{exp(a^{w}_{i})}{\sum_{j=1}^{M} exp(a^{w}_{j})}
+\tag{4}
+$$
+
+- ここで...
+  - $V_{w}$ と $v_{w}$ は線形投影パラメータ。$q_{w}$ はクエリベクトル。いずれもadditive attentionの学習可能なパラメータ。
+- **最終的なニュース表現**は以下。
+  - **contextual word representations(2層目の出力)の重み付き合計として定式化**される：
+
+$$
+\mathbf{r} = \sum_{i=1}^{M} \alpha^{w}_{i} h^{w}_{i}
+\tag{5}
+$$
 
 ### User Encoderのアーキテクチャ
 
@@ -87,24 +137,34 @@ User encoderは以下の2層で構成されている:
 - news-level multi-head self-attention層
 - news-level additive attention層
 
-1層目はnews-level multi-head self-attention層:
+#### 1層目はnews-level multi-head self-attention層:
 
-- 観察可能な振る舞い:
-  - 入力: ユーザの閲覧履歴のニュース埋め込み表現のsequence $[r_1, r_2, ..., r_N]$ (Nは閲覧履歴内のニュース数)
-  - 出力: ニュース間の相互作用を考慮したニュース埋め込み表現のsequence $[h^{n}_1, h^{n}_2, ..., h^{n}_N]$
+観察可能な振る舞い:
 
-2層目はnews-level additive attention層:
+- 入力: ユーザの閲覧履歴のニュース埋め込み表現のsequence $[r_1, r_2, ..., r_N]$ (Nは閲覧履歴内のニュース数) (各 $r$ は news encoderの3層目の出力を用いる)
+- 出力: ニュース間の相互作用を考慮したニュース埋め込み表現のsequence $[h^{n}_1, h^{n}_2, ..., h^{n}_N]$
 
-- 観察可能な振る舞い:
-  - 入力: ニュース間の相互作用を考慮したニュース埋め込み表現のsequence $[h^{n}_1, h^{n}_2, ..., h^{n}_N]$
-  - 出力: ニュース間の相互作用 & 各ニュースの重要度を考慮した最終的なユーザ埋め込みベクトル $\mathbf{u}$
+実装の詳細:
+
+- (基本的にnews encoderの2層目と同じ。ニュースをユーザに、単語をニュースに置き換えたver.)
+
+#### 2層目はnews-level additive attention層:
+
+観察可能な振る舞い:
+
+- 入力: ニュース間の相互作用を考慮したニュース埋め込み表現のsequence $[h^{n}_1, h^{n}_2, ..., h^{n}_N]$
+- 出力: ニュース間の相互作用 & 各ニュースの重要度を考慮した最終的なユーザ埋め込みベクトル $\mathbf{u}$
+
+実装の詳細:
+
+- (基本的にnews encoderの3層目と同じ。ニュースをユーザに、単語をニュースに置き換えたver.)
 
 ### NRMSの学習方法
 
 - negative sampling技術を使用してpositive exampleとnegative exampleを用意して教師あり学習をする。
   - 具体的には、ユーザによって閲覧された各ニュース(positive sample)について、**同じインプレッションに表示されたがユーザによってクリックされなかったニュース(negative sample)**をK個無作為にサンプリングする。
   - (一般的なimplicit feedbackのpositive sampleしか観測されない状況での未観測アイテムを頑張って工夫してnegative samplingする、という感じではなかった。シンプルでありがたい...!:thinking:)
-- positive sampleの事後クリック確率:
+- positive sampleの事後クリック確率を定義:
   - 1個のpositive newsとK個のnegative newsのクリック確率スコアをそれぞれ $\hat{y}^{+}$ と $[\hat{y}^{-}_{1}, \hat{y}^{-}_{2}, ..., \hat{y}^{-}_{K}]$ とする。
   - スコアをsoftmax関数に通す事で、陽性サンプルの事後クリック確率を計算する:
 
@@ -149,12 +209,64 @@ MINDデータセットを使ったオフライン実験
 
 ## 議論はある？
 
-### 精度の話
+### オフライン精度の話
+
+![]()
+論文のtable2より引用
+
+結果からわかった事:
+
+- 1. deepな推薦手法は非deepな推薦手法よりもオフライン性能が高かった。
+- 2. deepな推薦手法の中でも、ニュース間の相互作用を考慮する手法の方が、考慮しない手法よりもオフライン性能が高かった。
+- 3. NRMSは、ニュース間の相互作用を考慮する手法の中でも最もオフライン性能が高かった。
 
 ### 時間計算量の話
 
+![]()
+論文のtable3より引用
+
+結果からわかった事:
+
+- NRMSは、既存のニュース推薦手法と比較して、時間計算量が小さい。
+  - ニュース表現やユーザ表現を学習する際のパラメータサイズが小さいから。
+  - また、推論時はニュース表現とユーザ表現のドット積を計算するだけだから。
+  - 更にNRMSは、異なるattention headsの隠れ表現 $h_{i}^{hoge}$ を並列に計算することで更に高速化が可能。
+
 ### NRMSの各componentsの重要性の話
+
+ablation studyを行った結果からわかった事:
+
+- word-levelとnews-levelのattentionネットワークに関するablation study(figure 3 a):
+
+  - word-levelのattentionが特に性能向上に寄与する事がわかった。
+  - また、news-levelのattentionも、word-levelのattentionほどではないが、性能向上に寄与する事がわかった。
+  - そして、word-levelとnews-levelのattentionを組み合わせたモデルが最も性能が高かった。
+
+- multi-head self-attentionとadditive attentionに関するablation study(figure 3 b):
+  - multi-head self-attentionが性能向上に寄与する事がわかった。
+  - また、additive attentionも、multi-head self-attentionほどではないが、性能向上に寄与する事がわかった。
+  - そして、multi-head self-attentionとadditive attentionを組み合わせたモデルが最も性能が高かった。
+
+![]()
+論文のfigure3より引用
 
 ### 今後の拡張性の話
 
-## 次に読むべき論文は？-0///////////////////////
+- 単語やニュースのsequenceの順序情報の活用:
+  - 実はNRMSは、単語やニュースのsequenceの順序情報を考慮していない。
+    - (NRMSだと、attentionに入力する前にpositional encodingみたいな事をやってないので...!:thinking:)
+  - (ニュースのsequenceの順序情報を使うってことは、つまりsequential recommenderへ拡張するってことか:thinking:)
+- ニュースタイトル以外の属性情報の活用:
+  - 特に、self-attentionネットワークの効率性を脅かす可能性のあるニュース本文などの長いsequence情報をいかに効果的に扱うか。
+
+## 次に読むべき論文は？
+
+## お気持ち実装
+
+recboleで実験することを想定して、お気持ち実装。
+
+```python
+
+
+
+```
