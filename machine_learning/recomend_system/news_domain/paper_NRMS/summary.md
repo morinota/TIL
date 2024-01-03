@@ -1,3 +1,5 @@
+<!-- タイトル: 34週目: 2種のattentionを用いたニュース推薦タスク用のコンテンツベース手法 NRMS の論文を読んだ!-->
+
 # NRMS: Neural News Recommendation with Multi-Head Self-Attention
 
 published date: November 2019,
@@ -7,10 +9,37 @@ url(paper): https://aclanthology.org/D19-1671/
 
 ---
 
-n週連続推薦システム系論文読んだシリーズ hoge週目の記事になります。
-ちなみにhoge-1週目は [タイトル](url) でした!
+n週連続推薦システム系論文読んだシリーズ 34 週目の記事になります。
+ちなみに33週目は [異種行動データによるimplicit feedbackの分布の違いを考慮して推薦モデルを学習させるMBAの論文を読んだ!](https://zenn.dev/articles/0a7168e7b0f290/edit) でした!
 
 ## どんなもの?
+
+- (本論文を読んだ読んだ動機):
+  - ニュース推薦タスクに特化したある程度ナウい、王道なdeepのコンテンツベース手法を把握しておきたかった。
+  - 本論文の手法が https://arxiv.org/abs/2106.08934 や https://arxiv.org/pdf/2104.07413 などで紹介されていたので、王道っぽい手法だと思い読んでみた。
+- (論文概要):
+  - ニュース推薦タスク用のコンテンツベース推薦手法 NRMS を提案した2019年の論文。
+    - (ちなみに2021年の同著者の論文で、事前学習済み言語モデルを使う方法に拡張されてた: [n週連続推薦システム系 論文読んだシリーズ27週目: 事前学習済み言語モデルをNews Encoder部分に用いて、ニュース推薦の品質を向上させる論文を読んだ!(2021年)](https://qiita.com/morinota/items/fc462de816c5095b0b38))
+  - **ニュースとユーザ嗜好の特徴をより良く反映した (i.e. ニュース推薦タスク用に調整された) 埋め込み表現を得る**ために、news encoder部分とuser encoder部分に2種のattention機構を採用してる。
+    - ニューステキストに含まれる単語間、ユーザ閲読履歴に含まれるニュース間の**相互作用を考慮したい**...! -> **multi-head self-attention層**を採用。
+    - ニューステキスト内の各単語、ユーザ閲読履歴内の各ニュースの**重要度の違いを考慮したい**...! -> **additive attention層**を採用。
+  - 学習時には、同一impression内でクリック/クリックされなかったニュース履歴を学習データとする。(ここは結構シンプル)
+- (感想):
+  - attention機構の使い方は、任意の言語モデルを使うコンテンツベース推薦手法に応用できそう。
+  - **NRMS自体の推論処理はベクトル間の内積による軽量な処理**なので、2-stages推薦システムにおける1-stage目 candidate retrieve に使えそう。
+  - NRMSの成果物としてニュースとユーザ嗜好の埋め込み表現が得られるので、2-stages推薦システムにおける2-stage目 candidate ranking の特徴量としても使えそう。
+- (ちなみに...)FTI pipelinesアーキテクチャを意識した上で**実プロダクト上でNRMSを開発・運用する**ための設計を想像すると、例えば以下の4つだろうか? :thinking:
+  - 1. news encoderとuser encoderのパラメータを学習し学習済みモデルを保存する**学習パイプライン**。
+    - (低頻度のバッチ処理。月1回くらいの学習で十分?)
+  - 2. ニューステキストからニュースベクトルを作って保存する **news encoder の推論パイプライン(特徴量生成パイプライン)**。
+    - (新規ニュースがDBに追加されるたびに走るオンライン処理 or 高頻度のバッチ処理。)
+    - (encoderは推論してるけど、ニュースベクトルを特徴量と見做すなら「特徴量パイプライン」...!)
+  - 3. ユーザの閲読履歴からユーザベクトルを作る 。**user encoderの推論パイプライン(特徴量生成パイプライン)**
+    - (ユーザの閲読履歴が更新されるたびに走るオンライン処理 or 高頻度のバッチ処理。)
+    - (i.e. news encoderの推論同様に「特徴量パイプライン」とも言ってもいいはず)
+  - 4. 作成済みのニュースベクトルとユーザベクトルを使って候補記事をスコアリングして推薦結果を作る、**推論パイプライン**。
+    - (新規ニュースを推薦できるようにしたいケースを想定すると、高頻度のバッチ処理 or オンライン処理。)
+    - (NRMSのみで推薦結果を作るなら、スコアリングは内積なので、時間速度的にはオンライン推論でも可能。ただ、特にリクエスト側の入力情報をスコアリングに使用しなければ、バッチ推論で良いと思う。)
 
 ## 先行研究と比べて何がすごい？
 
@@ -24,9 +53,9 @@ n週連続推薦システム系論文読んだシリーズ hoge週目の記事�
 
 ## 技術や手法の肝は？
 
-### 提案手法 NRMSのモチベーション
+### 提案手法 NRMS のモチベーション
 
-本論文の提案手法 NRMS は、ニュース推薦に関する4つの洞察に動機づけられている:
+本論文の提案手法 NRMS は、**ニュース推薦に関する4つの洞察**に動機づけられている:
 
 - 洞察1: **ニュースタイトルに含まれる単語間の相互作用は、ニュースを理解するのに重要。**
   - ex. 図1において、RocketsとBullsは強い関連性を持っており、これらの単語の組み合わせが対象ニュースの特徴となりうる。
@@ -265,8 +294,139 @@ ablation studyを行った結果からわかった事:
 
 recboleで実験することを想定して、お気持ち実装。
 
+news encoder。
+
 ```python
+class NewsEncoder(nn.Module):
+    def __init__(self, config: Config, word_embedding: nn.Embedding) -> None:
+        super().__init__()
+        self.config = config
+        self.word_embedding = word_embedding
+        self.dropout_prob = config["dropout_prob"]  # 0.2
 
+        self.dim_per_head = config["embedding_size"] // config["num_attention_heads"]
+        assert config["embedding_size"] == self.dim_per_head * config["num_attention_heads"]  # ちょうど割り切れてほしいってことか。
 
+        self.multi_head_self_attn = MultiHeadSelfAttention(
+            config["embedding_size"],
+            config["num_attention_heads"],
+            self.dim_per_head,
+            self.dim_per_head,
+        )
+        self.additive_attn = AdditiveAttention(
+            config["embedding_size"],
+            config["news_query_vector_dim"],
+        )
 
+    def forward(self, x: Tensor) -> Tensor:
+        """
+        Args:
+            x: (batch_size, word_num_per_news) (tokenizeは完了済み)
+        Returns:
+            (shape): batch_size, embedding_size
+        """
+        # word embedding layer
+        word_vecs = F.dropout(
+            self.word_embedding(x),
+            p=self.dropout_prob,
+            training=self.training,
+        )  # (shape): batch_size, word_num_per_news, word_dim
+
+        # word-level multi-head self-attention layer
+        multihead_word_vecs = F.dropout(
+            self.multi_head_self_attn(word_vecs, word_vecs, word_vecs),
+            p=self.dropout_prob,
+            training=self.training,
+        )  # (shape): batch_size, word_num_per_news, embedding_size
+
+        # word-level additive attention layer
+        return self.additive_attn(multihead_word_vecs)  # (shape): batch_size, embedding_size
+```
+
+user encoder。
+
+```python
+class UserEncoder(nn.Module):
+    def __init__(self, config: Config) -> None:
+        super().__init__()
+        self.config = config
+
+        self.dim_per_head = config["embedding_size"] // config["num_attention_heads"]
+
+        self.multi_head_self_attn = MultiHeadSelfAttention(
+            config["embedding_size"],
+            config["num_attention_heads"],
+            self.dim_per_head,
+            self.dim_per_head,
+        )
+        self.additive_attn = AdditiveAttention(
+            config["embedding_size"],
+            config["news_query_vector_dim"],
+        )
+        # reading histroyの欠損をpaddingするためのベクトルを初期化
+        self.padding_vector: Tensor = nn.Parameter(torch.empty(1, config["embedding_size"]).uniform_(-1, 1)).type(
+            torch.FloatTensor
+        )  # (shape): 1, embedding_size
+
+    def forward(self, news_vectors: Tensor) -> Tensor:
+        """
+        Args:
+            news_vectors: (batch_size, history_length, news_dim)
+        Returns:
+            (shape): batch_size, news_dim
+        """
+        batch_size = news_vectors.shape[0]
+
+        padding_doc = self.padding_vector.unsqueeze(0).expand(
+            batch_size, self.config["history_length"], -1
+        )  # (shape): batch_size, history_length, news_dim
+        padded_news_vecs = news_vectors + padding_doc  # (shape): batch_size, history_length, news_dim
+
+        multi_head_news_vecs = self.multi_head_self_attn(padded_news_vecs, padded_news_vecs, padded_news_vecs)
+
+        return self.additive_attn(multi_head_news_vecs)
+```
+
+recboleのAbstractRecommenderを継承したNRMSクラス。
+
+```python
+class NRMS(AbstractRecommender):
+    def __init__(self, config: Config, dataset: Dataset) -> None:
+        super(NRMS, self).__init__(config, dataset)
+        self.config = config
+        pretrained_word_embedding = torch.from_numpy().float()
+        word_embedding = nn.Embedding.from_pretrained(pretrained_word_embedding, freeze=True)
+        self.news_encoder = NewsEncoder(config, word_embedding)
+        self.user_encoder = UserEncoder(config)
+        self.loss_fn = nn.CrossEntropyLoss()
+
+    def calculate_loss(self, interaction: Interaction) -> Tensor:
+        """
+        Args:
+            interaction: Interaction (batch_size, history_length, num_words_per_news)
+            データローダーから渡されるレコード集合。
+        Returns:
+            loss: Tensor (1)
+        """
+        reading_histories = interaction[self.reading_history]  # (batch_size, history_length, num_words_per_news)
+        candidates = interaction[self.news_candidate]  # (batch_size, 1+K, num_words_per_news)
+        labels = interaction[self.label]  # (batch_size, 1+K)
+
+        candidate_news_vecs = self.news_encoder(candidates)  # (batch_size, 1+K, news_vec_dim)
+
+        history_news_vecs = self.news_encoder(reading_histories)  # (batch_size, history_length, news_vec_dim)
+        user_vectors = self.user_encoder(history_news_vecs)  # (batch_size, news_vec_dim)
+
+        scores = torch.bmm(candidate_news_vecs, user_vectors)  # (batch_size, 1+K, 1)
+
+        return self.loss_fn(scores, labels)
+
+    def predict(self, interaction: Interaction) -> Tensor:
+        reading_histories = interaction[self.reading_history]  # (batch_size, history_length, num_words_per_news)
+        candidates = interaction[self.news_candidate]  # (batch_size, num_words_per_news)
+
+        user_vectors = self.user_encoder(self.news_encoder(reading_histories))  # (batch_size, news_vec_dim)
+        candidate_news_vectors = self.news_encoder(candidates)  # (batch_size, news_vec_dim)
+
+        return torch.bmm(user_vectors, candidate_news_vectors)  # (batch_size, 1)
 ```
