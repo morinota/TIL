@@ -387,7 +387,7 @@ An overview of different types of news features.
 Designing informative features to represent news articles is the key problem in feature-based news modelingmethods.
 ニュース記事を表現するための情報量の多い特徴量を設計することは、特徴量ベースのニュースモデリング手法の重要な問題である。
 As summarized in Fig. 2, there are mainly four types of features used in news modeling, which areintroduced as follows.
-図2に示すように、ニュースモデリングに用いられる特徴量には主に4つの種類があり、以下に紹介する。
+図2に示すように、**ニュースモデリングに用いられる特徴量には主に4つの種類**があり、以下に紹介する。
 
 In many CF-based methods, news articles are represented by collaborative iltering signals such as newsIDs [29,62,78,141,168,172,225].
 多くのCFベースの手法では，ニュース記事はnewsIDのような協調的フィルタリング信号で表現される [29,62,78,141,168,172,225]．
@@ -417,7 +417,7 @@ Beyondnews texts, the exploitation of vision-related information such as the vid
 ニューステキストを越えて、ニュースのビデオなどの視覚関連情報を利用することも、[131]で研究されている。
 
 In addition to content features, many other genres of features are used for news modeling.
-ニュースのモデル化には，内容特徴の他に多くの特徴ジャンルが用いられる。
+ニュースのモデル化には，内容特徴量の他に多くの特徴ジャンルが用いられる。
 They can be roughlydivided into two categories, i.e., property features and context features.
 これらは大きく分けて、特性特徴と文脈特徴の2つに分類される。
 Property features such as categories,locations and publishers usually relect intrinsic properties of news.
@@ -734,11 +734,12 @@ Thus, it is very important to understand news from their content.
 それゆえ、ニュースの内容を理解することが非常に重要である。
 
 News text modeling is critical for news understanding.
-ニューステキストをモデリングすることは，ニュースを理解する上で非常に重要である．
+ニューステキストをモデリングすることは，ニュースを理解する上で非常に重要である。
 Most methods use news titles to model news sincenews titles, because news titles usually have decisive inluence on users’ click behaviors.
 多くの手法は，ニュースのタイトルをニュースのモデル化に用いている。なぜなら、**ニュースのタイトルは，ユーザのクリック行動に決定的な影響を与えるから**である。
-Several methods such asEBNR [144], NAML [203] and CPRS [213] use news bodies to enhance news representations, since news bodiesare contain more detailed information of news.
+Several methods such as EBNR [144], NAML [203] and CPRS [213] use news bodies to enhance news representations, since news bodiesare contain more detailed information of news.
 EBNR [144]、NAML [203]、CPRS [213]などのいくつかの手法は、**ニュースの本文がより詳細な情報を含んでいるため、ニュース表現を強化するために本文を使用**しています。
+
 In existing methods, CNN is the most frequently used architecturefor text modeling.
 既存の手法では，CNNがテキストモデリングに最も頻繁に使用されるアーキテクチャである．(そうなの??)
 This is because local contexts in news articles are important for modeling news content, and CNN is efective and eicient in capturing local contexts.
@@ -752,7 +753,7 @@ In addition, a few methods use pre-trained language or and visiolinguistic model
 These advanced NLP techniques can greatly improve news content understanding, whichis very important for personalized news recommendation.
 **これらの高度なNLP技術は，ニュースの内容理解を大幅に向上させることができ，これはパーソナライズされたニュース推薦に非常に重要である**。
 However, these methods mainly aim to capture thesemantic information of news and may not be aware of the knowledge and commonsense information encodedin news.
-**しかし，これらの手法は主にニュースの意味情報を捕らえることを目的としており，ニュースにエンコードされた知識や常識的な情報には気づいていない可能性がある**。(ほうほう??)
+**しかし，これらの手法は主にニュースの意味情報を捕らえることを目的としており，ニュースにエンコードされた知識や共通認識的な情報には気づいていない可能性がある**。(ほうほう??)
 
 To address this issue, many methods incorporate news entities into news modeling to learn knowledge-awarenews representations [120].
 この問題に対処するため，**多くの手法がニュースのentities(固有表現?)をニュースモデリングに組み込んで**，knowledge-awareなニュース表現を学習している[120]。
@@ -816,7 +817,7 @@ However, ID-based user modeling methodsusually sufer from the data sparsity.
 Thus, most methods consider the behaviors of users such as news clicks tomodel their interest.
 そこで，多くの手法では，ニュースのクリック数などユーザの行動を考慮し，ユーザの興味をモデル化する．
 An intuitive way is to use the features of clicked news to build user features.
-直感的な方法は，クリックされたニュースの特徴量を用いてユーザ特徴量を構築することである．
+直感的な方法は，**クリックされたニュースの特徴量を用いてユーザ特徴量を構築すること**である．
 For example,Goossen et al. [58] used the CF-IDF features of clicked news to represent user interest.
 例えば，Goossen ら [58] はクリックされたニュースの CF-IDF 特性を用いてユーザの興味関心を表現している．
 Capelle et al. [16] proposedto use the SF-IDF features of clicked news for user modeling.
@@ -827,6 +828,7 @@ However, it is diicult for thesemethods to model users accurately when their new
 しかし，これらの手法では，ニュースのクリック行動がまばらな場合に，ユーザを正確にモデル化することが困難である．
 
 Besides news features, many methods consider other supplementary information of users in user modeling.For instance, in the MONERS [104] recommender system, users are clustered into segments, and the preferencesof user segments on news categories and news articles are used to represent users.
+ニュースの特徴量のほかに，ユーザモデリングでは，ユーザの他の補足情報も考慮されている．
 例えば，MONERS [104] 推薦システムでは，ユーザをセグメントに分類し，ニュースカテゴリとニュース記事に関するユーザセグメントの嗜好をユーザ表現に用いている．
 In addition, the demographicsof users, such as age, gender and profession, are also useful information for user modeling because users indiferent demographic groups usually have diferent preferences on news.
 また，年齢，性別，職業などのユーザの属性も，ユーザモデリングに有用な情報である．なぜなら，異なる属性グループに属するユーザは，通常，ニュースに対する嗜好が異なるからである．
@@ -838,6 +840,8 @@ Chu et al. [25] used the age and gender categories of users to model their chara
 さらに，ユーザの位置情報も正確なユーザモデリン グに非常に有効であり，いくつかの位置情報対応ニュース推薦 手法で利用されている[43,143]．
 However, some kinds of user features suchas locations and demographics are privacy-sensitive, and many users may not provide their accurate personalinformation.
 しかし，位置情報や属性情報などのユーザの特徴は，プライバシに敏感であり，多くのユーザが正確な個人情報を提供しない可能性がある．
+
+<!-- ここまで読んだ -->
 
 Since news clicks may not necessarily indicate user interests, several methods also consider other kinds of userbehaviors or feedback.
 また，ニュースのクリック数は必ずしもユーザの興味 を示しているとは限らないため，他の種類のユーザ行動やフィー ドバックを考慮する手法もある．

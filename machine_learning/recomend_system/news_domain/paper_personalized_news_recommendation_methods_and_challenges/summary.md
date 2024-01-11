@@ -1,139 +1,113 @@
-<!--
-title:   [ニュースの個別化推薦]"Personalized News Recommendation: Methods and Challenges"(chuhan et al. 2022)を読んでみた
-tags:    Python
--->
+# Personalized News Recommendation: Methods and Challenges
 
-## title
+published date: Feburary 2022,
+authors: Chuhan Wu, Fangzhao Wu, Yongfeng Huang, Xing Xie
+url(paper): https://arxiv.org/abs/2106.08934
+(勉強会発表者: morinota)
 
-"Personalized News Recommendation: Methods and Challenges"(chuhan et al. 2022)
+---
 
-# 1. Introduction
+n週連続推薦システム系論文読んだシリーズ hoge週目の記事になります。
+ちなみにhoge週目は [タイトル](url) でした!
 
-# 2. Framework Of Personalized News Recommendation
+## どんなもの?
 
-## 2.1. News Modeling
+- 2022年時点でのパーソナライズニュース推薦手法のサーベイ論文。
 
-- 主にfeature-basedとdeep learning-basedの２種。
-- 協調フィルタリング（CF）に基づく多くの手法では，ニュース記事はそのIDによって表現される.
-  - しかし，多くのニュースサイトでは，新しいニュース記事は継続的に公開され，古い記事はすぐに消えてしまう
-  - => IDで表現した場合，古い記事が推薦される問題が発生し，性能が低下することが多い．
-  - **IDベースのニュースモデリング手法の欠点を考慮**し，多くのアプローチはニュースを表現するためにコンテンツの特徴を取り入れている．
-  - その中で，**多くの手法はニューステキストから抽出した特徴をニュースのモデリングに用いている**．
-- feature-based:
-  - ニュース記事を表現するために**手作業で作成された特徴量**に依存.
-  - ニュースの人気度や新着度など，ユーザのニュース閲覧の意思決定に影響を与える様々な要因をニュースモデリングに取り込むことを試みる手法も多く存在する[109]．
-  - しかし，これらの手法では，ニュースを表現するための特徴は通常手作業で設計され，多くの労力とドメイン知識が必要とされる．
-- deep learning-based:
-  - Synset Frequency-Inverse Document Frequency(SF-IDF)を用いてニュースを表現する(Capelleら[16]). これは，TF-IDFの用語頻度をWordNetの同義語セットで置き換えるもの.
-  - 近年の自然言語処理技術の発展に伴い、ニュースの深い表現を学習するためにニューラルNLPモデルを採用する手法も多くなっている。
-    - **大倉ら[144]は、オートエンコーダーを用いて、ニュースコンテンツからニュース表現を学習すること**を提案.
-    - Wangら[197]は、知識認識型畳み込みニューラルネットワーク（CNN）を用いて、ニュースのタイトルとその実体からニュース表現を学習することを提案.
-    - Wuら[207]は、マルチヘッド自己注意ネットワークと付加的注意ネットワークの組み合わせによって、ニュースタイトルからニュース表現を学習することを提案.
-    - Wuら[214]は、事前に学習した言語モデルを用いてニューステキストをエンコードすることを研究
+## 先行研究と比べて何がすごい？
 
-これらの深層学習ベースのニュースモデリング手法は、**手動特徴エンジニアリングに大きな負担をかけずに**情報量の多いニュース表現を自動的に学習でき、通常は**従来の特徴ベースの手法よりもニュースコンテンツをよく理解することができる**。
+## 技術や手法の肝は？
 
-## 2.2. User Modeling
+### News modelingに関する調査と議論
 
-- ニュースのモデリングと同様に，ユーザモデリング手法もfeature-basedとdeep learning-basedの 2 種類に大別される．
+- News modelingとは?
+  - ニュース記事の特徴を捉え、その内容を理解すること。ニュース推薦において重要なステップ。
+- News modelingの手法の大分類は2種類:
+  - 大分類1 feature-based (↓以外の手法)
+  - 大分類2 deep learning-based (生のニューステキストからdeepなモデルでニュース表現を抽出)
+- news modelingによく使われる特徴量は4種類:
+  - BOW/XF-IDF
+  - Entity/Keyword
+  - Cluster/Category
+  - Others(ex. Topic分布, 地理的情報, publisher, popularity, etc.)
+- 大分類1:feature-based:
+  - ニュースのテキスト情報を活用した特徴量がよく使われる。
+    - BOW/TF-IDF特徴量やその変種。
+    - LDAの様なトピックモデルの使用。
+    - ニュースのentityやkeywordの活用。
+  - ニューステキスト以外の情報を活用した特徴量:
+    - ニュースのカテゴリやクラスタリング情報。
+    - 動的な特徴量(ex. popularity, publisher, etc.)
+    - 地理的情報や、時間などの環境要因。
+    - ニュースのsentiment情報。
+    - ニュース画像などの視覚情報。
+  - 様々なニュース情報を包括的にカバーしているが，通常，**特徴量設計のために大量のドメイン知識が必要となる**。
+- 大分類2:deep learning-based:
+  - news idに依存する手法か否か。
+    - レビューされた全ての手法の中で2つだけ(DNA [235]とDeepJoNN [237])が、news ID の埋め込みをモデルに直接組み込んでいる。
+      - (i.e. ニュース表現を推論させる際にnews IDを入力情報として渡す必要がある手法、ってことだと認識してる。idに依存する手法。ex. MF系手法やBERT4Rec等を始めとしたID-onlyな手法は推論時にnews IDを渡す必要がある。学習時に渡されていないnews idは推論できない)
+    - **レビューされた手法の多くが、id-freeな(news idに依存しない)手法**だった。
+      - -> ニュース記事はライフサイクルが短く、学習セットに含まれるニュースIDの範囲が非常に限られているから。
+      - id-freeでニュース記事の内容に基づいてnews modelingできることが非常に重要。
+  - ニュース記事のどのテキスト情報を使ってる??
+    - ニュース記事のタイトルを使ってる手法が多い。
+      - -> ニュースのタイトルは，ユーザのクリック行動に決定的な影響を与えるから。
+    - いくつかの手法 (EBNR [144], NAML [203] and CPRS [213]) は、ニュース記事の本文を使っている。
+      - -> 本文の方が、ニュースの内容に関するより詳細な情報を含んでいるから。
+  - テキスト情報のmodelingのために、どんなモデルアーキテクチャを採用してる??
+    - 既存手法の中では、CNNが最も頻繁に採用されていた。(そうなの??)
+      - テキスト中の**localなcontext**がニュース表現の抽出に重要な役割を果たすから。
+      - (CNNはglobalなcontextを捉えられないけど、localなcontextを捉えるのは得意なのか...!!)
+    - AttentionメカニズムやTransformerっぽいアーキテクチャを採用する手法も多い。(まさにNRMS系の手法)
+      - ニュースの内容やユーザの興味(=こっちはuser modelingの内容)をモデル化する上で、sequence内の異なるtokenやニュースは異なる情報性(i.e. 重要度)を持つ可能性があるから。(attention weightで重要度の違いを表現したいので。)
+      - (news modelingだけじゃなくてuser modeling側にも採用されてることが多い印象。)
+    - 事前学習済みの言語モデルや visiolinguiticモデル(=言語じゃなく画像?)を使って、news modelingを強化している手法もある。
+  - 上記のdeepなNLP技術によるテキスト情報を使ったnews modelingの課題:
+    - 主にニュースの意味情報を捉えることを目的としているため、ニュース内に含まれる知識情報や共通認識的な情報を考慮できない可能性がある。(ほうほう??)
+  - **ニュース記事のentity情報(=固有表現?)の活用**:
+    - -> 上記の問題への対処として、多くの手法がニュースのentity情報をnews modelingに組み込んでいる。
+      - entity情報を表現するために、entityのテキストを直接利用する手法(DAN [248])もあれば、knowledge graph埋め込みを利用する手法(DKN [197])もある。
+  - **ニュース記事のトピック情報の活用**:
+    - entity情報と同様に上記の問題への対処として、いくつかの手法はnews modeling にニュースのトピックカテゴリ情報を組み込んでいる。(トピック情報はニュースの内容を理解しユーザの興味を推測するのに有用なので)
+    - **ニュース記事の一部にトピックカテゴリが付与されていないシナリオを考慮**し、 TANR [205]やCHAMELEON [46]などでは、ニュース記事のトピックカテゴリを予測するサブタスクを採用し、トピック情報をニュース表現にencodeしている。
+  - テキスト以外の特徴量の活用:
+    - sentiment[212]，popularity[23]，recency[157]などをnews modelingに組み込む手法もある。
+  - **グラフ情報**を用いてnews modelingの強化を試みてる手法:
+    - ユーザ-ニュース二部グラフ[53,71,161,170]やより複雑な異種グラフ[70,167]上の高次情報を利用して、ニュースの特性やcontextの考慮を試みてる。
+    - しかし，これらの手法で用いられるグラフは静的であるため，新しく発表されたニュースを正確に表現することができない可能性はある。
+
+### user modelingに関する調査と議論
+
+![fig4]()
+
+- user modelingとは? = ユーザのニュースに対する個人的な興味をモデル化すること。
 -
+- user modelingの手法の大分類は2種類:
+  - 大分類1 feature-based (↓以外の手法)
+  - 大分類2 deep learning-based
+- 大分類1:feature-based:
+  - ユーザのニュース閲読履歴を利用する手法達:
+    - 多くの手法では、ニュースのクリック数などユーザの行動を考慮し，ユーザの興味をモデル化する。
+    - ex.
+      - クリックされたニュースの CF-IDF特徴量(Goossen et al. [58])
+      - クリックされたニュースのSF-IDF特徴量(Capelle et al. [16])
+      - クリックされた全てのニュースのLDA特徴量を平均してユーザベクトルに集約(Garcin et al. [52])
+    - **しかし、ニュースのクリック行動がまばらな場合にユーザを正確にモデル化することが困難**。
+  - ユーザ自身の属性情報を考慮する手法達:
+    - ユーザをセグメントに分類。ユーザセグメントの嗜好を対象ユーザの嗜好として利用。(MONERS [104] 推薦システム)
+    - また，年齢，性別，職業など、**ユーザのdemographicな(人口統計学的な)特徴量**も有用。(Yeung et al. [229])
+      - -> **異なる属性グループに属するユーザは，通常，ニュースに対する嗜好が異なるから**。
+    - また、ユーザの位置情報もuser-modelingに有用。([43,143])
+    - しかし、位置情報やdemographicなユーザ特徴量は、プライバシーに関する懸念があるため、多くのユーザが正確な個人情報を提供しない可能性がある。
+  - クリック以外のimplicit feedbackを活用する手法達:
+    - hoge
+- 大分類2: deep learning-based:
+  - hoge
 
-## 2.3. Personalized Ranking
+## どうやって有効だと検証した?
 
-## 2.4. Model Training
+## 議論はある？
 
-## 2.5. Evaluation
+## 次に読むべき論文は？
 
-## 2.6. Dataset And Benchmark
-
-## 2.7. Responsible News Recommendation
-
-- 個人向けニュース推薦に関するほとんどの研究は，推薦結果の精度を向上させることに焦点を当てている。
-- 近年，**機械知能システムの責任に関する研究**は，AI技術がよりよく人間に奉仕し，**社会的に負の影響や非倫理的な結果につながる可能性**がある危険で有害な行動さえ避けるために高い注目を集めている
-- 個人向けニュース推薦システムの責任を改善するには多くの面がある
-- 例えば、多くのニュース推薦手法は私的なユーザデータに基づいて学習されるため、推薦モデルの学習やオンラインサービスにおいてユーザのプライバシーを保護することが重要である
-- Federated Learning [137] はプライバシーを考慮した機械学習パラダイムであり、プライバシー保護型のニュース推薦システムの構築を支援することが可能である。
-- ニュース推薦の精度を最適化することに加え、ニュース推薦結果の多様性を促進することも重要であり、これにより、情報の多様性に関するユーザのニーズを満たし、イルターバブル問題を緩和することができる[65,164,166,212]
-- また，偏ったユーザデータから学習した推薦モデルは不要なバイアスを継承し，アルゴリズムの偏見や不公平な推薦結果を招く可能性があるため，公平性は責任あるニュース推薦の重要な側面である
-- ニュース推薦手法の不公平問題を軽減するために，公平性を考慮した機械学習技術[221]は，異なるユーザグループに高品質のニュース推薦サービスを提供する包括的で公平なアルゴリズムの構築を支援することが可能である．
-- しかし，既存のサーベイ論文では，責任あるニュース推薦に関する体系的なレビューが不足している.
-
-以上の概要を踏まえ、以下の章では、それぞれの核心的問題について、より深い議論を展開する。
-
-# 3. News Modeling
-
-## 3.1. Feature-Based News Modeling
-
-## 3.2. Deep Learning-Based News Modeling
-
-## 3.3. Discussions On News Modeling
-
-# 4. User Modeling
-
-## 4.1. Feature-Based User Modeling
-
-## 4.2. Deep Learning-Based User Modeling
-
-## 4.3. Discussion On User Modeling
-
-# 5. Personalized Ranking
-
-## 5.1. Relevance-Based Personalized Ranking
-
-## 5.2. Reinforcement Learning-Based Personalized Ranking
-
-## 5.3. Discussions On Personalized Ranking
-
-# 6. Model Training
-
-## 6.1. Training Methods
-
-## 6.2. Training Environment
-
-## 6.3. Discussions On Model Training
-
-# 7. Evaluation Metrics
-
-# 8. Dataset, Competition And Benchmark
-
-# 9. Responsible Personalized News Recommendation
-
-## 9.1. Privacy Protection
-
-## 9.2. Debiasing
-
-## 9.3. Fairness 公平性
-
-## 9.4. Diversity 多様性
-
-## 9.5. Content Moderation 内容の適正化
-
-# 10. Future Direction And Conclusion
-
-## 10.1. Deep News Understanding
-
-## 10.2. Universal User Modeling
-
-## 10.3. Efective And Eficient Personalized Ranking
-
-## 10.4. Hyperbolic Representation Learning For News Recommendation
-
-## 10.5. Unified Model Training
-
-## 10.6. News Recommendation In Social Context
-
-## 10.7. Privacy-Preserving News Recommendation
-
-## 10.8. Secure And Robust News Recommendation
-
-## 10.9. Diversity-Aware News Recommendation 多様性を考慮したニュース推薦
-
-## 10.10. Bias-Free News Recommendation バイアスを除去したニュース推薦
-
-## 10.11. Fairness-Aware News Recommendation
-
-## 10.12. Content Moderation In News Recommendation ニュース推薦におけるコンテンツの適正化
-
-## 10.13. Societal Impact Of News Recommendation ニュース推薦の社会的な影響
-
-# 11. Conclusion
+## お気持ち実装
