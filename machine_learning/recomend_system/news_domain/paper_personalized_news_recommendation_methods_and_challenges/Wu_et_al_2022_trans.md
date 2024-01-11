@@ -382,7 +382,7 @@ Fig. 3.
 An overview of different types of news features.
 様々なタイプのニュース特集の概要。
 
-## 3.1. 3.1 Feature-based News Modeling 3.1. 3.1 特徴に基づくニュースのモデル化
+## 3.1. 3.1 Feature-based News Modeling 3.1. 3.1 特徴量に基づくニュースのモデル化
 
 Designing informative features to represent news articles is the key problem in feature-based news modelingmethods.
 ニュース記事を表現するための情報量の多い特徴量を設計することは、特徴量ベースのニュースモデリング手法の重要な問題である。
@@ -482,8 +482,8 @@ Table 2.
 表2.
 Main features used for news representation.
 ニュース表現に使用した主な特徴量。
-\*XF-IDF means TF-IDF and its variants such as CF-IDF and SF-IDF.
-\*XF-IDFはTF-IDFとCF-IDFやSF-IDFなどの派生型を意味する。
+XF-IDF means TF-IDF and its variants such as CF-IDF and SF-IDF.
+XF-IDFはTF-IDFとCF-IDFやSF-IDFなどの派生型を意味する。
 
 ## 3.2. 3.2 Deep learning-based News Modeling 3.2. 3.2 ディープラーニングによるニュースモデリング
 
@@ -681,15 +681,23 @@ Next, we provide severaldiscussions on the aforementioned methods for news model
 
 In feature-based news modeling methods, mining textual information ofnews is critical for representing news content.
 特徴量に基づくニュースモデリング手法では、ニュースのテキスト情報をマイニングすることが、ニュース内容を表現するために重要である。
-Many methods incorporate BOW
-多くの手法では、BOW
+Many methods incorporate BOW/TFIDF features or their variants to represent news texts, which are also popular in the NLP field.
+多くの手法では、ニュースのテキストを表現するためにBOW/TFIDF特徴量やその変種を取り入れているが、これらはNLP分野でも人気がある。
+In addition, topic models like LDA are employed by various methods to extract topics from texts.
+さらに、**LDAのようなトピックモデルは、テキストからトピックを抽出するために、さまざまな手法で用いられている**。
+This is probably because topic models are capable of mining the topic distributions of news articles and can also provide useful clues for inferring user interest on different topics.
+これは、トピックモデルがニュース記事のトピック分布をマイニングすることができ、さらに、異なるトピックに関するユーザの興味を推測するための有用な手がかりを提供することができるためである。
+Moreover, since users may focus more on the entities or keywords in news, they are considered by many methods to summarize the content and topic of news, and can also be useful links to find similar news or map news on knowledge graphs.
+さらに、**ユーザはニュースのentityやキーワードにより多くの注意を払う可能性がある**ため、多くの手法では、ニュースの内容やトピックを要約するために考慮されており、類似したニュースを見つけたり、知識グラフ上のニュースをマッピングするための有用なリンクになることもある。
+Especially, some methods also use ontology such as Wikipedia to extract entity features to represent them more accurately.
+特に、いくつかの手法では、オントロジー（Wikipediaなど）を用いてエンティティ特徴量を抽出し、より正確に表現することもある。
 
 Besides the texts of news, many methods utilize other information of news.
 ニュースのテキスト以外に、多くの手法はニュースの他の情報を利用している。
 For instance, the categories orclusters of news are popular news features to help model news content.
 例えば，ニュースのカテゴリやクラスタは，ニュースの内容をモデル化するのに役立つ人気のあるニュースの特徴である．
 In addition, several dynamic features ofnews are also widely employed in feature-based news modeling methods, such as popularity and recency.
-さらに，ニュースの動的な特徴である人気度や再来時なども，特徴ベースのニュースモデリング手法に広く採用されています．
+さらに，**ニュースの動的な特徴量である popularity と recency なども，特徴量ベースのニュースモデリング手法で広く利用されている**。
 Sincemany users may pay more attention to popular events and news usually vanish quickly, incorporating newspopularity and recency can help build more informative news representations.
 多くのユーザは人気のあるイベントにより多くの注意を払い、ニュースは通常すぐに消えてしまうため、ニュースの人気度や再現性を取り入れることで、より情報量の多いニュース表現を構築することができます。
 Besides, several environmentalfactors, such as locations and time are also utilized by several methods.
@@ -698,18 +706,18 @@ This is because considering locations ofnews can provide news related to users�
 また，ニュースのタイムスタンプを利用することで，時間を考慮したニュースサービスを提供することができる．
 
 A few methods also study incorporating other interesting features.
-また、いくつかの手法では、他の興味深い特徴を取り入れることも研究されている。
+また、いくつかの手法では、他の興味深い特徴量を取り入れることも研究されている。
 For example, the sentiment information ofnews is useful for news understanding, because users may have diferent tastes on the sentiment of news.
-例えば、ニュースのセンチメント情報は、ニュースの理解に役立ちます。
+例えば、ニュースのsentiment情報は、ニュースの理解に役立ちます。
 Thebias of news may also need to be taken into consideration, because recommending news with biased opinions andfacts may hurt user experience and the reputation of news platforms.
-また、偏った意見や事実を含むニュースを推薦すると、ユーザー体験やニュースプラットフォームの評判を損なう可能性があるため、ニュースの偏りを考慮する必要がある。
+また、偏った意見や事実を含むニュースを推薦すると、ユーザ体験やニュースプラットフォームの評判を損なう可能性があるため、**ニュースの偏りを考慮**する必要がある。
 Finally, although several non-personalizednews recommendation methods have used news images to build news representations [127], few personalizedones consider the visual information of news, which is very useful for news modeling.
-最後に，いくつかの非個人化ニュース推薦手法は，ニュース画像を用いてニュース表現を構築していますが [127]，ニュースのモデリングに非常に有用なニュースの視覚情報を考慮した個人化手法はほとんどありません．
+最後に、いくつかの非個人化ニュース推薦手法では、ニュースの画像を用いてニュース表現を構築しているが[127]、**個人化されたニュース推薦手法では、ニュースモデリングに非常に有用である視覚情報を考慮しているものはほとんどない**。
 
 Although feature-based news modeling methods have comprehensive coverage of various news information,they usually require a large amount of domain knowledge for feature design.
-特徴量ベースのニュースモデリング手法は，様々なニュース情報を包括的にカバーしているが，通常，特徴量設計のために大量のドメイン知識が必要となる．
-In addition, handcrafted featuresare usually not optimal in representing the textual content of news due to the absence of the contexts and ordersof words.
-また，手作業で作成された特徴量は，文脈や語順が分からないため，ニュースのテキスト内容を表現するのに最適なものではありません．
+特徴量ベースのニュースモデリング手法は，様々なニュース情報を包括的にカバーしているが，通常，**特徴量設計のために大量のドメイン知識が必要となる**。
+In addition, handcrafted featuresare usually not optimal in representing the textual content of news due to the absence of the contexts and orders of words.
+さらに、手作業で作成された特徴量は、単語の文脈や順序の考慮が欠けているため、ニュースのテキスト内容を表現するのに最適ではない。
 
 Table 3.
 表3.
@@ -719,49 +727,54 @@ Comparison of different methods on news modeling.
 ### 3.3.2. 3.3.2 Deep Learning-based News Modeling. 3.3.2. 3.3.2 ディープラーニングを用いたニュースのモデリング。
 
 Among all the reviewed methods, only two methods, i.e., DNA [235]and DeepJoNN [237], directly incorporate the embeddings of news IDs.
-しかし，DNA [235]とDeepJoNN [237]の2つの手法だけが，ニュースIDの埋め込みを直接的に取り入れている．
+**レビューされたすべての手法の中で、DNA [235]とDeepJoNN [237]の2つの手法のみが、ニュースIDの埋め込みを直接組み込んでいる**。(多くの手法がid-freeな手法ってこと??)
 This is probably because of the shortlifecycle of news articles and the quick generation of novel news, which make the coverage of news IDs in thetraining set very limited.
 これは、ニュース記事のライフサイクルが短く、新しいニュースの生成が早いため、学習セットに含まれるニュースIDの範囲が非常に限られているためと思われます。
 Thus, it is very important to understand news from their content.
-このように、ニュースを内容から理解することは非常に重要である。
+それゆえ、ニュースの内容を理解することが非常に重要である。
 
 News text modeling is critical for news understanding.
 ニューステキストをモデリングすることは，ニュースを理解する上で非常に重要である．
 Most methods use news titles to model news sincenews titles, because news titles usually have decisive inluence on users’ click behaviors.
-これは，ニュースのタイトルは通常，ユーザのクリック行動に決定的な影響を与えるためです．
+多くの手法は，ニュースのタイトルをニュースのモデル化に用いている。なぜなら、**ニュースのタイトルは，ユーザのクリック行動に決定的な影響を与えるから**である。
 Several methods such asEBNR [144], NAML [203] and CPRS [213] use news bodies to enhance news representations, since news bodiesare contain more detailed information of news.
-EBNR [144]、NAML [203]、CPRS [213]などのいくつかの手法は、ニュースの本文がより詳細な情報を含んでいるため、ニュース表現を強化するために本文を使用しています。
+EBNR [144]、NAML [203]、CPRS [213]などのいくつかの手法は、**ニュースの本文がより詳細な情報を含んでいるため、ニュース表現を強化するために本文を使用**しています。
 In existing methods, CNN is the most frequently used architecturefor text modeling.
-既存の手法では，CNNがテキストモデリングに最も頻繁に使用されるアーキテクチャである．
+既存の手法では，CNNがテキストモデリングに最も頻繁に使用されるアーキテクチャである．(そうなの??)
 This is because local contexts in news articles are important for modeling news content, and CNN is efective and eicient in capturing local contexts.
 これは，ニュース記事中の局所的な文脈がニュース内容のモデル化に重要であり，CNNが局所的な文脈を捉えるのに有効かつ効率的であるためである．
 In addition, since diferent news informationmay have diferent informativeness in modeling news content and user interest, attention mechanisms are alsowidely used to build news representations by selecting important features.
-また、ニュースの内容やユーザの興味をモデル化する上で、異なるニュース情報は異なる情報性を持つ可能性があるため、重要な特徴を選択することでニュース表現を構築するアテンションメカニズムも広く用いられている。
+また、ニュースの内容やユーザの興味をモデル化する上で、異なるニュース情報は異なる情報性を持つ可能性があるため、**重要な特徴を選択することでニュース表現を構築するアテンションメカニズム**も広く用いられている。(まさにNRMSとかね...!)
 With the success of Transformerin NLP, many methods also use Transformer-like architectures for news modeling, such as NRMS [207] andCPRS [213].
 NLPにおけるTransformerの成功により、NRMS [207]やCPRS [213]などの多くの手法もニュースのモデリングにTransformerに似たアーキテクチャを使用しています。
 In addition, a few methods use pre-trained language or and visiolinguistic models to empower newsmodeling [214,217].
 さらに、いくつかの手法では、事前に学習させた言語モデルや視覚言語モデルを使用して、ニュースモデリングを強化しています[214,217]。
 These advanced NLP techniques can greatly improve news content understanding, whichis very important for personalized news recommendation.
-これらの高度なNLP技術は，ニュースの内容理解を大幅に向上させることができ，これはパーソナライズされたニュース推薦に非常に重要である．
+**これらの高度なNLP技術は，ニュースの内容理解を大幅に向上させることができ，これはパーソナライズされたニュース推薦に非常に重要である**。
 However, these methods mainly aim to capture thesemantic information of news and may not be aware of the knowledge and commonsense information encodedin news.
-しかし，これらの手法は主にニュースの意味情報を捕らえることを目的としており，ニュースにエンコードされた知識や常識的な情報には気づいていない可能性がある．
+**しかし，これらの手法は主にニュースの意味情報を捕らえることを目的としており，ニュースにエンコードされた知識や常識的な情報には気づいていない可能性がある**。(ほうほう??)
 
 To address this issue, many methods incorporate news entities into news modeling to learn knowledge-awarenews representations [120].
-この問題に対処するため，多くの手法がニュースの実体をニュースモデリングに組み込んで，知識連想ニュース表現を学習している[120]．
+この問題に対処するため，**多くの手法がニュースのentities(固有表現?)をニュースモデリングに組み込んで**，knowledge-awareなニュース表現を学習している[120]。
 Some methods such as DAN [248] directly use entity texts to represent entities,while several other methods like DKN [197] use knowledge graph embeddings to represent entities.
-DAN [248]のように実体を表現するために実体のテキストを直接利用する手法もあれば、DKN [197]のように実体の表現に知識グラフ埋め込みを利用する手法もある。
+DAN [248]のようにentityを表現するために**entityのテキストを直接利用する手法**もあれば、DKN [197]のように**entityの表現に知識グラフ埋め込みを利用する手法**もある。
 These entityrepresentations are usually combined with representations learned from news texts to better model news content.However, there are many new entities and concepts emerging in news and it may be diicult to accuratelyrepresent them with of-the-shelf knowledge bases.
-しかし、ニュースには多くの新しい実体や概念が出現しており、既成の知識ベースではそれらを正確に表現することは困難である。
+**これらのentity表現は，通常，ニューステキストから学習された表現と組み合わされて，ニュースの内容をよりよくモデル化することができる**。(うんうん)
+しかし，ニュースには多くの新しいentityや概念が登場し，市販の知識ベースで正確に表現することは困難である可能性がある。
 
 Several methods incorporate the topic categories of news into news modeling, because news topics are veryuseful for understanding news content and inferring user interest.
-ニュースのトピックは，ニュースの内容を理解し，ユーザの興味を推測するのに非常に有用であるため，いくつかの手法はニュースのモデリングにニュースのトピックカテゴリを組み込んでいる．
-Considering the scenarios that some newsarticles are not labeled with topic categories, some methods such as TANR [205] and CHAMELEON [46] alsoadopt auxiliary tasks by predicting news topic categories to encode topic information into news representations.In addition, a few methods study using other kinds of news features such as sentiment [212], popularity [23],recency [157], which can help better understand the characteristics of news.
-さらに，Sentent[212]，Popular[23]，Recency[157]などの他の種類のニュース特徴を用いる研究も行われており，ニュースの特徴をよりよく理解するのに役立っている．
+**ニュースのトピックは，ニュースの内容を理解し，ユーザの興味を推測するのに非常に有用であるため，いくつかの手法はニュースのモデリングにニュースのトピックカテゴリを組み込んでいる**．
+Considering the scenarios that some newsarticles are not labeled with topic categories, some methods such as TANR [205] and CHAMELEON [46] alsoadopt auxiliary tasks by predicting news topic categories to encode topic information into news representations.
+**ニュース記事の一部にトピックカテゴリが付与されていないシナリオを考慮**して，TANR [205]やCHAMELEON [46]などのいくつかの手法では，ニュースのトピックカテゴリを予測する補助的なタスクを採用して，トピック情報をニュース表現にエンコードしている。
+In addition, a few methods study using other kinds of news features such as sentiment [212], popularity [23],recency [157], which can help better understand the characteristics of news.
+さらに，いくつかの手法では，センチメント[212]，人気度[23]，recency[157]などの他の種類のニュース特徴を用いて，ニュースの特性をよりよく理解することができる．
 However, some additional newsfeatures (e.g., category and CTR) may be unavailable in certain scenarios, which limits the application of thesemethods.
-しかし，いくつかの追加的なニュース特徴（例えば，カテゴリやCTR）は特定のシナリオで利用できない場合があり，これらの手法の適用を制限している．
+しかし，いくつかの追加的なニュース特徴量(例えば，カテゴリやCTR)は特定のシナリオで利用できない場合があり，これらの手法の適用を制限している．
 
-There are also a few methods that explore to enhance news modeling with graph information [53,70].These methods can incorporate the high-order information on user-news bipartite graphs [53,71,161,170] ormore complicated heterogeneous graphs [70,167], which can provide useful contexts on understanding thecharacteristics of news for news recommendation.
-これらの手法は，ユーザとニュースの二部グラフ[53,71,161,170]やより複雑な異種グラフ[70,167]の高次情報を取り込み，ニュースの特性を理解する上で，ニュース推薦に有用なコンテキストを提供することができる。
+There are also a few methods that explore to enhance news modeling with graph information [53,70].
+**グラフ情報**を用いてニュースのモデリングを強化することを探求している手法もいくつかある[53,70]。
+These methods can incorporate the high-order information on user-news bipartite graphs [53,71,161,170] ormore complicated heterogeneous graphs [70,167], which can provide useful contexts on understanding thecharacteristics of news for news recommendation.
+これらの手法は，ニュース推薦のためにニュースの特性を理解する上で有用な文脈を提供することができる，ユーザ-ニュース二部グラフ[53,71,161,170]やより複雑な異種グラフ[70,167]上の高次情報を取り込むことができる．
 However, since the graphs used in these methods are static,they may have some diiculties in accurately representing newly published news.
 しかし，これらの手法で用いられるグラフは静的であるため，新しく発表されたニュースを正確に表現することに困難が伴う可能性がある．
 
@@ -780,7 +793,7 @@ An example framework of user modeling.
 User modeling is also a critical step in personalized news recommender systems to infer users’ personal interestsin news.
 また，個人化されたニュース推薦システムにおいて，ユーザモデリングは，ユーザのニュースに対する個人的な興味を推測するために重要なステップである．
 It is usually important for user modeling algorithms to understand users from their behaviors [205].
-ユーザーモデリングアルゴリズムでは、通常、ユーザーの行動からユーザーを理解することが重要である[205]。
+ユーザモデリングアルゴリズムでは、通常、ユーザの行動からユーザを理解することが重要である[205]。
 Anexample user modeling framework in personalized news recommendation is shown in Fig. 4.
 図4は、個人向けニュース推薦におけるユーザモデリングのフレームワークの一例である。
 We can see thatuser modeling is based on the modeling of news that users have interactions with, and it introduces additionaluser features to achieve better personalized user understanding.
