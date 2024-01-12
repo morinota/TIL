@@ -5,6 +5,7 @@
 - [ZOZOTOWNの検索基盤におけるElasticsearch移行で得た知見](https://techblog.zozo.com/entry/migrating-zozotown-search-platform)
 - [データベースとしてのElasticsearch](https://qiita.com/rjkuro/items/95f71ad522226dc381c8#:~:text=%E3%81%A8%E3%81%97%E3%81%A6%E3%81%84%E3%81%BE%E3%81%99%E3%80%82-,%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E9%81%95%E3%81%84,%E3%83%91%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%B3%E3%82%B9%E3%81%A8%E3%82%B9%E3%82%B1%E3%83%BC%E3%83%A9%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%81%8C%E5%BC%B7%E3%81%84%E3%80%82)
 - [AWS はお客様のベクトルデータベース要件をどのようにサポートできるか?](https://aws.amazon.com/jp/what-is/vector-databases/#:~:text=AWS%20%E3%81%AF%E3%81%8A%E5%AE%A2%E6%A7%98%E3%81%AE%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9%E8%A6%81%E4%BB%B6%E3%82%92%E3%81%A9%E3%81%AE%E3%82%88%E3%81%86%E3%81%AB%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88%E3%81%A7%E3%81%8D%E3%82%8B%E3%81%8B%3F)
+- [NineOCRの改善を⽀えるFeature Store / Feature Store Supporting NineOCR Improvements](https://speakerdeck.com/sansan_randd/feature-store-supporting-nineocr-improvements)
 
 # 1. ElasticSearchとは
 

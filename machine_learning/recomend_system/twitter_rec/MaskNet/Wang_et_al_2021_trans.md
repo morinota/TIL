@@ -606,8 +606,9 @@ The following three data sets are used in our experiments:
 - (3) Avazu3 Dataset: The Avazu dataset consists of several days of ad click- through data which is ordered chronologically. For each click data, there are 23 fields which indicate elements of a single ad impression.
   - (3) Avazu3データセット： Avazuのデータセットは、**数日分の広告クリックスルー・データを時系列に並べたもの**である。 各クリックデータには、1つの広告インプレッションの要素を示す23のフィールドが存在します。
 
-We randomly split instances by 8 : 1 : 1 for training , validation and test while Table 1 lists the statistics of the evaluation datasets(これは時系列に沿ってデータを分けたほうがいいね...!:thinking:)
-表1に評価用データセットの統計値を示す。
+We randomly split instances by 8 : 1 : 1 for training , validation and test while Table 1 lists the statistics of the evaluation datasets.
+評価データセットの統計量を表1に示します。訓練、検証、テストの割合は8:1:1で、ランダムにインスタンスを分割しています。
+(これは時系列に沿ってデータを分けたほうがいいね...!:thinking:)
 
 ![table1]()
 
@@ -619,7 +620,7 @@ AUC’s upper bound is 1 and larger value indicates a better performance.
 AUCの上限は1であり、値が大きいほど性能が優れていることを示す。(そうか、CTR予測タスクだからAUCでもいいんだ)
 
 RelaImp is also as work [23] does to measure the relative AUC improvements over the corresponding baseline model as another evaluation metric.
-RelaImpはまた、別の評価指標として、**対応するベースラインモデルに対する相対的なAUCの改善を測定する**作業[23]と同様です。
+RelaImpはまた、別の評価指標として、**対応するベースラインモデルに対する相対的なAUCの改善を測定する**作業[23]と同様です。  
 Since AUC is 0.5 from a random strategy, we can remove the constant part of the AUC score and formalize the RelaImp as:
 ランダム戦略からAUCは0.5なので、AUCスコアの定数部分を削除してRelaImpを次のように定式化することができる：
 
