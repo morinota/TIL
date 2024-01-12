@@ -38,7 +38,7 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
   - (**時系列に沿ってデータを分割した方が良さそう**...!:thinking:)
 - オフライン評価指標:
   - 1. AUC (そうか、CTR予測タスクだから、必ずしもランキング指標じゃなくてもいいのか:thinking:)
-  - 2. 「RelaImp」= ベースラインモデルに対する相対的なAUCの改善度合い。
+  - 2. 「RelaImp」= **ベースラインモデルに対する相対的なAUCの改善度合い**。
     - (数式中の0.5という数値は、random strategyによるAUCの理論値を意味する。)
 
 $$
@@ -49,15 +49,37 @@ $$
 - ベースラインモデル:
   - 既存のdeep learningベースのCTR予測モデル達(FM, DNN, DeepFM, Deep&Cross Network(DCN), xDeepFM, AutoInt Model)
 - 実装の詳細:
-  - hoge
+  - バッチサイズ=1024, Adam optimizer, learning rate=0.001
+  - 全てのモデルでfield embeddingの次元数を10に固定。
+  - DNN部分を持つモデルでは、隠れ層の深さを3に固定。1層辺りのニューロン数を400に固定。活性化関数は全てReLUで固定。
+  - MaskBlockのハイパーパラメータ:
+    - Instance-Guided Maskのreduction ratio(縮小率)を2に固定。
 
 ## 議論はある？
 
 ### オフライン性能の比較
 
+- 結果(表2)からわかったこと:
+  - (1) hogehoge
+  - (2) hogehoge
+
 ### abration studyによるMaskブロックの各componentsの有効性評価
 
+- MaskBlockの各componentsの効果を理解するために、MaskBlockの主要componentsであるmask module, レイヤー正規化(LN)、feed forward層(FFN)の有無を変化させたモデルを作成し、オフライン評価を行った。
+- 結果(表3)からわかったこと:
+  - (1) **instance-guided maskとレイヤー正規化のどちらかを削除するとモデルの性能が低下した**
+    - -> 両componentsはMaskBlockの有効性を高めるために重要な役割を果たしている。
+  - (2) feed forward層を削除すると、パラレルモデルでは大きな影響はないが、シリアルモデルでは性能が劇的に低下した。
+
 ### MaskNetの各ハイパーパラメータの影響評価
+
+- 1つのハイパーパラメータを変更し、他の設定を維持したまま実験を行った。
+- 特徴量埋め込みの次元数の影響(表4):
+  - hoge
+- MaskBlock数の影響(表5):
+  - hoge
+- instance-guided maskのreduction ratio(縮小率)の影響(表6):
+  - hoge
 
 ## 次に読むべき論文は？
 
