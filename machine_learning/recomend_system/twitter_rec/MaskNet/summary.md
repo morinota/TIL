@@ -15,6 +15,18 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
 
 ## 技術や手法の肝は？
 
+### MaskNetのモデルアーキテクチャ
+
+#### Embedding layerについて
+
+#### Instance-Guided Maskについて
+
+#### MaskBlockについて
+
+### 二種類のMaskNetモデル
+
+### MaskNetの学習方法
+
 ## どうやって有効だと検証した?
 
 以下の4つのresearch questionsへの回答を目的として、オフライン実験を行った。

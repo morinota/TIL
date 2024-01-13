@@ -176,7 +176,7 @@ Finally the log loss as a loss function is introduced.
 ## 3.1. Embedding Layer エンベデッドレイヤー
 
 The input data of CTR tasks usually consists of sparse and dense features and the sparse features are mostly categorical type.
-CTRタスクの入力データは通常、疎と密の特徴量で構成され、疎の特徴量は主にcategoricalである。
+CTRタスクの入力データは通常、sparceとdenseの特徴量で構成され、疎の特徴量は主にcategoricalである。
 Such features are encoded as one-hot vectors which often lead to excessively high-dimensional feature spaces for large vocabularies.
 このような特徴量は、**one-hotベクトルとして符号化される**ため、大規模な語彙の場合、過剰に高次元の特徴量空間となることが多い。(うんうん...!)
 The common solution to this problem is to introduce the embedding layer.
