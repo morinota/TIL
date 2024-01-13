@@ -1,16 +1,16 @@
-## link リンク
+## 0.1. link リンク
 
 - 元論文: [Visualizing Data using t-SNE](https://lvdmaaten.github.io/publications/papers/JMLR_2008.pdf) 元論文 [t-SNEによるデータの可視化](https://lvdmaaten.github.io/publications/papers/JMLR_2008.pdf)
 
-## title タイトル
+## 0.2. title タイトル
 
 Visualizing Data using t-SNE
 t-SNEを使ったデータの可視化
 
-## absract absract
+## 0.3. absract absract
 
 We present a new technique called “t-SNE” that visualizes high-dimensional data by giving each datapoint a location in a two or three-dimensional map.
-各データポイントに2次元または3次元の地図上の位置を与えることによって、高次元データを可視化する「t-SNE」と呼ばれる新しい手法を紹介する。
+各データポイントに2次元または3次元の地図上の位置を与えることによって、**高次元データを可視化する「t-SNE」と呼ばれる新しい手法**を紹介する。
 The technique is a variation of Stochastic Neighbor Embedding (Hinton and Roweis, 2002) that is much easier to optimize, and produces significantly better visualizations by reducing the tendency to crowd points together in the center of the map.
 この手法は、確率的近傍埋め込み（Stochastic Neighbor Embedding）（Hinton and Roweis, 2002）のバリエーションであり、最適化がはるかに容易で、マップの中心に点が密集する傾向を抑えることで、大幅に優れた視覚化を実現する。
 t-SNE is better than existing techniques at creating a single map that reveals structure at many different scales.
@@ -22,52 +22,56 @@ For visualizing the structure of very large data sets, we show how t-SNE can use
 We illustrate the performance of t-SNE on a wide variety of data sets and compare it with many other non-parametric visualization techniques, including Sammon mapping, Isomap, and Locally Linear Embedding.
 様々なデータセットにおけるt-SNEの性能を示し、サモン・マッピング、アイソマップ、局所線形埋め込みを含む他の多くのノンパラメトリック可視化技術と比較する。
 The visualizations produced by t-SNE are significantly better than those produced by the other techniques on almost all of the data sets.
-t-SNEによって生成された可視化は、ほとんどすべてのデータセットにおいて、他の手法によって生成された可視化よりも有意に優れている。
+**t-SNEによって生成された可視化は、ほとんどすべてのデータセットにおいて、他の手法によって生成された可視化よりも有意に優れている**。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 Visualization of high-dimensional data is an important problem in many different domains, and deals with data of widely varying dimensionality.
 高次元データの可視化は様々な領域で重要な問題であり、様々な次元のデータを扱う。
 Cell nuclei that are relevant to breast cancer, for example, are described by approximately 30 variables (Street et al., 1993), whereas the pixel intensity vectors used to represent images or the word-count vectors used to represent documents typically have thousands of dimensions.
 例えば、乳がんに関連する細胞核は約30の変数で記述される（Street et al, 1993）が、画像を表現するのに使われるピクセル強度ベクトルや文書を表現するのに使われる単語数ベクトルは、通常数千の次元を持つ。
 Over the last few decades, a variety of techniques for the visualization of such high-dimensional data have been proposed, many of which are reviewed by de Oliveira and Levkowitz (2003).
-ここ数十年の間に、このような高次元データの可視化のための様々な技術が提案されており、その多くはde Oliveira and Levkowitz (2003)によってレビューされている。
+ここ数十年の間に、このような**高次元データの可視化のための様々な技術**が提案されており、その多くはde Oliveira and Levkowitz (2003)によってレビューされている。
 Important techniques include iconographic displays such as Chernoff faces (Chernoff, 1973), pixel-based techniques (Keim, 2000), and techniques that represent the dimensions in the data as vertices in a graph (Battista et al., 1994).
 重要な技法には、チェルノフ・フェイス（Chernoff, 1973）のような図像表示、ピクセル・ベースの技法（Keim, 2000）、データの次元をグラフの頂点として表現する技法（Battista et al, 1994）などがある。
 Most of these techniques simply provide tools to display more than two data dimensions, and leave the interpretation of the data to the human observer.
-これらの技術のほとんどは、2次元以上のデータを表示するツールを提供するだけで、データの解釈は人間の観察者に委ねられている。
-This severely limits the applicability of these techniques to real-world data sets that contain thousands of high-dimensional datapoints.
-このため、何千もの高次元データポイントを含む実世界のデータセットには、これらの技術の適用が著しく制限される。
+**これらの技術のほとんどは、2次元以上のデータを表示するツールを提供するだけで、データの解釈は人間の観察者に委ねられている。**(三次元以上は解釈むずいよな...!f)
+This severely limits the applicability of these techniques to real-word data sets that contain thousands of high-dimensional datapoints.
+このため、何千もの高次元データポイントを含む実世界のデータセットには、これらの技術の適用が著しく制限される。(うんうん)
+
 In contrast to the visualization techniques discussed above, dimensionality reduction methods convert the high-dimensional data set X = {x1, x2,..., xn} into two or three-dimensional data Y = {y1, y2,..., yn} that can be displayed in a scatterplot.
-上述の可視化技術とは対照的に、次元削減法は、高次元データセットX＝｛x1，x2，...，xn｝を、散布図で表示できる2次元または3次元データY＝｛y1，y2，...，yn｝に変換する。
+上述の可視化技術とは対照的に、**次元削減法は、高次元データセット $X = \{x_1, x_2, ..., x_n\}$ を、散布図に表示できる2次元または3次元データ $Y = \{y_1, y_2, ..., y_n\}$ に変換する**。
 In the paper, we refer to the low-dimensional data representation Y as a map, and to the low-dimensional representations yi of individual datapoints as map points.
-本稿では、低次元データ表現Yをマップと呼び、個々のデータポイントの低次元表現yiをマップポイントと呼ぶ。
+本稿では、**低次元データ表現 $Y$ をマップ**と呼び、個々のデータポイントの低次元表現 $y_i$ を**マップポイント**と呼ぶ。
 The aim of dimensionality reduction is to preserve as much of the significant structure of the high-dimensional data as possible in the low-dimensional map.
-次元削減の目的は、高次元のデータの重要な構造を低次元のマップにできるだけ残すことである。
+**次元削減の目的は、高次元のデータの重要な構造を低次元のマップにできるだけ残す**ことである。
 Various techniques for this problem have been proposed that differ in the type of structure they preserve.
 この問題に対しては、保存する構造の種類が異なる様々な手法が提案されている。
 Traditional dimensionality reduction techniques such as Principal Components Analysis (PCA; Hotelling, 1933) and classical multidimensional scaling (MDS; Torgerson, 1952) are linear techniques that focus on keeping the low-dimensional representations of dissimilar datapoints far apart.
-主成分分析(PCA; Hotelling, 1933)や古典的な多次元尺度構成法(MDS; Torgerson, 1952)のような伝統的な次元削減技法は、異種データポイントの低次元表現を遠ざけることに焦点を当てた線形技法である。
+主成分分析(PCA; Hotelling, 1933)や古典的な多次元尺度構成法(MDS; Torgerson, 1952)のような**伝統的な次元削減技法は、異種データポイントの低次元表現を遠ざけることに焦点を当てた線形技法**である。
 For high-dimensional data that lies on or near a low-dimensional, non-linear manifold it is usually more important to keep the low-dimensional representations of very similar datapoints close together, which is typically not possible with a linear mapping.
-低次元の非線形多様体上またはその近傍にある高次元データでは、通常、非常に類似したデータポイントの低次元の表現を近づけることがより重要である。
+低次元の非線形多様体上または近傍にある高次元データに対しては、非常に類似したデータポイントの低次元表現を近くに保つことが、**通常は線形マッピングでは不可能であるため、非線形マッピング**が必要となる。
+
 A large number of nonlinear dimensionality reduction techniques that aim to preserve the local structure of data have been proposed, many of which are reviewed by Lee and Verleysen (2007).
-データの局所構造を保持することを目的とした非線形次元削減手法が数多く提案されており、その多くはLee and Verleysen (2007)によってレビューされている。
+**データのlocal構造を保持することを目的とした非線形次元削減手法が数多く提案**されており、その多くはLee and Verleysen (2007)によってレビューされている。
 In particular, we mention the following seven techniques: (1) Sammon mapping (Sammon, 1969), (2) curvilinear components analysis (CCA; Demartines and Herault, ´ 1997), (3) Stochastic Neighbor Embedding (SNE; Hinton and Roweis, 2002), (4) Isomap (Tenenbaum et al., 2000), (5) Maximum Variance Unfolding (MVU; Weinberger et al., 2004), (6) Locally Linear Embedding (LLE; Roweis and Saul, 2000), and (7) Laplacian Eigenmaps (Belkin and Niyogi, 2002).
 特に以下の7つの技法を挙げる： (1) Sammon mapping (Sammon, 1969), (2) curvilinear components analysis (CCA; Demartines and Herault, ´ 1997), (3) Stochastic Neighbor Embedding (SNE; Hinton and Roweis, 2002), (4) Isomap (Tenenbaum et al、 2000）、(5) Maximum Variance Unfolding (MVU; Weinberger et al., 2004)、(6) Locally Linear Embedding (LLE; Roweis and Saul, 2000)、(7) Laplacian Eigenmaps (Belkin and Niyogi, 2002)がある。
 Despite the strong performance of these techniques on artificial data sets, they are often not very successful at visualizing real, high-dimensional data.
 これらの技術は人工的なデータセットでは高い性能を発揮するものの、実際の高次元データの可視化ではあまり成功しないことが多い。
 In particular, most of the techniques are not capable of retaining both the local and the global structure of the data in a single map.
-特に、ほとんどの技術は、データのローカル構造とグローバル構造の両方を単一のマップに保持することができない。
+**特に、ほとんどの技術は、データのローカル構造とグローバル構造の両方を単一のマップに保持することができない**。
 For instance, a recent study reveals that even a semi-supervised variant of MVU is not capable of separating handwritten digits into their natural clusters (Song et al., 2007).
 例えば、最近の研究では、MVUの半教師付き変種でさえ、手書きの数字を自然なクラスターに分離できないことが明らかになった（Song et al, 2007）。
+
 In this paper, we describe a way of converting a high-dimensional data set into a matrix of pairwise similarities and we introduce a new technique, called “t-SNE”, for visualizing the resulting similarity data.
 本論文では、高次元データセットをペアごとの類似度行列に変換する方法を説明し、得られた類似度データを可視化するための「t-SNE」と呼ばれる新しい手法を紹介する。
 t-SNE is capable of capturing much of the local structure of the high-dimensional data very well, while also revealing global structure such as the presence of clusters at several scales.
-t-SNEは、高次元データの局所的な構造の多くを非常によく捉えることができ、同時にいくつかのスケールにおけるクラスターの存在などの大域的な構造も明らかにすることができる。
+**t-SNEは、高次元データの局所的な構造の多くを非常によく捉えることができ、同時にいくつかのスケールにおけるクラスターの存在などの大域的な構造も明らかにすることができる。**
 We illustrate the performance of t-SNE by comparing it to the seven dimensionality reduction techniques mentioned above on five data sets from a variety of domains.
 我々は、様々なドメインからの5つのデータセット上で、上記の7つの次元削減技術と比較することにより、t-SNEの性能を説明する。
 Because of space limitations, most of the (7+1)×5 = 40 maps are presented in the supplemental material, but the maps that we present in the paper are sufficient to demonstrate the superiority of t-SNE.
 紙面の都合上、(7+1)×5＝40のマップの大半は補足資料に掲載したが、t-SNEの優位性を示すには、論文で紹介したマップで十分である。
+
 The outline of the paper is as follows.
 論文のアウトラインは以下の通り。
 In Section 2, we outline SNE as presented by Hinton and Roweis (2002), which forms the basis for t-SNE.
@@ -83,77 +87,85 @@ The results of our experiments are discussed in more detail in Section 6.
 Our conclusions and suggestions for future work are presented in Section 7.
 結論と今後の課題についてはセクション7で述べる。
 
-# Stochastic Neighbor Embedding 確率的隣人埋め込み
+# 2. Stochastic Neighbor Embedding 確率的隣人埋め込み
 
-Stochastic Neighbor Embedding (SNE) starts by converting the high-dimensional Euclidean distances between datapoints into conditional probabilities that represent similarities.1 The similarity of datapoint x j to datapoint xi is the conditional probability, p j|i , that xi would pick x j as its neighbor if neighbors were picked in proportion to their probability density under a Gaussian centered at xi .
-i , that xi would pick x j as its neighbor if neighbors were picked in proportion to their probability density under a Gaussian centered at xi .
+Stochastic Neighbor Embedding (SNE) starts by converting the high-dimensional Euclidean distances between datapoints into conditional probabilities that represent similarities.
+**確率的近傍埋め込み(SNE)は、データポイント間の高次元ユークリッド距離を、類似性を表す条件付き確率に変換する**ことから始まる。
+The similarity of datapoint x j to datapoint xi is the conditional probability, p j|i , that xi would pick x j as its neighbor if neighbors were picked in proportion to their probability density under a Gaussian centered at xi .
+データポイント $x_j$ のデータポイント $x_i$ への類似性は、$x_i$ を中心とするガウス分布の確率密度に比例して近傍が選択された場合に、$x_i$ が近傍として $x_j$ を選択する条件付き確率 $p_{j|i}$ である。
 For nearby datapoints, pj|i is relatively high, whereas for widely separated datapoints, p j|i will be almost infinitesimal (for reasonable values of the variance of the Gaussian, σi).
-i is relatively high, whereas for widely separated datapoints, p j
+近くのデータポイントでは、$p_{j|i}$ は比較的高く、離れたデータポイントでは、$p_{j|i}$ はほとんど無限小になる(ガウス分布の分散 $\sigma_i$ の妥当な値に対して)。
 Mathematically, the conditional probability pj|i is given by
-i is given by
+(ちなみに)数学的には、条件付き確率 $p_{j|i}$ は次式で与えられる。
 
 $$
+p_{i|j} = \frac{\exp(-\|x_i - x_j\|^2 / 2\sigma_i^2)}{\sum_{k \neq i} \exp(-\|x_i - x_k\|^2 / 2\sigma_i^2)}
 \tag{1}
 $$
 
 where σi is the variance of the Gaussian that is centered on datapoint xi .
-ここでσi はデータポイントxi を中心とするガウスの分散である。
+ここでσi はデータポイントxi を中心とするガウス分布の分散である。
 The method for determining the value of σi is presented later in this section.
 σiの値を決定する方法は、このセクションで後述する。
 Because we are only interested in modeling pairwise similarities, we set the value of pi|i to zero.
-i to zero.
+ペアワイズの類似性をモデル化することに興味があるため、$p_{i|i}$ の値をゼロに設定する。
 For the low-dimensional counterparts yi and y j of the high-dimensional datapoints xi and x j , it is possible to compute a similar conditional probability, which we denote by qj|i .
-i .
-We set2 the variance of the Gaussian that is employed in the computation of the conditional probabilities q j|i to √ 1 2 .
-i to √ 1 2 .
+高次元データポイント$x_i$と$x_j$を**mappingした低次元対応 $y_i$ と$y_j$について、同様の条件付き確率$q_{j|i}$を計算することが可能である**。(うんうん...!)
+We set the variance of the Gaussian that is employed in the computation of the conditional probabilities q j|i to √ 1 2 .
+条件付き確率 $q_{j|i}$ の計算に使用されるガウス分布の分散を $1 / \sqrt{2}$ に設定する。
 Hence, we model the similarity of map point y j to map point yi
-したがって、地図点y jと地図点yiの類似性をモデル化する。
+したがって、圧縮後の**map point $y_i$ からmap point $y_j$ への類似性**を以下のようにモデル化する。
 
 $$
+q_{j|i} = \frac{\exp(-\|y_i - y_j\|^2)}{\sum_{k \neq i} \exp(-\|y_i - y_k\|^2)}
 \tag{}
 $$
 
 Again, since we are only interested in modeling pairwise similarities, we set qi|i = 0.
-i = 0.
+再び、ペアワイズの類似性をモデル化することに興味があるため、$q_{i|i}$ の値をゼロに設定する。
+
 If the map points yi and y j correctly model the similarity between the high-dimensional datapoints xi and x j , the conditional probabilities p j|i and qj|i will be equal.
-i and qj
+**map point $y_i$ と$y_j$が高次元データポイント $x_i$ と $x_j$ の類似性を正しくモデル化している場合、条件付き確率 $p_{j|i}$ と $q_{j|i}$ は等しくなる。**(うんうん...!これが最適化の方向性か...!)
 Motivated by this observation, SNE aims to find a low-dimensional data representation that minimizes the mismatch between pj|i and qj|i .
-i and qj
+この観察に基づいて、SNEは、$p_{j|i}$ と $q_{j|i}$ の不一致を最小化する低次元データ表現を見つけることを目指す。
 A natural measure of the faithfulness with which q j|i models pj|i is the KullbackLeibler divergence (which is in this case equal to the cross-entropy up to an additive constant).
-i models pj
+**「$q_{j|i}$ が $p_{j|i}$ をどの程度忠実にモデル化しているか」の自然な尺度は、カルバック・ライブラー発散**（この場合、加法定数を除いてクロスエントロピーと等しい）である。
 SNE minimizes the sum of Kullback-Leibler divergences over all datapoints using a gradient descent method.
-SNEは、勾配降下法を用いて、すべてのデータポイントのカルバック・ライブラー発散の和を最小化する。
+SNEは、勾配降下法を用いて、**すべてのデータポイントのカルバック・ライブラー発散の和を最小化**する。
 The cost function C is given by
-コスト関数Cは次式で与えられる。
+コスト関数Cは次式で与えられる。(=loss function?)
 
 $$
+C = \sum_i KL(P_i || Q_i) = \sum_i \sum_j p_{j|i} \log \frac{p_{j|i}}{q_{j|i}}
 \tag{2}
 $$
 
 in which Pi represents the conditional probability distribution over all other datapoints given datapoint xi , and Qi represents the conditional probability distribution over all other map points given map point yi .
-ここで、Pi はデータ点 xi が与えられた他の全てのデータ点に対する条件付き確率分布を表し、Qi は地図点 yi が与えられた他の全ての地図点に対する条件付き確率分布を表す。
+ここで、$P_i$ はデータポイント $x_i$ が与えられたときの他のすべてのデータポイントに対する条件付き確率分布を表し、$Q_i$ はマップポイント $y_i$ が与えられたときの他のすべてのマップポイントに対する条件付き確率分布を表す。
 Because the Kullback-Leibler divergence is not symmetric, different types of error in the pairwise distances in the low-dimensional map are not weighted equally.
-カルバック・ライブラー発散は対称ではないので、低次元マップの対距離の異なるタイプの誤差は等しく重み付けされない。
+**カルバック・ライブラー発散に対称性はないので(だよね!JSダイバージェンスはあるよ!)、低次元マップの対距離の異なるタイプの誤差は等しく重み付けされない**。(ここがSNEとt-SNEとの違いかな...??)
 In particular, there is a large cost for using widely separated map points to represent nearby datapoints (i.e., for us a small qj|i to model a large pj|i ), but there is only a small cost for using nearby map points to represent widely separated datapoints.
-i to model a large pj|i ), but there is only a small cost for using nearby map points to represent widely separated datapoints.
+特に、近くのデータポイントを表現するために離れたマップポイントを使用する場合（つまり、大きな $p_{j|i}$ をモデル化するために小さな $q_{j|i}$ を使用する場合）には、大きなコストが発生するが、離れたデータポイントを表現するために近くのマップポイントを使用する場合には、小さなコストしか発生しない。
 This small cost comes from wasting some of the probability mass in the relevant Q distributions.
-このわずかなコストは、関連するQ分布の確率質量の一部を無駄にすることに由来する。
+このわずかなコストは、**関連するQ分布の確率質量の一部を無駄にすること**に由来する。
 In other words, the SNE cost function focuses on retaining the local structure of the data in the map (for reasonable values of the variance of the Gaussian in the high-dimensional space, σi).
-言い換えれば、SNEコスト関数は、（高次元空間におけるガウスの分散σiの妥当な値に対して）マップ内のデータの局所構造を保持することに重点を置く。
+**言い換えれば、SNEコスト関数は、（高次元空間におけるガウスの分散σiの妥当な値に対して）マップ内のデータの局所構造を保持することに重点を置く。** (高次元空間における正規分布の分散はハイパーパラメータか...!)
+
 The remaining parameter to be selected is the variance σi of the Gaussian that is centered over each high-dimensional datapoint, xi .
 選択すべき残りのパラメータは、各高次元データポイントxi を中心とするガウスの分散σi である。
 It is not likely that there is a single value of σi that is optimal for all datapoints in the data set because the density of the data is likely to vary.
-データの密度は変化する可能性が高いため、データセット内のすべてのデータポイントに最適なσiの値が1つである可能性は低い。
+**データの密度は変化する可能性が高いため、データセット内のすべてのデータポイントに最適なσiの値が1つである可能性は低い。**(確かに...! 混雑してるエリアとそうでないエリア)
 In dense regions, a smaller value of σi is usually more appropriate than in sparser regions.
-密な領域では、通常、σi の値は、疎な領域よりも小さい方が適切である。
+密な領域では、通常、$\sigma_i$ の値が小さい方が、疎な領域よりも適している。
 Any particular value of σi induces a probability distribution, Pi , over all of the other datapoints.
-σiの任意の特定の値は、他のすべてのデータポイント上の確率分布Pi を誘導する。
+$\sigma_i$ の特定の値は、他のすべてのデータポイントに対する確率分布 $P_i$ を導く。
 This distribution has an entropy which increases as σi increases.
-この分布はエントロピーを持ち、σiが増加するにつれて増加する。
+この分布はエントロピー(=ばらつき??)を持ち、σiが増加するにつれて増加する。
 SNE performs a binary search for the value of σi that produces a Pi with a fixed perplexity that is specified by the user.3 The perplexity is defined as
-SNE は、σi の値の二値探索を行い、ユーザが指定する固定の当惑度を持つ円周率を生成する3。
+SNE は、ユーザーが指定したfixed perplexityを持つ $P_i$ を生成する $\sigma_i$ の値の2分探索を行う。ここで、perplexityは次式で定義される。
 
 $$
+Perp(P_i) = 2^{H(P_i)}
 \tag{}
 $$
 
@@ -161,68 +173,74 @@ where H(Pi) is the Shannon entropy of Pi measured in bits
 ここで、H(Pi)はPiのシャノンエントロピー（ビット単位）である。
 
 $$
+H(P_i) = -\sum_j p_{j|i} \log_2 p_{j|i}
 \tag{}
 $$
 
 The perplexity can be interpreted as a smooth measure of the effective number of neighbors.
-当惑度は、有効な近傍数の滑らかな尺度として解釈することができる。
+**perplexityは、有効な近傍の数の滑らかな尺度として解釈することができる。**(smooth measureって"ざっくり"みたいなイメージ??)
 The performance of SNE is fairly robust to changes in the perplexity, and typical values are between 5 and 50.
-SNEの性能は難易度の変化にかなり強く、典型的な値は5から50の間である。
+SNEの性能はperplexityの変化に対してかなり頑健であり、典型的な値は5から50の間である。
 The minimization of the cost function in Equation 2 is performed using a gradient descent method.
 式2のコスト関数の最小化は、勾配降下法を用いて行われる。
-The gradient has a surprisingly simple form
-グラデーションは驚くほど単純な形をしている。
+The gradient has a surprisingly simple form.
+勾配は驚くほど単純な形をしている。
 
 $$
+\frac{\partial C}{\partial y_i} = 2 \sum_j (p_{j|i} - q_{j|i} + p_{i|j} - q_{i|j})(y_i - y_j)
 \tag{}
 $$
 
 Physically, the gradient may be interpreted as the resultant force created by a set of springs between the map point yi and all other map points y j .
-物理的には、勾配は、地図点 yi と他のすべての地図点 y j との間のバネの集合によって生じる結果的な力として解釈することができる。
+物理的には、勾配は、地図点 yi と他のすべての地図点 y j Fとの間のバネの集合によって生じる結果的な力として解釈することができる。(面白い...!)
 All springs exert a force along the direction (yi −y j).
-すべてのバネは（yi -y j）方向に沿って力を発揮する。
+すべてのバネは $y_i - y_j$ の方向に力を及ぼす。
 The spring between yi and y j repels or attracts the map points depending on whether the distance between the two in the map is too small or too large to represent the similarities between the two high-dimensional datapoints.
-yiとy jの間のバネは、2つの高次元データポイントの類似性を表現するために、マップ内の2つの間の距離が小さすぎるか大きすぎるかによって、マップポイントを反発させたり引き寄せたりする。
+$y_i$ と $y_j$ の間のバネは、2つの高次元データポイントの類似性を表現するために、マップ上の距離が小さすぎるか大きすぎるかに応じて、マップポイントを引き離すか引き寄せる。
 The force exerted by the spring between yi and y j is proportional to its length, and also proportional to its stiffness, which is the mismatch (p j|i −qj|i + pi| j −qi| j) between the pairwise similarities of the data points and the map points.
-i −qj
+$y_i$ と $y_j$ の間のバネが及ぼす力は、**その長さに比例し、また、その硬さに比例する**。ここで、硬さは、データポイントとマップポイントのペアごとの類似性とマップポイントの不一致($p_{j|i} - q_{j|i} + p_{i|j} - q_{i|j}$)である。
+
 The gradient descent is initialized by sampling map points randomly from an isotropic Gaussian with small variance that is centered around the origin.
-勾配降下は、原点を中心とした小さな分散を持つ等方性ガウスからランダムにマップ点をサンプリングすることで初期化される。
+勾配降下は、原点を中心とした小さな分散を持つ等方性ガウスからランダムにマップ点をサンプリングすることで初期化される。(確率的勾配降下法)
 In order to speed up the optimization and to avoid poor local minima, a relatively large momentum term is added to the gradient.
-最適化を高速化し、貧弱な局所極小値を避けるために、比較的大きな運動量項を勾配に加える。
+最適化を高速化し、貧弱な局所極小値を避けるために、比較的大きな運動量項を勾配に加える。(これは局所最適解を避ける話か...!)
 In other words, the current gradient is added to an exponentially decaying sum of previous gradients in order to determine the changes in the coordinates of the map points at each iteration of the gradient search.
-言い換えれば、勾配探索の各反復における地図点の座標の変化を決定するために、指数関数的に減衰する過去の勾配の和に現在の勾配が加算される。
+言い換えれば、勾配探索の各反復におけるmap pointの座標の変化を決定するために、現在の勾配は、前の勾配の指数関数的に減衰する和に加えられる。
 Mathematically, the gradient update with a momentum term is given by
 数学的には、運動量項を持つ勾配更新は次式で与えられる。
 
 $$
+Y(t) = Y(t-1) + \eta \frac{\partial C}{\partial Y} + \alpha(t) (Y(t-1) - Y(t-2))
 \tag{}
 $$
 
 where Y (t) indicates the solution at iteration t, η indicates the learning rate, and α(t) represents the momentum at iteration t.
-ここで、Y(t)は反復tにおける解、ηは学習率、α(t)は反復tにおける運動量を表す。
+ここで、$Y(t)$ は反復tでの解を示し、$\eta$ は学習率を示し、$\alpha(t)$ は反復tでの運動量を示す。
+
 In addition, in the early stages of the optimization, Gaussian noise is added to the map points after each iteration.
-さらに、最適化の初期段階では、各反復の後に地図点にガウスノイズが加えられる。
+さらに、最適化の初期段階では、各反復の後にmap pointにガウスノイズが加えられる。
 Gradually reducing the variance of this noise performs a type of simulated annealing that helps the optimization to escape from poor local minima in the cost function.
-このノイズの分散を徐々に小さくしていくことで、シミュレーテッド・アニーリングの一種が実行され、最適化がコスト関数の貧弱な局所極小値から脱出できるようになる。
+このノイズの分散を徐々に小さくしていくことで、シミュレーテッド・アニーリングの一種が実行され、最適化がコスト関数の貧弱な局所極小値から脱出できるようになる。(最初は探索的に最適解を探していくよ！みたいなイメージ?)
 If the variance of the noise changes very slowly at the critical point at which the global structure of the map starts to form, SNE tends to find maps with a better global organization.
 マップの大域的な構造が形成され始める臨界点でノイズの分散が非常にゆっくりと変化する場合、SNEはより優れた大域的な構造を持つマップを見つける傾向がある。
 Unfortunately, this requires sensible choices of the initial amount of Gaussian noise and the rate at which it decays.
-残念なことに、これにはガウスノイズの初期量と減衰速度を適切に選択する必要がある。
+残念なことに、これにはガウスノイズの初期量と減衰速度の適切な選択が必要である。(ハイパーパラメータか...!)
 Moreover, these choices interact with the amount of momentum and the step size that are employed in the gradient descent.
 さらに、これらの選択は、勾配降下で採用される運動量やステップサイズと相互作用する。
 It is therefore common to run the optimization several times on a data set to find appropriate values for the parameters.4 In this respect, SNE is inferior to methods that allow convex optimization and it would be useful to find an optimization method that gives good results without requiring the extra computation time and parameter choices introduced by the simulated annealing.
-この点で、SNEは凸最適化が可能な手法よりも劣っており、シミュレーテッド・アニーリングによってもたらされる余分な計算時間やパラメータの選択を必要とせずに、良い結果をもたらす最適化手法を見つけることは有用であろう。
+したがって、パラメータの適切な値を見つけるために、データセット上で最適化を数回実行することは一般的である。
+この点で、SNEは凸最適化を許可する方法に劣っており、シミュレーテッド・アニーリングによって導入された余分な計算時間とハイパーパラメータ選択を必要とせずに良い結果を与える最適化方法を見つけることは有用であるだろう。(これがt-SNEか...!)
 
-# t-Distributed Stochastic Neighbor Embedding t分散確率的隣接埋め込み
+# 3. t-Distributed Stochastic Neighbor Embedding t分布確率的隣接埋め込み
 
 Section 2 discussed SNE as it was presented by Hinton and Roweis (2002).
 セクション2では、Hinton and Roweis (2002)が提示したSNEについて論じた。
 Although SNE constructs reasonably good visualizations, it is hampered by a cost function that is difficult to optimize and by a problem we refer to as the “crowding problem”.
-SNEはそれなりに優れたビジュアライゼーションを構築するが、最適化が難しいコスト関数と、われわれが「クラウディング問題」と呼ぶ問題によって妨げられている。
+**SNEはそれなりに優れたビジュアライゼーションを構築するが、最適化が難しいコスト関数と、われわれが「クラウディング問題」と呼ぶ問題によって妨げられている**。
 In this section, we present a new technique called “t-Distributed Stochastic Neighbor Embedding” or “t-SNE” that aims to alleviate these problems.
-このセクションでは、これらの問題を軽減することを目的とした「t-Distributed Stochastic Neighbor Embedding」（t-SNE）と呼ばれる新しい手法を紹介する。
+このセクションでは、**これらの問題を軽減することを目的とした「t-Distributed Stochastic Neighbor Embedding」（t-SNE）と呼ばれる新しい手**法を紹介する。
 The cost function used by t-SNE differs from the one used by SNE in two ways: (1) it uses a symmetrized version of the SNE cost function with simpler gradients that was briefly introduced by Cook et al.(2007) and (2) it uses a Student-t distribution rather than a Gaussian to compute the similarity between two points in the low-dimensional space.
-t-SNEで使用されるコスト関数は、SNEで使用されるものとは2つの点で異なる： (1)Cookら(2007)によって簡単に紹介された、より単純な勾配を持つSNEコスト関数の対称化バージョンを使用すること、(2)低次元空間における2点間の類似度を計算するために、ガウス分布ではなくスチューデントt分布を使用すること、である。
+t-SNEで使用されるコスト関数は、SNEで使用されるものとは2つの点で異なる：(1)Cookら(2007)によって簡単に紹介された、より単純な勾配を持つSNEコスト関数の対称化バージョンを使用すること、(2)低次元空間における2点間の類似度を計算するために、ガウス分布ではなくスチューデントt分布を使用すること、である。
 t-SNE employs a heavy-tailed distribution in the low-dimensional space to alleviate both the crowding problem and the optimization problems of SNE.
 t-SNEは、SNEの混雑問題と最適化問題の両方を軽減するために、低次元空間における重尾分布を採用している。
 In this section, we first discuss the symmetric version of SNE (Section 3.1).
@@ -278,7 +296,7 @@ $$
 In preliminary experiments, we observed that symmetric SNE seems to produce maps that are just as good as asymmetric SNE, and sometimes even a little better.
 予備的な実験では、対称SNEは非対称SNEと同じくらい良いマップを生成し、時には少し良いマップを生成することさえあるようだ。
 
-## The Crowding Problem 
+## 3.1. The Crowding Problem
 
 Consider a set of datapoints that lie on a two-dimensional curved manifold which is approximately linear on a small scale, and which is embedded within a higher-dimensional space.
 小さなスケールでほぼ線形であり、高次元空間に埋め込まれた2次元曲線多様体上にあるデータポイントの集合を考える。
@@ -383,7 +401,7 @@ SNEとUNI-SNEはこのような長距離力を持たないため、妥当な解�
 Instead, the long-range forces in t-SNE facilitate the identification of good local optima without resorting to simulated annealing.
 その代わりに、t-SNEの長距離力は、シミュレーテッド・アニーリングに頼ることなく、良好な局所最適値の同定を容易にする。
 
-## Optimization Methods for t-SNE t-SNEの最適化手法
+## 3.2. Optimization Methods for t-SNE t-SNEの最適化手法
 
 We start by presenting a relatively simple, gradient descent procedure for optimizing the t-SNE cost function.
 まず、t-SNEコスト関数を最適化するための、比較的単純な勾配降下法を紹介する。
@@ -426,7 +444,7 @@ A Matlab implementation of the resulting algorithm is available at http://ticc.
 uvt.nl/˜lvdrmaaten/tsne.
 uvt.nl/ 〜lvdrmaaten/tsne.
 
-# Experiments 実験
+# 4. Experiments 実験
 
 To evaluate t-SNE, we present experimentsin which t-SNE is compared to seven other non-parametric techniques for dimensionality reduction.
 t-SNEを評価するために、t-SNEを他の7つのノンパラメトリック次元削減手法と比較する実験を行う。
@@ -521,7 +539,7 @@ Figure 5 also reveals that the other three techniques are not nearly as good at 
 In addition, Isomap and LLE only visualize a small number of classes from the COIL-20 data set, because the data set comprises a large number of widely separated submanifolds that give rise to small connected components in the neighborhood graph.
 さらに、IsomapとLLEは、COIL-20データセットから少数のクラスしか可視化しない。これは、データセットが近傍グラフの小さな連結成分を生じさせる多数の広く分離した部分多様体から構成されているためである。
 
-# Applying t-SNE to Large Data Sets 大規模データセットへのt-SNEの適用
+# 5. Applying t-SNE to Large Data Sets 大規模データセットへのt-SNEの適用
 
 Applying t-SNE to Large Data Sets Like many other visualization techniques, t-SNE has a computational and memory complexity that is quadratic in the number of datapoints.
 大規模データセットへのt-SNEの適用 他の多くの可視化技術と同様に、t-SNEはデータポイント数の2次関数的な計算量とメモリ複雑度を持つ。
@@ -583,7 +601,7 @@ Whereas the generalization error (measured using 10-fold cross validation) of a 
 The computational requirements of random walk t-SNE are reasonable: it took only one hour of CPU time to construct the map in Figure 7.
 ランダムウォークt-SNEの計算要件は合理的である： 図7のマップを作成するのにかかったCPU時間はわずか1時間である。
 
-# Discussion 議論
+# 6. Discussion 議論
 
 The results in the previous two sections (and those in the supplemental material) demonstrate the performance of t-SNE on a wide variety of data sets.
 前の2つのセクションの結果（および補足資料の結果）は、様々なデータセットにおけるt-SNEの性能を示している。
@@ -715,7 +733,7 @@ Moreover, the convexity of cost functions can be misleading, because their optim
 Even for LLE and Laplacian Eigenmaps, the optimization is performed using iterative Arnoldi (Arnoldi, 1951) or Jacobi-Davidson (Fokkema et al., 1999) methods, which may fail to find the global optimum due to convergence problems.
 LLEやラプラシアン固有マップの場合でも、最適化はArnoldi (Arnoldi, 1951)やJacobi-Davidson (Fokkema et al., 1999)の反復法を用いて行われるが、収束の問題から大域的最適解を見つけられないことがある。
 
-# Conclusion 結論
+# 7. Conclusion 結論
 
 The paper presents a new technique for the visualization of similarity data that is capable of retaining the local structure of the data while also revealing some important global structure (such as clusters at multiple scales).
 本論文では、データの局所的な構造を保持しつつ、重要な大域的構造（複数のスケールにおけるクラスターなど）を明らかにすることができる、類似性データの可視化のための新しい手法を紹介する。
