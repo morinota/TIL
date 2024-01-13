@@ -134,90 +134,130 @@ Cross-domain recommendation problem has been formulated in different recommendat
 クロスドメイン推薦問題は、シングルターゲットCDR、マルチドメイン推薦、デュアルターゲットCDR、マルチターゲットCDRといった異なる推薦シナリオで定式化されている。
 The main differences among these scenarios are the scales of domains, overlaps, and improvement targets.
 これらのシナリオの主な違いは、ドメインの規模、重複、改善目標である。
-In this section, we introduce these particular CDR scenarios and their corresponding challenges.2.1 Single-Target CDR Single-target CDR is a conventional recommendation scenario in CDR area and most of the existing CDR approaches focus on this scenario.
-2.1 シングル・ターゲットCDR シングル・ターゲットCDRは、CDR分野における従来の推薦シナリオであり、既存のCDRアプローチのほとんどはこのシナリオに焦点を当てている。
+In this section, we introduce these particular CDR scenarios and their corresponding challenges.
+本節では、これらの特定のCDRシナリオとそれらに対応する課題について紹介する。
+
+## 2.1. Single-Target CDR
+
+Single-target CDR is a conventional recommendation scenario in CDR area and most of the existing CDR approaches focus on this scenario.
+シングルターゲットCDRは、CDR分野における従来の推薦シナリオであり、既存のCDRアプローチのほとんどはこのシナリオに焦点を当てている。
 We define this recommendation problem as follows.
 この推薦問題を以下のように定義する。
-Definition 1 Single-Target Cross-Domain Recommendation: Given the source domain s (including a user set U s and an item set V s ) with richer data — such as explicit feedback (e.g., ratings and comments), implicit feedback (e.g., purchase and browsing histories), and side information (e.g., user profiles and item details) — and the target domain t (including a user set U t and an item set V t ) with sparser data, single-target CDR is to improve the recommendation accuracy in t by leveraging the auxiliary information in s.
-定義1 単一ターゲット・クロスドメイン推薦： ソースドメインs（ユーザ集合U sとアイテム集合V sを含む）とターゲットドメインt（ユーザ集合U tとアイテム集合V tを含む）が、明示的フィードバック（評価やコメントなど）、暗黙的フィードバック（購入履歴や閲覧履歴など）、サイド情報（ユーザプロファイルやアイテムの詳細など）などの豊富なデータを持つ場合、シングルターゲットCDRは、sの補助情報を活用することで、tの推薦精度を向上させる。
+
+### 2.1.1. Definition 1 Single-Target Cross-Domain Recommendation:
+
+Given the source domain s (including a user set U s and an item set V s ) with richer data — such as explicit feedback (e.g., ratings and comments), implicit feedback (e.g., purchase and browsing histories), and side information (e.g., user profiles and item details) — and the target domain t (including a user set U t and an item set V t ) with sparser data, single-target CDR is to improve the recommendation accuracy in t by leveraging the auxiliary information in s.
+より豊富なデータを含むソースドメイン $s$ (ユーザ集合 $U^s$ とアイテム集合 $V^s$ を含む)と、よりsparseなデータを含むターゲットドメイン $t$ (ユーザ集合 $U^t$ とアイテム集合 $V^t$ を含む)が与えられた場合、**シングルターゲットCDRは、$s$における補助情報を活用して、$t$における推薦精度を向上させること**である。
+
 As introduced in Section 1, we define the notion of domain from three perspectives, i.e., content-level relevance, user-level relevance, and item-level relevance.
-セクション1で紹介したように、コンテンツレベルの関連性、ユーザーレベルの関連性、アイテムレベルの関連性という3つの観点からドメインの概念を定義する。
+セクション1で紹介したように、コンテンツレベルの関連性、ユーザーレベルの関連性、アイテムレベルの関連性という3つの観点からdomainの概念を定義する。
 Thus, singletarget CDR scenario is divided into three corresponding subscenarios as well (see Figure 1).
-このように、シングルターゲットCDRシナリオは、3つの対応するサブシナリオに分けられる（図1参照）。
+このように、**シングルターゲットCDRシナリオは3つの対応するサブシナリオに分けられる**（図1参照）。
 We summarize three main challenges for the single-target CDR scenarios.
 シングル・ターゲットCDRシナリオにおける3つの主要な課題を要約する。
-Building content-based relations (CH1).
-コンテンツ・ベースの関係構築（CH1）。
+
+### 2.1.2. Building content-based relations (CH1).
+
+(ここで、CHとはchallengeの略)
+
 In Figure 1(a), to improve the recommendation accuracy in the target domain, one should first build content-based relations, then choose similar users/items according to their common features, and finally, transfer/share other features between similar users/items across domains.
-図1(a)において、対象ドメインにおける推薦精度を向上させるためには、まずコンテンツベースの関係性を構築し、次に共通する特徴によって類似ユーザ／アイテムを選択し、最後にドメインを越えて類似ユーザ／アイテム間で他の特徴を転送／共有する必要がある。
+図1(a)において、対象ドメインにおける推薦精度を向上させるためには、まずコンテンツベースの関係性を構築し、次に共通する特徴量によって類似ユーザ/アイテムを選択し、最後にドメインを越えて類似ユーザ/アイテム間で他の特徴量を転送/共有する必要がある。
 Therefore, how to build a suitable content-based relation in single-target CDR (contentlevel relevance) scenario is very important and challenging.
-したがって、単一ターゲットCDR（コンテンツレベルの関連性）シナリオにおいて、どのように適切なコンテンツベースの関連性を構築するかは、非常に重要かつ挑戦的である。
-Generating accurate user/item embeddings or rating patterns (CH2).
-正確なユーザー/アイテムの埋め込みまたは評価パターンを生成する（CH2）。
+したがって、単一ターゲットCDR(コンテンツレベルの関連性)シナリオにおいて、どのように適切なコンテンツベースの関連性を構築するかは、非常に重要かつ挑戦的である。
+
+### 2.1.3. Generating accurate user/item embeddings or rating patterns (CH2). 正確なユーザ/アイテムの埋め込みまたは評価パターンを生成する（CH2）。
+
 In Figures 1(b) and 1(c), to improve the recommendation accuracy in the target domain, one should first generate accurate user/item embeddings or rating patterns, and then transfer/share the embeddings of common users/items or rating patterns of common users across domains.
-図1(b)および図1(c)において、対象ドメインにおける推薦精度を向上させるためには、まず、正確なユーザ／項目の埋め込み、または、評価パターンを生成し、次に、ドメイン間で共通のユーザ／項目の埋め込み、または、共通のユーザの評価パターンを転送／共有する必要がある。
+図1(b)および図1(c)において、対象ドメインにおける推薦精度を向上させるためには、まず、正確なユーザ/アイテムの埋め込み、または、評価パターンを生成する。次に、ドメイン間で共通のユーザ/アイテムの埋め込み、または、共通のユーザの評価パターンを転送/共有する必要がある。
 Therefore, how to generate accurate embeddings or rating patterns is a fundamental and crucial challenge.
 したがって、いかにして正確な埋め込みや評価パターンを生成するかは、基本的かつ重要な課題である。
-Learning accurate mapping relations (CH3).
-正確なマッピング関係を学ぶ（CH3）。
+
+### 2.1.4. Learning accurate mapping relations (CH3).
+
 For the three scenarios of single-target CDR in Figure 1, a naive transfer strategy is to directly replace the features/embeddings of users/items in the target domain with those of their similar users/items in the source domain [Zhao et al., 2017].
-図1の単一ターゲットCDRの3つのシナリオでは、素朴な転送戦略は、ターゲットドメインのユーザー／アイテムの特徴／埋め込みを、ソースドメインの類似ユーザー／アイテムの特徴／埋め込みに直接置き換えることである［Zhao et al.］
+図1の単一ターゲットCDRの3つのシナリオでは、**素朴な転送戦略は、ターゲットドメインのユーザ/アイテムの特徴量/埋め込みを、ソースドメインの類似ユーザ/アイテムの特徴量/埋め込みに直接置き換えること**である［Zhao et al., 2017］。
 This strategy is simple but not intelligent.
 この戦略は単純だが、知的ではない。
 An elegant way is to first learn accurate mapping relations between two domains, and then transfer the knowledge (e.g., user/item embeddings and rating patterns) learned from a source domain to a target domain according to the learned mapping relations.
-エレガントな方法は、まず2つのドメイン間の正確なマッピング関係を学習し、学習したマッピング関係に従って、ソースドメインで学習した知識（ユーザー／アイテムの埋め込みや評価パターンなど）をターゲットドメインに転送することである。
-Following such an intuition, how to learn accurate mapping relations becomes a crucial challenge.2.2 Multi-Domain Recommendation Multi-Domain Recommendation (MDR) is another direction in single-target CDR.
+エレガントな方法は、まず**2つのドメイン間の正確なマッピング関係を学習**し、学習したマッピング関係に従って、ソースドメインで学習した知識(ユーザ/アイテムの埋め込みや評価パターンなど)をターゲットドメインに転送することである。
+Following such an intuition, how to learn accurate mapping relations becomes a crucial challenge.
 このような直観に従って、どのように正確なマッピング関係を学習するかが重要な課題となる。
+
+## 2.2. Multi-Domain Recommendation
+
+Multi-Domain Recommendation (MDR) is another direction in single-target CDR.
 It leverages the auxiliary information from multiple domains to recommend a set of items from multiple domains to a certain set of users (single-target) in the multiple domains.
-複数ドメインの補助情報を活用し、複数ドメイン内の特定のユーザー（シングルターゲット）に対して、複数ドメインのアイテムセットを推薦する。
+複数ドメインの補助情報を活用し、複数ドメイン内の特定のユーザ(シングルターゲット)に対して、**複数ドメインのアイテムセットを推薦**する。
 We define multiple-domain recommendation as follows.
 複数ドメイン推薦を以下のように定義する。
-Definition 2 Multi-Domain Recommendation (MDR): Given the multiple domains 1 to n, including user sets {U1 , ..., U n} and item sets {V1 , ..., V n}, multi-target CDR is to recommend a set of items V x (V x ∈ V1 ∪ ...∪ Vn) to a certain set of users U x (U x ∈ U1 ∪ ...∪ U n) and improve the corresponding recommendation accuracy.
-定義2 マルチドメイン推薦（MDR）： ユーザ集合｛U1 ，...，U n｝とアイテム集合｛V1 ，...，V n｝を含む複数のドメイン1〜nが与えられたとき、マルチターゲットCDRは、あるユーザ集合U x (U x ∈ U1 ∪ ...∪ U n)にアイテム集合V x (V x ∈ V1 ∪ ...∪ Vn)を推薦し、対応する推薦精度を向上させることである。
-MDR faces the same challenges as single-target CDR.2.3 Dual-Target CDR Dual-target CDR is a new recommendation scenario in CDR area and it has attracted increasing attention in recent years.
-2.3 デュアル・ターゲットCDR デュアル・ターゲットCDRは、CDR分野での新しい推奨シナリオであり、近年注目されている。
+
+### 2.2.1. Definition 2 Multi-Domain Recommendation (MDR):
+
+Given the multiple domains 1 to n, including user sets {U1 , ..., U n} and item sets {V1 , ..., V n}, multi-target CDR is to recommend a set of items V x (V x ∈ V1 ∪ ...∪ Vn) to a certain set of users U x (U x ∈ U1 ∪ ...∪ U n) and improve the corresponding recommendation accuracy.
+複数のユーザ集合 $\{U^{1}, \ldots, U^{n}\}$ と複数のアイテム集合 $\{V^{1}, \ldots, V^{n}\}$ を含む複数のドメイン1からnが与えられたとき、multi-target CDRは、(単一の)ユーザ集合 $U^{x} \in U^{1} \cup \cdots \cup U^{n}$ に対して、(単一の)アイテム集合 $V^{x} \in V^{1} \cup \cdots \cup V^{n}$ を推薦し、対応する推薦精度を向上させることである。
+
+## 2.3. 2.3 Dual-Target CDR
+
+Dual-target CDR is a new recommendation scenario in CDR area and it has attracted increasing attention in recent years.
+デュアル・ターゲットCDRは、CDR分野での新しい推薦シナリオであり、近年注目されている。
 We define this recommendation problem as follows.
 この推薦問題を以下のように定義する。
-Definition 3 Dual-Target Cross-Domain Recommendation: Given the two domains 1 and 2, including user sets U 1 , U 2 and item sets V 1 , V 2 respectively, dual-target CDR is to improve the recommendation accuracy in both domains 1 and 2 simultaneously by leveraging their observed information.
-定義3 デュアルターゲットクロスドメイン推薦： ユーザ集合U 1 , U 2とアイテム集合V 1 , V 2をそれぞれ含む2つのドメイン1, 2が与えられたとき、デュアルターゲットCDRは、ドメイン1, 2の観測情報を活用することで、同時にドメイン1, 2の推薦精度を向上させることである。
+
+### 2.3.1. Definition 3 Dual-Target Cross-Domain Recommendation:
+
+Given the two domains 1 and 2, including user sets U 1 , U 2 and item sets V 1 , V 2 respectively, dual-target CDR is to improve the recommendation accuracy in both domains 1 and 2 simultaneously by leveraging their observed information.
+ユーザ集合 $U^{1}, U^{2}$ とアイテム集合 $V^{1}, V^{2}$ を含む2つのドメイン1と2が与えられた場合、デュアルターゲットCDRは、観測された情報を活用して、**両方のドメイン1と2における推薦精度を同時に向上させること**である。
+
 Similar to the problem of single-target CDR, dual-target CDR scenario can be divided into three sub-scenarios according to the notion of domain.
 シングルターゲットCDRの問題と同様に、デュアルターゲットCDRのシナリオは、ドメインの概念に従って3つのサブシナリオに分けることができる。
 This means that dual-target CDR scenarios can also use common features (content-level relevance), common users (user-level relevance), and common items (item-level relevance), to link the two domains and share/transfer knowledge across domains based on these common entities.
-つまり、デュアルターゲットCDRシナリオは、共通の特徴（コンテンツレベルの関連性）、共通のユーザー（ユーザーレベルの関連性）、共通のアイテム（アイテムレベルの関連性）を使用して、2つのドメインをリンクし、これらの共通のエンティティに基づいてドメイン間で知識を共有/転送することもできる。
+つまり、デュアルターゲットCDRシナリオは、共通の特徴量(content-level relevance)、共通のユーザ(user-level relevance)、共通のアイテム(item-level relevance)を使用して、2つのドメインをリンクし、これらの共通のエンティティに基づいてドメイン間で知識を共有/転送することができる。
 However, different from single-target CDR, dual-target CDR is to improve the recommendation accuracy in both target domains simultaneously (see Figure 4).
 しかし、シングルターゲットCDRとは異なり、デュアルターゲットCDRは、両方のターゲットドメインにおいて同時に推薦精度を向上させるものである（図4参照）。
 To achieve dual-target CDR, there are two challenges.
-デュアルターゲットCDRを達成するためには、2つの課題がある。
-Designing a feasible dual-target CDR framework (CH4).
-実現可能なデュアルターゲットCDRフレームワークの設計（CH4）。
+デュアルターゲットCDRを達成するためには、**2つの課題**がある。
+
+### 2.3.2. Designing a feasible dual-target CDR framework (CH4).実現可能なデュアルターゲットCDRフレームワークの設計
+
 Unlike conventional single-target CDR, dual-target CDR should enhance the recommendation performance in the two domains, i.e., the source domain and the target domain.
 従来のシングルターゲットCDRとは異なり、デュアルターゲットCDRは、ソースドメインとターゲットドメインの2つのドメインにおける推薦性能を向上させる必要がある。
 Therefore, how to design an effective framework for a dualtarget CDR scenario is still very challenging because the auxiliary information from the target domain may negatively affect the performance in the source domain.
 したがって、デュアルターゲットCDRシナリオのための効果的なフレームワークを設計する方法は、ターゲットドメインからの補助情報がソースドメインでのパフォーマンスに悪影響を与える可能性があるため、依然として非常に困難である。
-Optimizing the embedding of users and items (CH5).
-ユーザーとアイテムの埋め込みを最適化する（CH5）。
+
+### 2.3.3. Optimizing the embedding of users and items (CH5).ユーザーとアイテムの埋め込みを最適化する（CH5）。
+
 In a dual-target CDR scenario, to improve the recommendation accuracy in each domain, the researchers tend to share the common embeddings of common users/items for the two domains or enhance the embedding quality of users/items in each domain by leveraging the auxiliary information from another domain.
 デュアルターゲットCDRシナリオでは、各ドメインの推薦精度を向上させるために、研究者は2つのドメインに共通するユーザ／アイテムの埋め込みを共有したり、別のドメインの補助情報を活用して各ドメインのユーザ／アイテムの埋め込み品質を向上させたりする傾向がある。
-Therefore, embedding optimization for dualtarget CDR scenarios is particularly important.2.4 Multi-Target CDR Inspired by dual-target CDR, in a multi-target CDR scenario, the researchers aim to improve the recommendation accuracy in multiple domains simultaneously.
+Therefore, embedding optimization for dualtarget CDR scenarios is particularly important.
+したがって、デュアルターゲットCDRシナリオにおける埋め込み最適化は特に重要である。
+
+## 2.4. Multi-Target CDR
+
+Inspired by dual-target CDR, in a multi-target CDR scenario, the researchers aim to improve the recommendation accuracy in multiple domains simultaneously.
 したがって、デュアルターゲットCDRシナリオにおける埋め込み最適化は特に重要である。
 The core idea of multitarget CDR is to leverage more auxiliary information from more domains to achieve a further improvement of recommendation performance.
 マルチターゲットCDRの核となる考え方は、より多くのドメインからの補助情報を活用することで、推薦性能のさらなる向上を達成することである。
 The problem of multi-target CDR can be defined as follows.
 マルチターゲットCDRの問題は次のように定義できる。
-Definition 4 Multi-Target Cross-Domain Recommendation: Given the multiple domains 1 to n, including user sets {U1 , ..., U n} and item sets {V1 , ..., V n}, multi-target CDR is to improve the recommendation accuracy in all domains simultaneously by leveraging their observed information.
-定義4 マルチターゲットクロスドメイン推薦： ユーザ集合｛U1 ，...，U n｝とアイテム集合｛V1 ，...，V n｝を含む複数のドメイン1〜nが与えられたとき、それらの観測情報を活用することで、すべてのドメインにおける推薦精度を同時に向上させるのがマルチターゲットCDRである。
+
+### 2.4.1. Definition 4 Multi-Target Cross-Domain Recommendation:
+
+Given the multiple domains 1 to n, including user sets {U1 , ..., U n} and item sets {V1 , ..., V n}, multi-target CDR is to improve the recommendation accuracy in all domains simultaneously by leveraging their observed information.
+(複数の)ユーザ集合 $U^{1}, \ldots, U^{n}$ と(複数の)アイテム集合 $V^{1}, \ldots, V^{n}$ を含む複数のドメイン1からnが与えられた場合、マルチターゲットCDRは、観測された情報を活用して、**すべてのドメインにおける推薦精度を同時に向上させること**である。
+
 To achieve multi-target CDR, in addition to the challenges in single-target CDR and dual-target CDR scenarios, there is a new challenge as follows.
 マルチターゲットCDRを実現するためには、シングルターゲットCDRとデュアルターゲットCDRのシナリオにおける課題に加えて、以下のような新たな課題がある。
-Avoiding negative transfer (CH6).
-マイナスの移籍を避ける（CH6）。
+
+### 2.4.2. Avoiding negative transfer (CH6).
+
 In a multi-target CDR scenario, the recommendation performance in some domains may decline as more domains, especially sparser domains, join in.
-マルチターゲットCDRシナリオでは、より多くのドメイン、特にスパースなドメインが参加するにつれて、いくつかのドメインにおける推薦性能が低下する可能性がある。
+マルチターゲットCDRシナリオでは、**より多くのドメイン、特にスパースなドメインが参加するにつれて、いくつかのドメインにおける推薦性能が低下する可能性**がある。
 This is the negative transfer problem that the transferred data/knowledge may negatively affect the recommendation performance in the target domain.
-これは、転送されたデータ／知識が、ターゲット・ドメインにおける推薦性能に悪影響を及ぼす可能性があるという負の転送問題である。
+これは、転送されたデータ/知識が、ターゲット・ドメインにおける推薦性能に悪影響を及ぼす可能性があるという負の転送問題である。
 In fact, in singletarget CDR, MDR, and dual-target CDR scenarios, the researchers may also face the negative transfer problem.
-実際、シングルターゲットCDR、MDR、デュアルターゲットCDRのシナリオにおいても、研究者はネガティブトランスファーの問題に直面する可能性がある。
+実際、シングルターゲットCDR、MDR、デュアルターゲットCDRのシナリオにおいても、研究者は**ネガティブトランスファーの問題**に直面する可能性がある。(negative transferって、negative sampleを移行するんじゃなくて、negativaな影響を移行してしまうって現象か...!)
 However, this problem in multi-target CDR scenarios is more serious because the auxiliary information/knowledge in each domain should be transferred to other domains more than once.
-しかし、マルチターゲットCDRシナリオでは、各ドメインの補助情報／知識を他のドメインに複数回転送する必要があるため、この問題はより深刻になる。
+しかし、マルチターゲットCDRシナリオでは、各ドメインの補助情報/知識を他のドメインに複数回転送する必要があるため、この問題はより深刻になる。
 Therefore, avoiding negative transfer is an important prerequisite in multi-target CDR scenarios.
 したがって、負の転移を避けることは、マルチターゲットCDRシナリオにおける重要な前提条件である。
 
@@ -225,11 +265,17 @@ Therefore, avoiding negative transfer is an important prerequisite in multi-targ
 
 To correspond with the recommendation scenarios and challenges mentioned in Section 2, in this section, we summarize the existing CDR approaches according to their target scenarios, target challenges, data categories, and technical perspectives.
 セクション2で述べた推薦シナリオと課題に対応するため、このセクションでは、既存のCDRアプローチを、ターゲットシナリオ、ターゲット課題、データカテゴリ、および技術的観点に従って要約する。
-We also summarize the popular datasets in CDRs.3.1 Single-Target CDR Most of existing single-target CDR approaches tend to leverage useful information from the source domain to the target domain.
+We also summarize the popular datasets in CDRs.
+
+## 3.1. 3.1 Single-Target CDR
+
+Most of existing single-target CDR approaches tend to leverage useful information from the source domain to the target domain.
 3.1 シングル・ターゲットCDR 既存のシングル・ターゲットCDRアプローチのほとんどは、ソース・ドメインからターゲット・ドメインへの有用な情報を活用する傾向がある。
 According to transfer strategies, these single-target CDR approaches are divided in three categories: contentbased transfer, embedding-based transfer, and rating patternbased transfer.
 転送戦略によって、これらの単一ターゲットCDRアプローチは3つのカテゴリーに分けられる： コンテントベース、エンベッディングベース、レーティングパターンベースである。
-Content-Based Transfer.
+
+### 3.1.1. Content-Based Transfer.
+
 コンテント・ベース・トランスファー。
 To target CH1, the existing content-based transfer approaches first create links based on the common contents, e.g., user/item attributes, social tags, semantic properties, thumbs-up, text information, metadata, and browsing or watching history.
 CH1をターゲットとするために、既存のコンテンツベースの転送アプローチは、まず、共通のコンテンツ、例えば、ユーザー／アイテムの属性、ソーシャルタグ、セマンティックプロパティ、サムズアップ、テキスト情報、メタデータ、閲覧または視聴履歴に基づいてリンクを作成する。
@@ -237,7 +283,9 @@ Then, they transfer user/item data or knowledge across domains.
 そして、ユーザーやアイテムのデータや知識をドメインを越えて転送する。
 We clearly compare the difference of these approaches in Table 1.
 表1では、これらのアプローチの違いを明確に比較している。
-Embedding-Based Transfer.
+
+### 3.1.2. Embedding-Based Transfer.
+
 エンベディングベースの移籍。
 To target CH2 and CH3, the existing embedding-based transfer approaches employ some classical machine learning models, e.g., multi-task learning, transfer learning, clustering, deep neural networks, relational learning, and semi-supervised learning, to map or share embeddings, e.g., user/item latent factors, learned by CF-based models across domains.
 CH2とCH3をターゲットとするために、既存の埋め込みベースの転送アプローチは、いくつかの古典的な機械学習モデル、例えば、マルチタスク学習、転送学習、クラスタリング、ディープニューラルネットワーク、関係学習、半教師付き学習を採用し、CFベースのモデルによって学習された埋め込み、例えば、ユーザー／アイテムの潜在的要因をドメイン間でマッピングまたは共有する。
@@ -245,14 +293,18 @@ In addition to these frequentlyused learning techniques, other embedding-based t
 これらのよく使われる学習技術に加えて、他の埋め込みベースの転送アプローチは、例えば、ベイズ潜在因子モデル＆インタレストドリフト、三項関係（ユーザー-アイテム-ドメイン）、強化学習、逐次レコメンデーション、データプライバシーなど、異なる技術やアイデアを採用する傾向がある。
 We clearly compare the differences among these approaches in Table 2.
 表2では、これらのアプローチの違いを明確に比較している。
-Rating Pattern-Based Transfer.
+
+### 3.1.3. Rating Pattern-Based Transfer.
+
 格付けパターンに基づく移籍。
 To target CH2, the existing rating pattern-based transfer approaches tend to first learn an independent rating pattern of users from the source domain and then transfer the rating pattern for the target domain to improve the corresponding recommendation accuracy.
 CH2をターゲットとするために、既存の評価パターンベースの転送アプローチは、まずソースドメインからユーザーの独立した評価パターンを学習し、次にターゲットドメインの評価パターンを転送して、対応する推薦精度を向上させる傾向がある。
 The representative work of this type of approach includes [Gao et al., 2013; He et al., 2018b; Yuan et al., 2019].
 この種のアプローチの代表的な研究には、[Gao et al., 2013; He et al., 2018b; Yuan et al., 2019]がある。
-We list the difference of these approaches in Table 2.3.2 Multi-Domain Recommendation
+We list the difference of these approaches in Table 2.
 これらのアプローチの違いを表2.3.2に示す。
+
+## 3.2. 3.2 Multi-Domain Recommendation
 
 Multi-Domain Recommendation (MDR) is another direction in single-target CDR, but it achieves a different goal: it makes recommendations for different domains.
 マルチドメイン・レコメンデーション（MDR）は、シングルターゲットCDRのもう一つの方向性だが、異なるゴールを達成する： 異なるドメインに対して推薦を行う。
@@ -262,7 +314,11 @@ MDR also faces the conventional challenges, e.g., CH1 and CH2, in STCDR.
 MDRもまた、STDRにおける従来の課題、例えばCH1とCH2に直面している。
 To address these challenges, in [Zhang et al., 2012], Zhang et al.proposed a multi-domain collaborative filtering (MCF) framework for solving the data sparsity problem in multiple domains.
 これらの課題に対処するため、[Zhang et al., 2012]において、Zhang et al.は複数ドメインにおけるデータスパースティ問題を解決するための複数ドメイン協調フィルタリング（MCF）フレームワークを提案した。
-After this, the MDR models proposed in [Cao et al., 2010; Moreno et al., 2012; Pan and Yang, 2013; Zhang et al., 2016] employ different techniques, i.e., feature combination, transfer learning, and active learning to transfer the knowledge of similar/common users among multiple domains.3.3 Dual-Target CDR Dual-target CDR is still a novel but very attractive concept for improving the recommendation accuracies in both domains simultaneously.
+After this, the MDR models proposed in [Cao et al., 2010; Moreno et al., 2012; Pan and Yang, 2013; Zhang et al., 2016] employ different techniques, i.e., feature combination, transfer learning, and active learning to transfer the knowledge of similar/common users among multiple domains.
+
+## 3.3. 3.3 Dual-Target CDR
+
+Dual-target CDR is still a novel but very attractive concept for improving the recommendation accuracies in both domains simultaneously.
 この後、[Cao et al., 2010; Moreno et al., 2012; Pan and Yang, 2013; Zhang et al., 2016]で提案されたMDRモデルは、複数のドメイン間で類似/共通ユーザーの知識を転送するために、特徴組み合わせ、転送学習、能動学習などの異なる技術を採用している。
 Therefore, existing solutions are limited but the researchers are paying more and more attention to this direction.
 そのため、既存の解決策は限られているが、研究者たちはこの方向にますます注目している。
@@ -278,7 +334,11 @@ Additionally, a new dual-target CDR model (DDTCDR) was proposed in [Li and Tuzhi
 さらに、新しいデュアルターゲットCDRモデル（DDTCDR）が[Li and Tuzhilin, 2020]で提案され、これはユーザとアイテムの間の双方向の潜在的関係を考慮し、ユーザの嗜好を抽出するために潜在的直交マッピングを適用する。
 Based on the orthogonal mapping, DDTCDR can transfer users’ embeddings in a bidirectional way (i.e., Source → Target and Target → Source).
 直交マッピングに基づき、DDTCDRはユーザのエンベッディングを双方向（ソース→ターゲット、ターゲット→ソース）に転送することができる。
-Recently, Zhu et al.proposed another dual-target CDR framework in [Zhu et al., 2020], which employs graph embedding to generate more informative embeddings of users and items, and employs element-wise attention to combine the embeddings of common users/items across domains.3.4 Multi-Target CDR Although multi-target CDR is inspired by dual-target CDR and multi-domain recommendation, it aims to achieve a bigger goal, i.e., providing a complete solution for data sparsity.
+Recently, Zhu et al.proposed another dual-target CDR framework in [Zhu et al., 2020], which employs graph embedding to generate more informative embeddings of users and items, and employs element-wise attention to combine the embeddings of common users/items across domains.
+
+## 3.4. 3.4 Multi-Target CDR
+
+Although multi-target CDR is inspired by dual-target CDR and multi-domain recommendation, it aims to achieve a bigger goal, i.e., providing a complete solution for data sparsity.
 Zhu et al., 2020]では、グラフ埋め込みを用いて、より情報量の多いユーザとアイテムの埋め込みを生成し、ドメイン間で共通のユーザ／アイテムの埋め込みを結合するために、要素ごとの注意を用いている。3.4 マルチターゲットCDR マルチターゲットCDRは、デュアルターゲットCDRとマルチドメイン推薦に触発されているが、より大きな目標、すなわち、データスパース性の完全な解決策を提供することを目指している。
 In principle, if the multi-target CDR models can find enough related domains and utilize the auxiliary information from these multiple domains well, the long-standing data sparsity problem in recommender systems can be greatly alleviated and even solved.
 原理的には、マルチターゲットCDRモデルが十分な関連ドメインを見つけ、これらの複数のドメインからの補助情報をうまく利用することができれば、推薦システムにおける長年のデータスパースティ問題を大幅に緩和し、解決することさえできる。
@@ -303,7 +363,9 @@ Anyone who wishes to use these datasets can refer to the corresponding citations
 
 Although many efforts have been put to tackle the challenges of CDR, there remain some promising prospects, and we summarize three of them as follows.
 CDRの課題に取り組むために多くの努力が払われてきたが、いくつかの有望な展望も残されている。
-Heterogeneous CDR.
+
+## 4.1. Heterogeneous CDR.
+
 ヘテロジニアスCDR。
 Most existing CDR approaches assume information across domains is homogeneous, which is not consistent with reality.
 既存のCDRアプローチのほとんどは、ドメイン間の情報が均質であることを前提としているが、これは現実と一致していない。
@@ -317,8 +379,9 @@ Under such situations, new techniques should be proposed to identify the ‘brid
 このような状況下では、情報を伝達しCDRのパフォーマンスを向上させるために、ドメイン間の「橋」を特定する新しい技術が提案されるべきである。
 How to leverage these heterogeneous data across domains, to further improve the recommendation performance, becomes the first promising prospect in CDR.
 このようなドメイン間の異種データをどのように活用し、推薦性能をさらに向上させるかが、CDRにおける最初の有望な展望となる。
-Sequential CDR.
-シーケンシャルCDR。
+
+## 4.2. Sequential CDR.
+
 Sequential recommendation has gained much attention since it can suggest items to users by modeling the sequential dependencies over the user-item interactions [Wang et al., 2019a].
 シーケンシャル・レコメンデーションは、ユーザーとアイテムの相互作用にわたるシーケンシャルな依存関係をモデル化することで、ユーザーにアイテムを提案することができるため、注目を集めている[Wang et al, 2019a]。
 Naturally, CDR also faces the problem of sequentially modeling of users and items, the same as conventional recommender systems.
@@ -329,8 +392,9 @@ It becomes more challenging for sequential CDR since one not only needs to model
 逐次的なCDRでは、ユーザーとアイテムの逐次的な相互作用をモデル化するだけでなく、ドメインをまたいだ情報の転送も必要となるため、より困難となる[Ma et al, 2019]。
 Therefore, sequential CDR becomes the second promising research prospect.
 したがって、逐次CDRは2番目の有望な研究展望となる。
-Privacy-Preserving CDR.
-プライバシーを保護するCDR。
+
+## 4.3. Privacy-Preserving CDR.プライバシーを保護するCDR。
+
 Most existing approaches in CDR assume that data across domains are available in plaintext, which ignores the data isolation problem in practice.
 CDRにおける既存のアプローチのほとんどは、ドメイン間のデータが平文で利用可能であることを前提としているが、これは実際にはデータの分離問題を無視している。
 Apparently, most recommender systems are built using users’ sensitive data, e.g., check-in data, user profile, and browse history.
