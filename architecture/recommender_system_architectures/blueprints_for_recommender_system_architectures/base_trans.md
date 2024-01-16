@@ -1,4 +1,4 @@
-## link 
+## link
 
 - https://amatriain.net/blog/RecsysArchitectures httpsを使用しています。
 

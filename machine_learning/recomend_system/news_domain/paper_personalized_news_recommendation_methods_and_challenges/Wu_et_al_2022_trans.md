@@ -1,15 +1,15 @@
-### 0.1. link 0.1. リンク
+### 0.0.1. link 0.1. リンク
 
 - https://arxiv.org/abs/2106.08934 httpsを使用しています。
 
-### 0.2. title 0.2. タイトル
+### 0.0.2. title 0.2. タイトル
 
 Personalized News Recommendation:
 パーソナライズされたニュースの推薦。
 Methods and Challenges
 その方法と課題
 
-### 0.3. abstruct 0.3. アブストラクト
+### 0.0.3. abstruct 0.3. アブストラクト
 
 Personalized news recommendation is important for users to ind interested news information and alleviate informationoverload.
 個人化されたニュース推薦を行うことは、ユーザが興味のあるニュース情報を見つけ、情報の過負荷を軽減するために重要である。
@@ -30,7 +30,7 @@ This paper can provide up-to-date andcomprehensive views on personalized news re
 We hope this paper can facilitate research on personalizednews recommendation as well as related ields in natural language processing and data mining.
 また、本論文が自然言語処理とデータマイニングの関連分野と同様に、個人化されたニュース推薦に関する研究を促進することができればと願っている。
 
-## 1. Introduction 1. はじめに
+# 1. Introduction 1. はじめに
 
 In the era of the Internet, online news distributing platforms such as Microsoft News1have attracted hundredsof millions of users [223].
 インターネットの時代には，Microsoft News1のようなオンライン・ニュース配信のプラットフォームが，何億人ものユーザーを引きつけている[223]。
@@ -43,13 +43,6 @@ Thus, personalized news recommendationtechniques, which aim to select news accor
 Researches onpersonalized news recommendation have also attracted increasing attention from both academia and industry inrecent years [144, 203].
 また，近年では，パーソナライズド・ニュースの推薦に関する研究も，学界と産業界の双方から注目を集めている[144, 203]。
 
-<img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/2-Figure1-1.png">
-
-Fig. 1.
-図1.
-An example workflow of personalized news recommender systems.
-パーソナライズド・ニュースレコメンダーシステムのワークフロー例。
-
 An example worklow of personalized news recommender system is shown in Fig. 1.
 パーソナライズド・ニュースレコメンダーシステムのワークフロー例をFig.1に示す。
 When a user visits thenews platform, the news platform will recall a small set of candidate news from a large-scale news pool, andthe personalized news recommender will rank these candidate news articles according to the user interestsinferred from user proiles.
@@ -57,19 +50,19 @@ When a user visits thenews platform, the news platform will recall a small set o
 Then, the top K ranked news will be displayed to the user, and the user behaviorson these news will be recorded by the platform to update the maintained user proile for providing futureservices.
 そして、上位K位のニュースがユーザに表示され、これらのニュースに対するユーザの行動がプラットフォームによって記録され、未来サービスを提供するために維持されているユーザプロファイルが更新されます。
 Although many prior works have extensively studied these problems in diferent aspects, personalizednews recommendation remains challenging.
-しかし、個人化されたニュースの推薦にはまだ課題が残されています。
+**しかし、個人化されたニュースの推薦にはまだ課題が残されています**。
 For example, news articles on news websites usually have shortlife cycles.
 例えば、ニュースサイト上のニュース記事は、通常、ライフサイクルが短い。
 Many new articles emerge every day, and old ones will expire after a short period of time.
-例えば、ニュースサイトの記事は、毎日多くの新しい記事が作成され、古い記事は短期間で失効する。
+ニュースサイトの記事は、毎日多くの新しい記事が作成され、古い記事は短期間で失効する。
 Thus,news recommendation faces a severe cold-start problem.
 そのため、ニュース推薦にはコールドスタートという問題がある。
 In addition, news articles usually contain rich textualinformation such as title and body.
 さらに、ニュース記事にはタイトルや本文などの豊富なテキスト情報が含まれている。
 Thus, it is very important to understand news content from their texts withadvanced natural language processing techniques.
-そのため、高度な自然言語処理技術によりテキストからニュースの内容を理解することは非常に重要である。
+そのため、**高度な自然言語処理技術によりテキストからニュースの内容を理解することは非常に重要**である。
 Moreover, there is usually no explicit user feedback such asreviews and ratings on news platforms.
-さらに、通常、ニュースプラットフォームにはレビューや評価のような明示的なユーザフィードバックが存在しない。
+さらに、**通常、ニュースプラットフォームにはレビューや評価のような明示的なユーザフィードバックが存在しない**。
 Thus, we need to infer the personal interests of users from their implicitfeedback like clicks.
 そのため、クリックなどの暗黙のフィードバックから、ユーザーの個人的な興味を推測する必要があります。
 However, user interests are usually diverse and dynamic, which poses great challenges touser modeling algorithms.
@@ -108,11 +101,7 @@ Moreover, several key techniques in news recommender system design, such asranki
 Thus, the conventional taxonomy used bymost existing surveys cannot meet the development of this ield, and a more systematic taxonomy of existingnews recommendation methods is needed to help understand their characteristics and inspire further research.
 このように、既存のほとんどの調査で用いられている従来の分類法は、この分野の発展に対応することができず、既存のニュース推薦手法の特徴を理解し、さらなる研究を促すために、より体系的な分類法が必要である。
 
-<img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/3-Table1-1.png">
-
-Table 1.
-表1.
-The taxonomy and literature coverage of recent survey papers.
+Table 1. The taxonomy and literature coverage of recent survey papers.
 最近の調査論文の分類法と文献の範囲。
 Traditional taxonomy means the collaborative, content-based, and hybrid categories.
 従来のタクソノミは、協調型、コンテンツ型、ハイブリッドのカテゴリーを意味する。
@@ -126,7 +115,7 @@ Instead of reviewing existing personalized news recommendation methods based on 
 We irst introduce the framework of developing a personalized news recommender system in Section 2.
 まず、第2章では、個人向けニュース推薦システムの開発フレームワークを紹介する。
 Next, we systematically review the core problems, techniques and challenges in personalized news recommendation, including: news modeling, user modeling, personalized ranking, model training, datasets, benchmarks and evaluation, which are introduced in Sections 3-7, respectively.
-次に、セクション3〜7でそれぞれ紹介する、ニュースモデリング、ユーザーモデリング、パーソナライズドランキング、モデル学習、データセット、ベンチマーク、評価など、パーソナライズドニュース推薦に関わるコアな問題、技術、課題について系統的にレビューする。
+次に、セクション3〜7でそれぞれ紹介する、ニュースモデリング、ユーザモデリング、パーソナライズドランキング、モデル学習、データセット、ベンチマーク、評価など、パーソナライズドニュース推薦に関わるコアな問題、技術、課題について系統的にレビューする。
 Through our proposed framework, the characteristics of existing approaches can be more accurately described than using conventional taxonomy, and it is easier for researchers to track the technology evolution in diferent aspects.
 提案するフレームワークを用いることで、既存のアプローチの特徴を従来の分類法よりも正確に記述することができ、研究者が様々な側面から技術の進化を追跡することが容易になる。
 We then present some discussions on developing responsible news recommender systems in Section 9, which is an emerging research ield in recent years.
@@ -136,12 +125,10 @@ Finally, we raise several potential future directions and conclude this paper in
 
 <img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/4-Figure2-1.png">
 
-Fig. 2.
-図2.
-A framework of the key components in developing personalized news recommendation model.
+Fig. 2. A framework of the key components in developing personalized news recommendation model.
 パーソナライズドニュースレコメンデーションモデルを開発する際の主要な構成要素のフレームワーク。
 
-## 2. 2 FRAMEWORK OF PERSONALIZED NEWS RECOMMENDATION 2. 2 パーソナライズドニュースレコメンデーションのフレームワーク
+# 2. FRAMEWORK OF PERSONALIZED NEWS RECOMMENDATION 2. 2 パーソナライズドニュースレコメンデーションのフレームワーク
 
 Personalized news recommendation techniques have been widely used in many online news websites [144,223].Diferent from non-personalized news recommendation methods that suggest news articles solely based onnon-personalized factors [100] such as news popularity [27,127,130,227], editors’ demonstration [199] andgeographic information [21,178], personalized news recommendation can consider the personal interest of eachindividual user to provide personalized news services and better satisfy users’ need.
 パーソナライズド・ニュース推薦技術は，多くのオンライン・ニュース・サイトで広く用いられている[144,223]。ニュースの人気度[27,127,130,227]や編集者の実演[199]，地理情報などの非パーソナライズド要素のみに基づいてニュース記事を推薦する非パーソナライズド・ニュース推薦手法とは異なり，個人化ニュースサービスを提供してユーザのニーズをより良く満足することができる．
@@ -155,33 +142,36 @@ For example, the category of content-based methods includes traditionalsemantic-
 Thus, amore systematic overview of existing techniques is required to help understand the development of this field.
 したがって、この分野の発展を理解するためには、既存の技術をより体系的に概観することが必要である。
 
+![figure2]()
+
 Instead of following the conventional taxonomy, in this survey we propose a novel perspective to reviewexisting personalized news recommendation techniques based on the core problems involved in the developmentof a personalized news recommender system.
-本調査では、従来の分類法ではなく、個人向けニュース推薦システムの開発における中核的な問題に基づき、既存の個人向けニュース推薦技術をレビューする新たな視点を提案する。
+本調査では、従来の分類法ではなく、**personalizedニュース推薦システムの開発における中核的な問題に基づき、既存のpersonalizedニュース推薦技術をレビューする新たな視点を提案する**。
 A common framework of personalized news recommendationmodel development is shown in Fig. 2.
-図2に、個人向けニュース推薦モデル開発の共通フレームワークを示す。
+図2に、personalizedニュース推薦モデル開発の共通フレームワークを示す。
 We can see that there are several key problems in this framework.First, news modeling is the backbone of news recommendation and a core problem is how to understand thecontent and characteristics of news.
-このフレームワークでは、いくつかの重要な問題があることがわかる。まず、ニュース推薦のバックボーンであるニュースモデリングは、ニュースの内容や特性をどのように理解するかが中核的な問題である。
+このフレームワークでは、いくつかの重要な問題があることがわかる。まず、ニュース推薦のバックボーンである**ニュースモデリング**は、ニュースの内容や特性をどのように理解するかが中核的な問題である。
 In addition, user modeling is required to understand the personal interestof users in news, and it is critical to accurately infer user interest from user proiles like behaviors.
-また、ニュースに対するユーザの個人的な興味を理解するためには、ユーザモデリングが必要であり、行動などのユーザプロファイルからユーザの興味を正確に推論することが重要である。
+また、ニュースに対するユーザの個人的な興味を理解するためには、**ユーザモデリング**が必要であり、行動などのユーザプロファイルからユーザの興味を正確に推論することが重要である。
 Based onthe news and user representations built by the news and user models, the next step is ranking candidate newsaccording to certain policies such as the relevance between news and user interest.
-ニュースモデルとユーザモデルによって構築されたニュースとユーザの表現に基づき、次のステップでは、ニュースとユーザの関心の関連性などの特定のポリシーに従って、候補となるニュースをランク付けします。
-Then, it is important totrain the recommendation model with proper objectives to make high-quality news recommendations, andevaluating the ranking results given by the recommendation model is also a core problem in the development ofpersonalized recommender systems.
-また、推薦モデルによるランキング結果を評価することも、パーソナライズド推薦システムの開発において重要な問題である。
+ニュースモデルとユーザモデルによって構築されたニュースとユーザの表現に基づき、次のステップでは、ニュースとユーザの関心の関連度合いなどの特定の方針に従って、**候補となるニュースをランク付け**します。
+Then, it is important to train the recommendation model with proper objectives to make high-quality news recommendations, and evaluating the ranking results given by the recommendation model is also a core problem in the development ofpersonalized recommender systems.
+そして、**適切な目的関数で推薦モデルをトレーニングすること**は、高品質のニュース推薦を行う上で重要である。また、推薦モデルによって与えられるラ**ンキング結果の評価方法(オフライン評価の話...!)**も、パーソナライズド推薦システムの開発における中核的な問題である。
+Finally, the datasets and benchmarks for news recommendation are also important for researchers to evaluate the performance of their models.
 Besides, the datasets and benchmarks for news recommendation are alsonecessities in designing personalized news recommendation models.
-また，ニュース推薦のためのデータセットやベンチマークは，個人向けニュース推薦モデルを設計する際に必要なものである．
+また，ニュース推薦のための**データセットやベンチマーク**は，個人向けニュース推薦モデルを設計する際に必要なものである。
 Moreover, beyond developing accuratemodels, improving the responsibility of intelligent systems has been a spotlight problem in recent years.
-さらに、精度の高いモデルを開発するだけでなく、知的システムの責任能力を向上させることも、近年注目されている問題である。
+さらに、**精度の高いモデルを開発するだけでなく、知的システムの責任能力(フィルターバブル的な話??)を向上させること**も、近年注目されている問題である。
 How todevelop responsible news recommender systems is a less studied but extremely important problem in personalizednews recommendation.
 このように、個人向けニュース推薦において、責任あるニュース推薦システムをいかに構築するかは、あまり研究されていないが、非常に重要な問題である。
 Next, we briely discuss the key problems mentioned above in the following sections.
 次に、上記の重要な問題について、以下の節で簡単に説明する。
 
-### 2.1. 2.1 News Modeling 2.1. 2.1 ニュースのモデリング
+## 2.1. News Modeling
 
 News modeling aims to understand the characteristics and content of news, which is the backbone of newsrecommendation.
 ニュースのモデリングは、ニュースの特徴や内容を理解することを目的としており、ニュースレコメンデーションの基幹となるものである。
 There are mainly two kinds of techniques for news modeling, i.e., feature-based news modelingand deep learning-based news modeling.
-ニュースモデリングには主に2種類の技術がある。すなわち、特徴ベースのニュースモデリングと深層学習ベースのニュースモデリングである。
+ニュースモデリングには主に2種類の技術がある。すなわち、**特徴量ベース**のニュースモデリングと**深層学習ベース(=ニューステキストの特徴量抽出のために深層学習を使う手法??)**のニュースモデリングである。
 Feature-based news modeling methods usually rely on handcraftedfeatures to represent news articles.
 特徴量ベースのニュースモデリング手法は、通常、ニュース記事を表現するために手作業で作成された特徴量に依存します。
 For instance, in many methods based on collaborative iltering (CF), newsarticles are represented by their IDs [29,168].
@@ -189,18 +179,18 @@ For instance, in many methods based on collaborative iltering (CF), newsarticles
 However, on most news websites novel news articles are publishedcontinuously and old ones soon vanish.
 しかし，多くのニュースサイトでは，新しいニュース記事は継続的に公開され，古い記事はすぐに消えてしまう．
 Thus, representing news articles with their IDs will sufer from severecold-start problems, and the performance is usually suboptimal.
-しかし，多くのニュースサイトでは，新しい記事は継続的に公開され，古い記事はすぐに消えてしまうため，IDで表現した場合，古い記事から始まる問題が発生し，性能が低下することが多い．
+それゆえ、**ニュース記事をそのIDで表現すると、深刻なコールドスタートの問題に直面し、パフォーマンスは通常最適ではない**。
 
 Considering the drawbacks of ID-based news modeling methods, most approaches incorporate content featuresto represent news.
-IDベースのニュースモデリング手法の欠点を考慮し，多くのアプローチはニュースを表現するためにコンテンツの特徴を取り入れている．
+**IDベースのニュースモデリング手法の欠点を考慮し，多くのアプローチはニュースを表現するためにコンテンツの特徴量を取り入れている**．
 Among them, many methods use features extracted from news texts for news modeling.
-その中で，多くの手法はニューステキストから抽出した特徴をニュースのモデリングに用いている．
+その中で，**多くの手法はニューステキストから抽出した特徴量をニュースのモデリングに用いている**．
 For instance, Capelle et al. [16] proposed to represent news with Synset Frequency-Inverse Document Frequency(SF-IDF), which uses WordNet synonym set to replace the term frequencies in TF-IDF.
 例えば，Capelleら[16]はSynset Frequency-Inverse Document Frequency(SF-IDF)を用いてニュースを表現することを提案しています．これは，TF-IDFの用語頻度をWordNetの同義語セットで置き換えるものです．
 Besides the news texts,many methods also explore to incorporate various factors that may have inluence on users’ news browsingdecisions into news modeling, such as news popularity and recency [109].
 また，ニューステキスト以外にも，ニュースの人気度や新着度など，ユーザのニュース閲覧の意思決定に影響を与える様々な要因をニュースモデリングに取り込むことを試みる手法も多く存在する[109]．
 However, in these methods, the featuresto represent news are usually manually designed, which usually requires much efort and domain knowledge.
-しかし，これらの手法では，ニュースを表現するための特徴は通常手作業で設計され，多くの労力とドメイン知識が必要とされる．
+しかし，これらの手法では，ニュースを表現するための特徴は通常手作業で設計され，多くの労力とドメイン知識が必要とされる。
 Inaddition, handcrafted features are usually not optimal in representing the semantic information encoded in newstexts.
 さらに，手作業で設計された特徴量は，通常，ニューステキストにコード化された意味情報を表現する上で最適ではない．
 
@@ -210,81 +200,86 @@ For example, Okura et al. [144] proposed to useautoencoders to learn news repres
 例えば、**大倉ら[144]は、オートエンコーダーを用いて、ニュースコンテンツからニュース表現を学習すること**を提案している。
 Wang et al. [197] proposed to use a knowledge-aware convolutional neural network (CNN) to learn news representations from news titles and their entities.
 Wangら[197]は、知識認識型畳み込みニューラルネットワーク（CNN）を用いて、ニュースのタイトルとその実体からニュース表現を学習することを提案している。
-Wuet al. [207] proposed to learn news representations from news titles via a combination of multi-head self-attentionand additive attention networks.
-Wuら[207]は、マルチヘッド自己注意ネットワークと付加的注意ネットワークの組み合わせによって、ニュースタイトルからニュース表現を学習することを提案した。
+Wu et al. [207] proposed to learn news representations from news titles via a combination of multi-head self-attentionand additive attention networks.
+Wuら[207]は、マルチヘッド自己注意ネットワークと付加的注意ネットワークの組み合わせによって、ニュースタイトルからニュース表現を学習することを提案した。(NRMSのこと!)
 Wu et al. [214] studied to use pre-trained language models to encode news texts.These deep learning-based news modeling methods can automatically learn informative news representationswithout heavy efort on manual feature engineering, and they can usually better understand news content thantraditional feature-based methods.
-Wuら[214]は、事前に学習した言語モデルを用いてニューステキストをエンコードすることを研究しました。これらの深層学習ベースのニュースモデリング手法は、手動特徴エンジニアリングに大きな負担をかけずに情報量の多いニュース表現を自動的に学習でき、通常は従来の特徴ベースの手法よりもニュースコンテンツをよく理解することができます。
+Wuら[214]は、事前に学習した言語モデルを用いてニューステキストをエンコードすることを研究しました。これらの深層学習ベースのニュースモデリング手法は、マニュアルの特徴量エンジニアリングに大きな負担をかけずに情報量の多いニュース表現を自動的に学習でき、通常は従来の特徴ベースの手法よりもニュースコンテンツをよく理解することができます。(これも同じWu et alのやつ)
 
-### 2.2. 2.2 User Modeling 2.2. 2.2ユーザーモデリング
+## 2.2. User Modeling
 
 User modeling techniques in news recommendation aim to understand users’ personal interest in news.
-ニュース推薦におけるユーザモデリング技術は，ユーザのニュースに対する個人的な興味を理解することを目的としている．
+ニュース推薦におけるユーザモデリング技術は，ユーザのニュースに対する個人的な興味を理解することを目的としている。
 Similar tonews modeling, user modeling methods can also be roughly classiied into two categories, i.e., feature-based and deep learning-based.
-ニュースのモデリングと同様に，ユーザモデ リング手法も特徴ベースと深層学習ベースの 2 種類に大別される．
+ニュースのモデリングと同様に，**ユーザモデリング手法も特徴量ベースと深層学習ベースの 2 種類に大別される**．
 Some feature-based methods like CF represent users with their IDs [29,168].
-CF のような特徴ベースの手法は，ユーザを ID で表現する[29,168] がある．
+CF のような特徴量ベースの手法は，ユーザを ID で表現する[29,168] がある．
 However, theyusually sufer from the sparsity of user data and cannot model user interest accurately.
-しかし，CF のような特徴に基づく手法は，ユーザデータの疎らさに悩まされ，ユーザの興味を正確にモデル化することができない．
+しかし，CF のような特徴量に基づく手法は，ユーザデータの疎らさに悩まされ，ユーザの興味を正確にモデル化することができない。
 Thus, most feature-basedmethods consider other user information such as click behaviors on news.
 そこで，多くのFeature-based手法は，ニュースに対するクリック行動など，他のユーザ情報を考慮する．
 For example, Garcin et al. [52] proposedto use Latent Dirichlet Allocation (LDA) to extract topics from the concatenation of news title, summary andbody.
 例えば，Garcinら[52]は，Latent Dirichlet Allocation (LDA) を用いて，ニュースのタイトル，要約，本文を連結したものからトピックを抽出することを提案している．
 The topic vectors of all clicked news are further aggregated into a user vector by averaging.
-さらに、クリックされた全てのニュースのトピックベクトルを平均化することにより、ユーザベクトルに集約する。
+さらに、**クリックされた全てのニュースのトピックベクトルを平均化することにより、ユーザベクトルに集約する**。(ここはシンプルな手法。あ、でもトピックベクトルか...!)
 There are alsoseveral works that explore to incorporate other user features into user modeling, such as demographics [104],location [43] and access patterns [109].
-また，デモグラフィックス[104]，ロケーション[43]，アクセスパターン[109]などの他のユーザの特徴をユーザモデリングに組み込むことを検討した研究もいくつか存在する．
+また，デモグラフィックス[104]，ロケーション[43]，アクセスパターン[109]などの他のユーザの特徴をユーザモデリングに組み込むことを検討した研究もいくつか存在する。
 However, feature-based user modeling methods also require an enormousamount of domain knowledge to design informative user features in speciic scenarios, and they are usuallysuboptimal in representing user interests.
-しかし，特徴ベースのユーザモデリング手法は，特定のシナリオにおいて有益なユーザ特徴を設計するために膨大なドメイン知識を必要とし，通常，ユーザの興味を表すには最適とはいえない．
+しかし，特徴量ベースのユーザモデリング手法は，特定のシナリオにおいて有益なユーザ特徴を設計するために**膨大なドメイン知識を必要とし**，通常，ユーザの興味を表すには最適とはいえない．
 
-There are several methods that use neural networks to learn user representations from users’ click behaviors.For example, Okura et al. [144] proposed to use a GRU network to learn user representations from clicked news.Wu et al. [204] proposed a personalized attention network to learn user representations from clicked news in apersonalized manner.
+There are several methods that use neural networks to learn user representations from users’ click behaviors.
+ユーザのクリック行動からユーザ表現を学習するためにニューラルネットワークを用いる手法もいくつか存在する。
+For example, Okura et al. [144] proposed to use a GRU network to learn user representations from clicked news.Wu et al. [204] proposed a personalized attention network to learn user representations from clicked news in apersonalized manner.
 例えば，Okuraら[144]はGRUネットワークを用いてクリックされたニュースからユーザ表現を学習することを提案し，Wuら[204]はクリックされたニュースからユーザ表現を個人別に学習するpersonalized attention networkを提案している．
 Qi et al. [160] proposed a hierarchical user interest representation method to model thehierarchical structure of user interest.
-Qiら[160]は、ユーザの興味の階層構造をモデル化する階層的ユーザ興味表現手法を提案した。
+Qiら[160]は，ユーザの興味の階層構造をモデル化するための階層的なユーザ興味表現手法を提案している．
 These methods can automatically learn deep interest representations ofusers for personalized news recommendation, which are usually more accurate than handcrafted user interestfeatures.
-これらの手法は，個人化されたニュース推薦のためにユーザの深い興味表現を自動的に学習することができ，通常，手作業で作成したユーザ興味特徴よりも精度が高い．
+これらの手法は，パーソナライズドニュース推薦のためのユーザの深い興味表現を自動的に学習することができ，**手作業で作成されたユーザの興味の特徴よりも通常はより正確である**．
 
-### 2.3. 2.3 Personalized Ranking 2.3. パーソナライズドランキング
+## 2.3. 2.3 Personalized Ranking 2.3. パーソナライズドランキング
 
 On the basis of news and user interest modeling, the next step is ranking candidate news in a personalizedway according to user interest.
 ニュースおよびユーザインタレストのモデリングに基づき、次のステップは、ユーザの興味に応じてパーソナライズされた方法でニュース候補をランク付けすることである。
 Most methods rank news based on their relevance to user interest, and how toaccurately measure the relevance between user interest and candidate news is their core problem.
-多くの手法は，ユーザの興味とニュースの関連性に基づいてニュースをランク付けしており，ユーザの興味とニュース候補の関連性をどのように正確に測定するかが問題の核心である．
+多くの手法は，**ユーザの興味とニュースの関連性に基づいてニュースをランク付け**(=ユーザが好きそうなニュース推薦しようという方針!)しており，**ユーザの興味とニュース候補の関連性をどのように正確に測定するかが問題の核心**である．
 Some methodsmeasure the user-news relevance based on their representations.
-また，ユーザとニュースの関連性を表現に基づいて測定する手法もある．
+一部の手法では，ユーザとニュースの関連性を表現(=埋め込み!)に基づいて測定する。
 For example, Goossen et al. [58] proposed tocompute the cosine similarity between the Concept Frequency-Inverse Document Frequency (CF-IDF) featuresextracted from candidate news and clicked news, which was further used for personalized candidate newsranking.
-例えば，Goossenら[58]は，候補ニュースから抽出したCF-IDF（Concept Frequency-Inverse Document Frequency）特徴とクリックされたニュースとの間のコサイン類似度を計算し，さらにパーソナライズした候補ニュースランキングに利用することを提案している．
+例えば，Goossenら[58]は，ニュース候補とクリックされたニュースから抽出されたConcept Frequency-Inverse Document Frequency (CF-IDF)の特徴量の**コサイン類似度**を計算し，さらにパーソナライズされたニュース候補のランキングに用いている．
 Okura et al. [144] used the inner product between news and user embeddings to compute the clickscores, and ranked candidate news based on these scores.
-大倉ら[144]はクリックスコアの計算にニュースとユーザ埋め込み間の内積を用い，そのスコアに基づいてニュース候補をランク付けしています．
+大倉ら[144]はクリックスコアの計算にニュースとユーザ埋め込み間の**内積**を用い，そのスコアに基づいてニュース候補をランク付けしています．
 Gershman et al. [55] proposed to use an SVM model foreach individual user to classify whether this user will click a candidate news based on news and user interestfeatures.
-Gershmanら[55]は，個々のユーザに対してSVMモデルを用い，そのユーザがニュース候補をクリックするかどうかを，ニュースとユーザの興味の特徴に基づいて分類することを提案している．
+Gershmanら[55]は，個々のユーザに対して**SVMモデル**を用い，そのユーザがニュース候補をクリックするかどうかを，ニュースとユーザ興味の特徴量に基づいて分類することを提案している．
+
 In several recent methods, the relevance between candidate news and user interest is modeled in aine-grained way by matching candidate news with clicked news.
-最近のいくつかの手法では，ニュース候補とクリックされたニュースをマッチングすることで，ニュース候補とユーザの関心の関連性をきめ細かくモデル化する．
+最近のいくつかの手法では，**ニュース候補とクリックされたニュースをマッチングする**ことで，ニュース候補とユーザの関心の関連性をきめ細かくモデル化する。(??)
 For example, Wang et al. [196] proposed tomatch candidate news and clicked news with a 3-D convolutional neural network to mine the ine-grainedrelatedness between their content.
-例えば，Wangら[196]は，3次元畳み込みニューラルネットワークを用いて候補ニュースとクリックされたニュースをマッチングし，それらのコンテンツの間の粒度の細かい関連性をマイニングすることを提案している．
+例えば，Wangら[196]は，3次元畳み込みニューラルネットワークを用いて，ニュース候補とクリックされたニュースをマッチングし，その内容のきめ細かい関連性を探索することを提案している．
 However, ranking candidate news and user interest merely based on theirrelevance may recommend news that are similar to those previously clicked by users [160], which may cause thełilter bubble” problem.
-しかし，ニュース候補とユーザの興味・関心を単に関連性でランク付けすると，ユーザが過去にクリックしたニュースと類似したニュースを推薦する可能性があり[160]，「フィルタバブル」問題を引き起こす可能性がある．
+しかし，**ニュース候補とユーザの興味・関心を単に関連性でランク付けすると，ユーザが過去にクリックしたニュースと類似したニュースを推薦する可能性があり[160]，「フィルタバブル」問題を引き起こす可能性がある．**
 
 A few methods use reinforcement learning for personalized ranking.
-いくつかの方法は、パーソナライズされたランキングのために強化学習を使用しています。
+いくつかの方法は、パーソナライズされたランキングのために**強化学習**を使用しています。(推薦を探索的にするってこと??)
 Li et al. [106] irst explore to model thepersonalized news recommendation task as a contextual bandit problem.
-Liら[106]は，パーソナライズされたニュース推薦タスクを文脈的バンディット問題としてモデル化することを初めて試みた．
-They proposed a LinUCB approach thatcomputes the upper conidence bound (UCB) of each arm eiciently in closed form based on a linear payof model,which can match news with users’ personal interest and meanwhile explore making diverse recommendations.DRN [244] uses a deep reinforcement learning approach to ind the interest matching policy that optimizes thelong-term reward.
-彼らは，線形ペイオフモデルに基づいて各アームの上限信頼限界（UCB）を閉形式で効率的に計算するLinUCBアプローチを提案し，ニュースをユーザの個人的な興味にマッチングさせ，一方で多様な推薦を行うことを検討している．
+Liら[106]は，パーソナライズされたニュース推薦タスクをcontextual bandit問題としてモデル化することを初めて試みた。
+They proposed a LinUCB approach thatcomputes the upper conidence bound (UCB) of each arm eiciently in closed form based on a linear payof model,which can match news with users’ personal interest and meanwhile explore making diverse recommendations.
+彼らは，**線形ペイオフモデルに基づいて，各アームの上限信頼区間（UCB）を閉形式で効率的に計算するLinUCBアプローチ**を提案している．これは，ニュースをユーザの個人的な興味にマッチングさせることができ，**同時に多様な推薦**を行うことができる．
+DRN [244] uses a deep reinforcement learning approach to ind the interest matching policy that optimizes thelong-term reward.
+DRN [244]は，長期的な報酬を最適化するインタレストマッチングポリシーを見つけるために，深層強化学習アプローチを用いている．
 In addition, it uses a Dueling Bandit Gradient Descent (DBGD) method for exploration.
 また、探索にはDueling Bandit Gradient Descent (DBGD) 法が用いられる。
 Thesemethods usually optimize the long-term reward rather than the current click probability, which has the potentialto alleviate the ilter bubble problem by exploring more diverse user interest.
-これらの手法は通常，現在のクリック確率よりも長期的な報酬を最適化し，より多様なユーザの興味を探索することでイルターバブル問題を緩和する可能性を持っている．
+これらの手法は通常，**現在のクリック確率よりも長期的な報酬を最適化**し，より多様なユーザの興味を探索することでイルターバブル問題を緩和する可能性を持っている．
 
-### 2.4. 2.4 Model Training 2.4. 2.4 モデルトレーニング
+## 2.4. 2.4 Model Training 2.4. 2.4 モデルトレーニング
 
 Many personalized news recommendation methods employ machine learning models for news modeling, usermodeling and interest matching.
-個人向けニュース推薦手法の多くは，ニュースのモデリング，ユーザモデリング，インタレストマッチに機械学習モデルを用いている．
+個人向けニュース推薦手法の多くは，ニュースのモデリング，ユーザモデリング，interest matching(=ranking?) に機械学習モデルを用いている。
 How to train these models to make accurate recommendations is a criticalproblem.
 これらのモデルをどのように学習させ，正確な推薦を行うかは重要な問題である．
 A few methods train their models by predicting the ratings on news given by users.
-いくつかの手法は，ユーザのニュースに対する評価を予測することによってモデルを学習する．
+いくつかの手法は，**ユーザのニュースに対する評価を予測すること**によってモデルを学習する．
 For example, theGrouplens [168] system is trained by predicting the unknown ratings in the user-news matrix.
-例えば、Grouplens [168] システムでは、ユーザ-ニュース行列の未知の評価を予測することによって学習する。
+例えば、Grouplens [168] システムでは、**ユーザ-ニュース行列の未知の評価を予測する**ことによって学習する。
 However, explicitfeedback such as ratings is usually sparse on news platforms.
 しかし、ニュースプラットフォームでは通常、視聴率のような明示的なフィードバックはまばらである。
 Thus, most existing methods use implicit feedbacklike clicks to construct prediction targets for model training.
@@ -292,45 +287,48 @@ Thus, most existing methods use implicit feedbacklike clicks to construct predic
 For example, Wang et al. [197] formulated the newsclick prediction problem as a binary classiication task, and use crossentropy as the loss function for modeltraining.
 例えば、Wangら[197]はニュースクリック予測問題を二値分類タスクとして定式化し、モデル学習のための損失関数としてクロスエントロピーを使用しています。
 Wu et al. [204] proposed to employ negative sampling techniques that combine each positive samplewith several negative samples to construct labeled samples for model training.
-Wuら[204]は、モデル学習のためにラベル付きサンプルを構築するために、各陽性サンプルと複数の陰性サンプルを結合する陰性サンプリング技術を採用することを提案した。
+Wuら[204]は，各正例サンプルといくつかの負例サンプルを組み合わせてラベル付きサンプルを構成するネガティブサンプリング技術を用いて，**モデル学習のためのラベル付きサンプルを構成する**ことを提案している．
 However, click feedback usuallycontains heavy noise and may not indicate user interest, which poses great challenges to learning accuraterecommendation models.
-しかし、クリックフィードバックには通常大きなノイズが含まれており、ユーザの興味を示していない可能性があるため、正確な推薦モデルを学習する上で大きな課題となる。
+しかし、**クリックフィードバックには通常大きなノイズが含まれており**、ユーザの興味を示していない可能性があるため、正確な推薦モデルを学習する上で大きな課題となる。
 
 There are only a few methods that consider user feedback beyond click signals [213,215].
-また，クリック信号以外のユーザからのフィードバックを考慮した手法は少ない[213,215]．
+また，**クリック信号以外のユーザからのフィードバックを考慮した手法は少ない**[213,215]。
 For example,Wu et al. [213] proposed to model click preference with click feedback and model reading satisfaction basedon the personalized reading speed of users, and train the recommendation model to predict both clicks anduser satisfaction.
-例えば，Wuら[213]は，クリックフィードバックを用いてクリック嗜好をモデル化し，ユーザの個人化された読書速度に基づいて読書満足度をモデル化し，クリック数とユーザ満足度の両方を予測する推薦モデルを学習することを提案している．
+例えば，Wuら[213]は，クリックフィードバックを用いてクリック嗜好をモデル化し，**ユーザの個人化された読書速度に基づいて読書満足度をモデル化し，クリック数とユーザ満足度の両方を予測する推薦モデルを学習すること**を提案している．(事前学習とfine-tuningってことかな。またwuさんの論文??)
 By optimizing objectives beyond news clicks, these methods are aware of user engagementinformation and thereby can better understand user interest.
-これらの手法は，ニュースのクリック数以外の目的を最適化することで，ユーザのエンゲージメント情報を意識し，ユーザの興味をより理解することができる．
+これらの手法は，ニュースのクリック数以外の目的を最適化することで，**ユーザのエンゲージメント情報を意識し，ユーザの興味をより理解する**ことができる．
 In addition, these methods have the potential torecommend news articles that are not only clicked by users, but also indeed satisfy their information needs.
 さらに、これらの手法は、ユーザがクリックするだけでなく、ユーザの情報ニーズを満たすようなニュース記事を推薦する可能性がある。
 Thus,designing engagement-aware training objectives is useful for news recommender systems to provide high-qualitynews suggestions.
 このように、エンゲージメントを考慮した学習目標を設計することは、ニュース推薦システムが高品質なニュース推薦を行うために有用である。
 
-### 2.5. 2.5 Evaluation 2.5. 2.5 評価
+## 2.5. Evaluation
 
 Properly evaluating the performance of personalized news recommendation algorithms is important for devel-oping real-world news recommender systems.
-個人向けニュース推薦アルゴリズムの性能を適切に評価することは，実世界のニュース推薦システムを開発する上で重要である．
+**個人向けニュース推薦アルゴリズムの性能を適切に評価する**ことは，実世界のニュース推薦システムを開発する上で重要である。
 Most existing methods use click-related metrics to measure theaccuracy of recommendation results.
-既存の手法の多くは，推薦結果の精度を測定するためにクリック関連指標を用いている．
+既存の手法の多くは，推薦結果の精度を測定するために**クリック関連指標**を用いている．
 Some of them regard the recommendation task as a classiication prob-lem [70,116,197], where the performance is evaluated by classiication metrics such as Area Under Curve (AUC)and F1-score.
 また，推薦タスクを分類問題[70,116,197]として捉え，AUC (Area Under Curve) やF1-score などの分類指標によって性能を評価する手法もある．
 Many other methods use ranking metrics such as Mean Reciprocal Rank (MRR) and normalized Dis-counted Cummulative Gain (nDCG).
 また，MRR（Mean Reciprocal Rank）やnDCG（Normalized Dis-counted Cummulative Gain）といったランキング指標を用いる手法も多くある．
 However, click-based metrics may not indicate user experience.
-しかし，クリックベースの指標はユーザエクスペリエンスを示さない可能性がある．
-Thus, a fewworks explore to use user engagement-based metrics to evaluate the recommendation performance [215], such asdwell time and dislike, which can evaluate the performance of recommendation models more comprehensively.In most works, the performance of recommendation models is oline evaluated.
-しかし，クリックベースの指標はユーザエクスペリエンスを示さない可能性がある．そこで，滞留時間や嫌悪度などのユーザエンゲージメントベースの指標を用いて推薦性能を評価する研究がいくつか行われている[215]．
-However, the data used foroline evaluation is usually inluenced by the recommendation results generated by the predecessor recommen-dation algorithms, and the real user feedback on recommendation results cannot be obtained.
-しかし，オンライン評価に用いるデータは，先行する推薦アルゴリズムが生成した推薦結果に影響されることが多く，推薦結果に対する実際のユーザのフィードバックが得られない．
-Only a few worksreported online evaluation results [214], which may better indicate the real performance of the recommendersystems.
-また，オンライン評価結果を報告した研究は少なく[214]，これは推薦システムの実際の性能をよりよく表している可能性がある．
-To ill the gaps between oline and online experiments, one prior study [107] proposed an unbiasedevaluation method of contextual bandit-based news recommendation methods.
-このようなオンライン実験とオンライン実験のギャップを埋めるため，先行研究 [107] では，文脈バンディット型ニュース推薦手法の非バイアス評価法を提案している．
-However, there still lacks a generalmethod that can oline evaluate the potentials of various news recommender algorithms in online environments.
-しかし，オンライン環境における様々なニュース推薦アルゴリズムの潜在能力をオンライン上で評価できる一般的な方法はまだ存在しない．
+**しかし，クリックベースの指標はユーザエクスペリエンスを示さない可能性がある**．
+Thus, a fewworks explore to use user engagement-based metrics to evaluate the recommendation performance [215], such asdwell time and dislike, which can evaluate the performance of recommendation models more comprehensively.
+そこで、**ユーザエンゲージメントに基づく指標を用いて推薦性能を評価する研究[215]もいくつか存在する**。これらの指標は、推薦モデルの性能をより包括的に評価することができる。
 
-### 2.6. 2.6 Dataset and Benchmark 2.6. 2.6 データセットとベンチマーク
+In most works, the performance of recommendation models is offline evaluated.
+ほとんどの研究では、推薦モデルの性能はオフラインで評価されている。
+However, the data used for offline evaluation is usually inluenced by the recommendation results generated by the predecessor recommen-dation algorithms, and the real user feedback on recommendation results cannot be obtained.
+しかし、**オフライン評価に使用されるデータは通常、先行する推薦アルゴリズムによって生成された推薦結果に影響を受けており**、推薦結果に対する実際のユーザのフィードバックを得ることはできない。(logging policyに大きく影響を受けるっていう話ね...!)
+Only a few worksreported online evaluation results [214], which may better indicate the real performance of the recommendersystems.
+オンライン評価結果[214]を報告している研究はほとんどないが，これは推薦システムの実際の性能をよりよく示すことができる．
+To ill the gaps between oline and online experiments, one prior study [107] proposed an unbiasedevaluation method of contextual bandit-based news recommendation methods.
+このようなオンライン実験とオンライン実験のギャップを埋めるため，先行研究 [107] では，**コンテキストバンディットベースのニュース推薦手法のバイアスのない評価方法を提案**している。(OPEはやっぱりcontextual banditベースの手法 = 探索的な確率論的な推薦システムが前提なんだよな...!)
+However, there still lacks a general method that can oline evaluate the potentials of various news recommender algorithms in online environments.
+しかし，**オンライン環境における様々なニュース推薦アルゴリズムの潜在能力をオンライン上で評価できる一般的な方法はまだ存在しない**．
+
+## 2.6. 2.6 Dataset and Benchmark 2.6. 2.6 データセットとベンチマーク
 
 Publicly available datasets are important for facilitating researches in the corresponding ields as well as bench-marking their results and indings.
 一般に公開されているデータセットは、対応する分野の研究を促進し、その結果や指標をベンチマークするために重要である。
@@ -353,12 +351,14 @@ In addition, MIND is associated with a public leaderboard andan open competition
 Thus, many recentresearches are conducted on the MIND dataset [210, 214, 218].
 そのため、MINDデータセットを用いた多くの研究が行われている[210, 214, 218]。
 
-### 2.7. 2.7 Responsible News Recommendation 2.7. 2.7 レスポンシブル・ニュースのススメ
+## 2.7. Responsible News Recommendation 2.7. 責任あるニュース推薦
+
+hogehoge
 
 Given the overview above, we then present in-depth discussions on each mentioned core problem in thefollowing sections.
 以上の概要を踏まえ、以下の章では、それぞれの核心的問題について、より深い議論を展開する。
 
-## 3. 3 NEWS MODELING 3. 3 ニュースモデリング
+# 3. 3 NEWS MODELING 3. 3 ニュースモデリング
 
 News modeling is a critical step in personalized news recommendation methods to capture the characteristicsof news articles and understand their content.
 ニュースのモデリングは、ニュース記事の特徴を捉え、その内容を理解するためのパーソナライズド・ニュースレコメンデーション手法において重要なステップである。
@@ -382,12 +382,12 @@ Fig. 3.
 An overview of different types of news features.
 様々なタイプのニュース特集の概要。
 
-### 3.1. 3.1 Feature-based News Modeling 3.1. 3.1 特徴に基づくニュースのモデル化
+## 3.1. 3.1 Feature-based News Modeling 3.1. 3.1 特徴量に基づくニュースのモデル化
 
 Designing informative features to represent news articles is the key problem in feature-based news modelingmethods.
 ニュース記事を表現するための情報量の多い特徴量を設計することは、特徴量ベースのニュースモデリング手法の重要な問題である。
 As summarized in Fig. 2, there are mainly four types of features used in news modeling, which areintroduced as follows.
-図2に示すように、ニュースモデリングに用いられる特徴量には主に4つの種類があり、以下に紹介する。
+図2に示すように、**ニュースモデリングに用いられる特徴量には主に4つの種類**があり、以下に紹介する。
 
 In many CF-based methods, news articles are represented by collaborative iltering signals such as newsIDs [29,62,78,141,168,172,225].
 多くのCFベースの手法では，ニュース記事はnewsIDのような協調的フィルタリング信号で表現される [29,62,78,141,168,172,225]．
@@ -417,7 +417,7 @@ Beyondnews texts, the exploitation of vision-related information such as the vid
 ニューステキストを越えて、ニュースのビデオなどの視覚関連情報を利用することも、[131]で研究されている。
 
 In addition to content features, many other genres of features are used for news modeling.
-ニュースのモデル化には，内容特徴の他に多くの特徴ジャンルが用いられる。
+ニュースのモデル化には，内容特徴量の他に多くの特徴ジャンルが用いられる。
 They can be roughlydivided into two categories, i.e., property features and context features.
 これらは大きく分けて、特性特徴と文脈特徴の2つに分類される。
 Property features such as categories,locations and publishers usually relect intrinsic properties of news.
@@ -482,10 +482,10 @@ Table 2.
 表2.
 Main features used for news representation.
 ニュース表現に使用した主な特徴量。
-\*XF-IDF means TF-IDF and its variants such as CF-IDF and SF-IDF.
-\*XF-IDFはTF-IDFとCF-IDFやSF-IDFなどの派生型を意味する。
+XF-IDF means TF-IDF and its variants such as CF-IDF and SF-IDF.
+XF-IDFはTF-IDFとCF-IDFやSF-IDFなどの派生型を意味する。
 
-### 3.2. 3.2 Deep learning-based News Modeling 3.2. 3.2 ディープラーニングによるニュースモデリング
+## 3.2. 3.2 Deep learning-based News Modeling 3.2. 3.2 ディープラーニングによるニュースモデリング
 
 With the development of deep learning techniques, in recent years many methods employ neural networksto automatically learn news representations.
 近年，深層学習技術の発展に伴い，ニュース表現を自動的に学習するためにニューラルネットワークを採用する手法が多くなっている．
@@ -675,21 +675,29 @@ To help better understand the relatedness and diferences between the methods rev
 Next, we provide severaldiscussions on the aforementioned methods for news modeling.
 次に，前述したニュースモデル化手法に関するいくつかの考察を行う．
 
-### 3.3. 3.3 Discussions on News Modeling 3.3. 3.3 ニュースモデリングに関する考察
+## 3.3. 3.3 Discussions on News Modeling 3.3. 3.3 ニュースモデリングに関する考察
 
-#### 3.3.1. 3.3.1 Feature-based News Modeling. 3.3.1. 3.3.1 特徴に基づくニュースモデリング。
+### 3.3.1. 3.3.1 Feature-based News Modeling. 3.3.1. 3.3.1 特徴に基づくニュースモデリング。
 
 In feature-based news modeling methods, mining textual information ofnews is critical for representing news content.
 特徴量に基づくニュースモデリング手法では、ニュースのテキスト情報をマイニングすることが、ニュース内容を表現するために重要である。
-Many methods incorporate BOW
-多くの手法では、BOW
+Many methods incorporate BOW/TFIDF features or their variants to represent news texts, which are also popular in the NLP field.
+多くの手法では、ニュースのテキストを表現するためにBOW/TFIDF特徴量やその変種を取り入れているが、これらはNLP分野でも人気がある。
+In addition, topic models like LDA are employed by various methods to extract topics from texts.
+さらに、**LDAのようなトピックモデルは、テキストからトピックを抽出するために、さまざまな手法で用いられている**。
+This is probably because topic models are capable of mining the topic distributions of news articles and can also provide useful clues for inferring user interest on different topics.
+これは、トピックモデルがニュース記事のトピック分布をマイニングすることができ、さらに、異なるトピックに関するユーザの興味を推測するための有用な手がかりを提供することができるためである。
+Moreover, since users may focus more on the entities or keywords in news, they are considered by many methods to summarize the content and topic of news, and can also be useful links to find similar news or map news on knowledge graphs.
+さらに、**ユーザはニュースのentityやキーワードにより多くの注意を払う可能性がある**ため、多くの手法では、ニュースの内容やトピックを要約するために考慮されており、類似したニュースを見つけたり、知識グラフ上のニュースをマッピングするための有用なリンクになることもある。
+Especially, some methods also use ontology such as Wikipedia to extract entity features to represent them more accurately.
+特に、いくつかの手法では、オントロジー（Wikipediaなど）を用いてエンティティ特徴量を抽出し、より正確に表現することもある。
 
 Besides the texts of news, many methods utilize other information of news.
 ニュースのテキスト以外に、多くの手法はニュースの他の情報を利用している。
 For instance, the categories orclusters of news are popular news features to help model news content.
 例えば，ニュースのカテゴリやクラスタは，ニュースの内容をモデル化するのに役立つ人気のあるニュースの特徴である．
 In addition, several dynamic features ofnews are also widely employed in feature-based news modeling methods, such as popularity and recency.
-さらに，ニュースの動的な特徴である人気度や再来時なども，特徴ベースのニュースモデリング手法に広く採用されています．
+さらに，**ニュースの動的な特徴量である popularity と recency なども，特徴量ベースのニュースモデリング手法で広く利用されている**。
 Sincemany users may pay more attention to popular events and news usually vanish quickly, incorporating newspopularity and recency can help build more informative news representations.
 多くのユーザは人気のあるイベントにより多くの注意を払い、ニュースは通常すぐに消えてしまうため、ニュースの人気度や再現性を取り入れることで、より情報量の多いニュース表現を構築することができます。
 Besides, several environmentalfactors, such as locations and time are also utilized by several methods.
@@ -698,79 +706,83 @@ This is because considering locations ofnews can provide news related to users�
 また，ニュースのタイムスタンプを利用することで，時間を考慮したニュースサービスを提供することができる．
 
 A few methods also study incorporating other interesting features.
-また、いくつかの手法では、他の興味深い特徴を取り入れることも研究されている。
+また、いくつかの手法では、他の興味深い特徴量を取り入れることも研究されている。
 For example, the sentiment information ofnews is useful for news understanding, because users may have diferent tastes on the sentiment of news.
-例えば、ニュースのセンチメント情報は、ニュースの理解に役立ちます。
+例えば、ニュースのsentiment情報は、ニュースの理解に役立ちます。
 Thebias of news may also need to be taken into consideration, because recommending news with biased opinions andfacts may hurt user experience and the reputation of news platforms.
-また、偏った意見や事実を含むニュースを推薦すると、ユーザー体験やニュースプラットフォームの評判を損なう可能性があるため、ニュースの偏りを考慮する必要がある。
+また、偏った意見や事実を含むニュースを推薦すると、ユーザ体験やニュースプラットフォームの評判を損なう可能性があるため、**ニュースの偏りを考慮**する必要がある。
 Finally, although several non-personalizednews recommendation methods have used news images to build news representations [127], few personalizedones consider the visual information of news, which is very useful for news modeling.
-最後に，いくつかの非個人化ニュース推薦手法は，ニュース画像を用いてニュース表現を構築していますが [127]，ニュースのモデリングに非常に有用なニュースの視覚情報を考慮した個人化手法はほとんどありません．
+最後に、いくつかの非個人化ニュース推薦手法では、ニュースの画像を用いてニュース表現を構築しているが[127]、**個人化されたニュース推薦手法では、ニュースモデリングに非常に有用である視覚情報を考慮しているものはほとんどない**。
 
 Although feature-based news modeling methods have comprehensive coverage of various news information,they usually require a large amount of domain knowledge for feature design.
-特徴量ベースのニュースモデリング手法は，様々なニュース情報を包括的にカバーしているが，通常，特徴量設計のために大量のドメイン知識が必要となる．
-In addition, handcrafted featuresare usually not optimal in representing the textual content of news due to the absence of the contexts and ordersof words.
-また，手作業で作成された特徴量は，文脈や語順が分からないため，ニュースのテキスト内容を表現するのに最適なものではありません．
-
-<img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/250px/15-Table3-1.png">
+特徴量ベースのニュースモデリング手法は，様々なニュース情報を包括的にカバーしているが，通常，**特徴量設計のために大量のドメイン知識が必要となる**。
+In addition, handcrafted featuresare usually not optimal in representing the textual content of news due to the absence of the contexts and orders of words.
+さらに、手作業で作成された特徴量は、単語の文脈や順序の考慮が欠けているため、ニュースのテキスト内容を表現するのに最適ではない。
 
 Table 3.
 表3.
 Comparison of different methods on news modeling.
 ニュースのモデル化に関する様々な手法の比較。
 
-#### 3.3.2. 3.3.2 Deep Learning-based News Modeling. 3.3.2. 3.3.2 ディープラーニングを用いたニュースのモデリング。
+### 3.3.2. 3.3.2 Deep Learning-based News Modeling. 3.3.2. 3.3.2 ディープラーニングを用いたニュースのモデリング。
 
 Among all the reviewed methods, only two methods, i.e., DNA [235]and DeepJoNN [237], directly incorporate the embeddings of news IDs.
-しかし，DNA [235]とDeepJoNN [237]の2つの手法だけが，ニュースIDの埋め込みを直接的に取り入れている．
+**レビューされたすべての手法の中で、DNA [235]とDeepJoNN [237]の2つの手法のみが、ニュースIDの埋め込みを直接組み込んでいる**。(多くの手法がid-freeな手法ってこと??)
 This is probably because of the shortlifecycle of news articles and the quick generation of novel news, which make the coverage of news IDs in thetraining set very limited.
 これは、ニュース記事のライフサイクルが短く、新しいニュースの生成が早いため、学習セットに含まれるニュースIDの範囲が非常に限られているためと思われます。
 Thus, it is very important to understand news from their content.
-このように、ニュースを内容から理解することは非常に重要である。
+それゆえ、ニュースの内容を理解することが非常に重要である。
 
 News text modeling is critical for news understanding.
-ニューステキストをモデリングすることは，ニュースを理解する上で非常に重要である．
+ニューステキストをモデリングすることは，ニュースを理解する上で非常に重要である。
 Most methods use news titles to model news sincenews titles, because news titles usually have decisive inluence on users’ click behaviors.
-これは，ニュースのタイトルは通常，ユーザのクリック行動に決定的な影響を与えるためです．
-Several methods such asEBNR [144], NAML [203] and CPRS [213] use news bodies to enhance news representations, since news bodiesare contain more detailed information of news.
-EBNR [144]、NAML [203]、CPRS [213]などのいくつかの手法は、ニュースの本文がより詳細な情報を含んでいるため、ニュース表現を強化するために本文を使用しています。
+多くの手法は，ニュースのタイトルをニュースのモデル化に用いている。なぜなら、**ニュースのタイトルは，ユーザのクリック行動に決定的な影響を与えるから**である。
+Several methods such as EBNR [144], NAML [203] and CPRS [213] use news bodies to enhance news representations, since news bodiesare contain more detailed information of news.
+EBNR [144]、NAML [203]、CPRS [213]などのいくつかの手法は、**ニュースの本文がより詳細な情報を含んでいるため、ニュース表現を強化するために本文を使用**しています。
+
 In existing methods, CNN is the most frequently used architecturefor text modeling.
-既存の手法では，CNNがテキストモデリングに最も頻繁に使用されるアーキテクチャである．
+既存の手法では，CNNがテキストモデリングに最も頻繁に使用されるアーキテクチャである．(そうなの??)
 This is because local contexts in news articles are important for modeling news content, and CNN is efective and eicient in capturing local contexts.
 これは，ニュース記事中の局所的な文脈がニュース内容のモデル化に重要であり，CNNが局所的な文脈を捉えるのに有効かつ効率的であるためである．
 In addition, since diferent news informationmay have diferent informativeness in modeling news content and user interest, attention mechanisms are alsowidely used to build news representations by selecting important features.
-また、ニュースの内容やユーザの興味をモデル化する上で、異なるニュース情報は異なる情報性を持つ可能性があるため、重要な特徴を選択することでニュース表現を構築するアテンションメカニズムも広く用いられている。
+また、ニュースの内容やユーザの興味をモデル化する上で、異なるニュース情報は異なる情報性を持つ可能性があるため、**重要な特徴を選択することでニュース表現を構築するアテンションメカニズム**も広く用いられている。(まさにNRMSとかね...!)
 With the success of Transformerin NLP, many methods also use Transformer-like architectures for news modeling, such as NRMS [207] andCPRS [213].
 NLPにおけるTransformerの成功により、NRMS [207]やCPRS [213]などの多くの手法もニュースのモデリングにTransformerに似たアーキテクチャを使用しています。
 In addition, a few methods use pre-trained language or and visiolinguistic models to empower newsmodeling [214,217].
 さらに、いくつかの手法では、事前に学習させた言語モデルや視覚言語モデルを使用して、ニュースモデリングを強化しています[214,217]。
 These advanced NLP techniques can greatly improve news content understanding, whichis very important for personalized news recommendation.
-これらの高度なNLP技術は，ニュースの内容理解を大幅に向上させることができ，これはパーソナライズされたニュース推薦に非常に重要である．
+**これらの高度なNLP技術は，ニュースの内容理解を大幅に向上させることができ，これはパーソナライズされたニュース推薦に非常に重要である**。
 However, these methods mainly aim to capture thesemantic information of news and may not be aware of the knowledge and commonsense information encodedin news.
-しかし，これらの手法は主にニュースの意味情報を捕らえることを目的としており，ニュースにエンコードされた知識や常識的な情報には気づいていない可能性がある．
+**しかし，これらの手法は主にニュースの意味情報を捕らえることを目的としており，ニュースにエンコードされた知識や共通認識的な情報には気づいていない可能性がある**。(ほうほう??)
 
 To address this issue, many methods incorporate news entities into news modeling to learn knowledge-awarenews representations [120].
-この問題に対処するため，多くの手法がニュースの実体をニュースモデリングに組み込んで，知識連想ニュース表現を学習している[120]．
+この問題に対処するため，**多くの手法がニュースのentities(固有表現?)をニュースモデリングに組み込んで**，knowledge-awareなニュース表現を学習している[120]。
 Some methods such as DAN [248] directly use entity texts to represent entities,while several other methods like DKN [197] use knowledge graph embeddings to represent entities.
-DAN [248]のように実体を表現するために実体のテキストを直接利用する手法もあれば、DKN [197]のように実体の表現に知識グラフ埋め込みを利用する手法もある。
+DAN [248]のようにentityを表現するために**entityのテキストを直接利用する手法**もあれば、DKN [197]のように**entityの表現に知識グラフ埋め込みを利用する手法**もある。
 These entityrepresentations are usually combined with representations learned from news texts to better model news content.However, there are many new entities and concepts emerging in news and it may be diicult to accuratelyrepresent them with of-the-shelf knowledge bases.
-しかし、ニュースには多くの新しい実体や概念が出現しており、既成の知識ベースではそれらを正確に表現することは困難である。
+**これらのentity表現は，通常，ニューステキストから学習された表現と組み合わされて，ニュースの内容をよりよくモデル化することができる**。(うんうん)
+しかし，ニュースには多くの新しいentityや概念が登場し，市販の知識ベースで正確に表現することは困難である可能性がある。
 
 Several methods incorporate the topic categories of news into news modeling, because news topics are veryuseful for understanding news content and inferring user interest.
-ニュースのトピックは，ニュースの内容を理解し，ユーザの興味を推測するのに非常に有用であるため，いくつかの手法はニュースのモデリングにニュースのトピックカテゴリを組み込んでいる．
-Considering the scenarios that some newsarticles are not labeled with topic categories, some methods such as TANR [205] and CHAMELEON [46] alsoadopt auxiliary tasks by predicting news topic categories to encode topic information into news representations.In addition, a few methods study using other kinds of news features such as sentiment [212], popularity [23],recency [157], which can help better understand the characteristics of news.
-さらに，Sentent[212]，Popular[23]，Recency[157]などの他の種類のニュース特徴を用いる研究も行われており，ニュースの特徴をよりよく理解するのに役立っている．
+**ニュースのトピックは，ニュースの内容を理解し，ユーザの興味を推測するのに非常に有用であるため，いくつかの手法はニュースのモデリングにニュースのトピックカテゴリを組み込んでいる**．
+Considering the scenarios that some newsarticles are not labeled with topic categories, some methods such as TANR [205] and CHAMELEON [46] alsoadopt auxiliary tasks by predicting news topic categories to encode topic information into news representations.
+**ニュース記事の一部にトピックカテゴリが付与されていないシナリオを考慮**して，TANR [205]やCHAMELEON [46]などのいくつかの手法では，ニュースのトピックカテゴリを予測する補助的なタスクを採用して，トピック情報をニュース表現にエンコードしている。
+In addition, a few methods study using other kinds of news features such as sentiment [212], popularity [23],recency [157], which can help better understand the characteristics of news.
+さらに，いくつかの手法では，センチメント[212]，人気度[23]，recency[157]などの他の種類のニュース特徴を用いて，ニュースの特性をよりよく理解することができる．
 However, some additional newsfeatures (e.g., category and CTR) may be unavailable in certain scenarios, which limits the application of thesemethods.
-しかし，いくつかの追加的なニュース特徴（例えば，カテゴリやCTR）は特定のシナリオで利用できない場合があり，これらの手法の適用を制限している．
+しかし，いくつかの追加的なニュース特徴量(例えば，カテゴリやCTR)は特定のシナリオで利用できない場合があり，これらの手法の適用を制限している．
 
-There are also a few methods that explore to enhance news modeling with graph information [53,70].These methods can incorporate the high-order information on user-news bipartite graphs [53,71,161,170] ormore complicated heterogeneous graphs [70,167], which can provide useful contexts on understanding thecharacteristics of news for news recommendation.
-これらの手法は，ユーザとニュースの二部グラフ[53,71,161,170]やより複雑な異種グラフ[70,167]の高次情報を取り込み，ニュースの特性を理解する上で，ニュース推薦に有用なコンテキストを提供することができる。
+There are also a few methods that explore to enhance news modeling with graph information [53,70].
+**グラフ情報**を用いてニュースのモデリングを強化することを探求している手法もいくつかある[53,70]。
+These methods can incorporate the high-order information on user-news bipartite graphs [53,71,161,170] ormore complicated heterogeneous graphs [70,167], which can provide useful contexts on understanding thecharacteristics of news for news recommendation.
+これらの手法は，ニュース推薦のためにニュースの特性を理解する上で有用な文脈を提供することができる，ユーザ-ニュース二部グラフ[53,71,161,170]やより複雑な異種グラフ[70,167]上の高次情報を取り込むことができる．
 However, since the graphs used in these methods are static,they may have some diiculties in accurately representing newly published news.
 しかし，これらの手法で用いられるグラフは静的であるため，新しく発表されたニュースを正確に表現することに困難が伴う可能性がある．
 
 In summary, by reviewing news modeling techniques used in existing news recommendation methods, we cansee that news modeling is still a quite challenging problem in news recommendation due to the variety, dynamic,and timeliness of online news information.
 以上のように、既存のニュース推薦手法で用いられているニュースモデリング技術を概観すると、オンラインニュース情報の多様性、動的性、適時性から、ニュースモデリングはニュース推薦において依然として非常に困難な問題であることがわかる。
 
-## 4. 4 USER MODELING 4. 4 ユーザーモデリング
+# 4. 4 USER MODELING 4. 4 ユーザーモデリング
 
 <img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/17-Figure4-1.png">
 
@@ -782,7 +794,7 @@ An example framework of user modeling.
 User modeling is also a critical step in personalized news recommender systems to infer users’ personal interestsin news.
 また，個人化されたニュース推薦システムにおいて，ユーザモデリングは，ユーザのニュースに対する個人的な興味を推測するために重要なステップである．
 It is usually important for user modeling algorithms to understand users from their behaviors [205].
-ユーザーモデリングアルゴリズムでは、通常、ユーザーの行動からユーザーを理解することが重要である[205]。
+ユーザモデリングアルゴリズムでは、通常、ユーザの行動からユーザを理解することが重要である[205]。
 Anexample user modeling framework in personalized news recommendation is shown in Fig. 4.
 図4は、個人向けニュース推薦におけるユーザモデリングのフレームワークの一例である。
 We can see thatuser modeling is based on the modeling of news that users have interactions with, and it introduces additionaluser features to achieve better personalized user understanding.
@@ -794,7 +806,7 @@ By contrast, deep learning-based methods usually focus on automaticallyinding us
 The details of the two kinds of user modelingmethods are introduced in the following sections.
 この 2 種類のユーザーモデリング手法の詳細については，以下のセクションで紹介する．
 
-### 4.1. 4.1 Feature-based User Modeling 4.1. 4.1 特徴に基づくユーザモデリング
+## 4.1. 4.1 Feature-based User Modeling 4.1. 4.1 特徴に基づくユーザモデリング
 
 Feature-based user modeling methods use handcrafted features to represent users.
 特徴量ベースのユーザモデリング手法では，ユーザを表現するために手作りの特徴量を使用します．
@@ -805,7 +817,7 @@ However, ID-based user modeling methodsusually sufer from the data sparsity.
 Thus, most methods consider the behaviors of users such as news clicks tomodel their interest.
 そこで，多くの手法では，ニュースのクリック数などユーザの行動を考慮し，ユーザの興味をモデル化する．
 An intuitive way is to use the features of clicked news to build user features.
-直感的な方法は，クリックされたニュースの特徴量を用いてユーザ特徴量を構築することである．
+直感的な方法は，**クリックされたニュースの特徴量を用いてユーザ特徴量を構築すること**である．
 For example,Goossen et al. [58] used the CF-IDF features of clicked news to represent user interest.
 例えば，Goossen ら [58] はクリックされたニュースの CF-IDF 特性を用いてユーザの興味関心を表現している．
 Capelle et al. [16] proposedto use the SF-IDF features of clicked news for user modeling.
@@ -816,6 +828,7 @@ However, it is diicult for thesemethods to model users accurately when their new
 しかし，これらの手法では，ニュースのクリック行動がまばらな場合に，ユーザを正確にモデル化することが困難である．
 
 Besides news features, many methods consider other supplementary information of users in user modeling.For instance, in the MONERS [104] recommender system, users are clustered into segments, and the preferencesof user segments on news categories and news articles are used to represent users.
+ニュースの特徴量のほかに，ユーザモデリングでは，ユーザの他の補足情報も考慮されている．
 例えば，MONERS [104] 推薦システムでは，ユーザをセグメントに分類し，ニュースカテゴリとニュース記事に関するユーザセグメントの嗜好をユーザ表現に用いている．
 In addition, the demographicsof users, such as age, gender and profession, are also useful information for user modeling because users indiferent demographic groups usually have diferent preferences on news.
 また，年齢，性別，職業などのユーザの属性も，ユーザモデリングに有用な情報である．なぜなら，異なる属性グループに属するユーザは，通常，ニュースに対する嗜好が異なるからである．
@@ -827,6 +840,8 @@ Chu et al. [25] used the age and gender categories of users to model their chara
 さらに，ユーザの位置情報も正確なユーザモデリン グに非常に有効であり，いくつかの位置情報対応ニュース推薦 手法で利用されている[43,143]．
 However, some kinds of user features suchas locations and demographics are privacy-sensitive, and many users may not provide their accurate personalinformation.
 しかし，位置情報や属性情報などのユーザの特徴は，プライバシに敏感であり，多くのユーザが正確な個人情報を提供しない可能性がある．
+
+<!-- ここまで読んだ -->
 
 Since news clicks may not necessarily indicate user interests, several methods also consider other kinds of userbehaviors or feedback.
 また，ニュースのクリック数は必ずしもユーザの興味 を示しているとは限らないため，他の種類のユーザ行動やフィー ドバックを考慮する手法もある．
@@ -881,7 +896,7 @@ Diferent from other methods that only consider short-termor long-term user inter
 To help readers better understand feature-based user modeling methods in personalized news recommendersystems, we summarize the additional user features (ID and news features are excluded) used in these methods in Table 4.
 個人化ニュース推薦システムにおける特徴量ベースのユーザモデリング手法の理解を助けるために、これらの手法で使用される追加的なユーザ特徴量（IDおよびニュース特徴量は除く）を表4にまとめた。
 
-### 4.2. 4.2 Deep Learning-based User Modeling 4.2. 4.2 ディープラーニングに基づくユーザーモデリング
+## 4.2. 4.2 Deep Learning-based User Modeling 4.2. 4.2 ディープラーニングに基づくユーザーモデリング
 
 <img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/19-Table4-1.png">
 
@@ -1067,9 +1082,9 @@ We summarize the user information and user modeling techniques used in these dee
 We then provide several discussions on the user modeling methods introduced in this section.
 次に、本節で紹介するユーザモデリング手法に関するいくつかの考察を行う。
 
-### 4.3. 4.3 Discussions on User Modeling 4.3. 4.3 ユーザーモデリングに関する考察
+## 4.3. 4.3 Discussions on User Modeling 4.3. 4.3 ユーザーモデリングに関する考察
 
-#### 4.3.1. 4.3.1 Feature-based User Modeling. 4.3.1. 4.3.1 特徴に基づくユーザーモデリング。
+### 4.3.1. 4.3.1 Feature-based User Modeling. 4.3.1. 4.3.1 特徴に基づくユーザーモデリング。
 
 Most feature-based methods construct user proiles based on the collectionsof features extracted from the clicked news.
 特徴量ベースの手法の多くは，クリックされたニュースから抽出された特徴量に基づいてユーザプロファイルを構築する．
@@ -1090,7 +1105,7 @@ These behaviors can not only facilitate user interest modeling, but also has the
 However, feature-based user modeling methods usually require massive expertise for feature design andvalidation, and may not be optimal for representing user interests.
 しかし、特徴量ベースのユーザーモデリング手法は、通常、特徴量の設計と検証に膨大な専門知識を必要とし、ユーザーの興味関心を表現するのに最適な手法とは言えない可能性があります。
 
-#### 4.3.2. 4.3.2 Deep Learning-based User Modeling. 4.3.2. 4.3.2 深層学習によるユーザーモデリング。
+### 4.3.2. 4.3.2 Deep Learning-based User Modeling. 4.3.2. 4.3.2 深層学習によるユーザーモデリング。
 
 <img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/23-Table5-1.png">
 
@@ -1165,7 +1180,7 @@ Thesemethods can improve user interest understanding of user interests by taking
 However, user interests are diverse and evolutional, which are still diicult to be comprehensivelyand accurately modeled by these methods.
 しかし、ユーザの興味は多様であり、進化的であるため、これらの手法で包括的かつ正確にモデル化することはまだ困難である。
 
-#### 4.3.3. 4.3.3 Diferences to User Modeling in General Recommendation. 4.3.3. 4.3.3 一般的なレコメンデーションにおけるユーザーモデリングとの相違点。
+### 4.3.3. 4.3.3 Diferences to User Modeling in General Recommendation. 4.3.3. 4.3.3 一般的なレコメンデーションにおけるユーザーモデリングとの相違点。
 
 The user modeling techniques used for person-alized news recommendation have close relations to the user modeling methods in general recommendationscenarios such as e-commerce [246] and movie recommendation [35].
 ニュース推薦に用いられるユーザーモデリング技術は、電子商取引[246]や映画推薦[35]などの一般的な推薦シナリオにおけるユーザーモデリング手法と密接な関係にある。
@@ -1221,7 +1236,7 @@ Further study on this unique phenomenon isneeded to better understand user model
 In summary, by reviewing user modeling techniques used in existing news recommendation methods, weargue that user modeling is also remained challenging due to many reasons, such as the noise and sparsity ofuser behaviors, the diverse and dynamic characteristics of user interests, and the diiculties in modeling userinterests in a speciic candidate news efectively and eiciently.
 既存のニュース推薦手法で用いられているユーザモデリング技術を概観すると、ユーザ行動のノイズやスパース性、ユーザの興味の多様性や動的特性、特定の候補ニュースに対するユーザの興味を効果的かつ効率的にモデリングすることの難しさなど、多くの理由により、ユーザモデリングにも課題が残されていることがわかる。
 
-## 5. 5 PERSONALIZED RANKING 5. 5 パーソナライズドランキング
+# 5. 5 PERSONALIZED RANKING 5. 5 パーソナライズドランキング
 
 On the basis of news and user modeling, news ranking aims to rank candidate news for personalized displayaccording to users’ personal interest.
 ニュースランキングは、ニュースとユーザのモデリングに基づいて、ユーザの個人的な興味に応じてパーソナライズされた表示のために候補のニュースをランク付けすることを目的としています。
@@ -1230,7 +1245,7 @@ Common news ranking techniques can be divided into two categories, i.e.,relevanc
 We introduce them in the following sections.
 以下では、これらの手法を紹介する。
 
-### 5.1. 5.1 Relevance-based Personalized Ranking 5.1. 5.1 関連性に基づくパーソナライズドランキング
+## 5.1. 5.1 Relevance-based Personalized Ranking 5.1. 5.1 関連性に基づくパーソナライズドランキング
 
 Relevance-based news ranking methods usually rank candidate news with user interests based on their personal-ized relevance.
 関連性に基づくニュースランキング手法では，通常，ユーザの興味に関連するニュースの候補を個人的な関連性に基づいてランク付けします．
@@ -1275,9 +1290,9 @@ For example, Newsjunkie [47] isa system that ranks news articles based on their 
 Diferent from the methods that aresolely based on the relevance between candidate news and user interests, these methods have the potential toprovide more diverse recommendations.
 これらの手法は，候補となるニュースとユーザの興味との関連性にのみ基づく手法とは異なり，より多様な推薦を提供する可能性がある．
 
-### 5.2. 5.2 Reinforcement Learning-based Personalized Ranking 5.2. 5.2 強化学習による個人化ランキング
+## 5.2. 5.2 Reinforcement Learning-based Personalized Ranking 5.2. 5.2 強化学習による個人化ランキング
 
-### 5.3. 5.3 Discussions on Personalized Ranking 5.3. 5.3 パーソナライズドランキングに関する考察
+## 5.3. 5.3 Discussions on Personalized Ranking 5.3. 5.3 パーソナライズドランキングに関する考察
 
 In this section we provide some discussions on the news ranking methods in existing personalized news rec-ommender systems.
 本節では，既存のパーソナライズドニュースレコメンダーシステムにおけるニュースランキング手法について考察する．
@@ -1304,7 +1319,7 @@ Thus, RL-basednews ranking methods may be more suitable for exploring potential 
 In summary, news ranking in news recommendation also faces many challenges, including how to accuratelyand eiciently evaluate the relevance between candidate news and user interest indicated by user behaviors, how to mitigate the łilter bubble” problem in news recommender systems, and how to explore potential user interestswithout hurting user experience.
 このように、ニュース推薦におけるランキングは、候補となるニュースとユーザーの興味との関連性をいかに正確かつ効率的に評価するか、ニュース推薦システムにおける「フィルターバブル」問題をいかに軽減するか、ユーザーの体験を損なわずに潜在的なユーザーの興味をいかに探るかなど、多くの課題を抱えている。
 
-## 6. 6 MODEL TRAINING 6. 6 モデルトレーニング
+# 6. 6 MODEL TRAINING 6. 6 モデルトレーニング
 
 Many personalized news recommendation methods exploit machine learning models for news modeling, user mod-eling and interest matching.
 個人向けニュース推薦の多くは，ニュースのモデル化，ユーザのモデル化，インタレストマッチのために機械学習モデルを利用している．
@@ -1313,7 +1328,7 @@ Training these models is a necessary step in building an accurate news recommend
 In this section, we review the techniques used for model training in news recommendation.
 本節では、ニュース推薦におけるモデル学習のための技術をレビューする。
 
-### 6.1. 6.1 Training Methods 6.1. 6.1 トレーニング方法
+## 6.1. 6.1 Training Methods 6.1. 6.1 トレーニング方法
 
 In a few methods based on collaborative iltering, the news recommendation task is formulated as a ratingprediction problem, i.e., predicting the ratings that users give to news [78].
 協調フィルタリングに基づくいくつかの手法では，ニュース推薦タスクは評価予測問題，すなわち，ユーザがニュースに与える評価を予測する問題として定式化されている[78]．
@@ -1363,7 +1378,7 @@ KRED [121]はアイテム推薦、アイテム間推薦、カテゴリ分類、�
 These methods canalso efectively encode additional information into the recommendation model without taking it as the input.However, it is usually non-trivial to balance the main recommendation task and the auxiliary tasks.
 しかし，主推薦タスクと補助タスクのバランスをとることは，通常，容易ではない．
 
-### 6.2. 6.2 Training Environment 6.2. 6.2 トレーニング環境
+## 6.2. 6.2 Training Environment 6.2. 6.2 トレーニング環境
 
 Existing researches mainly focus on the model training methods while ignoring the implementation environmentof model training, which is in fact important in developing real-world news recommender systems.
 既存の研究では，主にモデル学習方法に焦点が当てられており，実際のニュース推薦システムの開発において重要であるモデル学習の実装環境は無視されている．
@@ -1386,7 +1401,7 @@ Third, most existingnews recommendation methods are trained on centrally stored 
 Several recent works like [158,159,231] explore totrain news recommendation models based on decentralized data with federated learning techniques, which canbetter protect user privacy in model training.
 また，[158,159,231]のような最近の研究は，分散化されたデータに基づくニュース推薦モデルを連携学習技術で学習することを検討しており，モデル学習においてユーザのプライバシーをより良く保護することができる．
 
-### 6.3. 6.3 Discussions on Model Training 6.3. 6.3 モデル学習に関する考察
+## 6.3. 6.3 Discussions on Model Training 6.3. 6.3 モデル学習に関する考察
 
 Next, we provide some discussions on the model training techniques used in news recommendation methods.In some CF-based methods, news recommendation is modeled as a regression task where the ratings given byusers are regarded as prediction targets.
 CFベースの手法では、ニュース推薦をユーザの評価を予測対象とした回帰タスクとしてモデル化するものがある。
@@ -1422,21 +1437,21 @@ Besides, the environment for news recommendation model training is a less studie
 In summary, model training is critical for news recommendation while it still has much room for improvement,such as designing more efective training tasks, choosing more representative training samples, adaptivelytuning the loss coeicients for multi-task learning, and building more efective, eicient and privacy-preservingenvironment for news recommendation model training.
 すなわち、より効果的な学習タスクの設計、より代表的な学習サンプルの選択、マルチタスク学習における損失係数の適応的調整、ニュース推薦モデル学習のためのより効果的、効率的かつプライバシー保護された環境の構築など、多くの改善の余地があることがわかった。
 
-#### 6.3.1. 6.3.1 A Bird’s-eye View on Recent Approaches. 6.3.1. 6.3.1 最近のアプローチに関する鳥瞰図。
+### 6.3.1. 6.3.1 A Bird’s-eye View on Recent Approaches. 6.3.1. 6.3.1 最近のアプローチに関する鳥瞰図。
 
 To help readers better understand the details of recent newsrecommendation methods in terms of their news modeling, user modeling, ranking, and model training techniques,we illustrate a joint table that summarizes their details in these aspects.
 最近のニュース推薦手法の詳細を、ニュースモデリング、ユーザモデリング、ランキング、モデル学習技術の観点から理解するために、それらの詳細をまとめた結合表を図示する。
 Due to the limitation of page sizes, we do notinclude it in the main content, and readers can refer to it in a public repository (https:
 ページ数の制限から本文には含まず、読者は公開リポジトリ（https.org）で参照することができる。
 
-## 7. 7 EVALUATION METRICS 7. 7 評価指標
+# 7. 7 EVALUATION METRICS 7. 7 評価指標
 
 There are many metrics to quantitatively evaluate the performance of news recommender systems.
 ニュース推薦システムの性能を定量的に評価するための指標は数多く存在する．
 Most metricsaim to measure the recommendation performance in terms of the ranking relevance.
 多くのメトリクスは推薦性能をランキングの関連性という観点で測定することを目的としている．
 
-### 推薦を分類問題として捉えるケース
+## 7.1. 推薦を分類問題として捉えるケース
 
 For methods that regard thetask of news recommendation as a classiication problem, the Area Under Curve (AUC) score is a widely usedmetric, which is formulated as follows:
 ニュース推薦を分類問題と捉える手法では，AUC (Area Under Curve) スコアが広く用いられており，以下のように定式化されている．
@@ -1469,7 +1484,7 @@ $$
 where TP, FP and FN respectively denote true positive, false positive and false negative.
 ここで、TP、FP、FNはそれぞれ真陽性、偽陽性、偽陰性を表す。
 
-### 回帰タスクとしてモデル化する場合
+## 7.2. 回帰タスクとしてモデル化する場合
 
 For methods that model news recommendation as a regression task (e.g., predict the ratings of news), severalcommon metrics for regression such as mean absolute error (MAE), mean squared error (MSE), rooted meansquared error (RMSE) and Pearson correlation coeicient (PCC) are used to indicate the recommendationperformance, which are respectively formulated as follows:
 ニュース推薦を**回帰タスクとしてモデル化する**手法（例：ニュースの視聴率予測）では、推薦性能を示す指標として、平均絶対誤差（MAE）、平均2乗誤差（MSE）、ルート付き平均2乗誤差（RMSE）、ピアソン相関係数（PCC）など、回帰に関する一般的な指標が用いられ、それぞれ次のように定式化されている。
@@ -1493,7 +1508,7 @@ $$
 where $r_i$ and $p_i$ are the real and predicted ratings of the i-th sample, ̄r and ̄p respectively denote the arithmeticmean of the real and predicted ratings, and $\sigma$ is the standard deviation.
 ここで、$r_i$と$p_i$はi番目のサンプルの実評価と予測評価、̄rと̄pはそれぞれ実評価と予測評価の算術平均、$sigma$は標準偏差を表している。
 
-### ニュース推薦をランキングタスクとみなす場合
+## 7.3. ニュース推薦をランキングタスクとみなす場合
 
 For methods that regard news recommendation as a ranking task, besides the AUC metric there are also severalother metrics such as Average Precision (AP), Hit Ratio (HR), Mean Reciprocal Rank (MRR) and normalizedDiscounted Cummulative Gain (nDCG).
 **ニュース推薦をランキングタスクとみなす手法**では、AUCの他に、平均精度（AP）、ヒット率（HR）、平均逆ランク（MRR）、正規化割引累積利益（nDCG）などの指標もある。
@@ -1521,7 +1536,7 @@ $$
 where $r_i$ is a relevance score of news with the i-th rank, which is 1 for clicked news and 0 for non-clicked news.There are several other metrics such as Click-Through Rate (CTR) and dwell time, which can be only used tomeasure the performance of online news recommenders.
 ここで，$r_i$はi番目のランクのニュースの関連性スコアであり，クリックされたニュースでは1，クリックされていないニュースでは0となる。クリックスルー率（CTR）や滞在時間など，オンラインニュース推薦者の性能を測定するためにのみ使用できる他のいくつかのメトリックが存在する。
 
-### 多様性のMetrics
+## 7.4. 多様性のMetrics
 
 Besides the metrics for measuring ranking accuracy, there are several other objective or subjective metricsto evaluate news recommender systems in other aspects.
 ランキングの正確さを測る指標以外にも，ニュース推薦システムを他の側面から評価するための客観的・主観的な指標がいくつかある．
@@ -1564,7 +1579,7 @@ $$
 where N is the number of candidate news in an impression,$s_i^c$ denotes the sentiment score of the i-th ranked candidate news.
 ここで、Nは印象の候補ニュースの数、$s_i^c$はi番目のランク付けされた候補ニュースのセンチメントスコアを表す。
 
-### 公平性のMetrics
+### 7.4.1. 公平性のMetrics
 
 Besides diversity, **several fairness metrics** are used to measure whether a news recommender system is fair todiferent groups of users or diferent news publishers.
 また，ニュース推薦システムが異なるユーザグループやニュース出版社に対して公平であるかどうかを測定するために，多様性のほかにいくつかの**公平性測定基準**が用いられている．
@@ -1594,7 +1609,7 @@ where g is the set of author groups and $L(i)$ is the set of recommended news be
   These metrics used in the twoworks can be used to measure user-side fairness and provider-side fairness, respectively.
   これらの指標は、**ユーザ側の公平性とプロバイダ側の公平性をそれぞれ測定する**ために用いることができる。
 
-### プライバシー保護の程度のMetrics
+### 7.4.2. プライバシー保護の程度のMetrics
 
 With the development of privacy-preserving news recommendation methods based on federated learning,a few measurements can be used to evaluate **the degree of privacy protection** in news recommendation.
 連合学習に基づくプライバシー保護型ニュース推薦手法の開発に伴い，ニュース推薦におけるプライバシー保護の程度を評価するために，いくつかの測定方法を用いることができるようになった．
@@ -1605,14 +1620,12 @@ In addition, privacy protection can also be measured by conducting membershipinf
 Thesemetrics can indicate whether private user information encoded in exchanged models results is well-protected.
 これらの指標は、交換されたモデルの結果にエンコードされたプライベートなユーザ情報が適切に保護されているかどうかを示すことができる。
 
-## 8. 8 DATASET, COMPETITION AND BENCHMARK 8. 8 データセット、コンペティション、ベンチマーク
+# 8. 8 DATASET, COMPETITION AND BENCHMARK 8. 8 データセット、コンペティション、ベンチマーク
 
 Table 6.
 表 6.
 Comparisons of the five public datasets for news recommendation.
 ニュース推薦のための5つの公開データセットの比較。
-
-<img src="https://d3i71xaburhd42.cloudfront.net/a867894db8f9d544a471e86d8844008861f6a2ec/33-Table6-1.png">
 
 Many works in the news recommendation ield are based on proprietary datasets, such as those collected fromGoogle News [29], Yahoo’s news [144], Bing news [116] and MSN news [204].
 ニュース推薦の分野では，Google News [29], Yahoo's news [144], Bing news [116], MSN news [204] などの独自のデータセットに基づいて研究が行われている．
@@ -1697,12 +1710,12 @@ Thecurrent top result on this leaderboard is 73.04% in terms of AUC, which is ac
 The MIND dataset, challenge and thepublic leaderboard can form a good benchmark to facilitate research and engineering on personalized newsrecommendation.
 MINDデータセット、チャレンジ、パブリックリーダーボードは、パーソナライズドニュースレコメンデーションに関する研究とエンジニアリングを促進するための良いベンチマークを形成することができます。
 
-## 9. 9 RESPONSIBLE PERSONALIZED NEWS RECOMMENDATION 9. 9 責任あるパーソナライズド・ニュースレコメンデーション
+# 9. 9 RESPONSIBLE PERSONALIZED NEWS RECOMMENDATION 9. 9 責任あるパーソナライズド・ニュースレコメンデーション
 
 Although personalized news recommendation techniques have achieved notable success in targeting user interest,they still have several issues that may afect user experience and even lead to potential negative social impacts.There are several critical problems in developing more responsible personalized news recommender systems,including privacy protection, debiasing and fairness, diversity, and content quality, which are discussed in thefollowing sections, respectively.
 個人化されたニュース推薦技術は、ユーザの興味をターゲットにすることで顕著な成功を収めているが、ユーザ体験に影響を与え、さらには社会的な悪影響を及ぼす可能性のあるいくつかの問題が残っている。より責任ある個人化ニュース推薦システムの開発には、プライバシー保護、偏向性と公平性、多様性およびコンテンツの品質などのいくつかの重要問題があり、以下のセクションでそれぞれ議論する。
 
-### 9.1. 9.1 Privacy Protection 9.1. 9.1 プライバシー保護
+## 9.1. Privacy Protection 9.1. 9.1 プライバシー保護
 
 Most existing personalized news recommender systems rely on centralized storage of users’ behavior data foruser modeling and model training.
 既存のパーソナライズドニュースレコメンダーシステムの多くは，ユーザのモデリングやモデル学習のためにユーザの行動データを一元的に保存することに依存している．
@@ -1751,7 +1764,7 @@ This method providesthe potential of incorporating big models such as BERT in fe
 Although existing works on privacy-preserving news recommendation have made notable progresses, there arestill many challenges in this ield, such as the huge performance sacriice of diferential privacy mechanism, thediiculty of involving some context features (e.g., CTR) and collaborative information in GNN, and the diicultyof real-world deployment of federated news recommender systems.
 プライバシー保護型ニュース推薦に関する既存の研究は注目に値する進歩を遂げているが，この分野にはまだ多くの課題がある．例えば，差分プライバシー機構による性能の大きな犠牲，GNNにおける文脈特徴（例えば，CTR）と協調情報の関与の難しさ，連合ニュース推薦システムの実世界への展開の難しさである．
 
-### 9.2. 9.2 Debiasing 9.2. 9.2 デビアス
+## 9.2. 9.2 Debiasing 9.2. 9.2 デビアス
 
 User behavior data usually encodes various kinds of biases.
 ユーザーの行動データには、通常、様々な種類のバイアスが含まれています。
@@ -1778,7 +1791,7 @@ In addition, many kinds of bias such as exposure and selection biases are rarely
 Thus, it is important forfuture research to understand how diferent biases afect user behaviors and the recommendation model as wellas how to eliminate their efect in model training and evaluation.
 このように，様々なバイアスがユーザの行動や推薦モデルにどのような影響を与えるのか，また，モデルの学習や評価においてどのようにバイアスの影響を排除するのかを理解することは，今後の研究において重要である．
 
-### 9.3. 9.3 Fairness 9.3. 9.3 公平性
+## 9.3. 9.3 Fairness 9.3. 9.3 公平性
 
 Making fair recommendations is an important problem in responsible news recommendation.
 公正な推薦を行うことは，責任あるニュース推薦を行う上で重要な問題である．
@@ -1807,7 +1820,7 @@ In addition,many other genres of fairness (e.g., provider-side fairness) are les
 In summary,there are many types of fairness to be improved in news recommendation and it is non-trivial to make both fairand accurate news recommendations.
 このように，ニュース推薦において改善すべき公平性は数多く存在し，公平かつ正確なニュース推薦を行うことは自明でない．
 
-### 9.4. 9.4 Diversity 9.4. 9.4 多様性
+## 9.4. 9.4 Diversity 9.4. 9.4 多様性
 
 Diversity is critical for personalized news recommendation [124,155,169].
 パーソナライズド・ニュースの推薦には，多様性が重要である [124,155,169]．
@@ -1824,7 +1837,7 @@ However, there is still no work on promoting both kinds of diversity in news rec
 Thus, further research on learning uniied diversity-aware news recommendation modelsis important for improving the quality of online news services.
 また，多様性を考慮した推薦手法の多くは，推薦の多様性を向上させるために再ランク付けを行うが，推薦の多様性と推薦の精度を両立させるためには最適な手法ではない可能性がある．
 
-### 9.5. 9.5 Content Moderation 9.5. 9.5 コンテンツの適正化
+## 9.5. 9.5 Content Moderation 9.5. 9.5 コンテンツの適正化
 
 The moderation of news content in news recommendation is a rarely studied problem.
 ニュース推薦におけるニュース内容の適正化については、ほとんど研究されていない問題である。
@@ -1843,9 +1856,9 @@ In addition, user behaviorssuch as comments and sharing on social media may also
 Thus, incorporating the various user feedback has the potential tohelp recommend news with high-quality content, which can improve the responsibility of news recommendationalgorithms.
 このように，様々なユーザのフィードバックを取り入れることで，質の高いコンテンツを含むニュースを推薦できる可能性があり，ニュース推薦アルゴリズムの責任を向上させることができる．
 
-## 10. 10 FUTURE DIRECTION AND CONCLUSION 10. 10 今後の方向性と結論
+# 10. 10 FUTURE DIRECTION AND CONCLUSION 10. 10 今後の方向性と結論
 
-### 10.1. 10.1 Deep News Understanding 10.1. 10.1 ディープニュースの理解
+## 10.1. 10.1 Deep News Understanding 10.1. 10.1 ディープニュースの理解
 
 News modeling is at the heart of personalized news recommendation.
 ニュースモデリングはパーソナライズドニュースの推薦の中核をなすものである。
@@ -1866,7 +1879,7 @@ A uniied framework is required to incorporate various kinds of news information 
 Furtherresearch on these directions can help understand news more accurately and deeply to empower subsequent usermodeling and news ranking.
 このような研究を進めることで、より正確かつ深くニュースを理解し、その後のユーザモデリングやニュースランキングに役立てることができる。
 
-### 10.2. 10.2 Universal User Modeling 10.2. 10.2 ユニバーサルユーザーモデリング
+## 10.2. 10.2 Universal User Modeling 10.2. 10.2 ユニバーサルユーザーモデリング
 
 User modeling is critical for understanding users’ interest in news.
 ニュースに対するユーザの興味・関心を理解するためには，ユーザのモデリングが重要である．
@@ -1891,7 +1904,7 @@ Since user interest usuallyevolves with time, it is important to understand user
 To meet this end, using more advanced sequence modeling techniques may help improve user interestmodeling in personalized news recommendation.
 このため、より高度なシーケンスモデリング技術を用いることで、パーソナライズドニュースの推薦におけるユーザの興味・関心のモデリングを改善できる可能性がある。
 
-### 10.3. 10.3 Efective and Eficient Personalized Ranking 10.3. 10.3 効果的・効率的なパーソナライズドランキング
+## 10.3. 10.3 Efective and Eficient Personalized Ranking 10.3. 10.3 効果的・効率的なパーソナライズドランキング
 
 News ranking is an essential step to make personalized news recommendations.
 ニュースランキングは、パーソナライズされたニュース推薦を行うために不可欠なステップである。
@@ -1912,7 +1925,7 @@ However, they may not be optimal for achieving good user engagement in the long-
 Thus,designing proper news ranking strategies to optimize long-term rewards may be beneicial for user experience.
 したがって、長期的な報酬を最適化するための適切なニュースランキング戦略を設計することは、ユーザー体験にとって有益であると考えられる。
 
-### 10.4. 10.4 Hyperbolic Representation Learning for News Recommendation 10.4. 10.4 ニュース推薦のための双曲線表現学習
+## 10.4. 10.4 Hyperbolic Representation Learning for News Recommendation 10.4. 10.4 ニュース推薦のための双曲線表現学習
 
 In most existing news recommendation methods, news and users representations are learned in Euclidean space.Matching functions such as inner product and cosine similarity are widely used for computing relevance scoresfor news ranking.
 既存のニュース推薦手法の多くは，ニュースやユーザの表現をユークリッド空間で学習し，内積や余弦類似度などのマッチング関数がニュースランキングの関連性スコアを計算するために広く利用されている．
@@ -1929,7 +1942,7 @@ In addition, there have been several successful applications of hyperbolic repre
 Futureresearch on hyperbolic representation learning may create a new direction to overcome several drawbacks ofcurrent user
 また，双曲線表現学習の今後の研究により，現在のユーザ推薦の欠点を克服する新たな方向性を見出すことができる．
 
-### 10.5. Unified Model Training 10.5. ユニファイドモデルトレーニング
+## 10.5. Unified Model Training 10.5. ユニファイドモデルトレーニング
 
 Model training techniques are also important for learning efective and robust personalized news recommendationmodels.
 また，効果的で頑健な個人向けニュース推薦モデルを学習するためには，モデルの学習技術も重要である．
@@ -1950,7 +1963,7 @@ Fourth, oline trained models may have gaps with the online scenarios and may suf
 Thus, it is important to incorporate both oline and online learningtechniques to help the model better adapt to the latest online serving requirements.
 このため、オンラインとオンラインの両方の学習技術を取り入れ、モデルが最新のオンラインサービス要件にうまく適応できるようにすることが重要である。
 
-### 10.6. News Recommendation in Social Context 10.6. 社会的文脈の中でのニュース推薦
+## 10.6. News Recommendation in Social Context 10.6. 社会的文脈の中でのニュース推薦
 
 On some news platforms, users may have social interactions with other users in many ways, such as leavingcomments, replies, and sharing to their social media blogs like Twitter.
 ニュースプラットフォームでは，ユーザはコメントや返信を残したり，Twitterのようなソーシャルメディアブログで共有するなど，さまざまな方法で他のユーザと社会的な相互作用を行うことができます．
@@ -1967,7 +1980,7 @@ However, they are usually neglected by newsrecommendation researches in recent y
 In future researches, it is an interesting topic to study the impacts ofusers’ online social interactions on the accuracy, timeliness and quality of news personalization.
 今後の研究において，ユーザのオンラインでの社会的相互作用がニュースのパーソナライゼーションの精度，適時性，品質に与える影響を研究することは興味深いトピックである．
 
-### 10.7. Privacy-preserving News Recommendation 10.7. プライバシー保護されたニュースの推奨
+## 10.7. Privacy-preserving News Recommendation 10.7. プライバシー保護されたニュースの推奨
 
 In recent years, the ethical issues of intelligent systems have attracted much attention from both the academiaand public.
 近年、知的システムの倫理的な問題が学界と社会から注目されている。
@@ -1986,7 +1999,7 @@ Third, the data isolation problem in federated learning frameworksettings makes 
 Thus,further researches on developing more efective, eicient and privacy-preserving news recommendation methodsare needed.
 したがって，より効果的で効率的，かつプライバシーを保護したニュース推薦手法の開発に関するさらなる研究が必要である．
 
-### 10.8. Secure and Robust News Recommendation 10.8. セキュアでロバストなニュースのススメ
+## 10.8. Secure and Robust News Recommendation 10.8. セキュアでロバストなニュースのススメ
 
 Existing researches on news recommendation focus on building algorithms in a trusted environment.
 ニュース推薦に関する既存の研究は、信頼できる環境下でのアルゴリズム構築に重点を置いている。
@@ -2003,7 +2016,7 @@ Unfortunately, although the security and robustness of personalized news recomme
 Future studies on secure and robust news recommendationare important for the stability and reliability of online news platforms.
 今後、オンラインニュースプラットフォームの安定性と信頼性を高めるために、安全で堅牢なニュース推薦に関する研究が重要である。
 
-### 10.9. Diversity-aware News Recommendation 10.9. 多様性を考慮したニュースの推奨
+## 10.9. Diversity-aware News Recommendation 10.9. 多様性を考慮したニュースの推奨
 
 Besides accuracy, diversity in news recommendation also has decisive inluence on user experience.
 ニュース推薦の多様性は、正確性だけでなく、ユーザー体験にも決定的な影響を与える。
@@ -2020,7 +2033,7 @@ The third one is ine-graineddiversity, which aims to not only diversify the cont
 It has the potential to make higher-quality diversity-aware newsrecommendations.
 これは、より質の高い多様性を考慮したニュース推薦を行う可能性を持っている。
 
-### 10.10. Bias-free News Recommendation 10.10. 偏りのないニュースの推奨
+## 10.10. Bias-free News Recommendation 10.10. 偏りのないニュースの推奨
 
 Debiasing is another important problem in improving the responsibility of news recommendation.
 ニュース推薦の信頼性を向上させるために、偏向補正も重要な課題である。
@@ -2037,7 +2050,7 @@ Third, thereare various kinds of biases in news recommendation.
 A uniied debiasing framework that can simultaneouslyreduce the efects of diferent biases can greatly improve the accuracy and robustness of news recommendationalgorithms.
 このようなバイアスの影響を同時に低減することができる統一的なデバイシングフレームワークは、ニュース推薦アルゴリズムの精度と頑健性を大きく向上させることができる。
 
-### 10.11. Fairness-aware News Recommendation 10.11. 公平性を考慮したニュース推薦
+## 10.11. Fairness-aware News Recommendation 10.11. 公平性を考慮したニュース推薦
 
 Fairness is an essential but often ignored factor in personalized news recommendation.
 個人向けニュース推薦において，公平性は重要な要素であるが，しばしば無視される．
@@ -2056,7 +2069,7 @@ Second, diferent news providers and publishers are diverse intheir characteristi
 Thus, it is non-trivial to properly balance therecommendation chances of news from diferent providers and publishers to achieve better provider-side fairness.Third, there are diferent types of fairness in the personalized news recommendation scenario, and it is verychallenging to simultaneously achieve multi-side fairness without a heavy sacriice of recommendation accuracy.
 第三に，個人化されたニュース推薦のシナリオには様々なタイプの公平性が存在し，推薦精度を大きく犠牲にすることなくマルチサイド公平性を同時に達成することは非常に困難である．
 
-### 10.12. Content Moderation in News Recommendation 10.12. ニュースレコメンデーションにおけるコンテンツモデレーション
+## 10.12. Content Moderation in News Recommendation 10.12. ニュースレコメンデーションにおけるコンテンツモデレーション
 
 The moderation of news content is important for online news platforms to avoid recommending news withlow quality or harmful content to users and mitigate their impact on users and society.
 オンラインニュースプラットフォームでは，低品質なニュースや有害なコンテンツをユーザに推薦することを避け，ユーザや社会への影響を軽減するために，ニュースコンテンツのモデレーションが重要である．
@@ -2071,7 +2084,7 @@ Second,it may be useful to incorporate content moderation techniques like fake n
 Third, without the assistance of additional tasks and resources, we can learn content quality-awarenews recommendation models with the guidance of certain kinds of user feedback such as comments and dislikes,which is expected to help recommend high-quality news to users.
 第三に、追加的なタスクやリソースを必要とせず、コメントや「嫌い」などの特定の種類のユーザーフィードバックを参考に、コンテンツの質に応じたニュース推薦モデルを学習することができ、ユーザーに高品質のニュースを推薦するのに役立つと期待される。
 
-### 10.13. Societal Impact of News Recommendation 10.13. ニュースレコメンデーションの社会的影響
+## 10.13. Societal Impact of News Recommendation 10.13. ニュースレコメンデーションの社会的影響
 
 News recommender systems can generate societal impact when they serve a certain number of users.
 ニュースレコメンダーシステムは，一定数のユー ザにサービスを提供することで，社会的なインパクトを与える ことができる．
@@ -2082,7 +2095,7 @@ Thus, itis valuable for further research to identify and analyze the societal im
 In addition,research on how to reduce the potential negative societal impact of personalized news recommendation methodscan help avoid their risky behaviors and better serve online users.
 さらに，パーソナライズド・ニュース推薦手法の潜在的な社会的悪影響を低減する方法に関する研究は，その危険な行動を回避し，オンライン・ユーザによりよいサービスを提供するのに役立つと思われます．
 
-## 11. Conclusion 11. 結論
+# 11. Conclusion 11. 結論
 
 Finally, we present a conclusion to this survey paper.
 最後に、本サーベイ論文の結論を述べる。

@@ -21,7 +21,7 @@ The core of our approach is a news encoder and a user encoder.
 In the news encoder, we use multi-head self-attentions to learn news representations from news titles by modeling the interactions between words.
 ニュースエンコーダでは、単語間の相互作用をモデル化することにより、ニュースタイトルからニュース表現を学習するために、多頭自己注意を用いる。
 In the user encoder, we learn representations of users from their browsed news and use multihead self-attention to capture the relatedness between the news.
-ユーザーエンコーダでは、**閲覧したニュースからユーザーの表現を学習**し、マルチヘッド自己注意を用いてニュース間の関連性を捉える。
+ユーザーエンコーダでは、**閲覧したニュースからユーザの表現を学習**し、マルチヘッド自己注意を用いてニュース間の関連性を捉える。
 Besides, we apply additive attention to learn more informative news and user representations by selecting important words and news.
 さらに、additive attentionを適用して、重要な単語やニュースを選択することで、より有益なニュースやユーザ表現を学習する。
 Experiments on a realworld dataset validate the effectiveness and efficiency of our approach.
@@ -55,6 +55,7 @@ First, the interactions between words in news title are important for understand
 まず、ニュースのタイトルに含まれる単語間の相互作用は、ニュースを理解する上で重要である。(このあたりはnews encoderの話なので、LLM時代にはあんまり気にしなくて良さそう。)
 For example, in Fig.1, the word “Rockets” has strong relatedness with “Bulls”.
 例えば図1では、"Rockets "という単語は "Bulls "と強い関連性を持っている。
+(これは言い換えると、単語Aと単語Bが一緒の文章に含まれていること対象ニュースの特徴を表現する上で重要...!みたいな? 特徴量間の相互作用を考慮したいって話だよね:thinking:)
 Besides, a word may interact with multiple words, e.g., “Rockets” also has semantic interactions with “trade”.
 さらに、ある単語が複数の単語と相互作用することもある。例えば、「ロケッツ」は「トレード」とも意味的に相互作用する。
 Second, different news articles browsed by the same user may also have relatedness.
@@ -115,7 +116,7 @@ For instance, in above example the word “Rockets” has interactions with both
 例えば、上記の例では、"Rockets "という単語は "End "と "Win "の両方と相互作用する。
 Thus, we propose to use multi-head self-attention to learn contextual representations of words by capturing their interactions.
 そこで、多頭自己注意を用いて、単語間の相互作用を捉えることにより、単語の文脈表現を学習することを提案する。
-The representation of the ith word learned by the kth attention head is computed as:
+The representation of the i-th word learned by the kth attention head is computed as:
 k番目のアテンション・ヘッドが学習した単語の表現は、次のように計算される:
 
 $$
@@ -124,7 +125,7 @@ $$
 $$
 
 $$
-\mathbf{h}_{i,j}^{w} = V_{k}^{w} (\sum_{j=1}^{M} \alpha^{k}_{i,j} e_{j})
+\mathbf{h}_{i,k}^{w} = V_{k}^{w} (\sum_{j=1}^{M} \alpha^{k}_{i,j} e_{j})
 $$
 
 where Qw k and Vw k are the projection parameters in the kth self-attention head, and α k i,j indicates the relative importance of the interaction between the ith and jth words.
@@ -152,6 +153,7 @@ $$
 
 $$
 \alpha^{w}_{i} = \frac{exp(a^{w}_{i})}{\sum_{j=1}^{M} exp(a^{w}_{j})}
+\tag{4}
 $$
 
 (最終的なattention weightは上式のようにsoftmaxで正規化される)
@@ -163,6 +165,7 @@ The final representation of a news is the weighted summation of the contextual w
 
 $$
 \mathbf{r} = \sum_{i=1}^{M} \alpha^{w}_{i} h^{w}_{i}
+\tag{5}
 $$
 
 ## 2.2. User Encoder ユーザーエンコーダ
@@ -307,10 +310,10 @@ We evaluate the performance of our approach by comparing it with several baselin
 我々は、以下のようないくつかのベースライン手法と比較することで、本アプローチの性能を評価する：
 
 - (1) LibFM (Rendle, 2012), 行列因数分解に基づく推薦手法;
-- (2) DSSM (Huang et al., 2013), 深い構造化意味モデル;
+- (2) DSSM (Huang et al., 2013), deepなsemanticモデル;
 - (3) Wide&Deep (Cheng et al., 2016), 有名なニューラル推薦手法;
 - (4) DeepFM (Guo et al., 2017), 別の有名なニューラル推薦手法;
-- (5) DFM (Lian et al、 2018）、ニュース推薦のための深層融合モデル、
+- (5) DFM (Lian et al、 2018)、ニュース推薦のための深層融合モデル、
 - （6）DKN（Wangら、2018）、ニュース推薦のための深層知識認識ネットワーク、
 - （7）Conv3D（Khattarら、2018）、ユーザ表現を学習するための3次元CNNを用いたニューラルニュース推薦手法、
 - （8）GRU（Okuraら、2017）、ユーザー表現を学習するためのGRUを用いたニューラルニュース推薦手法、
@@ -425,7 +428,7 @@ Extensive experiments validate the effectiveness and efficiency of our approach.
 In our future work, we will try to improve our approach in the following potential directions.
 今後の研究では、以下の可能性のある方向で、我々のアプローチを改善しようと考えている。
 First, in our framework we do not consider the positional information of words and news, but they may be useful for learning more accurate news and user representations.
-まず、我々のフレームワークでは、単語やニュースの位置情報は考慮しないが、より正確なニュースやユーザ表現を学習するためには有用かもしれない。(=positional encoding技術を使って、sequential recommenderに拡張するって話か...!)
+まず、我々のフレームワークでは単語やニュースの位置情報は考慮しないが、より正確なニュースやユーザ表現を学習するためには有用かもしれない。(=positional encoding技術を使って、sequential recommenderに拡張するって話か...!)
 We will explore position encoding techniques to incorporate the word position and the time-stamps of news clicks to further enhance our approach.
 今後、単語位置とニュースクリックのタイムスタンプを組み込んだ位置エンコーディング技術を探求し、我々のアプローチをさらに強化する予定である。
 Second, we will explore how to effectively incorporate multiple kinds of news information in our framework, especially long sequences such as news body, which may challenge the efficiency of typical self-attention networks.

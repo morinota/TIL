@@ -387,7 +387,7 @@ Besides diversity, several fairness metrics are used to measure whether a news r
 
 $$
 \text{EAGF} = hoge \\
-\text{SPD} = piyo 
+\text{SPD} = piyo
 \tag*{15}
 $$
 
