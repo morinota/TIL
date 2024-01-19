@@ -3,9 +3,8 @@
 https://netflixtechblog.com/building-confidence-in-a-decision-8705834e6fd8
 https://netflixtechblog.com/building-confidence-in-a-decision-8705834e6fd8
 
-## title タイトル
+# Building confidence in a decision
 
-Building confidence in a decision
 決断への自信を深める
 
 This is the fifth post in a multi-part series on how Netflix uses A/B tests to inform decisions and continuously innovate on our products.
@@ -16,132 +15,160 @@ Subsequent posts will go into more details on experimentation across Netflix, ho
 次回の記事では、Netflixにおける実験の詳細、Netflixが実験をサポートし拡大するためにどのようにインフラに投資してきたか、組織内で実験文化を発展させることの重要性について述べる。
 
 In Parts 3 (False positives and statistical significance) and 4 (False negatives and power), we discussed the core statistical concepts that underpin A/B tests: false positives, statistical significance and p-values, as well as false negatives and power.
-第3部（偽陽性と統計的有意性）と第4部（偽陰性と検出力）では、A/Bテストを支える中核となる統計的概念について説明した： 偽陽性、統計的有意性、p値、そして偽陰性と検出力である。
+第3部（偽陽性と統計的有意性）と第4部（偽陰性と検出力）では、**A/Bテストを支える中核となる統計的概念について**説明した： 偽陽性、統計的有意性、p値、そして偽陰性と検出力である。
 Here, we’ll get to the hard part: how do we use test results to support decision making in a complex business environment?
-ここで、難しい話に入ろう： 複雑なビジネス環境における意思決定をサポートするために、テスト結果をどのように利用するか？
+ここで、難しい話に入ろう： **複雑なビジネス環境における意思決定をサポートするために、テスト結果をどのように利用するか**？
 
 The unpleasant reality about A/B testing is that no test result is a certain reflection of the underlying truth.
 A/Bテストに関する不愉快な現実は、どんなテスト結果も根本的な真実を確実に反映するものではないということだ。
 As we discussed in previous posts, good practice involves first setting and understanding the false positive rate, and then designing an experiment that is well powered so it is likely to detect true effects of reasonable and meaningful magnitudes.
-以前の記事で説明したように、良い実践には、まず偽陽性率を設定し理解すること、そして、妥当で意味のある大きさの真の効果を検出できるよう、十分な検出力を持つ実験を計画することが必要である。
+以前の記事で説明したように、良い実践には、**まず偽陽性率を設定し理解すること**、そして、**妥当で意味のある大きさの真の効果を検出できるよう、十分な検出力を持つ実験を計画すること**が必要である。
 These concepts from statistics help us reduce and understand error rates and make good decisions in the face of uncertainty.
 統計学のこれらの概念は、私たちがエラー率を減らし、理解し、不確実性に直面して適切な意思決定をするのに役立ちます。
 But there is still no way to know whether the result of a specific experiment is a false positive or a false negative.
 しかし、特定の実験結果が偽陽性なのか偽陰性なのかを知る方法はまだない。
 
-In using A/B testing to evolve the Netflix member experience, we’ve found it critical to look beyond just the numbers, including the p-value, and to interpret results with strong and sensible judgment to decide if there’s compelling evidence that a new experience is a “win” for our members.
-ネットフリックスの会員体験を進化させるためにA/Bテストを活用する際、p値を含む数字だけにとらわれず、強く賢明な判断で結果を解釈し、新しい体験が会員にとって「勝利」であるという説得力のある証拠があるかどうかを判断することが重要だとわかりました。
-These considerations are aligned with the American Statistical Association’s 2016 Statement on Statistical Significance and P-Values, where the following three direct quotes (bolded) all inform our experimentation practice.
-これらの考慮事項は、米国統計協会の「統計的有意性とP値に関する2016年の声明」に沿ったものであり、以下の3つの直接引用（太字）はすべて我々の実験実践に役立つものである。
+![figure 1: Figure 1: Inspiration from Voltaire.]()
+doubt is not a pleasant condition, but certainty is absurd. ― Voltaire
+疑いは快適な状態ではないが、確信は不合理である。 ― ヴォルテール
 
-“Proper inference requires full reporting and transparency.” As discussed in Part 3: (False positives and statistical significance), by convention we run experiments at a 5% false positive rate.
-"適切な推論には完全な報告と透明性が必要" パート3： (偽陽性と統計的有意性）で述べたように、慣例として我々は5％の偽陽性率で実験を行う。
+In using A/B testing to evolve the Netflix member experience, we’ve found it critical to look beyond just the numbers, including the p-value, and to interpret results with strong and sensible judgment to decide if there’s compelling evidence that a new experience is a “win” for our members.
+ネットフリックスの会員体験を進化させるためにA/Bテストを活用する際、**p値を含む数字だけにとらわれず**、強く賢明な判断で結果を解釈し、新しい体験が会員にとって「勝利」であるという説得力のある証拠があるかどうかを判断することが重要だとわかりました。
+These considerations are aligned with the American Statistical Association’s 2016 Statement on Statistical Significance and P-Values, where the following three direct quotes (bolded) all inform our experimentation practice.
+これらの考慮事項は、米国統計協会の「統計的有意性とP値に関する2016年の声明」に沿ったものであり、以下の**3つの直接引用（太字）**はすべて我々の実験実践に役立つものである。
+
+> “Proper inference requires full reporting and transparency.”
+> (適切な推論には完全な報告と透明性が必要)
+
+As discussed in Part 3: (False positives and statistical significance), by convention we run experiments at a 5% false positive rate.
+パート3： 偽陽性と統計的有意性）で述べたように、**慣例として我々は5％の偽陽性率で実験を行う**。
 In practice, then, if we run twenty experiments (say to evaluate if each of twenty colors of jelly beans are linked to acne) we’d expect at least one significant result — even if, in truth, the null hypothesis is true in each case and there is no actual effect.
-実際には、20の実験（例えば、20色のジェリービーンズがそれぞれニキビに関連しているかどうかを評価する）を行った場合、少なくとも1つの有意な結果を期待することになる。
+実際には、20の実験（例えば、20の色のゼリービーンがにきびに関連しているかどうかを評価するため）を実行すると、少なくとも1つの有意な結果が得られると予想される。たとえ真実であっても、帰無仮説が各ケースで真実であり、実際の効果がないとしても。(20回に1回は偽陽性を検出する想定...!)
 This is the Multiple Comparisons Problem, and there are a number of approaches to controlling the overall false positive rate that we’ll not cover here.
 これは「多重比較問題」であり、全体的な偽陽性率をコントロールするための多くのアプローチがあるが、ここでは取り上げない。
 Of primary importance, though, is to report and track not only results from tests that yield significant results — but also those that do not.
 しかし、第一に重要なのは、重要な結果をもたらしたテストだけでなく、そうでないテストの結果も報告し、追跡することである。
 
-“A p-value, or statistical significance, does not measure the size of an effect or the importance of a result.” In Part 4 (False negatives and power), we talked about the importance, in the experimental design phase, of powering A/B tests to have a high probability of detecting reasonable and meaningful metric movements.
-"p値（統計的有意性）は、効果の大きさや結果の重要性を測るものではない" パート4（偽陰性と検出力）では、実験デザインの段階で、妥当で意味のある指標の動きを高い確率で検出できるようにA/Bテストに検出力をつけることの重要性についてお話しました。
+![figure 2: All you need to know about false positives, in cartoon form.]()
+
+> “A p-value, or statistical significance, does not measure the size of an effect or the importance of a result.”
+> "p値（統計的有意性）は、効果の大きさや結果の重要性を測るものではない"
+
+In Part 4 (False negatives and power), we talked about the importance, in the experimental design phase, of powering A/B tests to have a high probability of detecting reasonable and meaningful metric movements.
+パート4（偽陰性と検出力）では、実験デザインの段階で、**妥当で意味のある指標の動きを高い確率で検出できるようにA/Bテストに検出力をつけることの重要性**についてお話しました。
 Similar considerations are relevant when interpreting results.
 結果を解釈する際にも、同様の考慮が必要である。
 Even if results are statistically significant (p-value < 0.05), the estimated metric movements may be so small that they are immaterial to the Netflix member experience, and we are better off investing our innovation efforts in other areas.
-結果が統計的に有意（p値＜0.05）であったとしても、推定された指標の動きは、ネットフリックスの会員体験にとって重要でないほど小さい可能性があり、イノベーションの努力を他の分野に投資した方がよい。
+結果が統計的に有意 (p値＜0.05) であったとしても、推定された指標の動きは、ネットフリックスの会員体験にとって重要でないほど小さい可能性があり、イノベーションの努力を他の分野に投資した方がよい。(ex. サンプルサイズが大き過ぎたらp値は低くでやすい。-> この状態は検出力が低くなってる??)
 Or the costs of scaling out a new feature may be so high relative to the benefits that we could better serve our members by not rolling out the feature and investing those funds in improving different areas of the product experience.
 あるいは、新機能をスケールアウトするためのコストが、利点に比して非常に高く、その機能を展開せず、その資金を製品体験の別の分野の改善に投資した方が、会員により良いサービスを提供できるかもしれない。
 
-“Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold.” The remainder of this post gives insights into practices we use at Netflix to arrive at decisions, focusing on how we holistically evaluate evidence from an A/B test.
-"科学的な結論やビジネスや政策の決定は、p値が特定の閾値を超えたかどうかだけに基づくべきではありません。" この記事の残りの部分では、Netflixで意思決定に至るために使っているプラクティスについて、A/Bテストから得られたエビデンスをどのように総合的に評価するかに焦点を当てながら、洞察を述べる。
+> “Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold.”
+> "科学的な結論やビジネスや政策の決定は、p値が特定の閾値を超えたかどうかだけに基づくべきではありません。"
 
-Building a data-driven case
-データに基づくケースの構築
+The remainder of this post gives insights into practices we use at Netflix to arrive at decisions, focusing on how we holistically evaluate evidence from an A/B test.
+この記事の残りの部分では、Netflixで意思決定に至るために使っているプラクティスについて、**A/Bテストから得られたエビデンスをどのように総合的に評価するか**に焦点を当てながら、洞察を述べる。
 
-One practical way to evaluate the evidence in support of a decision is to think in terms of constructing a legal case in favor of the new product experience: is there enough evidence to “convict” and conclude, beyond that 5% reasonable doubt, that there is a true effect that benefits our members? To help build that case, here are some helpful questions that we ask ourselves in interpreting test results:
-決定を支持する証拠を評価する実際的な方法のひとつは、新商品体験に有利な法的事例を構築するという観点から考えることである： 有罪判決を下し」、5％の合理的な疑いを超えて、会員に利益をもたらす真の効果があると結論づけるに足る証拠はあるか？そのケースを構築するために、テスト結果を解釈する際に私たちが自問自答するのに役立つ質問をいくつか紹介しよう：
+## Building a data-driven case データに基づくケースの構築
 
-Do the results align with the hypothesis? If the hypothesis was about optimizing compute resources for back-end infrastructure, and results showed a major and statistically significant increase in user satisfaction, we’d be skeptical.
-結果は仮説と一致しているか？仮説がバックエンドインフラのコンピューティングリソースの最適化に関するもので、結果がユーザー満足度の大幅かつ統計的に有意な増加を示したとしたら、我々は懐疑的になるだろう。
+One practical way to evaluate the evidence in support of a decision is to think in terms of constructing a legal case in favor of the new product experience:
+決定を支持する証拠を評価する実際的な方法のひとつは、新商品体験に有利な法的事例を構築するという観点から考えることである:
+is there enough evidence to “convict” and conclude, beyond that 5% reasonable doubt, that there is a true effect that benefits our members?
+5％の合理的な疑いを超えて、会員に利益をもたらす真の効果があると結論づけるために、十分な証拠があるか？
+To help build that case, here are some helpful questions that we ask ourselves in interpreting test results:
+そのケースを構築するのに役立つために、**テスト結果を解釈する際に自問するいくつかの質問**を紹介する。
+
+### Do the results align with the hypothesis?結果は仮説と一致しているか？
+
+If the hypothesis was about optimizing compute resources for back-end infrastructure, and results showed a major and statistically significant increase in user satisfaction, we’d be skeptical.
+仮説がバックエンドインフラストラクチャのコンピューティングリソースの最適化についてであり、結果がユーザ満足度の大幅な統計的に有意な増加を示していた場合、私たちは懐疑的になるだろう。
 The result may be a false positive — or, more than likely, the result of a bug or error in the execution of the experiment (Twyman’s Law).
-その結果は偽陽性かもしれないし、実験実行中のバグやエラーの結果かもしれない（ツイマンの法則）。
+その結果は偽陽性かもしれないし、実験実行中のバグやエラーの結果かもしれない(ツイマンの法則)。
 Sometimes surprising results are correct, but more often than not they are either the result of implementation errors or false positives, motivating us to dig deep into the data to identify root causes.
 意外な結果が正しいこともあるが、多くの場合、実装ミスか偽陽性の結果であり、根本原因を特定するためにデータを深く掘り下げる動機となる。
 
-Does the metric story hang together? In Part 2 (What is an A/B Test?), we talked about the importance of describing the causal mechanism through which a change made to the product impacts both secondary metrics and the primary decision metric specified for the test.
-メトリクスストーリーはまとまっているか？パート2（A/Bテストとは何か）では、製品に加えられた変更が、セカンダリメトリクスとテストのために指定されたプライマリ決定メトリクスの両方に影響を与える因果メカニズムを記述することの重要性についてお話しました。
+### Does the metric story hang together? メトリクスストーリーはまとまっているか？
+
+In Part 2 (What is an A/B Test?), we talked about the importance of describing the causal mechanism through which a change made to the product impacts both secondary metrics and the primary decision metric specified for the test.
+パート2（A/Bテストとは何か）では、製品に加えられた変更が、secondary metricsとテストで指定されたprimary decision metricの両方にどのように影響を与えるかという**因果関係のメカニズムを記述することの重要性**について説明しました。
 In evaluating test results, it’s important to look at changes in these secondary metrics, which are often specific to a particular experiment, to assess if any changes in the primary metric follow the hypothesized causal chain.
-テスト結果を評価する際には、このような二次的なメトリクスの変化を見ることが重要であり、それはしばしば特定の実験に特有のものである。
+テスト結果を評価する際には、このような**secondary metricsの変化を見ることが重要**であり、これらはしばしば特定の実験に特有のものであり、**primary metricの変化が仮説に基づいた因果関係の連鎖に従っているかどうかを評価することが重要**である。
 With the Top 10 experiment, for example, we’d check if inclusion in the Top 10 list increases title-level engagement, and if members are finding more of the titles they watch from the home page versus other areas of the product.
 例えば、「トップ10」の実験では、「トップ10」リストへの掲載がタイトルレベルのエンゲージメントを高めるかどうか、また、会員が視聴するタイトルをトップページから探す場合と他のエリアから探す場合を比較します。
 Increased engagement with the Top 10 titles and more plays coming from the home page would help build our confidence that it is in fact the Top 10 list that is increasing overall member satisfaction.
-トップ10タイトルへの関与が増え、トップページからの再生回数が増えれば、全体的な会員満足度を高めているのはトップ10リストであるという確信につながるだろう。
+トップ10タイトルへのengagementの増加と、ホームページからの再生数の増加は、実際にはトップ10リストが全体的な会員満足度を高めていることを確信するのに役立つだろう。
 In contrast, if our primary member satisfaction metric was up in the Top 10 treatment group, but analysis of these secondary metrics showed no increase in engagement with titles included in the Top 10 list, we’d be skeptical.
-対照的に、主要な会員満足度指標がトップ10扱いグループで上昇していたとしても、これらの副次的指標を分析した結果、トップ10リストに含まれるタイトルのエンゲージメントが上昇していなかったとしたら、私たちは懐疑的になるだろう。
+対照的に、主要な会員満足度指標がトップ10の治療群で上昇していたとしても、これらのsecondary metricsの分析で、トップ10リストに含まれるタイトルへのエンゲージメントが増加していないことがわかれば、私たちは懐疑的になるだろう。
 Maybe the Top 10 list isn’t a great experience for our members, and its presence drives more members off the home page, increasing engagement with the Netflix search experience — which is so amazing that the result is an increase in overall satisfaction.
 もしかしたら、トップ10リストは会員にとって素晴らしい体験ではないかもしれない。その存在によって、より多くの会員がホームページから離れ、ネットフリックスの検索体験へのエンゲージメントが高まる。
 Or maybe it’s a false positive.
 あるいは偽陽性かもしれない。
 In any case, movements in secondary metrics can cast sufficient doubt that, despite movement in the primary decision metric, we are unable to confidently conclude that the treatment is activating the hypothesized causal mechanism.
-いずれにせよ、二次的な測定基準における動きは、一次的な判断基準における動きにもかかわらず、治療が仮説に基づいた原因メカニズムを活性化していると自信を持って結論づけることができないほど、十分な疑念を抱かせることがある。
+いずれにせよ、secondary metricsの動きは、primary decision metricの動きにもかかわらず、treatmentが仮説に基づいた因果関係のメカニズムを活性化していると確信できないほど十分な疑いを投げかけることができる。
 
-Is there additional supporting or refuting evidence, such as consistent patterns across similar variants of an experience? It’s common to test a number of variants of an idea within a single experiment.
-ある経験の類似したバリエーションに一貫したパターンがあるなど、追加的な裏付けや反証はあるか？一つの実験において、アイデアのいくつかの変種をテストすることは一般的である。
+## Is there additional supporting or refuting evidence, such as consistent patterns across similar variants of an experience?
+
+ある経験の類似したバリエーションに一貫したパターンがあるなど、追加的な裏付けや反証はあるか？
+
+It’s common to test a number of variants of an idea within a single experiment.
+**一つの実験において、アイデアのいくつかのvariantをテストすることは一般的**である。(2つとか3つとか)
 For example, with something like the Top 10 experience, we may test a number of design variants and a number of different ways to position the Top 10 row on the homepage.
 例えば、トップ10エクスペリエンスのようなものでは、デザインのバリエーションや、トップ10の行をホームページに配置するさまざまな方法をテストすることがある。
 If the Top 10 experience is great for Netflix members, we’d expect to see similar gains in both primary and secondary metrics across many of these variants.
-Netflixの会員にとってTop10の体験が素晴らしいものであれば、これらの亜種の多くで一次指標と二次指標の両方で同様の向上が見られると予想される。
+Netflixの会員にとってTop10の体験が素晴らしいものであれば、これらのvariantの多くで一次指標と二次指標の両方で同様の向上が見られると予想される。
 Some designs may be better than others, but seeing broadly consistent results across the variants helps build that case in favor of the Top 10 experience.
-いくつかのデザインは他のデザインよりも優れているかもしれないが、バリエーション全体にわたって広く一貫した結果を見ることは、トップ10の経験を支持するケースを構築するのに役立つ。
+いくつかのデザインは他のデザインよりも優れているかもしれないが、**バリエーション全体にわたって広く一貫した結果を見ること**は、トップ10の経験を支持するケースを構築するのに役立つ。
 If, on the other hand, we test 20 design and positioning variants and only one yields a significant movement in the primary decision metric, we’d be much more skeptical.
-一方、20のデザインとポジショニングのバリエーションをテストして、主要な決定指標に有意な動きをもたらしたのが1つだけだったとしたら、私たちはもっと懐疑的になるだろう。
+一方、20のデザインとポジショニングのバリエーションをテストして、primary decision metricで有意な動きを示すのは1つだけであれば、私たちはより懐疑的になるだろう。(本当に施策が有効なら、20個のうちの1つだけでなく、複数のバリエーションで段階的な変化が見られるはず)
 After all, with that 5% false positive rate, we expect on average one significant result from random chance alone.
 結局のところ、5％の偽陽性率があれば、無作為の偶然だけで平均して1つの有意な結果が得られると予想される。
 
-Do results repeat? Finally, the surest way to build confidence in a result is to see if results repeat in a follow-up test.
-結果は繰り返されるか？最後に、結果に自信を持つための最も確実な方法は、フォローアップテストで結果が繰り返されるかどうかを確認することである。
+### Do results repeat? 結果は繰り返されるか？
+
+Finally, the surest way to build confidence in a result is to see if results repeat in a follow-up test.
+最後に、結果に自信を持つための最も確実な方法は、フォローアップテストで結果が繰り返されるかどうかを確認することである。
 If results of an initial A/B test are suggestive but not conclusive, we’ll often run a follow-up test that hones in on the hypothesis based on learnings generated from the first test.
-最初のA/Bテストの結果が示唆的ではあっても決定的でない場合、私たちはしばしば、最初のテストから得られた学習に基づいて仮説に磨きをかけるフォローアップテストを実施します。
+**最初のA/Bテストの結果が示唆的ではあっても決定的でない場合、私たちはしばしば、最初のテストから得られた学習に基づいて仮説に磨きをかけるフォローアップテストを実施**します。
 With something like the Top 10 test, for example, we might observe that certain design and row positioning choices generally lead to positive metric movements, some of which are statistically significant.
 例えば、トップ10テストのようなものであれば、ある種のデザインや列の配置を選択することで、一般的にポジティブな指標の動きにつながり、そのうちのいくつかは統計的に有意であることが観察されるかもしれない。
 We’d then refine these most promising design and positioning variants, and run a new test.
-そして、最も有望なデザインとポジショニングのバリエーションを改良し、新たなテストを実施する。
+そして、**最も有望なデザインとポジショニングのバリエーションを改良し、新たなテストを実施する**。
 With fewer experiences to test, we can also increase the allocation size to gain more power.
 テストする経験が少なければ、より大きな力を得るために割り当てサイズを大きくすることもできる。
 Another strategy, useful when the product changes are large, is to gradually roll out the winning treatment experience to the entire user or member based to confirm benefits seen in the A/B test, and to ensure there are no unexpected deleterious impacts.
-製品の変更が大規模な場合に有効なもう一つの戦略は、A/Bテストで見られた利点を確認し、予期せぬ悪影響がないことを確認するために、勝利した治療体験をユーザーまたは会員全体に徐々に展開することである。
+製品の変更が大規模な場合に有効なもう一つの戦略は、A/Bテストで見られた利点を確認し、予期せぬ悪影響がないことを確認するために、勝利したtreatment experienceをユーザ全体またはメンバー全体に徐々に展開することである。(割合を徐々に増やしていくやつ。でも今回の動機は、示唆はあるが確信が持てないからか...!)
 In this case, instead of rolling out the new experience to all users at once, we slowly ramp up the fraction of members receiving the new experience, and observe differences with respect to those still receiving the old experience.
-この場合、新しいエクスペリエンスをすべてのユーザーに一度に展開するのではなく、新しいエクスペリエンスを受けるメンバーの割合を徐々に増やし、古いエクスペリエンスをまだ受けているメンバーとの違いを観察する。
+この場合、新しいエクスペリエンスをすべてのユーザに一度に展開するのではなく、新しいエクスペリエンスを受けるメンバーの割合を徐々に増やし、古いエクスペリエンスをまだ受けているメンバーとの違いを観察する。
 
-Connections with decision theory
-意思決定理論との関連
+## Connections with decision theory 意思決定理論との関連
 
 In practice, each person has a different framework for interpreting the results of a test and making a decision.
-実際には、検査結果の解釈や判断の枠組みは人それぞれである。
+実際には、各個人は、テストの結果を解釈し、意思決定をするための異なる枠組みを持っている。
 Beyond the data, each individual brings, often implicitly, prior information based on their previous experiences with similar A/B tests, as well as a loss or utility function based on their assessment of the potential benefits and consequences of their decision.
-データを超えて、各個人は、多くの場合、暗黙のうちに、類似のA/Bテストに関する過去の経験に基づく事前情報と、その決定の潜在的な利益と結果の評価に基づく損失または効用関数をもたらす。
+データを超えて、各個人は、しばしば暗黙的に、類似のA/Bテストに基づく以前の経験に基づく事前情報を持ち、また、自分の意思決定の潜在的な利益と結果の評価に基づく損失または効用関数を持っている。
 There are ways to formalize these human judgements about estimated risks and benefits using decision theory, including Bayesian decision theory.
-ベイズ決定理論などの決定理論を用いて、推定されるリスクと便益に関する人間の判断を形式化する方法がある。
+ベイズ決定理論などの決定理論を用いて、推定されるリスクと便益に関する人間の判断を形式化する方法がある。(これはベイジアンABテストの話??)
 These approaches involve formally estimating the utility of making correct or incorrect decisions (e.g., the cost of rolling out a code change that doesn’t improve the member experience).
 これらのアプローチでは、正しい決定または誤った決定（例えば、会員体験を改善しないコード変更を展開するコスト）を行うことの効用を正式に見積もることが含まれる。
 If, at the end of the experiment, we can also estimate the probability of making each type of mistake for each treatment group, we can make a decision that maximizes the expected utility for our members.
-実験終了時に、各治療群について、それぞれの種類の間違いを犯す確率も推定できれば、メンバーにとって期待効用が最大になるような決定を下すことができる。
+実験終了時に、各treatment群で各種の間違いをする確率を推定することができれば、会員の期待効用を最大化する意思決定をすることができる。
 
 Decision theory couples statistical results with decision-making and is therefore a compelling alternative to p-value-based approaches to decision making.
-意思決定理論は、統計的結果と意思決定を結びつけるものであり、したがって、意思決定に対するp値ベースのアプローチに代わる説得力のあるものである。
+意思決定理論は、統計的結果と意思決定を結びつけるものであり、したがって、**意思決定に対するp値ベースのアプローチに代わる説得力のあるもの**である。
 However, decision-theoretic approaches can be difficult to generalize across a broad range of experiment applications, due to the nuances of specifying utility functions.
 しかし、意思決定理論的なアプローチは、効用関数を特定する際の微妙なニュアンスのため、広範な実験アプリケーションにわたって一般化することが難しい場合がある。
 Although imperfect, the frequentist approach to hypothesis testing that we’ve outlined in this series, with its focus on p-values and statistical significance, is a broadly and readily applicable framework for interpreting test results.
 不完全ではあるが、このシリーズで概説した仮説検定に対する頻度論的アプローチは、p値と統計的有意性に焦点を当てたものであり、検定結果を解釈するための広範かつ容易に適用できる枠組みである。
+(頻度論的なアプローチは、不完全だけど汎用的で適用しやすいのか...!)
 
 Another challenge in interpreting A/B test results is rationalizing through the movements of multiple metrics (primary decision metric and secondary metrics).
-A/Bテストの結果を解釈する際のもう一つの課題は、複数の指標（主要な決定指標と副次的な指標）の動きを通して合理化することである。
+**A/Bテストの結果を解釈する際のもう一つの課題は、複数の指標(primary decision metricとsecondary metrics)の動きを合理化すること**である。
 A key challenge is that the metrics themselves are often not independent (i.e.metrics may generally move in the same direction, or in opposite directions).
-重要な課題は、メトリクス自体が独立していないことが多いことである（すなわち、メトリクスは一般的に同じ方向に動くこともあれば、反対の方向に動くこともある）。
+重要な課題は、**metrics自体がしばしば独立していないこと**である（つまり、metricsは一般的に同じ方向に動いたり、逆方向に動いたりする）。
 Here again, more advanced concepts from statistical inference and decision theory are applicable, and at Netflix we are engaged in research to bring more quantitative approaches to this multimetric interpretation problem.
-ここでもまた、統計的推論や決定理論からのより高度な概念が適用可能であり、ネットフリックスでは、このマルチメトリックな解釈問題に、より定量的なアプローチをもたらすための研究に取り組んでいる。
+ここでもまた、統計的推論や決定理論からのより高度な概念が適用可能であり、ネットフリックスでは、このmulti-metric解釈問題により多くの定量的アプローチをもたらすための研究に取り組んでいる。
 Our approach is to include in the analysis information about historical metric movements using Bayesian inference — more to follow!
-私たちのアプローチは、ベイズ推論を用いて過去の指標の動きに関する情報を分析に含めることである！
+私たちのアプローチは、**ベイズ推論を用いて過去の指標の動きに関する情報を分析に含めること**である！
 
 Finally, it’s worth noting that different types of experiments warrant different levels of human judgment in the decision making process.
 最後に、実験の種類によって、意思決定プロセスにおける人間の判断のレベルが異なることは注目に値する。
@@ -154,25 +181,22 @@ For this use case, the goal is to automate the deployment process and, using fra
 In success, we save our developers time by automatically passing the new build or flagging metric degradations to the developer.
 成功すれば、新しいビルドやメトリクス・デグレードのフラグを自動的に開発者に渡すことで、開発者の時間を節約できる。
 
-Summary
-概要
+## Summary
 
 Here we’ve described how to build the case for a product innovation through careful analysis of the experimental data, and noted that different types of tests warrant differing levels of human input to the decision process.
 ここでは、実験データの入念な分析を通じて製品革新のケースを構築する方法を説明し、テストの種類によって、意思決定プロセスにおける人間の入力レベルが異なることを指摘した。
 
 Decision making under uncertainty, including acting on results from A/B tests, is difficult, and the tools we’ve described in this series of posts can be hard to apply correctly.
 A/Bテストの結果に基づく行動を含め、不確実性の下での意思決定は難しく、この連載で紹介したツールを正しく適用するのは難しい。
-But these tools, including the p-value, have withstood the test of time, as reinforced in 2021 by the American Statistical Association president’s task force statement on statistical significance and replicability: “the use of p-values and significance testing, properly applied and interpreted, are important tools that should not be abandoned.
-しかし、p値を含むこれらのツールは、2021年にアメリカ統計協会会長の統計的有意性と再現可能性に関するタスクフォース声明によって補強されたように、時の試練に耐えてきた： 「p値の使用と有意性検定は、適切に適用され解釈される重要なツールであり、放棄されるべきではない。
-..
-..
-.
-.
+But these tools, including the p-value, have withstood the test of time, as reinforced in 2021 by the American Statistical Association president’s task force statement on statistical significance and replicability:
+しかし、これらのツール、p値を含むこれらのツールは、統計的有意性と再現性に関する米国統計協会会長のタスクフォース声明によって2021年に強化されたように、時代の試練に耐えてきた。
+“the use of p-values and significance testing, properly applied and interpreted, are important tools that should not be abandoned.
+「p値と有意性検定の使用は、適切に適用され解釈される限り、放棄されるべきではない重要なツールである。
 [they] increase the rigor of the conclusions drawn from data.”
-[データから引き出される結論の厳密性を高める。
+[それらは]データから導かれる結論の厳密さを高める。」
 
 The notion of publicly sharing and debating results of key product tests is ingrained in the Experimentation Culture at Netflix, which we’ll discuss in the last installment of this series.
-重要な製品テストの結果を公に共有し、議論するという考え方は、このシリーズの最終回で説明するネットフリックスの実験文化に根付いている。
+**重要な製品テストの結果を公に共有し、議論するという考え方**は、このシリーズの最終回で説明するネットフリックスの実験文化に根付いている。
 But up next, we’ll talk about the different areas of experimentation across Netflix, and the different roles that focus on experimentation.
 しかし次は、Netflix全体における実験のさまざまな分野と、実験に重点を置くさまざまな役割についてお話しします。
 Follow the Netflix Tech Blog to stay up to date.
