@@ -196,7 +196,7 @@ The interpretation is that, under repeated experiments, the confidence intervals
 実験を繰り返せば、confidence intervalは真の値（ここでは表が出る確率）を95％の確率でカバーするという解釈である。
 
 There is an equivalence between the confidence interval and the p-value, and both lead to the same decision: the 95% confidence interval does not cover the null value if and only if the p-value is less than 0.05, and in both cases we reject the null hypothesis of no effect.
-**confidence intervalとp値には等価性があり**、どちらも同じ決定を導く： p値が0.05未満である場合に限り、95％ confidence intervalは帰無値をカバーしない。この場合、効果がないという帰無仮説をrejectする。
+**confidence intervalとp値には等価性があり**、どちらも同じ決定を導く： p値が0.05未満である場合に限り、95％ confidence intervalは帰無値(=コインの例における50%という値...?)をカバーしない。この場合、効果がないという帰無仮説をrejectする。
 
 ## Summary 要約
 
