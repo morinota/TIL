@@ -162,7 +162,7 @@ $\sigma_i$ の特定の値は、他のすべてのデータポイントに対す
 This distribution has an entropy which increases as σi increases.
 この分布はエントロピー(=ばらつき??)を持ち、σiが増加するにつれて増加する。
 SNE performs a binary search for the value of σi that produces a Pi with a fixed perplexity that is specified by the user.3 The perplexity is defined as
-SNE は、ユーザーが指定したfixed perplexityを持つ $P_i$ を生成する $\sigma_i$ の値の2分探索を行う。ここで、perplexityは次式で定義される。
+SNE は、ユーザが指定したfixed(固定の、静的な) perplexity を持つ $P_i$ を生成する $\sigma_i$ の値の2分探索を行う。ここで、perplexityは次式で定義される。
 
 $$
 Perp(P_i) = 2^{H(P_i)}
@@ -178,7 +178,7 @@ H(P_i) = -\sum_j p_{j|i} \log_2 p_{j|i}
 $$
 
 The perplexity can be interpreted as a smooth measure of the effective number of neighbors.
-**perplexityは、有効な近傍の数の滑らかな尺度として解釈することができる。**(smooth measureって"ざっくり"みたいなイメージ??)
+**perplexityは、有効な近傍の数のsmooth measure**として解釈することができる。(smooth measureって"ざっくり"みたいなイメージ??)
 The performance of SNE is fairly robust to changes in the perplexity, and typical values are between 5 and 50.
 SNEの性能はperplexityの変化に対してかなり頑健であり、典型的な値は5から50の間である。
 The minimization of the cost function in Equation 2 is performed using a gradient descent method.
@@ -236,100 +236,114 @@ It is therefore common to run the optimization several times on a data set to fi
 Section 2 discussed SNE as it was presented by Hinton and Roweis (2002).
 セクション2では、Hinton and Roweis (2002)が提示したSNEについて論じた。
 Although SNE constructs reasonably good visualizations, it is hampered by a cost function that is difficult to optimize and by a problem we refer to as the “crowding problem”.
-**SNEはそれなりに優れたビジュアライゼーションを構築するが、最適化が難しいコスト関数と、われわれが「クラウディング問題」と呼ぶ問題によって妨げられている**。
+SNEはそれなりに優れたビジュアライゼーションを構築するが、**最適化が難しいコスト関数**と、われわれが「クラウディング問題」と呼ぶ問題によって妨げられている。
 In this section, we present a new technique called “t-Distributed Stochastic Neighbor Embedding” or “t-SNE” that aims to alleviate these problems.
 このセクションでは、**これらの問題を軽減することを目的とした「t-Distributed Stochastic Neighbor Embedding」（t-SNE）と呼ばれる新しい手**法を紹介する。
 The cost function used by t-SNE differs from the one used by SNE in two ways: (1) it uses a symmetrized version of the SNE cost function with simpler gradients that was briefly introduced by Cook et al.(2007) and (2) it uses a Student-t distribution rather than a Gaussian to compute the similarity between two points in the low-dimensional space.
-t-SNEで使用されるコスト関数は、SNEで使用されるものとは2つの点で異なる：(1)Cookら(2007)によって簡単に紹介された、より単純な勾配を持つSNEコスト関数の対称化バージョンを使用すること、(2)低次元空間における2点間の類似度を計算するために、ガウス分布ではなくスチューデントt分布を使用すること、である。
+t-SNEで使用されるコスト関数は、SNEで使用されるものとは2つの点で異なる：(1)Cookら(2007)によって簡単に紹介された、より単純な勾配を持つ**SNEコスト関数の対称化バージョン**を使用すること、(2)低次元空間における2点間の類似度を計算するために、**ガウス分布ではなくスチューデントt分布を使用**すること、である。
 t-SNE employs a heavy-tailed distribution in the low-dimensional space to alleviate both the crowding problem and the optimization problems of SNE.
 t-SNEは、SNEの混雑問題と最適化問題の両方を軽減するために、低次元空間における重尾分布を採用している。
+
 In this section, we first discuss the symmetric version of SNE (Section 3.1).
 このセクションでは、まずSNEの対称バージョンについて説明する（セクション3.1）。
 Subsequently, we discuss the crowding problem (Section 3.2), and the use of heavy-tailed distributions to address this problem (Section 3.3).
 続いて、混雑問題（セクション3.2）と、この問題に対処するための重尾部分布の使用（セクション3.3）について議論する。
-We conclude the section by describing our approach to the optimization of the t-SNE cost function (Section 3.4).3.1 Symmetric SNE As an alternative to minimizing the sum of the Kullback-Leibler divergences between the conditional probabilities pj|i and qj|i , it is also possible to minimize a single Kullback-Leibler divergence between a joint probability distribution, P, in the high-dimensional space and a joint probability distribution, Q, in the low-dimensional space:
-i and qj
+We conclude the section by describing our approach to the optimization of the t-SNE cost function (Section 3.4).
+最後に、t-SNEコスト関数の最適化へのアプローチについて説明する（セクション3.4）。
+
+## 3.1. 3.1 Symmetric SNE 
+
+As an alternative to minimizing the sum of the Kullback-Leibler divergences between the conditional probabilities pj|i and qj|i , it is also possible to minimize a single Kullback-Leibler divergence between a joint probability distribution, P, in the high-dimensional space and a joint probability distribution, Q, in the low-dimensional space:
+条件付き確率 $p_{j|i}$ と $q_{j|i}$ の間のカルバック・ライブラー発散の和を最小化する代わりに、高次元空間の結合確率分布 $P$ と低次元空間の結合確率分布 $Q$ の間の単一のカルバック・ライブラー発散を最小化することも可能である。(sum記号が消えた)
 
 $$
+C = KL(P || Q) = \sum_i \sum_j p_{ij} \log \frac{p_{ij}}{q_{ij}}
 \tag{}
 $$
 
 where again, we set pii and qii to zero.
-ここでもpiiとqiiをゼロとする。
+ここでも $p_{ii}$ と $q_{ii}$ をゼロに設定する。
 We refer to this type of SNE as symmetric SNE, because it has the property that pi j = pji and qi j = qji for ∀i, j.
-このタイプのSNEは、∀i, jに対してpi j = pji、qi j = qjiという性質を持つため、対称SNEと呼ぶ。
+このタイプのSNEは、$\forall i, j$ に対して $p_{ij} = p_{ji}$ および $q_{ij} = q_{ji}$ という性質を持つため、対称SNEと呼ぶ。
 In symmetric SNE, the pairwise similarities in the low-dimensional map qi j are given by
-対称SNEでは、低次元写像qi jにおける対の類似度は次式で与えられる。
+対称SNEでは、低次元写像$q_{ij}$のペアワイズ類似性は次式で与えられる。
 
 $$
+q_{ij} = \frac{exp(-\|y_i - y_j\|^2)}{\sum_{k \neq l} exp(-\|y_k - y_l\|^2)}
 \tag{3}
 $$
 
 The obvious way to define the pairwise similarities in the high-dimensional space pi j is
-高次元空間pi jにおける一対の類似性を定義する明白な方法は次の通りである。
+高次元空間のペアワイズ類似性 $p_{ij}$ を定義する明らかな方法は次式である。
 
 $$
+p_{ij} = \frac{exp(-\|x_i - x_j\|^2 / 2\sigma_i^2)}{\sum_{k \neq l} exp(-\|x_k - x_l\|^2 / 2\sigma_i^2)}
 \tag{}
 $$
 
 but this causes problems when a high-dimensional datapoint xi is an outlier (i.e., all pairwise distances kxi − x jk 2 are large for xi).
-しかしこれは、高次元のデータポイントxiが外れ値である場合（すなわち、すべての対距離kxi - x jk 2がxiに対して大きい場合）に問題を引き起こす。
+しかしこれは、高次元のデータポイント $x_i$ が外れ値の場合（つまり、$x_i$ に対してすべてのペア間距離 $kx_i - x_jk^2$ が大きい場合）に問題が発生する。
 For such an outlier, the values of pi j are extremely small for all j, so the location of its low-dimensional map point yi has very little effect on the cost function.
-このような異常値では、pi jの値はすべてのjに対して極めて小さいので、その低次元の地図点yiの位置はコスト関数にほとんど影響しない。
+このような異常値では、$p_{ij}$ の値はすべてのjに対して非常に小さいため、**低次元マップ点 $y_i$ の位置はコスト関数にほとんど影響を与えない**。(=最適化にy_iの情報が反映されない...??)
 As a result, the position of the map point is not well determined by the positions of the other map points.
 その結果、地図点の位置は他の地図点の位置によってうまく決定されない。
 We circumvent this problem by defining the joint probabilities pi j in the high-dimensional space to be the symmetrized conditional probabilities, that is, we set pi j = pj|i+pi| j 2n .
-i+pi
+この問題を回避するために、高次元空間における同時確率(=simultaneous probability = joint probability) **$p_{ij}$ を対称化された条件付き確率と定義する**。すなわち、$p_{ij} = p_{j|i} + p_{i|j} / 2n$ とする。
 This ensures that ∑j pi j > 1 2n for all datapoints xi , as a result of which each datapoint xi makes a significant contribution to the cost function.
-これにより、すべてのデータポイント xi に対して、∑j pi j > 1 2n が保証され、その結果、各データポイント xi はコスト関数に大きく寄与する。
+これにより、すべてのデータポイント $x_i$ に対して $\sum_j p_{ij} > 1 / 2n$ となり、各データポイント $x_i$ がコスト関数に有意な寄与をする。(外れ値が考慮されない問題の解決を意図してるのか...!)
 In the low-dimensional space, symmetric SNE simply uses Equation 3.
 低次元空間では、対称SNEは単に式3を使用する。
 The main advantage of the symmetric version of SNE is the simpler form of its gradient, which is faster to compute.
-対称版SNEの主な利点は、勾配の形が単純で、計算が速いことである。
+**対称版SNEの主な利点は、勾配の形が単純で、計算が速いこと**である。
 The gradient of symmetric SNE is fairly similar to that of asymmetric SNE, and is given by
 対称SNEの勾配は非対称SNEの勾配とよく似ており、次式で与えられる。
 
 $$
+\frac{\partial C}{\partial y_i} = 4 \sum_j (p_{ij} - q_{ij})(y_i - y_j)
 \tag{}
 $$
 
 In preliminary experiments, we observed that symmetric SNE seems to produce maps that are just as good as asymmetric SNE, and sometimes even a little better.
-予備的な実験では、対称SNEは非対称SNEと同じくらい良いマップを生成し、時には少し良いマップを生成することさえあるようだ。
+予備的な実験では、対称SNEは非対称SNEと同じくらい良いマップを生成し、時には少し良いマップを生成することさえあるようだ。(高速なのに品質は同程度なのか。)
 
-## 3.1. The Crowding Problem
+## 3.2. The Crowding Problem
 
 Consider a set of datapoints that lie on a two-dimensional curved manifold which is approximately linear on a small scale, and which is embedded within a higher-dimensional space.
-小さなスケールでほぼ線形であり、高次元空間に埋め込まれた2次元曲線多様体上にあるデータポイントの集合を考える。
+小さなスケールではほぼ線形であり、高次元空間に埋め込まれた2次元の曲線多様体上にあるデータポイントの集合を考える。
 It is possible to model the small pairwise distances between datapoints fairly well in a two-dimensional map, which is often illustrated on toy examples such as the “Swiss roll” data set.
 データポイント間の小さなペア間距離を2次元マップの中でかなりうまくモデル化することが可能で、これは「スイスロール」データセットのようなおもちゃの例でよく説明される。
 Now suppose that the manifold has ten intrinsic dimensions5 and is embedded within a space of much higher dimensionality.
 ここで、この多様体が10次元の固有次元5を持ち、もっと高次元の空間に埋め込まれているとしよう。
 There are several reasons why the pairwise distances in a two-dimensional map cannot faithfully model distances between points on the ten-dimensional manifold.
-二次元マップの対距離では、10次元多様体上の点間距離を忠実にモデル化できない理由はいくつかある。
+二次元マップのpairwise距離では、10次元多様体上の点間距離を忠実にモデル化できない理由はいくつかある。
 For instance, in ten dimensions, it is possible to have 11 datapoints that are mutually equidistant and there is no way to model this faithfully in a two-dimensional map.
 例えば、10次元の場合、互いに等距離にある11個のデータポイントが存在する可能性があり、これを2次元の地図で忠実にモデル化する方法はない。
 A related problem is the very different distribution of pairwise distances in the two spaces.
-関連する問題は、2つの空間における対距離の分布が大きく異なることである。
+関連する問題は、2つの空間におけるpairwise距離の非常に異なる分布である。
 The volume of a sphere centered on datapoint i scales as r m, where r is the radius and m the dimensionality of the sphere.
-データポイントiを中心とする球の体積はr mとしてスケールし、rは半径、mは球の次元数である。
-So if the datapoints are approximately uniformly distributed in the region around i on the ten-dimensional manifold, and we try to model the distances from i to the other datapoints in the two-dimensional map, we get the following “crowding problem”: the area of the two-dimensional map that is available to accommodate moderately distant datapoints will not be nearly large enough compared with the area available to accommodate nearby datapoints.
-そこで、データポイントが10次元多様体上のiの周りの領域にほぼ一様に分布しているとして、iから他のデータポイントまでの距離を2次元マップ上でモデル化しようとすると、次のような「混雑問題」が発生する： ほどよく離れたデータポイントを収容できる二次元マップの領域は、近くのデータポイントを収容できる領域と比べると、ほとんど十分な大きさにならない。
+データポイントiを中心とする球の体積は $r^m$ とスケーリングされる。ここで、$r$ は半径、$m$ は球の次元数である。
+So if the datapoints are approximately uniformly distributed in the region around i on the ten-dimensional manifold, and we try to model the distances from i to the other datapoints in the two-dimensional map, we get the following “crowding problem”: 
+したがって、データポイントが10次元多様体上のiの周りの領域におおよそ一様に分布しているとし、2次元マップ上のiから他のデータポイントまでの距離をモデル化しようとすると、次のような「**クラウディング問題(混雑問題?)**」が発生する：
+the area of the two-dimensional map that is available to accommodate moderately distant datapoints will not be nearly large enough compared with the area available to accommodate nearby datapoints.
+中程度の距離にあるデータポイントを収容するために利用可能な2次元マップの領域は、近くのデータポイントを収容するために利用可能な領域と比較して、十分に大きくない。
 Hence, if we want to model the small distances accurately in the map, most of the points that are at a moderate distance from datapoint i will have to be placed much too far away in the two-dimensional map.
-したがって、地図上で小さな距離を正確にモデル化しようとすれば、データポイントiから中程度の距離にある点のほとんどは、二次元地図上ではかなり遠くに配置しなければならない。
+したがって、**地図上で小さな距離を正確にモデル化しようとすれば、データポイントiから中程度の距離にある点のほとんどは、二次元地図上ではかなり遠くに配置しなければならない**。
 In SNE, the spring connecting datapoint i to each of these too-distant map points will thus exert a very small attractive force.
 SNEでは、データ点iとこれらの遠すぎる地図点のそれぞれを結ぶバネは、このように非常に小さな吸引力を発揮する。
 Although these attractive forces are very small, the very large number of such forces crushes together the points in the center of the map, which prevents gaps from forming between the natural clusters.
-これらの引力は非常に小さいが、このような力の数が非常に多いため、マップの中心にある点同士が押しつぶされ、自然のクラスター間に隙間ができるのを防ぐことができる。
+これらの引力は非常に小さいが、このような力の非常に大きな数は、マップの中心の点を押しつぶし、自然なクラスター間にギャップが形成されるのを防ぐ。(??)
 Note that the crowding problem is not specific to SNE, but that it also occurs in other local techniques for multidimensional scaling such as Sammon mapping.
 クラウディング問題はSNEに特有の問題ではなく、サモン・マッピングのような多次元スケーリングの他の局所的手法でも発生することに注意。
+
+<!-- crowding問題への対処の試み -->
 An attempt to address the crowding problem by adding a slight repulsion to all springs was presented by Cook et al.(2007).
 すべてのバネにわずかな反発力を加えることで、クラウディング問題に対処する試みがCookら（2007）によって発表された。
 The slight repulsion is created by introducing a uniform background model with a small mixing proportion, ρ.
 わずかな斥力は、混合割合ρが小さい一様な背景モデルを導入することによって生じる。
 So however far apart two map points are, qi j can never fall below 2ρ n(n−1) (because the uniform background distribution is over n(n−1)/2 pairs).
-そのため、2つの写像点がどんなに離れていても、qi jが2ρ n(n-1)を下回ることはない（一様な背景分布がn(n-1)/2組に及ぶため）。
+そのため、2つのmap pointがどれだけ離れていても、$q_{ij}$ は $2\rho n(n-1)$ 以下にはならない（一様な背景分布はn(n-1)/2のペアに対して行われるため）。
 As a result, for datapoints that are far apart in the high-dimensional space, qi j will always be larger than pi j , leading to a slight repulsion.
-その結果、高次元空間で離れたデータポイントの場合、qi jは常にpi jより大きくなり、わずかな反発が生じる。
+その結果、高次元空間で離れたデータポイントに対して、$q_{ij}$ は常に $p_{ij}$ より大きくなり、わずかな反発力が生じる。
 This technique is called UNI-SNE and although it usually outperforms standard SNE, the optimization of the UNI-SNE cost function is tedious.
 この手法はUNI-SNEと呼ばれ、通常、標準的なSNEよりも優れているが、UNI-SNEのコスト関数の最適化は面倒である。
 The best optimization method known is to start by setting the background mixing proportion to zero (i.e., by performing standard SNE).
@@ -339,28 +353,34 @@ SNEコスト関数がシミュレーテッドアニーリングを用いて最�
 Optimizing the UNI-SNE cost function directly does not work because two map points that are far apart will get almost all of their qi j from the uniform background.
 UNI-SNEコスト関数を直接最適化してもうまくいかないのは、離れた2つの地図点はそのqi jのほとんどすべてを一様な背景から得てしまうからである。
 So even if their pi j is large, there will be no attractive force between them, because a small change in their separation will have a vanishingly small proportional effect on qi j .
-そのため、たとえπ j が大きくても、両者の間に引力は生じない。なぜなら、両者の距離のわずかな変化は、qi j に及ぼす比例効果が極端に小さいからである。
-This means that if two parts of a cluster get separated early on in the optimization, there is no force to pull them back together.3.3 Mismatched Tails can Compensate for Mismatched Dimensionalities Since symmetric SNE is actually matching the joint probabilities of pairs of datapoints in the highdimensional and the low-dimensional spaces rather than their distances, we have a natural way of alleviating the crowding problem that works as follows.
-3.3 Mismatched Tails can compensate for Mismatched Dimensionalities 対称SNEは、実際には、高次元空間と低次元空間におけるデータポ イントのペアの結合確率のマッチングであり、それらの距離のマッチング ではないので、混雑問題を緩和する自然な方法がある。
+そのため、たとえ $p_{ij}$ が大きくても、それらの間に引力はない。なぜなら、その距離の小さな変化は、$q_{ij}$ に対して比例的に非常に小さな効果しかないからである。
+This means that if two parts of a cluster get separated early on in the optimization, there is no force to pull them back together.
+これは、クラスターの2つの部分が最適化の初期段階で分離された場合、それらを引き戻す力がないことを意味する。
+
+## 3.3 Mismatched Tails can Compensate for Mismatched Dimensionalities  不一致なテールは、不一致な次元に対して補償することができる
+
+Since symmetric SNE is actually matching the joint probabilities of pairs of datapoints in the highdimensional and the low-dimensional spaces rather than their distances, we have a natural way of alleviating the crowding problem that works as follows.
+対称SNEは、実際には高次元空間と低次元空間のデータポイントのペアの結合確率を一致させているので、次のようにクラウディング問題を軽減する自然な方法がある。
 In the high-dimensional space, we convert distances into probabilities using a Gaussian distribution.
-高次元空間では、ガウス分布を使って距離を確率に変換する。
+高次元空間では、ガウス分布を用いて距離を確率に変換する。
 In the low-dimensional map, we can use a probability distribution that has much heavier tails than a Gaussian to convert distances into probabilities.
-低次元マップでは、距離を確率に変換するために、ガウス分布よりもずっと重いテールを持つ確率分布を使うことができる。
+**低次元マップでは、距離を確率に変換するために、ガウス分布よりもはるかに重いテールを持つ(i.e. 裾野が広い)確率分布を使用できる**。
 This allows a moderate distance in the high-dimensional space to be faithfully modeled by a much larger distance in the map and, as a result, it eliminates the unwanted attractive forces between map points that represent moderately dissimilar datapoints.
-これにより、高次元空間における適度な距離が、マップにおけるはるかに大きな距離によって忠実にモデル化され、その結果、適度に異なるデータポイントを表すマップポイント間の不要な引力が排除される。
+これにより、**高次元空間における適度な距離が、マップにおけるはるかに大きな距離によって忠実にモデル化され**、その結果、適度に異なるデータポイントを表すマップポイント間の不要な引力が排除される。
 In t-SNE, we employ a Student t-distribution with one degree of freedom (which is the same as a Cauchy distribution) as the heavy-tailed distribution in the low-dimensional map.
-t-SNEでは、低次元写像の重尾部分布として、自由度1のスチューデントt分布（コーシー分布と同じ）を採用する。
+t-SNEでは、低次元写像のheavy-tailed分布として、自由度1のスチューデントt分布（カイ二乗分布と同じ）を使用する。
 Using this distribution, the joint probabilities qi j are defined as
-この分布を用いると、結合確率qi jは次のように定義される。
+この分布を用いると、結合確率 $q_{ij}$ は次式で定義される。
 
 $$
+q_{ij} = \frac{(1 + \|y_i - y_j\|^2)^{-1}}{\sum_{k \neq l} (1 + \|y_k - y_l\|^2)^{-1}}
 \tag{4}
 $$
 
-We use a Student t-distribution with a single degree of freedom, because it has the particularly nice property that 1+kyi −y jk 2 −1 approaches an inverse square law for large pairwise distances kyi − y jk in the low-dimensional map.
-これは、低次元の写像において、1+kyi -y jk 2 -1が大きな対の距離kyi - y jkに対して逆2乗則に近づくという、特に優れた性質を持っているからである。
+We use a Student t-distribution with a single degree of freedom, because it has the particularly nice property that $(1 + \|y_i - y_j\|^2)^{-1}$ approaches an inverse square law for large pairwise distances $\|y_i - y_j\|$ in the low-dimensional map.
+自由度1のスチューデントt分布を使用するのは、特に良い性質を持つためである。すなわち、低次元マップにおける大きなペア距離 $\|y_i - y_j\|$ に対して $(1 + \|y_i - y_j\|^2)^{-1}$ が逆二乗則に近づく。
 This makes the map’s representation of joint probabilities (almost) invariant to changes in the scale of the map for map points that are far apart.
-これによって、地図上の結合確率の表現は、地図上の点が離れている場合、地図の縮尺の変化に対して（ほぼ）不変となる。
+これによって、**地図上の結合確率の表現は、地図上の点が離れている場合、地図の縮尺の変化に対して（ほぼ）不変となる**。
 It also means that large clusters of points that are far apart interact in just the same way as individual points, so the optimization operates in the same way at all but the finest scales.
 また、離れた点の大きなクラスターも個々の点と同じように相互作用するため、最適化は最も細かいスケール以外ではすべて同じように動作する。
 A theoretical justification for our selection of the Student t-distribution is that it is closely related to the Gaussian distribution, as the Student t-distribution is an infinite mixture of Gaussians.
@@ -371,8 +391,11 @@ The gradient of the Kullback-Leibler divergence between P and the Student-t base
 PとStudent-tに基づく結合確率分布Q（式4を用いて計算）の間のカルバック・ライブラー発散の勾配は、付録Aで導出され、次式で与えられる。
 
 $$
+\frac{\partial C}{\partial y_i} = 4 \sum_j (p_{ij} - q_{ij})(y_i - y_j)(1 + \|y_i - y_j\|^2)^{-1}
 \tag{5}
 $$
+
+<!-- ここまで読んだ -->
 
 In Figure 1(a) to 1(c), we show the gradients between two low-dimensional datapoints yi and y j as a function of their pairwise Euclidean distances in the high-dimensional and the low-dimensional space (i.e., as a function of kxi −x jk and kyi −y jk) for the symmetric versions of SNE, UNI-SNE, and t-SNE.
 図1(a)～(c)では、SNE、UNI-SNE、t-SNEの対称バージョンについて、2つの低次元データポイントyiとy jの間の勾配を、高次元空間と低次元空間における対のユークリッド距離の関数として（すなわち、kxi -x jkとkyi -y jkの関数として）示している。
@@ -401,7 +424,7 @@ SNEとUNI-SNEはこのような長距離力を持たないため、妥当な解�
 Instead, the long-range forces in t-SNE facilitate the identification of good local optima without resorting to simulated annealing.
 その代わりに、t-SNEの長距離力は、シミュレーテッド・アニーリングに頼ることなく、良好な局所最適値の同定を容易にする。
 
-## 3.2. Optimization Methods for t-SNE t-SNEの最適化手法
+## 3.3. Optimization Methods for t-SNE t-SNEの最適化手法
 
 We start by presenting a relatively simple, gradient descent procedure for optimizing the t-SNE cost function.
 まず、t-SNEコスト関数を最適化するための、比較的単純な勾配降下法を紹介する。
