@@ -9,7 +9,7 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
 
 ## どんなもの?
 
-- twitterの個別化推薦システム内のrankerモデル(i.e. 2-stages推薦の2ステップ目!)として使われていた(今も?)CTR予測モデル MaskNet を提案した論文。
+- twitterの推薦システム内のrankerモデル(i.e. 2-stage推薦の2ステップ目で使われてるやつ!)として使われているらしい、CTR予測モデル MaskNet を提案した論文。
 
 ## 先行研究と比べて何がすごい？
 

@@ -1,9 +1,9 @@
-## link リンク
+## 0.1. link リンク
 
 https://netflixtechblog.com/building-confidence-in-a-decision-8705834e6fd8
 https://netflixtechblog.com/building-confidence-in-a-decision-8705834e6fd8
 
-# Building confidence in a decision
+# 1. Building confidence in a decision
 
 決断への自信を深める
 
@@ -69,7 +69,7 @@ Or the costs of scaling out a new feature may be so high relative to the benefit
 The remainder of this post gives insights into practices we use at Netflix to arrive at decisions, focusing on how we holistically evaluate evidence from an A/B test.
 この記事の残りの部分では、Netflixで意思決定に至るために使っているプラクティスについて、**A/Bテストから得られたエビデンスをどのように総合的に評価するか**に焦点を当てながら、洞察を述べる。
 
-## Building a data-driven case データに基づくケースの構築
+## 1.1. Building a data-driven case データに基づくケースの構築
 
 One practical way to evaluate the evidence in support of a decision is to think in terms of constructing a legal case in favor of the new product experience:
 決定を支持する証拠を評価する実際的な方法のひとつは、新商品体験に有利な法的事例を構築するという観点から考えることである:
@@ -78,7 +78,7 @@ is there enough evidence to “convict” and conclude, beyond that 5% reasonabl
 To help build that case, here are some helpful questions that we ask ourselves in interpreting test results:
 そのケースを構築するのに役立つために、**テスト結果を解釈する際に自問するいくつかの質問**を紹介する。
 
-### Do the results align with the hypothesis?結果は仮説と一致しているか？
+### 1.1.1. Do the results align with the hypothesis?結果は仮説と一致しているか？
 
 If the hypothesis was about optimizing compute resources for back-end infrastructure, and results showed a major and statistically significant increase in user satisfaction, we’d be skeptical.
 仮説がバックエンドインフラストラクチャのコンピューティングリソースの最適化についてであり、結果がユーザ満足度の大幅な統計的に有意な増加を示していた場合、私たちは懐疑的になるだろう。
@@ -87,7 +87,7 @@ The result may be a false positive — or, more than likely, the result of a bug
 Sometimes surprising results are correct, but more often than not they are either the result of implementation errors or false positives, motivating us to dig deep into the data to identify root causes.
 意外な結果が正しいこともあるが、多くの場合、実装ミスか偽陽性の結果であり、根本原因を特定するためにデータを深く掘り下げる動機となる。
 
-### Does the metric story hang together? メトリクスストーリーはまとまっているか？
+### 1.1.2. Does the metric story hang together? メトリクスストーリーはまとまっているか？
 
 In Part 2 (What is an A/B Test?), we talked about the importance of describing the causal mechanism through which a change made to the product impacts both secondary metrics and the primary decision metric specified for the test.
 パート2（A/Bテストとは何か）では、製品に加えられた変更が、secondary metricsとテストで指定されたprimary decision metricの両方にどのように影響を与えるかという**因果関係のメカニズムを記述することの重要性**について説明しました。
@@ -106,7 +106,7 @@ Or maybe it’s a false positive.
 In any case, movements in secondary metrics can cast sufficient doubt that, despite movement in the primary decision metric, we are unable to confidently conclude that the treatment is activating the hypothesized causal mechanism.
 いずれにせよ、secondary metricsの動きは、primary decision metricの動きにもかかわらず、treatmentが仮説に基づいた因果関係のメカニズムを活性化していると確信できないほど十分な疑いを投げかけることができる。
 
-## Is there additional supporting or refuting evidence, such as consistent patterns across similar variants of an experience?
+### 1.1.3. Is there additional supporting or refuting evidence, such as consistent patterns across similar variants of an experience?
 
 ある経験の類似したバリエーションに一貫したパターンがあるなど、追加的な裏付けや反証はあるか？
 
@@ -123,7 +123,7 @@ If, on the other hand, we test 20 design and positioning variants and only one y
 After all, with that 5% false positive rate, we expect on average one significant result from random chance alone.
 結局のところ、5％の偽陽性率があれば、無作為の偶然だけで平均して1つの有意な結果が得られると予想される。
 
-### Do results repeat? 結果は繰り返されるか？
+### 1.1.4. Do results repeat? 結果は繰り返されるか？
 
 Finally, the surest way to build confidence in a result is to see if results repeat in a follow-up test.
 最後に、結果に自信を持つための最も確実な方法は、フォローアップテストで結果が繰り返されるかどうかを確認することである。
@@ -134,37 +134,37 @@ With something like the Top 10 test, for example, we might observe that certain 
 We’d then refine these most promising design and positioning variants, and run a new test.
 そして、**最も有望なデザインとポジショニングのバリエーションを改良し、新たなテストを実施する**。
 With fewer experiences to test, we can also increase the allocation size to gain more power.
-テストする経験が少なければ、より大きな力を得るために割り当てサイズを大きくすることもできる。
+テストする経験が少なければ、**より大きなpowerを得るために割り当てサイズを大きくすることもできる**。
 Another strategy, useful when the product changes are large, is to gradually roll out the winning treatment experience to the entire user or member based to confirm benefits seen in the A/B test, and to ensure there are no unexpected deleterious impacts.
 製品の変更が大規模な場合に有効なもう一つの戦略は、A/Bテストで見られた利点を確認し、予期せぬ悪影響がないことを確認するために、勝利したtreatment experienceをユーザ全体またはメンバー全体に徐々に展開することである。(割合を徐々に増やしていくやつ。でも今回の動機は、示唆はあるが確信が持てないからか...!)
 In this case, instead of rolling out the new experience to all users at once, we slowly ramp up the fraction of members receiving the new experience, and observe differences with respect to those still receiving the old experience.
 この場合、新しいエクスペリエンスをすべてのユーザに一度に展開するのではなく、新しいエクスペリエンスを受けるメンバーの割合を徐々に増やし、古いエクスペリエンスをまだ受けているメンバーとの違いを観察する。
 
-## Connections with decision theory 意思決定理論との関連
+## 1.2. Connections with decision theory 意思決定理論との関連
 
 In practice, each person has a different framework for interpreting the results of a test and making a decision.
 実際には、各個人は、テストの結果を解釈し、意思決定をするための異なる枠組みを持っている。
 Beyond the data, each individual brings, often implicitly, prior information based on their previous experiences with similar A/B tests, as well as a loss or utility function based on their assessment of the potential benefits and consequences of their decision.
 データを超えて、各個人は、しばしば暗黙的に、類似のA/Bテストに基づく以前の経験に基づく事前情報を持ち、また、自分の意思決定の潜在的な利益と結果の評価に基づく損失または効用関数を持っている。
-There are ways to formalize these human judgements about estimated risks and benefits using decision theory, including Bayesian decision theory.
+There are ways to formalize these human judgements about estimated risks and benefits using [decision theory](https://en.wikipedia.org/wiki/Expected_utility_hypothesis), including [Bayesian decision theory](https://en.wikipedia.org/wiki/Bayes_estimator).
 ベイズ決定理論などの決定理論を用いて、推定されるリスクと便益に関する人間の判断を形式化する方法がある。(これはベイジアンABテストの話??)
 These approaches involve formally estimating the utility of making correct or incorrect decisions (e.g., the cost of rolling out a code change that doesn’t improve the member experience).
 これらのアプローチでは、正しい決定または誤った決定（例えば、会員体験を改善しないコード変更を展開するコスト）を行うことの効用を正式に見積もることが含まれる。
 If, at the end of the experiment, we can also estimate the probability of making each type of mistake for each treatment group, we can make a decision that maximizes the expected utility for our members.
-実験終了時に、各treatment群で各種の間違いをする確率を推定することができれば、会員の期待効用を最大化する意思決定をすることができる。
+実験終了時に、各treatment群で各typeの間違い(=type 1とtype 2のerrorの話か...!)をする確率を推定することができれば、会員の期待効用を最大化する意思決定をすることができる。
 
 Decision theory couples statistical results with decision-making and is therefore a compelling alternative to p-value-based approaches to decision making.
-意思決定理論は、統計的結果と意思決定を結びつけるものであり、したがって、**意思決定に対するp値ベースのアプローチに代わる説得力のあるもの**である。
+**意思決定理論は統計的結果と意思決定を結びつけるもの**であり、したがって、**意思決定に対するp値ベースのアプローチに代わる説得力のあるもの**である。
 However, decision-theoretic approaches can be difficult to generalize across a broad range of experiment applications, due to the nuances of specifying utility functions.
 しかし、意思決定理論的なアプローチは、効用関数を特定する際の微妙なニュアンスのため、広範な実験アプリケーションにわたって一般化することが難しい場合がある。
-Although imperfect, the frequentist approach to hypothesis testing that we’ve outlined in this series, with its focus on p-values and statistical significance, is a broadly and readily applicable framework for interpreting test results.
+Although imperfect, the [frequentist](https://en.wikipedia.org/wiki/Frequentist_inference) approach to hypothesis testing that we’ve outlined in this series, with its focus on p-values and statistical significance, is a broadly and readily applicable framework for interpreting test results.
 不完全ではあるが、このシリーズで概説した仮説検定に対する頻度論的アプローチは、p値と統計的有意性に焦点を当てたものであり、検定結果を解釈するための広範かつ容易に適用できる枠組みである。
 (頻度論的なアプローチは、不完全だけど汎用的で適用しやすいのか...!)
 
 Another challenge in interpreting A/B test results is rationalizing through the movements of multiple metrics (primary decision metric and secondary metrics).
 **A/Bテストの結果を解釈する際のもう一つの課題は、複数の指標(primary decision metricとsecondary metrics)の動きを合理化すること**である。
 A key challenge is that the metrics themselves are often not independent (i.e.metrics may generally move in the same direction, or in opposite directions).
-重要な課題は、**metrics自体がしばしば独立していないこと**である（つまり、metricsは一般的に同じ方向に動いたり、逆方向に動いたりする）。
+重要な課題は、**metrics自体がしばしば独立していないこと**である（つまり、複数のmetricsは一般的に同じ方向に動いたり、逆方向に動いたりする）。
 Here again, more advanced concepts from statistical inference and decision theory are applicable, and at Netflix we are engaged in research to bring more quantitative approaches to this multimetric interpretation problem.
 ここでもまた、統計的推論や決定理論からのより高度な概念が適用可能であり、ネットフリックスでは、このmulti-metric解釈問題により多くの定量的アプローチをもたらすための研究に取り組んでいる。
 Our approach is to include in the analysis information about historical metric movements using Bayesian inference — more to follow!
@@ -172,7 +172,7 @@ Our approach is to include in the analysis information about historical metric m
 
 Finally, it’s worth noting that different types of experiments warrant different levels of human judgment in the decision making process.
 最後に、実験の種類によって、意思決定プロセスにおける人間の判断のレベルが異なることは注目に値する。
-For example, Netflix employs a form of A/B testing to ensure safe deployment of new software versions into production.
+For example, Netflix employs a [form of A/B testing](https://netflixtechblog.com/safe-updates-of-client-applications-at-netflix-1d01c71a930c) to ensure safe deployment of new software versions into production.
 例えば、ネットフリックスは、新バージョンのソフトウェアを本番環境に安全に導入するために、A/Bテストの一種を採用している。
 Prior to releasing the new version to all members, we first set up a small A/B test, with some members receiving the previous code version and some the new, to ensure there are no bugs or unexpected consequences that degrade the member experience or the performance of our infrastructure.
 全メンバーに新バージョンをリリースする前に、まず小規模なA/Bテストを実施し、一部のメンバーには旧バージョンを、一部のメンバーには新バージョンを提供し、メンバーの経験やインフラのパフォーマンスを低下させるようなバグや予期せぬ影響がないことを確認しました。
@@ -181,7 +181,7 @@ For this use case, the goal is to automate the deployment process and, using fra
 In success, we save our developers time by automatically passing the new build or flagging metric degradations to the developer.
 成功すれば、新しいビルドやメトリクス・デグレードのフラグを自動的に開発者に渡すことで、開発者の時間を節約できる。
 
-## Summary
+## 1.3. Summary
 
 Here we’ve described how to build the case for a product innovation through careful analysis of the experimental data, and noted that different types of tests warrant differing levels of human input to the decision process.
 ここでは、実験データの入念な分析を通じて製品革新のケースを構築する方法を説明し、テストの種類によって、意思決定プロセスにおける人間の入力レベルが異なることを指摘した。
@@ -191,9 +191,8 @@ A/Bテストの結果に基づく行動を含め、不確実性の下での意�
 But these tools, including the p-value, have withstood the test of time, as reinforced in 2021 by the American Statistical Association president’s task force statement on statistical significance and replicability:
 しかし、これらのツール、p値を含むこれらのツールは、統計的有意性と再現性に関する米国統計協会会長のタスクフォース声明によって2021年に強化されたように、時代の試練に耐えてきた。
 “the use of p-values and significance testing, properly applied and interpreted, are important tools that should not be abandoned.
-「p値と有意性検定の使用は、適切に適用され解釈される限り、放棄されるべきではない重要なツールである。
 [they] increase the rigor of the conclusions drawn from data.”
-[それらは]データから導かれる結論の厳密さを高める。」
+「p値と有意性検定の使用は、適切に適用され解釈される限り、放棄されるべきではない重要なツールである。[それらは]データから導かれる結論の厳密さを高める。」
 
 The notion of publicly sharing and debating results of key product tests is ingrained in the Experimentation Culture at Netflix, which we’ll discuss in the last installment of this series.
 **重要な製品テストの結果を公に共有し、議論するという考え方**は、このシリーズの最終回で説明するネットフリックスの実験文化に根付いている。
