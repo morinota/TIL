@@ -111,72 +111,81 @@ Moreover, we present a visualization result of attention values to intuitively d
 # Preliminaries 予備知識
 
 In this section, we present several concepts and models related to this work, including knowledge graph embedding and convolutional neural networks for sentence representation learning.
-このセクションでは、知識グラフ埋め込みや文表現学習のための畳み込みニューラルネットワークなど、この研究に関連するいくつかの概念とモデルを紹介する。
+このセクションでは、knowledge graph embeddingと文章表現学習のための畳み込みニューラルネットワークなど、本稿に関連するいくつかの概念とモデルを紹介する。
 
 ## Knowledge Graph Embedding 知識グラフの埋め込み
 
 A typical knowledge graph consists of millions of entity-relation-entity triples (h, r, t), in which h, r and t represent the head, the relation, and the tail of a triple, respectively.
-典型的な知識グラフは、数百万の実体-関係-実体のトリプル（h、r、t）から構成され、h、r、tはそれぞれトリプルの先頭、関係、末尾を表す。
+典型的な知識グラフは、**数百万のentity-relation-entityトリプル $(h, r, t)$ で構成されており、ここで、h、r、tはそれぞれトリプルのhead、relation、tailを表す**。
 Given all the triples in a knowledge graph, the goal of knowledge graph embedding is to learn a low-dimensional representation vector for each entity and relation that preserves the structural information of the original knowledge graph.
-知識グラフのすべてのトリプルが与えられたとき、知識グラフ埋め込みの目標は、元の知識グラフの構造情報を保持する各エンティティと関係の低次元表現ベクトルを学習することである。
+知識グラフのすべてのトリプルが与えられたとき、**知識グラフ埋め込みの目標は、元の知識グラフの構造情報を保持する各entityとrelationの低次元表現ベクトルを学習すること**である。
 Recently, translation-based knowledge graph embedding methods have received great attention due to their concise models and superior performance.
-近年、翻訳ベースの知識グラフ埋め込み手法は、その簡潔なモデルと優れた性能により、大きな注目を集めている。
+近年、**translation-based な** knowledge graph embedding手法は、簡潔なモデルと優れたパフォーマンスにより、大きな注目を集めている。
 To be self-contained, we briefly review these translation-based methods in the following.
-自己完結するために、以下にこれらの翻訳ベースの手法を簡単にレビューする。
+自己完結するために、以下にこれらの**翻訳ベースの手法**を簡単にレビューする。
 
 TransE [4] wants h + r ≈ t when (h, r, t) holds, where h , r and t are the corresponding representation vector of h, r and t.
-ここで、h、r、tは、h、r、tの対応する表現ベクトルである。
+TransE [4]は、$(h, r, t)$ が成立するときに $\mathbf{h} + \mathbf{r} \approx \mathbf{t}$ を望んでいる。ここで、h、r、tはそれぞれh、r、tの対応する表現ベクトルである。
 Therefore, TransE assumes the score function
-したがって、TransEはスコア関数
+したがって、TransEは以下のスコア関数を仮定する。
 
 $$
+f_r(h,t) = \|\mathbf{h} + \mathbf{r} - \mathbf{t}\|^{2}_{2}
 \tag{}
 $$
 
 is low if (h, r, t) holds, and high otherwise.
-は、(h, r, t)が成立していれば低く、そうでなければ高い。
+**スコア関数は $(h, r, t)$ が成立するとき(=hとtに関連があるとき)に低く、そうでないとき(=hとtに関連がない時)に高くなる**。
 
 TransH [48] allows entities to have different representations when involved in different relations by projecting the entity embeddings into relation hyperplanes:
-TransH [48]は、エンティティの埋め込みを関係超平面に投影することで、異なる関係に関与するエンティティが異なる表現を持つことを可能にする：
+TransH [48]は、entityの埋め込みを関係の超平面に射影することで、異なる関係に関与するときにentityが異なる表現を持つことを許す。
 
 $$
+f_r(h,t) = || \mathbf{h}_{\perp} + \mathbf{r} - \mathbf{t}_{\perp} ||^{2}_{2}
 \tag{2}
 $$
 
 where h ⊥ = h − w ⊤ r h w r and t ⊥ = t − w ⊤ r t w r are the projections of h and t to the hyperplane w r , respectively, and ‖w r ‖2 = 1.
-ここで、h ⊥ = h - w ⊤ r h w r と t ⊥ = t - w ⊤ t w r はそれぞれ、h と t の超平面 w r への投影であり、‖w r‖2 = 1 である。
+ここで、$\mathbf{h}_{\perp} = \mathbf{h} - \mathbf{w}_{r}^{\top} \mathbf{h} \mathbf{w}_{r}$ と $\mathbf{t}_{\perp} = \mathbf{t} - \mathbf{w}_{r}^{\top} \mathbf{t} \mathbf{w}_{r}$ は、それぞれhとtを超平面 $\mathbf{w}_{r}$ に射影したものであり、$\|\mathbf{w}_{r}\|_{2} = 1$ である。
 
 TransR [26] introduces a projection matrix M r for each relation r to map entity embeddings to the corresponding relation space.
-TransR[26]は、各関係rに対して射影行列M rを導入し、エンティティの埋め込みを対応する関係空間にマッピングする。
+TransR[26]は、各関係rに対して射影行列 $M_{r}$ を導入し、entity埋め込みを対応する関係空間にマッピングする。
 The score function in TransR is defined as
 TransRのスコア関数は次のように定義される。
 
 $$
+f_r(h,t) = ||\mathbf{h}_{r} + \mathbf{r} - \mathbf{t}_{r}||^{2}_{2}
 \tag{3}
 $$
 
+
+
 where h r = h M r and t r = t M r .
-ここで、h r = h M r、t r = t M r とする。
+ここで、$\mathbf{h}_{r} = \mathbf{h} M_{r}$ と $\mathbf{t}_{r} = \mathbf{t} M_{r}$ である。
 
 TransD [18] replaces the projection matrix in TransR by the product of two projection vectors of an entity-relation pair:
-TransD [18]は、TransRの射影行列を、実体-関係ペアの2つの射影ベクトルの積で置き換える：
+TransD [18]は、TransRの射影行列を、entity-relationペアの2つの射影ベクトルの積に置き換える。
 
 $$
+f_r(h,t) = ||\mathbf{h}_{\perp} + \mathbf{r} - \mathbf{t}_{\perp}||^{2}_{2}
 \tag{4}
 $$
 
 where h ⊥ = ( r p h ⊤ p + I ) h , t ⊥ = ( r p t ⊤ p + I ) t , h p , r p and t p are another set of vectors for entities and relations, and I is the identity matrix.
-ここで、h ⊥ = ( r p h ⊤ p + I ) h、t ⊥ = ( r p t ⊤ p + I ) t、h p、r p、t p は、実体と関係を表す別のベクトル集合であり、I は恒等行列である。
+ここで、 $\mathbf{h}_{\perp} = (\mathbf{r}_{p} \mathbf{h}_{p}^{\top} + \mathbf{I}) \mathbf{h}$ 、 $\mathbf{t}_{\perp} = (\mathbf{r}_{p} \mathbf{t}_{p}^{\top} + \mathbf{I}) \mathbf{t}$ 、 $\mathbf{h}_{p}$ 、 $\mathbf{r}_{p}$ 、 $\mathbf{t}_{p}$ は、entityとrelationのべつのベクトル集合であり、 $\mathbf{I}$ は単位行列である。
 
 To encourage the discrimination between correct triples and incorrect triples, for all the methods above, the following margin-based ranking loss is used for training:
-正しいトリプルと正しくないトリプルの識別を促進するために、上記のすべてのメソッドにおいて、以下のマージンベースのランキングロスがトレーニングに使用される：
+正しいトリプルと正しくないトリプルの識別を促進するために、上記のすべての方法について、以下のマージンベースのランキング損失がトレーニングに使用される。
 
 $$
+L = \sum_{(h,r,t) \in \Delta} \sum_{(h',r,t') \in \Delta'} \max(0, \gamma + f_r(h,t) - f_r(h',t'))  
 \tag{5}
 $$
 
+(ペアワイズのランキング損失関数だ...!)
+
 where γ is the margin, Δ and Δ′ are the set of correct triples and incorrect triples.
-ここで、γはマージン、ΔとΔ′は正しいトリプルと正しくないトリプルの集合である。
+ここで、$\gamma$ はマージン、 $\Delta$ と $\Delta'$ は正しいトリプルと正しくないトリプルの集合である。
 
 ## CNN for Sentence Representation Learning 文章表現学習のためのCNN
 
@@ -190,37 +199,44 @@ Recently, inspired by the success of applying convolutional neural networks (CNN
 近年、コンピュータ・ビジョン[23]の分野で畳み込みニューラルネットワーク(CNN)を応用した成功に触発され、研究者たちは文表現学習のために多くのCNNベースのモデルを提案している[7, 19, 20, 53] 7。
 In this subsection, we introduce a typical type of CNN architecture, namely Kim CNN [20].
 この小節では、典型的なタイプのCNNアーキテクチャであるKim CNN [20]を紹介する。
+
+![figure2]()
+
 Figure 2 illustrates the architecture of Kim CNN.
 図2はキムCNNのアーキテクチャを示す。
 Let w 1: n be the raw input of a sentence of length n, and w 1 : n = [ w 1 w 2 … w n ] ∈ R d × n be the word embedding matrix of the input sentence, where w i ∈ R d × 1 is the embedding of the i-th word in the sentence and d is the dimension of word embeddings.
-w 1： nを長さnの生の入力文とし、w 1 ： n = [ w 1 w 2 ... w n ] ∈ R d × n は入力文の単語埋め込み行列であり、w i ∈ R d × 1 は文中のi番目の単語の埋め込み、dは単語埋め込み次元である。
+$w_{1:n}$ を**長さnの文章の生の入力**とし、$\mathbf{w}_{1:n} = [\mathbf{w}_{1} \mathbf{w}_{2} \cdots \mathbf{w}_{n}] \in \mathbb{R}^{d \times n}$ を**入力文章の単語埋め込み行列**とする。ここで、$\mathbf{w}_{i} \in \mathbb{R}^{d \times 1}$ は文章のi番目の単語の埋め込みであり、dは単語埋め込みの次元である。
 A convolution operation with filter h ∈ R d × l is then applied to the word embedding matrix w 1: n , where l (l ≤ n) is the window size of the filter.
-次に、フィルタh∈R d×l による畳み込み演算が、単語埋め込み行列w 1： ここで、l（l≦n）はフィルタのウィンドウサイズである。
+次に、フィルタ $h \in \mathbb{R}^{d \times l}$ を単語埋め込み行列 $\mathbf{w}_{1:n}$ に適用する畳み込み演算が行われる。ここで、$l (l \leq n)$ はフィルタのウィンドウサイズである。
 Specifically, a feature ci is generated from a sub-matrix w i: i + l − 1 by
-具体的には、特徴 ci は部分行列 w i から生成される： によって生成される。
+具体的には、特徴量 $c_{i}$ (=スカラー...!)は、サブ行列 $\mathbf{w}_{i:i+l-1}$ (フィルターと重なってる範囲)から以下のように生成される。
 
 $$
+c_{i} = f(h \ast \mathbf{w}_{i:i+l-1} + b)
 \tag{6}
 $$
 
 where f is a non-linear function, \* is the convolution operator, and b ∈ R is a bias.
-ここで、fは非線形関数、◎は畳み込み演算子、b（R）はバイアスである。
+ここで、fは非線形関数、$\ast$は畳み込み演算子()、$b \in \mathbb{R}$ はバイアスである。
+(convolution operatorの振る舞いは、元の行列に対して、フィルターをスライドさせながらアダマール積をとり、その結果の和をとって新しい行列の1要素にするもの...!:thinking:)
 After applying the filter to every possible position in the word embedding matrix, a feature map
-単語埋め込み行列のすべての可能な位置にフィルタを適用した後、特徴マップを作成する。
+単語埋め込み行列のすべての可能な位置にフィルタを適用した後、特徴量マップが得られる。
 
 $$
+\mathbf{c} = [c_{1}, c_{2}, \cdots, c_{n-l+1}]
 \tag{7}
 $$
 
 is obtained, then a max-over-time pooling operation is used on feature map c to identify the most significant feature:
-が得られると、特徴マップcに対して最大時間プーリング演算が行われ、最も重要な特徴が特定される：
+その後、特徴マップcに対してmax-over-timeプーリング演算を行い、最も重要な特徴量を識別する。
 
 $$
+\tilde{c} = \max(\mathbf{c}) = \max({c_{1}, c_{2}, \cdots, c_{n-l+1}})
 \tag{8}
 $$
 
 One can use multiple filters (with varying window sizes) to obtain multiple features, and these features are concatenated together to form the final sentence representation.
-複数の特徴量を得るために複数のフィルター（ウィンドウの大きさを変える）を使用することができ、これらの特徴量を連結して最終的な文表現を形成する。
+複数の特徴量を得るために**複数のフィルター（ウィンドウの大きさを変える）**を使用することができ、これらの特徴量をconcatして最終的な文表現を形成する。
 
 # Problem Formulation 問題の定式化
 

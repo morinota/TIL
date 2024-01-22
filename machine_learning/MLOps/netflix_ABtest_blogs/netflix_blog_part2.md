@@ -67,7 +67,8 @@ A/B tests let us make causal statements.We’ve introduced the Upside Down produ
 This hypothetical example is extreme, but the broad lesson is that there is always something we won’t be able to control. If we roll out an experience to everyone and simply measure a metric before and after the change, there can be relevant differences between the two time periods that prevent us from making a causal conclusion. Maybe it’s a new title that takes off. Maybe it’s a new product partnership that unlocks Netflix for more users to enjoy. There’s always something we won’t know about. Running A/B tests, where possible, allows us to substantiate causality and confidently make changes to the product knowing that our members have voted for them with their actions.
 この仮想的な例は極端ですが、広い教訓は、**常に制御できないことがあるということです。経験をすべての人に展開し、変更前と変更後にメトリックを単純に測定すると、因果関係の結論を出すことができない2つの期間の間に関連する違いがある可能性があります**(うんうん...。因果効果の検出を保証できるか否かの話...)。それは飛び立つ新しいタイトルかもしれません。それは、より多くのユーザーがNetflixを楽しむためにNetflixを解除する新しい製品パートナーシップかもしれません。私たちが知らないことは常にあります。可能な限りA/Bテストを実行すると、因果関係を裏付けることができ、メンバーが行動でそれらを投票したことを知って、製品に変更を自信を持って行うことができます。
 
-## 1.2. It all starts with an idea
+## 1.2. It all starts with an idea 
+
 
 An A/B test starts with an idea — some change we can make to the UI, the personalization systems that help members find content, the signup flow for new members, or any other part of the Netflix experience that we believe will produce a positive result for our members. Some ideas we test are incremental innovations, like ways to improve the text copy that appears in the Netflix product; some are more ambitious, like the test that led to “Top 10” lists that Netflix now shows in the UI.
 A/Bテストはアイデアから始まります。メンバーがコンテンツを見つけるのを助けるUI、パーソナライゼーションシステム、新しいメンバーのサインアップフロー、またはメンバーにとってポジティブな結果を生み出すと信じているNetflix体験のその他の部分のいずれかに変更できるものです。テストするアイデアの一部は、Netflix製品に表示されるテキストコピーを改善する方法などの増分のイノベーションです。一部は、Netflixが現在UIに表示している「トップ10」リストにつながったテストのように、より野心的なものです。

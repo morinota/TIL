@@ -49,7 +49,7 @@ They proposed a simple but effective approach named "latent cross" which is a ki
 Recently, Rendle et.al’s work [18] also shows that a carefully configured dot product baseline largely outperforms the MLP layer in collaborative filtering.
 最近、Rendleらの研究[18]でも、**協調フィルタリングにおいて、注意深く設定されたドット積ベースライン(MFのやつかな?)がMLP層を大きく上回ることが示されている**.
 While a MLP can in theory approximate any function, they show that it is non-trivial to learn a dot product with an MLP and learning a dot product with high accuracy for a decently large embedding dimension requires a large model capacity as well as many training data.
-MLPは理論的にはあらゆる関数を近似できるが、MLPでドットプロダクトを学習することは非自明であり、そこそこ大きな埋め込み次元に対して高い精度でドットプロダクトを学習するには、多くの学習データと同様に大きなモデル容量が必要であることを示している.
+**MLPは理論的にはあらゆる関数を近似できる**が、MLPでドットプロダクトを学習することは非自明であり、そこそこ大きな埋め込み次元に対して高い精度でドットプロダクトを学習するには、多くの学習データと同様に大きなモデル容量が必要であることを示している.
 Their work also proves the inefficiency of MLP layer’s ability to model complex feature interactions.
 また、彼らの研究は、**複雑な特徴量の相互作用をモデル化するMLP層の能力が非効率であることを証明している**.
 
@@ -67,7 +67,7 @@ instance-guided maskを適用する事の利点は主に２つ:
 firstly, the element-wise product between the mask and hidden layer or feature embedding layer brings multiplicative operation into DNN ranking system in unified way to more efficiently capture complex feature interaction.
 第一に、マスクと隠れ層または特徴埋め込み層の間の要素ごとの積が、DNNランキングシステムに統一的な方法で乗算演算をもたらし、**複雑な特徴量の相互作用をより効率的に捕らえることができる**こと.
 Secondly, it’s a kind of finegained bit-wise attention guided by input instance which can both weaken the influence of noise in feature embedding and MLP layers while highlight the informative signals in DNN ranking systems.
-第二に、DNNランキングシステムにおいて**情報量の多い信号を強調**しながら、特徴量埋め込み層やMLP層における**ノイズの影響を弱めることができる**、入力インスタンスによって導かれる一種の細かいbit-wise attention(??Attention層??)であることである.
+第二に、DNNランキングシステムにおいて**情報量の多い信号を強調**しながら、特徴量埋め込み層やMLP層における**ノイズの影響を弱めることができる**、入力インスタンスによって導かれる一種の細かいbit-wise attention(Attention層??)であることである.
 
 By combining instance-guided mask, a following feed-forward layer and layer normalization, MaskBlock is proposed by us to turn the commonly used feed-forward layer into a mixture of addictive and multiplicative feature interactions.
 instance-guidedマスク、後続のfeed-forward層、レイヤー正規化を組み合わせることで、**一般的に用いられるfeed-forward層を加法的・乗法的な特徴量相互作用の混合に変えるMaskBlock**が私たちによって提案されている.
@@ -120,7 +120,7 @@ To alleviate manual efforts in feature engineering, DeepFM[6] replaces the wide 
 DeepFM[6]は、feature engineeringの手作業を軽減するために、Wide & DeepモデルのWide部分をFMに置き換え、FMとDeepコンポーネント間で特徴量埋込みを共有する。
 
 While most DNN ranking models process high-order feature interactions by MLP layers in implicit way, some works explicitly introduce high-order feature interactions by sub-network.
-多くのDNNランキングモデルはMLP層によって高次特徴量相互作用を暗黙のうちに処理しているが、いくつかの作品はサブネットワークによる高次特徴量相互作用を明示的に導入している。
+多くのDNNランキングモデルはMLP層によって高次の特徴量間の相互作用を暗黙のうちに処理しているが、いくつかの作品はサブネットワークによる高次特徴量相互作用を明示的に導入している。
 Deep & Cross Network (DCN)[21] efficiently captures feature interactions of bounded degrees in an explicit fashion.
 Deep & Cross Network (DCN)[21]は、有界度の特徴的な相互作用を明示的に効率よく捉えることができます。
 Similarly, eXtreme Deep Factorization Machine (xDeepFM) [13] also models the loworder and high-order feature interactions in an explicit way by proposing a novel Compressed Interaction Network (CIN) part.
