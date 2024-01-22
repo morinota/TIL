@@ -1,13 +1,13 @@
-## refs 審判
+## 0.1. refs 審判
 
 - https://dl.acm.org/doi/fullHtml/10.1145/3178876.3186175 https://dl.acm.org/doi/fullHtml/10.1145/3178876.3186175
 
-## title タイトル
+## 0.2. title タイトル
 
 DKN: Deep Knowledge-Aware Network for News Recommendation
 DKN： ニュース推薦のためのディープ・ナレッジ・アウェア・ネットワーク
 
-## abstruct abstruct
+## 0.3. abstruct abstruct
 
 Online news recommender systems aim to address the information explosion of news and make personalized recommendation for users.
 オンライン・ニュース推薦システムは、ニュースの情報爆発に対処し、ユーザーにパーソナライズされた推薦を行うことを目的としている。
@@ -32,7 +32,7 @@ Through extensive experiments on a real online news platform, we demonstrate tha
 We also validate the efficacy of the usage of knowledge in DKN.
 また、DKNにおける知識の活用の有効性も検証している。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 With the advance of the World Wide Web, people's news reading habits have gradually shifted from traditional media such as newspapers and TV to the Internet.
 ワールド・ワイド・ウェブの進展に伴い、人々のニュースを読む習慣は、新聞やテレビといった従来のメディアからインターネットへと徐々にシフトしている。
@@ -108,12 +108,12 @@ Specifically, DKN significantly outperforms baselines by 2.8% to 17.0% on F1 and
 Moreover, we present a visualization result of attention values to intuitively demonstrate the efficacy of the usage of the knowledge graph in Section 5.5.
 さらに、セクション5.5では、知識グラフの活用の有効性を直感的に示すために、attention valuesの視覚化結果を示す。
 
-# Preliminaries 予備知識
+# 2. Preliminaries 予備知識
 
 In this section, we present several concepts and models related to this work, including knowledge graph embedding and convolutional neural networks for sentence representation learning.
 このセクションでは、knowledge graph embeddingと文章表現学習のための畳み込みニューラルネットワークなど、本稿に関連するいくつかの概念とモデルを紹介する。
 
-## Knowledge Graph Embedding 知識グラフの埋め込み
+## 2.1. Knowledge Graph Embedding 知識グラフの埋め込み
 
 A typical knowledge graph consists of millions of entity-relation-entity triples (h, r, t), in which h, r and t represent the head, the relation, and the tail of a triple, respectively.
 典型的な知識グラフは、**数百万のentity-relation-entityトリプル $(h, r, t)$ で構成されており、ここで、h、r、tはそれぞれトリプルのhead、relation、tailを表す**。
@@ -187,7 +187,7 @@ $$
 where γ is the margin, Δ and Δ′ are the set of correct triples and incorrect triples.
 ここで、$\gamma$ はマージン、 $\Delta$ と $\Delta'$ は正しいトリプルと正しくないトリプルの集合である。
 
-## CNN for Sentence Representation Learning 文章表現学習のためのCNN
+## 2.2. CNN for Sentence Representation Learning 文章表現学習のためのCNN
 
 Traditional methods [1, 43] usually represent sentences using the bag-of-words (BOW) technique, i.e., taking word counting statistics as the feature of sentences.
 伝統的な手法[1, 43]では、通常、BOW（Bag of Words）手法、つまり単語数の統計を文の特徴として用いて文を表現する。
@@ -238,27 +238,29 @@ $$
 One can use multiple filters (with varying window sizes) to obtain multiple features, and these features are concatenated together to form the final sentence representation.
 複数の特徴量を得るために**複数のフィルター（ウィンドウの大きさを変える）**を使用することができ、これらの特徴量をconcatして最終的な文表現を形成する。
 
-# Problem Formulation 問題の定式化
+# 3. Problem Formulation 問題の定式化
 
 We formulate the news recommendation problem in this paper as follows.
 本稿では、ニュース推薦問題を以下のように定式化する。
 For a given user i in the online news platform, we denote his click history as { t i 1 , t i 2 , … , t i N i } , where t i j (j = 1, …, Ni ) is the title8 of the j-th news clicked by user i, and Ni is the total number of user i’s clicked news.
-オンライン・ニュース・プラットフォームにおけるあるユーザ i について、そのクリック履歴を { t i 1 , t i 2 , ... , t i N i } とする。ここで，t i j (j = 1, ..., Ni ) はユーザiがクリックしたj番目のニュースのタイトル8であり，Niはユーザiがクリックしたニュースの総数である．
+オンライン・ニュース・プラットフォームにおけるあるユーザ $i$ に対して、彼のクリック履歴を $\{t_{i1}, t_{i2}, \cdots, t_{iN_{i}}\}$ と表す。ここで、$t_{ij} (j = 1, \cdots, N_{i})$ はユーザ $i$ がクリックしたj番目のニュースのタイトルであり、$N_{i}$ はユーザ $i$ のクリックしたニュースの総数である。
 Each news title t is composed of a sequence of words, i.e., t = [w 1, w 2, …], where each word w may be associated with an entity e in the knowledge graph.
-各ニュースのタイトルtは単語の列、すなわちt＝[w 1, w 2, ...]で構成され、各単語wは知識グラフのエンティティeに関連付けられる。
+各ニュースのタイトル $t$ は、単語のsequence、つまり、$t = [w_{1}, w_{2}, \cdots]$ で構成されており、各単語 $w$ は知識グラフのentity $e$ と関連付けられているかもしれない。
 For example, in the title “Trump praises Las Vegas medical team”, “Trump” is linked with the entity “Donald Trump”, while “Las” and “Vegas” are linked with the entity “Las Vegas”.
 例えば、"Trump praises Las Vegas medical team "というタイトルでは、"Trump "は "Donald Trump "というエンティティとリンクしているが、"Las "と "Vegas "は "Las Vegas "というエンティティとリンクしている。
 Given users’ click history as well as the connection between words in news titles and entities in the knowledge graph, we aim to predict whether user i will click a candidate news tj that he has not seen before.
-ユーザーのクリック履歴と、ニュースタイトルの単語と知識グラフのエンティティの結びつきがあれば、ユーザーiが見たことのないニュース候補tjをクリックするかどうかを予測することを目的とする。
+**ユーザのクリック履歴と、ニュースタイトルの単語と知識グラフのエンティティの間の関連を与えられたとき、ユーザ $i$ が以前に見たことのない候補ニュース $t_{j}$ をクリックするかどうかを予測すること**を目的とする。
 
-# Deep Knowledge-Aware Network ディープ・ナレッジ・アウェア・ネットワーク
+# 4. Deep Knowledge-Aware Network ディープ・ナレッジ・アウェア・ネットワーク
 
 In this section, we present the proposed DKN model in detail.
 このセクションでは、提案するDKNモデルの詳細を示す。
 We first introduce the overall framework of DKN, then discuss the process of knowledge distillation from a knowledge graph, the design of knowledge-aware convolutional neural networks (KCNN), and the attention-based user interest extraction, respectively.
-まずDKNの全体的な枠組みを紹介し、次に知識グラフからの知識抽出プロセス、知識認識畳み込みニューラルネットワーク（KCNN）の設計、注意に基づくユーザーの興味抽出についてそれぞれ論じる。
+まずDKNの全体的な枠組みを紹介し、次に知識グラフからの知識抽出プロセス、知識認識畳み込みニューラルネットワーク（KCNN）の設計、attentionに基づくユーザーの興味抽出についてそれぞれ論じる。
 
-## DKN Framework DKNフレームワーク
+## 4.1. DKN Framework DKNフレームワーク
+
+![figure3]()
 
 The framework of DKN is illustrated in Figure 3.
 DKNのフレームワークを図3に示す。
@@ -279,7 +281,7 @@ To get final embedding of the user with respect to the current candidate news, w
 The details of attention-based user interest extraction are presented in Section 4.4.The candidate news embedding and the user embedding are concatenated and fed into a deep neural network (DNN) to calculate the predicted probability that the user will click the candidate news.
 候補ニュースの埋め込みとユーザーの埋め込みは連結され、ユーザーが候補ニュースをクリックする予測確率を計算するためにディープニューラルネットワーク（DNN）に供給される。
 
-## Knowledge Distillation ♪知識の蒸留
+## 4.2. Knowledge Distillation ♪知識の蒸留
 
 The process of knowledge distillation is illustrated in Figure 4, which consists of four steps.
 知識の蒸留のプロセスは図4に示されており、4つのステップから構成されている。
@@ -327,7 +329,7 @@ where e i is the entity embedding of ei learned by knowledge graph embedding.
 We empirically demonstrate the efficacy of context embedding in the experiment section.
 私たちは、実験セクションでコンテキスト埋め込みの有効性を実証している。
 
-## Knowledge-aware CNN 知識認識CNN
+## 4.3. Knowledge-aware CNN 知識認識CNN
 
 Following the notations used in Section 2.2, we use t = w 1: n = [w 1, w 2, …, wn ] to denote the raw input sequence of a news title t of length n, and w 1 : n = [ w 1 w 2 … w n ] ∈ R d × n to denote the word embedding matrix of the title, which can be pre-learned from a large corpus or randomly initialized.
 セクション2.2で使用した表記法に従い、t = w 1： n = [w 1, w 2, ..., wn ]は長さ n のニュースタイトル t の生の入力列を表し、 w 1 ： n = [ w 1 w 2 ... w n ] ∈ R d × n をタイトルの単語埋め込み行列とし、大規模なコーパスから事前学習するか、ランダムに初期化する。
@@ -419,7 +421,7 @@ $$
 where m is the number of filters.
 ここで、mはフィルターの数である。
 
-## Attention-based User Interest Extraction 注意に基づくユーザーの興味抽出
+## 4.4. Attention-based User Interest Extraction 注意に基づくユーザーの興味抽出
 
 Given user i with clicked history { t i 1 , t i 2 , … , t i N i } , the embeddings of his clicked news can be written as e ( t i 1 ) , e ( t i 2 ) , … , e ( t i N i ) .
 クリックされた履歴{ t i 1 , t i 2 , ... , t i N i }を持つユーザiが与えられると、彼のクリックされたニュースの埋め込みはe ( t i 1 ) , e ( t i 2 ) , ... , e ( t i N i ) と書くことができる。彼のクリックしたニュースの埋め込みは、e ( t i 1 ) , e ( t i 2 ) , ... , e ( t i N i ) と書くことができる。
@@ -462,14 +464,14 @@ $$
 We will demonstrate the efficacy of the attention network in the experiment section.
 アテンション・ネットワークの有効性は、実験のセクションで実証する。
 
-# Experiments 実験
+# 5. Experiments 実験
 
 In this section, we present our experiments and the corresponding results, including dataset analysis and comparison of models.
 このセクションでは、データセットの分析とモデルの比較を含む、我々の実験とそれに対応する結果を示す。
 We also give a case study about user's reading interests and make discussions on tuning hyper-parameters.
 また、ユーザーの読書に対する興味についてのケーススタディを行い、ハイパーパラメータのチューニングについて議論する。
 
-## Dataset Description データセットの説明
+## 5.1. Dataset Description データセットの説明
 
 Our dataset comes from the server logs of Bing News.
 我々のデータセットは、ビング・ニュースのサーバー・ログから得たものである。
@@ -501,7 +503,7 @@ We can conclude from the two figures that the occurrence pattern of entities in 
 Therefore, contextual entities can greatly enrich the representations for a single entity in news recommendation.
 したがって、文脈上のエンティティは、ニュース推薦における単一のエンティティの表現を大いに豊かにすることができる。
 
-## Baselines ベースライン
+## 5.2. Baselines ベースライン
 
 We use the following state-of-the-art methods as baselines in our experiments:
 実験では、ベースラインとして以下の最先端手法を使用した：
@@ -546,7 +548,7 @@ LibFMを除き、他のベースラインはすべてディープニューラル
 Additionally, except for DMF which is based on collaborative filtering, other baselines are all content-based or hybrid methods.
 さらに、協調フィルタリングに基づくDMFを除き、他のベースラインはすべてコンテンツベースまたはハイブリッド手法である。
 
-## Experiment Setup 実験セットアップ
+## 5.3. Experiment Setup 実験セットアップ
 
 We choose TransD [18] to process the knowledge graph and learn entity embeddings, and use the non-linear transformation function in Eq.(15) in KCNN.
 知識グラフの処理とエンティティの埋め込み学習にはTransD [18]を選択し、KCNNでは式(15)の非線形変換関数を使用する。
@@ -582,7 +584,7 @@ Other parameters in the baselines are set as default.
 Each experiment is repeated five times, and we report the average and maximum deviation as results.
 各実験は5回繰り返され、結果として平均値と最大偏差を報告する。
 
-## Results 結果
+## 5.4. Results 結果
 
 In this subsection, we present the results of comparison of different models and the comparison among variants of DKN.
 この小節では、異なるモデルの比較とDKNの変種間の比較の結果を示す。
@@ -668,7 +670,7 @@ The attention network brings a 1.7% gain on F1 and 0.9% gain on AUC for the DKN 
 We will give a more intuitive demonstration on the attention network in the next subsection.
 次のサブセクションでは、注意ネットワークについてより直感的なデモンストレーションを行う。
 
-## Case Study ケーススタディ
+## 5.5. Case Study ケーススタディ
 
 To intuitively demonstrate the efficacy of the usage of the knowledge graph as well as the the attention network, we randomly sample a user and extract all his logs from the training set and the test set (training logs with label 0 are omitted for simplicity).
 アテンション・ネットワークと同様に知識グラフの使用法の有効性を直感的に示すために、ランダムにユーザーをサンプリングし、トレーニング・セットとテスト・セットからすべてのログを抽出する（簡単のため、ラベル0のトレーニング・ログは省略する）。
@@ -689,7 +691,7 @@ This is because in the knowledge graph, “General Motors” and “Ford Inc.”
 The difference in the response of the attention network also affects the final predicted results: DKN with knowledge graph (Figure 8b) accurately predicts all the test logs, while DKN without knowledge graph (Figure 8a) fails on the third one.
 注意ネットワークの反応の違いは、最終的な予測結果にも影響する： 知識グラフありのDKN（図8b）はすべてのテストログを正確に予測したが、知識グラフなしのDKN（図8a）は3つ目のテストログで失敗した。
 
-## Parameter Sensitivity パラメーター感度
+## 5.6. Parameter Sensitivity パラメーター感度
 
 DKN involves a number of hyper-parameters.
 DKNは多くのハイパーパラメーターを含んでいる。
@@ -698,7 +700,7 @@ In this subsection, we examine how different choices of hyper-parameters affect 
 In the following experiments, expect for the parameter being tested, all other parameters are set as introduced in Section 5.3.
 以下の実験では、テストされるパラメータを除き、他のすべてのパラメータはセクション5.3で紹介したように設定される。
 
-### Dimension of word embedding d and dimension of entity embedding k. 単語の埋め込み次元dとエンティティの埋め込み次元k。
+### 5.6.1. Dimension of word embedding d and dimension of entity embedding k. 単語の埋め込み次元dとエンティティの埋め込み次元k。
 
 We first investigate how the dimension of word embedding d and dimension of entity embedding k affect performance by testing all combinations of d and k in set {20, 50, 100, 200}.
 まず、セット{20, 50, 100, 200}におけるdとkのすべての組み合わせをテストすることにより、単語埋め込みdの次元と実体埋め込みkの次元がパフォーマンスにどのように影響するかを調べる。
@@ -711,7 +713,7 @@ However, the performance drops when d further increases, as a too large d (e.g.,
 The case is similar for k when d is given.
 dが与えられたときのkについても、ケースは同様である。
 
-### Window sizes of filters and the number of filters m. フィルターのウィンドウサイズとフィルター数 m.
+### 5.6.2. Window sizes of filters and the number of filters m. フィルターのウィンドウサイズとフィルター数 m.
 
 We further investigate the choice of windows sizes of filters and the number of filters for KCNN in the DKN model.
 さらに、DKNモデルにおけるKCNNのフィルターのウィンドウサイズとフィルター数の選択について調べる。
@@ -722,9 +724,9 @@ However, the trend changes when m is too large (m = 200) due to probable overfit
 Likewise, we can observe similar rules for window sizes given m: a small window size cannot capture long-distance patterns in sentences, while a too large window size may easily suffer from overfitting the noisy patterns.
 同様に、mを指定した場合の窓の大きさについても同様の規則がある： 小さいウィンドウサイズでは文の長距離パターンを捉えることができず、大きすぎるウィンドウサイズではノイズの多いパターンをオーバーフィットしてしまう。
 
-# Related Work 関連作品
+# 6. Related Work 関連作品
 
-## News Recommendation ニュース推薦
+## 6.1. News Recommendation ニュース推薦
 
 News recommendation has previously been widely studied.
 ニュース推薦については、以前から広く研究されてきた。
@@ -741,7 +743,7 @@ Recently, researchers have also tried to combine other features into news recomm
 The major difference between prior work and ours is that we use a knowledge graph to extract latent knowledge-level connections among news for better exploration in news recommendation.
 先行研究とわれわれの研究の大きな違いは、ニュース推薦におけるより良い探索のために、知識グラフを使ってニュース間の潜在的な知識レベルのつながりを抽出することである。
 
-## Knowledge Graph ナレッジグラフ
+## 6.2. Knowledge Graph ナレッジグラフ
 
 Knowledge graph representation aims to learn a low-dimensional vector for each entity and relation in the knowledge graph, while preserving the original graph structure.
 知識グラフ表現は、元のグラフ構造を保持しながら、知識グラフの各エンティティと関係に対して低次元のベクトルを学習することを目的としている。
@@ -752,7 +754,7 @@ Recently, the knowledge graph has also been used in many applications, such as m
 To the best of our knowledge, this paper is the first work that proposes leveraging knowledge graph embedding in news recommendation.
 我々の知る限り、本稿はニュース推薦において知識グラフの埋め込みを活用することを提案した最初の研究である。
 
-## Deep Recommender Systems ディープ・レコメンダー・システム
+## 6.3. Deep Recommender Systems ディープ・レコメンダー・システム
 
 Recently, deep learning has been revolutionizing recommender systems and achieves better performance in many recommendation scenarios.
 近年、ディープラーニングは推薦システムに革命をもたらし、多くの推薦シナリオでより良いパフォーマンスを達成している。
@@ -763,7 +765,7 @@ In addition to the aforementioned DSSM [16], DeepWide [6], DeepFM [13], YouTubeN
 The major difference between these methods and ours is that DKN specializes in news recommendation and could achieve better performance than other generic deep recommender systems.
 これらの手法と我々の手法の大きな違いは、DKNがニュース推薦に特化しており、他の一般的なディープ・レコメンダー・システムよりも優れたパフォーマンスを達成できることである。
 
-# Conclusion 結論
+# 7. Conclusion 結論
 
 In this paper, we propose DKN, a deep knowledge-aware network that takes advantage of knowledge graph representation in news recommendation.
 本論文では、知識グラフ表現をニュース推薦に活用するディープ・ナレッジ・アウェア・ネットワーク、DKNを提案する。
