@@ -2,7 +2,7 @@
 
 published date: hogehoge September 2022,
 authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
-url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
+url(paper): https://arxiv.org/pdf/2102.07619.pdf
 (勉強会発表者: morinota)
 
 ---
@@ -14,20 +14,89 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
 ## 先行研究と比べて何がすごい？
 
 - CTR予測タスクは、パーソナライズされた広告配信や推薦システムにおいて重要(主にrankerモデルとしての用途)
-- 特徴量間の相互作用を効果的にモデル化することは重要な要素。
-  - 
+  - CTR予測タスクでは、**特徴量間の相互作用を効果的にモデル化することが重要な要素らしい**。
+- 既存研究:
+  - CTR予測にDNNを採用する動向がある:
+    - 多くのDNNランキングモデルでは、浅い**MLP(Multi Layer Perceptron)層を使って**、特徴量間の相互作用を暗黙的にモデル化してる。
+      - ex.) FNN(Factorization-machine supported Neural Network), AFM(Attentional Factorization Machine), W&D(Wide & Deep), DeepFM, xDeepFM, etc.
+  - -> しかし、複雑な特徴量間の相互作用を捉える上で、**feed-forward networkによるadditiveなモデル化だけでは非効率**。(Alex Beutel et.al [2])
+    - というのも、MLP層は理論的にはあらゆる関数を近似できるが、dot product的な情報を高い精度で学習するには多くの学習データと大きなモデル容量が必要になるから。(らしい...)
+  - MLP層以外の手法を使って、**additive(加法的)だけでなくmultiplicative(乗法的)に相互作用を捉える**手法が提案されてきてる。
+- 本論文のモチベーションは、「DNNランキングモデル(i.e. CTR予測モデル)に**特定の乗算演算(multiplicative operation)を導入**することで、**複雑な特徴量間の相互作用を効率的に**捉えられるように改善できないか?」という感じ。
+  - 本論文では、feed-forward層に基づくDNNモデルを **additive & multiplicativeな特徴量間の相互作用を捉えられるように拡張**できるような、**MaskBlock**という新しいモジュールを提案。
+  - またMaskBlockからなるDNNモデルアーキテクチャとして、2種類の**MaskNet**モデルを提案してる。
 
 ## 技術や手法の肝は？
 
-### MaskNetのモデルアーキテクチャ
+### MaskBlockについて
 
+本論文では、feed-forward層に基づくDNNモデルを **additive & multiplicativeな特徴量間の相互作用を捉えられるように拡張**できるような、**MaskBlock**という新しいモジュールを提案してる。
+MaskBlockの主要なcomponentsは以下の3つ:
 
+- instance-guided mask
+- layer normalization
+- feed-forward hidden layer
 
-#### Embedding layerについて
+### 構成要素①Instance-Guided Mask
 
-#### Instance-Guided Maskについて
+- instance-guided maskの役割:
+  - 入力instance (i.e. 1つの入力exampleの特徴量埋め込み層からの出力値)から収集された全特徴量の情報を活用し、情報量の多い要素をdynamicに強調すること。
+  - また、このcomponentによってDNNランキングモデルに乗算演算を導入している。
+- instance-guided maskの構成(図1)
+  - identity function(?)を持つ2つのfully connected(FC)層。
+    - 第1FC層は"aggregation layer"。
+    - 第2FC層は"projection layer"。
+- instance-guided maskの入力:
+  - 特徴量埋め込み層からの出力値(数式にすると以下)
+    - ここで、$f$は特徴量の数、$d$は特徴量埋め込みの次元数。
+    - $\mathbf{e}_i \in \mathbb{R}^{k}$ は1つの特徴量 $\mathbf{x}_i$ に対応する埋め込み表現。
 
-#### MaskBlockについて
+$$
+V_{emb} = concat(\mathbf{e}_1, \mathbf{e}_2, \cdots, \mathbf{e}_i, \cdots, \mathbf{e}_{f})
+\tag{4}
+$$
+
+- instance-guided maskの振る舞い:
+  - 数式に表すと以下。
+    - ここで、$V_{emb} \in \mathbb{R}^{m = f \times k}$ は入力インスタンスの埋め込みベクトル。
+    - 添字 $d$は、d番目のinstance-guided maskであることを表す。
+    - $t$ と $z$ はそれぞれaggregation layerとprojection layerの出力次元数。
+    - $W_{d1} \in \mathbb{R}^{t \times m}, W_{d2} \in \mathbb{R}^{z \times t}$ は、instance-guidedマスクにおけるaggregation layerとprojection layerのパラメータ(投影行列)。同様に $\beta_{d1} \in \mathbb{R}^{t}, \beta_{d2} \in \mathbb{R}^{z}$ は2つのFC層のパラメータ(バイアス項)。
+
+$$
+V_{mask} = W_{d2}(Relu(W_{d1} V_{emb} + \beta_{d1})) + \beta_{d2}
+\tag{5}
+$$
+
+- instance-guided maskのハイパーパラメータ:
+
+  - reduction ratio(縮小率) $r$:
+    - projection layerの出力次元数(i.e. instance-guided maskの出力次元数) $z$ は、後続の特徴量埋め込み層や隠れ層の次元数に合わせて決定される。
+    - なのでこの値は、aggregation layerの出力次元数 $t$ をprojection layerと比べてどれくらい大きくするかを決めるために指定する。
+
+- instance-guided maskの出力値はどう使われる?
+  - 後続の特徴量埋め込み層やFFNの隠れ層の出力と組み合わされる。(図2参照)
+
+![]()
+
+- 具体的には、出力値は、後続の特徴量埋め込み層やFFNの隠れ層の出力に対して、**アダマール積(element-wise product)による乗算演算**を行う。(ここで乗算演算!!)
+  - 数式にすると以下:
+    - $V_{emb}$ は埋め込み層の出力、$V_{hidden}$ はDNNモデルにおけるFFNの隠れ層の出力
+
+$$
+V_{maskedEMB} = V_{mask} \odot V_{emb}
+\\
+V_{maskedHID} = V_{mask} \odot V_{hidden}
+\tag{6}
+$$
+
+- instance-guided maskの採用による利点:
+  - 1. maskの出力値と、後続の特徴量埋め込み層やFFNの隠れ層の出力とのアダマール積によって、**DNNランキングモデル内に統一的な方法で乗算演算が追加される**。
+  - 2. instance-guided maskによって得られるbit-wise(特徴量ベクトルにおけるelement-wiseって言っても同義なのかな??:thinking:)のattention的な役割によって、特徴量埋め込み層とFFNにおける**ノイズの影響**を弱め、DNNランキングモデルにおける有益な信号を強調できる。
+
+### 構成要素②Layer Normalization
+
+### 構成要素③feed-forward hidden layer
 
 ### 二種類のMaskNetモデル
 
@@ -35,7 +104,7 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
 
 ## どうやって有効だと検証した?
 
-以下の4つのresearch questionsへの回答を目的として、オフライン実験を行った。
+以下の4つのresearch questionsへの回答を目的として、オフライン実験してる。
 
 - RQ1: MaskBlockに基づく提案手法 MaskNet は、既存のdeep learningベースのCTR予測モデルよりも予測性能が高いか?
 - RQ2: MaskBlockアーキテクチャにおける各Componentsの有効性は? **効果的なランキングシステムを構築するために必要なのか**??

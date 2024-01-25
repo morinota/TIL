@@ -43,7 +43,7 @@ Most DNN ranking models such as FNN , W&D, DeepFM and xDeepFM use the shallow ML
 FNN , W&D, DeepFM, xDeepFMなどのほとんどのDNNランキングモデルは、**浅いMLP層**(=Multi Layer Perceptron層=多層の全結合層)を使って高次の相互作用を暗黙のうちにモデル化しており、現在の最新鋭のランキングシステムにおいて重要な要素となっている.
 
 However, Alex Beutel et.al [2] have proved that addictive feature interaction, particular feed-forward neural networks, is inefficient in capturing common feature crosses.
-しかし、Alex Beutelら[2]は、中毒性のある特徴の相互作用、特にフィードフォワードニューラルネットワークは、共通の特徴の交差を捉えるのに効率が悪いことを証明しました。
+しかし、Alex Beutelら[2]は、additive feature interaction、特にfeed-forward neural networksは、共通の特徴量の相互作用を捉えるのに非効率であることを証明している.
 They proposed a simple but effective approach named "latent cross" which is a kind of multiplicative interactions between the context embedding and the neural network hidden states in RNN model.
 彼らは、RNNモデルにおけるコンテキスト埋め込みとニューラルネットワークの隠れ状態の間の一種の乗法的相互作用である"latent cross"というシンプルで効果的なアプローチを提案しました。
 Recently, Rendle et.al’s work [18] also shows that a carefully configured dot product baseline largely outperforms the MLP layer in collaborative filtering.
@@ -252,7 +252,7 @@ Notice that the input of instance-guided mask is always from the input instance,
 The first FC layer is called "aggregation layer" and it is a relatively wider layer compared with the second FC layer in order to better collect the global contextual information in input instance.
 第1FC層は"aggregation layer"と呼ばれ、入力インスタンスのグローバルな(=f個全ての特徴量の、って意味かな??:thinking:)コンテキスト情報をよりよく収集するために、第2FC層に比べて比較的広い層となっています。
 The aggregation layer has parameters 𝑊𝑑1 and here 𝑑 denotes the 𝑑-th mask.
-aggregation層はパラメータ $W_{d1}$ を持ち、ここで $d$ は $d$ 番目のマスクを表す。(aggregation層は$d =1$ってことかな??)
+aggregation層はパラメータ $W_{d1}$ を持ち、ここで $d$ は $d$ 番目のマスクを表す。(instance-guided maskは複数ある:thinking:)
 For feature embedding and different MLP layers, we adopt different instance-guided mask owning its parameters to learn to capture various information for each layer from input instance.
 特徴埋め込みと異なるMLP層には、入力インスタンスから各層に様々な情報を取り込むための学習を行うため、そのパラメータに異なるインスタンスガイド付きマスクを採用しています。
 
@@ -270,7 +270,8 @@ $$
 where 𝑉𝑒𝑚𝑏 ∈ R 𝑚=𝑓 ×𝑘 refers to the embedding layer of input instance,𝑊𝑑1 ∈ R 𝑡×𝑚 and𝑊𝑑2 ∈ R 𝑧×𝑡 are parameters for instanceguided mask, 𝑡 and 𝑧 respectively denotes the neural number of aggregation layer and projection layer, 𝑓 denotes the number of fields and 𝑘 is the dimension of field embedding.
 ここで、$V_{emb} \in \mathbb{R}^{m = f \times k}$ は入力インスタンスの埋め込み層、$W_{d1} \in \mathbb{R}^{t \times m}, W_{d2} \in \mathbb{R}^{z \times t}$ はinstance-guidedマスク用のパラメータを指す。$t$ はaggregation層、$z$ はprojection層のニューラル数 (i.e 出力されるベクトルの次元数:thinking:) を示す。$f$ は特徴量数、$k$ は特徴量埋め込みの次元数をそれぞれ表す。
 𝛽𝑑1 ∈ R 𝑡×𝑚 and 𝛽𝑑2 ∈ R 𝑧×𝑡 are learned bias of the two FC layers.
-$\beta_{d1} \in \mathbb{R}^{t \times m}, \beta_{d2} \in \mathbb{R}^{z \times t}$、𝛽ᵅ2∈R𝑡は2つのFC層の学習バイアス。(たぶん誤植なのかな?? バイアスはそれぞれ$t$次元と$z$ 次元のベクトルだと思う:thinking:)
+$\beta_{d1} \in \mathbb{R}^{t \times m}, \beta_{d2} \in \mathbb{R}^{z \times t}$ は2つのFC層の学習されたバイアスである。
+(たぶん誤植なのかな?? バイアスはそれぞれ$t$次元と$z$ 次元のベクトルだと思う:thinking:)
 Notice here that the aggregation layer is usually wider than the projection layer because the size of the projection layer is required to be equal to the size of feature embedding layer or MLP layer.
 ここで注目したいのは、projection層のサイズは特徴量埋め込み層やMLP層のサイズと等しいことが要求されるため、aggregation層は通常、projection層よりも広いことです。
 So we define the size 𝑟 = 𝑡/𝑧 as reduction ratio which is a hyper-parameter to control the ratio of neuron numbers of two layers.
