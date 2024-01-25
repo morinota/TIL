@@ -357,8 +357,8 @@ $\odot$ は要素ごとの乗算 操作です。(=アダマール積)
 𝜇 and 𝛿 are the mean and standard deviation of input.
 $\mu$ と $\delta$ は入力の平均と標準偏差である。
 Bias b and gain g are parameters with the same dimension 𝐻.
-バイアス $\mathbf{b}$ とゲイン $\mathbf{g}$ は同じ次元 $H$ のパラメータである。(ここでbiasとgainはスカラーだろうか?orベクトル??:thinking:)
-(なるほど、LayerNorm層は、入力ベクトルを正規化 + 線形変換してるのか...!:thinking:)
+バイアス $\mathbf{b}$ とゲイン $\mathbf{g}$ は同じ次元 $H$ のパラメータである。(ここでbiasとgainはスカラーだろうか?orベクトル??:thinking: -> 次元Hのベクトルでしょう)
+(なるほど、LayerNorm層は、入力ベクトルを正規化したあとで線形変換してるのか...!:thinking:)
 
 As one of the key component in MaskBlock, layer normalization can be used on both feature embedding and feed- forward layer.
 MaskBlockの主要な構成要素の1つであるレイヤー正規化は、特徴量埋め込み層とfeed-forward層の両方で使用することができます。
@@ -366,7 +366,7 @@ For the feature embedding layer, we regard each feature’s embedding as a layer
 特徴量埋め込み層については、**各特徴量の埋め込み $\mathbf{e}_{i}$ を1つの層とみなして**(ふむふむ)、以下のようにLNの平均、標準偏差、バイアス、ゲインを計算することにしています:
 
 $$
-LN\_EMB(V_{emb})
+LN_{EMB}(V_{emb})
 = concat(LN(\mathbf{e}_1), LN(\mathbf{e}_2),\cdots, LN(\mathbf{e}_{f}))
 \tag{9}
 $$
@@ -375,14 +375,14 @@ As for the feed-forward layer in DNN model, the statistics of 𝐿𝑁 are estim
 DNNモデルのフィードフォワード層については、対応する隠れ層に含まれるニューロン間で、以下のように$LN$ (=レイヤー正規化)の統計量を推定する:
 
 $$
-LN\_HID(V_{hidden}) = ReLU(LN(W_{i} X))
+LN_{HID}(V_{hidden}) = ReLU(LN(W_{i} X))
 \tag{10}
 $$
 
 where X ∈ R 𝑡 refers to the input of feed-forward layer, W𝑖 ∈ R 𝑚×𝑡 are parameters for the layer, 𝑡 and 𝑚 respectively denotes the size of input layer and neural number of feed-forward layer.
 ここで、$X \in \mathbb{R}^{t}$ はフィードフォワード層の入力データ、$W_{i} \in \mathbb{R}^{m \times t}$ は層のパラメータ、$t$ は入力層のサイズ、フィードフォワード層のニューラル数をそれぞれ示す。(バイアス項はレイヤー正規化の中だけになるのか...!:thinking:)
 Notice that we have two places to put normalization operation on the MLP: one place is before non-linear operation and another place is after non-linear operation.
-MLPに正規化操作を入れる場所が2つあることに注目してください: 1つはnon-linear operation(=活性化関数の役割...!!:thinking:)の前、もう1つは非線形操作の後です。(=LayerNorm層を活性化関数の前にかませるか、それとも後にかませるか、の話:thinking:)
+MLPに正規化操作を入れ得る場所が2つあることに注目してください: 1つはnon-linear operation(=活性化関数の役割...!!:thinking:)の前、もう1つは非線形操作の後です。(=LayerNorm層を活性化関数の前にかませるか、それとも後にかませるか、の話:thinking:)
 We find the performance of the normalization before non-linear consistently outperforms that of the normalization after non-linear operation.
 非線形前の正規化の性能が、非線形演算後の正規化の性能を一貫して上回っていることがわかります。(=本論文の実験でわかった事なのかな。もしくは既存研究?:thinking:)
 So all the normalization used in MLP part is put before non-linear operation in our paper as formula (4) shows.

@@ -40,12 +40,15 @@ MaskBlockの主要なcomponentsは以下の3つ:
 ### 構成要素①Instance-Guided Mask
 
 - instance-guided maskの役割:
-  - 入力instance (i.e. 1つの入力exampleの特徴量埋め込み層からの出力値)から収集された全特徴量の情報を活用し、情報量の多い要素をdynamicに強調すること。
+  - 特徴量埋め込み層から出力された全特徴量の情報(=特徴量ベクトル。論文内ではこれをinstanceと定義してる)を活用し、情報量の多い要素を動的に強調すること。
   - また、このcomponentによってDNNランキングモデルに乗算演算を導入している。
 - instance-guided maskの構成(図1)
-  - identity function(?)を持つ2つのfully connected(FC)層。
+  - 2つのfully connected(FC)層。
     - 第1FC層は"aggregation layer"。
     - 第2FC層は"projection layer"。
+
+![figure1]()
+
 - instance-guided maskの入力:
   - 特徴量埋め込み層からの出力値(数式にすると以下)
     - ここで、$f$は特徴量の数、$d$は特徴量埋め込みの次元数。
@@ -95,6 +98,44 @@ $$
   - 2. instance-guided maskによって得られるbit-wise(特徴量ベクトルにおけるelement-wiseって言っても同義なのかな??:thinking:)のattention的な役割によって、特徴量埋め込み層とFFNにおける**ノイズの影響**を弱め、DNNランキングモデルにおける有益な信号を強調できる。
 
 ### 構成要素②Layer Normalization
+
+- hogehogeで使われる。
+- 正規化(normalization):
+  - 信号がネットワークを伝搬する際に平均値がゼロで分散が単位(=1.0)となるようにし、"covariate(共変量) shift"を減らすことを目的とする。
+- レイヤー正規化(Layer Norm、LN):
+  - 入力されたベクトル表現 $\mathbf{x} = (x_1, x_2,\cdots, x_{H})$ に対して、以下数式のように**再中心化(re-centering)** & **再スケーリング(re-scaling)**する。
+
+$$
+\mathbf{h} = g \odot N(\mathbf{x}) + \mathbf{b}
+, N(\mathbf{x}) = \frac{\mathbf{x} - \mu}{\delta}
+\\
+\mu = \frac{1}{H} \sum_{i=1}^{H} x_{i}
+, \delta = \sqrt{\frac{1}{H} \sum_{i=1}^{H} (x_{i} - \mu)^2}
+\tag{8}
+$$
+
+- ここで、
+  - $\mathbf{h}$ はLayerNorm層の出力。
+  - $\odot$ はアダマール積。
+  - $\mu$ と $\delta$ は入力の平均と標準偏差。
+  - バイアス $\mathbf{b}$ とゲイン $\mathbf{g}$ は次元$H$ のパラメータベクトル。
+  - (なるほど、LayerNorm層は、入力ベクトルを正規化したあとで線形変換してるのか...!:thinking:)
+- MaskBlockにおけるレイヤー正規化の使い所:
+  - 特徴量埋め込み層におけるMaskBlock活用の場合は、式(9)
+    - 各特徴量の埋め込み $\mathbf{e}_{i}$ を1つの層とみなしてレイヤー正規化。
+  - DNNモデルのFFN層におけるMaskBlock活用の場合は、式(10)
+    - 非線形操作(活性化関数の適用)の前に、レイヤー正規化する。(操作後よりも前の方が実験で良かったらしい)
+
+$$
+LN_{EMB}(V_{emb})
+= concat(LN(\mathbf{e}_1), LN(\mathbf{e}_2),\cdots, LN(\mathbf{e}_{f}))
+\tag{9}
+$$
+
+$$
+LN_{HID}(V_{hidden}) = ReLU(LN(W_{i} X))
+\tag{10}
+$$
 
 ### 構成要素③feed-forward hidden layer
 
