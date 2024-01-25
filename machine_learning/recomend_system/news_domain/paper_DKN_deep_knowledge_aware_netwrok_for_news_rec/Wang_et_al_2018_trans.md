@@ -158,8 +158,6 @@ f_r(h,t) = ||\mathbf{h}_{r} + \mathbf{r} - \mathbf{t}_{r}||^{2}_{2}
 \tag{3}
 $$
 
-
-
 where h r = h M r and t r = t M r .
 ここで、$\mathbf{h}_{r} = \mathbf{h} M_{r}$ と $\mathbf{t}_{r} = \mathbf{t} M_{r}$ である。
 
@@ -178,7 +176,7 @@ To encourage the discrimination between correct triples and incorrect triples, f
 正しいトリプルと正しくないトリプルの識別を促進するために、上記のすべての方法について、以下のマージンベースのランキング損失がトレーニングに使用される。
 
 $$
-L = \sum_{(h,r,t) \in \Delta} \sum_{(h',r,t') \in \Delta'} \max(0, \gamma + f_r(h,t) - f_r(h',t'))  
+L = \sum_{(h,r,t) \in \Delta} \sum_{(h',r,t') \in \Delta'} \max(0, \gamma + f_r(h,t) - f_r(h',t'))
 \tag{5}
 $$
 
@@ -251,6 +249,8 @@ For example, in the title “Trump praises Las Vegas medical team”, “Trump�
 Given users’ click history as well as the connection between words in news titles and entities in the knowledge graph, we aim to predict whether user i will click a candidate news tj that he has not seen before.
 **ユーザのクリック履歴と、ニュースタイトルの単語と知識グラフのエンティティの間の関連を与えられたとき、ユーザ $i$ が以前に見たことのない候補ニュース $t_{j}$ をクリックするかどうかを予測すること**を目的とする。
 
+<!-- ここまで読んだ -->
+
 # 4. Deep Knowledge-Aware Network ディープ・ナレッジ・アウェア・ネットワーク
 
 In this section, we present the proposed DKN model in detail.
@@ -267,95 +267,124 @@ DKNのフレームワークを図3に示す。
 We introduce the architecture of DKN from the bottom up.
 DKNのアーキテクチャをボトムアップで紹介する。
 As shown in Figure 3, DKN takes one piece of candidate news and one piece of a user's clicked news as input.
-図3に示すように、DKNは1つの候補ニュースと1つのユーザーがクリックしたニュースを入力として受け取る。
+図3に示すように、**DKNは1つの候補ニュースと1つのユーザがクリックしたニュース(のsequence?)を入力として受け取る**。
 For each piece of news, a specially designed KCNN is used to process its title and generate an embedding vector.
-各ニュースに対して、特別に設計されたKCNNがそのタイトルを処理し、埋め込みベクトルを生成する。
+各ニュースに対して、特別に設計されたKCNNがそのタイトルを処理し、埋め込みベクトルを生成する。(うんうん.)
 KCNN is an extension of traditional CNN that allows flexibility in incorporating symbolic knowledge from a knowledge graph into sentence representation learning.
-KCNNは従来のCNNを拡張したもので、知識グラフからの記号的知識を文表現学習に柔軟に取り入れることができる。
+KCNNは従来のCNNを拡張したもので、knowledge graphからのsymbolic knowledge(=ノードとエッジの記号的な知識?)を文章表現学習に柔軟に組み込むことができる。
 We will detail the process of knowledge distillation in Section 4.2 and the KCNN module in Section 4.3, respectively.
-セクション4.2では知識抽出のプロセスについて、セクション4.3ではKCNNモジュールについて、それぞれ詳しく説明する。
+セクション4.2ではknowledge distillation(知識の蒸留、抽出?) のプロセスを、セクション4.3ではKCNNモジュールをそれぞれ詳しく説明する。
 By KCNN, we obtain a set of embedding vectors for a user's clicked history.
-KCNNによって、ユーザのクリック履歴の埋め込みベクトル集合が得られる。
+KCNNによって、ユーザのクリック履歴の埋め込みベクトル集合が得られる。(sequenceじゃなくてsetとして扱うんだ...!)
 To get final embedding of the user with respect to the current candidate news, we use an attention-based method to automatically match the candidate news to each piece of his clicked news, and aggregate the user's historical interests with different weights.
-現在の候補ニュースに対するユーザーの最終的な埋め込みを得るために、アテンション・ベースの手法を用いて、候補ニュースとクリックされた各ニュースを自動的にマッチングさせ、ユーザーの過去の関心を異なる重みで集約する。
+**現在の候補ニュースに対するユーザの最終的な埋め込みを得るために**、アテンション・ベースの手法を用いて、候補ニュースとクリックされた各ニュースを自動的にマッチングさせ、ユーザの過去の関心を異なる重みで集約する。(やっぱり候補ニュースによって、ユーザ表現が動的に変わるってことか...!:thinking:)
 The details of attention-based user interest extraction are presented in Section 4.4.The candidate news embedding and the user embedding are concatenated and fed into a deep neural network (DNN) to calculate the predicted probability that the user will click the candidate news.
-候補ニュースの埋め込みとユーザーの埋め込みは連結され、ユーザーが候補ニュースをクリックする予測確率を計算するためにディープニューラルネットワーク（DNN）に供給される。
+候補ニュースの埋め込みとユーザの埋め込みはconcatされ、ユーザーが候補ニュースをクリックする予測確率を計算するためにディープニューラルネットワーク（DNN）に供給される。(なるほど...!内積じゃないタイプか)
+
+<!-- ここまで読んだ -->
 
 ## 4.2. Knowledge Distillation ♪知識の蒸留
 
+![figure4]()
+
 The process of knowledge distillation is illustrated in Figure 4, which consists of four steps.
-知識の蒸留のプロセスは図4に示されており、4つのステップから構成されている。
+知識の蒸留のプロセスは図4に示されており、**4つのステップ**から構成されている。
 First, to distinguish knowledge entities in news content, we utilize the technique of entity linking [31, 36] to disambiguate mentions in texts by associating them with predefined entities in a knowledge graph.
-まず、ニュース・コンテンツ内の知識エンティティを区別するために、エンティティ・リンク[31, 36]の技術を利用し、知識グラフ内の事前定義されたエンティティに関連付けることで、テキスト内の言及を曖昧さをなくす。
+まず、ニュース・コンテンツ内のknowledge entityを区別するために、**entity linking** [31, 36] (固有表現抽出の一種?) の技術を利用して、テキスト内のメンションを知識グラフ内の事前定義されたエンティティと関連付けることによって、テキスト内のメンションを明確にする。
 Based on these identified entities, we construct a sub-graph and extract all relational links among them from the original knowledge graph.
-これらの識別されたエンティティに基づいて、サブグラフを構築し、元の知識グラフからエンティティ間のすべての関係リンクを抽出する。
+これらの識別されたエンティティに基づいて、サブグラフを構築し、元の知識グラフからエンティティ間のすべての関係リンクを抽出する。(サブグラフってどうやってつくるんだろ、同じ文章内に含まれていたらhogehoge?)
 Note that the relations among identified entities only may be sparse and lack diversity.
-識別されたエンティティ間の関係のみが疎で多様性に欠ける可能性があることに注意。
+識別されたエンティティ間の関係は、スパースで多様性に欠ける可能性があることに注意する。
 Therefore, we expand the knowledge sub-graph to all entities within one hop of identified ones.
-したがって、知識サブグラフを、識別されたエンティティから1ホップ以内のすべてのエンティティに拡張する。
+したがって、知識サブグラフを、識別されたエンティティから1ホップ以内のすべてのエンティティに拡張する。(これでsparsityを緩和しようってことか)
 Given the extracted knowledge graph, a great many knowledge graph embedding methods, such as TransE [4], TransH [48], TransR [26], and TransD [18], can be utilized for entity representation learning.
-抽出された知識グラフがあれば、TransE [4]、TransH [48]、TransR [26]、TransD [18]など、非常に多くの知識グラフ埋め込み手法をエンティティ表現学習に利用することができる。
+抽出された知識グラフがあれば、TransE [4]、TransH [48]、TransR [26]、TransD [18]など、非常に多くの知識グラフ埋め込み手法をエンティティ表現学習に利用することができる。(ノード間が繋がってたら近くに投影する、みたいな感じで、ベクトル空間に埋め込むのか...!)
 Learned entity embeddings are taken as the input for KCNN in the DKN framework.
-学習されたエンティティの埋め込みは、DKNフレームワークのKCNNの入力となる。
+**学習されたエンティティの埋め込みは、DKNフレームワークのKCNNの入力となる**。
 
 It should be noted that though state-of-the-art knowledge graph embedding methods could generally preserve the structural information in the original graph, we find that the information of learned embedding for a single entity is still limited when used in subsequent recommendations.
-最先端の知識グラフ埋め込み手法は、一般的に元のグラフの構造情報を保持することができるが、学習された1つのエンティティの埋め込み情報は、その後のレコメンデーションに使用する場合、まだ限定的であることに注意すべきである。
+最新の知識グラフ埋め込み手法は、一般的に元のグラフの構造情報を保持できるが、単一のentityの学習された埋め込みの情報は、後続の推薦で使用するときにはまだ限られていることに注意する。(このentity埋め込みを直接使うのはいまいちで、fine-tuningが必要みたいなこと??)
 To help identify the position of entities in the knowledge graph, we propose extracting additional contextual information for each entity.
-知識グラフにおけるエンティティの位置を特定するために、各エンティティの追加的な文脈情報を抽出することを提案する。
+知識グラフ内のエンティティの位置を特定するのを助けるために、各エンティティに追加の文脈情報を抽出することを提案する。
 The “context” of entity e is defined as the set of its immediate neighbors in the knowledge graph, i.e.,
-エンティティeの "コンテキスト "は、知識グラフにおけるその近傍の集合として定義される、
+エンティティ $e$ の「コンテキスト」は、**知識グラフ内のその直接の隣接ノードの集合**と定義される。つまり、
 
 $$
+context(e) = \{
+    e_{i} | (e, r, e_{i}) \in G
+    or
+    (e_{i}, r, e) \in G\}
 \tag{9}
 $$
 
+(orだから矢印の向きは問わないってことか)
+
 where r is a relation and G is the knowledge graph.
-ここでrは関係、Gは知識グラフである。
+ここで $r$ は関係であり、$G$ は知識グラフである。
 Since the contextual entities are usually closely related to the current entity with respect to semantics and logic, the usage of context could provide more complementary information and assist in improving the identifiability of entities.
-文脈上のエンティティは通常、意味論と論理に関して現在のエンティティと密接に関連しているため、文脈の使用は、より補足的な情報を提供し、エンティティの識別可能性を向上させるのに役立つ可能性がある。
+**contextual entitiesは、通常、意味と論理に関して現在のentityと密接に関連しているため**、contextの使用はより補完的な情報を提供し、entityの識別性を向上させるのに役立つ。
+
+![figure5]()
+
 Figure 5 illustrates an example of context.
 図5にコンテキストの例を示す。
 In addition to use the embedding of “Fight Club” itself to represent the entity, we also include its contexts, such as “Suspense” (genre), “Brad Pitt” (actor), “United States” (country) and “Oscars” (award), as its identifiers.
-エンティティを表現するために「ファイト・クラブ」自体の埋め込みを使用するだけでなく、「サスペンス」（ジャンル）、「ブラッド・ピット」（俳優）、「アメリカ合衆国」（国）、「アカデミー賞」（賞）といったコンテキストも識別子として含める。
+エンティティを表現するために「Fight Club」自体の埋め込みを使用するだけでなく、そのコンテキスト（ジャンルの「Suspense」、俳優の「Brad Pitt」、国の「United States」、賞の「Oscars」など）も識別子として含める。
 Given the context of entity e, the context embedding is calculated as the average of its contextual entities:
-エンティティeの文脈が与えられると、文脈埋め込みはその文脈エンティティの平均として計算される：
+エンティティ $e$ のコンテキスト ($context(e)$) が与えられたとき、コンテキスト埋め込みは、そのコンテキストエンティティの平均として計算される。
 
 $$
+\bar{\mathbf{e}} = \frac{1}{|context(e)|} \sum_{e_{i} \in context(e)} \mathbf{e}_{i}
 \tag{10}
 $$
 
 where e i is the entity embedding of ei learned by knowledge graph embedding.
-ここで、e i は知識グラフ埋め込みによって学習された ei のエンティティ埋め込みである。
+ここで、$\mathbf{e}_{i}$ は知識グラフ埋め込みによって学習された $e_{i}$ のエンティティ埋め込みである。
 We empirically demonstrate the efficacy of context embedding in the experiment section.
-私たちは、実験セクションでコンテキスト埋め込みの有効性を実証している。
+私たちは、実験セクションで**コンテキスト埋め込みの有効性**を実証している。
 
 ## 4.3. Knowledge-aware CNN 知識認識CNN
 
 Following the notations used in Section 2.2, we use t = w 1: n = [w 1, w 2, …, wn ] to denote the raw input sequence of a news title t of length n, and w 1 : n = [ w 1 w 2 … w n ] ∈ R d × n to denote the word embedding matrix of the title, which can be pre-learned from a large corpus or randomly initialized.
-セクション2.2で使用した表記法に従い、t = w 1： n = [w 1, w 2, ..., wn ]は長さ n のニュースタイトル t の生の入力列を表し、 w 1 ： n = [ w 1 w 2 ... w n ] ∈ R d × n をタイトルの単語埋め込み行列とし、大規模なコーパスから事前学習するか、ランダムに初期化する。
+セクション2.2で使用した表記法に従い、$t = w_{1:n} = [w_{1}, w_{2}, \cdots, w_{n}]$ は長さnのニュースタイトルtの生の入力シーケンスを示すために使用され、$w_{1:n} = [w_{1} w_{2} \cdots w_{n}] \in \mathbb{R}^{d \times n}$ はタイトルの単語埋め込み行列を示すために使用される。これは、大規模なコーパスから事前に学習するか、ランダムに初期化することができる。
 After the knowledge distillation introduced in Section 4.2, each word wi may also be associated with an entity embedding e i ∈ R k × 1 and the corresponding context embedding ¯¯¯ e i ∈ R k × 1 , where k is the dimension of entity embedding.
-セクション4.2で導入された知識蒸留の後、各単語wiは、エンティティ埋め込みe i∈R k×1および対応するコンテキスト埋め込み¯¯ e i∈R k×1（kはエンティティ埋め込みの次元）に関連付けられることもある。
+セクション4.2で導入された知識蒸留の後、**各単語 $w_{i}$ は、エンティティ埋め込み $e_{i} \in \mathbb{R}^{k \times 1}$ と対応するコンテキスト埋め込み $\bar{e}_{i} \in \mathbb{R}^{k \times 1}$ と関連付けられる**。 ここで、$k$ はエンティティ埋め込みの次元である。
+(うんうん...! どのentityとも対応されない単語もあるだろうけど、それらはどう扱うんだろう:thinking:)
 Given the input above, a straightforward way to combine words and associated entities is to treat the entities as “pseudo words” and concatenate them to the word sequence [46], i.e.,
-上記の入力が与えられた場合、単語と関連するエンティティを組み合わせる簡単な方法は、エンティティを「擬似単語」として扱い、単語列に連結することである[46]、
+上記の入力が与えられた場合、**単語と関連するエンティティを組み合わせる簡単な方法は、エンティティを「擬似単語」として扱い、word sequenceに連結すること**である。つまり、
 
 $$
+W = [\mathbf{w}_{1}, \mathbf{w}_{2}, \cdots, \mathbf{w}_{n}, \mathbf{e}_{t1}, \mathbf{e}_{t2}, \cdots]
 \tag{11}
 $$
 
+(単語埋め込みとentity埋め込みの次元が異なりそうだけど...!)
+
 where { e t j } is the set of entity embeddings associated with this news title.
-ここで{ e t j }は、このニュースのタイトルに関連するエンティティの埋め込み集合である。
+ここで $\{\mathbf{e}_{tj}\}$ はこのニュースタイトルに関連付けられたエンティティ埋め込みの集合である。
 The obtained new sentence W is fed into CNN [ 20] for further processing.
-得られた新しい文WはCNN[20]に入力され、さらに処理される。
-However, we argue that this simple concatenating strategy has the following limitations: 1) The concatenating strategy breaks up the connection between words and associated entities and is unaware of their alignment.2) Word embeddings and entity embeddings are learned by different methods, meaning it is not suitable to convolute them together in a single vector space.3) The concatenating strategy implicitly forces word embeddings and entity embeddings to have the same dimension, which may not be optimal in practical settings since the optimal dimensions for word and entity embeddings may differ from each other.
-しかし、この単純な連結戦略には以下の限界がある： 1) 単語の埋め込みとエンティティの埋め込みは異なる手法で学習されるため、それらを単一のベクトル空間で畳み込むのは適していない。3) 単語の埋め込みとエンティティの埋め込みは暗黙のうちに同じ次元を持つように強制されるが、単語とエンティティの埋め込みに最適な次元は互いに異なる可能性があるため、実用的な設定では最適ではないかもしれない。
+得られた新しい文 $W$ は、さらに処理するためにCNN [20]に供給される。
+However, we argue that this simple concatenating strategy has the following limitations:
+しかし、この単純な連結戦略には以下のような制限があると考える。
+
+- 1. The concatenating strategy breaks up the connection between words and associated entities and is unaware of their alignment.
+  - 連結戦略は、単語と関連するエンティティの接続を分断し、それらの整列に気づかない。
+- 2. Word embeddings and entity embeddings are learned by different methods, meaning it is not suitable to convolute them together in a single vector space.
+  - 単語埋め込みとエンティティ埋め込みは異なる方法で学習されているため、それらを単一のベクトル空間で一緒に畳み込むことは適していない。(まさにそう...!)
+- 3. The concatenating strategy implicitly forces word embeddings and entity embeddings to have the same dimension, which may not be optimal in practical settings since the optimal dimensions for word and entity embeddings may differ from each other.
+  - 連結戦略は、単語埋め込みとエンティティ埋め込みが同じ次元を持つように暗黙的に強制するため、実際の設定では最適な次元が単語埋め込みとエンティティ埋め込みで異なる場合があるため、最適ではないかもしれない。(まさにそう...!)
+
+![figure3の左下]()
+
 Being aware of the above limitations, we propose a multi-channel and word-entity-aligned KCNN for combining word semantics and knowledge information.
-上記の限界を意識して、我々は単語の意味と知識情報を結合するための、マルチチャンネルかつ単語固有性整合KCNNを提案する。
+上記の限界を意識して、我々は**単語のsemantics(意味)とknowledge情報を組み合わせるためのマルチチャンネル**と**word-entity-aligned KCNN**を提案する。
 The architecture of KCNN is illustrated in the left lower part of Figure 3.
 KCNNのアーキテクチャは図3の左下に示されている。
 For each news title t = [w 1, w 2, …, wn ], in addition to use its word embeddings w 1: n = [w 1  w 2 … w n ] as input, we also introduce the transformed entity embeddings
-各ニュースタイトル t = [w 1, w 2, ..., wn ]に対して、単語埋め込み w 1： n = [w 1 w 2 ... w n ] を入力とし、変換されたエンティティ埋め込みを導入する。
+各ニュースタイトル $t = [w_{1}, w_{2}, \cdots, w_{n}]$ について、入力として単語埋め込みsequence $w_{1:n} = [w_{1} w_{2} \cdots w_{n}]$ を使用するだけでなく、変換されたエンティティ埋め込み
 
 $$
+g(e_{1:n}) = [g(e_{1}) g(e_{2}) \cdots g(e_{n})]
 \tag{12}
 $$
 
@@ -363,15 +392,17 @@ and transformed context embeddings
 と変換されたコンテキスト埋め込み
 
 $$
+g(\bar{e}_{1:n}) = [g(\bar{e}_{1}) g(\bar{e}_{2}) \cdots g(\bar{e}_{n})]
 \tag{13}
 $$
 
 as source of input 9, where g is the transformation function.
-gは変換関数である。
+を入力のソースとして導入する。ここでgは変換関数である。
 In KCNN, g can be either linear
 KCNNでは、gは線形である。
 
 $$
+g(\mathbf{e}) = M \mathbf{e}
 \tag{14}
 $$
 
@@ -379,129 +410,153 @@ or non-linear
 または非線形
 
 $$
+g(\mathbf{e}) = \tanh(M \mathbf{e} + b)
 \tag{15}
 $$
 
 where M ∈ R d × k is the trainable transformation matrix and b ∈ R d × 1 is the trainable bias.
-ここで、M（R d × k）は学習可能な変換行列であり、b（R d × 1）は学習可能なバイアスである。
+ここで、$M \in \mathbb{R}^{d \times k}$ は学習可能なtransformation matrix (変換行列、projection matrixと同義だろうか??)であり、$b \in \mathbb{R}^{d \times 1}$ は学習可能なbiasである。(dは単語埋め込みの次元、kはエンティティ埋め込みの次元)
 Since the transformation function is continuous, it can map the entity embeddings and context embeddings from the entity space to the word space while preserving their original spatial relationship.
-変換関数は連続的であるため、エンティティの埋め込みとコンテキストの埋め込みを、元の空間的関係を保ったままエンティティ空間から単語空間にマッピングすることができる。
+変換関数は連続的であるため(=entity-wiseとかじゃなくて、全てのentityに対して同様の変換をする的な意味??)、エンティティの埋め込みとコンテキストの埋め込みを、元の空間的関係を保ったままエンティティ空間から単語空間にマッピングすることができる。
 Note that word embeddings w 1: n , transformed entity embeddings g( e 1: n ) and transformed context embeddings g ( ¯¯¯ e 1 : n ) are the same size and serve as the multiple channels analogous to colored images.
-単語埋め込み w 1： n 、変換された実体の埋め込み g( e 1： n ) と変換されたコンテキスト埋め込み g ( ¯¯¯ e 1 ： n ) は同じサイズであり、カラー画像に類似した複数のチャンネルとして機能する。
+単語埋め込み $w_{1:n}$ 、変換されたエンティティ埋め込み $g(e_{1:n})$ 、変換されたコンテキスト埋め込み $g(\bar{e}_{1:n})$ は**同じサイズであり、カラー画像に類似した複数のチャンネルとして機能する**ことに注意する。(一つの画像が、RGBの3つの行列で表現されるのと同じ...!)
 We therefore align and stack the three embedding matrices as
-したがって、3つの埋め込み行列を次のように整列して積み重ねる。
+したがって、3つの埋め込み行列を次のように整列してstackする。
 
 $$
+W = [[w_1, g(e_1), (\bar{e}_1)], [w_2, g(e_2), g(\bar{e}_2)], \cdots, [w_n, g(e_n), g(\bar{e}_n)]]
+\in \mathbb{R}^{d \times n \times 3}
 \tag{16}
 $$
 
 After getting the multi-channel input W, similar to Kim CNN [20], we apply multiple filters h ∈ R d × l × 3 with varying window sizes l to extract specific local patterns in the news title.
-多チャンネル入力Wを得た後、Kim CNN [20]と同様に、ニュースのタイトル中の特定の局所パターンを抽出するために、ウィンドウサイズlを変化させながら複数のフィルターh∈R d×l×3を適用する。
+multi-channel入力 $W$ を得た後、Kim CNN [20]と同様に、異なるウィンドウサイズ $l$ を持つ複数のフィルター$h \in \mathbb{R}^{d \times l \times 3}$を適用して、ニュースタイトルの特定のlocal patternを抽出する。
 The local activation of sub-matrix W i: i + l − 1 with respect to h can be written as
-部分行列W iの局所活性化： i + l - 1のhに対する局所活性化は次のように書ける。
+部分行列 $W_{i:i+l-1}$ に対するフィルター $h$ のlocal activationは次のように書くことができる。
 
 $$
+c_i^{h} = f(h * W_{i:i+l-1} + b)
 \tag{17}
 $$
 
 and we use a max-over-time pooling operation on the output feature map to choose the largest feature:
-そして、出力特徴マップの最大時間プーリング演算を使って、最大の特徴を選択する：
+そして、出力特徴量マップのmax-over-timeプーリング演算を使用して、最大の特徴量を選択する:
 
 $$
+\tilde{c}^{h} = \max(\mathbf{c}^{h}) = \max({c_{1}^{h}, c_{2}^{h}, \cdots, c_{n-l+1}^{h}})
 \tag{18}
 $$
 
 All features ~ c h i are concatenated together and taken as the final representation e( t) of the input news title t, i.e.,
-すべての特徴〜c h iを連結し、入力ニュースタイトルtの最終的な表現e( t)とする、
+すべての特徴 $\tilde{c}_{h_i}$ は連結され、入力ニュースタイトル $t$ の最終的な埋め込み表現 $e(t)$ として取られる。つまり、
 
 $$
+e(t) = [\tilde{c}^{h_{1}}, \tilde{c}^{h_{2}}, \cdots, \tilde{c}^{h_{m}}]
 \tag{19}
 $$
 
 where m is the number of filters.
-ここで、mはフィルターの数である。
+ここで、$m$ はフィルターの数である。
 
-## 4.4. Attention-based User Interest Extraction 注意に基づくユーザーの興味抽出
+<!-- ここまで読んだ -->
+
+## 4.4. Attention-based User Interest Extraction attentionに基づくユーザーの興味抽出
 
 Given user i with clicked history { t i 1 , t i 2 , … , t i N i } , the embeddings of his clicked news can be written as e ( t i 1 ) , e ( t i 2 ) , … , e ( t i N i ) .
-クリックされた履歴{ t i 1 , t i 2 , ... , t i N i }を持つユーザiが与えられると、彼のクリックされたニュースの埋め込みはe ( t i 1 ) , e ( t i 2 ) , ... , e ( t i N i ) と書くことができる。彼のクリックしたニュースの埋め込みは、e ( t i 1 ) , e ( t i 2 ) , ... , e ( t i N i ) と書くことができる。
+ユーザ $i$ がクリック履歴 $\{t_{i1}, t_{i2}, \cdots, t_{iN_{i}}\}$ を持つとき、彼のクリックしたニュースの埋め込み(sequence)は $e(t_{i1}), e(t_{i2}), \cdots, e(t_{iN_{i}})$ と書くことができる。
 To represent user i for the current candidate news tj , one can simply average all the embeddings of his clicked news titles:
-現在の候補ニュースtjについてユーザーiを表現するには、単純に彼のクリックしたニュースのタイトルの埋め込みをすべて平均すればよい：
+現在の候補ニュース $t_{j}$ に対するユーザ $i$ を表現するために、彼がクリックしたニュースタイトルのすべての埋め込みを単純に平均することができる。(うんうん...! naiveだ...!)
 
 $$
+e(i) = \frac{1}{N_i} \sum_{k=1}^{N_i} e(t_{ik})
 \tag{20}
 $$
 
 However, as discussed in the introduction, a user's interest in news topics may be various, and user i’s clicked items are supposed to have different impacts on the candidate news tj when considering whether user i will click tj .
-しかし、冒頭で述べたように、ユーザーのニュース・トピックに対する興味は様々であり、ユーザーiがtjをクリックするかどうかを考える場合、ユーザーiがクリックした項目がニュース候補tjに与える影響は異なると考えられる。
+f。
 To characterize user's diverse interests, we use an attention network [ 47, 54] to model the different impacts of the user's clicked news on the candidate news.
-ユーザーの多様な関心を特徴づけるために、アテンション・ネットワーク[47, 54]を用いて、ユーザーがクリックしたニュースが候補ニュースに与えるさまざまな影響をモデル化する。
+ユーザの多様な関心を特徴づけるために、attention network [47, 54] を使用して、ユーザのクリック履歴のニュース集合が候補ニュースに与える異なる影響をモデル化する。
 The attention network is illustrated in the left upper part of Figure 3.
 アテンション・ネットワークは図3の左上に示されている。
 Specifically, for user i’s clicked news t i k and candidate news tj , we first concatenate their embeddings, then apply a DNN H as the attention network and the softmax function to calculate the normalized impact weight:
-具体的には、ユーザーiがクリックしたニュースt i kと候補ニュースtjに対して、まずそれらの埋め込みを連結し、次に注目ネットワークとしてDNN Hを適用し、正規化影響度重みを計算するためにソフトマックス関数を適用する：
+具体的には、ユーザiがクリックしたニュース $t_{ik}$ と候補ニュース $t_{j}$ について、まずそれらの埋め込みをconcatし、次にアテンション・ネットワークとしてDNN $H$ とsoftmax関数を適用して、正規化されたインパクトの重みを計算する。
 
 $$
+s_{t_{ik}, t_{j}} = softmax(H(e(t_{ik}), e(t_{j})))
+\\
+= \frac{exp(H(e(t_{ik}), e(t_{j})))}{\sum_{k=1}^{N_{i}} exp(H(e(t_{ik}), e(t_{j})))}
 \tag{21}
 $$
 
 The attention network H receives embeddings of two news titles as input and outputs the impact weight.
-アテンション・ネットワークHは、2つのニュースのエンベッディングを入力として受け取り、インパクトの重みを出力する。
+アテンション・ネットワーク $H$ は、2つのニュースタイトルの埋め込みを入力として受け取り、インパクトの重みを出力する。(出力値はスカラーか)
 The embedding of user i with respect to the candidate news tj can thus be calculated as the weighted sum of his clicked news title embeddings:
-したがって、候補ニュースtjに関するユーザーiの埋め込みは、彼のクリックしたニュースのタイトルの埋め込みの重み付き合計として計算することができる：
+したがって、候補ニュース $t_{j}$ に関するユーザ $i$ の埋め込みは、**彼のクリックしたニュースタイトルの埋め込みの重み付き和**として計算される。
 
 $$
+e(i, t_{j}) = \sum_{k=1}^{N_{i}} s_{t_{ik}, t_{j}} e(t_{ik})
 \tag{22}
 $$
 
 Finally, given user i’s embedding e(i) and candidate news tj ’s embedding e(tj ), the probability of user i clicking news tj is predicted by another DNN G :
-最後に、ユーザーiの埋め込みe(i)と候補ニュースtjの埋め込みe(tj )が与えられると、ユーザーiがニュースtjをクリックする確率が別のDNN Gによって予測される：
+最後に、ユーザ $i$ の埋め込み $e(i)$ と候補ニュース $t_{j}$ の埋め込み $e(t_{j})$ が与えられたとき、ユーザ $i$ がニュース $t_{j}$ をクリックする確率は、別のDNN $G$ によって予測される。
+(これはprediction moduleの話)
 
 $$
+p_{i, t_{j}} = G(e(i), e(t_{j}))
 \tag{23}
 $$
 
 We will demonstrate the efficacy of the attention network in the experiment section.
 アテンション・ネットワークの有効性は、実験のセクションで実証する。
 
+<!-- ここまで読んだ -->
+
 # 5. Experiments 実験
 
 In this section, we present our experiments and the corresponding results, including dataset analysis and comparison of models.
 このセクションでは、データセットの分析とモデルの比較を含む、我々の実験とそれに対応する結果を示す。
 We also give a case study about user's reading interests and make discussions on tuning hyper-parameters.
-また、ユーザーの読書に対する興味についてのケーススタディを行い、ハイパーパラメータのチューニングについて議論する。
+また、ユーザの読書に対する興味についてのケーススタディを行い、ハイパーパラメータのチューニングについて議論する。
 
 ## 5.1. Dataset Description データセットの説明
 
 Our dataset comes from the server logs of Bing News.
-我々のデータセットは、ビング・ニュースのサーバー・ログから得たものである。
+我々のデータセットは、Bing Newsのサーバーログから得られている。
 Each piece of log mainly contains the timestamp, user id, news url, news title, and click count (0 for no click and 1 for click).
-各ログには主に、タイムスタンプ、ユーザーID、ニュースのURL、ニュースのタイトル、クリックカウント（クリックがない場合は0、クリックがある場合は1）が含まれる。
+各ログには主に、タイムスタンプ、ユーザID、ニュースのURL、ニュースのタイトル、クリックカウント(クリックがない場合は0、クリックがある場合は1)が含まれる。
 We collect a randomly sampled and balanced dataset from October 16, 2016 to June 11, 2017 as the training set, and from June 12, 2017 to August 11, 2017 as the test set.
 訓練セットとして2016年10月16日から2017年6月11日まで、テストセットとして2017年6月12日から2017年8月11日まで、ランダムにサンプリングされたバランスのとれたデータセットを収集する。
 Additionally, we search all occurred entities in the dataset as well as the ones within their one hop in the Microsoft Satori knowledge graph, and extract all edges (triples) among them with confidence greater than 0.8.The basic statistics and distributions of the news dataset and the extracted knowledge graph are shown in Table 1 and Figure 6, respectively.
-さらに、データセット内のすべての発生エンティティと、その1ホップ以内のエンティティをMicrosoft Satori知識グラフで検索し、それらの間のすべてのエッジ（トリプル）を信頼度0.8以上で抽出する。ニュースデータセットと抽出された知識グラフの基本統計量と分布をそれぞれ表1と図6に示す。
+さらに、**データセット内で発生したすべてのエンティティと、Microsoft Satori知識グラフ内のそれらの1ホップ以内のエンティティを検索し、信頼度が0.8以上のすべてのエッジ(トリプル)を抽出**する。(既存の知識グラフがあるのかな)
+ニュースデータセットと抽出された知識グラフの基本的な統計と分布をそれぞれ表1と図6に示す。
+
+![table1]()
+
+![figure6]()
 
 Figure 6a illustrates the distribution of the length of the news life cycle, where we define the life cycle of a piece of news as the period from its publication date to the date of its last received click.
-図6aは、ニュースのライフサイクルの長さの分布を示している。ここでは、ニュースのライフサイクルを、掲載日から最後にクリックされた日までの期間と定義する。
+図6aは、ニュースのライフサイクルの長さの分布を示している。ここでは、**ニュースのライフサイクルを、掲載日から最後にクリックされた日までの期間と定義**する。
 We observe that about 90% of news are clicked within two days, which proves that online news is extremely time-sensitive and are substituted by newer ones with high frequency.
 約90％のニュースが2日以内にクリックされていることが観察され、これはオンラインニュースが非常に時間に対して敏感であり、高い頻度で新しいものに置き換えられていることを証明している。
 Figure 6b illustrates the distribution of the number of clicked pieces of news for a user.77.9% of users clicked no more than five pieces of news, which demonstrates the data sparsity in the news recommendation scenario.
-図6bは、1人のユーザーがクリックしたニュース数の分布を示している。77.9％のユーザーは5つ以上のニュースをクリックしておらず、ニュース推薦シナリオにおけるデータの希少性を示している。
+図6bは、**1人のユーザがクリックしたニュース数の分布**を示している。77.9％のユーザは5つ以上のニュースをクリックしておらず、ニュース推薦シナリオにおけるデータの希少性を示している。
 
 Figures 6c and 6d illustrate the distributions of the number of words (without stop words) and entities in a news title, respectively.
-図6cと図6dは、それぞれニュースのタイトルに含まれる単語（ストップワードは含まない）とエンティティの数の分布を示す。
+図6cと図6dは、それぞれニュースのタイトルに含まれる単語(stop wordsは含まない)とエンティティの数の分布を示す。(ここでstop wordsとは、a, the, is, ofとか、文の意味にはあまり影響しない単語のことを指しているのかな...!)
 The average number per title is 7.9 for words and 3.7 for entities, showing that there is one entity in almost every two words in news titles on average.
-タイトルあたりの平均数は、単語が7.9、実体が3.7であり、ニュースタイトルのほぼ2単語に1つの実体が含まれていることがわかる。
+タイトルあたりの平均数は、単語が7.9、entityが3.7であり、**ニュースタイトルの単語のほぼ2つに1つのエンティティがある**ことを示している。
 The high density of the occurrence of entities also empirically justifies the design of KCNN.
-エンティティの出現密度が高いことも、経験的にKCNNの設計を正当化している。
+**エンティティの出現密度が高いことも、経験的にKCNNの設計を正当化している**。(なるほど、これは高い方なんだ...!)
 
 Figures 6e and 6f present the distribution of occurrence times of an entity in the news dataset and the distribution of the number of contextual entities of an entity in extracted knowledge graph, respectively.
-図6eと図6fは、それぞれニュースデータセットにおけるエンティティの出現時間の分布と、抽出された知識グラフにおけるエンティティの文脈エンティティ数の分布を示す。
+図6eと図6fは、それぞれ**ニュースデータセットにおける各エンティティの出現回数の分布**と、**抽出された知識グラフにおける各エンティティのcontextual entitiesの数の分布**を示す。
 We can conclude from the two figures that the occurrence pattern of entities in online news is sparse and has a long tail (80.4% of entities occur no more than ten times), but entities generally have abundant contexts in the knowledge graph: the average number of context entities per entity is 42.5 and the maximum is 140,737.
-この2つの図から、オンライン・ニュースにおけるエンティティの出現パターンはまばらでロングテール（エンティティの80.4%は10回以下しか出現しない）であるが、エンティティは一般に知識グラフに豊富なコンテキストを持っていると結論づけることができる： エンティティあたりのコンテキスト・エンティティの平均数は42.5、最大数は140,737である。
+この2つの図から、オンライン・ニュースにおけるエンティティの出現パターンはまばらでロングテール(80.4％のエンティティは10回以上出現しない)であるが、エンティティは一般的に知識グラフにおいて豊富なcontextを持っていることがわかる。エンティティあたりの平均contextual entitiesの数は42.5で、最大値は140,737である。
 Therefore, contextual entities can greatly enrich the representations for a single entity in news recommendation.
-したがって、文脈上のエンティティは、ニュース推薦における単一のエンティティの表現を大いに豊かにすることができる。
+したがって、**contextual entitiesは、ニュース推薦において単一のエンティティの表現を大幅に豊かにすることができる**。(うんうん)
+
+<!-- ここまで読んだ -->
 
 ## 5.2. Baselines ベースライン
 
@@ -509,11 +564,11 @@ We use the following state-of-the-art methods as baselines in our experiments:
 実験では、ベースラインとして以下の最先端手法を使用した：
 
 LibFM [35] is a state-of-the-art feature-based factorization model and widely used in CTR scenarios.
-LibFM [35]は、最先端の特徴ベースの因数分解モデルであり、CTRシナリオで広く使用されている。
+LibFM [35]は、最先端の特徴量ベースの因数分解モデルであり、CTRシナリオで広く使用されている。
 In this paper, the input feature of each piece of news for LibFM is comprised of two parts: TF-IDF features and averaged entity embeddings.
 本稿では、LibFMのための各ニュースの入力特徴量は2つの部分から構成される： TF-IDF特徴と平均化されたエンティティ埋め込みである。
 We concatenate the feature of a user and candidate news to feed into LibFM.
-LibFMにフィードするために、ユーザーの特徴と候補となるニュースを連結します。
+LibFMにフィードするために、ユーザの特徴と候補となるニュースを連結します。
 
 KPCNN [46] attaches the contained entities to the word sequence of a news title and uses Kim CNN to learn representations of news, as introduced in Section 4.3.
 KPCNN [46]は、セクション4.3で紹介したように、ニュースのタイトルの単語列に含まれるエンティティを付加し、Kim CNNを使ってニュースの表現を学習する。
@@ -539,14 +594,14 @@ In this paper, we adapt the deep raking network to the news recommendation scena
 本稿では、ディープ・レイキング・ネットワークをニュース推薦のシナリオに適応させる。
 
 DMF [50] is a deep matrix factorization model for recommender systems which uses multiple non-linear layers to process raw rating vectors of users and items.
-DMF [50]は推薦システムのための深層行列分解モデルであり、ユーザーとアイテムの生の評価ベクトルを処理するために複数の非線形レイヤーを使用する。
+DMF [50]は推薦システムのための深層行列分解モデルであり、ユーザとアイテムの生の評価ベクトルを処理するために複数の非線形レイヤーを使用する。
 We ignore the content of news and take the implicit feedback as input for DMF.
-ニュースの内容は無視し、暗黙のフィードバックをDMFの入力とする。
+ニュースの内容は無視し、**暗黙のフィードバックをDMFの入力**とする。
 
 Note that except for LibFM, other baselines are all based on deep neural networks since we aim to compare our approach with state-of-the-art deep learning models.
 LibFMを除き、他のベースラインはすべてディープニューラルネットワークをベースにしている。
 Additionally, except for DMF which is based on collaborative filtering, other baselines are all content-based or hybrid methods.
-さらに、協調フィルタリングに基づくDMFを除き、他のベースラインはすべてコンテンツベースまたはハイブリッド手法である。
+**さらに、協調フィルタリングに基づくDMFを除き、他のベースラインはすべてコンテンツベースまたはハイブリッド手法**である。
 
 ## 5.3. Experiment Setup 実験セットアップ
 
@@ -555,13 +610,15 @@ We choose TransD [18] to process the knowledge graph and learn entity embeddings
 The dimension of both word embeddings and entity embeddings are set as 100.
 単語埋め込み、実体埋め込みともに次元は100とした。
 The number of filters are set as 100 for each of the window sizes 1, 2, 3, 4.
-フィルター数は、ウィンドウサイズ1、2、3、4それぞれについて100とした。
+フィルター数は 1, 2, 3, 4 の各ウィンドウサイズについて100とした。
 We use Adam [21] to train DKN by optimizing the log loss.
-Adam [21]を使い、対数損失を最適化することでDKNを訓練する。
+Adam [21]を使い、対数損失関数を最適化することでDKNを訓練する。(negativeサンプルってどう作るんだろう。)
 We will further study the variants of DKN and the sensitivity of key parameters in Sections 5.4 and 5.6, respectively.
 セクション5.4と5.6では、それぞれDKNの変種と主要パラメーターの感度をさらに研究する。
 To compare DKN with baselines, we use F1 and AUC value as the evaluation metrics.
 DKNをベースラインと比較するために、評価指標としてF1とAUC値を用いる。
+
+<!-- ここまで読んだ -->
 
 The key parameter settings for baselines are as follows.
 ベースラインの主なパラメータ設定は以下の通り。
