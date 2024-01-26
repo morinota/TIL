@@ -31,13 +31,20 @@ url(paper): https://arxiv.org/pdf/2102.07619.pdf
 ### MaskBlockについて
 
 本論文では、feed-forward層に基づくDNNモデルを **additive & multiplicativeな特徴量間の相互作用を捉えられるように拡張**できるような、**MaskBlock**という新しいモジュールを提案してる。
+
 MaskBlockの主要なcomponentsは以下の3つ:
 
 - instance-guided mask
-- layer normalization
 - feed-forward hidden layer
+- layer normalization
 
-### 構成要素①Instance-Guided Mask
+DNNモデルにおける特徴量埋め込み層およびFFN層を、MaskBlockを使って拡張することを想定している。
+MaskBlockの使い所は2種類:
+
+- MaskBlock on Feature Embedding(図2): 特徴量埋め込み層に対してMaskBlockをくっつけて拡張する。
+- MaskBlock on MaskBlock(図3): 前のMaskBlockの出力を次のMaskBlockの入力として使う。
+
+### Instance-Guided Mask
 
 - instance-guided maskの役割:
   - 特徴量埋め込み層から出力された全特徴量の情報(=特徴量ベクトル。論文内ではこれをinstanceと定義してる)を活用し、情報量の多い要素を動的に強調すること。
@@ -97,9 +104,9 @@ $$
   - 1. maskの出力値と、後続の特徴量埋め込み層やFFNの隠れ層の出力とのアダマール積によって、**DNNランキングモデル内に統一的な方法で乗算演算が追加される**。
   - 2. instance-guided maskによって得られるbit-wise(特徴量ベクトルにおけるelement-wiseって言っても同義なのかな??:thinking:)のattention的な役割によって、特徴量埋め込み層とFFNにおける**ノイズの影響**を弱め、DNNランキングモデルにおける有益な信号を強調できる。
 
-### 構成要素②Layer Normalization
+### Layer Normalization
 
-- hogehogeで使われる。
+- instance-guided mask と
 - 正規化(normalization):
   - 信号がネットワークを伝搬する際に平均値がゼロで分散が単位(=1.0)となるようにし、"covariate(共変量) shift"を減らすことを目的とする。
 - レイヤー正規化(Layer Norm、LN):
@@ -124,7 +131,7 @@ $$
   - 特徴量埋め込み層におけるMaskBlock活用の場合は、式(9)
     - 各特徴量の埋め込み $\mathbf{e}_{i}$ を1つの層とみなしてレイヤー正規化。
   - DNNモデルのFFN層におけるMaskBlock活用の場合は、式(10)
-    - 非線形操作(活性化関数の適用)の前に、レイヤー正規化する。(操作後よりも前の方が実験で良かったらしい)
+    - 非線形操作(活性化関数の適用)の前に、レイヤー正規化する。(活性化関数の後よりも前にレイヤー正規化する方が実験で良かったらしい)
 
 $$
 LN_{EMB}(V_{emb})
