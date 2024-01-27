@@ -606,17 +606,17 @@ Additionally, except for DMF which is based on collaborative filtering, other ba
 ## 5.3. Experiment Setup 実験セットアップ
 
 We choose TransD [18] to process the knowledge graph and learn entity embeddings, and use the non-linear transformation function in Eq.(15) in KCNN.
-知識グラフの処理とエンティティの埋め込み学習にはTransD [18]を選択し、KCNNでは式(15)の非線形変換関数を使用する。
+知識グラフの処理とエンティティの埋め込み学習には**TransD [18]を選択**し、**KCNNでは式(15)の非線形変換関数を使用**する。
 The dimension of both word embeddings and entity embeddings are set as 100.
 単語埋め込み、実体埋め込みともに次元は100とした。
 The number of filters are set as 100 for each of the window sizes 1, 2, 3, 4.
 フィルター数は 1, 2, 3, 4 の各ウィンドウサイズについて100とした。
 We use Adam [21] to train DKN by optimizing the log loss.
-Adam [21]を使い、対数損失関数を最適化することでDKNを訓練する。(negativeサンプルってどう作るんだろう。)
+Adam [21]を使い、**対数損失関数を最適化することでDKNを訓練**する。(negativeサンプルってどう作るんだろう。)
 We will further study the variants of DKN and the sensitivity of key parameters in Sections 5.4 and 5.6, respectively.
-セクション5.4と5.6では、それぞれDKNの変種と主要パラメーターの感度をさらに研究する。
+セクション5.4と5.6では、それぞれDKNの変種と主要パラメータの感度をさらに研究する。
 To compare DKN with baselines, we use F1 and AUC value as the evaluation metrics.
-DKNをベースラインと比較するために、評価指標としてF1とAUC値を用いる。
+DKNをベースラインと比較するために、評価指標としてF1とAUC値を用いる。(オフライン評価)
 
 <!-- ここまで読んだ -->
 
@@ -633,7 +633,7 @@ YouTubeNetの場合、最終層の次元は100に設定されている。
 For LibFM and DeepFM, the dimensionality of the factorization machine is set as {1, 1, 0}.
 LibFMとDeepFMでは、因数分解マシンの次元を{1, 1, 0}とする。
 For DMF, the dimension of latent representation for users and items is set as 100.
-DMFでは、ユーザーとアイテムの潜在表現の次元を100とする。
+DMFでは、ユーザとアイテムの潜在表現の次元を100とする。
 The above settings are for fair consideration.
 上記の設定は公正な検討のためのものである。
 Other parameters in the baselines are set as default.
@@ -644,10 +644,12 @@ Each experiment is repeated five times, and we report the average and maximum de
 ## 5.4. Results 結果
 
 In this subsection, we present the results of comparison of different models and the comparison among variants of DKN.
-この小節では、異なるモデルの比較とDKNの変種間の比較の結果を示す。
+この小節では、異なるモデルの比較とDKNの変種間(DKNのabration study??)の比較の結果を示す。
 
-5.4.1 Comparison of different models..
-5.4.1 各モデルの比較....
+### 5.4.1 Comparison of different models.. 各モデルの比較....
+
+![table2]()
+
 The results of comparison of different models are shown in Table 2.
 異なるモデルの比較結果を表2に示す。
 For each baseline in which the input contains entity embedding, we also remove the entity embedding from input to see how its performance changes (denoted by “(-)”).
@@ -655,43 +657,44 @@ For each baseline in which the input contains entity embedding, we also remove t
 Additionally, we list the improvements of baselines compared with DKN in brackets and calculate the p-value of statistical significance by t-test.
 さらに、DKNと比較したベースラインの改善点を括弧内に記載し、t検定によって統計的有意性のp値を算出した。
 Several observations stand out from Table 2:
-表2からは、いくつかの観察が目立つ：
+表2からは、いくつかの観察が目立つ:
 
-The usage of entity embedding could boost the performance of most baselines.
-エンティティの埋め込みを使用することで、ほとんどのベースラインのパフォーマンスを向上させることができる。
-For example, the AUC of KPCNN, DeepWide, and YouTubeNet increases by 1.1%, 1.8% and 1.1%, respectively.
-例えば、KPCNN、DeepWide、YouTubeNetのAUCは、それぞれ1.1%、1.8%、1.1%増加する。
-However, the improvement for DeepFM is less obvious.
-しかし、DeepFMの改善はそれほど顕著ではない。
-We try different parameter settings for DeepFM and find that if the AUC drops to about 0.6, the improvement brought by the usage of knowledge could be up to 0.5%.
-DeepFMのさまざまなパラメータ設定を試した結果、AUCが約0.6まで低下した場合、知識の利用によってもたらされる改善は最大0.5%になることがわかった。
-The results show that FM-based method cannot take advantage of entity embedding stably in news recommendation.
-その結果、FMベースの手法では、ニュース推薦においてエンティティの埋め込みを安定的に利用できないことがわかった。
+- The usage of entity embedding could boost the performance of most baselines.**エンティティの埋め込みを使用することで、ほとんどのベースラインのパフォーマンスを向上させることができる**。
+  For example, the AUC of KPCNN, DeepWide, and YouTubeNet increases by 1.1%, 1.8% and 1.1%, respectively.
+  例えば、KPCNN、DeepWide、YouTubeNetのAUCは、それぞれ1.1%、1.8%、1.1%増加する。
+  However, the improvement for DeepFM is less obvious.
+  しかし、DeepFMの改善はそれほど顕著ではない。
+  We try different parameter settings for DeepFM and find that if the AUC drops to about 0.6, the improvement brought by the usage of knowledge could be up to 0.5%.
+  DeepFMのさまざまなパラメータ設定を試した結果、AUCが約0.6まで低下した場合、知識の利用によってもたらされる改善は最大0.5%になることがわかった。
+  The results show that FM-based method cannot take advantage of entity embedding stably in news recommendation.
+  その結果、**FMベースの手法では、ニュース推薦においてエンティティの埋め込みを安定的に利用できない**ことがわかった。
 
-DMF performs worst among all methods.
-DMFはすべての手法の中で最悪の結果だった。
-This is because DMF is a CF-based method, but news is generally highly time-sensitive with a short life cycle.
-DMFはCFベースの手法だが、ニュースは一般的にライフサイクルが短く、時間的制約が大きいからだ。
-The result proves our aforementioned claim that CF methods cannot work well in the news recommendation scenario.
-この結果は、CF手法はニュース推薦のシナリオではうまく機能しないという前述の主張を証明するものである。
+- DMF performs worst among all methods.
+  DMFはすべての手法の中で最悪の結果だった。
+  This is because DMF is a CF-based method, but news is generally highly time-sensitive with a short life cycle.
+  **DMFはCFベースの手法だが、ニュースは一般的にライフサイクルが短く、時間的制約が大きいからだ**。
+  The result proves our aforementioned claim that CF methods cannot work well in the news recommendation scenario.
+  この結果は、CF手法はニュース推薦のシナリオではうまく機能しないという前述の主張を証明するものである。
 
-Except for DMF, other deep-learning-based baselines outperform LibFM by 2.0% to 5.2% on F1 and by 1.5% to 4.5% on AUC, which suggests that deep models are effective in capturing the non-linear relations and dependencies in news data.
-DMFを除き、他のディープラーニングベースのベースラインは、F1で2.0%から5.2%、AUCで1.5%から4.5%LibFMを上回っている。これは、ディープモデルがニュースデータの非線形な関係や依存関係を捉えるのに効果的であることを示唆している。
+- Except for DMF, other deep-learning-based baselines outperform LibFM by 2.0% to 5.2% on F1 and by 1.5% to 4.5% on AUC, which suggests that deep models are effective in capturing the non-linear relations and dependencies in news data.
+  DMFを除き、他のディープラーニングベースのベースラインは、F1で2.0%から5.2%、AUCで1.5%から4.5%LibFMを上回っている。これは、**ディープモデルがニュースデータの非線形な関係や依存関係を捉えるのに効果的**であることを示唆している。
 
-The architecture of DeepWide and YouTubeNet is similar in the news recommendation scenario, thus we can observe comparable performance of the two methods.
-DeepWideとYouTubeNetのアーキテクチャは、ニュース推薦シナリオにおいて類似している。
-DSSM outperforms DeepWide and YouTubeNet, the reason for which might be that DSSM models raw texts directly with word hashing.
-DSSMはDeepWideとYouTubeNetを上回っているが、その理由はDSSMが生のテキストを直接単語ハッシュでモデル化しているからかもしれない。
+- The architecture of DeepWide and YouTubeNet is similar in the news recommendation scenario, thus we can observe comparable performance of the two methods.
+  DeepWideとYouTubeNetのアーキテクチャは、ニュース推薦シナリオにおいて類似している。
+  DSSM outperforms DeepWide and YouTubeNet, the reason for which might be that DSSM models raw texts directly with word hashing.
+  DSSMはDeepWideとYouTubeNetを上回っているが、その理由はDSSMが生のテキストを直接単語ハッシュでモデル化しているからかもしれない。
 
-KPCNN performs best in all baselines.
-KPCNNはすべてのベースラインで最高のパフォーマンスを示した。
-This is because KPCNN uses CNN to process input texts and can better extract the specific local patterns in sentences.
-これは、KPCNNがCNNを使って入力テキストを処理し、文中の特定の局所パターンをよりよく抽出できるからである。
+- KPCNN performs best in all baselines.
+  KPCNNはすべてのベースラインで最高のパフォーマンスを示した。
+  This is because KPCNN uses CNN to process input texts and can better extract the specific local patterns in sentences.
+  これは、KPCNNがCNNを使って入力テキストを処理し、文中の特定の局所パターンをよりよく抽出できるからである。
 
-Finally, compared with KPCNN, DKN can still have a 1.7% AUC increase.
-最後に、KPCNNと比較して、DKNはまだ1.7％のAUCを増加させることができる。
-We attribute the superiority of DKN to its two properties: 1) DKN uses word-entity-aligned KCNN for sentence representation learning, which could better preserve the relatedness between words and entities; 2) DKN uses an attention network to treat users’ click history discriminatively, which better captures users’ diverse reading interests.
-我々は、DKNの優位性を次の2つの特性に求める： 1)DKNは文の表現学習に単語と実体の整列したKCNNを用いることで、単語と実体の間の関連性をよりよく保持できること、2)DKNはユーザーのクリック履歴を識別的に扱うためにアテンション・ネットワークを用いることで、ユーザーの多様な読書興味をよりよく捉えることができること、である。
+- Finally, compared with KPCNN, DKN can still have a 1.7% AUC increase.
+  最後に、KPCNNと比較して、DKNはまだ1.7％のAUCを増加させることができる。
+  We attribute the superiority of DKN to its two properties: 1) DKN uses word-entity-aligned KCNN for sentence representation learning, which could better preserve the relatedness between words and entities; 2) DKN uses an attention network to treat users’ click history discriminatively, which better captures users’ diverse reading interests.
+  我々は、DKNの優位性を次の2つの特性に求める： 1)DKNは文の表現学習に単語と実体の整列したKCNNを用いることで、**単語と実体の間の関連性をよりよく保持できる**こと、2)DKNはユーザのクリック履歴を識別的に扱うためにアテンション・ネットワークを用いることで、ユーザの多様な読書興味をよりよく捉えることができること、である。
+
+![figure7]()
 
 Figure 7 presents the AUC score of DKN and baselines for additional ten test days.
 図7は、DKNとベースラインのAUCスコアを10日間追加したものである。
@@ -700,64 +703,83 @@ DKNのカーブは10日間一貫してベースラインを上回っており、
 Moreover, the performance of DKN is also with low variance compared with baselines, which suggests that DKN is also robust and stable in practical application.
 さらに、DKNの性能はベースラインと比較して分散も小さく、これはDKNが実用的なアプリケーションにおいてもロバストで安定していることを示唆している。
 
-5.4.2 Comparison among DKN variants..
-5.4.2 DKN変種間の比較....
+### 5.4.2 Comparison among DKN variants.. 5.4.2 DKN変種間の比較....
+
 Further, we compare among the variants of DKN with respect to the following four aspects to demonstrate the efficacy of the design of the DKN framework: the usage of knowledge, the choice of knowledge graph embedding method, the choice of transformation function, and the usage of an attention network.
-さらに、DKNフレームワークの設計の有効性を示すために、以下の4つの側面に関してDKNのバリエーション間を比較する： 知識の使い方、知識グラフの埋め込み方法の選択、変換関数の選択、注意ネットワークの使い方。
+さらに、DKNフレームワークの設計の有効性を示すために、以下の4つの側面に関してDKNのバリエーション間を比較する：
+
+- 知識の使用 (entity embeddingとcontextual embeddingをそれぞれ使うか否か)
+- 知識グラフの埋め込み方法の選択
+- 変換関数の選択
+- attention networkの使用
+
 The results are shown in Table 3, from which we can conclude that:
 結果は表3の通りで、そこから次のように結論づけられる：
+
+![table3]()
 
 The usage of entity embedding and contextual embedding can improve AUC by 1.3% and 0.7%, respectively, and we can achieve even better performance by combining them together.
 エンティティ埋め込みと文脈埋め込みを利用することで、AUCをそれぞれ1.3%と0.7%向上させることができ、これらを組み合わせることで、さらに優れた性能を達成することができる。
 This finding confirms the efficacy of using a knowledge graph in the DKN model.
-この発見は、DKNモデルで知識グラフを使用することの有効性を裏付けている。
+この発見は、**DKNモデルで知識グラフを使用することの有効性**を裏付けている。
 
 DKN+TransD outperforms other combinations.
-DKN+TransDは他の組み合わせよりも優れている。
+**DKN+TransDは他の組み合わせよりも優れている**。
 This is probably because, as presented in Section 2.1, TransD is the most complicated model among the four embedding methods, which is able to better capture non-linear relationships among the knowledge graph for news recommendation.
 これは、2.1節で示したように、TransDが4つの埋め込み手法の中で最も複雑なモデルであり、ニュース推薦のための知識グラフ間の非線形関係をよりよく捉えることができるからであろう。
 
 DKN with mapping is better than DKN without mapping, and the non-linear function is superior to the linear one.
-マッピングありのDKNはマッピングなしのDKNより優れており、非線形関数は線形関数より優れている。
+マッピングありのDKNはマッピングなしのDKNより優れており、非線形関数は線形関数より優れている。(各種埋め込みをマルチチャンネルにする際の変換関数の話...!)
 The results prove that the transformation function can alleviate the heterogeneity between word and entity spaces by self learning, and the non-linear function can achieve better performance.
-その結果、変換関数は自己学習によって単語空間と実体空間の間の異質性を緩和することができ、非線形関数はより良い性能を達成できることが証明された。
+その結果、**変換関数は自己学習によって単語空間と実体空間の間の異質性を緩和することができ**、非線形関数はより良い性能を達成できることが証明された。
 
 The attention network brings a 1.7% gain on F1 and 0.9% gain on AUC for the DKN model.
 アテンション・ネットワークは、DKNモデルに対してF1で1.7%、AUCで0.9%の利得をもたらした。
 We will give a more intuitive demonstration on the attention network in the next subsection.
-次のサブセクションでは、注意ネットワークについてより直感的なデモンストレーションを行う。
+次のサブセクションでは、attention networkについてより直感的なデモンストレーションを行う。
 
 ## 5.5. Case Study ケーススタディ
 
+(知識グラフによるentity埋め込みを使うことの効果を直感的に理解するためのセクション)
+
 To intuitively demonstrate the efficacy of the usage of the knowledge graph as well as the the attention network, we randomly sample a user and extract all his logs from the training set and the test set (training logs with label 0 are omitted for simplicity).
-アテンション・ネットワークと同様に知識グラフの使用法の有効性を直感的に示すために、ランダムにユーザーをサンプリングし、トレーニング・セットとテスト・セットからすべてのログを抽出する（簡単のため、ラベル0のトレーニング・ログは省略する）。
+アテンション・ネットワークと同様に知識グラフの使用法の有効性を直感的に示すために、ランダムにユーザをサンプリングし、トレーニング・セットとテスト・セットからすべてのログを抽出する（簡単のため、ラベル0のトレーニング・ログは省略する）。
+(labelゼロのログがあるってことは、viewしたけどtapしなかったログが存在してるってことっぽいな...!)
+
+![table4]()
+
 As shown in Table 4, the clicked news clearly exhibits his points of interest: No.1-3 concern cars and No.4-6 concern politics (categories are not contained in the original dataset but manually tagged by us).
-表4に示すように、クリックされたニュースには、彼の関心がはっきりと表れている： No.1-3は自動車に関するもの、No.4-6は政治に関するものである（カテゴリーは元のデータセットには含まれておらず、われわれが手作業でタグ付けした）。
+表4に示すように、クリックされたニュースには、彼の関心がはっきりと表れている： **No.1-3は自動車に関するもの、No.4-6は政治に関するもの**である(カテゴリーは元のデータセットには含まれておらず、われわれが手作業でタグ付けした)。
 We use the whole training data to train DKN with full features and DKN without entity nor context embedding, then feed each possible pair of training logs and test logs of this user to the two trained models and obtain the output value of their attention networks.
-全トレーニングデータを用いて、完全な特徴量を持つDKNと、エンティティもコンテキストも埋め込まないDKNをトレーニングし、このユーザのトレーニングログとテストログの可能な各ペアを2つのトレーニングモデルに与え、それぞれのアテンションネットワークの出力値を求める。
+全トレーニングデータを用いて、完全な特徴量を持つDKNと、エンティティもコンテキストも埋め込まないDKNをトレーニングし、**このユーザのトレーニングログとテストログの可能な各ペアを2つのトレーニングモデルに与え**、それぞれのアテンションネットワークの出力値を求める。
+
+![figure8]()
+
 The results are visualized in Figure 8, in which the darker shade of blue indicates larger attention values.
-結果は図8に可視化されており、青が濃いほど注目度が高いことを示している。
+結果は図8に可視化されており、青が濃いほど注目度(attention weight?)が高いことを示している。
 From Figure 8a we observe that, the first title in test logs gets high attention values with “Cars” in the training logs since they share the same word “Tesla”, but the results for the second title are less satisfactory, since the second title shares no explicit word-similarity with any title in the training set, including No.1-3.
-図8aから、テスト・ログの最初のタイトルは、同じ単語「Tesla」を共有しているため、トレーニング・ログの「Cars」と高いアテンション値を得ているが、2番目のタイトルは、No.1-3を含むトレーニング・セットのどのタイトルとも明確な単語の類似性を共有していないため、2番目のタイトルの結果は満足のいくものではない。
+図8aから、テスト・ログの最初のタイトルは、**同じ単語「Tesla」を共有しているため、トレーニング・ログの「Cars」と高いアテンション値を得ている**が、**2番目のタイトルは、No.1-3を含むトレーニング・セットのどのタイトルとも明確な単語の類似性を共有していないため、2番目のタイトルの結果は満足のいくものではない**。(同じCarカテゴリなのに...??)
 The case is similar for the third title in test logs.
 テストログの3つ目のタイトルも同様のケースである。
 In contrast, in Figure 8b we see that the attention network precisely captures the relatedness within the two categories “Cars” and “Politics”.
-対照的に、図8bでは、注目ネットワークが「車」と「政治」という2つのカテゴリー内の関連性を正確に捉えていることがわかる。
+対照的に、図8bでは、**attentnion networkが「車」と「政治」という2つのカテゴリ内の関連性を正確に捉えている**ことがわかる。(semantic埋め込みだけじゃなくて、知識グラフに基づくentity埋め込みたちのおかげ...!)
 This is because in the knowledge graph, “General Motors” and “Ford Inc.” share a large amount of context with “Tesla Inc.” and “Elon Musk”, moreover, “Jeh Johnson” and “Russian” are also highly connected to “Donald Trump”.
-ナレッジグラフでは、「ゼネラルモーターズ」や「フォード社」は「テスラ社」や「イーロン・マスク」と多くの文脈を共有しており、さらに「ジェ・ジョンソン」や「ロシア人」も「ドナルド・トランプ」と強い結びつきがあるからだ。
+**ナレッジグラフでは、「ゼネラルモーターズ」や「フォード社」は「テスラ社」や「イーロン・マスク」と多くの文脈を共有しており、さらに「ジェ・ジョンソン」や「ロシア人」も「ドナルド・トランプ」と強い結びつきがあるからだ**。(この関連性は、semanticな埋め込みだけでは捉えられないのか...!)
 The difference in the response of the attention network also affects the final predicted results: DKN with knowledge graph (Figure 8b) accurately predicts all the test logs, while DKN without knowledge graph (Figure 8a) fails on the third one.
-注意ネットワークの反応の違いは、最終的な予測結果にも影響する： 知識グラフありのDKN（図8b）はすべてのテストログを正確に予測したが、知識グラフなしのDKN（図8a）は3つ目のテストログで失敗した。
+attention networkの反応の違いは、最終的な予測結果にも影響する: 知識グラフありのDKN（図8b）はすべてのテストログを正確に予測したが、知識グラフなしのDKN（図8a）は3つ目のテストログで失敗した。(semantic埋め込みで捉えられる関連性のテストは成功しているが...)
 
 ## 5.6. Parameter Sensitivity パラメーター感度
 
 DKN involves a number of hyper-parameters.
-DKNは多くのハイパーパラメーターを含んでいる。
+DKNは多くのハイパーパラメータを含んでいる。
 In this subsection, we examine how different choices of hyper-parameters affect the performance of DKN.
-この小節では、ハイパーパラメータの選択の違いがDKNの性能にどのような影響を与えるかを検証する。
+この小節では、**ハイパーパラメータの選択の違いがDKNの性能にどのような影響を与えるか**を検証する。
 In the following experiments, expect for the parameter being tested, all other parameters are set as introduced in Section 5.3.
 以下の実験では、テストされるパラメータを除き、他のすべてのパラメータはセクション5.3で紹介したように設定される。
 
 ### 5.6.1. Dimension of word embedding d and dimension of entity embedding k. 単語の埋め込み次元dとエンティティの埋め込み次元k。
+
+![figure9a]()
 
 We first investigate how the dimension of word embedding d and dimension of entity embedding k affect performance by testing all combinations of d and k in set {20, 50, 100, 200}.
 まず、セット{20, 50, 100, 200}におけるdとkのすべての組み合わせをテストすることにより、単語埋め込みdの次元と実体埋め込みkの次元がパフォーマンスにどのように影響するかを調べる。
@@ -772,6 +794,8 @@ dが与えられたときのkについても、ケースは同様である。
 
 ### 5.6.2. Window sizes of filters and the number of filters m. フィルターのウィンドウサイズとフィルター数 m.
 
+![figure9b]()
+
 We further investigate the choice of windows sizes of filters and the number of filters for KCNN in the DKN model.
 さらに、DKNモデルにおけるKCNNのフィルターのウィンドウサイズとフィルター数の選択について調べる。
 As shown in Figure 9b, given windows sizes, the AUC score generally increases as the number of filters m gets larger, since more filters are able to capture more local patterns in input sentences and enhance model capability.
@@ -780,6 +804,8 @@ However, the trend changes when m is too large (m = 200) due to probable overfit
 しかし、mが大きすぎる場合（m = 200）、オーバーフィッティングの可能性が高いため、傾向が変化する。
 Likewise, we can observe similar rules for window sizes given m: a small window size cannot capture long-distance patterns in sentences, while a too large window size may easily suffer from overfitting the noisy patterns.
 同様に、mを指定した場合の窓の大きさについても同様の規則がある： 小さいウィンドウサイズでは文の長距離パターンを捉えることができず、大きすぎるウィンドウサイズではノイズの多いパターンをオーバーフィットしてしまう。
+
+<!-- ここまで読んだ -->
 
 # 6. Related Work 関連作品
 
@@ -794,29 +820,29 @@ In personalized news recommendation, CF-based methods [41] often suffer from the
 Therefore, a large amount of content-based or hybrid methods have been proposed [2, 22, 27, 34, 39].
 そのため、コンテンツに基づく手法やハイブリッド手法が大量に提案されている[2, 22, 27, 34, 39]。
 For example, [34] proposes a Bayesian method for predicting users’ current news interests based on their click behavior, and [39] proposes an explicit localized sentiment analysis method for location-based news recommendation.
-例えば、[34]は、クリック行動に基づいてユーザーの現在のニュース関心を予測するベイズ法を提案し、[39]は、ロケーションベースのニュース推薦のための明示的なローカライズされたセンチメント分析法を提案している。
+例えば、[34]は、クリック行動に基づいてユーザの現在のニュース関心を予測するベイズ法を提案し、[39]は、ロケーションベースのニュース推薦のための明示的なローカライズされたセンチメント分析法を提案している。
 Recently, researchers have also tried to combine other features into news recommendation, for example, contextual-bandit [25], topic models [28], and recurrent neural networks [32].
 最近、研究者はまた、例えば、文脈バンディット[25]、トピックモデル[28]、リカレントニューラルネットワーク[32]など、他の特徴をニュース推薦に組み合わせることを試みている。
 The major difference between prior work and ours is that we use a knowledge graph to extract latent knowledge-level connections among news for better exploration in news recommendation.
-先行研究とわれわれの研究の大きな違いは、ニュース推薦におけるより良い探索のために、知識グラフを使ってニュース間の潜在的な知識レベルのつながりを抽出することである。
+**先行研究とわれわれの研究の大きな違いは、ニュース推薦におけるより良い探索のために、知識グラフを使ってニュース間の潜在的な知識レベルのつながりを抽出すること**である。
 
 ## 6.2. Knowledge Graph ナレッジグラフ
 
 Knowledge graph representation aims to learn a low-dimensional vector for each entity and relation in the knowledge graph, while preserving the original graph structure.
-知識グラフ表現は、元のグラフ構造を保持しながら、知識グラフの各エンティティと関係に対して低次元のベクトルを学習することを目的としている。
+**知識グラフ表現**は、元のグラフ構造を保持しながら、**知識グラフの各エンティティと関係に対して低次元のベクトルを学習すること**を目的としている。
 In addition to translation-based methods [4, 18, 26, 48] used in DKN, researchers have also proposed many other models such as Structured Embedding [5], Latent Factor Model [17], Neural Tensor Network [37] and GraphGAN [42].
-DKNで使用されている翻訳ベースの手法[4, 18, 26, 48]に加え、研究者は構造化埋め込み[5]、潜在因子モデル[17]、ニューラルテンソルネットワーク[37]、GraphGAN[42]など、他の多くのモデルも提案している。
+DKNで使用されているtranslation-basedの手法[4, 18, 26, 48]に加え、研究者は構造化埋め込み[5]、潜在因子モデル[17]、ニューラルテンソルネットワーク[37]、GraphGAN[42]など、他の多くのモデルも提案している。
 Recently, the knowledge graph has also been used in many applications, such as movie recommendation[52], top-N recommendation [33], machine reading[51], text classification[46] word embedding[49], and question answering [10].
 近年、知識グラフは、映画推薦[52]、トップN推薦[33]、機械読書[51]、テキスト分類[46]、単語埋め込み[49]、質問応答[10]など、多くのアプリケーションでも利用されている。
 To the best of our knowledge, this paper is the first work that proposes leveraging knowledge graph embedding in news recommendation.
-我々の知る限り、本稿はニュース推薦において知識グラフの埋め込みを活用することを提案した最初の研究である。
+我々の知る限り、**本稿はニュース推薦において知識グラフの埋め込みを活用することを提案した最初の研究**である。
 
 ## 6.3. Deep Recommender Systems ディープ・レコメンダー・システム
 
 Recently, deep learning has been revolutionizing recommender systems and achieves better performance in many recommendation scenarios.
 近年、ディープラーニングは推薦システムに革命をもたらし、多くの推薦シナリオでより良いパフォーマンスを達成している。
 Roughly speaking, deep recommender systems can be classified into two categories: using deep neural networks to process the raw features of users or items, or using deep neural networks to model the interaction among users and items.
-大まかに言えば、ディープ・レコメンダー・システムは2つのカテゴリーに分類できる： ユーザーやアイテムの生の特徴を処理するためにディープニューラルネットワークを使う場合と、ユーザーやアイテム間の相互作用をモデル化するためにディープニューラルネットワークを使う場合である。
+大まかに言えば、**ディープ・レコメンダー・システムは2つのカテゴリに分類できる**： **ユーザやアイテムの生の特徴を処理するために**ディープニューラルネットワークを使う場合と、**ユーザやアイテム間の相互作用をモデル化するために**ディープニューラルネットワークを使う場合である。
 In addition to the aforementioned DSSM [16], DeepWide [6], DeepFM [13], YouTubeNet [8] and DMF [50], other popular deep-learning-based recommender systems include Collaborative Deep Learning [44], SHINE [45], Multi-view Deep Learning [11], and Neural Collaborative Filtering [14].
 前述のDSSM [16]、DeepWide [6]、DeepFM [13]、YouTubeNet [8]、DMF [50]に加え、他の一般的なディープラーニングベースのレコメンダーシステムには、協調ディープラーニング [44]、SHINE [45]、マルチビュー・ディープラーニング [11]、ニューラル協調フィルタリング [14]などがある。
 The major difference between these methods and ours is that DKN specializes in news recommendation and could achieve better performance than other generic deep recommender systems.
@@ -826,11 +852,22 @@ The major difference between these methods and ours is that DKN specializes in n
 
 In this paper, we propose DKN, a deep knowledge-aware network that takes advantage of knowledge graph representation in news recommendation.
 本論文では、知識グラフ表現をニュース推薦に活用するディープ・ナレッジ・アウェア・ネットワーク、DKNを提案する。
-DKN addresses three major challenges in news recommendation: 1) Different from ID-based methods such as collaborative filtering, DKN is a content-based deep model for click-through rate prediction that are suitable for highly time-sensitive news.2) To make use of knowledge entities and common sense in news content, we design a KCNN module in DKN to jointly learn from semantic-level and knowledge-level representations of news.
-DKNは、ニュース推薦における3つの主要な課題を解決する： 1)協調フィルタリングのようなIDベースの手法とは異なり、DKNはクリック率予測のためのコンテンツベースのディープモデルであり、非常にタイムセンシティブなニュースに適している。2)ニュースコンテンツに含まれる知識エンティティや常識を利用するために、DKNのKCNNモジュールを設計し、ニュースの意味レベルと知識レベルの表現から共同で学習する。
-The multiple channels and alignment of words and entities enable KCNN to combine information from heterogeneous sources and maintain the correspondence of different embeddings for each word.3) To model the different impacts of a user's diverse historical interests on current candidate news, DKN uses an attention module to dynamically calculate a user's aggregated historical representation.
-単語とエンティティの複数のチャネルとアライメントにより、KCNNは異種ソースからの情報を結合し、各単語の異なる埋め込みの対応関係を維持することができる。3) ユーザーの多様な歴史的関心が現在の候補ニュースに与えるさまざまな影響をモデル化するために、DKNはアテンション・モジュールを使用して、ユーザーの集約された歴史的表現を動的に計算する。
+DKN addresses three major challenges in news recommendation:
+DKNは、ニュース推薦における3つの主要な課題を解決する:
+
+1. Different from ID-based methods such as collaborative filtering, DKN is a content-based deep model for click-through rate prediction that are suitable for highly time-sensitive news.
+   協調フィルタリングのようなIDベースの手法とは異なり、**DKNは高度に時間的制約のあるニュースに適した**クリックスルー率予測のためのコンテンツベースのディープモデルである。
+
+2. To make use of knowledge entities and common sense in news content, we design a KCNN module in DKN to jointly learn from semantic-level and knowledge-level representations of news. 2)ニュースコンテンツに含まれる知識エンティティや常識を利用するために、DKNのKCNNモジュールを設計し、**ニュースのsemanticレベルとknowledgeレベルの表現から共同学習する**。
+   The multiple channels and alignment of words and entities enable KCNN to combine information from heterogeneous sources and maintain the correspondence of different embeddings for each word.
+   単語とエンティティの複数のチャネルとアライメントにより、KCNNは異種ソースからの情報を結合し、各単語における異なる埋め込みの対応関係を維持することができる。
+
+3. To model the different impacts of a user's diverse historical interests on current candidate news, DKN uses an attention module to dynamically calculate a user's aggregated historical representation.
+   ユーザの多様な歴史的関心が現在の候補ニュースに与えるさまざまな影響をモデル化するために、DKNはアテンション・モジュールを使用して、**ユーザの集約された歴史的表現を動的に計算する**。("動的に"が特徴的だと思う...!)
+
 We conduct extensive experiments on a dataset from Bing News.
 ビング・ニュースのデータセットで大規模な実験を行った。
 The results demonstrate the significant superiority of DKN compared with strong baselines, as well as the efficacy of the usage of knowledge entity embedding and the attention module.
 その結果、DKNが強力なベースラインと比較して有意に優れていること、また知識エンティティの埋め込みとアテンション・モジュールの利用が有効であることが実証された。
+
+<!-- ここまで読んだ! -->
