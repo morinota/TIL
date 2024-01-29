@@ -13,9 +13,9 @@ The subsequent and final post in this series will discuss the importance of the 
 このシリーズの最終回となる次回は、ネットフリックスにおける実験文化の重要性について論じる。
 
 Experimentation and causal inference is one of the primary focus areas within Netflix’s Data Science and Engineering organization.
-実験と因果推論は、ネットフリックスのデータサイエンス・エンジニアリング組織における主要な重点分野のひとつである。
+**実験と因果推論は、ネットフリックスのデータサイエンス・エンジニアリング組織における主要な重点分野のひとつである**。
 To directly support great decision-making throughout the company, there are a number of data science teams at Netflix that partner directly with Product Managers, engineering teams, and other business units to design, execute, and learn from experiments.
-会社全体の優れた意思決定を直接サポートするために、ネットフリックスには、プロダクトマネージャー、エンジニアリングチーム、その他のビジネスユニットと直接提携し、実験を設計、実行、そして実験から学ぶデータサイエンスチームが数多くあります。
+**会社全体の優れた意思決定を直接サポートするために**、ネットフリックスには、プロダクトマネージャー、エンジニアリングチーム、その他のビジネスユニットと直接提携し、実験を設計、実行、そして実験から学ぶデータサイエンスチームが数多くあります。
 To enable scale, we’ve built, and continue to invest in, an internal experimentation platform (XP for short).
 規模拡大を可能にするため、私たちは社内に実験プラットフォーム（略してXP）を構築し、投資を続けている。
 And we intentionally encourage collaboration between the centralized experimentation platform and the data science teams that partner directly with Netflix business units.
@@ -29,9 +29,9 @@ Netflixのデータエンジニアの仕事について知りたいですか？�
 Experimentation and causal inference data scientists who work directly with Netflix business units develop deep domain understanding and intuition about the business areas where they work.
 ネットフリックスの事業部門と直接仕事をする実験と因果推論のデータサイエンティストは、彼らが働く事業領域について深い領域理解と直感を身につける。
 Data scientists in these roles apply the scientific method to improve the Netflix experience for current and future members, and are involved in the whole life cycle of experimentation: data exploration and ideation; designing and executing tests; analyzing results to help inform decisions on tests; synthesizing learnings from numerous tests (and other sources) to understand member behavior and identify opportunity areas for innovation.
-このような役割を担うデータサイエンティストは、現在および将来の会員のネットフリックス体験を向上させるために科学的手法を適用し、実験の全ライフサイクルに携わります： データ探索とアイデアの創出、テストの設計と実行、テストの意思決定に役立つ結果の分析、会員の行動を理解し、イノベーションの機会領域を特定するための多数のテスト（およびその他の情報源）からの学習の統合。
+このような役割を担うデータサイエンティストは、現在および将来の会員のネットフリックス体験を向上させるために科学的手法を適用し、**実験の全ライフサイクルに携わります**： データ探索とアイデアの創出、テストの設計と実行、テストの意思決定に役立つ結果の分析、会員の行動を理解し、イノベーションの機会領域を特定するための多数のテスト（およびその他の情報源）からの学習の統合。
 It’s a virtuous, scientifically rigorous cycle of testing specific hypotheses about member behaviors and preferences that are grounded in general principles (deduction), and generalizing learning from experiments to build up our conceptual understanding of our members (induction).
-それは、一般原則に基づいた会員の行動や嗜好に関する具体的な仮説を検証し（演繹）、実験から得た学びを一般化して会員の概念的な理解を深める（帰納）という、科学的に厳密な好循環である。
+それは、**一般原則に基づいた会員の行動や嗜好に関する具体的な仮説を検証し（演繹）、実験から得た学びを一般化して会員の概念的な理解を深める（帰納）という、科学的に厳密な好循環**である。
 In success, this cycle enables us to rapidly innovate on all aspects of the Netflix service, confident that we are delivering more joy to our members as our decisions are backed by empirical evidence.
 このサイクルを成功させることで、私たちはネットフリックス・サービスのあらゆる面において、経験則に裏打ちされた決断を下し、より多くの喜びを会員に提供することを確信しながら、迅速にイノベーションを起こすことができる。
 
@@ -41,12 +41,22 @@ Curious to learn more? Have a look at “A Day in the Life of an Experimentation
 Success in these roles requires a broad technical skill set, a self-starter attitude, and a deep curiosity about the domain space.
 このような職務で成功するには、幅広い技術的スキルセット、セルフスターターとしての姿勢、領域空間に対する深い好奇心が必要です。
 Netflix data scientists are relentless in their pursuit of knowledge from data, and constantly look to go the extra distance and ask one more question.
-ネットフリックスのデータ・サイエンティストは、データから知識を得ることに絶え間なく取り組み、常に一歩踏み込んだ質問をしている。
-“What more can we learn from this test, to inform the next one?” “What information can I synthesize from the last year of tests, to inform opportunity sizing for next year’s learning roadmap?” “What other data and intuition can I bring to the problem?” “Given my own experience with Netflix, where might there be opportunities to test and improve on the current experience?” We look to our data scientists to push the boundaries on both the design and analysis of experiments: what new approaches or methods may yield valuable insights, given the learning agenda in a particular part of the product? These data scientists are also sought after as trusted thought partners by their business partners, as they develop deep domain expertise about our members and the Netflix experience.
-「このテストからさらに何を学び、次のテストに役立てるか？"昨年のテストからどのような情報を総合して、来年の学習ロードマップのオポチュニティ・サイジングに役立てることができるか？" "この問題に、他にどのようなデータや直感をもたらすことができるか？" 「私自身のネットフリックスでの経験から、現在の体験をテストし改善する機会はどこにあるだろうか？私たちはデータサイエンティストに、実験の設計と分析の両方の限界を押し広げることを期待しています： 製品の特定の部分における学習課題を考えると、どのような新しいアプローチや方法が貴重な洞察をもたらす可能性があるのか？また、これらのデータサイエンティストは、会員やネットフリックスの体験に関する深い専門知識を身につけるため、ビジネスパートナーから信頼されるソートパートナーとしても求められています。
+ネットフリックスのデータ・サイエンティストは、データから知識を得ることに絶え間なく取り組み、**常に一歩踏み込んだ質問**をしている。
+“What more can we learn from this test, to inform the next one?”
+このテストから更に何を学び、次のテストに役立てることができるだろうか？
+“What information can I synthesize from the last year of tests, to inform opportunity sizing for next year’s learning roadmap?”
+昨年のテストからどのような情報を総合して、来年の学習ロードマップのオポチュニティ・サイジングに役立てることができるだろうか？
+“What other data and intuition can I bring to the problem?”
+この問題に、他にどのようなデータや直感をもたらすことができるだろうか？
+“Given my own experience with Netflix, where might there be opportunities to test and improve on the current experience?”
+私自身のネットフリックスでの経験から、現在の体験をテストし改善する機会はどこにあるだろうか？
+We look to our data scientists to push the boundaries on both the design and analysis of experiments: what new approaches or methods may yield valuable insights, given the learning agenda in a particular part of the product?
+私たちは、データサイエンティストに、実験の設計と分析の両方の限界を押し広げることを期待しています： 製品の特定の部分における学習課題を考えると、どのような新しいアプローチや方法が貴重な洞察をもたらす可能性があるのか？
+These data scientists are also sought after as trusted thought partners by their business partners, as they develop deep domain expertise about our members and the Netflix experience.
+これらのデータサイエンティストは、会員とNetflixの体験について深い領域知識を身につけるにつれて、ビジネスパートナーからの信頼できる思考パートナーとしても求められています。
 
 Here are quick summaries of a few of the experimentation areas at Netflix and some of the innovative work that’s come out of each.
-ここでは、Netflixにおけるいくつかの実験分野と、それぞれから生まれた革新的な作品を簡単にまとめてみた。
+ここでは、**Netflixにおけるいくつかの実験分野と、それぞれから生まれた革新的な作品**を簡単にまとめてみた。
 This is not an exhaustive list, and we’ve focused on areas where opportunities to learn and deliver a better member experience through experimentation may be less obvious.
 これは網羅的なリストではなく、実験を通じて学習し、より良い会員体験を提供する機会が目立たない分野に焦点を絞っている。
 
@@ -62,11 +72,11 @@ In advertising, the treatments (the ads that we purchase) have a direct monetary
 As a result, we are risk averse in decision making and actively mitigate the probability of purchasing ads that are not efficiently attracting new members.
 その結果、リスク回避的な意思決定を行い、新規会員を効率的に獲得できない広告を購入する確率を積極的に軽減している。
 Abiding by this risk aversion is challenging in our domain because experiments generally have low power (see Part 4).
-このリスク回避を守ることは、私たちの領域では難しい。というのも、実験は一般的にパワーが低いからだ（第4回参照）。
+このリスク回避を守ることは、私たちの領域では難しい。というのも、**実験は一般的にパワーが低いから**だ（第4回参照）。(検出力が低い = 偽陰性が高い...!)
 For example we rely on difference-in-differences techniques for unbiased comparisons between the potentially different audiences experiencing each advertising treatment, and these approaches effectively reduce the sample size (more details for the very interested reader).
 例えば、各広告処理を経験した潜在的に異なるオーディエンス間の不偏比較を行うために、差分差分法に頼っているが、これらのアプローチはサンプルサイズを効果的に縮小する（詳細は興味のある読者に）。
 One way to address these power reductions would be to simply run longer experiments — but that would slow down our overall pace of innovation.
-このような電力削減に対処するひとつの方法は、単純に長い実験を行うことだろうが、それでは技術革新の全体的なペースが落ちてしまう。
+このような**検出力の低下に対処する方法の1つは、単に長期間の実験を行うことだが、それでは全体的なイノベーションのペースが遅くなってしまう**。
 
 Here we highlight two related problems for experimentation in this domain and briefly describe how we address them while maintaining a high cadence of experimentation.
 ここでは、この領域における実験に関連する2つの問題に焦点を当て、実験の高いケイデンスを維持しながら、どのようにそれらに対処するかを簡単に説明する。
@@ -74,58 +84,59 @@ Here we highlight two related problems for experimentation in this domain and br
 Recall that Part 3 and Part 4 described two types of errors: false positives (or Type-I errors) and false negatives (Type-II errors).
 第3部と第4部では、2種類のエラーについて説明した： 偽陽性（またはI型エラー）と偽陰性（II型エラー）である。
 Particularly in regimes where experiments are low-powered, two other error types can occur with high probability, so are important to consider when acting upon a statistically significant test result:
-特に実験が低パワーの場合、他の2つのエラーが高い確率で発生する可能性があり、統計的に有意なテスト結果に基づいて行動する際に考慮することが重要である：
+特に**実験が低パワーの場合、他の2つのエラーが高い確率で発生する可能性**があり、統計的に有意なテスト結果に基づいて行動する際に考慮することが重要である：
+(Type-1とType-2とは異なる2つのエラー??)
 
-- A Type-S error occurs when, given that we observe a statistically-significant result, the estimated metric movement has the opposite sign relative to the truth. Type-Sエラーは、統計的に有意な結果が観測されたにもかかわらず、推定されたメトリックの動きが真実とは逆の符号を持つ場合に発生する。
+- **A Type-S error** occurs when, given that we observe a statistically-significant result, the estimated metric movement has the opposite sign relative to the truth. Type-Sエラーは、**統計的に有意な結果が観測されたにもかかわらず、推定されたメトリックの動きが真実とは逆の符号を持つ場合**に発生する。
 
-- A Type-M error occurs when, given that we observe a statistically-significant result, the size of the estimated metric movement is magnified (or exaggerated) relative to the truth. Type-Mエラーは、統計的に有意な結果が観測されたにもかかわらず、推定されたメトリックの動きの大きさが真実よりも相対的に拡大（または誇張）された場合に発生する。
+- **A Type-M error** occurs when, given that we observe a statistically-significant result, the size of the estimated metric movement is magnified (or exaggerated) relative to the truth. Type-Mエラーは、**統計的に有意な結果が観測されたにもかかわらず、推定されたメトリックの動きの大きさが真実よりも相対的に拡大（または誇張）された場合**に発生する。
 
 If we simply declare statistically significant test results (with positive metric movements) to be winners, a Type-S error would imply that we actually selected the wrong treatment to promote to production, and all our future advertising spend would be producing suboptimal results.
-統計的に有意なテスト結果（プラスの指標の動き）を単に勝者と宣言すれば、Type-Sエラーは、私たちが実際に生産に促進するために間違った治療を選択したことを意味し、私たちの将来の広告費はすべて、最適とは言えない結果を生み出すことになる。
+統計的に有意なテスト結果（プラスの指標の動き）を単に勝者と宣言すれば、**Type-Sエラーは、私たちが実際にproductionに促進するために間違ったtreatmentを選択したこと**を意味し、私たちの将来の広告費はすべて、最適とは言えない結果を生み出すことになる。
 A Type-M error means that we are over-estimating the impact of the treatment.
-M型エラーは、治療の影響を過大評価していることを意味します。
+**type-Mエラーは、treatmentの影響を過大評価していることを意味**する。
 In the short term, a Type-M error means we would overstate our result, and in the long-term it could lead to overestimating our optimal budget level, or even misprioritizing future research tracks.
-短期的には、タイプMのエラーは、結果を誇張しすぎることを意味し、長期的には、最適な予算レベルを過大評価することにつながり、将来の研究路線の優先順位を誤る可能性さえある。
+短期的には、タイプMのエラーは、結果を誇張しすぎることを意味し、長期的には、最適な予算レベルを過大評価することにつながり、将来の研究路線の優先順位を誤る可能性さえある。(長期的には、type-Mエラーも悪影響が大きいのかも。)
 
 To reduce the impact of these errors, we take a Bayesian approach to experimentation in growth advertising.
-こうした誤差の影響を減らすため、成長広告ではベイズ的なアプローチで実験を行う。
+**こうした誤差の影響を減らすため、成長広告ではベイズ的なアプローチで実験を行う**。
 We’ve run many tests in this area and use the distribution of metric movements from past tests as an additional input to the analysis.
-私たちはこの分野で多くのテストを実施しており、過去のテストから得られたメトリクスの動きの分布を分析への追加インプットとして使用している。
+私たちはこの分野で多くのテストを実施しており、**過去のテストから得られたメトリクスの動きの分布を分析への追加インプットとして使用**している。(事前分布的な役割...??)
 Intuitively (and mathematically) this approach results in estimated metric movements that are smaller in magnitude and that feature narrower confidence intervals (Part 3).
-直感的に（そして数学的に）、このアプローチは、より小さな大きさで、より狭い信頼区間を特徴とする推定メートルの動きをもたらす（パート3）。
+直感的に（そして数学的に）、このアプローチは、推定されたメトリックの動きがより小さく、信頼区間が狭くなる（第3回参照）。
 Combined, these two effects reduce the risk of Type-S and Type-M errors.
 この2つの効果を組み合わせることで、S型エラーやM型エラーのリスクを減らすことができる。
 
 As the benefits from ending suboptimal treatments early can be substantial, we would also like to be able to make informed, statistically-valid decisions to end experiments as quickly as possible.This is an active research area for the team, and we’ve investigated Group Sequential Testing and Bayesian Inference as methods to allow for optimal stopping (see below for more on both of those).
-最適でない治療を早期に終了させることで得られる利益は相当なものになる可能性があるため、私たちは、できるだけ早く実験を終了させるための、情報に基づいた統計的に有効な決定を下すこともできるようにしたいと考えている。
+**最適でないtreatmentを早期に終了することで得られる利点は大きいため、できるだけ早く実験を終了するための情報に基づいた統計的に妥当な意思決定を行うこともできるようにしたい**。これはチームの活発な研究分野であり、最適な停止を可能にするための方法として、**Group Sequential Testing**と**Bayesian Inference**を調査してきた（以下でそれぞれについて詳しく説明する）。
 The latter, when combined with decision theoretic concepts like expected loss (or risk) minimization, can be used to formally evaluate the impact of different decisions — including the decision to end the experiment early.
 後者は、期待損失（またはリスク）最小化のような意思決定理論的概念と組み合わせることで、さまざまな意思決定（実験を早期に終了する意思決定を含む）の影響を正式に評価するために使用することができる。
 
 ## Payments ペイメント
 
 The payments team believes that the methods of payment (credit card, direct debit, mobile carrier billing, etc) that a future or current member has access to should never be a barrier to signing up for Netflix, or the reason that a member leaves Netflix.
-ペイメントチームは、将来または現在の会員が利用できる支払い方法（クレジットカード、口座振替、携帯キャリア課金など）が、Netflixに登録する際の障壁や、会員がNetflixを退会する理由になってはならないと考えています。
+ペイメントチームは、将来または現在の会員が利用できる支払い方法（クレジットカード、口座振替、携帯キャリア課金など）が、Netflixに登録する際の障壁や、会員がNetflixを退会する理由になってはならないと考えています。(課金システムチーム、みたいなことかな??)
 There are numerous touchpoints between a member and the payments team: we establish relationships between Netflix and new members, maintain those relationships with renewals, and (sadly!) see the end of those relationships when members elect to cancel.
-会員とペイメントチームとの間には多くの接点があります： ネットフリックスと新規会員との関係を構築し、その関係を更新で維持し、そして（悲しいことですが！）会員が解約を選択すると、その関係は終わりを迎えます。
+会員とペイメントチームとの間には多くの接点があります: **ネットフリックスと新規会員との関係を構築し、その関係を更新で維持し、そして（悲しいことですが！）会員が解約を選択すると、その関係は終わりを迎えます**。
 
 We innovate on methods of payment, authentication experiences, text copy and UI designs on the Netflix product, and any other place that we may smooth the payment experience for members.
 私たちは、支払い方法、認証体験、Netflix製品上のテキストコピーやUIデザイン、その他会員の支払い体験をスムーズにするあらゆる場所について革新的な取り組みを行っています。
 In all of these areas, we seek to improve the quality and velocity of our decision-making, guided by the testing principles laid out in this series.
-これらすべての分野において、私たちはこのシリーズで示したテストの原則に導かれながら、意思決定の質と速度の向上を目指している。
+これらすべての分野において、**私たちはこのシリーズで示したテストの原則に導かれながら、意思決定の質と速度の向上を目指している**。
 
 Decision quality doesn’t just mean telling people, “Ship it!” when the p-value (see Part 3) drops below 0.05.
-意思決定の質とは、p値（第3回参照）が0.05を下回ったときに「出荷しろ！」と言うことだけを意味しない。
+**意思決定の質とは、p値（第3回参照）が0.05を下回ったときに「出荷しろ！」と言うことだけを意味しない**。
 It starts with having a good hypothesis and a clear decision framework — especially one that judiciously balances between long-term objectives and getting a read in a pragmatic timeframe.
-それは、優れた仮説と明確な決断の枠組みを持つことから始まる。特に、長期的な目標と現実的な時間枠で読み取ることのバランスを慎重にとるものである。
+それは、**優れた仮説と明確な決断の枠組みを持つことから始まる**。特に、長期的な目標と現実的な時間枠で読み取ることのバランスを慎重にとるものである。
 We don’t have unlimited traffic or time, so sometimes we have to make hard choices.
 交通量も時間も無制限ではないので、時には厳しい選択を迫られることもある。
 Are there metrics that can yield a signal faster? What’s the tradeoff of using those? What’s the expected loss of calling this test, versus the opportunity cost of running something else? These are fun problems to tackle, and we are always looking to improve.
-より早くシグナルを得られる指標はあるのか？それを使うことのトレードオフは？このテストを実施することによる期待損失と、他のテストを実施することによる機会費用とは？これらは取り組むのが楽しい問題であり、私たちは常に改善を求めている。
+**より早くシグナルを得られる指標はあるのか？それを使うことのトレードオフは？このテストを実施することによる期待損失と、他のテストを実施することによる機会費用とは？これらは取り組むのが楽しい問題であり、私たちは常に改善を求めている**。
 
 We also actively invest in increasing decision velocity, often in close partnership with the Experimentation Platform team.
 私たちはまた、しばしば実験プラットフォーム・チームと緊密に連携しながら、意思決定の速度を高めるために積極的に投資しています。
 Over the past year, we’ve piloted models and workflows for three approaches to faster experimentation: Group Sequential Testing (GST), Gaussian Bayesian Inference, and Adaptive Testing.
-この1年間、我々は、より迅速な実験を行うための3つのアプローチのモデルとワークフローを試験的に導入してきた： Group Sequential Testing (GST)、Gaussian Bayesian Inference、Adaptive Testingである。
+この1年間、我々は、**より迅速な実験を行うための3つのアプローチのモデルとワークフローを試験的に導入してきた**： **Group Sequential Testing (GST)**、**Gaussian Bayesian Inference**、**Adaptive Testing**である。
 Any one of these techniques would enhance our experiment throughput on their own; together, they promise to alter the trajectory of payments experimentation velocity at Netflix.
 これらのテクニックのうち、どれか1つだけでも実験のスループットは向上するだろう。
 
@@ -139,46 +150,47 @@ We also partner with mobile and PayTV operators to create bundled offerings to b
 また、携帯電話会社やPayTV事業者と提携し、Netflixの価値をより多くの未来の会員に提供するためのバンドルサービスを提供しています。
 
 In the partnerships space, many experiences that we want to understand, such as partner-driven marketing campaigns, are not amenable to the A/B testing framework that has been the focus of this series.
-パートナーシップの分野では、パートナー主導のマーケティング・キャンペーンなど、理解したい経験の多くが、この連載で焦点をあててきたA/Bテストの枠組みには適さない。
+パートナーシップの分野では、パートナー主導のマーケティング・キャンペーンなど、**理解したい経験の多くが、この連載で焦点をあててきたA/Bテストの枠組みには適さない**。
 Sometimes, users self-select into the experience, or the new experience is rolled out to a large cluster of users all at once.
-時には、ユーザーが自らそのエクスペリエンスを選択することもあれば、新しいエクスペリエンスが大規模なユーザー集団に一斉に展開されることもある。
+時には、ユーザが自らそのエクスペリエンスを選択することもあれば、新しいエクスペリエンスが大規模なユーザ集団に一斉に展開されることもある。
 This lack of randomization precludes the straightforward causal conclusions that follow from A/B tests.
-この無作為化の欠如は、A/Bテストから導かれる直接的な因果関係の結論を妨げる。
+**この無作為化の欠如は、A/Bテストから導かれる直接的な因果関係の結論を妨げる**。
 In these cases, we use quasi experimentation and observational causal inference techniques to infer the causal impact of the experience we are studying.
 このような場合、疑似実験や観察的因果推論の手法を用いて、研究対象の経験の因果的影響を推測する。
 A key aspect of a data scientist’s role in these analyses is to educate stakeholders on the caveats that come with these studies, while still providing rigorous evaluation and actionable insights, and providing structure to some otherwise ambiguous problems.
-このような分析におけるデータサイエンティストの重要な役割は、これらの研究に伴う注意点について利害関係者を教育することであり、同時に厳密な評価と実用的な洞察を提供し、曖昧な問題に構造を与えることである。
+このような分析におけるデータサイエンティストの重要な役割は、これらの研究に伴う**注意点について利害関係者を教育すること**であり、同時に厳密な評価と実用的な洞察を提供し、曖昧な問題に構造を与えることである。
 Here are some of the challenges and opportunities in these analyses:
 これらの分析における課題と機会をいくつか挙げてみよう：
 
-Treatment selection confounding.
-治療選択の交絡。
-When users self-select into the treatment or control experience (versus the random assignment discussed in Part 2), the probability that a user ends up in each experience may depend on their usage habits with Netflix.
-第2回で議論したランダム割り当てに対して）ユーザーが自己選択でトリートメントまたはコントロールのエクスペリエンスに入る場合、ユーザーがそれぞれのエクスペリエンスに入る確率は、Netflixの利用習慣に依存する可能性がある。
-These baseline metrics are also naturally correlated with outcome metrics, such as member satisfaction, and therefore confound the effect of the observed treatment on our outcome metrics.
-これらのベースライン指標は、当然、会員の満足度などのアウトカム指標とも相関しており、したがって、観察された治療のアウトカム指標への影響を混乱させる。
-The problem is exacerbated when the treatment choice or treatment uptake varies with time, which can lead to time varying confounding.
-この問題は、治療法の選択または治療の実施が時間とともに変化する場合に悪化する。
-To deal with these cases, we use methods such as inverse propensity scores, doubly robust estimators, difference-in-difference, or instrumental variables to extract actionable causal insights, with longitudinal analyses to account for the time dependence.
-このようなケースに対処するために、私たちは逆傾向スコア、二重ロバスト推定量、差分推定量、道具変数などの手法を用いて、時間依存性を考慮した縦断的分析を行い、実用的な因果関係の洞察を抽出する。
+- **Treatment selection confounding**.
+  治療選択の交絡。
+  When users self-select into the treatment or control experience (versus the random assignment discussed in Part 2), the probability that a user ends up in each experience may depend on their usage habits with Netflix.
+  第2回で議論したランダム割り当てに対して）ユーザーが自己選択でトリートメントまたはコントロールのエクスペリエンスに入る場合、ユーザーがそれぞれのエクスペリエンスに入る確率は、Netflixの利用習慣に依存する可能性がある。
+  These baseline metrics are also naturally correlated with outcome metrics, such as member satisfaction, and therefore confound the effect of the observed treatment on our outcome metrics.
+  これらのベースライン指標は、当然、会員の満足度などのアウトカム指標とも相関しており、したがって、観察された治療のアウトカム指標への影響を混乱させる。
+  The problem is exacerbated when the treatment choice or treatment uptake varies with time, which can lead to time varying confounding.
+  この問題は、治療法の選択または治療の実施が時間とともに変化する場合に悪化する。
+  To deal with these cases, we use methods such as inverse propensity scores, doubly robust estimators, difference-in-difference, or instrumental variables to extract actionable causal insights, with longitudinal analyses to account for the time dependence.
+  このようなケースに対処するために、私たちは逆傾向スコア、二重ロバスト推定量、差分推定量、道具変数などの手法を用いて、時間依存性を考慮した縦断的分析を行い、実用的な因果関係の洞察を抽出する。
 
-Synthetic controls and structural models.
-合成コントロールと構造モデル。
-Adjusting for confounding requires having pre-treatment covariates at the same level of aggregation as the response variable.
-交絡を調整するには、治療前の共変量が応答変数と同じ集計レベルにあることが必要である。
-However, sometimes we do not have access to that information at the level of individual Netflix members.
-しかし、ネットフリックスのメンバー個人レベルでは、その情報にアクセスできないこともある。
-In such cases, we analyze aggregate level data using synthetic controls and structural models.
-このような場合、合成コントロールと構造モデルを用いて、集計レベルのデータを分析する。
+- **Synthetic controls and structural models**.
+  合成コントロールと構造モデル。
+  Adjusting for confounding requires having pre-treatment covariates at the same level of aggregation as the response variable.
+  交絡を調整するには、治療前の共変量が応答変数と同じ集計レベルにあることが必要である。
+  However, sometimes we do not have access to that information at the level of individual Netflix members.
+  しかし、ネットフリックスのメンバー個人レベルでは、その情報にアクセスできないこともある。
+  In such cases, we analyze aggregate level data using synthetic controls and structural models.
+  このような場合、合成コントロールと構造モデルを用いて、集計レベルのデータを分析する。
 
-Sensitivity analysis.
-感度分析。
-In the absence of true A/B testing, our analyses rely on using the available data to adjust away spurious correlations between the treatment and the outcome metrics.
-真のA/Bテストがない場合、我々の分析は、利用可能なデータを使用して、治療と結果指標の間のスプリアス相関を調整することに依存する。
-But how well we can do so depends on whether the available data is sufficient to account for all such correlations.
-しかし、それがどの程度可能かは、利用可能なデータがそのような相関関係をすべて説明するのに十分かどうかにかかっている。
-To understand the validity of our causal claims, we perform sensitivity analyses to evaluate the robustness of our findings.
-我々の因果関係の主張の妥当性を理解するために、感度分析を行い、調査結果の頑健性を評価した。
+- **Sensitivity analysis**.
+  感度分析。
+  In the absence of true A/B testing, our analyses rely on using the available data to adjust away spurious correlations between the treatment and the outcome metrics.
+  真のA/Bテストがない場合、我々の分析は、利用可能なデータを使用して、治療と結果指標の間のスプリアス相関を調整することに依存する。
+  But how well we can do so depends on whether the available data is sufficient to account for all such correlations.
+  しかし、それがどの程度可能かは、利用可能なデータがそのような相関関係をすべて説明するのに十分かどうかにかかっている。
+  To understand the validity of our causal claims, we perform sensitivity analyses to evaluate the robustness of our findings.
+  我々の因果関係の主張の妥当性を理解するために、感度分析を行い、調査結果の頑健性を評価した。
+  (特定のパラメータを変動させて、metricsの動的な変動を見る、みたいな?? ただしABテストではない。)
 
 ## Messaging メッセージ
 
@@ -190,7 +202,7 @@ But what about other ways we can help keep members informed about new or relevan
 しかし、新しいコンテンツや関連するコンテンツを会員に知らせ、長い一日の終わりにくつろぐときに、会員が何か素晴らしいものを思い浮かべられるよう、私たちが支援できる他の方法はどうだろうか？
 
 Messaging, including emails and push notifications, is one of the key ways we keep our members in the loop.
-Eメールやプッシュ通知を含むメッセージングは、会員に常に最新情報を提供する重要な方法のひとつです。
+**Eメールやプッシュ通知を含むメッセージングは、会員に常に最新情報を提供する重要な方法のひとつ**です。
 The messaging team at Netflix strives to provide members with joy beyond the time when they are actively watching content.
 Netflixのメッセージング・チームは、会員がコンテンツを積極的に視聴している時間以外にも喜びを提供するよう努めている。
 What’s new or coming soon on Netflix? What’s the perfect piece of content that we can tell you about so you can plan “date time movie night” on the go? As a messaging team, we are also mindful of all the digital distractions in our members’ lives, so we work tirelessly to send just the right information to the right members at the right time.
