@@ -557,13 +557,6 @@ For binary classifications, the loss function is the log loss:
 二値分類の場合、損失関数は対数損失となる(=クロスエントロピー損失関数だっけ?:thinking:):
 (point-wiseの損失関数でも十分なのかもなぁ...! pair-wiseとかlist-wiseな損失関数でなくても。)
 
-$$
-\mathcal{L} = - \frac{1}{N} \sum_{i=1}^{N}{
-    y_i log(\hat{y}_{i}) + (1 - y_i)
-}
-\tag{18}
-$$
-
 where 𝑁 is the total number of training instances, 𝑦𝑖 is the ground truth of 𝑖-th instance and 𝑦^𝑖 is the predicted CTR.
 ここで、𝑁は訓練インスタンスの総数(=mini-batch1つあたりのtraining exampleの数)、$y_i$ は $i$ 番目のインスタンスのground truth、$\hat{y}_{i}$ は予測CTRである。
 The optimization process is to minimize the following objective function:

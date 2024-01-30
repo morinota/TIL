@@ -1,16 +1,27 @@
+<!-- 35週目: Twitterの2-stage推薦の2段階目(candidate ranking)で使われてるっぽいMaskNetの論文を読んだ! -->
+
 # MaskNet: Introducing Feature-Wise Multiplication to CTR Ranking Models by Instance-Guided Mask
 
-published date: hogehoge September 2022,
-authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
-url(paper): https://arxiv.org/pdf/2102.07619.pdf
+published date: 26 June 2021,
+authors: Zhiqiang Wang, Qingyun She, Junlin Zhang
+url(paper): https://arxiv.org/abs/2102.07619
 (勉強会発表者: morinota)
 
 ---
 
+n週連続推薦システム系論文読んだシリーズ 35 週目の記事になります。
+ちなみに34週目は [2種のattentionを用いたニュース推薦タスク用のコンテンツベース手法 NRMS の論文を読んだ!](https://zenn.dev/morinota/articles/b95fa0caf1c010) でした!
+
 ## どんなもの?
 
-- twitterの推薦システム内のrankerモデル(i.e. 2-stage推薦の2ステップ目で使われてるやつ!)として使われているらしい MaskNet の論文。
+- きっかけ: 2-stage推薦の2段階目(candidate ranking stage)って、みんなどんなモデルを採用してるんだろうと思った...!
+- twitterの2-stage推薦システム内のrankerモデル(i.e. 2-stage推薦の2ステップ目で使われてるやつ!)として使われているらしい MaskNet の論文。(参考: [Heavy Ranker](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md))
 - 特徴量間の相互作用を効果的にモデル化するために、深層学習に基づくCTR予測モデルを拡張するMaskBlockというComponentを提案してる。
+  - rankerモデルという用途だけど、結局2値分類タスクとして定式化してる感じ。
+
+![](https://github.com/twitter/the-algorithm/blob/main/docs/system-diagram.png)
+
+(twitterのリポジトリより引用。上図のheavy rankerの部分でMaskNetを採用してるっぽい)
 
 ## 先行研究と比べて何がすごい？
 
@@ -362,4 +373,4 @@ $$
 
 ## 次に読むべき論文は？
 
-## お気持ち実装
+- うーん、本論文とは全然関係ないけどknowledge-graphとかに関する論文を1つくらい読んでおきたい。
