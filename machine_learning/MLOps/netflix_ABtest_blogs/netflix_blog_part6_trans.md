@@ -206,23 +206,23 @@ Messaging, including emails and push notifications, is one of the key ways we ke
 The messaging team at Netflix strives to provide members with joy beyond the time when they are actively watching content.
 Netflixのメッセージング・チームは、会員がコンテンツを積極的に視聴している時間以外にも喜びを提供するよう努めている。
 What’s new or coming soon on Netflix? What’s the perfect piece of content that we can tell you about so you can plan “date time movie night” on the go? As a messaging team, we are also mindful of all the digital distractions in our members’ lives, so we work tirelessly to send just the right information to the right members at the right time.
-Netflixの新作や近日配信予定の作品は？外出先で "映画デート "を計画するのに最適なコンテンツは？メッセージング・チームとして、私たちはまた、メンバーの生活の中にあるデジタルな注意散漫に気を配り、適切な情報を適切なタイミングで適切なメンバーに送るために、たゆまぬ努力を続けています。
+Netflixの新作や近日配信予定の作品は？外出先で "映画デート "を計画するのに最適なコンテンツは？メッセージング・チームとして、私たちはまた、メンバーの生活の中にあるデジタルな注意散漫に気を配り、**適切な情報を適切なタイミングで適切なメンバーに送るために**、たゆまぬ努力を続けています。
 
 Data scientists in this space work closely with product managers and engineers to develop messaging solutions that maximize long term satisfaction for our members.
 この分野のデータ・サイエンティストは、プロダクト・マネージャーやエンジニアと緊密に連携し、会員の長期的な満足度を最大化するメッセージング・ソリューションを開発しています。
 For example, we are constantly working to deliver a better, more personalized messaging experience to our members.
 例えば、私たちはより良い、よりパーソナライズされたメッセージング体験を会員に提供するために常に取り組んでいます。
 Each day, we predict how each candidate message would meet a members’ needs, given historical data, and the output informs what, if any, message they will receive.
-毎日、過去のデータをもとに、候補となる各メッセージがどのように会員のニーズを満たすかを予測し、その結果に基づいて、会員が受け取るメッセージの内容を決定する。
+毎日、**過去のデータをもとに、候補となる各メッセージがどのように会員のニーズを満たすかを予測し、その結果に基づいて、会員が受け取るメッセージの内容を決定**する。
 And to ensure that innovations on our personalized messaging approach result in a better experience for our members, we use A/B testing to learn and confirm our hypotheses.
 また、パーソナライズされたメッセージング・アプローチの革新が会員にとってより良い体験となるよう、私たちはA/Bテストを用いて仮説を学び、確認しています。
 
 An exciting aspect of working as a data scientist on messaging at Netflix is that we are actively building and using sophisticated learning models to help us better serve our members.
 ネットフリックスでメッセージングに関するデータサイエンティストとして働くことのエキサイティングな点は、会員により良いサービスを提供するために、洗練された学習モデルを積極的に構築し、活用していることです。
 These models, based on the idea of bandits, continuously balance learning more about member messaging preferences with applying those learnings to deliver more satisfaction to our members.
-バンディッツの考え方に基づくこれらのモデルは、会員のメッセージング嗜好についてより深く学ぶことと、その学びを会員により多くの満足を提供するために応用することのバランスを継続的に取っている。
+**banditsの考え方に基づくこれらのモデル**は、会員のメッセージング嗜好についてより深く学ぶことと、その学びを会員により多くの満足を提供するために応用することのバランスを継続的に取っている。
 It’s like a continuous A/B test with new treatments deployed all the time.
-常に新しい治療法が導入される、継続的なA/Bテストのようなものだ。
+それは常に新しいtreatmentが導入される、**継続的なA/Bテストのようなもの**だ。
 This framework allows us to conduct many exciting and challenging analyses without having to deploy new A/B tests every time.
 このフレームワークにより、毎回新しいA/Bテストを展開することなく、多くのエキサイティングでチャレンジングな分析を実施することができる。
 
@@ -233,18 +233,18 @@ When a member opens the Netflix application, our goal is to help them choose a t
 One way we do this is through constantly improving the recommendation systems that produce a personalized home page experience for each of our members.
 その方法のひとつが、各メンバーにパーソナライズされたホームページ体験を提供するレコメンデーション・システムを常に改善することです。
 And beyond title recommendations, we strive to select and present artwork, imagery and other visual “evidence” that is likewise personalized, and helps each member understand why a particular title is a great choice for them — particularly if the title is new to the service or unfamiliar to that member.
-また、タイトルを推薦するだけでなく、アートワークや画像、その他の視覚的な "証拠 "を選び、提示することで、同様にパーソナライズされ、各会員が特定のタイトルを選ぶ理由を理解できるように努めています。
+また、タイトルを推薦するだけでなく、アートワークや画像、その他の視覚的な "evidence"を選び、提示することで、同様にパーソナライズされ、各会員が特定のタイトルを選ぶ理由を理解できるように努めています。
 
 Creative excellence and continuous improvements to evidence selection systems are both crucial in achieving this goal.
 この目標を達成するためには、創造的な卓越性と、エビデンス選定システムの継続的な改善が不可欠である。
 Data scientists working in the space of evidence selection use online experiments and offline analysis to provide robust causal insights to power product decisions in both the creation of evidence assets, such as the images that appear on the Netflix homepage, and the development of models that pair members with evidence.
-ネットフリックスのホームページに掲載される画像のようなエビデンス資産の作成と、会員とエビデンスをペアリングするモデルの開発の両方において、エビデンス選択の領域で働くデータサイエンティストは、オンライン実験とオフライン分析を使用して、製品の意思決定を後押しする強固な因果関係の洞察を提供している。
+ネットフリックスのホームページに掲載される画像のようなエビデンス資産の作成と、会員とエビデンスをペアリングするモデルの開発の両方において、エビデンス選択の領域で働くデータサイエンティストは、**オンライン実験とオフライン分析を使用して、製品の意思決定を後押しする強固な因果関係の洞察を提供している**。
 
 Sitting at the intersection of content creation and product development, data scientists in this space face some unique challenges:
 コンテンツ制作と製品開発の交差点に位置するこの分野のデータサイエンティストは、いくつかのユニークな課題に直面している：
 
-Predicting evidence performance.
-エビデンスのパフォーマンスを予測する
+### Predicting evidence performance. エビデンスのパフォーマンスを予測する
+
 Say we are developing a new way to generate a piece of evidence, such as a trailer.
 例えば、予告編のような証拠を生成する新しい方法を開発しているとしよう。
 Ideally, we’d like to have some sense of the positive outcomes of the new evidence type prior to making a potentially large investment that will take time to pay off.
@@ -252,14 +252,15 @@ Ideally, we’d like to have some sense of the positive outcomes of the new evid
 Data scientists help inform investment decisions like these by developing causally valid predictive models.
 データサイエンティストは、因果関係の妥当な予測モデルを開発することで、このような投資の意思決定を支援する。
 
-Matching members with the best evidence.
-最良のエビデンスでメンバーをマッチングする。
+### Matching members with the best evidence. 最良のエビデンスでメンバーをマッチングする。
+
 High quality and properly selected evidence is key to a great Netflix experience for all of our members.
 高品質で適切に選択された証拠品は、すべての会員にとって素晴らしいネットフリックス体験の鍵です。
 While we test and learn about what types of evidence are most effective, and how to match members to the best evidence, we also work to minimize the potential downsides by investing in efficient approaches to A/B tests that allow us to rapidly stop suboptimal treatment experiences.
 私たちは、どのような種類のエビデンスが最も効果的なのか、また、どのように会員を最良のエビデンスに適合させるのかをテストし、学ぶ一方で、最適とは言えない治療体験を迅速に中止させることができるA/Bテストの効率的なアプローチに投資することで、潜在的なマイナス面を最小限に抑える取り組みも行っている。
 
-Providing timely causal feedback on evidence development.
+### Providing timely causal feedback on evidence development.
+
 エビデンス開発の因果関係をタイムリーにフィードバックする。
 Insights from data, including from A/B tests, are used extensively to fuel the creation of better artwork, trailers, and other types of evidence.
 A/Bテストを含むデータからの洞察は、より良いアートワーク、予告編、その他のタイプの証拠を作成するために幅広く利用されている。
@@ -284,7 +285,7 @@ Data science roles in this business area emphasize experimentation at scale and 
 Automation.
 オートメーション。
 As streaming experiments are numerous (thousands per year) and tend to be short lived, we’ve invested in workflow automations.
-ストリーミング実験は数が多く（年間数千件）、短命になりがちなので、ワークフローの自動化に投資してきた。
+**ストリーミング実験は数が多く（年間数千件）、短命になりがちなので、ワークフローの自動化に投資してきた**。
 For example, we piggyback on Netflix’s amazing tools for safe deployment of the Netflix client by integrating the experimentation platform’s API directly with Spinnaker deployment pipelines.
 例えば、実験プラットフォームのAPIをSpinnakerのデプロイパイプラインに直接統合することで、Netflixクライアントを安全にデプロイするためのNetflixの素晴らしいツールにおんぶにだっこです。
 This allows engineers to set up, allocate, and analyze the effects of changes they’ve made using a single configuration file.
