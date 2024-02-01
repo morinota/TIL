@@ -32,23 +32,24 @@ There are now hundreds of ML systems that have been built by the community based
 
 # 1. Introduction はじめに
 
-“It's impressive how far you can go with contemporary tools like @modal_labs, @huggingface, and @hopsworks! In 2017, having a shared pipeline for training and prediction data that updated automatically and made models available as a UI and an API was a groundbreaking stack at Uber.
-「modal_labs、@huggingface、@hopsworksのような現代的なツールでどこまでできるかは印象的だ！2017年、自動的に更新され、モデルをUIとAPIとして利用可能にするトレーニングデータと予測データの共有パイプラインを持つことは、Uberにおける画期的なスタックだった。
-Now, it's a standard part of a well-done student project.” Charles Frye, Full Stack Deep Learning course leader.
-今では、よくできた学生プロジェクトの標準的な部分です」。チャールズ・フライ、フルスタック・ディープラーニングコースリーダー。
+> “It's impressive how far you can go with contemporary tools like @modal_labs, @huggingface, and @hopsworks! In 2017, having a shared pipeline for training and prediction data that updated automatically and made models available as a UI and an API was a groundbreaking stack at Uber.
+> 「@modal_labs、@huggingface、@hopsworksのような現代的なツールでどこまでできるかは印象的だ！2017年、自動的に更新され、モデルをUIとAPIとして利用可能にするトレーニングデータと予測データの共有パイプラインを持つことは、Uberにおける画期的なスタックだった。
+> Now, it's a standard part of a well-done student project.” Charles Frye, Full Stack Deep Learning course leader.
+> 今では、よくできた学生プロジェクトの標準的な部分です」。チャールズ・フライ、フルスタック・ディープラーニングコースリーダー。
 
 In a course I gave at KTH in 2022/23, students developed a full ML system in only 2 weeks that solved a prediction problem for a novel non-static data source of their choice.
-私が2022年から23年にかけてKTHで行ったコースでは、学生たちはわずか2週間で完全なMLシステムを開発し、自分たちが選んだ新しい非静的データソースの予測問題を解決した。
+私が2022年から23年にかけてKTHで行ったコースでは、**[学生たちはわずか2週間で完全なMLシステムを開発](https://id2223kth.github.io/assignments/project/ServerlessMLProjectsID22232023.html)**し、自分たちが選んだ新しい非静的データソースの予測問題を解決した。
 As Charles suggests in the above quote, leveraging ML infrastructure makes it easier to build ML systems.
 チャールズが上記の引用で示唆しているように、MLインフラを活用することで、MLシステムの構築が容易になる。
 You can write a Python program that scrapes data from the Internet and, with a few annotations, runs on a daily schedule with Modal.
 インターネットからデータをスクレイピングするPythonプログラムを書いて、いくつかの注釈を加えれば、Modalを使って毎日のスケジュールで実行することができる。
 The program can write the features it computes as DataFrames to Hopsworks Feature Store.
-プログラムは、計算したフィーチャーをDataFramesとしてHopsworks Feature Storeに書き込むことができます。
-From there, a notebook can be used to train a model that is saved in Hopsworks (or any model registry).
+プログラムは、計算したフィーチャーをDataFramesとしてHopsworks [Feature Store](https://www.hopsworks.ai/dictionary/feature-store)に書き込むことができます。
+From there, a notebook can be used to train a model that is saved in Hopsworks (or any [model registry](https://www.hopsworks.ai/dictionary/model-registry)).
+(model registry = モデルやモデルに関連するartifactsを保存するバージョン管理システム)
 そこからノートブックを使って、Hopsworks（または任意のモデル登録）に保存されたモデルをトレーニングすることができる。
 And, finally, a third Python program uses the trained model to make predictions with new inference data (for example, the data scraped today) read from the Feature Store, and displays the predictions in a nice UI or Dashboard (e.g., written in the Streamlit or Taipy).
-そして最後に、3つ目のPythonプログラムが、Feature Storeから読み込んだ新しい推論データ（例えば、今日スクレイピングされたデータ）を使って予測を行うために学習済みモデルを使用し、（StreamlitやTaipyで書かれた）素敵なUIやダッシュボードに予測を表示する。
+そして最後に、3つ目のPythonプログラムが、Feature Storeから読み込んだ新しい[推論データ](https://www.hopsworks.ai/dictionary/inference-data)（ex. 今日スクレイピングされたデータ）を使って予測を行うために学習済みモデルを使用し、（StreamlitやTaipyで書かれた）素敵なUIやダッシュボードに予測を表示する。
 Some examples of prediction problems were predicting air quality, water levels, snow depth, football scores, electricity demand, and sentiment for posts.
 予測問題の例としては、大気の質、水位、雪の深さ、サッカーの得点、電力需要、投稿の感情などを予測するものがあった。
 
@@ -423,22 +424,24 @@ In inference pipelines, some of the details that can be discovered on double-cli
 # 5. What are the fundamental principles of MLOps? MLOpsの基本原則とは？
 
 The existing mantra is that MLOps is about automating continuous integration (CI), continuous delivery (CD), and continuous training (CT) for ML systems.
-既存のマントラでは、MLOpsはMLシステムの継続的インテグレーション（CI）、継続的デリバリー（CD）、継続的トレーニング（CT）を自動化することだとされている。
+既存のマントラでは、**MLOpsはMLシステムの継続的インテグレーション（CI）、継続的デリバリー（CD）、継続的トレーニング（CT）を自動化すること**だとされている。
 But that is too abstract for many developers.
 しかし、多くの開発者にとっては抽象的すぎる。
 MLOps is really about continual development of ML-enabled products that evolve over time.
-MLOpsとは、時間と共に進化するML対応製品の継続的な開発のことである。
+**MLOpsとは、時間と共に進化するML対応プロダクトの継続的な開発のことである**。
 The available input data (features) changes over time, the target you are trying to predict changes over time.
-利用可能な入力データ（特徴量）は時間とともに変化し、予測しようとする対象も時間とともに変化する。
+**利用可能な入力データ（特徴量）は時間とともに変化し、予測しようとする対象も時間とともに変化する**。
 You need to make changes to the source code, and you want to ensure that any changes you make do not break your ML system or degrade its performance.
 ソースコードに変更を加える必要があり、その変更がMLシステムを壊したり、性能を低下させたりしないようにしたい。
 And you want to accelerate the time required to make those changes and test before those changes are automatically deployed to production.
 そして、その変更が本番環境に自動的にデプロイされる前に、その変更とテストに必要な時間を短縮したい。
 
 So, from our perspective, a more pithy definition of MLOps that enables ML Systems to be safely evolved over time is that it requires, at a minimum, automated testing, versioning, and monitoring of ML artifacts.
-つまり、MLシステムを長期にわたって安全に進化させることを可能にするMLOpsの定義とは、最低限、ML成果物の自動テスト、バージョン管理、モニタリングが必要だということだ。
+つまり、私たちの観点からは、MLシステムを安全に時間とともに進化させるために、少なくともMLの成果物の自動テスト、バージョン管理、モニタリングが必要であるという、より簡潔なMLOpsの定義が必要である。
 MLOps is about automated testing, versioning, and monitoring of ML artifacts.
-MLOpsとは、MLの成果物の自動テスト、バージョン管理、モニタリングのことである。
+**MLOpsとは、MLの成果物の自動テスト、バージョン管理、モニタリングのこと**である。
+
+![figure16]()
 
 In figure 16, we can see that more levels of testing are needed in ML systems than in traditional software systems.
 図16を見ると、MLシステムでは従来のソフトウェアシステムよりも多くのレベルのテストが必要であることがわかる。
@@ -452,23 +455,25 @@ MLシステムを安全なものにするためのテストと検証には、多
 At a high level, we need to test both the source-code and data for ML Systems.
 高いレベルでは、**MLシステムのソースコードとデータの両方をテストする必要がある**。
 The features created by feature pipelines can have their logic tested with unit tests and their input data checked with data validation tests (e.g., Great Expectations).
-フィーチャー・パイプラインで作成されたフィーチャーは、**そのロジックをユニットテストで**テストし、**入力データをデータ検証テスト（Great Expectationsなど）で**チェックすることができる。
+featureパイプラインによって作成された特徴量は、ユニットテストでそのロジックをテストし、データバリデーションテスト（例えば[Great Expectations](https://www.hopsworks.ai/post/data-validation-for-enterprise-ai-using-great-expectations-with-hopsworks)）で入力データをチェックすることができる。(great expectationsってなんだ??)
 The models need to be tested for performance, but also for a lack of bias against known groups of vulnerable users.
 モデルの性能だけでなく、既知の弱者グループに対する偏りがないかどうかもテストする必要がある。
 Finally, at the top of the pyramid, ML-Systems need to test their performance with A/B tests before they can switch to use a new model.
 最後に、ピラミッドの頂点に位置するMLシステムは、新しいモデルの使用に切り替える前に、A/Bテストでパフォーマンスをテストする必要がある。
 
 When a ML system runs in production, you can also add feature monitoring and model monitoring support to it to try and identify and correct problems in their performance.
-MLシステムが本番稼動する際には、特徴量モニタリングやモデルモニタリングのサポートを追加して、パフォーマンスの問題を特定して修正することもできます。
+MLシステムが本番稼動する際には、**特徴量モニタリングやモデルモニタリング**のサポートを追加して、パフォーマンスの問題を特定して修正することもできます。
 For example, monitoring can identify issues such as drift in feature values or a changing prediction target for a ML model.
 例えば、モニタリングは、特徴量のドリフトやMLモデルの予測ターゲットの変化といった問題を特定することができる。
 
+![figure18]()
+
 Finally, we need to version ML artifacts so that the operators of ML systems can safely update and rollback versions of deployed models.
-最後に、MLシステムのオペレータが、**配備されたモデルのバージョンを安全に更新したりロールバックしたりできるように**、MLの成果物をバージョン管理する必要がある。
+最後に、MLシステムのオペレータが、**配備されたモデルのバージョンを安全に更新したりロールバックしたりできるように、MLの成果物をバージョン管理する**必要がある。
 System support for the push-button upgrade/downgrade of models is one of the holy grails of MLOps.
 プッシュボタンによるモデルのアップグレード／ダウングレードのシステムサポートは、MLOpsの聖杯のひとつである。
 But models need features to make predictions, so model versions are connected to feature versions and models and features need to be upgraded/downgraded synchronously.
-しかし、モデルは予測を行うために特徴量を必要とする。そのため、モデルのバージョンは特徴量のバージョンと連動し、モデルと特徴量は同期してアップグレード／ダウングレードされる必要がある。(そうなの??)
+しかし、モデルは予測を行うために特徴量を必要とする。そのため、**モデルのバージョンは特徴量のバージョンと連動し、モデルと特徴量は同期してアップグレード／ダウングレードされる必要がある**。(なるほど確かに)
 Luckily, you don’t need a year in rotation as a Google SRE to easily upgrade/downgrade models - platform support for versioned ML artifacts should make this a straightforward ML system maintenance operation.
 幸いなことに、モデルのアップグレードやダウングレードを簡単に行うために、Google SREとして1年間ローテーションを組む必要はない。プラットフォームがバージョン管理されたML成果物をサポートすることで、MLシステムのメンテナンスが容易になるはずだ。
 
