@@ -48,10 +48,10 @@ Generally, news recommendation is quite difficult as it poses three major challe
 First, unlike other items such as movies [9] and restaurants [12], news articles are highly time-sensitive and their relevance expires quickly within a short period (see Section 5.1).
 第一に、映画[9]やレストラン[12]のような他のアイテムとは異なり、ニュース記事は非常に時間に敏感であり、その関連性は短期間ですぐに失効する（セクション5.1参照）。
 Out-of-date news are substituted by newer ones frequently, which makes traditional ID-based methods such as collaborative filtering (CF) [41] less effective.
-古いニュースは頻繁に新しいニュースに置き換えられるため、協調フィルタリング（CF）[41]のような**従来のIDベースの手法はあまり有効ではない**。
+時代遅れのニュースは頻繁に新しいニュースに置き換えられるため、協調フィルタリング（CF）[41]などの従来のIDベースの手法は効果が低い。
 
 Second, people are topic-sensitive in news reading as they are usually interested in multiple specific news categories (see Section 5.5).
-第二に、人々はニュースの読み方において**トピックに敏感**であり、複数の特定のニュースカテゴリに関心を持つのが普通である（セクション5.5参照）。
+第二に、人々はニュースの読み方において**トピックに敏感**であり、**複数の特定のニュースカテゴリに関心を持つのが普通**である（セクション5.5参照）。
 How to dynamically measure a user's interest based on his diversified reading history for current candidate news is key to news recommender systems.
 ニュース推薦システムでは、現在の候補ニュースに対する多様な読書履歴に基づいて、**ユーザの関心をいかに動的に測定するかが鍵**となる。
 
@@ -86,7 +86,7 @@ Specifically, for a piece of input news, we first enrich its information by asso
 We also search and use the set of contextual entities of each entity (i.e., its immediate neighbors in the knowledge graph) to provide more complementary and distinguishable information.
 また、**各entityのcontextual entitiesのセット(i.e. knowledge graphの直接の隣接ノード)**を検索して使用し、より補完的で識別可能な情報を提供する。
 Then we design a key component in DKN, namely knowledge-aware convolutional neural networks (KCNN), to fuse the word-level and knowledge-level representations of news and generate a knowledge-aware embedding vector.
-次に、DKNの主要な構成要素である、knowledge-aware convolutional neural networks（KCNN）を設計し、ニュースの単語レベルと知識レベルの表現を融合させ、知識認識埋め込みベクトルを生成する。
+次に、DKNの主要な構成要素である、knowledge-aware convolutional neural networks（KCNN）を設計し、ニュースのword-levelとknowledge-levelの表現を融合し、knowledge-awareな埋め込みベクトルを生成する。
 Finally, we use an attention module to dynamically aggregate a user's history with respect to current candidate news, and feed the user's embedding and the candidate news’ embedding into a deep neural network (DNN) for CTR prediction.
 最後に、**アテンション・モジュールを使用して、現在の候補ニュースに関するユーザの履歴を動的に集約**し(=これはNRMSのみならず王道アプローチなのかも...!)、ユーザの埋め込みと候補ニュースの埋め込みを、CTR予測のためのディープニューラルネットワーク（DNN）に入力する。
 Distinct from existing work [46], KCNN is: 1) multi-channel, as it treats word embedding, entity embedding, and contextual entity embedding of news as multiple stacked channels just like colored images; 2) word-entity-aligned, as it aligns a word and its associated entity in multiple channels and applies a transformation function to eliminate the heterogeneity of the word embedding and entity embedding spaces.
@@ -104,9 +104,9 @@ Empirically, we apply DKN to a real-world dataset from Bing News with extensive 
 The results show that DKN achieves substantial gains over state-of-the-art deep-learning-based methods for recommendation.
 その結果、DKNは最新のディープラーニングに基づく推薦手法と比較して、大幅な向上を達成した。
 Specifically, DKN significantly outperforms baselines by 2.8% to 17.0% on F1 and 2.6% to 16.1% on AUC with a significance level of 0.1.The results also prove that the usage of knowledge and an attention module can bring additional 3.5% and 1.4% in improvement, respectively, in the DKN framework.
-具体的には、DKNは、有意水準0.1で、F1で2.8％から17.0％、AUCで2.6％から16.1％、ベースラインを有意に上回った。結果はまた、DKNフレームワークにおいて、知識と注意モジュールの使用が、それぞれ3.5％と1.4％の追加改善をもたらすことが証明された。
+具体的には、DKNは、有意水準0.1で、F1で2.8％から17.0％、AUCで2.6％から16.1％、ベースラインを有意に上回った。結果はまた、**DKNフレームワークにおいて、知識と注意モジュールの使用が、それぞれ3.5％と1.4％の追加改善をもたらすことが証明された**。
 Moreover, we present a visualization result of attention values to intuitively demonstrate the efficacy of the usage of the knowledge graph in Section 5.5.
-さらに、セクション5.5では、知識グラフの活用の有効性を直感的に示すために、attention valuesの視覚化結果を示す。
+さらに、セクション5.5では、**知識グラフの活用の有効性を直感的に示すために、attention valuesの視覚化**結果を示す。
 
 # 2. Preliminaries 予備知識
 
@@ -122,7 +122,7 @@ Given all the triples in a knowledge graph, the goal of knowledge graph embeddin
 Recently, translation-based knowledge graph embedding methods have received great attention due to their concise models and superior performance.
 近年、**translation-based な** knowledge graph embedding手法は、簡潔なモデルと優れたパフォーマンスにより、大きな注目を集めている。
 To be self-contained, we briefly review these translation-based methods in the following.
-自己完結するために、以下にこれらの**翻訳ベースの手法**を簡単にレビューする。
+自己完結するために、以下にこれらの**translation-based(翻訳ベース)の手法**を簡単にレビューする。
 
 TransE [4] wants h + r ≈ t when (h, r, t) holds, where h , r and t are the corresponding representation vector of h, r and t.
 TransE [4]は、$(h, r, t)$ が成立するときに $\mathbf{h} + \mathbf{r} \approx \mathbf{t}$ を望んでいる。ここで、h、r、tはそれぞれh、r、tの対応する表現ベクトルである。
