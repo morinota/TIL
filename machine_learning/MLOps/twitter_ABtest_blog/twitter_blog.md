@@ -37,12 +37,22 @@ The umber-colored area illustrates false positives — the 5% chance of getting 
 
 We can represent false positive rate and power (of a two-sided test) in the following way:
 
+$$
+
+
+$$
+
 As experimenters, we want to increase our power and decrease the false positive rate. Low statistical power means we can miss a positive change and dismiss an experiment that would have made a difference. It also means we can miss a negative change, and pass through as harmless an experiment that in fact hurts our metrics.
 
 Ensuring we can get sufficient power is a critical step in experiment design.
 
 Sizing an experiment
 There is one big lever we can use to get desired power: the bucket size. We want to allocate enough traffic that we can detect the effect, but not so much that we’re practically shipping the feature. To figure out how large our bucket sizes need to be, let’s take another look at the power formula. Assuming a false positive rate of 5% and a two-tailed test, we see that power can be represented by:
+
+$$
+
+
+$$
 
 Here, Z is the distribution of the standardized mean difference. The difference of mus is the true effect size, and sigmas represent the standard deviation of the metrics in control and treatment buckets, respectively. Sizes of each bucket are represented by n and m. Finally, 1.96 is the C from above when we set false positive rate to 5% (the curious can find derivation in any statistics textbook).
 
@@ -52,6 +62,11 @@ The larger the true effect size, the larger the power.
 The smaller the variance, the smaller the sigma, the larger the power.
 The larger the sample size, the larger the power.
 If we use the convention of requiring power to be at least 80%, and make the simplifying assumptions that we have equal bucket sizes (n = m) and that the sigmas are the same, we can derive a nice formula for sample size n, as a function of true effect size and variance (via Kohavi et al [1]).
+
+$$
+
+
+$$
 
 With this simplified formula in place, we need to get a handle on delta and sigma — the true effect size and standard deviation, respectively.
 

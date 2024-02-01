@@ -1,5 +1,4 @@
 import math
-import statistics
 from scipy.stats import norm
 
 
@@ -37,14 +36,15 @@ def calcurate_sample_size(
 
 
 if __name__ == "__main__":
-    control_ctr_expected = 0.1
-    treatment_ctr_expected = 0.12
+    control_ctr_mean_expected = 0.20
+    treatment_ctr_mean_expected = 0.22
     statistical_power = 0.8
     significance_level = 0.05
 
     sample_size = calcurate_sample_size(
-        control_ctr_expected,
-        treatment_ctr_expected,
+        control_ctr_mean_expected,
+        treatment_ctr_mean_expected,
         statistical_power,
         significance_level,
     )
+    print(f"サンプルサイズ: {sample_size}人")

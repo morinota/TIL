@@ -381,9 +381,9 @@ Netflixの仕組み』を様々な角度から幅広く学ぶことができる�
 ## Summary 要約
 
 At Netflix, we’ve invested in data science teams that use A/B tests, other experimentation paradigms, and the scientific method more broadly, to support continuous innovation on our product offerings for current and future members.
-Netflixでは、A/Bテストやその他の実験パラダイム、より広範な科学的手法を活用するデータサイエンスチームに投資し、現在および将来の会員向けに提供する製品の継続的なイノベーションをサポートしています。
+Netflixでは、A/Bテストやその他の実験パラダイム、より広範な科学的手法を活用する**データサイエンスチームに投資**し、現在および将来の会員向けに提供する製品の継続的なイノベーションをサポートしています。
 In tandem, we’ve invested in building out an internal experimentation platform (XP) that supports the scale and complexity of our experimentation and learning program.
-それと並行して、私たちは実験と学習プログラムの規模と複雑さをサポートする社内実験プラットフォーム（XP）の構築に投資してきました。
+それと並行して、私たちは実験と学習プログラムの規模と複雑さをサポートする**社内実験プラットフォーム（XP）の構築に投資**してきました。
 
 In practice, the dividing line between these two investments is blurred and we encourage collaboration between XP and business-oriented data scientists, including through internal events like A/B Experimentation Workshops and Causal Inference Summits.
 実際には、この2つの投資の境界線は曖昧であり、A/B実験ワークショップや因果推論サミットなどの社内イベントを通じて、XPとビジネス志向のデータサイエンティストとのコラボレーションを奨励している。

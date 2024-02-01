@@ -16,7 +16,7 @@ But without a little magic, these basics are still not enough.
 しかし、ちょっとした魔法がなければ、これらの基本はまだ十分ではない。
 
 The secret sauce that turns the raw ingredients of experimentation into supercharged product innovation is culture.
-実験の原材料を超高速の製品革新に変える秘密のソースは、文化である。
+**実験の原材料を超高速の製品革新に変える秘密のソースは、文化**である。
 There are never any shortcuts when developing and growing culture, and fostering a culture of experimentation is no exception.
 文化を発展させ成長させることに近道はなく、実験文化の育成も例外ではない。
 Building leadership buy-in for an approach to learning that emphasizes A/B testing, building trust in the results of tests, and building the technical capabilities to execute experiments at scale all take time — particularly within an organization that’s new to these ideas.
