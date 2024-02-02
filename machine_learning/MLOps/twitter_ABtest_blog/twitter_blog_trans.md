@@ -226,25 +226,26 @@ We call attention to metrics for which no significant effect is detected, and th
 Consider a hypothetical experiment that attempts to improve the “Who To Follow” suggestion algorithm.
 Who To Follow "サジェスト・アルゴリズムの改善を試みる仮想実験を考えてみよう。
 Let’s imagine that historical experiments of this sort tend to produce a gain of 1% more follows.
-この種の歴史的な実験では、1％増の利得が得られる傾向があると想像してみよう。
+この種の歴史的な実験では、1％増の利得が得られる傾向があると想像してみよう。(これが期待するeffect sizeかな??)
 In the current experiment, we measure a 1.5% observed effect but it isn’t statistically significant.
 今回の実験では、1.5％の効果が観測されたが、統計的には有意ではなかった。
 We also calculate that based on the current sample size, MDE is 5%.
-また、現在のサンプル数から計算すると、MDEは5％となる。
+また、現在のサンプル数から計算すると、MDEは5％となる。 (0.8 MDEが5%)
 
 Based on past experience, we know that if there is a true effect, it’s unlikely to be above 5%.
-過去の経験から、もし本当の効果があったとしても、5％を超えることはまずないことがわかっている。
+**過去の経験から、もし本当の効果があったとしても、5％を超えることはまずないことがわかっている**。
 With the MDE we measured, it’s unlikely we would call a “real” 1.5% change statistically significant.
 私たちが測定したMDEでは、"実質的な "1.5％の変化を統計的に有意と呼ぶことはまずないだろう。
 In fact, the graph below demonstrates that only 30% of experiments of this size would detect a 1.5% change as statistically significant.
-実際、下のグラフは、この規模の実験では、1.5％の変化を統計的に有意であると検出できるのはわずか30％であることを示している。
+実際、下のグラフは、この規模の実験では、**1.5％の変化を統計的に有意であると検出できるのはわずか30％であること**を示している。
 Considering the high MDE, instead of concluding that the proposed improvement has no effect, it’s better to increase the sample size and re-run the experiment with higher power.
-MDEが高いことを考慮すると、提案された改良の効果がないと結論づけるのではなく、サンプルサイズを増やし、より高い検出力で実験を再実行する方がよい。
+MDEが高いこと(=minimum detectable effectのサイズが期待するeffect sizeよりも大きすぎていること...!:thinking:)を考慮すると、提案された改善が効果がないと結論付けるのではなく、サンプルサイズを増やして、より高い検出力で再実行する方が良い。
+![]()
 
 The Twitter experimentation framework, DDG, provides visual feedback to experimenters by coloring statistically significant positive changes green, and statistically significant negative changes red.
-Twitterの実験フレームワークであるDDGは、統計的に有意な正の変化を緑色に、統計的に有意な負の変化を赤色に着色することで、実験者に視覚的なフィードバックを提供する。
+Twitterの実験フレームワークであるDDGは、統計的に有意な正の変化を緑色に、統計的に有意な負の変化を赤色に着色することで、**実験者に視覚的なフィードバックを提供**する。
 We color likely-underpowered metrics a shade of yellow.
-私たちは、力不足と思われるメトリクスの色を黄色に染めている。
+私たちは、**検出力不足の可能性のあるメトリクスを黄色に着色**する。
 The intensity of the color is used to call experimenters’ attention to the actual p-values when we see statistical significance, and to potential power problems when we do not.
 色の濃さは、統計的有意性が見られる場合は実際のp値に、そうでない場合は潜在的な検出力の問題に、実験者の注意を喚起するために使われる。
 The intensity of red and green colors depends on the p-value (the more intense, the lower the p-value).
