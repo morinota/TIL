@@ -402,7 +402,7 @@ $$
 as source of input 9, where g is the transformation function.
 を入力のソースとして導入する。ここでgは変換関数である。
 In KCNN, g can be either linear
-KCNNでは、gは線形である。
+KCNNでは、gは線形
 
 $$
 g(\mathbf{e}) = M \mathbf{e}
@@ -462,6 +462,7 @@ where m is the number of filters.
 ここで、$m$ はフィルターの数である。
 
 <!-- ここまで読んだ -->
+<!-- ここまでまとめた! -->
 
 ## 4.4. Attention-based User Interest Extraction attentionに基づくユーザーの興味抽出
 

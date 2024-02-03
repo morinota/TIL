@@ -28,16 +28,11 @@ n週連続推薦システム系論文読んだシリーズ x週目の記事に�
 
 ### DKNの概要
 
-- 本論文は新しいコンテンツベース推薦手法 **DKN(deep knowledge-aware network)** を提案。
-
-  - DKNは、ニュース推薦においてknowledge graphを組み込んで外部知識を活用する。
-
+- 本論文は、ニュース推薦においてknowledge graphを組み込んで外部知識を活用する新しいコンテンツベース推薦手法 **DKN(deep knowledge-aware network)** を提案。
 - DKN推論時の観察可能な振る舞い:
-
   - 入力: 1つのニュース候補と1人のユーザのクリック履歴
   - 出力: ユーザがそのニュースをクリックする確率。
   - (この振る舞いはまさに一般的なcontent-basedのニュース推薦モデルって感じ:thinking:)
-
 - DKN推論時の内部のざっくりした動作:
   - まず、入力されたニュースに対して、ニュースの内容を表す**テキストの各単語をknowledge graphのentityに関連付ける**。
   - また、**各entityのcontextual entitiesのセット**(i.e. knowledge graph内での直接の隣接ノード)も関連付ける。
@@ -166,19 +161,92 @@ $$
 
 ### DKNの重要なcomponent: KCNNについて
 
-- KCNN(knowledge-aware convolutional neural networks)の2つの特徴:
+#### KCNNの入力データが作られる流れ:
 
-  - ニュースの単語埋め込み、entity埋め込み、contextual entity埋め込みを、stackされた**3つのチャンネルとして扱う**。(つまり、**カラー画像のようなデータ**として扱う...!:thinking:)
-  - **3種の埋め込みをalign**させ、単語埋め込み空間とentity埋め込み空間のheterogeneity(異質性, i.e. 違い)を除去するために、transformation function(変換関数?)を用いる。**word-entity-aligned**である。
+- 1. 長さ $n$ のニュースタイトル $t$ の単語sequenceを入力として受け取る。
+  - $t = w_{1:n} = [w_{1}, w_{2}, \cdots, w_{n}]$
+- 2. 言語モデル等によって、各単語 $w_{i}$ は、対応する単語埋め込み $\mathbf{w}_{i}$ を関連付けられる。(これはsemanticな埋め込み:thinking:) ($d$ はsemantic埋め込みの次元数。)
+  - よって単語埋め込みsequenceはこんな感じ: $\mathbf{w}_{1:n} = [\mathbf{w}_{1} \mathbf{w}_{2} \cdots \mathbf{w}_{n}] \in \mathbb{R}^{d \times n}$
+- 3. さらにKnowledge Distillationによって、各単語 $w_{i}$ は、entity埋め込み $e_{i} \in \mathbb{R}^{k \times 1}$ とcontextual埋め込み $\bar{e}_{i} \in \mathbb{R}^{k \times 1}$ に関連付けられる。($k$ は知識グラフ埋め込みの次元数)
+  - (どのentityにも紐づかない助詞みたいな単語もあるだろうけど、それらは削除するのかな:thinking:)
+- よって、1つのニュースのKCNNへの入力sequenceは、**各単語に対して3種の埋め込み(単語埋め込み、entity埋め込み、contexual埋め込み)が紐付けられたsequence**になる。
 
-- KCNNの入力データが作られる流れ:
-  - 1. 長さ $n$ のニュースタイトル $t$ の単語sequenceを入力として受け取る。
-    - $t = w_{1:n} = [w_{1}, w_{2}, \cdots, w_{n}]$
-  - 2. 言語モデル等によって、各単語 $w_{i}$ は、対応する単語埋め込み $\mathbf{w}_{i}$ を関連付けられる。(これはsemanticな埋め込み:thinking:) ($d$ はsemantic埋め込みの次元数。)
-    - よって単語埋め込みsequenceはこんな感じ: $\mathbf{w}_{1:n} = [\mathbf{w}_{1} \mathbf{w}_{2} \cdots \mathbf{w}_{n}] \in \mathbb{R}^{d \times n}$
-  - 3. さらにKnowledge Distillationによって、各単語 $w_{i}$ は、entity埋め込み $e_{i} \in \mathbb{R}^{k \times 1}$ とcontextual埋め込み $\bar{e}_{i} \in \mathbb{R}^{k \times 1}$ に関連付けられる。($k$ は知識グラフ埋め込みの次元数)
-    - (どのentityにも紐づかない助詞みたいな単語もあるだろうけど、それらは削除するのかな:thinking:)
-  - よって、1つのニュースのKCNNへの入力sequenceは、**各単語に対して3種の埋め込み(単語埋め込み、entity埋め込み、contexual埋め込み)が紐付けられたsequence**になる。
+#### KCNNの観察可能な振る舞い:
+
+- 入力: ニュースタイトル $t$ の単語に関する3種の埋め込みsequence(単語埋め込み、entity埋め込み、contextual埋め込み)
+- 出力: ニュースタイトル $t$ のknowledge-awareな埋め込み表現。
+
+#### KCNNの内部の動作:
+
+- KCNNはどうやって、1つのsemantic-levelな埋め込み表現と2つのknowledge-levelな埋め込み表現を融合して、knowledge-awareなニュース表現を出力してる?
+- そのための2つの工夫:
+
+  - 工夫1. word-entity-aligned: **3種の埋め込みをalign**させ、単語埋め込み空間とentity埋め込み空間のheterogeneity(異質性, i.e. 違い)を除去するために、**transformation function(変換関数?)を用いる**。
+  - 工夫2. ニュースの単語埋め込み、entity埋め込み、contextual entity埋め込みを、stackされた**3つのチャンネルとして扱う**。(つまり、**カラー画像のようなデータ**として扱う...!:thinking:)
+
+- (工夫1!)まずsemantic埋め込みとentity埋め込みは埋め込み空間が違うし次元数も全然違うので、整合するために、2種のentity埋め込みに対して transformed function $g$ をかませる。(なので、semantic埋め込み側に合わせるイメージ...!)
+  - 以下の数式は、変換されたentity埋め込みとcontextual埋め込み:
+
+$$
+g(e_{1:n}) = [g(e_{1}) g(e_{2}) \cdots g(e_{n})]
+\tag{12}
+$$
+
+$$
+g(\bar{e}_{1:n}) = [g(\bar{e}_{1}) g(\bar{e}_{2}) \cdots g(\bar{e}_{n})]
+\tag{13}
+$$
+
+- transformed function $g$ は、線形関数 or 非線形関数で、以下のように定義される:
+  - 式(14)が線形関数ver.、式(15)が非線形関数ver.。
+  - ここで、$M \in \mathbb{R}^{d \times k}$ は学習可能な変換行列、$\mathbf{b} \in \mathbb{R}^{d \times 1}$ は学習可能なbias項。
+  - ($d$ はsemantic埋め込みの次元数、$k$ はentity埋め込みの次元数)
+  - transformed functionは連続的なので、entity埋め込み & context埋め込みを元の空間的関係性を保ったまま、entity埋め込み空間からsemantic埋め込み空間にmappingできる。
+
+$$
+g(\mathbf{e}) = M \mathbf{e}
+\tag{14}
+$$
+
+$$
+g(\mathbf{e}) = \tanh(M \mathbf{e} + \mathbf{b})
+\tag{15}
+$$
+
+- (工夫2!) 工夫1によって3種の埋め込みが同じサイズになったので、それらをstackして、3つのチャンネルとして扱う(RGB画像みたいに!)。
+  - 以下の式のようにstackし、multi-channel入力 $W$ を作る。
+
+$$
+W = [[w_1, g(e_1), (\bar{e}_1)], [w_2, g(e_2), g(\bar{e}_2)], \cdots, [w_n, g(e_n), g(\bar{e}_n)]]
+\in \mathbb{R}^{d \times n \times 3}
+\tag{16}
+$$
+
+- このmulti-channel入力 $W$ に対して、CNNによる畳み込みを行う。
+  - 異なるウィンドウサイズ $l$ を持つ複数のフィルター $h \in \mathbb{R}^{d \times l \times 3}$ を適用する。
+  - 部分行列 $W_{i:i+l-1}$ に対するフィルター $h$ のlocal activationは以下の式のように書ける。
+
+$$
+c_i^{h} = f(h * W_{i:i+l-1} + b)
+\tag{17}
+$$
+
+- その後、畳み込み層の出力を以下の式のようにmax-poolingして、最大の特徴量を得る:
+
+$$
+\tilde{c}^{h} = \max(\mathbf{c}^{h}) = \max({c_{1}^{h}, c_{2}^{h}, \cdots, c_{n-l+1}^{h}})
+\tag{18}
+$$
+
+- 全ての特徴量 $\tilde{c}_{h_i}$ はconcatされ、入力ニュースタイトル $t$ のknowledge-awareな埋め込み表現 $e(t)$ として出力される:
+  - $m$ はフィルターの数。
+
+$$
+e(t) = [\tilde{c}^{h_{1}}, \tilde{c}^{h_{2}}, \cdots, \tilde{c}^{h_{m}}]
+\tag{19}
+$$
+
+### その他の重要なcomponent: Attention に基づくユーザ埋め込みの生成
 
 ## どうやって有効だと検証した?
 
@@ -187,3 +255,6 @@ $$
 ## 次に読むべき論文は？
 
 ## お気持ち実装
+
+$$
+$$
