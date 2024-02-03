@@ -216,13 +216,14 @@ The barrier to entry is too high - only a very few people have the software engi
 For other mortals - Data Scientists, Data Engineers, ML Engineers - the maps might as well be a riddle for finding buried treasure.
 データ・サイエンティスト、データ・エンジニア、MLエンジニアといった他の人間にとって、地図は埋もれた宝を見つけるための謎解きのようなものかもしれない。
 
-![](https://assets-global.website-files.com/618399cd49d125734c8dec95/6502aeb3d68f1808344bea82_figure%2010_lightbox.png)
+![figure10](https://assets-global.website-files.com/618399cd49d125734c8dec95/6502aeb3d68f1808344bea82_figure%2010_lightbox.png)
 Figure 10: ML Systems are fed new data with pipelines enabling them to continually drive business value.
+図10: MLシステムは、ビジネス価値を継続的に生み出すために、パイプラインを使って新しいデータを供給される。
 
 Let’s take a step back and examine the problem of making ML systems from first principles.
 一歩引いて、**第一原理からMLシステムを作る問題**を検証してみよう。
 We will skip static datasets where you only make one-off predictions on a static dataset - this is not a ML System.
-静的なデータセットで1回きりの予測だけを行うような静的なデータセットはスキップします - これはMLシステムではありません。(うんうん...!:thinking:)
+**静的なデータセットで1回きりの予測だけを行うような静的なデータセットはスキップします - これはMLシステムではありません。**(うんうん...!:thinking:)
 
 Firstly, a ML System uses a trained ML model to make predictions on new data to solve a “prediction problem” of interest.
 まず第一に、MLシステムは、興味のある「予測問題」を解決するために、新しいデータに対して予測を行うために学習されたMLモデルを使用する。
@@ -263,7 +264,7 @@ The confusion about what the ML pipeline does (does it feature engineer and trai
 The FTI map is the same for both batch ML systems and real-time ML systems.
 **FTIマップはバッチMLシステムでもリアルタイムMLシステムでも同じである。**
 
-![](https://assets-global.website-files.com/618399cd49d125734c8dec95/6502aeee69553d37d6d1197a_figure%2011_lightbox.png)
+![figure11](https://assets-global.website-files.com/618399cd49d125734c8dec95/6502aeee69553d37d6d1197a_figure%2011_lightbox.png)
 
 The feature pipeline can be a batch program or a streaming program.
 フィーチャー・パイプラインは、バッチ・プログラムでもストリーミング・プログラムでもよい。(うんうん...!)
@@ -272,8 +273,12 @@ The training pipeline can output anything from a simple XGBoost model to a fine-
 Finally, the inference pipeline can be a batch program that produces a batch of predictions to an online service that takes requests from clients and returns predictions in real-time.
 最後に、推論パイプラインは、クライアントからのリクエストを受けてリアルタイムで予測を返すオンラインサービス、もしくは予測のバッチを生成するバッチプログラムとすることができる。
 
+![figure12]()
+Figure 12: Choose the best language/framework for your ML pipelines.
+図12：MLパイプラインに最適な言語/フレームワークを選択する。
+
 One major advantage of FTI pipelines is it is an open architecture.
-FTIパイプラインの大きな利点は、オープン・アーキテクチャであることだ。(とは??)
+**FTIパイプラインの大きな利点は、オープン・アーキテクチャ**であることだ。(とは??)
 You can use Python, Java or SQL.
 Python、Java、SQLを使うことができる。
 If you need to do feature engineering on large volumes of data, you can use Spark or DBT or Beam.
@@ -285,27 +290,33 @@ Online inference pipelines are, however, nearly always in Python as models are t
 
 ![figure13]()
 Figure 13: Pick the best framework for your feature pipeline based on your requirements. If you have small data to process, Pandas may be fine, but when data volumes exceed what a single node can process, you may move to PySpark. If you need “fresh” features, use a stream processing engine.
+図13：要件に基づいて特徴量パイプラインに最適なフレームワークを選択する。データ処理するのが小さい場合はPandasでも問題ないかもしれませんが、データ量が単一ノードで処理できる量を超えると、PySparkに移行するかもしれません。新鮮な特徴が必要な場合は、ストリーム処理エンジンを使用します。
 
 In figure 13, we can see the value of pluggable feature pipelines.
-図13を見ると、プラグ可能なフィーチャー・パイプラインの価値がわかる。
+図13を見ると、pluggableな(i.e. 自由に着脱や拡張が可能な??)フィーチャー・パイプラインの価値がわかる。
 For a given feature ingestion problem, you can easily pick the best framework, depending on the size of the data that will be ingested in a pipeline run and the freshness requirements for the feature data created - use streaming or on-demand features if you need very fresh (near real-time) feature data.
 あるフィーチャインジェストの問題に対して、パイプライン実行でインジェストされるデータのサイズと、作成されるフィーチャデータの鮮度要件に応じて、最適なフレームワークを簡単に選択できます。
+
+![figure14]()
+Figure 14: Choose the best orchestrator for your ML pipeline/service.
+図14：MLパイプライン/サービスに最適なorcheestratorを選択する。
 
 The FTI pipelines are also modular and there is a clear interface between the different stages.
 FTIパイプラインはモジュール化されており、**異なるステージ間には明確なインターフェイスがある**。(=ポートアンドアダプター...!)
 Each FTI pipeline can be operated independently.
 それぞれのFTIパイプラインは独立して操作できる。
 Compared to the monolithic ML pipeline, different teams can now be responsible for developing and operating each pipeline.
-モノリシックなMLパイプラインに比べて、異なるチームがそれぞれのパイプラインの開発と運用を担当できるようになった。
+**モノリシックなMLパイプラインに比べて、異なるチームがそれぞれのパイプラインの開発と運用を担当できるようになった**。
 The impact of this is that for orchestration, for example, one team could use one orchestrator for a feature pipeline and a different team could use a different orchestrator for the batch inference pipeline.
-この影響は、例えばオーケストレーションの場合、あるチームはあるオーケストレーターを特徴量パイプラインに使い、別のチームは別のオーケストレーターをバッチ推論パイプラインに使うことができる。
+この影響は、例えばorchestrationの場合、あるチームがフィーチャーパイプラインに1つのorchestratorを使い、別のチームがバッチ推論パイプラインに別のorchestratorを使うことができるということです。
+(orchestrator = 複数のcomponentやserviceが連動して動作するシステムやアプリケーションにおいて、それらの部品の実行順序や相互作用を自動で管理・調整する役割を担うもの。)
 Alternatively, you could use the same orchestrator for the three different FTI pipelines for a batch ML system.
 あるいは、バッチMLシステムの3つの異なるFTIパイプラインに同じオーケストレーターを使うこともできる。
 Some examples of orchestrators that can be used in ML systems include general-purpose, feature-rich orchestrators, such as Airflow, or lightweight orchestrators, such as Modal, or managed orchestrators offered by feature platforms.
-MLシステムで使用可能なオーケストレータの例としては、Airflowのような汎用的で特徴量豊富なオーケストレータや、Modalのような軽量なオーケストレータ、あるいは特徴量プラットフォームが提供するマネージド・オーケストレータなどがある。
+MLシステムで使用可能なorchesratorの例としては、Airflowのような汎用性が高く機能が豊富なorchesrator、Modalのような軽量なorchesrator、特徴量プラットフォームが提供する管理されたorchesratorなどがあります。
 
 Some of our FTI pipelines, however, will not need orchestration.
-しかし、FTIパイプラインの中には、オーケストレーションを必要としないものもある。
+しかし、FTIパイプラインの中には、orchestrationを必要としないものもある。
 Training pipelines can be run on-demand, when a new model is needed.
 トレーニングパイプラインは、新しいモデルが必要なときにオンデマンドで実行できる。
 Streaming feature pipelines and online inference pipelines run continuously as services, and do not require orchestration.
@@ -323,7 +334,7 @@ Figure 15: Connect your ML pipelines with a Feature Store and Model Registry
 Finally, we show how we connect our FTI pipelines together with a stateful layer to store the ML artifacts - features, training/test data, and models.
 最後に、FTIパイプラインを、MLの成果物（特徴、トレーニング／テストデータ、モデル）を保存する**ステートフルレイヤー(=保存先?)とどのように接続するか**を示します。
 Feature pipelines store their output, features, as DataFrames in the feature store.
-フィーチャー・パイプラインは、その出力であるフィーチャーをDataFramesとしてフィーチャーストアに保存する。
+フィーチャー・パイプラインは、その出力であるフィーチャーをDataFramesとして**フィーチャーストアに保存**する。
 Incremental tables store each new update/append/delete as separate commits using a table format (we use Apache Hudi in Hopsworks).
 インクリメンタルテーブルは、各新規更新/追加/削除を、テーブルフォーマットを使って別々のコミットとして保存する（HopsworksではApache Hudiを使っている）。
 Training pipelines read point-in-time consistent snapshots of training data from Hopsworks to train models with and output the trained model to a model registry.
