@@ -434,7 +434,7 @@ Std-Errを減らすのに有効な方法が3つある：
   3.2.1の例を参照のこと。 - b. Use OEC components that have inherently lower variability, i.e., the StdDev, σ, is smaller.
 - **本質的にばらつきが小さい、すなわち標準偏差σが小さいOEC componentsを使用する**。(なるべく安定したmetricを選べってことかな:thinking:)
   For example, conversion probability (0–100%) typically has lower Std-Dev than number of purchase units (typically small integers), which in turn has a lower Std-Dev than revenue (real-valued).
-  例えば、コンバージョン確率（0-100％）は、通常、購入ユニット数（通常、小さな整数）よりもStd-Devが低く、その結果、収益（実数値）よりもStd-Devが低くなる。
+  **例えば、コンバージョン確率（0-100％）は、通常、購入ユニット数（通常、小さな整数）よりもStd-Devが低く**、その結果、収益（実数値）よりもStd-errも小さくなる。(Std-ErrはStd-Devの推定値なので...!)
   See the example in 3.2.1.
   3.2.1の例を参照のこと。
 - c. Lower the variability of the OEC by filtering out users who were not exposed to the variants, yet were still included in the OEC.
@@ -515,19 +515,26 @@ Eコマースサイトがあり、実験期間中に訪問したユーザの5％
 Those purchasing spend about $75.
 購入する人は75ドルほど使う。
 The average user therefore spends $3.75 (95% spend $0).
-そのため、平均的な利用者は3.75ドル（95％は0ドル）を使う。
+そのため、平均的な利用者は3.75ドル（95％は0ドルを使うので）を使う。
 Assume the standard deviation is $30.
-標準偏差を30ドルとする。
+標準偏差を30ドルとする。(=OECの変動性、ばらつき度合い)(=これは実験期間中のデータを使って推定してるっぽい...!:thinking:)
 If you are running an A/B test and want to detect a 5% change to revenue, you will need over 409,000 users to achieve the desired 80% power, based on the above formula: 16 ∗ 302/(3.75 ∗ 0.05)2.
-A/Bテストを実施し、収益に対する5%の変化を検出したい場合、上記の式に基づき、望ましい80%の検出力を達成するためには、409,000人以上のユーザーが必要となります： 16 ∗ 302/(3.75 ∗ 0.05)2.
+A/Bテストを実施し、収益に対する5%の変化 (=treatmentにより期待する効果量...!) を検出したい場合、上記の式に基づき、望ましい80%の検出力を達成するためには、409,000人以上のユーザが必要となります： $16 \times \frac{30^2}{(3.75 \times 0.05)}^2$。
+
 If, however, you were only looking for a 5% change in conversion rate (not revenue), a lower variability OEC based on point 3.b can be used.
-しかし、コンバージョン率（収益ではなく）の5％の変化だけを求めているのであれば、ポイント3.bに基づくより低い変動性のOECを使用することができる。
+しかし、もし、収益ではなく、**コンバージョン率 (=つまりbinary metric...!:thinking:) の5%の変化(=効果量)を検出したい場合**、3.bのポイントに基づいて、低変動性(=標準偏差の低い!)のOECを使用することができる。
 Purchase, a conversion event, is modeled as a Bernoulli trial with p = 0.05 being the probability of a purchase.
-コンバージョンイベントである購入は、ベルヌーイ試行としてモデル化され、p = 0.05が購入の確率となる。
+**コンバージョンイベントである購入は、ベルヌーイ試行としてモデル化され、p = 0.05が購入の確率となる**。(うんうん...!)
 The standard deviation of a Bernoulli is √p(1 − p) and thus you will need less than 122,000 users to achieve the desired power based on 16 ∗ (0.05 · (1 − 0.05))/(0.05 · 0.05)2.
-ベルヌーイの標準偏差は√p(1 - p)であるため、16 ∗ (0.05 - (1 - 0.05))/(0.05 - 0.05)2に基づいて望ましいパワーを達成するには、122,000人未満のユーザーが必要である。
-Using conversion as the OEC instead of purchasing spend can thus reduce the sample size required for the experiment by a factor of 3.3.Because the number of site visitors is approximately linear in the running time for the experiment (the number of distinct users is sublinear due to repeat visitors, but a linear approximation is reasonable for most sites), this can reduce the running time of the experiment from 6 weeks to 2 weeks, and thus is worth considering.
-サイト訪問者数は、実験の実行時間に対してほぼ線形であるため（リピーターがいるため、明確なユーザー数は非線形であるが、ほとんどのサイトでは線形近似が妥当である）、実験の実行時間を6週間から2週間に短縮することができ、検討に値する。
+ベルヌーイ試行の標準偏差は $\sqrt{p(1-p)}$ であり、したがって、 $16 \times \frac{0.05 \times (1-0.05)}{0.05 \times 0.05}^2$ に基づいて、望ましい検出力を達成するためには、122,000人以下のユーザが必要となります。
+
+Using conversion as the OEC instead of purchasing spend can thus reduce the sample size required for the experiment by a factor of 3.3.
+したがって、購入額ではなくコンバージョンをOECとして使用することで、実験に必要なサンプルサイズを 1/3.3 倍に減らすことができる。
+Because the number of site visitors is approximately linear in the running time for the experiment (the number of distinct users is sublinear due to repeat visitors, but a linear approximation is reasonable for most sites), this can reduce the running time of the experiment from 6 weeks to 2 weeks, and thus is worth considering.
+サイト訪問者数は実験の実行時間に対してほぼ線形であるため(繰り返し訪問者のため、ユニークユーザ数は亜線形であるが、ほとんどのサイトにとって線形近似は合理的である)、**これにより実験の実行時間を6週間から2週間に短縮することができ、したがって検討する価値がある**。
+(要は毎日同じ数だけユーザが訪問すると仮定して...! あれ? この場合のサンプルサイズって、同一ユーザが異なる日に訪問したら2って考えていいのかな。実験単位はユーザだとして。)
+
+<!-- ここまで読んだ! -->
 
 ### 3.2.2. Example: impact of reduced sensitivity on the sample size 例 感度の低下がサンプルサイズに与える影響
 
