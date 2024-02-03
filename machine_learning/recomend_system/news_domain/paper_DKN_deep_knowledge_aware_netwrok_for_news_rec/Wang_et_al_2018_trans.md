@@ -136,9 +136,10 @@ $$
 
 is low if (h, r, t) holds, and high otherwise.
 **スコア関数は $(h, r, t)$ が成立するとき(=hとtに関連があるとき)に低く、そうでないとき(=hとtに関連がない時)に高くなる**。
+(このスコア関数を全てのtripletに対して最小化するような損失関数を設計して、entityとrelationの埋め込みを学習する感じ...!:thinking)
 
 TransH [48] allows entities to have different representations when involved in different relations by projecting the entity embeddings into relation hyperplanes:
-TransH [48]は、entityの埋め込みを関係の超平面に射影することで、異なる関係に関与するときにentityが異なる表現を持つことを許す。
+TransH [48]は、entityの埋め込みをrelation 超平面に射影することで、異なるrelationに関与するときに異なる表現を持つことを許す。
 
 $$
 f_r(h,t) = || \mathbf{h}_{\perp} + \mathbf{r} - \mathbf{t}_{\perp} ||^{2}_{2}
@@ -146,10 +147,10 @@ f_r(h,t) = || \mathbf{h}_{\perp} + \mathbf{r} - \mathbf{t}_{\perp} ||^{2}_{2}
 $$
 
 where h ⊥ = h − w ⊤ r h w r and t ⊥ = t − w ⊤ r t w r are the projections of h and t to the hyperplane w r , respectively, and ‖w r ‖2 = 1.
-ここで、$\mathbf{h}_{\perp} = \mathbf{h} - \mathbf{w}_{r}^{\top} \mathbf{h} \mathbf{w}_{r}$ と $\mathbf{t}_{\perp} = \mathbf{t} - \mathbf{w}_{r}^{\top} \mathbf{t} \mathbf{w}_{r}$ は、それぞれhとtを超平面 $\mathbf{w}_{r}$ に射影したものであり、$\|\mathbf{w}_{r}\|_{2} = 1$ である。
+ここで、$\mathbf{h}_{\perp} = \mathbf{h} - \mathbf{w}_{r}^{\top} \mathbf{h} \mathbf{w}_{r}$ と $\mathbf{t}_{\perp} = \mathbf{t} - \mathbf{w}_{r}^{\top} \mathbf{t} \mathbf{w}_{r}$ は、それぞれ $\mathbf{h}$ と $\mathbf{t}$ を超平面 $\mathbf{w}_{r}$ に射影したものであり、 $\|\mathbf{w}_{r}\|_{2} = 1$ である。
 
 TransR [26] introduces a projection matrix M r for each relation r to map entity embeddings to the corresponding relation space.
-TransR[26]は、各関係rに対して射影行列 $M_{r}$ を導入し、entity埋め込みを対応する関係空間にマッピングする。
+TransR[26]は、各 relation r に対して、entity埋め込みを対応するrelation空間にマッピングするための射影行列 $M_{r}$ を導入する。
 The score function in TransR is defined as
 TransRのスコア関数は次のように定義される。
 
@@ -292,11 +293,11 @@ The process of knowledge distillation is illustrated in Figure 4, which consists
 First, to distinguish knowledge entities in news content, we utilize the technique of entity linking [31, 36] to disambiguate mentions in texts by associating them with predefined entities in a knowledge graph.
 まず、ニュース・コンテンツ内のknowledge entityを区別するために、**entity linking** [31, 36] (固有表現抽出の一種?) の技術を利用して、テキスト内のメンションを知識グラフ内の事前定義されたエンティティと関連付けることによって、テキスト内のメンションを明確にする。
 Based on these identified entities, we construct a sub-graph and extract all relational links among them from the original knowledge graph.
-これらの識別されたエンティティに基づいて、サブグラフを構築し、元の知識グラフからエンティティ間のすべての関係リンクを抽出する。(サブグラフってどうやってつくるんだろ、同じ文章内に含まれていたらhogehoge?)
+これらの識別されたエンティティに基づいて、サブグラフを構築し、元の知識グラフからエンティティ間のすべての関係リンクを抽出する。(knowledge graph全体が必要なわけじゃなくて、今回のデータに登場するentityだけが含まれるサブグラフを作るってことかな...!:thinking:)
 Note that the relations among identified entities only may be sparse and lack diversity.
 識別されたエンティティ間の関係は、スパースで多様性に欠ける可能性があることに注意する。
 Therefore, we expand the knowledge sub-graph to all entities within one hop of identified ones.
-したがって、知識サブグラフを、識別されたエンティティから1ホップ以内のすべてのエンティティに拡張する。(これでsparsityを緩和しようってことか)
+したがって、知識サブグラフを、識別されたエンティティから1ホップ以内のすべてのエンティティに拡張する。(これでcontexual entitiesを含めているのか)
 Given the extracted knowledge graph, a great many knowledge graph embedding methods, such as TransE [4], TransH [48], TransR [26], and TransD [18], can be utilized for entity representation learning.
 抽出された知識グラフがあれば、TransE [4]、TransH [48]、TransR [26]、TransD [18]など、非常に多くの知識グラフ埋め込み手法をエンティティ表現学習に利用することができる。(ノード間が繋がってたら近くに投影する、みたいな感じで、ベクトル空間に埋め込むのか...!)
 Learned entity embeddings are taken as the input for KCNN in the DKN framework.
@@ -305,7 +306,7 @@ Learned entity embeddings are taken as the input for KCNN in the DKN framework.
 It should be noted that though state-of-the-art knowledge graph embedding methods could generally preserve the structural information in the original graph, we find that the information of learned embedding for a single entity is still limited when used in subsequent recommendations.
 最新の知識グラフ埋め込み手法は、一般的に元のグラフの構造情報を保持できるが、単一のentityの学習された埋め込みの情報は、後続の推薦で使用するときにはまだ限られていることに注意する。(このentity埋め込みを直接使うのはいまいちで、fine-tuningが必要みたいなこと??)
 To help identify the position of entities in the knowledge graph, we propose extracting additional contextual information for each entity.
-知識グラフ内のエンティティの位置を特定するのを助けるために、各エンティティに追加の文脈情報を抽出することを提案する。
+**知識グラフ内のエンティティの位置を特定するのを助けるために、各エンティティに追加の文脈情報を抽出することを提案する**。
 The “context” of entity e is defined as the set of its immediate neighbors in the knowledge graph, i.e.,
 エンティティ $e$ の「コンテキスト」は、**知識グラフ内のその直接の隣接ノードの集合**と定義される。つまり、
 
@@ -329,7 +330,7 @@ Since the contextual entities are usually closely related to the current entity 
 Figure 5 illustrates an example of context.
 図5にコンテキストの例を示す。
 In addition to use the embedding of “Fight Club” itself to represent the entity, we also include its contexts, such as “Suspense” (genre), “Brad Pitt” (actor), “United States” (country) and “Oscars” (award), as its identifiers.
-エンティティを表現するために「Fight Club」自体の埋め込みを使用するだけでなく、そのコンテキスト（ジャンルの「Suspense」、俳優の「Brad Pitt」、国の「United States」、賞の「Oscars」など）も識別子として含める。
+“Fight Club”自体の埋め込みをエンティティを表すために使用するだけでなく、そのコンテキスト、例えば“Suspense”（ジャンル）、“Brad Pitt”（俳優）、“United States”（国）および“Oscars”（賞）をその識別子として含める。
 Given the context of entity e, the context embedding is calculated as the average of its contextual entities:
 エンティティ $e$ のコンテキスト ($context(e)$) が与えられたとき、コンテキスト埋め込みは、そのコンテキストエンティティの平均として計算される。
 
@@ -346,12 +347,14 @@ We empirically demonstrate the efficacy of context embedding in the experiment s
 ## 4.3. Knowledge-aware CNN 知識認識CNN
 
 Following the notations used in Section 2.2, we use t = w 1: n = [w 1, w 2, …, wn ] to denote the raw input sequence of a news title t of length n, and w 1 : n = [ w 1 w 2 … w n ] ∈ R d × n to denote the word embedding matrix of the title, which can be pre-learned from a large corpus or randomly initialized.
-セクション2.2で使用した表記法に従い、$t = w_{1:n} = [w_{1}, w_{2}, \cdots, w_{n}]$ は長さnのニュースタイトルtの生の入力シーケンスを示すために使用され、$w_{1:n} = [w_{1} w_{2} \cdots w_{n}] \in \mathbb{R}^{d \times n}$ はタイトルの単語埋め込み行列を示すために使用される。これは、大規模なコーパスから事前に学習するか、ランダムに初期化することができる。
+セクション2.2で使用した表記法に従い、$t = w_{1:n} = [w_{1}, w_{2}, \cdots, w_{n}]$ は長さnのニュースタイトルtの生の入力シーケンスを示すために使用され、$\mathbf{w}_{1:n} = [\mathbf{w}_{1} \mathbf{w}_{2} \cdots \mathbf{w}_{n}] \in \mathbb{R}^{d \times n}$ はタイトルの単語埋め込み行列を示すために使用され、これは大規模なコーパスから事前に学習されるか、ランダムに初期化される。
 After the knowledge distillation introduced in Section 4.2, each word wi may also be associated with an entity embedding e i ∈ R k × 1 and the corresponding context embedding ¯¯¯ e i ∈ R k × 1 , where k is the dimension of entity embedding.
 セクション4.2で導入された知識蒸留の後、**各単語 $w_{i}$ は、エンティティ埋め込み $e_{i} \in \mathbb{R}^{k \times 1}$ と対応するコンテキスト埋め込み $\bar{e}_{i} \in \mathbb{R}^{k \times 1}$ と関連付けられる**。 ここで、$k$ はエンティティ埋め込みの次元である。
 (うんうん...! どのentityとも対応されない単語もあるだろうけど、それらはどう扱うんだろう:thinking:)
 Given the input above, a straightforward way to combine words and associated entities is to treat the entities as “pseudo words” and concatenate them to the word sequence [46], i.e.,
 上記の入力が与えられた場合、**単語と関連するエンティティを組み合わせる簡単な方法は、エンティティを「擬似単語」として扱い、word sequenceに連結すること**である。つまり、
+
+<!-- ここまでまとめた! -->
 
 $$
 W = [\mathbf{w}_{1}, \mathbf{w}_{2}, \cdots, \mathbf{w}_{n}, \mathbf{e}_{t1}, \mathbf{e}_{t2}, \cdots]
