@@ -1,23 +1,23 @@
-## link リンク
+## 0.1. link リンク
 
 https://ai.stanford.edu/~ronnyk/2009controlledExperimentsOnTheWebSurvey.pdf
 https://ai.stanford.edu/~ronnyk/2009controlledExperimentsOnTheWebSurvey.pdf
 
-## title タイトル
+## 0.2. title タイトル
 
 Controlled experiments on the web: survey and practical guide
-ウェブ上での対照実験： サーベイと実践ガイド
+ウェブ上での制御実験： サーベイと実践ガイド
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 The web provides an unprecedented opportunity to evaluate ideas quickly using controlled experiments, also called randomized experiments, A/B tests (and their generalizations), split tests, Control/Treatment tests, MultiVariable Tests (MVT) and parallel flights.
-ウェブは、無作為化実験、A/Bテスト（およびその一般化）、スプリットテスト、コントロール/トリートメントテスト、マルチバリアブルテスト（MVT）、パラレルフライトとも呼ばれる統制実験を用いて、アイデアを迅速に評価する前例のない機会を提供する。
+ウェブは、無作為化実験、A/Bテスト（およびその一般化）、スプリットテスト、コントロール/トリートメントテスト、マルチバリアブルテスト（MVT）、パラレルフライトとも呼ばれる**controlled experiments(統制実験)**を用いて、アイデアを迅速に評価する前例のない機会を提供する。
 Controlled experiments embody the best scientific design for establishing a causal relationship between changes and their influence on user-observable behavior.
 対照実験は、変化とそれがユーザーの観察可能な行動に及ぼす影響との間の因果関係を確立するための最良の科学的デザインを具現化するものである。
 We provide a practical guide to conducting online experiments, where endusers can help guide the development of features.
 エンドユーザーが機能開発の指針となるオンライン実験を実施するための実践的なガイドを提供する。
 Our experience indicates that significant learning and return-on-investment (ROI) are seen when development teams listen to their customers, not to the Highest Paid Person’s Opinion (HiPPO).
-私たちの経験によれば、開発チームが高給取りの意見（HiPPO）ではなく、顧客の意見に耳を傾けることで、大きな学びと投資対効果（ROI）が得られる。
+私たちの経験によれば、開発チームが**Highest Paid Person’s Opinion(高給取りの意見, HiPPO)**ではなく、顧客の意見に耳を傾けることで、大きな学びと**return-on-investment(投資対効果, ROI)**が得られる。
 We provide several examples of controlled experiments with surprising results.
 意外な結果をもたらした対照実験の例をいくつか紹介する。
 We review the important ingredients of running controlled experiments, and discuss their limitations (both technical and organizational).
@@ -28,13 +28,17 @@ We describe common architectures for experimentation systems and analyze their a
 実験システムの一般的なアーキテクチャを説明し、その長所と短所を分析する。
 We evaluate randomization and hashing techniques, which we show are not as simple in practice as is often assumed.
 我々はランダム化とハッシュ化技術を評価するが、これらは一般に考えられているほど実際には単純ではないことを示す。
-Controlled
-コントロール
+Controlled experiments typically generate large amounts of data, which can be analyzed using data mining techniques to gain deeper understanding of the factors influencing the outcome of interest, leading to new hypotheses and creating a virtuous cycle of improvements.
+対照実験は通常、大量のデータを生成し、データマイニング技術を用いて、興味のある結果に影響を与える要因についての深い理解を得ることができ、新しい仮説を立て、改善の好循環を生み出すことができる。
+Organizations that embrace controlled experiments with clear evaluation criteria can evolve their systems with automated optimizations and real-time analyses.
+明確な評価基準を持つ対照実験を受け入れる組織は、自動最適化とリアルタイム分析を用いてシステムを進化させることができる。
+Based on our extensive practical experience with multiple systems and organizations, we share key lessons that will help practitioners in running trustworthy controlled experiments.
+複数のシステムと組織での豊富な実践経験に基づいて、実践者が信頼性のある対照実験を実施するのに役立つ重要な教訓を共有する。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 One accurate measurement is worth more than a thousand expert opinions – Admiral Grace Hopper In the 1700s, a British ship’s captain observed the lack of scurvy among sailors serving on the naval ships of Mediterranean countries, where citrus fruit was part of their rations.
-グレース・ホッパー提督 1700年代、英国のある艦長は、地中海諸国の海軍艦艇に勤務する水兵の壊血病の少なさを観察した。
+**正確な測定は、1000人の専門家の意見に値する** - グレース・ホッパー提督 18世紀、イギリスの船長は、地中海諸国の海軍艦船で勤務する船員たちの間で壊血病が見られないことに気づいた。地中海諸国の船員の食事には柑橘類が含まれていた。
 He then gave half his crew limes (the Treatment group) while the other half (the Control group) continued with their regular diet.
 そして、乗組員の半数（治療グループ）にライムを与え、残りの半数（対照グループ）は通常の食事を続けた。
 Despite much grumbling among the crew in the Treatment group, the experiment was a success, showing that consuming limes prevented scurvy.
@@ -43,16 +47,18 @@ While the captain did not realize that scurvy is a consequence of vitamin C defi
 壊血病がビタミンC欠乏の結果であること、ライムがビタミンCを豊富に含んでいることを船長は知らなかったが、介入は功を奏した。
 British sailors eventually were compelled to consume citrus fruit regularly, a practice that gave rise to the still-popular label limeys (Rossi et al.2003; Marks 2000).
 イギリスの船員たちは、やがて柑橘類を常食するようになり、この習慣が今でも人気のあるライムというラベルを生んだ（Rossi et al.2003; Marks 2000）。
+
 Some 300 years later, Greg Linden at Amazon created a prototype to show personalized recommendations based on items in the shopping cart (Linden 2006a, b).
-それから約300年後、アマゾンのグレッグ・リンデンは、ショッピングカート内の商品に基づいてパーソナライズされた推奨を表示するプロトタイプを作成した（リンデン2006a、b）。
+それから約300年後、アマゾンのグレッグ・リンデンは、**ショッピングカート内の商品に基づいてパーソナライズされた推薦を表示するプロトタイプ**を作成した（リンデン2006a、b）。
 You add an item, recommendations show up; add another item, different recommendations show up.
 アイテムを追加するとおすすめが表示され、別のアイテムを追加すると別のおすすめが表示される。
 Linden notes that while the prototype looked promising, “a marketing senior vice-president was dead set against it,” claiming it will distract people from checking out.
 リンデンは、プロトタイプは有望に見えたが、「マーケティング担当の上級副社長は、チェックアウトの気をそらせるとして、断固反対した」と指摘する。
 Greg was “forbidden to work on this any further.” Nonetheless, Greg ran a controlled experiment, and the “feature won by such a wide margin that not having it live was costing Amazon a noticeable chunk of change.
-グレッグは "これ以上の作業を禁じられた"。それにもかかわらず、グレッグは管理された実験を行った。
+グレッグは「これ以上このプロジェクトに取り組むことを禁じられた」。それにもかかわらず、グレッグは対照実験を実施し、「その機能は圧倒的な差で勝利し、**それを実装していないことがアマゾンにかなりの損失をもたらしていた**」と述べている。
 With new urgency, shopping cart recommendations launched.” Since then, multiple sites have copied cart recommendations.
-新たな緊急性をもって、ショッピングカートの推奨が開始された。それ以来、複数のサイトがカート推奨をコピーしている。
+新たな緊急性をもって、ショッピングカートの推薦が開始された。それ以来、複数のサイトがカート推薦をコピーしている。
+
 The authors of this paper were involved in many experiments at Amazon, Microsoft, Dupont, and NASA.
 この論文の著者たちは、アマゾン、マイクロソフト、デュポン、NASAで多くの実験に携わった。
 The culture of experimentation at Amazon, where data trumps intuition (Kohavi et al.2004), and a system that made running experiments easy, allowed Amazon to innovate quickly and effectively.
@@ -62,74 +68,81 @@ At Microsoft, there are multiple systems for running controlled experiments.
 We describe several architectures in this paper with their advantages and disadvantages.
 本稿では、いくつかのアーキテクチャについて、それぞれの長所と短所を説明する。
 A unifying theme is that controlled experiments have great return-on-investment (ROI) and that building the appropriate infrastructure can accelerate innovation.
-統一されたテーマは、管理された実験には大きな投資対効果（ROI）があり、適切なインフラを構築することでイノベーションを加速できるということだ。
+統一されたテーマは、**対照実験は大きな投資対効果（ROI）を持ち、適切なインフラを構築することでイノベーションを加速させることができる**ということである。
 Stefan Thomke’s book title is well suited here: Experimentation Matters (Thomke 2003).
-ステファン・トムケの本のタイトルは、ここにぴったりだ： Experimentation Matters (Thomke 2003)。
+ステファン・トムケの著書のタイトルは、ここにぴったりである：実験は重要である（Thomke 2003）。
 
 The web provides an unprecedented opportunity to evaluate ideas quickly using controlled experiments, also called randomized experiments (single-factor or factorial designs), A/B tests (and their generalizations), split tests, Control/Treatment, and parallel flights.
-ウェブは、無作為化実験（単一要因または要因計画）、A/Bテスト（およびその一般化）、スプリットテスト、コントロール/トリートメント、パラレルフライトとも呼ばれる統制実験を用いて、アイデアを迅速に評価する前例のない機会を提供する。
+ウェブは、無作為化実験（単一要因または因子設計）、A/Bテスト（およびその一般化）、スプリットテスト、コントロール/トリートメント、パラレルフライトとも呼ばれる**controlled experiments(統制実験)**を用いて、アイデアを迅速に評価する前例のない機会を提供する。
 In the simplest manifestation of such experiments, live users are randomly assigned to one of two variants: (i) the Control, which is commonly the “existing” version, and (ii) the Treatment, which is usually a new version being evaluated.
-このような実験の最も単純な表現では、ライブユーザーは、2つのバリアントのうちの1つにランダムに割り当てられる： (i)コントロール、これは通常「既存の」バージョンであり、(ii)トリートメント、これは通常評価される新しいバージョンである。
+このような実験の最も単純な表現では、ライブユーザは、2つのvariantのうちの1つにランダムに割り当てられる：（i）コントロール、通常は「既存」のバージョンであり、（ii）トリートメント、通常は評価されている新しいバージョンである。
 Metrics of interest, ranging from runtime performance to implicit and explicit user behaviors and survey data, are collected.
-実行時のパフォーマンスから、暗黙的・明示的なユーザー行動や調査データまで、関心のある指標が収集される。
+実行時のパフォーマンスから暗黙的および明示的なユーザーの行動、調査データまで、関心のあるmetricsが収集される。
 Statistical tests are then conducted on the collected data to evaluate whether there is a statistically significant difference between the two variants on metrics of interest, thus permitting us to retain or reject the (null) hypothesis that there is no difference between the versions.
-そして、収集されたデータに対して統計的検定が行われ、関心のある測定基準について2つの変種間に統計的に有意な差があるかどうかが評価され、その結果、バージョン間に差がないという（帰無）仮説を保持または棄却することができる。
+そして、収集されたデータに対して統計的検定が行われ、関心のあるmetricsにおいて2つのバリアントの間に統計的に有意な差があるかどうかを評価し、バージョン間に差がない（null）仮説を採択または棄却することができる。
 In many cases, drilling down to segments of users using manual (e.g., OLAP) or machine learning and data mining techniques, allows us to understand which subpopulations show significant differences, thus helping improve our understanding and progress forward with an idea.
-多くの場合、手作業（OLAPなど）や機械学習、データマイニング技術を用いてユーザーのセグメントを掘り下げていくことで、どの部分集団が有意な違いを示すかを理解することができる。
+多くの場合、**手動（例：OLAP）または機械学習およびデータマイニング技術を使用してユーザのセグメントに掘り下げることで、どのサブポピュレーションが有意な差を示すかを理解し、アイデアを進めるための理解を深めることができる**。(推薦のABテストの場合、全体で見ると差がないが、新規ユーザには効果がありそう...みたいな?:thinking)
+
 Controlled experiments provide a methodology to reliably evaluate ideas.
 管理された実験は、アイデアを確実に評価するための方法論を提供する。
 Unlike other methodologies, such as post-hoc analysis or interrupted time series (quasi experimentation) (Charles and Melvin 2004), this experimental design methodology tests for causal relationships (Keppel et al.1992, pp.5–6).
-事後分析や中断時系列（準実験）などの他の方法論（Charles and Melvin 2004）とは異なり、この実験計画法は因果関係を検証するものである（Keppel et al.1992, pp.5-6）。
+他の方法論（例：事後分析や中断された時間系列（準実験）（Charles and Melvin 2004））とは異なり、この実験デザイン方法論は因果関係をテストする（Keppel et al.1992, pp.5–6）。(RCTだからか...!)
 Most organizations have many ideas, but the return-on-investment (ROI) for many may be unclear and the evaluation itself may be expensive.
-たいていの組織は多くのアイデアを持っているが、その多くは投資対効果（ROI）が不明確で、評価自体に費用がかかる場合がある。
+たいていの組織は多くのアイデアを持っているが、その多くは投資対効果（ROI）が不明確であり、評価自体が高コストであることがある。
 As shown in the next section, even minor changes can make a big difference, and often in unexpected ways.
-次のセクションで示すように、些細な変更であっても大きな違いを生むことがあり、それはしばしば予期せぬ方法である。
+次のセクションで示すように、**些細な変更であっても大きな違いを生むことがあり、それはしばしば予期せぬ方法**である。
 A live experiment goes a long way in providing guidance as to the value of the idea.
 実戦的な実験は、アイデアの価値について指針を与えてくれる。
 Our contributions include the following.
 私たちの貢献は以下の通り。
-• In Sect.3 we review controlled experiments in a web environment and provide a rich set of references, including an important review of statistical power and sample size, which are often missing in primers.
-- 第3節では、ウェブ環境での対照実験をレビューし、入門書では不足しがちな統計的検出力とサンプルサイズに関する重要なレビューを含む、豊富な参考文献を提供する。
-We then look at techniques for reducing variance that we found useful in practice.
-続いて、実際に役立つと思われる分散を減らすテクニックを紹介する。
-We also discuss extensions and limitations so that practitioners can avoid pitfalls.
-また、実務家が落とし穴を回避できるよう、拡張性と限界についても議論する。
-• In Sect.4, we present several alternatives to MultiVariable Tests (MVTs) in an online setting.
-- 第4節では、オンライン設定における多変量検定（MVT）の代替案をいくつか紹介する。
-In the software world, there are sometimes good reasons to prefer concurrent uni-variate tests over traditional MVTs.
-ソフトウェアの世界では、伝統的なMVTよりもコンカレント単変量テストを好む正当な理由が存在することがある。
-• In Sect.5, we present generalized architectures that unify multiple experimentation systems we have seen, and we discuss their pros and cons.
-- 第5節では、これまで見てきた複数の実験システムを統合する一般化されたアーキテクチャを提示し、その長所と短所について議論する。
-We show that some randomization and hashing schemes fail conditional independence tests required for statistical validity.
-我々は、いくつかのランダム化とハッシュ化スキームが、統計的妥当性に必要な条件付き独立性テストに失敗することを示す。
-• In Sect.6 we provide important practical lessons.
-- 第6節では、重要な実践的教訓を示す。
+
+- In Sect.3 we review controlled experiments in a web environment and provide a rich set of references, including an important review of statistical power and sample size, which are often missing in primers.
+  第3節では、ウェブ環境での対照実験をレビューし、**入門書では不足しがちな統計的検出力とサンプルサイズに関する重要なレビュー**を含む、豊富な参考文献を提供する。
+  We then look at techniques for reducing variance that we found useful in practice.
+  続いて、**実際に役立つと思われる分散を減らすテクニック**を紹介する。
+  We also discuss extensions and limitations so that practitioners can avoid pitfalls.
+  また、実務家が落とし穴を回避できるよう、拡張性と限界についても議論する。
+- In Sect.4, we present several alternatives to MultiVariable Tests (MVTs) in an online setting.
+  第4節では、オンライン設定における多変量検定（MVT）の代替案をいくつか紹介する。(variantが3つ以上のテスト??)
+  In the software world, there are sometimes good reasons to prefer concurrent uni-variate tests over traditional MVTs.
+  ソフトウェアの世界では、伝統的なMVTよりもコンカレント単変量テストを好む正当な理由が存在することがある。
+- In Sect.5, we present generalized architectures that unify multiple experimentation systems we have seen, and we discuss their pros and cons.
+  第5節では、これまで見てきた複数の実験システムを統合する**一般化されたアーキテクチャ**を提示し、その長所と短所について議論する。
+  We show that some randomization and hashing schemes fail conditional independence tests required for statistical validity.
+  我々は、いくつかのランダム化とハッシュ化スキームが、統計的妥当性に必要な条件付き独立性テストに失敗することを示す。
+- In Sect.6 we provide important practical lessons.
+  第6節では、重要な実践的教訓を示す。
+
 When a company builds a system for experimentation, the cost of testing and experimental failure becomes small, thus encouraging innovation through experimentation.
-企業が実験のためのシステムを構築すれば、テストや実験の失敗にかかるコストは小さくなり、実験によるイノベーションが促進される。
+**企業が実験のためのシステムを構築すれば、テストや実験の失敗にかかるコストは小さくなり、実験によるイノベーションが促進される**。
 Failing fast and knowing that an idea is not as great as was previously thought helps provide necessary course adjustments so that other more successful ideas can be proposed and implemented.
-素早く失敗し、そのアイデアが以前考えられていたほど素晴らしいものではないことを知ることで、より成功する他のアイデアを提案し、実行できるよう、必要な軌道修正を行うことができる。
+**素早く失敗**し、そのアイデアが以前考えられていたほど素晴らしいものではないことを知ることで、より成功する他のアイデアを提案し、実行できるよう、必要な軌道修正を行うことができる。(うんうん、高速なフィードバック...!)
 
-# Motivating examples やる気を起こさせる例
+# 2. Motivating examples やる気を起こさせる例
 
-The fewer the facts, the stronger the opinion – Arnold Glasow The following examples present surprising results in multiple areas.
-事実が少なければ少ないほど、意見は強くなる - アーノルド・グラソー 以下の例は、複数の分野で驚くべき結果を示している。
+The fewer the facts, the stronger the opinion – Arnold Glasow
+事実が少なければ少ないほど、意見は強くなる - アーノルド・グラソー
+
+The following examples present surprising results in multiple areas.
+以下の例は、複数の分野で驚くべき結果を示している。
 The first two deal with small UI changes that result in dramatic differences.
 最初の2つは、劇的な違いをもたらす小さなUIの変更を扱ったものだ。
 The third example shows how controlled experiments can be used to make a tradeoff between short-term revenue from ads and the degradation in the user experience.
-3つ目の例は、広告による短期的な収益とユーザー体験の低下とのトレードオフを行うために、制御された実験をどのように利用できるかを示している。
+3つ目の例は controlled experimentsが、**広告からの短期的な収益とユーザーエクスペリエンスの低下とのトレードオフを行うためにどのように使用されるか**を示している。
 The fourth example shows the use of controlled experiments in backend algorithms, in this case search at Amazon.
-4つ目の例は、バックエンドのアルゴリズム（この場合はアマゾンの検索）における対照実験の利用を示している。
+4つ目の例は、バックエンドのアルゴリズム(この場合はアマゾンの検索)における対照実験の利用を示している。
 
-## Checkout page at Doctor FootCare 
+## 2.1. Checkout page at Doctor FootCare
 
 The conversion rate of an e-commerce site is the percentage of visits to the website that include a purchase.
-Eコマースサイトのコンバージョン率とは、ウェブサイトへの訪問のうち、購入に至った割合のことである。
+Eコマースサイトの**コンバージョン率とは、ウェブサイトへの訪問のうち、購入に至った割合のことである**。
 The following example comes from Bryan Eisenberg’s articles (Eisenberg 2003a, b).
 次の例は、ブライアン・アイゼンバーグの論文（Eisenberg 2003a、b）から引用したものである。
+
 Can you guess which one has a higher conversion rate and whether the difference is significant? There are nine differences between the two variants of the Doctor FootCare checkout page shown in Fig.1.If a designer showed you these and asked which one should be deployed, could you tell which one results in a higher conversion rate? Could you estimate what the difference is between the conversion rates and whether that difference is significant? We encourage you, the reader, to think about this experiment before reading the answer.
-どちらがコンバージョン率が高いか、またその差が有意かどうか、あなたは推測できますか？図1に示すドクターフットケアのチェックアウトページの2つのバリエーションには9つの違いがあります。もしデザイナーがこれらをあなたに見せて、どちらを展開すべきかと尋ねたら、どちらがより高いコンバージョン率になるか分かりますか？コンバージョン率の差はどれくらいか、またその差は有意かどうか推定できますか？読者の皆さんには、答えを読む前に、この実験について考えてみていただきたい。
+どちらがコンバージョン率が高いか、またその差が有意かどうか、**あなたは推測できますか？**図1に示すドクターフットケアのチェックアウトページの2つのバリエーションには9つの違いがあります。もしデザイナーがこれらをあなたに見せて、どちらを展開すべきかと尋ねたら、どちらがより高いコンバージョン率になるか分かりますか？コンバージョン率の差はどれくらいか、またその差は有意かどうか推定できますか？読者の皆さんには、答えを読む前に、この実験について考えてみていただきたい。
 Can you estimate which variant is better and by how much? It is very humbling to see how hard it is to correctly predict the answer.
-どのバリアントがどれだけ優れているか予想できますか？答えを正しく予測することがいかに難しいかを目の当たりにして、とても身が引き締まる思いです。
+どのバリアントがどれだけ優れているか予想できますか？**答えを正しく予測することがいかに難しいか**を目の当たりにして、とても身が引き締まる思いです。
 Please, challenge yourself!
 どうぞ、挑戦してください！
 
@@ -138,9 +151,9 @@ Variant A in Fig.1 outperformed variant B by an order of magnitude.
 In reality, the site “upgraded” from the A to B and lost 90% of their revenue! Most of the changes in the upgrade were positive, but the coupon code was the critical one: people started to think twice about whether they were paying too much because there are discount coupons out there that they do not have.
 実際には、このサイトはAからBに "アップグレード "し、収益の90％を失った！アップグレードの変更のほとんどは肯定的なものだったが、クーポンコードは決定的なものだった： 人々は、自分たちが持っていない割引クーポンが世の中に出回っているため、払いすぎていないかどうか、よく考えるようになったのだ。
 By removing the discount code from the new version (B), conversion-rate increased 6.5% relative to the old version (A) in Fig.2.
-新バージョン（B）から割引コードを削除することで、コンバージョン率は図2の旧バージョン（A）に対して6.5％増加した。
+新バージョン(B)から割引コードを削除することで、コンバージョン率は図2の旧バージョン(A)に対して6.5％増加した。
 
-## Ratings of Microsoft Office help articles Microsoft Office ヘルプ記事の評価
+## 2.2. Ratings of Microsoft Office help articles Microsoft Office ヘルプ記事の評価
 
 Users of Microsoft Office who request help (or go through the Office Online website at http://office.microsoft.com) are given an opportunity to rate the articles they read.
 マイクロソフト・オフィスのユーザーで、ヘルプをリクエストした人（またはオフィス・オンラインのウェブサイトhttp://office.microsoft.com）には、読んだ記事を評価する機会が与えられている。
@@ -148,10 +161,14 @@ The initial implementation presented users with a Yes/No widget.
 最初の実装では、Yes/Noのウィジェットがユーザーに表示された。
 The team then modified the widget and offered a 5-star ratings.
 その後、チームはウィジェットを修正し、5つ星の評価を提供した。
-The motivations for the change were the following: 1.
-変更の動機は以下の通りである： 1.
-The 5-star widget provides finer-grained feedback, which might help better evaluate content writers.2.The 5-star widget improves usability by exposing users to a single feedback box as opposed to two separate pop-ups (one for Yes/No and another for Why).
+
+The motivations for the change were the following:
+変更の動機は以下の通りである：
+1.The 5-star widget provides finer-grained feedback, which might help better evaluate content writers.
+1.5つ星ウィジェットは、より細かいフィードバックを提供し、コンテンツライターをよりよく評価するのに役立つかもしれない。
+2.The 5-star widget improves usability by exposing users to a single feedback box as opposed to two separate pop-ups (one for Yes/No and another for Why).
 2.5つ星ウィジェットは、2つの別々のポップアップ（1つは「はい/いいえ」、もう1つは「なぜ」）ではなく、1つのフィードバックボックスにユーザーをさらすことで、ユーザビリティを向上させます。
+
 Can you estimate which widget had a higher response rate, where response is any interaction with the widget? The surprise here was that number of ratings plummeted by about 90%, thus significantly missing on goal #2 above.
 どのウィジェットの回答率が高かったか推定できますか？ここで、回答とはウィジェットとのインタラクションのことです。ここでの驚きは、評価の数が約90%も激減したことで、上記のゴール#2を大幅に逃してしまったことである。
 Based on additional tests, it turned out that the two-stage model helps in increasing the response rate.
@@ -163,73 +180,94 @@ Even goal #1 was somewhat of a disappointment as most people chose the extremes 
 When faced with a problem for which you need help, the article either helps you solve the problem or it does not! The team finally settled on a yes/no/I-don’t-know option, which had a slightly lower response rate than just yes/no, but the additional information was considered useful.
 助けが必要な問題に直面したとき、その記事は問題解決に役立つか、そうでないかのどちらかである！最終的にチームは、「はい／いいえ／わからない」という選択肢に落ち着き、回答率は「はい／いいえ」よりも若干低かったが、追加情報は有用であると考えられた。
 
-## MSN home page ads MSNホームページ広告
+## 2.3. MSN home page ads MSNホームページ広告
 
 A critical question that many site owners face is how many ads to place.
 多くのサイトオーナーが直面する重大な問題は、どれだけの広告を掲載するかということだ。
 In the short-term, increasing the real-estate given to ads can increase revenue, but what will it do to the user experience, especially if these are non-targeted ads? The tradeoff between increased revenue and the degradation of the end-user experience is a tough one to assess, and that’s exactly the question that the MSN home page team at Microsoft faced in late 2007.
-短期的には、広告に割く面積を増やすことで収益を増やすことができるが、特にターゲット広告でない場合、ユーザー・エクスペリエンスにどのような影響を与えるだろうか？収益の増加とエンドユーザー体験の低下とのトレードオフを評価するのは難しいもので、マイクロソフトのMSNホームページ・チームが2007年後半に直面したのは、まさにこの問題だった。
+**短期的には、広告に割く面積を増やすことで収益を増やすことができるが、特にターゲット広告でない場合、ユーザー・エクスペリエンスにどのような影響を与えるだろうか？**収益の増加とエンドユーザ体験の低下とのトレードオフを評価するのは難しいもので、マイクロソフトのMSNホームページ・チームが2007年後半に直面したのは、まさにこの問題だった。
+
 The MSN home page is built out of modules.
 MSNのホームページはモジュールで構成されている。
 The Shopping module is shown on the right side of the page above the fold.
 ショッピング・モジュールは、ページの右側、折り目の上に表示されます。
 The proposal was to add three offers right below it, as shown in Fig.5, which meant that these offers would show up below the fold for most users.
-この提案は、図5に示すように、そのすぐ下に3つのオファーを追加するというもので、ほとんどのユーザーにとって、これらのオファーは折り目の下に表示されることになる。
+この提案は、図5に示すように、そのすぐ下に3つのオファー(i.e. 広告?)を追加するというもので、ほとんどのユーザーにとって、これらのオファーは折り目の下に表示されることになる。
 The Display Ads marketing team estimated they could generate tens of thousands of dollars per day from these additional offers.
 ディスプレイ広告のマーケティングチームは、これらの追加オファーから1日あたり数万ドルを生み出すことができると見積もっていた。
+
 The interesting challenge here is how to compare the ad revenue with the “user experience.” In Sect.3.1, we refer to this problem as the OEC, or the Overall Evaluation Criterion.
-ここでの興味深い課題は、広告収入と "ユーザー体験 "をどのように比較するかである。Sect.3.1では、この問題をOEC（総合評価基準）と呼ぶ。
+ここでの興味深い課題は、**広告収入と "ユーザ体験 "をどのように比較するか**である。Sect.3.1では、この問題を**OEC(Overall Evaluation Criterion, 総合評価基準)**と呼ぶ。
 In this case, we decided to see if page views and clicks decreased, and assign a monetary value to each.
 この場合、ページビューとクリック数が減少したかどうかを確認し、それぞれに金銭的価値を割り当てることにした。
 (No statistically significant change was seen in visit frequency for this experiment.) Page views of the MSN home page have an assigned value based on ads; clicks to destinations from the MSN home page were estimated in two ways: 1.
-(この実験では、訪問頻度に統計的に有意な変化は見られなかった）。MSNホームページのページビューは、広告に基づいた値が割り当てられている。MSNホームページからの目的地へのクリックは、2つの方法で推定された： 1.
-Monetary value that the destination property assigned to a click from the MSN home page.
-MSNホームページからのクリックに対して、デスティネーション・プロパティが割り当てた金額。
-These destination properties are other sites in the MSN network.
-これらのデスティネーション・プロパティは、MSNネットワーク内の他のサイトである。
-Such a click generates a visit to an MSN property (e.g., MSN Autos or MSN Money), which results in multiple page views.2.The cost paid to search engines for a click that brings a user to an MSN property but not via the MSN home page (Search Engine Marketing).
-このようなクリックは、MSNのプロパティ（MSN AutosやMSN Moneyなど）への訪問を生み、その結果、複数のページビューをもたらす。2.MSNのホームページを経由せずにMSNのプロパティにユーザーを誘導するクリックに対して検索エンジンに支払われる費用（検索エンジンマーケティング）。
-If the home page is driving less traffic to the properties, what is the cost of regenerating the “lost” traffic? As expected, the number from #2 (SEM) was higher, as additional value beyond direct monetization is assigned to a click that may represent a new user, but the numbers were close enough to get agreement on the monetization value to use.
-トップページから物件へのトラフィックが減少している場合、「失われた」トラフィックを再生するためのコストはいくらか？予想通り、#2（SEM）の数値の方が高かった。新規ユーザーを表すクリックには、直接的な収益化以上の付加価値が割り当てられるためである。
+(この実験では、訪問頻度に統計的に有意な変化は見られなかった)。MSNホームページのページビューは、広告に基づいた値が割り当てられている。MSNホームページからの目的地へのクリックは、2つの方法で推定された：
+
+1. Monetary value that the destination property assigned to a click from the MSN home page.
+   MSNホームページからのクリックに対して、デスティネーション・プロパティが割り当てた金額。
+   These destination properties are other sites in the MSN network.
+   これらのデスティネーション・プロパティは、MSNネットワーク内の他のサイトである。
+   Such a click generates a visit to an MSN property (e.g., MSN Autos or MSN Money), which results in multiple page views.
+   このようなクリックは、MSNのプロパティ（MSN AutosやMSN Moneyなど）への訪問を生み、その結果、複数のページビューをもたらす。
+2. The cost paid to search engines for a click that brings a user to an MSN property but not via the MSN home page (Search Engine Marketing).
+   2.MSNのホームページを経由せずにMSNのプロパティにユーザーを誘導するクリックに対して検索エンジンに支払われる費用（検索エンジンマーケティング）。
+   If the home page is driving less traffic to the properties, what is the cost of regenerating the “lost” traffic?
+   トップページから物件へのトラフィックが減少している場合、「失われた」トラフィックを再生するためのコストはいくらか？
+
+As expected, the number from #2 (SEM) was higher, as additional value beyond direct monetization is assigned to a click that may represent a new user, but the numbers were close enough to get agreement on the monetization value to use.
+予想通り、#2（SEM）の数値の方が高かった。新規ユーザを表すクリックには、直接的な収益化以上の付加価値が割り当てられるためである。
 A controlled experiment was run on 5% of the MSN US home page users for 12 days.
 MSN USのホームページ利用者の5％を対象に、対照実験を12日間行った。
 Clickthrough rate decreased by 0.38% (relative change), and the result was statistically significant (p-value = 0.02).
 クリック率は0.38％減少し（相対変化）、その結果は統計的に有意であった（p値=0.02）。
 Translating the lost clicks to their monetary value, it was higher than the expected ad revenue, so the idea of adding more ads to the MSN home page was scrapped.
-失われたクリック数を金額に換算すると、予想された広告収入よりも高かったため、MSNのホームページに広告を追加するというアイデアは破棄された。
+**失われたクリック数を金額に換算すると、予想された広告収入よりも高かったため、MSNのホームページに広告を追加するというアイデアは破棄された。**
 
-## Behavior-Based Search at Amazon アマゾンの行動ベース検索
+## 2.4. Behavior-Based Search at Amazon アマゾンの行動ベース検索
 
 The examples above changed User-Interface (UI) elements.
-上記の例では、ユーザーインターフェース（UI）要素を変更した。
+上記の例では、ユーザインターフェース（UI）要素を変更した。
 This example deals with a backend algorithmic change, which is often overlooked as an area to apply controlled experiments.
-この例では、バックエンドのアルゴリズム変更を扱っているが、これは対照実験を適用する領域として見過ごされがちである。
+この例では、**バックエンドのアルゴリズム変更を扱っているが、これは対照実験を適用する領域として見過ごされがち**である。(今は全然見過ごされたりしてなさそう...!)
+
 Back in 2004, when several of the authors were in the Data Mining and Personalization department at Amazon, there already existed a good algorithm for making recommendations based on two sets.
 著者の何人かがアマゾンのデータマイニングとパーソナライゼーション部門にいた2004年当時、2つのセットに基づいて推薦を行う優れたアルゴリズムがすでに存在していた。
-The signature feature for Amazon’s recommendation is “People who bought item X bought item Y,” but this was generalized to “People who viewed item X bought item Y” and “People who viewed item X viewed item Y.” A proposal was made to use the same algorithm for “People who searched for X bought item Y.” We called it Behavior-Based Search (BBS).
-アマゾンのレコメンデーションの特徴は、"商品Xを買った人が商品Yを買った "ことだが、これを "商品Xを見た人が商品Yを買った"、"商品Xを見た人が商品Yを見た "と一般化した。"Xを検索した人がYを買った "場合にも同じアルゴリズムを使うという提案がなされた。私たちはこれをBehavior-Based Search（BBS）と呼んだ。
-In fact, the idea was to surface this in search results with no visible changes to the user interface.
-実際、このアイデアは、ユーザーインターフェイスに目に見える変更を加えることなく、検索結果に表示することだった。
-If a user searched for a string that was common, and there was a strong signal that people who searched for that string bought one of several items, these items would surface at the top of the search results.
-ユーザーが一般的な文字列を検索し、その文字列を検索した人々がいくつかのアイテムのいずれかを購入したという強いシグナルがあった場合、これらのアイテムは検索結果の上位に表示される。
-Note that this algorithm has no semantic understanding of the searched phrase, which was its strength and weakness.
-このアルゴリズムは、検索されたフレーズを意味的に理解していないことに注意してほしい。
-Proponents of the algorithm gave examples of underspecified searches, such as “24,” which most humans associated with the TV show starring Kiefer Sutherland.
-アルゴリズムの支持者たちは、「24」のような特定が不十分な検索の例を挙げた。
-Amazon’s search was returning poor results, shown in Fig.6, such as CDs with 24 Italian Songs, clothing for 24-month old toddlers, a 24-inch towel bar, etc.
-アマゾンの検索結果は、図6に示すように、24曲のイタリア語の歌が収録されたCD、24ヶ月の幼児用の衣服、24インチのタオルバーなど、芳しくないものだった。
-(These results are still visible on Amazon today if you add an advanced search qualifier like “-foo” to the search phrase since this makes the search phrase unique and no mappings will exist from people who searched for it to products.) The BBS algorithm gave top-notch results with the DVDs of the show and with related books, i.e., things that people purchased after searching for “24” as shown in Fig.6.The weakness of the algorithm was that some items surfaced that did not contain the words in the search phrase.
-(これらの結果は、検索フレーズに"-foo "のような高度な検索修飾子を加えると、今日でもアマゾンで見ることができる。これは、検索フレーズがユニークになり、検索した人から商品へのマッピングが存在しなくなるからである) BBSアルゴリズムは、図6に示すように、番組のDVDや関連書籍、つまり「24」を検索した後に購入されたもので、最高の結果を出した。
-For example, if one searches for “Sony HD DVD Player” (this example is recent as of January 2008), Toshiba HD DVDs will show up fairly high.
-例えば、"Sony HD DVD Player "で検索すると（この例は2008年1月現在のもの）、東芝のHD DVDがかなり上位に表示される。
-The reason is that Sony makes Blu-Ray DVD players, not HD players, and that many users who search for Sony HD DVD players end up purchasing a Toshiba player.
-というのも、ソニーはHDプレーヤーではなくブルーレイDVDプレーヤーを製造しており、ソニーのHD DVDプレーヤーを探したユーザーの多くが東芝のプレーヤーを購入してしまうからだ。
-Given the pros and cons for the idea of Behavior-Based search, Amazon ran a controlled experiment.
-行動ベースの検索というアイデアに対する賛否両論を踏まえ、アマゾンは対照実験を行った。
-Back in 2004, when several of the authors were in the Data Mining and Personalization departmenIn a UW iEdge Seminar talk by Amazon in April 2006, it was disclosed that the feature increased Amazon’s revenue by 3%, which translates into several hundreds of millions of dollars.
-著者の何人かがデータマイニングとパーソナライゼーションの部署にいた2004年、2006年4月のアマゾンによるUW iEdgeセミナーの講演では、この機能によってアマゾンの収益が3％増加したことが明らかにされた。
+The signature feature for Amazon’s recommendation is “People who bought item X bought item Y,” but this was generalized to “People who viewed item X bought item Y” and “People who viewed item X viewed item Y.” A proposal was made to use the same algorithm for “People who searched for X bought item Y.”
+アマゾンの推薦の特徴は、**「商品Xを購入した人は商品Yを購入した」**というものだが、これは「商品Xを見た人は商品Yを購入した」と「商品Xを見た人は商品Yを見た」というものに一般化された。同じアルゴリズムを「商品Xを検索した人は商品Yを購入した」というものに使用する提案がなされた。
+We called it Behavior-Based Search (BBS).
+これを行動ベース検索（BBS）と呼んだ。
 
-# Controlled experiments 対照実験
+In fact, the idea was to surface this in search results with no visible changes to the user interface.
+実際、このアイデアは、ユーザインターフェイスに目に見える変更を加えることなく、検索結果に表示することだった。
+If a user searched for a string that was common, and there was a strong signal that people who searched for that string bought one of several items, these items would surface at the top of the search results.
+**ユーザが一般的な文字列を検索し、その文字列を検索した人々がいくつかのアイテムのいずれかを購入したという強いシグナルがあった場合、これらのアイテムは検索結果の上位に表示される**。
+Note that this algorithm has no semantic understanding of the searched phrase, which was its strength and weakness.
+**このアルゴリズムは、検索されたフレーズを意味的に理解していないことに注意**してほしい。(なるほど...!)
+
+Proponents of the algorithm gave examples of underspecified searches, such as “24,” which most humans associated with the TV show starring Kiefer Sutherland.
+アルゴリズムの支持者は、Kiefer Sutherland主演のテレビ番組と関連付けられる「24」といった不十分な指定の検索の例を挙げた。
+Amazon’s search was returning poor results, shown in Fig.6, such as CDs with 24 Italian Songs, clothing for 24-month old toddlers, a 24-inch towel bar, etc.
+アマゾンの検索は、図6に示すように、24のイタリアの歌を収録したCD、24ヶ月の幼児用の服、24インチのタオルバーなど、悪い結果を返していた。
+(These results are still visible on Amazon today if you add an advanced search qualifier like “-foo” to the search phrase since this makes the search phrase unique and no mappings will exist from people who searched for it to products.)
+（これらの結果は、検索フレーズに"-foo "のような高度な検索修飾子を加えると、今日でもアマゾンで見ることができる。これは、検索フレーズがユニークになり、**検索した人から商品へのマッピングが存在しなくなるから**である）
+The BBS algorithm gave top-notch results with the DVDs of the show and with related books, i.e., things that people purchased after searching for “24” as shown in Fig.6.
+BBSアルゴリズムは、図6に示すように、番組のDVDや関連書籍、つまり「24」を検索した後に購入されたもので、最高の結果を出した。
+The weakness of the algorithm was that some items surfaced that did not contain the words in the search phrase.
+アルゴリズムの弱点は、検索フレーズに含まれていない単語が含まれているアイテムが表示されることだった。
+For example, if one searches for “Sony HD DVD Player” (this example is recent as of January 2008), Toshiba HD DVDs will show up fairly high.
+例えば、「ソニーHD DVDプレーヤー」と検索すると（この例は2008年1月現在のものである）、東芝のHD DVDがかなり上位に表示される。
+The reason is that Sony makes Blu-Ray DVD players, not HD players, and that many users who search for Sony HD DVD players end up purchasing a Toshiba player.
+というのも、ソニーはHDプレーヤーではなくブルーレイDVDプレーヤーを製造しており、ソニーのHD DVDプレーヤーを探したユーザの多くが東芝のプレーヤーを購入してしまうからだ。(うんうんなるほど...!)
+Given the pros and cons for the idea of Behavior-Based search, Amazon ran a controlled experiment.
+**行動ベースの検索というアイデアに対する賛否両論**を踏まえ、アマゾンは対照実験を行った。
+
+In a UW iEdge Seminar talk by Amazon in April 2006, it was disclosed that the feature increased Amazon’s revenue by 3%, which translates into several hundreds of millions of dollars.
+2006年4月のアマゾンによるUW iEdgeセミナーでの講演では、この機能がアマゾンの収益を3％増加させ、それは数億ドルに相当すると明らかにされた。
+(行動ベースの検索が負けて、treatmentのアルゴリズムが収益を増加させたってことかな)
+
+<!-- ここまで読んだ! -->
+
+# 3. Controlled experiments 対照実験
 
 Enlightened trial and error outperforms the planning of flawless execution – David Kelly, founder of Ideo To have a great idea, have a lot of them – Thomas A.
 啓蒙された試行錯誤は、完璧な実行計画を凌駕する - デビッド・ケリー、アイデオの創設者 偉大なアイデアを持つには、それをたくさん持つこと - トーマス・A.
@@ -253,7 +291,7 @@ While the concept is easy to understand and basic ideas echo through many refere
 These will help experimenters understand the applicability, limitations, and how to avoid mistakes that invalidate the results.
 これらは、実験者が適用可能性、限界、結果を無効にするミスを避ける方法を理解するのに役立つ。
 
-## Terminology 用語
+## 3.1. Terminology 用語
 
 The terminology for controlled experiments varies widely in the literature.
 対照実験の用語は、文献によって大きく異なる。
@@ -340,7 +378,7 @@ For a statistic, it is the standard deviation of the sampling distribution of th
 For a mean of n independent observations, it is σ /ˆ √n where σˆ is the estimated standard deviation.
 n 個の独立したオブザベーションの平均では，σ /ˆ √n で，σˆ は推定標準偏差である．
 
-## Hypothesis testing and sample size 仮説の検定とサンプルサイズ
+## 3.2. Hypothesis testing and sample size 仮説の検定とサンプルサイズ
 
 To evaluate whether one of the treatments is different than the Control, a statistical test can be done.
 どちらかの処置がコントロールと異なるかどうかを評価するために、統計的検定を行うことができる。
@@ -441,7 +479,7 @@ comparison issues when conducting an analysis of variance with multiple variants
 The examples below use the first formula.
 以下の例では、最初の式を使用している。
 
-### Example: impact of lower-variability OEC on the sample size 例 低変数OECの標本サイズへの影響
+### 3.2.1. Example: impact of lower-variability OEC on the sample size 例 低変数OECの標本サイズへの影響
 
 Suppose you have an e-commerce site and 5% of users who visit during the experiment period end up purchasing.
 Eコマースサイトがあり、実験期間中に訪問したユーザーの5％が購入に至ったとする。
@@ -462,7 +500,7 @@ The standard deviation of a Bernoulli is √p(1 − p) and thus you will need le
 Using conversion as the OEC instead of purchasing spend can thus reduce the sample size required for the experiment by a factor of 3.3.Because the number of site visitors is approximately linear in the running time for the experiment (the number of distinct users is sublinear due to repeat visitors, but a linear approximation is reasonable for most sites), this can reduce the running time of the experiment from 6 weeks to 2 weeks, and thus is worth considering.
 サイト訪問者数は、実験の実行時間に対してほぼ線形であるため（リピーターがいるため、明確なユーザー数は非線形であるが、ほとんどのサイトでは線形近似が妥当である）、実験の実行時間を6週間から2週間に短縮することができ、検討に値する。
 
-### Example: impact of reduced sensitivity on the sample size 例 感度の低下がサンプルサイズに与える影響
+### 3.2.2. Example: impact of reduced sensitivity on the sample size 例 感度の低下がサンプルサイズに与える影響
 
 Because the sensitivity, , is squared in the formula for sample size, if the desired sensitivity is reduced to support detecting a 20% change in conversion instead of 5% (a factor of 4), the number of users needed drops by a factor of 16 to 7,600.
 サンプルサイズの公式では、感度は2乗されるため、もし希望する感度がコンバージョンの変化を5％ではなく20％検出できるように低下した場合（4分の1）、必要なユーザー数は16分の1の7,600人となる。
@@ -475,7 +513,7 @@ Such a bug can be detected not in 1/20th of the planned running time, but in 1/4
 If the experiment was planned to run for two weeks, you can detect an egregious problem in the first hour!
 実験が2週間行われる予定だったとしたら、最初の1時間で重大な問題を発見することができる！
 
-### Example: filtering users not impacted by the change 例 変更の影響を受けないユーザーのフィルタリング
+### 3.2.3. Example: filtering users not impacted by the change 例 変更の影響を受けないユーザーのフィルタリング
 
 If you made a change to the checkout process, you should only analyze users who started the checkout process (point 3.c), as others could not see any difference and therefore just add noise.
 チェックアウトプロセスに変更を加えた場合、チェックアウトプロセスを開始したユーザーのみを分析する必要があります（ポイント3.c）。
@@ -484,25 +522,25 @@ Assume that 10% of users initiate checkout and that 50% of those users complete 
 This user segment is more homogenous and hence the OEC has lower variability.
 このユーザー層はより均質であるため、OECのばらつきは小さい。
 Using the same numbers as before, the average conversion rate is 0.5, the std-dev is 0.5, and thus you will need only 6,400 users going through checkout to detect a 5% change based on 16 ∗ (0.5(1 − 0.5))/(0.5 · 0.05)2.
-先ほどと同じ数字を使用すると、平均コンバージョン率は0.5、標準偏差は0.5であるため、16 * (0.5(1 - 0.5))/(0.5 - 0.05)2に基づいて5%の変化を検出するには、チェックアウトを通過する6,400人のユーザーが必要です。
+先ほどと同じ数字を使用すると、平均コンバージョン率は0.5、標準偏差は0.5であるため、16 \* (0.5(1 - 0.5))/(0.5 - 0.05)2に基づいて5%の変化を検出するには、チェックアウトを通過する6,400人のユーザーが必要です。
 Since we excluded the 90% who do not initiate, the total number of users to the website should be 64,000, which is almost half the previous result of 122,000, thus the experiment could run for half the time and yield the same power.
 つまり、この実験を半分の時間で実施しても、同じパワーが得られることになる。
 
-### The choice of OEC must be made in advance OECの選択は事前に行わなければならない。
+### 3.2.4. The choice of OEC must be made in advance OECの選択は事前に行わなければならない。
 
 When running experiments, it is important to decide in advance on the OEC (a planned comparison); otherwise, there is an increased risk of finding what appear to be significant results by chance (familywise type I error) (Keppel et al.1992).
 そうでなければ、偶然に有意と思われる結果が見つかるリスクが高くなる（ファミリーワイズI型エラー）（Keppel et al.1992）。
 Several adjustments have been proposed in the literature (e.g., Fisher’s least-significant-difference, Bonferroni adjustment, Duncan’s test, Scheffé’s test, Tukey’s test, and Dunnett’s test), but they basically equate to increasing the 95% confidence level and thus reducing the statistical power (Mason et al.1989; Box et al.2005; Keppel et al.1992).
 いくつかの調整が文献で提案されている（Fisherの最小有意差、Bonferroniの調整、Duncanの検定、Schefféの検定、Tukeyの検定、Dunnettの検定など）が、基本的には95%信頼水準を上げることに等しく、その結果統計的検出力が低下する(Mason et al.1989; Box et al.2005; Keppel et al.1992)。
 
-## Confidence intervals for absolute and percent effect 絶対効果およびパーセント効果の信頼区間
+## 3.3. Confidence intervals for absolute and percent effect 絶対効果およびパーセント効果の信頼区間
 
 It is useful to give a confidence interval for the difference in the means of the Treatment and Control in addition to the results of the hypothesis test.
 仮説検定の結果に加えて、処理とコントロールの平均の差の信頼区間を与えることは有用である。
 The confidence interval gives a range of plausible values for the size of the effect of the Treatment whereas the hypothesis test only determines if there is a statistically significant difference in the mean.
 信頼区間は、仮説検定が平均値に統計的に有意な差があるかどうかを決定するだけであるのに対して、処置の効果の大きさについてもっともらしい値の範囲を与える。
 
-### Confidence intervals for absolute effect 絶対効果の信頼区間
+### 3.3.1. Confidence intervals for absolute effect 絶対効果の信頼区間
 
 The formula for the confidence interval for the difference in two means is fairly straightforward.
 2つの平均値の差の信頼区間の公式は非常に簡単である。
@@ -516,7 +554,7 @@ $$
 One could use the confidence interval for the absolute affect to conduct a hypothesis test—if zero is in the interval you would not reject H0, otherwise reject H0 and conclude the Treatment has an effect.
 影響の絶対値の信頼区間を用いて仮説検定ができる-区間内にゼロがあればH0を棄却しないが、そうでなければH0を棄却し、処置には効果があると結論づける。
 
-### Confidence intervals for percent effect 効果パーセントの信頼区間
+### 3.3.2. Confidence intervals for percent effect 効果パーセントの信頼区間
 
 For many online metrics, the difference in the means is so small that percent change has much more intuitive meaning than the absolute difference.
 多くのオンライン指標では、平均値の差は非常に小さいため、絶対的な差よりも変化率の方が直感的な意味を持つ。
@@ -560,7 +598,7 @@ $$
 These formulas assume the covariance between the Treatment and Control mean is zero which will be true in a controlled experiment when the randomization is carried out properly
 これらの公式は、治療平均とコントロール平均の間の共分散がゼロであることを仮定している。
 
-## Effect of robots on experimental results ロボットが実験結果に与える影響
+## 3.4. Effect of robots on experimental results ロボットが実験結果に与える影響
 
 Robots can introduce significant skew into estimates, enough to render assumptions invalid.
 ロボットは推定値に大きな歪みをもたらし、仮定を無効にしてしまうほどだ。
@@ -575,21 +613,21 @@ Since many robots have the same characteristics as human users it is difficult t
 Benign or simple robots can often be filtered by basic characteristics (e.g.user agent, IP address) but many modern robots use sophisticated techniques to escape detections and filtering (Tan and Kumar 2002).
 良性のロボットや単純なロボットは、基本的な特徴（ユーザーエージェントやIPアドレスなど）によってフィルタリングできることが多いが、最近のロボットの多くは、検出やフィルタリングを逃れるために高度なテクニックを使っている（Tan and Kumar 2002）。
 
-### JavaScript versus server-side call JavaScript対サーバーサイド・コール
+### 3.4.1. JavaScript versus server-side call JavaScript対サーバーサイド・コール
 
 It is generally thought that very few robots will be included in the experiment if the treatment assignment is called by JavaScript so those experimental setups shouldn’t be affected as much by robots.
 一般に、JavaScriptによって治療割り当てが呼び出される場合、実験に参加するロボットはほとんどいないと考えられているので、そのような実験設定はロボットの影響をあまり受けないはずである。
 This should be validated by the experimenter.
 これは実験者によって検証されるべきである。
 
-### Robots that reject cookies クッキーを拒否するロボット
+### 3.4.2. Robots that reject cookies クッキーを拒否するロボット
 
 We recommend excluding unidentified requests from the analysis, so that robots that reject cookies will not be part of the experimental results.
 クッキーを拒否するロボットが実験結果の一部とならないように、未確認のリクエストを分析から除外することを推奨します。
 If the treatment assignment and data collection is based only on users with a user ID stored in the user’s cookie, these robots will not be counted in the number of users or in the data that is collected on user behavior.
 治療の割り当てやデータ収集が、ユーザーのクッキーに保存されたユーザーIDを持つユーザーのみに基づいて行われる場合、これらのロボットはユーザー数やユーザー行動に関する収集データにはカウントされません。
 
-### Robots that accept cookies クッキーを受け入れるロボット
+### 3.4.3. Robots that accept cookies クッキーを受け入れるロボット
 
 If a robot accepts cookies and does not delete them, the effect can be profound, especially if the robot has a large number of actions on the site.
 ロボットがクッキーを受け入れ、それを削除しない場合、特にそのロボットがサイト上で大量のアクションを起こした場合、その影響は甚大なものとなります。
@@ -610,12 +648,12 @@ Robot filtering can be accomplished through a combination of omitting users whos
 The heuristics may vary depending on the website.
 ヒューリスティックはウェブサイトによって異なる場合がある。
 
-## Extensions for online settings オンライン設定の拡張機能
+## 3.5. Extensions for online settings オンライン設定の拡張機能
 
 Several extensions to basic controlled experiments are possible in an online setting (e.g., on the web).
 基本的な対照実験に対するいくつかの拡張は、オンライン環境（例えばウェブ上）でも可能である。
 
-### Treatment ramp-up 治療の立ち上げ
+### 3.5.1. Treatment ramp-up 治療の立ち上げ
 
 An experiment can be initiated with a small percentage of users assigned to the Treatment(s), and then that percentage can be gradually increased.
 実験は、トリートメントに割り当てるユーザーの割合を少なくして開始することができ、その後、その割合を徐々に増やしていくことができる。
@@ -626,7 +664,7 @@ At each step, which could run for, say, a couple of hours, you can analyze the d
 The square factor in the power formula implies that such errors could be caught quickly on small populations and the experiment can be aborted before many users are exposed to the bad Treatment.
 べき乗式の2乗係数は、このようなエラーは小さな母集団ではすぐに発見でき、多くのユーザーが悪い処置にさらされる前に実験を中止できることを意味している。
 
-### Automation オートメーション
+### 3.5.2. Automation オートメーション
 
 Once an organization has a clear OEC, it can run experiments to optimize certain areas amenable to automated search.
 一旦組織が明確なOECを持てば、自動検索に適した特定の領域を最適化するための実験を行うことができる。
@@ -637,7 +675,7 @@ If decisions have to be made quickly (e.g., headline optimizations for portal si
 Multi-armed bandit algorithms (Wikepedia 2008) and Hoeffding Races (Maron and Moore 1994) can be used for such optimizations.
 このような最適化には、多腕バンディット・アルゴリズム（Wikepedia 2008）やHoeffding Races（Maron and Moore 1994）を用いることができる。
 
-### Software migrations ソフトウェアの移行
+### 3.5.3. Software migrations ソフトウェアの移行
 
 Experiments can be used to help with software migration.
 実験はソフトウェアの移行に役立つ。
@@ -648,7 +686,7 @@ We have seen several such migrations, where the migration was declared complete,
 Because the goal here is to retain the Null Hypothesis, it is crucial to make sure the experiment has enough statistical power to actually reject the Null Hypothesis if it false.
 ここでの目標は「帰無仮説」を維持することなので、実験が「帰無仮説」を棄却するのに十分な統計的検出力があることを確認することが重要である。
 
-## Limitations 制限事項
+## 3.6. Limitations 制限事項
 
 Despite significant advantages that controlled experiments provide in terms of causality, they do have limitations that need to be understood.
 対照実験には、因果関係という点で大きな利点があるにもかかわらず、理解されなければならない限界がある。
@@ -709,7 +747,7 @@ Pairwise statistical tests can also be done to flag such interactions automatica
 If there is a big announcement made about a new feature, such that the feature is announced to the media, all users need to see it.
 新機能についてメディアに発表するような大きな発表があった場合、すべてのユーザーがそれを見る必要がある。
 
-# MultiVariable Testing 多変量テスト
+# 4. MultiVariable Testing 多変量テスト
 
 An experiment that includes more than one factor is often called a MultiVariable test (MVT) (Alt and Usborne 2005).
 つ以上の因子を含む実験は、しばしば多変量検定（MVT）と呼ばれる（Alt and Usborne 2005）。
@@ -748,14 +786,12 @@ Both may improve sales when tested individually, but when both are done at the s
 どちらも個別にテストすれば売上を向上させるかもしれないが、両方を同時に行うと「購入ボックス」がフォールドの下に押し込まれ、売上が減少する。
 This would be a large antagonistic interaction.
 これは大きな拮抗的相互作用となるだろう。
-This interaction should be caught in the planning phase so that these two factors would not be tested at the same time.2.Analysis and interpretation are more difficult.
-2.分析と解釈はより難しい。
+This interaction should be caught in the planning phase so that these two factors would not be tested at the same time.2.Analysis and interpretation are more difficult. 2.分析と解釈はより難しい。
 For a single factor test you typically have many metrics for the Treatment-Control comparison.
 単一因子のテストでは、通常、治療とコントロールの比較のために多くの測定基準があります。
 For an MVT you have the same metrics for many Treatment-Control comparisons (at least one for each factor being tested) plus the analysis and interpretation of the interactions between the factors.
 MVTでは、多くの治療-対照比較（試験される各要因について少なくとも1つ）に加え、要因間の交互作用の分析と解釈について同じ測定基準がある。
-Certainly, the information set is much richer but it can make the task of assessing which treatments to roll out more complex.3.It can take longer to begin the test.
-3.テストを開始するのに時間がかかる。
+Certainly, the information set is much richer but it can make the task of assessing which treatments to roll out more complex.3.It can take longer to begin the test. 3.テストを開始するのに時間がかかる。
 If you have five factors you want to test and plan to test them one at a time you can start with any of those that are ready to be tested and test the others later.
 テストしたい要素が5つあり、それらを1つずつテストする計画であれば、テストの準備ができたものから始めて、他の要素は後でテストすることができる。
 With an MVT you must have all five ready for testing at the beginning of the test.
@@ -769,7 +805,7 @@ Generally, we believe the first experiment one does should be an A/B test mainly
 There are three overarching philosophies to conducting MVTs with online properties.
 オンライン物件でMVTを実施するには、3つの包括的な哲学がある。
 
-## Traditional MVT 伝統的MVT
+## 4.1. Traditional MVT 伝統的MVT
 
 This approach uses designs that are used in manufacturing and other offline applications.
 このアプローチでは、製造業やその他のオフライン・アプリケーションで使用されている設計を使用する。
@@ -819,7 +855,7 @@ We recommend two alternatives that we believe are better than the traditional MV
 The one you prefer will depend on how highly you value estimating interactions.
 どちらを選ぶかは、相互作用の見積もりをどの程度重視するかによって変わってくる。
 
-## MVT by running concurrent tests 同時実行テストによる MVT
+## 4.2. MVT by running concurrent tests 同時実行テストによる MVT
 
 Fractions of the full factorial are used in offline testing because there is usually a cost to using more treatment combinations even when the number of experimental units does not increase.
 オフライン試験では、完全階乗の端数が使用される。これは、実験ユニットの数が増えなくても、通常、より多くの処理の組み合わせを使用するにはコストがかかるからである。
@@ -858,7 +894,7 @@ The other is to assign less than 50% of the test population to the treatment (if
 It is especially important for treatments in an MVT to have the same percentage of the population as the Control.
 MVTにおける治療は、対照と同じ割合で行われることが特に重要である。
 
-## Overlapping experiments オーバーラップする実験
+## 4.3. Overlapping experiments オーバーラップする実験
 
 This approach is to simply test a factor as a one-factor experiment when the factor is ready to be tested with each test being independently randomized.
 このアプローチは、因子をテストする準備ができたら、各テストを独立にランダム化して、単純に1因子実験として因子をテストすることである。
@@ -893,7 +929,7 @@ If you want to test ideas as quickly as possible and aren’t concerned about in
 If it is important to estimate interactions run the experiments concurrently with users being independently randomized into each test effectively giving you a full factorial experiment.
 交互作用の推定が重要な場合は、実験を同時並行で行い、ユーザーは各試験に独立して無作為に割り付けられ、効果的に完全要因実験を行うことができる。
 
-# Implementation architecture 実装アーキテクチャ
+# 5. Implementation architecture 実装アーキテクチャ
 
 Implementing an experiment on a website involves three components.
 ウェブサイトでの実験には、3つの要素がある。
@@ -904,7 +940,7 @@ The second component is the assignment method, which uses the output of the rand
 The third component is the data path, which captures raw observation data as the users interact with the website, aggregates it, applies statistics, and prepares reports of the experiment’s outcome.5
 第3の構成要素はデータパスであり、ユーザーがウェブサイトを操作する際に生の観測データを取得し、それを集計し、統計情報を適用し、実験結果のレポートを作成する5。
 
-## Randomization algorithm 無作為化アルゴリズム
+## 5.1. Randomization algorithm 無作為化アルゴリズム
 
 Finding a good randomization algorithm is critical because the statistics of controlled experiments assume that each variant of an experiment is assigned a random sample of end users.
 統制実験の統計は、実験の各バリアントがエンドユーザーのランダムサンプルを割り当てられることを前提としているため、良い無作為化アルゴリズムを見つけることは非常に重要である。
@@ -912,8 +948,7 @@ Randomization algorithms must have the following three properties to support sta
 ランダム化アルゴリズムは、統計的に正しい実験をサポートするために、以下の3つの特性を持たなければならない（上記で示した方法論を使って）： 1.
 End users must be equally likely to see each variant of an experiment (assuming a 50–50 split).
 エンドユーザーは、実験の各バリアントを見る可能性が等しくなければならない（半々を想定）。
-There should be no bias toward any particular variant.2.Repeat assignments of a single end user must be consistent; the end user should be assigned to the same variant on each successive visit to the site.3.When multiple experiments are run, there must be no correlation between experiments.
-2.一人のエンドユーザーの繰り返し割り当ては一貫していなければならない。エンドユーザーは、サイトを連続して訪問するたびに、同じバリアントに割り当てられるべきである。3.複数の実験が実行される場合、実験間に相関があってはならない。
+There should be no bias toward any particular variant.2.Repeat assignments of a single end user must be consistent; the end user should be assigned to the same variant on each successive visit to the site.3.When multiple experiments are run, there must be no correlation between experiments. 2.一人のエンドユーザーの繰り返し割り当ては一貫していなければならない。エンドユーザーは、サイトを連続して訪問するたびに、同じバリアントに割り当てられるべきである。3.複数の実験が実行される場合、実験間に相関があってはならない。
 An end user’s assignment to a variant in one experiment must have no effect on the probability of being assigned to a variant in any other experiment.
 エンドユーザーがある実験で変種に割り当てられたことは、他の実験で変種に割り当てられる確率に影響を及ぼしてはならない。
 Randomization algorithms may optionally support the following two desirable properties: 4.
@@ -1013,7 +1048,7 @@ The simplest way to satisfy this property is to use a hybrid approach, combining
 Because the set of users subject to external control is typically small (e.g.users designed by a test team), this hybrid approach should not encounter the full disadvantages of the pseudorandom with caching technique.
 外部制御の対象となるユーザーの集合は一般的に小さいため（テストチームによって設計されたユーザーなど）、このハイブリッド・アプローチは、キャッシュ技法による疑似ランダムの完全な欠点に遭遇することはないはずである。
 
-## Assignment method 割り当て方法
+## 5.2. Assignment method 割り当て方法
 
 The assignment method is the piece of software that enables the experimenting website to execute a different code path for different end users.
 割り当て方法は、実験サイトが異なるエンドユーザーに対して異なるコードパスを実行することを可能にするソフトウェアの一部である。
@@ -1024,7 +1059,7 @@ There are multiple ways to implement an assignment method.
 In the remainder of this section, we compare several common assignment methods and recommend best practices for their use.
 このセクションの残りの部分では、いくつかの一般的な割り当て方法を比較し、それらの使用に関するベストプラクティスを推奨する。
 
-### Traffic splitting トラフィックの分割
+### 5.2.1. Traffic splitting トラフィックの分割
 
 Traffic splitting refers to a family of assignment methods that involve implementing each variant of an experiment on a different logical fleet of servers.
 トラフィックの分割は、実験の各変種を異なる論理的なサーバー群に実装することを含む、割り当て方法の一群を指す。
@@ -1036,14 +1071,12 @@ Traffic splitting has the advantage of being non-intrusive; no changes to existi
 トラフィックの分割は非侵入的であるという利点があり、実験を実施するために既存のコードを変更する必要はない。
 However, the approach has significant disadvantages: 1.
 しかし、このアプローチには大きな欠点がある： 1.
-Running experiments on small features is disproportionately difficult because the entire application must be replicated regardless of the size of the change.2.Setting up and configuring parallel fleets is typically expensive.
-2.並列フリートの設定と構成には、通常コストがかかる。
+Running experiments on small features is disproportionately difficult because the entire application must be replicated regardless of the size of the change.2.Setting up and configuring parallel fleets is typically expensive. 2.並列フリートの設定と構成には、通常コストがかかる。
 The Control fleet must have sufficient capacity to take 100% of the traffic in the event that the experiment needs to be shut down.
 コントロール・フリートは、実験がシャットダウンされる必要が生じた場合、トラフィックの100％を引き受けるのに十分な容量を持っていなければならない。
 The Treatment fleet(s) may be smaller, but their size will limit the maximum percentage that may be assigned to each Treatment.3.Running multiple experiments requires the fleet to support one partition for each combination of variants across all experiments.
 Treatmentフリートは小さくてもよいが、そのサイズによって、各Treatmentに割り当てられる最大パーセンテージが制限される。3.複数の実験を実行するには、すべての実験にわたって、バリアントの組み合わせごとに1つのパーティションをサポートするフリートが必要である。
-This number increases as the number of tested combinations increases (potentially exponentially in the number of simultaneous experiments).4.Any differences between the fleets used for each variant may confound the experimental results.
-4.各バリアントに使用されるフリート間の違いは、実験結果を混乱させる可能性がある。
+This number increases as the number of tested combinations increases (potentially exponentially in the number of simultaneous experiments).4.Any differences between the fleets used for each variant may confound the experimental results. 4.各バリアントに使用されるフリート間の違いは、実験結果を混乱させる可能性がある。
 Ideally, the hardware and network topology of each fleet will be identical and A/A tests will be run to confirm the absence of fleet-related effects.
 理想的には、各フリートのハードウェアとネットワーク・トポロジーは同一とし、A/Aテストを実施して、フリート関連の影響がないことを確認する。
 The drawback of traffic splitting is that it is an expensive way to implement an experiment, even though the method appears cheap because it minimizes IT/developer involvement.
@@ -1051,7 +1084,7 @@ The drawback of traffic splitting is that it is an expensive way to implement an
 We recommend this method for testing changes that introduce significantly different code, such as migration to a new website platform, the introduction of a new rendering engine, or a complete upgrade of a website.
 新しいウェブサイト・プラットフォームへの移行、新しいレンダリング・エンジンの導入、ウェブサイトの完全なアップグレードなど、大幅に異なるコードを導入する変更のテストには、この方法をお勧めします。
 
-### Page rewriting ページの書き換え
+### 5.2.2. Page rewriting ページの書き換え
 
 Page rewriting is an assignment method that incorporates a special type of proxy server that modifies HTML content before it is presented to the end user.
 ページ書き換えは、エンドユーザーに提示される前にHTMLコンテンツを修正する特殊なタイプのプロキシサーバーを組み込んだ割り当て方法である。
@@ -1078,7 +1111,7 @@ Because the proxy servers both need to handle all potential traffic to the site 
 
 3. Development and testing of variant content is more difficult and more error-prone than with other methods. Each variant must be expressed as a set of rules for modifying HTML code rather than as the HTML code itself. 4. Running experiments on backend algorithms is difficult because the assignment decision is made after the page is rendered by the website. 5. Running experiments on encrypted traffic (in particular, pages served via https) is resource-intensive because the proxy server must decrypt, modify, and re-encrypt the content. This represents a significant problem because the most interesting parts of a website (such as the checkout page) are commonly encrypted. Page rewriting can be a cheap method for experimenting on front-end content because it minimizes IT/developer involvement. However, it is not appropriate for testing backend changes or platform migrations. バリアントコンテンツの開発とテストは、他の方法よりも難しく、エラーが起こりやすい。 各バリアントは、HTML コードそのものではなく、HTML コードを修正するためのルールセットとして表現する必要があります。4.バックエンドのアルゴリズムで実験を行うことは、ページがウェブサイトによってレンダリングされた後に割り当ての決定が行われるため、困難です。 なぜなら、ウェブサイトの最も興味深い部分（チェックアウトページなど）は一般的に暗号化されているからだ。 ページの書き換えは、IT/開発者の関与を最小限に抑えることができるため、フロントエンドのコンテンツを実験するための安価な方法となる。 しかし、バックエンドの変更やプラットフォームの移行をテストするには適していない。
 
-### Client-side assignment クライアント側の割り当て
+### 5.2.3. Client-side assignment クライアント側の割り当て
 
 Client-side page modification is the most popular assignment method found in third-party experimentation platforms.
 クライアント側のページ修正は、サードパーティの実験プラットフォームに見られる最も一般的な割り当て方法である。
@@ -1107,7 +1140,7 @@ This optimization is incorrect (and should not be used) because it causes the re
 This method is best for experiments on front-end content that is primarily static.
 この方法は、主に静的なフロントエンド・コンテンツの実験に最適である。
 
-### Server-side assignment サーバー側の割り当て
+### 5.2.4. Server-side assignment サーバー側の割り当て
 
 Server-side assignment refers to a family of methods that use code embedded into the website’s servers to produce a different user experience for each variant.
 サーバーサイド・アサインとは、ウェブサイトのサーバーに埋め込まれたコードを使用して、バリアントごとに異なるユーザーエクスペリエンスを提供する一連の方法を指します。
@@ -1138,12 +1171,12 @@ Server-side assignment also has a number of disadvantages, all of which are stem
 
 1. Initial implementation is expensive. Depending on the complexity of the site, implementing the necessary server-side code changes can be difficult. 2. Because the method requires a developer to change code deep in the page logic for each experiment, implementing an experiment introduces risk. The risk is greatest on complex features whose code is spread across many pages and/or services. 3. Some variations of this method require code changes to be manually undone to complete an experiment. Specifically, a programmer must remove the code path that implements the losing treatment along with the conditional logic that reacts to the end user’s treatment assignment. While this simply refers to code clean-up, leaving the losing treatment code in there can yield a very messy codebase, while removing it adds risk since production code will be modified. While this process is trivial for a simple one-page experiment, it can be a painful process if API calls are spread throughout the code, and all such code changes introduce additional risk. Server-side assignment can be integrated into a content management system to greatly reduce the cost of running experiments using this method. When so integrated, experiments are configured by changing metadata instead of code. The metadata may be represented by anything from an editable configuration file to a relational database managed by a graphical user interface. The method is best illustrated with an example from a real system running at Amazon.com. Amazon’s home page is built on a content management system that assembles the page from individual units called slots (Kohavi et al. 2004). The system refers to page metadata at render time to determine how to assemble the page. Non-technical content editors schedule pieces of content in each slot through a graphical user interface that edits this page metadata. Content can include anything from an advertisement, to a product image, to a snippet of text filled with links, to a widget that displays dynamic content (such as personalized recommendations). A typical experiment would be to try various pieces of content in different locations. For example, do the recommendations receive higher clickthrough on the left or on the right? To enable this sort of experiment, the content management system is extended to allow pieces of content to be scheduled with respect to a specific experiment. As the page request comes in, the system executes the assignment logic for each scheduled experiment and saves the results to page context where the page assembly mechanism can react to it. The content management system only needs to be modified once; from then on, experiments can be designed, implemented, and removed by modifying the page metadata through the user interface. 初期導入には費用がかかる。 サイトの複雑さによっては、必要なサーバーサイドのコード変更を実装するのが難しい場合がある。2.この方法では、開発者が実験ごとにページロジックの奥深くにあるコードを変更する必要があるため、実験を実装するにはリスクが伴う。 そのリスクは、コードが多くのページやサービスにまたがっている複雑な機能で最大となる。3.この方法のいくつかのバリエーションでは、実験を完了させるためにコードの変更を手動で元に戻す必要がある。 具体的には、プログラマーは、エンドユーザーの治療割り当てに反応する条件ロジックとともに、負けた治療を実装するコードパスを削除しなければならない。 これは単にコードのクリーンアップを意味するが、敗戦処理のコードをそのままにしておくと、コードベースが非常に乱雑になる可能性がある。 単純な1ページの実験であればこのプロセスは些細なことだが、APIコールがコード全体に広がっている場合は骨の折れるプロセスとなる。 サーバーサイドの割り当てをコンテンツ管理システムに統合することで、この方法を使った実験の実行コストを大幅に削減することができる。 このように統合された場合、実験はコードの代わりにメタデータを変更することで設定される。 メタデータは、編集可能なコンフィギュレーション・ファイルから、グラフィカル・ユーザー・インターフェースで管理されるリレーショナル・データベースまで、あらゆるもので表現することができる。 この方法は、Amazon.comで実際に稼動しているシステムの例で説明するのが一番わかりやすい。 アマゾンのホームページは、スロットと呼ばれる個々の単位からページを組み立てるコンテンツ管理システムで構築されている（Kohavi et al.2004）。 システムはレンダリング時にページのメタデータを参照し、ページの組み立て方を決定する。 技術者でないコンテンツ編集者は、このページのメタデータを編集するグラフィカル・ユーザー・インターフェースを通じて、各スロットにコンテンツの断片をスケジュールする。 コンテンツには、広告から商品画像、リンクで埋め尽くされたテキストの断片、動的コンテンツ（パーソナライズされたおすすめ商品など）を表示するウィジェットまで、あらゆるものが含まれる。 典型的な実験は、さまざまな場所でさまざまなコンテンツを試してみることだろう。 例えば、左と右のどちらがクリックスルー率が高いか？このような実験を可能にするために、コンテンツ管理システムを拡張し、特定の実験に関してコンテンツの断片をスケジューリングできるようにする。 ページ要求が来ると、システムはスケジュールされた各実験の割り当てロジックを実行し、その結果をページ組立メカニズムが対応できるページコンテキストに保存する。 コンテンツマネジメントシステムは一度だけ修正すればよい。それ以降は、ユーザーインターフェイスを通じてページのメタデータを修正することで、実験の設計、実施、削除が可能になる。
 
-### Summary 概要
+### 5.2.5. Summary 概要
 
 The following table summarizes the relative advantages and disadvantages of all of the assignment methods described above.
 次の表は、上記のすべての割り当て方法の相対的な長所と短所をまとめたものである。
 
-## Data path データパス
+## 5.3. Data path データパス
 
 In order to compare metrics across experiment variants, a website must first record the treatment assignments of all end users who visit the site during an experiment.
 実験のバリアント間でメトリクスを比較するためには、ウェブサイトはまず、実験中にサイトを訪れたすべてのエンドユーザーのトリートメント割り当てを記録する必要があります。
@@ -1212,7 +1245,7 @@ This method also makes it easier to experiment on large websites built on hetero
 Unlike with assignment methods, there is a clear winner among data collection techniques: service-based collection is the most flexible and therefore preferred when possible.
 割り当て方法とは異なり、データ収集技術には明確な勝者がいる： サービスベースの収集が最も柔軟であり、したがって可能な限り望ましい。
 
-# Lessons learned 教訓
+# 6. Lessons learned 教訓
 
 The difference between theory and practice is larger in practice than the difference between theory and practice in theory – Jan L.A.van de Snepscheut Many theoretical techniques seem well suited for practical use and yet require significant ingenuity to apply them to messy real world environments.
 理論と実践の差は、理論における理論と実践の差よりも、実践における差の方が大きい - Jan L.A.van de Snepscheut 理論的なテクニックの多くは、実践的な使用に適しているように見えるが、それを厄介な現実の環境に適用するには、かなりの工夫が必要である。
@@ -1221,12 +1254,12 @@ Controlled experiments are no exception.
 Having run a large number of online experiments, we now share several practical lessons in three areas: (i) analysis; (ii) trust and execution; and (iii) culture and business.
 多くのオンライン実験を実施してきた私たちは、3つの分野でいくつかの実践的な教訓を共有する： (i)分析、(ii)信頼と実行、(iii)文化とビジネス。
 
-## Analysis 分析
+## 6.1. Analysis 分析
 
 The road to hell is paved with good intentions and littered with sloppy analysis – Anonymous
 地獄への道は善意で舗装され、ずさんな分析で汚れている - Anonymous
 
-### Mine the data データをマイニングする
+### 6.1.1. Mine the data データをマイニングする
 
 A controlled experiment provides more than just a single bit of information about whether the difference in OECs is statistically significant.
 対照実験では、OECの差が統計的に有意かどうかという一口情報以上のものが得られる。
@@ -1239,7 +1272,7 @@ JavaScriptを含む特定の治療機能は、そのブラウザのバージョ�
 Excluding the population from the analysis showed positive results, and once the bug was fixed, the feature was indeed retested and was positive.
 この母集団を分析から除外したところ、肯定的な結果が得られた。バグが修正された後、この機能は実際に再テストされ、肯定的な結果が得られた。
 
-### Speed matters スピードが重要
+### 6.1.2. Speed matters スピードが重要
 
 A Treatment might provide a worse user experience because of its performance.
 トリートメントは、そのパフォーマンスのために、より悪いユーザーエクスペリエンスを提供するかもしれない。
@@ -1250,7 +1283,7 @@ Recent experiments at Microsoft Live Search (Kohavi 2007, p.12) showed that when
 If time is not directly part of your OEC, make sure that a new feature that is losing is not losing because it is slower.
 時間が直接OECの一部でない場合、負けている新機能が遅いから負けているのではないことを確認してください。
 
-### Test one factor at a time (or not) 一度に1つの要因をテストする（あるいはしない）
+### 6.1.3. Test one factor at a time (or not) 一度に1つの要因をテストする（あるいはしない）
 
 Several authors (Peterson 2004, p.76; Eisenberg 2005) recommend testing one factor at a time.
 いくつかの著者（Peterson 2004, p.76; Eisenberg 2005）は、一度に1つの要因をテストすることを推奨している。
@@ -1263,23 +1296,24 @@ While it is clear that factorial designs allow for joint optimization of factors
 Our recommendations are therefore: • Conduct single-factor experiments for gaining insights and when you make incremental changes that could be decoupled.
 従って、我々の推奨は以下の通りである： - 洞察力を得るため、そしてデカップリングが可能な段階的な変更を行う際に、単一要因実験を実施すること。
 • Try some bold bets and very different designs.
-- 大胆な賭けや、まったく異なるデザインに挑戦してみよう。
-For example, let two designers come up with two very different designs for a new feature and try them one against the other.
-例えば、2人のデザイナーが新機能のために全く異なる2つのデザインを考え、1対1で試してみる。
-You might then start to perturb the winning version to improve it further.
-その後、優勝したバージョンをさらに改良するために手を加え始めるかもしれない。
-For backend algorithms it is even easier to try a completely different algorithm (e.g., a new recommendation algorithm).
-バックエンドアルゴリズムの場合、まったく別のアルゴリズム（例えば新しい推薦アルゴリズム）を試すのはさらに簡単だ。
-Data mining can help isolate areas where the new algorithm is significantly better, leading to interesting insights.
-データマイニングは、新しいアルゴリズムが著しく優れている部分を特定するのに役立ち、興味深い洞察につながる。
-• Use full or fractional factorial designs suitable for estimating interactions when several factors are suspected to interact strongly.
-- いくつかの因子が強く相互作用することが疑われる場合、相互作用の推定に適した完全または分数階計画を用いる。
-Limit the number of values per factor and assign the same percentage to the treatments as to the control.
-各要因の値数を制限し、コントロールと同じパーセンテージをトリートメントに割り当てる。
-This gives your experiment maximum power to detect effects.
-これにより、実験が効果を検出するための最大限の力を得ることができる。
 
-## Trust and execution 信頼と実行
+- 大胆な賭けや、まったく異なるデザインに挑戦してみよう。
+  For example, let two designers come up with two very different designs for a new feature and try them one against the other.
+  例えば、2人のデザイナーが新機能のために全く異なる2つのデザインを考え、1対1で試してみる。
+  You might then start to perturb the winning version to improve it further.
+  その後、優勝したバージョンをさらに改良するために手を加え始めるかもしれない。
+  For backend algorithms it is even easier to try a completely different algorithm (e.g., a new recommendation algorithm).
+  バックエンドアルゴリズムの場合、まったく別のアルゴリズム（例えば新しい推薦アルゴリズム）を試すのはさらに簡単だ。
+  Data mining can help isolate areas where the new algorithm is significantly better, leading to interesting insights.
+  データマイニングは、新しいアルゴリズムが著しく優れている部分を特定するのに役立ち、興味深い洞察につながる。
+  • Use full or fractional factorial designs suitable for estimating interactions when several factors are suspected to interact strongly.
+- いくつかの因子が強く相互作用することが疑われる場合、相互作用の推定に適した完全または分数階計画を用いる。
+  Limit the number of values per factor and assign the same percentage to the treatments as to the control.
+  各要因の値数を制限し、コントロールと同じパーセンテージをトリートメントに割り当てる。
+  This gives your experiment maximum power to detect effects.
+  これにより、実験が効果を検出するための最大限の力を得ることができる。
+
+## 6.2. Trust and execution 信頼と実行
 
 In God we trust, all others pay cash – Jean Shepherd 6.2.1 Run continuous A/A tests Run A/A tests (see Sect.3.1) and validate the following.1.Are users split according to the planned percentages? 2.
 In God we trust, all others pay cash - Jean Shepherd 6.2.1 継続的なA/Aテストの実施 A/Aテスト（Sect.3.1参照）を実施し、以下のことを検証する。2.
@@ -1328,32 +1362,33 @@ However, if the experiment were run at 95%/5%, the running time would have to be
 Such an experiment should not be run at 99%/1% because it would require over 125 days, a period we consider too long for reliable result; factors, such as cookie churn, that have secondary impact in experiments running for a few weeks may start contaminating the data.
 このような実験を99%/1%で実行すべきではありません。なぜなら、信頼できる結果を得るには長すぎる期間である125日以上を必要とするからです。
 
-## Culture and business ♪文化とビジネス
+## 6.3. Culture and business ♪文化とビジネス
 
 It is difficult to get a man to understand something when his salary depends upon his not understanding it.
 彼の給料がそのことを理解しているかどうかで決まるとき、その人に何かを理解させるのは難しい。
 – Upton Sinclair 6.3.1 Agree on the OEC upfront One of the powers of controlled experiments is that it can objectively measure the value of new features for the business.
-- アプトン・シンクレア 6.3.1 OECを前もって合意する 管理実験の力の1つは、ビジネスにとっての新機能の価値を客観的に測定できることである。
-However, it best serves this purpose when the interested parties have agreed on how an experiment is to be evaluated before the experiment is run.
-しかし、実験が実施される前に、関係者が実験の評価方法について合意していれば、この目的に最も適している。
-While this advice may sound obvious, it is infrequently applied because the evaluation of many online features is subject to several, often competing objectives.
-このアドバイスは当たり前のように聞こえるかもしれないが、多くのオンライン機能の評価は、いくつかの、しばしば競合する目的に左右されるため、あまり適用されていない。
-OECs can be combined measures, which transform multiple objectives, in the form of experimental observations, into a single metric.
-OECは、実験的観察という形で、複数の目標を単一の指標に変換する複合指標であることができる。
-In formulating an OEC, an organization is forced to weigh the value of various inputs and decide their relative importance.
-OECを策定する際、組織は様々なインプットの価値を計量し、それらの相対的な重要性を決定する必要に迫られる。
-A good technique is to assess the lifetime value of users and their actions.
-良いテクニックは、ユーザーの生涯価値とその行動を評価することである。
-For example, a search from a new user may be worth more than an additional search from an existing user.
-例えば、新規ユーザーからの検索は、既存ユーザーからの追加検索よりも価値があるかもしれない。
-Although a single metric is not required for running experiments, this hard up-front work can align the organization and clarify goals.6.3.2 Beware of launching features that “do not hurt” users When an experiment yields no statistically significant difference between variants, this may mean that there truly is no difference between the variants or that the experiment did not have sufficient power to detect the change.
-6.3.2 ユーザーを "傷つけない "機能のローンチに注意 実験の結果、バリアント間で統計的に有意な差が出なかった場合、これはバリアント間に本当に差がないか、実験が変化を検出するのに十分な検出力を持たなかったことを意味するかもしれません。
-In the face of a “no significant difference” result, sometimes the decision is made to launch the change anyway “because it does not hurt anything.” It is possible that the experiment is negative but underpowered.6.3.3 Weigh the feature maintenance costs An experiment may show a statistically significant difference between variants, but choosing to launch the new variant may still be unjustified because of maintenance costs.
-有意差なし」という結果を前にして、"何も損しないから "とにかく変更を開始するという決定がなされることがある。6.3.3 機能のメンテナンスコストの重み付け 実験がバリアント間で統計的に有意な差を示しても、メンテナンスコストのために新しいバリアントをローンチすることは正当化されないかもしれません。
-A small increase in the OEC may not outweigh the cost of maintaining the feature.
-OECのわずかな増加は、その機能を維持するためのコストを上回らないかもしれない。
 
-### Change to a data-driven culture データ主導の文化への変革
+- アプトン・シンクレア 6.3.1 OECを前もって合意する 管理実験の力の1つは、ビジネスにとっての新機能の価値を客観的に測定できることである。
+  However, it best serves this purpose when the interested parties have agreed on how an experiment is to be evaluated before the experiment is run.
+  しかし、実験が実施される前に、関係者が実験の評価方法について合意していれば、この目的に最も適している。
+  While this advice may sound obvious, it is infrequently applied because the evaluation of many online features is subject to several, often competing objectives.
+  このアドバイスは当たり前のように聞こえるかもしれないが、多くのオンライン機能の評価は、いくつかの、しばしば競合する目的に左右されるため、あまり適用されていない。
+  OECs can be combined measures, which transform multiple objectives, in the form of experimental observations, into a single metric.
+  OECは、実験的観察という形で、複数の目標を単一の指標に変換する複合指標であることができる。
+  In formulating an OEC, an organization is forced to weigh the value of various inputs and decide their relative importance.
+  OECを策定する際、組織は様々なインプットの価値を計量し、それらの相対的な重要性を決定する必要に迫られる。
+  A good technique is to assess the lifetime value of users and their actions.
+  良いテクニックは、ユーザーの生涯価値とその行動を評価することである。
+  For example, a search from a new user may be worth more than an additional search from an existing user.
+  例えば、新規ユーザーからの検索は、既存ユーザーからの追加検索よりも価値があるかもしれない。
+  Although a single metric is not required for running experiments, this hard up-front work can align the organization and clarify goals.6.3.2 Beware of launching features that “do not hurt” users When an experiment yields no statistically significant difference between variants, this may mean that there truly is no difference between the variants or that the experiment did not have sufficient power to detect the change.
+  6.3.2 ユーザーを "傷つけない "機能のローンチに注意 実験の結果、バリアント間で統計的に有意な差が出なかった場合、これはバリアント間に本当に差がないか、実験が変化を検出するのに十分な検出力を持たなかったことを意味するかもしれません。
+  In the face of a “no significant difference” result, sometimes the decision is made to launch the change anyway “because it does not hurt anything.” It is possible that the experiment is negative but underpowered.6.3.3 Weigh the feature maintenance costs An experiment may show a statistically significant difference between variants, but choosing to launch the new variant may still be unjustified because of maintenance costs.
+  有意差なし」という結果を前にして、"何も損しないから "とにかく変更を開始するという決定がなされることがある。6.3.3 機能のメンテナンスコストの重み付け 実験がバリアント間で統計的に有意な差を示しても、メンテナンスコストのために新しいバリアントをローンチすることは正当化されないかもしれません。
+  A small increase in the OEC may not outweigh the cost of maintaining the feature.
+  OECのわずかな増加は、その機能を維持するためのコストを上回らないかもしれない。
+
+### 6.3.1. Change to a data-driven culture データ主導の文化への変革
 
 Running a few online experiments can provide great insights into how customers are using a feature.
 いくつかのオンライン実験を行うことで、顧客がその機能をどのように使用しているかについての素晴らしい洞察を得ることができる。
@@ -1368,7 +1403,7 @@ In a web world, we can integrate customer feedback directly through prototypes a
 If an organization has done the hard work to agree on an OEC and vetted an experimentation system, experimentation can provide real data and move the culture towards attaining shared goals rather than battle over opinions.
 もし組織がOECに合意し、実験システムを吟味するためのハードワークを行ったなら、実験は実際のデータを提供し、意見を戦わせるのではなく、共有された目標を達成する方向に文化を動かすことができる。
 
-# Summary 要約
+# 7. Summary 要約
 
 Almost any question can be answered cheaply, quickly and finally, by a test campaign.
 ほとんどどんな質問にも、テストキャンペーンによって、安く、早く、そして最終的に答えることができる。
@@ -1377,23 +1412,24 @@ And that’s the way to answer them – not by arguments around a table.
 Go to the court of last resort – buyers of your products.
 最後の頼みの綱である、あなたの製品の買い手に訴えよう。
 – Claude Hopkins, Scientific Advertising, 1923 …the ability to experiment easily is a critical factor for Web-based applications.
+
 - クロード・ホプキンス、科学的広告、1923年 ...簡単に実験できる能力は、ウェブベースのアプリケーションにとって重要な要素である。
-The online world is never static.
-ネットの世界は決して静的なものではない。
-There is a constant flow of new users, new products and new technologies.
-新しいユーザー、新しい製品、新しい技術が絶えず生まれている。
-Being able to figure out quickly what works and what doesn’t can mean the difference between survival and extinction.
-何が効果的で何が効果的でないかを素早く見極められるかどうかが、生き残りと絶滅の分かれ目になる。
-– Hal Varian, 2007 Classical knowledge discovery and data mining provide insight, but the patterns discovered are correlational and therefore pose challenges in separating useful actionable patterns from those caused by “leaks” (Kohavi et al.2004).
+  The online world is never static.
+  ネットの世界は決して静的なものではない。
+  There is a constant flow of new users, new products and new technologies.
+  新しいユーザー、新しい製品、新しい技術が絶えず生まれている。
+  Being able to figure out quickly what works and what doesn’t can mean the difference between survival and extinction.
+  何が効果的で何が効果的でないかを素早く見極められるかどうかが、生き残りと絶滅の分かれ目になる。
+  – Hal Varian, 2007 Classical knowledge discovery and data mining provide insight, but the patterns discovered are correlational and therefore pose challenges in separating useful actionable patterns from those caused by “leaks” (Kohavi et al.2004).
 - Hal Varian, 2007 古典的な知識発見とデータマイニングは、洞察力を提供するが、発見されたパターンは相関的であるため、有用な実用的パターンと「漏れ」によるパターンを分離するのに課題がある（Kohavi et al.2004）。
-Controlled experiments neutralize confounding variables by distributing them equally over all values through random assignment (Keppel et al.1992), thus establishing a causal relationship between the changes made in the different variants and the measure(s) of interest, including the Overall Evaluation Criterion (OEC).
-対照実験は、無作為割付けによってすべての値に等しく配分することで、交絡変数を中和し(Keppel et al.1992)、その結果、異なる変種における変化と、総合評価基準(OEC)を含む関心のある尺度の間の因果関係を確立する。
-Using data mining techniques in this setting can thus provide extremely valuable insights, such as the identification of segments that benefit from a feature introduced in a controlled experiment, leading to a virtuous cycle of improvements in features and better personalization.
-このような設定でデータマイニング技術を使用すると、制御された実験で導入された機能から利益を得るセグメントを特定し、機能の改善とより良いパーソナライゼーションの好循環につなげるなど、非常に貴重な洞察を得ることができる。
-The basic ideas in running controlled experiments are easy to understand, but a comprehensive overview for the web was not previously available.
-対照実験の基本的な考え方は理解しやすいが、ウェブ用の包括的な概要はこれまでなかった。
-In addition, there are important new lessons and insights that we shared throughout the paper, including generalized architectures, ramp-up and aborts, the practical problems with randomization and hashing techniques, and organizational issues, especially as they relate to OEC.
-さらに、一般化されたアーキテクチャー、ランプアップとアボート、ランダム化とハッシュ化技術に関する実際的な問題、特にOECに関連する組織的な問題など、論文全体を通じて共有した重要な新しい教訓と洞察がある。
+  Controlled experiments neutralize confounding variables by distributing them equally over all values through random assignment (Keppel et al.1992), thus establishing a causal relationship between the changes made in the different variants and the measure(s) of interest, including the Overall Evaluation Criterion (OEC).
+  対照実験は、無作為割付けによってすべての値に等しく配分することで、交絡変数を中和し(Keppel et al.1992)、その結果、異なる変種における変化と、総合評価基準(OEC)を含む関心のある尺度の間の因果関係を確立する。
+  Using data mining techniques in this setting can thus provide extremely valuable insights, such as the identification of segments that benefit from a feature introduced in a controlled experiment, leading to a virtuous cycle of improvements in features and better personalization.
+  このような設定でデータマイニング技術を使用すると、制御された実験で導入された機能から利益を得るセグメントを特定し、機能の改善とより良いパーソナライゼーションの好循環につなげるなど、非常に貴重な洞察を得ることができる。
+  The basic ideas in running controlled experiments are easy to understand, but a comprehensive overview for the web was not previously available.
+  対照実験の基本的な考え方は理解しやすいが、ウェブ用の包括的な概要はこれまでなかった。
+  In addition, there are important new lessons and insights that we shared throughout the paper, including generalized architectures, ramp-up and aborts, the practical problems with randomization and hashing techniques, and organizational issues, especially as they relate to OEC.
+  さらに、一般化されたアーキテクチャー、ランプアップとアボート、ランダム化とハッシュ化技術に関する実際的な問題、特にOECに関連する組織的な問題など、論文全体を通じて共有した重要な新しい教訓と洞察がある。
 
 Software features in products today are commonly determined by the same way medicine was prescribed prior to World War II: by people who were regarded as experts, not by using scientific methods, such as controlled experiments.
 今日の製品のソフトウェア機能は、第二次世界大戦前に医薬品が処方されていたのと同じ方法で決定されるのが一般的だ： つまり、専門家とみなされる人々によって決定されるのであって、管理された実験などの科学的方法によって決定されるのではない。
