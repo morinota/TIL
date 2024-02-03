@@ -269,27 +269,32 @@ In a UW iEdge Seminar talk by Amazon in April 2006, it was disclosed that the fe
 
 # 3. Controlled experiments 対照実験
 
-Enlightened trial and error outperforms the planning of flawless execution – David Kelly, founder of Ideo To have a great idea, have a lot of them – Thomas A.
-啓蒙された試行錯誤は、完璧な実行計画を凌駕する - デビッド・ケリー、アイデオの創設者 偉大なアイデアを持つには、それをたくさん持つこと - トーマス・A.
-Edison In the simplest controlled experiment, often referred to as an A/B test, users are randomly exposed to one of two variants: Control (A), or Treatment (B) as shown in Fig.7 (Mason et al.1989; Box et al.2005; Keppel et al.1992).
-エジソン（Edison） A/Bテストと呼ばれる最も単純な統制実験では、ユーザーは、図7（Mason et al： 図7（Mason et al.1989; Box et al.2005; Keppel et al.1992）に示すように、コントロール（A）とトリートメント（B）である。
+Enlightened trial and error outperforms the planning of flawless execution – David Kelly, founder of Ideo
+完璧な実行計画を凌駕するためには、啓蒙された試行錯誤が必要である - デビッド・ケリー、アイデオの創設者
+To have a great idea, have a lot of them – Thomas A.
+偉大なアイデアを持つためには、たくさんのアイデアを持つことが必要である - トーマス・A・エジソン
+
+![figure7]()
+
+In the simplest controlled experiment, often referred to as an A/B test, users are randomly exposed to one of two variants: Control (A), or Treatment (B) as shown in Fig.7 (Mason et al.1989; Box et al.2005; Keppel et al.1992).
+最も単純な対照実験では、A/Bテストと呼ばれることが多く、ユーザは図7に示すように、コントロール（A）またはトリートメント（B）の2つのバリアントのいずれかにランダムにさらされる（Mason et al.1989; Box et al.2005; Keppel et al.1992）。
 The key here is “random.” Users cannot be distributed “any old which way” (Weiss 1997); no factor can influence the decision.
-ここで重要なのは "ランダム "である。ユーザーを "どの方向にも "分散させることはできない（Weiss 1997）。
+**ここで重要なのは "ランダム"である**。ユーザーを "どの方向にも "分布させることはできない（Weiss 1997）。
 Based on observations collected, an Overall Evaluation Criterion (OEC) is derived for each variant (Roy 2001).
-収集された観察結果に基づき、各バリアントについて総合評価基準（OEC）が導き出される（Roy 2001）。
+収集された観察結果に基づき、各バリアントについてOverall Evaluation Criterion(総合評価基準, OEC)が導き出される（Roy 2001）。
 For example, in Checkout Example (Sect.2.1), the OEC can be the conversion rate, units purchased, revenue, profit, expected lifetime value, or some weighted combination of these.
-例えば、チェックアウトの例（Sect.2.1）では、OECは、コンバージョン率、購入個数、収益、利益、期待生涯価値、またはこれらの重み付けされた組み合わせとすることができる。
+例えば、チェックアウトの例（Sect.2.1）では、OECは、コンバージョン率、購入個数、収益、利益、期待生涯価値、または**これらの重み付けされた組み合わせ**とすることができる。(なるほど、複数のmetricsを結合した合成metricを用意するケースもあるのか...!)
 Analysis is then done to determine if the difference in the OEC for the variants is statistically significant.
 その後、各バリアントのOECの差が統計的に有意かどうかを判定するための分析が行われる。
 If the experiment was designed and executed properly, the only thing consistently different between the two variants is the change between the Control and Treatment, so any differences in the OEC are inevitably the result of this assignment, establishing causality (Weiss 1997, p.215).
-もし実験が適切にデザインされ、実施されたのであれば、2つの変種間で一貫して異なるのは、コントロールとトリートメントの間の変化だけであるため、OECの違いは必然的にこの割り当ての結果であり、因果関係が確立される(Weiss 1997, p.215)。
+実験が適切に設計され、実行されていれば、2つのvariantの間で一貫して異なるのはコントロールとトリートメントの変更だけであるため、OECの違いは必然的にこの割り当ての結果であり、因果関係が確立される（Weiss 1997, p.215）。
 There are several primers on running controlled experiments on the web (Peterson 2004, pp.76–78; Eisenberg and Eisenberg 2005, pp.283–286; Chatham et al.2004; Eisenberg 2005, 2004; Quarto-vonTivadar 2006; Miller 2007, 2006; Kaushik 2006; Peterson 2005, pp.248–253; Tyler and Ledford 2006, pp.213–219; Sterne 2002, pp.116–119).
 ウェブ上で対照実験を行うための入門書がいくつかある（Peterson 2004, pp.76-78; Eisenberg and Eisenberg 2005, pp.283-286; Chatham et al.2004; Eisenberg 2005, 2004; Quarto-vonTivadar 2006; Miller 2007, 2006; Kaushik 2006; Peterson 2005, pp.248-253; Tyler and Ledford 2006, pp.213-219; Sterne 2002, pp.116-119）。
 
 While the concept is easy to understand and basic ideas echo through many references, there are important lessons that we share here that are rarely discussed.
-コンセプトは理解しやすく、基本的な考え方は多くの文献で紹介されているが、ここで紹介するのは、あまり語られることのない重要な教訓である。
+コンセプトは理解しやすく、基本的な考え方は多くの文献で紹介されているが、ここで紹介するのは、**あまり語られることのない重要な教訓**である。
 These will help experimenters understand the applicability, limitations, and how to avoid mistakes that invalidate the results.
-これらは、実験者が適用可能性、限界、結果を無効にするミスを避ける方法を理解するのに役立つ。
+これらは、実験者が適用可能性、制限、および結果を無効にする間違いを避ける方法を理解するのに役立つだろう。
 
 ## 3.1. Terminology 用語
 
@@ -297,192 +302,216 @@ The terminology for controlled experiments varies widely in the literature.
 対照実験の用語は、文献によって大きく異なる。
 Below we define key terms used in this paper and note alternative terms that are commonly used.
 以下では、本稿で使用する主要な用語を定義し、一般的に使用される代替用語を記す。
-Overall Evaluation Criterion (OEC) (Roy 2001).
+
+### Overall Evaluation Criterion (OEC) (Roy 2001).
+
 総合評価基準（OEC）（Roy 2001）。
+
 A quantitative measure of the experiment’s objective.
-実験目的の定量的な指標。
+実験目的の定量的な指標。(=つまりprimary decision metric? もしくはprimary decision metricに加えてsecondary metricsやguardrail metricsも含めたもの?:thinking:)
 In statistics this is often called the Response or Dependent Variable (Mason et al.1989;Box et al.2005); other synonyms includeOutcome,Evaluation metric, Performance metric, or Fitness Function (Quarto-vonTivadar 2006).
-統計学では、これは応答変数または従属変数と呼ばれることが多い (Mason et al.1989;Box et al.2005)。他の同義語には、Outcome、Evaluation metric、Performance metric、Fitness Function などがある (Quarto-vonTivadar 2006)。
+統計学では、これはしばしば応答または従属変数と呼ばれる（Mason et al.1989;Box et al.2005）; 他の類義語にはOutcome,Evaluation metric, Performance metric, or Fitness Function (Quarto-vonTivadar 2006)がある。
 Experiments may have multiple objectives and a scorecard approach might be taken (Kaplan and Norton 1996), although selecting a single metric, possibly as a weighted combination of such objectives is highly desired and recommended (Roy 2001, p.50).
 実験には複数の目的があり、スコアカードアプローチが取られるかもしれない（Kaplan and Norton 1996）が、単一の指標を選択すること、場合によってはそのような目的の重み付けされた組み合わせとして選択することは、非常に望ましく、推奨される（Roy 2001, p.50）。
 A single metric forces tradeoffs to be made once for multiple experiments and aligns the organization behind a clear objective.
-単一の指標は、複数の実験に対してトレードオフを一度だけ行うことを強制し、明確な目的のために組織を一致させる。
+**単一の指標は、複数の実験に対してトレードオフを一度だけ行うことを強制し、明確な目的のために組織を一致させる**。
 A good OEC should not be short-term focused (e.g., clicks); to the contrary, it should include factors that predict long-term goals, such as predicted lifetime value and repeat visits.
 それどころか、予測される生涯価値やリピート訪問など、長期的なゴールを予測する要素を含むべきである。
 Ulwick describes some ways to measure what customers want (although not specifically for the web) (Ulwick 2005).
 ウルウィック氏は、（ウェブに特化したものではないが）顧客が何を求めているかを測定する方法をいくつか紹介している（Ulwick 2005）。
-Factor.
-ファクターだ。
+
+### Factor.
+
 A controllable experimental variable that is thought to influence the OEC.
-OECに影響を与えると考えられる制御可能な実験変数。
+OECに影響を与えると考えられる制御可能な実験変数。(control or treatmentみたいな??)
 Factors are assigned Values, sometimes called Levels or Versions.
-ファクターには値が割り当てられ、レベルやバージョンと呼ばれることもある。
+ファクターには値が割り当てられ、levelsやversionsと呼ばれることもある。
+(例えばpush通知のパーソナライスするか否かのABテストの場合、factor = is_personalized, value = true or false、みたいな?:thinking:)
 Factors are sometimes called Variables.
 因子は変数と呼ばれることもある。
 In simple A/B tests, there is a single factor with two values: A and B.
-単純なA/Bテストでは、2つの値を持つ単一の要因がある： AとBです。
-Variant.
-バリアント。
+**単純なA/Bテストでは、2つの値を持つ単一のfactorがある： AとBです**。
+
+### Variant.
+
 A user experience being tested by assigning levels to the factors; it is either the Control or one of the Treatments.
-要因にレベルを割り当てることで、ユーザー体験がテストされる。
+**factorにlevelを割り当てる**ことで、ユーザ体験がテストされる。
 Sometimes referred to as Treatment, although we prefer to specifically differentiate between the Control, which is a special variant that designates the existing version being compared against and the new Treatments being tried.
-トリートメント（Treatment）と呼ばれることもあるが、コントロール（Control）とは、比較対象となる既存のバージョンを示す特別な変種であり、新たに試されるトリートメント（Treatments）とは特に区別したい。
+トリートメント(reatment)と呼ばれることもあるが、特に比較対象となる既存のバージョンを指定する特別なvariantであるcontrolと、試される新しいtreatmentを明確に区別することを好む。
 In case of a bug, for example, the experiment is aborted and all users should see the Control variant.
 例えばバグがあった場合、実験は中止され、すべてのユーザがコントロールの variant を見ることになります。
-Experimental unit.
-実験ユニット。
+
+### Experimental unit. 実験単位。
+
 The entity over which metrics are calculated before averaging over the entire experiment for each variant.
-各バリアントの実験全体を平均化する前に、メトリクスが計算されるエンティティ。
+各variantの実験全体を平均化する前に、metricsが計算されるentity。(?? 後述の例を読んだらよく理解できた...!)
 Sometimes called an item.
 アイテムと呼ばれることもある。
 The units are assumed to be independent.
 各ユニットは独立していると仮定する。
 On the web, the user is a common experimental unit, although some metrics may have user-day, user-session or page views as the experimental units.
-ウェブ上では、ユーザーが一般的な実験単位であるが、メトリクスによっては、ユーザーデー、ユーザーセッション、ページビューを実験単位とするものもある。
+**ウェブ上では、ユーザが一般的な実験単位であるが、metricsによっては、user-day、user-session、page viewsを実験単位とするものもある**
 For any of these randomization by user is preferred.
-いずれの場合も、ユーザーによるランダム化が望ましい。
+いずれの場合も、ユーザによるランダム化が望ましい。(実験単位がuser-sessionだったとしても、ランダム化はあくまでもユーザ単位のほうがいいってこと??:thinking:)
 It is important that the user receive a consistent experience throughout the experiment, and this is commonly achieved through randomization based on user IDs stored in cookies.
-ユーザーが実験を通して一貫した体験を受けることが重要であり、これは一般的にクッキーに保存されたユーザーIDに基づくランダム化によって達成される。
+**ユーザが実験を通して一貫した体験を受けることが重要**であり、これは一般的にクッキーに保存されたユーザーIDに基づくランダム化によって達成される。
 We will assume that randomization is by user with some suggestions when randomization by user is not appropriate in Appendix.
-付録では、ユーザーによる無作為化が適切でない場合にいくつかの提案を行うが、ここではユーザーによる無作為化を仮定する。
-Null hypothesis.
-帰無仮説。
+付録では、ユーザーによる無作為化が適切でない場合にいくつかの提案を行うが、ここではユーザによる無作為化を仮定する。
+
+### Null hypothesis. 帰無仮説。
+
 The hypothesis, often referred to as H0, that the OECs for the variants are not different and that any observed differences during the experiment are due to random fluctuations.
-しばしばH0と呼ばれる仮説は、変異体のOECは異なっておらず、実験中に観察された違いはランダムな揺らぎによるものであるというものである。
-Confidence level.
-信頼度。
+しばしばH0と呼ばれる仮説は、variant間のOECは異なっておらず、実験中に観察された違いはランダムな揺らぎによるものであるというものである。
+
+### Confidence level. 信頼度。
+
 The probability of failing to reject (i.e., retaining) the null hypothesis when it is true.
-帰無仮説が真である場合に、帰無仮説が棄却されない（保持される）確率。
-Power.
-パワーだ。
+帰無仮説が真である場合に、帰無仮説が棄却されない(保持される)確率。(つまり、1 - significance level...!:thinking:)
+
+### Power
+
 The probability of correctly rejecting the null hypothesis, H0, when it is false.
 帰無仮説H0が偽である場合に、それを正しく棄却する確率。
 Power measures our ability to detect a difference when it indeed exists.
 検出力は、実際に差が存在する場合にそれを検出する能力を測るものである。
-A/A test.
-A/Aテスト。
+
+### A/A test.
+
 Sometimes called a Null Test (Peterson 2004).
-Null Testと呼ばれることもある（Peterson 2004）。
+**Null Test**と呼ばれることもある（Peterson 2004）。
 Instead of an A/B test, you exercise the experimentation system, assigning users to one of two groups, but expose them to exactly the same experience.
-A/Bテストの代わりに、実験システムを行使し、ユーザーを2つのグループのいずれかに割り当てるが、まったく同じ体験をさせる。
+A/Bテストの代わりに、実験システムを行使し、ユーザを2つのグループのいずれかに割り当てるが、まったく同じ体験をさせる。
 An A/A test can be used to (i) collect data and assess its variability for power calculations, and (ii) test the experimentation system (the Null hypothesis should be rejected about 5% of the time when a 95% confidence level is used).
-A/A検定は、(i)データを収集し、検出力計算のためにその変動性を評価し、(ii)実験システムを検定するために使用することができる（95％の信頼水準を使用する場合、帰無仮説は約5％の確率で棄却されるはずである）。
-Standard deviation (Std-Dev).
-標準偏差（Std-Dev）。
+A/A検定は、(i)データを収集し、検出力計算のためにその変動性(i.e. OEC metricの分散??)を評価するために使用することができ、(ii)実験システムをテストするために使用することができる（95%信頼度が使用される場合、帰無仮説は約5%の確率で棄却されるべきである）。
+
+### Standard deviation (Std-Dev). 標準偏差（Std-Dev）。
+
 A measure of variability, typically denoted by σ.
 一般的にσで示される変動性の尺度。
-Standard error (Std-Err).
-標準誤差（Std-Err）。
+
+### Standard error (Std-Err). 標準誤差（Std-Err）。
+
 For a statistic, it is the standard deviation of the sampling distribution of the sample statistic (Mason et al.1989).
-統計量については、標本統計量のサンプリング分布の標準偏差である(Mason et al.1989)。
+統計量の場合、標本統計量の標本分布の標準偏差である（Mason et al.1989）。
 For a mean of n independent observations, it is σ /ˆ √n where σˆ is the estimated standard deviation.
-n 個の独立したオブザベーションの平均では，σ /ˆ √n で，σˆ は推定標準偏差である．
+n 個の独立したオブザベーションの平均では，$\frac{\hat{\sigma}}{\sqrt{n}}$ であり，$\hat{\sigma}$ は標準偏差の推定値である。
 
 ## 3.2. Hypothesis testing and sample size 仮説の検定とサンプルサイズ
 
 To evaluate whether one of the treatments is different than the Control, a statistical test can be done.
-どちらかの処置がコントロールと異なるかどうかを評価するために、統計的検定を行うことができる。
+コントロールと比較して、treatmentのODC metricが異なるかどうかを評価するために、統計的検定が行われる。
 We accept a Treatment as being statistically significantly different if the test rejects the null hypothesis, which is that the OECs are not different.
-検定が帰無仮説（OECは異ならない）を棄却した場合、統計的に有意差があるとして処遇を受け入れる。
+検定が帰無仮説（OECは異ならない）を棄却した場合、統計的に有意差があるとして処遇を受け入れる。(うんうん)
 We will not review the details of the statistical tests, as they are described very well in many statistical books (Mason et al.1989; Box et al.2005; Keppel et al.1992).
 統計的検定の詳細については、多くの統計書（Mason et al.1989、Box et al.2005、Keppel et al.1992）に記載されているので、ここでは省略する。
-What is important is to review the factors that impact the test: 1.
-重要なのは、テストに影響を与える要因を見直すことである： 1.
-Confidence level.
-信頼度。
-Commonly set to 95%, this level implies that 5% of the time we will incorrectly conclude that there is a difference when there is none (Type I error).
-一般的に95%に設定されるこの水準は、差がないにもかかわらず差があると誤って結論づけることが5%あるということを意味する（タイプIエラー）。
-All else being equal, increasing this level reduces our power (below).2.Power.
-他の条件が同じであれば、このレベルを上げるとパワーが落ちる（以下略）。
-Commonly desired to be around 80–95%, although not directly controlled.
-直接コントロールはできないが、一般的には80～95％程度が望ましい。
-If the Null Hypothesis is false, i.e., there is a difference in the OECs, the power is the probability of determining that the difference is statistically significant.
-もし帰無仮説が偽であれば、つまりOECに差があれば、検出力とはその差が統計的に有意であると判断できる確率である。
-(A Type II error is one where we retain the Null Hypothesis when it is false.) 3.
-(第二種の過誤とは、帰無仮説が偽であるにもかかわらず、帰無仮説を維持する過誤のことである)。3.
-Standard error.
-標準誤差。
-The smaller the Std-Err, the more powerful the test.
-Std-Errが小さければ小さいほど、テストはより強力になる。
-There are three useful ways to reduce the Std-Err: a.
-Std-Errを減らすのに有効な方法が3つある： a.
-The estimated OEC is typically a mean of large samples.
-推定OECは通常、大きなサンプルの平均値である。
-As shown in Sect.3.1, the Std-Err of a mean is inversely proportional to the square root of the sample size, so increasing the sample size, which usually implies running the experiment longer, reduces the Std-Err and hence increases the power for most metrics.
-3.1節で示したように、平均値のStd-Errはサンプルサイズの平方根に反比例するので、サンプルサイズを大きくすることは、通常実験を長く行うことを意味し、Std-Errを減少させ、したがってほとんどの測定基準で検出力を増加させる。
-See the example in 3.2.1.
-3.2.1の例を参照のこと。
-b.
-b.
-Use OEC components that have inherently lower variability, i.e., the StdDev, σ, is smaller.
-本質的にばらつきが小さい、すなわち標準偏差σが小さいOEC成分を使用する。
-For example, conversion probability (0–100%) typically has lower Std-Dev than number of purchase units (typically small integers), which in turn has a lower Std-Dev than revenue (real-valued).
-例えば、コンバージョン確率（0-100％）は、通常、購入ユニット数（通常、小さな整数）よりもStd-Devが低く、その結果、収益（実数値）よりもStd-Devが低くなる。
-See the example in 3.2.1.
-3.2.1の例を参照のこと。
-c.
-c.
-Lower the variability of the OEC by filtering out users who were not exposed to the variants, yet were still included in the OEC.
-OECに含まれているにもかかわらず、バリアントにさらされていないユーザーをフィルタリングすることで、OECのばらつきを小さくする。
-For example, if you make a change to the checkout page, analyze only users who got to the page, as everyone else adds noise, increasing the variability.
-例えば、チェックアウトページに変更を加えた場合、そのページにたどり着いたユーザーだけを分析する。
-See the example in 3.2.3.
-3.2.3の例を参照のこと。
+What is important is to review the factors that impact the test:
+重要なのは、テストに影響を与える要因を見直すことである：
 
-Effect.
-効果
-The difference in OECs for the variants, i.e.the mean of the Treatment minus the mean of the Control.
-すなわち、トリートメントの平均からコントロールの平均を引いたものである。
-Larger differences are easier to detect, so great ideas will unlikely be missed.
-大きな差は発見しやすいので、素晴らしいアイデアが見逃される可能性は低い。
-Conversely, Type II errors are more likely when the effects are small.
-逆に、効果が小さいとタイプⅡの誤りは起こりやすい。
+- 1. Confidence level. 信頼度。
+     Commonly set to 95%, this level implies that 5% of the time we will incorrectly conclude that there is a difference when there is none (Type I error).
+     一般的に95%に設定されるこの水準は、差がないにもかかわらず差があると誤って結論づけることが5%あるということを意味する（タイプIエラー）。
+     All else being equal, increasing this level reduces our power (below).
+     他の条件が同じであれば、このレベルを上げるとパワーが落ちる（以下略）。
+- 2. Power 検出力
+     Commonly desired to be around 80–95%, although not directly controlled.
+     直接コントロールはできないが、一般的には80～95％程度が望ましい。
+     If the Null Hypothesis is false, i.e., there is a difference in the OECs, the power is the probability of determining that the difference is statistically significant.
+     もし帰無仮説が偽であれば、つまりOECに差があれば、検出力とはその差が統計的に有意であると判断できる確率である。
+     (A Type II error is one where we retain the Null Hypothesis when it is false.)
+     (第二種の過誤とは、帰無仮説が偽であるにもかかわらず、帰無仮説を維持する過誤のことである)
+- 3. Standard error. 標準誤差。
+     The smaller the Std-Err, the more powerful the test.
+     Std-Errが小さければ小さいほど、テストはより強力になる。
+
+There are three useful ways to reduce the Std-Err: a.
+Std-Errを減らすのに有効な方法が3つある：
+
+- The estimated OEC is typically a mean of large samples.
+  推定OECは通常、大きなサンプルの平均値である。
+  As shown in Sect.3.1, the Std-Err of a mean is inversely proportional to the square root of the sample size, so increasing the sample size, which usually implies running the experiment longer, reduces the Std-Err and hence increases the power for most metrics.
+  3.1節で示したように、平均値のStd-Errはサンプルサイズの平方根に反比例するので、サンプルサイズを大きくすることは、通常実験を長く行うことを意味し、Std-Errを減少させ、したがってほとんどの測定基準で検出力を増加させる。
+  See the example in 3.2.1.
+  3.2.1の例を参照のこと。 - b. Use OEC components that have inherently lower variability, i.e., the StdDev, σ, is smaller.
+- **本質的にばらつきが小さい、すなわち標準偏差σが小さいOEC componentsを使用する**。(なるべく安定したmetricを選べってことかな:thinking:)
+  For example, conversion probability (0–100%) typically has lower Std-Dev than number of purchase units (typically small integers), which in turn has a lower Std-Dev than revenue (real-valued).
+  例えば、コンバージョン確率（0-100％）は、通常、購入ユニット数（通常、小さな整数）よりもStd-Devが低く、その結果、収益（実数値）よりもStd-Devが低くなる。
+  See the example in 3.2.1.
+  3.2.1の例を参照のこと。
+- c. Lower the variability of the OEC by filtering out users who were not exposed to the variants, yet were still included in the OEC.
+  **OECに含まれているが、variantにさらされていないユーザーを除外することで、OECのばらつきを減らす**。(これはTrigger分析的なことっぽい:thinking:)
+  For example, if you make a change to the checkout page, analyze only users who got to the page, as everyone else adds noise, increasing the variability.
+  例えば、チェックアウトページに変更を加えた場合、そのページにたどり着いたユーザだけを分析する。
+  See the example in 3.2.3.
+  3.2.3の例を参照のこと。
+
+- 4. Effect.
+     The difference in OECs for the variants, i.e.the mean of the Treatment minus the mean of the Control.
+     すなわち、トリートメントの平均からコントロールの平均を引いたものである。(これはtrue effect sizeのことっぽい:thinking:)
+     Larger differences are easier to detect, so great ideas will unlikely be missed.
+     大きな差は発見しやすいので、素晴らしいアイデアが見逃される可能性は低い。
+     Conversely, Type II errors are more likely when the effects are small.
+     逆に、効果が小さいとtype IIエラーがより起こりやすい。
+
 Two formulas are useful to share in this context.
 この文脈では、2つの公式が役に立つ。
 The first is the t-test, used in A/B tests (single factor hypothesis tests):
-1つ目は、A/Bテスト（単一要因仮説検定）で使われるt検定である：
+1つ目は、A/Bテスト(single factor hypothesis tests)で使われるt検定である:
 
 $$
-\tag{}
+t = \frac{\bar{O_{B}} - \bar{O_{A}}}{\hat{\sigma_{d}}}
+\tag{1}
 $$
 
-where OA and OB are the estimated OEC values (e.g., averages), σd is the estimated standard deviation of the difference between the two OECs, and t is the test result.
-ここで、OAとOBは推定OEC値（例えば平均値）、σdは2つのOECの差の推定標準偏差、tはテスト結果である。
+where OA and OB are the estimated OEC values (e.g., averages), σ*d is the estimated standard deviation of the difference between the two OECs, and t is the test result.
+ここで、$\bar{O*{A}}$ と $\bar{O_{B}}$ は推定されたOECの値(例：平均値)、$\hat{\sigma_{d}}$ は2つのOECの差の推定標準偏差であり、tは検定結果である。
 Based on the confidence level, a threshold t is established (e.g., 1.96 for large samples and 95% confidence) and if the absolute value of t is larger than the threshold, then we reject the Null Hypothesis, claiming the Treatment’s OEC is therefore statistically significantly different than the Control’s OEC.
-信頼水準に基づき、しきい値tが設定され（たとえば、大きな標本と95%の信頼度では1.96）、tの絶対値がしきい値より大きければ、処理（Treatment）のOECはコントロール（Control）のOECより統計的に有意に異なると主張し、帰無仮説を棄却する。
+信頼水準に基づき、閾値 t が設定され（たとえば、大きな標本と95%の信頼度では1.96）、tの絶対値がしきい値より大きければ、処理（Treatment）のOECはコントロール（Control）のOECより統計的に有意に異なると主張し、帰無仮説を棄却する。(ex. 閾値の例 = 標準正規分布における 1 - cdf(confidence level)の値とか...!:thinking:)
 We assume throughout that the sample sizes are large enough that it is safe to assume the means have a Normal distribution by the Central Limit Theorem (Box et al.2005, p.29; Boos and Hughes-Oliver 2000) even though the population distributions may be quite skewed.
-母集団の分布がかなり歪んでいても、中心極限定理(Box et al.2005, p.29; Boos and Hughes-Oliver 2000)によって平均が正規分布を持つと仮定しても安全であるように、標本サイズは十分に大きいと仮定する。
-A second formula is a calculation for the minimum sample size, assuming the desired confidence level is 95% and the desired power is 80% (van Belle 2002, p.31) n = 16σ2 2 (2) where n is the number of users in each variant and the variants are assumed to be of equal size, σ2 is the variance of the OEC, and is the sensitivity, or the amount of change you want to detect.
-2番目の公式は、希望する信頼水準が95%で、希望する検出力が80%であると仮定した場合の、最小サンプルサイズの計算である (van Belle 2002, p.31) n = 16σ2 2 (2) ここで、nは各バリアントのユーザー数で、バリアントは等しいサイズであると仮定し、σ2はOECの分散で、感度、つまり検出したい変化の量である。
+母集団の分布がかなり歪んでいても、中心極限定理（Box et al.2005, p.29; Boos and Hughes-Oliver 2000）により、平均値が正規分布に従うと仮定しても安全であるということを前提としている。
+(サンプルサイズが十分に大きければ、標本平均の分布は正規分布に近づくという話か:thinking:)
+
+A second formula is a calculation for the minimum sample size, assuming the desired confidence level is 95% and the desired power is 80% (van Belle 2002, p.31)
+2番目の公式は、希望するconfidence levelが95%であり、希望するpowerが80%であると仮定した場合の**最小サンプルサイズの計算**である。
+(これって公式なのか??)
+
+$$
+n = \frac{16 \sigma^2}{\delta^2}
+$$
+
+where n is the number of users in each variant and the variants are assumed to be of equal size, σ2 is the variance of the OEC, and is the sensitivity, or the amount of change you want to detect.
+ここで、nは各variantのユーザ数であり、**各variantのユーザ数は同じ大きさであると仮定**されている。$\sigma^2$ はOECの分散であり、$\delta$ は 感度、または検出したい変化の量である。(=検出したい効果の大きさ...! = 想定してるcontrolとtreatmentそれぞれのOECの期待値の差)
 (It is well known that one could improve the power of comparisons of the treatments to the control by making the sample size of the control larger than for the treatments when there is more than one treatment and you are only interested in the comparison of each treatment to the control.
-(複数の治療があり、各治療とコントロールの比較にのみ関心がある場合、コントロールのサンプルサイズを治療よりも大きくすることで、治療とコントロールの比較の検出力を向上させることができることはよく知られている）。
-If, however, a primary objective is to compare the treatments to each other then all groups should be of the same size as given by Formula 2.) The coefficient of 16 in the formula provides 80% power, i.e., it has an 80% probability of rejecting the null hypothesis that there is no difference between the Treatment and Control if the true mean is different than the true Control by .
-しかし、もし第一の目的が治療同士を比較することであれば、式2で与えられるように、すべての群は同じサイズであるべきである)。式中の係数16は、80%の検出力を提供する、すなわち、真の平均が真のコントロールと.だけ異なる場合、処置とコントロールの間に差がないという帰無仮説を棄却する80%の確率を持つ。
+If, however, a primary objective is to compare the treatments to each other then all groups should be of the same size as given by Formula 2.)
+(1つ以上のtreatmentがある場合、そして各treatmentとcontrolの比較に興味がある場合、controlのサンプルサイズをtreatmentよりも大きくすることで、treatmentとcontrolの比較の検出力を向上させることができることはよく知られている。  
+しかし、もしtreatment同士を比較することが主な目的である場合、すべてのグループは式2で与えられるのと同じサイズでなければならない。)
+(=これは3つ以上のvariantのテストの話:thinking:)
+The coefficient of 16 in the formula provides 80% power, i.e., it has an 80% probability of rejecting the null hypothesis that there is no difference between the Treatment and Control if the true mean is different than the true Control by .
+式の $16$ の係数は80%の検出力を提供し、つまり、(treatmentのOECの)真の平均が真のcontrolのものと異なる場合、treatmentとcontrolの間に差がないという帰無仮説を棄却する確率が80%である。
 Even a rough estimate of standard deviation in Formula 2 can be helpful in planning an experiment.
 式2で標準偏差を大まかに見積もるだけでも、実験計画の参考になる。
 Replace the 16 by 21 in the formula above to increase the power to 90%.
 上の式の16を21で置き換え、パワーを90%にする。
 A more conservative formula for sample size (for 90% power) has been suggested (Wheeler 1974):
-より保守的な（検出力90％の）サンプルサイズの公式が提案されている（Wheeler 1974）：
+より保守的な(検出力90％の)サンプルサイズの公式が提案されている(Wheeler 1974):
 
 $$
-\tag{}
+n = (4r \sigma / \delta)^2
+\tag{3}
 $$
 
 where r is the number of variants (assumed to be approximately equal in size).
-ここでrはバリアントの数（大きさはほぼ等しいと仮定）である。
-The formula is an approximation and intentionally conservative to account for multiple
-この計算式は近似値であり、意図的に保守的になっている。
-
-comparison issues when conducting an analysis of variance with multiple variants per factor (Wheeler 1975; van Belle 2002).
-因子ごとに複数の変量で分散分析を行う場合の比較の問題（Wheeler 1975; van Belle 2002）。
+ここで $r$ はvariantの数であり（大体同じ大きさであると仮定されている）、
+The formula is an approximation and intentionally conservative to account for multiple comparison issues when conducting an analysis of variance with multiple variants per factor (Wheeler 1975; van Belle 2002).
+この式は近似値であり、**複数のvariantがある場合**の分散分析を行う際の多重比較問題を考慮して意図的に保守的になっている(Wheeler 1975; van Belle 2002)。
 The examples below use the first formula.
 以下の例では、最初の式を使用している。
+
+<!-- ここまで読んだ -->
 
 ### 3.2.1. Example: impact of lower-variability OEC on the sample size 例 低変数OECの標本サイズへの影響
 
 Suppose you have an e-commerce site and 5% of users who visit during the experiment period end up purchasing.
-Eコマースサイトがあり、実験期間中に訪問したユーザーの5％が購入に至ったとする。
+Eコマースサイトがあり、実験期間中に訪問したユーザの5％が購入に至ったとする。
 Those purchasing spend about $75.
 購入する人は75ドルほど使う。
 The average user therefore spends $3.75 (95% spend $0).
