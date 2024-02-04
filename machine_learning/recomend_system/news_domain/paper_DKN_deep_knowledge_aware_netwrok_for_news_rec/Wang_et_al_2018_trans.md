@@ -477,7 +477,7 @@ e(i) = \frac{1}{N_i} \sum_{k=1}^{N_i} e(t_{ik})
 $$
 
 However, as discussed in the introduction, a user's interest in news topics may be various, and user i’s clicked items are supposed to have different impacts on the candidate news tj when considering whether user i will click tj .
-f。
+しかし、導入で議論したように、ユーザのニューストピックへの興味は様々であり、ユーザ $i$ のクリックアイテムは、ユーザ $i$ が候補ニュース $t_{j}$ をクリックするかどうかを考慮すると、異なる影響を持つと考えられる。
 To characterize user's diverse interests, we use an attention network [ 47, 54] to model the different impacts of the user's clicked news on the candidate news.
 ユーザの多様な関心を特徴づけるために、attention network [47, 54] を使用して、ユーザのクリック履歴のニュース集合が候補ニュースに与える異なる影響をモデル化する。
 The attention network is illustrated in the left upper part of Figure 3.

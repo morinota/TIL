@@ -246,7 +246,65 @@ e(t) = [\tilde{c}^{h_{1}}, \tilde{c}^{h_{2}}, \cdots, \tilde{c}^{h_{m}}]
 \tag{19}
 $$
 
-### その他の重要なcomponent: Attention に基づくユーザ埋め込みの生成
+### その他の重要なcomponent: ユーザの興味を抽出するattention module
+
+- attention moduleの入力は2つ:
+  - 1. ユーザのクリック履歴に関連付けられたニュース埋め込みsequence
+    - ユーザ $i$ がクリック履歴 $\{t_{i1}, t_{i2}, \cdots, t_{iN_{i}}\}$ を持つとき、対応するニュース埋め込みsequenceは $e(t_{i1}), e(t_{i2}), \cdots, e(t_{iN_{i}})$。
+  - 2. 候補ニュースのknowledge-awareニュース埋め込み表現
+    - 候補ニュースを $t_{j}$ とすると、対応するknowledge-awareな埋め込み表現は $e(t_{j})$。
+  - (**ユーザ埋め込みを作るのに、候補ニュースの埋め込みを使う点に注意...! dynamicなユーザ埋め込みなのか...!**:thinking:)
+- (DKNのユーザの作り方の前に...)クリック履歴のニュース埋め込みsequenceからユーザ表現を作るシンプルな方法は...
+  - 最もnaiveな方法は履歴内の全てのニュース埋め込みを平均すること。
+    - 数式にすると以下:
+
+$$
+e(i) = \frac{1}{N_i} \sum_{k=1}^{N_i} e(t_{ik})
+\tag{20}
+$$
+
+- ↑のnaiveな方法の課題:
+  - ユーザのニューストピックへの興味は様々。ユーザ $i$ が推薦候補ニュース $t_{j}$ をクリックするかどうかを評価する上で、クリック履歴内のアイテムたちは異なる影響を持つ。
+    - (これは例えば、「自動車産業」と「政治」という2つのトピックの記事をよく読むユーザに対して、「自動車産業」に関する推薦候補ニュースとユーザの相性を評価する上で、クリック履歴内の「自動車産業」に関するニュース達の方が「政治」に関するニュース達よりも重要な情報を持ってる、みたいな?:thinking:)
+  - -> よってDKNでは、クリック履歴に加えて候補ニュースの情報をattention moduleに入力することで、クリック履歴内の各ニュースが候補ニュースに与える影響のモデル化を試みてる...!
+- DKNのユーザ埋め込みの作成手順1:
+  - ユーザ $i$ のクリック履歴内の各ニュース $t_{ik}$ と候補ニュース $t_{j}$ の**knowledge-aware埋め込みをconcatし**、attention network $H$ に入力し、impact weight $s_{t_{ik}, t_{j}}$ を算出する。(=attention weight的な??:thinking:)
+    - ($H$ は論文を読んだ感じ、実際にはfeed-forward networkなのかな。候補ニュースに対する各履歴ニュースのattention weight的なものを出力するからattention networkと言ってる感じなのかも...??:thinking:)
+    - 数式にすると以下:
+
+$$
+s_{t_{ik}, t_{j}} = softmax(H(e(t_{ik}), e(t_{j})))
+\\
+= \frac{exp(H(e(t_{ik}), e(t_{j})))}{\sum_{k=1}^{N_{i}} exp(H(e(t_{ik}), e(t_{j})))}
+\tag{21}
+$$
+
+- DKNのユーザ埋め込みの作成手順2:
+  - 候補ニュース $t_{j}$ に関するユーザ $i$ の埋め込み $e(i, t_{j})$ を、**クリックしたニュースタイトルの埋め込みの、attention weightによる重み付き和**として計算する。
+
+$$
+e(i, t_{j}) = \sum_{k=1}^{N_{i}} s_{t_{ik}, t_{j}} e(t_{ik})
+\tag{22}
+$$
+
+### DKNのprediction module:
+
+- 最後に、prediction moduleはfeed-forward network $G$ で構成される。
+- prediction moduleの振る舞い:
+  - 入力: ユーザ $i$ の埋め込み $e(i, t_{j})$ と候補ニュース $t_{j}$ の埋め込み $e(t_{j})$
+  - 出力: ユーザ $i$ がニュース $t_{j}$ をクリックする確率。
+
+$$
+p_{i, t_{j}} = G(e(i), e(t_{j}))
+\tag{23}
+$$
+
+### DKNの学習方法:
+
+- 論文内では、対数損失関数(=binary cross-entropy loss)を採用したとのこと。
+  - (**ニュースのクリック履歴を学習データとして使う設定なので、たぶん「ユーザがニュースをクリックした」履歴(=positive example)以外に、「ユーザにニュースが表示されたけどクリックされなかった」履歴(=negative example)も存在してる前提っぽい**...!:thinking:)
+  - (もしくはnegative sampling技術みたいな工夫を使って、擬似的にnegative exampleを生成してる可能性もある。)
+  - (でも論文内に記述がなかったから、たぶん前者だと思う...!:thinking:)
 
 ## どうやって有効だと検証した?
 
