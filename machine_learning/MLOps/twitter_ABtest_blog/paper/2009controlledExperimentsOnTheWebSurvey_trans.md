@@ -536,45 +536,51 @@ Because the number of site visitors is approximately linear in the running time 
 
 <!-- ここまで読んだ! -->
 
-### 3.2.2. Example: impact of reduced sensitivity on the sample size 例 感度の低下がサンプルサイズに与える影響
+### 3.2.2. Example: impact of reduced sensitivity on the sample size 例 感度(=検出したい効果量だっけ?)の低下がサンプルサイズに与える影響
 
 Because the sensitivity, , is squared in the formula for sample size, if the desired sensitivity is reduced to support detecting a 20% change in conversion instead of 5% (a factor of 4), the number of users needed drops by a factor of 16 to 7,600.
-サンプルサイズの公式では、感度は2乗されるため、もし希望する感度がコンバージョンの変化を5％ではなく20％検出できるように低下した場合（4分の1）、必要なユーザー数は16分の1の7,600人となる。
+サンプルサイズの公式では、感度(=検出したい、期待するeffect size) $\delta$ が2乗されているため、もし望ましい感度が5%ではなく20%(=4倍)のコンバージョンの変化を検出したいとなった場合、 必要なユーザ数は16分の1に減少し、7,600人になる。
+
 As will be discussed later on, this is the reason that detecting a bug in the implementation can be done quickly.
-後述するが、これが実装のバグを素早く検出できる理由である。
+後述するが、これが実装のバグを素早く検出できる理由である。(??実装のバグはマイナスのtrue effect sizeがめちゃでかいからってこと...??:thinking:)
 Suppose you plan an experiment that will allow detecting a 1% change in the OEC, but a bug in the implementation exposes users to a bad experience and causes the OEC to drop by 20%.
-OECの1％の変化を検出できるような実験を計画したが、実装にバグがあり、ユーザーが悪い経験にさらされ、OECが20％低下したとする。
+OECの1％の変化を検出できるような実験を計画したが、実装にバグがあり、ユーザが悪い経験にさらされ、OECが20％低下したとする。
 Such a bug can be detected not in 1/20th of the planned running time, but in 1/400th of the running time.
-このようなバグは、予定された走行時間の20分の1ではなく、400分の1で検出される可能性がある。
+**このようなバグは、予定された走行時間の20分の1ではなく、400分の1で検出される可能性がある**。(sensitivityが20倍だから...!:thinking:)(ユーザ体験の悪化からの検出...!) (でもバグをいきなり全体適用してたら気づかないよな...!:thinking:)
 If the experiment was planned to run for two weeks, you can detect an egregious problem in the first hour!
 実験が2週間行われる予定だったとしたら、最初の1時間で重大な問題を発見することができる！
 
-### 3.2.3. Example: filtering users not impacted by the change 例 変更の影響を受けないユーザーのフィルタリング
+### 3.2.3. Example: filtering users not impacted by the change 例 変更の影響を受けないユーザのフィルタリング
+
+(たぶんTriggered Analysisの話...!:thinking:)
 
 If you made a change to the checkout process, you should only analyze users who started the checkout process (point 3.c), as others could not see any difference and therefore just add noise.
-チェックアウトプロセスに変更を加えた場合、チェックアウトプロセスを開始したユーザーのみを分析する必要があります（ポイント3.c）。
+**チェックアウトプロセスに変更を加えた場合、チェックアウトプロセスを開始したユーザのみを分析する必要があります**（ポイント3.c）。(うんうん、Triggerを考慮)
 Assume that 10% of users initiate checkout and that 50% of those users complete it.
-10%のユーザーがチェックアウトを開始し、そのうちの50%のユーザーがチェックアウトを完了すると仮定します。
+10%のユーザがチェックアウトを開始し、そのうちの50%のユーザがチェックアウトを完了すると仮定します。
 This user segment is more homogenous and hence the OEC has lower variability.
-このユーザー層はより均質であるため、OECのばらつきは小さい。
+このユーザ層はより均質であるため、OECのばらつきは小さい。
 Using the same numbers as before, the average conversion rate is 0.5, the std-dev is 0.5, and thus you will need only 6,400 users going through checkout to detect a 5% change based on 16 ∗ (0.5(1 − 0.5))/(0.5 · 0.05)2.
-先ほどと同じ数字を使用すると、平均コンバージョン率は0.5、標準偏差は0.5であるため、16 \* (0.5(1 - 0.5))/(0.5 - 0.05)2に基づいて5%の変化を検出するには、チェックアウトを通過する6,400人のユーザーが必要です。
+先ほどと同じ数字を使用すると、平均コンバージョン率は0.5、標準偏差は0.5(=こっちは平均コンバージョン率で決まる!)であるため、$16 \times \frac{0.5 \times (1-0.5)}{0.5 \times 0.05}^2$ に基づいて、5%の変化(改善)を検出するためには、チェックアウトを通過するユーザが6,400人しか必要ありません。
+(**つまりTriggerを考慮したことで分散が小さくなって、必要なサンプルサイズが減ったってことか**...!:thinking:)
+(たしかに $\Delta$ って、controlのOECの期待値 ×そのx%の改善って表記するとわかりやすいかも...!:thinking:)
+(**あと分子で出てくる平均conversion率は、controlの方の値で良いんだ...!:thinking:**)
 Since we excluded the 90% who do not initiate, the total number of users to the website should be 64,000, which is almost half the previous result of 122,000, thus the experiment could run for half the time and yield the same power.
 つまり、この実験を半分の時間で実施しても、同じパワーが得られることになる。
 
 ### 3.2.4. The choice of OEC must be made in advance OECの選択は事前に行わなければならない。
 
 When running experiments, it is important to decide in advance on the OEC (a planned comparison); otherwise, there is an increased risk of finding what appear to be significant results by chance (familywise type I error) (Keppel et al.1992).
-そうでなければ、偶然に有意と思われる結果が見つかるリスクが高くなる（ファミリーワイズI型エラー）（Keppel et al.1992）。
+**実験を実施する際には、事前にOECを決定することが重要(計画された比較)であり、そうでないと偶然に有意な結果が得られるリスク(familywise type I error)が高まる**(Keppel et al.1992)。
 Several adjustments have been proposed in the literature (e.g., Fisher’s least-significant-difference, Bonferroni adjustment, Duncan’s test, Scheffé’s test, Tukey’s test, and Dunnett’s test), but they basically equate to increasing the 95% confidence level and thus reducing the statistical power (Mason et al.1989; Box et al.2005; Keppel et al.1992).
-いくつかの調整が文献で提案されている（Fisherの最小有意差、Bonferroniの調整、Duncanの検定、Schefféの検定、Tukeyの検定、Dunnettの検定など）が、基本的には95%信頼水準を上げることに等しく、その結果統計的検出力が低下する(Mason et al.1989; Box et al.2005; Keppel et al.1992)。
+いくつかの調整が文献で提案されている（例：フィッシャーの最小有意差、ボンフェローニ補正、ダンカンの検定、シェフェの検定、トゥーキーの検定、ダンネットの検定）が、基本的には95%信頼度を上げて統計的パワーを下げることに等しい(Mason et al.1989; Box et al.2005; Keppel et al.1992)。
 
 ## 3.3. Confidence intervals for absolute and percent effect 絶対効果およびパーセント効果の信頼区間
 
 It is useful to give a confidence interval for the difference in the means of the Treatment and Control in addition to the results of the hypothesis test.
-仮説検定の結果に加えて、処理とコントロールの平均の差の信頼区間を与えることは有用である。
+仮説検定の結果に加えて、treatmentとcontrolの平均値の差についての信頼区間を与えることは有用である。
 The confidence interval gives a range of plausible values for the size of the effect of the Treatment whereas the hypothesis test only determines if there is a statistically significant difference in the mean.
-信頼区間は、仮説検定が平均値に統計的に有意な差があるかどうかを決定するだけであるのに対して、処置の効果の大きさについてもっともらしい値の範囲を与える。
+信頼区間は、仮説検定が平均値に統計的に有意な差があるかどうかを決定するだけであるのに対して、treatmentの効果の大きさについてもっともらしい値の範囲を与える。
 
 ### 3.3.1. Confidence intervals for absolute effect 絶対効果の信頼区間
 
@@ -584,39 +590,44 @@ Using the notation developed previously, the upper and lower bounds for a 95% co
 先に開発した表記法を用いると、95%信頼区間の上界と下界は次のようになる。
 
 $$
-\tag{}
+\text{CI Limits} = \bar{O_{B}} - \bar{O_{A}} \pm 1.96 \times \hat{\sigma_{d}}
+\tag{4}
 $$
 
 One could use the confidence interval for the absolute affect to conduct a hypothesis test—if zero is in the interval you would not reject H0, otherwise reject H0 and conclude the Treatment has an effect.
-影響の絶対値の信頼区間を用いて仮説検定ができる-区間内にゼロがあればH0を棄却しないが、そうでなければH0を棄却し、処置には効果があると結論づける。
+absolute effect(=controlとtreatmentのOEC期待値の差)の信頼区間を使用して仮説検定を行うことができる。もし区間にゼロが含まれている場合、H0を棄却しない。それ以外の場合はH0を棄却し、Treatmentに効果があると結論づける。
 
 ### 3.3.2. Confidence intervals for percent effect 効果パーセントの信頼区間
 
 For many online metrics, the difference in the means is so small that percent change has much more intuitive meaning than the absolute difference.
-多くのオンライン指標では、平均値の差は非常に小さいため、絶対的な差よりも変化率の方が直感的な意味を持つ。
+**多くのオンライン指標では、平均値の差は非常に小さいため、絶対的な差よりも変化率の方が直感的な意味を持つ**。(これがpercent effectっていうのね...!)
 For example, for a recent experiment, the treatment effect for specific clickthrough rate was 0.00014.
-例えば、最近の実験では、特定のクリック率に対するトリートメント効果は0.00014であった。
+例えば、最近の実験では、特定のクリック率に対するトリートメント効果は0.00014であった。(こっちはabsolute effect...!)
 This translated to a 12.85% change due to the Treatment.
-これは治療による12.85％の変化に相当する。
+これはtreatmentによる12.85%の変化に相当する。(こっちはpercent effect...!)
 The latter number was much more meaningful to decision makers.
-意思決定者にとっては、後者の数字の方がはるかに意味がある。
+**意思決定者にとっては、後者の数字の方がはるかに意味がある**。
 The percent difference is calculated by
 パーセンテージの差は次式で計算される。
 
 $$
-\tag{}
+\text{Pct Diff} = \frac{\bar{O_{B}} - \bar{O_{A}}}{\bar{O_{A}}} \times 100 %
+\tag{5}
 $$
 
 However, forming a confidence interval around the percent change is not a straightforward extension of the confidence interval for the absolute effect.
-しかし、変化率の信頼区間は、絶対効果の信頼区間の延長線上にはない。
+しかし、percent changeの信頼区間を形成することは、絶対効果の信頼区間の直感的な拡張ではない。(なるほど、じゃあ難しいんだ...! :thinking:)
 This is because we are now dividing by a random variable.
-これは確率変数で割っているからである。
+**これは確率変数で割っているから**である。
 The initial derivation of this interval is due to Fieller (Willan and Briggs 2006).
 この区間の最初の導出はフィエラーによるものである（Willan and Briggs 2006）。
 Note that if the denominator is stochastically close to zero one or both endpoints will not exist.
 分母が確率的にゼロに近い場合、一方または両方の端点が存在しないことに注意。
 In practice, you shouldn’t calculate this interval if the confidence interval for the denominator contains zero.
 実際には、分母の信頼区間がゼロを含む場合は、この区間を計算すべきではありません。
+
+<!-- ここは飛ばそう! まだ必要性がよくわからんから! -->
+
 Define the coefficient of variation of the two groups to be
 2つのグループの変動係数を次のように定義する。
 
@@ -634,20 +645,26 @@ $$
 These formulas assume the covariance between the Treatment and Control mean is zero which will be true in a controlled experiment when the randomization is carried out properly
 これらの公式は、治療平均とコントロール平均の間の共分散がゼロであることを仮定している。
 
+<!-- ここまで読んだ! -->
+
 ## 3.4. Effect of robots on experimental results ロボットが実験結果に与える影響
 
 Robots can introduce significant skew into estimates, enough to render assumptions invalid.
-ロボットは推定値に大きな歪みをもたらし、仮定を無効にしてしまうほどだ。
+**ロボットは推定値に大きな歪みをもたらし、仮定を無効にしてしまう**ほどだ。(え、そうなの?? :thinking:) (自動でクリックするようなロボットのこと?? スクレイピングとかクローラーとかも含まれそう??)
 We have seen cases where robots caused many metrics to be significant when they should not have been (e.g., much more than 5% false positives for an A/A test).
-私たちは、ロボットが多くのメトリクスを有意であるべきでないにもかかわらず有意にしてしまったケースを見たことがある（例えば、A/Aテストで5％をはるかに超える偽陽性が出た）。
+私たちは、**ロボットが多くのメトリクスを有意であるべきでないにもかかわらず有意にしてしまったケースを見たことがある**（例えば、A/Aテストで5％をはるかに超える偽陽性が出た）。
 For the purpose of experimentation, it is especially important to remove some types of robots, those that interact with the user-id.
-実験の目的上、特に重要なのは、ユーザーIDと相互作用するタイプのロボットを取り除くことである。
+実験の目的上、特に重要なのは、ユーザIDと相互作用するタイプのロボットを取り除くことである。
 For some websites robots are thought to provide up to half the pageviews on the site(Kohavi et al.2004).
 サイトによっては、ページビューの半分をロボットが占めていることもある（Kohavi et al.2004）。
 Since many robots have the same characteristics as human users it is difficult to clearly delineate between the two.
-多くのロボットが人間のユーザーと同じような特性を持っているため、両者を明確に区別することは難しい。
+**多くのロボットが人間のユーザと同じような特性を持っているため、両者を明確に区別することは難しい**。
 Benign or simple robots can often be filtered by basic characteristics (e.g.user agent, IP address) but many modern robots use sophisticated techniques to escape detections and filtering (Tan and Kumar 2002).
-良性のロボットや単純なロボットは、基本的な特徴（ユーザーエージェントやIPアドレスなど）によってフィルタリングできることが多いが、最近のロボットの多くは、検出やフィルタリングを逃れるために高度なテクニックを使っている（Tan and Kumar 2002）。
+良性のロボットや単純なロボットは、基本的な特徴(ユーザーエージェントやIPアドレスなど)によってフィルタリングできることが多いが、最近のロボットの多くは、検出やフィルタリングを逃れるために高度なテクニックを使っている（Tan and Kumar 2002）。
+
+<!-- ここまで読んだ! -->
+
+<!-- ここは一旦飛ばす! -->
 
 ### 3.4.1. JavaScript versus server-side call JavaScript対サーバーサイド・コール
 
@@ -684,26 +701,28 @@ Robot filtering can be accomplished through a combination of omitting users whos
 The heuristics may vary depending on the website.
 ヒューリスティックはウェブサイトによって異なる場合がある。
 
+<!-- ここまで読んだ! -->
+
 ## 3.5. Extensions for online settings オンライン設定の拡張機能
 
 Several extensions to basic controlled experiments are possible in an online setting (e.g., on the web).
 基本的な対照実験に対するいくつかの拡張は、オンライン環境（例えばウェブ上）でも可能である。
 
-### 3.5.1. Treatment ramp-up 治療の立ち上げ
+### 3.5.1. Treatment ramp-up(立ち上げ)
 
 An experiment can be initiated with a small percentage of users assigned to the Treatment(s), and then that percentage can be gradually increased.
-実験は、トリートメントに割り当てるユーザーの割合を少なくして開始することができ、その後、その割合を徐々に増やしていくことができる。
+**実験は、トリートメントに割り当てるユーザの割合を少なくして開始することができ、その後、その割合を徐々に増やしていくことができる**。(うんうん)
 For example, if you plan to run an A/B test at 50%/50%, you might start with a 99.9%/0.1% split, then rampup the Treatment from 0.1% to 0.5% to 2.5% to 10% to 50%.
 例えば、A/Bテストを50%/50%で実施する場合、99.9%/0.1%のスプリットから始め、0.1%→0.5%→2.5%→10%→50%とトリートメントをアップしていく。
 At each step, which could run for, say, a couple of hours, you can analyze the data to make sure there are no egregious problems with the Treatment before exposing it to more users.
-各ステップ（例えば2、3時間）でデータを分析し、処理に重大な問題がないことを確認してから、より多くのユーザーに公開することができる。
+各ステップ（例えば2、3時間）でデータを分析し、処理に重大な問題がないことを確認してから、より多くのユーザに公開することができる。
 The square factor in the power formula implies that such errors could be caught quickly on small populations and the experiment can be aborted before many users are exposed to the bad Treatment.
-べき乗式の2乗係数は、このようなエラーは小さな母集団ではすぐに発見でき、多くのユーザーが悪い処置にさらされる前に実験を中止できることを意味している。
+検出力の公式の2乗因子は、このようなエラーが小規模な集団で迅速に捉えられ、多くのユーザが悪いトリートメントにさらされる前に実験を中止することができることを意味している。(??)
 
 ### 3.5.2. Automation オートメーション
 
 Once an organization has a clear OEC, it can run experiments to optimize certain areas amenable to automated search.
-一旦組織が明確なOECを持てば、自動検索に適した特定の領域を最適化するための実験を行うことができる。
+**一旦組織が明確なOECを持てば**、自動検索に適した特定の領域を最適化するための実験を行うことができる。
 For example, the slots on the home page at Amazon are automatically optimized (Kohavi et al.2004).
 例えば、アマゾンのホームページのスロットは自動的に最適化される（Kohavi et al.2004）。
 If decisions have to be made quickly (e.g., headline optimizations for portal sites), these could be made with lower confidence levels because the cost of mistakes is lower.
@@ -716,77 +735,102 @@ Multi-armed bandit algorithms (Wikepedia 2008) and Hoeffding Races (Maron and Mo
 Experiments can be used to help with software migration.
 実験はソフトウェアの移行に役立つ。
 If a feature or a system is being migrated to a new backend, new database, or a new language, but is not expected to change user-visible features, an A/B test can be executed with the goal of retaining the Null Hypothesis, which is that the variants are not different.
-ある機能やシステムが、新しいバックエンド、新しいデータベース、新しい言語に移行されるが、ユーザーの目に見える機能は変更されないと予想される場合、A/Bテストは中立仮説を維持することを目標に実行することができます。
+ある機能やシステムが、新しいバックエンド、新しいデータベース、新しい言語に移行されるが、**ユーザーの目に見える機能は変更されないと予想される場合、A/Bテストは帰無仮説を維持することを目標に実行することができます**。
 We have seen several such migrations, where the migration was declared complete, but an A/B test showed significant differences in key metrics, helping identify bugs in the port.
 移行が完了したと宣言されたものの、A/Bテストでは主要な指標に大きな違いが見られ、ポートのバグを特定するのに役立った。
 Because the goal here is to retain the Null Hypothesis, it is crucial to make sure the experiment has enough statistical power to actually reject the Null Hypothesis if it false.
 ここでの目標は「帰無仮説」を維持することなので、実験が「帰無仮説」を棄却するのに十分な統計的検出力があることを確認することが重要である。
+(OECがx%変動しちゃったらだめだよね、それを検出力80%で検出できる程度のサンプルサイズにしよう、みたいな?)
 
 ## 3.6. Limitations 制限事項
 
 Despite significant advantages that controlled experiments provide in terms of causality, they do have limitations that need to be understood.
-対照実験には、因果関係という点で大きな利点があるにもかかわらず、理解されなければならない限界がある。
-Some, which are noted in the Psychology literature are not relevant to the web (Rossi et al.2003, pp.252–262; Weiss 1997), but some limitations we encountered are certainly worth noting.1.Quantitative metrics, but no explanations.
+**対照実験には、因果関係という点で大きな利点があるにもかかわらず、理解されなければならない限界**がある。
+Some, which are noted in the Psychology literature are not relevant to the web (Rossi et al.2003, pp.252–262; Weiss 1997), but some limitations we encountered are certainly worth noting.
 心理学の文献で指摘されているものの中には、ウェブとは関係ないものもあるが（Rossi et al.2003, pp.252-262; Weiss 1997）、我々が遭遇したいくつかの限界は、確かに注目に値する。
-It is possible to know which variant is better, and by how much, but not “why.” In user studies, for example, behavior is often augmented with users’ comments, and hence usability labs can be used to augment and complement controlled experiments (Nielsen 2005).2.Short term versus long term effects.
-どの変種がどの程度優れているかを知ることはできますが、「なぜ」かはわかりません。したがって、ユーザビリティラボは、管理された実験を補強し、補完するために使用することができます（Nielsen 2005）。
+
+### Quantitative metrics, but no explanations. 数値指標だけで説明はない。
+
+It is possible to know which variant is better, and by how much, but not “why.” In user studies, for example, behavior is often augmented with users’ comments, and hence usability labs can be used to augment and complement controlled experiments (Nielsen 2005).
+どのvariantがどれだけ良いかはわかるが、「なぜ」はわからない。例えば、ユーザースタディでは、**行動に加えてユーザのコメントがよく使われるため、ユーザビリティラボは対照実験を補完するために使うことができる**（Nielsen 2005）。(ユーザインタビューか!)
+
+### Short term versus long term effects. 短期効果と長期効果。
+
 Controlled experiments measure the effect on the OEC during the experimentation period, typically a few weeks.
 対照実験では、実験期間中（通常は数週間）のOECへの影響を測定する。
 While some authors have criticized that focusing on a metric implies short-term focus (Quarto-vonTivadar 2006; Nielsen 2005), we disagree.
 指標を重視することは短期集中を意味すると批判する著者もいるが（Quarto-vonTivadar 2006; Nielsen 2005）、私たちはそうは思わない。
 Long-term goalsshould be part of the OEC.
-長期目標はOECの一部であるべきだ。
+長期目標はOECの一部であるべきだ。(i.e. そもそもOECを選択する時点で、長期効果をなるべく考慮したmetricにすべき :thinking:)
 Let us take search ads as an example.
 検索広告を例にとってみよう。
 If your OEC is revenue, you might plaster ads over a page, but we know that many ads hurt the user experience, so a good OEC should include a penalty term of usage of real-estate for ads that are not clicked, and/or should directly measure repeat visits and abandonment.
-もし、あなたのOECが収益であれば、ページ上に広告を貼り付けるかもしれないが、多くの広告はユーザーエクスペリエンスを損なうことを知っているので、良いOECは、クリックされなかった広告のリアルエステートの使用量のペナルティ期間を含むべきであり、そして／または、リピート訪問と放棄を直接測定するべきである。
+もし、あなたのOECが収益であれば、ページ上に広告を貼り付けるかもしれないが、多くの広告はユーザエクスペリエンスを損なうことを知っているので、**良いOECは、クリックされなかった広告のリアルエステートの使用量のペナルティ期間を含むべき**であり、そして/または、**リピート訪問と放棄を直接測定するべき**である。
 Likewise, it is wise to look at delayed conversion metrics, where there is a lag from the time a user is exposed to something and take action.
-同様に、ユーザーが何かに触れてから行動を起こすまでにタイムラグがある、遅延コンバージョンの指標を見ることも賢明である。
+同様に、ユーザが何かに触れてから行動を起こすまでにタイムラグがある、**遅延コンバージョンの指標を見ることも賢明**である。
 These are sometimes called latent conversions (Miller 2006; Quarto-vonTivadar 2006).
 これらは潜在的コンバージョンと呼ばれることもある（Miller 2006; Quarto-vonTivadar 2006）。
-Coming up with good OECs is hard, but what is the alternative? The key point here is to recognize this limitation, but avoid throwing the baby out with the bathwater.3.Primacy and newness effects.
+Coming up with good OECs is hard, but what is the alternative? The key point here is to recognize this limitation, but avoid throwing the baby out with the bathwater.
 良いOECを考えるのは難しいが、その代わりに何があるだろうか？ここでの重要なポイントは、この限界を認識しつつも、風呂の水と一緒に赤ん坊を投げ出さないようにすることである。
+
+### Primacy and newness effects. プライマシー効果と新しさ効果。
+
 These are opposite effects that need to be recognized.
 これらは相反する効果であり、認識する必要がある。
 If you change the navigation on a web site, experienced users may be less efficient until they get used to the new navigation, thus giving an inherent advantage to the Control.
-ウェブサイトのナビゲーションを変更した場合、経験豊富なユーザーは新しいナビゲーションに慣れるまで効率が落ちる可能性がある。
+ウェブサイトのナビゲーションを変更すると、**経験豊富なユーザは新しいナビゲーションに慣れるまで効率が低下する可能性があり、そのためにコントロールに固有の利点が生じる**。(=これがprimacy effectか!:thinking:)
 Conversely, when a new design or feature is introduced, some users will investigate it, click everywhere, and thus introduce a “newness” bias.
-逆に、新しいデザインや機能が導入されると、それを調べたり、あちこちをクリックしたりするユーザーもいるので、「新しさ」バイアスがかかる。
+**逆に、新しいデザインや機能が導入されると、それを調べたり、あちこちをクリックしたりするユーザもいるので、「新しさ」バイアスがかかる**。(=これがnewness effectか!:thinking:)
 This bias is sometimes associated with the Hawthorne effect (2007).
 このバイアスは、ホーソン効果と関連付けられることがある（2007年）。
 Both primacy and newness concerns imply that some experiments need to be run for multiple weeks.
-プライマシーと新しさの両方の懸念は、いくつかの実験を複数週にわたって実施する必要があることを意味する。
-One analysis that can be done is to compute the OEC only for new users on the different variants, since they are not affected by either factor.4.Features must be implemented.
-できる分析の1つは、異なるバリアント上の新規ユーザーのみOECを計算することである。なぜなら、彼らはどちらの要因にも影響されないからである。
+プライマシーと新しさの両方の懸念は、**いくつかの実験を複数週にわたって実施する必要があること**を意味する。
+
+One analysis that can be done is to compute the OEC only for new users on the different variants, since they are not affected by either factor.
+行うことができる分析の1つは、**異なるvariantの新規ユーザに対してのみOECを計算することである。なぜなら、彼らはどちらの要因にも影響を受けないから**である。
+
+### Features must be implemented. 機能は実装されなければならない。
+
 A live controlled experiment needs to expose some users to a Treatment different than the current site (Control).
-ライブの対照実験では、一部のユーザーを現在のサイト（対照）とは異なる待遇にさらす必要がある。
+ライブの対照実験では、一部のユーザを現在のサイト（対照）とは異なる待遇にさらす必要がある。
 The feature may be a prototype that is being tested against a small portion, or may not cover all edge cases (e.g., the experiment may intentionally exclude 20% of browser types that would require significant testing).
 その機能はプロトタイプで、ごく一部に対してテストされている場合もあれば、すべてのエッジケースをカバーしていない場合もある（例えば、実験では重要なテストを必要とするブラウザの種類の20％を意図的に除外することがある）。
 Nonetheless, the feature must be implemented and be of sufficient quality to expose users to it.
-とはいえ、その機能は実装されなければならないし、ユーザーにそれを見せるのに十分な品質でなければならない。
+とはいえ、その機能は実装されなければならないし、ユーザにそれを見せるのに十分な品質でなければならない。
 Nielsen (2005) correctly points out that paper prototyping can be used for qualitative feedback and quick refinements of designs in early stages.
 Nielsen (2005)は、ペーパー・プロトタイピングが初期段階におけるデザインの質的フィードバックと迅速な改良のために使用できることを正しく指摘している。
-We agree and recommend that such techniques complement controlled experiments.5.Consistency.
+We agree and recommend that such techniques complement controlled experiments.
 我々はこれに同意し、このような手法が対照実験を補完することを推奨する。
+
+### Consistency. 一貫性。
+
 Users may notice they are getting a different variant than their friends and family.
-ユーザーは、友人や家族と異なるバリアントが表示されていることに気づくかもしれません。
+ユーザは、友人や家族と異なるvariantが表示されていることに気づくかもしれません。
 It is also possible that the same user will see multiple variants when using different computers (with different cookies).
-また、同じユーザーが異なるコンピューター（異なるクッキー）を使用している場合、複数のバリアントが表示される可能性もあります。
-It is relatively rare that users will notice the difference.6.Parallel experiments.
-ユーザーがその違いに気づくことは比較的稀である。
+また、同じユーザが異なるコンピューター（異なるクッキー）を使用している場合、複数のvariantが表示される可能性もあります。
+It is relatively rare that users will notice the difference.
+ユーザがその違いに気づくことは比較的稀である。
+
+### Parallel experiments. 並行実験。
+
 Our experience is that strong interactions are rare in practice (van Belle 2002), and we believe this concern is overrated.
-私たちの経験では、実際には強い相互作用が起こることは稀であり（van Belle 2002）、この懸念は過大評価だと考えている。
+我々の経験では、実際には強い相互作用は稀であり（van Belle 2002）、この懸念は過大評価されていると考えている。
 Raising awareness of this concern is enough for experimenters to avoid tests that can interact.
 この懸念に対する意識を高めるだけで、実験者は相互作用の可能性があるテストを避けることができる。
-Pairwise statistical tests can also be done to flag such interactions automatically.7.Launch Events and Media Announcements.
-このような相互作用に自動的にフラグを立てるために、ペアワイズ統計検定を行うこともできる。
+Pairwise statistical tests can also be done to flag such interactions automatically.
+ペアワイズ統計検定を行うことで、このような相互作用を自動的に検出することもできる。
+
+### Launch Events and Media Announcements. ランチイベントとメディア発表。
+
 If there is a big announcement made about a new feature, such that the feature is announced to the media, all users need to see it.
 新機能についてメディアに発表するような大きな発表があった場合、すべてのユーザーがそれを見る必要がある。
+
+<!-- ここまで読んだ! -->
 
 # 4. MultiVariable Testing 多変量テスト
 
 An experiment that includes more than one factor is often called a MultiVariable test (MVT) (Alt and Usborne 2005).
-つ以上の因子を含む実験は、しばしば多変量検定（MVT）と呼ばれる（Alt and Usborne 2005）。
+つ以上の因子を含む実験は、しばしば多変量検定（MVT）と呼ばれる（Alt and Usborne 2005）
 For example, consider testing five factors on the MSN homepage in a single experiment.
 例えば、MSNのホームページで5つの要素を1回の実験でテストすることを考えてみよう。
 A screenshot of the MSN homepage showing the control for each of these factors is given in Fig.8.
