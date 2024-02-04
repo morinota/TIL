@@ -320,13 +320,14 @@ Some of our FTI pipelines, however, will not need orchestration.
 Training pipelines can be run on-demand, when a new model is needed.
 トレーニングパイプラインは、新しいモデルが必要なときにオンデマンドで実行できる。
 Streaming feature pipelines and online inference pipelines run continuously as services, and do not require orchestration.
-ストリーミング・フィーチャー・パイプラインとオンライン推論パイプラインはサービスとして継続的に実行され、オーケストレーションは必要ない。
+ストリーミング・フィーチャー・パイプラインとオンライン推論パイプラインは**サービスとして継続的に実行され**、オーケストレーションは必要ない。(batch処理の自動化とかは必要ないけど、サーバの台数増やしたりとかもorchestoratorの役割に含まれるのでは??)
 Flink, Spark Streaming, and Beam are run as services on platforms such as Kubernetes, Databricks, or Hopsworks.
 Flink、Spark Streaming、Beamは、Kubernetes、Databricks、Hopsworksなどのプラットフォーム上でサービスとして実行される。
 Online inference pipelines are deployed with their model on model serving platforms, such as KServe (Hopsworks), Seldon, Sagemaker, and Ray.
-**オンライン推論パイプラインは、KServe（Hopsworks）、Seldon、Sagemaker、Rayなどのモデル提供プラットフォーム上にモデルとともに展開される。**
+オンライン推論パイプラインは、KServe（Hopsworks）、Seldon、Sagemaker、Rayなどのモデル提供プラットフォーム上にモデルとともに展開される。
 The main takeaway here is that the ML pipelines are modular with clear interfaces, enabling you to choose the best technology for running your FTI pipelines.
 ここでの主なポイントは、**MLパイプライン達は明確なインターフェイスを備えたモジュラーなものであり、FTIパイプラインの実行に最適なテクノロジーを選択できるということ**です。
+(モジュラー性が高いよ!)
 
 ![figure15]()
 Figure 15: Connect your ML pipelines with a Feature Store and Model Registry
@@ -338,7 +339,7 @@ Feature pipelines store their output, features, as DataFrames in the feature sto
 Incremental tables store each new update/append/delete as separate commits using a table format (we use Apache Hudi in Hopsworks).
 インクリメンタルテーブルは、各新規更新/追加/削除を、テーブルフォーマットを使って別々のコミットとして保存する（HopsworksではApache Hudiを使っている）。
 Training pipelines read point-in-time consistent snapshots of training data from Hopsworks to train models with and output the trained model to a model registry.
-トレーニングパイプラインは、Hopsworksからポイントインタイムで一貫性のあるトレーニングデータのスナップショットを読み込んでモデルをトレーニングし、トレーニング済みモデルをモデルレジストリに出力する。
+トレーニングパイプラインは、Hopsworksからポイントインタイムで一貫性のあるトレーニングデータのスナップショットを読み込んでモデルをトレーニングし、トレーニング済みモデルを**モデルレジストリ**に出力する。
 You can include your favorite model registry here, but we are biased towards Hopsworks’ model registry.
 ここにお好きなモデル登録を入れることができますが、私たちはホップワークスのモデル登録に偏っています。
 Batch inference pipelines also read point-in-time consistent snapshots of inference data from the feature store, and produce predictions by applying the model to the inference data.
@@ -353,7 +354,7 @@ As with any good map, the FTI pipelines architecture hides complexity at a high 
 Here, we enumerate some of the important questions on implementing the different pipelines that can be handled internally within the team implementing the pipeline.
 ここでは、さまざまなパイプラインの実装に関する重要な質問のうち、パイプラインを実装するチーム内で処理できるものを列挙する。
 In contrast, the MLOps 1.0 mental maps leaked all concepts across all teams making it hard for teams to know where their responsibilities started and ended as part of a very complex bigger picture.
-対照的に、MLOps 1.0のメンタルマップでは、**すべてのチームにわたってすべての概念が漏れていたため**、非常に複雑な全体像の一部として、自分たちの責任の始まりと終わりがどこにあるのかをチームが把握するのが困難だった。
+対照的に、MLOps 1.0のメンタルマップでは、**すべてのチームにわたってすべての概念が漏れていたため**(=つまりモジュラー性が低くて、凝集度も低かった??)、非常に複雑な全体像の一部として、自分たちの責任の始まりと終わりがどこにあるのかをチームが把握するのが困難だった。
 
 ## 4.2. Feature Pipelines フィーチャー・パイプライン
 
