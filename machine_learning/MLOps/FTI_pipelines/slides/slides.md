@@ -29,3 +29,9 @@ title-slide-attributes:
 ## 参考文献:
 
 - hogehoge
+
+## FTI Pipelines Architectureの概要:
+
+## そもそもPipeline Architectureってなんだっけ?
+
+- pipe and filter architectureとも呼ばれる。
