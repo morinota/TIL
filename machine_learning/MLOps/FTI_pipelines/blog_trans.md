@@ -26,9 +26,9 @@ In contrast to existing MLOps architectures, we provide a unified architecture t
 This makes it easier for developers to move to/from batch and real-time systems, and provides clear interfaces between the ML pipelines, enabling easier collaboration between the data, ML, and product teams that work together to develop and operate ML systems.
 これにより、開発者はバッチシステムとリアルタイムシステムの行き来が容易になり、MLパイプライン間の明確なインターフェイスが提供されるため、MLシステムの開発・運用に協力するデータチーム、MLチーム、製品チーム間のコラボレーションが容易になります。
 Compared to existing MLOps architectures, the feature/training/inference pipeline architecture helps you get faster to a minimal working ML system that can be iteratively improved, while following best practices for automated testing, versioning, and monitoring.
-既存のMLOpsアーキテクチャと比較して、**機能/トレーニング/推論のパイプラインアーキテクチャ**は、自動テスト、バージョニング、およびモニタリングのベストプラクティスに従いながら、反復的に改善できる最小限の実用的なMLシステムに迅速に到達するのに役立ちます。
+既存のMLOpsアーキテクチャと比較して、**機能/トレーニング/推論のパイプラインアーキテクチャ**は、自動テスト、バージョニング、およびモニタリングのベストプラクティスに従いながら、iterativelyに改善できる最小限の実用的なMLシステムに迅速に到達するのに役立ちます。
 There are now hundreds of ML systems that have been built by the community based on our architecture, showing that building and shipping ML systems is easier if you follow a mental map that starts with building pipelines rather than starting by building ML infrastructure.
-私たちのアーキテクチャに基づいてコミュニティによって構築されたMLシステムは、現在数百にのぼります。これは、**MLインフラストラクチャの構築から始めるよりも、パイプラインの構築から始めるメンタルマップに従った方が、MLシステムの構築と出荷が容易であることを示しています**。
+私たちのアーキテクチャに基づいてコミュニティによって構築されたMLシステムは、現在数百にのぼります。これは、**MLインフラストラクチャの構築から始めるよりも、パイプラインの構築から始めるメンタルマップに従った方が、MLシステムの開発とデプロイが容易であることを示しています**。
 
 # 1. Introduction はじめに
 
@@ -42,7 +42,7 @@ In a course I gave at KTH in 2022/23, students developed a full ML system in onl
 As Charles suggests in the above quote, leveraging ML infrastructure makes it easier to build ML systems.
 チャールズが上記の引用で示唆しているように、MLインフラを活用することで、MLシステムの構築が容易になる。
 You can write a Python program that scrapes data from the Internet and, with a few annotations, runs on a daily schedule with Modal.
-インターネットからデータをスクレイピングするPythonプログラムを書いて、いくつかの注釈を加えれば、Modalを使って毎日のスケジュールで実行することができる。
+インターネットからデータをスクレイピングするPythonプログラムを書いて、いくつかのannotationを加えれば、Modalを使って毎日のスケジュールで実行することができる。
 The program can write the features it computes as DataFrames to Hopsworks Feature Store.
 プログラムは、計算したフィーチャーをDataFramesとしてHopsworks [Feature Store](https://www.hopsworks.ai/dictionary/feature-store)に書き込むことができます。
 From there, a notebook can be used to train a model that is saved in Hopsworks (or any [model registry](https://www.hopsworks.ai/dictionary/model-registry)).
@@ -60,21 +60,22 @@ Figure 1: Feature Pipelines, Training Pipelines, Inference Pipelines are the ind
 But in my course analysis, the conclusion I drew was that the key reason why students could go from zero to a working ML system in less than 2 weeks was not just the new frameworks.
 しかし、私のコース分析で導き出された結論は、学生たちが2週間足らずでゼロからMLシステムを使えるようになった主な理由は、新しいフレームワークだけではないということだった。
 It was, more importantly, the clear mental map of what they needed to do (see Figure 1):
-さらに重要なのは、彼らが**何をすべきかという明確なメンタルマップ**だった（図1参照）：
+さらに重要なのは、彼らが**何をすべきかという明確なメンタルマップ**だった(図1参照)
 
 - build a feature pipeline to continually create features from your novel data source, save those features as a DataFrame to Hopsworks Feature Store; **新規データソースから継続的にフィーチャーを作成するフィーチャーパイプラインを構築**し、フィーチャーをDataFrameとしてHopsworksフィーチャーストアに保存します;
 
 - write a training pipeline that reads training data from the Feature Store, trains your model and saves the trained model in the model registry, トレーニングパイプラインを作成し、Feature Storeからトレーニングデータを読み込み、モデルをトレーニングし、**トレーニング済みモデルをモデルレジストリに保存します**、
 
-- write a batch inference pipeline or online inference pipeline that downloads the trained model, then takes new feature data, either from the feature store or computes it from user requests, and makes predictions consumed by the ML-enabled product (often a simple UI written in Python using Streamlit or Gradio). **バッチ推論パイプラインまたはオンライン推論パイプラインを作成**し、学習済みモデルをダウンロードし、新しい特徴量データを特徴ストアから取得するか、ユーザリクエストから計算し、ML対応製品（多くの場合、StreamlitまたはGradioを使用してPythonで書かれたシンプルなUI）で消費される予測を行います。
+- write a batch inference pipeline or online inference pipeline that downloads the trained model, then takes new feature data, either from the feature store or computes it from user requests, and makes predictions consumed by the ML-enabled product (often a simple UI written in Python using Streamlit or Gradio). **バッチ推論パイプラインまたはオンライン推論パイプラインを作成**し、学習済みモデルをダウンロードし、新しい特徴量データを特徴ストアから取得するか、ユーザリクエストから計算し、ML対応プロダクト（多くの場合、StreamlitまたはGradioを使用してPythonで書かれたシンプルなUI）で消費される予測を行います。
 
 After the students have built their first MVP (Minimum Viable Product), they could add automated unit tests for features, data validation tests, and versioning for their features and models.
-生徒たちは最初のMVP(Minimum Viable Product)を作った後、特徴量(作成処理)の自動ユニットテスト、データ検証テスト、特徴量やモデルのバージョニングを追加することができる。
+生徒たちは最初の**MVP(Minimum Viable Product)**を作った後、特徴量(作成処理)の自動ユニットテスト、データ検証テスト、特徴量やモデルのバージョニングを追加することができる。
 That is, they could easily follow best practices for MLOps.
 つまり、**MLOpsのベストプラクティスに簡単に従うことができる**のだ。
 
 ![figure2]()
 Figure 2: Feature Pipelines, Training Pipelines, and Inference Pipelines are all examples of ML Pipelines. Note ML Pipelines now describes an abstract grouping, not a concrete pipeline.
+Feature pipelines、Training pipelines、Inference pipelinesはすべてML pipelines の例です。ML pipelines は、具体的なパイプラインではなく、抽象的なグループ(=独立したpipelineの集合?)を表すようになりました。
 
 However, even with recent advances in MLOps tooling, many teams are failing in getting models to production.
 しかし、最近のMLOpsツールの進歩にもかかわらず、多くのチームがモデルをproductionに移すことに失敗している。
@@ -92,6 +93,7 @@ MLシステムの黎明期には、MLシステムの構築は単にモデルを�
 
 ![](https://assets-global.website-files.com/618399cd49d125734c8dec95/6502ad4eb9b805fbe60281f4_figure%203_lightbox.png)
 Figure 3: This diagram from 2015 is from a canonical paper by Google on Hidden Technical Debt in Machine Learning Systems. [Image Source]
+図3：この図は2015年のGoogleの機械学習システムにおける隠れた技術的負債に関する権威ある論文からのものです。[画像ソース]
 
 (あ、よく引用されてる図だ!:thinking:)
 
@@ -99,7 +101,7 @@ The diagram in Figure 3 spread fast and wide and the message was clear to Data S
 図3の図は瞬く間に広まり、データサイエンティストへのメッセージは明確なものとなった。**MLシステムの構築は難しく、単にモデルをトレーニングするだけでは済まない**。
 
 In the era before MLOps practices merged, the first generation of ML systems many different architecture patterns were proposed to help build batch and real-time ML systems.
-MLOpsのプラクティスが融合する前の時代、MLシステムの第一世代では、バッチおよびリアルタイムのMLシステムを構築するのに役立つ多くの異なるアーキテクチャパターンが提案された。(ふむふむ...!)
+MLOpsのプラクティスが融合(一般化?)する前の時代、MLシステムの第一世代では、バッチおよびリアルタイムのMLシステムを構築するのに役立つ[多くの異なるアーキテクチャパターン](https://www.oreilly.com/library/view/machine-learning-design/9781098115777/)が提案された。(ふむふむ...!)
 
 Broadly speaking, there are two types of ML systems: batch ML systems and real-time ML systems.
 大まかに言って、MLシステムには2つのタイプがある： **バッチMLシステムとリアルタイムMLシステム**である。
@@ -130,6 +132,7 @@ However, features created here are not easily reused in other models and there i
 ![fig5]()
 
 Figure 5: A real-time ML system requires separate offline training and online inference pipelines.
+図5：リアルタイムMLシステムには、オフラインのトレーニングとオンラインの推論パイプラインが別々に必要です。
 
 In figure 5, you can see an operational ML system that receives requests from clients and responds with predictions in real-time.
 図5では、クライアントからのリクエストを受け、リアルタイムで予測結果を返すMLシステムが運用されているのがわかる。

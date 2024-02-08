@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.1.168">
 
   <meta name="author" content="モーリタ">
-  <title>FTI Pipelines architectureについて調べた話</title>
+  <title>より”良い”MLシステムってどう作ればいいんだろうと悩み、FTI Pipelines architectureについて調べた話</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -325,16 +325,21 @@
     <div class="slides">
 
 <section id="title-slide" data-background-opacity="0.5" data-background-size="contain" class="center">
-  <h1 class="title">FTI Pipelines architectureについて調べた話</h1>
+  <h1 class="title">より”良い”MLシステムってどう作ればいいんだろうと悩み、FTI Pipelines architectureについて調べた話</h1>
   <p class="subtitle">y-tech-ai ワクワク勉強会</p>
   <p class="author">モーリタ</p>
   <p class="date">2024/02/xx</p>
 </section>
 
-<section id="このテーマを選んだ経緯" class="slide level2">
-<h2>このテーマを選んだ経緯</h2>
+<section id="このテーマを選んだ経緯-概要" class="slide level2">
+<h2>このテーマを選んだ経緯 &amp; 概要</h2>
 <ul>
-<li>hogehoge</li>
+<li>業務の中で「より”良い”MLシステムってどう作ればいいんだろう」と思って色々調べ始めた。
+<ul>
+<li>“良い”: 変更・拡張がしやすい(i.e.&nbsp;システムの持続可能性が高い?)、ABテストやオフライン実験も含めて運用しやすい、みたいな状態を想像<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul></li>
+<li>昨年のMLOps勉強会の発表の中で「FTI pipelines architecture」っていう言葉を聞き、興味を持った。</li>
+<li>「<a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">From MLOps to ML Systems with Feature/Training/Inference Pipelines</a>」は、HopsworksのCEOのJim Dowling氏が書いた記事で、より良いMLシステムを作る上でFTI pipelines architecturを採用することが重要だと主張してる。</li>
 </ul>
 </section>
 <section id="参考文献" class="slide level2">
@@ -342,8 +347,22 @@
 <ul>
 <li>hogehoge</li>
 </ul>
-
-<img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
+</section>
+<section id="fti-pipelines-architectureの概要" class="slide level2">
+<h2>FTI Pipelines Architectureの概要:</h2>
+</section>
+<section id="そもそもpipeline-architectureってなんだっけ" class="slide level2">
+<h2>そもそもPipeline Architectureってなんだっけ?</h2>
+<ul>
+<li>pipe and filter architectureとも呼ばれる。
+<ul>
+<li>filter(component)とpipe(filter同士を繋ぐ)から構成される。</li>
+<li>たぶん「一方向的」というのが特徴 <span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul></li>
+</ul>
+<p><img data-src="https://miro.medium.com/v2/resize:fit:1100/format:webp/1*C1aXSo3klBPgPZSi8ZFhHw.png"></p>
+<p><img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo"></p>
+<div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
 </div>
 </section>
