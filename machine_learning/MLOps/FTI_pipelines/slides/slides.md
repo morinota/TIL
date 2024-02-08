@@ -35,3 +35,7 @@ title-slide-attributes:
 ## そもそもPipeline Architectureってなんだっけ?
 
 - pipe and filter architectureとも呼ばれる。
+  - filter(component)とpipe(filter同士を繋ぐ)から構成される。
+  - たぶん「一方向的」というのが特徴 :thinking:
+
+![](https://miro.medium.com/v2/resize:fit:1100/format:webp/1*C1aXSo3klBPgPZSi8ZFhHw.png)
