@@ -32,7 +32,7 @@ This scenario is like having a medical test come back as positive for a disease 
 The other error we can make in deciding on a test is a false negative (also called a Type II error), which occurs when the data do not indicate a meaningful difference between treatment and control, but in truth there is a difference.
 テストを決定する際に犯しうるもうひとつのエラーは**false negative(type 2 error)**である。これは、データがtrearmentとcontrolの間に意味のある差を示していないが、実際には差がある場合に起こる。
 This scenario is like having a medical test come back negative — when you do indeed have the disease you are being tested for.
-このシナリオは、医療検査で陰性と判定されるようなものである。
+このシナリオは、医療検査で陰性と出るが、実際には検査されている病気を持っている場合のようなものだ。
 
 (false positiveとfalse negativeを想像するための例の話??)
 As another way to build intuition, consider the real reason that the internet and machine learning exist: to label if images show cats.
@@ -79,9 +79,9 @@ We’ll label 5% of the non-cat photos as displaying cats.
 The false positive rate is closely associated with the “statistical significance” of the observed difference in metric values between the treatment and control groups, which we measure using the p-value.
 false positive rateは、treatmentとcontrolの間のメトリック値の観測された差の「統計的有意性」と密接に関連しており、p値を用いて測定する。
 The p-value is the probability of seeing an outcome at least as extreme as our A/B test result, had there truly been no difference between the treatment and control experiences.
-p値は、A/Bテストの結果と少なくとも同じ極端な結果が出る確率である。
+p値は、treatmentとcontrolの経験に実際に差がなかった場合に、A/Bテストの結果と同じような結果が得られる確率である。
 An intuitive way to understand statistical significance and p-values, which have been confusing students of statistics for over a century (your authors included!), is in terms of simple games of chance where we can calculate and visualize all the relevant probabilities.
-統計の有意性とp値を理解する直感的な方法は、1世紀以上にわたって統計学の学生を混乱させてきた（あなたの著者も含めて！）。
+統計的有意性とp値を理解するための直感的な方法は、関連するすべての確率を計算し視覚化できる単純なゲームの観点からである。これは、統計の学生を100年以上も混乱させてきた（筆者も含む）。
 
 Say we want to know if a coin is unfair, in the sense that the probability of heads is not 0.5 (or 50%).
 コインの表が出る確率が0.5（または50％）ではないという意味で、コインが不公平かどうかを知りたいとする。
@@ -120,11 +120,11 @@ Here, because we’ve made no assumptions about heads or tails being more likely
 ここでは、表と裏のどちらがより起こりやすいかという仮定をしていないので、**フリップの55％以上が表になる確率（実線の右側のバー）と、フリップの55％以上が裏になる確率（破線の左側のバー）を合計**する。
 
 This is the mythical p-value: the probability of seeing a result as extreme as our observation, if the null hypothesis were true.
-これが神話のp値である： **帰無仮説が真である場合に、観測結果と同じような結果が得られる確率**。(だからp値が低かったら、これは帰無仮説が真ではなさそうだろう...みたいな感じになるのか...!)(p値は確率じゃなく割合だ、みたいな話はよく聞くけど...。)
+これが神話のp値である： **帰無仮説が真である場合に、観測結果と同じような結果が得られる確率**。(だからp値が低かったら、これは帰無仮説が真ではなさそうだろう...みたいな感じになるのか...!)(p値は確率じゃなく割合だ、みたいな話はよく聞くけど...。-> 違った! 割合か確率か問題があるのは、p値ではなく信頼区間だった!)
 In our case, the null hypothesis is that the coin is fair, the observation is 55% heads in 100 flips, and the p-value is about 0.32.
 この場合、帰無仮説は「コインは公平である」、観測値は100回ひっくり返して55％が表、p値は約0.32である。
 The interpretation is as follows: were we to repeat, many times, the experiment of flipping a coin 100 times and calculating the fraction of heads, with a fair coin (the null hypothesis is true), in 32% of those experiments the outcome would feature at least 55% heads or at least 55% tails (results at least as unlikely as our actual observation).
-解釈は以下の通りである： 公正なコイン（帰無仮説が真）を使って、コインを100回ひっくり返して表が出た割合を計算する実験を何度も繰り返した場合、そのうちの32％(100回のうちの32回=これは割合か...)の結果で、少なくとも55％の表か少なくとも55％の裏が出たことになる（実際の観察結果と同じくらいあり得ない結果）。
+解釈は以下の通りである： 公正なコイン（帰無仮説が真）を使って、コインを100回ひっくり返して表が出た割合を計算する実験を何度も繰り返した場合、そのうちの32％(100回のうちの32回=これは割合か...)の結果で、少なくとも55％の表か少なくとも55％の裏が出たことになる(実際の観察結果と同じくらいあり得ない結果)
 
 How do we use the p-value to decide if there is statistically significant evidence that the coin is unfair — or that our new product experience is an improvement on the status quo? It comes back to that 5% false positive rate that we agreed to accept at the beginning: we conclude that there is a statistically significant effect if the p-value is less than 0.05.
 コインが不公平であるという統計的に有意な証拠があるかどうか、あるいは**私たちの新しい製品体験が現状より改善されているかどうかを判断するのに、p値をどのように使えばいいのだろうか？**それは、最初に受け入れることに同意した5％のfalse positive rateに戻ってくる： p値が0.05未満の場合、統計的に有意な効果があると結論づける。
