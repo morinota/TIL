@@ -79,11 +79,10 @@ infix fun Int.shl(x: Int): Int { ... }
 
 ## Operator function(operator notation)
 
-
 一部のfunctionはoperatorに "アップグレード "することができ、対応するオペレーターシンボルでの呼び出しが可能になる。
 
 Kotlinでは、型に対する演算子の定義済みのセットに対して、カスタム実装を提供することができる。
-これらの演算子は、あらかじめ定義された記号表現（+や*など）と優先順位を持つ。
+これらの演算子は、あらかじめ定義された記号表現（+や\*など）と優先順位を持つ。
 演算子を実装するには、対応する型に対して特定の名前を持つメンバ関数または拡張関数を提供します。この型は、二項演算の場合は左辺の型になり、単項演算の場合は引数の型になります。
 
 演算子をオーバーロードするには、対応する関数に operator 修飾子を付ける：
@@ -96,7 +95,7 @@ Vararg修飾語句(modifier)が付与された変数は、カンマで区切っ�
 fun printAll(vararg messages: String) {                            // 1
     for (m in messages) println(m)
 }
-printAll("Hello", "Hallo", "Salut", "Hola", "你好")      
+printAll("Hello", "Hallo", "Salut", "Hola", "你好")
 ```
 
 名前付きパラメータのおかげで、varargの後に同じ型の別のパラメータを渡す事も可能。
@@ -111,9 +110,9 @@ printAllWithPrefix(
 )
 ```
 
-実行時、varargは単なる配列. 
+実行時、varargは単なる配列.
 これを 別のfunctionのvararg パラメータに渡すには、特殊な拡散演算子(spread operator) `*` を使用する.
-これにより、entries (Array<String>) の代わりに *entries (String の vararg) を渡すことができる.
+これにより、entries (Array<String>) の代わりに \*entries (String の vararg) を渡すことができる.
 
 ```kotlin
 fun log(vararg entries: String) {
@@ -121,4 +120,3 @@ fun log(vararg entries: String) {
 }
 log("Hello", "Hallo", "Salut", "Hola", "你好")
 ```
-
