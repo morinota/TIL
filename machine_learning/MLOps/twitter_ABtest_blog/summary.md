@@ -123,7 +123,23 @@ n週連続推薦システム系論文読んだシリーズ 36 週目の記事に
 
 #### 関連する概念2: Confidence Intervals(信頼区間)
 
-- hogehoge
+- rejection regionと同様にp値と関連する概念が、Confidence Interval(信頼区間)。
+  - **信頼区間とp値には等価性があり、どちらも同じ判定(意思決定)を導く**。
+  - -> p値が0.05%未満である = null valueが95% confidence intervalの外側にある。
+- confidence intervalも、p値やrejection regionと同様にacceptable false positive rate=5%に基づく。(まあ等価性があるので当然か...!:thinking:)
+  - p値やrejection regionの概念はまず帰無仮説が真であるという仮定から導かれる概念だが、**confidence Intervalの場合は観測結果から導かれる**。
+- コインの例での思考練習:
+  - **ある観測結果が与えられた時、どのnull value(帰無値)であれば(i.e. どの帰無仮説であれば??:thinking:)棄却されないという判定(意思決定)を導くだろうか?**
+    - (null value = 帰無仮説が真の場合の検定統計量の期待値? 例えば公平なコインを帰無仮説とした場合は検定統計量の期待値は50%?:thinking:)
+  - コインの例では、55%表が出たという観測結果が得られると仮定した場合に、公平なコインである(i.e. 表が出る確率が50%である)という帰無仮説は棄却されなかった。また同様に、表が出る確率が47.5％、50％、60％であるという帰無仮説も棄却されない。
+  - -> 55%表という観測結果に対して、帰無仮説が棄却されない値には、約45％から65％表が出るというnull valueが含まれる。(この境界値は、rejection regionの概念における critical valueと同じ値...!でも意味合いは異なるよね:thinking:)
+- このnull valueの値域が、confidence interval(信頼区間): (ある観測結果が与えられた条件で)**帰無仮説が棄却されないnull valueの値の集合**。
+  - ちなみに、acceptable false positive rate=5% (i.e. significance level=5%)に設定している場合は、95% confidence intervalと呼ばれる。
+    - 解釈: 実験を繰り返し行うと、95% confidence intervalはtrue value(=コインの例では、真の表が出る確率。真の分布の期待値?)を、実験回数における95%の割合でカバーする。
+    - (自分はこの解釈をまだ理解できてない...!true valueの話が急に出てくる? confidence intervalは仮説検定というよりはtrue valueの推定の概念なのかな??:thinking:)
+    - (まあp-valueによる意思決定 = rejection regionによる意思決定 = confidence intervalによる意思決定ならば、必ずしもこの解釈を理解していることはABテストを運用する上では必須ではなさそう??:thinking:)
+
+![figure4]()
 
 ### false negative(type 2 error)に関する概念の整理
 

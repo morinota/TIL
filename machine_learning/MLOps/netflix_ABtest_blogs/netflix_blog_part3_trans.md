@@ -178,25 +178,32 @@ So far, we’ve approached building a decision rule by first starting with the n
 We then define possible outcomes under this null hypothesis and compare our observation to that distribution.
 次に、この帰無仮説のもとで起こりうる結果(=確率分布の形?)を定義し、我々の観測結果をその分布と比較する。
 To understand confidence intervals, it helps to flip the problem around to focus on the observation.
-confidence intervalを理解するには、問題を反転させて観測結果に焦点を当てると役立つ。(confidence intervalは仮定ではなく結果に基づくってことかな...?)
-We then go through a thought exercise: given the observation, what values of the null hypothesis would lead to a decision not to reject, assuming we specify a 5% false positive rate? For our coin flipping example, the observation is 55% heads in 100 flips and we do not reject the null of a fair coin.
-次に思考練習をする： 観察結果が与えられたとき、5%のfalse positive rateを指定した場合、帰無仮説のどの値が棄却されないという結論につながるだろうか？**コインを100回ひっくり返して55％の表が出たという観測結果が得られた場合**、公平なコインの帰無仮説は棄却されない。
+confidence intervalを理解するには、問題を反転させて観測結果に焦点を当てると役立つ。(confidence intervalは仮定ではなく観測結果に基づくってことかな...?)
+We then go through a thought exercise: given the observation, what values of the null hypothesis would lead to a decision not to reject, assuming we specify a 5% false positive rate?
+次に、思考実験を行う：観測結果が与えられた場合、5％のfalse positive rateを指定したと仮定して、帰無仮説のどの値が棄却されないという結論につながるか？
+For our coin flipping example, the observation is 55% heads in 100 flips and we do not reject the null of a fair coin.
+**コインを100回ひっくり返して55％の表が出たという観測結果が得られた場合**、公平なコインの帰無仮説は棄却されない。
 Nor would we reject the null hypothesis that the probability of heads was 47.5%, 50%, or 60%.
 **また、表が出る確率が47.5％、50％、60％であるという帰無仮説も棄却されない**。
 There’s a whole range of values for which we would not reject the null, from about 45% to 65% probability of heads (Figure 4).
 **帰無値が棄却されない値には、約45％から65％の確率で表が出る値が含まれる**（図4）。
 
 ![figure4]()
+Figure 4: Building the confidence interval by mapping out the set of values that, when used to define a null hypothesis, would not result in rejection for a given observation.
+図4：confidence intervalを構築するために、**観測結果に対して棄却されない帰無仮説を定義するときに使用される値の集合**をマッピングする。
 
 This range of values is a confidence interval: the set of values under the null hypothesis that would not result in a rejection, given the data from the test.
 この**値の範囲がconfidence intervalである： テストのデータが与えられたときに棄却されない帰無仮説の値の集合**(連続変数だったら範囲ともとれるか)。
 Because we’ve mapped out the interval using tests at the 5% significance level, we’ve created a 95% confidence interval.
 significance level 5％ (i.e. false positive rate 5%を許容...!)でテストを行っているので、95％confidence intervalを作成している。
 The interpretation is that, under repeated experiments, the confidence intervals will cover the true value (here, the actual probability of heads) 95% of the time.
-実験を繰り返せば、confidence intervalは真の値（ここでは表が出る確率）を95％の確率でカバーするという解釈である。
+解釈は、繰り返し実験を行うと、confidence intervalは真の値（ここでは実際の表が出る確率）を95％の確率でカバーするということである。
 
-There is an equivalence between the confidence interval and the p-value, and both lead to the same decision: the 95% confidence interval does not cover the null value if and only if the p-value is less than 0.05, and in both cases we reject the null hypothesis of no effect.
-**confidence intervalとp値には等価性があり**、どちらも同じ決定を導く： p値が0.05未満である場合に限り、95％ confidence intervalは帰無値(=コインの例における50%という値...?)をカバーしない。この場合、効果がないという帰無仮説をrejectする。
+There is an equivalence between the confidence interval and the p-value, and both lead to the same decision:
+confidence intervalとp値には等価性があり、どちらも同じ決定を導く：
+the 95% confidence interval does not cover the null value if and only if the p-value is less than 0.05, and in both cases we reject the null hypothesis of no effect.
+95％の信頼区間が帰無値をカバーしない場合に限り、p値が0.05未満であり、両方の場合において、効果がないという帰無仮説を棄却する。
+(null value=帰無仮説が真の場合の、検定統計量の期待値??)
 
 ## Summary 要約
 

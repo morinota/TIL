@@ -116,7 +116,6 @@ class CalcServiceFunSpecTest : FunSpec() {
 ## KotestのAssertion
 
 - shouldBe, shouldNotBe:
-  - pass
 - shouldThrow:
   - 例外が投げられることを確認する。
 -
