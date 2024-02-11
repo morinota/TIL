@@ -143,7 +143,7 @@ That’s why the examples above used a 64% probability of heads: an experiment w
 そのため、上記の例では表の確率を64％としている： 100回の実験では、80％の検出力がある。
 
 What constitutes a reasonable effect size can be tricky, as tests can surprise us.
-**何をもって妥当な効果量とするかは、テストが私たちを驚かせることもあるので、難しいところ**である。
+**何をもって合理的な効果量とするかは、テストが私たちを驚かせることもあるので、難しいところ**である。
 But a mix of domain knowledge and common sense can generally provide solid estimates.
 しかし、ドメイン知識と常識を組み合わせることで、一般的に確かな見積もりを出すことができる。
 In an area where testing has a long history, such as optimizing the recommendation systems that help Netflix members choose content that’s great for them, we have a solid idea about the effect sizes that our tests tend to produce (be they positive or negative).
@@ -154,7 +154,7 @@ Given an understanding of past effect sizes, as well as the analysis strategy, w
 The second consideration, both in this experimental design phase and in deciding where to invest efforts, is to determine what constitutes a meaningful impact to the primary metrics used to decide the test.
 この実験設計フェーズと、どこに努力を投資するかを決定する際の**第二の考慮事項は、テストを決定するために使用されるprimary metricsに対する意味のある(meaningfulな)影響を決定すること**である。(ex. 新施策によってCTRを1%改善することによる利益が、新施策の開発・運用コストよりも上回っているか、みたいな??)
 What is meaningful will depend on the impact area of the experiment (member satisfaction, playback latency, technical performance of back end systems, etc.), and potentially the effort or costs associated with the new product experience.
-何が有意義かは、実験の影響範囲（会員の満足度、再生レイテンシー、バックエンドシステムの技術的パフォーマンスなど）や、潜在的には新商品体験に関連する労力やコストによって異なる。
+何が有意義かは、実験の影響範囲（会員の満足度、再生レイテンシー、バックエンドシステムの技術的パフォーマンスなど）や、潜在的には新商品体験に関連する労力やコストによって異なる。  
 As a hypothetical, say that, for effect sizes smaller than a 0.1% change in the primary metric, the cost of supporting the new product feature outweighs the benefits.
 仮定の話として、primary metricsの0.1%よりも小さいeffect sizeによる利益よりも、新しい product featureをサポートするコストが上回るとしよう。
 In this case, there’s little point in powering a test to detect a 0.01% change in the metric, as successfully identifying an effect of that size won’t result in a meaningful change in decisions.
