@@ -117,7 +117,7 @@ In the product development context, we can increase the power by allocating more
 (分布の母分散的な? ばらつきが小さいか否か、みたいな)
 
 The more homogenous the metric within the population we are testing on, the easier it is to correctly identify true effects. The intuition for this one is a bit trickier, and our simple coin examples finally break down.
-集団内の指標が均一であればあるほど、真の効果を正しく同定しやすくなる。 この直感は少し厄介で、単純なコインの例は最終的に破綻する。(確かにコインの例では、期待値が同じだけど、ばらつきが大きい小さい、みたいな想像はつきづらいかも...??)
+集団内の指標が均一であればあるほど、真の効果を正しく同定しやすくなる。 この直感は少し厄介で、単純なコインの例は最終的に破綻する。(確かにコインの例では、期待値が同じだけど、ばらつきが大きい小さい、みたいな想像はつきづらいかも...??) (ベルヌーイ分布ではばらつきは期待値に依存するからこれはあんまり効果ないのかも??)
 Say at Netflix that we run a test that aims to reduce some measure of latency, such as the delay between a member pressing play and video playback commencing.
 ネットフリックスでは、再生ボタンを押してからビデオ再生が始まるまでの遅延などの、**latencyの測定を減らすことを目的としたテスト**を実行するとしよう。
 Given the variety of devices and internet connections that people use to access Netflix, there is a lot of natural variability in this metric across our users.
