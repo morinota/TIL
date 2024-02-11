@@ -28,7 +28,7 @@ Continuing on an example from Part 3, a false negative corresponds to labeling t
 False negatives are closely related to the statistical concept of power, which gives the probability of a true positive given the experimental design and a true effect of a specific size.
 **false negativesは、実験設計と特定のサイズの真の効果が与えられたときのtrue positiveの確率を与える、統計的概念であるpowerと密接に関連している**。
 In fact, power is simply one minus the false negative rate.
-実際、powerは単に1からfalse negative rate(=これは許容するfalse negative rateの値?)を引いたものである。
+実際、powerは単に1からfalse negative rate(=powerと同様の変数に依存)を引いたものである。
 
 Power involves thinking about possible outcomes given a specific assumption about the actual state of the world — similar to how in Part 3 we defined significance by first assuming the null hypothesis is true.
 **powerは、実際の世界の状態についての特定の仮定が与えられたときの可能な結果について考えることを含む**。これは、第3部にて、まず帰無仮説が真であると仮定することで有意性を定義したものと同様。
@@ -55,7 +55,7 @@ Visually, power is the fraction of this alternative (red) distribution that lies
 Here, 80% of the alternative distribution (red) falls to the right of the taller blue line that demarcates the critical value of the upper rejection region.
 **ここでは、alternative distribution(赤い曲線)の80％が、upper rejection regionの境界値を示す高い青い線の右側にある**。(うんうん...!)
 Assuming that the truth about the coin is that the probability of heads is 64%, then the power of this test is 80%.
-コインの真実は、表の確率が64％であると仮定すると、このテストのpower は80％である。(なるほど...!alternative distributionを仮定した上じゃないと、powerは計算できないのか...!)
+コインの真の不公平さが表の確率が64％であると仮定すると、このテストのpower は80％である。(なるほど...!alternative distributionを仮定した上じゃないと、powerは計算できないのか...!)
 To be complete, there is also a negligibly small part of the alternative (red) distribution that falls within the lower rejection region (to the left of the short blue line).
 完全であるためには(i.e. power=100%であるためには???)、alternative distribution(赤い曲線)のほんのわずかな部分が、lower rejection region(短い青い線の左側)に含まれている。
 

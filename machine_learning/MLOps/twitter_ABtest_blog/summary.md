@@ -74,7 +74,7 @@ n週連続推薦システム系論文読んだシリーズ 36 週目の記事に
   - false positive rateは、観測されたtreatmentとcontrolのmetric値の **statistical significance(統計的有意性)** と密接に関連する。そして statistical significanceは、p-valueを用いて計算される。
   - p値の解釈: 実際にはtreatmentとcontrolに差がない場合に、今回の観測結果と同じような結果が得られる確率。
 
-#### statistical significanceとp-valueの概念を直感的に理解するためのコインの例
+#### statistical significanceやp-valueの概念を直感的に理解するためのコインの例
 
 - コインの例、あまりに単純なシナリオすぎない?? -> 多くの企業はbinary metricに関心あるからそんなことない!
   - -> コインが表か否か = binary metric。
@@ -144,6 +144,45 @@ n週連続推薦システム系論文読んだシリーズ 36 週目の記事に
 ![figure4]()
 
 ### false negative(type 2 error)に関する概念の整理
+
+- false negative(type 2 error): 実際には施策に効果があるのに、効果がないと判断してしまうこと。
+  - (写真を猫か猫以外かで判定する機械学習モデルで例えると、実際は猫の写真なのに猫ではないと判定してしまうこと!)
+- false negativeは**検出力(power)**と密接に関連する。
+  - 検出力(power): **実験設計(acceptable false positive rateやサンプルサイズ)と、ABテストで検出したいtrue effectのサイズを条件づけた時**の true positiveの確率を意味する統計的概念。
+  - -> 実際、検出力の値は、単に1からfalse negative rateを引いたもの。
+    - (つまりfalse negative rateも、powerと同様の変数に依存して値が決まるもの:thinking:)
+
+#### 検出力(power)の概念を直感的に理解するためのコインの例
+
+- 前セクションのp-valueなどと同様に、コインの例を用いて理解を試みる。
+  - 100回コインを反転させて表が出る割合を計算する実験を使って、コインが不公平か否かを判断することが目的。
+
+![]()
+
+- まずコインが公平であるという帰無仮説のもとでの観測結果の確率分布を算出する(上図の黒線の分布)
+  - **null distribution(帰無分布)**と呼ぶらしい。
+  - (具体的には、p=0.5, n=100の二項分布の確率質量関数を算出すればOK? いや違うか。p=0.5のベルヌーイ分布の"標本平均 $\bar{x}$ の"確率質量関数を算出すればいいのか...!:thinking:)
+    - (nが十分に大きければ標本平均 $\bar{x}$ の分布は、中心極限定理によっては $\mu = p$、$\sigma^2 = p(1-p)/n$ の正規分布に近似できるから...! ググった感じではnの大きさは30以上が目安っぽい。:thinking:)
+  - (=観測結果は確率変数なので...!:thinking:)
+- 続いて、**「おそらくコインがこの程度不公平である」という仮説(=特定の対立仮説)**を指定し、null distributionと同様に確率分布を算出する。
+  - 今回は、「おそらく表の期待値が64%くらいなのでは?」という仮説を指定する。(=これが検出したいeffect sizeになる...!:thinking:) (上図の赤線の分布)
+  - この分布を、**alternative distribution(対立分布)**と呼ぶらしい。
+  - (具体的には、p=0.64, n=100として、ベルヌーイ分布の"標本平均 $\bar{x}$ の"確率質量関数を算出すればいいのか:thinking:)
+- 上図を見ると、視覚的には...
+  - 検出力の大きさ = **alternative distributionのうち、帰無仮説のcritical valueよりも外側にある(i.e. rejection regionに含まれる)確率質量の割合**。
+    - = (薄い赤色のエリアの確率質量の累積値)/ (赤線のエリアの確率質量の累積値)
+  - (ちなみに、null distribution と alternative distribution の峰の差が検出したいeffect sizeかな:thinking:)
+- 仮に検出力100%を目指すためには、alternative distributionのほぼ全てのエリアがrejection regionに含まれるようにする必要がある。そのためには...
+  - acceptable false positive rateを5%よりも大きくして、帰無仮説のrejection regionを広げる??
+  - 検出したいeffect sizeを大きくして、alternative distributionをもっと左側に寄せる??
+  - サンプルサイズnを大きくして、null distributionとalternative distributionの分布の幅を狭める??(i.e. 確率分布の分散を小さくする??)
+- この例では、「おそらく表の期待値が64%くらいなのでは?」という対立仮説を指定する場合は、このテストの検出力は80%になる。
+  - (なるほど...!**alternative distributionを仮定しないと、すなわち検出したいeffect sizeを仮定しないと、検出力は計算できないのか**...! p値とはは仮定しなくても計算できるけど...!:thinking:)
+- 解釈:
+  - 真の表が出る確率が64%のコインを使って、100回コインを反転させる実験を、accepetable false positive rate=5%で繰り返した場合、80%の確率でコインが公平であるという帰無仮説を正しくrejectできる...!
+  - (言い換えると、20%の確率でfalse negativeが発生する。つまり真の表が出る確率が64%だったとしても、コインが公平であるという帰無仮説をrejectできない:thinking:)
+
+#### 検出力を上げるためには...
 
 ### Null Hypothesis (帰無仮説)
 
