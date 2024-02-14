@@ -233,9 +233,39 @@ n週連続推薦システム系論文読んだシリーズ 36 週目の記事に
 
 <!-- netflixの4章までまとめた! 推薦システム改善施策を例に、いい感じに意思決定するためのABテスト設計を考える、という資料を別で作って発表しようかな...! あんまりいい感じに意思決定できてないので。ABテストを終える時期とか。-->
 
-### Confidence level (信頼度)
+## netflixさんのより良い意思決定のためのtips集:
 
-### Power (検出力)
+- ここまでのセクションでの我々の目標は、不確実性を排除することではなく、健全な意思決定を行うために不確実性を理解し、定量化すること。
+- 多くの場合、A/Bテストの結果には微妙な解釈が必要であり、実際、**テスト結果自体はビジネス上の意思決定のための1つのインプットに過ぎない**。
+  - じゃあテスト結果をどう利用して、できるだけ良い意思決定をしていけるだろうか?
+
+### どんなテスト結果も、真実を確実に反映するものではない!
+
+- 良い実験を実践していくためには、まずfalse positive rateを設定し理解すること、そして、reasonableでmeaningfulな大きさの真の効果を検出できるように、十分な検出力を持つ実験を計画することが必要。
+  - -> これは、テストを実施する人が結果の不確実性を理解し、適切な意思決定をするのに役立つ。
+- -> しかし、特定の実験結果がfanse positiveなのかfalse negativeなのかを知る方法はない。
+- -> p値を含む数字だけにとらわれず、説得力のある証拠があるかどうかを判断することが重要...!
+
+これらの考慮事項は、米国統計協会の「統計的有意性とP値に関する2016年の声明」に沿ったもの。
+
+- > “Proper inference requires full reporting and transparency.” (適切な推論には完全な報告と透明性が必要)
+- > “A p-value, or statistical significance, does not measure the size of an effect or the importance of a result.” ("p値（統計的有意性）は、効果の大きさや結果の重要性を測るものではない")
+- > “Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold.” (科学的な結論やビジネスや政策上の意思決定は、特定の閾値を超えるかどうかだけに基づいてはならない)
+
+以下はnetflixさんで、ABテストから得られたevidenceをどう使って総合的に評価するか。
+
+- テスト結果を解釈する上で確認すべきこと(5%の偽陽性ではなく真陽性をどう信じられる??):
+  - 1. 結果は仮説と一致してるか??
+    - 効果と
+  - 2. メトリクスストーリー(metric story)は結果と一致してるか??
+    - 実験する上で、treatmentが、secondary metricsとprimary decision metricの両方にどのように影響を与えるか、という**因果関係のメカニズムを仮定しておくべき**。
+    - 結果を評価する際には、secondary metricsの変化を見ることが重要。
+    - -> primary metricの変化が仮説に基づいたcausal chain(因果関係のメカニズム)に沿っているかどうかを評価すべき。
+    - -> これが不自然だったら、偽陽性を疑うべき...!
+    - そうでなくても、secondary metricsの動きは、treatmentが仮説に基づいた効果を発揮してるかどうかを考察する上で有効...!!
+  - 3. 一貫したパターンなど、追加的な裏付けや証拠は??
+
+####
 
 ### A/A test
 

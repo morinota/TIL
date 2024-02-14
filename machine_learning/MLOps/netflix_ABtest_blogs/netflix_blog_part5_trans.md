@@ -59,7 +59,7 @@ In Part 4 (False negatives and power), we talked about the importance, in the ex
 Similar considerations are relevant when interpreting results.
 結果を解釈する際にも、同様の考慮が必要である。
 Even if results are statistically significant (p-value < 0.05), the estimated metric movements may be so small that they are immaterial to the Netflix member experience, and we are better off investing our innovation efforts in other areas.
-結果が統計的に有意 (p値＜0.05) であったとしても、推定された指標の動きは、ネットフリックスの会員体験にとって重要でないほど小さい可能性があり、イノベーションの努力を他の分野に投資した方がよい。(ex. サンプルサイズが大き過ぎたらp値は低くでやすい。-> この状態は検出力が低くなってる??)
+結果が統計的に有意 (p値＜0.05) であったとしても、推定された指標の動きは、ネットフリックスの会員体験にとって重要でないほど小さい可能性があり、イノベーションの努力を他の分野に投資した方がよい。(ex. サンプルサイズが大き過ぎたらp値は低くでやすい。-> この状態は、無意味なほど小さい差について、検出力が高くなってる)
 Or the costs of scaling out a new feature may be so high relative to the benefits that we could better serve our members by not rolling out the feature and investing those funds in improving different areas of the product experience.
 あるいは、新機能をスケールアウトするためのコストが、利点に比して非常に高く、その機能を展開せず、その資金を製品体験の別の分野の改善に投資した方が、会員により良いサービスを提供できるかもしれない。
 
