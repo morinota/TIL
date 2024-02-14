@@ -575,7 +575,7 @@ We concatenate the feature of a user and candidate news to feed into LibFM.
 LibFMにフィードするために、ユーザの特徴と候補となるニュースを連結します。
 
 KPCNN [46] attaches the contained entities to the word sequence of a news title and uses Kim CNN to learn representations of news, as introduced in Section 4.3.
-KPCNN [46]は、セクション4.3で紹介したように、ニュースのタイトルの単語列に含まれるエンティティを付加し、Kim CNNを使ってニュースの表現を学習する。
+KPCNN [46]は、 セクション4.3で紹介されたように、ニュースの表現を学習するために、ニュースタイトルの単語シーケンスに含まれるエンティティを付加し、Kim CNNを使用する。
 
 DSSM [16] is a deep structured semantic model for document ranking using word hashing and multiple fully-connected layers.
 DSSM[16]は、単語ハッシュと複数の完全連結レイヤーを用いた、文書ランキングのための深層構造化セマンティックモデルである。
