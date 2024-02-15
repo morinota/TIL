@@ -82,6 +82,7 @@ title-slide-attributes:
   - 評価するmetric = 各ユーザのconversion rate (閲覧した商品を購入したか否かの割合)
     - 一旦 binary metricsを採用してみた。non-binary metricsを採用するケースも後半で試してみる。
   - 仮定された効果量: conversion rate +2%(0.02) (現在のconversion rate=5%に対して、施策でconversion rate=7%になると仮定(期待)する。)
+  - 2つのvariant(controllとtreatment)には、それぞれ同じサンプルサイズ $n$ を割り当てる。
 
 ## (ちなみに) 評価するmetric: binary metricかnon-binary metricか
 
@@ -96,4 +97,58 @@ title-slide-attributes:
   - 他の例: ユーザの滞在時間、サーバーのlatency、開封数、解約数、etc...。
   - non-binary metricsの場合、ABテストの設計時にmetricの変動性(分散)を指定する必要がある。(期待値から直接計算できないので...!)
 
-##
+## サンプルサイズの導出作戦
+
+さて、under-poweredなテストにならないような理想的なサンプルサイズの導出を試みます。作戦の手順は以下です:
+
+サンプルサイズを $n$ とおいておく。()
+
+- 1. null distribution(帰無分布)を描画する。
+  - 帰無仮説(=施策に効果がないという仮説)が正しい場合に得られる観測値の確率分布(=null distribution)を描画する。i.e. 確率分布関数を描画する。
+- 2. rejection region(棄却域)を描画する。
+  - 設定した有意水準(i.e. acceptable false positive rate)に基づき、rejectin region(棄却域)を描画する。
+- 3. alternative distribution(対立分布)を描画する。
+  - 仮定した効果量に基づき、対立仮説が正しい場合に得られる観測値の確率分布(=alternative distribution)を描画する。
+- 4. 検出力を計算する。
+
+## 手順1: null distribution(帰無分布)を描画する。
+
+- 帰無仮説: control群とtreatment群で、真のconversion rateには差がない。
+  (i.e. control群の真のconversion rate = treatment群の真のconversion rate = 5%)
+- -> controll群のconversionも、treatment群のconversionも、期待値5%(p=0.05)のベルヌーイ分布に従うbinaryの確率変数である。
+- -> サンプル数 $n$ の場合、controll群とtreatment群で観測されるconversion rate(=conversionの標本平均) $\hat{p}_{controll}, \hat{p}_{treatment}$ はそれぞれ、平均 $p$ 、分散 $p(1-p)/n$ の正規分布に従う。(中心極限定理より)
+- -> 統計的仮説検定で扱える確率変数は1つなので、確率変数 ${\hat{p}_{treatment} - \hat{p}_{controll}}$ が従う確率分布を算出する必要がある。
+  - -> 期待値 $p_{treatment} - p_{controll} = 0$ 、分散 $p(1-p)/n + p(1-p)/n = 2p(1-p)/n$ の正規分布に従う。(正規分布に従う確率変数同士の減算より)
+- -> 以上より、null distributionは、期待値0、分散 $2p(1-p)/n$ の正規分布である。
+
+以下の図は、n=100の場合のnull distributionを描画したもの。
+
+![]()
+
+## 手順2: rejection region(棄却域)を描画する。
+
+有意水準(accetable false positive rate) = 5% の条件をもとに、null distribution (期待値0、分散 $2p(1-p)/n$ の正規分布)において、rejection region(棄却域)を算出する。
+
+- rejection region(棄却域) = null distributionにおいて確率質量の累積値が5%を超えないような、最も発生しづらい観測結果の集合(i.e. 値域)
+  - -> 今回の場合は片側検定を想定するので、null distributionの右側にrejection regionが描画されるイメージ。
+  - -> null distributionの累積質量関数を $cmf(\odot)$ とすると、$cmf(x) < 1.0 - 0.05$ を満たす $x$ の集合がrejection regionになるはず...!
+
+## 手順3: alternative distribution(対立分布)を描画する。
+
+## 手順4: 検出力を計算する。
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
