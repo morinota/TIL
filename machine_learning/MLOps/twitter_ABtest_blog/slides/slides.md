@@ -170,3 +170,11 @@ title-slide-attributes:
 - 手順1~4を踏まえると、検出力は、null distributionとalternative distributionの形(正規分布のパラメータ)、および有意水準(->rejection region)によって一意に定まる。
 - 2つの確率分布のパラメータは、metricで仮定する効果量 ($p_{treatment}-p_{controll}$)、サンプルサイズ $n$ に依存する。(binary metricの場合は、metricの変動性(分散)は pとnによって一意に定まるので...!)
 - -> 検出力は、有意水準、metricで仮定する効果量、サンプルサイズの関数で表せそう。(non-binary metricの場合は、metricの変動性(分散)も関数に含まれるはず...!:thinking:)
+
+論文及びXのブログでは、以下のような最小サンプルサイズの公式が紹介されてた。
+
+$$
+n = 16 \times (\frac{\sigma}{\Delta^2})^2
+$$
+
+ここで、$n$ は各variantのサンプルサイズ。$\sigma$ はmetricの標準偏差、$\Delta$ は検出したい効果量。

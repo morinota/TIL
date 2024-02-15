@@ -471,7 +471,7 @@ We assume throughout that the sample sizes are large enough that it is safe to a
 (サンプルサイズが十分に大きければ、標本平均の分布は正規分布に近づくという話か:thinking:)
 
 A second formula is a calculation for the minimum sample size, assuming the desired confidence level is 95% and the desired power is 80% (van Belle 2002, p.31)
-2番目の公式は、希望するconfidence levelが95%であり、希望するpowerが80%であると仮定した場合の**最小サンプルサイズの計算**である。
+2番目の公式は、希望するconfidence levelが95%であり、希望するpowerが80%であると仮定した場合の**最小サンプルサイズの計算**である。(van Belle 2002, p.31)
 (これって公式なのか??)
 
 $$
