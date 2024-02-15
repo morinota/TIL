@@ -129,26 +129,37 @@ title-slide-attributes:
 
 有意水準(accetable false positive rate) = 5% の条件をもとに、null distribution (期待値0、分散 $2p(1-p)/n$ の正規分布)において、rejection region(棄却域)を算出する。
 
-- rejection region(棄却域) = null distributionにおいて確率質量の累積値が5%を超えないような、最も発生しづらい観測結果の集合(i.e. 値域)
-  - -> 今回の場合は片側検定を想定するので、null distributionの右側にrejection regionが描画されるイメージ。
-  - -> null distributionの累積質量関数を $cmf(\odot)$ とすると、$cmf(x) < 1.0 - 0.05$ を満たす $x$ の集合がrejection regionになるはず...!
+- rejection region(棄却域) = null distributionにおいて確率質量の累積値が有意水準を超えないような、最も発生しづらい観測結果の値域。観測結果がこの値域に含まれることと、p値が有意水準よりも小さくなることは同義。
+  - -> 今回の場合は片側検定を想定するので、null distributionの95%値よりも右側にrejection regionが描画される感じ...!:thinking:
+  - -> 具体的には、null distributionの累積質量関数を $cmf(\odot)$ とすると、$cmf(x) < 1.0 - 0.05$ を満たす $x$ の集合がrejection regionになる...!
+  - (ちなみに、rejection regionの境界値をcritical valueと呼ぶ。今回の場合は $cmf(x) = 1.0 - 0.05$ を満たす $x$。)
+
+以下の図は、n=100の場合のnull distributionにおけるrejection regionを描画したもの。
+
+![]()
 
 ## 手順3: alternative distribution(対立分布)を描画する。
 
+- 対立仮説: control群の真のconversion rate = 5%、treatment群の真のconversion rate = 7%
+- -> controll群のconversionは期待値 $p_{controll} = 0.05$、 treatment群のconversionは期待値 $p_{treatment} = 0.07$ のベルヌーイ分布に従うbinaryの確率変数である。
+- -> サンプル数 $n$ の場合に観測されるconversion rate(=conversionの標本平均)は、それぞれ以下(中心極限定理より):
+  - control群: $\hat{p}_{controll} \sim N(0.05, 0.05(1-0.05)/n)$
+  - treatment群: $\hat{p}_{treatment} \sim N(0.07, 0.07(1-0.07)/n)$
+- alternative distributionは、確率変数 $\hat{p}_{treatment} - \hat{p}_{controll}$ が従う確率分布なので...!
+  - -> $\hat{p}_{treatment} - \hat{p}_{controll} \sim N(0.07 - 0.05, 0.05(1-0.05)/n + 0.07(1-0.07)/n)$
+
+以下の図は、n=100の場合のalternative distributionを描画したもの。
+
+![]()
+
 ## 手順4: 検出力を計算する。
 
-```
+![]()
 
-```
+- 検出力の大きさ = alternative distributionのうち、rejection regionに含まれる確率質量の割合。
+- 視覚的には...
+  - 検出力の大きさ -> (薄い赤色エリアの面積) / (赤線エリアの面積)
+  - (ちなみに、仮定した効果量 -> null distributionとalternative distributionの峰の差。)
+- (なるほど...!**alternative distributionを仮定しないと、すなわち検出したいeffect sizeを仮定しないと、検出力は計算できないのか**...!:thinking: p値とはは仮定しなくても計算できるけど...! 逆にp値の計算には観測結果が必要だけど、検出力の計算には不要:thinking:)
 
-```
-
-```
-
-```
-
-```
-
-```
-
-```
+ちなみにサンプルサイズ $n = 100$ の場合、conversion rate 5% -> 7%の効果を仮定した検出力は、約x(=x%)となる。
