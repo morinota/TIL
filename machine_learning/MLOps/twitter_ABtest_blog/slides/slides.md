@@ -110,6 +110,7 @@ title-slide-attributes:
 - 3. alternative distribution(対立分布)を描画する。
   - 仮定した効果量に基づき、対立仮説が正しい場合に得られる観測値の確率分布(=alternative distribution)を描画する。
 - 4. 検出力を計算する。
+- 5. 検出力が0.8になるようなサンプルサイズ $n$ を導出する。
 
 ## 手順1: null distribution(帰無分布)を描画する。
 
@@ -134,7 +135,7 @@ title-slide-attributes:
   - -> 具体的には、null distributionの累積質量関数を $cmf(\odot)$ とすると、$cmf(x) < 1.0 - 0.05$ を満たす $x$ の集合がrejection regionになる...!
   - (ちなみに、rejection regionの境界値をcritical valueと呼ぶ。今回の場合は $cmf(x) = 1.0 - 0.05$ を満たす $x$。)
 
-以下の図は、n=100の場合のnull distributionにおけるrejection regionを描画したもの。
+以下の図は、n=100の場合のnull distributionにおけるrejection regionを描画したもの。$x > x_{critical}$ の領域がrejection regionになる。
 
 ![]()
 
@@ -163,3 +164,5 @@ title-slide-attributes:
 - (なるほど...!**alternative distributionを仮定しないと、すなわち検出したいeffect sizeを仮定しないと、検出力は計算できないのか**...!:thinking: p値とはは仮定しなくても計算できるけど...! 逆にp値の計算には観測結果が必要だけど、検出力の計算には不要:thinking:)
 
 ちなみにサンプルサイズ $n = 100$ の場合、conversion rate 5% -> 7%の効果を仮定した検出力は、約x(=x%)となる。
+
+## 手順5: 検出力が0.8になるようなサンプルサイズ $n$ を導出する。
