@@ -344,7 +344,7 @@ In case of a bug, for example, the experiment is aborted and all users should se
 ### Experimental unit. 実験単位。
 
 The entity over which metrics are calculated before averaging over the entire experiment for each variant.
-各variantの実験全体を平均化する前に、metricsが計算されるentity。(?? 後述の例を読んだらよく理解できた...!)
+**各variantの実験全体を平均化する前に、metricsが計算されるentity**。(?? 後述の例を読んだらよく理解できた...!) (異なる日付の同じユーザで、それぞれmetricを算出する場合は、experimental unitはuser-day)
 Sometimes called an item.
 アイテムと呼ばれることもある。
 The units are assumed to be independent.
@@ -571,7 +571,7 @@ Since we excluded the 90% who do not initiate, the total number of users to the 
 ### 3.2.4. The choice of OEC must be made in advance OECの選択は事前に行わなければならない。
 
 When running experiments, it is important to decide in advance on the OEC (a planned comparison); otherwise, there is an increased risk of finding what appear to be significant results by chance (familywise type I error) (Keppel et al.1992).
-**実験を実施する際には、事前にOECを決定することが重要(計画された比較)であり、そうでないと偶然に有意な結果が得られるリスク(familywise type I error)が高まる**(Keppel et al.1992)。
+**実験を実施する際には、事前にOECを決定することが重要(計画された比較)であり、そうでないと偶然に有意な結果が得られるリスク(familywise type I error)が高まる**(Keppel et al.1992)。(複数のOECで何回も統計的仮説検定しちゃうと、多重検定になるから??)
 Several adjustments have been proposed in the literature (e.g., Fisher’s least-significant-difference, Bonferroni adjustment, Duncan’s test, Scheffé’s test, Tukey’s test, and Dunnett’s test), but they basically equate to increasing the 95% confidence level and thus reducing the statistical power (Mason et al.1989; Box et al.2005; Keppel et al.1992).
 いくつかの調整が文献で提案されている（例：フィッシャーの最小有意差、ボンフェローニ補正、ダンカンの検定、シェフェの検定、トゥーキーの検定、ダンネットの検定）が、基本的には95%信頼度を上げて統計的パワーを下げることに等しい(Mason et al.1989; Box et al.2005; Keppel et al.1992)。
 
