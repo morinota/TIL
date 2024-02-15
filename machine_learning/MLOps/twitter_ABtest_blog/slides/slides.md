@@ -120,7 +120,7 @@ title-slide-attributes:
 - -> サンプル数 $n$ の場合、controll群とtreatment群で観測されるconversion rate(=conversionの標本平均) $\hat{p}_{controll}, \hat{p}_{treatment}$ はそれぞれ、平均 $p$ 、分散 $p(1-p)/n$ の正規分布に従う。(中心極限定理より)
 - -> 統計的仮説検定で扱える確率変数は1つなので、確率変数 ${\hat{p}_{treatment} - \hat{p}_{controll}}$ が従う確率分布を算出する必要がある。
   - -> 期待値 $p_{treatment} - p_{controll} = 0$ 、分散 $p(1-p)/n + p(1-p)/n = 2p(1-p)/n$ の正規分布に従う。(正規分布に従う確率変数同士の減算より)
-- -> 以上より、null distributionは、期待値0、分散 $2p(1-p)/n$ の正規分布である。
+- -> 以上より、null distributionは、期待値0、分散 $2 * 0.05 (1-0.05)/n$ の正規分布である。
 
 以下の図は、n=100の場合のnull distributionを描画したもの。
 
@@ -143,7 +143,7 @@ title-slide-attributes:
 
 - 対立仮説: control群の真のconversion rate = 5%、treatment群の真のconversion rate = 7%
 - -> controll群のconversionは期待値 $p_{controll} = 0.05$、 treatment群のconversionは期待値 $p_{treatment} = 0.07$ のベルヌーイ分布に従うbinaryの確率変数である。
-- -> サンプル数 $n$ の場合に観測されるconversion rate(=conversionの標本平均)は、それぞれ以下(中心極限定理より):
+- -> サンプル数 $n$ の場合に観測されるconversion rate(=conversionの標本平均)は、それぞれ以下の確率分布に従う(中心極限定理より):
   - control群: $\hat{p}_{controll} \sim N(0.05, 0.05(1-0.05)/n)$
   - treatment群: $\hat{p}_{treatment} \sim N(0.07, 0.07(1-0.07)/n)$
 - alternative distributionは、確率変数 $\hat{p}_{treatment} - \hat{p}_{controll}$ が従う確率分布なので...!
@@ -166,3 +166,7 @@ title-slide-attributes:
 ちなみにサンプルサイズ $n = 100$ の場合、conversion rate 5% -> 7%の効果を仮定した検出力は、約x(=x%)となる。
 
 ## 手順5: 検出力が0.8になるようなサンプルサイズ $n$ を導出する。
+
+- 手順1~4を踏まえると、検出力は、null distributionとalternative distributionの形(正規分布のパラメータ)、および有意水準(->rejection region)によって一意に定まる。
+- 2つの確率分布のパラメータは、metricで仮定する効果量 ($p_{treatment}-p_{controll}$)、サンプルサイズ $n$ に依存する。(binary metricの場合は、metricの変動性(分散)は pとnによって一意に定まるので...!)
+- -> 検出力は、有意水準、metricで仮定する効果量、サンプルサイズの関数で表せそう。(non-binary metricの場合は、metricの変動性(分散)も関数に含まれるはず...!:thinking:)
