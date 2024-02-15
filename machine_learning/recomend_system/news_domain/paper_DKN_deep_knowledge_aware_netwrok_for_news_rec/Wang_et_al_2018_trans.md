@@ -696,12 +696,12 @@ Several observations stand out from Table 2:
 - Finally, compared with KPCNN, DKN can still have a 1.7% AUC increase.
   最後に、KPCNNと比較して、DKNはまだ1.7％のAUCを増加させることができる。
   We attribute the superiority of DKN to its two properties: 1) DKN uses word-entity-aligned KCNN for sentence representation learning, which could better preserve the relatedness between words and entities; 2) DKN uses an attention network to treat users’ click history discriminatively, which better captures users’ diverse reading interests.
-  我々は、DKNの優位性を次の2つの特性に求める： 1)DKNは文の表現学習に単語と実体の整列したKCNNを用いることで、**単語と実体の間の関連性をよりよく保持できる**こと、2)DKNはユーザのクリック履歴を識別的に扱うためにアテンション・ネットワークを用いることで、ユーザの多様な読書興味をよりよく捉えることができること、である。
+  我々は、DKNの優位性を次の2つの特性に求める： 1)DKNは文の表現学習に単語とentityのalignしたKCNNを用いることで、**単語とentityの間の関連性をよりよく保持できる**こと、2)DKNはユーザのクリック履歴を識別的に扱うためにアテンション・ネットワークを用いることで、ユーザの多様な読書興味をよりよく捉えることができること、である。
 
 ![figure7]()
 
 Figure 7 presents the AUC score of DKN and baselines for additional ten test days.
-図7は、DKNとベースラインのAUCスコアを10日間追加したものである。
+図7は、DKNとベースラインのAUCスコアを追加の10日間について示している。
 We can observe that the curve of DKN is consistently above baselines over ten days, which strongly proves the competitiveness of DKN.
 DKNのカーブは10日間一貫してベースラインを上回っており、DKNの競争力を強く証明している。
 Moreover, the performance of DKN is also with low variance compared with baselines, which suggests that DKN is also robust and stable in practical application.
