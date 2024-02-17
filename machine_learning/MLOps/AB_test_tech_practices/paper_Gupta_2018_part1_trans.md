@@ -10,12 +10,12 @@ Top Challenges from the first Practical Online Controlled Experiments Summit
 
 ## 0.3. abstract # 0.3.abstract
 
-Online controlled experiments (OCEs), also known as A/B tests, have become ubiquitous in evaluating the impact of changes made to software products and services.
+**Online controlled experiments (OCEs), also known as A/B tests**, have become ubiquitous in evaluating the impact of changes made to software products and services.
 A/Bテストとしても知られるオンライン対照実験（OCE）は、ソフトウェア製品やサービスに加えられた変更の影響を評価する上で、どこにでもあるようになった。
 While the concept of online controlled experiments is simple, there are many practical challenges in running OCEs at scale and encourage further academic and industrial exploration.
 オンライン制御実験のコンセプトは単純だが、OCEを大規模に実行するには多くの現実的な課題があり、学術的・産業的な探求がさらに進むことが望まれる。
 To understand the top practical challenges in running OCEs at scale, representatives with experience in large-scale experimentation from thirteen different organizations (Airbnb, Amazon, Booking.com, Facebook, Google, LinkedIn, Lyft, Microsoft, Netflix, Twitter, Uber, Yandex, and Stanford University) were invited to the first Practical Online Controlled Experiments Summit.
-OCEを大規模に実行する上での実践的な最重要課題を理解するため、13の異なる組織（Airbnb、Amazon、Booking.com、Facebook、Google、LinkedIn、Lyft、Microsoft、Netflix、Twitter、Uber、Yandex、Stanford University）から大規模実験の経験を持つ代表者を招き、第1回実践的オンライン対照実験サミットを開催した。
+OCEを大規模に実行する上での実践的な最重要課題を理解するため、1**3の異なる組織(Airbnb、Amazon、Booking.com、Facebook、Google、LinkedIn、Lyft、Microsoft、Netflix、Twitter、Uber、Yandex、Stanford University)から大規模実験の経験を持つ代表者を招き、第1回実践的オンライン対照実験サミットを開催**した。
 All thirteen organizations sent representatives.
 全13団体が代表を派遣した。
 Together these organizations tested more than one hundred thousand experiment treatments last year.
@@ -23,20 +23,20 @@ Together these organizations tested more than one hundred thousand experiment tr
 Thirty-four experts from these organizations participated in the summit in Sunnyvale, CA, USA on December 13-14, 2018.
 2018年12月13日から14日にかけて米国カリフォルニア州サニーベールで開催されたサミットには、これらの組織から34人の専門家が参加した。
 While there are papers from individual organizations on some of the challenges and pitfalls in running OCEs at scale, this is the first paper to provide the top challenges faced across the industry for running OCEs at scale and some common solutions.
-OCEを大規模に運営する上での課題や落とし穴については、各組織から論文が出ているが、OCEを大規模に運営する上で業界全体が直面する最重要課題と共通の解決策を示した論文はこれが初めてである。
+OCEを大規模に運営する上での課題や落とし穴については、各組織から論文が出ているが、**OCEを大規模に運営する上で業界全体が直面する最重要課題と共通の解決策を示した論文**はこれが初めてである。
 
 # 1. Introduction 1. はじめに
 
 The Internet provides developers of connected software, including web sites, applications, and devices, an unprecedented opportunity to accelerate innovation by evaluating ideas quickly and accurately using OCEs.
 インターネットは、ウェブサイト、アプリケーション、デバイスなど、接続されたソフトウェアの開発者に、OCEを使用してアイデアを迅速かつ正確に評価することにより、イノベーションを加速させる前例のない機会を提供する。
 At companies that run OCEs at scale, the tests have very low marginal cost and can run with thousands to millions of users.
-OCEを大規模に実行する企業では、テストの限界コストは非常に低く、数千から数百万人のユーザーで実行できる。
+OCEを大規模に実行する企業では、テストの余剰コストは非常に低く、数千から数百万人のユーザで実行できる。
 As a result, OCEs are quite ubiquitous in the technology industry.
 その結果、OCEはテクノロジー業界のいたるところで見られるようになった。
 From front-end user-interface changes to backend algorithms, from search engines (e.g., Google, Bing, Yandex) to retailers (e.g., Amazon, eBay, Etsy) to media service providers (e.g.Netflix, Amazon) to social networking services (e.g., Facebook, LinkedIn, Twitter) to travel services (e.g., Lyft, Uber, Airbnb, Booking.com), OCEs now help make data-driven decisions [7, 10, 12, 27, 30, 40, 41, 44, 51, 58, 61, 76].
-検索エンジン（例：Google、Bing、Yandex）から小売業者（例：Amazon、eBay、Etsy）、メディアサービスプロバイダ（例：Netflix、Amazon）、ソーシャルネットワーキングサービス（例：Facebook、LinkedIn、Twitter）、旅行サービス（例：Lyft、Uber、Airbnb、Booking.com）に至るまで、フロントエンドのユーザーインターフェースの変更からバックエンドのアルゴリズムに至るまで、OCEは現在、データ駆動型の意思決定を支援している[7, 10, 12, 12]、 Facebook、LinkedIn、Twitter）から旅行サービス（Lyft、Uber、Airbnb、Booking.com）まで、OCEは今やデータ主導の意思決定を支援する[7, 10, 12, 27, 30, 40, 41, 44, 51, 58, 61, 76]。
+フロントエンドのユーザーインターフェイスの変更からバックエンドのアルゴリズムまで、検索エンジン（例：Google、Bing、Yandex）から小売業者（例：Amazon、eBay、Etsy）まで、メディアサービスプロバイダ（例：Netflix、Amazon）まで、ソーシャルネットワーキングサービス（例：Facebook、LinkedIn、Twitter）まで、旅行サービス（例：Lyft、Uber、Airbnb、Booking.com）まで、**OCEは今やデータ駆動型の意思決定を支援している**[7, 10, 12, 27, 30, 40, 41, 44, 51, 58, 61, 76]。
 
-## 1.1. First Practical Online Controlled Experiments Summit, 2018 1.1.First Practical Online Controlled Experiments Summit, 2018
+## 1.1. First Practical Online Controlled Experiments Summit, 2018 1.1. 2018年第1回実践的オンライン対照実験サミット
 
 To understand the top practical challenges in running OCEs at scale, representatives with experience in large-scale experimentation from thirteen different organizations (Airbnb, Amazon, Booking.com, Facebook, Google, LinkedIn, Lyft, Microsoft, Netflix, Twitter, Uber, Yandex, and Stanford University) were invited to the first Practical Online Controlled Experiments Summit.
 OCEを大規模に実行する上での実践的な最重要課題を理解するため、13の異なる組織（Airbnb、Amazon、Booking.com、Facebook、Google、LinkedIn、Lyft、Microsoft、Netflix、Twitter、Uber、Yandex、Stanford University）から大規模実験の経験を持つ代表者を招き、第1回実践的オンライン対照実験サミットを開催した。
@@ -61,58 +61,59 @@ Each participant could participate in at least two breakout sessions.
 Each breakout group presented a summary of their session to all summit participants and further discussed topics with them.
 各分科会グループは、サミット参加者全員にセッションの概要を発表し、さらに参加者とトピックについて話し合った。
 This paper highlights top challenges in the field of OCEs and common solutions based on discussions leading up to the summit, during the summit, and afterwards.
-本稿では、サミットに向けた議論、サミット期間中、そしてサミット後の議論に基づき、OCEs分野における最重要課題と共通の解決策を紹介する。
+本稿では、サミットに向けた議論、サミット期間中、そして**サミット後の議論に基づき、OCEs分野における最重要課題と共通の解決策を紹介**する。
 
 ## 1.2. Online Controlled Experiments
 
 Online Controlled Experiments, A/B tests or simply experiments, are widely used by data-driven companies to evaluate the impact of software changes (e.g.new features).
 オンライン対照実験、A/Bテスト、または単に実験は、データ駆動型の企業がソフトウェアの変更（新機能など）の影響を評価するために広く使用されています。
 In the simplest OCE, users are randomly assigned to one of the two variants: Control (A) or Treatment (B).
-最も単純なOCEでは、ユーザーは無作為に2つの変種のいずれかに割り当てられる： 対照(A)と治療(B)である。
+最も単純なOCEでは、ユーザーは無作為に2つのvariantのいずれかに割り当てられます：Control（A）またはTreatment（B）。
 Usually, Control is the existing system and Treatment is the system with the new feature, say, feature X.
 通常、Controlは既存のシステムで、Treatmentは新しい機能、例えば機能Xを持つシステムである。
 User interactions with the system are recorded and from that, metrics computed.
-システムに対するユーザーのインタラクションが記録され、そこからメトリクスが計算される。
+システムに対するユーザのinteractionが記録され、その結果、メトリクスが計算されます。
 If the experiment was designed and executed correctly, the only thing consistently different between the two variants is feature X.
-もし実験が正しく設計され、実行されたのであれば、2つの変種間で一貫して異なるのは機能Xだけである。
+もし実験が正しく設計され、実行されたのであれば、2つのvariantの間で一貫して異なるのは機能Xだけです。
 External factors such as seasonality, impact of other feature launches, or moves by the competition, are evenly distributed between Control and Treatment, which means that we can hypothesize that any difference in metrics between the two groups can be attributed to either feature X or due to chance resulting from the random assignment to the variants.
-季節性、他の機能の発売の影響、競合の動きなどの外的要因は、コントロールとトリートメントの間に均等に分布している。つまり、2つのグループ間のメトリクスの違いは、機能Xに起因するか、バリアントへのランダム割り当てによる偶然によるものであるという仮説を立てることができる。
+季節性、他の機能の発売の影響、競合他社の動きなどの外部要因は、ControlとTreatmentの間で均等に分布されているため、2つのグループ間のメトリクスの違いは、機能Xまたはvariantへの無作為な割り当てによる偶然の結果のいずれかに帰属できると仮定できます。
 The latter hypothesis is ruled out (probabilistically) using statistical tests such as a t-test [21].
 後者の仮説は、t検定[21]などの統計検定を使って（確率的に）除外される。
 This establishes a causal relationship (with high probability) between the feature change and changes in user behavior, which is a key reason for the widespread use of controlled experiments.
-これにより、機能の変化とユーザー行動の変化との間に（高い確率で）因果関係が確立される。
+これにより、**ユーザの行動の変化と機能の変更との間に因果関係が（高い確率で）確立され、これが制御実験の広範な使用の主な理由**です。
 
 ## 1.3. Contribution 1.3.Contribution
 
 OCEs rely on the same theory as randomized controlled trials (RCTs).
 OCEはランダム化比較試験（RCT）と同じ理論に依拠している。
-The theory of a controlled experiment dates back to Sir Ronald A.
-対照実験の理論は、ロナルド・A.
-Fisher’s experiments at the Rothamsted Agricultural Experimental Station in England in the 1920s.
-1920年代、イギリスのロザムステッド農業実験場におけるフィッシャーの実験。
+(ちゃんと設計されたOCE \in RCT?)
+The theory of a controlled experiment dates back to Sir Ronald A.Fisher’s experiments at the Rothamsted Agricultural Experimental Station in England in the 1920s.
+制御実験の理論は、1920年代のイギリスのロサムステッド農業実験所でのロナルド・A・フィッシャー卿の実験にさかのぼる。
 While the theory is simple, deployment and evaluation of OCEs at scale (100s of concurrently running experiments) across variety of web sites, mobile apps, and desktop applications presents many pitfalls and research challenges.
-理論は単純だが、様々なウェブサイト、モバイルアプリ、デスクトップアプリケーションにまたがるスケールでのOCEの展開と評価（100以上の同時実行実験）には、多くの落とし穴と研究課題がある。
+理論は単純だが、多様なウェブサイト、モバイルアプリ、デスクトップアプリケーションでの**大規模なOCE（100以上の同時実行実験）の展開と評価には、多くの落とし穴と研究課題がある**。
 Over the years some of these challenges and pitfalls have been described by authors from different companies along with novel methods to address some of those challenges [16, 23, 43, 48, 50, 61].
 長年にわたり、これらの課題や落とし穴のいくつかが、それらの課題のいくつかに対処するための新しい方法とともに、さまざまな企業の著者によって説明されてきた[16, 23, 43, 48, 50, 61]。
 This is the first time that OCE experts from thirteen organizations with some of the largest scale experimentation platforms have come together to identify the top challenges facing the industry and the common methods for addressing these challenges.
-これは、最大規模の実験プラットフォームを持つ13の組織からOCEの専門家が集まり、業界が直面する最重要課題と、これらの課題に対処するための共通の方法を特定する初めての機会である。
+これは、**最大規模の実験プラットフォームを持つ13の組織からOCEの専門家が集まり、業界が直面する最重要課題と、これらの課題に対処するための共通の方法を特定する初めての機会**である。
 This is the novel contribution of this paper.
 これが本稿の斬新な貢献である。
 We hope that this paper provides researchers a clear set of problems currently facing the industry and spurs further research in these areas in academia and industry.
-本稿が研究者たちに、業界が現在直面している問題を明確に提示し、学界と産業界におけるこれらの分野のさらなる研究に拍車をかけることを願っている。
+本稿が、現在の業界が直面している明確な問題のセットを研究者に提供し、これらの分野における学界と産業界のさらなる研究を促進することを願っている。
 It is our wish to continue this cross-company collaboration to help advance the science of OCEs.
 OCEsの科学的発展に貢献するため、このような企業間のコラボレーションを継続することが我々の願いである。
 Section 2 presents an overview of top challenges currently faced by companies across the industry.
-セクション2では、業界全体にわたって企業が現在直面している最重要課題の概要を紹介する。
+セクション2では、**業界全体にわたって企業が現在直面している最重要課題の概要**を紹介する。
 Later sections discuss specific problems in more detail, how these problems have an impact on running OCEs in different products, and common solutions for dealing with them
 この後のセクションでは、具体的な問題の詳細、これらの問題がさまざまな製品で OCE を実行する際に どのような影響を及ぼすか、そしてこれらの問題に対処するための一般的な解決策について説明する。
+
+<!-- ここまで読んだ -->
 
 # 2. Top Challenges 2. トップチャレンジ
 
 Software applications and services run at a very large scale and serve tens to hundreds of millions of users.
-ソフトウェア・アプリケーションやサービスは非常に大規模で、数千万から数億のユーザーにサービスを提供している。
+ソフトウェア・アプリケーションやサービスは非常に大規模で、数千万から数億のユーザにサービスを提供している。
 It is relatively low cost to update software to try out new ideas.
-新しいアイデアを試すためにソフトウェアを更新するコストは比較的低い。
+新しいアイデアを試すためにソフトウェアを更新するコストは比較的低い。(これがソフトウェアプロダクトの特徴だよね...!)
 Hundreds of changes are made in a software product during a short period of time.
 ソフトウェア製品には、短期間に何百もの変更が加えられる。
 This provides OCEs a unique set of opportunities and challenges to help identify the good changes from the bad to improve products.
@@ -120,64 +121,103 @@ This provides OCEs a unique set of opportunities and challenges to help identify
 Our compiled list of top challenges comes from three sources: the pre-summit survey to collect the list of topics to discuss, the top challenges presented by each company at the start of the summit, and the post-summit survey on top takeaways and list of topics to discuss in future.
 私たちがまとめたトップ・チャレンジのリストは、3つの情報源から得られたものである： すなわち、サミット前のアンケート調査による討議すべきトピックのリスト、サミット開始時に各社から提示されたトップ・チャレンジ、そしてサミット後のアンケート調査によるトップ・テイクアウェイと今後討議すべきトピックのリストである。
 The relative order of prevalence remained roughly the same across these sources.
-これらの情報源において、有病率の相対的な順位はほぼ同じであった。
+これらの情報源において、相対的な頻度の順序はおおむね同じであった。
 These top challenges reflect the high level of maturity and scale of OCE operations in these companies.
-これらの最重要課題は、これらの企業におけるOCE業務の成熟度と規模の高さを反映している。
+これらの最重要課題は、これらの企業におけるOCE業務の高い成熟度と規模を反映している。
 There is literature out there on the challenges and pitfalls some of these companies faced and solved during the early years of their operations [32].
-このような企業の中には、事業の初期に直面し、解決した課題や落とし穴に関する文献がある[32]。
+このような企業が**運営を開始した初期の数年間に直面し、解決した課題や落とし穴についての文献**が存在している[32]。(これ有用そう??)
 The challenges mentioned here are at the frontier of research in academia and industry.
 ここに挙げた課題は、学界と産業界における研究の最前線にある。
-While there are some solutions to existing challenges, there is a lot of scope for further advancement in these areas.1.Analysis: There are many interesting and challenging open questions for OCE results analysis.
-既存の課題に対する解決策はいくつかあるが、これらの分野にはさらなる進歩の余地が多くある： OCEの結果分析には、興味深く挑戦的な未解決の問題が数多くある。
+While there are some solutions to existing challenges, there is a lot of scope for further advancement in these areas.
+既存の課題に対する解決策はいくつかあるが、これらの分野にはさらなる進歩の余地が多くある。
+
+## 1.Analysis:
+
+There are many interesting and challenging open questions for OCE results analysis.
+OCEの結果分析には、多くの興味深く、挑戦的なオープンな問題がある。
 While most experiments in the industry run for 2 weeks or less, we are really interested in detecting the long-term effect of a change.
-業界では2週間以内の実験が多いが、私たちは長期的な変化の効果を検出することに関心がある。
-How do long-term effects differ from short-term outcomes? How can we accurately measure those long term factors without having to wait a long time in every case? What should be the overall evaluation criterion (OEC) for an experiment? How can we make sure that the OEC penalizes things like clickbaits that increase user dissatisfaction? While there are methods to test an OEC based on a set of labelled experiments [24], how to best collect such set of experiments for evaluation of the OEC and other metrics? While, there are models for estimating the long-term value (LTV) of a customer that may be a result of a complex machine learning model, can we leverage such models to create OEC metrics? Once we have OEC metrics and a Treatment improves or regresses the OEC metric, how can we best answer why the OEC metric improved or regressed and uncover the underlying causal mechanism or root cause for it? Running experiments at a large scale introduces another set of issues.
-長期的な影響は短期的な結果とどう違うのか？どのような場合にも長い時間をかけることなく、そのような長期的要因を正確に測定するにはどうすればよいのか？実験の総合評価基準（OEC）はどうあるべきか？OECが、ユーザーの不満を増大させるクリックベイトのようなものにペナルティを与えるようにするにはどうすればいいのか？ラベル付けされた実験セットに基づいてOECをテストする方法はあるが[24]、OECや他の評価基準を評価するために、そのような実験セットをどのように収集するのがベストなのだろうか？複雑な機械学習モデルの結果であるかもしれない、顧客の長期的価値（LTV）を推定するモデルがある一方で、OECの測定基準を作成するためにそのようなモデルを活用することはできるでしょうか？OEC測定基準ができ、ある治療がOEC測定基準を改善または後退させたとしたら、なぜOEC測定基準が改善または後退したのか、そしてその根本的な原因メカニズムや根本原因を明らかにするにはどうすればよいのでしょうか？大規模な実験を行うことは、別の問題を引き起こします。
+**業界のほとんどの実験は2週間以下で実行される**が、変更の長期的な影響を検出することに本当に興味がある。
+How do long-term effects differ from short-term outcomes? How can we accurately measure those long term factors without having to wait a long time in every case?
+長期的な影響は短期的な結果とどう違うのか？どのような場合にも長い時間をかけることなく、そのような長期的要因を正確に測定するにはどうすればよいのか？
+What should be the overall evaluation criterion (OEC) for an experiment?
+実験の総合評価基準（OEC）はどうあるべきか？
+How can we make sure that the OEC penalizes things like clickbaits that increase user dissatisfaction?
+OECが、ユーザーの不満を増大させるクリックベイトのようなものにペナルティを与えるようにするにはどうすればいいのか？
+While there are methods to test an OEC based on a set of labelled experiments [24], how to best collect such set of experiments for evaluation of the OEC and other metrics?
+ラベル付けされた実験セットに基づいてOECをテストする方法はあるが[24]、OECや他の評価基準を評価するために、そのような実験セットをどのように収集するのがベストなのだろうか？
+While, there are models for estimating the long-term value (LTV) of a customer that may be a result of a complex machine learning model, can we leverage such models to create OEC metrics?
+複雑な機械学習モデルの結果であるかもしれない、顧客の長期的価値（LTV）を推定するモデルがある一方で、OECの測定基準を作成するためにそのようなモデルを活用することはできるでしょうか？
+Once we have OEC metrics and a Treatment improves or regresses the OEC metric, how can we best answer why the OEC metric improved or regressed and uncover the underlying causal mechanism or root cause for it?
+OEC測定基準ができ、ある治療がOEC測定基準を改善または後退させたとしたら、なぜOEC測定基準が改善または後退したのか、そしてその根本的な原因メカニズムや根本原因を明らかにするにはどうすればよいのでしょうか？
+
+Running experiments at a large scale introduces another set of issues.
+大規模な実験を実行することは、別の問題を導入する。
 It is common for large products serving millions of users to have 100s of experiments running concurrently, where each experiment can include millions of users.
 数百万人のユーザーにサービスを提供する大規模な製品では、100以上の実験が同時に実行されるのが一般的で、各実験には数百万人のユーザーが含まれることもある。
 For products running so many experiments, most of the low-hanging fruit get picked quickly and many Treatments may then cause a very small change in OEC metrics.
-非常に多くの実験を実施している製品では、ほとんどの低空飛行の果実はすぐに摘み取られ、多くのTreatmentがOEC測定基準において非常に小さな変化を引き起こす可能性がある。
+多くの実験を実行している製品では、大部分の簡単な問題はすぐに解決され、多くの治療がOEC指標にごくわずかな変化を引き起こすかもしれない。
 It is important to detect these types of changes.
 こうした変化を察知することが重要だ。
 A very small change in a per-user metric may imply a change of millions of dollars in product revenue.
-ユーザー一人当たりの指標におけるごく小さな変化は、製品収益における数百万ドルの変化を意味するかもしれない。
-How can we best increase the sensitivity of OECs and other experiments metrics without hurting the accuracy of these metrics to discern between good and bad Treatments [18, 42, 75]? If we are running 100s of experiments concurrently how do we handle the issue of interaction between two treatments? How can we learn more from analyzing multiple experiments together and sharing learnings across experiments? For a product with millions of users, there are many ways to segment users.
-良い治療と悪い治療[18, 42, 75]を見分けるためのOECsや他の実験指標の正確さを損なわずに、OECsや他の実験指標の感度を高めるにはどうすれば良いでしょうか？もし100以上の実験を同時に行う場合、2つの治療間の相互作用の問題をどのように扱うか？複数の実験を一緒に分析し、実験間で学びを共有することで、どのように多くを学ぶことができるだろうか？何百万人ものユーザーを持つ製品の場合、ユーザーをセグメント化する方法はたくさんある。
+**ユーザーあたりのメトリクスのごくわずかな変化は、製品の収益の数百万ドルの変化を意味するかもしれない**。
+How can we best increase the sensitivity of OECs and other experiments metrics without hurting the accuracy of these metrics to discern between good and bad Treatments [18, 42, 75]?
+良い治療と悪い治療[18, 42, 75]を見分けるためのOECsや他の実験指標の正確さを損なわずに、OECsや他の実験指標の感度を高めるにはどうすれば良いでしょうか？
+If we are running 100s of experiments concurrently how do we handle the issue of interaction between two treatments?
+もし100以上の実験を同時に行う場合、2つの治療間の相互作用の問題をどのように扱うか？
+How can we learn more from analyzing multiple experiments together and sharing learnings across experiments? For a product with millions of users, there are many ways to segment users.
+複数の実験を一緒に分析し、実験間で学習を共有するためにはどうすればよいか？数百万人のユーザを持つ製品では、ユーザをセグメント化する方法は多岐にわたる。
 Even a small fraction of users is very significant.
 たとえごく一部のユーザーであっても、それは非常に大きな意味を持つ。
 Just understanding the average treatment effect on the entire population is not enough.
 母集団全体に対する平均的な治療効果を理解するだけでは十分ではない。
-How can we best identify heterogenous Treatment effects in different segments? 2.
-異なるセグメントにおける異質なトリートメント効果を識別する最善の方法は？2.
-Engineering and Culture: Culture is the tacit social order of an organization: It shapes attitudes and behaviors in wide-ranging and durable ways.
-エンジニアリングと文化： 文化とは組織の暗黙の社会秩序である： それは広範囲かつ永続的な方法で態度や行動を形成する。
+How can we best identify heterogenous Treatment effects in different segments?
+異なるセグメントの異なるtreatment効果を最もよく特定するにはどうすればよいか？
+
+## Engineering and Culture:
+
+Culture is the tacit social order of an organization: It shapes attitudes and behaviors in wide-ranging and durable ways.
+文化は組織の暗黙の社会秩序であり、態度や行動を幅広くかつ持続的な方法で形作る。
 Cultural norms define what is encouraged, discouraged, accepted, or rejected within a group [35].
-文化的規範は、集団の中で何が奨励され、何が落胆され、何が受け入れられ、何が拒否されるかを規定するものである［35］。
-How do we build a culture to one that uses OCEs at scale to ensure we get a trustworthy estimate of the impact of every change made to a product and bases ship decisions on the outcome of OCEs [46]? Engineering systems and tools are critical aspects to enable OCEs at scale.
-製品に加えられるすべての変更の影響について信頼に足る見積もりを得、OCE[46]の結果に基づいて出荷を決定することを確実にするために、OCEを大規模に使用する文化をどのように構築すればよいのでしょうか？エンジニアリング・システムとツールは、OCEs をスケール・アッ プできるようにするための重要な側面である。
-What are some good development practices, data logging and data engineering patterns that aid trustworthy experimentation at scale? 3.
-スケールの大きな信頼できる実験を支援する、優れた開発プラクティス、データロギング、データエンジニアリングパターンとは？3.
-Deviations from Traditional A/B Tests: Traditional A/B tests depend on a stable unit treatment value assumption(SUTVA) [39], that is, the response of any experiment unit (user) under treatment is independent of the response of another experiment unit under treatment.
-従来のA/Bテストからの逸脱： 伝統的なA/Bテストは、安定単位処置価値仮定（SUTVA）[39]に依存している。
+**文化的規範は、集団の中で何が奨励され、何が落胆され、何が受け入れられ、何が拒否されるかを規定するもの**である［35］。
+How do we build a culture to one that uses OCEs at scale to ensure we get a trustworthy estimate of the impact of every change made to a product and bases ship decisions on the outcome of OCEs [46]?
+プロダクトに加えられたすべての変更の影響を信頼できる推定値を得るために、OCEを大規模に使用する文化をどのように構築すればよいか？また、OCEの結果に基づいてデプロイの決定を下すことが重要である[46]。
+Engineering systems and tools are critical aspects to enable OCEs at scale.
+OCEを大規模に実行するためには、エンジニアリングシステムとツールが重要な要素である。
+What are some good development practices, data logging and data engineering patterns that aid trustworthy experimentation at scale?
+大規模な実験における信頼性の高い実験を支援するいくつかの良い開発プラクティス、データロギング、データエンジニアリングパターンは何か？
+
+## Deviations from Traditional A/B Tests:
+
+従来のA/Bテストからの乖離：
+
+Traditional A/B tests depend on a stable unit treatment value assumption(SUTVA) [39], that is, the response of any experiment unit (user) under treatment is independent of the response of another experiment unit under treatment.
+**従来のA/Bテストは、stable unit treatment value assumption(SUTVA) [39]に依存**しており、つまり、治療下の実験単位（ユーザ）の応答は、治療下の別の実験単位の応答とは独立しているという仮定である。(複数のABテストの相互作用の話??)
 There are cases where this assumption does not hold true, such as network interactions or interactions between multiple experiments.
 ネットワークの相互作用や複数の実験間の相互作用など、この仮定が成り立たない場合もある。
 If this issue is ignored, we may get a biased estimate of the treatment effect.
 この問題を無視すると、治療効果の推定値に偏りが生じる可能性がある。
 How can we detect such deviation? Where deviations are unavoidable, what is the best method to obtain a good estimate of the treatment effect? 4.
-そのような乖離を検出するにはどうしたらよいか？乖離が避けられない場合、治療効果の良好な推定値を得るための最良の方法は何か？4.
-Data quality: Trustworthiness of the results of an OCE depend on good data quality.
-データの質： OCEの結果の信頼性は、良好なデータ品質に依存する。
-What are some best practices to ensure good data quality? While the sample Ratio Mismatch test is a standard industry test to indicate data quality issues in OCEs [13, 22, 23, 45], what are other critical data quality tests to perform during OCE results analysis?
-良好なデータ品質を確保するためのベストプラクティスにはどのようなものがあるか？試料比率不一致試験は、OCEにおけるデータ品質の問題を示す業界標準の試験であるが[13, 22, 23, 45]、OCEの結果分析中に実施すべき他の重要なデータ品質試験にはどのようなものがあるか？
+そのような乖離を検出するにはどうしたらよいか？乖離が避けられない場合、治療効果の良好な推定値を得るための最良の方法は何か？
+
+## Data quality:
+
+Trustworthiness of the results of an OCE depend on good data quality.
+OCEの結果の信頼性は、良好なデータ品質に依存している。
+What are some best practices to ensure good data quality?
+良好なデータ品質を確保するためのベストプラクティスにはどのようなものがあるか？
+While the sample Ratio Mismatch test is a standard industry test to indicate data quality issues in OCEs [13, 22, 23, 45], what are other critical data quality tests to perform during OCE results analysis?
+**sample ratio mismatch test**(??)は、OCEにおけるデータ品質の問題を示すための標準的な業界テストである[13, 22, 23, 45]が、OCEの結果分析中に実行する他の重要なデータ品質テストは何か？
+
+<!-- ここまで読んだ! -->
 
 # 3. Estimating the long-term effect 3. 長期的効果の推定
 
 ## 3.1. Problem # 3.1.Problem
 
 Though it only takes a few days to change a part of a software product or service, the impact of that change may take a long time to materialize in terms of key product indicators (KPIs) and can vary across products and scenarios.
-ソフトウェア製品やサービスの一部を変更するには数日しかかからないが、その変更の影響が主要製品指標（KPI）として現れるには長い時間がかかり、製品やシナリオによって異なる場合がある。
+ソフトウェア製品やサービスの一部を変更するには数日しかかからないが、その変更の影響がkey product indicators（KPIs）の観点で具体化するのには長い時間がかかることがあり、製品やシナリオによって異なる。
 This makes it challenging to estimate the long-term impact of a change.
-このため、長期的な影響を見積もるのは難しい。
+このため、**長期的な影響を見積もるのは難しい**。
 For instance, the impact of a change of ranking results in an online travel service on customer satisfaction may not be fully understood until customers stay in a vacation rental or hotel room months after booking.
 例えば、オンライン旅行サービスにおけるランキング結果の変化が顧客満足度に与える影響は、顧客が予約から数ヶ月後にバケーションレンタルやホテルの部屋に滞在するまで、完全には理解できないかもしれない。
 Increasing the number of ads and hence decreasing their quality on a search results page may bring in more revenue in the first few weeks, but might have the opposite impact months later due to user attrition and users learning that ad results are less useful and ignoring them [38].
