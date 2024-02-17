@@ -75,8 +75,7 @@ are also called
 �
 �
 
--gram language models, e.g., bigram and trigram language models.
--グラム言語モデル、例えばビグラム言語モデルやトリグラム言語モデル。
+-gram language models, e.g., bigram and trigram language models. -グラム言語モデル、例えばビグラム言語モデルやトリグラム言語モデル。
 SLMs have been widely applied to enhance task performance in information retrieval (IR) [8, 9] and natural language processing (NLP) [10, 11, 12].
 SLMは、情報検索（IR）[8, 9]や自然言語処理（NLP）[10, 11, 12]において、タスクのパフォーマンスを向上させるために広く応用されている。
 However, they often suffer from the curse of dimensionality: it is difficult to accurately estimate high-order language models since an exponential number of transition probabilities need to be estimated.
@@ -619,7 +618,7 @@ LLaMA [57]は、CommonCrawl、C4 [71]、Github、Wikipedia、書籍、ArXiv、St
 The training data size for LLaMA (6B) and LLaMA (13B) is 1.0T tokens, while 1.4T tokens are used for LLaMA (32B) and LLaMA (65B).
 LLaMA（6B）とLLaMA（13B）の学習データサイズは1.0Tトークンで、LLaMA（32B）とLLaMA（65B）では1.4Tトークンが使用されている。
 
-## Library Resource 
+## Library Resource
 
 In this part, we briefly introduce a series of available libraries for developing LLMs.
 このパートでは、LLMを開発するために利用可能な一連のライブラリを簡単に紹介する。
@@ -862,24 +861,28 @@ As the second approach, several studies, such as BLOOM [66] and Gopher [59], emp
 2番目のアプローチとして、BLOOM [66]やGopher [59]などのいくつかの研究では、よく設計されたルールのセットを通じて低品質のテキストを排除するために、ヒューリスティックに基づくアプローチを採用しています：
 
 • Language filtering.
+
 - 言語フィルタリング。
-If a LLM would be mainly used in the tasks of certain languages, the text in other languages can be filtered.
-LLMが主に特定の言語のタスクで使用される場合、他の言語のテキストをフィルタリングすることができます。
+  If a LLM would be mainly used in the tasks of certain languages, the text in other languages can be filtered.
+  LLMが主に特定の言語のタスクで使用される場合、他の言語のテキストをフィルタリングすることができます。
 
 • Metric filtering.
+
 - メトリックフィルタリング。
-Evaluation metrics about the generated texts, e.g., perplexity, can be employed to detect and remove unnatural sentences.
-生成されたテキストに関する評価指標（例えば、perplexity）は、不自然な文章を検出して削除するために採用することができる。
+  Evaluation metrics about the generated texts, e.g., perplexity, can be employed to detect and remove unnatural sentences.
+  生成されたテキストに関する評価指標（例えば、perplexity）は、不自然な文章を検出して削除するために採用することができる。
 
 • Statistic filtering.
+
 - 統計フィルタリング。
-Statistical features of a corpus, e.g., the punctuation distribution, symbol-to-word ratio, and sentence length, can be utilized to measure the text quality and filter the low-quality data.
-コーパスの統計的特徴、例えば句読点の分布、記号と単語の比率、文の長さなどを利用して、テキストの品質を測定し、低品質なデータをフィルタリングすることができる。
+  Statistical features of a corpus, e.g., the punctuation distribution, symbol-to-word ratio, and sentence length, can be utilized to measure the text quality and filter the low-quality data.
+  コーパスの統計的特徴、例えば句読点の分布、記号と単語の比率、文の長さなどを利用して、テキストの品質を測定し、低品質なデータをフィルタリングすることができる。
 
 • Keyword filtering.
+
 - キーワードフィルタリング。
-Based on specific keyword set, the noisy or unuseful elements in the text, such as HTML tags, hyperlinks, boilerplates, and offensive words, can be identified and removed.
-特定のキーワードセットに基づいて、HTMLタグ、ハイパーリンク、定型文、不快な言葉など、テキスト内のノイズや不用な要素を特定し、削除することができる。
+  Based on specific keyword set, the noisy or unuseful elements in the text, such as HTML tags, hyperlinks, boilerplates, and offensive words, can be identified and removed.
+  特定のキーワードセットに基づいて、HTMLタグ、ハイパーリンク、定型文、不快な言葉など、テキスト内のノイズや不用な要素を特定し、削除することができる。
 
 De-duplication.
 重複排除。
@@ -992,7 +995,7 @@ Besides, it has been shown that duplicate data degrades the ability of LLMs to c
 Therefore, as suggested in existing work [59, 66, 56], it is essential to incorporate preprocessing methods on the pre-training corpus carefully (as illustrated in Section 4.1.2), to improve stability of the training process and avoid affecting the model performance.
 したがって、既存の研究[59, 66, 56]で示唆されているように、（セクション4.1.2で説明されているように）学習前のコーパスに慎重に前処理法を組み込むことが、学習プロセスの安定性を向上させ、モデルの性能に影響を与えないために不可欠である。
 
-## Architecture 
+## Architecture
 
 In this section, we review the architecture design of LLMs, i.e., mainstream architecture, pre-training objective, and detailed configuration.
 このセクションでは、LLMのアーキテクチャ設計、すなわち主流アーキテクチャ、事前学習目的、および詳細設定についてレビューする。
