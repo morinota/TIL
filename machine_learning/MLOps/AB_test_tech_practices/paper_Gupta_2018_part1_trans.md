@@ -223,11 +223,13 @@ For instance, the impact of a change of ranking results in an online travel serv
 Increasing the number of ads and hence decreasing their quality on a search results page may bring in more revenue in the first few weeks, but might have the opposite impact months later due to user attrition and users learning that ad results are less useful and ignoring them [38].
 検索結果ページで広告の数を増やし、その質を下げると、最初の数週間は収益が増えるかもしれないが、数カ月後にはユーザーの減少や、ユーザーが広告結果があまり役に立たないことを学習して無視するため、逆の影響が出るかもしれない[38]。
 Investing in user retention and satisfaction through better user experience can be more beneficial over the long term than what short term measurements indicate.
-より良いユーザー・エクスペリエンスを通じてユーザーの維持と満足に投資することは、短期的な測定が示すよりも長期的に有益である。
+**より良いユーザー・エクスペリエンスを通じてユーザの維持と満足に投資することは、短期的な測定が示すよりも長期的に有益**である。
 Introduction of clickbaits on a content provider service may cause increase in clicks due to the novelty effect but may induce larger dissatisfaction in the long term as users learn about poor content quality.
 コンテンツプロバイダーのサービスにクリックベイトを導入すると、目新しさ効果でクリック数は増えるかもしれないが、コンテンツの質の低さをユーザーが知ることで、長期的にはより大きな不満を誘発する可能性がある。
 Further, in twosided markets [71], some changes like pricing in ads, ride-sharing services, or home-sharing services may introduce a market effect with a shift in either demand or supply in the eco-system and it may take a long time before the market finds a new equilibrium.
-さらに、両側市場 [71]では、広告、ライドシェアサービス、ホームシェアサービ スにおける価格設定のような変化が、エコシステムにおける需要または供給の いずれかの変化を伴う市場効果を導入する可能性があり、市場が新たな均衡を 見出すまでに長い時間がかかるかもしれない。
+さらに、two-sided markets(=wantedlyさんとか!) [71]では、広告、ライドシェアリングサービス、またはホームシェアリングサービスの価格設定などの変更が、エコシステム内の需要または供給のシフトとともに市場効果を導入し、市場が新しい均衡を見つけるまでには長い時間がかかるかもしれない。
+
+<!-- ここまで読んだ! -->
 
 ## 3.2. Common Solutions and Challenges
 
