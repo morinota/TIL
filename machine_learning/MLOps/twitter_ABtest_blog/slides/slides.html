@@ -517,11 +517,11 @@ P(X=\hat{p}_{treatment} - \hat{p}_{controll}|p_{treatment}=0.05, p_{controll}=0.
 <h2>手順2: rejection region(棄却域)を描画する。</h2>
 <p>有意水準(accetable false positive rate) = 5% の条件をもとに、null distributionにおいて、rejection region(棄却域)を算出する。</p>
 <ul>
-<li>rejection region(棄却域) = null distributionにおいて確率質量の累積値が有意水準を超えないような、最も発生しづらい観測結果の値域。観測結果がこの値域に含まれることと、p値が有意水準よりも小さくなることは同義。
+<li><strong>rejection region(棄却域)</strong> = null distributionにおいて確率質量の累積値が有意水準を超えないような、最も発生しづらい観測結果の値域。観測結果がこの値域に含まれることと、p値が有意水準よりも小さくなることは同義。
 <ul>
 <li>-&gt; 今回の場合は片側検定を想定するので、null distributionの95%値よりも右側にrejection regionが描画される感じ…!<span class="emoji" data-emoji="thinking">🤔</span></li>
 <li>-&gt; 具体的には、null distributionの累積質量関数を <span class="math inline">\(cmf(\odot)\)</span> とすると、<span class="math inline">\(cmf(x) &lt; 1.0 - 0.05\)</span> を満たす <span class="math inline">\(x\)</span> の集合がrejection regionになる…!</li>
-<li>(ちなみに、rejection regionの境界値をcritical valueと呼ぶ。今回の場合は <span class="math inline">\(cmf(x) = 1.0 - 0.05\)</span> を満たす <span class="math inline">\(x\)</span>。)</li>
+<li>(ちなみに、rejection regionの境界値を<strong>critical value</strong>と呼ぶ。今回の場合は <span class="math inline">\(cmf(x) = 1.0 - 0.05\)</span> を満たす <span class="math inline">\(x\)</span>。)</li>
 </ul></li>
 </ul>
 <p>以下の図は、n=100の場合のnull distributionにおけるrejection regionを描画したもの。<span class="math inline">\(x &gt; x_{critical}\)</span> の領域がrejection regionになる。</p>
@@ -552,13 +552,15 @@ P(X=\hat{p}_{treat} - \hat{p}_{cont}|p_{treat}=0.07, p_{cont}=0.05)
 <h2>手順4: 検出力を計算する。</h2>
 
 <img data-src=".png" class="r-stretch"><ul>
-<li>検出力の大きさ = alternative distributionのうち、rejection regionに含まれる確率質量の割合。(i.e.&nbsp;対立仮説が正しい場合に帰無仮説を棄却できる確率…!)</li>
+<li><strong>検出力</strong> = alternative distributionのうち、rejection regionに含まれる確率質量の割合。(i.e.&nbsp;対立仮説が正しい場合に帰無仮説を棄却できる確率…!)</li>
 <li>視覚的には…
 <ul>
-<li>検出力の大きさ -&gt; (薄い赤色エリアの面積) / (赤線エリアの面積)</li>
-<li>(仮定した効果量 -&gt; null distributionとalternative distributionの峰の差。)</li>
+<li>検出力の大きさ = (薄い赤色エリアの面積) / (赤線エリアの面積)
+<ul>
+<li>(確率密度関数なので、面積は質量になるので…!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul></li>
-<li>ちなみに数式で表すと…</li>
+</ul></li>
+<li>ちなみに数式で表すとこんな感じ?</li>
 </ul>
 <p><span class="math display">\[
 power = \int_{x_{critical}}^{\infty} P(X=\hat{p}_{treat} - \hat{p}_{cont}|p_{treat}=0.07, p_{cont}=0.05) dx
@@ -577,11 +579,51 @@ power = \int_{x_{critical}}^{\infty} P(X=\hat{p}_{treat} - \hat{p}_{cont}|p_{tre
 <li>→ 検出力は、有意水準、metricで仮定する効果量、サンプルサイズの関数で表せそう。(non-binary metricの場合は、metricの変動性(分散)も関数に含まれるはず…!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul></li>
 </ul>
-<p>論文及びXのブログでは、以下のような最小サンプルサイズの公式が紹介されてた。(式変形頑張ったらたどり着く…??)</p>
+<p>どうしたら検出力が上がりそうか考えてみる。 alternative distributionのより多くのエリアがrejection regionに含まれるようにするには…??</p>
+<ul>
+<li><ol type="1">
+<li>有意水準を高くする(i.e.&nbsp;acceptable false positive rateを高くする)</li>
+</ol>
+<ul>
+<li>→ null distributionのrejection regionが広くなる。</li>
+</ul></li>
+<li><ol start="2" type="1">
+<li>仮定する効果量を大きくする</li>
+</ol>
+<ul>
+<li>→ alternative distributionの峰が右側に移動する。</li>
+<li>仮定する(i.e.&nbsp;検出したい)効果量をより大きく設定するには、効果的な施策を作る必要があるよね…!<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul></li>
+<li><ol start="3" type="1">
+<li>サンプルサイズを大きくする</li>
+</ol>
+<ul>
+<li>→ null distributionとalternative distributionの分散が小さくなる。</li>
+</ul></li>
+<li><ol start="4" type="1">
+<li>metricの変動性(分散)を小さくする</li>
+</ol>
+<ul>
+<li>→ null distributionとalternative distributionの分散が小さくなる。</li>
+</ul></li>
+</ul>
+<p>とりあえず指定した条件における検出力を算出できるようになったので、あとは全探索だったりグリッドサーチ的なアプローチで、良さげなサンプルサイズ <span class="math inline">\(n\)</span> を見つけられそう。 ちなみにpractice論文及びXのブログでは、以下のような最小サンプルサイズの公式が紹介されてた。(powerの式から式変形を色々頑張ったらたどり着きそう…??)</p>
 <p><span class="math display">\[
 n = 16 \times (\frac{\sigma}{\Delta^2})^2
 \]</span></p>
 <p>ここで、<span class="math inline">\(n\)</span> は各variantのサンプルサイズ。<span class="math inline">\(\sigma\)</span> はmetricの標準偏差、<span class="math inline">\(\Delta\)</span> は検出したい効果量。</p>
+</section>
+<section id="minimal-detectable-effectの考え方" class="slide level2">
+<h2>minimal detectable effectの考え方</h2>
+<ul>
+<li>Xさんのブログ内では、minimal detectable effectの概念が紹介されていた。
+<ul>
+<li>検出力は、有意水準、metricで仮定する効果量、サンプルサイズ、metricの変動性の関数で表せる。</li>
+<li>→ 式変形したら、<strong>検出力80%で検出できる最小の効果量</strong>を求めることができる。</li>
+<li>→ この最小の効果量を、<strong>検出力80%のMinimal Detectable Effect(検出可能な最小効果)</strong>、すなわち<strong>0.8MDE</strong>と呼ぶ。</li>
+</ul></li>
+<li>0.8MDEが検出したい効果量と一致するように、他の条件を調整しよう、みたいな考え方…!</li>
+</ul>
 
 <img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>⇒ <a href="https://qiita.com/morinota">https://qiita.com/morinota</a></p>
