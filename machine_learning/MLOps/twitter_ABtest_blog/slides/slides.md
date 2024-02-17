@@ -177,7 +177,7 @@ $$
 - **検出力** = alternative distributionのうち、rejection regionに含まれる確率質量の割合。(i.e. 対立仮説が正しい場合に帰無仮説を棄却できる確率...!)
 - 視覚的には...
   - 検出力の大きさ = (薄い赤色エリアの面積) / (赤線エリアの面積)
-  - (仮定した効果量 -> null distributionとalternative distributionの峰の差。)
+    - (確率密度関数なので、面積は質量になるので...!:thinking:)
 - ちなみに数式で表すとこんな感じ?
 
 $$
@@ -194,10 +194,32 @@ $$
   - 2つの確率分布のパラメータは、metricで仮定する効果量 ($p_{treatment}-p_{controll}$)、サンプルサイズ $n$ に依存する。(non-binary metricの場合は、metricの変動性(分散)にも依存する...!:thinking:)
   - → 検出力は、有意水準、metricで仮定する効果量、サンプルサイズの関数で表せそう。(non-binary metricの場合は、metricの変動性(分散)も関数に含まれるはず...!:thinking:)
 
-論文及びXのブログでは、以下のような最小サンプルサイズの公式が紹介されてた。(powerの式変形を頑張ったらたどり着きそう...??)
+どうしたら検出力が上がりそうか考えてみる。
+alternative distributionのより多くのエリアがrejection regionに含まれるようにするには...??
+
+- 1. 有意水準を高くする(i.e. acceptable false positive rateを高くする)
+  - → null distributionのrejection regionが広くなる。
+- 2. 仮定する効果量を大きくする
+  - → alternative distributionの峰が右側に移動する。
+  - 仮定する(i.e. 検出したい)効果量をより大きく設定するには、効果的な施策を作る必要があるよね...!:thinking:
+- 3. サンプルサイズを大きくする
+  - → null distributionとalternative distributionの分散が小さくなる。
+- 4. metricの変動性(分散)を小さくする
+  - → null distributionとalternative distributionの分散が小さくなる。
+
+とりあえず指定した条件における検出力を算出できるようになったので、あとは全探索だったりグリッドサーチ的なアプローチで、良さげなサンプルサイズ $n$ を見つけられそう。
+ちなみにpractice論文及びXのブログでは、以下のような最小サンプルサイズの公式が紹介されてた。(powerの式から式変形を色々頑張ったらたどり着きそう...??)
 
 $$
 n = 16 \times (\frac{\sigma}{\Delta^2})^2
 $$
 
 ここで、$n$ は各variantのサンプルサイズ。$\sigma$ はmetricの標準偏差、$\Delta$ は検出したい効果量。
+
+## minimal detectable effectの考え方
+
+- Xさんのブログ内では、**minimal detectable effect**の概念が紹介されていた。
+  - 検出力は、有意水準、metricで仮定する効果量、サンプルサイズ、metricの変動性の関数で表せる。
+  - → 目的変数を変更すれば、検出力80%で検出できる最小の効果量を求めることができる。
+  - → この最小の効果量を、**検出力80%のMinimal Detectable Effect(検出可能な最小効果)**、すなわち**0.8MDE**と呼ぶ。
+- 0.8MDEが検出したい効果量と一致するように、他の条件を調整しよう、みたいな考え方...!

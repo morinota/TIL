@@ -27,7 +27,7 @@ Additionally, if all experiments ran at a 50/50 split, our users could wind up i
 Thus, if 1% of the traffic is sufficient to measure effect of changes, we would prefer to use only 1%.
 したがって、**変化の影響を測定するのに1％のトラフィックで十分であれば、1％のみを使用する方が望ましい**。
 However, if we pick too small a bucket, we might not be able to observe a real change, which will affect our decision-making and/or slow down iteration while we re-run the experiment with larger buckets.
-しかし、あまりに小さなバケツを選ぶと、実際の変化を観察することができないかもしれない。
+しかし、あまりに小さなバケツを選ぶと、実際の変化を観察することができないかもしれない。(=under-poweredな実験...!)
 
 To address this problem, we created a special tool to provide guidance for experimenters on sizing their experiment appropriately, and to alert them when experiments are likely to be underpowered.
 この問題に対処するため、私たちは特別なツールを作成し、**実験者に実験の適切なサイジング**に関するガイダンスを提供し、実験がpower(検出力)不足になりそうな場合に警告を発するようにした。

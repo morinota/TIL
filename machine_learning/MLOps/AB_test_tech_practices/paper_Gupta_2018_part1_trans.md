@@ -63,7 +63,7 @@ Each breakout group presented a summary of their session to all summit participa
 This paper highlights top challenges in the field of OCEs and common solutions based on discussions leading up to the summit, during the summit, and afterwards.
 本稿では、サミットに向けた議論、サミット期間中、そしてサミット後の議論に基づき、OCEs分野における最重要課題と共通の解決策を紹介する。
 
-## 1.2. Online Controlled Experiments 
+## 1.2. Online Controlled Experiments
 
 Online Controlled Experiments, A/B tests or simply experiments, are widely used by data-driven companies to evaluate the impact of software changes (e.g.new features).
 オンライン対照実験、A/Bテスト、または単に実験は、データ駆動型の企業がソフトウェアの変更（新機能など）の影響を評価するために広く使用されています。
@@ -189,7 +189,7 @@ Introduction of clickbaits on a content provider service may cause increase in c
 Further, in twosided markets [71], some changes like pricing in ads, ride-sharing services, or home-sharing services may introduce a market effect with a shift in either demand or supply in the eco-system and it may take a long time before the market finds a new equilibrium.
 さらに、両側市場 [71]では、広告、ライドシェアサービス、ホームシェアサービ スにおける価格設定のような変化が、エコシステムにおける需要または供給の いずれかの変化を伴う市場効果を導入する可能性があり、市場が新たな均衡を 見出すまでに長い時間がかかるかもしれない。
 
-## 3.2. Common Solutions and Challenges 
+## 3.2. Common Solutions and Challenges
 
 ### 3.2.1. Long-term Experiments or Holdouts 3.2.1. 長期的な実験か、保留か
 
@@ -358,7 +358,7 @@ Finally, OEC should be able to accommodate new scenarios.
 For instance, direct answers to queries like current time would provide a good user experience in a search engine, but if you only base the OEC metrics on clicks, those metrics will miss this scenario.
 例えば、現在時刻のようなクエリに対する直接的な回答は、検索エンジンにおいて良いユーザーエクスペリエンスを提供するだろうが、OECメトリクスのベースをクリック数だけに置くと、そのメトリクスはこのシナリオを見逃すことになる。
 
-## 4.2. Common Solutions and Challenges 
+## 4.2. Common Solutions and Challenges
 
 ### 4.2.1. Search vs. Discovery 4.2.1. 検索対検索 ディスカバリー
 
