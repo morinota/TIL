@@ -476,6 +476,7 @@ A second formula is a calculation for the minimum sample size, assuming the desi
 
 $$
 n = \frac{16 \sigma^2}{\delta^2}
+\tag{2}
 $$
 
 where n is the number of users in each variant and the variants are assumed to be of equal size, σ2 is the variance of the OEC, and is the sensitivity, or the amount of change you want to detect.

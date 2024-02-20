@@ -49,7 +49,7 @@ def calculate_statistical_power(
         null_distribution, acceptable_false_positive_rate, alternative_type
     )
 
-    # true_positive_areaを算出
+    # 対立分布のうちrejection regionに含まれる部分の面積を算出
     true_positive_area = 0
     if left_critical_value:
         true_positive_area += alternative_distribution.cdf(left_critical_value)
@@ -128,3 +128,6 @@ def test_calculate_statistical_power() -> None:
     # Assert
     expected_statistical_power = 0.886
     assert np.isclose(actual_statistical_power, expected_statistical_power, atol=0.01)
+
+    # サンプルサイズの公式(van Belle, 2002, significance level=0.05, power=0.8)
+    n
