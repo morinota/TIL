@@ -52,9 +52,9 @@ def calculate_statistical_power(
     # true_positive_areaを算出
     true_positive_area = 0
     if left_critical_value:
-        true_positive_area += 1 - alternative_distribution.cdf(left_critical_value)
+        true_positive_area += alternative_distribution.cdf(left_critical_value)
     if right_critical_value:
-        true_positive_area += alternative_distribution.cdf(right_critical_value)
+        true_positive_area += 1 - alternative_distribution.cdf(right_critical_value)
 
     # statistical powerを算出
     return true_positive_area / 1
