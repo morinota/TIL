@@ -1,5 +1,4 @@
-from logging import critical
-from typing import Literal, Callable, Optional
+from typing import Literal, Optional
 from scipy.stats import norm
 import numpy as np
 
