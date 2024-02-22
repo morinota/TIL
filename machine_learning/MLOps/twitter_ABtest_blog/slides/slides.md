@@ -190,7 +190,7 @@ $$
 
 ## 手順5: 検出力が0.8になるようなサンプルサイズ $n$ を導出する。
 
-- 手順1~4を踏まえると、**検出力は、null distributionとalternative distributionの形、および有意水準(->rejection region)によって一意に定まる**。
+- 手順1~4を踏まえると、**検出力は、null distributionとalternative distributionの形、およびrejection regionによって一意に定まる**。
   - 2つの確率分布のパラメータは、metricで仮定する効果量 ($p_{treatment}-p_{controll}$)、サンプルサイズ $n$ に依存する。(non-binary metricの場合は、metricの変動性(分散)にも依存する...!:thinking:)
   - → 検出力は、有意水準、metricで仮定する効果量、サンプルサイズの関数で表せそう。(non-binary metricの場合は、metricの変動性(分散)も関数に含まれるはず...!:thinking:)
 
@@ -218,8 +218,12 @@ $$
 
 ## minimal detectable effectの考え方
 
-- Xさんのブログ内では、minimal detectable effectの概念が紹介されていた。
+- Xさんのブログ内では、Minimal Detectable Effectの概念が紹介されていた。
   - 検出力は、有意水準、metricで仮定する効果量、サンプルサイズ、metricの変動性の関数で表せる。
   - → 式変形したら、**検出力80%で検出できる最小の効果量**を求めることができる。
   - → この最小の効果量を、**検出力80%のMinimal Detectable Effect(検出可能な最小効果)**、すなわち**0.8MDE**と呼ぶ。
 - 0.8MDEの値が検出したい効果量よりも小さくなるように他の条件を調整しよう、みたいな考え方...!(まあ結局やることは同じ)
+
+## まとめ
+
+- 
