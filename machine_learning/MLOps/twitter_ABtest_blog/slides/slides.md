@@ -22,6 +22,12 @@ title-slide-attributes:
   data-background-opacity: "0.5"
 ---
 
+<!-- title: より良い意思決定がしたいので、under-powered なテストを避けるためのABテスト設計方法を調べた -->
+
+n週連続推薦システム系論文読んだシリーズ 37 週目の記事になります:)
+ちなみに36週目は [言語モデルと知識グラフを良い感じにalignして、knowledge-awareなニュース埋め込み表現を作る推薦手法DKNの論文を読んだ](https://zenn.dev/morinota/articles/93dd19e0c16b83) でした!
+(一応、推薦システムもオンライン実験するので!:pray:)
+
 ## はじめに:
 
 - 本資料は、netflixさんやXさんのテックブログやpracticeをまとめた論文を参考にunder-powered なテストを避ける為のABテストの設計方法について調べ、自分の理解をまとめたものです:)
