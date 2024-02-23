@@ -1,32 +1,16 @@
 from alternative_hypothesis_type import AlternativeHypothesisType
-from normal_distribution import NormalDistribution
+from normal_distribution import ProbabilityDistribution
 from typing import Optional
 
 
 def calculate_statistical_power(
-    null_distribution: NormalDistribution,
-    alternative_distribution: NormalDistribution,
+    null_distribution: ProbabilityDistribution,
+    alternative_distribution: ProbabilityDistribution,
     acceptable_false_positive_rate: float = 0.05,
-    alternative_type: AlternativeHypothesisType = AlternativeHypothesisType.GREATER_THAN,
+    alternative_hypothesis_type: AlternativeHypothesisType = AlternativeHypothesisType.GREATER_THAN,
 ) -> float:
-    """
-    Calculate statistical power.
-    args:
-        null_distribution: NormalDistribution
-            Null distribution. パラメータを固定された確率変数の確率分布オブジェクト
-        alternative_distribution: NormalDistribution
-            Alternative distribution. パラメータを固定された確率変数の確率分布オブジェクト
-        acceptable_false_positive_rate: float
-            Acceptable false positive rate.
-        alternative: Literal["two-sided", "larger", "smaller"]
-            Alternative hypothesis.
-    return:
-        statistical_power: float
-            Statistical power.
-    """
-    # rejection regionを算出
-    left_critical_value, right_critical_value = _get_rejection_region(
-        null_distribution, acceptable_false_positive_rate, alternative_type
+    left_critical_value, right_critical_value = get_rejection_region(
+        null_distribution, acceptable_false_positive_rate, alternative_hypothesis_type
     )
 
     # 対立分布のうちrejection regionに含まれる部分の面積を算出
@@ -35,13 +19,11 @@ def calculate_statistical_power(
         true_positive_area += alternative_distribution.cdf(left_critical_value)
     if right_critical_value:
         true_positive_area += 1 - alternative_distribution.cdf(right_critical_value)
-
-    # statistical powerを算出
     return true_positive_area / 1
 
 
-def _get_rejection_region(
-    null_distribution: NormalDistribution,
+def get_rejection_region(
+    null_distribution: ProbabilityDistribution,
     acceptable_false_positive_rate: float,
     alternative_type: AlternativeHypothesisType,
 ) -> tuple[Optional[float], Optional[float]]:

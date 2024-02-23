@@ -3,7 +3,7 @@ from scipy.stats import norm
 import numpy as np
 
 
-class NormalDistribution:
+class ProbabilityDistribution:
     def __init__(self, mean: float, std: float):
         self.mean = mean
         self.std = std

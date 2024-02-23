@@ -483,11 +483,11 @@ where n is the number of users in each variant and the variants are assumed to b
 ここで、nは各variantのユーザ数であり、**各variantのユーザ数は同じ大きさであると仮定**されている。$\sigma^2$ はOECの分散であり、$\delta$ は 感度、または検出したい変化の量である。(=検出したい効果の大きさ...! = 想定してるcontrolとtreatmentそれぞれのOECの期待値の差)
 (It is well known that one could improve the power of comparisons of the treatments to the control by making the sample size of the control larger than for the treatments when there is more than one treatment and you are only interested in the comparison of each treatment to the control.
 If, however, a primary objective is to compare the treatments to each other then all groups should be of the same size as given by Formula 2.)
-(1つ以上のtreatmentがある場合、そして各treatmentとcontrolの比較に興味がある場合、controlのサンプルサイズをtreatmentよりも大きくすることで、treatmentとcontrolの比較の検出力を向上させることができることはよく知られている。  
+(1つ以上のtreatmentがある場合、そして各treatmentとcontrolの比較に興味がある場合、controlのサンプルサイズをtreatmentよりも大きくすることで、treatmentとcontrolの比較の検出力を向上させることができることはよく知られている。
 しかし、もしtreatment同士を比較することが主な目的である場合、すべてのグループは式2で与えられるのと同じサイズでなければならない。)
 (=これは3つ以上のvariantのテストの話:thinking:)
 The coefficient of 16 in the formula provides 80% power, i.e., it has an 80% probability of rejecting the null hypothesis that there is no difference between the Treatment and Control if the true mean is different than the true Control by .
-式の $16$ の係数は80%の検出力を提供し、つまり、(treatmentのOECの)真の平均が真のcontrolのものと異なる場合、treatmentとcontrolの間に差がないという帰無仮説を棄却する確率が80%である。
+式の $16$ の係数は80%の検出力を提供し、つまり、(treatmentのOECの)真の平均が真のcontrolのものと(指定した効果量の条件で...!)異なる場合、treatmentとcontrolの間に差がないという帰無仮説を棄却する確率が80%である。
 Even a rough estimate of standard deviation in Formula 2 can be helpful in planning an experiment.
 式2で標準偏差を大まかに見積もるだけでも、実験計画の参考になる。
 Replace the 16 by 21 in the formula above to increase the power to 90%.
@@ -509,7 +509,7 @@ The examples below use the first formula.
 
 <!-- ここまで読んだ -->
 
-### 3.2.1. Example: impact of lower-variability OEC on the sample size 例 低変数OECの標本サイズへの影響
+### 3.2.1. Example: impact of lower-variability OEC on the sample size 例 低変動性OECの標本サイズへの影響
 
 Suppose you have an e-commerce site and 5% of users who visit during the experiment period end up purchasing.
 Eコマースサイトがあり、実験期間中に訪問したユーザの5％が購入に至ったとする。
@@ -556,7 +556,7 @@ If the experiment was planned to run for two weeks, you can detect an egregious 
 (たぶんTriggered Analysisの話...!:thinking:)
 
 If you made a change to the checkout process, you should only analyze users who started the checkout process (point 3.c), as others could not see any difference and therefore just add noise.
-**チェックアウトプロセスに変更を加えた場合、チェックアウトプロセスを開始したユーザのみを分析する必要があります**（ポイント3.c）。(うんうん、Triggerを考慮)
+もしチェックアウトプロセスに変更を加えた場合、他のユーザは違いを見ることができないため、ノイズを加えるだけであるため、チェックアウトプロセスを開始したユーザのみを
 Assume that 10% of users initiate checkout and that 50% of those users complete it.
 10%のユーザがチェックアウトを開始し、そのうちの50%のユーザがチェックアウトを完了すると仮定します。
 This user segment is more homogenous and hence the OEC has lower variability.
@@ -565,9 +565,9 @@ Using the same numbers as before, the average conversion rate is 0.5, the std-de
 先ほどと同じ数字を使用すると、平均コンバージョン率は0.5、標準偏差は0.5(=こっちは平均コンバージョン率で決まる!)であるため、$16 \times \frac{0.5 \times (1-0.5)}{0.5 \times 0.05}^2$ に基づいて、5%の変化(改善)を検出するためには、チェックアウトを通過するユーザが6,400人しか必要ありません。
 (**つまりTriggerを考慮したことで分散が小さくなって、必要なサンプルサイズが減ったってことか**...!:thinking:)
 (たしかに $\Delta$ って、controlのOECの期待値 ×そのx%の改善って表記するとわかりやすいかも...!:thinking:)
-(**あと分子で出てくる平均conversion率は、controlの方の値で良いんだ...!:thinking:**)
+(**あと分子で出てくる標準偏差は、controlの方の値で良いんだ...!:thinking:**)
 Since we excluded the 90% who do not initiate, the total number of users to the website should be 64,000, which is almost half the previous result of 122,000, thus the experiment could run for half the time and yield the same power.
-つまり、この実験を半分の時間で実施しても、同じパワーが得られることになる。
+したがって、開始しない90％を除外したため、ウェブサイトへの合計ユーザ数は64,000人であり、これはほぼ前回の122,000人の半分であるため、実験を半分の時間で実行し、同じ検出力を得ることができる。
 
 ### 3.2.4. The choice of OEC must be made in advance OECの選択は事前に行わなければならない。
 
