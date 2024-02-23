@@ -1,11 +1,13 @@
+from alternative_hypothesis_type import AlternativeHypothesisType
 from normal_distribution import NormalDistribution
-from typing import Literal, Optional
+from typing import Optional
+
 
 def calculate_statistical_power(
     null_distribution: NormalDistribution,
     alternative_distribution: NormalDistribution,
     acceptable_false_positive_rate: float = 0.05,
-    alternative_type: Literal["two-sided", "larger", "smaller"] = "larger",
+    alternative_type: AlternativeHypothesisType = AlternativeHypothesisType.GREATER_THAN,
 ) -> float:
     """
     Calculate statistical power.
@@ -37,23 +39,27 @@ def calculate_statistical_power(
     # statistical powerを算出
     return true_positive_area / 1
 
+
 def _get_rejection_region(
     null_distribution: NormalDistribution,
     acceptable_false_positive_rate: float,
-    alternative_type: Literal["two-sided", "larger", "smaller"],
+    alternative_type: AlternativeHypothesisType,
 ) -> tuple[Optional[float], Optional[float]]:
     """critical valueのタプルを返す
     - 片側検定の場合は片方のみの値が入る
     """
     assert 0 < acceptable_false_positive_rate < 1
 
-    if alternative_type == "two-sided":
+    has_left_rejection_region = alternative_type.has_left_rejection_region
+    has_right_rejection_region = alternative_type.has_right_rejection_region
+
+    if has_left_rejection_region and has_right_rejection_region:
         return (
             null_distribution.ppf(acceptable_false_positive_rate / 2),
             null_distribution.ppf(1 - acceptable_false_positive_rate / 2),
         )
 
-    if alternative_type == "larger":
-        return (None, null_distribution.ppf(1 - acceptable_false_positive_rate))
+    if has_left_rejection_region:
+        return (null_distribution.ppf(acceptable_false_positive_rate), None)
 
-    return (null_distribution.ppf(acceptable_false_positive_rate), None)
+    return (None, null_distribution.ppf(1 - acceptable_false_positive_rate))

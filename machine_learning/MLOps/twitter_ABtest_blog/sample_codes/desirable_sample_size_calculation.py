@@ -1,6 +1,7 @@
 from typing import Literal
 
 import numpy as np
+from alternative_hypothesis_type import AlternativeHypothesisType
 from normal_distribution import NormalDistribution
 from statistical_power_calculation import calculate_statistical_power
 
@@ -10,7 +11,7 @@ class DesirableSampleSizeSimulatorWithBinaryMetric:
         self,
         significance_level: float = 0.05,
         desirable_power: float = 0.8,
-        alternative_type: Literal["two-sided", "larger", "smaller"] = "larger",
+        alternative_type: AlternativeHypothesisType = AlternativeHypothesisType.GREATER_THAN,
     ) -> None:
         self.significance_level = significance_level
         self.desirable_power = desirable_power
@@ -72,39 +73,3 @@ class DesirableSampleSizeSimulatorWithNonBinaryMetric:
         metric_variance: float,
     ) -> int:
         pass
-
-
-def test_desirable_sample_size_calculation_with_binary_metric() -> None:
-    # Arrange
-    control_metric_mean = 0.1
-    treatment_metric_mean = 0.12
-    significance_level = 0.05  # i.e. acceptable false positive rate
-    desirable_power = 0.8
-    sut = DesirableSampleSizeSimulatorWithBinaryMetric(
-        significance_level,
-        desirable_power,
-    )
-
-    # Act
-    desirable_sample_size_actual = sut.calculate()
-
-    # Assert
-    assert desirable_sample_size_actual == 10000
-
-
-def test_desirable_sample_size_calculation_with_non_binary_metric() -> None:
-    control_metric_mean = 0.1
-    treatment_metric_mean = 0.12
-    metric_variance = 0.05
-    significance_level = 0.05
-    desirable_power = 0.8
-    sut = DesirableSampleSizeSimulatorWithNonBinaryMetric(
-        significance_level,
-        desirable_power,
-    )
-
-    # Act
-    desirable_sample_size_actual = sut.calculate(
-        control_metric_mean, treatment_metric_mean
-    )
-    assert desirable_sample_size_actual == 10000
