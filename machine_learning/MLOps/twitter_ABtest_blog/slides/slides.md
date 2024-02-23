@@ -50,23 +50,27 @@ title-slide-attributes:
 - under-poweredなテスト = 検出したい真の効果の大きさに対して、検出力(power, 指定した大きさの効果を正しく検出できる確率)が小さくなってしまっているテスト。
   - under-poweredなテストだと... 本当は施策に効果があるのに効果がないと判定されてしまうリスク(i.e. false negativeの確率)が高くなってしまう。
 - -> under-poweredなテストを避ける為に、いい感じにABテストを設計する必要があるよね...!
-  - (なんとなく、ABテストでより良い意思決定をするための前提条件というか、必要条件なのかなという認識になりました...!:thinking:)
+  - (なんとなく、ABテストでより良い意思決定をするための前提条件というか、必要条件なのかなという認識になりました...!たぶん十分条件ではない:thinking:)
 
 ## (自分の理解)under-poweredなテストを避けるためになにを設計できる?
 
 - under-poweredなテストを避けるために、我々がABテスト開始前に設計できるのは、ざっくり以下の要素っぽい:
   - significance level(有意水準):
-    - Netflixさんのブログでは**acceptable false positive rate**とも表現されてて、個人的にはこっちの方が直感的で意味がわかりやすくて好き～:thinking:
-  - postulated effect size(仮定された効果量):
+    - 慣例では5%が採用される事が多い。domainによっては異なるのかも。
+    - (Netflixさんのブログでは**acceptable false positive rate**とも表現されてて、個人的にはこっちの方が直感的で意味がわかりやすくて好きぇ～:thinking:)
+  - **postulated effect size(仮定された効果量)**:
     - 仮定された施策の効果の大きさ。検出力の値はABテストを経て検出したい効果量に依存するので、事前に設定しておく必要がある。
-  - sample size(サンプルサイズ):
+    - (これを指定しなくてもp値は算出できて、有意か否かの判定ができてしまうから罠だ...!:thinking:)
+  - **sample size(サンプルサイズ)**:
     - ABテストで収集すべき実験単位のサンプル数(実験単位がユーザの場合はユーザ数)。
-    - ざっくりサンプルサイズを増やしたら検出力は上がる。
-  - metricの変動性:
+    - ざっくりサンプルサイズを増やしたら、小さい差を検出しやすくなって、検出力は上がる。
+  - **metricの変動性**:
     - metricの変動性(分散)によって、他の全ての条件が同じでも検出力が異なる。metricの変動性が大きく不安定であるほど、実験の不確実性が高くなる。
     - 評価に使用するmetricの選び方だったり、metricの変動性を抑える工夫が可能。
 
 # 推薦システムの架空のABテストを例に、under-poweredなテストを避けつつ設計してみるぞ!
+
+(ここで強引に推薦システムにからめてみました...!:pray:)
 
 ## 架空のABテストシナリオ
 
@@ -76,6 +80,7 @@ title-slide-attributes:
   - 施策の有効性を判断(意思決定)するために、ABテストを実施することにした。
 - ABテストの設定:
   - **OECとしてconversion rate**を採用する。(今回はbinary metricsを採用してみた! non-binary metricsを採用するケースも後半で試してみる:thinking:)
+    - ちなみに**OEC(Overall Evaluation Criterion)**とは?　実験を経て改善させたい目的となる定量的な指標 (i.e. netflixさんの資料における primary decision metric?:thinking:)
   - **施策によってOECを+5%改善すること**を期待する。
   - variantは2つ(controlとtreatment)。各variantには同じサンプルサイズを割り当てる。
   - 有意水準(i.e. acceptable false positive rate)=5%。(今回は特に慣例から外れる理由はなさそうなので:thinking:)
@@ -107,7 +112,7 @@ title-slide-attributes:
   - 仮定した効果量に基づき、対立仮説が正しい場合に得られる観測値の確率分布(=alternative distribution)を描画する。
 - 4. 検出力を計算する。
   - null distribution, rejection region, alternative distributionが決まれば、検出力が決まる。
-- 5. 検出力が0.8になるようなサンプルサイズ $n$ を導出する。
+- 5. 検出力が0.8になるようなサンプルサイズ $n$ を探す。
 
 (ちなみに、今回はt検定やz検定のような特定の統計的仮説検定のフレームワークは特に意識せず、null distributionとalternative distributionを導出することで、検出力や良さげなサンプルサイズなどを計算してみます...!)
 
@@ -183,11 +188,12 @@ $$
 
 ちなみにサンプルサイズ $n = 10000$ の場合、conversion rate 5% -> 5.25% (OEC 5%の改善)の検出力は0.205と算出された。(図からもだいたいそれくらい...!)
 
-## 手順5: 検出力が0.8になるようなサンプルサイズ $n$ を導出する。
+## 手順5: 検出力が0.8になるようなサンプルサイズ $n$ を探す。
 
-- 手順1~4を踏まえると、**検出力は、null distributionとalternative distributionの形、およびrejection regionによって一意に定まる**。
-  - 2つの確率分布のパラメータは、metricで仮定する効果量 ($p_{treatment}-p_{controll}$)、サンプルサイズ $n$ に依存する。(non-binary metricの場合は、metricの変動性(分散)にも依存する...!:thinking:)
-  - → 検出力は、有意水準、metricで仮定する効果量、サンプルサイズの関数で表せそう。(non-binary metricの場合は、metricの変動性(分散)も関数に含まれるはず...!:thinking:)
+手順1~4を踏まえると、**検出力は、null distributionとalternative distributionの形、およびrejection regionによって一意に定まる**。
+
+- 2つの確率分布のパラメータは、metricで仮定する効果量 ($p_{treatment}-p_{controll}$)、サンプルサイズ $n$ に依存する。(non-binary metricの場合は、metricの変動性(分散)にも依存する...!:thinking:)
+- → 検出力は、有意水準、metricで仮定する効果量、サンプルサイズの関数で表せそう。(non-binary metricの場合は、metricの変動性(分散)も関数に含まれるはず...!:thinking:)
 
 どうしたら検出力が上がりそうか考えてみる。
 alternative distributionのより多くのエリアがrejection regionに含まれるようにするには...??
@@ -206,10 +212,10 @@ alternative distributionのより多くのエリアがrejection regionに含ま�
 
 ## (ちなみに) サンプルサイズの公式
 
-ちなみにpractice論文及びXのブログでは、有意水準5%、検出力80%における最小サンプルサイズの公式として、以下が紹介されてた。(powerの式から式変形を色々頑張ったらたどり着きそう...??:thinking:)
+ちなみにpractice論文及びXさんのブログでは、有意水準5%、検出力80%における最小サンプルサイズの公式として、以下が紹介されてた。(powerの式から式変形を色々頑張ったらたどり着きそう...??:thinking:)
 
 $$
-n = 16 \times (\frac{\sigma}{\Delta^2})^2
+n = 16 \times (\frac{\sigma^2}{\Delta^2})
 $$
 
 ここで、
@@ -217,7 +223,7 @@ $$
 - $n$ は各variantのサンプルサイズ。
 - $\sigma$ はmetricの標準偏差
   - (たぶんnull distributionとalternative distributionで同じ標準偏差を仮定してる感じ...!)
-- $\Delta$ は検出したい効果量(controlとtreatmentの差)
+- $\Delta$ は検出したい効果量(controlとtreatmentの期待値の差)
 
 ## (ちなみに) minimal detectable effectの考え方
 
