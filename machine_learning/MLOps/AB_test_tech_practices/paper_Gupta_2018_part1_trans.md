@@ -351,65 +351,69 @@ Note that there is still a risk that having too many surrogates for the long ter
 ## 4.1. Problem # 4.1.Problem
 
 One key benefit of evaluating new ideas through OCEs is that we can streamline the decision-making process and make it more objective.
-OCEを通じて新しいアイデアを評価することの重要な利点のひとつは、意思決定プロセスを合理化し、より客観的なものにできることだ。
+**OCE(=たぶんOEC。誤りっぽい)を通じて新しいアイデアを評価することの重要な利点のひとつは、意思決定プロセスを合理化し、より客観的なものにできることだ**。
 Without understanding the causal impact of an idea on customers, the decision-making process requires a lot of debate.
 あるアイデアが顧客に与える因果関係を理解しなければ、意思決定プロセスには多くの議論が必要となる。
 The proponents and opponents of the idea advance their arguments regarding the change only relying on their own experience, recall, and interpretation of certain business reports and user comments.
-賛成派も反対派も、自分たちの経験や記憶、特定のビジネスレポートやユーザーのコメントの解釈だけを頼りに、この変更に関する議論を進めている。
+賛成派も反対派も、自分たちの経験や記憶、特定のビジネスレポートやユーザのコメントの解釈だけを頼りに、この変更に関する議論を進めている。
 Eventually the team leader makes a call on whether to ship the idea.
-最終的にチームリーダーは、そのアイデアを出荷するかどうかの判断を下す。
+最終的にチームリーダーは、そのアイデアをship(出荷)するかどうかの判断を下す。
 This style of decision making is based on the HiPPO (Highest Paid Person’s Opinion) [37] and is fraught with many cognitive biases [2].
 このような意思決定のスタイルは、HiPPO（高給取りの意見）[37]に基づいており、多くの認知バイアスをはらんでいる[2]。
 To help change HiPPO decisions to more objective, data-driven decisions based on the causal impact of an idea from customer response [5], we recommend establishing the OEC for all experiments on your product.
-HiPPOの決定を、顧客の反応[5]からアイデアの因果的影響に基づく、より客観的なデータ主導の決定に変えるために、製品に関するすべての実験についてOECを設定することを推奨する。
+**HiPPOの決定を、顧客の反応[5]からアイデアの因果的影響に基づく、より客観的なデータ主導の決定に変えるために**、プロダクトに関するすべての実験についてOECを設定することを推奨する。
+
 Not all metrics computed to analyze the results of an experiment are part of the OEC.
-実験結果を分析するために計算されるすべてのメトリクスがOECの一部というわけではない。
+**実験結果を分析するために計算されるすべてのメトリクスがOECの一部というわけではない**。
 To analyze experiment results, we require different types of metrics [22].
-実験結果を分析するには、さまざまな種類のメトリクスが必要である[22]。
+実験結果を分析するには、さまざまな種類のメトリクスが必要である[22]。(primary decision metrics, guardrail metrics, secondary metricsとか!)
 First, we need to know if the results of an experiment are trustworthy.
 まず、実験結果が信頼できるかどうかを知る必要がある。
 A set of data quality metrics, like a sample ratio, help raise red flags on critical data quality issues.
-サンプル比率のような一連のデータ品質指標は、重大なデータ品質問題の赤旗を掲げるのに役立つ。
+**サンプル比率のような一連のデータ品質指標**は、重大なデータ品質問題の赤旗を掲げるのに役立つ。(diagnotic metricsっていうんだっけ?)
 After checking the data quality metrics, we want to know the outcome of the experiment.
 データ品質メトリクスをチェックした後、実験の結果を知りたい。
 Was the treatment successful and what was its impact? This set of metrics comprise the OEC.
-治療は成功したのか、その影響はどうだったのか。この一連の指標がOECを構成する。
+**treatmentは成功したのか、その影響はどうだったのか。この一連の指標がOECを構成する**。(primary decision metrics + guardrail metrics + secondary metricsの概念をOECに含めるべきなのかな??)
 In addition to OEC metrics, we have found that there is a set of guardrail metrics which are not clearly indicative of success of the feature being tested, but metrics that we do not want to harm.
-OECメトリクスに加えて、私たちは、テストされる機能の成功を明確に示すものではないが、私たちが害を及ぼしたくないメトリクスのガードレールメトリクスのセットがあることを発見した。
+OECメトリクスに加えて、テストされている機能の成功を明確に示すものではないが、損ないたくない、一連のガードレールメトリクスがあることがわかりました。(あ、guaradrail metricsはOECに含めるべきじゃないのか...!:thinking:)
 The remaining bulk of the metrics for an experiment are diagnostic, feature or local metrics.
-実験のメトリクスの残りの大部分は、診断、特徴、または局所的なメトリクスである。
+実験のメトリクスの残りの大部分は、diagnostic、feature、またはlocalメトリクスです。
 These metrics help you understand the source of OEC movement (or the lack of).
-これらの指標は、OECの動きの原因（またはその欠如）を理解するのに役立ちます。
+これらの指標は、**OECの動きの原因（またはその欠如）を理解するのに役立ち**ます。(あ、じゃあこれらがsecondary metricsっぽい位置づけぽい...!:thinking:)
+
 It is hard to find a good OEC.
 良いOECを見つけるのは難しい。
 Here are a few key properties [19, 24, 55] to consider.
 以下に、考慮すべきいくつかの重要な特性 [19, 24, 55] を示す。
 First, a good OEC must be indicative of the long-term gain in key product indicators (KPIs).
-第一に、優れたOECは、主要製品指標（KPI）の長期的な向上を示すものでなければならない。
+**第一に、優れたOECは、主要製品指標（KPI）の長期的な向上を示すものでなければならない**。
 At the very least make it directionally accurate in estimating the impact on the longterm outcome.
 少なくとも、長期的な結果に対する影響を推定する上で、方向性を正確にすること。
 Second, OEC must be hard to game and it should incentivize the right set of actions in the product team.
-第二に、OECはゲームになりにくく、製品チームの適切な行動にインセンティブを与えるものでなければならない。
+**第二に、OECはゲームになりにくく(i.e. ハックするだけになりづらく??:thinking:)、製品チームの適切な行動にインセンティブを与えるものでなければならない**。
 It should not be easy to satisfy the OEC by doing the wrong thing.
-間違ったことをしてOECを満足させることは容易ではないはずだ。
+間違ったことをしてOECを満足させることは容易ではないべきです。
 For instance, if the OEC is limited to a part or feature of the product, you may be able to satisfy the OEC by cannibalizing other parts or features.
-例えば、OECが製品の一部や機能に限定されている場合、他の部品や機能を共食いさせることでOECを満たすことができるかもしれません。
+例えば、**OECがプロダクトの一部や機能に限定されている場合、他の部分や機能をcanibalize(=食い荒らす)することでOECを満足させることができるかもしれません**。(カニバるって話か...!)
 Third, OEC metrics must be sensitive.
-第三に、OECの指標は敏感でなければならない。
+**第三に、OECの指標は敏感でなければならない。**
 Most changes that impact the long-term outcome should also have a statistically significant movement in OEC metrics so it is practical to use the OEC to distinguish between good and bad changes to the product.
 長期的な結果に影響を与えるほとんどの変更は、OEC測定基準においても統計的に有意な動きを示すはずなので、OECを使用して製品の良い変更と悪い変更を区別することは実用的である。
 Fourth, the cost of computing OEC metrics cannot be too expensive.
-第四に、OECメトリクスの計算コストは高すぎてはならない。
+**第四に、OECメトリクスの計算コストは高すぎてはならない。**
 OEC metrics must be computed for 100s of the experiments and be run on millions of users each and every week.
-OECの指標は、毎週、何百万人ものユーザーに対して、100回もの実験で計算され、実行されなければならない。
+OECの指標は、毎週、何百万人ものユーザに対して、100回もの実験で計算され、実行されなければならない。
 Methods that involve costly computation or costly procedures like human surveys or human judges may not scale well.
-コストのかかる計算や、人間による調査や人間の審判のようなコストのかかる手続きを伴う方法は、うまくスケールしない可能性がある。
+コストのかかる計算や、**人間による調査や人間の審判のようなコストのかかる手続きを伴う方法は、うまくスケールしない可能性がある**。
 Fifth, OEC metrics must account for a diverse set of scenarios that may drive the key product goals.
-第五に、OECの指標は、主要な製品目標を推進する可能性のある多様なシナリオを考慮しなければならない。
+**第五に、OECの指標は、主要な製品目標を推進する可能性のある多様なシナリオを考慮しなければならない。**
 Finally, OEC should be able to accommodate new scenarios.
 最後に、OECは新たなシナリオに対応できなければならない。
 For instance, direct answers to queries like current time would provide a good user experience in a search engine, but if you only base the OEC metrics on clicks, those metrics will miss this scenario.
-例えば、現在時刻のようなクエリに対する直接的な回答は、検索エンジンにおいて良いユーザーエクスペリエンスを提供するだろうが、OECメトリクスのベースをクリック数だけに置くと、そのメトリクスはこのシナリオを見逃すことになる。
+例えば、現在時刻のようなクエリに対する直接的な回答は、検索エンジンで良いユーザ体験を提供するが、OECメトリクスがクリックだけに基づいている場合、そのメトリクスはこのシナリオを見逃すことになる。(この場合はもっとユーザ体験を総合的に考慮できるようなOECであるべきなのか...!)
+
+<!-- ここまで読んだ! -->
 
 ## 4.2. Common Solutions and Challenges
 
