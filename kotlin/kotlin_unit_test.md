@@ -152,6 +152,48 @@ val mockUserRepo = mockk<UserRepository>() // テストダブルを用意して
 val sut = UserService(mockUserRepo) // sutにdependency injection
 ```
 
-- every {} returns {}:
-  - mockオブジェクトの特定のメソッドの振る舞いを明示的に定義する。
+- every関数でmockオブジェクトの特定のメソッドの振る舞いを明示的に定義する。
   - 通常のmockオブジェクトの場合は、基本的にpublicなメソッドの振る舞いはeveryで明示的に定義しておく必要がありそう...!:thinking_face:
+  - 例外を発生させる事も可能。
+
+```kotlin
+// example
+every { mockUserRepo.getUser(userId) } returns expectedUser
+
+every { mockUserRepo.getUser(userId) } throws NoSuchElementException("User not found")
+```
+
+- relaxed mockオブジェクトの注意点:ジェネリクスメソッド (=返り値の型がジェネリクス, i.e. 具体的じゃない) の場合、`ClassCastException`が発生してしまう!
+  - なぜ?
+    - relaxed mockオブジェクトは、返り値のデータ型に基づいてデフォルトの値を返そうとする。**ジェネリクスメソッドの場合、返り値の具体的なデータ型が実行時までわからない為**、mockkは正しいデータ型のオブジェクトを生成して返す事ができない。
+  - 対処法:
+    - relaxed mockオブジェクトを使用する場合でも、ジェネリクスメソッドを呼び出す必要がある場合は、可能な限り`every {} returns {}`で振る舞いを明示的に定義する!
+- ex.
+
+```kotlin
+// ジェネリクスメソッドを持つfactoryクラス
+interface Factory {
+    fun <T> create(): T
+}
+
+@Test
+fun testMockKSample() {
+    val factory = mockk<Factory>(relaxed = true) //
+    every { factory.create<Car>() } returns Car() // 明示的に振る舞いを定義しないとClassCastExceptionが発生する
+
+    val car = factory.create<Car>()
+}
+```
+
+- [参考](https://qiita.com/sadashi/items/81c64583a0112cfe6f8d)によると、オブジェクトもモック化できたり、返り値がUnit型(=値を返さない! voidみたいな!)のメソッドだけをrelaxex mockしてくれるoptionがあったりする。
+  - 返り値がUnit型、つまり値を返さないということは、副作用のみを持つメソッド(ex. ログの記録、状態の更新)などをテストする時に便利。(i.e. 返り値の検証が不要なテスト。じゃあこの場合はvarifyでメソッド呼び出しを検証するのかな...?:thinking_face:)
+
+### 主要なfunction 2. verifyでメソッド呼び出しを検証
+
+- verify関数はモックオブジェクトのメソッド呼び出しを検証するための関数。
+  - 例えば、特定のメソッドが特定の回数呼び出されたかどうかを検証することができる。
+
+```kotlin
+// example
+verify(exactly = 1) { mockUserRepo.getUser(userId) }
+```
