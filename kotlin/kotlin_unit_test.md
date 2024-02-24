@@ -136,13 +136,14 @@ class CalcServiceFunSpecTest : FunSpec() {
 - mockk(): mockオブジェクトを生成する。
   - 通常のmockオブジェクトは、特定のメソッドの振る舞いを`every{}`で明示的に定義しない限り、未定義のメソッドを呼び出すと例外 `io.mockk.MockKException` が投げられる。
 - `mockk(relaxed = true)`: relaxed mockオブジェクトを生成する。
-  - relaxed mockオブジェクト: 未定義のメソッドを呼び出しても例外が投げられずに、**データ型のデフォルト値を良い感じにdummyとして返す**mockオブジェクト。
+  - **relaxed mockオブジェクト**: 未定義のメソッドを呼び出しても例外が投げられずに、**データ型のデフォルト値を良い感じにdummyとして返す**mockオブジェクト。
   - ex.
     - 返り値がInt型のメソッドを呼び出すと0が返る。
     - Boolean型のメソッドを呼び出すとfalseが返る。
     - nullableなオブジェクトであればnullが返る。
     - non-nullなオブジェクトであれば新しいmockインスタンスが返る。
 - 各テストの用途に応じて、通常のmockオブジェクトとrelaxed mockオブジェクトを使い分ける必要がある...!:thinking_face:
+  - relaxed mockオブジェクトは、返り値の検証を必要としないテストケースとかで使えて、振る舞いを指定する手間が省けるので便利。
 
 ex.
 
