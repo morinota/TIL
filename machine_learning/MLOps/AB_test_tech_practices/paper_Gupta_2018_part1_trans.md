@@ -11,7 +11,8 @@ Top Challenges from the first Practical Online Controlled Experiments Summit
 ## 0.3. abstract # 0.3.abstract
 
 **Online controlled experiments (OCEs), also known as A/B tests**, have become ubiquitous in evaluating the impact of changes made to software products and services.
-A/Bテストとしても知られるオンライン対照実験（OCE）は、ソフトウェア製品やサービスに加えられた変更の影響を評価する上で、どこにでもあるようになった。
+A/Bテストとしても知られるオンライン対照実験(OCE)は、ソフトウェア製品やサービスに加えられた変更の影響を評価する上で、どこにでもあるようになった。
+(OCEとOECがごっちゃになりそう! OECのセクションでOCEって出てくると誤飾かなって思った!)
 While the concept of online controlled experiments is simple, there are many practical challenges in running OCEs at scale and encourage further academic and industrial exploration.
 オンライン制御実験のコンセプトは単純だが、OCEを大規模に実行するには多くの現実的な課題があり、学術的・産業的な探求がさらに進むことが望まれる。
 To understand the top practical challenges in running OCEs at scale, representatives with experience in large-scale experimentation from thirteen different organizations (Airbnb, Amazon, Booking.com, Facebook, Google, LinkedIn, Lyft, Microsoft, Netflix, Twitter, Uber, Yandex, and Stanford University) were invited to the first Practical Online Controlled Experiments Summit.
@@ -351,7 +352,7 @@ Note that there is still a risk that having too many surrogates for the long ter
 ## 4.1. Problem # 4.1.Problem
 
 One key benefit of evaluating new ideas through OCEs is that we can streamline the decision-making process and make it more objective.
-**OCE(=たぶんOEC。誤りっぽい)を通じて新しいアイデアを評価することの重要な利点のひとつは、意思決定プロセスを合理化し、より客観的なものにできることだ**。
+**OCEs(=オンライン比較実験!)を通じて新しいアイデアを評価することの重要な利点のひとつは、意思決定プロセスを合理化し、より客観的なものにできることだ**。
 Without understanding the causal impact of an idea on customers, the decision-making process requires a lot of debate.
 あるアイデアが顧客に与える因果関係を理解しなければ、意思決定プロセスには多くの議論が必要となる。
 The proponents and opponents of the idea advance their arguments regarding the change only relying on their own experience, recall, and interpretation of certain business reports and user comments.
@@ -417,32 +418,35 @@ For instance, direct answers to queries like current time would provide a good u
 
 ## 4.2. Common Solutions and Challenges
 
-### 4.2.1. Search vs. Discovery 4.2.1. 検索対検索 ディスカバリー
+### 4.2.1. Search vs. Discovery
 
 Measuring the success of a search experience in search engines has been a research subject for a long time in academia and for many products including Bing, Google and Yandex.
-検索エンジンにおける検索体験の成功を測定することは、アカデミアや、Bing、Google、Yandexを含む多くの製品において、長い間研究課題となってきた。
+**検索エンジンにおける検索体験の成功を測定すること**は、アカデミアや、Bing、Google、Yandexを含む多くの製品において、長い間研究課題となってきた。
 It is well established that metrics, like queries per user, cannot be a good OEC because queries per user may go up when search ranking degrades.
-ユーザーあたりのクエリのような指標は、良いOECにはなり得ないことはよく知られている。
+ユーザあたりのクエリのような指標は、良いOECにはなり得ないことはよく知られている。
 Sessions per user or visits per user are considered better OEC metrics [49].
-ユーザーあたりのセッションやユーザーあたりの訪問は、より良いOECメトリックと考えられている[49]。
+ユーザあたりのセッションやユーザあたりの訪問は、より良いOECメトリクスとされている[49]。(ほうほう...!:thinking:)
 In general there is an appreciation of focusing on HEART (Happiness, Engagement, Adoption, Retention, and Task success) metrics for the OEC and use PULSE (Page views, Uptime, Latency, Seven-day active users [i.e., the number of unique users who used the product at least once in the last week], and Earnings) metrics as your guardrail metrics [62].
-一般的に、OECのHEART（Happiness、Engagement、Adoption、Retention、Task success）メトリクスに注目し、PULSE（Page views、Uptime、Latency、Seven-day active users [つまり、過去1週間に少なくとも1回製品を使用したユニークユーザーの数]、Earnings）メトリクスをガードレールメトリクスとして使用することが評価されている[62]。
+**一般的に、OECにはHEART（Happiness, Engagement, Adoption, Retention, and Task success）メトリクスに焦点を当て**、**ガードレールメトリクスとしてPULSE（Page views, Uptime, Latency, Seven-day active users [i.e., the number of unique users who used the product at least once in the last week], and Earnings）メトリクスを使用する**ことが評価されている[62]。
 Over time, different methods have been proposed to measure HEART metrics in search engines and other goal-directed activities [36, 54].
-サーチエンジンやその他の目標指向活動において、HEARTメトリクスを測定するためのさまざまな方法が提案されてきた[36, 54]。
+サーチエンジンやその他のgoal-directed activitiesにおいて、HEARTメトリクスを測定するためのさまざまな方法が提案されてきた[36, 54]。
+
 It is still challenging to find metrics similar to HEART metrics to work for discovery- or browsing-related scenarios, like news articles shown on the Edge browser homepage, or Google mobile homepage, or Yandex homepage.
-Edgeブラウザのホームページ、Googleモバイルのホームページ、Yandexのホームページに表示されるニュース記事のような、発見やブラウジングに関連するシナリオで機能するHEARTメトリクスに似たメトリクスを見つけることは、まだ困難です。
+Edgeブラウザのホームページ、Googleモバイルのホームページ、Yandexのホームページに表示されるニュース記事のような、**発見やブラウジングに関連するシナリオで機能するHEARTメトリクスに似たメトリクスを見つけることは、まだ困難**です。
 The challenge is to understand user intent.
 課題は、ユーザーの意図を理解することだ。
 Sometimes users will come with a goal-oriented intent and would like to quickly find what they are looking for.
-時には、ユーザーが目的志向の意図を持ってやってきて、探しているものを素早く見つけたいと思うこともある。
+時には、ユーザがgoal-orientedの意図を持ってやってきて、探しているものを素早く見つけたいと思うこともある。
 Other times users may have a more browsing or discovering-newinformation intent where they are not looking for something specific but just exploring a topic.
-また、ユーザーが特定の何かを探しているのではなく、ただトピックを探求しているような、よりブラウジング的な、あるいは新しい情報を発見するような意図を持っている場合もある。
+また、ユーザが特定の何かを探しているのではなく、ただトピックを探求しているような、よりブラウジング的な、あるいは新しい情報を発見するような意図を持っている場合もある。
 In this case it is not clear if lack of a click on an article link with a summary snippet can be viewed as a negative experience or positive because users got the gist of the article and did not have to click further.
 この場合、要約スニペット付きの記事リンクをクリックしなかったことをネガティブな経験と見るか、ユーザーが記事の要点を理解し、それ以上クリックする必要がなかったことをポジティブな経験と見るかは明らかではない。
 Further the two intents (goal-oriented and browsing) can compete.
-さらに、2つの意図（目標志向と閲覧）は競合する可能性がある。
+**さらに、2つの意図(goal-orientedとbrowsing)は競合することがある**。
 If a user came with a goal-oriented intent but got distracted and ended up browsing more, it may cause dissatisfaction in the long term.
-目的があって来たのに、気が散ってもっと見てしまったというのでは、長期的には不満が残る。
+目的があってやってきたユーザが気を散らされて、結局もっとブラウジングをすることになった場合、長期的に不満を引き起こす可能性がある。
+
+<!-- ここまで読んだ! -->
 
 ### 4.2.2. Product Goals and Tradeoffs 4.2.2. 製品の目標とトレードオフ
 
