@@ -821,7 +821,7 @@ Raising awareness of this concern is enough for experimenters to avoid tests tha
 Pairwise statistical tests can also be done to flag such interactions automatically.
 ペアワイズ統計検定を行うことで、このような相互作用を自動的に検出することもできる。
 
-### Launch Events and Media Announcements. ランチイベントとメディア発表。
+### Launch Events and Media Announcements. ローンチイベントとメディア発表。
 
 If there is a big announcement made about a new feature, such that the feature is announced to the media, all users need to see it.
 新機能についてメディアに発表するような大きな発表があった場合、すべてのユーザーがそれを見る必要がある。
@@ -831,60 +831,75 @@ If there is a big announcement made about a new feature, such that the feature i
 # 4. MultiVariable Testing 多変量テスト
 
 An experiment that includes more than one factor is often called a MultiVariable test (MVT) (Alt and Usborne 2005).
-つ以上の因子を含む実験は、しばしば多変量検定（MVT）と呼ばれる（Alt and Usborne 2005）
+複数のfactorを含む実験は、**多変量テスト(MultiVariable test)（MVT）**と呼ばれることが多い（Alt and Usborne 2005）。
 For example, consider testing five factors on the MSN homepage in a single experiment.
-例えば、MSNのホームページで5つの要素を1回の実験でテストすることを考えてみよう。
+例えば、MSNのホームページで**5つのfactorを1回の実験でテストする**ことを考えてみよう。
 A screenshot of the MSN homepage showing the control for each of these factors is given in Fig.8.
-MSNのホームページのスクリーンショットを図8に示す。
+MSNのホームページのスクリーンショットを図8に示す。(画像を見た感じ、要は、1ユーザなどの実験単位に対して、複数の施策を同時に実験するってことか...!まさに複数のテスト間の相互作用の話...!)
+
+![figure8]()
 
 In a single test we can estimate the (main) effects of each factor as well as the interactive effects between factors.
-1回の検定で、各因子の（主）効果だけでなく、因子間の相互作用効果も推定できる。
+1回の検定で、各factorの(主)効果だけでなく、factor間の相互作用効果も推定できる。
 First, we will consider the benefits and limitations of MVT versus one-factor-at-a-time, or A/B tests.
-まず、MVTとワンファクター・アット・ア・タイム（A/B）テストの利点と限界を検討する。
+まず、**MVTとone-factor-at-a-time(A/B)テストの利点と限界**を検討する。
 Then we will discuss three approaches to online MVTs and how each approach takes advantage of the potential benefits and mitigates the limitations.
-次に、オンラインMVTの3つのアプローチと、それぞれのアプローチが潜在的な利点をどのように生かし、制限をどのように緩和するかについて説明する。
+次に、**オンラインMVTの3つのアプローチ**と、それぞれのアプローチが潜在的な利点をどのように生かし、制限をどのように緩和するかについて説明する。
 There are two primary benefits of a single MVT versus multiple sequential A/B tests to test the same factors: 1.
-同じ要素をテストする複数の連続したA/Bテストに対して、単一のMVTの主な利点は2つある： 1.
-You can test many factors in a short period of time, accelerating improvement.
-短期間で多くの要素をテストすることができ、改善を加速させることができる。
-For example, if you wanted to test five changes to the website and you need to run each A/B test four weeks to achieve the power you need, it will take at least five months to complete the A/B tests.
-例えば、ウェブサイトを5回変更し、それぞれのA/Bテストを4週間実施し、必要なパワーを得ようとした場合、A/Bテストを完了するには少なくとも5ヶ月かかる。
-However, you could run a single MVT with all five factors in one month with the same power as with the five A/B tests.2.You can estimate interactions between factors.
-しかし、5つのA/Bテストと同じ検出力で、1ヶ月に5つの要因すべてを使って1つのMVTを実施することができる。2.要因間の相互作用を推定することができる。
-Two factors interact if their combined effect is different from the sum of the two individual effects.
-2つの要因が相互作用するのは、それらの複合効果が2つの個別効果の合計と異なる場合である。
-If the two factors work together to enhance the outcome the interaction is synergistic.
-この2つの要素が相乗効果を発揮して結果を向上させるのであれば、その相互作用は相乗的である。
-If instead they work against each other to dampen the effect, the interaction is antagonistic.
-その代わり、互いに作用しあって効果を減衰させるのであれば、その相互作用は拮抗的である。
+同じ要素をテストする複数の連続したA/Bテストに対して、単一の**MVTの主な利点**は2つある：
+
+1. You can test many factors in a short period of time, accelerating improvement.
+   短期間で多くの要素をテストすることができ、改善を加速させることができる。
+   For example, if you wanted to test five changes to the website and you need to run each A/B test four weeks to achieve the power you need, it will take at least five months to complete the A/B tests.
+   例えば、ウェブサイトを5回変更し、それぞれのA/Bテストを4週間実施し、必要なパワーを得ようとした場合、A/Bテストを完了するには少なくとも5ヶ月かかる。
+   However, you could run a single MVT with all five factors in one month with the same power as with the five A/B tests.
+   しかし、5つのA/Bテストと同じ検出力で、1ヶ月に5つの要因すべてを使って1つのMVTを実施することができる。
+
+2. You can estimate interactions between factors. 2.要因間の相互作用を推定することができる。
+   Two factors interact if their combined effect is different from the sum of the two individual effects.
+   2つの要因が相互作用するのは、それらの複合効果が2つの個別効果の合計と異なる場合である。
+   If the two factors work together to enhance the outcome the interaction is synergistic.
+   この2つの要素が相乗効果を発揮して結果を向上させるのであれば、その相互作用は相乗的である。
+   If instead they work against each other to dampen the effect, the interaction is antagonistic.
+   その代わり、互いに作用しあって効果を減衰させるのであれば、その相互作用は拮抗的である。
+
 Three common limitations are: 1.
-一般的な制限は3つある： 1.
-Some combinations of factors may give a poor user experience.
-要因の組み合わせによっては、ユーザーエクスペリエンスが低下することもある。
-For example, two factors being tested for an online retailer may be enlarging a product image or providing additional product detail.
-例えば、あるオンライン小売業者がテストする2つの要素は、商品画像の拡大や商品詳細の追加提供かもしれない。
-Both may improve sales when tested individually, but when both are done at the same time the “buy box” is pushed below the fold and sales decrease.
-どちらも個別にテストすれば売上を向上させるかもしれないが、両方を同時に行うと「購入ボックス」がフォールドの下に押し込まれ、売上が減少する。
-This would be a large antagonistic interaction.
-これは大きな拮抗的相互作用となるだろう。
-This interaction should be caught in the planning phase so that these two factors would not be tested at the same time.2.Analysis and interpretation are more difficult. 2.分析と解釈はより難しい。
-For a single factor test you typically have many metrics for the Treatment-Control comparison.
-単一因子のテストでは、通常、治療とコントロールの比較のために多くの測定基準があります。
-For an MVT you have the same metrics for many Treatment-Control comparisons (at least one for each factor being tested) plus the analysis and interpretation of the interactions between the factors.
-MVTでは、多くの治療-対照比較（試験される各要因について少なくとも1つ）に加え、要因間の交互作用の分析と解釈について同じ測定基準がある。
-Certainly, the information set is much richer but it can make the task of assessing which treatments to roll out more complex.3.It can take longer to begin the test. 3.テストを開始するのに時間がかかる。
-If you have five factors you want to test and plan to test them one at a time you can start with any of those that are ready to be tested and test the others later.
-テストしたい要素が5つあり、それらを1つずつテストする計画であれば、テストの準備ができたものから始めて、他の要素は後でテストすることができる。
-With an MVT you must have all five ready for testing at the beginning of the test.
-MVTの場合、試験開始時に5つすべてを準備しておかなければならない。
-If any one is delayed, this would delay the start of the test.
-誰か一人でも遅れれば、テストの開始が遅れることになる。
+一般的な**制限は3つ**ある：
+
+1. **Some combinations of factors may give a poor user experience**.
+   factorの組み合わせによっては、ユーザーエクスペリエンスが低下することもある。
+   For example, two factors being tested for an online retailer may be enlarging a product image or providing additional product detail.
+   例えば、あるオンライン小売業者がテストする2つの要素は、商品画像の拡大や商品詳細の追加提供かもしれない。
+   Both may improve sales when tested individually, but when both are done at the same time the “buy box” is pushed below the fold and sales decrease.
+   どちらも個別にテストすれば売上を向上させるかもしれないが、両方を同時に行うと「購入ボックス」がフォールドの下に押し込まれ、売上が減少する。
+   This would be a large antagonistic interaction.
+   これは大きな**antagonistic interaction(拮抗的相互作用)**となるだろう。
+   This interaction should be caught in the planning phase so that these two factors would not be tested at the same time.
+2. **Analysis and interpretation are more difficult**. 2.分析と解釈はより難しい。
+   For a single factor test you typically have many metrics for the Treatment-Control comparison.
+   単一因子のテストでは、通常、治療とコントロールの比較のために多くの測定基準があります。
+   For an MVT you have the same metrics for many Treatment-Control comparisons (at least one for each factor being tested) plus the analysis and interpretation of the interactions between the factors.
+   MVTでは、多くの治療とコントロールの比較のために同じ測定基準があります（少なくともテストされている各因子について1つ）プラス、因子間の相互作用の分析と解釈があります。
+   Certainly, the information set is much richer but it can make the task of assessing which treatments to roll out more complex.
+   確かに、情報セットははるかに豊かですが、**どの治療を展開するかを評価するタスクはより複雑になる**かもしれません。
+
+3. It can take longer to begin the test.
+   テストを開始するのに時間がかかる。
+   If you have five factors you want to test and plan to test them one at a time you can start with any of those that are ready to be tested and test the others later.
+   テストしたい要素が5つあり、それらを1つずつテストする計画であれば、テストの準備ができたものから始めて、他の要素は後でテストすることができる。
+   With an MVT you must have all five ready for testing at the beginning of the test.
+   MVTの場合、試験開始時に5つすべてを準備しておかなければならない。
+   If any one is delayed, this would delay the start of the test.
+   誰か一人でも遅れれば、テストの開始が遅れることになる。
+
 We don’t believe any of the limitations are serious ones in most cases, but they should be recognized before conducting an MVT.
 ほとんどの場合、どの制限も重大なものではないと考えるが、MVTを実施する前に認識しておくべきである。
 Generally, we believe the first experiment one does should be an A/B test mainly due to the complexity of testing more than one factor in the same test.
-一般的に、最初に行う実験はA/Bテストであるべきだと私たちは考えていますが、その主な理由は、同じテストで複数の要素をテストすることの複雑さにあります。
+**一般的に、最初に行う実験はA/Bテストであるべき**だと私たちは考えていますが、その主な理由は、同じテストで複数の要素をテストすることの複雑さにあります。
 There are three overarching philosophies to conducting MVTs with online properties.
-オンライン物件でMVTを実施するには、3つの包括的な哲学がある。
+オンライン環境でMVTを実施するには、**3つの包括的な哲学**がある。
+
+<!-- ここまで読んだ -->
 
 ## 4.1. Traditional MVT 伝統的MVT
 

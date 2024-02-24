@@ -242,98 +242,109 @@ Most software companies have very short development cycles for planning, develop
 Short development cycles enable companies to be agile and quickly adapt to customer needs and the market.
 短い開発サイクルによって、企業は機敏になり、顧客のニーズや市場に素早く適応することができる。
 Long testing phases for understanding the impact of changes could harm a company’s agility and are not usually desirable.
-変更の影響を理解するための長いテスト段階は、企業の敏捷性を損なう可能性があり、通常は望ましくない。
+**変更の影響を理解するための長いテスト段階は、企業の敏捷性を損なう可能性があり、通常は望ましくない**。
+
 Another option is a long-term holdout group consisting of a random sample of users who do not get updates.
-もう一つの選択肢は、アップデートを受けないユーザーの無作為サンプルで構成される長期保留グループである。
+もう一つの選択肢は、**アップデートを受けないユーザの無作為サンプルで構成される長期保留グループ**である。
 This holdout group acts as the Control against the set of features shipping to everyone else.
 この保留グループは、他のすべての人に出荷される一連の機能に対するコントロールの役割を果たす。
 This option usually incurs a lot of engineering cost.
 このオプションには通常、多くのエンジニアリング・コストがかかる。
 The product development team must maintain a code fork that is not updated for a long time.
-製品開発チームは、長期間更新されないコードフォークを維持しなければならない。
+製品開発チームは、長期間更新されないコードフォーク(=control側の実装??)を維持しなければならない。
 All upstream and downstream components to this code must support this fork as well.
-このコードの上流および下流のコンポーネントはすべて、このフォークをサポートしなければならない。
+このコードの上流および下流のコンポーネントはすべて、このフォークをサポートしなければならない。(確かに...!)
 This still does not solve the challenges of non-persistent user tracking and network interactions described below.
-それでも、以下に述べる非永続的なユーザー追跡とネットワーク相互作用の課題を解決することはできない。
+それでも、以下に述べる非永続的なユーザ追跡とネットワーク相互作用の課題を解決することはできない。(どんな課題なんだろ)
+
 In many products and services, the first visit and subsequent visits of users is tracked using a non-persistent user identifier, like a random GUID [72] stored in a browser cookie.
-多くの製品やサービスでは、ブラウザのクッキーに保存されたランダムなGUID [72]のような永続的でないユーザー識別子を使用して、ユーザーの初回訪問とその後の訪問が追跡されます。
+多くの製品やサービスでは、ブラウザのクッキーに保存されたランダムなGUID [72]のような**永続的でないユーザ識別子を使用して**、ユーザーの初回訪問とその後の訪問が追跡されます。(この点はNPの場合は問題にならないかも、永続的なユーザ識別子を使えるから...!)
 This way of tracking users is not very durable over a long time as users churn their cookies and we are left with tracking a biased sample of all users exposed to the variants [23].
 ユーザを追跡するこの方法は、ユーザがクッキーを破棄してしまうので、長い間あまり長続きせず、バリアント[23]にさらされた全ユーザの偏ったサンプルを追跡することになります。
 Further, a user may access the same service from multiple devices, and the user’s friends and family may access the same service.
-さらに、ユーザーは複数のデバイスから同じサービスにアクセスする可能性があり、ユーザーの友人や家族も同じサービスにアクセスする可能性がある。
+さらに、ユーザは複数のデバイスから同じサービスにアクセスする可能性があり、ユーザの友人や家族も同じサービスにアクセスする可能性がある。
 As time goes on, a user or their friends or family may be exposed to both the treatment and control experience during an experiment, which dilutes the impact of the treatment being measured in the experiment.
-時間が経つにつれて、利用者やその友人や家族は、実験中に治療と対照の両方の体験にさらされる可能性があり、実験で測定される治療の影響が薄れてしまう。
+**時間が経つにつれて、利用者やその友人や家族は、実験中に治療と対照の両方の体験にさらされる可能性があり、実験で測定される治療の影響が薄れてしまう**。
+
+(一方で少し長めにすることにも価値はあるよ、って話...!)
 There is some value in running experiments a little longer when we suspect that there is a short-term novelty or user learning effect.
-短期的な新規性効果やユーザー学習効果があると思われる場合、実験を少し長めに行うことには価値がある。
+**short-term noveltyやuser learning effectがあると思われる場合、実験を少し長めに行うことには価値がある**。
 At Microsoft, while most experiments do not run for more than two weeks, it is recommended to run an experiment longer if novelty effects are suspected and use data from the last week to estimate the long-term treatment effect [23].
-マイクロソフトでは、ほとんどの実験が2週間以上実施されることはないが、新規性効果が疑われる場合は、実験を長く実施し、最後の週のデータを使用して長期的な治療効果を推定することが推奨されている[23]。
+**マイクロソフトでは、ほとんどの実験が2週間以上実施されることはないが、novelty効果が疑われる場合には実験を長く実施し、最後の1週間のデータを使用して長期的なtreatment効果を推定することが推奨されている**[23]。(なるほど...!)
 At Twitter, a similar practice is followed.
 ツイッターでも同様の慣行がある。
 An experiment at Twitter may run for 4 weeks and data from last two weeks is analyzed.
-ツイッターでの実験は4週間行われ、最後の2週間のデータが分析される。
+**ツイッターでの実験は4週間行われ、最後の2週間のデータが分析される**。(なるほど、実験中の全ての観測データを使うんじゃないケースもあるのか...!:thinking:)
 If a user exposed in the first two weeks does not appear in the last two weeks, values are imputed for that user when possible (like imputing 0 clicks).
-最初の2週間に露出したユーザーが最後の2週間に現れなかった場合、可能な限りそのユーザーの値がインプットされる（0クリックのインプットのように）。
+最初の2週間にさらされたユーザが最後の2週間に現れない場合、可能な限りそのユーザの値をimpute(取りのぞく)する(0クリックをimputeするなど)。
 However, it may not be possible to impute values for metrics, like ratio or performance metrics.
-しかし、比率やパフォーマンスメトリクスのようなメトリクスの値をインプットすることはできないかもしれない。
+しかし、比率やパフォーマンスメトリクスのようなメトリクスの値をimpute(取りのぞく)することはできないかもしれない。
 
-### 3.2.2. Proxies 3.2.2. プロキシ
+### 3.2.2. Proxies 3.2.2. プロキシ(代用指標)
 
+(proxyとは、本来の指標の代わりになる指標のこと...!:thinking:)
 Good proxies that are predictive of the long-term outcome of interest are commonly used to estimate the long-term impact.
-長期的な影響を推定するためには、対象となる長期的な結果を予測できる優れた指標が一般的に使用される。
+長期的な影響を推定するためには、対象となる**長期的な結果を予測できる優れた指標が一般的に使用される**。(長く実験するのではなくて、長期効果を短期間の実験で推論できるような指標ってことかな...!)
 For instance, Netflix has used logistic regression to find good predictors for user retention.
-例えば、ネットフリックスはロジスティック回帰を使って、ユーザー維持のための良い予測因子を見つけた。
+**例えば、ネットフリックスはロジスティック回帰を使って、ユーザ維持のための良い予測因子を見つけた**。(うんうん)
 Netflix also used survival analysis to take censoring of user data into account.
-また、ネットフリックスは生存分析を用いて、ユーザーデータの打ち切りを考慮に入れている。
+また、ネットフリックスは生存分析を用いて、ユーザデータの検閲を考慮に入れた。
 LinkedIn created metrics based on a lifetime value model.
 LinkedInは、生涯価値モデルに基づいて指標を作成した。
 For treatments that effect the overall market, Uber found some macro-economic models to be useful in finding good proxies.
-市場全体に影響を与える治療法については、ユーバーはマクロ経済モデルが適切なプロキシを見つけるのに有用であることを発見した。
+市場全体に影響を与える治療法については、ウーバーはいくつかのマクロ経済モデルが良いプロキシを見つけるのに役立つことがわかった。
 There can be downsides to this approach as correlation may not imply causation, and such proxies could be susceptible to misuse, where a treatment may cause an increase in the proxy metric, but ends up having no effect or regression in the long-term outcome.
-相関関係は因果関係を意味しないかもしれず、このような代用指標は、治療が代用指標を増加させるかもしれないが、長期的な結果では結局効果がなかったり、後退してしまったりするような、誤用の影響を受けやすい可能性があるため、このアプローチには欠点がある。
+相関関係は因果関係を意味しないかもしれないため、このアプローチにはデメリットがあるかもしれない。また、そのような(=因果関係じゃなくて相関関係的な!:thinking:)プロキシは誤用に対して脆弱であり(=ハック的なことをしてしまうから?? :thinking:)、治療がプロキシメトリクスの増加を引き起こすかもしれないが、長期的な結果には影響を与えないか、後退する可能性がある。(proxyを使う事の難しさもあるわけか...!そりゃそうだ...!:thinking:)
 It may be better to develop a mental causal structure model to find good proxies.
-良いプロキシを見つけるためには、精神的因果構造モデルを開発する方が良いかもしれない。
+良いプロキシを見つけるためには、**mental causal structure model**(=心的因果構造モデル)を開発する方が良いかもしれない。(教師あり学習っぽいアプローチよりも、って話かな...!:thinking:)
 Bing and Google have found proxies for user satisfaction and retention by having a mental causal structure model that estimates the utility of an experience to users.
-ビングとグーグルは、ユーザーにとっての経験の有用性を推定する心的因果構造モデルを持つことで、ユーザーの満足度とリテンションのプロキシを発見した。
+BingとGoogleは、**ユーザ満足度とretenion(維持)のプロキシを見つけるために、ユーザにとっての体験の効用を推定する心的因果構造モデル**を持っている。
 
-### 3.2.3. Modeling User Learning 3.2.3. ユーザー学習のモデリング
+<!-- ここまで読んだ! -->
+
+### 3.2.3. Modeling User Learning
 
 Another approach followed by Google is to explicitly model the user learning effects using some long duration experiments [38].
-グーグルが採用しているもう一つのアプローチは、長時間の実験を用いてユーザーの学習効果を明示的にモデル化することである[38]。
+グーグルが採用しているもう一つのアプローチは、**長期間の実験を用いてuser learning効果を明示的にモデル化すること**である[38]。
 In long duration experiments, there are multiple and exclusive random samples of users exposed to the treatment.
-長期間の実験では、治療にさらされるユーザーの複数の排他的無作為サンプルが存在する。
+長期間の実験では、treatmentにさらされたユーザの複数の排他的な無作為サンプルがある。(最初からtreatmentを受けるグループ、スタートが遅れてtreatmentを受けるグループ、など...!:thinking:)
 One group is exposed to the treatment from the start of the experiment.
-一方のグループは、実験開始時から治療にさらされる。
+一方のグループは、実験開始時からtreatmentにさらされる。
 A second group has a lagged start, being exposed to the treatment at some point after the start, and so on.
-もう1つのグループはスタートが遅れており、スタート後のある時点で治療を受けている。
+もう1つのグループはスタートが遅れており、スタート後のある時点でtreatmentにさらされる、など。
 Comparing these groups a day after the second group is exposed to the treatment provides an estimate of user learning from the treatment.
-2番目のグループが治療を受けた1日後にこれらのグループを比較することで、治療によるユーザーの学習の推定値が得られる。
+2番目のグループが治療を受けた1日後にこれらのグループを比較することで、treatmentによるuser learning効果の推定値を得ることができる。
 Google also used cookie-cookie day randomization to get an estimate of user learning for any duration (in days) since the experiment started.
-Googleはまた、実験開始からの任意の期間（日単位）のユーザー学習の推定値を得るために、クッキー・クッキーの日ランダム化を使用した。
+Googleはまた、実験開始からの任意の期間（日数）におけるユーザー学習の推定値を得るために、cookie-cookie dayランダム化を使用した。(?)
 In these experiments and in the subsequent analysis, the authors carefully designed the experiments and did careful analysis to ensure that they were not seeing many confounding effects (e.g., other system changes, system learning, concept drift, as well as selection bias issues due to cookie churn/short cookie lifetimes).
 これらの実験とその後の分析において、著者たちは実験を注意深く設計し、多くの交絡効果（たとえば、他のシステム変更、システム学習、コンセプト・ドリフト、またクッキーの解約/短いクッキー寿命による選択バイアスの問題）が見られないことを確実にするために、注意深い分析を行いました。
 They took this information and modeled user learning as an exponential curve, which allowed them to predict the long-term outcome of a treatment using the short-term impact of the treatment directly measured in the experiment and the prediction of the impact of the treatment on user learning.
-彼らはこの情報をもとに、ユーザーの学習を指数関数曲線としてモデル化し、実験で直接測定された治療の短期的な影響と、治療のユーザー学習への影響の予測を用いて、治療の長期的な結果を予測できるようにした。
+彼らはこの情報をもとに、**user learningを指数関数曲線としてモデル化**し、実験で直接測定されたtreatmentの短期的な影響と、treatmentがuser learningに与える影響の予測を使って、treatmentの長期的な結果を予測することができるようになりました。(user learning効果の影響を除外する事で、短期的な観測値から長期的な効果を予測しようって話か...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ### 3.2.4. Surrogates 3.2.4. サロゲート
 
 Surrogate modeling is another way to find good estimates of longterm outcome.
-サロゲート・モデリングは、長期転帰の良い推定値を見つけるもう一つの方法である。
+サロゲート・モデリングは、長期的な結果の良い推定値を見つける別の方法です。(surrogateってgateだから、経路の中間チェックポイントみたいな感じかな...!)(代用品? proxyのようなものかな...!:thinking:)
 A statistical surrogate lies on the causal path between the treatment and the long-term outcome.
-統計的サロゲートは、治療と長期的転帰の間の因果経路にある。
+**statistical surrogateは、treatmentと長期的な結果の間の因果関係の経路上にある**。
 It satisfies the condition that treatment and outcome are independent conditional on the statistical surrogate.
-これは、治療と結果が統計的代用物を条件として独立であるという条件を満たす。
+これは、「**治療と結果がstatistical surrogateに条件付けられて独立である**」という条件を満たしている。
 You can use observational data and experiment data to find good surrogates.
-観測データや実験データを使って、良いサロゲートを見つけることができる。
+観測データ(=実験中以外のデータ?)や実験データを使って、良いsurrogateを見つけることができる。
 Even if no individual proxy satisfies the statistical surrogacy criterion, a highdimensional vector of proxies may collectively satisfy the surrogacy assumption [8].
-たとえ個々のプロキシが統計的サロガシー基準を 満たさないとしても、プロキシの高次元のベクトルは、集合的 にサロガシーの仮定を満たすかもしれない[8]。
+たとえ個々のプロキシがstatistical surrogacy基準(?)を満たさなくても、高次元のプロキシベクトルが集合的にsurrogacy仮定を満たすことがある[8]。
 Having a rich set of surrogates reduces the risk of affecting only a few surrogates and not the long-term outcome.
-豊富なサロゲートのセットを持つことで、少数のサロゲートだけに影響を与え、長期的な転帰に影響を与えないリスクを減らすことができる。
+豊富なsurrogateを持つことで、長期的な結果に影響を与えるのは一部のsurrogateだけであり、他のsurrogateには影響を与えないというリスクを減らすことができる。
 Facebook used this approach with some success to find good surrogates of the 7-day outcome of an experiment by just using 2-3-day experiment results.
-フェイスブックは、2〜3日の実験結果を使うだけで、7日間の実験結果の良い代用品を見つけることに成功した。
+フェイスブックは、2〜3日の実験結果を使うだけで、7日間の実験結果の良いsurrogateを見つけるために、このアプローチを成功させた。(=たぶん複数のsurrogateを組み合わせるアプローチ?)
 They used quantile regression and a gradient-boosted regression tree to rank feature importance.
-彼らは、特徴の重要度をランク付けするために、分位回帰と勾配ブースト回帰木を使用した。
+彼らは、quantile regressionとgradient-boosted regression treeを使って、特徴(=各surrogate?)の重要度をランク付けした。
 Note that there is still a risk that having too many surrogates for the long term may make this approach less interpretable.
-長期的なサロゲートの数が多すぎると、このアプローチが解釈しにくくなる危険性があることに注意してほしい。
+長期的なsurrogateが多すぎると、このアプローチが解釈しにくくなるリスクがあることに注意してください。
+
+<!-- ここまで読んだ -->
 
 # 4. OEC: Overall Evaluation Criterion Metric 4. OEC： 総合評価基準
 
