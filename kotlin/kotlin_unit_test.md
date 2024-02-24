@@ -119,3 +119,38 @@ class CalcServiceFunSpecTest : FunSpec() {
 - shouldThrow:
   - 例外が投げられることを確認する。
 -
+
+# kotlinにおけるテストダブルの用意の仕方とmock機能
+
+- テストダブル = 単体テストにおいて、対象の振る舞いが依存している外部リソースやクラスを置き換えるためのもの。
+- テストダブを用意する方法の一つとして、mock機能を使う方法がある。
+  - (テストダブルの種類の1つのmockではなく、機能としてのmockのこと!)
+- kotlinにおけるmock機能としては、mockkというライブラリが一般的っぽい。
+
+## mockkについて
+
+- Mockkは、kotlin専用のmockingライブラリ。
+
+### 主要なfunction 1. mockオブジェクトを作る。
+
+- mockk(): mockオブジェクトを生成する。
+  - 通常のmockオブジェクトは、特定のメソッドの振る舞いを`every{}`で明示的に定義しない限り、未定義のメソッドを呼び出すと例外 `io.mockk.MockKException` が投げられる。
+- `mockk(relaxed = true)`: relaxed mockオブジェクトを生成する。
+  - relaxed mockオブジェクト: 未定義のメソッドを呼び出しても例外が投げられずに、**データ型のデフォルト値を良い感じにdummyとして返す**mockオブジェクト。
+  - ex.
+    - 返り値がInt型のメソッドを呼び出すと0が返る。
+    - Boolean型のメソッドを呼び出すとfalseが返る。
+    - nullableなオブジェクトであればnullが返る。
+    - non-nullなオブジェクトであれば新しいmockインスタンスが返る。
+- 各テストの用途に応じて、通常のmockオブジェクトとrelaxed mockオブジェクトを使い分ける必要がある...!:thinking_face:
+
+ex.
+
+```kotlin
+val mockUserRepo = mockk<UserRepository>() // テストダブルを用意して
+val sut = UserService(mockUserRepo) // sutにdependency injection
+```
+
+- every {} returns {}:
+  - mockオブジェクトの特定のメソッドの振る舞いを明示的に定義する。
+  - 通常のmockオブジェクトの場合は、基本的にpublicなメソッドの振る舞いはeveryで明示的に定義しておく必要がありそう...!:thinking_face:
