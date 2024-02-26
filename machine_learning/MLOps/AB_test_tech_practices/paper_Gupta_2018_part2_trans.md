@@ -5,54 +5,58 @@
 Without loss of generality, we consider the case that there is only one treatment and one control.
 一般性を損なわないように、治療と対照が1つずつしかない場合を考える。
 Under the potential outcome framework, (𝑌(1), 𝑌(0)) is the potential outcome pairs and 𝜏 = 𝑌(1) − 𝑌(0) is the individual treatment effect.
-潜在的アウトカムの枠組みでは、(𝑌(1), 𝑌(0))は潜在的アウトカム対であり、𝜏 = 𝑌(1) - 𝑌(0)は個別治療効果である。
+潜在的アウトカムの枠組みでは、$(Y(1), Y(0))$ は潜在的なアウトカムのペアであり、$\tau = Y(1) - Y(0)$ は個々の治療効果である。
 The primary goal of an A/B test is to understand the average treatment effect (ATE), 𝐸(𝜏).
-A/Bテストの主な目的は、平均治療効果（ATE）𝐸(↪Ll_1D70F) を理解することである。
+A/Bテストの主な目的は、**average treatment effect (ATE)**、$E(\tau)$ を理解することである。
 Although it is obvious that knowing individual effect is ideal, it is also impossible as we cannot observe the counterfactual.
-個々の効果を知ることが理想的であることは明らかだが、反事実を観察することができない以上、それは不可能でもある。
+個々の効果を知ることが理想的であることは明らかだが、反実仮想を観察することは不可能である。
 The closest thing is the conditional average treatment effect (CATE) [74], 𝐸(𝜏|𝑋), where 𝑋 is some attribute or side information about each individual that is not affected by the treatment.
-最も近いものは、条件付き平均治療効果（CATE）[74]、𝐸(𝜏|𝑋)であり、ここで𝑋は、治療によって影響されない各個人に関する何らかの属性または側面情報である。
+最も近いものは、**conditional average treatment effect（CATE）**[74]、$E(\tau|X)$ であり、$X$ は治療に影響を受けない各個人に関する属性や副情報である。
 This makes CATE the best regression prediction of individual treatment effect 𝜏 based on 𝑋.
-これにより、CATEは𝑋に基づく個別治療効果𝜏の最良の回帰予測となる。
+これにより、CATEは $X$ に基づく個々の治療効果 $\tau$ の最良の回帰予測となる。
+
 Attributes 𝑋 can be either discrete/categorical or continuous.
-属性𝑋は離散的／範疇的か連続的のどちらかである。
+属性 $X$ は離散的/カテゴリー的であるか、連続的であるかのいずれかである。
 Categorical 𝑋 segments the whole population into subpopulations, or segments.
-カテゴリー𝑋は、母集団全体を部分集団（セグメント）に区分する。
+**カテゴリー $X$ は、全人口をサブポピュレーション、またはセグメントに分割する**。
 In practice, the industry almost entirely uses categorical attributes.
 実際には、業界はほとんどすべてカテゴリー属性を使用している。
 Even continuous attributes are made discrete and considered ordered categorical segments.
-連続的な属性も離散的なものとされ、順序付けられたカテゴリー区分とみなされる。
+連続的な属性も離散的なものとされ、順序付けられたカテゴリー区分とみなされる。(なるほど...?そうなのか...!)
+
 Perhaps the most interesting cases are when treatment moves the same metric in different directions, or when the same metric has statistically significant movement in one segment but not in another segment.
-おそらく最も興味深いケースは、治療によって同じ指標が異なる方向に動いた場合や、同じ指標があるセグメントでは統計的に有意に動いたが、別のセグメントでは動かなかった場合である。
+おそらく最も興味深いケースは、複数のセグメントでtreatmentが同じメトリックを異なる方向に動かす場合、または同じメトリックが1つのセグメントで統計的に有意な動きを示すが、別のセグメントではそうではない場合である。
 Assume, for a given segment, say market, a metric moves positively for some markets but negatively for another, both highly statistically significant.
 あるセグメント（例えば市場）において、ある指標がある市場ではプラスに動き、別の市場ではマイナスに動き、どちらも統計的に非常に有意であったとする。
 Making the same ship decision for all segments would be sub-optimal.
-すべてのセグメントで同じ船の決定を下すことは、最適とは言えないだろう。
+すべてのセグメントで同じship(=適用)の決定をすることは、最適ではないだろう。
 Such cases uncover key insights about the differences between segments.
 このような事例から、セグメント間の違いに関する重要な洞察が明らかになる。
 Further investigation is needed to understand why the treatment was not appreciated in some markets and identify opportunities for improvement.
-この治療法が一部の市場で評価されなかった理由を理解し、改善の機会を特定するためには、さらなる調査が必要である。
+このtrearmentがいくつかの市場で評価されなかった理由を理解し、改善の機会を特定するためには、さらなる調査が必要である。
 In some cases adaptive models can be used to fit different treatments on different types of users [6, 52, 53, 77].
-場合によっては、適応モデルを使用して、異なるタイプの利用者に異なる治療を適用することができる [6, 52, 53, 77]。
-However, most common cases of HTE only show difference in magnitude, not direction.
-しかし、一般的なHTEの場合は、大きさの違いだけで、方向は変わらない。
-Knowledge of these differences can be valuable for detecting outlier segments that may be indicative of bugs affecting a segment, or for encouraging further investment into different segments based on results.
-これらの差異を知ることは、セグメントに影響を及ぼすバグを示す可能性のある異常値セグメントを検出したり、結果に基づいて異なるセグメントへのさらなる投資を促したりする上で有益である。
+場合によっては、適応モデルを使用して、異なるタイプのユーザーに異なる治療を適合させることができる[6, 52, 53, 77]。
 
-## 5.2. Common Solutions and Challenges 
+However, most common cases of HTE only show difference in magnitude, not direction.
+しかし、一般的なHTE(Heterogeniety Treatment Effects)のケースのほとんどは、方向ではなく、大きさの違いを示すだけである。
+Knowledge of these differences can be valuable for detecting outlier segments that may be indicative of bugs affecting a segment, or for encouraging further investment into different segments based on results.
+これらの違いの知識は、セグメントに影響を与えるバグの指標となる可能性のあるアウトライアーセグメントを検出するために貴重であり、結果に基づいて異なるセグメントへのさらなる投資を奨励するためにも役立つ。
+
+<!-- ここまで読んだ -->
+
+## 5.2. Common Solutions and Challenges
 
 ### 5.2.1. Common Segments 5.2.1. 共通セグメント
 
 It is a very common practice to define key segments based on product and user knowledge.
-製品やユーザーの知識に基づいて主要セグメントを定義するのは、ごく一般的なやり方だ。
+製品やユーザの知識に基づいて主要セグメントを定義するのは、ごく一般的なやり方だ。
 Where possible, it is preferred to define segments so that the treatment does not interact with the segment definition to avoid bias.
 可能であれば、バイアスを避けるために、治療がセグメント定義と相互作用しないようにセグメントを定義することが望ましい。
 Here are some of commonly defined segments for many software products and services: 1.
 以下は、多くのソフトウェア製品やサービスにおいて一般的に定義されているセグメントである： 1.
 Market/country: Market is commonly used by all companies with global presence who are running experiments and shipping features across different markets.
 市場/国： Marketは、さまざまな市場で実験や出荷を行うグローバル企業でよく使われる。
-When there are too many markets, it is useful to put them into larger categories or buckets like markets already with high penetration and growing markets or markets clustered by language.2.User activity level: Classifying users based on their activity level into heavy, light and new users can show interesting HTE.
-2.ユーザーの活動レベル 市場が多すぎる場合、すでに浸透度の高い市場や成長中の市場、あるいは言語によってクラスター化された市場など、より大きなカテゴリーやバケットに分類することが有効である： 2.ユーザーの活動レベル：ユーザーの活動レベルに基づいて、ヘビーユーザー、ライトユーザー、新規ユーザーに分類すると、興味深いHTEを示すことができる。
+When there are too many markets, it is useful to put them into larger categories or buckets like markets already with high penetration and growing markets or markets clustered by language.2.User activity level: Classifying users based on their activity level into heavy, light and new users can show interesting HTE. 2.ユーザーの活動レベル 市場が多すぎる場合、すでに浸透度の高い市場や成長中の市場、あるいは言語によってクラスター化された市場など、より大きなカテゴリーやバケットに分類することが有効である： 2.ユーザーの活動レベル：ユーザーの活動レベルに基づいて、ヘビーユーザー、ライトユーザー、新規ユーザーに分類すると、興味深いHTEを示すことができる。
 It is important to have this classification based on data before the experiment started to avoid any bias.3.Device and platform: Today most products have both desktop and mobile application.
 バイアスを避けるために、実験開始前のデータに基づいてこの分類を行うことが重要である。3.デバイスとプラットフォーム： 今日、ほとんどの製品はデスクトップとモバイルの両方のアプリケーションを持っています。
 We can test most backend server-side features across devices and platforms.
@@ -94,8 +98,7 @@ Computation scale: Because A/B tests routinely analyze hundreds or thousands of 
 計算規模： A/Bテストでは、数百万単位の実験ユニット（ユーザー）に対して、数百から数千のメトリクスを分析することが日常的に行われるため、自動スケジュール分析に費やすリソースと時間は、結果が遅延せず、生成にコストがかかりすぎないようにするためには、多すぎることはない。
 There is a desire to use a simple algorithm directly formulated using sufficient statistics, instead of using individual-unit level data.2.Low Signal Noise Ratio (SNR): A/B testing is already dealing with low power to estimate the average treatment effect.
 個体レベルのデータを使用する代わりに、十分な統計量を使用して直接定式化された単純なアルゴリズムを使用したいという要望がある。2.低信号雑音比（SNR）： A/Bテストは、平均的な治療効果を推定するために、すでに低い検出力を扱っている。
-Learning HTE is even harder than learning ATE because of the reduced sample sizes in each subpopulation.3.Multiple Testing Problem [66]: There is a severe multiple testing problem when looking at many metrics, and many possible ways to segment the population.
-3.多重検定問題 [66]．多くの指標を見る場合、また母集団を区分する多くの可能な方法を見る場合、深刻な多重検定の問題がある。
+Learning HTE is even harder than learning ATE because of the reduced sample sizes in each subpopulation.3.Multiple Testing Problem [66]: There is a severe multiple testing problem when looking at many metrics, and many possible ways to segment the population. 3.多重検定問題 [66]．多くの指標を見る場合、また母集団を区分する多くの可能な方法を見る場合、深刻な多重検定の問題がある。
 This issue, along with low SNR further complicates HTE estimations.4.Interpretable and memorable results: Most experimenters are not experts in statistics or machine learning.
 この問題は、低SNRとともにHTE推定をさらに複雑にする。4.解釈可能で記憶に残る結果： ほとんどの実験者は統計や機械学習の専門家ではない。
 You must have concise and memorable result summaries to facilitate experimenters to act.5.Absolute vs.
@@ -106,18 +109,15 @@ In many cases it makes sense to use the relative CATE as the baseline or the ave
 多くの場合、ベースラインとして相対的なCATEを使用することは理にかなっている。あるいは、コントロール指標の平均値は、異なる国のように異なるセグメントで大きく異なることがある。
 Use a relative CATE to normalize the treatment effect in different segments.
 異なるセグメントにおける治療効果を正規化するために、相対CATEを使用する。
-To tackle these challenges, there are common approaches companies take.1.Separate on-demand and scheduled analysis.
-1.オンデマンド分析とスケジュール分析を分ける。
+To tackle these challenges, there are common approaches companies take.1.Separate on-demand and scheduled analysis. 1.オンデマンド分析とスケジュール分析を分ける。
 For ondemand analysis, people are willing to spend more resources and wait longer to get results.
 オンデマンド分析では、人々は結果を得るためにより多くのリソースを費やし、より長く待つことを厭わない。
 For this kind of one-off analysis, linear regression with sparsity (L1 and elastic net) and tree-based algorithms, like causal tree, are very popular.
 このような一回限りの分析には、スパース性を持つ線形回帰（L1やエラスティックネット）や、因果木のような木ベースのアルゴリズムが非常によく使われる。
-Double ML also gained a lot of attention recently [14].2.Because of the challenge of low SNR and multiple testing, sparse modeling is a must.
-2.低SNRと多検査という課題のため、スパースモデリングは必須である。
+Double ML also gained a lot of attention recently [14].2.Because of the challenge of low SNR and multiple testing, sparse modeling is a must. 2.低SNRと多検査という課題のため、スパースモデリングは必須である。
 Even if the ground truth is not sparse, there are limited resources that experimenters can spend on learning and taking actions based on HTE.
 地上真実がまばらでないとしても、実験者がHTEに基づく学習や行動に費やせるリソースには限りがある。
-Sparse modeling forces concise results.3.To make results memorable, when certain segment has many values, markets might have a lot of values, it is desired to merge those values based on a common effect.
-3.結果を記憶に残るものにするために、あるセグメントが多くの値を持つ場合、市場は多くの値を持つ可能性があり、共通の効果に基づいてそれらの値をマージすることが望まれる。
+Sparse modeling forces concise results.3.To make results memorable, when certain segment has many values, markets might have a lot of values, it is desired to merge those values based on a common effect. 3.結果を記憶に残るものにするために、あるセグメントが多くの値を持つ場合、市場は多くの値を持つ可能性があり、共通の効果に基づいてそれらの値をマージすることが望まれる。
 For instance, the effect might be different for Asian markets compared to rest of the world.
 例えば、アジア市場とそれ以外の市場では効果が異なるかもしれない。
 Instead of reporting market HTE and list treatment effect estimates for individual markets, it is better to merge Asian markets and the rest of the world, and report only two different effect estimates.
@@ -201,7 +201,7 @@ This gives developers freedom to build and test different ideas with minimum via
 And allows the team to make future decisions to invest in a product area based on changes to the OEC metric due to features seen in that area.
 また、その分野で見られる機能によるOEC指標の変化に基づいて、製品分野への投資を将来的に決定することができる。
 
-## 6.2. Common Solutions and Challenges 
+## 6.2. Common Solutions and Challenges
 
 There are many cultural aspects to adoption of OCEs at scale to have a trustworthy estimate of the impact of every change made to a product.
 製品に加えられたすべての変更の影響について信頼に足る推定を行うためには、OCEを大規模に採用するには多くの文化的側面がある。
@@ -313,11 +313,12 @@ Conversely, anyone providing support needs fundamental experimentation knowledge
 Such democratization of knowledge and expertise enables a better experimentation culture.
 このような知識と専門知識の民主化によって、より良い実験文化が可能になる。
 
-## 7.2. Common Solutions and Challenges 
+## 7.2. Common Solutions and Challenges
 
 Across different companies, there are a few key practical challenges in spreading the expertise about OCEs that enable experimentation at scale.
 様々な企業において、大規模な実験を可能にするOCEに関する専門知識を普及させるには、いくつかの重要な現実的課題がある。
 • How do we set up a community to support experimenters? • How do we incorporate them in the experiment lifecycle? • How do we incentivize these people? • How do we quantify their impact? • How do we train them? • How do we maintain quality standards? Here are examples from several companies on how they tried to solve these challenges.
+
 - 実験者を支援するコミュニティをどのように立ち上げるか？- 実験者を実験のライフサイクルに組み込むには？- 実験者にインセンティブを与えるには？- 彼らの影響をどのように定量化するか？- どのように彼らを訓練するか？- どうやって品質基準を維持するのか？これらの課題をどのように解決しようとしたのか、いくつかの企業の例を紹介しよう。
 
 ### 7.2.1. Yandex: “Experts on Experiment” 7.2.1. ヤンデックス "実験のエキスパート"

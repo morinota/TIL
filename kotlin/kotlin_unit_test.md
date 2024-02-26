@@ -197,3 +197,36 @@ fun testMockKSample() {
 // example
 verify(exactly = 1) { mockUserRepo.getUser(userId) }
 ```
+
+## spyk: 既存のインスタンスのスパイ(監視)バージョンを作成する
+
+- kotlinのmockingライブラリ `mockk`の機能の一つ。
+- 既存インスタンスのスパイバージョンを作成する。
+  - **実際のオブジェクトの実装を保持**しつつ、**特定のメソッドの挙動をオーバーライド**することができる。
+  - また、特定のメソッドの呼び出しを検証することもできる。
+
+```kotlin
+// 使用例
+class ExampleClass {
+    fun sayHello() = "Hello"
+    fun sayGoodbye() = "Goodbye"
+}
+
+val example = spyk(ExampleClass())
+
+every { example.sayHello() } returns "Hi"  // sayHelloメソッドの挙動をオーバーライド
+
+println(example.sayHello())  // 出力: Hi
+println(example.sayGoodbye())  // 出力: Goodbye (オーバーライドされていないため、元の実装が使用される)
+```
+
+### mockk()とspyk()の違い
+
+- どちらもmockkライブラリの機能で、テストダブルを作成するための関数。
+  - どちらもメソッドの挙動を定義する際には、`every {} returns {}`などを使う。
+- `mockk()`:
+  - 完全なmockインスタンスを作成する。
+  - そのオブジェクトの全てのメソッドが、返り値に応じたデフォルト値を返す。(=オブジェクトの実装が保持されていない状態??:thinking_face:)
+- `spyk()`:
+  - スパイオブジェクトを作成する。
+  - 元のオブジェクトの実装を保持しつつ、特定のメソッドの挙動をオーバーライドすることができる。
