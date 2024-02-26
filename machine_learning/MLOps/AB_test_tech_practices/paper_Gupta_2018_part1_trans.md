@@ -434,7 +434,7 @@ Over time, different methods have been proposed to measure HEART metrics in sear
 It is still challenging to find metrics similar to HEART metrics to work for discovery- or browsing-related scenarios, like news articles shown on the Edge browser homepage, or Google mobile homepage, or Yandex homepage.
 Edgeブラウザのホームページ、Googleモバイルのホームページ、Yandexのホームページに表示されるニュース記事のような、**発見やブラウジングに関連するシナリオで機能するHEARTメトリクスに似たメトリクスを見つけることは、まだ困難**です。
 The challenge is to understand user intent.
-課題は、ユーザーの意図を理解することだ。
+課題は、ユーザの意図を理解することだ。
 Sometimes users will come with a goal-oriented intent and would like to quickly find what they are looking for.
 時には、ユーザがgoal-orientedの意図を持ってやってきて、探しているものを素早く見つけたいと思うこともある。
 Other times users may have a more browsing or discovering-newinformation intent where they are not looking for something specific but just exploring a topic.
@@ -451,52 +451,54 @@ If a user came with a goal-oriented intent but got distracted and ended up brows
 ### 4.2.2. Product Goals and Tradeoffs 4.2.2. 製品の目標とトレードオフ
 
 OEC metrics usually indicate improvement in product KPIs or goals in the long term.
-OECの指標は通常、長期的には製品のKPIや目標の改善を示す。
+**OECの指標は通常、長期的には製品のKPIや目標の改善を示す。**
 This assumes that product goals are clear.
-これは、製品の目標が明確であることを前提としている。
+これは、プロダクトの目標が明確であることを前提としている。(なるほど...!)
 This is not a trivial problem.
 これは些細な問題ではない。
 It takes a lot of effort and energy to have clarity on product goals and strategy alignment across the entire team.
 製品目標を明確にし、チーム全体で戦略を一致させるには、多くの努力とエネルギーが必要だ。
 This includes decisions like defining who the customer is and how best to serve them.
-これには、顧客が誰なのか、どのように顧客にサービスを提供するのがベストなのかを定義するような決定も含まれる。
+これには、顧客が誰なのか、どのように顧客にサービスを提供するのがベストなのかを定義するような決定も含まれる。(個人ユーザか法人ユーザか、みたいな...!)
 Further, your team must also create a monetization strategy for the product.
 さらに、チームは製品の収益化戦略も立てなければならない。
 In absence of such clarity, each sub team in the product group may set their own goals that may not align with other teams’ or corporate goals.
-このような明確さがない場合、製品グループの各サブチームは、他のチームや企業の目標と一致しない独自の目標を設定する可能性がある。
+**このような明確さがない場合、製品グループの各サブチームは、他のチームや企業の目標と一致しない独自の目標を設定する可能性がある**。(これはわかる...!)
+
 Even after the product goals are clear, in most companies you end up with a handful of key metrics of interest.
-製品目標が明確になっても、ほとんどの企業では、関心のある主要な指標はほんの一握りである。
+product goalsが明確になっても、ほとんどの企業では、関心のある主要な指標はほんの一握りである。
 It is challenging how to weigh these metrics relative to each other.
 これらの指標をどう相対的に評価するかは難しい。
 For instance, a product may have goals around revenue and user happiness.
-例えば、ある製品には収益やユーザーの幸福度に関する目標があるかもしれない。
+例えば、ある製品には収益やユーザの幸福度に関する目標があるかもしれない。
 If a feature increases user happiness but losses revenue, in what case is it desirable to ship this feature? This decision is often made on a caseby-case basis by leadership.
-ある機能がユーザーの幸福度を高めるが、収益が減少する場合、どのような場合にこの機能を出荷するのが望ましいか？この決定は、リーダーシップによってケースバイケースでなされることが多い。
+ある機能がユーザの幸福度を高めるが、収益が減少する場合、どのような場合にこの機能を出荷するのが望ましいか？この決定は、リーダーシップによってケースバイケースでなされることが多い。
 Such an approach is susceptible to a lot of cognitive biases, and also may result in an incoherent application of the overall strategy.
-このようなアプローチは多くの認知バイアスの影響を受けやすく、また全体的な戦略の適用が支離滅裂になる可能性もある。
+このようなアプローチは、多くの認知バイアスに影響を受けやすく、また全体的な戦略の不一貫な適用につながる可能性がある。
 Some product teams like at Bing, tried to come up with weights on different goals to make this tradeoff align with the overall product strategy and help ensure that consistent decision-making processes are used across multiple experiments.
-Bingのように、このトレードオフを全体的な製品戦略と整合させ、複数の実験にわたって一貫した意思決定プロセスが使用されるようにするために、異なる目標に対する重みを考え出そうとする製品チームもあった。
+Bingのような一部の製品チームは、このトレードオフを全体的な製品戦略に合わせ、**複数の実験で一貫した意思決定プロセスが使用されることを確実にするために、異なる目標に重みをつけることを試みた**。(複数の目標を組み合わせた一つのOECを作るって話か...!)
 
 ### 4.2.3. Evaluating Methods 4.2.3. メソッドの評価
 
 We mentioned that OEC metrics help decision making more objective.
-OECの指標が意思決定をより客観的なものにすると述べた。
+OECメトリクスは、意思決定をより客観的にするのに役立つと述べた。
 For it to be widely adopted, it is important to establish a process to evaluate any changes to the OEC metrics.
-OECが広く採用されるためには、OECの評価基準に対する変更を評価するプロセスを確立することが重要である。
+OECが広く採用されるためには、OECメトリクスへの変更を評価するプロセスを確立することが重要である。
 In some cases, there may be an expert review team that examines changes to the OEC and ensure that it retains the properties of a good OEC.
 場合によっては、OECへの変更を検討し、それが優れたOECの特性を保持していることを確認する専門家レビューチームが存在することもある。
 To make this process even more objective, we can have a corpus of past experiments widely seen to have a positive, negative or neutral impact.
 このプロセスをさらに客観的なものにするために、ポジティブ、ネガティブ、あるいはニュートラルな影響を与えたと広く見られている過去の実験のコーパスを用意することができる。
 Changes to the OEC were evaluated on this corpus to ensure sensitivity and directional correctness [24].
-OECの変更は、感度と方向性の正しさを保証するために、このコーパスで評価された[24]。
+OECの変更は、感度と方向性の正しさを保証するために、このコーパスで評価された[24]。(OECのオフライン実験みたいな話かな...!)
 Microsoft and Yandex successfully used this approach to update OEC metrics.
 マイクロソフトとヤンデックスは、OECの指標を更新するために、このアプローチを使用することに成功した。
 The challenge here is to create a scalable corpus of experiments with trustworthy labels.
 ここでの課題は、信頼できるラベルを持つスケーラブルな実験コーパスを作成することである。
+
 Other approaches include doing degradation experiments, where you intentionally degrade the product in a treatment and evaluate if the OEC metrics can detect this degradation.
-他のアプローチとしては、意図的に製品を劣化させ、OECメトリクスがこの劣化を検出できるかどうかを評価する劣化実験がある。
+他のアプローチとしては、**意図的に製品を劣化させ、OECメトリクスがこの劣化を検出できるかどうかを評価する劣化実験**がある。
 One well known example are experiments that slow down the user experience performed at Microsoft and Google [63, 64].
-よく知られている例としては、マイクロソフトやグーグルで行われたユーザー体験を遅くする実験がある[63, 64]。
+よく知られている例としては、マイクロソフトやグーグルで行われた**ユーザ体験を遅くする実験**がある[63, 64]。
 This is also a good thought exercise to go through while designing and evaluating OEC metrics to ensure that they are not gameable.
 これはまた、OECの測定基準を設計し評価する際に、それがゲームにならないようにするために行う良い思考訓練でもある。
 
@@ -505,17 +507,18 @@ This is also a good thought exercise to go through while designing and evaluatin
 Some product teams tried to incorporate machine learning models (MLMs) to create a metric.
 機械学習モデル（MLM）を組み込んで指標を作ろうとする製品チームもあった。
 For instance, using sequences of user actions to create a score metric based on the likelihood of user satisfaction [36, 54, 57] or creating more sensitive OEC metrics by combining different metrics [25, 42, 59].
-例えば、ユーザー満足の可能性に基づいたスコア・メトリックを作成するために、ユーザー・アクションのシーケンスを使用したり[36, 54, 57]、異なるメトリックを組み合わせることによって、より感度の高いOECメトリックを作成したり[25, 42, 59]。
+例えば、ユーザ満足の可能性に基づいたスコア・メトリックを作成するために、ユーザ・アクションのシーケンスを使用したり[36, 54, 57]、異なるメトリックを組み合わせることによって、より感度の高いOECメトリックを作成したり[25, 42, 59]。
 Also, good proxies for long-term outcomes are often used to find good OEC metrics.
 また、長期的なアウトカムの良い指標は、OECの良い指標を見つけるためによく使われる。
 This area of experimentation is relatively new.
 この分野の実験は比較的新しい。
 Many product teams are carefully trying to test these methods in limited areas.
-多くの製品チームは、限られた地域で慎重にこれらの方法を試している。
+多くの製品チームは、**限られたエリアで慎重に**これらの方法を試している。
 These methods are more commonly used in mature product areas, like search, where most of the low-hanging fruit is picked and we need more complex models to detect smaller changes.
-このような方法は、検索のような成熟した製品分野でより一般的に使用されている。
+これらの方法は、大部分の低い果実が摘まれており、**より複雑なモデルが小さな変化を検出する必要があるような、成熟したプロダクト領域でより一般的に使用されている**。
 For new products, it is usually better to use simple metrics as the OEC.
-新製品の場合、通常はOECのような単純な指標を使う方がよい。
+**新製品の場合、通常はOECのような単純な指標を使う方がよい**。
+
 There are some concerns with using machine learning models to create metrics.
 メトリクスの作成に機械学習モデルを使うことには、いくつかの懸念がある。
 MLM based metrics can be harder to interpret and can appear as a blackbox, which reduces trustworthiness and makes it hard to understand why a metric may have moved.
@@ -525,4 +528,6 @@ Refreshing MLMs by training them on most recent data may lead to an abrupt chang
 If the MLM is being refreshed while an experiment is running, it can create bias in the metric.
 実験の実行中にMLMが更新されると、指標に偏りが生じる可能性がある。
 Further, there are concerns these metrics are easily gamed by optimizing for the underlying model that created these metrics, which may or may not lead to improvement in the longterm outcome of interest.
-さらに、これらの測定基準は、これらの測定基準を作成した基礎モデルに対して最適化することで、簡単にゲーム化される懸念がある。
+さらに、これらの指標は、これらの指標を作成した基本モデルの最適化によって簡単にゲーム化される(=ハックされるってこと?)可能性があり、それが長期的な興味の対象の改善につながるかどうかはわからない。
+
+<!-- ここまで読んだ! -->
