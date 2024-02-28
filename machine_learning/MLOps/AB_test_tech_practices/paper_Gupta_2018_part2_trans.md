@@ -51,30 +51,54 @@ Knowledge of these differences can be valuable for detecting outlier segments th
 It is a very common practice to define key segments based on product and user knowledge.
 製品やユーザの知識に基づいて主要セグメントを定義するのは、ごく一般的なやり方だ。
 Where possible, it is preferred to define segments so that the treatment does not interact with the segment definition to avoid bias.
-可能であれば、バイアスを避けるために、治療がセグメント定義と相互作用しないようにセグメントを定義することが望ましい。
-Here are some of commonly defined segments for many software products and services: 1.
-以下は、多くのソフトウェア製品やサービスにおいて一般的に定義されているセグメントである： 1.
-Market/country: Market is commonly used by all companies with global presence who are running experiments and shipping features across different markets.
-市場/国： Marketは、さまざまな市場で実験や出荷を行うグローバル企業でよく使われる。
-When there are too many markets, it is useful to put them into larger categories or buckets like markets already with high penetration and growing markets or markets clustered by language.2.User activity level: Classifying users based on their activity level into heavy, light and new users can show interesting HTE. 2.ユーザーの活動レベル 市場が多すぎる場合、すでに浸透度の高い市場や成長中の市場、あるいは言語によってクラスター化された市場など、より大きなカテゴリーやバケットに分類することが有効である： 2.ユーザーの活動レベル：ユーザーの活動レベルに基づいて、ヘビーユーザー、ライトユーザー、新規ユーザーに分類すると、興味深いHTEを示すことができる。
-It is important to have this classification based on data before the experiment started to avoid any bias.3.Device and platform: Today most products have both desktop and mobile application.
-バイアスを避けるために、実験開始前のデータに基づいてこの分類を行うことが重要である。3.デバイスとプラットフォーム： 今日、ほとんどの製品はデスクトップとモバイルの両方のアプリケーションを持っています。
+可能であれば、バイアスを避けるために、セグメント定義とtreatmentが相互作用しないようにセグメントを定義することが望ましい。(RCTのランダム化がセグメント定義と相関しないように、みたいなこと?)
+Here are some of commonly defined segments for many software products and services:
+以下は、多くのソフトウェア製品やサービスにおいて一般的に定義されているセグメントである]
+
+#### Market/country:
+
+Market is commonly used by all companies with global presence who are running experiments and shipping features across different markets.
+市場は、異なる市場に実験を実施し、機能をリリースしているグローバル企業によって一般的に使用されている。
+When there are too many markets, it is useful to put them into larger categories or buckets like markets already with high penetration and growing markets or markets clustered by language.
+市場が多すぎる場合、市場がすでに浸透している市場や成長市場、言語によってクラスター化された市場など、より大きなカテゴリーやバケットに分類することが有効である。
+
+#### 2.User activity level:
+
+Classifying users based on their activity level into heavy, light and new users can show interesting HTE.
+ユーザの活動レベルに基づいてユーザを重度、軽度、新規ユーザに分類することで、興味深いHTEが示されることがある。
+It is important to have this classification based on data before the experiment started to avoid any bias.
+バイアスを避けるために、実験が開始される前のデータに基づいてこの分類を行うことが重要である。
+
+#### 3.Device and platform:
+
+Today most products have both desktop and mobile application.
+今日、ほとんどの製品はデスクトップとモバイルアプリケーションの両方を持っている。
 We can test most backend server-side features across devices and platforms.
 デバイスやプラットフォームを問わず、ほとんどのバックエンドサーバーサイドの機能をテストすることができます。
 With device and platform fragmentation, it is getting harder to eliminate bugs for all devices and platforms.
-デバイスやプラットフォームの断片化により、すべてのデバイスやプラットフォームのバグを排除することは難しくなっている。
+デバイスやプラットフォームの分散化により、すべてのデバイスやプラットフォームのバグを排除するのが難しくなっています。
 Using device and platform segments in A/B testing is essential to flag potential bugs using live traffic.
-A/Bテストでデバイスとプラットフォームのセグメントを使用することは、ライブトラフィックを使用して潜在的なバグにフラグを立てるために不可欠である。
+A/Bテストでデバイスとプラットフォームのセグメントを使用することは、ライブトラフィックを使用して潜在的なバグをフラグ付けするために不可欠である。(??)
 For example, in a recent experiment, a feature of the Outlook mobile app was moving key metrics on all Android devices except a few versions, which indicated further investigation was needed.
-例えば、最近の実験では、アウトルック・モバイル・アプリのある機能が、一部のバージョンを除くすべてのアンドロイド端末で主要な指標を動かしていた。
+例えば、最近の実験では、Outlookモバイルアプリの機能が、一部のバージョンを除いてすべてのAndroidデバイスで主要なメトリックを移動していたため、さらなる調査が必要であることが示された。
 Device and platforms also represent different demographics.
 デバイスやプラットフォームもまた、さまざまな層を表している。
-Many studies show a difference between iOS users and Android users.4.Time and day of week: Another common segment used is time.
-多くの調査で、iOSユーザーとAndroidユーザーの違いが示されている： もう1つの一般的なセグメントは時間である。
-Plotting the effects delta or percent delta by day can show interesting patterns, such as the weekday and weekend effect, reveal a novelty effect [13], and help flag data quality issues.5.Product specific segments: LinkedIn segmented users by normal user and recruiter.
-日別の効果デルタまたはパーセント・デルタをプロットすることで、平日と週末 の効果など興味深いパターンを示すことができ、新規性効果[13]を明らかにし、データ品質 の問題にフラグを立てるのに役立つ： LinkedInは、通常ユーザーとリクルーターによってユーザーをセグメ ントした。
+Many studies show a difference between iOS users and Android users.
+多くの調査で、iOSユーザーとAndroidユーザーの違いが示されている。
+
+#### 4.Time and day of week:
+
+Another common segment used is time.
+もう一つの一般的に使用されるセグメントは時間である。
+Plotting the effects delta or percent delta by day can show interesting patterns, such as the weekday and weekend effect, reveal a novelty effect [13], and help flag data quality issues.
+日ごとに効果のデルタ(=差分)やパーセントデルタをプロットすることで、平日と週末の効果、新規性の効果[13]など、興味深いパターンが明らかになり、データ品質の問題をフラグ付けするのに役立つ。
+
+#### 5.Product specific segments:
+
+LinkedIn segmented users by normal user and recruiter.
+LinkedInは、通常のユーザとリクルータによってユーザをセグメント化している。
 On Twitter, some handles can belong to a single user, so it is useful to segment Twitter handles by primary or secondary account.
-Twitterでは、いくつかのハンドルネームが1人のユーザーに属していることがあるため、プライマリーアカウントやセカンダリーアカウントでTwitterのハンドルネームをセグメントすることが有効です。
+Twitterでは、いくつかのハンドルが1人のユーザに属することがあるため、Twitterハンドルを主要アカウントと副次アカウントによってセグメント化することが有用である。
 For Netflix, network speed and device types have proved to be good segments.
 Netflixの場合、ネットワーク速度とデバイスの種類が良いセグメントであることが証明されている。
 Airbnb has found that segments of customers based on whether they have booked before and based on from where they first arrived on Airbnb site are useful.
@@ -85,45 +109,64 @@ Airbnbは、以前に予約したかどうかや、Airbnbのサイトを最初�
 Our community recognizes a lot of recent work from both academia and industry.
 私たちのコミュニティは、学界と産業界の両方から多くの最近の仕事を認めている。
 The most common mental model is the linear model with a first-order interaction term between treatment assignment and covariates 𝑋: 𝑌 = 𝜃 + 𝛿𝑇 + 𝛽 × 𝑇 × 𝑋 + 𝜖 .
-最も一般的なメンタル・モデルは、治療割り付けと共変量𝑋の間の一次交互作用項を持つ線形モデルである： 𝑌 = 𝜃 + 𝑇 + 𝛽 × 𝑇 × 𝑋 + 𝜖 .
+最も一般的なメンタル・モデルは、treatment割り当てと共変量 $X$ の間の1次の相互作用項を持つ線形モデルである：$Y = \theta + \delta T + \beta \times T \times X + \epsilon$。
+
 Most useful segments used by the community are categorical, so the linear model suffices.
 コミュニティで使用されるほとんどの有用なセグメントはカテゴリカルであるため、線形モデルで十分である。
 There is consensus that the first-order treatment effect adjustment by a single covariate, such as a segment of one categorical variable, is the most actionable.
-1つのカテゴリー変数のセグメントなど、1つの共変量による1次治療効果調整が最も実用的であるというコンセンサスがある。
+1つの共変量（例えば、1つのカテゴリカル変数のセグメント）による1次治療効果の調整が最も実行可能であるという合意がある。
 One active area of research is adapting more MLMs for identifying HTE [74].
-HTEを特定するために、より多くのMLMを適応させることが、活発な研究分野の1つである[74]。
+HTEを特定するために、より多くのMLM(=??)を適応させることが、活発な研究分野の1つである[74]。
+
 Nevertheless, there are a lot of outstanding challenges: 1.
-とはいえ、未解決の課題も多い： 1.
-Computation scale: Because A/B tests routinely analyze hundreds or thousands of metrics on millions of experiment units (users), the resources and time spent on an automatically scheduled analysis cannot be too much to ensure that results are not delayed and are not too expensive to generate.
-計算規模： A/Bテストでは、数百万単位の実験ユニット（ユーザー）に対して、数百から数千のメトリクスを分析することが日常的に行われるため、自動スケジュール分析に費やすリソースと時間は、結果が遅延せず、生成にコストがかかりすぎないようにするためには、多すぎることはない。
-There is a desire to use a simple algorithm directly formulated using sufficient statistics, instead of using individual-unit level data.2.Low Signal Noise Ratio (SNR): A/B testing is already dealing with low power to estimate the average treatment effect.
-個体レベルのデータを使用する代わりに、十分な統計量を使用して直接定式化された単純なアルゴリズムを使用したいという要望がある。2.低信号雑音比（SNR）： A/Bテストは、平均的な治療効果を推定するために、すでに低い検出力を扱っている。
-Learning HTE is even harder than learning ATE because of the reduced sample sizes in each subpopulation.3.Multiple Testing Problem [66]: There is a severe multiple testing problem when looking at many metrics, and many possible ways to segment the population. 3.多重検定問題 [66]．多くの指標を見る場合、また母集団を区分する多くの可能な方法を見る場合、深刻な多重検定の問題がある。
-This issue, along with low SNR further complicates HTE estimations.4.Interpretable and memorable results: Most experimenters are not experts in statistics or machine learning.
-この問題は、低SNRとともにHTE推定をさらに複雑にする。4.解釈可能で記憶に残る結果： ほとんどの実験者は統計や機械学習の専門家ではない。
-You must have concise and memorable result summaries to facilitate experimenters to act.5.Absolute vs.
-実験者が行動しやすいように、簡潔で記憶に残る結果要約が必要である。
-Relative: While determining the HTE, you must decide whether you will use absolute CATE or relative CATE (as a percentage of average value of the metric in control).
-相対的： HTEを決定する際、絶対的CATEを使用するか、相対的CATE（管理対象の指標の平均値に対するパーセンテージ）を使用するかを決定しなければならない。
-In many cases it makes sense to use the relative CATE as the baseline or the average value of a control metric can be very different for different segments, like different countries.
-多くの場合、ベースラインとして相対的なCATEを使用することは理にかなっている。あるいは、コントロール指標の平均値は、異なる国のように異なるセグメントで大きく異なることがある。
-Use a relative CATE to normalize the treatment effect in different segments.
-異なるセグメントにおける治療効果を正規化するために、相対CATEを使用する。
-To tackle these challenges, there are common approaches companies take.1.Separate on-demand and scheduled analysis. 1.オンデマンド分析とスケジュール分析を分ける。
-For ondemand analysis, people are willing to spend more resources and wait longer to get results.
-オンデマンド分析では、人々は結果を得るためにより多くのリソースを費やし、より長く待つことを厭わない。
-For this kind of one-off analysis, linear regression with sparsity (L1 and elastic net) and tree-based algorithms, like causal tree, are very popular.
-このような一回限りの分析には、スパース性を持つ線形回帰（L1やエラスティックネット）や、因果木のような木ベースのアルゴリズムが非常によく使われる。
-Double ML also gained a lot of attention recently [14].2.Because of the challenge of low SNR and multiple testing, sparse modeling is a must. 2.低SNRと多検査という課題のため、スパースモデリングは必須である。
-Even if the ground truth is not sparse, there are limited resources that experimenters can spend on learning and taking actions based on HTE.
-地上真実がまばらでないとしても、実験者がHTEに基づく学習や行動に費やせるリソースには限りがある。
-Sparse modeling forces concise results.3.To make results memorable, when certain segment has many values, markets might have a lot of values, it is desired to merge those values based on a common effect. 3.結果を記憶に残るものにするために、あるセグメントが多くの値を持つ場合、市場は多くの値を持つ可能性があり、共通の効果に基づいてそれらの値をマージすることが望まれる。
-For instance, the effect might be different for Asian markets compared to rest of the world.
-例えば、アジア市場とそれ以外の市場では効果が異なるかもしれない。
-Instead of reporting market HTE and list treatment effect estimates for individual markets, it is better to merge Asian markets and the rest of the world, and report only two different effect estimates.
-個々の市場について、市場HTEとリスト治療効果推定値を報告する代わりに、アジア市場とその他の市場を統合し、2つの異なる効果推定値のみを報告する方がよい。
-Algorithms that can perform regression and clustering is preferred in these cases, including Fused Lasso [69] and Total Variation Regularization.
-このようなケースでは、Fused Lasso [69]やTotal Variation Regularizationなど、回帰とクラスタリングを実行できるアルゴリズムが好まれます。
+とはいえ、未解決の課題も多い：
+
+- 1. **Computation scale:** Because A/B tests routinely analyze hundreds or thousands of metrics on millions of experiment units (users), the resources and time spent on an automatically scheduled analysis cannot be too much to ensure that results are not delayed and are not too expensive to generate.
+     計算規模： A/Bテストは、何百ものメトリックを何百万もの実験単位（ユーザ）で定期的に分析するため、結果が遅れることなく、生成に高すぎないことを保証するために、自動スケジュールされた分析に費やされるリソースと時間は多すぎてはならない。
+     There is a desire to use a simple algorithm directly formulated using sufficient statistics, instead of using individual-unit level data.
+     個体レベルのデータを使用する代わりに、十分な統計量を使用して直接定式化された単純なアルゴリズムを使用したいという要望がある。
+- 2.**Low Signal Noise Ratio (SNR)**: A/B testing is already dealing with low power to estimate the average treatment effect.
+  低信号雑音比（SNR）： A/Bテストはすでに平均治療効果を推定するための低いパワーを扱っている。
+  Learning HTE is even harder than learning ATE because of the reduced sample sizes in each subpopulation.
+  HTEを学習することは、各サブポピュレーションのサンプルサイズが減少するため、ATEを学習するよりもさらに難しい。
+
+- 3.**Multiple Testing Problem** [66]: There is a severe multiple testing problem when looking at many metrics, and many possible ways to segment the population. 3.多重検定問題 [66]．多くの指標を見る場合、また母集団を区分する多くの可能な方法を見る場合、深刻な多重検定の問題がある。
+  This issue, along with low SNR further complicates HTE estimations.
+  この問題は、低SNRとともにHTE推定をさらに複雑にする。
+
+- 4.**Interpretable and memorable results**: Most experimenters are not experts in statistics or machine learning. 4.解釈可能で記憶に残る結果： ほとんどの実験者は統計や機械学習の専門家ではない。
+  You must have concise and memorable result summaries to facilitate experimenters to act.
+  実験者が行動するためには、簡潔で記憶に残る結果の要約が必要である。
+- 5.Absolute vs. Relative: While determining the HTE, you must decide whether you will use absolute CATE or relative CATE (as a percentage of average value of the metric in control).
+  絶対的対相対的： HTEを決定する際、絶対的CATEを使用するか、相対的CATE（管理対象の指標の平均値に対するパーセンテージ）を使用するかを決定しなければならない。
+  相対的： HTEを決定する際、絶対的CATEを使用するか、相対的CATE（管理対象の指標の平均値に対するパーセンテージ）を使用するかを決定しなければならない。
+  In many cases it makes sense to use the relative CATE as the baseline or the average value of a control metric can be very different for different segments, like different countries.
+  多くの場合、ベースラインとして相対的なCATEを使用することは理にかなっている。あるいは、コントロール指標の平均値は、異なる国のように異なるセグメントで大きく異なることがある。
+  Use a relative CATE to normalize the treatment effect in different segments.
+  異なるセグメントにおける治療効果を正規化するために、相対CATEを使用する。
+
+To tackle these challenges, there are common approaches companies take.
+これらの課題に対処するために、企業が取る一般的なアプローチがある。
+
+- 1.Separate on-demand and scheduled analysis.
+  For ondemand analysis, people are willing to spend more resources and wait longer to get results.
+  オンデマンド分析では、人々は結果を得るためにより多くのリソースを費やし、より長く待つことを厭わない。
+  For this kind of one-off analysis, linear regression with sparsity (L1 and elastic net) and tree-based algorithms, like causal tree, are very popular.
+  このような一回限りの分析には、スパース性を持つ線形回帰（L1やエラスティックネット）や、因果木のような木ベースのアルゴリズムが非常によく使われる。
+  Double ML also gained a lot of attention recently [14].
+  最近では、Double MLも多くの注目を集めている[14]。
+- 2.Because of the challenge of low SNR and multiple testing, sparse modeling is a must. 2.低SNRと多重検定の課題のため、スパースモデリングは必須である。
+  Even if the ground truth is not sparse, there are limited resources that experimenters can spend on learning and taking actions based on HTE.
+  ground-truthがスパースでなくても、実験者がHTEに基づいて学習し、行動を起こすために費やすことができるリソースは限られている。
+  Sparse modeling forces concise results.3.To make results memorable, when certain segment has many values, markets might have a lot of values, it is desired to merge those values based on a common effect. 3.結果を記憶に残るものにするために、あるセグメントが多くの値を持つ場合、市場は多くの値を持つ可能性があり、共通の効果に基づいてそれらの値をマージすることが望まれる。
+  For instance, the effect might be different for Asian markets compared to rest of the world.
+  例えば、アジア市場とそれ以外の市場では効果が異なるかもしれない。
+  Instead of reporting market HTE and list treatment effect estimates for individual markets, it is better to merge Asian markets and the rest of the world, and report only two different effect estimates.
+  個々の市場について、市場HTEとリスト治療効果推定値を報告する代わりに、アジア市場とその他の市場を統合し、2つの異なる効果推定値のみを報告する方がよい。
+  Algorithms that can perform regression and clustering is preferred in these cases, including Fused Lasso [69] and Total Variation Regularization.
+  このようなケースでは、Fused Lasso [69]やTotal Variation Regularizationなど、回帰とクラスタリングを実行できるアルゴリズムが好まれます。
+
+<!-- ↑の章よくわからん -->
 
 ### 5.2.3. Correlation is not Causation 5.2.3. 相関関係は因果関係ではない
 
