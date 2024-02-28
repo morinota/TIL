@@ -107,6 +107,8 @@ MLflowによる実験管理を実現する為には、以下の4種類の機構�
 
 ## 手順5: 結果表示UIの立ち上げ
 
+- MLflow UIをブラウザ上で立ち上げる事で、実験結果を確認できる。
+
 # MLflow Projectsについて
 
 # MLflow Modelsについて
