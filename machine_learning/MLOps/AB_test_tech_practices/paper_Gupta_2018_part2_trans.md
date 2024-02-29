@@ -51,9 +51,9 @@ Knowledge of these differences can be valuable for detecting outlier segments th
 It is a very common practice to define key segments based on product and user knowledge.
 製品やユーザの知識に基づいて主要セグメントを定義するのは、ごく一般的なやり方だ。
 Where possible, it is preferred to define segments so that the treatment does not interact with the segment definition to avoid bias.
-可能であれば、バイアスを避けるために、セグメント定義とtreatmentが相互作用しないようにセグメントを定義することが望ましい。(RCTのランダム化がセグメント定義と相関しないように、みたいなこと?)
+可能であれば、バイアスを避けるために、セグメント定義とtreatmentが相互作用しないようにセグメントを定義することが望ましい。(RCTのランダム化がセグメント定義と相関しないように、みたいなことかな?)
 Here are some of commonly defined segments for many software products and services:
-以下は、多くのソフトウェア製品やサービスにおいて一般的に定義されているセグメントである]
+以下は、多くのソフトウェア製品やサービスにおいて一般的に定義されているセグメントである
 
 #### Market/country:
 
@@ -139,41 +139,42 @@ Nevertheless, there are a lot of outstanding challenges: 1.
   実験者が行動するためには、簡潔で記憶に残る結果の要約が必要である。
 - 5.Absolute vs. Relative: While determining the HTE, you must decide whether you will use absolute CATE or relative CATE (as a percentage of average value of the metric in control).
   絶対的対相対的： HTEを決定する際、絶対的CATEを使用するか、相対的CATE（管理対象の指標の平均値に対するパーセンテージ）を使用するかを決定しなければならない。
-  相対的： HTEを決定する際、絶対的CATEを使用するか、相対的CATE（管理対象の指標の平均値に対するパーセンテージ）を使用するかを決定しなければならない。
   In many cases it makes sense to use the relative CATE as the baseline or the average value of a control metric can be very different for different segments, like different countries.
   多くの場合、ベースラインとして相対的なCATEを使用することは理にかなっている。あるいは、コントロール指標の平均値は、異なる国のように異なるセグメントで大きく異なることがある。
   Use a relative CATE to normalize the treatment effect in different segments.
-  異なるセグメントにおける治療効果を正規化するために、相対CATEを使用する。
+  異なるセグメントにおける治療効果を正規化するために、相対的CATEを使用する。
+  (絶対値か、何倍、みたいな相対的な表現を使うか、みたいな話...??:thinking_face:)
 
 To tackle these challenges, there are common approaches companies take.
 これらの課題に対処するために、企業が取る一般的なアプローチがある。
 
-- 1.Separate on-demand and scheduled analysis.
-  For ondemand analysis, people are willing to spend more resources and wait longer to get results.
-  オンデマンド分析では、人々は結果を得るためにより多くのリソースを費やし、より長く待つことを厭わない。
-  For this kind of one-off analysis, linear regression with sparsity (L1 and elastic net) and tree-based algorithms, like causal tree, are very popular.
-  このような一回限りの分析には、スパース性を持つ線形回帰（L1やエラスティックネット）や、因果木のような木ベースのアルゴリズムが非常によく使われる。
-  Double ML also gained a lot of attention recently [14].
-  最近では、Double MLも多くの注目を集めている[14]。
-- 2.Because of the challenge of low SNR and multiple testing, sparse modeling is a must. 2.低SNRと多重検定の課題のため、スパースモデリングは必須である。
-  Even if the ground truth is not sparse, there are limited resources that experimenters can spend on learning and taking actions based on HTE.
-  ground-truthがスパースでなくても、実験者がHTEに基づいて学習し、行動を起こすために費やすことができるリソースは限られている。
-  Sparse modeling forces concise results.3.To make results memorable, when certain segment has many values, markets might have a lot of values, it is desired to merge those values based on a common effect. 3.結果を記憶に残るものにするために、あるセグメントが多くの値を持つ場合、市場は多くの値を持つ可能性があり、共通の効果に基づいてそれらの値をマージすることが望まれる。
-  For instance, the effect might be different for Asian markets compared to rest of the world.
-  例えば、アジア市場とそれ以外の市場では効果が異なるかもしれない。
-  Instead of reporting market HTE and list treatment effect estimates for individual markets, it is better to merge Asian markets and the rest of the world, and report only two different effect estimates.
-  個々の市場について、市場HTEとリスト治療効果推定値を報告する代わりに、アジア市場とその他の市場を統合し、2つの異なる効果推定値のみを報告する方がよい。
-  Algorithms that can perform regression and clustering is preferred in these cases, including Fused Lasso [69] and Total Variation Regularization.
-  このようなケースでは、Fused Lasso [69]やTotal Variation Regularizationなど、回帰とクラスタリングを実行できるアルゴリズムが好まれます。
+- 1. Separate on-demand and scheduled analysis.
+     For ondemand analysis, people are willing to spend more resources and wait longer to get results.
+     オンデマンド分析では、人々は結果を得るためにより多くのリソースを費やし、より長く待つことを厭わない。
+     For this kind of one-off analysis, linear regression with sparsity (L1 and elastic net) and tree-based algorithms, like causal tree, are very popular.
+     このような一回限りの分析には、スパース性を持つ線形回帰（L1やエラスティックネット）や、因果木のような木ベースのアルゴリズムが非常によく使われる。
+     Double ML also gained a lot of attention recently [14].
+     最近では、Double MLも多くの注目を集めている[14]。
+- 2. Because of the challenge of low SNR and multiple testing, sparse modeling is a must. 2.低SNRと多重検定の課題のため、スパースモデリングは必須である。
+     Even if the ground truth is not sparse, there are limited resources that experimenters can spend on learning and taking actions based on HTE.
+     ground-truthがスパースでなくても、実験者がHTEに基づいて学習し、行動を起こすために費やすことができるリソースは限られている。
+     Sparse modeling forces concise results.
+- 3. To make results memorable, when certain segment has many values, markets might have a lot of values, it is desired to merge those values based on a common effect. 3.結果を記憶に残るものにするために、あるセグメントが多くの値を持つ場合、市場は多くの値を持つ可能性があり、共通の効果に基づいてそれらの値をマージすることが望まれる。
+     For instance, the effect might be different for Asian markets compared to rest of the world.
+     **例えば、アジア市場とそれ以外の市場では効果が異なるかもしれない**。
+     Instead of reporting market HTE and list treatment effect estimates for individual markets, it is better to merge Asian markets and the rest of the world, and report only two different effect estimates.
+     個々の市場について、市場HTEとリスト治療効果推定値を報告する代わりに、アジア市場とその他の市場を統合し、2つの異なる効果推定値のみを報告する方がよい。
+     Algorithms that can perform regression and clustering is preferred in these cases, including Fused Lasso [69] and Total Variation Regularization.
+     このようなケースでは、Fused Lasso [69]やTotal Variation Regularizationなど、回帰とクラスタリングを実行できるアルゴリズムが好まれます。
 
-<!-- ↑の章よくわからん -->
+<!-- ↑の章よくわかってない...! -->
 
 ### 5.2.3. Correlation is not Causation 5.2.3. 相関関係は因果関係ではない
 
 Another difficulty in acting based on HTE results is more fundamental: HTE results are not causal, only correlational.
 HTEの結果に基づいて行動することのもう一つの難しさは、より根本的なものである： HTEの結果は因果関係ではなく、相関関係にすぎない。
 HTE is a regression to predict individual treatment effect based on covariates 𝑋.
-HTEは、共変量𝑋に基づいて個々の治療効果を予測する回帰である。
+**HTEは、共変量𝑋に基づいて個々の治療効果を予測する回帰である。** (HTEってそうなのか...!)
 There is no guarantee that predictor 𝑋 explains the root cause of the HTE.
 予測変数𝑋がHTEの根本原因を説明するという保証はない。
 In fact, when covariates 𝑋 are correlated, there might be even issues like collinearity.
@@ -191,16 +192,19 @@ Historical patterns and knowledge about whether investigating a segment 𝑋 hel
 
 # 6. Developing Experimentation Culture 6. 実験文化の発展
 
+<!-- section 5の理解は一旦飛ばそう! section 6が大事そう...! -->
+
 ## 6.1. Problem # 6.1.Problem
 
 Culture is the tacit social order of an organization.
-文化とは、組織の暗黙の社会秩序である。
+**文化とは、組織の暗黙の社会秩序**である。
 It shapes attitudes and behaviors in wide-ranging and durable ways.
 それは、広範かつ永続的な方法で態度や行動を形成する。
 Cultural norms define what is encouraged, discouraged, accepted, or rejected within a group [35].
-文化的規範は、集団の中で何が奨励され、何が落胆され、何が受け入れられ、何が拒否されるかを規定するものである［35］。
+**文化的規範は、集団の中で何が奨励され、何が落胆され、何が受け入れられ、何が拒否されるかを規定するもの**である［35］。
 There is a big challenge in creating an experiment-driven product development culture in an organization.
 組織内に実験主導の製品開発文化を生み出すには、大きな課題がある。
+
 Cultural change involves transformation of an organization through multiple phases.
 文化的変化には、複数の段階を経た組織の変革が含まれる。
 There may be hubris at first, where every idea of the team is considered a winner.
@@ -209,14 +213,15 @@ Then there may be introduction of some skepticism as the team begins experimenta
 チームが実験を開始し、その直感が問われるようになると、懐疑的な見方が導入されるかもしれない。
 Finally, a culture develops where there is humility about our value judgement of different ideas, and better understanding of the product and customers [3].
 最終的には、異なるアイデアに対する価値判断に謙虚になり、製品や顧客に対する理解を深める文化が育まれる[3]。
+
 It is well known that our intuition is a poor judge for the value of ideas.
 私たちの直感がアイデアの価値を判断するのに適していないことはよく知られている。
 Case studies at Microsoft showed a third of all ideas tested through an OCE succeed in showing statistically significant improvements in key metrics of interest, and a third showed statistically significant regressions.
-マイクロソフトのケーススタディによれば、OCEを通じてテストされたアイデアの3分の1が、関心のある主要指標において統計的に有意な改善を示し、3分の1が統計的に有意な後退を示した。
+Microsoftの事例研究では、OCEを通じてテストされたすべてのアイデアのうち、3分の1が興味のある主要なメトリックで統計的に有意な改善を示し、3分の1が統計的に有意な退行をしめした。
 Similar results have been noted by many major software companies [3, 17, 28, 47, 56, 60].
 同様の結果は、多くの大手ソフトウェア会社でも指摘されている[3, 17, 28, 47, 56, 60]。
 Yet it can be hard to subject your idea to an OCE and receive negative feedback, especially when you have spent a lot of time working on implementing it and selling it to your team.
-とはいえ、自分のアイデアをOCEの対象にして否定的なフィードバックを受けるのは、特に、そのアイデアの実装やチームへの売り込みに多くの時間を費やしてきたときには、つらいことかもしれない。
+**とはいえ、自分のアイデアをOCEの対象にして否定的なフィードバックを受けるのは、特に、そのアイデアの実装やチームへの売り込みに多くの時間を費やしてきたときには、つらいことかもしれない**。
 This phenomenon is not unique to the software industry.
 この現象はソフトウェア業界に限ったことではない。
 It is generally referred to as Semmelweis Reflex, based on the story of the long and hard transition of mindset among doctors about the importance of hygiene and having clean hands and scrubs before visiting a patient [65].
@@ -226,114 +231,141 @@ It takes a while to transition from a point where negative experiment results fe
 You must enact a paradigm shift to put your customers and business in focus and listen to customer responses.
 顧客とビジネスに焦点を当て、顧客の反応に耳を傾けるパラダイム・シフトを実施しなければならない。
 At that point, negative experiment results are celebrated as saving customers and your business from harm.
-その時点で、否定的な実験結果は、顧客とあなたのビジネスを害から救うものとして称賛される。
+その時点で、**否定的な実験結果は、顧客とあなたのビジネスを害から救うものとして称賛される**。
 Note that not only bad ideas (including bloodletting [11]) appear as great ideas to a human mind, we are also likely to discount the value of great ideas (including good hand hygiene for doctors [65]).
-人間の心には、悪いアイデア（瀉血[11]を含む）が素晴らしいアイデアに見えるだけでなく、素晴らしいアイデア（医師の手指衛生の良さ[65]を含む）の価値も割り引いて考えてしまう可能性があることに注意しよう。
+人間の心には、悪いアイデア（瀉血[11]を含む）が素晴らしいアイデアに見えるだけでなく、**素晴らしいアイデア（医師の手指衛生の良さ[65]を含む）の価値も割り引いて考えてしまう可能性があることに注意しよう**。
 There are cases where an idea that languished in the product backlog for months as no one thought it was valuable turns out to be one of the best ideas for the product in its history [51].
-誰も価値を見いだせず、何カ月もプロダクトバックログに滞留していたアイデアが、製品史上最高のアイデアになるケースもある[51]。
+誰もそれが価値があるとは思わなかったために、何ヶ月も製品のバックログに放置されていたアイデアが、その製品の歴史上最高のアイデアの1つであることが判明した事例もある[51]。
+
 A culture of working together towards the common goal of improving products through OCEs amplifies the benefits of controlled experimentation at scale [32].
-OCEを通じて製品を改善するという共通の目標に向かって協力する文化は、管理された規模での実験の利点を増幅させる[32]。
+OCEを通じて製品を改善するという共通の目標に向かって協力する文化は、大規模な実験の利点を増幅させる[32]。
 This paves the way for frictionless integration of OCEs into the development process, and makes it easy to run an OCE to test an idea, get automated and trustworthy analysis of this experiment quickly, and interpret the results to take the next step: ship the feature, iterate, or discard the idea.
-これにより、OCEを開発プロセスに摩擦なく統合する道が開かれ、アイデアをテストするためにOCEを実行し、この実験の自動化された信頼できる分析を素早く入手し、結果を解釈して次のステップに進むことが容易になる： そして、その結果を解釈して、次のステップに進むことができる。
+これにより、OCEを開発プロセスに摩擦なく統合する道が開かれ、アイデアをテストし、この実験の自動化された信頼性のある分析を迅速に行い、結果を解釈して次のステップを踏むことが容易になる：機能をリリースする、反復する、またはアイデアを破棄する。
 A strong experimentation culture ensures that all changes to the product are tested using OCEs and teams benefit from OCEs discovering valuable improvements while not degrading product quality.
-強力な実験文化は、製品へのすべての変更がOCEを使用してテストされることを保証し、チームはOCEによって製品品質を低下させることなく、価値ある改善を発見するという恩恵を受ける。
+強力な実験文化は、製品へのすべての変更がOCEを使用してテストされ、チームが製品の品質を低下させることなく、価値ある改善を発見するOCEから利益を得ることを保証する。
 It allows you to streamline product development discussions so everyone understands the OEC for the product and can take an objective decision to ship a feature based on the impact on the OEC metric.
-これにより、製品開発のディスカッションを効率化し、誰もが製品のOECを理解し、OEC指標への影響に基づいて機能の出荷を客観的に判断できるようになります。
+これにより、**製品開発の議論を効率化し、製品のOECを理解しているすべての人が、OEC指標への影響に基づいて機能をリリースするための客観的な意思決定を行うことができる**。(OECの作り方大事だよな...!)
 This gives developers freedom to build and test different ideas with minimum viable improvements without having to sell the entire team on the idea beforehand.
-これによって開発者は、事前にチーム全体にアイデアを売り込むことなく、最小実行可能改善でさまざまなアイデアを構築し、テストする自由を得ることができる。
+これによって開発者は、最小限の改善を伴うさまざまなアイデアを構築し、テストする自由を持つことができ、事前にチーム全体にアイデアを売り込む必要がなくなる。
 And allows the team to make future decisions to invest in a product area based on changes to the OEC metric due to features seen in that area.
-また、その分野で見られる機能によるOEC指標の変化に基づいて、製品分野への投資を将来的に決定することができる。
+また、その領域で見られる機能によるOEC指標の変化に基づいて、製品領域に投資するための将来の意思決定をチームに行うことができる。
+
+<!-- ここまで読んだ! -->
 
 ## 6.2. Common Solutions and Challenges
 
 There are many cultural aspects to adoption of OCEs at scale to have a trustworthy estimate of the impact of every change made to a product.
-製品に加えられたすべての変更の影響について信頼に足る推定を行うためには、OCEを大規模に採用するには多くの文化的側面がある。
+製品に加えられたすべての変更の影響を信頼できるように評価するために、OCEの大規模な採用には多くの文化的側面がある。
 
 ### 6.2.1. Experimentation Platform and Tools 6.2.1. 実験プラットフォームとツール
 
 First, we need to make sure that the experimentation platform has the right set of capabilities to support the team.
-まず、実験プラットフォームがチームをサポートする適切な機能を備えていることを確認する必要がある。
+**まず、実験プラットフォームがチームをサポートする適切な機能を備えていることを確認する必要がある**。
 It must be able to test the hypothesis of interest to the product team.
 製品チームにとって関心のある仮説を検証できなければならない。
 To do that one of the of the most important things required is a set of trustworthy and easily interpretable metrics to evaluate a change made to the product.
-そのために必要な最も重要なものの1つは、製品に加えられた変更を評価するための、信頼でき、容易に解釈できる測定基準のセットである。
+そのために必要な最も重要なものの1つは、**製品に加えられた変更を評価するための信頼性のあるかつ簡単に解釈できるmetricsのセット**である。
 In addition, it’s useful if there are easy tools to manage multiple experiments and clearly communicate results from these experiments.
-さらに、複数の実験を管理し、実験結果を明確に伝えるための簡単なツールがあれば便利だ。
+さらに、複数の実験を管理し、実験結果を明確に伝えるための簡単なツールがあると便利である。
 
 ### 6.2.2. Practices, Policies and Capabilities 6.2.2. 実践、方針、能力
 
 The second aspect deals with creating right set of practices, policies, and capabilities to encourage teams to test every change made to their product using OCEs.
-第二の側面は、OCEを使用して製品に加えられたすべての変更をテストすることをチームに奨励するための、適切なプラクティス、ポリシー、および能力のセットを作成することである。
+第二の側面は、OCEを使用して製品に加えられたすべての変更をテストすることをチームに奨励するための、**適切なプラクティス、ポリシー、および能力のセットを作成すること**である。
 The following are strategies that different companies use to achieve this goal.
 以下は、この目標を達成するために各企業が採用している戦略である。
-High Touch: Once per quarter, the LinkedIn experimentation team handpicks a few business-critical teams, prioritizes these teams, and then works closely with them on their needs.
-ハイタッチ： LinkedInの実験チームは、四半期に一度、ビジネスクリティカルなチームを数チーム選び、優先順位をつけ、そのチームのニーズと密接に連携します。
+
+#### High Touch:
+
+Once per quarter, the LinkedIn experimentation team handpicks a few business-critical teams, prioritizes these teams, and then works closely with them on their needs.
+LinkedInの実験チームは、四半期に一度、ビジネスクリティカルなチームを数チーム選び、優先順位をつけ、そのチームのニーズと密接に連携します。
 At the end of the quarter the team agrees they’ll use that experiment platform going forward, and the experimentation team continues to monitor them.
 四半期の終わりには、チームはその実験プラットフォームを今後も使用することに同意し、実験チームはそれを監視し続ける。
 Over several years a data-driven culture is built.
 数年かけてデータ主導の文化が構築される。
 Managers and directors now rely on development teams running experiments before features launch.
 今やマネージャーやディレクターは、開発チームが機能を立ち上げる前に実験を行うことに依存している。
+
 The Microsoft experimentation team selects product teams to onboard based on factors indicative of the impact experimentation has on the product.
 マイクロソフトの実験チームは、実験が製品に与える影響を示す要因に基づいて、参加する製品チームを選択する。
 The experimentation team works very closely with product teams over multiple years to advance the adoption of experimentation and its maturity over time.
-実験チームは、複数年にわたり製品チームと密接に協力し、実験の導入とその成熟を長期的に進める。
+**実験チームは、複数年にわたり製品チームと密接に協力し、実験の導入とその成熟を長期的に進める**。(うちのチームの場合は、実験チーム = プロダクトチームかも。)
 The downside of the High Touch approach is the large overhead in having a deep engagement with every team, and it may become a bottleneck for scaling.
-ハイ・タッチ・アプローチの欠点は、すべてのチームと深く関わることに大きなオーバーヘッドがかかることであり、スケーリングのボトルネックになる可能性がある。
-Top down buy in: It can help if there is a buy-in into experimentation by leadership and they expect every change tested in a controlled experiment.
-トップダウンの賛同： リーダーシップ層が実験に賛同し、管理された実験ですべての変更がテストされることを期待している場合、それは助けになる。
+ハイ・タッチ・アプローチの欠点は、すべてのチームとの深い関与による大きなオーバーヘッドであり、スケーリングのボトルネックになる可能性がある。
+
+#### Top down buy in:
+
+It can help if there is a buy-in into experimentation by leadership and they expect every change tested in a controlled experiment.
+リーダーシップ層が実験に賛同し、管理された実験ですべての変更がテストされることを期待している場合、それは助けになる。
 Further they can set team goals based on moving a metric in controlled experiments.
-さらに、管理された実験において指標を動かすことに基づいてチームの目標を設定することもできる。
+さらに、彼らは管理された実験で指標を動かすことに基づいてチームの目標を設定することができる。
 This creates a culture where all ship decisions are talked about in terms of their impact on key metrics.
-これにより、すべての船の決定が主要な指標への影響という観点から語られる文化が生まれる。
+これにより、**すべての船の決定が主要な指標への影響という観点から語られる文化が生まれる**。
 The product teams celebrate shipping changes that improve key metrics, and equally importantly, celebrate not shipping changes that would cause a regression in key metrics.
-製品チームは、主要メトリクスを改善する変更を出荷することを祝い、同様に重要なことは、主要メトリクスを後退させるような変更を出荷しないことを祝う。
+**製品チームは、主要メトリクスを改善する変更を出荷することを祝い、同様に重要なことは、主要メトリクスを後退させるような変更を出荷しないことを祝う**。
 It is important that the team’s key metrics are determined beforehand and agreed upon by the team.
-チームの重要な指標を事前に決定し、チームで合意しておくことが重要である。
+**チームの重要な指標を事前に決定し、チームで合意しておくことが重要である**。(うんうん...!)
 It is prudent to be cautious about preventing the gaming of metrics or over fitting metric flaws, where the metrics of interest move but are not indicative of improvement in the product.
-メトリクスのゲーミングや、メトリクスのオーバーフィッティングによる欠陥の防止には慎重であるべきである。
+メトリクスのゲーミングやメトリクスの欠陥の過剰適合を防ぐことに注意することが賢明である。興味のあるメトリクスが動くが、製品の改善を示していない場合がある。
 At Netflix a long-standing culture of peer review of experiment results is organized around frequent “Product Strategy” forums where results are summarized and debated amongst experimenters, product managers, and leadership teams before an experiment is “rolled out”.
-ネットフリックスでは、実験結果が「ロールアウト」される前に、実験者、プロダクトマネージャー、リーダーシップチームの間で結果をまとめ、議論する「プロダクト戦略」フォーラムが頻繁に開催され、実験結果のピアレビューを行う文化が長年根付いている。
-Negative and positive case studies: Stories about surprising negative results where a feature that is widely acclaimed as a positive causes a large regression in key metrics, or a surprising positive incident where a small change no one believed would be of consequence causes a large improvement in a metric were great drivers for cultural change.
-ネガティブなケーススタディとポジティブなケーススタディ ポジティブなものとして広く評価されている機能が、主要な測定基準において大幅な後退を引き起こしたという驚くべきネガティブな結果についての話や、誰も結果が出るとは信じていなかった小さな変更が、測定基準において大幅な改善を引き起こしたという驚くべきポジティブな出来事についての話は、文化的変化を促す大きな原動力となった。
+ネットフリックスでは、実験結果の長年にわたる**同僚による査読文化**が、実験が「ロールアウト」される前に、実験者、製品マネージャー、リーダーシップチームの間で結果が要約され、議論される頻繁な「製品戦略」フォーラムの周りに組織されている。
+
+#### Negative and positive case studies:
+
+Stories about surprising negative results where a feature that is widely acclaimed as a positive causes a large regression in key metrics, or a surprising positive incident where a small change no one believed would be of consequence causes a large improvement in a metric were great drivers for cultural change.
+広く称賛されている機能が大きな主要メトリクスの後退を引き起こすという驚くべき否定的な結果や、誰もが重要であるとは思わなかった小さな変更が大きなメトリクスの改善を引き起こすという驚くべき肯定的な**事例についての話は、文化の変化を促進する大きな要因**であった。(オフライン評価の話はまさにこれかも...!)
 These cases drive home a humbling point that our intuition is not a good judge of the value of ideas.
 これらのケースは、私たちの直感はアイデアの価値を判断するのに適していないという謙虚な指摘を突きつけている。
 There are some documented examples the best OCEs with surprising outcomes [4].
 驚くべき結果をもたらした最高のOCEの例がいくつか文書化されている[4]。
 For instance, an engineer at Bing had the idea to make ad titles longer for ads with very short titles.
-例えば、ビングのあるエンジニアは、非常に短いタイトルの広告のタイトルを長くするアイデアを思いついた。
+例えば、**Bingのエンジニアが、非常に短いタイトルの広告に対して広告タイトルを長くするアイデアを持っていた**。
 The change was a simple and cheap, but it was not developed for many months as neither the developer nor the team had much confidence in the idea.
 この変更はシンプルで安価なものだったが、開発者もチームもこのアイデアにあまり自信を持っていなかったため、何カ月も開発が進まなかった。
 When it was finally tested, it caused one of the biggest increases in Bing revenue in history [51].
-最終的にテストされたときには、Bing史上最大級の収益の増加を引き起こした[51]。
-Safe Rollout: It is easier to get a team to adopt experimentation when it fits into their existing processes and makes them better.
-安全なロールアウト： 実験が既存のプロセスに適合し、より良いものになれば、チームを実験に参加させやすくなる。
+**最終的にテストされたときには、Bing史上最大級の収益の増加を引き起こした**[51]。
+
+#### Safe Rollout:
+
+It is easier to get a team to adopt experimentation when it fits into their existing processes and makes them better.
+**実験がチームの既存のプロセスに適合し、それらのプロセスをより良くすると、実験を採用することは簡単である**。
 Some teams at Microsoft and Google began using experimentation as a way to do safe feature rollouts to all users, where an A/B test runs automatically during deployment as the feature is gradually turned on for a portion of users (Treatment) and others (Control) don’t have the feature turned on.
-マイクロソフトやグーグルの一部のチームは、全ユーザーに安全に機能をロールアウトする方法として、実験を使い始めた。そこでは、一部のユーザー（Treatment）には機能を徐々にオンにし、他のユーザー（Control）には機能をオンにしないように、デプロイ時にA/Bテストを自動的に実行する。
+マイクロソフトやグーグルの一部のチームは、**全ユーザに安全に機能をロールアウトする方法として、実験を使い始めた**。そこでは、一部のユーザ (Treatment)には機能を徐々にオンにし、他のユーザー（Control）には機能をオンにしないように、**デプロイ時にA/Bテストを自動的に実行する**。
 During this controlled feature rollout, the feature’s impact estimate on key reliability and userbehavior metrics helped find bugs.
-この管理された機能ロールアウトの間、主要な信頼性とユーザー行動メトリクスに対する機能の影響予測がバグ発見に役立ちました。
+この管理された機能ロールアウトの間、**主要な信頼性とユーザ行動のメトリクスに対する機能の影響の推定値がバグを見つけるのに役立った**。(=このバグを見つけるのに役立った、というのが「チームの既存のプロセスをより良くしている」という点なのか...!:thinking_face:)
+
 This method helps gain a toe hold in the feature team’s development process.
-この方法は、フィーチャー・チームの開発プロセスにおいて、足場を固めるのに役立つ。
+この方法は、機能チームの開発プロセスにおける足場を得るのに役立つ。
 Over time, as the feature team started seeing value in experimentation, they looked forward to using experimentation to test more hypotheses.
-時が経つにつれて、フィーチャー・チームが実験に価値を見出すようになると、彼らはより多くの仮説を検証するために実験を使うことを楽しみにしていた。
-Report cards and Gamification: Microsoft found that they encourage the adoption of OCEs in a set of teams by having a report card for each team that assesses their experimentation maturity level [31].
-レポートカードとゲーミフィケーション： マイクロソフト社は、実験成熟度を評価するレポート・カードをチームごとに用意することで、一連のチームにおけるOCEの採用を奨励していることを発見した[31]。
+時が経つにつれて、機能チームは実験を使ってさらに多くの仮説をテストすることを楽しみにしていた。
+
+#### Report cards and Gamification:
+
+Microsoft found that they encourage the adoption of OCEs in a set of teams by having a report card for each team that assesses their experimentation maturity level [31].
+マイクロソフトは、**各チームに対して実験の成熟度レベルを評価する成績表を持つことで、一連のチームにOCEの採用を奨励することができる**ことを発見した[31]。
 This report card gives the team a way to think about the potential of using experiments to improve the product.
 この成績表は、実験を使って製品を改善する可能性について考える方法をチームに与える。
 It gives the team a measure of its status and relative status among other teams and helps highlight key areas where they can invest to further improve.
 これにより、チームの地位と他のチームとの相対的な地位が測定され、さらなる改善のために投資できる重要な分野が浮き彫りになる。
+
 Booking.com is experimenting with gamification in their experimentation platform where users of the platform can receive badges to encourage the adoption of good practices.
-Booking.comは、彼らの実験プラットフォームでゲーミフィケーションを実験している。そこでは、プラットフォームのユーザーは、グッドプラクティスの採用を奨励するためにバッジを受け取ることができる。
+Booking.comは、**彼らの実験プラットフォームでゲーミフィケーションを試しており、プラットフォームのユーザは、良い実践の採用を奨励するためにバッジを受け取ることができる**。
+
 Twitter and Microsoft also use mascots, like duck [70] and HiPPO [37] to spread awareness about experimentation in their companies.
-ツイッター社やマイクロソフト社も、アヒル[70]やHiPPO[37]のようなマスコットを使って、自社における実験についての認識を広めている。
-Education and support: When a company tests thousands of experiments a year, it is impossible for experimentation teams to monitor each experiment to ensure that experiment analysis is trustworthy.
-教育とサポート： 企業が年間何千もの実験を行う場合、実験チームが各実験を監視し、実験分析が信頼に足るものであることを確認することは不可能である。
+ツイッター社やマイクロソフト社も、アヒル[70]やHiPPO[37]のようなマスコットを使って、自社における実験についての認識を広めている。(??)
+
+#### Education and support:
+
+When a company tests thousands of experiments a year, it is impossible for experimentation teams to monitor each experiment to ensure that experiment analysis is trustworthy.
+企業が年間何千もの実験をテストする場合、**実験チームが各実験を監視して実験分析が信頼できることを確認することは不可能**である。
 It is important that each team has subject matter experts to help them run experiments and ensure that they obtain reliable and trustworthy results.
 各チームが実験を行い、信頼できる結果を得られるようにするためには、各分野の専門家がいることが重要である。
 Educating team members on how to use OCEs to test hypotheses and how to avoid common pitfalls is critical in scaling experimentation adoption.
-仮説を検証するためにOCEをどのように使用し、よくある落とし穴をどのように避けるかについてチームメンバーを教育することは、実験の採用を拡大する上で極めて重要である。
+**仮説を検証するためにOCEをどのように使用し、よくある落とし穴をどのように避けるかについてチームメンバーを教育することは、実験の採用を拡大する上で極めて重要**である。
 We will discuss this important point in detail in section 7.
 この重要な点については、第7節で詳述する。
+
+<!-- ここまで読んだ! -->
 
 # 7. Training Others in the Organisation to scale Experimentation 7. 実験規模を拡大するために組織内の他者を訓練する
 
