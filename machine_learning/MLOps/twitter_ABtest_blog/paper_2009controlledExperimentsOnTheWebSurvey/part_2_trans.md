@@ -207,29 +207,45 @@ We recommend this method for testing changes that introduce significantly differ
 ### 5.2.2. Page rewriting ページの書き換え
 
 Page rewriting is an assignment method that incorporates a special type of proxy server that modifies HTML content before it is presented to the end user.
-ページ書き換えは、エンドユーザーに提示される前にHTMLコンテンツを修正する特殊なタイプのプロキシサーバーを組み込んだ割り当て方法である。
+ページ書き換えは、エンドユーザーに提示される前にHTMLコンテンツを修正する**特殊なタイプのproxyサーバ(=代理サーバ)**を組み込んだ割り当て方法である。
 Using this approach, the end-user’s browser sends a request to the proxy server, which forwards it on to the experimenting website after recording some data.
-このアプローチでは、エンドユーザーのブラウザはプロキシサーバーにリクエストを送り、プロキシサーバーは、いくつかのデータを記録した後、それを実験用ウェブサイトに転送する。
+このアプローチでは、エンドユーザのブラウザはproxyサーバにリクエストを送信し、一部のデータを記録した後、実験用ウェブサイトに転送される。
 Then, the HTML response from the experimenting website passes back through the proxy server on its way to the end user’s browser.
-そして、実験用ウェブサイトからのHTMLレスポンスは、エンドユーザーのブラウザに届く途中でプロキシサーバーを経由して戻ってくる。
+そして、実験用ウェブサイトからのHTMLレスポンスは、エンドユーザーのブラウザに届く途中でproxyサーバを通過する。
 The proxy server applies the randomization algorithm, selects variants for one or more experiments, and modifies the HTML according to the selected variants (e.g.by applying substitution rules expressed as regular expressions or XPath queries).
-プロキシサーバはランダム化アルゴリズムを適用し、1つ以上の実験に対してバリアントを選択し、選択されたバリアントに従ってHTMLを修正します(例えば、正規表現やXPathクエリとして表現された置換ルールを適用することによって)。
+プロキシサーバはランダム化アルゴリズムを適用し、1つ以上の実験に対してvariantを選択し、**選択されたvariantに従ってHTMLを修正する**（例えば、正規表現やXPathクエリとして表現された置換ルールを適用する）。
 The server then sends the modified HTML to the end user’s browser.
-その後、サーバーは修正したHTMLをエンドユーザーのブラウザに送信する。
+その後、proxyサーバは修正されたHTMLをエンドユーザのブラウザに送信する。
 At least one commercial provider (SiteSpect 2008) offers a solution based on this method.
 少なくとも1つの商用プロバイダー（SiteSpect 2008）は、この方法に基づいたソリューションを提供している。
 Like traffic splitting, this method is non-intrusive.
-トラフィックの分割と同様、この方法は非侵入的だ。
-However, it still incurs some disadvantages: 1.
-しかし、それでもいくつかの欠点がある： 1.
-Page render time is impacted by the action of the proxy server.
-ページのレンダリング時間は、プロキシサーバーの動作によって影響を受ける。
-Render time will be affected by both the time required to rewrite the HTML and the network latency between the proxy server and the web server.2.Experimentation on large sites requires significant hardware.
-レンダリング時間は、HTMLの書き換えに要する時間と、プロキシサーバーとウェブサーバー間のネットワーク遅延の両方によって影響を受ける。
-Because the proxy servers both need to handle all potential traffic to the site and may become a point of failure, a large number of servers may be required to ensure scalability and availability of the website.
-プロキシサーバーは、サイトへのすべての潜在的なトラフィックを処理する必要があり、障害点となる可能性があるため、ウェブサイトのスケーラビリティと可用性を確保するためには、多数のサーバーが必要となる可能性がある。
+traffic splittingと同様に、この方法はnon-intrusiveである。(non-intrusiveってなんだっけ??)
+However, it still incurs some disadvantages:
+しかし、それでもいくつかの欠点がある：
 
-3. Development and testing of variant content is more difficult and more error-prone than with other methods. Each variant must be expressed as a set of rules for modifying HTML code rather than as the HTML code itself. 4. Running experiments on backend algorithms is difficult because the assignment decision is made after the page is rendered by the website. 5. Running experiments on encrypted traffic (in particular, pages served via https) is resource-intensive because the proxy server must decrypt, modify, and re-encrypt the content. This represents a significant problem because the most interesting parts of a website (such as the checkout page) are commonly encrypted. Page rewriting can be a cheap method for experimenting on front-end content because it minimizes IT/developer involvement. However, it is not appropriate for testing backend changes or platform migrations. バリアントコンテンツの開発とテストは、他の方法よりも難しく、エラーが起こりやすい。 各バリアントは、HTML コードそのものではなく、HTML コードを修正するためのルールセットとして表現する必要があります。4.バックエンドのアルゴリズムで実験を行うことは、ページがウェブサイトによってレンダリングされた後に割り当ての決定が行われるため、困難です。 なぜなら、ウェブサイトの最も興味深い部分（チェックアウトページなど）は一般的に暗号化されているからだ。 ページの書き換えは、IT/開発者の関与を最小限に抑えることができるため、フロントエンドのコンテンツを実験するための安価な方法となる。 しかし、バックエンドの変更やプラットフォームの移行をテストするには適していない。
+1. Page render time is impacted by the action of the proxy server.
+   ページのレンダリング時間は、proxyサーバの動作によって影響を受ける。
+   Render time will be affected by both the time required to rewrite the HTML and the network latency between the proxy server and the web server.
+   レンダリング時間は、HTMLの書き換えに要する時間と、proxyサーバとウェブサーバとのネットワークの遅延の両方に影響を受ける。
+2. Experimentation on large sites requires significant hardware.
+   大規模なサイトでの実験には、かなりのハードウェアが必要となる。
+   Because the proxy servers both need to handle all potential traffic to the site and may become a point of failure, a large number of servers may be required to ensure scalability and availability of the website.
+   **proxyサーバはサイトへのすべての潜在的なトラフィックを処理する必要があり**、障害の原因となる可能性があるため、ウェブサイトの拡張性と可用性を確保するためには多数のproxyサーバが必要となる場合がある。
+3. Development and testing of variant content is more difficult and more error-prone than with other methods. Each variant must be expressed as a set of rules for modifying HTML code rather than as the HTML code itself.
+   variantコンテンツの開発とテストは、他の方法よりも難しく、エラーが起こりやすい。各variantは、HTMLコードそのものではなく、HTMLコードを修正するためのルールセットとして表現する必要がある。(確かに...!難しそう)
+4. Running experiments on backend algorithms is difficult because the assignment decision is made after the page is rendered by the website.
+   バックエンドのアルゴリズムで実験を行うことは困難である。なぜなら、ウェブサイトがページをレンダリングした後に割り当ての決定が行われるからだ。(フロントエンドの実験限定のアプローチなのか)
+5. Running experiments on encrypted traffic (in particular, pages served via https) is resource-intensive because the proxy server must decrypt, modify, and re-encrypt the content.
+   暗号化されたトラフィック（特にhttps経由で提供されるページ）で実験を実行することは、リソースを多く必要とする。なぜなら、proxyサーバはコンテンツを復号し、(variant毎にHTMLを)修正し、再度暗号化する必要があるからだ。
+   This represents a significant problem because the most interesting parts of a website (such as the checkout page) are commonly encrypted.
+   これは大きな問題を表している。なぜなら、ウェブサイトの最も興味深い部分（チェックアウトページなど）は一般的に暗号化されているからだ。
+
+Page rewriting can be a cheap method for experimenting on front-end content because it minimizes IT/developer involvement.
+ページの書き換えは、IT/開発者の関与を最小限に抑えるため、**フロントエンドのコンテンツを実験するための安価な方法**となる。
+However, it is not appropriate for testing backend changes or platform migrations.
+しかし、バックエンドの変更やプラットフォームの移行をテストするには適していない。
+
+<!-- ここまで読んだ! -->
 
 ### 5.2.3. Client-side assignment クライアント側の割り当て
 
@@ -629,3 +645,48 @@ Some authors have called experimentation the “New Imperative for Innovation”
 一部の著者は、**実験を「イノベーションのための新たな必須条件」（Thomke 2001）と呼び**、"新しいテクノロジーによって、複雑な実験を迅速かつ安価に実施することがかつてないほど容易になっている "と指摘している。**なぜなら、最終的に重要なのは顧客の経験であり、実験を行うことで顧客の声に常に耳を傾けるべきだからだ**。
 
 <!-- ここまで読んだ! -->
+
+# Appendix A
+
+When randomization by user-ID is not appropriate
+user-IDによるランダム化が適切でない場合 (実験単位がユーザでないケースの話...??:thinking_face:)
+
+The approach we describe in this paper is to randomly assign users to one group or another and compare these groups of users to determine which experience (i.e. Treatment) is best.
+本稿で説明するアプローチは、ユーザをランダムに1つのグループまたは他のグループに割り当て、これらのユーザグループを比較して、どの体験（すなわちTreatment）が最良かを決定することです。
+There are some experimentation objectives where this approach will not work.
+このアプローチが機能しない実験目的がいくつかあります。
+We will describe three of these and alternative approaches to randomization in an online environment.
+これらの3つを説明し、オンライン環境でのランダム化の代替アプローチを説明します。
+
+## Control may affect the effectiveness of the Treatment and vice versa コントロールはトリートメントの効果に影響を与える可能性があり、その逆もまた然り
+
+Bidding on Ebay.
+Ebayでの入札。
+Suppose the Treatment is to give an incentive (perhaps a $5 discount or certain percent off the final bid price) for a user to be the first bidder and no such incentive exists for the Control.
+Treatmentがユーザが最初の入札者であるためのインセンティブ（たとえば、最終入札価格から$5割引または一定の割合割引）を与えることであり、Controlにはそのようなインセンティブが存在しないとします。
+Assume the success metric (OEC) is the ratio of the final sales price to the minimum bid for each item.
+成功メトリック（OEC）は、各アイテムの最終販売価格と最低入札価格の比率であるとします。
+If some users have this incentive and others do not, the presence of the Treatment will affect all items so we cannot get a true measure of the effectiveness of making this change.
+もし、一部のユーザにこのインセンティブがあり、他のユーザにはない場合、Treatmentの存在はすべてのアイテムに影響を与えるため、この変更を行う効果の真の測定値を得ることはできません。
+In this case you can randomly assign one group of items in the auction to be in the Control and the rest to be in the Treatment and compare the OEC for these two groups. i.e. randomly assign the items in the auction, not the users.
+この場合、オークションのアイテムの1グループをControlに、残りをTreatmentにランダムに割り当て、これら2つのグループのOECを比較します。**つまり、ユーザではなく、オークションのアイテムをランダムに割り当てます**。(実験単位=アイテムのケースか)
+
+## Not desirable to randomize based on user ユーザに基づいてランダム化することは望ましくない
+
+Price elasticity study.
+価格弾力性の研究。
+The usual randomization based on user is not desirable because bad customer relations could result if it’s exposed that some customers are getting a different price than other customers (everything else being equal) as Amazon.com discovered when it ran such a study (Weiss 2000).
+通常のユーザに基づくランダム化は望ましくないです。なぜなら、Amazon.comがそのような研究を行ったときに発覚したように、他のすべてが同じである場合、一部の顧客が他の顧客と異なる価格を得ていることが明らかになると、悪い顧客関係が生じる可能性があるからです（Weiss 2000）。
+Here also, the items involved in the study can be randomly assigned to the Treatment or Control instead of randomizing the users.
+ここでも、ユーザをランダム化するのではなく、研究に関与するアイテムをTreatmentまたはControlにランダムに割り当てることができます。
+
+## Not possible to randomize on user ユーザにランダム化することができない
+
+Search Engine Optimization (SEO).
+検索エンジン最適化（SEO）。
+Most robots do not set cookies so they would not be in any experiment.
+ほとんどのロボットはクッキーを設定しないため、実験には含まれません。
+If you wanted to conduct a test on robot behavior (e.g. clickthroughs by robots or other) you cannot randomize based on a user ID.
+ロボットの動作（たとえば、ロボットによるクリックスルーなど）に関するテストを実施したい場合、ユーザIDに基づいてランダム化することはできません。
+Instead you can take groups of pages on your site that are similar and randomly assign pages within each group to Treatment or Control and compare robot behavior for the two groups of pages.
+代わりに、類似したサイトのページのグループを取り、各グループ内のページをTreatmentまたはControlにランダムに割り当て、2つのページグループのロボットの動作を比較することができます。
