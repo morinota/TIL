@@ -7,5 +7,7 @@
 # orchestrator
 
 - Sagemaker Pipelines もしくは Vertex AI Pipelines
-- Kubenetes(結構事例が多いっぽい。デファクトスタンダード?) (AWS EKSやGCP GKE)
-- Airflowなどのその他OSS
+- マネージドのKubenetes(結構事例が多いっぽい。デファクトスタンダード?) (AWS EKSやGCP GKE)
+- その他OSS:
+  - (ECSなどに自分でインスタンスを用意する感じ?)
+  - Airflowなど
