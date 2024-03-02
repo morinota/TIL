@@ -3,9 +3,7 @@
 https://engineering.atspotify.com/2023/08/experimentation-at-spotify-three-lessons-for-maximizing-impact-in-innovation/
 https://engineering.atspotify.com/2023/08/experimentation-at-spotify-three-lessons-for-maximizing-impact-in-innovation/
 
-# 1. Experimentation at Spotify: Three Lessons for Maximizing Impact in Innovation スポティファイにおける実験：
-
-イノベーションにおけるインパクトを最大化する3つの教訓
+# 1. Experimentation at Spotify: Three Lessons for Maximizing Impact in Innovation スポティファイにおける実験： イノベーションにおけるインパクトを最大化する3つの教訓
 
 As companies mature, it’s easy to believe that the core experience and most user needs have been resolved, and all that’s left to work toward are the marginal benefits, the cherries on top.
 企業が成熟してくると、核となる体験やほとんどのユーザーニーズは解決済みで、あとは限界的な利益、つまり上乗せされたさくらんぼを目指すだけだと考えがちだ。
