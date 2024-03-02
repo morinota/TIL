@@ -10,7 +10,24 @@ n週連続推薦システム系論文読んだシリーズ k 週目の記事に�
   - [X(旧Twitter)さんのABテストのサンプルサイズに関するブログ](https://blog.twitter.com/engineering/en_us/a/2016/power-minimal-detectable-effect-and-bucket-size-estimation-in-ab-tests)
   - [web上でのコントロール実験に関するpracticeをまとめた論文](https://ai.stanford.edu/~ronnyk/2009controlledExperimentsOnTheWebSurvey.pdf)
   - [hogehoge](https://www.researchgate.net/publication/333136404_Top_Challenges_from_the_first_Practical_Online_Controlled_Experiments_Summit)
+  - [hogehoge(通称カバ本)]()
   - 上記の文献ではABテストを経てより良い意思決定のための工夫として様々紹介されています。
 - 本資料は、より良い意思決定のために意識すべきことの1つとして、ABテストにおけるOEC(Overall Evaluation Criterion)をはじめとした評価するmetricの選定についてまとめたものです。
 
-# OEC(Overall Evaluation Criterion) とは?
+# metricsに関する様々な概念:
+
+## 組織を運用するためのmetrics
+
+カバ本によると、組織を運用するためのmetricsの一般的な分類方法として以下のようなものがある:
+
+- goal metrics
+- driver metrics
+- guardrail metrics
+
+ちなみに、他の分類方法もあるとのこと:
+
+- hoge
+
+## 実験のためのmetricsとOEC
+
+## OEC(Overall Evaluation Criterion) とは?
