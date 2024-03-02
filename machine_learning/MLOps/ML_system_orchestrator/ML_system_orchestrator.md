@@ -7,7 +7,9 @@
 # orchestrator
 
 - Sagemaker Pipelines もしくは Vertex AI Pipelines
+  - booking.comはSagemaker Pipelinesを使っている。LayerXさんはVertex AI Pipelinesを使っている。
 - マネージドのKubenetes(結構事例が多いっぽい。デファクトスタンダード?) (AWS EKSやGCP GKE)
+  - wantedlyさんはEKSを使ってるっぽい。エムスリーさんはGKEを使ってるっぽい。
 - その他OSS:
   - (ECSなどに自分でインスタンスを用意する感じ?)
   - Airflowなど
