@@ -79,6 +79,7 @@
   - VMもしくは物理マシンに相当するもの。
     - ex. AWS上の1つのEC2インスタンス
   - Node上には複数のPodがデプロイされる。
+  - (**Kubernetesクラスタは、1つ以上のNodeで構成される**...!:thinking:)
 - ReplicaSet:
   - Poｄの管理を行うObject
   - 指定した数のPodを複製・維持する。
