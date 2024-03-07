@@ -135,7 +135,14 @@ mse_threshold = ParameterFloat(name="MseThreshold", default_value=6.0)
 
 ## モデルリソースを作成する為のCreateModel stepを定義する
 
+- 学習したモデルを使ってbatch推論する為の準備として、モデルリソースを作成するstepを定義する。
+- モデルリソースを作成するstepを定義するには、`sagemaker.workflow.model_step.ModelStep`クラスを使う。
+  - ModelStepクラスを定義する際には`sagemaker.model.Model`オブジェクトの`create()`メソッドの返り値を`step_args`として渡す。
+  - Modelオブジェクトを初期化する際は、training jobの出力である`S3ModelArtifacts`を指定する。(TrainingStepのproperties属性を使って指定する)
+
 ## batch推論する為のTransform stepを定義する
+
+- バッチ推論を実行するstepを定義するには、`sagemaker.workflow.steps.TransformStep`クラスを使う。
 
 ## モデルパッケージを作る為のRegisterModel stepを定義する
 
@@ -164,16 +171,6 @@ mse_threshold = ParameterFloat(name="MseThreshold", default_value=6.0)
 - それ以外の方法??[Scheduling a daily processing job with Amazon SageMaker Processing and Amazon SageMaker Pipelines](https://github.com/aws-samples/scheduling-sagemaker-processing-with-sagemaker-pipelines)
 
 ## 方法1: AWS EventBridgeを使用する方法
-
-- Amazon EventBridgeとは?
-
-  - サーバレスのevent busサービス。
-  - AWSサービスやアプリケーションからのイベントを受け取り、それらを処理する為のルールに基づいて、他のサービスへイベントをルーティングできる。
-  - イベントの例:
-    - S3バケットにオブジェクトがアップロードされた。
-    - Sagemaker Endpointインスタンスのステータス変更
-    - SNSトピックにメッセージが送信された。
-    - (たぶん他にも色々サポートしてる)
 
 - Amazon EventBridgeはターゲットとして`StartPipelineExecution`アクションをサポートしている。
   - なので、**EventBridge ruleを作成すれば、event bus内の任意のイベントに基づいてpipeline実行を開始できる...!**

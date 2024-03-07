@@ -3,6 +3,17 @@
 - [Amazon EventBridge の料金](https://aws.amazon.com/jp/eventbridge/pricing/)
 - [Amazon SageMaker Pipeline の実行をトリガーする新しいオプション](https://aws.amazon.com/jp/about-aws/whats-new/2021/04/new-options-trigger-amazon-sagemaker-pipeline-executions/)
 
+# EventBridgeとは
+
+- Amazon EventBridgeとは?
+  - **サーバレスのevent busサービス**。
+  - AWSサービスやアプリケーションからのイベントを受け取り、それらを処理する為のルールに基づいて、他のサービスへイベントをルーティングできる。
+  - イベントの例:
+    - S3バケットにオブジェクトがアップロードされた。
+    - Sagemaker Endpointインスタンスのステータス変更
+    - SNSトピックにメッセージが送信された。
+    - (たぶん他にも色々サポートしてる)
+
 # EventBridge ruleの作り方
 
 指定すべき条件は以下:
