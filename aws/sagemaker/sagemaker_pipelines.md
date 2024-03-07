@@ -13,6 +13,7 @@
   - このDSLでは、**パイプラインパラメータとSagemakerジョブのDAG(Directed acyclic graph, S有向非巡回グラフ)を定義**する。
   - Sagemaker Python SDK(Software Development Kit)を使えば、**慣れ親しんだPythonコードによって、Sagemaker Pipeline DSLの生成ができる**。
     - (ここはcdkみたいな感じか...!!:thinking:)
+- Sagemaker Pipelinesの利用自体は無料。ProcessingJobなどでインスタンスを起動した際にその分の料金がかかる仕組みみたい。
 
 ## Sagemaker Pipelines の機能:
 
@@ -165,10 +166,26 @@ mse_threshold = ParameterFloat(name="MseThreshold", default_value=6.0)
 ## 方法1: AWS EventBridgeを使用する方法
 
 - Amazon EventBridgeとは?
-  - 
+
+  - サーバレスのevent busサービス。
+  - AWSサービスやアプリケーションからのイベントを受け取り、それらを処理する為のルールに基づいて、他のサービスへイベントをルーティングできる。
+  - イベントの例:
+    - S3バケットにオブジェクトがアップロードされた。
+    - Sagemaker Endpointインスタンスのステータス変更
+    - SNSトピックにメッセージが送信された。
+    - (たぶん他にも色々サポートしてる)
+
+- Amazon EventBridgeはターゲットとして`StartPipelineExecution`アクションをサポートしている。
+  - なので、**EventBridge ruleを作成すれば、event bus内の任意のイベントに基づいてpipeline実行を開始できる...!**
+- pre-requirsites(事前準備):
+  - EventBridgeが`Sagemaker::StartPipelineExecution`アクションの権限をassumeできるrole。
+    - (たぶんEvantBridge自体がアクション権限を所持できればOK??:thinking:)
+    - EventBridgeコンソールからEventBridge ruleを作成する場合は、自動で必要なアクション権限を持ったroleが紐づくみたい??
+  - 指定したいsagemaker pipeline。
+- EventBridge ruleの作成方法はいくつかある:
+  - AWS Management ConsoleのEventBridgeコンソールを使う方法。
+  - AWS CLIを使用する方法。
 
 ## 方法2: それ以外の方法
 
 - hoge
-
-
