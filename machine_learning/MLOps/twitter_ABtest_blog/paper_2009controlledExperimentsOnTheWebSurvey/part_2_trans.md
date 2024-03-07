@@ -250,19 +250,19 @@ However, it is not appropriate for testing backend changes or platform migration
 ### 5.2.3. Client-side assignment クライアント側の割り当て
 
 Client-side page modification is the most popular assignment method found in third-party experimentation platforms.
-クライアント側のページ修正は、サードパーティの実験プラットフォームに見られる最も一般的な割り当て方法である。
+クライアント側のページ修正は、サードパーティの実験プラットフォームに見られる最も一般的な割り当て方法である。(そうなのか...!)
 It is supported by numerous products including Google Website Optimizer (2008), Omniture’s Offermatica (Omniture 2008), Interwoven’s Optimost (2008), Widemile (2008), and Verster (2008).
 Google Website Optimizer (2008), Omniture's Offermatica (Omniture 2008), Interwoven's Optimost (2008), Widemile (2008), Verster (2008) など数多くの製品でサポートされている。
 All of these products can run an experiment without making any decisions on the server.
-これらの製品はすべて、サーバー上で何も決定することなく実験を実行することができる。
+これらの製品はすべて、サーバ上で何も決定することなく実験を実行することができる。
 A developer implements an experiment by inserting JavaScript code that instructs the end user’s browser to invoke an assignment service at render time.
 開発者は、レンダリング時に割り当てサービスを呼び出すようエンドユーザーのブラウザに指示するJavaScriptコードを挿入することで、実験を実施する。
 The service call returns the appropriate variant for the end user, and triggers a JavaScript callback that instructs the browser to dynamically alter the page being presented to the user, typically by modifying the DOM.
-サービスコールはエンドユーザーに適切なバリアントを返し、JavaScriptのコールバックをトリガーして、ユーザーに表示されるページを動的に変更するようにブラウザに指示します。
+サービスコールはエンドユーザに適切なvariantを返し、ブラウザに動的にページを変更するように指示するJavaScriptコールバックをトリガする。通常はDOMを修正することである。
 The modification must occur before any part of the page renders, so any latency in the service call will add to the overall page render time.
 修正はページのどの部分がレンダリングされる前にも行わなければならないので、サービス呼び出しの待ち時間はページ全体のレンダリング時間に追加される。
 The content for each variant can either be cleverly embedded into the page or can be served by the assignment service.
-各バリアントのコンテンツは、ページに巧妙に埋め込むか、割り当てサービスによって提供することができます。
+各variantのコンテンツは、ページに巧妙に埋め込むこともできるし、割り当てサービスによって提供することもできる。
 This method, although intrusive, can be very easy to implement: all the developer needs to do is add a small snippet of JavaScript to a page.
 この方法は押しつけがましいが、実装は非常に簡単だ： 開発者がすべきことは、JavaScriptの小さなスニペットをページに追加することだけだ。
 However, it has some key limitations: 1.

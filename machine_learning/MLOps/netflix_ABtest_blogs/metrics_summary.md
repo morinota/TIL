@@ -19,7 +19,7 @@ n週連続推薦システム系論文読んだシリーズ k 週目の記事に�
 元々本記事の執筆を試みた際は、ABテストの分析に使用すべきmetricsやOEC(Overall Evaluation Criterion)について調査しまとめる予定でした。
 しかし調査を進めるうちに、metricsに関する様々な概念があり、OECのことを理解・解釈するためには、それらの概念についてもざっくり把握しておく必要があると感じました!
 
-## 組織を運用するためのmetrics
+# 組織を運用するためのmetrics
 
 カバ本によると、組織を運用するためのmetricsとして以下の3種類に分類する方法が一般的なようです:
 
@@ -48,21 +48,64 @@ n週連続推薦システム系論文読んだシリーズ k 週目の記事に�
     - (なのでABテストの文脈でguardrail metricsという文言はよく出てくる...!:thinking:)
   - guardrail metricsはgoal merticsやdriver metricsよりも敏感であるケースが多い(i.e. 短期的?)
 
-ちなみに上記の3分類の他にも、以下のような分類方法もあるとのことでした!
+ちなみに上記の3分類の他にも、以下のような分類方法もあるとのことでした!(よくわかってない...:thinking:)
 
 - Asset metrics & engagement metrics
 - bussiness metrics & operational metrics
 
-### metricsについての議論を行う事の価値
+## metricsについての議論を行う事の価値
 
 (metricsっていいよね、大事だよねって話...!そもそもmetricsって定量指標の事??:thinking:)
 
 - どのような分類方法を採用するかに依らず、metricsについての議論を行う事は重要。
   - 会社レベル、チームレベル、機能レベル、個人レベルの目標設定に使用できる...!
   - 役員報告からシステムの監視まで、あらゆるものに使用できる...!
-- **各チームのmetricsを、組織全体のgoalや戦略の方向性と一致させることが重要**という話:
+  - 組織が進化し、metricsへの理解が進化するにつれて、時間をかけてmetricsを反復改善していく事も期待される...!
+- 会社レベルとチームレベルでのgoal & driver & guardrail metricsの測定:
+  - 各チームは異なる種類の貢献をして(ex. 異なるdriver metricを改善して?:thinking:)、会社全体の成功に貢献している可能性が高い。
+    - 同じmetricでも、チームによって異なる役割になりうる。(ex. あるチームではlatencyはguardrail metricsだが、別のチームではgoal metrics...!)
+- 各チームのmetricsを、組織全体のgoalや戦略の方向性と一致させることが重要。
+  - 組織の規模や目的(i.e. 役割?)に応じて各チームが独自のgoal & driver & guardrail merticsを持っているとしても、それら全てが会社全体のgoal & driver & guardrail metricsと整合しているべき...!
+
+## metricsの定式化
+
+- 「metricsの定式化」とは? = 定性的な概念を、具体的で定量化可能な定義にする操作。
+
+以下は、定式化する際の主要な原理をまとめたもの:
+
+- goal metricsの原則:
+  - 単純である。
+  - 安定している。
+- driver metricsの原則:
+  - goal metricsと整合している。
+  - 操作可能かつ関連性がある。
+  - 敏感に反応する。
+  - ゲーム化に耐性がある。
+- guardrail metricsの原則:
   - hoge
 
-## 実験のためのmetricsとOEC
+以下は、mertics定式化に役立つテクニックと考慮すべき点:
+
+- hoge
+- goal or driver metricsの定式化の際には「品質」を考慮すべきだよ。
+- metrics定義に統計モデルを組み込む場合、解釈可能な状態に保ち、継続的に検証し続けるべきだよ。
+- ユーザの不満や不幸など、望まないものを正確に測定する方が簡単なケースがあるよ。
+- metricsはproxy(代理)なので、常に失敗のリスクがある事を意識すべきだよ。(ex. ゲーム化など?)
+
+## metricsの継続的な評価と検証
+
+- metricsの有効性の評価は、最初の定式化の段階でも、その後の運用の段階でも継続的に行われるべき。
+- ex.
+  - ゲーム化しちゃってないか?
+  - goal metricsとdriver metricsの間の因果関係が整合しているか?(実際、driver metricsが改善したら、goal metricsの改善が促進されるの??って観点。)
+  - 同様に、goal metricsとguardrail metricsの間の因果関係も整合しているか?
+
+## metricsの進化
+
+## (Optional) guardrail metricsについて
+
+## (Optional) ゲーム化のしやすさについて
+
+# 実験のためのmetricsとOEC
 
 ## OEC(Overall Evaluation Criterion) とは?
