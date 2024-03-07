@@ -188,4 +188,7 @@ mse_threshold = ParameterFloat(name="MseThreshold", default_value=6.0)
 
 ## 方法2: それ以外の方法
 
-- hoge
+> EventBridgeを使わずに、Sagemaker Pipelinesの特定のpipelineをトリガーする事は可能ですか?
+> ChatGPT はい、EventBridgeを使わずにSageMaker Pipelinesの特定のパイプラインをトリガーすることは可能です。SageMaker Python SDKを使用して、スクリプトやアプリケーションから直接パイプラインの実行を開始することができます。この方法では、start_pipeline_executionメソッドを使用してパイプラインの実行をプログラム的にトリガーできます。また、AWS CLIを使用してコマンドラインからパイプラインを実行することも可能です。これにより、**EventBridgeを使用しない他のスケジューリングツールやトリガーメカニズムと組み合わせて、パイプラインの実行を自動化することができます**。
+
+- 要は別のorchestratorやschedulerからSagemakerのAPIを叩くってことか...! :thinking:

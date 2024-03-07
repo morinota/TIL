@@ -1,6 +1,7 @@
 ## refs:
 
 - [Amazon EventBridge の料金](https://aws.amazon.com/jp/eventbridge/pricing/)
+- [Amazon SageMaker Pipeline の実行をトリガーする新しいオプション](https://aws.amazon.com/jp/about-aws/whats-new/2021/04/new-options-trigger-amazon-sagemaker-pipeline-executions/)
 
 # EventBridge ruleの作り方
 
