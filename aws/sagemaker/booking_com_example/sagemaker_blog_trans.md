@@ -10,40 +10,42 @@ This post is co-written with Kostia Kofman and Jenny Tokar from Booking.com.
 As a global leader in the online travel industry, Booking.com is always seeking innovative ways to enhance its services and provide customers with tailored and seamless experiences.
 オンライン旅行業界のグローバルリーダーとして、Booking.comは常にサービスを強化し、お客様に合わせたシームレスな体験を提供する革新的な方法を模索しています。
 The Ranking team at Booking.com plays a pivotal role in ensuring that the search and recommendation algorithms are optimized to deliver the best results for their users.
-Booking.comのRankingチームは、検索と推薦のアルゴリズムがユーザーに最高の結果をもたらすように最適化されることを保証する上で極めて重要な役割を果たしています。
+Booking.comのRankingチームは、**検索と推薦のアルゴリズムがユーザーに最高の結果をもたらすように最適化されることを保証する上で極めて重要な役割**を果たしています。
 
 Sharing in-house resources with other internal teams, the Ranking team machine learning (ML) scientists often encountered long wait times to access resources for model training and experimentation – challenging their ability to rapidly experiment and innovate.
-社内のリソースを他の社内チームと共有するランキングチームの機械学習（ML）サイエンティストは、モデルのトレーニングや実験のためのリソースにアクセスするのに長い待ち時間がかかることが多く、迅速な実験とイノベーションを行うことが困難だった。
+社内のリソースを他の社内チームと共有するランキングチームの機械学習（ML）サイエンティストは、**モデルのトレーニングや実験のためのリソースにアクセスするのに長い待ち時間がかかることが多く、迅速な実験とイノベーションを行うことが困難だった**。
 Recognizing the need for a modernized ML infrastructure, the Ranking team embarked on a journey to use the power of Amazon SageMaker to build, train, and deploy ML models at scale.
-近代化されたMLインフラストラクチャの必要性を認識したランキング・チームは、Amazon SageMakerのパワーを使ってMLモデルの構築、トレーニング、デプロイを大規模に行う旅に出た。
+**近代化されたMLインフラストラクチャの必要性を認識**したランキング・チームは、Amazon SageMakerのパワーを使ってMLモデルの構築、トレーニング、デプロイを大規模に行う旅に出た。
 
 Booking.com collaborated with AWS Professional Services to build a solution to accelerate the time-to-market for improved ML models through the following improvements:
-Booking.comは、AWS Professional Servicesと協力し、以下の改善を通じてMLモデルの改良の市場投入までの時間を短縮するソリューションを構築した：
+Booking.comは、AWS Professional Servicesと協力し、以下の改善を通じて**MLモデルの改良の市場投入までの時間を短縮する**ソリューションを構築した：
 
-Reduced wait times for resources for training and experimentation
-トレーニングや実験に必要なリソースの待ち時間を短縮
+- Reduced wait times for resources for training and experimentation
+  トレーニングや実験に必要なリソースの待ち時間を短縮
 
-Integration of essential ML capabilities such as hyperparameter tuning
-ハイパーパラメータのチューニングなど、MLに不可欠な機能の統合
+- Integration of essential ML capabilities such as hyperparameter tuning
+  ハイパーパラメータのチューニングなど、MLに不可欠な機能の統合
 
-A reduced development cycle for ML models
-MLモデルの開発サイクルの短縮
+- A reduced development cycle for ML models
+  MLモデルの開発サイクルの短縮
 
 Reduced wait times would mean that the team could quickly iterate and experiment with models, gaining insights at a much faster pace.
-待ち時間が減るということは、チームがモデルを素早く反復して実験できることを意味し、より速いペースで洞察を得ることができる。
+待ち時間が減るということは、チームがモデルを素早く反復(iterate)して実験できることを意味し、より速いペースで洞察を得ることができる。
 Using SageMaker on-demand available instances allowed for a tenfold wait time reduction.
 オンデマンドで利用可能な SageMaker インスタンスを使用することで、待ち時間を 10 分の 1 に短縮することができました。
+(**ここでon-demandとは、事前にリソースを確保する必要がなく、必要に応じてリソースを使用ｄけいる。そして使用した分だけ料金を支払うような柔軟な利用方法、みたいな??**:thinking_face:)
 Essential ML capabilities such as hyperparameter tuning and model explainability were lacking on premises.
 ハイパーパラメータのチューニングやモデルの説明可能性といったMLに不可欠な機能は、前提条件として欠けていた。
 The team’s modernization journey introduced these features through Amazon SageMaker Automatic Model Tuning and Amazon SageMaker Clarify.
-チームの近代化の旅は、Amazon SageMaker Automatic Model Tuning と Amazon SageMaker Clarify を通じて、これらの機能を導入しました。
+チームの近代化の旅は、Amazon SageMaker Automatic Model Tuning と Amazon SageMaker Clarify を通じて、これらの機能を導入しました。(後者はどんなサービスだろう??:thinking_face:)
 Finally, the team’s aspiration was to receive immediate feedback on each change made in the code, reducing the feedback loop from minutes to an instant, and thereby reducing the development cycle for ML models.
-最後に、チームの願望は、コードに加えられた各変更に対するフィードバックを即座に受け取ることで、フィードバック・ループを数分から瞬時に減らし、それによってMLモデルの開発サイクルを短縮することだった。
+最後に、チームの願望は、**コードの変更ごとに即座のフィードバックを受け取り**、**フィードバックループを分単位から瞬時に短縮**し、MLモデルの開発サイクルを短縮することでした。
+(コードをcommmitする度に自動的にビルドやテストが行われて、エラーやバグを早期に発見できる、みたいなcontinuous integrationの概念の話かな。Sagemakerのサービスで実現できるの??:thinking_face:)
 
 In this post, we delve into the journey undertaken by the Ranking team at Booking.com as they harnessed the capabilities of SageMaker to modernize their ML experimentation framework.
 この投稿では、Booking.comのランキングチームがSageMakerの機能を活用してML実験のフレームワークを近代化するために行った旅について掘り下げます。
 By doing so, they not only overcame their existing challenges, but also improved their search experience, ultimately benefiting millions of travelers worldwide.
-そうすることで、既存の課題を克服しただけでなく、検索エクスペリエンスを向上させ、最終的には世界中の何百万人もの旅行者に利益をもたらした。
+そうすることで、既存の課題を克服しただけでなく、検索エクスペリエンスを向上させ、**最終的には世界中の何百万人もの旅行者に利益をもたらした**。(開発者も嬉しくて、ユーザも嬉しくて、最高じゃん...!:clap:)
 
 ## Approach to modernization 近代化へのアプローチ
 
@@ -55,93 +57,129 @@ If it shows online improvement, it can be deployed to all the users.
 オンラインで改善が見られれば、全ユーザーに配備することができる。
 
 The goal of this project was to create a user-friendly environment for ML scientists to easily run customizable Amazon SageMaker Model Building Pipelines to test their hypotheses without the need to code long and complicated modules.
-このプロジェクトの目標は、長く複雑なモジュールをコーディングする必要なく、ML科学者が仮説を検証するためにカスタマイズ可能なAmazon SageMakerモデル構築パイプラインを簡単に実行できるユーザーフレンドリーな環境を作ることでした。
+このプロジェクトの目標は、**長く複雑なモジュールをコーディングする必要なく、ML科学者が仮説を検証するためにカスタマイズ可能なAmazon SageMakerモデル構築パイプラインを簡単に実行できる**ユーザーフレンドリーな環境を作ることでした。
 
 One of the several challenges faced was adapting the existing on-premises pipeline solution for use on AWS.
-直面したいくつかの課題の1つは、既存のオンプレミス・パイプライン・ソリューションをAWS上で使用できるようにすることだった。
+直面したいくつかの**課題の1つは、既存のオンプレミス・パイプライン・ソリューションをAWS上で使用できるようにすること**だった。(かつては、ローカル環境でオフライン実験を走らせてた、みたいな事??:think)
 The solution involved two key components:
 この解決策には2つの重要な要素があった：
 
-Modifying and extending existing code – The first part of our solution involved the modification and extension of our existing code to make it compatible with AWS infrastructure.
-既存のコードの修正と拡張 - 私たちのソリューションの最初の部分は、AWSインフラストラクチャと互換性を持たせるために、既存のコードの修正と拡張を行いました。
-This was crucial in ensuring a smooth transition from on-premises to cloud-based processing.
-これは、オンプレミスからクラウドベースの処理へのスムーズな移行を保証する上で極めて重要だった。
+- Modifying and extending existing code – The first part of our solution involved the modification and extension of our existing code to make it compatible with AWS infrastructure.
+  既存のコードの修正と拡張 - 私たちのソリューションの最初の部分は、**AWSインフラストラクチャと互換性を持たせるために、既存のコードの修正と拡張**を行いました。
+  This was crucial in ensuring a smooth transition from on-premises to cloud-based processing.
+  これは、オンプレミスからクラウドベースの処理へのスムーズな移行を保証する上で極めて重要だった。
+  (基本的には、外部リソースとのやりとりの箇所だけ修正したら良いはず...??:thinking_face:)
 
-Client package development – A client package was developed that acts as a wrapper around SageMaker APIs and the previously existing code.
-クライアントパッケージの開発 - SageMaker API と既存のコードのラッパーとして機能するクライアントパッケージが開発されました。
-This package combines the two, enabling ML scientists to easily configure and deploy ML pipelines without coding.
-このパッケージはこの2つを組み合わせたもので、MLサイエンティストはコーディングなしでMLパイプラインを簡単に設定し、デプロイすることができる。
+- Client package development – A client package was developed that acts as a wrapper around SageMaker APIs and the previously existing code.
+  クライアント・パッケージの開発 - SageMakerのAPIと以前の既存のコードをラップするラッパーとして機能するクライアント・パッケージが開発されました。
+  This package combines the two, enabling ML scientists to easily configure and deploy ML pipelines without coding.
+  このパッケージは、2つを組み合わせ、**ML科学者がコーディングなしで簡単にMLパイプラインを構成してデプロイできるようにします**。(あ、Sagemaker Python SDKのFacadeみたいなものを用意した、みたいな感じなのかな...??:thinking_face:)
 
 ## SageMaker pipeline configuration SageMaker パイプラインの設定
 
 Customizability is key to the model building pipeline, and it was achieved through config.ini, an extensive configuration file.
-カスタマイズ性はモデル構築パイプラインの鍵であり、広範な設定ファイルであるconfig.iniによって実現された。
+**カスタマイズ性はモデル構築パイプラインの鍵**であり、広範な設定ファイルである`config.ini`によって実現された。(pipeline DSL以外にもconfigファイルを使う??:thinking_face:)
 This file serves as the control center for all inputs and behaviors of the pipeline.
-このファイルは、パイプラインのすべての入力と動作のコントロールセンターとなる。
+このファイルは、パイプラインのすべての入力と振る舞いのコントロールセンターとして機能します。
 
 Available configurations inside config.ini include:
-config.ini内で利用可能な設定は以下の通り：
+`config.ini`内で利用可能な設定は以下の通り：
 
-Pipeline details – The practitioner can define the pipeline’s name, specify which steps should run, determine where outputs should be stored in Amazon Simple Storage Service (Amazon S3), and select which datasets to use
-パイプラインの詳細 - プラクティショナーは、パイプラインの名前を定義し、実行するステップを指定し、出力をAmazon Simple Storage Service (Amazon S3)に保存する場所を決定し、使用するデータセットを選択することができます。
+- Pipeline details – The practitioner can define the pipeline’s name, specify which steps should run, determine where outputs should be stored in Amazon Simple Storage Service (Amazon S3), and select which datasets to use
+  パイプラインの詳細 - プラクティショナー(=実験する人?)は、パイプラインの名前を定義し、どのステップを実行するかを指定し、Amazon Simple Storage Service (Amazon S3) に出力を保存する場所を決定し、使用するデータセットを選択できます。
 
-AWS account details – You can decide which Region the pipeline should run in and which role should be used
-AWSアカウントの詳細 - パイプラインを実行するリージョンと、使用するロールを決定できます。
+- AWS account details – You can decide which Region the pipeline should run in and which role should be used
+  AWSアカウントの詳細 - パイプラインを実行するリージョンと、使用するロールを決定できます。
 
-Step-specific configuration – For each step in the pipeline, you can specify details such as the number and type of instances to use, along with relevant parameters
-ステップ固有の構成 - パイプラインの各ステップについて、使用するインスタンスの数やタイプなどの詳細を、関連するパラメータとともに指定できます。
+- Step-specific configuration – For each step in the pipeline, you can specify details such as the number and type of instances to use, along with relevant parameters
+  ステップ固有の設定 - パイプライン内の各ステップについて、使用するインスタンスの数とタイプ、関連するパラメータなどの詳細を指定できます。
+  (実験用のpipelineテンプレートが存在していて、たぶんstep数とかは固有な感じかな...!:thinking_face:)
 
 The following code shows an example configuration file:
 次のコードは、コンフィギュレーション・ファイルの例を示している：
 
+```ini
+[BUILD]
+pipeline_name = ranking-pipeline
+steps = DATA_TRANFORM, TRAIN, PREDICT, EVALUATE, EXPLAIN, REGISTER, UPLOAD
+train_data_s3_path = s3://...
+...
+[AWS_ACCOUNT]
+region = eu-central-1
+...
+[DATA_TRANSFORM_PARAMS]
+input_data_s3_path = s3://...
+compression_type = GZIP
+....
+[TRAIN_PARAMS]
+instance_count = 3
+instance_type = ml.g5.4xlarge
+epochs = 1
+enable_sagemaker_debugger = True
+...
+[PREDICT_PARAMS]
+instance_count = 3
+instance_type = ml.g5.4xlarge
+...
+[EVALUATE_PARAMS]
+instance_type = ml.m5.8xlarge
+batch_size = 2048
+...
+[EXPLAIN_PARAMS]
+check_job_instance_type = ml.c5.xlarge
+generate_baseline_with_clarify = False
+....
+```
+
 config.ini is a version-controlled file managed by Git, representing the minimal configuration required for a successful training pipeline run.
-config.iniはGitによってバージョン管理されるファイルで、トレーニングパイプラインの実行に必要な最小限の設定を表します。
+`config.ini`はGitによってバージョン管理されるファイルで、トレーニングパイプラインの実行に必要な最小限の設定を表します。
 During development, local configuration files that are not version-controlled can be utilized.
-開発中は、バージョン管理されていないローカル設定ファイルを利用することができる。
+**開発中は、バージョン管理されていないローカル設定ファイルを利用することができる**。(各データサイエンティストがローカルからpipelineをビルドするって事?)
 These local configuration files only need to contain settings relevant to a specific run, introducing flexibility without complexity.
-これらのローカル・コンフィギュレーション・ファイルには、特定の実行に関連する設定だけが含まれていればよく、複雑さを伴わない柔軟性が導入されている。
+これらのローカル・コンフィギュレーション・ファイルには、特定の実行に関連する設定だけが含まれていればよく、複雑さを伴わない柔軟性が導入されている。(指定しないconfigはデフォルト値が指定されるってことか!)
 The pipeline creation client is designed to handle multiple configuration files, with the latest one taking precedence over previous settings.
-パイプライン作成クライアントは、複数の設定ファイルを扱えるように設計されており、最新の設定ファイルが以前の設定よりも優先されます。
+パイプライン作成クライアントは、複数の設定ファイルを扱えるように設計されており、最新の設定ファイルが以前の設定よりも優先されます。(同名のpipelineの話かな...!)
 
 ## SageMaker pipeline steps SageMaker パイプラインのステップ
 
 The pipeline is divided into the following steps:
 パイプラインは以下のステップに分かれている：
+(これが実験用pipelineのstepを定義したテンプレートか...!)
 
-Train and test data preparation – Terabytes of raw data are copied to an S3 bucket, processed using AWS Glue jobs for Spark processing, resulting in data structured and formatted for compatibility.
-訓練データとテストデータの準備 - テラバイトの生データがS3バケットにコピーされ、Spark処理用のAWS Glueジョブを使用して処理されます。
+- Train and test data preparation – Terabytes of raw data are copied to an S3 bucket, processed using AWS Glue jobs for Spark processing, resulting in data structured and formatted for compatibility.
+  訓練データとテストデータの準備 - テラバイトの生データがS3バケットにコピーされ、Spark処理用のAWS Glueジョブを使用して処理されます。
 
-Train – The training step uses the TensorFlow estimator for SageMaker training jobs.
-Train - トレーニングステップでは、SageMakerトレーニングジョブ用のTensorFlow推定器を使用します。
-Training occurs in a distributed manner using Horovod, and the resulting model artifact is stored in Amazon S3.
-トレーニングはHorovodを使用して分散方式で行われ、得られたモデルの成果物はAmazon S3に保存される。
-For hyperparameter tuning, a hyperparameter optimization (HPO) job can be initiated, selecting the best model based on the objective metric.
-ハイパーパラメータのチューニングのために、ハイパーパラメータ最適化（HPO）ジョブを開始し、目的指標に基づいて最適なモデルを選択することができる。
+- Train – The training step uses the TensorFlow estimator for SageMaker training jobs.
+  Train - トレーニングステップでは、SageMakerトレーニングジョブ用のTensorFlow推定器を使用します。
+  Training occurs in a distributed manner using Horovod, and the resulting model artifact is stored in Amazon S3.
+  トレーニングはHorovodを使用して分散方式で行われ、得られたモデルの成果物はAmazon S3に保存される。
+  For hyperparameter tuning, a hyperparameter optimization (HPO) job can be initiated, selecting the best model based on the objective metric.
+  ハイパーパラメータのチューニングのために、ハイパーパラメータ最適化（HPO）ジョブを開始し、目的指標に基づいて最適なモデルを選択することができる。
 
-Predict – In this step, a SageMaker Processing job uses the stored model artifact to make predictions.
-予測 - このステップでは、SageMaker Processing ジョブは保存されたモデルアーティファクトを使用して予測を行います。
-This process runs in parallel on available machines, and the prediction results are stored in Amazon S3.
-このプロセスは利用可能なマシン上で並行して実行され、予測結果はAmazon S3に保存される。
+- Predict – In this step, a SageMaker Processing job uses the stored model artifact to make predictions.
+  予測 - このステップでは、SageMaker Processing ジョブは保存されたモデルアーティファクトを使用して予測を行います。
+  This process runs in parallel on available machines, and the prediction results are stored in Amazon S3.
+  このプロセスは利用可能なマシン上で並行して実行され、予測結果はAmazon S3に保存される。
 
-Evaluate – A PySpark processing job evaluates the model using a custom Spark script.
-Evaluate - PySparkの処理ジョブは、カスタムSparkスクリプトを使用してモデルを評価します。
-The evaluation report is then stored in Amazon S3.
-評価レポートはAmazon S3に保存される。
+- Evaluate – A PySpark processing job evaluates the model using a custom Spark script.
+  Evaluate - PySparkの処理ジョブは、カスタムSparkスクリプトを使用してモデルを評価します。
+  The evaluation report is then stored in Amazon S3.
+  評価レポートはAmazon S3に保存される。
 
-Condition – After evaluation, a decision is made regarding the model’s quality.
-コンディション - 評価の結果、モデルの品質が決定される。
-This decision is based on a condition metric defined in the configuration file.
-この決定は、コンフィギュレーション・ファイルで定義されたコンディション・メトリックに基づいて行われる。
-If the evaluation is positive, the model is registered as approved; otherwise, it’s registered as rejected.
-評価が肯定的であれば、そのモデルは承認されたものとして登録され、そうでなければ拒否されたものとして登録される。
-In both cases, the evaluation and explainability report, if generated, are recorded in the model registry.
-どちらの場合も、評価と説明可能性報告書が作成されれば、モデル登録簿に記録される。
+- Condition – After evaluation, a decision is made regarding the model’s quality.
+  コンディション - 評価の結果、モデルの品質が決定される。
+  This decision is based on a condition metric defined in the configuration file.
+  この決定(=condition stepによる条件分岐...!)は、コンフィギュレーション・ファイルで定義されたコンディション・メトリックに基づいて行われる。
+  If the evaluation is positive, the model is registered as approved; otherwise, it’s registered as rejected.
+  評価が肯定的であれば、そのモデルは承認されたものとして登録され、そうでなければ拒否されたものとして登録される。
+  In both cases, the evaluation and explainability report, if generated, are recorded in the model registry.
+  どちらの場合も、評価と説明可能性報告書が作成されれば、モデル登録簿に記録される。
 
-Package model for inference – Using a processing job, if the evaluation results are positive, the model is packaged, stored in Amazon S3, and made ready for upload to the internal ML portal.
-推論のためにモデルをパッケージ化する - 処理ジョブを使用して、評価結果が肯定的であれば、モデルはパッケージ化され、Amazon S3に保存され、内部のMLポータルにアップロードできるようになる。
+- Package model for inference – Using a processing job, if the evaluation results are positive, the model is packaged, stored in Amazon S3, and made ready for upload to the internal ML portal.
+  推論のためにモデルをパッケージ化する - 処理ジョブを使用して、評価結果が肯定的であれば、モデルはパッケージ化され、Amazon S3に保存され、内部のMLポータルにアップロードできるようになる。
 
-Explain – SageMaker Clarify generates an explainability report.
-説明 - SageMaker Clarify は、説明可能性レポートを生成します。
+- Explain – SageMaker Clarify generates an explainability report.
+  説明 - SageMaker Clarify は、説明可能性レポートを生成します。
 
 Two distinct repositories are used.
 2つの異なるリポジトリが使用されている。
