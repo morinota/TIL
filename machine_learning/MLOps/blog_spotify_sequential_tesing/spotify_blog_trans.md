@@ -143,150 +143,137 @@ The purpose is not to present the technical or mathematical details but rather t
 ### Group sequential tests グループ・シーケンシャル・テスト
 
 Group sequential tests can be viewed as consecutive applications of traditional tests like the z-test.
-グループ連続検定は、z検定のような伝統的な検定の連続的な応用とみなすことができる。
+**group sequential testsは、z検定などの伝統的なテストの連続的な適用**として見ることができる。
 The GST exploits the known correlation structure between intermittent tests to optimally account for the fact that we are testing multiple times.
-GSTは、断続的なテスト間の既知の相関構造を利用し、複数回テストしているという事実を最適に考慮する。
+GSTは、断続的なテスト間の既知の相関構造を利用して、**複数回テストを行っていることを最適に考慮**する。
 For detailed introduction see e.g.Kim and Tsiatis (2020) and Jennison and Turnbull (1999).
 詳しい紹介は、Kim and Tsiatis (2020)やJennison and Turnbull (1999)などを参照のこと。
 
-Pros:
-長所だ：
+#### Pros: 長所:
 
-Using the alpha-spending approach, alpha can be spent arbitrarily over the times you decide to peek, and you only spend alpha when you peek — if you skip one peek, you can save that unused alpha for later.
-アルファを消費するアプローチを使えば、アルファはピークの回数に応じて任意に使うことができ、ピークしたときだけアルファを消費する。
-Moreover, you don’t have to decide in advance how many tests you run or at what time during the data collection you run them.
-しかも、テストの回数やデータ収集のタイミングを事前に決めておく必要はない。
-If you do not peek at all during the data collection, the test once the data collection phase is over is exactly the traditional z-test.
-データ収集中にまったく覗き見をしなければ、データ収集段階が終わった後のテストは、まさに伝統的なz検定となる。
+- Using the alpha-spending approach, alpha can be spent arbitrarily over the times you decide to peek, and you only spend alpha when you peek — if you skip one peek, you can save that unused alpha for later.
+  alpha-speadingアプローチを使用すると、peekするタイミングで任意にalphaを使うことができ、peekするときだけalphaを使う。1回のpeekをスキップすると、その未使用のalphaを後で使うことができる。
+  Moreover, you don’t have to decide in advance how many tests you run or at what time during the data collection you run them.
+  しかも、テストの回数やデータ収集のタイミングを事前に決めておく必要はない。
+  If you do not peek at all during the data collection, the test once the data collection phase is over is exactly the traditional z-test.
+  データ収集中にまったく覗き見をしなければ、データ収集段階が終わった後のテストは、まさに伝統的なz検定となる。
 
-Easy to explain due to the relation with z-tests.
-z検定との関係で説明しやすい。
+- Easy to explain due to the relation with z-tests.
+  z検定との関係で説明しやすい。
 
-Cons:
-短所だ：
+#### Cons: 短所:
 
-You need to know or be able to estimate the maximum sample size in advance.
-事前に最大サンプル数を知っておくか、推定できるようにしておく必要がある。
-If you observe fewer users than expected, the test will be conservative and the true false positive rate will be lower than intended.
-観察されるユーザーが予想より少なければ、テストは保守的になり、真の偽陽性率は意図したより低くなります。
-If you keep observing new users after you have reached the expected total amount, the test will have an inflated false positive rate.
-予想総数に達した後も新規ユーザーを観察し続けると、テストは偽陽性率が高くなる。
+- You need to know or be able to estimate the maximum sample size in advance.
+  **事前に最大サンプル数を知っておく**か、推定できるようにしておく必要がある。
+  If you observe fewer users than expected, the test will be conservative and the true false positive rate will be lower than intended.
+  観察されるユーザが予想より少なければ、テストは保守的になり、真の偽陽性率は意図したより低くなります。
+  If you keep observing new users after you have reached the expected total amount, the test will have an inflated false positive rate.
+  予想総数に達した後も新規ユーザを観察し続けると、テストは偽陽性率が高くなる。
 
-You need to select an alpha spending function.
-アルファの支出機能を選択する必要がある。
-If you always reach the planned sample size, this choice is not critical, but if you undersample and observe too few users, the choice of spending function can affect the power properties substantially.
-常に計画されたサンプルサイズに達するのであれば、この選択は重要ではありませんが、アンダーサンプルで観察するユーザーが少なすぎる場合、支出関数の選択は検出力に大きく影響します。
+- You need to select an alpha spending function.
+  alpha spending functionを選択する必要がある。(ハイパーパラメータ的な?? 連続的に検定する事を考慮し、alphaをどのように補正するか、みたいな関数...??)
+  If you always reach the planned sample size, this choice is not critical, but if you undersample and observe too few users, the choice of spending function can affect the power properties substantially.
+  常に計画されたサンプルサイズに達する場合、この選択は重要ではないが、サンプル数が少なすぎると、speading functionの選択がパワーの特性に大きく影響する。
 
-The critical values used in the test need to be obtained by solving integrals numerically.
-試験で使用する臨界値は、積分を数値的に解いて求める必要がある。
-This numerical problem becomes more challenging with many intermittent analyses, and it is therefore not feasible to use GST in a streaming fashion, i.e., run more than a few hundred intermittent analyses for one experiment.
-この数値問題は、間欠的な解析が多くなると難しくなるため、GSTをストリーミング方式で使用する、つまり1つの実験に対して数百以上の間欠的な解析を実行することは現実的ではない。
+- The critical values used in the test need to be obtained by solving integrals numerically.
+  試験で使用するcritical valuesは、数値的に積分を解いて得る必要がある。(=null distributionの形が複雑になって、critical valueが解析的に得られないってこと?:thinking_face:)
+  This numerical problem becomes more challenging with many intermittent analyses, and it is therefore not feasible to use GST in a streaming fashion, i.e., run more than a few hundred intermittent analyses for one experiment.
+  この数値的な問題は、多くの断続的な分析があるとより難しくなり、したがって、GSTをstreaming fashion(方式)で使用すること、つまり、**1つの実験に数百回以上の断続的な分析を実行することは不可能**である。
 
-### Always valid inference 常に有効な推論
+### Always valid inference (AVI) 法
 
 Always valid inference tests allow for continuous testing during data collection without deciding in advance on a stopping rule or the number of intermittent analyses.
-常に有効な推論検定では、停止ルールや断続的な分析回数を事前に決めることなく、データ収集中に継続的に検定を行うことができる。
+always valid inference testsは、事前に停止ルールや断続的な分析の回数を決めることなく、データ収集中に連続的なテストを行うことを可能にする。
 We present both mSPRT and GAVI, but mSPRT is essentially a special case of GAVI, and the pros and cons are the same.
-MSPRTとGAVIの両方を紹介しているが、MSPRTは基本的にGAVIの特殊なケースであり、長所も短所も同じである。
+mSPRTとGAVIの両方を紹介しますが、mSPRTは基本的にGAVIの特殊なケースであり、長所と短所は同じです。
 For details see e.g.Howard et al.(2021) or Lindon et al.(2022).
 詳細はHowardら(2021)やLindonら(2022)を参照のこと。
 
-Pros:
-長所だ：
+#### Pros:
 
-Easy to implement.
-実行するのは簡単だ。
+- Easy to implement.
+  実行するのは簡単だ。
+- Allows unlimited sampling and no expected sample size is required in advance.
+  無制限のサンプリングが可能で、事前に予想されるサンプルサイズは必要ない。
+- Allows arbitrary stopping rules.
+  任意の停止ルールを許可する。
+- Supports streaming and batch data.
+  streamingデータもbatchデータもサポートする。
 
-Allows unlimited sampling and no expected sample size is required in advance.
-無制限のサンプリングが可能で、事前に予想されるサンプルサイズは必要ない。
+#### Cons:
 
-Allows arbitrary stopping rules.
-任意の停止ルールを許可する。
+- Requires the experimenter to choose parameters of the mixing distribution, i.e., the distribution that describes the effect under the alternative hypothesis.
+  mixing distribution(混合分布)、すなわち対立仮説のもとでの効果を記述する分布のパラメータを選択することを実験者に要求する。(分布の分散とかを事前に指定する必要があるってこと...??:thinking_face:)
+  This choice affects the statistical properties of the test and is nontrivial.
+  この選択は検定の統計的特性に影響し、自明ではない。
+  If the approximate expected sample size is known, it can be used to select the parameter, but then the pro of not having to know the sample size is lost.
+  おおよその予想されるサンプルサイズがわかっている場合、そのパラメータを選択するために使用できるが、その場合、サンプルサイズを知る必要がないという利点が失われる。
+- Harder to understand for folks trained in traditional hypothesis testing.
+  伝統的な仮説検証の訓練を受けた人々には理解しにくい。
+  It will probably take a while before intro courses in statistics cover these tests.
+  統計学の入門コースでこれらのテストが扱われるようになるには、しばらく時間がかかるだろう。
+- Has by construction less power when analyzing data in batch compared to streaming.
+  構造上、streamingに比べてbatchでデータを分析すると、パワーが低くなる。
 
-Supports streaming and batch data.
-ストリーミングとバッチデータに対応。
-
-Cons:
-短所だ：
-
-Requires the experimenter to choose parameters of the mixing distribution, i.e., the distribution that describes the effect under the alternative hypothesis.
-混合分布、すなわち対立仮説のもとでの効果を記述する分布のパラメータを選択することを実験者に要求する。
-This choice affects the statistical properties of the test and is nontrivial.
-この選択は検定の統計的特性に影響し、自明ではない。
-If the approximate expected sample size is known, it can be used to select the parameter, but then the pro of not having to know the sample size is lost.
-おおよその予想サンプルサイズがわかっていれば、それを使ってパラメータを選択することができるが、その場合、サンプルサイズを知らなくてもよいという利点が失われる。
-
-Harder to understand for folks trained in traditional hypothesis testing.
-伝統的な仮説検証の訓練を受けた人々には理解しにくい。
-It will probably take a while before intro courses in statistics cover these tests.
-統計学の入門コースでこれらのテストが扱われるようになるには、しばらく時間がかかるだろう。
-
-Has by construction less power when analyzing data in batch compared to streaming.
-構造上、ストリーミングに比べてバッチでデータを分析する際のパワーは小さい。
+<!-- ここまで読んだ! -->
 
 ### Bonferroni corrections ボンフェローニ補正
 
 If we have an upper bound for how many intermittent analyses we want to make, we can solve the peeking problem by selecting a conservative approach.
-断続的な分析の回数に上限があれば、保守的なアプローチを選択することで、ピーキング問題を解決することができる。
+断続的な分析の回数に上限があれば、**conservativeな(保守的な)アプローチ**を選択することで、peeking問題を解決することができる。(保守的な = 有意水準(i.e. 許容する偽陽性率)を小さくする事...??:thinkng:)
 We can bound the false positive rate by adjusting for multiple comparisons using Bonferroni corrections, where we use a standard z-test but with alpha divided by the number of intermittent analyses.
-Bonferroni補正を用いて多重比較を調整することで、偽陽性率を抑えることができる。この場合、標準的なz検定を用いるが、αは断続的分析の数で割る。
+Bonferroni補正を用いて複数の比較を調整することで、偽陽性率を制限することができる。ここでは、標準的なz検定を使用するが、**alphaを断続的な分析の回数で割る**。(多重検定を考慮して、有意水準をより小さくするって事か!)
 Since the test statistic is highly correlated over repeated testing, the Bonferroni approach is conservative by construction.
-検定統計量は反復検定で高い相関を持つので、ボンフェローニ・アプローチは構造上保守的である。
+検定統計量は繰り返しテストで高度に相関しているため、Bonferroniアプローチは構造上保守的である。
 
-Pros:
-長所だ：
+#### Pros:
 
-Easy to implement and explain.
-実施も説明も簡単だ。
+- Easy to implement and explain.
+  実施も説明も簡単だ。
 
-Cons:
-短所だ：
+#### Cons:
 
-You have to decide the maximum number of intermittent analyses in advance.
-断続的な分析の最大回数をあらかじめ決めておく必要がある。
-
-With many intermittent analyses, the test will become highly conservative with low power as a consequence.
-断続的な分析が多い場合、テストは非常に保守的になり、結果として検出力が低くなる。
+- You have to decide the maximum number of intermittent analyses in advance.
+  断続的な分析の最大回数をあらかじめ決めておく必要がある。
+- With many intermittent analyses, the test will become highly conservative with low power as a consequence.
+  断続的な分析が多い場合、テストは非常に保守的になり(i.e. acceptable false positive rateが低くなり...!)、結果として検出力が低くなる。
 
 ### Corrected-alpha approach 修正アルファ・アプローチ
 
 Statsig proposed a simple adjustment that reduces the false positive inflation rate from peeking.
-Statsigは、ピーキングによる偽陽性のインフレ率を減らす簡単な調整を提案した。
+Statsigは、peekingによる偽陽性のインフレ率を減らすための簡単な調整を提案した。
 The approach does not solve the peeking problem in the sense that the false positive rate under peeking is bounded below the target level (alpha) but substantially limits the inflation itself.
-このアプローチは、ピーキングの下での偽陽性率が目標レベル（アルファ）以下に制限されるという意味で、ピーキング問題を解決するものではないが、インフレそのものを実質的に制限するものである。
+このアプローチは、peeking問題を解決するわけではない。つまり、peekingの下での偽陽性率が目標レベル（alpha）よりも低く抑えられるが、インフレ自体は大幅に制限される。
 
-Pros:
-長所だ：
+#### Pros:
 
-Easy to use.
-使いやすい。
+- Easy to use.
+  使いやすい。
 
-Cons:
-短所だ：
+#### Cons:
 
-Does not bound the false positive rate and, therefore, does not solve the peeking problem.
-偽陽性率を制限しないため、ピーキング問題は解決しない。
-
-The actual false positive rate depends on the sample size and number of intermittent analyses — which might be hard for experimenters to understand.
-実際の偽陽性率は、サンプルサイズと断続的分析の回数に依存する。
+- Does not bound the false positive rate and, therefore, does not solve the peeking problem.
+  偽陽性率を制限しないため、peeking問題を解決しない。(??)
+- The actual false positive rate depends on the sample size and number of intermittent analyses — which might be hard for experimenters to understand.
+  実際の偽陽性率はサンプルサイズと断続的な分析の回数に依存するため、実験者にとって理解しにくいかもしれない。(??)
 
 ### How data is delivered affects the choice of test データがどのように配信されるかは、テストの選択に影響する。
 
 Most companies running online experiments have data infrastructure that supports either batch or streaming data (or both).
-オンライン実験を実施しているほとんどの企業は、バッチデータまたはストリーミングデータのいずれか（または両方）をサポートするデータインフラを持っている。
+オンライン実験を実施しているほとんどの企業は、batchデータまたはstreamingデータ（またはその両方）をサポートするデータインフラストラクチャを持っている。(うんうん...!)
 In the context of online experimentation, batch data implies that analysis can, at most, be done each time a new batch of data is delivered.
-オンライン実験の文脈では、バッチデータは、せいぜいデータの新しいバッチが配信されるたびに分析を行うことができることを意味する。
+オンライン実験の文脈では、batchデータは、新しいデータのバッチが配信されるたびに分析が行われることを意味する。
 At Spotify, most data jobs are run daily, implying one analysis per day during an experiment.
 Spotifyでは、ほとんどのデータジョブは毎日実行され、実験中は1日1回の分析を意味する。
 As the name indicates, the group sequential test is built for use with batches (groups) of data.
-その名が示すように、グループ・シーケンシャル・テストは、データのバッチ（グループ）で使用するために構築されている。
+その名が示すように、**グループ・シーケンシャル・テストは、データのbatch (group)と一緒に使用するために構築されている**。
 If the number of intermittent analyses adds up to more than a few hundred, the test will no longer be a feasible option due to increasingly complex numerical integrations.
 断続的な解析の回数が数百回以上になると、数値積分がますます複雑になるため、この試験はもはや実行可能な選択肢ではなくなる。
 Most experiments at Spotify run for a few weeks at most, and our data arrives in batches, which means that the GST is a good fit for our experimentation environment.
-Spotifyでの実験期間は長くても数週間がほとんどで、データはバッチで届く。
+**Spotifyのほとんどの実験は、最大でも数週間しか実行されず**、データはバッチで届くため、GSTは我々の実験環境に適している。
 
 Streaming data, on the other hand, allows us to analyze results after each new observation.
-一方、ストリーミング・データは、新しい観測のたびに結果を分析することができる。
+一方、streamingデータを使用すると、新しい観測ごとに結果を分析することができる。
 In other words, there can be as many analyses as there are observations in the sample.
 言い換えると、標本中のオブザベーションの数だけ分析があり得ます。
 The AVI family of tests can be computed as soon as a new observation comes in.
@@ -294,26 +281,28 @@ AVIファミリーのテストは、新しい観測が入るとすぐに計算�
 In fact, to utilize their full potential to find significant results, AVI tests should ideally be used with streaming data.
 実際、重要な結果を導き出すためにAVIテストの可能性を最大限に活用するには、ストリーミングデータを使用するのが理想的である。
 While streaming data is favorable, they can also handle batch data by simply skipping the intermittent analyses.
-ストリーミング・データは有利だが、断続的な分析をスキップするだけでバッチ・データも扱える。
+ストリーミングデータが好ましい一方で、断続的な分析を単にスキップすることでバッチデータも処理できる。(streamingデータをbatchデータとして扱えるよねって話か...!)
 This will, however, inevitably make the AVI tests conservative to some extent, as most of the chances for false positive results are never considered.
 しかし、これでは偽陽性の可能性がほとんど考慮されないため、AVI検査がある程度保守的になるのは避けられない。
 We come back to this point in the simulation study below.
 この点については、後述のシミュレーション・スタディで触れることにする。
 
+<!-- ここまで読んだ! -->
+
 ## Evaluating the efficacy of sequential tests by their false positive rates and statistical power
 
 There are two important properties by which we assess the usefulness and effectiveness of the sequential tests:
-逐次テストの有用性と有効性を評価するには、2つの重要な特性がある：
+sequential testsの有用性と効果を評価するための**2つの重要な特性**がある。
 
-A bounded false positive rate: The first and most important property for a sequential test is that it solves the peeking problem.
-偽陽性率が有限であること： 逐次テストの最初の、そして最も重要な特性は、ピーキング問題を解決することである。
-That is, the false positive rate should not be above the intended rate (alpha) even in the presence of peeking.
-つまり、ピーキングがあったとしても、偽陽性率は意図した率（アルファ）を超えてはならない。
-
-High power/sensitivity: The second property is the power or sensitivity for a test, i.e., how often we reject the null hypothesis when it is not true.
-高い検出力/感度： 2つ目の特性は、検定の検出力または感度、すなわち帰無仮説が真でないときにそれを棄却する頻度です。
-As often as possible, we want our test to identify effects when they are there and reject the null hypothesis when it is not true.
-可能な限り多くの場合、効果が存在するときにはそれを識別し、それが真でないときには帰無仮説を棄却するような検定にしたい。
+- A bounded false positive rate: The first and most important property for a sequential test is that it solves the peeking problem.
+  偽陽性率が有限であること： sequential testの最初で最も重要な特性は、peeking問題を解決することである。
+  That is, the false positive rate should not be above the intended rate (alpha) even in the presence of peeking.
+  **つまりpeekingがあったとしても、偽陽性率は意図した割合(alpha)を超えてはならない**。
+  (ここでalphaは、fixed-horizon testを前提としたテスト全体の偽陽性率のことっぽい...!:thinking:)
+- High power/sensitivity: The second property is the power or sensitivity for a test, i.e., how often we reject the null hypothesis when it is not true.
+  高い検出力/感度： 2つ目の特性は、検定の検出力または感度、すなわち帰無仮説が真でないときにそれを棄却する頻度です。
+  As often as possible, we want our test to identify effects when they are there and reject the null hypothesis when it is not true.
+  可能な限り多くの場合、テストが効果を識別し、帰無仮説が真でないときにそれを棄却することを望む。(施策に有害な効果がある場合に、それを正しく見つけ出すことができる必要がある...!:thinking:)
 
 We acknowledge that these tests could be evaluated from many additional angles, for example what type of test statistics they can be used together with and what their small-sample properties are.
 我々は、これらの検定が、例えば、どのような種類の検定統計量と併用できるのか、また、その小標本特性はどのようなものなのかなど、多くの追加的な角度から評価できることを認める。
@@ -321,18 +310,20 @@ In our experience, power and false positive rate are the most important aspects,
 私たちの経験では、検出力と偽陽性率が最も重要な点であり、比較の出発点として適している。
 
 Of the five tests mentioned above, all but the corrected-alpha approach (CAA) fulfill the first criterion of a bounded false positive rate.
-上述した5つのテストのうち、corrected-alpha approach (CAA)を除くすべてのテストは、境界のある偽陽性率という最初の基準を満たす。
+**上述した5つのテストのうち、corrected-alpha approach (CAA)を除くすべてのテストは、有限の偽陽性率の基準(=1つ目の基準)を満たしている**。
 The CAA test is constructed in such a way that the overall false positive rate is strictly larger than alpha if any peeking is performed during data collection.
-CAAテストは、データ収集中にピーキングが行われた場合、全体の偽陽性率がアルファ値より厳密に大きくなるように構成されている。
+CAAテストは、データ収集中にpeekingが行われた場合、全体的な偽陽性率が厳密にalphaよりも大きくなるように構築されている。
 The level of inflation depends on how often you peek and how large the total sample size is, as our results below reveal.
-インフレの程度は、以下の結果で明らかなように、どれくらいの頻度で覗くか、またサンプル総数がどれくらいのものかによって異なる。
+インフレの程度は、以下の結果で明らかなように、どれくらいの頻度でpeekingするか、そして総サンプルサイズがどれくらいかに依存する。
 Since it doesn’t bound the false positive rate under peeking, we don’t view CAA as a proper sequential test and will leave it out of the power comparison.
-ピーキング下での偽陽性率を束縛しないので、CAAを適切な逐次テストと見なさず、検出力比較から除外する。
+**peekingの下で偽陽性率を制限しないため、CAAを適切なsequential testとは見なしておらず**、パワーの比較から除外する。
 
 All other tests by construction bound the false positive rate to alpha or lower if used as intended but differ in power/sensitivity.
-他のすべての検査は、意図したとおりに使用された場合、偽陽性率はアルファ値以下に制限されるが、検出力／感度は異なる。
+**他のすべてのtestは、意図したとおりに使用された場合、偽陽性率はalpha以下に制限される**が、検出力/感度は異なる。
 However, these tests are also optimized to have sensitivity for different settings that we discuss further in the next section.
 しかし、これらのテストは、次のセクションでさらに議論するさまざまな設定に対して感度を持つように最適化されている。
+
+<!-- ここまで読んだ! -->
 
 ## Monte Carlo simulation study モンテカルロ・シミュレーション研究
 
@@ -452,7 +443,7 @@ This effect size was chosen as no method has power 1 or 0 for this effect size, 
 この効果量を選んだのは、どの方法もこの効果量に対して検出力1または0を示さないためであり、これによって方法間の差が明確になる。
 
 The results show that the GST is in most cases superior to all other methods in terms of power, even when the expected sample size is overestimated.
-その結果、予想される標本サイズが過大に見積もられている場合でも、ほとんどの場合、検出力の点でGSTが他のすべての方法よりも優れていることが示された。
+その結果、**予想される標本サイズが過大に見積もられている場合でも、ほとんどの場合、検出力の点でGSTが他のすべての方法よりも優れていることが示された**。
 The exception is when the GST uses an alpha spending function that spends very little alpha in combination with an overestimated sample size.
 例外は、GSTが、過大評価されたサンプルサイズと組み合わせて、アルファをほとんど使わないアルファ支出関数を使用している場合である。
 This is natural since the phase of the data collection during which most of the alpha is planned to be spent never comes.
@@ -461,7 +452,7 @@ In this situation, GST has power comparable to the always valid tests, but syste
 このような状況では、GSTは常に有効な検査と同等の検出力を持つが、常に有効な検査の中で最も成績のよいバリエーションよりも系統的に検出力が低い。
 
 The number of intermittent analyses only has a minor impact on the power of the GST.
-断続的な分析回数は、GSTのパワーにわずかな影響しか与えない。
+**断続的な分析回数は、GSTのパワーにわずかな影響しか与えない。**
 As expected, the always valid tests GAVI and mSPRT have lower power, the fewer intermittent analyses we perform.
 予想通り、常に有効なテストであるGAVIとMSPRTは、断続的な分析が少ないほど検出力が低くなる。
 Even though the differences are not very large, it is worth noting that the naive approach (Bonferroni) with 14 intermittent analyses has higher power than all considered variants of the always valid tests with that few analyses.
@@ -479,7 +470,7 @@ Bonferroni correction with 14 or 56 intermittent analyses performs surprisingly 
 ## What can we learn from the results? 我々はこの結果から何を学ぶことができるのか？
 
 In summary, we find that the group sequential test is systematically better or comparable to always valid approaches.
-まとめると、グループ・シーケンシャル・テストは、常に有効なアプローチよりも系統的に優れているか、同等であることがわかった。
+まとめると、**group sequential testは、常に有効なアプローチと比べて、系統的に優れているか同等である**ことがわかった。
 Since we analyze data arriving in batches at Spotify, the group sequential test’s inability to handle streaming data is no practical limitation; in fact, it means that we’re able to evaluate the data more efficiently since we don’t need to analyze results continuously as data arrives.
 Spotifyでは、到着したデータを一括して分析しているため、グループ逐次テストがストリーミングデータを扱えないことは、実用上の制限ではない。
 A surprising result is that when the number of analyses carried out is kept low, applying Bonferroni corrections to standard z-tests is as effective as relying on always valid approaches.
@@ -627,18 +618,18 @@ This means that the relative comparisons between the methods in this post apply 
 ## Summary 要約
 
 Spotify’s Experimentation Platform uses group sequential tests because this test was originally designed for medical studies where data arrived in batches — much like the data infrastructure that currently powers our experimentation platform.
-Spotifyの実験プラットフォームは、グループ逐次テストを使用している。このテストは、元々データがバッチで届く医学研究のために設計されたもので、現在我々の実験プラットフォームを動かしているデータインフラとよく似ている。
+Spotifyの実験プラットフォームは、group sequential testsを使用している。このテストはもともとデータがバッチで到着する医学研究向けに設計されたものであり、現在の実験プラットフォームの基盤となっているデータインフラストラクチャと非常によく似ている。
 For streaming data, the group sequential test is not a viable option unless the data is analyzed in batches.
 ストリーミング・データの場合、データをバッチで分析しない限り、グループ・シーケンシャル・テストは実行可能なオプションではない。
 Our simulation study shows that even with access to streaming data, the probability that we will identify an effect, when one exists, is higher when the streaming data is analyzed in batches with the group sequential test than in a streaming fashion using any of the other two tests.
-我々のシミュレーション研究によれば、ストリーミング・データにアクセスできる場合でも、効果が存在する場合にその効果を特定できる確率は、他の2つのテストのいずれかを用いてストリーミング方式で分析するよりも、群逐次テストによってストリーミング・データを一括して分析した場合の方が高い。
+我々のシミュレーション研究によれば、ストリーミング・データにアクセスできる場合でも、効果が存在する場合にその効果を特定できる確率は、他の2つのテストのいずれかを用いて**ストリーミング方式で分析するよりも、group sequential testを用いてストリーミングデータをバッチで分析する方が高い**。
 
 Regardless of the specific sequential test chosen, it is critical to use one.
-具体的なシーケンシャルテストの選択にかかわらず、1つのテストを使用することが重要である。
+具体的なsequential testが選ばれたとしても、それを使用することが重要である。
 A key aspect of the experimentation platform offered to developers at Spotify is that we help them to continuously monitor experiments and detect any adverse effects promptly, without compromising the statistical validity of the experiments.
-Spotifyの開発者に提供される実験プラットフォームの重要な点は、実験を継続的にモニターし、実験の統計的妥当性を損なうことなく、あらゆる悪影響を迅速に検出することを支援することである。
+Spotifyの開発者に提供されている実験プラットフォームの重要な側面の1つは、統計的な妥当性を損なうことなく、**実験を継続的に監視し、迅速に悪影響を検出することを支援すること**である。
 This would not be possible without a sequential test.
-これはシーケンシャルテストなしでは不可能だ。
+これはsequential testなしでは不可能である。
 
 Acknowledgement: the authors thanks Mattias Frånberg, Erik Stenberg, and Lizzie Eardley for feedback and suggestions for this blog post.
 謝辞 このブログ記事に対するフィードバックと提案をしてくれたMattias Frånberg、Erik Stenberg、Lizzie Eardleyに感謝する。
