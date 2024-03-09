@@ -81,6 +81,7 @@ Customizability is key to the model building pipeline, and it was achieved throu
 **カスタマイズ性はモデル構築パイプラインの鍵**であり、広範な設定ファイルである`config.ini`によって実現された。(pipeline DSL以外にもconfigファイルを使う??:thinking_face:)
 This file serves as the control center for all inputs and behaviors of the pipeline.
 このファイルは、パイプラインのすべての入力と振る舞いのコントロールセンターとして機能します。
+(事前に実験用Pipelineの雛形を固定しておき、実験者はその都度configファイルに値を指定してデプロイするだけでいい、みたいな点はいいなと思った...!:thinking_face:)
 
 Available configurations inside config.ini include:
 `config.ini`内で利用可能な設定は以下の通り：
@@ -146,99 +147,106 @@ The pipeline is divided into the following steps:
 パイプラインは以下のステップに分かれている：
 (これが実験用pipelineのstepを定義したテンプレートか...!)
 
-- Train and test data preparation – Terabytes of raw data are copied to an S3 bucket, processed using AWS Glue jobs for Spark processing, resulting in data structured and formatted for compatibility.
-  訓練データとテストデータの準備 - テラバイトの生データがS3バケットにコピーされ、Spark処理用のAWS Glueジョブを使用して処理されます。
+- **Train and test data preparation** – Terabytes of raw data are copied to an S3 bucket, processed using AWS Glue jobs for Spark processing, resulting in data structured and formatted for compatibility.
+  訓練データとテストデータの準備 - **テラバイト(やっぱり大きいな...!)の生データ**がS3バケットにコピーされ、Spark処理用のAWS Glueジョブを使用して処理されます。(=ここはProcssingJobじゃなくてGlueを使う??)
 
-- Train – The training step uses the TensorFlow estimator for SageMaker training jobs.
-  Train - トレーニングステップでは、SageMakerトレーニングジョブ用のTensorFlow推定器を使用します。
+- **Train** – The training step uses the TensorFlow estimator for SageMaker training jobs.
+  Train - トレーニングステップでは、SageMakerトレーニングジョブ用のTensorFlow Estimatorが使用されます。(=じゃあAWS提供のdocker imageを使ってるんだ...!やっぱり独自imageが必要なケースってそこまで多くない気がするなぁ...!:thinking_face:)
   Training occurs in a distributed manner using Horovod, and the resulting model artifact is stored in Amazon S3.
-  トレーニングはHorovodを使用して分散方式で行われ、得られたモデルの成果物はAmazon S3に保存される。
+  トレーニングはHorovodを使用して分散方式で行われ、得られたmodel artifactはAmazon S3に保存されます。
   For hyperparameter tuning, a hyperparameter optimization (HPO) job can be initiated, selecting the best model based on the objective metric.
-  ハイパーパラメータのチューニングのために、ハイパーパラメータ最適化（HPO）ジョブを開始し、目的指標に基づいて最適なモデルを選択することができる。
+  ハイパーパラメータのチューニングのために、**hyperparameter optimization (HPO) ジョブ**を開始し、目的指標に基づいて最適なモデルを選択することができる。
 
-- Predict – In this step, a SageMaker Processing job uses the stored model artifact to make predictions.
-  予測 - このステップでは、SageMaker Processing ジョブは保存されたモデルアーティファクトを使用して予測を行います。
+- **Predict** – In this step, a SageMaker Processing job uses the stored model artifact to make predictions.
+  予測 - このステップでは、SageMaker Processing ジョブは保存されたmodel artifactを使用して予測を行います。(=ここはbatch transformじゃなくてProcessingJobを使うんだ...!batch transformJobの場合は、model artifactを事前にmodel resourceに変換しておく必要があるからかな...!:thinking_face:)
   This process runs in parallel on available machines, and the prediction results are stored in Amazon S3.
-  このプロセスは利用可能なマシン上で並行して実行され、予測結果はAmazon S3に保存される。
+  このプロセスは**利用可能なマシン上で並行して実行**され、予測結果はAmazon S3に保存される。
 
 - Evaluate – A PySpark processing job evaluates the model using a custom Spark script.
-  Evaluate - PySparkの処理ジョブは、カスタムSparkスクリプトを使用してモデルを評価します。
+  Evaluate - PySparkのprocessingジョブは、カスタムのSparkスクリプトを使用してモデルを評価します。(Spark使ってるのはサイズがデカいから??)
   The evaluation report is then stored in Amazon S3.
   評価レポートはAmazon S3に保存される。
 
 - Condition – After evaluation, a decision is made regarding the model’s quality.
   コンディション - 評価の結果、モデルの品質が決定される。
   This decision is based on a condition metric defined in the configuration file.
-  この決定(=condition stepによる条件分岐...!)は、コンフィギュレーション・ファイルで定義されたコンディション・メトリックに基づいて行われる。
+  この決定(=condition stepによる条件分岐...!)は、configファイルで定義された条件メトリックに基づいて行われる。
   If the evaluation is positive, the model is registered as approved; otherwise, it’s registered as rejected.
-  評価が肯定的であれば、そのモデルは承認されたものとして登録され、そうでなければ拒否されたものとして登録される。
+  評価が肯定的であれば、そのモデルは承認されたものとして登録され、そうでなければ拒否されたものとして登録される。(architecture図を見ると、Model Registryを使ってるっぽい...!:thinking_face:)
   In both cases, the evaluation and explainability report, if generated, are recorded in the model registry.
-  どちらの場合も、評価と説明可能性報告書が作成されれば、モデル登録簿に記録される。
+  **どちらの場合も、evaluationとexplainabilityレポートが生成された場合は、モデルレジストリに記録されます**。(ふむふむ良い場合も悪い場合もモデルレジストリに記録するのか...!)
 
 - Package model for inference – Using a processing job, if the evaluation results are positive, the model is packaged, stored in Amazon S3, and made ready for upload to the internal ML portal.
   推論のためにモデルをパッケージ化する - 処理ジョブを使用して、評価結果が肯定的であれば、モデルはパッケージ化され、Amazon S3に保存され、内部のMLポータルにアップロードできるようになる。
 
 - Explain – SageMaker Clarify generates an explainability report.
   説明 - SageMaker Clarify は、説明可能性レポートを生成します。
+  (Sagemaker Clarify = データセットやMLモデルのバイアス検出とモデル解釈の機能を提供するサービスっぽい...! 特徴量の寄与度の分析とか...! :thinking_face:)
 
 Two distinct repositories are used.
 2つの異なるリポジトリが使用されている。
 The first repository contains the definition and build code for the ML pipeline, and the second repository contains the code that runs inside each step, such as processing, training, prediction, and evaluation.
-最初のリポジトリには、MLパイプラインの定義とビルドコードが含まれ、2番目のリポジトリには、処理、トレーニング、予測、評価などの各ステップ内で実行されるコードが含まれます。
+**最初のリポジトリには、MLパイプラインの定義とビルドコードが含まれ、2番目のリポジトリには、処理、トレーニング、予測、評価などの各ステップ内で実行されるコードが含まれます。**(リポジトリを2つに分けているんだ...!)
 This dual-repository approach allows for greater modularity, and enables science and engineering teams to iterate independently on ML code and ML pipeline components.
-このデュアル・リポジトリー・アプローチにより、モジュール性が高まり、サイエンス・チームとエンジニアリング・チームがMLコードとMLパイプライン・コンポーネントを独立して反復することが可能になる。
-
+**このdual-repositoryのアプローチは、より良いモジュール性を実現し、データサイエンスチームとエンジニアリングチームがMLコードとMLパイプラインのコンポーネントについて独立してiterationすることを可能にします**。(リポジトリを1つにまとめるか2つに分けるかは、トレードオフだから、開発組織の状況によって良し悪しは異なりそう...!:thinking_face:)
 The following diagram illustrates the solution workflow.
 次の図は、ソリューションのワークフローを示している。
+
+![]()
+
+<!-- ここまで読んだ! -->
 
 ## Automatic model tuning 自動モデルチューニング
 
 Training ML models requires an iterative approach of multiple training experiments to build a robust and performant final model for business use.
-MLモデルのトレーニングは、ビジネスで使用するためのロバストでパフォーマンスの高い最終モデルを構築するために、何度もトレーニング実験を繰り返す必要がある。
+MLモデルのトレーニングは、**ビジネスで使用するためのロバストでパフォーマンスの高いfinal modelを構築するため**に、何度もトレーニング実験を繰り返す必要がある。
 The ML scientists have to select the appropriate model type, build the correct input datasets, and adjust the set of hyperparameters that control the model learning process during training.
 MLの科学者は、適切なモデルタイプを選択し、正しい入力データセットを構築し、学習中にモデルの学習プロセスを制御するハイパーパラメータのセットを調整しなければならない。
 
 The selection of appropriate values for hyperparameters for the model training process can significantly influence the final performance of the model.
-モデル学習プロセスにおけるハイパーパラメータの適切な値の選択は、モデルの最終的な性能に大きく影響する。
+**モデル学習プロセスにおけるハイパーパラメータの適切な値の選択**は、モデルの最終的な性能に大きく影響する。
 However, there is no unique or defined way to determine which values are appropriate for a specific use case.
 しかし、どの値が特定のユースケースにふさわしいかを判断するための、独自の、あるいは定義された方法はない。
 Most of the time, ML scientists will need to run multiple training jobs with slightly different sets of hyperparameters, observe the model training metrics, and then try to select more promising values for the next iteration.
-ほとんどの場合、ML研究者は、わずかに異なるハイパーパラメータのセットで複数のトレーニングジョブを実行し、モデルのトレーニングメトリクスを観察し、次の反復のためにより有望な値を選択しようとする必要があります。
+ほとんどの場合、ML研究者は、わずかに異なるハイパーパラメータのセットで複数のトレーニングジョブを実行し、モデルのトレーニングメトリクスを観察し、次のiterationの為により有望な値を選択しようとします。(手動でのHPOかー...!)
 This process of tuning model performance is also known as hyperparameter optimization (HPO), and can at times require hundreds of experiments.
 モデルの性能をチューニングするこのプロセスは、ハイパーパラメータ最適化（HPO）としても知られており、時には数百回もの実験を必要とすることもある。
 
 The Ranking team used to perform HPO manually in their on-premises environment because they could only launch a very limited number of training jobs in parallel.
-ランキング・チームはオンプレミス環境でHPOを手作業で行っていたが、それは並行して起動できるトレーニング・ジョブの数が非常に限られていたからだ。
+**ランキング・チームはオンプレミス環境でHPOを手作業で行っていたが**、それは並行して起動できるトレーニング・ジョブの数が非常に限られていたからだ。(booking.comさんでもこれってことは安心するなぁ...!:thinking_face:)
 Therefore, they had to run HPO sequentially, test and select different combinations of hyperparameter values manually, and regularly monitor progress.
 そのため、HPOを順次実行し、ハイパーパラメータ値のさまざまな組み合わせを手動でテストして選択し、進捗状況を定期的に監視する必要があった。
 This prolonged the model development and tuning process and limited the overall number of HPO experiments that could run in a feasible amount of time.
 このため、モデル開発とチューニングのプロセスが長引き、実行可能な時間内に実施できるHPO実験の全体数が制限された。
 
 With the move to AWS, the Ranking team was able to use the automatic model tuning (AMT) feature of SageMaker.
-AWSへの移行に伴い、ランキングチームはSageMakerの自動モデルチューニング（AMT）機能を利用できるようになった。
+AWSへの移行に伴い、ランキングチームはSageMakerの**automatic model tuning（AMT）機能**を利用できるようになった。
 AMT enables Ranking ML scientists to automatically launch hundreds of training jobs within hyperparameter ranges of interest to find the best performing version of the final model according to the chosen metric.
 AMTにより、ランキングMLの科学者は、関心のあるハイパーパラメータの範囲内で何百ものトレーニングジョブを自動的に起動し、選択されたメトリックに従って最終モデルの最高のパフォーマンスバージョンを見つけることができる。
 The Ranking team is now able choose between four different automatic tuning strategies for their hyperparameter selection:
-ランキングチームは、ハイパーパラメータの選択について、4つの異なる自動チューニング戦略から選択できるようになった：
+ランキングチームは、ハイパーパラメータの選択について、**4つの異なる自動チューニング戦略**から選択できるようになった:
 
-Grid search – AMT will expect all hyperparameters to be categorical values, and it will launch training jobs for each distinct categorical combination, exploring the entire hyperparameter space.
-グリッド探索 - AMTはすべてのハイパーパラメータがカテゴリー値であることを想定し、各カテゴリーの組み合わせに対してトレーニングジョブを起動し、ハイパーパラメータ空間全体を探索する。
+- **Grid search** – AMT will expect all hyperparameters to be categorical values, and it will launch training jobs for each distinct categorical combination, exploring the entire hyperparameter space.
+  グリッド探索 - AMTはすべてのハイパーパラメータがカテゴリー値であることを想定し、各カテゴリーの組み合わせに対してトレーニングジョブを起動し、ハイパーパラメータ空間全体を探索する。
 
-Random search – AMT will randomly select hyperparameter values combinations within provided ranges.
-ランダム検索 - AMTは、指定された範囲内のハイパーパラメータ値の組み合わせをランダムに選択します。
-Because there is no dependency between different training jobs and parameter value selection, multiple parallel training jobs can be launched with this method, speeding up the optimal parameter selection process.
-異なるトレーニングジョブとパラメータ値選択の間に依存関係がないため、この方法では複数の並列トレーニングジョブを起動することができ、最適なパラメータ選択プロセスを高速化できる。
+- **Random search** – AMT will randomly select hyperparameter values combinations within provided ranges.
+  ランダム検索 - AMTは、指定された範囲内のハイパーパラメータ値の組み合わせをランダムに選択します。
+  Because there is no dependency between different training jobs and parameter value selection, multiple parallel training jobs can be launched with this method, speeding up the optimal parameter selection process.
+  異なるトレーニングジョブとパラメータ値選択の間に依存関係がないため、**この方法では複数の並列トレーニングジョブを起動することができ、最適なパラメータ選択プロセスを高速化**できる。
 
-Bayesian optimization – AMT uses Bayesian optimization implementation to guess the best set of hyperparameter values, treating it as a regression problem.
-ベイズ最適化 - AMTは、ベイズ最適化実装を使用して、回帰問題として扱い、最適なハイパーパラメータ値のセットを推測します。
-It will consider previously tested hyperparameter combinations and its impact on the model training jobs with the new parameter selection, optimizing for smarter parameter selection with fewer experiments, but it will also launch training jobs only sequentially to always be able to learn from previous trainings.
-これは、以前にテストされたハイパーパラメータの組み合わせと、新しいパラメータ選択によるモデル訓練ジョブへの影響を考慮し、より少ない実験でよりスマートなパラメータ選択を最適化する。
+- **Bayesian optimization** – AMT uses Bayesian optimization implementation to guess the best set of hyperparameter values, treating it as a regression problem.
+  ベイズ最適化 - AMTは、ベイズ最適化実装を使用して、回帰問題として扱い、最適なハイパーパラメータ値のセットを推測します。
+  It will consider previously tested hyperparameter combinations and its impact on the model training jobs with the new parameter selection, optimizing for smarter parameter selection with fewer experiments, but it will also launch training jobs only sequentially to always be able to learn from previous trainings.
+  これは、以前にテストされたハイパーパラメータの組み合わせと、新しいパラメータ選択によるモデル訓練ジョブへの影響を考慮し、より少ない実験でよりスマートなパラメータ選択を最適化する。
 
-Hyperband – AMT will use intermediate and final results of the training jobs it’s running to dynamically reallocate resources towards training jobs with hyperparameter configurations that show more promising results while automatically stopping those that underperform.
-ハイパーバンド - AMTは、実行中のトレーニングジョブの中間結果と最終結果を使用して、より有望な結果を示すハイパーパラメータ設定のトレーニングジョブに動的にリソースを再配分し、パフォーマンスが低下したトレーニングジョブは自動的に停止します。
+- **Hyperband** – AMT will use intermediate and final results of the training jobs it’s running to dynamically reallocate resources towards training jobs with hyperparameter configurations that show more promising results while automatically stopping those that underperform.
+  ハイパーバンド - AMTは、実行中のトレーニングジョブの中間結果と最終結果を使用して、より有望な結果を示すハイパーパラメータ設定のトレーニングジョブに動的にリソースを再配分し、パフォーマンスが低下したトレーニングジョブは自動的に停止します。
+  (中間成績が悪かったハイパーパラメータ候補は、早期でジョブを終了させる事で、探索を効率化するような戦略...??:thinking_face:)
 
 AMT on SageMaker enabled the Ranking team to reduce the time spent on the hyperparameter tuning process for their model development by enabling them for the first time to run multiple parallel experiments, use automatic tuning strategies, and perform double-digit training job runs within days, something that wasn’t feasible on premises.
-SageMaker 上の AMT により、Ranking チームは、複数の並列実験の実行、自動チューニング戦略の使用、2 桁のトレーニングジョブの実行を初めて数日以内に行うことができるようになり、モデル開発のためのハイパーパラメータチューニングプロセスに費やす時間を短縮することができました。
+SageMaker 上の AMT により、Ranking チームは、複数の並列実験の実行、自動チューニング戦略の使用、**2桁のトレーニングジョブの実行を初めて数日以内に行うことができるようになり**、モデル開発のためのハイパーパラメータチューニングプロセスに費やす時間を短縮することができました。
+
+<!-- ここまで読んだ! -->
 
 ## Model explainability with SageMaker Clarify SageMaker Clarifyによるモデル説明可能性
 
