@@ -251,31 +251,35 @@ SageMaker 上の AMT により、Ranking チームは、複数の並列実験の
 ## Model explainability with SageMaker Clarify SageMaker Clarifyによるモデル説明可能性
 
 Model explainability enables ML practitioners to understand the nature and behavior of their ML models by providing valuable insights for feature engineering and selection decisions, which in turn improves the quality of the model predictions.
-モデルの説明可能性は、ML実務者が特徴エンジニアリングと選択決定のための貴重な洞察を提供することによって、MLモデルの性質と挙動を理解することを可能にし、その結果、モデル予測の品質が向上します。
+モデルの説明可能性は、ML実務者が**特徴エンジニアリングと選択決定のための貴重な洞察を提供**することによって、**MLモデルの性質と挙動を理解**することを可能にし、その結果、**モデル予測の品質が向上**します。
 The Ranking team wanted to evaluate their explainability insights in two ways: understand how feature inputs affect model outputs across their entire dataset (global interpretability), and also be able to discover input feature influence for a specific model prediction on a data point of interest (local interpretability).
-ランキングチームは、説明可能性の洞察を2つの方法で評価したいと考えていた： 特徴量の入力がデータセット全体のモデル出力にどのような影響を与えるかを理解すること（グローバルな解釈可能性）、そして、注目するデータポイントの特定のモデル予測に対する入力特徴量の影響を発見できること（ローカルな解釈可能性）。
+ランキングチームは、説明可能性の洞察を**2つの方法**で評価したいと考えていた: 特徴入力がデータセット全体にわたってモデル出力にどのように影響するかを理解する(**global interpretablity**)、そして特定のデータポイントに対するモデル予測の入力特徴量の影響を発見することができる(**local interpretability**)。
 With this data, Ranking ML scientists can make informed decisions on how to further improve their model performance and account for the challenging prediction results that the model would occasionally provide.
 このデータがあれば、ランキングMLの科学者は、モデルの性能をさらに向上させる方法や、モデルが時折出す困難な予測結果を考慮する方法について、情報に基づいた決定を下すことができる。
 
 SageMaker Clarify enables you to generate model explainability reports using Shapley Additive exPlanations (SHAP) when training your models on SageMaker, supporting both global and local model interpretability.
 SageMaker Clarify を使用すると、SageMaker でモデルをトレーニングする際に、Shapley Additive exPlanations (SHAP) を使用してモデルの説明可能性レポートを生成することができ、グローバルおよびローカルの両方のモデルの解釈可能性をサポートします。
 In addition to model explainability reports, SageMaker Clarify supports running analyses for pre-training bias metrics, post-training bias metrics, and partial dependence plots.
-モデルの説明可能性レポートに加え、SageMaker Clarifyは、トレーニング前のバイアスメトリクス、トレーニング後のバイアスメトリクス、および部分依存プロットの分析の実行をサポートします。
+モデルの説明可能性レポートに加え、SageMaker Clarifyは、トレーニング前のバイアスメトリクス、トレーニング後のバイアスメトリクス、およびpartial dependence plotsの分析を実行することをサポートしています。(PDPなつかしい...!:thinking_face:)
 The job will be run as a SageMaker Processing job within the AWS account and it integrates directly with the SageMaker pipelines.
-ジョブは AWS アカウント内で SageMaker Processing ジョブとして実行され、SageMaker パイプラインと直接統合されます。
+**ジョブは AWS アカウント内で SageMaker Processing ジョブとして実行され、SageMaker パイプラインと直接統合されます**。(Sagemaker ClarifyのジョブはProcessingJobとして実行されるんだ...!)
 
 The global interpretability report will be automatically generated in the job output and displayed in the Amazon SageMaker Studio environment as part of the training experiment run.
 グローバルインタープリタビリティレポートは、ジョブの出力に自動的に生成され、トレーニング実験の実行の一部として Amazon SageMaker Studio 環境に表示されます。
 If this model is then registered in SageMaker model registry, the report will be additionally linked to the model artifact.
-このモデルが SageMaker モデルレジストリに登録されると、レポートはモデルアーティファクトに追加リンクされます。
+**このモデルが SageMaker モデルレジストリに登録されると、レポートはmodel artifactに追加でリンクされます**。(MLflowみたい! Tracking情報を紐付けてくれるのはいいね...!:thinking_face:)
 Using both of these options, the Ranking team was able to easily track back different model versions and their behavioral changes.
-この2つのオプションを使用することで、ランキングチームは異なるモデルのバージョンとその動作の変化を簡単に追跡することができた。
+この2つのオプションを使用することで、ランキングチームは異なるモデルのバージョンとその動作の変化を簡単にtrack back(追跡)することができました。
 
 To explore input feature impact on a single prediction (local interpretability values), the Ranking team enabled the parameter save_local_shap_values in the SageMaker Clarify jobs and was able to load them from the S3 bucket for further analyses in the Jupyter notebooks in SageMaker Studio.
-1つの予測値（局所的な解釈可能値）に対する入力特徴量の影響を調べるために、ランキングチームはSageMaker Clarifyのジョブでsave_local_shap_valuesパラメータを有効にし、SageMaker StudioのJupyterノートブックでさらに分析するためにS3バケットから読み込むことができました。
+1つの予測値(local interpretability values)に対する入力特徴量の影響を探るために、ランキングチームはSageMaker Clarifyジョブでパラメータsave_local_shap_valuesを有効にし、SageMaker StudioのJupyterノートブックでさらなる分析のためにそれらをS3バケットからロードすることができました。
+
+![]()
 
 The preceding images show an example of how a model explainability would look like for an arbitrary ML model.
 先の画像は、任意のMLモデルに対するモデルの説明可能性の例を示している。
+
+<!-- ここまで読んだ! -->
 
 ## Training optimization トレーニングの最適化
 
