@@ -32,7 +32,7 @@
 - Registering model steps:
   - 学習で得られたmodel artifactを使って、モデルパッケージを作りレジストリに登録するstep。
 - Create model steps:
-  - 学習で得られたmodel artifactを使って、モデルリソースを作成するstep。
+  - 学習で得られたmodel artifactを使って、model resourceを作成するstep。(=batch推論や推論エンドポイントではmodel resourceを使うので...!)
 - Transform job steps:
   - create model stepで作成したモデルリソースを使って、バッチ変換ジョブを実行するstep。
 - Wait steps
