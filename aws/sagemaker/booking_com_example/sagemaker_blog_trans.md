@@ -286,81 +286,86 @@ The preceding images show an example of how a model explainability would look li
 The rise of deep learning (DL) has led to ML becoming increasingly reliant on computational power and vast amounts of data.
 ディープラーニング（DL）の台頭により、MLは計算能力と膨大なデータへの依存度を高めている。
 ML practitioners commonly face the hurdle of efficiently using resources when training these complex models.
-MLの実務者は、このような複雑なモデルをトレーニングする際に、リソースを効率的に使用するというハードルに直面するのが一般的だ。
+MLの実務者は、このような複雑な(=time complexityの大きい!)モデルをトレーニングする際に、**リソースを効率的に使用するというハードルに直面するのが一般的**だ。
 When you run training on large compute clusters, various challenges arise in optimizing resource utilization, including issues like I/O bottlenecks, kernel launch delays, memory constraints, and underutilized resources.
-大規模な計算クラスタでトレーニングを実行する場合、I/Oボトルネック、カーネル起動の遅延、メモリ制約、リソースの過少利用などの問題を含め、リソース利用を最適化する上でさまざまな課題が発生する。
+大規模な計算クラスタでトレーニングを実行すると、**I/Oのボトルネック、カーネルの起動の遅延、メモリの制約、リソースの未使用など、リソースの利用を最適化するためのさまざまな課題が発生**します。
 If the configuration of the training job is not fine-tuned for efficiency, these obstacles can result in suboptimal hardware usage, prolonged training durations, or even incomplete training runs.
-トレーニングジョブの構成が効率化のために微調整されていない場合、これらの障害により、ハードウェアの使用率が最適でなくなったり、トレーニング時間が長くなったり、トレーニングの実行が不完全になったりする可能性がある。
+トレーニングジョブの構成が効率化のために微調整されていない場合、これらの障害により、**ハードウェアの使用率が最適でなくなったり、トレーニング時間が長くなったり、トレーニングの実行が不完全になったりする可能性**がある。
 These factors increase project costs and delay timelines.
 これらの要因は、プロジェクト・コストを増加させ、スケジュールを遅らせる。
 
 Profiling of CPU and GPU usage helps understand these inefficiencies, determine the hardware resource consumption (time and memory) of the various TensorFlow operations in your model, resolve performance bottlenecks, and, ultimately, make the model run faster.
-CPUとGPUの使用状況のプロファイリングは、これらの非効率性を理解し、モデル内のさまざまなTensorFlow操作のハードウェアリソース消費（時間とメモリ）を決定し、パフォーマンスのボトルネックを解決し、最終的にモデルを高速に実行するのに役立ちます。
+**CPUとGPUの使用状況のプロファイリング**は、これらの非効率性を理解し、モデル内のさまざまなTensorFlow操作のハードウェアリソース消費(時間とメモリ)を決定し、パフォーマンスのボトルネックを解決し、最終的にモデルを高速化するのに役立ちます。
 
 Ranking team used the framework profiling feature of Amazon SageMaker Debugger (now deprecated in favor of Amazon SageMaker Profiler) to optimize these training jobs.
-ランキングチームは、Amazon SageMaker Debuggerのフレームワークプロファイリング機能（現在はAmazon SageMaker Profilerに取って代わられ非推奨）を使用して、これらのトレーニングジョブを最適化しました。
+ランキングチームは、**Amazon SageMaker Debuggerのframework profiling機能** (現在は**Amazon SageMaker Profiler**に置き換えられています) を使用して、これらのトレーニングジョブを最適化しました。(インスタンス最適化のためのサービスがあるっぽい...!?これ自体はインスタンスを必要としないので利用料金は無料...!:thinking_face:)
 This allows you to track all activities on CPUs and GPUs, such as CPU and GPU utilizations, kernel runs on GPUs, kernel launches on CPUs, sync operations, memory operations across GPUs, latencies between kernel launches and corresponding runs, and data transfer between CPUs and GPUs.
-これにより、CPUとGPUの使用率、GPU上のカーネル実行、CPU上のカーネル起動、同期操作、GPU間のメモリ操作、カーネル起動と対応する実行間のレイテンシ、CPUとGPU間のデータ転送など、CPUとGPU上のすべてのアクティビティを追跡できます。
+これにより、**CPUとGPU上のすべてのアクティビティを追跡**できます。CPUとGPUの利用、GPU上でのカーネルの実行、CPU上でのカーネルの起動、同期操作、GPU間のメモリ操作、カーネルの起動と対応する実行の間の遅延、CPUとGPU間のデータ転送などです。
 
 Ranking team also used the TensorFlow Profiler feature of TensorBoard, which further helped profile the TensorFlow model training.
 ランキングチームは、TensorBoardのTensorFlow Profiler機能も使用し、TensorFlowモデルのトレーニングのプロファイリングをさらに支援した。
 SageMaker is now further integrated with TensorBoard and brings the visualization tools of TensorBoard to SageMaker, integrated with SageMaker training and domains.
-SageMakerはTensorBoardとさらに統合され、SageMakerのトレーニングやドメインと統合されたTensorBoardの可視化ツールをSageMakerにもたらします。
+SageMakerは、TensorBoardとさらに統合され、SageMakerトレーニングとドメインに統合されたTensorBoardの可視化ツールを提供します。
 TensorBoard allows you to perform model debugging tasks using the TensorBoard visualization plugins.
-TensorBoardでは、TensorBoard可視化プラグインを使用してモデルのデバッグタスクを実行できます。
+TensorBoardでは、TensorBoard可視化プラグインを使用してモデルのデバッグタスクを実行できます。(TensorBoard = TensorFlow専用の視覚化ツール?)
 
 With the help of these two tools, Ranking team optimized the their TensorFlow model and were able to identify bottlenecks and reduce the average training step time from 350 milliseconds to 140 milliseconds on CPU and from 170 milliseconds to 70 milliseconds on GPU, speedups of 60% and 59%, respectively.
-この2つのツールの助けを借りて、ランキング・チームはTensorFlowモデルを最適化し、ボトルネックを特定して、平均学習ステップ時間をCPUでは350ミリ秒から140ミリ秒に、GPUでは170ミリ秒から70ミリ秒に短縮することができた。
+これら2つのツールの助けを借りて、ランキングチームはTensorFlowモデルを最適化し、CPU上の平均トレーニングステップ時間を350ミリ秒から140ミリ秒、GPU上の平均トレーニングステップ時間を170ミリ秒から70ミリ秒に短縮し、それぞれ**60%と59%の高速化を実現**しました。
+
+<!-- ここまで読んだ! -->
 
 ## Business outcomes ビジネスの成果
 
 The migration efforts centered around enhancing availability, scalability, and elasticity, which collectively brought the ML environment towards a new level of operational excellence, exemplified by the increased model training frequency and decreased failures, optimized training times, and advanced ML capabilities.
-この移行作業は、可用性、スケーラビリティ、弾力性の強化に重点を置いたもので、モデルのトレーニング頻度の増加や失敗の減少、トレーニング時間の最適化、高度なML機能などに代表されるように、ML環境を新たなレベルの卓越した運用へと導いた。
+**この移行(migration)の取り組みは、availability(可用性)、scalability(スケーラビリティ)、elasticity(弾力性)の向上を中心に据えています**。(=アーキテクチャ品質の改善?)
+これらが集合的に(作用したことで?)、モデルトレーニングの頻度の増加、失敗の減少、トレーニング時間の最適化、高度なML能力(=精度改善?)など、新しいレベルの運用の優れた環境にML環境をもたらしました。
 
-Model training frequency and failures
-モデルトレーニングの頻度と失敗
+### Model training frequency and failures モデルトレーニングの頻度と失敗
 
 The number of monthly model training jobs increased fivefold, leading to significantly more frequent model optimizations.
-毎月のモデルトレーニングジョブの数は5倍に増え、モデルの最適化の頻度が大幅に増えた。
+**毎月のモデルトレーニングジョブの数(実行数?)は5倍に増え**、モデルの最適化の頻度が大幅に増えた。
 Furthermore, the new ML environment led to a reduction in the failure rate of pipeline runs, dropping from approximately 50% to 20%.
-さらに、新しいML環境は、パイプラインの失敗率を約50％から20％へと減少させた。
+さらに、新しいML環境は、**パイプラインの失敗率を約50％から20％へと減少させた**。
 The failed job processing time decreased drastically, from over an hour on average to a negligible 5 seconds.
-失敗したジョブの処理時間は大幅に短縮され、平均1時間以上からわずか5秒になった。
+失敗したジョブの処理時間は、平均で1時間以上から無視できる5秒に大幅に減少した。(復旧速度が向上したって事?)
 This has strongly increased operational efficiency and decreased resource wastage.
-これによって業務効率が大幅に向上し、資源の浪費が減った。
+これによって業務効率が大幅に向上し、**リソースの無駄を減らすことができた**。
 
 ### Optimized training time トレーニング時間の最適化
 
 The migration brought with it efficiency increases through SageMaker-based GPU training.
-この移行は、SageMakerベースのGPUトレーニングによる効率化をもたらした。
+この移行は、SageMakerベースの**GPUトレーニングによる効率化**をもたらした。
 This shift decreased model training time to a fifth of its previous duration.
-このシフトにより、モデルのトレーニング時間は以前の5分の1に短縮された。
+このシフトにより、**モデルのトレーニング時間は以前の5分の1に短縮**された。
 Previously, the training processes for deep learning models consumed around 60 hours on CPU; this was streamlined to approximately 12 hours on GPU.
 従来、ディープラーニングモデルの学習プロセスにはCPUで約60時間かかっていたが、GPUでは約12時間にまで効率化された。
 This improvement not only saves time but also expedites the development cycle, enabling faster iterations and model improvements.
-この改良は、時間を節約するだけでなく、開発サイクルを迅速化し、より迅速な反復とモデルの改良を可能にする。
+この改良は、時間を節約するだけでなく、開発サイクルを迅速化し、より迅速なiterationとモデルの改善を可能にしました。
+(めちゃいいじゃん...!:thinking_face:)
 
 ### Advanced ML capabilities 高度なML機能
 
 Central to the migration’s success is the use of the SageMaker feature set, encompassing hyperparameter tuning and model explainability.
 移行の成功の中心は、ハイパーパラメータのチューニングとモデルの説明可能性を包含するSageMaker機能セットの使用です。
 Furthermore, the migration allowed for seamless experiment tracking using Amazon SageMaker Experiments, enabling more insightful and productive experimentation.
-さらに、この移行により、Amazon SageMaker Experimentsを使用したシームレスな実験追跡が可能になり、より洞察的で生産性の高い実験が可能になりました。
+さらに、この移行により、**Amazon SageMaker Experimentsを使用したシームレスな実験trackingが可能になり**、より洞察に富んだ生産的な実験が可能になりました。
 
 Most importantly, the new ML experimentation environment supported the successful development of a new model that is now in production.
 最も重要なことは、新しいML実験環境が、現在生産中の新モデルの開発を成功に導いたことである。
 This model is deep learning rather than tree-based and has introduced noticeable improvements in online model performance.
 このモデルはツリーベースではなくディープラーニングであり、オンラインモデルのパフォーマンスに顕著な改善をもたらした。
 
+<!-- ここまで読んだ! -->
+
 ## Conclusion 結論
 
 This post provided an overview of the AWS Professional Services and Booking.com collaboration that resulted in the implementation of a scalable ML framework and successfully reduced the time-to-market of ML models of their Ranking team.
-この投稿では、スケーラブルなMLフレームワークを実装し、RankingチームのMLモデルの市場投入までの時間を短縮することに成功した、AWS Professional ServicesとBooking.comのコラボレーションの概要を紹介した。
+この投稿では、スケーラブルなMLフレームワークを実装し、**ランキングチームのMLモデルの市場投入までの時間を短縮することに成功した**、AWSプロフェッショナルサービスとBooking.comの協力の概要を提供しました。
 
 The Ranking team at Booking.com learned that migrating to the cloud and SageMaker has proved beneficial, and that adapting machine learning operations (MLOps) practices allows their ML engineers and scientists to focus on their craft and increase development velocity.
-Booking.comのRankingチームは、クラウドとSageMakerへの移行が有益であることを学び、機械学習オペレーション（MLOps）のプラクティスを適応させることで、MLエンジニアとサイエンティストが彼らの技術に集中し、開発速度を向上させることができることを学んだ。
+Booking.comのRankingチームは、**クラウドとSageMakerへの移行が有益であることを学び**、機械学習オペレーション（MLOps）の実践を適応することで、MLエンジニアと科学者が自分たちの技術に集中し、開発速度を向上させることができるということです。
 The team is sharing the learnings and work done with the entire ML community at Booking.com, through talks and dedicated sessions with ML practitioners where they share the code and capabilities.
-チームは、ブッキング・ドットコムのMLコミュニティ全体と、コードや機能を共有するML実践者の講演や専用セッションを通じて、学習や作業を共有している。
+チームは、トークやML実務者との専用セッションを通じて、**Booking.comのMLコミュニティ全体と学んだことや行ったことを共有し**、コードと機能(capability=能力?)を共有しています。
 We hope this post can serve as another way to share the knowledge.
 この投稿が、知識を共有するもうひとつの方法として役立つことを願っている。
 
@@ -368,3 +373,5 @@ AWS Professional Services is ready to help your team develop scalable and produc
 AWSプロフェッショナルサービスは、お客様のチームがAWSでスケーラブルかつプロダクションレディなMLを開発するお手伝いをいたします。
 For more information, see AWS Professional Services or reach out through your account manager to get in touch.
 詳細については、AWSプロフェッショナルサービスを参照するか、アカウントマネージャーを通じてお問い合わせください。
+
+<!-- ここまで読んだ! -->
