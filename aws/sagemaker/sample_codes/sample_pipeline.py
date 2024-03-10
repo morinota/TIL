@@ -122,3 +122,12 @@ eval_processor_args = eval_processor.run(
     ],
     code="code/evaluation.py",
 )
+
+from sagemaker.model import Model
+
+model = Model(
+    image_uri=image_uri,
+    model_data=xgb_train_step.properties.ModelArtifacts.S3ModelArtifacts,
+    sagemaker_session=pipeline_session,
+    role=role,
+)

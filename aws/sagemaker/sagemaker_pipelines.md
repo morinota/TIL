@@ -133,12 +133,31 @@ mse_threshold = ParameterFloat(name="MseThreshold", default_value=6.0)
     - (コードを渡してProcessingJobを実行するようなusecaseに特化したAPIって事っぽい?:thinking:)
     - (TrainingJobの場合は、各フレームワークの特化型APIが同様の役割を担ってるっぽい...!)
 
-## 2.5. モデルリソースを作成する為のCreateModel stepを定義する
+## 2.5. model resourceを作成する為のCreateModel stepを定義する
 
 - 学習したモデルを使ってbatch推論する為の準備として、モデルリソースを作成するstepを定義する。
 - モデルリソースを作成するstepを定義するには、`sagemaker.workflow.model_step.ModelStep`クラスを使う。
   - CreateModel stepクラスを定義する際には`sagemaker.model.Model`オブジェクトの`create()`メソッドの返り値を`step_args`として渡す。
   - Modelオブジェクトを初期化する際は、training jobの出力である`S3ModelArtifacts`を指定する。(TrainingStepのproperties属性を使って指定する)
+
+```python
+from sagemaker.model import Model
+
+model = Model(
+    image_uri=image_uri,
+    model_data=step_train.properties.ModelArtifacts.S3ModelArtifacts,
+    sagemaker_session=pipeline_session,
+    role=role,
+)
+
+from sagemaker.inputs import CreateModelInput
+from sagemaker.workflow.model_step import ModelStep
+
+step_create_model = ModelStep(
+    name="AbaloneCreateModel",
+    step_args=model.create(instance_type="ml.m5.large", accelerator_type="ml.eia1.medium"),
+)
+```
 
 ## 2.6. batch推論する為のTransform stepを定義する
 
@@ -166,7 +185,7 @@ step_transform = TransformStep(
 )
 ```
 
-## 2.7. モデルパッケージを作る為のRegisterModel stepを定義する
+## 2.7. model packageを作る為のRegisterModel stepを定義する
 
 - model package
   - 推論に必要な全ての要素をpackage化した、再利用可能なmodel artifactの抽象化された概念。
