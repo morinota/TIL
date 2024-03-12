@@ -169,6 +169,15 @@ n週連続推薦システム系論文読んだシリーズ k 週目の記事に�
   - 2. 全てのprimary metricsがflatまたはnegativeで、少なくとも1つのmetricがnegativeである場合は、変更をrevertする。
   - 3. 全てのprimary metricsがflatの場合は、変更をlaunchせずに、実験の検出力を上げるか、さっさと失敗と見なすか、方向転換するかの検討を行う。
   - 4. いくつかのprimary metricsがpositiveで、いくつかがnegativeである場合は、トレードオフのメンタルモデルに基づいて意思決定を行う。この意思決定が十分に蓄積されたら、primary metricsに重みを割り当てる事ができるようになる可能性がある...!
+- primary metricsを一つにできない場合は、primary metricsの数を最小限に絞る事を目指すべき。
+  - 経験則から「**実験のprimary metricsの数を5つ以下に絞るべき**」というルールがある。
+  - なぜ? -> primary metricsの数が多いほど、primary metricsの少なくともどれか1つでfalse positiveが発生する確率が高くなってしまうから...!
+    - primary metricsの数を$n$とすると、false positiveが発生する確率は以下のようになる:
+      - $1 - (1 - \alpha)^n$
+      - $\alpha$は、acceptable false poritive rate(i.e. 有意水準)
+      - 例えば、$\alpha=0.05$の場合、$n=5$でfalse positiveが発生する確率は約23%になる...! 一方でもし $n=10$だと、false positiveが発生する確率は約40%に至る...!
+    - ただそもそも、p-valueによる閾値(i.e. 差が有意か否か)に強い意味を持たせすぎるのは非推奨。(p-hackingが起こりやすくなるので...!)
+      - (p-hacking = 何度も検定を繰り返し、有意な結果を得るためにデータを選択する行為)
 
 ## OEC(Overall Evaluation Criterion) とは?
 
