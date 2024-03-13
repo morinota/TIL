@@ -1,14 +1,14 @@
-## link リンク
+## 0.1. link リンク
 
 https://arxiv.org/pdf/2403.05440.pdf
 https://arxiv.org/pdf/2403.05440.pdf
 
-## title タイトル
+## 0.2. title タイトル
 
 Is Cosine-Similarity of Embeddings Really About Similarity?
 埋め込みコサイン類似度は本当に類似度なのか？
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 Cosine-similarity is the cosine of the angle between two vectors, or equivalently the dot product between their normalizations.
 コサイン類似度は、2つのベクトル間の角度の余弦、または等価的にそれらの正規化間のドット積である。
@@ -25,7 +25,7 @@ We discuss implications beyond linear models: a combination of different regular
 Based on these insights, we caution against blindly using cosine-similarity and outline alternatives.
 これらの洞察に基づき、我々はコサイン類似度を盲目的に使用することに注意を促し、代替案を概説する。
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 Discrete entities are often embedded via a learned mapping to dense real-valued vectors in a variety of domains.
 離散エンティティは、多くの場合、さまざまな領域において、学習されたマッピングを介して、密な実数値ベクトルに埋め込まれる。
@@ -52,84 +52,123 @@ In Section 3, we propose possible remedies.
 The experiments in Section 4 illustrate our findings derived in this paper.
 セクション4の実験は、本稿で得られた知見を説明するものである。
 
-# Matrix Factorization Models 行列因数分解モデル
+# 2. Matrix Factorization Models 行列因数分解モデル
 
 In this paper, we focus on linear models as they allow for closed-form solutions, and hence a theoretical understanding of the limitations of the cosine-similarity metric applied to learned embeddings.
 本論文では、閉形式解を可能にする線形モデルに焦点を当て、それゆえ、学習された埋め込みに適用される余弦類似度メトリックの限界を理論的に理解する。
 We are given a matrix X ∈ R n×p containing n data points and p features (e.g., users and items, respectively, in case of recommender systems).
-n個のデータ点とp個の特徴（例えば、レコメンダー・システムの場合、それぞれユーザーとアイテム）を含む行列X∈R n×pが与えられる。
+$n$個のデータ点と$p$個の特徴（例えば、レコメンダーシステムの場合は、それぞれユーザーとアイテム）を含む行列 $X \in \mathbb{R}^{n \times p}$ が与えられているとする。
 The goal in matrix-factorization (MF) models, or equivalently in linear autoencoders, is to estimate a low-rank matrix AB⊤ ∈ R p×p , where A, B ∈ R p×k with k ≤ p, such that the product XABT is a good approximation of X: 1 X ≈ XAB⊤.
-行列因数分解(MF)モデル、あるいは線形オートエンコーダにおける目標は、低ランク行列ABA4⊤∈R p×p（A, B∈R p×k、k≦p）、積XABTがXの良い近似となるような行列を推定することである： 1 X ≈ XAB⊤。
+行列因数分解(MF)モデル、あるいは線形オートエンコーダにおける目標は、低ランク行列 $AB^T \in \mathbb{R}^{p \times p}$ を推定することであり、ここで $A, B \in \mathbb{R}^{p \times k}$ であり、$k \leq p$ であり、$XAB^T$ が $X$ の良い近似であることである: $X \approx XAB^T$。
 When the given X is a user-item matrix, the rows ⃗bi of B are typically referred to as the (k-dimensional) item-embeddings, while the rows of XA, denoted by ⃗xu · A, can be interpreted as the user-embeddings, where the embedding of user u is the sum of the item-embeddings ⃗aj that the user has consumed.
-与えられたXがユーザーアイテム行列であるとき、Bの行⃗biは一般的に（k次元）アイテム埋め込みと呼ばれ、一方、⃗xu - Aで示されるXAの行はユーザー埋め込みと解釈される。
+与えられた $X$ がuser-item行列の場合、$B$の行 $\vec{b}_{i}$ は通常、(k次元の)アイテム埋め込みと呼ばれる。一方、$XA$の行（$\vec{x}_{u} \cdot A$ で表される）は、ユーザ埋め込みと解釈できる。ここで、ユーザ $u$ の埋め込みは、ユーザが消費したアイテム埋め込み $\vec{a}_{j}$ の合計である。(item embeddingが2種類出てきてない?:thinking:)
+(通常のMFのnotationでは、XAを一つの行列として表す事が多い気がする...??:thinking:)
+
 Note that this model is defined in terms of the (unnormalized) dot-product between the user and item embeddings (XAB⊤)u,i = ⟨ ⃗xu · A, ⃗bi⟩.
-このモデルは、ユーザーとアイテムの埋め込み（XAB⊤）u,i = ⟨xu - A, ⃗bi⟩の間の（正規化されていない）ドット積で定義されていることに注意。
+このモデルは、ユーザとアイテムの埋め込み $(XA B^T)_{u,i} = <\vec{x}_{u} \cdot A, \vec{b}_{i}>$ の（正規化されていない）ドット積として定義されていることに注意してください。(損失関数内でのユーザの嗜好スコアの定義の話...?)
 Nevertheless, once the embeddings have been learned, it is common practice to also consider their cosine-similarity, between two items cosSim( ⃗bi , ⃗bi ′ ), two users cosSim( ⃗xu · A, ⃗xu′ · A), or a user and an item cosSim( ⃗xu · A, ⃗bi).
-埋め込みが学習されると、2つのアイテムcosSim( ⃗ ⃗ ′ )、2つのユーザーcosSim( ⃗ ⃗ - A, ⃗ ⃗ - A)、またはユーザーとアイテムのcosSim( ⃗ ⃗ - A, ⃗ ⃗ ⃗ ⃗ )の間の余弦類似性も考慮するのが一般的です。
+それにもかかわらず、一度埋め込みが学習されると、2つのアイテム間のcosSim( $\vec{b}_{i}, \vec{b}_{i'}$ )、2人のユーザ間のcosSim( $\vec{x}_{u} \cdot A, \vec{x}_{u'} \cdot A$ )、またはユーザとアイテム間のcosSim( $\vec{x}_{u} \cdot A, \vec{b}_{i}$ )のような、**それらのcosine-similarityも考慮するのが一般的である。** (うんうん、なるほど...??)
 In the following, we show that this can lead to arbitrary results, and they may not even be unique.
 以下では、これが任意の結果を導き、一意でない可能性さえあることを示す。
 
-## Training トレーニング
+## 2.1. Training トレーニング
 
 A key factor affecting the utility of cosine-similarity metric is the regularization employed when learning the embeddings in A, B, as outlined in the following.
 cosine-similarity メトリックの有用性に影響を与える重要な要因は、以下に概説するように、A, Bの埋め込みを学習する際に採用される正則化である。
 Consider the following two, commonly used, regularization schemes (which both have closed-form solutions, see Sections 2.2 and 2.3:
-よく使われる次の2つの正則化スキームを考えてみよう（どちらも閉形式解を持つ、セクション2.2と2.3参照）：
+よく使われる次の2つの正則化スキームを考えてみましょう（どちらも閉形式の解がある、セクション2.2と2.3を参照）。
+(L1正則化とL2正則化の話...???)
 
 $$
+\min_{A,B} ||X − XAB^T||^2_F + \lambda ||AB^T||^2_F \tag{1}
 $$
 
-The two training objectives obviously differ in their L2-norm regularization: • In the first objective, ||AB⊤||2 F applies to their product.
-この2つの訓練目的は、L2ノルムの正則化において明らかに異なる： - 最初の目的では 
+$$
+\min_{A,B} ||X − XAB^T||^2_F + \lambda (||XA||^2_F + ||B||^2_F) \tag{2}
+$$
+
+(両方ともL2正則化を含むMFの損失関数の話...???)
+The two training objectives obviously differ in their L2-norm regularization:
+この2つの学習目的は、明らかにL2ノルム正則化において異なる:
+
+In the first objective, ||AB⊤||2 F applies to their product.
+第1の目的関数では、$||AB^T||^2_F$ がそれらの積に適用される。
 In linear models, this kind of L2-norm regularization can be shown to be equivalent to learning with denoising, i.e., drop-out in the input layer, e.g., see [6].
-線形モデルでは、このようなL2-norm正則化は、ノイズ除去を伴う学習、つまり入力層でのドロップアウトと等価であることが示される。
+線形モデルでは、この種のL2ノルム正則化は、ノイズ除去、**つまり入力層のドロップアウトで学習することと同等**であることが示されている（例えば、[6]を参照）。
 Moreover, the resulting prediction accuracy on held-out test-data was experimentally found to be superior to the one of the second objective [2].
-さらに、保留されたテストデータに対する予測精度は、実験的に第2の目的[2]のものよりも優れていることが判明した。
+さらに、hold-outテストデータでの予測精度は、実験的に第2の目的関数よりも優れていることが実験的に見つかっている[2]。
 Not only in MF models, but also in deep learning it is often observed that denoising or drop-out (this objective) leads to better results on held-out test-data than weight decay (second objective) does.
-MFモデルだけでなく、ディープラーニングにおいても、ノイズ除去やドロップアウト（この目的）は、ウェイト減衰（第2の目的）よりも、保持されたテストデータでより良い結果をもたらすことがよく観察される。
-• The second objective is equivalent to the usual matrix factorization objective minW ||X − P Q⊤||2 F + λ(||P||2 F + ||Q||2 F ), where X is factorized as P Q⊤, and P = XA and Q = B.
+MFモデルだけでなく、ディープラーニングでも、ノイズ除去やドロップアウト（この目的）がウェイト減衰(第2の目的関数) よりもhold-outテストデータでより良い結果をもたらすことがしばしば観察される。(ノイズへのover fittingを避ける効果があるのかな...!)
+
+The second objective is equivalent to the usual matrix factorization objective minW ||X − P Q⊤||2 F + λ(||P||2 F + ||Q||2 F ), where X is factorized as P Q⊤, and P = XA and Q = B.
 |X − P Q⊤
+第2の目的関数は、通常のMatrix factorization目的関数 $min_{W} ||X − PQ^T||^2_F + \lambda (||P||^2_F + ||Q||^2_F)$ と同等であり、ここで $X$ は $PQ^T$ として因数分解され、$P = XA$ および $Q = B$ である。(うんうん、これが一般的なMFのnotationな気がする...!)
 This equivalence is outlined, e.g., in [2].
 この等価性は、例えば[2]に概説されている。
 Here, the key is that each matrix P and Q is regularized separately, similar to weight decay in deep learning.
-ここで重要なのは、ディープラーニングにおけるウェイト減衰と同様に、各行列PとQが別々に正則化されることだ。
+ここで重要なのは、ディープラーニングにおけるweight decay(重み減衰?)と同様に、**各行列PとQが別々に正則化されていること**である。
+
 If Aˆ and Bˆ are solutions to either objective, it is well known that then also ARˆ and BRˆ with an arbitrary rotation matrix R ∈ R k×k , are solutions as well.
-AˆとBˆがいずれかの目的に対する解であるならば、任意の回転行列R∈R k×kを持つARˆとBRˆも解であることはよく知られている。
+$\hat{A}$ と $\hat{B}$ がどちらかの目的関数の解(=closed-formな解)である場合、任意の回転行列 $R \in \mathbb{R}^{k \times k}$ を用いた $\hat{A}R$ と $\hat{B}R$ もまた解であることはよく知られている。(そうなのか...!)
+(rotation matrix = ベクトルや行列を特定の軸周りに回転させる行列っぽい)
 While cosine similarity is invariant under such rotations R, one of the key insights in this paper is that the first (but not the second) objective is also invariant to rescalings of the columns of A and B (i.e., the different latent dimensions of the embeddings): if AˆBˆ⊤ is a solution of the first objective, so is ADD ˆ −1Bˆ⊤ where D ∈ R k×k is an arbitrary diagonal matrix.
-コサイン類似度はこのような回転Rに対して不変であるが、本論文の重要な洞察の1つは、第一の目的（第二の目的ではない）は、AとBの列の再スケーリング（すなわち、埋込みの異なる潜在次元）に対しても不変であるということである： もしAˆBˆ⊤が第1の目的の解であれば、ADD ˆ -1B ˆ⊤も同様であり、ここでD∈R k×k は任意の対角行列である。
+cosine類似度はこのようなrotation matrix $R$ に対して不変である一方で、本稿の主要な洞察の一つは、**第1の目的関数がAとBの列 (i.e. 埋め込みの異なる潜在次元) のスケーリングにも不変であること**である: 第1の目的関数の解が $\hat{A}\hat{B}^T$ である場合、任意の対角行列 $D \in \mathbb{R}^{k \times k}$ を用いた $\hat{A}D D^{-1}\hat{B}^T$ もまた解である。(なるほど...??)
 We can hence define a new solution (as a function of D) as follows:
-したがって、新しい解を（Dの関数として）次のように定義することができる：
+したがって、新しい解を ($D$ の関数として) 以下のように定義することができる:
 
 $$
-
+\hat{A}^{(D)} :=  \hat{A}D
+\\
+\hat{B}^{(D)} :=  \hat{B}D^{-1}
+\tag{3}
 $$
 
 In turn, this diagonal matrix D affects the normalization of the learned user and item embeddings (i.e., rows):
-この対角行列Dは、学習されたユーザーとアイテムの埋め込み（つまり行）の正規化に影響する：
+この対角行列 $D$ は、**学習されたユーザとアイテムの埋め込み（つまり、行）の正規化に影響を与える**。
 
 $$
-
+(X \hat{A}^{(D)})_{(normalized)} = \Omega_{A} X \hat{A}^{(D)} = \Omega_{A} X \hat{A}D
+\\
+\hat{B}^{(D)}_{(normalized)} = \Omega_{B} \hat{B}^{(D)} = \Omega_{B} \hat{B}D^{-1}
+\tag{4}
 $$
 
 where ΩA and ΩB are appropriate diagonal matrices to normalize each learned embedding (row) to unit Euclidean norm.
-ここでΩAとΩBは、学習された各埋め込み（行）を単位ユークリッドノルムに正規化するための適切な対角行列である。
+ここで $\Omega_{A}$ と $\Omega_{B}$ は、それぞれの学習された埋め込み（行）をユニットユークリッドノルムに**正規化するための適切な対角行列**である。(各要素を定数倍するためのdiagonal matrix)
 Note that in general the matrices do not commute, and hence a different choice for D cannot (exactly) be compensated by the normalizing matrices ΩA and ΩB.
-一般に行列は通分しないので、Dに異なる選択をしたとしても、正規化行列ΩAとΩBによって（正確に）補正することはできない。
+一般に、これらの行列は可換ではないため、異なる $D$ の選択は正規化行列 $\Omega_{A}$ と $\Omega_{B}$ によって（正確に）補償されることはないことに注意してください。
+(??)
 As they depend on D, we make this explicit by ΩA(D) and ΩB(D).
-これらはDに依存するので、ΩA(D)とΩB(D)で明示する。
+これらは $D$ に依存するため、我々はこれを $\Omega_{A}(D)$ と $\Omega_{B}(D)$ で明示的に示す。(正規化するためには、もともとのベクトルのノルムに依存するからそりゃそう...!)
 Hence, also the cosine similarities of the embeddings depend on this arbitrary matrix D.
-したがって、埋込みの余弦類似度もこの任意の行列Dに依存する。
+したがって、埋め込みのcosine類似度もこの**任意の行列 $D$ に依存**する。
 As one may consider the cosine-similarity between two items, two users, or a user and an item, the three combinations read
-2つのアイテム、2人のユーザー、またはユーザーとアイテムの間の余弦類似度を考えると、3つの組み合わせは以下のようになる。
+2つのアイテム、2人のユーザ、またはユーザとアイテムの間のcosine類似度を考えることができるため、3つの組み合わせは以下のようになる。
+
+item-item:
 
 $$
+cosSim(\hat{B}^{(D)}, \hat{B}^{(D)}) = \Omega_{B}(D) \cdot \hat{B} \cdot D^{-2} \cdot \hat{B}^{T} \cdot \Omega_{B}(D)
+$$
 
+user-user:
+
+$$
+cosSim(X\hat{A}^{(D)}, X\hat{A}^{(D)}) = \Omega_{A}(D) \cdot X \cdot \hat{A} \cdot D^2 \cdot (X \cdot \hat{A})^{T} \cdot \Omega_{A}(D)
+$$
+
+user-item:
+
+$$
+cosSim(X\hat{A}^{(D)}, \hat{B}^{(D)}) = \Omega_{A}(D) \cdot X \hat{A} \cdot \hat{B}^{T} \cdot \Omega_{B}(D)
 $$
 
 It is apparent that the cosine-similarity in all three combinations depends on the arbitrary diagonal matrix D: while they all indirectly depend on D due to its effect on the normalizing matrices ΩA(D) and ΩB(D), note that the (particularly popular) item-item cosine-similarity (first line) in addition depends directly on D (and so does the user-user cosine-similarity, see second item).
-3つの組み合わせの余弦類似度は、すべて任意の対角行列Dに依存することが明らかである： これらはすべて正規化行列ΩA(D)とΩB(D)への影響により間接的にDに依存するが、（特によく使われる）項目-項目の余弦類似度（1行目）はさらにDに直接依存することに注意（ユーザー-ユーザーの余弦類似度も同様、2番目の項目を参照）。
+**これら3つの組み合わせのcosine類似度が、任意の対角行列 $D$ に依存していることは明らか**である: それらはすべて、正規化(用の対角)行列 $\Omega_{A}(D)$ と $\Omega_{B}(D)$ に対する $D$ の影響によって間接的に $D$ に依存しているが、**（特に人気のある）item-itemのcosine類似度（最初の行）は、直接的に $D$ に依存していることに注意**してください(user-userのcosine類似度も同様、2番目の行を参照)。
 
-## Details on First Objective (Eq. 1) 第1目標（式1）の詳細
+<!-- ここまで読んだ! -->
+
+## 2.2. Details on First Objective (Eq. 1) 第1目標（式1）の詳細
 
 The closed-form solution of the training objective in Eq.1 was derived in [2] and reads Aˆ (1)Bˆ⊤ (1) = Vk · dMat(..., 1 1+λ/σ2 i , ...)k · V ⊤ k , where X =: UΣV ⊤ is the singular value decomposition (SVD) of the given data matrix X, where Σ = dMat(..., σi , ...) denotes the diagonal matrix of singular values, while U, V contain the left and right singular vectors, respectively.
 式1の学習目的の閉形式解は[2]で導かれ、 Aˆ (1)Bˆ⊤ (1) = Vk - dMat(..., 1 1+λ/σ2 i , ...)k - V ⊤ k 、ここでX =： ここで Σ = dMat(..., σi , ...) は特異値の対角行列を表し， U, V はそれぞれ左特異ベクトルと右特異ベクトルを含む．
@@ -139,6 +178,7 @@ We may define2
 を定義することができる。
 
 $$
+
 
 $$
 
@@ -153,12 +193,14 @@ We thus obtain regarding the item-item cosine-similarities:
 
 $$
 
+
 $$
 
 which is quite a bizarre result, as it says that the cosine-similarity between any pair of (different) item-embeddings is zero, i.e., an item is only similar to itself, but not to any other item! Another remarkable result is obtained for the user-item cosine-similarity:
 これは非常に奇妙な結果である。というのも、（異なる）アイテム包含の任意のペア間の余弦類似度はゼロであり、つまり、アイテムはそれ自身にのみ類似しているが、他のアイテムには類似していないからである！もう一つの驚くべき結果は、ユーザー-アイテムの余弦類似度について得られる：
 
 $$
+
 
 $$
 
@@ -172,6 +214,7 @@ We now obtain regarding the user-user cosine-similarities:
 
 $$
 
+
 $$
 
 i.e., now the user-similarities are simply based on the raw data-matrix X, i.e., without any smoothing due to the learned embeddings.
@@ -181,6 +224,7 @@ Concerning the user-item cosine-similarities, we now obtain
 
 $$
 
+
 $$
 
 i.e., now ΩB normalizes the rows of B, which we did not have in the previous choice of D.
@@ -189,6 +233,7 @@ Similarly, the item-item cosine-similarities
 同様に、項目間の余弦類似度
 
 $$
+
 
 $$
 
@@ -200,12 +245,13 @@ Overall, these two cases show that different choices for D result in different c
 In other words, the results of cosine-similarity are arbitray and not unique for this model.
 言い換えれば、余弦類似度の結果は恣意的なものであり、このモデルに固有のものではない。
 
-## Details on Second Objective (Eq. 2) 第2目標（式2）の詳細
+## 2.3. Details on Second Objective (Eq. 2) 第2目標（式2）の詳細
 
 The solution of the training objective in Eq.2 was derived in [7] and reads
 式2の訓練目的の解は[7]で導かれ、以下のようになる。
 
 $$
+
 
 $$
 
@@ -235,7 +281,7 @@ Right: based on (unique) B obtained when training w.r.t.
 Eq.2.
 式2。
 
-# Remedies and Alternatives to Cosine-Similarity コサイン類似度の救済策と代替案
+# 3. Remedies and Alternatives to Cosine-Similarity コサイン類似度の救済策と代替案
 
 As we showed analytically above, when a model is trained w.r.t.
 上で解析的に示したように、モデルがw.r.t.で学習された場合、次のようになる。
@@ -262,7 +308,7 @@ Common approaches in deep learning include the use of negative sampling or inver
 For instance, in word2vec [5], a matrix factorization model was trained by sampling negatives with a probability proportional to their frequency (popularity) in the training data taken to the power of β = 3/4, which resulted in impressive word-similarities at that time.
 例えば、word2vec [5]では、β = 3/4乗の学習データにおける頻度（人気度）に比例した確率で否定語をサンプリングすることで、行列因数分解モデルを学習した。
 
-# Experiments 実験
+# 4. Experiments 実験
 
 While we discussed the full-rank model above, as it was amenable to analytical insights, we now illustrate these findings experimentally for low-rank embeddings.
 フルランクモデルについては、分析的な洞察が可能であったため、上記で説明したが、ここでは、低ランクの埋め込みについて実験的にこれらの知見を説明する。
@@ -299,7 +345,7 @@ Eq.1（ここでは、特異値と反相関するような極端な再スケー�
 Eq.2.
 式2。
 
-# Conclusions 結論
+# 5. Conclusions 結論
 
 It is common practice to use cosine-similarity between learned user and/or item embeddings as a measure of semantic similarity between these entities.
 これらのエンティティ間の意味的類似性の尺度として、学習されたユーザおよび/またはアイテムの埋め込み間の余弦類似度を使用することが一般的である。
