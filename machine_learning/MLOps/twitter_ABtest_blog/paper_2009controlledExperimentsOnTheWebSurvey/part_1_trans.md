@@ -316,7 +316,7 @@ Experiments may have multiple objectives and a scorecard approach might be taken
 A single metric forces tradeoffs to be made once for multiple experiments and aligns the organization behind a clear objective.
 **単一の指標は、複数の実験に対してトレードオフを一度だけ行うことを強制し、明確な目的のために組織を一致させる**。
 A good OEC should not be short-term focused (e.g., clicks); to the contrary, it should include factors that predict long-term goals, such as predicted lifetime value and repeat visits.
-それどころか、予測される生涯価値やリピート訪問など、長期的なゴールを予測する要素を含むべきである。
+**良いOECは、短期的な焦点（例：クリック）に焦点を当てるべきではない**。それどころか、予測される生涯価値(lifetime value)やリピート訪問など、長期的な目標を予測する要因を含むべきである。
 Ulwick describes some ways to measure what customers want (although not specifically for the web) (Ulwick 2005).
 ウルウィック氏は、（ウェブに特化したものではないが）顧客が何を求めているかを測定する方法をいくつか紹介している（Ulwick 2005）。
 

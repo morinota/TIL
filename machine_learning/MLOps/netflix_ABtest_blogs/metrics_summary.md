@@ -222,3 +222,88 @@ ex.) NetflixのUIにおける「Top 10リスト」というプロダクト新機
       - 仮に、top 10 listのユーザ体験が本当に良いものであるならば、top 10 listに掲載された動画の視聴回数が増加した上で、その結果として強いengagementが得られるはず...!
 - 4. 新機能による意図しない悪影響などを監視するためのguardrail metricsを選定する:
   - 例えば、新機能がユーザへ混乱や不満を与えている度合いを示す可能性のある「カスタマーサービスへの接触率」など。
+
+# Webのコントロール実験に関するpracticeをまとめた論文でのOECについて
+
+- OEC(Overall Evaluation Criterion)の定義:
+
+  - 実験の目的(objective)を表す定量的な指標。
+  - 類似した用語: Outcome, Evaluation metric, Performance metric, Fitness function, etc.
+  - 実験に複数の目的がある場合:
+    - 単一のmetricを選択する、もしくは複数の目的を表すmetricsを重み付けした単一の合成metricを用意する事が、非常に望ましく、推奨される。
+  - 長期目標はOECの一部であるべき:
+    - 良いOECは、短期的な目標だけに焦点を当てるべきではない。むしろ、lifetive valueなどの長期的な目標(goal)を予測する要素を含むべき。
+      - (OECは、長期的なgoalと整合するような、短期で測定可能なmetricであるべきってことか...!:thinking:)
+
+- 教訓「Agree on the OEC upfront (OECを事前に合意する)」
+  - 教訓の中の 「Culture and business」 セクションにて、OEC関連の話も少し出てきてた!
+  - まずコントロール実験の強みは、ビジネスの新機能の価値を客観的に測定できること。
+    - そしてこの強みは、**実験前に、関係者が実験をどのように評価するかについて合意できている場合に最もよく発揮される**。
+    - しかし、**多くのソフトウェアプロダクトの評価ではしばしば競合する複数の目標があるため、この教訓が適用されていない事がある**。
+  - OECは、複数の目標を単一のmetricに変換する combined measure になり得る。しかし、いざOECを策定しようとすると、組織は様々な目標の価値を軽量し、それらの相対的な重要性を決定する必要がある。
+  - コントロール実験するうえで必ずしも単一のmetricが必要というわけではないが、こうした事前のハードワークは、組織を整え、goalを明確にする事ができる。
+    - (難しいけど単一のOECを作っておけると、意思決定しやすくて最高だよねってことか...!:thinking:)
+
+最後に、OECに関する論文内での励まし(?)として、以下の言葉が述べられていました:)
+
+> Coming up with good OECs is hard, but what is the alternative? The key point here is to recognize this limitation, but avoid throwing the baby out with the bathwater.
+> 良いOECを考えるのは難しいが、その代わりに何があるだろうか? ここでの重要なポイントは、この限界を認識しながらも、お風呂の水と一緒に赤ん坊を投げ出さないようにすることである。
+
+# the first Practical Online Controlled Experiments Summit(第一回実践的オンラインコントロール実験サミット)の論文でのOEC metricsに関する議論
+
+- 実験のOECはどうあるべきか?
+- OECが、ユーザの不満を増大させるものにペナルティを与えるようにするにはどうするのが良いか?
+- OECの良し悪しをどのように評価するべきか?
+- ユーザのlong-term value(LTV)を推定するモデル(MLモデルや統計モデルの意味!)がある一方で、OEC metricsを作成するうえでそのようなモデルの活用可能性は??
+- 施策によってOEC metricsが改善or悪化された場合、その因果関係を最もよく説明するにはどうすればよいか??
+
+セクション4「OEC: Overall Evaluation Criterion Metric」にて。
+
+## OECを設定する事の価値の話:
+
+- オンラインコントロール実験の重要な利点:
+  - 新しいアイデアを評価するうえでの意思決定プロレスを合理化し、より客観的なものにできる事!
+- オンラインコントロール実験を行わない場合...
+  - あるアイデアの賛成派も反対派も、過去の経験や記憶、特定のビジネスレポートやユーザからのフィードバックの解釈だけを頼りに、議論を進めることになる。
+  - 最終的にリーダーが、そのアイデアをship(出荷)するか否かの判断を行う。
+  - このような意思決定スタイルは、HiPPO(高給取りの意見)に基づいており、多くのcognitive biases(認知バイアス)に影響されやすい。
+- OECを設定する事の価値:
+
+  - HiPPOに基づく意思決定スタイルを、アイデア-ユーザの反応の因果効果に基づく、より客観的なdata-drivenの意思決定スタイルに変える事ができる。
+  - 論文内では、**プロダクトに関する全ての実験についてOECを設定する事を推奨**している。(全ての実験でOECを統一すべきって意味??:thinking:)
+
+## 実験で監視するmetricsの話:
+
+- **実験で監視される全てのmetricsがOECの一部というわけではなく、実験結果を分析するには様々な種類のmetricsが必要**。
+
+  - 1. 実験結果が信頼できるものかどうかを判断するためのmetrics (ex. サンプル比率とか)
+  - 2. 施策が成功したのか、その影響はどうだったのかを判断するためのmetrics (この一連のmetricsがOECを構成する)
+    - (文脈的に、**この論文内ではOECは複数のmetricsの合成metricである事を前提としてるっぽい**...!:thinking:)
+  - 3. OEC metricsに加えて、テストされている施策の成功を明確に示すものではないが、悪化させたくないguardrail metrics。
+  - 4. 実験のmetricsの残りの大部分は、diagnostic, feature, local metricsと呼ばれるもの。
+    - これらのmetricsは、OECの動きの原因を理解するために使われる。
+    - (あ、じゃあこれらのmetricsが、netflixさんのブログで言うところのsecondary metricsに相当するのか...!:thinking:)
+
+## OECが考慮すべき重要な特性:
+
+- 良いOECを見つけるのは難しい。
+- OECが考慮すべき重要な特性:
+  - 1. 第一に、優れたOECは、key product indicators(KPIs)の長期的な向上を示すものでなければならない。
+  - 2. 第二に、OECはゲーム化しづらく、プロダクトチームの適切な行動にインセンティブを与えるものでなければならない。
+  - 3. 第三に、OEC metricsは敏感でなければならない。
+  - 4. 第四に、OEC metricsの計算コストは高すぎてはならない。
+  - 5. 第五に、OEC metricsはkey product goalsを推進し得る多様なシナリオを考慮できなければならない。
+
+## SearchとDiscoveryの両方を考慮した評価が難しい話:
+
+- セクション4.2.1「Search vs Discovery」にて。
+
+- hogehoge
+
+## 複数のprodact goalsとトレードオフの話:
+
+- セクション4.2.2「Product Goals and Trade-offs」にて。
+
+## OECの良し悪しを評価する方法の話:
+
+## metricsにおける機械学習モデルの活用の話:

@@ -149,7 +149,7 @@ While there are methods to test an OEC based on a set of labelled experiments [2
 While, there are models for estimating the long-term value (LTV) of a customer that may be a result of a complex machine learning model, can we leverage such models to create OEC metrics?
 複雑な機械学習モデルの結果であるかもしれない、顧客の長期的価値（LTV）を推定するモデルがある一方で、OECの測定基準を作成するためにそのようなモデルを活用することはできるでしょうか？
 Once we have OEC metrics and a Treatment improves or regresses the OEC metric, how can we best answer why the OEC metric improved or regressed and uncover the underlying causal mechanism or root cause for it?
-OEC測定基準ができ、ある治療がOEC測定基準を改善または後退させたとしたら、なぜOEC測定基準が改善または後退したのか、そしてその根本的な原因メカニズムや根本原因を明らかにするにはどうすればよいのでしょうか？
+OECメトリクスがあり、治療がOECメトリクスを改善または悪化させた場合、なぜOECメトリクスが改善または悪化したのか、その根本的な因果関係や原因を最もよく説明するにはどうすればよいか？
 
 Running experiments at a large scale introduces another set of issues.
 大規模な実験を実行することは、別の問題を導入する。
@@ -371,15 +371,15 @@ To analyze experiment results, we require different types of metrics [22].
 First, we need to know if the results of an experiment are trustworthy.
 まず、実験結果が信頼できるかどうかを知る必要がある。
 A set of data quality metrics, like a sample ratio, help raise red flags on critical data quality issues.
-**サンプル比率のような一連のデータ品質指標**は、重大なデータ品質問題の赤旗を掲げるのに役立つ。(diagnotic metricsっていうんだっけ?)
+**サンプル比率のような一連のデータ品質指標**は、重大なデータ品質問題の赤旗を掲げるのに役立つ。(diagnotic metricsっていうんだっけ?)(これは文脈によってはguardrail metricsの一種に含まれるのかな...??)
 After checking the data quality metrics, we want to know the outcome of the experiment.
 データ品質メトリクスをチェックした後、実験の結果を知りたい。
 Was the treatment successful and what was its impact? This set of metrics comprise the OEC.
 **treatmentは成功したのか、その影響はどうだったのか。この一連の指標がOECを構成する**。(primary decision metrics + guardrail metrics + secondary metricsの概念をOECに含めるべきなのかな??)
 In addition to OEC metrics, we have found that there is a set of guardrail metrics which are not clearly indicative of success of the feature being tested, but metrics that we do not want to harm.
-OECメトリクスに加えて、テストされている機能の成功を明確に示すものではないが、損ないたくない、一連のガードレールメトリクスがあることがわかりました。(あ、guaradrail metricsはOECに含めるべきじゃないのか...!:thinking:)
+OECメトリクスに加えて、テストされている機能の成功を明確に示すものではないが、損ないたくない、一連のguaradrail metricsがあることがわかりました。(あ、guaradrail metricsはOECに含めるべきじゃないのか...!:thinking:)
 The remaining bulk of the metrics for an experiment are diagnostic, feature or local metrics.
-実験のメトリクスの残りの大部分は、diagnostic、feature、またはlocalメトリクスです。
+実験のメトリクスの残りの大部分は、diagnostic、feature、またはlocal metricsです。(これらはOECに含めるべきじゃないのか...!:thinking:)
 These metrics help you understand the source of OEC movement (or the lack of).
 これらの指標は、**OECの動きの原因（またはその欠如）を理解するのに役立ち**ます。(あ、じゃあこれらがsecondary metricsっぽい位置づけぽい...!:thinking:)
 
@@ -432,7 +432,7 @@ Over time, different methods have been proposed to measure HEART metrics in sear
 サーチエンジンやその他のgoal-directed activitiesにおいて、HEARTメトリクスを測定するためのさまざまな方法が提案されてきた[36, 54]。
 
 It is still challenging to find metrics similar to HEART metrics to work for discovery- or browsing-related scenarios, like news articles shown on the Edge browser homepage, or Google mobile homepage, or Yandex homepage.
-Edgeブラウザのホームページ、Googleモバイルのホームページ、Yandexのホームページに表示されるニュース記事のような、**発見やブラウジングに関連するシナリオで機能するHEARTメトリクスに似たメトリクスを見つけることは、まだ困難**です。
+Edgeブラウザのホームページ、Googleモバイルのホームページ、Yandexのホームページに表示されるニュース記事のような、**discovery-relatedやbrowsing-relatedなシナリオで機能するHEARTメトリクスに似たメトリクスを見つけることは、まだ困難**です。
 The challenge is to understand user intent.
 課題は、ユーザの意図を理解することだ。
 Sometimes users will come with a goal-oriented intent and would like to quickly find what they are looking for.

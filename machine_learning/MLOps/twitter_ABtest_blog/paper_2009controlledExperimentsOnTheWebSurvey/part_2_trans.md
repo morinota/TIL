@@ -316,12 +316,14 @@ The following table summarizes the relative advantages and disadvantages of all 
 
 ## 5.3. Data path データパス
 
+<!-- 後で読む! -->
+
 In order to compare metrics across experiment variants, a website must first record the treatment assignments of all end users who visit the site during an experiment.
-実験のバリアント間でメトリクスを比較するためには、ウェブサイトはまず、実験中にサイトを訪れたすべてのエンドユーザーのトリートメント割り当てを記録する必要があります。
+実験のバリアント間でメトリクスを比較するためには、ウェブサイトはまず、**実験中にサイトを訪れたすべてのエンドユーザーのトリートメント割り当てを記録する必要があります**。(施策の影響をうけた...!記録してぇ～...!)
 Then, the website must collect raw data such as page views, clicks, revenue, render time, or customer-feedback selections.
 次に、ウェブサイトは、ページビュー、クリック数、収益、レンダリング時間、または顧客フィードバックの選択などの生データを収集しなければならない。
 Each row of this raw data must be annotated with the identifier of the variant of each experiment that the user saw on the page request.
-この生データの各行は、ユーザーがページリクエストで見た各実験のバリアントの識別子で注釈されていなければならない。
+**この生データの各行は、ユーザーがページリクエストで見た各実験のバリアントの識別子でannotateされていなければならない**。
 The system must then convert this raw data into metrics—numerical summaries that can be compared between variants of an experiment to determine the outcome.
 そしてシステムは、この生データを、結果を決定するために実験のバリエーション間で比較できるメトリクス-数値サマリー-に変換しなければならない。
 Metrics can range from simple aggregates (total page views) all the way to complex inferred measures (customer satisfaction or search relevance).
@@ -494,7 +496,7 @@ We have seen no mention of these practical ideas in the literature, yet they are
 ### 6.2.3 Determine the minimum sample size
 
 Decide on the statistical power, the effect you would like to detect, and estimate the variability of the OEC through an A/A test.
-統計的検出力、検出したい効果を決定し、A/A検定によってOECの変動を推定する。
+統計的検出力、検出したい効果を決定し、**A/A検定によってOECの変動性を推定する**。
 Based on this data you can compute the minimum sample size needed for the experiment and hence the running time for your web site.
 このデータに基づいて、実験に必要な最小サンプルサイズを計算し、したがってウェブサイトの実行時間を決定することができます。
 A common mistake is to run experiments that are underpowered.
@@ -553,7 +555,7 @@ It is difficult to get a man to understand something when his salary depends upo
 One of the powers of controlled experiments is that it can objectively measure the value of new features for the business.
 制御された実験の強みの1つは、**ビジネスの新機能の価値を客観的に測定できる**ことです。
 However, it best serves this purpose when the interested parties have agreed on how an experiment is to be evaluated before the experiment is run.
-しかし、実験が実施される前に、関係者が実験の評価方法に合意している場合に、この目的に最もよく役立ちます。
+しかし、実験が実行される前に、関係者が実験がどのように評価されるかについて合意している場合に、この目的に最もよく役立ちます。
 
 While this advice may sound obvious, it is infrequently applied because the evaluation of many online features is subject to several, often competing objectives.
 このアドバイスは当たり前のように聞こえるかもしれないが、多くのオンライン機能の評価は、**しばしば競合する複数の目標に従っているため、この教訓はあまり適用されていないことがある**。
@@ -630,7 +632,7 @@ Using data mining techniques in this setting can thus provide extremely valuable
 The basic ideas in running controlled experiments are easy to understand, but a comprehensive overview for the web was not previously available.
 対照実験の基本的な考え方は理解しやすいが、ウェブ用の包括的な概要はこれまでなかった。
 In addition, there are important new lessons and insights that we shared throughout the paper, including generalized architectures, ramp-up and aborts, the practical problems with randomization and hashing techniques, and organizational issues, especially as they relate to OEC.
-さらに、本稿全体を通じて共有した重要な新しい教訓や洞察があり、一般的なアーキテクチャ、ランプアップと中止、ランダム化とハッシング技術の実用的な問題、特にOECに関連する組織的な問題などがある。
+さらに、本稿全体を通じて共有した重要な新しい教訓や洞察があり、一般的なアーキテクチャ、ランプアップと中止、ランダム化とハッシング技術の実用的な問題、特にOECに関連する組織的な問題などが含まれています。
 
 Software features in products today are commonly determined by the same way medicine was prescribed prior to World War II: by people who were regarded as experts, not by using scientific methods, such as controlled experiments.
 今日の製品のソフトウェア機能は、第二次世界大戦前に医薬品が処方されていたのと同じ方法で決定されるのが一般的だ： つまり、専門家とみなされる人々によって決定されるのであって、管理された実験などの科学的方法によって決定されるのではない。
