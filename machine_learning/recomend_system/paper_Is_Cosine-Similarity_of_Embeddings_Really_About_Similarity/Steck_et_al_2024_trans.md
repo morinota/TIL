@@ -38,7 +38,7 @@ In particular, they can be used directly as (frozen or fine-tuned) inputs to oth
 While similarity in ’cosine similarity’ refers to the fact that larger values (as opposed to smaller values in distance metrics) indicate closer proximity, it has, however, also become a very popular measure of semantic similarity between the entities of interest, the motivation being that the norm of the learned embedding-vectors is not as important as the directional alignment between the embedding-vectors.
 コサイン類似度」の類似度は、（距離メトリクスの小さな値とは対照的に）大きな値がより近い接近を示すという事実を意味するが、しかし、それはまた、学習された埋め込みベクトルのノルムは、埋め込みベクトル間の方向の整列ほど重要ではないという動機から、関心のあるエンティティ間の意味的類似性の非常に一般的な尺度となっている。
 While there are countless papers that report the successful use of cosine similarity in practical applications, it was, however, also found to not work as well as other approaches, like the (unnormalized) dot-product between the learned embeddings, e.g., see [3, 4, 8].
-コサイン類似度を実用的なアプリケーションで成功裏に使用したことを報告する論文は数え切れないほどあるが、しかし、学習された埋め込み間の（正規化されていない）ドット積のような他のアプローチほどうまく機能しないことも判明している（例えば、[3, 4, 8]を参照）。
+コサイン類似度を実用的なアプリケーションで成功裏に使用したことを報告する論文は数え切れないほどあるが、**しかし、学習された埋め込み間の（正規化されていない）ドット積のような他のアプローチほどうまく機能しないことも判明している**（例えば、[3, 4, 8]を参照）。
 In this paper, we try to shed light on these inconsistent empirical observations.
 本稿では、こうした一貫性のない経験則に光を当てたい。
 We show that cosine similarity of the learned embeddings can in fact yield arbitrary results.
