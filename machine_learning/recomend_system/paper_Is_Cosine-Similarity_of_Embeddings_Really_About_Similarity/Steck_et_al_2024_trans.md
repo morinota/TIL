@@ -171,189 +171,218 @@ It is apparent that the cosine-similarity in all three combinations depends on t
 ## 2.2. Details on First Objective (Eq. 1) 第1目標（式1）の詳細
 
 The closed-form solution of the training objective in Eq.1 was derived in [2] and reads Aˆ (1)Bˆ⊤ (1) = Vk · dMat(..., 1 1+λ/σ2 i , ...)k · V ⊤ k , where X =: UΣV ⊤ is the singular value decomposition (SVD) of the given data matrix X, where Σ = dMat(..., σi , ...) denotes the diagonal matrix of singular values, while U, V contain the left and right singular vectors, respectively.
-式1の学習目的の閉形式解は[2]で導かれ、 Aˆ (1)Bˆ⊤ (1) = Vk - dMat(..., 1 1+λ/σ2 i , ...)k - V ⊤ k 、ここでX =： ここで Σ = dMat(..., σi , ...) は特異値の対角行列を表し， U, V はそれぞれ左特異ベクトルと右特異ベクトルを含む．
+式1の学習目的関数のclosed-formな解は[2]で導出され、$\hat{A}_{(1)}\hat{B}_{(1)}^T = V_k \cdot dMat(..., \frac{1}{1+\lambda/\sigma^2_i}, ...)_{k} \cdot V_k^T$ となる。ここで、$X =: U \Sigma V^T$ は与えられたデータ行列 $X$ の特異値分解(SVD)であり、$\Sigma = dMat(..., \sigma_i, ...)$ は特異値のdiagonal matrix(対角行列)を示し、$U, V$ はそれぞれ左特異ベクトルと右特異ベクトルを含む。
+(なるほど、dMatって、diagonal matrix=対角行列を示すnotationなのか...!:thinking:)
 Regarding the k largest eigenvalues σi , we denote the truncated matrices of rank k as Uk, Vk and (...)k.
-k個の最大固有値σi について、ランクkの切り捨て行列をUk, Vk, (...)kとする。
-We may define2
-を定義することができる。
+$k$個の最大固有値 $\sigma_i$ に関して、ランク$k$のtruncateされた(切り捨てられた)行列をそれぞれ $U_k, V_k$ と $(...)_k$ と表す。
+We may define...
+以下のように定義することができる...
 
 $$
-
-
+\hat{A}_{(1)} = \hat{B}_{(1)} := V_k \cdot dMat(..., \frac{1}{1+\lambda/\sigma^2_i}, ...)_{k}^{1/2}
+\tag{5}
 $$
 
 The arbitrariness of cosine-similarity becomes especially striking here when we consider the special case of a full-rank MF model, i.e., when k = p.
-コサイン類似度の恣意性は、フルランクMFモデルの特別な場合、すなわちk=pの場合を考えると、特に顕著になる。
-This is illustrated by the following two cases: • if we choose D = dMat(..., 1 1+λ/σ2 i , ...) 1 2 , then we have Aˆ (D) (1) = Aˆ (1) · D = V · dMat(..., 1 1+λ/σ2 i , ...) and Bˆ (D) (1) = Bˆ (1) · D−1 = V .
-これは以下の2つのケースで説明できる： - D = dMat(..., 1 1+λ/σ2 i , ...) 1 2 とすると、Aˆ (D) (1) = Aˆ (1) - D = V - dMat(..., 1 1+λ/σ2 i , ...) となり、Bˆ (D) (1) = Bˆ (1) - D-1 = V となる。
+コサイン類似度の恣意性(arbitrariness)は、フルランクMFモデルの特別な場合、すなわち$k=p$の場合に特に顕著になる。(i.e. full-rankな行列 = 線形方程式に一意の解が存在する。rank忘れた...!:thinking:)
+This is illustrated by the following two cases:
+これは以下の2つのケースで説明できる：
+
+(以下、ケース1つ目)
+
+if we choose D = dMat(..., 1 1+λ/σ2 i , ...) 1 2 , then we have Aˆ (D) (1) = Aˆ (1) · D = V · dMat(..., 1 1+λ/σ2 i , ...) and Bˆ (D) (1) = Bˆ (1) · D−1 = V .
+$D = dMat(..., \frac{1}{1+\lambda/\sigma^2_i}, ...)^{1/2}$ とすると、$A_{(D)}^{(1)} = A_{(1)} \cdot D = V \cdot dMat(..., \frac{1}{1+\lambda/\sigma^2_i}, ...)$ および $B_{(D)}^{(1)} = B_{(1)} \cdot D^{-1} = V$ となる。
 Given that the fullrank matrix of singular vectors V is already normalized (regarding both columns and rows), the normalization ΩB = I hence equals the identity matrix I.
-特異ベクトルVのフルランク行列が（列と行の両方に関して）すでに正規化されていることを考えると、正規化ΩB = Iは、したがって恒等行列Iに等しい。
+fullrankな特異ベクトル行列 $V$ はすでに正規化されている（列と行の両方について）事を考慮すると、したがって正規化行列 $\Omega_{B} = I$ は単位行列 $I$ と等しい。
 We thus obtain regarding the item-item cosine-similarities:
-こうして、項目間の余弦類似度が得られる：
+こうして、item-itemのcosine類似度について得られる：
 
 $$
-
-
+cosSim(\hat{B}_{(D)}^{(1)}, \hat{B}_{(D)}^{(1)}) = VV^T = I
 $$
 
-which is quite a bizarre result, as it says that the cosine-similarity between any pair of (different) item-embeddings is zero, i.e., an item is only similar to itself, but not to any other item! Another remarkable result is obtained for the user-item cosine-similarity:
-これは非常に奇妙な結果である。というのも、（異なる）アイテム包含の任意のペア間の余弦類似度はゼロであり、つまり、アイテムはそれ自身にのみ類似しているが、他のアイテムには類似していないからである！もう一つの驚くべき結果は、ユーザー-アイテムの余弦類似度について得られる：
+which is quite a bizarre result, as it says that the cosine-similarity between any pair of (different) item-embeddings is zero, i.e., an item is only similar to itself, but not to any other item!
+これは非常に奇妙な結果である。これは、**任意のペアの（異なる）アイテム埋め込み間のcosine類似度がゼロであることを示しており**、つまり、アイテムは自分自身にしか類似しておらず、他のアイテムには類似していないということである！
+
+Another remarkable result is obtained for the user-item cosine-similarity:
+ユーザーとアイテムのcosine類似度についても興味深い結果が得られる：
 
 $$
-
-
+cosSim(X\hat{A}_{(D)}^{(1)}, \hat{B}_{(D)}^{(1)}) = \Omega_{A} \cdot X \cdot V \cdot dMat(..., \frac{1}{1+\lambda/\sigma^2_i}, ...) \cdot V^T
+\\
+= \Omega_{A} \cdot X \cdot \hat{A}_{(1)} \cdot \hat{B}_{(1)}^T
 $$
 
 as the only difference to the (unnormalized) dot-product is due to the matrix ΩA, which normalizes the rows—hence, when we consider the ranking of the items for a given user based on the predicted scores, cosine-similarity and (unnormalized) dot-product result in exactly the same ranking of the items as the row-normalization is only an irrelevant constant in this case.
-(正規化されていない)ドット積との唯一の違いは、行を正規化する行列ΩAによるものである。したがって、予測されたスコアに基づいて、与えられたユーザーに対するアイテムのランキングを考えるとき、余弦類似度と(正規化されていない)ドット積は、行の正規化がこの場合に無関係な定数にすぎないように、アイテムの全く同じランキングになる。
+（正規化されていない）ドット積との唯一の違いは、行を正規化する行列 $\Omega_{A}$ によるものである。なので、予測されたスコアに基づいて特定のユーザのアイテムのランキングを考えると、cosine類似度と（正規化されていない）ドット積は、この場合には無関係な定数であるため、アイテムのランキングがまったく同じになる。
+
+(以下、ケース2つ目)
 
 if we choose D = dMat(..., 1 1+λ/σ2 i , ...) − 1 2 , then we have analogously to the previous case: Bˆ (D) (1) = V · dMat(..., 1 1+λ/σ2 i , ...), and Aˆ (D) (1) = V is orthonormal.
-D = dMat(..., 1 1+λ/σ2 i , ...) - 1 2 とすると、前のケースと同様に Bˆ (D) (1) = V - dMat(..., 1 1+λ/σ2 i , ...) であり、Aˆ (D) (1) = V は正規直交である。
+$D = dMat(..., \frac{1}{1+\lambda/\sigma^2_i}, ...)^{-1/2}$ とすると、前のケースと同様に、$B_{(D)}^{(1)} = V \cdot dMat(..., \frac{1}{1+\lambda/\sigma^2_i}, ...)$ および $A_{(D)}^{(1)} = V$ となる。
 We now obtain regarding the user-user cosine-similarities:
-次に、ユーザーとユーザーの余弦類似度について求める：
+次に、user-userのcosine類似度について得られる：
 
 $$
-
-
+cosSim(X\hat{A}_{(D)}^{(1)}, X\hat{A}_{(D)}^{(1)}) = \Omega_{A} \cdot X \cdot X^T \cdot \Omega_{A}
 $$
 
 i.e., now the user-similarities are simply based on the raw data-matrix X, i.e., without any smoothing due to the learned embeddings.
-つまり、ユーザー・シミラリティは、学習された埋め込みによる平滑化なしで、生のデータ行列Xに基づくだけである。
+つまり、user-similarityは今や生データ行列 $X$ に基づいており、学習された埋め込みによるスムージングはない。
 Concerning the user-item cosine-similarities, we now obtain
-ユーザーとアイテムの余弦類似度に関しては、次のようになる。
+user-itemの余弦類似度に関しては、次のようになる。
 
 $$
-
-
+cosSim(X\hat{A}_{(D)}^{(1)}, \hat{B}_{(D)}^{(1)}) = \Omega_{A} \cdot X \cdot \hat{A}_{(1)} \cdot \hat{B}_{(1)}^T \cdot \Omega_{B}
 $$
 
 i.e., now ΩB normalizes the rows of B, which we did not have in the previous choice of D.
-すなわち、ΩBはBの行を正規化する。
+すなわち、$\Omega_{B}$ はBの行を正規化する。これは、前のDの選択肢ではなかった。
 Similarly, the item-item cosine-similarities
-同様に、項目間の余弦類似度
+同様に、item-itemのcosine類似度は
 
 $$
-
-
+cosSim(\hat{B}_{(D)}^{(1)}, \hat{B}_{(D)}^{(1)}) = \Omega_{B} \cdot V \cdot dMat(..., \frac{1}{1+\lambda/\sigma^2_i}, ...)^2 \cdot V^T \cdot \Omega_{B}
 $$
 
 are very different from the bizarre result we obtained in the previous choice of D.
 は、以前のDの選択で得られた奇妙な結果とは大きく異なる。
 
 Overall, these two cases show that different choices for D result in different cosine-similarities, even though the learned model Aˆ (D) (1) Bˆ (D)⊤ (1) = Aˆ (1)Bˆ⊤ (1) is invariant to D.
-全体として、これらの2つのケースは、学習モデルAˆ (D) (1) Bˆ (D)↪Sm_22A4 (1) = Aˆ (1)Bˆ⊤ (1)がDに対して不変であるにもかかわらず、Dの選択が異なると余弦類似度が異なることを示している。
+全体として、**これらの2つのケースは、学習されたモデル $\hat{A}_{(D)}^{(1)}\hat{B}_{(D)}^{(1)T} = \hat{A}_{(1)}\hat{B}_{(1)}^T$ が $D$ に依らず不変であるにもかかわらず、異なる $D$ の選択が異なるcosine類似度をもたらすことを示している**。(なるほど...!それが言いたかった事なのか...!)
 In other words, the results of cosine-similarity are arbitray and not unique for this model.
-言い換えれば、余弦類似度の結果は恣意的なものであり、このモデルに固有のものではない。
+言い換えれば、cosine類似度の結果はこのモデルに対して任意であり、一意ではない。
+
+<!-- ここまで読んだ! -->
 
 ## 2.3. Details on Second Objective (Eq. 2) 第2目標（式2）の詳細
 
 The solution of the training objective in Eq.2 was derived in [7] and reads
-式2の訓練目的の解は[7]で導かれ、以下のようになる。
+式2の訓練目的の解は[7]で導かれ、以下のようになる。(これもclosed-formな解か...!:thinking:)
 
 $$
-
-
+\hat{A}^{(2)} = V_{k} \cdot dMat(...,\sqrt{frac{1}{\sigma_i} \cdot (1 - \frac{\lambda}{\sigma_i})_+}, ...)_{k}
+\\
+\hat{B}^{(2)} = V_{k} \cdot dMat(...,\sqrt{\sigma_i \cdot (1 - \frac{\lambda}{\sigma_i})_+}, ...)_{k}
 $$
 
 where (y)+ = max(0, y), and again X =: UΣV ⊤ is the SVD of the training data X, and Σ = dMat(..., σi , ...).
-ここで、(y)+ = max(0, y)、またX =： UΣV ⊤は学習データXのSVDであり、Σ = dMat(..., σi , ...)である。
-Note that, if we use the usual notation of MF where P = XA and Q = B, we obtain Pˆ = XAˆ (2) = Uk · dMat(..., q σi · (1 − λ σi )+, ...)k, where we can see that here the diagonal matrix dMat(..., q σi · (1 − λ σi )+, ...)k is the same for the user-embeddings and the item-embeddings in Eq.6, as expected due to the symmetry in the L2-norm regularization ||P||2 F + ||Q||2 F in the training objective in Eq.2.The key difference to the first training objective (see Eq.1) is that here the L2-norm regularization ||P||2 F + ||Q||2 F is applied to each matrix individually, so that this solution is unique (up to irrelevant rotations, as mentioned above), i.e., in this case there is no way to introduce an arbitrary diagonal matrix D into the solution of the second objective.
-|P
+ここで、$(y)_+ = max(0, y)$ であり、再び $X =: U \Sigma V^T$ は訓練データ $X$ のSVDであり、$\Sigma = dMat(..., \sigma_i, ...)$ である。(SVDって3つの行列に分解するんだっけか...!:thinking:)
+Note that, if we use the usual notation of MF where P = XA and Q = B, we obtain Pˆ = XAˆ (2) = Uk · dMat(..., q σi · (1 − λ σi )+, ...)k,
+通常のMFの表記法を使用すると、$P = XA$ および $Q = B$ の場合、$\hat{P} = X\hat{A}^{(2)} = U_k \cdot dMat(..., \sqrt{\sigma_i \cdot (1 - \frac{\lambda}{\sigma_i})_+}, ...)_{k}$ となる。
+where we can see that here the diagonal matrix dMat(..., q σi · (1 − λ σi )+, ...)k is the same for the user-embeddings and the item-embeddings in Eq.6,
+ここで、diagonal metrix $dMat(..., \sqrt{\sigma_i \cdot (1 - \frac{\lambda}{\sigma_i})_+}, ...)$ が式6のユーザ埋め込みとアイテム埋め込みに対して同じであることがわかる。
+as expected due to the symmetry in the L2-norm regularization ||P||2 F + ||Q||2 F in the training objective in Eq.2.
+これは、式2のtraining objectiveのL2ノルム正則化 $||P||^2_F + ||Q||^2_F$ の対称性によるものである。
+
+The key difference to the first training objective (see Eq.1) is that here the L2-norm regularization ||P||2 F + ||Q||2 F is applied to each matrix individually, so that this solution is unique (up to irrelevant rotations, as mentioned above), i.e., in this case there is no way to introduce an arbitrary diagonal matrix D into the solution of the second objective.
+式1のtraining objectiveとの主な違いは、**ここではL2ノルム正則化 $||P||^2_F + ||Q||^2_F$ がそれぞれの行列に適用されているため、この解が一意である**（上述のように無関係な回転を除いて）ことである。**つまり、この場合、第2の目的関数の解に任意の対角行列 $D$ を導入する方法はない。**（なるほど...? 目的関数2を使う場合はDが任意じゃなくなるのか...!:thinking:)
 Hence, the cosine-similarity applied to the learned embeddings of this MF variant yields unique results.
-したがって、このMF変種の学習済み埋め込みにコサイン類似度を適用すると、ユニークな結果が得られる。
+**したがって、このMF variantの学習された埋め込みに適用されるcosine類似度は、一意の結果をもたらす**。(ふむふむ...!)
+
 While this solution is unique, it remains an open question if this unique diagonal matrix dMat(..., q σi · (1 − λ σi )+, ...)k regarding the user and item embeddings yields the best possible semantic similarities in practice.
-この解はユニークであるが、ユーザーとアイテムの埋め込みに関するこのユニークな対角行列dMat(..., q σi - (1 - λ σi )+, ...)kが、実際に可能な限り最良の意味的類似性をもたらすかどうかは未解決のままである。
+**この解はユニークであるが、ユーザとアイテムの埋め込みに関するこのユニークな対角行列 $dMat(..., \sqrt{\sigma_i \cdot (1 - \frac{\lambda}{\sigma_i})_+}, ...)$ が実際に最適な意味的類似度をもたらすかどうかは未解決の問題である**。(なるほど...:thinking:)
 If we believe, however, that this regularization makes the cosine-similarity useful concerning semantic similarity, we could compare the forms of the diagonal matrices in both variants, i.e., comparing Eq.6 with Eq.5 suggests that the arbitrary diagonal matrix D in the first variant (see section above) analogously may be chosen as D = dMat(..., p 1/σi , ...)k.
-しかしながら、この正則化がコサイン類似度を意味的類似度に関して有用にすると考えるならば、両変形における対角行列の形式を比較することができる。すなわち、式.6と式.5を比較すると、最初の変形における任意の対角行列D（上のセクションを参照）は、類推的にD = dMat(..., p 1/σi , ...)kとして選択されることが示唆される。
+しかしながら、この正則化がcosine類似度を意味的類似度に有用にすると信じるならば、両方のvariantの対角行列の形を比較することができる。つまり、式6と式5を比較すると、上記のセクションで述べた第1のvariantの任意の対角行列 $D$ は $D = dMat(..., \frac{p}{\sigma_i}, ...)$ と同様に選択されるかもしれない。(??)
 
-![]()
-
-Figure 1: Illustration of the large variability of item-item cosine similarities cosSim(B, B) on the same data due to different modeling choices.
-図1： 図1: モデル選択の違いによる、同じデータ上での項目-項目余弦類似度cosSim(B, B)の大きなばらつきの説明。
-Left: groundtruth clusters (items are sorted by cluster assignment, and within each cluster by descending baseline popularity).
-左： groundtruthクラスタ（アイテムは、クラスタの割り当てによって、各クラスタ内でベースライン人気の降順でソートされている）。
-After training w.r.t.
-トレーニング後
-Eq.1, which allows for arbitrary re-scaling of the singular vectors in Vk, the center three plots show three particular choices of re-scaling, as indicated above each plot.
-式.1では、Vkの特異ベクトルを任意に再スケーリングすることができますが、中央の3つのプロットは、各プロットの上に示されているように、再スケーリングの3つの特定の選択を示しています。
-Right: based on (unique) B obtained when training w.r.t.
-右： 訓練時に得られた（ユニークな）Bに基づく。
-Eq.2.
-式2。
+<!-- ここまで読んだ! -->
 
 # 3. Remedies and Alternatives to Cosine-Similarity コサイン類似度の救済策と代替案
 
-As we showed analytically above, when a model is trained w.r.t.
-上で解析的に示したように、モデルがw.r.t.で学習された場合、次のようになる。
-the dotproduct, its effect on cosine-similarity can be opaque and sometimes not even unique.
-ドットプロダクションがコサイン類似度に与える影響は不透明で、一意でないことさえある。
-One solution obviously is to train the model w.r.t.
-一つの解決策は、明らかにモデルを訓練することである。
-to cosine similarity, which layer normalization [1] may facilitate.
-レイヤーの正規化 [1]が容易になるかもしれない。
+As we showed analytically above, when a model is trained w.r.t. the dotproduct, its effect on cosine-similarity can be opaque and sometimes not even unique.
+上記で分析的に示したように、**モデルがドットプロダクトに関して訓練された場合、そのcosine類似度に対する影響は不透明であり、時には一意でさえないことがある**。
+One solution obviously is to train the model w.r.t. to cosine similarity, which layer normalization [1] may facilitate.
+**明らかな解決策の1つは、cosine類似度に関してモデルを訓練することであり、これにはlayer normalization [1]が役立つかもしれない**。(dot-productじゃなくて、ってことね...!:thinking:)
 Another approach is to avoid the embedding space, which caused the problems outlined above in the first place, and project it back into the original space, where the cosine-similarity can then be applied.
-もう一つのアプローチは、そもそも上記の問題を引き起こした埋め込み空間を避け、元の空間に投影し直し、そこで余弦類似度を適用することである。
+もう一つのアプローチは、最初に上で概説した問題を引き起こした埋め込み空間を避け、それを元の空間に戻し、そこでcosine類似度を適用することである。
 For instance, using the models above, and given the raw data X, one may view XAˆBˆ⊤ as its smoothed version, and the rows of XAˆBˆ⊤ as the users’ embeddings in the original space, where cosine-similarity may then be applied.
-例えば、上記のモデルを使用し、生データXが与えられた場合、XAˆBˆ⊤を平滑化したものと見なし、XAˆBˆ⊤の行を元の空間におけるユーザーの埋め込みと見なし、そこで余弦類似度を適用することができる。
+例えば、上記のモデルを使用し、生データXが与えられた場合、$X\hat{A}\hat{B}^T$をそのスムージングされたバージョンと見なし、**$X\hat{A}\hat{B}^T$の行を元の空間のユーザの埋め込みとして見なし、そこでcosine類似度を適用することができる**。
+(smoothed version = たぶんsparceな離散値の行列を、denceで滑らかな連続値の行列に変換したversionってことっぽい...?:thinking:)
+
 Apart from that, it is also important to note that, in cosine-similarity, normalization is applied only after the embeddings have been learned.
-それとは別に、cosine-similarityでは、埋め込みが学習された後にのみ正規化が適用されることも重要である。
+それとは別に、cosine-similarityでは、埋め込みが学習された後に正規化が適用されることも重要である。(実務上でそういうケースが多いってことかな?)
 This can noticeably reduce the resulting (semantic) similarities compared to applying some normalization, or reduction of popularity-bias, before or during learning.
-これは、学習前や学習中に何らかの正規化を施したり、人気バイアスを軽減したりするのに比べて、結果として得られる（意味的な）類似性を著しく低下させる可能性がある。
+**これ(学習後に正規化すること)は、学習前や学習中に正規化や人気バイアスの削減を適用することと比較して、結果として得られる（意味的な）類似性を著しく減少させる可能性がある**。
 This can be done in several ways.
 これにはいくつかの方法がある。
 For instance, a default approach in statistics is to standardize the data X (so that each column has zero mean and unit variance).
-例えば、統計学におけるデフォルトのアプローチは、データXを標準化することである（各列がゼロ平均と単位分散を持つように）。
+例えば、統計学におけるデフォルトのアプローチは、**データXを標準化**することである（各列がゼロ平均と単位分散を持つように）。(=これはbefore learningの話か)
 Common approaches in deep learning include the use of negative sampling or inverse propensity scaling (IPS) as to account for the different item popularities (and user activity-levels).
-ディープラーニングにおける一般的なアプローチには、異なるアイテムの人気度（およびユーザーのアクティビティレベル）を考慮するためのネガティブサンプリングや逆傾向スケーリング（IPS）の使用が含まれる。
+**ディープラーニングにおける一般的なアプローチには、 異なるアイテムの人気度（およびユーザの活動レベル）を考慮するためのネガティブサンプリングや逆傾向スケーリング（IPS）の使用が含まれる。**(IPSは逆傾向スコア重み付けのことだよね!) (前者はbefore learningの話で、後者はduring learningの話か。まあ後者もdefore learningっぽく適用できるかもだけど:thinking:)
 For instance, in word2vec [5], a matrix factorization model was trained by sampling negatives with a probability proportional to their frequency (popularity) in the training data taken to the power of β = 3/4, which resulted in impressive word-similarities at that time.
-例えば、word2vec [5]では、β = 3/4乗の学習データにおける頻度（人気度）に比例した確率で否定語をサンプリングすることで、行列因数分解モデルを学習した。
+例えば、word2vec [5]では、$\beta = 3/4$ 乗の訓練データの頻度(人気度)に比例した確率でネガティブサンプリングを行う事で、行列因子分解モデルが訓練され、その結果、当時印象的な単語の類似性が得られた。
+(word2vecって行列因子分解モデルの一種なのか...!?:thinking:)
+
+<!-- ここまで読んだ! -->
 
 # 4. Experiments 実験
 
 While we discussed the full-rank model above, as it was amenable to analytical insights, we now illustrate these findings experimentally for low-rank embeddings.
 フルランクモデルについては、分析的な洞察が可能であったため、上記で説明したが、ここでは、低ランクの埋め込みについて実験的にこれらの知見を説明する。
 We are not aware of a good metric for semantic similarity, which motivated us to conduct experiments on simulated data, so that the ground-truth semantic similarites are known.
-我々は、意味的類似性のための良い指標を知らないので、真実の意味的類似性を知るために、模擬データで実験を行う動機となった。
+我々は、意味的類似性のための良い指標を知らないので、ground-truthの意味的類似性がわかっている模擬データで実験を行うことに動機づけられた。(ふむふむ...!)
 To this end, we simulated data where items are grouped into clusters, and users interact with items based on their cluster preferences.
-この目的のために、アイテムがクラスタにグループ化され、ユーザーがクラスタの嗜好に基づいてアイテムと相互作用するデータをシミュレートした。
+この目的のために、アイテムがクラスタにグループ化され、ユーザーがクラスタの嗜好に基づいてアイテムと相互作用するデータをシミュレートした。(clusterは、アイテムのカテゴリとかに基づいてるのかな...??)
 We then examined to what extent cosine similarities applied to learned embeddings can recover the item cluster structure.
-次に、学習された埋め込みにコサイン類似度を適用することで、どの程度項目クラスター構造を復元できるかを調べた。
+次に、学習された埋め込みに適用されたcosine類似度が、**アイテムのクラスタ構造をどの程度回復できるか**を調べた。
+
+(以下は疑似データの作り方! 自分で作る時に参考になりそう...!:thinking:)
 In detail, we generated interactions between n = 20, 000 users and p = 1, 000 items that were randomly assigned to C = 5 clusters with probabilities pc for c = 1, ..., C.
-詳細には、c = 1, ..., Cの確率pcでC = 5クラスタにランダムに割り当てられたn = 20, 000ユーザーとp = 1, 000アイテムの間の相互作用を生成した。
+詳細には、$n=20,000$人のユーザーと$p=1,000$個のアイテムのinteractionsを生成し、それらを$c=1, ..., C$ の確率 $p_{c}$ で**ランダムに** $C=5$ つのクラスタに割り当てた。(ふむふむ...!)
 Then we sampled the powerlaw-exponent for each cluster c, βc ∼ Unif(β (item) min , β(item) max ) where we chose β (item) min = 0.25 and β (item) max = 1.5, and then assigned a baseline popularity to each item i according to the powerlaw pi = PowerLaw(βc).
-次に、各クラスタcのパワーロー指数βc ∼ Unif(β (item) min , β (item) max ) をサンプリングし、β (item) min = 0.25 と β (item) max = 1.5 を選び、パワーローpi = PowerLaw(βc)に従って各アイテムiにベースライン人気を割り当てた。
+次に、各クラスタ $c \in \{1, ..., C\}$ に対してpowerlaw指数 $\beta_c \sim Unif(\beta_{item}^{min}, \beta_{item}^{max})$ をサンプリングした($\beta_{item}^{min} = 0.25$ および $\beta_{item}^{max} = 1.5$)。 その後、powerlaw $p_{i} = PowerLaw(\beta_c)$ に従って各アイテム $i$ にベースライン人気度を割り当てた。
+(要は、まず一様分布に従って各クラスターに0.25 ~ 1.5のパラメータを割り当てて、そのパラメータを指定したPowerLawに従ってアイテムにベースライン人気度を割り当てたってことっぽい...??)
+(PowerLawって何...?確率分布の一種??:thinking:)
 Then we generated the items that each user u had interacted with: first, we randomly sampled user-cluster preferences puc, and then computed the user-item probabilities: pui = puci P pi i puci pi .
-次に、各ユーザーuが相互作用したアイテムを生成した： まず、ユーザー・クラスタの嗜好pucをランダムにサンプリングし、ユーザー・アイテムの確率を計算した： pui = puci P pi i puci pi .
+次に、各ユーザ $u$ が相互作用したアイテムを生成した：まず、user-clusterの嗜好 $p_{uc}$ をランダムにサンプリングし、次にuser-itemの確率を計算した：$p_{ui} = \frac{p_{uc} p_{i}}{\sum_{i} p_{uc} p_{i}}$。
 We sampled the number of items for this user, ku ∼ PowerLaw(β (user)), where we used β (user) = 0.5, and then sampled ku items (without replacement) using probabilities pui.
-このユーザーのアイテム数ku ∼ PowerLaw(β (user))をサンプリングし、ここではβ (user) = 0.5とし、確率puiを用いてku個のアイテムを（置換なしで）サンプリングした。
+このユーザのアイテムの数 $k_{u}$ をサンプリングし、$k_{u} \sim PowerLaw(\beta_{user})$ を使用し、その後、確率 $p_{ui}$ を使用して $k_{u}$ 個のアイテムをサンプリングした(置換なし)。ここで、$\beta_{user} = 0.5$ を使用した。
+
+(ここから学習)
 We then learned the matrices A, B according to Eq.1 and also Eq.2 (with λ = 10, 000 and λ = 100, respectively) from the simulated data.
-次に、模擬データから式1および式2（それぞれλ=10,000、λ=100）に従って行列A、Bを学習した。
+次に、模擬データから式1および式2（それぞれ $\lambda = 10,000$ および $\lambda = 100$）に従って行列A、Bを学習した。(L2正則化項のハイパーパラメータ)
 We used a low-rank constraint k = 50 ≪ p = 1, 000 to complement the analytical results for the full-rank case above.
-上記のフルランクの場合の解析結果を補完するために、低ランクの制約k = 50 ≪ p = 1,000≫を使用した。
-Fig.1 shows the ”true” item-item-similarities as defined by the item clusters on the left hand side, while the remaining four plots show the item-item cosine similarities obtained for the following four scenarios: after training w.r.t.
-Fig.1は左側に項目クラスタによって定義された「真の」項目間類似度を示し、残りの4つのプロットは以下の4つのシナリオで得られた項目間余弦類似度を示す： 訓練後w.r.t.
-Eq.1, which allows for arbitrary re-scaling of the singular vectors in Vk (as outlined in Section 2.2), the center three cosine-similarities are obtained for three choices of re-scaling.
-式.1は、（セクション2.2で概説したように）Vkの特異ベクトルを任意に再スケーリングできるようにするもので、再スケーリングの3つの選択に対して、中心3つの余弦類似度が得られる。
-The last plot in this row is obtained from training w.r.t.
-この行の最後のプロットは、r.t.トレーニングから得られたものである。
-Eq.2, which results in a unique solution for the cosine-similarities.
-式.2により、余弦類似度に対する一意解が得られる。
-Again, the main purpose here is to illustrate how vastly different the resulting cosine-similarities can be even for reasonable choices of re-scaling when training w.r.t.
-繰り返しになるが、ここでの主な目的は、訓練時のリ・スケーリングを合理的に選択した場合でも、結果として得られる余弦類似度がいかに大きく異なるかを説明することである。
-Eq.1 (note that we did not use any extreme choice for the re-scaling here, like anti-correlated with the singular values, even though this would also be permitted), and also for the unique solution when training w.r.t.
-Eq.1（ここでは、特異値と反相関するような極端な再スケーリングは行っていない。
-Eq.2.
-式2。
+上記のフルランクの場合の解析結果を補完するために、低ランクの制約 $k = 50 \ll p = 1,000$ を使用した。(kって、ほぼベクトルの次元数ってことでいいのかな?:thinking:)
+
+(ここから実験結果)
+Fig.1 shows the ”true” item-item-similarities as defined by the item clusters on the left hand side, while the remaining four plots show the item-item cosine similarities obtained for the following four scenarios: after training w.r.t. Eq.1, which allows for arbitrary re-scaling of the singular vectors in Vk (as outlined in Section 2.2), the center three cosine-similarities are obtained for three choices of re-scaling.
+図1は、**左側にアイテムクラスタによって定義された「真の」アイテム-アイテムの類似性**を示している。残りの4つのプロットは、**次の4つのシナリオで得られたアイテム-アイテムのcosine類似度**を示している：Eq.1に対して訓練した後、Vkの特異ベクトルの任意の再スケーリングを許可する（セクション2.2で概説されているように）、中央の3つのcosine類似度は3つの再スケーリングの選択肢に対して得られている。
+The last plot in this row is obtained from training w.r.t.Eq.2, which results in a unique solution for the cosine-similarities.
+この行の最後のプロットは、cosine類似度に対して一意の解をもたらすEq.2に対して訓練したものである。
+
+Again, the main purpose here is to illustrate how vastly different the resulting cosine-similarities can be even for reasonable choices of re-scaling when training w.r.t. Eq.1 (note that we did not use any extreme choice for the re-scaling here, like anti-correlated with the singular values, even though this would also be permitted), and also for the unique solution when training w.r.t.Eq.2.
+再び、ここでの主な目的は、**Eq.1に対して訓練する際の合理的なre-scalingの選択に対しても、得られるcosine類似度がどれほど異なるかを示すことである**（ここでは、特異値と反相関するような極端な選択肢を使用していないが、これも許可されていることに注意してください）、そしてEq.2に対して訓練する際の一意の解に対しても。
+(re-scalingの選択は、たぶんdiagnoal matrix Dの選択肢のこと...!:thinking:)
+
+![]()
+
+Figure 1: Illustration of the large variability of item-item cosine similarities cosSim(B, B) on the same data due to different modeling choices.
+図1： 図1: モデル選択の違いによる、同じデータ上でのitem-itemのcosine類似度cosSim(B, B)の大きな変動のイラスト。
+Left: groundtruth clusters (items are sorted by cluster assignment, and within each cluster by descending baseline popularity).
+左： groundtruthクラスタ（アイテムは、クラスタの割り当てによって、各クラスタ内でベースライン人気の降順でソートされている）。
+After training w.r.t. Eq.1, which allows for arbitrary re-scaling of the singular vectors in Vk, the center three plots show three particular choices of re-scaling, as indicated above each plot.
+Eq.1(=学習目的関数ver.1!)に対して訓練した後、Vkの特異ベクトルの任意の再スケーリングを許可するため、中央の3つのプロットは、それぞれのプロットの上に示されているように、3つの特定の再スケーリングの選択を示している。
+Right: based on (unique) B obtained when training w.r.t. Eq.2.
+右： Eq.2(=学習目的関数ver.2!)に対して訓練した際に得られた（一意の）Bに基づいている。
+(Bはアイテム埋め込み行列)
+
+- (メモ)w.r.t.って??
+  - = with respect to = ～に関して、～に対して。
+  - 技術文書などでよく出てくる。ある変数や条件、状況などを前提として、その条件下での議論を行うときに使う。
 
 # 5. Conclusions 結論
 
 It is common practice to use cosine-similarity between learned user and/or item embeddings as a measure of semantic similarity between these entities.
-これらのエンティティ間の意味的類似性の尺度として、学習されたユーザおよび/またはアイテムの埋め込み間の余弦類似度を使用することが一般的である。
+学習されたユーザおよび/またはアイテムの埋め込み間のcosine類似度を、これらのエンティティ間の意味的類似性の尺度として使用することは一般的な実践である。
 We study cosine similarities in the context of linear matrix factorization models, which allow for analytical derivations, and show that cosine similarities are heavily dependent on the method and regularization technique, and in some cases can be rendered even meaningless.
-我々は、解析的な導出が可能な線形行列分解モデルの文脈で余弦類似度を研究し、余弦類似度は手法と正則化手法に大きく依存し、場合によっては無意味にさえなり得ることを示す。
+我々は、closed-formな解の導出が可能な線形行列因子分解モデルの文脈でcosine類似度を研究し、cosine類似度が手法や正則化技術に大きく依存し、場合によっては意味をなさなくなることを示した。
 Our analytical derivations are complemented experimentally by qualitatively examining the output of these models applied simulated data where we have ground truth item-item similarity.
-私たちの分析的な導出は、これらのモデルの出力を、グランドトゥルースの項目-項目の類似性を持つシミュレーションデータに適用して定性的に調べることにより、実験的に補完される。
+私たちの分析的な導出は、これらのモデルの出力を、ground truthのitem-item類似性を持つ模擬データに適用して質的に調べることで実験的に補完されている。
 Based on these insights, we caution against blindly using cosine-similarity, and proposed a couple of approaches to mitigate this issue.
-これらの洞察に基づき、我々はコサイン類似度を盲目的に使用することに注意し、この問題を軽減するためのいくつかのアプローチを提案した。
+**これらの洞察に基づき、我々はコサイン類似度を盲目的に使用することに注意し、この問題を軽減するためのいくつかのアプローチを提案した**。
 While this short paper is limited to linear models that allow for insights based on analytical derivations, we expect cosine-similarity of the learned embeddings in deep models to be plagued by similar problems, if not larger ones, as a combination of various regularization methods is typically applied there, and different layers in the model may be subject to different regularization—which implicitly determines a particular scaling (analogous to matrix D above) of the different latent dimensions in the learned embeddings in each layer of the deep model, and hence its effect on the resulting cosine similarities may become even more opaque there.
-この短い論文は、解析的導出に基づく洞察を可能にする線形モデルに限定されているが、様々な正則化手法の組み合わせが一般的に適用されるため、ディープモデルにおける学習された埋め込み値の余弦類似性は、より大きな問題ではないにせよ、同様の問題に悩まされることが予想される、 これは、ディープモデルの各層で学習された埋め込みにおける異なる潜在次元の特定のスケーリング（上記の行列Dに類似）を暗黙のうちに決定するものであり、それゆえ、結果として得られる余弦類似度に対するその影響は、そこでさらに不透明となる可能性がある。
+この短い論文は、解析的な導出に基づく洞察を可能にする線形モデルに限定されているが、**我々は、深層モデルの学習された埋め込みのcosine類似度が、そこで通常適用されるさまざまな正則化手法の組み合わせによって、同じ問題もしくはそれ以上の問題に悩まされることを予想している**。
+そして、モデルの異なる層が異なる正則化の対象になる可能性があり、それが深層モデルの各層の学習された埋め込みの異なる潜在次元の特定のscaling（上記の行列 $D$ に類似）を暗黙的に決定し、その結果のcosine類似度に対するその効果がさらに不透明になる可能性があるからである。
+(deepなモデルでそれを検証するには、解析的な導出ができないから、それこそ後半の疑似データなどを用いて実験的に検証するしかなさそう...?:thinking:)
+
+<!-- ここまで読んだ! -->
