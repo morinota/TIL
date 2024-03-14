@@ -113,7 +113,7 @@ There’s always something we won’t know about.
 Running A/B tests, where possible, allows us to substantiate causality and confidently make changes to the product knowing that our members have voted for them with their actions.
 可能な限りA/Bテストを実施することで、私たちは因果関係を立証することができ、会員がその行動で投票してくれたことを知っているため、自信を持って製品に変更を加えることができる。
 
-## 1.2. It all starts with an idea 
+## 1.2. It all starts with an idea
 
 An A/B test starts with an idea — some change we can make to the UI, the personalization systems that help members find content, the signup flow for new members, or any other part of the Netflix experience that we believe will produce a positive result for our members.
 A/Bテストは、UI、会員がコンテンツを見つけやすくするパーソナライゼーションシステム、新規会員登録フロー、その他ネットフリックス体験のあらゆる部分に加えることができる変更で、会員にとって良い結果をもたらすと思われるアイデアから始まります。
@@ -127,22 +127,30 @@ Here, the core idea was that surfacing titles that are popular in each country w
 First, by surfacing what’s popular we can help members have shared experiences and connect with one another through conversations about popular titles.
 まず、人気のあるタイトルを表に出すことで、会員が共通の体験を持ち、人気のあるタイトルについての会話を通じて互いにつながることができる。
 Second, we can help members choose some great content to watch by fulfilling the intrinsic human desire to be part of a shared conversation.
-第二に、共有された会話の一部になりたいという人間の本質的な欲求を満たすことで、会員が素晴らしいコンテンツを選ぶ手助けをすることができる。
+第二に、共有された会話の一部であることという人間の本能的な欲求を満たすことで、会員が見る素晴らしいコンテンツを選ぶのを手伝うことができる。
 
-We next turn this idea into a testable hypothesis, a statement of the form “If we make change X, it will improve the member experience in a way that makes metric Y improve.” With the Top 10 example, the hypothesis read: “Showing members the Top 10 experience will help them find something to watch, increasing member joy and satisfaction.” The primary decision metric for this test (and many others) is a measure of member engagement with Netflix: are the ideas we are testing helping our members to choose Netflix as their entertainment destination on any given night? Our research shows that this metric (details omitted) is correlated, in the long term, with the probability that members will retain their subscriptions.
-次に、このアイデアを検証可能な仮説、つまり、"Xを変更すれば、指標Yが改善されるような形で、メンバーのエクスペリエンスが改善される "という形のステートメントに変える。トップ10の例では、仮説はこうなる： "トップ10の体験を会員に見せることで、会員は見たいものを見つけやすくなり、会員の喜びと満足度が高まる。" このテスト（および他の多くのテスト）の主要な決定指標は、Netflixに対する会員のエンゲージメントの指標である： 私たちがテストしているアイデアは、会員がある夜にNetflixをエンターテイメントの目的地として選ぶのに役立っているか？私たちの調査によると、この指標（詳細は省略）は、長期的には、会員が契約を維持する確率と相関している。
+We next turn this idea into a testable hypothesis, a statement of the form “If we make change X, it will improve the member experience in a way that makes metric Y improve.”
+次に、このアイデアを検証可能な仮説、つまり、"Xを変更すれば、指標Yが改善されるような形で、メンバーのエクスペリエンスが改善される "という形のステートメントに変える。
+With the Top 10 example, the hypothesis read: “Showing members the Top 10 experience will help them find something to watch, increasing member joy and satisfaction.”
+トップ10の例では、仮説は次のようになった：「トップ10の体験を会員に表示することで、彼らが見るものを見つけるのを手伝い、会員の喜びと満足度を高める」。
+The primary decision metric for this test (and many others) is a measure of member engagement with Netflix:
+このテスト（および他の多くのテスト）の主要な意思決定指標は、Netflixとの会員のエンゲージメントを測定するものである：
+are the ideas we are testing helping our members to choose Netflix as their entertainment destination on any given night?
+私たちがテストしているアイデアは、会員がある夜にNetflixをエンターテイメントの目的地として選ぶのに役立っているか？
+Our research shows that this metric (details omitted) is correlated, in the long term, with the probability that members will retain their subscriptions.
+私たちの調査によると、この指標（詳細は省略）は、長期的には、会員がサブスクリプションを維持する確率と相関している。
 Other areas of the business in which we run tests, such as the signup page experience or server side infrastructure, make use of different primary decision metrics, though the principle is the same: what can we measure, during the test, that is aligned with delivering more value in the long-term to our members?
 サインアップページのエクスペリエンスやサーバーサイドのインフラストラクチャーなど、テストを実施する他の事業分野では、異なる主要な判断基準を使用していますが、原則は同じです： テスト中に何を測定すれば、長期的に会員により多くの価値を提供できるのか？
 
 Along with the primary decision metric for a test, we also consider a number of secondary metrics and how they will be impacted by the product feature we are testing.
-テストの主要な決定指標とともに、私たちは多くの二次的な指標と、それらがテストする製品機能によってどのような影響を受けるかも考慮します。
+テストの主要な決定指標とともに、私たちは多くのsecondary metrics（二次的な指標）を考慮し、テストしているプロダクト機能によってそれらの指標がどのように影響を受けるかを考えます。
 The goal here is to articulate the causal chain, from how user behavior will change in response to the new product experience to the change in our primary decision metric.
-ここでの目標は、新しい製品体験に反応してユーザーの行動がどのように変化するかから、主要な意思決定指標の変化までの因果の連鎖を明確にすることである。
+ここでの目標は、ユーザーの行動が新しい製品体験に反応してどのように変化し、主要な意思決定指標がどのように変化するかという因果の連鎖を明確にすることです。
 
 Articulating the causal chain between the product change and changes in the primary decision metric, and monitoring secondary metrics along this chain, helps us build confidence that any movement in our primary metric is the result of the causal chain we are hypothesizing, and not the result of some unintended consequence of the new feature (or a false positive — much more on that in later posts!).
-製品の変更と主要な意思決定指標の変化との間の因果の連鎖を明確にし、この連鎖に沿って二次的な指標を監視することで、主要な指標の動きが、新機能の予期せぬ結果（または誤検出-これについては後の記事で詳しく説明します！）ではなく、私たちが仮定している因果の連鎖の結果であるという確信を築くことができます。
+プロダクトの変更とprimary decision metricの変化の間の因果関係を明確にし、この連鎖に沿ってsecondary metricsを監視することで、私たちは、主要な指標の変化が私たちが仮説を立てている因果連鎖の結果であることを確信することができます。新機能の意図しない結果（または偽陽性）の結果ではない（これについては後の投稿で詳しく説明します）。
 For the Top 10 test, engagement is our primary decision metric — but we also look at metrics such as title-level viewing of those titles that appear in the Top 10 list, the fraction of viewing that originates from that row vs other parts of the UI, and so forth.
-トップ10テストでは、エンゲージメントが主要な判断基準だが、トップ10リストに表示されたタイトルのタイトルレベルでの視聴、UIの他の部分と比較してその行から発生した視聴の割合などの指標も見ている。
+トップ10テストでは、エンゲージメントがprimary decision metricである。しかし、トップ10リストに掲載されたタイトルのタイトルレベルの視聴、その行からの視聴の割合とUIの他の部分からの視聴の割合など、その他の指標も見ています。
 If the Top 10 experience really is good for our members in accord with the hypothesis, we’d expect the treatment group to show an increase in viewing of titles that appear in the Top 10 list, and for generally strong engagement from that row.
 仮に、トップ10の体験が本当に会員にとって良いものであるならば、トップ10リストに掲載されたタイトルの視聴が増加し、その列から一般的に強いエンゲージメントが得られると予想される。
 

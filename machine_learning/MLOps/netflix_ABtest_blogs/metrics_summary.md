@@ -187,3 +187,38 @@ n週連続推薦システム系論文読んだシリーズ k 週目の記事に�
 - ランダム化単位の方が細かくなっちゃうのがダメっぽい。
 - ex.
   - ランダム化単位=ユーザ、分析単位=ページのような、ランダム化単位の方が粗いケースでは、ページview数が極端に多い特定の１ユーザが大きく貢献しないようなmetricを選んだり、何かしらブートストラップサンプリング的な事を行ったり少し工夫が必要みたい。
+
+# netflixさんのブログにて
+
+- ABテストでは3種類のmetricsを使う事を述べていた:
+  - primary decision metrics:
+    - 施策のアイデアを、**実験で検証可能な仮説に変換したもの**。
+  - secondary metrics:
+    - **施策とprimary decision metricsの間の因果関係**を監視するためのmetrics。
+      - プロダクトの変更とprimary decision metricsの変化の間の因果関係を明確にし、このcausal chainに沿ったsecondary metricsを監視する。
+      - -> secondary metricsの監視により、**primary decision metricsの変化が、我々が仮定した因果関係通りにプロダクトの変更によって発生しているのかどうかの判断根拠を持てる**...!
+        - 例えば、primary decision metricsが改善したが、secondary metricsが改善されなかった場合、primary decision metricsの変化はプロダクトの変更によるものではなく偽陽性(false positive)である可能性がある...!
+  - guardrail metrics:
+    - 新機能による意図しない悪影響などを監視するためのmetrics。
+    - ちなみに「guardrail metrics」という用語は、実験の信用性や妥当性を保証するためのmetricsという文脈でも使われる事もあるが、ブログ内では前者の意味合いで紹介されてた!
+
+ex.) NetflixのUIにおける「Top 10リスト」というプロダクト新機能のテストにおける、primary decision metricsとsecondary metricsの例:
+
+- 1. 核となる施策のアイデア = 「各国や地域で人気のある動画を表示する事で、以下の2つの理由でユーザに利益をもたらすのでは??」
+  - 理由1: ユーザ同士が共通の体験ができることで、人気のある動画についてのコミュニケーションを通じて互いにつながる事ができる。
+  - 理由2: ユーザがどの動画を見るべきかの選択を助ける事ができる(ようは推薦か:thinking:)
+- 2. アイデアを実験で検証可能な仮説に変換して、primary decision metricsを選定する:
+  - **検証可能な仮説 = 「$X$ を変更すれば、metric $Y$ が改善されるような形で、ユーザ体験が改善されるのでは?」というstatement(文?)**
+  - top 10リストの例でアイデアから変換された仮説:「top 10 listの体験をユーザに表示する事で、ユーザ達が視聴すべき動画を見つけるのに役立ち、ユーザのengagementを向上させる事ができる。」
+    - (メモ) ちなみに「engagement」ってどんな概念だっけ??
+      - 「**ユーザーとプロダクトの間のつながりの強さ**」や「ユーザーがプロダクトにどれだけ関与しているか」を表す概念。
+      - このつながりが強ければ強いほど、ユーザーはそのプロダクトを頻繁に使用し、より深いレベルでの活動を行い、プロダクトに対してポジティブな感情を持つ傾向がある。
+      - engagementを表す指標には、active users, retention rate(継続率)などがある...!
+  - Netflixにおいてユーザのengagementを測定するmetricは「夜間のサービス利用率」。これが**primary decision metrics**になる。(正確にはengagementのproxyというか代理指標か...! retension rateは短期的に測定可能な指標ではないから...!:thinking:)
+    - (Netflixの場合、**このmetricが長期的なユーザのretention確率と相関している事**が分析で判明しているらしく、他の多くのABテストでもprimary decision metricsとして使用されているらしいっぽい。)
+- 3. 施策とprimary decision metricsの間の因果関係を監視するためのsecondary metricsを選定する:
+  - top 10リストの例でのsecondary metrics: 「ユーザがtop 10 listをクリックした回数」
+    - プロダクトの変更「top 10 list機能の追加」と、primary decision metrics「夜間のサービス利用率」の間の因果関係を明確にするために、secondary metricsとして「top10リストに掲載された動画の視聴回数」等が監視される。
+      - 仮に、top 10 listのユーザ体験が本当に良いものであるならば、top 10 listに掲載された動画の視聴回数が増加した上で、その結果として強いengagementが得られるはず...!
+- 4. 新機能による意図しない悪影響などを監視するためのguardrail metricsを選定する:
+  - 例えば、新機能がユーザへ混乱や不満を与えている度合いを示す可能性のある「カスタマーサービスへの接触率」など。
