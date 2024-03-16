@@ -136,7 +136,7 @@ n週連続推薦システム系論文読んだシリーズ k 週目の記事に�
 - 一般的には、goal metrics & driver metrics & guardrail metricsの中から、上述した4つの特性を満たすmetricsの一部を、実験のためのmetricsとして選択することになる。
 - その上で、metricsセットに以下のようなmetrcisを追加する必要があるかも:
   - goal metricsやdriver metricsのsurrogate metrics(i.e. proxy metrics)
-    - (goal metricsやdriver metrics達の多くが、実験のためのmetricsとして適していない場合の話??:thinking:)
+    - (goal metricsやdriver metrics達の多くが、実験のためのmetricsとして適していない場合の話?? その場合は、何らかのproxy metricsを採用する必要があるのか...!:thinking:)
   - 特定の機能の動きを理解する為の、より詳細なmetrics
     - (たぶんnetflixさんのブログにおけるsecondary metricsのようなもの...!:thinking:)
     - (ex. 新機能によってページ全体のCTRが上がる事を期待したい場合、その新機能自体のlocalなCTRが「より詳細なmetrics」に該当するよね...!:thinking:)
@@ -277,6 +277,7 @@ ex.) NetflixのUIにおける「Top 10リスト」というプロダクト新機
 - **実験で監視される全てのmetricsがOECの一部というわけではなく、実験結果を分析するには様々な種類のmetricsが必要**。
 
   - 1. 実験結果が信頼できるものかどうかを判断するためのmetrics (ex. サンプル比率とか)
+    - guardrail metricsの一種だよね...!:thinking:
   - 2. 施策が成功したのか、その影響はどうだったのかを判断するためのmetrics (この一連のmetricsがOECを構成する)
     - (文脈的に、**この論文内ではOECは複数のmetricsの合成metricである事を前提としてるっぽい**...!:thinking:)
   - 3. OEC metricsに加えて、テストされている施策の成功を明確に示すものではないが、悪化させたくないguardrail metrics。

@@ -46,9 +46,37 @@ n週連続推薦システム系論文読んだシリーズ 38 週目の記事に
 
 ## ABテストでどんなmetricsを監視・評価すればいいのよ??
 
+### metricsってどんな種類があるの??
+
+#### Netflixさんのテックブログでの記述によると...
+
+まずNetflixさんのブログでは、**以下の3種類のmetrics**を使う事を述べていました。
+
+- 1. primary decision metrics
+  - **施策のアイデアを実験で検証可能な仮説に変換**して得られたmetrics。
+- 2. secondary metrics
+  - **施策(ex. プロダクトの変更)とprimary decision metricsの間の因果関係**を監視するためのmetrics。
+    - 仮定するcausal chainのイメージはこう！「施策の適用 → secondary metricsが変化するはず! → primary decision」metricsが変化するはず!」
+  - -> secondary metricsを監視することで、**primary decision metricsの変化が、我々が仮定した因果関係通りに施策によって発生しているのかどうかの判断根拠を持てる**...!
+    - ex.) 期待通りにprimary decision metricsが改善したが、secondary metricsが期待と異なる変化をしている場合、primary decision metricsの変化は施策の効果によるものではなく偽陽性(false positive)である可能性がある。
+- 3. guardrail metrics:
+  - **施策による意図しない悪影響などを監視する為のmetrics**。
+  - ちなみに...
+    - 「guardrail metrics」という用語には大きく2種類のmetricsが含まれているようです。
+    - 後述する他の参考資料などでは、**実験の信用性や妥当性を保証するためのmetrics**、という文脈でも使用されていました。でも、Netflixさんのブログ内では主に前者の意味合いで紹介されてました!
+
+(ちなみに、ブログ内では「Top 10 list」というプロダクト新機能のABテストを例に、上記の3種のmetricsの設定手順について詳しく説明されていました! 分かりやすくてありがてぇ...!:thinking:)
+(ちなみに文脈的に、どの種類のmetricsも必ずしも単一のmetricであるべき、という制約はなさそうでした!:thinking:)
+
+#### カバ本での記述によると...
+
+#### 実践プラクティスサミットの論文での記述によると...
+
 ## OEC(Overall Evaluation Criterion)について
 
 ### OEC(Overall Evaluation Criterion)ってなんぞや??
+
+## OECの定義:
 
 ## おわりに
 
