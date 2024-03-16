@@ -466,7 +466,7 @@ In absence of such clarity, each sub team in the product group may set their own
 **このような明確さがない場合、製品グループの各サブチームは、他のチームや企業の目標と一致しない独自の目標を設定する可能性がある**。(これはわかる...!)
 
 Even after the product goals are clear, in most companies you end up with a handful of key metrics of interest.
-product goalsが明確になっても、ほとんどの企業では、関心のある主要な指標はほんの一握りである。
+product goalsが明確になっても、ほとんどの企業では、興味のある主要な数値が数個になることが多い。
 It is challenging how to weigh these metrics relative to each other.
 これらの指標をどう相対的に評価するかは難しい。
 For instance, a product may have goals around revenue and user happiness.
@@ -507,17 +507,17 @@ This is also a good thought exercise to go through while designing and evaluatin
 Some product teams tried to incorporate machine learning models (MLMs) to create a metric.
 機械学習モデル（MLM）を組み込んで指標を作ろうとする製品チームもあった。
 For instance, using sequences of user actions to create a score metric based on the likelihood of user satisfaction [36, 54, 57] or creating more sensitive OEC metrics by combining different metrics [25, 42, 59].
-例えば、ユーザ満足の可能性に基づいたスコア・メトリックを作成するために、ユーザ・アクションのシーケンスを使用したり[36, 54, 57]、異なるメトリックを組み合わせることによって、より感度の高いOECメトリックを作成したり[25, 42, 59]。
+例えば、ユーザ満足度の最もらしさに基づいてスコアメトリクスを作成するために、ユーザアクションのシーケンスを使用する[36, 54, 57]、または異なるメトリクスを組み合わせることでより感度の高いOECメトリクスを作成する[25, 42, 59]。
 Also, good proxies for long-term outcomes are often used to find good OEC metrics.
-また、長期的なアウトカムの良い指標は、OECの良い指標を見つけるためによく使われる。
+また、long-term outcomesの良いOEC metricsを見つけるために、良いプロキシがよく使われる。
 This area of experimentation is relatively new.
 この分野の実験は比較的新しい。
 Many product teams are carefully trying to test these methods in limited areas.
 多くの製品チームは、**限られたエリアで慎重に**これらの方法を試している。
 These methods are more commonly used in mature product areas, like search, where most of the low-hanging fruit is picked and we need more complex models to detect smaller changes.
-これらの方法は、大部分の低い果実が摘まれており、**より複雑なモデルが小さな変化を検出する必要があるような、成熟したプロダクト領域でより一般的に使用されている**。
+これらの方法は、大部分の低い果実が摘まれており、より複雑なモデルが小さな変化を検出する必要があるような、成熟した製品領域でより一般的に使用されている。
 For new products, it is usually better to use simple metrics as the OEC.
-**新製品の場合、通常はOECのような単純な指標を使う方がよい**。
+**新製品の場合、OECとしてシンプルなメトリクスを使用する方が通常は良い**。
 
 There are some concerns with using machine learning models to create metrics.
 メトリクスの作成に機械学習モデルを使うことには、いくつかの懸念がある。
@@ -526,7 +526,7 @@ MLMベースの指標は解釈が難しく、ブラックボックスのよう�
 Refreshing MLMs by training them on most recent data may lead to an abrupt change in the metric that would hard to account for.
 最新のデータでMLMをトレーニングすることによってMLMをリフレッシュさせると、メトリックが突然変化する可能性があり、それを考慮するのは難しい。
 If the MLM is being refreshed while an experiment is running, it can create bias in the metric.
-実験の実行中にMLMが更新されると、指標に偏りが生じる可能性がある。
+実験の実行中にMLMが更新されると、メトリックにバイアスが生じる可能性がある。
 Further, there are concerns these metrics are easily gamed by optimizing for the underlying model that created these metrics, which may or may not lead to improvement in the longterm outcome of interest.
 さらに、これらの指標は、これらの指標を作成した基本モデルの最適化によって簡単にゲーム化される(=ハックされるってこと?)可能性があり、それが長期的な興味の対象の改善につながるかどうかはわからない。
 
