@@ -277,7 +277,7 @@ ex.) NetflixのUIにおける「Top 10リスト」というプロダクト新機
 - **実験で監視される全てのmetricsがOECの一部というわけではなく、実験結果を分析するには様々な種類のmetricsが必要**。
 
   - 1. 実験結果が信頼できるものかどうかを判断するためのmetrics (ex. サンプル比率とか)
-    - guardrail metricsの一種だよね...!:thinking:
+    - (これも文脈によってはguardrail metricsの一種だよね...!:thinking:)
   - 2. 施策が成功したのか、その影響はどうだったのかを判断するためのmetrics (この一連のmetricsがOECを構成する)
     - (文脈的に、**この論文内ではOECは複数のmetricsの合成metricである事を前提としてるっぽい**...!:thinking:)
   - 3. OEC metricsに加えて、テストされている施策の成功を明確に示すものではないが、悪化させたくないguardrail metrics。
