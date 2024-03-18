@@ -6,6 +6,7 @@ https://www.researchgate.net/publication/333136404_Top_Challenges_from_the_first
 ## 0.2. title # 0.2.title
 
 Top Challenges from the first Practical Online Controlled Experiments Summit
+
 第1回実践的オンライン対照実験サミットのトップチャレンジ
 
 ## 0.3. abstract # 0.3.abstract
