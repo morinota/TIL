@@ -94,5 +94,4 @@ if __name__ == "__main__":
 
     pipeline_definition = pipeline.definition()
     definition = json.loads(pipeline_definition)
-    # 読みやすく整形して出力
     print(json.dumps(definition, indent=2))
