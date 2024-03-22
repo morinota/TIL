@@ -175,22 +175,24 @@ In the absence of barriers, engineers will naturally use the most convenient sig
 # Data Dependencies Cost More than Code Dependencies データ依存はコード依存よりもコストがかかる
 
 In [13], dependency debt is noted as a key contributor to code complexity and technical debt in classical software engineering settings.
-13]では、依存性負債が、古典的なソフトウェア工学の設定において、コードの複雑さと技術的負債の主な要因であると指摘されている。
+13]では、**dependency debt(依存負債)が、古典的なソフトウェアエンジニアリングの設定におけるコードの複雑さと技術的負債の主要な要因であると指摘されている**。
 We have found that data dependencies in ML systems carry a similar capacity for building debt, but may be more difficult to detect.
-私たちは、MLシステムにおけるデータの依存関係も同様に負債を生む可能性があることを発見したが、検出はより難しいかもしれない。
+私たちは、**MLシステムにおけるデータ依存関係が同様の負債を生む可能性**を持っていることを発見したが、それを検出するのはより困難かもしれない。
 Code dependencies can be identified via static analysis by compilers and linkers.
 コードの依存関係は、コンパイラーやリンカーによる静的解析によって特定することができる。
 Without similar tooling for data dependencies, it can be inappropriately easy to build large data dependency chains that can be difficult to untangle.
-データ依存関係のための同様のツールがないと、不適切なほど簡単に、紐解くのが困難な大規模なデータ依存チェーンを構築してしまう可能性がある。
+データ依存関係に対する同様のツールがない場合、**解きほぐすのが難しい大規模なデータ依存関係チェーンを簡単に構築することができる**。
+
+<!-- ここまで読んだ! -->
 
 ## Unstable Data Dependencies. Unstable Data Dependencies.
 
 To move quickly, it is often convenient to consume signals as input features that are produced by other systems.
-素早く移動するためには、他のシステムが生成した信号を入力機能として消費するのが便利な場合が多い。
+**素早く進むためには、他のシステムによって生成された入力特徴量として信号を消費することがしばしば便利である**。(うんうん...!:thinking:)
 However, some input signals are unstable, meaning that they qualitatively or quantitatively change behavior over time.
 しかし、入力信号の中には不安定なものがある。つまり、時間と共に定性的または定量的に挙動が変化するものがある。
 This can happen implicitly, when the input signal comes from another machine learning model itself that updates over time, or a data-dependent lookup table, such as for computing TF/IDF scores or semantic mappings.
-これは、入力信号が、時間と共に更新される別の機械学習モデル自体から来る場合や、TF/IDFスコアや意味マッピングを計算するためのような、データに依存するルックアップテーブルから来る場合に、暗黙的に起こることがある。
+これは、**入力信号が時間の経過とともに更新される他の機械学習モデル自体から来る場合**や、TF/IDFスコアやセマンティックマッピング(ex. 単語のsemantic埋め込み??)を計算するためのデータ依存ルックアップテーブルのような場合に、暗黙的に発生することがある。
 It can also happen explicitly, when the engineering ownership of the input signal is separate from the engineering ownership of the model that consumes it.
 また、入力信号のエンジニアリング・オーナーシップが、それを消費するモデルのエンジニアリング・オーナーシップから分離されている場合には、明示的に発生することもある。
 In such cases, updates to the input signal may be made at any time.
