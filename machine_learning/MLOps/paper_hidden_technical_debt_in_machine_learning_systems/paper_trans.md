@@ -12,139 +12,165 @@ Hidden Technical Debt in Machine Learning Systems
 Machine learning offers a fantastically powerful toolkit for building useful complex prediction systems quickly.
 機械学習は、有用で複雑な予測システムを素早く構築するための、非常に強力なツールキットを提供する。
 This paper argues it is dangerous to think of these quick wins as coming for free.
-本稿では、こうした迅速な勝利がタダで手に入ると考えるのは危険だと主張する。
+本稿では、こうした**迅速な勝利がタダで手に入ると考えるのは危険**だと主張する。
 Using the software engineering framework of technical debt, we find it is common to incur massive ongoing maintenance costs in real-world ML systems.
-技術的負債というソフトウェア工学のフレームワークを用いると、実世界のMLシステムでは、継続的に莫大なメンテナンスコストが発生するのが一般的であることがわかる。
+**technical debt(技術的負債)というソフトウェア工学のフレームワーク**を用いると、**実世界のMLシステムでは、継続的に莫大なメンテナンスコストが発生するのが一般的**であることがわかる。
 We explore several ML-specific risk factors to account for in system design.
-我々は、システム設計において考慮すべきML特有のリスク要因をいくつか探っている。
+我々は、**システム設計において考慮すべきML特有のリスク要因**をいくつか探っている。
 These include boundary erosion, entanglement, hidden feedback loops, undeclared consumers, data dependencies, configuration issues, changes in the external world, and a variety of system-level anti-patterns.
-これには、境界の侵食、もつれ、隠れたフィードバックループ、宣言されていない消費者、データの依存関係、コンフィギュレーションの問題、外界の変化、システムレベルのさまざまなアンチパターンなどが含まれる。
+これには、boundary erosion（境界の侵食）、entanglement（絡み合い）、hidden feedback loops（隠れたフィードバックループ）、undeclared consumers（未宣言の消費者）、data dependencies（データ依存）、configuration issues（構成問題）、changes in the external world（外界の変化）、さまざまなシステムレベルのアンチパターンが含まれる。
+
+<!-- ここまで読んだ! -->
 
 # Introduction はじめに
 
 As the machine learning (ML) community continues to accumulate years of experience with live systems, a wide-spread and uncomfortable trend has emerged: developing and deploying ML systems is relatively fast and cheap, but maintaining them over time is difficult and expensive.
-機械学習（ML）コミュニティが実稼働中のシステムで長年の経験を積み重ねるにつれ、広範で不快な傾向が現れてきた： MLシステムの開発とデプロイは比較的迅速かつ安価だが、長期間にわたってそれを維持するのは困難でコストがかかる。
+機械学習(ML) コミュニティがライブシステムでの経験を積み重ねるにつれて、広範囲にわたる不快なトレンドが浮かび上がってきた: **MLシステムの開発(developing)と展開(deploying)は比較的迅速で安価だが、時間の経過とともにそれらを維持することは困難で高価である**。
+
 This dichotomy can be understood through the lens of technical debt, a metaphor introduced by Ward Cunningham in 1992 to help reason about the long term costs incurred by moving quickly in software engineering.
-この二律背反は、技術的負債というレンズを通して理解することができる。このメタファーは、1992年にウォード・カニンガムが、ソフトウェア・エンジニアリングにおいて迅速に行動することで発生する長期的なコストを推論するために導入したものである。
+この二律背反は、**technical debt(技術的負債)**というレンズ(=これは隠喩!=metaphor!:thinking:)を通じて理解することができる。この隠喩は、1992年にWard Cunninghamによって導入され、ソフトウェア工学において迅速に進むことによって発生する**長期的なコスト**について考えるのを助けるものである。
 As with fiscal debt, there are often sound strategic reasons to take on technical debt.
-財政的負債と同様、技術的負債を負うことには、しばしば健全な戦略的理由がある。
+fiscal debt (財政的負債)と同様に、technical debt(技術的負債)を負う理にかなった戦略的な理由がしばしばある。
 Not all debt is bad, but all debt needs to be serviced.
 すべての借金が悪いわけではないが、すべての借金は返済する必要がある。
 Technical debt may be paid down by refactoring code, improving unit tests, deleting dead code, reducing dependencies, tightening APIs, and improving documentation [8].
 技術的負債は、コードのリファクタリング、単体テストの改善、デッドコードの削除、依存関係の削減、APIの強化、ドキュメンテーションの改善によって返済することができる[8]。
 The goal is not to add new functionality, but to enable future improvements, reduce errors, and improve maintainability.
-目的は新しい機能を追加することではなく、将来の改良を可能にし、エラーを減らし、保守性を向上させることである。
+**目的は新しい機能を追加することではなく、将来の改良を可能にし、エラーを減らし、保守性を向上させること**である。(つまり、システムの持続可能性を高めること...??:thinking:)
 Deferring such payments results in compounding costs.
-そのような支払いを先延ばしすることは、複合的なコストを生む。
+そのような**支払いを先延ばしすることは、複合的なコストを生む**。(なるほど...!)
 Hidden debt is dangerous because it compounds silently.
 隠れ借金は無言のうちに膨らむので危険だ。
+
 In this paper, we argue that ML systems have a special capacity for incurring technical debt, because they have all of the maintenance problems of traditional code plus an additional set of ML-specific issues.
-この論文では、MLシステムには技術的負債が発生する特別な能力があると主張する。なぜなら、MLシステムには、従来のコードのメンテナンスの問題に加えて、ML特有の問題があるからである。
+この論文では、**MLシステムには技術的負債が発生する特別な能力があると主張する**。なぜなら、MLシステムには、**従来のコードのメンテナンスの問題に加えて、ML特有の問題があるから**である。
 This debt may be difficult to detect because it exists at the system level rather than the code level.
-この負債は、コード・レベルではなくシステム・レベルに存在するため、検出が困難な場合がある。
+この負債は、コード・レベルではなくシステム・レベルに存在するため、検出が困難な場合がある。(ほうほう...?)
 Traditional abstractions and boundaries may be subtly corrupted or invalidated by the fact that data influences ML system behavior.
-従来の抽象化と境界は、データがMLシステムの動作に影響を与えるという事実によって、微妙に崩れたり無効になったりする可能性がある。
+従来のabstractions(抽象化)やboundaries(境界)は、データがMLシステムの挙動に影響を与えるという事実によって、微妙に破壊されたり無効化されたりする可能性がある。
+(boundariesって、モジュラー性の向上とか関心の分離とか、ってイメージであってるかな??:thinking:)
 Typical methods for paying down code level technical debt are not sufficient to address ML-specific technical debt at the system level.
-コードレベルの技術的負債を返済する一般的な方法は、システムレベルのML特有の技術的負債に対処するには不十分である。
+**コードレベルの技術的負債を返済する一般的な方法は、システムレベルのML特有の技術的負債に対処するには不十分**である。
+
 This paper does not offer novel ML algorithms, but instead seeks to increase the community’s awareness of the difficult tradeoffs that must be considered in practice over the long term.
-この論文は、新しいMLアルゴリズムを提供するのではなく、長期的に実践で考慮しなければならない難しいトレードオフに対するコミュニティの認識を高めることを目的としている。
+この論文は、新しいMLアルゴリズムを提供するのではなく、むしろ、実践的に長期的に考慮すべき困難なトレードオフについてコミュニティの意識を高めることを目指している。
 We focus on system-level interactions and interfaces as an area where ML technical debt may rapidly accumulate.
-我々は、MLの技術的負債が急速に蓄積される可能性のある領域として、システムレベルの相互作用とインターフェースに焦点を当てている。
+我々は、**MLの技術的負債が急速に蓄積される可能性のある領域として、システムレベルの相互作用とインターフェースに焦点を当てている**。
 At a system-level, an ML model may silently erode abstraction boundaries.
-システムレベルでは、MLモデルは無言のうちに抽象化の境界を侵食するかもしれない。
+システムレベルでは、MLモデルは無言のうちに抽象化の境界を侵食するかもしれない。(??)
 The tempting re-use or chaining of input signals may unintentionally couple otherwise disjoint systems.
-入力信号の誘惑的な再利用や連鎖は、本来なら分離しているはずのシステムを意図せず結合させてしまうかもしれない。
+**入力信号の誘惑的な再利用や連鎖は、本来なら分離しているはずのシステムを意図せず結合させてしまうかもしれない**。(特徴量の再利用、みたいな意味??)
 ML packages may be treated as black boxes, resulting in large masses of “glue code” or calibration layers that can lock in assumptions.
-MLパッケージはブラックボックスとして扱われ、その結果、大量の "グルーコード "や、仮定を固定化する可能性のあるキャリブレーションレイヤーが生じる可能性がある。
+MLパッケージはブラックボックスとして扱われ、大量の「glue code(接着剤コード)」やキャリブレーション層が結果としてロックインされた仮定を生むかもしれない。
+
+- (以下、この文の解釈):
+  - MLパッケージがしばしばブラックボックスとして扱われる。
+    - (i.e. MLアルゴリズムやモデルが、内部でどのように動作しているかを完全に理解せずに使用されること)
+  - その結果、ユーザは互換性の問題や調整の必要性など、モデルを**他の部分と結合するための追加のコードやレイヤー**を作成する必要が生じる事がある。
+    - これらはしばしばglue code(接着剤コード)やcalibration layers(キャリブレーション層)と呼ばれる。
+    - (後処理のおまじない的なノルム正規化なども、glue codeに含まれるだろうか...??:thinking:)
+  - つまり、**ユーザはモデルの内部動作を十分に理解できない為、その動作に関連する前提条件や仮定を変更する事が難しくなりがち**、という意味。
+
 Changes in the external world may influence system behavior in unintended ways.
-外界の変化は、意図しない形でシステムの挙動に影響を与える可能性がある。
+外界の変化は、意図しない形でシステムの挙動に影響を与える可能性がある。(ここでの外界の変化って、データの変化とか...??)
 Even monitoring ML system behavior may prove difficult without careful design.
-MLシステムの動作を監視することさえ、注意深く設計しなければ難しいかもしれない。
+**MLシステムの動作を監視することさえ**、注意深く設計しなければ難しいかもしれない。(うん、監視は難しいよね...!:thinking:)
 
 # Complex Models Erode Boundaries 複雑なモデルが境界を侵す
 
 Traditional software engineering practice has shown that strong abstraction boundaries using encapsulation and modular design help create maintainable code in which it is easy to make isolated changes and improvements.
-伝統的なソフトウェア工学の実践では、カプセル化とモジュール設計を使用した強力な抽象化境界が、孤立した変更や改良が容易な保守性の高いコードを作成するのに役立つことが示されている。
+**伝統的なソフトウェア工学の実践では、カプセル化とモジュール設計を使用した強力な抽象化境界(abstraction boundaries)が、維持可能なコードを作成し、単独の変更や改善を行いやすくすることがわかっている**。
+(absraction boundariesは、モジュール化、関心の分離、抽象化による情報隠蔽、疎結合など、ソフトウェアの複雑性を管理する為の一連の方法論の意味...?:thinking:)
 Strict abstraction boundaries help express the invariants and logical consistency of the information inputs and outputs from an given component [8].
-厳密な抽象化境界は、与えられたコンポーネントからの情報の入力と出力の不変性と論理的一貫性を表現するのに役立つ[8]。
+厳密なabstraction boundariesは、与えられたコンポーネントからの情報の入力と出力の不変条件と論理的整合性を表現するのに役立つ[8]。
+
 Unfortunately, it is difficult to enforce strict abstraction boundaries for machine learning systems by prescribing specific intended behavior.
-残念なことに、機械学習システムに特定の意図された動作を規定することで、厳密な抽象化境界を強制することは難しい。
+残念なことに、特定の意図された挙動を規定することで、機械学習システムに対して厳密な抽象化境界を強制することは難しい。
 Indeed, ML is required in exactly those cases when the desired behavior cannot be effectively expressed in software logic without dependency on external data.
-実際、MLが必要とされるのは、まさに、外部データに依存することなく、望ましい振る舞いをソフトウェアロジックで効果的に表現できないような場合である。
+**実際、MLが必要とされるのは、外部データへの依存なしにソフトウェアロジックで効果的に表現できない場合である**。(確かに...!:thinking:)
 The real world does not fit into tidy encapsulation.
 現実の世界は、整然としたカプセル化には収まらない。
 Here we examine several ways that the resulting erosion of boundaries may significantly increase technical debt in ML systems.
-ここでは、境界の侵食がMLシステムの技術的負債を著しく増加させる可能性があるいくつかの方法を検討する。
+ここでは、**境界の侵食(erosion of boundaries)がMLシステムにおける技術的負債を著しく増加させる**いくつかの方法を検討する。
 
-## Entanglement. エンタングルメント
+## Entanglement. 絡み合い
 
 Machine learning systems mix signals together, entangling them and making isolation of improvements impossible.
 機械学習システムは信号を混ぜ合わせ、絡め取り、改善の切り分けを不可能にする。
 For instance, consider a system that uses features x1, ...xn in a model.
-例えば、特徴x1、...xnをモデルで使用するシステムを考える。
+例えば、特徴量 $x_1, ...x_n$ をモデルで使用するシステムを考えてみましょう。
 If we change the input distribution of values in x1, the importance, weights, or use of the remaining n − 1 features may all change.
-x1の値の入力分布を変更すると、残りのn - 1の特徴の重要度、重み、または使用はすべて変更される可能性があります。
+$x_1$ の値の入力分布を変更すると、残りの n − 1 個の特徴量の重要性、重み、または使用方法がすべて変わるかもしれません。
 This is true whether the model is retrained fully in a batch style or allowed to adapt in an online fashion.
 これは、モデルがバッチ方式で完全に再学習される場合でも、オンライン方式で適応させられる場合でも同じである。
 Adding a new feature xn+1 can cause similar changes, as can removing any feature xj .
-新しい特徴 xn+1 を追加しても、特徴 xj を削除しても、同様の変化が生じる。
+新しい特徴 $x_{n+1}$ を追加すると、同様の変更が発生する可能性があり、特徴 $x_j$ を削除することも同様です。
 No inputs are ever really independent.
-インプットが本当に独立していることはない。
+インプットが本当に独立していることはない。(特徴量間の相互作用を完全に排斥してるMLモデルは存在しない、みたいな??:thinking:)
 We refer to this here as the CACE principle: Changing Anything Changes Everything.
-私たちはこれを「CACEの原則」と呼んでいる： 何かを変えればすべてが変わる。
+私たちはこれを「**CACEの原則**」と呼んでいる： **Changing Anything Changes Everything(何かを変えればすべてが変わる)**
 CACE applies not only to input signals, but also to hyper-parameters, learning settings, sampling methods, convergence thresholds, data selection, and essentially every other possible tweak.
-CACEは入力信号だけでなく、ハイパーパラメータ、学習設定、サンプリング方法、収束しきい値、データ選択、その他基本的にありとあらゆる微調整に適用される。
+CACEは、入力信号だけでなく、ハイパーパラメータ、学習設定、サンプリング方法、収束閾値、データ選択、および基本的にすべての可能な調整に適用される。
+
 One possible mitigation strategy is to isolate models and serve ensembles.
 可能な緩和策の一つは、モデルを分離してアンサンブルを提供することである。
 This approach is useful in situations in which sub-problems decompose naturally such as in disjoint multi-class settings like [14].
 このアプローチは、[14]のような離散的なマルチクラス設定のように、サブ問題が自然に分解される状況で有用である。
 However, in many cases ensembles work well because the errors in the component models are uncorrelated.
-しかし、多くの場合、アンサンブルは、構成モデルの誤差が無相関であるため、うまく機能する。
+しかし、多くの場合、アンサンブルがうまく機能するのは、コンポーネントモデルの誤差が相関していないためである。
 Relying on the combination creates a strong entanglement: improving an individual component model may actually make the system accuracy worse if the remaining errors are more strongly correlated with the other components.
-組み合わせに依存すると、強いもつれが生じる： 個々のコンポーネントのモデルを改善しても、残りの誤差が他のコンポーネントとより強く相関していれば、システムの精度はかえって悪化する可能性がある。
+組み合わせに依存することは、強い絡み合いを作り出す: 個々のコンポーネントモデルを改善すると、残りの誤差が他のコンポーネントとより強く相関している場合、システムの精度が悪化する可能性がある。
+
 A second possible strategy is to focus on detecting changes in prediction behavior as they occur.
-第二に考えられる戦略は、予測行動の変化が起こったときに、その変化を検出することに焦点を当てることである。
+第二に考えられる戦略は、予測行動の変化が起こったときに、その変化を検出することに焦点を当てることである。(異常検知、みたいな??:thinking:)
 One such method was proposed in [12], in which a high-dimensional visualization tool was used to allow researchers to quickly see effects across many dimensions and slicings.
-そのような手法の1つが[12]で提案されたもので、高次元の可視化ツールを用いて、研究者が多くの次元やスライシングにわたる効果を素早く確認できるようにした。
+そのような手法の1つが[12]で提案されたもので、高次元の可視化ツールを使用して、研究者が多くの次元とスライスにわたる効果を素早く見ることができるようにした。
 Metrics that operate on a slice-by-slice basis may also be extremely useful.
 また、スライス単位で評価する指標も非常に有用である。
 
-## Correction Cascades. 訂正 カスケード
+## Correction Cascades. (修正モデルが連鎖的に使用されること!)
 
 There are often situations in which model ma for problem A exists, but a solution for a slightly different problem A′ is required.
-問題Aに対するモデルMAは存在するが、少し異なる問題A′に対する解が必要とされる状況がよくある。
+問題Aに対するモデル $m_a$ が存在するが、わずかに異なる問題A′の解決策が必要な場合がしばしばある。
 In this case, it can be tempting to learn a model m′ a that takes ma as input and learns a small correction as a fast way to solve the problem.
-この場合、問題を素早く解く方法として、maを入力とし、小さな補正を学習するモデルm′aを学習したくなることがある。
-However, this correction model has created a new system dependency on ma, making it significantly more expensive to analyze improvements to that model in the future.
-しかし、この補正モデルは、マへの新たなシステム依存を生み出し、将来的にそのモデルの改良を分析するためのコストが著しく高くなる。
-The cost increases when correction models are cascaded, with a model for problem A′′ learned on top of m′ a , and so on, for several slightly different test distributions.
-補正モデルがカスケードされ、問題A′′に対するモデルがm′aの上に学習され、さらに、いくつかのわずかに異なるテスト分布に対して学習されるようになると、コストは増大する。
-Once in place, a correction cascade can create an improvement deadlock, as improving the accuracy of any individual component actually leads to system-level detriments.
-一度設置された修正カスケードは、個々のコンポーネントの精度を向上させることが、実際にはシステムレベルの不利益につながるため、改善のデッドロックを引き起こす可能性がある。
-Mitigation strategies are to augment ma to learn the corrections directly within the same model by adding features to distinguish among the cases, or to accept the cost of creating a separate model for A′ .
-緩和策としては、ケースを区別するための特徴を追加することで、同じモデル内で直接補正を学習するようにmaを増強するか、A′のために別個のモデルを作成するコストを受け入れることである。
+この場合、問題を素早く解く方法として、$m_a$ を入力として受け取り、小さな補正を学習するモデル $m′_a$ を学習することが誘惑されるかもしれない。
 
-## Undeclared Consumers. Undeclarared Consumers.
+However, this correction model has created a new system dependency on ma, making it significantly more expensive to analyze improvements to that model in the future.
+**しかし、この補正モデルは、$m_a$ に新しいシステム依存関係を作成し、将来そのモデルの改善を分析するコストが大幅に増加する**。(モデルの使いまわしへの警鐘...??:thinking:)
+The cost increases when correction models are cascaded, with a model for problem A′′ learned on top of m′ a , and so on, for several slightly different test distributions.
+補正モデルがカスケードされると、問題A′′のモデルが $m′_a$ の上に学習されたり...、また、いくつかのわずかに異なるテスト分布に対してまた別の修正モデルを学習させたり...、など、コストが増加する。
+Once in place, a correction cascade can create an improvement deadlock, as improving the accuracy of any individual component actually leads to system-level detriments.
+一度設置された修正カスケードは、個々のコンポーネントの精度を向上させることが、実際にはシステムレベルの不利益につながるため、**改善のデッドロックを引き起こす可能性**がある。(MLの各usecaseが密結合になってしまって、あるusecaseの為の変更の影響範囲が大きくなる...??)
+Mitigation strategies are to augment ma to learn the corrections directly within the same model by adding features to distinguish among the cases, or to accept the cost of creating a separate model for A′ .
+緩和策としては、ケースを区別するための特徴を追加することで、同じモデル内で直接補正を学習するようにmaを増強するか、**$A′$ 用に別のモデルを作成するコストを受け入れること**が考えられる。(後者が無難な気がするな...!:thinking:)
+(この話を踏まえると、全usecase共通の基盤モデル、みたいな考え方って結構危ないのかな...??:thinking:)
+
+## Undeclared Consumers. 未宣言の消費者
 
 Oftentimes, a prediction from a machine learning model ma is made widely accessible, either at runtime or by writing to files or logs that may later be consumed by other systems.
-多くの場合、機械学習モデルMAからの予測は、実行時に、または後に他のシステムによって消費される可能性のあるファイルやログに書き込むことによって、広くアクセスできるようにされる。
+多くの場合、機械学習モデル $m_a$ からの予測は、実行時に広くアクセス可能になるか(=リアルタイム推論??)、後で他のシステムによって消費される可能性のあるファイルやログに書き込まれる。(=batch推論??)
 Without access controls, some of these consumers may be undeclared, silently using the output of a given model as an input to another system.
-アクセス制御を行わなければ、これらのコンシューマーの一部は宣言されていない可能性があり、与えられたモデルの出力を黙って別のシステムの入力として使ってしまうかもしれない。
+**アクセス制御を行わなければ、これらのconsumerの中には未宣言のものがいて、特定のモデルの出力を別のシステムの入力として無言で使用しているかもしれない**。(ex. ユーザの埋め込みベクトルを、気づいたらプロダクト内のいろんな機能が使っちゃってた、みたいな??:thinking:)
 In more classical software engineering, these issues are referred to as visibility debt [13].
-より古典的なソフトウェア工学では、これらの問題は可視性負債と呼ばれる[13]。
+より古典的なソフトウェア工学では、これらの問題は**visibility debt(可視性負債)**と呼ばれる[13]。
+
 Undeclared consumers are expensive at best and dangerous at worst, because they create a hidden tight coupling of model ma to other parts of the stack.
-宣言されていないコンシューマーは、スタックの他の部分とモデルMAの隠れた密結合を生み出すため、よくても高価であり、悪くすれば危険である。
+**Undeclared consumers(未宣言の消費者)は、最悪の場合には危険であり、最高の場合でも高価である。なぜなら、$m_a$ とスタックの他の部分との間に隠れた緊密なカップリングを作り出すからである**。
 Changes to ma will very likely impact these other parts, potentially in ways that are unintended, poorly understood, and detrimental.
-MAの変更は、他の部分にも影響を与える可能性が非常に高く、意図せず、理解されず、有害な影響を与える可能性がある。
+$m_a$ への変更は、これらの他の部分に非常に大きな影響を与える可能性が高く、意図しない、理解不足、有害な方法で影響を与える可能性がある。
 In practice, this tight coupling can radically increase the cost and difficulty of making any changes to ma at all, even if they are improvements.
-実際には、この緊密なカップリングは、たとえそれが改善であっても、MAに変更を加えるコストと困難を根本的に増大させる可能性がある。
+実際には、**この緊密なカップリングは、$m_a$ に対する変更のコストと難しさを根本的に増加させる可能性があり**、たとえそれが改善であっても、$m_a$ に対する変更を行うことが非常に困難になる可能性がある。
+(booking.comのsemantic model的なMLの使用って、まさにundeclared consumersだらけだと思うんだけど、この点どうなんだろう...??:thinking:)
 Furthermore, undeclared consumers may create hidden feedback loops, which are described more in detail in section 4.
-さらに、未申告の消費者は隠れたフィードバック・ループを生み出すかもしれない。
+さらに、undecleared consumersは、隠れたフィードバックループを作り出す可能性があり、これについてはセクション4で詳しく説明する。
 
 Undeclared consumers may be difficult to detect unless the system is specifically designed to guard against this case, for example with access restrictions or strict service-level agreements (SLAs).
-未申告の消費者は、例えばアクセス制限や厳格なサービス・レベル・アグリーメント（SLA）など、このようなケースを防ぐために特別に設計されたシステムでない限り、発見が難しいかもしれない。
+未宣言の消費者は、アクセス制限や厳格なサービスレベル契約(SLA)など、このケースに対処するためにシステムが特に設計されていない限り、検出が困難である。
+(ex. undeclared consumersは意識しないと簡単に作られて、検出も困難だよってこと??:thinking:)
 In the absence of barriers, engineers will naturally use the most convenient signal at hand, especially when working against deadline pressures.
-障壁がない場合、エンジニアは当然、手元にある最も便利な信号を使用する。
+障壁がない場合、エンジニアは、特に締め切りのプレッシャーに対処するときに、手元にある最も便利な信号を自然に使用するだろう。
+
+<!-- ここまで読んだ! -->
 
 # Data Dependencies Cost More than Code Dependencies データ依存はコード依存よりもコストがかかる
 
@@ -201,33 +227,34 @@ This will not be a good day for the maintainers of the ML system.
 Underutilized data dependencies can creep into a model in several ways.
 十分に活用されていないデータ依存関係は、いくつかの方法でモデルに忍び込む可能性がある。
 • Legacy Features.
+
 - レガシーの特徴
-The most common case is that a feature F is included in a model early in its development.
-最も一般的なケースは、ある機能Fがモデルの開発初期に盛り込まれることである。
-Over time, F is made redundant by new features but this goes undetected.
-時間の経過とともに、Fは新しい機能によって冗長になるが、これは検出されない。
-• Bundled Features.
+  The most common case is that a feature F is included in a model early in its development.
+  最も一般的なケースは、ある機能Fがモデルの開発初期に盛り込まれることである。
+  Over time, F is made redundant by new features but this goes undetected.
+  時間の経過とともに、Fは新しい機能によって冗長になるが、これは検出されない。
+  • Bundled Features.
 - バンドル機能。
-Sometimes, a group of features is evaluated and found to be beneficial.
-時には、ある機能グループが評価され、有益であることが判明することもある。
-Because of deadline pressures or similar effects, all the features in the bundle are added to the model together, possibly including features that add little or no value.
-締め切りのプレッシャーや類似の効果のために、バンドル内のすべての機能が一緒にモデルに追加され、おそらくほとんど付加価値のない機能も含まれる。
-• ǫ-Features.
+  Sometimes, a group of features is evaluated and found to be beneficial.
+  時には、ある機能グループが評価され、有益であることが判明することもある。
+  Because of deadline pressures or similar effects, all the features in the bundle are added to the model together, possibly including features that add little or no value.
+  締め切りのプレッシャーや類似の効果のために、バンドル内のすべての機能が一緒にモデルに追加され、おそらくほとんど付加価値のない機能も含まれる。
+  • ǫ-Features.
 - ǫ-特徴。
-As machine learning researchers, it is tempting to improve model accuracy even when the accuracy gain is very small or when the complexity overhead might be high.
-機械学習の研究者としては、精度の向上が非常に小さい場合や複雑さのオーバーヘッドが大きい場合であっても、モデルの精度を向上させたくなる。
-• Correlated Features.
+  As machine learning researchers, it is tempting to improve model accuracy even when the accuracy gain is very small or when the complexity overhead might be high.
+  機械学習の研究者としては、精度の向上が非常に小さい場合や複雑さのオーバーヘッドが大きい場合であっても、モデルの精度を向上させたくなる。
+  • Correlated Features.
 - 相関する特徴。
-Often two features are strongly correlated, but one is more directly causal.
-多くの場合、2つの特徴には強い相関関係があるが、どちらか一方がより直接的な因果関係がある。
-Many ML methods have difficulty detecting this and credit the two features equally, or may even pick the non-causal one.
-多くのML手法はこれを検出するのが難しく、2つの特徴を同等に評価するか、あるいは非因果的な方を選ぶことさえある。
-This results in brittleness if world behavior later changes the correlations.
-その結果、世界の振る舞いが後に相関関係を変化させた場合、もろくなる。
-Underutilized dependencies can be detected via exhaustive leave-one-feature-out evaluations.
-十分に利用されていない依存関係は、徹底的な1つだけのフィーチャー除外評価によって検出することができる。
-These should be run regularly to identify and remove unnecessary features.
-これらは定期的に実行し、不要な機能を特定して削除する必要がある。
+  Often two features are strongly correlated, but one is more directly causal.
+  多くの場合、2つの特徴には強い相関関係があるが、どちらか一方がより直接的な因果関係がある。
+  Many ML methods have difficulty detecting this and credit the two features equally, or may even pick the non-causal one.
+  多くのML手法はこれを検出するのが難しく、2つの特徴を同等に評価するか、あるいは非因果的な方を選ぶことさえある。
+  This results in brittleness if world behavior later changes the correlations.
+  その結果、世界の振る舞いが後に相関関係を変化させた場合、もろくなる。
+  Underutilized dependencies can be detected via exhaustive leave-one-feature-out evaluations.
+  十分に利用されていない依存関係は、徹底的な1つだけのフィーチャー除外評価によって検出することができる。
+  These should be run regularly to identify and remove unnecessary features.
+  これらは定期的に実行し、不要な機能を特定して削除する必要がある。
 
 ## Static Analysis of Data Dependencies. データ依存の静的解析。
 
@@ -277,7 +304,7 @@ Consider the case of two stock-market prediction models from two different inves
 Improvements (or, more scarily, bugs) in one may influence the bidding and buying behavior of the other.
 一方の改善（あるいはもっと恐ろしいことにバグ）は、もう一方の入札や購買行動に影響を与えるかもしれない。
 
-# ML-System Anti-Patterns 
+# ML-System Anti-Patterns
 
 It may be surprising to the academic community to know that only a tiny fraction of the code in many ML systems is actually devoted to learning or prediction – see Figure 1.
 多くのMLシステムにおいて、実際に学習や予測に費やされているコードはごく一部であることを知ると、学術界は驚くかもしれない（図1参照）。
@@ -370,27 +397,28 @@ In software engineering, a design smell may indicate an underlying problem in a 
 We identify a few ML system smells, not hard-and-fast rules, but as subjective indicators.
 私たちは、いくつかのMLシステムの匂いを、厳密なルールではなく、主観的な指標として特定する。
 • Plain-Old-Data Type Smell.
+
 - 平凡なデータ型の匂い。
-The rich information used and produced by ML systems is all to often encoded with plain data types like raw floats and integers.
-MLシステムで使用され、生成される豊富な情報は、生の浮動小数点や整数のような平易なデータ型でエンコードされることが多い。
-In a robust system, a model parameter should know if it is a log-odds multiplier or a decision threshold, and a prediction should know various pieces of information about the model that produced it and how it should be consumed.
-ロバストシステムでは、モデルパラメータは、それが対数オッズ乗数なのか決定しきい値なのかを知っている必要があり、予測は、それを生成したモデルに関する様々な情報と、それをどのように消費すべきかを知っている必要がある。
-• Multiple-Language Smell.
+  The rich information used and produced by ML systems is all to often encoded with plain data types like raw floats and integers.
+  MLシステムで使用され、生成される豊富な情報は、生の浮動小数点や整数のような平易なデータ型でエンコードされることが多い。
+  In a robust system, a model parameter should know if it is a log-odds multiplier or a decision threshold, and a prediction should know various pieces of information about the model that produced it and how it should be consumed.
+  ロバストシステムでは、モデルパラメータは、それが対数オッズ乗数なのか決定しきい値なのかを知っている必要があり、予測は、それを生成したモデルに関する様々な情報と、それをどのように消費すべきかを知っている必要がある。
+  • Multiple-Language Smell.
 - 多言語の嗅覚。
-It is often tempting to write a particular piece of a system in a given language, especially when that language has a convenient library or syntax for the task at hand.
-特に、その言語が手元のタスクに便利なライブラリや構文を持っている場合、システムの特定の部分をある言語で書きたくなることがよくある。
-However, using multiple languages often increases the cost of effective testing and can increase the difficulty of transferring ownership to other individuals.
-しかし、複数の言語を使用することは、しばしば効果的なテストのコストを増加させ、他の個人への所有権の移転を困難にする可能性がある。
-• Prototype Smell.
+  It is often tempting to write a particular piece of a system in a given language, especially when that language has a convenient library or syntax for the task at hand.
+  特に、その言語が手元のタスクに便利なライブラリや構文を持っている場合、システムの特定の部分をある言語で書きたくなることがよくある。
+  However, using multiple languages often increases the cost of effective testing and can increase the difficulty of transferring ownership to other individuals.
+  しかし、複数の言語を使用することは、しばしば効果的なテストのコストを増加させ、他の個人への所有権の移転を困難にする可能性がある。
+  • Prototype Smell.
 - プロトタイプの匂い。
-It is convenient to test new ideas in small scale via prototypes.
-プロトタイプを通じて新しいアイデアを小規模にテストするのは便利だ。
-However, regularly relying on a prototyping environment may be an indicator that the full-scale system is brittle, difficult to change, or could benefit from improved abstractions and interfaces.
-しかし、定期的にプロトタイピング環境に依存することは、本格的なシステムがもろく、変更が困難で、抽象化やインターフェースの改善から利益を得られる可能性があるという指標になるかもしれない。
-Maintaining a prototyping environment carries its own cost, and there is a significant danger that time pressures may encourage a prototyping system to be used as a production solution.
-プロトタイピング環境の維持にはそれなりのコストがかかり、時間的なプレッシャーがプロトタイピング・システムをプロダクション・ソリューションとして使用することを促す危険性が大きい。
-Additionally, results found at small scale rarely reflect the reality at full scale.
-さらに、小規模で発見された結果が、フルスケールでの現実を反映することはほとんどない。
+  It is convenient to test new ideas in small scale via prototypes.
+  プロトタイプを通じて新しいアイデアを小規模にテストするのは便利だ。
+  However, regularly relying on a prototyping environment may be an indicator that the full-scale system is brittle, difficult to change, or could benefit from improved abstractions and interfaces.
+  しかし、定期的にプロトタイピング環境に依存することは、本格的なシステムがもろく、変更が困難で、抽象化やインターフェースの改善から利益を得られる可能性があるという指標になるかもしれない。
+  Maintaining a prototyping environment carries its own cost, and there is a significant danger that time pressures may encourage a prototyping system to be used as a production solution.
+  プロトタイピング環境の維持にはそれなりのコストがかかり、時間的なプレッシャーがプロトタイピング・システムをプロダクション・ソリューションとして使用することを促す危険性が大きい。
+  Additionally, results found at small scale rarely reflect the reality at full scale.
+  さらに、小規模で発見された結果が、フルスケールでの現実を反映することはほとんどない。
 
 # Configuration Debt コンフィギュレーション・デット
 
@@ -427,14 +455,15 @@ However, mistakes in configuration can be costly, leading to serious loss of tim
 This leads us to articulate the following principles of good configuration systems: • It should be easy to specify a configuration as a small change from a previous configuration.
 このことから、優れたコンフィギュレーション・システムの原則を次のように明確にする： - あるコンフィギュレーションを、以前のコンフィギュレーションからの小さな変更として簡単に指定できること。
 • It should be hard to make manual errors, omissions, or oversights.
+
 - 手作業によるミスや脱落、見落としは起こりにくいはずだ。
-• It should be easy to see, visually, the difference in configuration between two models.
+  • It should be easy to see, visually, the difference in configuration between two models.
 - 2つのモデルの構成の違いは、視覚的に容易に確認できるはずだ。
-• It should be easy to automatically assert and verify basic facts about the configuration: number of features used, transitive closure of data dependencies, etc.
+  • It should be easy to automatically assert and verify basic facts about the configuration: number of features used, transitive closure of data dependencies, etc.
 - コンフィギュレーションに関する基本的な事実を自動的にアサートし、検証することは容易でなければならない： 使用される機能の数、データ依存関係の推移的終結など。
-• It should be possible to detect unused or redundant settings.
+  • It should be possible to detect unused or redundant settings.
 - 使用されていない設定や冗長な設定を検出することができるはずだ。
-• Configurations should undergo a full code review and be checked into a repository
+  • Configurations should undergo a full code review and be checked into a repository
 - コンフィギュレーションは、完全なコードレビューを受け、リポジトリにチェックインされるべきである。
 
 # Dealing with Changes in the External World 外界の変化への対応
@@ -470,41 +499,42 @@ The key question is: what to monitor? Testable invariants are not always obvious
 We offer the following starting points.
 我々は次のような出発点を提供する。
 • Prediction Bias.
+
 - 予測バイアス。
-In a system that is working as intended, it should usually be the case that the distribution of predicted labels is equal to the distribution of observed labels.
-意図したとおりに機能しているシステムでは、通常、予測されたラベルの分布と観測されたラベルの分布が等しくなるはずである。
-This is by no means a comprehensive test, as it can be met by a null model that simply predicts average values of label occurrences without regard to the input features.
-これは決して包括的なテストではない。入力特徴に関係なく、単にラベル出現の平均値を予測するヌルモデルでも満たされるからだ。
-However, it is a surprisingly useful diagnostic, and changes in metrics such as this are often indicative of an issue that requires attention.
-しかし、これは驚くほど有用な診断法であり、このような指標の変化は、しばしば注意を要する問題を示している。
-For example, this method can help to detect cases in which the world behavior suddenly changes, making training distributions drawn from historical data no longer reflective of current reality.
-例えば、この方法は、世界の振る舞いが突然変化し、過去のデータから引き出された学習分布が現在の現実を反映しなくなるようなケースを検出するのに役立つ。
-Slicing prediction bias by various dimensions isolate issues quickly, and can also be used for automated alerting.
-様々な次元で予測バイアスをスライスすることで、問題を迅速に分離し、自動アラートにも使用できる。
-• Action Limits.
+  In a system that is working as intended, it should usually be the case that the distribution of predicted labels is equal to the distribution of observed labels.
+  意図したとおりに機能しているシステムでは、通常、予測されたラベルの分布と観測されたラベルの分布が等しくなるはずである。
+  This is by no means a comprehensive test, as it can be met by a null model that simply predicts average values of label occurrences without regard to the input features.
+  これは決して包括的なテストではない。入力特徴に関係なく、単にラベル出現の平均値を予測するヌルモデルでも満たされるからだ。
+  However, it is a surprisingly useful diagnostic, and changes in metrics such as this are often indicative of an issue that requires attention.
+  しかし、これは驚くほど有用な診断法であり、このような指標の変化は、しばしば注意を要する問題を示している。
+  For example, this method can help to detect cases in which the world behavior suddenly changes, making training distributions drawn from historical data no longer reflective of current reality.
+  例えば、この方法は、世界の振る舞いが突然変化し、過去のデータから引き出された学習分布が現在の現実を反映しなくなるようなケースを検出するのに役立つ。
+  Slicing prediction bias by various dimensions isolate issues quickly, and can also be used for automated alerting.
+  様々な次元で予測バイアスをスライスすることで、問題を迅速に分離し、自動アラートにも使用できる。
+  • Action Limits.
 - 行動制限。
-In systems that are used to take actions in the real world, such as bidding on items or marking messages as spam, it can be useful to set and enforce action limits as a sanity check.
-アイテムへの入札やメッセージをスパムとしてマークするなど、実世界でアクションを起こすために使われるシステムでは、サニティチェックとしてアクションの制限を設定し、強制することは有用である。
-These limits should be broad enough not to trigger spuriously.
-これらの制限は、スプリアス・トリガーが発生しない程度に十分広いものでなければならない。
-If the system hits a limit for a given action, automated alerts should fire and trigger manual intervention or investigation.
-システムが所定のアクションの限界に達した場合、自動化されたアラートが発せられ、手動介入または調査が開始されるはずである。
-• Up-Stream Producers.
+  In systems that are used to take actions in the real world, such as bidding on items or marking messages as spam, it can be useful to set and enforce action limits as a sanity check.
+  アイテムへの入札やメッセージをスパムとしてマークするなど、実世界でアクションを起こすために使われるシステムでは、サニティチェックとしてアクションの制限を設定し、強制することは有用である。
+  These limits should be broad enough not to trigger spuriously.
+  これらの制限は、スプリアス・トリガーが発生しない程度に十分広いものでなければならない。
+  If the system hits a limit for a given action, automated alerts should fire and trigger manual intervention or investigation.
+  システムが所定のアクションの限界に達した場合、自動化されたアラートが発せられ、手動介入または調査が開始されるはずである。
+  • Up-Stream Producers.
 - アップストリーム・プロデューサー
-Data is often fed through to a learning system from various upstream producers.
-データは多くの場合、様々な上流の生産者から学習システムに供給される。
-These up-stream processes should be thoroughly monitored, tested, and routinely meet a service level objective that takes the downstream ML system needs into account.
-これらのアップストリームプロセスは、徹底的にモニターされ、テストされ、下流のMLシステムのニーズを考慮したサービスレベル目標を日常的に満たすべきである。
-Further any up-stream alerts must be propagated to the control plane of an ML system to ensure its accuracy.
-さらに、アップストリームでの警告は、その精度を保証するためにMLシステムの制御プレーンに伝搬されなければならない。
-Similarly, any failure of the ML system to meet established service level objectives be also propagated down-stream to all consumers, and directly to their control planes if at all possible.
-同様に、MLシステムが確立されたサービスレベル目標を満たすことができなかった場合も、ダウンストリームですべての消費者に伝わり、可能であれば直接消費者のコントロールプレーンに伝わります。
-Because external changes occur in real-time, response must also occur in real-time as well.
-外部からの変化はリアルタイムで起こるため、対応もリアルタイムでなければならない。
-Relying on human intervention in response to alert pages is one strategy, but can be brittle for time-sensitive issues.
-アラートページに対する人間の介入に頼るのも一つの戦略だが、一刻を争う問題にはもろい。
-Creating systems to that allow automated response without direct human intervention is often well worth the investment.
-人間が直接介入することなく自動応答を可能にするシステムを構築することは、多くの場合、投資に値する。
+  Data is often fed through to a learning system from various upstream producers.
+  データは多くの場合、様々な上流の生産者から学習システムに供給される。
+  These up-stream processes should be thoroughly monitored, tested, and routinely meet a service level objective that takes the downstream ML system needs into account.
+  これらのアップストリームプロセスは、徹底的にモニターされ、テストされ、下流のMLシステムのニーズを考慮したサービスレベル目標を日常的に満たすべきである。
+  Further any up-stream alerts must be propagated to the control plane of an ML system to ensure its accuracy.
+  さらに、アップストリームでの警告は、その精度を保証するためにMLシステムの制御プレーンに伝搬されなければならない。
+  Similarly, any failure of the ML system to meet established service level objectives be also propagated down-stream to all consumers, and directly to their control planes if at all possible.
+  同様に、MLシステムが確立されたサービスレベル目標を満たすことができなかった場合も、ダウンストリームですべての消費者に伝わり、可能であれば直接消費者のコントロールプレーンに伝わります。
+  Because external changes occur in real-time, response must also occur in real-time as well.
+  外部からの変化はリアルタイムで起こるため、対応もリアルタイムでなければならない。
+  Relying on human intervention in response to alert pages is one strategy, but can be brittle for time-sensitive issues.
+  アラートページに対する人間の介入に頼るのも一つの戦略だが、一刻を争う問題にはもろい。
+  Creating systems to that allow automated response without direct human intervention is often well worth the investment.
+  人間が直接介入することなく自動応答を可能にするシステムを構築することは、多くの場合、投資に値する。
 
 # Other Areas of ML-related Debt その他のML関連債務
 
