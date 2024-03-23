@@ -482,53 +482,59 @@ We identify a few ML system smells, not hard-and-fast rules, but as subjective i
 # 6. Configuration Debt コンフィギュレーション・デット
 
 Another potentially surprising area where debt can accumulate is in the configuration of machine learning systems.
-負債が蓄積される可能性のあるもう一つの驚くべき分野は、機械学習システムの設定である。
+負債が蓄積される可能性のあるもう一つの驚くべき分野は、機械学習システムのconfigurationである。
 Any large system has a wide range of configurable options, including which features are used, how data is selected, a wide variety of algorithm-specific learning settings, potential pre- or post-processing, verification methods, etc.
-どんな大規模なシステムでも、どの特徴を使うか、どのようにデータを選択するか、多種多様なアルゴリズム固有の学習設定、潜在的な事前または事後処理、検証方法など、設定可能なオプションは多岐にわたる。
+どんな大規模なシステムでも、使用する特徴量、データの選択方法、さまざまなアルゴリズム固有の学習設定、前処理や後処理、検証方法など、**幅広い設定オプションがある**。
 We have observed that both researchers and engineers may treat configuration (and extension of configuration) as an afterthought.
-私たちは、研究者もエンジニアも、コンフィギュレーション（およびコンフィギュレーションの拡張）を後回しに扱っているのではないかと見てきた。
+私たちは、**研究者もエンジニアも、configuration(およびconfigurationの拡張)を二の次に扱うことがある**と観察している。
 Indeed, verification or testing of configurations may not even be seen as important.
-実際、コンフィギュレーションの検証やテストは重要視されないかもしれない。
+実際、configurationの検証やテストは、重要でないとさえ考えられないかもしれない。
 In a mature system which is being actively developed, the number of lines of configuration can far exceed the number of lines of the traditional code.
-活発に開発されている成熟したシステムでは、コンフィギュレーションの行数は、従来のコードの行数をはるかに上回ることがある。
+**活発に開発されている成熟したシステムでは、configurationの行数が従来のコードの行数をはるかに上回ることがある**。
 Each configuration line has a potential for mistakes.
 それぞれのコンフィギュレーション・ラインには間違いの可能性がある。
+
 Consider the following examples.
 次の例を考えてみよう。
 Feature A was incorrectly logged from 9/14 to 9/17.
-フィーチャーAが9/14から9/17まで誤って記録されていた。
+特徴量 A は、9/14から9/17まで誤ってログされていた。
 Feature B is not available on data before 10/7.
-フィーチャーBは10/7以前のデータでは使用できません。
+特徴量 B は、10/7以前のデータでは利用できない。
 The code used to compute feature C has to change for data before and after 11/1 because of changes to the logging format.
-特徴Cを計算するコードは、11/1以前のデータと11/1以降のデータで変更しなければならない。
+特徴量Cを計算するために使用されるコードは、ログフォーマットの変更のため、11/1以前と以降のデータで変更しなければならない。
 Feature D is not available in production, so a substitute features D′ and D′′ must be used when querying the model in a live setting.
-フィーチャーDは本番では使用できないので、本番環境でモデルをクエリするときは、代わりのフィーチャーD′とD′′を使用しなければならない。
+特徴量 D は本番環境では利用できないため、ライブ設定でモデルをクエリする際には、代替特徴量 D' と D'' を使用しなければならない。
 If feature Z is used, then jobs for training must be given extra memory due to lookup tables or they will train inefficiently.
-特徴Zを使用する場合、トレーニング用のジョブにはルックアップテーブルのために余分なメモリを与えなければならない。
+特徴量 Z を使用する場合、トレーニング用のジョブには、ルックアップテーブルのために余分なメモリが必要であり、効率的にトレーニングされない。
 Feature Q precludes the use of feature R because of latency constraints.
-特徴Qは、レイテンシの制約から特徴Rの使用を妨げる。
-All this messiness makes configuration hard to modify correctly, and hard to reason about.
-このようなゴチャゴチャしたものは、コンフィギュレーションを正しく変更することを難しくし、理屈をつけることも難しくする。
-However, mistakes in configuration can be costly, leading to serious loss of time, waste of computing resources, or production issues.
-しかし、コンフィギュレーションにおけるミスは、深刻な時間の損失、コンピューティングリソースの浪費、生産上の問題につながり、大きな代償を払うことになる。
-This leads us to articulate the following principles of good configuration systems: • It should be easy to specify a configuration as a small change from a previous configuration.
-このことから、優れたコンフィギュレーション・システムの原則を次のように明確にする： - あるコンフィギュレーションを、以前のコンフィギュレーションからの小さな変更として簡単に指定できること。
-• It should be hard to make manual errors, omissions, or oversights.
+特徴量 Q は、遅延制約のため、特徴量 R の使用を妨げる。
 
-- 手作業によるミスや脱落、見落としは起こりにくいはずだ。
-  • It should be easy to see, visually, the difference in configuration between two models.
-- 2つのモデルの構成の違いは、視覚的に容易に確認できるはずだ。
-  • It should be easy to automatically assert and verify basic facts about the configuration: number of features used, transitive closure of data dependencies, etc.
-- コンフィギュレーションに関する基本的な事実を自動的にアサートし、検証することは容易でなければならない： 使用される機能の数、データ依存関係の推移的終結など。
-  • It should be possible to detect unused or redundant settings.
-- 使用されていない設定や冗長な設定を検出することができるはずだ。
-  • Configurations should undergo a full code review and be checked into a repository
-- コンフィギュレーションは、完全なコードレビューを受け、リポジトリにチェックインされるべきである。
+All this messiness makes configuration hard to modify correctly, and hard to reason about.
+このようなゴチャゴチャしたものは、configurationを正しく変更することが難しく、理解することも難しくなる。
+However, mistakes in configuration can be costly, leading to serious loss of time, waste of computing resources, or production issues.
+**しかし、configurationのミスはコストがかかる可能性があり、時間の大幅な損失、コンピューティングリソースの無駄遣い、本番環墮の問題を引き起こす可能性がある**。
+This leads us to articulate the following principles of good configuration systems:
+このことから、**優れたconfigurationシステムの原則**を次のように明確にすることができる：
+
+- 1. It should be easy to specify a configuration as a small change from a previous configuration.
+     以前のconfigurationからの小さな変更としてconfigurationを指定することは簡単であるべき。
+- 2. It should be hard to make manual errors, omissions, or oversights.
+     手作業によるエラーや脱落、見落としをすることが発生しづらいべき。
+- 3. It should be easy to see, visually, the difference in configuration between two models.
+     2つのモデルの構成の違いは、視覚的に容易に確認できるべき。
+- 4. It should be easy to automatically assert and verify basic facts about the configuration: number of features used, transitive closure of data dependencies, etc.
+     **configurationに関する基本的な事実を自動的にassertし、検証することが容易**であるべき：使用される特徴量の数、データ依存関係の推移閉包など。
+- 5. It should be possible to detect unused or redundant settings.
+     使用されていない設定や冗長な設定を検出することができるべき。
+- 6. Configurations should undergo a full code review and be checked into a repository
+     configurationは、完全なコードレビューを受け、リポジトリにチェックインされるべき。
+
+<!-- ここまで読んだ! -->
 
 # 7. Dealing with Changes in the External World 外界の変化への対応
 
 One of the things that makes ML systems so fascinating is that they often interact directly with the external world.
-MLシステムの魅力のひとつは、しばしば外界と直接相互作用することだ。
+MLシステムの魅力のひとつは、しばしば外界と直接相互作用することだ。(外界から得られたデータを使って継続的に学習するから??)
 Experience has shown that the external world is rarely stable.
 経験上、外界が安定していることはほとんどない。
 This background rate of change creates ongoing maintenance cost.
