@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.1.168">
 
   <meta name="author" content="モーリタ">
-  <title>より”良い”MLシステムってどう作ればいいんだろうと悩み、FTI Pipelines architectureについて調べた話</title>
+  <title>より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLの技術的負債の論文読んだり、FTI Pipelines architectureについて調べたりした話</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -325,40 +325,114 @@
     <div class="slides">
 
 <section id="title-slide" data-background-opacity="0.5" data-background-size="contain" class="center">
-  <h1 class="title">より”良い”MLシステムってどう作ればいいんだろうと悩み、FTI Pipelines architectureについて調べた話</h1>
+  <h1 class="title">より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLの技術的負債の論文読んだり、FTI Pipelines architectureについて調べたりした話</h1>
   <p class="subtitle">y-tech-ai ワクワク勉強会</p>
   <p class="author">モーリタ</p>
-  <p class="date">2024/02/xx</p>
+  <p class="date">2024/03/26</p>
 </section>
 
+<section id="tldr" class="slide level2">
+<h2>TL;DR</h2>
+<ul>
+<li>より持続可能性の高いMLシステムってどう作るといいのか悩んで、有名な<strong>MLの技術的負債の論文</strong>や、<strong>FTI Pipelines architecture</strong>について調べた。</li>
+<li>FTI Pipelines architectureは、特徴量作成、学習、推論をそれぞれ独立したpipelineとして開発・運用する方法論。</li>
+<li>確かに、ソフトウェアの複雑さ管理の観点からも、FTI pipelinesは有効そう。(モジュラー性, 関心の分離, 疎結合, 抽象化, etc)</li>
+<li>また、MLシステム設計における技術的負債の観点からも、FTI pipelinesは有効そう。(glue codeの削減, pipeline jungleの予防, etc)</li>
+<li>MLシステムを設計・開発する上で、メンタルマップとしてFTI Pipelines architectureを意識することは良さそう。</li>
+</ul>
+</section>
 <section id="このテーマを選んだ経緯-概要" class="slide level2">
 <h2>このテーマを選んだ経緯 &amp; 概要</h2>
 <ul>
-<li>業務の中で「より”良い”MLシステムってどう作ればいいんだろう」と思って色々調べ始めた。
+<li>業務の中で、漠然と「より”良い”MLシステムってどう作ればいいんだろう」と思って色々調べ始めた。
 <ul>
-<li>“良い”: 変更・拡張がしやすい(i.e.&nbsp;システムの持続可能性が高い?)、ABテストやオフライン実験も含めて運用しやすい、みたいな状態を想像<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>“良い”ってなんだろ?
+<ul>
+<li>ex. 変更・拡張しやすい、ABテストやオフライン実験も含めて運用しやすい、プロダクトに価値提供しやすい、みたいな状態を想像してる。</li>
+</ul></li>
+<li>-&gt; i.e.&nbsp;システムの持続可能性が高い?<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul></li>
 <li>昨年のMLOps勉強会の発表の中で「FTI pipelines architecture」っていう言葉を聞き、興味を持った。</li>
-<li>「<a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">From MLOps to ML Systems with Feature/Training/Inference Pipelines</a>」は、HopsworksのCEOのJim Dowling氏が書いた記事で、より良いMLシステムを作る上でFTI pipelines architecturを採用することが重要だと主張してる。</li>
-</ul>
-</section>
-<section id="参考文献" class="slide level2">
-<h2>参考文献:</h2>
+<li>「<a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">From MLOps to ML Systems with Feature/Training/Inference Pipelines</a>」は、HopsworksのCEOの方が書いた記事で、より良いMLシステムを作る上でのメンタルマップとしてFTI pipelines architectureを採用することが重要だと主張してる。
 <ul>
-<li>hogehoge</li>
-</ul>
-</section>
-<section id="fti-pipelines-architectureの概要" class="slide level2">
-<h2>FTI Pipelines Architectureの概要:</h2>
-</section>
-<section id="そもそもpipeline-architectureってなんだっけ" class="slide level2">
-<h2>そもそもPipeline Architectureってなんだっけ?</h2>
-<ul>
-<li>pipe and filter architectureとも呼ばれる。
-<ul>
-<li>filter(component)とpipe(filter同士を繋ぐ)から構成される。</li>
-<li>たぶん「一方向的」というのが特徴 <span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>要は「特徴量作成、学習、推論はそれぞれ独立したpipelineとして開発・運用しよう!」みたいな方針!</li>
+<li>Hopsworks = 特徴量ストアやモデルレジストリ等のMLプラットフォームを提供してる会社っぽい。</li>
 </ul></li>
+</ul>
+</section>
+<section id="導入-何をすべきかという明確なメンタルマップが必要っぽい" class="slide level2">
+<h2>導入: 何をすべきかという明確なメンタルマップが必要っぽい</h2>
+</section>
+<section id="メンタルマップとしてのfti-pipelines-architecture" class="slide level2">
+<h2>メンタルマップとしてのFTI Pipelines Architecture:</h2>
+</section>
+<section id="pre-mlops時代の話" class="slide level2">
+<h2>Pre-MLOps時代の話:</h2>
+<ul>
+<li>MLシステムの黎明期には、<strong>MLシステムの開発は単にモデルを学習する以上のものである</strong>ことがすぐに常識になった。
+<ul>
+<li>下図は、MLシステムにおける隠れた技術的負債に関する論文(2015年)の抜粋(あ、よく引用されてる図だ! 良いMLモデルを作る以外にも色々必要だよって文脈<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul></li>
+<li></li>
+</ul>
+</section>
+<section id="アンチパターン例1" class="slide level2">
+<h2>アンチパターン例1:</h2>
+<!-- - MLシステムには2つのタイプがある: バッチMLシステムとリアルタイムMLシステム(要はbatch推論かonline推論かの違いかな) -->
+<ul>
+<li>バッチMLシステムのアンチパターンの例として下図が紹介されてた:
+<ul>
+<li>特徴: 特徴量作成、学習、推論が一つのモノリシックなpipelineにまとまっている。学習モードか推論モードをbooleanフラグで切り替える。</li>
+</ul></li>
+</ul>
+
+<img data-src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6502ad7d387cfe977467717b_figure%204_lightbox.png" class="r-stretch"><ul>
+<li>良さげなところ:
+<ul>
+<li>学習時と推論時で、特徴量の作り方の一貫性を保証しやすい!</li>
+</ul></li>
+<li>イマイチなところ:
+<ul>
+<li>作成された特徴量を、他のモデルでサッと再利用できない。</li>
+<li>モノリシックなためモジュラー性が低く、部分的なリソース最適化がしにくい。(ex. データサイズが増えたので特徴量作成を並列化したいが…! 学習時はGPU付きの計算機を使用したいが…!)</li>
+</ul></li>
+</ul>
+</section>
+<section id="アンチパターン例2" class="slide level2">
+<h2>アンチパターン例2:</h2>
+<ul>
+<li>リアルタイムMLシステムのアンチパターンの例として下図が紹介されてた:
+<ul>
+<li>特徴: クライアントからのリクエストを受けとり、リアルタイムで推論結果を返す。オフラインでの学習pipelineとオンラインの推論pipelineが別々になっている。</li>
+</ul></li>
+</ul>
+
+<img data-src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6502adc6d9992658b4fa84b7_figure%205_lightbox.png" class="r-stretch quarto-figure-center"><p class="caption">figure5</p><ul>
+<li>良さげなところ:
+<ul>
+<li>学習と推論のためのリソースをそれぞれ最適化できる(ex. 推論サーバのインスタンスを複数用意したり…!)</li>
+</ul></li>
+<li>イマイチなところ:
+<ul>
+<li>作成された特徴量を、他のモデルでサッと再利用できない。</li>
+<li>学習時と推論時で、特徴量の作り方の一貫性を保証しづらい。</li>
+<li>特徴量作成のためのリソース最適化がしづらい。</li>
+<li>(前述のアンチパターン例と合わせて)バッチとリアルタイムMLシステムで全く異なるアーキテクチャである点 -&gt; 開発者にとってバッチ &lt;-&gt; リアルタイム間の移行コストが高い。</li>
+</ul></li>
+</ul>
+</section>
+<section id="fti-pipelinesアーキテクチャによるリアルタイムmlシステム例" class="slide level2">
+<h2>FTI pipelinesアーキテクチャによるリアルタイムMLシステム例:</h2>
+<ul>
+<li>特徴: 特徴量作成の成果物をfeature storeに保存される。学習時と推論時にfeature storeからデータを取得する。(クライアントから受け取った情報を使う場合は推論時に追加の特徴量作成を行う必要はある。)</li>
+</ul>
+<p><a href="">figure6</a></p>
+</section>
+<section id="脱線そもそもpipeline-architectureってなんだっけ" class="slide level2">
+<h2>(脱線)そもそもPipeline Architectureってなんだっけ?</h2>
+<ul>
+<li>複数の<strong>filter(component)</strong>と、filter同士を繋ぐ<strong>pipe</strong>から構成されるので、pipe and filter architectureとも呼ばれる。</li>
+<li>たぶん「一方向的」というのが特徴 <span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul>
 <p><img data-src="https://miro.medium.com/v2/resize:fit:1100/format:webp/1*C1aXSo3klBPgPZSi8ZFhHw.png"></p>
 <p><img src="https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919" class="slide-logo"></p>

@@ -534,124 +534,159 @@ This leads us to articulate the following principles of good configuration syste
 # 7. Dealing with Changes in the External World 外界の変化への対応
 
 One of the things that makes ML systems so fascinating is that they often interact directly with the external world.
-MLシステムの魅力のひとつは、しばしば外界と直接相互作用することだ。(外界から得られたデータを使って継続的に学習するから??)
+MLシステムの魅力のひとつは、しばしば外界と直接相互作用することだ。(外界から得られたデータを使って継続的に学習するから。これは)
 Experience has shown that the external world is rarely stable.
 経験上、外界が安定していることはほとんどない。
 This background rate of change creates ongoing maintenance cost.
-この背景となる変化率は、継続的なメンテナンスコストを生み出す。
-Fixed Thresholds in Dynamic Systems.
-動的システムにおける固定閾値。
+このbackground rate of change(=外界の変化率??)は、継続的なメンテナンスコストを生み出す。
+
+## Fixed Thresholds in Dynamic Systems. 動的システムにおける固定閾値。
+
 It is often necessary to pick a decision threshold for a given model to perform some action: to predict true or false, to mark an email as spam or not spam, to show or not show a given ad.
-与えられたモデルが何らかのアクションを実行するために、判定しきい値を選ぶ必要があることがよくある： 例えば、真か偽かを予測する、メールをスパムかスパムでないかマークする、与えられた広告を表示するかしないか、などです。
+与えられたモデルが何らかのアクションを実行するために、決定的なしきい値を選択する必要があることがしばしばある: ex. 真または偽を予測するため、メールをスパムまたはスパムでないとマークするため、特定の広告を表示するかどうかを決定するため。
 One classic approach in machine learning is to choose a threshold from a set of possible thresholds, in order to get good tradeoffs on certain metrics, such as precision and recall.
-機械学習における古典的なアプローチの1つは、精度や想起などの特定のメトリクスで良好なトレードオフを得るために、可能な閾値のセットから閾値を選択することである。
+機械学習における古典的なアプローチの1つは、特定のメトリクス(適合率や再現率など)において良いトレードオフを得るために、可能なしきい値のセットからしきい値を選択することである。
 However, such thresholds are often manually set.
-しかし、そのような閾値は手動で設定されることが多い。
+しかし、**そのような閾値は手動で設定されることが多い**。
 Thus if a model updates on new data, the old manually set threshold may be invalid.
-したがって、モデルが新しいデータで更新された場合、手動で設定した古いしきい値は無効になる可能性がある。
+**したがって、モデルが新しいデータで更新された場合、手動で設定した古いしきい値は無効になる可能性がある**。
 Manually updating many thresholds across many models is time-consuming and brittle.
 多くのモデルで多くのしきい値を手動で更新するのは時間がかかり、もろい。
 One mitigation strategy for this kind of problem appears in [14], in which thresholds are learned via simple evaluation on heldout validation data.
 この種の問題に対する1つの緩和策が[14]にあり、そこでは、しきい値は、ホールドアウトされた検証データに対する単純な評価によって学習される。
-Monitoring and Testing.
-モニタリングとテスト。
+(定期的にグリッドサーチで自動で閾値を更新しますよ、っこと??:thinking:)
+
+## Monitoring and Testing. モニタリングとテスト。
+
 Unit testing of individual components and end-to-end tests of running systems are valuable, but in the face of a changing world such tests are not sufficient to provide evidence that a system is working as intended.
-個々のコンポーネントの単体テストや、稼働中のシステムのエンド・ツー・エンドのテストは貴重なものだが、変化する世界を前にして、システムが意図したとおりに動いているという証拠を提供するには、そうしたテストだけでは不十分だ。
+個々のコンポーネントの単体テストや、稼働中のシステムのend-to-endテストは価値があるが、変化する世界に直面している中で、そのようなテストは、システムが意図した通りに機能していることを証明するのに十分ではない。
+(MLシステムのテストが難しい話?:thinking:)
 Comprehensive live monitoring of system behavior in real time combined with automated response is critical for long-term system reliability.
-システムの挙動をリアルタイムで包括的にライブ監視し、自動応答と組み合わせることは、長期的なシステムの信頼性にとって重要である。
+**システムの挙動をリアルタイムで包括的にライブ監視し、自動応答を組み合わせることは、長期的なシステムの信頼性にとって重要**である。
 The key question is: what to monitor? Testable invariants are not always obvious given that many ML systems are intended to adapt over time.
-重要な問題は 何を監視するのか？テスト可能な不変量は、多くのMLシステムが時間とともに適応することを意図していることを考えると、必ずしも明らかではない。
+**重要な問題は 何を監視するのか**？ ということである。**多くのMLシステムは時間とともに適応することを意図しているため、Testable invariants(テスト可能な不変条件)が常に明らかであるわけではない**。
 We offer the following starting points.
 我々は次のような出発点を提供する。
-• Prediction Bias.
 
-- 予測バイアス。
+- **Prediction Bias**.
+  予測バイアス。
   In a system that is working as intended, it should usually be the case that the distribution of predicted labels is equal to the distribution of observed labels.
-  意図したとおりに機能しているシステムでは、通常、予測されたラベルの分布と観測されたラベルの分布が等しくなるはずである。
+  意図した通りに機能しているシステムでは、通常、予測されたラベルの分布が観測されたラベルの分布と等しいことが多いはずである。(=これはbooking.comの論文でいうところの応答分布分析か...!:thinking:)
   This is by no means a comprehensive test, as it can be met by a null model that simply predicts average values of label occurrences without regard to the input features.
-  これは決して包括的なテストではない。入力特徴に関係なく、単にラベル出現の平均値を予測するヌルモデルでも満たされるからだ。
+  **これは決して包括的なテストではない。**入力特徴に関係なく、単にラベル出現の平均値を予測するnullモデルでも満たすことができるからだ。(うんうん...!:thinking:)
   However, it is a surprisingly useful diagnostic, and changes in metrics such as this are often indicative of an issue that requires attention.
-  しかし、これは驚くほど有用な診断法であり、このような指標の変化は、しばしば注意を要する問題を示している。
+  **しかし、これは驚くほど有用な診断であり、このようなメトリクスの変化は、注意を要する問題の兆候であることが多い**。(なるほど...! この指標を最適化しようとするのはだめだけど、この指標が悪くなったら何か問題があるかもしれない、という事か...!:thinking:)
   For example, this method can help to detect cases in which the world behavior suddenly changes, making training distributions drawn from historical data no longer reflective of current reality.
-  例えば、この方法は、世界の振る舞いが突然変化し、過去のデータから引き出された学習分布が現在の現実を反映しなくなるようなケースを検出するのに役立つ。
+  例えば、この方法は、世界の振る舞いが突然変化し、過去のデータから引き出されたトレーニング分布が現在の現実を反映しなくなった場合を検出するのに役立つ。
   Slicing prediction bias by various dimensions isolate issues quickly, and can also be used for automated alerting.
-  様々な次元で予測バイアスをスライスすることで、問題を迅速に分離し、自動アラートにも使用できる。
-  • Action Limits.
-- 行動制限。
+  さまざまな次元で予測バイアスをスライスすることで、問題を迅速に分離し、自動アラートにも使用できる。(ex. 地域、時間帯、ユーザセグメントなどで、応答分布の偏りの変化を監視する、みたいな??:thinking:)
+
+- **Action Limits**.
+  行動制限。
   In systems that are used to take actions in the real world, such as bidding on items or marking messages as spam, it can be useful to set and enforce action limits as a sanity check.
-  アイテムへの入札やメッセージをスパムとしてマークするなど、実世界でアクションを起こすために使われるシステムでは、サニティチェックとしてアクションの制限を設定し、強制することは有用である。
+  アイテムへの入札やメッセージをスパムとしてマークするなど、実世界でアクションを起こすために使われるシステムでは、**sanity check(=正気か否かのチェック**??:thinking:)として行動制限を設定し、強制することが有用である。
+  (ex. 自動入札システムでは、入札件数を制限する。自動スパムチェックでは、スパムとしてマークするメッセージの件数を制限する、みたいな...?:thinking:)
   These limits should be broad enough not to trigger spuriously.
-  これらの制限は、スプリアス・トリガーが発生しない程度に十分広いものでなければならない。
+  これらの制限は、誤ってトリガーされないように広く設定されるべきである。(i.e. 不必要にアラートが発生しないように...!)
   If the system hits a limit for a given action, automated alerts should fire and trigger manual intervention or investigation.
-  システムが所定のアクションの限界に達した場合、自動化されたアラートが発せられ、手動介入または調査が開始されるはずである。
-  • Up-Stream Producers.
-- アップストリーム・プロデューサー
+  システムが特定のアクションの制限に達した場合、自動アラートが発生し、手動介入や調査がトリガーされるべきである。
+- **Up-Stream Producers**.
   Data is often fed through to a learning system from various upstream producers.
-  データは多くの場合、様々な上流の生産者から学習システムに供給される。
+  データは多くの場合、様々な上流のproducersから学習システムに供給される。
   These up-stream processes should be thoroughly monitored, tested, and routinely meet a service level objective that takes the downstream ML system needs into account.
-  これらのアップストリームプロセスは、徹底的にモニターされ、テストされ、下流のMLシステムのニーズを考慮したサービスレベル目標を日常的に満たすべきである。
+  **これらのアップストリームプロセスは、徹底的に監視され、テストされ、ダウンストリームのMLシステムのニーズを考慮に入れたサービスレベル目標を定期的に満たすべき**である。(入力データの変化やバグを検知したい、みたいな??:thinking:)
   Further any up-stream alerts must be propagated to the control plane of an ML system to ensure its accuracy.
-  さらに、アップストリームでの警告は、その精度を保証するためにMLシステムの制御プレーンに伝搬されなければならない。
+  さらに、**アップストリームでのアラートは、MLシステムのコントロールプレーンに伝播して、その正確性を確保する必要がある**。
   Similarly, any failure of the ML system to meet established service level objectives be also propagated down-stream to all consumers, and directly to their control planes if at all possible.
-  同様に、MLシステムが確立されたサービスレベル目標を満たすことができなかった場合も、ダウンストリームですべての消費者に伝わり、可能であれば直接消費者のコントロールプレーンに伝わります。
-  Because external changes occur in real-time, response must also occur in real-time as well.
-  外部からの変化はリアルタイムで起こるため、対応もリアルタイムでなければならない。
-  Relying on human intervention in response to alert pages is one strategy, but can be brittle for time-sensitive issues.
-  アラートページに対する人間の介入に頼るのも一つの戦略だが、一刻を争う問題にはもろい。
-  Creating systems to that allow automated response without direct human intervention is often well worth the investment.
-  人間が直接介入することなく自動応答を可能にするシステムを構築することは、多くの場合、投資に値する。
+  **同様に、MLシステムが確立されたサービスレベル目標を満たすことができなかった場合も、ダウンストリームですべてのconsumersに伝わり**、可能であれば直接consumersのコントロールプレーンに伝わります。
+
+Because external changes occur in real-time, response must also occur in real-time as well.
+**外部からの変化はリアルタイムで起こるため、対応もリアルタイムでなければならない。**
+Relying on human intervention in response to alert pages is one strategy, but can be brittle for time-sensitive issues.
+アラートページに対する人間の介入に頼るのも一つの戦略だが、一刻を争う問題にはもろい。
+Creating systems to that allow automated response without direct human intervention is often well worth the investment.
+**人間が直接介入することなく自動応答を可能にするシステムを構築することは、多くの場合、投資に値する**。
+
+<!-- ここまで読んだ! -->
 
 # 8. Other Areas of ML-related Debt その他のML関連債務
 
 We now briefly highlight some additional areas where ML-related technical debt may accrue.
 ここで、MLに関連する技術的負債が発生する可能性のある追加的な領域をいくつか簡単に紹介する。
-Data Testing Debt.
-データテストの負債。
+
+## Data Testing Debt. データテストの負債。
+
 If data replaces code in ML systems, and code should be tested, then it seems clear that some amount of testing of input data is critical to a well-functioning system.
-もし、MLシステムにおいてデータがコードに取って代わり、コードがテストされるべきものであるならば、入力データのある程度のテストが、うまく機能するシステムにとって重要であることは明らかだろう。
+もし、MLシステムにおいてデータがコードに置き換わり、コードをテストすべきであるとすれば、いくつかの**入力データのテストが、システムがうまく機能するためには重要**であることは明らかだ。(コードもデータも重要なんだったら、コードもデータも退行をテストすべきだよね...!みたいな話??:thinking:)
 Basic sanity checks are useful, as more sophisticated tests that monitor changes in input distributions.
 基本的なサニティ・チェックは、入力分布の変化を監視する、より洗練されたテストと同様に有用である。
 
-Reproducibility Debt.
-再現性の負債。
+## Reproducibility Debt. 再現性の負債。
+
 As scientists, it is important that we can re-run experiments and get similar results, but designing real-world systems to allow for strict reproducibility is a task made difficult by randomized algorithms, non-determinism inherent in parallel learning, reliance on initial conditions, and interactions with the external world.
-科学者としては、実験を再実行して同じような結果が得られることが重要だが、厳密な再現性を可能にするために実世界のシステムを設計することは、ランダム化されたアルゴリズム、並列学習に固有の非決定性、初期条件への依存、外界との相互作用などによって困難になっている。
-Process Management Debt.
-プロセス管理負債。
+科学者として、実験を再実行して似た結果を得ることができることは重要である。しかし、ランダム化されたアルゴリズム、並列学習に固有の非決定性、初期条件への依存、外界との相互作用など、厳密な再現性を許容するための実世界のシステムの設計は困難な課題である。
+(ex. いろんな条件があるから、常にCTR=20%を再現しているわけじゃないよ、みたいな??:thinking:)
+
+## Process Management Debt. プロセス管理負債。
+
 Most of the use cases described in this paper have talked about the cost of maintaining a single model, but mature systems may have dozens or hundreds of models running simultaneously [14, 6].
-本稿で説明したユースケースのほとんどは、単一のモデルを維持するコストについて述べてきたが、成熟したシステムでは、数十から数百のモデルが同時に実行される可能性がある[14, 6]。
+**本稿で説明したユースケースのほとんどは、単一のモデルを維持するコストについて述べてきたが、成熟したシステムでは、数十から数百のモデルが同時に実行される可能性がある**[14, 6]。
 This raises a wide range of important problems, including the problem of updating many configurations for many similar models safely and automatically, how to manage and assign resources among models with different business priorities, and how to visualize and detect blockages in the flow of data in a production pipeline.
-これには、多数の類似モデルに対して多数のコンフィギュレーションを安全かつ自動的に更新する問題、ビジネス上の優先順位が異なるモデル間でリソースをどのように管理し割り当てるか、プロダクション・パイプラインにおけるデータの流れの詰まりをどのように可視化し検出するかなど、さまざまな重要な問題がある。
+これには、多くの類似したモデルのために多くのconfigurationを安全かつ自動的に更新する問題、異なるビジネスの優先順位を持つモデル間でリソースを管理および割り当てる方法、本番パイプラインのデータフローにおけるブロックを視覚化し、検出する方法など、幅広い重要な問題が発生する。
 Developing tooling to aid recovery from production incidents is also critical.
 プロダクション・インシデントからの復旧を支援するツールの開発も重要だ。
 An important system-level smell to avoid are common processes with many manual steps.
-避けるべき重要なシステムレベルの臭いは、手作業のステップが多い一般的なプロセスである。
-Cultural Debt.
-文化的負債。
+**避けるべき重要なsystem-level smellは、多くの手作業ステップを持つ共通プロセスである**。 (運用を自動化すべきってこと?)
+
+## Cultural Debt.
+
+(=MLの研究とエンジニアリングの間に存在し得る、協力よりも対立を生じさせがちな文化的な境界、みたいな!)
+
 There is sometimes a hard line between ML research and engineering, but this can be counter-productive for long-term system health.
-ML研究とエンジニアリングの間には、時に厳しい境界線が存在するが、これは長期的なシステムの健全性にとって逆効果になりかねない。
+ML研究とエンジニアリングの間には、時に厳しい境界線があるが、これは長期的なシステムの健康にとって逆効果となることがある。
 It is important to create team cultures that reward deletion of features, reduction of complexity, improvements in reproducibility, stability, and monitoring to the same degree that improvements in accuracy are valued.
-精度の向上が評価されるのと同じ程度に、特徴の削除、複雑さの軽減、再現性の向上、安定性、モニタリングに報いるチーム文化を作ることが重要である。
+**精度の向上が評価されるのと同じ程度に、特徴量の削除、複雑さの削減、再現性、安定性、モニタリングの向上を報酬とするチーム文化を作り出すことが重要**である。(うんうん...!:thinking:)
 In our experience, this is most likely to occur within heterogeneous teams with strengths in both ML research and engineering.
-我々の経験では、これはML研究とエンジニアリングの双方に強みを持つ異質なチーム内で発生する可能性が最も高い。
+我々の経験では、これ(=上記のpositiveなチーム文化)は、ML研究とエンジニアリングの両方の強みを持つ異種チーム内で最も発生させやすい。(よしよし...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 # 9. Conclusions: Measuring Debt and Paying it Off 結論 負債の測定と返済
 
 Technical debt is a useful metaphor, but it unfortunately does not provide a strict metric that can be tracked over time.
-技術的負債は有用なメタファーだが、残念ながら、長期にわたって追跡できる厳密な指標を提供するものではない。
+技術的負債は有用なメタファー(隠喩)だが、残念ながら、長期にわたって追跡できる厳密な指標を提供するものではない。(定量評価できないから??)
 How are we to measure technical debt in a system, or to assess the full cost of this debt? Simply noting that a team is still able to move quickly is not in itself evidence of low debt or good practices, since the full cost of debt becomes apparent only over time.
-システムにおける技術的負債をどのように測定すればよいのだろうか？なぜなら、負債にかかる全費用は、時間の経過とともに初めて明らかになるからである。
+**システムの技術的負債をどのように測定し、この負債の全体的なコストを評価するのか?** チームがまだ素早く動くことができるということだけが、低い負債や良い実践の証拠となるわけではない。なぜなら、負債の全体的なコストは時間の経過とともに明らかになるからだ。
 Indeed, moving quickly often introduces technical debt.
 実際、素早く動くことは、しばしば技術的負債を生む。
-A few useful questions to consider are: • How easily can an entirely new algorithmic approach be tested at full scale? • What is the transitive closure of all data dependencies? • How precisely can the impact of a new change to the system be measured? • Does improving one model or signal degrade others? • How quickly can new members of the team be brought up to speed? We hope that this paper may serve to encourage additional development in the areas of maintainable ML, including better abstractions, testing methodologies, and design patterns.
-考慮すべき有益な質問をいくつか挙げよう： - まったく新しいアルゴリズムのアプローチを、どの程度簡単にフルスケールでテストできるか？- すべてのデータ依存関係の推移的終結とは何か？- システムに対する新たな変更の影響をどの程度正確に測定できるか？- あるモデルや信号を改善すると、他のモデルや信号が劣化するのか？- チームの新しいメンバーをいかに早くスピードアップさせることができるか？我々は、この論文が、より良い抽象化、テスト手法、デザインパターンなど、保守可能なMLの分野でのさらなる発展を促す一助となることを願っている。
+A few useful questions to consider are:
+考慮すべき有益な質問をいくつか挙げよう：
+
+- How easily can an entirely new algorithmic approach be tested at full scale?
+  まったく新しいアルゴリズムのアプローチを、どの程度簡単にフルスケールでテストできるか？
+- What is the transitive closure of all data dependencies?
+  すべてのデータ依存関係のtransitive closure(=推移閉包?)は何か??
+  - (メモ) transitive closure(推移閉包) = グラフ理論における、要素間の全ての直接的及び間接的な接続のこと。
+  - よって、技術的負債の文脈でのこの質問は、**システム内の全てのデータ依存関係の直接的及び間接的な接続をちゃんと理解できているか否か、ちゃんと答えられる程度にデータ依存関係が少ない事が重要**だよ、みたいな意図???:thinking:
+- How precisely can the impact of a new change to the system be measured?
+  システムに対する新たな変更の影響をどの程度正確に測定できるか？
+- Does improving one model or signal degrade others?
+  あるモデルや信号を改善すると、他のモデルや信号が劣化するのか？
+- How quickly can new members of the team be brought up to speed?
+  チームの新しいメンバーをいかに早くスピードアップさせることができるか？
+
+We hope that this paper may serve to encourage additional development in the areas of maintainable ML, including better abstractions, testing methodologies, and design patterns.
+本稿が、より保守可能なMLの分野での追加の開発を奨励することに役立つことを願っている。これには、より良い抽象化、テスト方法論、デザインパターンが含まれる。
 Perhaps the most important insight to be gained is that technical debt is an issue that engineers and researchers both need to be aware of.
-おそらく得られる最も重要な洞察は、技術的負債はエンジニアと研究者の双方が認識すべき問題であるということだ。
+**おそらく得られる最も重要な洞察は、技術的負債は、エンジニアと研究者の両方が認識している必要がある問題である**ということだ。
 Research solutions that provide a tiny accuracy benefit at the cost of massive increases in system complexity are rarely wise practice.
-システムの複雑さを大幅に増大させる代償として、わずかな精度の利点をもたらすような研究解決策は、賢明な実践とは言い難い。
+**システムの複雑さを大幅に増大させる代償として、微小な精度の利益を提供する研究ソリューションは、滅多に賢明な実践ではない**。(うんうん...!:thinking:)
 Even the addition of one or two seemingly innocuous data dependencies can slow further progress.
 一見何の問題もなさそうなデータの依存関係が1つか2つ追加されただけでも、その後の進展が遅れる可能性がある。
+
 Paying down ML-related technical debt requires a specific commitment, which can often only be achieved by a shift in team culture.
-ML関連の技術的負債を返済するためには、具体的なコミットメントが必要であり、それはしばしばチーム文化の転換によってのみ達成できる。
+ML関連の技術的負債を返済するには、特定のコミットメントが必要であり、これはしばしばチーム文化の変化によってのみ達成されることがある。
 Recognizing, prioritizing, and rewarding this effort is important for the long term health of successful ML teams.
-この努力を認識し、優先順位をつけ、報酬を与えることは、MLチームが長期的に健全であるために重要である。
+この努力を認識し、優先し、報酬を与えることは、成功したMLチームの長期的な健康にとって重要である。
+
+<!-- ここまで読んだ! -->

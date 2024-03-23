@@ -12,9 +12,9 @@ from: markdown+emoji
 
 fig-cap-location: bottom
 
-title: より"良い"MLシステムってどう作ればいいんだろうと悩み、FTI Pipelines architectureについて調べた話
+title: より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLの技術的負債の論文読んだり、FTI Pipelines architectureについて調べたりした話
 subtitle: y-tech-ai ワクワク勉強会
-date: 2024/02/xx
+date: 2024/03/26
 author: モーリタ
 title-slide-attributes:
   #   data-background-image: https://i.imgur.com/nTazczH.png
@@ -22,13 +22,24 @@ title-slide-attributes:
   data-background-opacity: "0.5"
 ---
 
+## TL;DR
+
+- より持続可能性の高いMLシステムってどう作るといいのか悩んで、有名な**MLの技術的負債の論文**や、**FTI Pipelines architecture**について調べた。
+- FTI Pipelines architectureは、特徴量作成、学習、推論をそれぞれ独立したpipelineとして開発・運用する方法論。
+- 確かに、ソフトウェアの複雑さ管理の観点からも、FTI pipelinesは有効そう。(モジュラー性, 関心の分離, 疎結合, 抽象化, etc)
+- また、MLシステム設計における技術的負債の観点からも、FTI pipelinesは有効そう。(glue codeの削減, pipeline jungleの予防, etc)
+- MLシステムを設計・開発する上で、メンタルマップとしてFTI Pipelines architectureを意識することは良さそう。
+
 ## このテーマを選んだ経緯 & 概要
 
-- 業務の中で「より"良い"MLシステムってどう作ればいいんだろう」と思って色々調べ始めた。
-  - "良い": 変更・拡張がしやすい(i.e. システムの持続可能性が高い?)、ABテストやオフライン実験も含めて運用しやすい、みたいな状態を想像:thinking:
+- 業務の中で、漠然と「より"良い"MLシステムってどう作ればいいんだろう」と思って色々調べ始めた。
+  - "良い"ってなんだろ?
+    - ex. 変更・拡張しやすい、ABテストやオフライン実験も含めて運用しやすい、プロダクトに価値提供しやすい、みたいな状態を想像してる。
+  - -> i.e. システムの持続可能性が高い?:thinking:
 - 昨年のMLOps勉強会の発表の中で「FTI pipelines architecture」っていう言葉を聞き、興味を持った。
-- 「[From MLOps to ML Systems with Feature/Training/Inference Pipelines](https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines)」は、HopsworksのCEOのJim Dowling氏が書いた記事で、より良いMLシステムを作る上でFTI pipelines architecturを採用することが重要だと主張してる。
-  - 要は「特徴量作成、学習、推論は独立したpipelineとして開発・運用しよう!」みたいなことかなと思う。
+- 「[From MLOps to ML Systems with Feature/Training/Inference Pipelines](https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines)」は、HopsworksのCEOの方が書いた記事で、より良いMLシステムを作る上でのメンタルマップとしてFTI pipelines architectureを採用することが重要だと主張してる。
+  - 要は「特徴量作成、学習、推論はそれぞれ独立したpipelineとして開発・運用しよう!」みたいな方針!
+  - Hopsworks = 特徴量ストアやモデルレジストリ等のMLプラットフォームを提供してる会社っぽい。
 
 ## 導入: 何をすべきかという明確なメンタルマップが必要っぽい
 
