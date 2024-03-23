@@ -1,13 +1,13 @@
-## link リンク
+## 0.1. link リンク
 
 - https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html
 
-## title タイトル
+## 0.2. title タイトル
 
 Hidden Technical Debt in Machine Learning Systems
 機械学習システムにおける隠れた技術的負債
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 Machine learning offers a fantastically powerful toolkit for building useful complex prediction systems quickly.
 機械学習は、有用で複雑な予測システムを素早く構築するための、非常に強力なツールキットを提供する。
@@ -22,7 +22,7 @@ These include boundary erosion, entanglement, hidden feedback loops, undeclared 
 
 <!-- ここまで読んだ! -->
 
-# Introduction はじめに
+# 1. Introduction はじめに
 
 As the machine learning (ML) community continues to accumulate years of experience with live systems, a wide-spread and uncomfortable trend has emerged: developing and deploying ML systems is relatively fast and cheap, but maintaining them over time is difficult and expensive.
 機械学習(ML) コミュニティがライブシステムでの経験を積み重ねるにつれて、広範囲にわたる不快なトレンドが浮かび上がってきた: **MLシステムの開発(developing)と展開(deploying)は比較的迅速で安価だが、時間の経過とともにそれらを維持することは困難で高価である**。
@@ -76,7 +76,7 @@ Changes in the external world may influence system behavior in unintended ways.
 Even monitoring ML system behavior may prove difficult without careful design.
 **MLシステムの動作を監視することさえ**、注意深く設計しなければ難しいかもしれない。(うん、監視は難しいよね...!:thinking:)
 
-# Complex Models Erode Boundaries 複雑なモデルが境界を侵す
+# 2. Complex Models Erode Boundaries 複雑なモデルが境界を侵す
 
 Traditional software engineering practice has shown that strong abstraction boundaries using encapsulation and modular design help create maintainable code in which it is easy to make isolated changes and improvements.
 **伝統的なソフトウェア工学の実践では、カプセル化とモジュール設計を使用した強力な抽象化境界(abstraction boundaries)が、維持可能なコードを作成し、単独の変更や改善を行いやすくすることがわかっている**。
@@ -93,7 +93,7 @@ The real world does not fit into tidy encapsulation.
 Here we examine several ways that the resulting erosion of boundaries may significantly increase technical debt in ML systems.
 ここでは、**境界の侵食(erosion of boundaries)がMLシステムにおける技術的負債を著しく増加させる**いくつかの方法を検討する。
 
-## Entanglement. 絡み合い
+## 2.1. Entanglement. 絡み合い
 
 Machine learning systems mix signals together, entangling them and making isolation of improvements impossible.
 機械学習システムは信号を混ぜ合わせ、絡め取り、改善の切り分けを不可能にする。
@@ -128,7 +128,7 @@ One such method was proposed in [12], in which a high-dimensional visualization 
 Metrics that operate on a slice-by-slice basis may also be extremely useful.
 また、スライス単位で評価する指標も非常に有用である。
 
-## Correction Cascades. (修正モデルが連鎖的に使用されること!)
+## 2.2. Correction Cascades. (修正モデルが連鎖的に使用されること!)
 
 There are often situations in which model ma for problem A exists, but a solution for a slightly different problem A′ is required.
 問題Aに対するモデル $m_a$ が存在するが、わずかに異なる問題A′の解決策が必要な場合がしばしばある。
@@ -145,7 +145,7 @@ Mitigation strategies are to augment ma to learn the corrections directly within
 緩和策としては、ケースを区別するための特徴を追加することで、同じモデル内で直接補正を学習するようにmaを増強するか、**$A′$ 用に別のモデルを作成するコストを受け入れること**が考えられる。(後者が無難な気がするな...!:thinking:)
 (この話を踏まえると、全usecase共通の基盤モデル、みたいな考え方って結構危ないのかな...??:thinking:)
 
-## Undeclared Consumers. 未宣言の消費者
+## 2.3. Undeclared Consumers. 未宣言の消費者
 
 Oftentimes, a prediction from a machine learning model ma is made widely accessible, either at runtime or by writing to files or logs that may later be consumed by other systems.
 多くの場合、機械学習モデル $m_a$ からの予測は、実行時に広くアクセス可能になるか(=リアルタイム推論??)、後で他のシステムによって消費される可能性のあるファイルやログに書き込まれる。(=batch推論??)
@@ -172,7 +172,7 @@ In the absence of barriers, engineers will naturally use the most convenient sig
 
 <!-- ここまで読んだ! -->
 
-# Data Dependencies Cost More than Code Dependencies データ依存はコード依存よりもコストがかかる
+# 3. Data Dependencies Cost More than Code Dependencies データ依存はコード依存よりもコストがかかる
 
 In [13], dependency debt is noted as a key contributor to code complexity and technical debt in classical software engineering settings.
 13]では、**dependency debt(依存負債)が、古典的なソフトウェアエンジニアリングの設定におけるコードの複雑さと技術的負債の主要な要因であると指摘されている**。
@@ -185,7 +185,7 @@ Without similar tooling for data dependencies, it can be inappropriately easy to
 
 <!-- ここまで読んだ! -->
 
-## Unstable Data Dependencies. Unstable Data Dependencies.
+## 3.1. Unstable Data Dependencies. 不安定なデータ依存関係。
 
 To move quickly, it is often convenient to consume signals as input features that are produced by other systems.
 **素早く進むためには、他のシステムによって生成された入力特徴量として信号を消費することがしばしば便利である**。(うんうん...!:thinking:)
@@ -194,235 +194,292 @@ However, some input signals are unstable, meaning that they qualitatively or qua
 This can happen implicitly, when the input signal comes from another machine learning model itself that updates over time, or a data-dependent lookup table, such as for computing TF/IDF scores or semantic mappings.
 これは、**入力信号が時間の経過とともに更新される他の機械学習モデル自体から来る場合**や、TF/IDFスコアやセマンティックマッピング(ex. 単語のsemantic埋め込み??)を計算するためのデータ依存ルックアップテーブルのような場合に、暗黙的に発生することがある。
 It can also happen explicitly, when the engineering ownership of the input signal is separate from the engineering ownership of the model that consumes it.
-また、入力信号のエンジニアリング・オーナーシップが、それを消費するモデルのエンジニアリング・オーナーシップから分離されている場合には、明示的に発生することもある。
+また、入力信号のエンジニアリング・オーナーシップが、それを消費するモデルのエンジニアリング・オーナーシップから分離されている場合には、明示的に発生することもある。(signalの変化に気づかないって事??)
 In such cases, updates to the input signal may be made at any time.
-このような場合、入力信号の更新はいつでも可能である。
+このような場合、入力信号の更新はいつでも行われる可能性がある。
 This is dangerous because even “improvements” to input signals may have arbitrary detrimental effects in the consuming system that are costly to diagnose and address.
-入力信号の「改善」でさえ、消費システムに恣意的な悪影響を及ぼす可能性があり、診断と対処にコストがかかるからだ。
+**入力信号の「改善」でさえ、診断と対処がコストがかかる消費システムに任意の悪影響をもたらす可能性があるため、これは危険である**。(まあトレードオフだよなぁ...)
 For example, consider the case in which an input signal was previously mis-calibrated.
-例えば、入力信号が以前に誤って較正された場合を考えてみよう。
+例えば、入力信号が以前に誤ってキャリブレーション(=補正?)されていた場合を考えてみましょう。
 The model consuming it likely fit to these mis-calibrations, and a silent update that corrects the signal will have sudden ramifications for the model.
-消費されるモデルは、このようなミスキャリブレーションに適合している可能性が高く、信号を修正するサイレントアップデートはモデルに突然の影響を与える。
-One common mitigation strategy for unstable data dependencies is to create a versioned copy of a given signal.
-不安定なデータ依存性に対する一般的な緩和策の一つは、与えられたシグナルのバージョン付きコピーを作成することである。
-For example, rather than allowing a semantic mapping of words to topic clusters to change over time, it might be reasonable to create a frozen version of this mapping and use it until such a time as an updated version has been fully vetted.
-たとえば、単語とトピック・クラスターのセマンティック・マッピングが時間の経過とともに変化するよりは、このマッピングの凍結バージョンを作成し、更新バージョンが十分に検証されるまでそれを使用する方が合理的かもしれない。
-Versioning carries its own costs, however, such as potential staleness and the cost to maintain multiple versions of the same signal over time.
-しかし、バージョニングには、潜在的な陳腐化や、同じシグナルの複数のバージョンを長期にわたって維持するためのコストなど、それなりのコストがかかる。
+消費されるモデルは、このようなミスキャリブレーションに適合している可能性が高く、**入力信号を修正する無言の更新は、モデルに突然の影響を与える**だろう。
 
-## Underutilized Data Dependencies. 利用されていないデータの依存関係。
+One common mitigation strategy for unstable data dependencies is to create a versioned copy of a given signal.
+不安定なデータ依存性に対する一般的な緩和策の一つは、**与えられたsignalのバージョン化コピーを作成すること**である。
+For example, rather than allowing a semantic mapping of words to topic clusters to change over time, it might be reasonable to create a frozen version of this mapping and use it until such a time as an updated version has been fully vetted.
+たとえば、単語とトピック・クラスターのセマンティック・マッピング(=word-topicのmap??)が時間の経過とともに変化するよりは、**このマッピングの凍結バージョンを作成し、更新バージョンが十分に検証されるまでそれを使用する方が合理的かもしれない**。
+Versioning carries its own costs, however, such as potential staleness and the cost to maintain multiple versions of the same signal over time.
+しかし、バージョニングには、potentially staleness(=潜在的な古さ?? 信号が現在の状況と合わなくなって劣化してくる、みたいな??:thinking:)や、**時間の経過とともに同じsignalの複数のバージョンを維持するコストなど、独自のコストがかかる。**
+
+## 3.2. Underutilized Data Dependencies. 十分に活用されていないデータ依存関係。
+
+(i.e. あんまり価値のないdata dependencyってこと??)
 
 In code, underutilized dependencies are packages that are mostly unneeded [13].
-コードにおいて、十分に利用されていない依存関係とは、ほとんど必要とされていないパッケージのことである[13]。
+コードにおいて、**underutilized dependencies(十分に活用されていない依存関係)は、ほとんど不要なパッケージである**[13]。(??)
 Similarly, underutilized data dependencies are input signals that provide little incremental modeling benefit.
-同様に、十分に活用されていないデータ依存関係は、モデリングにほとんど利益をもたらさない入力信号である。
+同様に、underutilized data dependenciesは、ほとんど追加のモデリング上の利益を提供しない入力信号である。
 These can make an ML system unnecessarily vulnerable to change, sometimes catastrophically so, even though they could be removed with no detriment.
-これらは、MLシステムを変化に対して不必要に脆弱にし、時には破壊的なまでに脆弱にする。
+これらは、**MLシステムを不必要に変更に対して脆弱にする可能性があり**、場合によっては致命的であるが、**これらを削除しても損失はないかもしれない。**
+
 As an example, suppose that to ease the transition from an old product numbering scheme to new product numbers, both schemes are left in the system as features.
-例として、古い製品番号体系から新しい製品番号への移行を容易にするために、両方の体系を機能としてシステムに残したとする。
+例として、古いプロダクト番号schemaから新しいプロダクト番号schemaへの移行を容易にするために、両方のschemaが特徴量としてシステムに残されているとしましょう。
+(プロダクト番号schemaって、商品のIDとかのことかな??)
 New products get only a new number, but old products may have both and the model continues to rely on the old numbers for some products.
-新製品には新番号のみが付与されるが、旧製品には両方が付与される場合もあり、製品によっては旧番号に依存し続けるモデルもある。
+**新製品には新番号のみが付与されるが、古い製品には両方が付与され、モデルは一部の製品について引き続き古い番号に依存している**。
+(まさに最近underutilized data dependenciesを解消した気がするな:thinking:)
 A year later, the code that stops populating the database with the old numbers is deleted.
-1年後、古い番号をデータベースに入力するのを止めるコードが削除される。
+1年後、データベースにデータを追加するコードが停止し、古い番号もデータベースから削除される。
 This will not be a good day for the maintainers of the ML system.
 これは、MLシステムの保守者にとっては良い日ではないだろう。
-Underutilized data dependencies can creep into a model in several ways.
-十分に活用されていないデータ依存関係は、いくつかの方法でモデルに忍び込む可能性がある。
-• Legacy Features.
 
-- レガシーの特徴
+Underutilized data dependencies can creep into a model in several ways.
+underutilized data dependenciesは、いくつかの方法でモデルに潜り込む可能性がある。
+
+- **Legacy Features**.
   The most common case is that a feature F is included in a model early in its development.
-  最も一般的なケースは、ある機能Fがモデルの開発初期に盛り込まれることである。
+  最も一般的なケースは、ある特徴量Fがモデルの開発初期に含まれていることである。
   Over time, F is made redundant by new features but this goes undetected.
-  時間の経過とともに、Fは新しい機能によって冗長になるが、これは検出されない。
-  • Bundled Features.
-- バンドル機能。
+  時間の経過とともに、Fは新しい特徴量によって不要になるが、これは検出されない。
+
+- **Bundled Features**.
   Sometimes, a group of features is evaluated and found to be beneficial.
-  時には、ある機能グループが評価され、有益であることが判明することもある。
+  時には、ある特徴量のグループが評価され、有益であることがわかる。
   Because of deadline pressures or similar effects, all the features in the bundle are added to the model together, possibly including features that add little or no value.
-  締め切りのプレッシャーや類似の効果のために、バンドル内のすべての機能が一緒にモデルに追加され、おそらくほとんど付加価値のない機能も含まれる。
-  • ǫ-Features.
-- ǫ-特徴。
+  締め切りのプレッシャーや類似の効果のために、バンドル内のすべての特徴量が一緒にモデルに追加される可能性があり、追加される特徴量の中には、ほとんど価値がないものも含まれるかもしれない。
+
+- $\epsilon$-Features.
   As machine learning researchers, it is tempting to improve model accuracy even when the accuracy gain is very small or when the complexity overhead might be high.
-  機械学習の研究者としては、精度の向上が非常に小さい場合や複雑さのオーバーヘッドが大きい場合であっても、モデルの精度を向上させたくなる。
-  • Correlated Features.
-- 相関する特徴。
+  機械学習の研究者としては、精度の向上が非常に小さい場合や、複雑さのオーバーヘッドが高い場合でも、モデルの精度を向上させることに誘惑される。
+
+- Correlated Features.
+  相関する特徴量
   Often two features are strongly correlated, but one is more directly causal.
-  多くの場合、2つの特徴には強い相関関係があるが、どちらか一方がより直接的な因果関係がある。
+  多くの場合、2つの特徴量は強く相関しているが、1つはより直接的な因果関係がある。(目的変数と...)
   Many ML methods have difficulty detecting this and credit the two features equally, or may even pick the non-causal one.
   多くのML手法はこれを検出するのが難しく、2つの特徴を同等に評価するか、あるいは非因果的な方を選ぶことさえある。
   This results in brittleness if world behavior later changes the correlations.
-  その結果、世界の振る舞いが後に相関関係を変化させた場合、もろくなる。
-  Underutilized dependencies can be detected via exhaustive leave-one-feature-out evaluations.
-  十分に利用されていない依存関係は、徹底的な1つだけのフィーチャー除外評価によって検出することができる。
-  These should be run regularly to identify and remove unnecessary features.
-  これらは定期的に実行し、不要な機能を特定して削除する必要がある。
+  その結果、**世界の振る舞いが後に相関関係を変化させた場合、もろくなる**。
 
-## Static Analysis of Data Dependencies. データ依存の静的解析。
+Underutilized dependencies can be detected via exhaustive leave-one-feature-out evaluations.
+underutilized dependenciesは、**徹底的なleave-one-feature-out評価によって検出することができる**。(たぶん特徴量を1つずつ取り除いて、その特徴量を取り除いた場合のモデルの性能を評価する、みたいな手法っぽい? 感度解析っぽい?:thinking:)
+These should be run regularly to identify and remove unnecessary features.
+これらは定期的に実行し、不要な特徴量を特定して削除するべきである。
+
+## 3.3. Static Analysis of Data Dependencies. データ依存の静的解析。
 
 In traditional code, compilers and build systems perform static analysis of dependency graphs.
-従来のコードでは、コンパイラーとビルドシステムが依存グラフの静的解析を行う。
+従来のコードでは、コンパイラとビルドシステムが依存グラフの静的解析を行う。
 Tools for static analysis of data dependencies are far less common, but are essential for error checking, tracking down consumers, and enforcing migration and updates.
-データの依存関係を静的に分析するツールはあまり一般的ではないが、エラーチェックやコンシューマの追跡、マイグレーションやアップデートの実施には不可欠である。
+データの依存関係を静的に分析するツールはあまり一般的ではないが、エラーチェック、**消費者の追跡**、マイグレーションと更新の強制には不可欠である。
 One such tool is the automated feature management system described in [12], which enables data sources and features to be annotated.
-そのようなツールの1つが、[12]で説明されている自動特徴管理システムであり、データソースと特徴に注釈を付けることができる。
+そのようなツールの1つが、[12]で説明されている自動特徴量管理システムであり、データソースと特徴量にアノテーションを付けることができる。(??)
 Automated checks can then be run to ensure that all dependencies have the appropriate annotations, and dependency trees can be fully resolved.
 その後、自動チェックを実行して、すべての依存関係に適切なアノテーションがあることを確認し、依存関係ツリーを完全に解決することができる。
 This kind of tooling can make migration and deletion much safer in practice.
 このようなツールを使えば、マイグレーションや削除をより安全に行うことができる。
 
-# Feedback Loops フィードバック・ループ
+<!-- ここまで読んだ! -->
+
+# 4. Feedback Loops フィードバック・ループ
 
 One of the key features of live ML systems is that they often end up influencing their own behavior if they update over time.
-ライブMLシステムの重要な特徴の1つは、時間経過とともに更新されると、しばしば自身の行動に影響を及ぼすことになることだ。
+ライブMLシステムの重要な特徴の1つは、**時間経過とともに更新されると、しばしば自身の行動に影響を及ぼすことになること**だ。(ex. 推薦モデルの推薦結果を基に得られたログを使って、推薦モデルを学習し直す、みたいな??)
 This leads to a form of analysis debt, in which it is difficult to predict the behavior of a given model before it is released.
-これは、あるモデルがリリースされる前にその挙動を予測することが難しいという、一種の分析負債につながる。
+これは、**analysis debt(分析負債)**の形態につながり、リリース前に特定のモデルの振る舞いを予測することが難しい。(この文献の時点でオフライン評価難しい問題が出てくるのか...!:thinking:)
 These feedback loops can take different forms, but they are all more difficult to detect and address if they occur gradually over time, as may be the case when models are updated infrequently.
-このようなフィードバックループはさまざまな形をとることができるが、モデルの更新頻度が低い場合のように、時間の経過とともに徐々に発生する場合は、いずれも検出や対処が難しくなる。
-Direct Feedback Loops.
-ダイレクト・フィードバック・ループ
+このようなフィードバックループは、さまざまな形を取ることができる。しかし、モデルがまれに更新される場合に起こるように、時間の経過とともに徐々に発生する場合、これらのフィードバックループは検出および対処がより困難になる。
+
+## Direct Feedback Loops. 直接的なフィードバック・ループ。
+
 A model may directly influence the selection of its own future training data.
-モデルは、それ自身の将来のトレーニングデータの選択に直接影響を与える可能性がある。
+モデルは、それ自身の将来のトレーニングデータの選択に直接影響を与える可能性がある。(まさに推薦システムとかの例だな...!:thinking:)
 It is common practice to use standard supervised algorithms, although the theoretically correct solution would be to use bandit algorithms.
-標準的な教師ありアルゴリズムを使うのが一般的だが、理論的にはバンディットアルゴリズムを使うのが正しい。
+標準的な教師ありアルゴリズムを使うのが一般的だが、**理論的にはバンディットアルゴリズムを使うのが正しい解決策である**。(確かに、そもそもバンディットアルゴリズムはfeedback loopを前提とした手法な気がするし...!:thinking:)
 The problem here is that bandit algorithms (such as contextual bandits [9]) do not necessarily scale well to the size of action spaces typically required for real-world problems.
-ここで問題となるのは、バンディット・アルゴリズム（コンテクスチュアル・バンディット[9]など）は、実世界の問題で一般的に必要とされる行動空間の大きさに対して、必ずしもうまくスケールしないことである。
+ここで問題となるのは、バンディット・アルゴリズム(例えば、contextual bandits[9])が、通常の実世界の問題に必要なアクション空間のサイズにスケーリングされない可能性があることだ。
 It is possible to mitigate these effects by using some amount of randomization [3], or by isolating certain parts of data from being influenced by a given model.
-ある程度のランダム化[3]を使用したり、データのある部分を特定のモデルの影響を受けないように分離することで、これらの影響を軽減することは可能である。
-Hidden Feedback Loops.
-隠れたフィードバック・ループ
+ある程度のランダム化[3]を使用するか、特定のデータの一部を特定のモデルに影響を受けないように分離することで、これらの影響を緩和することができる。(これって教師あり学習を使う場合の緩和策っぽい...??)
+
+## Hidden Feedback Loops. 隠れたフィードバック・ループ。
+
+(i.e. indirect feedback loop??)
+
 Direct feedback loops are costly to analyze, but at least they pose a statistical challenge that ML researchers may find natural to investigate [3].
-直接的なフィードバック・ループは分析にコストがかかるが、少なくともML研究者が調査するのが自然だと思うような統計的な課題を提起している[3]。
+直接的なフィードバック・ループは分析にコストがかかるが、少なくとも、ML研究者が自然に調査する可能性がある統計的な課題を提起する[3]。
 A more difficult case is hidden feedback loops, in which two systems influence each other indirectly through the world.
-より難しいケースは、2つのシステムが世界を通じて間接的に影響し合う、隠れたフィードバックループである。
+より難しいケースは、**2つのシステムが世界を通じて間接的に互いに影響を与えるhidden feedback loops(隠れたフィードバック・ループ)**である。
+
 One example of this may be if two systems independently determine facets of a web page, such as one selecting products to show and another selecting related reviews.
-その一例として、2つのシステムが独立してウェブページのファセットを決定する場合、例えば1つは表示する商品を選択し、もう1つは関連するレビューを選択する。
+その一例として、2つのシステムが独立してウェブページの側面を決定する場合がある。1つは表示する商品を選択し、もう1つは関連するレビューを選択する。
 Improving one system may lead to changes in behavior in the other, as users begin clicking more or less on the other components in reaction to the changes.
-一方のシステムを改善すると、ユーザーがその変化に反応して他のコンポーネントをクリックする回数が増えたり減ったりするため、もう一方のシステムの行動が変化する可能性がある。
+一方のシステムを改善すると、ユーザが変更に反応して他のコンポーネントをクリックする回数が増減するため、他方のシステムの振る舞いが変わる可能性がある。
 Note that these hidden loops may exist between completely disjoint systems.
-これらの隠れたループは、完全に分離したシステム間に存在する可能性があることに注意。
+これらのhidden loopsは、完全に独立したシステム間に存在する可能性があることに注意してください。
 Consider the case of two stock-market prediction models from two different investment companies.
 2つの異なる投資会社の2つの株式市場予測モデルの場合を考えてみよう。
 Improvements (or, more scarily, bugs) in one may influence the bidding and buying behavior of the other.
 一方の改善（あるいはもっと恐ろしいことにバグ）は、もう一方の入札や購買行動に影響を与えるかもしれない。
+(まあ確かに...!)
 
-# ML-System Anti-Patterns
+<!-- ここまで読んだ! -->
+
+# 5. ML-System Anti-Patterns
+
+<!-- このセクションが、有名な図のセクションっぽい...! -->
 
 It may be surprising to the academic community to know that only a tiny fraction of the code in many ML systems is actually devoted to learning or prediction – see Figure 1.
-多くのMLシステムにおいて、実際に学習や予測に費やされているコードはごく一部であることを知ると、学術界は驚くかもしれない（図1参照）。
+多くのMLシステムにおいて、実際に学習や予測に割り当てられているコードの割合はごくわずかであることを知ることは、学術コミュニティにとって驚くかもしれない。図1を参照。
 In the language of Lin and Ryaboy, much of the remainder may be described as “plumbing” [11].
-LinとRyaboyの言葉を借りれば、残りの多くは「配管」である[11]。
+LinとRyaboyの言葉を借りれば、残りの多くは「**plumbing(配管)**」である[11]。
+
 It is unfortunately common for systems that incorporate machine learning methods to end up with high-debt design patterns.
-機械学習の手法を取り入れたシステムが、高負債のデザインパターンに行き着くことは、残念ながらよくあることだ。
+**機械学習の手法を取り入れたシステムが、high-debt(高負債)なデザインパターンで終わることは残念ながら一般的である。**
 In this section, we examine several system-design anti-patterns [4] that can surface in machine learning systems and which should be avoided or refactored where possible.
 このセクションでは、機械学習システムで表面化する可能性があり、可能な限り回避またはリファクタリングされるべき、いくつかのシステム設計のアンチパターン[4]を検証する。
 
-Glue Code.
-グルーコード
+## Glue Code. (接着剤コード)
+
 ML researchers tend to develop general purpose solutions as self-contained packages.
 MLの研究者は、自己完結型のパッケージとして汎用的なソリューションを開発する傾向がある。
 A wide variety of these are available as open-source packages at places like mloss.org, or from in-house code, proprietary packages, and cloud-based platforms.
-mloss.orgのようなオープンソースのパッケージや、社内コード、プロプライエタリなパッケージ、クラウドベースのプラットフォームなど、さまざまなものが利用可能だ。
+mloss.orgのようなオープンソースのパッケージや、社内コード、プロプライエタリなパッケージ、クラウドベースのプラットフォームから、さまざまなものが利用可能である。
 Using generic packages often results in a glue code system design pattern, in which a massive amount of supporting code is written to get data into and out of general-purpose packages.
-汎用パッケージを使用すると、多くの場合、汎用パッケージへのデータの出し入れのために大量のサポートコードが書かれる、グルーコード・システム設計パターンになる。
+**汎用パッケージを使用すると、多くの場合、汎用パッケージにデータを入力および出力するために大量のサポートコードが書かれた、グルーコード・システム設計パターンが生じる**。
 Glue code is costly in the long term because it tends to freeze a system to the peculiarities of a specific package; testing alternatives may become prohibitively expensive.
-糊塗されたコードは、特定のパッケージの特殊性にシステムをフリーズさせる傾向があるため、長期的にはコストがかかる。
+**グルーコードは、長期的にはコストがかかる。なぜなら、特定のパッケージの特異性にシステムを凍結させる傾向があるためであり、代替手段のテストは非常に高価になる可能性がある。**
 In this way, using a generic package can inhibit improvements, because it makes it harder to take advantage of domain-specific properties or to tweak the objective function to achieve a domain-specific goal.
 このように、汎用パッケージを使用すると、ドメイン固有の特性を利用したり、ドメイン固有の目標を達成するために目的関数を微調整したりすることが難しくなるため、改善が阻害される可能性がある。
 Because a mature system might end up being (at most) 5% machine learning code and (at least) 95% glue code, it may be less costly to create a clean native solution rather than re-use a generic package.
-成熟したシステムは、（せいぜい）5％の機械学習コードと（少なくとも）95％のグルーコードで終わる可能性があるため、汎用パッケージを再利用するよりも、クリーンなネイティブ・ソリューションを作成する方がコストがかからないかもしれない。
+成熟したシステムは、(最大で)5%が機械学習コードであり、(最低で)95%がグルーコードである可能性があるため、汎用パッケージを再利用するよりも、クリーンなネイティブソリューションを作成する方がコストがかからないかもしれない。
+
 An important strategy for combating glue-code is to wrap black-box packages into common API’s.
-グルーコードに対抗するための重要な戦略は、ブラックボックス・パッケージを共通のAPIにラップすることだ。
+**グルーコードに対抗するための重要な戦略は、ブラックボックス・パッケージを共通のAPIにwrapすること**である。(共通のInterfaceをもたせたFacadeパターン的な??)
 This allows supporting infrastructure to be more reusable and reduces the cost of changing packages.
 これにより、サポートインフラをより再利用しやすくし、パッケージの変更にかかるコストを削減することができる。
-Pipeline Jungles.
-パイプライン・ジャングル
+
+## Pipeline Jungles. (パイプライン・ジャングル)
+
+(時間の経過や特徴量の追加とともに複雑化し、管理が難しくなったデータ処理pipelineのことっぽい...?:thinking:)
+
 As a special case of glue code, pipeline jungles often appear in data preparation.
-グルーコードの特殊なケースとして、パイプライン・ジャングルはデータ準備にしばしば現れる。
+glue codeの特殊なケースとして、**pipeline junglesは、データ準備においてしばしば現れる**。(**学習pipelineにおける前処理がめっちゃ生い茂ってしまう**、みたいなイメージ...??:thinking:)(データとMLモデルを接着させるための処理だから、gule codeの一種なのかな...!:thinking:)
 These can evolve organically, as new signals are identified and new information sources added incrementally.
-これらは、新しいシグナルが特定され、新しい情報源が少しずつ追加されるにつれて、有機的に進化することができる。
+これらは、新しいシグナルが特定され、新しい情報源が段階的に追加されるにつれて、有機的に進化することがある。
 Without care, the resulting system for preparing data in an ML-friendly format may become a jungle of scrapes, joins, and sampling steps, often with intermediate files output.
-注意を払わないと、MLに適したフォーマットでデータを準備するシステムは、スクレイプ、結合、サンプリングのステップのジャングルとなり、しばしば中間ファイルが出力されることになる。
+**注意を払わないと、MLに適したフォーマットでデータを準備するシステムは、しばしば中間ファイルが出力されるスクレイプ、結合、サンプリングステップのジャングルになるかもしれない**。
 Managing these pipelines, detecting errors and recovering from failures are all difficult and costly [1].
 これらのパイプラインを管理し、エラーを検出し、障害から回復することは、すべて困難でコストがかかる[1]。
 Testing such pipelines often requires expensive end-to-end integration tests.
 このようなパイプラインのテストには、高価なエンド・ツー・エンドの統合テストが必要になることが多い。
 All of this adds to technical debt of a system and makes further innovation more costly.
-これらはすべて、システムの技術的負債を増大させ、さらなる技術革新をより高価なものにする。
+**これらはすべて、システムのtechnical debtを増やし、さらなる革新をより高価にする**。
+
 Pipeline jungles can only be avoided by thinking holistically about data collection and feature extraction.
-パイプラインのジャングルは、データ収集と特徴抽出を総合的に考えることでしか回避できない。
+パイプラインのジャングルは、データ収集と特徴量抽出について全体的に考えることでのみ回避することができる。(=要は、システム全体を総合的に考えないとだめだよってこと??)
 The clean-slate approach of scrapping a pipeline jungle and redesigning from the ground up is indeed a major investment of engineering effort, but one that can dramatically reduce ongoing costs and speed further innovation.
-パイプライン・ジャングルを廃棄し、一から設計し直すというクリーン・スレート・アプローチは、確かにエンジニアリングの労力を大きく費やすことになるが、継続的なコストを劇的に削減し、さらなる技術革新を加速させることができる。
+パイプライン・ジャングルを廃棄し、ゼロから設計し直す**clean-slateアプローチ**(=要は、一から作りなおすこと??)は、確かにエンジニアリング努力の大きな投資であるが、継続的なコストを大幅に削減し、さらなる革新を加速させることができる。
+
 Glue code and pipeline jungles are symptomatic of integration issues that may have a root cause in overly separated “research” and “engineering” roles.
-糊塗されたコードやパイプラインのジャングルは、「研究」と「エンジニアリング」の役割分担が過度に分離されていることに根本的な原因があるかもしれない統合の問題の徴候である。
+glue codeとpipeline junglesは、**過度に分離された「研究」と「エンジニアリング」の役割に原因がある**可能性がある統合の問題の症状である。
 When ML packages are developed in an ivorytower setting, the result may appear like black boxes to the teams that employ them in practice.
-MLパッケージが象牙の塔のような環境で開発された場合、それを実際に使用するチームにとってはブラックボックスのように見えるかもしれない。
+MLパッケージが象牙の塔(=俗世間から離れた場所??)のような環境で開発された場合、それを実際に使用するチームにとってはブラックボックスのように見えるかもしれない。
 A hybrid research approach where engineers and researchers are embedded together on the same teams (and indeed, are often the same people) can help reduce this source of friction significantly [16].
-エンジニアと研究者が同じチームに一緒に組み込まれる（実際、同じ人であることが多い）ハイブリッド研究アプローチは、この摩擦の原因を大幅に減らすのに役立つ[16]。
-Dead Experimental Codepaths.
-死んだ実験的コードパス。
+**エンジニアと研究者が同じチームに一緒に組み込まれる(実際、同じ人であることも多い)ような、ハイブリッド研究アプローチは、この摩擦の原因を大幅に減らすのに役立つ**[16]。(ふむふむ...!うちは大丈夫だ...!)
+
+## Dead Experimental Codepaths. 死んだ実験的コードパス。
+
 A common consequence of glue code or pipeline jungles is that it becomes increasingly attractive in the short term to perform experiments with alternative methods by implementing experimental codepaths as conditional branches within the main production code.
-グルー・コードやパイプライン・ジャングルの一般的な帰結は、実験的なコードパスを本番コード内の条件分岐として実装することで、代替手法の実験を行うことが短期的にはますます魅力的になることである。
+glue codeやpipeline junglesの一般的な結果は、実験的なコードパスを、本番コード内の条件付きブランチとして実装することで、代替手法で実験を行うことがますます魅力的になっていくことである。
+(ここでの"ブランチ"は、リポジトリ内のブランチの意味ではなく、PipelineのDAGの中の条件分岐のブランチの意味っぽい...!:thinking:)
+(**要は、glue codeやpipeline junglesを放置していくほど、条件分岐で実験を行う事がますます魅力的になっていく**、みたいな...!:thinking:)
 For any individual change, the cost of experimenting in this manner is relatively low—none of the surrounding infrastructure needs to be reworked.
-個々の変更であれば、この方法で実験するコストは比較的低く、周囲のインフラを手直しする必要はない。
+個々の変更であれば、この方法で実験するコストは比較的低い。周囲のインフラストラクチャを再設計する必要はない。
 However, over time, these accumulated codepaths can create a growing debt due to the increasing difficulties of maintaining backward compatibility and an exponential increase in cyclomatic complexity.
-しかし、時間の経過とともに、後方互換性の維持が困難になり、サイクロマティック複雑度が指数関数的に増大するため、これらのコードパスの蓄積は負債を増大させる可能性がある。
+しかし、**時間の経過とともに(短期的には良さそうだが...!)**、これらの蓄積されたコードパスは、後方互換性の維持の困難さと、cyclomatic complexityの指数関数的な増加による成長する負債を生み出す可能性がある。
+("後方互換性の維持の困難さ" = 新しい特徴量や変更を条件分岐で加える度に、古いコードとの互換性を保つ事が困難になる。ex. 新しいver.では必要なハイパーパラメータが、古いver.では必要ない、とか...?:thinking:)
+(cyclomatic complexityの指数関数的な増加 = 条件分岐が増えると、コードの複雑さが指数関数的に増加する。これは、コードのパスの総数が増える事を意味し、コードを理解、テスト、デバッグするのが難しくなる...!:thinking:)
 Testing all possible interactions between codepaths becomes difficult or impossible.
 コードパス間で起こりうるすべての相互作用をテストすることは困難か不可能になる。
 A famous example of the dangers here was Knight Capital’s system losing $465 million in 45 minutes, apparently because of unexpected behavior from obsolete experimental codepaths [15].
-この危険性を示す有名な例として、ナイト・キャピタルのシステムが45分間で4億6500万ドルを失ったことが挙げられる。
+このような危険性の有名な例は、**Knight Capitalのシステムが45分で4億6500万ドルを失ったことであり、これは、時代遅れの実験的なコードパスから予期しない振る舞いが発生したため**のようだ[15]。(こわい...!:thinking:)
+
 As with the case of dead flags in traditional software [13], it is often beneficial to periodically reexamine each experimental branch to see what can be ripped out.
-従来のソフトウェアにおけるデッドフラグ[13]の場合と同様に、実験ブランチを定期的に再検査し、何が取り除けるかを確認することは、しばしば有益である。
+**従来のソフトウェアにおけるデッドフラグ[13]の場合と同様に、実験ブランチを定期的に再検査し、何が取り除けるかを確認することは、しばしば有益**である。(うんうん...!:thinking:)
+(**dead flags** = 以前に導入されたがもはや使用されていない、役にたたなくなったフラグ(設定optionや機能のオンオフを切り替える為の変数)。これらはしばしば、古い機能、実験的な機能、あるいは廃止された機能と関連していて、コードベース内に残留している。ふむふむ、ありそう...!:thinking:)
 Often only a small subset of the possible branches is actually used; many others may have been tested once and abandoned.
 多くの場合、実際に使用されるのは可能なブランチのごく一部だけで、他の多くのブランチは一度テストされただけで放棄されているかもしれない。
-Abstraction Debt.
-抽象化負債。
+
+## Abstraction Debt. 抽象化負債。
+
 The above issues highlight the fact that there is a distinct lack of strong abstractions to support ML systems.
-上記の問題は、MLシステムをサポートする強力な抽象化が明らかに不足しているという事実を浮き彫りにしている。
+上記の問題は、**MLシステムをサポートする強力な抽象化が不足している**という事実を浮き彫りにしている。
 Zheng recently made a compelling comparison of the state ML abstractions to the state of database technology [17], making the point that nothing in the machine learning literature comes close to the success of the relational database as a basic abstraction.
-Zheng氏は最近、MLの抽象化の現状とデータベース技術の現状を比較し、機械学習の文献には、基本的な抽象化としてのリレーショナル・データベースの成功に迫るものはないという点を指摘している[17]。
-What is the right interface to describe a stream of data, or a model, or a prediction? For distributed learning in particular, there remains a lack of widely accepted abstractions.
-データのストリーム、モデル、予測を記述するのに適したインターフェースは何だろうか？特に分散型学習では、広く受け入れられている抽象化がまだ不足している。
+Zheng氏は最近、**MLの抽象化の状態をデータベース技術の状態と比較し、機械学習文献には、基本的な抽象化としてのリレーショナルデータベースの成功に匹敵するものはないと**指摘している[17]。
+(確かに、データベースの抽象化は、SQLという共通の言語を使って、データの操作を行う事ができる。これにより、データの操作方法が統一され、データの操作が容易になる。このような共通の言語がないと、データの操作方法がバラバラになり、データの操作が困難になる...!:thinking:)
+What is the right interface to describe a stream of data, or a model, or a prediction?
+**データストリーム、モデル、予測を記述するための適切なインターフェースは何か**?
+
+For distributed learning in particular, there remains a lack of widely accepted abstractions.
+特に分散学習に関しては、広く受け入れられる抽象化が不足している。
 It could be argued that the widespread use of Map-Reduce in machine learning was driven by the void of strong distributed learning abstractions.
 機械学習でMap-Reduceが広く使われるようになったのは、強力な分散学習の抽象化がなかったからだと言える。
+(Map-Reduce = 並列処理と分散処理を行う為のプログラミングモデル。Map関数とReduce関数を使って、大規模なデータセットを分割して処理する。必ずしも複雑なMLモデルの学習などに最適化されているわけではないらしい。)
 Indeed, one of the few areas of broad agreement in recent years appears to be that Map-Reduce is a poor abstraction for iterative ML algorithms.
-実際、近年広く合意されている数少ない分野の1つは、Map-Reduceは反復MLアルゴリズムの抽象化に適していないということである。
+実際、近年広く合意されている数少ない領域の1つは、**Map-Reduceが反復的なMLアルゴリズムにとっては不適切な抽象化である**ということのようだ。
 
 The parameter-server abstraction seems much more robust, but there are multiple competing specifications of this basic idea [5, 10].
-パラメータ・サーバーの抽象化は、よりロバストであるように思えるが、この基本的な考え方には複数の競合する仕様がある[5, 10]。
+parameter-serverの抽象化は、はるかに堅牢に見えるが、この基本的なアイデアには複数の競合仕様がある[5, 10]。
+(パラメーターサーバ = 分散学習において、モデルのパラメータを一元管理するためのサーバ。)
 The lack of standard abstractions makes it all too easy to blur the lines between components.
 標準的な抽象概念がないため、コンポーネント間の境界線が曖昧になりやすい。
-Common Smells.
-一般的な匂い。
+
+## Common Smells. (一般的な匂い?)
+
 In software engineering, a design smell may indicate an underlying problem in a component or system [7].
-ソフトウェア工学では、デザイン臭はコンポーネントやシステムの根本的な問題を示すことがある[7]。
+ソフトウェア工学では、design smell(?)はコンポーネントやシステムの根本的な問題を示すことがある[7]。
+(**design smell** = ソフトウェア設計における問題点を指し示す可能性のある、コードやシステムの特徴やパターン、らしい。design smellは、ソフトウェアの設計が一般的な設計原則やベストプラクティスから逸脱している可能性を示す...!:thinkinFg:)
 We identify a few ML system smells, not hard-and-fast rules, but as subjective indicators.
 私たちは、いくつかのMLシステムの匂いを、厳密なルールではなく、主観的な指標として特定する。
-• Plain-Old-Data Type Smell.
 
-- 平凡なデータ型の匂い。
+- **Plain-Old-Data Type Smell**. (平易なデータ型の匂い?)
   The rich information used and produced by ML systems is all to often encoded with plain data types like raw floats and integers.
-  MLシステムで使用され、生成される豊富な情報は、生の浮動小数点や整数のような平易なデータ型でエンコードされることが多い。
+  MLシステムで使用される豊富な情報は、しばしば生の浮動小数点数や整数などのplainな(平易な?)データ型でエンコードされている。
   In a robust system, a model parameter should know if it is a log-odds multiplier or a decision threshold, and a prediction should know various pieces of information about the model that produced it and how it should be consumed.
-  ロバストシステムでは、モデルパラメータは、それが対数オッズ乗数なのか決定しきい値なのかを知っている必要があり、予測は、それを生成したモデルに関する様々な情報と、それをどのように消費すべきかを知っている必要がある。
-  • Multiple-Language Smell.
-- 多言語の嗅覚。
+  ロバストシステムでは、モデルパラメータは、対数オッズの乗数か決定閾値かを知っているべきであり、予測は、それを生成したモデルについてのさまざまな情報と、どのように消費されるべきかを知っているべきである。
+
+  - (以下、解釈):
+    - この問題は、システムが生の浮動小数点数や整数など、**単純なデータ型を使って複雑な情報を表現してしまっている状況**を指す。
+      - ->**システム内で使用される値が持つ意味やcontextが失われ、プログラムの理解や保守が困難になってしまう...!**
+    - MLモデルのパラメータや出力値は、単に数値として扱われがちだが、それぞれ特定の意味を持っている。
+      - パラメータ = 対数オッズ乗数(ex. ロジスティック回帰のパラメータ)や決定閾値(ex. treeモデルのパラメータ)
+      - 予測結果 = 生成されたモデルに関する情報や、どのように消費されるべきかについての情報を持っているべき。あと埋め込み表現なのか、確率なのか、とか??:thinking:
+    - 具体的な解決策としては...
+      - **より具体的なデータ型やクラスを定義して使用する**と、プログラムの意図をより明確に伝える事ができ、コードの可読性と保守性がup upする...!:smile:
+      - ex. モデルパラメータクラスを用意し、パラメータクラスや使用方法に関する情報を保持する、とか?
+
+- Multiple-Language Smell.
+  (多言語の匂い?)
   It is often tempting to write a particular piece of a system in a given language, especially when that language has a convenient library or syntax for the task at hand.
-  特に、その言語が手元のタスクに便利なライブラリや構文を持っている場合、システムの特定の部分をある言語で書きたくなることがよくある。
+  特定のシステムの一部を特定の言語で書くことは、しばしば魅力的である。特に、その言語が手元のタスクに便利なライブラリや構文を持っている場合。
   However, using multiple languages often increases the cost of effective testing and can increase the difficulty of transferring ownership to other individuals.
-  しかし、複数の言語を使用することは、しばしば効果的なテストのコストを増加させ、他の個人への所有権の移転を困難にする可能性がある。
-  • Prototype Smell.
-- プロトタイプの匂い。
+  しかし、複数の言語を使用することは、効果的なテストのコストを増やすことが多く、他の個人に所有権を移転する難しさを増加させる可能性がある。
+
+- Prototype Smell.
+  プロトタイプの匂い。
   It is convenient to test new ideas in small scale via prototypes.
   プロトタイプを通じて新しいアイデアを小規模にテストするのは便利だ。
   However, regularly relying on a prototyping environment may be an indicator that the full-scale system is brittle, difficult to change, or could benefit from improved abstractions and interfaces.
-  しかし、定期的にプロトタイピング環境に依存することは、本格的なシステムがもろく、変更が困難で、抽象化やインターフェースの改善から利益を得られる可能性があるという指標になるかもしれない。
+  しかし、**定期的にプロトタイピング環境に依存することは、フルスケールのシステムが壊れやすい、変更が難しい、または改善された抽象化とインターフェースを活用できる可能性があることを示す指標かもしれない**。
   Maintaining a prototyping environment carries its own cost, and there is a significant danger that time pressures may encourage a prototyping system to be used as a production solution.
   プロトタイピング環境の維持にはそれなりのコストがかかり、時間的なプレッシャーがプロトタイピング・システムをプロダクション・ソリューションとして使用することを促す危険性が大きい。
+  (**これって、ABテストのコストが高いから、オフライン実験を行って良かったモデルを、そのまま本番環境に全体適用してしまう、みたいな事かな...?**:thinking:)
   Additionally, results found at small scale rarely reflect the reality at full scale.
   さらに、小規模で発見された結果が、フルスケールでの現実を反映することはほとんどない。
 
-# Configuration Debt コンフィギュレーション・デット
+<!-- ここまで読んだ! -->
+
+# 6. Configuration Debt コンフィギュレーション・デット
 
 Another potentially surprising area where debt can accumulate is in the configuration of machine learning systems.
 負債が蓄積される可能性のあるもう一つの驚くべき分野は、機械学習システムの設定である。
@@ -468,7 +525,7 @@ This leads us to articulate the following principles of good configuration syste
   • Configurations should undergo a full code review and be checked into a repository
 - コンフィギュレーションは、完全なコードレビューを受け、リポジトリにチェックインされるべきである。
 
-# Dealing with Changes in the External World 外界の変化への対応
+# 7. Dealing with Changes in the External World 外界の変化への対応
 
 One of the things that makes ML systems so fascinating is that they often interact directly with the external world.
 MLシステムの魅力のひとつは、しばしば外界と直接相互作用することだ。
@@ -538,7 +595,7 @@ We offer the following starting points.
   Creating systems to that allow automated response without direct human intervention is often well worth the investment.
   人間が直接介入することなく自動応答を可能にするシステムを構築することは、多くの場合、投資に値する。
 
-# Other Areas of ML-related Debt その他のML関連債務
+# 8. Other Areas of ML-related Debt その他のML関連債務
 
 We now briefly highlight some additional areas where ML-related technical debt may accrue.
 ここで、MLに関連する技術的負債が発生する可能性のある追加的な領域をいくつか簡単に紹介する。
@@ -572,7 +629,7 @@ It is important to create team cultures that reward deletion of features, reduct
 In our experience, this is most likely to occur within heterogeneous teams with strengths in both ML research and engineering.
 我々の経験では、これはML研究とエンジニアリングの双方に強みを持つ異質なチーム内で発生する可能性が最も高い。
 
-# Conclusions: Measuring Debt and Paying it Off 結論 負債の測定と返済
+# 9. Conclusions: Measuring Debt and Paying it Off 結論 負債の測定と返済
 
 Technical debt is a useful metaphor, but it unfortunately does not provide a strict metric that can be tracked over time.
 技術的負債は有用なメタファーだが、残念ながら、長期にわたって追跡できる厳密な指標を提供するものではない。
