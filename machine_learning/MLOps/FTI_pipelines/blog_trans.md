@@ -18,7 +18,7 @@ Maps help us navigate the world, and communicate ideas, helping us get faster to
 Somewhere along the way, MLOps got lost in promoting “waterfall software architecture” maps for ML Systems that include a kitchen sink of requirements.
 MLOpsは、MLシステムのための「ウォーターフォール・ソフトウェア・アーキテクチャ」マップを推進するうちに、いつの間にか、要求事項の台所の流し台のようなものを含むようになった。
 Existing approaches to MLOps prevent teams from following DevOps principles of starting with a small working system and iteratively improving it.
-MLOpsに対する既存のアプローチでは、チームは、小さな稼働中のシステムから始めてそれを反復的に改善するというDevOpsの原則に従うことができない。
+MLOpsに対する既存のアプローチでは、チームは、小さな稼働中のシステムから始めてそれを反復的に改善するというDevOpsの原則に従うことができない。(i.e. iterativeに & incrementalに開発していくことができない??)
 In this article, we present a new mental map for ML Systems as three independent ML pipelines: feature pipelines, training pipelines, and inference pipelines that share a common storage layer for the ML artifacts they produce and consume (features, models).
 本稿では、MLシステムの新しいメンタルマップを**3つの独立したMLパイプライン**として提示する： **特徴量パイプライン、学習パイプライン、推論パイプラインは、それぞれが生成・消費するML成果物（特徴、モデル）に対して共通のストレージレイヤーを共有する**。
 In contrast to existing MLOps architectures, we provide a unified architecture that describes both batch ML systems and real-time ML systems.
@@ -177,7 +177,7 @@ In 2020, the term MLOps came to be adopted as the set of patterns and processes 
 MLOps was inspired by the DevOps movement which brought software engineers closer to production by ensuring that they automate and test the deployment of their software in production environments.
 MLOpsはDevOpsムーブメントに触発されたものである。DevOpsムーブメントは、本番環境でのソフトウェアのデプロイを自動化し、テストすることで、ソフトウェア・エンジニアがより本番環境に近づけるようにした。
 Wouldn’t it be great if we could do the same for ML systems? However, ML systems are more complex than classical software products - they have to manage both the code used to build them and the data used for training and inference.
-MLシステムでも同じことができれば素晴らしいと思わないだろうか？しかし、**MLシステムは古典的なソフトウェア製品よりも複雑**で、構築するために使われるコードと、学習や推論に使われるデータの**両方を管理しなければならない**。
+MLシステムでも同じことができれば素晴らしいと思わないだろうか？しかし、**MLシステムは古典的なソフトウェア製品よりも複雑**で、**構築するために使われるコードと、学習や推論に使われるデータの両方を管理しなければならない**。
 Our nascent MLOps Community badly needed some guidance on best practices and processes for teams - we needed a map to build ML systems.
 私たちの新興MLOpsコミュニティは、チームのベストプラクティスとプロセスに関するガイダンスをひどく必要としていた。
 
@@ -186,6 +186,7 @@ There is a long history of bad maps leading people astray.
 
 ![figure7]()
 Figure 7: Mercator Projection Maps make Greenland look much bigger than it is. Mercator Projection Maps suck.
+図7：メルカトル図法の地図は、グリーンランドを実際よりも大きく見せてしまう。メルカトル図法の地図は最悪だ。
 
 Personally, since a very young age, I have had an unreasonable dislike for Mercator Projection maps (see figure 7).
 個人的には、幼い頃からメルカトル図法(図7参照)の地図が理不尽に嫌いだった。
@@ -193,7 +194,7 @@ Personally, since a very young age, I have had an unreasonable dislike for Merca
 The first MLOps maps for building ML systems have similar deficiencies to Mercator Maps - they try to project a view of ML systems that doesn’t reflect the reality of building a ML system.
 **MLシステム構築のための最初のMLOpsマップには、メルカトル図法のような欠陥がある。MLシステム構築の現実を反映していないMLシステムの見方を投影しようとしているのだ**。
 The maps are a kitchen sink of requirements collected by consultants from all the different stakeholders and thrown unthinkingly into one huge diagram.
-マップは、コンサルタントがさまざまな利害関係者から集めた要求の台所の流しであり、1つの巨大な図に無造作に投げ込まれている。
+マップは、**コンサルタントがさまざまな利害関係者から集めた要求の台所の流し**であり、**1つの巨大な図に無造作に投げ込まれている**。
 
 ![figure8]()
 Figure 8: Google’s MLOps Map to help you build ML Systems [Source]

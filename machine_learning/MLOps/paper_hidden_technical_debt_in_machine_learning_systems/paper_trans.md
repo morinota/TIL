@@ -290,7 +290,7 @@ This leads to a form of analysis debt, in which it is difficult to predict the b
 These feedback loops can take different forms, but they are all more difficult to detect and address if they occur gradually over time, as may be the case when models are updated infrequently.
 このようなフィードバックループは、さまざまな形を取ることができる。しかし、モデルがまれに更新される場合に起こるように、時間の経過とともに徐々に発生する場合、これらのフィードバックループは検出および対処がより困難になる。
 
-## Direct Feedback Loops. 直接的なフィードバック・ループ。
+## 4.1. Direct Feedback Loops. 直接的なフィードバック・ループ。
 
 A model may directly influence the selection of its own future training data.
 モデルは、それ自身の将来のトレーニングデータの選択に直接影響を与える可能性がある。(まさに推薦システムとかの例だな...!:thinking:)
@@ -301,7 +301,7 @@ The problem here is that bandit algorithms (such as contextual bandits [9]) do n
 It is possible to mitigate these effects by using some amount of randomization [3], or by isolating certain parts of data from being influenced by a given model.
 ある程度のランダム化[3]を使用するか、特定のデータの一部を特定のモデルに影響を受けないように分離することで、これらの影響を緩和することができる。(これって教師あり学習を使う場合の緩和策っぽい...??)
 
-## Hidden Feedback Loops. 隠れたフィードバック・ループ。
+## 4.2. Hidden Feedback Loops. 隠れたフィードバック・ループ。
 
 (i.e. indirect feedback loop??)
 
@@ -326,6 +326,10 @@ Improvements (or, more scarily, bugs) in one may influence the bidding and buyin
 
 # 5. ML-System Anti-Patterns
 
+![]()
+
+Figure 1: Only a small fraction of real-world ML systems is composed of the ML code, as shown by the small black box in the middle. The required surrounding infrastructure is vast and complex.
+
 <!-- このセクションが、有名な図のセクションっぽい...! -->
 
 It may be surprising to the academic community to know that only a tiny fraction of the code in many ML systems is actually devoted to learning or prediction – see Figure 1.
@@ -338,7 +342,7 @@ It is unfortunately common for systems that incorporate machine learning methods
 In this section, we examine several system-design anti-patterns [4] that can surface in machine learning systems and which should be avoided or refactored where possible.
 このセクションでは、機械学習システムで表面化する可能性があり、可能な限り回避またはリファクタリングされるべき、いくつかのシステム設計のアンチパターン[4]を検証する。
 
-## Glue Code. (接着剤コード)
+## 5.1. Glue Code. (接着剤コード)
 
 ML researchers tend to develop general purpose solutions as self-contained packages.
 MLの研究者は、自己完結型のパッケージとして汎用的なソリューションを開発する傾向がある。
@@ -349,7 +353,7 @@ Using generic packages often results in a glue code system design pattern, in wh
 Glue code is costly in the long term because it tends to freeze a system to the peculiarities of a specific package; testing alternatives may become prohibitively expensive.
 **グルーコードは、長期的にはコストがかかる。なぜなら、特定のパッケージの特異性にシステムを凍結させる傾向があるためであり、代替手段のテストは非常に高価になる可能性がある。**
 In this way, using a generic package can inhibit improvements, because it makes it harder to take advantage of domain-specific properties or to tweak the objective function to achieve a domain-specific goal.
-このように、汎用パッケージを使用すると、ドメイン固有の特性を利用したり、ドメイン固有の目標を達成するために目的関数を微調整したりすることが難しくなるため、改善が阻害される可能性がある。
+このように、汎用パッケージを使用することは、改善を妨げる可能性がある。なぜなら、ドメイン固有の特性を活用したり、目的関数を調整してドメイン固有の目標を達成することが難しくなるからである。
 Because a mature system might end up being (at most) 5% machine learning code and (at least) 95% glue code, it may be less costly to create a clean native solution rather than re-use a generic package.
 成熟したシステムは、(最大で)5%が機械学習コードであり、(最低で)95%がグルーコードである可能性があるため、汎用パッケージを再利用するよりも、クリーンなネイティブソリューションを作成する方がコストがかからないかもしれない。
 
@@ -358,12 +362,12 @@ An important strategy for combating glue-code is to wrap black-box packages into
 This allows supporting infrastructure to be more reusable and reduces the cost of changing packages.
 これにより、サポートインフラをより再利用しやすくし、パッケージの変更にかかるコストを削減することができる。
 
-## Pipeline Jungles. (パイプライン・ジャングル)
+## 5.2. Pipeline Jungles. (パイプライン・ジャングル)
 
 (時間の経過や特徴量の追加とともに複雑化し、管理が難しくなったデータ処理pipelineのことっぽい...?:thinking:)
 
 As a special case of glue code, pipeline jungles often appear in data preparation.
-glue codeの特殊なケースとして、**pipeline junglesは、データ準備においてしばしば現れる**。(**学習pipelineにおける前処理がめっちゃ生い茂ってしまう**、みたいなイメージ...??:thinking:)(データとMLモデルを接着させるための処理だから、gule codeの一種なのかな...!:thinking:)
+glue codeの特殊なケースとして、**pipeline junglesは、データ準備においてしばしば現れる**。(**学習pipelineにおける前処理がめっちゃ生い茂ってしまう**、みたいなイメージ...??:thinking:)(元データとMLモデルを接着させるための処理だから、gule codeの一種なのかな...!:thinking:)
 These can evolve organically, as new signals are identified and new information sources added incrementally.
 これらは、新しいシグナルが特定され、新しい情報源が段階的に追加されるにつれて、有機的に進化することがある。
 Without care, the resulting system for preparing data in an ML-friendly format may become a jungle of scrapes, joins, and sampling steps, often with intermediate files output.
@@ -376,7 +380,7 @@ All of this adds to technical debt of a system and makes further innovation more
 **これらはすべて、システムのtechnical debtを増やし、さらなる革新をより高価にする**。
 
 Pipeline jungles can only be avoided by thinking holistically about data collection and feature extraction.
-パイプラインのジャングルは、データ収集と特徴量抽出について全体的に考えることでのみ回避することができる。(=要は、システム全体を総合的に考えないとだめだよってこと??)
+パイプラインのジャングルは、データ収集と特徴量抽出について全体的(総体的)に考えることでのみ回避することができる。(=要は、システム全体を総合的に考えないとだめだよってこと??)
 The clean-slate approach of scrapping a pipeline jungle and redesigning from the ground up is indeed a major investment of engineering effort, but one that can dramatically reduce ongoing costs and speed further innovation.
 パイプライン・ジャングルを廃棄し、ゼロから設計し直す**clean-slateアプローチ**(=要は、一から作りなおすこと??)は、確かにエンジニアリング努力の大きな投資であるが、継続的なコストを大幅に削減し、さらなる革新を加速させることができる。
 
@@ -385,9 +389,9 @@ glue codeとpipeline junglesは、**過度に分離された「研究」と「�
 When ML packages are developed in an ivorytower setting, the result may appear like black boxes to the teams that employ them in practice.
 MLパッケージが象牙の塔(=俗世間から離れた場所??)のような環境で開発された場合、それを実際に使用するチームにとってはブラックボックスのように見えるかもしれない。
 A hybrid research approach where engineers and researchers are embedded together on the same teams (and indeed, are often the same people) can help reduce this source of friction significantly [16].
-**エンジニアと研究者が同じチームに一緒に組み込まれる(実際、同じ人であることも多い)ような、ハイブリッド研究アプローチは、この摩擦の原因を大幅に減らすのに役立つ**[16]。(ふむふむ...!うちは大丈夫だ...!)
+**エンジニアと研究者が同じチームに一緒に組み込まれる(もしくは同じ人であることも多い)ような、ハイブリッド研究アプローチは、この摩擦の原因を大幅に減らすのに役立つ**[16]。(ふむふむ...!うちは大丈夫だ...!)
 
-## Dead Experimental Codepaths. 死んだ実験的コードパス。
+## 5.3. Dead Experimental Codepaths. 死んだ実験的コードパス。
 
 A common consequence of glue code or pipeline jungles is that it becomes increasingly attractive in the short term to perform experiments with alternative methods by implementing experimental codepaths as conditional branches within the main production code.
 glue codeやpipeline junglesの一般的な結果は、実験的なコードパスを、本番コード内の条件付きブランチとして実装することで、代替手法で実験を行うことがますます魅力的になっていくことである。
@@ -410,7 +414,7 @@ As with the case of dead flags in traditional software [13], it is often benefic
 Often only a small subset of the possible branches is actually used; many others may have been tested once and abandoned.
 多くの場合、実際に使用されるのは可能なブランチのごく一部だけで、他の多くのブランチは一度テストされただけで放棄されているかもしれない。
 
-## Abstraction Debt. 抽象化負債。
+## 5.4. Abstraction Debt. 抽象化負債。
 
 The above issues highlight the fact that there is a distinct lack of strong abstractions to support ML systems.
 上記の問題は、**MLシステムをサポートする強力な抽象化が不足している**という事実を浮き彫りにしている。
@@ -434,7 +438,7 @@ parameter-serverの抽象化は、はるかに堅牢に見えるが、この基�
 The lack of standard abstractions makes it all too easy to blur the lines between components.
 標準的な抽象概念がないため、コンポーネント間の境界線が曖昧になりやすい。
 
-## Common Smells. (一般的な匂い?)
+## 5.5. Common Smells. (一般的な匂い?)
 
 In software engineering, a design smell may indicate an underlying problem in a component or system [7].
 ソフトウェア工学では、design smell(?)はコンポーネントやシステムの根本的な問題を示すことがある[7]。
@@ -540,7 +544,7 @@ Experience has shown that the external world is rarely stable.
 This background rate of change creates ongoing maintenance cost.
 このbackground rate of change(=外界の変化率??)は、継続的なメンテナンスコストを生み出す。
 
-## Fixed Thresholds in Dynamic Systems. 動的システムにおける固定閾値。
+## 7.1. Fixed Thresholds in Dynamic Systems. 動的システムにおける固定閾値。
 
 It is often necessary to pick a decision threshold for a given model to perform some action: to predict true or false, to mark an email as spam or not spam, to show or not show a given ad.
 与えられたモデルが何らかのアクションを実行するために、決定的なしきい値を選択する必要があることがしばしばある: ex. 真または偽を予測するため、メールをスパムまたはスパムでないとマークするため、特定の広告を表示するかどうかを決定するため。
@@ -556,7 +560,7 @@ One mitigation strategy for this kind of problem appears in [14], in which thres
 この種の問題に対する1つの緩和策が[14]にあり、そこでは、しきい値は、ホールドアウトされた検証データに対する単純な評価によって学習される。
 (定期的にグリッドサーチで自動で閾値を更新しますよ、っこと??:thinking:)
 
-## Monitoring and Testing. モニタリングとテスト。
+## 7.2. Monitoring and Testing. モニタリングとテスト。
 
 Unit testing of individual components and end-to-end tests of running systems are valuable, but in the face of a changing world such tests are not sufficient to provide evidence that a system is working as intended.
 個々のコンポーネントの単体テストや、稼働中のシステムのend-to-endテストは価値があるが、変化する世界に直面している中で、そのようなテストは、システムが意図した通りに機能していることを証明するのに十分ではない。
@@ -614,20 +618,20 @@ Creating systems to that allow automated response without direct human intervent
 We now briefly highlight some additional areas where ML-related technical debt may accrue.
 ここで、MLに関連する技術的負債が発生する可能性のある追加的な領域をいくつか簡単に紹介する。
 
-## Data Testing Debt. データテストの負債。
+## 8.1. Data Testing Debt. データテストの負債。
 
 If data replaces code in ML systems, and code should be tested, then it seems clear that some amount of testing of input data is critical to a well-functioning system.
 もし、MLシステムにおいてデータがコードに置き換わり、コードをテストすべきであるとすれば、いくつかの**入力データのテストが、システムがうまく機能するためには重要**であることは明らかだ。(コードもデータも重要なんだったら、コードもデータも退行をテストすべきだよね...!みたいな話??:thinking:)
 Basic sanity checks are useful, as more sophisticated tests that monitor changes in input distributions.
 基本的なサニティ・チェックは、入力分布の変化を監視する、より洗練されたテストと同様に有用である。
 
-## Reproducibility Debt. 再現性の負債。
+## 8.2. Reproducibility Debt. 再現性の負債。
 
 As scientists, it is important that we can re-run experiments and get similar results, but designing real-world systems to allow for strict reproducibility is a task made difficult by randomized algorithms, non-determinism inherent in parallel learning, reliance on initial conditions, and interactions with the external world.
 科学者として、実験を再実行して似た結果を得ることができることは重要である。しかし、ランダム化されたアルゴリズム、並列学習に固有の非決定性、初期条件への依存、外界との相互作用など、厳密な再現性を許容するための実世界のシステムの設計は困難な課題である。
 (ex. いろんな条件があるから、常にCTR=20%を再現しているわけじゃないよ、みたいな??:thinking:)
 
-## Process Management Debt. プロセス管理負債。
+## 8.3. Process Management Debt. プロセス管理負債。
 
 Most of the use cases described in this paper have talked about the cost of maintaining a single model, but mature systems may have dozens or hundreds of models running simultaneously [14, 6].
 **本稿で説明したユースケースのほとんどは、単一のモデルを維持するコストについて述べてきたが、成熟したシステムでは、数十から数百のモデルが同時に実行される可能性がある**[14, 6]。
@@ -638,7 +642,7 @@ Developing tooling to aid recovery from production incidents is also critical.
 An important system-level smell to avoid are common processes with many manual steps.
 **避けるべき重要なsystem-level smellは、多くの手作業ステップを持つ共通プロセスである**。 (運用を自動化すべきってこと?)
 
-## Cultural Debt.
+## 8.4. Cultural Debt.
 
 (=MLの研究とエンジニアリングの間に存在し得る、協力よりも対立を生じさせがちな文化的な境界、みたいな!)
 
