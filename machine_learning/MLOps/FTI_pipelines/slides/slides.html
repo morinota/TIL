@@ -292,7 +292,28 @@ ul.task-list li input[type="checkbox"] {
 </figure>
 </div>
 <ul>
-<li>特徴</li>
+<li>特徴:
+<ul>
+<li><strong>3種類の独立したML Pipelines = Feature pipelines, Training pipelines, Inference pipelines を持つFTI Pipelinesアーキテクチャ</strong>。</li>
+<li>各種pipelineが生成・消費する成果物(ex. 特徴量、学習済みモデル)は、共通の永続化ストレージレイヤーを介して共有される。
+<ul>
+<li>多くのonline MLシステムではユーザ履歴やcontextも使用するが、特徴量ストアはそれらを事前に計算された特徴量の1つとして保存し、学習pipeline, 推論pipelineに提供する。</li>
+</ul></li>
+</ul></li>
+<li>良さげなところ:
+<ul>
+<li>推論時に特徴量を作成する必要がない -&gt; 低レイテンシー。</li>
+<li>学習と推論で、一貫した特徴量を保証できる。</li>
+</ul></li>
+<li>イマイチなところ:
+<ul>
+<li>hogehoge</li>
+</ul></li>
+<li>(ML特有の技術的負債を踏まえた印象):
+<ul>
+<li>FとTが独立してるので、新しい特徴量を追加したい場合は、元データから特徴量を作って特徴量ストアに保存するFeature pipelineを一つ新規作成すれば良い。なので、<strong>Pipeline Jungles問題のリスクは低そう</strong>…?<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>異なるMLモデルによるABテスト等の実験をしたい場合、Training Pipelineのみを新規作成すれば良い。</li>
+</ul></li>
 </ul>
 </section>
 <section id="何をすべきかという明確なメンタルマップが必要っぽい" class="level2">
