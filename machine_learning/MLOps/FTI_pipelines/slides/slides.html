@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.168">
+<meta name="generator" content="quarto-1.3.336">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="モーリタ">
 <meta name="dcterms.date" content="2024-03-26">
 
-<title>より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLの技術的負債の論文読んだり、FTI Pipelines architectureについて調べたりした話</title>
+<title>より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLの技術的負債の論文を読んでFTI Pipelines architectureに思いを馳せた話</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,7 +19,7 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
 </style>
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLの技術的負債の論文読んだり、FTI Pipelines architectureについて調べたりした話</h1>
+<h1 class="title">より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLの技術的負債の論文を読んでFTI Pipelines architectureに思いを馳せた話</h1>
 <p class="subtitle lead">y-tech-ai ワクワク勉強会</p>
 </div>
 
@@ -68,6 +68,7 @@ ul.task-list li input[type="checkbox"] {
       <p class="date">March 26, 2024</p>
     </div>
   </div>
+  
     
   </div>
   
@@ -77,47 +78,72 @@ ul.task-list li input[type="checkbox"] {
 <section id="tldr" class="level2">
 <h2 class="anchored" data-anchor-id="tldr">0.1. TL;DR</h2>
 <ul>
-<li>より持続可能性の高いMLシステムってどう作るといいのか悩んで、有名な<strong>MLの技術的負債の論文</strong>や、<strong>FTI Pipelines architecture</strong>について調べた。</li>
-<li>FTI Pipelines architectureは、特徴量作成、学習、推論をそれぞれ独立したpipelineとして開発・運用する方法論。</li>
+<li>より持続可能性の高いMLシステムってどう作るといいのか悩んで、<a href=""><strong>有名なMLの技術的負債の論文</strong></a>を読んで、<a href=""><strong>FTI Pipelines architecture</strong></a>について思いを馳せた。</li>
+<li>FTI Pipelines architectureは、<strong>特徴量作成、学習、推論をそれぞれ独立したpipelineとして開発・運用する</strong>設計思想。</li>
 <li>確かに、ソフトウェアの複雑さ管理の観点からも、FTI pipelinesは有効そう。(モジュラー性, 関心の分離, 疎結合, 抽象化, etc)</li>
 <li>また、MLシステム設計における技術的負債の観点からも、FTI pipelinesは有効そう。(glue codeの削減, pipeline jungleの予防, dead experimental codepathesの予防, etc)</li>
-<li>MLシステムを設計・開発する上で、メンタルマップとしてFTI Pipelines architectureを意識することは良さそう。</li>
+<li>MLシステムを設計・開発する上でのメンタルマップ(指針)として、FTI Pipelines architectureを意識しておくことは有効そう。</li>
+<li>と言いつつ、全てはトレードオフという意識を忘れないようにしたい…!</li>
 </ul>
 </section>
 <section id="このテーマを選んだ経緯-概要" class="level2">
 <h2 class="anchored" data-anchor-id="このテーマを選んだ経緯-概要">0.2. このテーマを選んだ経緯 &amp; 概要</h2>
 <ul>
-<li>業務の中で、漠然と「より”良い”MLシステムってどう作ればいいんだろう」と思って色々調べ始めた。
+<li>業務の中で、漠然と「より良いMLシステムってどう作ればいいんだろう」と思って色々調べ始めた。
 <ul>
-<li>“良い”ってなんだろ?
+<li>「良いMLシステム」ってどういうことだろう?
 <ul>
-<li>ex. 変更・拡張しやすい、ABテストやオフライン実験も含めて運用しやすい、プロダクトに価値提供しやすい、みたいな状態を想像してる。</li>
+<li>変更・拡張しやすい! (コードの変更・拡張もそうだし、ABテストとかオフライン実験を経てのMLアルゴリズムの変更も含めて!)</li>
+<li>運用しやすい!</li>
+<li>プロダクトに価値提供しやすい!使いやすい!</li>
 </ul></li>
-<li>-&gt; i.e.&nbsp;システムの持続可能性が高い?<span class="emoji" data-emoji="thinking">🤔</span>
+<li>-&gt; つまり<strong>持続可能性が高いMLシステム</strong>?<span class="emoji" data-emoji="thinking">🤔</span>
 <ul>
 <li>i.e.&nbsp;短期的にも長期的にも、改善し続ける事ができたり、プロダクトに価値提供し続けることができるようなMLシステム、みたいな…!<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul></li>
 </ul></li>
 <li>昨年のMLOps勉強会の発表の中で「FTI pipelines architecture」っていう言葉を聞き、興味を持った。</li>
-<li>「<a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">From MLOps to ML Systems with Feature/Training/Inference Pipelines</a>」は、HopsworksのCEOの方が書いた記事で、より良いMLシステムを作る上でのメンタルマップとしてFTI pipelines architectureを採用することが重要だと主張してる。
+<li>「<a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">From MLOps to ML Systems with Feature/Training/Inference Pipelines</a>」というブログは、HopsworksのCEOの方が書いたもので、より良いMLシステムを作る上でのメンタルマップとしてFTI pipelines architectureを推奨してる。
 <ul>
 <li>Hopsworks = 特徴量ストアやモデルレジストリ等のMLプラットフォームを提供してる会社っぽい。</li>
 </ul></li>
+<li>最近、有名なMLの技術的負債の論文「<a href="https://proceedings.neurips.cc/paper_files/paper/2015/file/86df7dcfd896fcaf2674f757a2463eba-Paper.pdf">Hidden Technical Debt in Machine Learning Systems</a>」を読んだので、改めてFTI Pipelines architectureについて思いを馳せてみた。</li>
 </ul>
 </section>
-<section id="最初に-fti-pipelines-architecture-ってどんなもの" class="level2">
-<h2 class="anchored" data-anchor-id="最初に-fti-pipelines-architecture-ってどんなもの">0.3. 最初に: FTI Pipelines Architecture ってどんなもの?</h2>
-<p><img src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6501bf916e9d382ecda67424_figure%201_lightbox.png" class="img-fluid"></p>
-<p>FTI(Feature/Training/Inference) Pipelines Architectureは、特徴量作成、学習、推論をそれぞれ独立したpipelineとして開発・運用する設計思想。</p>
-<p>各Pipelineは、永続化層(特徴量ストアやモデルレジストリ)を介してデータをやり取りする。</p>
+<section id="最初に-そもそもpipelineってなんだっけ" class="level2">
+<h2 class="anchored" data-anchor-id="最初に-そもそもpipelineってなんだっけ">0.3. 最初に: そもそもPipelineってなんだっけ?</h2>
+<ul>
+<li>Pipeline Architecture: 複数の<strong>filter(component)</strong>と、filter同士を繋ぐ<strong>pipe</strong>から構成される。Pipe and Filter architectureとも呼ばれる。</li>
+<li>書籍「ソフトウェアアーキテクチャの基礎」によると、一般的にはモノリシックっぽく記述されているけど、最近は必ずしもそうでもない気がする。</li>
+<li>要は、<strong>処理の向きが一方通行である点</strong>が特徴っぽい。つまり、<strong>DAG(Directed Acyclic Graph, 有向非巡回グラフ)で表すことができるようなアーキテクチャ</strong>だったら、もうPipeline Architectureと呼んで良さそうな気がしてる…!<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://www.oreilly.com/api/v2/epubs/9784873119823/files/images/fosa_1101.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">パイプラインアーキテクチャの基本的なトポロジー, <a href="https://www.oreilly.com/library/view/untitled/9784873119823/ch11.xhtml">書籍より引用</a></figcaption>
+</figure>
+</div>
+</section>
+<section id="最初に-fti-pipelines-architecture-ってどんな設計思想" class="level2">
+<h2 class="anchored" data-anchor-id="最初に-fti-pipelines-architecture-ってどんな設計思想">0.4. 最初に: FTI Pipelines Architecture ってどんな設計思想?</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6501bf916e9d382ecda67424_figure%201_lightbox.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure 1: Feature Pipelines, Training Pipelines, Inference Pipelines are the independent ML Pipelines that together make up a ML System. <a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">ブログより引用</a></figcaption>
+</figure>
+</div>
+<ul>
+<li>FTI(Feature/Training/Inference) Pipelines Architectureは、<strong>特徴量作成、学習、推論をそれぞれ独立したpipelineとして</strong>開発・運用する設計思想。</li>
+<li>各Pipelineは、共通のstorage layer(=特徴量ストアやモデルレジストリの役割永続化ストレージ)を介してデータをやり取りする。</li>
+</ul>
 </section>
 <section id="まずmlの技術的負債の論文におけるシステムの設計に関する負債に関して" class="level1">
 <h1>1. まずMLの技術的負債の論文における、システムの設計に関する負債に関して</h1>
 <ul>
 <li>論文: <a href="https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html">Hidden Technical Debt in Machine Learning Systems</a>(2015年)</li>
-<li>基本的には、セクション5 「ML-System Anti-Patterns」でのMLシステム設計での技術的負債に関してメモしています…!
+<li>基本的には、セクション5 「ML-System Anti-Patterns」でのMLシステム設計での技術的負債に関してメモしてます!
 <ul>
-<li>(他のセクションも色々興味深かった! Data depependencies costの話とか、)</li>
+<li>(他のセクションにも面白い話が色々ありました、Data depependencies costの話とか、configuration debtの話とか…!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul></li>
 </ul>
 <section id="たぶんこの図で有名な論文" class="level2">
@@ -177,7 +203,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="設計における負債3-dead-experimental-codepaths死んだ実験用コードパス" class="level2">
 <h2 class="anchored" data-anchor-id="設計における負債3-dead-experimental-codepaths死んだ実験用コードパス">1.5. 設計における負債3: Dead Experimental Codepaths(死んだ実験用コードパス)</h2>
 <ul>
-<li>glue codeやpipeline junglesを放置していくほど、<strong>実験用コードパスを本番コード内の条件分岐として実装すること</strong>が魅力的になっていく。</li>
+<li>Glue code や Pipeline junglesを放置していくほど、<strong>実験用コードパスを本番コード内の条件分岐として実装すること</strong>が魅力的になっていく。</li>
 <li>短期的には、コストは低い。(周囲のサポートコードやインフラが再設計不要なので…!)</li>
 <li>しかし長期的に、これらのコードパスが蓄積されていくと…
 <ul>
@@ -185,24 +211,44 @@ ul.task-list li input[type="checkbox"] {
 <li>後方互換性の維持が困難になる。(ex. 新しい特徴量や変更を条件分岐で加える度に、古いコードパスとの互換性を保つ事が困難になる、みたいな??<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ol></li>
 <li><ol start="2" type="1">
-<li>cyclomatic complexityが増加する。(i.e.&nbsp;条件分岐が増えると、コードの複雑さが指数関数的に増加して、コードの理解・テスト・デバッグ等が困難になる、みたいな?<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>cyclomatic complexity が増加する。(i.e.&nbsp;条件分岐が増えると、コードの複雑さが指数関数的に増加して、コードの理解・テスト・デバッグ等が困難になる、みたいな?<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ol></li>
 </ul></li>
-<li>このアンチパターンの危険性の有名な例: Knight Capitalのシステムが45分で4億6500万ドルを失った。<strong>原因は、時代遅れの実験用コードパスから予期しない振る舞いが発生したこと</strong>。(怖い..!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+<li>このアンチパターンの危険性の有名な例: Knight Capitalのシステムが45分で4億6500万ドルを失った。<strong>原因は、時代遅れの実験用コードパスから予期しない振る舞いが発生したこと</strong>。(怖いな!<span class="emoji" data-emoji="thinking">🤔</span>)</li>
 </ul>
 </section>
 <section id="mlシステムにおけるcommon-smells" class="level2">
 <h2 class="anchored" data-anchor-id="mlシステムにおけるcommon-smells">1.6. MLシステムにおける”common smells”</h2>
 <ul>
-<li>smells(匂い)って?
+<li><strong>smells(匂い)</strong>って?
 <ul>
 <li>-&gt; ソフトウェア設計における問題点を指し示す可能性のある、コードやシステムの特徴やパターン、みたいな意味合いっぽい<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul></li>
 <li>論文では、MLシステムにおける”common smells”として、以下の3つを挙げていた:
 <ul>
-<li>Plain-Old-Data Type Smell</li>
-<li>Multiple-Language Smell</li>
-<li>Prototype Smell</li>
+<li><strong>Plain-Old-Data Type Smell</strong>:
+<ul>
+<li>モデルパラメータや推論結果などのMLシステムに関わる複雑な情報を、浮動小数点数や整数などのplainなデータ型を使って表現してる状態。</li>
+<li>しかし、詳細やcontextが失われてプログラムの理解や保守が困難になるから、<strong>より具体的なデータ型やクラスを使うと良いよ！</strong>みたいな話。</li>
+</ul></li>
+<li><strong>Multiple-Language Smell</strong>:
+<ul>
+<li>特定のシステムの一部を特定の言語で実装することは、しばしば便利。</li>
+<li>しかし、複数の言語を使用することは、管理・テスト・デバッグ・デプロイ等のコストを増加させる可能性があるから注意！みたいな話。(まあトレードオフだよなぁ…<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul></li>
+<li><strong>Prototype Smell</strong>:
+<ul>
+<li>プロトタイプを通じて、新しいアイデアを小規模にテストするのは便利。</li>
+<li>しかし、<strong>定期的にプロトタイプ環境に依存しないといけない状況は、本番システムが壊れやすい or 変更が難しい状況を暗示しているかもしれない</strong>。(i.e.&nbsp;改善の余地!)</li>
+<li>プロトタイプ環境の維持にもコストがかかり、時間的なプレッシャーからプロトタイプ環境のシステムを本番の解決策として適用してしまうリスクが大きくなる。
+<ul>
+<li>(<strong>これって、ABテストのコストが高いから、オフライン実験を行って良かったモデルを、そのまま本番環境に全体適用してしまう、みたいな状況っぽい…?</strong><span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul></li>
+<li>さらに、小規模なプロトタイプで発見された結果が、本番環境での現実を反映することはほとんどない。
+<ul>
+<li>(=これは、<strong>オフライン評価とオンライン評価の結果が必ずしも整合しないよね</strong>、みたいな話っぽい??<span class="emoji" data-emoji="thinking">🤔</span>)</li>
+</ul></li>
+</ul></li>
 </ul></li>
 </ul>
 </section>
@@ -226,7 +272,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6502ad7d387cfe977467717b_figure%204_lightbox.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure 4: A monolithic batch ML system that can run in either (1) training mode or (2) inference mode.</figcaption><p></p>
+<figcaption class="figure-caption">Figure 4: A monolithic batch ML system that can run in either (1) training mode or (2) inference mode.<a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">ブログより引用</a></figcaption>
 </figure>
 </div>
 <ul>
@@ -257,14 +303,14 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6502adc6d9992658b4fa84b7_figure%205_lightbox.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure 5: A real-time ML system requires separate offline training and online inference pipelines.</figcaption><p></p>
+<figcaption class="figure-caption">Figure 5: A real-time ML system requires separate offline training and online inference pipelines.<a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">ブログより引用</a></figcaption>
 </figure>
 </div>
 <ul>
 <li>特徴:
 <ul>
 <li>クライアントからのリクエストを受けとり、リアルタイムで推論結果を返す。</li>
-<li>オフラインでの学習pipelineとオンラインの推論pipelineが別々になっている。</li>
+<li>オフラインでの学習pipelineと、オンラインの推論pipelineが別々になっている。</li>
 </ul></li>
 <li>良さげなところ:
 <ul>
@@ -272,10 +318,10 @@ ul.task-list li input[type="checkbox"] {
 </ul></li>
 <li>イマイチなところ:
 <ul>
-<li>作成された特徴量を、他のモデルでサッと再利用できない。</li>
+<li>例①と同様に、作成された特徴量を、他のモデルでサッと再利用できない。</li>
 <li>学習時と推論時で、特徴量の作り方の一貫性を保証しづらい。</li>
-<li>特徴量作成のためのリソース最適化がしづらい。</li>
-<li>(前述のアンチパターン例と合わせて)バッチとリアルタイムMLシステムで全く異なるアーキテクチャである点 -&gt; 開発者にとってバッチ &lt;-&gt; リアルタイム間の移行コストが高い。</li>
+<li>例①と同様に、リソース最適化がしづらい。</li>
+<li>(前述のアンチパターン例と合わせて)バッチとリアルタイムMLシステムで全く異なるアーキテクチャである点 -&gt; <strong>開発者にとってbatch推論 &lt;-&gt; online推論間の移行コストが高い</strong>。</li>
 </ul></li>
 <li>(ML特有の技術的負債を踏まえた印象):
 <ul>
@@ -288,7 +334,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6502adf3ca2eceb7be5b949e_figure%206_lightbox.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure 6: Many real-time ML systems also require history and context, and the feature store provides them as precomputed features to online models. This now requires three separate pipelines - feature creation, model training, and online model inference.</figcaption><p></p>
+<figcaption class="figure-caption">Figure 6: Many real-time ML systems also require history and context, and the feature store provides them as precomputed features to online models. This now requires three separate pipelines - feature creation, model training, and online model inference.<a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">ブログより引用</a></figcaption>
 </figure>
 </div>
 <ul>
@@ -302,17 +348,27 @@ ul.task-list li input[type="checkbox"] {
 </ul></li>
 <li>良さげなところ:
 <ul>
-<li>推論時に特徴量を作成する必要がない -&gt; 低レイテンシー。</li>
 <li>学習と推論で、一貫した特徴量を保証できる。</li>
+<li>FとTとIが完全に分かれているので、それぞれのリソース最適化がしやすい。(ex. 特徴量作成を並列化したり、学習時はGPU付きの大きなインスタンスを使ったり…!)</li>
+<li>各pipelineの状況に応じて、言語や、orchestratorに何を使うか、batch処理かonline処理かon-demand実行か、などを柔軟に選択できる。</li>
 </ul></li>
 <li>イマイチなところ:
 <ul>
-<li>hogehoge</li>
+<li>ブログ内では特に記述なし。</li>
+<li>まあでも、<strong>全てのアーキテクチャはトレードオフ</strong>なので、他のアーキテクチャと比較した欠点は存在するはず。まあ例えば管理すべきpipelineの数が増えるから、運用上の複雑性増加とか、管理すべきリソースの増加とか…??<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul></li>
 <li>(ML特有の技術的負債を踏まえた印象):
 <ul>
 <li>FとTが独立してるので、新しい特徴量を追加したい場合は、元データから特徴量を作って特徴量ストアに保存するFeature pipelineを一つ新規作成すれば良い。なので、<strong>Pipeline Jungles問題のリスクは低そう</strong>…?<span class="emoji" data-emoji="thinking">🤔</span></li>
-<li>異なるMLモデルによるABテスト等の実験をしたい場合、Training Pipelineのみを新規作成すれば良い。</li>
+<li>異なるMLモデルを比較するような実験をしたい場合、Training Pipelineだけをモデルの数だけ新規追加したら良い。<strong>Dead Experimental Codepaths問題も発生しにくそう</strong>…?<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul></li>
+<li>(ソフトウェアの複雑さ管理の観点を踏まえた印象):
+<ul>
+<li>各pipelineの責任(i.e.&nbsp;役割?責務?関心?)が明確!!</li>
+<li>モジュラー性が高い!!
+<ul>
+<li>各pipelineは独立して操作可能で、異なるチームが異なるpipelineの開発・運用を担当できる! i.e.&nbsp;開発チーム間のカップリングの度合いを低くしやすい!<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul></li>
 </ul></li>
 </ul>
 </section>
@@ -322,34 +378,67 @@ ul.task-list li input[type="checkbox"] {
 <p>Maps help us navigate the world, and communicate ideas, helping us get faster to our destination. 地図は私たちが世界をナビゲートし、アイデアを伝え、目的地により早く到達するのに役立つ。</p>
 </blockquote>
 <ul>
-<li>MLOpsにおける既存のメンタルマップは、様々な利害関係者から集めた要求をとりあえずシンクに入れ込んだ様なもので、MLシステム構築の現実を反映していない。</li>
+<li>でもMLOpsにおける既存のメンタルマップは、様々な利害関係者から集めた要求をとりあえずシンクに入れ込んだ様なもので、MLシステム構築の現実を反映していない、という主張。</li>
 </ul>
 </section>
 <section id="googleのmlops-map" class="level2">
 <h2 class="anchored" data-anchor-id="googleのmlops-map">2.5. GoogleのMLOps Map</h2>
-<p>Figure 8: Google’s MLOps Map to help you build ML Systems</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6502ae5d69553d37d6d0832e_figure%208_lightbox.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure 8: Google’s MLOps Map to help you build ML Systems. <a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">ブログより引用</a></figcaption>
+</figure>
+</div>
+<ul>
+<li>確かに「様々な利害関係者から集めた要求をとりあえずシンクに入れ込んだ様なもの」っぽい印象になる…<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul>
 </section>
 <section id="databricksのmlops-map" class="level2">
 <h2 class="anchored" data-anchor-id="databricksのmlops-map">2.6. DatabricksのMLOps Map</h2>
-<p>Figure 9: Databricks MLOps map to build ML Systems</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6502ae84b1e9d013a8dae678_figure%209_lightbox.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure 9: Databricks MLOps map to build ML Systems. <a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">ブログより引用</a></figcaption>
+</figure>
+</div>
+<ul>
+<li>こっちはDatabricksのMLOps map。</li>
+<li>パイプラインの名前もないし、最初のMLシステムを数週間で構築する簡単な方法もない。</li>
+<li>参入障壁が高すぎる! ソフトウェアエンジニアリング、オペレーション、データサイエンスの知識を持ち、これらのマップをナビゲートできるのは、ごく少数の人間だけだ！という主張だった。</li>
+<li>まあ確かに…!<span class="emoji" data-emoji="thinking">🤔</span></li>
+</ul>
 </section>
 <section id="メンタルマップとしてのfti-pipelines-architecture" class="level2">
 <h2 class="anchored" data-anchor-id="メンタルマップとしてのfti-pipelines-architecture">2.7. メンタルマップとしてのFTI Pipelines Architecture:</h2>
-</section>
-<section id="fti-pipelinesアーキテクチャによるリアルタイムmlシステム例" class="level2">
-<h2 class="anchored" data-anchor-id="fti-pipelinesアーキテクチャによるリアルタイムmlシステム例">2.11. FTI pipelinesアーキテクチャによるリアルタイムMLシステム例:</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://assets-global.website-files.com/618399cd49d125734c8dec95/6501bf916e9d382ecda67424_figure%201_lightbox.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure 1: Feature Pipelines, Training Pipelines, Inference Pipelines are the independent ML Pipelines that together make up a ML System. <a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">ブログより引用</a></figcaption>
+</figure>
+</div>
 <ul>
-<li>特徴: 特徴量作成の成果物をfeature storeに保存される。学習時と推論時にfeature storeからデータを取得する。(クライアントから受け取った情報を使う場合は推論時に追加の特徴量作成を行う必要はある。)</li>
+<li>ブログでは、MLシステムを構築する上での新しいメンタルマップとして、FTI Pipelines を推奨してる。</li>
+<li>まあ確かに、まず3本のpipelineで最小限のシステムを作って、iterableにincrementalに開発していく、という意識は持ちやすいかも…!!<span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>あと</li>
 </ul>
-<p><a href="">figure6</a></p>
 </section>
-<section id="脱線そもそもpipeline-architectureってなんだっけ" class="level2">
-<h2 class="anchored" data-anchor-id="脱線そもそもpipeline-architectureってなんだっけ">2.12. (脱線)そもそもPipeline Architectureってなんだっけ?</h2>
+</section>
+<section id="まとめ" class="level1">
+<h1>まとめ</h1>
 <ul>
-<li>複数の<strong>filter(component)</strong>と、filter同士を繋ぐ<strong>pipe</strong>から構成されるので、pipe and filter architectureとも呼ばれる。</li>
-<li>たぶん「一方向的」というのが特徴 <span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>より持続可能性の高いMLシステムってどう作るといいのか悩んで、<a href="https://proceedings.neurips.cc/paper_files/paper/2015/file/86df7dcfd896fcaf2674f757a2463eba-Paper.pdf"><strong>有名なMLの技術的負債の論文</strong></a>を読んで、<a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines"><strong>FTI Pipelines architecture</strong></a>について思いを馳せた。</li>
+<li>FTI Pipelines architectureは、<strong>特徴量作成、学習、推論をそれぞれ独立したpipelineとして開発・運用する</strong>設計思想。</li>
+<li>確かに、ソフトウェアの複雑さ管理の観点からも、FTI pipelinesは有効そう。(モジュラー性, 関心の分離, 疎結合, 抽象化, etc)</li>
+<li>また、MLシステム設計における技術的負債の観点からも、FTI pipelinesは有効そう。(glue codeの削減, pipeline jungleの予防, dead experimental codepathesの予防, etc)</li>
+<li>MLシステムを設計・開発する上でのメンタルマップ(指針)として、FTI Pipelines architectureを意識しておくことは良さそう。</li>
 </ul>
-<p><img src="https://miro.medium.com/v2/resize:fit:1100/format:webp/1*C1aXSo3klBPgPZSi8ZFhHw.png" class="img-fluid"></p>
+<section id="参考文献" class="level2">
+<h2 class="anchored" data-anchor-id="参考文献">2.8. 参考文献:</h2>
+<ul>
+<li>有名なMLシステムの技術的負債の論文: <a href="https://proceedings.neurips.cc/paper_files/paper/2015/file/86df7dcfd896fcaf2674f757a2463eba-Paper.pdf">Hidden Technical Debt in Machine Learning Systems</a></li>
+<li>Hopsworksのテックブログ: <a href="https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines">From MLOps to ML Systems with Feature/Training/Inference Pipelines</a></li>
+<li><a href="https://www.oreilly.co.jp//books/9784873119823/">ソフトウェアアーキテクチャの基礎 -エンジニアリングに基づく体系的アプローチ</a></li>
+</ul>
 </section>
 </section>
 
@@ -382,9 +471,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -396,7 +499,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -432,24 +552,128 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

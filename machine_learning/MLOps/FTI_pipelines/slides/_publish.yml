@@ -1,0 +1,8 @@
+- source: slides.md
+  quarto-pub:
+    - id: c44b2fca-552a-40d1-b15d-949529b71d6b
+      url: 'https://morinota.quarto.pub/より持続可能性の高いmlシステムってどう作ればいいんだろうと悩み、有名なmlの技術的負債の論文を読んでfti-pipelines-architectureに思いを馳せた話'
+    - id: c361805d-9f2e-4609-831b-e7fe0a458e4a
+      url: 'https://morinota.quarto.pub/y-tech-ai-wakuwaku-20240326'
+    - id: fe0338b2-9ee9-4544-add6-455ced9fcddd
+      url: 'https://morinota.quarto.pub/y-tech-ai-wakuwaku-20240326'
