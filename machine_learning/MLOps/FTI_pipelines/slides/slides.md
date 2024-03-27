@@ -47,7 +47,7 @@ title-slide-attributes:
   - Hopsworks = 特徴量ストアやモデルレジストリ等のMLプラットフォームを提供してる会社っぽい。
 - 最近、有名なMLの技術的負債の論文「[Hidden Technical Debt in Machine Learning Systems](https://proceedings.neurips.cc/paper_files/paper/2015/file/86df7dcfd896fcaf2674f757a2463eba-Paper.pdf)」を読んだので、改めてFTI Pipelines architectureについて思いを馳せてみた。
 
-## 0.3. 最初に:  そもそもPipelineってなんだっけ?
+## 0.3. 最初に: そもそもPipelineってなんだっけ?
 
 - Pipeline Architecture: 複数の**filter(component)**と、filter同士を繋ぐ**pipe**から構成される。Pipe and Filter architectureとも呼ばれる。
 - 書籍「ソフトウェアアーキテクチャの基礎」によると、一般的にはモノリシックっぽく記述されているけど、最近は必ずしもそうでもない気がする。
@@ -61,8 +61,6 @@ title-slide-attributes:
 
 - FTI(Feature/Training/Inference) Pipelines Architectureは、**特徴量作成、学習、推論をそれぞれ独立したpipelineとして**開発・運用する設計思想。
 - 各Pipelineは、共通のstorage layer(=特徴量ストアやモデルレジストリの役割永続化ストレージ)を介してデータをやり取りする。
-
-
 
 # 1. まずMLの技術的負債の論文における、システムの設計に関する負債に関して
 
@@ -121,13 +119,13 @@ Glue codeとPipeline Junglesの原因として、**“research”と“engineeri
 - **smells(匂い)**って?
   - -> ソフトウェア設計における問題点を指し示す可能性のある、コードやシステムの特徴やパターン、みたいな意味合いっぽい:thinking:
 - 論文では、MLシステムにおける"common smells"として、以下の3つを挙げていた:
-  - **Plain-Old-Data Type Smell**: 
+  - **Plain-Old-Data Type Smell**:
     - モデルパラメータや推論結果などのMLシステムに関わる複雑な情報を、浮動小数点数や整数などのplainなデータ型を使って表現してる状態。
     - しかし、詳細やcontextが失われてプログラムの理解や保守が困難になるから、**より具体的なデータ型やクラスを使うと良いよ！**みたいな話。
   - **Multiple-Language Smell**:
     - 特定のシステムの一部を特定の言語で実装することは、しばしば便利。
     - しかし、複数の言語を使用することは、管理・テスト・デバッグ・デプロイ等のコストを増加させる可能性があるから注意！みたいな話。(まあトレードオフだよなぁ...:thinking:)
-  - **Prototype Smell**: 
+  - **Prototype Smell**:
     - プロトタイプを通じて、新しいアイデアを小規模にテストするのは便利。
     - しかし、**定期的にプロトタイプ環境に依存しないといけない状況は、本番システムが壊れやすい or 変更が難しい状況を暗示しているかもしれない**。(i.e. 改善の余地!)
     - プロトタイプ環境の維持にもコストがかかり、時間的なプレッシャーからプロトタイプ環境のシステムを本番の解決策として適用してしまうリスクが大きくなる。
@@ -192,14 +190,14 @@ Glue codeとPipeline Junglesの原因として、**“research”と“engineeri
   - ブログ内では特に記述なし。
   - まあでも、**全てのアーキテクチャはトレードオフ**なので、他のアーキテクチャと比較した欠点は存在するはず。まあ例えば管理すべきpipelineの数が増えるから、運用上の複雑性増加とか、管理すべきリソースの増加とか...??:thinking:
 - (ML特有の技術的負債を踏まえた印象):
+
   - FとTが独立してるので、新しい特徴量を追加したい場合は、元データから特徴量を作って特徴量ストアに保存するFeature pipelineを一つ新規作成すれば良い。なので、**Pipeline Jungles問題のリスクは低そう**...?:thinking:
   - 異なるMLモデルを比較するような実験をしたい場合、Training Pipelineだけをモデルの数だけ新規追加したら良い。**Dead Experimental Codepaths問題も発生しにくそう**...?:thinking:
 
 - (ソフトウェアの複雑さ管理の観点を踏まえた印象):
   - 各pipelineの責任(i.e. 役割?責務?関心?)が明確!!
-  - モジュラー性が高い!! 
+  - モジュラー性が高い!!
     - 各pipelineは独立して操作可能で、異なるチームが異なるpipelineの開発・運用を担当できる! i.e. 開発チーム間のカップリングの度合いを低くしやすい!:thinking:
-  
 
 ## 2.4. 何をすべきかという明確なメンタルマップが必要っぽい
 
@@ -238,7 +236,6 @@ Glue codeとPipeline Junglesの原因として、**“research”と“engineeri
 - 確かに、ソフトウェアの複雑さ管理の観点からも、FTI pipelinesは有効そう。(モジュラー性, 関心の分離, 疎結合, 抽象化, etc)
 - また、MLシステム設計における技術的負債の観点からも、FTI pipelinesは有効そう。(glue codeの削減, pipeline jungleの予防, dead experimental codepathesの予防, etc)
 - MLシステムを設計・開発する上でのメンタルマップ(指針)として、FTI Pipelines architectureを意識しておくことは良さそう。
-
 
 ## 2.8. 参考文献:
 

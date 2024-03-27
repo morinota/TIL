@@ -1,83 +1,73 @@
 ## refs 審判
 
-- https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html
+- https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html
 
 # SageMaker Components for Kubeflow Pipelines KubeflowパイプラインのためのSageMakerコンポーネント
 
 This document outlines how to use SageMaker Components for Kubeflow Pipelines.
 このドキュメントでは、Kubeflowパイプライン用のSageMakerコンポーネントの使用方法について概説します。
 With these pipeline components, you can create and monitor native SageMaker training, tuning, endpoint deployment, and batch transform jobs from your Kubeflow Pipelines.
-これらのパイプラインコンポーネントを使用すると、KubeflowパイプラインからネイティブのSageMakerトレーニング、チューニング、エンドポイントデプロイ、バッチ変換ジョブを作成および監視できます。
+これらのパイプラインコンポーネントを使用すると、**KubeflowパイプラインからネイティブのSageMakerトレーニング、チューニング、エンドポイントデプロイ、バッチ変換ジョブを作成および監視できます**。
+(Sagemaker Pipelinesの代わりに、Kubeflow Pipelinesを使用できるってことか。別途、Orchestrator的なインスタンスを用意して稼働させておく必要がありそう?? だから、Sagemaker Pipelinesの方が稼働コストは安そう、という印象...!:thinking:)
 By running Kubeflow Pipeline jobs on SageMaker, you move data processing and training jobs from the Kubernetes cluster to SageMaker's machine learning-optimized managed service.
-SageMaker 上で Kubeflow Pipeline ジョブを実行することで、データ処理とトレーニングのジョブを Kubernetes クラスタから SageMaker の機械学習に最適化されたマネージドサービスに移動します。
+SageMaker 上で Kubeflow Pipeline ジョブを実行することで、**データ処理とトレーニングのジョブを Kubernetes クラスタから SageMaker の機械学習に最適化されたマネージドサービスに移動します**。(たぶん基本的にはコスト下がるよな...!:thinking:)
 This document assumes prior knowledge of Kubernetes and Kubeflow.
 このドキュメントでは、KubernetesとKubeflowに関する予備知識を前提としている。
 
 Contents
 内容
 
-What are Kubeflow Pipelines?
-Kubeflowパイプラインとは？
-
-What are Kubeflow Pipeline components?
-Kubeflow Pipelineのコンポーネントとは？
-
-Why use SageMaker Components for Kubeflow Pipelines?
-なぜKubeflowパイプラインにSageMaker Componentsを使うのか？
-
-SageMaker Components for Kubeflow Pipelines versions
-Kubeflow パイプライン用 SageMaker コンポーネント バージョン
-
-List of SageMaker Components for Kubeflow Pipelines
-Kubeflowパイプライン用SageMakerコンポーネント一覧
-
-IAM permissions
-IAMパーミッション
-
-Converting pipelines to use SageMaker
-SageMaker を使用するようにパイプラインを変換する
-
-Install Kubeflow Pipelines
-Kubeflowパイプラインのインストール
-
-Use SageMaker components
-SageMakerコンポーネントを使用する
+- 1. What are Kubeflow Pipelines?
+     Kubeflowパイプラインとは？
+- 2. What are Kubeflow Pipeline components?
+     Kubeflow Pipeline componentsとは？
+- 3. Why use SageMaker Components for Kubeflow Pipelines?
+     なぜKubeflowパイプラインにSageMaker Componentsを使うのか？
+- 4. SageMaker Components for Kubeflow Pipelines versions
+     Kubeflow パイプライン用 SageMaker コンポーネント バージョン
+- 5. List of SageMaker Components for Kubeflow Pipelines
+     Kubeflowパイプライン用SageMakerコンポーネント一覧
+- 6. IAM permissions
+     IAMパーミッション
+- 7. Converting pipelines to use SageMaker
+     SageMaker を使用するようにパイプラインを変換する
+- 8. Install Kubeflow Pipelines
+     Kubeflowパイプラインのインストール
+- 9. Use SageMaker components
+     SageMakerコンポーネントの使用
 
 ## What are Kubeflow Pipelines? Kubeflowパイプラインとは？
 
 Kubeflow Pipelines (KFP) is a platform for building and deploying portable, scalable machine learning (ML) workflows based on Docker containers.
-Kubeflow Pipelines（KFP）は、Dockerコンテナをベースとした、ポータブルでスケーラブルな機械学習（ML）ワークフローを構築・デプロイするためのプラットフォームです。
+**Kubeflow Pipelines（KFP）**は、Dockerコンテナをベースとした、ポータブルでスケーラブルな機械学習（ML）ワークフローを構築・デプロイするためのプラットフォームです。
 The Kubeflow Pipelines platform consists of the following:
 Kubeflow Pipelinesプラットフォームは以下のように構成されている：
 
-A user interface (UI) for managing and tracking experiments, jobs, and runs.
-実験、ジョブ、ランを管理・追跡するためのユーザーインターフェース（UI）。
-
-An engine (Argo) for scheduling multi-step ML workflows.
-マルチステップのMLワークフローをスケジューリングするためのエンジン（Argo）。
-
-An SDK for defining and manipulating pipelines and components.
-パイプラインとコンポーネントを定義し、操作するためのSDK。
-
-Notebooks for interacting with the system using the SDK.
-SDKを使用してシステムとやり取りするためのノートブック。
+- A user interface (UI) for managing and tracking experiments, jobs, and runs.
+  実験、ジョブ、ランを管理・追跡するためのユーザーインターフェース（UI）。
+- An engine (Argo) for scheduling multi-step ML workflows.
+  マルチステップのMLワークフローをスケジューリングするためのエンジン（Argo）。
+- An SDK for defining and manipulating pipelines and components.
+  パイプラインとコンポーネントを定義し、操作するためのSDK。
+- Notebooks for interacting with the system using the SDK.
+  SDKを使用してシステムとやり取りするためのノートブック。
 
 A pipeline is a description of an ML workflow expressed as a directed acyclic graph.
-パイプラインとは、MLのワークフローを有向非循環グラフで表現したものである。
+**パイプラインとは、MLのワークフローを有向非循環グラフ(DAG)で表現したもの**である。(まあ概念的には同感...!)
 Every step in the workflow is expressed as a Kubeflow Pipeline component, which is a AWS SDK for Python (Boto3) module.
-ワークフローの各ステップは、AWS SDK for Python（Boto3）モジュールであるKubeflow Pipelineコンポーネントとして表現される。
+ワークフローの各ステップは、AWS SDK for Python（Boto3）モジュールであるKubeflow Pipelineコンポーネントとして表現される。(Sagemaker Python SDKじゃなくて、Boto3??)
 
 For more information on Kubeflow Pipelines, see the Kubeflow Pipelines documentation.
-Kubeflow Pipelinesの詳細については、Kubeflow Pipelinesのドキュメントを参照してください。
+Kubeflow Pipelinesの詳細については、[Kubeflow Pipelinesのドキュメント](https://www.kubeflow.org/docs/pipelines/)を参照してください。
 
 ## What are Kubeflow Pipeline components? Kubeflowパイプラインコンポーネントとは？
 
 A Kubeflow Pipeline component is a set of code used to execute one step of a Kubeflow pipeline.
-Kubeflow Pipelineコンポーネントは、Kubeflowパイプラインの1ステップを実行するために使用されるコードのセットです。
+Kubeflow Pipelineコンポーネントは、Kubeflowパイプラインの1ステップを実行するために使用されるコードのセットです。(=pipelineの各filterと、実行タイミングとかを定義したコード集合??)
 Components are represented by a Python module built into a Docker image.
 コンポーネントは、Dockerイメージに組み込まれたPythonモジュールで表される。
 When the pipeline runs, the component's container is instantiated on one of the worker nodes on the Kubernetes cluster running Kubeflow, and your logic is executed.
-パイプラインが実行されると、コンポーネントのコンテナがKubeflowを実行しているKubernetesクラスタ上のワーカーノードの1つにインスタンス化され、あなたのロジックが実行される。
+パイプラインが実行されると、コンポーネントのコンテナがKubeflowを実行している**Kubernetesクラスタ上のワーカーノードの1つにインスタンス化され、あなたのロジックが実行される**。
 Pipeline components can read outputs from the previous components and create outputs that the next component in the pipeline can consume.
 パイプラインコンポーネントは、前のコンポーネントから出力を読み取り、パイプラインの次のコンポーネントが消費できる出力を作成することができます。
 These components make it fast and easy to write pipelines for experimentation and production environments without having to interact with the underlying Kubernetes infrastructure.
@@ -90,18 +80,18 @@ Rather than encapsulating your logic in a custom container, you simply load the 
 When the pipeline runs, your instructions are translated into a SageMaker job or deployment.
 パイプラインが実行されると、あなたの指示が SageMaker のジョブまたはデプロイメントに変換されます。
 The workload then runs on the fully managed infrastructure of SageMaker.
-ワークロードは、SageMaker の完全に管理されたインフラストラクチャ上で実行されます。
+ワークロードは、SageMaker の完全に管理されたインフラストラクチャ上で実行されます。(これがメリットだよな...!)
 
 ## Why use SageMaker Components for Kubeflow Pipelines? なぜ Kubeflow パイプラインに SageMaker Components を使うのか？
 
 SageMaker Components for Kubeflow Pipelines offer an alternative to launching your compute-intensive jobs from SageMaker.
-SageMaker Components for Kubeflow Pipelines は、SageMaker から計算負荷の高いジョブを起動するための代替手段を提供します。
+SageMaker Components for Kubeflow Pipelines は、SageMaker からコンピューティング集約型のジョブを起動する代替手段を提供します。
 The components integrate SageMaker with the portability and orchestration of Kubeflow Pipelines.
-このコンポーネントは、SageMakerをKubeflowパイプラインの移植性とオーケストレーションと統合します。
+このコンポーネントは、SageMakerをKubeflowパイプラインのportability(移植性)とorchestration(オーケストレーション)に統合します。
 Using the SageMaker Components for Kubeflow Pipelines, you can create and monitor your SageMaker resources as part of a Kubeflow Pipelines workflow.
-SageMaker Components for Kubeflow Pipelines を使用すると、Kubeflow Pipelines ワークフローの一部として SageMaker リソースを作成および監視できます。
+SageMaker Components for Kubeflow Pipelines を使用すると、**Kubeflow Pipelines ワークフローの一部として SageMaker リソースを作成および監視できます**。
 Each of the jobs in your pipelines runs on SageMaker instead of the local Kubernetes cluster allowing you to take advantage of key SageMaker features such as data labeling, large-scale hyperparameter tuning and distributed training jobs, or one-click secure and scalable model deployment.
-パイプラインの各ジョブは、ローカルのKubernetesクラスタではなくSageMaker上で実行されるため、データラベリング、大規模なハイパーパラメータチューニング、分散トレーニングジョブ、またはワンクリックで安全かつスケーラブルなモデルデプロイメントなどのSageMakerの主要機能を利用できます。
+**パイプラインの各ジョブは、ローカルのKubernetesクラスタではなくSageMaker上で実行される**ため、データラベリング、大規模なハイパーパラメータチューニング、分散トレーニングジョブ、またはワンクリックで安全かつスケーラブルなモデルデプロイメントなどのSageMakerの主要機能を利用できます。
 The job parameters, status, logs, and outputs from SageMaker are still accessible from the Kubeflow Pipelines UI.
 SageMakerからのジョブパラメータ、ステータス、ログ、出力は、Kubeflow Pipelines UIから引き続きアクセス可能です。
 
@@ -110,16 +100,16 @@ SageMaker コンポーネントは、データの準備から ML モデルの構
 You can create a Kubeflow Pipeline built entirely using these components, or integrate individual components into your workflow as needed.
 これらのコンポーネントを完全に使用してKubeflowパイプラインを作成することも、必要に応じて個々のコンポーネントをワークフローに統合することもできます。
 The components are available in one or two versions.
-コンポーネントは1つまたは2つのバージョンで利用できる。
+コンポーネントはバージョン1または2で利用可能です。
 Each version of a component leverages a different backend.
 コンポーネントのバージョンごとに、異なるバックエンドを利用する。
 For more information on those versions, see SageMaker Components for Kubeflow Pipelines versions.
-これらのバージョンの詳細については、「SageMaker Components for Kubeflow Pipelines versions」を参照してください。
+これらのバージョンの詳細については、「[SageMaker Components for Kubeflow Pipelines versions](https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html#sagemaker-components-versions)」を参照してください。
 
 There is no additional charge for using SageMaker Components for Kubeflow Pipelines.
 SageMaker Components for Kubeflow Pipelines を使用するための追加料金はかかりません。
 You incur charges for any SageMaker resources you use through these components.
-これらのコンポーネントを通じて使用する SageMaker リソースには料金が発生します。
+これらのコンポーネントを通じて使用する SageMaker リソースには料金が発生します。(それはそう。実際にインスタンスを使用してる時間)
 
 ## SageMaker Components for Kubeflow Pipelines versions Kubeflowパイプライン用SageMakerコンポーネントのバージョン
 
@@ -128,66 +118,68 @@ SageMaker Components for Kubeflow Pipelinesには2つのバージョンがあり
 Each version leverages a different backend to create and manage resources on SageMaker.
 各バージョンでは、SageMaker 上でリソースを作成および管理するために、異なるバックエンドを利用しています。
 
-The SageMaker Components for Kubeflow Pipelines version 1 (v1.x or below) use Boto3 (AWS SDK for Python (Boto3)) as backend.
-SageMaker Components for Kubeflow Pipelines バージョン1（v1.x以下）では、バックエンドとしてBoto3（AWS SDK for Python（Boto3））を使用しています。
+- The SageMaker Components for Kubeflow Pipelines version 1 (v1.x or below) use Boto3 (AWS SDK for Python (Boto3)) as backend.
+  SageMaker Components for Kubeflow Pipelines バージョン1（v1.x以下）では、バックエンドとしてBoto3（AWS SDK for Python（Boto3））を使用しています。
 
-The version 2 (v2.0.0-alpha2 and above) of SageMaker Components for Kubeflow Pipelines use SageMaker Operator for Kubernetes (ACK).
-SageMaker Components for Kubeflow Pipelines のバージョン 2 (v2.0.0-alpha2 以上) では、SageMaker Operator for Kubernetes (ACK) を使用します。
-
-AWS introduced ACK to facilitate a Kubernetes-native way of managing AWS Cloud resources.
-AWSはACKを導入し、AWSクラウドのリソースをKubernetesネイティブに管理できるようにした。
-ACK includes a set of AWS service-specific controllers, one of which is the SageMaker controller.
-ACKには、AWSサービス固有のコントローラのセットが含まれており、その1つがSageMakerコントローラである。
-The SageMaker controller makes it easier for machine learning developers and data scientists using Kubernetes as their control plane to train, tune, and deploy machine learning (ML) models in SageMaker.
-SageMakerコントローラは、Kubernetesをコントロールプレーンとして使用する機械学習開発者やデータ科学者が、SageMakerで機械学習（ML）モデルをトレーニング、チューニング、デプロイすることを容易にします。
-For more information, see SageMaker Operators for Kubernetes
-詳細については、SageMaker Operators for Kubernetesを参照してください。
+- The version 2 (v2.0.0-alpha2 and above) of SageMaker Components for Kubeflow Pipelines use SageMaker Operator for Kubernetes (ACK).
+  SageMaker Components for Kubeflow Pipelines のバージョン 2 (v2.0.0-alpha2 以上) では、**SageMaker Operator for Kubernetes (ACK) を使用**します。 (なにそれ??)
+  AWS introduced ACK to facilitate a Kubernetes-native way of managing AWS Cloud resources.
+  **AWSはACKを導入し、AWSクラウドのリソースをKubernetesネイティブに管理できるようにした**。
+  ACK includes a set of AWS service-specific controllers, one of which is the SageMaker controller.
+  ACKには、AWSサービス固有のコントローラのセットが含まれており、その1つがSageMakerコントローラである。
+  The SageMaker controller makes it easier for machine learning developers and data scientists using Kubernetes as their control plane to train, tune, and deploy machine learning (ML) models in SageMaker.
+  SageMakerコントローラは、Kubernetesをコントロールプレーンとして使用する機械学習開発者やデータ科学者が、SageMakerで機械学習（ML）モデルをトレーニング、チューニング、デプロイすることを容易にします。
+  For more information, see SageMaker Operators for Kubernetes
+  詳細については、SageMaker Operators for Kubernetesを参照してください。
 
 Both versions of the SageMaker Components for Kubeflow Pipelines are supported.
 SageMaker Components for Kubeflow Pipelines の両方のバージョンがサポートされています。
 However, the version 2 provides some additional advantages.
-しかし、バージョン2にはさらにいくつかの利点がある。
+しかし、**バージョン2にはさらにいくつかの利点がある**。
 In particular, it offers:
-特に、それは提供される：
+特に、それは以下の様な利点を提供します：
 
-A consistent experience to manage your SageMaker resources from any application; whether you are using Kubeflow pipelines, or Kubernetes CLI (kubectl) or other Kubeflow applications such as Notebooks.
-Kubeflow パイプライン、Kubernetes CLI (kubectl)、Notebooks などの Kubeflow アプリケーションのいずれを使用していても、どのアプリケーションからでも SageMaker リソースを一貫して管理できます。
+- 1. A consistent experience to manage your SageMaker resources from any application; whether you are using Kubeflow pipelines, or Kubernetes CLI (kubectl) or other Kubeflow applications such as Notebooks.
+     Kubeflow パイプライン、Kubernetes CLI (kubectl)、Notebooks などの Kubeflow アプリケーションのいずれを使用していても、どのアプリケーションからでも SageMaker リソースを一貫して管理できます。
 
-The flexibility to manage and monitor your SageMaker resources outside of the Kubeflow pipeline workflow.
-Kubeflowパイプラインワークフローの外側でSageMakerリソースを管理・監視できる柔軟性。
+- 2. The flexibility to manage and monitor your SageMaker resources outside of the Kubeflow pipeline workflow.
+     Kubeflowパイプラインワークフローの外側でSageMakerリソースを管理・監視できる柔軟性。
 
-Zero setup time to use the SageMaker components if you deployed the full Kubeflow on AWS release since the SageMaker Operator is part of its deployment.
-Kubeflow on AWSのフルリリースをデプロイした場合、SageMaker Operatorはそのデプロイの一部であるため、SageMakerコンポーネントを使用するためのセットアップ時間はゼロです。
+- 3. Zero setup time to use the SageMaker components if you deployed the full Kubeflow on AWS release since the SageMaker Operator is part of its deployment.
+     Kubeflow on AWSのフルリリースをデプロイした場合、SageMaker Operatorはそのデプロイの一部であるため、SageMakerコンポーネントを使用するためのセットアップ時間はゼロです。
 
 ## List of SageMaker Components for Kubeflow Pipelines Kubeflowパイプライン用SageMakerコンポーネント一覧
 
 The following is a list of all SageMaker Components for Kubeflow Pipelines and their available versions.
 以下は、Kubeflowパイプライン用のすべてのSageMakerコンポーネントと利用可能なバージョンの一覧です。
 Alternatively, you can find all SageMaker Components for Kubeflow Pipelines in GitHub.
-または、Kubeflowパイプライン用のすべてのSageMakerコンポーネントをGitHubで見つけることができます。
+または、[Kubeflowパイプライン用のすべてのSageMakerコンポーネント](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker#versioning)をGitHubで見つけることができます。
+
+- Ground Truth components
+- Data Processing components
+- Training components
+- Inference components
 
 ## IAM permissions IAMパーミッション
 
 Deploying Kubeflow Pipelines with SageMaker components requires the following three layers of authentication:
-SageMaker コンポーネントで Kubeflow パイプラインをデプロイするには、以下の 3 層の認証が必要です：
+SageMaker コンポーネントで Kubeflow パイプラインをデプロイするには、**以下の 3 層の認証が必要**です：
 
-An IAM role granting your gateway node (which can be your local machine or a remote instance) access to the Amazon Elastic Kubernetes Service (Amazon EKS) cluster.
-ゲートウェイノード（ローカルマシンでもリモートインスタンスでも可）にAmazon Elastic Kubernetes Service（Amazon EKS）クラスタへのアクセスを許可するIAMロール。
+- An IAM role granting your gateway node (which can be your local machine or a remote instance) access to the Amazon Elastic Kubernetes Service (Amazon EKS) cluster.
+  ゲートウェイノード（ローカルマシンでもリモートインスタンスでも可）にAmazon Elastic Kubernetes Service（Amazon EKS）クラスタへのアクセスを許可するIAMロール。
+  The user accessing the gateway node assumes this role to:
+  ゲートウェイノードにアクセスするユーザーは、この役割を担う：
 
-The user accessing the gateway node assumes this role to:
-ゲートウェイノードにアクセスするユーザーは、この役割を担う：
+  - Create an Amazon EKS cluster and install KFP
+    Amazon EKSクラスタを作成し、KFPをインストールする。
+  - Create IAM roles
+    IAMロールの作成
+  - Create Amazon S3 buckets for your sample input data
+    サンプル入力データ用にAmazon S3バケットを作成します。
 
-Create an Amazon EKS cluster and install KFP
-Amazon EKSクラスタを作成し、KFPをインストールする。
+         The role requires the following permissions:
 
-Create IAM roles
-IAMロールの作成
-
-Create Amazon S3 buckets for your sample input data
-サンプル入力データ用にAmazon S3バケットを作成します。
-
-The role requires the following permissions:
-この役割には以下の権限が必要です：
+    この役割には以下の権限が必要です：
 
 CloudWatchLogsFullAccess
 CloudWatchLogsFullAccess
@@ -251,3 +243,5 @@ You can convert an existing pipeline to use SageMaker by porting your generic Py
 汎用の Python 処理コンテナとトレーニングコンテナを移植することで、既存のパイプラインを SageMaker を使用するように変換できます。
 If you are using SageMaker for inference, you also need to attach IAM permissions to your cluster and convert an artifact to a model.
 推論に SageMaker を使用している場合は、クラスタに IAM パーミッションをアタッチし、アーティファクトをモデルに変換する必要もあります。
+
+<!-- ここまで雑に読んだ! -->
