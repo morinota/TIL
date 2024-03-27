@@ -268,32 +268,34 @@ Kappaアーキテクチャーの欠点といえば、次のような点が挙げ
 
 <!-- ここまで読んだ! -->
 
+![Streaming architecture based on Kafka for Kappa approach - Kafka message flow through components](https://nexocode.com/images/kafka-streams.webp)
+
 ### 1.4.3. Use Cases for Kappa Architecture Kappaアーキテクチャの使用例
 
 Kappa architecture is a data processing architecture that is designed to provide a flexible, fault-tolerant, and scalable architecture for processing large amounts of data in real-time.
 Kappaアーキテクチャは、大量のデータをリアルタイムで処理するための、柔軟性、耐障害性、拡張性を備えたデータ処理アーキテクチャである。
 It is well-suited for a wide range of data processing workloads, including continuous data pipelines, real time data processing, machine learning models and real-time data analytics, IoT systems, and many other use cases with a single technology stack.
-継続的なデータパイプライン、リアルタイムデータ処理、機械学習モデルやリアルタイムデータ分析、IoTシステム、その他多くのユースケースを含む幅広いデータ処理ワークロードに適しており、単一のテクノロジースタックで利用できる。
+継続的なデータパイプライン、リアルタイムデータ処理、機械学習モデルやリアルタイムデータ分析、IoTシステム、その他多くのユースケースを含む幅広いデータ処理ワークロードに適しており、**単一のテクノロジースタックで利用できる**。(これがLambdaアーキテクチャとの違い...??:thinking:)
+
+![Bounded and unbounded streams offer different use cases for stream processing.](https://nexocode.com/images/bounded-stream.webp)
 
 ## 1.5. Comparison of Lambda and Kappa Architectures ラムダ・アーキテクチャとカッパ・アーキテクチャの比較
 
 Both architectures are designed to provide scalable, fault-tolerant, and low latency systems for processing data, but they differ in terms of their underlying design and approach to data processing.
-どちらのアーキテクチャも、データ処理のためのスケーラブルでフォールト・トレラントな低レイテンシー・システムを提供するように設計されているが、その基本設計とデータ処理へのアプローチの点で異なっている。
+**どちらのアーキテクチャも、データ処理のためのscalableでfault-tolerant、低遅延システムを提供するように設計されている**が、基本的な設計とデータ処理へのアプローチにおいて異なる。
 
 ### 1.5.1. Data Processing Systems データ処理システム
 
 Lambda architecture uses two separate data processing systems to handle different types of data processing workloads: a batch processing system and a stream processing system.
-ラムダ・アーキテクチャは、異なるタイプのデータ処理ワークロードを処理するために、2つの独立したデータ処理システムを使用する： バッチ処理システムとストリーム処理システムだ。
+Lambdaアーキテクチャは、異なるタイプのdata processingワークロードを処理するために**2つの別々のデータ処理システムを使用する**：バッチ処理システムとストリーム処理システム。
 In Kappa architecture, on the other hand, a single stream processing engine acts (stream layer) to handle complete data processing.
-一方、Kappaアーキテクチャでは、1つのストリーム処理エンジンが完全なデータ処理を行う（ストリームレイヤー）。
+一方、Kappaアーキテクチャでは、**1つのストリーム処理エンジンが完全なデータ処理を行う**（ストリームレイヤー）。
 In Lambda, programmers need to learn and maintain two processing frameworks and support any daily code changes in a doubled way.
-ラムダでは、プログラマーは2つの処理フレームワークを学び、維持し、日々のコード変更を二重にサポートする必要がある。
-This separation (when not implemented in the same way) may cause different results in stream vs.
-この分離は（同じように実装されていない場合）、ストリーム対ストリームで異なる結果を引き起こす可能性がある。
-batch processing, which may cause further business issues.
-バッチ処理は、さらなるビジネス上の問題を引き起こす可能性がある。
+Lambdaでは、プログラマは2つの処理フレームワークを学び、維持し、日々のコード変更を2重にサポートする必要がある。
+This separation (when not implemented in the same way) may cause different results in stream vs. batch processing, which may cause further business issues.
+この分離（同じ方法で実装されていない場合）は、ストリーム処理とバッチ処理で異なる結果を引き起こす可能性があり、さらなるビジネス上の問題を引き起こす可能性がある。(pipelineが分離してるから、処理の整合性を保つコストが少し高い??)
 Kappa Architecture uses the same code for processing data in real time, eliminating the need for additional effort to maintain separate codebases for batch and stream processing.
-Kappaアーキテクチャーは、リアルタイムでデータを処理するために同じコードを使用するので、バッチ処理とストリーム処理のために別々のコードベースを維持するための新たな労力を必要としない。
+Kappaアーキテクチャーは、リアルタイムでデータを処理するために同じコードを使用するので、バッチ処理とストリーム処理のために別々のコードベースを維持するための新たな労力を必要としない。 (処理の一貫性を保証しやすいよね...!:thinking:)
 This makes it a more efficient and error-proof solution.
 そのため、より効率的でミスのないソリューションとなっている。
 
@@ -303,27 +305,31 @@ Lambda architecture has a separate long-term data storage layer, which is used t
 ラムダ・アーキテクチャには、過去のデータを保存し、複雑な集計を実行するために使用される、別の長期データ保存レイヤーがある。
 Kappa architecture does not have a separate long-term data storage layer, and all data is processed and stored by the stream processing system.
 Kappaアーキテクチャは、独立した長期データ保存層を持たず、すべてのデータはストリーム処理システムで処理され保存される。
+(この観点で、LambdaアーキテクチャよりもKappaアーキテクチャの方が、データ永続化周りのコストが高い??)
 
 ### 1.5.3. Complexity 複雑さ
 
 Lambda architecture is generally more complex to set up and maintain compared to Kappa architecture, as it requires two separate data processing systems and ongoing maintenance to ensure that the batch and stream processing systems are working correctly and efficiently.
-一般的に、ラムダ・アーキテクチャは、カッパ・アーキテクチャに比べてセットアップとメンテナンスが複雑である。2つの独立したデータ処理システムが必要であり、バッチ処理システムとストリーム処理システムが正しく効率的に動作するように継続的なメンテナンスが必要だからだ。
+一般的に、Lambdaアーキテクチャは、バッチ処理システムとストリーム処理システムの両方が正しく効率的に動作していることを確認するために、2つの別々のデータ処理システムと継続的なメンテナンスが必要なため、**Kappaアーキテクチャよりもセットアップと保守が複雑である**。
 Kappa architecture is generally simpler, as it uses a single data processing system to handle all data processing workloads.
-Kappaアーキテクチャは、すべてのデータ処理ワークロードを処理するために単一のデータ処理システムを使用するため、一般的に単純である。
+Kappaアーキテクチャは一般的に単純である。すべてのデータ処理ワークロードを処理するために単一のデータ処理システムを使用するので。
 On the other hand, Kappa, requires a mindset switch to think about all data as streams an it requires lots of experience in stream processing and distributed systems.
-一方、Kappaは、すべてのデータをストリームとして考えるという発想の転換が必要で、ストリーム処理と分散システムに関する多くの経験を必要とする。
+一方、Kappaは、すべてのデータをストリームとして考えるという発想の転換が必要で、ストリーム処理と分散システムに関する多くの経験を必要とする。(なるほど...!:thinking:)
 
 If you’re looking for more insights on building data-intensive applications head over to a classic position from Martin Kleppman, Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems, or check our take on this book with key insights highlighted by our colleague, Piotr Kubowicz in his article - Future According to Designing Data-Intensive Applications.
-データ集約型アプリケーションの構築に関するより多くの洞察をお探しなら、マーティン・クレップマンの古典的な立場である「Designing Data-Intensive Applications（データ集約型アプリケーションの設計）」をご覧いただきたい： また、私たちの同僚であるPiotr Kubowiczの記事 - データ集約型アプリケーションの設計による未来 - の中で、重要な洞察が強調されています。
+データ集約型アプリケーションの構築に関するより多くの洞察をお探しなら、マーティン・クレップマンの古典的な立場である「[Designing Data-Intensive Applications（データ集約型アプリケーションの設計）](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/)」をご覧いただきたい： また、私たちの同僚であるPiotr Kubowiczの記事 - [データ集約型アプリケーションの設計による未来](https://nexocode.com/blog/posts/future-designing-data-intensive-applications/) - の中で、重要な洞察が強調されています。
+(「データ集約型アプリケーション」の概念、全く分かってないから軽く見てみてもいいかも...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## 1.6. The Importance of Choosing the Right Data Processing Architecture for a Business ビジネスに適したデータ処理アーキテクチャを選択することの重要性
 
 The choice of data processing architecture is a critical one for businesses, as it impacts the scalability, performance, and flexibility of the data processing pipeline.
-データ処理アーキテクチャの選択は、データ処理パイプラインのスケーラビリティ、パフォーマンス、柔軟性に影響するため、企業にとって非常に重要です。
+データ処理アーキテクチャの選択は、データ処理パイプラインのscalability、performance、flexibilityに影響を与えるため、企業にとって重要な選択である。
 It is important for businesses to choose a big data architecture that meets their specific needs and to carefully consider the pros and cons of each option before making a decision.
-企業にとって重要なのは、特定のニーズを満たすビッグデータアーキテクチャを選択し、決定を下す前に各オプションの長所と短所を慎重に検討することである。
+企業にとって**重要なのは、特定のニーズを満たすビッグデータアーキテクチャを選択し、決定を下す前に各オプションの長所と短所を慎重に検討すること**である。
 Generally, if you’re building a system that needs real-time data access, start with Kappa.
-一般的に、リアルタイムのデータアクセスが必要なシステムを構築する場合は、Kappaから始める。
+**一般的に、リアルタイムのデータアクセスが必要なシステムを構築する場合は、Kappaから始める。**(stream処理が必要な場合は、まずは開発・運用コストの低いKappaアーキテクチャから始めるといいってこと...??:thinking:)
 And as you learn, you’ll be able to master streams in a way that supports all your workflows.
 そして、学ぶにつれて、すべてのワークフローをサポートする方法でストリームをマスターできるようになります。
 
@@ -332,6 +338,10 @@ If you are a business owner or data engineer who wants to develop data systems a
 Our team has extensive experience in building and optimizing modern data processing pipelines and can help you deploy big data architecture that will benefit your business.
 当社のチームは、最新のデータ処理パイプラインの構築と最適化において豊富な経験を有しており、お客様のビジネスに利益をもたらすビッグデータアーキテクチャの導入を支援します。
 If you want to know more about streaming data architecture read our article here.
-ストリーミング・データ・アーキテクチャについてもっと知りたい方は、こちらの記事をお読みください。
+**ストリーミング・データ・アーキテクチャについてもっと知りたい方は、[こちら](https://nexocode.com/blog/posts/streaming-data-architecture/)の記事をお読みください**。(ほーん)
 Contact us today to learn more about our services and how we can help you develop a data processing architecture that meets your needs and requirements.
 私たちのサービスの詳細と、お客様のニーズと要件を満たすデータ処理アーキテクチャの開発をお手伝いする方法については、今すぐお問い合わせください。
+
+(機械学習システムの文脈では、特に特徴量生成 & 学習では、基本的にbatch処理でデータを処理することが多そうだけど、online推論とかonline学習の場合は、リアルタイム処理が必要になるのかな...? あ、でもonline推論だったら、特徴量生成もある程度リアルタイムに近い処理である必要があるかも...!!:thinking:)
+
+<!-- ここまで読んだ! -->
