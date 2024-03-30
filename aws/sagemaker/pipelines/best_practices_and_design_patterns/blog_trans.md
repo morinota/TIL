@@ -202,7 +202,7 @@ sklearn_processor = SKLearnProcessor(
     instance_count=1,
     base_job_name="sklearn-abalone-process",
     role=role,
-    tags=[{'Key':'pipeline-cost-tag', 'Value':'<<tag_parameter>>'}]　# Include tags in the processor
+    tags=[{'Key':'pipeline-cost-tag', 'Value':'<<tag_parameter>>'}]# Include tags in the processor
 )
 
 step_process = ProcessingStep(

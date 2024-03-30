@@ -442,7 +442,8 @@ The lack of standard abstractions makes it all too easy to blur the lines betwee
 
 In software engineering, a design smell may indicate an underlying problem in a component or system [7].
 ソフトウェア工学では、design smell(?)はコンポーネントやシステムの根本的な問題を示すことがある[7]。
-(**design smell** = ソフトウェア設計における問題点を指し示す可能性のある、コードやシステムの特徴やパターン、らしい。design smellは、ソフトウェアの設計が一般的な設計原則やベストプラクティスから逸脱している可能性を示す...!:thinkinFg:)
+(**design smell** = ソフトウェア設計における問題点を指し示す可能性のある、コードやシステムの特徴やパターン、らしい。design smellは、ソフトウェアの設計が一般的な設計原則やベストプラクティスから逸脱している可能性を示す...!:thinking:)
+(ソフトウェアの文脈では"不吉な匂い"みたいな言葉が一般的っぽい...!)
 We identify a few ML system smells, not hard-and-fast rules, but as subjective indicators.
 私たちは、いくつかのMLシステムの匂いを、厳密なルールではなく、主観的な指標として特定する。
 
