@@ -10,6 +10,7 @@ SageMaker Pipelines offers ML application developers the ability to orchestrate 
 SageMaker Pipelines は、ML アプリケーション開発者に、データロード、データ変換、トレーニング、チューニング、デプロイメントなど、**ML ワークフローのさまざまなステップをオーケストレーションする機能を提供**します。(Orchestratorだ...!)
 You can use SageMaker Pipelines to orchestrate ML jobs in SageMaker, and its integration with the larger AWS ecosystem also allows you to use resources like AWS Lambda functions, Amazon EMR jobs, and more.
 SageMaker Pipelines を使用して、SageMaker で ML ジョブをオーケストレーションすることができます。また、より大きな AWS エコシステムとの統合により、AWS Lambda 関数や Amazon EMR ジョブなどのリソースを使用することもできます。
+(Amazon EMR(Elastic MapReduce) = AWSで大きなデータを分散処理させるためのサービスっぽい。Apache HadoopやApache Sparkなどのオープンソースフレームワークを使う。)
 This enables you to build a customized and reproducible pipeline for specific requirements in your ML workflows.
 これにより、MLワークフローにおける特定の要件に合わせてカスタマイズされた再現可能なパイプラインを構築することができる。
 
