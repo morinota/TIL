@@ -404,184 +404,189 @@ Furthermore, evaluating the quality of enhanced data is not straightforward – 
 ## 4.2. Handling Noisy Data ノイズデータの処理
 
 The key to handling the data noise issue is to filter out the noisy information.
-データのノイズ問題に対処する鍵は、ノイズとなる情報をフィルタリングすることだ。
+データのノイズ問題に対処する鍵は、**ノイズとなる情報をフィルタリングすること**だ。
 According to the varying severity of noisy data presented in Section 3.2, we divide existing denoising methods into three categories: reweighting-based methods, selection-based methods, and dataset distillation/condensation, which are illustrated in Figure 5.
-セクション3.2で示したノイズの多いデータの深刻度の違いにより、既存のノイズ除去法を3つのカテゴリーに分類する： 重み付けに基づく方法、選択に基づく方法、データセットの蒸留／凝縮である。
+セクション3.2で示した**ノイズデータの深刻さに応じて**、既存のノイズ除去方法をre-weighting-based methods(再重み付けベースの方法)、selection-based methods(選択ベースの方法)、dataset distillation/condensation(データセットの蒸留/凝縮)の**3つのカテゴリ**に分ける。
 
 ### 4.2.1. Reweighting-Based Denoising リワイティングに基づくノイズ除去
 
 The reweighting-based method aims to assign lower weights to the noisy data (or assign higher weights to the noiseless data) Wang et al.(2021a); Gao et al.(2022); Zhou et al.(2022); Zhang et al.(2023d); Ge et al.(2023); Wang et al.(2023c).
-再重み付けに基づく方法は、ノイズのあるデータにより低い重みを割り当てる（またはノイズのないデータにより高い重みを割り当てる）ことを目的としている。
+**re-weighting-based methodは、noisyなデータに低い重みを割り当てることを目的としている**(Wang et al.(2021a); Gao et al.(2022); Zhou et al.(2022); Zhang et al.(2023d); Ge et al.(2023); Wang et al.(2023c))。
 Wang et al.Wang et al.(2021a) experimentally observe that noisy interactions are harder to fit in the early training stages, and, based on this observation, they regard the interactions with large loss values as noise and propose an adaptive denoising training strategy called R-CE, which assigns different weights to noisy interactions according to their loss values during training.
-Wang et al.Wangら(2021a)は、ノイズの多い相互作用は学習初期に適合しにくいことを実験的に観察し、この観察に基づいて、損失値の大きい相互作用をノイズとみなし、学習中に損失値に応じてノイズの多い相互作用に異なる重みを割り当てるR-CEと呼ばれる適応的ノイズ除去学習戦略を提案している。
+Wang et al.Wangら(2021a)は、**noisyなinteractionが初期のトレーニング段階で適合しにくいことを実験的に観察し**、この観察に基づいて、大きな損失値を持つinteractionをノイズと見なし、R-CEと呼ばれる適応的ノイズ除去トレーニング戦略を提案している。この戦略は、トレーニング中に損失値に応じて異なる重みをnoisyなinteractionに割り当てる。(でも損失が大きいexampleって、要は推論が難しいhard negative exampleだから、寧ろこれを学習させる事は重要な気もする...!:thinking:)
 SLED Zhang et al.(2023d) identifies and determines the reliability of interactions based on their related structural patterns learned on multiple large-scale recommendation datasets.
-SLED Zhang et al.(2023d)は、複数の大規模推薦データセットで学習された関連構造パターンに基づき、相互作用の信頼性を識別・判定する。
+SLED Zhang et al.(2023d)は、**複数の大規模推薦データセットで学習された関連構造パターン**(??)に基づき、interactionの信頼性を特定し、決定する。(気になる...!:thinking:)
 FMLP-Rec Zhou et al.(2022) adopts learnable filters for denoising in sequential recommendation.
-FMLP-Rec Zhouら(2022)は、逐次推薦におけるノイズ除去に学習可能なフィルタを採用している。
+FMLP-Rec (Zhouら(2022))は、sequential recommendationにおいてノイズ除去のために学習可能なフィルターを採用している。(これはRecSys2022のベストペーパーのやつだ...!:thinking:)
 The learnable filters perform a fast Fourier transform (FFT) to convert the input sequence into the frequency domain and filter out noise through an inverse FFT procedure.
-学習可能なフィルターは、高速フーリエ変換（FFT）を実行して入力シーケンスを周波数領域に変換し、逆FFT手順によってノイズを除去する。
+学習可能なフィルターは、高速フーリエ変換（FFT）を実行して入力sequenceを周波数領域に変換し、逆FFT手順を通じてノイズを除去する。
 SGDL Gao et al.(2022) leverages the self-labeled memorized data as guidance to offer denoising signals without requiring any auxiliary information or defining any weighting functions.
-SGDL Gaoら(2022)は、自己ラベル付けされた記憶データをガイダンスとして活用し、補助情報を必要とせず、重み付け関数を定義することなく、ノイズ除去信号を提供する。
+SGDL(Gaoら(2022))は、自己ラベル付けされた記憶データをガイダンスとして活用し、補助情報を必要とせず、重み付け関数を定義することなく、ノイズ除去信号を提供する。
 AutoDenoise Ge et al.(2023) adopts reinforcement learning to automatically and adaptively learn the most appropriate weight for each interaction.
-AutoDenoise Geら(2023)は強化学習を採用し、各インタラクションに最適な重みを自動的に適応的に学習する。
+AutoDenoise Geら(2023)は強化学習を採用し、各interactionに最適な重みを自動的かつ適応的に学習する。
 
 ### 4.2.2. Selection-Based Denoising 選択ベースのノイズ除去
 
 Instead of assigning lower weights, the selection-based method directly removes the noisy data Tong et al.(2021); Wang et al.(2021a); Yuan et al.(2021); Zhang et al.(2022b); Lin et al.(2023a); Zhang et al.(2023c); Quan et al.(2023); Wang et al.(2023b); Lin et al.(2023b).
-より低い重みを割り当てる代わりに、選択ベースの方法はノイズの多いデータを直接除去する Tong et al.(2021); Wang et al.(2021a); Yuan et al.(2021); Zhang et al.(2022b); Lin et al.(2023a); Zhang et al.(2023c); Quan et al.
+より低い重みを割り当てる代わりに、**selection-based methodは直接ノイズデータを除去する**(Tong et al.(2021); Wang et al.(2021a); Yuan et al.(2021); Zhang et al.(2022b); Lin et al.(2023a); Zhang et al.(2023c); Quan et al.(2023); Wang et al.(2023b); Lin et al.(2023b))。
 For instance, different from R-CE, Wang et al.Wang et al.(2021a) propose another adaptive denoising training strategy called T-CE, which discards the interactions with large loss values.
-例えば、R-CEとは異なり、Wangら(2021a)はT-CEと呼ばれる別の適応的ノイズ除去学習戦略を提案している。
+例えば、R-CEとは異なり、Wang et al.Wangら(2021a)は、大きな損失値を持つinteractionを破棄するT-CEと呼ばれる別の適応的ノイズ除去トレーニング戦略を提案している。
 RAP Tong et al.(2021) formulates the denoising process as a Markov decision process and proposes to learn a policy network to select the appropriate action (i.e., removing or keeping an interaction) to maximize long-term rewards.
-RAP Tongら(2021)は、ノイズ除去プロセスをマルコフ決定過程として定式化し、長期的な報酬を最大化するために適切な行動（すなわち、相互作用を除去するか維持するか）を選択するためのポリシーネットワークを学習することを提案している。
+RAP Tongら(2021)は、ノイズ除去プロセスをマルコフ決定過程として定式化し、長期的な報酬を最大化するために適切な行動（すなわち、interactionを削除するか保持するか）を選択するためのポリシーネットワークを学習することを提案している。
 DSAN Yuan et al.(2021) suggests using the entmax function to automatically eliminate the weights of irrelevant interactions.
-DSAN Yuanら(2021)は、無関係な相互作用の重みを自動的に除去するためにentmax関数を使うことを提案している。
+DSAN Yuanら(2021)は、無関係なinteractionの重みを自動的に除去するためにentmax関数を使用することを提案している。
 HSD Zhang et al.(2022b) learns both user-level and sequence-level inconsistency signals to further identify inherent noisy interactions.
-HSD Zhangら(2022b)は、ユーザーレベルとシーケンスレベルの不整合シグナルの両方を学習し、固有のノイズの多い相互作用をさらに識別する。
+HSD Zhangら(2022b)は、user-levelとsequence-levelの不一致信号の両方を学習して、固有のノイズinteractionをさらに特定している。
 DeCA Wang et al.(2023b) finds that different models tend to make more consistent agreement predictions for noise-free interactions, and utilizes predictions from different models as the denoising signal.
-DeCA Wangら(2023b)は、異なるモデルがノイズのない相互作用についてより一貫した一致予測をする傾向があることを発見し、異なるモデルからの予測をノイズ除去信号として利用している。
+DeCA Wangら(2023b)は、異なるモデルがノイズのないinteractionに対してより一貫した合意予測を行う傾向があることを発見し、異なるモデルからの予測をノイズ除去信号として利用している。
 GDMSR Quan et al.(2023) designs a self-correcting curriculum learning mechanism and an adaptive denoising strategy to alleviate noise in social networks.
 GDMSR Quanら(2023)は、ソーシャルネットワークのノイズを緩和するために、自己修正カリキュラム学習メカニズムと適応的ノイズ除去戦略を設計している。
 STEAM Lin et al.(2023b) further designs a corrector that can adaptively apply “keep”, “delete”, and “insert” operations to correct an interaction sequence.
-STEAM Linら(2023b)はさらに、相互作用シーケンスを修正するために「keep」、「delete」、「insert」操作を適応的に適用できるコレクタを設計している。
+STEAM Linら(2023b)はさらに、interaction sequenceを修正するために"keep"(保持)、"delete"(削除)、"insert"(挿入)の操作を適応的に適用できるcorrectorを設計している。
 
 Some studies integrate the reweighting-based method with the selection-based method for better denoising Tian et al.(2022); Ye et al.(2023).
-より良いノイズ除去のために、再重み付けベースの手法と選択ベースの手法を統合した研究もある。
+より良いノイズ除去のために、再重み付けベースの手法と選択ベースの手法を統合した研究もある。(ふむふむ)
 For instance, RGCF Tian et al.(2022) and RocSE Ye et al.(2023) estimate the reliability of user-item interactions using normalized cosine similarity between their respective embeddings.
 例えば、RGCF Tian et al.(2022)やRocSE Ye et al.(2023)は、それぞれの埋め込み間の正規化コサイン類似度を用いて、ユーザとアイテムのインタラクションの信頼性を推定している。
 Subsequently, they filter out interactions and only retain those whose weights exceed a pre-defined threshold value.
-その後、相互作用をフィルタリングし、重みが事前に定義されたしきい値を超えるものだけを保持する。
+その後、interactionをフィルタリングし、重みが事前に定義された閾値値を超えるものだけを保持する。
+
+<!-- ここまで読んだ! -->
 
 ### 4.2.3. Dataset Distillation/Condensation データセット 蒸留／凝縮
 
 Dataset distillation or dataset condensation techniques Yu et al.(2023) aim to synthesize data points with the goal of condensing the comprehensive knowledge from the entire dataset into a small, synthetic data summary.
-データセット蒸留またはデータセット凝縮技術 Yuら(2023)は、データセット全体からの包括的な知識を小さな合成データ要約に凝縮することを目標に、データ点を合成することを目的としている。
+dataset distillation(データセット蒸留)やdataset condensation(データセット凝縮)技術は、**全データセットから包括的な知識を小さな合成データサマリに凝縮する**ことを目的としてdata point(?) を合成することを目指している(Yu et al.(2023))。
 This process retains the essence of the data, enabling models to be trained more efficiently.
-このプロセスはデータの本質を保持し、モデルをより効率的に学習させることができる。
+このプロセスは**データの本質を保持し、モデルをより効率的に学習させる**ことができる。
 Recently, some works Sachdeva et al.(2022); Wu et al.(2023) observe that dataset distillation has a strong data denoising effect in recommendation.
-最近、Sachdevaら(2022); Wuら(2023)は、データセット蒸留が推薦において強いデータノイズ除去効果を持つことを観察している。
+最近、Sachdevaら(2022); Wuら(2023)は、**dataset distillationが推薦において強力なデータノイズ除去効果を持つこと**を観察している。
 For example, DISTILL-CF Sachdeva et al.(2022) applies dataset meta-learning to synthetic user-item interactions.
-例えば、DISTILL-CF Sachdeva et al.(2022)は、データセットのメタ学習を合成ユーザーとアイテムのインタラクションに適用している。
+例えば、DISTILL-CF Sachdeva et al.(2022)は、データセットのmeta-learningを合成ユーザ-アイテムinteractionに適用している。
 Remarkably, models trained on the condensed dataset synthesized by DISTILL-CF have demonstrated improved performance compared to those trained on the full, original dataset.
-驚くべきことに、DISTILL-CFによって合成された凝縮データセットで訓練されたモデルは、完全なオリジナルデータセットで訓練されたモデルよりも性能が向上している。
+驚くべきことに、DISTILL-CFによって合成された**凝縮データセットでトレーニングされたモデルは、完全な元のデータセットでトレーニングされたモデルと比較して、性能が向上している**。(おもしろ!!まあオフライン性能なのかな...!)
 
 ### 4.2.4. Discussion ディスカッション
 
 Normally, data collected from real-world scenarios are frequently contaminated with noise stemming from system bugs or user mistakes.
-通常、実世界のシナリオから収集されたデータは、システムのバグやユーザーのミスに起因するノイズで汚染されていることが多い。
+**通常、実世界のシナリオから収集されたデータは、システムのバグやユーザのミスに起因するノイズで汚染されていることが多い**。
 However, obtaining labels for this noise is often impractical or even impossible, due to the lack of expert knowledge required for identifying noise, the high costs associated with manual labeling, or the dynamic nature of some noise which makes it hard to give fixed labels.
 しかし、ノイズの識別に必要な専門知識が不足していたり、手作業によるラベル付けに高いコストがかかったり、あるいはノイズの動的な性質によって固定的なラベル付けが困難であったりするため、このようなノイズのラベルを得ることは現実的でなかったり、不可能であったりすることが多い。
 In the absence of the ground truth, it is difficult to determine whether the denoising method achieves the optimal situation – no over-denoising or under-denoising.
-グランド・トゥルースがない場合、ノイズ除去法が最適な状況（オーバーデノイズやアンダーデノイズ）を達成しているかどうかを判断するのは難しい。
+**ground truthがない場合、ノイズ除去方法が最適な状況を達成しているかどうかを決定することは難しい**。つまり、過度なノイズ除去や不十分なノイズ除去がないかどうかを判断することが難しい。
+(確かに、評価が難しいよね...! 結局はABテストになるのかな...!もしdataset distillationによるより小さい合成データでより低コストの学習でも、元データと同様の性能が出せるのであれば検討の余地がありそう:thinking:)
 Taking into account this limitation, it may be preferable to synthesize a noise-free dataset via dataset distillation/condensation rather than attempting to adjust or filter the existing dataset through reweighting-based or selection-based methods.
-この制限を考慮すると、重み付けに基づく方法や選択に基づく方法で既存のデータセットの調整やフィルタリングを試みるよりも、データセットの蒸留／凝縮によってノイズのないデータセットを合成する方が望ましいかもしれない。
+この制限を考慮すると、re-weighting-basedやselection-basedの方法を用いて既存のデータセットを調整したりフィルタリングしたりするよりも、dataset distillation/condensationを用いてノイズのないデータセットを合成する方が望ましいかもしれない。
+(ground-truthがないから前者の2つの手法が難しい、ってことだよね。後者の手法はなくても大丈夫ってこと??:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## 4.3. Handling Biased Data バイアスのかかったデータを扱う
 
 The key to handling biased data is to align the biased training distribution with the unbiased test distribution.
-偏ったデータを扱う鍵は、偏った訓練分布と不偏のテスト分布を一致させることである。
+偏ったデータを扱う鍵は、**偏った訓練分布と不偏のテスト分布を一致させることである**。(ex. 学習データには人気バイアスがあって偏ったデータセットだけど、推論したいアイテムは人気だろうとニッチだろうと正しく推論する必要がある、みたいな??:thinking:)
 According to the causes of biased data explained in Section 3.2, we divide existing debiasing methods into two categories: user preference alignment and item popularity alignment.
-セクション3.2で説明した偏ったデータの原因に従って、既存のデビアス方法を2つのカテゴリーに分類する： ユーザ嗜好アライメントと項目人気アライメントである。
+セクション3.2で説明した偏ったデータの原因に従って、**既存のdebiasing方法を2つのカテゴリ**に分ける: **user preference alignment(ユーザ嗜好の調整)とitem popularity alignment(アイテム人気アライメント)**。
 
 ### 4.3.1. User Preference Alignment ユーザー嗜好の調整
 
 User preferences may shift due to a variety of reasons, such as temporal changes Zafari et al.(2019); Wangwatcharakul and Wongthanavasu (2021); Ding et al.(2022), locational moves Yin et al.(2016), or alterations in personal and environmental conditions Zheng et al.(2021); He et al.(2022); Wang et al.(2023a).
-ユーザーの嗜好は、時間的な変化Zafariら(2019); Wangwatcharakul and Wongthanavasu(2021);Dingら(2022)、場所的な移動Yinら(2016)、または個人的な条件や環境条件の変化Zhengら(2021); Heら(2022); Wangら(2023a)など、さまざまな理由で変化する可能性がある。
+**ユーザの嗜好は、さまざまな理由によって変化する可能性がある**: 時間的変化 (Zafari et al.(2019); Wangwatcharakul and Wongthanavasu (2021); Ding et al.(2022))、場所の移動 Yin et al.(2016)、個人的および環境的条件の変化 (Zheng et al.(2021); He et al.(2022); Wang et al.(2023a))など、
 Existing methods are designed to track and adjust to these changes, thereby maintaining alignment with the ever-evolving user preferences.
-既存の方法は、このような変化を追跡し、調整するように設計されているため、常に進化するユーザーの嗜好との整合性を維持することができる。
+既存の方法は、**このような変化を追跡し、調整する**ように設計されているため、常に進化するユーザの嗜好との整合性を維持することができる。
 For example, Aspect-MF Zafari et al.(2019) analyzes and models temporal preference drifts using a component-based factorized latent approach.
-例えば、Aspect-MF Zafari et al.(2019)は、成分ベースの因数分解潜在アプローチを用いて、時間的嗜好ドリフトを分析しモデル化している。
+例えば、Aspect-MF Zafari et al.(2019)は、component-based factorized latentアプローチを用いて時間的な嗜好のドリフトを分析し、モデル化している。
 MTUPD Wangwatcharakul and Wongthanavasu (2021) adopts a forgetting curve function to calculate the correlations of user preferences across time.
-MTUPD Wangwatcharakul and Wongthanavasu (2021)は、忘却曲線関数を採用し、ユーザーの嗜好の時間的相関を計算している。
+MTUPD Wangwatcharakul and Wongthanavasu (2021)は、忘却曲線関数を採用し、ユーザの嗜好の時間間の相関を計算している。
 ST-LDA Yin et al.(2016) learns region-dependent personal interests and crowd preferences to align locational preference drifts.
-ST-LDA Yin et al.(2016)は、地域に依存した個人の興味と群衆の嗜好を学習し、場所的嗜好のドリフトを調整する。
+ST-LDA(Yin et al.(2016)) は、地域依存の個人的な興味と群衆の嗜好を学習して、場所の嗜好のドリフトを整合させる。
 Wang et al.Wang et al.(2023a) review user preference shifts across environments from a causal perspective and inspect the underlying causal relations through causal graphs.
-Wangら.Wangら(2023a)は、因果的な観点から環境間のユーザーの嗜好の変化をレビューし、因果関係グラフを通してその根底にある因果関係を検証している。
+Wangら.Wangら(2023a)は、因果的な観点から環境間のユーザの嗜好の変化を検討し、因果グラフを通じてその基礎となる因果関係を調査している。
 Based on the causal relations, they further propose the CDR framework, which adopts a temporal variational autoencoder to capture preference shifts.
 さらに、因果関係に基づき、嗜好の変化を捉えるために時間変分オートエンコーダを採用したCDRフレームワークを提案している。
 
 ### 4.3.2. Item Popularity Alignment アイテム人気アライメント
 
 Existing methods for item popularity alignment roughly fall into five groups Zhang et al.(2023a).
-項目人気アライメントのための既存の方法は、大まかに5つのグループに分類される。
+**item popularity alignmentのための既存の方法は、大まかに5つのグループに分けられる**(Zhang et al.(2023a))。
 Inverse propensity scoring Schnabel et al.(2016); Saito et al.(2020) utilizes the inverse of item popularity as a propensity score to rebalance the loss for each user-item interaction.
-逆傾向スコアリング Schnabel et al.(2016); Saito et al.(2020) は，項目人気の逆数を傾向スコアとして利用し，各ユーザー-項目相互作用の損失をリバランスする．
+逆傾向スコアリング(Schnabel et al.(2016); Saito et al.(2020))は、各ユーザ-アイテムinteractionの損失を再バランスするために、アイテム人気度を傾向スコアの逆数として利用する。
 Domain adaptation Bonner and Vasile (2018); Chen et al.(2020) leverages a small sample of unbiased data as the target domain to guide the training process on the larger but biased data in the source domain.
-Domain adaptation Bonner and Vasile (2018); Chen et al. (2020)は、ターゲット・ドメインとしてバイアスのかかっていないデータの小さなサンプルを活用し、ソース・ドメインのより大きな、しかしバイアスのかかったデータに対する学習プロセスを導く。
+Domain adaptation (Bonner and Vasile (2018); Chen et al.(2020))は、ターゲットドメインとしての不偏データの小さなサンプルを利用して、ソースドメインの大きなが偏ったデータに対するトレーニングプロセスをガイドする。
 Causal estimation Wei et al.(2021); Zhang et al.(2021b); Wang et al.(2022) identifies the effect of popularity bias through assumed causal graphs and mitigates its impact on predictions.
-因果推定 Wei et al.(2021); Zhang et al.(2021b); Wang et al.(2022) は、仮定された因果グラフを通じて人気バイアスの影響を特定し、予測への影響を緩和する。
+因果推定 (Wei et al.(2021); Zhang et al.(2021b); Wang et al.(2022))は、仮定された因果グラフを通じて人気バイアスの影響を特定し、予測に対するその影響を軽減する。
 Regularization-based methods Boratto et al.(2021) explore regularization strategies to adjust recommendation results, aligning them more closely with the actual popularity distribution.
-正則化に基づく方法 Boratto et al.(2021) は、推薦結果を調整し、実際の人気分布により近づけるための正則化戦略を探求している。
+正則化に基づく方法 (Boratto et al.(2021))は、推薦結果を調整し、実際の人気度分布により密接に整合させるための正則化戦略を探求する。
 Generalization methods Zhang et al.(2022a, 2023b, 2023a) aim to learn invariant features that counteract popularity bias, thereby enhancing the stability and generalization capabilities of recommendation models.
-汎化手法 Zhangら(2022a, 2023b, 2023a)は、人気バイアスを打ち消す不変特徴を学習することで、推薦モデルの安定性と汎化能力を高めることを目指している。
+generalization methods (Zhang et al.(2022a, 2023b, 2023a))は、人気バイアスに対抗する不変特徴を学習し、推薦モデルの安定性と汎化能力を向上させることを目指している。
 
 ### 4.3.3. Discussion ディスカッション
 
 Traditional evaluation settings in RSs may not be appropriate for assessing debiasing methods because they typically entail that the distribution of a test set is representative of the distribution in the training set (independent and identically distributed evaluation settings).
-RSにおける従来の評価設定は、テスト集合の分布が訓練集合の分布を代表することが一般的であるため（独立同分布の評価設定）、デビアス手法の評価には適切ではないかもしれない。
+RSにおける従来の評価設定は、通常、テストセットの分布がトレーニングセットの分布を代表しているということを前提としているため、debiasing方法を評価するのに適していないかもしれない(indenpendent and identically distributed evaluation settings, 独立同一分布評価設定)。
+(i.e. 学習データとテストデータが、独立で、同一の傾向を持っているはずという仮定??:thinking:)
 Therefore, in this part, we discuss two out-of-distribution evaluation settings to assess debiasing methods:
-そこでこのパートでは、デビアス法を評価するための2つの分布外評価設定について議論する：
+そこでこのパートでは、**debiasing方法を評価するための2つのout-of-distribution評価設定について**議論する。
 
-• Temporal split setting: Temporal split setting slices the historical interactions into the training, validation, and test sets according to the timestamps Zhang et al.(2022a, 2023b).
-
-- 時間分割設定： 時間的分割設定：時間的分割設定は、タイムスタンプに従って、過去の相互作用をトレーニングセット、検証セット、テストセットにスライスする。
+- Temporal split setting: Temporal split setting slices the historical interactions into the training, validation, and test sets according to the timestamps Zhang et al.(2022a, 2023b).
+  **temporal split settingは、タイムスタンプに基づいて過去のinteractionをトレーニング、検証、テストセットにスライスする**。
   In this case, any shift in user preferences or item popularity over time is appropriately represented and accounted for during the evaluation.
-  この場合、時間の経過に伴うユーザーの嗜好やアイテムの人気の変化は、評価中に適切に表現され、説明される。
+  この場合、時間の経過に伴うユーザの嗜好やアイテムの人気の変化は、評価中に適切に表現され、説明される。
 
-• Popularity split setting: Popularity split setting constructs the training, validation, and test sets based on various popularity distributions Wei et al.(2021); Zheng et al.(2021).
-
-- 人気度分割設定： 人気度分割設定は、様々な人気度分布に基づいて訓練、検証、テストセットを構築する。
+- Popularity split setting: Popularity split setting constructs the training, validation, and test sets based on various popularity distributions Wei et al.(2021); Zheng et al.(2021).
+  popularity split settingは、さまざまな人気度分布に基づいてトレーニング、検証、テストセットを構築する。
   For example, the training interactions are sampled to be a long-tail distribution over items while the validation and test interactions are sampled with equal probability in terms of items (uniform popularity distribution).
-  例えば、トレーニングの相互作用は項目に関するロングテール分布になるようにサンプリングされ、一方、検証およびテストの相互作用は項目に関して等確率でサンプリングされる（一様な人気分布）。
+  例えば、**トレーニングのinteractionはアイテムに対してlong-tail分布にサンプリングされ(=これは色んなアプローチでalignmentしたって事??)、検証とテストのinteractionはアイテムに対して等しい確率でサンプリングされる(uniform popularity distribution)**。(学習データの方はalignしたのに、テストデータの方はそのまま使ってしまうと、人気アイテムを過剰に推薦する方法を不当に高く評価してしまう、みたいな??:thinking:)
   However, such a split setting has an inherent drawback: it may inadvertently lead to information leakage.
-  しかし、このような分割設定には固有の欠点がある： それは、不注意によって情報が漏れてしまう可能性があるということだ。
+  しかし、このような分割設定には固有の欠点がある: それは、不注意によって情報が漏れてしまう可能性があるということだ。
   By explicitly tailoring the test set to a known distribution of item popularity, the debiasing methods might be unduly influenced by this information.
-  アイテムの人気度の既知の分布に合わせてテスト・セットを明示的に調整することで、デバイアシング手法がこの情報に不当に影響される可能性がある。
+  アイテムの人気度の既知の分布に合わせてテスト・セットを明示的に調整することで、デバイアシング手法がこの情報に不当に影響される可能性がある。(学習データにdebiasingした推薦結果を、debiasingしていないテストデータで評価すると、不当に評価されてしまう、みたいな??:thinking:)
+
+<!-- ここまで読んだ! -->
 
 # 5. Future Directions 今後の方向性
 
 ## 5.1. Data-Centric RSs with Multimodal Data マルチモーダルデータによるデータ中心RS
 
 Multimodal data refers to data that consists of multiple modalities or types of information, such as text, images, audio, video, or any combination thereof.
-マルチモーダルデータとは、テキスト、画像、音声、映像、またはそれらの組み合わせなど、複数のモダリティやタイプの情報から構成されるデータのことである。
+**マルチモーダルデータとは、テキスト、画像、音声、映像、またはそれらの組み合わせなど、複数のモダリティやタイプの情報から構成されるデータのこと**である。(アイテムのattibute的な情報ってこと??)
 Traditionally, RSs have primarily relied on user-item interaction data, such as ratings or click-through data, to generate recommendations.
-従来、RSはレコメンデーションを生成するために、主に評価やクリックスルーデータなどのユーザーアイテムインタラクションデータに依存してきた。
+従来、RSは推薦を生成するために主にユーザ-アイテムのインタラクションデータ（評価やクリックスルーなど）に依存してきた。
 By incorporating multimodal data, RSs can capture richer and more diverse user preferences and item characteristics, leading to more personalized and relevant recommendations Truong and Lauw (2019).
-マルチモーダルデータを取り入れることで、RSはより豊かで多様なユーザーの嗜好やアイテムの特徴を捉えることができ、よりパーソナライズされた適切なレコメンデーションにつながる Truong and Lauw (2019).
+**マルチモーダルデータを取り入れることで、RSはより豊かで多様なユーザの嗜好やアイテムの特徴を捉えることができ、よりパーソナライズされた適切なレコメンデーションにつながる** (Truong and Lauw (2019).)
 However, the data issues mentioned before (i.e., incomplete data, noisy data, and biased data) also exist in multimodal data, and they can pose additional challenges in the context of multimodal RSs:
-しかし、先に述べたようなデータの問題（不完全なデータ、ノイズの多いデータ、偏ったデータなど）はマルチモーダルデータにも存在し、マルチモーダルRSの文脈ではさらなる課題となりうる：
+しかし、先に述べたようなデータの問題(incomplete data, noisy data, and biased data)は、マルチモーダルデータにも存在し、マルチモーダルRSの文脈において追加の課題を提起することがある。
 
-• Heterogeneity: Multimodal data can be highly heterogeneous, with different modalities having distinct data formats, scales, and distributions.
-
-- 異質性： マルチモーダルデータは、異なるモダリティが異なるデータ形式、スケール、分布を持ち、非常に異質である可能性がある。
+- **Heterogeneity**: Multimodal data can be highly heterogeneous, with different modalities having distinct data formats, scales, and distributions.
+  異質性： マルチモーダルデータは、異なるモダリティが異なるデータ形式、スケール、分布を持ち、非常に異質である可能性がある。
   For example, text data may require natural language processing techniques, while image data may need computer vision algorithms.
   例えば、テキストデータには自然言語処理技術が必要かもしれないし、画像データにはコンピュータ・ビジョン・アルゴリズムが必要かもしれない。
 
-• Imbalance: Multimodal datasets may exhibit imbalances in the distributions of different modalities.
-
-- 不均衡： マルチモーダルデータセットは、異なるモダリティの分布に不均衡を示すことがある。
+- Imbalance: Multimodal datasets may exhibit imbalances in the distributions of different modalities.
+  不均衡： マルチモーダルデータセットは、異なるモダリティの分布に不均衡を示すことがある。
   For example, there may be a larger number of text samples compared to images or audio samples.
   例えば、画像や音声サンプルに比べ、テキストサンプルの数が多い場合があります。
   Modality imbalance can affect the performance and generalization of recommendation models trained on such data.
   モダリティの不均衡は、そのようなデータで学習された推薦モデルの性能と一般化に影響を与える可能性がある。
 
-• Scalability: Multimodal data, especially when it includes high-dimensional modalities like images or videos, can be computationally expensive to process and analyze.
-
-- スケーラビリティ： マルチモーダルデータは、特に画像や動画のような高次元のモダリティを含む場合、処理や分析に計算コストがかかる。
+- Scalability: Multimodal data, especially when it includes high-dimensional modalities like images or videos, can be computationally expensive to process and analyze.
+  スケーラビリティ： **マルチモーダルデータは、特に画像や動画のような高次元のモダリティを含む場合、処理や分析に計算コストがかかる**。
   Therefore, handling large-scale multimodal data may require efficient algorithms or distributed computing frameworks to ensure scalability.
   したがって、大規模なマルチモーダルデータを扱うには、スケーラビリティを確保するための効率的なアルゴリズムや分散コンピューティングフレームワークが必要になるかもしれない。
 
-## 5.2. Data-Centric RSs with LLMs LLMによるデータ中心RS
+<!-- ここまで読んだ! -->
+
+## 5.2. Data-Centric RSs with LLMs LLMによるデータ中心型RS
 
 With the emergence of large language models (LLMs) in natural language processing, there has been a growing interest in harnessing the power of these models to enhance recommender systems.
-自然言語処理における大規模言語モデル（LLM）の出現に伴い、レコメンダーシステムを強化するためにこれらのモデルの力を活用することへの関心が高まっている。
+自然言語処理における大規模言語モデル（LLM）の出現に伴い、推薦システムを強化するためにこれらのモデルの力を利用することに関心が高まっている。
 In Data-Centric RSs, LLMs can serve as:
-データ中心のRSでは、LLMは次のような役割を果たす：
+データ中心のRSでは、LLMは次のような役割を果たす:
 
-• Recommendation models: Pre-trained LLMs can take as input a sequence that includes user profiles, item attributes, user-item interactions, and task instructions.
-
-- 推薦モデル： 事前に訓練されたLLMは、ユーザープロファイル、アイテムの属性、ユーザーとアイテムの相互作用、タスクの指示を含むシーケンスを入力として受け取ることができる。
+- **Recommendation models**: Pre-trained LLMs can take as input a sequence that includes user profiles, item attributes, user-item interactions, and task instructions.
+  推薦モデル： 事前に訓練されたLLMは、ユーザプロファイル、アイテムの属性、ユーザとアイテムの相互作用、タスクの指示を含むsequenceを入力として受け取ることができる。
   Then LLMs analyze this information to understand the context and the user’s preferences.
-  そしてLLMはこの情報を分析し、文脈とユーザーの好みを理解する。
+  そしてLLMはこの情報を分析し、文脈とユーザの好みを理解する。
   Based on this understanding, LLMs can generate a sequence that directly represents the recommendation results, which could be a list of items, a ranking of items, or even detailed descriptions or reasons for the recommendations.
   この理解に基づいて、LLMは、アイテムのリスト、アイテムのランキング、あるいは詳細な説明や推薦理由など、推薦結果を直接表すシーケンスを生成することができる。
   However, using LLMs as recommendation models also raises some challenges such as limited token length or latency, especially for users with a large amount of interactions.
@@ -589,37 +594,38 @@ In Data-Centric RSs, LLMs can serve as:
   With data denoising techniques to improve the design of input sequences, the ability of LLMs as recommendation models can be further explored.
   入力シーケンスの設計を改善するデータノイズ除去技術により、推薦モデルとしてのLLMの能力をさらに探求することができる。
 
-• Data processors: As mentioned before, given the extensive knowledge base and powerful reasoning capabilities of LLMs, some recent work has attempted to augment data with LLMs, for example, through carefully designed prompts, LLMRec Wei et al.(2023) employs three simple yet effective LLM-based data augmentation strategies to augment implicit feedback, user profiles, and item attributes, respectively.
-
-- データプロセッサ： 例えば、LLMRec Wei et al.(2023)は、暗黙のフィードバック、ユーザープロファイル、アイテム属性をそれぞれ拡張するために、3つのシンプルかつ効果的なLLMベースのデータ拡張戦略を採用している。
+- **Data processors**: As mentioned before, given the extensive knowledge base and powerful reasoning capabilities of LLMs, some recent work has attempted to augment data with LLMs, for example, through carefully designed prompts, LLMRec Wei et al.(2023) employs three simple yet effective LLM-based data augmentation strategies to augment implicit feedback, user profiles, and item attributes, respectively.
+  データプロセッサ： 例えば、LLMRec (Wei et al.(2023))は、慎重に設計されたプロンプトを介して、**暗黙のフィードバック、ユーザプロファイル、アイテムの属性をそれぞれ拡張するために、3つのシンプルで効果的なLLMベースのdata augmentation戦略**を採用している。
   Moving forward, it’s crucial to investigate the capability of LLMs in managing tasks such as data denoising and data debiasing.
-  今後、LLMがデータノイズ除去やデータデビアスのようなタスクを管理する能力を調査することは極めて重要である。
+  今後、LLMがdata denoisingやdata debiasingなどのタスクを管理する能力を調査することが重要である。
   This could pave the way for LLMs to harmonize Data-Centric RSs effectively.
-  これは、LLMがデータ中心RSを効果的に調和させる道を開く可能性がある。
+  これは、LLMがデータ中心型RSを効果的に調和させるための道を開くかもしれない。
 
-## 5.3. Automatic Data-Centric RSs 自動データ中心RS
+## 5.3. Automatic Data-Centric RSs 自動データ中心型RS
 
 Automatic machine learning (AutoML) He et al.(2021) refers to the process of automating the end-to-end process of applying machine learning to real-world problems, which typically involves automating a variety of tasks that are part of the machine learning workflow.
-自動機械学習（AutoML）He et al.(2021)は、実世界の問題に機械学習を適用するエンド・ツー・エンドのプロセスを自動化するプロセスを指し、通常、機械学習ワークフローの一部である様々なタスクの自動化を伴う。
+自動機械学習（AutoML）(He et al.(2021))は、実世界の問題に機械学習を適用するエンド・ツー・エンドのプロセスを自動化するプロセスを指し、通常、機械学習ワークフローの一部である様々なタスクの自動化を伴う。
 In the context of Data-Centric RSs, these tasks encompass data augmentation, data denoising, and data debiasing.
-データ中心RSの文脈では、これらのタスクは、データの増強、データのノイズ除去、データのデバイアシングを含む。
+データ中心RSの文脈では、これらのタスクは、data augmentation、data denoising、data debiasingを含む。
 Consequently, AutoML can automatically streamline and enhance the efficiency of these tasks, enabling more accurate recommendations, which is of great significance in practice.
 その結果、AutoMLはこれらの作業を自動的に合理化し、効率化することができ、より正確な推薦を可能にする。
 
-## 5.4. Transparent Data-Centric RSs 透明データ中心RS
+## 5.4. Transparent Data-Centric RSs 透明データ中心型RS
 
 Transparent Data-Centric RSs refer to Data-Centric RSs that not only offer enhanced data for model training but also provide insights into how and why particular enhancements are made, thereby allowing users and developers to understand the underlying decision-making processes.
-透明なデータ中心RSとは、モデルトレーニングのために強化されたデータを提供するだけでなく、特定の強化がどのように行われ、なぜ行われたのかについての洞察も提供するデータ中心RSのことで、これによりユーザーや開発者は基本的な意思決定プロセスを理解することができる。
+**Trasparent Data-Centric RSsは、モデルトレーニングのための強化されたデータを提供するだけでなく、特定の強化がどのように、なぜ行われたのかについての洞察を提供し、ユーザや開発者が基礎となる意思決定プロセスを理解することを可能にするData-Centric RSsを指す**。(説明可能な、解釈可能な、みたいな感じ??:thinking:)
 Research in transparent Data-Centric RSs is tackling complex challenges, such as the trade-off between transparency and complexity, ensuring user privacy while providing explanations, and developing standards for explainability and interpretability.
-透明性の高いデータ中心型RSの研究は、透明性と複雑性のトレードオフ、説明を提供しながらユーザーのプライバシーを確保すること、説明可能性と解釈可能性の基準を開発することなど、複雑な課題に取り組んでいる。
+透明性の高いデータ中心型RSの研究は、透明性と複雑性のトレードオフ、説明を提供しながらユーザのプライバシーを確保すること、説明可能性と解釈可能性の基準を開発することなど、複雑な課題に取り組んでいる。
 
 # 6. Conclusion 結論
 
 In this survey, we presented a comprehensive literature review of Data-Centric RSs.
-本サーベイでは、データ中心型RSに関する包括的な文献レビューを行った。
+本サーベイでは、Data-Centric RSsの包括的な文献レビューを紹介した。
 We systematically analyzed three critical issues inherent in recommendation data and subsequently categorized existing works in accordance with their focus on these issues.
-我々は、レコメンデーションデータに内在する3つの重要な問題を体系的に分析し、その後、これらの問題への焦点に従って既存の研究を分類した。
+我々は、推薦データに固有の3つの重要な問題を体系的に分析し、その後、これらの問題に焦点を当てた既存の研究をカテゴリー分けした。
 Additionally, we point out a range of prospective research directions to advance Data-Centric RSs.
-さらに、データ中心型RSを発展させるための様々な研究の方向性を指摘する。
+さらに、Data-Centric RSsを進化させるためのさまざまな将来の研究方向を指摘した。
 We expect that this survey can help readers easily grasp the big picture of this emerging field and equip them with the basic techniques and valuable future research ideas.
 このサーベイが、読者がこの新興分野の全体像を容易に把握し、基本的なテクニックと貴重な将来の研究アイデアを身につける一助となることを期待している。
+
+<!-- ここまで読んだ! -->
