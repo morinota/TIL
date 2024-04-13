@@ -24,6 +24,9 @@ def run_t_test(
     t_stat, p_value = stats.ttest_ind(control, treatment, equal_var=False)
     is_significant = p_value < acceptable_false_positive_rate
 
+    control_mean = control.mean()
+    treatment_mean = treatment.mean()
+
     # 結果を出力
     print(f"============={metric_col}============")
     print(
@@ -35,8 +38,9 @@ def run_t_test(
     print(
         f"p-value0={p_value}, is_significant={is_significant} (acceptable_false_positive_rate={acceptable_false_positive_rate})"
     )
-
-    percentage_diff = calc_percentage_diff(control.mean(), treatment.mean())
+    print(f"absolute_diff = {treatment_mean - control_mean:.2f}")
+    print(f"relative_metric_change = {treatment_mean / control_mean:.2f}倍")
+    percentage_diff = calc_percentage_diff(control_mean, treatment_mean)
     if percentage_diff > 0:
         print(f"percentage_diff = +{percentage_diff:.2f}%")
     else:

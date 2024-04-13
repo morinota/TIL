@@ -46,7 +46,8 @@ title-slide-attributes:
 
 ::: {.column width="50%"}
 
-![([booking.comの論文](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)より引用) 図4. Relative difference in a business metric vs relative performance difference between a baseline model and a new one.](https://nryotaro.dev/150_successful_machine_learning_models/fig4.png)
+![([booking.comの論文](https://blog.kevinhu.me/2021/04/25/25-Paper-Reading-Booking.com-Experiences/bernardi2019.pdf)より引用) 図4. Relative difference in a business metric vs relative performance difference between a baseline model and a new one.](https://i.imgur.com/TZEaYJu.png)
+
 
 「オフラインでのモデル性能の推定値(横軸)」と「RCTで観察されたビジネス指標(縦軸)」に相関がない。
 
