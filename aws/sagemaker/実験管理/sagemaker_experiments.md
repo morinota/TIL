@@ -50,9 +50,9 @@
 
 - Sagemaker Experiments SDKをインストールする必要がある。
   - `pip install sagemaker-experiments`
-  - でも2024年現在では、Sagemaker Python SDKを使えばいいのかも...! どうやら今は統合されてるっぽい...!:thinking:
+  - でも2024年現在では、Sagemaker Python SDKを使えばいいのかも...! どうやら今は統合されてるから、後者だけでOK...!:thinking:
 
-# ちなみに情報たち
+# 以下は「ちなみに」な情報たち
 
 ## (ちなみに) Sagemaker ProcessingJobと比較したTrainingJobの利点??
 

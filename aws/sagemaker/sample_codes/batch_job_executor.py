@@ -70,8 +70,7 @@ class SagemakerTrainingJobExecutor(BatchJobExecutorInterface):
         job_name = f"{self.training_job_name}-{execution_datetime}"
         # channell名を残しておく
         inputs = {
-            channel: TrainingInput(s3_data=input_s3uri)
-            for channel, input_s3uri in input_s3uri_by_dataname.items()
+            channel: TrainingInput(s3_data=input_s3uri) for channel, input_s3uri in input_s3uri_by_dataname.items()
         }
         print(inputs)
         self.estimator.fit(inputs, job_name=job_name)
@@ -126,9 +125,7 @@ def run_sagemaker_processing_job(
     if source_code_dir_path:
         assert (
             source_code_dir_path / entry_point_script_path
-        ).exists(), (
-            "entry_point_script_pathは、source_dir_pathからの相対パスで指定してください"
-        )
+        ).exists(), "entry_point_script_pathは、source_dir_pathからの相対パスで指定してください"
 
     boto3_session = boto3.Session(profile_name=PROFILE_NAME)
     sagemaker_session = sagemaker.Session(boto_session=boto3_session)
