@@ -1,8 +1,8 @@
-# Bayesian Personalized Ranking from Implicit Feedback
+# Hidden Technical Debt in Machine Learning Systems
 
 published date: hogehoge September 2022,
 authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
-url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
+url(paper): https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html
 (勉強会発表者: morinota)
 
 ---
@@ -10,16 +10,68 @@ url(paper): https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
 n週連続推薦システム系論文読んだシリーズ hoge週目の記事になります。
 ちなみにhoge-1週目は [タイトル](url) でした!
 
-## どんなもの?
+## 導入: MLシステムと技術的負債
 
-## 先行研究と比べて何がすごい？
+### 技術的負債ってなんだっけ?
 
-## 技術や手法の肝は？
+- technical debt(技術的負債)とは?
+  - 1992年にWard Cunningham(ウォード・カニンガム)が提唱した隠喩表現(metaphor)。
+  - ソフトウェア開発において、**短期的な利益を優先することで、長期的に追加のコストが発生する**ような設計や実装のこと?
+    - この概念は、金融の負債に例えられ、将来的にその借金を返済する必要があるとされ、返済しないと利子がついていくというもの。
+- 一般に技術的負債は、以下のアプローチ等によって返済できる:
+  - refatoring code
+  - improving unit tests
+  - deleting dead code
+  - reduce dependencies
+  - tightening APIs
+  - improving documentation
+- 返済の目的は、将来の改良を可能にし(=Easier to changeだ!:thinking:)、エラーを減らし、運用・保守性を向上させること(i.e. ソフトウェアの持続可能性を高めること...??:thinking:)
 
-## どうやって有効だと検証した?
+### MLシステム特有の技術的負債がある話
 
-## 議論はある？
+- 本論文では、MLシステムには、従来のソフトウェア開発の技術的負債に加え、**MLシステム特有の技術的負債**が存在すると主張している。
+  - この負債は、code levelではなくsystem levelに存在するため、検出が難しいかもしれない。
 
-## 次に読むべき論文は？
+### 本論文の目的
 
-## お気持ち実装
+- 本論文は新しいMLアルゴリズムを提供するものではない。**実践的に長期的に考慮すべき、MLシステムのトレードオフについてコミュニティの意識を高めること**を目的としている。
+
+## MLシステム特有の技術的負債1: Complex Models Erode Boundaries
+
+## MLシステム特有の技術的負債2: Data Dependencies Cost More than Code Dependencies
+
+## MLシステム特有の技術的負債3: Feedback Loops
+
+## MLシステム特有の技術的負債4: ML-Systems Anti-Patterns
+
+## MLシステム特有の技術的負債5: Configuration Debt
+
+## MLシステム特有の技術的負債6: Dealing with Changes in the External World
+
+## その他のMLシステム特有の技術的負債
+
+## 結論
+
+- 技術的負債は有用なメタファー(隠喩)だが、残念ながら、長期にわたって追跡できる厳密な指標を提供するものではない。(定量評価できないから??:thinking:)
+- **システムの技術的負債をどのように測定し、この負債の全体的なコストを評価するのか?**
+  - チームがまだ素早く動くことができるということだけが、低い負債や良い実践の証拠となるわけではない。
+  - なぜなら、負債の全体的なコストは時間の経過とともに明らかになるから...!
+    - (今素早く開発できるから負債はない、とは言えないって事か...!:thinking:)
+- 技術的負債を考える上で有用な質問たち:
+
+  - 1. **全く新しいアルゴリズムのアプローチを、どの程度簡単にfull scalseでテストできるか?** (test at full scaleってE2Eテストのことかな...?:thinking:)
+  - 2. 全てのdata dependenciesの接続状況を把握できているか??
+    - (メモ) transitive closure(推移閉包) = グラフ理論における、要素間の全ての直接的及び間接的な接続のこと。
+    - よって、技術的負債の文脈でのこの質問は、**システム内の全てのデータ依存関係の直接的及び間接的な接続をちゃんと理解できているか否か、ちゃんと答えられる程度にデータ依存関係が少ない事が重要**だよ、みたいな意図???
+  - 3. システムに対する新たな変更の影響を、どの程度正確に測定できるか??
+    - (ちゃんと監視できる状態にあるかってことか...!)
+  - 4. あるモデルやsignal (=モデルによる成果物など!) を改善すると、他のモデルやsignalが劣化するのか??
+    - (機能間の独立性とか、data dependencyがシンプルじゃないとこの質問に答えられない...?:thinking:)
+  - 5. チームの新しいメンバーを、いかに早くスピードアップさせることができるか??
+    - (システム全体の複雑性を管理できていたら、新メンバーのオンボーディングもスムーズにできるってことか...!:thinking:)
+
+- 最も重要な洞察:「**技術的負債は、エンジニアと研究者の両方が認識している必要がある...!**」
+  - **システムの複雑さを大幅に増大させる代償として、小さな精度の利益を得る研究ソリューションは、賢明なpracticeであることはほとんど無い**。(うんうん...!:thinking:)
+- ML関連の技術的負債を返済する為には、特定のcommitmentが必要。
+  - -> チーム文化が重要。
+  - **負債を回避するor返済する為の努力を認識し、優先し、報酬を与える事は、成功するMLチームの長期的な健康にとって重要**...!!

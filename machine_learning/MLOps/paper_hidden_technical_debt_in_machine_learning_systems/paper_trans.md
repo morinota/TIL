@@ -45,7 +45,7 @@ Hidden debt is dangerous because it compounds silently.
 In this paper, we argue that ML systems have a special capacity for incurring technical debt, because they have all of the maintenance problems of traditional code plus an additional set of ML-specific issues.
 この論文では、**MLシステムには技術的負債が発生する特別な能力があると主張する**。なぜなら、MLシステムには、**従来のコードのメンテナンスの問題に加えて、ML特有の問題があるから**である。
 This debt may be difficult to detect because it exists at the system level rather than the code level.
-この負債は、コード・レベルではなくシステム・レベルに存在するため、検出が困難な場合がある。(ほうほう...?)
+この負債は、コードレベルではなくシステムレベルに存在するため、検出が困難かもしれない。
 Traditional abstractions and boundaries may be subtly corrupted or invalidated by the fact that data influences ML system behavior.
 従来のabstractions(抽象化)やboundaries(境界)は、データがMLシステムの挙動に影響を与えるという事実によって、微妙に破壊されたり無効化されたりする可能性がある。
 (boundariesって、モジュラー性の向上とか関心の分離とか、ってイメージであってるかな??:thinking:)
@@ -685,7 +685,7 @@ We hope that this paper may serve to encourage additional development in the are
 Perhaps the most important insight to be gained is that technical debt is an issue that engineers and researchers both need to be aware of.
 **おそらく得られる最も重要な洞察は、技術的負債は、エンジニアと研究者の両方が認識している必要がある問題である**ということだ。
 Research solutions that provide a tiny accuracy benefit at the cost of massive increases in system complexity are rarely wise practice.
-**システムの複雑さを大幅に増大させる代償として、微小な精度の利益を提供する研究ソリューションは、滅多に賢明な実践ではない**。(うんうん...!:thinking:)
+システムの複雑さを大幅に増大させる代償として、小さな精度の利益を得る研究ソリューションは、賢明なpracticeであることはほとんど無い。
 Even the addition of one or two seemingly innocuous data dependencies can slow further progress.
 一見何の問題もなさそうなデータの依存関係が1つか2つ追加されただけでも、その後の進展が遅れる可能性がある。
 
