@@ -11,60 +11,63 @@ Recommendation as Language Processing (RLP): A Unified Pretrain, Personalized Pr
 ## abstract 抄録
 
 For a long time, different recommendation tasks typically require designing task-specific architectures and training objectives.
-長い間、様々な推薦タスクは通常、タスク固有のアーキテクチャとトレーニング目標を設計する必要があった。
+長い間、**様々な推薦タスクは通常、タスク固有のアーキテクチャとトレーニング目標を設計する必要があった**。
 As a result, it is hard to transfer the learned knowledge and representations from one task to another, thus restricting the generalization ability of existing recommendation approaches, e.g., a sequential recommendation model can hardly be applied or transferred to a review generation method.
 その結果、学習した知識や表現をあるタスクから別のタスクに移行することが難しく、既存の推薦アプローチの汎化能力が制限される。例えば、逐次推薦モデルをレビュー生成手法に適用したり移行したりすることは難しい。
 To deal with such issues, considering that language can describe almost anything and language grounding is a powerful medium to represent various problems or tasks, we present a flexible and unified text-to-text paradigm called “Pretrain, Personalized Prompt, and Predict Paradigm” (P5) for recommendation, which unifies various recommendation tasks in a shared framework.
-このような問題に対処するために、言語がほとんどのものを記述することができ、言語接地が様々な問題やタスクを表現するための強力な媒体であることを考慮し、我々は、様々な推薦タスクを共有フレームワークで統一する、柔軟で統一された推薦のための "Pretrain, Personalized Prompt, and Predict Paradigm"（P5）と呼ばれるテキスト-to-テキストパラダイムを提示する。
+このような問題に対処するために、言語がほとんどのものを記述することができ、言語接地が様々な問題やタスクを表現するための強力な媒体であることを考慮し、我々は、**様々な推薦タスクを共有フレームワークで統一する**、柔軟で統一された推薦のための **"Pretrain, Personalized Prompt, and Predict Paradigm"（P5）**と呼ばれる**text-to-textパラダイム**を提案する。(paradigmはざっくり方法論、みたいなイメージ?)
 In P5, all data such as user-item interactions, user descriptions, item metadata, and user reviews are converted to a common format — natural language sequences.
-P5では、ユーザーとアイテムのインタラクション、ユーザーの説明、アイテムのメタデータ、ユーザーレビューなどのすべてのデータは、自然言語シーケンスという共通のフォーマットに変換される。
+P5では、ユーザとアイテムのインタラクション、ユーザの説明、アイテムのメタデータ、ユーザのレビューなどの**すべてのデータが、共通のフォーマットである自然言語シーケンスに変換**される。
+Then, P5 learns to generate personalized recommendations by predicting the next tokens in the sequences.
 The rich information from natural language assists P5 to capture deeper semantics for personalization and recommendation.
-自然言語からの豊富な情報は、P5がパーソナライゼーションとレコメンデーションのために、より深いセマンティクスを把握するのを助ける。
+自然言語からの豊富な情報は、P5がパーソナライゼーションと推薦のためのより深い意味を捉えるのを支援する。
 Specifically, P5 learns different tasks with the same language modeling objective during pretraining.
 具体的には、P5は事前学習中に同じ言語モデリング目的で異なるタスクを学習する。
 Thus, it serves as the foundation model for various downstream recommendation tasks, allows easy integration with other modalities, and enables instruction-based recommendation based on prompts.
-また、他のモダリティとの統合も容易であり、プロンプトに基づく指示ベースの推薦も可能である。
+そのため、**P5は、さまざまな下流の推薦タスクの基礎モデルとして機能し**、他のmodalitiesとの簡単な統合を可能にし、プロンプトに基づいた指示に基づく推薦を実現する。(ここでmodalityは、他のdomainとかの意味だろうか...??:thinking:)
 P5 advances recommender systems from shallow model to deep model to large model, and will revolutionize the technical form of recommender systems towards universal recommendation engine.
-P5は、レコメンダーシステムを浅いモデルから深いモデル、そして大きなモデルへと進化させ、普遍的なレコメンダーエンジンへとレコメンダーシステムの技術形態を変革します。
+P5は、推薦システムを浅いモデルから深いモデル、大規模モデルに進化させ、普遍的な推薦エンジンに向けて推薦システムの技術形態を革命的に変えるだろう。
 With adaptive personalized prompt for different users, P5 is able to make predictions in a zero-shot or few-shot manner and largely reduces the necessity for extensive fine-tuning.
 さまざまなユーザーに適応的にパーソナライズされたプロンプトにより、P5はゼロショットまたは数ショットで予測を行うことができ、大規模な微調整の必要性を大幅に減らすことができる。
 On several recommendation benchmarks, we conduct experiments to show the effectiveness of P5.
 いくつかの推薦ベンチマークにおいて、P5の有効性を示す実験を行った。
 To help advance future research on Recommendation as Language Processing (RLP), Personalized Foundation Models (PFM), and Universal Recommendation Engine (URE), we release the source code, dataset, prompts, and pretrained P5 model at https://github.com/jeykigung/P5.
-言語処理としてのレコメンデーション(RLP)、パーソナライズド・ファウンデーション・モデル(PFM)、ユニバーサル・レコメンデーション・エンジン(URE)に関する今後の研究を促進するため、ソースコード、データセット、プロンプト、事前学習済みP5モデルをhttps://github.com/jeykigung/P5。
-Meanwhile, P5 is also hosted on Hugging Face at https://huggingface.co/makitanikaze/P5.
-一方、P5はハギング・フェイス（https://huggingface.co/makitanikaze/P5）でもホストされている。
+Recommendation as Language Processing(RLP, 言語処理としてのレコメンデーション)、Personalized Foundation Models(PFM, パーソナライズされた基礎モデル)、Universal Recommendation Engine(URE, 普遍的な推薦エンジン)に関する将来の研究を進めるために、ソースコード、データセット、プロンプト、事前学習済みP5モデルを公開している。
+
+<!-- ここまで読んだ! -->
 
 # Introduction はじめに
 
 For the past decades, recommender systems have witnessed significant advancements and played an essential role in people’s daily life, helping their micro decisions and fulfilling their demands with outstanding accuracy.
-過去数十年にわたり、レコメンダー・システムは大きな進歩を遂げ、人々の日常生活において重要な役割を果たしてきた。
+過去数十年にわたり、レコメンダーシステムは著しい進歩を遂げ、人々の日常生活において重要な役割を果たしてきた。優れた精度で人々のマイクロ意思決定を支援し、要求を満たしてきた。
 In retrospect, we can summarize the development trend of modern recommender systems – towards a more comprehensive system that accommodates diverse features and a wide spectrum of application scenarios.
-振り返ってみると、現代のレコメンダーシステムの発展傾向は、多様な機能と幅広い応用シナリオに対応する、より包括的なシステムに向かっていると言える。
+振り返ってみると、現代のレコメンダーシステムの発展傾向を要約すると、多様な特徴と幅広いアプリケーションシナリオに対応する包括的なシステムに向かっている。
+
 On one hand, feature engineering and learning in recommender systems has evolved greatly from simple to complex.
-一方では、推薦システムにおける特徴工学と学習は、単純なものから複雑なものへと大きく進化してきた。
+一方では、推薦システムにおけるfeature engineeringと学習は、単純から複雑へと大きく進化してきた。
 In early ages, recommender systems typically adopt logistic regression or collaborative filtering [25, 35, 50, 52] which utilize user-item interaction records to model users’ behavioral patterns.
-初期のレコメンダーシステムでは、ユーザーの行動パターンをモデル化するために、ユーザーとアイテムのインタラクション記録を利用するロジスティック回帰や協調フィルタリング[25, 35, 50, 52]が一般的に採用されている。
+初期のレコメンダーシステムでは、ユーザとアイテムの相互作用レコードを利用してユーザの行動パターンをモデル化するロジスティック回帰や協調フィルタリング[25, 35, 50, 52]が一般的であった。(うんうん)
 Later on, the contextual features such as user profile and item metadata are further integrated into the system through more sophisticated models such as factorization machines [48] and GBDT [20].
-その後、因数分解マシン[48]やGBDT[20]のような、より洗練されたモデルを通じて、ユーザープロファイルやアイテムのメタデータのような文脈的特徴がさらにシステムに統合される。
+その後、因数分解マシン[48]やGBDT[20]のような、より洗練されたモデルを通じて、ユーザプロファイルやアイテムのメタデータのような文脈的特徴がさらにシステムに統合される。
 Recently, deep neural network models [3, 5, 19, 74] facilitate crossing and combination among even more diverse and sophisticated features.
 最近では、ディープニューラルネットワークモデル[3, 5, 19, 74]が、さらに多様で洗練された特徴間の交差や組み合わせを容易にしている。
 As a result, these models gain better representation ability compared with traditional feature engineering based approaches.
-その結果、これらのモデルは、従来の特徴工学に基づくアプローチと比較して、より優れた表現能力を獲得している。
+その結果、これらのモデルは、従来のfeature engineeringに基づくアプローチと比較して、より優れた表現能力を獲得している。
+
 On the other hand, more recommendation tasks have emerged.
 その一方で、より多くの推薦タスクが出現している。
 Except for classical rating prediction and direct user-item matchingbased recommendation tasks, recent works are broadening the spectrum to new tasks and scenarios such as sequential recommendation [21, 60, 63, 80], conversational recommendation [8, 61, 76], explainable recommendation [17, 31, 62, 70, 75, 77] and so on.
-古典的な評価予測やユーザーとアイテムの直接マッチングに基づく推薦タスクを除き、最近の研究は、逐次推薦[21, 60, 63, 80]、会話型推薦[8, 61, 76]、説明可能な推薦[17, 31, 62, 70, 75, 77]などの新しいタスクやシナリオにスペクトルを広げている。
+古典的な評価予測や直接的なユーザアイテムマッチングに基づく推薦タスクに加えて、最近の研究は、逐次推薦[21, 60, 63, 80]、会話型推薦[8, 61, 76]、説明可能な推薦[17, 31, 62, 70, 75, 77]など、新しいタスクやシナリオにスペクトルを広げている。(ふむふむ...!)
 While the approaches to the aforementioned recommendation tasks are often proposed separately, there is an evident trend of utilizing multiple recommendation tasks to jointly learn the transferable representations [31, 56, 57, 72].
-前述の推薦タスクに対するアプローチは別々に提案されることが多いが、複数の推薦タスクを利用して伝達可能な表現を共同で学習する傾向が顕著である[31, 56, 57, 72]。
+前述の推薦タスクに対するアプローチは、通常別々に提案されるが、**transferable(転送可能な)表現を共同で学習するために複数の推薦タスクを利用する傾向**が明らかになっている。
 Although existing recommender systems achieved great success, there is still a considerable gap between current solutions and the foreseeable intersection of the aforementioned trends – a comprehensive recommender system that can accommodate diverse features and different types of tasks.
-既存のレコメンダーシステムは大きな成功を収めたが、現在の解決策と、前述のトレンドの予見可能な交差点、つまり多様な特徴や異なるタイプのタスクに対応できる包括的なレコメンダーシステムとの間には、まだかなりの隔たりがある。
+既存のレコメンダーシステムは大きな成功を収めたが、現在のソリューションと前述のトレンドの予測される交差点の間には、多様な特徴と異なるタイプのタスクに対応できる包括的なレコメンダーシステムとの間には、かなりのギャップがある。
 Since recommendation tasks usually share a common user–item pool and have overlapping contextual features, we believe it is promising to merge even more recommendation tasks into a unified framework so that they can implicitly transfer knowledge to benefit each other and enable generalization to other unseen tasks.
-推薦タスクは通常、共通のユーザーアイテムプールを共有し、重複する文脈的特徴を持つので、我々は、さらに多くの推薦タスクを統一されたフレームワークに統合することで、暗黙のうちに知識を移転し、互いに利益をもたらし、他の未知のタスクへの汎化を可能にすることができると考えている。
+推薦タスクは通常、共通のユーザアイテムプールを共有し、重複するcontextual featuresを持っているため、さらに多くの推薦タスクを統一されたフレームワークに統合することが有望であると考えている。これにより、それらは互いに利益をもたらすために知識を暗黙的に転送し、他の未見のタスクに汎化することができる。
 Inspired by the recent progress in multitask prompt-based training [1, 51, 67], in this work, we propose a unified “Pretrain, Personalized Prompt & Predict Paradigm” (denoted as P5).
 マルチタスクのプロンプトに基づくトレーニング[1, 51, 67]の最近の進歩に触発され、本研究では、統一された「Pretrain, Personalized Prompt & Predict Paradigm」（P5と表記）を提案する。
 We show that P5 is possible to learn multiple recommendation related tasks together through a unified sequence-to-sequence framework by formulating these problems as prompt-based natural language tasks, where user–item information and corresponding features are integrated with personalized prompt templates as model inputs.
-P5では、これらの問題をプロンプトベースの自然言語タスクとして定式化し、ユーザアイテム情報と対応する特徴量をパーソナライズされたプロンプトテンプレートと統合してモデル入力とすることで、複数のレコメンデーションに関連するタスクを、統一されたsequence-to-sequenceフレームワークを通じて学習することが可能であることを示す。
+P5は、ユーザ-アイテム情報と対応する特徴量が、モデル入力としてパーソナライズされたプロンプトテンプレートと統合された、プロンプトベースの自然言語タスクとしてこれらの問題を定式化することで、統一されたシーケンス-シーケンスフレームワークを通じて複数の推薦関連タスクを一緒に学習することが可能であることを示す。
 P5 sheds light on a promising technical route for unified and instruction-based recommendation.
 P5は、統一された指導に基づく推薦のための有望な技術的ルートに光を当てる。
 It has three main advantages: 1) P5 deeply immerses recommendation models into a full language environment, where all recommendation tasks are reformulated to NLP tasks with the help of personalized prompts.
@@ -82,10 +85,11 @@ We also conduct several ablation studies to justify the design details of P5 fra
 Overall, our main contributions can be outlined as follows: • To the best of our knowledge, this is the first work to propose a unified “Pretrain, Personalized Prompt & Predict Paradigm” which integrates various recommendation related tasks into a shared conditional language generation framework.
 全体として、我々の主な貢献は以下のように概説できる： - 我々の知る限り、これは様々な推薦関連タスクを共有条件言語生成フレームワークに統合する、統一された「Pretrain, Personalized Prompt & Predict Paradigm」を提案する最初の研究である。
 • We create a collection of personalized prompts that cover five different recommendation task families.
+
 - 私たちは、5つの異なる推薦タスクファミリーをカバーするパーソナライズされたプロンプトのコレクションを作成します。
-• According to the experimental results, P5 achieves promising performances on the five task families when taking seen prompt templates as model inputs.
+  • According to the experimental results, P5 achieves promising performances on the five task families when taking seen prompt templates as model inputs.
 - 実験結果によると、プロンプトテンプレートをモデル入力とした場合、P5は5つのタスクファミリーで有望な性能を達成した。
-• P5 shows sufficient zero-shot generalization ability for novel personalized prompts and new items in unseen domains.
+  • P5 shows sufficient zero-shot generalization ability for novel personalized prompts and new items in unseen domains.
 - P5は、新規のパーソナライズされたプロンプトや、未知の領域における新しいアイテムに対して、十分なゼロショット汎化能力を示す。
 
 # Related Work 関連作品
@@ -255,7 +259,7 @@ Hence, in this paper, we adopt multiple sub-word units to represent a user or it
 Afterwards, the text encoder takes the sum of the aforementioned three embeddings e = [𝑒1, · · · , 𝑒𝑛] and outputs their contextualized representations t = [𝑡1, · · · , 𝑡𝑛] = E (e).
 その後、テキストエンコーダは、前述の3つの埋め込みe = [↪Ll_1D452, - - , 𝑒𝑛]の合計を取り、それらの文脈化表現t = [↪Ll_1D461, - - , 𝑡𝑛] = E (e)を出力します。
 The decoder D (·) then attends to both the previously generated tokens y<𝑗 and the encoder output t and predicts the probability distribution of future tokens: 𝑃𝜃 y𝑗 | y<𝑗 , x  = D (y<𝑗 , t).
-デコーダ D (-) は、以前に生成されたトークン y<_1D457 とエンコーダの出力 t の両方に注目し、将来のトークンの確率分布を予測する： 𝑃 | y𝑗 , x = D (y<𝑗 , t)。
+デコーダ D (-) は、以前に生成されたトークン y<\_1D457 とエンコーダの出力 t の両方に注目し、将来のトークンの確率分布を予測する： 𝑃 | y𝑗 , x = D (y<𝑗 , t)。
 During the pretraining stage, P5 learns the model parameters 𝜃 by minimizing the negative log-likelihood of label tokens y conditioned on input text x in an
 事前学習段階では、P5は入力テキストxを条件とするラベルトークンyの負の対数尤度を最小化することで、モデルパラメータŰを学習する。
 
@@ -496,7 +500,7 @@ Finally, Prompts 5-1, 5-4, 5-5 and 5-8 are applied to evaluate the direct recomm
 For binary question prompts (5-1 & 5-4), which are discriminative prompts, we use the softmax generation probability of “yes” to rank the candidate items.
 識別プロンプトである2値質問プロンプト（5-1および5-4）については、「はい」のソフトマックス生成確率を使用して、候補項目のランク付けを行う。
 For open question prompts (5-5 & 5-8), which are generative prompts, we use beam-search (Eq.(2)) to generate the top-𝑘 list.
-生成プロンプトであるオープンクエスチョンプロンプト（5-5 & 5-8）については、ビームサーチ（式(2)）を使用してトップ_1リストを生成する。
+生成プロンプトであるオープンクエスチョンプロンプト（5-5 & 5-8）については、ビームサーチ（式(2)）を使用してトップ\_1リストを生成する。
 The results are presented in Table 7.
 結果を表7に示す。
 From the table, we can see that P5-B and P5-S have great advantages over BPR-MF and BPR-MLP on all three datasets.
