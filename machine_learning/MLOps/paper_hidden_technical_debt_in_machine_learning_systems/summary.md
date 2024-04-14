@@ -98,6 +98,15 @@ n週連続推薦システム系論文読んだシリーズ hoge週目の記事�
 
 ## MLシステム特有の技術的負債2: Data Dependencies Cost More than Code Dependencies
 
+- 既存文献では、古典的なソフトウェアエンジニアリングにおいて、「**depencency debt(依存性負債)がコードの複雑さと技術的負債の主要な要因である**」と指摘している。
+- 本論文では、MLシステムにおいて、data dependenciesが同様の負債を持ち、かつそれを検出するのがより困難かもしれない、ということを主張している。
+  - code dependenciesは、コンパイラやlint tool等の静的解析ツールで検出できる。
+  - data depencenciesに対する同様のツールが存在しなければ、大規模やdata depencency chainが簡単に発生し得る。
+
+### Unstable data dependencies(不安定なデータ依存関係):
+
+### Underutilized data dependencies(十分に活用されていないデータ依存関係):
+
 ## MLシステム特有の技術的負債3: Feedback Loops
 
 ## MLシステム特有の技術的負債4: ML-Systems Anti-Patterns
