@@ -2,6 +2,24 @@
 
 - [Amazon SageMaker Data Wrangler で Snowflake データへの直接接続が可能に](https://aws.amazon.com/jp/about-aws/whats-new/2023/06/amazon-sagemaker-data-wrangler-direct-connection-snowflake-data/)
 - Sagemaker PipelinesとRedshiftの連携例: [Process Amazon Redshift data and schedule a training pipeline with Amazon SageMaker Processing and Amazon SageMaker Pipelines](https://aws.amazon.com/jp/blogs/machine-learning/process-amazon-redshift-data-and-schedule-a-training-pipeline-with-amazon-sagemaker-processing-and-amazon-sagemaker-pipelines/)
+- Amazon SageMaker Data Wranglerの公式docs:[Amazon SageMaker Data Wrangler](https://aws.amazon.com/jp/sagemaker/data-wrangler/)
+
+# Amazon SageMaker Data Wranglerとは??
+- Data Wranglerとは?
+  - Sagemaker Studio上の機能で、ML向けの前処理を行うサービス。
+  - ほとんどコーディングなしで、データ前処理と特徴量エンジニアリングを簡素化・効率化できる。
+  - また、様々なソース(ex. S3、Athena、Redshift)や40以上のサードパーティのデータソースにアクセスすることが可能。
+- SageMaker Data Wrangler(データラングラー)でできること:
+  - 1. **様々なデータソース**に迅速にアクセスしてデータを取得できる。
+    - データソースの例: Amazon Simple Storage Service [Amazon S3]、Amazon Athena、Amazon Redshift、AWS Lake Formation、Amazon EMR、Snowflake、and Databricks Delta Lake, etc.
+    - また、**SQLでデータソースへのクエリを記述しSagemakerにデータを直接importする事もできる**。
+  - 2. data insightの生成とデータ品質の把握:
+    - データ品質(欠損値, 重複行, データ型, etc.)を自動的に検証し、データの以上(外れ値, クラスの不均衡)を検出するのに役立つ、data quality and insights reportを生成できる。
+  - 3. データの効率的な変換:
+    - Data wranglerは、PySparkベースのbuild-inデータ変換機能を300種類以上提供している。
+      - ex. jsonファイルの平坦化, 重複行の削除, 平均値や中央値による欠損データ補完, one-hot encoding, etc.
+    - なので、コードを1行も記述せずにデータ変換するpreprocessを実装できる。
+    - また、PySpark, SQL, Pandasでカスタムtransformationsを実装する事もできる。
 
 # Sagemaker PipelinesとRedshiftの連携例:
 
