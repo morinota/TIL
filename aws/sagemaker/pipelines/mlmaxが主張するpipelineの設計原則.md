@@ -30,4 +30,5 @@ MLエンジニアやデータサイエンティストは、AWS上で本番環境
   - Traceabilityってなんだ?
 - 4. Code should provide consistent results whereever it is run(コードはどこで実行されても一貫した結果を提供する)
   - hogehoge
-- 5. Promote modularity in the development of Training and Inference solutions
+- 5. Promote modularity in the development of Training and Inference solutions(訓練と推論ソリューションの開発においてモジュール性を促進する)
+- 6. Use on-demand compute, only paying for it when you need it for a specific job(必要なときにのみコンピューティングをオンデマンドで使用し、特定のジョブに必要なときにのみ支払う)
