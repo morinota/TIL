@@ -96,115 +96,137 @@ This unrealistic offline evaluation setting may also stem from the simplified fo
 # 2. The Established RecSys Task Formulation 確立されたRecSysタスクの定式化
 
 In Chapter 1 of the Recommender Systems Handbook, the core recommendation computation is defined as the prediction of the utility (or evaluation) of an item for a user [Ricci et al.2022].
-レコメンダー・システム・ハンドブックの第1章では、核となる推薦計算は、ユーザーにとってのアイテムの効用（または評価）の予測として定義されている[Ricci et al.2022]。
+レコメンダー・システム・ハンドブックの第1章では、**core recommendation computation(核となる推薦計算?)が、ユーザにとってのアイテムのutility/evaluation (効用 or 評価)を予測することと定義されている**[Ricci et al.2022]。(うんうん...!)
 The degree of utility/evaluation of user u for item i is modeled as a (real-valued) function R(u, i).
-アイテムiに対するユーザーuの効用／評価の度合いは、（実数値）関数R（u, i）としてモデル化される。
+アイテム $i$ に対するユーザ $u$ の効用/評価の程度は、(実数値の)関数 $R(u, i)$ としてモデル化される。
 Then, “the fundamental task of a recommender system is to predict the value of R(u, i) over pairs of users and items”.
-そして、「レコメンダーシステムの基本的なタスクは、ユーザーとアイテムのペアに対してR(u, i)の値を予測すること」である。
-We also reference two very recent survey papers at the time of writing.4 In the survey on modern recommender systems using generative models, [Deldjoo et al.2024] consider “a setup where only the user-item interactions (e.g., ‘user A clicks item B’) are available, which is the most general setup studied in RecSys”.
-生成モデルを用いた最新のレコメンダーシステムに関するサーベイでは、[Deldjoo et al.2024]が「ユーザーとアイテムの相互作用（例えば'ユーザーAがアイテムBをクリックする'）のみが利用可能なセットアップ」を検討しており、これはRecSysで研究されている最も一般的なセットアップである。
-In the survey on self-supervised learning for recommendation, [Ren et al.2024] formally define the RecSys task with two primary sets: the set of users U and the set of items I.
-推薦のための自己教師付き学習に関するサーベイにおいて、[Ren et al.2024]はRecSysタスクを2つの主要な集合で正式に定義している： ユーザーの集合Uとアイテムの集合Iである。
-Then, an interaction matrix U × I is utilized to represent the recorded interactions between users and items, where a value 1 entry means a user has interacted with an item, and 0 otherwise.
-ここで、値1のエントリは、ユーザがアイテムと対話したことを意味し、そうでなければ0である。
-The definition in [Ren et al.2024] also includes a notion of auxiliary observed data denoted as X; an example is “a knowledge graph comprising external item attributes”.
-また、[Ren et al.2024]の定義には、Xと表記される補助的な観測データの概念も含まれている。例としては、「外部項目の属性からなる知識グラフ」がある。
-Then a recommendation model aims to estimate the likelihood of a user interacting with an item based on the interaction matrix, and the auxiliary observed data if available.
-そして、推薦モデルは、相互作用行列と、もしあれば補助的な観測データに基づいて、ユーザーがアイテムと相互作用する可能性を推定することを目的とする。
-The task definitions reviewed above seem to be a common understanding in the RecSys research community.
-上記のタスク定義は、RecSysの研究コミュニティでは共通の認識となっているようだ。
-But there are also papers that mention the issue of simplification or over-simplification in RecSys research.
-しかし、RecSys研究における単純化や単純化しすぎの問題に言及した論文もある。
-In Section 7 of the review paper on popularity bias in RecSys, [Klimashevskaia et al.2023] summarize a few observations regarding the research on popularity bias, including “no agreed-upon definition of what represents popularity bias” in RecSys.
-Klimashevskaiaら[2023]は、RecSysの人気バイアスに関するレビュー論文の第7節で、RecSysにおける「何が人気バイアスを表すのかについて合意された定義がない」など、人気バイアスに関する研究に関するいくつかの見解をまとめている。
-The authors further state that “these observations point to a certain over-simplification of the problem and an overly abstract research operationalization, a phenomenon which can also be observed in today’s research on fairness in recommender systems”.
-さらに著者らは、「これらの観察は、問題のある種の単純化しすぎと、過度に抽象的な研究運用を指し示している。
-In the perspective paper on offline evaluations, [Castells and Moffat 2022] consider the adoption of offline evaluation methodologies from experimental practice in Machine Learning (ML) and Information Retrieval (IR) to RecSys evaluation is a form of simplification.
-オフライン評価に関する展望論文[Castells and Moffat 2022]では、機械学習(ML)や情報検索(IR)の実験的実践からRecSys評価へのオフライン評価手法の採用は、単純化の一形態であると考察している。
-To my understanding, over-simplification commonly exists in research task formulation in RecSys [Sun 2023].
-私の理解では、RecSys[Sun 2023]の研究タスクの定式化には、単純化しすぎがよく見られる。
-Next, we zoom into the RecSys task formulation from three perspectives: user, model, and item.
-次に、RecSysタスクの定式化を3つの視点から見ていく： ユーザー、モデル、アイテムである。
+そして、「**レコメンダーシステムの基本的なタスクは、ユーザとアイテムのペアに対してR(u, i)の値を予測すること**」である。(うんうん...!)
 
-# 3. User, Model, and Item ユーザー、モデル、アイテム
+We also reference two very recent survey papers at the time of writing.4 In the survey on modern recommender systems using generative models, [Deldjoo et al.2024] consider “a setup where only the user-item interactions (e.g., ‘user A clicks item B’) are available, which is the most general setup studied in RecSys”.
+生成モデルを用いた現代のレコメンダーシステムに関するサーベイ論文[Deldjoo et al.2024]では、「ユーザーとアイテムの相互作用のみが利用可能なセットアップ(ex. 'ユーザAがアイテムBをクリック')を考慮しており、これはRecSysで研究されている最も一般的なセットアップである」と述べている。(interactionデータのみを使うタスクってこと?? これが現実的じゃないよねっていう主張かな...!:thinking:)
+In the survey on self-supervised learning for recommendation, [Ren et al.2024] formally define the RecSys task with two primary sets: the set of users U and the set of items I.
+推薦のための自己教師付き学習に関するサーベイにおいて、[Ren et al.2024]はRecSysタスクを2つの主要な集合で正式に定義している： ユーザの集合 $U$ とアイテムの集合 $I$ 。
+Then, an interaction matrix U × I is utilized to represent the recorded interactions between users and items, where a value 1 entry means a user has interacted with an item, and 0 otherwise.
+次に、ユーザとアイテムの間の記録された相互作用を表すために、ユーザ $U$ × アイテム $I$ の相互作用行列が利用される。ここで、値1のエントリはユーザがアイテムと相互作用したことを意味し、それ以外は0である。(implicit feedbackの例か...!)
+The definition in [Ren et al.2024] also includes a notion of auxiliary observed data denoted as X; an example is “a knowledge graph comprising external item attributes”.
+また、[Ren et al.2024]の定義には、$X$ として示される補助的な観測データの概念も含まれており、例として「外部アイテム属性を含む知識グラフ」が挙げられている。(メタデータとか?)
+Then a recommendation model aims to estimate the likelihood of a user interacting with an item based on the interaction matrix, and the auxiliary observed data if available.
+そして、**推薦モデルは、相互作用行列と、もしあれば補助的な観測データに基づいて、ユーザがアイテムと相互作用する可能性を推定することを目的とする**。(うんうん...!)
+
+The task definitions reviewed above seem to be a common understanding in the RecSys research community.
+上記のタスク定義は、RecSysの研究コミュニティでは共通の認識となっているようだ。(うんうん、自分も共通認識もってた)
+But there are also papers that mention the issue of simplification or over-simplification in RecSys research.
+しかし、**RecSys研究におけるsimplificationやover-simplificationの問題を指摘**する論文もある。
+In Section 7 of the review paper on popularity bias in RecSys, [Klimashevskaia et al.2023] summarize a few observations regarding the research on popularity bias, including “no agreed-upon definition of what represents popularity bias” in RecSys.
+Klimashevskaiaら[2023]は、RecSysの人気バイアスに関するレビュー論文の第7節で、人気バイアスに関する研究に関するいくつかの観察をまとめており、「**RecSysにおける人気バイアスを表すものの定義について合意がない**」と述べている。
+The authors further state that “these observations point to a certain over-simplification of the problem and an overly abstract research operationalization, a phenomenon which can also be observed in today’s research on fairness in recommender systems”.
+さらに、著者らは、「これらの観察は、問題の過度な単純化と過度な抽象的な研究の操作化を指摘しており、これは今日のレコメンダーシステムにおける公平性に関する研究でも観察される現象である」と述べている。
+In the perspective paper on offline evaluations, [Castells and Moffat 2022] consider the adoption of offline evaluation methodologies from experimental practice in Machine Learning (ML) and Information Retrieval (IR) to RecSys evaluation is a form of simplification.
+オフライン評価に関する展望論文[Castells and Moffat 2022]では、**機械学習（ML）や情報検索（IR）の実験的practiceからRecSys評価へのオフライン評価方法論の採用**は、単純化の形態であると考えられている。(nDCGによる評価とかはまさにこれだよね...!:thinking:)
+To my understanding, over-simplification commonly exists in research task formulation in RecSys [Sun 2023].
+私の理解では、RecSys[Sun 2023]の研究タスクの定式化には、**単純化しすぎ**がよく見られる。
+Next, we zoom into the RecSys task formulation from three perspectives: user, model, and item.
+次に、**RecSysタスクの定式化を3つの視点から**見ていく：ユーザ、モデル、アイテム。
+
+<!-- ここまで読んだ! -->
+
+# 3. User, Model, and Item ユーザ、モデル、アイテム
 
 The current RecSys task definition mainly involves users, items, and their interactions, in a static view.
-現在のRecSysのタスク定義は、主に静的なビューで、ユーザー、アイテム、およびそれらの相互作用を含む。
+現在のRecSysのタスク定義は、**主に静的なビュー**で、ユーザ、アイテム、およびそれらの相互作用を含む。(static view = batch学習的な??:thinking:)
 The task of RecSys is viewed as a task of predicting missing values in an incomplete user-item interaction matrix.
-RecSysのタスクは、不完全なユーザーとアイテムの相互作用行列の欠損値を予測するタスクと見なされている。
+RecSysのタスクは、不完全なユーザとアイテムの相互作用行列の欠損値を予測するタスクとして捉えられている。(うんうん)
 Then user-item interaction matrix becomes the key focus of RecSys research.
-そして、ユーザーとアイテムの相互作用マトリックスが、RecSys研究の重要な焦点となる。
+そして、ユーザとアイテムの相互作用行列がRecSys研究の主要な焦点となる。(うんうん...!)
 However, if we examine any specific user-item interaction, it occurs at a particular time point and is the outcome of the user’s decision-making.
-しかし、特定のユーザーとアイテムの相互作用を調べると、それは特定の時点で発生し、ユーザーの意思決定の結果である。
+しかし、特定のユーザとアイテムの相互作用を調べると、それは特定の時点で発生したものであり、ユーザの意思決定の結果である。(うんうん...!)
 The decision-making can be influenced by various contextual factors.
-意思決定はさまざまな文脈的要因に影響される。
+意思決定はさまざまなcontextual factors(文脈要因)に影響を受ける可能性がある。
+
+![fig1]()
+Fig. 1. Illustration of two rounds of recommendations made to a user: (i) user triggers a recommender with her past interaction history Iu and receives the first set of recommendations R1; and (ii) the user interacts with item i2 after a decision-making process d1, and receives the second set of recommendations R2. The user then interacts with i4 after another decision-making d2. Accordingly, the item collection is updated with the two new interactions. Note that, R1 and R2 are made with different inputs to the model. Best viewed in color.
+図1. ユーザに対して行われた**2つのラウンドの推薦**のイラスト：(i) ユーザは過去の相互作用履歴 $I_{u}$ でレコメンダーをトリガーし、最初の推薦 $R_{1}$ を受け取る；および(ii) ユーザは意思決定プロセス $d_{1}$ の後にアイテム $i_{2}$ と相互作用し、2番目の推薦 $R_{2}$ を受け取る。ユーザは別の意思決定 $d_{2}$ の後に $i_{4}$ と相互作用する。したがって、アイテムコレクションは2つの新しい相互作用で更新される。$R_{1}$ と $R_{2}$ は、モデルへの異なる入力で行われる。カラーで表示されるとよい。
 
 We use Figure 1 to illustrate the interactions between a user and a collection of items, through a recommender i.e., a model.
-図1を用いて、レコメンダーすなわちモデルを介した、ユーザーとアイテムのコレクションとの間の相互作用を説明する。
+図1を用いて、レコメンダーすなわちモデルを介した、ユーザとアイテムのコレクションとの間の相互作用を説明する。
 We assume that the user is familiar with the recommendation service, and the service provider has historical records of the user’s past interactions with the platform.
-我々は、ユーザーがレコメンデーションサービスに精通しており、サービスプロバイダがユーザーの過去のプラットフォームとのインタラクションの履歴記録を持っていると仮定する。
+我々は、ユーザがレコメンデーションサービスに精通しており、サービスプロバイダがユーザの過去のプラットフォームとのインタラクションの履歴記録を持っていると仮定する。(コールドスタートユーザじゃない設定ってことね...!)
 We also assume that the model is well-trained and its parameters are fixed, then its output depends solely on its input.
 また、モデルは十分に訓練され、そのパラメータは固定されており、その出力は入力のみに依存すると仮定する。
+
 At time point t0, user u begins interacting with the recommendation service by opening a mobile app or a website, such as YouTube for video viewing or Amazon for products.
-時点t0において、ユーザーuはモバイルアプリやウェブサイト、例えば動画視聴のためのYouTubeや商品購入のためのAmazonなどを開いて、レコメンデーションサービスとの対話を開始する。
+時点 $t_0$ において、ユーザ $u$ は、ビデオ視聴のためのYouTubeや商品のためのAmazonなどのモバイルアプリやウェブサイトを開いて、**レコメンデーションサービスとの相互作用を開始する**。
 Based on the set of items that u has interacted with before t0, denoted by Iu, the model makes recommendations R1 = {i1, i2, i3} from a pool of candidate items.
-Iuで示される、t0以前にuが相互作用したアイテムのセットに基づいて、モデルは候補アイテムのプールから推奨R1 = {i1, i2, i3}を作成する。
+$I_{u}$ で表される時点 $t_0$ 以前に $u$ が相互作用したアイテムのセットに基づいて、モデルは候補アイテムのプールから推薦 $R_{1} = \{i_{1}, i_{2}, i_{3}\}$ を行う。
 Upon receiving the recommendations R1 at time t1, u considers these three items and chooses to interact with i2.
-時刻t1において推薦R1を受け取ったuは、これら3つの項目を考慮し、i2と対話することを選択する。
+時刻 $t_1$ において、$u$ はこれらの3つのアイテムを考慮し、$i_{2}$ と相互作用することを選択する。
 Accordingly, right after time t1, the interaction records available to the model would be Iu ∪ {i2}.
-したがって、時刻t1の直後、モデルが利用できる相互作用の記録はIu∪｛i2｝となる。
+したがって、時刻 $t_1$ 直後に、モデルに利用可能な相互作用記録は $I_{u} \cup \{i_{2}\}$ となる。
 With the current input of Iu ∪ {i2}, the model makes the next round of recommendation R2 = {i4, i5, i6} at time t2.
-現在のIu∪｛i2｝の入力で、モデルは時刻t2に次のラウンドの推薦R2＝｛i4、i5、i6｝を行う。
+現在の $I_{u} \cup \{i_{2}\}$ の入力により、モデルは時刻 $t_2$ に次の推薦 $R_{2} = \{i_{4}, i_{5}, i_{6}\}$ を行う。
 Upon further consideration, the user selects i4 for interaction.
-さらに検討した結果、ユーザーは対話のためにi4を選択する。
+さらに検討した結果、ユーザは対話のために $i_{4}$ を選択する。
 Consequently, for the subsequent round of recommendations, the model assimilates additional knowledge from Iu ∪ {i2, i4} to make more accurate predictions regarding the user’s current interests within the current interaction session.
-その結果、後続の推薦のラウンドでは、モデルはIu∪｛i2、i4｝からの追加知識を同化し、現在の対話セッション内でのユーザーの現在の興味に関して、より正確な予測を行う。
+その結果、次の推薦ラウンドでは、モデルは $I_{u} \cup \{i_{2}, i_{4}\}$ から**追加の知識を取り込み**、現在の相互作用セッション内でのユーザの現在の興味に関するより正確な予測を行う。
+(Twitter上で論文著者とmetaのMLエンジニアの方が議論してたのは、このあたりの{i2, i4}のリアクションの知識への感度が鈍い、みたいな内容だった...!:thinking:)
+
 Here, we assume that the two recommendations, R1 and R2, occur consecutively within a single session of interactions.
-ここでは、R1とR2という2つのレコメンデーションが、1セッションの交流の中で連続して起こると仮定する。
+ここでは、 $R_{1}$ と $R_{2}$ の2つの推薦が、1つの相互作用セッション内で連続して発生すると仮定する。
 It is important to note that in this illustration, we distinguish between the two newly available interactions {i2, i4} and the past historical interactions Iu.
-この図では、新しく利用可能になった2つの相互作用｛i2、i4｝と、過去の過去の相互作用Iuを区別していることに注意することが重要である。
+**この図では、新しく利用可能になった2つの相互作用 $\{i_{2}, i_{4}\}$ と過去の相互作用 $I_{u}$ の間に区別をつけることが重要**である。(なるほど...?? 最新のinteractionへの感度を上げろって主張??:thinking:)
 This distinction is made because interactions to {i2, i4} just occurred, while Iu may have occurred much earlier, with respect to the current session.
-この区別は、{i2, i4}に対する相互作用が発生したばかりであるのに対して、Iuは現在のセッ ションに関して、ずっと以前に発生している可能性があるために行われる。
+この区別は、$\{i_{2}, i_{4}\}$ への相互作用がたった今発生したのに対して、$I_{u}$ は現在のセッションに関してはるかに過去に発生している可能性があるためである。
+
 From the user’s perspective, at time t0, upon opening the recommendation service, the user expects the recommender to accurately predict her latent needs on information, services, or products.
-ユーザーの視点に立つと、推薦サービスを開始した時点t0において、ユーザーは推薦者が情報、サービス、商品に関する潜在的なニーズを正確に予測してくれることを期待している。
+**ユーザの視点**からは、時刻 $t_0$ において、レコメンデーションサービスを開いた際、**ユーザは、レコメンダーが情報、サービス、または製品に関する彼女の潜在的なニーズを正確に予測することを期待している**。
 Upon receiving recommendations R1 at t1, the decision to interact with i2 is the outcome of a decision process, represented by d1 in the figure.
-t1において推奨R1を受け取ったとき、i2と対話するかどうかは、図のd1で表される決定プロセスの結果である。
+時刻 $t_1$ において、推薦 $R_{1}$ を受け取った後、$i_{2}$ と相互作用する決定は、図に示されている $d_{1}$ によって表される決定プロセスの結果である。
 This decision process may consider various factors, such as attributes of the recommended items, the user’s current location, time of day, ongoing activities, and even the user’s mood.
-この決定プロセスでは、推奨アイテムの属性、ユーザーの現在地、時間帯、進行中のアクティビティ、さらにはユーザーの気分など、さまざまな要因を考慮することができる。
+この決定プロセスでは、推薦されたアイテムの属性、ユーザの現在の場所、時間帯、進行中の活動、さらにはユーザの気分など、さまざまな要因が考慮されるかもしれない。
 For example, users may choose to watch different types of videos on YouTube depending on whether they are feeling happy or sad.
-例えば、ユーザーは楽しい気分か悲しい気分かによって、ユーチューブで異なるタイプのビデオを見ることを選ぶかもしれない。
+**例えば、ユーザは楽しい気分か悲しい気分かによって、ユーチューブで異なるタイプのビデオを見ることを選ぶかもしれない**。(その時のcontextによって、ユーザの意思決定の傾向は、dynamicに変わるよねって話か:thinking:)
 The interaction with i4 is the outcome of another decision process.
-i4との相互作用は、別の決定プロセスの結果である。
+$i_{4}$ との相互作用は、別の決定プロセスの結果である。
+
 From the model’s perspective, the two sets of recommendations are generated by using different user-side inputs: Iu for R1, and Iu ∪ {i2} for R2, respectively.
-モデルの観点からは、2つの推奨セットは異なるユーザー側入力を使用して生成される： R1はIu、R2はIu∪{i2}である。
+モデルの観点からは、2つの推薦セットは、異なるユーザ側の入力を使用して生成される：$R_{1}$ には $I_{u}$ 、$R_{2}$ には $I_{u} \cup \{i_{2}\}$ がそれぞれ使われる。
 If a subsequent recommendation is to be made, the user-side input will be Iu ∪ {i2, i4}.
-その後の推薦を行う場合、ユーザー側の入力はIu∪｛i2, i4｝となる。
+その後の推薦を行う場合、ユーザー側の入力は $I_{u} \cup \{i_{2}, i_{4}\}$ となる。
 Moreover, the user’s decisions to interact with i2 from R1 and i4 from R2 may strongly suggest that the user, at the current moment, is interested in items similar to or related to i2 and i4, yet confined by the overall preference demonstrated through Iu.
-さらに、R1からi2、R2からi4と相互作用するというユーザーの決定は、現時点では、ユーザーがi2やi4に類似または関連するアイテムに興味を持っているが、Iuを通じて示された全体的な嗜好によって制限されていることを強く示唆している可能性がある。
+さらに、$R_{1}$ から $i_{2}$ と $R_{2}$ から $i_{4}$ との相互作用を選択するユーザの決定は、**現在の瞬間において、$I_{u}$ を通じて示された全体的な嗜好によって制限されつつ、$i_{2}$ と $i_{4}$ に類似したアイテムに興味を持っていることを強く示唆している**。(長期的な嗜好と短期的な嗜好の両方の観点があるってこと??:thinking:)
 Taking videos as example items, similar videos to i2 and i4 include videos in the same genre, uploaded by the same content creator, or featuring the same actors, and yet not too distinct from those viewed in the past.
-動画を例にとると、i2とi4の類似動画は、同じジャンルの動画、同じコンテンツクリエイターがアップロードした動画、同じ出演者が出演している動画などであり、過去に視聴された動画とあまり区別がつかない。
+動画を例にとると、$i_{2}$ と $i_{4}$ に類似した動画には、同じジャンルの動画、同じコンテンツクリエイターがアップロードした動画、または同じ俳優が出演する動画などが含まれるが、過去に視聴したものとあまり異ならない。
 The relationships between items may also be established through various means, e.g., by content similarity, by collaborative filtering, or other forms of knowledge.
-アイテム間の関係は、様々な手段、例えば、コンテンツの類似性、協調フィルタリング、または他の形式の知識によって確立することもできる。
+アイテム間の関係は、コンテンツの類似性、協調フィルタリング、または他の形式の知識によっても確立されるかもしれない。
 In many cases, Iu serves as a valuable resource for understanding a user’s general and enduring preferences, gleaned from past interactions.
-多くの場合、Iuは、過去のやりとりから得られた、ユーザーの一般的かつ永続的な嗜好を理解するための貴重なリソースとして機能する。
+多くの場合、$I_{u}$ は、**過去の相互作用から得られたユーザのgeneral(一般的)でenduring(持続的)な嗜好**を理解するための貴重なリソースとして機能する。(="一般的で持続的な嗜好"って表現いいな...!:thinking:)
 In the ongoing interaction session, the identification of {i2, i4} reveals the user’s current interests, prompting recommendations of similar or related items.
-進行中のインタラクション・セッションでは、{i2, i4}の識別によってユーザーの現在の興味が明らかになり、類似または関連するアイテムの推奨が促される。
+進行中のインタラクション・セッションでは、$\{i_{2}, i_{4}\}$ の特定は、**ユーザの現在の興味**を明らかにし、類似または関連するアイテムの推薦を促す。
 This could explain why item-KNN continues to perform well in many evaluations.
 これは、item-KNNが多くの評価で良好な結果を出し続けている理由を説明できるだろう。
-From the item’s perspective, as depicted in the upper portion of Figure 1, after the two interactions from user u, both i2 and i4 each receive an additional interaction.5 If we consider the number of interactions an item receives as the popularity attribute of the item, then the attributes of both items change.
-図1の上部に描かれているように、アイテムから見ると、ユーザーuからの2回のインタラクションの後、i2とi4はそれぞれ追加のインタラクションを受ける5。アイテムが受けるインタラクションの数をアイテムの人気属性と考えると、両アイテムの属性は変化する。
+(ん、なんで??よく分かってない...!:thinking:)
+
+<!-- ここまで読んだ! -->
+
+From the item’s perspective, as depicted in the upper portion of Figure 1, after the two interactions from user u, both i2 and i4 each receive an additional interaction.
+アイテムの視点から見ると、図1の上部に描かれているように、ユーザ $u$ からの2つの相互作用の後、$i_{2}$ と $i_{4}$ はそれぞれ追加の相互作用を受ける。
+If we consider the number of interactions an item receives as the popularity attribute of the item, then the attributes of both items change.
+**アイテムが受ける相互作用の数をアイテムの人気属性と考えると、両方のアイテムの属性が変化する**。(t_0とt_1の間に、i2とi4の人気度属性の値が変動するってことだよね:thinking:)
 Given that a typical recommender system serves a substantial number of users concurrently, such attribute changes can significantly impact a large number of items within a short period.
-典型的なレコメンダー・システムが相当数のユーザーに同時にサービスを提供していることを考えると、このような属性の変更は、短期間内に多数のアイテムに大きな影響を与える可能性がある。
+典型的なレコメンダーシステムは、多数のユーザに同時にサービスを提供するため、このような属性の変化は短期間で多数のアイテムに大きな影響を与える可能性がある。
 In extreme cases, a popular video can attract thousands or even millions of views within a day or two.
 極端な例では、人気のあるビデオは1日か2日のうちに何千、何百万という再生回数を集めることもある。
+
 In short, from three perspectives of user, model, and item, a recommender system should be viewed in a dynamic setting, instead of a prediction of missing values in a static useritem interaction matrix.
-つまり、ユーザー、モデル、アイテムの3つの観点から、レコメンダーシステムは、静的なユーザーとアイテムの相互作用マトリックスにおける欠損値の予測ではなく、動的な設定で見られるべきである。
+つまり、ユーザー、モデル、アイテムの3つの観点から、レコメンダーシステムは、**静的なユーザとアイテムの相互作用マトリックスにおける欠損値の予測ではなく、動的な設定で見られるべき**である。
 However, the dynamic nature of RecSys is largely overlooked in academic research, as the time dimension is often omitted from RecSys task definitions.
-しかし、RecSysのダイナミックな性質は、学術研究においてはほとんど見落とされており、RecSysのタスク定義から時間の次元が省かれていることが多い。
+**しかし、RecSysのダイナミックな性質は、学術研究においてはほとんど見落とされており、RecSysのタスク定義から時間の次元が省かれていることが多い**。(なるほど...!)
 The ignorance of the global timeline in the task formulation is also the root of data leakage in offline evaluation.
-タスク策定におけるグローバルタイムラインの無視も、オフライン評価におけるデータ漏洩の根源である。
+タスク策定における**グローバルタイムラインの無視も、オフライン評価におけるデータ漏洩の根源**である。(それはそう...!)
 More importantly, current task definitions do not sufficiently focus on the decision-making process [Kleinberg et al.2022; Jameson et al.2022].
-さらに重要なことは、現在のタスク定義では、意思決定プロセスに十分に焦点が当てられていないことである[Kleinberg et al.2022; Jameson et al.2022]。
+さらに重要なことは、**現在のタスク定義では、意思決定プロセスに十分に焦点が当てられていないこと**である[Kleinberg et al.2022; Jameson et al.2022]。(これは予測問題として扱ってしまうってこと?? もしくはユーザのcontextの考慮に関すること??:thinking:)
+
+<!-- ここまで読んだ! -->
 
 # 4. Recommenders are Task-specific レコメンダーはタスクに特化している
 
