@@ -296,139 +296,165 @@ Furthermore, the exploration of side information has primarily focused on enhanc
 <!-- ここまでよんだ! なるほど side information と ユーザの意思決定に影響を与えるcontext...! -->
 
 Based on the above discussion, we may consider a recommender taking the following inputs: ⟨X, u, Iu, Ic, I, U × I⟩.
-上記の議論に基づき、以下の入力を持つレコメンダーを考えることができる： X, u, Iu, Ic, I, U × I⟩。
+上記の議論に基づき、以下の入力を持つレコメンダーを考えることができる： $\langle X, u, I_{u}, I_{c}, I, U \times I \rangle$。
 Among them, X represents task-specific contextual inputs such as time and location.
-このうち、Xは時間や場所といったタスク固有の文脈入力を表す。
+このうち、Xは時間や場所といったタスク固有のcontextual(文脈的)な入力を表す。
 Note that, the X here refers to those contextual factors that are available to and/or accessible by the users or even the explicit input from users e.g., movie genre.
-なお、ここでいうXとは、ユーザーが利用可能な、あるいはアクセス可能な文脈的要素、あるいはユーザーからの明示的な入力、たとえば映画のジャンルなどを指す。
+なお、ここでいう$X$は、ユーザによって利用可能 and/or アクセス可能であるようなcontextual factorsを指し、ユーザからの明示的な入力（例えば、映画のジャンル）も含まれる。
 These factors are part of the user’s decision-making consideration and are not auxiliary knowledge only known to the model but not to users.
-これらの要因は、ユーザーの意思決定の考慮事項の一部であり、モデルだけが知っていてユーザーが知らない補助的な知識ではない。
+**これらの要因は、ユーザの意思決定の考慮事項の一部であり、モデルだけが知っている補助的な知識ではない**。(ここがXを定義する上での重要ポイントかも...!!)
 Among the remaining inputs, u denotes the user who initiates the recommendation service, Iu consists of the user’s past interacted items, and Ic comprises the newly interacted items in the current session (e.g., {i2, i4} in Figure 1).
-残りの入力のうち、uは推薦サービスを開始したユーザ、Iuはユーザの過去の対話項目、Icは現在のセッションで新たに対話された項目（例えば、図1の{i2, i4}）を示す。
+残りの入力のうち、$u$　はレコメンデーションサービスを開始するユーザを示し、$I_{u}$　はユーザの過去のインタラクションアイテムを構成し、$I_{c}$　は現在のセッションで新たにインタラクションしたアイテムを含む（図1の $\{i_{2}, i_{4}\}$ など）。
 Ic is empty at the start of the current session, and changes along with the increasing availability of new interactions.
-Icは現在のセッションの開始時点では空であり、新しい相互作用の利用可能性が高まるにつれて変化する。
+$I_{c}$ は現在のセッションの開始時には空であり、新しいインタラクションの利用可能性が増加するにつれて変化する。
 I refers to all candidate items available for recommendation.
-推薦可能なすべての候補を指す。
+$I$ は推薦に利用可能なすべての候補アイテムを指す。
 With the increasing available interactions, some of the interaction-related attributes of items in I are dynamically updated e.g., the number of interactions an item receives.
-利用可能なインタラクションが増えるにつれて、Iのアイテムのインタラクション関連属性のいくつかは動的に更新される。
-U × I represents historical user-item interactions before the current session.8 The task of a recommender is to generate recommendations for user u under the current decision-making context.
-U×Iは現在のセッション以前の過去のユーザーとアイテムのやりとりを表す。
+利用可能なインタラクションが増加するにつれて、$I$ のアイテムのいくつかのインタラクション関連の属性が動的に更新される（例：アイテムが受けとったインタラクションの数）。
+U × I represents historical user-item interactions before the current session.
+$U \times I$ は現在のセッションの前のユーザとアイテムの過去のインタラクションを表す。
+(厳密には、$U \times I$ も現在のセッション中の新しいinteractionによって更新される。一般的に、短時間に新しく利用可能になるinteractionn数は、historical interaction数よりもとても小さい) 
+The task of a recommender is to generate recommendations for user u under the current decision-making context.
+レコメンダーのタスクは、現在の意思決定コンテキストの下でユーザ $u$ に対して推薦を生成することである。
 For comparison, the inputs considered in common RecSys task formulations are ⟨u, I, U × I⟩.
-比較のために、一般的なRecSysタスクの定式化で考慮される入力は⟨u, I, U × I⟩である。
+比較のため、一般的なRecSysタスク定式化で考慮される入力は $\langle u, I, U \times I \rangle$ である。
+($X, I_{u}, I_{c}$ が加わっているのが違いか...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 # 5. The Mismaching Datasets ♪ミスマッチング・データセット
 
 We have outlined the inputs that a recommender system should consider, primarily to highlight the dynamic nature of RecSys by emphasizing the context of decision-making.
-レコメンダーシステムが考慮すべきインプットを概説したが、これは主に意思決定の文脈を強調することでRecSysのダイナミックな性質を強調するためである。
+レコメンダーシステムが考慮すべき入力を概説し、主に意思決定のコンテキストを強調することで、RecSysのダイナミックな性質を強調した。
 Note that, the consideration of both user’s general preferences and the current contexts is not new at all.
-なお、ユーザーの一般的な好みと現在のコンテキストの両方を考慮することは、まったく新しいことではない。
+なお、**ユーザのgeneral preferences (一般的な嗜好) と現在のcontextの両方を考慮することは、全く新しいものではない**。(うんうん...聞いたことあるもん:thinking:)
 [Cheng et al.2016] consider not only user (static) features like country, language, and age, but also contextual features like device, hour of the day, day of the week for app recommendation.
-[Cheng et al.2016]は、アプリ推薦のために、国、言語、年齢といったユーザー（静的）特徴だけでなく、デバイス、時間帯、曜日といったコンテキスト特徴も考慮する。
+[Cheng et al.2016]は、ユーザ（静的）の特徴（国、言語、年齢など）だけでなく、アプリの推薦のためのデバイス、一日の時間、週の曜日などのcontextual featuresも考慮している。
 [Zhou et al.2018] also consider context features for click-through rate prediction.
-また、[Zhou et al.2018]もクリックスルー率予測のためにコンテキスト特徴を考慮している。
+また、[Zhou et al.2018]もクリックスルー率の予測のためのcontext featuresを考慮している。
 A “User Instant Interest” modeling layer is part of the solution proposed in [Xiao et al.2024] to model the user’s current interest following the user’s behavior i.e., clicking an item that is referred to as a trigger item.
-ユーザー瞬間関心 "モデリングレイヤーは、[Xiao et al.2024]で提案されたソリューションの一部であり、ユーザーの行動、すなわちトリガーアイテムと呼ばれるアイテムをクリックした後のユーザーの現在の関心をモデル化する。
+"User Instant Interest"モデリングレイヤーは、[Xiao et al.2024]で提案されたソリューションの一部であり、ユーザの行動、つまり"trigger item"と呼ばれるアイテムをクリックすることに従って、ユーザの現在の興味をモデル化する。
 The assumption is that “the clicked trigger item explicitly represents the user’s instant interests”.
-その前提は、「クリックされたトリガーアイテムが、ユーザーの瞬間的な興味を明示的に表している」ということである。
+その前提は、「クリックされた trigger item は、ユーザの瞬時の興味を明示的に表している」ということである。(ユーザの短期的な嗜好を表すような特徴的なアイテムなのかな...!:thinking:)
 Note that, all aforementioned papers are from industry.
-なお、前述の論文はすべて産業界のものである。
+**なお、前述の論文はすべて産業界のものである**。(つまり実践的??:thinking:)
+
 Eventually, in a practical setting, the recommendation is a ranking problem with at least two forms of latent needs of information/service/product, learned from (i) the relatively static user/item features and historical interactions, and (ii) the current and dynamic interaction process, respectively.
-結局、実用的な設定では、推薦とは、(i)比較的静的なユーザー／アイテムの特徴と過去のインタラクション、および(ii)現在のインタラクションプロセスと動的なインタラクションプロセスからそれぞれ学習された、情報／サービス／製品に関する少なくとも2つの潜在的ニーズを持つランキング問題である。
+最終的に、**実践的な設定では、recommendationは、少なくとも2つの形式のinformation/service/productのlatent needs(潜在的なニーズ)を持つランキング問題**であり、それは(i)比較的静的なユーザ/アイテムの特徴と過去のインタラクションから学習され、(ii)現在の動的なインタラクションプロセスからそれぞれ学習される。
 The learned preferences then serve as implicit queries for item ranking or re-ranking [Liu et al.2022].
-学習された嗜好は、アイテムのランク付けや再ランク付けのための暗黙のクエリーとして機能する[Liu et al.2022]。
+学習された嗜好は、アイテムのランク付けや再ランク付けのための暗黙のクエリとして機能する[Liu et al.2022]。
+
 However, in academic research, accessing an online recommendation platform is not feasible in most cases.
-しかし、学術研究においては、オンライン推薦プラットフォームにアクセスすることは、ほとんどの場合不可能である。
+しかし、学術研究においては、オンライン推薦プラットフォームにアクセスすることは、ほとんどの場合不可能である。(うんうん。共同研究とかでないと...!:thinking:)
 The comprehension of the current context relies on two factors.
-現在の状況を理解するには、2つの要素が必要だ。
+**現在の状況を理解するには、2つの要素が必要だ**。
 The first factor is the information available in an offline dataset.
-第一の要因は、オフラインデータセットで利用可能な情報である。
+第一の要因は、オフラインデータセットに含まれる情報である。
 The widely used datasets like MovieLens and Amazon reviews only record the outcomes of the decision-making process, but not the context of decision-making e.g., under what consideration and/or among which options, a user decides to watch a movie or buy a product.
-MovieLensやAmazonレビューのような広く使われているデータセットは、意思決定プロセスの結果のみを記録しているが、意思決定のコンテキストは記録していない。
+MovieLensやAmazonのレビューなど、広く使用されているデータセットは、**意思決定プロセスの結果のみを記録しており、意思決定のcontextは記録されていない**。例えば、どのような考慮の下で、どのような選択肢の中から、ユーザが映画を見るか、製品を購入するかを決定するかなど。
 The second factor is the way a dataset is used, e.g., whether the user-item interactions are arranged in chronological order following the global timeline, and how a model is trained and evaluated on the dataset.
 第二の要因は、データセットの使われ方である。例えば、ユーザーとアイテムのインタラクションが、グローバルなタイムラインに従って時系列に並んでいるかどうか、そして、データセットに対してモデルがどのようにトレーニングされ評価されるか、などである。
+
+![]()
+Fig. 2. An illustration of train/test instances using leave-one-out data split with interactions by three example users. 
+Fig.2. 3人の例のユーザによるインタラクションを使ったリーブワンアウトデータ分割を用いた訓練/テストインスタンスの説明図。
+All interactions are arranged in chronological order following the global timeline. 
+すべてのインタラクションは、グローバルタイムラインに従って時系列に並べられている。
+The last interaction of each user is the test instance, represented by a squared octagonal star. 
+各ユーザの最後のインタラクションが**テストインスタンスで、四角い八角形の星**で表される。(latest-item-predictionタスクみたいな??)
+Circles are training interactions. The lower half of the figure shows the train/test instances in a typical offline evaluation. 
+丸はトレーニングインタラクションである。図の下半分は、典型的なオフライン評価における訓練/テストインスタンスを示している。
+The upper half of the figure shows an ideal simulation of a model trained/updated at time tm, for predicting u1’s test instance. Best viewed in color.
+図の上半分は、時刻 $t_{m}$ でトレーニング/更新されたモデルを示し、$u_{1}$ のテストインスタンスを予測するための理想的なシミュレーションを示している。カラーでの閲覧が最適である。
+
+
 We further elaborate on the second factor through Figure 2.
 図2を通して、2つ目の要因についてさらに詳しく説明する。
 The figure shows an illustration of train/test instances using leave-one-out data split with interactions by three example users.
-図は、3人のユーザーによるインタラクションで分割されたリーブワンアウトデータを使用した訓練/テストインスタンスの説明図である。
+図は、3人のユーザによるインタラクションを使った **leave-one-out data splitを用いた訓練/テストインスタンス**の説明図を示している。(leave-one-out split戦略ってsequential recommenderの評価でよく使われてる気がする...!:thinking:)
 Here, all interactions are arranged in chronological order following the global timeline.
-ここでは、すべての交流がグローバルタイムラインに従って時系列に並べられている。
+ここでは、すべてのinteractionは、グローバルタイムラインに従って時系列に並べられている。
 The last interaction of each user is the test instance, represented by a squared octagonal star, and the circles represent training instances.
-各ユーザーの最後のインタラクションがテスト・インスタンスで、四角い八角形の星で表され、丸はトレーニング・インスタンスを表す。
+各ユーザの最後のinteractionがテストインスタンスで、四角い八角形の星で表され、丸はトレーニングインスタンスを表している。
 Following a typical offline evaluation, illustrated in the lower half of the figure, a model is trained by using all training instances, and then evaluated on all test instances.
 図の下半分に示される典型的なオフライン評価に従って、モデルはすべてのトレーニングインスタンスを使ってトレーニングされ、次にすべてのテストインスタンスで評価される。
 Take user u1 as an example.
-ユーザーu1を例にとろう。
+ユーザu1を例にとろう。
 Many training interactions in the dataset occurred after u1’s test instance i.e., time tx1.
-データセット中の多くのトレーニング相互作用は、u1のテストインスタンス、すなわち時間tx1の後に発生した。
+データセット中の多くのトレーニングinteractionsは、$u_{1}$ のテストインスタンス、つまり時刻 $t_{x1}$ の後に発生した。(うんうん、図を見るとそうなってる。)
 Then the model predicts u1’s test instance, with future training data that occurred after tx1.
-そしてモデルは、tx1の後に発生した未来のトレーニングデータを使って、u1のテスト・インスタンスを予測する。
+**そしてモデルは、tx1の後に発生した未来のトレーニングデータを使って、$u_{1}$ のテストインスタンスを予測する**。(うんうん、実際には不可能なことだよね...!:thinking:)
 This is a data leakage issue discussed and evaluated in our earlier work [Ji et al.2023; Sun 2023].
-これは、我々の以前の研究[Ji et al.2023; Sun 2023]で議論され、評価されたデータ漏洩の問題である。
+これは、我々の以前の研究[Ji et al.2023; Sun 2023]で議論 & 評価された **data leakage(データ漏洩)の問題**である。
+
 The upper half of the figure illustrates an ideal online simulation using the same offline dataset.
-図の上半分は、同じオフラインデータセットを使った理想的なオンラインシミュレーションを示している。
+**図の上半分は、同じオフラインデータセットを使った理想的なオンラインシミュレーション**を示している。(図の下半分は、data leakage問題を引き起こし中の、leave-one-out戦略)
 In this simulation, the model is trained/retrained periodically or is a retrieval model.
-このシミュレーションでは、モデルは定期的に学習/再学習されるか、検索モデルである。
+このシミュレーションでは、モデルは定期的に学習/再学習されるか、retrieveモデルである。(retrieveモデルって何??:thinking:)
 We assume that the model is lastly updated at time tm, which learns from all the interactions U × I that occurred before tm.
-時刻tmにモデルが最後に更新され、tm以前に発生したすべての相互作用U×Iから学習されると仮定する。
+時刻 $t_{m}$ で最後に更新されたモデルを仮定し、$t_{m}$ の前に発生したすべてのインタラクション $U \times I$ から学習する。
 We also assume that the test instance of u1 occurred right after the two preceding interactions, which form the Ic of u1.
-また、u1のテスト・インスタンスは、u1のIcを形成する先行する2つの相互作用の直後に発生したと仮定する。
+また、$u_{1}$ のテストインスタンスが、直前の2つのインタラクションの後に発生したと仮定し、これらは $u_{1}$ の $I_{c}$ を形成する。
 Then predicting u1’s test instance is through a model trained at tm, and tm < tx1 .
-そして、u1のテスト・インスタンスの予測は、tmで学習されたモデルを通して行われ、tm < tx1 となる。
+そして、$u_{1}$ のテストインスタンスを予測するためには、$t_{m} < t_{x1}$ で学習されたモデルを使う。
 The model utilizes u1’s historical interactions Iu and her current session Ic to make the prediction.
-モデルはu1の過去のインタラクションIuと彼女の現在のセッションIcを利用して予測を行う。
+モデルは $u_{1}$ の過去のインタラクション $I_{u}$ と現在のセッション $I_{c}$ を利用して予測を行う。
 However, it is computationally expensive to strictly follow this online simulation to have a model retrained at every time point of every test instance.
-しかし、このオンライン・シミュレーションを厳密に実行し、すべてのテスト・インスタンスのすべての時点でモデルを再学習させるには、計算コストがかかる。
+**しかし、このオンライン・シミュレーションを厳密に実行し、すべてのテスト・インスタンスのすべての時点でモデルを再学習させるには、計算コストがかかる。**(だよね! あと結局ここで得られてるtraining & test instancesは、結局logging policy由来のバイアスを受けてるんだよなぁ...。なので、data leakage問題とは別でバイアスの問題は避けられない...! :thinking:)
 A periodical model retraining with the timeline evaluation scheme could be a possible solution [Ji et al.2023; Sun 2023].
-タイムライン評価スキームによる定期的なモデル再トレーニングは、可能な解決策である [Ji et al.2023; Sun 2023]。
+時系列評価スキームを用いた定期的なモデル再学習は、可能な解決策となるかもしれない[Ji et al.2023; Sun 2023]。
 Certainly, more research is required to discover the most effective evaluation schemes that best simulate the online setting for RecSys using offline datasets.
-確かに、オフラインデータセットを用いてRecSysのオンライン設定を最もよくシミュレートする最も効果的な評価スキームを発見するためには、さらなる研究が必要である。
+確かに、**オフラインデータセットを用いてRecSysのオンライン設定を最もよくシミュレートする最も効果的な評価スキーム**を発見するためには、さらなる研究が必要である。(それこそoff-policy evaluationとかね。)
 
 In our earlier work [Yu and Sun 2023], we argue that it is not merely the problem definition in its formal form, but the dataset and training, define the task that a model aims to solve.
-我々の先行研究[Yu and Sun 2023]では、単に形式的な問題定義だけでなく、データセットとトレーニングによって、モデルが解決しようとするタスクが定義されると論じている。
+我々の先行研究[Yu and Sun 2023]では、単に形式的な問題定義だけでなく、データセットとトレーニングによって、モデルが解決しようとするタスクが定義されると主張している。
 Put simply, the way a dataset is used defines what information is made available to a model under training.
-簡単に言えば、データセットの使われ方によって、学習中のモデルがどのような情報を利用できるかが決まる。
+簡単に言えば、データセットの使われ方によって、トレーニング中のモデルにどのような情報が提供されるかが定義される。
 To my understanding, with the common practice in RecSys academic research, a model’s prediction relies on the general preferences it has learned from a user, while the user’s decision-making process takes into account both her general preferences and her current interests during the current interaction session.
-私の理解では、RecSysの学術研究における一般的な慣行では、モデルの予測はユーザーから学習した一般的な嗜好に依存し、ユーザーの意思決定プロセスでは、現在の対話セッション中の一般的な嗜好と現在の興味の両方が考慮される。
+私の理解では、**RecSys学術研究における一般的な実践では、モデルの予測はユーザから学習したgeneral preferencesに依存**している一方、**ユーザの意思決定プロセスは、現在のインタラクションセッション中における彼女のgeneral preferencesとcurrent interests(現在の興味)の両方を考慮**に入れている。
 Yet, the impact of contextual factors varies across recommendation scenarios.
-しかし、文脈的要因の影響は推薦シナリオによって異なる。
+しかし、contextual factorsの影響は、推薦シナリオによって異なる。(うんうん。例えばメイン画面のニュース推薦ではgeneral preferenceだけを考慮してれば良い気もする。news2newsの推薦は、contextを大きく考慮した方が良い気もする。)
 Without providing the relevant contextual information, the model learned from these datasets will face a completely different setting when deployed online.
-関連するコンテキスト情報を提供しなければ、これらのデータセットから学習したモデルは、オンラインで展開されたときにまったく異なる設定に直面することになる。
+関連するcontextual情報を提供しない場合、これらのデータセットから学習したモデルは、オンラインで展開されたときには完全に異なる設定に直面することになる。
 Due to the inadequacy of many existing datasets to capture the essential input for users’ decision-making processes, the application of collaborative filtering in predicting users’ general and enduring preferences appears to be the main focus of academic research.
-既存の多くのデータセットでは、ユーザーの意思決定プロセスに不可欠なインプットを捉えることができないため、ユーザーの一般的かつ永続的な嗜好を予測するための協調フィルタリングの応用が、学術研究の主な焦点となっているようだ。
+多くの既存のデータセットがユーザの意思決定プロセスのための必要な入力を捉えるのに不十分であるため、**協調フィルタリングを用いてユーザの一般的で持続的な嗜好を予測することが、学術研究の主な焦点となっている**ようだ。
 This could be a possible reason for the significant diverge between RecSys in academic research and RecSys in industry.
-これは、学術研究におけるRecSysと産業界におけるRecSysが大きく乖離している理由である可能性がある。
+これは、**学術研究におけるRecSysと産業界におけるRecSysが大きく乖離している理由である可能性がある**。
 On the positive side, there is a promising trend in the availability of RecSys datasets containing more information e.g., impressions, than simply user-item interactions [Wu et al.2020; Perez Maurera et al.2022].
-肯定的な面では、RecSysのデータセットには、単にユーザーとアイテムのインタラクションだけでなく、インプレッションなど、より多くの情報が含まれているため、有望な傾向がある[Wu et al.2020; Perez Maurera et al.2022]。
+肯定的な面では、RecSysデータセットが、ユーザとアイテムのインタラクションだけでなく、impressionsなどのより多くの情報を含むようになっているという有望なトレンドがある[Wu et al.2020; Perez Maurera et al.2022]。
 
 # 6. Conclusion 結論
 
 In this paper, we revisit RecSys task formulation from a user perspective, highlighting two main messages.
-本稿では、ユーザーの視点からRecSysタスクの定式化を再検討し、2つの主要なメッセージを強調する。
+本稿では、ユーザーの視点からRecSysタスクの定式化を再検討し、**2つの主要なメッセージ**を強調する。
 Firstly, we emphasize that RecSys tasks are inherently applicationspecific, as factors influencing user decision-making vary across different scenarios.
-まず、ユーザーの意思決定に影響を与える要因はシナリオによって異なるため、RecSysタスクは本質的にアプリケーションに特化したものであることを強調する。
+**1つ目に、ユーザの意思決定に影響を与える要因はシナリオによって異なるため、RecSysタスクは本質的にアプリケーションに特化したものである**ことを強調する。
 Thus, it is imperative to study application-specific recommendation tasks rather than treating all recommendation tasks as simple missing value prediction problems in user-item interaction matrices.
-したがって、すべての推薦タスクをユーザーとアイテムの相互作用行列における単純な欠損値予測問題として扱うのではなく、アプリケーションに特化した推薦タスクを研究することが不可欠である。
+したがって、すべての推薦タスクをユーザとアイテムの相互作用行列における単純な欠損値予測問題として扱うのではなく、**アプリケーションに特化した推薦タスクを研究することが不可欠**である。
 Secondly, we view recommender systems in a dynamic setting.
-第二に、我々はレコメンダーシステムをダイナミックな設定で捉えている。
+第二に、我々は**レコメンダーシステムをdynamicな設定で捉える**。
 While collaborative filtering effectively learns general user preferences, it fails to capture dynamics in the decision-making process.
-協調フィルタリングは、一般的なユーザーの嗜好を効果的に学習する一方で、意思決定プロセスにおけるダイナミクスを捉えることができない。
+協調フィルタリングは、一般的なユーザの嗜好を効果的に学習する一方で、意思決定プロセスにおける dynamics を捉えることができない。
 Therefore, a balanced approach considering both aspects leads us to conceptualize RecSys as a ranking problem.
 したがって、両方の側面を考慮したバランスの取れたアプローチにより、RecSysをランキング問題として概念化することになる。
 With a clearer understanding of the RecSys problem, it is hopeful that more datasets containing necessary details will become available for various recommendation scenarios.
-RecSysの問題をより明確に理解することで、様々な推薦シナリオに必要な詳細を含むデータセットがより多く利用可能になることが期待される。
+RecSysの問題をより明確に理解することで、さまざまな推薦シナリオに必要な詳細を含むデータセットがより利用可能になることを期待している。
 Furthermore, a more refined task formulation will directly impact the design of effective evaluations.
 さらに、より洗練されたタスクの定式化は、効果的な評価の設計に直接影響する。
+
 Again, all points discussed in this opinion paper are not new.
 繰り返しになるが、この意見書で論じられている点はすべて目新しいものではない。
 These points should have already been well considered in practical RecSys applications for long, and some points extensively discussed in earlier literature [Castells and Moffat 2022] .
-これらの点は、実用的なRecSysのアプリケーションでは以前からよく考慮されていたはずであり、以前の文献[Castells and Moffat 2022]で広く議論されている点もある。
+**これらの点は、実用的なRecSysのアプリケーションでは以前からよく考慮されていたはずであり、以前の文献[Castells and Moffat 2022]で広く議論されている点もある**。
 However, due to the relatively large number of publications from academia, researchers who are new to RecSys may not have well considered these contexts and simply follow the common practice.
 しかし、アカデミアからの出版物が比較的多いため、RecSysを始めたばかりの研究者は、これらの文脈をよく考慮せず、単に一般的な慣例に従っている可能性がある。
 As a research field closely tied to real-world applications, it is imperative for us to clearly define research tasks tailored to specific recommendation scenarios, rather than relying on generic and oversimplified settings.
-実世界での応用と密接に結びついた研究分野である以上、一般的で単純化されすぎた設定に頼るのではなく、特定の推薦シナリオに合わせた研究課題を明確に定義することが不可欠である。
+**実世界での応用と密接に結びついた研究分野である以上、一般的で単純化されすぎた設定に頼るのではなく、特定の推薦シナリオに合わせた研究課題を明確に定義することが不可欠である**。(うんうん...!:thinking:)
 This is particularly important when considering new RecSys settings like convostational recommendation, and sequential recommendation, as well as when we bring in new technologies to RecSys like large language models.
-これは、対話型推薦や逐次推薦のような新しいRecSysの設定を検討するときや、大規模言語モデルのような新しい技術をRecSysに導入するときに特に重要である。
+**これは、convostational recommendation(会話型推薦)やsequential recommendation(時系列推薦)などの新しいRecSys設定を考慮する場合、また、大規模言語モデルなどの新しい技術をRecSysに導入する場合に特に重要である**。(うんうん...!:thinking:)
 Formulating tasks specific to scenarios would also significantly aid in selecting compatible baselines and establishing evaluation settings that best simulate practical conditions.
 シナリオに特化したタスクを策定することは、適合するベースラインを選択し、実用的な条件を最もよくシミュレートする評価設定を確立する上でも、大きな助けとなるだろう。
 Lastly, the definition of scenario-specific tasks heavily depends on the availability of high-quality datasets from real-world platforms.
-最後に、シナリオ固有のタスクの定義は、実世界のプラットフォームから高品質のデータセットを入手できるかどうかに大きく依存する。
+最後に、**シナリオ固有のタスクの定義**は、実世界のプラットフォームから高品質のデータセットを入手できるかどうかに大きく依存する。(事業会社はデータを入手できるからチャンスだよね...!:thinking:)
+
+<!-- ここまで読んだ! -->

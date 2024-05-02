@@ -10,7 +10,7 @@
   - AWS CDKのassertionsモジュールは全言語に対応してる。
 - テストの流れ:
   - 1. テスト対象のstackインスタンスを作成
-  - 2. CloudFormationのテンプレートを生成
+  - 2. stackインスタンスからCloudFormationテンプレートを作成
   - 3. Assertする
 - 二種類のテスト手法:
   - 手法1 **Fine-grained Assertions**:
