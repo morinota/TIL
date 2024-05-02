@@ -117,5 +117,32 @@ from ...dependencies import get_token_header
 - で、そこからdependencies moduleを見つけようとする。
 - そこから、`get_token_header` 関数をインポートしようとする。
 
+### app.main.pyからのimport
+
+#### relative import
+
+`app/routers/items.py` や `app/routers/users.py` は同じPython パッケージ `app`のサブモジュールなので、 "relative import" を使ってimportするために single dot `.` を使っている。
+
+```python:app/main.py
+from .routers import items, users
+```
+
+#### absolute import
+
+同様に以下のようにもimportできる:
+
+```python:app/main.py
+from app.routers import items, users
+```
+
+これは"relative import"ではなく、"absolute import"と呼ばれる。
+
+#### その他のimport(Pythonのモジュール検索パスにも基づく方法)
+
+`from routers import items, users` というimportはどうなるの??("absolute import"や"relative import"とは異なる??)
+
+- -> これは、Pythonのモジュール検索パス(`sys.path`)に基づいてモジュールを検索する方法。
+- この場合、`routers` というモジュールがどこかにインストールされているか、またはPythonの標準ライブラリのどこかにあるか、ということになる。
+  - これも"absolute import"に分類される??
 
 
