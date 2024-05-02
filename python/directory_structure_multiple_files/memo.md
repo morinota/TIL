@@ -142,7 +142,6 @@ from app.routers import items, users
 `from routers import items, users` というimportはどうなるの??("absolute import"や"relative import"とは異なる??)
 
 - -> これは、Pythonのモジュール検索パス(`sys.path`)に基づいてモジュールを検索する方法。
-- この場合、`routers` というモジュールがどこかにインストールされているか、またはPythonの標準ライブラリのどこかにあるか、ということになる。
-  - これも"absolute import"に分類される??
+  - `routers`というpackage名を現在の作業ディレクトリやその他の`sys.path`にリストされているディレクトリから探す。
 
 
