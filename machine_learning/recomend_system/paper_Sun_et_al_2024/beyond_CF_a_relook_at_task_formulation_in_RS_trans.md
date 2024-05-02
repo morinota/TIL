@@ -313,7 +313,7 @@ With the increasing available interactions, some of the interaction-related attr
 利用可能なインタラクションが増加するにつれて、$I$ のアイテムのいくつかのインタラクション関連の属性が動的に更新される（例：アイテムが受けとったインタラクションの数）。
 U × I represents historical user-item interactions before the current session.
 $U \times I$ は現在のセッションの前のユーザとアイテムの過去のインタラクションを表す。
-(厳密には、$U \times I$ も現在のセッション中の新しいinteractionによって更新される。一般的に、短時間に新しく利用可能になるinteractionn数は、historical interaction数よりもとても小さい) 
+(厳密には、$U \times I$ も現在のセッション中の新しいinteractionによって更新される。一般的に、短時間に新しく利用可能になるinteractionn数は、historical interaction数よりもとても小さい)
 The task of a recommender is to generate recommendations for user u under the current decision-making context.
 レコメンダーのタスクは、現在の意思決定コンテキストの下でユーザ $u$ に対して推薦を生成することである。
 For comparison, the inputs considered in common RecSys task formulations are ⟨u, I, U × I⟩.
@@ -356,17 +356,16 @@ The second factor is the way a dataset is used, e.g., whether the user-item inte
 第二の要因は、データセットの使われ方である。例えば、ユーザーとアイテムのインタラクションが、グローバルなタイムラインに従って時系列に並んでいるかどうか、そして、データセットに対してモデルがどのようにトレーニングされ評価されるか、などである。
 
 ![]()
-Fig. 2. An illustration of train/test instances using leave-one-out data split with interactions by three example users. 
+Fig. 2. An illustration of train/test instances using leave-one-out data split with interactions by three example users.
 Fig.2. 3人の例のユーザによるインタラクションを使ったリーブワンアウトデータ分割を用いた訓練/テストインスタンスの説明図。
-All interactions are arranged in chronological order following the global timeline. 
+All interactions are arranged in chronological order following the global timeline.
 すべてのインタラクションは、グローバルタイムラインに従って時系列に並べられている。
-The last interaction of each user is the test instance, represented by a squared octagonal star. 
+The last interaction of each user is the test instance, represented by a squared octagonal star.
 各ユーザの最後のインタラクションが**テストインスタンスで、四角い八角形の星**で表される。(latest-item-predictionタスクみたいな??)
-Circles are training interactions. The lower half of the figure shows the train/test instances in a typical offline evaluation. 
+Circles are training interactions. The lower half of the figure shows the train/test instances in a typical offline evaluation.
 丸はトレーニングインタラクションである。図の下半分は、典型的なオフライン評価における訓練/テストインスタンスを示している。
 The upper half of the figure shows an ideal simulation of a model trained/updated at time tm, for predicting u1’s test instance. Best viewed in color.
 図の上半分は、時刻 $t_{m}$ でトレーニング/更新されたモデルを示し、$u_{1}$ のテストインスタンスを予測するための理想的なシミュレーションを示している。カラーでの閲覧が最適である。
-
 
 We further elaborate on the second factor through Figure 2.
 図2を通して、2つ目の要因についてさらに詳しく説明する。
