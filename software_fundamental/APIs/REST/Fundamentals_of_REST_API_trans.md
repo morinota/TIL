@@ -1,35 +1,35 @@
-## refs: refs：
+## 0.1. refs: refs：
 
 - https://dev.to/cassiocappellari/fundamentals-of-rest-api-2nag https://dev.to/cassiocappellari/fundamentals-of-rest-api-2nag
 
-# Fundamentals of REST API REST APIの基礎
+# 1. Fundamentals of REST API REST APIの基礎
 
-## Introduction
+## 1.1. Introduction
 
 We live in a modern and ultra-connected world that shares a huge amount of data every second through browsers, servers, softwares and applications.
-私たちは、ブラウザ、サーバー、ソフトウェア、アプリケーションを通じて毎秒莫大な量のデータを共有する、現代的で超接続された世界に住んでいる。
+私たちは、ブラウザ、サーバ、ソフトウェア、アプリケーションを通じて毎秒莫大な量のデータを共有する、現代的で超接続された世界に住んでいる。
 For all these systems to communicate with each other, we have a tool that is the key player to integrate all this complexity: the APIs.
 これらすべてのシステムが互いに通信するために、この複雑なシステムすべてを統合する重要な役割を果たすツールがある： APIである。
 
 In this article I share my knowledge, experience and studies about this technology, with the goal to provide a basic understanding of the main fundamentals of API, REST and HTTP Protocol.
 この記事では、API、REST、HTTPプロトコルの主な基礎についての基本的な理解を提供することを目的として、この技術に関する私の知識、経験、研究を共有する。
 
-## API Concept APIコンセプト
+## 1.2. API Concept APIコンセプト
 
 API means Application Programming Interface and, like any other interface, allows interactions.
-APIとはApplication Programming Interface（アプリケーション・プログラミング・インターフェース）のことで、他のインターフェースと同様、相互作用を可能にするものである。
+APIとはApplication Programming Interface（アプリケーション・プログラミング・インターフェース）のことで、**他のインターフェースと同様、相互作用を可能にするもの**である。
 In the case of an API, it allows interactions between systems by following a set of standards and protocols in order to share features, information and data.
-APIの場合、機能や情報、データを共有するために、一連の標準やプロトコルに従ってシステム間の相互作用を可能にする。
+APIの場合、一連の標準とプロトコルに従って、システム間の相互作用を可能にし、機能、情報、データを共有する。
 In other words, it provides developers the opportunity to build and design products and services that will communicate with other products and services.
-言い換えれば、他の製品やサービスとコミュニケーションする製品やサービスを構築し、設計する機会を開発者に提供するということだ。
+言い換えれば、APIは、開発者が他の製品やサービスと通信する製品やサービスを構築し、設計する機会を提供する。
 
 We can have different architectural styles of APIs and, nowadays, the main one that is a key part of our Internet world it’s called REST, an acronym for REpresentational State Transfer.
-APIにはさまざまなアーキテクチャー・スタイルがあるが、現在、インターネットの世界で重要な役割を担っているのは、RESTと呼ばれるものだ。
+**APIにはさまざまなアーキテクチャー・スタイルがあるが、現在、インターネットの世界で重要な役割を担っているのは、RESTと呼ばれるもの**だ。
 
-## REST Fundamentals RESTの基礎
+## 1.3. REST Fundamentals RESTの基礎
 
 REST is an architecture style to develop web services, which uses the HTTP protocol as a communication interface in order to transfer data through HTTP methods.
-RESTはウェブサービスを開発するためのアーキテクチャスタイルで、HTTPプロトコルを通信インターフェースとして使用し、HTTPメソッドを通じてデータを転送する。
+**RESTはウェブサービスを開発するためのアーキテクチャスタイルで、HTTPプロトコルを通信インターフェースとして使用し、HTTPメソッドを通じてデータを転送する**。
 In other words, it allows performing basic data manipulation within an application with efficiency, such as creating, retrieving, updating and deleting information.
 言い換えれば、情報の作成、検索、更新、削除など、アプリケーション内での基本的なデータ操作を効率的に行うことができる。
 
@@ -40,89 +40,109 @@ RESTは、2000年にロイ・フィールディングが博士論文の中で誕
 「Representational State Transfer（表現的状態遷移）」という名前は、よく設計されたウェブアプリケーションの動作をイメージさせることを意図しています： ウェブページのネットワーク（仮想的な状態マシン）であり、ユーザーはリンク（状態遷移）を選択することでアプリケーションを進行させ、その結果、次のページ（アプリケーションの次の状態を表す）がユーザーに転送され、ユーザーが使用できるようにレンダリングされる。"
 
 So, as Roy Fielding defines, in order to build a well-designed web application, we can use REST principles that help us to develop services that are more scalable, reliable and flexible.
-だから、ロイ・フィールディングが定義しているように、よく設計されたウェブ・アプリケーションを構築するためには、よりスケーラブルで信頼性が高く、柔軟なサービスを開発するのに役立つRESTの原則を使うことができる。
+だから、ロイ・フィールディングが定義しているように、よく設計されたウェブアプリケーションを構築するために、**よりスケーラブルで信頼性があり、柔軟性のあるサービスを開発するのに役立つREST原則**を使用することができます。
 To achieve this goal, the REST architecture has six constraints and an API that is driven by that can be called RESTful.
-この目標を達成するために、RESTアーキテクチャには6つの制約があり、それによって駆動されるAPIはRESTfulと呼ぶことができる。
+この目標を達成するために、**RESTアーキテクチャには6つの制約**があり、それによって駆動されるAPIはRESTfulと呼ぶことができる。
+(お、前読んだ「What is REST?」では、RESTfulシステムの特性は2つだったきがする...!:thinking: : 1:クライアントとサーバの関心が分離している, 2:statelessである(=サーバがクライアントの状態を保存しない))
 
-### Client-Server クライアント・サーバー
+### 1.3.1. Client-Server (契約1)
 
 The main principle of the Client-Server web architecture is the Separation of Concerns, which means that the Client that sends the request it’s completely independent from the Server that returns the response.
-つまり、リクエストを送信するクライアントと、レスポンスを返すサーバーは完全に独立しているということです。
+クライアント・サーバーのウェブアーキテクチャの主要な原則は、関心の分離です。これは、**リクエストを送信するクライアントが、レスポンスを返すサーバと完全に独立していること**を意味します。
 
-### Stateless ステートレス
+### 1.3.2. Stateless ステートレス (契約2)
 
 All the information (state) that is required in a request must be sended by the Client.
-リクエストに必要なすべての情報（状態）は、クライアントから送信されなければなりません。
+**リクエストに必要なすべての情報(state)は、クライアントによって送信されなければならない**。
 Therefore, the Server must not store any data during a Client-Server communication, which means that every request is a standalone request.
-したがって、サーバーはクライアントとサーバーの通信中にいかなるデータも保存してはならない。これは、すべてのリクエストがスタンドアロンリクエストであることを意味する。
+したがって、サーバはクライアントとサーバの通信中にデータを保存してはならず、**すべてのリクエストは standalone なリクエストである**ということです。
 
-### Interface Uniform インターフェース・ユニフォーム
+### 1.3.3. Cache (契約3)
+
+Cache is a computational storage structure focused on keeping stored data that is frequently accessed, improving performance and network efficiency.
+**キャッシュは、頻繁にアクセスされるデータを保持し、パフォーマンスとネットワーク効率を向上させることに焦点を当てた計算ストレージ構造**です。
+Therefore, through caching, it’s possible to reduce or even eliminate the need for the Client to send requests to the Server (who must inform if the request can be cacheable or not).
+したがって、キャッシュを通じて、クライアントがサーバにリクエストを送信する必要を減らすか、さらには排除することができます (**サーバはリクエストがキャッシュ可能かどうかを通知する必要があります**)。
+
+(キャッシュされるのは基本的にサーバ側??クライアント側でキャッシュされることもある??:thinking:)
+
+### 1.3.4. Interface Uniform (契約4)
+
+(これって統一された相互作用方法、みたいなイメージ??:thinking:)
 
 Means how Client and Server will share information by defining an interface that must be followed in every request.
-クライアントとサーバーがどのように情報を共有するかを意味し、すべてのリクエストで従わなければならないインターフェースを定義する。
+クライアントとサーバがどのように情報を共有するかを意味し、すべてのリクエストで従わなければならないインターフェイスを定義する。
 In other words, it’s a contract between the Client and the Server that determines the standards for their communication.
-言い換えれば、クライアントとサーバーの間で交わされる契約であり、通信の標準を決定するものである。
+言い換えれば、それはクライアントとサーバの間の契約であり、彼らのコミュニケーションのための標準を決定する。
 
 Here, we have four additional constraints that is part of Uniform Interface:
-ここでは、Uniform Interfaceの一部である4つの制約が追加されている：
+ここでは、**Uniform Interface の一部である4つの追加の制約**があります。
 
-#### Identification of Resources 資源の特定
+#### 1.3.4.1. Identification of Resources リソースの識別
 
 REST is based on resources, and a resource is an information that can be named.
-RESTはリソースに基づいており、リソースとは名前を付けることができる情報のことである。
+RESTはリソースに基づいており、**リソースとは名前を付けることができる情報**のことである。
 It’s used in a request to identify what the Client wants to access in the Server.
-これは、クライアントがサーバーの何にアクセスしたいかを識別するための リクエストで使われる。
+これは、クライアントがサーバの何にアクセスしたいかを識別するための リクエストで使われる。
+(path to the resourceをリクエストに含めないといけないんだよね...!:thinking:)
 
 For example, to retrieve a list of products, the resource must be setted in the URL: http://api.example.com/products
-例えば、商品のリストを取得するには、URLにリソースを設定しなければならない： http://api.example.com/products
+例えば、商品のリストを取得するには、URLにリソースを設定しなければならない： `http://api.example.com/products` (base URL + path to the resource...! :thinking:)
 
-#### Manipulation of Resources Through Representation 表象による資源の操作
+#### 1.3.4.2. Manipulation of Resources Through Representation 表現を通じたリソースの操作
+
+(要するに、ヘッダーの `Accept` field を指定しないといけないよってことっぽい...??:thinking:)
 
 The Client must be sure that the request to the Server has enough information to manipulate (create, retrieve, update, delete) the informed resource, which can be represented by multiple formats, such as JSON, XML, HTML etc.
-クライアントは、サーバーへのリクエストが、JSON、XML、HTMLなどの複数のフォーマットで表現される情報リソースを操作（作成、取得、更新、削除）するのに十分な情報を持っていることを確認する必要があります。
+**クライアントは、サーバへのリクエストに、指定されたリソースを操作（作成、取得、更新、削除）するための十分な情報が含まれていることを確認しなければならない**。これは、JSON、XML、HTMLなどの複数の形式で表現することができる。(これって Design by Contract における事前条件みたいな...??)
 In other words, the Client can specify the desired representation of a resource in every request to a Server.
-言い換えれば、クライアントはサーバーへのリクエストのたびに、リソースの望ましい表現を指定することができる。
+言い換えれば、クライアントはサーバへのリクエストのたびに、リソースの望ましい表現を指定することができる。
 
 For example: a Client can specify in a request to retrieve a resource in JSON format.
-例えば a クライアントは、JSON形式のリソースを取得するようにリクエストで指定できます。
+例えば、クライアントは
 
-#### Self-descriptive Messages 自己紹介メッセージ
+#### 1.3.4.3. Self-descriptive Messages 自己紹介メッセージ
 
 A self-descriptive message ensures a uniform interface in the communication by containing all the information that a Client or a Server needs to understand the request and the response just by checking the semantics of the message.
-自己記述的メッセージは、クライアントまたはサーバーがメッセージのセマンティクスをチェックするだけで、リクエストとレスポンスを理解するために必要なすべての情報を含むことによって、通信における統一されたインターフェイスを保証します。
+self-descriptive messageは、統一されたインターフェイスを通信に保証する。それは、メッセージの意味論をチェックすることでクライアントやサーバがリクエストとレスポンスを理解するために必要なすべての情報を含むことにより...!
 
-#### HATEOAS (Hypertext As The Engine Of Application State) HATEOAS (アプリケーション状態のエンジンとしてのハイパーテキスト)
+(なんのこっちゃ...??)
+
+#### 1.3.4.4. HATEOAS (Hypertext As The Engine Of Application State) (アプリケーション状態のエンジンとしてのハイパーテキスト)
 
 HATEOAS means that a response sent from the Server should contain information about what the Client can do in further requests.
-HATEOASとは、サーバーから送られる応答が、クライアントが更なるリクエストで何ができるかについての情報を含むべきであることを意味する。
+**HATEOASとは、サーバから送られるレスポンスが、クライアントが更なるリクエストで何ができるかについての情報を含むべきであること**を意味する。
 In other words, the Server indicates what actions the Client can do next.
-言い換えれば、サーバーはクライアントが次にどのようなアクションができるかを示す。
+言い換えれば、**サーバはクライアントが次にどのようなアクションができるかを示す**。
 In REST standards, Servers must send only hypermedia (links) to Clients.
-REST標準では、サーバーはクライアントにハイパーメディア（リンク）のみを送信しなければならない。
+**REST標準では、サーバはクライアントにハイパーメディア(links) のみを送信しなければならない**。(ハイパーリンクだけを送信する? 次にそこにアクセスしてくれって示してるってこと??:thinking:)
 
-### Layered system レイヤーシステム
+### 1.3.5. Layered system レイヤーシステム (契約5)
 
 Layered system relates to the fact that there can be more components and subsystems between a Client and a Server.
-レイヤードシステムとは、クライアントとサーバーの間に、より多くのコンポーネントやサブシステムが存在しうるという事実に関連する。
+レイヤードシステムとは、クライアントとサーバーの間により多くのコンポーネントとサブシステムが存在することに関連しています。
 In other words, the client can’t assume that it is communicating directly to the Server, and don’t know about the complexity to process the request and return the response.
-言い換えれば、クライアントはサーバーと直接通信していると考えることはできず、リクエストの処理とレスポンスの返送の複雑さを知ることはできない。
+言い換えれば、**クライアントは、サーバと直接通信しているとは仮定できず、リクエストを処理しレスポンスを返すための複雑さについては知らない**。
+(複雑さに関しては、そもそも契約1でサーバとクライアントを分離させてる時点で、満たせる気がする...??:thinking:)
 
 For example: a Client sends a request to a Server, but first it passes by a proxy layer for security check.
-例えば クライアントがサーバにリクエストを送信する場合、まずセキュリティチェックのためにプロキシ層を通過する。
+例えば クライアントがサーバにリクエストを送信する場合、まずセキュリティチェックのために proxy層を通過する。(なるほど確かに...! Load Balancer とかもそうだよね...!:thinking:)
 
-### Code On Demand コード・オン・デマンド
+### 1.3.6. Code On Demand コード・オン・デマンド (契約6)
 
 Code On Demand is the only optional constraint, and means that a Server can send an executable code as a response to the Client.
-コード・オン・デマンドは、唯一のオプション制約であり、サーバーがクライアントに応答として実行可能コードを送ることができることを意味する。
-In other words, it’s what happens when a browser, for example, receives a response from the Server with a HTML tag <script> so, when the HTML document is loaded, the script can be executed.
-言い換えれば、たとえばブラウザがサーバーからHTMLタグ<script>付きのレスポンスを受け取ったときに、HTMLドキュメントが読み込まれたときにスクリプトを実行できるようにすることです。
+**コード・オン・デマンドは、唯一のoptionalな制約**であり、**サーバはクライアントに対して実行可能なコードをレスポンスとして送信することができる**ことを意味します。
+In other words, it’s what happens when a browser, for example, receives a response from the Server with a HTML tag `<script>` so, when the HTML document is loaded, the script can be executed.
+言い換えれば、たとえばブラウザがサーバーからHTMLタグ `<script>` を含むレスポンスを受け取ったときに、HTMLドキュメントがロードされると、スクリプトが実行される。
 
-## Request Anatomy リクエスト解剖学
+<!-- ここまで読んだ! RESFfulアプリケーションの6つの制約...! -->
+
+## 1.4. Request Anatomy リクエスト解剖学
 
 Basically, a Client request has 4 main elements that compose all the information that is needed to interact with the Server.
 基本的に、クライアントリクエストには4つの主要な要素があり、サーバーとやり取りするために必要なすべての情報を構成します。
 
-### URL URL
+### 1.4.1. URL URL
 
 URL means Uniform Resource Locator, which is the address to not just identify a resource, but also to specify how to access it.
 URLとはUniform Resource Locator（ユニフォーム・リソース・ロケーター）のことで、リソースを識別するだけでなく、そのリソースへのアクセス方法を指定するためのアドレスである。
@@ -132,7 +152,7 @@ APIでは、URLはベースURLと名付けることができる。これは、�
 For example: http://api.example.com
 例えば http://api.example.com
 
-### URI URI
+### 1.4.2. URI URI
 
 URI means Uniform Resource Identifier, which is used in the URL to specify which resource the Client would like to access in a request.
 URIとはUniform Resource Identifier(統一資源識別子)のことで、クライアントがリクエストの中でどのリソースにアクセスしたいかを指定するためにURLで使われる。
@@ -149,14 +169,14 @@ URI： /製品
 Therefore, every URL is an URI, but not all URIs are URLs.
 したがって、すべてのURLはURIであるが、すべてのURIがURLというわけではない。
 
-### Parameters パラメーター
+### 1.4.3. Parameters パラメーター
 
 Parameters are information that can be sended in a request by the Client in order to influence the response by the Server.
 パラメータとは、サーバーのレスポンスに影響を与えるために、クライアントがリクエストで送信できる情報のことです。
 REST has 4 types of parameters, and its use will depend on the type of action that the request demands.
 RESTには4種類のパラメータがあり、その使い方はリクエストが要求するアクションの種類によって異なる。
 
-### Body Params ボディ・パラメータ
+### 1.4.4. Body Params ボディ・パラメータ
 
 The Body, like the name says, it’s the body of the request which contains all the data that the Server needs to successfully process the request.
 Bodyは、その名の通りリクエストのボディで、サーバーがリクエストを正常に処理するために必要なすべてのデータを含んでいます。
@@ -174,7 +194,7 @@ JSON形式のリクエストボディの例：
 }
 ```
 
-### Route Params ルート・パラメータ
+### 1.4.5. Route Params ルート・パラメータ
 
 Route params are parameters inserted in the URL with the information to identify a specific resource in order to take an action, such as: retrieve, edit, update or delete.
 Route paramsは、次のようなアクションを実行するために、特定のリソースを識別するための情報をURLに挿入するパラメータです： 取得、編集、更新、削除などです。
@@ -185,7 +205,7 @@ For example: http://api.example.com/products/1
 In this given example, the route param with value 1 identifies the resource that will be manipulated in the request.
 この例では、値1を持つルートパラメータは、リクエストで操作されるリソー スを特定する。
 
-### Query Params クエリ・パラム
+### 1.4.6. Query Params クエリ・パラム
 
 Query params are also parameters inserted in the URL, but with the main difference that it’s use cases are related to filter and search information about a resource, or even paginate and ordinate the results.
 クエリパラメータもURLに挿入されるパラメータですが、主な違いは、リソースに関する情報のフィルタリングや検索、あるいは結果のページ分割や整列に使用されることです。
@@ -199,7 +219,7 @@ http://api.example.com/products?name=laptop&available=true
 In this given example, the Client communicates to the Server that the request is to retrieve products with name equals laptop, and available equals true.
 この例では、Clientは、nameがlaptopでavailableがtrueに等しい製品を検索することをServerに伝える。
 
-### Headers ヘッダー
+### 1.4.7. Headers ヘッダー
 
 Headers allows sending extra information in a request, such as authentication tokens and content types.
 ヘッダは、認証トークンやコンテントタイプのような追加情報をリクエストに送ることができます。
@@ -215,7 +235,7 @@ Accept: application/json
 In this given example, the Client is sending extra data informing not just it's credentials to access a resource, but also a desired response format.
 この例では、クライアントはリソースにアクセスするためのクレデンシャルだけでなく、 希望する応答フォーマットも知らせる追加データを送信している。
 
-## HTTP PROTOCOL httpプロトコル
+## 1.5. HTTP PROTOCOL httpプロトコル
 
 Alright, now that we have a basic understanding of REST fundamentals and it’s constraints, let’s talk about the communication standard that rules the Internet world by defining the interaction patterns between Clients and Servers: the HTTP Protocol (HyperText Transfer Protocol).
 さて、RESTの基礎と制約を理解したところで、クライアントとサーバー間の相互作用パターンを定義することで、インターネットの世界を支配している通信標準について話そう： HTTPプロトコル（HyperText Transfer Protocol）です。
@@ -223,7 +243,7 @@ Alright, now that we have a basic understanding of REST fundamentals and it’s 
 The HTTP Protocol determines not just the methods that are allowed in a REST API, which means the action types that the Client can demand in a request, but also the status codes that the Server returns as a response in order to have a good communication flow.
 HTTPプロトコルは、REST APIで許可されるメソッド、つまりクライアントがリクエストで要求できるアクションタイプだけでなく、サーバーが良好な通信フローを持つためにレスポンスとして返すステータスコードも決定する。
 
-### HTTP Methods HTTP メソッド
+### 1.5.1. HTTP Methods HTTP メソッド
 
 There are 5 main methods that a Client can use in a request in order to manipulate an API resource, which are related with the 5 basic data manipulation types in a database, such: Create, Retrieve, Update and Delete.
 クライアントがAPIリソースを操作するためにリクエストで使用できる主なメソッドは5つあり、これはデータベースにおける5つの基本的なデータ操作タイプと関連している： Create、Retrieve、Update、Deleteです。
@@ -324,7 +344,7 @@ DELETE http://api.example.com/products/1
 In this given example, the product with ID 1 will be deleted.
 この例では、ID 1の製品が削除される。
 
-### HTTP Status Code HTTP ステータスコード
+### 1.5.2. HTTP Status Code HTTP ステータスコード
 
 The HTTP Status Codes are codes returned by the Server in order to indicate the type of response in a Client’s request, facilitating the understanding just by its group and number.
 HTTPステータスコードは、クライアントのリクエストのレスポンスの種類を示すためにサーバーから返されるコードで、そのグループと番号だけで理解が容易になります。
@@ -356,7 +376,7 @@ Status group that indicates an error in the Client side, which means that the re
 Status group that indicates an error in the Server side, which means that the request was sent correctly by the Client, but an error occurred while processing it.
 サーバー側のエラーを示すステータスグループ。これは、リクエストはクライアントから正しく送信されたが、処理中にエラーが発生したことを意味する。
 
-## Conclusion 結論
+## 1.6. Conclusion 結論
 
 I hope that this article helped you to have a basic theoretical approach about REST fundamentals, which is an essential knowledge to every programmer that develops web services.
 この記事が、ウェブサービスを開発するすべてのプログラマーにとって不可欠な知識であるRESTの基礎について、基本的な理論的アプローチを持つ助けになったことを願っている。
