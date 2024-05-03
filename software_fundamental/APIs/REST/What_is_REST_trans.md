@@ -237,59 +237,56 @@ This would signify that the content requested is being returned in the response 
 #### Response Codes レスポンス・コード
 
 Responses from the server contain status codes to alert the client to information about the success of the operation.
-サーバーからの応答には、操作の成功に関する情報をクライアントに警告するためのステータスコードが含まれている。
+**サーバからの応答には、操作の成功に関する情報をクライアントに警告するためのステータスコードが含まれている**。
 As a developer, you do not need to know every status code (there are many of them), but you should know the most common ones and how they are used:
-開発者として、すべてのステータスコードを知る必要はありませんが（多くのステータスコードがあります）、最も一般的なものと、それらがどのように使用されるかを知っておくべきです：
+開発者として、すべてのステータスコードを知る必要はありませんが（多くのステータスコードがあります）、最も一般的なものと、それらがどのように使用されるかを知っておくべきです:
 
 For each HTTP verb, there are expected status codes a server should return upon success:
-各HTTP動詞には、成功時にサーバーが返すべき期待ステータスコードがある：
+**各 HTTP verb に対して、サーバが成功した場合に返すべき期待されるステータスコードがある**:
 
+```shell
 GET — return 200 (OK)
-GET - 200 (OK)を返す
-
 POST — return 201 (CREATED)
-POST - 201（CREATED）を返す。
-
 PUT — return 200 (OK)
-PUT - 200（OK）を返す。
+DELETE — return 204 (NO CONTENT)
+```
 
-DELETE — return 204 (NO CONTENT) If the operation fails, return the most specific status code possible corresponding to the problem that was encountered.
-DELETE - return 204 (NO CONTENT) 操作に失敗した場合は、発生した問題に対応する、可能な限り具体的なステータスコードを返します。
+If the operation fails, return the most specific status code possible corresponding to the problem that was encountered.
+操作に失敗した場合は、発生した問題に対応する、可能な限り具体的なステータスコードを返します。
 
 #### Examples of Requests and Responses リクエストとレスポンスの例
 
 Let’s say we have an application that allows you to view, create, edit, and delete customers and orders for a small clothing store hosted at fashionboutique.com.
-fashionboutique.comでホストされている小さな洋服店の顧客や注文を表示、作成、編集、削除できるアプリケーションがあるとします。
+`fashionboutique.com`(=base URL) でホストされている小さな洋服店の**顧客や注文を表示、作成、編集、削除できるアプリケーション**があるとします。
 We could create an HTTP API that allows a client to perform these functions:
-クライアントがこれらの機能を実行できるようなHTTP APIを作ることができる：
+クライアントがこれらの機能を実行できるような HTTP API を作ることができる：
 
 If we wanted to view all customers, the request would look like this:
 すべての顧客を表示したい場合、リクエストは次のようになる：
 
+```shell
 GET http://fashionboutique.com/customers
-http://fashionboutique.com/customers
-
 Accept: application/json
-受け付ける： application/json
+```
 
 A possible response header would look like:
 可能なレスポンス・ヘッダは次のようになる：
 
+```shell
 Status Code: 200 (OK)
-ステータスコード 200 (OK)
-
 Content-type: application/json
-コンテンツタイプ application/json
+```
 
 followed by the customers data requested in application/json format.
-の後に、application/json形式で要求された顧客データが続く。
+その後に、application/json 形式でリクエストされた顧客データが続きます。
 
 Create a new customer by posting the data:
 データを投稿して新しい顧客を作成する：
 
 ```shell
-POST http://fashionboutique.com/customers
-Body:
+POST http://fashionboutique.com/customers # HTTP verb と path of the resource
+# POST verbの場合は、Accept fieldは不要っぽい...??
+Body: # responceのmessage body
 {
   “customer”: {
     “name” = “Scylla Buss”,
@@ -299,13 +296,17 @@ Body:
 ```
 
 The server then generates an id for that object and returns it back to the client, with a header like:
-そして、サーバーはそのオブジェクトのidを生成し、以下のようなヘッダーをつけてクライアントに返す：
+そして、サーバーはそのオブジェクトのidを生成し、以下のようなヘッダーをつけてクライアントに返す:
 
-```
+```shell
 201 (CREATED)
 Content-type: application/json
-To view a single customer we GET it by specifying that customer’s id:
+```
 
+To view a single customer we GET it by specifying that customer’s id:
+特定の顧客を表示するには、その顧客のidを指定してGETします：
+
+```shell
 GET http://fashionboutique.com/customers/123
 Accept: application/json
 ```
@@ -313,24 +314,24 @@ Accept: application/json
 A possible response header would look like:
 可能なレスポンス・ヘッダは次のようになる：
 
-```
+```shell
 Status Code: 200 (OK)
 Content-type: application/json
 ```
 
 followed by the data for the customer resource with id 23 in application/json format.
-の後に、id 23の顧客リソースのデータがapplication/json形式で続きます。
+その後に、application/json 形式でリクエストされたid 23の顧客リソースのデータが続きます。(responceのmessage body?)
 
 We can update that customer by PUT ting the new data:
 新しいデータをPUTすることで、その顧客を更新することができる：
 
-```
-PUT http://fashionboutique.com/customers/123
+```shell
+PUT http://fashionboutique.com/customers/123 # HTTP verb と path of the resource
 Body:
 {
-  “customer”: {
-    “name” = “Scylla Buss”,
-    “email” = “scyllabuss1@codecademy.com”
+“customer”: {
+“name” = “Scylla Buss”,
+“email” = “scyllabuss1@codecademy.com”
   }
 }
 ```
@@ -341,49 +342,56 @@ A possible response header would have Status Code: 200 (OK), to notify the clien
 We can also DELETE that customer by specifying its id:
 また、idを指定してその顧客をDELETEすることもできる：
 
-```
+```shell
 DELETE http://fashionboutique.com/customers/123
 ```
 
 The response would have a header containing Status Code: 204 (NO CONTENT), notifying the client that the item with id 123 has been deleted, and nothing in the body.
-レスポンスには、Status Code： 204 (NO CONTENT) を含むヘッダを持ち、id 123 のアイテムが削除されたことをクライアントに通知します。
+レスポンスには、`Status Code： 204 (NO CONTENT)` を含むヘッダを持ち、id 123 のアイテムが削除されたことをクライアントに通知します。
 
-## Practice with REST RESTの練習
+<!-- ここまで読んだ! -->
+
+## Practice with REST
 
 Let’s imagine we are building a photo-collection site.
-写真集サイトを作るとしよう。
+**写真集サイト**を作るとしよう。
 We want to make an API to keep track of users, venues, and photos of those venues.
-ユーザー、会場、会場の写真を記録するAPIを作りたい。
+**ユーザ、会場、会場の写真を記録するAPI**を作りたい。
 This site has an index.html and a style.css.
-このサイトにはindex.htmlとstyle.cssがあります。
+このサイトには index.html と style.css があります。
 Each user has a username and a password.
-各ユーザーはユーザー名とパスワードを持っている。
+各ユーザ はユーザ名とパスワードを持っている。
 Each photo has a venue and an owner (i.e.the user who took the picture).
-それぞれの写真には撮影地とオーナー（撮影したユーザー）が設定されている。
+それぞれの写真には撮影地とオーナー（撮影したユーザ）が設定されている。
 Each venue has a name and street address.
 各会場には名前と住所がある。
 Can you design a REST system that would accommodate:
 それに対応するRESTシステムを設計できるか：
 
-storing users, photos, and venues
-ユーザー、写真、会場の保存
-
-accessing venues and accessing certain photos of a certain venue
-会場へのアクセス、特定の会場の特定の写真へのアクセス
+- storing users, photos, and venues
+  ユーザ、写真、会場の保存
+- accessing venues and accessing certain photos of a certain venue
+  会場へのアクセス、特定の会場の特定の写真へのアクセス
 
 Start by writing out:
 書き出すことから始めよう：
 
-what kinds of requests we would want to make
-どのようなリクエストをしたいのか
+- what kinds of requests we would want to make
+  どのようなリクエストをしたいのか
+- what responses the server should return
+  サーバが返すべき応答
+- what the content-type of each response should be
+  各レスポンスの `content-type` は何であるべきか
 
-what responses the server should return
-サーバーが返すべき応答
+### Possible Solution - Models 解決策 - モデル
 
-what the content-type of each response should be
-各レスポンスのコンテントタイプはどうあるべきか
+(これは各リソースのモデルを表すJSONオブジェクト??:thinking:)
 
-## Possible Solution - Models 解決策 - モデル
+- (ここで「Models」って??)
+  - 要するにDomain Model? もしくは単にデータの入れ物的なDTO?
+    - まあDomain Modelなのか単なるDTOなのかは、ドメインロジックを表現するアーキテクチャパターンに何を採用してるかによる??
+    - 要は、送信するデータの構造を定義するもの??
+    - DTO(Data Transfer Object)は、ビジネスロジックが含まれないデータの入れ物。メソッドを持たない。
 
 ```shell
 {
@@ -409,11 +417,15 @@ what the content-type of each response should be
 }
 ```
 
-## Possible Solution - Requests/Responses 解決策 - リクエスト/レスポンス
+### Possible Solution - Requests/Responses 解決策 - リクエスト/レスポンス
 
-### GET Requests GETリクエスト
+#### GET Requests GETリクエスト
 
-```
+(なるほど、以下のような感じで、リクエストのテギとそれに対するレスポンスの定義を書いていくのか...!:thinking:)
+
+(path to resourceの `/venues/{id}`みたいな意図って、`:`を使って`/venues/:id`で表記するのか...!:thinking:)
+
+```shell
 Request- GET /index.html Accept: text/html Response- 200 (OK) Content-type: text/html
 
 Request- GET /style.css Accept: text/css Response- 200 (OK) Content-type: text/css
@@ -425,9 +437,9 @@ Request- GET /venues/:id Accept: application/json Response- 200 (OK) Content-typ
 Request- GET /venues/:id/photos/:id Accept: application/json Response- 200 (OK) Content-type: image/png
 ```
 
-### POST Requests POSTリクエスト
+#### POST Requests POSTリクエスト
 
-```
+```shell
 Request- POST /users Response- 201 (CREATED) Content-type: application/json
 
 Request- POST /venues Response- 201 (CREATED) Content-type: application/json
@@ -435,9 +447,9 @@ Request- POST /venues Response- 201 (CREATED) Content-type: application/json
 Request- POST /venues/:id/photos Response- 201 (CREATED) Content-type: application/json
 ```
 
-### PUT Requests PUTリクエスト
+#### PUT Requests PUTリクエスト
 
-```
+```shell
 Request- PUT /users/:id Response- 200 (OK)
 
 Request- PUT /venues/:id Response- 200 (OK)
@@ -445,10 +457,12 @@ Request- PUT /venues/:id Response- 200 (OK)
 Request- PUT /venues/:id/photos/:id Response- 200 (OK)
 ```
 
-### DELETE Requests DELETEリクエスト
+#### DELETE Requests DELETEリクエスト
 
 ```shell
 Request- DELETE /venues/:id Response- 204 (NO CONTENT)
 
 Request- DELETE /venues/:id/photos/:id Response- 204 (NO CONTENT)
 ```
+
+<!-- ここまで読んだ! -->
