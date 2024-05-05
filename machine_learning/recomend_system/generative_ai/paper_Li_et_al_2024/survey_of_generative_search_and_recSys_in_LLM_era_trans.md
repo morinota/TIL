@@ -127,73 +127,89 @@ Finally, in Chapter 7, we give a conclusion of this survey.
 
 ## 2.1. Machine Learning based Search and Recommendation 機械学習に基づく検索と推薦
 
-• Machine learning-based search.
+### Machine learning-based search.
 
-- 機械学習ベースの検索。
-  In the era of machine learning, the core problem for search is to learn an effective function to predict the relevance scores between queries and documents.
-  機械学習の時代において、検索の核となる問題は、クエリと文書間の関連性スコアを予測する効果的な関数を学習することである。
-  A series of classical works, such as Regularized Matching in Latent Space (RMLS) [153] and Supervised Semantic Indexing (SSI) [2, 3], explored mapping functions to transform features from queries and documents into a “latent space”.
-  正則化潜在空間マッチング（RMLS）[153]や教師ありセマンティックインデックス（SSI）[2, 3]などの一連の古典的な研究は、クエリと文書からの特徴を「潜在空間」に変換するマッピング関数を探求した。
-  The series of “learning to rank” algorithms [65, 89] were also proposed to develop effective rank losses for machine learning based search methods: the pointwise approaches [19, 102, 119] transform ranking into regression or classification on single documents; the pairwise approaches [10, 107, 135] regard the ranking into classification on the pairs of documents; the listwise approaches [12, 30, 106, 146, 155] aim to model the ranking problem in a straightforward fashion and overcome the drawbacks of the aforementioned two approaches by tackling the ranking problem directly.
-  機械学習ベースの検索手法のための効果的なランク損失を開発するために、一連の「ランク付け学習」アルゴリズム[65, 89]も提案された： ポイントワイズ・アプローチ[19, 102, 119]は、ランキングを単一の文書に対する回帰や分類に変換するものであり、ペアワイズ・アプローチ[10, 107, 135]は、ランキングを文書のペアに対する分類に変換するものである。リストワイズ・アプローチ[12, 30, 106, 146, 155]は、ランキング問題をわかりやすくモデル化し、ランキング問題に直接取り組むことで前述の2つのアプローチの欠点を克服することを目的としている。
-  • Machine learning-based recommendation.
-- 機械学習ベースの推薦。
-  In the context of recommender systems, the user-item matching typically leverages Collaborative Filtering (CF), which assumes users with similar interactions (e.g., ratings or clicks) share similar preferences on items [39].
-  レコメンダーシステムの文脈では、ユーザーとアイテムのマッチングは、通常、協調フィルタリング（CF）を活用する。これは、同様のインタラクション（例えば、評価やクリック）を持つユーザーが、アイテムに関する同様の嗜好を共有すると仮定する[39]。
-  To achieve CF, early effort has been made to develop memory-based methods, which predict the user interactions by memorizing similar user’s or item’s ratings [9, 40, 84, 117].
-  CFを実現するために、類似のユーザーやアイテムの評価を記憶することで、ユーザーのインタラクションを予測する記憶ベースの手法が早くから開発されてきた[9, 40, 84, 117]。
-  Later on, popularized by the Netflix Prize, Matrix Factorization (MF) [116] has emerged as one of the most representative CF approaches.
-  その後、ネットフリックス賞によって普及した行列因数分解（MF）[116]は、最も代表的なCFアプローチの1つとして登場した。
-  MF decomposes user-item interactions into latent factors for users and items in a latent space.
-  MFは、ユーザーとアイテムの相互作用を、潜在空間におけるユーザーとアイテムの潜在因子に分解する。
-  It then predicts user-item interactions by matching these latent factors through inner product computations.
-  そして、内積計算によってこれらの潜在因子をマッチングさせることで、ユーザーとアイテムの相互作用を予測する。
-  Following MF, other notable methods have been proposed that also perform matching in the latent space, such as BMF [58] and FISM [53].
-  MFに続いて、BMF[58]やFISM[53]など、潜在空間でもマッチングを行う注目すべき手法が提案されている。
-  In addition to the CF-based methods, an orthogonal line of research focuses on content-based techniques, aiming to encode user/item features for user-item matching.
-  CFベースの手法に加えて、ユーザーとアイテムのマッチングのためにユーザー/アイテムの特徴を符号化することを目的とした、コンテンツベースの手法に焦点を当てた直交する研究ラインがある。
-  Factorization Machine [115] is a prominent content-based method that represents user and item features as latent factors and models their high-order interactions to match between users and items.
-  因数分解マシン[115]は、ユーザーとアイテムの特徴を潜在因子として表現し、ユーザーとアイテムの間のマッチングのためにそれらの高次の相互作用をモデル化する、著名なコンテンツベースの手法である。
+機械学習ベースの検索。
+In the era of machine learning, the core problem for search is to learn an effective function to predict the relevance scores between queries and documents.
+機械学習の時代において、検索の核となる問題は、クエリと文書の間の関連性スコアを予測するための効果的な関数を学習することである。(効果的な関数って、目的関数? もしくは教師ありモデル自体??)
+A series of classical works, such as Regularized Matching in Latent Space (RMLS) [153] and Supervised Semantic Indexing (SSI) [2, 3], explored mapping functions to transform features from queries and documents into a “latent space”.
+正則化潜在空間マッチング（RMLS）[153]や教師ありセマンティックインデックス（SSI）[2, 3]などの一連の古典的な研究は、クエリと文書からの特徴を「潜在空間」に変換するマッピング関数を探求した。(特徴量を埋め込みベクトルにmappingする関数??)
+The series of “learning to rank” algorithms [65, 89] were also proposed to develop effective rank losses for machine learning based search methods:
+機械学習ベースの検索手法のための効果的なランク損失を開発するために、 **「ランク付け学習」アルゴリズムの一連の提案**も行われた (こレラの提案って、基本的にはモデルアーキテクチャではなく、目的関数やサンプリング方法の提案、という印象...!:thinking:):
+the pointwise approaches [19, 102, 119] transform ranking into regression or classification on single documents; the pairwise approaches [10, 107, 135] regard the ranking into classification on the pairs of documents; the listwise approaches [12, 30, 106, 146, 155] aim to model the ranking problem in a straightforward fashion and overcome the drawbacks of the aforementioned two approaches by tackling the ranking problem directly.
+ポイントワイズアプロー[19, 102, 119]は、ランキングを単一のドキュメントに対する回帰または分類に変換する; ペアワイズアプローチ[10, 107, 135]は、ランキングをドキュメントのペアに対する分類に変換する; リストワイズアプローチ[12, 30, 106, 146, 155]は、ランキング問題を直接的な方法でモデル化し、ランキング問題に直接取り組むことで、前述の2つのアプローチの欠点を克服することを目指している。
+
+<!-- ここまで読んだ! -->
+
+### Machine learning-based recommendation.
+
+機械学習ベースの推薦。
+In the context of recommender systems, the user-item matching typically leverages Collaborative Filtering (CF), which assumes users with similar interactions (e.g., ratings or clicks) share similar preferences on items [39].
+レコメンダーシステムの文脈では、ユーザとアイテムのマッチングは、通常、協調フィルタリング(CF)を活用している。**CFは、類似したインタラクション（例：評価やクリック）を持つユーザは、アイテムに対して類似した嗜好を持つと仮定**している。(CFを説明する際にわかりやすそう...!:thinking:)
+To achieve CF, early effort has been made to develop memory-based methods, which predict the user interactions by memorizing similar user’s or item’s ratings [9, 40, 84, 117].
+CFを実現するために、類似のユーザやアイテムの評価を記憶することで、ユーザーのインタラクションを予測する **memory-based な方法**が初期に開発された[9, 40, 84, 117]。 (item-kNNとかはmemory-basedな手法に含まれる...?:thinking:)
+Later on, popularized by the Netflix Prize, Matrix Factorization (MF) [116] has emerged as one of the most representative CF approaches.
+その後、ネットフリックス賞によって人気を博したMatrix Factorization (MF) [116]は、最も代表的なCFアプローチの1つとして登場した。
+MF decomposes user-item interactions into latent factors for users and items in a latent space.
+MFは、ユーザとアイテムの相互作用を、潜在空間におけるユーザとアイテムのlatent factorsに分解する。(=latent factor vectors...!:thinking:)
+It then predicts user-item interactions by matching these latent factors through inner product computations.
+そして、内積計算によってこれらのlatent factorsをマッチングし、ユーザとアイテムの相互作用を予測する。
+Following MF, other notable methods have been proposed that also perform matching in the latent space, such as BMF [58] and FISM [53].
+MFに続いて、BMF[58]やFISM[53]など、潜在空間でもマッチングを行う注目すべき手法が提案されている。
+In addition to the CF-based methods, an orthogonal line of research focuses on content-based techniques, aiming to encode user/item features for user-item matching.
+CFベースの手法に加えて、**ユーザとアイテムの特徴をencodeしてユーザとアイテムのマッチングを行うコンテンツベースの技術**に焦点を当てた、直交する研究ラインもある。(ここで"直交する研究ライン"って、異なるアプローチや視点からの研究、みたいな意味合いの比喩表現っぽい...!!:thinking:)
+Factorization Machine [115] is a prominent content-based method that represents user and item features as latent factors and models their high-order interactions to match between users and items.
+因数分解マシン[115]は、ユーザとアイテムの特徴をlatent factorsとして表現し、ユーザとアイテムの間のマッチングを行うために、その高次の相互作用をモデル化する突出したコンテンツベースの手法である。(あ、factorization machineはcontent-basedな手法に分類されるのか...! ハイブリッド的なアプローチとみなしていたけど...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## 2.2. Deep Learning based Search and Recommendation ディープラーニングに基づく検索と推薦
 
-• Deep learning-based Search.
+### Deep learning-based Search. ディープラーニングに基づく検索。
 
-- ディープラーニングに基づく検索。
-  Deep learning-based search mainly relies on various neural architectures to represent queries and documents effectively.
-  ディープラーニングに基づく検索は、主にクエリと文書を効果的に表現するために、さまざまなニューラルアーキテクチャに依存している。
-  Feedforward neural networks are the first used to create semantic representations of queries and documents.
-  フィードフォワード・ニューラル・ネットワークは、クエリや文書の意味的表現を作成するために最初に使用された。
-  Deep Structured Semantic Models were proposed to represent queries and documents with deep neural networks [49].
-  Deep Structured Semantic Modelsは、ディープニューラルネットワークを使ってクエリとドキュメントを表現するために提案された[49]。
-  The popular Convolutional Neural Networks are also explored for the application in capturing semantic embeddings [44, 48, 121, 123].
-  一般的な畳み込みニューラルネットワークも、意味的埋め込みを捕捉するための応用が検討されている[44, 48, 121, 123]。
-  Given the fact that both queries and documents are sequential texts, it is natural to apply Recurrent Neural Networks to represent the queries and documents [103].
-  クエリも文書もシーケンシャルなテキストであるという事実を考えると、クエリと文書を表現するためにリカレント・ニューラル・ネットワークを適用するのは自然である[103]。
-  Later, with the rise of the Transformer architecture [138] and pretrained BERT model [26], the Bert-based dense retrievers show advanced performance in large-scale scenarios [55, 110].
-  その後、Transformerアーキテクチャ[138]と事前訓練されたBERTモデル[26]の台頭により、Bertベースの密な検索器は、大規模なシナリオで高度な性能を示すようになった[55, 110]。
-  • Deep learning-based recommendation.
-- ディープラーニングに基づく推薦
-  As deep neural networks have demonstrated exceptional learning capabilities across various domains, there emerges a trend in leveraging deep learning methodologies to tackle complex interaction patterns for user-item matching in recommendation systems [17, 54].
-  ディープ・ニューラル・ネットワークが様々な領域で卓越した学習能力を発揮していることから、推薦システムにおけるユーザーとアイテムのマッチングのための複雑なインタラクション・パターンに取り組むために、ディープ・ラーニングの方法論を活用する傾向が現れている[17, 54]。
-  Deep learning-based user-item matching can be broadly classified into two research directions.
-  ディープラーニングに基づくユーザーとアイテムのマッチングは、大きく2つの研究方向に分類できる。
-  One research line focuses on matching function learning, which utilizes deep learning techniques to learn intricate user-item matching function [170].
-  一つの研究ラインは、ユーザーとアイテムの複雑なマッチング関数を学習するために深層学習技術を利用するマッチング関数学習に焦点を当てている[170]。
-  Notably, Neural Collaborative Filtering (NCF) [39] leverages Multi-Layer Perceptrons (MLP) to achieve expressive and complicated matching functions.
-  特に、ニューラル協調フィルタリング（NCF）[39]は、多層パーセプトロン（MLP）を活用して、表現力豊かで複雑なマッチング関数を実現している。
-  This approach effectively models noisy implicit feedback data and enhances the recommendation performance.
-  このアプローチは、ノイズの多い暗黙のフィードバックデータを効果的にモデル化し、推薦性能を向上させる。
-  Another line of work lies in representation learning [158], which harnesses neural networks to transform user and item features into latent space conducive to matching.
-  別の研究分野は表現学習[158]にあり、これはニューラルネットワークを利用して、ユーザーとアイテムの特徴をマッチングに適した潜在空間に変換する。
-  For instance, Bert4Rec [124] employs deep bidirectional self-attention mechanisms to transform user’s historical sequences into latent space for sequential recommendation tasks.
-  例えば、Bert4Rec [124]は、逐次的な推薦タスクのために、ユーザーの履歴シーケンスを潜在空間に変換する深い双方向の自己注意メカニズムを採用している。
-  Caser [130] proposes a convolutional sequence model, which leverages both horizontal and vertical convolutional filters to identify complex historical interaction sequences.
-  Caser [130]は、複雑な歴史的相互作用シーケンスを識別するために、水平および垂直畳み込みフィルタの両方を活用する畳み込みシーケンスモデルを提案している。
-  Subsequently, motivated by the graphical structure inherent in user-item interactions, researchers have explored the application of graph neural networks for recommendation tasks.
-  その後、ユーザーとアイテムのインタラクションに内在するグラフィカルな構造に動機づけられ、研究者は推薦タスクへのグラフ・ニューラル・ネットワークの応用を模索してきた。
-  This research direction has enabled the utilization of high-order neighbor information to enhance the representation of users and items for the user-item matching, as exemplified by NGCF [145] and LightGCN [38].
-  この研究の方向性は、NGCF [145]やLightGCN [38]に代表されるように、ユーザーとアイテムのマッチングのために、ユーザーとアイテムの表現を強化するために高次の近傍情報を利用することを可能にした。
+Deep learning-based search mainly relies on various neural architectures to represent queries and documents effectively.
+ディープラーニングに基づく検索は、主にクエリと文書を効果的に表現するために、さまざまなニューラルアーキテクチャに依存している。
+Feedforward neural networks are the first used to create semantic representations of queries and documents.
+フィードフォワード・ニューラル・ネットワークは、クエリや文書の意味的表現を作成するために最初に使用された。
+Deep Structured Semantic Models were proposed to represent queries and documents with deep neural networks [49].
+Deep Structured Semantic Modelsは、ディープニューラルネットワークを使って**クエリとドキュメントを表現**するために提案された[49]。(この場合の成果物はクエリとドキュメントのsemanticな埋め込み表現になるっぽい...???:thinking:)
+The popular Convolutional Neural Networks are also explored for the application in capturing semantic embeddings [44, 48, 121, 123].
+一般的な畳み込みニューラルネットワークも、**semantic埋め込みを捕捉するための応用**が検討されている[44, 48, 121, 123]。
+Given the fact that both queries and documents are sequential texts, it is natural to apply Recurrent Neural Networks to represent the queries and documents [103].
+クエリも文書もシーケンシャルなテキストであるという事実を考えると、クエリと文書を表現するために Recurrent Neural Networks (RNN) を適用するのは自然である[103]。
+Later, with the rise of the Transformer architecture [138] and pretrained BERT model [26], the Bert-based dense retrievers show advanced performance in large-scale scenarios [55, 110].
+その後、Transformerアーキテクチャ[138]と事前訓練されたBERTモデル[26]の台頭により、**Bertベースの密な検索器は、大規模なシナリオで高度な性能を示すようになった**[55, 110]。(情報検索の歴史はNLPの歴史、みたいなイメージ...!:thinking:)
+
+<!-- ここまで読んだ! -->
+
+### Deep learning-based recommendation. ディープラーニングに基づく推薦
+
+As deep neural networks have demonstrated exceptional learning capabilities across various domains, there emerges a trend in leveraging deep learning methodologies to tackle complex interaction patterns for user-item matching in recommendation systems [17, 54].
+ディープ・ニューラル・ネットワークが様々な領域で卓越した学習能力を発揮していることから、推薦システムにおけるユーザとアイテムのマッチングのための複雑なインタラクション・パターンに取り組むために、ディープ・ラーニングの方法論を活用する傾向が現れている[17, 54]。
+Deep learning-based user-item matching can be broadly classified into two research directions.
+**ディープラーニングに基づくユーザとアイテムのマッチングは、大きく2つの研究方向に分類できる**。
+
+One research line focuses on matching function learning, which utilizes deep learning techniques to learn intricate user-item matching function [170].
+一つの研究ラインは、ユーザーとアイテムの複雑なマッチング関数を学習するために深層学習技術を利用するマッチング関数学習に焦点を当てている[170]。
+Notably, Neural Collaborative Filtering (NCF) [39] leverages Multi-Layer Perceptrons (MLP) to achieve expressive and complicated matching functions.
+特に、ニューラル協調フィルタリング（NCF）[39]は、多層パーセプトロン（MLP）を活用して、表現力豊かで複雑なマッチング関数を実現している。
+This approach effectively models noisy implicit feedback data and enhances the recommendation performance.
+このアプローチは、ノイズの多い暗黙のフィードバックデータを効果的にモデル化し、推薦性能を向上させる。
+(sequential recommendationも、どちらかというとこっちの研究ラインに含まれそう...! 色んなモデルアーキテクチャでマッチング関数の改良を頑張ってるイメージ...!:thinking:)
+(あ、マッチング関数って、DNNを使ってscore prediction module周りを頑張ってるってことかも...!:thinking:)
+
+Another line of work lies in representation learning [158], which harnesses neural networks to transform user and item features into latent space conducive to matching.
+**別の研究分野は representation learning(表現学習)**[158]にあり、これはニューラルネットワークを利用して、**ユーザとアイテムの特徴をマッチングに適した潜在空間に変換する**。(うんうん、two-tower architectureとかもこっちの研究ラインに含まれそう...!:thinking:)
+For instance, Bert4Rec [124] employs deep bidirectional self-attention mechanisms to transform user’s historical sequences into latent space for sequential recommendation tasks.
+例えば、Bert4Rec [124]は、sequential recommendationタスクのために、ユーザの歴史的なシーケンスを潜在空間に変換するために、深い双方向セルフアテンションメカニズムを利用している。(そうか、BERT4Recのscore prediction moduleは内積だっけ...!まあ内積じゃないにしろ、この研究ラインはユーザモデリングとアイテムモデリングに焦点を当ててるってことか...!:thinking:)
+Caser [130] proposes a convolutional sequence model, which leverages both horizontal and vertical convolutional filters to identify complex historical interaction sequences.
+Caser [130]は、複雑な歴史的interactionシーケンスを特定するために、水平と垂直の畳み込みフィルタを両方活用する畳み込みシーケンスモデルを提案している。(attention系じゃなくCNN系の手法か)
+Subsequently, motivated by the graphical structure inherent in user-item interactions, researchers have explored the application of graph neural networks for recommendation tasks.
+その後、**ユーザとアイテムのインタラクションに内在するグラフィカルな構造に動機づけられ**、研究者は推薦タスクへのグラフ・ニューラル・ネットワークの応用を模索してきた。(ほうほう...! アイテム表現にentityのknowledge graph使うやつしか認識してないけど、**interaction graph使うver.**もあるか...!:thinking:)
+This research direction has enabled the utilization of high-order neighbor information to enhance the representation of users and items for the user-item matching, as exemplified by NGCF [145] and LightGCN [38].
+この研究の方向性は、NGCF [145]やLightGCN [38]に代表されるように、ユーザとアイテムの表現を強化するために高次の隣接情報を利用することを可能にしている。
+
+<!-- ここまで読んだ! -->
 
 # 3. Generative Paradigm for Search and Recommendation 検索と推薦のための生成パラダイム
 
