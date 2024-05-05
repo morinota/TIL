@@ -2,13 +2,14 @@
 
 - [ドメインロジックのパターンは、ドメインモデルだけなの？](https://masuda220.jugem.jp/?eid=319)
 - [Catalog of Patterns of Enterprise Application Architecture](https://martinfowler.com/eaaCatalog/)
+- [PoEAA Part 1 Chapter 2 Organizing Domain Logic](https://wand-ta.hatenablog.com/entry/2019/02/02/202542)
 
 # ドメインロジックのパターン
 
 ## そもそもドメインロジックってなんだっけ?
 
 - そもそもドメインロジック (ビジネスロジック, ビジネスプロセス)とは?
-  - 特定のビジネスやプロダクト固有の問題の解決方法を、ソフトウェアシステムに落とし込んだもの?
+  - **特定のビジネスやプロダクト固有の問題の解決方法**を、ソフトウェアシステムに落とし込んだもの?
     - コアロジックと言い換えても良い?:thinking:
   - ex.
     - 在庫管理
@@ -21,14 +22,15 @@
 
 ## ドメインロジックの3パターン
 
-- ドメインロジックをいい感じに設計・実装するかに焦点を当てたアーキテクチャパターンが3種類ある。
+- ドメインロジックをいい感じに設計・構成・実装するかに焦点を当てたアーキテクチャパターンが3種類ある。
   - 1. Domain Model (ドメインモデル)
   - 2. Transaction Script (トランザクションスクリプト)
   - 3. Table Module (テーブルモジュール)
 
 なんとなくググってみてた印象:
 
-- 実現したいビジネスロジックが
+- **実現したいビジネスロジックがシンプルであればTransaction Scriptパターン。ビジネスロジックが複雑であるほど、Table Moduleパターン -> Domain Modelパターンが有効になってくるのかも**...?:thinking:
+- ただそもそも、3つの設計思想は排他的なものではなく、組み合わせて使うこともある??:thinking:
 
 ## パターン1. Domain Model (ドメインモデル)について
 
@@ -119,3 +121,41 @@ Transaction Scriptパターンでも、Table Moduleパターンでも、
 
 を、いい感じに凝集したドメインオブジェクトが増え、ドメインモデルパターンとして成長していくのかもしれない。
 最初はTransaction ScriptパターンやTable Moduleパターンでドメインロジックを表現していても、ソフトウェアを改良しながら育てていくと、結局ドメインモデルパターンに近づいていくのかもしれない。
+
+# Service Layerについて
+
+## 一般的なアプリケーションのレイヤー構成
+
+- Presentation Layer: インターフェース的なもの。
+- Domain Layer: ビジネスロジックを表現する。
+- Data Source Layer: データベースアクセスを表現する。
+
+## Service Layerの役割って??
+
+ドメイン層(Domain Layer)を更に2分割することは一般的。
+
+- 上: Service Layer
+- 下: Domain Model, Table Module
+- Transaction Scriptを適用すべき単純なケースでは、そもそも分割する必要はなさそう。
+  - といいつつ、データの入れ物としてdomain objectが使われる場合は、Service layer (Transaction Script)と simple domain object (Table Module)に分割され得る。
+
+その場合、**Service LayerとDomain Model(or Table Module)のように分割されがち**。
+
+Service Layerの役割ってどんな感じ? どこまで仕事させる?? これは設計思想による!
+
+- 1. 仕事させないver. (Facade):
+  - domain model や table module に対する操作を単純に呼び出すだけ。
+  - Transactionの性質を満たすための操作、セキュリティチェックでWrapするなど。
+- 2. 仕事させるver. (Transaction Script):
+  - Service Layer内にTransaction Scriptをガリガリ書く!
+  - 下側の層は簡素なデータの入れ物になる。
+  - (もう少し作り込んで) Domain Modelチックにするとしても、1つのDBのレコードに1つのdomain modelが紐づくような、単純なActive Recordになる。
+    - Active Record = データベースのテーブルに対応するクラスが、そのテーブルの行を表すオブジェクトとして振る舞うような感じ...??:thinking:
+    - (ビジネスロジックの多くはService Layerにあるってことか...!:thinking:)
+    - (うちの場合は割とこっちっぽい...??:thinking:)
+- 3. その中間ver. (controller-entityスタイル!):
+  - (たぶん、**上層と下層の両方にビジネスロジックを分散させてる様な設計**!!)
+  - 上層のService Layerは、**controller (use-case controller)**として機能する。
+    - 単一のビジネストランザクションや特定のusecase特有のビジネスロジックをTransaction Scriptとして実装する。
+  - 下層はentity = Domain Model(Acitive Record)として機能する。
+    - 複数のusecaseで共通のビジネスロジックはこちらで表現される。
