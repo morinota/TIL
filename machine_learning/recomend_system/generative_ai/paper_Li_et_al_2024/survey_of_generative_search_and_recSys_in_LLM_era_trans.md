@@ -127,7 +127,7 @@ Finally, in Chapter 7, we give a conclusion of this survey.
 
 ## 2.1. Machine Learning based Search and Recommendation 機械学習に基づく検索と推薦
 
-### Machine learning-based search.
+### 2.1.1. Machine learning-based search.
 
 機械学習ベースの検索。
 In the era of machine learning, the core problem for search is to learn an effective function to predict the relevance scores between queries and documents.
@@ -141,7 +141,7 @@ the pointwise approaches [19, 102, 119] transform ranking into regression or cla
 
 <!-- ここまで読んだ! -->
 
-### Machine learning-based recommendation.
+### 2.1.2. Machine learning-based recommendation.
 
 機械学習ベースの推薦。
 In the context of recommender systems, the user-item matching typically leverages Collaborative Filtering (CF), which assumes users with similar interactions (e.g., ratings or clicks) share similar preferences on items [39].
@@ -165,7 +165,7 @@ Factorization Machine [115] is a prominent content-based method that represents 
 
 ## 2.2. Deep Learning based Search and Recommendation ディープラーニングに基づく検索と推薦
 
-### Deep learning-based Search. ディープラーニングに基づく検索。
+### 2.2.1. Deep learning-based Search. ディープラーニングに基づく検索。
 
 Deep learning-based search mainly relies on various neural architectures to represent queries and documents effectively.
 ディープラーニングに基づく検索は、主にクエリと文書を効果的に表現するために、さまざまなニューラルアーキテクチャに依存している。
@@ -182,7 +182,7 @@ Later, with the rise of the Transformer architecture [138] and pretrained BERT m
 
 <!-- ここまで読んだ! -->
 
-### Deep learning-based recommendation. ディープラーニングに基づく推薦
+### 2.2.2. Deep learning-based recommendation. ディープラーニングに基づく推薦
 
 As deep neural networks have demonstrated exceptional learning capabilities across various domains, there emerges a trend in leveraging deep learning methodologies to tackle complex interaction patterns for user-item matching in recommendation systems [17, 54].
 ディープ・ニューラル・ネットワークが様々な領域で卓越した学習能力を発揮していることから、推薦システムにおけるユーザとアイテムのマッチングのための複雑なインタラクション・パターンに取り組むために、ディープ・ラーニングの方法論を活用する傾向が現れている[17, 54]。
@@ -214,61 +214,81 @@ This research direction has enabled the utilization of high-order neighbor infor
 # 3. Generative Paradigm for Search and Recommendation 検索と推薦のための生成パラダイム
 
 In this section, we first clarify the scope of generative search and recommendation, including comparison with previous paradigms and comparison with other LLM-based methods.
-本節では、まず、従来のパラダイムとの比較や他のLLMベースの手法との比較を含め、生成的検索と推薦の範囲を明らかにする。
+本節では、まず、生成的検索・推薦のスコープを明確にし、従来のパラダイムと他のLLMベースの手法との比較を含める。
 And then we abstract a unified framework for generative search and recommendation.
 そして、生成的検索と推薦のための統一されたフレームワークを抽象化する。
 
 ## 3.1. Scope Clarification スコープの明確化
 
-Comparison with previous paradigms.
-従来のパラダイムとの比較。
+### Comparison with previous paradigms.従来のパラダイムとの比較。
+
+![figure1]()
+
 As depicted in Figure 1, we present a summary of the three distinct paradigms in search and recommendation.
-図1に示すように、検索と推薦における3つの異なるパラダイムの概要を示す。
+図1に示すように、**検索と推薦における3つの異なるパラダイム**の概要を示す。
 Each paradigm employs different techniques to achieve the same goal of providing relevant documents/items for a given query/user.
-それぞれのパラダイムは、与えられたクエリ／ユーザーに対して関連する文書／アイテムを提供するという同じ目標を達成するために、異なる技術を採用している。
+それぞれのパラダイムは、与えられたクエリ/ユーザに対して関連する文書/アイテムを提供するという同じ目標を達成するために、異なる技術を用いている。
 The machine learning and deep learning paradigms approach the search/recommendation task as a discriminative problem, focusing on calculating similarities between queries/users and documents/items.
-機械学習とディープラーニングのパラダイムは、検索／レコメンデーションタスクを識別問題としてアプローチしており、クエリ／ユーザーと文書／アイテムの類似性を計算することに焦点を当てている。
+機械学習とディープラーニングのパラダイムは、**検索/推薦タスクを識別問題として取り組み**、**クエリ/ユーザと文書/アイテムの間の類似性を計算することに焦点**を当てている。
 In contrast, the generative paradigm formulates the task as a generation problem, aiming to directly generate the documents/items based on the queries/users.
-対照的に、生成パラダイムはタスクを生成問題として定式化し、クエリ/ユーザに基づいて文書/項目を直接生成することを目指す。
-We need to address two specific issues for the three paradigms.1) Deep learning is a subset of machine learning, and neural generative models are a subset of deep learning.
+対照的に、生成的パラダイムは、**タスクを生成問題として定式化**し、**クエリ/ユーザに基づいて直接文書/アイテムを生成**することを目指している。
+
+We need to address two specific issues for the three paradigms.
+3つのパラダイムについて2つの具体的なissuesに対処する必要がある。
+1)Deep learning is a subset of machine learning, and neural generative models are a subset of deep learning.
 1）ディープラーニングは機械学習のサブセットであり、ニューラル生成モデルはディープラーニングのサブセットである。
 While there are sub-concepts within these paradigms, they have clear boundaries and distinct development directions.
-これらのパラダイムにはサブコンセプトが存在するが、明確な境界線と明確な発展の方向性がある。
+これらのパラダイムにはsub-conceptsがあるが、それらには明確な境界と異なる発展方向がある。
 For instance, with the emergence of deep learning, new methods have been developed to apply neural networks for feature extraction in search and recommendation systems, despite deep learning being a part of machine learning.
-例えば、ディープラーニングの登場により、ディープラーニングは機械学習の一部であるにもかかわらず、検索や推薦システムにおける特徴抽出にニューラルネットワークを応用する新しい手法が開発されている。
-Similarly, generative models have gained popularity, with numerous works focusing on generative search and recommendation.2) We use the term “paradigm shift” to indicate potential community interest rather than actual trends.
+例えば、ディープラーニングの登場により、**ディープラーニングは機械学習の一部であるにもかかわらず、検索や推薦システムにおける特徴量抽出にニューラルネットワークを応用する新しい手法が開発**されている。(MLパラダイムは、生の特徴量を入れてるのかな)
+Similarly, generative models have gained popularity, with numerous works focusing on generative search and recommendation.
 同様に、生成モデルも人気を博しており、生成検索と推薦に焦点を当てた多くの作品がある。
+2)We use the term “paradigm shift” to indicate potential community interest rather than actual trends.
+2）「パラダイムシフト」という用語は、実際のトレンドではなく、コミュニティの関心を示すために使用されている。
 Both generative search and recommendation are relatively new approaches in the research community, and their effectiveness has not been fully verified historically.
 生成的検索も推薦も、研究コミュニティでは比較的新しいアプローチであり、その有効性は歴史的に十分に検証されていない。
-Comparison with LLM-based discriminative methods.
-LLMベースの識別手法との比較。
+
+### Comparison with LLM-based discriminative methods.LLMベースの識別手法との比較。
+
 In this study, we define generative search and generative recommendation as methods that fully accomplish search and recommendation tasks using generative models.
-本研究では、生成的検索と生成的推薦を、生成モデルを用いて検索と推薦のタスクを完全に達成する手法と定義する。
+本研究では、**生成的検索と生成的推薦を、生成モデルを使用して検索と推薦タスクを完全に達成する方法と定義**する。(=生成タスクと見なす手法...!:thinking:)
 This is a specific definition that may exclude certain works.
 これは具体的な定義であり、特定の作品を除外する可能性がある。
 For example, some approaches [97, 100] may use generative language models to extract features from queries/users and documents/items.
-例えば、いくつかのアプローチ[97, 100]は、クエリ/ユーザーと文書/アイテムから特徴を抽出するために、生成言語モデルを使用することができる。
+例えば、いくつかのアプローチ[97, 100]は、クエリ/ユーザと文書/アイテムから特徴量を抽出するために生成言語モデルを使用するかもしれない。(うんうんあるよね...!:thinking:)
 While these works also utilize generative language models, the overall paradigm is not significantly different from previous methods, as they simply replace the original encoder with a generative language model.
-これらの作品も生成言語モデルを利用しているが、全体的なパラダイムは、元のエンコーダーを生成言語モデルに置き換えただけで、以前の手法と大きな違いはない。
+これらの作品も生成言語モデルを利用しているが、全体的なパラダイムは、単に元のエンコーダを生成言語モデルに置き換えるだけであり、従来の方法とは大きく異なるわけではない。(deep learningのパラダイムに分類されそう...!:thinking:)
 In our study, we focus on presenting works that completely utilize generative paradigms to accomplish search or recommendation tasks.
 我々の研究では、検索や推薦タスクを達成するために生成的パラダイムを完全に利用した作品を紹介することに焦点を当てる。
+
+<!-- ここまで読んだ! -->
 
 ## 3.2. Unified Framework ユニファイド・フレームワーク
 
 Benefiting from the simplicity of the generative paradigm, we could summarize the generative search and generative recommendation into a unified framework.
 生成的パラダイムのシンプルさから、我々は生成的検索と生成的推薦を統一的なフレームワークにまとめることができた。
-To accomplish search and recommendation tasks in a generative manner, there are four essential steps: 1) Query/User Formulation: This step aims to determine the input of the generative model.
-検索と推薦のタスクを生成的な方法で達成するためには、4つの重要なステップがある： 1) クエリー／ユーザーの定式化： このステップは生成モデルの入力を決定することを目的とする。
-For search, complex query formulation is not necessary; for recommendation, user formulation is vital to transform user information into textual sequences.2) Document/Item Identifiers: In practice, directly generating the document or item is almost impossible.
-検索では、複雑なクエリの定式化は必要ない。推薦では、ユーザー情報をテキストシーケンスに変換するために、ユーザー定式化が不可欠である： 実際には、文書やアイテムを直接生成することはほとんど不可能である。
-Therefore, a short text sequence, known as the identifier, is used to represent the document or item.3) Training: Once the input (query/user formulation) and output (document/item identifiers) of the generative model are determined, training is easily achieved via the generation loss.4) Inference: After the training, the generative model can receive the query/user to predict the document/item identifier, and the document/item identifier can correspond to the document or item.
-そのため、識別子として知られる短いテキスト列が、文書やアイテムを表すのに使われる： 学習：生成モデルの入力（クエリ／ユーザー定式化）と出力（文書／アイテム識別子）が決定されると、学習は生成ロスを介して簡単に達成される： 学習後、生成モデルはクエリ/ユーザから文書/項目識別子を予測し、文書/項目識別子は文書または項目に対応することができる。
+
+To accomplish search and recommendation tasks in a generative manner, there are four essential steps:
+**検索と推薦のタスクを生成的な方法で達成するためには、4つの重要なステップ**がある：
+1)Query/User Formulation: This step aims to determine the input of the generative model. 1)クエリ/ユーザー定式化：このステップは、生成モデルの入力を決定することを目指している。
+For search, complex query formulation is not necessary; for recommendation, user formulation is vital to transform user information into textual sequences.
+検索では、複雑なクエリの定式化は必要ない；**推薦では、ユーザ定式化は、ユーザ情報をテキストシーケンスに変換するために不可欠**である。
+2)Document/Item Identifiers: In practice, directly generating the document or item is almost impossible. 2)文書/アイテム識別子：実際には、文書やアイテムを直接生成することはほとんど不可能である。
+Therefore, a short text sequence, known as the identifier, is used to represent the document or item.
+そのため、文書やアイテムを表すために、識別子として知られる短いテキスト列が使われる。
+3)Training: Once the input (query/user formulation) and output (document/item identifiers) of the generative model are determined, training is easily achieved via the generation loss. 3)学習：生成モデルの入力（クエリ/ユーザー定式化）と出力（文書/アイテム識別子）が決定されると、学習は生成ロスを介して簡単に達成される。
+4)Inference: After the training, the generative model can receive the query/user to predict the document/item identifier, and the document/item identifier can correspond to the document or item. 4)推論：学習後、**生成モデルはクエリ/ユーザを受け取り、文書/アイテム識別子を予測し**、文書/アイテム識別子は文書/アイテムに対応する。
+
+<!-- ここまで読んだ! -->
+
 While the entire process may seem simple, achieving effective generative search and recommendation is not trivial.
-プロセス全体は単純に見えるかもしれないが、効果的なジェネレーティブ検索と推薦を実現するのは些細なことではない。
+プロセス全体は単純に見えるかもしれないが、効果的な生成的検索と推薦を達成することは簡単ではない。
 Numerous details need to be considered and balanced within the four steps mentioned above.
 上記の4つのステップの中で、数多くの詳細を考慮し、バランスを取る必要がある。
 In Sections 4 and 5, we will summarize generative search and generative recommendation methods, emphasizing their focus on specific aspects within the framework.
 セクション4と5では、生成的検索と生成的推薦の方法を要約し、フレームワークの中で特定の側面に焦点を当てていることを強調する。
+
+<!-- ここまで読んだ! -->
 
 # 4. Generative Search ジェネレーティブ・サーチ
 
@@ -1130,4 +1150,4 @@ In addition to categorizing the current works, we offer valuable insights into t
 By adopting a unified view of search and recommendation, we highlight the commonalities and unique challenges of generative search and recommendation.
 検索と推薦の統一的な見方を採用することで、生成的検索と推薦の共通点とユニークな課題を浮き彫りにする。
 Furthermore, we engage in a thorough discussion about the future outlook of the next information-seeking paradigm and the open problems in this field.
-さらに、次の情報探索パラダイムの将来展望と、この分野における未解決の問題についても徹底的に議論する
+さらに、次の情報探索パラダイムの将来展望と、この分野における未解決の問題についても徹底的に議論する。
