@@ -126,9 +126,12 @@ Transaction Scriptパターンでも、Table Moduleパターンでも、
 
 ## 一般的なアプリケーションのレイヤー構成
 
-- Presentation Layer: インターフェース的なもの。
+- Presentation Layer: インターフェース的なもの。プレゼンテーションロジックを表現する。
 - Domain Layer: ビジネスロジックを表現する。
 - Data Source Layer: データベースアクセスを表現する。
+  - **これがどうやら例えばRepository Layerっぽい**...!:thinking:
+  - これは単一責任の原則に整合してて、**データアクセスロジックを専用のクラスに分離し、ビジネスロジックやプレゼンテーションロジックから独立させてる...!**
+    - これによりデータアクセスロジックの変更が他のロジックに影響を与えない...!:thinking:
 
 ## Service Layerの役割って??
 
