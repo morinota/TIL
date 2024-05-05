@@ -377,119 +377,141 @@ Unlike dense retrieval methods that can easily update passages by modifying the 
 This is because the LLM stores the passages in its parameters, and accurately editing these parameters is not feasible.
 これは、LLMがパラメータにパッセージを保存しているためで、これらのパラメータを正確に編集することは不可能である。
 In [98], the authors introduced incremental learning to solve the passage-adding problem partially.
+[98]では、著者らは、パッセージ追加問題を部分的に解決するために、**インクリメンタル学習**を導入した。(気持ちわかるな...!:thinking:)
 
 <!-- ここまで読んだ! -->
 
 #### Large-scale corpus.
 
-98]では、パッセージ追加問題を部分的に解決するためにインクリメンタル学習を導入した。
 Since generative search models must memorize the associations between documents and their numeric IDs, the memorization difficulty increases as the document corpus sizes increase.
-生成検索モデルは、文書とその数値IDとの関連を記憶しなければならないので、文書コーパスのサイズが大きくなるにつれて、記憶の難易度は高くなる。
+**生成検索モデルは、文書とその数値IDとの関連を記憶しなければならないので**、文書コーパスのサイズが大きくなるにつれて、記憶の難易度は高くなる。
 The work [105] explored to scaling up numeric ID based generative search.
-105]は、数値IDに基づく生成的検索をスケールアップすることを探求した。
+[105]は、数値IDに基づく生成的検索をスケールアップすることを探求した。
 It is found that while generative search is competitive with state-of-the-art dual encoders on small corpora, scaling to millions of passages remains an important and unsolved challenge.
-生成的検索は、小規模なコーパスでは最新のデュアルエンコーダと競合するものの、数百万パッセージへのスケーリングは重要かつ未解決の課題であることがわかった。
-Document titles [15, 24, 62, 74].
-文書のタイトル [15, 24, 62, 74]。
+**生成的検索は、小規模なコーパスでは state-of-the-art の dual encoders と競争力があるが、数百万のパッセージにスケーリングすることは、重要で未解決の課題**である。(多くの実践的なusecaseでは、きっとpassages数は数百万以上だよね...??:thinking:)
+
+### Document titles [15, 24, 62, 74].
+
 In certain specific scenarios, documents possess titles that can serve as effective identifiers.
-特定のシナリオでは、文書は効果的な識別子として機能するタイトルを持つ。
+特定のシナリオでは、**文書は効果的な識別子として機能するタイトルを持つ**。(割と多くの場合、documentはタイトルを持ってそう...!:thinking:)
 For instance, in Wikipedia, each page is assigned a unique title that succinctly summarizes its content.
 例えば、ウィキペディアでは、各ページにはその内容を簡潔に要約したユニークなタイトルが付けられている。
 These titles are semantically linked to the documents and establish a one-to-one correspondence, making them ideal identifiers.
-これらのタイトルは文書と意味的にリンクされ、1対1の対応を確立するため、理想的な識別子となる。
+**これらのタイトルは文書と意味的にリンクされ、1対1の対応を確立するため、理想的な識別子となる**。(うんうん...!:thinking:)
 In 2021, Cao et al.investigated the utilization of titles as identifiers in entity retrieval and document retrieval [24].
 2021年、Caoらは、エンティティ検索と文書検索における識別子としてのタイトルの利用について調査した[24]。
 Besides, there are some title-like identifiers, including URLs [113, 178, 180], keywords [63], and summaries [176].
-さらに、URL[113, 178, 180]、キーワード[63]、要約[176]など、タイトルのような識別子もある。
-However, document titles are only effective in certain retrieval domains and prove ineffective in the following aspects.1) Firstly, in passage-level retrieval, documents are often divided into smaller retrieval units known as passages.
-1）まず、パッセージ・レベルの検索では、文書はパッセージと呼ばれる小さな検索単位に分割されることが多い。
+さらに、URL[113, 178, 180]、キーワード[63]、要約[176]など、タイトルと同様に機能しそうな識別子がいくつかある。
+
+However, document titles are only effective in certain retrieval domains and prove ineffective in the following aspects.
+**しかし、文書タイトルは特定の検索ドメインでのみ効果的であり、以下の点で効果がないことが証明されている**。
+
+1)Firstly, in passage-level retrieval, documents are often divided into smaller retrieval units known as passages.
+1）まず、passageレベルの検索では、**文書はしばしばpassageとして知られるより小さな検索単位に分割される**。(passageって文書の中の一部分を抜き出したものっぽい?? 検索単位とタイトルが1対1対応しなくなるってこと...??:thinking:)
 It is hard to design effective passage identifiers even based on the document titles, which makes title-based generative search perform badly in passage retrieval.
-文書のタイトルに基づいても、効果的なパッセージ識別子を設計することは困難であり、そのため、タイトルに基づく生成検索はパッセージ検索において悪い結果をもたらす。
-In 2023, Li et al.employed document titles plus section titles as passage identifiers, but this approach was limited to the Wikipedia corpus [74].2) Secondly, web pages differ from Wikipedia in web retrieval as they lack high-quality titles.
-2023年、Liらは文書タイトルとセクションタイトルを通路識別子として採用したが、このアプローチはWikipediaコーパスに限定されていた[74]。2) 次に、ウェブ検索においてウェブページはWikipediaと異なり、高品質のタイトルがない。
-These titles may not accurately represent the content of the document, and multiple web pages may share the same title.3) Additionally, numerous pages do not have any titles at all.
-これらのタイトルは文書の内容を正確に表しているとは限らず、複数のウェブページが同じタイトルを共有している場合がある。
+文書のタイトルに基づいても、効果的なパッセージ識別子を設計することは困難であり、そのため、**タイトルに基づく生成検索はパッセージ検索において悪い結果をもたらす**。
+In 2023, Li et al.employed document titles plus section titles as passage identifiers, but this approach was limited to the Wikipedia corpus [74].
+2023年、Liらは文書タイトルとセクションタイトルを通路識別子として採用したが、このアプローチはWikipediaコーパスに限定されていた[74]。
+
+2)Secondly, web pages differ from Wikipedia in web retrieval as they lack high-quality titles. 2)次に、ウェブ検索においてウェブページはWikipediaと異なり、**高品質のタイトルがない**。
+These titles may not accurately represent the content of the document, and multiple web pages may share the same title.
+これらのタイトルは、文書の内容を正確に表現していない可能性があり、複数のウェブページが同じタイトルを共有することがある。
+
+3)Additionally, numerous pages do not have any titles at all. 3)さらに、多くのページにはタイトルが存在しない。
+
 These factors contribute to generative search lagging behind traditional retrieval methods.
 これらの要因は、生成検索が従来の検索手法に遅れをとる一因となっている。
-N-grams [7, 14, 150, 169].
-Nグラム [7, 14, 150, 169]。
+
+### N-grams [7, 14, 150, 169].
+
 The document itself is semantic but cannot serve as a reliable identifier.
-文書自体はセマンティックだが、信頼できる識別子としては機能しない。
+文書自体はsemantic(意味論的)だが、信頼性のある識別子として機能させることはできない。
 This is because not all of its content is necessarily related to the user query, making it difficult for the LLM to generate irrelevant content based solely on the user query.
-これは、LLMのすべてのコンテンツが必ずしもユーザーのクエリに関連しているわけではないため、LLMがユーザーのクエリのみに基づいて無関係なコンテンツを生成することが難しいためである。
+これは、LLMのすべてのコンテンツが必ずしもユーザのクエリに関連しているわけではないため、LLMがユーザのクエリのみに基づいて無関係なコンテンツを生成することが難しいためである。
 However, inspired by this limitation, the N-grams within the document that are semantically related to the user query could be regarded as potential identifiers.
-しかし、この制限に触発され、ユーザークエリに意味的に関連する文書内のN-gramを潜在的な識別子とみなすことができる。
+しかし、この制限に触発され、**ユーザクエリと意味的に関連する文書内のN-gramは、潜在的な識別子と見なすことができる**。
 In 2022, the authors in [7] trained an LLM to generate target N-grams using a user query as input.
-2022年、[7]の著者らは、ユーザークエリーを入力として、ターゲットN-gramを生成するLLMを訓練した。
+2022年、[7]の著者らは、ユーザクエリを入力として、ターゲットN-gramを生成するLLMを訓練した。(ユーザクエリ -> N-gramのencoder??:thinking:)
 These N-grams were selected based on the word overlap between the user query and the N-grams.
-これらのN-gramは、ユーザークエリとN-gramの間の単語の重複に基づいて選択された。
+これらのN-gramは、ユーザクエリとN-gramの間の単語の重複に基づいて選択された。
 Once trained, the LLM was able to predict relevant N-grams given a query.
 一度訓練されると、LLMはクエリが与えられたときに関連するN-gramを予測することができた。
 These predicted N-grams were then transformed into a passage rank list using a heuristic function.
 これらの予測されたN-gramは、ヒューリスティック関数を使ってパッセージ順位リストに変換された。
 The proposed method was evaluated on commonly used datasets, including NQ and TriviaQA, rather than some specifically designed subsets of datasets.
 提案手法は、特別に設計されたデータセットのサブセットではなく、NQやTriviaQAを含む一般的に使用されているデータセットで評価された。
-However, N-gram identifiers have certain limitations.1).
-しかし、N-gram識別子には一定の限界がある1)。
-Firstly, they are not as discriminative as numeric IDs.
-第一に、数値IDほど識別性が高くない。
+
+However, N-gram identifiers have certain limitations.
+しかし、N-gram識別子には一定の限界がある。
+
+1)Firstly, they are not as discriminative as numeric IDs. 1)第一に、数値IDほど識別性が高くない。
 Unlike numeric IDs, N-grams cannot directly correspond to specific documents on a oneto-one basis.
-数値IDとは異なり、N-gramは特定の文書に一対一で直接対応することはできない。
+**数値IDとは異なり、N-gramは特定の文書に一対一で直接対応することはできない**。(あ～確かに...!:thinking:)
 This means that the LLM must rely on a transformation function to convert the predicted N-grams into a document ranking list.
-つまり、LLMは予測されたN-gramを文書ランキングリストに変換する変換関数に頼らなければならない。
+つまり、LLMは予測されたN-gramを文書ランキングリストに変換する変換関数に頼らなければならない。(うんうん...!:thinking:)
 In SEAL [7], for example, the transformation function calculates a document’s score by summarizing the scores of the N-grams it contains.
 例えばSEAL [7]では、変換関数は文書が含むN-gramのスコアを要約することで文書のスコアを計算する。
-In a way, this transformation function acts as a simple retrieval approach, preventing N-gram-based generative search from achieving end-to-end document retrieval.2) Secondly, the selection of N-grams in the training phase is a crucial aspect.
-ある意味で、この変換機能は単純な検索アプローチとして機能し、N-gramベースの生成検索がエンド・ツー・エンドの文書検索を達成することを妨げている。
+In a way, this transformation function acts as a simple retrieval approach, preventing N-gram-based generative search from achieving end-to-end document retrieval.
+ある意味で、この変換関数は単純な検索アプローチとして機能し(=確かにMLパラダイムっぽい方法...?:thinking:)、N-gramベースの生成検索がエンドツーエンドの文書検索を達成するのを防いでいる。
+
+2)Secondly, the selection of N-grams in the training phase is a crucial aspect. 2)第二に、学習段階でのN-gramの選択は重要な側面である。
 A document may contain numerous N-grams, and it is necessary to select those that are semantically relevant to the query.
 文書には多数のN-gramが含まれている可能性があり、クエリに意味的に関連するものを選択する必要がある。
 However, the number of N-grams to be selected and the method used for selection are adjustable and can vary largely.
 ただし、選択するN-gramの数や選択方法は調整可能であり、大きく変化する可能性がある。
-Codebook [125, 159, 164, 166].
-コードブック [125, 159, 164, 166]。
+
+<!-- ここまで読んだ! -->
+
+### Codebook [125, 159, 164, 166].
+
 The text codebook, also known as tokens, plays a fundamental role in LLMs.
-トークンとも呼ばれるテキストコードブックは、LLMにおいて基本的な役割を果たす。
+**tokensとも呼ばれるtext codebook**は、LLMにおいて基本的な役割を果たす。
 Text is inherently discrete, allowing LLMs to acquire knowledge through tasks like predicting the next token.
-テキストは本質的に離散的であるため、LLMは次のトークンを予測するようなタスクを通じて知識を獲得することができる。
+**テキストは本質的に離散的**であるため、LLMは次のtokenを予測するようなタスクを通じて知識を獲得することができる。
 Some studies [60, 137] have also focused on developing visual codebooks for discrete images.
 いくつかの研究[60, 137]は、離散画像の視覚的コードブックの開発にも焦点を当てている。
 As mentioned earlier, while a document can be represented as a list of tokens, it is not suitable as an identifier due to its lengthiness.
-前述したように、文書はトークンのリストとして表現できるが、その長さから識別子としては適していない。
+前述したように、**文書はトークンのリストとして表現できるが、その長さから識別子としては適していない**。(うんうんなるほど...!:thinking:)
 Therefore, an alternative approach is to learn a new codebook specifically for documents, which can represent them more efficiently than natural text tokens.
-そのため、別のアプローチとして、文書に特化した新しいコードブックを学習することで、自然なテキストトークンよりも効率的に文書を表現することができる。
+そのため、別のアプローチとして、文**書に特化した新しいコードブックを学習する**ことで、自然なテキストトークンよりも効率的に文書を表現することができる。
 In 2023, Sun et al.proposed a method to learn a codebook for documents in generative search [125].
-2023年、Sunらは、生成的検索における文書のコードブックを学習する方法を提案した[125]。
+2023年、Sunらは、生成的検索における文書のcodebookを学習する方法を提案した[125]。
 The work [159] proposed an end-to-end framework to automatically search best identifiers according to the document’s content.
-159]は、文書の内容に応じて最適な識別子を自動的に検索するエンド・ツー・エンドのフレームワークを提案した。
+[159]は、文書の内容に応じて最適な識別子を自動的に検索する end-to-end フレームワークを提案した。
+
 However, learning a codebook for documents is a complex process.
 しかし、文書のコードブックを学習するのは複雑なプロセスである。
 It typically involves encoding documents into dense vectors using an encoder network, discretizing these vectors, and then using a decoder network to reconstruct the original document.
-通常、エンコーダー・ネットワークを使って文書を密なベクトルにエンコードし、これらのベクトルを離散化し、デコーダー・ネットワークを使って元の文書を再構築する。
+**通常、encoderネットワークを使用して文書を密なベクトルにエンコード**し、これらのベクトルを離散化し(=連続値を離散値に変換するってこと??)、その後、decoderネットワークを使用して元の文書を再構築する。
 The size of the codebook and the length of the sequence required to represent a document must be carefully adjusted.
 コードブックのサイズと、文書を表現するのに必要なシーケンスの長さは、慎重に調整する必要がある。
 Additionally, compared to titles and n-grams, the codebook lacks interpretability.
-さらに、タイトルやn-gramと比べると、コードブックは解釈性に欠ける。
-Multiview identifiers [75–77].
-マルチビュー識別子[75-77]。
+さらに、**タイトルやn-gramと比べると、コードブックは解釈性に欠ける**。(確かに...!)
+
+### Multiview identifiers [75–77].
+
 The above identifiers are limited in different aspects: numeric IDs require extra memorization steps and are ineffective in the large-scale corpus, while titles and substrings are only pieces of passages and thus lack contextualized information.
-上記の識別子はさまざまな面で限界がある： 数値IDは余分な暗記ステップを必要とし、大規模なコーパスでは効果がない。一方、タイトルと部分文字列はパッセージの一部でしかないため、文脈情報に欠ける。
+上記の識別子は、異なる側面で制限されている：数値IDは追加の記憶ステップが必要であり、大規模なコーパスでは効果がない一方、タイトルや部分文字列はパッセージの一部に過ぎず、したがって文脈情報が欠如している。
 More importantly, a passage should answer potential queries from different views, but one type of identifier only represents a passage from one perspective.
-さらに重要なのは、パッセージはさまざまな視点から潜在的なクエリに答えなければならないが、1つのタイプの識別子は1つの視点からしかパッセージを表現できないことである。
+さらに重要なのは、パッセージは異なる視点からの潜在的なクエリに答えるべきであるが、1つの識別子タイプは1つの視点からのみパッセージを表す。
 Therefore, a natural idea is to combine different identifiers to exploit their advantages.
-したがって、異なる識別子を組み合わせてそれぞれの利点を生かすというのは自然な発想である。
+**したがって、異なる識別子を組み合わせてそれぞれの利点を生かすというのは自然な発想である**。(なるほど...!)
 In 2023, Li et al.[76] proposed a generative search framework, MINDER, to unify different identities, including titles, N-grams, pseudo queries, and numeric IDs.
 2023年、Liら[76]は、タイトル、N-gram、擬似クエリ、数値IDなどの異なるIDを統一するための生成的検索フレームワーク、MINDERを提案した。
 Any other identifiers could also be included in this framework.
 その他の識別子もこの枠組みに含めることができる。
 The experiments on three common datasets verify the effectiveness and robustness of different retrieval domains benefiting from the multiview identifiers.
 3つの一般的なデータセットを用いた実験により、マルチビュー識別子の恩恵を受けるさまざまな検索ドメインの有効性と頑健性が検証された。
+
 Similar to the N-grams, multiview identifiers cannot correspond to documents one-to-one and thus require the transformation function.
-N-gramと同様に、マルチビュー識別子は文書と一対一に対応できないため、変換関数が必要となる。
+**N-gramと同様に、マルチビュー識別子は文書と一対一に対応できないため、変換関数が必要となる**。(あ～なるほど? じゃあこれも結局完全な生成的検索ではなさそう??)
 Besides, in the inference stage, the LLM needs to generate different types of identifiers, decreasing the inference efficiency.
 その上、推論段階でLLMは異なるタイプの識別子を生成する必要があり、推論効率が低下する。
 
-Document identifier summary.
-文書識別子の概要。
+### Document identifier summary
+
+![table1]()
+
 To better illustrate the characteristics of different document identifiers, we summarize Table 1 from the aspects of semantic, distinctiveness, update, training, and applicable retrieval domains.
 異なる文書識別子の特徴をよりよく説明するために、意味、識別性、更新、訓練、および適用可能な検索ドメインの側面から表1を要約する。
 Among the various types of identifiers, the codebook shows great potential in all dimensions.
@@ -498,6 +520,8 @@ However, it does have a drawback in that it requires a complex training process.
 しかし、複雑なトレーニングプロセスを必要とするという欠点がある。
 The multiview identifier has a simpler training process, but it lacks distinctiveness and requires a transform function from identifiers to documents.
 マルチビュー識別子は学習プロセスが単純だが、識別性に欠け、識別子から文書への変換関数が必要である。
+
+<!-- ここまで読んだ! -->
 
 ## 4.4. Training トレーニング
 
@@ -636,45 +660,53 @@ Recently, some work [97, 100] has focused on leveraging generative large languag
 Rankers should further refine the order of the retrieved candidates to improve output quality, and LLMs have also been applied to refine the ranking of retrieved documents, as demonstrated in studies [108, 126].
 ランカーは出力品質を向上させるために、検索された候補の順序をさらに洗練させる必要があり、研究[108, 126]で実証されているように、LLMは検索された文書のランキングを洗練させるためにも適用されている。
 
+<!-- ここまで読んだ! (4.4 Trainingからは一旦飛ばす! 検索領域はあんまり馴染みがないので...!) -->
+
 # 5. Generative Recommendation 生成的推薦
 
 ## 5.1. Overview 概要
 
 Since recommendation systems aim to filter out the items that are relevant to the user interests, two crucial components are required to achieve matching in the natural language space, i.e., user formulation, and item identifiers.
-推薦システムは、ユーザーの興味に関連するアイテムをフィルタリングすることを目的としているため、自然言語空間におけるマッチングを実現するためには、2つの重要な要素、すなわち、ユーザーの定式化とアイテムの識別子が必要となる。
+推薦システムは、**ユーザの興味に関連するアイテムをフィルタリングすることを目的としている**ため、**自然言語空間におけるマッチングを実現するためには、2つの重要な要素、すなわち、ユーザの定式化とアイテムの識別子が必要となる**。(生成的推薦を実現するには、ユーザやアイテムを自然言語空間に落とし込む必要があるのか...!:thinking:)
 The user formulation and item identifiers are analogous to the query formulation and document identifier in generative search, respectively.
-ユーザの定式化とアイテムの識別子は、それぞれ生成検索におけるクエリの定式化と文書の識別子に類似している。
+ユーザの定式化とアイテムの識別子は、それぞれ生成検索におけるクエリの定式化と文書の識別子に類似している。(query formulationはほぼ不要なんだよね...!:thinking:)
 Specifically, as the input for generative model, the user formulation contains diverse information (e.g., user’s historical interactions, and user profile) to represent a user in the natural language for modeling the user interests.
-具体的には、生成モデルの入力として、ユーザー定式化には、ユーザーの興味をモデル化するために、ユーザーを自然言語で表現するための多様な情報（例えば、ユーザーの過去のやりとりやユーザープロファイル）が含まれる。
+具体的には、生成モデルの入力として、ユーザ定式化には、ユーザの興味をモデル化するために、ユーザを自然言語で表現するための多様な情報(ex. ユーザの過去のインタラクション、ユーザプロファイル)が含まれている。
 To match the user interests in natural language, generative recommendation system will generate item identifier of the relevant items.
-自然言語でユーザーの興味にマッチするように、生成的推薦システムは関連するアイテムの識別子を生成する。
+**自然言語でユーザの興味にマッチするように、生成的推薦システムは関連するアイテムの識別子を生成する**。(それが分類タスク的な手法と比較して、どのようなどの程度のメリットを与えてくれるのか...!:thinking:)
 
-## 5.2. User Formulation ユーザー処方
+<!-- ここまで読んだ! -->
+
+## 5.2. User Formulation ユーザ定式化
 
 Since there is no specific “query” for each user in recommendation systems, user formulation is a crucial step to represent a user for personalized recommendation.
-推薦システムでは、各ユーザに対する特定の「クエリ」が存在しないため、パーソナライズされた推薦のためにユーザを表現するためのユーザ定式化が重要なステップとなる。
+推薦システムでは、各ユーザに対する特定の「クエリ」が存在しないため、**パーソナライズされた推薦のためにユーザを表現するためのユーザ定式化が重要なステップ**となる。
 In generative recommendation systems, the user2 is primarily formulated based on four distinct components: the task description, user-associated information, context information, and external knowledge expressed in natural language.
-生成的推薦システムでは、ユーザー2は主に4つの異なる要素に基づいて定式化される： タスク記述、ユーザー関連情報、コンテキスト情報、そして自然言語で表現された外部知識である。
+生成的推薦システムでは、**ユーザは主に4つの異なるコンポーネントに基づいて定式化**される: task description(タスクの説明), user-associated information(ユーザ関連情報), context information(コンテキスト情報), external knowledge expressed in natural language(自然言語で表現された外部知識)。
 In particular, the user-associated information mainly consists of user’s historical interactions and user profile (e.g., age and gender).
-特に、ユーザー関連情報は、主にユーザーの過去のインタラクションとユーザープロファイル（年齢や性別など）から構成される。
+特に、ユーザ関連情報は、主にユーザの過去のインタラクションとユーザプロファイル (年齢や性別など) から構成される。
 Based on the availability of the data, previous work formulates the user by encompassing one or multiple components through pre-defined prompt templates for each user.
-データの利用可能性に基づいて、以前の研究では、各ユーザーのために事前に定義されたプロンプトテンプレートを通じて、1つまたは複数のコンポーネントを包含することによってユーザーを定式化する。
-Task description [33].
-タスクの説明[33]。
+データの利用可能性に基づいて、以前の研究では、各ユーザのために事前に定義されたプロンプトテンプレートを通じて、1つまたは複数のコンポーネントを包含することによってユーザを定式化する。
+
+### Task description [33].
+
 To leverage the strong comprehension ability of the powerful generative models, task description is employed to guide the generative models to accomplish the recommendation task, i.e., next-item prediction.
-強力な生成モデルの強力な理解能力を活用するために、生成モデルが推薦タスク、すなわち次項目予測を達成するように導くタスク記述が採用される。
-For instance, in [4], the task description for movie recommendation is articulated as “Given ten movies that the user watched recently, please recommend a new movie that the user likes to the user.”.It is noted that the task description can also serve as the prompt template, where various components are inserted into the template to formulate the user.
-例えば、[4]では、映画推薦のタスク記述は、「ユーザが最近見た10本の映画が与えられたら、ユーザが好きな新しい映画をユーザに推薦してください」と表現されている。タスク記述はプロンプトテンプレートとしても機能し、様々なコンポーネントがテンプレートに挿入され、ユーザを定式化することができる。
-For example, [33] uses “I find the purchase history of ..., I wonder what is the next item to recommend to the user.
-例えば、[33]は「...の購入履歴を見つけたら、次にユーザーに勧めるべきアイテムは何だろう？
-Can you help me decide?” as the task description to instruct the generative models, where the user’s historical interactions will be utilized for user formulation.
-をタスク記述として生成モデルに指示し、ユーザーの過去のやりとりがユーザー定式化に利用される。
+**強力な生成モデルの強力な理解能力を活用するために**、生成モデルが推薦タスク、すなわちnext-item predictionを達成するために導くために、タスク記述が使用される。
+For instance, in [4], the task description for movie recommendation is articulated as “Given ten movies that the user watched recently, please recommend a new movie that the user likes to the user.”.
+例えば、[4]では、映画推薦のためのタスク記述は、「ユーザが最近見た10本の映画が与えられたら、ユーザが好きな新しい映画をユーザに推薦してください」と表現されている。
+It is noted that the task description can also serve as the prompt template, where various components are inserted into the template to formulate the user.
+タスク記述は、ユーザを定式化するためにテンプレートに挿入されるさまざまなコンポーネントとしても機能することに注意すべき。
+For example, [33] uses “I find the purchase history of ..., I wonder what is the next item to recommend to the user. Can you help me decide?” as the task description to instruct the generative models, where the user’s historical interactions will be utilized for user formulation.
+例えば、[33]では、「**...の購入履歴を見つけましたが、次にユーザに推薦するアイテムは何でしょうか。決めるのを手伝ってくれますか？**」というタスク記述を使用して、ユーザの定式化にユーザの過去のインタラクションが利用される。
 In [168], “Here is the historical interactions of a user: ..., his preferences are as follows: ..., please provide recommendations.” is used to guide the generative models, where historical interactions and user preference are incorporated to formulate the user.
-168]では、「ここにあるユーザーの過去のやりとりがある： ...、彼の好みは以下の通りです： ...、推奨を提供してください。"は、生成モデルを導くために使用され、過去の相互作用とユーザーの好みがユーザーを定式化するために組み込まれる。
-User’s historical interactions [56, 172].
-ユーザーの過去の交流 [56, 172]。
+[168]では、「**ユーザの過去のインタラクションは次のとおりです: ...、彼の好みは次のとおりです: ...、推薦を提供してください。**」というタスク記述が使用され、ユーザの定式化に過去のインタラクションとユーザの好みが組み込まれている。
+
+<!-- ここまで読んだ! -->
+
+### User’s historical interactions [56, 172].
+
 Serving as the implicit user feedback on items, user’s historical interactions play a crucial role in representing user behavior [38] in recommender systems, which implicitly conveys user preference over items.
-アイテムに対する暗黙のユーザーフィードバックとして機能し、ユーザーの過去のインタラクションは、アイテムに対するユーザーの嗜好を暗黙的に伝える推薦システムにおいて、ユーザーの行動[38]を表現する上で重要な役割を果たす。
+アイテムに対する暗黙のユーザフィードバックとして機能するユーザの過去のインタラクションは、ユーザの行動を表現する上で重要な役割を果たす[38]。
 To present the historical interactions, i.e., the sequence of interacted items, one common practice is to utilize the item ID to form the interaction sequence [33, 47].
 過去のインタラクション、すなわちインタラクションされたアイテムのシーケンスを表示するために、一般的なプラクティスの1つは、インタラクションシーケンスを形成するためにアイテムIDを利用することである[33, 47]。
 Nevertheless, as pointed out by [161], generative models face limitations in capturing collaborative information while excelling in capturing nuanced item semantics.
