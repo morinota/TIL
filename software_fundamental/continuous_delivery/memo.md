@@ -1,3 +1,7 @@
+## refs:
+
+- Continuous Deliveryの公式っぽい記事[What is Continuous Delivery?](https://continuousdelivery.com/)
+
 # 複雑性を管理する
 
 - モジュラー性:
