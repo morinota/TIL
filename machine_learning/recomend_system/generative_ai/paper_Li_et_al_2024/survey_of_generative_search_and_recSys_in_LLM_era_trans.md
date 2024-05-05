@@ -299,33 +299,36 @@ Generative search endeavors to leverage generative models, specifically generati
 The target is still the matching between documents and a given query.
 ターゲットはやはり、文書と与えられたクエリとのマッチングである。
 Different from previous paradigms, generative search aims to directly generate the desired target document when presented with a query.
-これまでのパラダイムとは異なり、生成検索は、クエリが提示されたときに、目的のターゲット文書を直接生成することを目的としている。
+これまでのパラダイムとは異なり、生成検索は、クエリが提示されたときに、目的のターゲット文書を**直接生成する**ことを目的としている。(分類問題じゃないってこと...?)
 
 ## 4.2. Query Formulation クエリ策定
 
 In search, users typically express their information needs through textual queries.
-検索では、ユーザーは通常、テキストクエリを通じて情報ニーズを表現する。
+検索では、ユーザは通常、テキストクエリを通じて情報ニーズを表現する。
 This is in contrast to generative recommendation, which involves a “user formulation” step to convert user history into a textual sequence.
-これは、ユーザーの履歴をテキストシーケンスに変換する「ユーザー定式化」ステップを含む生成的推薦とは対照的である。
+**これは、ユーザの履歴をテキストシーケンスに変換する「ユーザ定式化」ステップを含む生成的推薦とは対照的**である。
 In most retrieval tasks, the textual query can be directly inputted into the generative language model, sometimes with simple prefixes like “query: ”.
 ほとんどの検索タスクでは、テキストクエリを生成言語モデルに直接入力することができる： ".
 However, in certain retrieval tasks such as conversational QA and multi-hop QA, the query must be combined with the conversation context [74] or previous-hop answers [62].
-しかし、会話QAやマルチホップQAのような特定の検索タスクでは、クエリを会話コンテキスト[74]や前ホップ回答[62]と組み合わせる必要がある。
+しかし、会話QAやマルチホップQAのような特定の検索タスクでは、クエリを会話contextや前のホップの回答と組み合わせる必要がある。
+
+<!-- ここまで読んだ! -->
 
 ## 4.3. Document Identifiers ドキュメント識別子
 
 Ideally, generative search aims to directly generate the complete target document in response to a given query.
 理想的には、生成検索は、与えられたクエリに応答して、完全なターゲット文書を直接生成することを目指している。
 However, in practice, this task proves to be extremely challenging for LLMs due to the length and inclusion of irrelevant information in the document’s content.
-しかし、実際には、このタスクは、文書の内容の長さと無関係な情報が含まれているために、LLMにとって非常に困難であることが判明した。
+しかし、実際には、文書の内容の長さや関連のない情報の含まれることにより、LLMにとってこのタスクは非常に困難である。
 Consequently, current generative search approaches often rely on the use of identifiers to represent documents.
-その結果、現在の生成的検索アプローチは、しばしば文書を表現するための識別子の使用に依存している。
+その結果、**現在の生成的検索アプローチは、しばしば文書を表現するための識別子の使用に依存している**。(そりゃ文書そのものを生成するのは厳しそう...!:thinking:)
 These identifiers are concise strings that effectively capture the essence of a document’s content.
-これらの識別子は、文書の内容の本質を効果的に捉える簡潔な文字列である。
+**これらの識別子は、文書の内容の本質を効果的に捉える簡潔な文字列**である。(単なる連番のIDではない??)
 We summarize the current identifiers in generative search methods, and analyze their advantages and disadvantages as follows.
 生成的検索法における現在の識別子を要約し、その長所と短所を以下のように分析する。
-Numeric ID [70, 101, 133, 147, 177, 179].
-数値ID [70, 101, 133, 147, 177, 179]。
+
+### Numeric ID [70, 101, 133, 147, 177, 179].
+
 Each document in the corpus can be assigned a unique numeric ID, such as “12138”.
 コーパスの各文書には、"12138 "のようなユニークな数字IDを割り当てることができる。
 During the inference stage, the LLM can receive the query as input and generate either a single numeric ID or a list of numeric IDs using beam search.
@@ -333,11 +336,11 @@ During the inference stage, the LLM can receive the query as input and generate 
 Since each document corresponds to a numeric ID, the predicted numeric ID can represent a retrieved document.
 各文書は数値IDに対応しているので、予測された数値IDは検索された文書を表すことができる。
 However, it is important to note that the numeric ID itself does not have any semantic relation to the content of the document.
-しかし、数値ID自体は、文書の内容とは意味的な関係を持たないことに注意することが重要である。
+**しかし、数値ID自体は、文書の内容とは意味的な関係を持たないことに注意することが重要である**。(だよね、どうするの??:thinking:)
 There are several methods to establish correlations between semantic text and numeric IDs.1) Document-to-numeric ID training.
-意味論的テキストと数値IDの相関を確立するには、いくつかの方法がある。
+**意味論的テキストと数値IDの相関を確立するには、いくつかの方法がある**。(なるほど??)
 During the training phase, an LLM can be trained to take a document’s content as input and generate the corresponding numeric ID as the target.
-学習段階において、LLMは文書の内容を入力とし、対応する数値IDをターゲットとして生成するように学習させることができる。
+学習段階において、**LLMは文書の内容を入力とし、対応する数値IDをターゲットとして生成するように学習させることができる**。(auto encoder 的な...??:thinking:)
 This training approach compels the LLM to memorize the relationships between documents and their numeric IDs.
 この学習方法は、LLMに文書間の関係とその数値IDを記憶させる。
 Once trained effectively, the LLM is expected to recall the numeric IDs of the documents accurately.2) Clustered numeric IDs.
@@ -347,26 +350,38 @@ In [133], the authors explored the concept of clustering document embeddings and
 This approach allows similar documents with comparable content to be grouped into the same clusters, resulting in similar numeric IDs for these documents.
 このアプローチにより、同等の内容を持つ類似文書を同じクラスターにグループ化することができ、その結果、これらの文書に類似した数値IDが付与される。
 Unlike randomly assigned numeric IDs, the clustered IDs are determined based on the content of the documents and are consistent with their semantics.
-ランダムに割り当てられた数値のIDとは異なり、クラスタ化されたIDは文書の内容に基づいて決定され、文書のセマンティクスと一致している。
-Numeric IDs pose challenges in generative search for the following reasons.1) Generalization.
+**ランダムに割り当てられた数値のIDとは異なり、クラスタ化されたIDは文書の内容に基づいて決定され、文書のセマンティクスと一致している**。(1次元空間に埋め込んでる?? あ、でも数値ではなくテキストも含んだ識別子として埋め込んでるのか...!:thinking:)
+
+Numeric IDs pose challenges in generative search for the following reasons.
 数値IDは、以下の理由により、ジェネレーティブ・サーチに課題をもたらす。
-The inability to generalize is a significant issue for numeric IDs.
-一般化できないことは、数値IDにとって重大な問題である。
+
+#### Generalization 汎化
+
+The inability to generalize is a signifiscant issue for numeric IDs.
+**一般化できないことは、数値IDにとって重大な問題**である。
 Previous studies [133] have shown that the Language Model can effectively memorize numeric IDs of passages in the training set.
 先行研究[133]では、言語モデルが学習セット内のパッセージの数字IDを効果的に記憶できることが示されている。
 However, when it comes to the test set, the LLM’s performance deteriorates.
 しかし、テストセットになると、LLMの性能は悪化する。
 This can be attributed to the fact that numeric IDs lack semantic meaning, making it difficult for the model to generalize to unseen data.
-これは、数値のIDには意味的な意味がないため、モデルが未見のデータに一般化しにくいことに起因している。
-To address this problem, NCI [147] proposed the inclusion of pseudo-queries on test set passages, which helps alleviate the issue.2) Corpus update.
-この問題に対処するため、NCI [147]はテストセットのパッセージに擬似クエリを含めることを提案した。
+**これは、数値のIDには意味的な意味がないため、モデルが未見のデータに一般化しにくいことに起因している**。
+To address this problem, NCI [147] proposed the inclusion of pseudo-queries on test set passages, which helps alleviate the issue.
+この問題に対処するため、NCI [147]は、テストセットのパッセージに擬似クエリを含めることを提案し、この問題を緩和するのに役立っている。
+
+#### Corpus update.
+
 Updating poses a challenge for generative search methods based on numeric IDs.
 更新は、数値IDに基づく生成的検索方法にとって難題となる。
 Unlike dense retrieval methods that can easily update passages by modifying the embedding vectors in the corpus, the LLM struggles with updating passages.
-コーパスの埋め込みベクトルを修正することで簡単にパッセージを更新できる高密度検索手法とは異なり、LLMはパッセージの更新に苦労する。
+コーパスの埋め込みベクトルを変更することでpassages (=文書)を簡単に更新できる密な検索方法とは異なり、LLMはpassagesの更新に苦労する。(検索候補の文書が増えた時に、更新が大変ってことっぽい...??:thinking:)
 This is because the LLM stores the passages in its parameters, and accurately editing these parameters is not feasible.
 これは、LLMがパラメータにパッセージを保存しているためで、これらのパラメータを正確に編集することは不可能である。
-In [98], the authors introduced incremental learning to solve the passage-adding problem partially.3) Large-scale corpus.
+In [98], the authors introduced incremental learning to solve the passage-adding problem partially.
+
+<!-- ここまで読んだ! -->
+
+#### Large-scale corpus.
+
 98]では、パッセージ追加問題を部分的に解決するためにインクリメンタル学習を導入した。
 Since generative search models must memorize the associations between documents and their numeric IDs, the memorization difficulty increases as the document corpus sizes increase.
 生成検索モデルは、文書とその数値IDとの関連を記憶しなければならないので、文書コーパスのサイズが大きくなるにつれて、記憶の難易度は高くなる。
