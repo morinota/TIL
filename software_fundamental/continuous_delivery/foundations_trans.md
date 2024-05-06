@@ -115,77 +115,80 @@ We still need to apply the discipline of comprehensive use of version control an
 # Continuous Integration 継続的インテグレーション
 
 refs: https://continuousdelivery.com/foundations/continuous-integration/
-を参照してください： https://continuousdelivery.com/foundations/continuous-integration/
 
 Combining the work of multiple developers is hard.
-複数の開発者の仕事を組み合わせるのは難しい。
+**複数の開発者の仕事を組み合わせるのは難しい**。
 Software systems are complex, and an apparently simple, self-contained change to a single file can easily have unintended consequences which compromise the correctness of the system.
-ソフトウェア・システムは複雑であり、ひとつのファイルに対する一見単純で自己完結的な変更が、システムの正しさを損なう意図しない結果をもたらすこともある。
+ソフトウェア・システムは複雑であり、一見単純で自己完結的な単一ファイルへの変更でも、簡単に意図しない結果をもたらし、システムの正確性を損なうことがある。
 As a result, some teams have developers work isolated from each other on their own branches, both to keep trunk / master stable, and to prevent them treading on each other’s toes.
-その結果、チームによっては、トランク/マスターを安定させるためと、互いのつま先を踏まないようにするために、開発者をそれぞれのブランチで隔離して作業させている。
+その結果、チームによっては、trunk / masterを安定させるために、開発者が互いに孤立して自分のブランチで作業することがある。また、お互いの足を踏まないようにするためでもある。
 
 However, over time these branches diverge from each other.
 しかし、時間の経過とともに、これらの枝は互いに分岐していく。
 While merging a single one of these branches into mainline is not usually troublesome, the work required to integrate multiple long-lived branches into mainline is usually painful, requiring significant amounts of re-work as conflicting assumptions of developers are revealed and must be resolved.
-このようなブランチを1つだけ本線にマージするのは、通常は面倒なことではないが、複数の長期存続ブランチを本線に統合するのに必要な作業は、開発者の矛盾した思い込みが明らかになり、それを解決しなければならないため、かなりの量の再作業を必要とし、苦痛を伴うのが普通である。
+これらのブランチのうちの1つをメインラインにマージすることは通常問題にならないが、**複数の長期ブランチをメインラインに統合するために必要な作業は通常苦痛であり**、開発者の相反する前提が明らかになり、解決されなければならないため、**大量の再作業が必要になる**。
+(Continuous Integrationは、長期ブランチをなるべく使わないように、継続的に統合していきましょう、みたいな戦略のこと??:thinking:)
 
 Teams using long-lived branches often require code freezes, or even integration and stabilization phases, as they work to integrate these branches prior to a release.
 長期ブランチを使用しているチームは、リリース前にこれらのブランチを統合するために、コードフリーズ、あるいは統合と安定化のフェーズが必要になることがよくあります。
 Despite modern tooling, this process is still expensive and unpredictable.
-近代的な金型があるにもかかわらず、この工程はまだ高価で予測不可能である。
+近代的な ツールを使っても、このプロセスはまだ高価で予測不可能である。
 On teams larger than a few developers, the integration of multiple branches requires multiple rounds of regression testing and bug fixing to validate that the system will work as expected following these merges.
 数人以上の開発者がいるチームでは、複数のブランチを統合するために、リグレッションテストとバグフィックスを何度も繰り返し、マージ後にシステムが期待通りに動くかどうかを検証する必要がある。
 This problem becomes exponentially more severe as team sizes grow, and as branches become more long-lived.
-この問題は、チームの規模が大きくなるにつれて、またブランチの寿命が長くなるにつれて、指数関数的に深刻になっていく。
+**この問題は、チームの規模が大きくなるにつれて、またブランチの寿命が長くなるにつれて、指数関数的に深刻になっていく**。
 
 The practice of continuous integration was invented to address these problems.
-継続的インテグレーションのプラクティスは、こうした問題に対処するために考案された。
+継続的インテグレーションのプラクティスは、こうした問題に対処するために考案された。(こうした問題 = 長期ブランチによる統合が難しい問題?)
 CI (continuous integration) follows the XP (extreme programming) principle that if something is painful, we should do it more often, and bring the pain forward.
-CI（継続的インテグレーション）は、XP（エクストリーム・プログラミング）の原則に従っている。
+**CI（継続的インテグレーション）は、XP（エクストリーム・プログラミング）の原則に従っている**。つまり、**「何かが痛いときは、より頻繁に行い、痛みを前に出すべきだ」という原則**だ。
 Thus in CI developers integrate all their work into trunk (also known as mainline or master) on a regular basis (at least daily).
-このようにCIでは、開発者は定期的に（少なくとも毎日）、すべての作業をトランク（メインラインまたはマスターとも呼ばれる）に統合する。
+このように**CIでは、開発者は定期的に（少なくとも毎日）すべての作業をトランク（メインラインまたはマスターとも呼ばれる）に統合する**。(ええ！？CI難しそう...!:thinking:)
 A set of automated tests is run both before and after the merge to validate that no regressions are introduced.
 自動テストのセットは、リグレッションが発生しないことを検証するために、マージ前とマージ後の両方で実行される。
 If these automated tests fail, the team stops what they are doing and someone fixes the problem immediately.
 これらの自動テストが失敗した場合、チームは自分たちの作業を中断し、誰かが直ちに問題を修正する。
 
 Thus we ensure that the software is always in a working state, and that developer branches do not diverge significantly from trunk.
-こうして、ソフトウェアが常に稼働状態にあること、開発者ブランチがトランクから大きく乖離しないことを保証する。
+こうして、ソフトウェアが常に稼働状態にあること、開発者ブランチがtrunkから大きく分岐しないことを確認する。(trunk = 主要な開発ラインや基盤となるブランチを指す)
 The benefits of continuous integration are very significant—research shows that it leads to higher levels of throughput, more stable systems, and higher quality software.
 継続的インテグレーションの利点は非常に大きく、スループットの向上、システムの安定性、ソフトウェアの品質の向上につながることが研究によって示されている。
 However the practice is still controversial, for two main reasons.
-しかし、この慣行は、主に2つの理由から、いまだに議論の的となっている。
+**しかし、この慣行は、主に2つの理由から、いまだに議論の的となっている**。
 
 First, it requires developers to break up large features and other changes into smaller, more incremental steps that can be integrated into trunk / master.
-第一に、開発者は大規模な機能やその他の変更を、トランク／マスターに統合できるような、より小さな、より漸進的なステップに分割する必要がある。
+**第一に、 開発者に、大きな機能やその他の変更を、トランク／マスターに統合できるより小さな、よりインクリメンタルなステップに分割する**ことを求める。
 This is a paradigm shift for developers who are not used to working in this way.
 このようなやり方に慣れていない開発者にとってはパラダイムシフトだ。
 It also takes longer to get large features completed.
 また、大きな機能を完成させるのにも時間がかかる。
 However in general we don’t want to optimize for the speed at which developers can declare their work “dev complete” on a branch.
-しかし一般的には、開発者がブランチ上で 「dev complete 」と宣言できるスピードに最適化したくはない。
+しかし一般的には、開発者が自分の作業をブランチで「開発完了」と宣言できる速度を最適化したいわけではない。
 Rather, we want to be able to get changes reviewed, integrated, tested and deployed as fast as possible—and this process is an order of magnitude faster and cheaper when the changes are small and self-contained, and the branches they live on are short-lived.
-このプロセスは、変更が小さくて自己完結的であり、そのブランチが短命であれば、桁違いに速く、安くなる。
+**むしろ、変更をレビューし、統合し、テストし、デプロイすることができる速度をできるだけ速くしたい**のであり、これは、変更が小さく自己完結しており、それが存在するブランチが短命である場合、1桁速く、安価になる。
 Working in small batches also ensures developers get regular feedback on the impact of their work on the system as a whole—from other developers, testers, customers, and automated performance and security tests—which in turn makes any problems easier to detect, triage, and fix.
-また、小ロットで作業することで、開発者は、他の開発者、テスター、顧客、自動化されたパフォーマンステストやセキュリティテストから、自分の作業がシステム全体に与える影響について定期的にフィードバックを得ることができる。
+**小ロットで作業すること**は、開発者が他の開発者、テスター、顧客、自動パフォーマンスおよびセキュリティテストからシステム全体に与える影響について定期的なフィードバックを受けることを保証し、その結果、問題を検出、トリアージ、修正することが容易になる。
+(CIって、タスクを小さく分割して、短命ブランチでincrementalに開発していけってこと??:thinking:)
 
 Second, continuous integration requires a fast-running set of comprehensive automated unit tests.
-第二に、継続的インテグレーションには、包括的な自動ユニットテストを高速に実行する必要がある。
+**第二に、継続的インテグレーションには、包括的な自動ユニットテストを高速に実行する必要がある**。(CI = 自動テストじゃないけど、CIと自動テストは相互に関係してるってことかも...!:thinking:)
 These tests should be comprehensive enough to give a good level of confidence that the software will work as expected, while also running in a few minutes or less.
-これらのテストは、ソフトウェアが期待通りに動作することを確信させるのに十分な包括的なものでなければならず、しかも数分以内で実行できるものでなければならない。
+これらのテストは、ソフトウェアが期待通りに動作するという高い信頼レベルを提供するために十分包括的であるべきであり、数分以内に実行されるべきである。
 If the automated unit tests take longer to run, developers will not want to run them frequently, and they will become harder to maintain.
-自動ユニットテストの実行に時間がかかると、開発者は頻繁に実行したくなくなり、保守が難しくなる。
+自動ユニットテストの実行に時間がかかると、開発者は頻繁に実行したくなくなり、メンテナンスが難しくなる。
 Creating maintainable suites of automated unit tests is complex and is best done through test-driven development (TDD), in which developers write failing automated tests before they implement the code that makes the tests pass.
-自動化されたユニットテストの保守可能なスイートを作成するのは複雑であり、テスト駆動開発（TDD）を通して行うのがベストである。
+自動ユニットテストのメンテナンス可能なスイートを作成することは複雑であり、開発者は、テストが成功するコードを実装する前に、失敗する自動化テストを書くテスト駆動開発（TDD）を通じて最もよく行われる。
 TDD has several benefits, the most important of which is that it ensures developers write code that is modular and easy to test, reducing the maintenance cost of the resulting automated test suites.
-TDDにはいくつかの利点があるが、最も重要なのは、開発者がモジュール化されたテストしやすいコードを確実に書けるようにすることであり、その結果、自動化されたテスト・スイートのメンテナンス・コストを削減することである。
+TDDにはいくつかの利点があるが、最も重要なのは、開発者がモジュール化され、テストしやすいコードを書くことを保証し、**その結果の自動化テストスイートのメンテナンスコストを削減することである**。(TDDによって、自動テストの包括さを推進することができるのか...!:thinking:)
 But TDD is still not sufficiently widely practiced.
 しかし、TDDはまだ十分に普及していない。
 
 Despite these barriers, helping software development teams implement continuous integration should be the number one priority for any organization wanting to start the journey to continuous delivery.
-このような障壁があるにもかかわらず、ソフトウェア開発チームが継続的インテグレーションを導入するのを支援することは、継続的デリバリーへの旅を始めようとする組織にとって最優先事項であるべきだ。
+このような障壁があるにもかかわらず、継続的デリバリーの旅を始めたいと考えている組織にとって、ソフトウェア開発チームが継続的インテグレーションを実装するのを支援することは、最優先事項であるべきだ。
 By creating rapid feedback loops and ensuring developers work in small batches, CI enables teams to build quality into their software, thus reducing the cost of ongoing software development, and increasing both the productivity of teams and the quality of the work they produce.
-CIは、迅速なフィードバックループを作り出し、開発者が小ロットで作業できるようにすることで、チームがソフトウェアに品質を組み込むことを可能にし、その結果、継続的なソフトウェア開発のコストを削減し、チームの生産性と彼らが生み出す作品の品質の両方を向上させる。
+**CIは、迅速なフィードバックループを作成し、開発者が小ロットで作業することを保証することにより**、チームがソフトウェアに品質を組み込むことを可能にし、これにより、継続的なソフトウェア開発のコストを削減し、チームの生産性と彼らが生み出す作業の品質を向上させる。
+
+<!-- ここまで読んだ! -->
 
 ## Resources リソース
 
