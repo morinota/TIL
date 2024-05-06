@@ -5,7 +5,7 @@
 # Foundations ファウンデーション
 
 Continuous delivery rests on three foundations: comprehensive configuration management, continuous integration, and continuous testing.
-継続的デリバリーは、3つの基盤の上に成り立っている： すなわち、包括的な構成管理、継続的インテグレーション、継続的テストである。
+**継続的デリバリーは、3つの基盤の上に成り立っている**: すなわち、包括的な設定管理、継続的インテグレーション、継続的テストである。
 
 In this section, you can read an overview of each of these foundations.
 このセクションでは、それぞれの財団の概要をお読みいただけます。
@@ -18,68 +18,63 @@ refs: https://continuousdelivery.com/foundations/configuration-management/
 を参照してください： https://continuousdelivery.com/foundations/configuration-management/
 
 Automation plays a vital role in ensuring we can release software repeatably and reliably.
-オートメーションは、ソフトウェアを繰り返し確実にリリースするために重要な役割を果たす。
+自動化は、ソフトウェアを繰り返し、信頼性を持ってリリースできることを保証する上で重要な役割を果たしている。
 One key goal is to take repetitive manual processes like build, deployment, regression testing and infrastructure provisioning, and automate them.
-重要な目標のひとつは、ビルド、デプロイ、リグレッション・テスト、インフラ・プロビジョニングのような繰り返しの多い手作業プロセスを自動化することだ。
+**重要な目標のひとつは、ビルド、デプロイ、リグレッション・テスト、インフラ・プロビジョニングのような繰り返しの多い手作業プロセスを自動化すること**だ。
 In order to achieve this, we need to version control everything required to perform these processes, including source code, test and deployment scripts, infrastructure and application configuration information, and the many libraries and packages we depend upon.
-これを実現するためには、ソースコード、テストやデプロイのスクリプト、インフラやアプリケーションの設定情報、依存する多くのライブラリやパッケージなど、これらのプロセスを実行するために必要なすべてのものをバージョン管理する必要がある。
+**これを実現するためには、これらのプロセスを実行するために必要なすべてのものをバージョン管理する必要がある**。(version管理の重要さってこれか...!:thinking:) これには、ソースコード、テストおよびデプロイメントスクリプト、インフラストラクチャおよびアプリケーションのコンフィギュレーション情報、および依存する多くのライブラリやパッケージが含まれる。
 We also want to make it straightforward to query the current—and historical—state of our environments.
-また、環境の現在と過去の状態を簡単に照会できるようにしたい。
+また、環境の現在と過去の状態を簡単に照会できるようにしたい。(これこそversion管理だよね...!)
 
 We have two overriding goals:
-私たちには2つの最優先目標がある：
+私たちには**2つの最優先目標**がある：
 
-Reproducibility: We should be able to provision any environment in a fully automated fashion, and know that any new environment reproduced from the same configuration is identical.
-再現性： 完全に自動化された方法でどのような環境でもプロビジョニングでき、同じコンフィギュレーションから再現される新しい環境はすべて同じであることがわかるべきである。
-
-Traceability: We should be able to pick any environment and be able to determine quickly and precisely the versions of every dependency used to create that environment.
-トレーサビリティ： どのような環境であっても、その環境を作成するために使用されたすべての依存関係のバージョンを迅速かつ正確に特定できるようにすべきである。
-We also want to to be able to compare previous versions of an environment and see what has changed between them.
-また、ある環境の過去のバージョンを比較し、その間に何が変わったかを確認できるようにしたい。
+- 1. **Reproducibility**: We should be able to provision any environment in a fully automated fashion, and know that any new environment reproduced from the same configuration is identical.
+     **再現性**： 完全に自動化された方法でどのような環境でもプロビジョニングでき、同じコンフィギュレーションから再現される新しい環境はすべて同じであることがわかるべきである。
+- 2. **Traceability**: We should be able to pick any environment and be able to determine quickly and precisely the versions of every dependency used to create that environment.
+     **追跡性**： どの環境でも選択し、その環境を作成するために使用されたすべての依存関係のバージョンを迅速かつ正確に特定できるようにする必要がある。
+     We also want to to be able to compare previous versions of an environment and see what has changed between them.
+     また、ある環境の過去のバージョンを比較し、その間に何が変わったかを確認できるようにしたい。
 
 These capabilities give us several very important benefits:
-これらの能力は、私たちにいくつかの非常に重要な利点を与えてくれる：
+これらの能力(再現性、追跡性)は、私たちにいくつかの非常に重要な利点を与えてくれる：
 
-Disaster recovery: When something goes wrong with one of our environments, for example a hardware failure or a security breach, we need to be able to reproduce that environment in a deterministic amount of time in order to be able to restore service.
-災害復旧： 例えばハードウェアの故障やセキュリティ侵害など、私たちの環境のひとつに何か問題が発生した場合、サービスを復旧させるためには、決定論的な時間内にその環境を再現できる必要があります。
-
-Auditability: In order to demonstrate the integrity of the delivery process, we need to be able to show the path backwards from every deployment to the elements it came from, including their version.
-監査可能性： デリバリー・プロセスの完全性を証明するためには、すべてのデプロイメントから、そのエレメントのバージョンも含めて、デプロイメントの出所までの経路を示すことができる必要がある。
-Comprehensive configuration management, combined with deployment pipelines, enable this.
-包括的なコンフィギュレーション管理とデプロイメント・パイプラインの組み合わせが、これを可能にする。
-
-Higher quality: The software delivery process is often subject to long delays waiting for development, testing and production environments to be prepared.
-より高い品質： ソフトウェアのデリバリープロセスでは、開発、テスト、本番環境の準備に時間がかかることが多い。
-When this can be done automatically from version control, we can get feedback on the impact of our changes much more rapidly, enabling us to build quality in to our software.
-これをバージョン管理から自動的に行うことができれば、変更の影響に関するフィードバックをより迅速に得ることができ、ソフトウェアに品質を組み込むことができる。
-
-Capacity management: When we want to add more capacity to our environments, the ability to create new reproductions of existing servers is essential.
-容量管理： 環境に容量を追加したい場合、既存のサーバーの複製を新たに作成する機能が不可欠だ。
-This capability enables the horizontal scaling of modern cloud-based distributed systems.
-この機能により、最新のクラウドベースの分散システムの水平スケーリングが可能になる。
-
-Response to defects: When we discover a critical defect, or a vulnerability in some component of our system, we want to get a new version of our software released as quickly as possible.
-欠陥への対応： システムのコンポーネントに重大な欠陥や脆弱性が発見された場合、私たちはできるだけ早くソフトウェアの新バージョンをリリースしたいと考えています。
-Many organizations have an emergency process for this type of change which goes faster by bypassing some of the testing and auditing.
-多くの組織では、この種の変更のための緊急プロセスを持っており、テストや監査の一部をバイパスすることで、より迅速に行っている。
-This presents an especially serious dilemma in safety-critical systems.
-これは、特にセーフティ・クリティカルなシステムにおいて深刻なジレンマをもたらす。
-Our goal should be to be able to use our normal release process for emergency fixes—which is precisely what continuous delivery enables, on the basis of comprehensive configuration management.
-私たちのゴールは、緊急修正に通常のリリースプロセスを使用できるようにすることであるべきだ。それこそが、包括的なコンフィギュレーション管理に基づいて継続的デリバリーを可能にするものである。
+- 1. **Disaster recovery**: When something goes wrong with one of our environments, for example a hardware failure or a security breach, we need to be able to reproduce that environment in a deterministic amount of time in order to be able to restore service.
+     **災害復旧**： 例えばハードウェアの故障やセキュリティ侵害など、私たちの環境のひとつに何か問題が発生した場合、サービスを復旧させるためには、決定論的な時間内にその環境を再現できる必要があります。
+- 2. **Auditability**: In order to demonstrate the integrity of the delivery process, we need to be able to show the path backwards from every deployment to the elements it came from, including their version.
+     **監査可能性**： デリバリー・プロセスの完全性を証明するためには、すべてのデプロイメントから、そのエレメントのバージョンも含めて、デプロイメントの出所までの経路を示すことができる必要がある。
+     Comprehensive configuration management, combined with deployment pipelines, enable this.
+     包括的なコンフィギュレーション管理とデプロイメント・パイプラインの組み合わせが、これを可能にする。
+- 3. **Higher quality**: The software delivery process is often subject to long delays waiting for development, testing and production environments to be prepared.
+     **より高い品質**： ソフトウェアのデリバリープロセスでは、開発、テスト、本番環境の準備に時間がかかることが多い。
+     When this can be done automatically from version control, we can get feedback on the impact of our changes much more rapidly, enabling us to build quality in to our software.
+     これをバージョン管理から自動的に行うことができれば、変更の影響に関するフィードバックをより迅速に得ることができ、ソフトウェアに品質を組み込むことができる。
+- 4. **Capacity management**: When we want to add more capacity to our environments, the ability to create new reproductions of existing servers is essential.
+     **容量管理**： 環境に容量を追加したい場合、既存のサーバの複製を新たに作成する機能が不可欠だ。(スケーラビリティ的な??)
+     This capability enables the horizontal scaling of modern cloud-based distributed systems.
+     この機能により、最新のクラウドベースの分散システムの水平スケーリングが可能になる。
+- 5. **Response to defects**: When we discover a critical defect, or a vulnerability in some component of our system, we want to get a new version of our software released as quickly as possible.
+     **欠陥への対応**： システムのコンポーネントに重大な欠陥や脆弱性が発見された場合、私たちはできるだけ早くソフトウェアの新バージョンをリリースしたいと考えています。
+     Many organizations have an emergency process for this type of change which goes faster by bypassing some of the testing and auditing.
+     多くの組織では、この種の変更のための緊急プロセスを持っており、テストや監査の一部をバイパスすることで、より迅速に行っている。(特殊なリリース手続きになるってこと??)
+     This presents an especially serious dilemma in safety-critical systems.
+     これは、特にセーフティ・クリティカルなシステムにおいて深刻なジレンマをもたらす。
+     Our goal should be to be able to use our normal release process for emergency fixes—which is precisely what continuous delivery enables, on the basis of comprehensive configuration management.
+     私たちのゴールは、**緊急修正に通常のリリースプロセスを使用できるようにすることであるべき**だ。**それこそが、包括的なコンフィギュレーション管理に基づいて継続的デリバリーを可能にするもの**である。(なるほど...??:thinking:)
 
 As environments become more complex and heterogeneous, it becomes progressively harder to achieve these goals.
 環境がより複雑で異質なものになればなるほど、こうした目標を達成するのは徐々に難しくなる。
 Achieving perfect reproducibility and traceability to the last byte for a complex enterprise system is impossible (apart from anything else, every real system has state).
-複雑な企業システムにおいて、最後の1バイトまで完全な再現性とトレーサビリティを実現することは不可能である（他のことは別として、現実のシステムにはすべて状態がある）。
+複雑な企業システムにおいて、完璧な再現性と追跡性を最後のバイトまで達成することは不可能である（それ以外にも、すべての実際のシステムには状態がある）。(version管理できない状態がどうしても存在するってことかな...!:thinking:)
 Thus a key part of configuration management is working to simplify our architecture, environments and processes to reduce the investment required to achieve the desired benefits.
-したがって、コンフィギュレーション管理の重要な部分は、アーキテクチャ、環境、プロセスを簡素化し、望ましい利益を達成するために必要な投資を削減することである。
+したがって、コンフィギュレーション管理の重要な部分は、望ましい利益を得るために必要な投資を削減するために、**アーキテクチャ、環境、プロセスを単純化することに取り組むこと**である。
 
 When working to achieve the benefits, we should always start by defining in measurable terms the goals we want to achieve.
-利益を達成するために努力する場合、私たちは常に、達成したい目標を測定可能な言葉で定義することから始めるべきである。
+**利益を達成するために努力する場合、私たちは常に、達成したい目標を測定可能な言葉で定義することから始めるべき**である。(なるほど、これはgoal setting的にも大事だよなぁ...!:thinking:)
 This allows us to determine which of the possible paths to reach our goal are likely to be the best, and to change direction or reassess our goals if we discover our approach is going to be too expensive or take too long.
-これによって、目標に到達するための可能な経路のうち、どれが最良になりそうかを判断し、そのアプローチが高すぎたり、時間がかかりすぎたりしそうだとわかったら、方向を変えたり、目標を見直したりすることができる。
+これによって、目標に到達するための可能な経路のうち、最も良いものが何であるかを判断し、アプローチが高すぎるか時間がかかりすぎることがわかった場合には、方向を変えたり、目標を再評価したりすることができる。
 
-## Resources リソース
+## Resources リソース (参考資料)
 
 My talk on lean configuration management
 リーン構成管理に関する私の講演
@@ -95,25 +90,27 @@ Pedro Canahuati on scaling operations at Facebook.
 
 ## FAQ FAQ
 
-What tools should I use?
-どのような道具を使うべきか？
+### What tools should I use? どのようなツールを使えばよいですか？
 
 Tool choice is a complex topic, and in many cases (unless you use something wholly unsuitable) tool choice is not the critical factor in success.
-道具の選択は複雑なテーマであり、多くの場合（まったく適さないものを使わない限り）道具の選択は成功の決定的な要因ではない。
+道具の選択は複雑なテーマであり、**多くの場合（まったく適さないものを使わない限り）道具の選択は成功の決定的な要因ではない**。(うんうん...!:thinking:)
 I recommend doing some research to whittle down a shortlist based on what technologies your team is familiar with, what has the widest level of usage, and what is under active development and support, and then setting a short-term goal and trying to achieve it using each of the tools on your shortlist.
-あなたのチームがどのようなテクノロジーに精通しているか、どのようなものが最も広く使われているか、どのようなものが活発に開発されサポートされているかなどを基に、候補を絞り込むための調査を行い、短期的な目標を設定し、候補の各ツールを使ってその達成を試みることをお勧めする。
 
-How do containers / the cloud / virtualization technologies affect this topic?
-コンテナ／クラウド／仮想化技術は、このトピックにどのような影響を与えるのか？
+**チームが慣れている技術、最も広く使用されているもの**に基づいて、ショートリストを絞り込むためのいくつかの調査を行うことをお勧めします。(うんうん...!:thinking:)
+**そして、アクティブな開発とサポートを受けているもの**を選択し、その後、ショートリストにある各ツールを使用して短期目標を設定し、それを達成しようとすることです。
+
+### How do containers / the cloud / virtualization technologies affect this topic? コンテナ/クラウド/仮想化技術は、このトピックにどのように影響しますか？
 
 The most important thing is that every new advance makes it easier and cheaper to achieve the benefits described.
 最も重要なことは、新たな進歩があるたびに、説明したような利益をより簡単に、より安く達成できるようになるということだ。
 However in themselves, technologies such as containerization are not a silver bullet.
-しかし、コンテナ化などの技術は、それ自体が特効薬というわけではない。
+**しかし、コンテナ化などの技術は、それ自体が特効薬というわけではない**。(それ自体が特効薬、ってケースはほぼなさそう:thinking:)
 For example, it’s not uncommon to see developers create “snowflake” containers whose contents are hard to audit or reproduce.
 例えば、開発者が「スノーフレーク」コンテナを作成し、その中身を監査したり再現したりするのが難しいというケースは珍しくない。
 We still need to apply the discipline of comprehensive use of version control and the deployment pipeline in order to achieve our goals.
-目標を達成するためには、バージョン管理とデプロイメント・パイプラインの包括的な利用という規律を適用する必要がある。
+**目標を達成するためには、引き続きバージョン管理とデプロイメント・パイプラインの包括的な使用の原則を適用する必要がある**。(うんうん...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 # Continuous Integration 継続的インテグレーション
 

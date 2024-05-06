@@ -708,38 +708,51 @@ In [168], “Here is the historical interactions of a user: ..., his preferences
 Serving as the implicit user feedback on items, user’s historical interactions play a crucial role in representing user behavior [38] in recommender systems, which implicitly conveys user preference over items.
 アイテムに対する暗黙のユーザフィードバックとして機能するユーザの過去のインタラクションは、ユーザの行動を表現する上で重要な役割を果たす[38]。
 To present the historical interactions, i.e., the sequence of interacted items, one common practice is to utilize the item ID to form the interaction sequence [33, 47].
-過去のインタラクション、すなわちインタラクションされたアイテムのシーケンスを表示するために、一般的なプラクティスの1つは、インタラクションシーケンスを形成するためにアイテムIDを利用することである[33, 47]。
+過去のインタラクション、**すなわちインタラクションされたアイテムのシーケンス**を表示するために、一般的なプラクティスの1つは、インタラクションシーケンスを形成するためにアイテムIDを利用することである[33, 47]。(item idのsequenceね、一般的だ...!)
 Nevertheless, as pointed out by [161], generative models face limitations in capturing collaborative information while excelling in capturing nuanced item semantics.
-とはいえ、[161]によって指摘されているように、生成モデルは、ニュアンスに富んだアイテムのセマンティクスを捉えることに優れている一方で、コラボレーション情報を捉えることには限界がある。
-Therefore, two categories of work emerge to further improve the recommendation accuracy.1) To better leverage the strong semantics understanding of LLMs, a line of work [18, 22, 43, 56, 90] attempts to integrate rich side information of items in historical interactions.
-1)LLMの強力なセマンティクス理解をより活用するために、一連の研究[18, 22, 43, 56, 90]は、過去の相互作用におけるアイテムの豊富な側面情報を統合することを試みている。
+とはいえ、[161]によって指摘されているように、**生成モデルは、ニュアンスに富んだアイテムのsemantics(=意味論)を捉えることに優れている一方で、協調情報を捉える際には制約がある**。(あ、そうなのか...!CBは得意かもだけどCFは苦手?:thinking:)
+Therefore, two categories of work emerge to further improve the recommendation accuracy.
+したがって、推薦精度をさらに向上させるために、**2つのカテゴリの研究**が登場している。
+
+1)To better leverage the strong semantics understanding of LLMs, a line of work [18, 22, 43, 56, 90] attempts to integrate rich side information of items in historical interactions.
+1)LLMの強力な意味理解をより効果的に活用するために、いくつかの研究[18, 22, 43, 56, 90]は、過去のインタラクションに**アイテムの豊富なサイド情報を統合**しようとしている。
 In particular, [22, 87] incorporates item descriptions when listing the user’s historical interactions.
-特に、[22, 87]は、ユーザーの過去のインタラクションをリストアップする際に、アイテムの説明を組み込んでいる。
-[82] utilizes item titles and item attributes to exploit the rich semantics of items for a better understanding of user preference.2) To strengthen the collaborative information understanding of LLMs, another line of work aims to incorporate ID embeddings of the interacted items for LLMs to understand user behavior.
-[2）LLMの協調的な情報理解を強化するために、LLMの対話アイテムのIDエンベッディングを組み込んでユーザーの行動を理解することを目的とした別の研究がある。
+特に、[22, 87]は、ユーザの過去のインタラクションをリストアップする際に、アイテムの説明を組み込んでいる。
+[82] utilizes item titles and item attributes to exploit the rich semantics of items for a better understanding of user preference.
+[82]は、アイテムのタイトルとアイテムの属性を利用して、アイテムの豊富な意味論を活用し、ユーザの嗜好をよりよく理解する。
+
+2)To strengthen the collaborative information understanding of LLMs, another line of work aims to incorporate ID embeddings of the interacted items for LLMs to understand user behavior.
+2）LLMの協調的な情報理解を強化するために、LLMの対話アイテムの**IDエンベッディングを組み込んで**ユーザの行動を理解することを目的とした別の研究がある。
 For example, LLaRA [79] additionally includes ID embedding after the title’s token embedding to represent each item in historical interactions.
-例えば、LLaRA [79]は、タイトルのトークン埋込みの後にID埋込みを追加して、過去のインタラクションの各アイテムを表現している。
+例えば、LLaRA [79]は、各アイテムを過去のインタラクションで表現するために、タイトルのトークン埋め込みの後にID埋め込みを追加している。
+
 Moreover, with the advancements in multimodal LLMs, some work [34, 90] attempts to incorporate multimodal feature of the item, e.g., visual features, to complement the textual user’s historical interactions.
 さらに、マルチモーダルLLMの進歩に伴い、いくつかの研究[34, 90]では、テキストによるユーザーの歴史的インタラクションを補完するために、アイテムのマルチモーダル特徴、例えば視覚的特徴を組み込むことを試みている。
-User profile [31, 92].
+
+### User profile [31, 92].
+
 ユーザープロファイル [31, 92]。
 To enhance the user modeling, integrating user profile (e.g., demographic and preference information about the user) is an effective way to model the user characteristics in recommender systems [136].
-ユーザーモデリングを強化するために、ユーザープロファイル（例えば、ユーザーに関する人口統計学的情報や嗜好情報）を統合することは、推薦システムにおいてユーザー特性をモデル化する効果的な方法である[136]。
+ユーザーモデリングを強化するために、ユーザープロファイル（ユーザーに関する人口統計情報や好み情報など）を統合することは、推薦システムにおいてユーザーの特性をモデル化する効果的な方法である。
 In most cases, user’s demographic information (e.g., gender) can be obtained directly from the online recommendation platform.
-ほとんどの場合、ユーザーの人口統計学的情報（性別など）は、オンライン・レコメンデーション・プラットフォームから直接得ることができる。
+ほとんどの場合、ユーザーの人口統計情報（例えば、性別）は、オンライン推薦プラットフォームから直接取得できる。
 Such user information is then combined with descriptional text, e.g., “User description: female, 25-34, and in sales/marketing” [154].
-このようなユーザー情報は、記述的なテキストと組み合わされる： 女性、25～34歳、営業/マーケティング」[154]。
+このようなユーザ情報は、例えば「ユーザ説明: 女性、25-34歳、営業/マーケティング」といった記述テキストと組み合わされる[154]。
 For instance, [31] utilizes user’s age and gender to prompt ChatGPT to enhance its comprehension of user characteristics based on encoded prior knowledge.
-例えば、[31]はユーザーの年齢と性別を利用し、エンコードされた事前知識に基づいて、ChatGPTがユーザーの特性を理解するよう促しています。
+例えば、[31]はユーザの年齢と性別を利用して、エンコードされた事前知識に基づいてChatGPTのユーザ特性の理解を向上させるためにプロンプトを与えている。
 Although demographic information can implicitly reflect the general preference within specific user groups (e.g., teenagers), it can further enrich models’ comprehension of the user by explicitly detailing user’s general preference and current intention during user formulation.
-人口統計学的情報は、特定のユーザーグループ（例えば、ティーンエイジャー）における一般的な嗜好を暗黙的に反映することができますが、ユーザーの一般的な嗜好と現在の意図を明示的に詳細化することで、ユーザーに対するモデルの理解をさらに深めることができます。
+**人口統計学的情報は、特定のユーザグループ（例えば、10代）内での一般的な嗜好を暗黙的に反映することができる**。加えて、ユーザ定式化中にユーザの一般的な嗜好と現在の意図を明示的に詳細に説明することで、モデルのユーザ理解をさらに豊かにすることができる。
 To obtain the explicit general preference and current intention, [168] proposes to leverage LLMs to infer the user intention and the general preference based on the user’s historical interactions using tailored prompts.
-明示的な一般的嗜好と現在の意図を得るために、[168]はLLMを活用し、テーラードプロンプトを使用したユーザーの過去のインタラクションに基づいて、ユーザーの意図と一般的嗜好を推測することを提案している。
+**明示的な一般的嗜好と現在の意図を得るために**、[168]は、ユーザの過去のインタラクションに基づいてユーザの意図と一般的な嗜好を推論するために、適切なプロンプトを使用してLLMを活用することを提案している。
 Besides, [174] uses LLMs to summarize user preference based on the user’s historical interactions.
-さらに、[174]はLLMを使って、ユーザーの過去のインタラクションに基づいてユーザーの嗜好を要約している。
+さらに、[174]はLLMを使って、ユーザの過去のインタラクションに基づいてユーザの嗜好を要約している。
 However, acquiring user profiles can be challenging due to user privacy concerns, leading some studies to employ user ID to capture the collaborative information [33] or discard user profile for user formulation [112].
-しかし、ユーザープロファイルを取得することは、ユーザーのプライバシーの懸念のために困難である可能性があり、いくつかの研究は、協調情報をキャプチャするためにユーザーIDを採用したり[33]、ユーザー定式化のためにユーザープロファイルを破棄したりする[112]。
-Context information [88, 161].
+しかし、ユーザプロファイルを取得することは、ユーザのプライバシーの懸念のために困難である可能性があり、いくつかの研究は、協調情報をキャプチャするためにユーザIDを使用する[33]か、ユーザ定式化のためにユーザプロファイルを破棄する[112]。
+
+<!-- ここまで読んだ! -->
+
+### Context information [88, 161].
+
 コンテキスト情報 [88, 161]。
 In addition to user’s historical interactions and profile, environmental context information (e.g., location and time), which can influence user decisions, is also advantageous for models to better match the users with appropriate items.
 ユーザーの過去のインタラクションやプロファイルに加え、ユーザーの意思決定に影響を与える可能性のある環境コンテキスト情報（例えば、場所や時間）も、適切なアイテムとユーザーをより良くマッチングさせるモデルにとって有利である。
