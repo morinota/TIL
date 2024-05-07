@@ -192,7 +192,7 @@ By creating rapid feedback loops and ensuring developers work in small batches, 
 
 ## Resources リソース
 
-Martin Fowler’s canonical article on Continuous Integration.
+[Martin Fowler’s canonical article on Continuous Integration.](https://www.martinfowler.com/articles/continuousIntegration.html)
 マーティン・ファウラー（Martin Fowler）の継続的インテグレーションに関する代表的な記事。
 
 My personal favourite introduction, James Shore’s CI on a dollar a day.
@@ -209,81 +209,94 @@ Paul Duvall’s book on Continuous Integration.
 
 ## FAQ FAQ
 
-How do I know if my team is really doing CI?
+### How do I know if my team is really doing CI?
 自分のチームが本当にCIを実践しているかどうかは、どうすればわかるのか？
 
-I have a simple test I use to determine if teams are really practicing CI.1) are all the engineers pushing their code into trunk / master (not feature branches) on a daily basis? 2) does every commit trigger a run of the unit tests? 3) When the build is broken, is it typically fixed within 10 minutes? If you can answer yes to all three questions, congratulations! You are practicing continuous integration.
-チームが本当にCIを実践しているかどうかを判断するために使っている簡単なテストがある。1) すべてのエンジニアが毎日トランク／マスター（フィーチャーブランチではない）にコードをプッシュしているか？2) すべてのコミットがユニットテストの実行のトリガーになっているか？3) ビルドが壊れたとき、通常10分以内に修正されるか？3つの質問すべてに「はい」と答えられるなら、おめでとう！あなたは継続的インテグレーションを実践している。
+I have a simple test I use to determine if teams are really practicing CI.
+チームが本当にCIを実践しているかどうかを判断するために使っている簡単なテストがある。
+1)are all the engineers pushing their code into trunk / master (not feature branches) on a daily basis? 
+1)**すべてのエンジニアが毎日トランク／マスター（フィーチャーブランチではない）にコードをプッシュしているか？** (してないな...!:thinking:)
+2)does every commit trigger a run of the unit tests? 
+2)すべてのコミットがユニットテストの実行のトリガーになっているか？ (なってる!:thinking:)
+3)When the build is broken, is it typically fixed within 10 minutes? 
+3)ビルドが壊れたとき、通常10分以内に修正されるか? (ケースバイケースな気がする。これは小さいbatchで開発してるから、原因箇所が分かりやすくてすぐに対応できるよね、ってこと??:thinking:)
+If you can answer yes to all three questions, congratulations! You are practicing continuous integration.
+**これらの3つの質問にすべて「はい」と答えることができれば、おめでとうございます！あなたは継続的インテグレーションを実践しています。**
+
 In my experience, less than 20% of teams that think they are doing CI can actually pass the test.
 私の経験では、CIをやっていると思っているチームのうち、実際にテストに合格できるのは20％以下である。
 Note that it’s entirely possible to do CI without using a CI tool, and conversely, just because you’re using a CI tool does not mean you are doing CI!
-CIツールを使わなくてもCIを行うことは十分に可能であるし、逆にCIツールを使っているからといってCIを行っているとは限らない！
+**CIツールを使わずにCIを行うことも可能であり、逆に、CIツールを使っているからといって、CIを行っているわけではないことに注意してください**。
 
-Don’t modern tools such as Git make CI unnecessary?
+### Don’t modern tools such as Git make CI unnecessary?
 Gitのような最新のツールはCIを不要にするのではないか？
 
 No.
 いや。
 Distributed version control systems are an incredibly powerful tool that I fully endorse (and have been using since 2008).
-分散バージョン管理システムは、私が全面的に支持する（そして2008年から使っている）信じられないほど強力なツールだ。
+分散バージョン管理システムは私が完全に支持している非常に強力なツールであり、2008年以来使用している。
 However like all powerful tools, they can be used in a multitude of ways, not all of them good.
-しかし、あらゆる強力なツールと同様、さまざまな使い方ができる。
+**しかし、すべての強力なツールと同様に、それらは多くの方法で使用でき、すべてが良いわけではない。**
 It’s perfectly possible to practice CI using Git, and indeed recommended for full-time teams.
 Gitを使ってCIを実践することは完全に可能であり、実際フルタイムのチームには推奨されている。
 The main scenario where trunk-based development is not appropriate is open-source projects, where most contributors should be working on forks of the codebase rather than on master.
-トランクベースの開発が適切でない主なシナリオは、オープンソースのプロジェクトであり、そこでは、ほとんどの貢献者はマスターではなく、コードベースのフォークで作業するはずである。
+トランクベースの開発が適切でない主なシナリオは、ほとんどの貢献者がマスターではなくコードベースのフォークで作業すべきオープンソースプロジェクトである。(それ以外はトランクベースの開発が適してるってことか...??:thinking:)
 There’s more discussion of CI and DVCS in a blog post I wrote on the topic.
-CIとDVCSについては、私が書いたブログ記事に詳しい。
+CIとDVCSについては、私が書いたブログ記事に詳しい。(DVCS = Distributed Version Control System)
 
-Does trunk-based development mean using feature toggles?
+### Does trunk-based development mean using feature toggles?
 トランクベースの開発とは、フィーチャー・トグルを使うことですか？
 
 No.
 いや。
 Feature toggles are a new-fangled term for an old pattern: configuration options.
-フィーチャートグルは、古いパターンに対する新しい用語である： コンフィギュレーション・オプション。
+フィーチャートグルは、古いパターンに対する新しい用語である： configuration optionsだ。
 In this context, we use them to hide from users features that are not “ready”, so we can continue to check in on trunk.
-この文脈では、「準備ができていない 」機能をユーザーから隠すために使用し、トランクのチェックを続けることができる。
+**この文脈では、「準備ができていない 」機能をユーザから隠すために使用し、トランクのチェックを続けることができる。**
 However feature toggles are only really necessary when practicing continuous deployment, in which we release multiple times a day.
-しかし、機能トグルが本当に必要なのは、1日に何度もリリースする継続的デプロイを実践する場合だけだ。
+しかし、feature togglesは、継続的デプロイメントを実践している場合にのみ本当に必要であり、1日に複数回リリースする。
 For teams releasing every couple of weeks, or less frequently, they are unnecessary.
 2、3週間に1度、あるいはそれ以下の頻度でリリースするチームには不要だ。
 There are, however, two important practices to enable trunk-based development without using feature toggles.
-しかし、フィーチャートグルを使わずにトランクベースの開発を可能にするには、2つの重要なプラクティスがある。
+しかし、**feature togglesを使用せずにトランクベースの開発を可能にするための2つの重要なプラクティス**がある。
 First, we should build out our APIs before we create the user interface that relies on them.
-まず、APIに依存するユーザー・インターフェースを作成する前に、APIを構築すべきである。
+まず、APIに依存するユーザ・インターフェースを作成する前に、APIを構築すべきである。
 APIs (including automated tests running against them) can be created and deployed to production “dark” (that is, without anything calling them), enabling us to work on the implementation of a story on trunk.
-API（それに対して実行される自動テストを含む）を作成し、「ダーク」（つまり、それらを呼び出すものが何もない状態）でプロダクションにデプロイすることができ、トランクでストーリーの実装に取り組むことができる。
+**API(それに対して実行される自動テストを含む)は、「ダーク」（つまり、それを呼び出すものがない状態）で作成され、本番環境にデプロイされることができ、私たちはトランクでストーリーの実装に取り組むことができる**。
 The UI (which should almost always be a thin layer over the API) is written last.
 UI（ほとんどの場合、APIの上に薄いレイヤーがあるはずだ）は最後に書かれる。
 Second, we should aim to break down large features into small stories (1-3 days’ work) in a way that they build upon each other iteratively, not incrementally.
-第二に、大規模な機能を小さなストーリー（1～3日の作業）に分解し、漸進的ではなく反復的に積み重ねていく方法を目指すべきである。
+第二に、**大きな機能を小さなストーリー（1〜3日の作業）に分解し、それらが互いに反復的に構築されるようにすることを目指すべき**だ。
 In this way, we ensure we can continue to release increments of the feature.
 こうすることで、機能のインクリメントをリリースし続けることができるのだ。
 Only in the cases where an iterative approach is not possible for some reason (and this is less often than you think, given sufficient imagination) do we need to introduce feature toggles.
-繰り返しのアプローチが何らかの理由で不可能な場合（十分な想像力があれば、このようなケースは案外少ないものだ）にのみ、機能トグルを導入する必要がある。
+何らかの理由で反復的なアプローチが不可能な場合にのみ（十分な想像力があれば、それほど頻繁ではない）フィーチャートグルを導入する必要がある。
 
-What about GitHub-style development?
+### What about GitHub-style development?
 GitHubスタイルの開発についてはどうだろう？
 
 In general, I am fine with GitHub’s “flow” process—provided branches don’t live longer than a day or so.
-一般的に、私はGitHubの 「flow 」プロセスに満足しています。
+一般的に、私は**GitHubの 「flow」プロセス**に満足しています。
+(flow process = )
 If you’re breaking features down into stories and practicing incremental development (see previous FAQ entry), this is not a problem.
-もしあなたが機能をストーリーに分解し、インクリメンタル開発を実践しているなら（前回のFAQエントリーを参照）、これは問題ではない。
+もしあなたが機能をストーリーに分解し、インクリメンタルな開発を実践しているなら、これは問題ありません。
 I also believe that code review should be done in process—ideally by inviting someone to pair with you (perhaps using screenhero if you’re working on a remote team) when you’re ready to check in, and reviewing the code then and there.
-私はまた、コードレビューはプロセスで行うべきだと考えている。理想的には、チェックインの準備ができたときに誰かをペアに誘い（リモートチームで作業している場合は、おそらくscreenheroを使用する）、その場でコードをレビューすることだ。
+**私はまた、コードレビューはプロセスの中で行うべきだと考えています。理想的には、チェックインの準備ができたときに誰かを招待してペアプログラミングを行い（リモートチームで作業している場合は、screenheroを使用するかもしれません）、その場でコードをレビューします**。(うんうん...!ルールズオブプログラミングでも述べられてた...!:thinking:)
 Code review is best done continuously, and working in small batches enables this.
-コードレビューは継続的に行うのが最善であり、小ロットで作業することでそれが可能になる。
+**コードレビューは継続的に行うのが最善であり、小ロットで作業することでそれが可能になる。** (なるほど! ペアプロ的にレビューを行いやすくするためにもsmall batchesで作業する必要があるのか...!:thinking:)
 Nobody enjoys reviewing pages and pages of diff that are the result of several day’s work because it’s impossible to reason about the impact of large changes on the system as a whole.
-数日かけて作成されたdiffを何ページも何ページも見直すのは、誰にとっても楽しいことではない。
+何日もの作業の結果であるページ数の多いdiffをレビューするのは誰も楽しんでいません。**なぜなら、大きな変更がシステム全体に与える影響を理解することができないから**です。(確かに、大きな変更をレビューするのは大変で、小さな変更をレビューするのは簡単だ!:thinking:)
 
-What tools should I use?
+### What tools should I use?
 どのような道具を使うべきか？
 
 Tool choice is a complex topic, and in many cases (unless you use something wholly unsuitable) tool choice is not the critical factor in success.
-道具の選択は複雑なテーマであり、多くの場合（まったく適さないものを使わない限り）道具の選択は成功の決定的な要因ではない。
+道具の選択は複雑なテーマであり、**多くの場合（適切でないものを使わない限り）、道具の選択は成功の重要な要因ではありません**。
 I recommend doing some research to whittle down a shortlist based on what technologies your team is familiar with, what has the widest level of usage, and what is under active development and support, and then setting a short-term goal and trying to achieve it using each of the tools on your shortlist.
 あなたのチームがどのようなテクノロジーに精通しているか、どのようなものが最も広く使われているか、どのようなものが活発に開発されサポートされているかなどを基に、候補を絞り込むための調査を行い、短期的な目標を設定し、候補の各ツールを使ってその達成を試みることをお勧めする。
+
+
+<!-- ここまで読んだ! -->
 
 # Continuous Testing 継続的テスト
 
@@ -291,63 +304,70 @@ refs: https://continuousdelivery.com/foundations/test-automation/
 を参照してください： https://continuousdelivery.com/foundations/test-automation/
 
 The key to building quality into our software is making sure we can get fast feedback on the impact of changes.
-私たちのソフトウェアに品質を組み込む鍵は、変更の影響に関するフィードバックを迅速に得られるようにすることです。
+**私たちのソフトウェアに品質を組み込む鍵は、変更の影響に関するフィードバックを迅速に得られるようにすること**です。
 Traditionally, extensive use was made of manual inspection of code changes and manual testing (testers following documentation describing the steps required to test the various functions of the system) in order to demonstrate the correctness of the system.
-従来は、システムの正しさを実証するために、コード変更の手作業による検査や手作業によるテスト（システムのさまざまな機能をテストするために必要な手順を記述した文書に従って、テスターがテストを行う）が多用されていた。
+従来は、システムの正しさを実証するために、コード変更の手動検査と手動テスト（テスターがシステムのさまざまな機能をテストするために必要な手順を記述した文書に従う）が広く使用されていました。
 This type of testing was normally done in a phase following “dev complete”.
-この種のテストは通常、「開発完了」に続く段階で行われた。
+**この種のテストは通常、「開発完了」の後のフェーズで行われていた**。
 However this strategy have several drawbacks:
 しかし、この戦略にはいくつかの欠点がある：
 
-Manual regression testing takes a long time and is relatively expensive to perform, creating a bottleneck that prevents us releasing software more frequently, and getting feedback to developers weeks (and sometimes months) after they wrote the code being tested.
-手動のリグレッション・テストには長い時間と比較的高価な費用がかかるため、ソフトウェアを頻繁にリリースすることができず、テスト対象のコードを書いてから数週間（場合によっては数カ月）後に開発者にフィードバックを得ることができないボトルネックになっている。
+- Manual regression testing takes a long time and is relatively expensive to perform, creating a bottleneck that prevents us releasing software more frequently, and getting feedback to developers weeks (and sometimes months) after they wrote the code being tested.
+手動のリグレッション・テストには長い時間と比較的高価な費用がかかるため、ソフトウェアを頻繁にリリースすることができず、**テスト対象のコードを書いてから数週間（場合によっては数ヶ月）後に開発者にフィードバックを提供するボトルネックが生じる**。
 
-Manual tests and inspections are not very reliable, since people are notoriously poor at performing repetitive tasks such as regression testing manually, and it is extremely hard to predict the impact of a set of changes on a complex software system through inspection.
-リグレッション・テストのような反復作業を手作業で行うことは、人間には苦手なことで有名であり、複雑なソフトウェア・システムに対する一連の変更の影響を検査によって予測することは極めて困難であるため、手作業によるテストや検査は、あまり信頼できるものではない。
+- Manual tests and inspections are not very reliable, since people are notoriously poor at performing repetitive tasks such as regression testing manually, and it is extremely hard to predict the impact of a set of changes on a complex software system through inspection.
+リグレッション・テストのような反復作業を手作業で行うことは、人間には苦手なことで有名であり、複雑なソフトウェア・システムに対する一連の変更の影響を検査によって予測することは極めて困難であるため、**手作業によるテストや検査は、あまり信頼できるものではない。**
 
-When systems are evolving over time, as is the case in modern software products and services, we have to spend considerable effort updating test documentation to keep it up-to-date.
-最近のソフトウェア製品やサービスのように、システムが時とともに進化していく場合、テスト文書を最新のものに更新するために、かなりの労力を費やさなければならない。
+- When systems are evolving over time, as is the case in modern software products and services, we have to spend considerable effort updating test documentation to keep it up-to-date.
+最近のソフトウェア製品やサービスのように、システムが時間とともに進化している場合、**テスト文書を最新の状態に保つためにはかなりの努力が必要**である。
 
 In order to build quality in to software, we need to adopt a different approach.
-ソフトウェアに品質を組み込むためには、異なるアプローチを採用する必要がある。
+ソフトウェアに品質を組み込むためには、異なるアプローチを採用する必要がある。(うんうん...!)
 Our goal is to run many different types of tests—both manual and automated—continually throughout the delivery process.
-私たちの目標は、デリバリー・プロセスを通じて、手動と自動の両方で多くの異なるタイプのテストを継続的に実行することです。
+私たちの目標は、**デリバリー・プロセスを通じて、手動と自動の両方で多くの異なるタイプのテストを継続的に実行すること**です。
 The types of tests we want to run are nicely laid out the quadrant diagram created by Brian Marick, below:
-ブライアン・マリックが作成したクワドラント・ダイアグラム（象限図）には、私たちが実行したいテストのタイプがきれいにレイアウトされている：
+ブライアン・マリックが作成したクワドラント・ダイアグラム（象限図）には、私たちが実行したいテストのタイプがきれいにレイアウトされている:
+
+![]()
 
 Once we have continuous integration and test automation in place, we create a deployment pipeline (the key pattern in continuous delivery).
-継続的インテグレーションとテストの自動化が整ったら、デプロイメント・パイプラインを作成する（継続的デリバリーの重要なパターン）。
+継続的インテグレーションとテスト自動化が整ったら、デプロイメント・パイプライン（継続的デリバリーのキー・パターン）を作成する。
 In the deployment pipeline pattern, every change runs a build that a) creates packages that can be deployed to any environment and b) runs unit tests (and possibly other tasks such as static analysis), giving feedback to developers in the space of a few minutes.
-デプロイメント・パイプライン・パターンでは、すべての変更がビルドを実行し、a) あらゆる環境にデプロイ可能なパッケージを作成し、b) ユニットテスト（および場合によっては静的解析などの他のタスク）を実行し、数分のうちに開発者にフィードバックを与える。
+デプロイメント・パイプライン・パターンでは、すべての変更がビルドを実行し、a) 任意の環境にデプロイできるパッケージを作成し、b) ユニットテスト（および静的解析などの他のタスク）を実行し、**数分の間に開発者にフィードバックを提供する**。
 Packages that pass this set of tests have more comprehensive automated acceptance tests run against them.
-この一連のテストに合格したパッケージには、より包括的な自動受け入れテストが実行される。
+**この一連のテストに合格したパッケージには、より包括的な自動受け入れテストが実行される**。(pipelineのstepがわかれてるんだ。)
 Once we have packages that pass all the automated tests, they are available for self-service deplyment to other environments for activities such as exploratory testing, usability testing, and ultimately release.
-すべての自動テストに合格したパッケージができたら、探索的テスト、ユーザビリティ・テスト、そして最終的なリリースといった活動のために、他の環境にセルフサービスでデプリメントできるようにする。
+すべての自動テストに合格したパッケージがあると、探索的テスト、使いやすさテストなどの他の環境への自己サービスデプロイメントのために利用可能になり(これのpipelineの次のstep)、最終的にリリースされる。
 Complex products and services may have sophisticated deployment pipelines; a simple, linear pipeline is shown below:
-複雑な製品やサービスには、洗練された配備パイプラインがあるかもしれない：
+複雑な製品やサービスには、洗練されたデプロイメント・パイプラインがあるかもしれない。簡単な直線状のパイプラインは以下の通り:
+
+![]()
 
 In the deployment pipeline, every change is effectively a release candidate.
-デプロイメント・パイプラインでは、すべての変更が事実上リリース候補となる。
+デプロイメント・パイプラインでは、**すべての変更が実質的にリリース候補**(のpackage!)となる。
 The job of the deployment pipeline is to catch known issues.
-デプロイメント・パイプラインの仕事は、既知の問題をキャッチすることだ。
+デプロイメント・パイプラインの仕事は、既知の問題をキャッチすることだ。(これでcatchできない問題はincidentにつながるかもしれないが、その後の対応で既知の問題となり、次回以降はcatch可能になる...!:thinking:)
 If we can’t detect any known problems, we should feel totally comfortable releasing any packages that have gone through it.
-もし既知の問題が検出されなければ、それを通過したパッケージを安心してリリースできるはずだ。
+**もし既知の問題が検出されなければ、デプロイメントパイプラインを通過したパッケージをリリースしても全く問題ないと感じるべきだ**。(うんうん、過度にビクビクする必要はなさそう。未知の問題はそもそもcatchできないので...!:thinking:)
 If we aren’t, or if we discover defects later, it means we need to improve our pipeline, perhaps adding or updating some tests.
-そうでない場合、あるいは後になって欠陥が見つかった場合は、パイプラインを改善する必要があることを意味する。
+**そうでない(=全く問題ないと感じられない)場合、または後で不具合が発見された場合、パイプラインを改善する必要がある**。テストの追加や更新を行うかもしれない。(うんうん...!:thinking:)
 
 Our goal should be to find problems as soon as possible, and make the lead time from check-in to release as short as possible.
 私たちの目標は、できるだけ早く問題を見つけ、チェックインからリリースまでのリードタイムをできるだけ短くすることだ。
 Thus we want to parallelize the activities in the deployment pipeline, not have many stages executing in series.
-したがって、デプロイメント・パイプラインのアクティビティを並列化し、多くのステージが直列に実行されないようにしたい。
+したがって、**デプロイメント・パイプラインのアクティビティを並列化**し、多くのステージを直列で実行しないようにしたい。
 There is also a feedback process: if we discover bugs in exploratory testing, we should be looking to improve our automated tests.
-フィードバックのプロセスもある： 探索的テストでバグを発見したら、自動テストを改善するようにしなければならない。
+フィードバックのプロセスもある: 探索的テストでバグを発見した場合、自動テストの改善を目指すべきだ。(未知の問題を既知の問題としてcatchできるようにするために...!:thinking:)
 If we discover a defect in the acceptance tests, we should be looking to improve our unit tests (most of our defects should be discovered through unit testing).
-もし受け入れテストで不具合を発見したら、単体テストの改善に目を向けるべきだ（不具合のほとんどは単体テストで発見されるはずだ）。
+もし受け入れテストで欠陥を発見した場合、ユニットテストの改善を目指すべきだ（**ほとんどの欠陥はユニットテストを通じて発見されるべきだ**）。
 
 Get started by building a skeleton deployment pipeline—create a single unit test, a single acceptance test, an automated deployment script that stands up an exploratory testing envrionment, and thread them together.
-単体テスト、受け入れテスト、探索的テスト環境を立ち上げる自動デプロイメントスクリプトを作成し、それらをつなぎ合わせる。
+**スケルトンデプロイメントパイプライン**(??)を構築して始めましょう-単一のユニットテスト、単一の受け入れテスト、探索的テスト環境を立ち上げる自動化デプロイメントスクリプトを作成し、それらを組み合わせます。
 Then increase test coverage and extend your deployment pipeline as your product or service evolves.
-そして、製品やサービスの進化に合わせてテストカバレッジを拡大し、デプロイメントパイプラインを拡張する。
+そして、製品やサービスが進化するにつれて、テストカバレッジを拡大し、デプロイメントパイプラインを拡張していきます。
+(あ、スケルトンデプロイメントパイプラインって、最低限の機能を持ったデプロイメントパイプラインのことか...! 曳光弾的な...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## Resources リソース
 
@@ -368,14 +388,16 @@ Gojko Adzic’s Specification By Example has a series of interviews with success
 Gojko Adzicの『Specification By Example』には、世界中で成功を収めているチームへのインタビューが掲載されており、要件とテストを指定するための効果的なパターンがよくまとめられている。
 
 Think that “a few minutes” is optimistic for running automated tests? Read Dan Bodart’s blog post Crazy fast build times
-自動テストの実行に「数分」は楽観的だと思いますか？Dan Bodart氏のブログ記事「Crazy fast build times」をお読みください。
+**自動テストの実行に「数分」は楽観的だと思いますか**？[Dan Bodart氏のブログ記事「Crazy fast build times」](http://dan.bodar.com/2012/02/28/crazy-fast-build-times-or-when-10-seconds-starts-to-make-you-nervous/)をお読みください。 (気になる...":thinking:)
 
 Martin Fowler discusses the Test Pyramid and its evil twin, the ice cream cone on his bliki.
-マーティン・ファウラーが、テスト・ピラミッドとその邪悪な双子、アイスクリーム・コーンについて語る。
+マーティン・ファウラーが、[テスト・ピラミッドとその邪悪な双子、アイスクリーム・コーンについて語る](http://martinfowler.com/bliki/TestPyramid.html)。
+
+<!-- ここまで読んだ! -->
 
 ## FAQ FAQ
 
-Does continuous delivery mean firing all our testers?
+### Does continuous delivery mean firing all our testers?
 継続的デリバリーとは、テスターを全員解雇することなのだろうか？
 
 No.
@@ -383,50 +405,52 @@ No.
 Testers have a unique perspective on the system—they understand how users interact with it.
 テスターはシステムに対してユニークな視点を持っている-彼らはユーザーがどのようにシステムと相互作用するかを理解している。
 I recommend having testers pair alongside developers (in person) to help them create and evolve the suites of automated tests.
-私は、テスターが開発者と（直接）ペアを組み、自動テストのスイートの作成と進化を手助けすることを勧める。
+**私は、テスターが開発者と（直接）ペアを組み、自動テストのスイートの作成と進化を手助けすることを勧める**。(お、やってそう...!:thinking:)
 This way, developers get to understand the testers’ perspective, and testers can start to learn test automation.
 こうすることで、開発者はテスターの視点を理解できるようになり、テスターはテスト自動化を学び始めることができる。
 Testers should also be performing exploratory testing continuously as part of their work.
-また、テスターは業務の一環として、継続的に探索的テストを実施すべきである。
+また、テスターは、自分の仕事の一環として、探索的テストを継続的に実施すべきである。
 Certainly, testers will have to learn new skills—but that is true of anybody working in our industry.
-確かに、テスターは新しいスキルを学ばなければならないが、それはこの業界で働く人すべてに当てはまることだ。
+確かに、テスターは新しいスキルを学ばなければならないが、それは私たちの業界で働くすべての人に当てはまることだ。
 
-Should we be automating all of our tests?
+### Should we be automating all of our tests?
 すべてのテストを自動化すべきか？
 
 No.
 いや。
 As shown in the quadrant diagram, there are still important manual activities such as exploratory testing and usability testing (although automation can help with these activities, it can’t replace people).
-象限図に示されているように、探索的テストやユーザビリティ・テストといった重要な手作業はまだ残っている（自動化はこれらの活動を助けることはできるが、人の代わりにはならない）。
+**象限図に示されているように、探索的テストや使いやすさテストなどの重要な手動活動がまだあります**（これらの活動には自動化が役立つかもしれませんが、人を置き換えることはできません）。
 We should be aiming to bring all test activities, including security testing, into the development process and performing them continually from the beginning of the software delivery lifecycle for every product and service we build.
-私たちは、セキュリティ・テストを含むすべてのテスト活動を開発プロセスに導入し、私たちが構築するすべての製品やサービスについて、ソフトウェア・デリバリー・ライフサイクルの最初から継続的に実施することを目指すべきである。
+私たちは、**セキュリティテストを含むすべてのテスト活動を開発プロセスに取り込み**、ソフトウェアデリバリーライフサイクルの初めから、私たちが構築するすべての製品とサービスに対して継続的に実行することを目指すべきだ。
 
-Should I stop and automate all of my manual tests right now?
+### Should I stop and automate all of my manual tests right now?
 今すぐ手動テストをすべて中止し、自動化すべきでしょうか？
 
 No.
 いや。
 Start by writing a couple of automated tests—the ones that validate the most important functionality in the system.
-システムの最も重要な機能を検証する自動テストをいくつか書くことから始めよう。
+**システムの最も重要な機能を検証する自動テストをいくつか書くことから始めよう**。(最も重要な機能 = ドメインロジック??)
 Get those running on every commit.
 すべてのコミットでそれを実行させる。
 Then the rule is to add new tests to cover new functionality that is added, and functionality that is being changed.
-そして、新しく追加される機能や変更される機能をカバーするために、新しいテストを追加するのがルールだ。
+そして、新しく追加された機能と変更されている機能をカバーする新しいテストを追加するルールだ。
 Over time, you will evolve a comprehensive suite of automated tests.
-時間をかけて、自動テストの包括的なスイートを進化させていく。
+**時間をかけて、包括的な自動テストスイートを進化させることになる**。(MLシステム基盤のdeployment pipelineはまだスケルトンデプロイメントパイプラインの段階なのかも...!:thinking:)
 In general, it’s better to have 20 tests that run quickly and are trusted by the team than 2,000 tests that are flaky and constantly failing and which are ignored by the team.
-一般的に、不安定で常に失敗し、チームから無視される2,000のテストよりも、素早く実行され、チームから信頼される20のテストの方が良い。
+**一般的に、チームが信頼している20のテストを迅速に実行する方が、チームに無視される2,000の不安定で常に失敗するテストよりも良い**。
 
-Who is responsible for the automated tests?
+### Who is responsible for the automated tests?
 誰が自動テストに責任を持つのか？
 
 The whole team.
 チーム全員だ。
 In particular, developers should be involved in creating and maintaining the automated tests, and should stop what they are doing and fix them whenever there is a failure.
-特に、開発者は自動テストの作成と保守に携わるべきであり、失敗があるときはいつでも自分のやっていることを中断して修正すべきである。
+**特に、開発者は自動テストの作成とメンテナンスに関与し、失敗が発生したときにはやっていることを止めて修正するべきだ。**
 This is essential because it teaches developers how to write testable software.
-これは、テスト可能なソフトウェアを書く方法を開発者に教えるために不可欠である。
+これは、テスト可能なソフトウェアを書く方法を開発者に教えるために不可欠だ。
 When automated tests are created and maintained by a different group from the developers, there is no force acting on the developers to help them write software that is easy to test.
-自動テストが開発者とは別のグループによって作成され、管理されている場合、開発者がテストしやすいソフトウェアを書くのを助ける力は働かない。
+自動テストが開発者とは異なるグループによって作成およびメンテナンスされている場合、開発者がテストしやすいソフトウェアを書くのを助ける力が働いていない。
 Retrofitting automated tests onto such systems is painful and expensive, and poorly designed software that is hard to test is a major factor contributing to automated test suites that are expensive to maintain.
-このようなシステムに自動テストを後付けするのは、手間とコストがかかる。また、テストしにくいお粗末な設計のソフトウェアは、自動テスト・スイートの維持にコストがかかる主な要因である。
+**そのようなシステムに自動テストを後付けすることは痛苦で高価で**あり、テストが難しい設計の悪いソフトウェアは、メンテナンスが高価な自動テストスイートに貢献する主要な要因である。
+
+<!-- ここまで読んだ! -->
