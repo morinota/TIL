@@ -51,138 +51,147 @@ However, are the lessons learnt by Team D a blueprint for success in AI for the 
 Team D successfully applied some established techniques for handling complexity when building software systems:
 チームDは、ソフトウェアシステムを構築する際に複雑さを処理するための確立されたテクニックを応用することに成功した：
 
-decompose systems into smaller manageable modular components;
+- decompose systems into smaller manageable modular components;
 システムをより小さな管理しやすいモジュラー・コンポーネントに分解する；
-
-design the modular components in such a way that they can be easily composed into a complete AI system;
-モジュラー・コンポーネントを、完全なAIシステムに簡単に構成できるように設計する；
+- design the modular components in such a way that they can be easily composed into a complete AI system;
+モジュラー・コンポーネントを設計する際に、それらを簡単に組み合わせて完全なAIシステムにすることができるようにする；
 
 Team D also did their homework on machine learning engineering.
 チームDは機械学習工学の宿題もこなした。
 Some features needed to be precomputed and retrieved at runtime to hit their SLA, so they used a Postgres database to store and retrieve them and wrote a separate data pipeline for each model.
-SLAを達成するために、いくつかの機能は事前に計算され、実行時に取得される必要があった。そのため、Postgresデータベースを使用してそれらを保存および取得し、モデルごとに個別のデータパイプラインを作成した。
+SLAを達成するために、**いくつかの特徴量は事前に計算され**、**実行時に取得する必要があったため、それらを格納して取得するためにPostgresデータベースを使用し**(feature store)、各モデルに対して別々のデータパイプラインを書いた。
 They knew enough to avoid pitfalls such as skew between training and serving, so they logged all predictions to a single wide table and waited to collect enough training data.
-彼らは、トレーニングとサービス間のスキューのような落とし穴を避けるために、すべての予測を単一のワイドテーブルに記録し、十分なトレーニングデータが集まるのを待った。
+トレーニングとサービングの間のスキューなどの落とし穴を避けるために十分な知識を持っていたため、すべての予測を1つのワイドテーブルに記録し、十分なトレーニングデータを収集するのを待った。(??)
 This one-big-table data model avoids data leakage that can arise when your data is spread across multiple tables and you need to perform a temporal Join across tables when creating training data.
-この1つのビッグテーブル・データ・モデルにより、データが複数のテーブルにまたがっていて、トレーニング・データを作成する際にテーブル間でテンポラル・ジョインを実行する必要がある場合に発生する可能性のあるデータ漏れを回避することができます。
+この1つの大きなテーブルデータモデルは、データが複数のテーブルに分散されている場合や、トレーニングデータを作成する際にテーブル間で時間結合を行う必要がある場合に生じるデータ漏洩を回避する。
 
 Team A did not follow this approach as they did not have the software development skills to build the CI/CD pipelines, containerize the different modules in the ML system, and operate and instrument the microservice architecture used to deliver the operational ML system.
-チームAは、CI/CDパイプラインを構築し、MLシステムのさまざまなモジュールをコンテナ化し、運用可能なMLシステムを提供するために使用されるマイクロサービスアーキテクチャを運用し、インストゥルメントするためのソフトウェア開発スキルを持っていなかったため、このアプローチには従わなかった。
+チームAは、CI/CDパイプラインを構築し、MLシステムの異なるモジュールをコンテナ化し、運用MLシステムを提供するために使用されるマイクロサービスアーキテクチャを操作および計装するためのソフトウェア開発スキルを持っていなかったため、このアプローチに従わなかった。
 So Team A just concentrated on making their models better, which ultimately did not deliver value to the business.
-そのため、チームAは自分たちのモデルをより良くすることだけに集中し、結局はビジネスに価値を提供することはできなかった。
+そのため、**チームAは自分たちのモデルをより良くすることだけに集中し、結局はビジネスに価値を提供することはできなかった**。
 Models stuck in notebooks add no value to the business.
-ノートに詰まったモデルはビジネスに何の価値ももたらさない。
+**notebookに閉じ込められたモデルは、ビジネスに価値をもたらさない**。
 
 ![figure2]()
+Figure 2. A composable real-time machine learning system can be built from separate independent microservices. Images from Lak Lakshmanan in Google Cloud
+図2. 独立したマイクロサービスから構成可能なリアルタイム機械学習システムを構築することができる。Google CloudのLak Lakshmananによる画像
+
 
 Team D later helped Team B (the marketing team with a data engineer) build a batch ML system that helped predict subscriber churn.
-チームDはその後、チームB（データエンジニアを擁するマーケティングチーム）のバッチMLシステム構築を支援し、加入者の解約を予測した。
+チームDはその後、チームB(データエンジニアを持つマーケティングチーム)が、解約予測を支援するバッチMLシステムを構築するのを手伝った。
 For Team D, this was a more straightforward project, as it was a single monolithic batch ML system.
-チームDにとっては、モノリシックなバッチMLシステム1つという、より単純なプロジェクトだった。
+チームDにとっては、これは単一のモノリシックなバッチMLシステムであるため、より簡単なプロジェクトだった。
 Their ML system as a dataflow program - a directed acyclic graph of steps - executed by an orchestrator, see Figure 3.
-彼らのMLシステムは、オーケストレーターによって実行されるデータフロー・プログラム（ステップの有向非循環グラフ）である（図3を参照）。
+彼らのMLシステムは、**データフロープログラムであり、ステップの有向非巡回グラフであり、オーケストレータによって実行される**。図3を参照。
+
+![figure3]()
+Figure 3. A batch ML system can be built as a monolithic Directed Acyclic Graph (DAG) of independent steps executed by an orchestration engine. Image source: Google TFX Project.
+図3. バッチMLシステムは、オーケストレーションエンジンによって実行される独立したステップのモノリシックな有向非巡回グラフ（DAG）として構築することができる。画像出典：Google TFX Project。
+
 One difficult challenge they faced was in creating training data.
 彼らが直面した困難な課題は、トレーニングデータの作成だった。
 The data was spread over many tables - user engagement, marketing actions, session data, and so on.
-データは、ユーザーエンゲージメント、マーケティングアクション、セッションデータなど、多くのテーブルにまたがっていた。
+**データは、ユーザー・エンゲージメント、マーケティング・アクション、セッション・データなど、多くのテーブルに分散していた**。
 Team D realized temporal joins would be needed to create rich training data, and there was a risk of data leakage if they didn’t get them right.
-チームDは、豊富なトレーニングデータを作成するためには一時的な結合が必要であり、それを正しく行わなければデータ漏洩のリスクがあることに気づいた。
+チームDは、豊富なトレーニングデータを作成するために時間結合が必要であることを認識し、それらを正しく取得しないとデータ漏洩のリスクがあることに気づいた。
 So being the good engineers they are, they followed the KISS principle and used only the user engagement data for their model, as they hypothesized this data had the most predictive power for subscriber churn.
-そこで、優秀なエンジニアである彼らは、KISSの原則に従い、ユーザー・エンゲージメント・データのみをモデルに使用した。
+そこで、彼らは良いエンジニアであるため、KISSの原則に従い、ユーザー・エンゲージメント・データのみをモデルに使用し、このデータが解約率の予測力が最も高いと仮説を立てた。
 Unfortunately, neither Team D nor Team B were experts at data science, and the model they built was too trivial (it had low predictive power) and ultimately did not significantly impact the bottom line.
-残念ながら、チームDもチームBもデータサイエンスの専門家ではなく、彼らが構築したモデルはあまりに些細なもの（予測力が低い）であり、最終的に収益に大きな影響を与えることはなかった。
+残念ながら、チームDもチームBもデータサイエンスの専門家ではなく、彼らが構築したモデルはあまりにも単純で（予測力が低かった）、結局、収益にはほとんど影響を与えなかった。
 They also skipped on monitoring their features/predictions for drift, instead committing to retraining the model every 6 months.
-彼らはまた、特徴や予測のドリフトを監視することをスキップし、代わりに6ヶ月ごとにモデルを再トレーニングすることを約束した。
+彼らはまた、特徴量/予測のドリフトを監視することをスキップし、**代わりにモデルを6か月ごとに再トレーニングする**ことを約束した。
 But their model made it to production - in contrast to our Team A of data scientists.
-しかし、データサイエンティストのチームAとは対照的に、彼らのモデルは本番稼動にこぎつけた。
+しかし、彼らのモデルは、データサイエンティストのチームAとは対照的に、本番環境に到達した。
 Team A, in contrast, made fun of the churn model when they found out about it.
-対照的にチームAは、解約モデルを知ったとき、それをバカにしていた。
-
-![figure3]()
+チームAは、解約モデルを知ったときにそれをからかった。
 
 As you can see, the software architectures of the real-time ML system (Figure 2) and batch ML system (Figure 3) are radically different.
-ご覧のように、リアルタイムMLシステム（図2）とバッチMLシステム（図3）のソフトウェア・アーキテクチャは根本的に異なる。
+ご覧のように、**リアルタイムMLシステム（図2）とバッチMLシステム（図3）のソフトウェアアーキテクチャは根本的に異なる**。(推論だけじゃないの??)
 Team D has some crack developers who were comfortable switching development paradigms and tooling, and pulled it off for real-time and got something working for batch.
-チームDには、開発パラダイムやツールの切り替えに慣れている優秀な開発者が何人かいて、リアルタイムでそれをやり遂げ、バッチで何かを使えるようにした。
+チームDには、開発パラダイムやツールを切り替えることに慣れた優秀な開発者がいて、リアルタイムではうまくいき、バッチでは何かが動作するようになった。
 So what did the organization learn from its decentralized ML initiatives?
-では、分散型MLの取り組みから、この組織は何を学んだのだろうか？
+では、組織は分散型のML initiatives (=イニシアティブ) から何を学んだのか？
 
 Team D drew conclusions that real-time AI systems could be built as microservices architectures and batch AI systems should be orchestrated DAGs.
-チームDは、リアルタイムAIシステムはマイクロサービス・アーキテクチャとして構築でき、バッチAIシステムはオーケストレーションされたDAGであるべきだという結論を導き出した。
+チームDは、**リアルタイムAIシステムはマイクロサービスアーキテクチャとして構築でき、バッチAIシステムはオーケストレーションDAGとして構築すべき**だと結論づけた。
 However, there are some issues.
-しかし、問題もある。
+**しかし、問題もある**。
 While the microservices architecture is modular, it is not easy to compose AI systems as graphs of independent microservices.
-マイクロサービス・アーキテクチャはモジュール化されているが、AIシステムを独立したマイクロサービスのグラフとして構成するのは容易ではない。
+マイクロサービス・アーキテクチャはモジュラーであるが、AIシステムを独立したマイクロサービスのグラフとして構成することは簡単ではない。
 The subsystems are tightly coupled and need to be always-on.
-サブシステムは緊密に結合しており、常にオンである必要がある。
+サブシステム達は密結合されており、常にオンである必要がある。
 If a microservice is “down”, it can lead to the entire ML system being down.
-マイクロサービスが 「ダウン 」すれば、MLシステム全体のダウンにつながる。
+もし(単一の?)マイクロサービスが「ダウン」していると、全体のMLシステムがダウンする可能性がある。
 The call depth for microservices can be deep and you need great observability tools for tracing calls and monitoring services.
-マイクロサービスのコールの深さは深く、コールをトレースしてサービスを監視するための優れた観測可能性ツールが必要です。
+マイクロサービスの呼び出し深度は深くなり、呼び出しをトレースし、サービスを監視するための優れた観測ツールが必要となる。
 They couldn’t use serverless functions to implement microservices due to high latencies that break SLAs during cold-starts.
-コールドスタート時にSLAを破る高いレイテンシーのため、マイクロサービスを実装するためにサーバーレス関数を使用することができなかった。
+コールドスタート時にSLAを破る高レイテンシーのため、**サーバーレス関数を使用してマイクロサービスを実装することができなかった**。
 If they hadn’t had the same low latency SLA, they would have looked at designing their microservices as loosely coupled serverless functions that communicate by passing events through a serverless database (like DynamoDB) or a shared event bus, such as Kafka or AWS Kinesis or GCP PubSub.
-もし彼らが同じ低レイテンシーSLAを持っていなかったとしたら、彼らはマイクロサービスを、（DynamoDBのような）サーバーレスデータベースや、KafkaやAWS Kinesis、GCP PubSubのような共有イベントバスを介してイベントを渡すことで通信する、疎結合のサーバーレス関数として設計することを検討しただろう。
+もし彼らが同じ低レイテンシーSLAを持っていなかったら、DynamoDBのようなサーバーレスデータベースを介してイベントを渡すか、KafkaやAWS Kinesis、GCP PubSubなどの共有イベントバスを介して通信するように、マイクロサービスを疎結合のサーバーレス関数として設計することを検討していただろう。
 
 Then, there is the cost.
 それからコストだ。
 Deploying a new microservice is not trivial for the Data Science team.
-新しいマイクロサービスのデプロイは、データサイエンスチームにとって些細なことではない。
+**新しいマイクロサービスのデプロイは、データサイエンスチームにとっては簡単ではない**。
 You need to build your container, set up a CI/CD platform to deploy containers in a runtime (like Kubernetes) and connect your microservices to the other microservices and existing services.
-コンテナを構築し、（Kubernetesのような）ランタイムにコンテナをデプロイするCI/CDプラットフォームをセットアップし、マイクロサービスを他のマイクロサービスや既存のサービスに接続する必要がある。
+コンテナを構築し、CI/CDプラットフォームを設定してコンテナをランタイム（Kubernetesなど）にデプロイし、マイクロサービスを他のマイクロサービスや既存のサービスに接続する必要がある。
 You need to develop your microservices so that they correctly perform service discovery and handle service connection/disconnection events correctly.
-サービス・ディスカバリーを正しく実行し、サービスの接続／切断イベントを正しく処理するように、マイクロサービスを開発する必要がある。
+マイクロサービスを開発して、サービスディスカバリを正しく実行し、サービス接続/切断イベントを正しく処理する必要がある。
 This is all hard work, and definitely not the work of data scientists, or even many ML engineers.
-これはすべて大変な仕事であり、データサイエンティストや多くのMLエンジニアの仕事ではないことは間違いない。
- That is a common reason teams often “start with batch AI systems”.
- これが、チームがしばしば「バッチAIシステムから始める」一般的な理由である。
+これはすべて大変な作業であり、データサイエンティストや多くのMLエンジニアの仕事ではない。
+That is a common reason teams often “start with batch AI systems”.
+**これが、チームがしばしば「バッチAIシステムから始める」一般的な理由である。**
 Only the highest value real-time AI systems get deployed first.
-最も価値の高いリアルタイムAIシステムだけが最初に導入される。
+最も高い価値を持つリアルタイムAIシステムだけが最初にデプロイされる。
 Then, making those real-time AI systems highly available and reusing assets created between different real-time AI systems are just roadmap items for even Team D.
-そして、それらのリアルタイムAIシステムを高可用性にし、異なるリアルタイムAIシステム間で作成された資産を再利用することは、チームDにとってもロードマップ項目に過ぎない。
+その後、これらのリアルタイムAIシステムを高可用性にし、異なるリアルタイムAIシステム間で作成されたアセットを再利用することは、チームDにとってもただのロードマップ項目に過ぎない。
+
+<!-- ここまで読んだ! -->
 
 ## MLOps Infrastructure MLOps インフラストラクチャー
 
 So, what should the organization do now? Should it just work on batch AI systems and only in exceptional cases approve real-time AI systems? Is there an alternative? How do the hyperscale AI companies spit out new AI systems at low cost and with high quality? Could we do the same? The answer is that the hyperscalers have all built their own ML infrastructure to support AI systems, see Figure 3.
-では、組織は今何をすべきなのか？バッチAIシステムに取り組み、例外的な場合にのみリアルタイムAIシステムを承認すればいいのだろうか？代替案はあるのだろうか？ハイパースケールAI企業は、どのようにして新しいAIシステムを低コストかつ高品質で送り出しているのだろうか？我々も同じことができるだろうか？その答えは、ハイパースケーラー各社がAIシステムをサポートする独自のMLインフラを構築していることだ（図3を参照）。
+では、組織は今何をすべきなのか？バッチAIシステムに取り組むだけで、例外的なケースでのみリアルタイムAIシステムを承認すべきか？ 代替案はあるのか？ ハイパースケールAI企業は、低コストで高品質な新しいAIシステムを生み出しているのか？私たちも同じことができるだろうか？**答えは、ハイパースケーラーはすべて、AIシステムをサポートするための独自のMLインフラを構築していることだ**。図3を参照。
 Most of them (AWS, Databricks, Snowflake, Twitter, Spotify, Uber, WeChat) have presented their ML infrastructure at the feature store summit (videos available).
 ほとんどの企業（AWS、Databricks、Snowflake、Twitter、Spotify、Uber、WeChat）は、フィーチャーストア・サミットでMLインフラを発表した（ビデオあり）。
 All of them have implemented Feature Store-based data architectures and a model management infrastructure to solve most of the problems identified earlier:
-いずれもフィーチャーストアをベースとしたデータアーキテクチャとモデル管理インフラを導入し、先に挙げた問題のほとんどを解決している：
+**いずれもfeature storeをベースとしたデータアーキテクチャ**と**モデル管理インフラ**を実装しており、以前に特定された問題のほとんどを解決している:
 
-decompose the problem of building AI systems into modular ML pipelines that are easily composed together into a system using the shared data layer;
-AIシステム構築の問題を、共有データレイヤーを使ってシステムに簡単に組み込めるモジュール化されたMLパイプラインに分解する；
+- decompose the problem of building AI systems into modular ML pipelines that are easily composed together into a system using the shared data layer;
+AIシステム構築の問題を、**共有データレイヤーを使って**システムに簡単に組み込めるモジュール化されたML pipelinesに分解する；
 
-decouple ML pipelines enabling independent scheduling and the use of the best technology for each ML pipeline;
-MLパイプラインを切り離すことで、独立したスケジューリングが可能になり、各MLパイプラインに最適なテクノロジーを使用できるようになります；
+- decouple ML pipelines enabling independent scheduling and the use of the best technology for each ML pipeline;
+**ML pipelines を切り離すことで、独立したスケジューリングが可能になり**、各MLパイプラインに最適なテクノロジーを使用できるようになります；(FTI pipelinesじゃん!)
 
-support for creating point-in-time consistent training data;
+- support for creating point-in-time consistent training data;
 ポイント・イン・タイムで一貫性のあるトレーニングデータの作成をサポート；
 
-low-latency access to precomputed features for real-time ML systems;
+- low-latency access to precomputed features for real-time ML systems;
 リアルタイムMLシステムのために、事前に計算された特徴量に低レイテンシでアクセスできる；
 
-real-time features computed using data only available at request-time;
+- real-time features computed using data only available at request-time;
 リクエスト時にのみ利用可能なデータを使用して計算されたリアルタイムの機能；
 
-data validation for feature pipelines, ensuring no garbage-in;
-フィーチャー・パイプラインのデータ・バリデーション；
+- data validation for feature pipelines, ensuring no garbage-in;
+特徴パイプラインのデータ検証により、ゴミデータが入らないようにする；
 
-unified batch and real-time support for both feature monitoring and model monitoring;
-機能モニタリングとモデルモニタリングの両方をバッチおよびリアルタイムで統合サポート；
+- unified batch and real-time support for both feature monitoring and model monitoring;
+特徴量モニタリングとモデルモニタリングの両方に対する統一されたバッチとリアルタイムのサポート；
 
-out-of-the-box observability and governance, using versioning, tagging, search and lineage services;
-バージョニング、タグ付け、検索、リネージ・サービスを利用することで、すぐに利用可能な観察可能性とガバナンスを実現する；
-
-high availability and enterprise level security.
+- out-of-the-box observability and governance, using versioning, tagging, search and lineage services;
+バージョニング、タギング、検索、ラインエージサービスを使用した、即座に利用可能な観測性とガバナンス；
+- high availability and enterprise level security.
 高可用性と企業レベルのセキュリティ
 
-![figure4]()
+![figure3]()
+Figure 3. Feature Pipelines, Training Pipelines, Inference Pipelines are the independent ML Pipelines that together make up a ML System
+図3. 特徴パイプライン、学習パイプライン、推論パイプラインは、一緒にMLシステムを構成する独立したMLパイプラインである
+
 
 In a previous blog, and shown in Figure 3, we outlined what these ML platforms have in common.
 以前のブログで、図3に示すように、これらのMLプラットフォームに共通するものを概説した。
 AI systems consist of primarily three classes of ML pipelines (feature pipelines , training pipelines, and inference pipelines) that communicate via a shared data layer, consisting of a feature store and a model registry.
-AIシステムは、主に3つのクラスのMLパイプライン（特徴パイプライン、学習パイプライン、推論パイプライン）で構成され、特徴ストアとモデルレジストリからなる共有データ層を介して通信する。
+**AIシステムは、主に3つのクラスのMLパイプライン（特徴パイプライン、学習パイプライン、推論パイプライン）で構成され、特徴ストアとモデルレジストリからなる共有データ層を介して通信する。**
 Somebody in Team D happened to read that blog entry, and designed Table 1, comparing the different approaches to building AI systems.
 チームDの誰かがたまたまそのブログエントリーを読み、AIシステム構築のさまざまなアプローチを比較した表1をデザインした。
 
