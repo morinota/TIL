@@ -7,109 +7,122 @@
 By Jim Dowling, Co-Founder & CEO, Hopsworks
 ジム・ダウリング（ホップワークス共同設立者兼CEO）著
 
-## Introduction 
+## Introduction
 
 This article introduces a unified architectural pattern for building both Batch and Real-Time machine learning (ML) Systems.
 この記事では、バッチとリアルタイムの両方の機械学習（ML）システムを構築するための統一されたアーキテクチャ・パターンを紹介する。
 We call it the FTI (Feature, Training, Inference) pipeline architecture.
-私たちはこれをFTI（Feature, Training, Inference）パイプライン・アーキテクチャと呼んでいる。
+私たちはこれを**FTI(Feature, Training, Inference) pipelines architecture**と呼んでいます。
 FTI pipelines break up the monolithic ML pipeline into 3 independent pipelines, each with clearly defined inputs and outputs, where each pipeline can be developed, tested, and operated independently.
-FTIパイプラインは、モノリシックなMLパイプラインを3つの独立したパイプラインに分割し、それぞれが明確に定義された入力と出力を持ち、各パイプラインは独立して開発、テスト、運用することができます。
+FTI pipelinesは、monolithicなMLパイプラインを**3つの独立したパイプラインに分割**し、それぞれのパイプラインには明確に定義された入力と出力があり、各パイプラインを独立して開発、テスト、運用できるようにします。
 For a historical perspective on the evolution of the FTI Pipeline architecture, you can read the full in-depth mental map for MLOps article.
-FTI Pipelineアーキテクチャの進化に関する歴史的な視点については、MLOpsの詳細なメンタルマップの記事をお読みください。
+FTI Pipelineアーキテクチャの進化に関する歴史的な視点については、[MLOpsの詳細なメンタルマップの記事](https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines)をお読みください。
 
 In recent years, Machine Learning Operations (MLOps) has gained mindshare as a development process, inspired by DevOps principles, that introduces automated testing, versioning of ML assets, and operational monitoring to enable ML systems to be incrementally developed and deployed.
-近年、機械学習オペレーション（MLOps）は、DevOpsの原則に触発された開発プロセスとして注目を集め、自動テスト、ML資産のバージョン管理、MLシステムのインクリメンタルな開発とデプロイを可能にする運用監視を導入している。
+近年、**Machine Learning Operations（MLOps）**は、DevOpsの原則に触発された開発プロセスとして、自動化されたテスト、**ML assetsのバージョニング**、運用モニタリングを導入し、MLシステムを段階的に開発・展開することを可能にするとして注目を集めています。
+(assets: 資産、資本、財産。MLOpsにおいては、データセット, モデル, コード, モデルパラメータ, configファイル, ドキュメント, etc...!:thinking:)
 However, existing MLOps approaches often present a complex and overwhelming landscape, leaving many teams struggling to navigate the path from model development to production.
-しかし、既存のMLOpsのアプローチは、複雑で圧倒されるような状況を提示することが多く、多くのチームがモデル開発から生産までの道のりをナビゲートするのに苦労している。
+しかし、既存のMLOpsのアプローチは、しばしば複雑で圧倒的な状況を提示し、多くのチームがモデル開発から本番環境への道筋を辿るのに苦労しています。
 In this article, we introduce a fresh perspective on building ML systems through the concept of FTI pipelines.
-本稿では、FTIパイプラインの概念を通じて、MLシステム構築の新たな視点を紹介する。
+本稿では、FTIパイプラインの概念を通じてMLシステムを構築する新しい視点を紹介します。
 The FTI architecture has empowered countless developers to create robust ML systems with ease, reducing cognitive load, and fostering better collaboration across teams.
 FTIアーキテクチャは、数え切れないほどの開発者に、堅牢なMLシステムを簡単に作成する力を与え、認知的負荷を軽減し、チーム間のより良いコラボレーションを促進します。
 We delve into the core principles of FTI pipelines and explore their applications in both batch and real-time ML systems.
-FTIパイプラインの核となる原理を掘り下げ、バッチとリアルタイムの両方のMLシステムでの応用を探る。
+**FTIパイプラインの核となる原理を掘り下げ、バッチとリアルタイムの両方のMLシステムでの応用を探る**。
 
 ## Unified Architecture for ML Systems as Feature/Traing/Inference Pipelines 特徴／学習／推論パイプラインとしてのMLシステムの統一アーキテクチャ
 
 The FTI approach for this architectural pattern has been used to build hundreds of ML systems.
 このアーキテクチャパターンのFTIアプローチは、何百ものMLシステムの構築に使われてきた。
 The pattern is as follows - a ML system consists of three independently developed and operated ML pipelines:
-MLシステムは、独立して開発・運用される3つのMLパイプラインから構成される：
+このパターンは次の通りです。**MLシステムは、3つの独立して開発・運用されるMLパイプラインで構成**されています。
 
-a feature pipeline that takes as input raw data that it transforms into features (and labels)
-生データを入力として特徴（とラベル）に変換する特徴パイプライン
-
-a training pipeline that takes as input features (and labels) and outputs a trained model, and
-特徴（およびラベル）を入力とし、学習済みモデルを出力する学習パイプラインと
-
-an inference pipeline that takes new feature data and a trained model and makes predictions.
-新しい特徴データと学習済みモデルを受け取り、予測を行う推論パイプライン。
+- a feature pipeline that takes as input raw data that it transforms into features (and labels)
+  生データを入力として特徴（とラベル）に変換する**feature pipeline**
+- a training pipeline that takes as input features (and labels) and outputs a trained model, and
+  特徴（およびラベル）を入力とし、学習済みモデルを出力する**training pipeline**
+- an inference pipeline that takes new feature data and a trained model and makes predictions.
+  新しい特徴データと学習済みモデルを受け取り、予測を行う**infernece pipeline**
 
 In this FTI, there is no single ML pipeline.
 このFTIでは、単一のMLパイプラインは存在しない。
 The confusion about what the ML pipeline does (does it feature engineer and train models or also do inference or just one of those?) disappears.
-MLパイプラインが何をするのか（フィーチャーエンジニアリングとモデルの訓練なのか、推論もするのか、それともどちらか一方だけなのか）についての混乱はなくなる。
+MLパイプラインが何をするのかの混乱はなくなる。(フィーチャーエンジニアリングとモデルのトレーニングを行うのか、推論を行うのか、それともそのうちの1つだけを行うのか？)
 The FTI architecture applies to both batch ML systems and real-time ML systems.
 FTIアーキテクチャは、バッチMLシステムにもリアルタイムMLシステムにも適用できる。
 
+![figure1]()
+Figure 1: The Feature/Training/Inference (FTI) pipelines for building ML Systems
+図1: MLシステムを構築するためのFeature/Training/Inference（FTI）パイプライン
+
 The feature pipeline can be a batch program or a streaming program.
-フィーチャー・パイプラインは、バッチ・プログラムでもストリーミング・プログラムでもよい。
+**featureパイプラインはbatchプログラムまたはstreamingプログラムでも良い**。
 The training pipeline can output anything from a simple XGBoost model to a parameter-efficient fine-tuned (PEFT) large-language model (LLM), trained on many GPUs.
-トレーニング・パイプラインは、単純なXGBoostモデルから、多数のGPUでトレーニングされたパラメータ効率の良いファインチューニング（PEFT）ラージ・ランゲージ・モデル（LLM）まで出力できる。
+training pipelineは、単純なXGBoostモデルから、多数のGPUでトレーニングされたパラメータ効率の良いファインチューニング（PEFT）大規模言語モデル(LLM)まで、何でも出力できる。
 Finally, the inference pipeline can be a batch program that produces a batch of predictions to an online service that takes requests from clients and returns predictions in real-time.
-最後に、推論パイプラインは、クライアントからのリクエストを受けてリアルタイムで予測を返すオンラインサービスに対して、予測のバッチを生成するバッチプログラムとすることができる。
+最後に、inference pipelineは、クライアントからのリクエストを受け取り、リアルタイムで予測を返す**オンラインサービスでも良いし**、予測のバッチを生成する**バッチプログラムでも良い**。
 
 One major advantage of FTI pipelines is that it is an open architecture.
-FTIパイプラインの大きな利点は、オープン・アーキテクチャであることだ。
+FTIパイプラインの大きな利点は、**オープンアーキテクチャであること**です。
 You can use Python, Java or SQL.
 Python、Java、SQLを使うことができる。
 If you need to do feature engineering on large volumes of data, you can use Spark or DBT or Beam.
-大量のデータに対してフィーチャーエンジニアリングを行う必要がある場合は、SparkやDBT、Beamを使うことができる。
+大量のデータに対して feature engineering を行う必要がある場合、Spark、DBT、Beamを使うことができる。
 Training will typically be in Python using some ML framework, and batch inference could be in Python or Spark, depending on your data volumes.
 トレーニングは通常、何らかのMLフレームワークを使ってPythonで行い、バッチ推論はデータ量に応じてPythonかSparkで行う。
 Online inference pipelines are, however, nearly always in Python as models are typically training with Python.
-しかし、オンライン推論パイプラインは、モデルの学習が通常Pythonで行われるため、ほぼ常にPythonで行われる。
+しかし、オンライン推論パイプラインは、モデルの学習が通常Pythonで行われるため、ほぼ常にPythonで行われる。(よっぽどシンプルな推論の仕組みだったら多言語でもOKだと思うが...!:thinking:)
+
+![figure2]()
+Figure 2: Choose the best orchestrator for your ML pipeline/service.
 
 The FTI pipelines are also modular and there is a clear interface between the different stages.
-FTIパイプラインはモジュール化されており、異なるステージ間には明確なインターフェイスがある。
+**FTIパイプラインはmodularであり、異なるステージ間には明確なインターフェイスがある**。
 Each FTI pipeline can be operated independently.
 それぞれのFTIパイプラインは独立して操作できる。
 Compared to the monolithic ML pipeline, different teams can now be responsible for developing and operating each pipeline.
 モノリシックなMLパイプラインに比べて、異なるチームがそれぞれのパイプラインの開発と運用を担当できるようになった。
 The impact of this is that for orchestration, for example, one team could use one orchestrator for a feature pipeline and a different team could use a different orchestrator for the batch inference pipeline.
-この影響は、例えばオーケストレーションの場合、あるチームはあるオーケストレーターを機能パイプラインに使い、別のチームは別のオーケストレーターをバッチ推論パイプラインに使うことができる。
+この影響は、例えばオーケストレーションの場合、あるチームはあるオーケストレーターを feature pipeline に使用し、別のチームはbatch inference pipeline に別のオーケストレーターを使用することができる。
 Alternatively, you could use the same orchestrator for the three different FTI pipelines for a batch ML system.
-あるいは、バッチMLシステムの3つの異なるFTIパイプラインに同じオーケストレーターを使うこともできる。
+あるいは、batch MLシステムの場合、3つの異なるFTIパイプラインに同じオーケストレーターを使用することもできる。
 Some examples of orchestrators that can be used in ML systems include general-purpose, feature-rich orchestrators, such as Airflow, or lightweight orchestrators, such as Modal, or managed orchestrators offered by feature platforms.
-MLシステムで使用可能なオーケストレータの例としては、Airflowのような汎用的で機能豊富なオーケストレータや、Modalのような軽量なオーケストレータ、あるいは機能プラットフォームが提供するマネージド・オーケストレータなどがある。
+MLシステムで使用できるオーケストレーターの例には、Airflowなどの汎用性が高く機能が豊富なオーケストレーターや、Modalなどの軽量なオーケストレーター、または特徴量プラットフォームが提供する管理されたオーケストレーターがあります。(Databricksのorcherstratorもこれに該当するっぽい??:thinking:)
 
 Some of the FTI pipelines, however, will not need orchestration.
 しかし、FTIパイプラインの一部はオーケストレーションを必要としない。
 Training pipelines can be run on-demand, when a new model is needed.
-トレーニングパイプラインは、新しいモデルが必要なときにオンデマンドで実行できる。
+トレーニングパイプラインは、新しいモデルが必要なときにon-demandで実行できる。(on-demand = 需要に応じてマニュアルで??:thinking:)
 Streaming feature pipelines and online inference pipelines run continuously as services, and do not require orchestration.
 ストリーミング・フィーチャー・パイプラインとオンライン推論パイプラインはサービスとして継続的に実行され、オーケストレーションは必要ない。
 Flink, Spark Streaming, and Beam are run as services on platforms such as Kubernetes, Databricks, or Hopsworks.
 Flink、Spark Streaming、Beamは、Kubernetes、Databricks、Hopsworksなどのプラットフォーム上でサービスとして実行される。
 Online inference pipelines are deployed with their model on model serving platforms, such as KServe (Hopsworks), Seldon, Sagemaker, and Ray.
-オンライン推論パイプラインは、KServe（Hopsworks）、Seldon、Sagemaker、Rayなどのモデル提供プラットフォーム上にモデルとともに展開される。
+online infrrence pipelineは、KServe(Hopsworks)、Seldon、Sagemaker、Rayなどのモデルサービングプラットフォームにモデルとともにデプロイされる。
 The main takeaway here is that the ML pipelines are modular with clear interfaces, enabling you to choose the best technology for running your FTI pipelines.
-ここでの主なポイントは、MLパイプラインは明確なインターフェイスを備えたモジュール式であり、FTIパイプラインの実行に最適なテクノロジーを選択できるということです。
+ここでの主なポイントは、**MLパイプラインがモジュラーで明確なインターフェースを持ち、FTIパイプラインを実行するための最適なテクノロジーを選択できるようになる**ことです。(うんうん...!:thinking:)
+
+![]()
+Figure 3: Connect your ML pipelines with a Feature Store and Model Registry
+図3: フィーチャーストアとモデルレジストリを使ってMLパイプラインを接続する
 
 Finally, we show how we connect our FTI pipelines together with a stateful layer to store the ML artifacts - features, training/test data, and models.
-最後に、FTIパイプラインを、MLの成果物（特徴、トレーニング／テストデータ、モデル）を保存するステートフルレイヤーとどのように接続するかを示します。
+最後に、FTIパイプラインを、**MLの成果物(特徴量, トレーニング／テストデータ, モデル)を保存する stateful layer**と接続する方法を示します。(statefull layer = 永続化層??:thinking:)
 Feature pipelines store their output, features, as DataFrames in the feature store.
 フィーチャー・パイプラインは、その出力であるフィーチャーをDataFramesとしてフィーチャーストアに保存する。
 Incremental tables store each new update/append/delete as separate commits using a table format (we use Apache Hudi in Hopsworks).
-インクリメンタルテーブルは、各新規更新/追加/削除を、テーブルフォーマットを使って別々のコミットとして保存する（HopsworksではApache Hudiを使っている）。
+incremental tablesは、新しい更新/追加/削除ごとに別々のコミットとして保存され、テーブル形式を使用する（HopsworksではApache Hudiを使用）。
+(incremental tableってなんだ??:thinking:)
 Training pipelines read point-in-time consistent snapshots of training data from Hopsworks to train models with and output the trained model to a model registry.
-トレーニングパイプラインは、Hopsworksからポイントインタイムで一貫性のあるトレーニングデータのスナップショットを読み込んでモデルをトレーニングし、トレーニング済みモデルをモデルレジストリに出力する。
+トレーニングパイプラインは、Hopsworks (=特徴量ストア?) からポイントインタイムで一貫性のあるトレーニングデータのスナップショットを読み込んでモデルをトレーニングし、トレーニング済みモデルをモデルレジストリに出力する。
 You can include your favorite model registry here, but we are biased towards Hopsworks’ model registry.
-ここにお好きなモデル登録を入れることができますが、私たちはホップワークスのモデル登録に偏っています。
+ここにお好きな model registry を含めることができますが、私たちはHopsworksの model registry に偏っています。(そりゃHopsworkのCEOだもんね...!:thinking:)
 Batch inference pipelines also read point-in-time consistent snapshots of inference data from the feature store, and produce predictions by applying the model to the inference data.
-バッチ推論パイプラインはまた、特徴ストアから推論データのポイント・イン・タイム一貫性のあるスナップショットを読み込み、推論データにモデルを適用して予測を生成する。
+バッチ推論パイプラインはまた、特徴量ストアから推論データのポイント・イン・タイム一貫性のあるスナップショットを読み込み、推論データにモデルを適用して予測を生成する。
 Online inference pipelines compute on-demand features and read precomputed features from the feature store to build a feature vector that is used to make predictions in response to requests by online applications/services.
-オンライン推論パイプラインは、オンデマンド特徴量を計算し、特徴量ストアから事前計算された特徴量を読み出して特徴量ベクトルを構築し、オンラインアプリケーション/サービスからの要求に応じて予測を行う。
+オンライン推論パイプラインは、on-demand特徴量(=これはリアルタイムで渡される特徴量っぽい...!:thinking:)を計算し、フィーチャーストアから事前計算された特徴量を読み込むことで特徴量ベクトルを組み立てる。そして、 オンラインアプリケーション/サービスからのリクエストに応じて予測を行うために使用される。
+
+<!-- ここまで読んだ! -->
 
 ### Feature Pipelines フィーチャー・パイプライン
 
@@ -188,7 +201,7 @@ For a batch inference pipeline, what framework/language is used? What orchestrat
 For an online inference pipeline, what model serving server is used to host the deployed model? How is the online inference pipeline implemented - as a predictor class or with a separate transformer step? Are GPUs needed for inference? Is there a SLA (service-level agreements) for how long it takes to respond to prediction requests?
 オンライン推論パイプラインでは、どのモデル・サービング・サーバーがデプロイされたモデルをホストするために使用されますか？オンライン推論パイプラインはどのように実装されますか? 推論にGPUは必要ですか？予測リクエストに応答するのにかかる時間に関するSLA（サービス・レベル・アグリーメント）はありますか？
 
-## MLOps Principles 
+## MLOps Principles
 
 The existing mantra is that MLOps is about automating continuous integration (CI), continuous delivery (CD), and continuous training (CT) for ML systems.
 既存のマントラは、MLOpsはMLシステムの継続的インテグレーション（CI）、継続的デリバリー（CD）、継続的トレーニング（CT）を自動化することである。
@@ -216,7 +229,7 @@ Small bugs in data or code can easily cause a ML model to make incorrect predict
 データやコードの小さなバグは、MLモデルが間違った予測をする原因になりやすい。
 From a testing perspective, if web applications are propeller-driven airplanes, ML systems are jet-engines.
 テストの観点から言えば、ウェブアプリケーションがプロペラ機なら、MLシステムはジェットエンジンだ。
-It takes significant engineering effort to test and validate ML Systems  to make them safe!
+It takes significant engineering effort to test and validate ML Systems to make them safe!
 MLシステムを安全なものにするためのテストと検証には、多大なエンジニアリングの労力を要する！
 
 At a high level, we need to test both the source-code and data for ML Systems.

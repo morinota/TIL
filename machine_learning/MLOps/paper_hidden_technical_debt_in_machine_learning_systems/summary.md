@@ -1,14 +1,37 @@
-# Hidden Technical Debt in Machine Learning Systems
-
-published date: hogehoge September 2022,
-authors: Wondo Rhee, Sung Min Cho, Bongwon Suh
-url(paper): https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html
-(勉強会発表者: morinota)
-
+---
+format:
+  html:
+    toc: true # 目次(Table of Contents = toc)を自動生成するかどうか
+    toc-depth: 3 # tocで表示するsection levelの深さ
+    theme: cosmo # theme候補: cerulean, cosmo, flatly, journal, lumen, paper, readable, sandstone, simplex, spacelab, united, yeti
+  # revealjs:
+  #   # incremental: false
+  #   # theme: [default, custom_lab.scss]
+  #   theme: [default, custom_lab.scss]
+  #   slide-number: true
+  #   scrollable: true
+  #   logo: https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919
+  #   footer: ⇒ [https://qiita.com/morinota](https://qiita.com/morinota)
+from: markdown+emoji
+fig-cap-location: bottom
+# title: より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLシステムの隠れた技術的負債の論文を読んだ
+title: Hidden Technical Debt in Machine Learning Systems を読んで持続可能性の高いMLシステムに思いをはせた
+subtitle: y-tech-ai ワクワク勉強会
+date: 2024/05/14
+author: モーリタ
+title-slide-attributes:
+  #   data-background-image: https://i.imgur.com/nTazczH.png
+  data-background-size: contain
+  data-background-opacity: "0.5"
 ---
 
-n週連続推薦システム系論文読んだシリーズ hoge週目の記事になります。
-ちなみにhoge-1週目は [タイトル](url) でした!
+## この図で有名な論文!
+
+![](https://assets-global.website-files.com/618399cd49d125734c8dec95/6502ad4eb9b805fbe60281f4_figure%203_lightbox.png)
+
+Figure 1: Only a small fraction of real-world ML systems is composed of the ML code, as shown by the small black box in the middle. The required surrounding infrastructure is vast and complex.
+
+「MLアルゴリズムは、実世界のMLシステムにおいてあくまでも要素の1つだよ!他にも重要な要素はたくさんあるよ!」みたいな意図でよく引用されてる気がする:thinking:
 
 ## 導入: MLシステムと技術的負債
 
@@ -25,16 +48,23 @@ n週連続推薦システム系論文読んだシリーズ hoge週目の記事�
   - reduce dependencies
   - tightening APIs
   - improving documentation
-- 返済の目的は、将来の改良を可能にし(=Easier to changeだ!:thinking:)、エラーを減らし、運用・保守性を向上させること(i.e. ソフトウェアの持続可能性を高めること...??:thinking:)
+- 返済の目的は、将来の改良を可能にし(=Easier To Changeだ!:thinking:)、エラーを減らし、運用・保守性を向上させること(i.e. ソフトウェアシステムの持続可能性を高めること...??:thinking:)
 
 ### MLシステム特有の技術的負債がある話
 
 - 本論文では、MLシステムには、従来のソフトウェア開発の技術的負債に加え、**MLシステム特有の技術的負債**が存在すると主張している。
-  - この負債は、code levelではなくsystem levelに存在するため、検出が難しいかもしれない。
+  - 1. Complex Models Erode Boundaries
+  - 2. Data Dependencies Cost More than Code Dependencies
+  - 3. Feedback Loops
+  - 4. ML-Systems Anti-Patterns
+  - 5. Configuration Debt
+  - 6. Dealing with Changes in the External World
+- これらの技術的負債は、code levelではなくsystem levelに存在するため、検出が難しいかもしれない。
 
 ### 本論文の目的
 
-- 本論文は新しいMLアルゴリズムを提供するものではない。**実践的に長期的に考慮すべき、MLシステムのトレードオフについてコミュニティの意識を高めること**を目的としている。
+- 本論文は新しいMLアルゴリズムを提供するものではない。
+- **実践的に長期的に考慮すべき、MLシステムのトレードオフについてコミュニティの意識を高めること**を目的としている。
 
 ## MLシステム特有の技術的負債1: Complex Models Erode Boundaries
 
@@ -128,6 +158,7 @@ n週連続推薦システム系論文読んだシリーズ hoge週目の記事�
     - なぜなら、負債の全体的なコストは時間の経過とともに明らかになるから...!
       - (今素早く開発できiるから負債はない、とは言えないって事か...!:thinking:)
 - 技術的負債を考える上で有用な質問たち:
+
   - 1. **全く新しいアルゴリズムのアプローチを、どの程度簡単にfull scalseでテストできるか?** (test at full scaleってE2Eテストのことかな...?:thinking:)
   - 2. 全てのdata dependenciesの接続状況を把握できているか??
     - (メモ) transitive closure(推移閉包) = グラフ理論における、要素間の全ての直接的及び間接的な接続のこと。

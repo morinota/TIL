@@ -52,9 +52,9 @@ Team D successfully applied some established techniques for handling complexity 
 チームDは、ソフトウェアシステムを構築する際に複雑さを処理するための確立されたテクニックを応用することに成功した：
 
 - decompose systems into smaller manageable modular components;
-システムをより小さな管理しやすいモジュラー・コンポーネントに分解する；
+  システムをより小さな管理しやすいモジュラー・コンポーネントに分解する；
 - design the modular components in such a way that they can be easily composed into a complete AI system;
-モジュラー・コンポーネントを設計する際に、それらを簡単に組み合わせて完全なAIシステムにすることができるようにする；
+  モジュラー・コンポーネントを設計する際に、それらを簡単に組み合わせて完全なAIシステムにすることができるようにする；
 
 Team D also did their homework on machine learning engineering.
 チームDは機械学習工学の宿題もこなした。
@@ -75,7 +75,6 @@ Models stuck in notebooks add no value to the business.
 ![figure2]()
 Figure 2. A composable real-time machine learning system can be built from separate independent microservices. Images from Lak Lakshmanan in Google Cloud
 図2. 独立したマイクロサービスから構成可能なリアルタイム機械学習システムを構築することができる。Google CloudのLak Lakshmananによる画像
-
 
 Team D later helped Team B (the marketing team with a data engineer) build a batch ML system that helped predict subscriber churn.
 チームDはその後、チームB(データエンジニアを持つマーケティングチーム)が、解約予測を支援するバッチMLシステムを構築するのを手伝った。
@@ -125,7 +124,7 @@ If a microservice is “down”, it can lead to the entire ML system being down.
 The call depth for microservices can be deep and you need great observability tools for tracing calls and monitoring services.
 マイクロサービスの呼び出し深度は深くなり、呼び出しをトレースし、サービスを監視するための優れた観測ツールが必要となる。
 They couldn’t use serverless functions to implement microservices due to high latencies that break SLAs during cold-starts.
-コールドスタート時にSLAを破る高レイテンシーのため、**サーバーレス関数を使用してマイクロサービスを実装することができなかった**。
+コールドスタート時にSLAを破る高レイテンシーのため、**サーバーレス関数を使用してマイクロサービスを実装することができなかった**。(リアルタイム推論だと、サーバレスのサービスはinstanceの起動時間があるから使いづらいよね...!:thinking:)
 If they hadn’t had the same low latency SLA, they would have looked at designing their microservices as loosely coupled serverless functions that communicate by passing events through a serverless database (like DynamoDB) or a shared event bus, such as Kafka or AWS Kinesis or GCP PubSub.
 もし彼らが同じ低レイテンシーSLAを持っていなかったら、DynamoDBのようなサーバーレスデータベースを介してイベントを渡すか、KafkaやAWS Kinesis、GCP PubSubなどの共有イベントバスを介して通信するように、マイクロサービスを疎結合のサーバーレス関数として設計することを検討していただろう。
 
@@ -151,92 +150,90 @@ Then, making those real-time AI systems highly available and reusing assets crea
 ## MLOps Infrastructure MLOps インフラストラクチャー
 
 So, what should the organization do now? Should it just work on batch AI systems and only in exceptional cases approve real-time AI systems? Is there an alternative? How do the hyperscale AI companies spit out new AI systems at low cost and with high quality? Could we do the same? The answer is that the hyperscalers have all built their own ML infrastructure to support AI systems, see Figure 3.
-では、組織は今何をすべきなのか？バッチAIシステムに取り組むだけで、例外的なケースでのみリアルタイムAIシステムを承認すべきか？ 代替案はあるのか？ ハイパースケールAI企業は、低コストで高品質な新しいAIシステムを生み出しているのか？私たちも同じことができるだろうか？**答えは、ハイパースケーラーはすべて、AIシステムをサポートするための独自のMLインフラを構築していることだ**。図3を参照。
+では、組織は今何をすべきなのか？バッチAIシステムに取り組むだけで、例外的なケースでのみリアルタイムAIシステムを承認すべきか？ 代替案はあるのか？ ハイパースケールAI企業は、低コストで高品質な新しいAIシステムを生み出しているのか？私たちも同じことができるだろうか？**答えは、ハイパースケーラーはすべて、AIシステムをサポートするための独自のMLインフラを構築していることだ**。図3を参照。(FTI pipelinesじゃん!)
 Most of them (AWS, Databricks, Snowflake, Twitter, Spotify, Uber, WeChat) have presented their ML infrastructure at the feature store summit (videos available).
 ほとんどの企業（AWS、Databricks、Snowflake、Twitter、Spotify、Uber、WeChat）は、フィーチャーストア・サミットでMLインフラを発表した（ビデオあり）。
 All of them have implemented Feature Store-based data architectures and a model management infrastructure to solve most of the problems identified earlier:
 **いずれもfeature storeをベースとしたデータアーキテクチャ**と**モデル管理インフラ**を実装しており、以前に特定された問題のほとんどを解決している:
 
 - decompose the problem of building AI systems into modular ML pipelines that are easily composed together into a system using the shared data layer;
-AIシステム構築の問題を、**共有データレイヤーを使って**システムに簡単に組み込めるモジュール化されたML pipelinesに分解する；
-
+  **AIシステム構築の問題を、modularな複数のMLパイプラインに分解する**。これらは、共有データ層を使用して簡単に組み合わせてシステムを構築できる；
 - decouple ML pipelines enabling independent scheduling and the use of the best technology for each ML pipeline;
-**ML pipelines を切り離すことで、独立したスケジューリングが可能になり**、各MLパイプラインに最適なテクノロジーを使用できるようになります；(FTI pipelinesじゃん!)
-
+  **ML pipelines を切り離すことで、独立したスケジューリングが可能になり**、各MLパイプラインに最適なテクノロジーを使用できるようになる。(FTI pipelinesじゃん!)
 - support for creating point-in-time consistent training data;
-ポイント・イン・タイムで一貫性のあるトレーニングデータの作成をサポート；
-
+  **時点一貫性のあるトレーニングデータの作成をサポートする**；
 - low-latency access to precomputed features for real-time ML systems;
-リアルタイムMLシステムのために、事前に計算された特徴量に低レイテンシでアクセスできる；
-
+  リアルタイムMLシステムのために、事前に計算された特徴量に低レイテンシでアクセスできる; (FとIを分離してるから...!)
 - real-time features computed using data only available at request-time;
-リクエスト時にのみ利用可能なデータを使用して計算されたリアルタイムの機能；
-
+  リクエスト時にのみ利用可能なデータを使用して計算されたリアルタイム特徴量
 - data validation for feature pipelines, ensuring no garbage-in;
-特徴パイプラインのデータ検証により、ゴミデータが入らないようにする；
-
+  特徴パイプラインのデータ検証により、ゴミデータが入らないようにする；
 - unified batch and real-time support for both feature monitoring and model monitoring;
-特徴量モニタリングとモデルモニタリングの両方に対する統一されたバッチとリアルタイムのサポート；
-
+  特徴量モニタリングとモデルモニタリングの両方に対する統一されたバッチとリアルタイムのサポート；
 - out-of-the-box observability and governance, using versioning, tagging, search and lineage services;
-バージョニング、タギング、検索、ラインエージサービスを使用した、即座に利用可能な観測性とガバナンス；
+  バージョニング、タギング、検索、ラインエージサービスを使用した、即座に利用可能な観測性とガバナンス；
 - high availability and enterprise level security.
-高可用性と企業レベルのセキュリティ
+  高可用性と企業レベルのセキュリティ
 
 ![figure3]()
 Figure 3. Feature Pipelines, Training Pipelines, Inference Pipelines are the independent ML Pipelines that together make up a ML System
 図3. 特徴パイプライン、学習パイプライン、推論パイプラインは、一緒にMLシステムを構成する独立したMLパイプラインである
 
-
 In a previous blog, and shown in Figure 3, we outlined what these ML platforms have in common.
-以前のブログで、図3に示すように、これらのMLプラットフォームに共通するものを概説した。
+以前のブログで、図3に示すように、これらのMLプラットフォームに共通するものを概説した。(これら = AWS, Databricks, Snowflake, Twitter, Spotify, Uber, WeChat)
 AI systems consist of primarily three classes of ML pipelines (feature pipelines , training pipelines, and inference pipelines) that communicate via a shared data layer, consisting of a feature store and a model registry.
 **AIシステムは、主に3つのクラスのMLパイプライン（特徴パイプライン、学習パイプライン、推論パイプライン）で構成され、特徴ストアとモデルレジストリからなる共有データ層を介して通信する。**
 Somebody in Team D happened to read that blog entry, and designed Table 1, comparing the different approaches to building AI systems.
 チームDの誰かがたまたまそのブログエントリーを読み、AIシステム構築のさまざまなアプローチを比較した表1をデザインした。
 
 ![table1]()
+Table 1: Team D summarized the different approaches to building AI systems. Real-time AI systems as microservices. Batch AI systems as orchestrated DAGs. A unified ML system architecture based around feature/training/inference pipelines and a shared data layer.
+表1：チームDは、AIシステムを構築するさまざまなアプローチを要約した。リアルタイムAIシステムはマイクロサービスとして。バッチAIシステムはオーケストレーションDAGとして。特徴/学習/推論パイプラインと共有データ層を中心とした統一されたMLシステムアーキテクチャ。
 
 Microservices are not, however, as composable as ML pipelines.
-しかし、マイクロサービスはMLパイプラインほどコンポーザブルではない。
+しかし、Microservicesは ML pipelines ほどcomposable (組み合わせやすい) ではない。
 ML Pipelines can be scheduled to run as batch systems or microservices (always-on) or stream processing systems.
-MLパイプラインは、バッチシステム、マイクロサービス（常時稼働）、ストリーム処理システムとして実行するようにスケジュールできる。
+ML pipelines は、バッチシステムとして実行されるか、マイクロサービス（常にオン）として実行されるか、ストリーム処理システムとして実行されるようにスケジュールすることができる。(柔軟にtrigger方法を選択できる...!)
 Upgrading versions is straightforward - you do not need to stop upstream and downstream clients while upgrading.
-バージョンのアップグレードは簡単で、アップグレード中に上流と下流のクライアントを停止する必要はありません。
+バージョンのアップグレードは簡単で、アップグレード中に上流と下流のクライアントを停止する必要はありません。(各pipelineが分離してるから?)
 
 When planning their AI strategy, the executive team needed a summary of Table 1, so Team D developed Table 2.
 AI戦略を立案する際、経営陣は表1の要約を必要としたため、チームDは表2を作成した。
 
 ![table2]()
+Table 2: Relative economic benefits of the different architectural approaches to building AI systems
+表2：AIシステムを構築するための異なるアーキテクチャアプローチの相対的な経済的利点
 
 So, after a long journey, developing and deploying both batch AI systems and real-time AI systems, our organization takes the decision to move towards the software factory approach for building AI systems, using ML pipelines with shared ML infrastructure (feature store, model registry, experiment tracking, model serving).
-そこで、バッチAIシステムとリアルタイムAIシステムの両方を開発し、デプロイする長い旅の後、私たちの組織は、共有MLインフラストラクチャ（フィーチャーストア、モデルレジストリ、実験トラッキング、モデルサービング）を備えたMLパイプラインを使用して、AIシステムを構築するためのソフトウェアファクトリーアプローチに移行することを決定しました。
+そこで、バッチAIシステムとリアルタイムAIシステムの両方を開発し、デプロイした長い旅の後、私たちの組織は、**共有MLインフラ (feature store, model registry, experiment tracking, model serving) を使用したML Pipelinesを使用**してAIシステムを構築するためのsoftware factoryアプローチに移行することを決定した。
 They want to have the same infrastructure as the Hyperscale AI companies so that AI can become a core part of their value proposition.
-ハイパースケールAI企業と同じインフラを持つことで、AIが自社の価値提案の中核となることを望んでいるのだ。
+AIが彼らの価値提案の中核的な部分になるように、**ハイパースケールAI企業と同じインフラストラクチャを持ちたいと考えている**。
 
 ## Build or Buy the MLOps Infrastructure? MLOpsインフラを構築するか購入するか？
 
 The next question facing our organization is whether to build or buy the ML infrastructure.
 私たちの組織が直面している次の問題は、MLインフラを構築するか購入するかということです。
 This is not a simple question, nor is it something that is unique to organizations that are considering their alternatives with regards to any kind of data infrastructure.
-これは単純な問題ではないし、あらゆる種類のデータインフラに関して代替案を検討している組織特有の問題でもない。
-Given enough time and resources, large engineering organizations can pull off any infrastructure component themselves, as has been elaborately proven by many of the hyperscalers  mentioned above.
-十分な時間とリソースがあれば、大規模なエンジニアリング組織は、どんなインフラ・コンポーネントも自分たちで完成させることができる。
+これは単純な問題ではないし、どのようなデータインフラストラクチャに関する選択肢を検討している組織にも独自のものではない。
+Given enough time and resources, large engineering organizations can pull off any infrastructure component themselves, as has been elaborately proven by many of the hyperscalers mentioned above.
+十分な時間とリソースがあれば、多くのハイパースケーラーが上記で詳しく説明されているように、大規模なエンジニアリング組織は自分たちでどんなインフラストラクチャコンポーネントでも実現できる。
 
 ![figure4]()
+Figure 4. The Hopsworks platform provides all of the major ML infrastructure needed for your AI software factory: a feature store, managed ML pipelines, a model registry, and model serving (KServe).
+図4. Hopsworksプラットフォームは、AIソフトウェアファクトリーに必要なすべての主要なMLインフラストラクチャを提供しています：特徴ストア、管理されたMLパイプライン、モデルレジストリ、モデルサービング（KServe）。
 
 However, for the typical enterprise, considering their options with regards to their MLOps infrastructure landscape, this is not a straightforward question.
 しかし、一般的な企業にとって、MLOpsのインフラ環境に関する選択肢を検討することは、一筋縄ではいかない。
 In fact, it is complicated by the very nature of the problem:
-実際、問題の本質が複雑なのだ：
+実際、問題の本質が複雑なのだ:
 
-On the one hand, we want to move fast, be nimble and lean, and prove value quickly in the early parts of the machine learning and AI journey.
-一方では、機械学習とAIの旅の初期段階において、素早く動き、機敏で無駄がなく、素早く価値を証明したいと考えている。
-That will often mean taking shortcuts, and duct-taping infrastructure together - and that is fine in these early days.
-それはしばしば、近道をしたり、インフラをダクトテープでくっつけたりすることを意味する。
+- On the one hand, we want to move fast, be nimble and lean, and prove value quickly in the early parts of the machine learning and AI journey.
+  一方では、機械学習とAIの旅の初期段階において、**素早く動き、機敏で無駄がなく、素早く価値を証明したい**と考えている。
+  That will often mean taking shortcuts, and duct-taping infrastructure together - and that is fine in these early days.
+  それはしばしば、ショートカットを取り、インフラストラクチャを一緒にダクトテープで固定することを意味し、これらの初期段階では問題ありません。(短期的には問題ないけど、技術的負債がたまりそう...!:thinking:)
 
-On the other hand, we want to get to production quickly, as soon as we have proven the value and as soon as we understand that the machine learning and AI initiative will be more than just an experiment.
-その一方で、価値を証明し、機械学習とAIの取り組みが単なる実験以上のものになることを理解したら、すぐにでも本番に持ち込みたい。
+- On the other hand, we want to get to production quickly, as soon as we have proven the value and as soon as we understand that the machine learning and AI initiative will be more than just an experiment.
+  一方で、**価値を証明し、機械学習とAIの取り組みが単なる実験以上のものであることがわかったら、すぐに本番に移行したい**と考えている。
 
 This will greatly impact the timing and the balance of the build versus buy decision.
 これは、建設と購入の決断のタイミングとバランスに大きく影響する。
@@ -244,22 +241,22 @@ This will greatly impact the timing and the balance of the build versus buy deci
 In this decision, different factors should be taken into account.
 この決定には、さまざまな要素を考慮に入れる必要がある。
 However, it seems clear that they fall into three proverbial buckets:
-しかし、彼らが3つのバケツに分類されることは明らかなようだ：
+しかし、**それら(意思決定のための要素)は三つのことわざのバケツ**に分かれているように見える:
 
-Strategic parameters, that have everything to do with the way that the organization and the project can deal with the manpower, competencies and costs associated with both the build or the buy decision.
-戦略的パラメーターとは、その組織とプロジェクトが、建設か購入かの決断に関連する人員、能力、コストに対処する方法に関係するものである。
+- Strategic parameters, that have everything to do with the way that the organization and the project can deal with the manpower, competencies and costs associated with both the build or the buy decision.
+  組織とプロジェクトが、ビルドまたはバイの決定に関連する人員、能力、コストにどのように対処できるかに関連する戦略的パラメータ。
 
-Technical parameters that concern the nature of a feature store architecture and the intricate complexities that come with this.
-フィーチャーストア・アーキテクチャーの性質と、それに伴う複雑な技術的パラメータ。
+- Technical parameters that concern the nature of a feature store architecture and the intricate complexities that come with this.
+  特徴量ストアアーキテクチャの性質と、それに伴う複雑な複雑さに関する技術的パラメータ。
 
 We will not discuss these parameters in this article here in detail, but will instead refer to this page on the Hopsworks website, which discusses this in greater detail.
-この記事では、これらのパラメーターについて詳しく説明することはしないが、代わりにホップワークスのウェブサイトのこのページを参照してほしい。
+この記事では、これらのパラメーターについて詳しく説明することはしないが、代わりにホップワークスのウェブサイトの[このページ](https://www.hopsworks.ai/)を参照してほしい。
 It should, of course be clear, that at Hopsworks we think of it as our everyday mission to make sure that you will not have to worry about this build versus buy decision, and that it would be all the more obvious that you can productively start using the Hopsworks platform as early as you want, whatever the use case of your project might be.
-もちろん、ホップワークスでは、お客様がこのビルドか購入かの決断に悩む必要がないようにすることを日常的な使命と考えており、お客様のプロジェクトのユースケースが何であろうと、お客様が望むだけ早くホップワークスプラットフォームを生産的に使い始めることができるようにすることは、より明白であるべきです。
+もちろん、Hopsworksでは、ビルドとバイの決定について心配する必要がないようにすることが私たちの日常の使命であると考えています。そして、プロジェクトのユースケースが何であろうと、いつでもHopsworksプラットフォームを生産的に使用できることがより明らかになるでしょう。
 
 ## Summary 要約
 
 The typical Enterprise journey to creating value with AI involves decentralized experimentation, followed by first value-added services being built with bespoke solutions, to finally adopting a software factory approach to building and maintaining AI systems.
 AIで価値を創造するための典型的な企業の道のりには、分散化された実験、オーダーメイドのソリューションで構築される最初の付加価値サービス、そして最終的にAIシステムの構築と保守にソフトウェア工場のアプローチを採用することが含まれる。
 The hyperscale AI companies built their own software factories, but the next wave of Enterprises should probably buy their ML infrastructure, as the cost and time-to-market trade-offs are now heavily in favor of buying.
-ハイパースケールAI企業は自社でソフトウェア工場を建設したが、次の波はMLインフラを購入すべきだろう。
+ハイパースケールAI企業は自社でソフトウェア工場を建設したが、次の波の企業は、コストと市場投入までの時間のトレードオフが今は購入に大きく有利であるため、おそらくMLインフラストラクチャを購入すべきである。
