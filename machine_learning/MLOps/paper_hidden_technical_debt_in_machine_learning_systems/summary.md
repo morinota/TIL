@@ -39,8 +39,9 @@ title-slide-attributes:
 
 ### 参考文献:
 
-- 2015年の技術的負債の論文: [Hidden Technical Debt in Machine Learning Systems]()
-- 上の論文の重箱をつつくブログ: [Nitpicking Machine Learning Technical Debt](https://matthewmcateer.me/blog/machine-learning-technical-debt/)
+- 2015年の技術的負債論文: [Hidden Technical Debt in Machine Learning Systems]()
+- 技術的負債論文の日本語の解説スライド: [Hidden technical debt in machine learning systems（日本語資料）](https://www.slideshare.net/Gushi/hidden-technical-debt-in-machine-learning-systems)
+- 技術的負債論文の重箱をつつくブログ: [Nitpicking Machine Learning Technical Debt](https://matthewmcateer.me/blog/machine-learning-technical-debt/)
 - 上のブログの日本語訳: [【翻訳】機械学習の技術的負債の重箱の隅をつつく (前編)](https://blog.hoxo-m.com/entry/2020/06/21/190056)
 
 ## 2. 導入: MLシステムと技術的負債
@@ -63,14 +64,17 @@ title-slide-attributes:
 
 ### 2.2. MLシステム特有の技術的負債があるっぽい話
 
-- 本論文では、MLシステムには、従来のソフトウェア開発の技術的負債に加え、以下のような**MLシステム特有の技術的負債**が存在すると主張している。
+- 本論文では、MLシステムには、従来のソフトウェア開発の技術的負債に加え、**MLシステム特有の技術的負債**が存在すると主張してる。
+- 各セクションで、ざっくり以下のような分類の技術的負債が紹介されてました:
   - 1. Complex Models Erode Boundaries
+    -
   - 2. Data Dependencies Cost More than Code Dependencies
   - 3. Feedback Loops
   - 4. ML-Systems Anti-Patterns
   - 5. Configuration Debt
   - 6. Dealing with Changes in the External World
-- これらの技術的負債は、code levelではなくsystem levelに存在するため、検出が難しい可能性がある。
+  - 7. その他:
+    -
 
 ### 2.3. 本論文の目的
 
