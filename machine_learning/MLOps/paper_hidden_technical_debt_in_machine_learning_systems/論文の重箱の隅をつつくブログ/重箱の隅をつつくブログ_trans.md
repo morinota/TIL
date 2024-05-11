@@ -14,32 +14,34 @@ MAY 10, 2020 | UPDATED JULY 9, 2020
 ## Background for this post この投稿の背景
 
 I recently revisited the paper Hidden Technical Debt in Machine Learning Systems (Sculley et al.2015) (which I’ll refer to as the Tech Debt Paper throughout this post for the sake of brevity and clarity).
-私は最近、Hidden Technical Debt in Machine Learning Systems (Sculley et al.2015)という論文を読み返した（簡潔でわかりやすくするために、この投稿ではTech Debt Paperと呼ぶことにする）。
+私は最近、Hidden Technical Debt in Machine Learning Systems (Sculley et al.2015)という論文を読み返した（簡潔でわかりやすくするために、この投稿では**Tech Debt Paperと**呼ぶことにする）。
 This was a paper shown at NeurIPS 2015, but it sort of fell to the background because at the time everyone was swooning over projects based on this new “Generative Adversarial Networks” technique from Ian GoodFellow.
 これはNeurIPS 2015で発表された論文だが、当時はイアン・グッドフェローの新しい「生成的逆説的ネットワーク」技術に基づくプロジェクトに皆が熱狂していたため、背景には隠れていたようなものだ。
 
 Now the Tech Debt Paper is making a comeback.
-今、テック・デット・ペーパーが復活しつつある。
+**今、テック・デット・ペーパーが復活しつつある**。
 At the time of writing this, there have been 25 papers citing this in the last 75 days.
 この記事を書いている時点で、過去75日間に25本の論文が引用されている。
 This is understandable, as machine learning has gotten to the point where we need to worry about technical debt.
 機械学習は技術的負債を心配しなければならないところまで来ているのだから、これは理解できる。
 However, if a lot of people are going to be citing this paper (if not for more than just citing all the papers that have the phrase “machine learning technical debt” in them), we should at least be aware of which parts have and have not stood the test of time.
-しかし、もし多くの人がこの論文を引用するのであれば（「機械学習の技術的負債」というフレーズが含まれる論文をすべて引用する以上の理由がないとしても）、少なくとも、どの部分が時の試練に耐え、どの部分が耐えられなかったかを認識すべきだ。
+しかし、もし多くの人がこの論文を引用するのであれば（「機械学習の技術的負債」というフレーズが含まれる論文をすべて引用する以上の理由がないとしても）、**少なくとも、どの部分が時の試練に耐え、どの部分が耐えられなかったかを認識すべきだ**。(i.e. どの部分が現在も有効で、どの部分が時代遅れかを把握すべき...!:thinking:)
 With that in mind, I figured it would save a lot of time and trouble for everyone involved to write up which parts are outdated, and point out the novel methods that have superseded them.
-それを念頭に置いて、どの部分が時代遅れなのかを書き上げ、それに取って代わった斬新な方法を指摘することは、関係者全員の時間と手間を省くことになると考えた。
+それを念頭に置いて、**どの部分が時代遅れなのかを書き上げ、それに取って代わった斬新な方法を指摘すること**は、関係者全員の時間と手間を省くことになると考えた。
 Having worked at companies ranging from fast-growing startups to large companies like Google (the company of the Tech Debt Paper authors), and seeing the same machine learning technical debt mistakes being made everywhere, I felt qualified to comment on this.
-急成長中の新興企業からグーグル（Tech Debt Paperの著者の会社）のような大企業まで、さまざまな会社で働いてきた私は、同じ機械学習の技術的負債ミスがいたるところで行われているのを目の当たりにし、これについてコメントする資格があると感じた。
+急成長中の新興企業からグーグル（Tech Debt Paperの著者の会社）のような大企業まで、さまざまな会社で働いてきた私は、**同じ機械学習の技術的負債ミスがいたるところで行われているのを目の当たりにし**、これについてコメントする資格があると感じた。
 
 This post covers some of the relevant points of the Tech Debt Paper, while also giving additional advice on top that’s not 5 years out of date.
 この投稿では、Tech Debt Paperの関連ポイントをいくつか取り上げつつ、5年前のものではないトップへの追加アドバイスも紹介する。
 Some of this advice is in the form of tools that didn’t exist back then…and then some is in the form of tools/techniques that definitely did exist that the authors missed a huge opportunity by not bringing up.
-このアドバイスのいくつかは、当時は存在しなかったツールの形をとっている...そしていくつかは、著者が取り上げなかったことで大きなチャンスを逃してしまった、間違いなく存在していたツール／テクニックの形をとっている。
+このアドバイスのいくつかは、当時存在しなかったツールの形であり...そして、著者が取り上げなかったことで大きな機会損失を招いた、確実に存在していたツール/技術の形である。
 
-## Introduction 
+<!-- ここまで読んだ! -->
+
+## Introduction
 
 Tech debt is an analogy for the long-term buildup of costs when engineers make design choices for speed of deployment over everything else.
-技術的負債とは、エンジニアが他のすべてよりも配備のスピードを優先して設計上の選択をした場合に、長期的に積み重なるコストの例えである。
+**技術的負債とは、エンジニアが他のすべてよりも配備のスピードを優先して設計上の選択をした場合に、長期的に積み重なるコストの例え**である。
 Fixing technical debt can take a lot of work.
 技術的負債を修正するには、多くの労力がかかる。
 It’s the stuff that turns “Move fast and break things” into “Oh no, we went too fast and gotta clean some of this up”
@@ -57,18 +59,18 @@ Tech Debt Paperが元々人々の注目を集めることを意図したオピ�
 You’re all probably familiar by now with technical debt.
 技術的負債については、もう皆さんよくご存知だろう。
 The Tech Debt Paper starts with a clarification that by technical debt, we’re not referring to adding new capabilities to existing code.
-技術的負債ペーパーは、技術的負債とは、既存のコードに新しい機能を追加することを指しているのではないということを明確にすることから始まる。
+技術的負債ペーパーは、技術的負債(の返済...?)とは、既存のコードに新しい機能を追加することを指しているわけではないという説明から始まる。
 This is the less glamorous task of writing unit tests, improving readability, adding documentation, getting rid of unused sections, and other such tasks for the sake of making future development easier.
-これは、単体テストを書いたり、可読性を高めたり、ドキュメントを追加したり、未使用のセクションを取り除いたりと、将来の開発を容易にするための、あまり派手ではない仕事である。
+これは、将来の開発を容易にするために、ユニットテストの作成、可読性の向上、ドキュメントの追加、未使用のセクションの削除など、より魅力的でないタスクである。
 Well, since standard software engineering is a subset of the skills needed in machine learning engineering, more familiar software engineering tech debt is just a subset of the space of possible ML tech debt.
-標準的なソフトウェアエンジニアリングは、機械学習エンジニアリングで必要とされるスキルのサブセットであるため、より身近なソフトウェアエンジニアリングの技術負債は、ML技術負債の可能性のある空間のサブセットに過ぎない。
+標準的なソフトウェアエンジニアリングは機械学習エンジニアリングに必要なスキルのサブセットであるため、**より馴染みのあるソフトウェアエンジニアリング技術的負債(の返済方法?)は、可能なML技術的負債(の返済方法?)の空間のサブセットに過ぎない**。
 
 ## Part 2: The Nebulous Nature of Machine Learning Part 2： 機械学習の曖昧な本質
 
 The Tech Debt Paper section after the intro goes into detail about how the nebulous nature of machine learning models makes dealing with tech debt harder.
-イントロの後の「テック・デット・ペーパー」では、機械学習モデルの曖昧な性質が、テック・デットへの対処をいかに難しくしているかについて詳しく述べている。
+イントロの後の「テック・デット・ペーパー」では、**機械学習モデルの曖昧な性質が、技術的負債に対処することを難しくしている**ことについて詳しく説明している。
 A big part of avoiding or correcting technical debt is making sure the code is properly organized and segregated.
-技術的負債を回避・修正するための大きなポイントは、コードが適切に整理され、分離されていることを確認することだ。
+技術的負債を回避・修正するための大きなポイントは、**コードが適切に整理され、分離されていること**を確認することだ。(これが一般的なソフトウェアエンジニアリングの技術的負債の解決策...!)
 The fact is we often use machine learning in cases where precise rules or needs are super hard to specify in real code.
 実際のところ、正確なルールやニーズを実際のコードで指定するのが非常に難しい場合に、機械学習を使うことが多い。
 Instead of hardcoding the rules to turn data into outputs, more often than not we’re trying to give an algorithm the data and the outputs (and sometimes not even that) to output the rules.
@@ -80,7 +82,7 @@ Best Practice #1: Use interpretability/explainability tools.
 ベストプラクティスその1： 解釈可能性/説明可能性ツールを使用する。
 
 This is where the problem of entanglement comes in.
-そこで絡みの問題が出てくる。
+そこで
 Basically, if you change anything about a model, you risk changing the performance of the whole system.
 基本的に、モデルについて何かを変更すれば、システム全体のパフォーマンスが変わるリスクがある。
 For example, taking a 100-feature model on health records for individuals and adding a 101st feature (like, you’re suddenly listing whether or not they smoked weed).
