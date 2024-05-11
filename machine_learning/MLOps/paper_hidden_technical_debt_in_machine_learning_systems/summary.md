@@ -4,14 +4,6 @@ format:
     toc: true # 目次(Table of Contents = toc)を自動生成するかどうか
     toc-depth: 3 # tocで表示するsection levelの深さ
     theme: cosmo # theme候補: cerulean, cosmo, flatly, journal, lumen, paper, readable, sandstone, simplex, spacelab, united, yeti
-  # revealjs:
-  #   # incremental: false
-  #   # theme: [default, custom_lab.scss]
-  #   theme: [default, custom_lab.scss]
-  #   slide-number: true
-  #   scrollable: true
-  #   logo: https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919
-  #   footer: ⇒ [https://qiita.com/morinota](https://qiita.com/morinota)
 from: markdown+emoji
 fig-cap-location: bottom
 # title: より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLシステムの隠れた技術的負債の論文を読んだ
@@ -25,51 +17,69 @@ title-slide-attributes:
   data-background-opacity: "0.5"
 ---
 
-## この図で有名な論文!
+## 1. はじめに
 
-![](https://assets-global.website-files.com/618399cd49d125734c8dec95/6502ad4eb9b805fbe60281f4_figure%203_lightbox.png)
+### 1.1. この図で有名な論文!
 
-Figure 1: Only a small fraction of real-world ML systems is composed of the ML code, as shown by the small black box in the middle. The required surrounding infrastructure is vast and complex.
+![論文中のFigure 1より引用](https://assets-global.website-files.com/618399cd49d125734c8dec95/6502ad4eb9b805fbe60281f4_figure%203_lightbox.png)
 
-「MLアルゴリズムは、実世界のMLシステムにおいてあくまでも要素の1つだよ!他にも重要な要素はたくさんあるよ!」みたいな意図でよく引用されてる気がする:thinking:
+「MLアルゴリズムは、実世界のMLシステムにおいてあくまでも要素の1つだよ!他にも重要な要素はたくさんあるよ!」みたいな意図でよく引用されてるやつ...!:thinking:
 
-## 導入: MLシステムと技術的負債
+### 1.2. なんでこの論文を選んだの??
 
-### 技術的負債ってなんだっけ?
+- 
+- 業務の中で、漠然と「より良いMLシステムってどう作ればいいんだろう」と思って色々調べ始めた。
+  - 「良いMLシステム」ってどういうことだろう?
+    - → **持続可能性が高いMLシステム**?:thinking:
+    - i.e. 短期的にも長期的にも改善し続ける事ができたり、プロダクトに価値提供し続けることができるようなMLシステム、みたいな...!:thinking:
+- 上述の図で有名な論文だけど、前回(約1ヶ月前)喋った際に皆さん意外と読んでない人が多かった!(図は知ってるけど...!)
+  - → 概要と感想を共有することで共通認識を得たり議論できればと思いました:smile:
+- ちなみに、前回資料は以下です!
+  - [より持続可能性の高いMLシステムってどう作ればいいんだろうと悩み、有名なMLの技術的負債の論文を読んでFTI Pipelines architectureに思いを馳せた話](https://morinota.quarto.pub/y-tech-ai-wakuwaku-20240326/)
 
-- technical debt(技術的負債)とは?
-  - 1992年にWard Cunningham(ウォード・カニンガム)が提唱した隠喩表現(metaphor)。
+### 参考文献:
+
+- 2015年の技術的負債の論文: [Hidden Technical Debt in Machine Learning Systems]()
+- 
+
+## 2. 導入: MLシステムと技術的負債
+
+### 2.1. 技術的負債ってなんだっけ?
+
+- **技術的負債(technical debt)**とは??
+  - 1992年にWard Cunningham(ウォード・カニンガム)が提唱した**比喩表現**(metaphor)。
   - ソフトウェア開発において、**短期的な利益を優先することで、長期的に追加のコストが発生する**ような設計や実装のこと?
     - この概念は、金融の負債に例えられ、将来的にその借金を返済する必要があるとされ、返済しないと利子がついていくというもの。
+- 返済の目的は、将来の改良を可能にし(=Easier To Changeだ!:thinking:)、エラーを減らし、運用・保守性を向上させること
+  - -> (つまり、**ソフトウェアシステムの持続可能性を高めること**だ...!!:thinking:)
 - 一般に技術的負債は、以下のアプローチ等によって返済できる:
-  - refatoring code
-  - improving unit tests
-  - deleting dead code
-  - reduce dependencies
-  - tightening APIs
-  - improving documentation
-- 返済の目的は、将来の改良を可能にし(=Easier To Changeだ!:thinking:)、エラーを減らし、運用・保守性を向上させること(i.e. ソフトウェアシステムの持続可能性を高めること...??:thinking:)
+  - refatoring code (リファクタリング)
+  - improving unit tests (単体テストの改善)
+  - deleting dead code (不要なコードの削除)
+  - reduce dependencies (依存関係の削減)
+  - tightening APIs (APIの設計改善)
+  - improving documentation (ドキュメントの改善)
 
-### MLシステム特有の技術的負債がある話
+### 2.2. MLシステム特有の技術的負債があるっぽい話
 
-- 本論文では、MLシステムには、従来のソフトウェア開発の技術的負債に加え、**MLシステム特有の技術的負債**が存在すると主張している。
+- 本論文では、MLシステムには、従来のソフトウェア開発の技術的負債に加え、以下のような**MLシステム特有の技術的負債**が存在すると主張している。
   - 1. Complex Models Erode Boundaries
   - 2. Data Dependencies Cost More than Code Dependencies
   - 3. Feedback Loops
   - 4. ML-Systems Anti-Patterns
   - 5. Configuration Debt
   - 6. Dealing with Changes in the External World
-- これらの技術的負債は、code levelではなくsystem levelに存在するため、検出が難しいかもしれない。
+- これらの技術的負債は、code levelではなくsystem levelに存在するため、検出が難しい可能性がある。
 
-### 本論文の目的
+### 2.3. 本論文の目的
 
 - 本論文は新しいMLアルゴリズムを提供するものではない。
 - **実践的に長期的に考慮すべき、MLシステムのトレードオフについてコミュニティの意識を高めること**を目的としている。
 
-## MLシステム特有の技術的負債1: Complex Models Erode Boundaries
+## 3. MLシステム特有の技術的負債1: Complex Models Erode Boundaries
 
-- 伝統的なソフトウェアエンジニアリングのpracticeでは、カプセル化とmodular設計を使った強力な**abstraction boundary**が、持続可能なコードを作成し、独立した変更や改善を可能にする事が分かっている。
-- 残念ながらMLシステムの場合は、厳密なabstraction boundaryを規定する事は難しい。
+- 伝統的なソフトウェアエンジニアリングのpracticeでは、カプセル化とmodular設計を使った強力な**abstraction boundary**が、持続可能なコードを作る上で有効。
+- でも残念ながらMLシステムの場合は、厳密なabstraction boundaryを規定する事は難しい。
   - (もちろんモジュラー性を高めたり、関心を分離させる事はMLシステムでも変わらず重要だろうけど、どうしても通常のシステムよりも結合が強くなっちゃう、みたいな...!:thinking:)
   - (MLシステムは、外部データに依存したロジックだから?)
 - 論文では、**erosion of boundaries(境界の侵食)**が、MLシステムにおける技術的負債を著しく増加させ得ると主張している。
@@ -79,7 +89,7 @@ Figure 1: Only a small fraction of real-world ML systems is composed of the ML c
   - 2. Correction Cascades(修正の連鎖)
   - 3. Undeclared Consumers(未宣言の消費者)
 
-### 例1: Entanglement(絡み合い)
+### 3.1. 例1: Entanglement(絡み合い)
 
 - MLシステムは、複数の入力情報(i.e. 特徴量)を混ぜ合わせ、絡み合い、改善の為の分離を難しくしてしまう。
 - ex. 特徴量 $x_1, ...x_n$ を使用するMLモデルをシステム内で使用する場合
@@ -96,7 +106,7 @@ Figure 1: Only a small fraction of real-world ML systems is composed of the ML c
   - 2. 推論結果の変化が発生したときに、その変化を検出することに焦点を当てる事。
     - (異常検知、みたいな??:thinking:)
 
-### 例2: Correction Cascades(修正の連鎖)
+### 3.2. 例2: Correction Cascades(修正の連鎖)
 
 - 問題Aに対するモデル $m_a$ が存在するが、わずかに異なる問題A′の解決策が必要な場合がしばしばある。
 - この場合、問題を素早く解く方法として、$m_a$ を入力として受け取り、小さな補正を学習するモデル $m′_a$ を採用したくなるかもしれない...!
@@ -112,7 +122,7 @@ Figure 1: Only a small fraction of real-world ML systems is composed of the ML c
   - 2. **各usecase $A, A′, A′′$ に対して、別々のモデルを作成するコストを受け入れること**。(こっちの方法が無難な気がするな...!:thinking:)
     - (この話を踏まえると、全usecase共通の基盤モデル、みたいな考え方って結構危ないのかな...??:thinking:)
 
-### 例3: Undeclared Consumers(未宣言の消費者)
+### 3.3. 例3: Undeclared Consumers(未宣言の消費者)
 
 - 多くの場合、機械学習モデル $m_a$ からの予測結果は、実行時に広くアクセス可能になるか、後で他のシステムによって消費される可能性のあるファイルやログに書き込まれる。
 - **アクセス制御を行わなければ、これらのconsumerの中には未宣言のものがいて、特定のモデルの出力を別のシステムの入力として無言で使用しているかもしれない**。
@@ -126,31 +136,31 @@ Figure 1: Only a small fraction of real-world ML systems is composed of the ML c
 - **undeclared consumer は、特に対策しない限り簡単に発生し、検出も困難になる**。
   - 障壁がない場合、開発者は、手元にある最も便利な信号を自然に使用するだろう、特に締め切りのプレッシャーに対処するときに...!
 
-## MLシステム特有の技術的負債2: Data Dependencies Cost More than Code Dependencies
+## 4. MLシステム特有の技術的負債2: Data Dependencies Cost More than Code Dependencies
 
 - 既存文献では、古典的なソフトウェアエンジニアリングにおいて、「**depencency debt(依存性負債)がコードの複雑さと技術的負債の主要な要因である**」と指摘している。
 - 本論文では、MLシステムにおいて、data dependenciesが同様の負債を持ち、かつそれを検出するのがより困難かもしれない、ということを主張している。
   - code dependenciesは、コンパイラやlint tool等の静的解析ツールで検出できる。
   - data depencenciesに対する同様のツールが存在しなければ、大規模やdata depencency chainが簡単に発生し得る。
 
-### Unstable data dependencies(不安定なデータ依存関係):
+### 4.1. Unstable data dependencies(不安定なデータ依存関係):
 
 - 素早く開発を進めるために、他のシステムによって作られた信号を入力特徴量として使うことがしばしば便利。
 - 入力信号の「改善」でさえ、消費するシステムに任意の悪影響をもたらす可能性がある。
 
-### Underutilized data dependencies(十分に活用されていないデータ依存関係):
+### 4.2. Underutilized data dependencies(十分に活用されていないデータ依存関係):
 
-## MLシステム特有の技術的負債3: Feedback Loops
+## 5. MLシステム特有の技術的負債3: Feedback Loops
 
-## MLシステム特有の技術的負債4: ML-Systems Anti-Patterns
+## 6. MLシステム特有の技術的負債4: ML-Systems Anti-Patterns
 
-## MLシステム特有の技術的負債5: Configuration Debt
+## 7. MLシステム特有の技術的負債5: Configuration Debt
 
-## MLシステム特有の技術的負債6: Dealing with Changes in the External World
+## 8. MLシステム特有の技術的負債6: Dealing with Changes in the External World
 
-## その他のMLシステム特有の技術的負債
+## 9. その他のMLシステム特有の技術的負債
 
-## 結論
+## 10. 結論
 
 - 技術的負債は有用なメタファー(隠喩)だが、残念ながら、長期にわたって追跡できる厳密な指標を提供するものではない。(定量評価できないから??:thinking:)
   - **システムの技術的負債をどのように測定し、この負債の全体的なコストを評価するのか?**
