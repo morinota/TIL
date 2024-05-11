@@ -131,124 +131,123 @@ Feature pipelines read data from data sources, compute features and ingest them 
 Some of the questions that need to be answered for any given feature pipeline include:
 あるフィーチャー・パイプラインについて答えなければならない質問には、次のようなものがある：
 
-Is the feature pipeline batch or streaming?
-フィーチャーパイプラインはバッチかストリーミングか？
+- Is the feature pipeline batch or streaming?
+  フィーチャーパイプラインはバッチかストリーミングか？
+- Are feature ingestions incremental or full-load operations?
+  feature ingestions(フィーチャーの取り込み)は、増分操作かフルロード操作か？
+- What framework/language is used to implement the feature pipeline?
+  feature pipelineの実装には、どのようなフレームワーク／言語が使用されていますか？
+- Is there data validation performed on the feature data before ingestion?
+  **ingestion(取り込み)前にフィーチャーデータに対してデータ検証が行われていますか?** (成果物のvalidaiton...!:thinking:)
+- What orchestrator is used to schedule the feature pipeline?
+  feature pipelineのスケジューリングには、どのオーケストレーターが使われていますか?
+- If some features have already been computed by an upstream system (e.g., a data warehouse), how do you prevent duplicating that data, and only read those features when creating training or batch inference data?
+  もし、一部のフィーチャーがすでに上流システム（例：データウェアハウス）で計算されている場合、そのデータの重複を防ぎ、トレーニングやバッチ推論データを作成する際には、それらのフィーチャーだけを読み込むようにするにはどうすればよいか？
 
-Are feature ingestions incremental or full-load operations?
-フィーチャー・インジェストはインクリメンタルなのか、フルロードなのか？
+(ここで"ingestion"は、feature pipelineで得られた成果物を、feature storeにingestするみたいな意味合いっぽい...!:thinking:)
 
-What framework/language is used to implement the feature pipeline?
-フィーチャー・パイプラインの実装には、どのようなフレームワーク／言語が使われていますか？
-
-Is there data validation performed on the feature data before ingestion?
-インジェストの前に、フィーチャーデータに対してデータバリデーションが行われているか。
-
-What orchestrator is used to schedule the feature pipeline?
-フィーチャー・パイプラインのスケジューリングには、どのオーケストレーターが使われていますか？
-
-If some features have already been computed by an upstream system (e.g., a data warehouse), how do you prevent duplicating that data, and only read those features when creating training or batch inference data?
-上流のシステム（データウェアハウスなど）ですでに計算されている特徴量がある場合、そのデータの重複を防ぎ、トレーニングデータやバッチ推論データを作成するときに、それらの特徴量だけを読み込むにはどうすればよいでしょうか？
+<!-- ここまで読んだ! -->
 
 ### Training Pipelines トレーニングパイプライン
 
 In training pipelines some of the details that can be discovered on double-clicking are:
-トレーニングパイプラインでは、ダブルクリックで発見できる詳細がいくつかある：
+トレーニングパイプラインでは、ダブルクリックで発見できる詳細がいくつかある:
 
-What framework/language is used to implement the training pipeline?
-トレーニングパイプラインの実装には、どのようなフレームワーク／言語が使用されていますか？
+- What framework/language is used to implement the training pipeline?
+  トレーニングパイプラインの実装には、どのようなフレームワーク／言語が使用されていますか？
+- What experiment tracking platform is used?
+  どのような実験トラッキング・プラットフォームを使用しているのか？
+- Is the training pipeline run on a schedule (if so, what orchestrator is used), or is it run on-demand (e.g., in response to performance degradation of a model)?
+  トレーニングパイプラインはスケジュールで実行されるのか（実行される場合、どのようなオーケストレーターが使用されるのか）、それともオンデマンドで実行されるのか（モデルのパフォーマンス低下に対応するなど）。
+- Are GPUs needed for training? If yes, how are they allocated to training pipelines?
+  トレーニングにGPUは必要ですか？必要な場合、トレーニングパイプラインにどのように割り当てますか？
+- What feature encoding/scaling is done on which features?
+  どのフィーチャーに対して、どのようなフィーチャーエンコーディング／スケーリングが行われるのか?
+  (We typically store feature data unencoded in the feature store, so that it can be used for EDA (exploratory data analysis). Encoding/scaling is performed in a consistent manner training and inference pipelines).
+  (通常、フィーチャーデータはエンコードされていない状態でフィーチャーストアに保存されるため、EDA（探索的データ分析）に使用できる。エンコード／スケーリングは、トレーニングと推論パイプラインで一貫して実行される。)
+  Examples of feature encoding techniques include scikit-learn pipelines or declarative transformations in feature views (Hopsworks).
+  フィーチャーエンコーディング技術の例には、scikit-learnパイプラインやフィーチャービュー（Hopsworks）での宣言的変換が含まれる。
+  (feature encoding/scalingは、feature pipelineで行ったほうが、TとIの一貫性を保証できるんじゃない...?:thinking:)
+- What model evaluation and validation process is used?
+  どのようなモデル評価・検証プロセスを用いているのか?
+- What model registry is used to store the trained models?
+  学習済みモデルの保存には、どのようなモデルレジストリを使用するのですか?
 
-What experiment tracking platform is used?
-どのような実験トラッキング・プラットフォームを使用しているのか？
-
-Is the training pipeline run on a schedule (if so, what orchestrator is used), or is it run on-demand (e.g., in response to performance degradation of a model)?
-トレーニングパイプラインはスケジュールで実行されるのか（実行される場合、どのようなオーケストレーターが使用されるのか）、それともオンデマンドで実行されるのか（モデルのパフォーマンス低下に対応するなど）。
-
-Are GPUs needed for training? If yes, how are they allocated to training pipelines?
-トレーニングにGPUは必要ですか？必要な場合、トレーニングパイプラインにどのように割り当てますか？
-
-What feature encoding/scaling is done on which features? (We typically store feature data unencoded in the feature store, so that it can be used for EDA (exploratory data analysis).
-どのフィーチャーに対して、どのようなフィーチャーエンコーディング/スケーリングが行われるのか？(EDA(探索的データ分析)に使用できるように、通常、特徴データはエンコードされずに特徴ストアに保存されます。
-Encoding/scaling is performed in a consistent manner training and inference pipelines).
-エンコード/スケーリングは、一貫した方法で行われる トレーニングと推論パイプライン）。
-Examples of feature encoding techniques include scikit-learn pipelines or declarative transformations in feature views (Hopsworks).
-特徴エンコーディング技術の例としては、scikit-learnパイプラインや特徴ビューの宣言的変換（Hopsworks）などがある。
-
-What model evaluation and validation process is used?
-どのようなモデル評価・検証プロセスを用いているのか？
-
-What model registry is used to store the trained models?
-学習済みモデルの保存には、どのようなモデルレジストリを使用するのですか？
+<!-- ここまで読んだ! -->
 
 ### Inference Pipelines 推論パイプライン
 
 Inference pipelines are as diverse as the applications they AI-enable.
-推論パイプラインは、AIを可能にするアプリケーションと同様に多様である。
+**inference pipelinesは、AIを有効にするアプリケーションと同様に多様です。**
 In inference pipelines, some of the details that can be discovered on double-clicking are:
-推論パイプラインでは、ダブルクリックで発見できる詳細がいくつかある：
+推論パイプラインでは、ダブルクリックで発見できる詳細がいくつかある:
 
-What is the prediction consumer - is it a dashboard, online application - and how does it consume predictions?
-予測消費者とは何か、それはダッシュボードなのか、オンライン・アプリケーションなのか、そしてどのように予測を消費するのか。
+- What is the prediction consumer - is it a dashboard, online application - and how does it consume predictions?
+  **予測消費者は何か**、それはダッシュボードなのか、オンライン・アプリケーションなのか、そしてどのように予測を消費するのか。
+- Is it a batch or online inference pipeline?
+  推論パイプラインはバッチかオンラインか？
+- What type of feature encoding/scaling is done on which features?
+  どのフィーチャーに対して、どのようなフィーチャーエンコーディング／スケーリングが行われるのか？
+  (これはfeature pipelinesに任せてはダメなのかなぁ...:thinking:)
+- For a batch inference pipeline, what framework/language is used? What orchestrator is used to run it on a schedule? What sink is used to consume the predictions produced?
+  バッチ推論パイプラインでは、どのようなフレームワーク／言語が使われるのか？それをスケジュールで実行するために、どのオーケストレーターが使われるのか？**生成された予測を消費するためにどのようなシンクが使われるか**？
+- For an online inference pipeline, what model serving server is used to host the deployed model? How is the online inference pipeline implemented - as a predictor class or with a separate transformer step? Are GPUs needed for inference? Is there a SLA (service-level agreements) for how long it takes to respond to prediction requests?
+  オンライン推論パイプラインでは、**デプロイされたモデルをホストするためにどのモデルサービングサーバが使われるか？**オンライン推論パイプラインは、predictorクラスとして実装されるか、別のtransformerステップとして実装されるか？推論にGPUは必要ですか？**予測リクエストに対して応答するのにどれくらい時間がかかるかについてのSLA（サービスレベル契約）はありますか?**
 
-Is it a batch or online inference pipeline?
-推論パイプラインはバッチかオンラインか？
-
-What type of feature encoding/scaling is done on which features?
-どのフィーチャーに対して、どのようなフィーチャーエンコーディング／スケーリングが行われるのか？
-
-For a batch inference pipeline, what framework/language is used? What orchestrator is used to run it on a schedule? What sink is used to consume the predictions produced?
-バッチ推論パイプラインでは、どのようなフレームワーク／言語が使われるのか？それをスケジュールで実行するために、どのオーケストレーターが使われるのか？生成された予測を消費するためにどのようなシンクが使われるか？
-
-For an online inference pipeline, what model serving server is used to host the deployed model? How is the online inference pipeline implemented - as a predictor class or with a separate transformer step? Are GPUs needed for inference? Is there a SLA (service-level agreements) for how long it takes to respond to prediction requests?
-オンライン推論パイプラインでは、どのモデル・サービング・サーバーがデプロイされたモデルをホストするために使用されますか？オンライン推論パイプラインはどのように実装されますか? 推論にGPUは必要ですか？予測リクエストに応答するのにかかる時間に関するSLA（サービス・レベル・アグリーメント）はありますか？
+<!-- ここまで読んだ! -->
 
 ## MLOps Principles
 
 The existing mantra is that MLOps is about automating continuous integration (CI), continuous delivery (CD), and continuous training (CT) for ML systems.
-既存のマントラは、MLOpsはMLシステムの継続的インテグレーション（CI）、継続的デリバリー（CD）、継続的トレーニング（CT）を自動化することである。
+既存のmantra(=真言)は、**MLOpsはMLシステムのための継続的インテグレーション（CI）、継続的デリバリー（CD）、継続的トレーニング（CT）を自動化することだ**ということです。(continous integrationはCDの概念の一つだと思ってるけど...!:thinking:)
 But that is too abstract for many developers.
 しかし、多くの開発者にとっては抽象的すぎる。
 MLOps is really about continual development of ML-enabled products that evolve over time.
-MLOpsとは、時間と共に進化するML対応製品の継続的な開発のことである。
+**MLOpsとは、時間と共に進化するML対応プロダクトの継続的な開発についてである**。(なるほど...! MLOps = 持続可能なMLプロダクト開発のための概念ってこと?? :thinking:)
 The available input data (features) changes over time, the target you are trying to predict changes over time.
-利用可能な入力データ（特徴量）は時間とともに変化し、予測しようとする対象も時間とともに変化する。
+**利用可能な入力データ（特徴量）は時間とともに変化し、予測しようとする対象も時間とともに変化する**。
 You need to make changes to the source code, and you want to ensure that any changes you make do not break your ML system or degrade its performance.
-ソースコードに変更を加える必要があり、その変更がMLシステムを壊したり、性能を低下させたりしないようにしたい。
+**ソースコードに変更を加える必要があり、その変更がMLシステムを壊したり、パフォーマンスを低下させたりしないようにしたい**。
 And you want to accelerate the time required to make those changes and test before those changes are automatically deployed to production.
-そして、その変更が本番環境に自動的にデプロイされる前に、その変更とテストに必要な時間を短縮したい。
+そして、**変更を加えるために必要な時間を短縮したい**。そして、それらの変更が自動的に本番環墴にデプロイされる前にテストを行いたい。
 
 So, from our perspective, a more pithy definition of MLOps that enables ML Systems to be safely evolved over time is that it requires, at a minimum, automated testing, versioning, and monitoring of ML artifacts.
-つまり、MLシステムを長期にわたって安全に進化させることを可能にするMLOpsの定義とは、最低限、ML成果物の自動テスト、バージョン管理、モニタリングが必要だということだ。
+つまり、私たちの視点から見ると、**MLシステムを安全に時間とともに進化させるためには**、最低限、MLの成果物の自動テスト、バージョン管理、モニタリングが必要であるという、より簡潔なMLOpsの定義が必要です。
 MLOps is about automated testing, versioning, and monitoring of ML artifacts.
-MLOpsとは、MLの成果物の自動テスト、バージョン管理、モニタリングのことである。
+**MLOpsとは、MLの成果物の自動テスト、バージョン管理、モニタリングについてです**。(だいぶ簡潔になった! :thinking:)
 
 ![figure4]()
+Figure 4: The testing pyramid for ML Artifacts
+図4: ML成果物のテストピラミッド
 
 In figure 4, we can see that more levels of testing are needed in ML systems than in traditional software systems.
-図4を見ると、MLシステムでは従来のソフトウェア・システムよりも多くのレベルのテストが必要であることがわかる。
+図4を見ると、**MLシステムでは従来のソフトウェア・システムよりも多くのレベルのテストが必要である**ことがわかる。
 Small bugs in data or code can easily cause a ML model to make incorrect predictions.
 データやコードの小さなバグは、MLモデルが間違った予測をする原因になりやすい。
 From a testing perspective, if web applications are propeller-driven airplanes, ML systems are jet-engines.
-テストの観点から言えば、ウェブアプリケーションがプロペラ機なら、MLシステムはジェットエンジンだ。
+テストの観点から言えば、ウェブアプリケーションがプロペラ駆動の飛行機であるなら、MLシステムはジェットエンジンです。
 It takes significant engineering effort to test and validate ML Systems to make them safe!
-MLシステムを安全なものにするためのテストと検証には、多大なエンジニアリングの労力を要する！
+MLシステムを安全なものにするためのテストと検証には、かなりのエンジニアリング努力が必要です！
 
 At a high level, we need to test both the source-code and data for ML Systems.
-高いレベルでは、MLシステムのソースコードとデータの両方をテストする必要がある。
+**高いレベルでは、MLシステムのソースコードとデータの両方をテストする必要がある**。
 The features created by feature pipelines can have their logic tested with unit tests and their input data checked with data validation tests (e.g., Great Expectations).
-フィーチャー・パイプラインで作成されたフィーチャーは、そのロジックをユニットテストでテストし、入力データをデータ検証テスト（Great Expectationsなど）でチェックすることができる。
+**feature pipelineで作成された特徴量は、ユニットテストでそのロジックをテスト**し、**データ検証テスト(例：Great Expectations)で入力データをチェック**できる。(例: https://www.hopsworks.ai/post/data-validation-for-enterprise-ai-using-great-expectations-with-hopsworks)
 The models need to be tested for performance, but also for a lack of bias against known groups of vulnerable users.
 モデルの性能だけでなく、既知の弱者グループに対する偏りがないかどうかもテストする必要がある。
 Finally, at the top of the pyramid, ML-Systems need to test their performance with A/B tests before they can switch to use a new model.
-最後に、ピラミッドの頂点に位置するMLシステムは、新しいモデルの使用に切り替える前に、A/Bテストでパフォーマンスをテストする必要がある。
+最後に、ピラミッドの頂点に位置するMLシステムは、**新しいモデルを使用する前にA/Bテストでパフォーマンスをテストする必要がある**。(そりゃそうじゃない...??:thinking:)
 
 Finally, we need to version ML artifacts so that the operators of ML systems can safely update and rollback versions of deployed models.
-最後に、MLシステムのオペレータが、配備されたモデルのバージョンを安全に更新したりロールバックしたりできるように、MLの成果物をバージョン管理する必要がある。
+最後に、**MLシステムのオペレータが、配備されたモデルのバージョンを安全に更新したりロールバックしたりできるように、MLの成果物をバージョン管理する必要がある**。
 System support for the push-button upgrade/downgrade of models is one of the holy grails of MLOps.
-プッシュボタンによるモデルのアップグレード／ダウングレードのシステムサポートは、MLOの聖杯のひとつである。
+**プッシュボタンによるモデルの upgrade/downgrade をサポートするシステム**は、MLOpsの聖杯の1つです。(必須ってこと...?:thinking:)
 But models need features to make predictions, so model versions are connected to feature versions and models and features need to be upgraded/downgraded synchronously.
-しかし、モデルは予測を行うためにフィーチャーを必要とする。そのため、モデルのバージョンはフィーチャーのバージョンと連動し、モデルとフィーチャーは同期してアップグレード／ダウングレードされる必要がある。
+しかし、モデルは予測を行うために特徴量が必要なので、モデルのバージョンは特徴量のバージョンに接続され、**モデルと特徴量は同期してアップグレード/ダウングレードする必要がある**。(なるほど確かに...!:thinking:)
 Luckily, you don’t need a year in rotation as a Google SRE to easily upgrade/downgrade models - platform support for versioned ML artifacts should make this a straightforward ML system maintenance operation.
-幸いなことに、モデルのアップグレードやダウングレードを簡単に行うために、Google SREとして1年間ローテーションを組む必要はない。
+幸いなことに、Google SREとしての1年間の経験がなくても、モデルのアップグレード/ダウングレードは簡単に行える - **バージョン管理されたML成果物をサポートするプラットフォームが、これを簡単なMLシステムのメンテナンス操作にするはず**です。(なるほど。SagemakerとかDatabricksとか頼む...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## Example ML Systems MLシステムの例
 
@@ -257,7 +256,8 @@ Here is a sample of some of the open-source ML systems available built on the FT
 They have been built mostly by practitioners and students.
 これらは主に練習生や学生によって作られてきた。
 
-Batch ML Systems
+### Batch ML Systems
+
 バッチMLシステム
 
 Electricity Demand Prediction (452 github stars)
@@ -272,7 +272,8 @@ Premier league football score predictions (101 github stars)
 Churn prediction (113 github stars)
 解約予測 (113 github stars)
 
-Real-Time ML System
+### Real-Time ML System
+
 リアルタイムMLシステム
 
 Online Credit Card Fraud (113 github stars)
@@ -289,16 +290,16 @@ Loan application approval (113 github stars)
 This article introduces the FTI pipeline architecture for MLOps, which has empowered numerous developers to efficiently create and maintain ML systems.
 この記事では、多くの開発者がMLシステムを効率的に作成・保守できるようにした、MLOpsのためのFTIパイプライン・アーキテクチャを紹介する。
 Based on our experience, this architecture significantly reduces the cognitive load associated with designing and explaining ML systems, especially when compared to traditional MLOps approaches.
-我々の経験によれば、このアーキテクチャは、特に従来のMLOpsアプローチと比較して、MLシステムの設計と説明に関連する認知的負荷を大幅に軽減する。
+我々の経験に基づくと、このアーキテクチャは、従来のMLOpsアプローチと比較して、**MLシステムの設計と説明に関連する認知負荷を大幅に軽減する**。
 In corporate environments, it fosters enhanced inter-team communication by establishing clear interfaces, thereby promoting collaboration and expediting the development of high-quality ML systems.
-企業環境においては、明確なインターフェースを確立することでチーム間のコミュニケーションを促進し、コラボレーションを促進し、高品質なMLシステムの開発を促進する。
+企業環境においては、**明確なインターフェースを確立することで**、チーム間のコミュニケーションを向上させ、協力を促進し、高品質なMLシステムの開発を迅速化する。
 While it simplifies the overarching complexity, it also allows for in-depth exploration of the individual pipelines.
-包括的な複雑さを簡素化する一方で、個々のパイプラインを深く掘り下げることもできる。
+全体的な複雑さを簡素化する一方で、個々のパイプラインの詳細な探索も可能になる。
 Our goal for the FTI pipeline architecture is to facilitate improved teamwork and quicker model deployment, ultimately expediting the societal transformation driven by AI.
-FTIのパイプライン・アーキテクチャの目標は、チームワークの向上と迅速なモデル展開を促進し、最終的にAIによる社会変革を促進することです。
+FTIのパイプライン・アーキテクチャの目標は、チームワークの向上とモデルの迅速なデプロイメントを促進し、AIによって推進される社会の変革を加速することです。
 
 Read more about the fundamental principles and elements that constitute the FTI Pipelines architecture in our full in-depth mental map for MLOps.
-FTI Pipelinesアーキテクチャを構成する基本原則と要素については、MLOps向けの詳細なメンタルマップをご覧ください。
+FTI Pipelinesアーキテクチャを構成する基本原則と要素については、[MLOps向けの詳細なメンタルマップ](https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines)をご覧ください。
 
 ### More On This Topic このトピックに関する詳細
 
@@ -319,3 +320,5 @@ Development & Testing of ETL Pipelines for AWS Locally
 
 The Prefect Way to Automate & Orchestrate Data Pipelines
 データパイプラインの自動化とオーケストレーションに最適な方法
+
+<!-- ここまで読んだ! -->
