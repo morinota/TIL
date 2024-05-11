@@ -27,7 +27,7 @@ title-slide-attributes:
 
 ### 1.2. なんでこの論文を選んだの??
 
-- 
+-
 - 業務の中で、漠然と「より良いMLシステムってどう作ればいいんだろう」と思って色々調べ始めた。
   - 「良いMLシステム」ってどういうことだろう?
     - → **持続可能性が高いMLシステム**?:thinking:
@@ -40,7 +40,8 @@ title-slide-attributes:
 ### 参考文献:
 
 - 2015年の技術的負債の論文: [Hidden Technical Debt in Machine Learning Systems]()
-- 
+- 上の論文の重箱をつつくブログ: [Nitpicking Machine Learning Technical Debt](https://matthewmcateer.me/blog/machine-learning-technical-debt/)
+- 上のブログの日本語訳: [【翻訳】機械学習の技術的負債の重箱の隅をつつく (前編)](https://blog.hoxo-m.com/entry/2020/06/21/190056)
 
 ## 2. 導入: MLシステムと技術的負債
 
