@@ -755,167 +755,190 @@ However, acquiring user profiles can be challenging due to user privacy concerns
 
 コンテキスト情報 [88, 161]。
 In addition to user’s historical interactions and profile, environmental context information (e.g., location and time), which can influence user decisions, is also advantageous for models to better match the users with appropriate items.
-ユーザーの過去のインタラクションやプロファイルに加え、ユーザーの意思決定に影響を与える可能性のある環境コンテキスト情報（例えば、場所や時間）も、適切なアイテムとユーザーをより良くマッチングさせるモデルにとって有利である。
+**ユーザーの過去のインタラクションやプロファイルに加え、ユーザの意思決定に影響を与える可能性のある環境コンテキスト情報 (ex. 位置情報や時間情報) も、モデルが適切なアイテムをユーザによりよくマッチングするために有利**である。
 For example, users may prefer to purchase a coat rather than a T-shirt in winter in clothing recommendation.
-例えば、ユーザーは冬にTシャツを購入するよりも、コートを購入したがるかもしれない。
+例えば、ユーザは冬にTシャツを購入するよりも、コートを購入したがるかもしれない。
 Therefore, incorporating context information such as time, can achieve effective user understanding in real-world application scenarios.
-したがって、時間などのコンテキスト情報を組み込むことで、実世界のアプリケーションシナリオにおいて効果的なユーザー理解を実現することができる。
+したがって、時間などのコンテキスト情報を組み込むことで、実世界のアプリケーションシナリオにおいて効果的なユーザ理解を実現することができる。
 For instance, [88] harnesses diagnosis and procedures for medication recommendation while [161] incorporates context information via learnable soft prompt to capture unobserved context signals.
-例えば、[88]は診断と手順を薬の推薦に利用し、[161]は学習可能なソフトプロンプトを介してコンテキスト情報を組み込み、未観測のコンテキスト信号を捕捉する。
-External knowledge [28].
-外部の知識[28]。
+例えば、[88]は診断と処置を利用して薬物推薦を行い、[161]は学習可能なソフトプロンプトを介して未観測のコンテキスト信号を捉えるためにコンテキスト情報を組み込んでいる。
+
+### External knowledge [28]. 外部の知識[28]。
 Although generative models have demonstrated promising performance in recommendation tasks based on user-associated information, recent research has explored leveraging external knowledge to enhance the performance of generative recommender models.
-生成モデルは、ユーザー関連情報に基づく推薦タスクにおいて有望な性能を示してきたが、最近の研究では、生成推薦モデルの性能を向上させるために外部知識を活用することが検討されている。
+生成モデルは、ユーザ関連情報に基づいて推薦タスクで有望なパフォーマンスを示しているが、最近の研究では、**外部知識を活用して生成的レコメンダーモデルのパフォーマンスを向上させること**を探求している。
 To harness structured information from user-item graph, [28] integrates the graph data in natural language and further propagates higher-order neighbor’s information to capture complex relations between users and items.
-ユーザーとアイテムのグラフから構造化された情報を利用するために、[28]はグラフデータを自然言語で統合し、さらに高次の近傍情報を伝播して、ユーザーとアイテムの間の複雑な関係を捕捉する。
+ユーザ-アイテムグラフからの構造化情報を活用するために、[28]はグラフデータを自然言語で統合し、さらに高次隣接情報を伝播させて、ユーザとアイテムの複雑な関係を捉えている。
 Additionally, [93] leverages external knowledge from conventional recommender models by incorporating prediction from these models in natural language, showcasing collaborative efforts from both conventional models and generative models.
-さらに、[93]は、従来のレコメンダーモデルからの予測を自然言語に組み込むことによって、従来のレコメンダーモデルからの外部知識を活用し、従来のモデルと生成モデルの両方からの協調的な取り組みを示している。
+さらに、[93]は、従来の推薦モデルからの外部知識を活用し、これらのモデルの予測を自然言語で組み込むことで、従来のモデルと生成モデルの両方からの協力的な取り組みを示している。
 Some work also incorporates an item candidate set to reduce the searching space of the whole item set, thus alleviating the hallucination problem and improving the accuracy [23, 168].
-また、項目候補集合を組み込んで、項目集合全体の検索空間を縮小することで、幻覚問題を緩和し、精度を向上させた研究もある[23, 168]。
+また、item candidate setを組み込むことで、全アイテムセットの検索空間を縮小し、幻覚問題を緩和し、精度を向上させる[23, 168]。
+
+<!-- ここまで読んだ! -->
 
 ## 5.3. Item Identifiers アイテム識別子
 
 Similar to generative search, the generative recommender models are expected to generate relevant items given the user formulation.
-生成的検索と同様に、生成的レコメンダーモデルは、ユーザーの定式化によって関連するアイテムを生成することが期待される。
+生成的検索と同様に、**生成的レコメンダーモデルは、ユーザの定式化が与えられた場合に関連するアイテムを生成することが期待される**。
 Nevertheless, items in recommendation platforms usually consist of various side information from different modalities, e.g., thumbnails of the micro-videos, audios of the music, and titles of the news.
-とはいえ、レコメンデーション・プラットフォームのアイテムは通常、マイクロビデオのサムネイル、音楽のオーディオ、ニュースのタイトルなど、異なるモダリティからのさまざまなサイド情報で構成されている。
+とはいえ、レコメンデーション・プラットフォームのアイテムは通常、さまざまなモダリティからのサイド情報、例えば、マイクロビデオのサムネイル、音楽のオーディオ、ニュースのタイトルなどが含まれている。
 As such, the complex data from the items in recommendation necessitates item identifiers to present each item’s characteristics in the language space for generative recommendation.
-このように、レコメンデーションにおけるアイテムからの複雑なデータは、生成的レコメンデーションのための言語空間における各アイテムの特徴を提示するためのアイテム識別子を必要とする。
-It is highlighted that a good item identifier should at least meet two criteria as pointed out in [82]: 1) distinctiveness to emphasize the salient item features learned from user behaviors.
-良いアイテム識別子は、[82]で指摘されているように、少なくとも2つの基準を満たすべきであることが強調されている： 1) ユーザーの行動から学んだ顕著なアイテムの特徴を強調する識別性。
+このように、推薦アイテムの複雑なデータは、生成的推薦のために**各アイテムの特性を言語空間で表現するためにアイテム識別子が必要となる**。
+It is highlighted that a good item identifier should at least meet two criteria as pointed out in [82]: 
+**良いアイテム識別子は、[82]で指摘されているように、少なくとも2つの基準を満たすべきである**ことが強調されている： 
+1)distinctiveness to emphasize the salient item features learned from user behaviors.
+1)ユーザの行動から学んだ顕著なアイテム特徴を強調するための独自性。(CF的なアイテム特徴量?)
 And 2) semantics to focus on the utilization of prior knowledge in pre-trained language models, which facilitates strong generalization to cold-start and cross-domain recommendation.
-また、2）セマンティクスは、事前に訓練された言語モデルにおける事前知識の活用に焦点を当て、コールドスタートやクロスドメイン推薦への強力な汎化を促進する。
+また、2)事前学習された言語モデルでの事前知識の利用に焦点を当て、cold-startやクロスドメイン推薦に強力な**汎化を促進するsemantics(=意味論)**。
 Existing work usually constructs the item identifiers in the following four strategies, meeting different criteria accordingly.
 既存の研究は通常、以下の4つの戦略でアイテム識別子を構築し、それに応じて異なる基準を満たす。
-Numeric ID [11, 13, 33, 45, 67, 104, 109, 122, 149, 165].
+
+### Numeric ID [11, 13, 33, 45, 67, 104, 109, 122, 149, 165].
 数値ID [11、13、33、45、67、104、109、122、149、165]。
 Given the widely demonstrated efficacy of numeric IDs for capturing collaborative information in traditional recommendation models [172], a straightforward strategy in generative recommendation frameworks is to adopt the strategy of using numeric IDs to represent items [33, 78].
-従来の推薦モデル[172]において、協調情報を捕捉するための数値IDの有効性が広く実証されていることを考えると、生成的推薦フレームワークにおける単純な戦略は、アイテムを表現するために数値IDを使用する戦略を採用することである[33, 78]。
+**従来の推薦モデルで協調情報を捉えるための数値IDの効果が広く示されている**ことを考慮すると、生成的推薦フレームワークでの直接的な戦略は、アイテムを表すために数値IDを使用する戦略を採用することである[33, 78]。
 However, directly adopting the ID setting in traditional recommender models is infeasible in generative recommender models.
-しかし、従来の推薦モデルにおけるID設定を直接採用することは、生成的推薦モデルでは不可能である。
+しかし、従来の推薦モデルでのID設定を直接採用することは、生成的推薦モデルでは不可能である。
 Because traditional recommender models consider each item as an independent “token”, which cannot be further tokenized and strictly refers to one independent embedding.
-というのも、従来のレコメンダー・モデルは、各アイテムを独立した「トークン」とみなしており、さらにトークン化することはできず、厳密には1つの独立した埋め込みを指すからである。
+というのも、**従来の推薦モデルでは、各アイテムを独立した「トークン」として考慮しており**、これをさらにトークン化することはできず、厳密には1つの独立した埋め込みを指す。
 This requires adding all the independent tokens into the model, which requires 1) large memory to store every item embedding, and 2) sufficient interactions for training the item embedding.
 これは、すべての独立したトークンをモデルに追加する必要があり、1）すべてのアイテム埋め込みを格納するための大きなメモリと、2）アイテム埋め込みのトレーニングのための十分なインタラクションを必要とする。
 To combat these issues, generative recommender models offer a promising solution by designing the item identifier as a token sequence, where the numeric IDs can be further tokenized and are associated with several token embeddings.
-これらの問題に対処するために、生成レコメンダーモデルは、アイテム識別子をトークン列として設計することによって、有望な解決策を提供する。
+これらの問題に対処するために、生成的推薦モデルは、**アイテム識別子をトークンシーケンスとして設計**することで、数値IDをさらにトークン化し、いくつかのトークン埋め込みと関連付けることができる有望な解決策を提供している。
 As such, a token sequence as a numeric ID makes it possible to use finite tokens to represent infinite items [46, 68].
-このように、トークン列を数値IDとして使用することで、有限のトークンを使用して無限のアイテムを表現することが可能になる[46, 68]。
+このように、数値IDとしてのトークンシーケンスは、無限のアイテムを表すために有限のトークンを使用することが可能になる[46, 68]。
 To effectively represent an item with a numeric ID in a token sequence, previous work explores different strategies for ID assignment [47].
-トークンシーケンスで数値IDを持つアイテムを効果的に表現するために、先行研究ではID割り当てのためのさまざまな戦略が研究されている[47]。
+トークンシーケンスで数値IDを持つアイテムを効果的に表現するために、先**行研究ではID割り当てのためのさまざまな戦略**が研究されている[47]。
 In [33], sequential indexing is utilized to capture the collaborative information in an intuitive way.
-33]では、直感的な方法で協調情報を捕捉するために逐次索引付けが利用されている。
-Specifically, sequential indexing represents the user’s items in chronological order by consecutive numeric IDs, (e.g., “11138”, “11139”, .
-具体的には、シーケンシャル・インデックスは、連続する数字IDによって、ユーザーのアイテムを時系列に表す（例えば、"11138"、"11139"、...）。
-..
-..
-, “11405”), which could capture the co-occurrence of items that are interacted with the same user.
-11405")、同じユーザーとやりとりされたアイテムの共起を捕らえることができる。
+33]では、直感的な方法で協調情報を捉えるために、連続インデックス付けが利用されている。
+Specifically, sequential indexing represents the user’s items in chronological order by consecutive numeric IDs, (e.g., “11138”, “11139”, ... “11405”), which could capture the co-occurrence of items that are interacted with the same user.
+具体的には、連続インデックス付けは、連続した数値IDによってユーザのアイテムを時系列順に表現する（例: "11138"、"11139"、... "11405"）ことで、**同じユーザがインタラクションしたアイテムの共起を捉えることができる**。(CF的だなぁ...!:thinking:)
 However, such sequential indexing might suffer from the potential data leakage issue [47, 112].
 しかし、このような逐次インデックス付けは、潜在的なデータ漏洩の問題に悩まされるかもしれない[47, 112]。
 [47] fixes this potential issue and explores other non-trivial indexing methods that incorporate prior information on the items, such as semantics and collaborative knowledge.
-[47]は、この潜在的な問題を修正し、セマンティクスや協調的知識などのアイテムに関する事前情報を組み込んだ、他の自明でないインデックス作成方法を探求している。
+[47]は、この潜在的な問題を修正し、セマンティクスや協調知識などのアイテムに関する事前情報を組み込む他の非自明なインデックス付け方法を探索している。
 By constructing IDs based on item categories in a hierarchical structure, the items belonging to the same categories will have similar IDs and are validated to be effective in generative recommendation.
-アイテムのカテゴリを階層構造にしてIDを構成することで、同じカテゴリに属するアイテムは類似したIDを持つことになり、生成推薦に有効であることが検証されている。
+**階層的な構造のアイテムカテゴリに基づいてIDを構築すること**で、同じカテゴリに属するアイテムは類似したIDを持ち、生成的推薦において有効であることが検証されている。(これは解釈しやすい数値IDだな...!:thinking:)
 Similarly, SEATER [122] proposes a tree-based hierarchical identifier with numeric IDs, where items with similar interactions will have similar IDs.
 同様に、SEATER [122]は、数値IDを持つツリーベースの階層識別子を提案しており、類似した相互作用を持つアイテムは類似したIDを持つことになる。
 In addition, [47] also attempts to construct IDs based on the item co-occurance matrix, where items that co-occur more times will have more similar IDs, which is assessed to be beneficial in generating appropriate recommendation.
-さらに、[47]では、アイテムの共起行列に基づいてIDを構成することも試みられており、共起回数が多いアイテムはより類似したIDを持つことになり、適切な推薦を生成する上で有益であると評価されている。
+さらに、[47]では、**アイテムの共起行列に基づいてIDを構築**しようとしており、より多く共起するアイテムはより類似したIDを持つことになり、適切な推薦を生成する上で有益であると評価されている。
+
 Despite the effectiveness of distinctive numeric IDs in generative recommendation, it usually lacks semantic information, thus suffering from the cold-start problem [82] and failing to leverage the world knowledge encoded in the recently emerged powerful generative models, e.g., LLMs.
-生成的推薦における特徴的な数値IDの有効性にもかかわらず、それは通常、意味的情報を欠いているため、コールドスタート問題[82]に悩まされ、最近出現した強力な生成モデル、例えばLLMにエンコードされた世界知識を活用することができない。
-Item’s textual meta data [4, 27, 37, 80, 85, 94, 127, 140, 148, 160, 162, 167].
-アイテムのテキスト・メタデータ [4, 27, 37, 80, 85, 94, 127, 140, 148, 160, 162, 167]。
+生成的推薦における特徴的な数値IDの有効性にもかかわらず、**通常はセマンティクス情報が欠如しており、コールドスタートの問題[82]に直面し、最近登場した強力な生成モデル、例えばLLMにエンコードされた世界知識を活用することができない。**(CF的なitem identifierだからね...!:thinking:)
+
+### Item’s textual meta data [4, 27, 37, 80, 85, 94, 127, 140, 148, 160, 162, 167].
+
 To overcome the absence of semantics in numeric IDs, other work [4, 56] utilizes the item’s textual metadata, e.g., item title, leveraging the LLMs’ world knowledge encoded in the parameters to better comprehend the item characteristics based on the semantics in the item’s textual descriptions.
-数値IDのセマンティクスの欠如を克服するために、他の研究[4, 56]では、アイテムのテキストメタデータ、例えばアイテムのタイトルを利用し、アイテムのテキスト記述のセマンティクスに基づいてアイテムの特性をより良く理解するために、パラメータにエンコードされたLLMの世界知識を活用している。
+数値IDのセマンティクスの欠如を克服するために、他の研究[4, 56]は、アイテムのテキストメタデータ、例えば、アイテムのタイトルを利用して、アイテムのテキスト記述のセマンティクスに基づいてアイテム特性をよりよく理解するために、パラメータにエンコードされたLLMの世界知識を活用している。(CB的なアプローチだ...!:thinking:)
 For instance, [4, 43, 51, 79, 142, 171] use movie title, [18, 51, 66, 86, 90, 168] use the product name, [175] utilizes book name, [71, 72] adopt news title, [23] uses song title, [129] employs abstractive text of items, and [22] includes both title and descriptions of online products, as the item identifier for recommendation.
 例えば、[4, 43, 51, 79, 142, 171]は映画のタイトルを、[18, 51, 66, 86, 90, 168]は商品名を、[175]は書籍名を、[71, 72]はニュースのタイトルを、[23]は曲名を、[129]はアイテムの抽象的なテキストを、[22]はオンライン商品のタイトルと説明文の両方をアイテム識別子としてレコメンデーションに利用している。
 Although leveraging an item’s textual metadata significantly alleviates the cold-start issue [4, 82], it is still suboptimal for effective recommendation.
-アイテムのテキストメタデータを活用することで、コールドスタートの問題はかなり軽減されるが [4, 82]、それでも効果的な推薦には最適ではない。
+**アイテムのテキストメタデータを活用することで、コールドスタートの問題はかなり軽減されるが [4, 82]、それでも効果的な推薦には最適ではない**。(なるほど...??:thinking:)
 The textual metadata, especially the descriptions could be very lengthy, which would cause out-of-corpus issues, i.e., the generated token sequence could not match any valid item identifier.
-テキストのメタデータ、特に説明文は非常に長くなる可能性があり、コーパス外の問題、つまり生成されたトークン列が有効なアイテム識別子にマッチしない可能性がある。
+特に説明文は非常に長くなる可能性があり、これによりコーパス外の問題、すなわち生成されたトークン列が有効なアイテム識別子と一致しない可能性がある。
 Although grounding the generated tokens to existing items via distance-based methods is a potential solution to address this problem [4], it would take us back to deep learning-based recommendation since we need to calculate the matching score between the generated item and each in-corpus item [68].
-生成されたトークンを距離ベースの手法で既存のアイテムに接地することは、この問題に対処するための潜在的な解決策ではあるが[4]、生成されたアイテムとコーパス内の各アイテムのマッチングスコアを計算する必要があるため、ディープラーニングベースの推薦に戻ることになる[68]。
-Codebook [112].
+**生成されたトークンを既存のアイテムに距離ベースの方法で基礎付けすることは、この問題に対処するための潜在的な解決策**である[4]が、生成されたアイテムと各コーパス内アイテムの一致スコアを計算する必要があるため、深層学習ベースの推薦に戻ることになる。(結局、生成的じゃなくて識別的なタスクじゃん、みたいな??:thinking:)
+
+### Codebook [112].
 コードブック[112]。
 To simultaneously leverage the semantics while pursuing a unique short token sequence, [112] proposes to learn a codebook to construct the item identifier in generative recommendation.
-ユニークな短いトークン列を追求しながら同時にセマンティクスを活用するために、[112]は生成的推薦においてアイテム識別子を構築するコードブックを学習することを提案している。
+ユニークな短いトークンシーケンスを追求しながら、意味を活用するために、[112]は生成的推薦においてアイテム識別子を構築するためにコードブックを学習することを提案している。
 Similar to the codebook for document identifier in generative search, related work in recommendation [42, 42, 112] focuses on developing a codebook specifically for items.
-生成的検索における文書識別子のコードブックと同様に、推薦[42, 42, 112]における関連研究は、アイテムに特化したコードブックの開発に焦点を当てている。
+生成的検索における文書識別子のコードブックと同様に、推薦における関連研究[42, 42, 112]は、**アイテムに特化したコードブックの開発**に焦点を当てている。
 Typically, RQ-VAEs [163] are utilized to learn the codebook, where the input is the item’s semantic representation extracted from a pre-trained language model (e.g., LLaMA [134]) and the output is the generated token sequence.
-典型的には、RQ-VAE [163]がコードブックの学習に利用され、入力は事前に学習された言語モデル（例えば、LLaMA [134]）から抽出されたアイテムの意味表現であり、出力は生成されたトークン列である。
-The overall process of training codebook is similar to that in generative search, as discussed in Section 4.3.Along this line, TIGER [112] is a representative work that generates an item’s semantic ID based on the item’s textual descriptions via the codebook.
-コードブックを学習する全体的なプロセスは、4.3節で議論したように、生成的検索におけるプロセスと似ている。このラインに沿って、TIGER [112]は、コードブックを介してアイテムのテキスト記述に基づいてアイテムのセマンティックIDを生成する代表的な作品である。
+典型的には、RQ-VAEs [163]がコードブックを学習するために利用され、**入力は事前学習された言語モデル（例: LLaMA [134]）から抽出されたアイテムの意味表現であり、出力は生成されたトークンシーケンス**である。(なるほど...! それがcodebookなのか...!:thinking:)
+The overall process of training codebook is similar to that in generative search, as discussed in Section 4.3. 
+コードブックを学習する全体的なプロセスはセクション4.3で議論されたように、生成的検索と同様である。
+Along this line, TIGER [112] is a representative work that generates an item’s semantic ID based on the item’s textual descriptions via the codebook.
+このラインに沿って、TIGER [112]は、コードブックを介してアイテムのテキスト記述に基づいてアイテムの意味IDを生成する代表的な作品である。
 LC-Rec [173] further enhances the generated ID’s representation to align with user preference and semantics of the item’s textual descriptions.
 LC-Rec [173]はさらに、生成されたIDの表現をユーザーの好みとアイテムのテキスト記述のセマンティクスに沿うように強化する。
+
 However, while codebook-based identifiers meet both semantics and distinctiveness, they suffer from the misalignment between the semantics correlation and interaction correlation.
-しかし、コードブックベースの識別子は、意味性と識別性の両方を満たす反面、意味相関と相互作用相関のズレに悩まされる。
+しかし、コードブックベースの識別子はセマンティクスと識別性の両方を満たす一方で、**セマンティクス相関とinteraction相関のずれに苦しむ**。(これは、CB的な相関とCF的な相関のズレ...?:thinking:)
 Specifically, the codebooks essentially capture the correlation of the item semantics into the identifier, i.e., items with similar semantics will have similar identifiers.
-具体的には、コードブックは本質的に、アイテムのセマンティクスと識別子の相関をキャプチャする。
+具体的には、コードブックは基本的にアイテムのセマンティクスの相関を識別子に捉えるため、似たようなセマンティクスを持つアイテムは似たような識別子を持つことになる。
 The identifier representations will then be optimized to capture interaction correlation by training on recommendation data.
-その後、推薦データで訓練することにより、相互作用の相関を捉えるように識別子表現を最適化する。
+**その後、識別子表現は、推薦データでトレーニングすることで相互作用相関を捉えるように最適化される**。(interactionデータを使って、semanticな埋め込み表現をfine-tuningする、みたいなイメージ...?:thinking:)
 Nevertheless, the items with similar codes might not necessarily have similar interactions, thereby hurting the learning of user behavior.
-とはいえ、似たようなコードを持つアイテムが必ずしも似たようなインタラクションを持つとは限らないため、ユーザー行動の学習に支障をきたす。
-Multi-facet identifier [82].
-多面的識別子[82]。
+とはいえ、似たようなコードを持つアイテムが必ずしも似たようなインタラクションを持つとは限らないため、ユーザ行動の学習に支障をきたす。
+
+
+### Multi-facet identifier [82]. 多面的識別子[82]。
+
 To overcome the issues in previous identifier strategies, the multi-facet identifier is proposed.
-これまでの識別子戦略の問題点を克服するために、多面的な識別子が提案されている。
+これまでの識別子戦略の問題点を克服するために、多面的な識別子が提案されている。(これもgenerative searchと同様!)
 Multifacet identifier aims to pursue both semantics and distinctiveness while mitigating the misalignment between semantics correlation and interaction correlation.
-多面的識別子は、意味相関と相互作用相関のずれを緩和しながら、意味性と識別性の両方を追求することを目指している。
+多面的識別子は、セマンティクスと識別性の両方を追求し、**セマンティクス相関とinteraction相関のずれを緩和することを目指している**。
 While incorporating semantics (e.g., item title) exploits the world knowledge encoded in generative models, utilizing unique numeric IDs ensures distinctiveness for capturing the essential collaborative information.
-セマンティクス（アイテムのタイトルなど）を組み込むことで、生成モデルにエンコードされた世界の知識を利用することができる一方、一意の数値IDを利用することで、本質的なコラボレーション情報をキャプチャするための識別性を確保することができる。
+セマンティクス（例: アイテムタイトル）を取り入れることで、生成モデルにエンコードされた世界知識を活用し、ユニークな数値IDを利用することで、**重要な協調情報を捉えるためのdistinctivenessを確保**する。
 Additionally, to avoid the lengthy issue of textual metadata, TransRec [82] allows the generation of the substring of metadata.
 さらに、テキストメタデータの長い問題を避けるために、TransRec [82]ではメタデータの部分文字列の生成が可能である。
 The utilization of substring follows the one-to-many corresponding as discussed in Section 4.3, thus might decrease the inference efficiency.
-部分文字列の利用は、セクション4.3で議論したように、一対多の対応に従うため、推論効率を低下させる可能性がある。
-Item identifier summary.
-項目識別子の概要。
+部分文字列の利用は、セクション4.3で議論された1対多対応に従うため、推論効率が低下する可能性がある。
+
+### Item identifier summary.
+
+
+
+![table3]()
+Table 3: Identifiers in generative recommendation. 表3: 生成的推薦における識別子。
+
 We summarize the characteristics of different types of item identifiers in Table 3 from different aspects, including semantics, distinctiveness, update, and the involved training process.
-異なるタイプのアイテム識別子の特徴を、セマンティクス、識別性、更新、学習プロセスなど、さまざまな側面から表3にまとめる。
+異なるタイプのアイテム識別子の特性を、セマンティクス、識別性、更新、および関連するトレーニングプロセスを含むさまざまな側面から表3にまとめる。
 From the summary, we can find that 1) Incorporating semantics enables better utilization of world knowledge in generative language models and easier identifier update.
-要約から、1）意味論を取り入れることで、生成言語モデルにおいて世界の知識をより有効に活用でき、識別子の更新が容易になる。
-This can contribute to improved generalization and practicality in real-world deployments.2) Codebook and multi-facet identifiers achieve both semantics and distinctiveness, showing the potential to leverage semantics in pre-trained generative language models and learn collaborative information from user-item interactions.
-2）コードブックとマルチファセット識別子は、セマンティクスと識別性の両方を実現し、事前に訓練された生成言語モデルでセマンティクスを活用し、ユーザーとアイテムの相互作用から協調情報を学習する可能性を示している。
+要約から、**1）意味論を取り入れることで、生成言語モデルにおいて世界の知識をより有効に活用でき、識別子の更新が容易になる(=コールドスタートアイテムの問題に強くなる!)**。 
+This can contribute to improved generalization and practicality in real-world deployments.
+**これは、実世界での展開において、汎化性能と実用性を向上させることができる。**(CFだけだと実用性に欠けるってことだよなぁ...!:thinking:)
+2)Codebook and multi-facet identifiers achieve both semantics and distinctiveness, showing the potential to leverage semantics in pre-trained generative language models and learn collaborative information from user-item interactions.
+2)コードブックと多面的識別子は、セマンティクスと識別性の両方を実現し、事前学習された生成言語モデルのセマンティクスを活用し、ユーザー-アイテムの相互作用から協調情報を学習する可能性を示している。
 Nevertheless, while codebook requires additional item-to-identifier training and auxiliary alignment to endow the generated identifier with the semantics in language models, multi-facet identifier is naturally advantageous to leverage both numeric ID and descriptions for improved generative recommendation.
-とはいえ、コードブックでは、生成された識別子に言語モデルのセマンティクスを付与するために、項目間の学習や補助的なアラインメントを追加する必要がある。
+とはいえ、コードブックは追加の項目対識別子の学習と補助的なアライメントが必要であり、生成された識別子に言語モデルのセマンティクスを付与するために、多面的識別子は数値IDと説明を両方活用することで、生成的推薦の向上に自然に有利である。
+
+<!-- ここまで読んだ! -->
 
 ## 5.4. Training トレーニング
 
 Training the generative recommender models on the recommendation data involves two main steps, i.e., textual data construction and model optimization.
-推薦データに対する生成的推薦モデルの学習には、主に2つのステップ、すなわちテキストデータの構築とモデルの最適化が含まれる。
+推薦データに対する生成的推薦モデルの学習には、主に**2つのステップ、すなわち、テキストデータ構築とモデル最適化**が含まれる。
 The textual data construction converts the recommendation data into samples with textual input and output, where the choice of input and output depends on the learning objectives.
-テキストデータ構築は、推薦データをテキスト入力とテキスト出力のサンプルに変換するもので、入力と出力の選択は学習目的に依存する。
+テキストデータ構築は**推薦データをテキスト入力とテキスト出力を持つサンプルに変換する**。ここで、入力と出力の選択は学習目的に依存する。
 While most of the methods can directly construct the textual data based on the pre-defined item identifier, codebookbased methods necessitate the item-to-identifier training prior to textual data construction.
-ほとんどの手法は、事前に定義された項目識別子に基づいて直接テキストデータを構築することができるが、コードブックベースの手法は、テキストデータを構築する前に項目対識別子の学習が必要である。
+ほとんどの手法は、事前定義されたitem識別子に基づいてテキストデータを直接構築できるが、コードブックベースの手法は、テキストデータ構築の前に項目対識別子のトレーニングが必要となる。
 The item-to-identifier training typically utilizes RQ-VAE to map the item content representation into the quantized code words [112] as the item identifier.
-項目から識別子への学習は、通常、RQ-VAEを利用して、項目の内容表現を項目識別子として量子化された符号語[112]にマッピングする。
+item-to-identifierトレーニングは、通常、RQ-VAEを利用して、アイテムコンテンツ表現を量子化されたコードワード[112]にマッピングし、アイテム識別子としている。(codebookアプローチの話...!:thinking:)
+
 As for model optimization, literature typically utilizes generative training in language modeling [64] to optimize the model.
 モデルの最適化に関しては、言語モデリングにおける生成学習[64]を利用してモデルを最適化する文献が一般的である。
 Specifically, given the constructed samples with the textual input and output, the generative training maximizes the log-likelihood of the target output tokens conditioned on the input.
-具体的には、テキストの入力と出力で構成されたサンプルが与えられると、生成学習は、入力を条件としてターゲット出力トークンの対数尤度を最大化する。
+具体的には、テキストの入力と出力で構成されたサンプルが与えられると、生成学習は、入力に条件付けられたターゲット出力トークンの対数尤度を最大化する。
 According to the learning objectives, we divide the generative training into two groups for generative recommendation.
-学習目的に応じて、生成トレーニングは生成推薦のための2つのグループに分けられる。
+学習目的に応じて、生成的推薦のために生成学習を**2つのグループ**に分ける。
 To recommend the item relevant to the user preference, 1) user-to-identifier training is employed for generative models to learn the matching ability.
-ユーザーの嗜好に合ったアイテムを推薦するために、1)マッチング能力を学習するための生成モデルに、ユーザー対識別子の学習を採用する。
+ユーザの嗜好に合ったアイテムを推薦するために、1)マッチング能力を学習するための生成モデルに、user-to-identifierトレーニングが採用されている。
 For each constructed training sample, the input is the user formulation, and the output is the next-item identifier.
-構築された各訓練サンプルについて、入力はユーザーの定式化であり、出力は次の項目の識別子である。
+構築された各訓練サンプルについて、入力はユーザの定式化であり、出力は次のアイテム識別子である。(next-item-predictionタスクね...!:thinking:)
 The user-to-identifier training plays a crucial role in the generative recommendation and is utilized across all generative recommendation methods for item retrieval.
-ユーザー対識別子の学習は、生成的推薦において重要な役割を果たし、アイテム検索のためのすべての生成的推薦手法に利用されている。
+user-to-identifierトレーニングは、生成的推薦において重要な役割を果たし、アイテム検索のためにすべての生成的推薦方法で利用されている。
+
 As for the methods that utilize codebooks to learn semanticaware item identifiers, they might suffer from the semantic gap between the quantized codewords and the semantics in natural language.
-意味を意識した項目識別子を学習するためにコードブックを利用する方法については、量子化されたコードワードと自然言語の意味との間の意味的ギャップに悩まされるかもしれない。
+semantic-awareなアイテム識別子を学習するためにコードブックを利用する方法は、量子化されたコードワードと自然言語のセマンティクスとの間のセマンティックギャップに苦しむ可能性がある。
 To combat this issue, 2) auxiliary alignment is additionally used by the methods to strengthen the alignment between the item content and the item identifier.
-この問題に対処するため、2)補助的アライメントが追加的に使用され、項目内容と項目識別子の間のアライメントが強化される。
+この問題に対処するため、2)**補助的アライメント**が追加的に使用され、**アイテムコンテンツとアイテム識別子の間の整合性を強化**する。
 To achieve the alignment, extra training sample construction is required, which can be broadly divided into two groups.
-アライメントを達成するためには、余分なトレーニングサンプルの構築が必要であり、それは大きく2つのグループに分けられる。
+アライメントを達成するためには、余分なトレーニングサンプルの構築が必要であり、それは大きく**2つのグループ**に分けられる。
 (i) Content-to-identifier or identifier-to-content.
-(i) コンテンツ対識別子、または識別子対コンテンツ。
+(i) content-to-identifierまたはidentifier-to-content。
 For each constructed training sample, the input-output pair comprises the identifier and textual content of the same item, each serving interchangeably as input or output.
-構築された各トレーニングサンプルについて、入力と出力のペアは、同じ項目の識別子とテキストコンテンツで構成され、それぞれが入力または出力として交換可能に機能する。
+構築された各トレーニングサンプルについて、入力と出力のペアは、同じアイテムの識別子とテキストコンテンツであり、それぞれが入力または出力として交互に機能する。
 In addition to the item-wise alignment, (ii) user-to-content is another strategy to implicitly align the item identifier and the item content by pairing the user formulation with the next-item content [173].
-項目ごとの整列に加え、(ii)ユーザー対コンテンツは、ユーザー定式化と次の項目コンテンツを対にすることで、項目識別子と項目コンテンツを暗黙的に整列させるもう一つの戦略である[173]。
+アイテム単位のアライメントに加えて、(ii) user-to-contentは、ユーザの定式化を次のアイテムのコンテンツとペアリングすることで、アイテム識別子とアイテムコンテンツを暗黙的に整合させる別の戦略である[173]。
 Despite the effectiveness of various training strategies in adapting the generative models to recommendation tasks, the training costs are usually unaffordable, especially for LLMs such as LLaMA.
-生成モデルを推薦タスクに適応させるために様々な学習戦略が有効であるにもかかわらず、特にLLaMAのようなLLMの場合、学習コストは通常手が出ない。
+生成モデルを推薦タスクに適応させるために様々なトレーニング戦略が効果的であるにもかかわらず、トレーニングコストは通常手が出せないものであり、特にLLMAのようなLLMにとってはそうである。
 To improve training efficiency, recent efforts have focused on model architecture modification [99] and data pruning for LLM-based recommendation [83, 93].
-学習効率を向上させるために、最近ではモデル・アーキテクチャの修正[99]やLLMベースの推薦のためのデータ刈り込み[83, 93]に焦点が当てられている。
+学習効率を向上させるために、最近の取り組みは、モデルアーキテクチャの変更[99]とLLMベースの推薦のためのデータの剪定[83, 93]に焦点を当てている。
+
+<!-- ここまで読んだ! -->
 
 ## 5.5. Inference 推論
 
