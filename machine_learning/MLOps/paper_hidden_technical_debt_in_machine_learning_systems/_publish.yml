@@ -1,0 +1,4 @@
+- source: summary.md
+  quarto-pub:
+    - id: 38a73725-c673-4d38-b18f-11175dd1ec12
+      url: 'https://morinota.quarto.pub/y-tech-ai-wakuwaku-20240514'
