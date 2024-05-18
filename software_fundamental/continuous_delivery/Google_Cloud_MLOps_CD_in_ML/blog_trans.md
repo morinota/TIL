@@ -194,98 +194,92 @@ The following sections describe three levels of MLOps, starting from the most co
 ## MLOps level 0: Manual process MLOps レベル 0： 手動プロセス
 
 Many teams have data scientists and ML researchers who can build state-of-the-art models, but their process for building and deploying ML models is entirely manual.
-多くのチームには、最先端のモデルを構築できるデータサイエンティストやML研究者がいるが、MLモデルの構築とデプロイのプロセスはすべて手作業だ。
+多くのチームには、最先端のモデルを構築できるデータサイエンティストやML研究者がいるが、**MLモデルの構築とデプロイのプロセスはすべて手作業**だ。
 This is considered the basic level of maturity, or level 0.
 これは成熟度の基本レベル、つまりレベル0とみなされる。
 The following diagram shows the workflow of this process.
 次の図は、このプロセスのワークフローを示している。
 
 ![figure2]()
+Figure 2. Manual ML steps to serve the model as a prediction service.
+図2. モデルを予測サービスとして提供するための手動MLステップ。
 
 ### Characteristics 特徴
 
 The following list highlights the characteristics of the MLOps level 0 process, as shown in Figure 2:
 以下のリストは、図2に示すMLOpsレベル0プロセスの特徴を強調したものである：
 
-Manual, script-driven, and interactive process: Every step is manual, including data analysis, data preparation, model training, and validation.
-手動、スクリプト駆動、対話型プロセス： データ分析、データ準備、モデルのトレーニング、検証など、すべてのステップが手動で行われる。
-It requires manual execution of each step, and manual transition from one step to another.
-各ステップを手動で実行し、あるステップから別のステップへ手動で移行する必要がある。
-This process is usually driven by experimental code that is written and executed in notebooks by data scientist interactively, until a workable model is produced.
-このプロセスは通常、実行可能なモデルが生成されるまで、データサイエンティストがインタラクティブにノートブックに書いて実行する実験コードによって推進される。
-
-Disconnection between ML and operations: The process separates data scientists who create the model and engineers who serve the model as a prediction service.
-MLと運用の断絶： このプロセスでは、モデルを作成するデータサイエンティストと、予測サービスとしてモデルを提供するエンジニアが分離している。
-The data scientists hand over a trained model as an artifact to the engineering team to deploy on their API infrastructure.
-データサイエンティストは、学習済みのモデルを成果物としてエンジニアリングチームに渡し、APIインフラにデプロイしてもらう。
-This handoff can include putting the trained model in a storage location, checking the model object into a code repository, or uploading it to a models registry.
-このハンドオフには、学習済みモデルを保管場所に置くこと、モデルオブジェクトをコードリポジトリにチェックインすること、モデルレジストリにアップロードすることなどが含まれます。
-Then engineers who deploy the model need to make the required features available in production for low-latency serving, which can lead to training-serving skew.
-そうなると、モデルをデプロイするエンジニアは、低レイテンシーでサービスを提供するために必要な機能をプロダクションで利用できるようにする必要があり、トレーニングサービスのスキューにつながる可能性がある。
-
-Infrequent release iterations: The process assumes that your data science team manages a few models that don't change frequently—either changing model implementation or retraining the model with new data.
-頻繁にリリースを繰り返さない： このプロセスは、データサイエンスチームが、モデルの実装を変更したり、新しいデータでモデルを再トレーニングしたりするような、頻繁に変更されない少数のモデルを管理していることを想定している。
-A new model version is deployed only a couple of times per year.
-新バージョンの投入は年に2、3回しかない。
-
-No CI: Because few implementation changes are assumed, CI is ignored.
-CIなし： 実装の変更がほとんど想定されないため、CIは無視される。
-Usually, testing the code is part of the notebooks or script execution.
-通常、コードのテストはノートブックやスクリプトの実行の一部である。
-The scripts and notebooks that implement the experiment steps are source controlled, and they produce artifacts such as trained models, evaluation metrics, and visualizations.
-実験ステップを実装するスクリプトとノートブックはソース管理されており、学習済みモデル、評価メトリクス、ビジュアライゼーションなどの成果物を生成する。
-
-No CD: Because there aren't frequent model version deployments, CD isn't considered.
-CDはない： モデル・バージョンの頻繁なデプロイはないため、CDは考慮されない。
-
-Deployment refers to the prediction service: The process is concerned only with deploying the trained model as a prediction service (for example, a microservice with a REST API), rather than deploying the entire ML system.
-デプロイメントとは、予測サービスのことである： このプロセスは、MLシステム全体をデプロイするのではなく、学習済みモデルを予測サービス（例えば、REST APIを持つマイクロサービス）としてデプロイすることだけに関係しています。
-
-Lack of active performance monitoring: The process doesn't track or log the model predictions and actions, which are required in order to detect model performance degradation and other model behavioral drifts.
-能動的な性能モニタリングの欠如： このプロセスでは、モデルの予測やアクションを追跡したり、ログに記録したりすることができません。これは、モデルの性能低下やその他のモデルの動作のドリフトを検出するために必要です。
+- **Manual, script-driven, and interactive process**: Every step is manual, including data analysis, data preparation, model training, and validation.
+  手動、スクリプト駆動、対話型プロセス： データ分析、データ準備、モデルのトレーニング、検証など、すべてのステップが手動で行われる。
+  It requires manual execution of each step, and manual transition from one step to another.
+  各ステップを手動で実行し、あるステップから別のステップへ手動で移行する必要がある。
+  This process is usually driven by experimental code that is written and executed in notebooks by data scientist interactively, until a workable model is produced.
+  このプロセスは通常、データサイエンティストがノートブックで書かれ、実行される実験コードによって駆動され、作業可能なモデルが生成されるまで対話的に行われる。
+- **Disconnection between ML and operations**: The process separates data scientists who create the model and engineers who serve the model as a prediction service.
+  MLと運用の断絶： このプロセスでは、**モデルを作成するデータサイエンティストと、predictionサービスとしてモデルを提供するエンジニアが分離している**。
+  The data scientists hand over a trained model as an artifact to the engineering team to deploy on their API infrastructure.
+  データサイエンティストは、学習済みのモデルを成果物としてエンジニアリングチームに渡し、APIインフラにデプロイしてもらう。
+  This handoff can include putting the trained model in a storage location, checking the model object into a code repository, or uploading it to a models registry.
+  この引き渡しには、学習済みモデルをストレージ場所に配置したり、モデルオブジェクトをコードリポジトリにチェックインしたり、モデルレジストリにアップロードしたりすることが含まれる。
+  Then engineers who deploy the model need to make the required features available in production for low-latency serving, which can lead to training-serving skew.
+  そうなると、モデルをデプロイするエンジニアは、低レイテンシーの提供のために本番環境で必要な特徴量を利用可能にする必要があり、[training-serving skew](https://developers.google.com/machine-learning/guides/rules-of-ml/#training-serving_skew)につながる可能性がある。(=training時とserving時における性能の差)
+- **Infrequent release iterations**: The process assumes that your data science team manages a few models that don't change frequently—either changing model implementation or retraining the model with new data.
+  頻繁にリリースを繰り返さない： このプロセスは、データサイエンスチームが、モデルの実装を変更したり、新しいデータでモデルを再トレーニングしたりするような、頻繁に変更されない少数のモデルを管理していることを想定している。
+  A new model version is deployed only a couple of times per year.
+  **新バージョンの投入は年に2、3回しかない。**
+- **No CI**: Because few implementation changes are assumed, CI is ignored.
+  CIなし： 実装の変更がほとんど想定されないため、**CIは無視される**。(自動テスト的なことを意味してる??:thinking:)
+  Usually, testing the code is part of the notebooks or script execution.
+  通常、コードのテストはノートブックやスクリプトの実行の一部である。
+  The scripts and notebooks that implement the experiment steps are source controlled, and they produce artifacts such as trained models, evaluation metrics, and visualizations.
+  実験ステップを実装するスクリプトやノートブックはソースコントロールされ(i.e. バージョン管理され?)、学習済みモデル、評価メトリクス、視覚化などの成果物を生成する。
+- **No CD**: Because there aren't frequent model version deployments, CD isn't considered.
+  CDはない： モデル・バージョンの頻繁なデプロイはないため、CDは考慮されない。(自動デプロイもないってこと??:thinking:)
+- Deployment refers to the prediction service: The process is concerned only with deploying the trained model as a prediction service (for example, a microservice with a REST API), rather than deploying the entire ML system.
+  **デプロイメントとは、予測サービスのことである**： このプロセスは、MLシステム全体をデプロイするのではなく、学習済みモデルを予測サービス(ex. REST APIを持つマイクロサービス)としてデプロイすることに関心がある。(=CT pipelineをデプロイするのではなく、マニュアルで作ったモデルを推論サーバにデプロイする、みたいな事??:thinking:)
+- Lack of active performance monitoring: The process doesn't track or log the model predictions and actions, which are required in order to detect model performance degradation and other model behavioral drifts.
+  **能動的な性能モニタリングの欠如**: このプロセスでは、モデルの予測やアクションを追跡したり、ログに記録したりすることができません。これは、モデルの性能低下やその他のモデルの動作のドリフトを検出するために必要です。
 
 The engineering team might have their own complex setup for API configuration, testing, and deployment, including security, regression, and load and canary testing.
-エンジニアリングチームは、セキュリティ、リグレッション、負荷テスト、カナリアテストを含む、APIの設定、テスト、デプロイのための独自の複雑なセットアップを持っているかもしれない。
+エンジニアリングチームは、セキュリティ、退行、負荷、カナリアテストを含むAPIの設定、テスト、デプロイメントのための複雑なセットアップを持っているかもしれません。
 In addition, production deployment of a new version of an ML model usually goes through A/B testing or online experiments before the model is promoted to serve all the prediction request traffic.
-さらに、MLモデルの新バージョンの本番展開では、モデルがすべての予測要求トラフィックに対応するように昇格する前に、通常、A/Bテストやオンライン実験を行う。
+さらに、新しいバージョンのMLモデルの本番デプロイメントは、**通常、モデルがすべての予測リクエストトラフィックを提供する前に、A/Bテストやオンライン実験を経て行われます**。(これはいいことな気がする!!:thinking:)
 
 ### Challenges 課題
 
 MLOps level 0 is common in many businesses that are beginning to apply ML to their use cases.
-MLOpsレベル0は、MLをユースケースに適用し始めている多くの企業で一般的である。
+MLOpsレベル0は、MLをusecaseに適用し始める多くのビジネスで一般的です。
 This manual, data-scientist-driven process might be sufficient when models are rarely changed or trained.
-モデルの変更や訓練がめったに行われない場合は、このようなデータ科学者主導の手作業で十分かもしれない。
+モデルの変更や訓練がめったに行われない場合は、このような**手動のデータサイエンティスト駆動プロセス**で十分かもしれません。
 In practice, models often break when they are deployed in the real world.
-実際のところ、モデルは実戦に投入されると壊れてしまうことが多い。
+**実際のところ、モデルは実戦に投入されると壊れてしまうことが多い**。
 The models fail to adapt to changes in the dynamics of the environment, or changes in the data that describes the environment.
-モデルは環境のダイナミクスの変化や、環境を記述するデータの変化に適応できない。
+モデルは、環境のダイナミクスの変化や、環境を記述するデータの変化に適応できないことがあります。
 For more information, see Why Machine Learning Models Crash and Burn in Production.
-詳しくは、「機械学習モデルが本番でクラッシュ＆バーンする理由」を参照。
+詳しくは、[Why Machine Learning Models Crash and Burn in Production](https://www.forbes.com/sites/forbestechcouncil/2019/04/03/why-machine-learning-models-crash-and-burn-in-production/)を参照してください。
 
 To address these challenges and to maintain your model's accuracy in production, you need to do the following:
-このような課題に対処し、本番でモデルの精度を維持するためには、以下のことを行う必要があります：
+このような課題に対処し、**本番でモデルの精度を維持するためには**、以下のことを行う必要があります：
 
-Actively monitor the quality of your model in production: Monitoring lets you detect performance degradation and model staleness.
-プロダクションでのモデルの品質を積極的に監視します： モニタリングにより、パフォーマンスの低下やモデルの陳腐化を検出できます。
-It acts as a cue to a new experimentation iteration and (manual) retraining of the model on new data.
-これは、新たな実験反復と、新たなデータに対するモデルの（手作業による）再トレーニングへの手がかりとして機能する。
-
-Frequently retrain your production models: To capture the evolving and emerging patterns, you need to retrain your model with the most recent data.
-生産モデルを頻繁に再トレーニングする： 進化する新しいパターンを捉えるためには、最新のデータでモデルを再トレーニングする必要があります。
-For example, if your app recommends fashion products using ML, its recommendations should adapt to the latest trends and products.
-例えば、あなたのアプリがMLを使ってファッション製品をレコメンドする場合、そのレコメンドは最新のトレンドや製品に適応しなければならない。
-
-Continuously experiment with new implementations to produce the model: To harness the latest ideas and advances in technology, you need to try out new implementations such as feature engineering, model architecture, and hyperparameters.
-モデルを生成するために、新しい実装を継続的に実験する： 最新のアイデアとテクノロジーの進歩を利用するためには、特徴エンジニアリング、モデル・アーキテクチャ、ハイパーパラメータなどの新しい実装を試す必要がある。
-For example, if you use computer vision in face detection, face patterns are fixed, but better new techniques can improve the detection accuracy.
-例えば、顔検出でコンピューター・ビジョンを使用する場合、顔のパターンは固定されているが、より優れた新しい技術によって検出精度を向上させることができる。
+- Actively monitor the quality of your model in production: Monitoring lets you detect performance degradation and model staleness.
+  **プロダクションでのモデルの品質を積極的に監視する**： モニタリングにより、パフォーマンスの低下やモデルの陳腐化を検出できます。
+  It acts as a cue to a new experimentation iteration and (manual) retraining of the model on new data.
+  これは、新たな実験iterationと、新たなデータに対するモデルの(手作業による)再トレーニングへの手がかりとして機能する。
+- Frequently retrain your production models: To capture the evolving and emerging patterns, you need to retrain your model with the most recent data.
+  **productionモデルを頻繁に再トレーニングする**: 進化するパターンや新興パターンを捉えるためには、最新のデータでモデルを再トレーニングする必要がある。
+- Continuously experiment with new implementations to produce the model: To harness the latest ideas and advances in technology, you need to try out new implementations such as feature engineering, model architecture, and hyperparameters.
+  モデルを生成するために、**新しい実装で継続的に実験する**： 最新のアイデアや技術の進歩を活用するためには、フィーチャーエンジニアリング、モデルアーキテクチャ、ハイパーパラメータなどの新しい実装を試す必要がある。
+  For example, if you use computer vision in face detection, face patterns are fixed, but better new techniques can improve the detection accuracy.
+  例えば、顔検出でコンピューター・ビジョンを使用する場合、顔のパターンは固定されているが、より優れた新しい技術によって検出精度を向上させることができる。
 
 To address the challenges of this manual process, MLOps practices for CI/CD and CT are helpful.
-この手動プロセスの課題に対処するには、CI/CDとCTのためのMLOpsプラクティスが役に立つ。
+この手動プロセスの課題に対処するには、CI/CDとCTのためのMLOpsプラクティスが役に立つ。(=これがlevel 1っぽい。)
 By deploying an ML training pipeline, you can enable CT, and you can set up a CI/CD system to rapidly test, build, and deploy new implementations of the ML pipeline.
-MLトレーニングパイプラインをデプロイすることで、CTを有効にすることができ、MLパイプラインの新しい実装を迅速にテスト、ビルド、デプロイするCI/CDシステムをセットアップすることができる。
+**ML trainingパイプラインをデプロイする**ことで、CTを可能にし、CI/CDシステムを設定して、MLパイプラインの新しい実装を迅速にテスト、ビルド、デプロイすることができる。
 These features are discussed in more detail in the next sections.
 これらの特徴については、次のセクションで詳しく説明する。
+
+<!-- ここまで読んだ! -->
 
 ## MLOps level 1: ML pipeline automation MLOpsレベル1： MLパイプラインの自動化
 
