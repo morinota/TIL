@@ -6,7 +6,7 @@ https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-p
 # MLOps: Continuous delivery and automation pipelines in machine learning MLOps： 機械学習における継続的デリバリーと自動化パイプライン
 
 This document discusses techniques for implementing and automating continuous integration (CI), continuous delivery (CD), and continuous training (CT) for machine learning (ML) systems.
-この文書では、機械学習（ML）システムの継続的インテグレーション（CI）、継続的デリバリー（CD）、継続的トレーニング（CT）を実装し、自動化するための技術について説明する。
+この文書では、**機械学習（ML）システムの continuous integration (CI)、continuous delivery (CD)、continuous training (CT) を実装し自動化するためのテクニック**について説明します。
 
 Data science and ML are becoming core capabilities for solving complex real-world problems, transforming industries, and delivering value in all domains.
 データサイエンスとMLは、現実世界の複雑な問題を解決し、産業を変革し、あらゆる領域で価値を提供するための中核的な能力となりつつある。
@@ -30,43 +30,45 @@ This document is for data scientists and ML engineers who want to apply DevOps p
 MLOps is an ML engineering culture and practice that aims at unifying ML system development (Dev) and ML system operation (Ops).
 MLOpsは、MLシステム開発（Dev）とMLシステム運用（Ops）の一体化を目指すMLエンジニアリングの文化と実践である。
 Practicing MLOps means that you advocate for automation and monitoring at all steps of ML system construction, including integration, testing, releasing, deployment and infrastructure management.
-MLOpsを実践するということは、統合、テスト、リリース、デプロイメント、インフラ管理など、MLシステム構築のすべてのステップで自動化と監視を提唱するということだ。
+**MLOpsを実践するということは、統合、テスト、リリース、デプロイメント、インフラ管理など、MLシステム構築のすべてのステップで自動化と監視を提唱するということ**だ。(MLOpsの実践 = MLシステム構築のすべてのステップでの自動化と監視を提唱すること??:thinking:)
 
 Data scientists can implement and train an ML model with predictive performance on an offline holdout dataset, given relevant training data for their use case.
-データサイエンティストは、ユースケースに関連するトレーニングデータがあれば、オフラインのホールドアウトデータセットに予測性能を持つMLモデルを実装し、トレーニングすることができる。
+データサイエンティストは、usecaseに関連するトレーニングデータがあれば、オフラインのホールドアウトデータセットで予測性能の高いMLモデルを実装してトレーニングできる。
 However, the real challenge isn't building an ML model, the challenge is building an integrated ML system and to continuously operate it in production.
-しかし、本当の挑戦はMLモデルを構築することではなく、統合されたMLシステムを構築し、本番で継続的に運用することなのだ。
+しかし、**本当の挑戦はNLモデルを構築することではなく、統合されたMLシステムを構築し、それを本番環境で継続的に運用すること**だ。
 With the long history of production ML services at Google, we've learned that there can be many pitfalls in operating ML-based systems in production.
-グーグルにおける本番環境でのMLサービスの長い歴史の中で、MLベースのシステムを本番環境で運用する際に多くの落とし穴があることを学びました。
+グーグルにおける本番環境でのMLサービスの長い歴史の中で、**MLベースのシステムを本番環境で運用する際に多くの落とし穴がある**ことを学びました。
 Some of these pitfalls are summarized in Machine Learning: The high-interest credit card of technical debt.
-これらの落とし穴のいくつかは、機械学習にまとめられている： The high interest credit card of technical debt.
+これらの落とし穴のいくつかは、[Machine Learning: The high-interest credit card of technical debt](https://ai.google/research/pubs/pub43146) で要約されています。(技術的負債論文だ! 結局のところ、bebtではなく落とし穴やdifficultyの話な気がしてきた...!:thinking:)
 
 As shown in the following diagram, only a small fraction of a real-world ML system is composed of the ML code.
 以下の図に示すように、実際のMLシステムでは、MLコードで構成されるのはごく一部である。
 The required surrounding elements are vast and complex.
-必要とされる周囲の要素は膨大で複雑だ。
+必要とされる**周囲の要素は膨大で複雑**だ。(自分はここにもっと精通して強くなりたい...!:thinking:)
 
 ![figure1]()
+Figure 1. Elements for ML systems. Adapted from Hidden Technical Debt in Machine Learning Systems.
+図1. MLシステムの要素。[Hidden Technical Debt in Machine Learning Systems](https://ai.google/research/pubs/pub43146) から適応。
 
 In this diagram, the rest of the system is composed of configuration, automation, data collection, data verification, testing and debugging, resource management, model analysis, process and metadata management, serving infrastructure, and monitoring.
-この図では、システムの残りの部分は、コンフィギュレーション、自動化、データ収集、データ検証、テストとデバッグ、リソース管理、モデル分析、プロセスとメタデータの管理、サービング・インフラストラクチャ、モニタリングで構成されている。
+この図では、システムの残りの部分は、configuration(設定)、automation(自動化)、data collection(データ収集)、data verification(データ検証)、testing and debugging(テストとデバッグ)、resource management(リソース管理)、model analysis(モデル分析)、process and metadata management(プロセスとメタデータ管理)、serving infrastructure(提供インフラ)、monitoring(モニタリング)で構成されている。(うん、これらの要素には納得感がある...:thinking:)
 
 To develop and operate complex systems like these, you can apply DevOps principles to ML systems (MLOps).
 このような複雑なシステムを開発・運用するには、DevOpsの原則をMLシステムに適用すればよい（MLOps）。
 This document covers concepts to consider when setting up an MLOps environment for your data science practices, such as CI, CD, and CT in ML.
-このドキュメントでは、MLにおけるCI、CD、CTのようなデータサイエンスのプラクティスのためにMLOps環境をセットアップする際に考慮すべき概念について説明する。
+**このドキュメントでは、CI、CD、CTなどのデータサイエンスプラクティスのためのMLOps環境を設定する際に考慮すべき概念について説明します**。(GCPを使った具体的なsolutionの話じゃなくて良かった...!:thinking:)
 
 The following topics are discussed:
 以下のトピックが取り上げられている：
 
-DevOps versus MLOps
-DevOpsとMLOpsの比較
+- DevOps versus MLOps
+  DevOpsとMLOpsの比較
+- Steps for developing ML models
+  MLモデル開発のステップ
+- MLOps maturity levels
+  MLOpsの成熟度レベル
 
-Steps for developing ML models
-MLモデル開発のステップ
-
-MLOps maturity levels
-MLOpsの成熟度レベル
+<!-- ここまで読んだ! -->
 
 ## DevOps versus MLOps DevOps対MLOps
 
@@ -75,132 +77,119 @@ DevOpsは、大規模なソフトウェア・システムを開発・運用す�
 This practice provides benefits such as shortening the development cycles, increasing deployment velocity, and dependable releases.
 この実践は、開発サイクルの短縮、デプロイ速度の向上、信頼性の高いリリースといったメリットをもたらす。
 To achieve these benefits, you introduce two concepts in the software system development:
-これらのメリットを実現するために、ソフトウェア・システム開発では2つのコンセプトを導入する：
+これらのメリットを実現するために、ソフトウェア・システム開発では**2つの概念を導入**する：
 
-- Continuous Integration (CI) 継続的インテグレーション（CI）
-
-- Continuous Delivery (CD) 継続的デリバリー（CD）
+- Continuous Integration (CI, 継続的インテグレーション)
+- Continuous Delivery (CD, 継続的デリバリー)
+  - (継続的デリバリーは、継続的インテグレーションを包含した概念な気がしてるので、うーむ:thinking:)
 
 An ML system is a software system, so similar practices apply to help guarantee that you can reliably build and operate ML systems at scale.
-MLシステムはソフトウェア・システムであるため、同様のプラクティスが適用され、大規模なMLシステムを確実に構築・運用することができる。
+MLシステムはソフトウェア・システムであるため、同様の手法が適用され、スケールで信頼性の高いMLシステムを構築・運用できるようになる。(MLエンジニアである前にソフトウェアエンジニアである...!:thinking:)
 
 However, ML systems differ from other software systems in the following ways:
-しかし、MLシステムは他のソフトウェアシステムとは以下の点で異なる：
+**しかし、MLシステムは他のソフトウェアシステムとは以下の点で異なる**:
 
-Team skills: In an ML project, the team usually includes data scientists or ML researchers, who focus on exploratory data analysis, model development, and experimentation.
-チームのスキル： MLプロジェクトでは通常、チームにはデータサイエンティストやML研究者が含まれ、彼らは探索的データ分析、モデル開発、実験に集中する。
-These members might not be experienced software engineers who can build production-class services.
-これらのメンバーは、本番クラスのサービスを構築できる経験豊富なソフトウェア・エンジニアではないかもしれない。
-
-Development: ML is experimental in nature.
-開発： MLは実験的なものです。
-You should try different features, algorithms, modeling techniques, and parameter configurations to find what works best for the problem as quickly as possible.
-さまざまな機能、アルゴリズム、モデリング技法、パラメータ設定を試して、問題に最適なものをできるだけ早く見つけるべきである。
-The challenge is tracking what worked and what didn't, and maintaining reproducibility while maximizing code reusability.
-課題は、何がうまくいって何がうまくいかなかったかを追跡し、コードの再利用性を最大化しながら再現性を維持することだ。
-
-Testing: Testing an ML system is more involved than testing other software systems.
-テスト： MLシステムのテストは、他のソフトウェアシステムのテストよりも手間がかかる。
-In addition to typical unit and integration tests, you need data validation, trained model quality evaluation, and model validation.
-典型的な単体テストと統合テストに加えて、データ検証、学習済みモデルの品質評価、モデル検証が必要だ。
-
-Deployment: In ML systems, deployment isn't as simple as deploying an offline-trained ML model as a prediction service.
-デプロイメント： MLシステムでは、デプロイはオフラインで訓練されたMLモデルを予測サービスとしてデプロイするほど単純ではない。
-ML systems can require you to deploy a multi-step pipeline to automatically retrain and deploy model.
-MLシステムでは、モデルを自動的に再学習してデプロイするために、複数段階のパイプラインをデプロイする必要がある場合がある。
-This pipeline adds complexity and requires you to automate steps that are manually done before deployment by data scientists to train and validate new models.
-このパイプラインは複雑さを増し、データサイエンティストが新しいモデルをトレーニングし検証するために、デプロイ前に手動で行っていたステップを自動化する必要がある。
-
-Production: ML models can have reduced performance not only due to suboptimal coding, but also due to constantly evolving data profiles.
-生産： MLモデルは、最適でないコーディングのためだけでなく、常に進化するデータ・プロファイルのためにパフォーマンスが低下する可能性がある。
-In other words, models can decay in more ways than conventional software systems, and you need to consider this degradation.
-言い換えれば、モデルは従来のソフトウェア・システムよりも多くの点で劣化する可能性があり、この劣化を考慮する必要がある。
-Therefore, you need to track summary statistics of your data and monitor the online performance of your model to send notifications or roll back when values deviate from your expectations.
-したがって、データのサマリー統計を追跡し、モデルのオンラインパフォーマンスを監視して、値が予想から外れた場合に通知を送信したり、ロールバックしたりする必要がある。
+- **Team skills**: In an ML project, the team usually includes data scientists or ML researchers, who focus on exploratory data analysis, model development, and experimentation.
+  チームのスキル： MLプロジェクトでは通常、チームにはデータサイエンティストやML研究者が含まれ、彼らは探索的データ分析、モデル開発、実験に集中する。(**チームのスキル分布が通常のソフトウェア開発チームと異なる、みたいな??**:thinking:)
+  These members might not be experienced software engineers who can build production-class services.
+  これらのメンバーは、本番クラスのサービスを構築できる経験豊富なソフトウェア・エンジニアではないかもしれない。
+- Development: ML is experimental in nature.
+  開発： **MLは実験的な性質を持つ**。
+  You should try different features, algorithms, modeling techniques, and parameter configurations to find what works best for the problem as quickly as possible.
+  さまざまな機能、アルゴリズム、モデリング技術、パラメータ構成を試して、問題に最適なものをできるだけ早く見つける必要がある。
+  The challenge is tracking what worked and what didn't, and maintaining reproducibility while maximizing code reusability.
+  課題は、**何がうまくいったか、何がうまくいかなかったかを追跡**し、コードの再利用性を最大化しながら再現性を維持することだ。(実験のtrackingか～)
+- Testing: Testing an ML system is more involved than testing other software systems.
+  テスト： **MLシステムのテストは、他のソフトウェアシステムのテストよりも手間がかかる**。
+  In addition to typical unit and integration tests, you need data validation, trained model quality evaluation, and model validation.
+  典型的な単体テストと統合テストに加えて、データの検証、学習済みモデルの品質評価、モデルの検証が必要です。(最後のmodel validationは、モデルの品質評価と同じ意味に感じちゃうけど、なんだろう。想定通りの構造になってるかの検証とか??:thinking:)
+- Deployment: In ML systems, deployment isn't as simple as deploying an offline-trained ML model as a prediction service.
+  デプロイメント： MLシステムでは、オフラインでトレーニングされたMLモデルを予測サービスとしてデプロイするだけでは済まない。
+  ML systems can require you to deploy a multi-step pipeline to automatically retrain and deploy model.
+  MLシステムでは、**モデルを自動的に再トレーニングしてデプロイするためのマルチステップパイプラインをデプロイする必要がある**。(ex. 学習->学習済みモデルのpackaging-> 推論サーバにデプロイメントとか...??:thinking:)
+  This pipeline adds complexity and requires you to automate steps that are manually done before deployment by data scientists to train and validate new models.
+  このパイプラインは複雑さを増し、**データサイエンティストが新しいモデルをトレーニングして検証するためにデプロイメント前に手動で行っていたステップを自動化する必要がある**。(確かに...!:thinking:)
+- Production: ML models can have reduced performance not only due to suboptimal coding, but also due to constantly evolving data profiles.
+  生産： MLモデルは、最適でないコーディングのためだけでなく、**常に進化するデータ・プロファイルのためにパフォーマンスが低下する可能性がある**。(MLシステムは、外の世界と相互作用する特徴を持つから??debt論文でも主張されてた!!:thinking:)
+  In other words, models can decay in more ways than conventional software systems, and you need to consider this degradation.
+  **言い換えれば、モデルは従来のソフトウェアシステムよりも多くの方法で劣化する可能性があり、この劣化を考慮する必要がある**。(この言い換えが解釈しやすくて好き...!:thinking:)
+  Therefore, you need to track summary statistics of your data and monitor the online performance of your model to send notifications or roll back when values deviate from your expectations.
+  したがって、データの要約統計を追跡し、モデルのオンラインパフォーマンスを監視して、値が期待値から逸脱した場合に通知を送ったり、ロールバックしたりする必要がある。
 
 ML and other software systems are similar in continuous integration of source control, unit testing, integration testing, and continuous delivery of the software module or the package.
-MLと他のソフトウェアシステムは、ソース管理、単体テスト、統合テスト、ソフトウェアモジュールやパッケージの継続的デリバリーの継続的統合において類似している。
+MLと他のソフトウェアシステムは、ソースコントロールの継続的インテグレーション(=ソースコードの管理??:thinking:)、単体テスト、統合テスト、ソフトウェアモジュールやパッケージの継続的デリバリーにおいて類似している。
 However, in ML, there are a few notable differences:
-しかし、MLではいくつかの顕著な違いがある：
+しかし、MLではいくつかの顕著な違いがある:
 
-CI is no longer only about testing and validating code and components, but also testing and validating data, data schemas, and models.
-CIはもはや、コードやコンポーネントのテストと検証だけでなく、データ、データスキーマ、モデルのテストと検証も含んでいる。
+- CI is no longer only about testing and validating code and components, but also testing and validating data, data schemas, and models.
+  CIはもはや、コードやコンポーネントのテストと検証だけでなく、データ、データスキーマ、モデルのテストと検証も含んでいる。
+- CD is no longer about a single software package or a service, but a system (an ML training pipeline) that should automatically deploy another service (model prediction service).
+  CDは、もはや単一のソフトウェアパッケージやサービスのことではなく、別のサービス(モデル予測サービス)を自動的にデプロイするシステム(MLトレーニングパイプライン)のことである。
+  (Training pipelineを実行したら、prediction serviceに新しいendpointが追加される、みたいな感じ?? もしくはAPIのparameterで指定できるmodelの種類が追加されるみたいな感じかな:thinking:)
+- CT is a new property, unique to ML systems, that's concerned with automatically retraining and serving the models.
+  **CTは、MLシステム特有の新しい特性で、モデルを自動的に再トレーニングして提供することに関係している**。(モデルの性能低下を検知して、再トレーニング、みたいな事だよね。もしくはschedulingされたバッチでもいいし:thinking:)
 
-CD is no longer about a single software package or a service, but a system (an ML training pipeline) that should automatically deploy another service (model prediction service).
-CDは、もはや単一のソフトウェアパッケージやサービスのことではなく、別のサービス（モデル予測サービス）を自動的に展開するシステム（MLトレーニングパイプライン）のことである。
-
-CT is a new property, unique to ML systems, that's concerned with automatically retraining and serving the models.
-CTは、MLシステム特有の新しい特性で、モデルを自動的に再トレーニングして提供することに関係している。
+<!-- ここまで読んだ! -->
 
 The following section discusses the typical steps for training and evaluating an ML model to serve as a prediction service.
-以下のセクションでは、予測サービスとして機能するMLモデルのトレーニングと評価の典型的なステップについて説明する。
+以下のセクションでは、prediction service (=推論API?)として機能するMLモデルをトレーニングして評価するための典型的なステップについて説明します。
 
 ## Data science steps for ML MLのためのデータサイエンスのステップ
 
 In any ML project, after you define the business use case and establish the success criteria, the process of delivering an ML model to production involves the following steps.
-どのようなMLプロジェクトにおいても、ビジネスユースケースを定義し、成功基準を確立した後、MLモデルを本番環境に提供するプロセスには、以下のステップが含まれます。
+どのようなMLプロジェクトにおいても、ビジネスユースケースを定義し、成功基準を確立した後、MLモデルを本番環境に提供するプロセスには以下のステップが含まれる。
 These steps can be completed manually or can be completed by an automatic pipeline.
-これらのステップは、手動で完了させることもできるし、自動パイプラインで完了させることもできる。
+これらのステップは、手動で完了させることもできるし、自動パイプラインで完了させることもできる:
 
-Data extraction: You select and integrate the relevant data from various data sources for the ML task.
-データ抽出： MLタスクのために、様々なデータソースから関連するデータを選択し、統合する。
-
-Data analysis: You perform exploratory data analysis (EDA) to understand the available data for building the ML model.
-データ分析： MLモデルを構築するために利用可能なデータを理解するために、探索的データ分析（EDA）を行う。
-This process leads to the following:
-このプロセスは次のような結果をもたらす：
-
-Understanding the data schema and characteristics that are expected by the model.
-モデルが期待するデータスキーマと特性を理解する。
-
-Identifying the data preparation and feature engineering that are needed for the model.
-モデルに必要なデータ準備とフィーチャーエンジニアリングを特定する。
-
-Data preparation: The data is prepared for the ML task.
-データの準備： データはMLタスクのために準備される。
-This preparation involves data cleaning, where you split the data into training, validation, and test sets.
-この準備には、データをトレーニングセット、検証セット、テストセットに分けるデータクリーニングが含まれる。
-You also apply data transformations and feature engineering to the model that solves the target task.
-また、対象のタスクを解決するモデルに、データ変換とフィーチャーエンジニアリングを適用する。
-The output of this step are the data splits in the prepared format.
-このステップの出力は、準備されたフォーマットでのデータ分割である。
-
-Model training: The data scientist implements different algorithms with the prepared data to train various ML models.
-モデルのトレーニング： データサイエンティストは、様々なMLモデルを訓練するために、準備されたデータを使って様々なアルゴリズムを実装する。
-In addition, you subject the implemented algorithms to hyperparameter tuning to get the best performing ML model.
-さらに、実装されたアルゴリズムをハイパーパラメータ・チューニングにかけることで、最高のパフォーマンスを持つMLモデルを得ることができます。
-The output of this step is a trained model.
-このステップの出力は学習済みモデルである。
-
-Model evaluation: The model is evaluated on a holdout test set to evaluate the model quality.
-モデルの評価： モデルの品質を評価するために、ホールドアウトテストセットでモデルを評価する。
-The output of this step is a set of metrics to assess the quality of the model.
-このステップの出力は、モデルの品質を評価するための一連のメトリクスである。
-
-Model validation: The model is confirmed to be adequate for deployment—that its predictive performance is better than a certain baseline.
-モデルの検証： モデルが展開に適切であること、つまり予測性能が一定の基準値よりも優れていることを確認する。
-
-Model serving: The validated model is deployed to a target environment to serve predictions.
-モデルの提供： 検証されたモデルは、ターゲット環境に配備され、予測を提供する。
-This deployment can be one of the following:
-この配備は以下のいずれかになる：
-
-Microservices with a REST API to serve online predictions.
-オンライン予測を提供するREST APIを備えたマイクロサービス。
-
-An embedded model to an edge or mobile device.
-エッジデバイスやモバイルデバイスへの組み込みモデル。
-
-Part of a batch prediction system.
-一括予測システムの一部。
-
-Model monitoring: The model predictive performance is monitored to potentially invoke a new iteration in the ML process.
-モデルのモニタリング： モデルの予測性能は、MLプロセスの新しい反復を呼び出す可能性があるために監視される。
+1. **Data extraction**: You select and integrate the relevant data from various data sources for the ML task.
+   データ抽出： MLタスクのために、様々なデータソースから関連するデータを選択し、統合する。
+2. **Data analysis**: You perform exploratory data analysis (EDA) to understand the available data for building the ML model.
+   データ分析： MLモデルを構築するために利用可能なデータを理解するために、探索的データ分析（EDA）を行う。
+   This process leads to the following:
+   このプロセスは次のような結果をもたらす：
+   - Understanding the data schema and characteristics that are expected by the model.
+     モデルが期待するデータスキーマと特性を理解する。(data schema = データ構造、とみなして良さそう。)
+   - Identifying the data preparation and feature engineering that are needed for the model.
+     モデルに必要なデータ準備とフィーチャーエンジニアリングを特定する。
+3. **Data preparation**: The data is prepared for the ML task.
+   データの準備： データはMLタスクのために準備される。
+   This preparation involves data cleaning, where you split the data into training, validation, and test sets.
+   この準備には、データをトレーニングセット、検証セット、テストセットに分けるデータクリーニングが含まれる。
+   You also apply data transformations and feature engineering to the model that solves the target task.
+   また、対象のタスクを解決するモデルに、データ変換とフィーチャーエンジニアリングを適用する。
+   The output of this step are the data splits in the prepared format.
+   このステップの出力は、準備されたフォーマットでのデータ分割である。
+4. **Model training**: The data scientist implements different algorithms with the prepared data to train various ML models.
+   モデルのトレーニング： データサイエンティストは、様々なMLモデルを訓練するために、準備されたデータを使って様々なアルゴリズムを実装する。
+   In addition, you subject the implemented algorithms to hyperparameter tuning to get the best performing ML model.
+   さらに、実装されたアルゴリズムをハイパーパラメータ・チューニングにかけることで、最高のパフォーマンスを持つMLモデルを得ることができます。
+   The output of this step is a trained model.
+   このステップの出力は学習済みモデルである。
+5. **Model evaluation**: The model is evaluated on a holdout test set to evaluate the model quality.
+   モデルの評価： モデルの品質を評価するために、ホールドアウトテストセットでモデルを評価する。
+   The output of this step is a set of metrics to assess the quality of the model.
+   このステップの出力は、モデルの品質を評価するための一連のメトリクスである。
+6. **Model validation**: The model is confirmed to be adequate for deployment—that its predictive performance is better than a certain baseline.
+   モデルの検証： モデルがデプロイメントに適していることが確認される。つまり、その予測性能がある基準よりも優れていることが確認される。(評価した結果からvalidationするってことね:thinking:)
+7. **Model serving**: The validated model is deployed to a target environment to serve predictions.
+   モデルの提供： 検証されたモデルは、ターゲット環境に配備され、予測を提供する。
+   This deployment can be one of the following:
+   **このデプロイは以下のいずれかになる**：
+   - Microservices with a REST API to serve online predictions.
+     オンライン予測を提供するREST APIを備えたマイクロサービス。
+   - An embedded model to an edge or mobile device.
+     エッジデバイスやモバイルデバイスへの組み込みモデル。
+   - Part of a batch prediction system.
+     batch predictionシステムの一部。
+8. **Model monitoring**: The model predictive performance is monitored to potentially invoke a new iteration in the ML process.
+   モデルのモニタリング： モデルの予測性能は、MLプロセスの新しいイテレーションを呼び起こす可能性があるため、モニタリングされる。(i.e. モデルの性能低下やデータの特性のdriftが検知された場合には、それをtriggerとしてモデルの再学習が実行される、みたいな感じっぽい:thinking:)
 
 The level of automation of these steps defines the maturity of the ML process, which reflects the velocity of training new models given new data or training new models given new implementations.
-これらのステップの自動化のレベルは、MLプロセスの成熟度を定義する。これは、新しいデータを使って新しいモデルをトレーニングする速度や、新しい実装を使って新しいモデルをトレーニングする速度を反映する。
+**これらのステップの自動化のレベルは、MLプロセスの成熟度を定義する**。そしてそれは、新しいデータを与えられた場合の新しいモデルのトレーニングの速度や、新しい実装を与えられた場合の新しいモデルのトレーニングの速度を反映している。
 The following sections describe three levels of MLOps, starting from the most common level, which involves no automation, up to automating both ML and CI/CD pipelines.
-以下のセクションでは、自動化を伴わない最も一般的なレベルから、MLとCI/CDパイプラインの両方を自動化するレベルまで、MLOpsの3つのレベルについて説明する。
+以下のセクションでは、自動化を伴わない最も一般的なレベルから、MLとCI/CDパイプラインの両方を自動化するレベルまで、**MLOpsの(成熟度の)3つのレベルについて**説明する。
+
+<!-- ここまで読んだ! -->
 
 ## MLOps level 0: Manual process MLOps レベル 0： 手動プロセス
 
