@@ -36,7 +36,7 @@
 以下は、ざっくりリアルタイム推論エンドポイントに必要なもの達。
 
 - 1. 学習済みモデルのデータや推論コードをpackagingした概念である **Model Artifact** をS上に用意する。(model.tar.gzの形式のやつ...!:thinking:)
-  - Sagemaker Python SDKの場合は
+  - Boto3だとマニュアルでS3上にmodel artifactを用意しておく必要があるみたい。Sagemaker Python SDKの場合は、ローカルストレージ上の`source_dir`と`entry_point`を指定して、model artifactを作成できるらしい...!(ここは、batch jobサービスと同様:thinking:)
 - 2. エンドポイントのデプロイ時にmodel artifactやdocker imageにアクセスする為のIAMロールを用意する。
   - このIAM roleは、model artifactと一緒に model としてpackagingされる。
 - 3. 推論に必要な情報をpackagingした概念である **Model** を用意する。
