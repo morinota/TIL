@@ -52,6 +52,7 @@
 - 4. エンドポイントの稼働に必要な情報を定義した Sagemaker Endpoint Configuration を用意する。
   - 手順3で定義したモデルを動かすための、computing resourcesの指定。
   - ex. インスタンスタイプ, インスタンス数, etc.
+  - サーバレス推論の場合は、ここの設定だけが推論エンドポイントと異なるみたい! `ServerlessConfig`を追加する感じ...!:thinking:
 - 5. Sagemaker エンドポイントを作成する。
   - 手順3で定義したモデルを、手順4で定義したcomputing resourcesで動かし、リクエストを受け取ったら推論結果を返すようにする。
 
@@ -95,7 +96,8 @@ model.tar.gz
     - 第二引数が追加情報(optional)。
   - `input_fn()`: クライアントからのリクエストデータを取得し、推論で利用可能な形式に変換する関数。
     - 第一引数: リクエストデータのボディ。
-    - 第二引数: リクエストデータのContent-Type。
+    - 第二引数: リクエストデータのContent-Type。(i.e. MIMEタイプ)
+      - (REST APIの `ContentType` headerで指定されるやつ..!:thinking:)
     - 第三引数: 追加情報(optional)。
     - (任意の前処理を実装できる...!:thinking:)
   - `predict_fn()`: 推論ロジックを実行する関数。
@@ -104,7 +106,8 @@ model.tar.gz
     - 第三引数: 追加情報(optional)。
   - `output_fn()`: 推論結果をクライアントに返す形式に変換する関数。
     - 第一引数: `predict_fn()`でreturnされたオブジェクト。
-    - 第二引数: レスポンスデータのContent-Type。(i.e. MIMEタイプ)
+    - 第二引数: レスポンスデータのContent-Type。(i.e. MIMEタイプ):
+      - (REST APIの `Accept` headerで指定されるやつ..!:thinking:)
     - 第三引数: 追加情報(optional)。
     - (任意の後処理を実装できる...!:thinking:)
 - 4つの必須関数の実行タイミング:
