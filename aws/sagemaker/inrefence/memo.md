@@ -48,7 +48,7 @@
     - 追加設定(optional)
       - ex. VPC 設定, multi-model deploy, multi-container deploy, etc.
   - (Model packageもほぼ同じ概念??:thinking:)
-  - (batch transformの場合は、手順3まででOKになる。)
+  - (batch transformの場合は、手順3まででOKになる。modelを用意したあとで`create_transform_job`を起動する感じ...!:thinking:)
 - 4. エンドポイントの稼働に必要な情報を定義した Sagemaker Endpoint Configuration を用意する。
   - 手順3で定義したモデルを動かすための、computing resourcesの指定。
   - ex. インスタンスタイプ, インスタンス数, etc.
