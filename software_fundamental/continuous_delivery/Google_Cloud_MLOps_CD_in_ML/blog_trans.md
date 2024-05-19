@@ -284,115 +284,109 @@ These features are discussed in more detail in the next sections.
 ## MLOps level 1: ML pipeline automation MLOpsレベル1： MLパイプラインの自動化
 
 The goal of level 1 is to perform continuous training of the model by automating the ML pipeline; this lets you achieve continuous delivery of model prediction service.
-レベル1の目標は、MLパイプラインを自動化することにより、モデルの継続的な学習を行うことです。これにより、モデル予測サービスの継続的な提供を実現できます。
+レベル1の目標は、**MLパイプラインを自動化することにより、モデルの継続的な学習を行うこと**です。これにより、モデル予測サービスの継続的な提供を実現できます。(CTを達成できてたらlevel 1??)
 To automate the process of using new data to retrain models in production, you need to introduce automated data and model validation steps to the pipeline, as well as pipeline triggers and metadata management.
 新しいデータを使用して本番でモデルを再トレーニングするプロセスを自動化するには、パイプラインに自動化されたデータとモデルの検証ステップ、パイプライントリガーとメタデータ管理を導入する必要があります。
 
 The following figure is a schematic representation of an automated ML pipeline for CT.
 次の図は、CTのための自動化されたMLパイプラインの概略図である。
+(あ、GoogleのMLOps Mapじゃん!どこから手を付けていいか分かりづらいやつ...!:thinking:)
 
 ![figure3]()
+Figure 3. ML pipeline automation for CT.
 
 ### Characteristics 特徴
 
 The following list highlights the characteristics of the MLOps level 1 setup, as shown in Figure 3:
-以下のリストは、図3に示すMLOpsレベル1のセットアップの特徴を強調したものである：
+以下のリストは、**図3に示すMLOpsレベル1のセットアップの特徴**を強調したものである：
 
-Rapid experiment: The steps of the ML experiment are orchestrated.
-迅速な実験： ML実験のステップはオーケストレーションされる。
-The transition between steps is automated, which leads to rapid iteration of experiments and better readiness to move the whole pipeline to production.
-ステップ間の移行は自動化されており、実験の迅速な反復と、パイプライン全体を本番に移行させる準備の良さにつながっている。
+- Rapid experiment: The steps of the ML experiment are orchestrated.
+  **迅速な実験**： ML実験のステップはオーケストレーションされる。
+  The transition between steps is automated, which leads to rapid iteration of experiments and better readiness to move the whole pipeline to production.
+  ステップ間の移行は自動化されており、実験の迅速な反復と、パイプライン全体を本番に移行させる準備の良さにつながっている。
+  (もっと迅速にできるように頑張りたい...!:thinking:)
+- CT of the model in production: The model is automatically trained in production using fresh data based on live pipeline triggers, which are discussed in the next section.
+  **本番環境におけるモデルの CT**： モデルは、次のセクションで説明するライブ・パイプライン・トリガーに基づく新鮮なデータを使用して、本番環境で自動的にトレーニングされる。
+- Experimental-operational symmetry: The pipeline implementation that is used in the development or experiment environment is used in the preproduction and production environment, which is a key aspect of MLOps practice for unifying DevOps.
+  **実験と運用の対称性**： **開発または実験環境で使用されるパイプラインの実装は、プリプロダクションおよびプロダクション環境でも使用される**。これは、DevOpsを統一するためのMLOpsプラクティスの重要な側面である。
+  (これは本当にそう! 以前の recommendation industry talksの懇親会で喋って納得してた話...!:thinking:)
+- Modularized code for components and pipelines: To construct ML pipelines, components need to be reusable, composable, and potentially shareable across ML pipelines.
+  **コンポーネントとパイプラインのためのモジュール化されたコード**： MLパイプラインを構築するためには、**コンポーネントはreusable(再利用可能)で、composable(=組み合わせ可能)であり、MLパイプライン全体で共有可能である必要がある**。(=pipelineを生やすスピードを高める為にも、各componentのreusable性とcomposable性は必要だよな...!:thinking:)
+  Therefore, while the EDA code can still live in notebooks, the source code for components must be modularized.
+  そのため、EDAコードはノートブックに残すことができますが、コンポーネントのソースコードはモジュール化されている必要があります。
+  In addition, components should ideally be containerized to do the following:
+  **さらに、以下の事を満たせるように、コンポーネントは理想的にはコンテナ化されるべき**：
+  - Decouple the execution environment from the custom code runtime.
+    実行環境をカスタムコードのruntimeから切り離す。(i.e. コードがどの環境でも一貫して動作するようにする?:thinking:)
+  - Make code reproducible between development and production environments.
+    開発環境と本番環境でコードの再現性を高める。
+    (コンテナはコードとその依存関係をpackagingする為、devとprodで同じコンテナを使用することで再現性が高まる?:thinking:)
+  - Isolate each component in the pipeline.
+    パイプラインの各コンポーネントを分離する。
+    Components can have their own version of the runtime environment, and have different languages and libraries.
+    **各componentsは独自のバージョンのランタイム環境を持つことができ**、異なる言語やライブラリを持つことができる。(=runtime環境やcomputing resourceをcomponent毎に最適化できる、みたいな??:thinking:)
+- Continuous delivery of models: An ML pipeline in production continuously delivers prediction services to new models that are trained on new data.
+  **モデルの継続的デリバリー**： 本番稼動中のMLパイプラインは、新しいデータでトレーニングされた新しいモデルに予測サービスを継続的に提供する。(たぶんCT pipelineの後半のstepに、推論APIへのモデルデプロイのstepが含まれている、って話...!:thinking:)
+  The model deployment step, which serves the trained and validated model as a prediction service for online predictions, is automated.
+  モデルデプロイメントステップは、train & validate されたモデルをオンライン予測用の予測サービスとして提供するために自動化されている。
+- Pipeline deployment: In level 0, you deploy a trained model as a prediction service to production.
+  パイプラインデプロイメント： レベル0では、トレーニングされたモデルを(マニュアルで)予測サービスとして本番環境にデプロイする。
+  For level 1, you deploy a whole training pipeline, which automatically and recurrently runs to serve the trained model as the prediction service.
+  レベル1では、**トレーニングパイプライン全体をデプロイし**、自動的に繰り返し実行して、トレーニングされたモデルを予測サービスとして提供する。
 
-CT of the model in production: The model is automatically trained in production using fresh data based on live pipeline triggers, which are discussed in the next section.
-本番環境におけるモデルの CT： モデルは、次のセクションで説明するライブ・パイプライン・トリガーに基づく新鮮なデータを使用して、本番環境で自動的にトレーニングされる。
-
-Experimental-operational symmetry: The pipeline implementation that is used in the development or experiment environment is used in the preproduction and production environment, which is a key aspect of MLOps practice for unifying DevOps.
-実験と運用の対称性： 開発または実験環境で使用されるパイプラインの実装は、プリプロダクションおよびプロダクション環境でも使用される。これは、DevOpsを統一するためのMLOpsプラクティスの重要な側面である。
-
-Modularized code for components and pipelines: To construct ML pipelines, components need to be reusable, composable, and potentially shareable across ML pipelines.
-コンポーネントとパイプラインのためのモジュール化されたコード： MLパイプラインを構築するためには、コンポーネントは再利用可能で、コンポーザブルであり、MLパイプライン間で共有できる可能性がある必要がある。
-Therefore, while the EDA code can still live in notebooks, the source code for components must be modularized.
-そのため、EDAコードはノートブックで管理できるが、コンポーネントのソースコードはモジュール化しなければならない。
-In addition, components should ideally be containerized to do the following:
-さらに、コンポーネントは理想的にはコンテナ化され、以下のことができるようにすべきである：
-
-Decouple the execution environment from the custom code runtime.
-実行環境をカスタムコードのランタイムから切り離す。
-
-Make code reproducible between development and production environments.
-開発環境と本番環境でコードの再現性を高める。
-
-Isolate each component in the pipeline.
-パイプラインの各コンポーネントを分離する。
-Components can have their own version of the runtime environment, and have different languages and libraries.
-コンポーネントは独自のバージョンのランタイム環境を持つことができ、異なる言語やライブラリを持つことができる。
-
-Continuous delivery of models: An ML pipeline in production continuously delivers prediction services to new models that are trained on new data.
-モデルの継続的デリバリー： 本番稼動中のMLパイプラインは、新しいデータでトレーニングされた新しいモデルに予測サービスを継続的に提供する。
-The model deployment step, which serves the trained and validated model as a prediction service for online predictions, is automated.
-学習・検証されたモデルをオンライン予測サービスとして提供するモデル展開ステップは自動化されている。
-
-Pipeline deployment: In level 0, you deploy a trained model as a prediction service to production.
-パイプラインデプロイメント： レベル0では、学習済みモデルを予測サービスとして本番環境にデプロイします。
-For level 1, you deploy a whole training pipeline, which automatically and recurrently runs to serve the trained model as the prediction service.
-レベル1では、トレーニングパイプライン全体をデプロイし、トレーニングされたモデルを予測サービスとして提供するために自動的かつ反復的に実行する。
+<!-- ここまで読んだ! -->
 
 ### Additional components 追加コンポーネント
 
 This section discusses the components that you need to add to the architecture to enable ML continuous training.
-このセクションでは、MLの継続的なトレーニングを可能にするためにアーキテクチャに追加する必要があるコンポーネントについて説明します。
+このセクションでは、**MLのCTを可能にするためにアーキテクチャに追加する必要があるコンポーネント**について説明します。
 
 #### Data and model validation データとモデルの検証
 
 When you deploy your ML pipeline to production, one or more of the triggers discussed in the ML pipeline triggers section automatically executes the pipeline.
-MLパイプラインを本番環境にデプロイすると、MLパイプラインのトリガーセクションで説明した1つ以上のトリガーが自動的にパイプラインを実行します。
+MLパイプラインを本番環境にデプロイすると、[MLパイプラインのトリガーセクション](https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning#ml_pipeline_triggers)で説明した1つ以上のトリガーが自動的にパイプラインを実行します。
 The pipeline expects new, live data to produce a new model version that is trained on the new data (as shown in Figure 3).
 パイプラインは、新しいデータでトレーニングされた新しいモデルのバージョンを生成するために、新しいライブデータを期待する（図3に示すように）。
 Therefore, automated data validation and model validation steps are required in the production pipeline to ensure the following expected behavior:
-したがって、以下のような期待される挙動を保証するために、自動化されたデータ検証およびモデル検証ステップがプロダクションパイプラインで必要とされる：
+したがって、以下のような期待される挙動を保証するために、**自動化されたデータ検証およびモデル検証ステップがプロダクションパイプラインで必要**とされる：
 
-Data validation: This step is required before model training to decide whether you should retrain the model or stop the execution of the pipeline.
-データ検証： このステップはモデルトレーニングの前に必要で、モデルを再トレーニングするかパイプラインの実行を停止するかを決定する。
-This decision is automatically made if the following was identified by the pipeline.
-この決定は、パイプラインによって以下のことが確認された場合に自動的に行われる。
-
-Data schema skews: These skews are considered anomalies in the input data, which means that the downstream pipeline steps, including data processing and model training, receives data that doesn't comply with the expected schema.
-データスキーマの歪み： これらのスキューは入力データの異常とみなされ、データ処理やモデル学習を含む下流のパイプラインステップが、期待されるスキーマに準拠していないデータを受け取ることを意味する。
-In this case, you should stop the pipeline so the data science team can investigate.
-この場合、データサイエンスチームが調査できるように、パイプラインを止めるべきである。
-The team might release a fix or an update to the pipeline to handle these changes in the schema.
-チームは、スキーマの変更を処理するために、パイプラインの修正やアップデートをリリースするかもしれない。
-Schema skews include receiving unexpected features, not receiving all the expected features, or receiving features with unexpected values.
-スキーマの歪みには、予期せぬフィーチャーを受け取ること、期待されたフィーチャーをすべて受け取らないこと、予期せぬ値を持つフィーチャーを受け取ることなどが含まれる。
-
-Data values skews: These skews are significant changes in the statistical properties of data, which means that data patterns are changing, and you need to trigger a retraining of the model to capture these changes.
-データ値の歪み： これはデータのパターンが変化していることを意味し、これらの変化を捉えるためにモデルの再トレーニングを行う必要があります。
-
-Model validation: This step occurs after you successfully train the model given the new data.
-モデルの検証： このステップは、新しいデータを使ってモデルの訓練に成功した後に行われる。
-You evaluate and validate the model before it's promoted to production.
-本番稼動前にモデルを評価し、検証する。
-This offline model validation step consists of the following.
-このオフラインのモデル検証ステップは、以下のように構成されている。
-
-Producing evaluation metric values using the trained model on a test dataset to assess the model's predictive quality.
-モデルの予測品質を評価するために、テストデータセット上で学習済みモデルを使用して評価指標値を生成する。
-
-Comparing the evaluation metric values produced by your newly trained model to the current model, for example, production model, baseline model, or other business-requirement models.
-新しく学習したモデルによって生成された評価指標値を、現在のモデル（たとえば、生産モデル、ベースラインモデル、または他のビジネス要件モデル）と比較します。
-You make sure that the new model produces better performance than the current model before promoting it to production.
-新モデルが現行モデルよりも優れたパフォーマンスを発揮することを確認してから、生産に移行する。
-
-Making sure that the performance of the model is consistent on various segments of the data.
-モデルの性能がデータの様々なセグメントで一貫していることを確認する。
-For example, your newly trained customer churn model might produce an overall better predictive accuracy compared to the previous model, but the accuracy values per customer region might have large variance.
-例えば、新しくトレーニングされた顧客解約モデルは、以前のモデルと比較して全体的に優れた予測精度を出すかもしれませんが、顧客地域ごとの精度値は大きなばらつきがあるかもしれません。
-
-Making sure that you test your model for deployment, including infrastructure compatibility and consistency with the prediction service API.
-インフラの互換性や予測サービスAPIとの整合性など、展開のためのモデルのテストを確実に行うこと。
+- Data validation: This step is required before model training to decide whether you should retrain the model or stop the execution of the pipeline.
+  データ検証： このステップはモデルトレーニングの前に必要で、**モデルを再トレーニングするかパイプラインの実行を停止するかを決定**する。(有効な学習データじゃなければ、pipelineを停止する...!:thinking:)
+  This decision is automatically made if the following was identified by the pipeline.
+  この決定は、パイプラインによって以下のことが確認された場合に自動的に行われる。
+  - Data schema skews: These skews are considered anomalies in the input data, which means that the downstream pipeline steps, including data processing and model training, receives data that doesn't comply with the expected schema.
+    **データスキーマ(i.e. データ構造)の歪み**： これらのスキューは入力データの異常とみなされ、データ処理やモデル学習を含む下流のパイプラインステップが、期待されるスキーマに準拠していないデータを受け取ることを意味する。
+    In this case, you should stop the pipeline so the data science team can investigate.
+    この場合、**データサイエンスチームが調査できるように、パイプラインを止めるべきである**。(うんうん、何かしらバグがあるってことだもんね...!:thinking:)
+    The team might release a fix or an update to the pipeline to handle these changes in the schema.
+    チームは、スキーマの変更を処理するために、パイプラインの修正やアップデートをリリースするかもしれない。
+    Schema skews include receiving unexpected features, not receiving all the expected features, or receiving features with unexpected values.
+    スキーマの歪みには、予期せぬ特徴量の受信、期待されるすべての特徴量の受信がない、または予期しない値の特徴量の受信が含まれる。
+  - Data values skews: These skews are significant changes in the statistical properties of data, which means that data patterns are changing, and you need to trigger a retraining of the model to capture these changes.
+    **データ値の歪み**： これはデータのパターンが変化していることを意味し、これらの変化を捉えるためにモデルの再トレーニングを行う必要があります。(**driftってやつだ、そうか、逆にdriftが発生してなければCT pipelineを早期終了すればいいのか**...!:thinking:)
+- Model validation: This step occurs after you successfully train the model given the new data.
+  **モデルの検証**： このステップは、新しいデータを使ってモデルの訓練に成功した後に行われる。
+  You evaluate and validate the model before it's promoted to production.
+  本番稼動前にモデルを評価し、検証する。
+  This offline model validation step consists of the following.
+  このオフラインのモデル検証ステップは、以下のように構成されている。
+  - Producing evaluation metric values using the trained model on a test dataset to assess the model's predictive quality.
+    モデルの予測品質を評価するために、テストデータセット上で学習済みモデルを使用して評価指標値を生成する。
+  - Comparing the evaluation metric values produced by your newly trained model to the current model, for example, production model, baseline model, or other business-requirement models.
+    **新しく学習したモデルによって生成された評価指標値を、現在のモデル（たとえば、生産モデル、ベースラインモデル、または他のビジネス要件モデル）と比較**します。
+    You make sure that the new model produces better performance than the current model before promoting it to production.
+    新モデルが現行モデルよりも優れたパフォーマンスを発揮することを確認してから、生産に移行する。
+  - Making sure that the performance of the model is consistent on various segments of the data.
+    モデルの性能がデータの様々なセグメントで一貫していることを確認する。(特定のセグメントに特化したモデルになってないか、を確認する??:thinking:)
+    For example, your newly trained customer churn model might produce an overall better predictive accuracy compared to the previous model, but the accuracy values per customer region might have large variance.
+    例えば、新しくトレーニングされた顧客解約(customer churn)モデルは、以前のモデルと比較して全体的な予測精度が向上するかもしれませんが、顧客地域ごとの精度値には大きな分散があるかもしれません。
+  - Making sure that you test your model for deployment, including infrastructure compatibility and consistency with the prediction service API.
+    インフラの互換性や予測サービスAPIとの整合性など、デプロイのためのモデルのテストを確実に行うこと。
 
 In addition to offline model validation, a newly deployed model undergoes online model validation—in a canary deployment or an A/B testing setup—before it serves prediction for the online traffic.
-オフラインでのモデル検証に加えて、新しくデプロイされたモデルは、オンライントラフィックの予測を行う前に、カナリアデプロイメントやA/Bテストのセットアップでオンラインモデルの検証を受ける。
+オフラインでのモデル検証に加えて、新しくデプロイされたモデルは、オンライントラフィックの予測を提供する前に、**カナリアデプロイメントまたはA/Bテストのセットアップでオンラインモデル検証を受けます**。(うんうん)
+
+<!-- ここまで読んだ! -->
 
 #### Feature store 特集ストア
 
