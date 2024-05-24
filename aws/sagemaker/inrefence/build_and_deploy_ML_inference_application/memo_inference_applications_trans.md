@@ -9,7 +9,7 @@ As machine learning (ML) goes mainstream and gains wider adoption, ML-powered in
 The solution to these complex business problems often requires using multiple ML models and steps.
 このような複雑なビジネス問題の解決には、多くの場合、複数のMLモデルとステップを使用する必要がある。
 This post shows you how to build and host an ML application with custom containers on Amazon SageMaker.
-この投稿では、Amazon SageMaker上でカスタムコンテナを使ってMLアプリケーションを構築し、ホストする方法を紹介します。
+この投稿では、**Amazon SageMaker上でカスタムコンテナを使ってMLアプリケーションを構築し、ホストする方法**を紹介します。
 
 Amazon SageMaker offers built-in algorithms and pre-built SageMaker docker images for model deployment.
 Amazon SageMaker は、組み込みのアルゴリズムと、モデルのデプロイ用にあらかじめ構築された SageMaker docker イメージを提供します。
@@ -17,20 +17,23 @@ But, if these don’t fit your needs, you can bring your own containers (BYOC) f
 しかし、これらがあなたのニーズに合わない場合は、**Amazon SageMakerでホスティングするためのコンテナを自分で持ち込む(Bring Your Own Containers, BYOC)**ことができる。
 
 There are several use cases where users might need to BYOC for hosting on Amazon SageMaker.
-Amazon SageMakerでのホスティングにBYOCが必要なケースはいくつかあります。
+Amazon SageMakerでの**ホスティングにBYOCが必要なケース**はいくつかあります。
 
-1. Custom ML frameworks or libraries: If you plan on using a ML framework or libraries that aren’t supported by Amazon SageMaker built-in algorithms or pre-built containers, then you’ll need to create a custom container. カスタム ML フレームワークまたはライブラリ:Amazon SageMaker の組み込みアルゴリズムやビルド済みコンテナでサポートされていない ML フレームワークやライブラリを使用する場合は、カスタムコンテナを作成する必要があります。
+1. Custom ML frameworks or libraries: If you plan on using a ML framework or libraries that aren’t supported by Amazon SageMaker built-in algorithms or pre-built containers, then you’ll need to create a custom container. 
+カスタムMLフレームワークやライブラリ: Amazon SageMakerのビルトインアルゴリズムや事前構築されたコンテナでサポートされていないMLフレームワークやライブラリを使用する予定がある場合、カスタムコンテナを作成する必要があります。
 
-2. Specialized models: For certain domains or industries, you may require specific model architectures or tailored preprocessing steps that aren’t available in built-in Amazon SageMaker offerings. 特殊なモデル: 特定のドメインや業種では、Amazon SageMaker のビルトイン製品では利用できない特定のモデルアーキテクチャやカスタマイズされた前処理ステップが必要になる場合があります。
+1. Specialized models: For certain domains or industries, you may require specific model architectures or tailored preprocessing steps that aren’t available in built-in Amazon SageMaker offerings. 
+    **特殊なモデル**: 特定のドメインや業界では、Amazon SageMakerのbuild-inの提供物にはない特定のモデルアーキテクチャやカスタマイズされた前処理ステップが必要な場合があります。
+    学習済みモデルがgzファイルの場合、独自のモデルを使う場合は、モデルをS3にアップロードして、そのS3のURIを指定する必要がある。
 
-3. Proprietary algorithms: If you’ve developed your own proprietary algorithms inhouse, then you’ll need a custom container to deploy them on Amazon SageMaker. 独自のアルゴリズム: 独自のアルゴリズムを社内で開発した場合、Amazon SageMaker にデプロイするためのカスタムコンテナが必要になります。
+2. Proprietary algorithms: If you’ve developed your own proprietary algorithms inhouse, then you’ll need a custom container to deploy them on Amazon SageMaker. 独自のアルゴリズム: 独自のアルゴリズムを社内で開発した場合、Amazon SageMaker にデプロイするためのカスタムコンテナが必要になります。
 
-4. Complex inference pipelines: If your ML inference workflow involves custom business logic — a series of complex steps that need to be executed in a particular order — then BYOC can help you manage and orchestrate these steps more efficiently. 複雑な推論パイプライン: ML推論ワークフローにカスタムのビジネスロジック（特定の順序で実行する必要がある一連の複雑なステップ）が含まれる場合、BYOCはこれらのステップをより効率的に管理し、オーケストレーションするのに役立ちます。
+3. Complex inference pipelines: If your ML inference workflow involves custom business logic — a series of complex steps that need to be executed in a particular order — then BYOC can help you manage and orchestrate these steps more efficiently. 複雑な推論パイプライン: ML推論ワークフローにカスタムのビジネスロジック（特定の順序で実行する必要がある一連の複雑なステップ）が含まれる場合、BYOCはこれらのステップをより効率的に管理し、オーケストレーションするのに役立ちます。
 
 ## Solution overview 解決策の概要
 
 In this solution, we show how to host a ML serial inference application on Amazon SageMaker with real-time endpoints using two custom inference containers with latest scikit-learn and xgboost packages.
-このソリューションでは、最新のscikit-learnとxgboostパッケージを使用した2つのカスタム推論コンテナを使用して、リアルタイムエンドポイントを持つAmazon SageMaker上でMLシリアル推論アプリケーションをホストする方法を示します。
+このソリューションでは、最新のscikit-learnとxgboostパッケージを使用した**2つのカスタム推論コンテナ**を使用して、リアルタイムエンドポイントを持つAmazon SageMaker上でMLシリアル推論アプリケーションをホストする方法を示します。
 
 The first container uses a scikit-learn model to transform raw data into featurized columns.
 1番目のコンテナは、scikit-learnモデルを使って生データをフィーチャー化されたカラムに変換する。
@@ -47,10 +50,10 @@ The predictor model accepts the featurized input and outputs predictions.
 ![](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2023/09/14/ml-13802-image003.png)
 
 Lastly, we deploy the featurizer and predictor in a serial-inference pipeline to an Amazon SageMaker real-time endpoint.
-最後に、featurizerとpredictorをserial-inferenceパイプライン(serial??:thinking:)でAmazon SageMakerリアルタイムエンドポイントにデプロイする。
+最後に、 featurizer(特徴量生成器) と　predictor(予測器) をserial-inferenceパイプラインでAmazon SageMakerリアルタイムエンドポイントにデプロイする。
 
 Here are few different considerations as to why you may want to have separate containers within your inference application.
-**推論アプリケーションの中で、なぜコンテナを分けたほうがいいのか**、いくつか考えてみましょう。
+**推論アプリケーションの中で、なぜコンテナを分けたほうがいいのか**、いくつか考えてみましょう。(今回の場合はそこまでロジックが複雑じゃないから分ける必要はなさそうなんだよなぁ...:thinking:)
 
 - **Decoupling** – Various steps of the pipeline have a clearly defined purpose and need to be run on separate containers due to the underlying dependencies involved. This also helps keep the pipeline well structured. デカップリング - パイプラインの**様々なステップには明確に定義された目的があり**(各ステップでそれぞれ目的が異なる:thinking:)、その根底には依存関係があるため、別々のコンテナで実行する必要がある。 これはまた、パイプラインをうまく構成しておくのにも役立つ。
 
@@ -73,9 +76,9 @@ Full implementation, including code snippets, is available in this Github reposi
 ## Prerequisites 前提条件
 
 As we test these custom containers locally first, we’ll need docker desktop installed on your local computer.
-これらのカスタム・コンテナをまずローカルでテストするので、ローカル・コンピューターにdocker desktopがインストールされている必要がある。
+**これらのカスタム・コンテナをまずローカルでテストするので、**ローカル・コンピューターにdocker desktopがインストールされている必要がある。(やっぱりまずローカルでテストできる状態にしておくべきだよな...!:thinking:)
 You should be familiar with building docker containers.
-Dockerコンテナの構築には慣れているはずだ。
+**Dockerコンテナの構築には慣れているはずだ**。
 
 You’ll also need an AWS account with access to Amazon SageMaker, Amazon ECR and Amazon S3 to test this application end-to-end.
 また、このアプリケーションをエンドツーエンドでテストするには、Amazon SageMaker、Amazon ECR、Amazon S3にアクセスできるAWSアカウントが必要です。
@@ -96,7 +99,7 @@ To build the first container, the featurizer container, we train a scikit-learn 
 The preprocessing script uses SimpleImputer for handling missing values, StandardScaler for normalizing numerical columns, and OneHotEncoder for transforming categorical columns.
 前処理スクリプトは、欠損値の処理にSimpleImputer、数値列の正規化にStandardScaler、カテゴリー列の変換にOneHotEncoderを使用しています。
 After fitting the transformer, we save the model in joblib format.
-変換器をfittingした後、**モデル(i.e. 変換器)をjoblib形式で保存**します。(featurizerモデルをローカルで作っておくって事なのかな??:thinking:)
+変換器をfittingした後、**モデル(i.e. 変換器)をjoblib形式で保存**します。
 We then compress and upload this saved model artifact to an Amazon Simple Storage Service (Amazon S3) bucket.
 そして、この保存されたモデル・アーティファクトを圧縮してAmazon Simple Storage Service（Amazon S3）バケットにアップロードする。
 
@@ -144,15 +147,16 @@ Nginx, gunicorn and the Flask app will serve as the model serving stack on Amazo
 Nginx、gunicorn、Flaskアプリが、Amazon SageMakerリアルタイムエンドポイントのモデルサービングスタックとして機能する。
 
 When bringing custom containers for hosting on Amazon SageMaker, we need to ensure that the inference script performs the following tasks after being launched inside the container:
-Amazon SageMakerでホスティングするためにカスタムコンテナを持ち込む場合、推論スクリプトがコンテナ内で起動した後に以下のタスクを実行するようにする必要がある:
+Amazon SageMakerでホスティングするために**カスタムコンテナを持ち込む場合、推論スクリプトがコンテナ内で起動した後に以下のタスクを実行するようにする必要がある**:
 
-1. Model loading: Inference script (preprocessing.py) should refer to /opt/ml/model directory to load the model in the container. Model artifacts in Amazon S3 will be downloaded and mounted onto the container at the path /opt/ml/model. モデルのロード: 推論スクリプト(preprocessing.py)はコンテナにモデルをロードするために/opt/ml/modelディレクトリを参照する必要があります。 Amazon S3にあるモデル成果物はダウンロードされ、/opt/ml/modelのパスにあるコンテナにマウントされる。
+1. Model loading: Inference script (preprocessing.py) should refer to /opt/ml/model directory to load the model in the container. Model artifacts in Amazon S3 will be downloaded and mounted onto the container at the path /opt/ml/model. モデルのロード: 推論スクリプト(preprocessing.py)はコンテナにモデルをロードするために `/opt/ml/model` ディレクトリを参照する必要があります。 Amazon S3にあるモデル成果物はダウンロード & コンテナにマウントされ、`/opt/ml/model` パスに配置されます。
 
 2. Environment variables: To pass custom environment variables to the container, you must specify them during the Model creation step or during Endpoint creation from a training job. 環境変数: カスタム環境変数をコンテナに渡すには、モデル作成ステップ中またはトレーニングジョブからのエンドポイント作成中に指定する必要があります。
 
-3. API requirements: The Inference script must implement both /ping and /invocations routes as a Flask application. The /ping API is used for health checks, while the /invocations API handles inference requests. API要件:推論スクリプトは、`/ping`と`/invocations`の両方のルートをFlaskアプリケーションとして実装する必要があります。 ping APIはヘルスチェックに使用され、/invocations APIは推論リクエストを処理する。
+3. API requirements: The Inference script must implement both /ping and /invocations routes as a Flask application. The /ping API is used for health checks, while the /invocations API handles inference requests. API要件:**推論スクリプトは、`/ping`と`/invocations`の両方のルートをFlaskアプリケーションとして実装する必要があります**。 ping APIはヘルスチェックに使用され、/invocations APIは推論リクエストを処理する。
+(カスタムコンテナを使う場合は、ってことだよね...!:thinking:)
 
-4. Logging: Output logs in the inference script must be written to standard output (stdout) and standard error (stderr) streams. These logs are then streamed to Amazon CloudWatch by Amazon SageMaker. ロギング:推論スクリプトの出力ログは、標準出力（stdout）と標準エラー（stderr）ストリームに書き出されなければならない。 これらのログは、Amazon SageMakerによってAmazon CloudWatchにストリーミングされる。
+4. Logging: Output logs in the inference script *must* be written to standard output (stdout) and standard error (stderr) streams. These logs are then streamed to Amazon CloudWatch by Amazon SageMaker. ロギング:推論スクリプトの出力ログは、**標準出力（stdout）と標準エラー（stderr）ストリーム**に書き出されなければならない。 これらのログは、Amazon SageMakerによってAmazon CloudWatchにストリーミングされる。
 
 Here’s a snippet from preprocessing.py that show the implementation of /ping and /invocations.
 `/ping`と`/invocations`の実装を示すpreprocessing.pyのスニペットです。
