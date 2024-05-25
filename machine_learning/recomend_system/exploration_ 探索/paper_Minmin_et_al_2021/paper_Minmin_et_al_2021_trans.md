@@ -170,58 +170,67 @@ Our work measures the effect of exploration on recommendation accuracy, diversit
 We base our work on the REINFORCE recommender system introduced in [11], in which the authors framed a set recommendation problem as a Markov Decision Process (MDP) (S, A, P, R, ρ0,γ ).
 私たちは[11]で紹介されたREINFORCE推薦システムをベースにしており、著者たちは**セット推薦問題**(=k個のアイテムをおすすめする問題...!)をマルコフ決定過程（MDP）$(S, A, P, R, \rho_0, \gamma)$としてフレーム化した。
 Here S is the state space capturing the user interests and context, A is the discrete action space containing items available for recommendation, P : S × A × S → R is the state transition probability, and R : S × A → R is the reward function, with r(s, a) note the immediate reward of action a under state s.
-ここで、$S$ は
+ここで、$S$ はユーザの関心や文脈を表す状態空間(=特徴量空間??)、 $A$ は推薦可能なアイテムを含む**離散的なアクション空間**、 $P : S \times A \times S \rightarrow \mathbb{R}$ は状態遷移確率(=3つの変数の同時確率?)、 $R : S \times A \rightarrow \mathbb{R}$ は報酬関数(=2つの変数の同時確率?)であり、$r(s, a)$ は状態$s$の下でのアクション$a$の即時報酬を示す。
 ρ0 is the initial state distribution, and γ the discount for future rewards.
-ρ0は初期状態分布であり、γは将来の報酬に対する割引である。
+$\rho_0$ は初期状態分布、$\gamma$ は将来の報酬の割引率である（=将来の報酬が現在の報酬よりもどの程度価値が低いかを表現したもの）。
 Let Ht = {(A0, a0,r0), · · · , (At−1, at−1,rt−1)} denote an user’s historical activities on the platform up to time t, where At ′ stands for the set of items recommended to the user at time t ′ , at ′ denotes the item the user interacted with at t ′ (at ′ can be null), and rt ′ captures the user feedback (reward) on at ′ (rt ′ = 0 if the user did not interact with any item in At ′).
-Ht＝｛（A0，a0，r0），-，-，（At-1，at-1，rt-1）｝は、時刻tまでのプラットフォーム上でのユーザの履歴アクティビティを表すとする。ここで、At′は、時刻t′においてユーザに推奨されたアイテムのセットを表す、 at ′は、時刻t ′においてユーザが相互作用したアイテムを表し（at ′はnullでもよい）、rt ′は、at ′に対するユーザのフィードバック（報酬）を捕捉する（ユーザがAt ′のどのアイテムとも相互作用しなかった場合、rt ′＝0）。
+＄H_{t} = \{(A_{0}, a_{0}, r_{0}), \cdots, (A_{t-1}, a_{t-1}, r_{t-1})\}$ は、時刻$t$までのプラットフォーム上でのユーザの過去の活動を示し、$A_{t}'$ は時刻$t'$にユーザに推薦されたアイテムのセットを表し、$a_{t}'$ は$t'$でユーザが相互作用したアイテムを示し（$a_{t}'$ がnullの場合がある）、$r_{t}'$ は$a_{t}'$に対するユーザのフィードバック（報酬）を捉える（$a_{t}'$に対してユーザが何もアクションを起こさなかった場合、$r_{t}' = 0$）。
 The history Ht is encoded through a recurrent neural network to capture the latent user state, that is, ust = RNNθ (Ht ).
-履歴Htは、潜在的なユーザーの状態を捕捉するために、リカレントニューラルネットワークを介して符号化される。
+履歴 $H_{t}$ は、潜在的なユーザーの状態、すなわち $u_{st} = RNN_{\theta}(H_{t})$ を捉えるために、再帰ニューラルネットワークを用いてエンコードされる。(u_stは、ユーザの過去の行動履歴を埋め込んだもの...??)
 Given the latent user state, a softmax policy over the item corpus A is parameterized as
-潜在的なユーザーの状態が与えられたとき、アイテム・コーパスAに対するソフトマックス・ポリシーは次のようにパラメータ化される。
+潜在的なユーザの状態が与えられた場合、アイテムコーパスA上のソフトマックスポリシーは以下のようにパラメータ化される: 
 
 $$
-
+\pi_{\theta}(a|s_{t}) = \frac{\exp(u_{st}^{T}v_{a})}{\sum_{a' \in A} \exp(u_{st}^{T}v_{a'})}, \forall a \in A
+\tag{1}
 $$
 
 which defines a distribution over the item corpus A conditioning on the user state st at time t.
-これは、時刻tにおけるユーザーの状態stを条件とするアイテム・コーパスA上の分布を定義する。
+これは、時刻tにおけるユーザ状態stを条件とするアイテムコーパスA上の分布を定義している。(=ユーザ状態s_tで条件づけた行動の確率分布関数)
 Here va stands for the embedding of the item a.
-ここでvaはアイテムaの埋め込みを表す。
+ここで $v_{a}$ はアイテム$a$の埋め込みを表す。
 The agent then generates a set of recommendation At to user at time t according to the learned softmax policy πθ (·|st ).
-次に、エージェントは、学習されたソフトマックスポリシーπθ (-|st )に従って、時刻tにおけるユーザへの推薦Atのセットを生成する。
+次に、エージェントは、学習されたソフトマックスポリシー $\pi_{\theta}(-|s_{t})$ に従って、時刻$t$にユーザに推薦するアイテムのセット $A_{t}$ を生成する。
 The policy parameters θ are learned using REINFORCE [60] so as to maximize the expected cumulative reward over the user trajectories,
-ポリシーのパラメータθは、ユーザーの軌跡に対する期待累積報酬を最大化するように、REINFORCE [60]を用いて学習される、
+**ポリシーのパラメータθは、ユーザの軌跡に対する期待累積報酬を最大化するように**、REINFORCE [60]を用いて学習される。
 
 $$
-
+\max_{\theta} J(\theta_{\theta}) 
+= \mathbb{E}_{s_0 \sim \rho_{0}, a_{t} \sim \pi_{\theta}(-|s_{t})} \left[ \sum_{t=0}^{T} r(s_{t}, a_{t}) \right]
+\\
+\tag{2}
 $$
 
 where Rt = Ir(st ,at )>0 · ÍT t ′=t γ t ′−t r(st ′, at ′) is the discounted cumulative reward starting from time t.
-ここで、Rt = Ir(st ,at )>0 - ÍT t ′=t γ t ′-t r(st ′, at ′) は時刻tから始まる割引累積報酬である。
+ここで、 $R_{t} = I_{t}(s_{t}, a_{t}) > 0 \cdot \sum_{t' = t}^{T} \gamma^{t' - t} r(s_{t'}, a_{t'})$ は、時刻 $t$ から始まる割引累積報酬である。
 RL was designed as an online learning paradigm in the first place [57].
-RLはそもそもオンライン学習のパラダイムとして設計された[57]。
+**RLはそもそもオンライン学習のパラダイムとして設計された**[57]。
 Note that the expectation in eq.2 is taken over the trajectories generated according to the learned policy, and d πθ t (s) is the discounted state visitation probability under πθ [32].
-なお、式2の期待値は学習された方針に従って生成された軌道に対するものであり、d πθ t (s)はπθ[32]の下での割引後の状態訪問確率である。
+なお、式2の期待値は、学習されたポリシーに従って生成された軌跡に対して取られ、$d_{\pi_{\theta}}(s)$ は $\pi_{\theta}$ のもとでの割引後の状態訪問確率である[32]。
 One of the main contribution of [11] is bringing the REINFORCE algorithm to the offline batch learning setup commonly deployed in industrial recommender systems.
-11]の主な貢献の一つは、REINFORCEアルゴリズムを、産業用推薦システムで一般的に導入されているオフラインバッチ学習のセットアップに導入したことである。
+[11]の主な貢献の一つは、REINFORCEアルゴリズムを、**産業用推薦システムで一般的に導入されているオフラインバッチ学習のセットアップに導入したこと**である。
+(RLは元々オンライン学習のparadimだったのに、それを実践しやすいオフラインバッチ学習として使えるようにしたってことか...!：thinking_face:)
 The authors applied a first-order approximation [2] of importance sampling to address the distribution shift caused by offline training, resulting in a gradient of the following:
-著者らは、オフライン訓練による分布シフトに対処するために、重要度サンプリングの一次近似[2]を適用し、以下のような勾配をもたらした：
+著者らは、オフライン学習によって引き起こされる分布シフトに対処するために、重要度サンプリングの一次近似[2]を適用し、以下の勾配を得た。
 
 $$
+\Delta_{\theta} J(\pi_{\theta}) = \mathbb{E}_{s \sim d_{\beta_{t}}, a \sim \pi_{\theta}} \left[ \frac{\pi_{\theta}(a|s)}{\beta_{t}(a|s)} \nabla_{\theta} \log \pi_{\theta}(a|s) \cdot R_{t} \right]
 
 $$
 
 Here β(·|s) denotes the behavior policy, i.e., the action distribution conditioning on state s in the batch collected trajectories.
-ここで、β(-|s)は、行動方針、すなわち、バッチ収集された軌跡における状態sを条件とする行動分布を示す。
+ここで、 $\beta(-|s)$ は、バッチ収集された軌跡における状態 $s$ に条件づけられたアクション分布、すなわち行動ポリシーを示す。
 d β t (s) is the discounted state visitation probability under β.
 d β t (s) は、βのもとでの割引後の状態訪問確率である。
 This importance weight is further adapted to accommodate the set recommendation setup.
 この重要度のウェイトは、セット推薦の設定に対応するようにさらに調整される。
 We refer interested readers to [11] for more details.
 詳細は[11]を参照されたい。
+
 To balance exploration and exploitation, a hybrid approach that returns the top K ′ most probable items, while sampling the rest K −K ′ items according to πθ (Boltzmann exploration [13]), is employed during serving.
-探索と利用をバランスさせるために、上位K′個の最も可能性の高い項目を返す一方、残りのK -K ′個の項目をπθに従ってサンプリングする（ボルツマン探索[13]）ハイブリッドアプローチが、サービス中に採用される。
+探索と利用をバランスさせるために、サービング中に、最も確率が高い上位K'個のアイテムを返す一方で、**残りのK-K'個のアイテムを $\pi_{\theta}$ に従ってサンプリングするハイブリッドアプローチ（ボルツマン探索[13]）が採用されている**。
+
+<!-- ここまで読んだ! -->
 
 # Method メソッド
 
