@@ -17,17 +17,18 @@ While the exploration-exploitation tradeoff is the foundation of RL research, th
 Exploration, commonly seen as a tool to reduce model uncertainty in regions of sparse user interaction/feedback, is believed to cost user experience in the short term, while the indirect benefit of better model quality arrives at a later time.
 探索は、一般的に、ユーザーとのインタラクションやフィードバックが疎な領域でモデルの不確実性を低減するためのツールと考えられているが、短期的にはユーザーエクスペリエンスを犠牲にすると考えられている。
 We focus on another aspect of exploration, which we refer to as user exploration to help discover new user interests, and argue it can improve user experience even in the more imminent term.
-我々は、新しいユーザーの興味を発見するためのユーザー探索と呼ばれる探索の別の側面に焦点を当て、それがより差し迫った期間においてもユーザー体験を向上させることができると主張する。
+我々は、**新しいユーザの興味を発見するための user exploration (ユーザ探索) と呼ばれる探索のもう一つの側面に焦点を当て、それがユーザーエクスペリエンスをより即座に改善できると主張する**。
+
 We examine the role of user exploration in changing different facets of recommendation quality that more directly impact user experience.
-我々は、ユーザー・エクスペリエンスに直接影響を与える推薦品質の様々な側面を変化させるユーザー探索の役割を検証する。
+我々は、ユーザ体験に直接影響を与える推薦品質の異なる側面を変化させるユーザ探索の役割を検証する。
 To do so, we introduce a series of methods inspired by exploration research in RL to increase user exploration in an RL-based recommender system, and study their effect on the end recommendation quality, more specifically, on accuracy, diversity, novelty and serendipity.
 そのために、RLベースの推薦システムにおいてユーザの探索性を高めるために、RLにおける探索研究にインスパイアされた一連の手法を導入し、最終的な推薦品質、より具体的には精度、多様性、新規性、セレンディピティに対する効果を研究する。
 We propose a set of metrics to measure (RL based) recommender systems in these four aspects and evaluate the impact of exploration-induced methods against these metrics.
 これらの4つの側面から（RLベースの）レコメンダーシステムを評価するためのメトリクスセットを提案し、これらのメトリクスに対する探索誘発手法の影響を評価する。
 In addition to the offline measurements, we conduct live experiments on an industrial recommendation platform serving billions of users to showcase the benefit of user exploration.
-オフラインでの測定に加え、数十億のユーザーにサービスを提供する産業用レコメンデーション・プラットフォームでライブ実験を行い、ユーザー探索の利点を紹介する。
+オフラインでの測定に加え、数十億のユーザーにサービスを提供する産業用レコメンデーション・プラットフォームでライブ実験を行い、ユーザ探索の利点を紹介する。(オンライン実験もやってるんんだ...!:thinking_face:)
 Moreover, we use conversion of casual users to core users as an indicator of the holistic long-term user experience and study the values of user exploration in helping platforms convert users.
-さらに、カジュアルユーザーからコアユーザーへの転換を総合的な長期的ユーザー体験の指標とし、プラットフォームがユーザーを転換させるためのユーザー探索の価値を研究する。
+**さらに、カジュアルユーザからコアユーザへの転換を総合的な長期的ユーザ体験の指標とし、プラットフォームがユーザを転換させるためのユーザ探索の価値を研究する。**
 Through offline analyses and live experiments, we study the correlation between these four facets of recommendation quality and long term user experience, and connect serendipity to improved long term user experience.
 オフライン分析およびライブ実験を通じて、推薦品質のこれら4つの側面と長期的なユーザー・エクスペリエンスとの相関関係を研究し、セレンディピティを長期的なユーザー・エクスペリエンスの向上につなげている。
 
@@ -36,15 +37,16 @@ Through offline analyses and live experiments, we study the correlation between 
 In the era of increasing choices, recommender systems are becoming indispensable in helping users navigate the million or billion pieces of contents available on recommendation platforms.
 選択肢が増える時代において、レコメンデーション・システムは、レコメンデーション・プラットフォーム上で利用可能な百万、億単位のコンテンツをユーザーがナビゲートするのに不可欠なものとなっている。
 These systems are built to satisfy users’ information needs by anticipating what they would be interested in consuming next.
-これらのシステムは、ユーザーが次に何を消費したいと思うかを予測することで、ユーザーの情報ニーズを満たすように構築されている。
+これらのシステムは、ユーザが次に何を消費したいと思うかを予測することで、ユーザの情報ニーズを満たすように構築されている。
 Collaborative filtering [28, 47] and supervised learning based approaches predicting users’ immediate response toward recommendations [12, 65] such as clicks, dwell time, likes, have had enormous successes.
-協調フィルタリング[28, 47]や、推奨に対するユーザーの即時反応[12, 65]（クリック、滞在時間、「いいね！」など）を予測する教師あり学習ベースのアプローチは、大きな成功を収めている。
+協調フィルタリング[28, 47]や、推奨に対するユーザーのimmediate response(即時反応)[12, 65]（クリック、滞在時間、「いいね！」など）を予測する教師あり学習ベースのアプローチは、大きな成功を収めている。
 Researchers however are becoming increasingly aware of the limitations of such approaches.
-しかし研究者たちは、そうしたアプローチの限界をますます認識しつつある。
+**しかし研究者たちは、そうしたアプローチの限界をますます認識しつつある。**
 First, focus on driving short-term engagements such as user clicks fails to account for the long term impact of a recommendation.
 第一に、ユーザーのクリックなどの短期的なエンゲージメントを促進することに焦点を当てると、推薦の長期的な影響を考慮することができない。
 Second, lack of exploration causes these systems to increasingly concentrate on the known user interests and create satiation effect, i.e., reduced enjoyment of the content.
-第二に、探究心の欠如により、これらのシステムは既知のユーザーの興味にますます集中し、飽和効果、すなわちコンテンツの楽しみの減少を引き起こす。
+第二に、探究心の欠如により、これらのシステムは既知のユーザの興味にますます集中し、飽和効果、すなわちコンテンツの楽しみの減少を引き起こす。
+
 Reinforcement learning (and bandits) techniques have emerged as appealing alternatives [11, 23, 67, 68] over the years.
 強化学習（およびバンディット）技術は、長年にわたって魅力的な選択肢として浮上してきた[11, 23, 67, 68]。
 Compared with supervised learning based approaches, RL offers two advantages: 1) Exploration.
@@ -54,45 +56,47 @@ Compared with supervised learning based approaches, RL offers two advantages: 1)
 This provides a natural mechanism to deviate from the current system behavior, and introduce previously unseen contents to users; 2) Long-term user experience optimization.
 2）長期的なユーザー体験の最適化。
 As the planning horizon of these RL agents extends, the recommender naturally shifts its focus from short-term user engagement toward optimizing the long-term user experience on the platform.
-これらのRLエージェントの計画地平が広がるにつれて、レコメンダーは短期的なユーザーエンゲージメントから、プラットフォーム上での長期的なユーザーエクスペリエンスの最適化へと自然に焦点を移していく。
+これらのRLエージェントの計画地平が広がるにつれて、**レコメンダーは短期的なユーザーエンゲージメントから、プラットフォーム上での長期的なユーザーエクスペリエンスの最適化へと自然に焦点を移していく**。
 We focus our discussion on exploration, though as we show in the analyses it innately connects to the long-term user experience.
 分析で示したように、探索は長期的なユーザー体験につながるものである。
+
 The tradeoff between exploration and exploitation is central to the design of RL agents [17, 57].
 探索と搾取のトレードオフは、RLエージェントの設計の中心である[17, 57]。
 An agent learns to form a policy to maximize returns in a changing environment by taking actions and receiving reward/feedback from the environment.
 エージェントは、環境から報酬やフィードバックを受けながら行動を起こすことで、変化する環境の中でリターンを最大化するための方針を立てることを学習する。
 The agent is incentivized to exploit, repeating actions taken in the past that produced higher rewards, to maximize reward.
-エージェントは、報酬を最大化するために、より高い報酬をもたらした過去の行動を繰り返し、搾取するインセンティブがある。
+エージェントは、報酬を最大化するために、より高い報酬をもたらした過去の行動を繰り返し、exploit(搾取, 活用??)することを奨励される。
 On the other hand, the agent needs to explore previously unseen actions in order to discover potentially better options.
 一方、エージェントは、より良い選択肢を発見するために、以前に見たことのない行動を探索する必要がある。
 Exploration in RL based recommender systems serves a similar goal, that is to expose users to previously unseen items to discover contents the user is potentially interested in.
 RLベースのレコメンダーシステムにおける探索は、ユーザーが潜在的に興味を持っているコンテンツを発見するために、未見のアイテムにユーザーをさらすという同様の目的を果たす。
 The benefit of exploration to counter the selection bias of existing systems and generate training data to reduce model uncertainty has been established [11].
-既存のシステムの選択バイアスに対抗し、モデルの不確実性を低減するためのトレーニングデータを生成するための探索の利点は、確立されている[11]。
+既存のシステムの選択バイアスに対抗し、モデルの不確実性を低減するためのトレーニングデータを生成するための探索の利点は、確立されている[11]。(この記述は、OPEやOPLの観点で探索は利点があるよってことだよね...!:thinking_face:)
 Here we focus on another aspect of exploration that we refer to as user exploration, i.e., exploration for discovering something new for the user.
-ここでは、探索のもう一つの側面であるユーザー探索、つまりユーザーにとって新しい何かを発見するための探索に焦点を当てる。
+ここでは、探索のもう一つの側面であるユーザ探索、つまりユーザにとって新しい何かを発見するための探索に焦点を当てる。
+
 As exploration innately leads to recommending something less pertinent to the known user interests, it is often seen as a cost to user experience, especially in the short term.
-探索は生来、既知のユーザーの興味にあまり適切でないものを推薦することにつながるため、特に短期的には、ユーザー・エクスペリエンスに対するコストと見なされることが多い。
+**探索は生来、既知のユーザーの興味にあまり適切でないものを推薦することにつながるため、特に短期的には、ユーザー・エクスペリエンスに対するコストと見なされることが多い。**
 Here we argue that recommender systems have an inherent need for exploration as users perceive other factors of recommendation quality besides accuracy [5, 66].
-ここで我々は、推薦システムは、ユーザーが正確さ以外の推薦品質の要因を知覚するため、本質的に探索の必要性があると主張する[5, 66]。
+ここで我々は、**推薦システムは、ユーザが正確さ以外の推薦品質の要因を知覚するため、本質的に探索の必要性がある**と主張する[5, 66]。
 We dissect the values of user exploration by examining its role in changing different aspects of recommendation quality that impact the user experience on recommendation platforms.
 レコメンデーション・プラットフォームにおけるユーザー・エクスペリエンスに影響を与えるレコメンデーション・クオリティの様々な側面を変化させる役割を検証することで、ユーザー・エクスプロレーションの価値を解剖する。
 Together, we make the following contributions: • Methods to Introduce User Exploration: We introduce a collection of methods, inspired by exploration research in RL, to improve user exploration in recommender systems.
-併せて、我々は以下の貢献を行う： - ユーザー探索を導入する方法 推薦システムにおけるユーザ探索を改善するために、RLにおける探索研究に触発された手法を紹介する。
+併せて、我々は以下の貢献を行う： - **ユーザ探索を導入する方法 推薦システムにおけるユーザ探索を改善するために、RLにおける探索研究に触発された手法を紹介する**。(exploitionのみの決定的な推薦システムに、explorationを導入する手法...!:thinking_face:)
 • Metrics: We propose a set of metrics measuring the different aspects of recommendation quality, that is accuracy, diversity, novelty and serendipity for RL based recommender systems.
 - メトリクス RLベースの推薦システムにおいて、推薦品質の異なる側面、すなわち正確性、多様性、新規性、セレンディピティを測定する一連のメトリクスを提案する。
 • Offline Analyses: We conduct an extensive set of offline analyses to understand the values of user exploration in changing the four aspects of recommendation quality.
-- オフライン分析 我々は、推薦品質の4つの側面を変化させるユーザー探索の価値を理解するために、広範なオフライン分析を実施する。
+- オフライン分析 我々は、推薦品質の4つの側面を変化させるユーザ探索の価値を理解するために、広範なオフライン分析を実施する。
 • Live Experiments: We conduct live experiments of the proposed methods on a commercial recommendation platform serving billions of users and millions of items, and showcase the value of user exploration in improving long-term user experience on the platform.
 - ライブ実験： 数十億のユーザーと数百万のアイテムを提供する商用推薦プラットフォーム上で提案手法のライブ実験を行い、プラットフォーム上の長期的なユーザー体験を改善するためのユーザー探索の価値を示す。
 • Serendipity for Long Term User Experience: Through offline analyses and live experiments, we study the correlation between these four aspects of recommendation quality and the long term user experience.
-- 長期的なユーザー体験のためのセレンディピティ： オフライン分析とライブ実験を通じて、推薦品質のこれら4つの側面と長期的なユーザー・エクスペリエンスとの相関関係を研究する。
+- 長期的なユーザー体験のためのセレンディピティ： オフライン分析とライブ実験を通じて、**推薦品質のこれら4つの側面と長期的なユーザー・エクスペリエンスとの相関関係を研究する**。
 Using conversion of casual users to core users as an indicator of the holistic long term user experience, we connect serendipity to improved long term user experience.
-カジュアルユーザーからコアユーザーへの転換を総合的な長期的ユーザー体験の指標とすることで、セレンディピティを長期的ユーザー体験の向上につなげている。
+**カジュアルユーザからコアユーザへの転換を総合的な長期的ユーザ体験の指標とすること**で、セレンディピティを長期的ユーザー体験の向上につなげている。
 
 # Related Work 関連作品
 
-Reinforcement Learning for Recommender Systems.
+## Reinforcement Learning for Recommender Systems.
 推薦システムのための強化学習.
 Deep reinforcement learning, combining high-capacity function approximators, i.e., deep neural networks, with the mathematical formulations in classic reinforcement learning [57], has achieved enormous success in various domains such as games, robotics and hardware design [18, 33, 36, 52].
 ディープ強化学習は、大容量の関数近似器、すなわちディープニューラルネットワークを古典的な強化学習の数学的定式化[57]と組み合わせたもので、ゲーム、ロボット工学、ハードウェア設計などの様々な領域で大きな成功を収めている[18, 33, 36, 52]。
@@ -111,10 +115,11 @@ RLを用いたセット推薦については、[11, 23, 69]で研究されてい
 In recent years, we also start seeing success of RL in real-world recommendation applications.
 近年、RLは実世界の推薦アプリケーションでも成功を収め始めている。
 Chen et al.[11] scaled a batch RL algorithm, i.e., REINFORCE with off-policy correction to a commercial platform serving billions of users and tens of millions of contents.
-Chenら[11]は、数十億のユーザーと数千万のコンテンツにサービスを提供する商用プラットフォームに、バッチRLアルゴリズム、すなわちオフポリシー補正を伴うREINFORCEをスケーリングした。
+**Chenら[11]は、数十億のユーザーと数千万のコンテンツにサービスを提供する商用プラットフォームに、バッチRLアルゴリズム、すなわちオフポリシー補正を伴うREINFORCEをスケーリングした。**
 Hu et al.[22] tested an extension of the deep deterministic policy gradient (DDPG) method for learning to rank on Taobao, a commercial search platform.
 Huら[22]は、淘宝網（Taobao）という商業的な検索プラットフォームで、ランク付けを学習するための深層決定性政策勾配（DDPG）法の拡張をテストした。
-Exploration in Reinforcement Learning.
+
+## Exploration in Reinforcement Learning.
 強化学習における探索。
 The exploration/exploitation dilemma has long been studied in multi-armed bandits and classic reinforcement learning [17, 57].
 探索／搾取のジレンマは、多腕バンディットや古典的な強化学習で長い間研究されてきた[17, 57]。
@@ -134,10 +139,11 @@ Bellemare et al.[6] unifies count-based exploration and intrinsic motivation thr
 Bellemareら[6]は、情報獲得や学習の進歩というレンズを通して、カウントに基づく探索と内発的動機づけを統合している。
 Our work takes inspiration from these existing works, and re-designs the algorithms to fit more closely with the recommendation setup.
 我々の研究は、これらの既存の作品からインスピレーションを受け、より推薦の設定に合うようにアルゴリズムを再設計している。
-Diversity, Novelty and Serendipity of Recommender Systems.
-推薦システムの多様性、新規性、セレンディピティ。
+
+## Diversity, Novelty and Serendipity of Recommender Systems. 推薦システムの多様性、新規性、セレンディピティ。
+
 While early recommendation research has focused almost exclusively on improving recommendation accuracy, it has become increasingly recognized that there are other factors of recommendation quality contributing to the overall user experience on the platform.
-初期のレコメンデーション研究では、レコメンデーションの精度を向上させることだけに焦点が当てられていたが、レコメンデーションの品質には、プラットフォーム上でのユーザー体験全体に貢献する他の要因があることが次第に認識されるようになってきた。
+初期のレコメンデーション研究では、レコメンデーションの精度を向上させることだけに焦点が当てられていたが、**レコメンデーションの品質には、プラットフォーム上でのユーザ体験全体に貢献する他の要因がある**ことが次第に認識されるようになってきた。
 Herlocker et al.[19] in their seminal work of evaluating collaborative filtering based recommender systems defined various metrics to measure recommendation accuracy, coverage, novelty as well as serendipity.
 Herlockerら[19]は、協調フィルタリングベースの推薦システムを評価する代表的な研究で、推薦精度、カバー率、新規性、セレンディピティを測定する様々な指標を定義した。
 Diversity is another important aspect that has been extensively studied [3, 5].
@@ -151,18 +157,20 @@ Novelty [8] is closely related to long tail recommendation [62], measuring the c
 One of the early definitions of serendipity was introduced in [19], which captures the degree to which a recommendation is both relevant and surprising to users.
 セレンディピティの初期の定義の一つは[19]で紹介されたもので、推薦がユーザーにとって適切であると同時に驚くべきものである度合いを捉えている。
 Zhang et al.[66] proposed a hybrid rank-interpolation approach to combine outputs of three LDA algorithms [7] focusing on either accuracy, diversity or serendipity to achieve a balance between these factors in the end recommendations.
-Zhangら[66]は、3つのLDAアルゴリズム[7]の出力を組み合わせるハイブリッドランク補間アプローチを提案した。
+Zhangら[66]は、精度、多様性、セレンディピティのいずれかに焦点を当てた3つのLDAアルゴリズム[7]の出力を組み合わせるためのハイブリッドランク補間アプローチを提案し、最終的な推薦においてこれらの要素のバランスを実現する。
 Oku and Hattori [41] proposed a fusion based technique to mix items users expressed interest on based on item attributes in order to introduce serendipitous contents.
 奥・服部[41]は、セレンディピティコンテンツを導入するために、アイテムの属性に基づいてユーザが興味を示したアイテムをミックスするフュージョンベースの手法を提案した。
 Our work measures the effect of exploration on recommendation accuracy, diversity, novelty and serendipity, and connects these factors to long term user experience.
-我々の研究は、探索が推薦精度、多様性、新規性、セレンディピティに与える影響を測定し、これらの要素を長期的なユーザー体験に結びつける。
+我々の研究は、**探索(ここではユーザ探索?)が推薦精度、多様性、新規性、セレンディピティに与える影響を測定**し、これらの要素を長期的なユーザー体験に結びつける。
+
+<!-- ここまで読んだ! -->
 
 # Background 背景
 
 We base our work on the REINFORCE recommender system introduced in [11], in which the authors framed a set recommendation problem as a Markov Decision Process (MDP) (S, A, P, R, ρ0,γ ).
-私たちは[11]で紹介されたREINFORCE推薦システムをベースにしており、著者たちはセット推薦問題をマルコフ決定過程（MDP）（S, A, P, R, ρ0,γ ）として組み立てている。
+私たちは[11]で紹介されたREINFORCE推薦システムをベースにしており、著者たちは**セット推薦問題**(=k個のアイテムをおすすめする問題...!)をマルコフ決定過程（MDP）$(S, A, P, R, \rho_0, \gamma)$としてフレーム化した。
 Here S is the state space capturing the user interests and context, A is the discrete action space containing items available for recommendation, P : S × A × S → R is the state transition probability, and R : S × A → R is the reward function, with r(s, a) note the immediate reward of action a under state s.
-ここで、S はユーザの関心と文脈を捉えた状態空間、A は推薦可能なアイテムを含む離散アクション空間、P ： S × A × S → R は状態遷移確率、R ： R : S × A → R は報酬関数であり、r(s, a)は状態sにおけるアクションaの即時報酬を表す。
+ここで、$S$ は
 ρ0 is the initial state distribution, and γ the discount for future rewards.
 ρ0は初期状態分布であり、γは将来の報酬に対する割引である。
 Let Ht = {(A0, a0,r0), · · · , (At−1, at−1,rt−1)} denote an user’s historical activities on the platform up to time t, where At ′ stands for the set of items recommended to the user at time t ′ , at ′ denotes the item the user interacted with at t ′ (at ′ can be null), and rt ′ captures the user feedback (reward) on at ′ (rt ′ = 0 if the user did not interact with any item in At ′).
