@@ -62,7 +62,7 @@ model.tar.gz/
 
 - 参考:[The SageMaker PyTorch Model Server](https://sagemaker.readthedocs.io/en/stable/frameworks/pytorch/using_pytorch.html#id4)
 
-- デプロイされたPyTorchエンドポイントはは、**Sagemaker Pytorch Model Server**を実行する。
+- デプロイされたPyTorchエンドポイントは、**Sagemaker Pytorch Model Server**を実行する。
   - モデルサーバは、保存されたモデルをloadし、Sagemaker InvokeEndpoint API呼び出しに応答して、推論を実行する。
 - Sagemaker Pytorch Model Serverは2つのComponentを設定できる:
   - 1つ目: model loading: 保存したモデルをdeserializeする。
