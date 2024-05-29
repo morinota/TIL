@@ -6,7 +6,7 @@ https://dl.acm.org/doi/pdf/10.1145/3460231.3474236
 ## title タイトル
 
 Values of User Exploration in Recommender Systems
-推薦システムにおけるユーザー探索の価値
+推薦システムにおけるユーザ探索の価値
 
 ## abstract 抄録
 
@@ -215,7 +215,6 @@ The authors applied a first-order approximation [2] of importance sampling to ad
 
 $$
 \Delta_{\theta} J(\pi_{\theta}) = \mathbb{E}_{s \sim d_{\beta_{t}}, a \sim \pi_{\theta}} \left[ \frac{\pi_{\theta}(a|s)}{\beta_{t}(a|s)} \nabla_{\theta} \log \pi_{\theta}(a|s) \cdot R_{t} \right]
-
 $$
 
 Here β(·|s) denotes the behavior policy, i.e., the action distribution conditioning on state s in the batch collected trajectories.
@@ -235,16 +234,16 @@ To balance exploration and exploitation, a hybrid approach that returns the top 
 # Method メソッド
 
 Here we introduce three simple methods inspired by exploration research in RL to increase user exploration in the REINFORCE recommender system during training.
-ここでは、REINFORCEレコメンダーシステムにおいて、学習中にユーザの探索を増やすために、RLにおける探索研究にヒントを得た3つの簡単な方法を紹介する。
+ここでは、REINFORCEレコメンダーシステムにおいて、学習中にユーザの探索を増やすために、**RLにおける探索研究にヒントを得た3つの簡単な方法を紹介**する。
 That is, to recommend content less pertinent to the known user interests, and to discover new user interests.
-つまり、既知のユーザーの興味にあまり関係のないコンテンツを推薦し、新しいユーザーの興味を発見することである。
+つまり、**既知のユーザーの興味にあまり関係のないコンテンツを推薦し、新しいユーザーの興味を発見すること**である。
 
 ## Entropy Regularization エントロピー正則化
 
 The first method promotes recommending contents less pertinent to the known user interests by encouraging the policy πθ (·|s) to have an output distribution with high entropy [61].
 最初の方法は、ポリシーπθ (-|s)が高いエントロピーを持つ出力分布を持つように促すことで、既知のユーザの興味にあまり適切でないコンテンツを推薦することを促進する[61]。
 Mnih et al.[38] observed that adding entropy of the policy to the objective function discourages premature convergence to sub-optimal deterministic policies and leads to better performance.
-Mnihら[38]は、政策のエントロピーを目的関数に加えることで、最適でない決定論的政策への早すぎる収束を抑制し、より良い性能をもたらすことを観察した。
+Mnihら[38]は、policyのエントロピーを目的関数に追加することで、最適でない決定論的なポリシーへの早期収束を抑制し、より良いパフォーマンスをもたらすことを観察した。
 Pereyra et al.[46] conducted a systemic study of entropy regularization and found it to improve a wide range of state-of-the-art models.
 Pereyraら[46]は、エントロピー正則化の体系的な研究を行い、エントロピー正則化が広範囲の最先端モデルを改善することを発見した。
 We add of the entropy to the RL learning objective as defined in eq.2 during training.
@@ -252,20 +251,24 @@ We add of the entropy to the RL learning objective as defined in eq.2 during tra
 That is,
 それはそうだ、
 
-$$
 
+$$
+\max_{\theta} J(\theta) + \alpha \sum_{s_{t} - d^{\beta}_{t}(s)}H(\pi_{\theta}(-|s_{t}))
+\tag{4}
 $$
 
 where the entropy of the conditional distribution πθ (·|s) is defined as H (πθ (·|s)) = − Í a ∈A πθ (a|s) log πθ (a|s).
-s) is defined as H (πθ (·
+$\pi_{\theta}(-|s)$の条件付き分布のエントロピーは、$H(\pi_{\theta}(-|s)) = - \sum_{a \in A} \pi_{\theta}(a|s) \log \pi_{\theta}(a|s)$ と定義される。
 Here α controls the strength of the regularization.
 ここでαは正則化の強さを制御する。
 The entropy is equivalent to the negative reverse KL divergence of the conditional distribution πθ (·|s) to the uniform distribution.
 エントロピーは、一様分布に対する条件付き分布πθ (-|s)の負の逆KL発散と等価である。
 That is, H (πθ (·|s)) = −DK L(πθ (·|s)||U ) + const, where U stands for a uniform distribution across the action space A.
-s)) = −DK L(πθ (·
+つまり、$H(\pi_{\theta}(-|s)) = - D_{KL}(\pi_{\theta}(-|s)||U) + const$ であり、$U$ はアクション空間$A$全体にわたる一様分布を表す。
 As we increase this regularization, it pushes the learned policy to be closer to a uniform distribution, thus promoting exploration.
 この正則化を大きくすると、学習された方針がより一様分布に近くなり、探索が促進される。
+
+(学習後の条件付きアクション確率分布がなめらかになる、みたいな感じっぽい...!)
 
 ## Intrinsic Motivation and Reward Shaping 内発的動機づけと報酬の形成
 
@@ -288,22 +291,21 @@ The other uses a qualitative notion of curiosity or intrinsic motivation to enco
 Both camps of methods later adds an intrinsic reward r i (s, a), either capturing the uncertainty or curiosity to the extrinsic reward r e (s, a) that is emitted by the environment directly, to help the agent explore the unknown or learn new skills.
 どちらの手法も、エージェントが未知を探索したり新しいスキルを学んだりするのを助けるために、環境から直接発せられる外在的報酬r e (s, a)に、不確実性や好奇心を捕らえた内在的報酬r i (s, a)を後から加える。
 That is, transforming the reward function to
-つまり、報酬関数を
+つまり、報酬関数を次のように変換する。
 
 $$
-
+\max_{\theta} J(\theta) + \alpha \sum_{s_{t} - d^{\beta}_{t}(s)}H(\pi_{\theta}(-|s_{t}))
+\tag{4}
 $$
 
-where c controls the relative importance of the intrinsic reward w.r.t.
-ここで、cは内在的報酬の相対的重要度を制御する。
-the extrinsic reward emitted by the environment.
-環境から発せられる外発的報酬。
+where c controls the relative importance of the intrinsic reward w.r.t. the extrinsic reward emitted by the environment.
+ここで、cは、環境から発せられる外発的報酬に対する内発的報酬の相対的な重要性を制御する。
 Schmidhuber [49] formally captures the theory of creativity, fun and curiosity as an intrinsic desire to discover surprising patterns of the environment, and argues that a curiosity-driven agent can learn even in the absence of external reward.
 Schmidhuber[49]は、創造性、楽しさ、好奇心の理論を、環境の驚くべきパターンを発見したいという内発的欲求として正式にとらえ、好奇心主導型のエージェントは、外部からの報酬がなくても学習できると主張している。
 Our proposal bears the same principle by rewarding the agent more when it discovers some previously unknown patterns of the environment, that is the user.
 我々の提案は、エージェントが環境（ユーザー）の未知のパターンを発見したときに、より多くの報酬を与えるという同じ原理を採用している。
 Let R e t (st , at ) = Ir e (st ,at )>0 · ÍT t ′=t γ t ′−t r e (st ′, at ′) be the discounted cumulation of the extrinsic reward on the stateaction pair (st , at ) observed on the trajectory.
-R e t (st , at ) = Ir e (st ,at )>0 - ÍT t ′=t γ t ′-t r e (st ′, at ′) を軌跡上で観測された状態行動ペア(st , at )に対する外部報酬の割引累積とする。
+$R
 We then define the cumulative reward Rt (st , at ) used for the gradient update in eq.3 as
 次に、式3の勾配更新に用いる累積報酬 Rt (st , at ) を次のように定義する。
 
