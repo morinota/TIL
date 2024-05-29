@@ -384,83 +384,61 @@ Therefore, automated data validation and model validation steps are required in 
     インフラの互換性や予測サービスAPIとの整合性など、デプロイのためのモデルのテストを確実に行うこと。
 
 In addition to offline model validation, a newly deployed model undergoes online model validation—in a canary deployment or an A/B testing setup—before it serves prediction for the online traffic.
-オフラインでのモデル検証に加えて、新しくデプロイされたモデルは、オンライントラフィックの予測を提供する前に、**カナリアデプロイメントまたはA/Bテストのセットアップでオンラインモデル検証を受けます**。(うんうん)
+オフラインでのモデル検証に加えて、新しくデプロイされたモデルは、オンライントラフィックの予測を提供する前に、**カナリアデプロイメントまたはA/Bテストのセットアップでオンラインモデル検証を受けます**。
+(これは、新しい予測モデルにいきなり全てのtrafficを流さないって事だよね。ABテストなり、rolloutなりで徐々にtrafficを増やしていく方が安全:thinking:)
 
 <!-- ここまで読んだ! -->
 
-#### Feature store 特集ストア
+#### Feature store 特徴量ストア
 
 An optional additional component for level 1 ML pipeline automation is a feature store.
-レベル1のMLパイプライン自動化のためのオプションの追加コンポーネントは、フィーチャーストアである。
+レベル1のMLパイプライン自動化のための**optionalな追加コンポーネントは、特徴量ストア**です。
 A feature store is a centralized repository where you standardize the definition, storage, and access of features for training and serving.
 フィーチャーストアは、トレーニングやサービングのためのフィーチャーの定義、保存、アクセスを標準化する一元化されたリポジトリです。
 A feature store needs to provide an API for both high-throughput batch serving and low-latency real-time serving for the feature values, and to support both training and serving workloads.
-特徴量ストアは、高スループットのバッチ処理と低レイテンシのリアルタイム処理の両方のAPIを提供し、トレーニングと処理の両方のワークロードをサポートする必要がある。
+特徴量ストアは、特徴量の値に対して**高スループットのバッチサービングと低遅延のリアルタイムサービングの両方のAPIを提供**し、トレーニングとサービングのワークロードの両方をサポートする必要があります。(あ、これがfeature storeが持つべき特徴の1つかも...!:thinking:)
 
 The feature store helps data scientists do the following:
-フィーチャーストアは、データサイエンティストが以下のことを行うのに役立つ：
+フィーチャーストアは、データサイエンティストが以下のことを行うのに役立つ:
 
-Discover and reuse available feature sets for their entities, instead of re-creating the same or similar ones.
-エンティティのために利用可能な機能セットを発見し、再利用する。
+- Discover and reuse available feature sets for their entities, instead of re-creating the same or similar ones. 
+  - 同じもしくは類似のものを再作成するのではなく、entities(=複数のMLモデル?)に利用可能な特徴量集合を発見し、再利用する。
+- Avoid having similar features that have different definitions by maintaining features and their related metadata.
+  - 特徴量とその関連メタデータを維持することで、異なる定義を持つ類似の特徴量を持たないようにする。(**車輪の再発明を防ぐ**、みたいな...!:thinking:)
+- Serve up-to-date feature values from the feature store.
+  - フィーチャーストアから最新の特徴量の値を提供する。
+- Avoid training-serving skew by using the feature store as the data source for experimentation, continuous training, and online serving. 実験、継続的なトレーニング、オンラインサービングのデータソースとしてフィーチャーストアを使用することで、**training-serving skew (トレーニングとサービングのズレ)を回避**する。 This approach makes sure that the features used for training are the same ones used during serving: このアプローチは、トレーニングに使用される特徴量がサービング中に使用されるものと同じであることを保証する:
+  - For experimentation, data scientists can get an offline extract from the feature store to run their experiments. 実験のために、データサイエンティストは、実験を実行するためにフィーチャーストアからオフライン抽出を取得できる。
+  - For continuous training, the automated ML training pipeline can fetch a batch of the up-to-date feature values of the dataset that are used for the training task. 継続的なトレーニングの場合、自動化されたMLトレーニングパイプラインは、トレーニングタスクに使用されるデータセットの最新の特徴量値のバッチを取得できる。
+  - For online prediction, the prediction service can fetch in a batch of the feature values related to the requested entity, such as customer demographic features, product features, and current session aggregation features. オンライン予測の場合、予測サービスは、リクエストされたエンティティに関連する特徴量のバッチを取得できる。たとえば、顧客の人口統計特徴、製品特徴、および現在のセッション集約特徴など。
 
-Avoid having similar features that have different definitions by maintaining features and their related metadata.
-フィーチャーとそれに関連するメタデータを管理することで、定義が異なる類似のフィーチャーが存在しないようにする。
-
-Serve up-to-date feature values from the feature store.
-フィーチャーストアから最新のフィーチャー値を提供する。
-
-Avoid training-serving skew by using the feature store as the data source for experimentation, continuous training, and online serving.
-特徴ストアを実験、継続的なトレーニング、オンラインサービスのデータソースとして使用することで、トレーニングサービスの偏りを避けることができます。
-This approach makes sure that the features used for training are the same ones used during serving:
-このアプローチでは、トレーニングに使用される特徴が、サービス時に使用される特徴と同じであることを確認する：
-
-For experimentation, data scientists can get an offline extract from the feature store to run their experiments.
-実験のために、データサイエンティストはフィーチャーストアからオフラインの抽出物を取得して実験を行うことができる。
-
-For continuous training, the automated ML training pipeline can fetch a batch of the up-to-date feature values of the dataset that are used for the training task.
-継続的なトレーニングのために、自動化されたMLトレーニングパイプラインは、トレーニングタスクに使用されるデータセットの最新の特徴値のバッチをフェッチすることができます。
-
-For online prediction, the prediction service can fetch in a batch of the feature values related to the requested entity, such as customer demographic features, product features, and current session aggregation features.
-オンライン予測の場合、予測サービスは要求されたエンティティに関連する特徴値、例えば顧客属性特徴、商品特徴、現在のセッション集計特徴などを一括して取得することができる。
+<!-- ここまで読んだ! -->
 
 #### Metadata management メタデータ管理
 
 Information about each execution of the ML pipeline is recorded in order to help with data and artifacts lineage, reproducibility, and comparisons.
-MLパイプラインの各実行に関する情報は、データと成果物の系統、再現性、比較に役立つように記録される。
+MLパイプラインの各実行に関する情報は、**データと成果物の系譜、再現性、比較を支援するために記録されます**。
 It also helps you debug errors and anomalies.
 また、エラーや異常のデバッグにも役立つ。
 Each time you execute the pipeline, the ML metadata store records the following metadata:
-パイプラインを実行するたびに、MLメタデータストアは以下のメタデータを記録します：
+**パイプラインを実行するたびに、MLメタデータストアは以下のメタデータを記録します**：
+(実験だけじゃなくて、定期実行をtrackingする...!:thinking:)
 
-The pipeline and component versions that were executed.
-実行されたパイプラインとコンポーネントのバージョン。
+- The pipeline and component versions that were executed.  実行されたパイプラインとコンポーネントのバージョン。
+- The start and end date, time, and how long the pipeline took to complete each of the steps. 開始日と終了日、時間、パイプラインが各ステップを完了するのに要した時間。
+- The executor of the pipeline. パイプラインの実行者。
+- The parameter arguments that were passed to the pipeline. パイプラインに渡されたパラメータ引数。
+- The pointers to the artifacts produced by each step of the pipeline, such as the location of prepared data, validation anomalies, computed statistics, and extracted vocabulary from the categorical features. パイプラインの各ステップで生成された成果物へのポインタ(=成果物のpath??)。例えば、準備されたデータの場所、検証の異常、計算された統計、カテゴリ特徴から抽出された語彙、など。 Tracking these intermediate outputs helps you resume the pipeline from the most recent step if the pipeline stopped due to a failed step, without having to re-execute the steps that have already completed. **これらの中間出力を追跡することで、パイプラインが失敗したステップによって停止した場合、すでに完了したステップを再実行することなく、最新のステップからパイプラインを再開することができます**。(pipelineの途中の任意のstepから再実行できる方がいいよな...:thinking:)
+- A pointer to the previous trained model if you need to roll back to a previous model version or if you need to produce evaluation metrics for a previous model version when the pipeline is given new test data during the model validation step. 前回のトレーニングされたモデルへのポインタ。**以前のモデルバージョンにロールバックする必要がある場合**や、モデル検証ステップで新しいテストデータが与えられたときに、以前のモデルバージョンの評価メトリクスを生成する必要がある場合に使用します。
+- The model evaluation metrics produced during the model evaluation step for both the training and the testing sets. トレーニングセットとテストセットの両方に対して、モデル評価ステップ中に生成されたモデル評価メトリクス。These metrics help you compare the performance of a newly trained model to the recorded performance of the previous model during the model validation step. これらのメトリクスは、モデル検証ステップ中に、新しくトレーニングされたモデルのパフォーマンスを以前のモデルの記録されたパフォーマンスと比較するのに役立ちます。
 
-The start and end date, time, and how long the pipeline took to complete each of the steps.
-開始日と終了日、時間、パイプラインが各ステップを完了するのに要した時間。
-
-The executor of the pipeline.
-パイプラインの実行者。
-
-The parameter arguments that were passed to the pipeline.
-パイプラインに渡されたパラメータ引数。
-
-The pointers to the artifacts produced by each step of the pipeline, such as the location of prepared data, validation anomalies, computed statistics, and extracted vocabulary from the categorical features.
-準備されたデータの場所、検証の異常、計算された統計、カテゴリ特徴から抽出された語彙など、パイプラインの各ステップによって生成された成果物へのポインタ。
-Tracking these intermediate outputs helps you resume the pipeline from the most recent step if the pipeline stopped due to a failed step, without having to re-execute the steps that have already completed.
-これらの中間出力を追跡することで、失敗したステップのためにパイプラインが停止した場合、すでに完了したステップを再実行することなく、最新のステップからパイプラインを再開することができます。
-
-A pointer to the previous trained model if you need to roll back to a previous model version or if you need to produce evaluation metrics for a previous model version when the pipeline is given new test data during the model validation step.
-以前のモデル・バージョンにロールバックする必要がある場合や、モデル検証ステップでパイプラインに新しいテスト・データが与えられたときに、以前のモデル・バージョンの評価メトリクスを生成する必要がある場合の、以前の学習済みモデルへのポインタ。
-
-The model evaluation metrics produced during the model evaluation step for both the training and the testing sets.
-トレーニングセットとテストセットの両方について、モデル評価ステップで生成されたモデル評価メトリクス。
-These metrics help you compare the performance of a newly trained model to the recorded performance of the previous model during the model validation step.
-これらのメトリクスは、モデル検証ステップにおいて、新しくトレーニングされたモデルのパフォーマンスを、以前のモデルの記録されたパフォーマンスと比較するのに役立ちます。
+<!-- ここまで読んだ -->
 
 #### ML pipeline triggers MLパイプラインのトリガー
 
 You can automate the ML production pipelines to retrain the models with new data, depending on your use case:
-ユースケースに応じて、MLプロダクションパイプラインを自動化し、新しいデータでモデルを再学習させることができる：
+**ユースケースに応じて**、新しいデータでモデルを再トレーニングするためにML本番パイプラインを自動化することができます：
+(確かに、pipelineのtriggerはusecaseによって色々変わるよね...!:thinking:)
 
 On demand: Ad-hoc manual execution of the pipeline.
 オンデマンド： パイプラインのアドホックな手動実行。
