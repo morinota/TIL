@@ -2,16 +2,17 @@ import streamlit as st
 from streamlit import selectbox
 from app.pages import binary_metric_page, non_binary_metric_page
 
-# タイトルの設定
-st.title("ABテストの理想的なサンプルサイズ計算アプリ")
+# タイトルの設定()
+st.title("ABテストの適切なサンプルサイズ計算アプリ")
 
-# メニューの設定(selectboxを使ってページ選択)
+
+# metricのタイプを選択するためのドロップダウンをメインページに配置。
 option = st.selectbox(
-    "計算したいメトリクスを選択してください",
-    ("二値メトリクス", "非二値メトリクス"),
+    "計算したいメトリクスの種類を選択してください",
+    ("二値メトリクス(ex. CTR, 解約率)", "非二値メトリクス(ex. 購入数、売上)"),
 )
 
-if option == "二値メトリクス":
+if option == "二値メトリクス(ex. CTR, 解約率)":
     binary_metric_page.display()
 else:
     non_binary_metric_page.display()
