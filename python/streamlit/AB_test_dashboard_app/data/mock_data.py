@@ -8,19 +8,27 @@ from data.data_models import (
 import numpy as np
 
 
-def generate_mock_app_launch_log_table(num_rows: int) -> pl.DataFrame:
+def generate_mock_app_launch_log_table() -> pl.DataFrame:
     # アプリ起動ログテーブル
     return pl.DataFrame(
-        {
-            # user_id 1~4をランダムに
-            "user_id": np.random.randint(1, 5, num_rows),
-            # 2024-01-01, 2024-01-02, 2024-01-03, 2024-01-04をランダムに(時刻は00:00:00)
-            "timestamp": [
-                datetime(2024, 1, i) for i in np.random.randint(1, 5, num_rows)
-            ],
-            # iOS, Androidをランダムに
-            "os": np.random.choice(["iOS", "Android"], num_rows),
-        }
+        [
+            {"user_id": 1, "timestamp": datetime(2021, 1, 1, 0, 0, 0), "os": "iOS"},
+            {"user_id": 2, "timestamp": datetime(2021, 1, 1, 0, 0, 0), "os": "Android"},
+            {"user_id": 3, "timestamp": datetime(2021, 1, 1, 0, 0, 0), "os": "iOS"},
+            {"user_id": 4, "timestamp": datetime(2021, 1, 1, 0, 0, 0), "os": "Android"},
+            {"user_id": 1, "timestamp": datetime(2021, 1, 2, 0, 0, 0), "os": "iOS"},
+            {"user_id": 2, "timestamp": datetime(2021, 1, 2, 0, 0, 0), "os": "Android"},
+            {"user_id": 3, "timestamp": datetime(2021, 1, 2, 0, 0, 0), "os": "iOS"},
+            {"user_id": 4, "timestamp": datetime(2021, 1, 2, 0, 0, 0), "os": "Android"},
+            {"user_id": 1, "timestamp": datetime(2021, 1, 3, 0, 0, 0), "os": "iOS"},
+            {"user_id": 2, "timestamp": datetime(2021, 1, 3, 0, 0, 0), "os": "Android"},
+            {"user_id": 3, "timestamp": datetime(2021, 1, 3, 0, 0, 0), "os": "iOS"},
+            # user_id 4は2021-01-03にアプリを起動してない。
+            {"user_id": 1, "timestamp": datetime(2021, 1, 4, 0, 0, 0), "os": "iOS"},
+            {"user_id": 2, "timestamp": datetime(2021, 1, 4, 0, 0, 0), "os": "Android"},
+            {"user_id": 3, "timestamp": datetime(2021, 1, 4, 0, 0, 0), "os": "iOS"},
+            {"user_id": 4, "timestamp": datetime(2021, 1, 4, 0, 0, 0), "os": "Android"},
+        ]
     )
 
 
