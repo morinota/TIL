@@ -41,5 +41,5 @@ class Repository:
 if __name__ == "__main__":
     repo = Repository()
     print(repo.query("select * from app_launch_log where timestamp >= '2024-01-02'"))
-    print(repo.query("select * from user_variant_mapping"))
-    print(repo.query("select * from user_metadata"))
+    print(repo.query("select * from user_variant_mapping where abtest_id = 1001"))
+    print(repo.query("select * from user_metadata where age >= 30"))
