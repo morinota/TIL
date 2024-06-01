@@ -31,13 +31,13 @@ def display() -> None:
         assumed_metric_variance = assumed_metric_std**2
         desirable_sample_size = simulator.calculate(
             control_metric_mean,
-            assumed_metric_variance,
             treatment_metric_mean,
+            metric_variance=assumed_metric_variance,
         )
         st.success(
-            f"理想的なサンプルサイズ: 片側ユーザグループ当たり {desirable_sample_size} 人"
-        )
-        # 補足説明
-        st.write(
-            f"期待する効果量 +{treatment_metric_mean - control_metric_mean} に対して、検出力 {1.0 - acceptable_false_negative_rate} を満たすサンプルサイズを計算しました。"
+            f"""
+            treatmentに期待する効果量 +{treatment_metric_mean - control_metric_mean} が実際に存在する場合に、
+            それを検出力 {1.0 - acceptable_false_negative_rate} で検出するためには、
+            各ユーザグループのサンプルサイズは少なくとも {desirable_sample_size} 人が必要です。
+            """
         )
