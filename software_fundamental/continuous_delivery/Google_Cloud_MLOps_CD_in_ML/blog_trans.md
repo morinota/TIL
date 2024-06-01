@@ -440,152 +440,108 @@ You can automate the ML production pipelines to retrain the models with new data
 **ユースケースに応じて**、新しいデータでモデルを再トレーニングするためにML本番パイプラインを自動化することができます：
 (確かに、pipelineのtriggerはusecaseによって色々変わるよね...!:thinking:)
 
-On demand: Ad-hoc manual execution of the pipeline.
-オンデマンド： パイプラインのアドホックな手動実行。
+- **On demand**: Ad-hoc manual execution of the pipeline. オンデマンド： パイプラインのアドホックな手動実行。
+- **On a schedule**: New, labelled data is systematically available for the ML system on a daily, weekly, or monthly basis. スケジュール通りに： 新しい、ラベル付けされたデータは、毎日、毎週、または毎月、MLシステムで体系的に利用可能です。 The retraining frequency also depends on how frequently the data patterns change, and how expensive it is to retrain your models. 再トレーニングの頻度は、データパターンがどれくらい頻繁に変化するか、モデルを再トレーニングするのがどれくらいコストがかかるかにも依存します。
+- **On availability of new training data**: New data isn't systematically available for the ML system and instead is available on an ad-hoc basis when new data is collected and made available in the source databases. 新しいトレーニングデータが利用可能になったとき： 新しいデータは、MLシステムに体系的に利用可能ではなく、新しいデータが収集され、ソースデータベースで利用可能になったときにアドホックな基準で利用可能です。 
+- On model performance degradation: The model is retrained when there is noticeable performance degradation. モデルのパフォーマンスが低下したとき： パフォーマンスが著しく低下したときにモデルを再トレーニングします。
 
-On a schedule: New, labelled data is systematically available for the ML system on a daily, weekly, or monthly basis.
-スケジュール通りに： 新しい、ラベル付けされたデータは、毎日、毎週、または毎月、MLシステムで体系的に利用可能です。
-The retraining frequency also depends on how frequently the data patterns change, and how expensive it is to retrain your models.
-再トレーニングの頻度は、データパターンがどの程度頻繁に変わるか、モデルを再トレーニングするのにどの程度コストがかかるかにもよる。
+- On significant changes in the data distributions (concept drift). **データ分布の著しい変化（コンセプトドリフト）が発生した時**。 It's hard to assess the complete performance of the online model, but you notice significant changes on the data distributions of the features that are used to perform the prediction. オンラインモデルの完全なパフォーマンスを評価するのは難しいですが、予測を行うために使用される特徴量のデータ分布に著しい変化があることに気づきます。 These changes suggest that your model has gone stale, and that needs to be retrained on fresh data. **これらの変化は、モデルが古くなったことを示しており**、新鮮なデータで再トレーニングする必要があることを示しています。
 
-On availability of new training data: New data isn't systematically available for the ML system and instead is available on an ad-hoc basis when new data is collected and made available in the source databases.
-新しいトレーニングデータの利用可能性について： 新しいデータは、MLシステムにとって体系的に利用可能なものではなく、新しいデータが収集され、ソース・データベースで利用可能になったときに、アドホックに利用可能になる。
-
-On model performance degradation: The model is retrained when there is noticeable performance degradation.
-モデルの性能劣化について： モデルの性能劣化が顕著な場合、モデルは再トレーニングされる。
-
-On significant changes in the data distributions (concept drift).
-データ分布の著しい変化（コンセプト・ドリフト）について。
-It's hard to assess the complete performance of the online model, but you notice significant changes on the data distributions of the features that are used to perform the prediction.
-オンラインモデルの完全なパフォーマンスを評価するのは難しいが、予測を実行するために使用される特徴のデータ分布に大きな変化があることに気づく。
-These changes suggest that your model has gone stale, and that needs to be retrained on fresh data.
-このような変化は、モデルが古くなったことを示唆しており、新しいデータで再トレーニングする必要がある。
+<!-- ここまで読んだ! -->
 
 ### Challenges 課題
 
 Assuming that new implementations of the pipeline aren't frequently deployed and you are managing only a few pipelines, you usually manually test the pipeline and its components.
-パイプラインの新しい実装が頻繁にデプロイされず、少数のパイプラインしか管理していないと仮定すると、通常はパイプラインとそのコンポーネントを手動でテストします。
+**新しいパイプラインの実装が頻繁にデプロイされず、数本のパイプラインのみを管理していると仮定すると**、通常、パイプラインとそのコンポーネントを手動でテストします。
 In addition, you manually deploy new pipeline implementations.
-さらに、新しいパイプラインの実装を手動でデプロイする。
+さらに、新しいパイプラインの実装を手動でデプロイします。
 You also submit the tested source code for the pipeline to the IT team to deploy to the target environment.
-また、テスト済みのパイプラインのソースコードをITチームに提出し、ターゲット環境にデプロイしてもらう。
+また、テスト済みのパイプラインのソースコードをITチームに提出して、ターゲット環境にデプロイします。
 This setup is suitable when you deploy new models based on new data, rather than based on new ML ideas.
-この設定は、MLの新しいアイデアに基づいてではなく、新しいデータに基づいて新しいモデルをデプロイする場合に適している。
+この設定は、新しいデータに基づいて新しいモデルをデプロイする場合に適していますが、新しいMLのアイデアに基づいてデプロイする場合には適していません。
 
 However, you need to try new ML ideas and rapidly deploy new implementations of the ML components.
-しかし、新しいMLのアイデアを試し、MLコンポーネントの新しい実装を迅速に展開する必要がある。
+**しかし、新しいMLのアイデアを試して、MLコンポーネントの新しい実装を迅速にデプロイする必要があります**。(新しいアイデアをすぐに試せてデプロイできるようにしたい...!:thinking:)
 If you manage many ML pipelines in production, you need a CI/CD setup to automate the build, test, and deployment of ML pipelines.
-本番環境で多くのMLパイプラインを管理する場合、MLパイプラインのビルド、テスト、デプロイを自動化するためのCI/CDセットアップが必要になる。
+本番環境で多くのMLパイプラインを管理する場合、MLパイプラインのビルド、テスト、デプロイメントを自動化するためのCI/CDセットアップが必要です。
+
+<!-- ここまで読んだ! -->
 
 ## MLOps level 2: CI/CD pipeline automation MLOpsレベル2 CI/CDパイプラインの自動化
 
 For a rapid and reliable update of the pipelines in production, you need a robust automated CI/CD system.
-本番環境でパイプラインを迅速かつ確実に更新するには、堅牢な自動CI/CDシステムが必要です。
+**本番環境でパイプラインを迅速かつ確実に更新するには、堅牢な自動CI/CDシステムが必要**です。
 This automated CI/CD system lets your data scientists rapidly explore new ideas around feature engineering, model architecture, and hyperparameters.
-この自動化されたCI/CDシステムにより、データ・サイエンティストは、フィーチャー・エンジニアリング、モデル・アーキテクチャ、ハイパー・パラメータに関する新しいアイデアを迅速に探求することができます。
+この自動化されたCI/CDシステムにより、データ・サイエンティストは、フィーチャー・エンジニアリング、モデル・アーキテクチャ、ハイパー・パラメータに関する**新しいアイデアを迅速に探求することができます。**(迅速にしたい...!:thinking:)
 They can implement these ideas and automatically build, test, and deploy the new pipeline components to the target environment.
-これらのアイデアを実装し、新しいパイプラインコンポーネントを自動的にビルド、テストし、ターゲット環境にデプロイすることができる。
+**これらのアイデアを実装し、新しいパイプラインコンポーネントを自動的にビルド、テストし、ターゲット環境にデプロイすることができる。**
 
 The following diagram shows the implementation of the ML pipeline using CI/CD, which has the characteristics of the automated ML pipelines setup plus the automated CI/CD routines.
-以下の図は、CI/CDを使ったMLパイプラインの実装を示しており、自動化されたMLパイプラインのセットアップに加え、自動化されたCI/CDルーチンの特徴を備えている。
+以下の図は、CI/CDを使用したMLパイプラインの実装を示しており、自動化されたMLパイプラインのセットアップに加えて、自動化されたCI/CDルーチンの特性を持っています。
+(FTI pipelinesのブログで引用されてた、わかりづらい MLOps mapだ!:thinking:)
 
 ![figure4]()
 
 This MLOps setup includes the following components:
 このMLOpsセットアップには、以下のコンポーネントが含まれる：
 
-Source control
-ソース・コントロール
+- Source control
+- Test and build services サービスのテストと構築
+- Deployment services デプロイメント・サービス
+- Model registry
+- Feature store
+- ML metadata store
+- ML pipeline orchestrator
 
-Test and build services
-サービスのテストと構築
-
-Deployment services
-デプロイメント・サービス
-
-Model registry
-モデル登録
-
-Feature store
-フィーチャーストア
-
-ML metadata store
-MLメタデータストア
-
-ML pipeline orchestrator
-MLパイプライン・オーケストレーター
+<!-- ここまで読んだ! -->
 
 ### Characteristics 特徴
 
 The following diagram shows the stages of the ML CI/CD automation pipeline:
-以下の図は、MLのCI/CD自動化パイプラインの段階を示している：
+以下の図は、MLのCI/CD自動化パイプラインの段階を示している:
 
 ![figure5]()
+Figure 5. Stages of the CI/CD automated ML pipeline.
+図5. CI/CD自動化MLパイプラインのステージ。
 
 The pipeline consists of the following stages:
-パイプラインは以下のステージで構成されている：
+パイプラインは以下のステージで構成されている: (このpipelineは、**CD pipeline**のこと...!)
 
-Development and experimentation: You iteratively try out new ML algorithms and new modeling where the experiment steps are orchestrated.
-開発と実験： 新しいMLアルゴリズムや新しいモデリングを繰り返し試し、実験ステップがオーケストレーションされる。
-The output of this stage is the source code of the ML pipeline steps that are then pushed to a source repository.
-この段階の出力は、MLパイプラインステップのソースコードであり、ソースリポジトリにプッシュされる。
+- 1. Development and experimentation: You iteratively try out new ML algorithms and new modeling where the experiment steps are orchestrated.
+開発と実験： 新しいMLアルゴリズムや新しいモデリングを繰り返し試し、実験ステップがオーケストレーションされる。The output of this stage is the source code of the ML pipeline steps that are then pushed to a source repository. この段階の出力は、MLパイプラインステップのソースコードであり、ソースリポジトリにプッシュされる。
+- 2. Pipeline continuous integration: You build source code and run various tests. パイプラインの継続的インテグレーション： ソースコードをビルドし、様々なテストを実行する。 The outputs of this stage are pipeline components (packages, executables, and artifacts) to be deployed in a later stage. この段階の出力は、後の段階でデプロイされるパイプラインコンポーネント（パッケージ、実行可能ファイル、成果物）である。
+- 3. Pipeline continuous delivery: You deploy the artifacts produced by the CI stage to the target environment.
+パイプラインによる継続的デリバリー： **CIステージで作成された成果物をターゲット環境にデプロイする**。 The output of this stage is a deployed pipeline with the new implementation of the model. このステージのアウトプットは、モデルの新しい実装を含むデプロイされたパイプラインである。
+- 4. Automated triggering: The pipeline is automatically executed in production based on a schedule or in response to a trigger. 自動トリガー： パイプラインは、スケジュールに基づいて、またはトリガーに応答して、プロダクションで自動的に実行される。 The output of this stage is a trained model that is pushed to the model registry. この段階の出力は、モデル登録にプッシュされる学習済みモデルである。
+- 5. **Model continuous delivery**: You serve the trained model as a prediction service for the predictions. モデルの継続的デリバリー： 学習済みのモデルを予測サービスとして提供する。 The output of this stage is a deployed model prediction service. この段階の出力は、展開されたモデル予測サービスである。
+- 6. Monitoring: You collect statistics on the model performance based on live data. モニタリング： ライブデータに基づいてモデルのパフォーマンスに関する統計を収集します。 The output of this stage is a trigger to execute the pipeline or to execute a new experiment cycle. このステージの出力は、パイプラインの実行や新しい実験サイクルの実行のトリガーとなる。
 
-Pipeline continuous integration: You build source code and run various tests.
-パイプラインの継続的インテグレーション： ソースコードをビルドし、様々なテストを実行する。
-The outputs of this stage are pipeline components (packages, executables, and artifacts) to be deployed in a later stage.
-この段階の出力は、後の段階でデプロイされるパイプラインコンポーネント（パッケージ、実行可能ファイル、成果物）である。
-
-Pipeline continuous delivery: You deploy the artifacts produced by the CI stage to the target environment.
-パイプラインによる継続的デリバリー： CIステージで作成された成果物をターゲット環境にデプロイする。
-The output of this stage is a deployed pipeline with the new implementation of the model.
-このステージのアウトプットは、モデルの新しい実装を含むデプロイされたパイプラインである。
-
-Automated triggering: The pipeline is automatically executed in production based on a schedule or in response to a trigger.
-自動トリガー： パイプラインは、スケジュールに基づいて、またはトリガーに応答して、プロダクションで自動的に実行される。
-The output of this stage is a trained model that is pushed to the model registry.
-この段階の出力は、モデル登録にプッシュされる学習済みモデルである。
-
-Model continuous delivery: You serve the trained model as a prediction service for the predictions.
-モデルの継続的デリバリー： 学習済みのモデルを予測サービスとして提供する。
-The output of this stage is a deployed model prediction service.
-この段階の出力は、展開されたモデル予測サービスである。
-
-Monitoring: You collect statistics on the model performance based on live data.
-モニタリング： ライブデータに基づいてモデルのパフォーマンスに関する統計を収集します。
-The output of this stage is a trigger to execute the pipeline or to execute a new experiment cycle.
-このステージの出力は、パイプラインの実行や新しい実験サイクルの実行のトリガーとなる。
+(なるほど、MLシステムのoperationだから、step4とstep５とstep6があるのか:thinking:)
 
 The data analysis step is still a manual process for data scientists before the pipeline starts a new iteration of the experiment.
 データ分析ステップは、パイプラインが実験の新しい反復を開始する前に、データサイエンティストにとって依然として手作業のプロセスである。
 The model analysis step is also a manual process.
 モデル分析のステップも手作業だ。
 
+<!-- ここまで読んだ! -->
+
 ### Continuous integration 継続的インテグレーション
 
 In this setup, the pipeline and its components are built, tested, and packaged when new code is committed or pushed to the source code repository.
 このセットアップでは、新しいコードがソースコード・リポジトリにコミットまたはプッシュされると、パイプラインとそのコンポーネントがビルド、テスト、パッケージ化される。
 Besides building packages, container images, and executables, the CI process can include the following tests:
-パッケージ、コンテナ・イメージ、実行ファイルのビルド以外に、CIプロセスには以下のテストを含めることができる：
+パッケージ、コンテナイメージ、実行可能ファイルをビルドするだけでなく、**CIプロセスには以下のテストが含まれることがあります**：
 
-Unit testing your feature engineering logic.
-フィーチャーエンジニアリングロジックのユニットテスト
+- Unit testing your feature engineering logic. フィーチャーエンジニアリングロジックのユニットテスト
+- Unit testing the different methods implemented in your model. モデルに実装されたさまざまなメソッドのユニットテスト For example, you have a function that accepts a categorical data column and you encode the function as a one-hot feature. 例えば、カテゴリーデータ列を受け入れる関数があり、その関数をワンホット特徴としてエンコードするとする。
+- Testing that your model training converges (that is, the loss of your model goes down by iterations and overfits a few sample records). モデル学習が収束する（つまり、モデルの損失が反復によって減少し、いくつかのサンプルレコードをオーバーフィットする）ことをテストする。
+- Testing that your model training doesn't produce NaN values due to dividing by zero or manipulating small or large values. モデル学習が、ゼロで割ったり、大小の値を操作したりすることによってNaN値を生成しないことをテストする。
+- Testing that each component in the pipeline produces the expected artifacts. **パイプラインの各コンポーネントが期待される成果物を生成することをテストする**。
+- Testing integration between pipeline components. **パイプラインコンポーネント間の統合テスト**
 
-Unit testing the different methods implemented in your model.
-モデルに実装されているさまざまなメソッドをユニットテストする。
-For example, you have a function that accepts a categorical data column and you encode the function as a one-hot feature.
-例えば、カテゴリーデータ列を受け入れる関数があり、その関数をワンホット特徴としてエンコードするとする。
+(後半2つのテストしたいな。)
 
-Testing that your model training converges (that is, the loss of your model goes down by iterations and overfits a few sample records).
-モデル学習が収束する（つまり、モデルの損失が反復によって減少し、いくつかのサンプルレコードをオーバーフィットする）ことをテストする。
-
-Testing that your model training doesn't produce NaN values due to dividing by zero or manipulating small or large values.
-モデル学習が、ゼロで割ったり、大小の値を操作したりすることによってNaN値を生成しないことをテストする。
-
-Testing that each component in the pipeline produces the expected artifacts.
-パイプラインの各コンポーネントが期待される成果物を生成することをテストする。
-
-Testing integration between pipeline components.
-パイプラインコンポーネント間の統合テスト
+<!-- ここまで読んだ! -->
 
 ### Continuous delivery 継続的デリバリー
 
@@ -594,33 +550,15 @@ In this level, your system continuously delivers new pipeline implementations to
 For rapid and reliable continuous delivery of pipelines and models, you should consider the following:
 パイプラインとモデルの迅速かつ信頼性の高い継続的デリバリーのためには、以下を考慮すべきである：
 
-Verifying the compatibility of the model with the target infrastructure before you deploy your model.
-モデルをデプロイする前に、ターゲットインフラストラクチャとモデルの互換性を検証する。
-For example, you need to verify that the packages that are required by the model are installed in the serving environment, and that the required memory, compute, and accelerator resources are available.
-例えば、モデルが必要とするパッケージがサービング環境にインストールされていること、必要なメモリ、コンピュート、アクセラレータリソースが利用可能であることを確認する必要があります。
+- Verifying the compatibility of the model with the target infrastructure before you deploy your model. **モデルをデプロイする前に、ターゲットインフラストラクチャとモデルの互換性を検証する**。 For example, you need to verify that the packages that are required by the model are installed in the serving environment, and that the required memory, compute, and accelerator resources are available. たとえば、モデルに必要なパッケージがサービング環境にインストールされていること、必要なメモリ、計算、アクセラレータリソースが利用可能であることを検証する必要があります。
 
-Testing the prediction service by calling the service API with the expected inputs, and making sure that you get the response that you expect.
-予想される入力でサービスAPIを呼び出し、予想されるレスポンスが得られることを確認することで、予測サービスをテストする。
-This test usually captures problems that might occur when you update the model version and it expects a different input.
-このテストは通常、モデルのバージョンを更新し、異なる入力を期待した場合に発生する可能性のある問題を捕捉する。
-
-Testing prediction service performance, which involves load testing the service to capture metrics such as queries per seconds (QPS) and model latency.
-予測サービスのパフォーマンスをテストする。これには、サービスの負荷テストを行い、秒あたりのクエリー数（QPS）やモデルの待ち時間などのメトリクスを取得する。
-
-Validating the data either for retraining or batch prediction.
-再トレーニングまたはバッチ予測のためにデータを検証する。
-
-Verifying that models meet the predictive performance targets before they are deployed.
-モデルが展開される前に、予測性能目標を満たしていることを検証する。
-
-Automated deployment to a test environment, for example, a deployment that is triggered by pushing code to the development branch.
-テスト環境への自動デプロイメント。例えば、開発ブランチにコードをプッシュすることで開始されるデプロイメント。
-
-Semi-automated deployment to a pre-production environment, for example, a deployment that is triggered by merging code to the main branch after reviewers approve the changes.
-プリプロダクション環境への半自動デプロイメント。たとえば、レビュアーが変更を承認した後、コードをメインブランチにマージすることでデプロイメントが開始される。
-
-Manual deployment to a production environment after several successful runs of the pipeline on the pre-production environment.
-本番前の環境でパイプラインを数回実行し成功した後、本番環境に手動でデプロイする。
+- Testing the prediction service by calling the service API with the expected inputs, and making sure that you get the response that you expect. 予想される入力でサービスAPIを呼び出し、予想されるレスポンスが得られることを確認することで、**予測サービスをテスト**する。 This test usually captures problems that might occur when you update the model version and it expects a different input. このテストは通常、モデルのバージョンを更新し、異なる入力を期待した場合に発生する可能性のある問題を捕捉する。
+- Testing prediction service performance, which involves load testing the service to capture metrics such as queries per seconds (QPS) and model latency. **予測サービスのパフォーマンスをテストする**。これには、クエリ数（QPS）やモデルのレイテンシなどのメトリクスをキャプチャするためにサービスの負荷テストが含まれる。
+- Validating the data either for retraining or batch prediction. **再トレーニングまたはバッチ予測のためのデータを検証**する。
+- Verifying that models meet the predictive performance targets before they are deployed. **モデルがデプロイされる前に、予測性能目標を満たしていることを検証**する。
+- Automated deployment to a test environment, for example, a deployment that is triggered by pushing code to the development branch. **テスト環境への自動デプロイメント**。たとえば、コードを開発ブランチにプッシュすることでトリガーされるデプロイメント。(CI的な自動テストみたいな?)
+- Semi-automated deployment to a pre-production environment, for example, a deployment that is triggered by merging code to the main branch after reviewers approve the changes. **本番前の環境への半自動デプロイメント**。たとえば、レビュアーが変更を承認した後、コードをメインブランチにマージすることでトリガーされるデプロイメント。
+- Manual deployment to a production environment after several successful runs of the pipeline on the pre-production environment. 本番前の環境でパイプラインを数回実行し成功した後、**本番環境に手動でデプロイする**。(あ、まあAPIだもんね。本番へはちゃんと検証が全て通ってから手動でgoサインを出すべき、ってことか)
 
 To summarize, implementing ML in a production environment doesn't only mean deploying your model as an API for prediction.
 要約すると、本番環境でMLを実装することは、予測用のAPIとしてモデルをデプロイすることだけを意味しない。
