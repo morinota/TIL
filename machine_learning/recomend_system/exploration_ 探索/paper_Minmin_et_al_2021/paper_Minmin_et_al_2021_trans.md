@@ -84,19 +84,21 @@ We dissect the values of user exploration by examining its role in changing diff
 Together, we make the following contributions: • Methods to Introduce User Exploration: We introduce a collection of methods, inspired by exploration research in RL, to improve user exploration in recommender systems.
 併せて、我々は以下の貢献を行う： - **ユーザ探索を導入する方法 推薦システムにおけるユーザ探索を改善するために、RLにおける探索研究に触発された手法を紹介する**。(exploitionのみの決定的な推薦システムに、explorationを導入する手法...!:thinking_face:)
 • Metrics: We propose a set of metrics measuring the different aspects of recommendation quality, that is accuracy, diversity, novelty and serendipity for RL based recommender systems.
+
 - メトリクス RLベースの推薦システムにおいて、推薦品質の異なる側面、すなわち正確性、多様性、新規性、セレンディピティを測定する一連のメトリクスを提案する。
-• Offline Analyses: We conduct an extensive set of offline analyses to understand the values of user exploration in changing the four aspects of recommendation quality.
+  • Offline Analyses: We conduct an extensive set of offline analyses to understand the values of user exploration in changing the four aspects of recommendation quality.
 - オフライン分析 我々は、推薦品質の4つの側面を変化させるユーザ探索の価値を理解するために、広範なオフライン分析を実施する。
-• Live Experiments: We conduct live experiments of the proposed methods on a commercial recommendation platform serving billions of users and millions of items, and showcase the value of user exploration in improving long-term user experience on the platform.
+  • Live Experiments: We conduct live experiments of the proposed methods on a commercial recommendation platform serving billions of users and millions of items, and showcase the value of user exploration in improving long-term user experience on the platform.
 - ライブ実験： 数十億のユーザーと数百万のアイテムを提供する商用推薦プラットフォーム上で提案手法のライブ実験を行い、プラットフォーム上の長期的なユーザー体験を改善するためのユーザー探索の価値を示す。
-• Serendipity for Long Term User Experience: Through offline analyses and live experiments, we study the correlation between these four aspects of recommendation quality and the long term user experience.
+  • Serendipity for Long Term User Experience: Through offline analyses and live experiments, we study the correlation between these four aspects of recommendation quality and the long term user experience.
 - 長期的なユーザー体験のためのセレンディピティ： オフライン分析とライブ実験を通じて、**推薦品質のこれら4つの側面と長期的なユーザー・エクスペリエンスとの相関関係を研究する**。
-Using conversion of casual users to core users as an indicator of the holistic long term user experience, we connect serendipity to improved long term user experience.
-**カジュアルユーザからコアユーザへの転換を総合的な長期的ユーザ体験の指標とすること**で、セレンディピティを長期的ユーザー体験の向上につなげている。
+  Using conversion of casual users to core users as an indicator of the holistic long term user experience, we connect serendipity to improved long term user experience.
+  **カジュアルユーザからコアユーザへの転換を総合的な長期的ユーザ体験の指標とすること**で、セレンディピティを長期的ユーザー体験の向上につなげている。
 
 # Related Work 関連作品
 
 ## Reinforcement Learning for Recommender Systems.
+
 推薦システムのための強化学習.
 Deep reinforcement learning, combining high-capacity function approximators, i.e., deep neural networks, with the mathematical formulations in classic reinforcement learning [57], has achieved enormous success in various domains such as games, robotics and hardware design [18, 33, 36, 52].
 ディープ強化学習は、大容量の関数近似器、すなわちディープニューラルネットワークを古典的な強化学習の数学的定式化[57]と組み合わせたもので、ゲーム、ロボット工学、ハードウェア設計などの様々な領域で大きな成功を収めている[18, 33, 36, 52]。
@@ -120,6 +122,7 @@ Hu et al.[22] tested an extension of the deep deterministic policy gradient (DDP
 Huら[22]は、淘宝網（Taobao）という商業的な検索プラットフォームで、ランク付けを学習するための深層決定性政策勾配（DDPG）法の拡張をテストした。
 
 ## Exploration in Reinforcement Learning.
+
 強化学習における探索。
 The exploration/exploitation dilemma has long been studied in multi-armed bandits and classic reinforcement learning [17, 57].
 探索／搾取のジレンマは、多腕バンディットや古典的な強化学習で長い間研究されてきた[17, 57]。
@@ -174,11 +177,11 @@ Here S is the state space capturing the user interests and context, A is the dis
 ρ0 is the initial state distribution, and γ the discount for future rewards.
 $\rho_0$ は初期状態分布、$\gamma$ は将来の報酬の割引率である（=将来の報酬が現在の報酬よりもどの程度価値が低いかを表現したもの）。
 Let Ht = {(A0, a0,r0), · · · , (At−1, at−1,rt−1)} denote an user’s historical activities on the platform up to time t, where At ′ stands for the set of items recommended to the user at time t ′ , at ′ denotes the item the user interacted with at t ′ (at ′ can be null), and rt ′ captures the user feedback (reward) on at ′ (rt ′ = 0 if the user did not interact with any item in At ′).
-＄H_{t} = \{(A_{0}, a_{0}, r_{0}), \cdots, (A_{t-1}, a_{t-1}, r_{t-1})\}$ は、時刻$t$までのプラットフォーム上でのユーザの過去の活動を示し、$A_{t}'$ は時刻$t'$にユーザに推薦されたアイテムのセットを表し、$a_{t}'$ は$t'$でユーザが相互作用したアイテムを示し（$a_{t}'$ がnullの場合がある）、$r_{t}'$ は$a_{t}'$に対するユーザのフィードバック（報酬）を捉える（$a_{t}'$に対してユーザが何もアクションを起こさなかった場合、$r_{t}' = 0$）。
+＄H*{t} = \{(A*{0}, a*{0}, r*{0}), \cdots, (A*{t-1}, a*{t-1}, r*{t-1})\}$ は、時刻$t$までのプラットフォーム上でのユーザの過去の活動を示し、$A*{t}'$ は時刻$t'$にユーザに推薦されたアイテムのセットを表し、$a_{t}'$ は$t'$でユーザが相互作用したアイテムを示し（$a_{t}'$ がnullの場合がある）、$r_{t}'$ は$a_{t}'$に対するユーザのフィードバック（報酬）を捉える（$a_{t}'$に対してユーザが何もアクションを起こさなかった場合、$r_{t}' = 0$）。
 The history Ht is encoded through a recurrent neural network to capture the latent user state, that is, ust = RNNθ (Ht ).
 履歴 $H_{t}$ は、潜在的なユーザーの状態、すなわち $u_{st} = RNN_{\theta}(H_{t})$ を捉えるために、再帰ニューラルネットワークを用いてエンコードされる。(u_stは、ユーザの過去の行動履歴を埋め込んだもの...??)
 Given the latent user state, a softmax policy over the item corpus A is parameterized as
-潜在的なユーザの状態が与えられた場合、アイテムコーパスA上のソフトマックスポリシーは以下のようにパラメータ化される: 
+潜在的なユーザの状態が与えられた場合、アイテムコーパスA上のソフトマックスポリシーは以下のようにパラメータ化される:
 
 $$
 \pi_{\theta}(a|s_{t}) = \frac{\exp(u_{st}^{T}v_{a})}{\sum_{a' \in A} \exp(u_{st}^{T}v_{a'})}, \forall a \in A
@@ -186,16 +189,16 @@ $$
 $$
 
 which defines a distribution over the item corpus A conditioning on the user state st at time t.
-これは、時刻tにおけるユーザ状態stを条件とするアイテムコーパスA上の分布を定義している。(=ユーザ状態s_tで条件づけた行動の確率分布関数)
+これは、時刻tにおけるユーザ状態stを条件とするアイテムコーパスA上の分布を定義している。(=ユーザ状態s*tで条件づけた行動の確率分布関数)
 Here va stands for the embedding of the item a.
-ここで $v_{a}$ はアイテム$a$の埋め込みを表す。
+ここで $v*{a}$ はアイテム$a$の埋め込みを表す。
 The agent then generates a set of recommendation At to user at time t according to the learned softmax policy πθ (·|st ).
 次に、エージェントは、学習されたソフトマックスポリシー $\pi_{\theta}(-|s_{t})$ に従って、時刻$t$にユーザに推薦するアイテムのセット $A_{t}$ を生成する。
 The policy parameters θ are learned using REINFORCE [60] so as to maximize the expected cumulative reward over the user trajectories,
 **ポリシーのパラメータθは、ユーザの軌跡に対する期待累積報酬を最大化するように**、REINFORCE [60]を用いて学習される。
 
 $$
-\max_{\theta} J(\theta_{\theta}) 
+\max_{\theta} J(\theta_{\theta})
 = \mathbb{E}_{s_0 \sim \rho_{0}, a_{t} \sim \pi_{\theta}(-|s_{t})} \left[ \sum_{t=0}^{T} r(s_{t}, a_{t}) \right]
 \\
 \tag{2}
@@ -250,7 +253,6 @@ We add of the entropy to the RL learning objective as defined in eq.2 during tra
 式2で定義されるRLの学習目的に対して、学習時にエントロピーを追加する。
 That is,
 それはそうだ、
-
 
 $$
 \max_{\theta} J(\theta) + \alpha \sum_{s_{t} - d^{\beta}_{t}(s)}H(\pi_{\theta}(-|s_{t}))
@@ -310,6 +312,7 @@ We then define the cumulative reward Rt (st , at ) used for the gradient update 
 次に、式3の勾配更新に用いる累積報酬 Rt (st , at ) を次のように定義する。
 
 $$
+
 
 $$
 
@@ -386,7 +389,7 @@ Others measure on the recommendation set A πθ generated by acting according to
 These metrics bear similarity to many prior works in quantifying the four factors of recommendation quality [5, 8, 15, 19, 26, 29, 66].
 これらの指標は、推薦品質の4つの要素を定量化する多くの先行研究[5, 8, 15, 19, 26, 29, 66]と類似している。
 
-## Attributes 
+## Attributes
 
 We first introduce two item attributes that are used to define both the surprise factor in eq (6) as well as the metrics:
 まず、式(6)の驚き因子と測定基準を定義するために使用される2つの項目属性を紹介する：
@@ -418,6 +421,7 @@ Among them, the average dissimilarity of all pairs of items in the set is a popu
 
 $$
 
+
 $$
 
 We define the similarity between two items i and j both on topic level and on content provider level.
@@ -440,6 +444,7 @@ Zhouら[71]は推薦項目の自己情報という概念を最初に導入し、
 
 $$
 
+
 $$
 
 Herep(a) measures the chance a random user would have consumed item a.
@@ -450,6 +455,7 @@ With the definition of item-level self-information, we can then measure novelty 
 項目レベルの自己情報の定義により、学習された方針piの新規性を次のように測定することができる。
 
 $$
+
 
 $$
 
@@ -475,6 +481,7 @@ a user with interaction history of It as
 
 $$
 
+
 $$
 
 Again we can define the content-provider level serendipity value similarly.
@@ -483,6 +490,7 @@ With the serendipity value of an item defined, we can then quantify the serendip
 アイテムのセレンディピティ値が定義されたことで、推薦セットSπθのセレンディピティは次のように定量化できる。
 
 $$
+
 
 $$
 
@@ -589,40 +597,41 @@ The relative change on diversity related metrics is marginal between these varia
 The variant with window size of d = 7 scored the highest on the topic serendipity metric, which is defined using a window size of one year.
 ウインドウサイズd = 7のバリアントは、1年のウインドウサイズで定義されるトピック・セレンディピティの指標で最も高いスコアを獲得した。
 
-## Actionable Representation 
+## Actionable Representation
 
 In this set of experiments, we compare four setups: 1) baseline: the baseline REINFORCE algorithm; 2) repre.
 この一連の実験では、4つのセットアップを比較した： 1) ベースライン： ベースライン：ベースラインREINFORCEアルゴリズム。
 alone: the baseline REINFORCE with the actionable representation, i.e., the additional bit indicating if the item at is serendipitous at state st according to user historical interactions It ; 3) intrinsic alone: the baseline REINFORCE with intrinsic motivation for reward shaping; 4) repre.
 単独： ベースラインREINFORCEに、行動可能な表現、すなわち、ユーザーの過去のインタラクションに従っ て状態stでアイテムがセレンディピティであるかどうかを示す追加ビットを加えたもの： ベースラインREINFORCEと報酬形成のための内発的動機づけ。
-+ intrinsic: the baseline REINFORCE adding both the intrinsic motivation and the actionable representation.
-＋内発的： ベースラインのREINFORCEは、内発的動機づけと行動可能な表現の両方を加える。
-As shown in Table 3, adding the indicator alone (row 2) and adding the indicator along with the intrinsic motivation (row 4) resulted in very different metrics.
-表3に示すように、指標を単独で追加した場合（2行目）と、指標を内発的動機づけとともに追加した場合（4行目）では、測定基準が大きく異なる結果となった。
-Adding the indicator alone without the reward shaping performs very similarly to the baseline method, suggesting the representation is more useful when combined with the reward shaping.
-報酬のシェーピングを行わずにインジケーターを追加するだけで、ベースラインの方法と非常によく似た結果が得られ、報酬のシェーピングと組み合わせることで、より有用な表現になることが示唆された。
-We see +24.3% improvement in the serendipity value comparing (row 4) to (row 1) (0.037 → 0.046), and +4.5% improvement comparing to (row 3) (0.044 → 0.046).
-(4行目)と(1行目)(0.037 → 0.046)を比較すると+24.3%、(3行目)(0.044 → 0.046)を比較すると+4.5%のセレンディピティ値の向上が見られる。
-This suggests that the added representation is indeed helpful for decision making when the intrinsic motivation is rewarding serendipitous actions, i.e.actions that discover previously unknown user interests.
-このことは、内発的動機がセレンディピティ的行動、すなわち、これまで知られていなかったユーザーの興味を発見する行動に報いるものである場合、追加された表現が意思決定に役立つことを示唆している。
-To gain more insight into how the agent utilizes the additional bit indicating whether or not a historical event is surprising when provided, we compare the learning of the baseline REINFORCE algorithm with intrinsic motivation alone (shown in orange in Figure 1) vs the one combined with both the intrinsic motivation and the actionable representation (shown in cyan in Figure 1).
-エージェントは、歴史的なイベントが提供されたときに、それが驚くべきものであるかどうかを示す追加のビットをどのように利用するかをより深く理解するために、ベースラインREINFORCEアルゴリズムの学習を、内発的動機づけのみ（図1のオレンジ色で示す）と、内発的動機づけと行動可能表現の両方を組み合わせたもの（図1のシアン色で示す）とを比較する。
-The RNN [31] Chen et al.[11] used to encode the user history Ht has an important gate named input gate.
-ユーザー履歴Htを符号化するために使用されるRNN[31] Chenら[11]には、入力ゲートという重要なゲートがある。
-This gate controls how much the RNN is updating its hidden state to take into account a new input (event).
-このゲートは、RNNが新しい入力（イベント）を考慮するためにどれだけ隠れ状態を更新するかを制御する。
-We take the activation values of the input gates across the user trajectory, and separate the values in two groups: the ones on historical events that are considered surprising and relevant (shown in Figure 1 left), and the ones on historical events that are not (shown in Figure 1 right).
-入力ゲートの活性化値をユーザーの軌跡全体にわたって取り出し、2つのグループに分ける： すなわち、意外性があり、関連性があると考えられる歴史的出来事に関するもの（図1左）と、そうでない歴史的出来事に関するもの（図1右）である。
-Comparing the left and right figures, we can see that by adding this additional information, the RNN is able to differentiate better between historical events that are serendipitous and those that are not.
-左と右の図を比較すると、この追加情報を加えることで、RNNはセレンディピティである歴史的出来事とそうでない歴史的出来事をよりよく区別できることがわかる。
-At the end of training, the mean activation for events that are surprising and relevant (left) is at 0.1765 (+1.4% higher) for intrinsic motivation + actionable representation compared with 0.1741 for intrinsic motivation alone.
-訓練終了時、驚きと関連性のある出来事（左）に対する平均活性化は、内発的動機づけ＋行動可能な表現では0.1765（＋1.4％）であるのに対し、内発的動機づけのみでは0.1741である。
-The mean activation for events that are NOT serendipitous (right) is at 0.1409 (−11.2% lower) for intrinsic motivation + actionable representation compared with 0.1586 for intrinsic motivation alone.
-セレンディピティではない出来事（右）に対する平均活性化は、内発的動機づけ＋行動可能な表現では0.1409（-11.2％）であり、内発的動機づけのみの場合は0.1586であった。
-This suggests that relying on the reward alone, RNN can still recognize the difference between these two groups of events and perform slightly larger update when the historical event is considered surprising.
-このことは、RNNが報酬だけに頼っていても、2つのイベントの違いを認識することができ、歴史的なイベントが意外なものであると考えられる場合に、わずかに大きな更新を行うことができることを示唆している。
-Adding the feature helps RNN differentiate the two groups better.
-特徴を追加することで、RNNは2つのグループをより区別しやすくなる。
+
+- intrinsic: the baseline REINFORCE adding both the intrinsic motivation and the actionable representation.
+  ＋内発的： ベースラインのREINFORCEは、内発的動機づけと行動可能な表現の両方を加える。
+  As shown in Table 3, adding the indicator alone (row 2) and adding the indicator along with the intrinsic motivation (row 4) resulted in very different metrics.
+  表3に示すように、指標を単独で追加した場合（2行目）と、指標を内発的動機づけとともに追加した場合（4行目）では、測定基準が大きく異なる結果となった。
+  Adding the indicator alone without the reward shaping performs very similarly to the baseline method, suggesting the representation is more useful when combined with the reward shaping.
+  報酬のシェーピングを行わずにインジケーターを追加するだけで、ベースラインの方法と非常によく似た結果が得られ、報酬のシェーピングと組み合わせることで、より有用な表現になることが示唆された。
+  We see +24.3% improvement in the serendipity value comparing (row 4) to (row 1) (0.037 → 0.046), and +4.5% improvement comparing to (row 3) (0.044 → 0.046).
+  (4行目)と(1行目)(0.037 → 0.046)を比較すると+24.3%、(3行目)(0.044 → 0.046)を比較すると+4.5%のセレンディピティ値の向上が見られる。
+  This suggests that the added representation is indeed helpful for decision making when the intrinsic motivation is rewarding serendipitous actions, i.e.actions that discover previously unknown user interests.
+  このことは、内発的動機がセレンディピティ的行動、すなわち、これまで知られていなかったユーザーの興味を発見する行動に報いるものである場合、追加された表現が意思決定に役立つことを示唆している。
+  To gain more insight into how the agent utilizes the additional bit indicating whether or not a historical event is surprising when provided, we compare the learning of the baseline REINFORCE algorithm with intrinsic motivation alone (shown in orange in Figure 1) vs the one combined with both the intrinsic motivation and the actionable representation (shown in cyan in Figure 1).
+  エージェントは、歴史的なイベントが提供されたときに、それが驚くべきものであるかどうかを示す追加のビットをどのように利用するかをより深く理解するために、ベースラインREINFORCEアルゴリズムの学習を、内発的動機づけのみ（図1のオレンジ色で示す）と、内発的動機づけと行動可能表現の両方を組み合わせたもの（図1のシアン色で示す）とを比較する。
+  The RNN [31] Chen et al.[11] used to encode the user history Ht has an important gate named input gate.
+  ユーザー履歴Htを符号化するために使用されるRNN[31] Chenら[11]には、入力ゲートという重要なゲートがある。
+  This gate controls how much the RNN is updating its hidden state to take into account a new input (event).
+  このゲートは、RNNが新しい入力（イベント）を考慮するためにどれだけ隠れ状態を更新するかを制御する。
+  We take the activation values of the input gates across the user trajectory, and separate the values in two groups: the ones on historical events that are considered surprising and relevant (shown in Figure 1 left), and the ones on historical events that are not (shown in Figure 1 right).
+  入力ゲートの活性化値をユーザーの軌跡全体にわたって取り出し、2つのグループに分ける： すなわち、意外性があり、関連性があると考えられる歴史的出来事に関するもの（図1左）と、そうでない歴史的出来事に関するもの（図1右）である。
+  Comparing the left and right figures, we can see that by adding this additional information, the RNN is able to differentiate better between historical events that are serendipitous and those that are not.
+  左と右の図を比較すると、この追加情報を加えることで、RNNはセレンディピティである歴史的出来事とそうでない歴史的出来事をよりよく区別できることがわかる。
+  At the end of training, the mean activation for events that are surprising and relevant (left) is at 0.1765 (+1.4% higher) for intrinsic motivation + actionable representation compared with 0.1741 for intrinsic motivation alone.
+  訓練終了時、驚きと関連性のある出来事（左）に対する平均活性化は、内発的動機づけ＋行動可能な表現では0.1765（＋1.4％）であるのに対し、内発的動機づけのみでは0.1741である。
+  The mean activation for events that are NOT serendipitous (right) is at 0.1409 (−11.2% lower) for intrinsic motivation + actionable representation compared with 0.1586 for intrinsic motivation alone.
+  セレンディピティではない出来事（右）に対する平均活性化は、内発的動機づけ＋行動可能な表現では0.1409（-11.2％）であり、内発的動機づけのみの場合は0.1586であった。
+  This suggests that relying on the reward alone, RNN can still recognize the difference between these two groups of events and perform slightly larger update when the historical event is considered surprising.
+  このことは、RNNが報酬だけに頼っていても、2つのイベントの違いを認識することができ、歴史的なイベントが意外なものであると考えられる場合に、わずかに大きな更新を行うことができることを示唆している。
+  Adding the feature helps RNN differentiate the two groups better.
+  特徴を追加することで、RNNは2つのグループをより区別しやすくなる。
 
 # Live Experiments and Logn Term User Experience ライブ実験と長期ユーザー・エクスペリエンス
 
@@ -653,8 +662,7 @@ Comparing with entropy regularization (Figure 3a), intrinsic motivation (Figure 
 エントロピー正則化（図3a）と比較すると、内発的動機づけ（図3b）および行動可能な表現との組み合わせ（図3c）は、トップラインの指標を大幅に改善するだけでなく、実験4 の過程で強力な学習効果を示す。
 We compare the offline measurement on accuracy, diversity, novelty and serendipity between entropy regularization with α = 0.5 (Table 1 row 3) and intrinsic motivation (Table 3 row 3) and its combination with actionable representation (Table 3 row 4) and make the following observations: 1) the entropy regularization method with α = 0.5 achieves very similar diversity metrics comparing to intrinsic motivation or its combination with actionable representation.
 我々は、α=0.5のエントロピー正則化（表1の行3）、内在的動機づけ（表3の行3）、および実行可能な表現との組み合わせ（表3の行4）の間の精度、多様性、新規性およびセレンディピティに関するオフライン測定を比較し、以下の観察を行う： 1) α = 0.5のエントロピー正則化法は、intrinsic motivationまたはactoable representationとの組み合わせと比較して、非常に類似した多様性指標を達成する。
-All three methods reach a topic diversity around 0.86, and content provider diversity around 0.93; 2) The entropy regularization method achieved slightly higher novelty metric, both in item level and content provider level; 3) The metrics that entropy regularization loses is on accuracy and serendipity.4) Intrinsic motivation method and its combination with actionable representation have favorable improvement on serendipity comparing with the baseline REINFORCE algorithm even though their accuracy numbers are worse.
-3)エントロピー正則化法は精度とセレンディピティで負けている。4)本質的動機づけ法とその実行可能な表現との組み合わせは、精度は悪いが、ベースラインのREINFORCEアルゴリズムと比較して、セレンディピティで有利な改善をしている。
+All three methods reach a topic diversity around 0.86, and content provider diversity around 0.93; 2) The entropy regularization method achieved slightly higher novelty metric, both in item level and content provider level; 3) The metrics that entropy regularization loses is on accuracy and serendipity.4) Intrinsic motivation method and its combination with actionable representation have favorable improvement on serendipity comparing with the baseline REINFORCE algorithm even though their accuracy numbers are worse. 3)エントロピー正則化法は精度とセレンディピティで負けている。4)本質的動機づけ法とその実行可能な表現との組み合わせは、精度は悪いが、ベースラインのREINFORCEアルゴリズムと比較して、セレンディピティで有利な改善をしている。
 In conclusion, intrinsic motivation and its combination with actionable representation compare favorably to the baseline REINFORCE and entropy regularization only in the serendipity metrics offline.
 結論として、内発的動機づけと行動可能な表現との組み合わせは、オフラインのセレンディピティ測定基準においてのみ、ベースラインのREINFORCEやエントロピー正則化と比較して有利である。
 In live experiments, the intrinsic motivation and its combination with actionable representation were shown to significantly improve over the baseline REINFORCE and entropy regularization, as shown in Figure 3 (middle and right).

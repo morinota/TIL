@@ -401,7 +401,7 @@ A feature store needs to provide an API for both high-throughput batch serving a
 The feature store helps data scientists do the following:
 フィーチャーストアは、データサイエンティストが以下のことを行うのに役立つ:
 
-- Discover and reuse available feature sets for their entities, instead of re-creating the same or similar ones. 
+- Discover and reuse available feature sets for their entities, instead of re-creating the same or similar ones.
   - 同じもしくは類似のものを再作成するのではなく、entities(=複数のMLモデル?)に利用可能な特徴量集合を発見し、再利用する。
 - Avoid having similar features that have different definitions by maintaining features and their related metadata.
   - 特徴量とその関連メタデータを維持することで、異なる定義を持つ類似の特徴量を持たないようにする。(**車輪の再発明を防ぐ**、みたいな...!:thinking:)
@@ -424,7 +424,7 @@ Each time you execute the pipeline, the ML metadata store records the following 
 **パイプラインを実行するたびに、MLメタデータストアは以下のメタデータを記録します**：
 (実験だけじゃなくて、定期実行をtrackingする...!:thinking:)
 
-- The pipeline and component versions that were executed.  実行されたパイプラインとコンポーネントのバージョン。
+- The pipeline and component versions that were executed. 実行されたパイプラインとコンポーネントのバージョン。
 - The start and end date, time, and how long the pipeline took to complete each of the steps. 開始日と終了日、時間、パイプラインが各ステップを完了するのに要した時間。
 - The executor of the pipeline. パイプラインの実行者。
 - The parameter arguments that were passed to the pipeline. パイプラインに渡されたパラメータ引数。
@@ -442,7 +442,7 @@ You can automate the ML production pipelines to retrain the models with new data
 
 - **On demand**: Ad-hoc manual execution of the pipeline. オンデマンド： パイプラインのアドホックな手動実行。
 - **On a schedule**: New, labelled data is systematically available for the ML system on a daily, weekly, or monthly basis. スケジュール通りに： 新しい、ラベル付けされたデータは、毎日、毎週、または毎月、MLシステムで体系的に利用可能です。 The retraining frequency also depends on how frequently the data patterns change, and how expensive it is to retrain your models. 再トレーニングの頻度は、データパターンがどれくらい頻繁に変化するか、モデルを再トレーニングするのがどれくらいコストがかかるかにも依存します。
-- **On availability of new training data**: New data isn't systematically available for the ML system and instead is available on an ad-hoc basis when new data is collected and made available in the source databases. 新しいトレーニングデータが利用可能になったとき： 新しいデータは、MLシステムに体系的に利用可能ではなく、新しいデータが収集され、ソースデータベースで利用可能になったときにアドホックな基準で利用可能です。 
+- **On availability of new training data**: New data isn't systematically available for the ML system and instead is available on an ad-hoc basis when new data is collected and made available in the source databases. 新しいトレーニングデータが利用可能になったとき： 新しいデータは、MLシステムに体系的に利用可能ではなく、新しいデータが収集され、ソースデータベースで利用可能になったときにアドホックな基準で利用可能です。
 - On model performance degradation: The model is retrained when there is noticeable performance degradation. モデルのパフォーマンスが低下したとき： パフォーマンスが著しく低下したときにモデルを再トレーニングします。
 
 - On significant changes in the data distributions (concept drift). **データ分布の著しい変化（コンセプトドリフト）が発生した時**。 It's hard to assess the complete performance of the online model, but you notice significant changes on the data distributions of the features that are used to perform the prediction. オンラインモデルの完全なパフォーマンスを評価するのは難しいですが、予測を行うために使用される特徴量のデータ分布に著しい変化があることに気づきます。 These changes suggest that your model has gone stale, and that needs to be retrained on fresh data. **これらの変化は、モデルが古くなったことを示しており**、新鮮なデータで再トレーニングする必要があることを示しています。
@@ -508,10 +508,10 @@ The pipeline consists of the following stages:
 パイプラインは以下のステージで構成されている: (このpipelineは、**CD pipeline**のこと...!)
 
 - 1. Development and experimentation: You iteratively try out new ML algorithms and new modeling where the experiment steps are orchestrated.
-開発と実験： 新しいMLアルゴリズムや新しいモデリングを繰り返し試し、実験ステップがオーケストレーションされる。The output of this stage is the source code of the ML pipeline steps that are then pushed to a source repository. この段階の出力は、MLパイプラインステップのソースコードであり、ソースリポジトリにプッシュされる。
+     開発と実験： 新しいMLアルゴリズムや新しいモデリングを繰り返し試し、実験ステップがオーケストレーションされる。The output of this stage is the source code of the ML pipeline steps that are then pushed to a source repository. この段階の出力は、MLパイプラインステップのソースコードであり、ソースリポジトリにプッシュされる。
 - 2. Pipeline continuous integration: You build source code and run various tests. パイプラインの継続的インテグレーション： ソースコードをビルドし、様々なテストを実行する。 The outputs of this stage are pipeline components (packages, executables, and artifacts) to be deployed in a later stage. この段階の出力は、後の段階でデプロイされるパイプラインコンポーネント（パッケージ、実行可能ファイル、成果物）である。
 - 3. Pipeline continuous delivery: You deploy the artifacts produced by the CI stage to the target environment.
-パイプラインによる継続的デリバリー： **CIステージで作成された成果物をターゲット環境にデプロイする**。 The output of this stage is a deployed pipeline with the new implementation of the model. このステージのアウトプットは、モデルの新しい実装を含むデプロイされたパイプラインである。
+     パイプラインによる継続的デリバリー： **CIステージで作成された成果物をターゲット環境にデプロイする**。 The output of this stage is a deployed pipeline with the new implementation of the model. このステージのアウトプットは、モデルの新しい実装を含むデプロイされたパイプラインである。
 - 4. Automated triggering: The pipeline is automatically executed in production based on a schedule or in response to a trigger. 自動トリガー： パイプラインは、スケジュールに基づいて、またはトリガーに応答して、プロダクションで自動的に実行される。 The output of this stage is a trained model that is pushed to the model registry. この段階の出力は、モデル登録にプッシュされる学習済みモデルである。
 - 5. **Model continuous delivery**: You serve the trained model as a prediction service for the predictions. モデルの継続的デリバリー： 学習済みのモデルを予測サービスとして提供する。 The output of this stage is a deployed model prediction service. この段階の出力は、展開されたモデル予測サービスである。
 - 6. Monitoring: You collect statistics on the model performance based on live data. モニタリング： ライブデータに基づいてモデルのパフォーマンスに関する統計を収集します。 The output of this stage is a trigger to execute the pipeline or to execute a new experiment cycle. このステージの出力は、パイプラインの実行や新しい実験サイクルの実行のトリガーとなる。
@@ -561,31 +561,30 @@ For rapid and reliable continuous delivery of pipelines and models, you should c
 - Manual deployment to a production environment after several successful runs of the pipeline on the pre-production environment. 本番前の環境でパイプラインを数回実行し成功した後、**本番環境に手動でデプロイする**。(あ、まあAPIだもんね。本番へはちゃんと検証が全て通ってから手動でgoサインを出すべき、ってことか)
 
 To summarize, implementing ML in a production environment doesn't only mean deploying your model as an API for prediction.
-要約すると、本番環境でMLを実装することは、予測用のAPIとしてモデルをデプロイすることだけを意味しない。
+要約すると、本番環境でMLを実装するということは、予測のためのAPIとしてモデルをデプロイするだけではありません。
 Rather, it means deploying an ML pipeline that can automate the retraining and deployment of new models.
-そうではなく、新しいモデルの再トレーニングとデプロイメントを自動化できるMLパイプラインをデプロイすることを意味する。
+**そうではなく、新しいモデルの再トレーニングと(推論APIへの)デプロイメントを自動化できるMLパイプラインをデプロイすることを意味します。**
 Setting up a CI/CD system enables you to automatically test and deploy new pipeline implementations.
 CI/CDシステムをセットアップすることで、新しいパイプラインの実装を自動的にテストし、デプロイすることができる。
 This system lets you cope with rapid changes in your data and business environment.
 このシステムにより、データやビジネス環境の急速な変化に対応することができます。
 You don't have to immediately move all of your processes from one level to another.
-すべてのプロセスをあるレベルから別のレベルにすぐに移す必要はない。
+**すべてのプロセスを一度に次のレベルに移す必要はありません。**
 You can gradually implement these practices to help improve the automation of your ML system development and production.
-これらのプラクティスを徐々に導入することで、MLシステムの開発と生産の自動化を改善することができる。
+**これらのプラクティスを徐々に導入することで、MLシステムの開発と生産の自動化を改善することができる。**
+(うんうん、徐々に導入していくという話は、FTI pipelinesのブログでもあったな...!:thinking:)
 
 ### What's next 次の記事
 
-Learn more about Architecture for MLOps using TensorFlow Extended, Vertex AI Pipelines, and Cloud Build.
-TensorFlow Extended、Vertex AI Pipelines、Cloud Buildを使用したMLOpsのためのアーキテクチャの詳細については、こちらをご覧ください。
+- Learn more about Architecture for MLOps using TensorFlow Extended, Vertex AI Pipelines, and Cloud Build.
+  TensorFlow Extended、Vertex AI Pipelines、Cloud Buildを使用したMLOpsのためのアーキテクチャの詳細については、こちらをご覧ください。
+- Learn about the Practitioners Guide to Machine Learning Operations (MLOps).
+  機械学習オペレーション（MLOps）プラクティショナーズガイドをご覧ください。
+- Learn more about Setting up a CI/CD pipeline for your data-processing workflow.
+  データ処理ワークフローにCI/CDパイプラインを設定する」の詳細をご覧ください。
+- Watch the MLOps Best Practices on Google Cloud (Cloud Next '19) on YouTube.
+  Google CloudにおけるMLOpsのベストプラクティス（Cloud Next '19）をYouTubeでご覧ください。
+- For more reference architectures, diagrams, and best practices, explore the Cloud Architecture Center.
+  リファレンス・アーキテクチャ、ダイアグラム、ベスト・プラクティスについては、クラウド・アーキテクチャ・センターをご覧ください。
 
-Learn about the Practitioners Guide to Machine Learning Operations (MLOps).
-機械学習オペレーション（MLOps）プラクティショナーズガイドをご覧ください。
-
-Learn more about Setting up a CI/CD pipeline for your data-processing workflow.
-データ処理ワークフローにCI/CDパイプラインを設定する」の詳細をご覧ください。
-
-Watch the MLOps Best Practices on Google Cloud (Cloud Next '19) on YouTube.
-Google CloudにおけるMLOpsのベストプラクティス（Cloud Next '19）をYouTubeでご覧ください。
-
-For more reference architectures, diagrams, and best practices, explore the Cloud Architecture Center.
-リファレンス・アーキテクチャ、ダイアグラム、ベスト・プラクティスについては、クラウド・アーキテクチャ・センターをご覧ください。
+<!-- ここまで読んだ! -->
