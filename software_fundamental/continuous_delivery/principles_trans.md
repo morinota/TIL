@@ -24,7 +24,7 @@ Principle three states, “Cease dependence on inspection to achieve quality. El
 第3原則は、「**品質を達成するために検査に依存するのをやめよ。最初から製品に品質を組み込むことによって、大量の検査を必要としないようにする**」と述べている。(プロダクトに品質保証の振る舞いを組み込む、みたいな...??:thinking:)
 
 It’s much cheaper to fix problems and defects if we find them immediately—ideally before they are ever checked into version control, by running automated tests locally.
-ローカルで自動テストを実行することで、問題や欠陥をすぐに見つけることができれば、それを修正するコストははるかに安くつく。
+ローカルで自動テストを実行することで、**問題や欠陥をすぐに見つける**ことができれば、理想的にはバージョン管理にチェックインされる前に見つけることができれば、問題や欠陥を修正するコストははるかに安くなる。
 Finding defects downstream through inspection (such as manual testing) is time-consuming, requiring significant triage.
 検査(手動テストなど)を通じて下流で欠陥を見つけることは、時間がかかり、大規模なトリアージが必要となる。(トリアージ = 整理すること??)
 When we find a defect in production, we must first find the defect in our version control system.
@@ -62,7 +62,7 @@ A key goal of continuous delivery is to change the economics of the software del
 One of the earliest philosophical ideas of the Toyota tradition is jidoka, sometimes translated as “automation with a human touch.” The goal is for computers to perform simple, repetitive tasks, such as regression testing, so that humans can focus on problem-solving.
 トヨタ伝統の最も古い哲学的思想のひとつに「自動化（jidoka）」がある。その目的は、**リグレッション・テストのような単純で反復的な作業をコンピューターに行わせ、人間が問題解決に集中できるようにすること**である。
 Thus computers and people complement each other.
-このように、**コンピューターと人間は互いに補完し合っている**。
+したがって、コンピュータと人間は互いに補完し合う。
 
 Many people worry that automation will put them out of a job.
 オートメーション化によって仕事がなくなるのではないかと心配する人は多い。
@@ -73,7 +73,7 @@ There will never be a shortage of work in a successful company.
 Rather, people are freed up from mindless drudge-work to focus on higher value activities.
 むしろ、人々は頭を使わない雑務から解放され、より価値の高い活動に集中することができる。
 This also has the benefit of improving quality, since humans are at their most error-prone when performing mindless tasks.
-人間は頭を使わない作業をするときに最もミスを犯しやすいからだ。
+これは品質を向上させる利点もある。なぜなら、人間は、頭を使わない作業をするときに最もミスを犯しやすいからだ。
 
 ## Relentlessly Pursue Continuous Improvement ♪ 絶え間ない改善を追求する
 
@@ -113,6 +113,6 @@ A classic example is rewarding developers for increasing their velocity or writi
 Most people want to do the right thing, but they will adapt their behaviour based on how they are rewarded.
 たいていの人は正しいことをしたいと思っているが、報酬に基づいて行動を適応させるだろう。
 Therefore, it is very important to create fast feedback loops from the things that really matter: how customers react to what we build for them, and the impact on our organization.
-従って、顧客が私たちが彼らのために構築したものにどのように反応し、組織に与える影響など、**本当に重要なことから迅速なフィードバック・ループを作ることが非常に重要**である。(何かしらのアクションを評価するためのmetricsの決め方大事だよね...!:thinking:)
+従って、本当に重要なことからのフィードバック・ループを作成することが非常に重要である：顧客が私たちが彼らのために構築したものにどのように反応するか、および組織への影響。
 
 <!-- ここまで読んだ! -->
