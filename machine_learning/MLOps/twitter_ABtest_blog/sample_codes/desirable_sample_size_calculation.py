@@ -36,7 +36,9 @@ class DesirableSampleSizeSimulatorWithBinaryMetric:
             if power >= self.desirable_power:
                 return sample_size
         else:
-            raise ValueError("The desirable sample size is not found. expected effect size is too small.")
+            raise ValueError(
+                "The desirable sample size is not found. expected effect size is too small."
+            )
 
     def _create_null_distribution(
         self,
@@ -98,7 +100,9 @@ class DesirableSampleSizeSimulatorWithNonBinaryMetric:
             if power >= self.desirable_power:
                 return sample_size
         else:
-            raise ValueError("The desirable sample size is not found. Please re-design the experiment.")
+            raise ValueError(
+                "The desirable sample size is not found. Please re-design the experiment."
+            )
 
     def _create_null_distribution(
         self,
