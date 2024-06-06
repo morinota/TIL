@@ -8,7 +8,7 @@ Continuous delivery rests on three foundations: comprehensive configuration mana
 **継続的デリバリーは、3つの基盤の上に成り立っている**: すなわち、包括的な設定管理、継続的インテグレーション、継続的テストである。
 
 In this section, you can read an overview of each of these foundations.
-このセクションでは、それぞれの財団の概要をお読みいただけます。
+このセクションでは、それぞれの基盤の概要を読むことができます。
 You’ll also discover how to find out more about each of them, and find answers to some frequently-asked questions.
 また、それぞれの詳細を調べる方法や、よくある質問に対する回答もご覧いただけます。
 
@@ -18,7 +18,7 @@ refs: https://continuousdelivery.com/foundations/configuration-management/
 を参照してください： https://continuousdelivery.com/foundations/configuration-management/
 
 Automation plays a vital role in ensuring we can release software repeatably and reliably.
-自動化は、ソフトウェアを繰り返し、信頼性を持ってリリースできることを保証する上で重要な役割を果たしている。
+自動化は、ソフトウェアを繰り返し、信頼性を持ってリリースできることを保証する上で重要な役割を果たす。
 One key goal is to take repetitive manual processes like build, deployment, regression testing and infrastructure provisioning, and automate them.
 **重要な目標のひとつは、ビルド、デプロイ、リグレッション・テスト、インフラ・プロビジョニングのような繰り返しの多い手作業プロセスを自動化すること**だ。
 In order to achieve this, we need to version control everything required to perform these processes, including source code, test and deployment scripts, infrastructure and application configuration information, and the many libraries and packages we depend upon.
@@ -32,7 +32,7 @@ We have two overriding goals:
 - 1. **Reproducibility**: We should be able to provision any environment in a fully automated fashion, and know that any new environment reproduced from the same configuration is identical.
      **再現性**： 完全に自動化された方法でどのような環境でもプロビジョニングでき、同じコンフィギュレーションから再現される新しい環境はすべて同じであることがわかるべきである。
 - 2. **Traceability**: We should be able to pick any environment and be able to determine quickly and precisely the versions of every dependency used to create that environment.
-     **追跡性**： どの環境でも選択し、その環境を作成するために使用されたすべての依存関係のバージョンを迅速かつ正確に特定できるようにする必要がある。
+     **追跡性**： 任意の環境を選択したときに、その環境を作成するために使用されたすべての依存関係のバージョンを迅速かつ正確に特定できるようにする必要がある。
      We also want to to be able to compare previous versions of an environment and see what has changed between them.
      また、ある環境の過去のバージョンを比較し、その間に何が変わったかを確認できるようにしたい。
 
@@ -46,7 +46,7 @@ These capabilities give us several very important benefits:
      Comprehensive configuration management, combined with deployment pipelines, enable this.
      包括的なコンフィギュレーション管理とデプロイメント・パイプラインの組み合わせが、これを可能にする。
 - 3. **Higher quality**: The software delivery process is often subject to long delays waiting for development, testing and production environments to be prepared.
-     **より高い品質**： ソフトウェアのデリバリープロセスでは、開発、テスト、本番環境の準備に時間がかかることが多い。
+     **より高い品質**： ソフトウェアのデリバリープロセスでは、開発、テスト、本番環境の準備を待つために長い遅延が発生することがよくある。
      When this can be done automatically from version control, we can get feedback on the impact of our changes much more rapidly, enabling us to build quality in to our software.
      これをバージョン管理から自動的に行うことができれば、変更の影響に関するフィードバックをより迅速に得ることができ、ソフトウェアに品質を組み込むことができる。
 - 4. **Capacity management**: When we want to add more capacity to our environments, the ability to create new reproductions of existing servers is essential.
@@ -72,7 +72,7 @@ Thus a key part of configuration management is working to simplify our architect
 When working to achieve the benefits, we should always start by defining in measurable terms the goals we want to achieve.
 **利益を達成するために努力する場合、私たちは常に、達成したい目標を測定可能な言葉で定義することから始めるべき**である。(なるほど、これはgoal setting的にも大事だよなぁ...!:thinking:)
 This allows us to determine which of the possible paths to reach our goal are likely to be the best, and to change direction or reassess our goals if we discover our approach is going to be too expensive or take too long.
-これによって、目標に到達するための可能な経路のうち、最も良いものが何であるかを判断し、アプローチが高すぎるか時間がかかりすぎることがわかった場合には、方向を変えたり、目標を再評価したりすることができる。
+これによって、目標に到達するための可能な経路のうち、最も良いものが何かを決定し、アプローチが高価すぎるか、時間がかかりすぎることがわかった場合には、方向を変えたり、目標を再評価したりすることができる。
 
 ## Resources リソース (参考資料)
 
@@ -95,7 +95,6 @@ Pedro Canahuati on scaling operations at Facebook.
 Tool choice is a complex topic, and in many cases (unless you use something wholly unsuitable) tool choice is not the critical factor in success.
 道具の選択は複雑なテーマであり、**多くの場合（まったく適さないものを使わない限り）道具の選択は成功の決定的な要因ではない**。(うんうん...!:thinking:)
 I recommend doing some research to whittle down a shortlist based on what technologies your team is familiar with, what has the widest level of usage, and what is under active development and support, and then setting a short-term goal and trying to achieve it using each of the tools on your shortlist.
-
 **チームが慣れている技術、最も広く使用されているもの**に基づいて、ショートリストを絞り込むためのいくつかの調査を行うことをお勧めします。(うんうん...!:thinking:)
 **そして、アクティブな開発とサポートを受けているもの**を選択し、その後、ショートリストにある各ツールを使用して短期目標を設定し、それを達成しようとすることです。
 
