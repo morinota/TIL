@@ -94,3 +94,10 @@
 ### 基盤3: 継続的テストについて
 
 - hogehoge
+
+# MLシステムと継続的デリバリーの話
+
+参考: GCPさんのブログ [MLOps: Continuous delivery and automation pipelines in machine learning](https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning)
+
+- MLOpsは、MLシステム開発（Dev）とMLシステム運用（Ops）の一体化を目指すMLエンジニアリングの文化と実践。
+- 

@@ -26,9 +26,9 @@ Therefore, many businesses are investing in their data science teams and ML capa
 そのため、多くの企業がデータサイエンスチームとML機能に投資し、ユーザーにビジネス価値を提供できる予測モデルを開発している。
 
 This document is for data scientists and ML engineers who want to apply DevOps principles to ML systems (MLOps).
-このドキュメントは、DevOpsの原則をMLシステム（MLOps）に適用したいと考えているデータサイエンティストやMLエンジニアのためのものです。
+このドキュメントは、**DevOpsの原則をMLシステム（MLOps）に適用したいと考えているデータサイエンティストやMLエンジニアのため**のものです。
 MLOps is an ML engineering culture and practice that aims at unifying ML system development (Dev) and ML system operation (Ops).
-MLOpsは、MLシステム開発（Dev）とMLシステム運用（Ops）の一体化を目指すMLエンジニアリングの文化と実践である。
+**MLOpsは、MLシステム開発（Dev）とMLシステム運用（Ops）の一体化を目指すMLエンジニアリングの文化と実践**である。
 Practicing MLOps means that you advocate for automation and monitoring at all steps of ML system construction, including integration, testing, releasing, deployment and infrastructure management.
 **MLOpsを実践するということは、統合、テスト、リリース、デプロイメント、インフラ管理など、MLシステム構築のすべてのステップで自動化と監視を提唱するということ**だ。(MLOpsの実践 = MLシステム構築のすべてのステップでの自動化と監視を提唱すること??:thinking:)
 

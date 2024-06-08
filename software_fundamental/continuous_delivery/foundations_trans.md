@@ -153,7 +153,7 @@ Thus we ensure that the software is always in a working state, and that develope
 The benefits of continuous integration are very significant—research shows that it leads to higher levels of throughput, more stable systems, and higher quality software.
 継続的インテグレーションの利点は非常に大きく、スループットの向上、システムの安定性、ソフトウェアの品質の向上につながることが研究によって示されている。
 However the practice is still controversial, for two main reasons.
-**しかし、この慣行は、主に2つの理由から、いまだに議論の的となっている**。
+**しかし、このプラクティスは、主に2つの理由から、いまだに議論の的となっている**。
 
 First, it requires developers to break up large features and other changes into smaller, more incremental steps that can be integrated into trunk / master.
 **第一に、 開発者に、大きな機能やその他の変更を、トランク／マスターに統合できるより小さな、よりインクリメンタルなステップに分割する**ことを求める。
