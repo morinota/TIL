@@ -156,7 +156,7 @@ However the practice is still controversial, for two main reasons.
 **しかし、このプラクティスは、主に2つの理由から、いまだに議論の的となっている**。
 
 First, it requires developers to break up large features and other changes into smaller, more incremental steps that can be integrated into trunk / master.
-**第一に、 開発者に、大きな機能やその他の変更を、トランク／マスターに統合できるより小さな、よりインクリメンタルなステップに分割する**ことを求める。
+**第一に、 CIは、開発者に大きな機能やその他の変更を、トランク/マスターに統合できるより小さな、よりインクリメンタルなステップに分割するよう要求する**。
 This is a paradigm shift for developers who are not used to working in this way.
 このようなやり方に慣れていない開発者にとってはパラダイムシフトだ。
 It also takes longer to get large features completed.
@@ -253,7 +253,7 @@ Feature toggles are a new-fangled term for an old pattern: configuration options
 In this context, we use them to hide from users features that are not “ready”, so we can continue to check in on trunk.
 **この文脈では、「準備ができていない 」機能をユーザから隠すために使用し、トランクのチェックを続けることができる。**
 However feature toggles are only really necessary when practicing continuous deployment, in which we release multiple times a day.
-しかし、feature togglesは、継続的デプロイメントを実践している場合にのみ本当に必要であり、1日に複数回リリースする。
+しかし、feature togglesは、継続的デプロイメントを実践している場合にのみ本当に必要であり、それは1日に複数回リリースすることを意味する。
 For teams releasing every couple of weeks, or less frequently, they are unnecessary.
 2、3週間に1度、あるいはそれ以下の頻度でリリースするチームには不要だ。
 There are, however, two important practices to enable trunk-based development without using feature toggles.
@@ -265,7 +265,7 @@ APIs (including automated tests running against them) can be created and deploye
 The UI (which should almost always be a thin layer over the API) is written last.
 UI（ほとんどの場合、APIの上に薄いレイヤーがあるはずだ）は最後に書かれる。
 Second, we should aim to break down large features into small stories (1-3 days’ work) in a way that they build upon each other iteratively, not incrementally.
-第二に、**大きな機能を小さなストーリー（1〜3日の作業）に分解し、それらが互いに反復的に構築されるようにすることを目指すべき**だ。
+第二に、**大きな機能を小さなストーリー（1〜3日の作業）に分解し、それらが互いに反復的に、増分的に構築されるようにすることを目指すべき**だ。
 In this way, we ensure we can continue to release increments of the feature.
 こうすることで、機能のインクリメントをリリースし続けることができるのだ。
 Only in the cases where an iterative approach is not possible for some reason (and this is less often than you think, given sufficient imagination) do we need to introduce feature toggles.
@@ -275,8 +275,7 @@ Only in the cases where an iterative approach is not possible for some reason (a
 GitHubスタイルの開発についてはどうだろう？
 
 In general, I am fine with GitHub’s “flow” process—provided branches don’t live longer than a day or so.
-一般的に、私は**GitHubの 「flow」プロセス**に満足しています。
-(flow process = )
+一般的に、ブランチが1日以上生存しない限り、GitHubの「フロー」プロセスは問題ないと思います。
 If you’re breaking features down into stories and practicing incremental development (see previous FAQ entry), this is not a problem.
 もしあなたが機能をストーリーに分解し、インクリメンタルな開発を実践しているなら、これは問題ありません。
 I also believe that code review should be done in process—ideally by inviting someone to pair with you (perhaps using screenhero if you’re working on a remote team) when you’re ready to check in, and reviewing the code then and there.
@@ -323,7 +322,7 @@ However this strategy have several drawbacks:
 In order to build quality in to software, we need to adopt a different approach.
 ソフトウェアに品質を組み込むためには、異なるアプローチを採用する必要がある。(うんうん...!)
 Our goal is to run many different types of tests—both manual and automated—continually throughout the delivery process.
-私たちの目標は、**デリバリー・プロセスを通じて、手動と自動の両方で多くの異なるタイプのテストを継続的に実行すること**です。
+私たちの目標は、**デリバリープロセス全体を通じて、多くの異なるタイプのテスト（手動および自動）を継続的に実行すること**だ。
 The types of tests we want to run are nicely laid out the quadrant diagram created by Brian Marick, below:
 ブライアン・マリックが作成したクワドラント・ダイアグラム（象限図）には、私たちが実行したいテストのタイプがきれいにレイアウトされている:
 
@@ -349,7 +348,7 @@ The job of the deployment pipeline is to catch known issues.
 If we can’t detect any known problems, we should feel totally comfortable releasing any packages that have gone through it.
 **もし既知の問題が検出されなければ、デプロイメントパイプラインを通過したパッケージをリリースしても全く問題ないと感じるべきだ**。(うんうん、過度にビクビクする必要はなさそう。未知の問題はそもそもcatchできないので...!:thinking:)
 If we aren’t, or if we discover defects later, it means we need to improve our pipeline, perhaps adding or updating some tests.
-**そうでない(=全く問題ないと感じられない)場合、または後で不具合が発見された場合、パイプラインを改善する必要がある**。テストの追加や更新を行うかもしれない。(うんうん...!:thinking:)
+**そうでない(=デプロイメントパイプラインが成功しても、不安を感じてしまう)場合、または後で不具合が発見された場合、パイプラインを改善する必要がある**。テストの追加や更新を行うかもしれない。(うんうん...!:thinking:)
 
 Our goal should be to find problems as soon as possible, and make the lead time from check-in to release as short as possible.
 私たちの目標は、できるだけ早く問題を見つけ、チェックインからリリースまでのリードタイムをできるだけ短くすることだ。
@@ -361,7 +360,7 @@ If we discover a defect in the acceptance tests, we should be looking to improve
 もし受け入れテストで欠陥を発見した場合、ユニットテストの改善を目指すべきだ（**ほとんどの欠陥はユニットテストを通じて発見されるべきだ**）。
 
 Get started by building a skeleton deployment pipeline—create a single unit test, a single acceptance test, an automated deployment script that stands up an exploratory testing envrionment, and thread them together.
-**スケルトンデプロイメントパイプライン**(??)を構築して始めましょう-単一のユニットテスト、単一の受け入れテスト、探索的テスト環境を立ち上げる自動化デプロイメントスクリプトを作成し、それらを組み合わせます。
+**スケルトンデプロイメントパイプライン**(=スカスカのデプロイメントパイプライン??)を構築して始めましょう-単一のユニットテスト、単一の受け入れテスト、探索的テスト環境を立ち上げる自動化デプロイメントスクリプトを作成し、それらを組み合わせます。
 Then increase test coverage and extend your deployment pipeline as your product or service evolves.
 そして、製品やサービスが進化するにつれて、テストカバレッジを拡大し、デプロイメントパイプラインを拡張していきます。
 (あ、スケルトンデプロイメントパイプラインって、最低限の機能を持ったデプロイメントパイプラインのことか...! 曳光弾的な...!:thinking:)
