@@ -8,7 +8,7 @@ Continuous delivery rests on three foundations: comprehensive configuration mana
 **継続的デリバリーは、3つの基盤の上に成り立っている**: すなわち、包括的な設定管理、継続的インテグレーション、継続的テストである。
 
 In this section, you can read an overview of each of these foundations.
-このセクションでは、それぞれの財団の概要をお読みいただけます。
+このセクションでは、それぞれの基盤の概要を読むことができます。
 You’ll also discover how to find out more about each of them, and find answers to some frequently-asked questions.
 また、それぞれの詳細を調べる方法や、よくある質問に対する回答もご覧いただけます。
 
@@ -18,7 +18,7 @@ refs: https://continuousdelivery.com/foundations/configuration-management/
 を参照してください： https://continuousdelivery.com/foundations/configuration-management/
 
 Automation plays a vital role in ensuring we can release software repeatably and reliably.
-自動化は、ソフトウェアを繰り返し、信頼性を持ってリリースできることを保証する上で重要な役割を果たしている。
+自動化は、ソフトウェアを繰り返し、信頼性を持ってリリースできることを保証する上で重要な役割を果たす。
 One key goal is to take repetitive manual processes like build, deployment, regression testing and infrastructure provisioning, and automate them.
 **重要な目標のひとつは、ビルド、デプロイ、リグレッション・テスト、インフラ・プロビジョニングのような繰り返しの多い手作業プロセスを自動化すること**だ。
 In order to achieve this, we need to version control everything required to perform these processes, including source code, test and deployment scripts, infrastructure and application configuration information, and the many libraries and packages we depend upon.
@@ -32,7 +32,7 @@ We have two overriding goals:
 - 1. **Reproducibility**: We should be able to provision any environment in a fully automated fashion, and know that any new environment reproduced from the same configuration is identical.
      **再現性**： 完全に自動化された方法でどのような環境でもプロビジョニングでき、同じコンフィギュレーションから再現される新しい環境はすべて同じであることがわかるべきである。
 - 2. **Traceability**: We should be able to pick any environment and be able to determine quickly and precisely the versions of every dependency used to create that environment.
-     **追跡性**： どの環境でも選択し、その環境を作成するために使用されたすべての依存関係のバージョンを迅速かつ正確に特定できるようにする必要がある。
+     **追跡性**： 任意の環境を選択したときに、その環境を作成するために使用されたすべての依存関係のバージョンを迅速かつ正確に特定できるようにする必要がある。
      We also want to to be able to compare previous versions of an environment and see what has changed between them.
      また、ある環境の過去のバージョンを比較し、その間に何が変わったかを確認できるようにしたい。
 
@@ -46,7 +46,7 @@ These capabilities give us several very important benefits:
      Comprehensive configuration management, combined with deployment pipelines, enable this.
      包括的なコンフィギュレーション管理とデプロイメント・パイプラインの組み合わせが、これを可能にする。
 - 3. **Higher quality**: The software delivery process is often subject to long delays waiting for development, testing and production environments to be prepared.
-     **より高い品質**： ソフトウェアのデリバリープロセスでは、開発、テスト、本番環境の準備に時間がかかることが多い。
+     **より高い品質**： ソフトウェアのデリバリープロセスでは、開発、テスト、本番環境の準備を待つために長い遅延が発生することがよくある。
      When this can be done automatically from version control, we can get feedback on the impact of our changes much more rapidly, enabling us to build quality in to our software.
      これをバージョン管理から自動的に行うことができれば、変更の影響に関するフィードバックをより迅速に得ることができ、ソフトウェアに品質を組み込むことができる。
 - 4. **Capacity management**: When we want to add more capacity to our environments, the ability to create new reproductions of existing servers is essential.
@@ -72,7 +72,7 @@ Thus a key part of configuration management is working to simplify our architect
 When working to achieve the benefits, we should always start by defining in measurable terms the goals we want to achieve.
 **利益を達成するために努力する場合、私たちは常に、達成したい目標を測定可能な言葉で定義することから始めるべき**である。(なるほど、これはgoal setting的にも大事だよなぁ...!:thinking:)
 This allows us to determine which of the possible paths to reach our goal are likely to be the best, and to change direction or reassess our goals if we discover our approach is going to be too expensive or take too long.
-これによって、目標に到達するための可能な経路のうち、最も良いものが何であるかを判断し、アプローチが高すぎるか時間がかかりすぎることがわかった場合には、方向を変えたり、目標を再評価したりすることができる。
+これによって、目標に到達するための可能な経路のうち、最も良いものが何かを決定し、アプローチが高価すぎるか、時間がかかりすぎることがわかった場合には、方向を変えたり、目標を再評価したりすることができる。
 
 ## Resources リソース (参考資料)
 
@@ -95,7 +95,6 @@ Pedro Canahuati on scaling operations at Facebook.
 Tool choice is a complex topic, and in many cases (unless you use something wholly unsuitable) tool choice is not the critical factor in success.
 道具の選択は複雑なテーマであり、**多くの場合（まったく適さないものを使わない限り）道具の選択は成功の決定的な要因ではない**。(うんうん...!:thinking:)
 I recommend doing some research to whittle down a shortlist based on what technologies your team is familiar with, what has the widest level of usage, and what is under active development and support, and then setting a short-term goal and trying to achieve it using each of the tools on your shortlist.
-
 **チームが慣れている技術、最も広く使用されているもの**に基づいて、ショートリストを絞り込むためのいくつかの調査を行うことをお勧めします。(うんうん...!:thinking:)
 **そして、アクティブな開発とサポートを受けているもの**を選択し、その後、ショートリストにある各ツールを使用して短期目標を設定し、それを達成しようとすることです。
 
@@ -154,10 +153,10 @@ Thus we ensure that the software is always in a working state, and that develope
 The benefits of continuous integration are very significant—research shows that it leads to higher levels of throughput, more stable systems, and higher quality software.
 継続的インテグレーションの利点は非常に大きく、スループットの向上、システムの安定性、ソフトウェアの品質の向上につながることが研究によって示されている。
 However the practice is still controversial, for two main reasons.
-**しかし、この慣行は、主に2つの理由から、いまだに議論の的となっている**。
+**しかし、このプラクティスは、主に2つの理由から、いまだに議論の的となっている**。
 
 First, it requires developers to break up large features and other changes into smaller, more incremental steps that can be integrated into trunk / master.
-**第一に、 開発者に、大きな機能やその他の変更を、トランク／マスターに統合できるより小さな、よりインクリメンタルなステップに分割する**ことを求める。
+**第一に、 CIは、開発者に大きな機能やその他の変更を、トランク/マスターに統合できるより小さな、よりインクリメンタルなステップに分割するよう要求する**。
 This is a paradigm shift for developers who are not used to working in this way.
 このようなやり方に慣れていない開発者にとってはパラダイムシフトだ。
 It also takes longer to get large features completed.
@@ -254,7 +253,7 @@ Feature toggles are a new-fangled term for an old pattern: configuration options
 In this context, we use them to hide from users features that are not “ready”, so we can continue to check in on trunk.
 **この文脈では、「準備ができていない 」機能をユーザから隠すために使用し、トランクのチェックを続けることができる。**
 However feature toggles are only really necessary when practicing continuous deployment, in which we release multiple times a day.
-しかし、feature togglesは、継続的デプロイメントを実践している場合にのみ本当に必要であり、1日に複数回リリースする。
+しかし、feature togglesは、継続的デプロイメントを実践している場合にのみ本当に必要であり、それは1日に複数回リリースすることを意味する。
 For teams releasing every couple of weeks, or less frequently, they are unnecessary.
 2、3週間に1度、あるいはそれ以下の頻度でリリースするチームには不要だ。
 There are, however, two important practices to enable trunk-based development without using feature toggles.
@@ -266,7 +265,7 @@ APIs (including automated tests running against them) can be created and deploye
 The UI (which should almost always be a thin layer over the API) is written last.
 UI（ほとんどの場合、APIの上に薄いレイヤーがあるはずだ）は最後に書かれる。
 Second, we should aim to break down large features into small stories (1-3 days’ work) in a way that they build upon each other iteratively, not incrementally.
-第二に、**大きな機能を小さなストーリー（1〜3日の作業）に分解し、それらが互いに反復的に構築されるようにすることを目指すべき**だ。
+第二に、**大きな機能を小さなストーリー（1〜3日の作業）に分解し、それらが互いに反復的に、増分的に構築されるようにすることを目指すべき**だ。
 In this way, we ensure we can continue to release increments of the feature.
 こうすることで、機能のインクリメントをリリースし続けることができるのだ。
 Only in the cases where an iterative approach is not possible for some reason (and this is less often than you think, given sufficient imagination) do we need to introduce feature toggles.
@@ -276,8 +275,7 @@ Only in the cases where an iterative approach is not possible for some reason (a
 GitHubスタイルの開発についてはどうだろう？
 
 In general, I am fine with GitHub’s “flow” process—provided branches don’t live longer than a day or so.
-一般的に、私は**GitHubの 「flow」プロセス**に満足しています。
-(flow process = )
+一般的に、ブランチが1日以上生存しない限り、GitHubの「フロー」プロセスは問題ないと思います。
 If you’re breaking features down into stories and practicing incremental development (see previous FAQ entry), this is not a problem.
 もしあなたが機能をストーリーに分解し、インクリメンタルな開発を実践しているなら、これは問題ありません。
 I also believe that code review should be done in process—ideally by inviting someone to pair with you (perhaps using screenhero if you’re working on a remote team) when you’re ready to check in, and reviewing the code then and there.
@@ -324,7 +322,7 @@ However this strategy have several drawbacks:
 In order to build quality in to software, we need to adopt a different approach.
 ソフトウェアに品質を組み込むためには、異なるアプローチを採用する必要がある。(うんうん...!)
 Our goal is to run many different types of tests—both manual and automated—continually throughout the delivery process.
-私たちの目標は、**デリバリー・プロセスを通じて、手動と自動の両方で多くの異なるタイプのテストを継続的に実行すること**です。
+私たちの目標は、**デリバリープロセス全体を通じて、多くの異なるタイプのテスト（手動および自動）を継続的に実行すること**だ。
 The types of tests we want to run are nicely laid out the quadrant diagram created by Brian Marick, below:
 ブライアン・マリックが作成したクワドラント・ダイアグラム（象限図）には、私たちが実行したいテストのタイプがきれいにレイアウトされている:
 
@@ -350,7 +348,7 @@ The job of the deployment pipeline is to catch known issues.
 If we can’t detect any known problems, we should feel totally comfortable releasing any packages that have gone through it.
 **もし既知の問題が検出されなければ、デプロイメントパイプラインを通過したパッケージをリリースしても全く問題ないと感じるべきだ**。(うんうん、過度にビクビクする必要はなさそう。未知の問題はそもそもcatchできないので...!:thinking:)
 If we aren’t, or if we discover defects later, it means we need to improve our pipeline, perhaps adding or updating some tests.
-**そうでない(=全く問題ないと感じられない)場合、または後で不具合が発見された場合、パイプラインを改善する必要がある**。テストの追加や更新を行うかもしれない。(うんうん...!:thinking:)
+**そうでない(=デプロイメントパイプラインが成功しても、不安を感じてしまう)場合、または後で不具合が発見された場合、パイプラインを改善する必要がある**。テストの追加や更新を行うかもしれない。(うんうん...!:thinking:)
 
 Our goal should be to find problems as soon as possible, and make the lead time from check-in to release as short as possible.
 私たちの目標は、できるだけ早く問題を見つけ、チェックインからリリースまでのリードタイムをできるだけ短くすることだ。
@@ -362,7 +360,7 @@ If we discover a defect in the acceptance tests, we should be looking to improve
 もし受け入れテストで欠陥を発見した場合、ユニットテストの改善を目指すべきだ（**ほとんどの欠陥はユニットテストを通じて発見されるべきだ**）。
 
 Get started by building a skeleton deployment pipeline—create a single unit test, a single acceptance test, an automated deployment script that stands up an exploratory testing envrionment, and thread them together.
-**スケルトンデプロイメントパイプライン**(??)を構築して始めましょう-単一のユニットテスト、単一の受け入れテスト、探索的テスト環境を立ち上げる自動化デプロイメントスクリプトを作成し、それらを組み合わせます。
+**スケルトンデプロイメントパイプライン**(=スカスカのデプロイメントパイプライン??)を構築して始めましょう-単一のユニットテスト、単一の受け入れテスト、探索的テスト環境を立ち上げる自動化デプロイメントスクリプトを作成し、それらを組み合わせます。
 Then increase test coverage and extend your deployment pipeline as your product or service evolves.
 そして、製品やサービスが進化するにつれて、テストカバレッジを拡大し、デプロイメントパイプラインを拡張していきます。
 (あ、スケルトンデプロイメントパイプラインって、最低限の機能を持ったデプロイメントパイプラインのことか...! 曳光弾的な...!:thinking:)
