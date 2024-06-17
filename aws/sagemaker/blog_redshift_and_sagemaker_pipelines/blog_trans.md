@@ -5,19 +5,22 @@
 # Process Amazon Redshift data and schedule a training pipeline with Amazon SageMaker Processing and Amazon SageMaker Pipelines Amazon SageMaker Processing と Amazon SageMaker Pipelines を使って Amazon Redshift のデータを処理し、トレーニングパイプラインをスケジュールする。
 
 Customers in many different domains tend to work with multiple sources for their data: object-based storage like Amazon Simple Storage Service (Amazon S3), relational databases like Amazon Relational Database Service (Amazon RDS), or data warehouses like Amazon Redshift.
-様々なドメインの顧客は、データを複数のソースで扱う傾向がある： Amazon Simple Storage Service (Amazon S3)のようなオブジェクトベースのストレージ、Amazon Relational Database Service (Amazon RDS)のようなリレーショナル・データベース、Amazon Redshiftのようなデータウェアハウス。
+**様々なドメインの顧客は、データを複数のソースで扱う傾向がある**： Amazon Simple Storage Service (Amazon S3)のようなオブジェクトベースのストレージ、Amazon Relational Database Service (Amazon RDS)のようなリレーショナル・データベース、Amazon Redshiftのようなデータウェアハウス。
+(まさにそう!笑)
 Machine learning (ML) practitioners are often driven to work with objects and files instead of databases and tables from the different frameworks they work with.
-機械学習（ML）の実務者は、データベースやテーブルの代わりに、オブジェクトやファイルを扱うよう駆り立てられることが多い。
+機械学習（ML）の実務者は、よく使うさまざまなフレームワークから、**データベースやテーブルではなくオブジェクトやファイルで作業することが多い**。(確かに...)
 They also prefer local copies of such files in order to reduce the latency of accessing them.
-また、アクセスの待ち時間を減らすために、そのようなファイルのローカルコピーを好む。
+また、**アクセスの待ち時間を減らすために**、そのようなファイルのローカルコピーを好むことが多い。(ローカルコピーってdump的な意味かな。なるほど、こういう利点があるのか...!:thinking_face:)
 
 Nevertheless, ML engineers and data scientists might be required to directly extract data from data warehouses with SQL-like queries to obtain the datasets that they can use for training their models.
-とはいえ、MLエンジニアやデータサイエンティストは、SQLのようなクエリを使ってデータウェアハウスから直接データを抽出し、モデルの学習に使えるデータセットを取得する必要があるかもしれない。
+とはいえ、MLエンジニアやデータサイエンティストは、**SQLのようなクエリを使ってデータウェアハウスから直接データを抽出し、モデルの学習に使えるデータセットを取得する必要があるかもしれない**。
 
 In this post, we use the Amazon SageMaker Processing API to run a query against an Amazon Redshift cluster, create CSV files, and perform distributed processing.
 この記事では、Amazon SageMaker Processing APIを使用して、Amazon Redshiftクラスタに対してクエリを実行し、CSVファイルを作成し、分散処理を実行します。
 As an extra step, we also train a simple model to predict the total sales for new events, and build a pipeline with Amazon SageMaker Pipelines to schedule it.
 追加ステップとして、新規イベントの総売上高を予測する簡単なモデルをトレーニングし、Amazon SageMaker Pipelinesでパイプラインを構築してスケジューリングします。
+
+<!-- ここまで読んだ! -->
 
 ## Prerequisites 前提条件
 
@@ -30,6 +33,8 @@ For instructions on creating the cluster with the sample dataset, see Using a sa
 For instructions on associating the role with the cluster, see Authorizing access to the Amazon Redshift Data API.
 ロールをクラスタに関連付ける手順については、Amazon Redshift Data APIへのアクセスを許可するを参照してください。
 
+(↑はRedshiftのリソースの準備なので不要)
+
 You can then use your IDE of choice to open the notebooks.
 その後、お好みのIDEを使ってノートブックを開くことができる。
 This content has been developed and tested using SageMaker Studio on a ml.t3.medium instance.
@@ -37,14 +42,9 @@ This content has been developed and tested using SageMaker Studio on a ml.t3.med
 For more information about using Studio, refer to the following resources:
 Studioの使い方の詳細については、以下のリソースを参照してください：
 
-Onboard to Amazon SageMaker Domain
-Amazon SageMakerドメインへのオンボード
-
-Clone a Git Repository in SageMaker Studio
-SageMaker Studio で Git リポジトリをクローンする
-
-Change an Instance Type
-インスタンスタイプの変更
+- Onboard to Amazon SageMaker Domain Amazon SageMakerドメインへのオンボード
+- Clone a Git Repository in SageMaker Studio SageMaker Studio で Git リポジトリをクローンする
+- Change an Instance Type インスタンスタイプの変更
 
 ## Define the query クエリーの定義
 
@@ -56,16 +56,18 @@ In particular, analysts can identify ticket movement over time, success rates fo
 特にアナリストは、長期的なチケットの動き、売り手の成功率、最も売れているイベント、会場、シーズンなどを特定することができる。
 
 Analysts may be tasked to solve a very common ML problem: predict the number of tickets sold given the characteristics of an event.
-アナリストは、ごく一般的なMLの問題を解決するよう命じられるかもしれない： イベントの特徴からチケットの販売枚数を予測する。
+**アナリストは、ごく一般的なMLの問題を解決するよう命じられるかもしれない： イベントの特性を考慮して売れるチケットの数を予測する**。(ありそう)
 Because we have two fact tables and five dimensions in our sample database, we have some data that we can work with.
 サンプル・データベースには 2 つのファクト・テーブルと 5 つのディメンジョンがあるため、作業可能なデータがあります。
+(star schema的な概念。fact table = イベントログとか。dimension = イベントやユーザの属性情報とか？:thinking_face:)
 For the sake of this example, we try to use information from the venue in which the event takes place as well as its date.
 この例では、イベントが開催される会場とその日付の情報を使用するようにしています。
 The SQL query looks like the following:
-SQLクエリは以下のようになる：
+SQLクエリは以下のようになる: 
 
 ```sql
-SELECT sum(s.qtysold) AS total_sold, e.venueid, e.catid, d.caldate, d.holiday
+SELECT 
+sum(s.qtysold) AS total_sold, e.venueid, e.catid, d.caldate, d.holiday
 from sales s, event e, date d
 WHERE s.eventid = e.eventid and e.dateid = d.dateid
 GROUP BY e.venueid, e.catid, d.caldate, d.holiday
@@ -73,30 +75,31 @@ GROUP BY e.venueid, e.catid, d.caldate, d.holiday
 
 We can run this query in the query editor to test the outcomes and change it to include additional information if needed.
 クエリーエディターでこのクエリーを実行して結果をテストし、必要であれば追加情報を含むように変更することができる。
+(まずはクエリで想定通りのデータを取得できるか、マニュアルでチェックするよね。)
+
+<!-- ここまで読んだ! -->
 
 ## Extract the data from Amazon Redshift and process it with SageMaker Processing Amazon Redshiftからデータを抽出し、SageMaker Processingで処理する。
 
 Now that we’re happy with our query, we need to make it part of our training pipeline.
-さて、クエリーに満足したら、それをトレーニングパイプラインの一部にする必要がある。
+**さて、クエリーに満足したら、それをトレーニングパイプラインの一部にする必要がある**。
 
 A typical training pipeline consists of three phases:
 典型的なトレーニングパイプラインは、3つのフェーズで構成される：
 
-Preprocessing – This phase reads the raw dataset and transforms it into a format that matches the input required by the model for its training
+- Preprocessing – This phase reads the raw dataset and transforms it into a format that matches the input required by the model for its training
 前処理 - このフェーズでは、生のデータセットを読み取り、モデルのトレーニングに必要な入力と一致する形式に変換する。
-
-Training – This phase reads the processed dataset and uses it to train the model
+- Training – This phase reads the processed dataset and uses it to train the model
 トレーニング - このフェーズでは、処理されたデータセットを読み込み、モデルのトレーニングに使用します。
-
-Model registration – In this phase, we save the model for later usage
+- Model registration – In this phase, we save the model for later usage
 モデルの登録 - この段階では、後で使用するためにモデルを保存します。
 
 Our first task is to use a SageMaker Processing job to load the dataset from Amazon Redshift, preprocess it, and store it to Amazon S3 for the training model to pick up.
-最初のタスクは、SageMaker Processingジョブを使用して、Amazon Redshiftからデータセットをロードし、前処理を行い、学習モデルが選択できるようにAmazon S3に保存することです。
+最初のタスクは、**SageMaker Processingジョブを使用して、Amazon Redshiftからデータセットをロードし、前処理を行い、学習モデルが選択できるようにAmazon S3に保存すること**です。
 SageMaker Processing allows us to directly read data from different resources, including Amazon S3, Amazon Athena, and Amazon Redshift.
-SageMaker Processingでは、Amazon S3、Amazon Athena、Amazon Redshiftなど、さまざまなリソースからデータを直接読み込むことができます。
+**SageMaker Processingでは、Amazon S3、Amazon Athena、Amazon Redshiftなど、さまざまなリソースからデータを直接読み込むことができます。**(これってProcessing自体の機能? もしくは内部で動くData Wranglerの機能??:thinking_face:)
 SageMaker Processing allows us to configure access to the cluster by providing the cluster and database information, and use our previously defined SQL query as part of a RedshiftDatasetDefinition.
-SageMaker Processing では、クラスタとデータベース情報を提供することでクラスタへのアクセスを構成し、RedshiftDatasetDefinition の一部として事前に定義した SQL クエリを使用することができます。
+SageMaker Processing では、クラスタとデータベース情報を提供することでクラスタへのアクセスを構成し、 `RedshiftDatasetDefinition` の一部として事前に定義した SQL クエリを使用することができます。(Data Wranglerの機能なのか??)
 We use the SageMaker Python SDK to create this object, and you can check the definition and the parameters needed on the GitHub page.
 このオブジェクトの作成には SageMaker Python SDK を使用しており、定義と必要なパラメータは GitHub ページで確認できます。
 See the following code:
