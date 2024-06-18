@@ -33,7 +33,7 @@ For instructions on creating the cluster with the sample dataset, see Using a sa
 For instructions on associating the role with the cluster, see Authorizing access to the Amazon Redshift Data API.
 ロールをクラスタに関連付ける手順については、Amazon Redshift Data APIへのアクセスを許可するを参照してください。
 
-(↑はRedshiftのリソースの準備なので不要)
+(↑はRedshift側のリソースの準備なのであんまり気にしなくて良い気がしてる)
 
 You can then use your IDE of choice to open the notebooks.
 その後、お好みのIDEを使ってノートブックを開くことができる。
@@ -122,7 +122,7 @@ rdd = RedshiftDatasetDefinition(
 Then, you can define the DatasetDefinition.
 次に、DatasetDefinition を定義します。
 This object is responsible for defining how SageMaker Processing uses the dataset loaded from Amazon Redshift:
-このオブジェクトは、SageMaker Processing が Amazon Redshift から読み込んだデータセットをどのように使用するかを定義します：
+このオブジェクトは、SageMaker Processing が Amazon Redshift から読み込んだデータセットをどのように使用するかを定義します:
 
 ```python
 from sagemaker.dataset_definition.inputs import DatasetDefinition
@@ -135,7 +135,7 @@ dd = DatasetDefinition(
 ```
 
 Finally, you can use this object as input of your processor of choice.
-最後に、このオブジェクトをお好みのプロセッサーの入力として使うことができる。
+**最後に、このオブジェクトをお好みのプロセッサーの入力として使うことができる**。
 For this post, we wrote a very simple scikit-learn script that cleans the dataset, performs some transformations, and splits the dataset for training and testing.
 この投稿のために、データセットのクリーンアップ、いくつかの変換の実行、トレーニングとテストのためのデータセットの分割を行う、非常にシンプルなscikit-learnスクリプトを書いた。
 You can check the code in the file processing.py.
@@ -144,7 +144,8 @@ processing.pyでコードを確認できます。
 We can now instantiate the SKLearnProcessor object, where we define the framework version that we plan on using, the amount and type of instances that we spin up as part of our processing cluster, and the execution role that contains the right permissions.
 ここで、使用する予定のフレームワークのバージョン、処理クラスタの一部としてスピンアップするインスタンスの量とタイプ、適切なパーミッションを含む実行ロールを定義します。
 Then, we can pass the parameter dataset_definition as the input of the run() method.
-そして、パラメータ dataset_definition を run() メソッドの入力として渡すことができる。
+そして、パラメータ `dataset_definition` を `run()` メソッドの入力として渡すことができる。
+(DataSetDefinitionは`ProcessingInput`クラスにwrapしてProcessingJobに渡すのか...!:thinking:)
 This method accepts our processing.py script as the code to run, given some inputs (namely, our RedshiftDatasetDefinition), generates some outputs (a train and a test dataset), and stores both to Amazon S3.
 このメソッドはprocessing.pyスクリプトを実行するコードとして受け取り、いくつかの入力(つまりRedshiftDatasetDefinition)を与え、いくつかの出力(trainとtestデータセット)を生成し、両方をAmazon S3に保存します。
 We run this operation synchronously thanks to the parameter wait=True:
@@ -164,7 +165,7 @@ skp = SKLearnProcessor(
 skp.run(
     code='processing/processing.py',
     inputs=[ProcessingInput(
-        dataset_definition=dd,
+        dataset_definition=dd, # ここでDatasetDefinitionをProcessingInputにwrapしてる(データの入れ物??)
         destination='/opt/ml/processing/input/data/',
         s3_data_distribution_type='ShardedByS3Key'
     )],
@@ -222,13 +223,11 @@ These steps define the actions that the pipeline takes, and the relationships be
 We already know that our pipelines are composed of three steps:
 パイプラインが3つのステップで構成されていることはすでに知っている：
 
-A processing phase, defined in ProcessingStep
+- A processing phase, defined in ProcessingStep
 ProcessingStep で定義される処理フェーズ。
-
-A training phase, defined in TrainingStep
+- A training phase, defined in TrainingStep
 TrainingStepで定義されたトレーニングフェーズ
-
-A registration phase, defined in CreateModelStep
+- A registration phase, defined in CreateModelStep
 CreateModelStep で定義される登録フェーズ。
 
 Furthermore, to make the pipeline definition dynamic, Pipelines allows us to define parameters, which are values that we can provide at runtime when the pipeline starts.
@@ -241,11 +240,64 @@ The step requires the definition of a processor, which is very similar to the on
 The others parameters, code, inputs, and outputs are the same as we have defined previously:
 その他のパラメータ、コード、入力、出力は、前回定義したものと同じである：
 
+```python
+#### PROCESSING STEP #####
+
+# PARAMETERS
+processing_instance_type = ParameterString(name='ProcessingInstanceType', default_value='ml.m5.large')
+processing_instance_count = ParameterInteger(name='ProcessingInstanceCount', default_value=2)
+
+# PROCESSOR
+skp = SKLearnProcessor(
+    framework_version='0.23-1',
+    role=get_execution_role(),
+    instance_type=processing_instance_type,
+    instance_count=processing_instance_count
+)
+
+# DEFINE THE STEP
+processing_step = ProcessingStep(
+    name='ProcessingStep',
+    processor=skp,
+    code='processing/processing.py',
+    inputs=[ProcessingInput(
+        dataset_definition=dd,
+        destination='/opt/ml/processing/input/data/',
+        s3_data_distribution_type='ShardedByS3Key'
+    )],
+    outputs = [
+        ProcessingOutput(output_name="train", source="/opt/ml/processing/output/train"),
+        ProcessingOutput(output_name="test", source="/opt/ml/processing/output/test"),
+    ]
+)
+```
+
 Very similarly, we can define the training step, but we use the outputs from the processing step as inputs:
 これと同様に、学習ステップを定義することができるが、処理ステップからの出力を入力として使用する：
 
+```python
+# TRAININGSTEP
+training_step = TrainingStep(
+    name='TrainingStep',
+    estimator=s,
+    inputs={
+        "train": TrainingInput(s3_data=processing_step.properties.ProcessingOutputConfig.Outputs["train"].S3Output.S3Uri),
+        "test": TrainingInput(s3_data=processing_step.properties.ProcessingOutputConfig.Outputs["test"].S3Output.S3Uri)
+    }
+)
+```
+
 Finally, let’s add the model step, which registers the model to SageMaker for later use (for real-time endpoints and batch transform):
 最後に、モデルステップを追加します。このステップでは、後で使用するためにモデルを SageMaker に登録します（リアルタイムエンドポイントとバッチ変換用）：
+
+```python
+# MODELSTEP
+model_step = CreateModelStep(
+    name="Model",
+    model=model,
+    inputs=CreateModelInput(instance_type='ml.m5.xlarge')
+)
+```
 
 With all the pipeline steps now defined, we can define the pipeline itself as a pipeline object comprising a series of those steps.
 すべてのパイプラインステップが定義されたので、一連のステップからなるパイプラインオブジェクトとして、パイプライン自体を定義することができる。
@@ -254,8 +306,31 @@ ParallelStep and Condition steps also are possible.
 Then we can update and insert (upsert) the definition to Pipelines with the .upsert() command:
 そして、.upsert()コマンドを使って、定義を更新し、Pipelinesに挿入（upsert）することができる：
 
+```python
+#### PIPELINE ####
+pipeline = Pipeline(
+    name = 'Redshift2Pipeline',
+    parameters = [
+        processing_instance_type, processing_instance_count,
+        training_instance_type, training_instance_count,
+        inference_instance_type
+    ],
+    steps = [
+        processing_step, 
+        training_step,
+        model_step
+    ]
+)
+pipeline.upsert(role_arn=role)
+```
+
 After we upsert the definition, we can start the pipeline with the pipeline object’s start() method, and wait for the end of its run:
 定義をアップサートしたら、パイプライン・オブジェクトのstart()メソッドでパイプラインを開始し、実行の終了を待ちます：
+
+```python
+execution = pipeline.start()
+execution.wait()
+```
 
 After the pipeline starts running, we can view the run on the SageMaker console.
 パイプラインの実行が開始されると、SageMaker コンソールで実行を確認できます。
@@ -271,24 +346,16 @@ Typically, this pipeline should take about 10 minutes to complete.
 ## Conclusions 結論
 
 In this post, we created a SageMaker pipeline that reads data from Amazon Redshift natively without requiring additional configuration or services, processed it via SageMaker Processing, and trained a scikit-learn model.
-この投稿では、追加の設定やサービスを必要とせずに Amazon Redshift からネイティブにデータを読み込む SageMaker パイプラインを作成し、SageMaker Processing で処理し、scikit-learn モデルを学習させました。
+この投稿では、**追加の設定やサービスを必要とせずに Amazon Redshift からネイティブにデータを読み込む SageMaker パイプラインを作成し**、SageMaker Processing で処理し、scikit-learn モデルを学習させました。
 We can now do the following:
 これで次のことができる：
 
-Schedule the pipeline to run with Amazon EventBridge rules (see Automating Amazon SageMaker with Amazon EventBridge)
-Amazon EventBridgeルールで実行するパイプラインをスケジュールする（Amazon EventBridgeによるAmazon SageMakerの自動化参照）
-
-Create a new scheduled pipeline for inference with the TransformStep
-TransformStepで推論用の新しいスケジュールされたパイプラインを作成する。
-
-Use the model to update an existing real-time endpoint manually or as part of a SageMaker project
-モデルを使用して、既存のリアルタイムエンドポイントを手動で、または SageMaker プロジェクトの一部として更新します。
+- Schedule the pipeline to run with Amazon EventBridge rules (see Automating Amazon SageMaker with Amazon EventBridge) Amazon EventBridgeルールで実行するパイプラインをスケジュールする（Amazon EventBridgeによるAmazon SageMakerの自動化参照）
+- Create a new scheduled pipeline for inference with the TransformStep TransformStepで推論用の新しいスケジュールされたパイプラインを作成する。
+- Use the model to update an existing real-time endpoint manually or as part of a SageMaker project モデルを使用して、既存のリアルタイムエンドポイントを手動で、または SageMaker プロジェクトの一部として更新します。
 
 If you want additional notebooks to play with, check out the following:
 他にもノートブックで遊びたい方は、以下をご覧ください：
 
-Use the Amazon Redshift Data API from within a SageMaker notebook: extra-content/data-api-discovery.ipynb
-SageMaker ノートブック内から Amazon Redshift Data API を使用します： extra-content/data-api-discovery.ipynb
-
-Integrate the Amazon Redshift Data API in an AWS Lambda function to have more granular control, and add this step to a SageMaker pipeline: extra-content/pipeline.ipynb
-Amazon Redshift Data API を AWS Lambda 関数に統合して、より詳細な制御を行い、このステップを SageMaker パイプラインに追加します： extra-content/pipeline.ipynb
+- Use the Amazon Redshift Data API from within a SageMaker notebook: extra-content/data-api-discovery.ipynb SageMaker ノートブック内から Amazon Redshift Data API を使用します： extra-content/data-api-discovery.ipynb
+- Integrate the Amazon Redshift Data API in an AWS Lambda function to have more granular control, and add this step to a SageMaker pipeline: extra-content/pipeline.ipynb Amazon Redshift Data API を AWS Lambda 関数に統合して、より詳細な制御を行い、このステップを SageMaker パイプラインに追加します： extra-content/pipeline.ipynb
