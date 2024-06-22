@@ -47,8 +47,6 @@ snowflake-connector-python
 pyarrow
 ```
 
-### RDSに関しては、psycopg2 とかmysql-connector-pythonとか使える??
-
 # Sagemaker notebookからRedshiftにアクセスするsample notebookのメモ:
 
 - わかったことメモ:
@@ -108,3 +106,18 @@ if status == 'FINISHED':
     print(f'SUCCESS. Found {len(records)} records')
 else:
     print(f'Failed with Error: {client.describe_statement(Id=execution_id)["Error"]}')
+```
+
+# Sagemaker から プライベートサブネット内のRDSにアクセスする方法
+
+- 参考:
+  - [Connect to RDS from basic SageMaker Studio domain?](https://repost.aws/ja/questions/QUksj1ZyvgQbCveN6a8laexA/connect-to-rds-from-basic-sagemaker-studio-domain)
+- 上記資料によると以下のことがわかった。
+  - デフォルトのquick setupで作られる Sagemaker Domain では、public internet accessになる。(i.e. direct-to-internet)
+    - direct-to-internetのSagemaker Domainは、RDSインスタンスがinternetからアクセスできる場合にのみ、ノートブックからアクセスできるようになる。
+    - よってこの場合、private subnetにあるRDSインスタンスにはアクセスできない。
+  - -> **private subnetにあるRDSにアクセス可能にするためには、quick setupではなくstandard setupを選択してSagemaker Domainを作る必要がある**。
+    - ざっくり以下のことを準備しておく必要がありそう.
+      - VPCの設定: Sagemaker  Studioが同じVPC内にあるか、RDSインスタンスがあるVPCとVPC peeringが設定されている必要がある。
+      - セキュリティグループの設定: RDSインスタンスに関連づけられているセキュリティグループに、Sagemaker Studioのセキュリティグループからのアクセスを許可する必要がある。
+        - ex. Sagemaker Studioが所属するVPCのCIDRブロックからのinboundアクセスを許可する。
