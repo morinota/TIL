@@ -95,6 +95,22 @@ aws ec2 create-route --route-table-id rtb-2 --destination-cidr-block 192.168.0.0
   - 3. セキュリティグループの設定:
     - **RDSインスタンスにattachされているセキュリティグループに、TrainingJobのインスタンスのIPアドレス範囲からMySQLのデフォルトポート（3306）へのアクセスを許可するインバウンドルールが含まれているか確認**する。なければ、必要に応じてルールを追加する。
 
+対象のRDSインスタンスに関連づけられているセキュリティグループIDの一覧を取得するコマンド:
+
+```shell
+$ aws rds describe-db-instances --db-instance-identifier {my-rds-instance-id} --query "DBInstances[0].VpcSecurityGroups[*].VpcSecurityGroupId" --output text
+
+sg-xxxxxxxxxxxxxx
+```
+
+対象のRDSインスタンスが所属するサブネットを取得するためのコマンド:
+
+```shell
+aws rds describe-db-instances --db-instance-identifier {my-rds-instance-id} --query "DBInstances[0].DBSubnetGroup.Subnets[*].SubnetIdentifier" --output text
+
+subnet-xxxxxxxxxxxxxxxx       subnet-yyyyyyyyyyyyyy
+```
+
 ## TrainingJobを、RDSと同じサブネットを指定して起動させるデメリット・メリットについて
 
 - メリット:
@@ -105,3 +121,29 @@ aws ec2 create-route --route-table-id rtb-2 --destination-cidr-block 192.168.0.0
   - サブネットのリソース制限
   - 障害の影響範囲が広がる
   - ネットワーク分離の欠如
+
+# セキュリティグループのinbound ruleの見方
+
+ざっくり:
+
+- インバウンドルールは、セキュリティグループが紐づけられたリソースに対して、**外部からのアクセスの流入を許可するためのルール**! 
+- アウトバウンドルールは、逆に紐付けたリソースから外部へのアクセスの流出を許可するためのルール。
+  - アウトバウンドルールは、デフォルトで全てのトラフィックを許可するように設定されていることが多い。(**なので基本はアウトバウンドルールは気にせず、インバウンドルールを確認すれば良いはず**...!:thinking:)
+
+セキュリティグループの特徴
+
+- リソース単位(ex. EC2インスタンス、RDSインスタンス)で許可するインバウンド、アウトバウンドトラフィックを定義する。
+- ホワイトリスト方式なので、許可ルールのみ指定可能。
+- 設定されたルールに序列はなく、全て評価される。ルールに載ってないものは全て拒否される。
+
+トラフィックを制御するルールは、以下の内容を指定して登録される:
+
+- タイプ
+- プロトコル: 許可するプロトコルの種類 (TCP, UDP, ICMP, etc.)
+- ポート範囲: 許可するポート番号。単一あるいは範囲で指定可能。
+- Source(ソース、送信元)/Destination(宛先、送信先): 許可するトラフィックの送信元(inbound)、または送信先(outbound)を指定する。
+  - **送信元/送信先は、以下のいずれかの方法で指定できる**(インバウンドルール毎に異なる設定方法っぽくて解釈難しいな...:thinking:):
+    - 単一のIPアドレス
+    - CIDRブロック表記によるIPアドレス範囲
+    - prefixリスト(複数のIPアドレスを指定したリスト)のID。
+    - セキュリティグループのID
