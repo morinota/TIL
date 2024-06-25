@@ -146,3 +146,315 @@ model.tar.gz
 
 - 参考:
   - https://pages.awscloud.com/rs/112-TZM-766/images/AWS-Black-Belt_2022_Amazon-SageMaker-Inference-Part-3_1014_v1.pdf の36ページ目とか
+
+# リアルタイム推論のエンドポイントを試しに立ててみたメモ:
+- 以下資料のパターン2を採用して、推論エンドポイントを立てることができた:
+  - [Amazon SageMaker におけるカスタムコンテナ実装パターン詳説 〜推論編〜](https://aws.amazon.com/jp/blogs/news/sagemaker-custom-containers-pattern-inference/) 
+
+最終的には、以下のようにリクエスト可能なエンドポイントをhostすることができた。
+
+```python
+import json
+
+request_body = {"user_id": "114521", "k": 3}
+content_type = "application/json"
+responce = predictor.predict(json.dumps(request_body), initial_args={"ContentType": content_type})
+
+print(json.loads(responce))
+
+>>> {'user_id': '114521', 'recommendations': [{'1887': 12.380890434982271}, {'2266': 11.636938986300727}, {'1904': 11.24494711613486}]}
+```
+
+ざっくり、以下の手順で実現できた:
+
+- 1. ECRリポジトリを用意(endpoint内でrunさせるdocker imageを格納するため)
+  - (気づき)AWS提供のコンテナを使うよりも、結局のところ自前のimageを使う方が楽だった!
+    - aws提供のコンテナは結局いろいろお作法があったので...!(pytorchの推論用イメージの場合は、`.pth`ファイルがないとエラーが出る、など)
+
+```shell
+AWS_PROFILE={特定のprofile} aws ecr create-repository --repository-name {リポジトリ名}
+```
+
+- 2. Dockerfileとentrypointのファイル `serve.py` を用意する
+  - 学習済みモデルは、imageの中に入れない。
+  - 推論の実際の中身の処理のコードも、imageの中に入れない。
+  - 入れるのは、依存関係のpackageと、`serve.py`のみ。
+    - **`sagemaker-inference`と`multi-model-server`を入れる点に注意!**(カスタムコンテナ戦略に確か書いてあった方法...!:thinking:)
+      - MMS(`multi-model-server`): 
+        - OSSのモデルサービングのライブラリ。
+        - Sagemakerに限らず、オンプレミスやECS上などの様々なプラットフォーム上で動作する。
+        - MMSはAWSが中心で開発してるライブラリだが、MMS自体にはSagemakerとの連携機能はないため、sagemaker inference toolkit (`sagemaker-inference`)が必要になる。
+      - Sagemaker inference toolkit (`sagemaker-inference`):
+        - **MMS専用のSagemaker連携用ライブラリ**。(そうなのか...!:thinking:)
+        - Sagemaker Endpointのコンテナ内で利用可能。
+
+ディレクトリ構造は以下:
+
+```shell
+.
+├── Dockerfile
+└── realtime_inference_endpoint
+    └── serve.py
+```
+
+Dockefileの中身は以下(ライブラリのinstallと、entrypointの設定のみ):
+
+```Dockerfile
+FROM python:3.10-slim
+
+# working directoryを設定(デフォルトは/usr/src/app)
+WORKDIR /usr/src/app 
+
+# パッケージのインストール
+## sagemaker-inferenceを使用することで、いい感じに環境を構築してくれる
+RUN apt-get update && apt-get upgrade -y && apt-get install -y openjdk-17-jdk-headless
+RUN pip install --no-cache-dir numpy multi-model-server sagemaker-inference pydantic pandas
+
+# 推論用のスクリプトをコピー
+COPY realtime_inference_endpoint/serve.py /usr/src/app/serve.py
+
+# entrypointを設定
+ENTRYPOINT ["python", "/usr/src/app/serve.py"]
+```
+
+serve.pyの中身は非常にシンプル:
+(エンドポイントを自由に決めたり、複数のモデルをhostするための設定をする場合は、このファイルをいじる必要がありそうなんだろうか...??:thinking:)
+
+```python
+from sagemaker_inference import model_server
+
+model_server.start_model_server()
+```
+
+- 3. Docker imageをbuildして、ECRリポジトリにpushする
+
+```python
+import os
+import boto3
+
+ecr_repository_name = "{リポジトリ名}"
+account_id = "{アカウントID}"
+aws_profile = "{特定のprofile}"
+region = boto3.session.Session(profile_name=aws_profile).region_name
+tag = "latest"
+image_uri = f"{account_id}.dkr.ecr.{region}.amazonaws.com/{ecr_repository_name}:{tag}"
+
+# ECRにログイン
+os.system(f"AWS_PROFILE={aws_profile} aws ecr get-login-password --region {region} | docker login --username AWS --password-stdin {account_id}.dkr.ecr.{region}.amazonaws.com")
+
+# docker imageをbuild
+os.system(f"docker buildx build --platform linux/amd64 -t {ecr_repository_name} -f realtime_inference_endpoint/Dockerfile .")
+
+# tagを付けてpush
+os.system(f"docker tag {ecr_repository_name} {image_uri}")
+os.system(f"docker push {image_uri}")
+```
+
+- 4. なんらかの方法で model artifact　(学習済みモデルのデータを`model.tar.gz`にまとめたもの) をS3にアップロードしておく。
+  - (今回は、ローカル環境にベクトルデータを落としてきておいた。それらをまとめて`model.tar.gz`にしてS3にアップロードした)
+  - (推論用のコードは含めない点に注意! まあ含めても問題ないのかもしれないが...!:thinking:)
+
+事前に、以下のようなディレクトリ構造にしておいた:
+
+```shell
+.
+└── realtime_inference_endpoint
+    └── model_artifact
+        ├── movie_vectors
+        │   └── 000.gz
+        └── user_vectors
+            └── 000.gz
+```
+
+学習済みのベクトルデータをまとめて`model.tar.gz`にしてS3にアップロードする関数を以下のように作成し、実行した:
+
+```python
+import boto3
+import tarfile
+
+from pathlib import Path
+
+def prepare_model_artifact(
+    model_artifact_dir_path: Path,
+    model_artifact_s3uri: str,
+) -> str:
+    """ローカル環境のmodel artifact directoryを指定し、model.tar.gzとしてS3にuploadする"""
+    tar_path = model_artifact_dir_path.parent / "model.tar.gz"
+
+    # model.tar.gzファイルを作成
+    with tarfile.open(tar_path, mode="w:gz") as tar:
+        # directory内のファイルを順番にtarに追加
+        for file_path in model_artifact_dir_path.iterdir():
+            tar.add(file_path, arcname=file_path.name)
+
+    # S3にアップロード
+    session = boto3.Session(profile_name=PROFILE_NAME)
+    s3 = session.client("s3")
+    bucket_name, key = model_artifact_s3uri.replace("s3://", "").split("/", 1)
+    s3.upload_file(str(tar_path), bucket_name, key)
+
+    # localのmodel.tar.gzファイルを削除
+    tar_path.unlink()
+    return model_artifact_s3uri
+
+model_artifact_dir_path = Path("./realtime_inference_endpoint/model_artifact")
+model_artifact_s3uri = f"s3://my-bucket/my-key-prefix/model.tar.gz"
+prepare_model_artifact(model_artifact_dir_path, model_artifact_s3uri)
+```
+
+- 5. 推論コードの中身を作成する
+  - Sagemaker推論endpointのお作法に従った4つの関数を持つ`inference.py`と、その他のモジュールたちを用意した。
+    - 4つの関数を上書きするようなお作法
+      - 初回実行時に呼ばれる処理: model_fn -> input_fn -> predict_fn -> output_fn
+      - リクエストを受けて呼ばれる処理: input_fn -> predict_fn -> output_fn
+
+ディレクトリ構造は以下:
+
+```shell
+.
+└── realtime_inference_endpoint
+    └── code
+        ├── inference.py
+        ├── loader.py
+        ├── models.py
+        ├── type_aliases.py
+        └── recommender.py
+```
+
+inference.pyの中身は以下:
+
+```python
+# sagemaker推論endpointの推論コード
+# 4つの必須関数を実装する必要がある
+# 初回実行時に呼ばれる処理: model_fn -> input_fn -> predict_fn -> output_fn
+# リクエストを受けて呼ばれる処理: input_fn -> predict_fn -> output_fn
+from pathlib import Path
+from recommender import Recommender
+from loader import load_vectors_csv
+from models import Request, Responce
+from type_aliases import UserId, ContentId, PreferenceScore
+
+
+def model_fn(model_dir: str):
+    """Sagemaker推論エンドポイントの推論コードの必須関数1
+    - 初回実行時に呼ばれる。
+    - 学習済みモデルをロードして返す。
+    """
+    model_dir_path = Path(model_dir)
+    return Recommender(
+        user_vectors=load_vectors_csv(model_dir_path / "user_vectors", "user_id"),
+        movie_vectors=load_vectors_csv(model_dir_path / "movie_vectors", "movie_id"),
+    )
+
+
+def input_fn(request_body: str, request_content_type: str):
+    if request_content_type != "application/json":
+        raise ValueError(
+            f"Invalid content-type: {request_content_type} (expected: application/json)"
+        )
+    return Request.model_validate_json(request_body)
+
+
+def predict_fn(
+    input_data: Request, model: Recommender
+) -> tuple[UserId, list[tuple[ContentId, PreferenceScore]]]:
+    return input_data.user_id, model.predict_ver1(input_data.user_id, input_data.k)
+
+
+def output_fn(
+    prediction: tuple[UserId, list[tuple[ContentId, PreferenceScore]]],
+    response_content_type: str,
+) -> str:
+    if response_content_type != "application/json":
+        raise ValueError(
+            f"Invalid content-type: {response_content_type} (expected: application/json)"
+        )
+
+    user_id, recommendations = prediction
+    return Responce(user_id=user_id, recommendations=recommendations).model_dump_json()
+```
+
+ちなみに、APIのrequestとresponseのデータ構造は、DbC(Design by Contract)的にPydanticを使って定義 & Validationしてみた!
+
+```python
+from pydantic import BaseModel, field_validator
+from type_aliases import ContentId, PreferenceScore, UserId
+
+
+class Request(BaseModel):
+    user_id: UserId
+    k: int
+
+
+class Responce(BaseModel):
+    user_id: UserId
+    recommendations: list[dict[ContentId, PreferenceScore]]
+
+    @field_validator("recommendations", pre=True, each_item=True)
+    def parse_recommendations(
+        cls,
+        target: any,
+    ) -> dict[ContentId, PreferenceScore]:
+        """pydanticのカスタムvalidate & parse メソッドを追加。
+        recommendations fieldにて、tuple[ContentId, PreferenceScore]を許容してdict[ContentId, PreferenceScore]にparseする。
+        """
+        if isinstance(target, tuple) and len(target) == 2:
+            content_id, preference_score = target
+            if isinstance(content_id, str) and isinstance(
+                preference_score, (float, int)
+            ):
+                return {content_id: preference_score}
+        raise ValueError(
+            "Invalid recommendation format. Expected a tuple of (ContentId, PreferenceScore)."
+        )
+```
+
+- 6. Sagemaker Model, Endpoint Configuration, Endpointを作成する
+  - model artifactのS3 URIと、docker imageのURIを指定する必要がある。
+  - sagemaker python SDKだと結構短く書ける印象。(endpoint configurationの存在を意識せずに済んでしまう...!:thinking:)
+  - boto3だと、ローカル環境の推論コードを`source_dir`と`entry_point`として指定してデプロイ、みたいなことはできずに、手動でS3に`source.tar.gz`としてアップロードする必要はありそう...!:thinking:
+
+```python
+import sagemaker
+
+session = boto3.Session(profile_name=PROFILE_NAME)
+sagemaker_session = sagemaker.Session(boto_session=session)
+model_artifact_s3uri = "s3://my-bucket/my-key-prefix/model.tar.gz"
+
+model = sagemaker.Model(
+    image_uri=image_uri,
+    model_data=model_artifact_s3uri,
+    role=ROLE_FOR_ENDPOINT,
+    entry_point="inference.py",
+    source_dir="./realtime_inference_endpoint/code",
+    predictor_cls=sagemaker.predictor.Predictor,
+    sagemaker_session=sagemaker_session,
+)
+
+predictor = model.deploy(
+    instance_type="ml.m5.xlarge",
+    initial_instance_count=1,
+    endpoint_name="realtime-inference-endpoint",
+    wait=True,
+)
+```
+
+- 7. 最後に、実際にリクエストを投げてみる
+
+```python
+import json
+
+request_body = {"user_id": "114521", "k": 3}
+content_type = "application/json"
+
+# predictorインスタンスはなんらか作っておく必要はある
+responce = predictor.predict(
+    json.dumps(request_body), initial_args={"ContentType": content_type}
+)
+
+print(json.loads(responce))
+{'user_id': '114521', 'recommendations': [{'1887': 12.380890434982271}, {'2266': 11.636938986300727}, {'1904': 11.24494711613486}]}
+
+# 試せたので、エンドポイントを削除
+predictor.delete_endpoint()
+```
