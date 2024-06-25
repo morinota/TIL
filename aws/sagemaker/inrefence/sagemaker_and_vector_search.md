@@ -4,3 +4,7 @@
   - Sagemaker推論エンドポイントと、OSSのインメモリベクトル検索フレームワークFAISSを使って、ベクトル検索APIをhostするサンプルコードみたい...!:thinking:
   - Faiss以外にもBoyagerとか、色々ANNフレームワークがある。
 - [近似最近傍探索ライブラリVoyagerで類似単語検索を試す](https://zenn.dev/chimuichimu/articles/bab071c182784c)
+
+# Sagemaker Endpoint × インメモリベクトル検索フレームワークでベクトル検索APIをhostする
+
+
