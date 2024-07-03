@@ -18,27 +18,24 @@ Typically, the endpoint is fronted as part of a broader API, based on a conventi
 通常、エンドポイントは、RESTのような従来のウェブフレンドリーなアプローチに基づく、より広範なAPIの一部として前面に押し出され、クライアント・ソフトウェアにアプリケーション機能一式を提供する。
 
 Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale.
-Amazon API Gatewayは、開発者があらゆる規模のAPIを簡単に作成、公開、保守、監視、セキュア化できるフルマネージドサービスです。
+**Amazon API Gatewayは、開発者があらゆる規模のAPIを簡単に作成、公開、保守、監視、セキュア化できるフルマネージドサービス**です。
 API Gateway can be used to present an external-facing, single point of entry for Amazon SageMaker endpoints, with the following benefits:
-API Gateway は、Amazon SageMaker のエンドポイントに対して、外部向けの単一エントリーポイントを提示するために使用でき、以下のような利点があります：
+**API Gateway は、Amazon SageMaker のエンドポイントに対して、外部向けの単一エントリーポイントを提示するために使用でき**、以下のような利点があります：
 
-Insulates clients from the specifics of the underlying implementation by translating between a client-facing REST API and the underlying Amazon SageMaker runtime inference API
-クライアント向けの REST API と基礎となる Amazon SageMaker ランタイム推論 API 間を変換することで、基礎となる実装の仕様からクライアントを保護します。
+- 1. Insulates clients from the specifics of the underlying implementation by translating between a client-facing REST API and the underlying Amazon SageMaker runtime inference API
+  クライアント向けの REST API と基礎となる Amazon SageMaker ランタイム推論 API 間を変換することで、**基礎となる実装の仕様からクライアントを保護**します。(クライアント側が、あ、これ、Sagemakerで動いてるのかと実装の詳細を漏らす必要がないもんね...!:thinking:)
+- 2. Supports authentication and authorization of client requests
+  クライアント・リクエストの認証と認可をサポート
+- 3. Manages client requests through the use of throttling, rate-limiting, and quota management
+  スロットリング、レート制限、クォータ管理を使用してクライアントのリクエストを管理する。
+- 4. Uses firewall features as provided by AWS WAF
+  AWS WAFが提供するファイアウォール機能を使用する。
+- 5. Enables cost savings and operational optimization through caching and request validation
+  キャッシュとリクエスト検証によるコスト削減と運用の最適化
+- 6. Makes it easier to create canary deployments to introduce model changes safely
+  モデルの変更を安全に導入するための**カナリアデプロイ**の作成を容易にする。
 
-Supports authentication and authorization of client requests
-クライアント・リクエストの認証と認可をサポート
-
-Manages client requests through the use of throttling, rate-limiting, and quota management
-スロットリング、レート制限、クォータ管理を使用してクライアントのリクエストを管理する。
-
-Uses firewall features as provided by AWS WAF
-AWS WAFが提供するファイアウォール機能を使用する。
-
-Enables cost savings and operational optimization through caching and request validation
-キャッシュとリクエスト検証によるコスト削減と運用の最適化
-
-Makes it easier to create canary deployments to introduce model changes safely
-モデルの変更を安全に導入するためのカナリア配備の作成を容易にする。
+<!-- ここまで読んだ! -->
 
 In this post, I show how API Gateway can be used to front an Amazon SageMaker inference endpoint as (part of) a REST API, by making use of an API Gateway feature called mapping templates.
 この投稿では、マッピングテンプレートと呼ばれる API Gateway の機能を利用して、Amazon SageMaker の推論エンドポイントを REST API の（一部として）前面に表示する方法を紹介します。
