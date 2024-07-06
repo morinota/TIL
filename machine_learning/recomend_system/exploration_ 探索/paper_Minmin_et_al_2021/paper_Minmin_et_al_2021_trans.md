@@ -1,14 +1,14 @@
-## refs: refs：
+## 0.1. refs: refs：
 
 https://dl.acm.org/doi/pdf/10.1145/3460231.3474236
 [empty]
 
-## title タイトル
+## 0.2. title タイトル
 
 Values of User Exploration in Recommender Systems
 推薦システムにおけるユーザ探索の価値
 
-## abstract 抄録
+## 0.3. abstract 抄録
 
 Reinforcement Learning (RL) has been sought after to bring nextgeneration recommender systems to further improve user experience on recommendation platforms.
 強化学習(RL)は、レコメンデーションプラットフォームにおけるユーザーエクスペリエンスをさらに向上させる次世代のレコメンデーションシステムを実現するために注目されている。
@@ -32,7 +32,7 @@ Moreover, we use conversion of casual users to core users as an indicator of the
 Through offline analyses and live experiments, we study the correlation between these four facets of recommendation quality and long term user experience, and connect serendipity to improved long term user experience.
 オフライン分析およびライブ実験を通じて、推薦品質のこれら4つの側面と長期的なユーザー・エクスペリエンスとの相関関係を研究し、セレンディピティを長期的なユーザー・エクスペリエンスの向上につなげている。
 
-# Information インフォメーション
+# 1. Information インフォメーション
 
 In the era of increasing choices, recommender systems are becoming indispensable in helping users navigate the million or billion pieces of contents available on recommendation platforms.
 選択肢が増える時代において、レコメンデーション・システムは、レコメンデーション・プラットフォーム上で利用可能な百万、億単位のコンテンツをユーザーがナビゲートするのに不可欠なものとなっている。
@@ -95,9 +95,9 @@ Together, we make the following contributions: • Methods to Introduce User Exp
   Using conversion of casual users to core users as an indicator of the holistic long term user experience, we connect serendipity to improved long term user experience.
   **カジュアルユーザからコアユーザへの転換を総合的な長期的ユーザ体験の指標とすること**で、セレンディピティを長期的ユーザー体験の向上につなげている。
 
-# Related Work 関連作品
+# 2. Related Work 関連作品
 
-## Reinforcement Learning for Recommender Systems.
+## 2.1. Reinforcement Learning for Recommender Systems.
 
 推薦システムのための強化学習.
 Deep reinforcement learning, combining high-capacity function approximators, i.e., deep neural networks, with the mathematical formulations in classic reinforcement learning [57], has achieved enormous success in various domains such as games, robotics and hardware design [18, 33, 36, 52].
@@ -121,7 +121,7 @@ Chen et al.[11] scaled a batch RL algorithm, i.e., REINFORCE with off-policy cor
 Hu et al.[22] tested an extension of the deep deterministic policy gradient (DDPG) method for learning to rank on Taobao, a commercial search platform.
 Huら[22]は、淘宝網（Taobao）という商業的な検索プラットフォームで、ランク付けを学習するための深層決定性政策勾配（DDPG）法の拡張をテストした。
 
-## Exploration in Reinforcement Learning.
+## 2.2. Exploration in Reinforcement Learning.
 
 強化学習における探索。
 The exploration/exploitation dilemma has long been studied in multi-armed bandits and classic reinforcement learning [17, 57].
@@ -143,7 +143,7 @@ Bellemareら[6]は、情報獲得や学習の進歩というレンズを通し�
 Our work takes inspiration from these existing works, and re-designs the algorithms to fit more closely with the recommendation setup.
 我々の研究は、これらの既存の作品からインスピレーションを受け、より推薦の設定に合うようにアルゴリズムを再設計している。
 
-## Diversity, Novelty and Serendipity of Recommender Systems. 推薦システムの多様性、新規性、セレンディピティ。
+## 2.3. Diversity, Novelty and Serendipity of Recommender Systems. 推薦システムの多様性、新規性、セレンディピティ。
 
 While early recommendation research has focused almost exclusively on improving recommendation accuracy, it has become increasingly recognized that there are other factors of recommendation quality contributing to the overall user experience on the platform.
 初期のレコメンデーション研究では、レコメンデーションの精度を向上させることだけに焦点が当てられていたが、**レコメンデーションの品質には、プラットフォーム上でのユーザ体験全体に貢献する他の要因がある**ことが次第に認識されるようになってきた。
@@ -168,7 +168,7 @@ Our work measures the effect of exploration on recommendation accuracy, diversit
 
 <!-- ここまで読んだ! -->
 
-# Background 背景
+# 3. Background 背景
 
 We base our work on the REINFORCE recommender system introduced in [11], in which the authors framed a set recommendation problem as a Markov Decision Process (MDP) (S, A, P, R, ρ0,γ ).
 私たちは[11]で紹介されたREINFORCE推薦システムをベースにしており、著者たちは**セット推薦問題**(=k個のアイテムをおすすめする問題...!)をマルコフ決定過程（MDP）$(S, A, P, R, \rho_0, \gamma)$としてフレーム化した。
@@ -234,14 +234,16 @@ To balance exploration and exploitation, a hybrid approach that returns the top 
 
 <!-- ここまで読んだ! -->
 
-# Method メソッド
+# 4. Method メソッド
+
+<!-- methodは一旦飛ばそう! -->
 
 Here we introduce three simple methods inspired by exploration research in RL to increase user exploration in the REINFORCE recommender system during training.
 ここでは、REINFORCEレコメンダーシステムにおいて、学習中にユーザの探索を増やすために、**RLにおける探索研究にヒントを得た3つの簡単な方法を紹介**する。
 That is, to recommend content less pertinent to the known user interests, and to discover new user interests.
 つまり、**既知のユーザーの興味にあまり関係のないコンテンツを推薦し、新しいユーザーの興味を発見すること**である。
 
-## Entropy Regularization エントロピー正則化
+## 4.1. Entropy Regularization エントロピー正則化
 
 The first method promotes recommending contents less pertinent to the known user interests by encouraging the policy πθ (·|s) to have an output distribution with high entropy [61].
 最初の方法は、ポリシーπθ (-|s)が高いエントロピーを持つ出力分布を持つように促すことで、既知のユーザの興味にあまり適切でないコンテンツを推薦することを促進する[61]。
@@ -272,7 +274,7 @@ As we increase this regularization, it pushes the learned policy to be closer to
 
 (学習後の条件付きアクション確率分布がなめらかになる、みたいな感じっぽい...!)
 
-## Intrinsic Motivation and Reward Shaping 内発的動機づけと報酬の形成
+## 4.2. Intrinsic Motivation and Reward Shaping 内発的動機づけと報酬の形成
 
 The second method helps discovering new user interests through reward shaping.
 2つ目の方法は、リワード・シェーピングを通じて新しいユーザーの興味を発見するのに役立つ。
@@ -307,14 +309,10 @@ Schmidhuber[49]は、創造性、楽しさ、好奇心の理論を、環境の�
 Our proposal bears the same principle by rewarding the agent more when it discovers some previously unknown patterns of the environment, that is the user.
 我々の提案は、エージェントが環境（ユーザー）の未知のパターンを発見したときに、より多くの報酬を与えるという同じ原理を採用している。
 Let R e t (st , at ) = Ir e (st ,at )>0 · ÍT t ′=t γ t ′−t r e (st ′, at ′) be the discounted cumulation of the extrinsic reward on the stateaction pair (st , at ) observed on the trajectory.
-$R
+
 We then define the cumulative reward Rt (st , at ) used for the gradient update in eq.3 as
 次に、式3の勾配更新に用いる累積報酬 Rt (st , at ) を次のように定義する。
 
-$$
-
-
-$$
 
 Here c > 1 is a constant multiplier.
 ここでc > 1は定数倍である。
@@ -339,7 +337,7 @@ In other words, the additive design gives a uniform boost to actions based entir
 The multiplicative design on the other end, favors surprising actions that actually lead to improved user experience, indicated by higher extrinsic reward.
 もう一方の乗法的デザインは、より高い外発的報酬によって示される、ユーザー体験の向上に実際につながる意外な行動を好む。
 
-## Actionable Representation for Exploration 探索のための実用的な表現
+## 4.3. Actionable Representation for Exploration 探索のための実用的な表現
 
 The third method reinforces the newly discovered user interest through representation learning.
 第3の方法は、表現学習によって新たに発見されたユーザーの興味を強化する。
@@ -366,151 +364,162 @@ Here It ′ is the list of items the user has interacted with up to time t ′ .
 This feature is then embedded and consumed by the RNN along with other features describing the item at .
 この特徴は、.NETのアイテムを説明する他の特徴とともにRNNに埋め込まれ、消費される。
 
-# Measurement 測定
+# 5. Measurement 測定
+
+<!-- Methodは一旦飛ばしてここから読む! -->
+
+<!-- 推薦システムの良し悪しを評価するための指標の設計のセクション?? -->
 
 Personalization has been the cornerstone of modern recommender systems.
 パーソナライゼーションは、現代のレコメンダーシステムの基礎となっている。
 It aims to produce targeted and accurate recommendations based on user historical activities.
 これは、ユーザーの過去のアクティビティに基づいて、ターゲットを絞った正確なレコメンデーションを作成することを目的としている。
 Overly focusing on the accuracy aspect of recommendation, however, runs the risk of exposing users only to a concentrated set of contents.
-しかし、レコメンデーションの精度を重視しすぎると、ユーザーに限られたコンテンツしか提供できなくなる危険性がある。
+**しかし、レコメンデーションの精度を重視しすぎると、ユーザーに限られたコンテンツしか提供できなくなる危険性がある**。
 This could attract user attention in the near term, but likely hurt user experience in the long run.
 これは短期的にはユーザーの注目を集めるかもしれないが、長期的にはユーザー体験を損なう可能性が高い。
 There has been a growing body of work examining factors other than accuracy in shaping user’s perception of recommendation quality [9, 19, 35, 66, 72, 72].
-推薦の質に対するユーザーの認識を形成する上で、正確さ以外の要因を検討する研究が増えている[9, 19, 35, 66, 72, 72]。
+**推薦の質に対するユーザの認識を形成する上で、accuracy以外の要因を検討する研究が増えている**[9, 19, 35, 66, 72, 72]。(beyond-accuracy metricsってやつか:thinking_face:)
 In particular, aspects such as diversity, novelty and serendipity of recommendations have been studied.
 特に、レコメンデーションの多様性、新規性、セレンディピティといった側面が研究されてきた。
 Here we design metrics to measure these four aspects for a RL based recommender system.
-ここでは、RLベースのレコメンダーシステムのために、これら4つの側面を測定するためのメトリクスを設計する。
+ここでは、RLベースのレコメンダーシステムのために、**これら4つの側面を測定するためのメトリクスを設計**する。
 Some of the metrics measure directly on the learned policy πθ , and thus apply only to systems producing a distribution over the content vocabulary.
-メトリクスのいくつかは、学習されたポリシーπθを直接測定するため、コンテンツ語彙上の分布を生成するシステムにのみ適用される。
+**メトリクスのいくつかは、学習されたポリシー $\pi_{\theta}$ に対して直接適用される**ため、コンテンツボキャブラリー全体にわたる分布を生成するシステムにのみ適用される。
+(これって、全てのコンテンツを推薦し得るような確率的なpolicyを前提としたmetricsだよってこと?? もしくは $\pi_{\theta}(a|x) \forall a in A$ が既知の方策だったら適用可能ってことかも...??:thinking_face:)
 Others measure on the recommendation set A πθ generated by acting according to πθ (taking most probable items) 1 , which are generic for any types of recommender systems 2 .
-また、πθに従って行動することで生成される推薦集合A πθ（最も確率の高い項目を選ぶ）1 を測定するものもあり、これはあらゆるタイプの推薦システム2 に共通である。
+また $\pi_{\theta}$ に従って行動することによって**生成された推薦set $A_{\pi_{\theta}}$ に対して測定されるものもあり、これはどのようなタイプのレコメンダーシステムにも一般的**である。(うんうん、こういうmetricsならpolicyが決定的でも確率的でも一様に評価可能...!:thinking_face:)
 These metrics bear similarity to many prior works in quantifying the four factors of recommendation quality [5, 8, 15, 19, 26, 29, 66].
 これらの指標は、推薦品質の4つの要素を定量化する多くの先行研究[5, 8, 15, 19, 26, 29, 66]と類似している。
 
-## Attributes
+## 5.1. Attributes
 
 We first introduce two item attributes that are used to define both the surprise factor in eq (6) as well as the metrics:
-まず、式(6)の驚き因子と測定基準を定義するために使用される2つの項目属性を紹介する：
+まず、**式(6)のsurprise因子とメトリクスの両方を定義するために使用される2つのアイテム属性**を紹介する。
 
-Topic cluster.
-トピック・クラスター
+### Topic cluster. トピック・クラスター
 A topic cluster for each item is produced by: 1) taking the item co-occurrence matrix, where entry (i, j) counts the number of times item i and j were interacted by the same user consecutively; 2) performing matrix factorization to generate one embedding for each item; 3) using k-means to cluster the learned embeddings into 10K clusters; 4) assigning the nearest cluster to each item.
-各アイテムのトピック・クラスタは、次のようにして生成される： 1) 項目の共起行列（項目(i, j)は、項目iとjが同じユーザーによって連続して相互作用された回数をカウントする）を取り、2) 各項目に対して1つの埋め込みを生成するために行列因数分解を実行し、3) 学習された埋め込みを10Kクラスタにクラスタリングするためにk-meansを使用し、4) 各項目に最も近いクラスタを割り当てる。
-Content provider.
+各アイテムのトピック・クラスタは、次のようにして生成される： 1) アイテムの共起行列（項目(i, j)は、項目iとjが同じユーザーによって連続して相互作用した回数をカウントする）を取る; 2) マトリックス因子化を行い、各アイテムに1つの埋め込みを生成する; 3) k-meansを使用して学習された埋め込みを10Kのクラスタにクラスタリングする; 4) 各アイテムに最も近いクラスタを割り当てる。
+
+### Content provider.
 コンテンツプロバイダー。
 Content provider is another attribute of interest as: 1) we observed consistency between contents produced by the same provider, e.g., a food blogger often writes about specific cuisines; 2) we are interested in understanding the importance of content-provider diversity/novelty [37, 64] in influencing long term user experience.
-コンテンツ・プロバイダーは、次のような理由で注目されるもうひとつの属性である： 1) 同じプロバイダーによって制作されたコンテンツ間で一貫性があることが観察された。例えば、料理ブロガーは特定の料理について書くことが多い。2) 長期的なユーザー・エクスペリエンスに影響を与えるコンテンツプロバイダーの多様性／新規性 [37, 64] の重要性を理解することに興味がある。
+コンテンツ提供者は興味深い属性の一つです。理由としては、1) 同じ提供者によって作られたコンテンツには一貫性が見られることが多いこと（例えば、フードブロガーは特定の料理について頻繁に書く傾向があります）、2) 長期的なユーザー体験に影響を与えるコンテンツ提供者の多様性や新規性の重要性を理解したいという点があります【37, 64】。
 
-## Accuracy 正確さ
+## 5.2. Accuracy 正確さ
 
 Arguably the most important property of a recommender is to be able to retrieve contents the user is interested in consuming.
 レコメンダーの最も重要な特性は、ユーザーが消費したいと思うコンテンツを検索できることである。
 We compute the mean average precision at K = 50 (mAP@50) [63] on the recommended set A πθ to measure the accuracy, that is the average precision of identifying an item the user is interested in consuming among A πθ .
-K=50における平均平均精度（mAP@50）[63]を推奨集合A πθについて計算し、精度を測定する。
+正確さを測定するために、推奨セットA πθ において、ユーザーが消費したいと思うアイテムを識別する平均精度を測定するために、K = 50での平均平均精度（mAP@50）[63]を計算する。
 
-## Diversity 多様性
+## 5.3. Diversity 多様性
 
 Diversity measures the number of distinct faucets the recommendation set contains.
-多様性は、推奨セットが含む別個の蛇口の数を測定する。
+多様性は、推薦セットが含む異なる蛇口の数(??)を測定する。
 Many measurements of set diversity have been proposed [39, 45, 53].
-セットの多様性については、多くの測定法が提案されている[39, 45, 53]。
+セットの多様性については、多くの測定法が提案されている[39, 45, 53]。(うんうん...!)
 Among them, the average dissimilarity of all pairs of items in the set is a popular choice.
-その中でも、セット内のすべてのアイテムのペアの平均非類似度がよく使われる。
+その中でも、**推薦セット内のすべてのアイテムのペアの平均非類似度**がよく使われる。
 
 $$
-
-
+Diversity(A^{\pi_{\theta}}) = E_{s \in d^B} [1 - \frac{1}{|A^{\pi_{\theta}}|(|A^{\pi_{\theta}}| - 1)} \sum_{i,j \in A^{\pi_{\theta}}, i \neq j} Sim(i, j)]
 $$
 
 We define the similarity between two items i and j both on topic level and on content provider level.
-2つのアイテムiとjの類似度を、トピックレベルとコンテンツプロバイダレベルの両方で定義する。
+本研究では、**2つのアイテムiとjの類似度を、トピックレベルとコンテンツプロバイダレベルの両方で定義**する。
 That is, Sim(i, j) = 1 if i and j belongs to the same topic cluster, and 0 otherwise.
-つまり、Sim(i, j) = iとjが同じトピック・クラスターに属していれば1、そうでなければ0である。
+つまり、Sim(i, j) = 1 は、iとjが同じトピッククラスタに属している場合であり、それ以外は0である。
 Similarly for content provider.
 コンテンツプロバイダーも同様だ。
 
-## Novelty ノベルティ
+## 5.4. Novelty ノベルティ
 
 The two terms of novelty and serendipity have been used interchangeably in the literature.
-新規性とセレンディピティという2つの用語は、文献の中で同じ意味で使われている。
+**新規性(novelty)とセレンディピティという2つの用語は、文献の中で同じ意味で使われている**。(あ、そうなのか...!:thinking:)
 In this work, we use novelty to focus on the global popularity-based measurements and serendipity to capture the unexpectedness/surprise of the recommendation to a specific user.
-この研究では、グローバルな人気に基づく測定に焦点を当てるために新規性を使用し、特定のユーザーへの推薦の意外性／驚きを捉えるためにセレンディピティを使用する。
+**この研究では、noveltyはグローバルな人気に基づく測定に焦点を当て、serendipityは特定のユーザーに対する推薦の意外性／驚きを捉えるために使用**する。(別の指標として使用するってことね!)
 That is, novelty concerns the recommender system’s capacity to suggest something a user is unlikely to know about already or discover by themselves.
-つまり、新規性とは、ユーザーがすでに知っていたり、自分で発見したりしそうもないものを推薦システムが提案する能力に関するものである。
+つまり、**新規性とは、ユーザがすでに知っていたり、自分で発見したりしそうもないものを推薦システムが提案する能力**に関するものである。(これって、本質的に推薦システムで求められる能力だよな...!:thinking:)
 Zhou et al.[71] first introduced the notion of self-information of a recommended item, which measures the unexpectedness of a recommended item relative to its global popularity
-Zhouら[71]は推薦項目の自己情報という概念を最初に導入し、推薦項目のグローバルな人気に対する意外性を測定した。
+Zhouら[71]は、**推薦アイテムのself-information(自己情報?)という概念**を最初に導入し、これは**推薦アイテムのグローバルな人気に対する推薦アイテムの unexpectedness(意外性)**を測定する。
 
 $$
-
-
+I(a) = - \log p(a) = - \log \frac{\text{# users consumed item a}}{\text{# users}}
+\\
+= - \log (\text{# users consumed item a}) + const
+\tag{8}
 $$
 
 Herep(a) measures the chance a random user would have consumed item a.
-ここでp(a)は、ランダムなユーザーがアイテムaを消費する確率を測定する。
+ここで $p(a)$ は、ランダムなユーザがアイテムaを消費する機会を測定する。
 By definition, a globally "under-explored" item (tail content) will have higher self-information.
-定義によれば、グローバルに 「調査されていない 」項目（テールコンテンツ）は、自己情報が高くなる。
+**自己情報の定義によれば、グローバルに "未探索" のアイテム（テールコンテンツ）は、より高い自己情報を持つ**。
 With the definition of item-level self-information, we can then measure novelty of the learned policy pi as
-項目レベルの自己情報の定義により、学習された方針piの新規性を次のように測定することができる。
+アイテムレベルの自己情報の定義により、学習された方策 $\pi$ の新規性を次のように測定できる。
 
 $$
-
-
+Novelty(\pi_{\theta}) = E_{s \in d^B_t} [\sum_{a in \mathcal{A}} \pi_{\theta}(a|s_t)I(a)]
+\tag{9}
 $$
 
 A learned policy πθ that casts more mass on items with higher selfinformation, being able to recommend "under-explored" items, is deemed more novel.
-学習されたポリシーπθは、自己情報が高いアイテムにより多くの質量を投じ、「未探索」アイテムを推薦することができ、より新規性が高いと判断される。
+学習されたポリシー $\pi_{\theta}$ が、より高い自己情報を持つアイテムにより多くの質量を投影し"未探索"のアイテムを推薦できるようになると、より新規性が高いと見なされる。
+(なるほど、このNoveltyが、開発者が $\pi_{\theta}(a|x)$ を認識できてないと測定できない指標の1つか...!:thinking:)
 We can define the novelty metrics for attributes similarly by looking at the self-information of the attribute instead, e.g., popularity of the content provider.
-属性の新奇性メトリクスは、属性の自己情報（例えば、コンテンツ提供者の人気度）に注目することで、同様に定義することができる。
+**同様に、アイテム属性のnoveltyメトリクスを定義することができる**。例えば、アイテム属性レベルの自己情報 (i.e. コンテンツプロバイダの人気度合い) をみることで。
 
-## Serendipity ♪セレンディピティ
+<!-- ここまで読んだ! -->
+
+## 5.5. Serendipity ♪セレンディピティ
 
 Serendipity captures the unexpectedness/surprise of a recommendation to a specific user.
 セレンディピティは、特定のユーザーに対する推薦の意外性／驚きを捉える。
 It measures the capability of the recommender system to recommend relevant contents outside of the user’s normal interests.
-これは、推薦システムがユーザーの通常の興味以外の関連コンテンツを推薦する能力を測定するものである。
+これは、**推薦システムがユーザの通常の興味以外の関連コンテンツを推薦する能力を測定するもの**である。
 There are two important factors in play here: 1) unexpectedness/surprise: as a counter example, a recommendation of John Lenon to listeners of The Beatles will not constitutes a surprising recommendation; 2) relevance: the surprising contents should be of interest to the user.
-ここには2つの重要な要素がある： 1）意外性／驚き： 逆の例として、ビートルズのリスナーにジョン・レノンを推薦しても、意外な推薦にはならない： 2）関連性：驚くような内容は、ユーザーにとって興味深いものでなければならない。
+ここには2つの重要な要素がある： 1）意外性／驚き： 逆の例として、ビートルズのリスナーにジョン・レノンを推薦しても、意外な推薦にはならない： 2）関連性：驚くような内容は、ユーザにとって関心のあるものでなければならない。
 In other words, serendipity measure the ability of the recommender to discover previously unknown (to the recommender) interests of the user.
-言い換えれば、セレンディピティとは、レコメンダーが（レコメンダーにとって）未知のユーザーの興味を発見する能力のことである。
-We define the serendipity value of a recommendation at w.r.t.
-我々は、セレンディピティの価値を次のように定義する。
-a user with interaction history of It as
-というインタラクション履歴を持つユーザー。
+言い換えれば、セレンディピティとは、レコメンダーが（レコメンダーにとって）未知のユーザーの興味を発見する能力のことである。(うん、Serendipity = like + didn't expect だもんね...!:thinking:)
+We define the serendipity value of a recommendation $\mathbf{a}_t$ w.r.t a user with interaction history of $I_t$ as
+ユーザーの相互作用履歴 $I_t$ に関して、推薦アイテム $a_t$ のセレンディピティ値を次のように定義する。
 
-$$
-
-
-$$
+もし $r^{e}(s_t, a_t) > 0$ かつ $a_t$ のトピッククラスタが $I_t$ のどのアイテムのトピッククラスタとも異なる場合、セレンディピティ値 $S^{topic}(a_t|s_t, I_t)$ は1となる。そうでない場合は0となる。
 
 Again we can define the content-provider level serendipity value similarly.
-ここでも同様に、コンテンツ提供者レベルのセレンディピティ値を定義することができる。
+ここでも同様に、コンテンツ提供者レベルのセレンディピティ値も定義することができる。
 With the serendipity value of an item defined, we can then quantify the serendipity of the recommendation set Sπθ as.
-アイテムのセレンディピティ値が定義されたことで、推薦セットSπθのセレンディピティは次のように定量化できる。
+アイテムのセレンディピティ値が定義されたことで、推薦セットのセレンディピティ $S_{\pi_{\theta}}$ を次のように定量化できる。
 
 $$
-
-
+Serendipity(A^{\pi_{\theta}}) = E_{s_t \in d^B_t} [ \frac{1}{|A^{\pi_{\theta}}|} \sum_{a \in A^{\pi_{\theta}}} S^{topic}(a|s_t, I_t)]
+\tag{11}
 $$
 
-## Long Term User Experience 長期的なユーザー・エクスペリエンス
+(推薦アイテム集合内のセレンディピティ値の平均値の、ユーザ特徴量の分布に対する期待値を取ることで、方策のセレンディピティを測定してる? たぶんこの定義は、ある1ユーザへの推薦結果への評価値だよね...!:thinking:)
+
+<!-- ここまで読んだ! -->
+
+## 5.6. Long Term User Experience 長期的なユーザー・エクスペリエンス
 
 Past work has suggested connections between these recommendation qualities toward long term user experience, either through surveys or interviews [5, 66].
 過去の研究では、調査やインタビューを通じて、長期的なユーザー体験に向けたこれらの推薦品質との関連性が示唆されている[5, 66]。
 We use user returning to the platform, and user moving from a low-activity bucket to a highly-active one on the platform as the holistic measurement of improved long term user experience, and establish the connection between these measurements and long term user experience.
-我々は、長期的なユーザー・エクスペリエンスの向上の全体的な測定として、ユーザーがプラットフォームに戻ること、およびユーザーがプラットフォーム上で低アクティブのバケットから高アクティブのバケットに移動することを使用し、これらの測定値と長期的なユーザー・エクスペリエンスとの間の関連性を確立する。
+我々は、**ユーザがプラットフォームに戻ってくること、およびプラットフォーム上で低活動バケットから高活動バケットに移動することを、改善された長期的なユーザー体験の包括的な測定として使用**し、これらの測定と長期的なユーザー体験との関連性を確立する。
+(user engagementの代理指標として、ユーザのプラットフォームへの戻りやユーザの活動レベルの変化を用いているってことか...!:thinking:)
 
-# Offline Analysis オフライン分析
+<!-- ここまで読んだ! -->
+
+# 6. Offline Analysis オフライン分析
 
 We conducted an extensive set of offline experiments comparing the exploration strategies introduced in Section 4.
-セクション4で紹介した探索戦略を比較するため、オフラインで広範な実験を行った。
+**セクション4で紹介した探索戦略**(あ、4章では探索戦略の方法を説明してるのか!笑)を比較するため、オフラインで広範な実験を行った。
 Specifically, we built these exploration approaches onto the baseline REINFORCE recommender described in Section 3.
-具体的には、セクション3で説明したベースラインREINFORCEレコメンダーに、これらの探索アプローチを組み込んだ。
+具体的には、セクション3で説明した**ベースラインREINFORCEレコメンダー**に、これらの探索アプローチを組み込んだ。
 We evaluate them by computing the set of metrics defined in Section 5 and compare the metric movements between different hyper-parameter settings and different exploration methods.
 セクション5で定義されたメトリクスのセットを計算することでそれらを評価し、異なるハイパーパラメータ設定と異なる探索方法の間でメトリクスの動きを比較する。
 
-## Dataset データセット
+## 6.1. Dataset データセット
 
 We conducted 3 runs of experiments for each comparison and report the mean and standard deviation of the metrics.
 各比較について3回の実験を行い、メトリクスの平均と標準偏差を報告する。
@@ -533,7 +542,7 @@ We restrict our action space (item corpus) to the most popular 10 million items 
 Our goal is to build a recommender agent that can choose among the 10 million corpus the next set of items for users to consume so as to maximize the cumulative long-term reward.
 我々の目標は、長期的な累積報酬を最大化するように、1,000万コーパスの中からユーザーが消費すべき次のアイテムセットを選択できるレコメンダーエージェントを構築することである。
 
-## Entroy Regularization 正則化
+## 6.2. Entroy Regularization 正則化
 
 The most straightforward knob to tune up and down the exploration strength for entropy regularization is the regularization coefficient α as defined in eq.4.We compare the baseline method, a REINFORCE agent maximizing only the expected return as defined in eq.2, with added entropy regularization with α in [0.1, 0.5, 1.0, 10.0].
 エントロピー正則化の探索強度を上下に調整する最も簡単なノブは、式4で定義される正則化係数αである。我々は、ベースライン手法、すなわち、式2で定義される期待リターンのみを最大化するREINFORCEエージェントと、αを[0.1, 0.5, 1.0, 10.0]の範囲で追加したエントロピー正則化とを比較する。
@@ -544,7 +553,7 @@ When the regularization strength is large, it also significantly drops the syste
 For example, a regularization strength of α = 1.0 drops the topic serendipity value by −21.6% (0.037 → 0.029).
 例えば、正則化の強さをα = 1.0にすると、トピック・セレンディピティの値は-21.6%低下する（0.037 → 0.029）。
 
-## Intrinsic Motivation 内発的動機づけ
+## 6.3. Intrinsic Motivation 内発的動機づけ
 
 One of the obvious hyper-parameters to adjust the exploration strength for the intrinsic motivation approach is to tune the boosting factor c defined in eq.6.Here we study the impact of the more interesting variants.
 内発的動機づけアプローチの探索強度を調整するための明らかなハイパーパラメータの1つは、式6で定義されるブースティング係数cを調整することである。
@@ -597,7 +606,7 @@ The relative change on diversity related metrics is marginal between these varia
 The variant with window size of d = 7 scored the highest on the topic serendipity metric, which is defined using a window size of one year.
 ウインドウサイズd = 7のバリアントは、1年のウインドウサイズで定義されるトピック・セレンディピティの指標で最も高いスコアを獲得した。
 
-## Actionable Representation
+## 6.4. Actionable Representation
 
 In this set of experiments, we compare four setups: 1) baseline: the baseline REINFORCE algorithm; 2) repre.
 この一連の実験では、4つのセットアップを比較した： 1) ベースライン： ベースライン：ベースラインREINFORCEアルゴリズム。
@@ -633,113 +642,152 @@ alone: the baseline REINFORCE with the actionable representation, i.e., the addi
   Adding the feature helps RNN differentiate the two groups better.
   特徴を追加することで、RNNは2つのグループをより区別しやすくなる。
 
-# Live Experiments and Logn Term User Experience ライブ実験と長期ユーザー・エクスペリエンス
+# 7. Live Experiments and Logn Term User Experience ライブ実験と長期ユーザー・エクスペリエンス
+
+<!-- 6章は一旦飛ばして、オンライン実験の7章へ! -->
 
 We conduct a series of live A/B tests on a industrial recommendation platform serving billions of users to evaluate the impact of the proposed exploration approaches.
-何十億ものユーザーに利用されている産業用レコメンデーション・プラットフォーム上で一連のライブA/Bテストを実施し、提案する探索アプローチの影響を評価する。
+何十億ものユーザーに利用されている**産業用レコメンデーション・プラットフォーム上で一連のライブA/Bテストを実施**し、提案する探索アプローチの影響を評価する。(オンラインテストだ!)
 The control serves the base REINFORCE agent as described in Section 3.
 コントロールは、セクション3で説明したように、ベースとなるREINFORCEエージェントにサービスを提供する。
 The agent selects hundreds of candidates from a corpus of 10 million.
 エージェントは1,000万のコーパスから数百の候補を選ぶ。
 The returned candidates A πθ , along with others, are ranked by a separate ranking system before showing to the users.
-返された候補A πθは、他の候補とともに、ユーザーに見せる前に別のランキングシステムによってランク付けされる。
-We ran three separate experiments: 1) Entropy regularization: serving the REINFORCE agent with entropy regularization as explained in Section 4.1; 2) Intrinsic motivation: serving the REINFORCE agent with intrinsic motivation to discover new user interest (using topic cluster attributes with a history window of 7 days and a serendipity boost c = 4) as explained in Section 4.2; 3) Intrinsic Motivation + Actionable Representation: serving the REINFORCE agent with both the intrinsic motivation and the actionable representation as introduced in Section 4.3.We compare 1) and 2) to the baseline REINFORCE system as described in Section 3 as control to measure the effect of entropy regularization and intrinsic motivation respectively, and 3) to 2) as control to measure the additional value of introducing the actionable representation on top of intrinsic motivation.
-我々は3つの実験を行った： 1) エントロピー正則化： 2) 本質的動機づけ： 2) 本質的動機づけ：セクション4.2で説明するように、REINFORCEエージェントに、新しいユーザの興味を発見するための内発的動機づけ（7日間の履歴ウィンドウとセレンディピティ・ブーストc = 4のトピック・クラスタ属性を使用）を提供する： 1)と2)を、それぞれエントロピー正則化と内発的動機づけの効果を測定するためのコントロールとして、セクション3で説明したベースラインREINFORCEシステムと比較し、3)を、内発的動機づけの上に行動可能な表現を導入する付加価値を測定するためのコントロールとして、2)と比較する。
-We first summarize the live experiment results of these experiments in Section 7.1, and later measure several aspects of long term user experience in Section 7.2.In the end, we establish the connection between exploration and different aspects of recommendation quality toward improving long term user experience.
-我々は、まずセクション7.1でこれらの実験のライブ結果を要約し、その後セクション7.2で長期的なユーザーエクスペリエンスのいくつかの側面を測定する。
+返された候補 $A_{\pi_{\theta}}$ は、ユーザに表示される前に別のランキングシステムによってランク付けされる。
+(あ、今回の方策は、2-stages推薦における1段階目で採用される方策なのか...!:thinking:)
+We ran three separate experiments: 
+3つの別々の実験を実施した。(あ、じゃあcontrol合わせてvariant数4つのABテストってことかな...!:thinking:)
+1) Entropy regularization: serving the REINFORCE agent with entropy regularization as explained in Section 4.1; 
+1) エントロピー正則化： セクション4.1で説明されているように、エントロピー正則化を使用してREINFORCEエージェントにサービスを提供する。
+2) Intrinsic motivation: serving the REINFORCE agent with intrinsic motivation to discover new user interest (using topic cluster attributes with a history window of 7 days and a serendipity boost c = 4) as explained in Section 4.2; 
+2) 内発的動機づけ： セクション4.2で説明されているように、新しいユーザーの興味を発見するために内発的動機づけを使用してREINFORCEエージェントにサービスを提供する（トピック・クラスター属性を使用し、履歴ウィンドウを7日、セレンディピティブーストをc = 4とする）。
+3) Intrinsic Motivation + Actionable Representation: serving the REINFORCE agent with both the intrinsic motivation and the actionable representation as introduced in Section 4.3. 
+3) 内発的動機づけ+行動可能な表現： セクション4.3で紹介された内発的動機づけと行動可能な表現の両方を使用してREINFORCEエージェントにサービスを提供する。
+We compare 1) and 2) to the baseline REINFORCE system as described in Section 3 as control to measure the effect of entropy regularization and intrinsic motivation respectively, and 3) to 2) as control to measure the additional value of introducing the actionable representation on top of intrinsic motivation.
+我々は、エントロピー正則化と内発的動機づけの効果を測定するために、セクション3で説明されているベースラインREINFORCEシステムに対して、1)と2)を比較し、内発的動機づけの上に行動可能な表現を導入することの追加価値を測定するために、3)と2)を比較する。
 
-## Results 結果
+We first summarize the live experiment results of these experiments in Section 7.1, and later measure several aspects of long term user experience in Section 7.2. In the end, we establish the connection between exploration and different aspects of recommendation quality toward improving long term user experience.
+まずセクション7.1において、これらのライブ実験の結果を要約し、その後セクション7.2において、長期的なユーザー体験のいくつかの側面を測定する。最後に、長期的なユーザー体験を向上させるために、探索と推薦品質の様々な側面との関連を確立する。
+
+<!-- ここまで読んだ! -->
+
+## 7.1. Results 結果
 
 Figure 3 summarizes the performances of these exploration approaches on the top-line metric capturing user overall enjoyment of the platform.
-図3は、プラットフォームに対するユーザーの総合的な楽しさを表すトップライン指標における、これらの探索アプローチのパフォーマンスをまとめたものである。
+図3は、**プラットフォームに対するユーザーの総合的な楽しさを表すトップライン指標**における、これらの探索アプローチのパフォーマンスをまとめたものである。 (この縦軸の使い方を発表の際に真似したい...!:thinking:)
+(あ、教えられないけど何かしらの代理指標があるんだ!いや、後述された内容をみると多分「プラットフォーム上で低活動バケットから高活動バケットに移動すること」の指標っぽい...!:thinking:)
 As shown in Figure 3a (α = 0.1 in red, and α = 0.5 in blue), although entropy regularization increases diversity and novelty in both offline and live experiments, it does not lead to significant improvement on the user enjoyment.
 図3a（赤がα＝0.1、青がα＝0.5）に示すように、エントロピー正則化は、オフライン実験とライブ実験の両方で多様性と新規性を増加させるものの、ユーザーの楽しみの大幅な改善にはつながらない。
 In other words, increased diversity or novelty alone does not necessarily lead to better user experience.
-言い換えれば、多様性や新規性を高めるだけでは、必ずしもユーザー体験の向上にはつながらないということだ。
+**言い換えれば、多様性や新規性を高めるだけでは、必ずしもユーザー体験の向上にはつながらない**ということだ。
 When we increase the regularization strength to α = 0.5, we see slightly worse live metrics.
 正則化の強さをα = 0.5まで上げると、ライブ・メトリクスがわずかに悪化する。
-Comparing with entropy regularization (Figure 3a), intrinsic motivation (Figure 3b) and its combination with actionable representation (Figure 3c), not only significantly improve on the top-line metric, but also exhibit a strong learning effect over the course of the experiments 4 .
-エントロピー正則化（図3a）と比較すると、内発的動機づけ（図3b）および行動可能な表現との組み合わせ（図3c）は、トップラインの指標を大幅に改善するだけでなく、実験4 の過程で強力な学習効果を示す。
-We compare the offline measurement on accuracy, diversity, novelty and serendipity between entropy regularization with α = 0.5 (Table 1 row 3) and intrinsic motivation (Table 3 row 3) and its combination with actionable representation (Table 3 row 4) and make the following observations: 1) the entropy regularization method with α = 0.5 achieves very similar diversity metrics comparing to intrinsic motivation or its combination with actionable representation.
-我々は、α=0.5のエントロピー正則化（表1の行3）、内在的動機づけ（表3の行3）、および実行可能な表現との組み合わせ（表3の行4）の間の精度、多様性、新規性およびセレンディピティに関するオフライン測定を比較し、以下の観察を行う： 1) α = 0.5のエントロピー正則化法は、intrinsic motivationまたはactoable representationとの組み合わせと比較して、非常に類似した多様性指標を達成する。
-All three methods reach a topic diversity around 0.86, and content provider diversity around 0.93; 2) The entropy regularization method achieved slightly higher novelty metric, both in item level and content provider level; 3) The metrics that entropy regularization loses is on accuracy and serendipity.4) Intrinsic motivation method and its combination with actionable representation have favorable improvement on serendipity comparing with the baseline REINFORCE algorithm even though their accuracy numbers are worse. 3)エントロピー正則化法は精度とセレンディピティで負けている。4)本質的動機づけ法とその実行可能な表現との組み合わせは、精度は悪いが、ベースラインのREINFORCEアルゴリズムと比較して、セレンディピティで有利な改善をしている。
+
+Comparing with entropy regularization (Figure 3a), intrinsic motivation (Figure 3b) and its combination with actionable representation (Figure 3c), not only significantly improve on the top-line metric, but also exhibit a strong learning effect over the course of the experiments.
+エントロピー正則化（図3a）と比較すると、内発的動機づけ（図3b）および行動可能な表現との組み合わせ（図3c）は、**トップラインの指標を大幅に改善するだけでなく、実験の過程で強力な学習効果を示す**。(強力な学習効果って、オフライン学習で方策を改善できてるってことか...いいね...!:thinking:)
+We compare the offline measurement on accuracy, diversity, novelty and serendipity between entropy regularization with α = 0.5 (Table 1 row 3) and intrinsic motivation (Table 3 row 3) and its combination with actionable representation (Table 3 row 4) and make the following observations: 
+我々は、α=0.5のエントロピー正則化（表1の行3）、内在的動機づけ（表3の行3）、および実行可能な表現との組み合わせ（表3の行4）の間の精度、多様性、新規性およびセレンディピティに関するオフライン測定を比較し、以下の観察を行う： 
+1) the entropy regularization method with α = 0.5 achieves very similar diversity metrics comparing to intrinsic motivation or its combination with actionable representation.
+19 α = 0.5のエントロピー正則化法は、intrinsic motivationまたはactoable representationとの組み合わせと比較して、非常に類似した多様性指標を達成する。(i.e. 多様性は、(a)と(b)(c)は同程度ってことか!)
+All three methods reach a topic diversity around 0.86, and content provider diversity around 0.93; 
+3つの方法はすべて、トピックの多様性が約0.86、コンテンツプロバイダの多様性が約0.93に達する。
+
+1) The entropy regularization method achieved slightly higher novelty metric, both in item level and content provider level; 
+2) エントロピー正則化法は、アイテムレベルとコンテンツプロバイダレベルの新規性指標がわずかに高かった;
+3) The metrics that entropy regularization loses is on accuracy and serendipity.
+4) エントロピー正則化が負けているメトリックは、精度とセレンディピティである。
+5) Intrinsic motivation method and its combination with actionable representation have favorable improvement on serendipity comparing with the baseline REINFORCE algorithm even though their accuracy numbers are worse. 
+6) 内発的動機づけ法とその行動可能な表現との組み合わせは、精度の数値が悪いにもかかわらず、ベースラインのREINFORCEアルゴリズムと比較して、**セレンディピティに有利な改善**が見られる。
 In conclusion, intrinsic motivation and its combination with actionable representation compare favorably to the baseline REINFORCE and entropy regularization only in the serendipity metrics offline.
-結論として、内発的動機づけと行動可能な表現との組み合わせは、オフラインのセレンディピティ測定基準においてのみ、ベースラインのREINFORCEやエントロピー正則化と比較して有利である。
+**結論として、内発的動機づけと行動可能な表現との組み合わせは、オフラインでのセレンディピティ指標において、ベースラインのREINFORCEとエントロピー正則化と比較して有利**である。
 In live experiments, the intrinsic motivation and its combination with actionable representation were shown to significantly improve over the baseline REINFORCE and entropy regularization, as shown in Figure 3 (middle and right).
-ライブ実験では、図3（中と右）に示すように、内在的動機づけと行動可能な表現との組み合わせは、ベースラインのREINFORCEとエントロピー正則化よりも大幅に改善することが示された。
+**ライブ実験では、図3（中と右）に示すように、内在的動機づけと行動可能な表現との組み合わせは、ベースラインのREINFORCEとエントロピー正則化よりも大幅に改善することが示された**。
 Combining the offline and live experiment observations, we hypothesize that serendipity is an important faucet of recommendation quality that leads to improved long term user experience.
-オフラインとライブ実験の観察を組み合わせることで、セレンディピティは長期的なユーザー体験の向上につながる推薦品質の重要な蛇口であるという仮説を立てた。
+オフラインとライブ実験の観察を組み合わせることで、セレンディピティは、改善された長期的なユーザー体験につながる推薦品質の重要な要素であるという仮説を立てる。
 We also conducted another group of live experiments defining surprise for optimization using content provider rather than topic.
 また、トピックではなくコンテンツプロバイダーを使った最適化のためのサプライズを定義する、別のライブ実験グループも行った。
 The experiment turns out neutral on the top-line metric, which suggest topic serendipity is more connected with long term user experience than content provider.
-これは、トピック・セレンディピティが、コンテンツ・プロバイダーよりも長期的なユーザー・エクスペリエンスに関係していることを示唆している。
+この実験は、トップラインの指標に対して中立的であり、**トピックセレンディピティがコンテンツプロバイダーよりも長期的なユーザー体験と関連していること**を示唆している。
+
 Another top-line metric that we keep track of is the number of days users returning to the platform.
-私たちが記録しているもう1つのトップライン指標は、ユーザーがプラットフォームに戻った日数です。
+私たちが記録している**もう1つのトップライン指標は、ユーザーがプラットフォームに戻った日数**です。(平均再訪日数、みたいな感じか...!:thinking:)
 For both the intrinsic motivation and actionable representation treatment, we observed significant improvement on this metric as well, suggesting users are encouraged to return to the platform due to better recommendation quality.
-内発的動機づけと行動可能な表現の両処理において、この指標でも有意な改善が観察され、推薦の質が向上したことにより、ユーザーがプラットフォームに戻るよう促されることが示唆された。
+内発的動機づけと行動可能な表現の両処理において、この指標においても大幅な改善が見られ、より良い推薦品質によってユーザーがプラットフォームに戻ることが奨励されていることを示唆している。
 Figure 2 shows the improvement of user returning in the actionable representation experiment, comparing with the base REINFORCE with intrinsic motivation as control, suggesting that aiding the representation learning with the serendipity information further improves the learned policy, leading to better overall user experience.
-図2は、内発的動機付けをコントロールとしたベースREINFORCEと比較した、行動可能な表現実験におけるユーザー帰着性の改善を示しており、セレンディピティ情報を用いて表現学習を補助することで、学習された方針がさらに改善され、全体的なユーザー体験の向上につながることを示唆している。
+図2は、ベースのREINFORCE with 内発的動機づけをcontrol variant ((b)パターンをcontrolとした結果ってことね!)として比較した行動可能な表現実験におけるユーザーの戻りの改善を示している。**セレンディピティ情報を使って表現学習を支援することで、学習されたポリシーがさらに改善され、全体的なユーザーエクスペリエンスが向上すること**を示している。
+("学習された方策がさらに改善され"ってことは、探索的に方策が行動を選んでることで品質の高いデータを収集できて、結果としてOPLによって方策を更に最適化できているってことだよなぁ...:thinking:)
 
-## Long Term User Experience 長期的なユーザー・エクスペリエンス
+<!-- ここまで読んだ! -->
 
-Learning Effect of Intrinsic Motivation.
-内発的動機づけの学習効果。
+## 7.2. Long Term User Experience 長期的なユーザー・エクスペリエンス
+
+### Learning Effect of Intrinsic Motivation. 内発的動機づけの学習効果。
+
 To better understand the effect of intrinsic motivation and reward shaping in the long term, we examine the temporal trend of the live metrics in addition to the aggregated metrics reported above.
 長期的な内発的動機づけと報酬シェーピングの効果をよりよく理解するために、上記で報告した集計指標に加えて、ライブ指標の時間的傾向を調べた。
 For the 6-week experiment on intrinsic motivation, we look at week-over-week metrics by aggregating user activities within each week.
 内発的動機づけに関する6週間の実験では、各週のユーザー活動を集計することで、前週比の指標を調べた。
 Specifically, we track the number of unique topic clusters the user has interacted with over every week, as well as the entropy of those topic clusters.
-具体的には、ユーザが1週間ごとにやりとりしたユニークなトピック・クラスタの数と、それらのトピック・クラスタのエントロピーを追跡する。
+**具体的には、ユーザが1週間ごとにやりとりしたユニークなトピック・クラスタの数と、それらのトピック・クラスタのエントロピーを追跡する**。
 Suppose the user has interacted with Ni items from topic cluster i, then the entropy of his/her history is computed as − Í i pˆi loд(pˆi), where pˆi = Ni / Í i Ni is the proportion of items interacted with that are from topic cluster i.
-ここで、pˆi = Ni / Í i Niは、トピッククラスタiから対話したアイテムの割合である。
+ユーザがトピック・クラスタ $i$ から $N_i$ アイテムとやりとりしたとすると、彼/彼女の履歴のエントロピーは $- \sum_i \hat{p}_i \log(\hat{p}_i)$ として計算される。ここで、$\hat{p}_i = N_i / \sum_i N_i$ は、トピック・クラスタ $i$ からやりとりしたアイテムの割合である。
+
 Figure 4 shows the comparison between control and treatment, where the treatment group has a boosting multiplier of 4 for unknown user interests as in Eq.(6).
 図4は、コントロールとトリートメントの比較である。トリートメントグループは、式(6)のように、未知のユーザーの興味に対してブースティング乗数を4としている。
 Compared with users in the control group which does not have the reward shaping, users in the treatment group have consistently interacted with more topic clusters (Fig 4a) and generated a higher entropy over cluster distributions (Fig 4c) over the whole experiment period.
-リワード・シェーピングを行わないコントロール・グループのユーザーと比較すると、トリートメント・グループのユーザーは、実験期間全体を通じて一貫して、より多くのトピック・クラスターと相互作用し（図4a）、クラスター分布に対してより高いエントロピーを生成した（図4c）。
+リワード・シェーピングを行わないコントロール・グループのユーザーと比較すると、**トリートメント・グループのユーザーは、実験期間全体を通じて一貫して、より多くのトピック・クラスタとやりとりし（図4a）、クラスタ分布のエントロピーが高い（図4c）**。
 More interestingly, the amount of improvements over control is increasing over time (Fig 4b and 4d).
-さらに興味深いことに、コントロールよりも改善された量は時間とともに増加している（図4bと4d）。
+さらに興味深いことに、コントロールよりも改善された量(=差分)は時間とともに増加している（図4bと4d）。
 This suggests a learning effect over time from exploration, which enables users to continuously find and engage with new topics.
-このことは、ユーザーが継続的に新しいトピックを見つけ、それに取り組むことを可能にする、探索による長期的な学習効果を示唆している。
-User Activity Levels.
-ユーザーの活動レベル。
+このことは、ユーザが継続的に新しいトピックを見つけ、それに取り組むことを可能にする、探索による長期的な学習効果を示唆している。
+
+### User Activity Levels. ユーザーの活動レベル。
+
 Users who come to the recommendation platform are heterogeneous in terms of activity levels.
-レコメンデーション・プラットフォームにやってくるユーザーは、活動レベルにおいて異質である。
+レコメンデーション・プラットフォームにやってくるユーザは、活動レベルにおいて異質である。(うんうん...!)
 Some users visit the platform occasionally, while others visit the platform more regularly and consistently.
 たまにこのプラットフォームを訪れるユーザーもいれば、定期的にコンスタントに訪れるユーザーもいる。
 The long-term goal of a recommendation platform is to not only satisfy the user’s need in the current session, but ideally to see them return to the recommendation platform more often in the future.
-レコメンデーション・プラットフォームの長期的な目標は、現在のセッションでユーザーのニーズを満たすだけでなく、理想的には、将来、より頻繁にレコメンデーション・プラットフォームに戻ってきてもらうことである。
+**レコメンデーション・プラットフォームの長期的な目標は、現在のセッションでユーザのニーズを満たすだけでなく、理想的には、将来、より頻繁にレコメンデーション・プラットフォームに戻ってきてもらうことである**。(うんうん...!:thinking:)
+
 We would like to see if adding exploration in the recommendation has any effect on moving user activity levels.
-レコメンデーションにエクスプロレーションを加えることが、ユーザーのアクティビティレベルを上げる効果があるかどうかを確認したい。
+**レコメンデーションに探索を加えることが、ユーザーのアクティビティレベルを上げる効果があるかどうか**を確認したい。
 We define four user activity levels in terms of how many days they are active on the platform in a 2-week period, which is shown in Fig 5a.
-図5aに示すように、2週間のうち何日プラットフォーム上で活動したかという観点から、4つのユーザー活動レベルを定義する。
+図5aに示すように、**2週間のうち何日プラットフォーム上で活動したかという観点から、4つのユーザ活動レベルを定義する**。(この定義真似したい!というか一般的かも:thinking:)
 For example, a user being casual means that he/she has been active for 1 to 4 days in the last 14 days.
-例えば、カジュアルなユーザーとは、過去14日間のうち1～4日間アクティブであったことを意味する。
+例えば、カジュアルなユーザとは、過去14日間のうち1～4日間アクティブであったことを意味する。
 Users can become more active or less active depending their experience on the platform as well as exogenous factors not control by recommendation.
-ユーザーは、プラットフォームでの経験や、レコメンデーションではコントロールできない外的要因によって、よりアクティブになったり、よりアクティブでなくなったりする。
-Suppose the goal of a recommendation platform is moving causal users to become core users.
-レコメンデーション・プラットフォームのゴールが、因果的なユーザーをコアユーザーに移行させることだとする。
+ユーザは、プラットフォームでの経験や、レコメンデーションではコントロールできない外的要因によって、よりアクティブになったり、よりアクティブでなくなったりする。
+Suppose the goal of a recommendation platform is moving casual users to become core users.
+レコメンデーション・プラットフォームのゴールが、**カジュアルユーザをコアユーザに移行させること**であるとする。
 An intuitive way to measure the conversion is by counting the number of users who start off casual, and end up core.
-コンバージョンを測定する直感的な方法は、カジュアルから始めてコアになったユーザーの数を数えることである。
+コンバージョンを測定する直感的な方法は、**カジュアルから始めてコアになったユーザの数を数えること**である。
 This can be realized with a user activity level transition matrix, which measures the movement between different user activity levels.
-これは、異なるユーザー活動レベル間の移動を測定するユーザー活動レベル遷移行列で実現できる。
+これは、**ユーザー活動レベルの遷移行列**によって実現できる。これは、異なるユーザー活動レベル間の移動を測定する。
+
+(以下は、具体的なユーザ活動レベルの遷移行列の集計方法!)
 We examine user activity level before the experiment start date and at the end of the experiment for every treatment group to compute the transition matrix, and compare with control.
-実験開始前と実験終了時のユーザーのアクティビティレベルを各処理グループごとに調べ、遷移行列を計算し、コントロールと比較する。
+**実験開始前と実験終了時のユーザのアクティビティレベルを各処理グループごとに調べ、遷移行列を計算**し、コントロールと比較する。
 Figure 5b shows the percentage difference of the transition matrices between the actionable representation treatment group and control.
 図5bは、実行可能表現処理グループとコントロールの間の遷移行列の差の割合を示している。
 We see that there is a significant increase in casual-to-core conversion rate.
-カジュアルからコアへのコンバージョン率が大幅に上昇していることがわかる。
+**カジュアルからコアへのコンバージョン率が大幅に上昇している**ことがわかる。
 This suggests that a successful exploration strategy can result in a desired user movement as less active users are becoming more engaged on the platform.
-このことは、探索戦略の成功が、あまりアクティブでないユーザーがプラットフォーム上でより積極的に関与するようになり、望ましいユーザーの動きをもたらす可能性があることを示唆している。
+このことは、**探索戦略の成功が、あまりアクティブでないユーザがプラットフォーム上でより積極的になる**ことで、望ましいユーザの移動をもたらす可能性があることを示唆している。
 
-# Conclusion 結論
+<!-- ここまで読んだ! -->
+
+# 8. Conclusion 結論
 
 We present a systemic study to understand the values of exploration in recommender systems beyond reducing model uncertainty.
 我々は、モデルの不確実性を低減する以上に、推薦システムにおける探索の価値を理解するための体系的研究を発表する。
 We examine different user exploration strategies in affecting the four facets of recommendation quality, i.e., accuracy, diversity, novelty and serendipity, that contribute directly to user experience on the platform.
-我々は、プラットフォーム上でのユーザー体験に直接寄与する、推薦品質の4つの側面、すなわち、正確性、多様性、新規性、セレンディピティに影響を与える様々なユーザー探索戦略を検証する。
+我々は、プラットフォーム上でのユーザ体験に直接寄与する、推薦品質の4つの側面、すなわち、正確性、多様性、新規性、セレンディピティに影響を与える様々なユーザー探索戦略を検証する。
 We showcase exploration strategies that oriented toward discovering unknown user interests in positively influencing user experience on recommendation platforms.
-レコメンデーション・プラットフォームにおけるユーザー体験にポジティブな影響を与える、未知のユーザーの興味を発見することを指向した探索戦略を紹介する。
+レコメンデーション・プラットフォームにおけるユーザー体験にポジティブな影響を与える、未知のユーザの興味を発見することを指向した探索戦略を紹介する。
 Using conversion of casual users to core users as an indicator of the holistic long term user experience, we connects serendipity to improved long term user experience.
-カジュアルユーザーからコアユーザーへの転換を、総合的な長期的ユーザー体験の指標とすることで、セレンディピティを長期的ユーザー体験の向上につなげる。
+カジュアルユーザからコアユーザへの転換を、総合的な長期的なユーザー体験の指標として使用し、セレンディピティを改善された長期的なユーザー体験につなげる。
 We believe these are important first steps in understanding and improving exploration and serendipity in (RL based) recommender systems, and providing foundation for future effort in this direction.
-我々は、これらが（RLベースの）推薦システムにおける探索とセレンディピティを理解し、改善するための重要な第一歩であり、この方向における将来の努力の基礎になると信じている。
+我々は、これらが（RLベースの）推薦システムにおける探索とセレンディピティを理解し、改善するための重要な最初のステップであり、この方向における将来の取り組みの基盤を提供すると考えている。
+
+<!-- ここまで読んだ! -->
