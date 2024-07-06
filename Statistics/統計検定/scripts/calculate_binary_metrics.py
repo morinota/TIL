@@ -21,10 +21,19 @@ class StatisticalTestRecord(patito.Model):
     control_mean: str
     treatment_mean: str
     relative_metric_change: str
-    percentage_diff: str
-    absolute_diff: str
     p_value: str
     is_significant: str
+
+    @classmethod
+    def column_name_map(cls):
+        return {
+            "test_name": "検定名",
+            "control_mean": "現行パターン",
+            "treatment_mean": "テストパターン",
+            "relative_metric_change": "相対的な変化量",
+            "p_value": "p値",
+            "is_significant": "有意差",
+        }
 
 
 def load_metrics_from_yaml(yaml_file: str) -> list[BinaryMetricResult]:
@@ -93,25 +102,14 @@ def run_z_test(
     return StatisticalTestRecord(
         # test_name=f"{metric_name} ({control_variant_name} vs {treatment_variant_name})",
         test_name=f"{metric_name} ({control_variant_name} vs {treatment_variant_name})",
-        control_mean=f"{control_mean:.4f}",
-        treatment_mean=f"{treatment_mean:.4f}",
+        control_mean=f"{control_mean * 100:.2f}％ ({control_numerator}/{control_denominator})",
+        treatment_mean=f"{treatment_mean * 100:.2f}％ ({treatment_numerator}/{treatment_denominator})",
         relative_metric_change=(
-            f"{treatment_mean / control_mean:.2f}倍" if control_mean != 0 else "-"
+            f"{treatment_mean / control_mean:.3f}倍" if control_mean != 0 else "-"
         ),
-        percentage_diff=(
-            f"{_calc_percentage_diff(control_mean, treatment_mean):.2f}％"
-            if control_mean != 0
-            else "-"
-        ),
-        absolute_diff=f"{treatment_mean - control_mean:.2f}",
-        p_value=f"{p_value:.2f}",
+        p_value=f"{p_value:.3f}",
         is_significant="有意" if is_significant else "-",
     )
-
-
-def _calc_percentage_diff(control_val: float, treatment_val: float) -> float:
-    diff = treatment_val - control_val
-    return diff / control_val * 100
 
 
 def _run_z_test(
@@ -135,9 +133,12 @@ def _run_z_test(
 
 
 if __name__ == "__main__":
-    yaml_file = Path("Statistics/統計検定/scripts/binary_metrics_results.yml")
+    yaml_file = Path("/tmp/binary_metrics_results/binary_metrics_results.yml")
     binary_metrics_results = load_metrics_from_yaml(yaml_file)
+
     test_result_df = pl.concat([main(result) for result in binary_metrics_results])
 
+    # カラム名を日本語に変換
+    test_result_df = test_result_df.rename(StatisticalTestRecord.column_name_map())
     print(test_result_df)
     test_result_df.write_csv("/tmp/binary_metrics_test_results.csv")

@@ -19,13 +19,22 @@ class NonBinaryMetricResult(BaseModel):
 
 class StatisticalTestRecord(patito.Model):
     test_name: str
-    control_mean: float
-    treatment_mean: float
+    control_mean: str
+    treatment_mean: str
     relative_metric_change: str
-    percentage_diff: str
-    absolute_diff: str
     p_value: str
     is_significant: str
+
+    @classmethod
+    def column_name_map(cls):
+        return {
+            "test_name": "検定名",
+            "control_mean": "現行パターン",
+            "treatment_mean": "テストパターン",
+            "relative_metric_change": "相対的な変化量",
+            "p_value": "p値",
+            "is_significant": "有意差",
+        }
 
 
 def load_metrics_from_yaml(yaml_file: str) -> list[NonBinaryMetricResult]:
@@ -96,11 +105,9 @@ def run_t_test_ver2(
 
     return StatisticalTestRecord(
         test_name=f"{metric_name} ({control_variant_name} vs {treatment_variant_name})",
-        control_mean=control_mean,
-        treatment_mean=treatment_mean,
-        relative_metric_change=f"{treatment_mean / control_mean:.2f}倍",
-        percentage_diff=f"{_calc_percentage_diff(control_mean, treatment_mean):.2f}％",
-        absolute_diff=f"{treatment_mean - control_mean:.2f}",
+        control_mean=f"{control_mean:.3f} (± {control_var ** 0.5:.3f})",
+        treatment_mean=f"{treatment_mean:.3f} (± {treatment_var ** 0.5:.3f})",
+        relative_metric_change=f"{treatment_mean / control_mean:.3f}倍",
         p_value=f"{p_value:.2f}",
         is_significant="有意" if is_significant else "-",
     )
@@ -130,8 +137,11 @@ def _calc_percentage_diff(control_val: float, treatment_val: float) -> float:
 
 
 if __name__ == "__main__":
-    yaml_path = Path("Statistics/統計検定/scripts/non_binary_metrics_results.yml")
+    yaml_path = Path("/tmp/non_binary_metrics_results/non_binary_metrics_results.yml")
     non_binary_metrics_results = load_metrics_from_yaml(yaml_path)
-    test_results_df = pl.concat([main(result) for result in non_binary_metrics_results])
-    test_results_df.write_csv("/tmp/non_binary_metrics_test_results.csv")
-    print(test_results_df)
+    test_result_df = pl.concat([main(result) for result in non_binary_metrics_results])
+
+    # カラム名を日本語に変換
+    test_result_df = test_result_df.rename(StatisticalTestRecord.column_name_map())
+    test_result_df.write_csv("/tmp/non_binary_metrics_test_results.csv")
+    print(test_result_df)
