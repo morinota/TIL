@@ -179,7 +179,7 @@ $\rho_0$ は初期状態分布、$\gamma$ は将来の報酬の割引率であ�
 Let Ht = {(A0, a0,r0), · · · , (At−1, at−1,rt−1)} denote an user’s historical activities on the platform up to time t, where At ′ stands for the set of items recommended to the user at time t ′ , at ′ denotes the item the user interacted with at t ′ (at ′ can be null), and rt ′ captures the user feedback (reward) on at ′ (rt ′ = 0 if the user did not interact with any item in At ′).
 ＄H*{t} = \{(A*{0}, a*{0}, r*{0}), \cdots, (A*{t-1}, a*{t-1}, r*{t-1})\}$ は、時刻$t$までのプラットフォーム上でのユーザの過去の活動を示し、$A*{t}'$ は時刻$t'$にユーザに推薦されたアイテムのセットを表し、$a_{t}'$ は$t'$でユーザが相互作用したアイテムを示し（$a_{t}'$ がnullの場合がある）、$r_{t}'$ は$a_{t}'$に対するユーザのフィードバック（報酬）を捉える（$a_{t}'$に対してユーザが何もアクションを起こさなかった場合、$r_{t}' = 0$）。
 The history Ht is encoded through a recurrent neural network to capture the latent user state, that is, ust = RNNθ (Ht ).
-履歴 $H_{t}$ は、潜在的なユーザーの状態、すなわち $u_{st} = RNN_{\theta}(H_{t})$ を捉えるために、再帰ニューラルネットワークを用いてエンコードされる。(u_stは、ユーザの過去の行動履歴を埋め込んだもの...??)
+履歴 $H_{t}$ は、潜在的なユーザーの状態、すなわち $u_{s_t} = RNN_{\theta}(H_{t})$ を捉えるために、再帰ニューラルネットワークを用いてエンコードされる。(u_stは、ユーザの過去の行動履歴を埋め込んだもの...??)
 Given the latent user state, a softmax policy over the item corpus A is parameterized as
 潜在的なユーザの状態が与えられた場合、アイテムコーパスA上のソフトマックスポリシーは以下のようにパラメータ化される:
 
@@ -193,7 +193,7 @@ which defines a distribution over the item corpus A conditioning on the user sta
 Here va stands for the embedding of the item a.
 ここで $v*{a}$ はアイテム$a$の埋め込みを表す。
 The agent then generates a set of recommendation At to user at time t according to the learned softmax policy πθ (·|st ).
-次に、エージェントは、学習されたソフトマックスポリシー $\pi_{\theta}(-|s_{t})$ に従って、時刻$t$にユーザに推薦するアイテムのセット $A_{t}$ を生成する。
+次に、方策は、学習されたソフトマックスポリシー $\pi_{\theta}(-|s_{t})$ に従って、時刻 $t$ にユーザに推薦するアイテムのセット $A_{t}$ を生成する。
 The policy parameters θ are learned using REINFORCE [60] so as to maximize the expected cumulative reward over the user trajectories,
 **ポリシーのパラメータθは、ユーザの軌跡に対する期待累積報酬を最大化するように**、REINFORCE [60]を用いて学習される。
 
@@ -783,7 +783,7 @@ We present a systemic study to understand the values of exploration in recommend
 我々は、モデルの不確実性を低減する以上に、推薦システムにおける探索の価値を理解するための体系的研究を発表する。
 We examine different user exploration strategies in affecting the four facets of recommendation quality, i.e., accuracy, diversity, novelty and serendipity, that contribute directly to user experience on the platform.
 我々は、プラットフォーム上でのユーザ体験に直接寄与する、推薦品質の4つの側面、すなわち、正確性、多様性、新規性、セレンディピティに影響を与える様々なユーザー探索戦略を検証する。
-We showcase exploration strategies that oriented toward discovering unknown user interests in positively influencing user experience on recommendation platforms.
+We showcase exploration strategies that oriented toward discovering unknown user interests in åositively influencing user experience on recommendation platforms.
 レコメンデーション・プラットフォームにおけるユーザー体験にポジティブな影響を与える、未知のユーザの興味を発見することを指向した探索戦略を紹介する。
 Using conversion of casual users to core users as an indicator of the holistic long term user experience, we connects serendipity to improved long term user experience.
 カジュアルユーザからコアユーザへの転換を、総合的な長期的なユーザー体験の指標として使用し、セレンディピティを改善された長期的なユーザー体験につなげる。
