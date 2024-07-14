@@ -375,29 +375,36 @@ The multiplicative design on the other end, favors surprising actions that actua
 ## 4.3. Actionable Representation for Exploration 探索のための実用的な表現
 
 The third method reinforces the newly discovered user interest through representation learning.
-第3の方法は、表現学習によって新たに発見されたユーザーの興味を強化する。
+第3の方法は、**表現学習(representation learning)**によって新たに発見されたユーザの興味を強化する。(ユーザ埋め込みとアイテム埋め込みを強化するってこと??:thinking:)
 Learning effective representation is critical to improve the sample efficiency of many machine learning algorithms, and RL is no exception.
 多くの機械学習アルゴリズムのサンプル効率を向上させるためには、効果的な表現を学習することが重要であり、RLも例外ではない。
 Most prior work on representation learning for RL has focused on generative approaches, learning representations that capture all underlying factors of variation in the observation space in a more disentangled or well-ordered manner.
 RLのための表現学習に関する先行研究のほとんどは、生成的なアプローチに焦点を当てており、観測空間における変動のすべての根本的な要因を、よりばらばらに、あるいは整然とした方法で捉える表現を学習してきた。
 Self-supervised learning [20, 25, 50, 54] to capture the full dynamics of the environment has also attracted a lot of attentions lately.
-環境のダイナミクスを完全に把握するための自己教師付き学習[20, 25, 50, 54]も、最近注目を集めている。
-Ghosh et al.[16] instead argue to learn functionally salient representations: representations that are not necessarily complete in terms of capturing all factors of variation in the observation space, but rather aim to capture those factors of variation that are important for decision making – that are "actionable." The REINFORCE agent introduced in Section 3 describes the environment, i.e., the user, through encoding his/her historical activities Ht .
-Ghoshら[16]は、代わりに機能的に顕著な表現を学習することを主張する： この表現は、観測空間における全ての変動要因を捉えるという点では必ずしも完全ではなく、むしろ意思決定にとって重要な変動要因、つまり 「行動可能な 」変動要因を捉えることを目的としている。セクション3で紹介するREINFORCEエージェントは、環境、すなわちユーザーを、彼の過去の活動Htを符号化することで記述する。
+**環境のダイナミクスを完全に把握するための自己教師あり学習[20, 25, 50, 54]**も、最近注目を集めている(なんだろう...!:thinking:)
+Ghosh et al.[16] instead argue to learn functionally salient representations: representations that are not necessarily complete in terms of capturing all factors of variation in the observation space, but rather aim to capture those factors of variation that are important for decision making – that are "actionable." 
+Ghoshらは、観測空間のすべての変動要因を捉えるのではなく、代わりに、**意思決定に重要な「機能的に顕著な」表現を学ぶべき**だと主張しています。これらの表現は、「実行可能な」要因を捉えることを目指しています。
+
+The REINFORCE agent introduced in Section 3 describes the environment, i.e., the user, through encoding his/her historical activities Ht .
+第3章で紹介されたREINFORCEエージェントは、ユーザーの過去の活動履歴 $H_t$ をエンコードすることで環境（ユーザ）を記述します。(ユーザの状態を表す埋め込み表現を作ってるんだよね。)
 That is, ust = RNNθ (Ht ).
-つまり、ust = RNNθ（Ht ）である。
+つまり、$u_{s_t} = RNN_{\theta}(H_t)$ である。
 When an user interacted with a surprising item at (to the agent) and gave high reward, the user state ust should be updated to capture the new information so the agent can act differently next.
-ユーザが（エージェントにとって）驚くようなアイテムとインタラクトし、高い報酬を与えたとき、エージェントが次に異なる行動を取れるように、ユーザの状態は新しい情報を取り込むために更新されなければならない。
+ユーザが（エージェントにとって）驚くようなアイテムとインタラクトし、高い報酬を与えたとき、エージェントが次に異なる行動を取れるように、**ユーザの状態は新しい情報を取り込むために更新されなければならない**。
 That is, to make recommendations according to the newly acquired information about the new interest of the user.
-つまり、ユーザーの新たな興味について新たに得た情報に従って推薦を行うことである。
+つまり、新しいユーザの興味に関する新しく獲得した情報に従って推薦を行うためである。
 To aid the agent in capturing this information in its state, we extend Ht with an additional bit, indicating whether or not an item the user interacts with is surprising and relevant.
-エージェントがこの情報を状態に取り込むのを助けるために、我々はHtを追加ビットで拡張し、ユーザが相互作用したアイテムが驚きと関連性があるかどうかを示す。
+**エージェントがこの情報を状態に取り込むのを助けるために、我々は $H_t$ を拡張し、ユーザが相互作用するアイテムが驚くべきかどうか、関連性があるかどうかを示す追加のビットを追加する**。
+(H_tの中の各tuppleに、surprisingか、relevanceかを示すフラグを追加するってこと?? あ、relevanceかは即時の外発的報酬関数で得られるから、surprisingかを示す変数を1つだけ追加してるっぽい!:thinking:)
 That is, we expand Ht = {(A0, a0,r0,i0), · · · , (At−1, at−1,rt−1,it−1)}, where it ′ = 1 if 1) the attribute of at (such as topic cluster) is different from that of any items in It ′ (being a surprise) and; 2) rt > 0 (being relevant).
-つまり、Ht＝{(A0,a0,r0,i0), - - , (At-1, at-1,rt-1,it-1)} と展開し、1)atの属性(トピック・クラスターなど)がIt′内のどのアイテムの属性とも異なる(サプライズである)、2)rt＞0(関連性がある)場合、it′＝1とする。
+つまり、$H_t = \{(A_0, a_0, r_0, i_0), \cdots, (A_{t-1}, a_{t-1}, r_{t-1}, i_{t-1})\}$ のように拡張する。ここで $i_{t'} = 1$ は、以下の2つの条件を満たしていることを意味する: 1) $a_t$の属性（トピッククラスタなど）が $I_{t'}$のアイテムと異なる場合（驚き）、2) $r_t > 0$（関連性がある）場合である。
 Here It ′ is the list of items the user has interacted with up to time t ′ .
-ここで、It ′は、時刻t ′までにユーザが相互作用した項目のリストである。
-This feature is then embedded and consumed by the RNN along with other features describing the item at .
-この特徴は、.NETのアイテムを説明する他の特徴とともにRNNに埋め込まれ、消費される。
+ここで、$I_{t'}$ は、時刻 $t'$ までにユーザが相互作用したアイテムのリストである。
+This feature is then embedded and consumed by the RNN along with other features describing the item a_t.
+この特徴は、その後、アイテム $a_t$ を記述する他の特徴と一緒にRNNに埋め込まれ、消費される。
+(要するに、ユーザの埋め込み表現を作るための特徴量に、新しく情報を追加したってことか!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 # 5. Measurement 測定
 
