@@ -221,16 +221,16 @@ $$
 $$
 
 Here β(·|s) denotes the behavior policy, i.e., the action distribution conditioning on state s in the batch collected trajectories.
-ここで、 $\beta(-|s)$ は、バッチ収集された軌跡における状態 $s$ に条件づけられたアクション分布、すなわち行動ポリシーを示す。
+ここで、 $\beta(-|s)$ は、バッチ収集された軌跡における状態 $s$ に条件づけられたアクション分布、すなわち行動ポリシーを示す。(半日仮想機械学習でも、logging policyをbehavior policyとも言ったりする、みたいな記述があった!)
 d β t (s) is the discounted state visitation probability under β.
-d β t (s) は、βのもとでの割引後の状態訪問確率である。
+$d^{\beta}_{t}(s)$ は、方策 $\beta$　のもとでの状態遷移確率である。(discountedの意味がわからず...!)
 This importance weight is further adapted to accommodate the set recommendation setup.
-この重要度のウェイトは、セット推薦の設定に対応するようにさらに調整される。
+この重要度のウェイトは、セット推薦(=k個の長さのランキング推薦!)の設定に対応するようにさらに調整される。
 We refer interested readers to [11] for more details.
 詳細は[11]を参照されたい。
 
 To balance exploration and exploitation, a hybrid approach that returns the top K ′ most probable items, while sampling the rest K −K ′ items according to πθ (Boltzmann exploration [13]), is employed during serving.
-探索と利用をバランスさせるために、サービング中に、最も確率が高い上位K'個のアイテムを返す一方で、**残りのK-K'個のアイテムを $\pi_{\theta}$ に従ってサンプリングするハイブリッドアプローチ（ボルツマン探索[13]）が採用されている**。
+探索と利用をバランスさせるために、サービング中に、方策の出力する確率 $\pi_{\theta}$ に従って、上位 $K'$ 個の最も確率が高いアイテムを返す一方で、残りの $K - K'$ 個のアイテムをサンプリングするハイブリッドアプローチ（ボルツマン探索[13]）が採用される。
 
 <!-- ここまで読んだ! -->
 
@@ -239,22 +239,22 @@ To balance exploration and exploitation, a hybrid approach that returns the top 
 <!-- methodは一旦飛ばそう! -->
 
 Here we introduce three simple methods inspired by exploration research in RL to increase user exploration in the REINFORCE recommender system during training.
-ここでは、REINFORCEレコメンダーシステムにおいて、学習中にユーザの探索を増やすために、**RLにおける探索研究にヒントを得た3つの簡単な方法を紹介**する。
+ここでは、REINFORCEレコメンダーシステムにおいて、RLにおける探索研究にヒントを得た、**学習中にユーザの探索を増やすための3つの簡単な方法**を紹介する。(推論時ではなく、学習時!:thinking_face:)
 That is, to recommend content less pertinent to the known user interests, and to discover new user interests.
-つまり、**既知のユーザーの興味にあまり関係のないコンテンツを推薦し、新しいユーザーの興味を発見すること**である。
+つまり、既知のユーザーの興味にあまり関係のないコンテンツを推薦し、新しいユーザーの興味を発見することである。(...そのように学習させること!)
 
 ## 4.1. Entropy Regularization エントロピー正則化
 
 The first method promotes recommending contents less pertinent to the known user interests by encouraging the policy πθ (·|s) to have an output distribution with high entropy [61].
-最初の方法は、ポリシーπθ (-|s)が高いエントロピーを持つ出力分布を持つように促すことで、既知のユーザの興味にあまり適切でないコンテンツを推薦することを促進する[61]。
+最初の方法は、**方策(の行動分布!) $\pi_{\theta}(-|s)$ が高エントロピーの出力分布を持つよう**にすることで、既知のユーザーの興味にあまり関係のないコンテンツを推薦することを促進する[61]。(i.e. ばらつきの大きい確率分布になるように強制するってことぽい...?:thinking_face:)
 Mnih et al.[38] observed that adding entropy of the policy to the objective function discourages premature convergence to sub-optimal deterministic policies and leads to better performance.
-Mnihら[38]は、policyのエントロピーを目的関数に追加することで、最適でない決定論的なポリシーへの早期収束を抑制し、より良いパフォーマンスをもたらすことを観察した。
+Mnihら[38]は、**policyのエントロピーを目的関数に追加**することで、最適でない決定論的なポリシーへの早期収束を抑制し、より良いパフォーマンスをもたらすことを観察した。
 Pereyra et al.[46] conducted a systemic study of entropy regularization and found it to improve a wide range of state-of-the-art models.
-Pereyraら[46]は、エントロピー正則化の体系的な研究を行い、エントロピー正則化が広範囲の最先端モデルを改善することを発見した。
+Pereyraら[46]は、エントロピー正則化の体系的な研究を行い、**エントロピー正則化が幅広いSOTAモデルを改善することを発見した**。
 We add of the entropy to the RL learning objective as defined in eq.2 during training.
 式2で定義されるRLの学習目的に対して、学習時にエントロピーを追加する。
 That is,
-それはそうだ、
+つまり、
 
 $$
 \max_{\theta} J(\theta) + \alpha \sum_{s_{t} - d^{\beta}_{t}(s)}H(\pi_{\theta}(-|s_{t}))
@@ -270,72 +270,107 @@ The entropy is equivalent to the negative reverse KL divergence of the condition
 That is, H (πθ (·|s)) = −DK L(πθ (·|s)||U ) + const, where U stands for a uniform distribution across the action space A.
 つまり、$H(\pi_{\theta}(-|s)) = - D_{KL}(\pi_{\theta}(-|s)||U) + const$ であり、$U$ はアクション空間$A$全体にわたる一様分布を表す。
 As we increase this regularization, it pushes the learned policy to be closer to a uniform distribution, thus promoting exploration.
-この正則化を大きくすると、学習された方針がより一様分布に近くなり、探索が促進される。
+**この正則化を大きくすると、学習された方針がより一様分布に近くなり**、探索が促進される。
 
 (学習後の条件付きアクション確率分布がなめらかになる、みたいな感じっぽい...!)
 
+<!-- ここまで読んだ! -->
+
 ## 4.2. Intrinsic Motivation and Reward Shaping 内発的動機づけと報酬の形成
 
+<!-- ここから! -->
+
 The second method helps discovering new user interests through reward shaping.
-2つ目の方法は、リワード・シェーピングを通じて新しいユーザーの興味を発見するのに役立つ。
+2つ目の方法は、reward shapingを通じて新しいユーザの興味を発見するのを助ける。(reward shapingって、即時の報酬関数をいじるってこと?)
 The reward function r(s, a) as defined in eq.2, describes the (immediate) value of a recommendation a to a user s.
-式2で定義される報酬関数r(s, a)は、ユーザーsに対する推薦aの（即時の）価値を記述する。
+式2で定義される報酬関数 $r(s, a)$ は、ユーザー$s$に対する推薦$a$の（即時の）価値を表す。(よく、即時報酬って呼ばれるよね!)
 It plays a critical role in deciding the learned policy πθ .
 これは、学習された方針πθを決定する上で重要な役割を果たす。
 Reward shaping, transforming or supplying additional rewards beyond those provided by the MDP, is very effective in guiding the learning of RL agents to produce policies desired by the algorithm designers [1, 27, 40].
-報酬シェーピングは、MDPが提供する報酬以外の報酬を変換したり供給したりするもので、アルゴリズム設計者が望む政策を生み出すようにRLエージェントの学習を導くのに非常に効果的である[1, 27, 40]。
+**報酬シェーピングは、MDPが提供する報酬以外の報酬を変換したり追加したりすること**で、RLエージェントの学習を導くのに非常に効果的であり、アルゴリズム設計者が望むポリシーを生成するためのRLエージェントの学習を導くのに非常に効果的である[1, 27, 40]。
+
 Exploration has been extensively studied in RL [6, 42–44, 55], and has been shown to be extremely useful in solving hard tasks, e.g., tasks with sparse reward and/or long horizons, and .
 探索はRLにおいて広く研究されており[6, 42-44, 55]、困難なタスク、例えば報酬がまばらなタスクや長いホリゾンを持つタスク、.NETを解く際に非常に有用であることが示されている。
 These works can be roughly grouped into two categories.
-これらの作品は大きく2つのカテゴリーに分類できる。
+これらの既存研究は**大きく2つのカテゴリー**に分類できる。
 One concerns quantifying the uncertainty of the value function of the state-action pairs so the agent can direct its exploration on regions where it is most uncertain.
-一つは、状態-行動ペアの価値関数の不確実性を定量化することで、エージェントが最も不確実性の高い領域の探索を指示できるようにすることである。
+一つは、state-actionペアの価値関数の不確実性を定量化することで、**エージェントが最も不確実性の高い領域の探索を指示できるようにすること**である。
 The other uses a qualitative notion of curiosity or intrinsic motivation to encourage the agent to explore its environment and learn skills that might be useful later.
-もうひとつは、好奇心や内発的動機づけという定性的な概念を用いて、エージェントが環境を探索し、後で役に立つかもしれないスキルを学ぶように促すものだ。
+もうひとつは、**好奇心や内発的動機づけという定性的な概念**を用いて、エージェントが環境を探索し、後で役に立つかもしれないスキルを学ぶように促すものだ。
 Both camps of methods later adds an intrinsic reward r i (s, a), either capturing the uncertainty or curiosity to the extrinsic reward r e (s, a) that is emitted by the environment directly, to help the agent explore the unknown or learn new skills.
-どちらの手法も、エージェントが未知を探索したり新しいスキルを学んだりするのを助けるために、環境から直接発せられる外在的報酬r e (s, a)に、不確実性や好奇心を捕らえた内在的報酬r i (s, a)を後から加える。
+どちらの手法も、後でエージェントが未知の領域を探索したり新しいスキルを学んだりするのを助けるために、**内発的報酬$r_{i}(s, a)$**を、直接環境から発せられる外発的報酬$r_{e}(s, a)$に加える。
 That is, transforming the reward function to
 つまり、報酬関数を次のように変換する。
 
 $$
-\max_{\theta} J(\theta) + \alpha \sum_{s_{t} - d^{\beta}_{t}(s)}H(\pi_{\theta}(-|s_{t}))
-\tag{4}
+r(s, a) = c \cdot r^{i}(s, a) + r^{e}(s, a)
+\tag{5}
 $$
 
 where c controls the relative importance of the intrinsic reward w.r.t. the extrinsic reward emitted by the environment.
 ここで、cは、環境から発せられる外発的報酬に対する内発的報酬の相対的な重要性を制御する。
+
 Schmidhuber [49] formally captures the theory of creativity, fun and curiosity as an intrinsic desire to discover surprising patterns of the environment, and argues that a curiosity-driven agent can learn even in the absence of external reward.
-Schmidhuber[49]は、創造性、楽しさ、好奇心の理論を、環境の驚くべきパターンを発見したいという内発的欲求として正式にとらえ、好奇心主導型のエージェントは、外部からの報酬がなくても学習できると主張している。
+Schmidhuber[49]は、創造性、楽しさ、好奇心の理論を、環境の驚くべきパターンを発見したいという内発的欲求として正式にとらえ、好奇心主導型のエージェントは、外発的報酬がなくても学習できると主張している。
 Our proposal bears the same principle by rewarding the agent more when it discovers some previously unknown patterns of the environment, that is the user.
 我々の提案は、エージェントが環境（ユーザー）の未知のパターンを発見したときに、より多くの報酬を与えるという同じ原理を採用している。
 Let R e t (st , at ) = Ir e (st ,at )>0 · ÍT t ′=t γ t ′−t r e (st ′, at ′) be the discounted cumulation of the extrinsic reward on the stateaction pair (st , at ) observed on the trajectory.
-
+$R^{e}_{t}(s_t, a_t) = \mathbb{I}_{r^{e}(s_t, a_t) > 0} \cdot \sum_{t' = t}^{T} \gamma^{t' - t} \cdot r^{e}(s_{t'}, a_{t'})$ を、軌跡上で観測された状態-アクションペア　$(s_t, a_t)$ に対する**外発的報酬の割引した累積値**とする。
 We then define the cumulative reward Rt (st , at ) used for the gradient update in eq.3 as
-次に、式3の勾配更新に用いる累積報酬 Rt (st , at ) を次のように定義する。
+次に、式3の勾配更新に使用される　time step tの累積報酬関数 $R_{t}(s_t, a_t)$ を以下のように定義する。
 
+- まず、状態 $s_t$ のもとで推薦された $a_t$ が未知のユーザ興味の発見をもたらした場合...
+
+$$
+R_{t}(s_t, a_t) = c \cdot R^{e}_{t}(s_t, a_t)
+$$
+
+- そうじゃない場合...
+
+$$
+R_{t}(s_t, a_t) = R^{e}_{t}(s_t, a_t)
+$$
 
 Here c > 1 is a constant multiplier.
-ここでc > 1は定数倍である。
+ここで $c > 1$ は定数の乗数である。(ハイパーパラメータ)
+(1より大きくしてるのは、未知のユーザ興味の発見をもたらした場合にボーナスを与えるためっぽい...!)
+
 As explained in Section 3, the agent perceives the environment, that is the user interests and context, through encoding user’s historical activities Ht = {(A0, a0,r0), · · · , (At−1, at−1,rt−1)}.
-セクション3で説明したように、エージェントは、ユーザの履歴 Ht = {(A0, a0,r0), - - , (At-1, at-1,rt-1)} を符号化することにより、環境、つまりユーザの興味とコンテキストを認識する。
+セクション3で説明したように、エージェントは、ユーザの履歴 $H_t = \{(A_0, a_0, r_0), \cdots, (A_{t-1}, a_{t-1}, r_{t-1})\}$ をencodeすることを通じて、**環境(i.e. ユーザの興味や文脈)を知覚**する。
 One can imagine a large update (surprise) to the agent’s modeling of the environment if an item at recommended given the state st is 1) drastically different from any of the items the user interacted with in the past; 2) enjoyed by the user, i.e., r e (st , at ) or R e (st , at ) is high.
-もし状態stが与えられたときに推奨されるアイテムが、1)ユーザが過去にやりとりしたアイテムのどれとも大きく異なる、2)ユーザが楽しんでいる、つまりr e (st , at )またはR e (st , at )が高い場合、エージェントの環境モデリングが大きく更新される（サプライズ）ことが想像できる。
-These two conditions, surprise and relevance, align with the serendipity metrics we are going to detail in Section 5.5.To measure the surprise of at , we define It = {at ′, ∀t ′ < t and rt ′ > 0} as the set of items the user interacted with up to time t.
-atの驚きを測定するために、我々はIt = {at ′, ∀t ′ < t and rt ′ > 0}を時間tまでにユーザーが相互作用したアイテムのセットと定義する。
+もし状態 $s_t$ が与えられたときに推薦されたアイテム $a_t$ が、以下の2つの条件の両方を満たす場合、エージェントの環境モデリング(=ユーザの嗜好や文脈のモデリング!:thinking:)に大きな更新（驚き）があると想像できる。
+
+- 1) ユーザが過去に相互作用したアイテムと大きく異なる
+- 2) ユーザが楽しんでいる。具体的には、即時の外発的報酬関数 $r^{e}(s_t, a_t)$ または 累積の外発的報酬関数 $R^{e}(s_t, a_t)$ が高い
+
+These two conditions, surprise and relevance, align with the serendipity metrics we are going to detail in Section 5.5. 
+これら2つの条件、surpriseとrelevanceは、セクション5.5で詳細に説明するserendipity metricsと一致している。
+
+To measure the surprise of at , we define It = {at ′, ∀t ′ < t and rt ′ > 0} as the set of items the user interacted with up to time t.
+$a_t$ の驚きを測定するために、$I_t = \{a_{t'}, \forall t' < t \text{ and } r_{t'} > 0\}$ を定義し、**時刻 $t$ までにユーザが相互作用した(かつ、ユーザが楽しんだ!)アイテムのセット**とする。
 As recommendation items are often associated with various attributes as described in Section 5.1, we use these attributes to measure the similarity (or difference) of a candidate action at towards It .
-セクション5.1で述べたように、推薦項目は様々な属性と関連していることが多いので、これらの属性を用いて、It に対する候補行動の類似度（または相違度）を測定する。
+セクション5.1で述べたように、推薦アイテムはさまざまな属性と関連付けられているため、候補行動 $a_t$ が $I_t$ に対してどの程度類似しているか（または異なるか）を測定するために、これらの属性を使用する。
 For example, we consider an item at surprising (different) if its topic cluster is different from any of the items in It .
-例えば、トピック・クラスタが It 内のどのアイテムとも異なる場合、そのアイテムは意外性がある（異なる）と考える。
+**例えば、トピック・クラスタが It 内のどのアイテムとも異なる場合、そのアイテムはsurprising (diffrent) と考える**。(なるほど...!:thinking:)
+
 The multiplicative design in eq.6 naturally accomplishes the second condition, that is, relevance.
-式.6の乗法設計は、2番目の条件、つまり関連性を自然に達成する。
+**式.6の乗法デザイン**は、2番目の条件、つまり関連性を自然に達成する。
+(i.e. surprisingを満たすアイテムの場合、1以上の乗数を外発的報酬関数の値にかけるので、relevanceが低ければ外発的報酬関数が小さくなる。よって、自然とボーナスも低くなる...!:thinking:)
 Comparing with the additive form (eq.5), the multiplicative design results in: 1) a candidate action at with zero extrinsic reward, i.e., R e t (st , at ) = 0 will NOT receive any additional reward even if being under-surfaced; 2) an action at receiving higher extrinsic reward R e t (st , at ) will be rewarded even more compared with those that are equally surprising but received lower extrinsic reward.
-加法形式（式5）と比較すると、乗法設計の結果は以下のようになる： 1) 外在的報酬がゼロの候補行動at、すなわちR e t (st , at ) = 0は、たとえアンダーサーフェスであっても追加報酬を受け取らない。2) 外在的報酬R e t (st , at ) が高い候補行動atは、同じように驚くが外在的報酬が低い候補行動と比較して、さらに報酬が高くなる。
+**既存手法の加法形式（式5）と比較すると、乗法設計の結果は以下のようになる**:
+
+- 1) 累積の外在的報酬 $R^{e}_{t}(s_t, a_t)$ がゼロの候補行動 $a_t$ は、たとえそれがunder-surfaced(=ユーザの過去の行動と異なる=surprisingを満たす!)であっても、追加の報酬を受け取らない。
+- 2) 外在的報酬 $R^{e}_{t}(s_t, a_t)$ が高い行動 $a_t$ は、同じくらい驚くべき行動でも、外在的報酬が低い行動よりもさらに報酬を受け取る。
+
 This contrasts with the additive form where the extrinsic rewards observed does not influence the intrinsic reward.
-これは、観察された外発的報酬が内発的報酬に影響を与えない加算型とは対照的である。
+**これらの特徴は、観察された外発的報酬が内発的報酬に影響を与えない加算型とは対照的**である。
 In other words, the additive design gives a uniform boost to actions based entirely on surprise.
-言い換えれば、この加算設計は、不意打ちに基づく行動を一律に後押しする。
+**言い換えれば、この加算設計は、surprisingの条件を満たす行動に均一なブーストを与える。**(うんうん...!)
 The multiplicative design on the other end, favors surprising actions that actually lead to improved user experience, indicated by higher extrinsic reward.
 もう一方の乗法的デザインは、より高い外発的報酬によって示される、ユーザー体験の向上に実際につながる意外な行動を好む。
+(こっちの方が、surprising × relavanceを満たす行動に焦点を当ててボーナスを与えられるってことか...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## 4.3. Actionable Representation for Exploration 探索のための実用的な表現
 
