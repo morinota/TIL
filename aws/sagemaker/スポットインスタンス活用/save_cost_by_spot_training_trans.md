@@ -2,7 +2,7 @@
 
 - [Managed Spot Training: Save Up to 90% On Your Amazon SageMaker Training Jobs](https://aws.amazon.com/jp/blogs/aws/managed-spot-training-save-up-to-90-on-your-amazon-sagemaker-training-jobs/) マネージド・スポット・トレーニング： Amazon SageMakerトレーニングジョブを最大90%割引](https://aws.amazon.com/jp/blogs/aws/managed-spot-training-save-up-to-90-on-your-amazon-sagemaker-training-jobs/)
 
-# Managed Spot Training: Save Up to 90% On Your Amazon SageMaker Training Jobs マネージド・スポット・トレーニング： Amazon SageMakerトレーニングのジョブを最大90%節約
+# Managed Spot Training: Save Up to 90% On Your Amazon SageMaker Training Jobs マネージド・スポット・トレーニング： Amazon SageMakerトレーニングジョブを最大90%節約
 
 Amazon SageMaker is a fully-managed, modular machine learning (ML) service that enables developers and data scientists to easily build, train, and deploy models at any scale.
 Amazon SageMakerはfully-managedなモジュール式の機械学習（ML）サービスで、開発者やデータサイエンティストがあらゆる規模のモデルを簡単に構築、トレーニング、デプロイできるようにします。
