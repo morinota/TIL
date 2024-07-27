@@ -4,6 +4,8 @@
 - [Amazon SageMaker におけるカスタムコンテナ実装パターン詳説 〜推論編〜](https://aws.amazon.com/jp/blogs/news/sagemaker-custom-containers-pattern-inference/)
 - [Amazon SageMaker 推論 Part 3 もう悩まない︕機械学習モデルのデプロイパターンと戦略](https://pages.awscloud.com/rs/112-TZM-766/images/AWS-Black-Belt_2022_Amazon-SageMaker-Inference-Part-3_1014_v1.pdf)
 - [Amazon SageMaker 推論 Part2 すぐにプロダクション利用できる！ モデルをデプロイして推論する方法](https://d1.awsstatic.com/webinars/jp/pdf/services/202208_AWS_Black_Belt_AWS_AIML_Dark_04_inference_part2.pdf)
+- 柏木さんのブログ! これは自前コンテナでSagemakerエンドポイントを作ってる例: [SageMakerとStep Functionsを用いた機械学習パイプラインで構築した検閲システム（後編）](https://tech.connehito.com/entry/2022/03/28/190436)
+- CyberAgentの長江さんのSagemakerエンドポイントの高速化のtips: [SageMaker Endpointのレイテンシー高速化実験](https://nsakki55.hatenablog.com/entry/2023/01/07/134201)
 
 # Sagemaker 推論エンドポイント:
 
@@ -84,6 +86,8 @@ model.tar.gz
     - 推論スクリプトが実行される。(デプロイ直後の初回実行っぽい??)
 
 ## 推論スクリプト `inference.py` の書き方のお作法
+
+(お作法に従わない場合は、`inference.py`側でflaskとかFastAPIとか使って、自前でエンドポイントを定義したりする感じっぽい...!:thinking:)
 
 - 参考:
 
@@ -178,8 +182,9 @@ AWS_PROFILE={特定のprofile} aws ecr create-repository --repository-name {リ�
 - 2. Dockerfileとentrypointのファイル `serve.py` を用意する
   - 学習済みモデルは、imageの中に入れない。
   - 推論の実際の中身の処理のコードも、imageの中に入れない。
-  - 入れるのは、依存関係のpackageと、`serve.py`のみ。
-    - **`sagemaker-inference`と`multi-model-server`を入れる点に注意!**(カスタムコンテナ戦略に確か書いてあった方法...!:thinking:)
+  - **コンテナに入れるのは、依存関係のpackageと、`serve.py`のみ**。 
+    - `serve.py`は、Sagemaker inference toolkit (`sagemaker-inference`)を使って、推論エンドポイントを立ち上げるためのファイル。(NginxとGunicornを起動するのかな??:thinking:)
+    - **`sagemaker-inference`と`multi-model-server`を依存関係パッケージに含める点に注意!**(カスタムコンテナ戦略に確か書いてあった方法...!:thinking:)
       - MMS(`multi-model-server`): 
         - OSSのモデルサービングのライブラリ。
         - Sagemakerに限らず、オンプレミスやECS上などの様々なプラットフォーム上で動作する。
@@ -458,3 +463,7 @@ print(json.loads(responce))
 # 試せたので、エンドポイントを削除
 predictor.delete_endpoint()
 ```
+
+# ざっくり思ったこと
+
+- Sagemaker推論エンドポイントを使うメリットの1つって、GunicornとかNginxとかの設定をせずに抽象化してSagemaker側に任せられることかもって思った。(自動スケーリングとかLoad BalancerとかもSagemaker側でやってくれるっぽい??)
