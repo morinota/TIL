@@ -375,15 +375,15 @@ The multiplicative design on the other end, favors surprising actions that actua
 ## 4.3. Actionable Representation for Exploration 探索のための実用的な表現
 
 The third method reinforces the newly discovered user interest through representation learning.
-第3の方法は、**表現学習(representation learning)**によって新たに発見されたユーザの興味を強化する。(ユーザ埋め込みとアイテム埋め込みを強化するってこと??:thinking:)
+第3の方法は、**表現学習(representation learning)によって新たに発見されたユーザの興味を強化する**。(ユーザ埋め込みとアイテム埋め込みを強化するってこと??:thinking:)
 Learning effective representation is critical to improve the sample efficiency of many machine learning algorithms, and RL is no exception.
-多くの機械学習アルゴリズムのサンプル効率を向上させるためには、効果的な表現を学習することが重要であり、RLも例外ではない。
+多くの機械学習アルゴリズムのサンプル効率を向上させるためには、**効果的な表現を学習することが重要**であり、RLも例外ではない。
 Most prior work on representation learning for RL has focused on generative approaches, learning representations that capture all underlying factors of variation in the observation space in a more disentangled or well-ordered manner.
 RLのための表現学習に関する先行研究のほとんどは、生成的なアプローチに焦点を当てており、観測空間における変動のすべての根本的な要因を、よりばらばらに、あるいは整然とした方法で捉える表現を学習してきた。
 Self-supervised learning [20, 25, 50, 54] to capture the full dynamics of the environment has also attracted a lot of attentions lately.
 **環境のダイナミクスを完全に把握するための自己教師あり学習[20, 25, 50, 54]**も、最近注目を集めている(なんだろう...!:thinking:)
 Ghosh et al.[16] instead argue to learn functionally salient representations: representations that are not necessarily complete in terms of capturing all factors of variation in the observation space, but rather aim to capture those factors of variation that are important for decision making – that are "actionable." 
-Ghoshらは、観測空間のすべての変動要因を捉えるのではなく、代わりに、**意思決定に重要な「機能的に顕著な」表現を学ぶべき**だと主張しています。これらの表現は、「実行可能な」要因を捉えることを目指しています。
+Ghoshらは、観測空間のすべての変動要因を捉えるのではなく、代わりに、**意思決定に重要な「機能的に顕著な」表現を学ぶべき**だと主張しています。これらの表現は、"actionable"な要因を捉えることを目指しています。
 
 The REINFORCE agent introduced in Section 3 describes the environment, i.e., the user, through encoding his/her historical activities Ht .
 第3章で紹介されたREINFORCEエージェントは、ユーザーの過去の活動履歴 $H_t$ をエンコードすることで環境（ユーザ）を記述します。(ユーザの状態を表す埋め込み表現を作ってるんだよね。)
@@ -397,7 +397,7 @@ To aid the agent in capturing this information in its state, we extend Ht with a
 **エージェントがこの情報を状態に取り込むのを助けるために、我々は $H_t$ を拡張し、ユーザが相互作用するアイテムが驚くべきかどうか、関連性があるかどうかを示す追加のビットを追加する**。
 (H_tの中の各tuppleに、surprisingか、relevanceかを示すフラグを追加するってこと?? あ、relevanceかは即時の外発的報酬関数で得られるから、surprisingかを示す変数を1つだけ追加してるっぽい!:thinking:)
 That is, we expand Ht = {(A0, a0,r0,i0), · · · , (At−1, at−1,rt−1,it−1)}, where it ′ = 1 if 1) the attribute of at (such as topic cluster) is different from that of any items in It ′ (being a surprise) and; 2) rt > 0 (being relevant).
-つまり、$H_t = \{(A_0, a_0, r_0, i_0), \cdots, (A_{t-1}, a_{t-1}, r_{t-1}, i_{t-1})\}$ のように拡張する。ここで $i_{t'} = 1$ は、以下の2つの条件を満たしていることを意味する: 1) $a_t$の属性（トピッククラスタなど）が $I_{t'}$のアイテムと異なる場合（驚き）、2) $r_t > 0$（関連性がある）場合である。
+つまり、$H_t = \{(A_0, a_0, r_0, i_0), \cdots, (A_{t-1}, a_{t-1}, r_{t-1}, i_{t-1})\}$ のように拡張する。ここで $i_{t'} = 1$ は、以下の2つの条件を満たしていることを意味する: 1) $a_t$の属性（トピッククラスタなど）が $I_{t'}$ のアイテムと異なる場合（驚き）、2) $r_t > 0$（関連性がある）場合である。
 Here It ′ is the list of items the user has interacted with up to time t ′ .
 ここで、$I_{t'}$ は、時刻 $t'$ までにユーザが相互作用したアイテムのリストである。
 This feature is then embedded and consumed by the RNN along with other features describing the item a_t.
