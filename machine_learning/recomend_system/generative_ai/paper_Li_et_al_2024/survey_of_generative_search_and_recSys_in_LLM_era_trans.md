@@ -943,7 +943,7 @@ To improve training efficiency, recent efforts have focused on model architectur
 ## 5.5. Inference 推論
 
 To achieve item recommendation, the generative models perform generation grounding during the inference stage [82].
-項目推薦を実現するために、生成モデルは推論段階で世代グラウンディングを行う[82]。
+アイテム推薦を実現するために、生成モデルは推論段階で**世代グラウンディング**(??)を行う[82]。
 Given the user formulation in natural language, the generative models first generate the item identifier autoregressively via beam search.
 自然言語によるユーザー定式化が与えられると、生成モデルはまず、ビーム探索によって項目識別子を自己回帰的に生成する。
 Here, we divide the generation into two types, i.e., free generation and constrained generation.

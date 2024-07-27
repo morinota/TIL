@@ -30,7 +30,7 @@ url(paper): https://mlops.community/mlops-maturity-assessment/
 
 ## 技術や手法の肝は？
 
-- 本アンケートは、以下の7つのセクションに分かれている:
+- 本アンケートは、以下の**7つのセクション**に分かれている:
   - Documentation
   - Traceability & Reproducibility
   - Code quality
@@ -38,8 +38,8 @@ url(paper): https://mlops.community/mlops-maturity-assessment/
   - Data transformation pipelines & Feature store
   - Model explainability
   - A/B testing & Feedback loop
-- セクション1~4の全ての問にYesと答える事ができれば、プロジェクトはMLOpsの観点で成熟しているとみなせる。
-  - (i.e. セクション1~4が、MLプロジェクトを本番環境で確実にデプロイする為の必要条件)
+- セクション1~4の**全ての問にYesと答える事ができれば**、プロジェクトはMLOpsの観点で成熟しているとみなせる。
+  - (i.e. **セクション1~4が、MLプロジェクトを本番環境で確実にデプロイする為の必要条件**)
 - セクション5~7は、MLOps成熟度の必要条件を超えた項目。
 - 本アンケートでは、高度なMLOps(=section 5~7)の実践に移る前に、基本条件(=section 1~4)を優先する事を推奨している。
 - 本アンケートにて「No」と答えた観点が、プロジェクトのMLOps成熟度を向上させる為に組織が取り組むべき事になる。
@@ -79,6 +79,7 @@ url(paper): https://mlops.community/mlops-maturity-assessment/
 
 - MLモデルのコードがcommitされる前に Pre-commit hookによってコード品質ガイドラインに従っている事を確認しましょう。学習データの前処理、学習、推論APIなど、MLモデルの全てのプロセスのテストを用意しましょう。CIパイプライン用意しましょう。リアルタイム推論用のAPIは、負荷テストなどを行いレイテンシー要件を満たしていることを確認できるようにしましょう。MLモデルコードの新しいリリースがあるたびにリリースノートを作りましょう、みたいな話。
   - Pre-commit hook: commitが実行される前にコードの品質チェックを行う仕組み、らしい。formatterとかlinterとかの話??:thinking:
+    - あとmypyとかでの静的解析とか...!
   - MLモデルの学習・推論はどんなテストによって品質を保証すべきなんだろ。まあ学習は「損失関数がちゃんと減少してるか」とか? 推論は応答分布分析とか?:thinking:
     - (2023/11のMLOps勉強会で、メタモルフィックテスティングとか紹介されていた...!)
   - MLモデルコードの新しいリリースがあるたびにリリースノートを作る、なるほど...!:thinking:

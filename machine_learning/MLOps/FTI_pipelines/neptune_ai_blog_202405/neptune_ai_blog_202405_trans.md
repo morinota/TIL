@@ -17,7 +17,7 @@ This can seem daunting.
 Luckily, we have tried and trusted tools and architectural patterns that provide a blueprint for reliable ML systems.
 幸運なことに、我々には信頼できるMLシステムの青写真を提供する、試行錯誤されたツールやアーキテクチャ・パターンがある。
 In this article, I’ll introduce you to a unified architecture for ML systems built around the idea of FTI pipelines and a feature store as the central component.
-この記事では、FTIパイプラインとフィーチャーストアを中心に構築されたMLシステムの統一アーキテクチャを紹介する。
+この記事では、**FTIパイプラインとフィーチャーストアを中心に構築されたMLシステムの統一アーキテクチャ**を紹介する。
 We’ll see how this architecture applies to different classes of ML systems, discuss MLOps and testing aspects, and look at some example implementations.
 このアーキテクチャがMLシステムの様々なクラスにどのように適用されるかを見て、MLOpsとテストの側面について議論し、いくつかの実装例を見ていく。
 
@@ -26,35 +26,37 @@ We’ll see how this architecture applies to different classes of ML systems, di
 Machine learning (ML) pipelines are a key component of ML systems.
 機械学習（ML）パイプラインは、MLシステムの重要な構成要素である。
 But what is an ML pipeline? Ask four ML engineers, and you will likely get four different answers.
-しかし、MLパイプラインとは何だろうか？4人のMLエンジニアに聞けば、4つの異なる答えが返ってくるだろう。
+しかし、**MLパイプラインとは何だろうか？**4人のMLエンジニアに聞けば、4つの異なる答えが返ってくるだろう。
 Some will say that an ML pipeline trains models, another says it makes predictions, and another says it does both in a single run.
 ある人はMLパイプラインがモデルを訓練すると言い、別の人は予測をすると言い、また別の人は1回の実行で両方を行うと言う。
 None of them are wrong, but you can already tell that just saying “ML pipeline” can easily lead to miscommunication.
-どれも間違いではないが、「MLパイプライン」と言うだけで、誤解を招きやすいことはすでにお分かりだろう。
+**どれも間違いではないが、「MLパイプライン」と言うだけで、誤解を招きやすいことはすでにお分かりだろう。**
 We’ll have to be more precise.
-もっと正確でなければならない。
+**もっと正確でなければならない。**
 
 An ML system needs to transform the data into features, train models, and make predictions.
-MLシステムは、データを特徴量に変換し、モデルを訓練し、予測を行う必要がある。
+**MLシステムは、データを特徴量に変換し、モデルを訓練し、予測を行う必要がある。** (まさにそう)
 Each of these tasks can be performed by a pipeline: A program that runs on some schedule with well-defined inputs and outputs.
-これらの各タスクは、パイプラインによって実行することができる： 入力と出力が明確に定義されたスケジュールで実行されるプログラム。
+これらの各タスクは、パイプラインによって実行することができる： **入力と出力が明確に定義されたスケジュールで実行されるプログラム**。(あ、これが本ブログにおけるpipelineの定義なのか...! pipeとstepで構成されるDAGのアーキテクチャじゃなくて...!:thinking:)
 
 In this article, we define a machine learning system as consisting of three ML pipelines:
 本稿では、機械学習システムを3つのMLパイプラインから構成されると定義する：
 
-A feature pipeline that transforms its input data into features/labels as output,
+- A feature pipeline that transforms its input data into features/labels as output,
 入力データを出力として特徴/ラベルに変換する特徴パイプライン、
 
-a training pipeline that transforms its input features/labels into trained models as output,
+- a training pipeline that transforms its input features/labels into trained models as output,
 入力された特徴/ラベルを出力として学習済みモデルに変換する学習パイプライン、
 
-and an inference pipeline that uses these trained models to transform its input features into predictions as output.
+- and an inference pipeline that uses these trained models to transform its input features into predictions as output.
 そして、これらの学習済みモデルを使用して、入力特徴を出力として予測に変換する推論パイプライン。
 
 Collectively, these three ML pipelines are known as the FTI pipelines: feature, training, and inference.
 これら3つのMLパイプラインを総称してFTIパイプラインと呼ぶ： feature、training、inferenceです。
 
-## Machine learning systems with feature stores 特徴ストアによる機械学習システム
+<!-- ここまで読んだ! -->
+
+## Machine learning systems with feature stores 特徴量ストアによる機械学習システム
 
 Machine learning (ML) systems manage the data transformations, model training, and predictions made on ML models.
 機械学習（ML）システムは、データの変換、モデルのトレーニング、MLモデルによる予測を管理する。
@@ -64,17 +66,18 @@ They transform data into features, train ML models using features and labels, an
 As you’re building an ML system, you’ll find that matching the outputs of your feature pipeline with the inputs of the training and inference pipelines becomes a challenge.
 MLシステムを構築していると、特徴パイプラインの出力と学習パイプラインや推論パイプラインの入力を一致させることが課題になることに気づくだろう。
 Keeping track of how exactly the incoming data (the feature pipeline’s input) has to be transformed and ensuring that each model receives the features precisely how it saw them during training is one of the hardest parts of architecting ML systems.
-入力データ（特徴パイプラインの入力）がどのように変換されなければならないかを正確に把握し、各モデルがトレーニング中に見た通りの特徴を正確に受け取れるようにすることは、MLシステムをアーキテクトする上で最も難しい部分の1つである。
+**入力データ（特徴パイプラインの入力）がどのように変換されなければならないかを正確に把握し**、各モデルがトレーニング中に見た通りの特徴を正確に受け取れるようにすることは、MLシステムをアーキテクトする上で最も難しい部分の1つである。
+(難しいかも、ベクトルが文字列になって保存されてるから、推論時は一旦文字列->配列の変換処理を挟まなきゃいけない、とか...! 知らんがなって話になるし...!:thinking:)
 
 This is where feature stores come in.
 そこでフィーチャーストアの出番となる。
 A feature store is a data platform that supports the creation and use of feature data throughout the lifecycle of an ML model, from creating features that can be reused across many models to model training to model inference (making predictions).
-フィーチャーストアは、多くのモデルで再利用できるフィーチャーの作成から、モデルのトレーニング、モデルの推論（予測）まで、MLモデルのライフサイクル全体を通してフィーチャーデータの作成と利用をサポートするデータプラットフォームである。
+フィーチャーストアは、多くのモデルで再利用できるフィーチャーの作成から、モデルのトレーニング、モデルの推論（予測）まで、**MLモデルのライフサイクル全体を通して特徴量データの作成と利用をサポートするデータプラットフォーム**である。
 
 A feature store typically comprises a feature repository, a feature serving layer, and a metadata store.
-特徴ストアは通常、特徴リポジトリ、特徴サービングレイヤー、メタデータストアから構成される。
+特徴量ストアは通常、**特徴量リポジトリ(feature repository)、特徴量サービング層(feature serving layer)、メタデータストア(metadata store)から構成**される。
 The feature repository is essentially a database storing pre-computed and versioned features.
-機能リポジトリは基本的に、事前に計算され、バージョン管理された機能を保存するデータベースである。
+特徴量リポジトリは、事前に計算されたバージョン管理された特徴を保存するデータベースである。
 The serving layer facilitates real-time access to these features during model training and inference.
 サービングレイヤーは、モデルのトレーニングや推論中に、これらの特徴にリアルタイムでアクセスすることを容易にする。
 It can also transform incoming data on the fly.
@@ -82,12 +85,15 @@ It can also transform incoming data on the fly.
 The metadata store manages the metadata associated with each feature, such as its origin and transformations.
 メタデータストアは、各フィーチャに関連するメタデータ（オリジンや変換など）を管理する。
 Together, these components form a specialized infrastructure to streamline feature data management in ML workflows.
-これらのコンポーネントを組み合わせることで、MLワークフローにおける特徴データ管理を合理化するための専用インフラストラクチャが形成される。
+これらのコンポーネントを組み合わせることで、**MLワークフローにおける特徴量データ管理を合理化するための専用インフラストラクチャ**が形成される。
+
+<!-- ここまで読んだ! -->
 
 Many ML systems benefit from having the feature store as their data platform, including:
-多くのMLシステムは、フィーチャーストアをデータ・プラットフォームとすることで恩恵を受ける：
+**多くのMLシステムは、フィーチャーストアをデータ・プラットフォームとすることで恩恵を受ける**：
+(基本的には、feature storeを導入した方がメリットが大きいよ、ってこと??:thinking:)
 
-Interactive ML systems receive a user request and respond with a prediction.
+- Interactive ML systems receive a user request and respond with a prediction.
 対話型MLシステムは、ユーザーのリクエストを受け、予測で応答する。
 An interactive ML system either downloads a model and calls it directly or calls a model hosted in a model-serving infrastructure.
 対話型MLシステムは、モデルをダウンロードして直接呼び出すか、モデル提供インフラにホストされているモデルを呼び出す。
@@ -96,35 +102,40 @@ The inputs to the model – the features – can be computed on-demand from requ
 Both scenarios are supported by feature stores.
 どちらのシナリオもフィーチャーストアがサポートしている。
 
-Batch ML systems run on a schedule or are triggered when a new batch of data arrives.
+- Batch ML systems run on a schedule or are triggered when a new batch of data arrives.
 バッチMLシステムは、スケジュールに従って実行されるか、新しいバッチデータが到着したときにトリガーされる。
 They download a model from a model registry, compute predictions, and store the results to be later consumed by AI-enabled applications.
 モデルレジストリからモデルをダウンロードし、予測を計算し、結果を保存して、後でAI対応アプリケーションで利用できるようにする。
 Batch ML systems can retrieve a new batch of inference data from a feature store as a batch of precomputed features created by the feature pipelines.
 バッチMLシステムは、特徴パイプラインによって事前に計算された特徴のバッチとして、特徴ストアから新しい推論データのバッチを取り出すことができる。
 
-Stream-processing ML systems typically use a model downloaded from a model registry to make predictions on streaming data.
+- Stream-processing ML systems typically use a model downloaded from a model registry to make predictions on streaming data.
 ストリーム処理MLシステムは通常、ストリーミング・データに対して予測を行うために、モデル・レジストリからダウンロードしたモデルを使用する。
 Features are typically computed on-demand but may also be enriched with precomputed features retrieved from a feature store.
 特徴量は通常オンデマンドで計算されるが、特徴量ストアから取得した事前計算された特徴量でエンリッチされることもある。
 (It is also possible for stream-processing systems to use an externally hosted model, although less common due to the higher latency it introduces).
-(ストリーム処理システムが外部ホストモデルを使用することも可能だが、レイテンシーが高くなるため、あまり一般的ではない）。
+(ストリーム処理システムが外部ホストモデルを使用することも可能だが、レイテンシーが高くなるため、あまり一般的ではない)。
+
+(以下は、feature storeが価値を発揮しないMLシステムの例...!)
 
 There are ML systems, such as embedded systems in self-driving cars, that do not use feature stores as they require real-time safety-critical decisions and cannot wait for a response from an external database.
 自動運転車の組み込みシステムのように、リアルタイムで安全上重要な判断を必要とし、外部データベースからの応答を待つことができないため、フィーチャストアを使用しないMLシステムがある。
 
+<!-- ここまで読んだ! -->
+
 ## A unified architecture for ML systems MLシステムの統一アーキテクチャ
 
 One of the challenges in building machine-learning systems is architecting the system.
-機械学習システムの構築における課題のひとつは、システムのアーキテクチャーである。
+機械学習システムの構築における課題のひとつは、システムのアーキテクチャである。
 As you’ll likely have experienced yourself, there is no one right way that fits every situation.
-あなた自身も経験したことがあるだろうが、どんな状況にも合う正しい方法というものはない。
+あなた自身も経験したことがあるだろうが、**どんな状況にも合う正しい方法というものはない**。
 But there are some common patterns and best practices, which we’ll explore in this section.
-しかし、共通のパターンやベストプラクティスがいくつかあるので、このセクションで紹介する。
+しかし、**共通のパターンやベストプラクティスがいくつかある**ので、このセクションで紹介する。(個人的には、サーバレスの機能が多く普及した現代において、FTI pipelinesは多くの状況で、betterなプラクティスにはなる気はしている...!:thinking:)
 
-Figure 1.
-図1.
-Overview of the high-level architecture of an ML system centered around a feature store.
+![](https://i0.wp.com/neptune.ai/wp-content/uploads/2024/01/how-to-build-ml-systems-with-a-feature-store-1.png?w=1200&ssl=1)
+
+(以下は図1の説明文)
+figure1. Overview of the high-level architecture of an ML system centered around a feature store.
 特徴ストアを中心としたMLシステムの高レベルアーキテクチャの概要。
 The feature pipeline retrieves data from outside sources, transforms them, and loads them into the feature store.
 フィーチャー・パイプラインは、外部ソースからデータを取得し、変換し、フィーチャー・ストアにロードする。
@@ -136,6 +147,7 @@ It uses the feature store to retrieve properly transformed features, which it fe
 特徴ストアを使用して適切に変換された特徴を取得し、それをモデルに与えて予測を行い、下流のアプリケーションに公開する。
 In most ML systems, the feature and inference pipeline are always active, while the training pipeline is only invoked occasionally.
 ほとんどのMLシステムでは、特徴量パイプラインと推論パイプラインは常にアクティブで、トレーニングパイプラインはたまにしか起動されない。
+(図1の説明終わり!)
 
 The feature pipeline ingests data.
 フィーチャー・パイプラインはデータを取り込む。
@@ -149,7 +161,7 @@ GDPRや同様の規制に準拠しなければならない場合、サンプル�
 The feature store is the stateful layer to manage your features (and training labels) for your ML system.
 特徴ストアは、MLシステムの特徴（とトレーニング・ラベル）を管理するステートフルなレイヤーである。
 It stores the features created in feature pipelines and provides APIs to retrieve them.
-フィーチャー・パイプラインで作成されたフィーチャーを保存し、それらを取得するためのAPIを提供する。
+**フィーチャー・パイプラインで作成されたフィーチャーを保存し、それらを取得するためのAPIを提供する**。
 
 For model training, it’s paramount that the training pipeline can easily load snapshots of training data from tables of features (feature groups).
 モデルのトレーニングでは、トレーニング・パイプラインが、特徴のテーブル（特徴グループ）からトレーニング・データのスナップショットを簡単にロードできることが最も重要である。

@@ -153,7 +153,7 @@ Before we discuss the challenges of the domain in more detail along with algorit
 Recommender systems are often classified into four main categories [84, 108]: collaborative filtering (CF), contentbased filtering (CB), knowledge-based techniques (KB), and hybrid approaches.
 レコメンダーシステムは、協調フィルタリング（CF）、コンテンツベースフィルタリング（CB）、**知識ベース技術（KB）**、ハイブリッドアプローチの**4つ**に分類されることが多い [84, 108]。
 In academic settings, collaborative filtering is the most common approach in the recommender systems literature according to the survey presented in [85], while all other approaches are much less frequently employed.
-学術的には、[85]の調査によると、協調フィルタリングは推薦システムの文献で最も一般的なアプローチであり、他のすべてのアプローチはあまり採用されていない。
+学術的には、[85]の調査によると、**協調フィルタリングは推薦システムの文献で最も一般的なアプローチ**であり、他のすべてのアプローチはあまり採用されていない。
 The general dominance of collaborative filtering is in some sense not surprising because this method, whose recommendations are based on the “wisdom of the crowd”, is domain-independent and does not require detailed (and domain-specific) information about the recommendable items.
 **協調フィルタリングの優位性はある意味当然である。なぜなら、この手法は「群衆の知恵」に基づいて推薦されるため、ドメインに依存せず、推薦されるアイテムに関する詳細な（そしてドメイン固有の）情報を必要としないため**である。
 Furthermore, a number of public benchmark data sets, e.g., from MovieLens4 , are available, which has been a driving factor for the academic community.
@@ -162,7 +162,7 @@ Furthermore, a number of public benchmark data sets, e.g., from MovieLens4 , are
 In the news recommendation domain, however, things are different.
 **しかし、ニュースレコメンデーションの領域では、事情が異なりま**す。
 An analysis of the 112 (of 144) papers in our survey that propose one or more recommendation algorithms reveals the following.5 Content-based filtering, which is, roughly speaking, based on analyzing a reader’s past documents of interest and recommending “more of the same”, was used as an underlying paradigm in 59 of the analyzed papers.
-推薦アルゴリズムが提案されている論文 112 件（144 件中）を分析した結果、以下のことが明らかになった5。 コンテンツベースフィルタリングは、大まかに言えば、読者の過去の興味ある文書を分析し、「同じものをもっと」推薦するというもので、59 件の論文が基本パラダイムとして使用されていた。
+推薦アルゴリズムが提案されている論文 112 件（144 件中）を分析した結果、以下のことが明らかになった5。 コンテンツベースフィルタリングは、大まかに言えば、読者の過去の興味ある文書を分析し、“more of the same”(同じものをもっと = つまりコンテンツベース!)推薦するというもので、59 件の論文が基本パラダイムとして使用されていた。
 Approaches, like the Google News personalization system [39], that rely on collaborative filtering and on interest patterns in a community without considering the content of a news article are only proposed in 19 of the 112 papers.
 **Google News Personalization System [39]のように、ニュース記事の内容を考慮せず、協調フィルタリングやコミュニティ内の関心パターンに依存するアプローチは、112本の論文のうち19本しか提案されていない。**
 However, 45 of the papers use a hybrid approach and combine content-based filtering and collaborative filtering.
