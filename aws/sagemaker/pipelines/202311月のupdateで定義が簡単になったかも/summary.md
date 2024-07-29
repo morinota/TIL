@@ -79,6 +79,7 @@ stepデコレータをつけた関数は`DelayedReturn`オブジェクトを返�
     - `a_member = a_delayed_return[2]['a_key']`
 
 感想メモ:thinking:
+
 - 各ステップはTrainingJobとして実行される事になるが、`DelayedReturn`オブジェクトのおかげで、**各ステップ間の接続方法の実装を開発者が意識する必要がなくなる**気がする。
   - ここがstepデコレータの特徴?? **ステップ間の接続方法が抽象化・情報隠蔽されてる感じ**...!
   - stepデコレータを使わない場合は、ステップ間のデータの接続というか受け渡しを開発者自身が認識する必要があった...!:thinking:
@@ -123,10 +124,108 @@ pipeline.start()
 
 ## 実装するパイプラインの問題設定
 
+自分が実務でニュース記事の推薦システムを扱っていることもあり、今回はニュース記事のメタデータを入力として受け取り、各ニュース記事に対して関連ニュースを紐付ける item2itemのバッチ推薦パイプラインを実装してみます。
+
+パイプラインのステップは以下のようになります。
+
+- NewsEncodeStep: ニュース記事のメタデータを入力として受け取り、各ニュース記事の特徴を埋め込んだニュースベクトルを出力するステップ
+- Item2ItemRecommendationStep: NewsEncodeStepの出力を入力として受け取り、各ニュース記事に対して関連ニュースを紐付けた推薦結果を出力するステップ
+- OfflineEvaluationStep: Item2ItemRecommendationStepの出力を入力として受け取り、推薦結果の評価指標を出力するステップ
+
+ちなみに、今回は練習として、ニュース記事のメタデータから最終的に推薦結果を作るまでの処理を1つのパイプラインにまとめてしまいますが、実際のプロダクトでは必ずしもその設計が良いとは限らないと思います。場合によっては、それぞれのステップを独立したパイプラインとして稼働させる方が有効かもしれません(ex. FTI Pipelines Architecture)。
+
+また、今回の実装では、ニュース記事のデータとして[huggingface](https://huggingface.co/datasets/llm-book/livedoor-news-corpus#dataset-card-for-llm-bookner-wikinews-dataset)で公開されている `llm-book/livedoor-news-corpus` を使用してみます。
+
 ## stepデコレータを使わないver.
+
+まずは、stepデコレータを使わないver.で、このnews2news推薦パイプラインを実装してみます。
+ディレクトリ構造は、以下のようにしてみます。
+
+```
+.
+├── news2news_pipeline.py
+├── config.yaml
+├── requirements.txt
+└── pipeline_steps
+    ├── news_encode.py
+    ├── item2item_recommendation.py
+    └── offline_evaluation.pys
+```
+
 
 ## stepデコレータを使うver.
 
+さて、前半で頑張って実装したところで、ステップデコレータを使うver.を実装していきましょう! 果たして、より少ないグルーコードで簡単に高速にシンプルにパイプラインを実装できるのでしょうか。
+
+ディレクトリ構造は、使わないver.と同様に、以下のようにしてみます。
+
+```
+.
+├── news2news_pipeline.py
+├── config.yaml
+├── requirements.txt
+└── pipeline_steps
+    ├── news_encode.py
+    ├── item2item_recommendation.py
+    └── offline_evaluation.py
+```
+
+まず、`NewsEncodeStep`を実装してみます。
+
+```python
+@step(name="NewsEncodeStep")
+def news_encode(news_metadata_s3uri: str)->pl.DataFrame:
+    import polars as pl
+    # ファイル形式はparquetを想定
+    if not news_metadata_s3uri.endswith(".parquet"):
+        raise ValueError("news_metadata_s3uri must be parquet file")
+    
+    news_metadata_df = pl.read_parquet(news_metadata_s3uri)
+
+    # 前処理 (category, title, content を単一の文字列に連結)
+    news_metadata_df["text"] = news_metadata_df["category"] + " " + news_metadata_df["title"] + " " + news_metadata_df["content"]
+
+    # ニュース記事のメタデータを埋め込んだニュースベクトルを作成
+    model = NewsEncoderModel()
+    news_vector_df = model.encode(news_metadata_df["text"])
+
+    return news_vector_df
+
+class NewsEncoderModel:
+    pass
+```
+
+続いて、`Item2ItemRecommendationStep`を実装してみます。
+
+```python
+@step(name="Item2ItemRecommendationStep")
+def item2item_recommendation(target_vector_df: pl.DataFrame, candidate_vector_df: pl.DataFrame)->pl.DataFrame:
+    import polars as pl
+    # ニュースベクトルを使って、item2itemの推薦結果を作成
+    model = Item2ItemRecommendationModel()
+    recommendation_df = model.recommend(target_features=vector_df, vector_df=vector_df)
+
+    return recommendation_df
+
+class Item2ItemRecommendationModel:
+    pass
+```
+
+最後に`OfflineEvaluationStep`を実装してみます。
+
+```python
+@step(name="OfflineEvaluationStep")
+def offline_evaluation(recommendation_df: pl.DataFrame, news_metadata_s3uri: str)->dict[str,float]:
+    import polars as pl
+    # 推薦結果のオフライン評価
+    evaluator = OfflineEvaluator()
+    metrics = evaluator.evaluate(recommendation_df, ground_truth_df)
+
+    return metrics
+
+class OfflineEvaluator:
+    pass
+```
 
 # 気づき: stepデコレータによってSagemaker PipelinesによるML Pipelineの定義が簡単になったのか??
 
