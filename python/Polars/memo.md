@@ -133,3 +133,52 @@ def test_num_products_for_sale():
     products = Product.examples({"is_for_sale": [True, True, False]})
     assert num_products_for_sale(products) == 2
 ```
+
+## Representing rows as classes(クラスとして行を表現する)
+
+- DataFrameは、オブジェクト集合(=行集合?) に対して、ベクトル化された操作を実行するのに適している。
+- **しかし、1つの行を取り出して、それを操作する場合、DataFrameのAPIは少し冗長になることがある**。(確かに...!:sob:)
+  - Patitoは、モデル上で定義されたメソッドに、1行レベルのロジックを埋め込める...!
+
+```python
+class Product(pt.Model):
+    product_id: int = pt.Field(unique=True)
+    name: str
+
+    @property
+    def url(self) -> str:
+        return (
+            "https://example.com/no/products/"
+            f"{self.product_id}-"
+            f"{self.name.lower().replace(' ', '-')}"
+        )
+```
+
+- このモデルクラスは、`from_row()`メソッドを使用して、**DataFrameの単一行からインスタンス化**できる。
+
+```python
+products = pl.DataFrame(
+    {
+        "product_id": [1, 2],
+        "name": ["Skimmed milk", "Eggs"],
+    }
+)
+milk_row = products.filter(pl.col("product_id" == 1))
+milk = Product.from_row(milk_row)
+print(milk.url)
+# https://example.com/no/products/1-skimmed-milk
+```
+
+- `patito.DataFrame.set_model()`あるいは直接 `Product.DataFrame()` を使用してProductモデルとDataFrameを「接続」すると、`.get()`メソッドを使用してデータフレームから単一行に絞り込み、それをモデルインスタンスにcastできる。
+
+```python
+products = Product.DataFrame(
+    {
+        "product_id": [1, 2],
+        "name": ["Skimmed milk", "Eggs"],
+    }
+)
+milk = products.get(pl.col("product_id") == 1)
+print(milk.url)
+# https://example.com/no/products/1-skimmed-milk
+```
