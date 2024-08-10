@@ -1,72 +1,77 @@
 ## ref ref
 
-https://tech.instacart.com/lessons-learned-the-journey-to-real-time-machine-learning-at-instacart-942f3a656af3
-https://tech.instacart.com/lessons-learned-the-journey-to-real-time-machine-learning-at-instacart-942f3a656af3
+<https://tech.instacart.com/lessons-learned-the-journey-to-real-time-machine-learning-at-instacart-942f3a656af3>
+<https://tech.instacart.com/lessons-learned-the-journey-to-real-time-machine-learning-at-instacart-942f3a656af3>
 
 # Lessons Learned: The Journey to Real-Time Machine Learning at Instacart インスタカートにおけるリアルタイム機械学習への旅
 
 Instacart incorporates machine learning extensively to improve the quality of experience for all actors in our “four-sided marketplace” — customers who place orders on Instacart apps to get deliveries in as fast as 30 minutes, shoppers who can go online at anytime to fulfill customer orders, retailers that sell their products and can make updates to their catalog in real time, and the brand partners that participate in auctions on the Instacart Advertising platform to promote their products.
 Instacartは、Instacartアプリで注文して最短30分で配達を受ける顧客、いつでもオンラインで顧客の注文に対応できる買い物客、商品を販売してリアルタイムでカタログを更新できる小売業者、Instacart Advertisingプラットフォームでオークションに参加して商品を宣伝するブランド・パートナーなど、「四面市場」のすべての関係者の体験の質を向上させるために、機械学習を広範囲に取り入れている。
 
+![Figure 1: How ML models support shopping journey at Instacart]()
+
 Figure 1 depicts a typical shopping journey at Instacart, powered by hundreds of machine learning models.
 図1は、何百もの機械学習モデルによるInstacartの典型的なショッピング・ジャーニーを示している。
 All of these actions happen in real time, which means leveraging machine learning in real-time can provide significant value to the business.
-[empty]
+**これらのすべてのアクション(ユーザ目線では...!)はリアルタイムで行われるため、リアルタイムで機械学習を活用することはビジネスに大きな価値を提供できる**。
 One of the major changes we have gone through is transitioning many of our batch-oriented ML systems into real-time.
-私たちが経験した大きな変化のひとつは、バッチ指向のMLシステムの多くをリアルタイムに移行したことです。
+私たちが経験した大きな変化のひとつは、**バッチ指向のMLシステムの多くをリアルタイムに移行したこと**です。
 In this post, we describe our transition process, review main challenges and decisions, and draw important lessons that could help others learn from our experience.
-この投稿では、私たちの移籍プロセスについて説明し、主な課題と決断を検証し、他の人々が私たちの経験から学ぶのに役立つ重要な教訓を導き出す。
+この投稿では、私たちの移行プロセスを説明し、主な課題と決定を振り返り、他の人々が私たちの経験から学ぶのに役立つ重要な教訓をまとめます。
 
 ## History of Batch-Oriented ML Systems バッチ指向MLシステムの歴史
 
 Most machine learning in production is about leveraging signals (features) derived from raw data to predict targeted goals (labels).
 生産現場における機械学習のほとんどは、生データから得られたシグナル（特徴）を活用して、目標とするゴール（ラベル）を予測することである。
 The quality of features is crucial and the features are largely categorized into two types by freshness:
-特徴の質は非常に重要で、特徴は鮮度によって大きく2種類に分類される：
+特徴の品質は重要であり、特徴は鮮度によって大きく2つのタイプに分類される：
 
-Batch features: Features extracted from historical data, often through batch processing.
-バッチ特徴： 過去のデータからバッチ処理で抽出された特徴。
-These types of features usually change infrequently, such as category or nutrition information of a food product.
-この種の機能は、食品のカテゴリーや栄養情報のように、通常は頻繁に変更されるものではない。
+- **Batch features**: Features extracted from historical data, often through batch processing.
+  - **バッチ特徴： 過去のデータからバッチ処理で抽出された特徴**。
+  - These types of features usually change infrequently, such as category or nutrition information of a food product.
+  - この種の特徴量は、食品のカテゴリーや栄養情報のように、**通常は頻繁に変更されるものではない**。(ふむふむ確かに...!:thinking_face:)
 
-Real-time features: Features extracted from real-time data, often through stream processing.
-リアルタイムの特徴： リアルタイムのデータから、ストリーム処理によって抽出された特徴。
-These types of features usually change frequently and the changes are essential for model prediction and decision-making.
-この種の特徴は通常頻繁に変化し、その変化はモデルの予測や意思決定に不可欠である。
-Some examples are real-time item availability, supply (number of online shoppers) and demand (number of orders), and customers real-time shopping sessions.
-例えば、リアルタイムの商品在庫状況、供給（オンラインショッピング利用者数）と需要（注文数）、顧客のリアルタイムのショッピングセッションなどである。
+- **Real-time features**: Features extracted from real-time data, often through stream processing.
+  - リアルタイム特徴量： リアルタイムのデータから、ストリーム処理によって抽出された特徴量。
+  - These types of features usually change frequently and the changes are essential for model prediction and decision-making.
+    - **この種の特徴は通常頻繁に変化し**、その変化はモデルの予測や意思決定に不可欠である。
+  - Some examples are real-time item availability, supply (number of online shoppers) and demand (number of orders), and customers real-time shopping sessions.
+    - 例えば、リアルタイムの商品在庫状況、供給(オンラインショッピング利用者数)と需要(注文数)、顧客のリアルタイムのショッピングセッションなどである。
 
 It is a natural choice for relatively small companies to start with batch-oriented ML systems since the progress can be bootstrapped by existing batch-oriented infrastructures.
-比較的小規模な企業がバッチ指向のMLシステムから始めるのは自然な選択である。なぜなら、既存のバッチ指向のインフラによって進歩をブートストラップできるからである。
+**比較的小規模な企業がバッチ指向のMLシステムから始めるのは自然な選択である。なぜなら、既存のバッチ指向のインフラストラクチャによって開発を容易に進められるから**だ。(うんうん...!:thinking:)
 While some of our logistics systems were using real-time predictions using mostly transactional data and some event-driven feature computation, it was not easy to generate features and was not widely adopted across the company.
-私たちの物流システムの中には、主にトランザクション・データとイベント・ドリブンの特徴量計算を使ったリアルタイム予測を使っているものもありましたが、特徴量を生成するのは簡単ではなく、全社的に広く採用されるには至っていませんでした。
+私たちの物流システムの中には、主にトランザクションデータと一部のイベント駆動型特徴量計算を使用してリアルタイム予測を行っているものもありましたが、**特徴量を生成することは簡単ではなく、会社全体で広く採用されていませんでした**。
 Most other ML systems at Instacart started with batched-oriented systems with two main characteristics: 1) ML models only had access to batch features; 2) these models generated predictions offline in batches and consumed those predictions either offline for analytics, or online using a lookup table.
-Instacartの他のほとんどのMLシステムは、2つの主な特徴を持つバッチ指向システムから始まった： 1)MLモデルはバッチの特徴にしかアクセスできなかった。2)これらのモデルはオフラインでバッチで予測を生成し、分析のためにオフラインで、またはルックアップテーブルを使用してオンラインでそれらの予測を消費した。
+**Instacartの他のほとんどのMLシステムは、2つの主な特徴を持つバッチ指向システムから始まった**： 1)MLモデルはバッチ特徴量にしかアクセスしなかった； 2)これらのモデルはバッチでオフラインで予測を生成し、その予測をオフラインで分析用に消費するか、ルックアップテーブルを使用してオンラインで消費していた。
+(わかる〜...!:thinking_face:)
 Machine learning engineers could simply write the model outputs to database tables and applications could read them in production without the need for any complicated infrastructure.
-機械学習エンジニアは、モデルの出力をデータベースのテーブルに書き込むだけで、アプリケーションは複雑なインフラを必要とせずに、本番環境でそれを読み取ることができる。
+**機械学習エンジニアは、モデルの出力をデータベースのテーブルに書き込むだけで、アプリケーションは複雑なインフラを必要とせずに、本番環境でそれを読み取ることができる**。
 However, we experienced several limitations in these batch-oriented ML systems:
-しかし、これらのバッチ指向のMLシステムにはいくつかの限界があった：
+しかし、これらのバッチ指向のMLシステムにはいくつかの限界があった:
 
-Stale Predictions: Precomputed prediction offers an inferior experience in many applications since they only generate stale responses to requests that happened in the past.
-陳腐な予測： 事前に計算された予測は、過去に起こったリクエストに対する古いレスポンスを生成するだけなので、多くのアプリケーションで劣った経験を提供する。
-For example, batch prediction only allowed us to classify historical queries but performed poorly on new queries.
-例えば、バッチ予測は過去のクエリーを分類することができたが、新しいクエリーに対してはうまく機能しなかった。
+- 1. Stale Predictions: Precomputed prediction offers an inferior experience in many applications since they only generate stale responses to requests that happened in the past.
+  - 陳腐な予測： 事前に計算された予測は、過去に発生したリクエストに対してのみ陳腐な応答を生成するため、多くのアプリケーションで劣った体験を提供する。
+  - For example, batch prediction only allowed us to classify historical queries but performed poorly on new queries.
+  - 例えば、バッチ予測は過去のクエリーを分類することができたが、新しいクエリーに対してはうまく機能しなかった。
 
-Inefficient Resource Usage: It is a waste of resources to generate predictions daily for all customers since many customers are not active every day.
-非効率的なリソース使用： 多くの顧客は毎日アクティブではないため、すべての顧客の予測を毎日生成するのはリソースの無駄です。
+- 2. Inefficient Resource Usage: It is a waste of resources to generate predictions daily for all customers since many customers are not active every day.
+  - **非効率的なリソース使用： 多くの顧客は毎日アクティブではないため、すべての顧客の予測を毎日生成するのはリソースの無駄**です。
 
-Limited Coverage: This system provides limited coverage.
-限られた範囲： このシステムは限られた範囲をカバーする。
-For instance, it’s not possible to cache predictions for all user-item pairs due to large cardinality and we have to truncate the pairs in the long-tail.
-例えば、カーディナリティが大きいため、すべてのユーザーとアイテムのペアの予測をキャッシュすることは不可能であり、ロングテールのペアを切り捨てる必要がある。
+- 3. Limited Coverage: This system provides limited coverage.
+  - 限られた範囲： このシステムは限られた範囲をカバーする。
+  - For instance, it’s not possible to cache predictions for all user-item pairs due to large cardinality and we have to truncate the pairs in the long-tail.
+  - 例えば、**カーディナリティが大きいため、すべてのユーザーとアイテムのペアの予測をキャッシュすることは不可能であり、ロングテールのペアを切り捨てる必要がある**。
 
-Response Lag: Models are less responsive to recent changes since real-time features, such as customers’ intents in the current shopping session and real-time product availability, are not accessible to the model.
-レスポンスの遅れ： 現在のショッピングセッションにおける顧客の意図や、リアルタイムの商品在庫状況などのリアルタイムの機能は、モデルにはアクセスできないため、モデルは最近の変化に対する反応が鈍い。
+- 4. Response Lag: Models are less responsive to recent changes since real-time features, such as customers’ intents in the current shopping session and real-time product availability, are not accessible to the model.
+  - レスポンスの遅れ： 現在のショッピングセッションにおける顧客の意図や、リアルタイムの商品在庫状況などのリアルタイムの機能は、モデルにはアクセスできないため、モデルは最近の変化に対する反応が鈍い。
 
-Suboptimal: Data freshness impacts the quality of model output.
-最適ではない： データの鮮度がモデル出力の品質に影響する。
-Without the up-to-date signals (such as supply and demand), the fulfillment process can be suboptimal since models do not have access to real-time changes and the lag in decision-making can lead to inefficient resource allocation.
-最新のシグナル（需給など）がなければ、モデルはリアルタイムの変化にアクセスできず、意思決定の遅れが非効率的な資源配分につながるため、フルフィルメント・プロセスは最適化されない可能性がある。
+- 5. Suboptimal: Data freshness impacts the quality of model output.
+  - 最適化されていない： **データの鮮度がモデルの出力の品質に影響を与える**。
+  - Without the up-to-date signals (such as supply and demand), the fulfillment process can be suboptimal since models do not have access to real-time changes and the lag in decision-making can lead to inefficient resource allocation.
+  - 最新のシグナル（需給など）がなければ、モデルはリアルタイムの変化にアクセスできず、意思決定の遅れが非効率的な資源配分につながるため、フルフィルメント・プロセスは最適化されない可能性がある。
+
+(上記の記述は、バッチ特徴量を使ったオンライン推論ならで達成できることと、オンライン特徴量を使ったオンライン推論なら達成できること、の両方がありそう...!:thinking_face:)
 
 As we introduce product innovations in the Instacart app to improve personalization, inspiration, capturing and serving dynamic features in real time becomes essential.
 パーソナライゼーションを向上させるためにInstacartアプリに製品イノベーションを導入する際、インスピレーション、リアルタイムでの動的機能のキャプチャと提供が不可欠になります。
@@ -112,7 +117,7 @@ Steep Learning Curve: The system involves understanding many new components and 
 It was mainly challenging for machine learning engineers because it changed the development process and introduced many new tools.
 開発プロセスが変わり、多くの新しいツールが導入されたため、主に機械学習エンジニアにとってチャレンジングなものだった。
 
-## Key Decisions 
+## Key Decisions
 
 Unified Interface: Developing a unified interface, Griffin, enabled us to integrate best practices such as unit tests, integration tests, and canary deployments.
 統一インターフェース： 統一インターフェースGriffinを開発することで、ユニットテスト、統合テスト、カナリアデプロイメントなどのベストプラクティスを統合することができた。
