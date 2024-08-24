@@ -2,6 +2,10 @@
 
 - https://www.mdpi.com/2673-6470/4/1/3 https://www.mdpi.com/2673-6470/4/1/3
 
+## title
+Bias Reduction News Recommendation System
+
+
 ## Abstract
 
 News recommender systems (NRS) are crucial for helping users navigate the vast amount of content available online.
@@ -9,7 +13,7 @@ News recommender systems (NRS) are crucial for helping users navigate the vast a
 However, traditional NRS often suffer from biases that lead to a narrow and unfair distribution of exposure across news items.
 しかし、**従来のNRSは、ニュースアイテム間の露出の分布が狭く不公平になるバイアスに悩まされることが多い**。
 In this paper, we propose a novel approach, the Contextual-Dual Bias Reduction Recommendation System (C-DBRRS), which leverages Long Short-Term Memory (LSTM) networks optimized with a multi-objective function to balance accuracy and diversity.
-本論文では、C-DBRRS（Contextual-Dual Bias Reduction Recommendation System）という新しいアプローチを提案する。C-DBRRSは、精度と多様性のバランスをとるために多目的関数で最適化されたLSTM（Long Short-Term Memory）ネットワークを活用する。
+本論文では、**C-DBRRS（Contextual-Dual Bias Reduction Recommendation System）という新しいアプローチを提案**する。C-DBRRSは、精度と多様性のバランスをとるために多目的関数で最適化されたLSTM（Long Short-Term Memory）ネットワークを活用する。
 We conducted experiments on two real-world news recommendation datasets and the results indicate that our approach outperforms the baseline methods, and achieves higher accuracy while promoting a fair and balanced distribution of recommendations.
 我々は2つの実世界のニュース推薦データセットで実験を行い、その結果、我々のアプローチがベースライン手法を上回り、推薦の公平でバランスの取れた分布を促進しながら、より高い精度を達成することを示した。
 This work contributes to the development of a fair and responsible recommendation system.
