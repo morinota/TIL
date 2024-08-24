@@ -137,11 +137,43 @@ def _calc_percentage_diff(control_val: float, treatment_val: float) -> float:
 
 
 if __name__ == "__main__":
-    yaml_path = Path("/tmp/non_binary_metrics_results/non_binary_metrics_results.yml")
+    yaml_path = Path("/Users/masato.morita/tmp/non_binary_metrics_results/config.yml")
     non_binary_metrics_results = load_metrics_from_yaml(yaml_path)
     test_result_df = pl.concat([main(result) for result in non_binary_metrics_results])
 
     # カラム名を日本語に変換
     test_result_df = test_result_df.rename(StatisticalTestRecord.column_name_map())
-    test_result_df.write_csv("/tmp/non_binary_metrics_test_results.csv")
+    test_result_df.write_csv(
+        "/Users/masato.morita/tmp/non_binary_metrics_results/statistical_test_results.csv"
+    )
     print(test_result_df)
+
+
+def t_test_p_value(
+    mean_a: float, var_a: float, n_a: int, mean_b: float, var_b: float, n_b: int
+) -> int:
+    """両群のmetricの平均値、分散、サンプルサイズを入力として、t検定のp値を返す"""
+    _, p_value = stats.ttest_ind_from_stats(
+        mean_a,
+        # statsモジュールの関数が標準偏差を引数として受け取るので、分散の平方根を渡す
+        var_a**0.5,
+        n_a,
+        mean_b,
+        var_b**0.5,
+        n_b,
+        equal_var=False,  # 等分散性を仮定しない
+        alternative="two-sided",  # 両側検定
+    )
+    return p_value
+
+
+scipy.stats.ttest_ind_from_stats(
+    1.0,
+    2.0**0.5,
+    1000,
+    1.1,
+    2.0**0.5,
+    1000,
+    equal_var=False,  # 等分散性を仮定しない
+    alternative="two-sided",  # 両側検定
+)
