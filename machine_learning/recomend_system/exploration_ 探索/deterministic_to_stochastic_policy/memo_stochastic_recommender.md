@@ -1,10 +1,9 @@
-# 確率的な方策 (stochastic policy) による推薦システムを考える。
+# 確率的な方策 (stochastic policy) による推薦システムを考える
 
-## プラケット・ルースモデル(Plackett-Luce model, PLモデル)を使って、ランキング方策をstochasticにする。
+## プラケット・ルースモデル(Plackett-Luce model, PLモデル)を使って、ランキング方策をstochasticにする
 
 - ランキング方策 (ランキング集合 $\Pi(A)$ 上の条件付き確率分布) をパラメータ化する際は、ランキング内で同一アイテムの重複を生まないような工夫が必要。
 - よく用いられるのが、**プラケット・ルースモデル(Plackett-Luce model, PLモデル)**という方法。
-
 
 PLモデルがやりたいことは以下:
   
@@ -37,14 +36,14 @@ def plackett_luce_sampling(f_theta: ScoreFunction, x: FeatureVector)->list[Item]
 PLモデルに基づいてランキング $\mathbf{a}$ を生成することは、以下のランキング方策を適用していることと等価である。
 
 $$
-\pi_{\theta}(\mathbf{a}|x) 
+\pi_{\theta}(\mathbf{a}|x)
 = \prod_{k=1}^{K} \frac{exp(f_{\theta}(x, \mathbf{a}(k)))}{\sum_{a' \in A_k} exp(f_{\theta}(x,a'))}
 \tag{1}
 $$
 
 しかし実際には、上記のアルゴリズムは現場の推薦・検索システムに適用するには計算量の問題で難しい。(**ソフトマックス関数を何度も計算する必要がある**ため...!:scream:)
 
-###  ガンベルソフトマックストリック(Gumbel-Softmax trick)を使って高速化
+### ガンベルソフトマックストリック(Gumbel-Softmax trick)を使って高速化
 
 - 前述のように、originalのPLモデルのアルゴリズムは計算量が大きく、実用的ではない。(特にリアルタイム推論の上では...!)
   - ガンベルソフトマックストリック(Gumbel-Softmax trick)と呼ばれるテクニックを使うことで、**PLモデルに基づいた確率的なランキング方策を効率化して高速化できる**ことが知られている。
@@ -60,7 +59,7 @@ $$
 $$
 \mathbf{a} = argsort_{a \in A} \{ f_{\theta}(x,a) + \epsilon_{a} \}
 \\
-\epsilon_{a} \sim Gumbel(0,1) 
+\epsilon_{a} \sim Gumbel(0,1)
 \tag{2}
 $$
 
