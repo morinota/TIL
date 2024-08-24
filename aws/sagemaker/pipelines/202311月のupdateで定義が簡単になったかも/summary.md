@@ -128,6 +128,7 @@ pipeline.start()
 
 パイプラインのステップは以下のようになります。
 
+- DataPrepareStep: データストアからニュース記事のメタデータを取得するステップ
 - NewsEncodeStep: ニュース記事のメタデータを入力として受け取り、各ニュース記事の特徴を埋め込んだニュースベクトルを出力するステップ
 - Item2ItemRecommendationStep: NewsEncodeStepの出力を入力として受け取り、各ニュース記事に対して関連ニュースを紐付けた推薦結果を出力するステップ
 - OfflineEvaluationStep: Item2ItemRecommendationStepの出力を入力として受け取り、推薦結果の評価指標を出力するステップ
@@ -147,9 +148,10 @@ pipeline.start()
 ├── config.yaml
 ├── requirements.txt
 └── pipeline_steps
-    ├── news_encode.py
-    ├── item2item_recommendation.py
-    └── offline_evaluation.pys
+    ├── data_preparer_step.py
+    ├── news_encoder_step.py
+    ├── item2item_recommendation_step.py
+    └── offline_evaluation_step.py
 ```
 
 
@@ -165,23 +167,29 @@ pipeline.start()
 ├── config.yaml
 ├── requirements.txt
 └── pipeline_steps
-    ├── news_encode.py
-    ├── item2item_recommendation.py
-    └── offline_evaluation.py
+    ├── news_encoder_step.py
+    ├── item2item_recommendation_step.py
+    └── offline_evaluation_step.py
 ```
 
-まず、`NewsEncodeStep`を実装してみます。
+まず `DataPrepareStep` は、データストアからニュース記事のメタデータを取得するステップです。このステップは、S3に格納されているニュース記事のメタデータを取得するものとします。
+
+```python
+@step(name="DataPrepareStep")
+def data_prepare(news_metadata_s3uri: str)->pl.DataFrame:
+    import polars as pl
+    # ニュース記事のメタデータを取得
+    news_metadata_df = pl.read_parquet(news_metadata_s3uri)
+
+    return news_metadata_df
+```
+
+さて次に`NewsEncodeStep`を実装してみます。
 
 ```python
 @step(name="NewsEncodeStep")
-def news_encode(news_metadata_s3uri: str)->pl.DataFrame:
+def news_encode(news_metadata_df: pl.DataFrame)->pl.DataFrame:
     import polars as pl
-    # ファイル形式はparquetを想定
-    if not news_metadata_s3uri.endswith(".parquet"):
-        raise ValueError("news_metadata_s3uri must be parquet file")
-    
-    news_metadata_df = pl.read_parquet(news_metadata_s3uri)
-
     # 前処理 (category, title, content を単一の文字列に連結)
     news_metadata_df["text"] = news_metadata_df["category"] + " " + news_metadata_df["title"] + " " + news_metadata_df["content"]
 
@@ -215,7 +223,7 @@ class Item2ItemRecommendationModel:
 
 ```python
 @step(name="OfflineEvaluationStep")
-def offline_evaluation(recommendation_df: pl.DataFrame, news_metadata_s3uri: str)->dict[str,float]:
+def offline_evaluation(recommendation_df: pl.DataFrame, news_metadata_df: str)->dict[str,float]:
     import polars as pl
     # 推薦結果のオフライン評価
     evaluator = OfflineEvaluator()

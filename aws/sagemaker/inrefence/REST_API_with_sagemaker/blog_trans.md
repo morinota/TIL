@@ -1,9 +1,9 @@
-## refs: refs：
+## 0.1. refs: refs
 
-- https://aws.amazon.com/jp/blogs/machine-learning/creating-a-machine-learning-powered-rest-api-with-amazon-api-gateway-mapping-templates-and-amazon-sagemaker/
-- 日本語やく: https://aws.amazon.com/jp/blogs/news/creating-a-machine-learning-powered-rest-api-with-amazon-api-gateway-mapping-templates-and-amazon-sagemaker/
+- <https://aws.amazon.com/jp/blogs/machine-learning/creating-a-machine-learning-powered-rest-api-with-amazon-api-gateway-mapping-templates-and-amazon-sagemaker/>
+- 日本語やく: <https://aws.amazon.com/jp/blogs/news/creating-a-machine-learning-powered-rest-api-with-amazon-api-gateway-mapping-templates-and-amazon-sagemaker/>
 
-# Creating a machine learning-powered REST API with Amazon API Gateway mapping templates and Amazon SageMaker Amazon API GatewayのマッピングテンプレートとAmazon SageMakerを使って、機械学習を利用したREST APIを作成する
+# 1. Creating a machine learning-powered REST API with Amazon API Gateway mapping templates and Amazon SageMaker Amazon API GatewayのマッピングテンプレートとAmazon SageMakerを使って、機械学習を利用したREST APIを作成する
 
 July 2022: Post was reviewed for accuracy.
 2022年7月 ポストの正確性を確認。
@@ -63,7 +63,7 @@ Note: This post focuses on direct integration with Amazon SageMaker, but you can
 I demonstrate the approach using a console-based walk through, starting with deployment of an Amazon SageMaker model endpoint, and then stepping through the creation of an Amazon API Gateway integration with this endpoint.
 Amazon SageMaker モデルエンドポイントのデプロイから始まり、このエンドポイントを使用した Amazon API Gateway インテグレーションの作成まで、コンソールベースのウォークスルーを使用して、このアプローチをデモンストレーションします。
 
-## Overview of solution ソリューションの概要
+## 1.1. Overview of solution ソリューションの概要
 
 For illustration purposes, this post employs a use case in which a TV app requests ratings predictions for a list of movies.
 説明のために、この記事では、テレビアプリが映画リストの視聴率予測をリクエストするユースケースを採用している。
@@ -72,7 +72,7 @@ Whenever the app displays a page of movies, it should display them so that movie
 In this example, every user and movie can be identified by a numeric ID, and predicted ratings are on a scale of 1 to 5, with a higher rating indicating a stronger likelihood that the user will like a particular movie.
 この例では、すべてのユーザーと映画は数値IDで識別でき、予測された評価は1から5のスケールであり、より高い評価はユーザーが特定の映画を好む可能性が高いことを示している。
 
-### Architecture 建築
+### 1.1.1. Architecture 建築
 
 The following diagram summarizes the architecture, key components, and interactions in the solution.
 次の図は、ソリューションのアーキテクチャ、主要コンポーネント、相互作用をまとめたものである。
@@ -85,7 +85,7 @@ API Gateway subsequently receives the response from the Amazon SageMaker endpoin
 
 ![]()
 
-### Request and response formats リクエストとレスポンスのフォーマット
+### 1.1.2. Request and response formats リクエストとレスポンスのフォーマット
 
 The solution incorporates a REST API that supports a single resource (predicted-ratings) and a GET method.
 このソリューションには、単一のリソース（`predicted-ratings`）とGETメソッドをサポートするREST APIが組み込まれている。
@@ -133,7 +133,7 @@ This would return with a response similar to the below:
 }
 ```
 
-### Amazon SageMaker model input and output formats Amazon SageMaker モデルの入出力フォーマット
+### 1.1.3. Amazon SageMaker model input and output formats Amazon SageMaker モデルの入出力フォーマット
 
 The rating predictor solution is based on a sample model that comes supplied with Amazon SageMaker, specifically: object2vec_movie_recommendation.ipynb.
 評価予測ソリューションは、Amazon SageMakerに付属しているサンプルモデルに基づいています： object2vec_movie_recommendation.ipynb です。
@@ -174,7 +174,7 @@ You can use mapping templates to map the GET request format received by the REST
 
 <!-- ここまで読んだ! -->
 
-### Amazon API Gateway method integration Amazon API Gatewayメソッドの統合
+### 1.1.4. Amazon API Gateway method integration Amazon API Gatewayメソッドの統合
 
 When you use API Gateway to create a REST API, you need to define the following configuration models for each API method:
 API Gatewayを使用してREST APIを作成する場合、APIメソッドごとに以下の**configurationモデル**を定義する必要があります:
@@ -193,7 +193,7 @@ The following diagram depicts the processing flow, and shows how an example requ
 
 ![]()
 
-### Mapping Templates マッピング・テンプレート
+### 1.1.5. Mapping Templates マッピング・テンプレート
 
 As part of the integration request and response configurations, the solution defines mapping templates using the Apache Velocity Template Language (VTL).
 integrationリクエストとintegrationレスポンスの設定の一部として、このソリューションは、Apache Velocity Template Language (VTL) を使用してマッピングテンプレートを定義します。(VTLっていうDSLがあって、その言語を使ってマッピングテンプレートを定義するよってこと?? 文脈的に、他の言語を使って定義する方法もありそう...??:thinking:)
@@ -204,7 +204,7 @@ With mapping templates, you can use VTL templates to convert from the REST reque
 
 <!-- ここまで読んだ! -->
 
-## Walkthrough steps チュートリアルの手順
+## 1.2. Walkthrough steps チュートリアルの手順
 
 The walkthrough contains the following key steps:
 このウォークスルーには、以下の重要なステップが含まれている：
@@ -234,7 +234,7 @@ API Gatewayエンドポイントのデプロイとテスト
 
 <!-- ここまで読んだ -->
 
-## Prerequisites 前提条件
+## 1.3. Prerequisites 前提条件
 
 To follow this walkthrough, you need to meet the following prerequisites:
 このウォークスルーに従うには、以下の前提条件を満たす必要がある：
@@ -249,7 +249,7 @@ To follow this walkthrough, you need to meet the following prerequisites:
 
 <!-- 前提条件は全て満たしてそう -->
 
-## Step 1: Building and deploying the Amazon SageMaker model ステップ 1： Amazon SageMaker モデルの構築とデプロイ
+## 1.4. Step 1: Building and deploying the Amazon SageMaker model ステップ 1： Amazon SageMaker モデルの構築とデプロイ
 
 <!-- このステップは既知なので、飛ばして良さそう。 -->
 
@@ -354,7 +354,7 @@ Verify that you can see the runtime endpoint.
 Record the endpoint name and ARN as you will need these later.
 **エンドポイント名とARN**は後で必要になるので記録しておく。
 
-## Step 2: Testing the Amazon SageMaker model endpoint using the AWS CLI ステップ 2： AWS CLI を使用した Amazon SageMaker モデルエンドポイントのテスト
+## 1.5. Step 2: Testing the Amazon SageMaker model endpoint using the AWS CLI ステップ 2： AWS CLI を使用した Amazon SageMaker モデルエンドポイントのテスト
 
 You can test the inference endpoint using the AWS CLI as follows:
 以下のようにAWS CLIを使って推論エンドポイントをテストすることができる：
@@ -383,7 +383,7 @@ If your endpoint is working correctly, you should see a file called results that
 Now that you have a working Amazon SageMaker endpoint, you can build a REST API in front of it.
 これで Amazon SageMaker のエンドポイントが使えるようになったので、その手前に REST API を構築することができます。
 
-## Step 3: Creating an execution role for the REST API REST APIの実行ロールの作成
+## 1.6. Step 3: Creating an execution role for the REST API REST APIの実行ロールの作成
 
 <!-- ここから未知! -->
 
@@ -451,12 +451,12 @@ IAM roleのsummaryページで、**ロールのARN**を記録しておく。
 
 <!-- ここまで読んだ! -->
 
-## Step 4: Building an API Gateway endpoint ステップ4： API Gatewayのエンドポイントを構築する
+## 1.7. Step 4: Building an API Gateway endpoint ステップ4： API Gatewayのエンドポイントを構築する
 
 In this section, you build your REST API.
 このセクションでは、REST APIを構築します。
 
-### Creating an API APIの作成
+### 1.7.1. Creating an API APIの作成
 
 Complete the following steps:
 以下のステップを完了する：
@@ -483,7 +483,7 @@ Create APIを選択します。
 Note: In a production system, you should consider whether you would benefit from the Edge Optimized option.
 注意: 本番システムでは、`Edge Optimized` オプションが有益かどうかを検討する必要があります。(どんなオプション?)
 
-### Creating a resource リソースの作成
+### 1.7.2. Creating a resource リソースの作成
 
 (APIオブジェクトを作ってから、リソースを定義する??)
 
@@ -521,7 +521,7 @@ The resource navigation tree should now be similar to the following screenshot, 
 リソース・ナビゲーション・ツリーは以下のスクリーンショットのようになり、`/predicted-ratings/{user_id}`が表示されます。
 (ここでリソースを定義してるのって、エンドポイントを階層的に定義していくってことか...! そういえばWeb API: the good partsによると、エンドポイント=リソースの場所みたいな感じだったっけ??:thinking:)
 
-### Creating a GET method GETメソッドの作成
+### 1.7.3. Creating a GET method GETメソッドの作成
 
 The next step is to create a GET method on the resource path /predicted-ratings/{user_id} and integrate it with your Amazon SageMaker endpoint.
 次のステップは、**リソースパス `/predicted-ratings/{user_id}` に GET メソッドを作成し、Amazon SageMaker エンドポイントと統合すること**です。
@@ -586,7 +586,7 @@ In the next step, you use mapping templates to map parameters passed in the GET 
 
 <!-- ここまで読んだ! -->
 
-## Step 5: Create a mapping template for request integration ステップ5： リクエスト統合用のマッピングテンプレートを作成する
+## 1.8. Step 5: Create a mapping template for request integration ステップ5： リクエスト統合用のマッピングテンプレートを作成する
 
 You should now see a Method Execution screen in the right-hand pane.
 これで、右側のペインにメソッド実行画面が表示されるはずです。
@@ -598,7 +598,7 @@ See the following screenshot.
 This contains a diagram showing how requests flow from your REST API to the Amazon SageMaker runtime and how responses flow back.
 これには、REST API から Amazon SageMaker ランタイムへのリクエストの流れと、レスポンスの流れを示す図が含まれています。
 
-### Creating a VTL mapping template VTL マッピングテンプレートの作成
+### 1.8.1. Creating a VTL mapping template VTL マッピングテンプレートの作成
 
 In this next step, create a VTL mapping template to convert GET requests received on the REST API to POST requests expected by the Amazon SageMaker runtime.
 次のステップでは、**REST API で受け取った GET リクエストを Amazon SageMaker ランタイムが期待する POST リクエストに変換する VTL マッピングテンプレート**を作成します。
@@ -648,7 +648,6 @@ This is where you add your VTL template.
 - Choose Save.
 保存を選択する。
 
-
 The template defines what goes into the body of the POST request.
 **テンプレートはPOSTリクエストのボディに入るものを定義する。** (うんうん、確かにそう見える...!)
 The first two lines are copied into the request body exactly as specified.
@@ -667,10 +666,10 @@ The template converts the string held in $items to an array using the string spl
 A comma separator is inserted between JSON objects, with no comma after the last entry.
 JSONオブジェクトの間にはカンマ区切りが挿入され、最後のエントリーの後にはカンマは挿入されない。
 
-
 (VTLの文法を覚えないといけないと思ったけど、おそらくAPI間のパラメータのmappingってパターンがかなり限られてると思うので、まあ楽勝なのかも。)
 
-### Testing the mapping
+### 1.8.2. Testing the mapping
+
 マッピングのテスト
 
 You can now test this mapping using the API Gateway built-in test harness.
@@ -709,7 +708,7 @@ If everything is working correctly, you should see response code 200, with a res
 You can also scroll through the logs to verify the sequence of events.
 また、ログをスクロールして一連の出来事を確認することもできる。
 You should see something similar to the following:
-以下のようなものが表示されるはずだ: 
+以下のようなものが表示されるはずだ:
 
 ```shell
 <timestamp>: Endpoint request body after transformations: {
@@ -734,7 +733,7 @@ In the next step, you add a second mapping template to convert the model respons
 
 <!-- ここまで読んだ! -->
 
-## Step 6: Creating a mapping template for response integration ステップ6： レスポンス統合用のマッピングテンプレートの作成
+## 1.9. Step 6: Creating a mapping template for response integration ステップ6： レスポンス統合用のマッピングテンプレートの作成
 
 To add a mapping template for the response, complete the following steps:
 応答用のマッピングテンプレートを追加するには、以下の手順を実行する：
@@ -779,7 +778,7 @@ You can test this again by following the same procedure you used earlier, and th
 
 <!-- ここまで読んだ! -->
 
-## Step 7: Deploying and testing the API Gateway endpoint ステップ7： API Gateway エンドポイントのデプロイとテスト
+## 1.10. Step 7: Deploying and testing the API Gateway endpoint ステップ7： API Gateway エンドポイントのデプロイとテスト
 
 You are now ready to deploy your REST API.
 これでREST APIをデプロイする準備が整いました。
@@ -836,7 +835,7 @@ You now have a deployed, working REST API that is integrated with your Amazon Sa
 
 <!-- ここまで読んだ! -->
 
-## Additional considerations その他の考慮事項
+## 1.11. Additional considerations その他の考慮事項
 
 This post focused on how to use API Gateway mapping templates to transform requests and responses between formats required by the REST API and model runtime.
 この投稿では、API Gatewayのマッピングテンプレートを使用して、REST APIとモデルランタイムが要求するフォーマット間でリクエストとレスポンスを変換する方法に焦点を当てました。
@@ -852,7 +851,7 @@ This may not be possible in all situations, such as when you need to enrich the 
 In such cases, you can still use VTL-based mapping templates to pre-process requests and post-process responses, which reduces the load on any intermediate compute layer.
 このような場合でも、VTLベースのマッピングテンプレートを使って、リクエストの前処理とレスポンスの後処理を行うことができる。
 
-## Cleaning up 後始末
+## 1.12. Cleaning up 後始末
 
 When you are finished experimenting with your setup, clean up the various resources that you used on API Gateway, S3, and Amazon SageMaker.
 セットアップの実験が終わったら、API Gateway、S3、Amazon SageMakerで使用した様々なリソースをクリーンアップします。
@@ -864,7 +863,7 @@ If you wish to retain the model and API Gateway setup for further experimentatio
 Remember to update the API Gateway request integration if you use a different endpoint name.
 異なるエンドポイント名を使用する場合は、API Gatewayリクエスト統合を更新することを忘れないでください。
 
-## Conclusion 結論
+## 1.13. Conclusion 結論
 
 This post demonstrated how to use API Gateway to create a public RESTful endpoint for an Amazon SageMaker inference.
 この投稿では、**API Gateway を使用して Amazon SageMaker 推論のパブリック RESTful エンドポイントを作成する方法**を紹介しました。
