@@ -1,7 +1,7 @@
 ## link リンク
 
-https://www.moderndatastack.xyz/category/feature-store
-https://www.moderndatastack.xyz/category/feature-store
+<https://www.moderndatastack.xyz/category/feature-store>
+<https://www.moderndatastack.xyz/category/feature-store>
 
 # What is a Feature Store? フィーチャーストアとは何か？
 
