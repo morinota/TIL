@@ -1,7 +1,7 @@
 ## refs
 
-- https://udemy.benesse.co.jp/development/system/kubernetes.html
-- https://kubernetes.io/ja/docs/tutorials/
+- <https://udemy.benesse.co.jp/development/system/kubernetes.html>
+- <https://kubernetes.io/ja/docs/tutorials/>
 
 ## めちゃざっくりKubernetesって?
 
@@ -17,4 +17,4 @@ Pod, Node, Clusterという3種の Componentがあるっぽい。
 
 - Kubernetes Clusterは、コンテナ化されたアプリケーションを実行する、Node(=worker machine)の集合
 
-![]https://udemy.benesse.co.jp/wp-content/uploads/Kubernetes-e1604986289452.png
+![]<https://udemy.benesse.co.jp/wp-content/uploads/Kubernetes-e1604986289452.png>
