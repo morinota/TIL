@@ -1,16 +1,16 @@
-## 参考
+## 0.1. 参考
 
 - https://medium.com/deep-learning-hk/compute-document-similarity-using-autoencoder-with-triplet-loss-eb7eb132eb38
 - [論文:Article De-duplication Using Distributed Representations](http://gdac.uqam.ca/WWW2016-Proceedings/companion/p87.pdf)
   - 分散表現を用いた記事の重複排除
 
-## title & overview
+## 0.2. title & overview
 
 Compute Document Similarity Using Autoencoder With Triplet Loss
 
 In this blog post, we will examine how to compute document similarity for news articles using Denoising Autoencoder (DAE) combined with a Triplet Loss function. This approach is presented in Article De-duplication Using Distributed Representations published by Yahoo! JAPAN and my Tensoflow implementation could be find here.このブログでは、**Denoising Autoencoder (DAE)** と**Triplet Loss関数**を組み合わせて、ニュース記事の類似性を計算する方法について説明します。この手法は、Yahoo! JAPANが発行したArticle De-duplication Using Distributed Representationsで紹介されており、私のTensoflowでの実装はこちらでご覧いただけます。
 
-# Introduciton
+# 1. Introduciton
 
 The most common way of computing document similarity is to transform documents into TFIDF vectors and then apply any similarity measure e.g. cosine similarity to these vectors.
 文書の類似度を計算する最も一般的な方法は、文書をTFIDFベクトルに変換し、これらのベクトルにコサイン類似度などの任意の類似度指標を適用することである。
@@ -27,7 +27,7 @@ And this is how Yahoo! JAPAN solves the limitations:
 
 Now let go through DAE and Triplet loss separately. それでは、DAEとTriplet lossを別々に見ていきましょう。
 
-# Denoisining Autoencoder
+# 2. Denoisining Autoencoder
 
 Autoencoder is basically a neural network doing unsupervised learning that tries to reconstruct input vector (encoder) from compressed embeddings (decoder).
 オートエンコーダーは、基本的に教師なし学習を行うニューラルネットワークで、圧縮された**埋め込みデータ（デコーダー）から入力ベクトル（エンコーダー）を再構成**しようとするものである。
@@ -62,7 +62,7 @@ where
 The loss function used is usually squared loss or cross-entropy.
 損失関数は、通常、二乗損失またはクロスエントロピが使用される。
 
-# Triplet Loss
+# 3. Triplet Loss
 
 Triplet loss is first introduced in FaceNet: A Unified Embedding for Face Recognition and Clustering by Google which used to train faces’ embeddings.
 トリプレットロスはFaceNetで初めて紹介された。[A Unified Embedding for Face Recognition and Clustering by Google](https://arxiv.org/abs/1503.03832)で初めて紹介され、顔の埋め込みを学習するのに使われた。
@@ -87,7 +87,7 @@ Above is an example from FaceNet, we can see images of same person have lower eu
 Yahoo! JAPAN applied the same idea to news articles’ embeddings to preserve categorical similarity, although the loss function is different compared to the one used by FaceNet.
 Yahoo! JAPANでは、FaceNetで用いられている損失関数とは異なるものの、**同様の考え方をニュース記事の埋め込みに適用し、カテゴリの類似性を保持する**ようにしました。
 
-# Denoising Autoencoder + Triplet Loss
+# 4. Denoising Autoencoder + Triplet Loss
 
 The approach presented in Article De-duplication Using Distributed Representations used DAE with triplet loss to generate embeddings which preserve categorical similarity and here is how it is done.
 Article De-duplication Using Distributed Representationsで紹介したアプローチは、トリプレットロスを伴うDAEを用いて、カテゴリカルな類似性を保持した埋め込みを生成するもので、その方法は以下のとおりです。
@@ -95,14 +95,14 @@ Article De-duplication Using Distributed Representationsで紹介したアプロ
 **Binary word count vector** is used as input to the DAE, and for every news article (anchor), we need another news article that has the same category label (positive) and another news article that has different category label (negative).
 DAEの入力として**2値語数ベクトル**を用い、1つのニュース記事（アンカー）に対して、同じカテゴリラベル（ポジティブ）を持つ別のニュース記事と、異なるカテゴリラベル（ネガティブ）を持つ別のニュース記事が必要である。
 
-### Notation
+### 4.0.1. Notation
 
 The input vector of (anchor, positive, negative) denoted as (x1, x2, x3)
 (アンカー, 正, 負)の入力ベクトル(x1, x2, x3)
 The embeddings / hidden layer of (anchor, positive, negative) denoted as (h1, h2, h3)
 (アンカー, 正, 負)の埋め込み/隠れ層は(h1, h2, h3)とする。
 
-### Loss function
+### 4.0.2. Loss function
 
 To preserve the categorical similarity, we want h1．h2 > h1．h3 since x1 is more similar to x2 than x3. Hence the loss function of DAE is updated as follows:
 x1はx3よりもx2に類似しているので、カテゴリカルな類似性を保持するために、h1.h2 > h1.h3としたい。したがって、DAE の損失関数は以下のように更新される。
@@ -133,7 +133,7 @@ From (2), ø is the penalty function for article similarity and from the curve a
 After training, we could apply cosine similarity on the embeddings to check how similar two articles are.
 学習後、埋め込みに余弦類似度を適用することで、2つの記事がどの程度似ているかを確認することができる。
 
-# Triplet Mining
+## 4.1. Triplet Mining
 
 As said before, to train the DAE with triplet loss, we need to prepare a set of triplet (anchor, positive, negative) as training data. So for every anchor, we need to map a positive and a negative. It could be a lot of works if this is done manually.
 前述したように、トリプレット損失を用いたDAEを学習するためには、**学習データとしてトリプレット（アンカー、正、負）のセットを用意する必要**がある。つまり、**アンカーごとに、ポジティブとネガティブをマッピングする必要**がある。これを手作業で行うとなると、大変な労力となる。
@@ -147,22 +147,22 @@ With triplet mining, we only need to provide anchor and label of the anchor to D
 > Note that triplet mining is not mentioned in the paper, but I found this saves a lot of effort to create the triplet manually.
 > なお、トリプレットマイニングについては論文では触れられていませんが、トリプレットを手動で作成する手間が大幅に省けることがわかりました。
 
-# Evaluation
+# 5. Evaluation
 
 Let test the performance of this approach on some open dataset.
 この手法の性能を、いくつかのオープンデータセットで検証してみよう。
 
-## dataset
+## 5.1. dataset
 
 A dataset which contains 10348 news articles with categories labels and story labels is used for evaluation. The dataset is available at https://www.kaggle.com/louislung/uci-news-aggregator-dataset-with-content
 
 評価には、カテゴリラベルとストーリーラベルを持つ10348のニュース記事を含むデータセットを使用した。
 
-## Code
+## 5.2. Code
 
 I have implemented this autoencoder using Tensorflow and you may find the implementation [here in my github](https://github.com/louislung/DAE_RNN_News_Recommendation).
 
-## Setting
+## 5.3. Setting
 
 The embeddings is trained with following autoencoder network’s settings:
 埋め込みは、以下のオートエンコーダーネットワークの設定で学習されます。
@@ -181,7 +181,7 @@ The embeddings is trained with following autoencoder network’s settings:
 The dataset is splitted into two: 5000 for training and 5348 for testing.
 データセットは、トレーニング用の5000個とテスト用の5348個に分割されています。
 
-# Result
+# 6. Result
 
 We can evaluate the performance of the embeddings by checking the AUROC of cosine similarity of similar articles (article of the same category or same story).
 埋め込みの性能は、類似記事（同じカテゴリーや同じストーリーの記事）のコサイン類似度のAUROCを確認することで評価することができる。
@@ -203,7 +203,7 @@ While Tfidf is still good at identifying similar articles at story level as the 
 We can see that embeddings trained with the approach is highly compressed (dimensions reduced from 10000 to 50) and is able to preserve categorical similarity.
 この手法で学習した埋め込みは、高度に圧縮され（**次元は1万から50に減少**）、カテゴリ的な類似性を保持できていることがわかる。
 
-# Wrapping Up
+# 7. Wrapping Up
 
 We have seen how to train embeddings which preserve categorical similarity using a variant of denoising autoencoder by introducing triplet loss into the model.
 ここまで、三重項損失をモデルに導入したノイズ除去オートエンコーダの変種を用いて、カテゴリ的類似性を保持した埋め込みを学習する方法を見てきました。
