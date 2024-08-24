@@ -24,6 +24,10 @@ title-slide-attributes:
 
 ## 参考文献:
 
+OPEは、logging policy $\pi_{0}$ で収集した過去の $n$ 個のログデータ $D := {(\mathbf{x}_i, a_i , r_i)}_{i=1}^{n}$ のみを用いて、($\pi_{0}$ とは異なる) target policy $\pi$ の性能を推定する。
+
+$\pi_A$, $\pi_B$, 
+
 - usaitoさんの資料: [Off-Policy Evaluationの基礎とOpen Bandit Dataset & Pipelineの紹介](https://speakerdeck.com/usaito/off-policy-evaluationfalseji-chu-toopen-bandit-dataset-and-pipelinefalseshao-jie)
 - 大規模行動空間におけるOPEの論文: [Off-Policy Evaluation for Large Action Spaces via Embeddings](https://arxiv.org/pdf/2202.06317.pdf)
 - 複数のオフラインmetricsからオンライン性能を予測する論文: [Predicting Online Performance of News Recommender Systems Through Richer Evaluation Metrics](https://dl.acm.org/doi/10.1145/2792838.2800184)
