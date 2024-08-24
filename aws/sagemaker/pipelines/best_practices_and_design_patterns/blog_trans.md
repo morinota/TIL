@@ -1,6 +1,6 @@
-## 0.1. refs: refs：
+## 0.1. refs: refs
 
-- https://aws.amazon.com/jp/blogs/machine-learning/best-practices-and-design-patterns-for-building-machine-learning-workflows-with-amazon-sagemaker-pipelines/ https://aws.amazon.com/jp/blogs/machine-learning/best-practices-and-design-patterns-for-building-machine-learning-workflows-with-amazon-sagemaker-pipelines/
+- <https://aws.amazon.com/jp/blogs/machine-learning/best-practices-and-design-patterns-for-building-machine-learning-workflows-with-amazon-sagemaker-pipelines/> <https://aws.amazon.com/jp/blogs/machine-learning/best-practices-and-design-patterns-for-building-machine-learning-workflows-with-amazon-sagemaker-pipelines/>
 
 # 1. Best practices and design patterns for building machine learning workflows with Amazon SageMaker Pipelines Amazon SageMaker Pipelinesで機械学習ワークフローを構築するためのベストプラクティスとデザインパターン
 
@@ -26,7 +26,7 @@ In this section, we discuss some best practices that can be followed while desig
 Adopting them can improve the development process and streamline the operational management of SageMaker Pipelines.
 これらを採用することで、SageMaker Pipelines の開発プロセスを改善し、運用管理を効率化することができます。
 
-### 1.1.1. Use Pipeline Session for lazy loading of the pipeline パイプラインの遅延ロードにはパイプライン・セッションを使用する。
+### 1.1.1. Use Pipeline Session for lazy loading of the pipeline パイプラインの遅延ロードにはパイプライン・セッションを使用する
 
 Pipeline Session enables lazy initialization of pipeline resources (the jobs are not started until pipeline runtime).
 **パイプライン・セッションは、パイプライン・リソースのlazy initialization (遅延初期化)を可能にします**(ジョブはパイプライン実行時まで開始されません)
@@ -50,7 +50,7 @@ sklearn_processor = SKLearnProcessor(
 )
 ```
 
-### 1.1.2. Run pipelines in local mode for cost-effective and quick iterations during development 開発中のパイプラインをローカルモードで実行し、費用対効果に優れた迅速なiteration を行う。
+### 1.1.2. Run pipelines in local mode for cost-effective and quick iterations during development 開発中のパイプラインをローカルモードで実行し、費用対効果に優れた迅速なiteration を行う
 
 You can run a pipeline in local mode using theLocalPipelineSession context.
 `LocalPipelineSession` コンテキストを使用して、**ローカルモードでパイプラインを実行でき**ます。
@@ -98,7 +98,7 @@ pipeline = Pipeline(
 )
 ```
 
-### 1.1.4. Organize and track SageMaker pipeline runs by integrating with SageMaker Experiments SageMaker Experiments と統合することで、SageMaker パイプラインの実行を整理および追跡。
+### 1.1.4. Organize and track SageMaker pipeline runs by integrating with SageMaker Experiments SageMaker Experiments と統合することで、SageMaker パイプラインの実行を整理および追跡
 
 SageMaker Pipelines can be easily integrated with SageMaker Experiments for organizing and tracking pipeline runs.
 **SageMaker Pipelines は SageMaker Experiments と簡単に統合でき、パイプラインの実行を整理および追跡できる**。
@@ -133,15 +133,20 @@ Pipeline(
 )
 ```
 
-### 1.1.5. Securely run SageMaker pipelines within a private VPC プライベート VPC 内で SageMaker パイプラインを安全に実行します。
+### 1.1.5. Securely run SageMaker pipelines within a private VPC プライベート VPC 内で SageMaker パイプラインを安全に実行します
+
+(本番運用の可能性が出てきた気がするので、この辺りの理解が必要になってきた...!:thinking:)
 
 To secure the ML workloads, it’s a best practice to deploy the jobs orchestrated by SageMaker Pipelines in a secure network configuration within a private VPC, private subnets, and security groups.
-ML ワークロードを保護するために、SageMaker Pipelines によってオーケストレーションされたジョブを、プライベート VPC、プライベートサブネット、およびセキュリティグループ内の安全なネットワーク構成で展開することがベストプラクティスです。
+ML ワークロードを保護するために、**SageMaker Pipelines によってオーケストレーションされたジョブを、プライベート VPC、プライベートサブネット、およびセキュリティグループ内の安全なネットワーク構成で展開することがベストプラクティス**です。
+(pipeline自体をVPC内にデプロイする、というよりは、pipelineによって指揮されるジョブをVPC内で動かす、みたいなイメージだろうか...?:thinking:)
 (なるほど...?? この様なsecureなネットワーク構成を取る事で、データの漏洩や不正アクセスから守れるってことか...! 逆に言えば、この指定をしなければ、Sagemaker Pipelinesで情報漏洩や不正アクセスのリスクがあるということ...??)
 To ensure and enforce the usage of this secure environment, you can implement the following AWS Identity and Access Management (IAM) policy for the SageMaker execution role (this is the role assumed by the pipeline during its run).
-このセキュアな環境の使用を保証し、強制するには、SageMaker 実行ロール（これはパイプラインの実行中に想定されるロールです）に対して、以下の AWS Identity and Access Management (IAM) ポリシーを実装します。
+**このセキュアな環境の使用を保証し強制するために**、SageMaker 実行ロール(=これはパイプラインの実行にassumeされるロール) に対して、次の AWS Identity and Access Management (IAM) ポリシーを実装できます。
 You can also add the policy to run the jobs orchestrated by SageMaker Pipelines in network isolation mode.
 SageMaker Pipelines でオーケストレーションされたジョブをネットワーク分離モードで実行するポリシーを追加することもできます。
+
+(なるほど、pipelineに移譲されるIAM roleにこの条件を追加しておく事で、TrainingJobなどを実行させる時にVPCの指定をしないとエラーを返すようになるってことだよね...!:thinking:)
 
 ```python
 # IAM Policy to enforce execution within a private VPC
@@ -154,7 +159,6 @@ SageMaker Pipelines でオーケストレーションされたジョブをネッ
         "sagemaker:CreateTrainingJob",
         "sagemaker:CreateModel"
     ],
-
     "Resource": "*",
     "Effect": "Deny",
     "Condition": {
@@ -185,7 +189,7 @@ SageMaker Pipelines でオーケストレーションされたジョブをネッ
 }
 ```
 
-### 1.1.6. Monitor the cost of pipeline runs using tags タグを使用してパイプラインの実行コストを監視する。
+### 1.1.6. Monitor the cost of pipeline runs using tags タグを使用してパイプラインの実行コストを監視する
 
 Using SageMaker pipelines by itself is free; you pay for the compute and storage resources you spin up as part of the individual pipeline steps like processing, training, and batch inference.
 SageMakerパイプラインの使用自体は無料です。しかし、processing、training、batch inferenceなどの個々のパイプラインステップの一部としてspin up(=起動する)したコンピュートリソースとストレージリソースに対して支払いが発生します。
