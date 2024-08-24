@@ -68,7 +68,7 @@ def gumbel_softmax_trick_sampling(f_theta: ScoreFunction, x: float) -> list[str]
     # scoresと同じ長さの乱数を、標準Gumbel分布からサンプリング
     gumbel_noises = np.random.gumbel(size=len(action_space), loc=0, scale=1)
 
-    perturbed_scores = scores + gumbel_noises  # perturbedの意味=「わからない」
+    perturbed_scores = scores + gumbel_noises  # perturbedの意味=「摂動された」
     ## np.argsortは配列の要素を昇順のインデックスを返すので、-1をかけて降順にする
     ranking = [a for a in np.array(action_space)[np.argsort(-perturbed_scores)]]
     return ranking[:K]
