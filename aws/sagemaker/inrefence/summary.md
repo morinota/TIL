@@ -1,4 +1,4 @@
-## refs:
+## 0.1. refs:
 
 - [既存のPyTorchモデルをAmazon SageMakerのリアルタイム推論エンドポイントにデプロイする](https://qiita.com/thruaxle/items/8339d70de0548f00460f)
 - [Amazon SageMaker におけるカスタムコンテナ実装パターン詳説 〜推論編〜](https://aws.amazon.com/jp/blogs/news/sagemaker-custom-containers-pattern-inference/)
@@ -7,9 +7,9 @@
 - 柏木さんのブログ! これは自前コンテナでSagemakerエンドポイントを作ってる例: [SageMakerとStep Functionsを用いた機械学習パイプラインで構築した検閲システム（後編）](https://tech.connehito.com/entry/2022/03/28/190436)
 - CyberAgentの長江さんのSagemakerエンドポイントの高速化のtips: [SageMaker Endpointのレイテンシー高速化実験](https://nsakki55.hatenablog.com/entry/2023/01/07/134201)
 
-# Sagemaker 推論エンドポイント:
+# 1. Sagemaker 推論エンドポイント:
 
-## なにそれ?
+## 1.1. なにそれ?
 
 - Sagemaker:
   - MLモデルの学習や推論に必要な環境の構築を、専用のコンピューティング環境(Sagemaker MLインスタンス上で稼働するコンテナ)上でフルマネージドに行うことができる。
@@ -21,7 +21,7 @@
 - リアルタイム推論エンドポイントは、低レイテンシーまたは高スループットが要求されるオンライン推論に適したオプション。
   - 参考: [推論オプション](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/deploy-model.html#deploy-model-options)
 
-## リアルタイム推論エンドポイントについて:
+## 1.2. リアルタイム推論エンドポイントについて:
 
 - 低レイテンシーや高スループットが要求されるオンライン推論に最適。
 - 選択したインスタンスタイプに基づいて、持続的なtrafficを処理できる、**永続的でフルマネージド方のendpoint(REST API)**として使用できる。
@@ -33,7 +33,7 @@
 
 図を見た感じでは、外部からのリクエストをまず HTTPS Endpointが受けとり、それがElastic Load Balancerを経由して、Sagemaker エンドポイントのML instances (Auto Scaling Group)に送られるぽい。
 
-## リアルタイプ推論エンドポイントのデプロイ手順:
+## 1.3. リアルタイプ推論エンドポイントのデプロイ手順:
 
 以下は、ざっくりリアルタイム推論エンドポイントに必要なもの達。
 
@@ -58,7 +58,7 @@
 - 5. Sagemaker エンドポイントを作成する。
   - 手順3で定義したモデルを、手順4で定義したcomputing resourcesで動かし、リクエストを受け取ったら推論結果を返すようにする。
 
-## リアルタイム推論エンドポイントがmodel artifactをどう使うのか:
+## 1.4. リアルタイム推論エンドポイントがmodel artifactをどう使うのか:
 
 - model artifact:
   - 具体的には、Sagemakerエンドポイントでモデルをホストするために、**Sagemakerの利用者が準備する必要のあるファイル一式を格納した圧縮ファイルのこと**。
@@ -85,7 +85,7 @@ model.tar.gz
     - 依存関係のあるライブラリがインストールされる。
     - 推論スクリプトが実行される。(デプロイ直後の初回実行っぽい??)
 
-## 推論スクリプト `inference.py` の書き方のお作法
+## 1.5. 推論スクリプト `inference.py` の書き方のお作法
 
 (お作法に従わない場合は、`inference.py`側でflaskとかFastAPIとか使って、自前でエンドポイントを定義したりする感じっぽい...!:thinking:)
 
@@ -119,18 +119,18 @@ model.tar.gz
     - あ、じゃあデプロイ直後に、空リクエストを投げておかないと、コールドスタートになっちゃう??
   - 2回目以降のリクエストでは、`input_fn()` → `predict_fn()` → `output_fn()` の順で実行される。
 
-# 推論エンドポイントのコスト最適化のtips:
+# 2. 推論エンドポイントのコスト最適化のtips:
 
-## 複数のモデルをデプロイする場合のコスト最適化:
+## 2.1. 複数のモデルをデプロイする場合のコスト最適化:
 
-### Multi-Models Endpoint:
+### 2.1.1. Multi-Models Endpoint:
 
 - ざっくり雰囲気的な理解:
   - **単一のML instanceの1コンテナ内に複数のモデル(i.e. 複数のmodel artifact)をhostすることができる機能**っぽい。
     - **モデルの数だけ推論エンドポイントを稼働させておくよりも、コスト最適化ができる**。
     - query parameterなどで、どのモデル (i.e. どのmodel artifact) を使うか指定するようなイメージ。(ex. `TargetModel='model-008.tar.gz'`)
 
-### Multi-Containers Endpoint:
+### 2.1.2. Multi-Containers Endpoint:
 
 - ざっくり雰囲気的な理解:
   - 単一のML instanceに複数のコンテナをhostすることができる機能。最大15コンテナまで。
@@ -140,18 +140,18 @@ model.tar.gz
     - んーでもなんか、次のページにはコールドスタートなさそうな事が書いてる。
       - (https://pages.awscloud.com/rs/112-TZM-766/images/AWS-Black-Belt_2022_Amazon-SageMaker-Inference-Part-3_1014_v1.pdf の35ページ目とか)
 
-## デプロイパターンと戦略:
+## 2.2. デプロイパターンと戦略:
 
 - まずリアルタイム推論が必要か否か。
   - いいえ(一日ごと、1時間ごと、１週間毎、一ヶ月ごとなど)の場合 -> Sagemaker Batch Transform。
 - hogehoge
 
-# 安全なデプロイのために:
+# 3. 安全なデプロイのために:
 
 - 参考:
   - https://pages.awscloud.com/rs/112-TZM-766/images/AWS-Black-Belt_2022_Amazon-SageMaker-Inference-Part-3_1014_v1.pdf の36ページ目とか
 
-# リアルタイム推論のエンドポイントを試しに立ててみたメモ:
+# 4. リアルタイム推論のエンドポイントを試しに立ててみたメモ:
 - 以下資料のパターン2を採用して、推論エンドポイントを立てることができた:
   - [Amazon SageMaker におけるカスタムコンテナ実装パターン詳説 〜推論編〜](https://aws.amazon.com/jp/blogs/news/sagemaker-custom-containers-pattern-inference/) 
 
@@ -171,7 +171,7 @@ print(json.loads(responce))
 
 ざっくり、以下の手順で実現できた:
 
-- 1. ECRリポジトリを用意(endpoint内でrunさせるdocker imageを格納するため)
+##  4.1. ECRリポジトリを用意(endpoint内でrunさせるdocker imageを格納するため)
   - (気づき)AWS提供のコンテナを使うよりも、結局のところ自前のimageを使う方が楽だった!
     - aws提供のコンテナは結局いろいろお作法があったので...!(pytorchの推論用イメージの場合は、`.pth`ファイルがないとエラーが出る、など)
 
@@ -179,7 +179,8 @@ print(json.loads(responce))
 AWS_PROFILE={特定のprofile} aws ecr create-repository --repository-name {リポジトリ名}
 ```
 
-- 2. Dockerfileとentrypointのファイル `serve.py` を用意する
+## 4.2. Dockerfileとentrypointのファイル `serve.py` を用意する
+
   - 学習済みモデルは、imageの中に入れない。
   - 推論の実際の中身の処理のコードも、imageの中に入れない。
   - **コンテナに入れるのは、依存関係のpackageと、`serve.py`のみ**。 
@@ -231,7 +232,7 @@ from sagemaker_inference import model_server
 model_server.start_model_server()
 ```
 
-- 3. Docker imageをbuildして、ECRリポジトリにpushする
+## 4.3. 4.3 Docker imageをbuildして、ECRリポジトリにpushする
 
 ```python
 import os
@@ -255,7 +256,7 @@ os.system(f"docker tag {ecr_repository_name} {image_uri}")
 os.system(f"docker push {image_uri}")
 ```
 
-- 4. なんらかの方法で model artifact　(学習済みモデルのデータを`model.tar.gz`にまとめたもの) をS3にアップロードしておく。
+## 4.4. 4.4 なんらかの方法で model artifact　(学習済みモデルのデータを`model.tar.gz`にまとめたもの) をS3にアップロードしておく。
   - (今回は、ローカル環境にベクトルデータを落としてきておいた。それらをまとめて`model.tar.gz`にしてS3にアップロードした)
   - (推論用のコードは含めない点に注意! まあ含めても問題ないのかもしれないが...!:thinking:)
 
@@ -307,7 +308,7 @@ model_artifact_s3uri = f"s3://my-bucket/my-key-prefix/model.tar.gz"
 prepare_model_artifact(model_artifact_dir_path, model_artifact_s3uri)
 ```
 
-- 5. 推論コードの中身を作成する
+## 4.5. 4.5 推論コードの中身を作成する
   - Sagemaker推論endpointのお作法に従った4つの関数を持つ`inference.py`と、その他のモジュールたちを用意した。
     - 4つの関数を上書きするようなお作法
       - 初回実行時に呼ばれる処理: model_fn -> input_fn -> predict_fn -> output_fn
@@ -414,7 +415,7 @@ class Responce(BaseModel):
         )
 ```
 
-- 6. Sagemaker Model, Endpoint Configuration, Endpointを作成する
+## 4.6. 4.6 Sagemaker Model, Endpoint Configuration, Endpointを作成する
   - model artifactのS3 URIと、docker imageのURIを指定する必要がある。
   - sagemaker python SDKだと結構短く書ける印象。(endpoint configurationの存在を意識せずに済んでしまう...!:thinking:)
   - boto3だと、ローカル環境の推論コードを`source_dir`と`entry_point`として指定してデプロイ、みたいなことはできずに、手動でS3に`source.tar.gz`としてアップロードする必要はありそう...!:thinking:
@@ -444,7 +445,11 @@ predictor = model.deploy(
 )
 ```
 
-- 7. 最後に、実際にリクエストを投げてみる
+## 4.7 最後に、Sagemaker Ruitimeを使って実際にエンドポイントにリクエストを投げてみる
+
+- ちなみにSagemaker Runtimeって??:thinking:
+  - **SageMakerエンドポイントとのインターフェースを提供するサービス**。Saegmaker RuntimeのAPIを介して、SageMakerエンドポイントの機能を使える。
+  - SageMakerエンドポイントは、モデルをホストするための実体（インフラストラクチャとスケーリング機能を含む）。Sagemaker Runtimeは、エンドポイントにリクエストを送信するためのAPIを提供するサービス。
 
 ```python
 import json
@@ -464,6 +469,8 @@ print(json.loads(responce))
 predictor.delete_endpoint()
 ```
 
-# ざっくり思ったこと
+## API Gatewayと連携して、Web APIとして公開する
+
+# 5. ざっくり思ったこと
 
 - Sagemaker推論エンドポイントを使うメリットの1つって、GunicornとかNginxとかの設定をせずに抽象化してSagemaker側に任せられることかもって思った。(自動スケーリングとかLoad BalancerとかもSagemaker側でやってくれるっぽい??)
