@@ -347,3 +347,17 @@ def sampling_with_deterministic_policy(f_theta: ScoreFunction, x: FeatureVector,
   - スコア関数 $f_{theta}(x,a)$ について
     - 今回は、ユーザとアイテムの特徴を埋め込み表現をもとに、内積をスコアとするシンプルなスコア関数を想定する。
   - リアルタイム推論時には事前に作成された特徴量を使うケースを想定する。(特徴量作成はバッチ、推論だけリアルタイムのケース)
+
+### ちなみに、今回の実験のための準備方法
+
+- リアルタイムで推薦結果を作って返す推論サーバの作り方:
+  - 今回はなるべく簡単にシンプルに推論サーバを提供するために、Sagemaker EndpointとAWS API Gatewayを紐付ける方法を試してみました!
+  - 参考にしたAWS公式のブログ: [Creating a machine learning-powered REST API with Amazon API Gateway mapping templates and Amazon SageMaker](https://aws.amazon.com/jp/blogs/machine-learning/creating-a-machine-learning-powered-rest-api-with-amazon-api-gateway-mapping-templates-and-amazon-sagemaker/)
+
+![アーキテクチャ図を作って追加する](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2020/03/04/api-gateway-sagemaker-1.gif)
+
+- こんな感じのエンドポイントを作ってみました!
+
+```shell
+curl -X GET "https://xxxxxxxxx.execute-api.{aws-region}.amazonaws.com/1/recommended-items/{user_id}?k={推薦アイテムリストの長さ}&inference_type={推薦結果の作り方の種類}" 
+```
