@@ -1,54 +1,12 @@
----
-format:
-  html:
-    theme: cosmo
-  # revealjs:
-  #   # incremental: false
-  #   # theme: [default, custom_lab.scss]
-  #   theme: [default, custom_lab.scss]
-  #   slide-number: true
-  #   scrollable: true
-  #   logo: https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919
-  #   footer: ⇒ [https://qiita.com/morinota](https://qiita.com/morinota)
-from: markdown+emoji
-
-fig-cap-location: bottom
-
-title: 確率的(探索的)な推薦方策を考える ~オフライン評価&学習しやすい優しい世界?~
-subtitle: y-tech-ai ワクワク勉強会
-date: 2024/08/13
-author: モーリタ
-title-slide-attributes:
-  #   data-background-image: https://i.imgur.com/nTazczH.png
-  data-background-size: contain
-  data-background-opacity: "0.5"
----
-
-## (下書き) 書きたい内容をラフに列挙する
-
-<!-- ## TL;DR -->
-
-- 意思決定最適化問題のオフライン評価が難しい話を少し
-  - 「反実仮想機械学習」などを読んだ感じでは、データ収集方策が決定的だと、オフライン評価がかなり困難になりそう。
-  - (確率的な方策を採用したらそれで完結するわけではないが、決定的な方策だともう厳しすぎるので)
-- 評価・学習に使用しやすいログデータを収集するというモチベーションで、決定的な推薦方策から確率的な推薦方策への移行アイデアをいくつか考えてみる。
-  - まず問題設定:
-  - アイデア0: 決定的な方策
-  - アイデア1: プラケットルースモデルに基づくランキングの確率的サンプリング
-  - アイデア2: ガンベルソフトマックストリックを使って同様のランキングを高速に生成
-  - アイデア3: epsilon-greedyを使う
-  - ちなみに...「探索」がユーザ体験にポジティブな影響を与えて長期的なengagementに繋がるという主張の論文もあった。
-  - 論文の結論としては、単に多様性を増やすだけではダメで、セレンディピティを生むような探索を推薦システムに実行させることができた場合に有効という結論だったはず。
-- 懸念: オンライン推論の場合、確率的な方策はレイテンシーとか大丈夫??
-- 実験してみる:
-
 ## はじめに
 
 ### なんでこのトピックを??
 
 - 先日のRecommendation Industry Talksというイベントで「推薦システムを本番導入する上で一番優先すべきだったこと」というタイトルで発表してきましたー!
   - 結論: **推薦システムのオフライン評価が難しいから一旦諦めて、まずはいかにA/Bテスト(オンライン評価)しやすい基盤を設計することが大事だった**...!
-  - オフライン評価が難しかった -> オフライン-オンライン評価の結果が相関しなかった
+
+<https://speakerdeck.com/morinota/tui-jian-sisutemuwoben-fan-dao-ru-surushang-de-fan-you-xian-subekidatutakoto-newspicksji-shi-tui-jian-ji-neng-nogai-shan-shi-li-woyuan-ni>
+
 - 一方で、やっぱりオフライン評価できた方が嬉しい...!
   - A/Bテストなどのオンライン評価と比べて、高速にフィードバックを得られる。ユーザ体験を毀損するリスクがない、という利点。
   - というか、オフライン評価が難しいってことは、ハイパーパラメータチューニングやオフライン学習も難しいのでは...!:scared:
@@ -126,17 +84,41 @@ V(\pi) := \mathbb{E}_{p(x, a, r)}[r] =\mathbb{E}_{p(x)\pi(a|x)p(r|a,x)}[r]
 
 （例えば、推薦方策の性能をCTRとしたい場合は、報酬 $r$ をクリックした(1)か否(0)かのbinary変数として定義し、その期待値 $V(\pi)$ がCTRになる）
 
-もしA/Bテストなどのオンライン評価で推薦方策 $\pi$ を本番稼働させ、収集したログデータ $D_{\pi}:=\{(x_i, a_i, r_i)\}_{i=1}^{n}$ で推薦方策の性能 $V(\pi)$ を推定する場合、以下のような**AVG推定量**が使われる:
+もしA/Bテストなどのオンライン評価で推薦方策 $\pi$ を本番稼働させ収集したログデータ $D_{\pi}:=\{(x_i, a_i, r_i)\}_{i=1}^{n}$ で推薦方策の性能 $V(\pi)$ を推定する場合、以下のような**AVG推定量**が使われる:
 
 ```math
 \hat{V}_{AVG}(\pi;D_{\pi}) = \frac{1}{n} \sum_{i=1}^{n} r_i
 ```
 
-（A/Bテストの事後分析で実際に算出してるCTRなどは、この方法で推定した値のはず...!:thinking:）
+（A/Bテストの事後分析で算出してるCTRなどは、 $V(\pi)$ そのものではなく、実際にこの方法で推定した値のはず...!:thinking:）
 
 オンライン評価（データ収集方策 $\pi_0$ と評価方策 $\pi_1$ が同じ）の場合は、AVG推定量（シンプルにログデータの報酬を平均するだけ）で推薦方策の性能 $V(\pi)$ をバイアスなく推定できる。
+（具体的には、ログデータ $D$ に対するAVG推定量 $\hat{V}_{AVG}(\pi;D_{\pi})$ の期待値が、$V(\pi)$ に一致する）
 
-しかし一方で、オフライン評価（データ収集方策 $\pi_0$ と評価方策 $\pi_1$ が異なる）の場合は、AVG推定量は推薦方策の性能 $V(\pi)$ に対してバイアスを持ってしまう。
+```math
+\mathbf{E}_{D_{\pi}}[\hat{V}_{AVG}(\pi;D_{\pi})] = \mathbb{E}_{D}[\frac{1}{n} \sum_{i=1}^{n} r_i]
+\\
+= \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}_{p(x)\pi(a|x)p(r|a,x)}[r] = V(\pi)
+\\
+\because (x,a,r) \sim^{i.i.d.} p(x)\pi(a|x)p(r|a,x), \text{期待値の線形性より}
+\\
+= \mathbb{E}_{p(x)\pi(a|x)p(r|a,x)}[r] 
+\\
+= V(\pi)
+```
+
+しかし一方で、オフライン評価（データ収集方策 $\pi_0$ と評価方策 $\pi_1$ が異なる）の場合は、このAVG推定量は推薦方策の性能 $V(\pi)$ に対してバイアスを持ってしまう。
+
+```math
+\mathbb{E}_{D_{\pi_0}}[\hat{V}_{AVG}(\pi_1;D_{\pi_0})] = \mathbb{E}_{D_{\pi_0}}[\frac{1}{n} \sum_{i=1}^{n} r_i]
+\\
+= \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}_{p(x)\pi_0(a|x)p(r|a,x)}[r]
+\\
+\because (x,a,r) \sim^{i.i.d.} p(x)\pi(a|x)p(r|a,x), \text{期待値の線形性より}
+\\
+= \mathbb{E}_{p(x)}[\sum_{a \in A} \pi_0(a|x) \mathbb{E}_{p(r|a,x)}[r]]
+\neq V(\pi_1)
+```
 
 ### 　最も基本的な戦略　IPS推定量
 
@@ -370,6 +352,7 @@ def sampling_with_deterministic_policy(f_theta: ScoreFunction, x: FeatureVector,
     """
     # スコア関数 f_theta(x,a) を使って、個別のアイテムaについてスコアを計算してる
     score_by_item = {a: f_theta(x, a) for a in A}
+
     # スコアが最も高いアイテムk個を推薦アイテムリストとして返す
     return sorted(score_by_item.items(), key=lambda item_score: item_score[1], reverse=True)[:k]
 ```
