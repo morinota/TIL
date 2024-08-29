@@ -19,6 +19,8 @@
 !*.js
 !*.eot
 !*.ttf
+!*.toml
+!*.lock
 # !*.PNG
 # 明示的に除外.
 .venv
