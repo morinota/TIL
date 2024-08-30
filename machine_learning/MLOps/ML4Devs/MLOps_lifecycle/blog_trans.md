@@ -1,6 +1,8 @@
+<!-- 読み返したい -->
+
 ## link リンク
 
-- https://www.ml4devs.com/articles/mlops-machine-learning-life-cycle/ https://www.ml4devs.com/articles/mlops-machine-learning-life-cycle/
+- <https://www.ml4devs.com/articles/mlops-machine-learning-life-cycle/> <https://www.ml4devs.com/articles/mlops-machine-learning-life-cycle/>
 
 # MLOps: Machine Learning Life Cycle MLOps 機械学習のライフサイクル
 
@@ -67,11 +69,11 @@ Data Scientists translate a business objective into a machine learning problem.
 There are several factors that you may need to consider:
 考慮すべきいくつかの要素がある:
 
-### Business Objective:
+### Business Objective
 
 Narrow down to a small set of ML problems that can serve the business objective. ビジネスの目的 ビジネス目的に役立つMLの問題を絞り込む。
 
-### Cost of Mistakes:
+### Cost of Mistakes
 
 No ML model can be 100% accurate.
 ミスのコスト： 100％正確なMLモデルは存在しない。
@@ -81,7 +83,7 @@ But if the model fails to diagnose cancer in a patient, then it can turn out to 
 しかし、もしこのモデルが患者の癌を診断できなければ、発見が遅れたために致命的な結果を招くことになる。
 (予測が外れた場合にどの程度リスクがあるか? どの程度の誤りを許容できるか??の話かな:thinking:)
 
-### Data Availability:
+### Data Availability
 
 It may come as a surprise, but you may start with no data and bootstrap your data collection.
 データの入手可能性： 意外に思われるかもしれないが、データがないところから始めて、データ収集をブートストラップすることもできる。
@@ -94,7 +96,7 @@ But as you collect user reactions to your model, you will have a labeled dataset
 Then you may want to try if a supervised classification model will perform better.
 それなら、教師あり分類モデルの方がうまくいくかどうか試してみるのもいいだろう。
 
-### Evaluation Metrics:
+### Evaluation Metrics
 
 Depending upon problem formulation, you also should specify a model performance metric to optimize for, which should align with the business metric for your business objective.
 評価指標： 問題の定式化に応じて、最適化するモデルのパフォーマンス指標を指定する必要があります。これは、**ビジネス目標のビジネス指標と一致させる**(=まあ相関させる??:thinking:)必要があります。
