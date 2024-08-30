@@ -1,6 +1,6 @@
-## 0.1. refs: refs：
+## 0.1. refs: refs
 
-https://dl.acm.org/doi/pdf/10.1145/3460231.3474236
+<https://dl.acm.org/doi/pdf/10.1145/3460231.3474236>
 [empty]
 
 ## 0.2. title タイトル
@@ -39,7 +39,7 @@ In the era of increasing choices, recommender systems are becoming indispensable
 These systems are built to satisfy users’ information needs by anticipating what they would be interested in consuming next.
 これらのシステムは、ユーザが次に何を消費したいと思うかを予測することで、ユーザの情報ニーズを満たすように構築されている。
 Collaborative filtering [28, 47] and supervised learning based approaches predicting users’ immediate response toward recommendations [12, 65] such as clicks, dwell time, likes, have had enormous successes.
-協調フィルタリング[28, 47]や、推奨に対するユーザーのimmediate response(即時反応)[12, 65]（クリック、滞在時間、「いいね！」など）を予測する教師あり学習ベースのアプローチは、大きな成功を収めている。
+協調フィルタリング[28, 47]や、推奨に対するユーザーのimmediate response[即時反応](12, 65)（クリック、滞在時間、「いいね！」など）を予測する教師あり学習ベースのアプローチは、大きな成功を収めている。
 Researchers however are becoming increasingly aware of the limitations of such approaches.
 **しかし研究者たちは、そうしたアプローチの限界をますます認識しつつある。**
 First, focus on driving short-term engagements such as user clicks fails to account for the long term impact of a recommendation.
@@ -97,7 +97,7 @@ Together, we make the following contributions: • Methods to Introduce User Exp
 
 # 2. Related Work 関連作品
 
-## 2.1. Reinforcement Learning for Recommender Systems.
+## 2.1. Reinforcement Learning for Recommender Systems
 
 推薦システムのための強化学習.
 Deep reinforcement learning, combining high-capacity function approximators, i.e., deep neural networks, with the mathematical formulations in classic reinforcement learning [57], has achieved enormous success in various domains such as games, robotics and hardware design [18, 33, 36, 52].
@@ -121,7 +121,7 @@ Chen et al.[11] scaled a batch RL algorithm, i.e., REINFORCE with off-policy cor
 Hu et al.[22] tested an extension of the deep deterministic policy gradient (DDPG) method for learning to rank on Taobao, a commercial search platform.
 Huら[22]は、淘宝網（Taobao）という商業的な検索プラットフォームで、ランク付けを学習するための深層決定性政策勾配（DDPG）法の拡張をテストした。
 
-## 2.2. Exploration in Reinforcement Learning.
+## 2.2. Exploration in Reinforcement Learning
 
 強化学習における探索。
 The exploration/exploitation dilemma has long been studied in multi-armed bandits and classic reinforcement learning [17, 57].
@@ -129,7 +129,7 @@ The exploration/exploitation dilemma has long been studied in multi-armed bandit
 Exploration methods are concerned with reducing agents’ uncertainty of the environment reward and/or the dynamics.
 探索手法は、エージェントの環境報酬やダイナミクスの不確実性を低減することに関係する。
 For the stochastic bandits problems, Upper Confidence Bound (UCB) [30] and Thompson Sampling (TS) [4, 10, 59] are among the most well known techniques with both theoretical guarantees and empirical successes.
-確率的バンディッツ問題では、UCB(Upper Confidence Bound)[30]とTS(Thompson Sampling)[4,10,59]が理論的保証と経験的成功の両方を持つ最もよく知られた手法の一つである。
+確率的バンディッツ問題では、UCB[Upper Confidence Bound](30)とTS[Thompson Sampling](4,10,59)が理論的保証と経験的成功の両方を持つ最もよく知られた手法の一つである。
 In classic reinforcement learning with tabular settings, count-based exploration techniques quantifying the uncertainty based on the inverse square root of the state-action visit count, can be seen as extension of these techniques to Markov Decision Processes (MDPs).
 表形式設定の古典的な強化学習では、状態-行動訪問回数の逆平方根に基づいて不確実性を定量化する回数ベースの探索技法は、これらの技法をマルコフ決定過程（MDP）に拡張したものと見なすことができる。
 Tang et al.[58] further generalizes counted-based methods to deep RL with highdimensional state spaces.
@@ -143,7 +143,7 @@ Bellemareら[6]は、情報獲得や学習の進歩というレンズを通し�
 Our work takes inspiration from these existing works, and re-designs the algorithms to fit more closely with the recommendation setup.
 我々の研究は、これらの既存の作品からインスピレーションを受け、より推薦の設定に合うようにアルゴリズムを再設計している。
 
-## 2.3. Diversity, Novelty and Serendipity of Recommender Systems. 推薦システムの多様性、新規性、セレンディピティ。
+## 2.3. Diversity, Novelty and Serendipity of Recommender Systems. 推薦システムの多様性、新規性、セレンディピティ
 
 While early recommendation research has focused almost exclusively on improving recommendation accuracy, it has become increasingly recognized that there are other factors of recommendation quality contributing to the overall user experience on the platform.
 初期のレコメンデーション研究では、レコメンデーションの精度を向上させることだけに焦点が当てられていたが、**レコメンデーションの品質には、プラットフォーム上でのユーザ体験全体に貢献する他の要因がある**ことが次第に認識されるようになってきた。
@@ -343,7 +343,7 @@ One can imagine a large update (surprise) to the agent’s modeling of the envir
 - 1) ユーザが過去に相互作用したアイテムと大きく異なる
 - 2) ユーザが楽しんでいる。具体的には、即時の外発的報酬関数 $r^{e}(s_t, a_t)$ または 累積の外発的報酬関数 $R^{e}(s_t, a_t)$ が高い
 
-These two conditions, surprise and relevance, align with the serendipity metrics we are going to detail in Section 5.5. 
+These two conditions, surprise and relevance, align with the serendipity metrics we are going to detail in Section 5.5.
 これら2つの条件、surpriseとrelevanceは、セクション5.5で詳細に説明するserendipity metricsと一致している。
 
 To measure the surprise of at , we define It = {at ′, ∀t ′ < t and rt ′ > 0} as the set of items the user interacted with up to time t.
@@ -382,7 +382,7 @@ Most prior work on representation learning for RL has focused on generative appr
 RLのための表現学習に関する先行研究のほとんどは、生成的なアプローチに焦点を当てており、観測空間における変動のすべての根本的な要因を、よりばらばらに、あるいは整然とした方法で捉える表現を学習してきた。
 Self-supervised learning [20, 25, 50, 54] to capture the full dynamics of the environment has also attracted a lot of attentions lately.
 **環境のダイナミクスを完全に把握するための自己教師あり学習[20, 25, 50, 54]**も、最近注目を集めている(なんだろう...!:thinking:)
-Ghosh et al.[16] instead argue to learn functionally salient representations: representations that are not necessarily complete in terms of capturing all factors of variation in the observation space, but rather aim to capture those factors of variation that are important for decision making – that are "actionable." 
+Ghosh et al.[16] instead argue to learn functionally salient representations: representations that are not necessarily complete in terms of capturing all factors of variation in the observation space, but rather aim to capture those factors of variation that are important for decision making – that are "actionable."
 Ghoshらは、観測空間のすべての変動要因を捉えるのではなく、代わりに、**意思決定に重要な「機能的に顕著な」表現を学ぶべき**だと主張しています。これらの表現は、"actionable"な要因を捉えることを目指しています。
 
 The REINFORCE agent introduced in Section 3 describes the environment, i.e., the user, through encoding his/her historical activities Ht .
@@ -440,10 +440,12 @@ We first introduce two item attributes that are used to define both the surprise
 まず、**式(6)のsurprise因子とメトリクスの両方を定義するために使用される2つのアイテム属性**を紹介する。
 
 ### Topic cluster. トピック・クラスター
+
 A topic cluster for each item is produced by: 1) taking the item co-occurrence matrix, where entry (i, j) counts the number of times item i and j were interacted by the same user consecutively; 2) performing matrix factorization to generate one embedding for each item; 3) using k-means to cluster the learned embeddings into 10K clusters; 4) assigning the nearest cluster to each item.
 各アイテムのトピック・クラスタは、次のようにして生成される： 1) アイテムの共起行列（項目(i, j)は、項目iとjが同じユーザーによって連続して相互作用した回数をカウントする）を取る; 2) マトリックス因子化を行い、各アイテムに1つの埋め込みを生成する; 3) k-meansを使用して学習された埋め込みを10Kのクラスタにクラスタリングする; 4) 各アイテムに最も近いクラスタを割り当てる。
 
-### Content provider.
+### Content provider
+
 コンテンツプロバイダー。
 Content provider is another attribute of interest as: 1) we observed consistency between contents produced by the same provider, e.g., a food blogger often writes about specific cuisines; 2) we are interested in understanding the importance of content-provider diversity/novelty [37, 64] in influencing long term user experience.
 コンテンツ提供者は興味深い属性の一つです。理由としては、1) 同じ提供者によって作られたコンテンツには一貫性が見られることが多いこと（例えば、フードブロガーは特定の料理について頻繁に書く傾向があります）、2) 長期的なユーザー体験に影響を与えるコンテンツ提供者の多様性や新規性の重要性を理解したいという点があります【37, 64】。
@@ -697,13 +699,14 @@ The agent selects hundreds of candidates from a corpus of 10 million.
 The returned candidates A πθ , along with others, are ranked by a separate ranking system before showing to the users.
 返された候補 $A_{\pi_{\theta}}$ は、ユーザに表示される前に別のランキングシステムによってランク付けされる。
 (あ、今回の方策は、2-stages推薦における1段階目で採用される方策なのか...!:thinking:)
-We ran three separate experiments: 
+We ran three separate experiments:
 3つの別々の実験を実施した。(あ、じゃあcontrol合わせてvariant数4つのABテストってことかな...!:thinking:)
-1) Entropy regularization: serving the REINFORCE agent with entropy regularization as explained in Section 4.1; 
+
+1) Entropy regularization: serving the REINFORCE agent with entropy regularization as explained in Section 4.1;
 1) エントロピー正則化： セクション4.1で説明されているように、エントロピー正則化を使用してREINFORCEエージェントにサービスを提供する。
-2) Intrinsic motivation: serving the REINFORCE agent with intrinsic motivation to discover new user interest (using topic cluster attributes with a history window of 7 days and a serendipity boost c = 4) as explained in Section 4.2; 
+2) Intrinsic motivation: serving the REINFORCE agent with intrinsic motivation to discover new user interest (using topic cluster attributes with a history window of 7 days and a serendipity boost c = 4) as explained in Section 4.2;
 2) 内発的動機づけ： セクション4.2で説明されているように、新しいユーザーの興味を発見するために内発的動機づけを使用してREINFORCEエージェントにサービスを提供する（トピック・クラスター属性を使用し、履歴ウィンドウを7日、セレンディピティブーストをc = 4とする）。
-3) Intrinsic Motivation + Actionable Representation: serving the REINFORCE agent with both the intrinsic motivation and the actionable representation as introduced in Section 4.3. 
+3) Intrinsic Motivation + Actionable Representation: serving the REINFORCE agent with both the intrinsic motivation and the actionable representation as introduced in Section 4.3.
 3) 内発的動機づけ+行動可能な表現： セクション4.3で紹介された内発的動機づけと行動可能な表現の両方を使用してREINFORCEエージェントにサービスを提供する。
 We compare 1) and 2) to the baseline REINFORCE system as described in Section 3 as control to measure the effect of entropy regularization and intrinsic motivation respectively, and 3) to 2) as control to measure the additional value of introducing the actionable representation on top of intrinsic motivation.
 我々は、エントロピー正則化と内発的動機づけの効果を測定するために、セクション3で説明されているベースラインREINFORCEシステムに対して、1)と2)を比較し、内発的動機づけの上に行動可能な表現を導入することの追加価値を測定するために、3)と2)を比較する。
@@ -727,18 +730,19 @@ When we increase the regularization strength to α = 0.5, we see slightly worse 
 
 Comparing with entropy regularization (Figure 3a), intrinsic motivation (Figure 3b) and its combination with actionable representation (Figure 3c), not only significantly improve on the top-line metric, but also exhibit a strong learning effect over the course of the experiments.
 エントロピー正則化（図3a）と比較すると、内発的動機づけ（図3b）および行動可能な表現との組み合わせ（図3c）は、**トップラインの指標を大幅に改善するだけでなく、実験の過程で強力な学習効果を示す**。(強力な学習効果って、オフライン学習で方策を改善できてるってことか...いいね...!:thinking:)
-We compare the offline measurement on accuracy, diversity, novelty and serendipity between entropy regularization with α = 0.5 (Table 1 row 3) and intrinsic motivation (Table 3 row 3) and its combination with actionable representation (Table 3 row 4) and make the following observations: 
-我々は、α=0.5のエントロピー正則化（表1の行3）、内在的動機づけ（表3の行3）、および実行可能な表現との組み合わせ（表3の行4）の間の精度、多様性、新規性およびセレンディピティに関するオフライン測定を比較し、以下の観察を行う： 
+We compare the offline measurement on accuracy, diversity, novelty and serendipity between entropy regularization with α = 0.5 (Table 1 row 3) and intrinsic motivation (Table 3 row 3) and its combination with actionable representation (Table 3 row 4) and make the following observations:
+我々は、α=0.5のエントロピー正則化（表1の行3）、内在的動機づけ（表3の行3）、および実行可能な表現との組み合わせ（表3の行4）の間の精度、多様性、新規性およびセレンディピティに関するオフライン測定を比較し、以下の観察を行う：
+
 1) the entropy regularization method with α = 0.5 achieves very similar diversity metrics comparing to intrinsic motivation or its combination with actionable representation.
 19 α = 0.5のエントロピー正則化法は、intrinsic motivationまたはactoable representationとの組み合わせと比較して、非常に類似した多様性指標を達成する。(i.e. 多様性は、(a)と(b)(c)は同程度ってことか!)
-All three methods reach a topic diversity around 0.86, and content provider diversity around 0.93; 
+All three methods reach a topic diversity around 0.86, and content provider diversity around 0.93;
 3つの方法はすべて、トピックの多様性が約0.86、コンテンツプロバイダの多様性が約0.93に達する。
 
-1) The entropy regularization method achieved slightly higher novelty metric, both in item level and content provider level; 
+1) The entropy regularization method achieved slightly higher novelty metric, both in item level and content provider level;
 2) エントロピー正則化法は、アイテムレベルとコンテンツプロバイダレベルの新規性指標がわずかに高かった;
 3) The metrics that entropy regularization loses is on accuracy and serendipity.
 4) エントロピー正則化が負けているメトリックは、精度とセレンディピティである。
-5) Intrinsic motivation method and its combination with actionable representation have favorable improvement on serendipity comparing with the baseline REINFORCE algorithm even though their accuracy numbers are worse. 
+5) Intrinsic motivation method and its combination with actionable representation have favorable improvement on serendipity comparing with the baseline REINFORCE algorithm even though their accuracy numbers are worse.
 6) 内発的動機づけ法とその行動可能な表現との組み合わせは、精度の数値が悪いにもかかわらず、ベースラインのREINFORCEアルゴリズムと比較して、**セレンディピティに有利な改善**が見られる。
 In conclusion, intrinsic motivation and its combination with actionable representation compare favorably to the baseline REINFORCE and entropy regularization only in the serendipity metrics offline.
 **結論として、内発的動機づけと行動可能な表現との組み合わせは、オフラインでのセレンディピティ指標において、ベースラインのREINFORCEとエントロピー正則化と比較して有利**である。
@@ -763,7 +767,7 @@ Figure 2 shows the improvement of user returning in the actionable representatio
 
 ## 7.2. Long Term User Experience 長期的なユーザー・エクスペリエンス
 
-### Learning Effect of Intrinsic Motivation. 内発的動機づけの学習効果。
+### Learning Effect of Intrinsic Motivation. 内発的動機づけの学習効果
 
 To better understand the effect of intrinsic motivation and reward shaping in the long term, we examine the temporal trend of the live metrics in addition to the aggregated metrics reported above.
 長期的な内発的動機づけと報酬シェーピングの効果をよりよく理解するために、上記で報告した集計指標に加えて、ライブ指標の時間的傾向を調べた。
@@ -783,7 +787,7 @@ More interestingly, the amount of improvements over control is increasing over t
 This suggests a learning effect over time from exploration, which enables users to continuously find and engage with new topics.
 このことは、ユーザが継続的に新しいトピックを見つけ、それに取り組むことを可能にする、探索による長期的な学習効果を示唆している。
 
-### User Activity Levels. ユーザーの活動レベル。
+### User Activity Levels. ユーザーの活動レベル
 
 Users who come to the recommendation platform are heterogeneous in terms of activity levels.
 レコメンデーション・プラットフォームにやってくるユーザは、活動レベルにおいて異質である。(うんうん...!)
