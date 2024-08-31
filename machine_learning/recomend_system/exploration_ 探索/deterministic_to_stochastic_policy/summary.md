@@ -390,3 +390,85 @@ def sampling_with_deterministic_policy(f_theta: ScoreFunction, x: FeatureVector,
 ```shell
 curl -X GET "https://xxxxxxxxx.execute-api.{aws-region}.amazonaws.com/1/recommended-items/{user_id}?k={推薦アイテムリストの長さ}&inference_type={推薦結果の作り方の種類}" 
 ```
+
+- ちなみにSagemaker推論エンドポイントの設定は以下です:
+  - instance_type: `ml.m5.large` (利用料金は 0.149 USD/hour)
+    - 今回は $f_{\theta}(x,a)$ の計算がシンプルな内積計算なので、m5.largeで十分です!
+    - 参考: <https://aws.amazon.com/jp/sagemaker/pricing/>
+  - instance_count: 1
+
+## 実験結果
+
+- パスパラメータ
+  - user_id=U:114521
+- クエリパラメータ
+  - k=10&inference_type=deterministic
+  - k=10&inference_type=stochastic_plackett_luce
+  - k=10&inference_type=stochastic_plackett_luce_cached
+  - k=10&inference_type=stochastic_gumbel_softmax_trick
+  - k=10&inference_type=stochastic_epsilon_greedy
+- リクエストヘッダ:
+
+```yml
+content-type:application/json
+accept:application/json
+```
+
+パッと数回、リクエストを投げてみた結果...。体感的には、どれが遅いとか早いとかなさそうな感じ...:thinking:
+
+- `inference_type=deterministic`
+  - 80msくらい
+- `inference_type=stochastic_plackett_luce`
+  - 80msくらい
+- `inference_type=stochastic_plackett_luce_cached`
+  - 80msくらい
+- `inference_type=stochastic_gumbel_softmax_trick`
+  - 80msくらい
+- `inference_type=stochastic_epsilon_greedy`
+  - 80msくらい
+
+## ちゃんとレイテンシー計測してみたい
+
+### locust
+
+以下の資料を参考に、**locustという負荷試験ツール**を使って、Sagemaker Endpointのレイテンシーを計測してみます。
+
+- 参考: [SageMaker Endpointのレイテンシーを負荷試験ツールlocustで計測する](https://nsakki55.hatenablog.com/entry/2022/12/14/091430)
+- locustとは
+  - 参考: [【初心者でも安心】Locustで始める負荷テスト](https://zenn.dev/secondselection/articles/locust_sample)
+  - オープンソースのPython製の負荷試験ツールの1つ。
+    - Pythonistaに使いやすくシンプルなUIで負荷試験ができる
+  - locust=イナゴ、という意味らしい。
+    - イナゴのように群れて大量発生したリクエストをサーバ（アプリケーション）がどれだけ対処できるかをテストする感じ...!:thinking:
+
+### locustの使い方
+
+`task`という概念を使って、ユーザが操作する想定のタスク（シナリオ）を定義する。
+
+```python:locust_experiment.py
+from locust import HttpUser, task, between
+
+
+class MyUser(HttpUser):
+    wait_time = between(1, 5) # ユーザのリクエスト間隔を1-5秒の間でランダムに設定
+
+    @task
+    def test_httpbin(self):
+        self.client.get("/get")
+```
+
+その後、以下のコマンドでWeb UIを立ち上げる
+
+```shell
+locust -f locust_experiment.py --host https://httpbin.org
+```
+
+続いて、UIからパラメータを入力し、テストを開始する（各パラメータは起動時にoptionalな引数としても指定できるはず...?）
+
+- Number of users (peak concurrency): 同時ユーザ数(最大)
+- Ramp Up (users started/second): 1秒間でのユーザ増加数
+- Host: リクエスト先
+
+### いざ実験
+
+今回はレイテンシーに興味があるため、ユーザー数を1としてSageMaker Endopointの負荷をかけすぎないようにしています。
