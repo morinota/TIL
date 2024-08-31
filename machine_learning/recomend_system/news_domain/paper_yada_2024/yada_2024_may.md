@@ -87,7 +87,7 @@ Furthermore, title + template-based shows insignificant improvement in performan
 
 To explore the limitations, we performed a manual inspection of the category descriptions. Although GPT-4 generally produces high-quality descriptions, it occasionally fails to generate accurate descriptions.
 
-Figure 5 shows an example in which the generated description for the tunedin category focuses on entertainment, music, and television. However, the actual article titles in Table 3 reflect a wider range of topics, including technology and trends. A more accurate description would be that the tunedin category casually provides news on various topics such as entertainment, technology, and business, keeping readers updated on the latest trends. This discrepancy highlights the model’s inability to accurately capture the category’s broad scope.
+Figure 5 shows an example in which the generated description for the tunedin category focuses on entertainment, music, and television. However, the actual article titles in Table 3 reflect a wider range of to"pics, including technology and trends. A more accurate description would be that the tunedin category casually provides news on various topics such as entertainment, technology, and business, keeping readers updated on the latest trends. This discrepancy highlights the model’s inability to accurately capture the category’s broad scope.
 
 This example, along with other similar instances, suggests that the model may struggle to generate accurate category descriptions when the input lacks sufficient background knowledge or context.
 
