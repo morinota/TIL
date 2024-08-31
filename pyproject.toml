@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 sagemaker = "^2.231.0"
 locust = "^2.31.4"
+loguru = "^0.7.2"
 
 
 [build-system]
