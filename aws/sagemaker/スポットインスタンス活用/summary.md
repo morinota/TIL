@@ -55,3 +55,7 @@ role=None, security_group_ids=None, subnets=None, tags=None, volume_kms_key=None
 max_wait_time_in_seconds=None # ここ!
 )
 ```
+
+## boto3で実行するときは??
+
+TrainingJobのリクエストパラメータに、`EnableManagedSpotTraining`を`True`に設定すルト良さそう。
