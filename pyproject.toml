@@ -12,6 +12,7 @@ locust = "^2.31.4"
 loguru = "^0.7.2"
 ruff = "^0.6.3"
 scipy = "^1.14.1"
+langchain = "^0.3.0"
 
 [tool.ruff.lint]
 extend-select = ["I"]
