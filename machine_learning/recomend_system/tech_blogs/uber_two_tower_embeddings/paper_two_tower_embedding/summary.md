@@ -2,7 +2,7 @@
 
 published date: RecSys ’16 September 15-19, 2016,
 authors: Paul Covington, Jay Adams, Emre Sargin
-url(paper): https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf?uclick_id=516d5009-f5a0-49d5-b5cb-7fcf02e27ab8
+url(paper): <https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf?uclick_id=516d5009-f5a0-49d5-b5cb-7fcf02e27ab8>
 (勉強会発表者: morinota)
 
 ---
@@ -29,11 +29,11 @@ url(paper): https://static.googleusercontent.com/media/research.google.com/en//p
 
 - 図2は推薦システムの全体構造。
 - 2つのNNモデルで構成されている: candidate retrieve(generation)モデルとcandidate rankingモデル
-  - candidate retrieve(generation)モデル:
+  - 1ステージ目: candidate retrieve(generation)モデル:
     - 本モデルは、ユーザの行動履歴を入力とし、**大規模なcorpus(数百万本)から小さなsubset(数百)をretrieve**する。
     - 本モデルは、協調フィルタリングによる**広範な(broadな!)パーソナライゼーションのみ**を提供する。
     - 本モデルでユーザ間の類似性を抽出する為の特徴量は、以下の様な**粗い(coarseな)特徴量**: 動画視聴のid、検索クエリのトークン、demographics(=人口統計情報。ex. 年齢、性別、職業、etc.)
-  - candidate rankingモデル:
+  - 2ステージ目: candidate rankingモデル:
     - candidate listの中で少数の"best"な推薦を提示する為には、高いrecallを持つ推薦アイテム候補の中で**相対的な重要性を区別する**為の、より細かいレベルの表現が必要。
     - よって本モデルでは、ビデオとユーザを説明する**richな特徴量set**を使用して、望ましい目的関数に従って各ビデオにスコアを割り当てる。
     - 動画アイテムはそのスコアによってラング付けされ、上位の動画がユーザに提示される。
@@ -72,7 +72,7 @@ $$
 - continuous bag of words言語モデル(=良くわかってないが単語の埋め込みベクトルを作る手法らしい...!)にヒントを得て各動画のembeddingを用意し、この動画embeddingを元にcandidate retrieveモデルの入力を作る:
   - ユーザの視聴履歴はsparseな動画IDの可変長sequenceで表現され(うんうん:thinking:)、動画embeddingを使ってaggregateしてdenseなベクトル表現にmappingされる。
   - この動画embeddingも、他の全てのモデルパラメータと共同で学習される。
-- **全ての特徴量は広い第1層に連結**され、その後にfully connected layer(ReLU)[6]の数層が続く。
+- **全ての特徴量は広い第1層に連結**され、その後にfully connected layer[ReLU](6)の数層が続く。
   - **このarchitectureの下側(=入力側)が広く、上側(=出力側)が狭くなっている点から、"tower pattern"と呼ばれるらしい**...!
 - **ディープニューラルネットワークを行列分解法の一般化として使用する主な利点は、任意のcontinuous特徴量やcategorical特徴量を簡単にモデルに追加できること**.(うんうん。CFとCBのハイブリッド手法に簡単に拡張できるってこと??)
 
