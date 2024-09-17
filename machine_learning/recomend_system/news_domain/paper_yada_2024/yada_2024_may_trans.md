@@ -94,8 +94,7 @@ Finally, In Section 6, we conclude this paper.
 
 # Related Work 関連作品
 
-2.Related Work
-2.関連作品
+2.Related Work 2.関連作品
 
 In this section, we review related work on news recommendations and the use of LLM-generated text.
 このセクションでは、ニュース推薦とLLM生成テキストの使用に関する関連研究をレビューする。
