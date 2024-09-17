@@ -1,4 +1,6 @@
-## refs 審判
+<!-- 後で読む -->
+
+## refs
 
 <https://arxiv.org/html/2405.13007v1>
 <https://arxiv.org/html/2405.13007v1>
