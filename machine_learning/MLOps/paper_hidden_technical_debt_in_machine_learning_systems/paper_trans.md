@@ -1,6 +1,6 @@
 ## 0.1. link リンク
 
-- https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html
+- <https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html> <https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html>
 
 ## 0.2. title タイトル
 
@@ -185,7 +185,7 @@ Without similar tooling for data dependencies, it can be inappropriately easy to
 
 <!-- ここまで読んだ! -->
 
-## 3.1. Unstable Data Dependencies. 不安定なデータ依存関係。
+## 3.1. Unstable Data Dependencies. 不安定なデータ依存関係
 
 To move quickly, it is often convenient to consume signals as input features that are produced by other systems.
 **素早く進むためには、他のシステムによって生成された入力特徴量として信号を消費することがしばしば便利である**。(うんうん...!:thinking:)
@@ -211,7 +211,7 @@ For example, rather than allowing a semantic mapping of words to topic clusters 
 Versioning carries its own costs, however, such as potential staleness and the cost to maintain multiple versions of the same signal over time.
 しかし、バージョニングには、potentially staleness(=潜在的な古さ?? 信号が現在の状況と合わなくなって劣化してくる、みたいな??:thinking:)や、**時間の経過とともに同じsignalの複数のバージョンを維持するコストなど、独自のコストがかかる。**
 
-## 3.2. Underutilized Data Dependencies. 十分に活用されていないデータ依存関係。
+## 3.2. Underutilized Data Dependencies. 十分に活用されていないデータ依存関係
 
 (i.e. あんまり価値のないdata dependencyってこと??)
 
@@ -266,7 +266,7 @@ underutilized dependenciesは、**徹底的なleave-one-feature-out評価によ�
 These should be run regularly to identify and remove unnecessary features.
 これらは定期的に実行し、不要な特徴量を特定して削除するべきである。
 
-## 3.3. Static Analysis of Data Dependencies. データ依存の静的解析。
+## 3.3. Static Analysis of Data Dependencies. データ依存の静的解析
 
 In traditional code, compilers and build systems perform static analysis of dependency graphs.
 従来のコードでは、コンパイラとビルドシステムが依存グラフの静的解析を行う。
@@ -290,7 +290,7 @@ This leads to a form of analysis debt, in which it is difficult to predict the b
 These feedback loops can take different forms, but they are all more difficult to detect and address if they occur gradually over time, as may be the case when models are updated infrequently.
 このようなフィードバックループは、さまざまな形を取ることができる。しかし、モデルがまれに更新される場合に起こるように、時間の経過とともに徐々に発生する場合、これらのフィードバックループは検出および対処がより困難になる。
 
-## 4.1. Direct Feedback Loops. 直接的なフィードバック・ループ。
+## 4.1. Direct Feedback Loops. 直接的なフィードバック・ループ
 
 A model may directly influence the selection of its own future training data.
 モデルは、それ自身の将来のトレーニングデータの選択に直接影響を与える可能性がある。(まさに推薦システムとかの例だな...!:thinking:)
@@ -301,7 +301,7 @@ The problem here is that bandit algorithms (such as contextual bandits [9]) do n
 It is possible to mitigate these effects by using some amount of randomization [3], or by isolating certain parts of data from being influenced by a given model.
 ある程度のランダム化[3]を使用するか、特定のデータの一部を特定のモデルに影響を受けないように分離することで、これらの影響を緩和することができる。(これって教師あり学習を使う場合の緩和策っぽい...??)
 
-## 4.2. Hidden Feedback Loops. 隠れたフィードバック・ループ。
+## 4.2. Hidden Feedback Loops. 隠れたフィードバック・ループ
 
 (i.e. indirect feedback loop??)
 
@@ -391,7 +391,7 @@ MLパッケージが象牙の塔(=俗世間から離れた場所??)のような�
 A hybrid research approach where engineers and researchers are embedded together on the same teams (and indeed, are often the same people) can help reduce this source of friction significantly [16].
 **エンジニアと研究者が同じチームに一緒に組み込まれる(もしくは同じ人であることも多い)ような、ハイブリッド研究アプローチは、この摩擦の原因を大幅に減らすのに役立つ**[16]。(ふむふむ...!うちは大丈夫だ...!)
 
-## 5.3. Dead Experimental Codepaths. 死んだ実験的コードパス。
+## 5.3. Dead Experimental Codepaths. 死んだ実験的コードパス
 
 A common consequence of glue code or pipeline jungles is that it becomes increasingly attractive in the short term to perform experiments with alternative methods by implementing experimental codepaths as conditional branches within the main production code.
 glue codeやpipeline junglesの一般的な結果は、実験的なコードパスを、本番コード内の条件付きブランチとして実装することで、代替手法で実験を行うことがますます魅力的になっていくことである。
@@ -414,7 +414,7 @@ As with the case of dead flags in traditional software [13], it is often benefic
 Often only a small subset of the possible branches is actually used; many others may have been tested once and abandoned.
 多くの場合、実際に使用されるのは可能なブランチのごく一部だけで、他の多くのブランチは一度テストされただけで放棄されているかもしれない。
 
-## 5.4. Abstraction Debt. 抽象化負債。
+## 5.4. Abstraction Debt. 抽象化負債
 
 The above issues highlight the fact that there is a distinct lack of strong abstractions to support ML systems.
 上記の問題は、**MLシステムをサポートする強力な抽象化が不足している**という事実を浮き彫りにしている。
@@ -545,7 +545,7 @@ Experience has shown that the external world is rarely stable.
 This background rate of change creates ongoing maintenance cost.
 このbackground rate of change(=外界の変化率??)は、継続的なメンテナンスコストを生み出す。
 
-## 7.1. Fixed Thresholds in Dynamic Systems. 動的システムにおける固定閾値。
+## 7.1. Fixed Thresholds in Dynamic Systems. 動的システムにおける固定閾値
 
 It is often necessary to pick a decision threshold for a given model to perform some action: to predict true or false, to mark an email as spam or not spam, to show or not show a given ad.
 与えられたモデルが何らかのアクションを実行するために、決定的なしきい値を選択する必要があることがしばしばある: ex. 真または偽を予測するため、メールをスパムまたはスパムでないとマークするため、特定の広告を表示するかどうかを決定するため。
@@ -561,7 +561,7 @@ One mitigation strategy for this kind of problem appears in [14], in which thres
 この種の問題に対する1つの緩和策が[14]にあり、そこでは、しきい値は、ホールドアウトされた検証データに対する単純な評価によって学習される。
 (定期的にグリッドサーチで自動で閾値を更新しますよ、っこと??:thinking:)
 
-## 7.2. Monitoring and Testing. モニタリングとテスト。
+## 7.2. Monitoring and Testing. モニタリングとテスト
 
 Unit testing of individual components and end-to-end tests of running systems are valuable, but in the face of a changing world such tests are not sufficient to provide evidence that a system is working as intended.
 個々のコンポーネントの単体テストや、稼働中のシステムのend-to-endテストは価値があるが、変化する世界に直面している中で、そのようなテストは、システムが意図した通りに機能していることを証明するのに十分ではない。
@@ -619,20 +619,20 @@ Creating systems to that allow automated response without direct human intervent
 We now briefly highlight some additional areas where ML-related technical debt may accrue.
 ここで、MLに関連する技術的負債が発生する可能性のある追加的な領域をいくつか簡単に紹介する。
 
-## 8.1. Data Testing Debt. データテストの負債。
+## 8.1. Data Testing Debt. データテストの負債
 
 If data replaces code in ML systems, and code should be tested, then it seems clear that some amount of testing of input data is critical to a well-functioning system.
 もし、MLシステムにおいてデータがコードに置き換わり、コードをテストすべきであるとすれば、いくつかの**入力データのテストが、システムがうまく機能するためには重要**であることは明らかだ。(コードもデータも重要なんだったら、コードもデータも退行をテストすべきだよね...!みたいな話??:thinking:)
 Basic sanity checks are useful, as more sophisticated tests that monitor changes in input distributions.
 基本的なサニティ・チェックは、入力分布の変化を監視する、より洗練されたテストと同様に有用である。
 
-## 8.2. Reproducibility Debt. 再現性の負債。
+## 8.2. Reproducibility Debt. 再現性の負債
 
 As scientists, it is important that we can re-run experiments and get similar results, but designing real-world systems to allow for strict reproducibility is a task made difficult by randomized algorithms, non-determinism inherent in parallel learning, reliance on initial conditions, and interactions with the external world.
 科学者として、実験を再実行して似た結果を得ることができることは重要である。しかし、ランダム化されたアルゴリズム、並列学習に固有の非決定性、初期条件への依存、外界との相互作用など、厳密な再現性を許容するための実世界のシステムの設計は困難な課題である。
 (ex. いろんな条件があるから、常にCTR=20%を再現しているわけじゃないよ、みたいな??:thinking:)
 
-## 8.3. Process Management Debt. プロセス管理負債。
+## 8.3. Process Management Debt. プロセス管理負債
 
 Most of the use cases described in this paper have talked about the cost of maintaining a single model, but mature systems may have dozens or hundreds of models running simultaneously [14, 6].
 **本稿で説明したユースケースのほとんどは、単一のモデルを維持するコストについて述べてきたが、成熟したシステムでは、数十から数百のモデルが同時に実行される可能性がある**[14, 6]。
@@ -643,7 +643,7 @@ Developing tooling to aid recovery from production incidents is also critical.
 An important system-level smell to avoid are common processes with many manual steps.
 **避けるべき重要なsystem-level smellは、多くの手作業ステップを持つ共通プロセスである**。 (運用を自動化すべきってこと?)
 
-## 8.4. Cultural Debt.
+## 8.4. Cultural Debt
 
 (=MLの研究とエンジニアリングの間に存在し得る、協力よりも対立を生じさせがちな文化的な境界、みたいな!)
 
