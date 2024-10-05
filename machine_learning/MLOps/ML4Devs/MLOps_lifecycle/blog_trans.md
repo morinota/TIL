@@ -10,7 +10,7 @@ MLOps Lifecycle strings model and software development together in an unified ma
 MLOpsライフサイクルは、統一された機械学習ライフサイクルで、モデルとソフトウェア開発を一緒に紐付けます。
 
 Building machine learning products or ML-assisted product features involve two distinct disciplines:
-機械学習製品またはML-assistedな製品機能の構築には、2つの異なる分野が含まれる：
+機械学習製品またはML-assistedな製品機能の構築には、**2つの異なる分野**が含まれる：
 
 - **Model Development**: Data Scientists — highly skilled in statistics, linear algebra, and calculus — train, evaluate, and select the best-performing statistical or neural network model. モデル開発： 統計学、線形代数、微積分学に精通したデータサイエンティストが、最適な統計モデルまたはニューラルネットワークモデルをトレーニング、評価、選択します。(scientistの仕事)
 
@@ -37,7 +37,7 @@ Model Development can’t be done in a silo given the consequences it may have o
 モデル開発は、製品やビジネスへの影響を考えると、サイロで行うことはできない。
 
 We need an ML lifecycle that is attuned to the realities of ML-assisted products and MLOps.
-ML-assisted商品とMLOpsの現実に適応したMLライフサイクルが必要だ。
+ML-assistedなプロダクトと
 It should facilitate visibility for all stakeholders, without causing too many changes in the existing workflows of data scientists and engineers.
 データサイエンティストやエンジニアの既存のワークフローに大きな変更を加えることなく、すべての利害関係者の可視化を促進する必要がある。
 
