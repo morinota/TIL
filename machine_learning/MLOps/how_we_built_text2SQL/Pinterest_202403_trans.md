@@ -20,122 +20,132 @@ This tool is the natural place for us to develop and deploy new features to assi
 ### The Initial Version: A Text-to-SQL Solution Using an LLM 初期バージョン LLMを使ったText-to-SQLソリューション
 
 The first version incorporated a straightforward Text-to-SQL solution utilizing an LLM.
-最初のバージョンは、LLMを利用した簡単なText-to-SQLソリューションでした。
+**最初のバージョンは、LLMを利用した簡単なText-to-SQLソリューション**でした。
 Let’s take a closer look at its architecture:
 そのアーキテクチャを詳しく見てみよう：
 
-The user asks an analytical question, choosing the tables to be used.
-ユーザーは分析的な質問をし、使用するテーブルを選択する。
+![]()
 
-The relevant table schemas are retrieved from the table metadata store.
+The user asks an analytical question, choosing the tables to be used.
+ユーザは分析的な質問をし、**使用するテーブルを選択**する。(ここはユーザ自身が選ぶのか!)
+
+- The relevant table schemas are retrieved from the table metadata store.
 関連するテーブル・スキーマは、テーブル・メタデータ・ストアから取得される。
 
-The question, selected SQL dialect, and table schemas are compiled into a Text-to-SQL prompt.
-質問、選択されたSQL方言、およびテーブルスキーマは、Text-to-SQLプロンプトにコンパイルされます。
+- The question, selected SQL dialect, and table schemas are compiled into a Text-to-SQL prompt.
+質問、選択されたSQL方言(MySQLなど、SQLの文法を選択)、およびテーブルスキーマは、**Text-to-SQLプロンプトにコンパイルされます**。
 
-The prompt is fed into the LLM.
+- The prompt is fed into the LLM.
 プロンプトはLLMに入力される。
 
-A streaming response is generated and displayed to the user.
-ストリーミング・レスポンスが生成され、ユーザーに表示される。
+- A streaming response is generated and displayed to the user.
+ストリーミング・レスポンスが生成され、ユーザに表示される。
 
-Table Schema
-テーブル・スキーマ
+#### Table Schema テーブル・スキーマ
 
 The table schema acquired from the metadata store includes:
 メタデータ・ストアから取得したテーブル・スキーマには以下のものがある：
 
-Table name
+- Table name
 テーブル名
-
-Table description
+- Table description
 表の説明
 
-Columns
+- Columns
 コラム
 
-Column name
+- Column name
 カラム名
 
-Column type
+- Column type
 カラムタイプ
 
-Column description
+- Column description
 カラムの説明
 
-Low-Cardinality Columns
-低基数列
+#### Low-Cardinality Columns 低カーディナリティ・カラム
 
 Certain analytical queries, such as “how many active users are on the ‘web’ platform”, may generate SQL queries that do not conform to the database’s actual values if generated naively.
-例えば、「「web 」プラットフォーム上のアクティブユーザー数」のような特定の分析クエリは、素朴に生成された場合、データベースの実際の値に適合しないSQLクエリを生成する可能性がある。
+例えば、「'web'プラットフォームにアクティブなユーザーが何人いるか」というような分析クエリは、単純に生成された場合、データベースの実際の値に準拠しないSQLクエリを生成するかもしれません。
 For example, the where clause in the response might bewhere platform=’web’ as opposed to the correct where platform=’WEB’.
-例えば、レスポンスのwhere節は、正しいwhere platform='WEB'に対して、where platform='WEB'かもしれません。
+例えば、レスポンスのwhere節は、正しいwhere platform='WEB'に対して、where platform='web'になるかもしれません。
 To address such issues, unique values of low-cardinality columns which would frequently be used for this kind of filtering are processed and incorporated into the table schema, so that the LLM can make use of this information to generate precise SQL queries.
-このような問題に対処するため、この種のフィルタリングに頻繁に使われるような、カーディナリティの低いカラムのユニークな値を処理してテーブルスキーマに組み込み、LLMがこの情報を利用して正確なSQLクエリを生成できるようにする。
+このような問題に対処するため、**この種のフィルタリングに頻繁に使用される低カーディナリティ・カラムの一意の値が処理され、テーブル・スキーマに組み込まれる**ため、LLMはこの情報を利用して正確なSQLクエリを生成することができる。(LLMに渡すテーブルスキーマの中に、low-cardinalityカラムのユニーク値一覧を含めるのか...!:thinking:)
 
-Context Window Limit
-コンテクスト・ウィンドウの制限
+<!-- ここまで読んだ! -->
+
+#### Context Window Limit コンテクスト・ウィンドウの制限
 
 Extremely large table schemas might exceed the typical context window limit.
-非常に大きなテーブル・スキーマは、一般的なコンテキスト・ウィンドウの制限を超える可能性がある。
+**非常に大きなテーブル・スキーマ**は、一般的なコンテキスト・ウィンドウの制限を超える可能性がある。(情報量がめちゃ多いテーブルだと、LLMが考慮可能なcontext長を超える可能性がある)
 To address this problem, we employed a few techniques:
 この問題に対処するため、我々はいくつかのテクニックを採用した：
 
-Reduced version of the table schema: This includes only crucial elements such as the table name, column name, and type.
-テーブルスキーマの縮小版： テーブル名、カラム名、型などの重要な要素のみを含む。
+- Reduced version of the table schema: This includes only crucial elements such as the table name, column name, and type.
+**テーブルスキーマの縮小版**： テーブル名、カラム名、型などの重要な要素のみを含む。
 
-Column pruning: Columns are tagged in the metadata store, and we exclude certain ones from the table schema based on their tags.
+- Column pruning: Columns are tagged in the metadata store, and we exclude certain ones from the table schema based on their tags.
 カラムの刈り込み： カラムはメタデータストアでタグ付けされ、そのタグに基づいてテーブルスキーマから特定のカラムを除外する。
+(使わなさそうなカラムを除外するってこと...??:thinking:)
 
 ### Response Streaming レスポンス・ストリーミング
 
 A full response from an LLM can take tens of seconds, so to avoid users having to wait, we employed WebSocket to stream the response.
-LLMからの完全なレスポンスには数十秒かかるので、ユーザーを待たせないために、レスポンスをストリーミングするためにWebSocketを採用した。
+LLMからの完全なレスポンスには数十秒かかるので、**ユーザを待たせないために、WebSocketを使用してレスポンスをストリーミングする。**
 Given the requirement to return varied information besides the generated SQL, a properly structured response format is crucial.
-生成されたSQL以外に様々な情報を返す必要があることを考えると、適切に構造化されたレスポンス・フォーマットは非常に重要である。
+生成されたSQL以外に様々な情報を返す必要があることを考えると、**適切に構造化されたレスポンス・フォーマットは非常に重要**である。
 Although plain text is straightforward to stream, streaming JSON can be more complex.
 プレーン・テキストのストリーミングは簡単だが、JSONのストリーミングはより複雑になる。
 We adopted Langchain’s partial JSON parsing for the streaming on our server, and then the parsed JSON will be sent back to the client through WebSocket.
-サーバーでのストリーミングにはLangchainの部分的JSONパースを採用し、パースされたJSONはWebSocketを通じてクライアントに送り返される。
+サーバーでのストリーミングには**Langchainのpartial JSON parsingを採用**し、その後、パースされたJSONはWebSocketを介してクライアントに送信される。
+
+<!-- ここまで読んだ! -->
 
 ### Prompt プロンプト
 
 Here is the current prompt we’re using for Text2SQL:
 これが現在Text2SQLで使用しているプロンプトです：
 
+![]()
+
 ### Evaluation & Learnings 評価と教訓
 
 Our initial evaluations of Text-to-SQL performance were mostly conducted to ensure that our implementation had comparable performance with results reported in the literature, given that the implementation mostly used off-the-shelf approaches.
-Text-to-SQLの性能に関する初期の評価は、実装のほとんどが既製のアプローチを使用していることから、我々の実装が文献で報告されている結果と同等の性能を持つことを確認するために行われました。
+Text-to-SQLの性能に関する初期の評価は、**実装のほとんどが既製のアプローチを使用**していることから、我々の実装が文献で報告されている結果と同等の性能を持つことを確認するために行われました。
 We found comparable results to those reported elsewhere on the Spider dataset, although we noted that the tasks in this benchmark were substantially easier than the problems our users face, in particular that it considers a small number of pre-specified tables with few and well-labeled columns.
-我々は、Spiderデータセットの他の場所で報告されている結果と同等の結果を得たが、このベンチマークのタスクは、我々のユーザーが直面している問題よりもかなり簡単であることに注意した。
+Spiderデータセットに関しては、他の場所で報告されている結果と同等の結果を見つけましたが、このベンチマークのタスクは、特に事前に指定された少数のテーブルと少数でよくラベル付けされたカラムを考慮しているため、ユーザーが直面する問題よりもはるかに簡単であることに注意しました。
 
 Once our Text-to-SQL solution was in production, we were also able to observe how users interacted with the system.
-Text-to-SQLソリューションが本番稼動してからは、ユーザーがどのようにシステムとやりとりしているかも観察することができました。
+Text-to-SQLソリューションが本番稼動してからは、ユーザがどのようにシステムとやりとりしているかも観察することができました。
 As our implementation improved and as users became more familiar with the feature, our first-shot acceptance rate for the generated SQL increased from 20% to above 40%.
-実装が改善され、ユーザーがこの機能に慣れるにつれて、生成されたSQLの一発合格率は20％から40％以上に上昇した。
+実装が改善され、ユーザがこの機能に慣れてくるにつれて、**生成されたSQLの初回受け入れ率は20％から40％以上に上昇**しました。
 In practice, most queries that are generated require multiple iterations of human or AI generation before being finalized.
-実際には、生成されたクエリのほとんどは、最終的なクエリになるまで、人間やAIによる生成を何度も繰り返す必要がある。
+**実際には、生成されたクエリのほとんどは、最終的なクエリになるまで、人間やAIによる生成を何度も繰り返す必要がある**。
 In order to determine how Text-to-SQL affected data user productivity, the most reliable method would have been to experiment.
 Text-to-SQLがデータユーザーの生産性にどのような影響を与えるかを判断するためには、最も確実な方法は実験することであっただろう。
 Using such a method, previous research has found that AI assistance improved task completion speed by over 50%.
-このような方法を用いた先行研究では、AIの支援によってタスク完了速度が50％以上向上したことが判明している。
+このような方法を用いた先行研究では、**AIの支援によってタスク完了速度が50％以上向上した**ことが判明している。
 In our real world data (which importantly does not control for differences in tasks), we find a 35% improvement in task completion speed for writing SQL queries using AI assistance.
-我々の実世界のデータ（重要なことは、タスクの違いを制御していない）では、AIの支援を使用してSQLクエリを記述する場合、タスク完了速度が35％向上することがわかった。
+我々の実世界のデータ（重要なのはタスクの違いをコントロールしていない）では、AIの支援を利用して**SQLクエリを書くタスクの完了速度が35％向上**している。
+(firstバージョンでさえ35%向上! いいね! でも2倍良くなると思いたい!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## Second Iteration: Incorporating RAG for Table Selection 第二の反復： テーブル選択にRAGを組み込む
 
 While the first version performed decently — assuming the user is aware of the tables to be employed — identifying the correct tables amongst the hundreds of thousands in our data warehouse is actually a significant challenge for users.
-最初のバージョンは、ユーザーが使用するテーブルを認識していることを前提に、まずまずのパフォーマンスを示したが、データウェアハウスにある数十万のテーブルの中から正しいテーブルを特定することは、ユーザーにとって大きな課題であった。
+**最初のバージョンは、ユーザが使用するテーブルを把握していると仮定すれば、まずまずの性能を発揮しましたが**、データウェアハウスに数十万のテーブルがある中から正しいテーブルを特定することは、**実際にはユーザにとってかなりの課題**です。(うんうん...!:thinking:)
 To mitigate this, we integrated Retrieval Augmented Generation (RAG) to guide users in selecting the right tables for their tasks.
-これを軽減するために、我々はRAG(Retrieval Augmented Generation)を統合し、ユーザーのタスクに適したテーブルの選択をガイドするようにした。
+これを軽減するために、我々は**RAG(Retrieval Augmented Generation)を統合し、ユーザのタスクに適したテーブルの選択をガイドするようにした**。(RAGを使わないとガイドできない??:thinking:)
 Here’s a review of the refined infrastructure incorporating RAG:
-ここでは、RAGを組み込んだ洗練されたインフラについてレビューする：
+ここでは、RAGを組み込んだ洗練されたインフラについてレビューする:
 
-An offline job is employed to generate a vector index of tables’ summaries and historical queries against them.
-オフラインジョブは、テーブルのサマリーとそれらに対する過去のクエリのベクトルインデックスを生成するために使用される。
+![]()
 
-If the user does not specify any tables, their question is transformed into embeddings, and a similarity search is conducted against the vector index to infer the top N suitable tables.
+- 1. An offline job is employed to generate a vector index of tables’ summaries and historical queries against them.
+オフラインジョブ (は、テーブルのサマリーとそれらに対する過去のクエリのベクトルインデックスを生成するために使用される。
+
+- 2. If the user does not specify any tables, their question is transformed into embeddings, and a similarity search is conducted against the vector index to infer the top N suitable tables.
 ユーザーがテーブルを指定しなかった場合、質問は埋め込みに変換され、上位N個の適切なテーブルを推測するためにベクトルインデックスに対して類似性検索が行われる。
 
 The top N tables, along with the table schema and analytical question, are compiled into a prompt for LLM to select the top K most relevant tables.
