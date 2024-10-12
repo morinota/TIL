@@ -106,7 +106,42 @@ We adopted Langchain’s partial JSON parsing for the streaming on our server, a
 Here is the current prompt we’re using for Text2SQL:
 これが現在Text2SQLで使用しているプロンプトです：
 
-![]()
+---
+
+You are a {dialect} expert.
+
+Please help to generate a {dialect} query to answer the question. Your response
+should ONLY be based on the given context and follow the response guidelines and
+format instructions.
+
+===Tables
+{table_schemas}
+
+===Original Query
+{original_query}
+
+===Response Guidelines
+
+1. If the provided context is sufficient, please generate a valid query without any
+   explanations for the question. The query should start with a comment containing the
+   question being asked.
+2. If the provided context is insufficient, please explain why it can't be
+   generated.
+3. Please use the most relevant table(s).
+5. Please format the query before responding.
+6. Please always respond with a valid well-formed JSON object with the following
+   format
+
+===Response Format
+{{
+   "query": "A generated SQL query when context is sufficient.",
+   "explanation": "An explanation of failing to generate the query."
+}}
+
+===Question
+{question}
+
+---
 
 ### Evaluation & Learnings 評価と教訓
 
@@ -143,87 +178,153 @@ Here’s a review of the refined infrastructure incorporating RAG:
 ![]()
 
 - 1. An offline job is employed to generate a vector index of tables’ summaries and historical queries against them.
-オフラインジョブ (は、テーブルのサマリーとそれらに対する過去のクエリのベクトルインデックスを生成するために使用される。
+オフラインジョブ は、**テーブルのサマリーとそれらに対する過去のクエリのベクトルインデックスを生成**するために使用される。
+(ここで、クエリはそのまま埋め込む? もしくは自然言語に変換してから埋め込みにする??:thinking:)
 
 - 2. If the user does not specify any tables, their question is transformed into embeddings, and a similarity search is conducted against the vector index to infer the top N suitable tables.
-ユーザーがテーブルを指定しなかった場合、質問は埋め込みに変換され、上位N個の適切なテーブルを推測するためにベクトルインデックスに対して類似性検索が行われる。
+ユーザがテーブルを指定しない場合、彼らの**質問は埋め込みに変換**され、ベクトルインデックスに対して類似性検索が行われ、**上位N個の適切なテーブルが推測**される。(RAGチックだ...!:thinking:)
 
-The top N tables, along with the table schema and analytical question, are compiled into a prompt for LLM to select the top K most relevant tables.
-上位N個のテーブルは、テーブルスキーマと分析問題とともに、LLMが最も関連性の高い上位K個のテーブルを選択するためのプロンプトにまとめられる。
+- 3. The top N tables, along with the table schema and analytical question, are compiled into a prompt for LLM to select the top K most relevant tables.
+上位N個のテーブルは、テーブルスキーマと分析的なクエリとともに、LLMが最も関連性の高い上位K個のテーブルを選択するための**プロンプトにコンパイル**される。
 
-The top K tables are returned to the user for validation or alteration.
-トップKのテーブルは、検証または変更のためにユーザーに返される。
+- 4. The top K tables are returned to the user for validation or alteration.
+トップKのテーブルは、検証または変更のためにユーザに返される。
 
-The standard Text-to-SQL process is resumed with the user-confirmed tables.
-標準のText-to-SQL処理は、ユーザーが確認したテーブルで再開される。
+- 5. The standard Text-to-SQL process is resumed with the user-confirmed tables.
+ユーザが確認したテーブルで、標準のText-to-SQLプロセスが再開される。(ここからfirstバージョンの手順が続く??)
 
 ### Offline Vector Index Creation オフライン・ベクトル・インデックスの作成
 
 There are two types of document embeddings in the vector index:
-ベクトルインデックスには2種類の文書埋め込みがある：
+ベクトルインデックスには**2種類の文書埋め込み**がある：
+(うんうん:thinking:)
 
-Table summarization
+- Table summarization
 表の要約
 
-Query summarization
+- Query summarization
 クエリの要約
 
 ### Table Summarization 表の要約
 
 There is an ongoing table standardization effort at Pinterest to add tiering for the tables.
-Pinterestでは、テーブルの階層化を追加するために、テーブルの標準化を進めている。
+Pinterestでは、テーブルに階層化(Tier)を追加するためのテーブル標準化の取り組みが進行中である。
 We index only top-tier tables, promoting the use of these higher-quality datasets.
-トップクラスのテーブルのみにインデックスを付け、より質の高いデータセットの利用を促進している。
+**トップtierのテーブルのみにインデックスを付け**、より質の高いデータセットの利用を促進している。(品質が低くて使ってほしくないテーブルとかを除外するってことかな:thinking:)
 The table summarization generation process involves the following steps:
 表の要約生成プロセスには以下のステップがある：
 
-Retrieve the table schema from the table metadata store.
+- 1. Retrieve the table schema from the table metadata store.
 テーブル・メタデータ・ストアからテーブル・スキーマを取得する。
 
-Gather the most recent sample queries utilizing the table.
+- 2. Gather the most recent sample queries utilizing the table.
 テーブルを利用した最新のサンプルクエリを収集する。
 
-Based on the context window, incorporate as many sample queries as possible into the table summarization prompt, along with the table schema.
-コンテキスト・ウィンドウに基づき、テーブル・スキーマとともに、できるだけ多くのサンプル・クエリをテーブル要約プロンプトに組み込みます。
+- 3. Based on the context window, incorporate as many sample queries as possible into the table summarization prompt, along with the table schema.
+コンテキストウィンドウに基づいて、**テーブルスキーマとともに、できるだけ多くのサンプルクエリ**をテーブルの要約プロンプトに組み込む。
+(サンプルクエリもtable summaryを作るために渡すの:thinking:)
+(コンテキストウィンドウは各モデルによって異なるのか:thinking:)
 
-Forward the prompt to the LLM to create the summary.
-プロンプトをLLMに転送し、要約を作成する。
+- 4. Forward the prompt to the LLM to create the summary.
+プロンプトをLLMに転送し、**要約を作成**する。
 
-Generate and store embeddings in the vector store.
-埋め込みを生成し、ベクトルストアに保存する。
+- 5. Generate and store embeddings in the vector store.
+埋め込みを生成し、ベクトルストアに保存する。(summaryを埋め込む)
 
 The table summary includes description of the table, the data it contains, as well as potential use scenarios.
 表サマリーには、表の説明、含まれるデータ、潜在的な使用シナリオが含まれる。
 Here is the current prompt we are using for table summarization:
 現在、表の要約に使用しているプロンプトはこちら：
 
+---
+
+You are a data analyst that can help summarize SQL tables.
+
+Summarize below table by the given context.
+
+===Table Schema
+{table_schema}
+
+===Sample Queries
+{sample_queries}
+
+===Response guideline
+
+- You shall write the summary based only on provided information.
+- Note that above sampled queries are only small sample of queries and thus not all
+  possible use of tables are represented, and only some columns in the table are used.
+- Do not use any adjective to describe the table. For example, the importance of
+  the table, its comprehensiveness or if it is crucial, or who may be using it. For
+  example, you can say that a table contains certain types of data, but you cannot say
+  that the table contains a 'wealth' of data, or that it is 'comprehensive'.
+- Do not mention about the sampled query. Only talk objectively about the type of
+  data the table contains and its possible utilities.
+- Please also include some potential usecases of the table, e.g. what kind of
+  questions can be answered by the table, what kind of analysis can be done by the
+  table, etc.
+
+---
+
 ### Query Summarization クエリの要約
 
 Besides their role in table summarization, sample queries associated with each table are also summarized individually, including details such as the query’s purpose and utilized tables.
-テーブルを要約する役割の他に、各テーブルに関連するサンプルクエリも個別に要約されており、クエリの目的や利用したテーブルなどの詳細が含まれている。
+表の要約における役割に加えて、**各テーブルに関連付けられたサンプルクエリも個別に要約**され、クエリの目的や使用されたテーブルなどの詳細が含まれる。
 Here is the prompt we are using:
 これが、私たちが使っているプロンプトです：
+(summarize対象のクエリ + クエリ内で使われているテーブルスキーマを渡す:thinking:)
+
+---
+You are a helpful assistant that can help document SQL queries.
+あなたはSQLクエリを文書化するのに役立つアシスタントです。
+
+Please document below SQL query by the given table schemas.
+以下のSQLクエリを、与えられたテーブルスキーマによって文書化してください。
+
+===SQL Query
+{query}
+
+===Table Schemas
+{table_schemas}
+
+===Response Guidelines
+Please provide the following list of descriptions for the query:
+
+- The selected columns and their description
+- The input tables of the query and the join pattern
+- Query's detailed transformation logic in plain english, and why these
+  transformation are necessary
+- The type of filters performed by the query, and why these filters are necessary
+- Write very detailed purposes and motives of the query in detail
+- Write possible business and functional purposes of the query
+
+---
+
+<!-- ここまで読んだ! -->
 
 ### NLP Table Search NLP テーブル検索
 
 When a user asks an analytical question, we convert it into embeddings using the same embedding model.
-ユーザーが分析的な質問をすると、同じ埋め込みモデルを使って埋め込みに変換する。
+ユーザが分析的な質問をすると、**同じ埋め込みモデルを使用して埋め込みに変換**する。(RAGの前半のステップだ:thinking:)
 Then we conduct a search against both table and query vector indices.
 次に、テーブルとクエリーベクトルの両方のインデックスに対して検索を行う。
 We’re using OpenSearch as the vector store and using its built in similarity search ability.
-我々はベクターストアとしてOpenSearchを使用しており、その組み込みの類似検索機能を使用している。
+**我々はベクターストアとしてOpenSearchを使用**しており、その組み込みの類似検索機能を使用している。
 
 Considering that multiple tables can be associated with a query, a single table could appear multiple times in the similarity search results.
-1つのクエリに複数のテーブルが関連づけられることを考えると、1つのテーブルが類似検索結果に複数回表示される可能性がある。
+複数のテーブルがクエリに関連付けられる可能性があるため、**単一のテーブルが類似性検索結果に複数回表示されることがあります**。(なんでかよくわかってない:thinking:)
 Currently, we utilize a simplified strategy to aggregate and score them.
-現在、私たちは簡略化された戦略で集計と採点を行っている。
+現在は、それらを集約してスコアリングするための簡略化された戦略を利用している。
 Table summaries carry more weight than query summaries, a scoring strategy that could be adjusted in the future.
-テーブル・サマリーはクエリー・サマリーよりも重視されるが、これは将来的に調整可能な得点戦略である。
+**テーブルサマリはクエリサマリよりも重要視され**、将来調整される可能性のあるスコアリング戦略である。
 
 Other than being used in the Text-to-SQL, this NLP-based table search is also used in the general table search in Querybook.
-Text-to-SQLで使用される以外に、このNLPベースのテーブル検索はQuerybookの一般的なテーブル検索でも使用されます。
+Text-to-SQLで使用されるだけでなく、このNLPベースのテーブル検索は、Querybookの一般的なテーブル検索にも使用されています。
+
+<!-- ここまで読んだ! -->
 
 ### Table Re-selection テーブルの再選択
+
+(質問に利用できそうなテーブルk個を選ぶステップ!)
 
 Upon retrieving the top N tables from the vector index, we engage an LLM to choose the most relevant K tables by evaluating the question alongside the table summaries.
 ベクトルインデックスから上位N個のテーブルを検索すると、LLMがテーブルの要約とともに質問を評価し、最も関連性の高いK個のテーブルを選択する。
@@ -232,21 +333,46 @@ Depending on the context window, we include as many tables as possible in the pr
 Here is the prompt we’re using for the table re-selection:
 以下は、テーブルの再選択に使用するプロンプトである：
 
+---
+
+You are a data scientist that can help select the most relevant tables for SQL query tasks.
+
+Please select the most relevant table(s) that can be used to generate SQL query for the question.
+
+===Response Guidelines
+
+- Only return the most relevant table(s).
+- Return at most {top_n} tables.
+- Response should be a valid JSON array of table names which can be parsed by Python
+  json.loads(). For a single table, the format should be ["table_name"].
+
+===Tables
+{table_schemas}
+
+===Question
+{question}
+
+---
+
 Once the tables are re-selected, they are returned to the user for validation before transitioning to the actual SQL generation stage.
-テーブルが再選択されると、実際のSQL生成段階に移行する前に、検証のためにユーザーに戻される。
+テーブルが再選択されると、実際のSQL生成段階に移行する前に、ユーザに返されて検証される。
 
 ### Evaluation & Learnings 評価と教訓
 
 We evaluated the table retrieval component of our Text-to-SQL feature using offline data from previous table searches.
-我々は、過去のテーブル検索のオフラインデータを使用して、Text-to-SQL 機能のテーブル検索コンポーネントを評価した。
+我々は、過去のテーブル検索のオフラインデータを使用して、Text-to-SQL機能の**テーブル検索コンポーネント**(=secondバージョンで追加されたやつ...!)を評価した。
 This data was insufficient in one important respect: it captured user behavior before they knew that NLP-based search was available.
-このデータは、ある重要な点において不十分であった： それは、NLPベースの検索が利用可能であることを知る前のユーザーの行動を捉えているという点である。
+このデータは、1つの重要な点で不十分であった：NLPベースの検索が利用可能であることを知る前のユーザの行動を捉えていた。
+(オフラインデータを使うから、どうしても実際の運用時の性能を完璧には推定できないよ、ってことっぽい:thinking:)
 Therefore, this data was used mostly to ensure that the embedding-based table search did not perform worse than the existing text-based search, rather than attempting to measure improvement.
-したがって、このデータは、改善を測定するためというよりも、埋め込みベースのテーブル検索が既存のテキストベースの検索よりもパフォーマンスが悪くないことを確認するために主に使用された。
+したがって、このデータは、改善を測定するためというよりも、**埋め込みベースのテーブル検索が既存のテキストベースの検索よりもパフォーマンスが悪くないことを確認するため**に主に使用された。(あくまでも健康診断だ、という認識を持ってるのが素敵だ...!:thinking:)
 We used this evaluation to select a method and set weights for the embeddings used in table retrieval.
-この評価を用いて、テーブル検索に使用する埋め込み方法の選択と重みの設定を行った。
+この評価を用いて、テーブル検索に使用する埋め込み方法の選択と重みの設定を行った。(ハイパーパラメータ調整はオフライン評価で...!:thinking:)
 This approach revealed to us that the table metadata generated through our data governance efforts was of significant importance to overall performance: the search hit rate without table documentation in the embeddings was 40%, but performance increased linearly with the weight placed on table documentation up to 90%.
-このアプローチにより、データ・ガバナンスの取り組みを通じて生成されたテーブル・メタデータが、全体的なパフォーマンスにとって重要であることが明らかになった： 埋め込みにテーブル・ドキュメンテーションがない場合の検索ヒット率は40％でしたが、テーブル・ドキュメンテーションに重きを置くとパフォーマンスは直線的に向上し、90％まで上昇しました。
+このアプローチにより、データガバナンスの取り組みを通じて生成された**テーブルメタデータが全体的なパフォーマンスに重要である**ことが明らかになった：埋め込みにテーブルのドキュメントがない場合の検索ヒット率は40％だったが、テーブルのドキュメントに置かれた重みが90％まで増加すると、パフォーマンスが線形に向上した。
+(データカタログの充実が重要だったってことか...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## Next Steps 次のステップ
 
@@ -257,24 +383,21 @@ Here are some potential areas of further development:
 
 ### NLP Table Search NLP テーブル検索
 
-Metadata Enhancement
-メタデータの強化
+#### Metadata Enhancement メタデータの強化
 
 Currently, our vector index only associates with the table summary.
-現在、我々のベクター・インデックスはテーブル・サマリーとしか関連付けられない。
+現在、我々のベクター・インデックスはテーブル・サマリーとしか関連付けられない。(あれ、クエリサマリもじゃない??:thinking:)
 One potential improvement could be the inclusion of further metadata such as tiering, tags, domains, etc., for more refined filtering during the retrieval of similar tables.
-潜在的な改良点としては、類似したテーブルを検索する際に、より洗練されたフィルタリングを行うために、階層化、タグ、ドメインなどのメタデータを追加することである。
+より洗練されたテーブルの類似性検索中のフィルタリングのために、ティアリング、タグ、ドメインなどの追加のメタデータを含めることができる。
 
-Scheduled or Real-Time Index Update
-インデックスのスケジュール更新またはリアルタイム更新
+#### Scheduled or Real-Time Index Update インデックスのスケジュール更新またはリアルタイム更新
 
 Currently the vector index is generated manually.
 現在、ベクトルインデックスは手動で生成されている。
 Implementing scheduled or even real-time updates whenever new tables are created or queries executed would enhance system efficiency.
 新しいテーブルが作成されたり、クエリーが実行されたりするたびに、スケジュールされた、あるいはリアルタイムのアップデートを実装することで、システムの効率を高めることができる。
 
-Similarity Search and Scoring Strategy Revision
-類似性検索と採点戦略の見直し
+#### Similarity Search and Scoring Strategy Revision 類似性検索と採点戦略の見直し
 
 Our current scoring strategy to aggregate the similarity search results is rather basic.
 類似検索結果を集約するための現在のスコアリング戦略は、かなり基本的なものだ。
@@ -284,9 +407,9 @@ Fine-tuning this aspect could improve the relevance of retrieved results.
 ### Query validation クエリ検証
 
 At present, the SQL query generated by the LLM is directly returned to the user without validation, leaving a potential risk that the query may not run as expected.
-現在のところ、LLMによって生成されたSQLクエリは、検証されることなく直接ユーザーに返されるため、クエリが期待通りに実行されない可能性がある。
+現在のところ、LLMによって生成されたSQLクエリは、検証されることなく直接ユーザに返されるため、クエリが期待通りに実行されない可能性がある。
 Implementing query validation, perhaps using a constrained beam search, could provide an extra layer of assurance.
-クエリ検証を実装することで、おそらくは制約付きビーム検索を使用することで、さらなる保証を提供することができるだろう。
+制約付きビームサーチを使用してクエリ検証を実装することで、追加の保証を提供できるかもしれない。
 
 ### User feedback ユーザーからのフィードバック
 
@@ -298,7 +421,7 @@ Such feedback could be processed and incorporated into the vector index or table
 ### Evaluation 評価
 
 While working on this project, we realized that the performance of text-to-SQL in a real world setting is significantly different to that in existing benchmarks, which tend to use a small number of well-normalized tables (which are also prespecified).
-このプロジェクトに取り組んでいる間に、実環境におけるテキストからSQLへの変換の性能は、少数の十分に正規化されたテーブル（それも事前に指定されたもの）を使用する傾向にある既存のベンチマークにおける性能とは大きく異なることに気付きました。
+このプロジェクトに取り組んでいる間に、**実世界の環境でのText-to-SQLの性能は**、一般的には少数のよく正規化されたテーブル（または事前に指定されたテーブル）を使用する**既存のベンチマークとは大きく異なる**ことに気づきました。
 It would be helpful for applied researchers to produce more realistic benchmarks which include a larger amount of denormalized tables and treat table search as a core part of the problem.
 より多くの非正規化テーブルを含む、より現実的なベンチマークを作成し、テーブル検索を問題の中核部分として扱うことは、応用研究者にとって有益であろう。
 
@@ -306,3 +429,5 @@ To learn more about engineering at Pinterest, check out the rest of our Engineer
 Pinterestのエンジニアリングについてもっと知りたい方は、エンジニアリングブログの他の部分をチェックし、Pinterest Labsサイトをご覧ください。
 To explore and apply to open roles, visit our Careers page.
 募集職種を検索して応募するには、採用ページをご覧ください。
+
+<!-- ここまで読んだ! -->
