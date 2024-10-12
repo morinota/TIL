@@ -1,20 +1,21 @@
 ## link リンク
 
-- https://huyenchip.com/2023/04/11/llm-engineering.html https://huyenchip.com/2023/04/11/llm-engineering.html
+- <https://huyenchip.com/2023/04/11/llm-engineering.html> <https://huyenchip.com/2023/04/11/llm-engineering.html>
 
 ## title タイトル
 
 Building LLM applications for production
-LLMアプリケーションの制作を構築する
+production向けLLMアプリケーションの構築
 
 # intro ♪ イントロ
 
 A question that I’ve been asked a lot recently is how large language models (LLMs) will change machine learning workflows.
-最近よく聞かれるのが、大規模言語モデル（LLM）が機械学習のワークフローをどう変えるかという質問です。
+最近よく聞かれるのが、**大規模言語モデル（LLM）が機械学習のワークフローをどう変えるか**という質問です。
 After working with several companies who are working with LLM applications and personally going down a rabbit hole building my applications, I realized two things:
 LLMの申請書を作成しているいくつかの会社と仕事をし、個人的には申請書を作成するためにウサギの穴に行った後、私は2つのことに気づきました：
 
-- 1. It’s easy to make something cool with LLMs, but very hard to make something production-ready with them. 1. LLMでクールなものを作るのは簡単ですが、LLMでプロダクションレディなものを作るのは非常に難しいです。
+- 1. It’s easy to make something cool with LLMs, but very hard to make something production-ready with them.
+**LLMを使って何かを作るのは簡単ですが、それをproduction-readyにするのは非常に難しい**。
 
 - 2. LLM limitations are exacerbated by a lack of engineering rigor in prompt engineering, partially due to the ambiguous nature of natural languages, and partially due to the nascent nature of the field. 2. LLMの限界は、プロンプトエンジニアリングにおける工学的厳密さの欠如、自然言語の曖昧な性質による部分的なもの、そしてこの分野の新しさによる部分的なものによって悪化している。
 
