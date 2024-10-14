@@ -236,103 +236,114 @@ You use multiple retrievers to fetch candidates at the same time, then combine t
 
 ### RAGs with tabular data 表形式データによるRAG
 
+(構造化データから関連情報をretrieveして、contextとしてgeneratorに渡すケース! 事例としては少なさそう??:thinking:)
+
 External data sources can also be structured, such as dataframes or SQL tables.
 外部データソースは、データフレームやSQLテーブルのように構造化することもできる。
 Retrieving data from an SQL table is significantly different from retrieving data from unstructured documents.
-SQLテーブルからのデータ検索は、非構造化文書からのデータ検索とは大きく異なる。
+SQLテーブルからのデータ検索は、非構造化documentからのデータ検索とは大きく異なります。
 Given a query, the system works as follows.
 クエリが与えられると、システムは次のように動作する。
 
-Text-to-SQL: Based on the user query and the table schemas, determine what SQL query is needed.
+1. Text-to-SQL: Based on the user query and the table schemas, determine what SQL query is needed.
 テキストからSQLへ： ユーザークエリとテーブルスキーマに基づいて、必要なSQLクエリを決定する。
+(まずここが一筋縄ではいかないはず。他社ブログを見てると、Text-to-SQLアプリケーションを開発する上でアーキテクチャが大事そう...!:thinking:)
 
-SQL execution: Execute the SQL query.
+2. SQL execution: Execute the SQL query.
 SQLの実行： SQLクエリを実行します。
 
-Generation: Generate a response based on the SQL result and the original user query.
-生成： SQLの結果と元のユーザークエリに基づいてレスポンスを生成する。
+3. Generation: Generate a response based on the SQL result and the original user query.
+生成： SQLの結果と元のユーザクエリに基づいてレスポンスを生成する。
 
 For the text-to-SQL step, if there are many available tables whose schemas can’t all fit into the model context, you might need an intermediate step to predict what tables to use for each query.
 テキストをSQLに変換するステップでは、利用可能なテーブルが多数あり、そのスキーマがすべてモデルのコンテキストに適合しない場合、各クエリに使用するテーブルを予測する中間ステップが必要になることがあります。
 Text-to-SQL can be done by the same model used to generate the final response or one of many specialized text-to-SQL models.
-テキストからSQLへの変換は、最終的な応答を生成するために使用されるのと同じモデル、または多くの特殊なテキストからSQLへの変換モデルの1つによって行うことができます。
+テキストからSQLへの変換は、最終的な応答を生成するために使用される同じモデル、または多くの専門のテキストからSQLへの変換モデルの1つで行うことができます。
+
+<!-- ここまで読んだ -->
 
 ### Agentic RAGs エージェントのRAG
 
 An important source of data is the Internet.
-重要なデータ源はインターネットだ。
+**重要なデータ源はインターネット**です。(=context constructionのための手段として、外部データソースから関連情報をretrieveするケース...!:thinking:)
 A web search tool like Google or Bing API can give the model access to a rich, up-to-date resource to gather relevant information for each query.
-GoogleやBingのAPIのようなウェブ検索ツールは、各クエリに関連する情報を収集するための豊富で最新のリソースへのアクセスをモデルに与えることができる。
+GoogleやBingのAPIのようなウェブ検索ツールは、モデルに対して、各クエリに関連する情報を収集するための豊富で最新のリソースにアクセスさせることができます。
 For example, given the query “Who won Oscar this year?”, the system searches for information about the latest Oscar and uses this information to generate the final response to the user.
-例えば、「Who won Oscar this year? 」というクエリが与えられると、システムは最新のオスカーに関する情報を検索し、この情報を使ってユーザーへの最終的な応答を生成する。
+例えば、「今年のオスカーは誰が受賞しましたか？」というクエリが与えられた場合、システムは最新のオスカーに関する情報を検索し、この情報を使用してユーザに最終的な応答を生成します。
 
 Term-based retrieval, embedding-based retrieval, SQL execution, and web search are actions that a model can take to augment its context.
-用語ベースの検索、埋め込みベースの検索、SQLの実行、ウェブ検索は、モデルがそのコンテキストを拡張するために取ることができるアクションである。
+**term-based retrieval、embedding-based retrieval、SQL実行、ウェブ検索は、いずれもモデルがcontextを補完するために取ることができるアクション**です。
 You can think of each action as a function the model can call.
-それぞれのアクションは、モデルが呼び出すことができる関数だと考えることができる。
+それぞれのアクションは、**モデルが呼び出すことができる関数**と考えることができます。
 A workflow that can incorporate external actions is also called agentic.
-外部のアクションを取り入れることができるワークフローは、エージェント型とも呼ばれる。
+**外部アクションを組み込むことができるワークフロー**は、エージェントとも呼ばれます。
 The architecture then looks like this.
 すると、アーキテクチャは次のようになる。
 
-» Action vs.
-」 アクション対アクション
-tool «
-ツール 」
+![]()
+
+<!-- 余談 -->
+» Action vs tool アクション対ツール
 
 A tool allows one or more actions.
-ツールは1つ以上のアクションを可能にする。
+**ツールは1つ以上のアクションを可能にする**。
 For example, a people search tool might allow two actions: search by name and search by email.
 例えば、人名検索ツールは2つのアクションを可能にするかもしれない： 名前による検索とEメールによる検索です。
 However, the difference is minimal, so many people use action and tool interchangeably.
-しかし、その違いはごくわずかであるため、多くの人はアクションとツールを同じ意味で使っている。
+しかし、その違いはわずかであるため、多くの人がアクションとツールを同義に使っています。
 
-» Read-only actions vs.
-」 読み取り専用アクション対
-write actions «
-アクションを書く 」
+<!-- これも余談 -->
+» Read-only actions vs write actions 読み取り専用アクション対書き込みアクション
 
 Actions that retrieve information from external sources but don’t change their states are read-only actions.
 外部ソースから情報を取得するが状態を変更しないアクションは、読み取り専用アクションである。
+(基本的にcontext constructionのための手段としてRAGを使う場合は、read-only actionsのイメージ:thinking:)
 Giving a model write actions, e.g.updating the values in a table, enables the model to perform more tasks but also poses more risks, which will be discussed later.
-モデルに書き込みアクションを与えることで、例えばテーブルの値を更新するような、より多くのタスクを実行できるようになりますが、後述するようなリスクも生じます。
+モデルに書き込みアクション、例えばテーブル内の値を更新する権限を与えると、モデルはより多くのタスクを実行できるが、より多くのリスクも伴う。これについては後で詳しく説明します。
 
-### Query rewriting クエリーの書き換え
+<!-- ここまで読んだ -->
+
+### Query rewriting クエリの書き換え
 
 Often, a user query needs to be rewritten to increase the likelihood of fetching the right information.
-多くの場合、正しい情報を取得する可能性を高めるために、ユーザーのクエリを書き換える必要がある。
+多くの場合、**正しい情報を取得する可能性を高めるために、ユーザのクエリを書き換える必要があります**。
+(関連情報をretrieveする前に、クエリをrewriteするコンポーネントが必要な場合がある...!:thinking:)
 Consider the following conversation.
 次のような会話を考えてみよう。
 
+```shell
 User: When was the last time John Doe bought something from us?
-ユーザー ジョン・ドウが最後に何かを買ったのはいつですか？
-
+ユーザ: ジョン・ドウが最後に何かを買ったのはいつですか？
 AI: John last bought a Fruity Fedora hat from us two weeks ago, on January 3, 2030.
-AIです： ジョンが最後にFruity Fedoraの帽子を買ったのは2週間前の2030年1月3日です。
-
+AI： ジョンが最後にFruity Fedoraの帽子を買ったのは2週間前の2030年1月3日です。
 User: How about Emily Doe?
-ユーザー エミリー・ドウはどうですか？
+ユーザ: エミリー・ドウはどうですか？
+```
 
 The last question, “How about Emily Doe?”, is ambiguous.
-エミリー・ドウはどうですか」という最後の質問は曖昧だ。
+最後の質問「エミリー・ドウはどうですか？」は曖昧です。
 If you use this query verbatim to retrieve documents, you’ll likely get irrelevant results.
-このクエリをそのまま使って文書を検索すると、無関係な結果が得られる可能性が高い。
+**このクエリをそのまま使って文書を検索すると、無関係な結果が得られる可能性が高い**。(確かに、対話式のアプリケーションだと特に問題になりそう:thinking:)
 You need to rewrite this query to reflect what the user is actually asking.
-ユーザーが実際に尋ねていることを反映させるために、このクエリを書き換える必要があります。
+ユーザが実際に尋ねていることを反映させるために、このクエリを書き換える必要があります。
 The new query should make sense on its own.
-新しいクエリはそれ自体で意味をなすはずだ。
+新しいクエリは、単独で意味をなすはずです。
 The last question should be rewritten to “When was the last time Emily Doe bought something from us?”
 最後の質問は、「エミリー・ドウが最後に私たちから何かを買ったのはいつですか？」に書き換えるべきだ。
 
 Query rewriting is typically done using other AI models, using a prompt similar to “Given the following conversation, rewrite the last user input to reflect what the user is actually asking."
-クエリの書き換えは通常、他のAIモデルを使って行われる。「次の会話が与えられたら、ユーザーが実際に尋ねていることを反映させるために、最後のユーザー入力を書き換えてください 」のようなプロンプトを使用する。
+query rewritingは通常、他のAIモデルを使って行われる。「**次の会話が与えられたら、ユーザーが実際に尋ねていることを反映させるために、最後のユーザー入力を書き換えてください**」のようなプロンプトを使用する。
 
 Query rewriting can get complicated, especially if you need to do identity resolution or incorporate other knowledge.
-クエリーの書き換えは複雑になる可能性があり、特に同一性解決や他の知識を取り入れる必要がある場合はなおさらだ。
+query rewritingは、特にIDの解決や他の知識を組み込む必要がある場合、複雑になることがあります。
 If the user asks “How about his wife?”, you will first need to query your database to find out who his wife is.
-もしユーザーが 「彼の奥さんはどうですか？」と尋ねたら、まず彼の奥さんが誰なのかデータベースを照会する必要がある。
+**もしユーザが「彼の妻はどうですか？」と尋ねた場合、まずデータベースにクエリを送信して彼の妻が誰かを調べる必要があります。**
 If you don’t have this information, the rewriting model should acknowledge that this query isn’t solvable instead of hallucinating a name, leading to a wrong answer.
-この情報を持っていない場合、書き換えモデルは、名前を幻視して間違った答えを導くのではなく、このクエリが解決不可能であることを認めるべきである。
+この情報がない場合、**書き換えモデルは、名前をハルシネートする代わりに、このクエリが解決できないことを認めて、誤った回答につながるのを防ぐべきです**。
+
+(query rewritingなかなか難しそう:thinking:)
+
+<!-- ここまで読んだ -->
 
 ## Step 2. Put in Guardrails ステップ2. ガードレールの設置
 
