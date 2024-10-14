@@ -1,7 +1,7 @@
 # Building A Generative AI Platform ジェネレーティブAIプラットフォームの構築
 
 After studying how companies deploy generative AI applications, I noticed many similarities in their platforms.
-各社がどのようにジェネレーティブAIアプリケーションを導入しているかを調査した結果、そのプラットフォームには多くの共通点があることに気づいた。
+各社がどのようにジェネレーティブAIアプリケーションを導入しているかを調査した結果、そのプラットフォームには**多くの共通点**があることに気づいた。
 This post outlines the common components of a generative AI platform, what they do, and how they are implemented.
 この記事では、ジェネレーティブAIプラットフォームの一般的な構成要素、それらの機能、実装方法について概説する。
 I try my best to keep the architecture general, but certain applications might deviate.
@@ -9,45 +9,47 @@ I try my best to keep the architecture general, but certain applications might d
 This is what the overall architecture looks like.
 全体的なアーキテクチャはこんな感じだ。
 
+![]()
+
 This is a pretty complex system.
 これはかなり複雑なシステムだ。
 This post will start from the simplest architecture and progressively add more components.
-この記事では、最もシンプルなアーキテクチャから始め、徐々にコンポーネントを追加していく。
+**この記事では、最も単純なアーキテクチャから始め、徐々にさらに多くのコンポーネントを追加していく**。(わかりやすく解説してくれていそうでありがたい...!:pray:)
 In its simplest form, your application receives a query and sends it to the model.
-最も単純な形では、アプリケーションはクエリーを受け取り、それをモデルに送ります。
+**最も単純な形では、アプリケーションはクエリを受け取り、モデルに送信する**。
 The model generates a response, which is returned to the user.
-モデルはレスポンスを生成し、それがユーザーに返される。
+**モデルはレスポンスを生成し、それがユーザに返される。**
 There are no guardrails, no augmented context, and no optimization.
 ガードレールも、拡張された文脈も、最適化もない。
 The Model API box refers to both third-party APIs (e.g., OpenAI, Google, Anthropic) and self-hosted APIs.
-モデルAPIの欄は、サードパーティAPI（OpenAI、Google、Anthropicなど）とセルフホストAPIの両方を指す。
+**モデルAPIの欄は、サードパーティAPI（例：OpenAI、Google、Anthropic）と自己ホストAPIの両方を指す**。(外部LLMでも内製LLMでも、どちらでも置き換え可能なアーキテクチャってことか:thinking:)
 
 From this, you can add more components as needs arise.
 ここから、必要に応じてコンポーネントを追加していくことができる。
 The order discussed in this post is common, though you don’t need to follow the exact same order.
 この記事で取り上げた順番が一般的だが、まったく同じ順番に従う必要はない。
 A component can be skipped if your system works well without it.
-コンポーネントがなくてもシステムがうまく機能する場合は、コンポーネントを省略することができる。
+**コンポーネントがなくてもシステムがうまく機能する場合は、コンポーネントを省略することができる。**
 Evaluation is necessary at every step of the development process.
-評価は開発プロセスのあらゆる段階で必要である。
+評価は、開発プロセスの各段階で必要だ。
 
-Enhance context input into a model by giving the model access to external data sources and tools for information gathering.
+- Enhance context input into a model by giving the model access to external data sources and tools for information gathering.
 モデルが外部のデータソースや情報収集ツールにアクセスできるようにすることで、モデルへのコンテキスト入力を強化する。
 
-Put in guardrails to protect your system and your users.
+- Put in guardrails to protect your system and your users.
 システムとユーザーを守るためにガードレールを設置しましょう。
 
-Add model router and gateway to support complex pipelines and add more security.
+- Add model router and gateway to support complex pipelines and add more security.
 モデルルーターとゲートウェイを追加して、複雑なパイプラインをサポートし、セキュリティを強化。
 
-Optimize for latency and costs with cache.
+- Optimize for latency and costs with cache.
 キャッシュでレイテンシとコストを最適化。
 
-Add complex logic and write actions to maximize your system’s capabilities.
+- Add complex logic and write actions to maximize your system’s capabilities.
 複雑なロジックを追加し、アクションを記述することで、システムの能力を最大限に引き出します。
 
 Observability, which allows you to gain visibility into your system for monitoring and debugging, and orchestration, which involves chaining all the components together, are two essential components of the platform.
-監視とデバッグのためにシステムを可視化するオブザーバビリティと、すべてのコンポーネントを連結するオーケストレーションは、プラットフォームの2つの重要な要素である。
+観測可能性(監視とデバッグのためにシステムを可視化する)とオーケストレーション(すべてのコンポーネントを連結する)は、プラットフォームの2つの重要なコンポーネントです。
 We will discuss them at the end of this post.
 それらについては、この記事の最後で説明する。
 
@@ -55,273 +57,182 @@ We will discuss them at the end of this post.
 」 この記事ではないもの 」
 
 This post focuses on the overall architecture for deploying AI applications.
-この記事では、AIアプリケーションを展開するための全体的なアーキテクチャに焦点を当てる。
+**この記事では、AIアプリケーションを展開するための全体的なアーキテクチャに焦点を当てる**。
 It discusses what components are needed and considerations when building these components.
 どのようなコンポーネントが必要なのか、またこれらのコンポーネントを構築する際の注意点についても触れている。
 It’s not about how to build AI applications and, therefore, does NOT discuss model evaluation, application evaluation, prompt engineering, finetuning, data annotation guidelines, or chunking strategies for RAGs.
-したがって、モデル評価、アプリケーション評価、プロンプト・エンジニアリング、ファインチューニング、データ注釈ガイドライン、RAGのチャンキング戦略については触れていない。
+したがって、AIアプリケーションの構築方法については説明しておらず、モデル評価、アプリケーション評価、プロンプトエンジニアリング、ファインチューニング、データ注釈のガイドライン、RAGのチャンキング戦略については説明していません。
 All these topics are covered in my upcoming book AI Engineering.
 これらのトピックはすべて、私の近刊『AIエンジニアリング』で取り上げている。
 
-Table of contents
-目次
-
-Step 1.
-ステップ1.
-Enhance Context
-コンテキストの強化
-
-….RAGs
-...ラグ
-
-….RAGs with tabular data
-...表データによるRAG
-
-….Agentic RAGs
-...エージェントのRAG
-
-….Query rewriting
-クエリ書き換え
-
-Step 2.
-ステップ2.
-Put in Guardrails
-ガードレールの設置
-
-….Input guardrails
-入力ガードレール
-
-……..Leaking private information to external APIs
-............個人情報を外部APIに漏らす
-
-……..Model jailbreaking
-脱獄モデル
-
-….Output guardrails
-...出力ガードレール
-
-……..Output quality measurement
-出力品質測定
-
-……..Failure management
-.........失敗のマネジメント
-
-….Guardrail tradeoffs
-......ガードレールのトレードオフ
-
-Step 3.
-ステップ3.
-Add Model Router and Gateway
-ルーターとゲートウェイのモデル追加
-
-….Router
-......ルーター
-
-….Gateway
-ゲートウェイ
-
-Step 4.
-ステップ4.
-Reduce Latency with Cache
-キャッシュによるレイテンシーの削減
-
-….Prompt cache
-...プロンプト・キャッシュ
-
-….Exact cache
-正確なキャッシュ
-
-….Semantic cache
-...セマンティック・キャッシュ
-
-Step 5.
-ステップ5.
-Add complex logic and write actions
-複雑なロジックの追加とアクションの記述
-
-….Complex logic
-......複雑な論理
-
-….Write actions
-......アクションを書く
-
-Observability
-観測可能性
-
-….Metrics
-メトリクス
-
-….Logs
-ログ
-
-….Traces
-痕跡
-
-AI Pipeline Orchestration
-AIパイプライン・オーケストレーション
-
-Conclusion
-結論
-
-References and Acknowledgments
-参考文献と謝辞
+<!-- ここまで読んだ -->
 
 ## Step 1. Enhance Context ステップ1. コンテキストの強化
 
+("最も簡単な形"に最初に追加するコンポーネント??:thinking:)
+("最も単純な形" = アプリケーションがクエリを受け取り、モデルに送信し、モデルがレスポンスを生成してユーザに返すだけの状態)
+
 The initial expansion of a platform usually involves adding mechanisms to allow the system to augment each query with the necessary information.
-プラットフォームの初期拡張には通常、システムが各クエリーを必要な情報で補強できるようにするメカニズムの追加が含まれる。
+プラットフォームの最初の拡張では、**システムが各クエリに必要な情報を補完するためのメカニズムを追加すること**が一般的です。
 Gathering the relevant information is called context construction.
-関連情報を集めることをコンテキスト構築と呼ぶ。
+関連情報を集めることを **context construction (コンテキスト構築)** と呼びます。
 
 Many queries require context to answer.
-多くのクエリは、答えるために文脈を必要とする。
+多くのクエリは、答えるために文脈(context)が必要です。
 The more relevant information there is in the context, the less the model has to rely on its internal knowledge, which can be unreliable due to its training data and training methodology.
-コンテキストに関連する情報が多ければ多いほど、モデルの内部知識に頼る必要は少なくなる。
+**コンテキストに関連する情報が多ければ多いほど、モデルが内部の知識に頼る必要が少なくなります**。これは、トレーニングデータとトレーニング方法によって信頼性が低い可能性があるためです。
+(なるほど、信頼性の観点から、基本的にはcontextを追加したいモチベーションがあるのか...!:thinking:)
 Studies have shown that having access to relevant information in the context can help the model generate more detailed responses while reducing hallucinations (Lewis et al., 2020).
-研究によると、文脈中の関連情報にアクセスすることで、幻覚を減らしながら、モデルがより詳細な反応を生成するのに役立つことが示されている（Lewis et al.）
+研究によると、**contextで関連情報にアクセスできると、モデルがより詳細な回答を生成するのに役立ち、ハルシネーションを減らすことができる**とされています（Lewis et al., 2020）。
 
 For example, given the query “Will Acme’s fancy-printer-A300 print 100pps?”, the model will be able to respond better if it’s given the specifications of fancy-printer-A300.
-たとえば、「Acmeのfancy-printer-A300は100ppsを印刷するか？」というクエリが与えられた場合、fancy-printer-A300の仕様を与えれば、モデルはよりよく答えることができる。
+たとえば、「Acmeのfancy-printer-A300は100ppsを印刷しますか？」というクエリが与えられた場合、fancy-printer-A300の仕様が与えられると、モデルはより良く応答できるでしょう。
 (Thanks Chetan Tekur for the example.)
 (例を示してくれたチェタン・テクールに感謝する）。
 
 Context construction for foundation models is equivalent to feature engineering for classical ML models.
-基礎モデルのためのコンテキスト構築は、古典的なMLモデルのための特徴エンジニアリングに相当する。
+**基礎モデルの context construction は、古典的なMLモデルの特徴量エンジニアリングに相当します**。(なるほど...!:thinking:)
 They serve the same purpose: giving the model the necessary information to process an input.
-これらは同じ目的を果たす： モデルに入力を処理するのに必要な情報を与える。
+これらは同じ目的を果たします：**モデルに入力を処理するために必要な情報を提供すること**。(← context construction の目的)
 
 In-context learning, learning from the context, is a form of continual learning.
-コンテクスト学習、つまりコンテクストから学ぶことは、継続的な学習の一形態である。
+コンテクスト学習、つまり**コンテクストから学習することは、continuous learning（継続的学習）の形態**です。
 It enables a model to incorporate new information continually to make decisions, preventing it from becoming outdated.
-これにより、モデルは絶えず新しい情報を取り入れて意思決定を行うことができ、時代遅れになるのを防ぐことができる。
+これにより、モデルは新しい情報を継続的に取り込んで意思決定を行い、時代遅れになるのを防ぐことができます。
 For example, a model trained on last-week data won’t be able to answer questions about this week unless the new information is included in its context.
-例えば、先週のデータで訓練されたモデルは、新しい情報がコンテキストに含まれていない限り、今週に関する質問に答えることができない。
+例えば、先週のデータで訓練されたモデルは、**新しい情報がコンテキストに含まれていない限り、今週に関する質問に答えることができない**。
 By updating a model’s context with the latest information, e.g.fancy-printer-A300’s latest specifications, the model remains up-to-date and can respond to queries beyond its cut-off date.
-例えばfancy-printer-A300の最新スペックなど、モデルのコンテキストを最新情報に更新することで、モデルは最新状態を維持し、期限を超えた問い合わせにも対応することができます。
+最新の情報（たとえば、fancy-printer-A300の最新の仕様）でモデルのコンテキストを更新することで、モデルは最新の状態を維持し、カットオフ日を超えるクエリに応答できる。
+
+<!-- ここまで読んだ -->
 
 ### RAGs RAG
 
 The most well-known pattern for context construction is RAG, Retrieval-Augmented Generation.
-コンテキスト構築のための最もよく知られたパターンは、RAG（Retrieval-Augmented Generation）である。
+**context construction で最もよく知られているパターンは、RAG**（Retrieval-Augmented Generation）です。
 RAG consists of two components: a generator (e.g.a language model) and a retriever, which retrieves relevant information from external sources.
-RAGは2つのコンポーネントから構成される： ジェネレーター（言語モデルなど）と、外部ソースから関連情報を検索するレトリーバー。
-
+**RAGは2つのコンポーネントから構成**される：**generator（たとえば言語モデル）**と**retriever**。retrieverは外部ソースから関連情報を取得する。
 Retrieval isn’t unique to RAGs.
-回収はRAGに限ったことではない。
+retrievalはRAGに特有のものではありません。
 It’s the backbone of search engines, recommender systems, log analytics, etc.
-検索エンジン、レコメンダー・システム、ログ分析などのバックボーンだ。
+検索エンジン、推薦システム、ログ分析などのバックボーンです。
 Many retrieval algorithms developed for traditional retrieval systems can be used for RAGs.
-従来の検索システムのために開発された多くの検索アルゴリズムは、RAGに使用することができる。
+**従来の検索システム向けに開発された多くの検索アルゴリズムは、RAGにも使用できます。**
+(dual-encodingなど?:thinking:)
 
 External memory sources typically contain unstructured data, such as memos, contracts, news updates, etc.
-外部記憶ソースには通常、メモ、契約書、ニュース更新などの非構造化データが含まれている。
+外部記憶ソースには通常、メモ、契約、ニュース更新などの非構造化データが含まれています。
 They can be collectively called documents.
-それらを総称してドキュメントと呼ぶこともある。
+それらを総称して **document** と呼ぶことができます。
 A document can be 10 tokens or 1 million tokens.
 文書は10トークンにも100万トークンにもなる。
 Naively retrieving whole documents can cause your context to be arbitrarily long.
-直感的に文書全体を検索すると、コンテキストが恣意的に長くなる可能性がある。
+**直感的にdocument全体を取得すると、コンテキストが任意に長くなる可能性**があります。
 RAG typically requires documents to be split into manageable chunks, which can be determined from the model’s maximum context length and your application’s latency requirements.
-RAGでは通常、ドキュメントを管理可能なチャンクに分割する必要があり、これはモデルの最大コンテキスト長とアプリケーションのレイテンシ要件から決定することができる。
+RAGでは通常、**documentを管理可能なチャンクに分割する必要**があります。これは、**モデルの最大コンテキスト長とアプリケーションのレイテンシ要件から決定できる**。
+(これは、クエリに関連する情報をdocumentsから上位何件取得して、contextとしてgeneratorに渡すか、って話...?? もしくは上位1件のみgeneratorに渡すとしても、その1件が自然言語として長すぎる可能性があるって話かも...!:thinking:)
 To learn more about chunking and the optimal chunk size, see Pinecone, Langchain, Llamaindex, and Greg Kamradt’s tutorials.
-チャンキングと最適なチャンクサイズについてもっと知りたい方は、Pinecone、Langchain、Llamaindex、Greg Kamradtのチュートリアルをご覧ください。
+chunkingと最適なchunkサイズについて詳しく知りたい場合は、Pinecone、Langchain、Llamaindex、Greg Kamradtのチュートリアルを参照してください。
 
 Once data from external memory sources has been loaded and chunked, retrieval is performed using two main approaches.
-外部メモリソースからのデータがロードされ、チャンク化されると、検索は主に2つのアプローチで実行される。
+外部メモリソースからのデータがロードされ、chunk化(??)されたら、2つの主要なアプローチを使用してretrievalが行われます。
 
-Term-based retrieval
+- Term-based retrieval
 用語ベースの検索
 
 This can be as simple as keyword search.
 これはキーワード検索と同じくらい簡単なことだ。
 For example, given the query “transformer”, fetch all documents containing this keyword.
-例えば、「transformer 」というクエリが与えられた場合、このキーワードを含むすべての文書をフェッチする。
+例えば、「transformer」というクエリが与えられた場合、このキーワードを含むすべての文書を(関連情報として...!)フェッチする。
 More sophisticated algorithms include BM25 (which leverages TF-IDF) and Elasticsearch (which leverages inverted index).
-より洗練されたアルゴリズムとしては、BM25（TF-IDFを活用）やElasticsearch（転置インデックスを活用）などがある。
+**より洗練されたアルゴリズムには、BM25（TF-IDFを活用）とElasticsearch（逆インデックスを活用）がある**。
 
 Term-based retrieval is usually used for text data, but it also works for images and videos that have text metadata such as titles, tags, captions, comments, etc.
 用語ベースの検索は通常テキストデータに用いられるが、タイトル、タグ、キャプション、コメントなどのテキストメタデータを持つ画像や動画にも有効である。
 
-Embedding-based retrieval (also known as vector search)
+- Embedding-based retrieval (also known as vector search)
 埋め込みベースの検索（ベクトル検索とも呼ばれる）
 
 You convert chunks of data into embedding vectors using an embedding model such as BERT, sentence-transformers, and proprietary embedding models provided by OpenAI or Google.
-BERT、文変換器、OpenAIやGoogleが提供する独自の埋め込みモデルなどの埋め込みモデルを使用して、データの塊を埋め込みベクトルに変換する。
+データのチャンクをBERT、sentence-transformers、OpenAIやGoogleが提供する独自の埋め込みモデルなどの埋め込みモデルを使用して埋め込みベクトルに変換する。
 Given a query, the data whose vectors are closest to the query embedding, as determined by the vector search algorithm, is retrieved.
-クエリが与えられると、ベクトル検索アルゴリズムによって決定された、クエリの埋め込みに最も近いベクトルを持つデータが検索される。
+クエリが与えられると、ベクトル検索アルゴリズム(=たぶん近傍探索?)によって決定されたクエリ埋め込みに最も近いデータが取得される。
 
 Vector search is usually framed as nearest-neighbor search, using approximate nearest neighbor (ANN) algorithms such as FAISS (Facebook AI Similarity Search), Google’s ScaNN, Spotify’s ANNOY, and hnswlib (Hierarchical Navigable Small World).
-ベクトル検索は通常、FAISS（Facebook AI Similarity Search）、GoogleのScaNN、SpotifyのANNOY、hnswlib（Hierarchical Navigable Small World）などの近似最近傍（ANN）アルゴリズムを使用した最近傍検索として組み立てられている。
+ベクトル検索は通常、近傍探索としてフレーム化され、FAISS（Facebook AI Similarity Search）、GoogleのScaNN、SpotifyのANNOY、hnswlib（Hierarchical Navigable Small World）などの近似最近傍（ANN）アルゴリズムを使用する。
+(特にリアルタイム推論のLLMアプリケーションで、context constructionのための手段としてRAGでembedding-based retrievalを使う場合、ANNアルゴリズムを使う必要がある...!:thinking:)
 
 The ANN-benchmarks website compares different ANN algorithms on multiple datasets using four main metrics, taking into account the tradeoffs between indexing and querying.
 ANN-benchmarksのウェブサイトでは、インデックス作成とクエリのトレードオフを考慮し、4つの主要な指標を用いて複数のデータセットで異なるANNアルゴリズムを比較している。
 
-Recall: the fraction of the nearest neighbors found by the algorithm.
+- Recall: the fraction of the nearest neighbors found by the algorithm.
 リコール： アルゴリズムによって発見された最近傍の割合。
-
-Query per second (QPS): the number of queries the algorithm can handle per second.
-1秒あたりのクエリー数（QPS）： アルゴリズムが1秒間に処理できるクエリー数。
-This is crucial for high-traffic applications.
-これはトラフィックの多い用途では極めて重要である。
-
-Build time: the time required to build the index.
-構築時間： インデックスを構築するのに必要な時間。
-This metric is important especially if you need to frequently update your index (e.g.because your data changes).
-この指標は、特にインデックスを頻繁に更新する必要がある場合（データが変更された場合など）に重要である。
-
-Index size: the size of the index created by the algorithm, which is crucial for assessing its scalability and storage requirements.
-インデックスサイズ： アルゴリズムによって作成されるインデックスのサイズであり、スケーラビリティとストレージ要件を評価する上で極めて重要である。
+- Query per second (QPS): the number of queries the algorithm can handle per second.
+    1秒あたりのクエリー数（QPS）： アルゴリズムが1秒間に処理できるクエリー数。
+    This is crucial for high-traffic applications.
+    これはトラフィックの多い用途では極めて重要である。
+- Build time: the time required to build the index.
+    構築時間： インデックスを構築するのに必要な時間。
+    This metric is important especially if you need to frequently update your index (e.g.because your data changes).
+    この指標は、特にインデックスを頻繁に更新する必要がある場合（データが変更された場合など）に重要である。
+- Index size: the size of the index created by the algorithm, which is crucial for assessing its scalability and storage requirements.
+    インデックスサイズ： アルゴリズムによって作成されるインデックスのサイズであり、スケーラビリティとストレージ要件を評価する上で極めて重要である。
 
 This works with not just text documents, but also images, videos, audio, and code.
-これは、テキスト文書だけでなく、画像、ビデオ、オーディオ、コードでも機能する。
+これ(embedding-based retrieval)は、テキスト文書だけでなく、画像、ビデオ、オーディオ、コードでも機能する。
 Many teams even try to summarize SQL tables and dataframes and then use these summaries to generate embeddings for retrieval.
-多くのチームは、SQLテーブルやデータフレームを要約し、検索用の埋め込みを生成するためにこれらの要約を使用しようとさえしている。
+多くのチームは、**SQLテーブルやデータフレームを要約してから、これらの要約を使用して検索用の埋め込みを生成しようとします。**
+(データを直接embeddingに変換するのではなく、要約してからembeddingに変換するアプローチ。text-to-SQLアプリケーションでも採用してるアプローチじゃん...!:thinking:)
 
 Term-based retrieval is much faster and cheaper than embedding-based retrieval.
-用語ベースの検索は、埋め込みベースの検索よりもはるかに高速で安価である。
+**用語ベースの検索は、埋め込みベースの検索よりもはるかに高速で安価**である。(そうなのか...!そりゃANNアルゴリズム使わなきゃってモチベーションもあるわけだ:thinking:)
 It can work well out of the box, making it an attractive option to start.
-箱から出してすぐに使えるので、始めるには魅力的な選択肢だ。
+使い始めるには魅力的なオプションであり、すぐにうまく機能することができる。
 Both BM25 and Elasticsearch are widely used in the industry and serve as formidable baselines for more complex retrieval systems.
-BM25とElasticsearchはどちらも業界で広く使われており、より複雑な検索システムのベースラインとして大いに役立っている。
+BM25とElasticsearchは、業界で広く使用されており、より複雑な検索システムの**強力なベースラインとして機能**する。
 Embedding-based retrieval, while computationally expensive, can be significantly improved over time to outperform term-based retrieval.
-埋め込みに基づく検索は、計算コストは高いが、時間の経過とともに大幅に改善され、用語に基づく検索を凌駕することができる。
+embedding-based retrievalは計算コストが高いが、時間の経過とともに大幅に改善され、用語ベースの検索を上回ることができる。(どうなんだろ...!検索速度も重要だし:thinking:)
 
 A production retrieval system typically combines several approaches.
 プロダクション検索システムは通常、いくつかのアプローチを組み合わせる。
 Combining term-based retrieval and embedding-based retrieval is called hybrid search.
-用語ベースの検索と埋め込みベースの検索を組み合わせたものをハイブリッド検索と呼ぶ。
+**term-based retrievalとembedding-based retrievalを組み合わせることをハイブリッド検索**と呼ぶ。
 
 One common pattern is sequential.
-よくあるパターンとしては、シーケンシャルなものがある。
+**よくあるパターンとしては、sequential**がある。(two-stage recommendみたいな感じ!:thinking:)
 First, a cheap, less precise retriever, such as a term-based system, fetches candidates.
-まず、用語ベースのシステムなど、安価で精度の低いリトリーバーが候補をフェッチする。
+まず、term-basedシステムなどの安価で精度の低いretrieverが候補を取得する。
 Then, a more precise but more expensive mechanism, such as k-nearest neighbors, finds the best of these candidates.
-次に、k-nearest neighborsのような、より正確だが高価なメカニズムが、これらの候補の中から最適なものを見つける。
+次に、k-nearest neighborsなどのより正確でコストの高いメカニズムが、これらの候補の中から最適なものを見つける。(二段階目がembedding-based retrievalってことか...!:thinking:)
 The second step is also called reranking.
-第2段階はリランキングとも呼ばれる。
+第2段階はrerankingとも呼ばれる。
 
 For example, given the term “transformer”, you can fetch all documents that contain the word transformer, regardless of whether they are about the electric device, the neural architecture, or the movie.
-たとえば、「transformer 」という用語があれば、電気機器、神経アーキテクチャ、映画のどれに関するものであっても、transformerという単語を含むすべての文書を取り出すことができる。
+たとえば、「transformer」という用語があれば、電気機器、神経アーキテクチャ、映画のどれに関するものであっても、transformerという単語を含むすべての文書を取り出すことができる。
 Then you use vector search to find among these documents those that are actually related to your transformer query.
 次に、ベクトル検索を使って、これらの文書の中から、トランスフォーマーに関するクエリに実際に関連する文書を探し出す。
+(うんうん:thinking:)
 
 Context reranking differs from traditional search reranking in that the exact position of items is less critical.
-コンテキスト・リランキングは、アイテムの正確な位置がそれほど重要ではないという点で、従来の検索リランキングとは異なる。
+**context rerankingは、従来の検索再ランキングと異なり、アイテムの正確な位置(ランク)がそれほど重要ではない**。(検索rerankingと比較すると、って話!:thinking:)
 In search, the rank (e.g., first or fifth) is crucial.
-検索では、順位（例えば1位か5位か）が重要である。
+検索では、ランク（たとえば、最初か5番目か）が重要です。
 In context reranking, the order of documents still matters because it affects how well a model can process them.
-コンテキストの再ランク付けでは、文書の順序は、モデルがどれだけうまく処理できるかに影響するため、依然として重要である。
+**context rerankingでは、documentの順序は依然として重要です。なぜなら、それがモデルがそれらをどれだけうまく処理できるかに影響を与えるからです**。
 Models might better understand documents at the beginning and end of the context, as suggested by the paper Lost in the middle (Liu et al., 2023).
-途中の論文「Lost in the middle」（Liu et al, 2023）が示唆するように、コンテキストの最初と最後にある文書を、モデルはよりよく理解するかもしれない。
+モデルは、Lost in the middle（Liu et al., 2023）の論文で示されているように、コンテキストの最初と最後の文書をよりよく理解するかもしれません。
 However, as long as a document is included, the impact of its order is less significant compared to in search ranking.
-しかし、文書が含まれている限り、その順序の影響は検索ランキングに比べればそれほど大きくない。
+**しかし、対象documentが含まれている限り、その順序の影響は、検索ランキングと比較してそれほど重要ではありません**。
 
 Another pattern is ensemble.
-もう一つのパターンはアンサンブルだ。
+もう一つのパターンは **ensemble** です。
+(よくKaggleで目にするような、スコアを平均するようなアンサンブル学習ではなく、interleaving的なアプローチの意味だった...!:thinking:)
 Remember that a retriever works by ranking documents by their relevance scores to the query.
-リトリーバーは、クエリとの関連性スコアによって文書をランク付けすることで機能することを覚えておいてほしい。
+retrieverは、クエリに対する関連スコアによって文書をランク付けすることで動作することを覚えておいてください。
 You use multiple retrievers to fetch candidates at the same time, then combine these different rankings together to generate a final ranking.
 複数のリトリーバーを使って候補を同時に取得し、それらの異なるランキングを組み合わせて最終的なランキングを生成する。
+
+<!-- ここまで読んだ -->
 
 ### RAGs with tabular data 表形式データによるRAG
 
@@ -1304,7 +1215,7 @@ This post also didn’t discuss how to serve models, assuming that most people w
 AI Engineering will also have a chapter dedicated to inference and model optimization.
 また、AIエンジニアリングでは、推論とモデルの最適化に関する章も設けられる。
 
-## References and Acknowledgments 
+## References and Acknowledgments
 
 Special thanks to Luke Metz, Alex Li, Chetan Tekur, Kittipat “Bot” Kampa, Hien Luu, and Denys Linkov for feedback on the early versions of this post.
 Luke Metz、Alex Li、Chetan Tekur、Kittipat 「Bot」 Kampa、Hien Luu、Denys Linkovに感謝する。
