@@ -1,3 +1,5 @@
+<https://huyenchip.com/2024/07/25/genai-platform.html>
+
 # Building A Generative AI Platform ジェネレーティブAIプラットフォームの構築
 
 After studying how companies deploy generative AI applications, I noticed many similarities in their platforms.
@@ -350,118 +352,117 @@ If you don’t have this information, the rewriting model should acknowledge tha
 Guardrails help reduce AI risks and protect not just your users but also you, the developers.
 ガードレールは、AIのリスクを軽減し、ユーザーだけでなく、開発者であるあなた自身をも保護するのに役立つ。
 They should be placed whenever there is potential for failures.
-故障の可能性がある場合は必ず設置する。
+**故障の可能性がある場合は必ず設置する**。
 This post discusses two types of guardrails: input guardrails and output guardrails.
-この記事では、2種類のガードレールについて説明する： 入力ガードレールと出力ガードレールです。
+この記事では、**2種類のガードレール**について説明する： input guardrails と output guardrails。
 
 ### Input guardrails 入力ガードレール
 
 Input guardrails are typically protection against two types of risks: leaking private information to external APIs, and executing bad prompts that compromise your system (model jailbreaking).
-入力ガードレールは、一般的に2つのタイプのリスクに対する保護である： 外部APIに個人情報を漏らすこと、そしてあなたのシステムを危険にさらす悪いプロンプトを実行すること（モデルの脱獄）。
+入力ガードレールは、通常、2つのリスクに対する保護です：外部APIに個人情報を漏らすリスク、およびシステムを危険にさらす悪いプロンプトを実行するリスク（モデル脱獄）。
 
-Leaking private information to external APIs
-外部APIへの個人情報の漏洩
+#### Leaking private information to external APIs 外部APIへの個人情報の漏洩
 
 This risk is specific to using external model APIs when you need to send your data outside your organization.
-このリスクは、組織外にデータを送信する必要がある場合に、外部モデルAPIを使用する場合に特有のものです。
+このリスクは、データを組織外に送信する必要がある場合に外部モデルAPIを使用する際に特有のものです。
 For example, an employee might copy the company’s secret or a user’s private information into a prompt and send it to wherever the model is hosted.
-たとえば、従業員が会社の秘密やユーザーの個人情報をプロンプトにコピーし、モデルがホストされている場所に送信するかもしれない。
+たとえば、社員が会社の秘密やユーザーの個人情報をプロンプトにコピーして、モデルがホストされている場所に送信するかもしれません。
 
 One of the most notable early incidents was when Samsung employees put Samsung’s proprietary information into ChatGPT, accidentally leaking the company’s secrets.
-初期の最も有名な事件のひとつは、サムスンの社員がサムスン独自の情報をChatGPTに入れ、誤って会社の秘密を漏らしてしまったことだ。
+**初期の最も有名な事件のひとつは、サムスンの従業員がChatGPTにサムスンの独自情報を入れ、会社の秘密を誤って漏洩させたとき**です。
 It’s unclear how Samsung discovered this leak and how the leaked information was used against Samsung.
 サムスンがこのリークをどのように発見したのか、また、リークされた情報がサムスンに対してどのように利用されたのかは不明である。
 However, the incident was serious enough for Samsung to ban ChatGPT in May 2023.
-しかし、この事件はサムスンが2023年5月にChatGPTを禁止するほど深刻なものだった。
+しかし、この事件は、サムスンが2023年5月にChatGPTを禁止するほど深刻でした。
 
 There’s no airtight way to eliminate potential leaks when using third-party APIs.
-サードパーティのAPIを使用する場合、潜在的なリークを排除する完全な方法はない。
+サードパーティのAPIを使用する際に潜在的なリークを排除する完璧な方法はありません。
 However, you can mitigate them with guardrails.
 しかし、ガードレールでそれを軽減することはできる。
 You can use one of the many available tools that automatically detect sensitive data.
-機密データを自動的に検出する多くのツールのいずれかを使用することができます。
+自動的に機密データを検出する多くの利用可能なツールの1つを使用できる。
 What sensitive data to detect is specified by you.
-どのような機密データを検出するかは、あなたが指定する。
+**どのような機密データを検出するかは、あなたが指定する**。
 Common sensitive data classes are:
 一般的な機密データクラスは以下の通りである：
 
-Personal information (ID numbers, phone numbers, bank accounts).
+- Personal information (ID numbers, phone numbers, bank accounts).
 個人情報（ID番号、電話番号、銀行口座）。
 
-Human faces.
+- Human faces.
 人の顔。
 
-Specific keywords and phrases associated with the company’s intellectual properties or privileged information.
+- Specific keywords and phrases associated with the company’s intellectual properties or privileged information.
 会社の知的財産や特権情報に関連する特定のキーワードやフレーズ。
 
 Many sensitive data detection tools use AI to identify potentially sensitive information, such as determining if a string resembles a valid home address.
-多くの機密データ検出ツールは、文字列が有効な自宅住所に似ているかどうかを判断するなど、潜在的に機密性の高い情報を特定するためにAIを使用している。
+多くの機密データ検出ツールは、文字列が有効な自宅の住所に似ているかどうかを判断するなど、潜在的に機密情報を特定するためにAIを使用しています。
 If a query is found to contain sensitive information, you have two options: block the entire query or remove the sensitive information from it.
-クエリに機密情報が含まれていることが判明した場合、2つの選択肢があります： クエリ全体をブロックするか、クエリから機密情報を削除するかです。
+クエリに機密情報が含まれていることが判明した場合、2つの選択肢があります： クエリ全体をブロックするか、機密情報を削除するかです。
 For instance, you can mask a user’s phone number with the placeholder [PHONE NUMBER].
-例えば、プレースホルダ[PHONE NUMBER]でユーザーの電話番号をマスクすることができます。
+例えば、プレースホルダ[PHONE NUMBER]でユーザの電話番号をマスクすることができます。
 If the generated response contains this placeholder, use a PII reversible dictionary that maps this placeholder to the original information so that you can unmask it, as shown below.
-生成されたレスポンスにこのプレースホルダが含まれている場合、以下に示すように、このプレースホルダを元の情報にマップするPII可逆辞書を使用し、マスクを解除できるようにする。
+生成された応答にこのプレースホルダが含まれている場合、このプレースホルダを元の情報にマッピングするPII可逆辞書を使用して、それを復号化できるようにします。
 
-Model jailbreaking
-モデル脱獄
+#### Model jailbreaking モデル脱獄
 
 It’s become an online sport to try to jailbreak AI models, getting them to say or do bad things.
 AIモデルを脱獄させ、悪いことを言わせたり、させたりするのがオンラインスポーツになっている。
 While some might find it amusing to get ChatGPT to make controversial statements, it’s much less fun if your customer support chatbot, branded with your name and logo, does the same thing.
-ChatGPTに物議を醸すような発言をさせるのは面白いと思う人もいるかもしれませんが、あなたの名前とロゴでブランド化されたカスタマーサポートのチャットボットが同じことをしたら、もっと面白くありません。
+**ChatGPTに物議を醸すような発言をさせるのは面白いと思う人もいるかもしれませんが、あなたの名前とロゴでブランド化されたカスタマーサポートのチャットボットが同じことをしたら、もっと面白くありません**。
 This can be especially dangerous for AI systems that have access to tools.
 これは、ツールにアクセスできるAIシステムにとっては特に危険なことだ。
 Imagine if a user finds a way to get your system to execute an SQL query that corrupts your data.
-もしユーザーが、データを破壊するSQLクエリを実行させる方法を見つけたとしよう。
+ユーザがシステムにデータを破壊するSQLクエリを実行させる方法を見つけたとしたらどうなるでしょうか。(SQL injection攻撃みたいな話か...!:thinking:)
 
 To combat this, you should first put guardrails on your system so that no harmful actions can be automatically executed.
-これに対抗するには、まずシステムにガードレールを設置し、有害なアクションが自動的に実行されないようにする必要がある。
+これに対抗するには、**まずシステムにガードレールを設置し、有害なアクションが自動的に実行されないようにする必要がある**。
 For example, no SQL queries that can insert, delete, or update data can be executed without human approval.
 例えば、データの挿入、削除、更新を行うSQLクエリは、人間の承認なしに実行することはできない。
 The downside of this added security is that it can slow down your system.
-このセキュリティ強化の欠点は、システムが遅くなることだ。
+**このセキュリティ強化の欠点は、システムが遅くなることだ。**
 
 To prevent your application from making outrageous statements it shouldn’t be making, you can define out-of-scope topics for your application.
 アプリケーションが、作成すべきでないとんでもない発言をするのを防ぐために、アプリケーションにスコープ外のトピックを定義することができます。
 For example, if your application is a customer support chatbot, it shouldn’t answer political or social questions.
 例えば、あなたのアプリケーションがカスタマーサポートのチャットボットであれば、政治的、社会的な質問には答えるべきではない。
 A simple way to do so is to filter out inputs that contain predefined phrases typically associated with controversial topics, such as “immigration” or “antivax”.
-そうするための簡単な方法は、「移民」や「反ワクチン」など、論争の的になるトピックに典型的に関連する定義済みのフレーズを含む入力をフィルタリングすることである。
+そうするための簡単な方法は、「移民」や「反ワクチン」など、論争の的になるトピックに典型的に関連する定義済みのフレーズを含む**入力をフィルタリングすること**である。
 More sophisticated algorithms use AI to classify whether an input is about one of the pre-defined restricted topics.
 より洗練されたアルゴリズムは、AIを使って、入力があらかじめ定義された制限されたトピックのいずれかに関するものかどうかを分類する。
 
 If harmful prompts are rare in your system, you can use an anomaly detection algorithm to identify unusual prompts.
-有害なプロンプトがシステムでまれにしか表示されない場合は、異常検知アルゴ リズムを使用して異常なプロンプトを特定することができる。
+有害なプロンプトがシステムでまれにしか表示されない場合は、異常検知アルゴリズムを使用して異常なプロンプトを特定することができる。
+
+<!-- ここまで読んだ -->s
 
 ### Output guardrails 出力ガードレール
 
 AI models are probabilistic, making their outputs unreliable.
 AIモデルは確率論的であり、その出力は信頼性に欠ける。
 You can put in guardrails to significantly improve your application’s reliability.
-ガードレールを設置することで、アプリケーションの信頼性を大幅に向上させることができる。
+**ガードレールを設置することで、アプリケーションの信頼性を大幅に向上させることができる。**
 Output guardrails have two main functionalities:
 出力ガードレールには主に2つの機能がある：
 
-Evaluate the quality of each generation.
-各世代のクオリティを評価する。
+- Evaluate the quality of each generation.
+各生成の品質を評価する。
 
-Specify the policy to deal with different failure modes.
+- Specify the policy to deal with different failure modes.
 異なる故障モードに対処するためのポリシーを指定する。
 
-Output quality measurement
-出力品質測定
+#### Output quality measurement 出力品質測定
 
 To catch outputs that fail to meet your standards, you need to understand what failures look like.
-基準を満たさないアウトプットをキャッチするには、失敗がどのようなものかを理解する必要がある。
+**基準を満たさないアウトプットをキャッチする**には、失敗がどのようなものかを理解する必要がある。
 Here are examples of failure modes and how to catch them.
 ここでは、故障モードの例とその対処法を紹介する。
 
-Empty responses.
+- 1. Empty responses.
 空返事だ。
 
-Malformatted responses that don’t follow the expected output format.
-期待される出力フォーマットに従わない、不正なフォーマットによる応答。
+- 2. Malformatted responses that don’t follow the expected output format.
+**期待される出力フォーマットに従わない、不正なフォーマットによる応答**。
 For example, if the application expects JSON and the generated response has a missing closing bracket.
 例えば、アプリケーションがJSONを期待していて、生成されたレスポンスに閉じ括弧がない場合。
 There are validators for certain formats, such as regex, JSON, and Python code validators.
@@ -469,127 +470,129 @@ There are validators for certain formats, such as regex, JSON, and Python code v
 There are also tools for constrained sampling such as guidance, outlines, and instructor.
 ガイダンス、アウトライン、インストラクターなど、制約のあるサンプリングのためのツールもある。
 
-Toxic responses, such as those that are racist or sexist.
+- 3. Toxic responses, such as those that are racist or sexist.
 人種差別や性差別などの有害な反応。
 These responses can be caught using one of many toxicity detection tools.
 このような反応は、多くの毒性検出ツールのいずれかを使って捕らえることができる。
 
-Factual inconsistent responses hallucinated by the model.
-モデルによって幻覚化された事実と矛盾した反応。
+- 4. Factual inconsistent responses hallucinated by the model.
+モデルによってハルシネートされた、事実に矛盾する反応。
 Hallucination detection is an active area of research with solutions such as SelfCheckGPT (Manakul et al., 2023) and SAFE, Search Engine Factuality Evaluator (Wei et al., 2024).
-幻覚検出は、SelfCheckGPT (Manakul et al., 2023)やSAFE, Search Engine Factuality Evaluator (Wei et al., 2024)のようなソリューションのある、活発な研究分野である。
+ハルシネーションの検出は、SelfCheckGPT（Manakul et al., 2023）やSAFE、Search Engine Factuality Evaluator（Wei et al., 2024）などの解決策がある研究の活発な分野である。
 You can mitigate hallucinations by providing models with sufficient context and prompting techniques such as chain-of-thought.
-モデルに十分な文脈を与えたり、思考の連鎖のようなテクニックを促したりすることで、幻覚を軽減することができる。
+モデルに十分な文脈を与えたり、思考の連鎖のようなテクニックを促したりすることで、ハルシネーションを軽減することができる。
 Hallucination detection and mitigation are discussed further in my upcoming book AI Engineering.
-幻覚の検出と軽減については、近々出版予定の私の著書『AIエンジニアリング』でさらに詳しく説明する。
+ハルシネーションの検出と軽減については、私の近日発売の書籍AIエンジニアリングでさらに詳しく説明します。
 
-Responses that contain sensitive information.
+- 5. Responses that contain sensitive information.
 機密情報を含む回答。
 This can happen in two scenarios.
-これには2つのシナリオがある。
-
-Your model was trained on sensitive data and regurgitates it back.
-あなたのモデルは機密データで訓練され、それを再送信する。
-
-Your system retrieves sensitive information from your internal database to enrich its context, and then it passes this sensitive information on to the response.
-あなたのシステムは、そのコンテキストを豊かにするために、内部データベースから機密情報を取得し、そしてこの機密情報をレスポンスに渡す。
+これには2つのシナリオ（i.e. 原因...!:thinking:）があり得ます。
+  - Your model was trained on sensitive data and regurgitates it back. あなたのモデルは機密データで訓練され、それを再送信する。
+  - Your system retrieves sensitive information from your internal database to enrich its context, and then it passes this sensitive information on to the response. あなたのシステムは、内部データベースから機密情報を取得してコンテキストを豊かにし、その後、この機密情報を応答に渡す。
 
 This failure mode can be prevented by not training your model on sensitive data and not allowing it to retrieve sensitive data in the first place.
-この失敗モードは、機密データでモデルをトレーニングしないこと、そもそも機密データを取得させないことで防ぐことができる。
+この失敗モードは、機密データでモデルをトレーニングしないこと、および最初から機密データをretrieveすることを許可しないことで防ぐことができる。
 Sensitive data in outputs can be detected using the same tools used for input guardrails.
-出力中の機密データは、入力ガードレールに使用されるのと同じツールを使用して検出することができる。
+**出力の中の機密データは、入力ガードレールに使用されるのと同じツールを使用して検出することができる**。
 
-Brand-risk responses, such as responses that mischaracterize your company or your competitors.
+- 6. Brand-risk responses, such as responses that mischaracterize your company or your competitors.
 自社や競合他社を誤解させるような対応など、ブランドリスクを伴う対応。
 An example is when Grok, a model trained by X, generated a response suggesting that Grok was trained by OpenAI, causing the Internet to suspect X of stealing OpenAI’s data.
-例えば、Xによって訓練されたモデルであるGrokが、GrokがOpenAIによって訓練されたことを示唆する応答を生成した場合、インターネットはXがOpenAIのデータを盗んだのではないかと疑うことになる。
+例えば、Xによって訓練されたモデルであるGrokが、GrokがOpenAIによって訓練されたと示唆する応答を生成し、インターネットがXがOpenAIのデータを盗んだと疑うようになった場合。
 This failure mode can be mitigated with keyword monitoring.
-この故障モードは、キーワード監視で軽減できる。
+**この故障モードは、キーワード監視で軽減できる**。
 Once you’ve identified outputs concerning your brands and competitors, you can either block these outputs, pass them onto human reviewers, or use other models to detect the sentiment of these outputs to ensure that only the right sentiments are returned.
-自社ブランドや競合他社に関するアウトプットを特定したら、これらのアウトプットをブロックするか、人間のレビュアーに渡すか、または他のモデルを使用してこれらのアウトプットのセンチメントを検出し、適切なセンチメントのみが返されるようにすることができます。
+**自社ブランドや競合他社に関する出力を特定したら**、これらの出力をブロックしたり、人間のレビュアーに渡したり、他のモデルを使用してこれらの出力の感情を検出して、正しい感情のみが返されるようにすることができる。
+(なるほど...!:thinking:)
 
-Generally bad responses.
-概して対応が悪い。
+- 7. Generally bad responses.
+一般的に悪い応答。
 For example, if you ask the model to write an essay and that essay is just bad, or if you ask the model for a low-calorie cake recipe and the generated recipe contains an excessive amount of sugar.
-例えば、モデルにエッセイを書くように頼んだら、そのエッセイがひどかったとか、モデルに低カロリーのケーキのレシピを頼んだら、出来上がったレシピに砂糖が過剰に含まれていたとか。
+**例えば、モデルにエッセイを書くように頼んだら、そのエッセイがひどかったとか、モデルに低カロリーのケーキのレシピを頼んだら、出来上がったレシピに砂糖が過剰に含まれていたとか**。
 It’s become a popular practice to use AI judges to evaluate the quality of models’ responses.
-モデルの回答の質を評価するためにAIジャッジを使用することは一般的になっている。
+**モデルの回答の質を評価するためにAIジャッジを使用することは一般的になっている**。(なるほど...!:thinking:)
 These AI judges can be general-purpose models (think ChatGPT, Claude) or specialized scorers trained to output a concrete score for a response given a query.
-これらのAIジャッジは、汎用のモデル（ChatGPT、Claudeを考える）であったり、クエリが与えられたレスポンスに対して具体的なスコアを出力するように訓練された専門的なスコアラーであったりする。
+これらのAIジャッジは、汎用モデル（ChatGPT、Claudeなど）であったり、またはクエリが与えられたときに具体的なスコアを出力するために訓練された専門のスコアラーである。
 
-Failure management
-故障管理
+#### Failure management 故障管理
 
 AI models are probabilistic, which means that if you try a query again, you might get a different response.
 AIモデルは確率的なものである。つまり、もう一度クエリを試せば、違う回答が返ってくるかもしれない。
 Many failures can be mitigated using a basic retry logic.
-多くの失敗は、基本的な再試行ロジックを使うことで軽減できる。
+**多くの失敗は、基本的なリトライロジックを使用して軽減できる**。
 For example, if the response is empty, try again X times or until you get a non-empty response.
 例えば、レスポンスが空であれば、空でないレスポンスが返ってくるまでX回再試行する。
 Similarly, if the response is malformatted, try again until the model generates a correctly formatted response.
-同様に、応答が不正な書式である場合は、モデルが正しい書式の応答を生成するまで、もう一度試してください。
+同様に、レスポンスが不正なフォーマットであれば、モデルが正しくフォーマットされたレスポンスを生成するまで再試行する。
 
 This retry policy, however, can incur extra latency and cost.
-しかし、この再試行ポリシーは、余分なレイテンシーとコストを発生させる可能性がある。
+**しかし、この再試行ポリシーは、余分なレイテンシーとコストを発生させる可能性がある。**
 One retry means 2x the number of API calls.
 1回のリトライは、API呼び出し回数の2倍を意味する。
 If the retry is carried out after failure, the latency experienced by the user will double.
-失敗した後に再試行すると、ユーザーが経験する待ち時間は2倍になる。
+**失敗した後に再試行すると、ユーザーが経験する待ち時間は2倍になる**。
 To reduce latency, you can make calls in parallel.
-待ち時間を減らすために、並列に呼び出すことができる。
+**待ち時間を減らすために、並列に呼び出すことができる**。(なるほど...!:thinking:)
 For example, for each query, instead of waiting for the first query to fail before retrying, you send this query to the model twice at the same time, get back two responses, and pick the better one.
 例えば、それぞれのクエリに対して、最初のクエリが失敗するのを待ってから再試行するのではなく、このクエリをモデルに同時に2回送信し、2つのレスポンスを返してもらい、より良い方を選ぶ。
 This increases the number of redundant API calls but keeps latency manageable.
-これにより、冗長なAPIコールの数は増えるが、レイテンシーは管理可能なレベルに保たれる。
+これにより、冗長なAPIコールの数は増えるが、レイテンシーは管理可能な範囲に抑えられる。
 
 It’s also common to fall back on humans to handle tricky queries.
 また、トリッキーなクエリを処理するために人間に頼ることもよくあることだ。
 For example, you can transfer a query to human operators if it contains specific key phrases.
-例えば、クエリに特定のキーワードが含まれている場合、そのクエリを人間のオペレーターに転送することができる。
+例えば、クエリに特定のキーワードが含まれている場合、クエリを人間のオペレーターに転送することができる。
 Some teams use a specialized model, potentially trained in-house, to decide when to transfer a conversation to humans.
-チームによっては、専門的なモデル（社内で訓練された可能性もある）を使って、会話を人間に移すタイミングを判断している。
+チームによっては、専門的なモデル（社内で訓練された可能性もある）を使って、会話を人間に転送するタイミングを決定することがある。
 One team, for instance, transfers a conversation to human operators when their sentiment analysis model detects that the user is getting angry.
-たとえば、あるチームは、感情分析モデルがユーザーが怒っていることを検知すると、会話を人間のオペレーターに転送する。
+たとえば、あるチームは、**感情分析モデルがユーザが怒っていると検出したときに、会話を人間のオペレーターに転送する**。
 Another team transfers a conversation after a certain number of turns to prevent users from getting stuck in an infinite loop.
-別のチームは、ユーザーが無限ループに陥るのを防ぐため、一定のターン数が経過すると会話を転送する。
+別のチームは、ユーザーが無限ループに陥るのを防ぐために、一定回数のターン後に会話を転送する。
+
+<!-- ここまで読んだ -->
 
 ### Guardrail tradeoffs ガードレールのトレードオフ
 
-Reliability vs.
-信頼性vs.
-latency tradeoff: While acknowledging the importance of guardrails, some teams told me that latency is more important.
-レイテンシーのトレードオフ ガードレールの重要性を認めつつも、レイテンシーの方が重要だと言うチームもあった。
+#### Reliability vs latency tradeoff: 信頼性とレイテンシーのトレードオフ
+
+While acknowledging the importance of guardrails, some teams told me that latency is more important
+ガードレールの重要性を認識しながらも、一部のチームは、レイテンシーの方が重要だと私に話した。
 They decided not to implement guardrails because they can significantly increase their application’s latency.
 ガードレールはアプリケーションのレイテンシーを大幅に増加させる可能性があるため、彼らはガードレールを実装しないことに決めた。
 However, these teams are in the minority.
 しかし、こうしたチームは少数派である。
 Most teams find that the increased risks are more costly than the added latency.
-ほとんどのチームは、リスクの増大は、追加されたレイテンシーよりもコストがかかることに気づく。
+**ほとんどのチームは、増加したリスクが、追加されたレイテンシーよりもコストがかかると考えている**。(なるほど...!:thinking:)
 
 Output guardrails might not work well in the stream completion mode.
-出力ガードレールは、ストリーム補完モードではうまく機能しないかもしれない。
+出力ガードレールは、stream completionモードではうまく機能しないかもしれない。
 By default, the whole response is generated before shown to the user, which can take a long time.
-デフォルトでは、レスポンス全体が生成されてからユーザーに表示されるため、時間がかかることがある。
+デフォルトでは、ユーザーに表示される前に全体のレスポンスが生成されるため、時間がかかる。
 In the stream completion mode, new tokens are streamed to the user as they are generated, reducing the time the user has to wait to see the response.
-ストリーム完了モードでは、新しいトークンは生成されると同時にユーザーにストリーミングされ、ユーザーがレスポンスを確認するまでの待ち時間が短縮される。
+**stream completionモードでは、新しいトークンが生成されると、それらがユーザーにストリーミングされ、ユーザーが応答を見るまでの待ち時間が短縮される**。
 The downside is that it’s hard to evaluate partial responses, so unsafe responses might be streamed to users before the system guardrails can determine that they should be blocked.
-欠点は、部分的なレスポンスを評価するのが難しいことで、システムのガードレールがブロックすべきと判断する前に、安全でないレスポンスがユーザーに流れてしまう可能性がある。
+**欠点は、部分的な応答を評価するのが難しいため、システムのガードレールがそれらをブロックすべきかどうかを判断する前に、危険な応答がユーザーにストリーミングされる可能性がある**ことだ。
 
-Self-hosted vs.
-セルフホスト vs. セルフホスト
-third-party API tradeoff: Self-hosting your models means that you don’t have to send your data to a third party, reducing the need for input guardrails.
-サードパーティAPIとのトレードオフ： モデルをセルフホストすることは、データをサードパーティに送る必要がないことを意味し、入力ガードレールの必要性を減らす。
+#### Self-hosted vs third-party API tradeoff: セルフホストとサードパーティAPIのトレードオフ
+
+Self-hosting your models means that you don’t have to send your data to a third party, reducing the need for input guardrails.
+**モデルをセルフホストすることは、データをサードパーティに送る必要がないことを意味し、入力ガードレールの必要性を減らす**。
 However, it also means that you must implement all the necessary guardrails yourself, rather than relying on the guardrails provided by third-party services.
-しかし、それはまた、サードパーティのサービスが提供するガードレールに頼るのではなく、必要なガードレールをすべて自分で実装しなければならないことを意味する。
+**しかし、サードパーティサービスが提供するガードレールに頼るのではなく、自分で必要なすべてのガードレールを実装する必要がある**。
 
 Our platform now looks like this.
 現在、我々のプラットフォームはこのようになっている。
 Guardrails can be independent tools or parts of model gateways, as discussed later.
-後述するように、ガードレールは独立したツールであることもあれば、モデルゲートウェイの一部であることもある。
+後述するように、**ガードレールは独立したツールであるか、モデルゲートウェイの一部であるかのいずれか**である。
 Scorers, if used, are grouped under model APIs since scorers are typically AI models, too.
 スコアラーも通常AIモデルであるため、使用される場合はモデルAPIに分類される。
 Models used for scoring are typically smaller and faster than models used for generation.
 採点に使われるモデルは、一般的に生成に使われるモデルよりも小型で高速である。
+
+![]()
+
+<!-- ここまで読んだ -->
 
 ## Step 3. Add Model Router and Gateway ステップ3. ルーターとゲートウェイのモデル追加
 
