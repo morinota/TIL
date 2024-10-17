@@ -397,14 +397,13 @@ curl -X GET "https://xxxxxxxxx.execute-api.{aws-region}.amazonaws.com/1/recommen
     - 参考: <https://aws.amazon.com/jp/sagemaker/pricing/>
   - instance_count: 1
 
-## 実験結果
+それぞれリクエスト投げてみる。
 
 - パスパラメータ
   - user_id=U:114521
 - クエリパラメータ
   - k=10&inference_type=deterministic
   - k=10&inference_type=stochastic_plackett_luce
-  - k=10&inference_type=stochastic_plackett_luce_cached
   - k=10&inference_type=stochastic_gumbel_softmax_trick
   - k=10&inference_type=stochastic_epsilon_greedy
 - リクエストヘッダ:
@@ -419,8 +418,6 @@ accept:application/json
 - `inference_type=deterministic`
   - 80msくらい
 - `inference_type=stochastic_plackett_luce`
-  - 80msくらい
-- `inference_type=stochastic_plackett_luce_cached`
   - 80msくらい
 - `inference_type=stochastic_gumbel_softmax_trick`
   - 80msくらい
@@ -462,13 +459,3 @@ class MyUser(HttpUser):
 ```shell
 locust -f locust_experiment.py --host https://httpbin.org
 ```
-
-続いて、UIからパラメータを入力し、テストを開始する（各パラメータは起動時にoptionalな引数としても指定できるはず...?）
-
-- Number of users (peak concurrency): 同時ユーザ数(最大)
-- Ramp Up (users started/second): 1秒間でのユーザ増加数
-- Host: リクエスト先
-
-### いざ実験
-
-今回はレイテンシーに興味があるため、ユーザー数を1としてSageMaker Endopointの負荷をかけすぎないようにしています。
