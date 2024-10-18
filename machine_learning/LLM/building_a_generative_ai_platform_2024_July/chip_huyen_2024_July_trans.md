@@ -597,121 +597,159 @@ Models used for scoring are typically smaller and faster than models used for ge
 ## Step 3. Add Model Router and Gateway ステップ3. ルーターとゲートウェイのモデル追加
 
 As applications grow in complexity and involve more models, two types of tools emerged to help you work with multiple models: routers and gateways.
-アプリケーションが複雑化し、より多くのモデルを扱うようになると、複数のモデルを扱うのに役立つ2種類のツールが登場した： ルーターとゲートウェイだ。
+アプリケーションが複雑化し、より多くのモデルを扱うようになると、**複数のモデルを扱うのに役立つ2種類のツール**が登場した: ルーターとゲートウェイ。
 
 ### Router ルーター
 
 An application can use different models to respond to different types of queries.
 アプリケーションは、異なるタイプのクエリに対応するために、異なるモデルを使用することができる。
 Having different solutions for different queries has several benefits.
-異なるクエリに対して異なるソリューションを持つことには、いくつかの利点がある。
+**異なるクエリに対して異なるソリューションを持つことには、いくつかの利点**がある。
 First, this allows you to have specialized solutions, such as one model specialized in technical troubleshooting and another specialized in subscriptions.
-まず、技術的なトラブルシューティングに特化したモデルや、サブスクリプションに特化したモデルなど、特化したソリューションを持つことができる。
+まず、技術的なトラブルシューティングに特化したモデルや、サブスクリプションに特化した別のモデルなど、特化したソリューションを持つことができる。
 Specialized models can potentially perform better than a general-purpose model.
-特殊化されたモデルは、汎用モデルよりも優れたパフォーマンスを発揮する可能性がある。
+特化したモデルは、汎用モデルよりも性能が向上する可能性がある。
 Second, this can help you save costs.
 第二に、これはコスト削減に役立つ。
 Instead of routing all queries to an expensive model, you can route simpler queries to cheaper models.
-すべてのクエリーを高価なモデルにルーティングする代わりに、単純なクエリーを安価なモデルにルーティングすることができる。
+**すべてのクエリを高価なモデルにルーティングする代わりに、より安価なモデルに簡単なクエリをルーティングすることができる**。
 
 A router typically consists of an intent classifier that predicts what the user is trying to do.
-ルーターは通常、ユーザーが何をしようとしているかを予測するインテント分類器から構成される。
+**ルーターは通常、ユーザが何をしようとしているかを予測するintent classifier(意図分類器)で構成**されている。
 Based on the predicted intent, the query is routed to the appropriate solution.
-予測されたインテントに基づいて、クエリは適切なソリューションにルーティングされる。
+予測された意図に基づいて、クエリは適切なソリューションにルーティングされる。
 For example, for a customer support chatbot, if the intent is:
 例えば、カスタマーサポートのチャットボットの場合、次のような意図があるとします：
 
-To reset a password –> route this user to the page about password resetting.
+- To reset a password –> route this user to the page about password resetting.
 パスワードをリセットするには→このユーザーをパスワードリセットのページに誘導する。
 
-To correct a billing mistake –> route this user to a human operator.
+- To correct a billing mistake –> route this user to a human operator.
 請求ミスを訂正する→このユーザーを人間のオペレーターにルーティングする。
 
-To troubleshoot a technical issue –> route this query to a model finetuned for troubleshooting.
+- To troubleshoot a technical issue –> route this query to a model finetuned for troubleshooting.
 技術的な問題のトラブルシューティングを行うには→このクエリーをトラブルシューティング用に細かく調整されたモデルにルーティングする。
 
 An intent classifier can also help your system avoid out-of-scope conversations.
-インテント分類器は、システムが範囲外の会話を避けるのにも役立つ。
+**intent classifierは、システムがスコープ外の会話を避けるのにも役立ちます**。
 For example, you can have an intent classifier that predicts whether a query is out of the scope.
-例えば、クエリがスコープ外かどうかを予測するインテント分類器を持つことができる。
-If the query is deemed inappropriate (e.g.if the user asks who you would vote for in the upcoming election), the chatbot can politely decline to engage using one of the stock responses (“As a chatbot, I don’t have the ability to vote.
-クエリが不適切と判断された場合（例えば、ユーザーが次の選挙で誰に投票するかと尋ねた場合）、チャットボットは純正の応答（「チャットボットとして、私は投票する能力を持っていません。
-If you have questions about our products, I’d be happy to help.”) without wasting an API call.
-当社の製品についてご質問があれば、喜んでお手伝いさせていただきます」）。
+例えば、クエリがスコープ外かどうかを予測するintent classifierを持つことができます。
+If the query is deemed inappropriate (e.g.if the user asks who you would vote for in the upcoming election), the chatbot can politely decline to engage using one of the stock responses (“As a chatbot, I don’t have the ability to vote. If you have questions about our products, I’d be happy to help.”) without wasting an API call.
+クエリが不適切と判断された場合（例えば、ユーザが次回の選挙で誰に投票するか尋ねる場合）、チャットボットはAPIコールを無駄にすることなく、ストックの応答の1つを使って丁寧に拒否することができます（「チャットボットとして、投票する権限はありません。製品に関する質問があれば、喜んでお手伝いします。」）。
 
 If your system has access to multiple actions, a router can involve a next-action predictor to help the system decide what action to take next.
-システムが複数のアクションにアクセスできる場合、ルーターは、システムが次に取るべきアクションを決定するのを助けるために、ネクストアクションプレディクターを含むことができる。
+システムが複数のアクションにアクセスできる場合、ルーターは、next action predictorを含めることができ、システムが次にどのアクションを取るかを決定するのに役立ちます。
 One valid action is to ask for clarification if the query is ambiguous.
-クエリがあいまいな場合は、説明を求めることも有効な行動のひとつである。
-For example, in response to the query “Freezing,” the system might ask, “Do you want to freeze your account or are you talking about the weather?” or simply say, “I’m sorry.
-例えば、「Freezing」（凍結）というクエリに対して、システムは 「Do you want to freeze your account or are you talking about weather?」（口座を凍結したいのですか、それとも天気のことを言っているのですか）と尋ねるかもしれないし、単に 「I'm sorry.」（申し訳ありません）と言うかもしれない。
-Can you elaborate?”
-詳しく話してくれる？
+クエリがあいまいな場合は、説明を求めることも有効なアクションの1つです。
+For example, in response to the query “Freezing,” the system might ask, “Do you want to freeze your account or are you talking about the weather?” or simply say, “I’m sorry. Can you elaborate?”
+例えば、クエリ「freeeze」に対して、システムは「アカウントを凍結したいのか、天気について話しているのか？」と尋ねるか、「申し訳ありません。詳しく説明していただけますか？」と言うかもしれません。
 
 Intent classifiers and next-action predictors can be general-purpose models or specialized classification models.
-意図分類器と次行動予測器は、汎用モデルであることもあれば、特殊な分類モデルであることもある。
+intent classifierとnext-action predictorは、汎用モデルまたは特殊化された分類モデルであることができます。
 Specialized classification models are typically much smaller and faster than general-purpose models, allowing your system to use multiple of them without incurring significant extra latency and cost.
-特殊化された分類モデルは、一般的に汎用モデルよりもはるかに小さく高速であるため、システムは余分なレイテンシーやコストをかけずに複数の分類モデルを使用することができます。
+**特化した分類モデルは、通常、汎用モデルよりもはるかに小さく高速であり**、システムが多数のモデルを使用しても、大幅な追加のレイテンシーやコストをかけることなく使用できます。
+(これが特化モデルの利点か:thinking:)
 
 When routing queries to models with varying context limits, the query’s context might need to be adjusted accordingly.
-様々なコンテキスト制限を持つモデルにクエリをルーティングする場合、クエリのコンテキストはそれに応じて調整する必要があるかもしれない。
+**様々なコンテキスト制限を持つモデルにクエリをルーティングする場合**、クエリのコンテキストを適切に調整する必要があるかもしれません。(含めたいcontextの長さに応じて、モデルを切り替えるアプローチか:thinking:)
 Consider a query of 1,000 tokens that is slated for a model with a 4K context limit.
 1,000トークンのクエリが、4Kコンテキスト制限のあるモデルで処理されることを考えます。
 The system then takes an action, e.g.web search, that brings back 8,000-token context.
 その後、システムはウェブ検索などのアクションを起こし、8,000トークンのコンテキストを返す。
 You can either truncate the query’s context to fit the originally intended model or route the query to a model with a larger context limit.
-クエリのコンテキストを切り捨てて本来の目的のモデルに合わせるか、あるいは、より大きなコンテキスト制限を持つモデルにクエリをルーティングすることができます。
+クエリのコンテキストを切り捨てて本来の目的のモデルに合わせるか、コンテキスト制限が大きいモデルにクエリをルーティングするかのどちらかです。
+
+<!-- ここまで読んだ -->
 
 ### Gateway ゲートウェイ
 
 A model gateway is an intermediate layer that allows your organization to interface with different models in a unified and secure manner.
-モデル・ゲートウェイは、組織が統一された安全な方法で異なるモデルとのインタフェースを可能にする中間層である。
+**モデル・ゲートウェイは、組織が異なるモデルと統一された安全な方法でインターフェースを持つことを可能にする中間層**です。
 The most basic functionality of a model gateway is to enable developers to access different models – be it self-hosted models or models behind commercial APIs such as OpenAI or Google – the same way.
-モデルゲートウェイの最も基本的な機能は、開発者が異なるモデル（それがセルフホストされたモデルであれ、OpenAIやGoogleのような商用APIの背後にあるモデルであれ）に同じ方法でアクセスできるようにすることである。
+**モデルゲートウェイの最も基本的な機能は、開発者が異なるモデルに同じ方法でアクセスできるようにすること**です。それがセルフホストされたモデルであるか、OpenAIやGoogleなどの商用APIの背後にあるモデルであるかの違いはありません。
 A model gateway makes it easier to maintain your code.
-モデルゲートウェイは、コードの保守を容易にする。
+**モデルゲートウェイは、コードの保守を容易にする。**
 If a model API changes, you only need to update the model gateway instead of having to update all applications that use this model API.
-モデルAPIが変更された場合、このモデルAPIを使うすべてのアプリケーションを更新する代わりに、モデルゲートウェイだけを更新すればよいのです。
+モデルAPIが変更された場合、そのモデルAPIを使用するすべてのアプリケーションを更新する必要がある代わりに、モデルゲートウェイだけを更新すればよい。
+
+![]()
 
 In its simplest form, a model gateway is a unified wrapper that looks like the following code example.
 最も単純な形では、モデルゲートウェイは以下のコード例のような統一されたラッパーです。
 This example is to give you an idea of how a model gateway might be implemented.
 この例は、モデルゲートウェイがどのように実装されるかのアイデアを与えるためのものである。
 It’s not meant to be functional as it doesn’t contain any error checking or optimization.
-エラーチェックや最適化が含まれていないため、機能的なものではない。
+エラーチェックや最適化が含まれていないため、機能的ではありません。
+
+```python
+
+import google.generativeai as genai
+import openai
+
+def openai_model(input_data, model_name, max_tokens):
+    openai.api_key = os.environ["OPENAI_API_KEY"]
+    response = openai.Completion.create(
+        engine=model_name,
+        prompt=input_data,
+        max_tokens=max_tokens
+    )
+    return {"response": response.choices[0].text.strip()}
+
+def gemini_model(input_data, model_name, max_tokens):
+    genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+    model = genai.GenerativeModel(model_name=model_name)
+    response = model.generate_content(input_data, max_tokens=max_tokens)
+    return {"response": response["choices"][0]["message"]["content"]}
+
+@app.route('/model', methods=['POST'])
+def model_gateway():
+    data = request.get_json()
+    model_type = data.get("model_type")
+    model_name = data.get("model_name")
+    input_data = data.get("input_data")
+    max_tokens = data.get("max_tokens")
+
+    if model_type == "openai":
+        result = openai_model(input_data, model_name, max_tokens)
+    elif model_type == "gemini":
+        result = gemini_model(input_data, model_name, max_tokens)
+    return jsonify(result)
+```
 
 A model gateway is access control and cost management.
-ゲートウェイのモデルは、アクセスコントロールとコスト管理である。
+**モデルゲートウェイは、アクセス制御とコスト管理**です。
 Instead of giving everyone who wants access to the OpenAI API your organizational tokens, which can be easily leaked, you only give people access to the model gateway, creating a centralized and controlled point of access.
-OpenAI APIにアクセスしたい人全員にあなたの組織トークンを提供する代わりに、簡単に漏洩する可能性があるモデルゲートウェイへのアクセスのみを提供し、集中管理されたアクセスポイントを作成します。
+OpenAI APIにアクセスしたい人全員にあなたの組織のトークンを渡すのではなく、**モデルゲートウェイにアクセス権を与えることで、中央集権化された制御されたアクセスポイントを作成**します。
 The gateway can also implement fine-grained access controls, specifying which user or application should have access to which model.
-ゲートウェイはまた、どのユーザーやアプリケーションがどのモデルにアクセスすべきかを指定する、きめ細かいアクセス制御を実装することもできる。
+**ゲートウェイはまた、どのユーザーやアプリケーションがどのモデルにアクセスできるかを指定する細かいアクセス制御を実装することができる**。
 Moreover, the gateway can monitor and limit the usage of API calls, preventing abuse and managing costs effectively.
-さらに、ゲートウェイはAPIコールの使用状況を監視し、制限することができるため、不正使用を防止し、コストを効果的に管理することができる。
+さらに、ゲートウェイはAPIコールの使用状況を監視し、制限することで、乱用を防ぎ、コストを効果的に管理することができる。
 
 A model gateway can also be used to implement fallback policies to overcome rate limits or API failures (the latter is unfortunately common).
-モデル・ゲートウェイはまた、レート制限やAPIの障害を克服するためのフォールバック・ポリシーを実装するために使用することもできる（後者は残念ながら一般的である）。
+モデル・ゲートウェイはまた、**レート制限やAPIの失敗（残念ながら一般的）を克服するためのフォールバックポリシー**を実装するために使用することができる。(推論モデルに不具合があった場合になんとか対応するためのフォールバック戦略か...!:thinking:)
 When the primary API is unavailable, the gateway can route requests to alternative models, retry after a short wait, or handle failures in other graceful manners.
-プライマリAPIが利用できない場合、ゲートウェイはリクエストを代替モデルにルーティングしたり、少し待ってから再試行したり、他の優雅な方法で失敗を処理したりすることができる。
+プライマリAPIが利用できない場合、ゲートウェイはリクエストを代替モデルにルーティングしたり、短い待ち時間後に再試行したり、他の優雅な方法で失敗を処理したりすることができる。
 This ensures that your application can operate smoothly without interruptions.
-これにより、アプリケーションが中断することなくスムーズに動作することが保証されます。
+これにより、**アプリケーションが中断することなくスムーズに動作することが保証**されます。(大事...!:thinking:)
 
 Since requests and responses are already flowing through the gateway, it’s a good place to implement other functionalities such as load balancing, logging, and analytics.
-リクエストとレスポンスはすでにゲートウェイを通って流れているので、負荷分散、ロギング、分析などの他の機能を実装するのに適した場所です。
+リクエストとレスポンスがすでにゲートウェイを通過するようになっているため、**ロードバランシング、ロギング、アナリティクスなどの他の機能を実装するのに適した場所**です。(推薦統一インタフェースでも...!:thinking:)
 Some gateway services even provide caching and guardrails.
-ゲートウェイ・サービスの中には、キャッシュやガードレールを提供するものもある。
+**ゲートウェイ・サービスの中には、キャッシュやガードレールを提供するものもあります**。
 
 Given that gateways are relatively straightforward to implement, there are many off-the-shelf gateways.
 ゲートウェイの実装が比較的簡単であることを考えると、既製品のゲートウェイも多い。
 Examples include Portkey’s gateway, MLflow AI Gateway, WealthSimple’s llm-gateway, TrueFoundry, Kong, and Cloudflare.
-例えば、Portkeyのゲートウェイ、MLflowのAIゲートウェイ、WealthSimpleのllm-gateway、TrueFoundry、Kong、Cloudflareなどがある。
+例えば、Portkeyのゲートウェイ、MLflow AI Gateway、WealthSimpleのllm-gateway、TrueFoundry、Kong、Cloudflareなどがあります。
 
 With the added gateway and routers, our platform is getting more exciting.
 ゲートウェイとルーターが追加され、我々のプラットフォームはよりエキサイティングになっている。
 Like scoring, routing is also in the model gateway.
-得点と同様、ルーティングもモデルのゲートウェイにある。
+スコアリング(=多分Output Guardrailの話...!:thinking:)と同様に、ルーティングもモデルゲートウェイに含まれている。
 Like models used for scoring, models used for routing are typically smaller than models used for generation.
-採点に使用されるモデルと同様、ルーティングに使用されるモデルは、通常、生成に使用されるモデルよりも小さい。
+scoring に使われるモデルと同様に、ルーティングに使われるモデル(intent classifierやnext-action predictor)は、通常、生成に使われるモデルよりも小さくなっています。
+
+<!-- ここまで読んだ -->
 
 ## Step 4. Reduce Latency with Cache ステップ4. キャッシュによるレイテンシーの削減
 
