@@ -754,43 +754,46 @@ scoring に使われるモデルと同様に、ルーティングに使われる
 ## Step 4. Reduce Latency with Cache ステップ4. キャッシュによるレイテンシーの削減
 
 When I shared this post with my friend Eugene Yan, he said that cache is perhaps the most underrated component of an AI platform.
-この投稿を友人のユージン・ヤンと共有したところ、彼は「キャッシュはおそらくAIプラットフォームで最も過小評価されている要素だ」と言った。
+この投稿を友人のユージン・ヤンと共有したところ、彼は「**キャッシュはおそらくAIプラットフォームで最も過小評価されているcomponentだ**」と言いました。
 Caching can significantly reduce your application’s latency and cost.
-キャッシュは、アプリケーションのレイテンシーとコストを大幅に削減することができます。
+**キャッシュは、アプリケーションのレイテンシーとコストを大幅に削減することができます**。
 
 Cache techniques can also be used during training, but since this post is about deployment, I’ll focus on cache for inference.
-キャッシュのテクニックはトレーニング中にも使えるが、この投稿はデプロイメントに関するものなので、推論用のキャッシュに焦点を当てることにする。
+キャッシュのテクニックはトレーニング中にも使えるが、この投稿はデプロイメントについてなので、**推論用のキャッシュに焦点を当てる**。
+(学習中のcacheって、例えばどんな風に使えるんだろう:thinking:)
 Some common inference caching techniques include prompt cache, exact cache, and semantic cache.
-一般的な推論キャッシュ技術には、プロンプトキャッシュ、厳密キャッシュ、セマンティックキャッシュなどがある。
+**一般的な推論キャッシュ技術には、prompt cache、exact cache(正確なキャッシュ)、semantic cache(意味キャッシュ)があります**。
 Prompt cache are typically implemented by the inference APIs that you use.
 プロンプト・キャッシュは通常、使用する推論APIによって実装される。
 When evaluating an inference library, it’s helpful to understand what cache mechanism it supports.
-推論ライブラリを評価する際には、そのライブラリがどのようなキャッシュ・メカニズムをサポートしているかを理解することが役に立つ。
+**推論ライブラリを評価する際には、そのライブラリがどのようなキャッシュ・メカニズムをサポートしているかを理解することが役立ちます**。
 
 KV cache for the attention mechanism is out of scope for this discussion.
 アテンション・メカニズム用のKVキャッシュは、今回の議論の対象外である。
+
+<!-- ここまで読んだ -->
 
 ### Prompt cache プロンプト・キャッシュ
 
 Many prompts in an application have overlapping text segments.
 アプリケーションの多くのプロンプトには、重複するテキストセグメントがあります。
 For example, all queries can share the same system prompt.
-例えば、すべてのクエリーは同じシステムプロンプトを共有することができる。
+例えば、すべてのクエリは同じシステム・プロンプトを共有できます。
 A prompt cache stores these overlapping segments for reuse, so you only need to process them once.
-プロンプト・キャッシュは、重複するセグメントを再利用できるように保存する。
+プロンプト・キャッシュは、これらの重複するセグメントを再利用するために保存するため、一度だけ処理するだけで済みます。
 A common overlapping text segment in different prompts is the system prompt.
-さまざまなプロンプトで重複する共通のテキストセグメントは、システムプロンプトである。
+**さまざまなプロンプトで重複する共通のテキストセグメントは、システムプロンプト**である。
 Without prompt cache, your model needs to process the system prompt with every query.
 プロンプト・キャッシュがない場合、モデルはクエリごとにシステム・プロンプトを処理する必要があります。
 With prompt cache, it only needs to process the system prompt once for the first query.
 プロンプト・キャッシュを使えば、システム・プロンプトを処理するのは最初のクエリに対して一度だけでよい。
 
 For applications with long system prompts, prompt cache can significantly reduce both latency and cost.
-長いシステム・プロンプトを伴うアプリケーションの場合、プロンプト・キャッシュはレイテンシーとコストの両方を大幅に削減することができる。
+**長いシステム・プロンプトを伴うアプリケーションの場合、プロンプト・キャッシュは、レイテンシーとコストの両方を大幅に削減できる。**
 If your system prompt is 1000 tokens and your application generates 1 million model API calls today, a prompt cache will save you from processing approximately 1 billion repetitive input tokens a day! However, this isn’t entirely free.
-システム・プロンプトが1000トークンで、アプリケーションが今日100万回のモデルAPIコールを生成する場合、プロンプト・キャッシュを使えば、1日に約10億回の繰り返し入力トークンの処理を省くことができる！しかし、これは完全に無料というわけではない。
+システム・プロンプトが1000トークンで、アプリケーションが今日100万回のモデルAPIコールを生成する場合、プロンプト・キャッシュを使えば、1日に約10億回の繰り返し入力トークンの処理を省くことができる！**しかし、これ(=プロンプト・キャッシュ)は完全に無料ではありません**。
 Like KV cache, prompt cache size can be quite large and require significant engineering effort.
-KVキャッシュと同様、プロンプト・キャッシュのサイズはかなり大きくなり、エンジニアリングに多大な労力を要する。
+KVキャッシュと同様、プロンプト・キャッシュのサイズはかなり大きく、かなりのエンジニアリング努力が必要です。
 
 Prompt cache is also useful for queries that involve long documents.
 プロンプト・キャッシュは、長い文書を含むクエリにも便利です。
@@ -798,25 +801,27 @@ For example, if many of your user queries are related to the same long document 
 例えば、ユーザーのクエリの多くが同じ長いドキュメント（本やコードベースなど）に関連している場合、この長いドキュメントはクエリ間で再利用できるようにキャッシュすることができます。
 
 Since its introduction in November 2023 by Gim et al., prompt cache has already been incorporated into model APIs.
-ギムらによって2023年11月に導入されて以来、プロンプト・キャッシュはすでにモデルのAPIに組み込まれている。
+**ギムらによって2023年11月に導入されて以来、プロンプト・キャッシュはすでにモデルAPIに組み込まれています**。
 Google announced that Gemini APIs will offer this functionality in June 2024 under the name context cache.
-グーグルは、ジェミニAPIが2024年6月にコンテキストキャッシュという名称でこの機能を提供すると発表した。
+グーグルは、ジェミニAPIが2024年6月に**コンテキストキャッシュという名称**でこの機能を提供すると発表した。
 Cached input tokens are given a 75% discount compared to regular input tokens, but you’ll have to pay extra for cache storage (as of writing, $1.00 / 1 million tokens per hour).
 キャッシュされたインプット・トークンは、通常のインプット・トークンに比べて75％割引されるが、キャッシュ・ストレージのために追加料金を支払う必要がある（執筆時点では、1時間あたり100万トークンあたり1ドル）。
 Given the obvious benefits of prompt cache, I wouldn’t be surprised if it becomes as popular as KV cache.
-プロンプト・キャッシュの明らかな利点を考えれば、KVキャッシュのように普及しても不思議ではない。
+**プロンプト・キャッシュの明らかな利点を考えれば、KVキャッシュと同じくらい人気が出ることも不思議ではありません**。
 
 While llama.cpp also has prompt cache, it seems to only cache whole prompts and work for queries in the same chat session.
 llama.cppもプロンプトキャッシュを持っているが、プロンプト全体をキャッシュし、同じチャットセッション内のクエリに対してのみ動作するようだ。
 Its documentation is limited, but my guess from reading the code is that in a long conversation, it caches the previous messages and only processes the newest message.
-ドキュメントは限られているが、コードを読んで推測するに、長い会話では前のメッセージをキャッシュし、最新のメッセージだけを処理するのだろう。
+ドキュメントは限られているが、コードを読んだ結果から推測すると、長い会話の中で、前のメッセージをキャッシュし、最新のメッセージのみを処理するようだ。
 
-### Exact cache 正確なキャッシュ
+<!-- ここまで読んだ -->
+
+### Exact cache 厳密なキャッシュ
 
 If prompt cache and KV cache are unique to foundation models, exact cache is more general and straightforward.
-プロンプト・キャッシュとKVキャッシュが基礎モデル特有のものだとすれば、正確なキャッシュはより一般的でわかりやすい。
+**プロンプト・キャッシュとKVキャッシュが基盤モデル特有のものだとすれば、Exact cacheはより一般的で直接的**です。
 Your system stores processed items for reuse later when the exact items are requested.
-システムは処理された項目を保存し、後で正確な項目が要求されたときに再利用できるようにします。
+**システムは処理されたアイテムを保存し、同一のアイテムが要求されたときに後で再利用する**。
 For example, if a user asks a model to summarize a product, the system checks the cache to see if a summary of this product is cached.
 例えば、ユーザーが商品の要約をモデルに求めた場合、システムはキャッシュをチェックし、この商品の要約がキャッシュされているかどうかを確認する。
 If yes, fetch this summary.
@@ -825,92 +830,99 @@ If not, summarize the product and cache the summary.
 そうでない場合は、製品を要約し、要約をキャッシュする。
 
 Exact cache is also used for embedding-based retrieval to avoid redundant vector search.
-厳密なキャッシュは、冗長なベクトル検索を避けるために、埋め込みベースの検索にも使用される。
+**Exact cacheは、冗長なベクトル検索を避けるために埋め込みベースの検索にも使用される。**
+
 If an incoming query is already in the vector search cache, fetch the cached search result.
 入力されたクエリがすでにベクトル検索キャッシュにある場合、キャッシュされた検索結果をフェッチする。
 If not, perform a vector search for this query and cache the result.
 そうでない場合は、このクエリに対してベクトル検索を行い、結果をキャッシュする。
 
 Cache is especially appealing for queries that require multiple steps (e.g.chain-of-thought) and/or time-consuming actions (e.g.retrieval, SQL execution, or web search).
-キャッシュは、複数のステップ（思考の連鎖など）や時間のかかるアクション（検索、SQL実行、ウェブ検索など）を必要とするクエリには特に魅力的である。
+キ**ャッシュは、複数のステップ（思考の連鎖など）や時間のかかるアクション（検索、SQL実行、ウェブ検索など）を必要とするクエリには特に魅力的**である。
 
 An exact cache can be implemented using in-memory storage for fast retrieval.
-正確なキャッシュは、高速検索のためにメモリ内ストレージを使用して実装することができる。
+**exact cacheは、高速な検索のためにインメモリ・ストレージを使用して実装することができる**。
 However, since in-memory storage is limited, a cache can also be implemented using databases like PostgreSQL, Redis, or tiered storage to balance speed and storage capacity.
-しかし、インメモリ・ストレージには限りがあるため、PostgreSQLやRedisなどのデータベース、あるいは速度とストレージ容量のバランスを取るための階層型ストレージを使用してキャッシュを実装することもできる。
+**しかし、インメモリ・ストレージには限りがあるため、PostgreSQLやRedisなどのデータベース、あるいは速度とストレージ容量のバランスを取るための階層型ストレージを使用してキャッシュを実装することもできる**。
 Having an eviction policy is crucial to manage the cache size and maintain performance.
-キャッシュサイズを管理し、パフォーマンスを維持するためには、立ち退きポリシーを持つことが重要である。
+**キャッシュサイズを管理し、パフォーマンスを維持するためには、eviction policy(=立ち退きポリシー)が重要**です。
 Common eviction policies include Least Recently Used (LRU), Least Frequently Used (LFU), and First In, First Out (FIFO).
-一般的な立ち退きポリシーには、LRU（Least Recently Used）、LFU（Least Frequently Used）、FIFO（First In, First Out）などがある。
+**一般的なeviction policyには、Least Recently Used (LRU)、Least Frequently Used (LFU)、First In, First Out (FIFO)があります**。
 
 How long to cache a query depends on how likely this query is to be called again.
-クエリをどのくらいキャッシュするかは、そのクエリが再度呼び出される可能性がどの程度あるかによって決まる。
+**クエリをどのくらいキャッシュするかは、そのクエリが再度呼び出される可能性がどの程度あるかによって決まる**。
 User-specific queries such as “What’s the status of my recent order” are less likely to be reused by other users, and therefore, shouldn’t be cached.
-最近の注文のステータスは "のようなユーザー固有のクエリは、他のユーザーによって再利用される可能性が低いため、キャッシュされるべきではない。
+「What’s the status of my recent order(私の最近の注文の状況はどうですか)」のようなユーザ固有のクエリは、他のユーザに再利用される可能性が低く、したがってキャッシュするべきではありません。
 Similarly, it makes less sense to cache time-sensitive queries such as “How’s the weather?” Some teams train a small classifier to predict whether a query should be cached.
-同様に、「How's the weather? 」のような時間に敏感なクエリをキャッシュすることはあまり意味がありません。クエリをキャッシュすべきかどうかを予測するために、小さな分類器を訓練するチームもあります。
+同様に、「How is the weather?（天気はどうですか？）」のような時間的に敏感なクエリをキャッシュするのは意味がありません。**一部のチームは、クエリをキャッシュすべきかどうかを予測する小さな分類器をトレーニングしています**。
+
+<!-- ここまで読んだ -->
 
 ### Semantic cache セマンティック・キャッシュ
 
 Unlike exact cache, semantic cache doesn’t require the incoming query to be identical to any of the cached queries.
-厳密なキャッシュとは異なり、セマンティックキャッシュでは、入力されるクエリがキャッシュされたクエリと同一である必要はない。
+**厳密なキャッシュとは異なり、セマンティックキャッシュでは、入力されるクエリがキャッシュされたクエリと同一である必要はない**。
 Semantic cache allows the reuse of similar queries.
-セマンティックキャッシュは類似したクエリの再利用を可能にする。
+セマンティックキャッシュは**類似したクエリの再利用**を可能にする。
 Imagine one user asks “What’s the capital of Vietnam?” and the model generates the answer “Hanoi”.
-あるユーザーが 「ベトナムの首都は？」と尋ね、モデルが 「ハノイ 」という答えを生成したとする。
+あるユーザが「ベトナムの首都は？」と尋ね、モデルが「ハノイ」という答えを生成するとします。
 Later, another user asks “What’s the capital city of Vietnam?”, which is the same question but with the extra word “city”.
-その後、別のユーザーが 「ベトナムの首都は？」と質問している。
+その後、別のユーザが「ベトナムの首都はどこですか？」と尋ねると、同じ質問ですが「どこ」という余分な単語が付いています。
 The idea of semantic cache is that the system can reuse the answer “Hanoi” instead of computing the new query from scratch.
-セマンティック・キャッシュのアイデアは、システムがゼロから新しいクエリを計算する代わりに、「ハノイ」という答えを再利用できるということである。
+**セマンティック・キャッシュのアイデアは、システムが新しいクエリをゼロから計算する代わりに、「ハノイ」という答えを再利用できること**です。
 
 Semantic cache only works if you have a reliable way to determine if two queries are semantically similar.
-セマンティックキャッシュは、2つのクエリが意味的に類似しているかどうかを判断する信頼できる方法を持っている場合にのみ機能する。
+**セマンティックキャッシュは、2つのクエリが意味的に類似しているかどうかを判断する信頼できる方法を持っている場合にのみ機能する**。
 One common approach is embedding-based similarity, which works as follows:
 一般的なアプローチのひとつは埋め込みベースの類似性で、次のように動作する：
 
-For each query, generate its embedding using an embedding model.
+- 1. For each query, generate its embedding using an embedding model.
 各クエリに対して、埋め込みモデルを用いて埋め込みを生成する。
-
-Use vector search to find the cached embedding closest to the current query embedding.
+- 2. Use vector search to find the cached embedding closest to the current query embedding.
 ベクトル検索を使用して、現在のクエリ埋め込みに最も近いキャッシュ埋め込みを見つける。
 Let’s say this similarity score is X.
 この類似スコアをXとしよう。
 
-If X is more than the similarity threshold you set, the cached query is considered the same as the current query, and the cached results are returned.
-Xが設定した類似度のしきい値以上であれば、キャッシュされたクエリは現在のクエリと同じとみなされ、キャッシュされた結果が返されます。
+- 3. If X is more than the similarity threshold you set, the cached query is considered the same as the current query, and the cached results are returned.
+**Xが設定した類似度のしきい値以上であれば、キャッシュされたクエリは現在のクエリと同じとみなされ、キャッシュされた結果が返されます**。(なるほど...!:thinking:)
 If not, process this current query and cache it together with its embedding and results.
 そうでない場合は、現在のクエリを処理し、その埋め込みと結果とともにキャッシュする。
 
 This approach requires a vector database to store the embeddings of cached queries.
-このアプローチは、キャッシュされたクエリの埋め込みを保存するためのベクトルデータベースを必要とする。
+このアプローチは、**キャッシュされたクエリの埋め込みを保存するためのベクトルデータベースを必要とする**。
 
 Compared to other caching techniques, semantic cache’s value is more dubious because many of its components are prone to failure.
-他のキャッシュ技術に比べ、セマンティックキャッシュの価値は、その構成要素の多くが故障しやすいため、より疑わしい。
+**他のキャッシュ技術に比べ、セマンティックキャッシュの価値は、その多くのコンポーネントが故障しやすいため、より疑わしい**。(なるほど、不確実性が高いというか...!:thinking:)
 Its success relies on high-quality embeddings, functional vector search, and a trustworthy similarity metric.
-その成功は、高品質の埋め込み、機能的なベクトル探索、信頼できる類似性メトリックに依存している。
+**その成功は、高品質の埋め込み、機能的なベクトル探索、信頼できる類似性メトリックに依存している**。
 Setting the right similarity threshold can also be tricky and require a lot of trial and error.
-適切な類似度のしきい値を設定するのも厄介で、多くの試行錯誤を必要とする。
+適切な類似度の**しきい値を設定するのも厄介**で、多くの試行錯誤を必要とする。(閾値設定は、それはそうだよな:thinking:)
 If the system mistakes the incoming query as being similar to another query, the returned response, fetched from the cache, will be incorrect.
 入力されたクエリが他のクエリと類似しているとシステムが誤認した場合、キャッシュから取得された返されたレスポンスは正しくないものとなる。
 
 In addition, semantic cache can be time-consuming and compute-intensive, as it involves a vector search.
-さらに、セマンティックキャッシュはベクトル検索を伴うため、時間と計算負荷がかかる。
+さらに、セマンティックキャッシュは**ベクトル検索を伴うため、時間がかかり、計算量が多くなることがあります**。
 The speed and cost of this vector search depend on the size of your database of cached embeddings.
 このベクトル検索の速度とコストは、キャッシュされた埋め込みデータベースのサイズに依存します。
 
 Semantic cache might still be worth it if the cache hit rate is high, meaning that a good portion of queries can be effectively answered by leveraging the cached results.
-セマンティックキャッシュは、キャッシュのヒット率が高い場合、つまり、クエリのかなりの部分がキャッシュされた結果を活用することで効果的に回答できる場合、それでも価値があるかもしれません。
+**セマンティックキャッシュは、キャッシュヒット率が高い場合にはまだ価値があるかも**しれません。つまり、キャッシュされた結果を活用することで、クエリのかなりの部分に効果的に回答できる可能性があるということです。
 However, before incorporating the complexities of semantic cache, make sure to evaluate the efficiency, cost, and performance risks associated with it.
-しかし、セマンティックキャッシュの複雑さを取り入れる前に、それに伴う効率、コスト、パフォーマンスのリスクを評価するようにしてください。
+**しかし、セマンティックキャッシュの複雑さを取り入れる前に、それに関連する効率、コスト、パフォーマンスリスクを評価することを忘れないでください。**
 
 With the added cache systems, the platform looks as follows.
 キャッシュシステムを追加したプラットフォームは以下のようになる。
 KV cache and prompt cache are typically implemented by model API providers, so they aren’t shown in this image.
-KVキャッシュとプロンプトキャッシュは通常、モデルAPIプロバイダーによって実装されるため、この画像には表示されていない。
+**KVキャッシュとプロンプトキャッシュは通常、モデルAPIプロバイダーによって実装されるため、この画像には表示されていない**。
 If I must visualize them, I’d put them in the Model API box.
 どうしても視覚化したいのであれば、モデルAPIのボックスに入れるだろう。
 There’s a new arrow to add generated responses to the cache.
 生成されたレスポンスをキャッシュに追加する新しい矢印がある。
+(この図に書いてあるのはexact cacheとsemantic cacheか。手前側がexact cacheで、DBと接続してる奥側がsemantic cacheっぽい??:thinking:)
+
+![]()
+
+<!-- ここまで読んだ -->
 
 ## Step 5. Add complex logic and write actions ステップ5. 複雑なロジックの追加とアクションの記述
 
