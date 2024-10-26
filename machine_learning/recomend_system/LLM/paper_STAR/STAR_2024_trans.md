@@ -5,67 +5,72 @@
 Recent progress in large language models (LLMs) offers promising new approaches for recommendation system (RecSys) tasks.
 最近の大規模言語モデル（LLM）の進歩は、推薦システム（RecSys）タスクに有望な新しいアプローチを提供する。
 While the current state-of-the-art methods rely on fine-tuning LLMs to achieve optimal results, this process is costly and introduces significant engineering complexities.
-現在の最先端の方法は、最適な結果を得るためにLLMを微調整することに依存しているが、このプロセスにはコストがかかり、工学的に非常に複雑な問題が生じる。
+**現在のSOTA（最先端技術）は、最適な結果を得るためにLLMをfine-tuneすることに依存している**が、このプロセスはコストがかかり、著しいエンジニアリングの複雑さを導入する。
 Conversely, methods that bypass fine-tuning and use LLMs directly are less resource-intensive but often fail to fully capture both semantic and collaborative information, resulting in sub-optimal performance compared to their fine-tuned counterparts.
-逆に、ファインチューニングをバイパスしてLLMを直接使用する方法は、リソース消費は少ないが、意味情報と協調情報の両方を完全に捕捉できないことが多く、その結果、ファインチューニングされた同等の方法と比較して、パフォーマンスが最適化されない。
+逆に、ファインチューニングをバイパスし、**LLMを直接使用する方法は、リソースを少なく済ませるが、しばしば意味的情報と協調情報の両方を十分に捉えることができず、ファインチューニングされたモデルと比較して最適なパフォーマンスを発揮しない**。
 In this paper, we propose a Simple Training-free Approach for Recommendation (STAR), a framework that utilizes LLMs and can be applied to various recommendation tasks without the need for fine-tuning.
-本論文では、LLMを利用し、微調整の必要なく様々な推薦タスクに適用可能なフレームワークであるSimple Training-free Approach for Recommendation (STAR)を提案する。
+本論文では、**ファインチューニングを必要とせず、LLMを利用してさまざまな推薦タスクに適用できるフレームワーク**であるSimple Training-free Approach for Recommendation (STAR)を提案する。
 Our approach involves a retrieval stage that uses semantic embeddings from LLMs combined with collaborative user information to retrieve candidate items.
-我々のアプローチでは、LLMからの意味埋め込みと協調的なユーザー情報を組み合わせて、候補となるアイテムを検索する。
+我々のアプローチでは、**LLMからの意味的埋め込みと協調的ユーザ情報を組み合わせて候補アイテムを取得する検索ステージ**が含まれている。(2-stages推薦の1段階目。これだけでも推薦としては機能する。2段階目をモジュールっぽく柔軟に取り外し可能だといいな:thinking:)
 We then apply an LLM for pairwise ranking to enhance next-item prediction.
-次に、ペアワイズ・ランキングにLLMを適用し、次項目予測を強化する。
+次に、ペアワイズ・ランキングにLLMを適用し、next-item predictionを強化する。
 Experimental results on the Amazon Review dataset show competitive performance for next item prediction, even with our retrieval stage alone.
 Amazon Reviewデータセットでの実験結果は、我々の検索ステージだけでも、次のアイテム予測で競争力のある性能を示している。
 Our full method achieves Hits@10 performance of +23.8% on Beauty, +37.5% on Toys and Games, and -1.8% on Sports and Outdoors relative to the best supervised models.
-我々の完全な方法は、最良の教師ありモデルと比較して、美容で+23.8%、おもちゃとゲームで+37.5%、スポーツとアウトドアで-1.8%のHits@10パフォーマンスを達成した。
+我々の完全な方法は、最高の教師ありモデルに対して、Beautyで+23.8%、Toys and Gamesで+37.5%、Sports and Outdoorsで-1.8%のHits@10性能を達成している。(まあここは結局オフライン評価だから、我々のユースケースではなんとも言えない。というか、多分この結果の部分はあんまり本論文で重要なところではないはずなので、4章と5章は飛ばして良さそう:thinking:)
 This framework offers an effective alternative to traditional supervised models, highlighting the potential of LLMs in recommendation systems without extensive training or custom architectures.
-このフレームワークは、従来の教師ありモデルに代わる効果的なモデルを提供し、大規模なトレーニングやカスタムアーキテクチャを必要としない推薦システムにおけるLLMの可能性を強調している。
+このフレームワークは、従来の教師ありモデルに対する効果的な代替手段を提供し、**大規模なトレーニングやカスタムアーキテクチャを必要とせずに、推薦システムにおけるLLMの可能性**を示している。
 
-## Introduction 
+<!-- ここまで読んだ! -->
+
+## Introduction
 
 Personalized recommendation systems have become indispensable tools for enhancing user experiences and driving engagement across a wide range of online platforms.
-パーソナライズされたレコメンデーションシステムは、幅広いオンラインプラットフォームにおいて、ユーザー体験を向上させ、エンゲージメントを促進するために不可欠なツールとなっている。
-Recent advances in large language models (LLMs) present new opportunities for addressing recommendation tasks (brown2020language,; team2023gemini,; lin2023can,; zhao2023recommender,; li2023large,; chen2024large,; tsai-etal-2024-leveraging,; wu2024survey,).
-最近の大規模言語モデル(LLM)の進歩は、推薦タスクに取り組む新たな機会を提供している(brown2020language,; team2023gemini,; lin2023can,; zhao2023recommender,; li2023large,; chen2024large,; tsai-etal-2024-leveraging,; wu2024survey,)。
-Current strategies primarily involve utilizing LLMs as either feature encoders (sun2019bert4rec,; Ding2022,; hou2022towards,; hou2023learning,; singh2023better,; yuan2023go,; harte2023leveraging,; gong2023unified,; li2023text,; liu2024once,; li2024enhancing,; ren2024representation,; rajput2024recommender,; zheng2024adapting,; sheng2024language,; hu2024enhancing,) or as scoring and ranking functions (wang2023zero,; wang2023drdt,; hou2024large,; wang-etal-2024-recmind,; xu2024prompting,; zhao2024let,; liang2024taxonomy,).
-現在の戦略では、主にLLMを特徴エンコーダ（sun2019bert4rec,; Ding2022,; hou2022towards,; hou2023learning,; singh2023better,; yuan2023go,; harte2023leveraging,; gong2023unified,; li2023text,; liu2024once,; li2024hancing,； ren2024representation、; rajput2024recommender、; zheng2024adapting、; sheng2024language、; hu2024enhancing、）、またはスコアリングやランキング機能（wang2023zero、; wang2023drdt、; hou2024large、; wang-etal-2024-recmind、; xu2024prompting、; zhao2024let、; liang2024taxonomy、）。
+パーソナライズされたレコメンデーションシステムは、幅広いオンラインプラットフォームにおいて、ユーザ体験を向上させ、エンゲージメントを促進するために欠かせないツールとなっている。
+Recent advances in large language models (LLMs) present new opportunities for addressing recommendation tasks .
+大規模言語モデル（LLM）の最近の進歩は、推薦タスクに取り組む新しい機会を提供している。
+Current strategies primarily involve utilizing LLMs as either feature encoders, or as scoring and ranking functions.
+**現在の戦略では、主にLLMを特徴エンコーダとして使用するか、スコアリングおよびランキング機能として使用するかのいずれか**である。
 When LLMs are employed as feature encoders, there is potential for transfer learning and cross-domain generalization by initializing embedding layers with LLM embeddings, although this approach requires extensive training.
-LLMを特徴エンコーダとして採用する場合、LLM埋め込みで埋め込み層を初期化することで、転移学習や領域横断的な汎化ができる可能性があるが、このアプローチには大規模な学習が必要である。
+LLMを特徴エンコーダとして採用する場合、LLM埋め込みで埋め込み層を初期化することで、転移学習やクロスドメインの汎化の可能性があるが、このアプローチには大規模なトレーニングが必要である。
 On the other hand, using LLMs for scoring and ranking demonstrates the ability to leverage their reasoning capabilities to address recommendation tasks.
-一方、スコアリングとランキングにLLMを使用することは、推薦タスクに対処するためにLLMの推論能力を活用する能力を示している。
+一方、LLMをスコアリングおよびランキングに使用することで、推薦タスクに対処するために推論能力を活用する能力が示される。
 However, these models still lag behind the performance of fine-tuned models due to a lack of collaborative knowledge.
-しかし、これらのモデルは、協調的な知識が不足しているため、微調整されたモデルのパフォーマンスにはまだ及ばない。
+しかし、これらのモデルは、**協調的知識の不足により、fine-tuningされたモデルの性能に遅れをとっている**。
 
 Figure 1.Retrieval pipeline uses scoring rules that combine semantic and collaborative information with temporal, weight, and rating factors to score unseen items without requiring any fine-tuning.
 図1.検索パイプラインは、意味情報と協調情報を時間的、重み、および評価要素と組み合わせたスコアリングルールを使用して、微調整を必要とせずに未見のアイテムをスコアリングする。
 
 The primary motivation of this work is to develop a general framework that serves as a generalist across multiple recommendation domains.
-この研究の第一の動機は、複数のレコメンデーション領域にわたってジェネラリストとして機能する一般的なフレームワークを開発することである。
+この研究の第一の動機は、**複数のレコメンデーション領域にわたってジェネラリストとして機能する一般的なフレームワークを開発すること**である。
 We demonstrate that recent advancements in LLMs align with this vision, effectively functioning as generalists without requiring any domain-specific fine-tuning.
-我々は、最近のLLMの進歩がこのビジョンに合致しており、領域特有の微調整を必要とせず、ジェネラリストとして効果的に機能することを実証する。
+我々は、最近のLLMの進歩がこのビジョンと一致しており、**ドメイン固有の微調整を必要とせずにジェネラリストとして効果的に機能する**ことを示す。
 Based on our findings, we present a Simple Training-free Approach for Recommendation (STAR) framework using LLMs.
-この結果に基づき、我々はLLMを用いたSimple Training-free Approach for Recommendation (STAR)フレームワークを提案する。
+我々の発見に基づいて、LLMを用いた推薦のためのSimple Training-free Approach for Recommendation (STAR)フレームワークを提案する。
 The STAR framework involves two stages: Retrieval and Ranking.
-STARフレームワークには2つの段階がある： 検索とランキングである。
+**STARフレームワークには2つの段階がある： 検索とランキング**である。
 The Retrieval stage scores new items using a combination of semantic similarity and collaborative commonality to the items in a user’s history.
-検索ステージでは、ユーザーの履歴にあるアイテムとの意味的類似性と協調的共通性の組み合わせを使って、新しいアイテムをスコアリングする。
+検索ステージでは、ユーザの履歴にあるアイテムとの意味的類似性と協調的共通性の組み合わせを使って、新しいアイテムをスコアリングする。
 Here, we utilize LLM-based embeddings to determine semantic similarity.
 ここでは、LLMに基づく埋め込みを利用して、意味的類似性を決定する。
 Additionally, a temporal factor gives priority to user’s recent interactions, and a rating factor aligns with user preferences to rank items within a specific set (See Figure 1 and Section 3.2).
-さらに、時間的要因は、ユーザーの最近のインタラクションを優先し、評価要因は、特定のセット内のアイテムをランク付けするために、ユーザーの好みに合わせる（図1およびセクション3.2参照）。
+さらに、temporal factor (時間的要素) はユーザの最近の相互作用に優先度を与え、rating factor (評価要素) は特定のセット内のアイテムをランク付けするためにユーザの嗜好に合わせる（図1とセクション3.2を参照）。(まだわからん!:thinking:)
 The Ranking stage leverages the reasoning capabilities of LLMs to adjust the rankings of the initially retrieved candidates.
-ランキング・ステージでは、LLMの推論能力を活用して、最初に検索された候補者の順位を調整する。
+**ランキング・ステージでは、LLMの推論能力を活用して、最初に取得した候補のランキングを調整する**。
 Specifically, we assess various LLM-based ranking approaches, including point-wise, pair-wise, and list-wise methods, while also determining the key information needed for the LLM to better understand user preferences and make accurate predictions (Section 3.3).
-具体的には、ポイント・ワイズ法、ペア・ワイズ法、リスト・ワイズ法など、さまざまなLLMベースのランキング・アプローチを評価するとともに、LLMがユーザーの嗜好をよりよく理解し、正確な予測を行うために必要な主要情報を決定する（セクション3.3）。
+具体的には、ポイント・ワイズ法、ペア・ワイズ法、リスト・ワイズ法など、さまざまなLLMベースのランキング・アプローチを評価するとともに、LLMがユーザの嗜好をよりよく理解し、正確な予測を行うために必要な主要情報を決定する（セクション3.3）。
 Our experimental evaluation shows competitive performance across a diverse range of recommendation datasets, all without the need for supervised training or the development of custom-designed architectures.
 我々の実験評価では、様々な推薦データセットにおいて、教師あり学習やカスタム設計アーキテクチャの開発を必要としない、競争力のある性能を示している。
+（プロンプトで、簡単に推薦戦略を調整できたらいいなぁ...:thinking:）
 
 We present extensive experimental results on the Amazon Review dataset (mcauley2015image,; he2016ups,).
 Amazon Reviewデータセット(mcauley2015image,; he2016ups,)を用いた広範な実験結果を示す。
 Our findings are as follow: (1) Our retrieval pipeline, comprised of both semantic relationship and collaborative information, demonstrates competitive results compared to a wide range of fine-tuned methods.
-我々の発見は以下の通りである： (1)意味関係と協調情報の両方から構成される我々の検索パイプラインは、様々な微調整された手法と比較して競争力のある結果を示す。
+我々の発見は以下の通りである： **(1)意味関係と協調情報の両方から構成される我々の検索パイプラインは、様々な微調整された手法と比較して競争力のある結果を示す**。(ほーん:thinking:)
 LLM embeddings allow for an effective method to calculate semantic similarity; (2) We show that pair-wise ranking further improves upon our retrieval performance, while point-wise and list-wise methods struggle to achieve similar improvements; and (3) We illustrate that collaborative information is a critical component that adds additional benefits to the semantic information throughout our system, in both the retrieval and ranking stages.
-LLM埋め込みは、意味的類似性を計算する効果的な方法を可能にする。(2)ペアワイズ・ランキングは、検索性能をさらに向上させるが、ポイントワイズとリストワイズの方法は同様の向上を達成するのに苦労する。
+LLM埋め込みは、意味的類似性を計算するための効果的な手法を提供することができる；(2) ペア・ワイズ法は、検索パフォーマンスをさらに向上させる一方、ポイント・ワイズ法とリスト・ワイズ法は同様の改善を達成するのに苦労することを示す；(3) 協調情報は、検索およびランキングの両段階で、システム全体に追加の利益をもたらす重要な要素であることを示す。
+
+<!-- ここまで読んだ! -->
 
 ## Related Work 関連作品
 
@@ -161,7 +166,7 @@ For our experiments, we precompute the entire semantic relationship matrix R S �
 For many domains, this is a practical solution.
 多くのドメインにとって、これは現実的な解決策である。
 However, if | I | is very large, Approximate Nearest Neighbor methods (guo2020accelerating,; sun2024soar,) are efficient approaches to maintain quality and reduce computation.
- I 
+ I
 
 #### Collaborative Relationship 協力関係
 
