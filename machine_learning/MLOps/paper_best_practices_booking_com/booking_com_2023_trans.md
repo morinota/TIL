@@ -23,7 +23,7 @@ Applying set-function optimization techniques we can answer questions such as wh
 We illustrate the usage of our framework by analyzing well-known sets of practices.
 よく知られたプラクティスのセットを分析することで、私たちのフレームワークの使い方を説明する。
 
-## Introduction 
+## Introduction
 
 In Software Engineering, Software Quality Models (SQM) are central when it comes to achieving high quality software, as highlighted for example by [10]: "A quality model provides the framework towards a definition of quality".
 ソフトウェア工学において、ソフトウェア品質モデル（SQM）は、例えば[10]で強調されているように、高品質なソフトウェアを達成するための中心的存在である： 「品質モデルは、品質の定義に向けたフレームワークを提供する」。
@@ -213,7 +213,7 @@ Given a Software Quality Model represented by a set of sub-characteristics 𝐶,
 Having an influence 𝑢(𝑝, 𝑐) for a practice 𝑝 on a sub-characteristic 𝑐 we can define coverage as a minimum threshold 𝑘 of influence.
 あるサブ特性𝑝に対する影響力𝑢(𝑝)があれば、影響力の最小閾値𝑘としてカバレッジを定義することができる。
 Formally we have: (1) A Software Quality Model, represented by its set of subcharacteristics 𝐶 (2) A set of software practices 𝑃 (3) For each practice 𝑝 ∈ 𝑃 and each quality sub-characteristic 𝑐 ∈ 𝐶, the influence defined by a function 𝑢 : 𝑃 × 𝐶 → R + (4) A sub-characteristic importance vector 𝑤 ∈ [0, 1] |𝐶| representing the relevance of each sub-characteristic 𝑐 ∈ 𝐶 (5) An effort budget in the form of number of practices to be adopted 𝐵 ∈ N (6) An integer 𝑘 representing the minimum influence necessary to consider any sub-characteristic covered We define the coverage function as a set function that given a set of sub-characteristics 𝐶 with importance weights 𝑤 and a coverage threshold 𝑘 maps a set of practices 𝑋 ∈ 2 𝑃 to a real number, formally:
-形式的には以下のようになる： (1) 副特性 ↪Lu_1D436 の集合で表現されるソフトウェア品質モデル (2) ソフトウェア実践 ᵄ の集合 (3) 各実践 ᵄ と各品質副特性 𝐶 について、関数 𝑢 で定義される影響力： 𝑃 × 𝐶 → R + (4) サブ特性の重要度ベクトル𝑤∈ [0, 1]. 
+形式的には以下のようになる： (1) 副特性 ↪Lu_1D436 の集合で表現されるソフトウェア品質モデル (2) ソフトウェア実践 ᵄ の集合 (3) 各実践 ᵄ と各品質副特性 𝐶 について、関数 𝑢 で定義される影響力： 𝑃 × 𝐶 → R + (4) サブ特性の重要度ベクトル𝑤∈ [0, 1].
 
 The objective is to choose a subset of practices that maximizes the coverage of the quality model weighted by its importance under the budget constraint:
 その目的は、予算制約の下で、重要度によって重み付けされた品質モデルの適用範囲を最大化する診療のサブセットを選択することである：
@@ -251,7 +251,7 @@ However the practices logging of metadata and artifacts, data versioning and ale
 
 Based on ML practitioners’ evaluation, four practices scored with an influence of weakly contributes = 1 should not be treated equally as a practice scored with addresses = 4, hence to penalize weak contributions we re-scale the scores.
 ML実践者の評価によれば、「貢献度が弱い＝1」と採点された4つの実践は、「貢献度が高い＝4」と採点された実践と同等に扱われるべきではない。
-To achieve this we chose a piecewise linear function where we define the addresses influence score = 4*strongly contributes, strongly contributes = 3* contributes, contributes = 2 * weakly contributes.
+To achieve this we chose a piecewise linear function where we define the addresses influence score = 4*strongly contributes, strongly contributes = 3* contributes, contributes = 2 *weakly contributes.
 これを達成するために、我々はアドレスの影響力スコア＝4*強く貢献、強く貢献＝3*貢献、貢献＝2*弱く貢献と定義する区分線形関数を選んだ。
 For continuous values, after averaging multiple ML practitioners scores, we apply a piecewise linear function between these values which we depict in Figure 2.
 連続値については、複数のML実践者のスコアを平均化した後、これらの値の間に区分線形関数を適用する。

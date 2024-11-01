@@ -5,7 +5,7 @@
 After studying how companies deploy generative AI applications, I noticed many similarities in their platforms.
 各社がどのようにジェネレーティブAIアプリケーションを導入しているかを調査した結果、そのプラットフォームには**多くの共通点**があることに気づいた。
 This post outlines the common components of a generative AI platform, what they do, and how they are implemented.
-この記事では、ジェネレーティブAIプラットフォームの一般的な構成要素、それらの機能、実装方法について概説する。
+この記事では、ジェネレーティブAIプラットフォームの一般的な構成要素、それらの機能、および実装方法について概説します。
 I try my best to keep the architecture general, but certain applications might deviate.
 私は一般的なアーキテクチャを維持するために最善を尽くしているが、特定のアプリケーションは逸脱するかもしれない。
 This is what the overall architecture looks like.
@@ -98,7 +98,7 @@ They serve the same purpose: giving the model the necessary information to proce
 これらは同じ目的を果たします：**モデルに入力を処理するために必要な情報を提供すること**。(← context construction の目的)
 
 In-context learning, learning from the context, is a form of continual learning.
-コンテクスト学習、つまり**コンテクストから学習することは、continuous learning（継続的学習）の形態**です。
+コンテクスト学習、つまりコンテクストから学習することは、継続的学習の形態です。
 It enables a model to incorporate new information continually to make decisions, preventing it from becoming outdated.
 これにより、モデルは新しい情報を継続的に取り込んで意思決定を行い、時代遅れになるのを防ぐことができます。
 For example, a model trained on last-week data won’t be able to answer questions about this week unless the new information is included in its context.
@@ -131,7 +131,7 @@ A document can be 10 tokens or 1 million tokens.
 Naively retrieving whole documents can cause your context to be arbitrarily long.
 **直感的にdocument全体を取得すると、コンテキストが任意に長くなる可能性**があります。
 RAG typically requires documents to be split into manageable chunks, which can be determined from the model’s maximum context length and your application’s latency requirements.
-RAGでは通常、**documentを管理可能なチャンクに分割する必要**があります。これは、**モデルの最大コンテキスト長とアプリケーションのレイテンシ要件から決定できる**。
+RAGでは通常、**documentsを管理可能なチャンクに分割する必要**があります。これは、**モデルの最大コンテキスト長とアプリケーションのレイテンシ要件から決定できる**。
 (これは、クエリに関連する情報をdocumentsから上位何件取得して、contextとしてgeneratorに渡すか、って話...?? もしくは上位1件のみgeneratorに渡すとしても、その1件が自然言語として長すぎる可能性があるって話かも...!:thinking:)
 To learn more about chunking and the optimal chunk size, see Pinecone, Langchain, Llamaindex, and Greg Kamradt’s tutorials.
 chunkingと最適なchunkサイズについて詳しく知りたい場合は、Pinecone、Langchain、Llamaindex、Greg Kamradtのチュートリアルを参照してください。
@@ -924,7 +924,7 @@ There’s a new arrow to add generated responses to the cache.
 
 <!-- ここまで読んだ -->
 
-## Step 5. Add complex logic and write actions ステップ5. 複雑なロジックの追加とアクションの記述
+## Step 5. Add complex logic and write actions ステップ5. 複雑なロジックの追加と書き込みアクション
 
 The applications we’ve discussed so far have fairly simple flows.
 これまで説明してきたアプリケーションは、かなりシンプルなフローを持っている。
