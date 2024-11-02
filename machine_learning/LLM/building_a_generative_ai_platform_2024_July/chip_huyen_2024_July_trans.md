@@ -434,7 +434,7 @@ More sophisticated algorithms use AI to classify whether an input is about one o
 If harmful prompts are rare in your system, you can use an anomaly detection algorithm to identify unusual prompts.
 有害なプロンプトがシステムでまれにしか表示されない場合は、異常検知アルゴリズムを使用して異常なプロンプトを特定することができる。
 
-<!-- ここまで読んだ -->s
+<!-- ここまで読んだ -->
 
 ### Output guardrails 出力ガードレール
 
@@ -471,12 +471,12 @@ There are also tools for constrained sampling such as guidance, outlines, and in
 ガイダンス、アウトライン、インストラクターなど、制約のあるサンプリングのためのツールもある。
 
 - 3. Toxic responses, such as those that are racist or sexist.
-人種差別や性差別などの有害な反応。
+人種差別や性差別などの有害な応答。
 These responses can be caught using one of many toxicity detection tools.
 このような反応は、多くの毒性検出ツールのいずれかを使って捕らえることができる。
 
 - 4. Factual inconsistent responses hallucinated by the model.
-モデルによってハルシネートされた、事実に矛盾する反応。
+モデルによってハルシネートされた、事実に矛盾する応答。
 Hallucination detection is an active area of research with solutions such as SelfCheckGPT (Manakul et al., 2023) and SAFE, Search Engine Factuality Evaluator (Wei et al., 2024).
 ハルシネーションの検出は、SelfCheckGPT（Manakul et al., 2023）やSAFE、Search Engine Factuality Evaluator（Wei et al., 2024）などの解決策がある研究の活発な分野である。
 You can mitigate hallucinations by providing models with sufficient context and prompting techniques such as chain-of-thought.
@@ -497,11 +497,11 @@ Sensitive data in outputs can be detected using the same tools used for input gu
 **出力の中の機密データは、入力ガードレールに使用されるのと同じツールを使用して検出することができる**。
 
 - 6. Brand-risk responses, such as responses that mischaracterize your company or your competitors.
-自社や競合他社を誤解させるような対応など、ブランドリスクを伴う対応。
+自社や競合他社を誤って表現するなど、ブランドリスクのある応答。
 An example is when Grok, a model trained by X, generated a response suggesting that Grok was trained by OpenAI, causing the Internet to suspect X of stealing OpenAI’s data.
 例えば、Xによって訓練されたモデルであるGrokが、GrokがOpenAIによって訓練されたと示唆する応答を生成し、インターネットがXがOpenAIのデータを盗んだと疑うようになった場合。
 This failure mode can be mitigated with keyword monitoring.
-**この故障モードは、キーワード監視で軽減できる**。
+**この失敗は、キーワード監視で軽減できる**。
 Once you’ve identified outputs concerning your brands and competitors, you can either block these outputs, pass them onto human reviewers, or use other models to detect the sentiment of these outputs to ensure that only the right sentiments are returned.
 **自社ブランドや競合他社に関する出力を特定したら**、これらの出力をブロックしたり、人間のレビュアーに渡したり、他のモデルを使用してこれらの出力の感情を検出して、正しい感情のみが返されるようにすることができる。
 (なるほど...!:thinking:)
@@ -580,6 +580,8 @@ Self-hosting your models means that you don’t have to send your data to a thir
 **モデルをセルフホストすることは、データをサードパーティに送る必要がないことを意味し、入力ガードレールの必要性を減らす**。
 However, it also means that you must implement all the necessary guardrails yourself, rather than relying on the guardrails provided by third-party services.
 **しかし、サードパーティサービスが提供するガードレールに頼るのではなく、自分で必要なすべてのガードレールを実装する必要がある**。
+
+![](https://huyenchip.com/assets/pics/genai-platform/8-guardrails.png)
 
 Our platform now looks like this.
 現在、我々のプラットフォームはこのようになっている。
