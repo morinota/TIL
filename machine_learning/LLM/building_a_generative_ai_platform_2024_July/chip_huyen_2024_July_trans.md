@@ -285,7 +285,7 @@ The architecture then looks like this.
 ![]()
 
 <!-- 余談 -->
-» Action vs tool アクション対ツール
+» Action vs tool アクションとツールの定義の話
 
 A tool allows one or more actions.
 **ツールは1つ以上のアクションを可能にする**。
@@ -337,7 +337,7 @@ Query rewriting is typically done using other AI models, using a prompt similar 
 query rewritingは通常、他のAIモデルを使って行われる。「**次の会話が与えられたら、ユーザーが実際に尋ねていることを反映させるために、最後のユーザー入力を書き換えてください**」のようなプロンプトを使用する。
 
 Query rewriting can get complicated, especially if you need to do identity resolution or incorporate other knowledge.
-query rewritingは、特にIDの解決や他の知識を組み込む必要がある場合、複雑になることがあります。
+query rewritingは、特にidentityの解決や他の知識を組み込む必要がある場合、複雑になることがあります。
 If the user asks “How about his wife?”, you will first need to query your database to find out who his wife is.
 **もしユーザが「彼の妻はどうですか？」と尋ねた場合、まずデータベースにクエリを送信して彼の妻が誰かを調べる必要があります。**
 If you don’t have this information, the rewriting model should acknowledge that this query isn’t solvable instead of hallucinating a name, leading to a wrong answer.
