@@ -328,3 +328,70 @@ AI： ジョンが最後にFruity Fedoraの帽子を買ったのは2週間前の
 - intent classifierやnext action predictorは、汎用モデル、または特化した分類モデルを利用できる。
   - **特化した分類モデルは、通常、汎用モデルよりもはるかに小さく高速であり**、システムが多数のモデルを使用しても、大幅な追加のレイテンシーやコストをかけることなく使用できる。
 (これが特化モデルの利点か:thinking:)
+
+### Gateway
+
+- モデル・ゲートウェイは、**組織が異なるモデルに対して統一された安全な方法でインターフェースを持つことを可能にする**中間層である。
+  - 最も基本的な機能 = 「開発者が異なるモデルに同じ方法でアクセスできるようにすること」
+    - (大事だ...!:thinking:)
+    - self-hostされたモデルか、OpenAIやGoogleなどの商用APIの背後にあるモデルかの違いはない。
+    - -> コードの保守が容易になる!
+      - モデルAPIが変更された場合、そのモデルAPIを使用するすべてのアプリケーションを更新する必要がある代わりに、モデルゲートウェイだけを更新すればよい!
+
+![]()
+
+- 最も単純な形では、モデルゲートウェイは統一されたwrapper!
+  - コード例
+
+```python
+import google.generativeai as genai
+import openai
+
+def openai_model(input_data, model_name, max_tokens):
+    openai.api_key = os.environ["OPENAI_API_KEY"]
+    response = openai.Completion.create(
+        engine=model_name,
+        prompt=input_data,
+        max_tokens=max_tokens
+    )
+    return {"response": response.choices[0].text.strip()}
+
+def gemini_model(input_data, model_name, max_tokens):
+    genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+    model = genai.GenerativeModel(model_name=model_name)
+    response = model.generate_content(input_data, max_tokens=max_tokens)
+    return {"response": response["choices"][0]["message"]["content"]}
+
+@app.route('/model', methods=['POST'])
+def model_gateway():
+    data = request.get_json()
+    model_type = data.get("model_type")
+    model_name = data.get("model_name")
+    input_data = data.get("input_data")
+    max_tokens = data.get("max_tokens")
+
+    if model_type == "openai":
+        result = openai_model(input_data, model_name, max_tokens)
+    elif model_type == "gemini":
+        result = gemini_model(input_data, model_name, max_tokens)
+    return jsonify(result)
+```
+
+- モデルゲートウェイの他の機能:
+  - 1. アクセス制御とコスト管理:
+    - OpenAI APIにアクセスしたい人全員にあなたの組織のトークンを渡すのではなく、**モデルゲートウェイにアクセス権を与えることで、中央集権化された制御されたアクセスポイント**を作成する
+    - またどのユーザやアプリケーションがどのモデルにアクセスできるかを指定する**細かいアクセス制御**を実装することができる
+    - 更に、APIコールの使用状況を監視し、制限することで、乱用を防ぎ、コストを効果的に管理することができる。
+    - (うんうん、**モデル利用状況の管理の観点から、モデルサービスとの窓口は1箇所 = 中央集権化されている方が都合がいい**んだよね:thinking:)
+  - 2. fallback policyの実装:
+    - モデルゲートウェイは、レート制限やAPIの失敗（残念ながら一般的）を克服するためのフォールバックポリシーの実装のために利用できる。
+      - (あ、推論モデルに不具合があった場合になんとか対応するためのフォールバック戦略か...!:thinking:)
+    - プライマリAPIが利用できない場合、ゲートウェイはリクエストを代替モデルにルーティングしたり、短い待ち時間後に再試行したり、他の様々な戦略で失敗対応できる
+      - -> **アプリケーションが中断することなくスムーズに動作することが保証**できる(大事...!:thinking:)
+  - 3. ルーティング、ロードバランシング、ロギング、アナリティクスなどの他の様々な機能を実装するのに適した場所
+    - (推薦統一インタフェースでも...!:thinking:)
+    - ゲートウェイ・サービスの中には、キャッシュやガードレールを提供するものもある
+
+ゲートウェイとルーターが追加され、我々のプラットフォームはよりエキサイティングになった!
+
+![]()
