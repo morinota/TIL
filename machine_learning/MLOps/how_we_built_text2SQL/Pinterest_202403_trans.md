@@ -179,7 +179,7 @@ Here’s a review of the refined infrastructure incorporating RAG:
 
 - 1. An offline job is employed to generate a vector index of tables’ summaries and historical queries against them.
 オフラインジョブ は、**テーブルのサマリーとそれらに対する過去のクエリのベクトルインデックスを生成**するために使用される。
-(ここで、クエリはそのまま埋め込む? もしくは自然言語に変換してから埋め込みにする??:thinking:)
+(ここで、クエリはそのまま埋め込む? もしくは自然言語に変換してから埋め込みにする?? -> どうやら後者!:thinking:)
 
 - 2. If the user does not specify any tables, their question is transformed into embeddings, and a similarity search is conducted against the vector index to infer the top N suitable tables.
 ユーザがテーブルを指定しない場合、彼らの**質問は埋め込みに変換**され、ベクトルインデックスに対して類似性検索が行われ、**上位N個の適切なテーブルが推測**される。(RAGチックだ...!:thinking:)
@@ -275,10 +275,8 @@ Here is the prompt we are using:
 
 ---
 You are a helpful assistant that can help document SQL queries.
-あなたはSQLクエリを文書化するのに役立つアシスタントです。
 
 Please document below SQL query by the given table schemas.
-以下のSQLクエリを、与えられたテーブルスキーマによって文書化してください。
 
 ===SQL Query
 {query}
