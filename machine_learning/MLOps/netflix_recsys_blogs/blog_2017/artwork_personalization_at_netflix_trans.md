@@ -1,6 +1,6 @@
 ## refs 審判
 
-- https://netflixtechblog.com/artwork-personalization-c589f074ad76 https://netflixtechblog.com/artwork-personalization-c589f074ad76
+- <https://netflixtechblog.com/artwork-personalization-c589f074ad76> <https://netflixtechblog.com/artwork-personalization-c589f074ad76>
 
 # Artwork Personalization at Netflix Netflixにおけるアートワークのパーソナライズ
 
@@ -207,7 +207,7 @@ Even with this simplification we can still learn member image preferences across
 These preferences can be modeled to predict for each (member, title, image) tuple, the probability that the member will enjoy a quality engagement.
 これらの嗜好をモデル化することで、各（メンバー、タイトル、画像）タプルについて、そのメンバーが質の高いエンゲージメントを享受する確率を予測することができる。
 These can be supervised learning models or contextual bandit counterparts with Thompson Sampling, LinUCB, or Bayesian methods that intelligently balance making the best prediction with data exploration.
-これらは、教師あり学習モデルや、トンプソン・サンプリング、LinUCB、またはデータ探索と最良の予測をインテリジェントにバランスさせるベイズ法を用いたコンテキスト・バンディット対応モデルである。
+これらは、教師あり学習モデル、もしくはcontextual bandit対応のアプローチ(Thompson Sampling、LinUCB、ベイズ法)である。contextual bandit対応のアプローチは、最良の予測とデータ探索を賢くバランスさせる。
 
 ### Potential signals 潜在的なシグナル
 
