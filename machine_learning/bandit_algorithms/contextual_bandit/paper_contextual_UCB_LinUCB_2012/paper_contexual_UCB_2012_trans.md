@@ -1,7 +1,7 @@
 ## link リンク
 
-- https://elicit.org/search?q=contextual-bandit+approach+to+personalized+news+article+recommendation&token=01H6WSCJKBN9JGVG9CRQNKSJQJ&paper=ec0072bc37f83f1a81459df43289613e04cc61e1&column=title
-- https://arxiv.org/pdf/1003.0146.pdf
+- <https://elicit.org/search?q=contextual-bandit+approach+to+personalized+news+article+recommendation&token=01H6WSCJKBN9JGVG9CRQNKSJQJ&paper=ec0072bc37f83f1a81459df43289613e04cc61e1&column=title>
+- <https://arxiv.org/pdf/1003.0146.pdf>
 
 ## title タイトル
 
@@ -135,7 +135,7 @@ In trial $t$:
 
 In the process above, the total T -trial payoff of A is defined as T t=1 rt,a t .
 上記のプロセスにおいて、Aの総T試行ペイオフは $\sum_{t=1}^{T}r_{t,a_t}$ と定義される。
-Similarly, we define the optimal expected T -trial payoff as E T t=1 r t,a _ t , where a _ t is the arm with maximum expected payoff at trial t.
+Similarly, we define the optimal expected T -trial payoff as E T t=1 r t,a _t , where a_ t is the arm with maximum expected payoff at trial t.
 同様に、T-trialsの総報酬の最適な期待値を $\mathbb{E}[\sum_{t=1}^{T} r_{t, a_{t}^*}]$ として定義する。ここで $a_{t}^*$ は、試行tで最大の期待ペイオフを持つアームである。
 Our goal is to design A so that the expected total payoff above is maximized.
 我々の目標は、上記の期待総ペイオフが最大になるようにアルゴリズムAを設計することである。
@@ -526,7 +526,7 @@ We start with an introduction of the problem setting in Yahoo! Today-Module, and
 Finally, we define performance metrics and report experimental results with comparison to a few standard (contextual) bandit algorithms.
 最後に、性能指標を定義し、いくつかの標準的な(contexutal)バンディットアルゴリズムと比較した実験結果を報告する。
 
-## 5.1 Yahoo! Today Module # 5.1 Yahoo!
+## 5.1 Yahoo! Today Module # 5.1 Yahoo
 
 ![fig1]()
 
@@ -644,7 +644,7 @@ Another reason for using a relatively small feature space is that, in online ser
 The algorithms empirically evaluated in our experiments can be categorized into three groups: I.
 我々の実験で経験的に評価されたアルゴリズムは、**3つのグループ**に分類できる：
 
-### I. Algorithms that make no use of features.
+### I. Algorithms that make no use of features
 
 特徴を利用しないアルゴリズム。
 These correspond to the context-free K-armed bandit algorithms that ignore all contexts (i.e., user/article information).
@@ -693,7 +693,7 @@ In training, CTR was estimated using the context-free ǫ-greedy with ǫ = 1.
   • ucb (warm): This algorithm is the same as the previous one but replaces ǫ-greedy with ucb.
 - ucb (warm)： このアルゴリズムは前のものと同じだが、 ↪L_1-greedy を ucb に置き換えたものである。
 
-### Algorithms that learn user-specific CTRs online オンラインでユーザー固有のCTRを学習するアルゴリズム。
+### Algorithms that learn user-specific CTRs online オンラインでユーザー固有のCTRを学習するアルゴリズム
 
 • ǫ-greedy (seg): Each user is assigned to the closest user cluster among the five constructed in Section 5.2.2, and so all users are partitioned into five groups (a.k.a.
 
@@ -816,7 +816,7 @@ Recall that the reported CTRs were normalized by the random policy's CTR.
 We examine the results more closely in the following subsections.
 以下のサブセクションで、その結果をさらに詳しく検証する。
 
-#### On the Use of Features.
+#### On the Use of Features
 
 機能の使用について。
 
@@ -844,7 +844,7 @@ In contrast, exploration in upper confidence bound methods are effectively guide
 Our experimental results imply the effectiveness of upper confidence bound methods and we believe they have similar benefits in many other applications as well.
 我々の実験結果は、UCBの有効性を示唆しており、他の多くのアプリケーションにおいても同様の利点があると信じている。
 
-#### On the Size of Data.
+#### On the Size of Data
 
 データのサイズについて
 
@@ -882,7 +882,7 @@ In contrast, in disjoint models, feedback of one article may not be utilized by 
 Figure 4 (a) shows transfer learning is indeed helpful when data are sparse.
 図4(a)は、データが疎な場合に転移学習が実際に役立つことを示している。
 
-#### Comparing ucb (seg) and linucb (disjoint).
+#### Comparing ucb (seg) and linucb (disjoint)
 
 ucb（seg）とlinucb（disjoint）の比較。
 
