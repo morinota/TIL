@@ -323,12 +323,14 @@ In our simulation, the number of users is much smaller than the news items, henc
 From our experiment in Table 2, we observe that performance still drop when the number of users increases.  
 表2の実験から、ユーザーの数が増加すると性能が低下することを観察します。  
 
-**3.2 Proposed Policies: Additive and Bilinear UCB**
+<!-- ここまで読んだ! -->
+
+#### 3.2 Proposed Policies: Additive and Bilinear UCB 提案ポリシー：加法的およびバイリニアUCB
 
 We consider shared bandits models where the parameters are shared by all pairs of users and (or) news items.  
-**3.2 提案ポリシー：加法的およびバイリニアUCB** 私たちは、パラメータがすべてのユーザーおよび（または）ニュースアイテムのペアによって共有される共有バンディットモデルを考慮します。  
+私たちは、**パラメータがすべてのユーザーおよび（または）ニュースアイテムのペアによって共有される共有バンディットモデルを考慮**します。  
 Coefficient sharing across entities can make the model learned more efficient and more generalisable.  
-エンティティ間での係数共有は、学習されたモデルをより効率的かつ一般化可能にすることができます。  
+**エンティティ間での係数共有は、学習されたモデルをより効率的かつ一般化可能にすることができます**。(うんうん、コールドスタートアイテムやコールドスタートユーザに適用可能だし...!:thinking:)  
 One also needs to design how to capture both the item and user embedding in the contextual information.  
 また、コンテキスト情報におけるアイテムとユーザーの埋め込みの両方をどのようにキャプチャするかを設計する必要があります。  
 We propose the generalised additive linear or generalised bilinear models to handle this.  
