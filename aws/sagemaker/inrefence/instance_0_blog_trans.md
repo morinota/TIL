@@ -1,17 +1,17 @@
-
 # Unlock cost savings with the new scale down to zero feature in SageMaker Inference SageMaker推論における新しいゼロスケールダウン機能でコスト削減を実現
 
 Today at AWS re:Invent 2024, we are excited to announce a new feature for Amazon SageMaker inference endpoints: the ability to scale SageMaker inference endpoints to zero instances.
-2024年のAWS re:Inventで、私たちはAmazon SageMaker推論エンドポイントの新機能、すなわちSageMaker推論エンドポイントをゼロインスタンスにスケールダウンする機能を発表できることを嬉しく思います。
+2024年のAWS re:Inventで、私たちはAmazon SageMaker推論エンドポイントの新機能、すなわち**SageMaker推論エンドポイントをゼロインスタンスにスケールダウンする機能**を発表できることを嬉しく思います。
 
 This long-awaited capability is a game changer for our customers using the power of AI and machine learning (ML) inference in the cloud.
 この待望の機能は、クラウドにおけるAIおよび機械学習（ML）推論の力を利用する顧客にとって、ゲームチェンジャーとなります。
 
 Previously, SageMaker inference endpoints maintained a minimum number of instances to provide continuous availability, even during periods of low or no traffic.
-以前は、SageMaker推論エンドポイントは、トラフィックが少ないまたは全くない期間でも継続的な可用性を提供するために、最小限のインスタンス数を維持していました。
+以前は、SageMaker推論エンドポイントは、**トラフィックが少ないまたは全くない期間でも継続的な可用性を提供するため**に、最小限のインスタンス数を維持していました。
+(それはそう。インスタンス数0だとコールドスタートはどうしても発生するだろうし...:thinking:)
 
 With this update, available when using SageMaker inference components, you have more options to align your resource usage with your specific needs and traffic patterns.
-この更新により、SageMaker推論コンポーネントを使用する際に、リソース使用を特定のニーズやトラフィックパターンに合わせるための選択肢が増えました。
+この更新により、**SageMaker推論コンポーネントを使用する際に、リソース使用を特定のニーズやトラフィックパターンに合わせるための選択肢が増えました**。
 
 Refer to the accompanying notebooks to get started with the new scale down to zero feature.
 新しいゼロスケールダウン機能を始めるには、付随するノートブックを参照してください。
@@ -29,13 +29,13 @@ This enhancement builds upon the existing auto scaling capabilities in SageMaker
 この強化は、SageMakerの既存のオートスケーリング機能を基にしており、リソース割り当てに対するより詳細な制御を提供します。
 
 You can now configure your scaling policies to include scaling to zero, allowing for more precise management of your AI inference infrastructure.
-これにより、スケーリングポリシーをゼロスケールダウンを含むように設定でき、AI推論インフラストラクチャのより正確な管理が可能になります。
+これにより、**スケーリングポリシーをゼロスケールダウンを含むように設定でき**、AI推論インフラストラクチャのより正確な管理が可能になります。
 
 The scale down to zero feature presents new opportunities for how businesses can approach their cloud-based ML operations.
 ゼロスケールダウン機能は、企業がクラウドベースのMLオペレーションにアプローチする新しい機会を提供します。
 
 It provides additional options for managing resources across various scenarios, from development and testing environments to production deployments with variable traffic patterns.
-開発およびテスト環境から、変動するトラフィックパターンを持つ本番展開に至るまで、さまざまなシナリオでリソースを管理するための追加オプションを提供します。
+**開発およびテスト環境から、変動するトラフィックパターンを持つ本番展開に至るまで**、さまざまなシナリオでリソースを管理するための追加オプションを提供します。
 
 As with any new feature, you are encouraged to carefully evaluate how it fits into your overall architecture and operational needs, considering factors such as response times and the specific requirements of your applications.
 新機能と同様に、応答時間やアプリケーションの特定の要件などの要素を考慮しながら、全体のアーキテクチャや運用ニーズにどのように適合するかを慎重に評価することをお勧めします。
@@ -44,10 +44,12 @@ In this post, we explore the new scale to zero feature for SageMaker inference e
 この記事では、SageMaker推論エンドポイントの新しいゼロスケールダウン機能を探求し、コストを最適化し、リソースをより効果的に管理するためにこの機能を実装し使用する方法を示します。
 
 We cover the key scenarios where scaling to zero is beneficial, provide best practices for optimizing scale-up time, and walk through the step-by-step process of implementing this functionality.
-ゼロスケールダウンが有益な主要なシナリオをカバーし、スケールアップ時間を最適化するためのベストプラクティスを提供し、この機能を実装するためのステップバイステップのプロセスを説明します。
+**ゼロスケールダウンが有益になる主要なシナリオ**をカバーし、スケールアップ時間を最適化するためのベストプラクティスを提供し、この機能を実装するためのステップバイステップのプロセスを説明します。
 
 Additionally, we discuss how to set up scheduled scaling actions for predictable traffic patterns and test the behavior of your scaled-to-zero endpoints.
 さらに、予測可能なトラフィックパターンのためのスケジュールされたスケーリングアクションの設定方法と、ゼロにスケールダウンしたエンドポイントの動作をテストする方法についても説明します。
+
+<!-- ここまで読んだ -->
 
 ## Determining when to scale to zero ゼロスケールのタイミングの決定
 
