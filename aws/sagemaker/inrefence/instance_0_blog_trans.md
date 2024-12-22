@@ -1,4 +1,4 @@
-# Unlock cost savings with the new scale down to zero feature in SageMaker Inference SageMaker推論における新しいゼロスケールダウン機能でコスト削減を実現
+# 1. Unlock cost savings with the new scale down to zero feature in SageMaker Inference SageMaker推論における新しいゼロスケールダウン機能でコスト削減を実現
 
 Today at AWS re:Invent 2024, we are excited to announce a new feature for Amazon SageMaker inference endpoints: the ability to scale SageMaker inference endpoints to zero instances.
 2024年のAWS re:Inventで、私たちはAmazon SageMaker推論エンドポイントの新機能、すなわち**SageMaker推論エンドポイントをゼロインスタンスにスケールダウンする機能**を発表できることを嬉しく思います。
@@ -51,7 +51,7 @@ Additionally, we discuss how to set up scheduled scaling actions for predictable
 
 <!-- ここまで読んだ -->
 
-## Determining when to scale to zero ゼロスケールのタイミングの決定
+## 1.1. Determining when to scale to zero ゼロスケールのタイミングの決定
 
 Before we dive into the implementation details of the new scale to zero feature, it’s crucial to understand when and why you should consider using it.
 新しいゼロスケール機能の実装詳細に入る前に、いつ、なぜそれを使用するべきかを理解することが重要です。
@@ -114,55 +114,77 @@ Then we walk through the step-by-step process of implementing the scale to zero 
 
 <!-- ここまで読んだ -->
 
-## Optimizing scale-up time best practices スケールアップ時間最適化のベストプラクティス
+## 1.2. Optimizing scale-up time best practices スケールアップ時間最適化のベストプラクティス
 
 When using the scale to zero feature, it’s crucial to minimize the time it takes for your endpoint to scale up and begin serving requests.
 スケールゼロ機能を使用する際には、エンドポイントがスケールアップしてリクエストを処理し始めるまでの時間を最小限に抑えることが重要です。
 The following are several best practices you can implement to decrease the scale-out time for your SageMaker inference endpoints:
-以下は、SageMaker推論エンドポイントのスケールアウト時間を短縮するために実装できるいくつかのベストプラクティスです：
+以下は、**SageMaker推論エンドポイントのスケールアウト時間を短縮するために実装できるいくつかのベストプラクティス**です：
 
-- Decrease model or container download time– Use uncompressed model format to reduce the time it takes to download the model artifacts when scaling up.
-- モデルまたはコンテナのダウンロード時間を短縮する– スケールアップ時にモデルアーティファクトをダウンロードする時間を短縮するために、非圧縮モデル形式を使用します。
+### 1.2.1. Decrease model or container download time モデルまたはコンテナのダウンロード時間を短縮する
+
+Use uncompressed model format to reduce the time it takes to download the model artifacts when scaling up
+スケールアップ時にモデルアーティファクトをダウンロードする時間を短縮するために、非圧縮モデル形式を使用します。
 Compressed model files may save storage space, but they require additional time to uncompress and files can’t be downloaded in parallel, which can slow down the scale-up process.
 圧縮されたモデルファイルはストレージスペースを節約できますが、解凍に追加の時間がかかり、ファイルは並行してダウンロードできないため、スケールアッププロセスが遅くなる可能性があります。
 To learn more, see Supercharge your auto scaling for generative AI inference – Introducing Container Caching in SageMaker Inference.
 詳細については、「生成AI推論のための自動スケーリングを強化する – SageMaker Inferenceにおけるコンテナキャッシングの導入」を参照してください。
 
-- Reduce model server startup time– Look for ways to optimize the startup and initialization of your model server container.
-- モデルサーバーの起動時間を短縮する– モデルサーバーコンテナの起動と初期化を最適化する方法を探ります。
+<!-- ここまで読んだ!! -->
+
+### 1.2.2. Reduce model server startup time モデルサーバーの起動時間を短縮する
+
+Look for ways to optimize the startup and initialization of your model server container.
+モデルサーバーコンテナの起動と初期化を最適化する方法を探ります。
 This could include techniques like building in packages into the image, using multi-threading, or minimizing unnecessary initialization steps.
 これには、イメージにパッケージを組み込む、マルチスレッドを使用する、または不要な初期化ステップを最小限に抑えるといった技術が含まれます。
 For more details, see Introducing Fast Model Loader in SageMaker Inference: Accelerate autoscaling for your Large Language Models (LLMs) – part 1.
 詳細については、「SageMaker Inferenceにおけるファストモデルローダーの導入：大規模言語モデル（LLM）の自動スケーリングを加速する – パート1」を参照してください。
 
-- Use faster auto scaling metrics– Take advantage of more granular auto scaling metrics like ConcurrentRequestsPerCopy to more accurately monitor and react to changes in inference traffic.
-- より高速な自動スケーリングメトリクスを使用する– ConcurrentRequestsPerCopyのようなより詳細な自動スケーリングメトリクスを活用して、推論トラフィックの変化をより正確に監視し、反応します。
+<!-- ここまで読んだ -->
+
+### 1.2.3. Use faster auto scaling metrics より高速な自動スケーリングメトリクスを使用する
+
+(これは、スケールアウト/イン時のタイミングを判断するmetricsの選択の話っぽい??:thinking:)
+
+Take advantage of more granular auto scaling metrics like ConcurrentRequestsPerCopy to more accurately monitor and react to changes in inference traffic.
+ConcurrentRequestsPerCopyのようなより詳細な自動スケーリングメトリクスを活用して、推論トラフィックの変化をより正確に監視し、反応します。
 These sub-minute metrics can help trigger scale-out actions more precisely, reducing the number of NoCapacityInvocationFailures your users might experience.
 これらのサブミニットメトリクスは、スケールアウトアクションをより正確にトリガーするのに役立ち、ユーザーが経験する可能性のあるNoCapacityInvocationFailuresの数を減少させます。
 For more information, see Amazon SageMaker inference launches faster auto scaling for generative AI models.
 詳細については、「Amazon SageMaker推論が生成AIモデルのためのより迅速な自動スケーリングを開始」を参照してください。
 
-- Handle failed requests– When scaling from zero instances, there will be a brief period where requests fail due to NoCapacityInvocationFailures because SageMaker provisions resources.
-- 失敗したリクエストを処理する– ゼロインスタンスからスケールアップする際、SageMakerがリソースをプロビジョニングするため、リクエストがNoCapacityInvocationFailuresにより失敗する短い期間があります。
-To handle this, you can use queues or implement client-side retries:
-これを処理するために、キューを使用するか、クライアント側の再試行を実装できます：
+<!-- ここまで読んだ -->
 
-- Use a serverless queue like Amazon Simple Queue Service (Amazon SQS) to buffer requests during scale-out.
-- Amazon Simple Queue Service（Amazon SQS）のようなサーバーレスキューを使用して、スケールアウト中にリクエストをバッファリングします。
+### 1.2.4. Handle failed requests 失敗したリクエストを処理する
+
+When scaling from zero instances, there will be a brief period where requests fail due to NoCapacityInvocationFailures because SageMaker provisions resources.
+ゼロインスタンスからスケールアップする際、SageMakerがリソースをプロビジョニングするため、リクエストがNoCapacityInvocationFailuresにより失敗する短い期間があります。
+To handle this, you can use queues or implement client-side retries:
+これを処理するために、**キューを使用するか、クライアント側の再試行**を実装できます：
+
+#### 1.2.4.1. Use a serverless queue like Amazon Simple Queue Service (Amazon SQS) to buffer requests during scale-out
+
+Amazon Simple Queue Service（Amazon SQS）のようなサーバーレスキューを使用して、スケールアウト中にリクエストをバッファリングします。
 When a failure occurs, enqueue the request and dequeue after the model copies have scaled up from zero.
 失敗が発生した場合、リクエストをキューに入れ、モデルコピーがゼロからスケールアップした後にデキューします。
 
-- Alternatively, have your client reject failed requests, but then retry after some time after the model copies have scaled.
-- あるいは、クライアントに失敗したリクエストを拒否させ、その後モデルコピーがスケールした後に再試行させることもできます。
+#### 1.2.4.2. Alternatively, have your client reject failed requests, but then retry after some time after the model copies have scaled
+
+あるいは、クライアントに失敗したリクエストを拒否させ、その後モデルコピーがスケールした後に再試行させることもできます。
 You can retrieve the number of copies of an inference component at any time by making the DescribeInferenceComponent API call and checking the CurrentCopyCount.
-DescribeInferenceComponent APIコールを行い、CurrentCopyCountを確認することで、推論コンポーネントのコピー数をいつでも取得できます。
+`DescribeInferenceComponent` APIコールを行い、CurrentCopyCountを確認することで、推論コンポーネントのコピー数をいつでも取得できます。
 This allows time for the model copies to scale out from zero, transparently handling the transition for end-users.
 これにより、モデルコピーがゼロからスケールアウトするための時間が確保され、エンドユーザーに対する移行が透過的に処理されます。
+
+---
 
 By implementing these best practices, you can help make sure your SageMaker inference endpoints can scale out quickly and efficiently to meet changes in traffic, providing a responsive and reliable experience for your end-users.
 これらのベストプラクティスを実装することで、SageMaker推論エンドポイントがトラフィックの変化に迅速かつ効率的にスケールアウトできるようにし、エンドユーザーに対して応答性が高く信頼性のある体験を提供できます。
 
-## Solution overview ソリューションの概要
+<!-- ここまで読んだ -->
+
+## 1.3. Solution overview ソリューションの概要
 
 With these best practices in mind, let’s now walk through the process of enabling your SageMaker inference endpoints to scale down to zero instances.
 これらのベストプラクティスを念頭に置いて、SageMaker推論エンドポイントをゼロインスタンスにスケールダウンするプロセスを見ていきましょう。
@@ -233,7 +255,7 @@ By implementing these scaling policies, you create a flexible and cost-effective
 Now let’s see how to use this feature step by step.
 では、この機能をステップバイステップで使用する方法を見ていきましょう。
 
-## Set up your endpoint エンドポイントの設定
+## 1.4. Set up your endpoint エンドポイントの設定
 
 The first crucial step in enabling your SageMaker endpoint to scale to zero is properly configuring the endpoint and its associated components.
 SageMakerエンドポイントをゼロにスケールさせるための最初の重要なステップは、エンドポイントとその関連コンポーネントを適切に構成することです。
@@ -303,7 +325,7 @@ This process involves three main steps:
    )
    ```
 
-## Add scaling policies スケーリングポリシーの追加
+## 1.5. Add scaling policies スケーリングポリシーの追加
 
 After the endpoint is deployed and InService, you can add the necessary scaling policies:
 エンドポイントがデプロイされ、InService（サービス中）になった後、必要なスケーリングポリシーを追加できます：
@@ -313,7 +335,7 @@ After the endpoint is deployed and InService, you can add the necessary scaling 
 - A step scaling policy that will allow the endpoint to scale up from zero
   - エンドポイントがゼロからスケールアップできるステップスケーリングポリシー
 
-### Scaling policy for inference components model copies 推論コンポーネントモデルコピーのスケーリングポリシー
+### 1.5.1. Scaling policy for inference components model copies 推論コンポーネントモデルコピーのスケーリングポリシー
 
 After you create your SageMaker endpoint and inference components, you register a new auto scaling target for Application Auto Scaling.
 SageMakerエンドポイントと推論コンポーネントを作成した後、Application Auto Scalingのために新しい自動スケーリングターゲットを登録します。
@@ -373,7 +395,7 @@ The first triggers scale-out actions after 1 minute (using one 1-minute data poi
 The time to trigger the scaling action is usually 1–2 minutes longer than those minutes because it takes time for the endpoint to publish metrics to CloudWatch, and it also takes time for AutoScaling to react.
 スケーリングアクションをトリガーするまでの時間は通常、これらの分数よりも1〜2分長くなります。これは、エンドポイントがCloudWatchにメトリクスを公開するのに時間がかかり、AutoScalingが反応するのにも時間がかかるためです。
 
-### Scale out from zero model copies policy ゼロモデルコピーからのスケールアウトポリシー
+### 1.5.2. Scale out from zero model copies policy ゼロモデルコピーからのスケールアウトポリシー
 
 To enable your endpoint to scale out from zero instances, complete the following steps:
 エンドポイントがゼロインスタンスからスケールアウトできるようにするために、以下の手順を完了してください。
@@ -422,7 +444,7 @@ To enable your endpoint to scale out from zero instances, complete the following
    With the scaling policy, CloudWatch alarm, and minimum instances set to zero, your SageMaker inference endpoint will now be able to automatically scale down to zero instances when not in use.
    スケーリングポリシー、CloudWatch アラーム、および最小インスタンスがゼロに設定されていることで、SageMaker 推論エンドポイントは、使用されていないときに自動的にゼロインスタンスにスケールダウンできるようになります。
 
-## Test the solution 解決策のテスト
+## 1.6. Test the solution 解決策のテスト
 
 When our SageMaker endpoint doesn’t receive requests for 15 minutes, it will automatically scale down to zero the number of model copies:
 私たちのSageMakerエンドポイントが15分間リクエストを受け取らない場合、モデルのコピーの数は自動的にゼロにスケールダウンします。
@@ -447,7 +469,7 @@ sagemaker_client.invoke_endpoint(EndpointName=endpoint_name,InferenceComponentNa
 However, after 1 minute, our step scaling policy should start. SageMaker will then start provisioning a new instance and deploy our inference component model copy to handle requests.
 しかし、1分後には、私たちのステップスケーリングポリシーが開始されるはずです。SageMakerは新しいインスタンスのプロビジョニングを開始し、リクエストを処理するために推論コンポーネントのモデルコピーをデプロイします。
 
-## Schedule scaling down to zero スケジュールのスケーリングをゼロにする
+## 1.7. Schedule scaling down to zero スケジュールのスケーリングをゼロにする
 
 In some scenarios, you might observe consistent weekly traffic patterns: a steady workload Monday through Friday, and no traffic on weekends.
 いくつかのシナリオでは、一貫した週次トラフィックパターンを観察することがあります：月曜日から金曜日までの安定した作業負荷と、週末のトラフィックがないことです。
@@ -604,7 +626,7 @@ To scale to zero on an endpoint with multiple inference components, all componen
 You can also automate this process by using EventBridge Scheduler to trigger an AWS Lambda function that handles either deletion or zero-setting of all inference components.
 また、EventBridge Schedulerを使用して、すべての推論コンポーネントの削除またはゼロ設定を処理するAWS Lambda関数をトリガーすることで、このプロセスを自動化することもできます。
 
-## Performance evaluation パフォーマンス評価
+## 1.8. Performance evaluation パフォーマンス評価
 
 We evaluated the performance implications of the Scale to Zero feature by conducting tests using a Llama3-8B instruct model.
 私たちは、Llama3-8B instructモデルを使用して、Scale to Zero機能のパフォーマンスへの影響を評価するためのテストを実施しました。
@@ -632,7 +654,7 @@ The slightly longer scale-out times, especially for larger models, provide a bal
 This measured approach to scaling helps maintain consistent performance and cost-efficiency in environments with variable workloads.
 このような慎重なスケーリングアプローチは、変動するワークロードを持つ環境において、一貫したパフォーマンスとコスト効率を維持するのに役立ちます。
 
-### Scale up Trials スケールアップ試験
+### 1.8.1. Scale up Trials スケールアップ試験
 
 - Target Tracking: Scale Model Copies to Zero (min)– This refers to the time it took target tracking to trigger the alarm and SageMaker to decrease model copies to zero on the instance
 - ターゲットトラッキング: モデルコピーをゼロにスケールダウンする時間（分）– これは、ターゲットトラッキングがアラームをトリガーし、SageMakerがインスタンス上のモデルコピーをゼロに減少させるのにかかった時間を指します。
@@ -649,7 +671,7 @@ This measured approach to scaling helps maintain consistent performance and cost
 If you want more customization and faster scaling, consider using step scaling to scale model copies instead of target tracking.
 より多くのカスタマイズと迅速なスケーリングを望む場合は、ターゲットトラッキングの代わりにステップスケーリングを使用してモデルコピーをスケールすることを検討してください。
 
-## Customers testimonials 顧客の証言
+## 1.9. Customers testimonials 顧客の証言
 
 The new Scale to Zero feature for SageMaker inference endpoints has sparked considerable interest across customers.
 SageMaker推論エンドポイントの新しいScale to Zero機能は、顧客の間でかなりの関心を呼び起こしています。
@@ -724,7 +746,7 @@ These testimonials underscore the anticipation for SageMaker’s Scale to Zero f
 As organizations begin to implement this capability, we expect to see innovative applications that balance cost efficiency with performance in machine learning deployments.
 組織がこの機能を実装し始めると、コスト効率とパフォーマンスのバランスを取った革新的なアプリケーションが見られることを期待しています。
 
-## Conclusion 結論
+## 1.10. Conclusion 結論
 
 In this post, we introduced the new scale to zero feature in SageMaker, an innovative capability that enables you to optimize costs by automatically scaling in your inference endpoints when they’re not in use.
 本稿では、SageMakerの新しいスケール・トゥ・ゼロ機能を紹介しました。この革新的な機能は、推論エンドポイントが使用されていないときに自動的にスケールダウンすることでコストを最適化することを可能にします。
@@ -747,7 +769,7 @@ To help you get started quickly, we’ve prepared a comprehensive notebooks cont
 We encourage you to try this capability and start optimizing your SageMaker inference costs today!
 この機能を試し、今日からSageMakerの推論コストを最適化することをお勧めします！
 
-### About the authors 著者について
+### 1.10.1. About the authors 著者について
 
 Marc Karpis an ML Architect with the Amazon SageMaker Service team.
 Marc Karpisは、Amazon SageMakerサービスチームのMLアーキテクトです。
@@ -797,12 +819,12 @@ He has helped build various at-scale solutions for AWS and Amazon.
 In his spare time, he likes reading books, pursue long distance running and exploring new places with his family.
 余暇には、読書をしたり、長距離ランニングをしたり、家族と新しい場所を探索することを楽しんでいます。
 
-### Resources リソース
+### 1.10.2. Resources リソース
 
 - Getting Started 始めに
 - What's New 新着情報
 
-### Blog Topics ブログトピック
+### 1.10.3. Blog Topics ブログトピック
 
 - Amazon Bedrock
 - Amazon Comprehend
@@ -814,7 +836,7 @@ In his spare time, he likes reading books, pursue long distance running and expl
 - Amazon SageMaker
 - Amazon Textract
 
-### Follow フォロー
+### 1.10.4. Follow フォロー
 
 - Twitter
 - Facebook
@@ -822,7 +844,7 @@ In his spare time, he likes reading books, pursue long distance running and expl
 - Twitch
 - Email Updates (メール更新)
 
-### Learn About AWS AWSについて学ぶ
+### 1.10.5. Learn About AWS AWSについて学ぶ
 
 - What Is AWS? AWSとは何ですか？
 - What Is Cloud Computing? クラウドコンピューティングとは何ですか？
@@ -839,7 +861,7 @@ In his spare time, he likes reading books, pursue long distance running and expl
 - Blogs ブログ
 - Press Releases プレスリリース
 
-### Resources for AWS AWSのリソース
+### 1.10.6. Resources for AWS AWSのリソース
 
 - Getting Started 始めに
 - Training and Certification トレーニングと認証
@@ -849,7 +871,7 @@ In his spare time, he likes reading books, pursue long distance running and expl
 - Analyst Reports アナリストレポート
 - AWS Partners AWSパートナー
 
-### Developers on AWS AWS上の開発者
+### 1.10.7. Developers on AWS AWS上の開発者
 
 - Developer Center 開発者センター
 - SDKs & Tools SDKとツール
