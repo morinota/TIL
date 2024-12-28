@@ -359,7 +359,7 @@ SageMakerエンドポイントと推論コンポーネントを作成した後�
 In the following code block, you set MinCapacity to 0, which is required for your endpoint to scale down to zero:
 以下のコードブロックでは、MinCapacityを0に設定します。これは、エンドポイントがゼロにスケールダウンするために必要です。
 
-```
+```python
 # Register scalable target
 resource_id=f"inference-component/{inference_component_name}"
 service_namespace="sagemaker"
@@ -382,7 +382,7 @@ In the following code example, we set the TargetValue to 5.
 This setting instructs the auto scaling system to increase capacity when the number of concurrent requests per model reaches or exceeds 5.
 この設定は、モデルごとの同時リクエスト数が5に達するかそれを超えたときに、自動スケーリングシステムに容量を増加させるよう指示します。
 
-```
+```python
 # Create Target Tracking Scaling Policy
 aas_client.put_scaling_policy(
     PolicyName="inference-component-target-tracking-scaling-policy",
@@ -427,17 +427,30 @@ To enable your endpoint to scale out from zero instances, complete the following
    Depending on your use case, you can adjust ScalingAdjustment as required.
    使用ケースに応じて、ScalingAdjustmentを必要に応じて調整できます。
 
-   ```python
-   aas_client.put_scaling_policy(PolicyName="inference-component-step-scaling-policy",PolicyType="StepScaling",ServiceNamespace=service_namespace,ResourceId=resource_id,ScalableDimension=scalable_dimension,StepScalingPolicyConfiguration={"AdjustmentType":"ChangeInCapacity","MetricAggregationType":"Maximum","Cooldown":60,"StepAdjustments":[{"MetricIntervalLowerBound":0,"ScalingAdjustment":1# you need to adjust this value based on your use case}]},)
-   ```
+```python
+aas_client.put_scaling_policy(
+    PolicyName="inference-component-step-scaling-policy",
+    PolicyType="StepScaling",
+    ServiceNamespace=service_namespace,
+    ResourceId=resource_id,
+    ScalableDimension=scalable_dimension,
+    StepScalingPolicyConfiguration={
+        "AdjustmentType": "ChangeInCapacity",
+        "MetricAggregationType": "Maximum",
+        "Cooldown": 60,
+        "StepAdjustments":
+          [
+             {
+               "MetricIntervalLowerBound": 0,
+               "ScalingAdjustment": 1 # you need to adjust this value based on your use case
+             }
+          ]
+    },
+)
+```
 
 2. Create a CloudWatch alarm with the metric NoCapacityInvocationFailures.
    メトリック NoCapacityInvocationFailures を使用して CloudWatch アラームを作成します。
-
-   ```python
-   aas_client.put_scaling_policy(PolicyName="inference-component-step-scaling-policy",PolicyType="StepScaling",ServiceNamespace=service_namespace,ResourceId=resource_id,ScalableDimension=scalable_dimension,StepScalingPolicyConfiguration={"AdjustmentType":"ChangeInCapacity","MetricAggregationType":"Maximum","Cooldown":60,"StepAdjustments":[{"MetricIntervalLowerBound":0,"ScalingAdjustment":1# you need to adjust this value based on your use case}]},)
-   ```
-
    When triggered, the alarm initiates the previously defined scaling policy.
    トリガーされると、アラームは以前に定義したスケーリングポリシーを開始します。
    For more information about the NoCapacityInvocationFailures metric, see documentation.
@@ -447,50 +460,101 @@ To enable your endpoint to scale out from zero instances, complete the following
    - EvaluationPeriods to 1
    - DatapointsToAlarm to 1
    - ComparisonOperator to GreaterThanOrEqualToThreshold
+   This results in waiting approximately 1 minute for the step scaling policy to trigger after our endpoint receives a single request.
    これにより、エンドポイントが単一のリクエストを受信した後、ステップスケーリングポリシーがトリガーされるまで約1分待機します。
 
-   ```python
-   cw_client.put_metric_alarm(AlarmName='ic-step-scaling-policy-alarm',AlarmActions=<step_scaling_policy_arn>,# Replace with your actual ARNMetricName='NoCapacityInvocationFailures',Namespace='AWS/SageMaker',Statistic='Maximum',Dimensions=[{'Name':'InferenceComponentName','Value':inference_component_name# Replace with actual InferenceComponentName}],Period=30,EvaluationPeriods=1,DatapointsToAlarm=1,Threshold=1,ComparisonOperator='GreaterThanOrEqualToThreshold',TreatMissingData='missing')
-   ```
+```python
+cw_client.put_metric_alarm(
+AlarmName='ic-step-scaling-policy-alarm',
+AlarmActions=<step_scaling_policy_arn>,  # Replace with your actual ARN
+MetricName='NoCapacityInvocationFailures',
+Namespace='AWS/SageMaker',
+Statistic='Maximum',
+Dimensions=[
+    {
+        'Name': 'InferenceComponentName',
+        'Value': inference_component_name  # Replace with actual InferenceComponentName
+    }
+],
+Period=30,
+EvaluationPeriods=1,
+DatapointsToAlarm=1,
+Threshold=1,
+ComparisonOperator='GreaterThanOrEqualToThreshold',
+TreatMissingData='missing'
+)
+```
 
-   Replace <STEP_SCALING_POLICY_ARN> with the Amazon Resource Name (ARN) of the scaling policy you created in the previous step.
-   <STEP_SCALING_POLICY_ARN> を、前のステップで作成したスケーリングポリシーの Amazon リソース名 (ARN) に置き換えます。
-   Notice the "MinInstanceCount": 0 setting in the endpoint configuration, which allows the endpoint to scale down to zero instances.
-   エンドポイント構成の "MinInstanceCount": 0 設定に注意してください。これにより、エンドポイントはゼロインスタンスにスケールダウンできます。
-   With the scaling policy, CloudWatch alarm, and minimum instances set to zero, your SageMaker inference endpoint will now be able to automatically scale down to zero instances when not in use.
-   スケーリングポリシー、CloudWatch アラーム、および最小インスタンスがゼロに設定されていることで、SageMaker 推論エンドポイントは、使用されていないときに自動的にゼロインスタンスにスケールダウンできるようになります。
+Replace <STEP_SCALING_POLICY_ARN> with the Amazon Resource Name (ARN) of the scaling policy you created in the previous step.
+<STEP_SCALING_POLICY_ARN> を、前のステップで作成したスケーリングポリシーの Amazon リソース名 (ARN) に置き換えます。
+Notice the "MinInstanceCount": 0 setting in the endpoint configuration, which allows the endpoint to scale down to zero instances.
+エンドポイント構成の "MinInstanceCount": 0 設定に注意してください。これにより、エンドポイントはゼロインスタンスにスケールダウンできます。
+With the scaling policy, CloudWatch alarm, and minimum instances set to zero, your SageMaker inference endpoint will now be able to automatically scale down to zero instances when not in use.
+スケーリングポリシー、CloudWatch アラーム、および最小インスタンスがゼロに設定されていることで、SageMaker 推論エンドポイントは、使用されていないときに自動的にゼロインスタンスにスケールダウンできるようになります。
 
 ## 1.6. Test the solution 解決策のテスト
 
 When our SageMaker endpoint doesn’t receive requests for 15 minutes, it will automatically scale down to zero the number of model copies:
 私たちのSageMakerエンドポイントが15分間リクエストを受け取らない場合、モデルのコピーの数は自動的にゼロにスケールダウンします。
 
-```
-time.sleep(500)whileTrue:desc=sagemaker_client.describe_inference_component(InferenceComponentName=inference_component_name)status=desc["InferenceComponentStatus"]print(status)sys.stdout.flush()ifstatusin["InService","Failed"]:breaktime.sleep(30)desc=sagemaker_client.describe_inference_component(InferenceComponentName=inference_component_name)print(desc)
+```python
+time.sleep(500)
+while True:
+    desc = sagemaker_client.describe_inference_component(InferenceComponentName=inference_component_name)
+    status = desc["InferenceComponentStatus"]
+    print(status)
+    sys.stdout.flush()
+    if status in ["InService", "Failed"]:
+        break
+    time.sleep(30)
+    
+desc = sagemaker_client.describe_inference_component(InferenceComponentName=inference_component_name)
+print(desc)
 ```
 
 After 10 additional minutes of inactivity, SageMaker automatically stops all underlying instances of the endpoint, eliminating all associated instance costs.
 さらに10分間の非アクティブ状態の後、SageMakerはエンドポイントのすべての基盤となるインスタンスを自動的に停止し、関連するインスタンスコストをすべて排除します。
 
 If we try to invoke our endpoint while instances are scaled down to zero, we get a validation error:
-インスタンスがゼロにスケールダウンしている間にエンドポイントを呼び出そうとすると、検証エラーが発生します。
+**インスタンスがゼロにスケールダウンしている間にエンドポイントを呼び出そうとすると、validationエラーが発生**します。
 
+```python
 An error occurred (ValidationError) when calling the InvokeEndpoint operation: Inference Component has no capacity to process this request. ApplicationAutoScaling may be in-progress (if configured) or try to increase the capacity by invoking UpdateInferenceComponentRuntimeConfig API.
-InvokeEndpoint操作を呼び出す際にエラーが発生しました（ValidationError）：推論コンポーネントにはこのリクエストを処理する能力がありません。ApplicationAutoScalingが進行中である可能性があります（設定されている場合）または、UpdateInferenceComponentRuntimeConfig APIを呼び出して容量を増やそうとしてください。
-
 ```
-sagemaker_client.invoke_endpoint(EndpointName=endpoint_name,InferenceComponentName=inference_component_name,Body=json.dumps({"inputs":"The diamondback terrapin was the first reptile to be","parameters":{"do_sample":True,"max_new_tokens":256,"min_new_tokens":256,"temperature":0.3,"watermark":True,},}),ContentType="application/json",)["Body"].read().decode("utf8")
+
+```python
+sagemaker_client.invoke_endpoint(
+    EndpointName=endpoint_name,
+    InferenceComponentName=inference_component_name,
+    Body=json.dumps(
+        {
+            "inputs": "The diamondback terrapin was the first reptile to be",
+            "parameters": {
+                "do_sample": True,
+                "max_new_tokens": 256,
+                "min_new_tokens": 256,
+                "temperature": 0.3,
+                "watermark": True,
+            },
+        }
+    ),
+    ContentType="application/json",
+)["Body"].read().decode("utf8")
 ```
 
 However, after 1 minute, our step scaling policy should start. SageMaker will then start provisioning a new instance and deploy our inference component model copy to handle requests.
-しかし、1分後には、私たちのステップスケーリングポリシーが開始されるはずです。SageMakerは新しいインスタンスのプロビジョニングを開始し、リクエストを処理するために推論コンポーネントのモデルコピーをデプロイします。
+しかし、**1分後には、私たちのステップスケーリングポリシーが開始されるはず**です。SageMakerは新しいインスタンスのプロビジョニングを開始し、リクエストを処理するために推論コンポーネントのモデルコピーをデプロイします。
+(1分かかるの、どうしたらいいんだろ:thinking:)
 
-## 1.7. Schedule scaling down to zero スケジュールのスケーリングをゼロにする
+<!-- ここまで読んだ! -->
+
+## 1.7. Schedule scaling down to zero ゼロにスケールダウンするスケジュール
 
 In some scenarios, you might observe consistent weekly traffic patterns: a steady workload Monday through Friday, and no traffic on weekends.
 いくつかのシナリオでは、一貫した週次トラフィックパターンを観察することがあります：月曜日から金曜日までの安定した作業負荷と、週末のトラフィックがないことです。
 You can optimize costs and performance by configuring scheduled actions that align with these patterns:
-これらのパターンに合わせてスケジュールされたアクションを設定することで、コストとパフォーマンスを最適化できます：
+これらの**パターンに合わせてスケジュールされたアクションを設定**することで、コストとパフォーマンスを最適化できます:
+(定期的なscalingもできる、と。あとはマニュアルでのscalingができれば嬉しい...!:thinking:)
 
 - Weekend scale-in (Friday evening)– Configure a scheduled action to reduce the number of model copies to zero.
 - 週末のスケールイン（金曜日の夕方）– モデルコピーの数をゼロに減らすスケジュールされたアクションを設定します。
@@ -501,18 +565,26 @@ This will instruct SageMaker to scale the number instance behind the endpoint to
 - 平日スケールアウト（月曜日の朝）– 月曜日の朝に推論コンポーネントの必要なモデル容量を復元する補完的なスケジュールされたアクションを設定し、アプリケーションが平日の操作に備えられるようにします。
 
 You can scale your endpoint to zero in two ways.
-エンドポイントをゼロにスケールダウンする方法は2つあります。
-The first method is to set the number of model copies to zero in your inference component using the UpdateInferenceComponentRuntimeConfig API.
-最初の方法は、UpdateInferenceComponentRuntimeConfig APIを使用して推論コンポーネントのモデルコピーの数をゼロに設定することです。
-This approach maintains your endpoint configuration while eliminating compute costs during periods of inactivity.
-このアプローチは、非アクティブな期間中に計算コストを排除しながら、エンドポイントの構成を維持します。
+**エンドポイントをゼロにスケールダウンする方法は2つ**あります。
 
-```
-sagemaker_client.update_inference_component_runtime_config(InferenceComponentName=inference_component_name,DesiredRuntimeConfig={'CopyCount':0})
+### 方法1: UpdateInferenceComponentRuntimeConfig APIを使用する
+
+The first method is to set the number of model copies to zero in your inference component using the UpdateInferenceComponentRuntimeConfig API.
+最初の方法は、**UpdateInferenceComponentRuntimeConfig APIを使用**して推論コンポーネントのモデルコピーの数をゼロに設定することです。
+This approach maintains your endpoint configuration while eliminating compute costs during periods of inactivity.
+このアプローチは、**非アクティブな期間中に計算コストを排除しながら、endpoint configurationを維持**します。(じゃあ逆に、もう一方のアプローチは、endpoint configurationを削除するってことかな...?:thinking:)
+
+```python
+sagemaker_client.update_inference_component_runtime_config(
+    InferenceComponentName=inference_component_name,
+    DesiredRuntimeConfig={
+        'CopyCount': 0
+    }
+)
 ```
 
 Amazon EventBridge Scheduler can automate SageMaker API calls using cron/rate expressions for recurring schedules or one-time invocations.
-Amazon EventBridge Schedulerは、定期的なスケジュールや一度きりの呼び出しのためにcron/rate式を使用してSageMaker API呼び出しを自動化できます。
+**Amazon EventBridge Schedulerは、定期的なスケジュールや一度きりの呼び出しのためにcron/rate式を使用してSageMaker API呼び出しを自動化**できます。(EventBridge使うってことね!まあdigdagとかでもいいんだろうけど...!:thinking:)
 To function, EventBridge Scheduler requires an execution role with appropriate permissions to invoke the target API operations on your behalf.
 機能するためには、EventBridge Schedulerは、あなたの代わりにターゲットAPI操作を呼び出すための適切な権限を持つ実行ロールを必要とします。
 For more information about how to create this role, see Set up the execution role.
@@ -527,68 +599,79 @@ The first schedule scales in the CopyCount to zero every Friday at 18:00 UTC+1, 
 The schedule will start on November 29, 2024, end on December 31, 2025, and be deleted after completion.
 このスケジュールは2024年11月29日に開始し、2025年12月31日に終了し、完了後に削除されます。
 
-```
+```python
 import json
 scheduler = boto3.client('scheduler')
-flex_window = {"Mode": "OFF"}
+
+flex_window = {
+    "Mode": "OFF"
+}
+
 # We specify the SageMaker target API for the scale in schedule
 scale_in_target = {
     "RoleArn": role,
     "Arn": "arn:aws:scheduler:::aws-sdk:sagemaker:updateInferenceComponentRuntimeConfig",
-    "Input": json.dumps({"DesiredRuntimeConfig": {"CopyCount": 0}, "InferenceComponentName": inference_component_name})
+    "Input": json.dumps({ "DesiredRuntimeConfig": {"CopyCount": 0}, "InferenceComponentName": inference_component_name })
 }
-# Scale in our endpoint to 0 every Friday at 18:00 UTC+1, starting on November 29, 2024
+
+# Scale in our endpoint to 0 every friday at 18:00 UTC+1, starting on November 29, 2024
 scheduler.create_schedule(
     Name="scale-to-zero-schedule",
     ScheduleExpression="cron(00 18 ? * 6 2024-2025)",
-    ScheduleExpressionTimezone="UTC+1",
-    # Set the correct timezone for your application
+    ScheduleExpressionTimezone="UTC+1", # Set the correct timezone for your application
     Target=scale_in_target,
     FlexibleTimeWindow=flex_window,
     ActionAfterCompletion="DELETE",
     StartDate="2024-11-29T00:00:00",
     EndDate="2025-12-31T23:59:59"
 )
+
 # Specify the SageMaker target API for the scale out schedule
 scale_out_target = {
     "RoleArn": role,
     "Arn": "arn:aws:scheduler:::aws-sdk:sagemaker:updateInferenceComponentRuntimeConfig",
-    "Input": json.dumps({"DesiredRuntimeConfig": {"CopyCount": 2}, "InferenceComponentName": inference_component_name})
+    "Input": json.dumps({ "DesiredRuntimeConfig": {"CopyCount": 2}, "InferenceComponentName": inference_component_name })
 }
+
 # Scale out our endpoint every Monday at 07:00 UTC+1
 scheduler.create_schedule(
     Name="scale-out-schedule",
     ScheduleExpression="cron(00 07 ? * 2 2024-2025)",
-    ScheduleExpressionTimezone="UTC+1",
-    # Set the correct timezone for your application
+    ScheduleExpressionTimezone="UTC+1", # Set the correct timezone for your application
     Target=scale_out_target,
     FlexibleTimeWindow=flex_window,
     ActionAfterCompletion="DELETE",
     StartDate="2024-11-29T00:00:00",
     EndDate="2025-12-31T23:59:59"
-)
 ```
 
+### 方法2: DeleteInferenceComponent APIを使用する
+
 The second method is to delete the inference components by calling the DeleteInferenceComponent API.
-2番目の方法は、DeleteInferenceComponent APIを呼び出して推論コンポーネントを削除することです。
+2番目の方法は、**DeleteInferenceComponent APIを呼び出して推論コンポーネントを削除**することです。
 This approach achieves the same cost-saving benefit while completely removing the components from your configuration.
-このアプローチは、構成からコンポーネントを完全に削除しながら、同じコスト削減の利点を達成します。
+このアプローチは、**endpoint configurationからコンポーネントを完全に削除**することで、同じコスト削減の利点を実現します。(あ、endpoint configuration自体を削除するって話ではなくて、コンポーネントだけを削除するってことね!:thinking:)
+
 The following code creates a scheduled action that automatically deletes the inference component every Friday at 18:00 UTC during 2024–2025.
 以下のコードは、2024年から2025年の間に毎週金曜日の18:00 UTCに推論コンポーネントを自動的に削除するスケジュールされたアクションを作成します。
 It also creates a complementary scheduled action that recreates the inference component every Monday at 07:00 UTC+1.
 また、毎週月曜日の07:00 UTC+1に推論コンポーネントを再作成する補完的なスケジュールされたアクションも作成します。
 
-```
+```python
 import json
 scheduler = boto3.client('scheduler')
 flex_window = {"Mode": "OFF"}
+
 # We specify the SageMaker target API for the scale in schedule
+
 scale_in_target = {
     "RoleArn": role,
     "Arn": "arn:aws:scheduler:::aws-sdk:sagemaker:deleteInferenceComponent",
     "Input": json.dumps({"InferenceComponentName": inference_component_name})
 }
+
 # Scale in our endpoint by deleting the IC every Friday at 18:00 UTC+1
+
 scheduler.create_schedule(
     Name="scale-to-zero-schedule",
     ScheduleExpression="cron(00 18 ? * 6 2024-2025)",
@@ -600,7 +683,9 @@ scheduler.create_schedule(
     StartDate="2024-11-29T00:00:00",
     EndDate="2025-12-31T23:59:59"
 )
+
 # Specify the SageMaker target API for the scale up schedule
+
 input_config = {
     "EndpointName": endpoint_name,
     "InferenceComponentName": inference_component_name,
@@ -623,7 +708,9 @@ scale_out_target = {
     "Arn": "arn:aws:scheduler:::aws-sdk:sagemaker:createInferenceComponent",
     "Input": json.dumps(input_config)
 }
+
 # Scale out our endpoint by recreating the IC every Monday at 07:00 UTC+1
+
 scheduler.create_schedule(
     Name="scale-out-schedule",
     ScheduleExpression="cron(00 07 ? * 2 2024-2025)",
@@ -638,37 +725,42 @@ scheduler.create_schedule(
 ```
 
 To scale to zero on an endpoint with multiple inference components, all components must be either set to 0 or deleted.
-複数の推論コンポーネントを持つエンドポイントをゼロにスケールダウンするには、すべてのコンポーネントを0に設定するか削除する必要があります。
+**複数の推論コンポーネントを持つエンドポイントをゼロにスケールダウンするには、すべてのコンポーネントを0に設定するか削除する必要があります**。
 You can also automate this process by using EventBridge Scheduler to trigger an AWS Lambda function that handles either deletion or zero-setting of all inference components.
 また、EventBridge Schedulerを使用して、すべての推論コンポーネントの削除またはゼロ設定を処理するAWS Lambda関数をトリガーすることで、このプロセスを自動化することもできます。
+(あ、event bridgeだけだと、forループで全てのコンポーネントを順番に削除する、みたいなことができないから、lambdaを使えってこと?:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## 1.8. Performance evaluation パフォーマンス評価
 
 We evaluated the performance implications of the Scale to Zero feature by conducting tests using a Llama3-8B instruct model.
-私たちは、Llama3-8B instructモデルを使用して、Scale to Zero機能のパフォーマンスへの影響を評価するためのテストを実施しました。
+私たちは、Llama3-8B instructモデルを使用して、**Scale to Zero機能のパフォーマンスへの影響**を評価するためのテストを実施しました。
 These tests utilized container caching and optimized model loading techniques, and were performed with both Target Tracking and Step Scaling policies in place.
-これらのテストは、コンテナキャッシングと最適化されたモデルロード技術を利用し、Target TrackingポリシーとStep Scalingポリシーの両方を適用して実施されました。
+これらのテストは、**コンテナキャッシングと最適化されたモデルロード技術を利用し、Target TrackingポリシーとStep Scalingポリシーの両方を適用**して実施されました。
 Our findings for Llama3-8B instruct show that when using the Target Tracking policy, SageMaker will scale the endpoint to zero model copies in approximately 15 minutes, and then take an additional 10 minutes to fully scale down the underlying instances, for a total scale-in time of 25 minutes.
 Llama3-8B instructに関する私たちの発見は、Target Trackingポリシーを使用する場合、SageMakerはエンドポイントをゼロモデルコピーにスケールダウンするのに約15分かかり、その後、基盤となるインスタンスを完全にスケールダウンするのに追加で10分かかり、合計で25分のスケールイン時間がかかることを示しています。
 Conversely, when scaling the endpoint back up from zero, the Step Scaling policy triggers the provisioning of new instances in around 1 minute, followed by provisioning the instance(s) in ~1.748 minutes.
 逆に、エンドポイントをゼロから再スケールアップする際には、Step Scalingポリシーが新しいインスタンスのプロビジョニングを約1分でトリガーし、その後、インスタンスのプロビジョニングが約1.748分で行われます。
 Scaling out of model copies in approximately 2.28 minutes, resulting in a total scale-out time of around 5.028 minutes.
-モデルコピーのスケールアウトは約2.28分で行われ、合計スケールアウト時間は約5.028分となります。
+モデルコピーのスケールアウトは約2.28分で行われ、**合計スケールアウト時間は約5.028分**となります。
 
 The performance tests on LLaMa3.1 models (8B and 70B variants) demonstrate SageMaker’s Scale to Zero feature’s effectiveness, with intentionally conservative scaling times to prevent endpoint thrashing and accommodate spiky traffic patterns.
-LLaMa3.1モデル（8Bおよび70Bバリアント）に対するパフォーマンステストは、エンドポイントのスラッシングを防ぎ、スパイキーなトラフィックパターンに対応するために意図的に保守的なスケーリング時間を持つSageMakerのScale to Zero機能の効果を示しています。
+LLaMa3.1モデル（8Bおよび70Bバリアント）に対するパフォーマンステストは、エンドポイントのスラッシングを防ぎ、スパイキーなトラフィックパターンに対応するために**意図的に保守的なスケーリング時間を持つ**SageMakerのScale to Zero機能の効果を示しています。(あ、ゆっくりスケールインするのは意図的なのか...!:thinking:)
 For both model sizes, scaling in takes a total of 25 minutes, allowing a 15-minute buffer before initiating scale-down and an additional 10 minutes to fully decommission instances.
 両方のモデルサイズにおいて、スケールインには合計25分かかり、スケールダウンを開始する前に15分のバッファを設け、インスタンスを完全に廃止するのに追加で10分かかります。
 This cautious approach helps avoid premature scaling during temporary lulls in traffic.
-この慎重なアプローチは、一時的なトラフィックの減少中に早期のスケーリングを避けるのに役立ちます。
+この**慎重なアプローチ**は、一時的なトラフィックの減少中に早期のスケーリングを避けるのに役立ちます。
 When scaling out, the 8B model takes about 5 minutes, while the 70B model needs approximately 6 minutes.
 スケールアウトする際、8Bモデルは約5分かかり、70Bモデルは約6分必要です。
 These times include a 1-minute trigger delay, followed by instance provisioning and model copy instantiation.
-これらの時間には1分のトリガー遅延が含まれ、その後にインスタンスのプロビジョニングとモデルコピーのインスタンス化が行われます。
+これらの時間には**1分のトリガー遅延が含まれ、その後にインスタンスのプロビジョニングとモデルコピーのインスタンス化が行われます**。
 The slightly longer scale-out times, especially for larger models, provide a balance between responsiveness and stability, ensuring the system can handle sudden traffic increases without constantly scaling up and down.
-特に大きなモデルにおいては、わずかに長いスケールアウト時間が応答性と安定性のバランスを提供し、システムが突然のトラフィックの増加に対応できるようにし、常にスケールアップとスケールダウンを繰り返すことがないようにします。
+特に大きなモデルにおいては、わずかに長いスケールアウト時間は、応答性と安定性のバランスを取り、システムが継続的にスケールアップおよびスケールダウンすることなく、突然のトラフィック増加に対応できるようにします。
 This measured approach to scaling helps maintain consistent performance and cost-efficiency in environments with variable workloads.
 このような慎重なスケーリングアプローチは、変動するワークロードを持つ環境において、一貫したパフォーマンスとコスト効率を維持するのに役立ちます。
+
+<!-- ここまで読んだ! -->
 
 ### 1.8.1. Scale up Trials スケールアップ試験
 
@@ -686,20 +778,20 @@ This measured approach to scaling helps maintain consistent performance and cost
 
 If you want more customization and faster scaling, consider using step scaling to scale model copies instead of target tracking.
 より多くのカスタマイズと迅速なスケーリングを望む場合は、ターゲットトラッキングの代わりにステップスケーリングを使用してモデルコピーをスケールすることを検討してください。
+(target tracking scalingよりも、step scalingの方が速いってこと??:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## 1.9. Customers testimonials 顧客の証言
 
 The new Scale to Zero feature for SageMaker inference endpoints has sparked considerable interest across customers.
 SageMaker推論エンドポイントの新しいScale to Zero機能は、顧客の間でかなりの関心を呼び起こしています。
 We gathered initial reactions from companies who have previewed and evaluated this capability, highlighting its potential impact on AI and machine learning operations.
-私たちは、この機能をプレビューし評価した企業からの初期反応を集め、そのAIおよび機械学習運用への潜在的な影響を強調しました。
+私たちは、この機能をプレビューし、評価した企業からの初期の反応を集め、AIおよび機械学習運用に与える潜在的な影響を強調しました。
 
 Atlassian, headquartered in Sydney, Australia, is a software company specializing in collaboration tools for software development and project management:
 オーストラリアのシドニーに本社を置くAtlassianは、ソフトウェア開発とプロジェクト管理のためのコラボレーションツールを専門とするソフトウェア会社です：
-“The new Scale to Zero feature for SageMaker inference strongly aligns with our commitment to efficiency and innovation.
-「SageMaker推論の新しいScale to Zero機能は、私たちの効率性と革新へのコミットメントと強く一致しています。
-We’re enthusiastic about its potential to revolutionize how we manage our machine learning inference resources, and we look forward to integrating it into our operations”
-私たちは、機械学習推論リソースの管理方法を革命的に変える可能性に熱心であり、これを私たちの業務に統合することを楽しみにしています」
+> “The new Scale to Zero feature for SageMaker inference strongly aligns with our commitment to efficiency and innovation.「SageMaker推論の新しいScale to Zero機能は、私たちの効率性と革新へのコミットメントと強く一致しています。We’re enthusiastic about its potential to revolutionize how we manage our machine learning inference resources, and we look forward to integrating it into our operations”私たちは、機械学習推論リソースの管理方法を革命的に変える可能性に熱心であり、これを私たちの業務に統合することを楽しみにしています」
 – Guarav Awadhwal – Senior Engineering Manager at Atlassian
 – Guarav Awadhwal – Atlassianのシニアエンジニアリングマネージャー
 
@@ -707,12 +799,9 @@ iFood is a Latin American online food delivery firm based in Brazil.
 iFoodはブラジルに本社を置くラテンアメリカのオンラインフードデリバリー企業です。
 It works with over 300,000 restaurants, connecting them with millions of customers every month.
 毎月300,000以上のレストランと提携し、数百万の顧客とつなげています。
-“The Scale to Zero feature for SageMaker Endpoints will be fundamental for iFood’s Machine Learning Operations.
-「SageMakerエンドポイントのScale to Zero機能は、iFoodの機械学習運用にとって基本的なものとなります。
-Over the years, we’ve collaborated closely with the SageMaker team to enhance our inference capabilities.
-私たちは、推論能力を向上させるために、SageMakerチームと密接に協力してきました。
-This feature represents a significant advancement, as it allows us to improve cost efficiency without compromising the performance and quality of our ML services, given that inference constitutes a substantial part of our infrastructure expenses.”
-この機能は重要な進展を示しており、推論が私たちのインフラストラクチャ費用の大部分を占めるため、MLサービスのパフォーマンスと品質を損なうことなくコスト効率を向上させることができます。」
+
+> “The Scale to Zero feature for SageMaker Endpoints will be fundamental for iFood’s Machine Learning Operations.「SageMakerエンドポイントのScale to Zero機能は、iFoodの機械学習運用にとって基本的なものとなります。Over the years, we’ve collaborated closely with the SageMaker team to enhance our inference capabilities.私たちは、推論能力を向上させるために、SageMakerチームと密接に協力してきました。This feature represents a significant advancement, as it allows us to improve cost efficiency without compromising the performance and quality of our ML services, given that inference constitutes a substantial part of our infrastructure expenses.”この機能は重要な進展を示しており、推論が私たちのインフラストラクチャ費用の大部分を占めるため、MLサービスのパフォーマンスと品質を損なうことなくコスト効率を向上させることができます。」
+
 – Daniel Vieira, MLOps Engineer Manager at iFoods
 – Daniel Vieira, iFoodsのMLOpsエンジニアマネージャー
 
@@ -733,34 +822,26 @@ Leveraging cutting-edge generative AI and deep learning technologies, the compan
 最先端の生成AIと深層学習技術を活用して、同社は多国籍銀行向けの革新的なAI FinTechソリューションを開発しています。
 APOIDEA’s products automate repetitive human analysis tasks, extracting valuable financial insights from extensive financial documents to accelerate AI-driven transformation across the industry.
 APOIDEAの製品は、繰り返しの人間の分析タスクを自動化し、広範な財務文書から貴重な財務インサイトを抽出して、業界全体のAI駆動の変革を加速します。
-“SageMaker’s Scale to Zero feature is a game changer for our AI financial analysis solution in operations.
-「SageMakerのScale to Zero機能は、私たちのAI財務分析ソリューションの運用においてゲームチェンジャーです。
-It delivers significant cost savings by scaling down endpoints during quiet periods, while maintaining the flexibility we need for batch inference and model testing.
-静かな期間中にエンドポイントを縮小することで大幅なコスト削減を実現し、バッチ推論やモデルテストに必要な柔軟性を維持します。
-This capability is transforming how we manage our GenAI workloads and evaluate new models.
-この機能は、私たちのGenAIワークロードの管理方法と新しいモデルの評価方法を変革しています。
-We’re eager to harness its power to further optimize our deep learning and NLP model deployments.”
-私たちは、この機能の力を活用して、深層学習とNLPモデルの展開をさらに最適化することを楽しみにしています。」
+
+> “SageMaker’s Scale to Zero feature is a game changer for our AI financial analysis solution in operations.
+「SageMakerのScale to Zero機能は、私たちのAI財務分析ソリューションの運用においてゲームチェンジャーです。It delivers significant cost savings by scaling down endpoints during quiet periods, while maintaining the flexibility we need for batch inference and model testing. **静かな期間中にエンドポイントを縮小することで大幅なコスト削減を実現**し、バッチ推論やモデルテストに必要な柔軟性を維持します。 This capability is transforming how we manage our GenAI workloads and evaluate new models. この機能は、私たちのGenAIワークロードの管理方法と新しいモデルの評価方法を変革しています。 We’re eager to harness its power to further optimize our deep learning and NLP model deployments.” 私たちは、この機能の力を活用して、深層学習とNLPモデルの展開をさらに最適化することを楽しみにしています。」
 – Mickey Yip, VP of Product at APOIDEA Group
 – Mickey Yip, APOIDEA Groupの製品担当副社長
 
 Fortiro, based in Melbourne, Australia, is a FinTech company specializing in automated document fraud detection and financial verification for trusted financial institutions.
 オーストラリアのメルボルンに本社を置くFortiroは、信頼できる金融機関向けの自動文書詐欺検出と財務検証を専門とするFinTech企業です。
-“The new Scale-to-Zero capability in SageMaker is a game-changer for our MLOps and delivers great cost savings.
-「SageMakerの新しいScale-to-Zero機能は、私たちのMLOpsにとってゲームチェンジャーであり、大幅なコスト削減を実現します。
-Being able to easily scale inference endpoints and GPUs means we can take advantage of a fast, highly responsive environment, without incurring unnecessary costs.
-推論エンドポイントとGPUを簡単にスケールできることは、不要なコストをかけることなく、迅速で高い応答性のある環境を活用できることを意味します。
-Our R&D teams constantly experiment with new AI-based document fraud detection methods, which involves a lot of testing and repeating.
-私たちのR&Dチームは、新しいAIベースの文書詐欺検出方法を常に実験しており、多くのテストと繰り返しが必要です。
-This capability empowers us to do this both faster and more efficiently.”
+> “The new Scale-to-Zero capability in SageMaker is a game-changer for our MLOps and delivers great cost savings.「**SageMakerの新しいScale-to-Zero機能は、私たちのMLOpsにとってゲームチェンジャー**であり、大幅なコスト削減を実現します。Being able to easily scale inference endpoints and GPUs means we can take advantage of a fast, highly responsive environment, without incurring unnecessary costs. 推論エンドポイントとGPUを簡単にスケールできることは、不要なコストをかけることなく、迅速で高い応答性のある環境を活用できることを意味します。 Our R&D teams constantly experiment with new AI-based document fraud detection methods, which involves a lot of testing and repeating. 私たちのR&Dチームは、新しいAIベースの文書詐欺検出方法を常に実験しており、多くのテストと繰り返しが必要です。This capability empowers us to do this both faster and more efficiently.”
 この機能は、私たちがこれをより早く、より効率的に行うことを可能にします。」
+
 – Amir Vahid, Chief Technology Officer at Fortiro
 – Amir Vahid, Fortiroの最高技術責任者
 
 These testimonials underscore the anticipation for SageMaker’s Scale to Zero feature.
 これらの証言は、SageMakerのScale to Zero機能への期待を強調しています。
 As organizations begin to implement this capability, we expect to see innovative applications that balance cost efficiency with performance in machine learning deployments.
-組織がこの機能を実装し始めると、コスト効率とパフォーマンスのバランスを取った革新的なアプリケーションが見られることを期待しています。
+組織がこの機能を実装し始めると、機械学習の展開においてコスト効率とパフォーマンスをバランスよく保つ革新的なアプリケーションが登場することが期待されます。
+
+<!-- ここまで読んだ! -->
 
 ## 1.10. Conclusion 結論
 
@@ -780,10 +861,12 @@ We encourage you to try this capability and start optimizing your SageMaker infe
 この機能を試し、今日からSageMakerの推論コストを最適化することをお勧めします。
 
 To help you get started quickly, we’ve prepared a comprehensive notebooks containing an end-to-end example of how to configure an endpoint to scale to zero.
-迅速に始められるように、エンドポイントをスケール・トゥ・ゼロに設定する方法のエンドツーエンドの例を含む包括的なノートブックを用意しました。
+迅速に始められるように、エンドポイントをスケール・トゥ・ゼロに設定する方法のエンドツーエンドの例を含む[包括的なノートブック](https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/scale-to-zero-endpoint/)を用意しました。
 
 We encourage you to try this capability and start optimizing your SageMaker inference costs today!
 この機能を試し、今日からSageMakerの推論コストを最適化することをお勧めします！
+
+<!-- ここまで読んだ! -->
 
 ### 1.10.1. About the authors 著者について
 
@@ -835,64 +918,4 @@ He has helped build various at-scale solutions for AWS and Amazon.
 In his spare time, he likes reading books, pursue long distance running and exploring new places with his family.
 余暇には、読書をしたり、長距離ランニングをしたり、家族と新しい場所を探索することを楽しんでいます。
 
-### 1.10.2. Resources リソース
-
-- Getting Started 始めに
-- What's New 新着情報
-
-### 1.10.3. Blog Topics ブログトピック
-
-- Amazon Bedrock
-- Amazon Comprehend
-- Amazon Kendra
-- Amazon Lex
-- Amazon Polly
-- Amazon Q
-- Amazon Rekognition
-- Amazon SageMaker
-- Amazon Textract
-
-### 1.10.4. Follow フォロー
-
-- Twitter
-- Facebook
-- LinkedIn
-- Twitch
-- Email Updates (メール更新)
-
-### 1.10.5. Learn About AWS AWSについて学ぶ
-
-- What Is AWS? AWSとは何ですか？
-- What Is Cloud Computing? クラウドコンピューティングとは何ですか？
-- AWS Accessibility AWSのアクセシビリティ
-- AWS Inclusion, Diversity & Equity AWSの包括性、多様性、平等
-- What Is DevOps? DevOpsとは何ですか？
-- What Is a Container? コンテナとは何ですか？
-- What Is a Data Lake? データレイクとは何ですか？
-- What is Artificial Intelligence (AI)? 人工知能（AI）とは何ですか？
-- What is Generative AI? ジェネレーティブAIとは何ですか？
-- What is Machine Learning (ML)? 機械学習（ML）とは何ですか？
-- AWS Cloud Security AWSクラウドセキュリティ
-- What's New 新着情報
-- Blogs ブログ
-- Press Releases プレスリリース
-
-### 1.10.6. Resources for AWS AWSのリソース
-
-- Getting Started 始めに
-- Training and Certification トレーニングと認証
-- AWS Solutions Library AWSソリューションライブラリ
-- Architecture Center アーキテクチャセンター
-- Product and Technical FAQs 製品および技術に関するFAQ
-- Analyst Reports アナリストレポート
-- AWS Partners AWSパートナー
-
-### 1.10.7. Developers on AWS AWS上の開発者
-
-- Developer Center 開発者センター
-- SDKs & Tools SDKとツール
-- .NET on AWS AWS上の.NET
-- Python on AWS AWS上のPython
-- Java on AWS AWS上のJava
-- PHP on AWS AWS上のPHP
-- JavaScript on AWS AWS上のJavaScript
+<!-- ここまで読んだ! -->
