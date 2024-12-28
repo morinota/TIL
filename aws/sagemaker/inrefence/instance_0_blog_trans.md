@@ -192,68 +192,84 @@ With these best practices in mind, let’s now walk through the process of enabl
 This process involves a few key steps that are crucial for optimizing your endpoint’s performance and cost-efficiency:
 このプロセスには、エンドポイントのパフォーマンスとコスト効率を最適化するために重要な数ステップが含まれています。
 
-- Configure your endpoint– The first and most critical step is to enable managed instance scaling for your SageMaker endpoint.
-- エンドポイントの設定– 最初で最も重要なステップは、SageMakerエンドポイントのためにマネージドインスタンススケーリングを有効にすることです。
+### Configure your endpoint エンドポイントの設定
 
+The first and most critical step is to enable managed instance scaling for your SageMaker endpoint.
+最初で最も重要なステップは、SageMakerエンドポイントのために**マネージドインスタンススケーリングを有効にする**ことです。
 This is the foundational action that allows you to implement advanced scaling features, including scaling to zero.
 これは、ゼロへのスケーリングを含む高度なスケーリング機能を実装するための基盤となるアクションです。
-
 By enabling managed instance scaling, you’re creating an inference component endpoint, which is essential for the fine-grained control over scaling behaviors we discuss later in this post.
-マネージドインスタンススケーリングを有効にすることで、後でこの投稿で説明するスケーリング動作の詳細な制御に不可欠な推論コンポーネントエンドポイントを作成します。
-
+マネージドインスタンススケーリングを有効にすることで、推論コンポーネントエンドポイントが作成され、この後の投稿で詳しく説明する**スケーリング動作に対する細かい制御**が可能になります。
 After you configure managed instance scaling, you then configure the SageMaker endpoint to set the MinInstanceCount parameter to 0.
-マネージドインスタンススケーリングを設定した後、SageMakerエンドポイントを設定して、MinInstanceCountパラメータを0に設定します。
-
+マネージドインスタンススケーリングを設定した後、SageMakerエンドポイントを設定して、`MinInstanceCount`パラメータを0に設定します。
 This parameter allows the endpoint to scale all the way down to zero instances when not in use, maximizing cost-efficiency.
 このパラメータにより、エンドポイントは使用されていないときにゼロインスタンスまでスケールダウンでき、コスト効率を最大化します。
-
 Enabling managed instance scaling and setting MinInstanceCount to 0 work together to provide a highly flexible and cost-effective endpoint configuration.
-マネージドインスタンススケーリングを有効にし、MinInstanceCountを0に設定することで、非常に柔軟でコスト効果の高いエンドポイント構成を提供します。
-
+**マネージドインスタンススケーリングを有効にし、 `MinInstanceCount` を0に設定すること**で、非常に柔軟でコスト効果の高いエンドポイント構成を提供します。(これが全てっぽい!:thinking:)
 However, scaling up from zero will introduce cold starts, potentially impacting response times for initial requests after periods of inactivity.
-ただし、ゼロからスケールアップするとコールドスタートが発生し、非アクティブ期間後の初回リクエストの応答時間に影響を与える可能性があります。
-
+ただし、ゼロからスケールアップするとコールドスタートが発生し、非アクティブ期間後の初回リクエストの応答時間に影響を与える可能性があります。(うんうん)
 The inference component endpoint created through managed instance scaling serves as the foundation for implementing the sophisticated scaling policies we explore in the next step.
-マネージドインスタンススケーリングを通じて作成された推論コンポーネントエンドポイントは、次のステップで探求する高度なスケーリングポリシーを実装するための基盤となります。
+マネージドインスタンススケーリングを介して作成された推論コンポーネントエンドポイントは、次のステップで探る洗練されたスケーリングポリシーを実装するための基盤となります。
 
-- Define scaling policies– Next, you need to create two scaling policies that work in tandem to manage the scaling behavior of your endpoint effectively:
-- スケーリングポリシーの定義– 次に、エンドポイントのスケーリング動作を効果的に管理するために連携して機能する2つのスケーリングポリシーを作成する必要があります：
+### Define scaling policies スケーリングポリシーの定義
 
-Scaling policy for inference component copies– This target tracking scaling policy will manage the scaling of your inference component copies.
-推論コンポーネントコピーのためのスケーリングポリシー– このターゲットトラッキングスケーリングポリシーは、推論コンポーネントコピーのスケーリングを管理します。
+Next, you need to create two scaling policies that work in tandem to manage the scaling behavior of your endpoint effectively
+次に、エンドポイントのスケーリング動作を効果的に管理するために、**連携して機能する2つのスケーリングポリシー**を作成する必要があります。
 
+#### Scaling policy for inference component copies 推論コンポーネントコピーのためのスケーリングポリシー
+
+This target tracking scaling policy will manage the scaling of your inference component copies.
+このターゲットトラッキングスケーリングポリシーは、推論コンポーネントコピーのスケーリングを管理します。
 It’s a dynamic policy that adjusts the number of copies based on a specified metric, such as CPU utilization or request count.
-これは、CPU使用率やリクエスト数などの指定されたメトリックに基づいてコピーの数を調整する動的ポリシーです。
-
+これは、**CPU使用率やリクエスト数などの指定されたメトリックに基づいてコピーの数を調整する動的ポリシー**です。
 The policy is designed to scale the copy count to zero when there is no traffic, making sure you’re not paying for unused resources.
-このポリシーは、トラフィックがないときにコピー数をゼロにスケールダウンするように設計されており、未使用のリソースに対して支払わないようにします。
-
+このポリシーは、トラフィックがないときにコピー数をゼロにスケールダウンするように設計されており、未使用のリソースに対して支払いを行わないようにします。
 Conversely, it will scale back up to your desired capacity when needed, allowing your endpoint to handle incoming requests efficiently.
 逆に、必要に応じて希望の容量までスケールアップし、エンドポイントが受信リクエストを効率的に処理できるようにします。
-
 When configuring this policy, you need to carefully choose the target metric and threshold that best reflect your workload patterns and performance requirements.
-このポリシーを設定する際には、ワークロードパターンとパフォーマンス要件を最もよく反映するターゲットメトリックとしきい値を慎重に選択する必要があります。
+このポリシーを設定する際には、**ワークロードパターンとパフォーマンス要件を最もよく反映するターゲットメトリックと閾値**を慎重に選択する必要があります。(このあたりの設定は難しそう...!:thinking:)
 
-Scale out from zero policy– This policy is crucial for enabling your endpoint to scale out from zero model copies when traffic arrives.
-ゼロからのスケールアウトポリシー– このポリシーは、トラフィックが到着したときにエンドポイントがゼロのモデルコピーからスケールアウトできるようにするために重要です。
+#### Scale out from zero policy ゼロからのスケールアウトポリシー
 
+This policy is crucial for enabling your endpoint to scale out from zero model copies when traffic arrives.
+このポリシーは、トラフィックが到着したときにエンドポイントがゼロからモデルコピーにスケールアウトするために重要です。
 It’s implemented as a step scaling policy that adds model copies when triggered by incoming requests.
 これは、受信リクエストによってトリガーされるとモデルコピーを追加するステップスケーリングポリシーとして実装されています。
-
 This allows SageMaker to provision the necessary instances to support the model copies and handle the incoming traffic.
 これにより、SageMakerはモデルコピーをサポートし、受信トラフィックを処理するために必要なインスタンスをプロビジョニングできます。
-
 When configuring this policy, you need to consider factors such as the expected traffic patterns, the desired responsiveness of your endpoint, and the potential cold start latency.
-このポリシーを設定する際には、予想されるトラフィックパターン、エンドポイントの望ましい応答性、および潜在的なコールドスタートのレイテンシを考慮する必要があります。
-
+このポリシーを設定する際には、予想されるトラフィックパターン、エンドポイントの望ましい応答性、および潜在的なコールドスタートの遅延などの要因を考慮する必要があります。
 You may want to set up multiple steps in your policy to handle different levels of incoming traffic more granularly.
-異なるレベルの受信トラフィックをより詳細に処理するために、ポリシーに複数のステップを設定することを検討するかもしれません。
+異なるレベルの受信トラフィックをより詳細に処理するために、ポリシーに複数のステップを設定することがあります。
+
+---
+
+- 2つのscaling policyについて要約
+  - 1. 推論コンポーネントコピーのscaling policy
+    - 目的: **推論処理を行うコンポーネントのコピー数を、動的に調整する**。
+    - トリガー条件: CPU使用率、リクエスト数などのmetrics。
+    - 特徴:
+      - target tracking scaling policyとして設定される。
+        - (=**特定のmetricを一定のターゲット値に保つ**ことを目的としたスケーリングポリシー)
+      - トラフィックが増加した場合に「指定されたmetrics(ex. CPU使用率やリクエスト数)」に基づき、希望の容量までスケールアップする。
+      - 基本的にリアルタイムの状況をモニタリングし、トラフィックに応じてスケール調整を行う。
+      - ゼロスケール対応: トラフィックがないときにコピー数をゼロにスケールダウンする。
+  - 2. ゼロからのscaling policy
+    - 目的: **エンドポイントが「モデルコピー数０」の状態から、トラフィックが発生した時に適切にスケールアウトする**。
+    - トリガー条件: 受信リクエスト(トラフィック到着)
+    - 特徴:
+      - 主にエンドポイントが「スケールゼロ」からの状態で動作を再開する場合に必要。
+      - **step scaling policy(?)**として設定され、リクエスト数などに応じて段階的にコピーを追加。
+        - (=**特定のmetricが特定の閾値を超えたときに、段階的にリソースを増加させる**スケーリングポリシー)
+      - コールドスタート（=インスタンス起動時の遅延）を考慮して、迅速にトラフィックを処理できるように設定する必要がある。
 
 By implementing these scaling policies, you create a flexible and cost-effective infrastructure that can automatically adjust to your workload demands and scale to zero when needed.
 これらのスケーリングポリシーを実装することで、ワークロードの要求に自動的に調整し、必要に応じてゼロにスケールダウンできる柔軟でコスト効果の高いインフラストラクチャを作成します。
 
 Now let’s see how to use this feature step by step.
 では、この機能をステップバイステップで使用する方法を見ていきましょう。
+
+<!-- ここまで読んだ -->
 
 ## 1.4. Set up your endpoint エンドポイントの設定
 
