@@ -1,7 +1,7 @@
 ## 0.1. link リンク
 
-https://netflixtechblog.com/building-confidence-in-a-decision-8705834e6fd8
-https://netflixtechblog.com/building-confidence-in-a-decision-8705834e6fd8
+<https://netflixtechblog.com/building-confidence-in-a-decision-8705834e6fd8>
+<https://netflixtechblog.com/building-confidence-in-a-decision-8705834e6fd8>
 
 # 1. Building confidence in a decision
 

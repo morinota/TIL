@@ -65,7 +65,7 @@ Figure 1: Two-stage neural contextual bandits framework for news recommendation.
 The state-of-the-art news recommender systems utilise deep neural networks (DNN) with two-tower structures (user and news encoders) [24].  
 最先端のニュース推薦システムは、**二塔構造（ユーザーとニュースエンコーダ）を持つ深層ニューラルネットワーク（DNN）を利用**しています [24]。  
 How to combine contextual bandits models with such DNN models with valid uncertainty estimations remains an open problem.  
-コンテキストバンディットモデルをこのようなDNNモデルと有効なuncertainty estimations(不確実性推定)を持って組み合わせる方法は、未解決の問題のままです。  
+**コンテキストバンディットモデルをこのようなDNNモデルと有効なuncertainty estimations(不確実性推定)を持って組み合わせる方法**は、未解決の問題のままです。  
 We review related work which addresses each challenge respectively in Section 3.3.  
 私たちは、各課題にそれぞれ対処する関連研究をセクション3.3でレビューします。  
 
@@ -115,7 +115,7 @@ At each iteration $t = 1, \ldots, N$, given user $u_t$ and candidate arm set $A_
 In the following, we will drop subscript $t$ for $u_t$ when there is no ambiguity.  
 以下では、曖昧さがない場合は $u_t$ の下付き文字を省略します。 (自明な場合はtime step tを省略するってことね...!:thinking:)
 The agent recommends $m \geq 1$ news items $S_{rec}$ according to a policy $\pi$ given the context.  
-エージェントは、コンテキストが与えられた場合にポリシー $\pi$ に従って $m \geq 1$ のニュースアイテム $S_{rec}$ を推薦します。  
+エージェントは、コンテキストが与えられた場合にポリシー $\pi$ に従って $m \geq 1$ のニュースアイテムリスト $S_{rec}$ を推薦します。  
 Then the agent receives the feedback $\{y_{t,1}, \ldots, y_{t,m}\}$, where $y_{t,i} \in \{0, 1\}$ indicating whether the user clicks the item $i$ or not at iteration $t$.  
 その後、エージェントはフィードバック $\{y_{t,1}, \ldots, y_{t,m}\}$ を受け取り、ここで $y_{t,i} \in \{0, 1\}$ はユーザーがイテレーション $t$ でアイテム $i$ をクリックしたかどうかを示します。
 The reward is defined as $y_t = \sum_{i=1}^{m} I\{y_{t,i} = 1\}$.  
@@ -149,9 +149,9 @@ where $\hat{y}_{u,i}$ is the click prediction, $\sigma_{u,i}$ is the uncertainty
 Li et al. [16] popularised the LinUCB contextual bandits approach on news recommendation tasks, where the expected reward of item $i$ and user $u$ is assumed to be linear in terms of the contextual feature $c_{u,i} \in \mathbb{R}^{d}$.  
 Li et al. [16] は、ニュース推薦タスクにおけるLinUCBコンテキストバンディットアプローチを普及させました。ここで、アイテム $i$ とユーザー $u$ の期待報酬は、コンテキスト特徴 $c_{u,i} \in \mathbb{R}^{d}$ に関して線形であると仮定されます。(これは見た気がする! yahooさんのやつ??:thinking:)  
 Xu et al. [28], Riquelme et al. [20] studied neural linear models, where the representation of contextual information is learnt by neural networks, which further improves the performance.  
-Xu et al. [28]、Riquelme et al. [20] は、コンテキスト情報の表現がニューラルネットワークによって学習されるニューラル線形モデルを研究し、これにより性能がさらに向上します。
+Xu et al. [28]、Riquelme et al. [20] は、**コンテキスト情報の表現がニューラルネットワークによって学習されるニューラル線形モデル**を研究し、これにより性能がさらに向上します。
 
-(以下は要するに「即時報酬の確率分布が正規分布以外の場合に対応したよ！」という話っぽい!...!:thinking:)
+(以下は要するに「即時報酬の確率分布が正規分布以外の場合にも一般化させて対応したよ！」という話っぽい!...!:thinking:)
 Filippi et al. [4] extended the LinUCB policy to the Generalised Linear Model s.t. $E[y_{u,i}|c_{u,i}] = \rho(c_{u,i}^T \theta_{u}^{*})$, where $\rho: \mathbb{R} \to \mathbb{R}$ is the inverse link function, $\theta_{u}^{*} \in \mathbb{R}^{d}$ is the unknown coefficient.  
 Filippi et al. [4] は、LinUCBポリシーを**一般化線形モデルに拡張**し、$E[y_{u,i}|c_{u,i}] = \rho(c_{u,i}^T \theta_{u}^{*})$ とし、ここで $\rho: \mathbb{R} \to \mathbb{R}$ は逆リンク関数、$\theta_{u}^{*} \in \mathbb{R}^{d}$ は未知の係数です。
 (文脈的にinverse link functionって、「とにかく嗜好度スコアを即時報酬の期待値の推定値に変換するよ！」って役割の関数っぽい???:thinking:)
@@ -166,6 +166,7 @@ $M_u = D_u^T D_u + I_d$ と推定係数 $\hat{\theta}_u$ を用いて、GLM-UCB�
 $$
 \alpha_{GLM-UCB}(u, i) := \rho(c_{u,i}^T \hat{\theta}_u) + \beta \|c_{u,i}\| M_u^{-1}.
 $$
+
 (ベータの項は、不確実性の大きさを表すやつ!)
 (design matrix D の構造は、ユーザの過去のinteractionの履歴を表す行列? 列はcontextの次元数 d に対応するっぽい...! なので、ユーザの過去のinteractionの履歴が少ないほど、ベータの項が大きくなる?? :thinking:)
 
@@ -309,64 +310,83 @@ Then using the mean of the predictions $\bar{y}_{u,i}$ as central tendency and t
 次に、予測の平均 $\bar{y}_{u,i}$ を中心傾向として、標準偏差 $\sigma_{u,i}$ を不確実性として使用することで、E.q. (1) で定義されたUCBポリシーに従うことができます。  
 
 **Neural Generalised Linear UCB (N-GLM-UCB)** To utilise the representation power of DNNs and the exploration ability from linear bandits, Neural-Linear [20, 28] learns contextual embedding from DNNs and use it as input of a linear model.  
-**ニューラル一般化線形UCB (N-GLM-UCB)** DNNの表現力を利用し、線形バンディットからの探索能力を活用するために、ニューラル-線形 [20, 28] はDNNからコンテキスト埋め込みを学習し、それを線形モデルの入力として使用します。  
+**ニューラル一般化線形UCB (N-GLM-UCB)** DNNの表現力を利用し、線形バンディットからの探索能力を活用するために、Neural-Linear [20, 28] は**DNNからコンテキスト埋め込みを学習し、それを線形モデルの入力として使用**します。(うんうん、シンプル!:thinking:)
 Since our reward is binary, we extend neural LinUCB [28] to neural generalised linear UCB, where we first get the deep contextual embedding learnt from NRMS model, and then follow the same acquisition function as in E.q. (2).  
-私たちの報酬はバイナリであるため、ニューラルLinUCB [28] をニューラル一般化線形UCBに拡張し、**最初にNRMSモデルから学習した深いコンテキスト埋め込みを取得し、次にE.q. (2) と同じ取得関数に従います**。  
+私たちの報酬はバイナリであるため、ニューラルLinUCB [28] をニューラル一般化線形UCBに拡張し、**最初にNRMSモデルから学習したdeepなコンテキスト埋め込みを取得し、次にE.q. (2) と同じ取得関数に従います**。  
 Applying existing neural contextual bandits algorithms directly on recommender systems may be computationally expensive or lead to suboptimal performance.  
 **既存のニューラルコンテキストバンディットアルゴリズムを推薦システムに直接適用することは、計算コストが高くなるか、最適でない性能を引き起こす可能性があります**。  
 For example, uncertainties inferred from Monte-Carlo can have high variance [20].  
 例えば、モンテカルロから推測された不確実性は高い分散を持つ可能性があります [20]。  
 Also, learning coefficients for each arm in neural-linear models is unrealistic, since one needs enough samples for each of the millions of news items.  
-**また、ニューラル-線形モデルにおける各アームの係数を学習することは非現実的であり、数百万のニュースアイテムの各々に対して十分なサンプルが必要**です。  
+**また、ニューラル-線形モデルにおける各アームの係数を学習することは非現実的であり、数百万のニュースアイテムの各々に対して十分なサンプルが必要**です。(行動空間が大きいし、ダイナミックに変化するし!)
 In our simulation, the number of users is much smaller than the news items, hence we learn coefficients per user.  
 **私たちのシミュレーションでは、ユーザの数はニュースアイテムよりもはるかに少ないため、ユーザーごとに係数を学習**します。(なるほど?? 場合によってはユーザごとのパラメータも排除する選択肢もありそう...!:thinking:)
 From our experiment in Table 2, we observe that performance still drop when the number of users increases.  
-表2の実験から、ユーザーの数が増加すると性能が低下することを観察します。  
+表2の実験から、ユーザーの数が増加すると性能が低下することを観察します。
 
 <!-- ここまで読んだ! -->
 
 #### 3.2 Proposed Policies: Additive and Bilinear UCB 提案ポリシー：加法的およびバイリニアUCB
 
-We consider shared bandits models where the parameters are shared by all pairs of users and (or) news items.  
-私たちは、**パラメータがすべてのユーザーおよび（または）ニュースアイテムのペアによって共有される共有バンディットモデルを考慮**します。  
-Coefficient sharing across entities can make the model learned more efficient and more generalisable.  
-**エンティティ間での係数共有は、学習されたモデルをより効率的かつ一般化可能にすることができます**。(うんうん、コールドスタートアイテムやコールドスタートユーザに適用可能だし...!:thinking:)  
+We consider shared bandits models where the parameters are shared by all pairs of users and (or) news items.
+私たちは、**パラメータがすべてのユーザーおよび（または）ニュースアイテムのペアによって共有されるshared bandits models(共有バンディットモデル)を考慮**します。
+Coefficient sharing across entities can make the model learned more efficient and more generalisable.
+**エンティティ間での係数共有は、学習されたモデルをより効率的かつ一般化可能にすることができます**。(うんうん、コールドスタートアイテムやコールドスタートユーザに適用可能だし...!:thinking:)
+
 One also needs to design how to capture both the item and user embedding in the contextual information.  
-また、コンテキスト情報におけるアイテムとユーザーの埋め込みの両方をどのようにキャプチャするかを設計する必要があります。  
+また、**コンテキスト情報におけるアイテムとユーザの埋め込みの両方をどのようにキャプチャするか**を設計する必要があります(??)
 We propose the generalised additive linear or generalised bilinear models to handle this.  
-これに対処するために、一般化加法線形または一般化バイリニアモデルを提案します。  
+これに対処するために、一般化加法線形モデルまたは一般化バイリニアモデルを提案します。
 Recall $x_i \in \mathbb{R}^{d_1}$ as item $i$ representation and $z_u \in \mathbb{R}^{d_2}$ as user $u$ representation.  
-アイテム $i$ の表現を $x_i \in \mathbb{R}^{d_1}$、ユーザー $u$ の表現を $z_u \in \mathbb{R}^{d_2}$ として再確認します。  
+アイテム $i$ の表現を $x_i \in \mathbb{R}^{d_1}$、ユーザ $u$ の表現を $z_u \in \mathbb{R}^{d_2}$ として再確認します。  
+
+<!-- ここまで読んだ! -->
+
+(以下は、アイテム関連のパラメータと、ユーザ関連のパラメータを別々にモデル化する話!)
 
 **Shared Neural Generalised Additive Linear UCB (S-N-GALM-UCB)** We consider an additive linear model, where the item-related coefficient $\theta_x^{*}$ and user-related coefficient $\theta_z^{*}$ are modelled separately, i.e. $E[y_{u,i}|x_i, z_u] = \rho(\gamma x_i^T \theta_x^{*} + \tilde{\gamma} \theta_z^{*T} z_u)$, where $\gamma$ is a hyperparameter, $\tilde{\gamma} = 1 - \gamma$.  
-**共有ニューラル一般化加法線形UCB (S-N-GALM-UCB)** 私たちは加法線形モデルを考慮し、アイテム関連の係数 $\theta_x^{*}$ とユーザー関連の係数 $\theta_z^{*}$ を別々にモデル化します。すなわち、$E[y_{u,i}|x_i, z_u] = \rho(\gamma x_i^T \theta_x^{*} + \tilde{\gamma} \theta_z^{*T} z_u)$ とし、ここで $\gamma$ はハイパーパラメータ、$\tilde{\gamma} = 1 - \gamma$ です。  
+**共有ニューラル一般化加法線形UCB (S-N-GALM-UCB)** 私たちは加法線形モデルを考慮し、アイテム関連の係数 $\theta_x^{*}$ とユーザ関連の係数 $\theta_z^{*}$ を別々にモデル化します。すなわち、$E[y_{u,i}|x_i, z_u] = \rho(\gamma x_i^T \theta_x^{*} + \tilde{\gamma} \theta_z^{*T} z_u)$ とし、ここで $\gamma$ はハイパーパラメータ、$\tilde{\gamma} = 1 - \gamma$ です。  
 The acquisition function follows  
+UCB取得関数は次のようになります:
 
 $$
 \alpha_{S-N-GALM-UCB}(u, i) := \rho(\gamma x_i^T \hat{\theta}_x + \tilde{\gamma} \hat{\theta}_z^T z_u) + \beta(\gamma \|x_i\| A^{-1} + \tilde{\gamma} \|z_u\| A^{-1}),
-$$  
+$$
 
-where $A_i = D_i^T D_i + I_d$, with $D_i \in \mathbb{R}^{n_i \times d_1}$ be a design matrix at iteration $t$, where each row contains item representations that user $u$ that has been observed up to iteration $t$; $A_u = D_u^T D_u + I_d$, with $D_u \in \mathbb{R}^{n_u \times d_2}$ be a design matrix at iteration $t$, where each row contains user representations that item $i$ has been recommended to up to iteration $t$.  
-ここで、$A_i = D_i^T D_i + I_d$ とし、$D_i \in \mathbb{R}^{n_i \times d_1}$ はイテレーション $t$ における設計行列であり、各行にはユーザー $u$ に対してイテレーション $t$ までに観察されたアイテム表現が含まれます。$A_u = D_u^T D_u + I_d$ とし、$D_u \in \mathbb{R}^{n_u \times d_2}$ はイテレーション $t$ における設計行列であり、各行にはアイテム $i$ がイテレーション $t$ までに推薦されたユーザー表現が含まれます。  
+where $A_i = D_i^T D_i + I_d$, with $D_i \in \mathbb{R}^{n_i \times d_1}$ be a design matrix at iteration $t$, where each row contains item representations that user $u$ that has been observed up to iteration $t$; $A_u = D_u^T D_u + I_d$, with $D_u \in \mathbb{R}^{n_u \times d_2}$ be a design matrix at iteration $t$, where each row contains user representations that item $i$ has been recommended to up to iteration $t$.
+ここで、
+
+- $A_i = D_i^T D_i + I_d$ とする
+  - $D_i \in \mathbb{R}^{n_i \times d_1}$ はイテレーション $t$ における設計行列。
+    - 各行にはユーザ $u$ に対してイテレーション $t$ までに観察されたアイテム表現が含まれます。
+- $A_u = D_u^T D_u + I_d$ とする。
+  - $D_u \in \mathbb{R}^{n_u \times d_2}$ はイテレーション $t$ における設計行列。
+    - 各行にはアイテム $i$ がイテレーション $t$ までに推薦されたユーザ表現が含まれる。  
+
 In this way, the additive model handles the user and item uncertainties separately.  
-このようにして、加法モデルはユーザーとアイテムの不確実性を別々に扱います。  
+このようにして、加法モデルはユーザとアイテムの不確実性を別々に扱います。
+
+<!-- ここまで読んだ! -->
+(以下は、すべてのユーザ、アイテムで共通のパラメータを使う話)
 
 **Shared Neural Generalised Bilinear UCB (S-N-GBLM-UCB)** Inspired by the Bilinear UCB algorithm (rank $r$ Oracle UCB) proposed by Jang et al. [14], we consider a Generalised bilinear model, where we assume $E[y_{u,i}|x_i, z_u] = \rho(x_i^T \theta^{*} z_u)$, with the coefficient $\theta^{*}$ shared by all user-item pairs.  
-**共有ニューラル一般化バイリニアUCB (S-N-GBLM-UCB)** Jang et al. [14] によって提案されたバイリニアUCBアルゴリズム（ランク $r$ オラクルUCB）に触発され、一般化バイリニアモデルを考慮します。ここで、$E[y_{u,i}|x_i, z_u] = \rho(x_i^T \theta^{*} z_u)$ とし、係数 $\theta^{*}$ はすべてのユーザー-アイテムペアで共有されます。  
-The acquisition function follows  
+**共有ニューラル一般化バイリニアUCB (S-N-GBLM-UCB)** Jang et al. [14] によって提案されたバイリニアUCBアルゴリズム（ランク $r$ オラクルUCB）に触発され、一般化バイリニアモデルを考慮します。ここで、$E[y_{u,i}|x_i, z_u] = \rho(x_i^T \theta^{*} z_u)$ とし、**パラメータ $\theta^{*}$ はすべてのユーザ-アイテムペアで共有**されます。
+(うんうん、ユーザもアイテムも数が多い場合は、こっちの方が使い勝手良さそう...!:thinking:)
+The acquisition function follows
 
 $$
-\alpha_{S-N-GBLM-UCB}(u, i) := \rho(x_i^T \hat{\theta}_z) + \beta \|vec(x_i z_u^T)\| W_{t}^{-1},
-$$  
+\alpha^{S-N-GBLM-UCB}(u, i) := \rho(x_i^T \hat{\theta}_z) + \beta \|vec(x_i z_u^T)\| W_{t}^{-1},
+$$
 
 where $W_t = W_0 + \sum_{s=1}^{t} vec(x_i z_u^T) vec(x_i z_u^T)^T \in \mathbb{R}^{d_1 d_2 \times d_1 d_2}$, and $W_0 = I_{d_1 d_2}$.  
 ここで、$W_t = W_0 + \sum_{s=1}^{t} vec(x_i z_u^T) vec(x_i z_u^T)^T \in \mathbb{R}^{d_1 d_2 \times d_1 d_2}$ とし、$W_0 = I_{d_1 d_2}$ です。  
-Computing the confidence interval might be computationally costly due to the inverse of a potentially large design matrix.  
-信頼区間を計算することは、潜在的に大きな設計行列の逆により計算コストが高くなる可能性があります。  
+Computing the confidence interval might be computationally costly due to the inverse of a potentially large design matrix.
+信頼区間を計算することは、潜在的に大きな設計行列の逆行列を計算する必要があるため、計算コストが高くなる可能性があります。  
 Different from Jang et al. [14], instead recommending a pair of arms $(u, i)$, we consider the item $i$ as arm to be recommended, and user $u$ as side information instead of an arm.  
 Jang et al. [14] とは異なり、アームのペア $(u, i)$ を推薦するのではなく、アイテム $i$ を推薦されるアームとし、ユーザー $u$ をアームではなくサイド情報と見なします。  
 The two-tower model in recommender system is naturally expressed in terms of bilinear structure.  
 推薦システムにおける二塔モデルは、バイリニア構造の観点から自然に表現されます。  
+
 A bilinear bandit can be reinterpreted in the form of linear bandits [14], $x_i^T \theta^{*} z_u = \sum_{s=1}^{r} vec(x_i z_u^T) vec(\theta^{*})$.  
 バイリニアバンディットは、線形バンディットの形で再解釈できます [14]。$x_i^T \theta^{*} z_u = \sum_{s=1}^{r} vec(x_i z_u^T) vec(\theta^{*})$。  
 So linear bandits policies can be applied on bilinear bandits problem with regret upper bound $O(\tilde{O}(d_1^2 d_2^2 T))$, where $\tilde{O}$ ignores polylogarithmic factors in $T$.  
@@ -402,19 +422,21 @@ Recently, there are work applying deep contextual bandits to recommender system.
 Collier and Llorens [3] proposed a Thompson sampling algorithm based on inference time Concrete Dropout [6] with learnable dropout rate, and applied this approach on marketing optimisation problems at HubSpot.  
 CollierとLlorens [3] は、学習可能なドロップアウト率を持つ推論時間コンクリートドロップアウト [6] に基づくトンプソンサンプリングアルゴリズムを提案し、このアプローチをHubSpotのマーケティング最適化問題に適用しました。  
 Guo et al. [8] studied deep Bayesian bandits with a bootstrapped model with multiple heads and dropout units, which was evaluated offline and online in Twitter’s ad recommendation.  
-Guo et al. [8] は、複数のヘッドとドロップアウトユニットを持つブートストラップモデルを用いた深いベイジアンバンディットを研究し、Twitterの広告推薦においてオフラインおよびオンラインで評価されました。  
+Guo et al. [8] は、複数のヘッドとドロップアウトユニットを持つブートストラップモデルを用いた深いベイジアンバンディットを研究し、**Twitterの広告推薦においてオフラインおよびオンラインで評価**されました。(これは後で読もうかな...!:thinking:)
 Hao et al. [9] added representation uncertainty for embedding to further encourage explore items whose embedding have not been sufficiently learned based on recurrent neural network models.  
 Hao et al. [9] は、埋め込みの表現不確実性を追加して、再帰的ニューラルネットワークモデルに基づいて十分に学習されていないアイテムを探索することをさらに促進しました。  
 
 Theoretically, Zhou et al. [30] proposed NeuralUCB and proved a sublinear regret bound, followed which Gu et al. [7] studied the case where the parameters of DNN only update at the end of batches.  
 理論的には、Zhou et al. [30] はNeuralUCBを提案し、サブリニア後悔境界を証明しました。その後、Gu et al. [7] はDNNのパラメータがバッチの最後でのみ更新される場合を研究しました。  
 Xu et al. [28] proposed Neural-LinUCB to make the use of deep representation from deep neural networks and shallow exploration with a linear UCB model, and provided a sublinear regret bound.  
-Xu et al. [28] は、深層ニューラルネットワークからの深い表現を利用し、線形UCBモデルで浅い探索を行うためにNeural-LinUCBを提案し、サブリニア後悔境界を提供しました。  
+Xu et al. [28] は、**深層ニューラルネットワークからの深い表現を利用し、線形UCBモデルで浅い探索を行う**ためにNeural-LinUCBを提案し、サブリニア後悔境界を提供しました。  
 Zhu and Rigotti [31] proposed sample average uncertainty frequentist exploration, which only depends on value predictions on each action and is computationally efficient.  
 ZhuとRigotti [31] は、各アクションの値予測のみに依存し、計算効率が高いサンプル平均不確実性頻度主義探索を提案しました。  
 
 To the best of our knowledge, among those utilised the power of deep representation from existing network structures in online recommender system with bandits feedback, no existing work addressed the generalised bilinear model for exploration, which suits the two-tower recommender system naturally; and no work has addressed the hierarchical exploration, which can increase the computational efficiency and is important to the practical use in a large-scale recommender system.  
 私たちの知る限り、バンディットフィードバックを持つオンライン推薦システムにおいて既存のネットワーク構造からの深い表現の力を利用した研究の中で、探索のための一般化バイリニアモデルに対処したものはなく、これは二塔推薦システムに自然に適合します。また、大規模推薦システムの実用的な使用において計算効率を高めることができる階層的探索に対処した研究もありません。  
+
+<!-- ここまで読んだ! -->
 
 ### 4 Experiments
 
@@ -424,7 +446,7 @@ The MIND dataset contains 1,000,000 users, 161,013 news, 285 topics and 24,155,4
 MINDデータセットには、1,000,000人のユーザー、161,013件のニュース、285のトピック、24,155,470件のサンプルが含まれており、機械学習アルゴリズムの使用のためにトレーニング、検証、テストデータに分割されています。  
 
 We simulate the sequential recommendation based on MIND dataset.  
-私たちは、MINDデータセットに基づいて逐次推薦をシミュレートします。  
+私たちは、**MINDデータセットに基づいて逐次推薦をシミュレート**します。(オフライン評価!)
 The experiments run in $T$ independent trials.  
 実験は $T$ の独立した試行で実行されます。  
 For each trial $\tau \in [1, T]$, we randomly select a set of users $U_{\tau}$ from the whole user set as the candidate user dataset from trial $\tau$.  
@@ -441,12 +463,12 @@ In each iteration $t$ of the total $N$ simulation iterations within each trial $
 To illustrate how the computational complexity of algorithms influence the performance, we follow Song et al. [22] and introduce the computational budget $b = 5000$, which constraints the maximum number of acquisition score over arms one can compute before conducting the recommendation.  
 アルゴリズムの計算複雑性が性能にどのように影響するかを示すために、私たちはSong et al. [22] に従い、計算予算 $b = 5000$ を導入します。これは、推薦を行う前に計算できる取得スコアの最大数を制約します。  
 The computational budget is set to evaluate the computational efficiency of algorithms and is meaningful for practical applications like large-scale recommender system.  
-計算予算は、アルゴリズムの計算効率を評価するために設定されており、大規模推薦システムのような実用的なアプリケーションにとって意義があります。  
+**計算予算は、アルゴリズムの計算効率を評価するために設定されており、大規模推薦システムのような実用的なアプリケーションにとって意義があります**。  
 For one-stage algorithms, we randomly sample $b$ news from the whole news set for the candidate news set of iteration $t$; for two-stage algorithms, we first query all topics then use the left budget to explore the items.  
 一段階アルゴリズムの場合、イテレーション $t$ の候補ニュースセットのために全ニュースセットから $b$ ニュースをランダムにサンプリングします。二段階アルゴリズムの場合、最初にすべてのトピックをクエリし、残りの予算を使用してアイテムを探索します。  
 
 We evaluate the performance by the cumulative rewards as defined in Definition 1.  
-私たちは、定義1で定義された累積報酬によって性能を評価します。  
+私たちは、**定義1で定義された累積報酬によって性能を評価**します。  
 To make the score more comparable between different number of recommendations, we further define the clickthrough-rate (CTR) inside a batch of $m$ recommendations at iteration $t$ for each trial $\tau$ as $CTR[\tau]_t = \frac{1}{m} \sum_{i=1}^{m} I\{y_{t,\tau} = 1\}$.  
 異なる数の推薦間でスコアをより比較可能にするために、各試行 $\tau$ におけるイテレーション $t$ の $m$ の推薦のバッチ内でのクリック率（CTR）を $CTR[\tau]_t = \frac{1}{m} \sum_{i=1}^{m} I\{y_{t,\tau} = 1\}$ と定義します。  
 Then we evaluate the performance of bandits policies by the cumulative CTR over $N$ iterations $\sum_{t=1}^{N} CTR_t[\tau]$.  

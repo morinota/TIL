@@ -1,7 +1,7 @@
 ## refs 審判
 
-https://www.hopsworks.ai/post/mlops-vs-devops-best-practices-challenges-and-differences
-https://www.hopsworks.ai/post/mlops-vs-devops-best-practices-challenges-and-differences
+<https://www.hopsworks.ai/post/mlops-vs-devops-best-practices-challenges-and-differences>
+<https://www.hopsworks.ai/post/mlops-vs-devops-best-practices-challenges-and-differences>
 
 # MLOps vs. DevOps: Best Practices, Challenges and Differences MLOps vs. DevOps： ベストプラクティス、課題、相違点
 
@@ -14,7 +14,7 @@ Learn about their purposes, differences, and areas of integration.
 Discover best practices, challenges, and the future potential of these practices in software development and machine learning deployments.
 ソフトウェア開発と機械学習の導入におけるこれらのプラクティスのベストプラクティス、課題、将来の可能性を発見する。
 
-## Introduction 
+## Introduction
 
 In the ever-evolving landscape of technology and software development, two methodologies have emerged as crucial pillars for effective and efficient project management: MLOps and DevOps.
 進化を続けるテクノロジーとソフトウェア開発において、2つの方法論が効果的かつ効率的なプロジェクト管理の重要な柱として浮上してきた： MLOpsとDevOpsだ。
@@ -77,7 +77,7 @@ Popular DevOps tools include version control systems like Git, continuous integr
 DevOps methodologies, such as Agile, also play a significant role in driving its practices.
 アジャイルなどのDevOpsの方法論も、そのプラクティスを推進する上で重要な役割を果たしている。
 Agile methodologies emphasize iterative development, frequent feedback, and adaptive planning, aligning well with DevOps's focus on incremental changes and continuous improvement.
-**アジャイルな方法論は、反復的な開発、頻繁なフィードバック、適応的な計画を強調し**、DevOpsの焦点が増分変更と継続的改善にあることとよく一致している。
+**アジャイルな方法論は、反復的な開発、頻繁なフィードバック、適応的な計画を強調し**、DevOpsの焦点がincrementalな変更と継続的な改善にあることとよく一致している。
 
 Incorporating these principles, tools, and methodologies, DevOps empowers organizations to overcome traditional development and operations challenges.
 これらの原則、ツール、および方法論を取り入れることで、DevOpsは従来の開発および運用の課題を克服する力を組織に与える。
@@ -192,7 +192,6 @@ They provide a centralized and efficient way to retrieve features in real-time, 
 リアルタイムで特徴量を取得するための一元化された効率的な方法を提供し、モデル予測に必要な入力への一貫した信頼性の高いアクセスを保証する。
 Overall, Feature Stores automate and streamline critical aspects of feature management, reducing manual effort, improving efficiency, and enhancing the overall automation of MLOps processes.
 全体として、フィーチャーストアはフィーチャー管理の重要な側面を自動化し、合理化することで、手作業を減らし、効率を向上させ、MLOpsプロセスの全体的な自動化を強化します。
-
 
 **Nature of Artifacts**: DevOps primarily deals with code as its central artifact, focusing on software development, testing, and deployment.
 成果物の性質： DevOpsは主にコードを中心的な成果物として扱い、ソフトウェア開発、テスト、デプロイメントに焦点を当てる。

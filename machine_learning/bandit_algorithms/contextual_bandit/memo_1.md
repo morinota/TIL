@@ -1,16 +1,17 @@
 ## refs
 
-- https://qiita.com/usaito/items/e727dcac7325b50d4d4c#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB
+- usaitoさんが書いてるQiitaの記事: <https://qiita.com/usaito/items/e727dcac7325b50d4d4c#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB>
 
 # Contextual Banditとは
 
 context(ユーザ特徴、アイテム特徴、etc.)によって、各arm(選択肢、action、何を推薦するか)の報酬構造が変化する、というアイデア。
-具体的には、各armで得られる**報酬に対して仮定した確率分布のパラメータ**を、contextに応じて変化させる。これにより、より効率的に得られる報酬を最大化できるだろう、という想定。
+具体的には、各armで得られる**報酬に対して仮定した確率分布のパラメータ(ex. 正規分布の場合は期待値と分散!:thinking:)**を、contextに応じて変化させる。これにより、より効率的に得られる報酬を最大化できるだろう、という想定。
 
 ## 仮定
 
-時刻 $t$ における あるarm $a$ からの報酬 $r_{t, a}$ は、既知同一分散 $\sigma^{2}$ を持つ正規分布に従うと仮定する(Linear Stochastic Bandit).
-この時、Contextual Banditは以下の様に報酬をモデル化する.
+- 時刻 $t$ における あるarm $a$ からの報酬 $r_{t, a}$ は、既知同一の分散 $\sigma^{2}$ を持つ正規分布に従うと仮定する(Linear Stochastic Bandit).
+- この時、Contextual Banditは以下の様に報酬をモデル化する。
+  - ここで $\theta_{a}$ はarm $a$ に固有のパラメータベクトル、$\mathbf{x}_{t, a}$ は時刻 $t$ におけるarm $a$ について観測される文脈、$\epsilon_{t}$ はガウスノイズ。
 
 $$
 r_{t, a} = \theta^{T}_{a} \mathbf{x}_{t, a} + \epsilon_{t},
@@ -19,15 +20,16 @@ r_{t, a} = \theta^{T}_{a} \mathbf{x}_{t, a} + \epsilon_{t},
 \tag{1}
 $$
 
-よって、時刻 $t$ におけるarm $a$ からの報酬 $r_{t, a}$ は以下。
+- よって、時刻 $t$ におけるアーム $a$ からの報酬 $r_{t, a}$ は...
 
 $$
 r_{t, a} \sim Norm(\theta^{T}_{a} \mathbf{x}_{t, a} | \sigma^2)
 $$
 
-おそらく $\theta^{T}_{a} \mathbf{x}_{t, a}$ の部分は、任意の決定論的関数 $f_{\theta}(\mathbf{x}_{t, a})$ に一般化できるのでは??:thinking:
-(->じゃあ決定論的な推薦モデルを、確率的な推薦モデルに拡張するのってそこまで困難じゃないかも??:thinking:)
-(期待報酬関数 $q(x, a) := \mathbb{E}[r|x, a]$ といっても良いかも!)
+-
+- おそらく $\theta^{T}_{a} \mathbf{x}_{t, a}$ の部分は、任意の決定論的関数 $f_{\theta}(\mathbf{x}_{t, a})$ に一般化できるのでは??:thinking:
+  - (->じゃあ決定論的な推薦モデルを、確率的な推薦モデルに拡張するのってそこまで困難じゃないかも??:thinking:)
+  - (期待報酬関数 $q(x, a) := \mathbb{E}[r|x, a]$ といっても良いかも!)
 
 Contextual Banditは報酬の確率分布に関するモデルパラメータを逐次的に推定する(arm選択 -> 報酬を取得 -> パラメータ更新 -> arm選択...を繰り返す??)。
 時刻$t$の度に、context情報 $\mathbf{x}_{t, a}$ を用いて各armの報酬の確率分布を推定し、次に選択するarmを選択する。
@@ -58,7 +60,7 @@ $$
 - A_t_a, b_t_aの更新式もLinUCBと同じ。
 - $\theta$ の推定方法がベイズっぽい感じ。
 
-## 目的変数がbinaryの場合の報酬モデル式:
+## 目的変数がbinaryの場合の報酬モデル式
 
 $$
 \mathbb{P}(r_{t,a} = 1)
