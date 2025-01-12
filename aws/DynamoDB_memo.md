@@ -1,6 +1,7 @@
 ## refs
 
 - noteのバッチ推論結果をDynamoDBに保存してる事例: https://note.com/mussso/n/nb662ad4e6d73
+- https://speakerdeck.com/_kensh/dynamodb-design-practice
 
 ## note社のDynamoDB利用事例
 
@@ -197,4 +198,64 @@ def lambda_handler(event: Dict[str, str], context: Dict) -> None:
   - メトリクスを定期的に確認し、適切なチューニングを継続的に行う必要がある。
 
 
+## DynamoDBの基礎と設計のメモ
 
+- Amazon DynamoDBの構成
+  - Key-Valueという単純な構造。
+    - これにより...
+      - テーブルのデータ量に関係なく高速なレスポンス
+      - 1日に10兆件以上のリクエスト処理可能
+      - 毎秒2,000万件を超えるリクエストをサポート
+- 料金体系
+  - 設定したReadキャパシティユニット（RCU）, Writeキャパシティユニット（WCU）
+  - ストレージ利用料
+
+### DynamoDBの用語
+
+概要
+
+- Item: テーブル内の1行に相当
+- Attribute: Item内の1列に相当
+  - **注意: Primary Key以外は、Item間で不揃いであっても問題ない**。
+- Primary Key: テーブル内の各Itemを一意に識別するためのキー
+  - DynamoDBでは2種類のPrimary Keyをサポート
+    - **Partition Key**
+    - **Partition Key + Sort Key**
+
+### DynamoDBにおけるテーブル設計の概要
+
+#### ざっくりDynamoDBの設計できる項目について
+
+- 1. DynamoDBでは2種類のPrimary Keyをサポートする。
+  - **Partition Key**: 同じPartition Keyを持つItemは登録できない。
+  - **Partition Key + Sort Key**: Partition KeyとSort Keyがともに同じItemは登録できない。
+- 2. DynamoDBでは、2種類の**Secondary Index**を利用することができる。
+  - **Local Secondary Index(LSI)**:
+    - Sort Key以外に絞り込み検索を行うKeyを持つことができる。
+    - Partition Keyはベーステーブルと同じ / Sort Keyが異なる
+    - ex.) LSIの例
+      - 4種類のカラム(customer_id, order_id, book_name, price)を持つテーブルを想定する。
+      - primary keyとして「partition key=customer_id & sort key=order_id」を設定済み。
+      - **ここで、Local Secondary Indexとして、「partition key=customer_id & sort key=price」を設定することで、「ある顧客のある注文」以外に、「ある顧客のいくらの注文」も検索可能になる! (なるほど、やっとわかった...!:thinking:)**
+  - **Global Secondary Index(GSI)**:
+    - Partition Key属性の代わりとなる、Partition Keyをまたいで検索を行うためのインデックス。
+- 3. キャパシティユニットの考え方:
+  - **Readキャパシティユニット**: 1ユニットにつき、最大4KBのデータを1秒間に1回読み込み可能
+    - （強い一貫性を持たない読み込み設定であれば、1秒あたり2回）(? トランザクション分離レベルっぽい話かな...!:thinking:)
+  - **Writeキャパシティユニット**: 1ユニットにつき、最大1KBのデータを1秒間に1回書き込み可能
+  - 考え方の例:
+    - **ピーク時は、1KB以下のデータが秒間80回書き込まれる -> 少し余裕を見て、Writeキャパシティは100にしよう...!**
+    
+### DynamoDBにおけるデータの操作方法
+
+- HTTPベースのAPIで操作を行う。
+- 例:
+  - データの作成: PutItem, BatchWriteItem
+  - データの更新: UpdateItem(対象ItemのKeyを指定して更新)
+  - 単一データの取得: GetItem(対象ItemのKeyを指定して取得)
+  - 複数データの取得: Query, Scan
+
+### DynamoDBの知識とベストプラクティス
+
+(参考: https://speakerdeck.com/_kensh/dynamodb-design-practice?slide=34)
+- テーブルの数は最小限に留める
