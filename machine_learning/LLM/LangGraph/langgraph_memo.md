@@ -366,3 +366,144 @@ graph.update_state(config, {"messages": [new_message]})
 # stream()にNoneを渡して、現在の状態からグラフの実行を再開!
 events = graph.stream(None, config, stream_mode="values")
 ```
+
+### グラフの状態のカスタマイズ(オリジナルの様々なfieldを使う!)
+
+- 上記の例では、シンプルなstate（メッセージのリストだけ）を使った。
+  - このシンプルなstateでも十分に多くのことを達成できるが、メッセージリストに依存せずに複雑な動作を定義したい場合は、stateに任意のfieldを追加できる。
+- 例: チャットボットが「人間に確認する」という選択肢を持たせる
+  - 実現方法の1つは、"human"ノードを作成すること。
+    - chatbotノードと、humanノードの間に条件付きエッジを追加し、必要に応じて「人間に確認する」という選択が取れるようにする。
+    - このノードの実行時は、常にグラフが中断される。
+  - 便宜のために、**`ask_human`というフィールドをグラフのstateに含める。
+    - (これを含めるといいことがあるのかは、よくわかってない!このフィールド不要かも??)
+
+- まず、stateに新しいfieldを追加する。
+
+```python
+class State(TypedDict):
+    messages: Annotated[list, add_messages]  
+    ask_human: bool
+```
+
+- 次に、llmが「人間に確認する」という選択をとるべきかを決定させるための、スキーマ(?)を定義する。
+  - (要するに、toolオブジェクト的なものを定義してるってこと??:thinking:)
+
+```python
+from pydantic import BaseModel
+
+class RequestAssistance(BaseModel):
+    """
+    会話を専門家にエスカレーションします。
+    直接支援できない場合や、ユーザーがあなたの権限を超えた支援を必要とする場合に使用します。
+    この機能を使用するには、ユーザを中継して、専門家が適切なガイダンスを提供できるようにします。
+    """
+    request: str
+```
+
+- 次にchatbotノードを定義する。
+  - bind_tools()メソッドには、ツール定義、pydanticモデル、またはjsonスキーマを含めることができる。(よくわかってない!要するに、llmに「こんなtool達が利用できますよ!」と伝えているイメージ...!:thinking:)
+
+```python
+llm = ChatOpenAI(model="gpt-4o-mini")
+# RequestAssistanceをtoolsと一緒に、llmにバインドする。
+llm_with_tools = llm.bind_tools(tools + [RequestAssistance])
+
+# chatbotノードの実装を定義
+def chatbot(state: State)-> State:
+    response = llm_with_tools.invoke(state["messages"])
+    ask_human = False
+
+    # もし、ツール呼び出しがあって、そのツール呼び出しがRequestAssistanceである場合は、ask_humanをTrueにする
+    if (response.tool_calls and response.tool_calls[0]["name"] == RequestAssistance.__name__):
+        ask_human = True
+    return {
+        "messages": [response],
+        "ask_human": ask_human
+    }
+```
+
+- 次に、グラフビルダーを作成し、chatbotノードとtoolノードをグラフに登録する(前回と同様)
+  - あ、下のコード例を見ると、toolノードにはRequestAssistanceを含めていない!
+    - llmへはtoolsもRequestAssistanceも同様にバインドしているので、llm目線ではどちらも共通のツールボックスに入ってるが、グラフ目線では別々のノードにしてる...!:thinking:
+
+```python
+graph_builder = StateGraph(State)
+graph_builder.add_node("chatbot", chatbot)
+graph_builder.add_node("tools", ToolNode(tools=tools)) # あ、toolノードには、RequestAssistanceを含めてないんだ...!:thinking:
+```
+
+- 次に、humanノードを定義する。
+  - humanノードは、**常にグラフの実行を中断する**。
+  - このノードは、**人間が介入する必要がある場合にのみ実行される**。
+
+```python
+from langchain_core.messages import AIMessage, ToolMessagefrom langchain_core.messages import AIMessage, ToolMessage
+
+def _create_response(response: str, ai_message: AIMessage):
+    return ToolMessage(content=response, tool_call_id=ai_message.tool_calls[0]["id"],)
+
+def human_node(state: State)-> State:
+    new_messages = []
+
+    # グラフ実行の中断にユーザが何らかstateを更新した場合、ToolMessageが最後のメッセージになるはず。
+    # もしユーザが更新しないことを選択した場合、LLMが続行できるように仮のToolMessageを含める。
+    if not isinstance(state["messages"][-1], ToolMessage):
+        new_messages.append(_create_response("No response from human.", state["messages"][-1]))
+    return {
+        "messages": new_messages,
+        "ask_human": False,
+    }
+
+graph_builder.add_node("human", human_node)
+```
+
+- 次に、条件付きエッジを追加する。
+  - まずtoolsノード以外の新しい条件分岐ロジックが必要なので、LangGraphの`tools_condition`関数のみでは対応できない。よって、**自前でルーティング関数を定義する必要がある**。
+
+```python
+# 条件ロジックを示す、ルーティング関数を定義
+def select_next_node(state: State)-> str | list[str]:
+    if state["ask_human"]:
+        return "human"
+    # Otherwise, we can route as before
+    return tools_condition(state)
+
+# グラフに条件付きエッジを登録
+graph_builder.add_conditional_edges(
+    "chatbot", 
+    select_next_node, 
+    {"human": "human", "tools": "tools", END: END},
+)
+```
+
+- これで、chatbotが実行を中断して「人間に相談する」必要があるかどうかを自分で決定できるようになった!
+
+
+### タイムトラベル: LLMアプリケーションの作業を巻き戻して修正などできるようにする!
+
+- LangGraphの組み込み「タイムトラベル」機能を利用する
+  - 具体的には、**`graph.get_state_history()`メソッドを使用してcheckpointの遷移を取得**することで、グラフを巻き戻す。
+    - グラフの各ノードの遷移によって更新されたstateは、全てcheckpointされているはずなので...!
+    - stateのイテラブルを返すっぽい! たぶん最後尾のmessagesから取得されるっぽい!
+  - checkpointされた各stateは、それぞれconfigを持っており、その中に**チェックポイントIDのタイムスタンプが含まれている**。
+    - **`graph.stream()`メソッドや`graph.invoke()`メソッド実行時に、このcheckpoint_idを指定することで、その時点のstateからグラフの実行を再開できる**
+
+
+```python
+# get_state_history()メソッドを使って、記録されたグラフのstateを順番に取得
+for state in graph.get_state_history(config):
+    print("Num Messages: ", len(state.values["messages"]), "Next: ", state.next)
+    print("-" * 80)
+    if len(state.values["messages"]) == 6:
+        # We are somewhat arbitrarily selecting a specific state based on the number of chat messages in the state.
+        to_replay = state
+    
+    print(state.config.keys())
+    # >>> dict_keys(['thread_id', 'checkpoint_ns', 'checkpoit_id'])
+
+# 特定のcheckpoint_idをconfigに含めて、stream()メソッドを呼ぶことで、その時点のstateからグラフの実行を再開できる
+for event in graph.stream(None, to_replay.config, stream_mode="values"):
+    if "messages" in event:
+        event["messages"][-1].pretty_print()
+```
