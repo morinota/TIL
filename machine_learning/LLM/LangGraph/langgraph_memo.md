@@ -136,3 +136,90 @@ graph_builder.add_conditional_edges(
   - このルーティングのロジックは頻出なので、LangGraphでは`tools_condition`関数として実装ずみ。
   - `tools_condition()`関数は、グラフのstateを引数にとり、最新のAI Messageに`tool_calls`が含まれる場合は、`"tools"`を返し、それ以外の場合は`END`を返す。(まさに上のコード例と振る舞いが同じ関数!:thinking:)
   - もし仮にノード名を`"my_tools"`などにした場合は、path_map引数にて`{"tools": "my_tools", END: END}`と指定すればOK!
+
+### グラフにメモリ(チェックポイント)を追加する
+
+- 前述までの技術で、チャットbotがユーザの質問に答えるためにtoolを使用できるようになった。しかし、以前のやり取りのコンテキストを記憶していない。
+- LangGraphは、**永続的なチェックポイント**を使用して、この問題を解決できる。
+  - **グラフをコンパイルする際にチェックポインタ(thread_id)を提供し、グラフを呼び出す際にthread_idを指定する**と、LangGraphは各ステップの後に自動的に状態を保存する。
+  - 同じthread_idを使用してグラフを再度呼び出すと、**グラフは保存された状態を読み込み、以前のやり取りのコンテキストを維持**できる。
+- 後述されるかもだが、チェックポイントは単純なチャットメモリよりもはるかに強力。
+  - エラー回復や人間の介入が必要なワークフロー、タイムトラベルインタラクションなどのために、**いつでも複雑な状態を保存して再開できる**...!
+
+- チェックポイントを追加するために、まず**checkpointのクラスをインスタンス化**する。
+  - 下のコード例では、in-memoryのcheckpointerである`MemorySaver()`クラスを使っている。(=**全てをメモリ内に保存する!**)
+  - おそらく本番アプリケーションでは、`SqliteSaver()`や`PostgresSaver()`などを使って本番DBに保存することが多いかも。
+
+```python
+from langgraph.checkpoint.memory import MemorySaver
+memory = MemorySaver()
+```
+
+- 次に、チェックポイントをグラフに渡してコンパイルする
+  - 具体的には、`checkpointer` 引数にチェックポイントを指定する。
+  - グラフの形は変わらない。
+  - この指定によって変わったのは、**グラフが各ノードを通過する際にStateをcheckpoint(記録)することだけ**。
+    - (各ノードの処理がよばれるたびに、その時点のStateをそれぞれ保存しておくってこと。再利用やエラー時の再開に便利そう...!:thinking:)
+
+```python
+graph = graph_builder.compile(checkpointer=memory)
+```
+
+- 最後に、グラフの実行時には、stateを記録するためのスレッドを指定するようにする。
+  - `config`は、グラフの`invoke()`メソッドや`stream()`メソッドの第二位置引数として指定できる。
+
+```python
+config = {"configurable": {"thread_id": "1"}}
+
+events = graph.stream({"messages": [("user", "My name is Will.")]}, config, stream_mode="values")
+
+# やり取りの結果を表示
+for event in events:
+    event["messages"][-1].pretty_print()
+# ================================[1m Human Message [0m=================================
+# My name is Will.
+# ==================================[1m Ai Message [0m==================================
+# Hello Will! It's nice to meet you. How can I assist you today? Is there anything specific you'd like to know or discuss?
+```
+
+- 動作確認として、再度グラフを`invoke()`して、前回のコンテキストを覚えているかを確認する
+  - (続けて上のコードの下に書く! 今回はメモリ上にcheckpointingしてるので、一回アプリケーションを落とすとメモリが解放されてしまう...! :thinking:)
+  - (ちなみに、指定するthread_idを変えると、元のthread_idのメモリは読み込まれないので、名前を覚えていない状態になる...!:thinking_face:)
+
+```python
+user_input = "Remember my name?"
+events = graph.stream({"messages": [("user", user_input)]}, config, 
+streammode="values")
+
+# やり取りの結果を表示
+for event in events:
+    event["messages"][-1].pretty_print()
+# ================================[1m Human Message [0m=================================
+# Remember my name?
+# ==================================[1m Ai Message [0m==================================
+# Of course, I remember your name, Will. I always try to pay attention to important details that users share with me. Is there anything else you'd like to talk about or any questions you have? I'm here to help with a wide range of topics or tasks.
+```
+
+上記までの技術で、**セッションを跨いでグラフのstateを維持できる**ようになった!
+では**checkpointにはどんな情報が保存されている??**
+
+- 指定したconfigに対して、グラフの状態を確認するには、`graph.get_state(config)`メソッドを使う。返り値として`StateSnapshot`オブジェクトが返される。
+  - `StateSnapshot`オブジェクトは以下のfieldを持つ。
+    - `values`: 現在のグラフのstateを表す。
+    - `next`: 次のstateを表す。
+      - 最新のstateの`StateSnapshot`オブジェクトの場合は、空。
+    - `config`: 設定やsnapshotの関連情報を記録。
+    - `metadata`: snapshotのメタデータを記録。(よくわかってない!)
+    - `created_at`: snapshotの作成日時を記録。
+    - `parent_config`: 親snapshotのconfig。(よくわかってない!)
+    - `tasks`: snapshotに関連するタスクのリスト。(よくわかってない!)
+
+```python
+# 現在保存されている、グラフのstateを取得
+snapshot = graph.get_state(config)
+prin(snapshot)
+
+# StateSnapshot(values={'messages': [HumanMessage(content='My name is Will.', additional_kwargs={}, response_metadata={}, id='8c1ca919-c553-4ebf-95d4-b59a2d61e078'), AIMessage(content="Hello Will! It's nice to meet you. How can I assist you today? Is there anything specific you'd like to know or discuss?", additional_kwargs={}, response_metadata={'id': 'msg_01WTQebPhNwmMrmmWojJ9KXJ', 'model': 'claude-3-5-sonnet-20240620', 'stop_reason': 'end_turn', 'stop_sequence': None, 'usage': {'input_tokens': 405, 'output_tokens': 32}}, id='run-58587b77-8c82-41e6-8a90-d62c444a261d-0', usage_metadata={'input_tokens': 405, 'output_tokens': 32, 'total_tokens': 437}), ... 'is_ask_human': False}, thread_id='1')
+```
+
+### グラフに、Human-in-the-Loopの機能を追加する
