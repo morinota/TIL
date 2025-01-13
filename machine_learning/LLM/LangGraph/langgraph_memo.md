@@ -222,4 +222,69 @@ prin(snapshot)
 # StateSnapshot(values={'messages': [HumanMessage(content='My name is Will.', additional_kwargs={}, response_metadata={}, id='8c1ca919-c553-4ebf-95d4-b59a2d61e078'), AIMessage(content="Hello Will! It's nice to meet you. How can I assist you today? Is there anything specific you'd like to know or discuss?", additional_kwargs={}, response_metadata={'id': 'msg_01WTQebPhNwmMrmmWojJ9KXJ', 'model': 'claude-3-5-sonnet-20240620', 'stop_reason': 'end_turn', 'stop_sequence': None, 'usage': {'input_tokens': 405, 'output_tokens': 32}}, id='run-58587b77-8c82-41e6-8a90-d62c444a261d-0', usage_metadata={'input_tokens': 405, 'output_tokens': 32, 'total_tokens': 437}), ... 'is_ask_human': False}, thread_id='1')
 ```
 
-### グラフに、Human-in-the-Loopの機能を追加する
+### グラフに、Human-in-the-Loop的に、人間の承認アクションを追加する1
+
+- LangGraphの`interrupt_before`機能を使って、特定のノードの実行時にグラフ実行を中断し、人間の承認アクションを挿入する。
+  - 具体的には、グラフのコンパイル時に`interrupt_before`引数を指定すれば良い。
+
+```python
+graph = graph_builder.compile(
+    checkpointer=memory,
+    # toolsノードの実行前に、必ずグラフの実行を中断する
+    interrupt_before=["tools"], 
+    # interrupt_after=["tools"]
+)
+```
+
+- 動作確認してみると...
+
+```python
+user_input = "I'm learning LangGraph. Could you do some research on it for me?"
+config = {"configurable": {"thread_id": "1"}}
+events = graph.stream({"messages": [("user", user_input)]}, config, stream_mode="values")
+
+# グラフの一連の実行結果を確認
+for event in events:
+    if "messages" in event:
+        event["messages"][-1].pretty_print()
+# 以下の出力を見ると、chatbotノードの実行後に、toolsノードが実行される前に、グラフの実行が中断されていることがわかる。
+
+# ================================[1m Human Message [0m=================================
+
+# I'm learning LangGraph. Could you do some research on it for me?
+# ==================================[1m Ai Message [0m==================================
+
+# [{'text': "Certainly! I'd be happy to research LangGraph for you. To get the most up-to-date and comprehensive information, I'll use the Tavily search engine to look this up. Let me do that for you now.", 'type': 'text'}, {'id': 'toolu_01R4ZFcb5hohpiVZwr88Bxhc', 'input': {'query': 'LangGraph framework for building language model applications'}, 'name': 'tavily_search_results_json', 'type': 'tool_use'}]
+# Tool Calls:
+#   tavily_search_results_json (toolu_01R4ZFcb5hohpiVZwr88Bxhc)
+#  Call ID: toolu_01R4ZFcb5hohpiVZwr88Bxhc
+#   Args:
+#     query: LangGraph framework for building language model applications
+
+# ちなみにsnapshotを取得して、次に実行されるノードを確認すると...
+snapshot = graph.get_state(config)
+snapshot.next
+# >>> ('tools',)
+
+# ちなみにsnapshotから、現在のstateの最後のメッセージを確認すると...
+existing_message = snapshot.values["messages"][-1]
+existing_message.tool_calls
+# [{'name': 'tavily_search_results_json', 'args': {'query': 'LangGraph framework for building language model applications'}, 'id': 'toolu_01R4ZFcb5hohpiVZwr88Bxhc', 'type': 'tool_call'}]
+```
+
+- さて、人間の手によって、中断したグラフの実行を再開させてみる。
+  - **stateとして`None`を渡すことで、グラフは新しい状態を追加することなく、元の位置から続行する**。
+    - Noneは現在のstateに何も追加しないことを意味する。
+  - checkpointerを追加済みであれば、グラフは無期限に一時停止でき、いつでも再開できる。
+
+```python
+# stream()メソッドにNoneを渡して、現在の状態から再開する
+events = graph.stream(None, config, stream_mode="values")
+
+for event in events:
+    if "messages" in event:
+        event["messages"][-1].pretty_print()
+# 最初のユーザーのメッセージが再度表示されて...
+# その後に、toolsノードの実行結果も表示されて...
+# 最終的にフィニッシュポイントに到達する
+```
