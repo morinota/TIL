@@ -288,3 +288,81 @@ for event in events:
 # その後に、toolsノードの実行結果も表示されて...
 # 最終的にフィニッシュポイントに到達する
 ```
+
+### グラフの状態を、手動で更新する
+
+前述のセクションでは、グラフの実行を中断して、人間の承認アクションを挿入する方法を見た。これで人間はグラフの状態を読み取れる。しかし、**エージェントの進路を変更したい場合は、書き込みアクセスが必要**。
+
+#### `graph.update_state()`で、現在のグラフの状態に手動で新しいメッセージを追加する
+
+- エージェントの進路を変更するには、**checkpointされた状態を更新すれば良い**。
+  - まず`graph.get_state(config)`メソッドで、現在のグラフ状態のsnapshotを取得。
+  - 新しいメッセージを作成。
+  - `graph.update_state()`メソッドを使って、新しいメッセージを現在のstateに追加する。
+    - (下のコードの例では、今回定義したstateのmessagesはappend-onlyなので、現在のstateのmessagesは上書きされず、新しいmessageが追加される。`add_messages`アノテーションを指定したやつ!)
+      - **`graph.update_state()`メソッドの振る舞いも、stateの状態更新を処理するreducer関数に従うことに注意！**
+    - update_state()メソッドは、グラフ内のノードの1つであるかのように、stateを更新する。
+      - `as_node`引数に任意のノード名を指定することで、そのノードによってstateが更新されたかのように振る舞うこともできる。
+
+```python
+# 前回同様に、toolsノードの実行前にグラフの実行を中断するように、グラフをコンパイル
+graph = graph_builder.compile(
+    checkpointer=memory,
+    interrupt_before=["tools"], 
+)
+
+# グラフの実行を開始(toolsノードの実行前に中断される)
+user_input = "I'm learning LangGraph. Could you do some research on it for me?"
+config = {"configurable": {"thread_id": "1"}}
+events = graph.stream({"messages": [("user", user_input)]}, config)
+
+# checkpointされた現在のグラフの状態を取得
+snapshot = graph.get_state(config)
+
+# 
+answer = "LangGraph is a library for building stateful, multi-actor applications with LLMs."
+new_messages = [
+    ToolMessage(
+        content=answer,
+        tool_call_id=existing_message.tool_calls[0]["id"],
+    ),
+    AIMessage(content=answer),
+]
+
+# グラフの現在のstateを更新
+# stateの定義で、messagesはadd_messagesアノテーションを指定しているので、既存のmessagesの上書きはされず、新しいmessagesが追加される
+graph.update_state(
+    config,
+    {"messages": new_messages},
+)
+```
+
+#### append-onlyなstateのmessages属性を上書きする方法!
+
+- stateの定義で、messagesは`add_messages` reducer関数を指定した。なので、append-onlyに新しいメッセージを追加していく振る舞いになってる。この場合に、**既存のメッセージを上書き**するにはどうしたら良い??
+  - `add_messages()`の実装の詳細として、`messages`リスト内の各メッセージをIDで管理している。
+  - よって、**IDが既存の状態のメッセージと一致する場合、`add_messages` recuder関数は既存のメッセージを新しいコンテンツで上書きする**。
+
+```python
+# 現在のグラフのstateを取得
+snapshot = graph.get_state(config)
+# stateのsnapshotから、最後尾のメッセージを取得
+existing_message = snapshot.values["messages"][-1]
+
+# 既存のメッセージを上書きするために、新しいメッセージを作成する
+new_tool_call = existing_message.tool_calls[0].copy()
+# 例として、AIのツール呼び出しを「LangGraph」から「LangGraph human-in-the-loop workflow」に変更してる...!
+new_tool_call["args"]["query"] = "LangGraph human-in-the-loop workflow"
+new_message = AIMessage(
+    content=existing_message.content, 
+    tool_calls=[new_tool_call],
+    # 既存のメッセージと同一のIDを指定!!
+    id=existing_message.id,
+    )
+
+# 現在のstateを更新(同一のIDを指定してるので、メッセージが追加ではなく上書きされる!)
+graph.update_state(config, {"messages": [new_message]})
+
+# stream()にNoneを渡して、現在の状態からグラフの実行を再開!
+events = graph.stream(None, config, stream_mode="values")
+```
