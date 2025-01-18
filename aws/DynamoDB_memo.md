@@ -1,7 +1,8 @@
 ## refs
 
 - noteのバッチ推論結果をDynamoDBに保存してる事例: https://note.com/mussso/n/nb662ad4e6d73
-- https://speakerdeck.com/_kensh/dynamodb-design-practice
+- DynamoDBの基礎と設計: https://speakerdeck.com/_kensh/dynamodb-design-practice
+- Amazon DynamoDB のベストプラクティスに従うという 2019 年の計を立てる: https://aws.amazon.com/jp/blogs/news/resolve-to-follow-amazon-dynamodb-best-practices-in-2019/
 
 ## note社のDynamoDB利用事例
 
@@ -214,10 +215,10 @@ def lambda_handler(event: Dict[str, str], context: Dict) -> None:
 
 概要
 
-- Item: テーブル内の1行に相当
-- Attribute: Item内の1列に相当
+- **Item**: テーブル内の1行に相当
+- **Attribute**: Item内の1列に相当
   - **注意: Primary Key以外は、Item間で不揃いであっても問題ない**。
-- Primary Key: テーブル内の各Itemを一意に識別するためのキー
+- **Primary Key**: テーブル内の各Itemを一意に識別するためのキー
   - DynamoDBでは2種類のPrimary Keyをサポート
     - **Partition Key**
     - **Partition Key + Sort Key**
@@ -255,7 +256,33 @@ def lambda_handler(event: Dict[str, str], context: Dict) -> None:
   - 単一データの取得: GetItem(対象ItemのKeyを指定して取得)
   - 複数データの取得: Query, Scan
 
-### DynamoDBの知識とベストプラクティス
 
-(参考: https://speakerdeck.com/_kensh/dynamodb-design-practice?slide=34)
-- テーブルの数は最小限に留める
+### DynamoDBの設計
+
+- 前提: DynamoDBの知識とベストプラクティス
+  - (参考: https://speakerdeck.com/_kensh/dynamodb-design-practice?slide=34)
+  - **テーブルの数は最小限に留める**。
+    - １箇所にあるデータに、テーブルやインデックスを通じアクセスすることで、望む形のデータが入手しやすいように構成。
+    - キャパシティユニットの消費を抑えるためにも重要。
+    - テーブルを分けるべき例外はある。
+  - DynamoDBは、Primary Key(**Partition Key**(PK)、またはPK + **Sort Key**(SK)の複合)でデータを識別し、アクセスする。
+    - ScanまたはQuery等のAPI利用
+  - グローバルセカンダリインデックスは、元テーブルから非同期レプリケーションされる別テーブルのような存在。
+  - 1テーブルや1インデックスに複数種類のアイテム(=行!)を持たせても良いし、**1属性(=カラム!)に複数種類の値を入れてもよい**。
+- DynamoDBの設計プロセス
+  - 1. 業務分析とデータのモデリング
+    - 対象ドメインのデータをモデリング。RDB設計と同じく、ER図による概念と論理レベルの整理は有効。
+  - 2. アクセスパターン設計
+    - ビジネス要件から、**アプリケーションで必要な機能とデータ(アクセスパターン)を整理**する。たとえば「**従業員情報をIDで検索する**」など。
+  - 3. TableとIndex設計
+    - ユースケースを満たせるテーブル及び、インデックスのスキーマを設計する
+  - 4. クエリ条件設計
+    - クエリの詳細を設計、定義する
+    - **ユースケースごとに利用するパラメータ、インデックス、検索条件などを書き出す**。
+  - 5. 追加要件が生じたら??
+    - サービスに合わせてテーブル・インデックス設計を変更する
+    - 他のサービスと連携する、etc.
+
+- DynamoDBのよくある誤解の一つ
+  - 「DynamoDBってスキーマレスだから、事前の設計いらないでしょ??」
+  - -> No! アクセスパターンに基づいた設計が必要！
