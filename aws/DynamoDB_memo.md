@@ -286,3 +286,50 @@ def lambda_handler(event: Dict[str, str], context: Dict) -> None:
 - DynamoDBのよくある誤解の一つ
   - 「DynamoDBってスキーマレスだから、事前の設計いらないでしょ??」
   - -> No! アクセスパターンに基づいた設計が必要！
+
+## DynamoDBの料金の仕組みメモ
+
+- 参考:
+  - https://aws.amazon.com/jp/dynamodb/pricing/on-demand/
+
+- ざっくりDynamoDBでは、テーブル内の**データの保存、読み取り、書き込み**が課金対象になる。
+- データの保存
+  - **テーブルのクラスによって異なる**。
+    - DynamoDB Standard: 1GBあたり、0.285USD/月
+    - DynamoDB Standard-IA: 1GBあたり、0.114USD/月
+  - 両クラスの比較
+    - **通常はStandardクラスを利用することが多い**。
+    - 一方で、アクセス頻度の低いデータを大量に保存するようなユースケースでは、Standard-IAを使用するとコストを60%カットできる。
+      - >DynamoDB Standard-IA テーブルクラスは、アプリケーションログ、古いソーシャルメディアの投稿、e コマースの注文履歴、過去のゲームの実績など、アクセス頻度の低いデータを長期間保存する必要があるユースケースに最適です。
+      - 引用: [Amazon DynamoDB が、DynamoDB コストを最大 60% 削減するのに役立つ新しい Amazon DynamoDB Standard-Infrequent Access テーブルクラスを発表](https://aws.amazon.com/jp/about-aws/whats-new/2021/12/amazon-dynamodb-standard-infrequent-access-table-class/)
+    - また、**Standardクラスには無料枠25GB/月**がある。
+      - (バッチ推論結果とか、基本的に無料枠を超えることはないかも...!:thinking:)
+- データの読み取り/書き込み
+  - 現時点では、**大きく2つのキャパシティモード**が用意されており、料金計算が異なる。
+    - on-demandキャパシティモード:
+      - 実行したデータの**読み取り/書き込みリクエスト**(RRUとWRU)に対して課金。
+      - 読み取りと書き込みのthroughput予測値を指定する必要がない。
+    - provisionedキャパシティモード:
+      - 1秒あたりの**読み込みと書き込みの回数**(RCU, WCU)を指定。Auto Scalingも可能。
+  - 料金計算における単位についてメモ:
+    - 「読み取りリクエスト単位(RRU)」:
+      - データを読み込む際は、テーブルに対してAPIコールする必要がある。このとき、**読み込みリクエストという単位で課金が発生**する。
+      - **on-demandキャパシティモードでStandardテーブルクラスの場合、100万RRUあたり0.1425USD**
+      - 読み込みリクエストには、以下の3種類があり、それぞれ消費するRRUの数が異なる。
+        - 「結果整合性のある読み込み(Eventually Consistent Read)」
+          - **基本的にはこれを使うらしい！**
+          - **一回のリクエストで0.5単位のRRUが消費される(4KBまで)**。
+          - ex. 8KBの項目を読み込む場合、1単位のRRUが消費される...!:thinking:
+        - 「強い整合性のある読み込み(Strongly Consistent Read)」
+        - 「トランザクション読み込み(Transactional Read)」
+    - 「読み取りキャパシティユニット(RCU)」
+      - hoge
+    - 「書き込みリクエスト単位(WRU)」
+      - データを書き込む際は、テーブルに対してAPIコールする必要がある。この時、**書き込みリクエストという単位で課金が発生**する
+      - **on-demandキャパシティモードでStandardテーブルクラスの場合、100万WRUあたり0.715USD**
+      - 書き込みリクエストには、以下の2種類があり、それぞれ消費するWRUの数が異なる。
+        - 「標準書き込みリクエスト」
+          - 1単位のWRUで、最大1KBまでの項目を書き込むことができる。
+        - 「トランザクション書き込みリクエスト」
+          - **1単位のWRUで1KBまでのデータを書き込むことができる**。
+    - 「書き込みキャパシティユニット(WCU)」
