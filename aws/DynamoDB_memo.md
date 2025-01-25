@@ -3,6 +3,7 @@
 - noteのバッチ推論結果をDynamoDBに保存してる事例: https://note.com/mussso/n/nb662ad4e6d73
 - DynamoDBの基礎と設計: https://speakerdeck.com/_kensh/dynamodb-design-practice
 - Amazon DynamoDB のベストプラクティスに従うという 2019 年の計を立てる: https://aws.amazon.com/jp/blogs/news/resolve-to-follow-amazon-dynamodb-best-practices-in-2019/
+- [DynamoDBでできないこと](https://zenn.dev/hsaki/articles/aws-dynamodb-non-suited)
 
 ## note社のDynamoDB利用事例
 
@@ -383,13 +384,19 @@ export class HelloCdkStack extends cdk.Stack {
         billingMode: dynamodb.BillingMode.PAY_PER_REQUEST, // on-demandモード
         removalPolicy: cdk.RemovalPolicy.DESTROY, // stack削除時にテーブルも削除する
     });
+    // タグを追加(Tableクラスによらず、任意のConstructs)
+    cdk.Tags.of(table).add("my_tag_key1", "my_tag_value1")
   }
 }
 ```
 
 ### テーブルにデータを書き込んでみる
 
-まずはAWS CLIで、PutItem APIを使ってデータを書き込んでみる。
+- まずはAWS CLIで、PutItem APIを使ってデータを書き込んでみる。
+  - **Itemがすでに存在する場合は、そのItem全体が置き換えられる**。特定の属性のみを更新する場合は、updateItem APIを使う(バッチ推論結果の文脈では、PutItemやBatchWriteItemで十分そう...!:thinking:)。
+    - >putItem メソッドによって、項目をテーブルに格納します。項目が存在する場合、その項目全体が置き換えられます。項目全体を置き換える代わりに固有の属性のみを更新する場合は、updateItem メソッドを使用できます。
+    - 参考: https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/JavaDocumentAPIItemCRUD.html#JavaDocumentAPIItemUpdate
+
 
 ```shell
 aws dynamodb put-item \
@@ -401,7 +408,8 @@ aws dynamodb put-item \
     }'
 ```
 
-同様にAWS CLIで、BatchWriteItem APIを使って複数のデータを書き込んでみる。
+- 同様にAWS CLIで、BatchWriteItem APIを使って複数のデータを書き込んでみる。
+  - **PutItem APIと同様に、Itemがすでに存在する場合は、そのItem全体が置き換えられる**。
 
 ```shell
 aws dynamodb batch-write-item --request-items '{
@@ -527,4 +535,19 @@ aws dynamodb update-item \
     --expression-attribute-values '{":r": {"S": "item7,item8,item9"}}'
 
 # 結果は特に出力されないが、実際にはrecommendation属性が更新される
+```
+
+### テーブルからItemを削除してみる。
+
+- AWS CLIから DeleteItem APIを使って、テーブル内の単一Itemを削除してみる。
+  - DeleteItem操作でも、書き込みの一種として料金がかかる。
+  - ちなみに、**指定されたprimary keyに一致するItemが存在しない場合も、エラーにならずに正常終了してしまう**。
+    - なので「DeleteItemするときに対象アイテムがなければ404」という設計にしたい場合は一工夫必要らしい...!:thinking:
+      - 参考: https://zenn.dev/hsaki/articles/aws-dynamodb-non-suited#:~:text=DeleteItem%E3%81%99%E3%82%8B%E3%81%A8%E3%81%8D%E3%81%AB%E5%AF%BE%E8%B1%A1%E3%82%A2%E3%82%A4%E3%83%86%E3%83%A0%E3%81%8C%E3%81%AA%E3%81%91%E3%82%8C%E3%81%B0404
+  - 
+
+```shell
+AWS_PROFILE=newspicks-development aws dynamodb delete-item \
+    --table-name TempBatchRecommendations \
+    --key '{"user_id": {"S": "test_user1"}, "model_unique_name": {"S": "test_model1"}}'
 ```
