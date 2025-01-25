@@ -231,6 +231,7 @@ def lambda_handler(event: Dict[str, str], context: Dict) -> None:
   - **Partition Key**: 同じPartition Keyを持つItemは登録できない。
   - **Partition Key + Sort Key**: Partition KeyとSort Keyがともに同じItemは登録できない。
 - 2. DynamoDBでは、2種類の**Secondary Index**を利用することができる。
+  - (前提として、Secondary Indexとは、Primary Key以外の属性をキーとして、テーブルのデータを別の方法で検索できるようにする仕組み...!:thinking:)
   - **Local Secondary Index(LSI)**:
     - Sort Key以外に絞り込み検索を行うKeyを持つことができる。
     - Partition Keyはベーステーブルと同じ / Sort Keyが異なる
@@ -308,6 +309,7 @@ def lambda_handler(event: Dict[str, str], context: Dict) -> None:
   - 現時点では、**大きく2つのキャパシティモード**が用意されており、料金計算が異なる。
     - on-demandキャパシティモード:
       - 実行したデータの**読み取り/書き込みリクエスト**(RRUとWRU)に対して課金。
+        - この100万単位あたりの料金が、2024年11月14日から半額になったらしい。
       - 読み取りと書き込みのthroughput予測値を指定する必要がない。
     - provisionedキャパシティモード:
       - 1秒あたりの**読み込みと書き込みの回数**(RCU, WCU)を指定。Auto Scalingも可能。
@@ -333,3 +335,196 @@ def lambda_handler(event: Dict[str, str], context: Dict) -> None:
         - 「トランザクション書き込みリクエスト」
           - **1単位のWRUで1KBまでのデータを書き込むことができる**。
     - 「書き込みキャパシティユニット(WCU)」
+
+## Partition Keyとsort keyの役割の違い、ホットパーティションの問題
+
+- partition key
+  - テーブル内のデータを分散させるために使用される。
+  - **データの物理的な配置**を決定するために使用される。
+  - 完全一致検索のみが可能。
+- sort key
+  - オプショナルなキーで、必須ではない。
+  - **同じpartition key内のitemをソート**するために使用される。
+  - 範囲検索や条件検索が可能。
+    - begins_with, between, >, <, >=, <=などの演算子を使って検索が可能。
+- ホットパーティション問題。
+  - 特定のpartition keyに対して、読み書きが集中する現象。
+  - 何が困る??
+    - DynamoDBでは、テーブルに割り当てられた読み込み/書き込みcapacity unit(RCU, WCU)が各partitionに均等に分散される。
+    - ホットパーティションが発生すると、**そのpartitionのcapacity unitが枯渇し、スロットリング(速度制限)が発生**する可能性がある。
+      - DynamoDBには「Adaptive Capacity」機能があり、ホットパーティションが発生した場合でも、他のpartitionの余剰capacity unitを割り当てることで、スロットリングを回避する仕組みらしい。
+      - まあでも基本はホットパーティション自体の発生を避けるべきだよね、という話か...!:thinking:
+    - (パープレ曰く、on-demandモードでも同様に影響があるみたい、あくまで料金体系がRCU/WCUではなくRRU/WRUになるだけで、裏側の仕組みとしてはこのcapacity unitが使われてるってことなのかな...!:thinking:)
+- 
+
+## 実際にテーブルを作って色々やってみる
+
+### cdkでテーブルを定義する
+
+- dynamodb.Tableクラスを使ってテーブルを定義できる。
+  - 参考: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_dynamodb.Table.html
+  - コンストラクタのpropsには、以下のような設定がある。
+    - hoge
+
+
+```typescript
+import * as cdk from 'aws-cdk-lib';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+
+export class HelloCdkStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const table = new dynamodb.Table(this, `TempBatchRecommendations`, {
+        // primary key (partition key + sort key)の設定
+        partitionKey: { name: "user_id", type: dynamodb.AttributeType.STRING },
+        sortKey: { name: "model_unique_name", type: dynamodb.AttributeType.STRING },
+        tableName: `TempBatchRecommendations`,
+        billingMode: dynamodb.BillingMode.PAY_PER_REQUEST, // on-demandモード
+        removalPolicy: cdk.RemovalPolicy.DESTROY, // stack削除時にテーブルも削除する
+    });
+  }
+}
+```
+
+### テーブルにデータを書き込んでみる
+
+まずはAWS CLIで、PutItem APIを使ってデータを書き込んでみる。
+
+```shell
+aws dynamodb put-item \
+    --table-name TempBatchRecommendations \
+    --item '{
+        "user_id": {"S": "test_user1"},
+        "model_unique_name": {"S": "test_model1"},
+        "recommendation": {"S": "item1,item2,item3"}
+    }'
+```
+
+同様にAWS CLIで、BatchWriteItem APIを使って複数のデータを書き込んでみる。
+
+```shell
+aws dynamodb batch-write-item --request-items '{
+  "TempBatchRecommendations": [
+    {
+      "PutRequest": {
+        "Item": {
+          "user_id": { "S": "test_user2" },
+          "model_unique_name": { "S": "test_model1" },
+          "recommendation": { "S": "item1,item2,item3" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "user_id": { "S": "test_user1" },
+          "model_unique_name": { "S": "test_model2" },
+          "recommendation": { "S": "item4,item5,item6" }
+        }
+      }
+    }
+  ]
+}'
+# 以下はレスポンス(書き込めなかったItemはUnprocessedItemsに表示されるっぽい...!:thinking:)
+{
+    "UnprocessedItems": {}
+}
+```
+
+### テーブルからデータを取得してみる
+
+まずはAWS CLIで、単一のItemを取得するためのGetItem APIを使ってみる。
+
+```json
+% AWS_PROFILE=newspicks-development aws dynamodb get-item \
+    --table-name TempBatchRecommendations \
+    --key '{"user_id": {"S": "test_user1"}, "model_unique_name": {"S": "test_model1"}}'
+// レスポンス
+{
+    "Item": {
+        "recommendation": {
+            "S": "item1,item2,item3"
+        },
+        "user_id": {
+            "S": "test_user1"
+        },
+        "model_unique_name": {
+            "S": "test_model1"
+        }
+    }
+}
+```
+
+scan APIを使ってデータを取得してみる。
+  - 返り値の各keyの意味
+    - Items: クエリの結果として返された各Item
+    - Count: クエリの結果として返されたItem数
+    - ScannedCount: DynamoDBがscanした総アイテム数
+    - ConsumedCapacity: 今回の読み取りリクエストで消費されたcapacity unitの情報
+
+```shell
+% aws dynamodb scan --table-name TempBatchRecommendations
+
+{
+    "Items": [
+        {
+            "recommendation": {
+                "S": "item1,item2,item3"
+            },
+            "user_id": {
+                "S": "test_user1"
+            },
+            "model_unique_name": {
+                "S": "test_model1"
+            }
+        },
+        {
+            "recommendation": {
+                "S": "item4,item5,item6"
+            },
+            "user_id": {
+                "S": "test_user1"
+            },
+            "model_unique_name": {
+                "S": "test_model2"
+            }
+        },
+        {
+            "recommendation": {
+                "S": "item1,item2,item3"
+            },
+            "user_id": {
+                "S": "test_user2"
+            },
+            "model_unique_name": {
+                "S": "test_model1"
+            }
+        }
+    ],
+    "Count": 3,　# クエリの結果として返されたItem数
+    "ScannedCount": 3, # DynamoDBがscanした総アイテム数
+    "ConsumedCapacity": null # 今回の読み取りリクエストで消費されたcapacity unitの情報。
+}
+```
+
+### テーブルのデータを更新してみる
+
+- updateItem APIを使って、テーブル内の単一Itemを更新してみる。
+  - 以下の例では、user_id=test_user1, model_unique_name=test_model1のItemについて、recommendation属性を更新している。
+  - 補足:
+    - 条件付き更新: `ConditionExpression`を使って、特定の条件を満たす場合のみ更新を行うこともできる。
+    - 指定した属性が存在しない場合でも、新しく作成される。
+    - 複数の属性を更新: `update-expression`に複数の属性を指定することで、複数の属性を一度に更新することもできる。
+      - ex. `--update-expression "SET attr1 = :val1, attr2 = :val2" --expression-attribute-values '{":val1": {"S": "value1"}, ":val2": {"S": "value2"}}'`
+
+
+```shell
+aws dynamodb update-item \
+    --table-name TempBatchRecommendations \
+    --key '{"user_id": {"S": "test_user1"}, "model_unique_name": {"S": "test_model1"}}' \
+    --update-expression "SET recommendation = :r" \
+    --expression-attribute-values '{":r": {"S": "item7,item8,item9"}}'
+
+# 結果は特に出力されないが、実際にはrecommendation属性が更新される
+```
