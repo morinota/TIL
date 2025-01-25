@@ -4,6 +4,7 @@
 - DynamoDBの基礎と設計: https://speakerdeck.com/_kensh/dynamodb-design-practice
 - Amazon DynamoDB のベストプラクティスに従うという 2019 年の計を立てる: https://aws.amazon.com/jp/blogs/news/resolve-to-follow-amazon-dynamodb-best-practices-in-2019/
 - [DynamoDBでできないこと](https://zenn.dev/hsaki/articles/aws-dynamodb-non-suited)
+- [Rustによる並列処理でDynamoDBへのデータ投入を20倍高速化してみた](https://zenn.dev/chiku_dev/articles/b4e068680e2b2e)
 
 ## note社のDynamoDB利用事例
 
@@ -551,3 +552,11 @@ AWS_PROFILE=newspicks-development aws dynamodb delete-item \
     --table-name TempBatchRecommendations \
     --key '{"user_id": {"S": "test_user1"}, "model_unique_name": {"S": "test_model1"}}'
 ```
+
+## 大量のItemを一括で高速でかきこむためのメモ
+
+- AWS情報センターによる回答:
+  - >複数の PutItem 呼び出しを同時に発行するには、BatchWriteItem API オペレーションを使用します。また、**コード内で並列プロセスまたはスレッドを使用して、複数の並列の BatchWriteItem API 呼び出しを発行**して、データのロードを高速化することもできます。
+    - 参考: https://repost.aws/ja/knowledge-center/dynamodb-bulk-upload
+  - なのでこれを踏まえると、TrainingJobでバッチ推論した最後に、マルチスレッドでBatchWriteItemを使って一気に書き込む、というのは悪い手段ではないのかも...!:thinking:
+
