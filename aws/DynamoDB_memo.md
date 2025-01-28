@@ -409,7 +409,7 @@ aws dynamodb put-item \
     }'
 ```
 
-- 同様にAWS CLIで、BatchWriteItem APIを使って複数のデータを書き込んでみる。
+- 同様にAWS CLIで、 BatchWriteItem APIを使って複数のデータを書き込んでみる。
   - **PutItem APIと同様に、Itemがすでに存在する場合は、そのItem全体が置き換えられる**。
 
 ```shell
@@ -440,6 +440,15 @@ aws dynamodb batch-write-item --request-items '{
     "UnprocessedItems": {}
 }
 ```
+
+- ちなみに、AWS Python SDKでBatchWriteItemを使いたい場合は、`batch_writer`が便利らしい...! 
+  - 25件の制限を気にせずに裏側でよしなにやってくれるらしい。
+  - あと、追加(削除)に失敗したアイテムに対するハンドリングも、裏側でやってくれてる??:thinking:
+  - 参考:
+    - https://dev.classmethod.jp/articles/lambda-python-dynamodb/
+    - https://qiita.com/dokeita/items/2950d0ee8815730973c2
+
+```python
 
 ### テーブルからデータを取得してみる
 
