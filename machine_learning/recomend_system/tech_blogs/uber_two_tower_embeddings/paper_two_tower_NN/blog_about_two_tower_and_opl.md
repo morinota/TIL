@@ -570,8 +570,113 @@ def estimate_q_x_a_via_regression(
         x_a = np.concatenate([x, np.tile(a_feat[a_idx], (n_data, 1))], axis=1)
         q_x_a_hat[:, a_idx] = q_x_a_model.predict(x_a)
 
-    return q_x_a_hat
-
-
-      
+    return q_x_a_hat      
 ```
+
+一方で、回帰ベースアプローチのprivateな学習メソッド。
+
+```python
+def _fit_by_regression_based_approach(
+    self,
+    bandit_feedback_train: BanditFeedbackDict,
+    bandit_feedback_test: Optional[BanditFeedbackDict] = None,
+) -> None:
+    """two-towerモデルに基づく推薦方策を、回帰ベースアプローチで学習するメソッド。
+    ここでは、報酬rの予測問題としてクロスエントロピー誤差を最小化するように学習を行う。
+    Args:
+        bandit_feedback_train (BanditFeedbackDict): 学習用のバンディットフィードバックデータ
+        bandit_feedback_test (Optional[BanditFeedbackDict]): テスト用のバンディットフィードバックデータ
+    """
+    n_actions = bandit_feedback_train["n_actions"]
+    context, action, reward, action_context, pscore, pi_b = (
+        bandit_feedback_train["context"],
+        bandit_feedback_train["action"],
+        bandit_feedback_train["reward"],
+        bandit_feedback_train["action_context"],
+        bandit_feedback_train["pscore"],
+        bandit_feedback_train["pi_b"],
+    )
+
+    # optimizerの設定
+    if self.solver == "adagrad":
+        optimizer = optim.Adagrad(
+            self.nn_model.parameters(),
+            lr=self.learning_rate_init,
+            weight_decay=self.alpha,
+        )
+    elif self.solver == "adam":
+        optimizer = optim.Adam(
+            self.nn_model.parameters(),
+            lr=self.learning_rate_init,
+            weight_decay=self.alpha,
+        )
+    else:
+        raise NotImplementedError("`solver` must be one of 'adam' or 'adagrad'")
+
+    training_data_loader = self._create_train_data_for_opl(
+        context,
+        action,
+        reward,
+        pscore,
+        np.zeros((reward.shape[0], n_actions)),  # 回帰ベースでは不要
+        pi_b,
+    )
+    action_context_tensor = torch.from_numpy(action_context).float()
+
+    # start policy training
+    q_x_a_train = bandit_feedback_train["expected_reward"]
+    q_x_a_test = bandit_feedback_test["expected_reward"]
+    for _ in range(self.max_iter):
+        # 各エポックの最初に、学習データとテストデータに対する真の方策性能を計算
+        pi_train = self.predict_proba(
+            context=context, action_context=action_context
+        ).squeeze(-1)
+        self.train_values.append((q_x_a_train * pi_train).sum(1).mean())
+        pi_test = self.predict_proba(
+            context=bandit_feedback_test["context"],
+            action_context=bandit_feedback_test["action_context"],
+        ).squeeze(-1)
+        self.test_values.append((q_x_a_test * pi_test).sum(1).mean())
+
+        loss_epoch = 0.0
+        self.nn_model.train()
+        for x, a, r, p, q_x_a_hat_, pi_b_ in training_data_loader:
+            optimizer.zero_grad()
+            # 各バッチに対するtwo-towerモデルの出力を \hat{q}(x,a) とみなす
+            context_embedding = self.nn_model["context_tower"](x)
+            action_embedding = self.nn_model["action_tower"](action_context_tensor)
+            logits = torch.matmul(context_embedding, action_embedding.T)
+            q_x_a_hat_by_two_tower = torch.sigmoid(logits)
+
+            # 選択されたアクションに対応する\hat{q}(x,a)を取得
+            selected_action_idx_tensor = torch.arange(a.shape[0], dtype=torch.long)
+            q_x_a_hat_by_two_tower_of_selected_action = q_x_a_hat_by_two_tower[
+                selected_action_idx_tensor,
+                a,
+            ]
+
+            # 期待報酬の推定値 \hat{q}(x,a) と報酬rとのクロスエントロピー誤差を損失関数とする
+            loss = torch.nn.functional.binary_cross_entropy(
+                q_x_a_hat_by_two_tower_of_selected_action, r
+            ).mean()
+
+            # lossを最小化するようにモデルパラメータを更新
+            loss.backward()
+            optimizer.step()
+            loss_epoch += loss.item()
+
+        self.train_losses.append(loss_epoch)
+
+    # 学習完了後に、学習データとテストデータに対する真の方策性能を計算
+    pi_train = self.predict_proba(
+        context=context, action_context=action_context
+    ).squeeze(-1)
+    self.train_values.append((q_x_a_train * pi_train).sum(1).mean())
+    pi_test = self.predict_proba(
+        context=bandit_feedback_test["context"],
+        action_context=bandit_feedback_test["action_context"],
+    ).squeeze(-1)
+    self.test_values.append((q_x_a_test * pi_test).sum(1).mean())
+```
+
+以上で、two-towerモデルに基づく推薦方策を勾配ベースのオフ方策学習で最適化するためのクラスを実装しました...!
