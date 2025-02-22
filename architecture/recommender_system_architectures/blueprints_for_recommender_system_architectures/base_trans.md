@@ -12,7 +12,7 @@ That’s why, when a few months back I designed a Recsys course for Sphere, I th
 だからこそ、数ヶ月前に Sphere の Recsys コースをデザインしたとき、この青写真を見直す良い機会になると思ったのです。
 
 In this blog post I summarize 4 existing architectural blueprints, and present a new one that, in my opinion, encompasses all the previous ones.
-このブログでは、既存の4つのアーキテクチャーの青写真を要約し、私が考える、これまでのものをすべて包含する新しい青写真を提示します。
+このブログでは、**既存の4つのアーキテクチャーの設計図**を要約し、私が考える、これまでのものをすべて包含する新しい青写真を提示します。
 
 At a very high-level, any recommender system has items to score and/or rank, and a machine learned model that does that. This model needs to be trained on some data, which is obtained from the service where the recommender operates in some form of feedback loop. The architectural blueprints that we will see below connect those components (and others) in a general way while incorporating some best practices and guidelines.非常に高いレベルでは、どんなレコメンダーシステムも、スコアやランク付けをする項目と、それを行う機械学習モデルを持っています。このモデルはいくつかのデータで学習される必要があり、それはレコメンダーがある種のフィードバックループで動作しているサービスから取得されます。以下に示すアーキテクチャーの青写真は、いくつかのベストプラクティスやガイドラインを取り入れながら、これらのコンポーネント（およびその他のコンポーネント）を一般的な方法で接続するものです。
 
