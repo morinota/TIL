@@ -86,3 +86,16 @@ ECSの料金体系は、2つの起動タイプ(EC2/Fargate)によって異なる
         - Sagemaker TrainingJobで`ml.m5.large`インスタンスの料金: USD 0.149/per hour (i.e. 22.26円)
           - 参考: [Amazon SageMaker AI の料金](https://aws.amazon.com/jp/sagemaker-ai/pricing/)
         - あ、ほぼ一致!!ちょっとだけFargateの方が安いくらいなんだ!
+
+### Fargateの制約
+
+- Fargateの計算リソースの制約:
+  - メモリ上限: 120GiB
+  - vCPU上限: 16個
+  - 以前はメモリ上限30GiBとかだったが、2022年9月のアップデートで拡張されたらしい。
+    - 参考: [【アップデート】AWS Fargateで最大16個のvCPU,120GiBのメモリが利用可能となりました！](https://dev.classmethod.jp/articles/fargate-vcpu-memory-expansion/)
+  - AWS BatchのFargateタイプも同様に拡張されたらしい!
+- Sagemaker TrainingJobなどとの比較
+  - GPUが使えない。
+  - vCPU数が最大で16なので、場合によっては物足りない。
+  - やはりバッチはTrainingJobの方が使いやすそう。
