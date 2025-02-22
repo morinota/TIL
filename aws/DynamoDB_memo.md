@@ -441,7 +441,7 @@ aws dynamodb batch-write-item --request-items '{
 }
 ```
 
-- ちなみに、AWS Python SDKでBatchWriteItemを使いたい場合は、`batch_writer`が便利らしい...! 
+- ちなみに、**AWS Python SDKでBatchWriteItemを使いたい場合は、`batch_writer`が便利らしい**...! 
   - 25件の制限を気にせずに裏側でよしなにやってくれるらしい。
   - あと、追加(削除)に失敗したアイテムに対するハンドリングも、裏側でやってくれてる??:thinking:
   - 参考:
@@ -449,6 +449,35 @@ aws dynamodb batch-write-item --request-items '{
     - https://qiita.com/dokeita/items/2950d0ee8815730973c2
 
 ```python
+TABLE_NAME = "TempBatchRecommendations"
+dynamoDB = boto3.resource("dynamodb")
+
+
+class BatchRecommendation(TypedDict):
+    user_id: str
+    model_unique_name: str
+    recommendation: str
+
+
+def batch_write_items(items: list[BatchRecommendation]) -> None:
+    try:
+        table = dynamoDB.Table(TABLE_NAME)
+        with table.batch_writer() as batch:
+            for item in items:
+                batch.put_item(Item=item)
+    except Exception as error:
+        logger.error(f"Error: {error}")
+
+df = pl.DataFrame(
+        {
+            "user_id": ["user1", "user2", "user1"],
+            "model_unique_name": ["model1", "model1", "model2"],
+            "recommendation": ["[item1, item2]", "[item3, item4]", "[item5, item6]"],
+        }
+    )
+items = df.to_dicts()
+batch_write_items(items)
+```
 
 ### テーブルからデータを取得してみる
 
@@ -569,3 +598,23 @@ AWS_PROFILE=newspicks-development aws dynamodb delete-item \
     - 参考: https://repost.aws/ja/knowledge-center/dynamodb-bulk-upload
   - なのでこれを踏まえると、TrainingJobでバッチ推論した最後に、マルチスレッドでBatchWriteItemを使って一気に書き込む、というのは悪い手段ではないのかも...!:thinking:
 
+
+- 並列化するスレッド数は、vCPUの数と一致させれば良い??
+  - **CPUバウンドな処理の場合と、I/Oバウンドな処理の場合で、スレッド数の最適値は異なるっぽい...!**
+  - CPUバウンドな処理の場合:
+    - ex. ML推論、数値計算、etc.
+    - スレッド数をCPUのコア数に合わせると良さそう。
+      - スレッド数をvCPU数よりも多くすると、スレッド間でCPUのコアを共有するため、オーバーヘッドが発生し、処理速度が遅くなる可能性がある。
+      - なのでvCPUとスレッド数を一致させるのが基本らしい。
+  - I/Oバウンドな処理の場合:
+    - I/Oバウンドとは??
+      - プログラムの処理速度がCPUではなく、I/O処理(ネットワーク・ディスクなどの外部通信)によって影響を受ける場合。
+      - ex. ファイル読み書き、ネットワーク通信、データベースアクセス、etc.
+    - スレッド数をCPUのコア数よりも少し多めにすると良いっぽい。
+      - CPUはほぼ使わず、I/O待ちがボトルネック
+      - **スレッドを増やすと I/O待ち中に他のスレッドが処理を進められるため、隙間時間を有効活用でき、全体の処理速度が向上する**。
+      - スレッド数の目安は、vCPU数 * 2~4位らしい。
+        - (ex. vCPU数が4の場合、スレッド数は8~16程度)
+        - ただしDynamoDBのスロットリング (Throttling) に注意!
+          - スループット上限を超えると、`ProvisionedThroughputExceededException`が発生する可能性がある。
+    
