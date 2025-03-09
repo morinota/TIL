@@ -70,13 +70,41 @@
   - なのでこの場合、**RAGでは通常、各Documentを適切なサイズのchunkに分割する**。
     - 適切なchunkサイズは、LLMの最大コンテキスト長とアプリケーションのレイテンシー要件などを考慮して決定する。
     - (なるほど...! 例えばニュース記事を一つのdocumentとみなす場合、本文全体をLLMに渡すのがアプリケーションの要件的に無理かもしれない。その場合、単一のdocumentを小さなセクションに分割(chunking)する...!!!:thinking:)
-    - chunkingと最適なchunkサイズについてより詳しく知りたい場合は、Pinecone、Langchain、Llamaindex、Greg Kamradtのチュートリアルを参照、とのこと。
-- 主要なretrieveアプローチの話:
-  - hoge
-- Context constructionにおいて、Documentの正確なランキングは重要かの話:
-  - hoge
+    - ちなみにchunkingと最適なchunkサイズについてより詳しく知りたい場合は、Pinecone、Langchain、Llamaindex、Greg Kamradtのチュートリアルを参照、とのこと。
+- 主要な2種類のretrieveアプローチの話:
+  - アプローチ1: **Term-based retrieval(単語ベースの検索)**
+    - ex. 「transformer」というクエリが与えられた場合、このキーワードを含むすべての文書を関連情報としてfetchする。
+    - より洗練されたアルゴリズムには、BM25（TF-IDFの活用）とElasticsearch（転置インデックスの活用）がある
+    - 単語ベースの検索は、通常テキストデータに用いられるが、タイトル、タグ、キャプション、コメントなどの**テキストメタデータを持つ画像や動画にも有効**。
+  - アプローチ2: **Embedding-based retrieval(埋め込みベースの検索、ベクトル検索)**
+    - 各Documentのchunkを任意の埋め込みモデルを使用して埋め込みベクトルに変換しておく。(ex. BERT、sentence-transformers、OpenAIやGoogleが提供する独自の埋め込みモデル, etc.)
+    - クエリが与えられると、クエリ埋め込みに最も近いデータk個が、任意のベクトル検索アルゴリズム(=ほぼほぼ何らかの近似近傍探索アルゴリズム!)によって関連情報としてfetchされる。
+    - **埋め込みベースの検索は、非テキストのDocument(ex. 画像、ビデオ、オーディオ、コード)でも適用できる**。
+      - 例えば、コードをDocumentとして扱う場合、多くのケースでは、**SQLテーブルやデータフレームを自然言語に要約してから、これらの要約を使用してretrieve用の埋め込みを生成**する。
+      - (うんうん、実際にいくつかのText2SQLの事例でもこの方法を採用してた...!:thinking:)
+      - (ちなみに、この方法を使えば、**term-based retrievalでも同様に非テキストデータを扱えるよね...??** これは別にembedding-based retrieval固有の方法ではない気がする...!:thinking:)
+  - 両アプローチの比較:
+    - **term-based retrievalは、embedding-based retrievalよりもはるかに高速で安価**。
+      - (そうなのか...!まあDocumentの件数にもよるだろうけど、そりゃANNしなきゃってモチベーションもあるわけだ:thinking:)
+      - BM25とElasticsearchは、業界で広く使用されており、より複雑な検索システムの**強力なベースライン**として機能する。
+    - 埋め込みベースの検索は、計算コストが高いが、時間の経過とともに大幅に改善され、単語ベースの検索を上回ることができる。
+      - (どうなんだろ、レイテンシーも重要だし...!**元々はRAGってembedding-based retrieval一択なのかなと思ってたけど、アプリケーション要件によってはterm-based retrievalの方が良いケースも結構あるのかも...!**:thinking:)
+- まあ本番の検索システムは通常、いくつかのアプローチを組み合わせるハイブリッド検索だよねという話:
+  - term-based retrievalとembedding-based retrievalを組み合わせる → ハイブリッド検索
+  - よくあるパターン1つ目が、**sequentialパターン** (要するに2-stages推薦みたいな感じか...!:thinking:)
+    - - 第一段階として、term-basedシステムなどの安価で精度の低いretrieverが候補を取得
+    - 第二段階として、embedding-basedシステムなどのより正確でコストの高いretrieverが候補から最適なものを見つける
+      - 第2段階はrerankingとも呼ばれる。(まさに、2-stages推薦と同じじゃん!:thinking:)
+  - よくあるパターン2つ目が、**ensembleパターン**
+    - 複数のretrieverを使って候補を同時に取得し、それらの異なるランキングを組み合わせて最終的なランキングを生成する。
+    - (よくKaggleで目にするような、スコアを平均するようなensembleアプローチではなく、複数のランキングを混ぜ合わせるのでinterleaving的な感じか...!:thinking:)
     
-
+- Context constructionにおいて、Documentの正確なランキングは重要かの話:
+  - 検索や推薦と比較するとそれほど重要ではないかもしれないが、Documentの順序は一定重要っぽい。
+  - なぜならそれが、**generatorモデルがcontextをどれだけうまく処理できるかに影響を与えるから**
+  - generatorモデルは、**contextの最初と最後の文書をよりよく理解する可能性**がある。
+  - しかし、対象Documentが含まれてさえいれば、その順序の影響は、検索ランキングと比較したら小さいらしい。
+    
 #### RAGの性能向上に関連するテクニック: Query Rewriting
 
 - hogehoge
