@@ -156,7 +156,27 @@ AI： ジョンが最後にFruity Fedoraの帽子を買ったのは2週間前の
 
 ### 追加コンポーネント2つ目: Guardrails
 
+- ガードレールは、LLMのリスクを軽減し、ユーザだけでなく、開発者自身も保護するための重要なコンポーネント。
+- 失敗の可能性がある場合は必須。
+- 二種類のガードレール: 
+  - Input Guardrails
+  - Output Guardrails
 
+#### Input Guardrails
+
+- hoge
+
+#### Output Guardrails
+
+- hoge
+
+#### ガードレールのトレードオフの話
+
+- hoge
+
+#### Input/Output Guardrailsの設置場所
+
+生成AIプラットフォームのアーキテクチャ内で、ガードレールは、独立したコンポーネント、もしくは後述するモデルゲートウェイの一部として実装される。
 
 ### 追加コンポーネント3つ目: RouterとGateway
 
