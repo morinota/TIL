@@ -33,3 +33,7 @@ config.yml
 !*slides/*.PNG
 %XDG_DATA_HOME%
 360feedback
+
+# 明示的に除外
+aws/sagemaker/pipelines/202311月のupdateで定義が簡単になったかも/sample_codes/sagemaker_pipelines/sagemaker_pipelines.ipynb
+aws/sagemaker/pipelines/202311月のupdateで定義が簡単になったかも/sample_codes/sagemaker_pipelines_with_step_decorator/sagemaker_pipelines_with_step_decorator.ipynb
