@@ -59,11 +59,23 @@
   - RAGは2つのコンポーネントから構成される: 
     - retriever(外部ソースから関連情報を取得する)
     - generator(ex.言語モデル)
-- retrieverは、RAG固有のコンポーネントではない。
+- retrieverは、別にRAG固有のコンポーネントではないよね、という話:
   - 検索エンジン、推薦システムなど、他のアプリケーションでも結構使われてる。
     - 2-stages推薦でも、retrieveとrankの2つのステージがある!
   - **なので、従来の検索システム向けに開発された多くの検索アルゴリズムは、RAGにも適用できる!**
-    - (dual-encodingなど?:thinking:)
+- retrieve対象のDocumentとchunkingの話:
+  - retrieveにおける外部ソースには通常、メモ・契約書・ニュース記事などの非構造化データ(テキストデータ)が含まれる = これらを総称して **Document** と呼ぶ。
+  - 各Documentのtoken数によっては、**1つのDocument全体をcontextとして渡すのが難しい場合**もある。
+    - (原因は、LLM APIに渡せる最大コンテキスト長の制約や、アプリケーションのレイテンシー要件など...!)
+  - なのでこの場合、**RAGでは通常、各Documentを適切なサイズのchunkに分割する**。
+    - 適切なchunkサイズは、LLMの最大コンテキスト長とアプリケーションのレイテンシー要件などを考慮して決定する。
+    - (なるほど...! 例えばニュース記事を一つのdocumentとみなす場合、本文全体をLLMに渡すのがアプリケーションの要件的に無理かもしれない。その場合、単一のdocumentを小さなセクションに分割(chunking)する...!!!:thinking:)
+    - chunkingと最適なchunkサイズについてより詳しく知りたい場合は、Pinecone、Langchain、Llamaindex、Greg Kamradtのチュートリアルを参照、とのこと。
+- 主要なretrieveアプローチの話:
+  - hoge
+- Context constructionにおいて、Documentの正確なランキングは重要かの話:
+  - hoge
+    
 
 #### RAGの性能向上に関連するテクニック: Query Rewriting
 
