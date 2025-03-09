@@ -104,7 +104,24 @@
   - なぜならそれが、**generatorモデルがcontextをどれだけうまく処理できるかに影響を与えるから**
   - generatorモデルは、**contextの最初と最後の文書をよりよく理解する可能性**がある。
   - しかし、対象Documentが含まれてさえいれば、その順序の影響は、検索ランキングと比較したら小さいらしい。
-    
+
+#### RAGのAgenticなバージョン
+
+Context constructionを行うために、**「どの外部ソースからどのretrieve方法でcontextを取得するか」の選択を、LLM自身が行う**ようなケースの話...!:thinking:
+
+- contextを取得する外部ソースとして、インターネットも有効、
+  - GoogleやBingのAPIのようなウェブ検索ツールは、各クエリに関連する情報を収集するための豊富で最新のリソースにアクセスできる。
+  - ex. 「今年のオスカーは誰が受賞しましたか？」というクエリが与えられた場合、システムは最新のオスカーに関する情報を検索し、この情報をcontextとして使用してユーザに最終的な応答を生成する
+
+前述した2種類のretrieveアプローチ(term-based retrievalとembedding-based retrieval)、自社DBへのSQL実行、ウェブ検索は、**いずれもLLMがContext constructionを行うために取ることができるアクション**である。よってそれぞれのアクションは、モデルが呼び出せる関数とみなせる。これがいわゆるAgenticなRAG!
+
+- (余談) AgenticなLLMシステムにどれくらいのアクション権限を与えるかの話:
+  - AgenticなLLMシステムにおいて、モデルが呼び出す関数(i.e. アクション)は、**read-only actions**と**write actions**に分類できる。
+    - read-only actions: 外部データソースから情報をretrieveするが、状態を変更しないアクション
+      - (基本的にcontext constructionのための手段としてRAGを使う場合は、read-only actionsのイメージ...!!:thinking:)
+    - write actions: データベースに書き込む、メールを送信するなど、状態を変更するアクション
+  - LLMにwrite actionsの権限を与えると、モデルはより多くのタスクを実行できるが、より多くのリスクも伴う。
+
 #### RAGの性能向上に関連するテクニック: Query Rewriting
 
 - hogehoge
