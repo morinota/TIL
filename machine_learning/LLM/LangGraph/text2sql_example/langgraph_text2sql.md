@@ -139,10 +139,15 @@ from langgraph.prebuilt import ToolNode
 # ToolNodeを作成する。
 # with_fallbacksってなんだ??
 def create_tool_node_with_fallback(tools: list) -> RunnableWithFallbacks[Any, dict]:
-    """Create a ToolNode with a fallback to handle errors and surface them to the agent."""
+    """Create a ToolNode with a fallback to handle errors and surface them to the agent.
+    ToolNodeを作成し、エラーを処理し、エージェントに表示するためのフォールバックを追加します。
+    """
     return ToolNode(tools).with_fallbacks([RunnableLambda(handle_tool_error)], exception_key="error")
 
-def handle_tool_error(state) -> dict:
+def handle_tool_error(state:State) -> State:
+    """ツールのエラーを処理する関数
+    (これも、stateを受け取り、stateを返す関数にしてる? ノード関数と同じ...!:thinking_face:)
+    """
     error = state.get("error")
     tool_calls = state["messages"][-1].tool_calls
     return {
@@ -156,8 +161,6 @@ def handle_tool_error(state) -> dict:
     }
 ```
 
-API Reference: ToolMessage | RunnableLambda | RunnableWithFallbacks | ToolNode
-APIリファレンス: ToolMessage | RunnableLambda | RunnableWithFallbacks | ToolNode
 
 <!-- ここまで読んだ! -->
 
@@ -213,7 +216,11 @@ from langchain_core.tools import tool
 def db_query_tool(query: str) -> str:
     """Execute a SQL query against the database and get back the result.  
     If the query is not correct, an error message will be returned.  
-    If an error is returned, rewrite the query, check the query, and try again.""" 
+    If an error is returned, rewrite the query, check the query, and try again.
+    データベースに対してSQLクエリを実行し、結果を取得します。
+    もしクエリが正しくない場合、エラーメッセージが返されます。
+    もしエラーが返された場合、クエリを書き直し、クエリをチェックして、もう一度試してください。
+    """ 
     result = db.run_no_throw(query)  
     if not result:  
         return "Error: Query failed. Please rewrite your query and try again."  
@@ -279,16 +286,19 @@ class State(TypedDict):
 # グラフビルダーを定義
 workflow = StateGraph(State)
 
-# エントリーポイントにつながる、最初に必ず呼び出されるノード関数を定義
+
 def first_tool_call(state: State) -> State:
+    """
+    エントリーポイントにつながる、最初に必ず呼び出されるノード関数を定義
+    """
     return {
         "messages": [
             AIMessage(content="", tool_calls=[{"name": "sql_db_list_tables", "args": {}, "id": "tool_abcd123",}]),
         ]
     }
 
-# クエリが正しいかどうかを実行するツールを定義
-def model_check_query(state: State) -> dict[str, list[AIMessage]]:
+# クエリが正しいかどうかを実行するノードを定義
+def model_check_query(state: State) -> State:
     """Use this tool to double-check if your query is correct before executing it."""
     return {
         "messages": [query_check.invoke({"messages": [state["messages"][-1]]})]
@@ -318,6 +328,7 @@ query_gen = query_gen_prompt | ChatOpenAI(model="gpt-4o", temperature=0).bind_to
 def query_gen_node(state: State)-> State:
     message = query_gen.invoke(state)
     # Sometimes, the LLM will hallucinate and call the wrong tool. We need to catch this and return an error message.
+    # 時々、LLMは幻覚を起こし、間違ったツールを呼び出すことがあります。これをキャッチしてエラーメッセージを返す必要があります。
     tool_messages = []
     if message.tool_calls:
         for tc in message.tool_calls:

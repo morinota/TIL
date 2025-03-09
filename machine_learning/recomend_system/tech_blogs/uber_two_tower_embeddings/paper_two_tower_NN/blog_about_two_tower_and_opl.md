@@ -330,7 +330,7 @@ $$
 $$
 loss = \sum_{i=1}^{n} l_{r}(r_i, \text{TwoTowerModel}_{\theta}(x_i, a_i))
 \\
-= \sum_{i=1}^{n} \text{CrossEntropyLoss}(r_i, \text{TwoTowerModel}_{\theta}(x_i, a_i))
+= \sum_{i=1}^{n} [r_i \log \text{TwoTowerModel}_{\theta}(x_i, a_i) + (1-r_i) \log (1 - \text{TwoTowerModel}_{\theta}(x_i, a_i))]
 $$
 
 ## 合成データを使って、Two-Towerモデルのオフ方策学習を実験してみる!
@@ -496,7 +496,7 @@ class PolicyByTwoTowerModel:
 
 続いて推薦方策の推論用のpublic & privateメソッド。
 入力として、n件のユーザ(i.e. コンテキスト、クエリ)特徴量と、推薦候補アイテムの特徴量を受け取る。
-出力
+出力として、各ユーザに対する各推薦候補アイテムの選択確率 $\pi_{\theta}(a|x)$ を返す。
 
 ```python
 def predict_proba(
@@ -545,7 +545,6 @@ def _predict_proba_as_tensor(
         action_context
     )  # shape: (n_actions, dim_two_tower_embedding)
 
-    # context_embeddingとaction_embeddingの内積をスコアとして計算
     logits = torch.matmul(
         context_embedding, action_embedding.T
     )  # shape: (n_rounds, n_actions)
@@ -592,7 +591,7 @@ def _fit_by_gradiant_based_approach(
     bandit_feedback_train: BanditFeedbackDict,
     bandit_feedback_test: Optional[BanditFeedbackDict] = None,
 ) -> None:
-    """推薦方策を、勾配ベースアプローチで学習するメソッド"""
+    """推薦方策を勾配ベースアプローチで学習するメソッド"""
 
     n_actions = bandit_feedback_train["n_actions"]
     context, action, reward, action_context, pscore, pi_b = (
@@ -634,7 +633,6 @@ def _fit_by_gradiant_based_approach(
         reward,
         pscore,
         q_x_a_hat,
-        pi_b,
     )
     action_context_tensor = torch.from_numpy(action_context).float()
 
@@ -655,7 +653,7 @@ def _fit_by_gradiant_based_approach(
 
         loss_epoch = 0.0
         self.nn_model.train()
-        for x, a, r, p, q_x_a_hat_, pi_b_ in training_data_loader:
+        for x, a, r, p, q_x_a_hat_ in training_data_loader:
             optimizer.zero_grad()
             # 新方策の行動選択確率分布\pi(a|x)を計算
             pi = self._predict_proba_as_tensor(
@@ -668,7 +666,6 @@ def _fit_by_gradiant_based_approach(
                 reward=r,
                 pscore=p,
                 q_x_a_hat=q_x_a_hat_,
-                pi_0=pi_b_,
                 pi=pi,
             ).mean()
             # lossを最小化するようにモデルパラメータを更新
@@ -696,7 +693,6 @@ def _create_train_data_for_opl(
     reward: np.ndarray,
     pscore: np.ndarray,
     q_x_a_hat: np.ndarray,
-    pi_0: np.ndarray,
     **kwargs,
 ) -> torch.utils.data.DataLoader:
     """学習データを作成するメソッド
@@ -706,7 +702,6 @@ def _create_train_data_for_opl(
         reward (np.ndarray): 観測された報酬の配列 (n_rounds,)
         pscore (np.ndarray): 傾向スコアの配列 (n_rounds,)
         q_x_a_hat (np.ndarray): 期待報酬の推定値の配列 (n_rounds, n_actions)
-        pi_0 (np.ndarray): データ収集方策の行動選択確率の配列 (n_rounds, n_actions)
     """
     dataset = NNPolicyDataset(
         torch.from_numpy(context).float(),
@@ -714,7 +709,6 @@ def _create_train_data_for_opl(
         torch.from_numpy(reward).float(),
         torch.from_numpy(pscore).float(),
         torch.from_numpy(q_x_a_hat).float(),
-        torch.from_numpy(pi_0).float(),
     )
 
     data_loader = torch.utils.data.DataLoader(
@@ -725,13 +719,12 @@ def _create_train_data_for_opl(
 
 def _estimate_policy_gradient(
     self,
-    action: torch.Tensor,  # shape: (batch_size,)
-    reward: torch.Tensor,  # shape: (batch_size,)
-    pscore: torch.Tensor,  # shape: (batch_size,)
-    q_x_a_hat: torch.Tensor,  # shape: (batch_size, n_actions)
-    pi: torch.Tensor,  # shape: (batch_size, n_actions, 1)
-    pi_0: torch.Tensor,  # shape: (batch_size, n_actions)
-) -> torch.Tensor:  # shape: (batch_size,)
+    action: torch.Tensor,
+    reward: torch.Tensor,
+    pscore: torch.Tensor,
+    q_x_a_hat: torch.Tensor, 
+    pi: torch.Tensor, 
+) -> torch.Tensor: 
     """
     方策勾配の推定値を計算するメソッド
     Args:
@@ -740,7 +733,6 @@ def _estimate_policy_gradient(
         pscore (torch.Tensor): 傾向スコアのテンソル (batch_size,)
         q_x_a_hat (torch.Tensor): 期待報酬の推定値のテンソル (batch_size, n_actions)
         pi (torch.Tensor): 現在の方策による行動選択確率のテンソル (batch_size, n_actions, 1)
-        pi_0 (torch.Tensor): 収集した方策による行動選択確率のテンソル (batch_size, n_actions)
     Returns:
         torch.Tensor: 方策勾配の推定値のテンソル (batch_size,)
             ただし勾配計算自体はPyTorchの自動微分機能により行われるので、
@@ -758,6 +750,20 @@ def _estimate_policy_gradient(
 
     return estimated_policy_grad_arr
 
+class BanditFeedbackDict(TypedDict):
+    n_rounds: int  # ラウンド数
+    n_actions: int  # アクション数s
+    context: np.ndarray  # 文脈 (shape: (n_rounds, dim_context))
+    action_context: (
+        np.ndarray
+    )  # アクション特徴量 (shape: (n_actions, dim_action_features))
+    action: np.ndarray  # 実際に選択されたアクション (shape: (n_rounds,))
+    position: Optional[np.ndarray]  # ポジション (shape: (n_rounds,) or None)
+    reward: np.ndarray  # 報酬 (shape: (n_rounds,))
+    expected_reward: np.ndarray  # 期待報酬 (shape: (n_rounds, n_actions))
+    pi_b: np.ndarray  # データ収集方策 P(a|x) (shape: (n_rounds, n_actions))
+    pscore: np.ndarray  # 傾向スコア (shape: (n_rounds,))
+
 @dataclass
 class NNPolicyDataset(torch.utils.data.Dataset):
     """Two-Towerモデルのオフ方策学習用のデータセットクラス"""
@@ -767,7 +773,6 @@ class NNPolicyDataset(torch.utils.data.Dataset):
     reward: np.ndarray  # 報酬r_i
     pscore: np.ndarray  # 傾向スコア \pi_0(a_i|x_i)
     q_x_a_hat: np.ndarray  # 期待報酬の推定値 \hat{q}(x_i, a)
-    pi_0: np.ndarray  # データ収集方策の行動選択確率分布 \pi_0(a|x_i)
 
     def __post_init__(self):
         """initialize class"""
@@ -777,7 +782,6 @@ class NNPolicyDataset(torch.utils.data.Dataset):
             == self.reward.shape[0]
             == self.pscore.shape[0]
             == self.q_x_a_hat.shape[0]
-            == self.pi_0.shape[0]
         )
 
     def __getitem__(self, index):
@@ -787,7 +791,6 @@ class NNPolicyDataset(torch.utils.data.Dataset):
             self.reward[index],
             self.pscore[index],
             self.q_x_a_hat[index],
-            self.pi_0[index],
         )
 
     def __len__(self):
@@ -874,7 +877,6 @@ def _fit_by_regression_based_approach(
         reward,
         pscore,
         np.zeros((reward.shape[0], n_actions)),  # 回帰ベースでは不要
-        pi_b,
     )
     action_context_tensor = torch.from_numpy(action_context).float()
 
@@ -895,7 +897,7 @@ def _fit_by_regression_based_approach(
 
         loss_epoch = 0.0
         self.nn_model.train()
-        for x, a, r, p, q_x_a_hat_, pi_b_ in training_data_loader:
+        for x, a, r, p, q_x_a_hat_  in training_data_loader:
             optimizer.zero_grad()
             # 各バッチに対するTwo-Towerモデルの出力を \hat{q}(x,a) とみなす
             context_embedding = self.nn_model["context_tower"](x)
@@ -934,4 +936,5 @@ def _fit_by_regression_based_approach(
     self.test_values.append((q_x_a_test * pi_test).sum(1).mean())
 ```
 
-以上で、Two-Towerモデルに基づく推薦方策を勾配ベースのオフ方策学習で最適化するためのクラスを実装しました...!
+Two-Towerモデルと三種類のオフライン学習方法の実装は以上になります。
+あとは、Open Bandit Pipelineの`SyntheticBanditDataset`クラスを使って合成データを生成してシミュレーションを回す形になります。
