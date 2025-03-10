@@ -326,6 +326,25 @@ Output Guardrailsの役割2つ目: 各種類の失敗への対処方針の設定
 
 ### 追加コンポーネント4つ目: Cache
 
+LLMアプリケーションにおけるキャッシュ(Cache)は、レイテンシーを削減し、コストを抑えるための重要な要素である。
+LLMの代表的な推論キャッシュ技術として、以下の3つがある:
+
+- 1つ目: Prompt Cache(プロンプトキャッシュ)
+- 2つ目: Exact Cache(厳密なキャッシュ)
+- 3つ目: Semantic Cache(意味的なキャッシュ)
+
+Prompt Cacheについて。
+
+- hoge
+
+Exact Cacheについて。
+
+- hoge
+
+Semantic Cacheについて。
+
+- hoge
+
 ### 追加コンポーネント5つ目: Complex LogicやWrite Action
 
 ### 追加コンポーネント6つ目: ObservabilityとOrchestration
