@@ -22,7 +22,7 @@ SQL Botは、LangChainとLangGraphの上に構築されたマルチエージェ�
 ![fig]()
 
 While creating a proof of concept for a Text-to-SQL tool is straightforward, the challenge lies in navigating complex enterprise data warehouses to identify authoritative data sources that accurately answer user questions. 
-テキストからSQLへのツールの概念実証を作成することは簡単ですが、**課題は複雑な企業データウェアハウスをナビゲートして、ユーザの質問に正確に答える権威あるデータソースを特定すること**にあります。
+Text2SQLへのツールの概念実証を作成することは簡単ですが、**課題は複雑な企業データウェアハウスをナビゲートして、ユーザの質問に正確に答える権威あるデータソースを特定すること**にあります。
 In this post, we share key strategies that enabled us to deploy a practical text-to-SQL solution, now utilized by hundreds of employees across LinkedIn’s diverse business verticals.
 この投稿では、私たちが**実用的なtext-to-sqlソリューションを展開するために採用した重要な戦略**を共有します。このソリューションは、LinkedInの多様なビジネス分野で数百人の従業員によって利用されています。
 

@@ -5,6 +5,7 @@
 ## 参考文献
 
 - その1 [Streamlit in Snowflakeの設計で意識すると良さそうなポイント](https://zenn.dev/datum_studio/articles/ba80a63100db4e)
+- その2: [Streamlit in Snowpark Container Services](https://medium.com/snowflake/streamlit-in-snowpark-container-services-0e28e07fdc26)
 
 ## SiSを使ったアプリ開発の際に意識した方が良さそうなことメモ
 
@@ -17,15 +18,22 @@
     - (Sagemaker Notebookなどの話と似てそう! notebookインスタンスの起動中はお金がかかり続けるので、あんまりnotebook上で試行錯誤させづらい...!:thinking:)
   - 関連して、実装する際にはローカル環境とSiSの環境差分をできる限り減らすことを意識すべき...!! (実装のコードも、パッケージ依存関係なども)
 - その2: environment.ymlとsnowflake.ymlの作成
-  - SiSのアプリ設定は、environment.ymlとsnowflake.ymlファイルにより定義できる。バージョン管理できる。
+  - SiSのアプリ設定は、environment.ymlとsnowflake.ymlファイルにより定義できる。Githubなどでもバージョン管理できる。
+    - environment.yml:
+      - SiSアプリの実行に必要なパッケージ依存関係を定義するファイル。外部パッケージを追加する場合に必要。
+      - **SnowflakeのAnacondaチャネルを利用して、許可されたパッケージのみをインストールできる**。
+    - snowflake.yml: 
+      - SiSのアプリ設定を定義するファイル。
+      - アプリケーションに関連する設定（ステージ、メインファイル、ウェアハウスなど）を記述。
+      - また、Streamlitアプリの構成要素（ページディレクトリや追加ファイルなど）も定義できる。
 
-```
+```yml::environment.yml
 dependencies:
 - streamlit=1.35.0
 - pandas
 ```
 
-```
+```yml::snowflake.yml
 definition_version: 1
 streamlit:
   name: my_streamlit_app
@@ -166,3 +174,17 @@ streamlit:
   additional_source_files:
   - src/utils.py
 ```
+
+## SiSで任意のコンテナイメージを起動することはできる??
+
+- まず結論。どうやらできなさそう。
+- SiSは、Snowflakeのプラットフォーム上でStreamlitアプリを実行するための機能なので、基本的にサポートされていない。
+- コンテナイメージの利用に関する、Snowflakeの制約
+  - **Snowflakeはセキュリティと管理性を重視したプラットフォーム**であり、外部のコンテナイメージを直接起動することは制限されている。代わりに、Snowflakeが提供する機能やAPIを利用して、データ処理やアプリケーションを構築することが推奨されている。
+
+## 代替として、Snowpark Container ServiceでStreamlitアプリを実行する事例があるっぽい!
+
+- (参考文献2より)
+- SnowflakeのSnowpark Container Servicesを利用して、任意のコンテナイメージをもとにStreamlitアプリケーションをデプロイする事例。
+- Snowpark Container Servicesは、Snowflakeのプラットフォーム上でコンテナベースのアプリケーションを実行できる機能。
+- Snowpark Container Servicesは、AWS ECRなどの外部レジストリから直接コンテナイメージをプルすることはできない。

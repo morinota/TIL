@@ -786,7 +786,7 @@ A prompt cache stores these overlapping segments for reuse, so you only need to 
 A common overlapping text segment in different prompts is the system prompt.
 **さまざまなプロンプトで重複する共通のテキストセグメントは、システムプロンプト**である。
 Without prompt cache, your model needs to process the system prompt with every query.
-プロンプト・キャッシュがない場合、モデルはクエリごとにシステム・プロンプトを処理する必要があります。
+プロンプト・キャッシュがない場合、モデルはクエリごとにシステム・プロンプトを処理する必要があります。    
 With prompt cache, it only needs to process the system prompt once for the first query.
 プロンプト・キャッシュを使えば、システム・プロンプトを処理するのは最初のクエリに対して一度だけでよい。
 
@@ -963,7 +963,7 @@ Our infrastructure now has an arrow pointing the generated response back to cont
 ### Write actions アクションを書く
 
 Actions used for context construction are read-only actions.
-context constructionに使用されるアクションは、**読み取り専用のアクション**です。(?)
+context constructionに使用されるアクションは、read-onlyアクションです。(うんうん、外部ソースの状態を変更するようなwriteアクションはないよね:thinking:)
 They allow a model to read from its data sources to gather context.
 これにより、モデルはデータソースから読み取ってコンテキストを収集することができる。
 But a system can also write actions, making changes to the data sources and the world.
