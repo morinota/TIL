@@ -12,7 +12,7 @@
   - このボトルネックはデータチームを苛立たせるだけでなく、**重要な洞察を待っているビジネスパートナーに遅延**を引き起こす。
 - 解決策
   - データ民主化の取り組みの一環として、Text2SQLのBotを開発・導入した。
-  - 導入されたBotは、LangChainとLangGraphで実装されたマルチエージェントシステム。
+  - 導入されたBotは、**LangChainとLangGraphで実装されたマルチエージェントシステム**。
     - ここでマルチエージェントっていうのは、SQLのgeneratorとreviewerがいて、それぞれがAgenticにアクションを決定する、みたいな感じなんだろうか...!:thinking:
 - 本ブログで記述されるのは、**実用的なText2SQLソリューションをデプロイするために採用した重要な戦略たち**。
   - 現在は、LinkedInの多様なビジネス分野で数百人の従業員がこのBotを使用してるらしい。(ちゃんとPoCで終わらせずに普及させてるのが凄い...!:thinking:)
@@ -20,13 +20,15 @@
 ### 戦略1: 高品質なテーブルメタデータとパーソナライズされたretreival
 
 - Embedding-Based Retrieval(EBR)に基づくRAGを採用
-  - Text2SQLタスクはしばしばRAGアプリケーションとして位置付けられる。
-  - なんで??
-    - Text2SQLのタスクを精度高く解くためには、テーブルスキーマ、サンプルクエリ、その他のドメイン知識などが必要。
-    - よって、LLM自身の内部知識のみでは不十分であり、Context Constructionが必要。
-  - 本事例では特に、**EBRに基づくRAGを採用して、Context Constructionを実装してる**みたい。
+  - **Text2SQLタスクはしばしばRAGアプリケーションとして位置付けられる**。
+    - なんで??
+      - Text2SQLのタスクを精度高く解くためには、テーブルスキーマ、サンプルクエリ、その他のドメイン知識などが必要。
+      - よって、LLM自身の内部知識のみでは不十分であり、Context Constructionが必要。
+      - Context Constructionの一番有名な手法がRAG(Retriever-Reader-Generator)
+    - 本事例では特に、**EBRに基づくRAGを採用して、Context Constructionを実装してる**みたい。
 - Dataset Certification
   - より良質なcontextをretrieveするための1つの課題は、説明文の頻繁な欠如や不完全さ。
+  - 
 - 組織ベースのデータセットフィルタ
 - ベクトルストアを活用した自動アップデート
 
