@@ -8,7 +8,9 @@
 - LangChain公式のv0.2からv0.3のメモリ移行についてまとめたページ: [How to migrate to LangGraph memory](https://python.langchain.com/docs/versions/migrating_memory/)
 - Streamlitでチャット履歴を実装するならこれを参考にできそう
   - [RAG機能付きチャットボットを作ろう-5_チャット表示のMarkdown化](https://zenn.dev/bluetang/articles/chatbot_with_lc_st_chromadb_05)
-  - Streamlitのアップデートでchat UIが追加されて、実装が簡単になったらしい...!実装時はこれか公式docを参照したら良さそう![Streamlitを使ってチャットアプリを簡単に作る](https://zenn.dev/nishijima13/articles/7ed472f51240b5)
+  - Streamlitのアップデートでchat UIが追加されて、実装が簡単になったらしい...![Streamlitを使ってチャットアプリを簡単に作る](https://zenn.dev/nishijima13/articles/7ed472f51240b5)
+  - 普通にchat UIの公式docがわかりやすそうだった![Build a basic LLM chat app
+](https://docs.streamlit.io/develop/tutorials/chat-and-llm-apps/build-conversational-apps)
 
 ## LangChainの状態保持について
 
@@ -54,4 +56,10 @@ v0.2で推奨されていた8つのメモリ機能クラスについて。
 - ConversationEntityMemoryクラス: Entity(=固有名詞?)に関してのみメモリを保持する。
 - ConversationKGMemoryクラス: ナレッジグラフを作って会話についての情報を保持する。
 - ConversationVectorStoreTokenBufferMemoryクラス: 過去会話をベクターストアに保持し、関連する会話のみ探索して用いる。
+
+
+## streamlitのchat UIについて
+
+- `st.chat_message`コンポーネント
+- `st.chat_input`コンポーネント
 
