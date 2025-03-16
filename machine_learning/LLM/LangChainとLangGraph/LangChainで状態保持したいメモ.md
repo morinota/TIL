@@ -6,7 +6,9 @@
 
 - わかりやすかったブログ: [langchain version0.3におけるメモリ機能の備忘録](https://qiita.com/ayoyo/items/276b4a6dc49037782b92)
 - LangChain公式のv0.2からv0.3のメモリ移行についてまとめたページ: [How to migrate to LangGraph memory](https://python.langchain.com/docs/versions/migrating_memory/)
-- Streamlitでチャット履歴を実装するならこれを参考にできそう: [RAG機能付きチャットボットを作ろう-5_チャット表示のMarkdown化](https://zenn.dev/bluetang/articles/chatbot_with_lc_st_chromadb_05)
+- Streamlitでチャット履歴を実装するならこれを参考にできそう
+  - [RAG機能付きチャットボットを作ろう-5_チャット表示のMarkdown化](https://zenn.dev/bluetang/articles/chatbot_with_lc_st_chromadb_05)
+  - Streamlitのアップデートでchat UIが追加されて、実装が簡単になったらしい...!実装時はこれか公式docを参照したら良さそう![Streamlitを使ってチャットアプリを簡単に作る](https://zenn.dev/nishijima13/articles/7ed472f51240b5)
 
 ## LangChainの状態保持について
 
