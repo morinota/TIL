@@ -94,13 +94,13 @@ In addition to leveraging tables and fields, we organize additional information 
 1. We use DataHub to look up table schemas, field descriptions, the top K values for categorical dimension fields, partition keys, and a classification of fields into metrics, dimensions, and attributes. 
 私たちはDataHubを使用して、テーブルスキーマ、フィールドの説明、カテゴリ次元フィールドの上位K値、パーティションキー、およびフィールドの分類(metrics、dimensions、attributes)を調べます。
 
-2. We collect domain knowledge from users in SQL Bot’s UI. SQL BotのUIからユーザのドメイン知識を収集します。
+2. We collect domain knowledge from users in SQL Bot’s UI. SQL BotのUIからユーザのドメイン知識を収集します。(これはユーザの質問??)
 
 3. We use successful queries from query logs to derive aggregate information, such as table/field popularity and common table joins. 
 クエリログから成功したクエリを使用して、**テーブル/フィールドの人気**や**一般的なテーブル結合**などの集約情報を導出します。
 
 4. We incorporate example queries from internal wikis and from notebooks in DARWIN. 
-**内部ウィキやDARWINのノートブックからの例クエリ**を取り入れます。
+**内部ウィキやDARWINのノートブックからのサンプルクエリ**を取り入れます。
 Because the quality of code in DARWIN can vary, we only include notebooks certified by users and those that meet a set of heuristics for recency and reliability – for instance, we prefer recently created notebooks titled by users that have a high number of executions. 
 **DARWINのコードの品質はさまざまなので、ユーザによって認証されたノートブックと、最近性と信頼性のための一連のヒューリスティック(i.e. ルールベースでの判定ロジック!:thinking:)を満たすノートブックのみを含めます**。
 ヒューリスティックの例: 高い実行回数を持つユーザによって、最近作成されたノートブックは有効とする。
@@ -108,7 +108,7 @@ Because the quality of code in DARWIN can vary, we only include notebooks certif
 <!-- ここまで読んだ! -->
 
 Then, we use LLMs to filter and sort the results from EBR using the knowledge graph. 
-次に、知識グラフを使用して、EBRからの結果をフィルタリングおよびソートするためにLLMsを使用します。(**EBRした結果に対して、知識グラフ*LLMで際フィルタリング&ソートするってことぽい...?**:thinking:)
+次に、知識グラフを使用して、EBRからの結果をフィルタリングおよびソートするためにLLMsを使用します。(**EBRした結果に対して、知識グラフ*LLMで再フィルタリング&ソートするってことぽい...?**:thinking:)
 After retrieving the top 20 tables via EBR, we employ a LLM re-ranker to select the top 7 tables for query writing. 
 **EBRを介して上位20のテーブルを取得した後、クエリ作成のために上位7のテーブルを選択するためにLLM再ランキングを使用**します。
 The inputs to table selection include table descriptions, example queries, domain knowledge, and explanations of internal jargon detected in the user’s question. 
