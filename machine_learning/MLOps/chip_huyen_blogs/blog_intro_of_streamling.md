@@ -202,34 +202,30 @@ We need to find a way to evaluate each model iteration fast, which brings us bac
 
 <!-- ここまで読んだ! -->
 
-## 2. From table to log
+## 2. From table to log　テーブルからログへ
 
 I hope that I’ve convinced you why and where we need streaming in ML. 
-私は、なぜMLにおいてストリーミングが必要であるか、どこで必要であるかを納得させられたことを願っています。
-
+私は、**なぜMLにおいてストリーミングが必要であるか、どこで必要であるか**を納得させられたことを願っています。
 If you’re not convinced, I’d love to hear from you. 
 もし納得できない場合は、ぜひお知らせください。
-
 Now, let’s walk through some of the core concepts behind streaming that I find really cool. 
-さて、私が本当に面白いと思うストリーミングの背後にあるいくつかのコアコンセプトを見ていきましょう。
+さて、私が**本当に面白いと思うストリーミングの背後にあるいくつかのコアコンセプト**を見ていきましょう。
 
 The first article that helped me make sense of streaming is the classic post "The log" by Jay Kreps, a creator of Kafka. 
-ストリーミングを理解するのに役立った最初の記事は、Kafkaの創設者であるJay Krepsによる古典的な投稿「The log」です。
-
+ストリーミングを理解するのに役立った最初の記事は、Kafkaの創設者であるJay Krepsによる古典的な投稿「[The log](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying)」です。
 Side note: Kreps mentioned in a tweet that he wrote the post to see if there was enough interest in streaming for his team to start a company around it. 
 余談ですが、Krepsはツイートで、彼のチームがストリーミングに関する会社を始めるのに十分な関心があるかどうかを確認するためにこの投稿を書いたと述べています。
-
 The post must have been popular because his team spun out of LinkedIn to become Confluent. 
 この投稿は人気があったに違いなく、彼のチームはLinkedInから分社してConfluentになりました。
 
 The core idea of the post (for me) is the duality of table and log. 
-私にとって、この投稿の核心的なアイデアは、テーブルとログの二重性です。
-
+私にとって、**この投稿の核心的なアイデアは、テーブルとログの二重性**です。
 You’re probably already familiar with data tables, like a MySQL table or a pandas DataFrame. 
 おそらく、MySQLテーブルやpandas DataFrameのようなデータテーブルにはすでに慣れているでしょう。
-
 For simplicity, consider the following inventory table. 
 簡単のために、以下の在庫テーブルを考えてみましょう。
+
+![]()
 
 Let’s say, on June 19, you want to make a change to this table – e.g. changing the price of item #3 (Blouse) from $30 to $35. 
 例えば、6月19日にこのテーブルに変更を加えたいとしましょう。つまり、アイテム#3（ブラウス）の価格を$30から$35に変更することです。
@@ -238,28 +234,22 @@ There are many ways to do this, but the 2 common approaches are:
 これを行う方法はいくつかありますが、一般的な2つのアプローチは次のとおりです。
 
 1. Go to where the table is stored and make the change directly (e.g. overwriting a file). 
-1. テーブルが保存されている場所に行き、直接変更を加える（例：ファイルを上書きする）。
-
-This means that we’ll have no way of reverting the change, but many companies do it anyway. 
-これにより、変更を元に戻す方法がなくなりますが、多くの企業はそれでも行います。
+    テーブルが保存されている場所に行き、直接変更を加える（例：ファイルを上書きする）。
+    This means that we’ll have no way of reverting the change, but many companies do it anyway. 
+    これにより、変更を元に戻す方法がなくなりますが、多くの企業はそれでも行います。
 
 2. Send an update with the new price {"timestamp": "2022-06-19 09:23:23", "id": 3, "Price ($)": 35}, and this update will be applied to the table. 
-2. 新しい価格{"timestamp": "2022-06-19 09:23:23", "id": 3, "Price ($)": 35}を含む更新を送信し、この更新がテーブルに適用されます。
-
-Over time, we’ll have a series of ordered updates, which is called a log. 
-時間が経つにつれて、順序付けられた一連の更新があり、これをログと呼びます。
-
-Each update is an example of an event. 
-各更新はイベントの一例です。
-
-Logs are append-only. 
-ログは追加専用です。
-
-You can only append the new events to your existing log. 
-既存のログに新しいイベントを追加することしかできません。
-
-You can’t overwrite previous events. 
-以前のイベントを上書きすることはできません。
+    新しい価格`{"timestamp": "2022-06-19 09:23:23", "id": 3, "Price ($)": 35}`を含む更新を送信し、この更新がテーブルに適用されます。
+    Over time, we’ll have a series of ordered updates, which is called a log. 
+    **時間が経つにつれて、順序付けられた一連の更新があり、これをログと呼びます**。
+    Each update is an example of an event. 
+    各更新はイベントの一例です。
+    Logs are append-only. 
+    ログは追加専用です。
+    You can only append the new events to your existing log. 
+    既存のログに新しいイベントを追加することしかできません。
+    You can’t overwrite previous events. 
+    **以前のイベントを上書きすることはできません**。
 
 ```
 …
@@ -270,74 +260,71 @@ You can’t overwrite previous events.
 
 I’m using wall clock timestamps for readability. 
 私は可読性のために壁時計のタイムスタンプを使用しています。
-
 In practice, wall clocks are unreliable. 
 実際には、壁時計は信頼性がありません。
-
 Distributed systems often leverage logical clock instead. 
-分散システムでは、代わりに論理クロックを利用することがよくあります。
+分散システムでは、代わりに[論理クロック](https://en.wikipedia.org/wiki/Logical_clock)を利用することがよくあります。
+(ざっくりlogical clock = 分散システムにおいてイベントの発生順序を管理するための仕組み!)
+
+![]()
 
 A table captures the state of data at a point in time. 
 テーブルは、ある時点でのデータの状態をキャプチャします。
-
 Given a table alone, we don’t know what the state of data was a day ago or a week ago. 
 テーブルだけでは、1日前や1週間前のデータの状態がわかりません。
-
 Given a log of all the changes to this table, we can recreate this table at any point in time. 
-このテーブルへのすべての変更のログがあれば、任意の時点でこのテーブルを再作成できます。
+**このテーブルへのすべての変更のログがあれば、任意の時点でこのテーブルを再作成できる**。
 
 You’re already familiar with logs if you work with git. 
-gitを使っているなら、ログにはすでに慣れているでしょう。
-
+**gitを使っているなら、ログにはすでに慣れている**でしょう。
 A git log keeps track of all the changes to your code. 
 gitログは、コードのすべての変更を追跡します。
-
 Given this log, you can recreate your code at any point in time. 
-このログがあれば、任意の時点でコードを再作成できます。
+**このログがあれば、任意の時点でコードを再作成できます**。
 
+(例えば推薦モデルの特徴量として、「直近100件の行動履歴」を使う場合、行動ログを記録しておけば、任意の時点での特徴量の再現が可能になる、って話かな...! それはそうだけど、学習に各サンプルごとに毎回計算するの時間かかる気がするなぁ...!:thinking:)
+(↑後述のセクションを読んで、ちょっと理解が間違ってることに気づいた!「直近100件の行動履歴」を使う場合、行動が追加されるたびに、あるタイムスタンプの「直近100件の行動履歴」をログとして記録しておく、っていう考え方っぽい! これはfeature storeのtime travel機能のイメージ...!:thinking:)
+(前者のログをステートフルログ、後者をステートレスログ、と呼ぶらしい! じゃあたぶんfeature storeのtime travel機能はステートレスログで実装してるのかな...!:thinking:)
 
+<!-- ここまで読んだ! -->
 
 ### Stateless vs. stateful log ステートレスとステートフルのログ
 
 It’s possible to send an event with the price difference only{"id": 3, "Action": "increase", "Price ($)": 5}. 
-価格差のみを持つイベントを送信することが可能です{"id": 3, "Action": "increase", "Price ($)": 5}。
-
+価格差のみを持つイベントを送信することが可能です`{"id": 3, "Action": "increase", "Price ($)": 5}`。
 For this type of event we’ll need to look at the previous price to determine the updated price. 
 このタイプのイベントでは、更新された価格を決定するために前の価格を確認する必要があります。
 
 This is called a stateful event (we need to know the previous state to construct the current state). 
-これはステートフルイベントと呼ばれます（現在の状態を構築するために前の状態を知る必要があります）。
-
+これは**ステートフルイベントと呼ばれます（現在の状態を構築するために前の状態を知る必要があるログ）**。
 The type of event mentioned in #2 is a stateless log. 
-#2で言及されたイベントのタイプはステートレスログです。
-
-Stateful events are required to be processed in order – adding $5 to the blouse price then doubling it is very different from doubling it then adding $5. 
+#2 (上述の例2!) で言及されたイベントのタイプは**ステートレスログ**です。(=ある時点の状態を構築するために、前の状態を知る必要がないログ)
+Stateful events are required to be processed in order – adding $5 to the blouse price then doubling it is very different from doubling it then adding $5.
 ステートフルイベントは順番に処理する必要があります - ブラウスの価格に$5を加えてから倍にすることは、倍にしてから$5を加えることとは非常に異なります。
 
 There’s a whole industry focusing on solving stateful events called Change Data Capture (CDC). 
-ステートフルイベントを解決することに焦点を当てた業界全体があり、これをChange Data Capture（CDC）と呼びます。
-
-See Debezium, Fivetran, Striim. 
+ステートフルイベントを解決することに焦点を当てた業界全体があり、これを**Change Data Capture（CDC）**と呼びます。
+See Debezium, Fivetran, Striim.
 Debezium、Fivetran、Striimを参照してください。
 
-
+<!-- ここまで読んだ! -->
 
 ### Real-time transport and computation engine リアルタイム輸送および計算エンジン
 
 There are two components of a streaming system: the real-time transport and the computation engine.  
-ストリーミングシステムには2つのコンポーネントがあります：リアルタイム輸送と計算エンジン。
+**ストリーミングシステムには2つのコンポーネント**があります：real-time transportとcomputation engine。
 
-- Thereal-time transport, which are basically distributed logs.  
-- リアルタイム輸送は基本的に分散ログです。  
-Data in real-time transports are called streaming data, or “data in motion” as coined by Confluent.  
-リアルタイム輸送のデータはストリーミングデータ、またはConfluentによって名付けられた「動いているデータ」と呼ばれます。  
-Examples: Kafka, AWS Kinesis, GCP Dataflow.  
-例：Kafka、AWS Kinesis、GCP Dataflow。
-
-- Thecomputation engine performs computation (e.g. joining, aggregation, filtering, etc.) on the data being transported.  
-- 計算エンジンは、輸送されているデータに対して計算（例：結合、集約、フィルタリングなど）を実行します。  
-Examples: Flink, KSQL, Beam, Materialize, Decodable, Spark Streaming.  
-例：Flink、KSQL、Beam、Materialize、Decodable、Spark Streaming。
+- The real-time transport, which are basically distributed logs.  
+    **リアルタイム輸送は基本的に分散ログ(i.e. ステートレスログ or ステートフルログ?)**です。  
+    Data in real-time transports are called streaming data, or “data in motion” as coined by Confluent.
+    リアルタイム輸送のデータはストリーミングデータ、またはConfluentによって名付けられた「動いているデータ」と呼ばれます。  
+    Examples: Kafka, AWS Kinesis, GCP Dataflow.  
+    例：Kafka、AWS Kinesis、GCP Dataflow。
+- The computation engine performs computation (e.g. joining, aggregation, filtering, etc.) on the data being transported.  
+    計算エンジンは、輸送されているデータに対して計算（例：結合、集約、フィルタリングなど）を実行します。  
+    Examples: Flink, KSQL, Beam, Materialize, Decodable, Spark Streaming.  
+    例：Flink、KSQL、Beam、Materialize、Decodable、Spark Streaming。
+    (計算エンジンは任意の計算リソース、っていう認識で良さそう...?:thinking:)
 
 Transports usually have capacity for simple computation.  
 輸送は通常、単純な計算の能力を持っています。  
@@ -351,16 +338,16 @@ We’ve discussed logs at length.
 From the next section onward, we’ll focus on stream computation.  
 次のセクション以降では、ストリーム計算に焦点を当てます。
 
-
+<!-- ここまで読んだ! -->
 
 ## 3. ストリーム処理の簡単な例
 
 Imagine that we want to use the average price of all items a user has looked at as a feature. 
-ユーザが見たすべてのアイテムの平均価格を特徴量として使用したいと考えたとします。 
+**あるユーザが見たすべてのアイテムの平均価格を特徴量として使用したいケース**と考えたとします。 
 If we put all these items into a table, the feature definition might look something like this. 
 これらのアイテムをテーブルに入れると、特徴量の定義は次のようになります。 
 This is batch processing. 
-これはバッチ処理です。
+これはバッチ処理です。(i.e. バッチ特徴量の扱い...!:thinking:)
 
 ```
 # Pseudocode
@@ -369,143 +356,130 @@ return sum(table.price) / len(table)
 ```
 
 If, instead, we have a log of all item updates, how should we compute the average price? 
-代わりに、すべてのアイテムの更新ログがある場合、平均価格はどのように計算すべきでしょうか？
+代わりに、**すべてのアイテムの更新ログがある場合、平均価格はどのように計算すべき**でしょうか？
 
-
+<!-- ここまで読んだ! -->
 
 ### Internal state and checkpoints 内部状態とチェックポイント
 
 One way to do it is to process events in the log (replay the log) from the beginning of time to recreate the inventory table of all items. 
-その方法の一つは、ログ内のイベントを処理（ログを再生）し、すべてのアイテムの在庫テーブルを再作成することです。しかし、実際には平均価格を取得するために全体のテーブルを追跡する必要はありません。 
+その方法の一つは、ログ内のイベントを処理（ログを再生）し、すべてのアイテムの在庫テーブルを再作成することです。しかし、実際には平均価格を取得するために全体のテーブルを追跡する必要はありません。
 私たちが必要とするのは、すべてのアイテムの合計価格とアイテム数だけです。 The average price can be computed from these two values. 
 平均価格はこれら二つの値から計算できます。The total price and the count constitute the internal state of the stream processing job. 
 合計価格とカウントは、ストリーム処理ジョブの内部状態を構成します。We say this computation is stateful because we keep track of the internal state between computation. 
 この計算は、計算の間に内部状態を追跡するため、状態を持つ（stateful）といいます。
 
-```
+```python
 # Pseudocode 擬似コード
 def average_price(log):
-initialize total_price, item_count
-for each event in the log:
-update total_price, item_count
-avg_price = total_price / item_count
-return avg_price
+    initialize total_price, item_count
+    for each event in the log:
+        update total_price, item_count
+    avg_price = total_price / item_count
+    return avg_price
 ```
 
 If the log is large (in 2021, Netflix was processing 20 trillion events a day!), replaying the log from the beginning can be prohibitively slow. 
 ログが大きい場合（2021年にはNetflixが1日あたり20兆のイベントを処理していました！）、最初からログを再生するのは非常に遅くなる可能性があります。To mitigate this, we can occasionally save the internal state of the job, e.g. once every hour. 
-これを軽減するために、私たちは時折ジョブの内部状態を保存することができます。例えば、1時間ごとに保存します。The saved internal state is called a checkpoint (or savepoint), and this job can resume from any checkpoint. 
-保存された内部状態はチェックポイント（checkpoint）またはセーブポイント（savepoint）と呼ばれ、このジョブは任意のチェックポイントから再開できます。The function above will be updated as follows: 
+これを軽減するために、私たちは**時折ジョブの内部状態を保存することができます。例えば、1時間ごとに保存**します。The saved internal state is called a checkpoint (or savepoint), and this job can resume from any checkpoint. 
+**保存された内部状態はチェックポイント（checkpoint）またはセーブポイント（savepoint）と呼ばれ、このジョブは任意のチェックポイントから再開できます**。The function above will be updated as follows: 
 上記の関数は次のように更新されます。
+(あ〜、推薦モデルの「直近100件の行動履歴」特徴量を使う場合、checkpointは直近100件の行動履歴のlistでありそれを定期的に永続化しつつ、新しいログが入ってくるたびに内部状態を更新しながら特徴量を最新化する、っていうイメージかな...!:thinking:)
 
-```
+```python
 # Pseudocode 擬似コード
 def average_price(log):
-find the latest checkpoint X
-load total_price, item_count from X
-for each event in the log after X:
-update total_price, item_count
-avg_price = total_price / item_count
-return avg_price
+    find the latest checkpoint X
+    load total_price, item_count from X
+    for each event in the log after X:
+        update total_price, item_count
+    avg_price = total_price / item_count
+    return avg_price
 ```
 
+![]()
 
+<!-- ここまで読んだ! -->
 
 ### Materialized view マテリアライズドビュー
 
 The computed average price value, if saved, will become a materialized view of the feature average price. 
-計算された平均価格の値が保存されると、それは特徴の平均価格のマテリアライズドビューになります。
-
+計算された平均価格の値が保存されると、それは特徴量のマテリアライズドビューになります。
 Each time we query from the materialized view, we don’t recompute the value, but read the saved value. 
-マテリアライズドビューからクエリを実行するたびに、値を再計算するのではなく、保存された値を読み取ります。
+**マテリアライズドビューからクエリを実行するたびに、値を再計算するのではなく、保存された値を読み取ります**。(うんうん、viewじゃなくてmaterialized viewだ...!:thinking:)
 
 You might wonder: “Why must we come up with a new term like materialized view instead of saying saved copy or cache?” 
-「なぜsaved copyやcacheではなく、materialized viewという新しい用語を考え出さなければならないのか？」と疑問に思うかもしれません。
+「**なぜsaved copyやcacheではなく、materialized viewという新しい用語を考え出さなければならないのか？**」と疑問に思うかもしれません。
 
 Because “saved copy” or “cache” implies that the computed value will never change. 
-なぜなら、「保存されたコピー」や「キャッシュ」は、計算された値が決して変わらないことを意味するからです。
-
+なぜなら、**「保存されたコピー」や「キャッシュ」は、計算された値が決して変わらないことを意味する**からです。
 Materialized views can change due to late arrivals. 
-マテリアライズドビューは、遅延到着によって変わる可能性があります。
-
+**マテリアライズドビューは、遅延到着によって変化し得る**。
 If an event that happened at 10.15am got delayed and arrived at 11.10am, all the materialized views that might be affected by this update should be recomputed to account for this delayed event. 
 午前10時15分に発生したイベントが遅延し、午前11時10分に到着した場合、この更新によって影響を受ける可能性のあるすべてのマテリアライズドビューは、この遅延イベントを考慮するために再計算されるべきです。
-
 I say “should” because not all implementations do this. 
 「すべき」と言うのは、すべての実装がこれを行うわけではないからです。
 
 Reading from a materialized view is great for latency, since we don’t need to recompute the feature. 
 マテリアライズドビューから読み取ることは、レイテンシにとって素晴らしいです。なぜなら、特徴を再計算する必要がないからです。
-
 However, the materialized view will eventually become outdated. 
 しかし、マテリアライズドビューは最終的に古くなります。
-
 Materialized views will need to be refreshed (recomputed) either periodically (every few minutes) or based on a change stream. 
-マテリアライズドビューは、定期的（数分ごと）に、または変更ストリームに基づいてリフレッシュ（再計算）する必要があります。
+**マテリアライズドビューは、定期的（数分ごと）に、または変更ストリームに基づいてリフレッシュ（再計算）する必要があります**。
 
 When refreshing a materialized view, you can recompute it from scratch (e.g. using all the items to compute their average price). 
-マテリアライズドビューをリフレッシュする際には、最初から再計算することができます（例：すべてのアイテムを使用して平均価格を計算する）。
-
+マテリアライズドビューをリフレッシュする際には、**最初から再計算**することができます（例：すべてのアイテムを使用して平均価格を計算する）。
 Or you can update it using only the new information (e.g. using the latest materialized average price + the prices of updated items). 
-または、新しい情報のみを使用して更新することもできます（例：最新のマテリアライズド平均価格 + 更新されたアイテムの価格）。
-
+**または、新しい情報のみを使用して更新**することもできます（例：最新のマテリアライズド平均価格 + 更新されたアイテムの価格）。
 The latter is called incremental materialized. 
-後者はインクリメンタルマテリアライズドと呼ばれます。
-
+後者は**incremental materialized**と呼ばれます。(へぇー!:thinking:)
 For those interested, Materialize has a great article with examples on materialized and incremental materialized. 
-興味のある方のために、Materializeにはマテリアライズドとインクリメンタルマテリアライズドに関する素晴らしい記事と例があります。
+興味のある方のために、Materializeには[materializedとincremental materializedに関する素晴らしい記事](https://materialize.com/why-use-a-materialized-view/)があります。
 
-
+<!-- ここまで読んだ! -->
 
 ## 4. タイムトラベルとバックフィリング
 
 We’ve talked about how to compute a feature on the latest data. 
-最新のデータで特徴量を計算する方法について話しました。 
+(前のセクションにて)最新のデータで特徴量を計算する方法について話しました。 
 Next, we’ll discuss how to compute a feature in the past. 
-次に、過去のデータで特徴量を計算する方法について説明します。 
+次に、**過去のデータで特徴量を計算する方法**について説明します。 
 
 Imagine that the latest price for the item blouse in our inventory is $35. 
 私たちの在庫にあるブラウスの最新の価格が$35であると想像してください。 
 We want to compute the avg_price feature as it would’ve happened on June 10. 
-私たちは、6月10日に発生したであろう avg_price 特徴量を計算したいと考えています。 
+私たちは、**6月10日(i.e. 過去!)に発生したであろう avg_price 特徴量を計算したい**と考えています。 
 There are two ways this feature might have differed in the past: 
 この特徴量が過去に異なっていた可能性がある方法は2つあります。 
 
 - The data was different. For example, the blouse’s price was $30 instead of $35. 
-- データが異なっていました。例えば、ブラウスの価格は$35ではなく$30でした。 
+    データが異なっていました。例えば、ブラウスの価格が$35ではなく$30でした。
 - The feature logic was different. For example: 
-- 特徴量のロジックが異なっていました。例えば： 
-- Today, the avg_price feature computes the average raw price of all items. 
-- 今日、avg_price 特徴量はすべてのアイテムの平均生の価格を計算します。 
-- On June 10, the avg_price feature computes the average listed price, and the listed price is the raw price plus discount. 
-- 6月10日には、avg_price 特徴量が平均リスト価格を計算し、リスト価格は生の価格に割引を加えたものです。 
-- Today, the avg_price feature computes the average raw price of all items. 
-- 今日、avg_price 特徴量はすべてのアイテムの平均生の価格を計算します。 
-- On June 10, the avg_price feature computes the average listed price, and the listed price is the raw price plus discount. 
-- 6月10日には、avg_price 特徴量が平均リスト価格を計算し、リスト価格は生の価格に割引を加えたものです。 
-- Today, the avg_price feature computes the average raw price of all items. 
-- 今日、avg_price 特徴量はすべてのアイテムの平均生の価格を計算します。 
-- On June 10, the avg_price feature computes the average listed price, and the listed price is the raw price plus discount. 
-- 6月10日には、avg_price 特徴量が平均リスト価格を計算し、リスト価格は生の価格に割引を加えたものです。 
+    特徴量のロジックが異なっていました。例えば： 
+    - Today, the avg_price feature computes the average raw price of all items. 今日、avg_price特徴量はすべてのアイテムの平均生の価格を計算します。
+    - On June 10, the avg_price feature computes the average listed price, and the listed price is the raw price plus discount. 
+    6月10日には、avg_price特徴量は平均リスト価格を計算し、リスト価格は生の価格に割引を加えたものです。
 
 If we accidentally use the data or the feature logic from today instead of the data & logic from June 10, it means there is a leakage from the future. 
-もし私たちが誤って6月10日のデータとロジックの代わりに今日のデータやロジックを使用した場合、それは未来からの漏洩があることを意味します。 
+**もし私たちが誤って6月10日のデータとロジックの代わりに今日のデータやロジックを使用した場合、それは未来からの漏洩があることを意味します**。
+(今日のデータを使っちゃうのはリークってわかりやすいけど、今日のロジックの話は? 新しい特徴量の作り方の良し悪しを評価するときは、過去のデータで新しい特徴量ロジックを計算すべきだよね...!  :thinking: あ、このケースはすぐ下でbackfillingとして説明してくれてた!:pray:)
 Point-in-time correctness refers to a system’s ability to accurately perform a computation as it would’ve happened at any time in the past. 
-ポイントインタイムの正確性は、システムが過去の任意の時点で発生したであろう計算を正確に実行する能力を指します。 
+**ポイントインタイムの正確性は、システムが過去の任意の時点で発生したであろう計算を正確に実行する能力**を指します。 
 Point-in-time correctness means no data leakage. 
-ポイントインタイムの正確性は、データの漏洩がないことを意味します。 
+ポイントインタイムの正確性は、**データの漏洩がないこと**を意味します。
+(意図しないデータリークを防ぐ、という意味で、point-in-time correctnessは重要な要素...!:thinking:)
 
 Retroactively processing historical data using a different logic is also called backfilling. 
-異なるロジックを使用して過去のデータを遡って処理することは、バックフィリングとも呼ばれます。 
+**異なるロジックを使用して過去のデータを遡って処理することは、バックフィリングとも呼ばれます**。(あ、納得!:thinking:)
 Backfilling is a very common operation in data workflows, e.g. see backfilling in Airflow and Amplitude. 
-バックフィリングはデータワークフローにおいて非常に一般的な操作であり、例えばAirflowやAmplitudeでのバックフィリングを参照してください。 
+**バックフィリングはデータワークフローにおいて非常に一般的な操作**であり、例えばAirflowやAmplitudeでのバックフィリングを参照してください。 
 Backfilling can be done both in batch and streaming. 
-バックフィリングはバッチ処理とストリーミングの両方で行うことができます。 
+**バックフィリングはバッチ処理とストリーミングの両方で行うことができます**。 
 
 - With batch backfilling, you can apply the new logic (e.g. new feature definition) to a table in the past. 
-- バッチバックフィリングでは、新しいロジック（例えば、新しい特徴量定義）を過去のテーブルに適用できます。 
+    バッチバックフィリングでは、新しいロジック（例えば、新しい特徴量定義）を過去のテーブルに適用できます。 
 - With stream backfilling, you can apply the new logic to the log in a given period of time in the past, e.g. apply it to the log on June 10, 2022. 
-- ストリームバックフィリングでは、過去の特定の期間のログに新しいロジックを適用できます。例えば、2022年6月10日のログに適用します。 
+    ストリームバックフィリングでは、過去の特定の期間のログに新しいロジックを適用できます。例えば、2022年6月10日のログに適用します。 
 
 Time travel is hard, because we need to keep track of the states of your data over time. 
 タイムトラベルは難しいです。なぜなら、私たちはデータの状態を時間の経過とともに追跡する必要があるからです。 
@@ -514,106 +488,100 @@ It can get very complicated if your data is joined from multiple places.
 For example, the average listed price depends on raw prices and discounts, both of them can independently change over time. 
 例えば、平均リスト価格は生の価格と割引に依存しており、両方とも独立して時間とともに変化する可能性があります。
 
-
+<!-- ここまで読んだ! -->
 
 ### Time travel in ML workflows MLワークフローにおけるタイムトラベル
 
 There are many scenarios in an ML workflow where time travel is necessary, but here are the two major ones: 
-MLワークフローにはタイムトラベルが必要なシナリオが多くありますが、ここでは2つの主要なシナリオを紹介します。
+MLワークフローには**タイムトラベルが必要なシナリオ**が多くありますが、ここでは2つの主要なシナリオを紹介します。
 
 - to ensure the train-predict consistency for online features (also known as online-offline skew or training-serving skew) 
-- オンライン機能（オンライン-オフラインの偏りまたはトレーニング-サービングの偏りとも呼ばれる）のためにトレーニングと予測の一貫性を確保すること
-
+    オンライン特徴量のために**学習と推論の一貫性を確保**すること（オンライン-オフラインの偏りまたはトレーニング-サービングの偏りとも呼ばれる）
 - to compare two models on historical data 
-- 歴史的データに基づいて2つのモデルを比較すること
+    過去データを使って2つのモデルを比較するため
+
+#### Train-predict consistency for online features オンライン特徴量の学習と推論の一貫性
 
 Online prediction can cause train-predict inconsistency. 
 オンライン予測はトレーニングと予測の不一致を引き起こす可能性があります。
-
 Imagine our model does online prediction using online features, one of them is the average price of all the items this user has looked at in the last 30 minutes. 
-私たちのモデルがオンライン機能を使用してオンライン予測を行うと仮定しましょう。その一つは、このユーザーが過去30分間に見たすべてのアイテムの平均価格です。
-
+私たちのモデルがオンライン特徴量を使用してオンライン予測を行うと仮定しましょう。その一つは、このユーザーが過去30分間に見たすべてのアイテムの平均価格です。
 Whenever a prediction request arrives, we compute this feature using the prices for these items at that moment, possibly using stream processing. 
-予測リクエストが到着するたびに、私たちはその時点でのこれらのアイテムの価格を使用してこの機能を計算します。おそらくストリーム処理を使用して。
+予測リクエストが到着するたびに、私たちはその時点でのこれらのアイテムの価格を使用してこの特徴量を計算します。おそらくストリーム処理を使用して。
 
 During training, we want to use this same feature, but computed on historical data, such as data from the last week. 
-トレーニング中には、この同じ機能を使用したいのですが、過去1週間のデータなどの歴史的データに基づいて計算します。
-
+トレーニング中には、この同じ特徴量を使用したいのですが、過去1週間のデータなどの歴史的データに基づいて計算します。
 Over the last week, however, the prices for many items have changed, some have changed multiple times. 
 しかし、過去1週間で多くのアイテムの価格が変わり、一部は何度も変わっています。
-
 We need time travel to ensure that the historical average prices can be computed correctly at each given point in time. 
-私たちは、歴史的な平均価格が各時点で正しく計算できるようにするためにタイムトラベルが必要です。
+私たちは、**歴史的な平均価格が各時点で正しく計算できるようにするためにタイムトラベルが必要**です。
+
+#### Production-first ML
 
 Traditionally, ML workflows are development-first. 
 従来、MLワークフローは開発優先です。
-
 Data scientists experiment with new features for the training pipeline. 
-データサイエンティストはトレーニングパイプラインのための新しい機能を試します。
-
+データサイエンティストはトレーニングパイプラインのための新しい特徴量を試します。
 Feature definitions, aka feature logic, are often written for batch processing, blissfully unaware of the time-dependent nature of data. 
-機能定義、つまり機能ロジックは、しばしばバッチ処理のために書かれ、データの時間依存性を無視しています。
-
+**特徴量定義、つまり特徴量ロジックは、しばしばバッチ処理のために書かれ、データの時間依存性を無視している。**
 Training data often doesn’t even have timestamps. 
-トレーニングデータには、しばしばタイムスタンプすらありません。
+**学習データには、しばしばタイムスタンプすらありません**。(あった方が良いってことか〜...!:thinking:)
 
 This approach might help data scientists understand how a model or feature does during training, but not how this model / feature will perform in production, both performance-wise (e.g. accuracy, F1) and operation-wise (e.g. latency). 
-このアプローチは、データサイエンティストがトレーニング中にモデルや機能がどのように機能するかを理解するのに役立つかもしれませんが、このモデル/機能が本番環境でどのように機能するか（パフォーマンス面（例：精度、F1）および運用面（例：レイテンシ））を理解するのには役立ちません。
+このアプローチは、データサイエンティストがトレーニング中にモデルや特徴量がどのように機能するかを理解するのに役立つかもしれませんが、このモデル/特徴量が**本番環境(i.e. 推論時)でどのように機能するか（性能的には（例：精度、F1）、運用的には（例：レイテンシ））はわかりません**。
 
 At deployment, ML or ops engineers need to translate these batch features into streaming features for the prediction pipeline and optimize them for latency. 
-デプロイ時に、MLまたは運用エンジニアは、これらのバッチ機能を予測パイプラインのためのストリーミング機能に変換し、レイテンシの最適化を行う必要があります。
-
-Errors during this translation process – e.g. changes or assumptions in one pipeline not updated or insufficiently tested in another – create train-predict inconsistency. 
-この翻訳プロセス中のエラー（例：あるパイプラインでの変更や仮定が別のパイプラインで更新されていない、または十分にテストされていない）は、トレーニングと予測の不一致を引き起こします。
+デプロイ時に、MLまたはopsエンジニアは、これらのバッチ特徴量を予測パイプラインのためのストリーミング特徴量に変換し、レイテンシの最適化を行う必要があります。(このあたりの話を簡単にするために、FTI Pipelines的に分けて、feature storeを採用するのがベストプラクティスと言われるのかな...!:thinking:)
+Errors during this translation process – e.g. changes or assumptions in one pipeline not updated or insufficiently tested in another – create train-predict inconsistency.
+この変換プロセス中のエラー（例：あるパイプラインでの変更や仮定が別のパイプラインで更新されていない、または十分にテストされていない）は、トレーニングと予測の不一致を引き起こします。
 
 This inconsistency gets worse when the training and prediction pipelines use different languages, e.g. the training pipeline uses Python and the prediction pipeline uses SQL or Java. 
-この不一致は、トレーニングパイプラインがPythonを使用し、予測パイプラインがSQLまたはJavaを使用する場合に悪化します。
+**この不一致は、トレーニングパイプラインがPythonを使用し、予測パイプラインがSQLまたはJavaを使用する場合に悪化**します。
+
+<!-- ここまで読んだ! -->
 
 To avoid this inconsistency, we should get rid of the translation process altogether. 
-この不一致を避けるために、私たちは翻訳プロセスを完全に排除すべきです。
-
+この不一致を避けるために、私たちは変換プロセスを完全に排除すべきです。
 What if we let data scientists experiment with features for the prediction pipeline directly? 
-データサイエンティストが予測パイプラインのための機能を直接試すことができるとしたらどうでしょうか？
-
+データサイエンティストが予測パイプラインのための特徴量を直接試すことができるとしたらどうでしょうか？
 You can write new features as they will be used in production. 
-本番環境で使用されるように新しい機能を書くことができます。
-
+本番環境で使用されるように新しい特徴量を書くことができます。
 To test out these new features, you apply them to historical data to generate training data to train models. 
-これらの新しい機能をテストするために、歴史的データに適用してトレーニングデータを生成し、モデルをトレーニングします。
-
+これらの新しい特徴量をテストするために、歴史的データに適用してトレーニングデータを生成し、モデルをトレーニングします。
 Applying new feature logic to historical data is exactly what backfilling is. 
-新しい機能ロジックを歴史的データに適用することは、まさにバックフィリングです。
-
+**新しい特徴量ロジックを歴史的データに適用することは、まさにバックフィリング**です。
+(これってFeature Pipelineをデプロイしてから、オフライン学習などの実験に使う、みたいなイメージなのかな...:thinking:)
 With this setup, ML workflows become production-first! 
 この設定により、MLワークフローは本番優先になります！
 
 Thanks to its ability to support both streaming and batch processing, SQL has emerged to be a popular language for production-first ML workflows. 
-ストリーミングとバッチ処理の両方をサポートする能力のおかげで、SQLは本番優先のMLワークフローにおいて人気のある言語となっています。
-
+**ストリーミングとバッチ処理の両方をサポートする**能力のおかげで、SQLは本番優先のMLワークフローにおいて人気のある言語となっています。
 In the relational database era, SQL computation engines were entirely in the batch paradigm. 
 リレーショナルデータベースの時代には、SQL計算エンジンは完全にバッチパラダイムにありました。
-
 In recent years, there has been a lot of investment in streaming SQL engines, such as KSQL and Apache Flink. 
 近年、KSQLやApache FlinkなどのストリーミングSQLエンジンへの多くの投資が行われています。
-
 (See Streaming SQL to Unify Batch & Stream Processing w/ Apache Flink @Uber) 
 （ストリーミングSQLを使用してバッチとストリーム処理を統合する @Uberを参照）
 
-Development-first ML workflows: features are written for training and adapted for online prediction. 
-開発優先のMLワークフロー：機能はトレーニングのために書かれ、オンライン予測のために適応されます。
+![]()
 
-Production-first ML workflows: features are written for online prediction and backfilled for training. 
-本番優先のMLワークフロー：機能はオンライン予測のために書かれ、トレーニングのためにバックフィルされます。
+
+**Development-first ML workflows**: features are written for training and adapted for online prediction. 
+開発優先のMLワークフロー：特徴量はトレーニングのために書かれ、オンライン予測のために適応されます。
+**Production-first ML workflows**: features are written for online prediction and backfilled for training. 
+本番優先のMLワークフロー：特徴量はオンライン予測のために書かれ、トレーニングのためにバックフィルされます。
+
+#### Backtest for model comparison
 
 Backfilling to generate features for training is how feature stores like FeatureForm and Tecton ensure train-predict consistency. 
-トレーニングのための機能を生成するためのバックフィリングは、FeatureFormやTectonのような機能ストアがトレーニングと予測の一貫性を確保する方法です。
-
+トレーニングのための特徴量を生成するためのバックフィリングは、FeatureFormやTectonのような特徴量ストアがトレーニングと予測の一貫性を確保する方法です。
 However, most feature stores only support limited streaming computation engines, which can pose performance (latency + cost) challenges when you want to work with complex online features. 
-しかし、ほとんどの機能ストアは限られたストリーミング計算エンジンしかサポートしておらず、複雑なオンライン機能を扱う際にパフォーマンス（レイテンシ + コスト）の課題を引き起こす可能性があります。
+しかし、ほとんどの特徴量ストアは限られたストリーミング計算エンジンしかサポートしておらず、複雑なオンライン機能を扱う際にパフォーマンス（レイテンシ + コスト）の課題を引き起こす可能性があります。
+
+![]()
 
 Imagine your team is using model A to serve live prediction requests, and you just came up with a new model B. 
 あなたのチームがモデルAを使用してライブ予測リクエストに応答していると仮定し、あなたは新しいモデルBを考案しました。
-
 Before A/B testing model B on live traffic, you want to evaluate model B on the most recent data, e.g. on the prediction requests from the last day. 
 モデルBをライブトラフィックでA/Bテストする前に、最新のデータ（例：過去1日の予測リクエスト）でモデルBを評価したいと考えています。
 
@@ -621,15 +589,14 @@ To do so, you replay the requests from the last day, and use model B to generate
 そのために、過去1日のリクエストを再生し、モデルBを使用してそれらのリクエストに対する予測を生成し、Aの代わりにBを使用していた場合のパフォーマンスを確認します。
 
 If model B uses exactly the same feature logic as model A, model B can reuse the features previously computed for model A. 
-モデルBがモデルAとまったく同じ機能ロジックを使用している場合、モデルBは以前にモデルAのために計算された機能を再利用できます。
-
+モデルBがモデルAとまったく同じ特徴量ロジックを使用している場合、モデルBは以前にモデルAのために計算された特徴量を再利用できます。
 However, if model B uses a different feature set, you’ll have to backfill, apply model B’s feature logic to data from the last day, to generate features for model B. 
 しかし、モデルBが異なる機能セットを使用している場合、バックフィルを行い、モデルBの機能ロジックを過去1日のデータに適用してモデルBのための機能を生成する必要があります。
 
 This is also called a backtest. 
 これはバックテストとも呼ばれます。
 
-
+<!-- ここまで読んだ! backtestよくわからなかった! -->
 
 ### Time travel challenges for data scientists データサイエンティストのためのタイムトラベルの課題
 
@@ -639,7 +606,7 @@ What should they do?
 彼らはどうすればよいのでしょうか？
 
 It’s impossible to time travel without timestamps. 
-タイムスタンプなしでタイムトラベルすることは不可能です。 
+**タイムスタンプなしでタイムトラベルすることは不可能**です。 
 This is not a problem that data scientists can solve without having control over how data is ingested and stored. 
 これは、データがどのように取り込まれ、保存されるかを制御できないデータサイエンティストが解決できる問題ではありません。
 
@@ -649,25 +616,24 @@ So why don’t data scientists have access to data with timestamps?
 One reason is that data platforms might have been designed using practices from an era where ML production wasn’t well understood. 
 一つの理由は、データプラットフォームがMLプロダクションが十分に理解されていなかった時代の慣行を用いて設計された可能性があることです。 
 Therefore, they were not designed with ML production in mind, and timestamps weren’t considered an important artifact to keep track of. 
-したがって、MLプロダクションを考慮して設計されておらず、タイムスタンプは追跡すべき重要なアーティファクトとは見なされていませんでした。
+したがって、**MLプロダクションを考慮して設計されておらず、タイムスタンプは追跡すべき重要なアーティファクトとは見なされていませんでした**。
 
 Another reason is the lack of communication between those who ingest the data (e.g. the data platform team) and those who consume the data (e.g. the data science team). 
-もう一つの理由は、データを取り込む人々（例：データプラットフォームチーム）とデータを消費する人々（例：データサイエンスチーム）との間のコミュニケーションの欠如です。 
+もう一つの理由は、**データを取り込む人々（例：データプラットフォームチーム）とデータを消費する人々（例：データサイエンスチーム）との間のコミュニケーションの欠如**です。 
 Many companies already have application logs, however, the timestamps are not retained during data ingestion or processing, or they are retained somewhere that data scientists don’t access to. 
 多くの企業はすでにアプリケーションログを持っていますが、タイムスタンプはデータの取り込みや処理中に保持されず、またはデータサイエンティストがアクセスできない場所に保持されています。
 
 This is an operational issue that companies who want modern ML workflows will need to invest into. 
-これは、現代のMLワークフローを望む企業が投資する必要がある運用上の問題です。 
+**これは、現代のMLワークフローを望む企業が投資する必要がある運用上の問題**です。 
 Without a well-designed data pipeline, data scientists won’t be able to build production-ready data applications. 
 適切に設計されたデータパイプラインがなければ、データサイエンティストはプロダクション対応のデータアプリケーションを構築することができません。
 
-
+<!-- ここまで読んだ! -->
 
 ## 5. Why is streaming hard? なぜストリーミングは難しいのか？
 
 I hope that by now, I’ve convinced you why streaming is important for ML workloads. 
-これまでに、ストリーミングが機械学習（ML）ワークロードにとって重要である理由を納得させられたことを願っています。
-
+これまでのセクションで、ストリーミングが機械学習（ML）ワークロードにとって重要である理由を納得させられたことを願っています。
 Another question is: if streaming is so important, why is it not more common in ML workflows? 
 もう一つの疑問は、ストリーミングがそれほど重要であれば、なぜMLワークフローでより一般的ではないのかということです。
 
@@ -676,42 +642,32 @@ Because it’s hard.
 
 If you’ve worked with streaming before, you probably don’t need any convincing. 
 もし以前にストリーミングを扱ったことがあるなら、あなたはおそらく納得する必要はないでしょう。
-
 Tyler Aikidau gave a fantastic talk on the open challenges in stream processing. 
 Tyler Aikidauは、ストリーム処理におけるオープンな課題について素晴らしい講演を行いました。
-
 Here, I’ll go over the key challenges from my perspective as a data scientist. 
 ここでは、データサイエンティストとしての私の視点から、主要な課題について説明します。
-
 This is far from an exhaustive list. 
 これは決して包括的なリストではありません。
-
 A streaming system needs to be able to handle all of these challenges and more. 
 ストリーミングシステムは、これらすべての課題やそれ以上のものに対処できる必要があります。
-
-
 
 ### Distributed computation 分散計算
 
 Streaming is simple when you have a small amount of updates and they are generated and consumed by one single machine, like the inventory example in From table to log. 
-ストリーミングは、少量の更新があり、それが1台のマシンによって生成され消費される場合、例えば「From table to log」の在庫の例のように、簡単です。
-
+ストリーミングは、**少量の更新があり、それが1台のマシンによって生成され消費される場合は簡単である**。From table to logの在庫の例のように。
+(記事が追加されるたびに新しい特徴量を作る、くらいであればシングルインスタンスで対応できるから簡単そう! ユーザの行動履歴特徴量の場合は、扱うデータの数が増えてスケールアウト構成にする必要がありそう:thinking:)
 However, a real-world application can have hundreds, if not thousands, of microservices, spread out over different machines. 
 しかし、実世界のアプリケーションには、数百、あるいは数千のマイクロサービスが異なるマシンに分散して存在する可能性があります。
-
 Many of these machines might try to read and write from the same log. 
 これらのマシンの多くは、同じログから読み書きしようとするかもしれません。
-
 Streaming systems are highly distributed. 
 ストリーミングシステムは非常に分散化されています。
-
 Engineers working directly with streaming need to have a deep understanding of distributed systems, which not many data scientists would’ve exposure to in their day-to-day jobs. 
 ストリーミングに直接関わるエンジニアは、分散システムについて深く理解している必要がありますが、これは多くのデータサイエンティストが日常業務で触れることのない分野です。
-
 We need good abstraction to enable data scientists to leverage streaming without having to deal with the underlying distributed systems. 
-私たちは、データサイエンティストが基盤となる分散システムに対処することなくストリーミングを活用できるようにするための良い抽象化が必要です。
+私たちは、**データサイエンティストが基盤となる分散システムに対処することなくストリーミングを活用できるようにするための良い抽象化が必要**です。
 
-
+<!-- ここまで読んだ! -->
 
 ### Time-variant results 時間変動結果
 
@@ -720,7 +676,7 @@ Time adds another dimension of complexity.
 If you apply the same query to the same table twice, you’ll get the same result. 
 同じクエリを同じテーブルに2回適用すると、同じ結果が得られます。
 However, if you apply the same query to the same stream twice, you’ll likely get very different results. 
-しかし、同じクエリを同じストリームに2回適用すると、非常に異なる結果が得られる可能性が高いです。
+しかし、**同じクエリを同じストリームに2回適用すると、非常に異なる結果が得られる可能性が高い**です。(冪等性がなくなりがち??)
 
 In batch, if a query fails, you can just rerun it. 
 バッチ処理では、クエリが失敗した場合、単に再実行すればよいです。
@@ -731,147 +687,113 @@ Different stream processing engines have different ways to address this problem.
 For example, Flink uses the Chandy–Lamport algorithm, developed by K. Mani Chandy and the Turing Award winner Leslie Lamport. 
 例えば、Flinkは、K. Mani Chandyとチューリング賞受賞者のLeslie Lamportによって開発されたChandy–Lamportアルゴリズムを使用しています。
 
-
+<!-- ここまで読んだ! -->
 
 ### Cascading failure カスケーディング障害
 
 In a batch setting, jobs are typically scheduled at large intervals, hence fluctuation in workloads isn’t a big deal. 
-バッチ設定では、ジョブは通常大きな間隔でスケジュールされるため、ワークロードの変動はそれほど問題ではありません。
-
+**バッチ設定では、ジョブは通常大きな間隔でスケジュールされるため、ワークロード(=処理時間?みたいなイメージ??)の変動はそれほど問題ではありません**。
 If you schedule a job to run every 24 hours and one run takes 6 hours instead of 4 hours, these extra 2 hours won’t affect the next run. 
 もしジョブを24時間ごとに実行するようにスケジュールし、1回の実行が4時間ではなく6時間かかる場合、これらの追加の2時間は次の実行に影響を与えません。
 
 However, fluctuation in a streaming setting can make it very hard to maintain consistently low latency. 
-しかし、ストリーミング設定における変動は、一貫して低いレイテンシを維持することを非常に難しくする可能性があります。
-
+しかし、**ストリーミング処理における変動は、一貫して低いレイテンシを維持することを非常に難しくする可能性があります**。
 Assuming that your streaming system is capable of handling 100 events / second. 
 あなたのストリーミングシステムが1秒あたり100イベントを処理できると仮定します。
-
 If the traffic is less than 100 events / second, your system is fine. 
 トラフィックが1秒あたり100イベント未満であれば、システムは問題ありません。
-
 If the traffic suddenly surges to 200 events one second, ~100 events will be delayed. 
 もしトラフィックが突然1秒間に200イベントに急増した場合、約100イベントが遅延します。
-
 If not addressed quickly, these delayed 100 seconds will overload your system the next second, and so on, causing your system to significantly slow down. 
-迅速に対処しないと、これらの遅延した100イベントが次の秒にシステムを過負荷にし、その結果、システムが著しく遅くなります。
+**迅速に対処しないと、これらの遅延した100イベントが次の秒にシステムを過負荷にし、その結果、システムが著しく遅くなります**。(スケールアウト構成になっていないと、ストリーミングパイプラインがどんどん詰まっていくって話か...!:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 ### Availability vs. consistency 可用性と一貫性
 
 Imagine that there are two machines trying to send updates about the same item:
 同じアイテムについて更新を送信しようとしている2台のマシンを想像してみてください。
+
 - Machine A, at “03:12:10”, updates that user views product 123
-- Machine Aは「03:12:10」に、ユーザーが製品123を閲覧したと更新します。
+    Machine Aは「03:12:10」に、ユーザーが製品123を閲覧したと更新します。
 - Machine B, at “03:12:16”, updates that user views product 234
-- Machine Bは「03:12:16」に、ユーザーが製品234を閲覧したと更新します。
+    Machine Bは「03:12:16」に、ユーザーが製品234を閲覧したと更新します。
 
 Due to some network delays, machine A’s update is delayed in transit, and arrives later than machine B’s update.
 ネットワークの遅延により、マシンAの更新は遅れて到着し、マシンBの更新よりも遅くなります。
-
 How long should we wait for machine A before computing the average prices of all items the user has looked at in the last 30 minutes?
 過去30分間にユーザーが見たすべてのアイテムの平均価格を計算する前に、マシンAをどれくらい待つべきでしょうか？
 
 If we don’t wait long enough, we’ll miss machine A’s update, and the feature will be incorrect.
 十分に待たなければ、マシンAの更新を見逃し、その機能は不正確になります。
-
 However, if we wait too long, the latency will be low.
 しかし、あまりにも長く待つと、レイテンシが低くなります。
-
 An optimal time window is probably somewhere in the middle.
 最適な時間ウィンドウは、おそらくその中間にあるでしょう。
-
 Therefore, the results of stream computation tend to be approximate.
-したがって、ストリーム計算の結果は概算になる傾向があります。
+**したがって、ストリーム計算の結果は概算になる傾向があります**。
 
 This leads us to an interesting trade-off: availability vs. consistency.
-これは、興味深いトレードオフ、すなわち可用性と一貫性をもたらします。
-
+これは、興味深いトレードオフ、すなわち可用性 vs 一貫性のトレードオフにつながります。
 For our system to be highly available, we’ll want to duplicate the same workload over multiple machines.
 私たちのシステムが高い可用性を持つためには、同じ作業負荷を複数のマシンに複製したいと考えます。
-
 However, the more machines there are, the more stragglers there will be, and the more inconsistent the results of your stream computation will become.
 しかし、マシンが増えれば増えるほど、遅延するマシンが増え、ストリーム計算の結果はより不一致になります。
-
 All large-scale distributed systems, not just streaming systems, have to make this tradeoff.
-ストリーミングシステムだけでなく、すべての大規模分散システムはこのトレードオフを考慮しなければなりません。
+**ストリーミングシステムだけでなく、すべての大規模分散システムはこの可用性vs一貫性のトレードオフを考慮しなければなりません**。
 
-
+<!-- ここまで読んだ! -->
 
 ### Operational challenges 運用上の課題
 
 While streaming technology can be technically hard, the real challenge for companies to adapt streaming is in operations. 
 ストリーミング技術は技術的に難しい場合がありますが、企業がストリーミングに適応する際の本当の課題は運用にあります。
-
 Operating on (near) real-time data streams means that we can make things happen in (near) real-time. 
 (ほぼ)リアルタイムのデータストリームで運用することは、(ほぼ)リアルタイムで物事を実現できることを意味します。
-
 Unfortunately, this means that catastrophes can also happen in (near) real-time. 
-残念ながら、これは災害も(ほぼ)リアルタイムで発生する可能性があることを意味します。
+**残念ながら、これは災害も(ほぼ)リアルタイムで発生する可能性があることを意味します。**
 
 Maintaining a streaming system means that your engineers will have to be on-call 24x7 to respond to incidents quickly. 
 ストリーミングシステムを維持することは、エンジニアが24時間365日待機してインシデントに迅速に対応しなければならないことを意味します。
-
 If you can’t figure out the problems and resolve them fast enough, data streams will be interrupted and you might lose data. 
 問題を特定し、十分に迅速に解決できない場合、データストリームが中断され、データを失う可能性があります。
-
 Because the stake is higher in streaming systems, maintenance of streaming systems requires a high level of automation and mature DevOps practices. 
-ストリーミングシステムではリスクが高いため、ストリーミングシステムの維持には高いレベルの自動化と成熟したDevOpsプラクティスが必要です。
+ストリーミングシステムではリスクが高いため、**ストリーミングシステムの維持には高いレベルの自動化と成熟したDevOpsプラクティスが必要**です。
 
 We’ve talked to many small teams who want to maintain their own Kafka or Flink clusters and it’s not pretty. 
 私たちは、自分たちのKafkaやFlinkクラスターを維持したいと考えている多くの小さなチームと話をしましたが、状況はあまり良くありません。
-
 Streaming is an area where I can see a lot of values in managed services (e.g. Confluent instead of Kafka). 
-ストリーミングは、マネージドサービス（例：Kafkaの代わりにConfluent）に多くの価値が見出せる分野です。
+**ストリーミングは、マネージドサービス（例：Kafkaの代わりにConfluent）に多くの価値が見出せる分野**です。
 
-
+<!-- ここまで読んだ! -->
 
 ## Conclusion 結論
 
 Wow, this was a hard post for me to write. 
 わあ、これは私にとって書くのが難しい投稿でした。
-
 I hope you’re still with me. 
 あなたがまだ私と一緒にいてくれることを願っています。
 
 I’m very excited about the application of streaming for ML applications. 
 私は、MLアプリケーションにおけるストリーミングの応用に非常に興奮しています。
-
 My dream is that data scientists should have access to an ML platform that enables them to leverage streaming without having to worry about its underlying complexities. 
 私の夢は、データサイエンティストがその基盤となる複雑さを気にせずにストリーミングを活用できるMLプラットフォームにアクセスできることです。
-
 This platform needs to provide a high-enough level of abstraction for things to just work, while being flexible enough for data scientists to customize their workflows. 
 このプラットフォームは、物事がうまく機能するために十分なレベルの抽象化を提供し、データサイエンティストが自分のワークフローをカスタマイズできるように十分な柔軟性を持つ必要があります。
 
 I know that leveraging streaming for ML is hard right now and I believe in the value of making it easier, so I’m working on it. 
-ストリーミングをMLに活用することが今は難しいことを知っており、それを容易にする価値を信じているので、私はそれに取り組んでいます。
-
+**ストリーミングをMLに活用することが今は難しいこと**を知っており、それを容易にする価値を信じているので、私はそれに取り組んでいます。
 Hit me up if you want to chat! 
 もし話したいことがあれば、気軽に連絡してください！
 
 This is a relatively new field, and I’m still learning too. 
 これは比較的新しい分野であり、私もまだ学んでいます。
-
 I’d appreciate any feedback and discussion points you have! 
 あなたのフィードバックや議論のポイントをいただけると嬉しいです！
-
-
 
 ## Acknowledgment 謝辞
 
 Thanks Zhenzhong Xu for having patiently answered all my dumb questions on streaming, Luke Metz, Chloe He, Han-chung Lee, Dan Turkel, and Robert Metzger.
 Zhenzhong Xuには、ストリーミングに関する私の愚かな質問に忍耐強く答えてくれたことに感謝します。また、Luke Metz、Chloe He、Han-chung Lee、Dan Turkel、Robert Metzgerにも感謝します。
 
-- hi@[thiswebsite]
-- chiphuyen
-- chipro
-- chipiscrazy
-- huyenchip19
-- chiphuyen
-
-I help companies deploy machine learning into production. 
-私は企業が機械学習を本番環境に展開するのを支援します。
-
-I write about AI applications, tooling, and best practices.
-私はAIアプリケーション、ツール、ベストプラクティスについて執筆しています。
+<!-- ここまで読んだ! -->
