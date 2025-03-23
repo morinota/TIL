@@ -81,8 +81,9 @@
   - refs: https://docs.github.com/ja/actions/writing-workflows/workflow-syntax-for-github-actions#permissions
 - `env`キー: ワークフロー内のジョブに渡す環境変数を指定する。map形式 `KEY: VALUE` で指定する。
   - 任意の粒度(ワークフロー全体、ジョブ全体、ジョブ内のステップ)に対して設定できる。
+- jobsキー: ワークフローに含まれるジョブ集合の設定をこの中に書いていく。
 
-#### `jobs`キー: ワークフローに含まれるジョブの集合
+#### `jobs`キーの書き方メモ
 
 - 各ジョブは`runs-on`で指定されたランナー環境で実行される。
 
@@ -108,6 +109,9 @@ jobs:
         ...
 ```
 
+#### `on`キーの書き方メモ
+
+- hoge
 
 ## Github Actionsでのシークレット値の使用
 
