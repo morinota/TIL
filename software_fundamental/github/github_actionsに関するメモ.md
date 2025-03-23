@@ -66,7 +66,43 @@
 
 ## ワークフローファイルのyamlの書き方
 
-- ワークフローファイル達は、リポジトリの `.github/workflows` ディレクトリ以下に置く。
+- ワークフローファイル達は`.yml`もしくは`.yaml`で記述され、リポジトリの `.github/workflows` ディレクトリ以下に保存する必要がある。
+- 0から書かなくても、ワークフローテンプレートを使って最小限の書き換えで始められるらしい。
+  - **まあ大体やりたいことのパターンは決まってる感あるので、既存リポジトリのコピペで大抵のことは事足りそう**...!:thinking:
+
+### ワークフローファイルの構文
+
+- `name`キー: ワークフローの名前を指定。
+- `run-name`キー: ある一回のワークフロー実行の名前。(式とか含められる!)
+- `on`キー: ワークフローをトリガーするイベントを指定。
+  - 色々設定方法のレパートリーがありそう: https://docs.github.com/ja/actions/writing-workflows/workflow-syntax-for-github-actions#on
+- `permissions`キー: ワークフロー内のジョブに対する特定のアクセス権限たちを指定する。
+  - 最上位に指定してワークフロー内のすべてのジョブに適用することもできるし、個別のジョブに対して指定することもできる。
+  - refs: https://docs.github.com/ja/actions/writing-workflows/workflow-syntax-for-github-actions#permissions
+- `env`キー: ワークフロー内のジョブに渡す環境変数を指定する。map形式 `KEY: VALUE` で指定する。
+  - 任意の粒度(ワークフロー全体、ジョブ全体、ジョブ内のステップ)に対して設定できる。
+
+#### `jobs`キー: ワークフローに含まれるジョブの集合
+
+- 各ジョブは`runs-on`で指定されたランナー環境で実行される。
+
+例:
+
+```yaml
+name: ワークフロー名
+on: [push]
+jobs:
+    job名1:
+        runs-on: ubuntu-latest
+        steps:
+            - name: ステップ名1
+              run: echo Hello, world!
+            - name: ステップ名2
+              run: echo Goodbye, world!
+    job名2:
+        ...
+```
+
 
 ## Github Actionsでのシークレット値の使用
 
