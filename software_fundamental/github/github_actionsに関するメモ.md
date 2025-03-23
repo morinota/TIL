@@ -63,3 +63,32 @@
   - 各ワークフロー実行は、新しくプロビジョニングされた仮想マシンで実行される。
 - **各ランナーは一度に1つのジョブを実行する**。(not 1つのワークフロー...!)
   - 並列の2つのジョブを持つワークフローは、2つのランナーで実行されるってこと?? :thinking:
+
+## ワークフローファイルのyamlの書き方
+
+- ワークフローファイル達は、リポジトリの `.github/workflows` ディレクトリ以下に置く。
+
+## Github Actionsでのシークレット値の使用
+
+refs: [GitHub Actions でのシークレットの使用](https://docs.github.com/ja/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
+
+- **シークレット値は3種類の粒度で設定できる: organization単位、repository単位、repository environment単位**。
+  - organization単位のシークレットは、organizationのオーナーのみが作成or編集できる。
+  - repository単位、repository environment単位のシークレットは、**repositoryのオーナーのみ**が作成or編集できる。
+- シークレット値は、GitHubのWeb UI上で設定できる。
+- ちなみに、シークレット値に関する制限:
+  - 個数制限: 最大1000個のorganizationシークレット、100個のrepositoryシークレット、100個のrepository environmentシークレットを作成できる。
+  - サイズの制限: 最大48KBのシークレット値を保存できる。
+- ワークフローファイル内では `${{secrets.XXX}}` という記法でシークレット値を参照できる。(secretsコンテキスト)
+  - 参照先のシークレット値が存在しない場合、空文字列が返される。
+
+```yaml
+steps:
+  - name: Hello world action
+    with: # Set the secret as an input
+      super_secret: ${{ secrets.SuperSecret }}
+    env: # Or as an environment variable
+      super_secret: ${{ secrets.SuperSecret }}
+```
+
+- 注目: **セキュリティの観点で、可能であればCLIではなく環境変数としてシークレット値を渡すことが推奨されるらしい...!!**
