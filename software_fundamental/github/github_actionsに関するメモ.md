@@ -91,14 +91,19 @@
 ```yaml
 name: ワークフロー名
 on: [push]
+env:
+  KEY1: VALUE1
+  KEY2: VALUE2
 jobs:
     job名1:
         runs-on: ubuntu-latest
         steps:
-            - name: ステップ名1
+            - name: ステップ名1(シェルスクリプト使う場合)
               run: echo Hello, world!
-            - name: ステップ名2
-              run: echo Goodbye, world!
+            - name: ステップ名2(アクション使う場合)
+              uses: actions/setup-python@v5
+              with:
+                  python-version: 3.12
     job名2:
         ...
 ```
