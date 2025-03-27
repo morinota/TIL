@@ -226,7 +226,7 @@ This enabled us to differentiate between repeated vs. anomalous shortcomings of 
 
 Curating a set of golden question-to-SQL answer mappings for evaluation required manual upfront investment. 
 評価のための**ゴールデンなquestion-to-SQLの回答マッピングのセットを作成するには、手動での事前投資が必要**でした。(まあここは一定頑張ってでも、手動で作る価値があるのかな...!)
-We identified a set of real questions from the QueryGPT logs, and manually verified the correct intent, schemas required to answer the question, and the golden SQL. 
+We identified a set of real questions from the QueryGPT logs, and manually verified the correct intent, schemas required to answer the question, and the golden SQL.
 私たちは、QueryGPTのログから実際の質問のセットを特定し、正しい意図、質問に答えるために必要なスキーマ、およびゴールデンSQLを手動で検証しました。
 (最初にText2SQLアプリを導入してから、実用的な良い評価用質問を探してる感じ...??)
 The question set covers a variety of datasets and business domains. 
