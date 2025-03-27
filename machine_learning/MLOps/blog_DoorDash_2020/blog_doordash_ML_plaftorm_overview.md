@@ -119,7 +119,7 @@ We then looked at the API set for Tensorflow and PyTorch for both training and p
 With the launch of TorchScript C++ support in PyTorch, we had the right API set needed to build the prediction service using PyTorch.  
 PyTorchでのTorchScript C++サポートの開始により、PyTorchを使用して予測サービスを構築するために必要な適切なAPIセットが得られました。
 
-#### Pillars of the ML Platform MLプラットフォームの柱たち
+#### Pillars of the ML Platform MLプラットフォームの柱(i.e. コンポーネント)たち
 
 After the ML framework decision, based on prediction scenarios and requirements, the following four pillars emerged:  
 MLフレームワークの決定後、予測シナリオと要件に基づいて、次の**4つの柱**が浮かび上がりました：
