@@ -14,6 +14,8 @@
 - どちらのパターンも、プログラムを **composable(コンポーザブル、組み合わせ可能)** で **plugable(プラガブル、差し替え可能) にするためのデザインパターン**の一種。
 - Strategyパターンの構造:
   - 共通のinterfaceを持つ複数のstrategyクラス + strategyを渡すcontextクラス。
+    - (contextクラスにstrategyクラスを依存性注入する感じ...!:thinking:)
+    - (ていうか、プログラムをplugableにするなら依存性注入は王道アプローチか...!:thinking:)
 - Template Methodパターンの構造:
   - 処理の骨組み(i.e. テンプレート)を定義した抽象クラス + 具体的な処理の中身をorgverrideする具体クラス。
 
