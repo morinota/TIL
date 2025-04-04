@@ -908,6 +908,8 @@ for step in graph.stream({"input": "ギャルのSQLを教えて"}):
     - 「どんな経路をたどったか」と「途中の出力内容」をリアルタイムで取得できる。
 
 - `stream`で返ってくる`step`の中身は大体こんな感じ:
+  - `stream_mode="values"`オプションを指定すると、出力stateのdictだけが返されるっぽい!!
+    - dictはより詳細には`langgraph.pregel.io.AddableValuesDict`型らしい。
 
 ```python
 {
