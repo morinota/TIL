@@ -881,3 +881,52 @@ generate_random_ints.invoke(
 
 >>> ToolMessage(content='Successfully generated array of 10 random ints in [0, 9].', name='generate_random_ints', tool_call_id='123', artifact=[4, 8, 2, 4, 1, 0, 9, 5, 8, 1])
 ```
+
+## Langgraphにおける`graph.stream()`メソッドと`graph.invoke()`メソッドの違い
+
+### invoke()メソッド:
+
+- グラフ全体を一気に実行して、最終結果を返す。
+
+```python
+result = graph.invoke({"input": "ギャルのSQLを教えて"})
+print(result)
+# → 最終ノードまで実行した「最終結果」だけが返ってくる
+```
+
+### stream()メソッド:
+
+- 各ステップの出力をストリーム(逐次)で返す。
+  - もし LangGraph を Streamlit とかに組み込んで チャット風UIにしたいケースは、こっちを採用して「逐次表示」にしたほうがUX良さそう。
+
+```python
+for step in graph.stream({"input": "ギャルのSQLを教えて"}):
+    print(step)
+```
+- 上記実装の説明:
+  - `step`には、ノードごとの中間出力が順番に入ってくる。
+    - 「どんな経路をたどったか」と「途中の出力内容」をリアルタイムで取得できる。
+
+- `stream`で返ってくる`step`の中身は大体こんな感じ:
+
+```python
+{
+  "{対象のノード名}": {
+    "state_key1": "state_value1",
+    "state_key2": "state_value2",
+    ...
+  },  # そのノードの出力stateをdict形式に変換したものがvalueに入るっぽい!
+}
+```
+
+関数でwrapするならyieldとかを使う感じになりそう。例えば以下。
+
+```python
+def stream_response(user_input: str)-> Iterator[str]:
+    for step in graph.stream({"input": user_input}):
+        output = step.get("output")
+        if isinstance(output, dict):
+            yield output.get("response", str(output))
+        else:
+            yield str(output)
+```
