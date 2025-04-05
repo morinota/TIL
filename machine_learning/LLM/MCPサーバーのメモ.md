@@ -6,6 +6,7 @@
 
 - https://zenn.dev/tomo0108/articles/6b472b4c9cacfa
 - [MCP サーバーを自作して GitHub Copilot の Agent に可読性の低いクラス名を作ってもらう](https://zenn.dev/microsoft/articles/semantickernel-mcp4)
+- [VS Code の設定から MCPサーバーを追加して GitHub Copilot agent mode で利用してみる（安定版でも利用可能に）](https://qiita.com/youtoy/items/adfeedeedf1309f194ce)
 
 # メモ
 
