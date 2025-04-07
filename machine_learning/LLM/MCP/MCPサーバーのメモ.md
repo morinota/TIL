@@ -30,7 +30,7 @@
 
 ### 主要な概念たち
 
-#### Server
+#### Server (FastMCPサーバクラス)
 
 - FastMCPサーバーは、MCPプロトコルを実装したインターフェース。
 - 接続管理、プロトコルの遵守、メッセージのルーティングを行う。
@@ -81,8 +81,10 @@ def query_db(ctx: Context) -> str:
     return db.query()
 ```
 
+- より細かくカスタマイズしたい場合は、low-levelな`Server`クラスを使うこともできるらしい。
 
-#### Resources
+
+#### Resources　(resourceデコレータ)
 
 - リソースは、LLMにデータを公開する方法。
 - **REST APIにおけるGETエンドポイントに似てる!**
@@ -103,7 +105,7 @@ def get_user_profile(user_id: str) -> str:
     return f"Profile data for user {user_id}"
 ```
 
-#### Tools
+#### Tools (toolデコレータ)
 
 - ツールは、LLMがサーバーを通してアクションを起こせるようにする。
   - (read-onlyアクションではなく、writeアクション、みたいなイメージ??:thinking:)
@@ -132,7 +134,7 @@ async def fetch_weather(city: str) -> str:
         return response.text
 ```
 
-#### Prompts
+#### Prompts　(promptデコレータ)
 
 - プロンプトは再利用可能なテンプレート。
   - (あ、プロンプトテンプレートはローカルのymlファイルじゃなくて、MCPサーバーから提供してもらう時代なのか...!:thinking:)
@@ -229,3 +231,95 @@ mcp dev server.py --with pandas --with numpy
 # Mount local code
 mcp dev server.py --with-editable .
 ```
+
+### MCPサーバーに接続するインターフェースのクライアントの提供
+
+- MCP Python SDKは、**MCPサーバーへの接続をhigh-levelに抽象化したクライアント**も提供してるみたい!
+  - (MCPクライアント = MCPサーバーとやりとりするためのアプリ側のコンポーネント的な!)
+
+```python
+from mcp import ClientSession, StdioServerParameters, types
+from mcp.client.stdio import stdio_client
+
+# サーバーを直接起動する場合は、`StdioServerParameters`を使って、サーバーの実行ファイルや引数を指定する。
+# すでに稼働中のMCPサーバーに接続したい場合は不要。
+server_params = StdioServerParameters(
+    command="python",  # Executable
+    args=["example_server.py"],  # Optional command line arguments
+    env=None,  # Optional environment variables
+)
+
+
+# Optional: create a sampling callback
+async def handle_sampling_message(
+    message: types.CreateMessageRequestParams,
+) -> types.CreateMessageResult:
+    return types.CreateMessageResult(
+        role="assistant",
+        content=types.TextContent(
+            type="text",
+            text="Hello, world! from model",
+        ),
+        model="gpt-3.5-turbo",
+        stopReason="endTurn",
+    )
+
+
+async def run():
+    # stdio_clientを使ってサーバーと接続。
+    async with stdio_client(server_params) as (read, write):
+        # セッションを開始
+        async with ClientSession(
+            read, write, sampling_callback=handle_sampling_message
+        ) as session:
+            # Initialize the connection
+            await session.initialize()
+
+            # List available prompts
+            prompts = await session.list_prompts()
+
+            # Get a prompt
+            prompt = await session.get_prompt(
+                "example-prompt", arguments={"arg1": "value"}
+            )
+
+            # List available resources
+            resources = await session.list_resources()
+
+            # List available tools
+            tools = await session.list_tools()
+
+            # 特定のリソースの呼び出し
+            content, mime_type = await session.read_resource("file://some/path")
+
+            # 特定のツールの呼び出し
+            result = await session.call_tool("tool-name", arguments={"arg1": "value"})
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(run())
+```
+
+- ちなみにstdio connnectionとは??
+  - **標準入力(stdin)と標準出力(stdout)を使って、プロセス同士がやりとり**するシンプルな通信方法。
+  - 具体例:
+    - Pythonから別プロセスでサーバーを起動し、そのプロセスと通信したい時に、わざわざHTTPサーバーとか立てずに、標準入出力で直接やりとりしちゃおうというスタイル。
+  - 内部の動作イメージ:
+    - `stdio_client()`が内部で`subprocess.Popen()`的なことをして、**MCPサーバーを子プロセスとして起動**して、標準入出力で通信を行う。
+  - 特徴:
+    - メリット:
+      - 軽量: サーバー立てなくて済む。`subprocess`叩くだけで通信できる。
+      - ネットワーク設定不要: 
+        - サーバーのIPアドレスやポート番号を気にしなくていい。
+        - **ローカルだけで完結する!**
+      - セキュア。プロセス間通信なので、ネット越しの攻撃とか気にしなくていい。
+      - 環境依存が少ない: DockerやCIでも安定して動く。
+    - デメリット:
+      - プロセスが一対一固定。
+      - **外部クライアントから接続できない。ローカル限定!** ネットワーク越しに他のクライアントが使いたいときはNG。
+      - ログとの混在に注意。
+        - print()でログ書くと、通信の邪魔になることがある！stdoutを使ってるから注意(なるほど...!:thinking:)
+
+
