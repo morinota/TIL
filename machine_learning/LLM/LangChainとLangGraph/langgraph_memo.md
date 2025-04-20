@@ -924,11 +924,13 @@ for step in graph.stream({"input": "ギャルのSQLを教えて"}):
 関数でwrapするならyieldとかを使う感じになりそう。例えば以下。
 
 ```python
-def stream_response(user_input: str)-> Iterator[str]:
-    for step in graph.stream({"input": user_input}):
-        output = step.get("output")
-        if isinstance(output, dict):
-            yield output.get("response", str(output))
-        else:
-            yield str(output)
+def stream_response(self, user_input: str) -> dict:
+    initial_input_state = InputState(messages=[HumanMessage(user_input)])
+    # グラフを実行
+    for step_output in self.graph.stream(
+        initial_input_state,
+        config=self.config,
+        stream_mode="values",
+    ):
+        yield step_output
 ```
