@@ -6,6 +6,7 @@
 
 - その1 [Streamlit in Snowflakeの設計で意識すると良さそうなポイント](https://zenn.dev/datum_studio/articles/ba80a63100db4e)
 - その2: [Streamlit in Snowpark Container Services](https://medium.com/snowflake/streamlit-in-snowpark-container-services-0e28e07fdc26)
+- [【Snowflake】外部からモジュールを取り込んでStreamlitで使ってみる](https://blog.truestar.co.jp/snowflake/20231117/56866/)
 
 ## SiSを使ったアプリ開発の際に意識した方が良さそうなことメモ
 
