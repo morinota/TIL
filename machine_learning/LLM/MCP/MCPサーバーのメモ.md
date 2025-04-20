@@ -7,6 +7,7 @@
 - https://zenn.dev/tomo0108/articles/6b472b4c9cacfa
 - [MCP サーバーを自作して GitHub Copilot の Agent に可読性の低いクラス名を作ってもらう](https://zenn.dev/microsoft/articles/semantickernel-mcp4)
 - [VS Code の設定から MCPサーバーを追加して GitHub Copilot agent mode で利用してみる（安定版でも利用可能に）](https://qiita.com/youtoy/items/adfeedeedf1309f194ce)
+- [MCPを動かしながら理解する 〜Python, GitHub Copilot, VSCode〜](https://qiita.com/cccggoo/items/994e8838e58e344990c9)
 
 # メモ
 
@@ -26,7 +27,9 @@
 
 ## MCP Python SDKについてメモ
 
-- refs: https://github.com/modelcontextprotocol/python-sdk?tab=readme-ov-file#quickstart
+- refs: 
+  - README: https://github.com/modelcontextprotocol/python-sdk?tab=readme-ov-file#quickstart
+  - 公式ドキュメント: https://modelcontextprotocol.io/introduction
 
 ### 主要な概念たち
 
@@ -325,4 +328,28 @@ if __name__ == "__main__":
         - print()でログ書くと、通信の邪魔になることがある！stdoutを使ってるから注意(なるほど...!:thinking:)
       - 
 
+### VSCodeでどうやって使うの?
 
+settings.jsonに以下のように書くと、Github Copilot Agent Modeからアクセスできることを確認できた!
+
+- Pythonの場所もエントリポイントも、とりあえずフルパスを指定すれば動いてくれた!
+
+```json
+{
+"mcp": {
+        "inputs": [],
+        "servers": {
+            "sample-mcp-server": {
+                // Pythonの場所もエントリポイントも、とりあえずフルパスを指定すれば動いてくれた!
+                "command": "/Users/masato.morita/src/weather_service/.venv/bin/python",
+                "args": [
+                    "/Users/masato.morita/src/weather_service/src/my_weather_service/server.py"
+                ],
+                "env": {
+                  // 必要な環境変数があればここに書く
+                }
+            },
+        }
+    }
+}
+```
