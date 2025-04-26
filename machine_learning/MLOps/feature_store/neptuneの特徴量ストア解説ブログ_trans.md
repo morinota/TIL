@@ -147,7 +147,6 @@ Feature Stores ensure that these features are constantly updated in real-time, a
 
 MLOps is about applying DevOps principles to building, testing and deploying machine learning pipelines. 
 MLOpsは、機械学習パイプラインの構築、テスト、展開にDevOpsの原則を適用することに関するものです。
-
 With MLOps practices, teams can deploy better models, more frequently. 
 MLOpsの実践により、チームはより良いモデルをより頻繁に展開することができます。
 
@@ -160,8 +159,6 @@ MLOpsの課題には以下が含まれます：
 - managing data governance and compliance for models. 
 - モデルのデータガバナンスとコンプライアンスの管理。
 
-
-
 ### RELATED ARTICLES 関連記事
 
 MLOps: What It Is, Why it Matters, and How To Implement It
@@ -170,22 +167,19 @@ MLOps：それが何であるか、なぜ重要であるか、そしてどのよ
 The Best MLOps Tools You Need to Know as a Data Scientist
 データサイエンティストとして知っておくべき最高のMLOpsツール
 
-
+<!-- ここまで読んだ! -->
 
 ### MLOps vs DevOps
 
 Traditionally, developers use Git to version control code over time, which is necessary for automation and continuous integration (CI). 
 従来、開発者はGitを使用してコードのバージョン管理を行い、これは自動化と継続的インテグレーション（CI）に必要です。
-
 This makes it easy to automatically reproduce an environment. 
 これにより、環境を自動的に再現することが容易になります。
 
 Every commit to Git triggers the automated creation of packages that can be deployed using information in version control. 
 Gitへのすべてのコミットは、バージョン管理の情報を使用してデプロイ可能なパッケージの自動作成をトリガーします。
-
 Jenkins is used alongside version control software to build, test and deploy code, so that it behaves in a controlled and predictable way. 
 Jenkinsは、バージョン管理ソフトウェアとともに使用され、コードをビルド、テスト、デプロイするために使用され、制御された予測可能な方法で動作します。
-
 The steps involved with Jenkins are: 
 Jenkinsに関わるステップは次のとおりです：
 
@@ -203,11 +197,9 @@ Jenkinsに関わるステップは次のとおりです：
    6. バイナリをデプロイする。
 
 The most important part of MLOps is versioning data. 
-MLOpsの最も重要な部分はデータのバージョン管理です。
-
+**MLOpsの最も重要な部分はデータのバージョン管理**です。(ほうほう...!)
 You can’t do it with Git, as it doesn’t scale to large volumes of data. 
 Gitでは大規模なデータにスケールしないため、これを行うことはできません。
-
 A simple machine learning pipeline consists of the following: 
 シンプルな機械学習パイプラインは次のような構成になります：
 
@@ -231,7 +223,6 @@ This can get even more complex when you add hyperparameter tuning, model explain
 
 Orchestration frameworks help in automatic workflow execution, model retraining, data passing between components, and workflow triggering based on events. 
 オーケストレーションフレームワークは、自動ワークフローの実行、モデルの再トレーニング、コンポーネント間のデータの受け渡し、イベントに基づくワークフローのトリガーに役立ちます。
-
 Some of these frameworks are: 
 これらのフレームワークのいくつかは次のとおりです：
 
@@ -247,14 +238,12 @@ Some of these frameworks are:
 TFX, MLFlow and Hopsworks support distributed processing with Beam and Spark to enable scale-out of execution on clusters using large amounts of data. 
 TFX、MLFlow、およびHopsworksは、BeamおよびSparkを使用した分散処理をサポートし、大量のデータを使用したクラスターでの実行のスケールアウトを可能にします。
 
-
-
 ### Machine Learning pipelines 機械学習パイプライン
 
 DevOps CI/CD is mostly triggered by source code updates. 
 DevOpsのCI/CDは主にソースコードの更新によってトリガーされます。
 MLOps and DataOps CI/CD pipelines may be triggered not just by source code updates, but also data updates and data processing: 
-MLOpsおよびDataOpsのCI/CDパイプラインは、ソースコードの更新だけでなく、データの更新やデータ処理によってもトリガーされる可能性があります：
+**MLOpsおよびDataOpsのCI/CDパイプラインは、ソースコードの更新だけでなく、データの更新やデータ処理によってもトリガーされる可能性があります**：
 - DataOps mostly automates the testing and deployment of data pipelines, 
 - DataOpsは主にデータパイプラインのテストとデプロイを自動化します。
 - MLOps automates the process of training, validating and deploying models. 
@@ -274,11 +263,11 @@ Feature Stores can help in two ways:
 The issue with machine learning pipelines is their stateful nature. 
 機械学習パイプラインの問題は、その状態を持つ性質です。
 A good data pipeline should be stateless and idempotent. 
-良いデータパイプラインは、無状態で冪等であるべきです。
+**良いデータパイプラインは、無状態で冪等であるべき**です。(うんうん...!:thinking:)
 In other words, we need a lot of information before deploying a new model (in validation stage) about how well it’s performing, what are the assumptions we’re making, the impact of the model, and so on. 
 言い換えれば、新しいモデル（検証段階）をデプロイする前に、そのパフォーマンス、私たちが行っている仮定、モデルの影響などについて多くの情報が必要です。
 Usually, developers end up re-writing code over and over again to define input and output properly. 
-通常、開発者は入力と出力を適切に定義するために、何度もコードを書き直すことになります。
+通常、開発者は**入力と出力を適切に定義するため**に、何度もコードを書き直すことになります。
 
 Hopsworks offers an inobtrusive metadata model, where pipelines read/write to the HDFS and interact with the feature store using the Hopsworks API. 
 Hopsworksは、パイプラインがHDFSに読み書きし、Hopsworks APIを使用してフィーチャーストアと対話する目立たないメタデータモデルを提供します。
@@ -287,6 +276,7 @@ This way we can store metadata, artifacts, model provenance and more, without re
 
 Some of the industrial best practices along with relevant tools to help us achieve them are as follows – 
 私たちがそれを達成するのを助けるためのいくつかの業界のベストプラクティスと関連ツールは以下の通りです –
+
 - Unit test and continuous integration with Jenkins. 
 - Jenkinsを使用した単体テストと継続的インテグレーション。
 - Data validation using TFX or Deequ, so that features have expected values. 
@@ -302,14 +292,13 @@ Some of the industrial best practices along with relevant tools to help us achie
 - Test for Personally Identifiable Information (PII) leaks. 
 - 個人を特定できる情報（PII）の漏洩をテストします。
 
-
-
 ### READ ALSO 参照してください
 
 The Best Feature Engineering Tools
 最良の特徴エンジニアリングツール
 
 
+<!-- ここまで読んだ! -->
 
 ## Feature Store architectures 特徴ストアアーキテクチャ  
 ### Uber’s Michelangelo Machine Learning platform UberのMichelangelo機械学習プラットフォーム
@@ -331,9 +320,9 @@ Kafka brokers are deployed to aggregate data from all of Uber’s services, and 
 Kafkaブローカーは、Uberのすべてのサービスからデータを集約するために展開され、Cassandraクラスターを使用してSamzaコンピュートエンジン経由でストリーミングされます。  
 
 The platform uses Hive/HDFS to store Uber’s transactional and log data.  
-このプラットフォームは、Uberのトランザクションデータとログデータを保存するためにHive/HDFSを使用しています。  
+このプラットフォームは、Uberのトランザクションデータとログデータを保存するためにHive/HDFSを使用しています。 
 Features needed for online models are precomputed and stored in CassandraDB, where they can be read at a low-latency at prediction time.  
-オンラインモデルに必要な特徴は事前に計算され、CassandraDBに保存され、予測時に低遅延で読み取ることができます。  
+**オンラインモデルに必要な特徴は事前に計算され、CassandraDBに保存され**、予測時に低遅延で読み取ることができます。  
 
 For feature selection, transformation, and to ensure that input data is checked for proper format and missingness, Uber developers built their own Domain Specific Language (DSL) as a subset of Scala.  
 特徴選択、変換、および入力データが適切な形式と欠損をチェックされることを保証するために、Uberの開発者はScalaのサブセットとして独自のドメイン特化言語（DSL）を構築しました。  
@@ -362,6 +351,7 @@ Training jobs can be managed via the Michelangelo UI, API, or even through a Jup
 トレーニングジョブは、MichelangeloのUI、API、またはJupyter Notebookを通じて管理できます。  
 When training is complete, a versioned object containing the following information is stored in CassandraDB:  
 トレーニングが完了すると、以下の情報を含むバージョン管理されたオブジェクトがCassandraDBに保存されます：  
+
 1. Author of the model,  
 1. モデルの著者、  
 2. Start and end time of training job,  
@@ -379,13 +369,12 @@ When training is complete, a versioned object containing the following informati
 8. Summary statistics.  
 8. 要約統計。  
 
-
+<!-- ここまで読んだ! -->
 
 ### Google’s Feast: an open-source feature store
 
 Feast is an open-source feature store for machine learning for making the process of creating, managing, sharing, and serving features easier. 
 Feastは、機械学習のためのオープンソースのフィーチャーストアであり、フィーチャーの作成、管理、共有、提供のプロセスを容易にします。
-
 In 2019, Gojek introduced it in collaboration with Google Cloud. 
 2019年に、GojekはGoogle Cloudとのコラボレーションでこれを導入しました。
 
@@ -408,10 +397,10 @@ Components:
    4. Feast Python SDK: これはフィーチャー定義の管理、ジョブの起動、トレーニングデータセットやオンラインフィーチャーの取得に使用されます。
 
 5. Online Store: It stores the latest features for each entity. It can be populated by either batch ingestion or streaming ingestion jobs for a streaming source. 
-   5. Online Store: 各エンティティの最新のフィーチャーを保存します。ストリーミングソースのためにバッチインジェストまたはストリーミングインジェストジョブによってデータを格納できます。
+   5. Online Store: 各エンティティの最新のフィーチャーを保存します(**そっか、オンラインストアには最新verだけあれば十分なんだ**...!:thinking:)。ストリーミングソースのためにバッチインジェストまたはストリーミングインジェストジョブによってデータを格納できます。
 
 6. Offline Store: Stores batch data used to train AI models. 
-   6. Offline Store: AIモデルのトレーニングに使用されるバッチデータを保存します。
+   1. Offline Store: AIモデルのトレーニングに使用されるバッチデータを保存します。
 
 How does it work? 
 どのように機能するのか？
@@ -435,16 +424,17 @@ How does it work?
    6. Feast Jobサービスは新しいフィーチャーと更新されたフィーチャーをポーリングします。
 
 7. Batch ingestion jobs are short-lived, they fetch data into offline and online stores. 
-   7. バッチインジェストジョブは短命で、オフラインおよびオンラインストアにデータを取得します。
+   7. **バッチインジェストジョブは短命で、オフラインおよびオンラインストアにデータを取得します**。
 
 8. Stream ingestion jobs are long-lived, they fetch from streaming sources and provide to online applications. 
-   8. ストリームインジェストジョブは長命で、ストリーミングソースから取得し、オンラインアプリケーションに提供します。
+   8. **ストリームインジェストジョブは長命で、ストリーミングソースから取得し、オンラインアプリケーションに提供**します。
 
 9. A machine learning pipeline is launched, data is used, all controlled by the SDK. 
    9. 機械学習パイプラインが起動され、データが使用され、すべてSDKによって制御されます。
 
 10. According to model configurations, feast provides point-in-time training data and features. 
-    10. モデルの設定に応じて、Feastは時点トレーニングデータとフィーチャーを提供します。
+    10. モデルの設定に応じて、Feastは**point-in-timeなトレーニングデータとフィーチャーを提供**します。
+    (**直近1週間を正解ラベル & それ以前の履歴を特徴量とするように、シンプルにtime-seriesでデータを分けて特徴量&ラベルを作るなら、feature storeでpoint-in-time機能を使う必要はないのかな...! wantedlyさんの事例を踏まえると。少なくともfeature store的なコンポーネントは別の理由で必要かもだが、point-in-time機能は持ってる必要はないかも。**)
 
 11. The trained model is then served and the backend requests for prediction from the model serving system. 
     11. トレーニングされたモデルが提供され、バックエンドがモデルサービングシステムから予測を要求します。
@@ -455,37 +445,32 @@ How does it work?
 13. Model Serving System makes predictions on online features and returns results. 
     13. モデルサービングシステムはオンラインフィーチャーに基づいて予測を行い、結果を返します。
 
-
+<!-- ここまで読んだ!-->
 
 ### Hopswork’s Feature Store Hopsworksのフィーチャーストア
 
 Data Engineers are primarily responsible for adding/updating features, which could be computed with SQL queries or even complex graph embeddings, using notebooks, programs written in Python, Java or Scala, and even Hopsworks’ UI. 
 データエンジニアは、主にフィーチャーの追加/更新を担当しており、これはSQLクエリや複雑なグラフ埋め込みを使用して計算される可能性があり、ノートブック、Python、Java、Scalaで書かれたプログラム、さらにはHopsworksのUIを使用します。
-
 Programs ingest data in the form of Pandas or Spark dataframes. 
 プログラムは、PandasまたはSparkデータフレームの形式でデータを取り込みます。
 
 Feature data is validated before ingestion using the Data Validation API. 
 フィーチャーデータは、データ検証APIを使用して取り込み前に検証されます。
-
 A UI platform is provided by Hopsworks for establishing data validation rules through which feature statistics can also be viewed. 
 Hopsworksは、フィーチャー統計を表示できるデータ検証ルールを確立するためのUIプラットフォームを提供しています。
-
 Hopsworks also supports the creation of more than one feature store, because one feature store should not necessarily be accessible to all parts of an enterprise. 
-Hopsworksは、1つのフィーチャーストアが企業のすべての部門にアクセス可能である必要はないため、複数のフィーチャーストアの作成もサポートしています。
+Hopsworksは、1つのフィーチャーストアが企業のすべての部門にアクセス可能である必要はないため、**複数のフィーチャーストアの作成もサポート**しています。
+(これってfeature storeの一元管理的な役割と少し矛盾してる感...??:thinking:)
 
 Data scientists use Feature Stores to split data into training and testing sets for building machine learning models. 
 データサイエンティストは、フィーチャーストアを使用してデータをトレーニングセットとテストセットに分割し、機械学習モデルを構築します。
-
 Online applications use it to create a feature vector which is later used for inference. 
 オンラインアプリケーションは、後で推論に使用されるフィーチャーベクターを作成するためにそれを使用します。
-
 In addition to this, users can also query for point-in-time data. 
-これに加えて、ユーザーは時点データをクエリすることもできます。
+これに加えて、ユーザーはpoint-in-timeデータをクエリすることもできます。
 
 Features are measurable properties, wherein each feature belongs to a Feature Group with an associated key for computation. 
 フィーチャーは測定可能な特性であり、各フィーチャーは計算のための関連キーを持つフィーチャーグループに属します。
-
 Data Scientists can generate training and testing data by providing/selecting a set of features, the target file format for the output of features (CSV, TFRecords, Numpy, etc.), and the target storage system (GCS, AWS S3, etc.). 
 データサイエンティストは、フィーチャーのセット、フィーチャーの出力のターゲットファイル形式（CSV、TFRecords、Numpyなど）、およびターゲットストレージシステム（GCS、AWS S3など）を提供/選択することによって、トレーニングデータとテストデータを生成できます。
 
@@ -494,32 +479,26 @@ There are two ways to calculate feature groups:
 
 - On-demand: There is built-in support for external DBs that lets you define features on external data sources. 
 - オンデマンド：外部データソースでフィーチャーを定義できる外部DBのための組み込みサポートがあります。
-
 - Cached: The Hopsworks Feature Store can scale up to peta-bytes of feature data. 
 - キャッシュ：Hopsworksフィーチャーストアは、ペタバイトのフィーチャーデータまでスケールアップできます。
 
 Hopsworks provides great documentation on how to use their API and get started with its feature store. 
 Hopsworksは、APIの使用方法やフィーチャーストアの使い始め方に関する優れたドキュメントを提供しています。
 
-
+<!-- ここまで読んだ -->
 
 ### Tectonのフィーチャーストア
 
 While most organisations have taken up the initiative to build feature stores for internal use, 
 ほとんどの組織が内部使用のためにフィーチャーストアを構築する取り組みを始めている中、 
-
 Tecton has been building their platform to be provided as a service to various enterprises. 
 Tectonは、さまざまな企業にサービスとして提供されるプラットフォームを構築しています。 
-
 Their founding members originally were at Uber, where they had built Michelangelo. 
 彼らの創設メンバーは元々Uberにおり、そこでMichelangeloを構築していました。 
-
 Taking inspiration from Uber’s product, Tecton built and started offering its services as well. 
 Uberの製品からインスピレーションを受けて、Tectonは自社のサービスを構築し、提供を開始しました。 
-
 They also contribute to Google’s open-source feature store, Feast. 
 彼らはまた、GoogleのオープンソースフィーチャーストアであるFeastにも貢献しています。
-
 
 
 ## Summary 概要
@@ -533,8 +512,6 @@ They also contribute to Google’s open-source feature store, Feast.
 - Some of the examples of feature stores are Uber’s Michelangelo, Google’s Feast, Hopsworks’ Feature Store and Tecton’s Feature Store.
 - Feature Storesの例としては、UberのMichelangelo、GoogleのFeast、HopsworksのFeature Store、TectonのFeature Storeがあります。
 
-
-
 ### References 参考文献
 
 - https://docs.hopsworks.ai/
@@ -542,302 +519,4 @@ They also contribute to Google’s open-source feature store, Feast.
 - www.tecton.ai
 - splicemachine.com
 
-
-
-## Was the article useful? 記事は役に立ちましたか？
-
-Yes はい
-No いいえ
-Suggest changes 変更を提案する
-I am familiar with the Privacy Policy* プライバシーポリシーに精通しています*
-I am familiar with the Privacy Policy* プライバシーポリシーに精通しています*
-I am familiar with the Privacy Policy* プライバシーポリシーに精通しています*
-I am familiar with the Privacy Policy* プライバシーポリシーに精通しています*
-I am familiar with the プライバシーポリシーに精通しています
-Submit 提出
-Δ 
-
-
-
-### More about Feature Stores: Components of a Data Science Factory [Guide]
-### フィーチャーストアについての詳細: データサイエンスファクトリーのコンポーネント [ガイド]
-
-#### Check out our product resources and related articles below:
-#### 以下の製品リソースと関連する記事をご覧ください:
-
-product resources
-製品リソース
-
-related articles
-関連する記事
-
-Related article
-関連する記事
-
-#### How to Build an LLM Agent With AutoGen: Step-by-Step Guide
-#### AutoGenを使用してLLMエージェントを構築する方法: ステップバイステップガイド
-Read more
-続きを読む
-
-Related article
-関連する記事
-
-#### Bayesian Deep Learning is Needed in the Age of Large-Scale AI [Paper Reflection]
-#### 大規模AIの時代に必要なベイズ深層学習 [論文の考察]
-Read more
-続きを読む
-
-Related article
-関連する記事
-
-#### Introduction to State Space Models as Natural Language Models
-#### 自然言語モデルとしての状態空間モデルの紹介
-Read more
-続きを読む
-
-Related article
-関連する記事
-
-#### Ethical Considerations and Best Practices in LLM Development
-#### LLM開発における倫理的考慮事項とベストプラクティス
-Read more
-続きを読む
-
-
-
-### Explore more content topics: コンテンツトピックをさらに探る:
-
-About neptune.ai neptune.aiについて
-Play with a live project ライブプロジェクトで遊ぶ
-See Docs ドキュメントを見る
-1. What is a Feature Store? 1. フィーチャーストアとは？
-2. Feature Stores and MLOps 2. フィーチャーストアとMLOps
-3. Feature Store architectures 3. フィーチャーストアのアーキテクチャ
-4. Summary 4. まとめ
-What is a Feature Store? フィーチャーストアとは？
-Feature Stores and MLOps フィーチャーストアとMLOps
-Feature Store architectures フィーチャーストアのアーキテクチャ
-Summary まとめ
-Check also: こちらもご覧ください:
-
-
-
-## Monitor your model training at scale 大規模なモデルトレーニングの監視
-
-Join 60,000+ researchers and practitioners who use Neptune to debug training failures, spot anomalies, and compare experiments. 
-60,000人以上の研究者や実務者がNeptuneを使用して、トレーニングの失敗をデバッグし、異常を検出し、実験を比較しています。
-
-Request free trial 
-無料トライアルをリクエスト
-
-Play with a live project 
-ライブプロジェクトで遊ぶ
-
-#### Newsletter ニュースレター
-
-Top articles, case studies, events (and more) in your inbox every month. 
-毎月、あなたの受信箱にトップ記事、ケーススタディ、イベント（その他）をお届けします。
-
-Get Newsletter 
-ニュースレターを受け取る
-
-Get Newsletter 
-ニュースレターを受け取る
-
-- ProductWalkthroughDocumentationDeployment optionsSelf-hosted deploymentPricingService status 
-- 製品ウォークスルー ドキュメント デプロイメントオプション 自己ホスト型デプロイメント 価格 サービスステータス
-
-- Walkthrough 
-- ウォークスルー
-
-- Documentation 
-- ドキュメント
-
-- Deployment options 
-- デプロイメントオプション
-
-- Self-hosted deployment 
-- 自己ホスト型デプロイメント
-
-- Pricing 
-- 価格
-
-- Service status 
-- サービスステータス
-
-- Walkthrough 
-- ウォークスルー
-
-- Documentation 
-- ドキュメント
-
-- Deployment options 
-- デプロイメントオプション
-
-- Self-hosted deployment 
-- 自己ホスト型デプロイメント
-
-- Pricing 
-- 価格
-
-- Service status 
-- サービスステータス
-
-- SolutionsAI ResearcherML Platform EngineerEnterpriseAcademic Research 
-- ソリューション AI研究者 MLプラットフォームエンジニア 企業 学術研究
-
-- AI Researcher 
-- AI研究者
-
-- ML Platform Engineer 
-- MLプラットフォームエンジニア
-
-- Enterprise 
-- 企業
-
-- Academic Research 
-- 学術研究
-
-- AI Researcher 
-- AI研究者
-
-- ML Platform Engineer 
-- MLプラットフォームエンジニア
-
-- Enterprise 
-- 企業
-
-- Academic Research 
-- 学術研究
-
-- CompareNeptune vs Weights & BiasesNeptune vs MLflowNeptune vs TensorBoardOther comparisonsML experiment tracking tools 
-- 比較 Neptune vs Weights & Biases Neptune vs MLflow Neptune vs TensorBoard その他の比較 ML実験トラッキングツール
-
-- Neptune vs Weights & Biases 
-- Neptune vs Weights & Biases
-
-- Neptune vs MLflow 
-- Neptune vs MLflow
-
-- Neptune vs TensorBoard 
-- Neptune vs TensorBoard
-
-- Other comparisons 
-- その他の比較
-
-- ML experiment tracking tools 
-- ML実験トラッキングツール
-
-- Neptune vs Weights & Biases 
-- Neptune vs Weights & Biases
-
-- Neptune vs MLflow 
-- Neptune vs MLflow
-
-- Neptune vs TensorBoard 
-- Neptune vs TensorBoard
-
-- Other comparisons 
-- その他の比較
-
-- ML experiment tracking tools 
-- ML実験トラッキングツール
-
-- CommunityBlogExperiment Tracking Learning HubLLMOps Learning HubMLOps Learning HubHow to Build an Experiment Tracker 
-- コミュニティ ブログ 実験トラッキング学習ハブ LLMOps学習ハブ MLOps学習ハブ 実験トラッカーの構築方法
-
-- Blog 
-- ブログ
-
-- Experiment Tracking Learning Hub 
-- 実験トラッキング学習ハブ
-
-- LLMOps Learning Hub 
-- LLMOps学習ハブ
-
-- MLOps Learning Hub 
-- MLOps学習ハブ
-
-- How to Build an Experiment Tracker 
-- 実験トラッカーの構築方法
-
-- Blog 
-- ブログ
-
-- Experiment Tracking Learning Hub 
-- 実験トラッキング学習ハブ
-
-- LLMOps Learning Hub 
-- LLMOps学習ハブ
-
-- MLOps Learning Hub 
-- MLOps学習ハブ
-
-- How to Build an Experiment Tracker 
-- 実験トラッカーの構築方法
-
-- CompanyCustomersAbout usCareersSecurity portal and SOC 2Contact us 
-- 会社 顧客 私たちについて キャリア セキュリティポータルとSOC 2 お問い合わせ
-
-- Customers 
-- 顧客
-
-- About us 
-- 私たちについて
-
-- Careers 
-- キャリア
-
-- Security portal and SOC 2 
-- セキュリティポータルとSOC 2
-
-- Contact us 
-- お問い合わせ
-
-- Customers 
-- 顧客
-
-- About us 
-- 私たちについて
-
-- Careers 
-- キャリア
-
-- Security portal and SOC 2 
-- セキュリティポータルとSOC 2
-
-- Contact us 
-- お問い合わせ
-
-Copyright © 2025 Neptune Labs. All rights reserved. 
-Copyright © 2025 Neptune Labs. 無断転載を禁じます。
-
-start Simple Custom CSS and JS 
-Simple Custom CSSとJSの開始
-
-end Simple Custom CSS and JS 
-Simple Custom CSSとJSの終了
-
-Google Optimize Integration 
-Google Optimize統合
-
-Heap Integration 
-Heap統合
-
-To provide the best experiences, we use technologies like cookies to store and/or access device information. Find out more in our 
-最高の体験を提供するために、私たちはクッキーのような技術を使用してデバイス情報を保存および/またはアクセスします。詳細は私たちの
-
-Strictly necessary 
-厳密に必要
-
-Performance 
-パフォーマンス
-
-Targeting 
-ターゲティング
-
-Functionality 
-機能
-
-Unclassified 
-分類されていない
+<!-- ここまで読んだ -->
