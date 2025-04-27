@@ -50,7 +50,12 @@ def main():
     #     news_embedding_df=news_embedding_df,
     # )
 
-    fetch_feature(
+    # fetch_feature(
+    #     feature_group_name=feature_group_name,
+    #     sagemaker_session=sagemaker_session,
+    # )
+
+    fetch_feature_with_point_in_time_join(
         feature_group_name=feature_group_name,
         sagemaker_session=sagemaker_session,
     )
@@ -205,11 +210,12 @@ def fetch_feature_with_point_in_time_join(
     feature_store = FeatureStore(sagemaker_session=sagemaker_session)
 
     # event_timeとレコード識別子を含むベースデータを用意(これに特徴量がjoinされる)
+    current_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
     entity_df = pl.DataFrame(
         {
-            "content_id": ["N:123", "N:456", "N:789"],
-            "event_time": ["2023-01-10T09:30:00Z", "2023-01-11T14:15:00Z", "2023-01-12T16:40:00Z"],
-            "reward": [1, 2, 3],
+            "content_id": ["N:14074705", "N:14074706", "N:14074711"],
+            "event_time": [current_time, current_time, current_time],
+            "reward": [0.0, 1.0, 0.0],
         }
     )
 
@@ -217,6 +223,7 @@ def fetch_feature_with_point_in_time_join(
     dataset_builder = feature_store.create_dataset(
         base=entity_df.to_pandas(),
         event_time_identifier_feature_name="event_time",
+        # record_identifier_feature_nameは、interaction履歴を学習データとする場合は、interationのidになるよね...!:thinking:
         record_identifier_feature_name="content_id",
         output_path=f"s3://{BUCKET_NAME}/point_in_time_join/",
     ).point_in_time_accurate_join()
@@ -226,6 +233,10 @@ def fetch_feature_with_point_in_time_join(
         feature_group=FeatureGroup(name=feature_group_name, sagemaker_session=sagemaker_session),
         target_feature_name_in_base="content_id",
     )
+    # with_feature_groupって複数回指定できるのかな...!
+    # 例えばユーザ特徴量のFeatureグループとコンテンツ特徴量のFeature Groupを一気に、みたいな...!:thinking:
+    # ↑できるらしい!
+    # dataset_builder = dataset_builder.with_feature_group(別のFeature Group!)
 
     # joinされたデータセットの生成
     dataset_pandas_df, executed_query = dataset_builder.to_dataframe()
