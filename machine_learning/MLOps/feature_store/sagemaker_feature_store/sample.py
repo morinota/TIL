@@ -15,14 +15,7 @@ ROLE_ARN = os.getenv("MY_SAGEMAKER_ROLE")
 def main():
     aws_profile = os.getenv("MY_AWS_PROFILE")
     session = boto3.Session(profile_name=aws_profile)
-    sagemaker_client = session.client("sagemaker")
     sagemaker_session = sagemaker.Session(boto_session=session)
-
-    print(f"{sagemaker_client=}")
-    print(f"{boto3.Session().profile_name=}")
-
-    feature_store_runtime = boto3.client("sagemaker-featurestore-runtime")
-    print(f"{feature_store_runtime=}")
 
     # 特徴量としてnews_embedding_dfを読み込む
     news_embedding_df = pl.read_parquet("/tmp/news_embeddings/")
@@ -158,6 +151,14 @@ def fetch_feature(
         - get_recordメソッド。entityカラムの値と取得したい特徴量名を指定する。
     - offline storeから取得する場合:
         - 方法1: Amazon Athenaを使用したSQLクエリ
+            - select *だと、返り値として特徴量 & entity_id & event_timeの他に、write_time & api_invocation_time, is_deletedカラムがついてくるみたい。
+            - これらは自動付与されるカラム。
+                - write_time: データがFeature Storeに書き込まれた時間
+                - api_invocation_time: データを書き込むAPIリクエストを受けた時間
+                - is_deleted: データが削除済かどうか。
+                    - しかしオフラインストアの場合はS3にappend-only保存だから、deleteリクエストがきても物理的にはレコードが消えない。
+                    - その代わりにis_deletedがTrueになり、レコードが無効化される。
+            - 基本的に学習 & 推論時は、方法2の方が使うのかな。特徴量を元に新しい特徴量を作る、みたいな時は、方法1も使ったりする??
         - 方法2: FeatureStore.create_dataset()メソッド。多分point-in-timeな特徴量取得はこれを使うのが抽象化されててシンプルそう。
         - 方法3: S3上のparquetファイルを直接読み込む。
     """
@@ -172,16 +173,16 @@ def fetch_feature(
 
     # offline storeからAthenaクエリを利用して特徴量を取得してみる
     feature_store_query = feature_group.athena_query()  # Glue Data Catalogに登録してないとエラーになる
-    print(f"{feature_store_query=}")
     feature_store_table = feature_store_query.table_name
-    print(f"{feature_store_table=}")
-    query_string = """
+    query_string = f"""
 SELECT *
-FROM "{}" LIMIT 5
-""".format(feature_store_table)
-
+FROM "{feature_store_table}" LIMIT 5
+"""
+    feature_store_query.run(query_string, output_location=f"s3://{BUCKET_NAME}/tmp/query_results/")
     feature_store_query.wait()
-    dataset = feature_store_query.as_dataframe()
+    fetched_feature_pd_df = feature_store_query.as_dataframe()
+    feature_df = pl.from_pandas(fetched_feature_pd_df)
+    print(f"{feature_df=}")
 
 
 def fetch_feature_with_point_in_time_join(
@@ -229,6 +230,7 @@ def fetch_feature_with_point_in_time_join(
     # joinされたデータセットの生成
     dataset_pandas_df, executed_query = dataset_builder.to_dataframe()
     dataset_df = pl.from_pandas(dataset_pandas_df)
+    print(f"{dataset_df=}")
 
 
 if __name__ == "__main__":
