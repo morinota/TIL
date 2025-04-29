@@ -272,7 +272,6 @@ If you couldn’t backfill features, you could start logging features in your pr
 もし機能をバックフィルできなければ、プロダクションシステムで機能のログを取り始め、モデルのトレーニングを開始する前に十分なデータが収集されるのを待つことになります。
 <!-- ここまで読んだ! -->
 
-
 ### Point-in-Time Correct Training Data 時点正確なトレーニングデータ
 
 If you want to create training data from time-series feature data without any future data leakage, you will need to perform a temporal join, sometimes called a point-in-time correct join.
@@ -280,357 +279,262 @@ If you want to create training data from time-series feature data without any fu
 
 For example, in the figure below, we can see that for the (red) label value, the correct feature values for Feature A and Feature B are 4 and 6, respectively.
 例えば、以下の図では、（赤い）ラベル値に対して、特徴Aと特徴Bの正しい特徴値はそれぞれ4と6であることがわかります。
-
 Data leakage would occur if we included feature values that are either the pink (future data leakage) or orange values (stale feature data).
-ピンク（未来のデータ漏洩）またはオレンジの値（古い特徴データ）のいずれかの特徴値を含めると、データ漏洩が発生します。
-
+ピンク（未来のデータ漏洩）またはオレンジの値（古い特徴データ）のいずれかの特徴値を含めると、データ漏洩が発生します。(古い特徴量も確かにそうか、これもデータリークって言うのか...!::thinking:)
 If you do not create point-in-time correct training data, your model may perform poorly and it will be very difficult to discover the root cause of the poor performance.
 時点正確なトレーニングデータを作成しないと、モデルのパフォーマンスが悪化し、その悪化の根本原因を特定することが非常に難しくなります。
 
 If your offline store supports AsOf Joins, feature retrieval involves joining Feature A and Feature B from their respective tables AsOf the timestamp value for each row in the Label table.
 オフラインストアがAsOf Joinsをサポートしている場合、特徴の取得は、ラベルテーブルの各行のタイムスタンプ値に基づいて、特徴Aと特徴Bをそれぞれのテーブルから結合することを含みます。
-
 The SQL query to create training data is an “AS OF LEFT JOIN”, as this query enforces the invariant that for every row in your Label table, there should be a row in your training dataset, and if there are missing feature values for a join, we should include NULL values (we can later impute missing values in model-dependent transformations).
-トレーニングデータを作成するためのSQLクエリは「AS OF LEFT JOIN」であり、このクエリはラベルテーブルの各行に対してトレーニングデータセットに行が存在するべきであるという不変条件を強制します。また、結合に対して欠損している特徴値がある場合はNULL値を含めるべきです（後でモデル依存の変換で欠損値を補完できます）。
-
+トレーニングデータを作成するためのSQLクエリは「AS OF LEFT JOIN」であり、このクエリは**ラベルテーブルの各行に対してトレーニングデータセットに行が存在するべきであるという不変条件を強制**します。また、結合に対して欠損している特徴値がある場合はNULL値を含めるべきです（後でモデル依存の変換で欠損値を補完できます）。
 If your offline store does not support AsOf Joins, you can write alternative windowing code using state tables.
 オフラインストアがAsOf Joinsをサポートしていない場合、状態テーブルを使用して代替のウィンドウコードを書くことができます。
+(まあ基本サポートしてる気がする...!:thinking:)
+
+![]()
 
 As both AsOf Left joins and window tables result in complex SQL queries, many feature stores provide domain-specific language (DSL) support for executing the temporal query.
 AsOf Left joinsとウィンドウテーブルの両方が複雑なSQLクエリを生成するため、多くのフィーチャーストアは時間的クエリを実行するためのドメイン固有言語（DSL）サポートを提供しています。
-
 The following code snippet, in Hopsworks, creates point-in-time-consistent training data by first creating a feature view.
 以下のコードスニペットは、Hopsworksで最初にフィーチャービューを作成することによって、時点正確なトレーニングデータを作成します。
-
 The code starts by (1) selecting the columns to use as features and label(s) to use for the model, then (2) creates a feature view with the selected columns, defining the label column(s), and (3) uses the feature view object to create a point-in-time correct snapshot of training data.
-コードは、（1）モデルに使用する特徴およびラベルとして使用する列を選択し、次に（2）選択した列でフィーチャービューを作成し、ラベル列を定義し、（3）フィーチャービューオブジェクトを使用して時点正確なトレーニングデータのスナップショットを作成します。
+コードは、（1）モデルに使用する特徴およびラベルとして使用する列を選択し、次に（2）選択した列でフィーチャービューを作成し、ラベル列を定義し、（3）フィーチャービューオブジェクトを使用して**時点正確なトレーニングデータのスナップショットを作成**します。
 
-```
+```python
 fg_loans = fs.get_feature_group(name="loans", version=1)
 fg_applicants = fs.get_feature_group(name="applicants", version=1)
-select= fg_loans.select_except(["issue_d","id"]).join(\
-fg_applicants.select_except(["earliest_cr_line","id"]))
-```
-```
-fg_loans = fs.get_feature_group(name="loans", version=1)
-fg_applicants = fs.get_feature_group(name="applicants", version=1)
-select= fg_loans.select_except(["issue_d","id"]).join(\
-fg_applicants.select_except(["earliest_cr_line","id"]))
-```
-
-```
-fv = fs.create_feature_view(name="loans_approvals",
-version=1,
-description="Loan applicant data",
-labels=["loan_status"],
-query=select
-)
-```
-```
-fv = fs.create_feature_view(name="loans_approvals",
-version=1,
-description="Loan applicant data",
-labels=["loan_status"],
-query=select
-)
-```
-
-```
-X_train, X_test, y_train, y_test = fv.train_test_split(test_size=0.2)#....model.fit(X_train, y_train)
-```
-```
-X_train, X_test, y_train, y_test = fv.train_test_split(test_size=0.2)#....model.fit(X_train, y_train)
-```
-
-"loans"
-"applicants"
-"issue_d"
-"id"
-"earliest_cr_line"
-"id"
-"loans_approvals"
-"Loan applicant data"
-"loan_status"
+select= fg_loans.select_except(["issue_d", "id"]).join(\
+            fg_applicants.select_except(["earliest_cr_line", "id"]))
+ 
+fv = fs.create_feature_view(name="loans_approvals", 
+            version=1,
+            description="Loan applicant data",
+            labels=["loan_status"],
+            query=select
+            )
+X_train, X_test, y_train, y_test = fv.train_test_split(test_size=0.2)
 #....
-以下のコードスニペットは、Hopsworksで、先ほど定義したフィーチャービューを使用して、時点正確なバッチ推論データを作成します。
-The following code snippet, in Hopsworks, uses the feature view we just defined to create point-in-time consistent batch inference data.
+model.fit(X_train, y_train)
+```
 
+The following code snippet, in Hopsworks, uses the feature view we just defined to create point-in-time consistent batch inference data.
+以下のコードスニペットは、Hopsworksで、先ほど定義したフィーチャービューを使用して、時点正確なバッチ推論データを作成します。
 The model makes predictions using the DataFrame df containing the batch inference data.
 モデルは、バッチ推論データを含むDataFrame dfを使用して予測を行います。
+(バッチ推論の場合は、event_timeは一律で現在時刻でいいはず...!:thinking:)
 
-```
-fv= fs.get_feature_view(name="loans_approvals", version=fv_version)
-df= fv.get_batch_data(start_time=”2023-12-2300:00”, end_time=NOW)
-predictions_df= model.predict(df)
-```
-```
-fv= fs.get_feature_view(name="loans_approvals", version=fv_version)
-df= fv.get_batch_data(start_time=”2023-12-2300:00”, end_time=NOW)
-predictions_df= model.predict(df)
+```python
+fv = fs.get_feature_view(name="loans_approvals", version=fv_version) 
+df = fv.get_batch_data(start_time=”2023-12-23 00:00”, end_time=NOW)
+
+predictions_df = model.predict(df)
 ```
 
-fv
-"loans_approvals"
-df
-2023
-12
-23
-00
-00
-predictions_df
-
+<!-- ここまで読んだ! -->
 
 
 ### History and Context for Online Models オンラインモデルの歴史と文脈
 
 Online models are often hosted in model-serving infrastructure or stateless (AI-enabled) applications. 
 オンラインモデルは、モデル提供インフラストラクチャやステートレス（AI対応）アプリケーションでホストされることが多いです。
-
 In many user-facing applications, the actions taken by users are “information poor”, but we would still like to use a trained model to make an intelligent decision. 
 多くのユーザー向けアプリケーションでは、ユーザーが取る行動は「情報が乏しい」ですが、それでも訓練されたモデルを使用してインテリジェントな決定を下したいと考えています。
-
 For example, in Tiktok, a user click contains a limited amount of information - you could not build the world’s best real-time recommendation system using just a single user click as an input feature. 
-例えば、Tiktokでは、ユーザーのクリックには限られた情報しか含まれておらず、単一のユーザークリックを入力特徴として使用するだけでは、世界最高のリアルタイム推薦システムを構築することはできません。
+**例えば、Tiktokでは、ユーザのクリックには限られた情報しか含まれておらず、単一のユーザクリックを入力特徴として使用するだけでは、世界最高のリアルタイム推薦システムを構築することはできません**。
 
 The solution is to use the user’s ID to retrieve precomputed features from the online store containing the user's personal history as well as context features (such as what videos or searches are trending). 
-解決策は、ユーザーのIDを使用して、ユーザーの個人履歴やコンテキスト特徴（どの動画や検索がトレンドになっているかなど）を含むオンラインストアから事前計算された特徴を取得することです。
-
+解決策は、ユーザのIDを使用して、ユーザの個人履歴やコンテキスト特徴（どの動画や検索がトレンドになっているかなど）を含むオンラインストアから事前計算された特徴を取得することです。
 The precomputed features returned enrich any features that can be computed from the user input to build a rich feature vector that can be used to train complex ML models. 
 返された事前計算された特徴は、ユーザー入力から計算できる特徴を豊かにし、複雑な機械学習モデルを訓練するために使用できる豊富な特徴ベクトルを構築します。
-
 For example, in Tiktok, you can retrieve precomputed features about the 10 most recent videos you looked at - their category, how long you engaged for, what’s trending, what your friends are looking at, and so on. 
-例えば、Tiktokでは、最近見た10本の動画に関する事前計算された特徴を取得できます - それらのカテゴリ、どれくらいの時間関与したか、何がトレンドになっているか、友達が何を見ているかなどです。
-
+**例えば、Tiktokでは、最近見た10本の動画に関する事前計算された特徴量を取得できます - それらのカテゴリ、どれくらいの時間関与したか、何がトレンドになっているか、友達が何を見ているかなど**です。
 In many examples of online models, the entity is a simple user or product or booking. 
 多くのオンラインモデルの例では、エンティティは単純なユーザー、製品、または予約です。
-
 However, often you will need more complex data models, and it is beneficial if your online store supports multi-part primary keys (see Uber talk). 
-しかし、しばしばより複雑なデータモデルが必要となり、オンラインストアが複数部分の主キーをサポートしていると有益です（Uberのトークを参照）。
+しかし、しばしばより複雑なデータモデルが必要となり、**オンラインストアが複数部分の主キーをサポートしていると有益**です（Uberのトークを参照）。
+(例えば(user_id, item_id)みたいな複数カラムの主キーってことだろうか?? Sagemaker Feature Storeだと単一カラムの主キーしか対応してなさそう:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 ### Feature Reuse 特徴の再利用
+(Feature Storeがあれば、特徴量の使い回しできてめっちゃ楽だよ！って話)
 
 A common problem faced by organizations when they build their first ML models is that there is a lot of bespoke tooling, extracting data from existing backend systems so that it can be used to train a ML model. 
-組織が最初の機械学習（ML）モデルを構築する際に直面する一般的な問題は、多くの特注ツールが必要であり、既存のバックエンドシステムからデータを抽出してMLモデルのトレーニングに使用することです。
-
+**組織が最初の機械学習（ML）モデルを構築する際に直面する一般的な問題は、多くの特注ツールが必要であり、既存のバックエンドシステムからデータを抽出してMLモデルのトレーニングに使用すること**です。
 Then, when it comes to productionizing the ML model, more data pipelines are needed to continually extract new data and compute features so that the model can make continual predictions on the new feature data. 
 次に、MLモデルを本番環境に展開する際には、新しいデータを継続的に抽出し、特徴を計算するために、さらに多くのデータパイプラインが必要になります。これにより、モデルは新しい特徴データに基づいて継続的に予測を行うことができます。
 
+- 上記の内容の例:
+  - 最初にMLモデルを作るとき...
+    - 「うわー、バックエンドDBから直接データ引っこ抜いて…」
+    - 「CSVこねくり回して…」
+    - 「学習用の特徴量作った〜！やった〜！」
+  - → で、モデルを本番運用するときに、
+    - 「あ、リアルタイムでこの特徴量作らないとダメじゃん」
+    - 「本番用に別パイプライン作るか〜」
+  - みたいな感じで、トレーニング用・本番用で別々にデータ準備しちゃうことが多い!
+
 However, after the first set of pipelines have been written for the first model, organizations soon notice that one or more features used in an earlier model are needed in a new model. 
 しかし、最初のモデルのために最初の一連のパイプラインが書かれた後、組織はすぐに、以前のモデルで使用された1つまたは複数の特徴が新しいモデルに必要であることに気付きます。
-
 Metareported that in their feature store “most features are used by many models”, and that the most popular 100 features are reused in over 100 different models. 
-Metaは、彼らの特徴ストアで「ほとんどの特徴は多くのモデルで使用されている」と報告し、最も人気のある100の特徴が100以上の異なるモデルで再利用されていることを示しました。
-
+**Metaは、彼らの特徴ストアで「ほとんどの特徴は多くのモデルで使用されている」と報告し、最も人気のある100の特徴が100以上の異なるモデルで再利用されていることを示しました。**
+(よって、使い回す前提で設計した方が絶対とく...!:thinking:)
 However, for expediency, developers typically rewrite the data pipelines for the new model. 
 しかし、迅速さのために、開発者は通常、新しいモデルのためにデータパイプラインを再作成します。
-
-Now you have different models re-computing the same feature(s) with different pipelines. 
-これにより、異なるモデルが異なるパイプラインで同じ特徴を再計算することになります。
-
-This leads to waste, and a less maintainable (non-DRY) code base. 
-これは無駄を生じさせ、メンテナンスが難しい（非DRY）コードベースにつながります。
+Now you have different models re-computing the same feature(s) with different pipelines. This leads to waste, and a less maintainable (non-DRY) code base. 
+これにより、**異なるモデルが異なるパイプラインで同じ特徴を再計算することになります。これは無駄を生じさせ、メンテナンスが難しい（非DRY）コードベースにつながります。**
+(無駄なストレージ、無駄な計算資源...!:thinking:)
 
 The benefits of feature reuse with a feature store include higher quality features through increased usage and scrutiny, reduced storage costs - and less feature pipelines. 
 特徴ストアを使用した特徴の再利用の利点には、使用頻度と精査の増加による高品質な特徴、ストレージコストの削減、そして特徴パイプラインの削減が含まれます。
-
 In fact, the feature store decouples the number of models you run in production from the number of feature pipelines you have to maintain. 
-実際、特徴ストアは、本番環境で実行するモデルの数と、維持しなければならない特徴パイプラインの数を切り離します。
-
+**実際、特徴ストアは、本番環境で実行するモデルの数と、維持しなければならない特徴パイプラインの数を切り離します**。(この観点大事だ...! 言い換えるとFTI Pipelines Architectureの利点でもある!)
 Without a feature store, you typically write at least one feature pipeline per model. 
 特徴ストアがない場合、通常はモデルごとに少なくとも1つの特徴パイプラインを書く必要があります。
-
 With a (large enough) feature store, you may not need to write any feature pipeline for your model if the features you need are already available there. 
 （十分に大きな）特徴ストアがあれば、必要な特徴がすでにそこに存在する場合、モデルのために特徴パイプラインを書く必要がないかもしれません。
 
-
+<!-- ここまで読んだ! -->
 
 ### Multiple Feature Computation Models 複数の特徴計算モデル
 
 The feature pipeline typically does not need GPUs, may be a batch program or streaming program, and may process small amounts of data with Pandas or Polars or large amounts of data with a framework such as Spark or DBT/SQL.
 特徴パイプラインは通常、GPUを必要とせず、バッチプログラムまたはストリーミングプログラムであり、PandasやPolarsを使用して少量のデータを処理するか、SparkやDBT/SQLのようなフレームワークを使用して大量のデータを処理することがあります。
-
 Streaming feature pipelines can be implemented in Python (Bytewax) or more commonly in distributed frameworks such as PySpark, with its micro-batch computation model, or Flink/Beam with their lower latency per-event computation model.
 ストリーミング特徴パイプラインは、Python（Bytewax）で実装することもできますが、より一般的には、マイクロバッチ計算モデルを持つPySparkや、イベントごとの低遅延計算モデルを持つFlink/Beamのような分散フレームワークで実装されます。
 
 The training pipeline is typically a Python program, as most ML frameworks are written in Python.
 トレーニングパイプラインは通常、Pythonプログラムであり、ほとんどの機械学習フレームワークはPythonで書かれています。
-
 It reads features and labels as input, trains a model and outputs the trained model (typically to a model registry).
 それは特徴とラベルを入力として読み込み、モデルをトレーニングし、トレーニングされたモデルを出力します（通常はモデルレジストリに）。
 
 An inference pipeline then downloads a trained model and reads features as input (some may be computed from the user’s request, but most will be read as precomputed features from the feature store).
-次に、推論パイプラインはトレーニングされたモデルをダウンロードし、特徴を入力として読み込みます（いくつかはユーザーのリクエストから計算される場合がありますが、ほとんどは特徴ストアから事前計算された特徴として読み込まれます）。
-
+次に、推論パイプラインはトレーニングされたモデルをダウンロードし、特徴を入力として読み込みます（**いくつかはユーザのリクエストから計算される場合がありますが、ほとんどは特徴ストアから事前計算された特徴として読み込まれます**）。
 Finally, it uses the features as input to the model to make predictions that are either returned to the client who requested them or stored in some data store (often called an inference store) for later retrieval.
-最後に、それは特徴をモデルへの入力として使用して予測を行い、それらはリクエストしたクライアントに返されるか、後で取得するために何らかのデータストア（しばしば推論ストアと呼ばれる）に保存されます。
+最後に、それは特徴をモデルへの入力として使用して予測を行い、それらはリクエストしたクライアントに返されるか(リアルタイム推論...!)、**後で取得するために何らかのデータストア（しばしば推論ストアと呼ばれる）に保存されます(バッチ推論...!)**。
 
-
+<!-- ここまで読んだ! -->
 
 ### Validate Feature Data and Monitor for Drift 特徴データの検証とドリフトの監視
 
 Garbage-in, garbage out is a well known adage in the data world. 
 「ゴミが入ればゴミが出る」というのはデータの世界でよく知られた格言です。
 Feature stores can provide support for validating feature data in feature pipelines. 
-フィーチャーストアは、フィーチャーパイプラインにおけるフィーチャーデータの検証をサポートすることができます。
+フィーチャーストアは、**フィーチャーパイプラインにおけるフィーチャーデータの検証**をサポートすることができます。
+(feature validationはfeature pipelineの中でやるべきなのかな...??:thinking:)
 The following code snippet uses the Great Expectations library to define a data validation rule that is applied when feature data is written to a feature group in Hopsworks. 
-以下のコードスニペットは、Great Expectationsライブラリを使用して、フィーチャーデータがHopsworksのフィーチャーグループに書き込まれるときに適用されるデータ検証ルールを定義します。
+以下のコードスニペットは、Great Expectationsライブラリを使用して、**フィーチャーデータがHopsworksのフィーチャーグループに書き込まれるときに適用されるデータ検証ルール**を定義します。(feature storeに書き込まれるタイミングでvalidationするんだ...!:thinking:)
 
-```
-df=# read from data source, then perform feature engineering# define data validation rules in Great Expectationsge_suite = ge.core.ExpectationSuite(
-expectation_suite_name="expectation_suite_101")
+```python
+df = # read from data source, then perform feature engineering
+
+
+# define data validation rules in Great Expectations
+ge_suite = ge.core.ExpectationSuite(
+    expectation_suite_name="expectation_suite_101"
+    )
 
 ge_suite.add_expectation(
-ExpectationConfiguration(
-expectation_type="expect_column_values_to_not_be_null",
-kwargs={"column":"'search_term'"}
+    ExpectationConfiguration(
+        expectation_type="expect_column_values_to_not_be_null",
+        kwargs={"column":"'search_term'"}
+    )
 )
-)fg= fs.get_or_create_feature_group(name="query_terms_yearly",
-version=1,
-description="Count of search term by year",
-primary_key=['year','search_term'],
-partition_key=['year'],
-online_enabled=True,
-expectation_suite=ge_suite
-)
-fg.insert(df)# data validation rules executed in client before insertion
+
+fg = fs.get_or_create_feature_group(name="query_terms_yearly",
+                              version=1,
+                              description="Count of search term by year",
+                              primary_key=['year', 'search_term'],
+                              partition_key=['year'],
+                              online_enabled=True,
+                              expectation_suite=ge_suite
+                              )
+fg.insert(df) # data validation rules executed in client before insertion
 ```
-
-
-
-# read from data source, then perform feature engineering
-データソースから読み込み、その後特徴量エンジニアリングを実行します。
-
-
-
-# define data validation rules in Great Expectations Great Expectationsにおけるデータ検証ルールの定義
-
-"expectation_suite_101" 
-"expectation_suite_101"
-
-"expect_column_values_to_not_be_null" 
-"列の値がNULLでないことを期待する"
-
-"column" 
-"列"
-
-"'search_term'" 
-"'search_term'"
-
-fg 
-fg
-
-"query_terms_yearly" 
-"年間の検索用語"
-
-"Count of search term by year" 
-"年ごとの検索用語のカウント"
-
-'year' 
-'年'
-
-'search_term' 
-'検索用語'
-
-'year' 
-'年'
-
-df 
-df
-
-
-
-# data validation rules executed in client before insertion クライアントで挿入前に実行されるデータ検証ルール
 
 The data validation results can then be viewed in the feature store, as shown below. 
 データ検証結果は、以下に示すようにフィーチャーストアで確認できます。
-
 In Hopsworks, you can trigger alerts if data validation fails, and you can decide whether to allow the insertion or fail the insertion of data, if data validation fails. 
 Hopsworksでは、データ検証が失敗した場合にアラートをトリガーすることができ、データ検証が失敗した場合に挿入を許可するか、挿入を失敗させるかを決定できます。
 
 Feature monitoring is another useful capability provided by many feature stores. 
-フィーチャー監視は、多くのフィーチャーストアが提供するもう一つの便利な機能です。
-
+**Feature monitoringは、多くのフィーチャーストアが提供するもう一つの便利な機能**です。(あ、これはvalidationというよりはdrift監視みたいな話か...!前者は特徴量ストアに保存するときに実行されて、後者は特徴量ストアの中で定期的もしくはon-demandで実行されるイメージかな...!:thinking:)
 Whether you build a batch ML system or an online ML system, you should be able to monitor inference data for the system’s model to see if it is statistically significantly different from the model’s training data (data drift). 
-バッチMLシステムを構築する場合でもオンラインMLシステムを構築する場合でも、システムのモデルに対する推論データを監視し、それがモデルのトレーニングデータ（データドリフト）と統計的に有意に異なるかどうかを確認できる必要があります。
-
+バッチMLシステムを構築する場合でもオンラインMLシステムを構築する場合でも、システムのモデルに対する**推論データを監視し、それがモデルのトレーニングデータ（データドリフト）と統計的に有意に異なるかどうかを確認できる必要があります**。
 If it is, you should alert users and ideally kick-off the retraining of the model using more recent training data. 
-もし異なる場合は、ユーザーにアラートを通知し、理想的にはより最近のトレーニングデータを使用してモデルの再トレーニングを開始するべきです。
+もし異なる場合は、ユーザ(=開発者)にアラートを通知し、**理想的にはより最近のトレーニングデータを使用してモデルの再トレーニングを開始するべき**です。
 
 Here is an example code snippet from Hopsworks for defining a feature monitoring rule for the feature “amount” in the model’s prediction log (available for both batch and online ML systems). 
 以下は、モデルの予測ログにおけるフィーチャー「amount」のフィーチャー監視ルールを定義するためのHopsworksからのコードスニペットの例です（バッチおよびオンラインMLシステムの両方で利用可能です）。
-
 A job is run once per day to compare inference data for the last week for the amount feature, and if its mean value deviates more than 50% from the mean observed in the model’s training data, data drift is flagged and alerts are triggered. 
-ジョブは、amountフィーチャーの過去1週間の推論データを比較するために1日1回実行され、その平均値がモデルのトレーニングデータで観測された平均から50%以上逸脱した場合、データドリフトがフラグされ、アラートがトリガーされます。
+**ジョブは、amountフィーチャーの過去1週間の推論データを比較するために1日1回実行され、その平均値がモデルのトレーニングデータで観測された平均から50%以上逸脱した場合、データドリフトがフラグされ、アラートがトリガーされます**。
+(この場合のデータdriftの監視は、バッチで行われるイメージなんだ。理想的にはこれもストリーミング的に実行される方が良い、というブログを見たな...!:thinking:)1
 
-```
+```python
 # Compute statistics on a prediction log as a detection window
-fg_mon = pred_log.create_feature_monitoring("name",
-feature_name ="amount", job_frequency ="DAILY")
-.with_detection_window(row_percentage=0.8, time_offset ="1w")
+fg_mon = pred_log.create_feature_monitoring("name", 
+    feature_name = "amount", job_frequency = "DAILY")
+    .with_detection_window(row_percentage=0.8, time_offset ="1w")
+
 # Compare feature statistics with a reference window - e.g., training data
 fg_mon.with_reference_training_dataset(version=1).compare_on(
-metric ="mean", threshold=50)
+    metric = "mean", threshold=50)
 ```
 
-
-
-# Compute statistics on a prediction log as a detection window 予測ログにおける統計の計算（検出ウィンドウとして）
-
-"name" "名前"
-"amount" "金額"
-"DAILY" "日次"
-"1w" "1週間"
-
-
-
-# Compare feature statistics with a reference window - e.g., training data
-特徴統計を参照ウィンドウ（例：トレーニングデータ）と比較する
-
-"mean"
-"平均"
-
-
+<!-- ここまで読んだ! -->
 
 ### Taxonomy of Data Transformations データ変換の分類
 
 When data scientists and data engineers talk about data transformations, they are not talking about the same thing. 
-データサイエンティストとデータエンジニアがデータ変換について話すとき、彼らは同じことを話しているわけではありません。 
+データサイエンティストとデータエンジニアがデータ変換について話すとき、彼らは同じことを話しているわけではありません。
 This can cause problems in communication, but also in the bigger problem of feature reuse in feature stores. 
 これはコミュニケーションの問題を引き起こす可能性がありますが、フィーチャーストアにおけるフィーチャー再利用のより大きな問題にもつながります。 
 There are 3 different types of data transformations, and they belong in different ML pipelines. 
-データ変換には3つの異なるタイプがあり、それぞれ異なるMLパイプラインに属します。 
+**データ変換には3つの異なるタイプがあり、それぞれ異なるMLパイプラインに属します**。 
+
+![]()
 
 Data transformations, as understood by data engineers, is a catch-all term that covers data cleansing, aggregations, and any changes to your data to make it consumable by BI or ML. 
 データエンジニアが理解するデータ変換は、データクレンジング、集約、およびBIやMLで消費可能にするためのデータの変更を含む包括的な用語です。 
 These data transformations are called model-independent transformations as they produce features that are reusable by many models. 
-これらのデータ変換は、さまざまなモデルで再利用可能な特徴を生成するため、モデル非依存変換と呼ばれます。 
+これらのデータ変換は、**さまざまなモデルで再利用可能な特徴を生成するため、model-independent transformations(モデル非依存な変換)**と呼ばれます。
+(i.e. どのモデルでも再利用できる汎用的な特徴量を作る処理!:thinking:)
 
 In data science, data transformations are a more specific term that refers to encoding a variable (categorical or numerical) into a numerical format, scaling a numerical variable, or imputing a value for a variable, with the goal of improving the performance of your ML model training. 
 データサイエンスにおいて、データ変換は、変数（カテゴリカルまたは数値）を数値形式にエンコードしたり、数値変数をスケーリングしたり、変数の値を補完したりすることを指すより具体的な用語であり、MLモデルのトレーニングのパフォーマンスを向上させることを目的としています。 
 These data transformations are called model-dependent transformations and they are specific to one model. 
-これらのデータ変換はモデル依存変換と呼ばれ、特定の1つのモデルに特有です。 
+これらのデータ変換は**model-dependent transformations(モデル依存な変換)**と呼ばれ、特定の1つのモデルに特有です。 
+(カテゴリ変数をone-hot encodingしたり、数値特徴量を標準化したり、欠損値を埋めたり...は、各モデルの精度を上げるために個別に細かくチューニングするもの...!:thinking:)
 
 Finally, there are data transformations that can only be performed at runtime for online models as they require parameters only available in the prediction request. 
 最後に、オンラインモデルの実行時にのみ実行できるデータ変換があり、これは予測リクエストでのみ利用可能なパラメータを必要とします。 
 These data transformations are called on-demand transformations, but they may also be needed in feature pipelines if you want to backfill feature data from historical data. 
-これらのデータ変換はオンデマンド変換と呼ばれますが、過去のデータからフィーチャーデータをバックフィルする場合、フィーチャーパイプラインでも必要になることがあります。 
+これらのデータ変換は**on-demand transformations(オンデマンド変換)**と呼ばれますが、**過去のデータからフィーチャーデータをバックフィルする場合、フィーチャーパイプラインでも必要になることがある**。
+(ここどうしても難しそうだな...! なるべく同じ特徴量生成ロジックを維持できるようにしないと...!ロジックをPythonモジュール化して同じ関数を呼び出すようにするとか。:thinking:)
 
 The feature store architecture diagram from earlier shows that model-independent transformations are only performed in feature pipelines (whether batch or streaming pipelines). 
-前述のフィーチャーストアアーキテクチャ図は、モデル非依存変換がフィーチャーパイプライン（バッチまたはストリーミングパイプラインのいずれか）でのみ実行されることを示しています。 
+前述のフィーチャーストアアーキテクチャ図は、**モデル非依存変換がフィーチャーパイプライン（バッチまたはストリーミングパイプラインのいずれか）でのみ実行されること**を示しています。(つまり学習 & 推論パイプラインには含まれるべきではない!)
 However, model-dependent transformations are performed in both training and inference pipelines, and on-demand transformations can be applied in both feature and online inference pipelines. 
-しかし、モデル依存変換はトレーニングパイプラインと推論パイプラインの両方で実行され、オンデマンド変換はフィーチャーパイプラインとオンライン推論パイプラインの両方に適用できます。 
+しかし、**モデル依存変換はトレーニングパイプラインと推論パイプラインの両方で実行され**(つまりfeature pipelineには含まれるべきではない!)、**オンデマンド変換はフィーチャーパイプラインとオンライン推論パイプラインの両方に適用**できます。
 You need to ensure that equivalent transformations are performed in both pipelines - if there is skew between the transformations, you will have model performance bugs that will be very hard to identify and debug. 
 両方のパイプラインで同等の変換が実行されることを確認する必要があります。変換間に偏りがある場合、モデルのパフォーマンスバグが発生し、特定やデバッグが非常に困難になります。 
 Feature stores help prevent this problem of online-offline skew. 
 フィーチャーストアは、オンラインとオフラインの偏りの問題を防ぐのに役立ちます。 
 For example, model-dependent transformations can be performed in scikit-learn pipelines or in feature views in Hopsworks, ensuring consistent transformations in both training and inference pipelines. 
-たとえば、モデル依存変換はscikit-learnパイプラインやHopsworksのフィーチャービューで実行でき、トレーニングパイプラインと推論パイプラインの両方で一貫した変換が保証されます。 
+たとえば、モデル依存変換はscikit-learnパイプラインやHopsworksのフィーチャービューで実行でき、トレーニングパイプラインと推論パイプラインの両方で一貫した変換が保証されます。
+(まあ同じ関数を呼び出せるようにする、ってことだよね...!:thinking:)
 Similarly, on-demand transformations are version-controlled Python or Pandas user-defined functions (UDFs) in Hopsworks that are applied in both feature and online inference pipelines. 
 同様に、オンデマンド変換はHopsworksのバージョン管理されたPythonまたはPandasのユーザー定義関数（UDF）であり、フィーチャーパイプラインとオンライン推論パイプラインの両方に適用されます。
+(これもまあ同じ関数を呼び出せるようにする、ってことだよね...!:thinking:)
 
+<!-- ここまで読んだ! -->
 
+- つまり...この辺りが整理して運用できてないと...
+  - モデル依存変換の場合は学習パイプラインと推論パイプラインで、on-demand変換の場合は推論パイプラインとfeature pipelineで、特徴量作成ロジックにズレが生じうる...!
+  - -> 学習時と推論時で data skew問題が発生する...!
+
+<!-- ここまで読んだ! --> 
 
 ### Query Engine for Point-in-Time Consistent Feature Data for Training トレーニング用の時点整合性のある特徴データのためのクエリエンジン
 
