@@ -267,10 +267,10 @@ Both batch and streaming feature pipelines should be able to backfill features.
 バッチおよびストリーミング特徴量パイプラインの両方が特徴量をバックフィルできる必要があります。(**ストリーミングパイプラインもbackfillできるようにしておこうね**、という話か...!ストリームのreplay設計っていうらしい...!:thinking:) 
 (でも結局、大量の期間のデータをbackifillする際には、バッチというかバルクで一気に処理できる設計になってた方がいいよな...**単一のパイプラインをバッチでもストリームでも実行できるようにしておくのが運用上最強ってことでは**...!:thinking:)
 Backfilling features is important because you may have existing historical data that can be leveraged to create training data for a model. 
-特徴量をバックフィルすることは重要です。なぜなら、モデルのトレーニングデータを作成するために活用できる既存の履歴データがあるかもしれないからです。(逆にbackfillできないと、今から集めたデータだけを使って学習用・推論用データを作らなきゃいけなくなっちゃう。)
+特徴量をバックフィルすることは重要です。なぜなら、モデルのトレーニングデータを作成するために活用できる既存の履歴データがあるかもしれないからです。(逆にbackfillできないと、今から集めたデータだけを使って学習用・推論用データを作らなきゃいけなくなっちゃう。あ、下に同じことが書いてあった...!:thinking:)
 If you couldn’t backfill features, you could start logging features in your production system and wait until sufficient data has been collected before you start training your model. 
 もし機能をバックフィルできなければ、プロダクションシステムで機能のログを取り始め、モデルのトレーニングを開始する前に十分なデータが収集されるのを待つことになります。
-
+<!-- ここまで読んだ! -->
 
 
 ### Point-in-Time Correct Training Data 時点正確なトレーニングデータ
