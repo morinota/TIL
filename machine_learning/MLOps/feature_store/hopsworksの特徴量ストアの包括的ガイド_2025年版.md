@@ -15,9 +15,9 @@ Feature stores also provide compute support to ML pipelines that create and use 
 ## What is a feature and why do I need a specialized store for them? 特徴とは何か、そしてなぜそれらのための専門のストアが必要なのか？
 
 A feature is a measure property of some entity that has predictive power for a machine learning model. 
-特徴とは、機械学習モデルに対して予測力を持つエンティティの測定特性です。
+特徴量(feature)とは、ある対象(entity)の属性(property)を数値化したもので、かつ機械学習モデルの予測に役立つものである。
 Feature data is used to train ML models, and make predictions in batch ML systems and online ML systems. 
-特徴データは、MLモデルのトレーニングや、バッチMLシステムおよびオンラインMLシステムでの予測に使用されます。
+特徴量データは、MLモデルのトレーニングや、バッチMLシステムおよびオンラインMLシステムでの予測に使用されます。
 Features can be computed either when they are needed or in advance and used later for training and inference. 
 **特徴は、必要なときに計算することも、事前に計算して後でトレーニングや推論に使用することもできます**。
 Some of the advantages of storing features is that they can be easily discovered and reused in different models, reducing the cost and time required to build new machine learning systems. 
@@ -45,7 +45,7 @@ MLOpsプラットフォームにおいて、**特徴ストアは異なるMLパ�
   - 推論パイプラインはそこから事前計算された特徴を読み取ることができます。
 
 The main goals of MLOps are to decrease model iteration time, improve model performance, ensure governance of ML assets (feature, models), and improve collaboration. 
-MLOpsの主な目標は、モデルの反復時間を短縮し、モデルのパフォーマンスを向上させ、ML資産（特徴、モデル）のガバナンスを確保し、コラボレーションを改善することです。
+MLOpsの主な目標は、モデル試行錯誤のiteractionを短縮し、モデルのパフォーマンスを向上させ、ML資産（特徴、モデル）のガバナンスを確保し、コラボレーションを改善することです。
 (結果としてiterationをよりいい感じに回せるようになることが、成果のスケールに繋がるから、って解釈できそう...!:thinking:)
 By decomposing your ML system into separate feature, training, and inference (FTI) pipelines, your system will be more modular with 3 pipelines that can be independently developed, tested, and operated. 
 MLシステムを特徴、トレーニング、推論（FTI）パイプラインに分解することで、システムはよりモジュール化され、3つのパイプラインが独立して開発、テスト、運用できるようになります。
@@ -140,12 +140,12 @@ Its historical feature data is stored in an offline store (typically a columnar 
 その履歴フィーチャーデータはオフラインストア（通常はカラム型データストア）に保存され、オンラインモデルで使用される最新のフィーチャーデータはオンラインストア（通常は行指向データベースまたはキー・バリューストア）に保存され、インデックス付き埋め込みがサポートされている場合は、ベクトルデータベースに保存されます。
 (**あ、オンラインストアに全ての特徴量を保存する必要はなくて、リアルタイム推論で使うもの、かつ最新のversionの特徴量レコードのみで良さそう...!! :thinking:**)
 Some feature stores provide the storage layer as part of the platform, some have partial or full pluggable storage layers. 
-一部のフィーチャーストアは、プラットフォームの一部としてストレージ層を提供し、一部は部分的または完全なプラグイン可能なストレージ層を持っています。
+一部のフィーチャーストアは、プラットフォームの一部としてストレージ層を提供し、一部は部分的または完全にpluggableなストレージ層を持っています。
 (=一部のFeature Storeはストレージ層をそれ自体が持ち、また別のFeature Storeはそれ自体がストレージ層を持たずに別のストレージ層と接続する、みたいな??:thinking:)
 
 The machine learning pipelines (feature pipelines, training pipelines, and inference pipelines) read and write features/labels from/to the feature store, and prediction logs are typically also stored there to support feature/model monitoring and debugging. 
 機械学習パイプライン（フィーチャーパイプライン、トレーニングパイプライン、推論パイプライン）は、**フィーチャーストアからフィーチャー/ラベルを読み書きし**、予測ログも通常そこに保存されて、フィーチャー/モデルの監視とデバッグをサポートします。
-(ラベルもfeature storeに保存する想定なのか...!:thinking:)
+(予測結果もfeature storeに保存する想定なのか...!:thinking:)
 Different data transformations (model-independent, model-dependent, and on-demand) are performed in the different ML pipelines, see the Taxonomy of Data Transformations for more details. 
 異なるデータ変換（モデル非依存、モデル依存、オンデマンド）が異なるMLパイプラインで実行されます。詳細については、データ変換の分類を参照してください。
 (うんうん、複数本のFeature pipelineが動くよね、って話...!:thinking:)
@@ -250,20 +250,24 @@ Backfilling is the process of recomputing datasets from raw, historical data.
 When you backfill feature data, backfilling involves running a feature pipeline with historical data to populate the feature store. 
 特徴量データをバックフィルする際、バックフィリングは履歴データを使用して特徴量ストアを埋めるために特徴量パイプラインを実行することを含みます。
 This requires users to provide a start_time and an end_time for the range of data that is to be backfilled, and the data source needs to support timestamps, e.g., Type 2 slowly changing dimensions in a data warehouse table. 
-これには、ユーザーがバックフィルするデータの範囲のためにstart_timeとend_timeを提供する必要があり、データソースはタイムスタンプをサポートする必要があります。例えば、データウェアハウスのテーブルにおけるType 2の徐々に変化する次元などです。
+これには、**ユーザーがバックフィルするデータの範囲のためにstart_timeとend_timeを提供する必要があり**、データソースはタイムスタンプをサポートする必要があります。例えば、データウェアハウスのテーブルにおけるType 2の徐々に変化する次元などです。
+
+- 思ったことメモ:
+  - 毎回全ユーザ分の特徴量を作る系のパイプラインだったら、backfillはあくまで学習用データセットを作るため、という用途になりそう...!:thinking:
+  - 特定期間内に追加・更新されたアイテムだけの特徴量を作る系のパイプラインだったら、学習用だけじゃなくて推論用のデータを作る目的でもbackfillしそう。
+  - まあすでに既存の特徴量パイプライン達が運用されてる状況だったらbackfillってのはあんまりする必要はなくて、**どちらにせよ、特徴量グループに新しい特徴量を追加したり既存特徴量の作り方を変更した場合などにbackfillすることになるはず**:thinking:
+  - backfill可能なデータパイプラインである為には、やはり無状態 & 冪等性を持つパイプラインを意識する必要がありそう...!:thinking:
 
 The same feature pipeline used to backfill features should also process “live” data. 
-バックフィル機能に使用されるのと同じ機能パイプラインは、「ライブ」データも処理する必要があります。
-
+特徴量のbackfillに使用されるのと同じ特徴量パイプラインは、「ライブ」データも処理する必要があります。(うんうん、リアルタイムで現在収集してるデータも同じパイプラインで処理させようね、という話。ここで実装が別になってしまってるとバグの温床なんだよね...!:thinking:)
 You just point the feature pipeline at the data source and the range of data to backfill (e.g., backfill the daily partitions with all users for the last 180 days). 
-単に機能パイプラインをデータソースとバックフィルするデータの範囲（例：過去180日間のすべてのユーザーのデイリーパーティションをバックフィル）に向けるだけです。
-
+単に特徴量パイプラインを、データソースとバックフィルするデータの範囲（例：過去180日間のすべてのユーザーの毎日のパーティションをバックフィル）にポイントすればOKです。
+(要するに、**わざわざ「バックフィル用の特別なパイプライン」を別で作るのはやめようね**、って話だと思ってる! backfill時は、対象データ期間を「過去データの範囲に切り替えて」動かすだけ! :thinking:)
 Both batch and streaming feature pipelines should be able to backfill features. 
-バッチおよびストリーミング機能パイプラインの両方が機能をバックフィルできる必要があります。
-
+バッチおよびストリーミング特徴量パイプラインの両方が特徴量をバックフィルできる必要があります。(**ストリーミングパイプラインもbackfillできるようにしておこうね**、という話か...!ストリームのreplay設計っていうらしい...!:thinking:) 
+(でも結局、大量の期間のデータをbackifillする際には、バッチというかバルクで一気に処理できる設計になってた方がいいよな...**単一のパイプラインをバッチでもストリームでも実行できるようにしておくのが運用上最強ってことでは**...!:thinking:)
 Backfilling features is important because you may have existing historical data that can be leveraged to create training data for a model. 
-機能をバックフィルすることは重要です。なぜなら、モデルのトレーニングデータを作成するために活用できる既存の履歴データがあるかもしれないからです。
-
+特徴量をバックフィルすることは重要です。なぜなら、モデルのトレーニングデータを作成するために活用できる既存の履歴データがあるかもしれないからです。(逆にbackfillできないと、今から集めたデータだけを使って学習用・推論用データを作らなきゃいけなくなっちゃう。)
 If you couldn’t backfill features, you could start logging features in your production system and wait until sufficient data has been collected before you start training your model. 
 もし機能をバックフィルできなければ、プロダクションシステムで機能のログを取り始め、モデルのトレーニングを開始する前に十分なデータが収集されるのを待つことになります。
 
