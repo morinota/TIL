@@ -540,52 +540,48 @@ Similarly, on-demand transformations are version-controlled Python or Pandas use
 
 Feature stores can use existing columnar data stores and data processing engines, such as Spark, to create point-in-time correct training data. 
 フィーチャーストアは、既存のカラム型データストアやデータ処理エンジン（例：Spark）を使用して、時点整合性のある正しいトレーニングデータを作成できます。 
-
 However, as of December 2023, Spark, BigQuery, Snowflake, and Redshift do not support the ASOF LEFT JOIN query that is used to create training data from feature groups. 
-しかし、2023年12月現在、Spark、BigQuery、Snowflake、およびRedshiftは、フィーチャーグループからトレーニングデータを作成するために使用されるASOF LEFT JOINクエリをサポートしていません。 
-
+**しかし、2023年12月現在、Spark、BigQuery、Snowflake、およびRedshiftは、フィーチャーグループからトレーニングデータを作成するために使用されるASOF LEFT JOINクエリをサポートしていません**。(あ、そうなのか!:thinking:)
 Instead, they have to implement stateful windowed approaches. 
 その代わりに、状態を持つウィンドウアプローチを実装する必要があります。 
 
+![]()
+
 The other main performance bottleneck with many current data warehouses is that they provide query interfaces to Python with either a JDBC or ODBC API. 
 現在の多くのデータウェアハウスにおけるもう一つの主要なパフォーマンスボトルネックは、JDBCまたはODBC APIを介してPythonにクエリインターフェースを提供していることです。 
-
 These are row-oriented protocols, and data from the offline store needs to be pivoted from columnar format to row-oriented, and then back to column-oriented in Pandas. 
 これらは行指向のプロトコルであり、オフラインストアからのデータはカラム型フォーマットから行指向にピボットされ、その後Pandasで再びカラム指向に戻す必要があります。 
-
 Arrow is now the backing data format for Pandas 2.+. 
 Arrowは現在、Pandas 2.+のバックデータフォーマットです。 
 
 In open-source, reproducible benchmarks by KTH, Karolinska, and Hopsworks, they showed the throughput improvements over a specialist DuckDB/ArrowFlight feature query engine that returns Pandas DataFrames to Python clients in training and batch inference pipelines. 
 KTH、Karolinska、およびHopsworksによるオープンソースの再現可能なベンチマークでは、トレーニングおよびバッチ推論パイプラインでPandas DataFrameをPythonクライアントに返す専門のDuckDB/ArrowFlightフィーチャークエリエンジンに対するスループットの改善が示されました。 
-
 We can see from the table below that throughput improvements of 10-45X JDBC/ODBC-based query engines can be achieved. 
 以下の表から、10-45倍のJDBC/ODBCベースのクエリエンジンのスループット改善が達成できることがわかります。
 
+![]()
 
+<!-- ここまで読んだ! -->
 
 ### Query Engine for Low Latency Feature Data for Online Inference
 ### オンライン推論のための低遅延フィーチャーデータのクエリエンジン
 
 The online feature store is typically built on existing low latency row-oriented data stores. 
-オンラインフィーチャーストアは、通常、既存の低遅延の行指向データストアに基づいて構築されます。
-
+**オンラインフィーチャーストアは、通常、既存の低遅延の行指向データストアに基づいて構築**されます。
 These could be key-value stores such as Redis or Dynamo or a key-value store with a SQL API, such as RonDB for Hopsworks. 
 これには、RedisやDynamoのようなキー-バリューストア、またはHopsworksのためのSQL APIを持つキー-バリューストア（例：RonDB）が含まれます。
 
 The process of building the feature vector for an online model also involves more than just retrieving precomputed features from the online feature store using an entity ID. 
-オンラインモデルのためのフィーチャーベクトルを構築するプロセスは、エンティティIDを使用してオンラインフィーチャーストアから事前計算されたフィーチャーを取得するだけではありません。
-
+**オンラインモデルのためのフィーチャーベクトルを構築するプロセスは、エンティティIDを使用してオンラインフィーチャーストアから事前計算されたフィーチャーを取得するだけではありません**。(前述されてた3つの分類のうちの、リアルタイム変換の話か...!)
 Some features may be passed as request parameters directly and some features may be computed on-demand - using either request parameters or data from some 3rd party API, only available at runtime. 
 いくつかのフィーチャーはリクエストパラメータとして直接渡される場合があり、他のフィーチャーはオンデマンドで計算される場合があります - リクエストパラメータまたは実行時にのみ利用可能なサードパーティAPIからのデータを使用します。
-
 These on-demand transformations may even need historical feature values, inference helper columns, to be computed. 
 これらのオンデマンド変換は、計算される必要がある履歴フィーチャー値や推論ヘルパーカラムを必要とする場合もあります。
 
 In the code snippet below, we can see how an online inference pipeline takes request parameters in the predict method, computes an on-demand feature, retrieves precomputed features using the request supplied id, and builds the final feature vector used to make the prediction with the model. 
 以下のコードスニペットでは、オンライン推論パイプラインがpredictメソッドでリクエストパラメータを受け取り、オンデマンドフィーチャーを計算し、リクエストで提供されたidを使用して事前計算されたフィーチャーを取得し、モデルで予測を行うために使用される最終的なフィーチャーベクトルを構築する方法を示しています。
 
-```
+```python
 def loc_diff(event_ts, cur_loc) :
     return grid_loc(event_ts, cur_loc)
 
@@ -600,60 +596,51 @@ def predict(id, event_ts, cur_loc, amount) :
 
 In the figure below, we can see important system properties for online feature stores. 
 以下の図では、オンラインフィーチャーストアの重要なシステム特性を見ることができます。
-
 If you are building your online AI application on top of an online feature store, it should have LATS properties (low Latency, high Availability, high Throughput, and scalable Storage), and it should also support fresh features (through streaming feature pipelines). 
 オンラインフィーチャーストアの上にオンラインAIアプリケーションを構築している場合、それはLATS特性（低遅延、高可用性、高スループット、スケーラブルストレージ）を持ち、また新鮮なフィーチャー（ストリーミングフィーチャーパイプラインを通じて）をサポートする必要があります。
+
+![]()
 
 Some other important technical and performance considerations here for the online store are: 
 オンラインストアに関する他の重要な技術的およびパフォーマンスの考慮事項は次のとおりです：
 
-- Projection pushdown can massively reduce network traffic and latency. 
-- プロジェクションプッシュダウンは、ネットワークトラフィックと遅延を大幅に削減できます。
-
+- Projection pushdown can massively reduce network traffic and latency. プロジェクションプッシュダウンは、ネットワークトラフィックと遅延を大幅に削減できます。
 When you have popular features in feature groups with lots of columns, your model may only require a few features. 
 多くのカラムを持つフィーチャーグループに人気のフィーチャーがある場合、モデルは数個のフィーチャーのみを必要とするかもしれません。
-
 Projection pushdown only returns the features you need. 
 プロジェクションプッシュダウンは、必要なフィーチャーのみを返します。
-
 Without projection pushdown (e.g., most key-value stores), the entire row is returned and the filtering is performed in the client. 
 プロジェクションプッシュダウンがない場合（例：ほとんどのキー-バリューストア）、全行が返され、フィルタリングはクライアントで行われます。
-
 For rows of 10s of KB, this could mean 100s of times more data is transferred than needed, negatively impacting latency and throughput (and potentially also cost). 
 10sのKBの行の場合、必要なデータの100倍以上のデータが転送される可能性があり、遅延とスループットに悪影響を及ぼす（そして潜在的にコストにも影響を与える）可能性があります。
 
 - Your feature store should support a normalized data model, not just a star schema. 
 - フィーチャーストアは、スタースキーマだけでなく、正規化されたデータモデルをサポートする必要があります。
-
 For example, if your user provides a booking reference number that is used as the entity ID, can your online store also return features for the user and products referenced in the booking, or does either the user or application have to provide the user ID and product ID? 
 例えば、ユーザーがエンティティIDとして使用される予約参照番号を提供した場合、オンラインストアは予約に参照されるユーザーや製品のフィーチャーも返すことができますか、それともユーザーまたはアプリケーションのいずれかがユーザーIDと製品IDを提供する必要がありますか？
-
 For high performance, your online store should support pushdown LEFT JOINs to reduce the number of database round trips for building features from multiple feature groups. 
 高パフォーマンスのために、オンラインストアは複数のフィーチャーグループからフィーチャーを構築するためのデータベースの往復回数を減らすために、プッシュダウンLEFT JOINをサポートする必要があります。
 
-
+<!-- ここまで読んだ! 良くわからんかった! -->
 
 ### Query Engine to find similar Feature Data using Embeddings 埋め込みを使用して類似の特徴データを見つけるクエリエンジン
 
 Real-time ML systems often use similarity search as a core functionality. 
 リアルタイムの機械学習システムは、しばしば類似性検索をコア機能として使用します。 
 For example, personalized recommendation engines typically use similarity search to generate candidates for recommendation, and then use a feature store to retrieve features for the candidates, before a ranking model personalizes the candidates for the user.
-例えば、パーソナライズされた推薦エンジンは、通常、類似性検索を使用して推薦候補を生成し、その後、フィーチャーストアを使用して候補の特徴を取得し、最後にランキングモデルがユーザーのために候補をパーソナライズします。
+例えば、パーソナライズされた推薦エンジンは、通常、類似性検索を使用して推薦候補を生成し、その後、フィーチャーストアを使用して候補の特徴を取得し、最後にランキングモデルがユーザーのために候補をパーソナライズします。(うんうん、2-stages推薦ね。:thinking:)
 
 The example code snippet below is from Hopsworks, and shows how you can search for similar rows in a feature group with the text “Happy news for today” in the embedding_body column.
 以下の例のコードスニペットはHopsworksからのもので、embedding_body列に「Happy news for today」というテキストを含むフィーチャーグループ内で類似の行を検索する方法を示しています。
-```
+(ちなみにSagemaker Feature Storeは近似近傍探索の機能はなさそうだった)
+
+```python
 news_desc="Happy news for today"
 df=news_fg.find_neighbors(model.encode(news_desc), k=3)
 # df now contains rows with 'news_desc' values that are most similar to 'news_desc'
 ```
-```
-news_desc="Happy news for today"
-df=news_fg.find_neighbors(model.encode(news_desc), k=3)
-# dfには、'news_desc'の値が'news_desc'に最も類似している行が含まれています
-```  
 
-
+<!-- ここまで読んだ! -->
 
 ## Do I need a feature store? 特徴ストアは必要ですか？
 
@@ -662,65 +649,52 @@ Feature stores have historically been part of big data ML platforms, such as Ube
 
 More recent open-source feature stores provide open APIs enabling easy integration with existing ML pipelines written in Python, Spark, Flink, or SQL.
 最近のオープンソースの特徴ストアは、Python、Spark、Flink、またはSQLで書かれた既存のMLパイプラインとの簡単な統合を可能にするオープンAPIを提供します。
-
 Serverless feature stores further reduce the barriers of adoption for smaller teams.
 サーバーレス特徴ストアは、より小規模なチームの採用の障壁をさらに低くします。
-
 The key features needed by most teams include APIs for consistent reading/writing of point-in-time correct feature data, monitoring of features, feature discovery and reuse, and the versioning and tracking of feature data over time.
-ほとんどのチームが必要とする主要な機能には、時点で正確な特徴データの一貫した読み書きのためのAPI、特徴の監視、特徴の発見と再利用、そして時間の経過に伴う特徴データのバージョン管理と追跡が含まれます。
-
+**ほとんどのチームが必要とする主要な機能には、時点で正確な特徴データの一貫した読み書きのためのAPI、特徴の監視、特徴の発見と再利用、そして時間の経過に伴う特徴データのバージョン管理と追跡**が含まれます。
 Basically, feature stores are needed for MLOps and governance.
 基本的に、特徴ストアはMLOpsとガバナンスに必要です。
-
 Do you need Github to manage your source code? No, but it helps.
 ソースコードを管理するためにGithubは必要ですか？いいえ、しかし役に立ちます。
-
 Similarly, do you need a feature store to manage your features for ML? No, but it helps.
 同様に、MLのために特徴を管理するために特徴ストアは必要ですか？いいえ、しかし役に立ちます。
 
+<!-- ここまで読んだ! -->
 
-
-## What is the difference between a feature store and a vector database? 
-特徴ストアとベクトルデータベースの違いは何ですか？
+## What is the difference between a feature store and a vector database? 　特徴ストアとベクトルデータベースの違いは何ですか？
 
 Both feature stores and vector databases are data platforms used by machine learning systems. 
-特徴ストアとベクトルデータベースは、機械学習システムで使用されるデータプラットフォームです。
-
+特徴ストアとベクトルデータベースは、どちらも機械学習システムで使用されるデータプラットフォームです。
 The feature store stores feature data and provides query APIs for efficient reading of large volumes feature data (for model training and batch inference) and low latency retrieval of feature vectors (for online inference). 
 特徴ストアは特徴データを保存し、大量の特徴データ（モデルのトレーニングやバッチ推論用）を効率的に読み取るためのクエリAPIと、特徴ベクトル（オンライン推論用）を低遅延で取得するためのクエリAPIを提供します。
-
 In contrast, a vector database provides a query API to find similar vectors using approximate nearest neighbour (ANN) search. 
-対照的に、ベクトルデータベースは近似最近傍（ANN）検索を使用して類似ベクトルを見つけるためのクエリAPIを提供します。
+対照的に、**ベクトルデータベースは近似最近傍（ANN）検索を使用して類似ベクトルを見つけるためのクエリAPIを提供**します。
 
 The indexing and data models used by feature stores and vector databases are very different. 
 特徴ストアとベクトルデータベースで使用されるインデックスとデータモデルは非常に異なります。
-
 The feature store has two data stores - an offline store, typically a data warehouse/lakehouse, that is a columnar database with indexes to help improve query performance such as (file) partitioning based on a partition column, skip indexes (skip files when reading data using file statistics), and bloom filters (which files to skip when looking for a row). 
-特徴ストアには2つのデータストアがあります。オフラインストアは通常、データウェアハウス/レイクハウスであり、クエリパフォーマンスを向上させるためのインデックスを持つ列指向データベースです。これには、パーティション列に基づく（ファイル）パーティショニング、スキップインデックス（ファイル統計を使用してデータを読み取る際にスキップするファイル）、およびブルームフィルター（行を探すときにスキップするファイル）が含まれます。
-
+**特徴ストアには2つのデータストアがあります**。オフラインストアは通常、データウェアハウス/レイクハウスであり、クエリパフォーマンスを向上させるためのインデックスを持つ列指向データベースです。これには、パーティション列に基づく（ファイル）パーティショニング、スキップインデックス（ファイル統計を使用してデータを読み取る際にスキップするファイル）、およびブルームフィルター（行を探すときにスキップするファイル）が含まれます。
 The online store is a row-oriented database with indexes to help improve query performance such as a hash index to lookup a row, a tree index (such as a b-tree) for efficient range queries and row lookups, and a log-structured merge-tree (for improved write performance). 
 オンラインストアは、行を検索するためのハッシュインデックス、効率的な範囲クエリと行検索のためのツリーインデックス（b-treeなど）、および書き込みパフォーマンスを向上させるためのログ構造マージツリーを持つ行指向データベースです。
-
 In contrast, the vector database stores its data in a vector index that supports ANN search, such as FAISS (Facebook AI Similarity Search) or ScaNN by Google. 
-対照的に、ベクトルデータベースは、FAISS（Facebook AI Similarity Search）やGoogleのScaNNなど、ANN検索をサポートするベクトルインデックスにデータを保存します。
+対照的に、ベクトルデータベースは、FAISS（Facebook AI Similarity Search）やGoogleのScaNNなど、**ANN検索をサポートするベクトルインデックスにデータを保存**します。
+(と言っても、HopsworksのFeature Storeは機能の一つとして、ベクトルDBをサポートしてるってことだよね...!:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 ## Is there an integrated feature store and vector database? 統合されたフィーチャーストアとベクターデータベースは存在するか？
 
 Hopsworks is a feature store with an integrated vector database. 
-Hopsworksは、統合されたベクターデータベースを持つフィーチャーストアです。
-
+Hopsworksは、統合されたベクターデータベースを持つフィーチャーストアです。(だよね!)
 You store tables of feature data in feature groups, and you can index a column that contains embeddings in a built-in vector database. 
 フィーチャーグループにフィーチャーデータのテーブルを保存し、組み込みのベクターデータベースに埋め込みを含む列をインデックス化することができます。
-
 This means you can search for rows of similar features using embeddings and ANN search. 
 これは、埋め込みとANN検索を使用して、類似のフィーチャーの行を検索できることを意味します。
-
 Hopsworks also supports filtering, so you can search for similar rows, but provide conditions on what type of data to return (e.g., only users whose age>18). 
 Hopsworksはフィルタリングもサポートしているため、類似の行を検索できますが、返すデータの種類に条件を指定することができます（例：年齢が18歳以上のユーザーのみ）。
 
-
+<!-- ここまで読んだ! -->
 
 ## Resources on feature stores 特徴ストアに関するリソース
 
@@ -743,3 +717,5 @@ This article series is describing in lay terms concepts and results from this st
 - Part 6: RonDB：リアルタイムAIシステムのためのリアルタイムデータベース
 - Part 7: Reproducible Data for the AI Lakehouse
 - Part 7: AIレイクハウスのための再現可能なデータ
+
+<!-- ここまで読んだ! -->
