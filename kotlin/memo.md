@@ -120,3 +120,54 @@ fun log(vararg entries: String) {
 }
 log("Hello", "Hallo", "Salut", "Hola", "你好")
 ```
+
+## sealed class
+
+- 「**このクラスを継承できるのは、定義ファイル内に限る**」という制約付きの抽象クラス。
+
+## ジェネリクスの指定について。
+
+
+ex.
+
+```kotlin
+fun <T: HogeClass> foo(myArg: T) {
+    // ...
+}
+```
+
+- `T: HogeClass` って何?
+  - **型引数`T`が、型`HogeClass`を継承してることを表す**、ジェネリクスの指定。
+- そもそもジェネリクスってなんだっけ??
+  - hoge
+
+## `object`キーワードって??
+
+ex.
+
+```kotlin
+sealed class ContentRecommendationType<T : ContentRecommendationAlgorithm>(val algorithmClass: Class<T>) {
+    // 以下に、ContentRecommendationAlgorithmを継承した各アルゴリズムのクラスを登録していく
+    object Movie2Movie : ContentRecommendationType<Movie2MovieRecommendationAlgorithm>(Movie2MovieRecommendationAlgorithm::class.java)
+}
+```
+
+
+- kotlinの`object`キーワードは、**クラスのシングルトンインスタンスを定義**できる特殊構文。
+  - `object`キーワードを使うと、「この型のインスタンスは1つしか存在しませんよ」って明示的に保証される。
+- **sealed class + objectキーワードの組み合わせにより、Enum的に使える**。
+  - Enum的ってどういうこと? どんな特性を持ってる?
+    - 限定された選択肢: sealed class + objectで定義した選択肢だけ許可される
+    - 型ごとの情報を持てる: 各objectに異なる型を持たせられる。
+    - シングルトン保証: 同じ型のインスタンスは1つしか存在しない。
+    - パターンマッチが安全にできる: when式でsealed classの各objectを分岐できる。
+  - kotlinのEnum(列挙型)と何が違うのか??
+    - 上述の性質のうち「型ごとの情報を持てる: 各objectに異なる型を持たせられる」という部分がやりづらい。
+
+
+
+## `applicationContext.getBean()`についてメモ
+
+- Spring Frameworkの機能の一つ。
+- 指定した型のBean(インスタンス)をDIコンテナから取得してくるやつ。
+
