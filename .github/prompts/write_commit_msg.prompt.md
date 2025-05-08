@@ -2,7 +2,7 @@
 
 ## 目的
 
-ステージングされた差分（`git diff --cached`）に基づいて、日本語でConventional Commit形式のコミットメッセージを書いてください。
+ステージングされた差分（`git diff --cached`）に基づいて、日本語でConventional Commit形式のコミットメッセージを考えて git commit を実行します。
 
 
 ## 制約条件
