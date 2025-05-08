@@ -14,22 +14,48 @@
   - Edits の機能に加えて、コンソールでのコマンド実行やその結果を自己解釈して半自動でコードを継続的に生成する。
   - 現在はVSCode insiderのみで提供されてる。
 
+## Custom instructions (カスタム指示)　機能
+
+- Copilot がコード生成やその他のタスクを行う際に、特定のコーディング規約やプロジェクトの要件に合わせた応答を得るために使用できる機能。
+- VS Code では、コード生成、テスト生成、コードレビュー、コミットメッセージ生成、プルリクエストのタイトルと説明生成など、**いくつかの種類の custom instructions がサポートされてる**。
+- custom instructions の設定方法2パターン:
+  - その1: ワークスペースの `.github/copilot-instructions.md` ファイルを使用する。
+    - github.copilot.chat.codeGeneration.useInstructionFiles 設定を true にする必要がある。
+  - その2: VS Code の設定 (`settings.json`) に直接記述する。
+- 
+
 ## reusable prompt files　機能についてメモ
 
 refs: https://code.visualstudio.com/docs/copilot/copilot-customization#_reusable-prompt-files-experimental
 
-- GitHub Copilotで使える再利用可能なプロンプトを、markdownで管理する機能。
-  - プロジェクトやチームでよく使う指示をテンプレ化して、効率的に使えるようにする。
+- **完全なチャットプロンプトをmarkdown形式で記述し、チャット内で参照できる機能**。
+  - カスタム指示が既存のプロンプトを補足するのに対し、**プロンプトファイルはスタンドアロンのプロンプト**であり、ワークスペース内に保存して他のユーザーと共有できる。
 - 主な特徴:
   - プロンプトのテンプレート化
   - ファイル参照機能
   - 階層化構造
   - 共有容易性
-- 設定方法
-  - その1: VSCodeの設定で"chat.promptFiles": trueを追加
-  - その2: ワークスペースの`.github/prompts/`にプロンプトファイル `hoge.prompt.md`ファイルを作成
-  - その3: プロンプト内容をmarkdown形式で記載
-- 使い方のコツ:
-  - コンテキスト追加：チャット画面で📎アイコン→「Prompt...」から選択
-  - 複数ファイル連携: プロンプト内で別の `.prompt.md`ファイルを参照することができる。
-  - 変数活用: `#file`や`#folder`を使って、関連ファイルを自動読み込みできる。
+- プロンプトファイルは2種類:
+  - ワークスペースプロンプトファイル
+    - ワークスペースの `.github/prompts/` フォルダに直接`hoge.prompt.md`ファイルを作成するか、`Chat: Create Prompt`コマンドを使うこともできる。
+    - chat.promptFilesLocations 設定で追加のプロンプトファイル場所を指定することも可能。
+  - ユーザープロンプトファイル
+    - 複数のワークスペースで利用可能。
+    - `Chat: Create User Prompt`コマンドで作成できる。
+    - ユーザプロンプトファイルは、Settings Sync を使用して、他のデバイスと同期できる。
+  - どちらの種類のプロンプトファイルでも、他の`.prompt.md`ファイルを参照して階層構造を作成できる。
+    - (この階層構造を使って、ワークフローを作れるのかな...? 各stepを定義した`.prompt.md`と、orchestrator的な役割の`.prompt.md`を作成して、呼び出し時にはorchestratorのプロンプトファイルを選択する、みたいな...!:thinking:)
+
+- 一般的なユースケース
+  - コード生成
+  - ドメイン知識の共有
+  - チームコラボレーション
+  - オンボーディング
+
+- 使い方は大きく2通り:
+  - その1: Chatビューから「Add Context」ボタンをクリックして、「Prompts」から対象のプロンプトファイルを選択する。
+  - その2: 「Chat: Use Prompt」コマンドを使用する。
+  - 注目:
+    - プロンプトファイルは、ask, edit, agentモードのいずれでも使用できる。
+    - 必要に応じて、追加のコンテキストファイルを添付したり、チャットプロンプトに更に指示を含めたりできる。
+    - **追加のコンテキスト不要で、そのままプロンプトファイルを使用する場合は、追加の指示なしで送信すれば良い**。
