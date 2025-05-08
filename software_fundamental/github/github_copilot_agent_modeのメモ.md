@@ -22,7 +22,6 @@
   - その1: ワークスペースの `.github/copilot-instructions.md` ファイルを使用する。
     - github.copilot.chat.codeGeneration.useInstructionFiles 設定を true にする必要がある。
   - その2: VS Code の設定 (`settings.json`) に直接記述する。
-- 
 
 ## reusable prompt files　機能についてメモ
 
@@ -45,6 +44,9 @@ refs: https://code.visualstudio.com/docs/copilot/copilot-customization#_reusable
     - ユーザプロンプトファイルは、Settings Sync を使用して、他のデバイスと同期できる。
   - どちらの種類のプロンプトファイルでも、他の`.prompt.md`ファイルを参照して階層構造を作成できる。
     - (この階層構造を使って、ワークフローを作れるのかな...? 各stepを定義した`.prompt.md`と、orchestrator的な役割の`.prompt.md`を作成して、呼び出し時にはorchestratorのプロンプトファイルを選択する、みたいな...!:thinking:)
+    - 別ファイルからの読み込み方法
+      - パターン1: markdownリンク形式 ex. `[hoge](./hoge.prompt.md)`
+      - パターン2: `#file:`を使ったファイル参照形式 ex. `#file:../index.ts`
 
 - 一般的なユースケース
   - コード生成
