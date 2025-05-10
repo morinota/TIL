@@ -193,3 +193,19 @@ Feature Storeの各種データの保存場所について:
     - (この観点大事だ...! 言い換えるとFTI Pipelines Architectureの利点でもある!)
 - 恩恵4: 工数の削減
   - Feature Storeが十分に整備されていれば、必要な特徴量がすでにFeature Storeにあるなら、新しいMLモデルのためにfeature pipelineを書く必要はなくなる。
+
+### 補足: Feature Storeは特徴量データのvalidation & ドリフト監視をどう支えるか??
+
+- 前提:
+  - 「Garbage In, Garbage Out」はMLにも完全に当てはまり、**モデルの性能は入力データの品質に大きく依存する**。よって、**特徴量の品質チェックは必須**である。
+- 特徴量のvalidation ＝ Feature Storeに書き込む前のチェック
+  - 特徴量パイプラインの出口 or Feature Storeへの書き込み時に実行する。
+  - (feature pipelineの最後のstepでvalidationを実行すれば良さそう...!:thinking:)
+- 特徴量の監視 = 保存後の変化・異常の検知
+  - Feature monitoringは、多くのFeature Storeが提供する便利な機能の一つ
+  - バッチMLシステムを構築する場合でもオンラインMLシステムを構築する場合でも、システムのモデルに対する**推論データを監視し、それがモデルの学習データと統計的に有意に異なるかどうか(data drift)を確認できる必要がある**。
+    - もし異なる場合は、ユーザ(=開発者)にアラートを通知し、**理想的にはより最近の学習データを使用してモデルの再学習を開始するべき**。
+  - ちなみに...Hopsworks Feature Storeの例:
+    - ドリフト検知のバッチが1日一回実行されるようになってるみたい。
+    - 推論時の特徴量の統計量が、学習時の同じ値から50%以上逸脱してた場合に、データドリフトが発生したとみなし、アラートをtriggerするような仕組みらしい。
+    - なるほどこの場合のデータドリフトの監視はバッチで行われるのか。[こちらのブログ](https://huyenchip.com/2022/08/03/stream-processing-for-data-scientists.html)で理想的にはこれもストリーミング的に実行される方が良いって見た覚えがある...!:thinking:
