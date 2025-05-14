@@ -21,6 +21,7 @@ pymc = "^5.20.0"
 langgraph = "^0.3.20"
 mcp = "^1.6.0"
 typer = "^0.15.2"
+feast = "^0.48.1"
 
 [tool.poetry.group.dev.dependencies]
 locust = "^2.32.5"
