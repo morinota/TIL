@@ -1,3 +1,5 @@
+<!-- 読む! --> 
+
 ## link リンク
 
 https://towardsdatascience.com/effective-testing-for-machine-learning-part-i-e6b5aeb51421
