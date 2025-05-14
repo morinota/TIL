@@ -1,8 +1,7 @@
+- refs: https://neptune.ai/blog/feature-stores-components-of-a-data-science-factory-guide
 
 # Feature Stores: Components of a Data Science Factory [Guide] 特徴ストア：データサイエンスファクトリーの構成要素 [ガイド]
 Sumit Saha
-Sumit Saha
-7 min
 21st August, 2023 2023年8月21日
 
 Ineffective and expensive feature engineering practices often plague companies that work with large amounts of data. 
@@ -263,7 +262,7 @@ Feature Stores can help in two ways:
 The issue with machine learning pipelines is their stateful nature. 
 機械学習パイプラインの問題は、その状態を持つ性質です。
 A good data pipeline should be stateless and idempotent. 
-**良いデータパイプラインは、無状態で冪等であるべき**です。(うんうん...!:thinking:)
+**良いデータパイプラインは、無状態で冪等であるべき**です。(i.e. 再実行しても結果が変わらないデータパイプライン...!:thinking:)
 In other words, we need a lot of information before deploying a new model (in validation stage) about how well it’s performing, what are the assumptions we’re making, the impact of the model, and so on. 
 言い換えれば、新しいモデル（検証段階）をデプロイする前に、そのパフォーマンス、私たちが行っている仮定、モデルの影響などについて多くの情報が必要です。
 Usually, developers end up re-writing code over and over again to define input and output properly. 
