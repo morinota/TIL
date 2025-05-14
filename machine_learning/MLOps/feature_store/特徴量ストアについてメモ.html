@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.336">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>quarto-inputcefeb19a</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="特徴量ストアについてメモ_files/libs/clipboard/clipboard.min.js"></script>
+<script src="特徴量ストアについてメモ_files/libs/quarto-html/quarto.js"></script>
+<script src="特徴量ストアについてメモ_files/libs/quarto-html/popper.min.js"></script>
+<script src="特徴量ストアについてメモ_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="特徴量ストアについてメモ_files/libs/quarto-html/anchor.min.js"></script>
+<link href="特徴量ストアについてメモ_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="特徴量ストアについてメモ_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="特徴量ストアについてメモ_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="特徴量ストアについてメモ_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="特徴量ストアについてメモ_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="これは何" class="level2">
+<h2 class="anchored" data-anchor-id="これは何">これは何?</h2>
+<ul>
+<li>特徴量ストア(feature store) について調査したものです。</li>
+</ul>
+</section>
+
+<section id="メモ" class="level1">
+<h1>メモ</h1>
+<ul>
+<li>Feature Storeとは？
+<ul>
+<li>MLモデルのライフサイクル全体にわたり特徴量を管理するデータプラットフォーム</li>
+</ul></li>
+<li>構成要素：
+<ul>
+<li><code>Feature repository</code>：バージョン管理された特徴量を保存</li>
+<li><code>Feature serving layer</code>：学習・推論時にリアルタイムで特徴を提供</li>
+<li><code>Metadata store</code>：特徴量の由来・変換履歴などのメタ情報を保持</li>
+</ul></li>
+<li>Feature Storeを使う利点
+<ul>
+<li>モデルのトレーニング・推論で<strong>同じ特徴を再利用可能</strong></li>
+<li>過去時点の特徴値を再現できる（Point-in-time consistency）</li>
+<li>リアルタイム/バッチ/ストリーム処理のMLすべてに対応可能</li>
+<li>オンライン推論で使う特徴が、学習時と一致する保証ができる</li>
+</ul></li>
+</ul>
+<section id="operationalなfeature-storeに必要な5つの最低条件" class="level2">
+<h2 class="anchored" data-anchor-id="operationalなfeature-storeに必要な5つの最低条件">OperationalなFeature Storeに必要な5つの最低条件</h2>
+<section id="shareableであること" class="level3">
+<h3 class="anchored" data-anchor-id="shareableであること">Shareableであること</h3>
+<ul>
+<li>フィーチャーは<strong>チーム間・プロジェクト間で再利用可能</strong>であるべき</li>
+<li>データサイエンティストが新しいプロジェクトのたびに同じ特徴量を再構築する必要がなくなる</li>
+<li>例：ユーザーの過去7日間のクリック数をカウントする特徴量を何度も定義し直すのは非効率</li>
+<li>「Feature repo + documentation + discoverability」が大事</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="feature-store決定版ガイド2025年ver.を読んだメモ" class="level1">
+<h1>Feature Store決定版ガイド2025年ver.を読んだメモ</h1>
+<section id="特徴量とは-なんで専用の保存場所が必要" class="level2">
+<h2 class="anchored" data-anchor-id="特徴量とは-なんで専用の保存場所が必要">特徴量とは? なんで専用の保存場所が必要?</h2>
+<ul>
+<li>特徴量(feature)とは
+<ul>
+<li>ある対象(entity)の属性(property)を数値化したもので、かつ機械学習モデルの予測に役立つもの。</li>
+<li>特徴量は、MLモデルの学習や、バッチMLシステムおよびオンラインMLシステムでの推論に使用される。</li>
+<li>特徴量は、必要なときにその場で計算することも、事前に計算して後で学習や推論に使用することもできる。</li>
+</ul></li>
+<li>なんで専用のストアが必要なの?
+<ul>
+<li>特徴量を保存することの利点の一部は、それらが簡単に発見され、異なるモデルで再利用しやすい状況を作れること。
+<ul>
+<li>それにより、新しいMLシステムを構築するために必要なコストと時間を削減できること。</li>
+</ul></li>
+<li>リアルタイム推論の場合に、事前に計算しておいたリッチな特徴量を提供できること。
+<ul>
+<li>オンラインモデルはlocal stateを持たない傾向があるらしい。
+<ul>
+<li>(これってどういう意味だろう。local stateを持たない傾向、って部分。perplexityに聞いてみた感じ、各ユーザやリクエストの履歴・状態をモデル本体やサーバーのメモリ内に溜め込まず、<strong>「今来たリクエスト」に含まれる情報だけをそのまま使う傾向がある</strong>、みたいな意味合いっぽい…!:thinking:)</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<section id="特徴量ストアとmlopsmlシステムとの関連" class="level3">
+<h3 class="anchored" data-anchor-id="特徴量ストアとmlopsmlシステムとの関連">特徴量ストアとMLOps、MLシステムとの関連</h3>
+<ul>
+<li></li>
+</ul>
+</section>
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><section id="refs" class="level2">
+<h2 class="anchored" data-anchor-id="refs">refs:</h2>
+<ul>
+<li>自前でfeature storeを実装した事例: <a href="https://speakerdeck.com/zerebom/wantedlydefeature-storewodao-ru-suruji-nikao-etakoto?slide=42">WantedlyでFeature Storeを導入する際に考えたこと</a></li>
+<li>neptuneの特徴量ストアのブログ:</li>
+<li><a href="https://medium.com/data-for-ai/5-minimum-requirements-of-an-operational-feature-store-ab1436ca1a2c">5 Minimum Requirements of an Operational Feature Store</a></li>
+<li><a href="https://www.hopsworks.ai/dictionary/feature-store">Feature Store: The Definitive Guide 2025年ver.</a></li>
+</ul>
+</section></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
