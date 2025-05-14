@@ -1,5 +1,7 @@
 ## これは何?
 
+- n週連続 推薦システム系論文読んだシリーズの43回目です。
+  - 前回はこちら: [Operational(=本番システム上で実際に価値を発揮する?)なFeature Storeに必要な5つの最低条件を読んだメモ](https://qiita.com/morinota/items/9e5eb673be3abfc24296)
 - 論文「Carousel Personalization in Music Streaming Apps with Contextual Bandits」を読んだメモです。
 
 ## ざっくりどんな内容?
