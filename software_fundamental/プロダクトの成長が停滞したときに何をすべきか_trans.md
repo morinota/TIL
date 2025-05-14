@@ -1,57 +1,44 @@
 refs: https://andrewchen.com/growth-stalls/
 
 
-# Andrew Chen Archives  
-# What to do when product growth stalls
+Andrew Chen Archives  
+# What to do when product growth stalls プロダクトの成長が停滞したときに何をすべきか
 
-The crisis arrives slowly, then all at once  
-危機はゆっくりと訪れ、そして一気にやってくる。
+## The crisis arrives slowly, then all at once 危機はゆっくりと訪れ、そして一気にやってくる。
 
 At first, everything seems rosy. The growth rate of a new product is spiking, and growing quickly, maybe even hundreds of percentage points a year.  
 最初はすべてが順調に見える。新製品の成長率は急上昇し、急速に成長している。年間で数百パーセントの成長もあり得る。
-
 But weirdly, a year or two in, there’s some softness in the latest numbers.  
 しかし奇妙なことに、1年か2年経つと、最新の数字に若干の軟化が見られる。
-
 Maybe it’s seasonality, or maybe something else. But worryingly, it keeps slowing.  
 それは季節性かもしれないし、他の何かかもしれない。しかし心配なことに、成長は鈍化し続ける。
-
 First to 300% a year, then 200%. Then 100% – a mere doubling annually in a startup ecosystem that demands a much faster target.  
 最初は年間300%、次に200%。そして100% – スタートアップエコシステムでは、年間の倍増は非常に遅い目標である。
-
 More features are planned, and some are even shipped. Eventually, there’s a back-to-back where things are completely flat.  
 さらに多くの機能が計画され、一部は実装される。しかし最終的には、すべてが完全に横ばいになる。
-
 What starts as a slow boil – where the team has a well-planned roadmap and a big vision – becomes a sudden crisis.  
 チームがよく計画されたロードマップと大きなビジョンを持っている状態から始まるゆっくりとした沸騰は、突然の危機に変わる。
-
 There are late evening phone calls and emergency sessions.  
 遅い時間の電話や緊急会議が行われる。
-
 Analytics dashboards are pulled and re-pulled, to figure out what’s going on.  
 分析ダッシュボードが引き出され、何が起こっているのかを把握するために再度引き出される。
-
 The team needs a new plan.  
 チームは新しい計画を必要としている。
 
 There’s a saying that no military plan survives first contact with the enemy, and similarly — no product roadmap survives first contact with stalled growth.  
 「どんな軍事計画も敵との初接触を生き延びることはない」という言葉があるが、同様に、成長が停滞した際に製品のロードマップも生き延びることはない。
-
 Instead, a crisis ensues, and the entire roadmap has to be rewritten.  
 その代わりに危機が発生し、全体のロードマップを再作成しなければならない。
-
 Particularly for startups, where continual growth is life and death.  
-特にスタートアップにとっては、継続的な成長が生死に関わる問題である。
+**特にスタートアップにとっては、継続的な成長が生死に関わる問題である**。
 
 When this crisis hits, the question is, what to do about it?  
-この危機が訪れたとき、問題はどう対処するかである。
-
+**この危機が訪れたとき、問題はどう対処するかである**。
 How do you come up with a plan?  
 どのように計画を立てるのか？
 
 For better or worse, I’ve had this conversation with product managers and entrepreneurs many times over the years.  
 良いことでも悪いことでも、私はこれまでに何度もプロダクトマネージャーや起業家とこの会話を交わしてきた。
-
 The easy answer that people generally want to hear either falls into the camp of:  
 人々が一般的に聞きたい簡単な答えは、次のようなものに分類される。
 
@@ -68,43 +55,39 @@ Don’t listen to these people :)
 これらの人々の言うことを聞いてはいけない :)
 
 Instead, I offer the idea that you can analyze growth stalls systematically.  
-代わりに、成長の停滞を体系的に分析できるという考えを提案する。
-
+代わりに、**成長の停滞を体系的に分析**できるという考えを提案する。
 You can ask questions, gather data, and assess the stall to zero in on the problems that are driving the metrics downwards.  
 質問をし、データを集め、停滞を評価して、指標を下げている問題に焦点を当てることができる。
 
-Assessing the stall – starting with retention  
-停滞の評価 – リテンションから始める
+<!-- ここまで読んだ! -->
+
+## Assessing the stall – starting with retention 停滞の評価 – リテンションから始める
 
 First off, let me explain what’s happening during a growth stall.  
-まず、成長の停滞中に何が起こっているのかを説明させてください。
-
+まず、**成長の停滞中に何が起こっているのか**を説明させてください。
 Yes, of course, it’s when a top-line number (like revenue or active users, or otherwise) stops growing.  
-はい、もちろん、トップラインの数字（収益やアクティブユーザーなど）が成長を止めるときのことです。
-
+はい、もちろん、**トップラインの数字（収益やアクティブユーザーなど）が成長を止めるとき**のことです。
 But what’s happening under the covers?  
 しかし、裏では何が起こっているのか？
-
 At its core, a product stalls when its churn catches up with its customer acquisition.  
-本質的には、顧客の流出が顧客獲得に追いつくときに製品が停滞する。
+**本質的には、顧客の流出が顧客獲得に追いつくときに製品が停滞する**。
 
 I encourage y’all reading the entire thing, but I’ve written about this in the past in the deckThe Red Flags and Magic Numbers That Investors Look For, which shows this growth of the underlying dynamics:  
-皆さんに全体を読んでいただきたいが、私は過去に「投資家が探す赤旗と魔法の数字」というデッキでこれについて書いたことがあり、基礎的なダイナミクスの成長を示している。
+皆さんに全体を読んでいただきたいが、私は過去に「[投資家が探す赤旗と魔法の数字](https://andrewchen.com/investor-metrics-deck/)」というデッキでこれについて書いたことがあり、基礎的なダイナミクスの成長を示している。
+
+![]()
 
 That is, a stall occurs when a product is churning enough users that it overpowers the counterforce – the product attracting new users and reactivating users (though this latter term is less important for startups).  
 つまり、製品が十分なユーザーを流出させて、反対の力（新しいユーザーを引き付け、ユーザーを再活性化する製品）を上回るときに停滞が発生する（ただし、この後者の用語はスタートアップにとってはあまり重要ではない）。
-
 This happens because typically churn happens to a % of the user base, as anyone who’s seen cohort retention curves knows.  
-これは、通常、流出はユーザーベースの%に発生するため、コホートリテンションカーブを見たことがある人なら誰でも知っている。
-
+これは、通常、流出はユーザーベースのa%に発生するため、コホートリテンションカーブを見たことがある人なら誰でも知っている。
 But unfortunately, new customer growth channels tend to be fairly linear — most marketing channels don’t scale up as the user base scales up, and even the channels that do, like viral marketing, eventually saturate and slow down.  
 しかし残念ながら、新しい顧客成長チャネルはかなり線形的である傾向がある – ほとんどのマーケティングチャネルはユーザーベースが拡大するにつれてスケールアップせず、バイラルマーケティングのようにスケールアップするチャネルでさえ、最終的には飽和し、鈍化する。
-
 All while churn continues to creep up over time as a percentage.  
 その間、流出は時間とともに%として徐々に増加し続ける。
 
 Because of these dynamics, I start by asking questions about retention to establish a baseline.  
-これらのダイナミクスのために、私はリテンションに関する質問をして基準を確立することから始める。
+これらのダイナミクスのために、私は**リテンションに関する質問をして基準を確立すること**から始める。
 
 These questions are just a starting point, because once you ask them, the question is — what do you do with the answers?  
 これらの質問は出発点に過ぎない。なぜなら、質問をした後は、答えをどうするかが問題だからだ。
@@ -113,70 +96,58 @@ These questions are just a starting point, because once you ask them, the questi
 - 製品のD1/D7/D30は何ですか？（消費者の場合）それは同じカテゴリの他の製品と比較してどうですか？
 
 - If it’s a workplace product, how many days per week does the typical user engage? (This is the Power User Curve)  
-- もしそれが職場向けの製品であれば、典型的なユーザーは週に何日関与しますか？（これはパワーユーザーカーブです）
+- もしそれが職場向けの製品であれば、典型的なユーザーは週に何日関与しますか？（これは[パワーユーザーカーブ](https://andrewchen.com/power-user-curve/)です）
 
 - Are people as active and engaged as you expect them to be? If it’s a daily-use product, does your DAU/MAU ratio reflect that?  
 - 人々はあなたが期待するほどアクティブで関与していますか？それが日常的に使用される製品であれば、あなたのDAU/MAU比はそれを反映していますか？
 
 There are many benchmarks out there for all the product categories, but as a very rough guideline, you need a D1/D7/D30 of 60/30/15% to be at respectable numbers for a social app.  
-すべての製品カテゴリには多くのベンチマークがありますが、非常に粗いガイドラインとして、ソーシャルアプリにとってはD1/D7/D30が60/30/15%である必要があります。
-
+すべての製品カテゴリには多くのベンチマークがありますが、**非常に粗いガイドラインとして、ソーシャルアプリにとってはD1/D7/D30が60/30/15%である必要があります**。
 You need DAU/MAU over 20%, and if subscription based, you want churn <5% if SMB (and free acquisition).  
-DAU/MAUは20%以上必要であり、サブスクリプションベースの場合、SMB（および無料獲得）の場合は流出率を5%未満にしたい。
-
+**DAU/MAUは20%以上必要であり、サブスクリプションベースの場合、SMB（および無料獲得）の場合は流出率を5%未満にしたい**。
 There are equivalent numbers for net revenue retention, session lengths, and lots of other metrics too.  
 ネット収益維持率、セッションの長さ、その他多くの指標にも同様の数値があります。
 
 A marketplace company might look at a different set of metrics.  
 マーケットプレイス企業は異なる指標セットを見るかもしれません。
-
 Often the demand side can have heavy churn, but the supply side should retain well (>50% YoY).  
 需要側は大きな流出があることが多いが、供給側は良好に維持されるべきである（前年比50%以上）。
-
 An enterprise SaaS product would have its own set of metrics.  
 エンタープライズSaaS製品には独自の指標がある。
-
 It’s important to benchmark, to see if there are successful products with similar metrics that have gotten to scale.  
 ベンチマークを行い、スケールに達した同様の指標を持つ成功した製品があるかどうかを確認することが重要である。
-
 If you have similar numbers, then probably these underlying retention metrics are not the problem.  
 もしあなたが同様の数値を持っているなら、おそらくこれらの基礎的なリテンション指標が問題ではない。
 
 Let’s look there first, but understand that you might find a devastating truth.  
 まずそこを見てみましょうが、壊滅的な真実を見つけるかもしれないことを理解してください。
 
-Admit it when people don’t want your product  
-人々があなたの製品を欲しがらないときはそれを認める
+<!-- ここまで読んだ! -->
+
+## Admit it when people don’t want your product 人々があなたの製品を欲しがらないときはそれを認める
 
 There’s an ugly truth that when most products are put under a microscope, most of them simply don’t have the retention to sustain growth over time — this is “pouring water into a leaky bucket.”  
-ほとんどの製品が顕微鏡で見られるとき、ほとんどの製品は単に成長を持続するためのリテンションがないという醜い真実がある – これは「漏れたバケツに水を注ぐ」ことだ。
-
+ほとんどの製品が顕微鏡で見られるとき、**ほとんどの製品は単に成長を持続するためのリテンションがないという醜い真実がある – これは「漏れたバケツに水を注ぐ」こと**だ。(この例え、たまに聞くな...!:thinking:)
 A slow growth rate is inevitable because products start at a mega disadvantage of needing to replace all their existing users who churn, in addition to building new marketing channels that grow the overall number significantly.  
 成長率が遅いのは避けられない。なぜなら、製品は流出する既存のユーザーをすべて置き換える必要があるという大きな不利な立場から始まり、全体の数を大幅に増やす新しいマーケティングチャネルを構築する必要があるからだ。
 
 But “my product is not retaining” is also sometimes a fancy phrase for “people don’t want to use my product.”  
-しかし「私の製品はリテンションがない」というのは、「人々は私の製品を使いたくない」ということを表す洗練された表現でもある。
-
+**しかし「私の製品はリテンションがない」というのは、「人々は私の製品を使いたくない」ということを表す洗練された表現でもある**。
 I say this because it’s a blunt way of stating what’s often true – that a new product is too experimental, too unpolished, or so poorly positioned, or underdeveloped, that no one wants to use it.  
 私はこれを言うのは、しばしば真実であることを率直に述べる方法だからだ – 新しい製品はあまりにも実験的で、あまりにも未完成で、またはあまりにも不適切に位置づけられているか、未発達であるため、誰もそれを使いたくない。
-
 I think this was especially a problem in the Web 2.0 days when folks would combine their favorite random set of product mechanics — disappearing text messages sent to strangers near you, but you can only reply with a video — and launch them as the latest app (Disappr! – gotta love those 2010 app names).  
 私は、特にWeb 2.0の時代に、皆が自分のお気に入りのランダムな製品メカニクスを組み合わせて（近くの見知らぬ人に送られる消えるテキストメッセージ、しかし返信はビデオだけ）、最新のアプリとして立ち上げたことが問題だったと思う（Disappr! – 2010年のアプリ名が好きだ）。
-
 When people don’t want your product, no amount of new customer acquisition is going to solve that.  
 人々があなたの製品を欲しがらないとき、新しい顧客獲得の量がそれを解決することはない。
-
 Yes, you can sometimes generate very fast growth rates for a few weeks or months, but eventually, it catches up to you.  
 はい、時には数週間または数ヶ月の間に非常に速い成長率を生み出すことができるが、最終的にはそれがあなたに追いつく。
-
 And then the product stalls, per the graph above.  
 そして、製品は停滞する、上のグラフの通りに。
 
 Instead, when initial product/market fit is low (yes, another fancy way to say people don’t get it), I usually recommend the exercise of positioning more closely to existing product categories.  
 代わりに、初期のプロダクト/マーケットフィットが低いとき（はい、これは人々が理解していないと言う別の洗練された方法です）、私は通常、既存の製品カテゴリにより近い位置づけを行うことを推奨する。
-
 As I argue in Zero to Product/Market Fit, any founder can instantly get to product/market fit by simply going after an existing category — of course, we all know how to build and design a coffee cup such that there’s product/market fit.  
-私が「Zero to Product/Market Fit」で主張するように、どの創業者も既存のカテゴリを追求することで瞬時にプロダクト/マーケットフィットに到達できる – もちろん、私たちは皆、プロダクト/マーケットフィットがあるようにコーヒーカップを作り、デザインする方法を知っている。
+**私が[「Zero to Product/Market Fit」](https://andrewchen.com/zero-to-productmarket-fit-presentation/)で主張するように、どの創業者も既存のカテゴリを追求することで瞬時にプロダクト/マーケットフィットに到達できる** – もちろん、私たちは皆、プロダクト/マーケットフィットがあるようにコーヒーカップを作り、デザインする方法を知っている。
 
 You incur other problems, of course, such as competitive differentiation, but if you combine a well-known product category with innovation, and picking at the right time and place in the innovation cycle, it can work.  
 もちろん、競争の差別化などの他の問題が発生するが、よく知られた製品カテゴリと革新を組み合わせ、革新サイクルの適切なタイミングと場所を選ぶことで、うまくいくことがある。
