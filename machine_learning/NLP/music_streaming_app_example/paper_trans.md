@@ -474,19 +474,14 @@ Results confirm the superiority of the proposed multi-armed bandit framework for
 
 In this paper, we modeled carousel personalization as a contextual multi-armed bandit problem with multiple plays.
 本論文では、カルーセルのパーソナライズを複数回のプレイを伴う文脈的マルチアームバンディット問題としてモデル化しました。
-
 By addressing a challenging playlist recommendation task, we highlighted the benefits of our framework, notably the
 プレイリスト推薦の難しいタスクに取り組むことで、私たちのフレームワークの利点、特にカスケードモデルとユーザクラスタリングによる半パーソナライズの統合を強調しました。
-
 integration of the cascade model and of semi-personalization via user clustering. Along with this paper, we publicly
 この論文とともに、私たちはDeezer上のキュレーションされたプレイリストに対するユーザの好みの大規模データセットを公開し、
-
 release a large-scale dataset of user preferences for curated playlists on Deezer, and an open-source environment
 比較可能な学習問題を再現するためのオープンソース環境を提供します。
-
 to recreate comparable learning problems. We believe that such release will benefit future research on carousel
 私たちは、このようなリリースがカルーセルのパーソナライズに関する今後の研究に貢献すると信じています。
-
 personalization. In particular, we assumed that the number of users and cards was fixed throughout the rounds, which
 特に、私たちはラウンド全体でユーザとカードの数が固定されていると仮定しましたが、これは制限であり、
 
@@ -494,13 +489,8 @@ is a limit, that could initiate future studies on the integration of new users o
 新しいユーザやスワイプ可能なカルーセルにおける新しい推薦可能なコンテンツの統合に関する今後の研究を開始する可能性があります。
 
 carousels. Moreover, our work, as most previous efforts, also assumes that arms/cards distributions are fixed and
-さらに、私たちの研究は、ほとんどの以前の努力と同様に、アーム/カードの分布が固定されていると仮定していますが、
-
-independent, which might be unrealistic. A playlist’s relative interest might depend on its neighbors in the carousel,
-これは非現実的である可能性があります。プレイリストの相対的な興味はカルーセル内の隣接するプレイリストに依存する可能性があり、
-
+さらに、私たちの研究は、ほとんどの以前の努力と同様に、アーム/カードの分布が固定されていると仮定していますが、独立している可能性があり、これは非現実的である可能性があります。プレイリストの相対的な興味はカルーセル内の隣接するプレイリストに依存する可能性があり、
 and individually selecting the top-L playlists does not always lead to the best set of L playlists, e.g. in terms of musical
 個別にトップLのプレイリストを選択することが、必ずしも音楽の多様性の観点から最良のLのプレイリストのセットにつながるわけではありません。
-
 diversity. Future works in this direction would definitely lead towards the improvement of carousel personalization.
 この方向での今後の研究は、カルーセルのパーソナライズの改善につながるでしょう。
