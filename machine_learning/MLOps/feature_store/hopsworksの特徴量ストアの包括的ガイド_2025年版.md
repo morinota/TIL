@@ -269,7 +269,7 @@ Both batch and streaming feature pipelines should be able to backfill features.
 Backfilling features is important because you may have existing historical data that can be leveraged to create training data for a model. 
 特徴量をバックフィルすることは重要です。なぜなら、モデルのトレーニングデータを作成するために活用できる既存の履歴データがあるかもしれないからです。(逆にbackfillできないと、今から集めたデータだけを使って学習用・推論用データを作らなきゃいけなくなっちゃう。あ、下に同じことが書いてあった...!:thinking:)
 If you couldn’t backfill features, you could start logging features in your production system and wait until sufficient data has been collected before you start training your model. 
-もし機能をバックフィルできなければ、プロダクションシステムで機能のログを取り始め、モデルのトレーニングを開始する前に十分なデータが収集されるのを待つことになります。
+もし特徴量をバックフィルできなければ、プロダクションシステムで機能のログを取り始め、モデルのトレーニングを開始する前に十分なデータが収集されるのを待つことになります。
 <!-- ここまで読んだ! -->
 
 ### Point-in-Time Correct Training Data 時点正確なトレーニングデータ
@@ -469,7 +469,7 @@ Here is an example code snippet from Hopsworks for defining a feature monitoring
 以下は、モデルの予測ログにおけるフィーチャー「amount」のフィーチャー監視ルールを定義するためのHopsworksからのコードスニペットの例です（バッチおよびオンラインMLシステムの両方で利用可能です）。
 A job is run once per day to compare inference data for the last week for the amount feature, and if its mean value deviates more than 50% from the mean observed in the model’s training data, data drift is flagged and alerts are triggered. 
 **ジョブは、amountフィーチャーの過去1週間の推論データを比較するために1日1回実行され、その平均値がモデルのトレーニングデータで観測された平均から50%以上逸脱した場合、データドリフトがフラグされ、アラートがトリガーされます**。
-(この場合のデータdriftの監視は、バッチで行われるイメージなんだ。理想的にはこれもストリーミング的に実行される方が良い、というブログを見たな...!:thinking:)1
+(この場合のデータdriftの監視は、バッチで行われるイメージなんだ。理想的にはこれもストリーミング的に実行される方が良い、というブログを見たな...!:thinking:)
 
 ```python
 # Compute statistics on a prediction log as a detection window
