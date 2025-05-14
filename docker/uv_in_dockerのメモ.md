@@ -379,7 +379,6 @@ uv sync --no-install-project will install the dependencies of the project but no
 Since the project changes frequently, but its dependencies are generally static, this can be a big time saver.
 **プロジェクトは頻繁に変更されますが、その依存関係は一般的に静的であるため、これは大きな時間の節約になります**。
 
-
 ```Dockerfile
 # Install uv
 FROM python:3.12-slim
@@ -404,6 +403,10 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # あ、2回uv syncするような形になるのか...!:thinking:
 ```
 
+- 個人メモ:
+  - `--no-install-project`オプションを使うことで、プロジェクトの依存関係はインストールされるけど、プロジェクト自体はインストールされない。
+  - `--mount=type=bind` オプションを使うことで、ビルド時にuv.lockとpyproject.tomlを一時マウントしている(Dockerfileの中でCOPYしなくても良い)
+  - `--mount=type=cache` オプションを使うことでuvのキャッシュが使えるように!
 
 Note that the pyproject.toml is required to identify the project root and name, but the project contents are not copied into the image until the final uv sync command.
 pyproject.tomlはプロジェクトのルートと名前を特定するために必要ですが、**プロジェクトの内容は最終的なuv syncコマンドまでイメージにコピーされません**。(ふーん:thinking:)
@@ -456,84 +459,6 @@ COPY --from=builder --chown=app:app /app/.venv /app/.venv
 # Run the application
 CMD ["/app/.venv/bin/hello"]
 ```
-
-
-
-# Install uv uvのインストール
-
-FROM
-python:3.12-slim
-AS
-builder
-COPY
-= 
-
-
-
-# Change the working directory to the `app` directory
-作業ディレクトリを`app`ディレクトリに変更します。
-WORKDIR
-/app
-
-
-
-# Install dependencies 依存関係のインストール
-
-RUN
-=
-type
-=
-=
-\
-=
-type
-=
-=
-=
-\
-=
-type
-=
-=
-=
-\
-
-
-
-# Copy the project into the intermediate image 中間イメージにプロジェクトをコピーする
-ADD
-
-
-
-# Sync the project プロジェクトの同期
-
-RUN
-=
-type
-=
-=
-\
-FROM
-python:3.12-slim
-
-
-
-# Copy the environment, but not the source code 環境をコピーするが、ソースコードはコピーしない
-
-COPY
-=
-=
-
-
-
-# Run the application アプリケーションを実行する
-
-CMD
-[
-"/app/.venv/bin/hello"
-]
-
-
 
 ### Using uv temporarily 一時的にuvを使用する
 
