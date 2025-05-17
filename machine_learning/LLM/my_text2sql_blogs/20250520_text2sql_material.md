@@ -1,36 +1,49 @@
-ざっくり話したいことメモ:
+---
+format:
+  revealjs:
+    # incremental: false
+    theme: [default, quarto_custom_style_format.scss]
+    slide-number: true
+    logo: https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/1697279/dfa905d1c1e242b4e39be182ae21a2b6ac72c0ad/large.png?1655951919
+    footer: ⇒ [https://qiita.com/morinota](https://qiita.com/morinota)
+from: markdown+emoji
 
-- なぜ今回このトピックを喋りたいのか??
-- Text2SQLとは何か??
-- どういうモチベーションでText2SQLをやりたいの??
-- 参考文献たち
-  - PinterestさんのText2SQL事例
-  - メルカリさんのText2SQLに関するPoC資料
-  - LinkedInさんのText2SQL事例
-  - UberさんのText2SQL事例
-  - (先週読んだ!) UbieさんのText2SQL事例
-- 共有したいポイント1:
-  - まず前提としてテーブルメタデータの整備は一定投資が必要っぽい。
-- 共有したいポイント2: 
-  - LLMの事前学習した知識には自社のDWH事情は含まれないので、当然context constructionは必要。context constructionの方法としてRAGなどが一般的。
-  - context constructionをより良い感じにやる工夫たち。
-- 共有したいポイント3:
-  - context construction(i.e. RAG)だけを頑張ればもうOKなのか??
-    - これだけでOKだったら、RAGの検索部分だけを提供するMCPサーバーで十分そう。
-  - 事例によっては、生成したSQLクエリの実行計画を取得させたり、レビュアーLLMを用意して、SQLクエリを精錬してたりする。
-  - この辺りのワークフロー(処理の流れ)は、一定我々が制御しておいた方が良さそう?? あまりにLLM側のAgentic度合い(ワークフローを自由に決められる度合い)を高くしちゃうと、この辺り扱いづらそう...??
-- 自由研究して今どんな感じか??
-  - hogehoge
-- 今困ってること: 社内メンバーに使ってもらってFB欲しいけど、どうやれば良いねん??
-  - エンジニアだけだったら...
-    - ローカルMCPサーバー化してVSCode上で使ってもらえそう。
-    - あるいはローカル環境でStreamlitアプリケーションを起動してもらえそう??
-  - エンジニア以外のメンバーにはどう展開したら良さそう??
-    - リモート環境に社内限定アクセスのStreamlitアプリケーションを立てる??
-    - あるいは、社内のSlack上で使えるようにする??
+fig-cap-location: bottom
 
-## なぜ今回このトピックを喋りたい??
+title: 我々はなぜまだText2SQLを社内に展開できてない? なぜまだデータ分析業務を効率化・高速化・標準化・民主化できてない?
+subtitle: y-tech-ai 勉強会
+date: 2025/05/20
+author: morinota
+title-slide-attributes:
+  #   data-background-image: https://i.imgur.com/nTazczH.png
+  data-background-size: contain
+  data-background-opacity: "0.5"
+---
 
-## Text2SQLとは何か?? 
+# はじめに
 
-## どういうモチベーションでText2SQLをやりたいの??
+## なぜ今回このトピックを喋りたいんだっけ??
+
+- 社内でもちょくちょくText2SQL的なことを試してる様子がある。
+- 自分も半年くらい前から自由研究的にText2SQLについて調べたり試したりしてた(実は社内AIコンテストもText2SQLで応募したが実力不足で落選...!)。
+- なので、情報共有・交換のために「**こういう事例を調査して、こういう思想で、こういうアプローチを採用してみてて、今ここで困ってるんですよ〜...!**」みたいお喋りがカジュアルにできたらいいな〜と思い...!!
+- そして最終的には、価値を発揮するText2SQLアプリケーションが自社に展開され、社内のデータ分析業務の効率化・高速化・標準化・民主化が実現されたらいいな〜と思い...!!
+
+## 先に参考文献達を紹介: これらを参考にしてるよ〜
+
+1. 最初に読んだChip HuyenさんのLLMアプリケーション設計思想の記事: [Building A Generative AI Platform](https://huyenchip.com/2024/07/25/genai-platform.html)
+2. 真似しまくってるPinterestさんの事例: [How we built Text-to-SQL at Pinterest](https://medium.com/pinterest-engineering/how-we-built-text-to-sql-at-pinterest-30bad30dabff)
+3. メタデータ作る方法を参考にしたメルカリさんの発表資料: [1日50万件貯まるクエリのログを活かして、SQLの生成に挑戦している話](https://speakerdeck.com/__hiza__/1ri-50mo-jian-zhu-marukuerinorokuwohuo-kasite-sqlnosheng-cheng-nitiao-zhan-siteiruhua)
+4. LinkedInさんのText2SQL事例: [Practical text-to-SQL for data analytics](https://www.linkedin.com/blog/engineering/ai/practical-text-to-sql-for-data-analytics)
+5. UberさんのText2SQL事例: [QueryGPT – Natural Language to SQL Using Generative AI](https://eng.uber.com/using-llms-to-translate-natural-language-to-sql/)
+6. (先週読んだ!) UbieさんのText2SQL事例: [Pydantic AIで作る！実践Text-to-SQLシステム構築ガイド 〜自然言語によるデータ抽出の自動化で分析業務を効率化〜](https://zenn.dev/ubie_dev/articles/64cf285988ebe8)
+
+
+# 本論: 我々はどうしたら価値のあるText2SQL機能を社内展開して、データ分析業務を効率化・高速化・標準化・民主化できるんだ??
+
+ざっくり、以下の2点を考えている:
+
+1. Context Constructionできる基盤さえあれば、一定品質は担保できる感!
+2. より価値を発揮するには、ワークフローを設計してあげる必要はありそう。
+
+
