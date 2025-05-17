@@ -39,11 +39,60 @@ title-slide-attributes:
 6. (先週読んだ!) UbieさんのText2SQL事例: [Pydantic AIで作る！実践Text-to-SQLシステム構築ガイド 〜自然言語によるデータ抽出の自動化で分析業務を効率化〜](https://zenn.dev/ubie_dev/articles/64cf285988ebe8)
 
 
-# 本論: 我々はどうしたら価値のあるText2SQL機能を社内展開して、データ分析業務を効率化・高速化・標準化・民主化できるんだ??
+# 本論: 我々はどうしたら価値のあるText2SQL機能を社内展開して、データ分析業務を効率化・高速化・標準化・民主化できるんだろ??
 
-ざっくり、以下の2点を考えている:
+今の所、ざっくり以下の2点の考えに至ってます...! :thinking:
 
 1. Context Constructionできる基盤さえあれば、一定品質は担保できる感!
-2. より価値を発揮するには、ワークフローを設計してあげる必要はありそう。
+2. より価値を発揮するには、ワークフローを制御してあげる必要はありそう。
+
+# 主張1: Context Constructionできる基盤さえあれば、一定品質は担保できる感!
+
+- hoge
+
+## 前提としてcontext constructionは必要
+
+- hoge
+
+## テーブルメタデータ整備はとりあえず頑張りすぎなくて良さそう
+
+- hoge
+
+## context constructionの精度向上は iterative & incremental にやれば良さそう
+
+- hoge
+
+# 主張2: より価値を発揮するには、ワークフローを制御してあげる必要はありそう
+
+- hoge  
+
+## 品質向上には、context constructionの前後で色んなコンポーネントが必要そう
+
+- hoge
+
+## context constructionの前の追加コンポーネント例
+
+- hoge
+
+## context constructionの後の追加コンポーネント例
+
+- hoge
+
+## LLMにSQL実行権限を与えたい場合は特に、ワークフローを制御してしっかり検証させてあげたほうが良さそう
+
+- hoge
+
+## Text2SQLタスクの場合はそこまでagentic度合いを高くすべきではなさそう
+
+- hoge
+
+# 今モタモタしちゃってること: どう社内に展開したらいいんだろ??
+
+- hoge
+
+# おわりに
 
 
+## まとめ
+
+- hoge
