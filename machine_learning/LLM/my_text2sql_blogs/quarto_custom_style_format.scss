@@ -44,3 +44,27 @@ $presentation-font-size-root: 30px;
   background-color: #48fa42;
   color: #4a0cbd;
 }
+
+.reveal h1 {
+  font-size: 2.0em;
+}
+
+.reveal h2 {
+  font-size: 1.5em;
+}
+
+// pタグの設定
+.reveal p {
+  font-size: 1.0em;
+}
+
+// 箇条書きの設定
+.reveal ul {
+  // 箇条書き全体の文字サイズ
+  font-size: 0.9em;
+}
+
+.reveal li {
+  // 各リストアイテムの文字サイズ
+  font-size: 0.9em;
+}
