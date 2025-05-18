@@ -180,7 +180,14 @@ RAG(i.e. Context Construction)の精度向上に関しては、各社が色々�
 
 ## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう
 
-- hoge
+各社の事例では、context construction以外にもいくつかコンポーネントを追加してる
+
+- Pinterestさん: 
+  - hoge
+- LinkedInさん: 
+  - hoge
+- Uberさん:
+  - hoge
 
 ## LLMにSQL実行権限を与えたい場合は特に、ワークフローを制御してしっかり検証させてあげたほうが良さそう
 
@@ -192,7 +199,7 @@ RAG(i.e. Context Construction)の精度向上に関しては、各社が色々�
 
 ## 今モタモタしちゃってること: どう社内に展開したらいいんだろ??
 
-- hoge
+- 現在は簡単のため、Context Construction部分をMCPサーバーとして実装して、VSCodeのCopilotから呼べるようにしてる。
 
 # おわりに
 
