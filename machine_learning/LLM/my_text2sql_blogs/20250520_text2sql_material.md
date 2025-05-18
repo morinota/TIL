@@ -22,7 +22,10 @@ title-slide-attributes:
 
 # はじめに
 
-## Text2SQLとは?? たぶんText2SQLできた方がみんな嬉しいですよね??
+## Text2SQLって? たぶんText2SQLできた方がみんな嬉しいですよね??
+
+- Text2SQL: 自然言語で書かれた質問をSQLクエリに変換する技術。
+- 「あれ、このデータってどこにあるっけ?」「あの人に聞けばわかるけど、また聞くの気まずいな〜」「なんか最近、同じようなSQL書く時間ばっか増えてる気がする...」
 
 ## なぜ今回このトピックを喋りたいんだっけ??
 
@@ -178,20 +181,55 @@ RAG(i.e. Context Construction)の精度向上に関しては、各社が色々�
 - LLMにSQL実行権限を与えたい場合は特に、ワークフローを制御してしっかり検証させてあげたほうが良さそう
 - Text2SQLタスクの場合はそこまでagentic度合いを高くすべきではなさそう
 
-## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう
+## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう1
 
 各社の事例では、context construction以外にもいくつかコンポーネントを追加してる
 
 - Pinterestさん: 
-  - hoge
+  - こちらは1年以上前の事例だからか、RAGで一度生成したSQLをそのままユーザに返してた。今後の課題としてLLM-as-a-judge的に反復的なSQL生成プロセスを検討してるとのこと。
+
+## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう2
+
 - LinkedInさん: 
-  - hoge
+  - RAGの手前で、ユーザ質問を意図分類するコンポーネント (ex. テーブル検索なのか、参考クエリが欲しいのか、SQLを書いてほしいのか, etc.)
+  - 生成されたSQLを評価するコンポーネント (DWHから実行計画などを取得し、問題があればSQL生成コンポーネントにLLM-as-a-judge的にフィードバックを送る)。
+
+![](https://media.licdn.com/dms/image/v2/D4D08AQFs4aVHGWNHnQ/croft-frontend-shrinkToFit1024/croft-frontend-shrinkToFit1024/0/1733776847861?e=2147483647&v=beta&t=K-CEVLdprBTUMf3PUzVdr4Xs_D_t6C_eJijrhi1dtMM)
+
+## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう3
+
 - Uberさん:
   - hoge
 
-## LLMにSQL実行権限を与えたい場合は特に、ワークフローを制御してしっかり検証させてあげたほうが良さそう
+## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう4
 
-- hoge
+- Ubieさん:
+  - 生成されたSQLを評価するコンポーネント。
+  - 生成されたSQLを実行し、最終的な分析結果を整形するコンポーネント。
+
+## LLMにSQL実行権限を与えたい場合は特に、ワークフローを制御してしっかり検証させてあげたほうが良さそう1
+
+- 最終的な回答はSQLクエリ? それともSQLクエリを実行して得た分析結果??
+  - 前者: Pinterestさん, LinkedInさん, Uberさん
+  - 後者: Ubieさん
+- AgenticなLLMシステムにどれくらいのアクション権限を与えるかの話:
+  - AgenticなLLMシステムにおいて、モデルが呼び出すツール(i.e. アクション)は**read-only actions**と**write actions**に分類できる(参考文献1より引用)。
+    - read-only actions: 外部ソースから情報を取得するが、状態を変更しないアクション
+    - write actions: 状態を変更するアクション。
+  - **LLMにwrite actionsを許可することは、LLMアプリケーションをはるかに強力にするが、より多くのリスクも伴う**。
+    - インターンに本番データベースを削除する権限を与えてはいけないように、信頼性のないAIに銀行振込を開始させてはいけない。
+    - model jailbreakやprompt injection対策を行い、有害なアクションを実行させようとする悪質なユーザからシステムを守る必要がある。
+
+## LLMにSQL実行権限を与えたい場合は特に、ワークフローを制御してしっかり検証させてあげたほうが良さそう2
+
+- LLMにSQL実行権限を与える場合は、どんなリスクを考慮すべきだろ?? :thinking:
+  - delete文やupdate文などを生成して実行しちゃうリスク
+  - 計算がめっちゃ重いselect文を生成して実行しちゃって、お金が溶ける or DB負荷が上がるリスク
+  - prompt injectionは社内アプリだからあんまり気にしなくて大丈夫かな。
+- LLMにSQL実行権限を与えるなら、あんまりLLMのAgentic度合いは高くない方がいいかも。生成したSQLをきちんと評価・検証してから実行するようなワークフロー制御はあった方が良さそう...!:thinking:
+  - 少なくとも、これまで述べてきた各種コンポーネントをそれぞれツール化して、LLMがそれらを自由な順番に呼び出せるようにする、というのは
+  - 例えば、関連テーブル・サンプルクエリを取得するRAG用(retrieve用)MCPサーバーと、DWHにアクセスできるMCPサーバーを用意して、それをgithub copilotが自由に呼べるようにする。これだけだとリスクが大きいよね...!:thinking:
+  - 各事例でもワークフロー制御してる感 (LLM自身がAgenticに判断する部分は、LinkedInさんの意図分類コンポーネントくらいかも)
 
 ## Text2SQLタスクの場合はそこまでagentic度合いを高くすべきではなさそう
 
