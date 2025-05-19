@@ -45,14 +45,6 @@ $presentation-font-size-root: 30px;
   color: #4a0cbd;
 }
 
-.reveal h1 {
-  font-size: 1.5em;
-}
-
-.reveal h2 {
-  font-size: 1.3em;
-}
-
 // pタグの設定(普通のテキスト)
 .reveal p {
   font-size: 1.0em;
@@ -67,4 +59,9 @@ $presentation-font-size-root: 30px;
 .reveal li {
   // 各リストアイテムの文字サイズ
   font-size: 0.9em;
+}
+
+// 画像キャプションの文字サイズ設定
+.reveal figcaption {
+  font-size: 0.6em; // キャプションの文字サイズを小さく設定
 }
