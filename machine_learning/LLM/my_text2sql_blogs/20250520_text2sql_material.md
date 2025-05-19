@@ -46,7 +46,7 @@ title-slide-attributes:
 2. 真似しまくってるPinterestさんの事例: [How we built Text-to-SQL at Pinterest](https://medium.com/pinterest-engineering/how-we-built-text-to-sql-at-pinterest-30bad30dabff)
 3. メタデータ作る方法を参考にしたメルカリさんの発表資料: [1日50万件貯まるクエリのログを活かして、SQLの生成に挑戦している話](https://speakerdeck.com/__hiza__/1ri-50mo-jian-zhu-marukuerinorokuwohuo-kasite-sqlnosheng-cheng-nitiao-zhan-siteiruhua)
 4. LinkedInさんのText2SQL事例: [Practical text-to-SQL for data analytics](https://www.linkedin.com/blog/engineering/ai/practical-text-to-sql-for-data-analytics)
-5. UberさんのText2SQL事例: [QueryGPT – Natural Language to SQL Using Generative AI](https://eng.uber.com/using-llms-to-translate-natural-language-to-sql/)
+5. UberさんのText2SQL事例: [QueryGPT – Natural Language to SQL Using Generative AI](https://www.uber.com/en-JP/blog/query-gpt/)
 6. (先週読んだ!) UbieさんのText2SQL事例: [Pydantic AIで作る！実践Text-to-SQLシステム構築ガイド 〜自然言語によるデータ抽出の自動化で分析業務を効率化〜](https://zenn.dev/ubie_dev/articles/64cf285988ebe8)
 
 # 本論: 我々はどうしたら価値のあるText2SQL機能を社内展開して、データ分析業務を効率化・高速化・標準化・民主化できるんだろ??
@@ -275,16 +275,37 @@ Text2SQLタスクにおいて利用される共通のcontextは、テーブル�
 ::::
 
 
-## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう3
+## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう
+
+
+:::: { .columns}
+:::{ .column width="40%"}
+
 
 - Uberさん:
-  - hoge
+  - 初期バージョンはPinterestさんと(i.e. 自由研究と)ほぼ同様の構成!(かなりシンプルなRAG!)
+  - 対応テーブルの増加 & 大規模スキーマを持つ(カラム数が多い)テーブルに対応するために、だんだんと追加コンポーネントを増やしていったとのこと。
+    - Intent Agent (LLMによる意図分類)
+    - Table Agent (ユーザ自身によるretrieve結果の補正)
+    - Column Prune Agent (LLMによる不要なカラムの切り落とし)
+  - SQL生成後のvalidationやLLM-as-a-judge的な反復的なSQL生成プロセスは採用してない。
+  - Text2SQLの継続的改善のための評価方法が参考になった。
 
-## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう4
+:::
+:::{ .column width="60%"}
+
+![](image-5.png)
+
+:::
+::::
+
+## 品質向上には、context construction以外でもいくつかコンポーネントが必要そう
 
 - Ubieさん:
   - 生成されたSQLを評価するコンポーネント。
   - 生成されたSQLを実行し、最終的な分析結果を整形するコンポーネント。
+
+![](image-7.png)
 
 ## LLMにSQL実行権限を与えたい場合は特に、ワークフローを制御してしっかり検証させてあげたほうが良さそう1
 
