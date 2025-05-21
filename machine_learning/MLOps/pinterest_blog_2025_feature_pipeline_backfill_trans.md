@@ -7,25 +7,6 @@ Pinterest EngineeringFollow
 Pinterest Engineering
 Pinterestエンジニアリングをフォロー
 
-Follow
-フォロー
-
-12 min read·1 day ago
-12分で読める·1日前
-
-12 min read
-12分で読める
-·
-·
-19
-Listen
-聞く
-Listen
-聞く
-
-Share
-共有
-
 Authors: Kartik Kapur, Tech Lead, Sr Software Engineer | Matthew Jin, Sr Software Engineer | Qingxian Lai, Staff Software Engineer
 著者: Kartik Kapur, テックリード、シニアソフトウェアエンジニア | Matthew Jin, シニアソフトウェアエンジニア | Qingxian Lai, スタッフソフトウェアエンジニア
 
@@ -35,53 +16,42 @@ Authors: Kartik Kapur, Tech Lead, Sr Software Engineer | Matthew Jin, Sr Softwar
 
 At Pinterest, our mission is to inspire users to curate a life they love. 
 Pinterestでは、私たちの使命はユーザーが愛する生活をキュレーションするようにインスパイアすることです。
-
 To achieve this, we rely on state-of-the-art Recommendation and Ads models trained on tens of petabytes of data over the span of many months of engagement logs. 
-これを達成するために、私たちは数十ペタバイトのデータを使用して、数ヶ月にわたるエンゲージメントログで訓練された最先端の推薦および広告モデルに依存しています。
-
+これを達成するために、私たちは数十ペタバイトのデータを使用して、**数ヶ月にわたるエンゲージメントログで訓練された最先端の推薦および広告モデルに依存**しています。
 These models drive personalized recommendations, showing users content that resonates with their interests. 
 これらのモデルは、ユーザーの興味に共鳴するコンテンツを表示するパーソナライズされた推薦を推進します。
-
 These models show significantly better performance when trained on large datasets with events spanning over many months of events. 
 これらのモデルは、数ヶ月にわたるイベントを含む大規模データセットで訓練されると、著しく良いパフォーマンスを示します。
 
 Our ML Models are trained on a wide range of features, including Pin, user, advertiser-level, and session-based features. 
-私たちの機械学習モデルは、Pin、ユーザー、広告主レベル、セッションベースの特徴を含む幅広い特徴で訓練されています。
-
+私たちの機械学習モデルは、**Pin(=アイテム??)、ユーザー、広告主レベル、セッションベースの特徴を含む幅広い特徴量**で訓練されています。
 Experimenting with these features is a common task, and the first step in this process is integrating new features into the training dataset. 
-これらの特徴を使った実験は一般的な作業であり、このプロセスの最初のステップは新しい特徴を訓練データセットに統合することです。
+これらの特徴量を使った実験は一般的な作業であり、**このプロセスの最初のステップは新しい特徴量を訓練データセットに統合すること**です。
+(うんうん、だからbackfillしやすさが重要って話かな...!:thinking:)
 
 The most straightforward method of incorporating features into the training dataset is through Forward Logging: adding the features into our serving logs and waiting for it to accumulate enough data for training. 
-特徴を訓練データセットに組み込む最も簡単な方法は、Forward Loggingを通じて行うことです。これは、特徴をサービングログに追加し、訓練に十分なデータが蓄積されるのを待つことです。
+特徴を訓練データセットに組み込む最も簡単な方法は、Forward Loggingを通じて行うことです。これは、特徴量をサービングログに追加し、訓練に十分なデータが蓄積されるのを待つことです。
+(backfillしないで一番簡単なのは、新しいfeature pipelineをリリースして本番稼働させて、学習データ期間分が溜まるのを待つって意味...!:thinking:)
 
 However, this method presents several challenges: 
 しかし、この方法にはいくつかの課題があります。
 
-- High Calendar Day Cost: Every iteration takes 3~6 months to be hydrated in the training dataset. 
-- 高いカレンダー日コスト：各イテレーションは、訓練データセットに反映されるまでに3〜6ヶ月かかります。
-
-- High Development Time Cost: Introducing new features in logging touches multiple systems, including training and serving logic. 
-- 高い開発時間コスト：ログに新しい特徴を導入することは、訓練およびサービングロジックを含む複数のシステムに影響を与えます。
-
-- Lack of isolation: Production and experimental features share the logging pipeline. In some cases, adding large experimental features can inadvertently cause data loss incidents. 
-- 孤立性の欠如：本番環境と実験的な特徴がログパイプラインを共有します。場合によっては、大きな実験的特徴を追加することで、意図せずデータ損失のインシデントを引き起こすことがあります。
-
-- Resource wastage and instability: As experimental features are added directly to the production logs and training datasets, it makes the end-to-end data pipeline expensive. 
-- リソースの無駄遣いと不安定性：実験的特徴が本番ログや訓練データセットに直接追加されるため、エンドツーエンドのデータパイプラインが高価になります。
+- High Calendar Day Cost: Every iteration takes 3~6 months to be hydrated in the training dataset. 高いカレンダー日コスト：各イテレーションは、訓練データセットに反映されるまでに3〜6ヶ月かかります。
+- High Development Time Cost: Introducing new features in logging touches multiple systems, including training and serving logic. 高い開発時間コスト：ログに新しい特徴量を導入することは、訓練およびサービングロジックを含む複数のシステムに影響を与えます。
+- Lack of isolation: Production and experimental features share the logging pipeline. In some cases, adding large experimental features can inadvertently cause data loss incidents. 孤立性の欠如：本番環境と実験的な特徴がログパイプラインを共有します。場合によっては、大きな実験的特徴を追加することで、意図せずデータ損失のインシデントを引き起こすことがあります。(これはシステムの設計次第な気がする...!:thinking:)
+- Resource wastage and instability: As experimental features are added directly to the production logs and training datasets, it makes the end-to-end data pipeline expensive. リソースの無駄遣いと不安定性：実験的特徴が本番ログや訓練データセットに直接追加されるため、エンドツーエンドのデータパイプラインが高価になります (まあ確かに、価値を発揮するか分からない特徴量を作るpipelineを、何ヶ月も本番で動かすのは無駄だよね...!:thinking:)
 
 Feature Backfill is an alternative to forward logging that is commonly used to address these challenges. 
-Feature Backfillは、これらの課題に対処するために一般的に使用されるForward Loggingの代替手段です。
-
+**Feature Backfill**は、これらの課題に対処するために一般的に使用されるForward Loggingの代替手段です。
 Feature backfill involves counter-factually computing the historical feature values and joining it with production training data using offline batch processing. 
 Feature Backfillは、歴史的な特徴値を反実仮想的に計算し、オフラインバッチ処理を使用して本番の訓練データと結合することを含みます。
-
 Feature backfill allows us to greatly cut down calendar day costs, enabling faster iteration and more efficient use of our engineering resources. 
-Feature Backfillは、カレンダー日コストを大幅に削減し、より迅速なイテレーションとエンジニアリングリソースのより効率的な使用を可能にします。
+**Feature Backfillは、calendar day costを大幅に削減し、より迅速なイテレーションとエンジニアリングリソースのより効率的な使用を可能にします**。
 
 In this blog post, we’ll explore how we’ve created our Feature Backfill Solution, leveraging various techniques to reduce costs and iteration time by up to 90x¹. 
-このブログ記事では、コストとイテレーション時間を最大90倍削減するために、さまざまな技術を活用して私たちのFeature Backfillソリューションをどのように作成したかを探ります。
+このブログ記事では、**コストとイテレーション時間を最大90倍削減するため**に、さまざまな技術を活用して私たちのFeature Backfillソリューションをどのように作成したかを探ります。
 
-
+<!-- ここまで読んだ! -->
 
 # Structure of Recommender / Ads Training Datasets 推奨システム/広告トレーニングデータセットの構造
 
