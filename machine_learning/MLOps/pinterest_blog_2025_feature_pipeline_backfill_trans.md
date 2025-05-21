@@ -10,8 +10,6 @@ Pinterestエンジニアリングをフォロー
 Authors: Kartik Kapur, Tech Lead, Sr Software Engineer | Matthew Jin, Sr Software Engineer | Qingxian Lai, Staff Software Engineer
 著者: Kartik Kapur, テックリード、シニアソフトウェアエンジニア | Matthew Jin, シニアソフトウェアエンジニア | Qingxian Lai, スタッフソフトウェアエンジニア
 
-
-
 # Context 背景
 
 At Pinterest, our mission is to inspire users to curate a life they love. 
@@ -57,23 +55,21 @@ In this blog post, we’ll explore how we’ve created our Feature Backfill Solu
 
 Below is a simplified representation of the datasets we are dealing with. 
 以下は、私たちが扱っているデータセットの簡略化された表現です。
-
 Feature groups are collections of logically and physically related features in a Feature Store, designed to be produced, updated, and stored together. 
-フィーチャーグループは、フィーチャーストア内の論理的および物理的に関連するフィーチャーのコレクションであり、一緒に生成、更新、保存されるように設計されています。
-
+**フィーチャーグループは、フィーチャーストア内の論理的および物理的に関連するフィーチャーのコレクションであり、一緒に生成、更新、保存されるように設計されています**(うんうん、 Feature Groupを切り分けるときの考え方として参考になりそう...!:thinking:)。
 These groups are keyed by specific entity identifiers, such as advertiser IDs or user IDs. 
 これらのグループは、広告主IDやユーザーIDなどの特定のエンティティ識別子によってキー付けされています。
-
 For the remainder of this blog post, we will specify user id as the entity key. 
 このブログ記事の残りの部分では、ユーザーIDをエンティティキーとして指定します。
 
+![]()
 
+<!-- ここまで読んだ! -->
 
 # [2022–2024] Features Backfiller v1: Full Backfill per Feature Group
 
 In 2022, we developed our initial backfill solution using Spark to materialize features within our training tables. 
 2022年に、私たちはトレーニングテーブル内の特徴を具現化するためにSparkを使用して初期のバックフィルソリューションを開発しました。
-
 This solution operates as a reusable Airflow DAG that is triggered by ML Engineers on Demand. 
 このソリューションは、MLエンジニアによってオンデマンドでトリガーされる再利用可能なAirflow DAGとして機能します。
 
