@@ -72,10 +72,8 @@ In 2022, we developed our initial backfill solution using Spark to materialize f
 2022年に、私たちはトレーニングテーブル内の特徴を具現化するためにSparkを使用して初期のバックフィルソリューションを開発しました。
 This solution operates as a reusable Airflow DAG that is triggered by ML Engineers on Demand. 
 このソリューションは、MLエンジニアによってオンデマンドでトリガーされる再利用可能なAirflow DAGとして機能します。
-
 Each Airflow DAG run contains multiple Spark jobs that each run the backfill application on the target training tables. 
 各Airflow DAGの実行には、ターゲットトレーニングテーブル上でバックフィルアプリケーションを実行する複数のSparkジョブが含まれています。
-
 The backfill application itself does the following work: 
 バックフィルアプリケーション自体は、以下の作業を行います。
 
@@ -91,90 +89,77 @@ The backfill application itself does the following work:
 The overall process then looks as follows: 
 全体のプロセスは次のようになります。
 
+![]()
+
 The majority of computational effort occurs during the join stage, where both datasets are shuffled and partitioned for each feature group. 
-計算の大部分は、両方のデータセットがシャッフルされ、各特徴グループのためにパーティション分けされる結合ステージで発生します。
-
-
+**計算の大部分は、両方のデータセットがシャッフルされ、各特徴グループのためにパーティション分けされる結合ステージで発生**します。
 
 # OnDemand Features
 
 The backfill approach listed above works effectively when the feature is already stored in a feature store. 
-上記のバックフィルアプローチは、特徴がすでにフィーチャーストアに保存されている場合に効果的に機能します。
-
+**上記のバックフィルアプローチは、特徴がすでにフィーチャーストアに保存されている場合に効果的に機能**します。(なんかpoint-in-time correct joinしてるみたいな話だったな...!:thinking:)
 However, if the feature is not yet materialized, engineers face the additional challenge of backfilling their features in the feature store before they can perform the training data backfill. 
 しかし、特徴がまだ具現化されていない場合、エンジニアはトレーニングデータのバックフィルを実行する前に、フィーチャーストアで特徴をバックフィルするという追加の課題に直面します。
-
+(あ、なるほど! 前セクションの話は学習データのbackfill的な意味合いなのか...!!:thinking:)
 This additional step can add up to three weeks of calendar time. 
 この追加のステップは、最大で3週間のカレンダー時間を追加する可能性があります。
+(じゃあ結局、新しい特徴量を追加した場合はそれが貯まるまで3週間待つって話。特徴量生成のbackfillはできてないじゃん...!!:thinking:)
+(まあ特徴量生成パイプラインをbackfillしたのち、学習パイプラインにて学習データとjoinすればもうそれで良い気がする...!:thinking:)
 
 To remove this bottleneck, we introduced a concept of on demand features. 
 このボトルネックを解消するために、私たちはオンデマンドフィーチャーの概念を導入しました。
-
 Users express a feature in terms of a Spark transform and run the computation prior to joining the training table with their features without ever materializing the intermediary output. 
 ユーザーは、特徴をSpark変換の形で表現し、中間出力を具現化することなく、トレーニングテーブルと特徴を結合する前に計算を実行します。
-
 With this approach, engineers no longer have to wait for a full backfill to the feature store before proceeding with their iteration. 
 このアプローチにより、エンジニアはイテレーションを進める前にフィーチャーストアへの完全なバックフィルを待つ必要がなくなります。
 
 The transformation code that is utilized to backfill the feature becomes a part of the feature definition allowing for seamless integration and no user interface difference when initiating the backfill. 
-特徴をバックフィルするために利用される変換コードは、特徴定義の一部となり、バックフィルを開始する際にシームレスな統合とユーザーインターフェースの違いがないことを可能にします。
-
-
+**特徴をバックフィルするために利用される変換コードは、特徴定義の一部となり**、バックフィルを開始する際にシームレスな統合とユーザーインターフェースの違いがないことを可能にします。
+(そういう考え方ね...! たぶん事前計算されてるか否かは関係ない、みたいな思想かな...! この場合はきっと、Feature Storeが特徴量生成の役割を含んでる考え方だ...!:thinking:)
 
 # Key Functionalities 主要機能
 
 To enhance the utility of this backfiller, we made several iterations to address critical aspects. 
 このバックフィラーの有用性を高めるために、私たちは重要な側面に対処するためにいくつかの反復を行いました。
-
 Below are some key learnings from the backfiller v1. 
 以下は、バックフィラーv1からのいくつかの重要な学びです。
 
-Time Correctness Alignment Tuning: Proper alignment between feature group partitions and the training dataset is crucial. 
+**Time Correctness Alignment Tuning**: Proper alignment between feature group partitions and the training dataset is crucial. 
 時間的正確性の整合性調整：特徴グループのパーティションとトレーニングデータセットとの適切な整合性が重要です。
-
 Misalignment can cause feature leakage (future events leaking into current partitions) or feature lagging (irrelevant features entering training data). 
 不整合は、特徴漏洩（将来のイベントが現在のパーティションに漏れ出す）や特徴遅延（無関係な特徴がトレーニングデータに入る）を引き起こす可能性があります。
-
 Our backfillers provide various partition alignment strategies, allowing users to choose based on specific use cases. 
 私たちのバックフィラーは、さまざまなパーティション整合性戦略を提供しており、ユーザーは特定のユースケースに基づいて選択できます。
 
-Version Control and Rollback Support: Because backfilled data overwrites production data, it’s essential to protect the integrity of the training dataset. 
+**Version Control and Rollback Support**: Because backfilled data overwrites production data, it’s essential to protect the integrity of the training dataset. 
 バージョン管理とロールバックサポート：バックフィルされたデータは本番データを上書きするため、トレーニングデータセットの整合性を保護することが不可欠です。
-
 The backfilling process may introduce bugs or misconfigurations, and regenerating production data is often costly and time-consuming. 
 バックフィリングプロセスはバグや設定ミスを引き起こす可能性があり、本番データを再生成することはしばしば高コストで時間がかかります。
-
 We implemented partition-level version control and rollback tooling to recover data during incidents. 
-私たちは、インシデント時にデータを回復するために、パーティションレベルのバージョン管理とロールバックツールを実装しました。
+私たちは、インシデント時にデータを回復するために、**パーティションレベルのバージョン管理**とロールバックツールを実装しました。(そもそもこれがFeature Storeによる恩恵の一つでは??)
 
-Standard Feature Statistics: Verifying backfill data quality is another critical requirement. 
+**Standard Feature Statistics**: Verifying backfill data quality is another critical requirement. 
 標準特徴統計：バックフィルデータの品質を検証することは、もう一つの重要な要件です。
-
 By computing standard feature statistics based on feature types and generating reports, users can quickly assess feature quality before model training and evaluation. 
 特徴タイプに基づいて標準特徴統計を計算し、レポートを生成することで、ユーザーはモデルのトレーニングと評価の前に特徴の品質を迅速に評価できます。
 
-Workflow Templates: Backfill is a standard data processing task, yet a common operation. 
+**Workflow Templates**: Backfill is a standard data processing task, yet a common operation. 
 ワークフローテンプレート：バックフィルは標準的なデータ処理タスクであり、一般的な操作です。
-
 We’ve built workflow templates to streamline backfill launching, reducing human error during configuration. 
 私たちは、バックフィルの開始を効率化するためのワークフローテンプレートを構築し、設定中の人的エラーを減少させました。
-
 Users simply provide feature groups and a backfill data range to trigger new backfill operations. 
 ユーザーは、特徴グループとバックフィルデータ範囲を提供するだけで、新しいバックフィル操作をトリガーできます。
 
-Utilizing S3 Persist: Backfill jobs are extraordinarily expensive and are very disk intensive due to the large amount of shuffles between multiple tables, as well as large quantities of cached data going to disk and long spark lineages. 
+**Utilizing S3 Persist**: Backfill jobs are extraordinarily expensive and are very disk intensive due to the large amount of shuffles between multiple tables, as well as large quantities of cached data going to disk and long spark lineages. 
 S3 Persistの利用：バックフィルジョブは非常に高価であり、複数のテーブル間の大量のシャッフルや、ディスクに送られる大量のキャッシュデータ、長いスパークの系譜のために非常にディスク集約的です。
-
 To alleviate the issues, we initially tried using native Spark Checkpointing; however, we found this had inefficiencies for tabular data compared to reading and writing Parquet files, namely it became extremely difficult to prevent rate limits and read times ballooned since data was stored in heavily serialized java byte arrays with checkpoint. 
 これらの問題を軽減するために、最初はネイティブSpark Checkpointingを使用しようとしましたが、Parquetファイルの読み書きと比較して、表形式データに対して非効率的であることがわかりました。具体的には、レート制限を防ぐことが非常に難しくなり、データがチェックポイント付きの重度にシリアライズされたJavaバイト配列に保存されていたため、読み取り時間が膨れ上がりました。
-
 We then created our own “S3 checkpointing,” which writes the intermediate data to parquet with short retention. 
 その後、短期間の保持で中間データをParquetに書き込む独自の「S3チェックポイント」を作成しました。
-
 This helped solve our issues by pruning lineage completely and alleviated disk issues. 
 これにより、系譜を完全に剪定し、ディスクの問題を軽減することで、私たちの問題を解決するのに役立ちました。
 
-
+<!-- ここまで読んだ! -->
 
 # Challenges 課題
 
@@ -192,14 +177,12 @@ While this backfiller provides features more quickly than the number of days bei
 
 While these issues are not unique to feature backfill, the process is particularly vulnerable due to the complexity and volume involved.
 これらの問題は機能バックフィルに特有のものではありませんが、プロセスは関与する複雑さとボリュームのために特に脆弱です。
-
 Feature backfilling often deals with large, intricate datasets, such as extensive user sequence features, which are particularly costly and resource-intensive to manage.
 機能バックフィリングは、広範なユーザーシーケンス機能などの大規模で複雑なデータセットを扱うことが多く、特に管理にコストがかかり、リソースを消費します。
-
 For instance, four developers each backfilling a feature group into the training dataset over a 120-day range currently face a cumulative 140-day completion time —clearly suboptimal.
 たとえば、4人の開発者がそれぞれ120日間にわたってトレーニングデータセットに機能グループをバックフィルしている場合、現在の累積完了時間は140日であり、明らかに最適ではありません。
 
-
+<!-- ここまで読んだ! -->
 
 # [2024–2025] Features Backfiller v2: Two-Stage Backfill
 
