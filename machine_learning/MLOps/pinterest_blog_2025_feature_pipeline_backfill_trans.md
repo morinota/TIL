@@ -189,8 +189,7 @@ For instance, four developers each backfilling a feature group into the training
 To address the challenges we encountered with our v1 backfiller, we developed a v2 version, adopting a two-stage backfill approach. 
 私たちは、v1バックフィラーで直面した課題に対処するために、v2バージョンを開発し、二段階バックフィルアプローチを採用しました。この新しい方法は、プロセスを2つの主要なステージに簡素化します。
 
-Stage1: Feature Staging  
-ステージ1: フィーチャーステージング  
+Stage1: Feature Staging ステージ1: フィーチャーステージング  
 In this first stage, the feature group is joined with the IDs of the main training table. 
 この最初のステージでは、フィーチャーグループがメインのトレーニングテーブルのIDと結合されます。  
 The resulting data — consisting only of primary keys and features — is output to an intermediate Staging Table.  
@@ -203,8 +202,13 @@ In this stage, multiple intermediate staging tables are collectively joined into
 
 Visually, Stage 1 looks as follows:  
 視覚的に、ステージ1は以下のようになります:  
+
+![](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*Lwx1DrWHlMDDfntm)
+
 After multiple stage 1 backfills complete, we perform stage 2:  
 複数のステージ1バックフィルが完了した後、ステージ2を実行します:  
+
+![](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*z09EMgLYVURYCVm6)
 
 This two-stage approach has advantages in addressing the challenges faced previously:  
 この二段階アプローチには、以前直面した課題に対処するための利点があります:  
@@ -226,7 +230,7 @@ This two-stage approach has advantages in addressing the challenges faced previo
 For the same example where engineers took 140 days to backfill their features, the new 2 step backfill approach took a total of 26 days — an overall 82% improvement.  
 エンジニアがフィーチャーをバックフィルするのに140日かかった同じ例では、新しい2ステップバックフィルアプローチは合計26日かかり、全体で82%の改善が見られました。  
 
-
+<!-- ここまで読んだ! -->
 
 # Optimization: Enhanced Two-Stage Backfill with Iceberg Table Format 最適化：Icebergテーブルフォーマットを用いた強化された二段階バックフィル
 
@@ -237,84 +241,71 @@ This shift brought several key benefits:
 この変更により、いくつかの重要な利点がもたらされました：
 
 1. Iceberg enables dynamic partition insertion functionalities, allowing us to commit multiple partitions within the span of a single data epoch. 
-1. Icebergは動的パーティション挿入機能を可能にし、単一のデータエポック内で複数のパーティションをコミットできるようにします。 
-
-This significantly reduces the manual overhead of inserting into individual partitions, diminishing costs and resolving the major bottleneck during write. 
-これにより、個々のパーティションへの挿入にかかる手動の負担が大幅に軽減され、コストが削減され、書き込み時の主要なボトルネックが解消されます。 
-
-Previously, per-partition insertion would take 12 hours; dynamic partition insertion reduces this to just one hour — an impressive 12x improvement. 
-以前は、パーティションごとの挿入に12時間かかっていましたが、動的パーティション挿入によりこれがわずか1時間に短縮され、驚異的な12倍の改善が達成されました。 
+    Icebergは動的パーティション挿入機能を可能にし、単一のデータエポック内で複数のパーティションをコミットできるようにします。 
+    This significantly reduces the manual overhead of inserting into individual partitions, diminishing costs and resolving the major bottleneck during write. 
+    これにより、個々のパーティションへの挿入にかかる手動の負担が大幅に軽減され、コストが削減され、書き込み時の主要なボトルネックが解消されます。 
+    Previously, per-partition insertion would take 12 hours; dynamic partition insertion reduces this to just one hour — an impressive 12x improvement. 
+    以前は、パーティションごとの挿入に12時間かかっていましたが、動的パーティション挿入によりこれがわずか1時間に短縮され、驚異的な12倍の改善が達成されました。 
 
 2. We enhanced our version control and rollback support by leveraging Iceberg’s flexible snapshot management system. 
-2. Icebergの柔軟なスナップショット管理システムを活用することで、バージョン管理とロールバックサポートを強化しました。 
-
-We implement this rollback support by cherrypicking data partitions from previous snapshots to overwrite the current snapshot. 
-このロールバックサポートは、以前のスナップショットからデータパーティションを選択して現在のスナップショットを上書きすることで実装しています。 
-
-Since these operations are primarily metadata-only operations, they can be performed swiftly and efficiently, ensuring quick recovery and minimal downtime. 
-これらの操作は主にメタデータのみの操作であるため、迅速かつ効率的に実行でき、迅速な回復と最小限のダウンタイムを確保します。 
+   Icebergの柔軟なスナップショット管理システムを活用することで、バージョン管理とロールバックサポートを強化しました。 
+    We implement this rollback support by cherrypicking data partitions from previous snapshots to overwrite the current snapshot. 
+    このロールバックサポートは、以前のスナップショットからデータパーティションを選択して現在のスナップショットを上書きすることで実装しています。 
+    Since these operations are primarily metadata-only operations, they can be performed swiftly and efficiently, ensuring quick recovery and minimal downtime. 
+    これらの操作は主にメタデータのみの操作であるため、迅速かつ効率的に実行でき、迅速な回復と最小限のダウンタイムを確保します。 
 
 3. The Iceberg format offers great support for table partitioning schemas, enabling the development of a bucketing partitioning strategy. 
-3. Icebergフォーマットはテーブルパーティショニングスキーマに対して優れたサポートを提供し、バケッティングパーティショニング戦略の開発を可能にします。 
-
-This allows for efficient storage-partitioned joins, which significantly reduce shuffling during both Stage 1 and Stage 2 operations. 
-これにより、効率的なストレージパーティション結合が可能になり、ステージ1およびステージ2の操作中のシャッフルが大幅に削減されます。 
-
-Our observations indicate up to a 3x speed increase for backfills. 
-私たちの観察によれば、バックフィルの速度が最大3倍向上することが示されています。 
+    Icebergフォーマットはテーブルパーティショニングスキーマに対して優れたサポートを提供し、バケッティングパーティショニング戦略の開発を可能にします。 
+    This allows for efficient storage-partitioned joins, which significantly reduce shuffling during both Stage 1 and Stage 2 operations. 
+    これにより、効率的なストレージパーティション結合が可能になり、ステージ1およびステージ2の操作中のシャッフルが大幅に削減されます。 
+    Our observations indicate up to a 3x speed increase for backfills. 
+    私たちの観察によれば、バックフィルの速度が最大3倍向上することが示されています。 
 
 4. By leveraging bucketing and local bucket sorting, data compression potential is unlocked. 
-4. バケッティングとローカルバケットソートを活用することで、データ圧縮の可能性が引き出されます。 
-
-Tables’ sizes are compressed to as little as 25% of their original size, achieved through sorting and bucketing by UserId. 
-テーブルのサイズは、UserIdによるソートとバケッティングを通じて、元のサイズのわずか25%に圧縮されます。 
-
-This organization allows grouping of user-sequence features adjacent to each other, facilitating effective Delta Encoding for these sequences. 
-この構成により、ユーザーシーケンス特徴が隣接してグループ化され、これらのシーケンスに対する効果的なデルタエンコーディングが促進されます。 
+    バケッティングとローカルバケットソートを活用することで、データ圧縮の可能性が引き出されます。 
+    Tables’ sizes are compressed to as little as 25% of their original size, achieved through sorting and bucketing by UserId. 
+    テーブルのサイズは、UserIdによるソートとバケッティングを通じて、元のサイズのわずか25%に圧縮されます。 
+    This organization allows grouping of user-sequence features adjacent to each other, facilitating effective Delta Encoding for these sequences. 
+    この構成により、ユーザーシーケンス特徴が隣接してグループ化され、これらのシーケンスに対する効果的なデルタエンコーディングが促進されます。 
 
 The Stage 1 process utilizing Iceberg looks as follows (Inputs contains multiple partitions and leverage dynamic partition insertion to overwrite the corresponding output): 
 Icebergを利用したステージ1のプロセスは以下のようになります（入力には複数のパーティションが含まれ、動的パーティション挿入を活用して対応する出力を上書きします）： 
 
+![](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*wPvh_zUjXOioJoUg)
+
 The Stage 2 Feature Promotion Process then visually looks as follows (Used storage partition join to replace the full shuffle join): 
 次に、ステージ2の特徴プロモーションプロセスは以下のように視覚的に表現されます（ストレージパーティション結合を使用してフルシャッフル結合を置き換えます）： 
+
+![](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*XkyO_GtMRI20GVPk)
 
 Furthermore, to streamline the initiation of new backfills, the team has developed a dedicated backfiller UI, making the process straightforward and user-friendly. 
 さらに、新しいバックフィルの開始を効率化するために、チームは専用のバックフィラーUIを開発し、プロセスを簡素化し、ユーザーフレンドリーにしました。
 
-
+<!-- ここまで読んだ! -->
 
 # [2025+] Training Time “Backfill” via Ray Bucket Join
 
 How can we further enhance the backfiller experience? 
 バックフィラーの体験をさらに向上させるにはどうすればよいでしょうか？
-
 While we’ve already achieved considerable efficiency gains with the two-stage backfill approach and by leveraging Iceberg, the Stage 2 process still requires users to materialize the full training dataset before model training which can take multiple days for a large training window. 
 私たちはすでに二段階のバックフィルアプローチとIcebergを活用することでかなりの効率向上を達成していますが、ステージ2のプロセスでは、モデルのトレーニングの前にユーザーが完全なトレーニングデータセットを具現化する必要があり、大きなトレーニングウィンドウの場合、数日かかることがあります。
-
 Imagine if we could entirely bypass Stage 2 and proceed to train models directly using the intermediate staging tables produced in Stage 1. 
 もしステージ2を完全にバイパスし、ステージ1で生成された中間ステージングテーブルを使用して直接モデルをトレーニングできるとしたらどうでしょうか。
-
 Achieving this would require a data loader capable of joining the training data with these staging tables on the fly. 
 これを実現するには、トレーニングデータとこれらのステージングテーブルを即座に結合できるデータローダーが必要です。
-
 This led us to build the next generation training time backfill with Ray. 
 これにより、私たちはRayを使用して次世代のトレーニング時間バックフィルを構築することになりました。
 
 Ray is an open-source framework that excels in building distributed applications. 
 Rayは、分散アプリケーションの構築に優れたオープンソースのフレームワークです。
-
 It provides the flexibility to manage heterogeneous types of instances and distribute the workload in a resource-aware manner. 
 異種のインスタンスを管理し、リソースを意識した方法で作業負荷を分散する柔軟性を提供します。
-
 Since 2023, Pinterest has been utilizing Ray to build our training platform (more details in our previous blogs posts: Last Mile Data Processing⁵, Ray Infrastructure at Pinterest⁶, Ray Batch Inference at Pinterest⁷) and leverage Ray’s data component aids in optimizing data loading speeds, enabling us to horizontally scale CPU resources for data loading workers and unlock various training-time data processing capabilities, such as joining staging tables with the training dataset. 
 2023年以降、PinterestはRayを利用してトレーニングプラットフォームを構築しており（詳細は以前のブログ投稿をご覧ください：Last Mile Data Processing⁵、Ray Infrastructure at Pinterest⁶、Ray Batch Inference at Pinterest⁷）、Rayのデータコンポーネントを活用してデータロード速度を最適化し、データローディングワーカーのCPUリソースを水平にスケールし、トレーニングデータセットとステージングテーブルを結合するなど、さまざまなトレーニング時間データ処理機能を解放しています。
-
 However, Ray’s data processing emphasizes a streaming execution paradigm, which is not well-suited for the typical data shuffling required by hash join workloads. 
 しかし、Rayのデータ処理はストリーミング実行パラダイムを強調しており、ハッシュジョインワークロードに必要な典型的なデータシャッフルには適していません。
-
 This limitation was one of the motivations for adopting Iceberg in Backfiller v2 and implement bucketing partitioning on the training dataset. 
 この制限は、Backfiller v2でIcebergを採用し、トレーニングデータセットにバケットパーティショニングを実装する動機の一つでした。
-
 Bucketing partitioning allows the data to be partitioned by on a hash modulo operation on specified columns (e.g. request_id): 
 バケットパーティショニングにより、データを指定された列（例：request_id）に対するハッシュモジュロ操作でパーティション分けできます：
 
@@ -325,62 +316,47 @@ $$
 With standardized bucketing across staging tables and training tables, we can effectively implement a map side bucket join inside Ray data loader workers. 
 ステージングテーブルとトレーニングテーブル全体で標準化されたバケットを使用することで、Rayデータローダーワーカー内でマップサイドバケットジョインを効果的に実装できます。
 
+![]()
+
 The idea is simple: during training, data loader workers analyze the data distribution, bucketing information from both the training dataset and the staging table. 
 アイデアはシンプルです：トレーニング中、データローダーワーカーはトレーニングデータセットとステージングテーブルの両方からデータ分布とバケット情報を分析します。
-
 Assuming both tables have the same bucketing schema, the data loader worker then selectively loads files from corresponding buckets across multiple tables, dynamically joining them into a single data block. 
 両方のテーブルが同じバケットスキーマを持っていると仮定すると、データローダーワーカーは対応するバケットから複数のテーブルのファイルを選択的にロードし、それらを動的に単一のデータブロックに結合します。
-
 This block is then sent to the trainer for processing or training. 
 このブロックは、その後、処理またはトレーニングのためにトレーナーに送信されます。
-
 Although this method demands additional computational resources, Ray allows us to scale up CPU resources effectively, ensuring that training speed remains consistent and unaffected. 
 この方法は追加の計算リソースを必要としますが、RayはCPUリソースを効果的にスケールアップできるため、トレーニング速度が一貫して維持され、影響を受けないことを保証します。
 
 While adopting Ray and Iceberg offers substantial benefits, it’s important to acknowledge the technical complexities involved, which can be more challenging than they initially appear. 
-RayとIcebergを採用することは大きな利点を提供しますが、関与する技術的な複雑さを認識することも重要であり、これは最初に見えるよりも難しい場合があります。
-
+**RayとIcebergを採用することは大きな利点を提供しますが、関与する技術的な複雑さを認識することも重要であり、これは最初に見えるよりも難しい場合があります**。
 For example, implementing bucketing and sorting can alter dataset distributions, and migrating the entire existing training stack to a new platform is a significant undertaking that could warrant an entire chapter in itself. 
 たとえば、バケット化とソートを実装するとデータセットの分布が変わる可能性があり、既存のトレーニングスタック全体を新しいプラットフォームに移行することは、独自の章を必要とする重要な作業です。
-
 Our teams are actively addressing these challenges. 
 私たちのチームはこれらの課題に積極的に取り組んでいます。
-
 Stay tuned for future blog posts as we unveil more about this journey. 
 この旅についての詳細を明らかにする今後のブログ投稿にご期待ください。
 
 With the inclusion of in-trainer join functionality, we can streamline and speed up our feature testing process significantly. 
 トレーナー内結合機能の追加により、私たちは機能テストプロセスを大幅に合理化し、加速することができます。
-
 New feature experiments begin with a quick Stage 1 backfill using a dedicated UI. 
 新しい機能の実験は、専用のUIを使用した迅速なステージ1バックフィルから始まります。
-
 Once these features are verified, they can be directly used for model training in offline evaluations. 
 これらの機能が確認されると、オフライン評価でのモデルトレーニングに直接使用できます。
-
 If the features meet the evaluation criteria, users can proceed with the Stage 2 operation to promote them to the production dataset and initiate online experiments. 
 機能が評価基準を満たす場合、ユーザーはステージ2の操作を進めてそれらを本番データセットに昇格させ、オンライン実験を開始できます。
-
-
 
 # Summary 概要
 
 Our multi-year journey in enhancing Pinterest’s feature backfilling experience reflects a commitment to innovation and efficiency, transitioning from forward logging to a refined two-stage backfill process. 
-Pinterestの機能バックフィリング体験を向上させるための私たちの数年にわたる旅は、革新と効率へのコミットメントを反映しており、フォワードロギングから洗練された二段階バックフィルプロセスへと移行しました。
-
+Pinterestの機能バックフィリング体験を向上させるための私たちの数年にわたる旅は、革新と効率へのコミットメントを反映しており、**フォワードロギングから洗練された二段階バックフィルプロセスへと移行**しました。
 Feature Backfiller v1 used Spark for full backfills, significantly reducing calendar day costs and accelerating feature iteration, though it also highlighted the need for further optimization. 
 Feature Backfiller v1は、完全なバックフィルにSparkを使用し、カレンダー日コストを大幅に削減し、機能の反復を加速しましたが、さらなる最適化の必要性も浮き彫りにしました。
-
 This led to Feature Backfiller v2, featuring a two-stage process that optimized parallel execution and minimized data shuffling, supported by the Iceberg table format for enhanced partition management and version control. 
 これにより、Feature Backfiller v2が生まれ、並列実行を最適化し、データのシャッフルを最小限に抑える二段階プロセスが特徴となり、パーティション管理とバージョン管理を強化するためにIcebergテーブルフォーマットがサポートされました。
-
 These advancements resulted in a 90 times speed up in completion times and improved data compression by up to 75%. 
 これらの進展により、完了時間が90倍速くなり、データ圧縮が最大75%改善されました。
-
 As we look ahead, our training-time “backfill” approach with Ray aims to further streamline processes by enabling on-the-fly data joins during model training, ensuring that our recommendation systems continue to deliver inspiring, personalized experiences efficiently. 
 今後を見据え、Rayを用いたトレーニング時間の「バックフィル」アプローチは、モデルのトレーニング中にオンザフライのデータ結合を可能にすることでプロセスをさらに効率化し、私たちの推薦システムが引き続き刺激的でパーソナライズされた体験を効率的に提供できるようにすることを目指しています。
-
-
 
 # Acknowledgements 謝辞
 
@@ -388,13 +364,6 @@ This project represents a collaborative effort across many teams at Pinterest.
 このプロジェクトは、Pinterestの多くのチームによる共同作業を表しています。
 We wish to acknowledge and thank them for their significant contributions to this workstream. 
 私たちは、彼らのこの作業の流れへの重要な貢献に感謝の意を表したいと思います。
-
-- ML Platform: Rubin Ferguson, Yi He, Matthew Almeida, Andrew Yu
-- Ads ML Infrastructure: Chao Huang, Harshal Dahake, Xinyi Zhang, Haoyu He
-- Core ML Infrastructure: Laksh Bhasin, Jiahuan Liu, Henry Feng, Alekhya Pyla, Dave Chen
-- Big Data Platform: Ashish Singh, Pucheng Yang
-- Analytics Platform: Surya Karri
-- Leadership support: Se Won Jang, Joey Wang, Shun-ping Chiu, Colin Leatherbury, Archer Liu, Shu Zhang, David Liu
 
 
 
@@ -421,267 +390,4 @@ We wish to acknowledge and thank them for their significant contributions to thi
 ⁷Pinterest Engineering. “Ray Batch Inference at Pinterest (Part 3).” Medium, 14 Mar. 2024, https://medium.com/pinterest-engineering/ray-batch-inference-at-pinterest-part-3-4faeb652e385.
 ⁷Pinterestエンジニアリング. 「PinterestにおけるRayバッチ推論 (パート3).」Medium、2024年3月14日、https://medium.com/pinterest-engineering/ray-batch-inference-at-pinterest-part-3-4faeb652e385.
 
-
-
-## Sign up to discover human stories that deepen your understanding of the world. 
-世界の理解を深める人間の物語を発見するためにサインアップしてください。
-
-
-
-## Free 無料
-
-Distraction-free reading. No ads.  
-気を散らさない読書。広告なし。
-
-Organize your knowledge with lists and highlights.  
-リストやハイライトで知識を整理しましょう。
-
-Tell your story. Find your audience.  
-あなたの物語を語りましょう。聴衆を見つけましょう。
-
-Sign up for free  
-無料でサインアップ
-
-
-
-## Membership メンバーシップ
-
-Read member-only stories
-メンバー限定のストーリーを読む
-
-Support writers you read most
-最もよく読む作家をサポートする
-
-Earn money for your writing
-自分の執筆でお金を稼ぐ
-
-Listen to audio narrations
-オーディオナレーションを聞く
-
-Read offline with the Medium app
-Mediumアプリでオフラインで読む
-
-Try for $5/month
-月額$5でお試し
-
-
-
-## Published in Pinterest Engineering Blog Pinterest Engineering Blogに掲載
-
-Published in Pinterest Engineering Blog
-Pinterest Engineering Blogに掲載
-
-15.9K followers
-15.9K フォロワー
-
-·
-·
-
-Inventive engineers building the first visual discovery engine, 300 billion ideas and counting.
-発明的なエンジニアが初のビジュアルディスカバリーエンジンを構築中、3000億のアイデアが進行中。
-
-Follow
-フォロー
-
-
-
-## Written by Pinterest Engineering 著者: Pinterestエンジニアリング
-
-Written by Pinterest Engineering
-Pinterestエンジニアリングによって書かれました。
-
-59K followers
-59Kフォロワー
-
-·
-·
-
-https://medium.com/pinterest-engineering| Inventive engineers building the first visual discovery engine
-https://medium.com/pinterest-engineering | 最初のビジュアルディスカバリーエンジンを構築する創造的なエンジニア
-
-https://careers.pinterest.com/
-https://careers.pinterest.com/
-Follow
-フォロー
-
-
-
-## No responses yet まだ応答はありません
-
-Write a response 応答を書く
-What are your thoughts? あなたの考えは何ですか？
-What are your thoughts? あなたの考えは何ですか？
-
-
-
-## More from Pinterest Engineering and Pinterest Engineering Blog Pinterest Engineering Blogからのさらなる情報
-
-In
-Pinterest Engineering Blog
-Pinterest Engineeringによる
-
-
-
-## How we built Text-to-SQL at Pinterest  
-### Adam Obeng | Data Scientist, Data Platform Science; J.C. Zhong | Tech Lead, Analytics Platform; Charlie Gu | Sr. Manager, Engineering
-PinterestにおけるText-to-SQLの構築方法  
-### Adam Obeng | データサイエンティスト、データプラットフォームサイエンス; J.C. Zhong | テックリード、アナリティクスプラットフォーム; Charlie Gu | シニアマネージャー、エンジニアリング
-Apr 3, 2024A clap icon2.6KA response icon23  
-2024年4月3日　拍手アイコン2.6K　応答アイコン23
-Apr 3, 2024  
-2024年4月3日
-2.6K  
-2.6K
-23  
-23
-In  
-Pinterest Engineering Blog  
-Pinterest Engineering Blogにて
-by  
-Pinterest Engineering  
-Pinterest Engineeringによる
-
-
-
-## Multi-gate-Mixture-of-Experts (MMoE) model architecture and knowledge distillation in Ads…  
-### Authors: Jiacheng Li | Machine Learning Engineer II, Ads Ranking; Matt Meng | Staff Machine Learning Engineer, Ads Ranking; Kungang Li |…
-
-Multi-gate-Mixture-of-Experts (MMoE)モデルアーキテクチャと広告における知識蒸留…
-### 著者: Jiacheng Li | 機械学習エンジニア II, 広告ランキング; Matt Meng | スタッフ機械学習エンジニア, 広告ランキング; Kungang Li |…
-
-Apr 25A clap icon111  
-4月25日　拍手アイコン111
-
-Apr 25  
-4月25日
-
-In  
-に
-
-Pinterest Engineering Blog  
-Pinterestエンジニアリングブログ
-
-by  
-によって
-
-Pinterest Engineering  
-Pinterestエンジニアリング
-
-
-
-## Migrating 3.7 Million Lines of Flow Code to TypeScript  
-### Authors: Jack Hsu | Staff Software Engineer, Core Web Platform; Mark Molinaro | Staff Software Engineer, Code and Language Runtime
-3.7百万行のFlowコードをTypeScriptに移行する  
-### 著者: Jack Hsu | スタッフソフトウェアエンジニア、コアウェブプラットフォーム; Mark Molinaro | スタッフソフトウェアエンジニア、コードおよび言語ランタイム
-
-Apr 17A clap icon638A response icon4  
-4月17日　拍手アイコン638　応答アイコン4
-
-In  
-Pinterest Engineering Blog  
-にて  
-Pinterest Engineering  
-
-
-
-## Improving Pinterest Search Relevance Using Large Language Models  
-Pinterestの検索関連性を大規模言語モデルを使用して改善する
-
-### Han Wang | Machine Learning Engineer, Relevance & Query Understanding; Mukuntha Narayanan | Machine Learning Engineer, Relevance & Query…  
-ハン・ワン | 機械学習エンジニア、関連性とクエリ理解; ムクンタ・ナラヤナン | 機械学習エンジニア、関連性とクエリ…
-
-Apr 5A clap icon208A response icon1  
-4月5日　拍手アイコン208　応答アイコン1
-Apr 5  
-4月5日
-208  
-208
-1  
-1
-
-
-
-## Recommended from Medium おすすめのMediumから
-
-In
-Coding Beauty
-by
-Tari Ibaba
-において
-
-
-
-## This new IDE from Google is an absolute game changer この新しいIDEはGoogleからの絶対的なゲームチェンジャーです  
-### This new IDE from Google is seriously revolutionary. この新しいIDEはGoogleからの本当に革命的です。
-Mar 12 3月12日
-A clap icon5.6K 拍手アイコン5.6K
-A response icon335 反応アイコン335
-Mar 12 3月12日
-5.6K 5.6K
-335 335
-In 在
-Level Up Coding Level Up Coding
-by 著者
-Rahul Sharma ラフル・シャルマ
-
-
-
-## SQL Is Dead, NoSQL Is Dying, and NewSQL Is Quietly Taking Over  
-SQLは死に、NoSQLは衰退し、NewSQLが静かに台頭している
-
-### You are developing the backend infrastructure of an extensive financial system. 
-あなたは、大規模な金融システムのバックエンドインフラを開発しています。
-
-The system operates as either a hedge fund, payment…
-そのシステムは、ヘッジファンドまたは支払いシステムとして機能します…
-
-
-
-## Why Our CTO Banned Rust After One Rewrite なぜ私たちのCTOは一度の書き換えの後にRustを禁止したのか
-
-At our company, Rust was a dream. Fast, safe, modern. We were excited. 
-私たちの会社では、Rustは夢のような存在でした。速く、安全で、現代的でした。私たちは興奮していました。
-
-We’d read the blogs. Watched the conference talks. Saw the memes…
-私たちはブログを読み、カンファレンスの講演を見て、ミームを見ました…
-
-
-
-## 500X Scalability of Experiment Metric Computing with Unified Dynamic Framework  
-### Xinyue Cao | Software Engineer Tech Lead; Bojun Lin | Software Engineer
-500Xスケーラビリティの実験メトリック計算のための統一動的フレームワーク  
-### Xinyue Cao | ソフトウェアエンジニア テックリード; Bojun Lin | ソフトウェアエンジニア
-
-May 14A clap icon41  
-5月14日 A clap icon41
-
-May 14  
-5月14日
-
-41  
-41
-
-The Latency Gambler  
-レイテンシーギャンブラー
-
-
-
-## Scaling to 1 Million Users: The Architecture I Wish I Knew Sooner 100万人のユーザーへのスケーリング：もっと早く知っておきたかったアーキテクチャ  
-### When we launched, we were happy just having 100 daily users. 立ち上げたとき、私たちは100人のデイリーユーザーがいるだけで満足していました。 
-But within months, we hit 10,000, then 100,000. しかし数ヶ月以内に、私たちは10,000人、次に100,000人に達しました。 
-And scaling problems piled up… そして、スケーリングの問題が積み重なっていきました…  
-May 10A clap icon1.2KA response icon32 5月10日　拍手アイコン1.2K　応答アイコン32  
-May 10 5月10日  
-1.2K 1.2K  
-32 32  
-Nathan Rosidi ナサン・ロシディ  
-
-
-
-## Matplotlib Alternatives That Actually Save You Time Matplotlibの代替手段で実際に時間を節約する方法
-
-### If you find Matplotlib leaving a lot to be desired, you’re not the only one. 
-### Matplotlibに不満を感じているのはあなただけではありません。
-
-While it’s not a bad library, you might find these five… 
-悪いライブラリではありませんが、これらの5つの代替手段を見つけるかもしれません…
+<!-- ここまで読んだ! -->
