@@ -1,0 +1,6 @@
+- source: 20250520_text2sql_material.md
+  quarto-pub:
+    - id: 77d359a5-3647-47e2-baab-ee97dff48857
+      url: 'https://morinota.quarto.pub/テーブルメタデータが整備できてないことは、たぶん我々がtext2sqlを諦める理由にはならない'
+    - id: b13852b3-8275-40ce-ad57-2a66429e55f1
+      url: 'https://morinota.quarto.pub/text2sql-material-20250520-2'
