@@ -191,14 +191,91 @@ export class FeatureStoreStack extends cdk.Stack {
 
 ### Feature Storeへの特徴量の書き込み
 
+```python
+import abc
+import json
+from datetime import datetime
+
+import polars as pl
+import sagemaker
+from sagemaker.feature_store.feature_group import FeatureGroup
+from sagemaker.feature_store.feature_store import FeatureStore
+
+class SagemakerFeatureStoreRepository(FeatureStoreRepositoryInterface):
+    def __init__(
+        self,
+        sagemaker_session: sagemaker.Session,
+        bucket_for_temp_file: str,
+    ) -> None:
+        self._sagemaker_session = sagemaker_session
+
+        self._feature_store = FeatureStore(sagemaker_session=self._sagemaker_session)
+        self._bucket_for_temp_file = bucket_for_temp_file
+
+    def ingest_features(
+        self,
+        feature_group_name: str,
+        feature_df: pl.DataFrame,
+    ) -> None:
+        feature_group = FeatureGroup(feature_group_name, self._sagemaker_session)
+
+        print(f"{feature_group.describe()["FeatureGroupStatus"]=}")
+
+        feature_group.ingest(data_frame=feature_df.to_pandas(), max_workers=1, wait=True)
+
+        # TODO: オフラインストアへの結果反映まで5~15分くらいかかるっぽいので、待機処理を追加する。
+```
+
+![S3上にparquetとして書き込まれた特徴量レコード達](image.png)
+
 - 注意点: オフラインストアへの特徴量書き込み(ingest)の反映には、通常5~15分ほどかかるっぽい。
   - >PutRecord を呼び出すと、データは 15 分以内に Amazon S3 にバッファされ、バッチ処理され、書き込まれます
   - `FeatureGroup.ingest()`メソッドには`wait`オプションがあるが、**これはあくまでPutRecord APIの呼び出しが完了するまで待つだけ。その後実行されるオフラインストアへの非同期の書き込み処理の完了を待つわけではないので注意...!!**
   - なので、オフラインストアへの書き込みが完了したかどうかを確認するには、自前でS3のparquetファイルを確認する実装をする必要があるっぽい...??:thinking:
 
+- 訃報: Sagemaker Feature Storeのオフラインストアは、vector型の特徴量をサポートしていない...:cry:
+  - なので埋め込み表現などの特徴量は、文字列にencodeしてFeature Storeに保存しておき、使うときにdecodeする必要がありそう...:cry:
+
 ### Feature Storeからの特徴量の読み込み
 
-- hoge
+- オンラインストアから取得するか、オフラインストアから取得するかでAPIが異なる。
+  - オンラインストアから取得する場合:
+    - `get_record`メソッド。entityカラムの値と取得したい特徴量名を指定する。
+    - 今回はオフラインストアのみに保存するfeature groupを作成したので、これは試さない。
+  - オフラインストアから取得する場合
+    - **3パターンくらい方法がありそう**。
+    - 方法1: `FeatureGroup.athena_query().run(query)`メソッドを使う方法。
+      - Amazon Athena用のSQLクエリを直接書いて、run()メソッドの引数に渡して実行する。
+      - 自由にSQLクエリをかけるので、柔軟性は高い。
+    - **方法2: `FeatureStore.create_dataset()`メソッドを使う**。
+      - **基本的に本番システムにおいて、学習用データセットやバッチ推論用データセットを作る時はこの方法で十分そう...!**:thinking:
+      - point-in-time correct join機能なども抽象化されてる。
+    - 方法3: S3上のparquetファイルを直接読み込む。
+      - あまり使わなさそう。
+
+````python
+    def fetch_features(
+        self,
+        feature_group_name: str,
+        entity_ids: list[str] | None = None,
+    ) -> pl.DataFrame:
+        feature_group = FeatureGroup(feature_group_name, self._sagemaker_session)
+        feature_store_query = feature_group.athena_query()
+        feature_store_table = feature_store_query.table_name
+        query_string = f"""
+        select * 
+        from "{feature_store_table}"
+        """
+
+        feature_store_query.run(
+            query_string=query_string,
+            output_location=f"s3://{self._bucket_for_temp_file}/athena_query_results/{feature_group_name}/",
+        )
+        feature_store_query.wait()
+        feature_pd_df = feature_store_query.as_dataframe()
+        return pl.from_pandas(feature_pd_df)
+```
+
 
 ### point-in-time correct join機能を活用した学習用・バッチ推論用データセットの作成
 
