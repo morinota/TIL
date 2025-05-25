@@ -189,7 +189,15 @@ export class FeatureStoreStack extends cdk.Stack {
 }
 ```
 
-### Feature Storeへの特徴量の書き込み
+### Feature Storeへの特徴量レコードの書き込み
+
+前セクションにて、特徴量を管理するためのfeature groupを定義できました。
+なので次は、feature groupに対して特徴量レコードを実際に書き込んでみます。
+
+- 特徴量レコードのfeature groupへの書き込み方法はいくつかあるようですが、今回はバッチで一気に複数レコードをオフラインストアに書き込む方法として`FeatureGroup.ingest()`メソッドを使ってみます。
+  - オンラインストアに少量レコードを書き込む場合は別のAPIを使うことになりそうです。
+
+以下が実装例です。
 
 ```python
 import abc
@@ -201,11 +209,11 @@ import sagemaker
 from sagemaker.feature_store.feature_group import FeatureGroup
 from sagemaker.feature_store.feature_store import FeatureStore
 
-class SagemakerFeatureStoreRepository(FeatureStoreRepositoryInterface):
+class SagemakerFeatureStoreRepository:
     def __init__(
         self,
         sagemaker_session: sagemaker.Session,
-        bucket_for_temp_file: str,
+        bucket_for_temp_file: str = "my-bucket-for-temp-file",
     ) -> None:
         self._sagemaker_session = sagemaker_session
 
@@ -219,22 +227,78 @@ class SagemakerFeatureStoreRepository(FeatureStoreRepositoryInterface):
     ) -> None:
         feature_group = FeatureGroup(feature_group_name, self._sagemaker_session)
 
-        print(f"{feature_group.describe()["FeatureGroupStatus"]=}")
-
         feature_group.ingest(data_frame=feature_df.to_pandas(), max_workers=1, wait=True)
 
         # TODO: オフラインストアへの結果反映まで5~15分くらいかかるっぽいので、待機処理を追加する。
 ```
 
-![S3上にparquetとして書き込まれた特徴量レコード達](image.png)
+上記の`ingest_features`メソッドを実際に呼び出してみます。
 
-- 注意点: オフラインストアへの特徴量書き込み(ingest)の反映には、通常5~15分ほどかかるっぽい。
-  - >PutRecord を呼び出すと、データは 15 分以内に Amazon S3 にバッファされ、バッチ処理され、書き込まれます
-  - `FeatureGroup.ingest()`メソッドには`wait`オプションがあるが、**これはあくまでPutRecord APIの呼び出しが完了するまで待つだけ。その後実行されるオフラインストアへの非同期の書き込み処理の完了を待つわけではないので注意...!!**
-  - なので、オフラインストアへの書き込みが完了したかどうかを確認するには、自前でS3のparquetファイルを確認する実装をする必要があるっぽい...??:thinking:
+```python
+import json
 
-- 訃報: Sagemaker Feature Storeのオフラインストアは、vector型の特徴量をサポートしていない...:cry:
-  - なので埋め込み表現などの特徴量は、文字列にencodeしてFeature Storeに保存しておき、使うときにdecodeする必要がありそう...:cry:
+import boto3
+import polars as pl
+import sagemaker
+
+from feature_store_repository import SagemakerFeatureStoreRepository
+
+# awsとの接続設定
+sagemaker_session = sagemaker.Session(boto3.Session(profile_name="newspicks-development"))
+print(f"{sagemaker_session.account_id()=}")
+
+# Feature Storeのリポジトリを作成
+repository = SagemakerFeatureStoreRepository(sagemaker_session)
+
+# 特徴量をfeature groupに登録
+feature_df = pl.DataFrame(
+    {
+        "user_id": [1, 1, 1, 2, 2, 2, 3, 3, 3],
+        "event_time": ["2025-01-01T00:00:00Z", "2025-01-02T00:00:00Z", "2025-01-03T00:00:00Z"] * 3,
+        "user_embedding": [[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]] * 3,
+    }
+).with_columns(
+    # ベクトル型がないので、embeddingを文字列にencodeして保存してる
+    pl.col("user_embedding").map_elements(lambda record: json.dumps(list(record)))
+)
+print(f"{feature_df=}")
+repository.ingest_features(
+    feature_group_name="user-feature-group",
+    feature_df=feature_df,
+)
+```
+
+今回は以下のような特徴量レコード達を書き込んでみました。
+想定としては、3人のユーザについて、3つのバージョンの特徴量を追加しています。
+(実運用では、例えば1日一回、ユーザ埋め込みを作るfeature pipelineが稼働して、1つ(i.e.ある日)のバージョンの特徴量をfeature groupに追加していくのがイメージしやすそう:thinking:)
+
+```
+┌─────────┬──────────────────────┬────────────────┐
+│ user_id ┆ event_time           ┆ user_embedding │
+│ ---     ┆ ---                  ┆ ---            │
+│ i64     ┆ str                  ┆ str            │
+╞═════════╪══════════════════════╪════════════════╡
+│ 1       ┆ 2025-01-01T00:00:00Z ┆ [0.1, 0.2]     │
+│ 1       ┆ 2025-01-02T00:00:00Z ┆ [0.3, 0.4]     │
+│ 1       ┆ 2025-01-03T00:00:00Z ┆ [0.5, 0.6]     │
+│ 2       ┆ 2025-01-01T00:00:00Z ┆ [0.1, 0.2]     │
+│ 2       ┆ 2025-01-02T00:00:00Z ┆ [0.3, 0.4]     │
+│ 2       ┆ 2025-01-03T00:00:00Z ┆ [0.5, 0.6]     │
+│ 3       ┆ 2025-01-01T00:00:00Z ┆ [0.1, 0.2]     │
+│ 3       ┆ 2025-01-02T00:00:00Z ┆ [0.3, 0.4]     │
+│ 3       ┆ 2025-01-03T00:00:00Z ┆ [0.5, 0.6]     │
+└─────────┴──────────────────────┴────────────────┘
+```
+
+エラーなく処理が成功しました。なのでS3上のオフラインストアにparquetファイルが書き込まれたか見てみたのですが、すぐにはS3上にparquetファイルが生成されていません。
+ここで注意点なのですが、どうやらオフラインストアへの特徴量書き込み(ingest)の反映には、通常5~15分ほどかかるっぽい。
+
+- >PutRecord を呼び出すと、データは 15 分以内に Amazon S3 にバッファされ、バッチ処理され、書き込まれます
+- `FeatureGroup.ingest()`メソッドには`wait`オプションがあるが、**これはあくまでPutRecord APIの呼び出しが完了するまで待つだけ。その後実行されるオフラインストアへの非同期の書き込み処理の完了を待つわけではないので注意...!!**
+- なので、オフラインストアへの書き込みが完了したかどうかを確認するには、自前でS3のparquetファイルを確認する実装をする必要があるっぽい...??:thinking:
+
+<!-- - 訃報: Sagemaker Feature Storeのオフラインストアは、vector型の特徴量をサポートしていない...:cry:
+  - なので埋め込み表現などの特徴量は、文字列にencodeしてFeature Storeに保存しておき、使うときにdecodeする必要がありそう...:cry: -->
 
 ### Feature Storeからの特徴量の読み込み
 
@@ -253,15 +317,18 @@ class SagemakerFeatureStoreRepository(FeatureStoreRepositoryInterface):
     - 方法3: S3上のparquetファイルを直接読み込む。
       - あまり使わなさそう。
 
-````python
+以下は、方法1によるオフラインストアからの特徴量の読み込み実装例です。
+今回はとりあえず、feature group内の全ての特徴量レコードを取得するようなSQLクエリを書いて実行させてます。
+
+```python
     def fetch_features(
         self,
         feature_group_name: str,
-        entity_ids: list[str] | None = None,
     ) -> pl.DataFrame:
         feature_group = FeatureGroup(feature_group_name, self._sagemaker_session)
         feature_store_query = feature_group.athena_query()
         feature_store_table = feature_store_query.table_name
+        
         query_string = f"""
         select * 
         from "{feature_store_table}"
@@ -276,7 +343,242 @@ class SagemakerFeatureStoreRepository(FeatureStoreRepositoryInterface):
         return pl.from_pandas(feature_pd_df)
 ```
 
+試しに呼び出してみる。
+
+```python
+# Feature Groupから全ての特徴量レコードを取得する例
+fetched_feature_df = repository.fetch_features("user-feature-group")
+print(f"{fetched_feature_df=}")
+```
+
+無事に、指定したfeature groupの全て特徴量レコードがDataFrameとして返ってくることを確認できました!
+
+```
+fetched_feature_df=shape: (9, 6)
+┌─────────┬─────────────────────┬────────────────┬──────────────┬─────────────────────┬────────────┐
+│ user_id ┆ event_time          ┆ user_embedding ┆ write_time   ┆ api_invocation_time ┆ is_deleted │
+│ ---     ┆ ---                 ┆ ---            ┆ ---          ┆ ---                 ┆ ---        │
+│ i64     ┆ str                 ┆ str            ┆ str          ┆ str                 ┆ bool       │
+╞═════════╪═════════════════════╪════════════════╪══════════════╪═════════════════════╪════════════╡
+│ 1       ┆ 2025-01-03T00:00:00 ┆ [0.5, 0.6]     ┆ 2025-05-25   ┆ 2025-05-25          ┆ false      │
+│         ┆ Z                   ┆                ┆ 11:27:22.463 ┆ 11:22:23.000        ┆            │
+│ 1       ┆ 2025-01-01T00:00:00 ┆ [0.1, 0.2]     ┆ 2025-05-25   ┆ 2025-05-25          ┆ false      │
+│         ┆ Z                   ┆                ┆ 11:27:22.454 ┆ 11:22:22.000        ┆            │
+│ 3       ┆ 2025-01-03T00:00:00 ┆ [0.5, 0.6]     ┆ 2025-05-25   ┆ 2025-05-25          ┆ false      │
+│         ┆ Z                   ┆                ┆ 11:27:21.833 ┆ 11:22:24.000        ┆            │
+│ 3       ┆ 2025-01-02T00:00:00 ┆ [0.3, 0.4]     ┆ 2025-05-25   ┆ 2025-05-25          ┆ false      │
+│         ┆ Z                   ┆                ┆ 11:27:21.834 ┆ 11:22:24.000        ┆            │
+│ 2       ┆ 2025-01-01T00:00:00 ┆ [0.1, 0.2]     ┆ 2025-05-25   ┆ 2025-05-25          ┆ false      │
+│         ┆ Z                   ┆                ┆ 11:27:21.858 ┆ 11:22:23.000        ┆            │
+│ 3       ┆ 2025-01-01T00:00:00 ┆ [0.1, 0.2]     ┆ 2025-05-25   ┆ 2025-05-25          ┆ false      │
+│         ┆ Z                   ┆                ┆ 11:27:21.829 ┆ 11:22:24.000        ┆            │
+│ 2       ┆ 2025-01-03T00:00:00 ┆ [0.5, 0.6]     ┆ 2025-05-25   ┆ 2025-05-25          ┆ false      │
+│         ┆ Z                   ┆                ┆ 11:27:21.858 ┆ 11:22:23.000        ┆            │
+│ 2       ┆ 2025-01-02T00:00:00 ┆ [0.3, 0.4]     ┆ 2025-05-25   ┆ 2025-05-25          ┆ false      │
+│         ┆ Z                   ┆                ┆ 11:27:21.858 ┆ 11:22:23.000        ┆            │
+│ 1       ┆ 2025-01-02T00:00:00 ┆ [0.3, 0.4]     ┆ 2025-05-25   ┆ 2025-05-25          ┆ false      │
+│         ┆ Z                   ┆                ┆ 11:27:22.458 ┆ 11:22:23.000        ┆            │
+└─────────┴─────────────────────┴────────────────┴──────────────┴─────────────────────┴────────────┘
+```
+
+- 注意点: Sagemaker Feature Store側が勝手に追加してくれるカラム達について。
+  - Athenaクエリで普通に`select *`で取得すると、feature groupで定義した3つのカラム(user_id, event_time, user_embedding)に加えて、以下の3つのカラムも自動付与されていることがわかる。
+    - write_time: データがFeature Storeに書き込まれた時間
+    - api_invocation_time: データを書き込むAPIリクエストを受けた時間
+    - is_deleted: データが削除済かどうか。
+      - しかしオフラインストアの場合はS3にappend-only保存だから、deleteリクエストがきても物理的にはレコードが消えない。
+      - その代わりにis_deletedがTrueになり、レコードが無効化される。
 
 ### point-in-time correct join機能を活用した学習用・バッチ推論用データセットの作成
 
-- hoge
+おそらくMLの学習 & バッチ推論時など、実運用でよく使うと思われるやつです。
+point-in-time correct join機能を活用して、学習用・バッチ推論用のデータセットを作成する方法について。
+
+以下のように実装してみました。
+
+```python
+    def fetch_dataset_with_point_in_time_join(
+            self,
+            base_entity_df: pl.DataFrame,
+            base_record_identifier_name: str,
+            base_event_time_name: str,
+            feature_groups: list[tuple[str, str]],
+        ) -> pl.DataFrame:
+        """point-in-time join によるデータ取得を行うメソッド
+            Args:
+                base_entity_df: ベースとなるデータフレーム
+                base_record_identifier_name: ベースのレコード識別子のカラム名
+                base_event_time_name: ベースのイベント時間のカラム名
+                feature_groups: ターゲットのフィーチャグループ名と結合キーのタプルのリスト
+                    feature_group_name: フィーチャグループ名
+                    join_key: フィーチャグループとのjoinに使いたいbase_entity_dfのカラム名
+            Returns:
+                各種特徴量がbase_entity_dfに結合されたデータフレーム
+        """
+        dataset_builder = (
+            self._feature_store.create_dataset(
+                base=base_entity_df.to_pandas(),
+                event_time_identifier_feature_name=base_event_time_name,
+                record_identifier_feature_name=base_record_identifier_name,
+                output_path=f"s3://{self._bucket_for_temp_file}/point_in_time_join/",
+            )
+            # 時点整合性を保証するための設定
+            .point_in_time_accurate_join()
+            # かつ最も新しいtimestampのレコードのみを取得する設定
+            .with_number_of_recent_records_by_record_identifier(1)
+        )
+
+        for feature_group_name, join_key in feature_groups:
+            dataset_builder = dataset_builder.with_feature_group(
+                feature_group=FeatureGroup(
+                    feature_group_name,
+                    self._sagemaker_session,
+                ),
+                target_feature_name_in_base=join_key,
+            )
+
+        dataset_pandas_df, _ = dataset_builder.to_dataframe()
+        return pl.from_pandas(dataset_pandas_df)
+```
+
+上記の`fetch_dataset_with_point_in_time_join`メソッドを、まずは学習用データセットを作る想定で呼び出してみます。
+
+```python
+# point-in-time correct join機能を使って、学習用データセットを作る例
+
+# 擬似的なinteractionデータを用意(このrewardに基づく目的関数でMLモデルを学習するイメージ)
+interaction_df = pl.DataFrame(
+    {
+        "interaction_id": [1, 2, 3],
+        "user_id": [1, 2, 3],
+        "item_id": [101, 102, 103],
+        "reward": [0.5, 1.0, 0.75],
+        "event_time": ["2025-01-01T12:00:00Z", "2025-01-02T12:00:00Z", "2025-01-03T12:00:00Z"],
+    }
+)
+print(f"{interaction_df=}")
+
+## 必要な特徴量をpoint-in-time correct joinで結合
+train_df = repository.fetch_dataset_with_point_in_time_join(
+    base_entity_df=interaction_df,
+    base_record_identifier_name="interaction_id",
+    base_event_time_name="event_time",
+    feature_groups=[("user-feature-group", "user_id")],
+)
+print(f"{train_df=}")
+
+# 学習ステップへ...!
+```
+
+出力結果は以下です。
+
+```
+interaction_df=shape: (3, 5)
+┌────────────────┬─────────┬─────────┬────────┬──────────────────────┐
+│ interaction_id ┆ user_id ┆ item_id ┆ reward ┆ event_time           │
+│ ---            ┆ ---     ┆ ---     ┆ ---    ┆ ---                  │
+│ i64            ┆ i64     ┆ i64     ┆ f64    ┆ str                  │
+╞════════════════╪═════════╪═════════╪════════╪══════════════════════╡
+│ 1              ┆ 1       ┆ 101     ┆ 0.5    ┆ 2025-01-01T12:00:00Z │
+│ 2              ┆ 2       ┆ 102     ┆ 1.0    ┆ 2025-01-02T12:00:00Z │
+│ 3              ┆ 3       ┆ 103     ┆ 0.75   ┆ 2025-01-03T12:00:00Z │
+└────────────────┴─────────┴─────────┴────────┴──────────────────────┘
+
+train_df=shape: (3, 8)
+┌──────────────┬─────────┬─────────┬────────┬──────────────┬───────────┬─────────────┬─────────────┐
+│ interaction_ ┆ user_id ┆ item_id ┆ reward ┆ event_time   ┆ user_id.1 ┆ event_time. ┆ user_embedd │
+│ id           ┆ ---     ┆ ---     ┆ ---    ┆ ---          ┆ ---       ┆ 1           ┆ ing.1       │
+│ ---          ┆ i64     ┆ i64     ┆ f64    ┆ str          ┆ i64       ┆ ---         ┆ ---         │
+│ i64          ┆         ┆         ┆        ┆              ┆           ┆ str         ┆ str         │
+╞══════════════╪═════════╪═════════╪════════╪══════════════╪═══════════╪═════════════╪═════════════╡
+│ 2            ┆ 2       ┆ 102     ┆ 1.0    ┆ 2025-01-02T1 ┆ 2         ┆ 2025-01-02T ┆ [0.3, 0.4]  │
+│              ┆         ┆         ┆        ┆ 2:00:00Z     ┆           ┆ 00:00:00Z   ┆             │
+│ 1            ┆ 1       ┆ 101     ┆ 0.5    ┆ 2025-01-01T1 ┆ 1         ┆ 2025-01-01T ┆ [0.1, 0.2]  │
+│              ┆         ┆         ┆        ┆ 2:00:00Z     ┆           ┆ 00:00:00Z   ┆             │
+│ 3            ┆ 3       ┆ 103     ┆ 0.75   ┆ 2025-01-03T1 ┆ 3         ┆ 2025-01-03T ┆ [0.5, 0.6]  │
+│              ┆         ┆         ┆        ┆ 2:00:00Z     ┆           ┆ 00:00:00Z   ┆             │
+└──────────────┴─────────┴─────────┴────────┴──────────────┴───────────┴─────────────┴─────────────┘
+```
+
+出力された`train_df`を見てみると、interactionデータに加えて、user-feature-groupからの特徴量が結合されていることがわかります。
+そして重要なのは、point-in-time correct join機能により、各interactionレコードの`event_time`の値に基づいて、**feature data leakしない範囲での最新の特徴量レコードが結合されていること**です。
+うんうん、これぞpoint-in-time correct joinって感じがして良さげですね...!:thinking:
+
+同様に、バッチ推論用のデータセットを作る場合も想定して、`fetch_dataset_with_point_in_time_join`メソッドを呼び出してみます。
+
+```python
+# point-in-time correct join機能を使って、バッチ推論用データセットを作る例
+# 基本的には全ユーザについて、バッチ推論を実行する際のtimestampを指定すれば良いはず
+execution_timestamp = "2025-01-04T00:00:00Z"
+target_user_df = pl.DataFrame(
+    {
+        "user_id": [1, 2, 3],
+        "event_time": [execution_timestamp] * 3,
+    }
+)
+
+# 学習と同様に、point-in-time correct joinで必要な特徴量を結合
+inference_input_df = repository.fetch_dataset_with_point_in_time_join(
+    base_entity_df=target_user_df,
+    base_record_identifier_name="user_id",
+    base_event_time_name="event_time",
+    feature_groups=[("user-feature-group", "user_id")],
+)
+print(f"{inference_input_df=}")
+
+# バッチ推論ステップへ...!
+```
+
+出力結果は以下です。
+
+```
+inference_input_df=shape: (3, 5)
+┌─────────┬──────────────────────┬───────────┬──────────────────────┬──────────────────┐
+│ user_id ┆ event_time           ┆ user_id.1 ┆ event_time.1         ┆ user_embedding.1 │
+│ ---     ┆ ---                  ┆ ---       ┆ ---                  ┆ ---              │
+│ i64     ┆ str                  ┆ i64       ┆ str                  ┆ str              │
+╞═════════╪══════════════════════╪═══════════╪══════════════════════╪══════════════════╡
+│ 1       ┆ 2025-01-04T00:00:00Z ┆ 1         ┆ 2025-01-03T00:00:00Z ┆ [0.5, 0.6]       │
+│ 2       ┆ 2025-01-04T00:00:00Z ┆ 2         ┆ 2025-01-03T00:00:00Z ┆ [0.5, 0.6]       │
+│ 3       ┆ 2025-01-04T00:00:00Z ┆ 3         ┆ 2025-01-03T00:00:00Z ┆ [0.5, 0.6]       │
+└─────────┴──────────────────────┴───────────┴──────────────────────┴──────────────────┘
+```
+
+作られた`inference_input_df`を見てみると、学習用データセットと同様に、`base_entity_df`の各レコードの`event_time`に基づいて、feature data leakしない範囲での最新の特徴量レコードが結合されています。
+今回の場合は推論なので、基本的には推論時点での最も新しい特徴量レコードを使えば良いですよね。
+
+### Feature Storeからの特徴量の削除
+
+最後に、今回追加した特徴量レコードをfeature groupから削除しておきます。
+
+以下のように、`FeatureGroup.delete_record()`メソッドを使って実装してみました。
+
+```python
+    def delete_feature_record(
+        self,
+        feature_group_name: str,
+        record_identifier_value_as_string: str,
+        event_time: str,
+    ) -> None:
+        feature_group = FeatureGroup(feature_group_name, self._sagemaker_session)
+        feature_group.delete_record(
+            record_identifier_value_as_string=record_identifier_value_as_string,
+            event_time=event_time,
+            deletion_mode="Soft",  # オフラインストアは論理削除のみなので、"Soft"を指定
+        )
+```
+
+
+- **注意点: オフラインストアの場合はあくまで論理削除のみ! 物理削除する場合はS3のライフサイクルルールなどを使うと良さそう!**
+  - 特にオフラインストアの場合、Feature Storeのデータは基本append-only (オンラインストアの場合は物理削除できるけど、オフラインストアはできない)
+  - **よって「削除」という動作は、`is_deleted`フラグを立てる(論理削除)という動作になる!**
+    - 言い換えると、レコードを消すのではなく「無効です!」とマークすることになる。
+  - **なので、オフラインストアにあるデータを物理削除するには、S3側の機能を使う必要があるみたい...! ライフサイクルルールとか!**
+- 唯一提供されてる削除API: `FeatureGroup.delete_record()`メソッド
+  - 引数は3つ (=削除したいレコードを一意に識別するための情報のみ...!シンプル!:thinking:)
+    - `record_identifier_value_as_string`: 削除したいレコードのentity id
+    - `event_time`: 削除したいレコードのevent time (i.e. レコードのversion)
+    - `deletion_mode`(オプショナル): 削除モードをソフトかハードか指定する。あ、物理削除できるじゃん、と思いがちだが、これで物理削除できるのはあくまでオンラインストア上にあるレコードのみ...! **どちらのモードを指定してもオフラインストアのレコードは論理削除になる**。
+- tips:
+  - 公式には「一括の論理削除」のAPIは存在しない。forループで順番にdeleteするしかない。
+  - もし自前でAthenaクエリを書いてレコードを取得するときは、is_deletedを考慮すべき! `where is_deleted = 0`みたいな条件を追加する必要がある!
