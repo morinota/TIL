@@ -49,21 +49,6 @@ Selecting and ranking the most relevant cards to display is a challenging task [
 While being close to _slate recommendation [16, 18, 20, 40] and to learning to rank settings [30, 34, 36], carousel personalization also requires dealing with user feedback to adaptively improve the recommended content via online learning strategies [2, 6, 13], and integrating that some cards from the carousel might not be seen by users due to the swipeable structure.  
 _slates推薦 [16, 18, 20, 40] やランク付け設定 [30, 34, 36] に近いものである一方で、カルーセルのパーソナライズには、ユーザのフィードバックを扱い、オンライン学習戦略 [2, 6, 13] を通じて推奨コンテンツを適応的に改善する必要があり、スワイプ可能な構造のためにカルーセルの一部のカードがユーザに見られない可能性があることを統合する必要があります。  
 
-Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page.  
-この作業のすべてまたは一部のデジタルまたは印刷コピーを個人または教室で使用するために作成する許可は、コピーが利益または商業的利益のために作成または配布されず、コピーがこの通知と最初のページに完全な引用を含む限り、無料で付与されます。  
-Copyrights for components of this work owned by others than the author(s) must be honored.  
-著者以外の者が所有するこの作業のコンポーネントの著作権は尊重されなければなりません。  
-Abstracting with credit is permitted.  
-クレジット付きの要約は許可されています。  
-To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee.  
-それ以外の方法でコピーしたり、再出版したり、サーバーに投稿したり、リストに再配布したりするには、事前の特定の許可および/または料金が必要です。  
-Request permissions from permissions@acm.org.  
-permissions@acm.org から許可をリクエストしてください。  
-© 2020 Copyright held by the owner/author(s). Publication rights licensed to ACM.  
-© 2020 著作権は所有者/著者に帰属します。出版権はACMにライセンスされています。  
-Manuscript submitted to ACM  
-原稿はACMに提出されました。  
-
 In this paper, we model carousel personalization as a multi-armed bandit with multiple plays [2] learning problem.  
 本論文では、カルーセルのパーソナライズを複数のプレイを持つマルチアームバンディット [2] 学習問題としてモデル化します。  
 Within our proposed framework, we account for important characteristics of real-world swipeable carousels, notably by considering that media services providers have access to contextual information on user preferences, that they might not know which cards from a carousel are actually seen by users, and that feedback data from carousels might not be available in real time.  
