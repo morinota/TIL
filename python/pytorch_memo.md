@@ -7,35 +7,71 @@
 
 #### 1つ目: 基本 state_dict形式 (.pth or .pt)
   - ex. `torch.save(model.state_dict(), 'model.pth')`
-  - 一番よく使われる形式。モデルの重み・バイアスなどのパラメータのみを保存する方法。
+  - 一番よく使われる形式。
+  - モデルの重み・バイアスなどのパラメータのみを全部state_dictという辞書形式で保存する方法。
   - メリット:
     - PyTorch公式でも推奨されてる保存方法.
     - モデルの再学習や推論で柔軟に使いやすい。
     - クラス定義が変わっても比較的安全。
 
-必要に応じて、いろんなパラメータもdict形式で保存できる。
+
+読み込み方の例:
 
 ```python
-# 学習時のチェックポイント保存
-torch.save({
-    'epoch': epoch,
-    'model_state_dict': model.state_dict(),
-    'optimizer_state_dict': optimizer.state_dict(),
-    'loss': loss,
-}, "checkpoint.pth")
+model = TheModelClass(*args, **kwargs)
+model.load_state_dict(torch.load(PATH, weights_only=True))
+model.eval()  # 推論モードにするの忘れずに！
 ```
 
 
 #### 2つ目: モデル全体を保存する方法 (.pt 形式)
   - ex. `torch.save(model, 'model.pt')`
   - モデルのクラス構造ごと全部保存する方法。
-  - クラス定義がロード時に必要になるので、プロジェクト構造が変わると読み込めなくなるリスクあり。
+  - 注意点:
+    - クラス定義やディレクトリ構成が変わると読み込めなくなるリスクあり。
+    - 基本的にはstate_dict形式を使うことが推奨されてる。
+
+読み込み方の例:
+
+```python
+model = torch.load(PATH, weights_only=False)
+model.eval()
+```
 
 #### 3つ目: TorchScript形式 (.pt 形式)
-  - ex. `torch.jit.save(torch.jit.script(model), 'model_scripted.pt')`
-  - モデルをTorchScriptに変換して保存する方法。
-  - リアルタイム推論サーバーへのデプロイや、他言語環境で推論させたい場合に適してる。
 
+- ex. `torch.jit.save(torch.jit.script(model), 'model_scripted.pt')`
+- モデルをTorchScriptに変換して保存する方法。
+- メリット:
+  - モデルクラスの定義がなくても動く。
+  - リアルタイム推論サーバーへのデプロイや、C++などの他言語環境で推論させたい場合に適してる。
+
+### チェックポイント保存 (再学習・中断再開用)
+
+必要に応じて、いろんなパラメータもdict形式で保存できる。
+
+保存の例:
+
+```python
+torch.save({
+    'epoch': epoch,
+    'model_state_dict': model.state_dict(),
+    'optimizer_state_dict': optimizer.state_dict(),
+    'loss': loss,
+}, PATH)
+```
+
+読み込みの例:
+
+```python
+model = TheModelClass(*args, **kwargs)
+optimizer = TheOptimizerClass(*args, **kwargs)
+checkpoint = torch.load(PATH, weights_only=True)
+model.load_state_dict(checkpoint['model_state_dict'])
+optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+epoch = checkpoint['epoch']
+loss = checkpoint['loss']
+```
 
 ### state_dict形式のS3との読み書きについて
 
