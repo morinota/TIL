@@ -9,7 +9,6 @@ Netflix TechBlogに掲載·11分で読める·2025年3月22日
 ByKo-Jen Hsiao,Yesu FengandSudarshan Lamkhede  
 著者：コー・ジェン・シャオ、イエス・フェン、スダルシャン・ラムケデ  
 
-
 # Motivation 動機
 
 Netflix’s personalized recommender system is a complex system, boasting a variety of specialized machine learned models each catering to distinct needs including “Continue Watching” and “Today’s Top Picks for You.” 
@@ -144,9 +143,9 @@ This blending of contextual and historical information ensures each token in the
 # Considerations for Model Objective and Architecture モデルの目的とアーキテクチャに関する考慮事項
 
 As previously mentioned, our default approach employs the autoregressive next-token prediction objective, similar to GPT. 
-前述のように、私たちのデフォルトのアプローチは、GPTに似た自己回帰的な次トークン予測目的を採用しています。 
+前述のように、私たちのデフォルトのアプローチは、**GPTに似た自己回帰的なnext-token prediction目的関数を採用**しています。(このnext-token predictionタスクが、よく「半教師あり学習」って呼ばれるやつだっけ...!:thinking:)
 This strategy effectively leverages the vast scale of unlabeled user interaction data. 
-この戦略は、ラベルのないユーザーインタラクションデータの膨大なスケールを効果的に活用します。 
+**この戦略は、ラベルのないユーザインタラクションデータの膨大なスケールを効果的に活用します。**
 The adoption of this objective in recommendation systems has shown multiple successes [1–3]. 
 この目的の推薦システムへの採用は、いくつかの成功を示しています[1–3]。 
 However, given the distinct differences between language tasks and recommendation tasks, we have made several critical modifications to the objective. 
@@ -155,9 +154,9 @@ However, given the distinct differences between language tasks and recommendatio
 Firstly, during the pretraining phase of typical LLMs, such as GPT, every target token is generally treated with equal weight. 
 まず、GPTのような典型的なLLMの事前学習フェーズでは、すべてのターゲットトークンは一般的に等しい重みで扱われます。 
 In contrast, in our model, not all user interactions are of equal importance. 
-対照的に、私たちのモデルでは、すべてのユーザーインタラクションが等しい重要性を持つわけではありません。 
+**対照的に、私たちのモデルでは、すべてのユーザーインタラクションが等しい重要性を持つわけではありません**。 
 For instance, a 5-minute trailer play should not carry the same weight as a 2-hour full movie watch. 
-例えば、5分間のトレーラー再生は、2時間のフルムービー視聴と同じ重みを持つべきではありません。 
+**例えば、5分間のトレーラー再生は、2時間のフルムービー視聴と同じ重みを持つべきではありません**。(なるほどimplicit feedbackの中でも、ユーザの嗜好を表す度合いには違いがあるよね...!:thinking:)
 A greater challenge arises when trying to align long-term user satisfaction with specific interactions and recommendations. 
 特定のインタラクションや推薦と長期的なユーザー満足度を一致させようとすると、より大きな課題が生じます。 
 To address this, we can adopt a multi-token prediction objective during training, where the model predicts the next tokens at each step instead of a single token [4]. 
