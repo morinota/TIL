@@ -35,7 +35,7 @@ The feature store also reduces the time required to make online predictions, as 
 In a MLOps platform, the feature store is the glue that ties together different ML pipelines to make a complete ML system: 
 MLOpsプラットフォームにおいて、**特徴ストアは異なるMLパイプラインを結びつけて完全なMLシステムを作る接着剤**です。
 
-- feature pipelines compute features and then write those features (and labels/targets) to it; 
+- feature pipelines compute features and then write those features (and labels/targets) to it;
   - 特徴パイプラインは特徴を計算し、それらの特徴（およびラベル/ターゲット）を書き込みます；
 
 - training pipelines read features (and labels/targets) from it; 
