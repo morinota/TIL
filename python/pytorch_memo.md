@@ -1,7 +1,7 @@
 ## モデルインスタンスの保存について
 
 - refs: 
-  - https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html
+  - Pytorch公式: [Saving and Loading Models](https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html)
 
 ### 大きく3種類あるっぽい
 
