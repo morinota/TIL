@@ -301,40 +301,53 @@ This suggests that the simpler slate bandit framework can still be highly effect
 
 <!-- ここまで読んだ! -->
 
-# Data Science Challenges データサイエンスの課題  
+# Data Science Challenges データサイエンスの課題
+
 ## Achieving / Measuring Convergence 収束の達成 / 測定
-One common data science challenge when running a multi-armed bandit system is that of achieving convergence.  
-マルチアームバンディットシステムを運用する際の一般的なデータサイエンスの課題の一つは、収束を達成することです。  
+
+One common data science challenge when running a multi-armed bandit system is that of achieving convergence.
+マルチアームバンディットシステムを運用する際の一般的なデータサイエンスの課題の一つは、収束を達成することです。
 In the stationary bandit setting (where the true reward distributions per arm do not change drastically over time), we expect our bandit system to converge onto the optimal arm(s) (i.e., reduce exploration and mostly perform exploitation). 
-定常バンディット設定（各アームの真の報酬分布が時間とともに大きく変化しない場合）では、私たちはバンディットシステムが最適なアームに収束することを期待しています（すなわち、探索を減らし、主に搾取を行うこと）。 
+**定常バンディット設定（各アームの真の報酬分布が時間とともに大きく変化しない場合）では、私たちはバンディットシステムが最適なアームに収束することを期待**しています（すなわち、探索を減らし、主に活用を行う）。
 In general, the speed at which a multi-armed bandit algorithm can converge is dependent on several factors.  
-一般的に、マルチアームバンディットアルゴリズムが収束する速度は、いくつかの要因に依存します。  
+一般的に、**マルチアームバンディットアルゴリズムが収束する速度は、いくつかの要因に依存**します。  
 These are summarized in the table below.  
 これらは以下の表にまとめられています。  
+
+![]()
+
+- Convergence Factors
+<!-- - TODO: 後でメモする -->
+
 Defining and measuring convergence can be done in many different ways.  
 収束を定義し、測定する方法はいくつかあります。  
-For our slate bandit ranking system, we developed a metric that looks at the consecutive rankings outputted by the bandit and tracks the average proportion of arm set changes in the top k positions for a window of time.  
-私たちのスレートバンディットランキングシステムでは、バンディットが出力する連続したランキングを見て、一定の時間ウィンドウ内で上位k位置におけるアームセットの変更の平均割合を追跡するメトリックを開発しました。  
+For our slate bandit ranking system, we developed a metric that looks at the consecutive rankings outputted by the bandit and tracks the average proportion of arm set changes in the top k positions for a window of time.
+私たちのスレートバンディットランキングシステムでは、**バンディットが出力する連続したランキングを見て、一定の時間ウィンドウ内で上位k位置におけるアームセットの変更の平均割合を追跡するメトリック**を開発しました。  
 Conceptually, this metric can be thought of as a “rate of change” metric.  
 概念的には、このメトリックは「変化率」メトリックと考えることができます。  
+
 If our bandit is successfully converging, then the rate of change should gradually decrease towards zero (with some natural fluctuations that occur due to the inherent exploration that is almost always possible with most bandit strategies).  
-もし私たちのバンディットが成功裏に収束しているなら、変化率は徐々にゼロに向かって減少するはずです（ほとんどのバンディット戦略で常に可能な固有の探索による自然な変動があることを考慮して）。  
+**もし私たちのバンディットが成功裏に収束しているなら、変化率は徐々にゼロに向かって減少するはず**です（ほとんどのバンディット戦略で常に可能な固有の探索による自然な変動があることを考慮して）。
 Having graphs to measure convergence is vital for ensuring that the bandit system is working as expected.  
-収束を測定するためのグラフを持つことは、バンディットシステムが期待通りに機能していることを確認するために重要です。  
+収束を測定するためのグラフを持つことは、バンディットシステムが期待通りに機能していることを確認するために重要です。
 An example of this can be seen below:  
-その例は以下に示されています：  
+その例は以下に示されています：
+
+![]()
+
 We have generally seen that successful A/B test results with our bandit system correlate highly with successful, quick convergence.  
-私たちは一般的に、バンディットシステムによる成功したA/Bテストの結果が、成功した迅速な収束と高い相関関係があることを確認しています。  
+私たちは一般的に、**バンディットシステムによる成功したA/Bテストの結果が、成功した迅速な収束と高い相関関係があることを確認**しています。  
 When choosing your application and deciding whether bandits are a good fit, keep in mind all of the factors that can affect convergence.  
-アプリケーションを選択し、バンディットが適しているかどうかを決定する際には、収束に影響を与える可能性のあるすべての要因を考慮してください。  
+アプリケーションを選択し、バンディットが適しているかどうかを決定する際には、収束に影響を与える可能性のあるすべての要因を考慮してください。
 
-
+<!-- ここまで読んだ! -->
 
 ## Offline Evaluation オフライン評価
 
+<!-- TODO: ここも面白そうだが、一定肌感はあるので後で読む --> 
+
 Another data science challenge that arises when dealing with bandit systems is performing offline evaluation. 
 バンディットシステムを扱う際に生じる別のデータサイエンスの課題は、オフライン評価を行うことです。
-
 Offline evaluation is useful for determining which explore-exploit strategy to test online in an A/B test, and to shorten the time needed to iterate and improve. 
 オフライン評価は、A/Bテストでオンラインでテストするための探索-活用戦略を決定し、反復と改善に必要な時間を短縮するのに役立ちます。
 
