@@ -82,8 +82,6 @@ pytest --markers
   - `mocker`フィクスチャを使うと、スタブやスパイ、モックといったテストダブルを簡単に作成できる。
   - ちなみに、`mocker`フィクスチャのデータ型は`unittest.mock.MagicMock`。でも`pytest_mock`にタイプアノテーション用の`pytest_mock.MockerFixture`があるので、テスト関数のシグネチャのタイプヒントには`pytest_mock.MockerFixture`を使うと良さそう!
 
-
-
 #### modker.stubメソッド
 
 スタブは主に固定の値を返すために使用する。以下の例では、スタブを使用して外部APIからのレスポンスを模倣してる。
