@@ -80,6 +80,9 @@ pytest --markers
 - pytestのモック機能は、`mocker`フィクスチャを使う。
   - `mocker`fixtureは `pytest-mock`プラグインをインストールすると自動的に使えるようになる。
   - `mocker`フィクスチャを使うと、スタブやスパイ、モックといったテストダブルを簡単に作成できる。
+  - ちなみに、`mocker`フィクスチャのデータ型は`unittest.mock.MagicMock`。でも`pytest_mock`にタイプアノテーション用の`pytest_mock.MockerFixture`があるので、テスト関数のシグネチャのタイプヒントには`pytest_mock.MockerFixture`を使うと良さそう!
+
+
 
 #### modker.stubメソッド
 
