@@ -22,8 +22,28 @@ In that case we can use the same approach, but we have to be a bit more sophisti
 Let’s start by creating a feature dataset with different timestamps per record: 
 まず、各レコードに異なるタイムスタンプを持つ特徴データセットを作成しましょう：
 
+```python
+df = pd.read_csv('s3://sagemaker-sample-files/datasets/tabular/fraud_detection/synthethic_fraud_detection_SA/sampled_transactions.csv')
+```
+
 This code creates appends random timestamps between 1 Jan 2021, 8pm and 2 Jan 2021, 10am to the dataset. 
 このコードは、2021年1月1日午後8時から2021年1月2日午前10時の間のランダムなタイムスタンプをデータセットに追加します。
+
+```python
+def str_time_prop(start, end, format):
+    stime = time.mktime(time.strptime(start, format))
+    etime = time.mktime(time.strptime(end, format))
+    ptime = stime + random.random() * (etime - stime)
+    return time.strftime(format, time.localtime(ptime))
+
+def random_date(start, end):
+    return str_time_prop(start, end, "%Y-%m-%d'T'%H:%M:%SZ")
+
+random.seed(42)
+start = "2021-01-01'T'20:00:00Z"
+end = "2021-01-02'T'10:00:00Z"
+df['EventTime'] = df.apply(lambda x: random_date(start, end), axis=1)
+```
 
 The documentation on the S3 folder structure for the Offline Store tells us that we have to create a different folder for each unique combination of year, month, day, and hour of those timestamps. 
 **オフラインストアのS3フォルダ構造に関するドキュメントによれば、これらのタイムスタンプの年、月、日、時間のユニークな組み合わせごとに異なるフォルダを作成する必要があります**。(うんうん、そうだよね...!:thinking:)
@@ -36,8 +56,13 @@ s3:://<bucket-name>/<customer-prefix>/<account-id>/sagemaker/<aws-region>/offlin
 
 To accomplish this we need to create a key for each record in the dataset. 
 これを達成するために、**データセット内の各レコードに対してキーを作成する**必要があります。
-This key will be in format YYYY-MM-DD-HH, representing the year, month, day, and hour of the timestamp for this record. 
+This key will be in format YYYY-MM-DD-HH, representing the year, month, day, and hour of the timestamp for this record.
 このキーは、**YYYY-MM-DD-HH形式で、レコードのタイムスタンプの年、月、日、時間を表します**。(うんうん、ディレクトリ構造を作るためのキーだね...!:thinking:)
+
+```python
+df['key'] = df['EventTime'].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d'T'%H:%M:%SZ").strftime("%Y-%m-%d-%H"))
+```
+
 We then group together all feature records with the same keys: 
 次に、同じキーを持つすべての特徴レコードをグループ化します。
 
@@ -53,8 +78,46 @@ In the example shown above, the filename for subset with key 2021–01–01–22
 The following code generates the keys as well as S3 paths and filenames for each subset: 
 以下のコードは、各サブセットのキー、S3パス、およびファイル名を生成します。
 
+```python
+def create_s3_paths(df):
+    # make a copy in which we convert event timestamp to dtype=object, because the max() function in the groupby method doesn't work with strings
+    df_copy = df.copy()
+    df_copy['EventTime'] = df_copy['EventTime'].astype(object)
+    s3_paths = {}
+    
+    # loop over the unique keys
+    for v in df['key'].unique():
+        year, month, day, hour = v.split('-')
+        # create path
+        path = f"s3://{bucket}/{s3_folder}/{account_id}/sagemaker/{region}/offline-store/{fg_table}/data/year={year}/month={month}/day={day}/hour={hour}/"
+        # identify the last entry for each group and retrieve minute and second
+        _, minute, second = df_copy[df_copy['key'] == v].groupby('key')['EventTime'].max().iloc[0].split(':')
+        # create filename
+        filename = f"{year}{month}{day}T{hour}{minute}{second}_"
+        filename += ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16))
+        filename += '.parquet'
+        # append path + filename to dictionary
+        s3_paths[v] = path + filename
+        
+    return s3_paths
+
+
+# create a key for each row in the data that contains year, month, day, hour
+df['key'] = df['EventTime'].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d'T'%H:%M:%SZ").strftime("%Y-%m-%d-%H"))
+# create the correspong S3 paths and filenames
+file_path_names = create_s3_paths(df)
+```
+
 To split the dataset according to their timestamp keys and save them to S3 in the corresponding S3 path we can simply leverage the groupby() method of pandas: 
 データセットをタイムスタンプキーに従って分割し、対応するS3パスにS3に保存するには、pandasの**groupby()メソッドを単純に利用できます**。
+
+```python
+for key, data in df.groupby('key'):
+    data = data.drop('key', axis=1)
+    data.to_parquet(file_path_names[key])
+
+# 結果の確認は、以前と同様に、Athenaクエリを使用して確認すればOK!
+```
 
 ### Conclusion 結論
 
@@ -72,7 +135,7 @@ Q: 各フィーチャーレコードに複数のバージョンがあります�
 (そうか、本来はこれをやってくれるのがPutRecord APIだからか...!:thinking:)
 
 In this scenario we will have to identify the latest version of each feature record based on the event timestamp. 
-このシナリオでは、イベントのタイムスタンプに基づいて各フィーチャーレコードの最新バージョンを特定する必要があります。
+このシナリオでは、**イベントのタイムスタンプに基づいて各フィーチャーレコードの最新バージョンを特定**する必要があります。
 We will then backfill all versions older than the latest one by writing those records directly into S3. 
 次に、**最新のものより古いすべてのバージョンをS3に直接書き込むことでバックフィル**します。
 The subset with the latest records we will ingest using the regular ingestion API. 
@@ -87,10 +150,49 @@ Let’s start by creating a dataset to reflect this scenario.
 The code below creates 3 records per transaction, each with a different timestamp:
 以下のコードは、各トランザクションごとに異なるタイムスタンプを持つ3つのレコードを作成します。
 
+```python
+df = pd.DataFrame()
+random.seed(42)
+
+for i in range(3):
+    df_tmp = pd.read_csv('s3://sagemaker-sample-files/datasets/tabular/fraud_detection/synthethic_fraud_detection_SA/sampled_transactions.csv')
+    
+    if i == 0:
+        start = "2021-01-01T20:00:00Z"
+        end = "2021-01-02T10:00:00Z"
+        s = list(range(0, 2000))
+    elif i == 1:
+        start = "2021-01-04T20:00:00Z"
+        end = "2021-01-05T10:00:00Z"
+        s = list(range(2000, 4000))
+    elif i == 2:
+        start = "2021-01-07T20:00:00Z"
+        end = "2021-01-08T10:00:00Z"
+        s = list(range(4000, 6000))
+    
+    df_tmp['EventTime'] = df_tmp.apply(lambda x: random_date(start, end), axis=1)
+    df_tmp = df_tmp.set_index([s])
+    df = df.append(df_tmp)
+```
+
 The resulting dataset has 6,000 records, three for each transaction. 
 結果として得られるデータセットには6,000レコードがあり、各トランザクションに対して3つのレコードがあります。
+
+```python
+df[df['TransactionID'] == 3343087]
+# これで、各トランザクションに対して3つのレコードがあることを確認できます。
+```
+
 Now we want to split the data into two groups:
 さて、**データを2つのグループに分割**したいと思います。
+
+```python
+idx = df.groupby(['TransactionID'])['EventTime'].transform(max) == df['EventTime']
+# 各entityについて最新の特徴量レコード達。こっちはPutRecord APIを使ってingestする
+df_online = df[idx].copy() 
+# 各entityについて最新でない特徴量レコード達。こっちはマニュアルでS3にingestする
+df_offline = df[~idx].copy() 
+```
 
 The first subset (_dfonline) contains the latest version for each transaction. 
 最初のサブセット（_dfonline）は、各トランザクションの最新バージョンを含みます。

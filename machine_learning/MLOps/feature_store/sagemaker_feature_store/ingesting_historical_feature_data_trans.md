@@ -115,6 +115,15 @@ s3://<bucket-name>/<customer-prefix>/<account-id>/sagemaker/<aws-region>/offline
 To reconstruct this corresponding S3 file path we only need the table name, as well as year, month, day, and hour of the event timestamp we created earlier: 
 この対応するS3ファイルパスを再構築するには、テーブル名と、以前に作成したイベントのタイムスタンプの年、月、日、時間が必要です。
 
+```python
+# これでテーブル名(+feature groupの作成時刻付き?)が取得できる
+query = feature_group.athena_query()
+fg_table = query.table_name 
+
+# これは今回書き込みたい特徴量レコードのevent_time
+year, month, day, hour = strftime('%Y-%m-%d-%H', gm_time).split('-')
+```
+
 It is important to note that additional fields will be created by SMFS when using the ingestion API: 
 取り込みAPIを使用する際に、**SMFSによって追加のフィールドが作成されることに注意することが重要**です。(うんうん、確か3つくらいあったよね...!:thinking:)
 Because we aren’t using the API, we need to add those additional fields manually. 
@@ -124,10 +133,29 @@ The two timestamps (api_invocation_time and write_time) are different from the e
 However, for demonstration purposes it’s OK to reuse the same timestamp: 
 ただし、デモンストレーションの目的では、同じタイムスタンプを再利用しても問題ありません。
 
+```python
+# 今回はevent_timeと同じタイムスタンプを使う
+df['write_time'] = df['api_invocation_time'] = pd.to_datetime(fg_timestamp)
+df['is_deleted'] = False
+```
+
 To create a valid file name for the data we can concatenate the event time and a random 16 alpha numeric code. 
 データの有効なファイル名を作成するために、イベント時間とランダムな16桁の英数字コードを連結することができます。
 As a final step we can now save the data as a parquet file in S3: 
 最後のステップとして、データをS3にparquetファイルとして保存できます。
+
+```python
+# ディレクトリのS3uriを用意
+filepath = f"s3://{bucket}/{s3_folder}/{account_id}/sagemaker/{region}/offline-store/{fg_table}/data/year={year}/month={month}/day={day}/hour={hour}/"
+
+# ファイル名を用意(YYYYMMDDTHHMMSSZ_<ランダムな16桁の英数字>.parquet)
+filename = strftime("%Y%m%dT%H%M%SZ_", gm_time)
+filename += ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16))
+filename += '.parquet'
+
+# s3への書き込み(ここではpandas.DataFrameのメソッドでやってるけど何でもいい)
+df.to_parquet(filepath + filename)
+```
 
 <!-- ここまで読んだ! -->
 
@@ -136,6 +164,17 @@ As a final step we can now save the data as a parquet file in S3:
 The SMFS offline store is accessed via Athena queries, so the quickest way to check if the data ingestion was successful is to write an Athena SQL query that retrieves the data from the feature store:
 SMFSオフラインストアはAthenaクエリを介してアクセスされるため、**データ取り込みが成功したかを確認する最も迅速な方法は、フィーチャーストアからデータを取得するAthena SQLクエリを書くこと**です。(うんうん)
 
+```python
+
+# Athenaクエリを実行する
+query_string = f'SELECT * FROM "{fg_table}"'
+query.run(query_string=query_string, output_location=f's3://{bucket}/{s3_folder}/query_results/')
+query.wait()
+
+# クエリ結果をデータフレームで取得
+dataset = query.as_dataframe()
+dataset.head()
+```
 
 If the ingestion was successful, the dataset retrieved from feature store will be the same as the dataset we have uploaded.
 データ取り込みが成功していれば、フィーチャーストアから取得したデータセットは、私たちがアップロードしたデータセットと同じになります。
