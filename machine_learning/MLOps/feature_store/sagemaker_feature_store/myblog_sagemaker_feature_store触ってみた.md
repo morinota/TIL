@@ -201,6 +201,21 @@ export class FeatureStoreStack extends cdk.Stack {
 
 - 特徴量レコードのfeature groupへの書き込み方法はいくつかあるようですが、今回はバッチで一気に複数レコードをオフラインストアに書き込む方法として`FeatureGroup.ingest()`メソッドを使ってみます。
   - オンラインストアに少量レコードを書き込む場合は別のAPIを使うことになりそうです。
+  - `FeatureGroup.ingest()`メソッドについて:
+    - 渡されるデータフレームの全レコードをFeature Storeに書き込むメソッド。
+    - 引数:
+      - `data_frame`: 書き込みたい特徴量レコードを含むpandas.DataFrame
+      - `max_workers`: 並列で書き込むワーカーの数。デフォルトは1。
+      - `max_processes`: 並列で書き込むプロセスの数。デフォルトは1。
+      - `wait`: 
+        - Trueの場合
+          - Feature Storeは`ingest`関数を同期的に実行する。もし特定のレコードのingestが失敗した場合は、即座に`IngestError`例外が発生する。
+        - Falseの場合
+          - Feature Storeは`ingest`関数を非同期的に実行する。この場合ingest()は`IngestionManagerPandas`オブジェクトを返す。
+          - `IngestionManagerPandas` オブジェクトの`wait()`メソッドを呼び出すことで、ingestの完了を同期的に待つこともできる。
+        - もしingest失敗した特徴量レコードを取得したい場合は、`wait=False`を指定すべき。`IngestionError.failed_rows`で、ingest失敗した全レコードを取得できる。
+      - `timeout`: 処理を待つ最大時間。デフォルトはNone(=無制限)。
+      - `profile_name`: `PutRecord` APIを呼び出す際に使用するAWSプロファイル名。デフォルトはNone(=現在のセッションのプロファイルを使用)。
 
 以下が実装例です。
 
