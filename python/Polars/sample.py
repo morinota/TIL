@@ -1,10 +1,6 @@
-import numpy as np
-import polars as pl
 from datetime import datetime
 
-from typing import Literal, Optional
-
-import patito as pt
+import polars as pl
 
 df = pl.DataFrame(
     {
@@ -29,9 +25,7 @@ df.select(pl.col("integer", "float"))  # select specific columns
 # filterによりDataFrameのsubsetを作成できる
 df.filter(pl.col("date").is_between(datetime(2025, 1, 1), datetime(2025, 1, 2)))
 # 複数のカラムを含む、より複雑な条件を指定することも可能
-df.filter(
-    (pl.col("integer") == 1) & (pl.col("float") == 4.0) & (pl.col("string") == "a")
-)
+df.filter((pl.col("integer") == 1) & (pl.col("float") == 4.0) & (pl.col("string") == "a"))
 
 # add column
 # with_columnを使って新しいカラムを追加できる
