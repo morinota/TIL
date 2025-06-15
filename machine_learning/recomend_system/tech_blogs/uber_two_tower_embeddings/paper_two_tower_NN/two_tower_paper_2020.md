@@ -95,7 +95,7 @@ We focus on applying the two-tower framework to improve the retrieval system of 
 Similar to language tasks, negative sampling plays a critical role in training two-tower neural networks in recommendations.  
 言語タスクと同様に、ネガティブサンプリングは推薦におけるツータワーニューラルネットワークのトレーニングにおいて重要な役割を果たします。
 Especially, in recommendation, users’ positive feedback are often collected, and counterfactuals on items not shown are very hard to obtain.  
-特に推薦においては、ユーザーのポジティブフィードバックがしばしば収集され、表示されていないアイテムに関する**反事実**を得ることは非常に困難です。(ここで反実仮想の観点が出てきてる...!)
+特に推薦においては、ユーザーのポジティブフィードバックがしばしば収集され、**表示されていないアイテムに関する反事実**を得ることは非常に困難です。(ここで反実仮想の観点が出てきてる...!)
 A popular sampling approach [1, 7] for fitting a softmax output distribution is to sample according to the unigram distribution of items.  
 ソフトマックス出力分布にフィットさせるための一般的なサンプリングアプローチ[1, 7]は、アイテムのユニグラム分布に従ってサンプリングすることです。
 The work in [24] extends unigram sampling to the two-tower setting by using batch negatives, i.e., using the positive items in a mini batch as shared negatives for all queries in the same batch.  
@@ -103,13 +103,12 @@ The work in [24] extends unigram sampling to the two-tower setting by using batc
 (**このあたりの話は、結局無理やりnegative sampleを用意して教師あり学習として解こうとしてるって話で、自分が気にしてる話ではないな...!:thinking_face:**)
 We note that unigram-sampled or batch negatives have the limit of selection bias in training data.  
 ユニグラムサンプリングまたはバッチネガティブには、トレーニングデータにおける選択バイアスの制限があることに注意します。
-This is because the training data is derived from user feedback logs, and users often interact with a small set of popular items suggested by existing recommender system.  
+This is because the training data is derived from user feedback logs, and users often interact with a small set of popular items suggested by existing recommender system.
 これは、トレーニングデータがユーザーフィードバックログから派生しており、ユーザーが既存の推薦システムによって提案された少数の人気アイテムとしばしば相互作用するためです。
 Items that are not favored by the existing system are less likely to get user feedback.  
-既存のシステムに好まれないアイテムは、ユーザーフィードバックを得る可能性が低くなります。
+**既存のシステムに好まれないアイテムは、ユーザーフィードバックを得る可能性が低くなります**。(そっか。showとtap両方のログを取れてるケースでも、この観点は問題になるのか。だからこそ、データ収集方策は探索的要素を持ってないとね、というモチベーションが出てくる...!:thinking_face:)
 Accordingly, sampling batch negatives only from training data will end up with a model lacking resolution for long-tail apps, which seldom appear in the training data.  
 したがって、トレーニングデータからのみバッチネガティブをサンプリングすると、トレーニングデータにほとんど現れないロングテールアプリに対する解像度が欠けたモデルになります。
-
 
 Inspired by the aforementioned constraint of batch negatives, we propose a novel sampling approach called Mixed Negative Sampling (MNS), where the idea is to use a mixture of unigram and uniform distributions.  
 前述のバッチネガティブの制約に触発されて、ユニグラムと一様分布の混合を使用する新しいサンプリングアプローチであるMixed Negative Sampling (MNS)を提案します。
@@ -176,7 +175,7 @@ People started to adopt two-tower DNNs to learn representation from content feat
 Two-tower DNNs have also been introduced for retrieval task to leverage rich content feature on item side in recommender systems with application in video recommendations [24], where batch negative sampling based on item frequency estimation is adopted to correct sampling bias.  
 ツータワーDNNは、アイテム側の豊富なコンテンツ特徴を活用するために検索タスクにも導入されており、ビデオ推薦[24]におけるアプリケーションでは、アイテム頻度推定に基づくバッチネガティブサンプリングが採用されてサンプリングバイアスを修正しています。
 In contrast, our work found it important to reduce the selection bias brought by batch negative sampling in the application for app recommendations, which has not been considered in existing works to the best of our knowledge.  
-対照的に、私たちの研究では、アプリ推薦のアプリケーションにおいてバッチネガティブサンプリングによってもたらされる選択バイアスを減少させることが重要であると考えています。これは、既存の研究では考慮されていないと私たちの知る限りではあります。
+対照的に、私たちの研究では、アプリ推薦のアプリケーションにおいて**バッチネガティブサンプリングによってもたらされる選択バイアスを減少させることが重要である**と考えています。これは、既存の研究では考慮されていないと私たちの知る限りではあります。
 (まあ反実仮想的な部分をどうにか考慮する必要があるよね、という議論はあるんだな)
 
 <!-- ここまで読んだ! -->
@@ -402,7 +401,7 @@ To account for weekly pattern, we repeat the evaluation for 7 times and each tim
 We report the average metric across the 7 train-eval datasets. 
 7つの訓練-評価データセット全体の平均指標を報告します。 
 For a given {query, candidate app} pair in the eval-set, we find the top k nearest neighbors in the embedding space for the query. 
-評価セット内の特定の{クエリ、候補アプリ}ペアに対して、クエリの埋め込み空間内で上位kの最近傍を見つけます。 
+評価セット内の特定の{クエリ、候補アプリ}ペアに対して、クエリの埋め込み空間内で上位kの最近傍を見つけます。
 Recall is the main optimization objective in the retrieval phase of our app recommendation system. 
 リコールは、私たちのアプリ推薦システムの取得フェーズにおける主要な最適化目標です。 
 We thus report Recall@K, i.e., the average probability for the candidate apps to appear among the top k nearest neighbors retrieved for the query, as our offline metric. 
