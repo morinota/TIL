@@ -306,6 +306,8 @@ Feature Storeが解決する課題として以下の11個が挙げられてた:
 
 - refs:
   - 2022年の発表: [Embedding Stores and Feature Stores - Better Together](https://www.youtube.com/watch?v=UHRauDZuEO0)
+  - 2025年の動画。結論VectorDBじゃないよって話だった: [Is Amazon SageMaker Feature Store a Vector Database?](https://www.youtube.com/watch?v=ie1MgTx914U)
+
 - Feature Store の vector indexサポートについて。
   - Feature Store内にvector indexが組み込まれており、リアルタイムML推論やLLMからのアクセスを可能にする。
 - 両者を統合することは、メリットとデメリットがそれぞれありそう。(まあ全てのアーキテクチャはトレードオフなので...!:thinking:)
