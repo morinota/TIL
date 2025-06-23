@@ -6,23 +6,51 @@ refs: https://arxiv.org/pdf/2306.14834
 
 ## イントロ: 研究のモチベーション
 
-### 従来のRecSysの課題
-
-- 教師あり学習の限界
-- 探索の必要性
-
-### 従来のneural contextual banditの課題
-
-- 計算コストの高さ
-- 既存手法の非実用性
+- 従来のRecSysの課題
+  - 教師あり学習ベースのRecSysの課題:
+    - hoge
+  - 探索の必要性:
+    - hoge
+- 従来のneural contextual banditの課題
+  - 計算コストの高さ
+    - hoge
+  - 既存手法の非実用性
+    - hgoe
 
 ## 関連研究と探索戦略
 
-### TS(Thompson Sampling)系のアプローチ
+MABアルゴリズムでは、人気な2つのオンライン探索戦略がある。
 
-### UCB(Upper Confidence Bound)系のアプローチ
+- TS(Thompson Sampling)
+- UCB(Upper Confidence Bound)
+
+### TS(Thompson Sampling)系のアプローチについて
+
+- 戦略の概要:
+  - hoge
+- バニラなTS:
+  - hoge
+- 線形TS:
+  - hoge
+- ニューラルネットワークを用いたTS:
+  - hoge
+
+### UCB(Upper Confidence Bound)系のアプローチについて
+
+- 戦略の概要:
+  - hoge
+- バニラなUCB:
+  - hoge
+- 線形UCB:
+  - hoge
+- ニューラルネットワークを用いたUCB:
+  - hoge
 
 ### 計算上のボトルネック
+
+- Neural Thompson Sampling、Neural UCB、Neural LinUCB といったニューラルネットワークを用いたコンテキストバンディットアルゴリズムは、**不確実性推定の計算コストが高い**という大きな欠点がある。
+  - 具体的には、ニューラルネットワークのパラメータサイズ、または最終層の表現サイズに等しい次元の正方行列の逆行列計算が必要になる。
+  - これは実運用において非常に計算コストが高く、推論時間が長くなってしまう。
 
 ## ENR(Epistemic Neural Recommender)の提案
 
