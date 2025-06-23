@@ -302,6 +302,12 @@ Feature Storeが解決する課題として以下の11個が挙げられてた:
   - フィルタ付きのANN検索もサポート
   - (ちなみにパッと見た感じ、Sagemaker Feature Storeは、特徴量定義としてベクトル型はあるが、ANNの機能はなさそう...??:thinking:)
 
+### 2025/06/23 追記: ベクトルDBとFeature Storeのは統合すべきか??
+
+- refs:
+  - [Embedding Stores and Feature Stores - Better Together](https://www.youtube.com/watch?v=UHRauDZuEO0)
+
+
 ## Feature Storeは必要か??
 
 - 過去の特徴量ストアは...
