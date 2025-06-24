@@ -431,14 +431,11 @@ In the experiments section, we also provide a simple comparison of different rew
 ### 3.4. ハイブリッドトレーニング目的
 
 As mentioned in the Section3.2, the problem of exploring the action space when $M$ is large can be tackled using a hybrid loss, which is a combination of the reinforcement learning loss and a standard supervised learning loss such as binary cross entropy. 
-セクション3.2で述べたように、$M$が大きいときのアクション空間を探索する問題は、強化学習損失とバイナリ交差エントロピーのような標準的な教師あり学習損失の組み合わせであるハイブリッド損失を使用して対処できます。
-
+セクション3.2で述べたように、$M$ が大きいときのアクション空間を探索する問題は、強化学習損失とバイナリ交差エントロピーのような標準的な教師あり学習損失の組み合わせであるハイブリッド損失を使用して対処できます。
 The supervised loss can guide the training initially when the exploration by the model is in the starting stages for large $M$. 
-教師あり損失は、モデルによる探索が大きな$M$の初期段階にあるときに、最初にトレーニングをガイドすることができます。
-
+**教師あり損失は、モデルによる探索が大きな$M$の初期段階にあるときに、最初にトレーニングをガイドすることができます**。(あ、これが3.2で言ってたベースライン関数なのか。じゃあこのハイブリッドhogehogeっていう手法は、DR推定量のことだと思って良さそう...??:thinking:)
 Even though the number of actions explored with the model at each epoch given by $B$ is small for large $M$, i.e., $B \ll P_{M}$, a supervised signal can help the model by compensating the loss incurred due to the inefficient exploration. 
 大きな$M$に対して、各エポックでモデルによって探索されるアクションの数は$B$によって与えられ、小さいですが、すなわち、$B \ll P_{M}$、教師あり信号は非効率的な探索によって発生した損失を補うことでモデルを助けることができます。
-
 The hybrid loss function is given as follows: 
 ハイブリッド損失関数は次のように与えられます：
 
@@ -447,27 +444,21 @@ L_{hybrid} = L_{rl} + \gamma L_{sl}
 $$
 
 where $L_{rl}$ is the loss given by the reinforcement-learning algorithm, which is the negative of (1), and $L_{sl}$ is a supervised loss such as binary cross entropy. 
-ここで、$L_{rl}$は強化学習アルゴリズムによって与えられる損失であり、(1)の負の値であり、$L_{sl}$はバイナリ交差エントロピーのような教師あり損失です。
-
+ここで、$L_{rl}$は強化学習アルゴリズムによって与えられる損失であり、(1)の負の値であり、$L_{sl}$はバイナリ交差エントロピーのような教師あり損失です。(あれ、ベースライン関数を使ったDR推定量とはまた違う話っぽい??:thinking:)
 The notation $\gamma$ is a scaling factor accounting for the difference in magnitude between $L_{rl}$ and $L_{sl}$. 
 記号$\gamma$は、$L_{rl}$と$L_{sl}$の間の大きさの違いを考慮したスケーリングファクターです。
-
 It is a hyperparameter lying between 0 and 1. 
 これは0と1の間にあるハイパーパラメータです。
-
 We found the hybrid loss to be effective in the case of the web search dataset where the average number of relevant documents per query was equal to 10.3. 
 私たちは、平均的な関連文書数が10.3であるウェブ検索データセットの場合にハイブリッド損失が効果的であることを発見しました。
-
 Since we use binary cross entropy as the supervised loss, the hybrid training objective is a blend of the pointwise objective function $L_{sl}$ and a listwise objective function $L_{rl}$. 
 私たちはバイナリ交差エントロピーを教師あり損失として使用しているため、ハイブリッドトレーニング目的は、ポイントワイズ目的関数$L_{sl}$とリストワイズ目的関数$L_{rl}$のブレンドです。
-
 The hybrid training objective still has direct control over the target measures weighted by $\gamma$. 
 ハイブリッドトレーニング目的は、$\gamma$で重み付けされたターゲット測定に対して直接的な制御を持っています。
-
 Similar hybrid loss was used in the domain of NLP in some papers, e.g., (Paulus et al., 2017; Wu et al., 2016). 
 類似のハイブリッド損失は、いくつかの論文（例：Paulus et al., 2017; Wu et al., 2016）においてNLPの分野で使用されました。
 
-
+<!-- ここまで読んだ! -->
 
 ## 4.Model Architecture モデルアーキテクチャ
 
