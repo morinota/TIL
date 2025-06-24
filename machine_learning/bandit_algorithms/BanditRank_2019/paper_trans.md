@@ -3,12 +3,12 @@ refs: https://ar5iv.labs.arxiv.org/html/1910.10410
 
 ## Abstract
 
-We propose an extensible deep learning method that uses reinforcement learning to train neural networks for offline ranking in information retrieval (IR). 
-私たちは、情報検索（IR）におけるオフラインランキングのためにニューラルネットワークを訓練する強化学習を使用した拡張可能な深層学習手法を提案します。 
-We call our method BanditRank as it treats ranking as a contextual bandit problem. 
-私たちの手法は**BanditRankと呼ばれ、ランキングをコンテキストバンディット問題として扱います**。 
-In the domain of learning to rank for IR, current deep learning models are trained on objective functions different from the measures they are evaluated on. 
-**IRのためのランキング学習の分野において、現在の深層学習モデルは、評価される指標とは異なる目的関数で訓練されています**。 
+We propose an extensible deep learning method that uses reinforcement learning to train neural networks for offline ranking in information retrieval (IR).
+私たちは、情報検索（IR）におけるオフラインランキングのためにニューラルネットワークを訓練する強化学習を使用した拡張可能な深層学習手法を提案します。
+We call our method BanditRank as it treats ranking as a contextual bandit problem.
+私たちの手法は**BanditRankと呼ばれ、ランキングをコンテキストバンディット問題として扱います**。
+In the domain of learning to rank for IR, current deep learning models are trained on objective functions different from the measures they are evaluated on.
+**IRのためのランキング学習の分野において、現在の深層学習モデルは、評価される指標とは異なる目的関数で訓練されています**。
 Since most evaluation measures are discrete quantities, they cannot be leveraged by directly using gradient descent algorithms without an approximation. 
 ほとんどの評価指標は離散的な量であるため、近似なしに勾配降下アルゴリズムを直接使用することはできません。 
 BanditRank bridges this gap by directly optimizing a task-specific measure, such as mean average precision (MAP), using gradient descent. 
@@ -258,7 +258,7 @@ We follow the approach used for extractive summarization (Dong et al., 2018) bec
 私たちは、その単純さと効果性のために、抽出的要約（Dong et al., 2018）で使用されるアプローチに従います。
 With this approach, $p_{\theta}(.|c)$ is decomposed into a deterministic function $\pi_{\theta}$, which contains all the network’s parameters, and $\mu$, a probability distribution induced by the output of $\pi_{\theta}$ defined as
 このアプローチでは、$p_{\theta}(.|c)$ は、**ネットワークのすべてのパラメータを含む決定論的関数 $\pi_{\theta}$ と、$\pi_{\theta}$ の出力によって誘導される確率分布$\mu$に分解されます**。
-(うんうん、シンプルでイメージしやすい。ただnotationに $\pi$を使ってるところが混乱を招きそう。書籍「反実仮想機械学習」では、$\pi$はポリシーを表す記号として使われてるから...!:thinking:)
+(5章まで読んだメモ: $\pi_{\theta}$ は親和性スコアベクトルを出力する。言い換えると、各文書をアクションとみなした場合のアクション選択確率分布を出力する関数のイメージ! 一方で、$\mu$ は、文書順列をアクションとみなした場合のアクション選択確率分布を出力する関数のイメージ...!:thinking:)
 
 $$
 p_{\theta}(.|c) = \mu(.|\pi_{\theta}(c))
@@ -266,7 +266,7 @@ p_{\theta}(.|c) = \mu(.|\pi_{\theta}(c))
 $$
 
 Provided a $c$ corresponding to a $q$, the network $\pi_{\theta}$ outputs a real valued vector of document affinities within the range $[0,1]$. 
-$q$ に対応する $c$ が与えられると、ネットワーク $\pi_{\theta}$ は、範囲$[0,1]$内の**文書の親和性の実数値ベクトルを出力**します。(=各候補文書に対するスコアのベクトル...!)
+$q$ に対応する $c$ が与えられると、ネットワーク $\pi_{\theta}$ は、範囲$[0,1]$内の**文書の親和性の実数値ベクトルを出力**します。
 The length of the vector is equal to the number of candidate documents $n_{c}$ corresponding to $q$, i.e., $\pi_{\theta}(c) \in \mathbb{R}^{n_{c}}$. 
 ベクトルの長さは、$q$ に対応する候補文書の数 $n_{c}$に等しく、すなわち、$\pi_{\theta}(c) \in \mathbb{R}^{n_{c}}$ です。
 The affinity score of a document $d_{i}$ given by $\pi_{\theta}(c)$ isubscript $\pi_{\theta}(c)_{i}$ represents the network’s propensity to keep the document at the top position in the output permutation. 
@@ -286,6 +286,7 @@ This is similar to the $\epsilon$-greedy technique generally used in the reinfor
 これは、探索のために強化学習の問題で一般的に使用される$\epsilon$-greedy手法に似ています。
 According to the prescribed definition of $\mu$, the probability $p_{\theta}(a_{c}|c)$ of producing a permutation $a_{c}$ corresponding to $c$ according to (2) is given by
 $\mu$ の定義に従って、(2)に従って $c$ に対応する順列 $a_{c}$ を生成する確率 $p_{\theta}(a_{c}|c)$ は次のように与えられます。
+(以下が $\mu$ の中身...!:thinking:)
 
 $$
 p_{\theta}(a_{c}|c) = \prod_{i=1}^{M} (
@@ -296,8 +297,8 @@ p_{\theta}(a_{c}|c) = \prod_{i=1}^{M} (
 $$
 
 (プラケットルースモデルによるアクション選択確率分布って、こんなにわかりやすい式で定式化できるのか...! $z(c)$ を導入してるからかな...!:thinking:)
-where $k_{t}$ is the index to the $t$-th document in $a_{c}$, $d_{k_{t}}$ and $z(c)=\sum_{m=1}^{n_{c}}\pi_{\theta}(c)_{m}$. 
-ここで、$k_{t}$は、$a_{c}$の$t$番目の文書のインデックスであり、$d_{k_{t}}$はその文書を表します。また、$z(c)=\sum_{m=1}^{n_{c}}\pi_{\theta}(c)_{m}$ (i.e. z(c)は、コンテキスト$c$における候補文書の親和性スコアの合計)です。
+where $k_{t}$ is the index to the $t$-th document in $a_{c}$, $d_{k_{t}}$ and $z(c)=\sum_{m=1}^{n_{c}}\pi_{\theta}(c)_{m}$.
+ここで、$k_{t}$ は、$a_{c}$ の$t$番目の文書のインデックスであり、$d_{k_{t}}$ はその文書を表します。また、$z(c)=\sum_{m=1}^{n_{c}}\pi_{\theta}(c)_{m}$ (i.e. z(c)は、コンテキスト$c$における候補文書の親和性スコアの合計)です。
 We define $M=\min(n_{c},M')$, where $M'$ is an integer hyper parameter that depends on the environment or dataset. 
 私たちは、$M=\min(n_{c},M')$ と定義します。ここで、$M'$ は環境またはデータセットに依存する整数ハイパーパラメータです。
 This sampling method with exploration is followed only during training time. 
@@ -433,7 +434,7 @@ In the experiments section, we also provide a simple comparison of different rew
 As mentioned in the Section3.2, the problem of exploring the action space when $M$ is large can be tackled using a hybrid loss, which is a combination of the reinforcement learning loss and a standard supervised learning loss such as binary cross entropy. 
 セクション3.2で述べたように、$M$ が大きいときのアクション空間を探索する問題は、強化学習損失とバイナリ交差エントロピーのような標準的な教師あり学習損失の組み合わせであるハイブリッド損失を使用して対処できます。
 The supervised loss can guide the training initially when the exploration by the model is in the starting stages for large $M$. 
-**教師あり損失は、モデルによる探索が大きな$M$の初期段階にあるときに、最初にトレーニングをガイドすることができます**。(あ、これが3.2で言ってたベースライン関数なのか。じゃあこのハイブリッドhogehogeっていう手法は、DR推定量のことだと思って良さそう...??:thinking:)
+**教師あり損失は、モデルによる探索が大きな$M$の初期段階にあるときに、最初にトレーニングをガイドすることができます**。(あ、これが3.2で言ってたベースライン関数なのか??じゃあこのハイブリッドhogehogeっていう手法は、DR推定量のことだと思って良さそう...?? でも下を見るとまた別で損失関数に項を追加してるっぽい...!:thinking:)
 Even though the number of actions explored with the model at each epoch given by $B$ is small for large $M$, i.e., $B \ll P_{M}$, a supervised signal can help the model by compensating the loss incurred due to the inefficient exploration. 
 大きな$M$に対して、各エポックでモデルによって探索されるアクションの数は$B$によって与えられ、小さいですが、すなわち、$B \ll P_{M}$、教師あり信号は非効率的な探索によって発生した損失を補うことでモデルを助けることができます。
 The hybrid loss function is given as follows: 
@@ -462,181 +463,147 @@ Similar hybrid loss was used in the domain of NLP in some papers, e.g., (Paulus 
 
 ## 4.Model Architecture モデルアーキテクチャ
 
+(context-候補ドキュメント一覧を入力として受け取り、各ドキュメントをアクションとみなした場合のアクション選択確率分布を出力する関数 $\pi_{\theta}$ の構造について...!:thinking:)
+(もしかすると必ずしも確率質量関数の定義を満たすような形にはなってないかも。最終的に $p_{\theta}(.|c)$ が確率質量関数になってれば良いはずなので...!:thinking:)
+
 In this section, we discuss the neural architecture $\pi_{\theta}$ we used in our experiments. 
 このセクションでは、私たちの実験で使用したニューラルアーキテクチャ $\pi_{\theta}$ について説明します。
 For demonstrating the extensibility of BanditRank, we considered two scenarios for the experiments and show that BanditRank performs well in both the scenarios.
 BanditRankの拡張性を示すために、私たちは実験のために2つのシナリオを考慮し、BanditRankが両方のシナリオでうまく機能することを示します。
 
-
+<!-- ここまで読んだ! -->
 
 ### Scenario 1 シナリオ1
 
 In this scenario, we decomposed $\pi_{\theta}$ into two neural network architectures $f_{\theta 1}$ and $b_{\theta 2}$; $f_{\theta 1}$ for extracting the feature vectors from raw texts of query or documents and $b_{\theta 2}$ for a bandit network that yields the document affinities. 
-このシナリオでは、$\pi_{\theta}$を2つのニューラルネットワークアーキテクチャ$f_{\theta 1}$と$b_{\theta 2}$に分解しました。$f_{\theta 1}$はクエリや文書の生テキストから特徴ベクトルを抽出するためのものであり、$b_{\theta 2}$は文書の親和性を生成するバンディットネットワークです。
-
+このシナリオでは、$\pi_{\theta}$ を2つのニューラルネットワークアーキテクチャ$f_{\theta 1}$と$b_{\theta 2}$ に分解しました。$f_{\theta 1}$ はクエリや文書の生テキストから特徴ベクトルを抽出するためのものであり、$b_{\theta 2}$ は文書の親和性を生成するバンディットネットワークです。
 For $f_{\theta 1}$, since any text-matching neural network (Tay et al., 2018; Wang and Jiang, 2016; Bian et al., 2017) that can provide a single feature vector corresponding to each query-document pair was suitable, we have used the architecture similar to the recently proposed Multi Cast Attention Networks (MCAN) (Tay et al., 2018). 
-$f_{\theta 1}$については、各クエリ-文書ペアに対応する単一の特徴ベクトルを提供できる任意のテキストマッチングニューラルネットワーク（Tay et al., 2018; Wang and Jiang, 2016; Bian et al., 2017）が適していたため、最近提案されたMulti Cast Attention Networks (MCAN) (Tay et al., 2018)に類似したアーキテクチャを使用しました。
-
+**$f_{\theta 1}$ については、各クエリ-文書ペアに対応する単一の特徴ベクトルを提供できる任意のテキストマッチングニューラルネットワーク**（Tay et al., 2018; Wang and Jiang, 2016; Bian et al., 2017）が適していたため、最近提案されたMulti Cast Attention Networks (MCAN) (Tay et al., 2018)に類似したアーキテクチャを使用しました。(あ、Two-Towerかと思ったけど、クエリ-文書ペアに対して単一の特徴ベクトルを出力するようなアーキテクチャか...!:thinking:)
 The $b_{\theta 2}$ architecture was chosen to be a simple feed forward neural network with an output sigmoid unit for yielding the document affinities corresponding to a query. 
-$b_{\theta 2}$のアーキテクチャは、クエリに対応する文書の親和性を生成するための出力シグモイドユニットを持つシンプルなフィードフォワードニューラルネットワークとして選択されました。
-
+$b_{\theta 2}$ のアーキテクチャは、クエリに対応する文書の親和性を生成するための出力シグモイドユニットを持つシンプルなフィードフォワードニューラルネットワークとして選択されました。
 While training, the two architectures were treated as a single architecture by positioning the bandit network on top of the text-matching network. 
-トレーニング中、2つのアーキテクチャは、バンディットネットワークをテキストマッチングネットワークの上に配置することによって、単一のアーキテクチャとして扱われました。
-
+**トレーニング中、2つのアーキテクチャは、バンディットネットワークをテキストマッチングネットワークの上に配置することによって、単一のアーキテクチャとして扱われました**。
+(うんうん。ここはTwo-Towerモデルも同じ。こういう説明をすればわかりやすいのかも...!:thinking:)
 Formally, provided with a context $c=\{(q,d_{1}),(q,d_{2}),\ldots,(q,d_{n_{q}})\}$, we passed it through both networks to obtain the document affinities $\pi_{\theta}(d)$ as given below: 
-形式的には、コンテキスト$c=\{(q,d_{1}),(q,d_{2}),\ldots,(q,d_{n_{q}})\}$が与えられた場合、私たちはそれを両方のネットワークに通して文書の親和性$\pi_{\theta}(d)$を取得しました。
+形式的には、コンテキスト $c=\{(q,d_{1}),(q,d_{2}),\ldots,(q,d_{n_{q}})\}$ が与えられた場合、私たちはそれを両方のネットワークに通して文書の親和性 $\pi_{\theta}(d)$ を取得しました。
+
+$$
+f_{\theta 1}(c) = c_{1},c_{2},\ldots,c_{n_{q}} 
+\\
+b_{\theta 2}(c_{1},c_{2},\ldots,c_{n_{q}}) = \pi_{\theta}(d)
+$$
 
 where $c_{i}$ is a feature vector corresponding to the query-document pair $(q,d_{i})$. 
-ここで、$c_{i}$はクエリ-文書ペア$(q,d_{i})$に対応する特徴ベクトルです。
+ここで、$c_{i}$はクエリ-文書ペア $(q,d_{i})$ に対応する特徴量ベクトルです。
 
-
+<!-- ここまで読んだ! -->
 
 ### Scenario 2 シナリオ2
 
 In this scenario, we have only used $b_{\theta}$ for training. 
-このシナリオでは、トレーニングに$b_{\theta}$のみを使用しました。
-
+このシナリオでは、トレーニングに $b_{\theta}$ のみを使用しました。
 The feature vectors corresponding to the query and document texts were extracted using a pre-trained neural language model such as BERT (Devlin et al., 2018), which is a state-of-the-art unsupervised language model in NLP. 
-クエリとドキュメントテキストに対応する特徴ベクトルは、BERT（Devlin et al., 2018）などの事前学習済みニューラル言語モデルを使用して抽出されました。これは、NLPにおける最先端の教師なし言語モデルです。
-
+**クエリとドキュメントテキストに対応する特徴ベクトルは、BERT（Devlin et al., 2018）などの事前学習済みニューラル言語モデルを使用して抽出されました**。これは、NLPにおける最先端の教師なし言語モデルです。
 In web search datasets, such as MQ2007 (Qin and Liu, 2013), 46-dimensional feature vectors composed of basic features including BM25, term frequency (TF), and LMIR, are provided for each query-document pair. 
-MQ2007（Qin and Liu, 2013）などのウェブ検索データセットでは、BM25、用語頻度（TF）、およびLMIRを含む基本的な特徴から構成された46次元の特徴ベクトルが各クエリ-ドキュメントペアに対して提供されます。
-
+MQ2007（Qin and Liu, 2013）などのウェブ検索データセットでは、BM25、用語頻度（TF）、およびLMIRを含む基本的な特徴から構成された**46次元の特徴ベクトルが各クエリ-ドキュメントペアに対して提供**されます。
 We directly use those vectors while conducting experiment on MQ2007 dataset. 
 私たちは、MQ2007データセットでの実験を行う際に、これらのベクトルを直接使用します。
-
 Formally, provided with the query-document feature vectors $c_{1},\ldots,c_{n_{q}}$ corresponding to a context $c=\{(q,d_{1}),\ldots,(q,d_{n_{q}})\}$, we have obtained the document affinities $\pi_{\theta}(d)$ as given below: 
 形式的には、コンテキスト $c=\{(q,d_{1}),\ldots,(q,d_{n_{q}})\}$ に対応するクエリ-ドキュメント特徴ベクトル $c_{1},\ldots,c_{n_{q}}$ が与えられた場合、以下のようにドキュメントの親和性 $\pi_{\theta}(d)$ を得ました：
 
+$$
+b_{\theta}(c_{1},c_{2},\ldots,c_{n_{q}}) = \pi_{\theta}(d)
+$$
+
 These scenarios are intended for separating the functionality of the text-matching and bandit networks. 
-これらのシナリオは、テキストマッチングネットワークとバンディットネットワークの機能を分離することを目的としています。
-
+**これらのシナリオは、テキストマッチングネットワークとバンディットネットワークの機能を分離することを目的としています**。
 Therefore, the inputs and outputs are not necessarily in the above prescribed format. 
-したがって、入力と出力は必ずしも上記の指定された形式である必要はありません。
+**したがって、入力と出力は必ずしも上記の指定された形式である必要はありません**。(うんうん...!:thinking:)
 
-The results obtained in both the scenarios indicate that the bandit network is not entirely dependent on a text-matching network for providing good results. 
-両方のシナリオで得られた結果は、バンディットネットワークが良好な結果を提供するためにテキストマッチングネットワークに完全に依存していないことを示しています。
-
+The results obtained in both the scenarios indicate that the bandit network is not entirely dependent on a text-matching network for providing good results.
+両方のシナリオで得られた結果は、**バンディットネットワークが良好な結果を提供するためにテキストマッチングネットワークに完全に依存していないこと**を示しています。
 The exact details of the scenarios and the neural network architectures used for each dataset are provided in the experiments section. 
 シナリオの正確な詳細と各データセットに使用されるニューラルネットワークアーキテクチャは、実験セクションに記載されています。
 
-We will make our implementation publicly available when the paper is accepted. 
-私たちは、論文が受理された際に実装を公開する予定です。
-
-
+<!-- ここまで読んだ! -->
 
 ## 5. Experiments 実験
 
 We conducted our experiments on three different datasets in the domains of question answering and web search. 
 私たちは、質問応答とウェブ検索の分野で、3つの異なるデータセットを用いて実験を行いました。
-
 For the question answering task, we tested BanditRank on InsuranceQA (Feng et al., 2015), which is a community question answering dataset (closed domain), and on WikiQA (Yang et al., 2015), which is a well-studied factoid question answering dataset (open domain). 
 質問応答タスクでは、コミュニティ質問応答データセット（クローズドドメイン）であるInsuranceQA（Feng et al., 2015）と、よく研究された事実質問応答データセット（オープンドメイン）であるWikiQA（Yang et al., 2015）でBanditRankをテストしました。
-
 For the web search task, we conducted our experiments on the benchmark MQ2007 (Qin and Liu, 2013) dataset. 
 ウェブ検索タスクでは、ベンチマークデータセットであるMQ2007（Qin and Liu, 2013）を用いて実験を行いました。
-
 Since the baselines and evaluation measures are different for the above three datasets, we divide this section into three subsections each dealing with a specific dataset. 
 上記の3つのデータセットではベースラインと評価指標が異なるため、このセクションをそれぞれ特定のデータセットに関する3つのサブセクションに分けます。
-
 For each dataset, we provide the details of the architecture used, implementation details, details of the baselines, and obtained results. 
 各データセットについて、使用したアーキテクチャの詳細、実装の詳細、ベースラインの詳細、および得られた結果を提供します。
-
 We adopted Scenario 1 for the InsuranceQA dataset and Scenario 2 for the MQ2007 dataset and compared both scenarios on the WikiQA dataset. 
 InsuranceQAデータセットにはシナリオ1を、MQ2007データセットにはシナリオ2を採用し、WikiQAデータセットで両方のシナリオを比較しました。
-
 Finally, we conducted a comparative study on different reward choices for training on the MQ2007 dataset. 
 最後に、MQ2007データセットでのトレーニングにおける異なる報酬選択に関する比較研究を行いました。
-
 We choose the exploration probability mentioned in Section 3.1 as $\epsilon = 0.1$ for all the experiments. 
-すべての実験に対して、セクション3.1で言及された探索確率を$\epsilon = 0.1$として選択しました。
+すべての実験に対して、セクション3.1で言及された探索確率を $\epsilon = 0.1$ として選択しました。
 
-
+<!-- ここまで読んだ! -->
 
 ### 5.1. Experiment 1: InsuranceQA
 
-### 5.1. 実験 1: InsuranceQA
-
 #### 5.1.1. Dataset and Evaluation Measures
-
-#### 5.1.1. データセットと評価指標
 
 InsuranceQA(Feng et al., 2015) is a well studied community question answering dataset with questions submitted by real users and answers composed by professionals with good domain knowledge. 
 InsuranceQA（Feng et al., 2015）は、実際のユーザーから提出された質問と、専門知識を持つプロフェッショナルによって作成された回答を含む、よく研究されたコミュニティ質問応答データセットです。
-
 In this task, BanditRank was expected to select the correct answer among a pool of candidate answers with negative answers randomly sampled from the whole dataset. 
-このタスクでは、BanditRankは、全データセットからランダムにサンプリングされた否定的な回答を含む候補回答のプールから正しい回答を選択することが期待されました。
-
+**このタスクでは、BanditRankは、全データセットからランダムにサンプリングされた否定的な回答を含む候補回答のプールから正しい回答を選択すること**が期待されました。(これはground-truthが与えられているから、意思決定問題というより分類問題として解くべきものっぽい??:thinking:)
 The dataset consists of two test datasets for evaluation. 
 データセットは評価のために2つのテストデータセットで構成されています。
-
 The evaluation measure for this task was Precision@1. 
 このタスクの評価指標はPrecision@1でした。
-
 The statistics of the dataset along with the average number of relevant answers per question are given in Table 1. 
 データセットの統計と、質問ごとの関連回答の平均数は表1に示されています。
 
-#### 5.1.2. Model and Implementation Details
-
-#### 5.1.2. モデルと実装の詳細
+#### 5.1.2. Model and Implementation Details　モデルと実装の詳細
 
 We used two architectures for Scenario 1. 
 シナリオ1には2つのアーキテクチャを使用しました。
-
 For the text matching part, we used the architecture of the recently proposed Multi Cast Attention Network (MCAN)(Tay et al., 2018). 
 テキストマッチング部分には、最近提案されたMulti Cast Attention Network (MCAN)（Tay et al., 2018）のアーキテクチャを使用しました。
-
 Specifically, we used the same architecture until the mean max pooling operation layer of the MCAN, which provides a fixed dimensional feature vector of each question or answer sentence. 
 具体的には、MCANの平均最大プーリング操作層まで同じアーキテクチャを使用し、各質問または回答文の固定次元の特徴ベクトルを提供しました。
-
 We used the sum function (SM) as the compression function for casting the attention. 
 注意を向けるための圧縮関数として、和関数（SM）を使用しました。
-
 For the bandit network, we modified the prediction layer of MCAN with a sigmoid unit in the output layer and kept the two highway layers intact. 
 バンディットネットワークでは、MCANの予測層を出力層にシグモイドユニットを追加して修正し、2つのハイウェイ層はそのままにしました。
-
 We conducted the experiments by replacing the highway networks with simple neural networks with the same dimensions, but the best results were obtained when highway layers were used. 
 ハイウェイネットワークを同じ次元の単純なニューラルネットワークに置き換えて実験を行いましたが、ハイウェイ層を使用したときに最良の結果が得られました。
-
 Highway networks (Srivastava et al., 2015) are gated nonlinear transform layers that control the information flow similar to the LSTM layers (Hochreiter and Schmidhuber, 1997) for sequential tasks. 
 ハイウェイネットワーク（Srivastava et al., 2015）は、情報の流れを制御するゲート付き非線形変換層であり、シーケンシャルタスクに対するLSTM層（Hochreiter and Schmidhuber, 1997）に似ています。
 
 We randomly initialized the embedding matrix with 100 dimensional vectors sampled from standard normal distribution and fixed them during training. 
 埋め込み行列を標準正規分布からサンプリングした100次元ベクトルでランダムに初期化し、トレーニング中は固定しました。
-
 The hidden size of the LSTM layers was set to 300. 
 LSTM層の隠れサイズは300に設定しました。
-
 The dimensions of the two highway prediction layers were set to 200 with ReLU being the activation function. 
 2つのハイウェイ予測層の次元は200に設定し、活性化関数にはReLUを使用しました。
-
 Once we obtained the feature vectors corresponding to the question and answer sentences from the text-matching network $h_q, h_a \in \mathbb{R}^{600}$, we passed the following vector $h_{qa} = [h_q; h_a; h_q \odot h_a; h_q - h_a] \in \mathbb{R}^{2400}$ to the bandit network, where $\odot$ is the pointwise multiplication operation and $[.;.]$ is a vector concatenation operator. 
 テキストマッチングネットワークから質問と回答文に対応する特徴ベクトル $h_q, h_a \in \mathbb{R}^{600}$ を取得した後、次のベクトル $h_{qa} = [h_q; h_a; h_q \odot h_a; h_q - h_a] \in \mathbb{R}^{2400}$ をバンディットネットワークに渡しました。ここで、$\odot$ は要素ごとの乗算操作であり、$[.;.]$ はベクトルの連結演算子です。
-
 The vectors $h_{qa}$ correspond to the query-document feature vectors $c_i$ mentioned in Section 4. 
-ベクトル $h_{qa}$ は、セクション4で言及されたクエリ-ドキュメント特徴ベクトル $c_i$ に対応します。
-
+**ベクトル $h_{qa}$ は、セクション4で言及されたクエリ-ドキュメント特徴ベクトル $c_i$ に対応**します。
 Before passing $h_{qa}$ to the highway layers of the bandit network, we used a single feed forward layer with a ReLU activation function for projecting $h_{qa}$ into a 200-dimensional space. 
-$h_{qa}$ をバンディットネットワークのハイウェイ層に渡す前に、$h_{qa}$ を200次元空間に投影するためにReLU活性化関数を持つ単一のフィードフォワード層を使用しました。
-
+**$h_{qa}$ をバンディットネットワークのハイウェイ層に渡す前に、$h_{qa}$ を200次元空間に投影するためにReLU活性化関数を持つ単一のフィードフォワード層を使用**しました。
 A dropout of 0.2 was applied to all layers except the embedding layer. 
 埋め込み層を除くすべての層に0.2のドロップアウトが適用されました。
-
 The sequences were padded to their batch-wise maximums. 
 シーケンスはバッチごとの最大値にパディングされました。
-
 We optimized the model using the Adam optimizer (Kingma and Ba, 2014) with the beta parameters set to $(0.9, 0.999)$ and a weight decay of $1e^{-6}$ was used for regularization. 
 モデルは、ベータパラメータを $(0.9, 0.999)$ に設定したAdamオプティマイザ（Kingma and Ba, 2014）を使用して最適化し、正則化には $1e^{-6}$ の重み減衰が使用されました。
-
 We used the hybrid training objective defined in Eq. (12) with $\gamma$ tuned over the set of values $[0.5, 0.75, 1]$. 
 ハイブリッドトレーニング目的は、式（12）で定義され、$\gamma$ は値のセット $[0.5, 0.75, 1]$ にわたって調整されました。
-
 An initial learning rate of $5e^{-5}$ was used for BanditRank with $\gamma=1$ and $1e^{-4}$ for BanditRank with other $\gamma$ values. 
 初期学習率は、$\gamma=1$ のBanditRankには $5e^{-5}$ が使用され、他の $\gamma$ 値のBanditRankには $1e^{-4}$ が使用されました。
-
 We set $M', B$ to $M' = 5$ and $B = 20$ for calculating the gradient in Eq. (8). 
 勾配を計算するために、$M', B$ を $M' = 5$ および $B = 20$ に設定しました。
-
 For BanditRank with $\gamma=0.75$, $M'$ was set to 20. 
 $\gamma=0.75$ のBanditRankでは、$M'$ を20に設定しました。
 
@@ -649,278 +616,220 @@ We used the reward function defined as Eq. (10) during training.
 
 We compared the performance of BanditRank against all current methods that achieved significant results on this dataset. 
 BanditRankの性能を、このデータセットで重要な結果を達成したすべての現在の手法と比較しました。
-
 The competitive baselines are the IR model (Bendersky et al., 2010), CNN with GESD (from the authors who created the InsuranceQA dataset) (Feng et al., 2015), Attentive LSTM (Tan et al., 2016), IARNN-Occam (Wang et al., 2016a), IARNN-Gate (Wang et al., 2016a), QA-CNN (Santos et al., 2016), LambdaCNN (Santos et al., 2016; Zhang et al., 2013), IRGAN (Wang et al., 2017b), and the method with the previous best P@1 measure, Comp-Agg (Wang and Jiang, 2016). 
 競争ベースラインは、IRモデル（Bendersky et al., 2010）、GESDを使用したCNN（InsuranceQAデータセットを作成した著者から）（Feng et al., 2015）、Attentive LSTM（Tan et al., 2016）、IARNN-Occam（Wang et al., 2016a）、IARNN-Gate（Wang et al., 2016a）、QA-CNN（Santos et al., 2016）、LambdaCNN（Santos et al., 2016; Zhang et al., 2013）、IRGAN（Wang et al., 2017b）、および以前の最良のP@1測定値を持つ手法、Comp-Agg（Wang and Jiang, 2016）です。
-
 A description of all the baselines can be found in previous studies (Wang and Jiang, 2016; Wang et al., 2017b). 
 すべてのベースラインの説明は、以前の研究（Wang and Jiang, 2016; Wang et al., 2017b）に見つけることができます。
-
 As the testing splits were the same for all methods, we report the P@1 measures directly from those studies. 
 テストスプリットはすべての手法で同じであったため、これらの研究から直接P@1測定値を報告します。
 
 The results in Table 2 indicate the superiority of BanditRank over all other methods. 
 表2の結果は、BanditRankが他のすべての手法に対して優れていることを示しています。
-
 BanditRank with $\gamma=1$ achieved the second best P@1 measure, this is equivalent to training the model only with the reinforcement loss. 
 $\gamma=1$ のBanditRankは、2番目に良いP@1測定値を達成しました。これは、モデルを強化損失のみでトレーニングすることに相当します。
-
 The results further improved using a hybrid loss with $\gamma=0.75$ weight to the reinforcement loss $L_{rl}$. 
 結果は、強化損失 $L_{rl}$ に対して重み $\gamma=0.75$ のハイブリッド損失を使用することでさらに改善されました。
-
 Therefore, providing some weight to the supervised loss improved the performance of BanditRank. 
 したがって、教師あり損失にいくらかの重みを与えることで、BanditRankの性能が向上しました。
-
 BanditRank exhibited significant improvement in P@1 measure by 13.3% on the test-1 dataset and 16.1% on the test-2 dataset when compared to the previous best method. 
 BanditRankは、以前の最良の手法と比較して、テスト-1データセットでP@1測定値が13.3%、テスト-2データセットで16.1%の大幅な改善を示しました。
 
-
+<!-- ここまで読んだ! -->
 
 ### 5.2. Experiment 2: WikiQA
-
-### 5.2. WikiQA
-
-#### 5.2.1. Dataset and Evaluation Measures
-#### 5.2.1. データセットと評価指標
+#### 5.2.1. Dataset and Evaluation Measures データセットと評価指標
 
 WikiQA(Yang et al., 2015) is a well-known open domain question answering dataset in contrast to InsuranceQA, which is a closed domain question answering dataset. 
 WikiQA（Yang et al., 2015）は、保険QAとは対照的に、よく知られたオープンドメインの質問応答データセットです。
-
 The dataset was constructed from real queries on Bing and Wikipedia. 
 このデータセットは、BingとWikipediaの実際のクエリから構築されました。
-
 In this task, the models were expected to rank the candidate answers according to the question. 
 このタスクでは、モデルは質問に基づいて候補となる回答をランク付けすることが期待されました。
-
 The evaluation measures for this task were MAP and MRR. 
 このタスクの評価指標はMAPとMRRでした。
-
 The statistics of the dataset are given in Table 3. 
 データセットの統計は表3に示されています。
 
-#### 5.2.2. Model and Implementation details
-#### 5.2.2. モデルと実装の詳細
+#### 5.2.2. Model and Implementation details モデルと実装の詳細
 
 We considered both the scenarios given in Section 4 for WikiQA dataset. 
 私たちは、WikiQAデータセットに対してセクション4で示された両方のシナリオを考慮しました。
-
 For Scenario 1, we used the same setting of MCAN as InsuranceQA. 
 シナリオ1では、保険QAと同じMCANの設定を使用しました。
-
 The only difference was the type of embedding used. 
 唯一の違いは、使用される埋め込みのタイプでした。
-
 We initialized the embedding matrix with 300-dimensional GloVe embeddings (Pennington et al., 2014) and fixed them during training. 
 埋め込み行列は、300次元のGloVe埋め込み（Pennington et al., 2014）で初期化し、トレーニング中は固定しました。
-
 We used the reward function defined as Eq. (10) during training. 
 トレーニング中は、式（10）で定義された報酬関数を使用しました。
-
 A dropout of 0.2 was applied to all layers except the embedding layer. 
 埋め込み層を除くすべての層に0.2のドロップアウトが適用されました。
-
 The sequences were padded to their batch-wise maximums. 
 シーケンスは、バッチごとの最大値にパディングされました。
 
 We optimized the model using the Adam optimizer (Kingma and Ba, 2014) with the beta parameters set to (0.9, 0.999), and a weight decay of $1e^{-6}$ was used for regularization. 
 モデルは、ベータパラメータを(0.9, 0.999)に設定したAdamオプティマイザ（Kingma and Ba, 2014）を使用して最適化し、正則化のために$1e^{-6}$の重み減衰が使用されました。
-
 We used the hybrid training objective defined in Eq. (12) with $\gamma$ tuned over the set of values [0.25, 0.5, 0.75, 1]. 
 私たちは、式（12）で定義されたハイブリッドトレーニング目的を使用し、$\gamma$を[0.25, 0.5, 0.75, 1]の値のセットで調整しました。
-
 We provide the results of the two best performing models with respect to $\gamma$. 
 私たちは、$\gamma$に関して最も良いパフォーマンスを示した2つのモデルの結果を提供します。
-
 An initial learning rate of $5e^{-5}$ was used for BanditRank with $\gamma=1$ and $1e^{-4}$ for BanditRank with other $\gamma$ values. 
 初期学習率は、$\gamma=1$のBanditRankに対して$5e^{-5}$、他の$\gamma$値のBanditRankに対して$1e^{-4}$が使用されました。
-
 We set $M', B$ to $M' = 3$ and $B = 20$ for calculating the gradient in Eq. (8). 
 式（8）で勾配を計算するために、$M', B$を$M' = 3$および$B = 20$に設定しました。
-
 The $M'$ was chosen according to the average number of relevant queries, which is much less for the WikiQA dataset. 
 $M'$は、WikiQAデータセットの関連クエリの平均数に基づいて選択されました。
 
+<!-- ここまで読んだ! -->
+
 For Scenario 2, we extracted word-level features from a pre-trained BERT (Devlin et al., 2018) language model, which takes a question-answer sentence pair $(q, a)$ as the input. 
 シナリオ2では、事前学習済みのBERT（Devlin et al., 2018）言語モデルから単語レベルの特徴を抽出しました。このモデルは、質問-回答文のペア$(q, a)$を入力として受け取ります。
-
 There are two versions of the BERT model available, BERT-base and BERT-large. 
 利用可能なBERTモデルには、BERT-baseとBERT-largeの2つのバージョンがあります。
-
 We conducted our experiments on features extracted with both versions. 
 私たちは、両方のバージョンから抽出された特徴を使用して実験を行いました。
-
 We used the concatenation of word-level features obtained from the last four layers of the BERT language model for training. 
-トレーニングには、BERT言語モデルの最後の4層から得られた単語レベルの特徴の連結を使用しました。
-
+**トレーニングには、BERT言語モデルの最後の4層から得られた単語レベルの特徴の連結を使用**しました。
 BERT-base produced 3072-dimensional feature vectors for each word in the input sentence while BERT-large produced 4096-dimensional feature vectors after the concatenation. 
 BERT-baseは、入力文の各単語に対して3072次元の特徴ベクトルを生成し、BERT-largeは連結後に4096次元の特徴ベクトルを生成しました。
-
 These contextual word embeddings were passed through a two-layer bidirectional LSTM layer followed by mean pooling for obtaining a fixed dimensional representation of $(q, a)$. 
-これらの文脈的な単語埋め込みは、2層の双方向LSTM層を通過し、その後平均プーリングを行って$(q, a)$の固定次元表現を得ました。
-
+これらの文脈的な単語埋め込みは、2層の双方向LSTM層を通過し、その後平均プーリングを行って$(q, a)$ の固定次元表現を得ました。
 These vectors correspond to the $c_i$ vectors mentioned in Section 4. 
-これらのベクトルは、セクション4で言及された$c_i$ベクトルに対応しています。
-
+**これらのベクトルは、セクション4で言及された$c_i$ベクトルに対応**しています。
 Regarding the architecture of the bandit network, we chose a feed forward network with a single hidden layer followed by a sigmoid unit at the output layer. 
-バンディットネットワークのアーキテクチャに関しては、出力層にシグモイドユニットを持つ単一の隠れ層を持つフィードフォワードネットワークを選択しました。
-
+バンディットネットワークのアーキテクチャに関しては、**出力層にシグモイドユニットを持つ単一の隠れ層を持つフィードフォワードネットワークを選択**しました。
 Tanh was used as the activation function. 
 活性化関数としてTanhが使用されました。
-
 For the BanditRank method trained on features extracted from BERT-base, we set the dimensions of the LSTM layer to 768. 
 BERT-baseから抽出された特徴でトレーニングされたBanditRankメソッドでは、LSTM層の次元を768に設定しました。
-
 For BERT-large, we set the dimensions of the LSTM layer to 1024. 
 BERT-largeの場合、LSTM層の次元を1024に設定しました。
-
 For the feed forward layer, we set the dimensions of the hidden layer to 256 for both types of features. 
 フィードフォワード層では、両方のタイプの特徴に対して隠れ層の次元を256に設定しました。
-
 A dropout of 0.4 was applied to all layers. 
 すべての層に0.4のドロップアウトが適用されました。
-
 We optimized BanditRank using the Adam optimizer (Kingma and Ba, 2014) with the beta parameters set to (0, 0.999) and used a weight decay of $1e^{-6}$ for regularization. 
 BanditRankは、ベータパラメータを(0, 0.999)に設定したAdamオプティマイザ（Kingma and Ba, 2014）を使用して最適化し、正則化のために$1e^{-6}$の重み減衰を使用しました。
-
 We used the hybrid training objective defined in Eq. (12) with $\gamma$ tuned over the set of values [0.5, 0.75, 1]. 
 私たちは、式（12）で定義されたハイブリッドトレーニング目的を使用し、$\gamma$を[0.5, 0.75, 1]の値のセットで調整しました。
-
 We provide the results of the best performing model with respect to $\gamma$. 
 私たちは、$\gamma$に関して最も良いパフォーマンスを示したモデルの結果を提供します。
-
 An initial learning rate of $8e^{-5}$ was used for BanditRank with $\gamma=1$ and $1e^{-4}$ for the BanditRank method with other $\gamma$ values. 
 初期学習率は、$\gamma=1$のBanditRankに対して$8e^{-5}$、他の$\gamma$値のBanditRankメソッドに対して$1e^{-4}$が使用されました。
-
 We set $M', B$ to $M' = 5$ and $B = 20$ for calculating the gradient in Eq. (8). 
 式（8）で勾配を計算するために、$M', B$を$M' = 5$および$B = 20$に設定しました。
-
 We used the reward function defined with Eq. (10) during training. 
 トレーニング中は、式（10）で定義された報酬関数を使用しました。
 
-#### 5.2.3. Baselines and Results
-#### 5.2.3. ベースラインと結果
+<!-- ここまで読んだ! -->
+
+#### 5.2.3. Baselines and Results ベースラインと結果
 
 We compared the performance of BanditRank against all other previous methods on this dataset. 
 私たちは、このデータセットにおけるBanditRankのパフォーマンスを他のすべての以前の方法と比較しました。
-
 The baselines were CNN-Cnt (Yang et al., 2015), QA-CNN (Santos et al., 2016), NASM (Miao et al., 2016), Wang et al (Wang et al., 2016b), He and Lin (He and Lin, 2016), NCE-CNN (Rao et al., 2016), BIMPM (Wang et al., 2017a), Comp-Agg (Wang and Jiang, 2016), and the state-of-the-art method Comp-Clip (Bian et al., 2017). 
 ベースラインは、CNN-Cnt（Yang et al., 2015）、QA-CNN（Santos et al., 2016）、NASM（Miao et al., 2016）、Wang et al（Wang et al., 2016b）、He and Lin（He and Lin, 2016）、NCE-CNN（Rao et al., 2016）、BIMPM（Wang et al., 2017a）、Comp-Agg（Wang and Jiang, 2016）、および最先端の方法であるComp-Clip（Bian et al., 2017）でした。
-
 Since the testing split is same for all methods, we report the highest measures directly from the respective papers. 
 テストスプリットはすべての方法で同じであるため、私たちはそれぞれの論文から直接最高の測定値を報告します。
-
 The results given in Table 4 indicate the superiority of BanditRank over all other methods. 
 表4に示された結果は、BanditRankが他のすべての方法に対して優れていることを示しています。
-
 BanditRank trained using the features extracted from BERT-large produced the best results. 
 BERT-largeから抽出された特徴を使用してトレーニングされたBanditRankは、最良の結果を出しました。
-
 Interestingly in Scenario 1, we observed performance degradation when hybrid loss was used. 
 興味深いことに、シナリオ1では、ハイブリッド損失を使用した際にパフォーマンスの低下が観察されました。
-
 Although, this degradation may depend on many factors, one possible explanation can be that the model can explore with the help of $L_{rl}$ efficiently since the average number of relevant documents is much less. 
 この低下は多くの要因に依存する可能性がありますが、1つの可能な説明は、関連文書の平均数がはるかに少ないため、モデルが$L_{rl}$の助けを借りて効率的に探索できることです。
-
 The results in Scenario 2 indicate that, provided with good features, training a text-matching network along with the bandit network is not necessary for achieving good results. 
-シナリオ2の結果は、良い特徴が提供されれば、バンディットネットワークと共にテキストマッチングネットワークをトレーニングする必要はないことを示しています。
+**シナリオ2の結果は、良い特徴が提供されれば、バンディットネットワークと共にテキストマッチングネットワークをトレーニングする必要はないことを示しています**。(ふむふむ...!:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 ### 5.3. Experiment 3: MQ2007
 
-### 5.3. 実験 3: MQ2007
-
-#### 5.3.1. Dataset and Evaluation Measures
-
-#### 5.3.1. データセットと評価指標
+#### 5.3.1. Dataset and Evaluation Measures データセットと評価指標
 
 For the web search task, we used the benchmark Million Query Track 2007 (MQ2007)(Qin and Liu,2013)dataset777https://www.microsoft.com/en-us/research/project/letor-learning-rank-information-retrieval/. 
 ウェブ検索タスクでは、ベンチマークのMillion Query Track 2007 (MQ2007)(Qin and Liu,2013)データセットを使用しました777https://www.microsoft.com/en-us/research/project/letor-learning-rank-information-retrieval/。
-
 In this task, BanditRank was expected to rank the documents corresponding to a query according to their relevance. 
-このタスクでは、BanditRankはクエリに対応する文書をその関連性に基づいてランク付けすることが期待されました。
-
+このタスクでは、**BanditRankはクエリに対応する文書をその関連性に基づいてランク付けすること**が期待されました。(これもground-truthが与えられてるのかな。検索だと割とそういうケースが多いのかも??:thinking:)
 Unlike the previous tasks in which the relevance was binary, this task consisted of multiple-levels of relevance with {0,1,2}. 
-以前のタスクが二値の関連性であったのに対し、このタスクは{0,1,2}の複数のレベルの関連性で構成されていました。
-
+**以前のタスクが二値の関連性であったのに対し、このタスクは{0,1,2}の複数のレベルの関連性で構成されていました**。
 This dataset provides 46-dimensional feature vectors corresponding to each query-document pair. 
 このデータセットは、各クエリ-文書ペアに対応する46次元の特徴ベクトルを提供します。
-
 Moreover, the average number of relevant documents per query was very large compared to the previous tasks. 
 さらに、クエリあたりの関連文書の平均数は、以前のタスクと比較して非常に大きかったです。
-
 The statistics are given in Table 5. 
 統計は表5に示されています。
-
 Out of the total 1692 queries, the number of queries with at least one relevant document was only 1455. 
 1692のクエリのうち、少なくとも1つの関連文書を持つクエリの数は1455に過ぎませんでした。
 
 The loss for the above mentioned 237 query instances would be zero as the reward generated would be zero. 
 上記の237のクエリインスタンスに対する損失は、生成される報酬がゼロであるためゼロになります。
-
 Therefore, we conduct experiments on the dataset after removing the queries with no relevant documents as they would not help BanditRank during training. 
 したがって、BanditRankのトレーニングに役立たないため、関連文書のないクエリを削除した後にデータセットで実験を行います。
-
 We carried out 60-20-20 splitting for the train-val-test datasets after the dataset was cleaned. 
 データセットがクリーンになった後、トレイン-バリデーション-テストデータセットの60-20-20分割を行いました。
-
 The baselines were also trained and evaluated on the same splits. 
 ベースラインも同じ分割でトレーニングおよび評価されました。
-
 As per evaluation measures, we report the measures of MAP, MRR, precision, and nDCG at positions 1, 3, 10. 
 評価指標に従い、位置1、3、10でのMAP、MRR、精度、およびnDCGの指標を報告します。
-
 We also conducted significance tests using both paired t-test and Wilcoxon signed rank test. 
 また、対応のあるt検定とウィルコクソン符号付き順位検定の両方を使用して有意性テストを実施しました。
 
-#### 5.3.2. Model and Implementation details
+<!-- ここまで読んだ! -->
 
-#### 5.3.2. モデルと実装の詳細
+#### 5.3.2. Model and Implementation details モデルと実装の詳細
 
 We used Scenario 2 for this task. 
 このタスクにはシナリオ2を使用しました。
-
 For the bandit network, we used a feed forward layer with three highway network layers followed by an output layer with a sigmoid unit. 
-バンディットネットワークには、3つのハイウェイネットワーク層の後にシグモイドユニットを持つ出力層を持つフィードフォワード層を使用しました。
+**バンディットネットワークには、3つのハイウェイネットワーク層の後にシグモイドユニットを持つ出力層を持つフィードフォワード層を使用しました**。
+
+- 森田メモ: highwayネットワークについて
+  - NNの訓練を容易にするために開発された特別な層。
+  - highwayネットワークは、NNの層が深くなるにつれて勾配が消失したり爆発したりする問題(勾配消失・爆発問題)を解決するために開発された。
+  - 核心はLSTMにインスパイアされたゲートメカニズム。
+    - 従来のFeed Forward NNでは、ある層の出力 y はその入力xに非線形変換 H を適用することで得られる: $y = H(x, W_{H})$。
+    - 一方、ハイウェイネットワークでは、この変換に加えて、**入力 x をそのまま次の層に「運び去る」情報ハイウェイのような経路が追加**される。この「変換」と「運び去る」という2つの経路の情報を、ゲートを使ってどれくらいの割合で結合するかを学習する。
+      - $y = H(x, W_{H}) \odot T(x, W_{T}) + x \odot C(x, W_{C})$
+      - ここで...
+        - $H(x, W_{H})$ はFFNNと同じ非線形変換。通常は、アフィン変換（線形変換＋バイアス）の後に非線形活性化関数が続く。
+        - $T(x, W_{T})$ は「変換ゲート(transform gate)」と呼ばれるゲート。
+          - 入力xから計算されて最終的に0~1の間の値を出力する。これは、$H(x, W_{H})$ からの出力のうち、どれだけの割合を通過させるかを制御する。
+        - $C(x, W_{C})$ は「キャリーゲート(carry gate)」と呼ばれるゲート。
+          - 入力xから計算されて最終的に0~1の間の値を出力する。これは、入力x自体をどれだけの割合で次の層に「運び去る(carry)」かを制御する。
+          - 元の論文では、キャリーゲート C は変換ゲート T の補数として設定されることが多い。この場合 $C = 1 - T$ となる。
+  - highwayネットワーク層は、pytorchでは直接提供はされてないっぽい。なので自前で`nn.Module`を継承して実装する必要がありそう...??:thinking:
 
 The dimensions of the highway layer were set to 92. 
 ハイウェイ層の次元は92に設定されました。
-
 An input projection layer with an ReLU activation function was used to project the input vectors into 92 dimensions. 
 ReLU活性化関数を持つ入力投影層を使用して、入力ベクトルを92次元に投影しました。
-
 The provided 46-dimensional feature vectors correspond to vectors $c_i$ mentioned in Section 4. 
 提供された46次元の特徴ベクトルは、セクション4で言及されたベクトル$c_i$に対応します。
 
 We used the reward function defined in Eq.(11). 
 私たちは、式(11)で定義された報酬関数を使用しました。
-
 We chose nDCG@10 instead of reciprocal rank (RR) for this task as the number of relevant documents was large. 
 関連文書の数が多いため、このタスクでは逆数ランク(RR)の代わりにnDCG@10を選択しました。
-
 We optimized the model using the Adam optimizer (Kingma and Ba, 2014) with the beta parameters set to (0, 0.999), and a weight decay of $1e^{-6}$ was used for regularization. 
 私たちは、ベータパラメータを(0, 0.999)に設定したAdamオプティマイザ(Kingma and Ba, 2014)を使用してモデルを最適化し、正則化のために$1e^{-6}$の重み減衰を使用しました。
-
 We used the hybrid training objective defined in Eq.(12) with $\gamma$ tuned over the set of values [0.25, 0.5, 0.75, 1]. 
 私たちは、式(12)で定義されたハイブリッドトレーニング目的を使用し、$\gamma$を[0.25, 0.5, 0.75, 1]の値のセットで調整しました。
-
 The best results were obtained for BanditRank with $\gamma=0.5$. 
 最良の結果は、$\gamma=0.5$のBanditRankで得られました。
-
 A dropout of 0.4 was applied to all layers. 
 すべての層に0.4のドロップアウトが適用されました。
-
 An initial learning rate of $7e^{-5}$ was used for all models. 
 すべてのモデルに対して$7e^{-5}$の初期学習率が使用されました。
-
 We set $M', B$ to $M' = 40$ and $B = 30$ for calculating the gradient in Eq.(8). 
 式(8)で勾配を計算するために、$M', B$を$M' = 40$および$B = 30$に設定しました。
-
 A high value was chosen for $M'$ because the number of queries with at least 30 relevant documents was 99, which is a significant number. 
 $M'$には高い値が選ばれました。なぜなら、少なくとも30の関連文書を持つクエリの数が99であり、これは重要な数だからです。
-
 Moreover, the average number of relevant documents per query was large, i.e., 10.3. 
 さらに、クエリあたりの関連文書の平均数は大きく、すなわち10.3でした。
+
+<!-- ここまで読んだ! -->
 
 #### 5.3.3. Baselines and Results
 
@@ -928,217 +837,74 @@ Moreover, the average number of relevant documents per query was large, i.e., 10
 
 We compared BanditRank with four strong listwise baselines. 
 私たちは、BanditRankを4つの強力なリストワイズベースラインと比較しました。
-
 The baselines were AdaRank (Xu and Li, 2007), ListNet (Cao et al., 2007), Coordinate Ascent (Metzler and Croft, 2007) and the state-of-the-art listwise ranking method LambdaMART (Burges, 2010). 
 ベースラインは、AdaRank (Xu and Li, 2007)、ListNet (Cao et al., 2007)、Coordinate Ascent (Metzler and Croft, 2007)、および最先端のリストワイズランキング手法であるLambdaMART (Burges, 2010)でした。
-
 All baselines were implemented using the RankLib888https://sourceforge.net/projects/lemur/software. 
 すべてのベースラインは、RankLib888https://sourceforge.net/projects/lemur/softwareを使用して実装されました。
-
 As mentioned in Section 3.4, hybrid training objective with $\gamma=0.5$ resulted in the best performance as BanditRank with $\gamma=1$ cannot efficiently explore the relatively large action space in this task. 
 セクション3.4で述べたように、$\gamma=0.5$のハイブリッドトレーニング目的は最良のパフォーマンスをもたらしました。なぜなら、$\gamma=1$のBanditRankはこのタスクで比較的大きなアクション空間を効率的に探索できないからです。
 
 The results given in Table 6 show that BanditRank clearly outperformed AdaRank, ListNet, and Coordinate Ascent. 
 表6に示された結果は、BanditRankが明らかにAdaRank、ListNet、およびCoordinate Ascentを上回ったことを示しています。
-
 When compared with the stronger baseline LambdaMART, except for the measures P@10, nDCG@3, and nDCG@10, BanditRank achieved a minimum of 1% improvement in all other measures. 
 より強力なベースラインであるLambdaMARTと比較した場合、P@10、nDCG@3、およびnDCG@10を除いて、BanditRankは他のすべての指標で最低1%の改善を達成しました。
-
 Except for the measure nDCG@10, the improvement shown by BanditRank on all other measures is statistically significant according to the paired t-test and Wilcoxon signed rank test. 
 nDCG@10の指標を除いて、BanditRankが他のすべての指標で示した改善は、対応のあるt検定およびウィルコクソン符号付き順位検定により統計的に有意です。
-
 In the next section, we discuss the behavior of different reward functions when trained on the MQ2007 dataset. 
 次のセクションでは、MQ2007データセットでトレーニングされたときの異なる報酬関数の挙動について議論します。
 
-
+<!-- ここまで読んだ! -->
 
 ### 5.4. 報酬関数の比較
 
 The reward function plays a significant role in the training of an agent in reinforcement learning. 
-報酬関数は、強化学習におけるエージェントの訓練において重要な役割を果たします。 
-
+**報酬関数は、強化学習におけるエージェントの訓練において重要な役割を果たします。**
 Gradual feedback through rewards is often required for training a good agent. 
 良いエージェントを訓練するためには、報酬を通じた段階的なフィードバックがしばしば必要です。 
-
 For comparing the behavior of reward functions during training, we conducted experiments using different reward functions on the MQ2007 dataset with the same architecture as the previous section. 
 報酬関数の訓練中の挙動を比較するために、前のセクションと同じアーキテクチャを用いてMQ2007データセット上で異なる報酬関数を使用した実験を行いました。 
-
 Since we wanted to compare the behavior of the reward function, we chose $\gamma=1$ for all the experiments. 
 報酬関数の挙動を比較したかったため、すべての実験で$\gamma=1$を選択しました。 
-
 The following reward functions were used: 
 以下の報酬関数が使用されました：
 
+$$
+各報酬関数の定義
+$$
+
 The first three reward functions are the direct evaluation measures and the last three are a combination of several evaluation measures. 
 最初の3つの報酬関数は直接的な評価指標であり、最後の3つは複数の評価指標の組み合わせです。 
-
 Figure 1 plots the test set performance of the models during training epochs. 
 図1は、訓練エポック中のモデルのテストセット性能をプロットしています。 
-
 We can observe that $R_{1}$ achieved good measures right from the start when compared with $R_{2}$ and $R_{3}$. 
 $R_{1}$は、$R_{2}$および$R_{3}$と比較して、開始時から良好な指標を達成したことが観察できます。 
-
 The performance of $R_{6}$ when compared with $R_{5}$ and $R_{4}$ shows that using many evaluation measures will not necessarily improve the measures of MAP and nDCG@10. 
 $R_{6}$の性能は、$R_{5}$および$R_{4}$と比較した場合、多くの評価指標を使用することが必ずしもMAPおよびnDCG@10の指標を改善するわけではないことを示しています。 
-
 During the initial epochs, $R_{4}$ was clearly a better performer than $R_{5}$ and $R_{6}$. 
 初期のエポックでは、$R_{4}$は明らかに$R_{5}$および$R_{6}$よりも優れた性能を示しました。 
-
 After a similar performance by all three models in the next few epochs, $R_{4}$ achieved better measures of MAP and nDCG@10 in the final stages. 
 次の数エポックで3つのモデルが同様の性能を示した後、$R_{4}$は最終段階でMAPおよびnDCG@10の指標をより良く達成しました。 
-
-1
-Figure 1.
-
-
 
 ## 6.Conclusion 結論
 
 We proposed an extensible listwise deep learning method BanditRank for ranking. 
 私たちは、ランキングのための拡張可能なリストワイズ深層学習手法BanditRankを提案しました。
-
 It can directly optimize the evaluation measures using the policy gradient algorithm. 
-これは、ポリシー勾配アルゴリズムを使用して評価指標を直接最適化できます。
-
+これは、ポリシー勾配アルゴリズムを使用して評価指標を直接最適化できます。(要するに回帰ベースじゃなくて勾配ベースのアプローチ...!:thinking:)
 Experimental results indicate the superiority of BanditRank over other methods on the tested datasets. 
 実験結果は、テストされたデータセットにおいてBanditRankが他の手法に対して優れていることを示しています。
-
 Future work can involve modifying the structure of the policy network discussed in Section 3.1 for efficiently addressing the issue of exploration when the number of actions is large. 
-今後の研究では、アクションの数が多い場合の探索の問題に効率的に対処するために、セクション3.1で議論されたポリシーネットワークの構造を修正することが考えられます。
-
+今後の研究では、**アクションの数が多い場合の探索の問題に効率的に対処するために、セクション3.1で議論されたポリシーネットワークの構造を修正すること**が考えられます。
 For example, we could use adaptive exploration strategies instead of simple $\epsilon$-greedy strategy, for exploring the action space. 
-例えば、アクション空間を探索するために、単純な$\epsilon$-greedy戦略の代わりに適応的探索戦略を使用することができます。
-
+例えば、アクション空間を探索するために、**単純な$\epsilon$-greedy戦略の代わりに適応的探索戦略(??)を使用すること**ができます。
 We can define new reward functions for handling queries with no relevant documents. 
-関連する文書がないクエリを処理するための新しい報酬関数を定義することができます。
-
+関連する文書がないクエリを処理するための**新しい報酬関数を定義**することができます。
 For example, we can penalize the model if any of the document affinity scores for such queries is greater than 0.5. 
 例えば、そのようなクエリの文書親和性スコアのいずれかが0.5を超える場合、モデルにペナルティを課すことができます。
-
 There is also a possibility of defining reward functions as the weighted average of different measures with trainable weights for better feedback. 
-より良いフィードバックのために、異なる指標の重み付き平均として報酬関数を定義する可能性もあります。
-
+より良いフィードバックのために、**異なる指標の重み付き平均として報酬関数を定義する可能性**もあります。
 Regarding the theoretical aspects, we can compare the directness of BanditRank to other algorithms such as LambdaRank. 
 理論的な側面に関しては、BanditRankの直接性をLambdaRankなどの他のアルゴリズムと比較することができます。
 
+<!-- ここまで読んだ! -->
 
-
-## References 参考文献
-
-- (1)
-- Bahdanau etal.(2016)Dzmitry Bahdanau, Philemon Brakel, Kelvin Xu, Anirudh Goyal, Ryan Lowe, Joelle Pineau, Aaron Courville, and Yoshua Bengio. 2016.An actor-critic algorithm for sequence prediction.arXiv preprint arXiv:1607.07086(2016).
-- Bahdanau etal.(2016) Dzmitry Bahdanau, Philemon Brakel, Kelvin Xu, Anirudh Goyal, Ryan Lowe, Joelle Pineau, Aaron Courville, および Yoshua Bengio. 2016. シーケンス予測のためのアクター-クリティックアルゴリズム. arXivプレプリント arXiv:1607.07086(2016).
-- Bendersky etal.(2010)Michael Bendersky, Donald Metzler, and WBruce Croft. 2010.Learning concept importance using a weighted dependence model. InProceedings of the third ACM international conference on Web search and data mining. ACM, 31–40.
-- Bendersky etal.(2010) マイケル・ベンダースキー、ドナルド・メッツラー、W・ブルース・クロフト. 2010. 重み付き依存モデルを用いた概念の重要性の学習. 第三回ACM国際会議の議事録、Web検索とデータマイニングに関する国際会議. ACM, 31–40.
-- Bian etal.(2017)Weijie Bian, Si Li, Zhao Yang, Guang Chen, and Zhiqing Lin. 2017.A compare-aggregate model with dynamic-clip attention for answer selection. InProceedings of the 2017 ACM on Conference on Information and Knowledge Management. ACM, 1987–1990.
-- Bian etal.(2017) ウェイジー・ビアン、シー・リー、ジャオ・ヤン、グアン・チェン、そしてジーキン・リン. 2017. 動的クリップアテンションを用いた回答選択のための比較集約モデル. 2017 ACM情報および知識管理会議の議事録. ACM, 1987–1990.
-- Burges (2010)ChristopherJC Burges. 2010.From ranknet to lambdarank to lambdamart: An overview.Learning11, 23-581 (2010), 81.
-- Burges (2010) クリストファー・J・C・バージェス. 2010. ranknetからlambdarank、lambdamartへの移行: 概要. Learning11, 23-581 (2010), 81.
-- Burges etal.(2007)ChristopherJ Burges, Robert Ragno, and QuocV Le. 2007.Learning to rank with nonsmooth cost functions. InAdvances in neural information processing systems. 193–200.
-- Burges etal.(2007) クリストファー・J・バージェス、ロバート・ラグノ、クオック・V・レ. 2007. 非滑らかなコスト関数を用いたランキング学習. ニューラル情報処理システムの進歩. 193–200.
-- Cao etal.(2007)Zhe Cao, Tao Qin, Tie-Yan Liu, Ming-Feng Tsai, and Hang Li. 2007.Learning to rank: from pairwise approach to listwise approach. InProceedings of the 24th international conference on Machine learning. ACM, 129–136.
-- Cao etal.(2007) ゼ・カオ、タオ・チン、ティエ・ヤン・リウ、ミン・フェン・ツァイ、そしてハン・リー. 2007. ランキング学習: ペアワイズアプローチからリストワイズアプローチへ. 第24回国際機械学習会議の議事録. ACM, 129–136.
-- Chapelle etal.(2007)Olivier Chapelle, Quoc Le, and Alex Smola. 2007.Large margin optimization of ranking measures. InNIPS workshop: Machine learning for Web search.
-- Chapelle etal.(2007) オリビエ・シャペル、クオック・レ、アレックス・スモラ. 2007. ランキング指標の大きなマージン最適化. NIPSワークショップ: Web検索のための機械学習.
-- Devlin etal.(2018)Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2018.Bert: Pre-training of deep bidirectional transformers for language understanding.arXiv preprint arXiv:1810.04805(2018).
-- Devlin etal.(2018) ジェイコブ・デブリン、ミン・ウェイ・チャン、ケントン・リー、クリスティーナ・トゥータノバ. 2018. BERT: 言語理解のための深層双方向トランスフォーマーの事前学習. arXivプレプリント arXiv:1810.04805(2018).
-- Dong etal.(2018)Yue Dong, Yikang Shen, Eric Crawford, Herke van Hoof, and Jackie ChiKit Cheung. 2018.Banditsum: Extractive summarization as a contextual bandit.arXiv preprint arXiv:1809.09672(2018).
-- Dong etal.(2018) ユエ・ドン、イーカン・シェン、エリック・クロフォード、ヘルケ・ファン・フーフ、ジャッキー・チキット・チョン. 2018. Banditsum: コンテキストバンディットとしての抽出要約. arXivプレプリント arXiv:1809.09672(2018).
-- Donmez etal.(2009)Pinar Donmez, KrystaM Svore, and ChristopherJC Burges. 2009.On the local optimality of LambdaRank. InProceedings of the 32nd international ACM SIGIR conference on Research and development in information retrieval. ACM, 460–467.
-- Donmez etal.(2009) ピナール・ドンメズ、クリスタM・スヴォレ、クリストファー・J・C・バージェス. 2009. LambdaRankの局所最適性について. 第32回国際ACM SIGIR会議の議事録. ACM, 460–467.
-- Feng etal.(2015)Minwei Feng, Bing Xiang, MichaelR Glass, Lidan Wang, and Bowen Zhou. 2015.Applying deep learning to answer selection: A study and an open task. In2015 IEEE Workshop on Automatic Speech Recognition and Understanding (ASRU). IEEE, 813–820.
-- Feng etal.(2015) ミンウェイ・フェン、ビン・シアン、マイケルR・グラス、リダン・ワン、ボーウェン・ジョウ. 2015. 深層学習を用いた回答選択の適用: 研究とオープンタスク. 2015 IEEE自動音声認識と理解ワークショップ (ASRU). IEEE, 813–820.
-- Guiver and Snelson (2008)John Guiver and Edward Snelson. 2008.Learning to rank with softrank and gaussian processes. InProceedings of the 31st annual international ACM SIGIR conference on Research and development in information retrieval. ACM, 259–266.
-- Guiver and Snelson (2008) ジョン・ギバーとエドワード・スネルソン. 2008. Softrankとガウス過程を用いたランキング学習. 第31回国際ACM SIGIR会議の議事録. ACM, 259–266.
-- Guo etal.(2016)Jiafeng Guo, Yixing Fan, Qingyao Ai, and WBruce Croft. 2016.A deep relevance matching model for ad-hoc retrieval. InProceedings of the 25th ACM International on Conference on Information and Knowledge Management. ACM, 55–64.
-- Guo etal.(2016) ジアフェン・グオ、イーシン・ファン、チンヤオ・アイ、W・ブルース・クロフト. 2016. アドホック検索のための深い関連性マッチングモデル. 第25回ACM国際情報および知識管理会議の議事録. ACM, 55–64.
-- He and Lin (2016)Hua He and Jimmy Lin. 2016.Pairwise word interaction modeling with deep neural networks for semantic similarity measurement. InProceedings of the 2016 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies. 937–948.
-- He and Lin (2016) フア・ヘとジミー・リン. 2016. 意味的類似性測定のための深層ニューラルネットワークを用いたペアワイズ単語相互作用モデリング. 2016年北米計算言語学会の会議の議事録: 人間の言語技術. 937–948.
-- Hochreiter and Schmidhuber (1997)Sepp Hochreiter and Jürgen Schmidhuber. 1997.Long short-term memory.Neural computation9, 8 (1997), 1735–1780.
-- Hochreiter and Schmidhuber (1997) セップ・ホクレイターとユルゲン・シュミットフーバー. 1997. 長短期記憶. ニューラル計算9, 8 (1997), 1735–1780.
-- Hu etal.(2014)Baotian Hu, Zhengdong Lu, Hang Li, and Qingcai Chen. 2014.Convolutional neural network architectures for matching natural language sentences. InAdvances in neural information processing systems. 2042–2050.
-- Hu etal.(2014) バオティアン・フー、ゼンドン・ル、ハン・リー、チンカイ・チェン. 2014. 自然言語文をマッチングするための畳み込みニューラルネットワークアーキテクチャ. ニューラル情報処理システムの進歩. 2042–2050.
-- Huang etal.(2013)Po-Sen Huang, Xiaodong He, Jianfeng Gao, Li Deng, Alex Acero, and Larry Heck. 2013.Learning deep structured semantic models for web search using clickthrough data. InProceedings of the 22nd ACM international conference on Information & Knowledge Management. ACM, 2333–2338.
-- Huang etal.(2013) ポー・セン・ファン、シャオドン・ハ、ジアンフェン・ガオ、リ・デン、アレックス・アセロ、ラリー・ヘック. 2013. クリックスルーデータを用いたWeb検索のための深層構造的意味モデルの学習. 第22回ACM国際情報および知識管理会議の議事録. ACM, 2333–2338.
-- Katariya etal.(2016)Sumeet Katariya, Branislav Kveton, Csaba Szepesvari, and Zheng Wen. 2016.DCM bandits: Learning to rank with multiple clicks. InInternational Conference on Machine Learning. 1215–1224.
-- Katariya etal.(2016) スメート・カタリヤ、ブラニスラフ・クヴェトン、チャバ・シェペスバリ、そしてゼン・ウェン. 2016. DCMバンディット: 複数のクリックで学ぶランキング. 国際機械学習会議. 1215–1224.
-- Kingma and Ba (2014)DiederikP Kingma and Jimmy Ba. 2014.Adam: A method for stochastic optimization.arXiv preprint arXiv:1412.6980(2014).
-- Kingma and Ba (2014) ディーデリック・P・キングマとジミー・バ. 2014. Adam: 確率的最適化のための手法. arXivプレプリント arXiv:1412.6980(2014).
-- Kveton etal.(2015)Branislav Kveton, Csaba Szepesvari, Zheng Wen, and Azin Ashkan. 2015.Cascading bandits: Learning to rank in the cascade model. InInternational Conference on Machine Learning. 767–776.
-- Kveton etal.(2015) ブラニスラフ・クヴェトン、チャバ・シェペスバリ、ゼン・ウェン、アジン・アシュカン. 2015. カスケードモデルにおけるランキング学習: カスケーディングバンディット. 国際機械学習会議. 767–776.
-- LeCun etal.(2015)Yann LeCun, Yoshua Bengio, and Geoffrey Hinton. 2015.Deep learning.nature521, 7553 (2015), 436.
-- LeCun etal.(2015) ヤン・ルクン、ヨシュア・ベンジオ、そしてジェフリー・ヒントン. 2015. 深層学習. nature521, 7553 (2015), 436.
-- Lee and Lee (2017)GyoungHo Lee and KongJoo Lee. 2017.Automatic Text Summarization Using Reinforcement Learning with Embedding Features. InProceedings of the Eighth International Joint Conference on Natural Language Processing (Volume 2: Short Papers). 193–197.
-- Lee and Lee (2017) ギョンホ・リーとコンジュ・リー. 2017. 埋め込み特徴を用いた強化学習による自動テキスト要約. 第8回国際共同自然言語処理会議の議事録 (第2巻: 短い論文). 193–197.
-- Lin (2004)Chin-Yew Lin. 2004.Rouge: A package for automatic evaluation of summaries.Text Summarization Branches Out(2004).
-- Lin (2004) チン・イー・リン. 2004. Rouge: 要約の自動評価のためのパッケージ. 要約の枝分かれ(2004).
-- Metzler and Croft (2007)Donald Metzler and WBruce Croft. 2007.Linear feature-based models for information retrieval.Information Retrieval10, 3 (2007), 257–274.
-- Metzler and Croft (2007) ドナルド・メッツラーとW・ブルース・クロフト. 2007. 情報検索のための線形特徴ベースのモデル. 情報検索10, 3 (2007), 257–274.
-- Miao etal.(2016)Yishu Miao, Lei Yu, and Phil Blunsom. 2016.Neural variational inference for text processing. InInternational conference on machine learning. 1727–1736.
-- Miao etal.(2016) イーシュ・ミアオ、レイ・ユー、フィル・ブラウンソム. 2016. テキスト処理のためのニューラル変分推論. 国際機械学習会議. 1727–1736.
-- Pang etal.(2017)Liang Pang, Yanyan Lan, Jiafeng Guo, Jun Xu, Jingfang Xu, and Xueqi Cheng. 2017.Deeprank: A new deep architecture for relevance ranking in information retrieval. InProceedings of the 2017 ACM on Conference on Information and Knowledge Management. ACM, 257–266.
-- Pang etal.(2017) リャン・パン、ヤンヤン・ラン、ジアフェン・グオ、ジュン・シュー、ジンファン・シュー、そしてシュエチ・チェン. 2017. Deeprank: 情報検索における関連性ランキングのための新しい深層アーキテクチャ. 2017 ACM情報および知識管理会議の議事録. ACM, 257–266.
-- Papineni etal.(2002)Kishore Papineni, Salim Roukos, Todd Ward, and Wei-Jing Zhu. 2002.BLEU: a method for automatic evaluation of machine translation. InProceedings of the 40th annual meeting on association for computational linguistics. Association for Computational Linguistics, 311–318.
-- Papineni etal.(2002) キショール・パピネニ、サリム・ロウコス、トッド・ウォード、そしてウェイ・ジン・ジュ. 2002. BLEU: 機械翻訳の自動評価のための手法. 第40回計算言語学会年次大会の議事録. 計算言語学会, 311–318.
-- Paulus etal.(2017)Romain Paulus, Caiming Xiong, and Richard Socher. 2017.A deep reinforced model for abstractive summarization.arXiv preprint arXiv:1705.04304(2017).
-- Paulus etal.(2017) ロマン・ポーラス、カイミン・シオン、リチャード・ソッカー. 2017. 抽象的要約のための深層強化モデル. arXivプレプリント arXiv:1705.04304(2017).
-- Pennington etal.(2014)Jeffrey Pennington, Richard Socher, and Christopher Manning. 2014.Glove: Global vectors for word representation. InProceedings of the 2014 conference on empirical methods in natural language processing (EMNLP). 1532–1543.
-- Pennington etal.(2014) ジェフリー・ペニングトン、リチャード・ソッカー、クリストファー・マニング. 2014. GloVe: 単語表現のためのグローバルベクトル. 2014年自然言語処理における経験的手法に関する会議の議事録 (EMNLP). 1532–1543.
-- Qin and Liu (2013)Tao Qin and Tie-Yan Liu. 2013.Introducing LETOR 4.0 datasets.arXiv preprint arXiv:1306.2597(2013).
-- Qin and Liu (2013) タオ・チンとティエ・ヤン・リウ. 2013. LETOR 4.0データセットの紹介. arXivプレプリント arXiv:1306.2597(2013).
-- Qin etal.(2010)Tao Qin, Tie-Yan Liu, and Hang Li. 2010.A general approximation framework for direct optimization of information retrieval measures.Information retrieval13, 4 (2010), 375–397.
-- Qin etal.(2010) タオ・チン、ティエ・ヤン・リウ、そしてハン・リー. 2010. 情報検索指標の直接最適化のための一般的近似フレームワーク. 情報検索13, 4 (2010), 375–397.
-- Radlinski etal.(2008)Filip Radlinski, Robert Kleinberg, and Thorsten Joachims. 2008.Learning diverse rankings with multi-armed bandits. InProceedings of the 25th international conference on Machine learning. ACM, 784–791.
-- Radlinski etal.(2008) フィリップ・ラドリンスキー、ロバート・クラインバーグ、そしてトーステン・ジョアヒムス. 2008. マルチアームバンディットを用いた多様なランキングの学習. 第25回国際機械学習会議の議事録. ACM, 784–791.
-- Ranzato etal.(2015)Marc’Aurelio Ranzato, Sumit Chopra, Michael Auli, and Wojciech Zaremba. 2015.Sequence level training with recurrent neural networks.arXiv preprint arXiv:1511.06732(2015).
-- Ranzato etal.(2015) マルク・アウレリオ・ランザート、スミット・チョプラ、マイケル・アウリ、そしてヴォイチェフ・ザレンバ. 2015. 再帰的ニューラルネットワークによるシーケンスレベルのトレーニング. arXivプレプリント arXiv:1511.06732(2015).
-- Rao etal.(2016)Jinfeng Rao, Hua He, and Jimmy Lin. 2016.Noise-contrastive estimation for answer selection with deep neural networks. InProceedings of the 25th ACM International on Conference on Information and Knowledge Management. ACM, 1913–1916.
-- Rao etal.(2016) ジンフェン・ラオ、フア・ヘ、そしてジミー・リン. 2016. 深層ニューラルネットワークを用いた回答選択のためのノイズ対比推定. 第25回ACM国際情報および知識管理会議の議事録. ACM, 1913–1916.
-- Rennie etal.(2017)StevenJ Rennie, Etienne Marcheret, Youssef Mroueh, Jerret Ross, and Vaibhava Goel. 2017.Self-critical sequence training for image captioning. InProceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 7008–7024.
-- Rennie etal.(2017) スティーブン・J・レニー、エティエンヌ・マルシェレ、ユセフ・ムロエ、ジェレット・ロス、そしてヴァイババ・ゴエル. 2017. 画像キャプショニングのための自己批判的シーケンストレーニング. IEEEコンピュータビジョンとパターン認識会議の議事録. 7008–7024.
-- Santos etal.(2016)Cicerodos Santos, Ming Tan, Bing Xiang, and Bowen Zhou. 2016.Attentive pooling networks.arXiv preprint arXiv:1602.03609(2016).
-- Santos etal.(2016) シセロ・ドス・サントス、ミン・タン、ビン・シアン、そしてボーウェン・ジョウ. 2016. アテンティブプーリングネットワーク. arXivプレプリント arXiv:1602.03609(2016).
-- Srivastava etal.(2015)RupeshKumar Srivastava, Klaus Greff, and Jürgen Schmidhuber. 2015.Highway networks.arXiv preprint arXiv:1505.00387(2015).
-- Srivastava etal.(2015) ルペシュ・クマール・スリバスタバ、クラウス・グレフ、そしてユルゲン・シュミットフーバー. 2015. ハイウェイネットワーク. arXivプレプリント arXiv:1505.00387(2015).
-- Sutton etal.(2000)RichardS Sutton, DavidA McAllester, SatinderP Singh, and Yishay Mansour. 2000.Policy gradient methods for reinforcement learning with function approximation. InAdvances in neural information processing systems. 1057–1063.
-- Sutton etal.(2000) リチャード・S・サットン、デイビッド・A・マカリスター、サティンダー・P・シン、そしてイシャイ・マンスール. 2000. 関数近似を用いた強化学習のためのポリシー勾配法. ニューラル情報処理システムの進歩. 1057–1063.
-- Tan etal.(2016)Ming Tan, Cicero DosSantos, Bing Xiang, and Bowen Zhou. 2016.Improved representation learning for question answer matching. InProceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), Vol.1. 464–473.
-- Tan etal.(2016) ミン・タン、シセロ・ドス・サントス、ビン・シアン、そしてボーウェン・ジョウ. 2016. 質問回答マッチングのための改善された表現学習. 第54回計算言語学会年次大会の議事録 (第1巻: 長い論文), Vol.1. 464–473.
-- Tay etal.(2018)Yi Tay, LuuAnh Tuan, and SiuCheung Hui. 2018.Multi-cast attention networks for retrieval-based question answering and response prediction.arXiv preprint arXiv:1806.00778(2018).
-- Tay etal.(2018) イー・テイ、ルー・アン・トゥアン、そしてシウ・チョン・フイ. 2018. 取得ベースの質問応答と応答予測のためのマルチキャストアテンションネットワーク. arXivプレプリント arXiv:1806.00778(2018).
-- Taylor etal.(2008)Michael Taylor, John Guiver, Stephen Robertson, and Tom Minka. 2008.Softrank: optimizing non-smooth rank metrics. InProceedings of the 2008 International Conference on Web Search and Data Mining. ACM, 77–86.
-- Taylor etal.(2008) マイケル・テイラー、ジョン・ギバー、スティーブン・ロバートソン、そしてトム・ミンカ. 2008. Softrank: 非滑らかなランキングメトリックの最適化. 2008年国際Web検索とデータマイニング会議の議事録. ACM, 77–86.
-- Wan etal.(2016)Shengxian Wan, Yanyan Lan, Jun Xu, Jiafeng Guo, Liang Pang, and Xueqi Cheng. 2016.Match-srnn: Modeling the recursive matching structure with spatial rnn.arXiv preprint arXiv:1604.04378(2016).
-- Wan etal.(2016) シェンシアン・ワン、ヤンヤン・ラン、ジュン・シュー、ジアフェン・グオ、リャン・パン、そしてシュエチ・チェン. 2016. Match-srnn: 空間RNNを用いた再帰的マッチング構造のモデリング. arXivプレプリント arXiv:1604.04378(2016).
-- Wang etal.(2016a)Bingning Wang, Kang Liu, and Jun Zhao. 2016a.Inner attention based recurrent neural networks for answer selection. InProceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), Vol.1. 1288–1297.
-- Wang etal.(2016a) ビンニング・ワン、カン・リウ、そしてジュン・ジャオ. 2016a. 回答選択のための内部アテンションベースの再帰的ニューラルネットワーク. 第54回計算言語学会年次大会の議事録 (第1巻: 長い論文), Vol.1. 1288–1297.
-- Wang etal.(2017b)Jun Wang, Lantao Yu, Weinan Zhang, Yu Gong, Yinghui Xu, Benyou Wang, Peng Zhang, and Dell Zhang. 2017b.Irgan: A minimax game for unifying generative and discriminative information retrieval models. InProceedings of the 40th International ACM SIGIR conference on Research and Development in Information Retrieval. ACM, 515–524.
-- Wang etal.(2017b) ジュン・ワン、ランタオ・ユー、ウェイナン・ジャン、ユー・ゴン、インフイ・シュー、ベンユウ・ワン、ペン・ジャン、そしてデル・ジャン. 2017b. Irgan: 生成的および識別的情報検索モデルを統一するためのミニマックスゲーム. 第40回国際ACM SIGIR会議の議事録. ACM, 515–524.
-- Wang and Jiang (2016)Shuohang Wang and Jing Jiang. 2016.A compare-aggregate model for matching text sequences.arXiv preprint arXiv:1611.01747(2016).
-- Wang and Jiang (2016) シュオハン・ワンとジン・ジャン. 2016. テキストシーケンスをマッチングするための比較集約モデル. arXivプレプリント arXiv:1611.01747(2016).
-- Wang etal.(2017a)Zhiguo Wang, Wael Hamza, and Radu Florian. 2017a.Bilateral multi-perspective matching for natural language sentences.arXiv preprint arXiv:1702.03814(2017).
-- Wang etal.(2017a) ジグオ・ワン、ワエル・ハムザ、そしてラドゥ・フロリアン. 2017a. 自然言語文のための双方向マルチパースペクティブマッチング. arXivプレプリント arXiv:1702.03814(2017).
-- Wang etal.(2016b)Zhiguo Wang, Haitao Mi, and Abraham Ittycheriah. 2016b.Sentence similarity learning by lexical decomposition and composition.arXiv preprint arXiv:1602.07019(2016).
-- Wang etal.(2016b) ジグオ・ワン、ハイタオ・ミ、そしてアブラハム・イッティチャリア. 2016b. 語彙の分解と構成による文の類似性学習. arXivプレプリント arXiv:1602.07019(2016).
-- Wei etal.(2017)Zeng Wei, Jun Xu, Yanyan Lan, Jiafeng Guo, and Xueqi Cheng. 2017.Reinforcement learning to rank with Markov decision process. InProceedings of the 40th International ACM SIGIR Conference on Research and Development in Information Retrieval. ACM, 945–948.
-- Wei etal.(2017) ゼン・ウェイ、ジュン・シュー、ヤンヤン・ラン、ジアフェン・グオ、そしてシュエチ・チェン. 2017. マルコフ決定過程を用いたランキングのための強化学習. 第40回国際ACM SIGIR会議の議事録. ACM, 945–948.
-- Williams (1992)RonaldJ Williams. 1992.Simple statistical gradient-following algorithms for connectionist reinforcement learning.Machine learning8, 3-4 (1992), 229–256.
-- Williams (1992) ロナルド・J・ウィリアムズ. 1992. コネクショニスト強化学習のための単純な統計的勾配追従アルゴリズム. 機械学習8, 3-4 (1992), 229–256.
-- Wu etal.(2016)Yonghui Wu, Mike Schuster, Zhifeng Chen, QuocV Le, Mohammad Norouzi, Wolfgang Macherey, Maxim Krikun, Yuan Cao, Qin Gao, Klaus Macherey, etal.2016.Google’s neural machine translation system: Bridging the gap between human and machine translation.arXiv preprint arXiv:1609.08144(2016).
-- Wu etal.(2016) ヨンフイ・ウー、マイク・シュースター、ジーフェン・チェン、クオック・V・レ、モハマド・ノルジ、ヴォルフガング・マヘレイ、マキシム・クリクン、ユアン・カオ、チン・ガオ、クラウス・マヘレイ、他. 2016. Googleのニューラル機械翻訳システム: 人間と機械翻訳のギャップを埋める. arXivプレプリント arXiv:1609.08144(2016).
-- Xu and Li (2007)Jun Xu and Hang Li. 2007.Adarank: a boosting algorithm for information retrieval. InProceedings of the 30th annual international ACM SIGIR conference on Research and development in information retrieval. ACM, 391–398.
-- Xu and Li (2007) ジュン・シューとハン・リー. 2007. Adarank: 情報検索のためのブースティングアルゴリズム. 第30回国際ACM SIGIR会議の議事録. ACM, 391–398.
-- Yang etal.(2015)Yi Yang, Wen-tau Yih, and Christopher Meek. 2015.Wikiqa: A challenge dataset for open-domain question answering. InProceedings of the 2015 Conference on Empirical Methods in Natural Language Processing. 2013–2018.
-- Yang etal.(2015) イー・ヤン、ウェン・タウ・イー、そしてクリストファー・ミーク. 2015. Wikiqa: オープンドメイン質問応答のためのチャレンジデータセット. 2015年自然言語処理における経験的手法に関する会議の議事録. 2013–2018.
-- Yu etal.(2017)Lantao Yu, Weinan Zhang, Jun Wang, and Yong Yu. 2017.Seqgan: Sequence generative adversarial nets with policy gradient. InThirty-First AAAI Conference on Artificial Intelligence.
-- Yu etal.(2017) ランタオ・ユー、ウェイナン・ジャン、ジュン・ワン、そしてヨン・ユー. 2017. Seqgan: ポリシー勾配を用いたシーケンス生成的敵対ネットワーク. 第31回AAAI人工知能会議.
-- Yuan etal.(2016)Fajie Yuan, Guibing Guo, JoemonM Jose, Long Chen, Haitao Yu, and Weinan Zhang. 2016.Lambdafm: learning optimal ranking with factorization machines using lambda surrogates. InProceedings of the 25th ACM International on Conference on Information and Knowledge Management. ACM, 227–236.
-- Yuan etal.(2016) ファジエ・ユアン、グイビン・グオ、ジョモン・M・ジョセ、ロン・チェン、ハイタオ・ユー、そしてウェイナン・ジャン. 2016. Lambdafm: ラムダ代理を使用した因子分解機械による最適ランキングの学習. 第25回ACM国際情報および知識管理会議の議事録. ACM, 227–236.
-- Yue etal.(2007)Yisong Yue, Thomas Finley, Filip Radlinski, and Thorsten Joachims. 2007.A support vector method for optimizing average precision. InProceedings of the 30th annual international ACM SIGIR conference on Research and development in information retrieval. ACM, 271–278.
-- Yue etal.(2007) イーソン・ユエ、トーマス・フィンリー、フィリップ・ラドリンスキー、そしてトーステン・ジョアヒムス. 2007. 平均精度を最適化するためのサポートベクターメソッド. 第30回国際ACM SIGIR会議の議事録. ACM, 271–278.
-- Zeng etal.(2018)Wei Zeng, Jun Xu, Yanyan Lan, Jiafeng Guo, and Xueqi Cheng. 2018.Multi Page Search with Reinforcement Learning to Rank. InProceedings of the 2018 ACM SIGIR International Conference on Theory of Information Retrieval. ACM, 175–178.
-- Zeng etal.(2018) ウェイ・ゼン、ジュン・シュー、ヤンヤン・ラン、ジアフェン・グオ、そしてシュエチ・チェン. 2018. 強化学習を用いたマルチページ検索のランキング. 2018年ACM SIGIR情報検索理論国際会議の議事録. ACM, 175–178.
-- Zhang etal.(2013)Weinan Zhang, Tianqi Chen, Jun Wang, and Yong Yu. 2013.Optimizing top-n collaborative filtering via dynamic negative item sampling. InProceedings of the 36th international ACM SIGIR conference on Research and development in information retrieval. ACM, 785–788.
-- Zhang etal.(2013) ウェイナン・ジャン、ティアンキ・チェン、ジュン・ワン、そしてヨン・ユー. 2013. 動的負のアイテムサンプリングを通じたトップn協調フィルタリングの最適化. 第36回国際ACM SIGIR会議の議事録. ACM, 785–788.
-- Zhao etal.(2018)Xiangyu Zhao, Long Xia, Jiliang Tang, and Dawei Yin. 2018.Reinforcement Learning for Online Information Seeking.arXiv preprint arXiv:1812.07127(2018).
-- Zhao etal.(2018) シャンユ・ジャオ、ロン・シャ、ジリアン・タン、そしてダウェイ・イン. 2018. オンライン情報探索のための強化学習. arXivプレプリント arXiv:1812.07127(2018).
