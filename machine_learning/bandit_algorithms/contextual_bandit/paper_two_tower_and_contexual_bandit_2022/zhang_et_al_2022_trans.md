@@ -480,22 +480,3 @@ We report the mean and standard deviation of the cumulative reward or CTR over $
 
 Table 2: Cumulative CTR for one stage policies with different number of users. We recommend 5 news for each user and simulate the experiment with 2,000 iterations, 5 trials. In policy names, “S” means shared parameters, and “N” means using neural contextual information from the NRMS.  
 表2: 異なるユーザー数に対する一段階ポリシーの累積CTR。各ユーザーに5つのニュースを推薦し、2,000イテレーション、5試行で実験をシミュレートします。ポリシー名の「S」は共有パラメータを意味し、「N」はNRMSからのニューラルコンテキスト情報を使用することを意味します。  
-
-**Policy \# User** **10** **100** **1,000**  
-
-Random 320 ± 4 320 ± 2 320 ± 2  
-GLM 442 ± 4 340 ± 4 320 ± 6  
-N-GLM 1,140 ± 39 522 ± 58 341 ± 11  
-N-Greedy 1,188 ± 72 1,244 ± 38 1,282 ± 46  
-N-Dropout 1,198 ± 41 1,256 ± 34 1,286 ± 44  
-S-N-GALM **1,538 ± 20** **1,522 ± 20** **1,540 ± 19**  
-S-N-GBLM 1,402 ± 42 1,366 ± 21 1,362 ± 38  
-
-Table 3: Cumulative CTR for policies with different number of recommendation each iteration. We select 100 users and simulate the experiment with 2,000 iterations, 5 trials. The prefix “2-” indicates two-stage policies.  
-表3: 各イテレーションで異なる数の推薦を持つポリシーの累積CTR。100人のユーザーを選択し、2,000イテレーション、5試行で実験をシミュレートします。接頭辞「2-」は二段階ポリシーを示します。  
-
-**Policy \# Recs** **1** **5** **10**  
-
-Random 298 ± 1 320 ± 2 300 ± 3  
-N-Greedy 418 ± 224 1,244 ± 38 1,364 ± 32  
-N-Dropout 428 ± 222 1,256 ± 34 1,368 ±
