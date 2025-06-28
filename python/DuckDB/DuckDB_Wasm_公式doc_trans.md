@@ -365,7 +365,7 @@ const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
 const worker = new Worker(bundle.mainWorker!);
 const logger = new duckdb.ConsoleLogger();
 const db = new duckdb.AsyncDuckDB(logger, worker);
-await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+await db.instantiate(bundle.mainstreModule, bundle.pthreadWorker);
 ```
 
 You can also test the features and selected bundle in your browser using the web shell command features. 

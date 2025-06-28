@@ -41,4 +41,3 @@ await db.instantiate(duckdb_wasm, {
 
 - 注意点:
   - OFPSサポートしてるブラウザは限定されてる。(Chrome系が安定)
-  - 
