@@ -26,18 +26,34 @@
   - 通常の仮想ファイルはブラウザリロードしたら消える。OPFSは永続化される。
   - 通常の仮想ファイルは、メモリ上だけで動く。OPFSはブラウザのストレージに書き込まれる。
   - 通常の仮想ファイルは、小規模データのみ。OPFSは大規模データも扱える。
+- 最近DuckDB-WasmがOPFS対応がマージされた。
+  - [Add OPFS (Origin Private File System) Support by e1arikawa · Pull Request #1856 · duckdb/duckdb-wasm](https://github.com/duckdb/duckdb-wasm/pull/1856)
+  - DuckDB-Wasmのデータベース保存先をOPFSにするという仕組み。
+  - 利用方法はシンプルで db.instantiate した後に db.open で path に `opfs://` から始める。
+    - 書き込みと読み込みをするので、アクセスモードは `READ_WRITE` を指定する。
+- 注意点:
+  - OFPSサポートしてるブラウザは限定されてる。(Chrome系が安定)
 
 実装イメージ:
 
-
 ```typescript
-const db = new duckdb.AsyncDuckDB(logger, worker);
-await db.instantiate(duckdb_wasm, {
-  // OPFSを使うオプション
-  path: 'my_database.db', // OPFS上のデータベースファイル名
-  useOPFS: true, // OPFSを使用するフラグ
-});
+import * as duckdb from '@duckdb/duckdb-wasm'
+import duckdb_worker from '@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?worker'
+import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url'
+
+const worker = new duckdb_worker()
+const logger = new duckdb.ConsoleLogger()
+const db = new duckdb.AsyncDuckDB(logger, worker)
+
+// instantiate DuckDB with the worker and wasm module
+await db.instantiate(duckdb_wasm)
+// open a database in OPFS
+await db.open({
+    path: 'opfs://duckdb-wasm-opfs.db',
+    accessMode: duckdb.DuckDBAccessMode.READ_WRITE,
+})
+
+// 書き込む場合は、
 ```
 
-- 注意点:
-  - OFPSサポートしてるブラウザは限定されてる。(Chrome系が安定)
+
