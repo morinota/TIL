@@ -194,6 +194,32 @@ export class FeatureStoreStack extends cdk.Stack {
 }
 ```
 
+- (2025/06/29追記) cdkでFeature Storeのリソースを定義する場合の困ったポイント:
+  - SageMaker Feature Groupを更新しようとしたら、カスタム名（user-feature-group）があるせいでエラーが出る！
+    - `CloudFormation cannot update a stack when a custom-named resource requires replacing.`
+    - ざっくり↑の意味:
+      - カスタム名リソース（`FeatureGroupName` で名前を指定してるリソース）を置き換え（replace）が必要な変更を加えようとした。
+      - **CloudFormationは「カスタム名リソースを置き換える時は、一度リソース名を変えてね」って怒ってる**
+    - なぜこのエラーが出た??
+      - **Feature Groupのプロパティで変更不可な設定を更新しようとしたから!**
+        - ex. OnlineStoreConfigからOfflineStoreConfigへの変更, パーティションキーの変更, ストレージタイプの変更（Iceberg ↔ Glue）
+    - 解決策: **一時的にリソース名を変更（最速！）**
+      - `FeatureGroupName`を一時的に変更して、cdk deploy。
+      - その上で元の名前に戻してもう一度デプロイ。
+      - この方法であれば、オフラインストア内のデータは消えたりしない(でも手動でS3からコピーしてきたりする必要はあるのかも...:thinking:)
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### Feature Storeへの特徴量レコードの書き込み
 
 前セクションにて、特徴量を管理するためのfeature groupを定義できました。
