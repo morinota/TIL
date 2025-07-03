@@ -75,3 +75,25 @@ validate()の流れは以下:
 ## エラーレポート
 
 panderaは、検証エラーが発生した場合に、以下のようにエラーを報告する。
+
+- SchemaError(即時エラー): デフォルトでは、最初のvalidationエラーが見つかった時点でSchemaErrorが即座に発生する。
+- SchemaErrors(遅延検証): `validate(..., lazy=True)`のように遅延検証(lazy validation)を指定すると、panderaはSchemaErrors例外を発生させる。これは、データ内に存在するすべての検証エラーを収集したい場合に役立つ。
+
+ちなみにPanderaのLazy Validation と PolarsのLazy APIは、名前が衝突しているが異なる概念を示す。
+
+- PanderaのLazy Validation: 全てのパーサーとチェックが全データに適用された後に`SchemaErrors`例外を返す機能。
+- PolarsのLazy API: 計算グラフを構築し、`.collect()`が呼び出されるまで実際の実行を遅らせる機能。
+
+## Validationでサポートされるデータ型
+
+- Panderaは現在、**全てのPolarsデータ型をサポートしてる**。
+  - Polarsネストされたデータ型 (ex. List, Array, Struct)
+
+## カスタムチェック
+
+- panderaのすべての組み込みチェックメソッドはPolars統合でサポートされてる。
+- さらに、**独自のカスタムチェック**を定義することも可能。
+
+### カスタムチェック関数の定義
+
+
