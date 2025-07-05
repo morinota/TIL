@@ -209,6 +209,20 @@ export class FeatureStoreStack extends cdk.Stack {
       - この方法であれば、オフラインストア内のデータは消えたりしない(でも手動でS3からコピーしてきたりする必要はあるのかも...:thinking:)
 
 
+- Sagemaker Feature Groupのプロパティで、後から変更可能な設定とそうでない設定:
+  - 変更可能な設定:
+    - 特徴量(Feature)の追加:
+      - **既存のFeature Groupに新しい特徴量（カラム）を追加できる**。
+      - ただし、一度追加した特徴量は削除できないので注意。
+    - オンラインストアのキャパシティ設定:
+      - Online StoreのTTL（Time To Live）やスループット（読み書きキャパシティ）など、一部の設定は後から変更できる。
+      - スループットモード（オンデマンド⇔プロビジョンド）は24時間に1回だけ切り替え可能。
+  - 変更不能な設定:
+    - 既存の特徴量の削除・型や名前の変更。
+    - Feature Group名の変更
+    - Record Identifier（主キー）やEvent TimeのFeature名の変更。
+    - オフラインストアの有効/無効やS3の保存先。
+  - 
 
 
 
