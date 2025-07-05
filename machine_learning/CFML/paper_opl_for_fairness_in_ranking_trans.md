@@ -110,30 +110,30 @@ Each query q has a candidate set of documents d[q] = {d[q]1[, d][q]2[, . . . d][
 Our framework is agnostic to how relevance is] defined, and it could be the probability that a user with query q finds the document relevant, or it could be some subjective judgment of relevance as assigned by a relevance judge. 
 私たちのフレームワークは、関連性がどのように定義されるかに依存しません。それは例えば、クエリqを持つユーザーがドキュメントを関連性があると見なす確率であったり、関連性の判断者によって割り当てられた主観的な関連性の判断であったりする可能性があります。
 Finally, each document d[q]i [is represented by a feature vector][ x]i[q] [= Ψ(][q, d]i[q][)][ that describes the match between] document d[q]i [and query][ q][.] 
-最後に、各ドキュメント $d^{q}_{i}$ は、ドキュメント $d^{q}_{i}$ とクエリ $q$ の間のマッチを記述する特徴ベクトル $x^{i}_{q} = \Psi(q, d^{i}_{q})$ で表されます。
+最後に各ドキュメント $d^{q}_{i}$ は、ドキュメント $d^{q}_{i}$ とクエリ $q$ の間のマッチを記述する特徴ベクトル $x^{i}_{q} = \Psi(q, d^{i}_{q})$ で表されます。
 
 We consider stochastic ranking functions π ∈ Π, where π(r|q) is a distribution over the rankings r (i.e. permutations) of the candidate set. 
 私たちは、確率的ランキング関数 $\pi \in \Pi$ を考慮します。ここで、$\pi(r|q)$ は候補セットのランキング $r$（すなわち順列）に対する分布です。
 We refer to π as a ranking policy and note that deterministic ranking functions are merely a special case. 
-私たちは**πをランキングポリシー**と呼び、決定論的ランキング関数は単なる特別なケースであることに注意します。(うんうん、反実仮想機械学習っぽいnotationだ...!:thinking:)
+私たちは**$\pi$をランキングポリシー**と呼び、決定論的ランキング関数は単なる特別なケースであることに注意します。(うんうん、反実仮想機械学習っぽいnotationだ...!:thinking:)
 However, a key advantage of considering the full space of stochastic ranking policies is their ability to distribute expected exposure in a continuous fashion, which provides more fine-grained control and enables gradient-based optimization. 
 しかし、**確率的ランキングポリシーの全空間を考慮することの重要な利点は、期待される露出を連続的に分配できること**であり、これによりより細かい制御が可能になり、勾配ベースの最適化が可能になります。
 
 The conventional goal in LTR is to find a ranking policy π[∗] that maximizes the expected utility of π _π[∗]_ = argmaxπ∈Π Eq∼Q�U (π|q)�, 
-LTRにおける従来の目標は、期待される効用を最大化するランキングポリシーπ[∗]を見つけることです。これは、次のように表されます： 
+LTRにおける従来の目標は、期待される効用を最大化するランキングポリシー $\pi^{*}$ を見つけることです。これは、次のように表されます： 
 
 $$
 \pi^{*} = \arg\max_{\pi \in \Pi} \mathbb{E}_{q \sim Q} [U(\pi | q)]
 $$
 
 where the utility of a stochastic policy π for a query q is defined as the expectation of a ranking metric ∆ over π _U_ (π|q) = Er∼π(r|q) �∆�r, rel[q][��] _._ 
-ここで、クエリqに対する確率的ポリシーπの効用は、次のように定義されます:
+ここで、クエリ $q$ に対する確率的ポリシー $\pi$ の効用は、ランキングメトリック $\Delta$ の期待値として定義されます。これは次のように表されます: 
+(Utilityって、クエリ $q$ に対してランキング方策 $\pi$ を適用する場合の報酬期待値みたいな感じ...??:thinking:)
 
 $$
 U(\pi | q) = \mathbb{E}_{r \sim \pi(r|q)} [\Delta(r, rel[q])]
 $$
 
-(デルタって、要するにランキングの報酬関数もしくは損失関数みたいなイメージだな...! :thinking:)
 Common choices for ∆ are DCG, NDCG, Average Rank, or ERR. 
 **∆の一般的な選択肢には、DCG、NDCG、平均ランク、またはERR**があります。
 For concreteness, we focus on NDCG as in (Chapelle and Chang, 2011), which is the normalized version of ∆DCG(r, rel[q]) = [�]j[n]=1[q] _ulog(1+(r(j)|jq))_ [,] where u(r(j)|q) is the utility of the document placed by ranking r on position j for q as a function of relevance (e.g., u(i|q) = 2[rel]i[q] − 1). 
@@ -141,74 +141,63 @@ For concreteness, we focus on NDCG as in (Chapelle and Chang, 2011), which is th
 NDCG normalizes DCG via ∆NDCG(r, rel[q]) = max∆rDCG ∆DCG(r,rel(r,[q]rel) _[q])_ [.]
 NDCGは、次のようにDCGを正規化します：$\Delta_{NDCG}(r, rel[q]) = \frac{\Delta_{DCG}(r, rel[q])}{\max_{r'} \Delta_{DCG}(r', rel[q])}$。
 
+<!-- ここまで読んだ! -->
 
 #### Fair Ranking policies. 公正なランキングポリシー
 
 Instead of single-mindedly maximizing this utility measure like in conventional LTR algorithms, we include a constraint into the learning problem that enforces an application-dependent notion of fair allocation of exposure. 
-従来のLTRアルゴリズムのようにこの効用測定を単純に最大化するのではなく、私たちは露出の公正な割り当てのアプリケーション依存の概念を強制する制約を学習問題に含めます。
+従来のLTRアルゴリズムのようにこの効用指標を単純に最大化するのではなく、私たちは露出の公正な割り当てのアプリケーション依存の概念を強制する制約を学習問題に含めます。
 To this effect, let’s denote with D(π|q) ≥ 0 a measure of unfairness or the disparity, which we will define in detail in Section § 2.2. 
-この目的のために、$D(\pi|q) >= 0$ を不公平もしくはdisparityを計測するものとして導入します。
+この目的のために、$D(\pi|q) >= 0$ を unfairness (不公平さ) または disparity (格差) の尺度とし、§ 2.2 で詳細に定義します。
 We can now formulate the objective of fair LTR by constraining the space of admissible ranking policies to those that have expected disparity less than some parameter δ. 
-これにより、期待される格差があるパラメータδ未満であるような許容可能なランキングポリシーの空間を制約することによって、公正なLTRの目的を定式化できます。
+これにより、期待される格差があるパラメータ $\delta$ よりも小さいランキングポリシーの空間を制約することによって、公正なLTRの目的を定式化できます。(方策を探索する際に、閾値を制約にするのか...!:thinking:)
 
 _πδ[∗]_ [= argmax]π [E][q][∼Q] [[][U] [(][π][|][q][)]][ s.t.][ E][q][∼Q] [[][D][(][π][|][q][)]][ ≤] _[δ]_ 
 _πδ[∗]_ [= argmax]π [E][q][∼Q] [[][U] [(][π][|][q][)]][ s.t.][ E][q][∼Q] [[][D][(][π][|][q][)]][ ≤] _[δ]_ 
 
 $$
-\pi^{*}_{\delta} = 
+\pi^{*}_{\delta} = \argmax_{\pi} \mathbb{E}_{q \sim Q} [U(\pi | q)] \quad \text{s.t.} \quad \mathbb{E}_{q \sim Q} [D(\pi | q)] \leq \delta
+% 日本語にすると、$\pi^{*}_{\delta}$ は、クエリ空間における効用の期待値を最大化しつつ、不公平さ期待値が $\delta$ 以下であるようなランキングポリシーを最適化する。
 $$
 
 Since we only observe samples from the query distribution Q, we resort to the ERM principle and estimate the expectations with their empirical counterparts. 
-クエリ分布Qからのサンプルのみを観察するため、私たちはERM原則に頼り、期待値をその経験的対応物で推定します。
+クエリ分布 $Q$ からのサンプルのみを観察するため、私たちはERM原則(=経験的リスク最小化原則)に頼り、期待値を経験的な対応物で推定します。
+(これはつまり、クエリ分布 $Q$ から観測されたサンプルの経験平均を用いて、クエリ分布に対する各種期待値を推定する、ってこと...!:thinking:)
 Denoting the training set as _T = {(x[q], rel[q])}q[N]=1[, the empirical analog of the optimization problem becomes_  
-トレーニングセットを_T = {(x[q], rel[q])}q[N]=1_とし、最適化問題の経験的アナログは次のようになります。
+トレーニングセットを_T = {(x[q], rel[q])}q[N]=1_とし、最適化問題の経験的アナログ(=実際に計算する式?)は次のようになります。
 
-_N_ �
-(π _q)_ _δ_ _D_ _|_ _≤_ _q=1_  
-1 _πˆδ[∗]_ [= argmax]π
-_N_  
-_N_ �
-_U_ (π|q) s.t. [1]
-_N_
-_q=1_  
+$$
+\hat{\pi}^{*}_{\delta} = \argmax_{\pi} \frac{1}{N} \sum_{q=1}^{N} U(\pi | q) \quad \text{s.t.} \quad \frac{1}{N} \sum_{q=1}^{N} D(\pi | q) \leq \delta
+% 日本語にすると、$\pi^{*}_{\delta}$ は、トレーニングセットの経験平均による期待効用の推定値を最大化しつつ、トレーニングセットの経験平均による期待不公平さの推定値が $\delta$ 以下であるようなランキングポリシーを最適化する。
+$$
 
 
 Using a Lagrange multiplier, this is equivalent to  
-ラグランジュ乗数を使用すると、これは次のように等価になります。
+ラグランジュ乗数 $\lambda$ を使用すると、これは次のように等価になります。
 
-� _N_ � 1 �
-(π _q)_ _δ_ _D_ _|_ _−_
-_N_
-_q=1_  
-1 _πˆδ[∗]_ [= argmax]π [min] _λ≥0_ _N_  
-_N_ �
-_U_ (π _q)_ _λ_ _|_ _−_ _q=1_  
-_._  
-
+$$
+\hat{\pi}^{*}_{\delta} = \argmax_{\pi} \min_{\lambda \geq 0} \frac{1}{N} \sum_{q=1}^{N} U(\pi | q) - \lambda \left( \frac{1}{N} \sum_{q=1}^{N} D(\pi | q) - \delta \right)
+$$
 
 In the following, we avoid minimization w.r.t. λ for a chosen δ. 
-以下では、選択したδに対してλに関する最小化を避けます。
-Instead, we steer the utility/fairness trade-off by chosing a particular λ and then computing the corresponding δ afterwards. 
-代わりに、特定のλを選択し、その後に対応するδを計算することによって、効用と公正性のトレードオフを調整します。
+以下では、選択した $\delta$ に対して $\lambda$ に関する最小化を避けます。
+Instead, we steer the utility/fairness trade-off by chosing a particular $\lambda$ and then computing the corresponding $\delta$ afterwards.
+代わりに、特定の $\lambda$ を選択し、その後に対応する $\delta$ を計算することによって、効用と公正性のトレードオフを調整します。
 This means we merely have to solve
 これは、単に次の問題を解決する必要があることを意味します。
 
-_N_ �
-_D(π|q)_ (1) _q=1_  
-1 _πˆλ[∗]_ [= argmax]π
-_N_  
-_N_ �
-_U_ (π _q)_ _λ_ [1] _|_ _−_
-_N_
-_q=1_
-3  
------
-and then recover δλ = _N[1]_ �Nq=1 _[D][(][π][ˆ]λ[∗][|][q][)][ afterwards. 
-その後、δλ = _N[1]_ �Nq=1 _[D][(][π][ˆ]λ[∗][|][q][)][を回復します。
+$$
+\hat{\pi}^{*}_{\lambda} = \argmax_{\pi} \frac{1}{N} \sum_{q=1}^{N} U(\pi | q) - \lambda \frac{1}{N} \sum_{q=1}^{N} D(\pi | q)
+\tag{1}
+$$
 
+and then recover δλ = _N[1]_ �Nq=1 _[D][(][π][ˆ]λ[∗][|][q][)][ afterwards. 
+その後、$\delta_{\lambda} = \frac{1}{N} \sum_{q=1}^{N} D(\hat{\pi}^{*}_{\lambda} | q)$ を回復します。
 Note that this formulation implements our third]_
 goal from the opening paragraph, although we still lack a concrete definition of D. 
 この定式化は、冒頭の段落からの私たちの3番目の目標を実装していますが、Dの具体的な定義はまだ欠けています。
+
+<!-- ここまで読んだ! -->
 
 ### 2.2 Defining a Class of Fairness Measures for Rankings ランキングの公平性を測定するクラスの定義
 
@@ -294,6 +283,7 @@ We can now define the following disparity measure D that** captures in how far t
 
 $$
 D_{ind}(\pi|q) = \frac{1}{|H_q|} \sum_{(i,j) \in H_q} \max(0, \frac{Exposure(d_i|\pi)}{M(rel_i)} - \frac{Exposure(d_j|\pi)}{M(rel_j)})
+\tag{3}
 $$
 
 where $H_q = \{(i,j) \mid M(rel_i) \geq M(rel_j) > 0\}$. 
@@ -306,27 +296,26 @@ The measure Dind(π|q) is always non-negative and it equals zero only when the i
 #### Group fairness disparity.  グループの公正性の格差
 
 The disparity measure from above implements an individual notion** of fairness, while other applications ask for a group-based notion. 
-上記の格差測定は個々の公正性の概念を実装していますが、他のアプリケーションではグループベースの概念を求めています。
+上記の格差測定は個々の公正性の概念を実装していますが、**他のアプリケーションではグループベースの概念を求めています**。(まあ確かに。動画ランキングの文脈では、各チャンネル単位の公正性を考えることも多そう...!:thinking:)
 Here, fairness is aggregated over the members of each group. 
 ここでは、公正性は各グループのメンバーに対して集約されます。
 A group of documents can refer to sets of items sold by one seller in an online marketplace, to content published by one publisher, or to job candidates belonging to a protected group. 
-ドキュメントのグループは、オンラインマーケットプレイスで1人の売り手によって販売されるアイテムのセット、1人の出版社によって公開されたコンテンツ、または保護されたグループに属する求職者を指すことができます。
+ドキュメントのグループは、例えば、オンラインマーケットプレイスで1人の売り手によって販売されるアイテムのセット、1人の出版社によって公開されたコンテンツ、または保護されたグループに属する求職者を指すことができます。(うんうん...!:thinking:)
 Similar to the case of individual fairness, we want to allocate exposure to groups proportional to their merit. 
 個々の公正性のケースと同様に、私たちはグループに対してそのメリットに比例した露出を割り当てたいと考えています。
 Hence, in the case of only two groups G0 and G1, we can define the following group fairness disparity for query q as  
-したがって、2つのグループG0とG1のみの場合、クエリqに対する次のグループ公正性の格差を定義できます。
+したがって、2つのグループ $G_0$ と $G_1$ のみの場合、クエリ $q$ に対する次のグループ公正性の格差を定義できます:
 
 $$
-D_{group}
+D_{group}(\pi|q) = \max(0, \frac{Exposure(G_i|\pi)}{M_{G_i}} - \frac{Exposure(G_j|\pi)}{M_{G_j}})
+\tag{4}
 $$
-
-� _Dgroup(π|q) = max_ 0, [v][π][(][G][i][)] _−_ _[v][π][(][G][j][)]_
-_MGi_ _MGj_  
-� _,_ (4)  
 
 where Gi and Gj are such that MGi ≥ _MGj and Exposure(G|π) = vπ(G) =_ _|G1_ _|_ �di∈G _[v][π][(][d][i][)] is the average exposure of group G, and the merit of the group G is denoted by MG = _|G1_ _|_ �di∈G _[M][i][.]_
+ここで、$G_i$ と $G_j$ は $M_{G_i} \geq M_{G_j}$ (i.e. つまりグループ $G_i$ のメリット 大なり等しい グループ $G_j$ のメリット) である。
+$Exposure(G|\pi) = v_{\pi}(G) = \frac{1}{|G|} \sum_{d_i \in G} v_{\pi}(d_i)$ はあるグループ $G$ の平均露出を表し、グループ $G$ のメリットは $M_G = \frac{1}{|G|} \sum_{d_i \in G} M_i$ (i.e. グループ $G$ の全ドキュメントのメリットの平均) で表されます。
 
-<!-- ここまで雑に読んだ! -->
+<!-- ここまで読んだ! -->
 
 ## 3. Fair-PG-Rank: A Policy Learning Algorithm for Fair LTR 公平なLTRのためのポリシー学習アルゴリズム
 
@@ -345,19 +334,22 @@ The ranking policies π we define in the following comprise of two components: a
 以下で定義する**ランキングポリシー π は、ランキングに対する分布を定義するスコアリングモデルと、それに関連するサンプリング手法の2つのコンポーネントで構成**されています。
 (メモ: やっぱりこの2段階にはなるのか。いきなりランキングをサンプリングするような手法はあまり現実的ではないのかも...!:thinking:)
 Starting with the scoring model hθ, we allow any differentiable machine learning model with parameters θ, for example a linear model or a neural network.
-スコアリングモデル hθ から始めて、パラメータ θ を持つ任意の微分可能な機械学習モデル、たとえば線形モデルやニューラルネットワークを許可します。 
+スコアリングモデル $h_{\theta}$ から始めて、パラメータ $\theta$ を持つ任意の微分可能な機械学習モデル、たとえば線形モデルやニューラルネットワークを許可します。 
 Given an input x[q] representing the feature vectors of all query-document pairs of the candidate set, the scoring model outputs a vector of scores _hθ(x[q]) = (hθ(x[q]1[)][, h][θ][(][x][q]2[)][, . . . h][θ][(][x]n[q]_ _q_ [))][. 
-候補セットのすべてのクエリ-ドキュメントペアの特徴ベクトルを表す入力 x[q] が与えられると、スコアリングモデルはスコアのベクトル _hθ(x[q]) = (hθ(x[q]1[)][, h][θ][(][x][q]2[)][, . . . h][θ][(][x]n[q]_ _q_ [))][を出力します。 
+候補セットのすべてのクエリ-ドキュメントペアの特徴ベクトルを表す入力 $x^q$ が与えられると、スコアリングモデルはスコアのベクトル $h_{\theta}(x^q) = (h_{\theta}(x^q_1), h_{\theta}(x^q_2), \ldots, h_{\theta}(x^{n[q]}))$ を出力します。
 Based on this score vector, the probability][ π][θ][(][r][|][q][)][ of a ranking] _r = ⟨r(1), r(2), . . . r(nq)⟩_ under the Plackett-Luce model (Plackett, 1975; Luce, 1959) is the following product of softmax distributions  
-このスコアベクトルに基づいて、Plackett-Luce モデル (Plackett, 1975; Luce, 1959) の下でのランキング _r = ⟨r(1), r(2), . . . r(nq)⟩_ の確率][ π][θ][(][r][|][q][)][は、次のソフトマックス分布の積です。  
+このスコアベクトルに基づいて、Plackett-Luce モデル (Plackett, 1975; Luce, 1959) の下で、ランキング $r = (r(1), r(2), \ldots, r(n_q))$ の確率 $\pi_{\theta}(r|q)$ は 以下のソフトマックス分布になります:
 
 $$
 \piθ(r|q) = \frac{exp(hθ(x[q]r(i)[))}{\sum_{i=1}^{nq} exp(hθ(x[q]r(i)[))} 
+
+\pi_{\theta}(r|q) = \prod_{i=1}^{n_q} \frac{\exp(h_{\theta}(x^q_{r(i)}))}{\sum_{j=i}^{n_q} \exp(h_{\theta}(x^q_{r(j)}))}
+\tag{5}
 $$  
 
-Note that this probability of a ranking can be computed efficiently, and that the derivative of _πθ(r|q) and log πθ(r|q) exists whenever the scoring model hθ is differentiable. 
-このランキングの確率は効率的に計算でき、スコアリングモデル hθ が微分可能である限り、_πθ(r|q) および log πθ(r|q) の導関数が存在することに注意してください。 
-Sampling a ranking_ under the Plackett-Luce model is efficient as well. 
+Note that this probability of a ranking can be computed efficiently, and that the derivative of $\pi_{\theta}(r|q)$ and $\log \pi_{\theta}(r|q)$ exists whenever the scoring model $h_{\theta}$ is differentiable. 
+このランキングの確率は効率的に計算でき、スコアリングモデル $h_{\theta}$ が微分可能である限り、$\pi_{\theta}(r|q)$ および $\log \pi_{\theta}(r|q)$ の導関数が存在することに注意してください。 
+Sampling a ranking under the Plackett-Luce model is efficient as well. 
 Plackett-Luce モデルの下でランキングをサンプリングすることも効率的です。 
 To sample a ranking, starting from the top, documents are drawn recursively from the probability distribution resulting from Softmax over the scores of the remaining documents in the candidate set, until the set is empty. 
 ランキングをサンプリングするには、最初に上から始めて、候補セット内の残りのドキュメントのスコアに対するソフトマックスから得られる確率分布からドキュメントを再帰的に引き出し、セットが空になるまで続けます。(うんうん、これぞプラケットルースモデルだ...!!:thinking:)
