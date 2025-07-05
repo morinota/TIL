@@ -64,7 +64,7 @@ Second, we propose a class of fairness constraints for ranking that incorporates
 And, third, we propose a policy-gradient method for implementing the ERM procedure that can directly optimize any information retrieval utility metric and a wide range of fairness criteria.  
 第三に、**任意の情報検索効用メトリックと幅広い公正性基準を直接最適化できるERM手続き**を実装するためのポリシー勾配法を提案します。  
 Across a number of empirical evaluations, we find that the policy-gradient approach is a competitive LTR method in its own right, that Fair-PG-Rank can identify and avoid biased features when trading-off utility for fairness, and that it can effectively optimize notions of individual and group fairness on real-world datasets.  
-いくつかの実証評価を通じて、ポリシー勾配アプローチが独自に競争力のあるLTR手法であり、Fair-PG-Rankが効用と公正性のトレードオフを行う際にバイアスのある特徴を特定し回避できること、そして実世界のデータセットにおいて個人の公正性とグループの公正性の概念を効果的に最適化できることがわかりました。
+いくつかの実証評価を通じて、**ポリシー勾配アプローチが独自に競争力のあるLTR手法であり**、Fair-PG-Rankが効用と公正性のトレードオフを行う際にバイアスのある特徴を特定し回避できること、そして実世界のデータセットにおいて個人の公正性とグループの公正性の概念を効果的に最適化できることがわかりました。
 
 <!-- ここまで読んだ! -->
 
@@ -222,7 +222,7 @@ In order to formulate any specific disparity measure D, we first need to define 
 #### **Position Bias**. 
 
 The position bias of position j, vj, is defined as the fraction of users accessing a ranking who examine the item at position j. 
-**位置バイアス**。位置jの位置バイアスvjは、ランキングにアクセスするユーザーのうち、位置jのアイテムを調べる割合として定義されます。
+**位置バイアス**。位置 $j$ の**位置バイアス $v_j$ は、ランキングにアクセスするユーザのうち、位置 $j$ のアイテムを調べる割合**として定義されます。
 This captures how much attention a result will receive, where higher positions are expected to receive more attention than lower positions. 
 **これは、結果がどれだけの注意を受けるかを捉え、高い位置は低い位置よりも多くの注意を受けることが期待されます**。
 In operational systems, position bias can be directly measured using eye-tracking (Joachims et al., 2007), or indirectly estimated through swap experiments (Joachims et al., 2017) or intervention harvesting (Agarwal et al., 2019; Fang et al., 2019). 
@@ -233,55 +233,55 @@ In operational systems, position bias can be directly measured using eye-trackin
 #### **Exposure**. 
 
 For a given query q and ranking distribution π(r|q), the exposure of a document is defined as the expected attention that a document receives. 
-**露出**。特定のクエリ $q$ とランキング分布 $π(r|q)$ に対するドキュメントの露出は、**ドキュメントが受ける注意の期待値**として定義されます。
+**露出**。特定のクエリ $q$ とランキング分布 $\pi(r|q)$ に対するドキュメントの露出は、**ドキュメントが受ける注意の期待値**として定義されます。
 This is equivalent to the expected position bias from all the positions that the document can be placed in. 
 これは、ドキュメントが配置される可能性のあるすべての位置からの位置バイアスの期待値に相当します。
-Exposure is denoted as _vπ(di) and can be expressed as_
-露出は_vπ(di)と表され、次のように表現できます。
-
-Exposure(di|π) = vπ(di) = Er∼π(r|q) �vr(di)� _,_ (2) 
-Exposure(di|π) = vπ(di) = Er∼π(r|q) �vr(di)� _,_ (2) 
+Exposure is denoted as $v_{\pi}(d_i)$ and can be expressed as
+露出は $v_{\pi}(d_i)$ $と表され、次のように表現できます。
 
 $$
-Exposure(d_{i}|\pi) = v_{\pi}(d_i) = 
+Exposure(d_{i}|\pi) = v_{\pi}(d_i) = \mathbb{E}_{r \sim \pi(r|q)} [v_{r}(d_i)]
 $$
 
-where r(di) is the position of document di under ranking r. 
-ここで、r(di)はランキングrの下でのドキュメントdiの位置です。
+where $r(d_i)$ is the position of document $d_i$ under ranking $r$. 
+ここで、$r(d_i)$ はランキング $r$ の下でのドキュメント $d_i$ の位置です。
 
 #### **Allocating exposure based on merit.**
 
 Our first two goals from the opening paragraph postulate that exposure should be based on an application dependent notion of merit. 
 **メリットに基づく露出の割り当て。** 冒頭の段落からの最初の2つの目標は、**露出はアプリケーション依存のメリットの概念に基づくべき**であると仮定しています。
-We define the _merit of a document as a function of its relevance to the query (e.g., $
-私たちは、ドキュメントのメリットをそのクエリに対する関連性の関数として定義します（例：reli、rel[2]i_ [または][ √][rel][i] [アプリケーションに応じて]）。
-Let’s denote the merit of document di as M (reli) ≥ 0, or simply Mi, and we state that each document in the candidate set should get exposure proportional to its merit Mi. 
-ドキュメントdiのメリットをM (reli) ≥ 0、または単にMiとし、候補セット内の各ドキュメントはそのメリットMiに比例した露出を得るべきであると述べます。
+We define the _merit of a document as a function of its relevance to the query (e.g., $M_i = \text{rel}(d_i)$ for document $d_i$). 
+私たちは、**ドキュメントのメリットをそのクエリに対する関連性の関数として定義**します（例：$rel_{i}$, $rel_{i}^2$, or $\sqrt{rel_{i}}$） 
+Let’s denote the merit of document $d_i$ as $M_i \geq 0$, or simply $M_i$, and we state that each document in the candidate set should get exposure proportional to its merit $M_i$. 
+ドキュメント $d_i$ のメリットを $M(rel_{i}) \geq 0$、または単に $M_i$ とし、**候補セット内の各ドキュメントはそのメリット $M_i$ に比例した露出を得るべき**であると述べます。
 
-_∀di ∈_ _d[q]_ : Exposure(di|π) ∝ _M_ (reli) 
-_∀di ∈_ _d[q]_ : Exposure(di|π) ∝ _M_ (reli) 
+$$
+% 全てのドキュメントにおいて、露出はメリットに比例すべき。
+\forall d_i \in d^{q}, Exposure(d_i|\pi) \propto M(rel_i)
+$$
+
 
 For many queries, however, this set of exposure constraints is infeasible. 
 しかし、多くのクエリに対して、この露出制約のセットは実現不可能です。
 As an example, consider a query where one document in the candidate set has relevance 1, while all other documents have small relevance ϵ. 
-例として、**候補セット内の1つのドキュメントが関連性1を持ち、他のすべてのドキュメントが小さな関連性ϵを持つクエリ**を考えます。(epsilon-greedyの)
+例として、**候補セット内の1つのドキュメントが関連度 1 を持ち、他のすべてのドキュメントが小さな関連度 $\epsilon$ を持つクエリ**を考えます。(なんかepsilon-greedyっぽい設定だ...!!:thinking:)
 For sufficiently small ϵ, any ranking will provide too much exposure to the ϵ-relevant documents, since we have to put these documents somewhere in the ranking. 
-十分に小さなϵの場合、どのランキングでもϵ関連のドキュメントに過剰な露出を提供します。なぜなら、これらのドキュメントをランキングのどこかに配置しなければならないからです。
+十分に小さなϵの場合、どのランキングでも関連度 $\epsilon$ のドキュメントに過剰な露出を提供します。なぜなら、これらのドキュメントをランキングのどこかに配置しなければならないからです。(なるほど、これだと、露出とメリットが比例する、という制約を満たせない:thinking:)
 This violates the exposure constraint, and this shortcoming is also present in the Disparate Exposure measure of Singh and Joachims (2018) and the Equity of Attention constraint of Biega et al. (2018). 
 これは露出制約に違反し、この欠点はSinghとJoachims（2018）の不均等な露出測定やBiegaら（2018）の注意の公平性制約にも存在します。
 
 To overcome this problem of overabundance of exposure, we instead consider the following set of inequality constraints where ∀di, dj ∈ _d[q]_ with M (reli) ≥ _M_ (relj) > 0, 
-露出の過剰供給の問題を克服するために、私たちは代わりに次の不等式制約のセットを考慮します。ここで、∀di, dj ∈ _d[q]_ でM (reli) ≥ _M_ (relj) > 0です。
+<!-- 露出の過剰供給の問題を克服するために、私たちは代わりに次の不等式制約のセットを考慮します。ここで、∀di, dj ∈ _d[q]_ でM (reli) ≥ _M_ (relj) > 0です。 -->
+露出の過剰供給の問題を克服するために、代わりに次の不等式制約のセットを考慮します。ここで、$\forall d_i, d_j \in d^{q}$ で $M(rel_i) \geq M(rel_j) > 0$ です。
 
-Exposure(di|π)
-_≤_ [Exposure][(][d][j][|][π][)] _M_ (reli) _M_ (relj)  
-Exposure(di|π)
-_≤_ [Exposure][(][d][j][|][π][)] _M_ (reli) _M_ (relj)  
+$$
+\frac{Exposure(d_i|\pi)}{M(rel_i)} \leq \frac{Exposure(d_j|\pi)}{M(rel_j)}
+$$
 
 This set of constraints still enforces proportionality of exposure to merit, but allows the allocation of overabundant exposure. 
-この制約のセットは、依然として露出をメリットに比例させることを強制しますが、過剰な露出の割り当てを許可します。
+この制約のセットは、**依然として露出をメリットに比例させることを強制しますが、過剰な露出の割り当てを許可**します。
 This is achieved by only enforcing that higher merit items don’t get exposure beyond their merit, since the opposite direction is already achieved through utility maximization. 
-これは、より高いメリットのアイテムがそのメリットを超える露出を得ないようにすることを強制することによって達成されます。なぜなら、逆の方向はすでに効用の最大化を通じて達成されているからです。
+これは、**より高いメリットのアイテムがそのメリットを超える露出を得ないようにすることを強制することによって達成されます**。なぜなら、逆の方向はすでに効用の最大化を通じて達成されているからです。
 This counteracts unmerited rich-get-richer dynamics, as present in the motivating example from above. 
 これは、上記の動機付けの例に見られるように、不当な富の集中ダイナミクスに対抗します。
 
@@ -290,26 +290,18 @@ This counteracts unmerited rich-get-richer dynamics, as present in the motivatin
 #### Measuring disparate exposure. 不均等な露出の測定
 
 We can now define the following disparity measure D that** captures in how far the fairness-of-exposure constraints are violated  
-私たちは今、露出の公正性制約がどの程度違反されているかを捉える次の格差測定Dを定義できます。
-
-� _,_ (3)  
-1 _Dind(π|q) =_
-_|Hq|_  
-�
-�
-max 0, [v][π][(][d][i][)]
-_−_ _[v][π][(][d][j][)]_ _Mi_ _Mj_
-(i,j)∈Hq
-4  
+私たちは今、露出の公正性制約がどの程度違反されているかを捉える次の格差測定 $D$ を定義できます。
 
 $$
-D_{ind}
+D_{ind}(\pi|q) = \frac{1}{|H_q|} \sum_{(i,j) \in H_q} \max(0, \frac{Exposure(d_i|\pi)}{M(rel_i)} - \frac{Exposure(d_j|\pi)}{M(rel_j)})
 $$
 
-where Hq = {(i, j) s.t. Mi ≥ _Mj > 0}. 
-ここで、Hq = {(i, j) s.t. Mi ≥ _Mj > 0}です。
-The measure Dind(π|q) is always non-negative and it equals_ zero only when the individual constraints are exactly satisfied. 
-**測定Dind(π|q)は常に非負であり、個々の制約が正確に満たされるときにのみゼロになり**ます。
+where $H_q = \{(i,j) \mid M(rel_i) \geq M(rel_j) > 0\}$. 
+ここで、$H_q = \{(i,j) \mid M(rel_i) \geq M(rel_j) > 0\}$ ($H_q$ は、メリットが高いドキュメントと低いドキュメントの全てのペアの集合)です。
+The measure Dind(π|q) is always non-negative and it equals zero only when the individual constraints are exactly satisfied. 
+格差測定 $D_{ind}(\pi|q)$ は常に非負であり、個々の制約が正確に満たされている場合にのみゼロになります。
+
+<!-- ここまで読んだ! -->
 
 #### Group fairness disparity.  グループの公正性の格差
 
@@ -375,27 +367,27 @@ To sample a ranking, starting from the top, documents are drawn recursively from
 ### 3.2 Policy-Gradient Training Algorithm** ポリシー勾配トレーニングアルゴリズム
 
 The next step is to search this policy space Π for a model that maximizes the objective in Equation (1). 
-次のステップは、このポリシースペース Π を検索して、式 (1) の目的を最大化するモデルを見つけることです。 
+次のステップは、このポリシースペース $\Pi$ を検索して、式 (1) の目的を最大化するモデルを見つけることです。 
 This section proposes a policy-gradient approach (Williams, 1992; Sutton, 1998), where we use stochastic gradient descent (SGD) updates to iteratively improve our ranking policy. 
 このセクションでは、ポリシー勾配アプローチ (Williams, 1992; Sutton, 1998) を提案し、確率的勾配降下法 (SGD) アップデートを使用してランキングポリシーを反復的に改善します。 
 However, since both U and D are expectations over rankings sampled from π, computing the gradient brute-force is intractable. 
-ただし、U と D の両方が π からサンプリングされたランキングの期待値であるため、勾配を強引に計算することは困難です。 
+ただし、$U$ と $D$ の両方が $\pi$ からサンプリングされたランキングの期待値であるため、勾配を強引に計算することは困難です。 
 In this section, we derive the required gradients over expectations as an expectation over gradients. 
-このセクションでは、期待値に対する必要な勾配を勾配に対する期待値として導出します。 
+このセクションでは、期待値に対する必要な勾配を勾配に対する期待値として導出します(=これって期待値の式変形かな...!!:thinking:).
 We then estimate this expectation as an average over a finite sample of rankings from the policy to get an approximate gradient. 
 次に、この期待値をポリシーからの有限サンプルのランキングの平均として**推定し、近似勾配**を得ます。(はいはい、方策勾配の推定値を使って学習するんだよね...!!:thinking:)
 Conventional LTR methods that maximize user utility are either designed to optimize over a smoothed version of a specific utility metric, such as SVMRank (Joachims et al., 2009), RankNet (Burges et al., 2005) etc., or use heuristics to optimize over probabilistic formulations of rankings (e.g. SoftRank (Taylor et al., 2008)). 
 ユーザのユーティリティを最大化する従来の LTR メソッドは、SVMRank (Joachims et al., 2009)、RankNet (Burges et al., 2005) などの特定のユーティリティメトリックの平滑化バージョンを最適化するように設計されているか、ランキングの確率的定式化を最適化するためにヒューリスティックを使用します (例: SoftRank (Taylor et al., 2008))。 
-Our LTR setup is similar to ListNet (Cao et al., 2007), however, instead of using a heuristic loss function for utility, we present a policy gradient method to directly optimize over both utility and disparity measures. 
+Our LTR setup is similar to ListNet (Cao et al., 2007), however, instead of using a heuristic loss function for utility, we present a policy gradient method to directly optimize over both utility and disparity measures.
 私たちの LTR セットアップは ListNet (Cao et al., 2007) に似ていますが、ユーティリティのためのヒューリスティック損失関数を使用する代わりに、ユーティリティと格差の両方の測定値を直接最適化するためのポリシー勾配法を提示します。 
 Directly optimizing the ranking policy via policy-gradient learning has two advantages over most conventional LTR algorithms, which optimize upper bounds or heuristic proxy measures. 
 **ポリシー勾配学習を介してランキングポリシーを直接最適化すること**には、上限やヒューリスティックプロキシ測定値を最適化するほとんどの従来の LTR アルゴリズムに対して2つの利点があります。
 First, our learning algorithm directly optimizes a specified user utility metric and has no restrictions in the choice of the information retrieval (IR) metric. 
-第一に、私たちの学習アルゴリズムは指定されたユーザユーティリティメトリックを直接最適化し、情報検索 (IR) メトリックの選択に制限がありません。 
+第一に、私たちの学習アルゴリズムは指定されたユーザユーティリティメトリックを直接最適化し、情報検索 (IR) メトリックの選択に制限がありません。
 Second, we can use the same policy-gradient approach on our disparity measure D as well, since it is also an expectation over rankings. 
-第二に、格差測定 D に対しても同じポリシー勾配アプローチを使用できます。これは、ランキングの期待値でもあるからです。 
-Overall, the use of policy-gradient optimization in the space of stochastic ranking policies elegantly handles the non-smoothness inherent in rankings. 
-全体として、確率的ランキングポリシーの空間におけるポリシー勾配最適化の使用は、ランキングに固有の非滑らかさを優雅に処理します。 
+第二に、格差測定 D に対しても同じポリシー勾配アプローチを使用できます。これは、ランキングの期待値でもあるからです。
+Overall, the use of policy-gradient optimization in the space of stochastic ranking policies elegantly handles the non-smoothness inherent in rankings.
+全体として、確率的ランキングポリシーの空間におけるポリシー勾配最適化の使用は、ランキングに固有の非滑らかさを優雅に処理します。
 
 <!-- ここまで読んだ! -->
 
@@ -483,116 +475,88 @@ The completes all necessary ingredients for SGD training of objective (1), and a
 
 <!-- ここまで読んだ! よくわからん!-->
 
-### 4. Empirical Evaluation 実証評価
+## 4. Empirical Evaluation 実証評価
 
 We conduct experiments on simulated and real-world datasets to empirically evaluate our approach.  
 私たちは、シミュレーションデータセットと実世界のデータセットで実験を行い、私たちのアプローチを実証的に評価します。
-
 First, we validate that the policy-gradient algorithm is competitive with conventional LTR approaches independent of fairness considerations.  
-まず、ポリシー勾配アルゴリズムが公平性の考慮に依存せず、従来のLTRアプローチと競争力があることを検証します。
-
+まず、ポリシー勾配アルゴリズムが公平性の考慮に依存せず、**従来のLTRアプローチと競争力があることを検証**します。
 Second, we use simulated data to verify that Fair-PG-Rank can detect and mitigate unfair features.  
 次に、シミュレーションデータを使用して、Fair-PG-Rankが不公平な特徴を検出し、軽減できることを確認します。
-
 Third, we evaluate real-world applicability on the Yahoo! Learning to Rank dataset and the German Credit Dataset (Dheeru and Karra Taniskidou, 2017) for individual fairness and group fairness respectively.  
 第三に、個別の公平性とグループの公平性について、Yahoo! Learning to RankデータセットとGerman Credit Dataset（DheeruとKarra Taniskidou、2017）で実世界の適用性を評価します。
-
 For all the experiments, we use NDCG as the utility metric, define merit using the identity function M (rel) = rel, and set the position bias v to follow the same distribution as the gain factor in DCG i.e. $v_j \propto \log_2(1+1_j)$ [where $j = 1, 2, 3, \ldots$ is a] position in the ranking.  
 すべての実験で、NDCGをユーティリティメトリックとして使用し、M (rel) = relという恒等関数を使用してメリットを定義し、位置バイアス$v$をDCGのゲインファクターと同じ分布に従うように設定します。すなわち、$v_j \propto \log_2(1+1_j)$ [ここで、$j = 1, 2, 3, \ldots$はランキング内の位置です]。
 
-**4.1 Can PG-Rank learn accurate ranking policies?**  
-**4.1 PG-Rankは正確なランキングポリシーを学習できるか？**
+### 4.1 Can PG-Rank learn accurate ranking policies?** PG-Rankは正確なランキングポリシーを学習できるか？**
 
 To validate that PG-Rank is indeed a highly effective LTR method, we conduct experiments on the Yahoo dataset (Chapelle and Chang, 2011).  
 PG-Rankが実際に非常に効果的なLTR手法であることを検証するために、Yahooデータセット（ChapelleとChang、2011）で実験を行います。
 
 We use the standard experiment setup on the SET 1 dataset and optimize NDCG using PG-Rank, which is equivalent to finding the optimal policy in Eq. (1) with $\lambda = 0$.  
 SET 1データセットで標準的な実験設定を使用し、PG-Rankを使用してNDCGを最適化します。これは、$\lambda = 0$のときに式(1)で最適ポリシーを見つけることに相当します。
-
 We train Fair-PG-Rank for two kinds of scoring models: a linear model and a neural network (one hidden layer with 32 hidden units and ReLU activation).  
 私たちは、線形モデルとニューラルネットワーク（隠れユニット32の隠れ層1つとReLU活性化）という2種類のスコアリングモデルのためにFair-PG-Rankを訓練します。
-
 Details of the models and training hyperparameters are given in the supplementary material.  
 モデルとトレーニングハイパーパラメータの詳細は、補足資料に記載されています。
-
 The policy learned by our method is a stochastic policy, however, for the purpose of evaluation in this task, we use the highest probability ranking of the candidate set for each query to compute the average NDCG@10 and ERR (Expected Reciprocal Rank) over all the test set queries.  
 私たちの方法で学習されたポリシーは確率的ポリシーですが、このタスクの評価の目的のために、各クエリの候補セットの最高確率ランキングを使用して、すべてのテストセットクエリに対する平均NDCG@10とERR（期待逆順位）を計算します。
-
 We compare our evaluation scores with two baselines from Chapelle and Chang (2011) – a linear RankSVM (Joachims, 2006) and a non-linear regression-based ranker that uses Gradient-boosted Decision Trees (GBDT) (Ye et al., 2009).  
 私たちは、ChapelleとChang（2011）からの2つのベースライン、すなわち線形RankSVM（Joachims、2006）と、勾配ブースト決定木（GBDT）（Ye et al.、2009）を使用する非線形回帰ベースのランカーと評価スコアを比較します。
 
 Table 1 shows that PG-Rank achieves competitive performance compared to the conventional LTR methods.  
 表1は、PG-Rankが従来のLTR手法と比較して競争力のあるパフォーマンスを達成していることを示しています。
-
 When comparing PG-Rank to RankSVM for linear models, our method outperforms RankSVM in terms of both NDCG@10 and ERR.  
 線形モデルに対してPG-RankとRankSVMを比較すると、私たちの方法はNDCG@10とERRの両方の点でRankSVMを上回ります。
-
 This verifies that the policy-gradient approach is effective at optimizing utility without having to rely on a possibly lose convex upper bound like RankSVM.  
 これは、ポリシー勾配アプローチがRankSVMのような緩い凸上限に依存せずにユーティリティを最適化するのに効果的であることを確認します。
-
 PG-Rank with the non-linear neural network model further improves on the linear model.  
 非線形ニューラルネットワークモデルを使用したPG-Rankは、線形モデルをさらに改善します。
-
 Furthermore, additional parameter tuning and variance-control techniques from policy optimization are likely to further boost the performance of PG-Rank, but are outside the scope of this paper.  
 さらに、ポリシー最適化からの追加のパラメータ調整と分散制御技術は、PG-Rankのパフォーマンスをさらに向上させる可能性がありますが、これは本論文の範囲外です。
 
-**4.2 Can Fair-PG-Rank effectively trade-off between utility and fairness?**  
-**4.2 Fair-PG-Rankはユーティリティと公平性の間で効果的にトレードオフできるか？**
+<!-- ここまで読んだ! -->
+
+### 4.2 Can Fair-PG-Rank effectively trade-off between utility and fairness?** Fair-PG-Rankはユーティリティと公平性の間で効果的にトレードオフできるか？**
 
 We designed a synthetic dataset to allow inspection into how Fair-PG-Rank trades-off between user utility and fairness of exposure.  
 私たちは、Fair-PG-Rankがユーザのユーティリティと露出の公平性の間でどのようにトレードオフするかを検査できるように、合成データセットを設計しました。
-
 The dataset contains 100 queries with 10 candidate documents each.  
 データセットには、各10の候補文書を持つ100のクエリが含まれています。
-
 In expectation, 8 of those documents belong to the majority group G0 and 2 belong to the minority group G1.  
 期待値として、これらの文書の8つは多数派グループG0に属し、2つは少数派グループG1に属します。
-
 For each document we independently and uniformly draw two values $x_1$ and $x_2$ from the interval (0, 3), and set the relevance of the document to $x_1 + x_2$ clipped between 0 and 5.  
 各文書について、独立して均等に区間(0, 3)から2つの値$x_1$と$x_2$を引き出し、文書の関連性を$0$と$5$の間にクリップされた$x_1 + x_2$に設定します。
-
 For the documents from the majority group G0, the features vector $(x_1, x_2)$ representing the documents provides perfect information about relevance.  
 多数派グループG0の文書については、文書を表す特徴ベクトル$(x_1, x_2)$が関連性に関する完全な情報を提供します。
-
 For documents in the minority group G1, however, feature $x_2$ is corrupted by replacing it with zero so that the information about relevance for documents in G1 only comes from $x_1$.  
 しかし、少数派グループG1の文書については、特徴$x_2$がゼロに置き換えられることによって破損し、G1の文書に関する関連性の情報は$x_1$からのみ得られます。
-
 This leads to a biased representation between groups, and any use of $x_2$ is prone to producing unfair exposure between groups.  
 これにより、グループ間での偏った表現が生じ、$x_2$の使用はグループ間で不公平な露出を生じる可能性があります。
 
 In order to validate that Fair-PG-Rank can detect and neutralize this biased feature, we consider a linear scoring model $h_\theta(x) = \theta_1 x_1 + \theta_2 x_2$ with parameters $\theta = (\theta_1, \theta_2)$.  
 Fair-PG-Rankがこの偏った特徴を検出し、中和できることを検証するために、パラメータ$\theta = (\theta_1, \theta_2)$を持つ線形スコアリングモデル$h_\theta(x) = \theta_1 x_1 + \theta_2 x_2$を考えます。
-
 Figure 1 shows the contour plots of NDCG and $D_{group}$ evaluated for different values of $\theta$.  
 図1は、異なる$\theta$の値に対して評価されたNDCGと$D_{group}$の等高線プロットを示しています。
-
 Note that not only the direction of the $\theta$ vector affects both NDCG and $D_{group}$, but also its length as it determines the amount of stochasticity in $\pi_\theta$.  
 $\theta$ベクトルの方向がNDCGと$D_{group}$の両方に影響を与えるだけでなく、その長さも$\pi_\theta$の確率的要素の量を決定することに注意してください。
-
 The true relevance model lies on the $\theta_1 = \theta_2$ line (dotted), however, a fair model is expected to ignore the biased feature $x_2$.  
 真の関連性モデルは$\theta_1 = \theta_2$の線（点線）上にありますが、公平なモデルは偏った特徴$x_2$を無視することが期待されます。
-
 We use PG-Rank to train this linear model to maximize NDCG and minimize $D_{group}$.  
 私たちは、NDCGを最大化し、$D_{group}$を最小化するためにこの線形モデルを訓練するためにPG-Rankを使用します。
-
 The dots in Figure 1 denote the models learned by Fair-PG-Rank for different values of $\lambda$.  
 図1の点は、異なる$\lambda$の値に対してFair-PG-Rankによって学習されたモデルを示しています。
-
 For small values of $\lambda$, Fair-PG-Rank puts more emphasis on NDCG and thus learns parameter vectors along the $\theta_1 = \theta_2$ direction.  
 小さな$\lambda$の値では、Fair-PG-RankはNDCGにより重点を置き、そのため$\theta_1 = \theta_2$の方向に沿ったパラメータベクトルを学習します。
-
 As we increase emphasis on group fairness disparity $D_{group}$ by increasing $\lambda$, the policies learned by Fair-PG-Rank become more stochastic and it correctly starts to discount the biased attribute by learning models where increasingly $\theta_1 >> \theta_2$.  
 グループの公平性の不均衡$D_{group}$に対する重点を$\lambda$を増加させることで高めると、Fair-PG-Rankによって学習されたポリシーはより確率的になり、$\theta_1 >> \theta_2$のモデルを学習することで偏った属性を正しく割り引き始めます。
 
 In Figure 1(c), we compare Fair-PG-Rank with two baselines.  
 図1(c)では、Fair-PG-Rankを2つのベースラインと比較します。
-
 As the first baseline, we estimate relevances with a fairness-oblivious linear regression and then use the post-processing method from (Singh and Joachims, 2018) on the estimates.  
 最初のベースラインとして、公平性を無視した線形回帰で関連性を推定し、その後、推定値に(SinghとJoachims、2018)の後処理手法を使用します。
-
 Unlike Fair-PG-Rank, which reduces disparity with increasing $\lambda$, the post-processing method is misled by the estimated relevances that use the biased feature $x_2$, and the ranking policies become even less fair as $\lambda$ is increased.  
 $\lambda$を増加させることで不均衡を減少させるFair-PG-Rankとは異なり、後処理手法は偏った特徴$x_2$を使用した推定関連性に誤導され、ランキングポリシーは$\lambda$が増加するにつれてさらに不公平になります。
-
 As the second baseline, we apply the method of Zehlike and Castillo (2018), but the heuristic measure it optimizes shows little effect on disparity.  
 第二のベースラインとして、ZehlikeとCastillo（2018）の手法を適用しますが、最適化するヒューリスティックな測定は不均衡に対してほとんど効果を示しません。
 
@@ -604,34 +568,25 @@ In order to study Fair-PG-Rank on real-world data, we conducted two sets of expe
 
 For Individual Fairness, we train Fair-PG-Rank with a linear and a neural network model on the Yahoo! Learning to rank challenge dataset, optimizing Equation 1 with different values of $\lambda$.  
 個別の公平性のために、Yahoo! Learning to rankチャレンジデータセットで線形モデルとニューラルネットワークモデルを使用してFair-PG-Rankを訓練し、異なる$\lambda$の値で式1を最適化します。
-
 The details about the model and training hyperparameters are present in the supplementary material.  
 モデルとトレーニングハイパーパラメータの詳細は、補足資料に記載されています。
-
 For both the models, Figure 2 shows the average NDCG@10 and $D_{ind}$ (individual disparity) over the test and training (dotted line) datasets for different values of $\lambda$ parameter.  
 両方のモデルについて、図2は異なる$\lambda$パラメータの値に対するテストおよびトレーニング（点線）データセット全体の平均NDCG@10と$D_{ind}$（個別の不均衡）を示しています。
-
 As desired, Fair-PG-Rank emphasizes lower disparity over higher NDCG as the value of $\lambda$ increases, with disparity going down to zero eventually.  
 期待通り、Fair-PG-Rankは$\lambda$の値が増加するにつれて高いNDCGよりも低い不均衡を強調し、不均衡は最終的にゼロにまで下がります。
-
 Furthermore, the training and test curves for both NDCG and disparity overlap indicating the learning method generalizes to unseen queries.  
 さらに、NDCGと不均衡の両方のトレーニングとテストの曲線が重なり、学習方法が未見のクエリに一般化することを示しています。
-
 This is expected since both training quantities concentrate around their expectation as the training set size increases.  
 これは、トレーニングセットのサイズが増加するにつれて、両方のトレーニング量がその期待値の周りに集中するため、予想されることです。
 
 For Group fairness, we adapt the German Credit Dataset from the UCI repository (Dheeru and Karra Taniskidou, 2017) to a learning-to-rank task (described in the supplementary), choosing gender as the group attribute.  
 グループの公平性のために、UCIリポジトリからGerman Credit Dataset（DheeruとKarra Taniskidou、2017）を学習ランキングタスクに適応させ（補足に記載）、性別をグループ属性として選択します。
-
 We train Fair-PG-Rank using a linear model, for different values of $\lambda$.  
 異なる$\lambda$の値に対して線形モデルを使用してFair-PG-Rankを訓練します。
-
 Figure 3 shows that Fair-PG-Rank is again able to effectively trade-off NDCG and fairness.  
 図3は、Fair-PG-Rankが再びNDCGと公平性の間で効果的にトレードオフできることを示しています。
-
 Here we also plot the standard deviation to illustrate that the algorithm reliably converges to solutions of similar performance over multiple runs.  
 ここでは、標準偏差もプロットして、アルゴリズムが複数回の実行で同様のパフォーマンスの解に確実に収束することを示しています。
-
 Similar to the synthetic example, Figure 3 (right) again shows that Fair-PG-Rank can effectively trade-off NDCG for $D_{group}$, while the baselines fail.  
 合成例と同様に、図3（右）は再びFair-PG-Rankが$D_{group}$に対してNDCGを効果的にトレードオフできることを示しており、ベースラインは失敗しています。
 
@@ -641,12 +596,10 @@ Similar to the synthetic example, Figure 3 (right) again shows that Fair-PG-Rank
 
 We presented a framework for learning ranking functions that not only maximize utility to their users, but that also obey application specific fairness constraints on how exposure is allocated to the ranked items based on their merit. 
 私たちは、ユーザに対する効用を最大化するだけでなく、ランク付けされたアイテムに対する露出の配分がその価値に基づく特定のアプリケーションの公平性制約を遵守するランキング関数を学習するためのフレームワークを提示しました。
-
 Based on this framework, we derived the Fair-PG-Rank policy-gradient algorithm that directly optimizes both utility and fairness without having to resort to upper bounds or heuristic surrogate measures. 
 このフレームワークに基づいて、私たちは、上限やヒューリスティックな代理測定に頼ることなく、効用と公平性の両方を直接最適化するFair-PG-Rankポリシー勾配アルゴリズムを導出しました。
-
 We demonstrated that our policy-gradient approach is effective for training high-quality ranking functions, that Fair-PG-Rank can identify and neutralize biased features, and that it can effectively learn ranking functions under both individual fairness and group fairness constraints. 
-私たちは、ポリシー勾配アプローチが高品質なランキング関数のトレーニングに効果的であり、Fair-PG-Rankがバイアスのある特徴を特定し中和できること、さらに個別の公平性と集団の公平性の制約の下でランキング関数を効果的に学習できることを示しました。
+私たちは、**ポリシー勾配アプローチが高品質なランキング関数のトレーニングに効果的**であり、Fair-PG-Rankがバイアスのある特徴を特定し中和できること、さらに個別の公平性と集団の公平性の制約の下でランキング関数を効果的に学習できることを示しました。
 
 
 
