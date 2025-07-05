@@ -410,12 +410,15 @@ To overcome this, we use sampling via the log-derivative trick pioneered in the 
 
 $$
 ∇θU (πθ|q) = ∇θEr∼πθ(r|q)∆�r, rel[q][�] = Er∼πθ(r|q)[∇θlog πθ(r|q)∆(r, rel[q])] 
+
+\nabla_{\theta} U(\pi_{\theta}|q) = \nabla_{\theta} E_{r \sim \pi_{\theta}(r|q)} [\Delta(r, rel[q])] = E_{r \sim \pi_{\theta}(r|q)} [\nabla_{\theta} \log \pi_{\theta}(r|q) \Delta(r, rel[q])]
 $$
 
 This transformation exploits that the gradient of the expected value of the metric ∆ over rankings sampled from π can be expressed as the expectation of the gradient of the log probability of each sampled ranking multiplied by the metric value of that ranking. 
 この変換は、π からサンプリングされたランキングに対するメトリック ∆ の期待値の勾配が、サンプリングされた各ランキングの対数確率の勾配とそのランキングのメトリック値の積の期待値として表現できることを利用しています。
 The final expectation is approximated via Monte-Carlo sampling from the Plackett-Luce model in Eq. (5).
 最終的な期待値は、式 (5) の Plackett-Luce モデルからのモンテカルロサンプリングを介して近似されます。
+
 Note that this policy-gradient approach to LTR, which we call PG-Rank, is novel in itself and beyond fairness. 
 このポリシー勾配アプローチは、私たちが PG-Rank と呼ぶ LTR に対して新しいものであり、公平性を超えています。 
 It can be used as a standalone LTR algorithm for virtually any choice of utility metric ∆, including NDCG, DCG, ERR, and Average-Rank. 
@@ -423,45 +426,52 @@ It can be used as a standalone LTR algorithm for virtually any choice of utility
 Furthermore, PG-Rank also supports non-linear metrics, IPS-weighted metrics for partial information feedback (Joachims et al., 2017), and listwise metrics that do not decompose as a sum over individual documents (Zhai et al., 2003). 
 さらに、PG-Rank は非線形メトリック、部分情報フィードバックのための IPS 加重メトリック (Joachims et al., 2017)、および個々のドキュメントの合計として分解されないリストワイズメトリック (Zhai et al., 2003) もサポートしています。 
 
-**Using baseline for variance reduction.**  
-**分散削減のためのベースラインの使用。**
+#### Using baseline for variance reduction. **分散削減のためのベースラインの使用。**
+
+(DR推定量的な考え方っぽい...! ベースラインの計算はラフだけど:thinking:)
 
 Since making stochastic gradient descent updates with this gradient estimate is prone to high variance, we subtract a baseline term from the reward (Williams, 1992) to act as a control variate for variance reduction. 
 この勾配推定を使用して確率的勾配降下法の更新を行うと、高い分散が生じやすいため、報酬からベースライン項を引き算します (Williams, 1992)。これにより、分散削減のための制御変数として機能します。 
 Specifically, in the gradient estimate in Eq. (6), we replace ∆(r, rel[q]) with ∆(r, rel[q]) − _b(q) where b(q) is the average ∆_ for the current query. 
-具体的には、式 (6) の勾配推定において、∆(r, rel[q]) を ∆(r, rel[q]) − _b(q) に置き換えます。ここで b(q) は現在のクエリの平均 ∆_ です。 
+具体的には、式 (6) の勾配推定において、$\Delta(r, rel[q])$ を $\Delta(r, rel[q]) - b(q)$ に置き換えます。ここで、$b(q)$ は現在のクエリの平均 $\Delta$ です。
 
-**Entropy Regularization While optimizing over stochastic policies, entropy regularization is**  
-**エントロピー正則化 確率的ポリシーを最適化する際に、エントロピー正則化は** 
+#### Entropy Regularization  エントロピー正則化
 
-used as a method for encouraging exploration as to avoid convergence to suboptimal deterministic policies (Mnih et al., 2016; Williams and Peng, 1991). 
-最適でない決定論的ポリシーへの収束を避けるための探索を促す手法として使用されます (Mnih et al., 2016; Williams and Peng, 1991)。 
+While optimizing over stochastic policies, entropy regularization is used as a method for encouraging exploration as to avoid convergence to suboptimal deterministic policies (Mnih et al., 2016; Williams and Peng, 1991). 
+エントロピー正則化は、確率的ポリシーを最適化する際に、最適でない決定論的ポリシーへの収束を避けるための探索を促す手法として使用されます (Mnih et al., 2016; Williams and Peng, 1991)。 
 For our algorithm, we add the entropy of the probability distribution Softmax(hθ(x[q])) times a regularization coefficient γ to the objective. 
-私たちのアルゴリズムでは、目的に対して Softmax(hθ(x[q])) の確率分布のエントロピーに正則化係数 γ を掛けたものを追加します。 
+私たちのアルゴリズムでは、目的に対して Softmax(hθ(x[q])) の確率分布のエントロピーに正則化係数 γ を掛けたものを追加します。
 
-3.2.2 Minimizing disparity  
-3.2.2 格差の最小化
+#### 3.2.2 Minimizing disparity 格差の最小化
 
 When a fairness-of-exposure term D is included in the training objective, we also need to compute the gradient of this term. 
-露出の公平性項 D がトレーニング目的に含まれる場合、この項の勾配も計算する必要があります。 
+露出の公平性項 D がトレーニング目的に含まれる場合、この項の勾配も計算する必要があります。
 Fortunately, it has a structure similar to the utility term, so that the same Monte-Carlo approach applies. 
 幸いなことに、これはユーティリティ項と似た構造を持っているため、同じモンテカルロアプローチが適用されます。 
 Specifically, for the individual-fairness disparity measure in Equation (3), the gradient can be computed as:  
 具体的には、式 (3) の個別公平性格差測定に対して、勾配は次のように計算できます。  
+
 $$
-∇θDind = \sum_{(i,j)∈H1} vr(di) - v[r](dj) \times Er∼πθ(r|q) vr(di) - v[r](dj) ∇θ log πθ(r|q) 
-$$  
-(H = {(i, j) s.t. Mi ≥ _Mj})_  
+\nabla_{\theta} D_{ind} = \sum_{(i,j) \in H_1} v_r(d_i) - v_r(d_j) \times E_{r \sim \pi_{\theta}(r|q)} [v_r(d_i) - v_r(d_j) \nabla_{\theta} \log \pi_{\theta}(r|q)]
+
+\\
+(H = {(i, j) s.t. Mi ≥ _Mj})
+$$
+  
 For the group-fairness disparity measure defined in Equation (4), the gradient can be derived as follows:  
 式 (4) で定義されたグループ公平性格差測定に対して、勾配は次のように導出できます。  
+
 $$
-∇θDgroup(π|G0, G1, q) = ∇θmax(0, ξqdiff(π|q)) = 1_{ξqdiff(π|q) > 0} ξq∇θdiff(π|q) 
+\nabla_{\theta} D_{group}(\pi|G_0, G_1, q) = \nabla_{\theta} \max(0, \xi_q \text{diff}(\pi|q)) = 1_{\xi_q \text{diff}(\pi|q) > 0} \xi_q \nabla_{\theta} \text{diff}(\pi|q)
 $$  
+
 where diff(π|q) = ∑_{d∈G0} vMπ(G0) - vMπ(G1) , and ξq = sign(MG0 - MG1).  
 ここで、diff(π|q) = ∑_{d∈G0} vMπ(G0) - vMπ(G1) 、および ξq = sign(MG0 - MG1) です。  
+
 $$
-∇θdiff(π|q) = Er∼πθ \left[ \sum_{d∈G0} v[r](d) - \sum_{d∈G1} v[r](d) \nablaθlog πθ(r|q) \right] 
+\nabla_{\theta} \text{diff}(\pi|q) = E_{r \sim \pi_{\theta}} \left[ \sum_{d \in G_0} v_r(d) - \sum_{d \in G_1} v_r(d) \nabla_{\theta} \log \pi_{\theta}(r|q) \right]
 $$  
+
 The derivation of the gradients is shown in the supplementary material. 
 勾配の導出は補足資料に示されています。 
 The expectation of the gradient in both the cases can be estimated as an average over a Monte Carlo sample of rankings from the distribution. 
@@ -471,7 +481,7 @@ The size of the sample is denoted by S in the rest of the paper.
 The completes all necessary ingredients for SGD training of objective (1), and all steps of the Fair-PG-Rank algorithm are summarized in the supplementary material. 
 これにより、目的 (1) の SGD トレーニングに必要なすべての要素が揃い、Fair-PG-Rank アルゴリズムのすべてのステップが補足資料に要約されています。 
 
-
+<!-- ここまで読んだ! よくわからん!-->
 
 ### 4. Empirical Evaluation 実証評価
 
