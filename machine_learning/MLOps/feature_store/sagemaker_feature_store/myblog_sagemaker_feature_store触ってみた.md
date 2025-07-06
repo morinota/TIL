@@ -222,17 +222,9 @@ export class FeatureStoreStack extends cdk.Stack {
   - Feature Group名の変更
   - Record Identifier（主キー）やEvent TimeのFeature名の変更。
   - オフラインストアの有効/無効やS3の保存先。
-  - 
+  - オンラインストアの有効/無効。
 
-
-
-
-
-
-
-
-
-
+なので、あるfeature groupについて変更不可能な設定を変更したい場合は、新しいFeature Groupを作成して、古いFeature Groupからデータを移行する or backfillするような仕組みを用意すると良いのかも:thinking:
 
 ### Feature Storeへの特徴量レコードの書き込み
 
