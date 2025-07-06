@@ -367,17 +367,20 @@ However, since both U and D are expectations over rankings sampled from π, comp
 In this section, we derive the required gradients over expectations as an expectation over gradients. 
 このセクションでは、期待値に対する必要な勾配を勾配に対する期待値として導出します(=これって期待値の式変形かな...!!:thinking:).
 We then estimate this expectation as an average over a finite sample of rankings from the policy to get an approximate gradient. 
-次に、この期待値をポリシーからの有限サンプルのランキングの平均として**推定し、近似勾配**を得ます。(はいはい、方策勾配の推定値を使って学習するんだよね...!!:thinking:)
+次に、**この期待値をポリシーからの有限サンプルのランキングの平均として推定し、近似勾配**を得ます。(はいはい、方策勾配の推定値を使って学習するんだよね...!!ここだと経験平均に基づくAVG推定量なのかな...??:thinking:)
 Conventional LTR methods that maximize user utility are either designed to optimize over a smoothed version of a specific utility metric, such as SVMRank (Joachims et al., 2009), RankNet (Burges et al., 2005) etc., or use heuristics to optimize over probabilistic formulations of rankings (e.g. SoftRank (Taylor et al., 2008)). 
 ユーザのユーティリティを最大化する従来の LTR メソッドは、SVMRank (Joachims et al., 2009)、RankNet (Burges et al., 2005) などの特定のユーティリティメトリックの平滑化バージョンを最適化するように設計されているか、ランキングの確率的定式化を最適化するためにヒューリスティックを使用します (例: SoftRank (Taylor et al., 2008))。 
 Our LTR setup is similar to ListNet (Cao et al., 2007), however, instead of using a heuristic loss function for utility, we present a policy gradient method to directly optimize over both utility and disparity measures.
-私たちの LTR セットアップは ListNet (Cao et al., 2007) に似ていますが、ユーティリティのためのヒューリスティック損失関数を使用する代わりに、ユーティリティと格差の両方の測定値を直接最適化するためのポリシー勾配法を提示します。 
+私たちの LTR セットアップは ListNet (Cao et al., 2007) に似ていますが、ユーティリティのためのヒューリスティック損失関数を使用する代わりに、**ユーティリティと格差の両方の指標を直接最適化するためのポリシー勾配法**を提示します。
 Directly optimizing the ranking policy via policy-gradient learning has two advantages over most conventional LTR algorithms, which optimize upper bounds or heuristic proxy measures. 
-**ポリシー勾配学習を介してランキングポリシーを直接最適化すること**には、上限やヒューリスティックプロキシ測定値を最適化するほとんどの従来の LTR アルゴリズムに対して2つの利点があります。
-First, our learning algorithm directly optimizes a specified user utility metric and has no restrictions in the choice of the information retrieval (IR) metric. 
-第一に、私たちの学習アルゴリズムは指定されたユーザユーティリティメトリックを直接最適化し、情報検索 (IR) メトリックの選択に制限がありません。
-Second, we can use the same policy-gradient approach on our disparity measure D as well, since it is also an expectation over rankings. 
-第二に、格差測定 D に対しても同じポリシー勾配アプローチを使用できます。これは、ランキングの期待値でもあるからです。
+**ポリシー勾配学習を介してランキングポリシーを直接最適化すること**には、上限やヒューリスティックプロキシ測定値を最適化するほとんどの従来の LTR アルゴリズムに対して**2つの利点**があります。
+
+- First, our learning algorithm directly optimizes a specified user utility metric and has no restrictions in the choice of the information retrieval (IR) metric. 
+    第一に、私たちの学習アルゴリズムは指定されたユーザユーティリティメトリックを直接最適化し、情報検索 (IR) メトリックの選択に制限がありません。
+
+- Second, we can use the same policy-gradient approach on our disparity measure D as well, since it is also an expectation over rankings. 
+第二に、格差測定 D に対しても同じポリシー勾配アプローチを使用できます。これは、ランキングに関する期待値でもあるからです。
+
 Overall, the use of policy-gradient optimization in the space of stochastic ranking policies elegantly handles the non-smoothness inherent in rankings.
 全体として、確率的ランキングポリシーの空間におけるポリシー勾配最適化の使用は、ランキングに固有の非滑らかさを優雅に処理します。
 
@@ -386,29 +389,30 @@ Overall, the use of policy-gradient optimization in the space of stochastic rank
 #### 3.2.1 PG-Rank: Maximizing User Utility ユーザユーティリティの最大化
 
 The user utility of a policy πθ for a query q is defined as U (π|q) = Er∼πθ(r|q)∆�r, rel[q][�].
-クエリ q に対するポリシー πθ のユーザユーティリティは、U (π|q) = Er∼πθ(r|q)∆�r, rel[q][�] と定義されます。
+クエリ $q$ に対するポリシー $\pi_{\theta}$ のユーザユーティリティは $U(\pi_{\theta}|q) = E_{r \sim \pi_{\theta}(r|q)} [\Delta(r, rel[q])]$ と定義されます。
 Note that taking the gradient w.r.t. θ over this expectation is not straightforward, since the space of rankings is exponential in cardinality. 
-この期待値に対して θ に関する勾配を取ることは簡単ではありません。なぜなら、ランキングの空間は基数に対して指数的だからです。 
+この期待値に対して $\theta$ に関する勾配を取ることは簡単ではありません。なぜなら、ランキングの空間は基数に対して指数的だからです。 
 To overcome this, we use sampling via the log-derivative trick pioneered in the REINFORCE algorithm (Williams, 1992) as follows: 
-これを克服するために、REINFORCE アルゴリズム (Williams, 1992) で先駆けられたログ導関数トリックを使用してサンプリングします。次のようになります。
+これを克服するために、REINFORCE アルゴリズム (Williams, 1992) で先駆けられた**ログ導関数トリック**を使用してサンプリングします。次のようになります。
+(なんかlogを追加するように式変形するよ、ってやつか...!:thinking:)
 
 $$
-∇θU (πθ|q) = ∇θEr∼πθ(r|q)∆�r, rel[q][�] = Er∼πθ(r|q)[∇θlog πθ(r|q)∆(r, rel[q])] 
-
 \nabla_{\theta} U(\pi_{\theta}|q) = \nabla_{\theta} E_{r \sim \pi_{\theta}(r|q)} [\Delta(r, rel[q])] = E_{r \sim \pi_{\theta}(r|q)} [\nabla_{\theta} \log \pi_{\theta}(r|q) \Delta(r, rel[q])]
 $$
 
 This transformation exploits that the gradient of the expected value of the metric ∆ over rankings sampled from π can be expressed as the expectation of the gradient of the log probability of each sampled ranking multiplied by the metric value of that ranking. 
-この変換は、π からサンプリングされたランキングに対するメトリック ∆ の期待値の勾配が、サンプリングされた各ランキングの対数確率の勾配とそのランキングのメトリック値の積の期待値として表現できることを利用しています。
+この変換は、$\pi$ からサンプリングされたランキングに対するメトリック $\Delta$ の期待値の勾配が、サンプリングされた各ランキングの対数確率の勾配とそのランキングのメトリック値の積の期待値として表現できることを利用しています。(ここは、特に何かしらの仮定を置いてるとかではなくて、確か普通に式変形してるはず...!:thinking:)
 The final expectation is approximated via Monte-Carlo sampling from the Plackett-Luce model in Eq. (5).
-最終的な期待値は、式 (5) の Plackett-Luce モデルからのモンテカルロサンプリングを介して近似されます。
+**最終的な期待値は、式 (5) の Plackett-Luce モデルからのモンテカルロサンプリングを介して近似**されます。
 
 Note that this policy-gradient approach to LTR, which we call PG-Rank, is novel in itself and beyond fairness. 
 このポリシー勾配アプローチは、私たちが PG-Rank と呼ぶ LTR に対して新しいものであり、公平性を超えています。 
 It can be used as a standalone LTR algorithm for virtually any choice of utility metric ∆, including NDCG, DCG, ERR, and Average-Rank. 
-これは、NDCG、DCG、ERR、Average-Rank を含む、ほぼすべてのユーティリティメトリック ∆ の選択に対してスタンドアロンの LTR アルゴリズムとして使用できます。 
+これは、NDCG、DCG、ERR、Average-Rank を含む、ほぼすべてのユーティリティメトリック $\Delta$ の選択に対してスタンドアロンの LTR アルゴリズムとして使用できます。 
 Furthermore, PG-Rank also supports non-linear metrics, IPS-weighted metrics for partial information feedback (Joachims et al., 2017), and listwise metrics that do not decompose as a sum over individual documents (Zhai et al., 2003). 
 さらに、PG-Rank は非線形メトリック、部分情報フィードバックのための IPS 加重メトリック (Joachims et al., 2017)、および個々のドキュメントの合計として分解されないリストワイズメトリック (Zhai et al., 2003) もサポートしています。 
+
+<!-- ここまで読んだ! -->
 
 #### Using baseline for variance reduction. **分散削減のためのベースラインの使用。**
 
@@ -417,23 +421,27 @@ Furthermore, PG-Rank also supports non-linear metrics, IPS-weighted metrics for 
 Since making stochastic gradient descent updates with this gradient estimate is prone to high variance, we subtract a baseline term from the reward (Williams, 1992) to act as a control variate for variance reduction. 
 この勾配推定を使用して確率的勾配降下法の更新を行うと、高い分散が生じやすいため、報酬からベースライン項を引き算します (Williams, 1992)。これにより、分散削減のための制御変数として機能します。 
 Specifically, in the gradient estimate in Eq. (6), we replace ∆(r, rel[q]) with ∆(r, rel[q]) − _b(q) where b(q) is the average ∆_ for the current query. 
-具体的には、式 (6) の勾配推定において、$\Delta(r, rel[q])$ を $\Delta(r, rel[q]) - b(q)$ に置き換えます。ここで、$b(q)$ は現在のクエリの平均 $\Delta$ です。
+具体的には、式 (6) の勾配推定において、$\Delta(r, rel[q])$ を $\Delta(r, rel[q]) - b(q)$ に置き換えます。ここで、$b(q)$ は現在のクエリの $\Delta$ の平均値です(経験平均??:thinking:)。
+
+<!-- ここまで読んだ! -->
 
 #### Entropy Regularization  エントロピー正則化
 
 While optimizing over stochastic policies, entropy regularization is used as a method for encouraging exploration as to avoid convergence to suboptimal deterministic policies (Mnih et al., 2016; Williams and Peng, 1991). 
 エントロピー正則化は、確率的ポリシーを最適化する際に、最適でない決定論的ポリシーへの収束を避けるための探索を促す手法として使用されます (Mnih et al., 2016; Williams and Peng, 1991)。 
 For our algorithm, we add the entropy of the probability distribution Softmax(hθ(x[q])) times a regularization coefficient γ to the objective. 
-私たちのアルゴリズムでは、目的に対して Softmax(hθ(x[q])) の確率分布のエントロピーに正則化係数 γ を掛けたものを追加します。
+私たちのアルゴリズムでは、$\gamma$ を正則化係数として、目的関数に確率分布 $\text{Softmax}(h_{\theta}(x[q]))$ のエントロピーを追加します。
+
+<!-- ここまで読んだ! -->
 
 #### 3.2.2 Minimizing disparity 格差の最小化
 
 When a fairness-of-exposure term D is included in the training objective, we also need to compute the gradient of this term. 
-露出の公平性項 D がトレーニング目的に含まれる場合、この項の勾配も計算する必要があります。
+露出の公平性項 $D$ がトレーニング目的に含まれる場合、この項の勾配も計算する必要があります。
 Fortunately, it has a structure similar to the utility term, so that the same Monte-Carlo approach applies. 
 幸いなことに、これはユーティリティ項と似た構造を持っているため、同じモンテカルロアプローチが適用されます。 
 Specifically, for the individual-fairness disparity measure in Equation (3), the gradient can be computed as:  
-具体的には、式 (3) の個別公平性格差測定に対して、勾配は次のように計算できます。  
+具体的には、式 (3) のindividual-fairness disparity measure(個別公平性格差指標??)に対して、勾配は次のように計算できます。  
 
 $$
 \nabla_{\theta} D_{ind} = \sum_{(i,j) \in H_1} v_r(d_i) - v_r(d_j) \times E_{r \sim \pi_{\theta}(r|q)} [v_r(d_i) - v_r(d_j) \nabla_{\theta} \log \pi_{\theta}(r|q)]
@@ -442,7 +450,7 @@ $$
 (H = {(i, j) s.t. Mi ≥ _Mj})
 $$
   
-For the group-fairness disparity measure defined in Equation (4), the gradient can be derived as follows:  
+For the group-fairness disparity measure defined in Equation (4), the gradient can be derived as follows:
 式 (4) で定義されたグループ公平性格差測定に対して、勾配は次のように導出できます。  
 
 $$
@@ -450,18 +458,18 @@ $$
 $$  
 
 where diff(π|q) = ∑_{d∈G0} vMπ(G0) - vMπ(G1) , and ξq = sign(MG0 - MG1).  
-ここで、diff(π|q) = ∑_{d∈G0} vMπ(G0) - vMπ(G1) 、および ξq = sign(MG0 - MG1) です。  
+ここで、$diff(\pi|q) = \sum_{d \in G_0} v_{\pi}(d) - \sum_{d \in G_1} v_{\pi}(d)$ (言い換えると、グループ $G_0$ の平均露出からグループ $G_1$ の平均露出を引いたもの) です。また、$\xi_q = \text{sign}(M_{G_0} - M_{G_1})$ はグループ $G_0$ のメリットがグループ $G_1$ のメリットより大きいかどうかを示す符号関数です。
 
 $$
 \nabla_{\theta} \text{diff}(\pi|q) = E_{r \sim \pi_{\theta}} \left[ \sum_{d \in G_0} v_r(d) - \sum_{d \in G_1} v_r(d) \nabla_{\theta} \log \pi_{\theta}(r|q) \right]
 $$  
 
 The derivation of the gradients is shown in the supplementary material. 
-勾配の導出は補足資料に示されています。 
+方策勾配の導出は補足資料に示されています。 
 The expectation of the gradient in both the cases can be estimated as an average over a Monte Carlo sample of rankings from the distribution. 
-両方のケースにおける勾配の期待値は、分布からのランキングのモンテカルロサンプルの平均として推定できます。 
+両方のケースにおける勾配の期待値は、**分布からのランキングのモンテカルロサンプルの平均として推定**できます。(そうか、ここは解析的な推定量じゃなくても、モンテカルロサンプリングで近似値を得るのか...!:thinking:)
 The size of the sample is denoted by S in the rest of the paper. 
-サンプルのサイズは、論文の残りの部分で S と表記されます。 
+サンプルのサイズは、論文の残りの部分で $S$ と表記されます。 
 The completes all necessary ingredients for SGD training of objective (1), and all steps of the Fair-PG-Rank algorithm are summarized in the supplementary material. 
 これにより、目的 (1) の SGD トレーニングに必要なすべての要素が揃い、Fair-PG-Rank アルゴリズムのすべてのステップが補足資料に要約されています。 
 
