@@ -71,7 +71,7 @@ Across a number of empirical evaluations, we find that the policy-gradient appro
 ## 2. Learning Fair Ranking Policies
 
 The key goal of our work is to learn ranking policies where the allocation of exposure to items is not an accidental by-product of maximizing utility to the users, but where one can specify a merit-based exposure-allocation constraint that is enforced by the learning algorithm. 
-私たちの研究の主な目標は、アイテムへの露出の割り当てがユーザーの効用を最大化する偶発的な副産物ではなく、**学習アルゴリズムによって強制されるメリットに基づく露出割り当て制約を指定できるランキングポリシー**を学習することです。
+私たちの研究の主な目標は、アイテムへの露出の割り当てがユーザーの効用を最大化する偶発的な副産物ではなく、**学習アルゴリズムによって強制されるメリットに基づく露出割り当て制約を指定できるランキングポリシーを学習すること**です。
 
 An illustrative example adapted from Singh and Joachims (2018) is that of ranking 10 job candidates, where the probabilities of relevance (e.g., probability that an employer will invite for an interview) of 5 male job candidates are {0.89, 0.89, 0.89, 0.89, 0.89} and those of 5 female candidates are {0.88, 0.88, 0.88, 0.88, 0.88}. 
 SinghとJoachims（2018）から適応した例として、10人の求職者をランキングする場合を考えます。5人の男性求職者の関連性の確率（例：雇用主が面接に招待する確率）は{0.89, 0.89, 0.89, 0.89, 0.89}であり、5人の女性候補者のそれは{0.88, 0.88, 0.88, 0.88, 0.88}です。
@@ -101,7 +101,7 @@ We then define concrete families of allocation constraints for both individual a
 次に、個人およびグループの公正性のための具体的な割り当て制約のファミリーを定義します。
 
 
-### 2.1 Learning to Rank as Policy Learning via ERM
+### 2.1 Learning to Rank as Policy Learning via ERM ERM(経験リスク最小化)によるポリシー学習としてのランキング学習
 
 Let Q be the distribution from which queries are drawn. 
 Qをクエリが引き出される分布とします。(i.e. ユーザ特徴量xの分布 P(x)...!:thinking:)
