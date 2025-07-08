@@ -235,7 +235,7 @@ $$
 where $r(d_i)$ is the position of document $d_i$ under ranking $r$. 
 ここで、$r(d_i)$ はランキング $r$ の下でのドキュメント $d_i$ の位置です。
 
-#### **Allocating exposure based on merit.**
+#### **Allocating exposure based on merit.** 
 
 Our first two goals from the opening paragraph postulate that exposure should be based on an application dependent notion of merit. 
 **メリットに基づく露出の割り当て。** 冒頭の段落からの最初の2つの目標は、**露出はアプリケーション依存のメリットの概念に基づくべき**であると仮定しています。
@@ -260,7 +260,6 @@ This violates the exposure constraint, and this shortcoming is also present in t
 これは露出制約に違反し、この欠点はSinghとJoachims（2018）の不均等な露出測定やBiegaら（2018）の注意の公平性制約にも存在します。
 
 To overcome this problem of overabundance of exposure, we instead consider the following set of inequality constraints where ∀di, dj ∈ _d[q]_ with M (reli) ≥ _M_ (relj) > 0, 
-<!-- 露出の過剰供給の問題を克服するために、私たちは代わりに次の不等式制約のセットを考慮します。ここで、∀di, dj ∈ _d[q]_ でM (reli) ≥ _M_ (relj) > 0です。 -->
 露出の過剰供給の問題を克服するために、代わりに次の不等式制約のセットを考慮します。ここで、$\forall d_i, d_j \in d^{q}$ で $M(rel_i) \geq M(rel_j) > 0$ です。
 
 $$
