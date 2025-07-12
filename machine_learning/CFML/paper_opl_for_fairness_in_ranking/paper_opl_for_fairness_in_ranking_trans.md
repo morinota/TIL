@@ -340,8 +340,6 @@ Based on this score vector, the probability][ π][θ][(][r][|][q][)][ of a ranki
 このスコアベクトルに基づいて、Plackett-Luce モデル (Plackett, 1975; Luce, 1959) の下で、ランキング $r = (r(1), r(2), \ldots, r(n_q))$ の確率 $\pi_{\theta}(r|q)$ は 以下のソフトマックス分布になります:
 
 $$
-\piθ(r|q) = \frac{exp(hθ(x[q]r(i)[))}{\sum_{i=1}^{nq} exp(hθ(x[q]r(i)[))} 
-
 \pi_{\theta}(r|q) = \prod_{i=1}^{n_q} \frac{\exp(h_{\theta}(x^q_{r(i)}))}{\sum_{j=i}^{n_q} \exp(h_{\theta}(x^q_{r(j)}))}
 \tag{5}
 $$  
@@ -349,7 +347,7 @@ $$
 Note that this probability of a ranking can be computed efficiently, and that the derivative of $\pi_{\theta}(r|q)$ and $\log \pi_{\theta}(r|q)$ exists whenever the scoring model $h_{\theta}$ is differentiable. 
 このランキングの確率は効率的に計算でき、スコアリングモデル $h_{\theta}$ が微分可能である限り、$\pi_{\theta}(r|q)$ および $\log \pi_{\theta}(r|q)$ の導関数が存在することに注意してください。 
 Sampling a ranking under the Plackett-Luce model is efficient as well. 
-Plackett-Luce モデルの下でランキングをサンプリングすることも効率的です。 
+Plackett-Luce モデルの下でランキングをサンプリングすることも効率的です。
 To sample a ranking, starting from the top, documents are drawn recursively from the probability distribution resulting from Softmax over the scores of the remaining documents in the candidate set, until the set is empty. 
 ランキングをサンプリングするには、最初に上から始めて、候補セット内の残りのドキュメントのスコアに対するソフトマックスから得られる確率分布からドキュメントを再帰的に引き出し、セットが空になるまで続けます。(うんうん、これぞプラケットルースモデルだ...!!:thinking:)
 
@@ -407,7 +405,7 @@ The final expectation is approximated via Monte-Carlo sampling from the Plackett
 Note that this policy-gradient approach to LTR, which we call PG-Rank, is novel in itself and beyond fairness. 
 このポリシー勾配アプローチは、私たちが PG-Rank と呼ぶ LTR に対して新しいものであり、公平性を超えています。 
 It can be used as a standalone LTR algorithm for virtually any choice of utility metric ∆, including NDCG, DCG, ERR, and Average-Rank. 
-これは、NDCG、DCG、ERR、Average-Rank を含む、ほぼすべてのユーティリティメトリック $\Delta$ の選択に対してスタンドアロンの LTR アルゴリズムとして使用できます。 
+これは、NDCG、DCG、ERR、Average-Rank を含む、ほぼすべてのユーティリティメトリック $\Delta$ の選択に対してスタンドアロンの LTR アルゴリズムとして使用できます。
 Furthermore, PG-Rank also supports non-linear metrics, IPS-weighted metrics for partial information feedback (Joachims et al., 2017), and listwise metrics that do not decompose as a sum over individual documents (Zhai et al., 2003). 
 さらに、PG-Rank は非線形メトリック、部分情報フィードバックのための IPS 加重メトリック (Joachims et al., 2017)、および個々のドキュメントの合計として分解されないリストワイズメトリック (Zhai et al., 2003) もサポートしています。 
 
