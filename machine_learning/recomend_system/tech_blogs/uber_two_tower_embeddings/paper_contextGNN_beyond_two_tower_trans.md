@@ -1,4 +1,7 @@
-https://arxiv.org/html/2411.19513v1
+- refs:
+  - https://arxiv.org/abs/2411.19513
+  - https://github.com/kumo-ai/ContextGNN
+
 
 # ContextGNN: Beyond Two-Tower Recommendation Systems
 
@@ -487,673 +490,192 @@ We perform experiments on six diverse datasets stemming from different domains, 
 We aim to answer the following research questions:  
 以下の研究質問に答えることを目指します：
 
-Q1  
-Q1
-
-Which benefits does ContextGNN provide over each of its individual component?  
+- Q1: Which benefits does ContextGNN provide over each of its individual component?  
 ContextGNNは、それぞれの個別のコンポーネントに対してどのような利点を提供しますか？
 
-Q2  
-Q2
-
-How does ContextGNN perform against state-of-the-art recommendation system methods?  
+- Q2: How does ContextGNN perform against state-of-the-art recommendation system methods?  
 ContextGNNは、最先端の推薦システム手法に対してどのようにパフォーマンスを発揮しますか？
 
-Q3  
-Q3
-
-How does the locality score of Sec. 3 influence the model performance of ContextGNN?  
+- Q3: How does the locality score of Sec. 3 influence the model performance of ContextGNN?  
 セクション3の局所性スコアは、ContextGNNのモデルパフォーマンスにどのように影響しますか？
 
-Q4  
-Q4
-
-How efficient and scalable is ContextGNN compared to the related work?  
+- Q4: How efficient and scalable is ContextGNN compared to the related work?  
 ContextGNNは、関連研究と比較してどの程度効率的でスケーラブルですか？
 
-Our method 111 Source code: https://github.com/kumo-ai/ContextGNN is implemented in PyTorch (Paszke et al., 2019) utilizing the PyTorch Geometric (Fey & Lenssen, 2019) and PyTorch Frame (Hu et al., 2024) libraries.  
+Our method Source code: https://github.com/kumo-ai/ContextGNN is implemented in PyTorch (Paszke et al., 2019) utilizing the PyTorch Geometric (Fey & Lenssen, 2019) and PyTorch Frame (Hu et al., 2024) libraries.  
 私たちの手法は、PyTorch（Paszke et al., 2019）を使用して実装されており、PyTorch Geometric（Fey & Lenssen, 2019）およびPyTorch Frame（Hu et al., 2024）ライブラリを利用しています。
 
-111 Source code: https://github.com/kumo-ai/ContextGNN  
-111 ソースコード: https://github.com/kumo-ai/ContextGNN
+### 5.1 Relational Deep Learning リレーショナル深層学習
 
-11 Source code: https://github.com/kumo-ai/ContextGNN  
-11 ソースコード: https://github.com/kumo-ai/ContextGNN
-
-11 Source code: https://github.com/kumo-ai/ContextGNN  
-11 ソースコード: https://github.com/kumo-ai/ContextGNN
-
-1  
-1
-
-
-
-### 5.1 Relational Deep Learning
-
-5.1 リレーショナル深層学習
-
-##### Dataset Description.
-
-##### データセットの説明
+#### Dataset Description. データセットの説明
 
 We utilize the recommendation tasks introduced in RelBench (Robinson et al., 2024), which consists of eight different realistic and temporal-aware recommendation tasks. 
-私たちは、RelBench（Robinson et al., 2024）で紹介された推薦タスクを利用します。これは、8つの異なる現実的かつ時間に配慮した推薦タスクで構成されています。
-
+私たちは、RelBench（Robinson et al., 2024）で紹介された推薦タスクを利用します。これは、**8つの異なる現実的かつ時間に配慮した推薦タスク**で構成されています。
 RelBench datasets contain rich relational structure, providing a challenging environment for recommendation tasks. 
 RelBenchデータセットは豊富なリレーショナル構造を含んでおり、推薦タスクにとって挑戦的な環境を提供します。
-
 To achieve strong performance, methods must be able to leverage information across multiple relational tables. 
 強力なパフォーマンスを達成するためには、手法が複数のリレーショナルテーブル間の情報を活用できる必要があります。
-
 All datasets are publicly accessible and vary in terms of domain, size, and sparsity. 
 すべてのデータセットは公開されており、ドメイン、サイズ、およびスパース性の点で異なります。
-
 The task is to predict the top-k items given a user at a given seed time. 
-タスクは、特定のシード時間におけるユーザに対してトップkアイテムを予測することです。
-
+タスクは、**特定のシード時間におけるユーザに対してトップkアイテムを予測すること**です。
 The metric we use is Mean Average Precision (MAP)@k, where k is set per task (higher is better). 
 私たちが使用する指標はMean Average Precision (MAP)@kであり、kはタスクごとに設定されます（高い方が良い）。
 
-##### Experimental Protocols.
-
-##### 実験プロトコル
+#### Experimental Protocols.  実験プロトコル
 
 We compare ContextGNN to the following baseline methods: 
 私たちはContextGNNを以下のベースライン手法と比較します：
 
-- ContextGNN
-- LightGBM
 - LightGBM (Ke et al., 2017) concatenates both user and item features, and feeds them into a LightGBM decision tree. 
   LightGBM（Ke et al., 2017）は、ユーザとアイテムの特徴を連結し、それをLightGBM決定木に入力します。
 
-- MultiVAE
 - MultiVAE (Liang et al., 2018) extends variational autoencoders to collaborative filtering via a user-item interaction matrix for implicit feedback. 
   MultiVAE（Liang et al., 2018）は、ユーザ-アイテム相互作用行列を介して協調フィルタリングに変分オートエンコーダを拡張します。
 
-- GraphSAGE
 - GraphSAGE (Hamilton et al., 2017) employs a heterogeneous GNN on both user and item side, and ranks the produced embeddings via an inner product decoder. 
   GraphSAGE（Hamilton et al., 2017）は、ユーザとアイテムの両方に対して異種GNNを使用し、生成された埋め込みを内積デコーダを介してランク付けします。
 
-- NGCF
 - NGCF (Wang et al., 2019) extends GraphSAGE by propagating both shallow user and item embeddings inside the GNN. 
   NGCF（Wang et al., 2019）は、GNN内で浅いユーザとアイテムの埋め込みの両方を伝播させることによってGraphSAGEを拡張します。
 
-- NBFNet
 - NBFNet (Zhu et al., 2021) employs pair-wise GNN representations. This is the backbone of our pair-wise representation model in ContextGNN. 
   NBFNet（Zhu et al., 2021）は、ペアワイズGNN表現を使用します。これは、ContextGNNにおけるペアワイズ表現モデルのバックボーンです。
 
-- ShallowItem
 - ShallowItem describes our two-tower model in ContextGNN, which ranks user GNN representations and shallow item embeddings via an inner product decoder. 
   ShallowItemは、ContextGNNにおける私たちの2タワーモデルを説明し、ユーザGNN表現と浅いアイテム埋め込みを内積デコーダを介してランク付けします。
 
 Importantly, all GNN-based models utilize the same GNN backbone, which guarantees fair comparison of training procedures that are agnostic to the underlying model implementation. 
-重要なことに、すべてのGNNベースのモデルは同じGNNバックボーンを利用しており、基盤となるモデル実装に依存しないトレーニング手順の公正な比較を保証します。
-
+**重要なことに、すべてのGNNベースのモデルは同じGNNバックボーンを利用しており、基盤となるモデル実装に依存しないトレーニング手順の公正な比較を保証します**。(モデルアーキテクチャと入力データは全部同じってことか:thinking:)
 Specifically, we use a heterogeneous GraphSAGE variant as introduced in Robinson et al. (2024), which leverages a ResNet tabular model (Gorishniy et al., 2021) to encode multi-modal input data into a shared embedding space, which then gets fed into a heterogeneous GraphSAGE variant (Hamilton et al., 2017) with sum-based neighbor aggregation. 
 具体的には、Robinson et al.（2024）で紹介された異種GraphSAGEのバリアントを使用し、ResNetタブularモデル（Gorishniy et al., 2021）を活用してマルチモーダル入力データを共有埋め込み空間にエンコードし、その後、合計ベースの隣接集約を持つ異種GraphSAGEバリアント（Hamilton et al., 2017）に入力します。
-
 For all experiments, optimization is done via Adam (Kingma & Ba, 2015) for a maximum of 20 epochs. 
-すべての実験では、最適化はAdam（Kingma & Ba, 2015）を介して最大20エポックで行われます。
-
+すべての実験では、**最適化はAdam（Kingma & Ba, 2015）を介して最大20エポック**で行われます。
 The hyper-parameters we tune for each task are: (1) the number of hidden units ∈ {32, 64, 128, 256, 512}, (2) the batch size ∈ {256, 512, 1024}, and (3) the learning rate ∈ {0.001, 0.01}. 
 各タスクに対して調整するハイパーパラメータは次のとおりです：（1）隠れユニットの数 ∈ {32, 64, 128, 256, 512}、（2）バッチサイズ ∈ {256, 512, 1024}、および（3）学習率 ∈ {0.001, 0.01}。
 
-##### Recommendation results
+<!-- ここまで読んだ! -->
 
-##### 推薦結果
 
-| Task            | Split | Light | Multi | Graph | NGCF | NBFNet | Shallow | ContextGNN |
-|------------------|-------|-------|-------|-------|------|--------|---------|------------|
-| rel-amazon       |       |       |       |       |      |        |         |            |
-| user-item-purchase | val   | 0.18  | 0.37  | 1.53  | 1.16 | 2.60   | 1.45    | 2.71       |
-|                   | test  | 0.16  | 0.23  | 0.74  | 0.88 | 2.06   | 0.56    | 2.93       |
-| user-item-rate   | val   | 0.22  | 0.34  | 1.42  | 1.22 | 1.61   | 1.62    | 2.68       |
-|                   | test  | 0.17  | 0.24  | 0.87  | 0.86 | 1.24   | 0.74    | 2.25       |
-| user-item-review  | val   | 0.14  | 0.19  | 1.03  | 0.79 | 1.86   | 1.06    | 1.95       |
-|                   | test  | 0.09  | 0.10  | 0.47  | 0.55 | 1.57   | 0.40    | 1.63       |
-| rel-hm          |       |       |       |       |      |        |         |            |
-| user-item-purchase | val   | 0.44  | 0.33  | 0.92  | 0.81 | 2.64   | 0.49    | 3.00       |
-|                   | test  | 0.38  | 0.28  | 0.80  | 0.75 | 2.81   | 0.40    | 2.93       |
-| rel-stack       |       |       |       |       |      |        |         |            |
-| user-post-comment | val   | 0.04  | 0.07  | 0.43  | 0.52 | 15.17  | 0.05    | 15.22      |
-|                   | test  | 0.04  | 0.01  | 0.11  | 0.13 | 12.72  | 0.03    | 13.34      |
-| rel-trial       |       |       |       |       |      |        |         |            |
-| condition-val    | 4.88  | 2.59  | 3.12  | 3.71 | 1.33 | 0.88   | 11.59   |            |
-| sponsor-run      | test  | 4.82  | 2.47  | 2.89  | 3.88 | 1.36   | 0.85    | 11.65      |
-| site-sponsor-run | val   | 10.92 | 7.16  | 14.09 | 9.68 | 17.47  | 12.59   | 28.55      |
-|                   | test  | 8.40  | 6.17  | 10.70 | 6.54 | 19.06  | 10.66   | 28.02      |
-| Average (↑)     | val   | 2.30  | 1.46  | 2.82  | 2.24 | 7.56   | 2.35    | 9.22       |
-|                   | test  | 2.01  | 1.29  | 2.08  | 1.72 | 7.71   | 1.81    | 9.23       |
-
-##### Discussion.
-
-##### 議論
+#### Discussion.
 
 The results are reported in Table 2. 
 結果は表2に示されています。
-
 We answer Q1 by comparing ContextGNN to its individual components NBFNet and ShallowItem, and answer Q2 by relating ContextGNN’s performance to all reported baselines. 
 私たちは、ContextGNNをその個々のコンポーネントであるNBFNetとShallowItemと比較することでQ1に答え、ContextGNNのパフォーマンスをすべての報告されたベースラインに関連付けることでQ2に答えます。
 
 ContextGNN outperforms all competing baselines, often by very significant margins. 
 ContextGNNはすべての競合ベースラインを上回り、しばしば非常に大きな差で勝っています。
-
 Notably, one can observe that the two-tower models MultiVAE, GraphSAGE and NGCF all fail to capture the pair-wise signals that both NBFNet and ContextGNN are able to leverage. 
-特に、2タワーモデルであるMultiVAE、GraphSAGE、NGCFは、NBFNetとContextGNNの両方が活用できるペアワイズ信号を捉えることができないことが観察されます。
-
+特に、**2タワーモデルであるMultiVAE、GraphSAGE、NGCFは、NBFNetとContextGNNの両方が活用できるペアワイズ信号を捉えることができないこと**が観察されます。
 This shows that two-tower representations are not powerful enough to capture the fine-grained pair-wise dependencies that are required to solve these tasks with high precision. 
-これは、2タワー表現がこれらのタスクを高精度で解決するために必要な細かいペアワイズ依存関係を捉えるには十分な力を持っていないことを示しています。
-
+これは、**2タワー表現がこれらのタスクを高精度で解決するために必要な細かいペアワイズ依存関係を捉えるには十分な力を持っていないこと**を示しています。
 Among the two-tower GNN models, there is no clear winner between GraphSAGE and NGCF, indicating that shallow (user) embeddings do not significantly drive improvements (and may even hinder performance, especially in tasks with inherent temporal dynamics). 
 2タワーGNNモデルの中で、GraphSAGEとNGCFの間に明確な勝者はおらず、浅い（ユーザ）埋め込みが改善を大きく促進しないこと（特に内在的な時間的ダイナミクスを持つタスクではパフォーマンスを妨げる可能性があること）を示しています。
-
 ContextGNN improves results by 344% on average compared to the best two-tower baseline. 
 ContextGNNは、最良の2タワーベースラインと比較して平均344%の結果改善を達成します。
 
 Among the baselines, NBFNet performs the best across all tasks, while ContextGNN can consistently improve upon these strong outcomes. 
 ベースラインの中で、NBFNetはすべてのタスクで最も良いパフォーマンスを発揮し、ContextGNNはこれらの強力な結果を一貫して改善できます。
-
 On average, ContextGNN increases performance by 20% compared to NBFNet, underscoring the importance of incorporating “distant” items into the ranking process - an aspect that NBFNet overlooks by design. 
-平均して、ContextGNNはNBFNetと比較して20%のパフォーマンス向上を実現し、「遠くの」アイテムをランキングプロセスに組み込む重要性を強調します。これは、NBFNetが設計上見落としている側面です。
+平均して、**ContextGNNはNBFNetと比較して20%のパフォーマンス向上を実現し、「遠くの」アイテムをランキングプロセスに組み込む重要性を強調**します。これは、NBFNetが設計上見落としている側面です。
 
 Our own two-tower ShallowItem model performs comparably to other two-tower GNN baselines, despite only using shallow item information in order to improve the overall efficiency of the model. 
 私たち自身の2タワーShallowItemモデルは、モデルの全体的な効率を向上させるために浅いアイテム情報のみを使用しているにもかかわらず、他の2タワーGNNベースラインと同等のパフォーマンスを発揮します。
-
 This supports the hypothesis that a deep GNN on the item side is not particularly useful on most tasks, as the shallow embeddings can capture most of the key signals on the item side just as well as the GNN. 
-これは、アイテム側の深いGNNがほとんどのタスクで特に有用ではないという仮説を支持します。浅い埋め込みは、GNNと同様にアイテム側の主要な信号のほとんどを捉えることができます。
-
+これは、**アイテム側の深いGNNがほとんどのタスクで特に有用ではないという仮説**を支持します。浅い埋め込みは、GNNと同様にアイテム側の主要な信号のほとんどを捉えることができます。
 However, there exists specific cases such as the condition-sponsor-run task on the rel-trial dataset, where ShallowItem underperforms relative to GraphSAGE and NGCF. 
 しかし、rel-trialデータセットのcondition-sponsor-runタスクのような特定のケースでは、ShallowItemがGraphSAGEやNGCFに対して劣ることがあります。
-
 On this task, deep GNNs on the item side play indeed a crucial role to improve results of two-tower models, which is captured in ContextGNN through its pair-wise representation model. 
 このタスクでは、アイテム側の深いGNNが2タワーモデルの結果を改善するために重要な役割を果たし、これはContextGNNのペアワイズ表現モデルを通じて捉えられています。
 
 The most noteworthy result is seen in the site-sponsor-run task on the rel-trial dataset. 
 最も注目すべき結果は、rel-trialデータセットのsite-sponsor-runタスクで見られます。
-
 Here, both pair-wise models and two-tower models achieve strong initial results. 
-ここでは、ペアワイズモデルと2タワーモデルの両方が強力な初期結果を達成します。
-
+ここでは、**ペアワイズモデルと2タワーモデルの両方が強力な初期結果を達成**します。
 Combining these two paradigms together via ContextGNN improves the final performance by ≈ 100%, indicating that each of the individual components of ContextGNN captures orthogonal signals. 
 ContextGNNを介してこれら2つのパラダイムを組み合わせることで、最終的なパフォーマンスが約100%向上し、ContextGNNの各個別コンポーネントが直交信号を捉えていることを示しています。
-
 The fusion of these paradigms yields a ranking model that excels in both local and distant item ranking, achieving superior overall performance. 
-これらのパラダイムの融合は、ローカルおよび遠方のアイテムランキングの両方で優れたランキングモデルを生み出し、全体的なパフォーマンスを向上させます。
+**two-towerモデルとペアワイズモデルのパラダイムの融合**は、ローカルおよび遠方のアイテムランキングの両方で優れたランキングモデルを生み出し、全体的なパフォーマンスを向上させます。
+
+<!-- ここまで読んだ! -->
 
 In order to answer Q3, we now analyze the relationship between the locality scores $s_{k}^{[T,T+i)}$ and the performance of ContextGNN. 
-Q3に答えるために、私たちは現在、局所性スコア$s_{k}^{[T,T+i)}$とContextGNNのパフォーマンスとの関係を分析します。
-
+Q3に答えるために、私たちは現在、局所性スコア $s_{k}^{[T,T+i)}$ とContextGNNのパフォーマンスとの関係を分析します。
 We observe that the improvements of ContextGNN compared to NBFNet are notably higher on tasks with lower locality scores. 
-ContextGNNのNBFNetに対する改善は、局所性スコアが低いタスクで顕著に高いことが観察されます。
-
+**ContextGNNのNBFNetに対する改善は、局所性スコアが低いタスクで顕著に高い**ことが観察されます。
 This observation aligns intuitively, as ContextGNN needs to rely more heavily on its two-tower component during optimization when locality scores are lower. 
 この観察は直感的に一致しており、局所性スコアが低いときにContextGNNは最適化中にその2タワーコンポーネントにより依存する必要があります。
-
 Specifically, in tasks with the lowest locality scores (e.g., 0.168, 0.170 and 0.229 on the user-item-purchase, user-item-rate and site-sponsor-run tasks from the rel-amazon and rel-trial datasets), ContextGNN achieves substantial performance gains of 42% to 80% compared to NBFNet. 
 具体的には、最低の局所性スコア（例：rel-amazonおよびrel-trialデータセットのuser-item-purchase、user-item-rate、site-sponsor-runタスクでの0.168、0.170、0.229）を持つタスクでは、ContextGNNはNBFNetに対して42%から80%の大幅なパフォーマンス向上を達成します。
-
 Conversely, for tasks with higher locality scores (e.g., 0.417, 0.298, and 0.280 on the user-item-purchase, user-post-comment, and post-post-related tasks from the rel-hm and rel-stack datasets), the performance improvements of ContextGNN over NBFNet are more modest, ranging from 3% to 5%. 
 逆に、局所性スコアが高いタスク（例：rel-hmおよびrel-stackデータセットのuser-item-purchase、user-post-comment、post-post-relatedタスクでの0.417、0.298、0.280）では、ContextGNNのNBFNetに対するパフォーマンス向上はより控えめで、3%から5%の範囲です。
-
 These findings underscore the significant impact of the locality score on the performance of NBFNet, whereas ContextGNN demonstrates robustness, achieving stellar performance improvements regardless of task-specific characteristics. 
-これらの発見は、NBFNetのパフォーマンスに対する局所性スコアの重要な影響を強調し、一方でContextGNNは堅牢性を示し、タスク特有の特性に関係なく優れたパフォーマンス向上を達成します。
+これらの発見は、NBFNetのパフォーマンスに対する局所性スコアの重要な影響を強調し、一方で**ContextGNNは堅牢性を示し、タスク特有の特性に関係なく優れたパフォーマンス向上を達成**します。
 
-
+<!-- ここまで読んだ! -->
 
 ### 5.2 Static Link Prediction 静的リンク予測
 
-Table 3:  
-表3：
-
-Results on Amazon-Book.  
-Amazon-Bookにおける結果。
-
-Model Recall@20 NDCG@20  
-モデル　Recall@20　NDCG@20  
-NGCF (2019) 0.0337 0.0261  
-LightGCN (2020) 0.0410 0.0318  
-UltraGCN (2021) 0.0681 0.0556  
-LightGCL (2023) 0.0585 0.0436  
-SimGCL (2022) 0.0478 0.0379  
-SGL (2021) 0.0468 0.0371  
-ContextGNN 0.0451 0.0377  
-
 While ContextGNN’s main focus is to excel on large-scale real-world use-cases which are temporal and heterogeneous, it can also be used in a plug-and-play fashion for any link prediction task.  
 ContextGNNの主な焦点は、時間的かつ異種の大規模な実世界のユースケースで優れた性能を発揮することですが、任意のリンク予測タスクに対してプラグアンドプレイ方式で使用することもできます。
-
 To verify, we evaluate ContextGNN on the static link prediction task of Amazon-Book (Wang et al., 2019), which is a small-scale dataset of 52,643 users and 91,599 items, which does not come with input features, only considers users with at least ten interactions, and evaluates on 10% of randomly selected interactions independent of time, cf. Table 3.  
 これを検証するために、私たちはContextGNNをAmazon-Book（Wang et al., 2019）の静的リンク予測タスクで評価します。これは、52,643人のユーザと91,599アイテムからなる小規模なデータセットで、入力特徴はなく、少なくとも10回のインタラクションを持つユーザのみを考慮し、時間に依存しないランダムに選択されたインタラクションの10%で評価します（表3を参照）。
-
 We can see that ContextGNN is able to outperform both NGCF and LightGCN, while it is slightly underperforming compared to, e.g., UltraGCN or LightGCL.  
 ContextGNNは、NGCFおよびLightGCNの両方を上回る性能を発揮できることがわかりますが、例えばUltraGCNやLightGCLと比較するとやや劣っています。
-
 Given the relatively small size of this dataset, much of the progress in GNN-based recommendation systems has centered on two key directions: (1) simplifying GNN architectures, and (2) incorporating self-supervised learning techniques.  
-このデータセットの比較的小さなサイズを考慮すると、GNNベースの推薦システムにおける進展の多くは、2つの主要な方向に集中しています：（1）GNNアーキテクチャの簡素化、（2）自己教師あり学習技術の組み込みです。
-
+このデータセットの比較的小さなサイズを考慮すると、**GNNベースの推薦システムにおける進展の多くは、2つの主要な方向に集中しています：（1）GNNアーキテクチャの簡素化、（2）自己教師あり学習技術の組み込み**です。
 Exploring how ContextGNN can benefit from a more lightweight GNN backbone or complementary learning signals presents an exciting direction for future research.  
 ContextGNNがより軽量なGNNバックボーンや補完的な学習信号からどのように利益を得ることができるかを探ることは、今後の研究にとって興味深い方向性を示しています。
 
-
+<!-- ここまで読んだ! -->
 
 ### 5.3 Temporal Next-Item Prediction
 
-5.3
-Table 4:
-Results on IJCAI Contest.
-表4: IJCAIコンテストの結果。
-
-ModelHR@1HR@5NDCG@5HR@10NDCG@10DeepFM(2017)0.1380.3320.2440.4690.290Bert4Rec(2019)0.1410.3560.2610.4670.297Chorus(2020a)0.1400.3450.2470.4570.283HyRec(2020b)0.1370.3230.2290.4420.266NMTR(2019)0.1410.3600.2540.4810.304MATN(2020)0.1420.3750.2730.4890.309MBGCN(2020)0.1370.3320.2280.4630.277TGT(2022)0.1480.3990.2930.5190.330ContextGNN0.4110.6030.5130.6670.534
-モデル
-HR@1
-HR@5
-NDCG@5
-HR@10
-NDCG@10
-DeepFM
-Bert4Rec
-Chorus
-HyRec
-NMTR
-MATN
-MBGCN
-TGT
-ContextGNN
-0.411
-0.603
-0.513
-0.667
-0.534
+(Sequential recommendationのデータセットを使ってオフライン評価してみたよ、って話?)
 
 We use ContextGNN to perform temporal next-item recommendation on the IJCAI Contest dataset (Xia et al., 2022), which is a common dataset to evaluate sequential recommendation models et al. (Sun et al., 2019; Xia et al., 2020; 2022).
 私たちは、IJCAIコンテストデータセット（Xia et al., 2022）において、ContextGNNを使用して時間的次アイテム推薦を行います。このデータセットは、逐次推薦モデルを評価するための一般的なデータセットです（Sun et al., 2019; Xia et al., 2020; 2022）。
-
 As per evaluation protocol, we report HitRate@k and NDCG@k over 99 sampled negatives per entity.
 評価プロトコルに従い、各エンティティに対して99のサンプルネガティブに対するHitRate@kとNDCG@kを報告します。
-
 Notably, ContextGNN excels at incorporating multi-behavioral and temporal signal, cf. Table 4.
 特に、ContextGNNは多様な行動と時間的信号を取り入れるのに優れており、表4を参照してください。
-
 We observe that ContextGNN is able to out-perform all baselines on all metrics on this task (e.g., 170% improvement on HitRate@1).
 私たちは、ContextGNNがこのタスクのすべての指標で全てのベースラインを上回ることができることを観察しました（例：HitRate@1で170%の改善）。
 
-ContextGNN
-ContextGNN
-4
-ContextGNN
-
-
-
 ### 5.4 Efficiency Analysis 効率分析
 
-Table 5:  
-表5：
-
-Runtime [s]  
-実行時間 [秒]
-
-Model rel-hm rel-stack  
-モデル rel-hm rel-stack
-
-GraphSAGE (1 negative) 275s  
-GraphSAGE (1 negative) 275秒
-
-GraphSAGE (10 negatives) 293s  
-GraphSAGE (10 negatives) 293秒
-
-GraphSAGE (100 negatives) OOM  
-GraphSAGE (100 negatives) OOM
-
-NFBNet 77s  
-NFBNet 77秒
-
-ShallowItem 92s  
-ShallowItem 92秒
-
-ContextGNN 94s  
-ContextGNN 94秒
+(計算効率の話! two-towerモデルと比べてどうなのよ! これは運用する上で重要だよなぁ...)
 
 Our hybrid ContextGNN model is designed in such a way to have minimal overhead compared to its two components in isolation since the vast majority of the model parts are shared between the two paradigms.  
-私たちのハイブリッドContextGNNモデルは、二つのコンポーネントを単独で使用する場合と比較して、最小限のオーバーヘッドを持つように設計されています。これは、モデルの大部分の部分が二つのパラダイム間で共有されているためです。
-
+私たちのハイブリッドContextGNNモデルは、**二つのコンポーネントを単独で使用する場合と比較して、最小限のオーバーヘッドを持つように設計**されています。これは、モデルの大部分の部分が二つのパラダイム間で共有されているためです。
 To answer Q4, we report the runtime in seconds to reach 1,000 optimization steps across different models, cf. Table 5.  
 Q4に答えるために、異なるモデルで1,000回の最適化ステップに到達するための実行時間を秒単位で報告します（表5を参照）。
-
 Most importantly, since ContextGNN only requires a single GNN forward pass, it is faster compared to any two-tower GNN by a very significant factor (i.e., a two-tower GNN such as GraphSAGE requires to run the GNN on both positive and negative items).  
-最も重要なのは、ContextGNNは単一のGNNフォワードパスのみを必要とするため、任意の二塔GNNと比較して非常に大きな要因で速くなります（つまり、GraphSAGEのような二塔GNNは、正のアイテムと負のアイテムの両方でGNNを実行する必要があります）。
-
+**最も重要なのは、ContextGNNは単一のGNNフォワードパスのみを必要とするため、任意の二塔GNNと比較して非常に大きな要因で速くなります**（つまり、GraphSAGEのような二塔GNNは、正のアイテムと負のアイテムの両方でGNNを実行する必要があります）。
 In particular, two-tower GNNs scale very poorly when increasing the number of negative samples to train against.  
 特に、二塔GNNは、トレーニングに対して負のサンプルの数を増やすと、非常にスケールが悪くなります。
-
 For training recommendation systems, a large number of negative examples is important to allow learning of discriminative features.  
 推薦システムのトレーニングにおいては、大量の負の例が、識別的特徴の学習を可能にするために重要です。
-
 However, in the simplest case (one negative pair per positive pair), a two-tower GNN needs to be executed three times already.  
-しかし、最も単純なケース（正のペアごとに1つの負のペア）では、二塔GNNはすでに3回実行する必要があります。
-
+しかし、**最も単純なケース（正のペアごとに1つの負のペア）では、二塔GNNはすでに3回実行する必要があります**。(2回じゃなくて?? ユーザタワー1回、アイテムタワー2回ってこと??:thinking:)
 ContextGNN does not have this limitation and can consider up to 1M negatives before running into GPU memory limitations.  
 ContextGNNはこの制限がなく、GPUメモリの制限に達する前に最大1Mの負のサンプルを考慮することができます。
-
-ContextGNN  
-ContextGNN
-
-Q4  
-Q4
-
-5  
-5
-
-ContextGNN  
-ContextGNN
-
-GraphSAGE  
-GraphSAGE
-
-ContextGNN  
-ContextGNN
-
-
 
 ## 6Conclusion 結論
 
 We presented a novel hybrid GNN pipeline for recommendation called ContextGNN that can effectively contextualize predictions via pair-wise representations for familiar items, while falling back to two-tower representations for exploratory and serendipitous items. 
 私たちは、ContextGNNと呼ばれる推薦のための新しいハイブリッドGNNパイプラインを提案しました。このパイプラインは、馴染みのあるアイテムに対してペアワイズ表現を通じて予測を効果的に文脈化し、探索的および偶然のアイテムに対しては二塔表現に戻ることができます。
-
 We evaluated our architecture on real-world datasets on which it consistently improved upon the state-of-the-art. 
 私たちは、実世界のデータセットでアーキテクチャを評価し、常に最先端の技術を上回る改善を示しました。
+
+<!-- ここまで読んだ! -->
 
 #### Acknowledgments 謝辞
 
 We thank the entire Kumo.AI team for their invaluable support in bringing Hybrid-GNN into production for over dozens of customers and for any dataset scale. 
 私たちは、数十の顧客に対してHybrid-GNNを製品化するための貴重なサポートを提供してくれたKumo.AIチーム全体に感謝します。また、あらゆるデータセットのスケールに対しても感謝します。
-
 Special thanks go to Amitabha Roy, Myungwhan Kim and Federico Reyes Gómez for helpful discussions and feedback. 
 特に、役立つ議論とフィードバックを提供してくれたAmitabha Roy、Myungwhan Kim、Federico Reyes Gómezに感謝します。
 
-
-
-## References 参考文献
-
-- Baras & Theodorakopoulos (2010)↑
-J.S. Baras and G.Theodorakopoulos. 
-Path problems in networks. 
-Synthesis Lectures on Communication Networks, 3(1):1–77, 2010.
-- Cai etal. (2023)↑
-X.Cai, C.Huang, L.Xia, and X.Ren. 
-LightGCL: Simple yet effective graph contrastive learning for 
-recommendation. 
-InICLR, 2023.
-- Campana & Delmastro (2017)↑
-M.G. Campana and F.Delmastro. 
-Recommender systems for online and mobile social networks: A survey. 
-Online Social Networks and Media, 3:75–97, 2017.
-- Fey & Lenssen (2019)↑
-M.Fey and J.E. Lenssen. 
-Fast graph representation learning with PyTorch Geometric. 
-InICLR Workshop on Representation Learning on Graphs and 
-Manifolds, 2019.
-- Fey etal. (2024)↑
-M.Fey, W.Hu, K.Huang, J.E. Lenssen, R.Ranjan, J.Robinson, R.Ying, 
-J.You, and J.Leskovec. 
-Relational deep learning: Graph representation learning on relational 
-databases. 
-InICML, 2024.
-- Gao etal. (2019)↑
-C.Gao, X.He, D.Gan, X.Chen, F.Feng, Y.Li, T.S. Chua, and D.Jin. 
-Neural multi-task recommendation from multi-behavior data. 
-InICDE, 2019.
-- Gorishniy etal. (2021)↑
-Yury Gorishniy, Ivan Rubachev, Valentin Khrulkov, and Artem Babenko. 
-Revisiting deep learning models for tabular data. 
-InNeurIPS, 2021.
-- Grover & Leskovec (2016)↑
-A.Grover and J.Leskovec. 
-node2vec: Scalable feature learning for networks. 
-InSIGKDD, 2016.
-- Guo etal. (2017)↑
-H.Guo, R.Tang, Y.Ye, Z.Li, and X.He. 
-DeepFM: A factorization-machine based neural network for CTR 
-prediction. 
-InICJAI, 2017.
-- H. & C. (2017)↑
-Xiangnan H. and Tat-Seng C. 
-Neural factorization machines for sparse predictive analytics. 
-InSIGIR, 2017.
-- Hamilton etal. (2017)↑
-W.Hamilton, Z.Ying, and J.Leskovec. 
-Inductive representation learning on large graphs. 
-InNIPS, 2017.
-- He & McAuley (2016)↑
-R.He and J.McAuley. 
-Fusing similarity models with Markov chains for sparse sequential 
-recommendation. 
-InICDM, 2016.
-- He etal. (2017)↑
-X.He, L.Liao, H.Zhang, L.Nie, X.Hu, and T.Chua. 
-Neural collaborative filtering. 
-InWWW, 2017.
-- He etal. (2020)↑
-X.He, K.Deng, X.Wang, Y.Li, Y.Zhang, and M.Wang. 
-LightGCN: Simplifying and powering graph convolution network for 
-recommendation. 
-InSIGIR, 2020.
-- He etal. (2023)↑
-Z.He, W.Liu, W.Guo, J.Qin, Y.Zhang, Y.Hu, and R.Tang. 
-A survey on user behavior modeling in recommender systems. 
-InIJCAI, 2023.
-- Hu etal. (2024)↑
-W.Hu, Y.Yuan, Z.Zhang, A.Nitta, K.Cao, V.Kocijan, J.Leskovec, and 
-M.Fey. 
-PyTorch Frame: A modular framework for multi-modal tabular 
-learning. 
-CoRR, abs/2404.00776, 2024.
-- Hu etal. (2008)↑
-Y.Hu, Y.Koren, and C.Volinsky. 
-Collaborative filtering for implicit feedback datasets. 
-InICDM, 2008.
-- Huang etal. (2023)↑
-S.Huang, F.Poursafaei, J.Danovitch, M.Fey, W.Hu, E.Rossi, J.Leskovec, 
-M.Bronstein, G.Rabusseau, and R.Rabbany. 
-Temporal graph benchmark for machine learning on temporal graphs. 
-NeurIPS, 2023.
-- Jin etal. (2020)↑
-B.Jin, C.Gao, X.He, D.Jin, and Y.Li. 
-Multi-behavior recommendation with graph convolutional networks. 
-InSIGIR, 2020.
-- Johnson etal. (2019)↑
-J.Johnson, M.Douze, and H.Jégou. 
-Billion-scale similarity search with GPUs. 
-IEEE Transactions on Big Data, 7(3):535–547, 2019.
-- Kang & McAuley (2018)↑
-W.Kang and J.McAuley. 
-Self-attentive sequential recommendation. 
-InICDM, 2018.
-- Ke etal. (2017)↑
-G.Ke, Q.Meng, T.Finley, T.Wang, W.Chen, W.Ma, Q.Ye, and T.Liu. 
-LightGBM: A highly efficient gradient boosting decision tree. 
-InNIPS, 2017.
-- Kingma & Ba (2015)↑
-D.P. Kingma and J.L. Ba. 
-Adam: A method for stochastic optimization. 
-InICLR, 2015.
-- Kipf & Welling (2016)↑
-T.N. Kipf and M.Welling. 
-Varitional graph auto-encoders. 
-InNIPS Workshop on Bayesian Deep Learning, 2016.
-- Koren etal. (2009)↑
-Y.Koren, R.Bell, and C.Volinsky. 
-Matrix factorization techniques for recommender systems. 
-Computer, 42(8):30–37, 2009.
-- Li etal. (2017)↑
-J.Li, P.Ren, Z.Chen, Z.Ren, T.Lian, and J.Ma. 
-Neural attentive session-based recommendation. 
-New York, NY, USA, 2017.
-- Li etal. (2024)↑
-Y.Li, K.Liu, R.Satapathy, S.Wang, and E.Cambria. 
-Recent developments in recommender systems: A survey. 
-IEEE Computational Intelligence Magazine, 19:78–95, 2024.
-- Liang etal. (2018)↑
-D.Liang, R.G. Krishnan, M.D. Hoffman, and T.Jebara. 
-Variational autoencoders for collaborative filtering. 
-InWWW, 2018.
-- Liu etal. (2018)↑
-Q.Liu, Y.Zeng, R.Mokhosi, and H.Zhang. 
-STAMP: Short-term attention/memory priority model for session-based 
-recommendation. 
-InSIGKDD, 2018.
-- Ma etal. (2020)↑
-C.Ma, L.Ma, Y.Zhang, J.Sun, X.Liu, and M.Coates. 
-Memory augmented graph neural networks for sequential recommendation. 
-InAAAI, 2020.
-- Mao etal. (2021)↑
-K.Mao, J.Zhu, X.Xiao, B.Lu, Z.Wang, and X.He. 
-UltraGCN: Ultra simplification of graph convolutional networks for 
-recommendation. 
-InCIKM, 2021.
-- Mnih & Salakhutdinov (2007)↑
-A.Mnih and R.R. Salakhutdinov. 
-Probabilistic matrix factorization. 
-InNIPS, 2007.
-- Paszke etal. (2019)↑
-A.Paszke, S.Gross, F.Massa, A.Lerer, J.Bradbury, G.Chanan, T.Killeen, 
-Z.Lin, N.Gimelshein, L.Antiga, A.Desmaison, A.Kopf, E.Yang, 
-Z.DeVito, M.Raison, A.Tejani, S.Chilamkurthy, B.Steiner, L.Fang, 
-J.Bai, and S.Chintala. 
-PyTorch: An imperative style, high-performance deep learning 
-library. 
-InNeurIPS, 2019.
-- Perozzi etal. (2014)↑
-B.Perozzi, R.Al-Rfou, and S.Skiena. 
-DeepWalk: Online learning of social representations. 
-InSIGKDD, 2014.
-- Rendle etal. (2009)↑
-S.Rendle, C.Freudenthaler, Z.Gantner, and L.Schmidt-Thieme. 
-BPR: Bayesian personalized ranking from implicit feedback. 
-InUAI, 2009.
-- Rendle etal. (2010)↑
-S.Rendle, C.Freudenthaler, and L.Schmidt-Thieme. 
-Factorizing personalized Markov chains for next-basket 
-recommendation. 
-InWWW, 2010.
-- Ricci etal. (2010)↑
-F.Ricci, L.Rokach, and B.Shapira. 
-Introduction to recommender systems handbook. 
-InRecommender systems handbook. 2010.
-- Robinson etal. (2024)↑
-J.Robinson, R.Ranjan, W.Hu, K.Huang, J.Han, A.Dobles, M.Fey, J.E. 
-Lenssen, Y.Yuan, Z.Zhang, X.He, and J.Leskovec. 
-RelBench: A benchmark for deep learning on relational databases. 
-InNeurIPS, 2024.
-- Schlichtkrull etal. (2018)↑
-M.Schlichtkrull, T.N. Kipf, P.Bloem, R.vanden Berg, I.Titov, and 
-M.Welling. 
-Modeling relational data with graph convolutional networks. 
-InThe Semantic Web, 2018.
-- Sun etal. (2019)↑
-F.Sun, J.Liu, J.Wu, C.Pei, X.Lin, W.Ou, and P.Jiang. 
-BERT4Rec: Sequential recommendation with bidirectional encoder 
-representations from transformer. 
-InCIKM, 2019.
-- Teru etal. (2020)↑
-K.K. Teru, E.G. Denis, and W.L. Hamilton. 
-Inductive relation prediction by subgraph reasoning. 
-InICML, 2020.
-- Wang etal. (2020a)↑
-C.Wang, M.Zhang, W.Ma, Y.Liu, and Sh. Ma. 
-Make it a chorus: knowledge-and time-aware item modeling for 
-sequential recommendation. 
-InSIGIR, 2020a.
-- Wang etal. (2020b)↑
-J.Wang, K.Ding, L.Hong, H.Lui, and J.Caverlee. 
-Next-item recommendation with sequential hypergraphs. 
-InSIGIR, 2020b.
-- Wang etal. (2019)↑
-X.Wang, X.He, M.Wang, F.Feng, and T.Chua. 
-Neural graph collaborative filtering. 
-InSIGIR, 2019.
-- Webber (2021)↑
-J.Webber. 
-Powering real-time recommendations with graph database technology. 
-Technical report, Neo4J, 2021.
-- Wu etal. (2021)↑
-J.Wu, X.Wang, F.Feng, X.He, L.Chen, J.Lian, and X.Xie. 
-Self-supervised graph learning for recommendation. 
-InSIGIR, 2021.
-- Wu etal. (2023)↑
-L.Wu, Z.Zheng, Z.Qiu, H.Wang, H.Gu, T.Shen, C.Qin, C.Zhu, H.Zhu, 
-Q.Liu, H.Xiong, and E.Chen. 
-A survey on large language models for recommendation. 
-CoRR, abs/2305.19860, 2023.
-- Xia etal. (2020)↑
-L.Xia, C.Huang, Y.Xu, P.Dai, B.Zhang, and L.Bo. 
-Multiplex behavioral relation learning for recommendation via memory 
-augmented transformer network. 
-InSIGIR, 2020.
-- Xia etal. (2022)↑
-L.Xia, C.Huang, Y.Xu, and J.Pei. 
-Multi-behavior sequential recommendation with temporal graph 
-transformer. 
-InTKDE, 2022.
-- Yang etal. (2022)↑
-Y.Yang, C.Huang, L.Xia, Y.Liang, Y.Yu, and C.Li. 
-Multi-behavior hypergraph-enhanced transformer for sequential 
-recommendation. 
-InSIGKDD, 2022.
-- You etal. (2019)↑
-J.You, R.Ying, and J.Leskovec. 
-Position-aware graph neural networks. 
-InICML, 2019.
-- You etal. (2021)↑
-J.You, J.M. Gomes-Selman, R.Ying, and J.Leskovec. 
-Identity-aware graph neural networks. 
-InAAAI, 2021.
-- Yu etal. (2022)↑
-J.Yu, H.Yin, X.Xia, T.Chen, L.Cui, and Q.V.H. Nguyen. 
-Are graph augmentations necessary? simple graph contrastive learning 
-for recommendation. 
-InSIGIR, 2022.
-- Zeng etal. (2021)↑
-H.Zeng, M.Zhang, Y.Xia, A.Srivastava, A.Malevich, R.Kannan, V.Prasanna, 
-L.Jin, and R.Chen. 
-Decoupling the depth and scope of graph neural networks. 
-InNeurIPS, 2021.
-- Zhang & Chen (2018)↑
-M.Zhang and Y.Chen. 
-Link prediction based on graph neural networks. 
-InNIPS, 2018.
-- Zhu etal. (2021)↑
-Z.Zhu, Z.Zhang, L.P. Xhonneux, and J.Tang. 
-Neural Bellmann-Ford networks: A general graph neural network 
-framework for link prediction. 
-InNeurIPS, 2021.
-
-
-
-## Instructions for reporting errors エラー報告の手順
-
-We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile support. 
-私たちは論文のHTMLバージョンを改善し続けており、あなたのフィードバックはアクセシビリティとモバイルサポートの向上に役立ちます。 
-To report errors in the HTML that will help us improve conversion and rendering, choose any of the methods listed below:
-HTMLのエラーを報告するには、以下に示すいずれかの方法を選択してください。
-
-- Click the "Report Issue" button.
-- "Report Issue"ボタンをクリックしてください。
-- Open a report feedback form via keyboard, use "Ctrl + ?".
-- キーボードを使用して報告フィードバックフォームを開くには、「Ctrl + ?」を使用してください。
-- Make a text selection and click the "Report Issue for Selection" button near your cursor.
-- テキストを選択し、カーソルの近くにある「Report Issue for Selection」ボタンをクリックしてください。
-- You can use Alt+Y to toggle on and Alt+Shift+Y to toggle off accessible reporting links at each section.
-- 各セクションでアクセシブルな報告リンクをオンにするにはAlt+Yを、オフにするにはAlt+Shift+Yを使用できます。
-
-Our team has already identified the following issues. 
-私たちのチームはすでに以下の問題を特定しています。 
-We appreciate your time reviewing and reporting rendering errors we may not have found yet. 
-私たちは、まだ見つけていない可能性のあるレンダリングエラーをレビューし報告するためにあなたが費やす時間に感謝します。 
-Your efforts will help us improve the HTML versions for all readers, because disability should not be a barrier to accessing research. 
-あなたの努力は、すべての読者のためにHTMLバージョンを改善するのに役立ちます。なぜなら、障害は研究へのアクセスの障壁であってはならないからです。 
-Thank you for your continued support in championing open access for all.
-すべての人にオープンアクセスを推進するための継続的なサポートに感謝します。
-
-Have a free development cycle? Help support accessibility at arXiv! 
-開発サイクルに余裕がありますか？arXivでのアクセシビリティをサポートしてください！ 
-Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
-私たちの協力者であるLaTeXMLは、変換が必要なパッケージのリストを維持しており、開発者の貢献を歓迎しています。
+<!-- ここまで読んだ! -->
