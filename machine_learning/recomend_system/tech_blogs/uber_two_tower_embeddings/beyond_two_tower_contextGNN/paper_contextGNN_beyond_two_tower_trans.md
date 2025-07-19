@@ -3,12 +3,12 @@
   - https://github.com/kumo-ai/ContextGNN
 
 
-# ContextGNN: Beyond Two-Tower Recommendation Systems
+# 1. ContextGNN: Beyond Two-Tower Recommendation Systems
 
 Yiwen Yuan, Zecheng Zhang, Xinwei He, Akihiro Nitta, Weihua Hu, Dong Wang, Manan Shah, Shenyang Huang, Blaž Stojanovič, Alan Krumholz, Jan Eric Lenssen, Jure Leskovec, Matthias Fey Kumo.AI
 Yiwen Yuan, Zecheng Zhang, Xinwei He, Akihiro Nitta, Weihua Hu, Dong Wang, Manan Shah, Shenyang Huang, Blaž Stojanovič, Alan Krumholz, Jan Eric Lenssen, Jure Leskovec, Matthias Fey Kumo.AI
 
-## Abstract 概要
+## 1.1. Abstract 概要
 
 Recommendation systems predominantly utilize two-tower architectures, which evaluate user-item rankings through the inner product of their respective embeddings.
 推薦システムは主に二塔型アーキテクチャを利用しており、これはそれぞれの埋め込みの内積を通じてユーザとアイテムのランキングを評価します。
@@ -27,7 +27,7 @@ We demonstrate that ContextGNN is able to adapt to different data characteristic
 
 <!-- ここまで読んだ! -->
 
-## 1Introduction 1 はじめに
+## 1.2. 1Introduction 1 はじめに
 
 Recommendation systems have emerged as an important application domain for predictive machine learning over the past decades(Webber,2021; He etal.,2023; Li etal.,2024). 
 推薦システムは、過去数十年にわたり、予測機械学習の重要な応用分野として登場しました（Webber, 2021; He et al., 2023; Li et al., 2024）。
@@ -102,7 +102,7 @@ In particular, ContextGNN improves results by 20% on average compared to the bes
 
 <!-- ここまで読んだ! -->
 
-## Related Work 関連研究
+## 1.3. Related Work 関連研究
 
 Recommendation systems are a long-standing research area in machine learning.  
 推薦システムは、機械学習における長年の研究分野です。
@@ -120,7 +120,7 @@ Recently, the new field of generative recommendation deserves mentioning, utiliz
 Our work here relates to two lines of research: Sequential recommendation systems and recommendations with GNNs.  
 ここでの私たちの研究は、**シーケンシャル推薦システムとGNNを用いた推薦の二つの研究ライン**に関連しています。
 
-### Recommendation on Sequences. シーケンスにおける推薦
+### 1.3.1. Recommendation on Sequences. シーケンスにおける推薦
 
 Recommendation has traditionally been modeled as a sequence prediction problem.  
 推薦は従来、シーケンス予測問題としてモデル化されてきました。
@@ -131,7 +131,7 @@ They also have been combined with GNNs to additionally capture collaborative sig
 
 <!-- ここまで読んだ! -->
 
-### Recommendation with GNNs. GNNを用いた推薦
+### 1.3.2. Recommendation with GNNs. GNNを用いた推薦
 
 Various two-tower-based Graph Neural Networks (Hamilton et al., 2017) have been developed for link prediction tasks, based on the idea of integrating the paradigm of collaborative filtering via refining embeddings on the user-item interaction graph.  
 ユーザ-アイテム相互作用グラフ上の埋め込みを洗練することによって協調フィルタリングのパラダイムを統合するというアイデアに基づいて、**リンク予測タスクのためにさまざまなtwo-towerベースのグラフニューラルネットワーク（Hamilton et al., 2017）が開発**されています。(GNNベースのtwo-towerモデルが結構あるのか...!:thinking:)
@@ -168,7 +168,7 @@ In this work, we adapt the temporal formulation of a recommender systems task an
 
 <!-- ここまで読んだ! -->
 
-## Temporal Recommendations and Where to Find Them 
+## 1.4. Temporal Recommendations and Where to Find Them 
 
 We formulate the temporal recommendation problem on a heterogeneous graph snapshot $G^{(-\infty,T]} = (V, E, \phi, \psi)$.
 時間的推薦問題を、**異種グラフのスナップショット $G^{(-\infty,T]} = (V, E, \phi, \psi)$ で定式化**します。(グラフってこう定式化するのか〜:thinking:)
@@ -199,7 +199,7 @@ However, for simplicity of notation, we assume them to be in $\mathcal{L}$ and $
 
 <!-- ここまで読んだ! -->
 
-### Locality Score.
+### 1.4.1. Locality Score.
 
 Developing machine learning solutions for recommendation systems is inherently challenging due to the complex patterns of human behavior (He et al., 2023).
 推薦システムのための機械学習ソリューションの開発は、人間の行動の複雑なパターンのために本質的に困難です（He et al., 2023）。
@@ -248,7 +248,7 @@ This raises an interesting question of how we can leverage the benefits of pair-
 
 <!-- ここまで読んだ! -->
 
-## Recommendation with Context-based Graph Neural Networks
+## 1.5. Recommendation with Context-based Graph Neural Networks
 
 Next, we describe Context-based Graph Neural Networks (ContextGNNs), which consist of two separate GNN architectures sitting behind the same GNN backbone. 
 次に、Context-based Graph Neural Networks（ContextGNN）について説明します。これは、**同じGNNバックボーンの背後にある2つの別々のGNNアーキテクチャ**で構成されています。
@@ -279,7 +279,7 @@ A user-specific fusion score is learned via an MLPθ to produce the final rankin
 
 <!-- ここまで読んだ!  -->
 
-### 4.1 Pair-wise Representations 4.1 ペアワイズ表現
+### 1.5.1. 4.1 Pair-wise Representations 4.1 ペアワイズ表現
 
 Our local pair-wise representation model builds upon the framework proposed by Zhu et al. (2021), extending it to fit into the heterogeneous, multi-behavioral, and temporal recommendation system context.  
 私たちのローカルペアワイズ表現モデルは、Zhu et al.（2021）によって提案されたフレームワークに基づいており、異種、多行動、時間的推薦システムの文脈に適合するように拡張されています。
@@ -335,7 +335,7 @@ Nonetheless, as discussed in Sec. 3, this method alone does not fully address th
 
 <!-- ここまで読んだ! -->
 
-### 4.2 Two-Tower Representations 4.2 二塔表現
+### 1.5.2. 4.2 Two-Tower Representations 4.2 二塔表現
 
 ContextGNN’s two-tower model ranks all user-item pairs outside the user’s subgraph, serving as an effective fallback mechanism to supplement the pair-wise representations.  
 ContextGNNのtwo-towerモデルは、ユーザのサブグラフの外にあるすべてのユーザ-アイテムペアをランク付けし、ペアワイズ表現を補完するための効果的なフォールバックメカニズムとして機能します。
@@ -392,7 +392,7 @@ As such, our two-tower representation model can be summarized as follows:
 
 <!-- よくわからんかった! ここまで読んだ! -->
 
-### 4.3 Context-based Graph Neural Networks
+### 1.5.3. 4.3 Context-based Graph Neural Networks
 
 Our finalContextGNNarchitecture fuses both pair-wise representations and two-tower representations into a single unified architecture.
 私たちの最終的なContextGNNアーキテクチャは、ペアワイズ表現とツータワー表現の両方を単一の統一されたアーキテクチャに統合します。
@@ -432,12 +432,12 @@ During inference, we obtain top scores from the two-tower model via (approximate
 
 <!-- ここまで読んだ! -->
 
-### 4.4 Extensions 拡張
+### 1.5.4. 4.4 Extensions 拡張
 
 We go over additional considerations and extensions when applying ContextGNNs in practice.  
 ContextGNNsを実際に適用する際の追加の考慮事項と拡張について説明します。
 
-#### Fitting into the Context of Relational Deep Learning. 関係深層学習の文脈への適合
+#### 1.5.4.1. Fitting into the Context of Relational Deep Learning. 関係深層学習の文脈への適合
 
 ContextGNNs nicely align with the framework of relational deep learning (Fey et al., 2024), a blueprint for graph representation learning on relational databases.  
 ContextGNNは、関係データベースにおけるグラフ表現学習のための青写真である関係深層学習（Fey et al., 2024）のフレームワークと適切に整合します。
@@ -450,7 +450,7 @@ Relational databases (Robinson et al., 2024) comprise diverse set of tables with
 
 <!-- ここまで読んだ! -->
 
-#### Transductive vs. Inductive Modeling. 
+#### 1.5.4.2. Transductive vs. Inductive Modeling. 
 
 - ざっくりイメージメモ:thinking:
   - Transductive: 学習に使ってないアイテムは予測できない!
@@ -467,7 +467,7 @@ This approach allows ContextGNN to scale to tasks such as marketplace or event r
 
 <!-- ここまで読んだ! -->
 
-#### Sampled Softmax Formulation.   サンプリングソフトマックスの定式化
+#### 1.5.4.3. Sampled Softmax Formulation.   サンプリングソフトマックスの定式化
 
 Since it is infeasible to train against the full item set $\mathcal{R}$ when optimizing ContextGNNs, in practice, we rely on a sampled softmax formulation.  
 ContextGNNを最適化する際に全アイテムセット $R$ に対してトレーニングすることは不可能であるため、実際にはサンプリングソフトマックスの定式化に依存します。
@@ -482,7 +482,7 @@ In practice, we have no issues to scale the number of classes $C$ to $\approx 1M
 
 <!-- ここまで読んだ! -->
 
-## 5 Experimental Evaluation 実験評価
+## 1.6. 5 Experimental Evaluation 実験評価
 
 We perform experiments on six diverse datasets stemming from different domains, including ten different recommendation tasks.  
 私たちは、異なるドメインからの6つの多様なデータセットを用いて実験を行い、10の異なる推薦タスクを含みます。
@@ -505,9 +505,9 @@ ContextGNNは、関連研究と比較してどの程度効率的でスケーラ�
 Our method Source code: https://github.com/kumo-ai/ContextGNN is implemented in PyTorch (Paszke et al., 2019) utilizing the PyTorch Geometric (Fey & Lenssen, 2019) and PyTorch Frame (Hu et al., 2024) libraries.  
 私たちの手法は、PyTorch（Paszke et al., 2019）を使用して実装されており、PyTorch Geometric（Fey & Lenssen, 2019）およびPyTorch Frame（Hu et al., 2024）ライブラリを利用しています。
 
-### 5.1 Relational Deep Learning リレーショナル深層学習
+### 1.6.1. 5.1 Relational Deep Learning リレーショナル深層学習
 
-#### Dataset Description. データセットの説明
+#### 1.6.1.1. Dataset Description. データセットの説明
 
 We utilize the recommendation tasks introduced in RelBench (Robinson et al., 2024), which consists of eight different realistic and temporal-aware recommendation tasks. 
 私たちは、RelBench（Robinson et al., 2024）で紹介された推薦タスクを利用します。これは、**8つの異なる現実的かつ時間に配慮した推薦タスク**で構成されています。
@@ -522,7 +522,7 @@ The task is to predict the top-k items given a user at a given seed time.
 The metric we use is Mean Average Precision (MAP)@k, where k is set per task (higher is better). 
 私たちが使用する指標はMean Average Precision (MAP)@kであり、kはタスクごとに設定されます（高い方が良い）。
 
-#### Experimental Protocols.  実験プロトコル
+#### 1.6.1.2. Experimental Protocols.  実験プロトコル
 
 We compare ContextGNN to the following baseline methods: 
 私たちはContextGNNを以下のベースライン手法と比較します：
@@ -557,7 +557,7 @@ The hyper-parameters we tune for each task are: (1) the number of hidden units �
 <!-- ここまで読んだ! -->
 
 
-#### Discussion.
+#### 1.6.1.3. Discussion.
 
 The results are reported in Table 2. 
 結果は表2に示されています。
@@ -615,7 +615,7 @@ These findings underscore the significant impact of the locality score on the pe
 
 <!-- ここまで読んだ! -->
 
-### 5.2 Static Link Prediction 静的リンク予測
+### 1.6.2. 5.2 Static Link Prediction 静的リンク予測
 
 While ContextGNN’s main focus is to excel on large-scale real-world use-cases which are temporal and heterogeneous, it can also be used in a plug-and-play fashion for any link prediction task.  
 ContextGNNの主な焦点は、時間的かつ異種の大規模な実世界のユースケースで優れた性能を発揮することですが、任意のリンク予測タスクに対してプラグアンドプレイ方式で使用することもできます。
@@ -630,7 +630,7 @@ ContextGNNがより軽量なGNNバックボーンや補完的な学習信号か�
 
 <!-- ここまで読んだ! -->
 
-### 5.3 Temporal Next-Item Prediction
+### 1.6.3. 5.3 Temporal Next-Item Prediction
 
 (Sequential recommendationのデータセットを使ってオフライン評価してみたよ、って話?)
 
@@ -643,7 +643,7 @@ Notably, ContextGNN excels at incorporating multi-behavioral and temporal signal
 We observe that ContextGNN is able to out-perform all baselines on all metrics on this task (e.g., 170% improvement on HitRate@1).
 私たちは、ContextGNNがこのタスクのすべての指標で全てのベースラインを上回ることができることを観察しました（例：HitRate@1で170%の改善）。
 
-### 5.4 Efficiency Analysis 効率分析
+### 1.6.4. 5.4 Efficiency Analysis 効率分析
 
 (計算効率の話! two-towerモデルと比べてどうなのよ! これは運用する上で重要だよなぁ...)
 
@@ -662,7 +662,7 @@ However, in the simplest case (one negative pair per positive pair), a two-tower
 ContextGNN does not have this limitation and can consider up to 1M negatives before running into GPU memory limitations.  
 ContextGNNはこの制限がなく、GPUメモリの制限に達する前に最大1Mの負のサンプルを考慮することができます。
 
-## 6Conclusion 結論
+## 1.7. 6Conclusion 結論
 
 We presented a novel hybrid GNN pipeline for recommendation called ContextGNN that can effectively contextualize predictions via pair-wise representations for familiar items, while falling back to two-tower representations for exploratory and serendipitous items. 
 私たちは、ContextGNNと呼ばれる推薦のための新しいハイブリッドGNNパイプラインを提案しました。このパイプラインは、馴染みのあるアイテムに対してペアワイズ表現を通じて予測を効果的に文脈化し、探索的および偶然のアイテムに対しては二塔表現に戻ることができます。
@@ -671,7 +671,7 @@ We evaluated our architecture on real-world datasets on which it consistently im
 
 <!-- ここまで読んだ! -->
 
-#### Acknowledgments 謝辞
+#### 1.7.0.1. Acknowledgments 謝辞
 
 We thank the entire Kumo.AI team for their invaluable support in bringing Hybrid-GNN into production for over dozens of customers and for any dataset scale. 
 私たちは、数十の顧客に対してHybrid-GNNを製品化するための貴重なサポートを提供してくれたKumo.AIチーム全体に感謝します。また、あらゆるデータセットのスケールに対しても感謝します。
