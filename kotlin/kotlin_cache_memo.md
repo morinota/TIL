@@ -27,3 +27,33 @@ private val cache: LoadingCache<Unit, List<OnboardingBanditParams>> = Caffeine.n
 ```kotlin
 val params: List<OnboardingBanditParams> = cache.get(Unit)
 ```
+
+### ジッターを使ったキャッシュ更新のランダム化
+
+「キャッシュのリフレッシュ間隔に**ちょびっとランダム性（ジッター）**を加えて、アクセス集中を避ける」っていうテクニック
+
+- ジッター(jitter)とは??
+  - 元々の意味: 通信の用語。信号の到達タイミングのブレ（ゆらぎ）
+  - ソフトウェアの文脈では、「**ある処理のタイミングをわざとランダムにずらす**」こと。
+- なぜジッターが必要??
+  - **全スレッドやプロセスが一斉にキャッシュ更新しにいくのを防ぐため!**
+  - ex. 
+    - 50スレッドが 30分ごとにS3アクセス！ ってなってたら、同時にS3へアクセス集中しちゃって、重くなる or エラーになりがち…
+  - そこでジッター（ちょっとだけズラす）を入れることで→ **自然にアクセスがばらけて、システムが安定する！**
+- ソフトウェア文脈でのジッターの使われどころ例:
+  - 1. キャッシュの更新
+  - 2. リトライ処理
+  - 3. 定期ジョブやスケジューラー
+
+```kotlin
+// この値をrefreshAfterWrite()に指定するイメージ.
+private fun getCacheRefreshInterval(): Duration {
+        val jitterMinutes = ThreadLocalRandom.current().nextLong(0, 5)
+        return CACHE_REFRESH_INTERVAL_MINUTES.plusMinutes(jitterMinutes)
+    }
+```
+
+- `ThreadLocalRandom.current()` は、スレッド安全な乱数生成器を取得。
+- `nextLong(0, 5)` は、0から4までのランダムな整数値を生成してる。
+  - i.e. この`jitterMinutes`は、リフレッシュ間隔を微妙にずらすためのランダム時間!
+
