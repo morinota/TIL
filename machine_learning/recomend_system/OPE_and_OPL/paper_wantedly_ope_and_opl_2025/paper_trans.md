@@ -253,7 +253,7 @@ DMの重要な特徴は、その低い分散です。
 However, it is highly susceptible to bias, which occurs depending on the accuracy of $\hat{q}_{m}(c,j)$. 
 しかし、$\hat{q}_{m}(c,j)$の精度に依存して発生するバイアスに非常に敏感です。 
 Particularly in environments with large action spaces and sparse rewards, DM produces high bias due to the difficulty of achieving accurate regression (Saito and Joachims, 2022b). 
-特に、大きなアクション空間とスパースな報酬を持つ環境では、正確な回帰を達成するのが難しいため、DMは高いバイアスを生じます（Saito and Joachims, 2022b）。
+特に、大きなアクション空間とスパースな報酬を持つ環境では、**正確な回帰を達成するのが難しいため、DMは高いバイアスを生じます**（Saito and Joachims, 2022b）。
 
 <!-- ここまで読んだ! -->
 
@@ -269,6 +269,7 @@ $\pi_{0}$の下で収集されたログデータに基づいて、IPSは次の�
 $$
 w(c,j) := \frac{\pi(j|c)}{\pi_{0}(j|c)}
 $$
+
 where $w(c,j)$ is called the importance weight, which plays a crucial role in correcting for the distributional shift and ensuring unbiasedness. 
 ここで、$w(c,j)$は重要度重みと呼ばれ、分布のシフトを修正し、バイアスのないことを保証する上で重要な役割を果たします。 
 There exist situations where the logging policy $\pi_{0}$ is unknown, and in such a circumstance, we need to estimate it by learning a supervised classifier to estimate the probabilities of observing $j$ given $c$ using the logged data $\mathcal{D}$. 
