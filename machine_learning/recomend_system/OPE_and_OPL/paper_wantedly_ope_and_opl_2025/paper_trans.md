@@ -366,7 +366,7 @@ Consequently, despite its theoretical benefits against IPS, DR can suffer from h
 This section summarizes key related studies.  
 このセクションでは、主要な関連研究を要約します。
 
-##### Reciprocal Recommender System 相互推薦システム
+### Reciprocal Recommender System 相互推薦システム
 
 A reciprocal recommender system is highly effective in domains where bidirectional preferences play a crucial role, such as matching platforms(Yang etal.,2024).  
 相互推薦システムは、マッチングプラットフォームのように双方向の嗜好が重要な役割を果たす領域で非常に効果的です（Yang etal.,2024）。  
@@ -376,7 +376,7 @@ In particular, reciprocal recommendation approaches are widely used in dating se
 Various architectures for reciprocal recommender systems have been proposed.  
 相互推薦システムのためのさまざまなアーキテクチャが提案されています。  
 A well-known approach is training two separate models to predict preferences in each direction and then aggregating their predictions using functions such as the harmonic mean.  
-よく知られたアプローチは、各方向の嗜好を予測するために2つの別々のモデルを訓練し、その後、調和平均のような関数を使用して予測を集約することです。  
+**よく知られたアプローチは、各方向の嗜好を予測するために2つの別々のモデルを訓練し、その後、調和平均のような関数を使用して予測を集約すること**です。
 More recently, deep learning techniques have been employed to capture the complex preferences of both parties more accurately(Yıldırım etal.,2021).  
 最近では、深層学習技術が両者の複雑な嗜好をより正確に捉えるために使用されています（Yıldırım etal.,2021）。  
 Additionally, methods based on Graph Neural Networks(Lai etal.,2024; Liu etal.,2024; Luo etal.,2020)have been explored to enhance recommendation performance.  
@@ -389,12 +389,14 @@ Our primary focus is not on developing algorithms for reciprocal recommender sys
 By leveraging our methods, practitioners working on reciprocal recommender systems will be able to reliably identify the most suitable algorithms among the many proposed in academia, using only their offline logged interactions.  
 私たちの手法を活用することで、相互推薦システムに取り組む実務者は、学術界で提案された多くのアルゴリズムの中から、オフラインで記録されたインタラクションのみを使用して、最も適切なアルゴリズムを信頼性を持って特定できるようになります。
 
-##### Off-Policy Evaluation and Learning オフポリシー評価と学習
+<!-- ここまで読んだ! -->
+
+### Off-Policy Evaluation and Learning オフポリシー評価と学習
 
 Off-policy evaluation (OPE) and learning (OPL) have gained particular attention in contextual bandit and reinforcement learning settings as they offer a safe and cost-efficient alternative to online A/B tests(Mehrotra etal.,2018; Gilotte etal.,2018; Saito etal.,2021; Kiyohara etal.,2024a).  
-オフポリシー評価（OPE）と学習（OPL）は、文脈バンディットや強化学習の設定で特に注目を集めており、オンラインA/Bテストに対する安全でコスト効率の良い代替手段を提供します（Mehrotra etal.,2018; Gilotte etal.,2018; Saito etal.,2021; Kiyohara etal.,2024a）。
+**オフポリシー評価（OPE）と学習（OPL）は、文脈バンディットや強化学習の設定で特に注目を集めており、オンラインA/Bテストに対する安全でコスト効率の良い代替手段を提供**します（Mehrotra etal.,2018; Gilotte etal.,2018; Saito etal.,2021; Kiyohara etal.,2024a）。
 
-Numerous OPE methods have been extensively studied(Su etal.,2020b,2019b; Lichtenberg etal.,2023)to enable accurate evaluation of decision-making policies.  
+Numerous OPE methods have been extensively studied(Su etal.,2020b,2019b; Lichtenberg etal.,2023)to enable accurate evaluation of decision-making policies.
 多くのOPE手法が広範に研究されており（Su etal.,2020b,2019b; Lichtenberg etal.,2023）、意思決定ポリシーの正確な評価を可能にしています。  
 However, the reward prediction model in DM and the importance weights in IPS can become unstable under certain conditions such as less data, noisy rewards, and large action spaces, preventing them from being effective in the matching market setup.  
 しかし、DMにおける報酬予測モデルやIPSにおける重要度重みは、データが少ない、報酬がノイズを含む、大きなアクション空間などの特定の条件下で不安定になる可能性があり、マッチング市場の設定で効果的であることを妨げます。  
@@ -402,7 +404,7 @@ Recent efforts have reduced MSE by decreasing bias in the DM term(Farajtabar eta
 最近の取り組みでは、DM項のバイアスを減少させることによってMSEを削減したり（Farajtabar etal.,2018; Kang and Schafer,2007; Thomas and Brunskill,2016）、重要度重み付けの分散を減少させたり（Bembom and vander Laan,2008; Wang etal.,2017; Lichtenberg etal.,2023; Saito and Joachims,2022a; Shimizu etal.,2024; Metelli etal.,2021; Saito etal.,2023b）、または複数の推定量を組み合わせたりしています（Wang etal.,2017; Farajtabar etal.,2018）。
 
 A straightforward approach to mitigating the issue of exploding importance weights is called clipping, which restricts the maximum value of the weights to a predefined threshold(Bembom and vander Laan,2008; Su etal.,2019b).  
-重要度重みの爆発問題を緩和するための簡単なアプローチはクリッピングと呼ばれ、重みの最大値を事前に定義された閾値に制限します（Bembom and vander Laan,2008; Su etal.,2019b）。  
+**重要度重みの爆発問題を緩和するための簡単なアプローチはクリッピング**と呼ばれ、重みの最大値を事前に定義された閾値に制限します（Bembom and vander Laan,2008; Su etal.,2019b）。  
 While this method effectively reduces variance coming from the variation of the importance weights, it introduces bias and does not directly deal with the sparsity of the reward.  
 この方法は、重要度重みの変動から生じる分散を効果的に減少させますが、バイアスを導入し、報酬のスパース性に直接対処するものではありません。  
 Saito and Joachims (2022a)introduced the marginalized importance weight as a technique to substantially reduce variance compared to conventional IPS leveraging embeddings in the action space.  
@@ -411,6 +413,8 @@ The Switch-DR estimator(Wang etal.,2017)smoothly interpolates between DM and DR 
 Switch-DR推定量（Wang etal.,2017）は、ハイパーパラメータ $\lambda$ を介してDMとDRの間を滑らかに補間し、パラメータを適切に調整することで過剰なMSEの成長を緩和します。  
 Even though we focus on DM, IPS, and DR as the baseline estimators, Appendix A demonstrates that we can readily extend our methods to improve more sophisticated estimators such as Switch-DR(Wang etal.,2017)and MIPS(Saito and Joachims,2022a)as well.  
 私たちはDM、IPS、DRを基準推定量として焦点を当てていますが、付録Aでは、Switch-DR（Wang etal.,2017）やMIPS（Saito and Joachims,2022a）などのより洗練された推定量を改善するために、私たちの手法を容易に拡張できることを示しています。
+
+<!-- ここまで読んだ! -->
 
 When learning new policies offline, these OPE estimators serve as estimators for the policy gradient(Saito and Joachims,2021).  
 新しいポリシーをオフラインで学習する際、これらのOPE推定量はポリシー勾配の推定量として機能します（Saito and Joachims,2021）。  
@@ -425,7 +429,7 @@ This work takes the first step by formulating the problems of OPE and OPL for ma
 We also develop highly effective methods for OPE and OPL that explicitly leverage first-stage rewards that we can observe in matching markets and provide both theoretical and empirical analyses of their effectiveness.  
 また、マッチング市場で観察できる第一段階の報酬を明示的に活用するOPEおよびOPLの非常に効果的な手法を開発し、その有効性について理論的および実証的な分析を提供します。
 
-
+<!-- ここまで読んだ! -->
 
 ## 4. 提案手法
 
