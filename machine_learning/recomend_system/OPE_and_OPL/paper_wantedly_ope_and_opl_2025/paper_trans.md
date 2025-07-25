@@ -262,46 +262,66 @@ Particularly in environments with large action spaces and sparse rewards, DM pro
 The IPS estimator, unlike DM, does not rely on prediction models. 
 IPS推定量は、DMとは異なり、予測モデルに依存しません。 
 Instead of modeling match probabilities directly, it applies importance weighting to correct for bias. 
-マッチ確率を直接モデル化するのではなく、バイアスを修正するために重要度重み付けを適用します。 
+マッチ確率を直接モデル化するのではなく、**バイアスを修正するために重要度重み付けを適用**します。
 Given logged data collected under $\pi_{0}$, IPS is defined as: 
-$\pi_{0}$の下で収集されたログデータに基づいて、IPSは次のように定義されます：
+$\pi_{0}$ の下で収集されたログデータに基づいて、IPSは次のように定義されます：
 
 $$
-w(c,j) := \frac{\pi(j|c)}{\pi_{0}(j|c)}
+\hat{V}_{IPS}(\pi;D) = \frac{1}{|C|} \sum_{c \in C} \frac{\pi(j_c|c)}{\pi_{0}(j_c|c)} m_{c}
+\tag{7}
 $$
 
 where $w(c,j)$ is called the importance weight, which plays a crucial role in correcting for the distributional shift and ensuring unbiasedness. 
-ここで、$w(c,j)$は重要度重みと呼ばれ、分布のシフトを修正し、バイアスのないことを保証する上で重要な役割を果たします。 
+ここで、$w(c,j)$ は重要度重みと呼ばれ、分布のシフトを修正し、バイアスのないことを保証する上で重要な役割を果たします。 
 There exist situations where the logging policy $\pi_{0}$ is unknown, and in such a circumstance, we need to estimate it by learning a supervised classifier to estimate the probabilities of observing $j$ given $c$ using the logged data $\mathcal{D}$. 
-ログポリシー$\pi_{0}$が不明な状況が存在し、そのような場合には、ログデータ$\mathcal{D}$を使用して$c$が与えられたときに$j$を観測する確率を推定するために、教師あり分類器を学習して推定する必要があります。 
+**ログポリシー $\pi_{0}$ が不明な状況が存在し、そのような場合には、ログデータ$\mathcal{D}$を使用して$c$が与えられたときに$j$を観測する確率を推定するために、教師あり分類器を学習して推定する必要があります**。(ふむふむなるほど...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 Unlike DM, IPS has zero bias (i.e., $\mathbb{E}_{p(\mathcal{D})}[\hat{V}_{\mathrm{IPS}}(\pi;\mathcal{D})]=V(\pi)$) under the common support condition and known logging policy: 
 DMとは異なり、IPSは共通サポート条件および既知のログポリシーの下でゼロバイアスを持ちます（すなわち、$\mathbb{E}_{p(\mathcal{D})}[\hat{V}_{\mathrm{IPS}}(\pi;\mathcal{D})]=V(\pi)$）。 
+
+
+$$
+\text{common support}: \pi(j|c)
+$$
+
 which ensures the sufficient exploration by the logging policy $\pi_{0}$. 
-これは、ログポリシー$\pi_{0}$による十分な探索を保証します。 
+これは、**ログポリシー$\pi_{0}$による十分な探索**を保証します。 
+
 However, when the logging policy is estimated, IPS produces bias depending on the accuracy of the estimation. 
 しかし、ログポリシーが推定されると、IPSは推定の精度に依存してバイアスを生じます。 
 The bias of IPS under an estimated logging policy $\hat{\pi}_{0}(j|c)$ is given as 
-推定されたログポリシー$\hat{\pi}_{0}(j|c)$の下でのIPSのバイアスは次のように与えられます：
+推定されたログポリシー $\hat{\pi}_{0}(j|c)$ の下でのIPSのバイアスは次のように与えられます：
 
 $$
 \mathrm{Bias}(\hat{V}_{\mathrm{IPS}}(\pi;\mathcal{D})) = \frac{1}{|\mathcal{C}|} \sum_{c \in \mathcal{C}} \mathbb{E}_{\pi(j|c)}\left[\left(\frac{\pi_{0}(j|c)}{\hat{\pi}_{0}(j|c)}-1\right)q_{m}(c,j)\right]
 $$
+
 which becomes zero when $\pi_{0}(j|c)=\hat{\pi}_{0}(j|c)$. 
 これは、$\pi_{0}(j|c)=\hat{\pi}_{0}(j|c)$のときにゼロになります。 
 Moreover, a major limitation of IPS is its high variance, particularly when the target policy differs significantly from the logging policy or when the action space is large (Saito and Joachims, 2022a; Saito et al., 2023a; Kiyohara et al., 2024b). 
-さらに、IPSの主要な制限はその高い分散であり、特にターゲットポリシーがログポリシーと大きく異なる場合やアクション空間が大きい場合に顕著です（Saito and Joachims, 2022a; Saito et al., 2023a; Kiyohara et al., 2024b）。 
+さらに、**IPSの主要な制限はその高い分散であり、特にターゲットポリシーがログポリシーと大きく異なる場合やアクション空間が大きい場合に顕著**です（Saito and Joachims, 2022a; Saito et al., 2023a; Kiyohara et al., 2024b）。 
 More specifically, we can represent the variance of IPS under our formulation as follows. 
 より具体的には、私たちの定式化の下でのIPSの分散を次のように表現できます。
 
-The variance of the IPS estimator under the matching market formulation is represented as follows. 
+---
+proposition 2.1: The variance of the IPS estimator under the matching market formulation is represented as follows. 
 マッチング市場の定式化の下でのIPS推定量の分散は次のように表現されます。
+
+$$
+\tag{9}
+$$
 
 $$
 \sigma_{m}^{2}(c,j) := \operatorname{Var}[m|c,j]
 $$
+
 is the conditional variance, or noise, of the match label. 
 これは、マッチラベルの条件付き分散、またはノイズです。 
+
+<!-- ここまで読んだ! 以下はあまりちゃんと読めてない-->
+
 From the variance expression, we can see that it depends on the square and variance of the importance weight $w(c,j)$, which causes the typical variance issue of IPS. 
 分散の表現から、これは重要度重み$w(c,j)$の二乗と分散に依存しており、IPSの典型的な分散の問題を引き起こします。 
 This problem is further amplified under sparse reward conditions. 
@@ -328,17 +348,18 @@ $$
 \Delta_{q_{m},\hat{q}_{m}}(c,j) := q_{m}(c,j) - \hat{q}_{m}(c,j)
 $$
 is an estimation error of the match probability estimator $\hat{q}_{m}(c,j)$. 
+
 これは、マッチ確率推定量$\hat{q}_{m}(c,j)$の推定誤差です。 
 We can see from the variance expression of DR that the second term is dependent on the accuracy of the q-function estimator, i.e., $\Delta_{q_{m},\hat{q}_{m}}(c,j)$, which is expected to be small compared to the original q-function $q_{m}(c,j)$ unless the match probability estimation $\hat{q}_{m}(c,j)$ is highly inaccurate. 
 DRの分散表現から、第二項はq関数推定量の精度に依存していることがわかります。すなわち、$\Delta_{q_{m},\hat{q}_{m}}(c,j)$は、マッチ確率推定$\hat{q}_{m}(c,j)$が非常に不正確でない限り、元のq関数$q_{m}(c,j)$に比べて小さいことが期待されます。 
 However, as previously discussed, sparse rewards negatively affect the first term in the variance expression, which remains unchanged for DR as well. 
-しかし、前述のように、スパースな報酬は分散表現の最初の項に悪影響を及ぼし、DRでも変わりません。 
+しかし、前述のように、**スパースな報酬は分散表現の最初の項に悪影響を及ぼし**、DRでも変わりません。 
 Sparse rewards also make it difficult to learn an accurate $\hat{q}_{m}(c,j)$, limiting the variance reduction advantage. 
 スパースな報酬は、正確な$\hat{q}_{m}(c,j)$を学習することを困難にし、分散削減の利点を制限します。 
 Consequently, despite its theoretical benefits against IPS, DR can suffer from high MSE when applied to the evaluation of recommender systems in matching markets. 
 その結果、IPSに対する理論的な利点にもかかわらず、DRはマッチング市場におけるレコメンダーシステムの評価に適用されると高いMSEに苦しむ可能性があります。
 
-
+<!-- ここまで読んだ! -->
 
 ## 3.RELATED WORK 関連研究
 
