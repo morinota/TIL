@@ -435,25 +435,19 @@ We also develop highly effective methods for OPE and OPL that explicitly leverag
 
 In the previous sections, we observed that typical estimators in OPE do not account for the bidirectional nature and reward sparsity of matching platforms. 
 前のセクションでは、OPEにおける典型的な推定器がマッチングプラットフォームの双方向性と報酬の希薄性を考慮していないことを観察しました。 
-To address these limitations, we explicitly leverage the useful structure of matching platforms, specifically the existence of first-stage rewards $s_s$, not just the ultimate rewards $m_m$.
-これらの制限に対処するために、私たちはマッチングプラットフォームの有用な構造、特に最初の段階の報酬$s_s$の存在を明示的に活用し、最終的な報酬$m_m$だけではなくします。
-
-
+To address these limitations, we explicitly leverage the useful structure of matching platforms, specifically the existence of first-stage rewards $s$, not just the ultimate rewards $m_m$.
+これらの制限に対処するために、私たちはマッチングプラットフォームの有用な構造、**特に最初の段階の報酬$s$の存在を明示的に活用**し、最終的な報酬$m_m$だけではなくします。
 
 ### 4.1. DiPS推定量
 
 We first propose the DiPS estimator, a novel hybrid of the DM and IPS estimators, specifically designed for the matching problem.  
-まず、マッチング問題に特化して設計されたDMとIPS推定量の新しいハイブリッドであるDiPS推定量を提案します。
-
+まず、マッチング問題に特化して設計された**DMとIPS推定量の新しいハイブリッドであるDiPS推定量**を提案します。
 More specifically, DiPS estimates the expected first-stage reward $q_s(c,j)$ (e.g., the probability of company $c$ sending a scouting request to job seeker $j$) by applying IPS to the first-stage reward observations $s$, achieving its unbiased estimate.  
-より具体的には、DiPSは、第一段階の報酬観測値$s$にIPSを適用することによって、期待される第一段階の報酬$q_s(c,j)$（例えば、企業$c$が求職者$j$にスカウトリクエストを送信する確率）を推定し、その無偏推定を達成します。
-
+より具体的には、**DiPSは、第一段階の報酬観測値 $s$ にIPSを適用**することによって、期待される第一段階の報酬 $q_s(c,j)$（例えば、企業$c$が求職者$j$にスカウトリクエストを送信する確率）を推定し、その不偏推定を達成します。
 For the second-stage reward, DiPS relies on a reward regression model $\hat{q}_r(c,j)$ trained on offline logged data $\mathcal{D}$, similarly to DM.  
-第二段階の報酬については、DiPSは、DMと同様に、オフラインのログデータ$\mathcal{D}$で訓練された報酬回帰モデル$\hat{q}_r(c,j)$に依存します。
-
+**第二段階の報酬については、DiPSは、DM**と同様に、オフラインのログデータ$\mathcal{D}$で訓練された報酬回帰モデル$\hat{q}_r(c,j)$に依存します。
 By employing this novel hybrid approach, DiPS avoids fully applying IPS to the sparse match label $m$, thereby mitigating the variance problem.  
-この新しいハイブリッドアプローチを採用することで、DiPSはスパースマッチラベル$m$にIPSを完全に適用することを避け、分散の問題を軽減します。
-
+この新しいハイブリッドアプローチを採用することで、**DiPSはスパースマッチラベル $m$ にIPSを完全に適用することを避け、分散の問題を軽減**します。
 At the same time, it does not rely entirely on DM, preventing potential bias issues.  
 同時に、DMに完全に依存することもなく、潜在的なバイアスの問題を防ぎます。
 
@@ -461,202 +455,182 @@ The DiPS estimator is rigorously defined as follows:
 DiPS推定量は次のように厳密に定義されます：
 
 $$
-w(c,j) := \frac{\pi(j|c)}{\pi_0(j|c)}
-$$  
-$$
-w(c,j) := \frac{\pi(j|c)}{\pi_0(j|c)} 
+\hat{V}_{\mathrm{DiPS}}(\pi;\mathcal{D}) := \frac{1}{|C|} \sum_{c \in C} (\frac{\pi(j_c|c)}{\pi_0(j_c|c)} \cdot s_c) \cdot \hat{q}_r(c,j_c)
+\tag{12}
 $$
 
-is the same importance weight used in IPS and DR.  
+where $w(c,j) := \frac{\pi(j|c)}{\pi_0(j|c)}$ is the same importance weight used in IPS and DR.  
 これは、IPSおよびDRで使用されるのと同じ重要度重みです。
 
 As in Eq.(12), the DiPS estimator estimates the expected first-stage reward function by applying IPS to the first-stage labels $s$.  
-式(12)のように、DiPS推定量は第一段階のラベル$s$にIPSを適用することによって期待される第一段階の報酬関数を推定します。
-
+式(12)のように、**DiPS推定量は第一段階のラベル$s$にIPSを適用することによって期待される第一段階の報酬関数を推定**します。
 It then estimates the expected second-stage reward using the reward model $\hat{q}_r(c,j_c)$.  
 次に、報酬モデル$\hat{q}_r(c,j_c)$を使用して期待される第二段階の報酬を推定します。
-
 By leveraging IPS and DM to estimate different stages of the rewards, DiPS achieves desirable bias-variance control in matching markets compared to typical estimators.  
 IPSとDMを活用して報酬の異なる段階を推定することにより、DiPSは典型的な推定量と比較してマッチング市場における望ましいバイアス-分散制御を達成します。
 
 We first analyze the bias of the DiPS estimator as follows.  
 まず、DiPS推定量のバイアスを次のように分析します。
-
 The bias of the DiPS estimator under the matching market formulation is represented by the following equation:  
 マッチング市場の定式化におけるDiPS推定量のバイアスは、次の式で表されます：
 
 $$
-\Delta_{q_r,\hat{q}_r}(c,j) := \hat{q}_r(c,j) - q_r(c,j)
-$$  
-$$
-\Delta_{q_r,\hat{q}_r}(c,j) := \hat{q}_r(c,j) - q_r(c,j)
+Bias(\hat{V}_{\mathrm{DiPS}}(\pi;\mathcal{D})) = \frac{1}{|C|} \sum_{c \in C} \mathbb{E}_{\pi(j|c)} [q_s(c,j) \cdot \Delta_{q_r,\hat{q}_r}(c,j)]
+\tag{13}
 $$
 
-is an estimation error of the expected second-stage reward estimator $\hat{q}_r(c,j)$.  
-これは、期待される第二段階の報酬推定量$\hat{q}_r(c,j)$の推定誤差です。
+where $\Delta_{q_r,\hat{q}_r}(c,j) := \hat{q}_r(c,j) - q_r(c,j)$ is an estimation error of the expected second-stage reward estimator $\hat{q}_r(c,j)$.  
+ここで、$\Delta_{q_r,\hat{q}_r}(c,j) := \hat{q}_r(c,j) - q_r(c,j)$は、期待される第二段階の報酬推定量$\hat{q}_r(c,j)$の推定誤差です。
 
 The bias analysis suggests that the bias of DiPS is characterized by the estimation error of the prediction model for the second-stage reward, $\hat{q}_r(c,j)$.  
-バイアス分析は、DiPSのバイアスが第二段階の報酬の予測モデル$\hat{q}_r(c,j)$の推定誤差によって特徴付けられることを示唆しています。
-
+**バイアス分析は、DiPSのバイアスが第二段階の報酬の予測モデル$\hat{q}_r(c,j)$の推定誤差によって特徴付けられることを示唆**しています。
 This is reasonable because DiPS provides an unbiased estimate of the first-stage reward by applying importance weighting, leaving bias only in the second-stage reward estimation.  
 これは、DiPSが重要度重み付けを適用することによって第一段階の報酬の無偏推定を提供し、第二段階の報酬推定にのみバイアスを残すため、合理的です。
-
 This bias is expected to be smaller than that of DM since it directly estimates the match probability $q_m(c,j)$, which is highly sparse and difficult to estimate accurately.  
-このバイアスは、非常にスパースで正確に推定するのが難しいマッチ確率$q_m(c,j)$を直接推定するため、DMのそれよりも小さいと予想されます。
+**このバイアスは、非常にスパースで正確に推定するのが難しいマッチ確率$q_m(c,j)$を直接推定するため、DMのそれよりも小さいと予想されます**。(DMよりも小さいのはなんでだ? = あ、より小さいような確率変数を予測するようになるから、バイアスのスケールが小さくなるのか...!:thinking:)
 
 Next, the following analyzes the bias of DiPS under an estimated logging policy $\hat{\pi}_0(j|c)$.  
-次に、推定されたログポリシー$\hat{\pi}_0(j|c)$の下でのDiPSのバイアスを分析します。
-
+次に、推定されたログポリシー $\hat{\pi}_0(j|c)$ の下でのDiPSのバイアスを分析します。(あ、これはデータ収集方策が未知で、推定するしかない場合の話か。)
 The bias of the DiPS estimator with an estimated logging policy $\hat{\pi}_0(j|c)$ is represented by the following equation:  
 推定されたログポリシー$\hat{\pi}_0(j|c)$を持つDiPS推定量のバイアスは、次の式で表されます：
 
 $$
+Bias[\hat{V}_{\mathrm{DiPS}}(\pi;\mathcal{D}, \hat{\pi}] = \frac{1}{|C|} \sum_{c \in C} \mathbb{E}_{\pi(j|c)} [(\frac{\pi_0(j|c)}{\hat{\pi}_0(j|c)} \frac{\hat{q}_r(c,j)}{q_r(c,j)} - 1) q_m(c,j)]
 \text{(14)}
 $$
 
 Comparing Eq.(14) to the bias of IPS in Eq.(8), it is interesting that the bias of DiPS can be smaller than that of IPS when the estimation errors against $\pi_0(j|c)$ and $q_r(c,j)$ are positively correlated.  
-式(14)を式(8)のIPSのバイアスと比較すると、DiPSのバイアスがIPSのそれよりも小さくなることが興味深いのは、$\pi_0(j|c)$および$q_r(c,j)$に対する推定誤差が正の相関を持つ場合です。
+式(14)を式(8)のIPSのバイアスと比較すると、DiPSのバイアスがIPSのそれよりも小さくなることが興味深いのは、**$\pi_0(j|c)$ および $q_r(c,j)$ に対する推定誤差が正の相関を持つ場合**です。(おお？？:thinking:)
 
 We then derive the variance of the DiPS estimator.  
 次に、DiPS推定量の分散を導出します。
-
 The variance of the DiPS estimator under the matching market formulation is given as follows:  
 マッチング市場の定式化におけるDiPS推定量の分散は次のように与えられます：
 
 $$
-\sigma_s^2(c,j) := \operatorname{Var}[s|c,j]
-$$  
-$$
-\sigma_s^2(c,j) := \operatorname{Var}[s|c,j]
+Var[\hat{V}_{\mathrm{DiPS}}(\pi;\mathcal{D})] = \frac{1}{|C|^2} \sum_{c \in C} \{E_{\pi(j|c)}[w^2(c,j) \cdot \sigma_s^2(c,j) \cdot \hat{q}_r^2(c,j)] + Var_{\pi(j|c)}[w(c,j) \cdot q_s(c,j) \cdot \hat{q}_r(c,j)]\}
+\tag{15}
 $$
 
-is the conditional variance of the first-stage reward.  
-これは第一段階の報酬の条件付き分散です。
+where $\sigma_s^2(c,j) := \operatorname{Var}[s|c,j]$ is the conditional variance of the first-stage reward.  
+ここで、$\sigma_s^2(c,j) := \operatorname{Var}[s|c,j]$は第一段階の報酬の条件付き分散です。
+
+<!-- ここまで読んだ! -->
 
 Analogous to the variance expression of IPS, the first term in the DiPS variance captures the contribution from the importance weights.  
-IPSの分散表現と類似して、DiPSの分散の最初の項は重要度重みからの寄与を捉えます。
-
+**IPSの分散表現と類似して、DiPSの分散の最初の項は重要度重みからの寄与**を捉えます。(うんうん、重要度重みのスケールが大きいと、推定量の分散が大きくなるやつ...:thinking:)
 A key distinction, however, lies in the fact that the variance in DiPS depends on the noise in the first-stage reward, denoted by $\sigma_s^2(c,j)$, scaled by the square of the second-stage reward model, $\hat{q}_r^2(c,j)$.  
-しかし、重要な違いは、DiPSの分散が第一段階の報酬のノイズ$\sigma_s^2(c,j)$に依存し、第二段階の報酬モデル$\hat{q}_r^2(c,j)$の二乗でスケーリングされるという点です。
-
+しかし、**重要な違いは、DiPSの分散が第一段階の報酬のノイズ$\sigma_s^2(c,j)$に依存し、第二段階の報酬モデル$\hat{q}_r^2(c,j)$の二乗でスケーリングされるという点**です。
 This quantity is generally smaller than the noise in the sparse match label, $\sigma_m^2(c,j)$, which appears in the IPS variance.  
 この量は、IPSの分散に現れるスパースマッチラベルのノイズ$\sigma_m^2(c,j)$よりも一般的に小さいです。
-
 The DiPS estimator reduces the variance by at least the following amount compared to IPS, if the second-stage reward estimator is not overestimating, i.e., $\hat{q}_r(c,j) \leq q_r(c,j), \forall (c,j)$.  
 DiPS推定量は、第二段階の報酬推定量が過大評価されていない場合、すなわち、$\hat{q}_r(c,j) \leq q_r(c,j), \forall (c,j)$に対して、IPSと比較して少なくとも次の量だけ分散を減少させます。
 
 $$
+Var[\hat{V}_{IPS}(\pi;\mathcal{D})] - Var[\hat{V}_{\mathrm{DiPS}}(\pi;\mathcal{D})] 
+\geq \frac{1}{|C|^2} \sum_{c \in C} E_{\pi(j|c)}[w^2(c,j) \cdot q_s(c,j) \cdot \sigma_r^2(c,j)] \geq 0
 \text{(16)}
 $$
 
 The theorem indicates that DiPS generally achieves lower variance than IPS.  
-この定理は、DiPSが一般的にIPSよりも低い分散を達成することを示しています。
-
+この定理は、**DiPSが一般的にIPSよりも低い分散を達成すること**を示しています。
 It is intriguing that the variance reduction achieved by DiPS becomes particularly large when the square of the importance weight $w^2(c,j)$, the expected first-stage reward $q_s(c,j)$, and the noise in the second-stage reward $\sigma_r^2(c,j)$ are large.  
 DiPSによって達成される分散の減少が、重要度重みの二乗$w^2(c,j)$、期待される第一段階の報酬$q_s(c,j)$、および第二段階の報酬のノイズ$\sigma_r^2(c,j)$が大きいときに特に大きくなることは興味深いです。
-
 This highlights a particularly advantageous property of DiPS in challenging scenarios of large action spaces or significant policy divergence.  
-これは、大きなアクション空間や重要なポリシーの乖離のある困難なシナリオにおけるDiPSの特に有利な特性を強調しています。
+これは、**大きなアクション空間や重要なポリシーの乖離のある困難なシナリオにおけるDiPSの特に有利な特性**を強調しています。
 
-
+<!-- ここまで読んだ! -->
 
 ### 4.2. The DPR Estimator
 
 The previous section introduced DiPS as a new hybrid approach that explicitly leverages the first-stage reward in the matching market setup. 
 前のセクションでは、マッチング市場の設定において第一段階の報酬を明示的に活用する新しいハイブリッドアプローチとしてDiPSを紹介しました。
-
 This section further extends DiPS by incorporating a model for the expected match probability, $\hat{q}_{m}(c,j)$, originally used in DM and DR, to achieve even better bias-variance control. 
-このセクションでは、DMおよびDRで元々使用されていた期待マッチ確率のモデル$\hat{q}_{m}(c,j)$を組み込むことにより、DiPSをさらに拡張し、バイアス-バリアンス制御をより良く達成します。
-
+このセクションでは、DMおよびDRで元々使用されていた期待マッチ確率のモデル $\hat{q}_{m}(c,j)$ を組み込むことにより、DiPSをさらに拡張し、バイアス-バリアンス制御をより良く達成します。
 The following formulation realizes this idea, defining the new DPR estimator: 
 以下の定式化はこのアイデアを実現し、新しいDPR推定量を定義します：
 
 $$
-\text{DPR Estimator}
+\hat{V}_{DPR}(\pi;\mathcal{D}) := \frac{1}{|C|} \sum_{c \in C} 
+\{ \frac{\pi(j_c|c)}{\pi_0(j_c|c)} \cdot (s_c \cdot \hat{q}_{r}(c,j_c) - \hat{q}_{m}(c,j_c)) + E_{\pi(j|c)}[\hat{q}_{m}(c,j)] \}
+\tag{17}
 $$
 
 which explicitly incorporates the first-stage reward and leverages both the prediction models for the expected second-stage reward and ultimate reward, $\hat{q}_{r}(c,j)$ and $\hat{q}_{m}(c,j)$. 
-これは第一段階の報酬を明示的に組み込み、期待される第二段階の報酬と最終的な報酬の予測モデル$\hat{q}_{r}(c,j)$および$\hat{q}_{m}(c,j)$の両方を活用します。
-
+ここで、第一段階の報酬を明示的に組み込み、期待される第二段階の報酬と最終的な報酬の予測モデル $\hat{q}_{r}(c,j)$ と $\hat{q}_{m}(c,j)$ の両方を活用します。
 An interesting interpretation of DPR is that it extends DiPS by the same fundamental idea as DR yet additionally leveraging the first-stage rewards $s$. 
 DPRの興味深い解釈は、DRと同じ基本的なアイデアでDiPSを拡張し、さらに第一段階の報酬$s$を活用することです。
 
 The following analyzes the key statistical properties of DPR. 
 以下では、DPRの主要な統計的特性を分析します。
-
-The bias of the DPR estimator under the matching market formulation is derived as follows. 
-マッチング市場の定式化におけるDPR推定量のバイアスは以下のように導出されます。
-
 The bias of the DPR estimator under the matching market formulation is derived as follows. 
 マッチング市場の定式化におけるDPR推定量のバイアスは以下のように導出されます。
 
 $$
-\text{Bias of DPR Estimator}
+Bias[\hat{V}_{DPR}(\pi;\mathcal{D})] = Bias[\hat{V}_{\mathrm{DiPS}}(\pi;\mathcal{D})]
+\tag{18}
 $$
 
 The above theorem suggests that, theoretically, DPR produces exactly the same bias as DiPS. 
-上記の定理は、理論的にはDPRがDiPSと全く同じバイアスを生成することを示唆しています。
-
+上記の定理は、**理論的にはDPRがDiPSと全く同じバイアスを生成すること**を示唆しています。
 This result is reasonable because DPR incorporates the additional reward model $\hat{q}_{m}(c,j)$, similar to DR, in a way that does not introduce additional bias. 
-この結果は妥当であり、DPRがDRと同様に追加の報酬モデル$\hat{q}_{m}(c,j)$を組み込んでいるため、追加のバイアスを導入しない方法であるからです。
+この結果は妥当であり、DPRがDRと同様に追加の報酬モデル $\hat{q}_{m}(c,j)$ を組み込んでいるため、追加のバイアスを導入しない方法であるからです。
 
 Next, we analyze the variance of DPR. 
 次に、DPRの分散を分析します。
-
-The variance of the DPR estimator under the matching market formulation is derived as follows. 
-マッチング市場の定式化におけるDPR推定量の分散は以下のように導出されます。
-
 The variance of the DPR estimator under the matching market formulation is derived as follows. 
 マッチング市場の定式化におけるDPR推定量の分散は以下のように導出されます。
 
 $$
-\text{Variance of DPR Estimator}
+Var[\hat{V}_{DPR}(\pi;\mathcal{D})] = \frac{1}{|C|^2} \sum_{c \in C} 
+\{E_{\pi(j|c)}[w^2(c,j) \cdot \sigma_s^2(c,j) \cdot \hat{q}_r^2(c,j)] + Var_{\pi(j|c)}[w(c,j) \cdot q_s(c,j) \cdot \hat{q}_r(c,j)]\}
 $$
 
 It is interesting that the second term in the variance expression of DPR is characterized by the estimation error of the model $\hat{q}_{r}(c,j)$, i.e., $\Delta_{q_{r},\hat{q}_{r}}(c,j)$, as opposed to $q_{r}(c,j)$ in DiPS. 
-DPRの分散表現における第二項は、モデル$\hat{q}_{r}(c,j)$の推定誤差、すなわち$\Delta_{q_{r},\hat{q}_{r}}(c,j)$によって特徴付けられることが興味深いです。これはDiPSの$q_{r}(c,j)$とは対照的です。
-
+興味深いことに、DPRの分散表現の第二項は、モデル $\hat{q}_{r}(c,j)$ の推定誤差、すなわち $\Delta_{q_{r},\hat{q}_{r}}(c,j)$ によって特徴付けられ、DiPSの $q_{r}(c,j)$ とは異なります。
 Therefore, as long as the prediction model for the second-stage reward is reasonably accurate, DPR produces lower variance than DiPS. 
-したがって、第二段階の報酬の予測モデルが合理的に正確である限り、DPRはDiPSよりも低い分散を生成します。
+したがって、**第二段階の報酬の予測モデルが合理的に正確である限り、DPRはDiPSよりも低い分散を生成**します。
 
-
+<!-- ここまで読んだ! -->
 
 ### 4.3. マッチング市場のためのOPLへの拡張
 
 In addition to the OPE counterpart, we can formulate the problem of learning a new policy for matchmaking to optimize the expected reward as $\max_{\theta}V(\pi_{\theta})$ where $\theta \in \mathbb{R}^{d}$ is the policy parameter. 
-OPEの対応物に加えて、期待報酬を最適化するためのマッチメイキングの新しいポリシーを学習する問題を、$\max_{\theta}V(\pi_{\theta})$として定式化できます。ここで、$\theta \in \mathbb{R}^{d}$はポリシーのパラメータです。
-
+OPEの対応物に加えて、期待報酬を最適化するためのマッチメイキングの新しいポリシーを学習する問題を、$\max_{\theta}V(\pi_{\theta})$として定式化できます。ここで、$\theta \in \mathbb{R}^{d}$ はポリシーのパラメータです。
 A common approach to solving this policy learning problem is the policy-based method, which updates the policy parameter iteratively using gradient ascent: $\theta_{t+1} \leftarrow \theta_{t} + \eta \cdot \nabla_{\theta}V(\pi_{\theta})$ where $\eta > 0$ is the learning rate. 
-このポリシー学習問題を解決する一般的なアプローチは、ポリシーベースの手法であり、勾配上昇を使用してポリシーパラメータを反復的に更新します：$\theta_{t+1} \leftarrow \theta_{t} + \eta \cdot \nabla_{\theta}V(\pi_{\theta})$、ここで$\eta > 0$は学習率です。
-
+このポリシー学習問題を解決する一般的なアプローチは、方策ベースの手法であり、勾配上昇を使用してポリシーパラメータを反復的に更新します：$\theta_{t+1} \leftarrow \theta_{t} + \eta \cdot \nabla_{\theta}V(\pi_{\theta})$、ここで$\eta > 0$は学習率です。
 Since the true gradient is unknown, it must be estimated from logged data. 
 真の勾配は未知であるため、ログデータから推定する必要があります。
+以下は真の方策勾配の定義式です:
+
+$$
+\nabla_{\theta}V(\pi_{\theta}) = \sum_{c \in C} \mathbb{E}_{\pi_{\theta}(j|c)}[q_m(c,j) \nabla_{\theta} \log \pi_{\theta}(j|c)]
+$$
 
 This estimation has been addressed in the existing literature by applying DM, IPS, or DR estimators (Su et al., 2019a; Metelli et al., 2021). 
 この推定は、既存の文献でDM、IPS、またはDR推定量を適用することによって対処されています（Su et al., 2019a; Metelli et al., 2021）。
-
 However, similar to OPE for matching markets, policy gradient estimators based on these conventional methods suffer from either bias or high variance in our problem. 
-しかし、マッチング市場のOPEと同様に、これらの従来の手法に基づくポリシー勾配推定量は、私たちの問題においてバイアスまたは高い分散のいずれかに悩まされます。
+**しかし、マッチング市場のOPEと同様に、これらの従来の手法に基づくポリシー勾配推定量は、私たちの問題においてバイアスまたは高い分散のいずれかに悩まされます**。
 
 To address these challenges in OPL for matching markets, the following extends DiPS to serve as a policy gradient estimator to optimize the policy value using logged data. 
 マッチング市場のOPLにおけるこれらの課題に対処するために、以下はDiPSを拡張して、ログデータを使用してポリシー値を最適化するポリシー勾配推定量として機能します。
 
 $$
-s_{\theta}(c,j) := \nabla_{\theta}\log\pi_{\theta}(j|c)
+\nabla_{\theta} \hat{V}_{DiPS}(\pi_{\theta};D) := \frac{1}{|C|} \sum_{c \in C} (\frac{\pi_{\theta}(j_c|c)}{\pi_0(j_c|c)} \cdot s_c) \cdot \hat{q}_r(c,j_c) s_{\theta}(c,j_c)
+\tag{20}
 $$
-where $s_{\theta}(c,j)$ is the policy score function. 
-ここで、$s_{\theta}(c,j)$はポリシースコア関数です。
 
+where $s_{\theta}(c,j) := \nabla_{\theta}\log\pi_{\theta}(j|c)$ is the policy score function. 
+ここで、$s_{\theta}(c,j) := \nabla_{\theta}\log\pi_{\theta}(j|c)$ はポリシースコア関数です。
 Note that the policy gradient estimator based on DPR can similarly be defined, and is described in the appendix. 
 DPRに基づくポリシー勾配推定量も同様に定義でき、付録に記載されています。
 
 As discussed earlier, the policy gradient estimator in Eq. (20) explicitly incorporates first-stage rewards. 
 前述のように、式(20)のポリシー勾配推定量は、第一段階の報酬を明示的に組み込んでいます。
-
 By following the same theoretical reasoning as in the OPE setting, our proposed gradient estimators achieve more efficient OPL for matching markets enjoying better bias-variance control in the gradient estimation. 
 OPEの設定と同じ理論的理由に従うことで、私たちの提案した勾配推定量は、勾配推定においてより良いバイアス-分散制御を享受し、マッチング市場のためのより効率的なOPLを実現します。
 
-
+<!-- ここまで読んだ! -->
 
 ## 5. 合成データ実験
 
@@ -664,272 +638,252 @@ This section empirically evaluates the proposed methods using synthetic datasets
 このセクションでは、さまざまな状況に対して合成データセットを使用して提案された方法を実証的に評価します。
 
 ##### セットアップ
+
 To generate synthetic data, we begin with characterizing companies ($c \in \mathcal{C}$) and job seekers ($j \in \mathcal{J}$), each by 10-dimensional context vectors ($x_c$ and $x_j$), sampled from the standard normal distribution.
 合成データを生成するために、まず企業（$c \in \mathcal{C}$）と求職者（$j \in \mathcal{J}$）をそれぞれ10次元のコンテキストベクトル（$x_c$ と $x_j$）で特徴付け、標準正規分布からサンプリングします。
-
 We then synthesize the first- and second-stage expected reward functions using non-linear transformations as follows:
-次に、非線形変換を使用して第一段階および第二段階の期待報酬関数を合成します。
+次に、非線形変換を使用して以下のような第一段階と第二段階の期待報酬関数を合成します:
+
+$$
+q_s(c,j) = \mathrm{sigmoid}((x_c - x_c^2) \theta_s + (x_c^3 + x_c^2 - x_c) M_s x_j^T - \theta_{sp} b_s)
+$$
+
+$$
+q_r(c,j) = \mathrm{sigmoid}((x_j^3 + x_j^2 - x_j) \theta_r + (x_j - x_j^2) M_r x_c^T - \theta_{sp} b_r)
+$$
 
 where $\mathrm{sigmoid}(x)$ denotes the sigmoid function, defined as $\frac{1}{1+\exp(-x)}$.
 ここで、$\mathrm{sigmoid}(x)$ はシグモイド関数を示し、$\frac{1}{1+\exp(-x)}$ と定義されます。
-
 These reward functions are parameterized by matrices and vectors $M_s$, $M_r$, $\theta_s$, and $\theta_r$, all of which are sampled from the standard normal distribution.
 これらの報酬関数は、行列 $M_s$, $M_r$ とベクトル $\theta_s$, $\theta_r$ によってパラメータ化され、すべて標準正規分布からサンプリングされます。
-
 The experimental parameter $\theta_{sp}$ controls the sparsity of rewards, and $b_s$ and $b_r$ are sampled from a uniform distribution over the range $[0,2]$.
 実験パラメータ $\theta_{sp}$ は報酬のスパース性を制御し、$b_s$ と $b_r$ は範囲 $[0,2]$ の一様分布からサンプリングされます。
-
 Note that the expected match probability between $c$ and $j$ is defined as $q_m(c,j) = q_s(c,j) \cdot q_r(c,j)$.
 $c$ と $j$ の間の期待マッチ確率は $q_m(c,j) = q_s(c,j) \cdot q_r(c,j)$ と定義されることに注意してください。
 
+<!-- ここまで読んだ! -->
+
 We construct the logging policy $\pi_0$ by applying the softmax function to $q_m(c,j)$ as
-ログポリシー $\pi_0$ は、$q_m(c,j)$ にソフトマックス関数を適用することによって構築されます。
+データ収集ポリシー $\pi_0$ は、$q_m(c,j)$ にソフトマックス関数を適用することによって構築されます。
 
 $$
-\pi_0(j|c) = \frac{\exp(q_m(c,j)/\beta)}{\sum_{j' \in \mathcal{J}} \exp(q_m(c,j')/\beta)}
+\pi_0(j|c) = \frac{\exp(\beta \cdot q_m(c,j))}{\sum_{j' \in \mathcal{J}} \exp(\beta \cdot q_m(c,j'))}
+\tag{21}
 $$
 
 where $\beta$ is an experimental parameter that controls the optimality and entropy of the logging policy.
-ここで、$\beta$ はログポリシーの最適性とエントロピーを制御する実験パラメータです。
-
+ここで、$\beta$ はデータ収集ポリシーの最適性とエントロピーを制御する実験パラメータです。
 We set $\beta = -0.5$ by default.
 デフォルトでは $\beta = -0.5$ に設定します。
 
+<!-- ここまで読んだ! 上はデータ収集方策の設定 -->
+
 In contrast, we define the target policy $\pi(j|c)$ using an epsilon-greedy strategy:
-対照的に、ターゲットポリシー $\pi(j|c)$ はエプシロン-グリーディ戦略を使用して定義します。
+対照的に、ターゲットポリシー $\pi(j|c)$ はエプシロン-グリーディ戦略を使用して定義します。具体的には以下:
+
+$$
+\pi(j|c) = (1-\epsilon) \cdot \mathbb{I}[j = \arg\max_{j' \in \mathcal{J}} q_m(c,j')] + \frac{\epsilon}{|\mathcal{J}|}
+$$
+
+(なるほど、epsilon-greedyの確率分布関数って、indicator functionを使ってこういう式で表現できるのか...!ブログ書くときに使えそう:thinking:)
 
 where $\epsilon \in [0,1]$ controls the level of randomness in $\pi(j|c)$.
 ここで、$\epsilon \in [0,1]$ は $\pi(j|c)$ のランダム性のレベルを制御します。
-
 We set $\epsilon = 0.2$ by default.
-デフォルトでは $\epsilon = 0.2$ に設定します。
+**デフォルトでは $\epsilon = 0.2$ に設定**します。(これくらいがいいのかな...!:thinking:)
+
+<!-- ここまで読んだ! 上は評価方策の設定 -->
 
 ##### 結果
+
 In our experiments on the evaluation task, we compared the MSE and ErrorRate of DiPS and DPR against DM, IPS, and DR, which serve as baseline estimators.
 評価タスクに関する実験では、DiPS と DPR の MSE と ErrorRate を、基準推定器として機能する DM、IPS、および DR と比較しました。
-
 We also conducted experiments on the learning task, where we compared the policy value of policies learned using DiPS-PG and DPR-PG against DM-PG, IPS-PG, and DR-PG as baselines (PG stands for Policy Gradient).
 また、学習タスクに関する実験も行い、DiPS-PG と DPR-PG を使用して学習したポリシーのポリシー値を、基準として DM-PG、IPS-PG、および DR-PG と比較しました（PG はポリシー勾配を意味します）。
-
 We performed both OPE and OPL experiments by varying the number of companies, the number of job seekers, and reward sparsity parameters.
-企業の数、求職者の数、および報酬のスパース性パラメータを変化させることによって、OPE と OPL の両方の実験を実施しました。
-
+**企業の数、求職者の数、および報酬のスパース性パラメータを変化させることによって、OPE と OPL の両方の実験を実施**しました。
 The results are presented in Figures 2 to 4.
 結果は図 2 から 4 に示されています。
 
+<!-- ここまで読んだ! -->
+
 First, we vary the number of companies (i.e., size of the logged data $|\mathcal{D}|$) in Figure 2.
 まず、図 2 で企業の数（すなわち、ログデータのサイズ $|\mathcal{D}|$）を変化させます。
-
 The figure shows that every estimator except DM shows a decrease in MSE and variance as the number of companies increases, which is expected.
-この図は、DM を除くすべての推定器が企業の数が増えるにつれて MSE と分散が減少することを示しており、これは予想される結果です。
-
+この図は、**DM を除くすべての推定器が企業の数が増えるにつれて MSE と分散が減少すること**を示しており、これは予想される結果です。
 In particular, both DiPS and DPR achieve significantly lower MSE than the baseline methods across most experimental configurations.
 特に、DiPS と DPR はほとんどの実験設定において基準方法よりも著しく低い MSE を達成します。
-
 More specifically, they achieve much lower variance than IPS and DR while introducing slightly higher bias due to their reliance on the estimated second-stage reward function, which aligns with our theoretical analysis.
 より具体的には、彼らは推定された第二段階の報酬関数に依存するため、IPS および DR よりもはるかに低い分散を達成しますが、わずかに高いバイアスを導入します。これは私たちの理論的分析と一致します。
-
 This improvement in MSE for OPE translates to better performance in policy selection tasks (ErrorRate) for DiPS and DPR as well.
-OPE における MSE の改善は、DiPS と DPR にとってポリシー選択タスク（ErrorRate）でのパフォーマンス向上につながります。
+OPE における MSE の改善は、DiPS と DPR にとって**ポリシー選択タスク（ErrorRate）でのパフォーマンス向上につながります**。
+
+<!-- ここまで読んだ! -->
 
 Next, we vary the number of job seekers (i.e., size of the action space) in Figure 3.
-次に、図 3 で求職者の数（すなわち、アクション空間のサイズ）を変化させます。
-
+次に、図 3 で**求職者の数（すなわち、アクション空間のサイズ）**を変化させます。
 The results demonstrate the greater robustness of DiPS and DPR in larger action spaces, primarily due to substantial variance reduction compared to IPS and DR.
-結果は、主に IPS および DR に比べて大幅な分散削減により、より大きなアクション空間における DiPS と DPR のより大きなロバスト性を示しています。
-
+結果は、主に IPS および DR に比べて大幅な分散削減により、**より大きなアクション空間における DiPS と DPR のより大きなロバスト性**を示しています。
 In particular, for larger action spaces, IPS and DR, which heavily depend on importance weighting, produce substantial variance, whereas DiPS and DPR mitigate this issue at the cost of introducing a small amount of bias by estimating the second-stage q-function by a regression model.
 特に、より大きなアクション空間では、重要度重み付けに大きく依存する IPS および DR が大幅な分散を生じるのに対し、DiPS および DPR は回帰モデルによって第二段階の q 関数を推定することでわずかなバイアスを導入する代償でこの問題を軽減します。
-
 Moreover, the bias introduced by DiPS and DPR remains significantly smaller than that of DM, consistently leading to lower MSE against it.
 さらに、DiPS および DPR によって導入されるバイアスは DM のそれよりも著しく小さく、常にそれに対して低い MSE につながります。
-
 Similar to the previous experiment, improved estimation accuracy, particularly for larger numbers of job seekers, results in better policy selection performance (lower ErrorRate) for DiPS and DPR compared to the baseline methods.
 前の実験と同様に、特により多くの求職者に対する推定精度の向上は、基準方法に対して DiPS と DPR のポリシー選択パフォーマンス（低い ErrorRate）を向上させます。
 
-We also evaluated the performance of the estimators while varying the sparsity of match labels in Figure 4.
-図 4 では、マッチラベルのスパース性を変化させながら推定器の性能を評価しました。
+<!-- ここまで読んだ! -->
 
+We also evaluated the performance of the estimators while varying the sparsity of match labels in Figure 4.
+図 4 では、**マッチラベルのスパース性**を変化させながら推定器の性能を評価しました。
 As sparsity increases, estimating the match probability function $q_m(c,j)$ becomes more challenging, leading to higher MSE for DM.
 スパース性が増すにつれて、マッチ確率関数 $q_m(c,j)$ の推定がより困難になり、DM の MSE が高くなります。
-
 Since DiPS and DPR do not rely solely on the match prediction model as DM does, they perform significantly better across a range of sparsity configurations.
 DiPS と DPR は DM のようにマッチ予測モデルにのみ依存しないため、さまざまなスパース性設定において著しく良い性能を発揮します。
-
 Additionally, DiPS and DPR consistently outperform IPS and DR due to the substantial variance reduction achieved by explicitly leveraging the two-stage reward structure.
 さらに、DiPS と DPR は、二段階の報酬構造を明示的に活用することによって達成される大幅な分散削減により、IPS および DR を常に上回ります。
-
 This also results in a lower ErrorRate in the selection task across various sparsity levels.
 これにより、さまざまなスパース性レベルにおける選択タスクでの ErrorRate が低下します。
 
-Finally, we compare the effectiveness of each estimator in policy learning when used for policy gradient estimation in Figure 7 in the appendix.
-最後に、付録の図 7 でポリシー勾配推定に使用される各推定器のポリシー学習における効果を比較します。
+<!-- ここまで読んだ! 上記まではOPEの実験 -->
 
+Finally, we compare the effectiveness of each estimator in policy learning when used for policy gradient estimation in Figure 7 in the appendix.
+最後に、付録の図 7 でポリシー勾配推定に使用される**各推定器のポリシー学習における効果**を比較します。
 The figures show the resulting policy values relative to that of the logging policy $\pi_0$ (higher values indicate better performance) for policies learned using each method under varying numbers of companies, numbers of job seekers, and reward sparsity levels.
 図は、企業の数、求職者の数、および報酬のスパース性レベルが異なる中で各方法を使用して学習されたポリシーに対するログポリシー $\pi_0$ に対する結果のポリシー値（高い値はより良いパフォーマンスを示す）を示しています。
-
 The results suggest that the proposed methods improve upon the logging policy even in challenging scenarios, such as when the number of companies is small, the number of job seekers is large, or reward sparsity is severe.
-結果は、提案された方法が企業の数が少ない、求職者の数が多い、または報酬のスパース性が厳しいといった困難なシナリオにおいてもログポリシーを改善することを示唆しています。
-
+結果は、**提案された方法が企業の数が少ない、求職者の数が多い、または報酬のスパース性が厳しいといった困難なシナリオにおいてもログポリシーを改善すること**を示唆しています。
 Compared to the baseline methods (DM-, IPS-, and DR-PG), DiPS- and DPR-PG achieve the highest policy values in most cases, demonstrating their effectiveness not only in policy evaluation and selection but also in learning.
 基準方法（DM-、IPS-、および DR-PG）と比較して、DiPS- および DPR-PG はほとんどのケースで最高のポリシー値を達成し、ポリシー評価と選択だけでなく学習においてもその効果を示しています。
 
-
+<!-- ここまで読んだ! 上記まではOPLの実験 -->
 
 ## 6.REAL-WORLD DATA EXPERIMENTS
 
 To evaluate the real-world applicability of DiPS and DPR, we conduct experiments about OPE using real-world A/B testing data collected from Wantedly Visit, an industrial job-matching platform with over 4 million registered users and more than 40,000 companies. 
-DiPSとDPRの実世界での適用可能性を評価するために、私たちはWantedly Visitから収集した実世界のA/Bテストデータを使用してOPEに関する実験を行います。このプラットフォームは、400万人以上の登録ユーザーと40,000社以上の企業を持つ産業の求人マッチングプラットフォームです。
-
+DiPSとDPRの実世界での適用可能性を評価するために、私たちはWantedly Visitから収集した**実世界のA/Bテストデータを使用してOPEに関する実験**を行います。このプラットフォームは、400万人以上の登録ユーザーと40,000社以上の企業を持つ産業の求人マッチングプラットフォームです。
 On this platform, job seekers can apply for jobs, and conversely, recruiters can send scouting requests to job seekers. 
 このプラットフォームでは、求職者が求人に応募でき、逆にリクルーターは求職者にスカウトリクエストを送信できます。
-
 We use A/B testing data from a recommender system in the Wantedly Visit’s scouting service, which recommends job seekers to companies. 
 私たちは、Wantedly VisitのスカウトサービスにおけるレコメンダーシステムからのA/Bテストデータを使用します。このシステムは、求職者を企業に推薦します。
-
 This system is designed as a reciprocal recommender system and recalculates rankings once per day. 
-このシステムは相互推薦システムとして設計されており、ランキングを1日1回再計算します。
-
+このシステムは相互推薦システムとして設計されており、**ランキングを1日1回再計算**します。
 The dataset includes records of recommendations, which companies sent scouts to which job seekers, and whether the job seekers responded. 
-データセットには、どの企業がどの求職者にスカウトを送ったか、そして求職者が応答したかどうかの推薦記録が含まれています。
+**データセットには、どの企業がどの求職者にスカウトを送ったか、そして求職者が応答したかどうかの推薦記録が含まれています**。
+
+<!-- ここまで読んだ! -->
 
 ##### Dataset
 
 We processed the online testing data to align the original ranked interaction data with our formulation. 
-私たちは、オンラインテストデータを処理して、元のランク付けされたインタラクションデータを私たちの定式化に合わせました。
-
+私たちは、**オンラインテストデータを処理して、元のランク付けされたインタラクションデータを私たちの定式化に合わせました**。
 Specifically, we regard $c$ as a mix of (recommended date, interaction rank, company ID), and $j$ as a mix of (recommended date, job seeker ID). 
 具体的には、$c$を（推薦日、インタラクションランク、企業ID）の組み合わせと見なし、$j$を（推薦日、求職者ID）の組み合わせと見なします。
-
 These definitions include the ”recommended date” because the contexts of companies, job seekers, and policies vary from day to day. 
 これらの定義には「推薦日」が含まれています。なぜなら、企業、求職者、ポリシーのコンテキストは日々異なるからです。
-
+(異なる日の同じ企業に対する推薦も異なるサンプルとして扱うよ、って意味かな。まあ自然というか理解できる...!:thinking:)
 Additionally, we introduce the notion of ”interaction rank,” which denotes the position in the ranking at which the company interacted with the job seeker. 
-さらに、「インタラクションランク」という概念を導入します。これは、企業が求職者とインタラクションを行った際のランキング内の位置を示します。
-
+さらに、**「インタラクションランク」という概念を導入します。これは、企業が求職者とインタラクションを行った際のランキング内の位置**を示します。
 This framing supports a bandit setting and allows us to distinguish between situations in which a company encounters a job seeker at rank $k$ versus rank $k'$ on the same day (where $k \neq k'$). 
 この枠組みはバンディット設定をサポートし、企業が同じ日にランク $k$ とランク $k'$ の求職者に出会う状況を区別できるようにします（ここで $k \neq k'$）。
-
 For this evaluation, we used only data where $k \leq 3$ from the original logged dataset. 
-この評価のために、元のログデータセットから $k \leq 3$ のデータのみを使用しました。
-
+この評価のために、**元のログデータセットから $k \leq 3$ のデータのみを使用**しました。(ふむふむ...!:thinking:)
 Table 1 in the appendix shows the statistics of the preprocessed dataset. 
 付録の表1には、前処理されたデータセットの統計が示されています。
-
 In our dataset, the first-stage rewards $s$ corresponds to the scout request, while the ultimate reward $m$ corresponds to a successful match, that is, the company sends a scout to the job seeker, and the job seeker replies positively. 
 私たちのデータセットでは、第一段階の報酬 $s$ はスカウトリクエストに対応し、最終的な報酬 $m$ は成功したマッチに対応します。つまり、企業が求職者にスカウトを送り、求職者が肯定的に応答することです。
 
+<!-- ここまで読んだ! -->
+
 ##### Setup
 
+(推薦方策の確率分布が、データ収集方策、評価方策ともに未知なので、これもGBDTで推定するよ、という話！)
+
 Since we were not able to replicate the exact action choice probabilities under our recommendation policies, we estimated both the logging $\pi_0(j|c)$ and the new $\pi(j|c)$ policies using Gradient Boosting Decision Tree (GBDT). 
-私たちは、推薦ポリシーの下で正確なアクション選択確率を再現できなかったため、ログの $\pi_0(j|c)$ と新しい $\pi(j|c)$ ポリシーの両方をGradient Boosting Decision Tree (GBDT)を使用して推定しました。
-
+私たちは、**推薦ポリシーの下で正確なアクション選択確率を再現できなかった**ため、ログの $\pi_0(j|c)$ と新しい $\pi(j|c)$ ポリシーの両方を**Gradient Boosting Decision Tree (GBDT)を使用して推定**しました。
 During the policy estimation task, we treated instances where a job seeker was recommended as a rank-$k$ candidate for a company whose interaction rank was also $k$ as positive examples, and all other instances as negative examples. 
-ポリシー推定タスク中、求職者がランク-$k$ の候補として推薦された場合を、インタラクションランクも $k$ の企業に対する正の例と見なし、他のすべてのインスタンスを負の例と見なしました。
-
+ポリシー推定タスク中、求職者が企業に対してランク-$k$の候補として推薦されたインスタンスを正の例として扱い、他のすべてのインスタンスを負の例として扱いました。(あ、これは推薦方策の確率分布の予測モデルを作る時の学習サンプルの話か...!:thinking:)
 We trained the models using a 5-fold cross-validation procedure, and then applied the softmax function to normalize the model outputs, ensuring that $\sum_{j \in \mathcal{J}} \pi'(j|c) = 1$ for $\pi' \in \{\pi_0, \pi\}$. 
-私たちは5分割交差検証手法を使用してモデルを訓練し、その後ソフトマックス関数を適用してモデル出力を正規化しました。これにより、$\pi' \in \{\pi_0, \pi\}$ に対して $\sum_{j \in \mathcal{J}} \pi'(j|c) = 1$ が保証されます。
+私たちは5分割交差検証手順を使用してモデルを訓練し、次にソフトマックス関数を適用してモデル出力を正規化しました。これにより、$\sum_{j \in \mathcal{J}} \pi'(j|c) = 1$ が成り立つようにしました。ここで、$\pi' \in \{\pi_0, \pi\}$です。
+(このタスクはfuture data leakとか気にしなくていいんだよね!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ##### Results
 
-In our experiments, we compared the MSE and ErrorRate of DiPS and DPR against baseline estimators. 
+In our experiments, we compared the MSE and ErrorRate of DiPS and DPR against baseline estimators.
 私たちの実験では、DiPSとDPRのMSEとErrorRateをベースライン推定器と比較しました。
-
 During evaluation, we sampled a specific number of companies from the logged data, trained reward estimation models using GBDT within a cross-validation framework, and then estimated the policy value with each method. 
 評価中、ログデータから特定の数の企業をサンプリングし、交差検証フレームワーク内でGBDTを使用して報酬推定モデルを訓練し、その後各手法でポリシー値を推定しました。
-
 We repeated this evaluation process 20 times, varying the number of companies in $\mathcal{D}$. 
 この評価プロセスを20回繰り返し、$\mathcal{D}$内の企業の数を変えました。
-
 Figure 5 presents the evaluation results under different company sampling sizes, and Figure 6 shows the distributions of policy values estimated by IPS and DiPS over 20 repetitions with 8,000 companies. 
 図5は異なる企業サンプリングサイズの下での評価結果を示し、図6は8,000社での20回の繰り返しにわたってIPSとDiPSによって推定されたポリシー値の分布を示しています。
-
 We discuss the results below. 
 以下に結果を議論します。
 
-First, Figure 5 shows that DiPS and DPR achieve low MSE, in particular, DPR achieves significantly lower MSE than the baseline methods across most configurations. 
-まず、図5はDiPSとDPRが低いMSEを達成していることを示しており、特にDPRはほとんどの構成でベースライン手法よりも有意に低いMSEを達成しています。
+<!-- ここまで読んだ! 実験方法とか真似できそう! -->
 
+First, Figure 5 shows that DiPS and DPR achieve low MSE, in particular, DPR achieves significantly lower MSE than the baseline methods across most configurations. 
+まず、図5はDiPSとDPRが低いMSEを達成していることを示しており、**特にDPRはほとんどの構成でベースライン手法よりも有意に低いMSEを達成**しています。
 This reduction in MSE results from both low bias and low variance. 
 このMSEの低下は、低いバイアスと低い分散の両方から生じています。
-
 The low variance aligns with our theoretical analysis and findings from synthetic data experiments. 
 低い分散は、私たちの理論的分析と合成データ実験の結果と一致しています。
-
 In contrast, the bias behavior of DiPS and DPR has two noteworthy characteristics. 
 対照的に、DiPSとDPRのバイアスの挙動には2つの注目すべき特徴があります。
-
 First, DiPS produces lower bias than IPS, and DPR shows lower bias than DR. 
-まず、DiPSはIPSよりも低いバイアスを生成し、DPRはDRよりも低いバイアスを示します。
-
+まず、**DiPSはIPSよりも低いバイアスを生成し、DPRはDRよりも低いバイアス**を示します。
 As shown in Theorem 4.2, the bias of DiPS can be smaller than that of IPS when the estimation errors of $\hat{\pi}_{0}(j|c)$ and $\hat{q}_{r}(c,j)$ are positively correlated. 
 定理4.2に示されているように、DiPSのバイアスは、$\hat{\pi}_{0}(j|c)$ と $\hat{q}_{r}(c,j)$ の推定誤差が正の相関を持つ場合、IPSのバイアスよりも小さくなる可能性があります。
-
 The overestimation observed in $\hat{V}_{\mathrm{IPS}}(\pi)$ in Figure 6 suggests an underestimation of the logging policy probability $\hat{\pi}_{0}(j|c)$. 
-図6における$\hat{V}_{\mathrm{IPS}}(\pi)$で観察された過大評価は、ログポリシー確率$\hat{\pi}_{0}(j|c)$の過小評価を示唆しています。
-
+図6における $\hat{V}_{\mathrm{IPS}}(\pi)$ で観察された過大評価は、ログポリシー確率$\hat{\pi}_{0}(j|c)$ の過小評価を示唆しています。
 Additionally, we observed that the model $\hat{q}_{r}(c,j)$ tends to underestimate $q_{r}(c,j)$ during cross-validation. 
 さらに、モデル$\hat{q}_{r}(c,j)$は交差検証中に$q_{r}(c,j)$を過小評価する傾向があることを観察しました。
-
 These factors contribute to bias reduction of DiPS. 
 これらの要因は、DiPSのバイアス削減に寄与しています。
-
 A similar reasoning applies to DPR compared to DR. 
 同様の理由がDPRにもDRと比較して適用されます。
 
 The second notable observation is that DPR tends to produce smaller bias than DiPS. 
-2つ目の注目すべき観察は、DPRがDiPSよりも小さいバイアスを生成する傾向があることです。
-
+2つ目の注目すべき観察は、**DPRがDiPSよりも小さいバイアスを生成する傾向があること**です。
 Under a known logging policy, both estimators have the same bias, as confirmed by theoretical analysis and synthetic experiments. 
 既知のログポリシーの下では、両方の推定器は同じバイアスを持ち、これは理論的分析と合成実験によって確認されています。
-
 However, under an unknown logging policy, Eq.(26) in the appendix shows that the bias of DPR differs from that of DiPS by the term $(1 - \pi_{0}(j|c)/\hat{\pi}_{0}(j|c))\hat{q}_{m}(j|c)$. 
 しかし、未知のログポリシーの下では、付録の式(26)はDPRのバイアスがDiPSのバイアスと$(1 - \pi_{0}(j|c)/\hat{\pi}_{0}(j|c))\hat{q}_{m}(j|c)$という項によって異なることを示しています。
-
 In our experiments, the underestimation of the logging policy probability mitigates the bias in DPR. 
 私たちの実験では、ログポリシー確率の過小評価がDPRのバイアスを軽減します。
-
 Taken together, these results demonstrate that our proposed methods provide more accurate estimations on real-world data than the baselines by effectively reducing variance and, with unknown logging policies, our methods even reduce bias. 
-これらの結果を総合すると、私たちの提案した手法は、分散を効果的に減少させることによって、実世界のデータに対してベースラインよりもより正確な推定を提供し、未知のログポリシーの下でもバイアスを減少させることを示しています。
+**これらの結果を総合すると、私たちの提案した手法は、分散を効果的に減少させることによって、実世界のデータに対してベースラインよりもより正確な推定を提供し、未知のログポリシーの下でもバイアスを減少させることを示しています**。
 
 Next, DiPS and DPR also achieve low ErrorRate. 
-次に、DiPSとDPRも低いErrorRateを達成します。
-
+次に、DiPSとDPRは低いErrorRateも達成します。
 An interesting observation is that DiPS and IPS show lower ErrorRate than DPR and DR, despite DPR and DR achieving smaller MSE. 
 興味深い観察は、DPRとDRがより小さいMSEを達成しているにもかかわらず、DiPSとIPSがDPRとDRよりも低いErrorRateを示すことです。
-
 Figure 6 helps explain this phenomenon. 
 図6はこの現象を説明するのに役立ちます。
-
 The overestimation of $V(\pi)$ by IPS contributes to its large MSE but leads to a low ErrorRate, as it more often ranks the target policy above the logging policy, which is correct. 
 IPSによる$V(\pi)$の過大評価は、その大きなMSEに寄与しますが、ターゲットポリシーをログポリシーの上にランク付けすることが多いため、低いErrorRateにつながります。
-
 DiPS significantly reduces overestimation by lowering both bias and variance, leading to a slight improvement in ErrorRate. 
 DiPSはバイアスと分散の両方を低下させることによって過大評価を大幅に減少させ、ErrorRateのわずかな改善につながります。
-
 Overall, these findings demonstrate that our estimators are well-suited for real-world applications, achieving both low MSE and ErrorRate compared to their respective counterparts. 
 全体として、これらの発見は、私たちの推定器が実世界のアプリケーションに適しており、それぞれの対照と比較して低いMSEとErrorRateを達成していることを示しています。
 
-
+<!-- ここまで読んだ! -->
 
 ## 7. 結論
 
 This paper studies and formulates the problems of off-policy evaluation (OPE) and off-policy learning (OPL) for matching markets for the first time in the relevant literature. 
 本論文は、関連文献においてマッチング市場のオフポリシー評価（OPE）およびオフポリシー学習（OPL）の問題を初めて研究し、定式化します。
-
 Existing estimators, such as DM, IPS, and DR, perform poorly in matching markets due to the large-scale environment and sparse reward nature. 
 既存の推定量（DM、IPS、DRなど）は、大規模な環境とスパースな報酬の特性により、マッチング市場での性能が低下します。
-
 We introduce two novel estimators, DiPS and DPR, for off-policy evaluation in the matching domain. 
 私たちは、マッチング領域におけるオフポリシー評価のための2つの新しい推定量、DiPSとDPRを導入します。
-
 These estimators explicitly leverage first-stage reward labels, such as the ”sending scout” label in job-matching recommender systems, to achieve better bias-variance control. 
-これらの推定量は、ジョブマッチング推薦システムにおける「送信スカウト」ラベルのような第一段階の報酬ラベルを明示的に活用し、より良いバイアス-バリアンス制御を実現します。
-
+これらの推定量は、**ジョブマッチング推薦システムにおける「送信スカウト」ラベルのような第一段階の報酬ラベルを明示的に活用し、より良いバイアス-バリアンス制御を実現**します。
 Extensive experiments on synthetic data and the real-world A/B testing dataset demonstrated that our proposed methods outperformed conventional estimators in policy evaluation, selection, and learning tasks, showing practical impact. 
 合成データおよび実世界のA/Bテストデータセットにおける広範な実験により、私たちの提案した手法がポリシー評価、選択、学習タスクにおいて従来の推定量を上回り、実際の影響を示しました。
 
-
+<!-- ここまで読んだ! -->
 
 ## References 参考文献
 - (1)↑
