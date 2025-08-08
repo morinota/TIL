@@ -66,3 +66,28 @@ refs: https://github.com/aku11i/phantom
     - `o`: ペインを順番に移動。
     - `;`: 以前のペインへ移動。
     - `exit`: ペインを終了。
+
+### phantomのtmux連携の使い方:
+
+ワークツリーを新規作成してtmuxで開く:
+
+```shell
+tmux
+# ワークツリーを新規作成して、新しいtmuxウィンドウでfeature-xブランチの作業ディレクトリが開く。
+phantom create <branch-name> --tmux
+# ワークツリーを新規作成して、既存tmuxウィンドウの新しい縦分割ペインでfeature-xブランチの作業ディレクトリが開く。
+phantom create <branch-name> --tmux-vertical
+# ワークツリーを新規作成して、既存tmuxウィンドウの新しい横分割ペインでfeature-xブランチの作業ディレクトリが開く。
+phantom create <branch-name> --tmux-horizontal 
+```
+
+既存ワークツリーをtmuxで開く:
+
+```shell
+# 既存のワークツリーを新しいtmuxウィンドウで開く。
+phantom shell <branch-name> --tmux
+# 既存のワークツリーを既存のtmuxウィンドウの新しい縦分割ペインで開く。
+phantom shell <branch-name> --tmux-vertical
+# 既存のワークツリーを既存のtmuxウィンドウの新しい横分割ペインで開く。
+phantom shell <branch-name> --tmux-horizontal
+```
