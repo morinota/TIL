@@ -21,5 +21,6 @@ refs: https://github.com/aku11i/phantom
 - 便利な機能:
   - VS CodeやCursor連携で、worktreeごとにエディタをすぐ開けるらしい。
     - ex. `phantom create feature-x --exec "code ."`
+    - 既存のworktreeを開く場合は、`phantom exec <branch-name> code .`で開ける。
   - **fzf連携により、worktreeの選択も楽にできる**らしい!
     -  ex. `phantom shell --fzf`
