@@ -53,8 +53,6 @@ But the best products emerge through a more sophisticated evolution.
 Here’s the six-stage lifecycle that separates successful PRDs from expensive failures: 
 ここでは、成功したPRDと高コストの失敗を分ける**6段階のライフサイクル**を示します：
 
-
-
 ### Stage One: Aperture (Align Leadership & Team on Direction) ステージ1: アパーチャ（リーダーシップとチームを方向性に合わせる）
 
 This is where everything starts, but it’s not where most people think it starts. 
