@@ -199,7 +199,7 @@ Importantly, the embeddings are learned jointly with all other model parameters 
 Features are concatenated into a wide first layer, followed by several layers of fully connected Rectified Linear Units (ReLU) [6].
 **特徴量は広い第1層に連結**され、その後に完全連結された整流線形ユニット(ReLU)[6]の数層が続く.
 Figure 3 shows the general network architecture with additional non-video watch features described below.
-図3は、一般的なネットワーク・アーキテクチャを示し、ビデオウォッチ以外の機能については後述する。
+図3は、一般的なネットワーク・アーキテクチャを示し、ビデオウォッチ以外の特徴量については後述する。
 
 ![fig3]()
 

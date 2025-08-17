@@ -411,7 +411,7 @@ Among the simplifications are: omitting embedding layers, using non-parametric a
 
 For RealTabR-D, we adapt TabR-S-D by using our numerical preprocessing, setting Adam’s $\beta_2$ to 0.95, using our scaling layer with a modification to amplify the effective learning rate by a factor of 96, adding PBLD embeddings for numerical features, and adding label smoothing for classification.  
 **RealTabR-D** RealTabR-Dでは、数値前処理を使用し、Adamの$\beta_2$を0.95に設定し、効果的な学習率を96倍に増幅するための修正を加えたスケーリング層を使用し、数値特徴のためのPBLD埋め込みを追加し、分類のためのラベルスムージングを追加することによってTabR-S-Dを適応させます。  
-More details can be found in Appendix A.3.  
+More details can be found in Appendix A.3. 
 詳細は付録A.3にあります。  
 
 <!-- ここまで雑に読んだ! -->

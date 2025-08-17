@@ -320,14 +320,14 @@ To understand how an ensemble inference pipeline can be used in the real world c
 Banks could use an ensemble pipeline consisting of a machine learning model for predicting credit scores, a rule-based system for identifying potentially fraudulent applications, and a deep learning model for analyzing unstructured data like applicant social media activity. 
 銀行は、信用スコアを予測するための機械学習モデル、潜在的に不正な申請を特定するためのルールベースのシステム、申請者のソーシャルメディア活動のような非構造化データを分析するための深層学習モデルで構成されるアンサンブルパイプラインを使用できます。 
 The outputs from these models would be aggregated to arrive at a final credit risk assessment for loan approval decisions. 
-これらのモデルからの出力は集約され、ローン承認の決定のための最終的な信用リスク評価に至ります。 
+これらのモデルからの出力は集約され、ローン承認の決定のための最終的な信用リスク評価に至ります。
 
 #### Cascaded inferences カスケード推論
 
 The cascaded inference pattern involves a sequential arrangement where the output of one model serves as the input for another, forming a cascading pattern. 
 カスケード推論パターンは、1つのモデルの出力が別のモデルの入力として機能する順次配置を含み、カスケードパターンを形成します。 
 This technique proves valuable in mitigating model biases or addressing incomplete data scenarios by leveraging an additional predictor to compensate for these shortcomings. 
-この技術は、追加の予測子を活用してこれらの欠点を補うことで、モデルのバイアスを軽減したり、不完全なデータシナリオに対処したりするのに役立ちます。 
+この技術は、追加の予測子を活用してこれらの欠点を補うことで、モデルのバイアスを軽減したり、不完全なデータシナリオに対処したりするのに役立ちます。
 
 Imagine a scenario where a primary model exhibits a certain bias or struggles with incomplete data, potentially leading to inaccurate predictions. 
 主要なモデルが特定のバイアスを示したり、不完全なデータに苦しんだりするシナリオを想像してみてください。これは、潜在的に不正確な予測につながる可能性があります。 
