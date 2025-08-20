@@ -211,7 +211,6 @@ These keyword sets serve as concise, informative indicators, reflecting the like
 
 When harnessing the power of LLMs to generate reasons for potential user likes and dislikes, we integrate the Chain of Thoughts (CoT) (Wei et al. 2022; Chu et al. 2023) approach to bolster the precision and reliability of the LLM’s output. 
 LLMの力を利用してユーザの好みや嫌悪の理由を生成する際、私たちはChain of Thoughts (CoT) (Wei et al. 2022; Chu et al. 2023)アプローチを統合し、LLMの出力の精度と信頼性を高めます。
-
 In particular, we guide the LLM to first identify the concrete reasons behind the likes and dislikes using the provided keywords and then summarize the reasons into concise keywords. 
 特に、私たちはLLMに提供されたキーワードを使用して好みや嫌悪の具体的な理由を特定させ、その後、理由を簡潔なキーワードに要約させます。
 

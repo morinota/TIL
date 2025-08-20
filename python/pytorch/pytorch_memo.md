@@ -125,3 +125,9 @@ with checkpoint.reader(CHECKPOINT_URI + "model.pth") as reader:
     state_dict = torch.load(reader)
 model.load_state_dict(state_dict)
 ```
+
+
+## embedding layer (nn.Embedding)について
+
+- NNでカテゴリカル特徴量を扱う方法の一つとしてEntity Embeddingがある。
+  - 詳細は /Users/masato.morita/src/TIL/machine_learning/特徴量エンジニアリング/entity_embedding_memo.md 
