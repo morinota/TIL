@@ -133,6 +133,7 @@ model.load_state_dict(state_dict)
   - https://zenn.dev/kaba777/articles/32d8f619ef4f72
   - [【Pytorch】nn.Embeddingの使い方を丁寧に](https://gotutiyan.hatenablog.com/entry/2020/09/02/200144)
   - [pytorch の Embedding の挙動について](https://info.drobe.co.jp/blog/engineering/pytorch-embedding)
+  - [Pytorch公式doc embedding](https://docs.pytorch.org/docs/stable/generated/torch.nn.Embedding.html)
 
 - NNでカテゴリカル特徴量を扱う方法の一つとしてEntity Embeddingがある。
   - 詳細は /Users/masato.morita/src/TIL/machine_learning/特徴量エンジニアリング/entity_embedding_memo.md 
