@@ -129,5 +129,90 @@ model.load_state_dict(state_dict)
 
 ## embedding layer (nn.Embedding)について
 
+- refs:
+  - https://zenn.dev/kaba777/articles/32d8f619ef4f72
+  - [【Pytorch】nn.Embeddingの使い方を丁寧に](https://gotutiyan.hatenablog.com/entry/2020/09/02/200144)
+  - [pytorch の Embedding の挙動について](https://info.drobe.co.jp/blog/engineering/pytorch-embedding)
+
 - NNでカテゴリカル特徴量を扱う方法の一つとしてEntity Embeddingがある。
   - 詳細は /Users/masato.morita/src/TIL/machine_learning/特徴量エンジニアリング/entity_embedding_memo.md 
+  - One-hot encodingよりも、カテゴリを密ベクトルにマッピングして意味を学習することができるのがentity embeddingの魅力。
+
+### nn.Embeddingクラスについて:
+
+- 特徴
+  - 軽い! 
+    - one-hot encodingよりも次元数が小さく効率的。
+  - 学習可能!
+    - ベクトルの値は誤差逆伝搬で更新できる。freezeも可能。
+  - 柔軟!
+    - 多次元埋め込み、複数カテゴリに対応できる。
+
+
+- ざっくり使い方: 
+  - 初期化時の引数は基本的に2つ!
+    - 第一引数: `num_embeddings` 語彙サイズ。
+    - 第二引数: `embedding_dim` 埋め込み次元数。
+    - オプショナルの引数:
+      - `padding_idx`オプション: 空っぽのゼロベクトルとして埋め込むようなカテゴリIDを指定する。
+      - `max_norm`オプション: 埋め込みベクトルの最大ノルムを制限する。
+      - `norm_type`オプション: ノルムの計算方法を指定する。デフォルトは2ノルム。
+      - `scale_grad_by_freq`オプション: 勾配をカテゴリの出現頻度でスケーリングする。
+      - `sparse`オプション: 勾配を疎行列で計算するかどうか。デフォルトはFalse。
+  - 変数(properties?)
+    - `weight (Tensor)`: nn.Embeddingの学習可能なパラメータ。形状は(`num_embeddings`, `embedding_dim`)。標準正規分布N(0, 1)で初期化される。
+  - 入出力の形状:
+    - 入力: `(*)`。IntTensorもしくはLongTensor。各要素は抽出したいカテゴリ値のID。
+    - 出力: `(*, embedding_dim)`
+
+```python
+import torch
+import torch.nn as nn
+
+# 例：性別2種類、職業22種類を、それぞれ8次元ベクトルに
+embedding_gender = nn.Embedding(num_embeddings=2, embedding_dim=8)
+embedding_job = nn.Embedding(num_embeddings=22, embedding_dim=8)
+
+# カテゴリデータ（label化済み）をTensorで渡す
+gender_idx = torch.tensor([0, 1, 1, 0])   # 0:男性、1:女性
+job_idx = torch.tensor([3, 12, 7, 5])     # 職業ID
+
+# 埋め込みベクトルに変換（バッチでOK）
+gender_emb = embedding_gender(gender_idx)  # shape: [4, 8]
+job_emb = embedding_job(job_idx)           # shape: [4, 8]
+
+# 特徴量と連続特徴を合算してMLPへ！
+x = torch.cat([gender_emb, job_emb, ...], dim=1)
+```
+
+- 公式の説明は以下:
+  - >A simple lookup table that stores embeddings of a fixed dictionary and size. (**固定長の辞書埋め込みを保存するシンプルなルックアップテーブル**)
+
+### nn.Embeddingの学習について
+
+- Embedding がシンプルなルックアップテーブルだという事は理解できたが、**ランダムに作られたベクトルというだけでは対して役に立たない**。
+  - 入力に対して学習をしてこのベクトルに意味を持たせる事が大事
+- クラスメソッド`from_pretrained()`を使うと、事前学習済みのembedding layerを読み込むことができる。
+  - 引数:
+    - `embeddings(Tensor)`: 事前学習済みの埋め込みテーブル。FloatTensor型。形状は(`num_embeddings`, `embedding_dim`)。
+    - `freeze(bool)`: Trueにすると、埋め込みテーブルは学習時に更新されなくなる。`embedding.weight.requires_grad`の値に相当する。
+    - `padding_idx(int)`: 初期化時と同じ。
+    - `max_norm(float)`: 初期化時と同じ。
+    - `norm_type(float)`: 初期化時と同じ。
+    - `scale_grad_by_freq(bool)`: 初期化時と同じ。
+    - `sparse(bool)`: 初期化時と同じ。
+
+
+- `from_pretrained()`の使い方の例:
+
+```python
+# FloatTensor containing pretrained weights
+weight = torch.FloatTensor([[1, 2.3, 3], [4, 5.1, 6.3]])
+embedding = nn.Embedding.from_pretrained(weight)
+# Get embeddings for index 1
+input = torch.LongTensor([1])
+embedding(input)
+tensor([[ 4.0000,  5.1000,  6.3000]])
+```
+
+
