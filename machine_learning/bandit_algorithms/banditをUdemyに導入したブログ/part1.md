@@ -267,7 +267,7 @@ The selection of the value for k is important; feedback for arms shown in one of
 **k の値の選択は重要**です。上位 k 位置のいずれかに表示されたアームに対するフィードバックはすべて同等に扱われるため、最初の位置でのクリックや登録は、バンディットの目には k 位置目でのクリックや登録と何ら変わりません。
 Generally speaking, the value chosen for k is a design decision, and will vary depending on the use case and page layout.  
 一般的に、k の値として選ばれるものは設計上の決定であり、使用ケースやページレイアウトによって異なります。
-For our particular use case, we chose k = 3 because a user’s logged-in homepage usually shows three full units in the window when the screen is maximized, so an argument can be made that feedback for units in these positions is generally comparable.  
+For our particular use case, we chose k = 3 because a user’s logged-in homepage usually shows three full units in the window when the screen is maximized, so an argument can be made that feedback for units in these positions is generally comparable.
 私たちの特定の使用ケースでは、k = 3 を選択しました。なぜなら、**ユーザのログインしたホームページは通常、画面が最大化されるとウィンドウ内に3つの完全なユニットを表示するため、これらの位置にあるユニットに対するフィードバックは一般的に比較可能であると主張できます**。
 (ここでのk=3って、以前他のスレートバンディットの論文でいう $L_{init}$ と同じだな...!:thinking:)
 
