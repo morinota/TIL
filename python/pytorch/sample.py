@@ -7,8 +7,10 @@ def main() -> None:
     embedding_job = nn.Embedding(num_embeddings=22, embedding_dim=8)
 
     # カテゴリカル特徴量をTensorで渡す
-    gender_idx = torch.tensor([0, 1, 1, 0])  # 例: 0=男性, 1=女性
-    job_idx = torch.tensor([3, 12, 7, 5])  # 例: 職業ID
+    gender_features = torch.tensor(["male", "female", "female", "male"])
+    job_features = torch.tensor(["engineer", "doctor", "artist", "teacher"])
+
+    # ラベルエンコーディング
 
     # Entity Embeddingによって埋め込みベクトルに変換
     gender_emb = embedding_gender(gender_idx)
