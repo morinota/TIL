@@ -26,7 +26,7 @@ and discuss the engineering challenges that teams may face when deploying a simi
 
 The high-level architecture of the multi-armed bandit system for recommendations is represented in the diagram below. 
 推薦のためのマルチアームバンディットシステムの高レベルアーキテクチャは、以下の図に示されています。
-Note that as the red dotted arrows show, it is anear real-time closed loop system, meaning user feedback is continuously being used to improve the recommendations. 
+Note that as the red dotted arrows show, it is a near real-time closed loop system, meaning user feedback is continuously being used to improve the recommendations. 
 赤い点線の矢印が示すように、これは**ほぼリアルタイムの閉ループシステム**であり、ユーザーフィードバックが継続的に使用されて推薦を改善しています。
 
 ![]()
@@ -41,7 +41,7 @@ Let’s look more closely at this loop and explain how it works and what compone
 The loop begins when a user interacts with the Udemy website or mobile app. 
 ループは、ユーザがUdemyのウェブサイトまたはモバイルアプリと対話する際に始まります。
 As the requested page is being loaded, the current best recommendations are loaded from Redis and served to the user. 
-リクエストされたページが読み込まれる際、**現在の最良の推薦がRedisから読み込まれ、ユーザに提供されます**。(あ、バッチ推論じゃん!:thinking:)
+リクエストされたページが読み込まれる際、**現在の最良の推薦がRedisから読み込まれ、ユーザに提供されます**。(あ、バッチ推論かな?って思ったら、後述された内容を見るにストリーミング推論って感じだった!:thinking:)
 We will later explain how these recommendations are kept up to date. 
 これらの推薦がどのように最新の状態に保たれているかについては、後で説明します。
 
@@ -55,7 +55,7 @@ These events have tracking IDs, which allow them to be stitched together into fu
 The tracking system ensures the schema and consistency of the events is maintained across time and that they are reliably published to Kafka topics to be consumed by downstream systems. 
 トラッキングシステムは、イベントのスキーマと一貫性が時間を通じて維持され、下流システムによって消費されるためにKafkaトピックに信頼性を持って公開されることを保証します。
 
-## 3. Streaming apps create observations from the events 
+## 3. Streaming apps create observations from the events ストリーミングアプリがイベントから観測を作成する
 
 (イベントログから報酬観測値を作るストリーミングパイプライン的なやつ...!:thinking:)
 
@@ -74,7 +74,7 @@ This app makes use of Spark’s stateful stream processing and writes the observ
 
 <!-- ここまで読んだ-->
 
-## 4. Bandit model apps use the observations to update recommendations and refresh Redis
+## 4. Bandit model apps use the observations to update recommendations and refresh Redis バンディットモデルアプリが観測を使用して推薦を更新し、Redisを更新する
 
 The final set of Spark Streaming Applications are the Bandit Model Apps. 
 最終的なSpark Streamingアプリケーションのセットは、Bandit Model Appsです。(バッチ推論というか、ストリーミング推論、非同期推論みたいな感じかな...!:thinking:)
