@@ -345,7 +345,7 @@ An example of this can be seen below:
 ![]()
 
 We have generally seen that successful A/B test results with our bandit system correlate highly with successful, quick convergence.  
-私たちは一般的に、**バンディットシステムによる成功したA/Bテストの結果が、成功した迅速な収束と高い相関関係があることを確認**しています。  
+私たちは一般的に、バンディットシステムを使用した成功したA/Bテストの結果が、成功した迅速な収束と高い相関があることを確認しています。
 When choosing your application and deciding whether bandits are a good fit, keep in mind all of the factors that can affect convergence.  
 アプリケーションを選択し、バンディットが適しているかどうかを決定する際には、収束に影響を与える可能性のあるすべての要因を考慮してください。
 
