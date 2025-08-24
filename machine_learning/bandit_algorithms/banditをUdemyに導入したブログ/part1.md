@@ -317,7 +317,16 @@ These are summarized in the table below.
 ![]()
 
 - Convergence Factors
-<!-- - TODO: 後でメモする -->
+  - 1. Number of arms (アームの数)
+    - The greater the number of arms, the more exploration will be required for the bandit, wchich increases convergence time. (アームの数が増えるほど、バンディットの為のより多くの探索が必要になる。それは収束時間を長くする)
+  - 2. Size of the difference between the true mean rewards of each arms(各アームの真の期待報酬の差の大きさ)
+    - When the true mean rewards of two of the best arms are very close to each other, it becomes harder for the bandit to distinguish which arm is better. (2つの最良アームの真の期待報酬が非常に近い場合、どちらのアームがより良いかをバンディットが区別するのが難しくなる)
+    - This in turn causes the bandit's choice of what to show to go back and forth, making convergence take longer. (これは、バンディットが何を表示するかの選択が行ったり来たりする原因となり、収束に時間がかかる)
+  - 3. Amount of traffic (user feedback) the bandit receives (バンディットインスタンスが受け取るユーザフィードバックの量)
+    - more user traffic means more rewards generated in a given period of time, which means enables the bandit to learn and converge more quickly (より多くのユーザトラフィックは、一定期間内に生成されるより多くの報酬を意味し、バンディットがより迅速に学習し、収束することを可能にする)
+  - 4. bandit algorithm itself (バンディットアルゴリズムそのもの)
+    - Some bandit strategies, such as ε-greedy, have a fixed exploration probability which will limit how much the ranking will stabilize. (ε-greedyのような一部のバンディット戦略には固定された探索確率があり、ランキングが安定する量を制限する)
+    - The degree to which the bandit converges (and how long it takes to do so) can be highly dependent on which strategy is used. (バンディットが収束する程度（およびそれにかかる時間）は、使用される戦略に大きく依存する可能性がある)
 
 Defining and measuring convergence can be done in many different ways.  
 収束を定義し、測定する方法はいくつかあります。  
