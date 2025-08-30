@@ -189,3 +189,19 @@ ON
 WHERE
   year >= 2020;
 ```
+
+### TursoのAuthenticationについて!
+
+- SDKを使ってTursoのDBにアクセスする際には、**Database URL + Auth Token(認証トークン)**を必要とする。
+  - Database URL
+    - URLの確認はTurso CLIもしくはPlatform APIを使ってできる。
+    - `libsql://`プロトコルもしくは`https://`プロトコルのどちらでもOK。
+      - `libsql://[DB-NAME]-[ORG-NAME].turso.io`
+      - `https://[DB-NAME]-[ORG-NAME].turso.io`
+      - それぞれパフォーマンスに得手不得手がある。
+  - Auth Token
+    - クラウド上のDBにアクセスする際、SDKはauth tokeを必要とする。
+    - DB(もしくは複数のDBのグループ)のための新しいトークンは、Turso CLIもしくはPlatform APIを使って作成できる。
+    - `full-access`と`read-only`の2種類の権限レベルがある。
+    - tokeの有効期限も設定できる。
+    - 必要に応じて全てのトークンを無効化することも可能。
