@@ -5,6 +5,7 @@
 - [Tursoを軽く触ってみた](https://zenn.dev/ryohei0509/articles/62b80b47483425)
 - [Turso Quickstart (Python)](https://docs.turso.tech/sdk/python/quickstart)
 - [Embedded Replicas](https://docs.turso.tech/features/embedded-replicas/introduction)
+- [Turso brings Native Vector Search to SQLite](https://turso.tech/blog/turso-brings-native-vector-search-to-sqlite)
 
 ## ざっくりTursoの雰囲気を掴みたい。
 
@@ -77,3 +78,65 @@ auth_token = os.getenv("TURSO_AUTH_TOKEN")
 # Embedded Replicas
 conn = libsql.connect("hello.db", sync_url=url, auth_token=auth_token)
 conn.sync()
+```
+
+### Native Vector Searchのサポート
+
+- 2024年6月に、Tursoがnativeな**Vector Similarity Search**をサポートしたらしい。
+- 具体的な使い方:　基本的には**ただデータ型を指定するだけっぽい!**
+  - 拡張機能は不要。
+  - TursoクラウドDBでも、ローカルのインメモリDBでも、同様に動作する。
+  - 
+
+例:
+
+```sql
+-- テーブル作成時に、embeddingカラムをF32_BLOB(3)型(=float32の3次元array)で定義
+CREATE TABLE movies (
+  title TEXT,
+  year INT,
+  embedding F32_BLOB(3)
+);
+
+-- Insert時には、vector('[1,2,3]')のようにvector()関数で指定すればOKっぽい。
+-- vector()関数: 文字列表現をベクトルに変換する関数
+INSERT INTO movies (title, year, embedding)
+VALUES
+  (
+    'Napoleon',
+    2023,
+    vector('[1,2,3]')
+  ),
+  (
+    'Black Hawk Down',
+    2001,
+    vector('[10,11,12]')
+  ),
+  (
+    'Gladiator',
+    2000,
+    vector('[7,8,9]')
+  ),
+  (
+    'Blade Runner',
+    1982,
+    vector('[4,5,6]')
+  );
+
+  -- 検索時には、vector_distance_cos()関数でコサイン類似度を計算できる。
+  -- vector_extract()関数: vector()関数の逆。つまり、ベクトルを文字列表現に変換する関数
+  SELECT title,
+       vector_extract(embedding),
+       vector_distance_cos(embedding, vector('[5,6,7]'))
+  FROM movies;
+
+  -- 例えば、2020年以降の映画で、embeddingが[3,1,2]に最も近い上位3件を取得するクエリは以下の通り:
+  SELECT *
+  FROM
+    movies
+  WHERE
+    year >= 2020
+  ORDER BY
+    vector_distance_cos(embedding, '[3,1,2]')
+  LIMIT 3;
+```
