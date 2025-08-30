@@ -28,6 +28,7 @@ pytesseract = "^0.3.13"
 reportlab = "^4.4.1"
 pyautogui = "^0.9.54"
 torch = "^2.8.0"
+libsql = "^0.1.10"
 
 [tool.poetry.group.dev.dependencies]
 locust = "^2.32.5"

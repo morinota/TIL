@@ -2179,6 +2179,39 @@ otel = ["opentelemetry-api (>=1.30.0,<2.0.0)", "opentelemetry-exporter-otlp-prot
 pytest = ["pytest (>=7.0.0)", "rich (>=13.9.4,<14.0.0)"]
 
 [[package]]
+name = "libsql"
+version = "0.1.10"
+description = ""
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "libsql-0.1.10-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:f67f75a17fb43347053ab09429f31cc8d0cf65f953f99cd668900f4894af2113"},
+    {file = "libsql-0.1.10-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:ee89909d51502121df7a76f978bac837b8d7731b7fbe63ebf0cb468fe2544e27"},
+    {file = "libsql-0.1.10-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0fbcaf6ec0686eed6510f7bd0955e888a3061812286c8a20c1042851989d606d"},
+    {file = "libsql-0.1.10-cp310-cp310-win_amd64.whl", hash = "sha256:27a504cff98969bb8290eab9406b89c7b9c5f43512f94ed317f06a0b8fc6476b"},
+    {file = "libsql-0.1.10-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:183503d71db8da05571495b6879b6120974def6c6a7a65d1d7d3cb8a5ef8df92"},
+    {file = "libsql-0.1.10-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:754afa702de6fd0778df260cafcfaa3ca1226abcd19b283b06b1a5be18a22c74"},
+    {file = "libsql-0.1.10-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3e5b3259ca0610d142bfe3192e036f7e28110e80214e742ed63a96531b30c9ea"},
+    {file = "libsql-0.1.10-cp311-cp311-win_amd64.whl", hash = "sha256:7c502da8d13de58cd158952153078710dfad65c0fdeb8328f9f68364907f5c08"},
+    {file = "libsql-0.1.10-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:5f0f5f2e815d5873978de10034dddf1050f5f825139602e8dcef9e92ff203ef9"},
+    {file = "libsql-0.1.10-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:9e270fe477ee7c4cf7f5dcb1e0d108a2bd33bae0a3661adcb54b050a16162902"},
+    {file = "libsql-0.1.10-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:68411a36318415acf8eb4357ec7b1edcce19578f4ea84fe1ac6c5df3f5f62d95"},
+    {file = "libsql-0.1.10-cp312-cp312-win_amd64.whl", hash = "sha256:93b6cf2d0d6c007f93f7c3869600d488b45be4ebae08bb7d1a76ad26e6c00474"},
+    {file = "libsql-0.1.10-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:242805cb38acd4e97b6c4041bb57beddf067b756262be6851ab559135b6c32d0"},
+    {file = "libsql-0.1.10-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:00ec77a89face1ce8df083bdabae15215e3235deac40ded94ab27224aed20b94"},
+    {file = "libsql-0.1.10-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:32363c2cf42bfadd3c075723ef170b8feef4d350ed236caea52b2ddc8b31fbb2"},
+    {file = "libsql-0.1.10-cp313-cp313-win_amd64.whl", hash = "sha256:a1e7c0cbf7b9cbf4f59f56c5386c810b29d482c480fff0fcdc72db7a1a249ce9"},
+    {file = "libsql-0.1.10-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f66cebb971db45116501c0cbe417bb8102a568d7fa9a4720352e98eed8aa7d95"},
+    {file = "libsql-0.1.10-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fd3979e81530b09e6269448878bdcd6c9dac39dd804d9ec629e82df30e793f01"},
+    {file = "libsql-0.1.10-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a636d7c8386f8b1976e28c2563df41bfd99a248a449440413e43f76e126983d4"},
+    {file = "libsql-0.1.10-cp39-cp39-win_amd64.whl", hash = "sha256:64d262e35aa484b35076174a9391f3cddef557332c0c2af5d8c37449cc557843"},
+    {file = "libsql-0.1.10-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:76416bcac5e7807e659d5d3a795214b649da905c5b268143afc105d7a8d20932"},
+    {file = "libsql-0.1.10-pp311-pypy311_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4581dda613d28f8f9a1259e1e151c6db817404b4a04c84c727d725bad4b9d8dc"},
+    {file = "libsql-0.1.10.tar.gz", hash = "sha256:f995df77f9e453f441b3ede30da0068869c542127c2b6e11c91fee97328650b5"},
+]
+
+[[package]]
 name = "locket"
 version = "1.0.0"
 description = "File-based locks for Python on Linux and Windows"
@@ -6243,4 +6276,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13"
-content-hash = "4ca1084b5350500b5a70e11804afa6cf3adc2fde71568110c15f87b81de52cfa"
+content-hash = "077aa25a3df7c150a04c6cc809080d34693e06b31901e4ad87da31781bcdd9f5"
