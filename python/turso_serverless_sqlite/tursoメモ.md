@@ -6,6 +6,7 @@
 - [Turso Quickstart (Python)](https://docs.turso.tech/sdk/python/quickstart)
 - [Embedded Replicas](https://docs.turso.tech/features/embedded-replicas/introduction)
 - [Turso brings Native Vector Search to SQLite](https://turso.tech/blog/turso-brings-native-vector-search-to-sqlite)
+- Turso + ORMについて: [SQLAlchemy + Turso](https://docs.turso.tech/sdk/python/orm/sqlalchemy)
 
 ## ざっくりTursoの雰囲気を掴みたい。
 
