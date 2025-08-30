@@ -7,6 +7,7 @@
 - [Embedded Replicas](https://docs.turso.tech/features/embedded-replicas/introduction)
 - [Turso brings Native Vector Search to SQLite](https://turso.tech/blog/turso-brings-native-vector-search-to-sqlite)
 - Turso + ORMについて: [SQLAlchemy + Turso](https://docs.turso.tech/sdk/python/orm/sqlalchemy)
+- sqlite -> tursoのmigrate: [Migrate to Turso](https://docs.turso.tech/cloud/migrate-to-turso)
 
 ## ざっくりTursoの雰囲気を掴みたい。
 
@@ -205,3 +206,24 @@ WHERE
     - `full-access`と`read-only`の2種類の権限レベルがある。
     - tokeの有効期限も設定できる。
     - 必要に応じて全てのトークンを無効化することも可能。
+
+### 既存SQLite DBからTursoへのimport
+
+- 準備:
+  - 対象のSQLite databaseを開く
+    - `sqlite3 path/to/your/database.db`
+  - WAL journalモードを設定する。
+    - `PRAGMA journal_mode=WAL;`
+  - checkpointを実行する。
+    - checkpointを実行して、全ての変更がmainデータベースに書き込まれて、WALファイルがtruncate(削除)されるようにする。
+    - `PRAGMA wal_checkpoint(truncate);`
+  - journalモードを確認する。
+    - `PRAGMA journal_mode;`
+    - 返り値が`wal`であることを確認する。
+  - SQLiteデータベースを閉じる。
+    - `.exit`
+  - これでTursoへのimport準備は完了!
+- Turso CLIを使ってimport
+  - `turso db import ~/path/to/your/database.db`
+  - データベース名はSQLiteファイル名から自動的に決定される。
+  - 全てのテーブル、データ、スキーマがimportされる。
