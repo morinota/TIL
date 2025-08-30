@@ -140,3 +140,31 @@ VALUES
     vector_distance_cos(embedding, '[3,1,2]')
   LIMIT 3;
 ```
+
+- Indexingについて
+  - より大きなデータセットで高速に検索したい場合、Tursoは**ANN(Approximate Nearest Neighbor)をサポート**している(具体的にはDiskANNというアルゴリズムを使用してるらしい)。
+  - 方法:
+    - index作成時...`libsql_vector_idx()`関数でベクトルカラムをwrapするだけでいいっぽい!
+    - ANN検索時...
+      - インデックスは内部的には別テーブルとして表現されるので、前述のクエリのままでは自動ではANNにならない。
+      - 以下のように `vector_top_k()`関数を使ってANNインデックスを指定して、元テーブルとjoinしてあげる必要があるみたい!
+
+例:
+
+```sql
+-- embeddingカラムに対してANNインデックスを作成
+CREATE INDEX movies_idx ON movies ( libsql_vector_idx(embedding) );
+
+-- 上述のクエリの、ANNを使ったver.
+SELECT
+  title,
+  year
+FROM
+  vector_top_k('movies_idx', '[4,5,6]', 3)
+JOIN
+  movies
+ON
+  movies.rowid = id
+WHERE
+  year >= 2020;
+```
