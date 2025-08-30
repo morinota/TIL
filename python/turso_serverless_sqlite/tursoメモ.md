@@ -72,12 +72,32 @@
 import libsql
 import os
 
+
+# クラウド上のTurso DBにアクセスする場合(Embedded Replicas)
 url = os.getenv("TURSO_DATABASE_URL")
 auth_token = os.getenv("TURSO_AUTH_TOKEN")
 
-# Embedded Replicas
 conn = libsql.connect("hello.db", sync_url=url, auth_token=auth_token)
 conn.sync()
+
+# Local Onlyなsqliteファイルにアクセスする場合
+# conn = libsql.connect("hello.db")
+# cur = conn.cursor()
+
+# SQLクエリの実行
+conn.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER);")
+conn.execute("INSERT INTO users(id) VALUES (10);")
+
+print(conn.execute("select * from users").fetchall())
+
+# Sync (Embedded Replicasを使ってる場合のみ)
+conn.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER);")
+conn.execute("INSERT INTO users(id) VALUES (1);")
+conn.commit()
+
+conn.sync() # sync your local database with the primary database(cloud)
+
+print(conn.execute("select * from users").fetchall())
 ```
 
 ### Native Vector Searchのサポート
