@@ -8,6 +8,7 @@
 - [Turso brings Native Vector Search to SQLite](https://turso.tech/blog/turso-brings-native-vector-search-to-sqlite)
 - Turso + ORMについて: [SQLAlchemy + Turso](https://docs.turso.tech/sdk/python/orm/sqlalchemy)
 - sqlite -> tursoのmigrate: [Migrate to Turso](https://docs.turso.tech/cloud/migrate-to-turso)
+- [利用者は数十億人！？ SQLiteはどこが凄いデータベース管理システムなのか調べてみた](https://qiita.com/ko1nksm/items/87d27a287e1b6005d11c)
 
 ## ざっくりTursoの雰囲気を掴みたい。
 
@@ -17,6 +18,23 @@
   - DBMSの中での位置付け:
     - まず組み込み型！ RDSやサーバー・クライアント型ではない。
       - 組み込み型の中では、OLTP(オンライントランザクション処理)向け！OLAP(オンライン分析処理)向けではない。
+  - 世界で一番多く使われてるRDBMSらしい。
+    - なぜSQLiteの利用者は数十億人もいるのか?? 
+      - -> **Android や iOS、つまりスマホに組み込まれているから。** (なるほどエッジデバイス上で動作してるからか:thinking:)
+      - 多くのRDBMSとは異なり組み込み型なので。
+  - SQLiteの信頼性が高いって言われるのはなぜ??
+    - 1. 歴史が長く、20年以上エッジデバイスで問題なく使用されてきた。
+    - 2. どんな環境でも動作するように設計されている(らしい)。
+    - 3. オープンソースでも危険なコードの混入はない。
+      - -> **オープンソースであってもオープンコントリビュートではない**。
+    - 4. 互換性が高く、SQLiteをアップデートしてもアプリケーション側の修正は不要。
+      - 「互換性がない方法で変更しない」と名言してるらしい。
+  - SQLiteはRDBMSとして何がすごいの??
+    - 利用するための設定作業が全く不要! パッケージ管理システム上でインストールするだけ。
+    - ほとんどフル機能のSQL実装。
+    - OSのAPIをネイティブで呼び出せるC言語で作られてるから高速。パフォーマンスが良い。
+      - ファイルシステムへの直接アクセスよりも速い!
+    - NoSQLとしても使える(JSON形式・半構造化データへの対応)
 - Tursoの**Embedded Replicas**という仕組み:
   - ざっくり!:
     - ローカルにレプリカ(SQLiteのファイル)を持ちつつ、クラウド上のメインDBと同期できるハイブリッドな仕組み。これにより「**爆速ローカル読み込み + クラウド同期**」の両方が実現される!
