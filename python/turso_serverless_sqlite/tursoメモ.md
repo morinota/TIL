@@ -250,3 +250,5 @@ WHERE
   - `turso db import ~/path/to/your/database.db`
   - データベース名はSQLiteファイル名から自動的に決定される。
   - 全てのテーブル、データ、スキーマがimportされる。
+  - もし既存のグループに、SQLiteデータベースをimportしたい場合は、`--group`フラグを使う。
+    - `turso db import --group <group_name> ~/path/to/my-database.db`
