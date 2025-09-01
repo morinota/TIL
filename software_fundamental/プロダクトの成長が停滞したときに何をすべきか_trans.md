@@ -32,7 +32,7 @@ Instead, a crisis ensues, and the entire roadmap has to be rewritten.
 Particularly for startups, where continual growth is life and death.  
 **特にスタートアップにとっては、継続的な成長が生死に関わる問題である**。
 
-When this crisis hits, the question is, what to do about it?  
+When this crisis hits, the question is, what to do about it? 
 **この危機が訪れたとき、問題はどう対処するかである**。
 How do you come up with a plan?  
 どのように計画を立てるのか？
