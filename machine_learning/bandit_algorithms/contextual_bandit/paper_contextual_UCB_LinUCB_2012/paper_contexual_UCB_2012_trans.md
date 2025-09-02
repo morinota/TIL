@@ -15,12 +15,12 @@ Personalized web services strive to adapt their services (advertisements, news a
 Despite a few recent advances, this problem remains challenging for at least two reasons.
 最近のいくつかの進歩にもかかわらず、この問題は少なくとも2つの理由から依然として難題である。
 First, web service is featured with dynamically changing pools of content, rendering traditional collaborative filtering methods inapplicable.
-第一に、ウェブサービスには**動的に変化するコンテンツプール**があり、従来の協調フィルタリング手法は適用できない。
+**第一に、ウェブサービスには動的に変化するコンテンツプールがあり、従来の協調フィルタリング手法は適用できない。**
 Second, the scale of most web services of practical interest calls for solutions that are both fast in learning and computation.
 第二に、実用的なほとんどのウェブサービスの規模は、**学習と計算の両方において高速なソリューションを求めている**。
 
 In this work, we model personalized recommendation of news articles as a contextual bandit problem, a principled approach in which a learning algorithm sequentially selects articles to serve users based on contextual information about the users and articles, while simultaneously adapting its article-selection strategy based on user-click feedback to maximize total user clicks.
-この問題では、学習アルゴリズムがユーザと記事に関する文脈情報に基づいてユーザに提供する記事を順次選択し、同時にユーザのクリックフィードバックに基づいて記事選択戦略を適応させ、ユーザの総クリック数を最大化する。
+この問題では、**学習アルゴリズムがユーザと記事に関する文脈情報に基づいてユーザに提供する記事を順次選択し、同時にユーザのクリックフィードバックに基づいて記事選択戦略を適応させ、ユーザの総クリック数を最大化**する。
 
 The contributions of this work are three-fold.
 この仕事の貢献は3つある。
@@ -31,7 +31,9 @@ Second, we argue that any bandit algorithm can be reliably evaluated offline usi
 Finally, using this offline evaluation method, we successfully applied our new algorithm to a Yahoo! Front Page Today Module dataset containing over 33 million events.
 最後に、このオフライン評価法を用いて、3,300万件以上のイベントを含むYahoo! Front Page Today Moduleデータセットに新しいアルゴリズムを適用することに成功した。
 Results showed a 12.5% click lift compared to a standard context-free bandit algorithm, and the advantage becomes even greater when data gets more scarce.
-その結果、標準的なコンテクストフリー・バンディット・アルゴリズムと比較して12.5％のクリックリフトを示し、データがより乏しくなるとその優位性はさらに大きくなる。
+**その結果、標準的なコンテクストフリー・バンディット・アルゴリズムと比較して12.5％のクリックリフトを示し、データがより乏しくなるとその優位性はさらに大きくなる。**
+
+<!-- ここまで読んだ! -->
 
 # 1. INTRODUCTION 1. はじめに
 
@@ -40,26 +42,28 @@ This paper addresses the challenge of identifying the most appropriate web-based
 Most service vendors acquire and maintain a large amount of content in their repository, for instance, for filtering news articles [14] or for the display of advertisements [5].
 多くのサービスベンダーは、例えばニュース記事のフィルタリング [14]や広告の表示 [5]のために、大量のコンテンツを取得し、リポジトリに保持している。
 Moreover, the content of such a web-service repository changes dynamically, undergoing frequent insertions and deletions.
-さらに、このようなウェブサービスリポジトリのコンテンツは動的に変化し、頻繁に挿入や削除が行われる。
+**さらに、このようなウェブサービスリポジトリのコンテンツは動的に変化し、頻繁に挿入や削除が行われる。**
 In such a setting, it is crucial to quickly identify interesting content for users.
-このような環境では、ユーザーにとって興味深いコンテンツを素早く見極めることが重要である。
+このような環境では、**ユーザーにとって興味深いコンテンツを素早く見極めること**が重要である。
 For instance, a news filter must promptly identify the popularity of breaking news, while also adapting to the fading value of existing, aging news stories.
 例えば、ニュースフィルターは、速報ニュースの人気を素早く識別する一方で、既存の古くなったニュースの価値の衰えにも適応しなければならない。
 
 It is generally difficult to model popularity and temporal changes based solely on content information.
 一般に、**コンテンツ情報のみに基づいて人気や時間的変化をモデル化することは難しい**。
 In practice, we usually explore the unknown by collecting consumers' feedback in real time to evaluate the popularity of new content while monitoring changes in its value [3].
-実際には、消費者のフィードバックをリアルタイムで収集し、新しいコンテンツの人気度を評価しながら、その価値の変化を監視することで、未知の領域を探索するのが一般的である[3]。
+実際には、**消費者のフィードバックをリアルタイムで収集し、新しいコンテンツの人気度を評価しながら、その価値の変化を監視することで、未知の領域を探索するのが一般的**である[3]。
 For instance, a small amount of traffic can be designated for such exploration.
 例えば、少量のトラフィックをこのような探索のために指定することができる。
 Based on the users' response (such as clicks) to randomly selected content on this small slice of traffic, the most popular content can be identified and exploited on the remaining traffic.
-この小さなトラフィックの一部でランダムに選択されたコンテンツに対するユーザーの反応（クリックなど）に基づいて、最も人気のあるコンテンツを特定し、残りのトラフィックで利用することができる。
+**この小さなトラフィックの一部でランダムに選択されたコンテンツに対するユーザーの反応（クリックなど）に基づいて、最も人気のあるコンテンツを特定し、残りのトラフィックで利用することができる**。
 This strategy, with random exploration on an $\epsilon$ fraction of the traffic and greedy exploitation on the rest, is known as ǫ-greedy.
 この戦略は、トラフィックの $\epsilon$ 分をランダムに探索し、残りを貪欲に利用するもので、$\epsilon$-greedy として知られている。
 Advanced exploration approaches such as EXP3 [8] or UCB1 [7] could be applied as well.
 EXP3[8]やUCB1[7]のような高度な探査アプローチも適用できるだろう。
 Intuitively, we need to distribute more traffic to new content to learn its value more quickly, and fewer users to track temporal changes of existing content.
 直感的に言えば、新しいコンテンツにはその価値をより早く知るために多くのトラフィックを配分し、既存のコンテンツの時間的変化を追跡するためには少ないユーザーを配分する必要がある。
+
+<!-- ここまで読んだ! -->
 
 Recently, personalized recommendation has become a desirable feature for websites to improve user satisfaction by tailoring content presentation to suit individual users' needs [10].
 近年、パーソナライズド・レコメンデーションは、個々のユーザーのニーズに合わせてコンテンツのプレゼンテーションを調整することで、ユーザーの満足度を向上させるために、ウェブサイトにとって望ましい機能となっている[10]。
@@ -69,13 +73,13 @@ Personalization involves a process of gathering and storing user attributes, man
 Often, both users and content are represented by sets of features.
 **多くの場合、ユーザもコンテンツも特徴量のセットで表される**。
 User features may include historical activities at an aggregated level as well as declared demographic information.
-ユーザー機能には、申告された人口統計情報だけでなく、集約されたレベルでの過去の活動が含まれる場合があります。
+ユーザ特徴量には、申告された人口統計情報だけでなく、集約されたレベルでの過去の活動が含まれる場合があります。
 Content features may contain descriptive information and categories.
 コンテンツの特徴には、説明的な情報やカテゴリーが含まれることがある。
 In this scenario, exploration and exploitation have to be deployed at an individual level since the views of different users on the same content can vary significantly.
 このシナリオでは、同じコンテンツに対する異なるユーザーの見解が大きく異なる可能性があるため、探索と利用を個人レベルで展開する必要がある。
 Since there may be a very large number of possible choices or actions available, it becomes critical to recognize commonalities between content items and to transfer that knowledge across the content pool.
-可能性のある選択肢や行動が非常に多く存在する可能性があるため、**コンテンツitem間の共通性を認識**(=action embedding的な)し、その知識をコンテンツプール全体に伝達することが重要になる。
+可能性のある選択肢や行動が非常に多く存在する可能性があるため、**コンテンツitem間の共通性を認識**(=action embedding的な)し、**その知識をコンテンツプール全体に伝達**することが重要になる。
 
 Traditional recommender systems, including collaborative filtering, content-based filtering and hybrid approaches, can provide meaningful recommendations at an individual level by leveraging users' interests as demonstrated by their past activity.
 協調フィルタリング、コンテンツベースフィルタリング、ハイブリッドアプローチを含む従来のレコメンダーシステムは、過去のアクティビティによって示されるユーザーの興味を活用することで、個人レベルで有意義なレコメンデーションを提供することができる。
@@ -95,7 +99,7 @@ These issues make traditional recommender-system approaches difficult to apply, 
 It thus becomes indispensable to learn the goodness of match between user interests and content when one or both of them are new.
 そのため、ユーザの興味とコンテンツのどちらか、あるいは両方が新しい場合、そのマッチングの良し悪しを学習することが不可欠となる。(ユーザかアイテムのどちらかがcold-start状態じゃなくなるまでログを集める必要があるよね...!って意味?)
 However, acquiring such information can be expensive and may reduce user satisfaction in the short term, raising the question of optimally balancing the two competing goals: maximizing user satisfaction in the long run, and gathering information about goodness of match between user interests and content.
-しかし、このような情報の取得にはコストがかかり、短期的にはユーザーの満足度を低下させる可能性がある。そのため、**長期的にユーザーの満足度を最大化することと、ユーザーの興味とコンテンツの一致度に関する情報を収集することという、相反する2つの目標を最適にバランスさせる必要がある**。
+しかし、このような情報の取得にはコストがかかり、短期的にはユーザの満足度を低下させる可能性がある。そのため、**長期的にユーザーの満足度を最大化することと、ユーザーの興味とコンテンツの一致度に関する情報を収集することという、相反する2つの目標を最適にバランスさせる必要がある**。(つまり exploration/exploitation のバランスを取る必要がある...! => バンディットアルゴリズムの出番じゃん! :thinking:)
 
 The above problem is indeed known as a feature-based exploration/exploitation problem.
 上記の問題は、まさに**feature-based exploration/exploitation problem(特徴に基づく探索/利用問題)**として知られている。
@@ -109,6 +113,8 @@ We also address the problem of offline evaluation in Section 4, showing this is 
 また、**セクション4でオフライン評価の問題を取り上げ**、異なるユーザーに対して妥当な仮定であるように、相互作用が独立かつ同一分布（i.i.d.）である場合、どのような探索/探索戦略でも可能であることを示す。
 We then test our new algorithm and several existing algorithms using this offline evaluation strategy in Section 5.
 そしてセクション5で、このオフライン評価戦略を用いて、我々の新しいアルゴリズムといくつかの既存のアルゴリズムをテストする。
+
+<!-- ここまで読んだ! -->
 
 # 2. FORMULATION & RELATED WORK 2. 策定と関連作業
 
@@ -129,12 +135,12 @@ In trial $t$:
 - 1. The algorithm observes the current user $u_t$ and a set $A_t$ of arms or actions together with their feature vectors $x_{t,a}$ for $a \in A_{t}$. The vector xt,a summarizes information of both the user ut and arm a, and will be referred to as the context.
 - このアルゴリズムは、現在のユーザーutと、アームまたはアクションの集合Atを、その特徴ベクトルxt,aとともに、a∈Atについて観察する。 **ベクトルxt,aは、ユーザーutとアームaの両方の情報を要約しており、コンテキストと呼ばれる**。
 - 2. Based on observed payoffs in previous trials, A chooses an arm at ∈ At, and **receives** payoff rt,a t whose expectation depends on both the user ut and the arm at.
-- 2.以前の試行で観察されたペイオフ(=報酬?)に基づいて、アルゴリズムはアームat∈Atを選択し、期待値がユーザ $u_t$ とアーム $a_t$ の両方に依存するペイオフ $r_{t,a_t}$ を受け取る。
+- 2.以前の試行で観察されたペイオフ(=報酬?)に基づいて、アルゴリズムはアームat∈Atを選択し、期待値がユーザ $u_t$ とアーム $a_t$ の両方に依存するペイオフ(報酬) $r_{t,a_t}$ を受け取る。
 - 3. The algorithm then improves its arm-selection strategy with the new observation, (xt,a t , at, rt,a t ). It is important to em-phasize here that no feedback (namely, the payoff rt,a) is observed for unchosen arms a = at. The consequence of this fact is discussed in more details in the next subsection.
-- 3. その後アルゴリズムは、新しい観測値 $(x_{t, a_t}, a_t, r_{t, a_t})$ でaction選択戦略を改善する。ここで重要な事は、選ばれてないarms $a \neq a_{t}$ にはfeedback(=報酬 $r_{t, a}$)が観測されない、という事。
+- 3. その後アルゴリズムは、新しい観測値 $(x_{t, a_t}, a_t, r_{t, a_t})$ でaction選択戦略を改善する。ここで重要な事は、選ばれてないarms $a \neq a_{t}$ にはfeedback(=報酬 $r_{t, a}$)が観測されない、という事。(=反実仮想的な問題設定...!)
 
 In the process above, the total T -trial payoff of A is defined as T t=1 rt,a t .
-上記のプロセスにおいて、Aの総T試行ペイオフは $\sum_{t=1}^{T}r_{t,a_t}$ と定義される。
+上記のプロセスにおいて、Aの総 $T$ 試行ペイオフ(=試行 $T$ までの累積報酬) は $\sum_{t=1}^{T}r_{t,a_t}$ と定義される。
 Similarly, we define the optimal expected T -trial payoff as E T t=1 r t,a _t , where a_ t is the arm with maximum expected payoff at trial t.
 同様に、T-trialsの総報酬の最適な期待値を $\mathbb{E}[\sum_{t=1}^{T} r_{t, a_{t}^*}]$ として定義する。ここで $a_{t}^*$ は、試行tで最大の期待ペイオフを持つアームである。
 Our goal is to design A so that the expected total payoff above is maximized.
@@ -142,7 +148,7 @@ Our goal is to design A so that the expected total payoff above is maximized.
 Equivalently, we may find an algorithm so that its regret with respect to the optimal arm-selection strategy is minimized.
 同様に、**最適な腕選択戦略に対するregret(後悔)が最小になるようなアルゴリズム**を見つけることもできる。
 Here, the T -trial regret $R_{A}(T)$ of algorithm $A$ is defined formally by
-ここで、アルゴリズムAのT試行後悔R A (T ) は、形式的に次式で定義される。(理想的なarmを選択し続けた場合の総報酬と、実際の総報酬の差分??)
+ここで、アルゴリズムAのT試行後悔R A (T ) は、形式的に次式で定義される。(理想的なarmを選択し続けた場合の総報酬と、実際の総報酬の差分、の期待値。)
 
 $$
 R_{A}(T) := $\mathbb{E}[\sum_{t=1}^{T} r_{t, a_{t}^*}]$ - $\mathbb{E}[\sum_{t=1}^{T} r_{t, a_{t}}]$
@@ -168,7 +174,9 @@ For example, it is much more likely for a male teenager to be interested in an a
 Therefore, we may "summarize" users and articles by a set of informative features that describe them compactly.
 したがって、**ユーザや記事をコンパクトに記述する情報量の多い特徴量によって「要約」することができる**。(i.e. 低次元に投射する...!)
 By doing so, a bandit algorithm can generalize CTR information from one article/user to another, and learn to choose good articles more quickly, especially for new users and articles.
-そうすることで、バンディットアルゴリズムは、**ある記事/ユーザから別の記事/ユーザへのCTR情報を一般化**し、**特に新しいユーザや記事に対して**、より迅速に良い記事を選択することを学ぶことができる。(記事の特徴量はテキストを使えばOKだけど、新規でも入手できるユーザの特徴量なんかあるかなぁ...:thinking:)
+そうすることで、バンディットアルゴリズムは、**ある記事/ユーザから別の記事/ユーザへのCTR情報を一般化**し、**特に新しいユーザや記事に対して**、より迅速に良い記事を選択することを学ぶことができる。(記事の特徴量はテキストを使えばOKだけど、新規でも入手できるユーザの特徴量なんかあるかなぁ...オンボーディング回答...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 ## 2.2 Existing Bandit Algorithms 2.2 既存のバンディット・アルゴリズム
 
