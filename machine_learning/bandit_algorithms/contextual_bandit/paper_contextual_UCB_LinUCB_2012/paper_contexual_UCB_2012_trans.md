@@ -195,6 +195,8 @@ However, obtaining information about the arms' average payoffs (i.e., exploratio
 Clearly, neither a purely exploring nor a purely exploiting algorithm works best in general, and a good tradeoff is needed.
 明らかに、**純粋に探索するアルゴリズムも、純粋に利用するアルゴリズムも、一般的に最もうまく機能するものではなく、適切なトレードオフが必要である**。(purely exploiting algorithm って 要は決定論的なアルゴリズムだよなぁ...:thinking:)
 
+<!-- ここまで読んだ! -->
+
 The context-free K-armed bandit problem has been studied by statisticians for a long time [9,24,26].
 **context-freeなK-armdedバンディット問題**は、統計学者によって長い間研究されてきた[9,24,26]。
 One of the simplest and most straightforward algorithms is ǫ-greedy.
