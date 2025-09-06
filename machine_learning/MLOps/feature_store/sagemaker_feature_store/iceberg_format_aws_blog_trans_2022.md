@@ -130,150 +130,126 @@ OPTIMIZE sagemaker_featurestore.orders-feature-group-iceberg-post-comp-03-14-05-
 <!-- ここまで読んだ! -->
 
 After running the optimize command, you use the VACUUM procedure, which performs snapshot expiration and removes orphan files. 
-最適化コマンドを実行した後、VACUUM手順を使用します。これにより、スナップショットの有効期限が切れ、孤立したファイルが削除されます。
+最適化コマンドを実行した後、`VACUUM`手順を使用します。これにより、スナップショットの有効期限が切れ、**孤立したファイルが削除**されます。
 These actions reduce metadata size and remove files that are not in the current table state and are also older than the retention period specified for the table. 
 これらのアクションは、メタデータのサイズを削減し、現在のテーブル状態にないファイルや、テーブルに指定された保持期間よりも古いファイルを削除します。
 
-```
+```bash
 VACUUM sagemaker_featurestore.orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334
 ```
 
-Bash
-
 Note that table properties are configurable using Athena’s ALTER TABLE. 
-テーブルプロパティは、AthenaのALTER TABLEを使用して構成可能であることに注意してください。
-
+テーブルプロパティは、Athenaの`ALTER TABLE`を使用して構成可能であることに注意してください。
 For an example of how to do this, see the Athena documentation. 
-これを行う方法の例については、Athenaのドキュメントを参照してください。
-
+これを行う方法の例については、[Athenaのドキュメント](https://docs.aws.amazon.com/athena/latest/ug/querying-iceberg-managing-tables.html#querying-iceberg-alter-table-set-properties)を参照してください。
 For VACUUM, vacuum_min_snapshots_to_keep and vacuum_max_snapshot_age_seconds can be used to configure snapshot pruning parameters. 
 VACUUMの場合、`vacuum_min_snapshots_to_keep`および`vacuum_max_snapshot_age_seconds`を使用してスナップショットのプルーニングパラメータを構成できます。
 
+<!-- ここまで読んだ! -->
+
 Let’s have a look at the performance impact of running compaction on a sample feature group table. 
 サンプルフィーチャーグループテーブルで圧縮を実行した際のパフォーマンスへの影響を見てみましょう。
-
 For testing purposes, we ingested the same orders feature records into two feature groups, orders-feature-group-iceberg-pre-comp-02-11-03-06-1669979003 and orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334, using a parallelized SageMaker processing job with Scikit-Learn, which results in 49,908,135 objects stored in Amazon S3 and a total size of 106.5 GiB. 
-テスト目的で、同じ注文フィーチャーレコードを2つのフィーチャーグループ、`orders-feature-group-iceberg-pre-comp-02-11-03-06-1669979003`と`orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334`に取り込みました。これは、Scikit-Learnを使用した並列化されたSageMaker処理ジョブを使用して行われ、Amazon S3に49,908,135オブジェクトが保存され、合計サイズは106.5 GiBです。
+テスト目的で、同じ注文フィーチャーレコードを2つのフィーチャーグループ、`orders-feature-group-iceberg-pre-comp-02-11-03-06-1669979003`と`orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334`に取り込みました。これは、Scikit-Learnを使用した並列化されたSageMaker処理ジョブを使用して行われ、Amazon S3に49,908,135オブジェクトが保存され、**合計サイズは106.5 GiB**です。
 
 We run a query to select the latest snapshot without duplicates and without deleted records on the feature group orders-feature-group-iceberg-pre-comp-02-11-03-06-1669979003. 
 フィーチャーグループ`orders-feature-group-iceberg-pre-comp-02-11-03-06-1669979003`で、重複や削除されたレコードなしで最新のスナップショットを選択するクエリを実行します。
-
 Prior to compaction, the query took 1hr 27mins. 
-圧縮前は、クエリの実行に1時間27分かかりました。
+**圧縮前は、クエリの実行に1時間27分**かかりました。
+
+![]()
 
 We then run compaction on orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334 using the Athena OPTIMIZE query, which compacted the feature group table to 109,851 objects in Amazon S3 and a total size of 2.5 GiB. 
-次に、AthenaのOPTIMIZEクエリを使用して`orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334`で圧縮を実行し、フィーチャーグループテーブルをAmazon S3に109,851オブジェクト、合計サイズ2.5 GiBに圧縮しました。
-
+次に、AthenaのOPTIMIZEクエリを使用して`orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334`で圧縮を実行し、フィーチャーグループテーブルをAmazon S3に109,851オブジェクト、**合計サイズ2.5 GiBに圧縮**しました。
 If we then run the same query after compaction, its runtime decreased to 1min 13sec. 
-圧縮後に同じクエリを実行すると、実行時間は1分13秒に短縮されました。
+**圧縮後に同じクエリを実行すると、実行時間は1分13秒に短縮**されました。
 
 With Iceberg file compaction, the query execution time improved significantly. 
 アイスバーグファイルの圧縮により、クエリの実行時間が大幅に改善されました。
-
 For the same query, the run time decreased from 1h 27mins to 1min 13sec, which is 71 times faster. 
-同じクエリに対して、実行時間は1時間27分から1分13秒に短縮され、71倍速くなりました。
+**同じクエリに対して、実行時間は1時間27分から1分13秒に短縮され、71倍速くなりました。**
 
+<!-- ここまで読んだ! -->
 
+## Scheduling Iceberg compaction with AWS services アイスバーグコンパクションのスケジューリングとAWSサービス
 
-## Scheduling Iceberg compaction with AWS services
-アイスバーグコンパクションのスケジューリングとAWSサービス
+(これは前のセクションでやってた、`OPTIMIZE`と`VACUUM`を定期的に実行する、って話...!:thinking:)
 
 In this section, you will learn how to automate the table management procedures to compact your offline feature store. 
 このセクションでは、オフラインフィーチャーストアをコンパクトにするためのテーブル管理手順を自動化する方法を学びます。
-
 The following diagram illustrates the architecture for creating feature groups in Iceberg table format and a fully automated table management solution, which includes file compaction and cleanup operations. 
 以下の図は、Icebergテーブル形式でフィーチャーグループを作成するためのアーキテクチャと、ファイルのコンパクションおよびクリーンアップ操作を含む完全自動化されたテーブル管理ソリューションを示しています。
 
 At a high level, you create a feature group using the Iceberg table format and ingest records into the online feature store. 
-高いレベルでは、Icebergテーブル形式を使用してフィーチャーグループを作成し、オンラインフィーチャーストアにレコードを取り込みます。
-
+高いレベルでは、Icebergテーブル形式を使用してフィーチャーグループを作成し、**オンラインフィーチャーストアにレコードを取り込みます**。
 Feature values are automatically replicated from the online store to the historical offline store. 
-フィーチャー値は、オンラインストアから履歴のオフラインストアに自動的に複製されます。
-
+**フィーチャー値は、オンラインストアから履歴のオフラインストアに自動的に複製されます**。
+(基本的にこういう構造になってるのか、オンラインストア無効のfeature groupの場合はもっと書き込みコスト安くなって欲しいなぁ...:thinking:)
 Athena is used to run the Iceberg management procedures. 
 Athenaは、Iceberg管理手順を実行するために使用されます。
-
 To schedule the procedures, you set up an AWS Glue job using a Python shell script and create an AWS Glue job schedule. 
 手順をスケジュールするために、Pythonシェルスクリプトを使用してAWS Glueジョブを設定し、AWS Glueジョブスケジュールを作成します。
 
-
+<!-- ここまで読んだ! -->
 
 ### AWS Glue Job setup AWS Glueジョブの設定
 
 You use an AWS Glue job to execute the Iceberg table maintenance operations on a schedule. 
 AWS Glueジョブを使用して、Icebergテーブルのメンテナンス操作をスケジュールに従って実行します。
-
 First, you need to create an IAM role for AWS Glue to have permissions to access Amazon Athena, Amazon S3, and CloudWatch. 
-まず、AWS GlueがAmazon Athena、Amazon S3、およびCloudWatchにアクセスするための権限を持つIAMロールを作成する必要があります。
+まず、AWS Glueが**Amazon Athena、Amazon S3、およびCloudWatchにアクセスするための権限を持つIAMロール**を作成する必要があります。(うんうん、特にFeature Storeに関するアクション権限は必要ない! ってことはIcebergテーブルに固有の操作をすれば良いのか...!:thinking:)
 
 Next, you need to create a Python script to run the Iceberg procedures. 
-次に、Iceberg手続きを実行するためのPythonスクリプトを作成する必要があります。
-
+次に、Iceberg手続き(=多分前述のやつ!)を実行するためのPythonスクリプトを作成する必要があります。
 You can find the sample script in GitHub. 
 サンプルスクリプトはGitHubで見つけることができます。
-
 The script will execute the OPTIMIZE query using boto3. 
 このスクリプトは、boto3を使用してOPTIMIZEクエリを実行します。
 
-```
-optimize_sql=f"optimize {database}.{table} rewrite data using bin_pack"
-```
-```
-optimize_sql=f"optimize {database}.{table} rewrite data using bin_pack"
+```bash
+optimize_sql = f"optimize {database}.{table} rewrite data using bin_pack"
 ```
 
 The script has been parametrized using the AWS Glue getResolvedOptions(args, options) utility function that gives you access to the arguments that are passed to your script when you run a job. 
-このスクリプトは、AWS GlueのgetResolvedOptions(args, options)ユーティリティ関数を使用してパラメータ化されており、ジョブを実行する際にスクリプトに渡される引数にアクセスできます。
-
+このスクリプトは、AWS GlueのgetResolvedOptions(args, options)ユーティリティ関数を使用してパラメータ化されており、ジョブを実行する際にスクリプトに渡される引数にアクセスできます。(Glueは多分使わないのでどうでもOK!:thinking:)
 In this example, the AWS Region, the Iceberg database and table for your feature group, the Athena workgroup, and the Athena output location results folder can be passed as parameters to the job, making this script reusable in your environment. 
-この例では、AWSリージョン、機能グループのためのIcebergデータベースとテーブル、Athenaワークグループ、およびAthena出力場所の結果フォルダをジョブにパラメータとして渡すことができ、このスクリプトを環境内で再利用可能にします。
+この例では、AWSリージョン、feature groupのためのIcebergデータベースとテーブル、Athenaワークグループ、およびAthena出力場所の結果フォルダをジョブにパラメータとして渡すことができ、このスクリプトを環境内で再利用可能にします。
 
 Finally, you create the actual AWS Glue job to run the script as a shell in AWS Glue. 
 最後に、スクリプトをAWS Glue内でシェルとして実行する実際のAWS Glueジョブを作成します。
+(ここはどうでもOK!:thinking:)
 
 - Navigate to the AWS Glue console. 
-- AWS Glueコンソールに移動します。
-
-- Choose the Jobs tab under AWS Glue Studio. 
+  - AWS Glueコンソールに移動します。
 - AWS Glue StudioのJobsタブを選択します。
-
-- Select Python Shell script editor. 
-- Python Shellスクリプトエディタを選択します。
-
+  - Python Shellスクリプトエディタを選択します。
 - Choose Upload and edit an existing script. Click Create. 
-- 既存のスクリプトをアップロードして編集することを選択します。作成をクリックします。
-
+  - 既存のスクリプトをアップロードして編集することを選択します。作成をクリックします。
 - The Job details button lets you configure the AWS Glue job. 
-- Job detailsボタンを使用して、AWS Glueジョブを構成できます。
-
-You need to select the IAM role you created earlier. 
-以前に作成したIAMロールを選択する必要があります。
-
-Select Python 3.9 or the latest available Python version. 
-Python 3.9または最新の利用可能なPythonバージョンを選択します。
+  - Job detailsボタンを使用して、AWS Glueジョブを構成できます。
+    You need to select the IAM role you created earlier. 
+    以前に作成したIAMロールを選択する必要があります。
+    Select Python 3.9 or the latest available Python version. 
+    Python 3.9または最新の利用可能なPythonバージョンを選択します。
 
 - In the same tab, you can also define a number of other configuration options, such as Number of retries or Job timeout. 
-- 同じタブで、リトライ回数やジョブタイムアウトなど、他のいくつかの構成オプションを定義することもできます。
-
-In Advanced properties, you can add job parameters to execute the script, as shown in the example screenshot below. 
-Advanced propertiesでは、以下の例のスクリーンショットに示すように、スクリプトを実行するためのジョブパラメータを追加できます。
+  - 同じタブで、リトライ回数やジョブタイムアウトなど、他のいくつかの構成オプションを定義することもできます。
+    In Advanced properties, you can add job parameters to execute the script, as shown in the example screenshot below. 
+    Advanced propertiesでは、以下の例のスクリーンショットに示すように、スクリプトを実行するためのジョブパラメータを追加できます。
 
 - Click Save. 
-- 保存をクリックします。
+  - 保存をクリックします。
 
 In the Schedules tab, you can define the schedule to run the feature store maintenance procedures. 
 Schedulesタブでは、機能ストアのメンテナンス手続きを実行するスケジュールを定義できます。
-
 For example, the following screenshot shows you how to run the job on a schedule of every 6 hours. 
 例えば、以下のスクリーンショットは、6時間ごとにジョブを実行する方法を示しています。
-
 You can monitor job runs to understand runtime metrics such as completion status, duration, and start time. 
 ジョブの実行を監視して、完了状況、所要時間、開始時刻などの実行時メトリクスを理解できます。
-
 You can also check the CloudWatch Logs for the AWS Glue job to check that the procedures run successfully. 
 また、AWS GlueジョブのCloudWatch Logsを確認して、手続きが正常に実行されたかどうかを確認できます。
 
-
+<!-- ここまで読んだ! -->
 
 ### Executing Iceberg table management tasks with Spark Icebergテーブル管理タスクの実行
 
@@ -285,79 +261,12 @@ Sparkの手順の詳細については、Sparkのドキュメントを参照し�
 You first need to configure some of the common properties. 
 最初に、いくつかの一般的なプロパティを設定する必要があります。
 
-```
-%%configure-f{"conf":{"spark.sql.catalog.smfs":"org.apache.iceberg.spark.SparkCatalog","spark.sql.catalog.smfs.catalog-impl":"org.apache.iceberg.aws.glue.GlueCatalog","spark.sql.catalog.smfs.warehouse":"<YOUR_ICEBERG_DATA_S3_LOCATION>","spark.sql.extensions":"org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions","spark.sql.catalog.smfs.glue.skip-name-validation":"true"}}
-```
--f
-{
-"conf"
-:
-{
-"spark.sql.catalog.smfs"
-:
-"org.apache.iceberg.spark.SparkCatalog"
-"spark.sql.catalog.smfs.catalog-impl"
-:
-"org.apache.iceberg.aws.glue.GlueCatalog"
-"spark.sql.catalog.smfs.warehouse"
-:
-"<YOUR_ICEBERG_DATA_S3_LOCATION>"
-"spark.sql.extensions"
-:
-"org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"
-"spark.sql.catalog.smfs.glue.skip-name-validation"
-:
-"true"
-}
-}
-Bash
 The following code can be used to optimize the feature groups via Spark. 
 以下のコードは、Sparkを介してフィーチャーグループを最適化するために使用できます。
 
-```
-spark.sql(f"""CALL smfs.system.rewrite_data_files(table=>'{DATABASE}.`{ICEBERG_TABLE}`')""")
-```
-(
-""
-(
-=
->
-'{DATABASE}.`{ICEBERG_TABLE}`'
-)
-""
-)
-Bash
 You can then execute the next two table maintenance procedures to remove older snapshots and orphan files that are no longer needed. 
 次に、古いスナップショットともはや必要のない孤立ファイルを削除するために、次の2つのテーブルメンテナンス手順を実行できます。
 
-```
-spark.sql(f"""CALL smfs.system.expire_snapshots(table=>'{DATABASE}.`{ICEBERG_TABLE}`', older_than=>TIMESTAMP'{one_day_ago}', retain_last=>1)""")spark.sql(f"""CALL smfs.system.remove_orphan_files(table=>'{DATABASE}.`{ICEBERG_TABLE}`')""")
-```
-(
-""
-(
-=
->
-'{DATABASE}.`{ICEBERG_TABLE}`'
-=
->
-'{one_day_ago}'
-=
->
-1
-)
-""
-)
-(
-""
-(
-=
->
-'{DATABASE}.`{ICEBERG_TABLE}`'
-)
-""
-)
-Bash
 You can then incorporate the above Spark commands into your Spark environment. 
 その後、上記のSparkコマンドをSpark環境に組み込むことができます。 
 For example, you can create a job that performs the optimization above on a desired schedule or in a pipeline after ingestion. 
@@ -365,7 +274,7 @@ For example, you can create a job that performs the optimization above on a desi
 To explore the complete code example, and try it out in your own account, see the GitHub repo. 
 完全なコード例を探求し、自分のアカウントで試すには、GitHubリポジトリを参照してください。
 
-
+<!-- ここまで読んだ! -->
 
 ## Conclusion 結論
 
@@ -376,150 +285,4 @@ In this post, we explained how you can leverage Apache Iceberg as a table format
 Give it a try, and let us know what you think in the comments. 
 ぜひ試してみて、コメントであなたの意見を教えてください。
 
-
-
-### About the authors 著者について
-
-Arnaud Lauer is a Senior Partner Solutions Architect in the Public Sector team at AWS. 
-Arnaud Lauerは、AWSの公共部門チームのシニアパートナーソリューションアーキテクトです。 
-He enables partners and customers to understand how best to use AWS technologies to translate business needs into solutions. 
-彼は、パートナーや顧客がビジネスニーズをソリューションに変換するためにAWS技術をどのように最適に使用するかを理解できるようにします。 
-He brings more than 17 years of experience in delivering and architecting digital transformation projects across a range of industries, including public sector, energy, and consumer goods. 
-彼は、公共部門、エネルギー、消費財などのさまざまな業界でデジタルトランスフォーメーションプロジェクトを提供し、設計する17年以上の経験を持っています。 
-Arnaud holds 12 AWS certifications, including the ML Specialty Certification. 
-Arnaudは、MLスペシャリティ認定を含む12のAWS認定を保持しています。
-
-Ioan Catana is an Artificial Intelligence and Machine Learning Specialist Solutions Architect at AWS. 
-Ioan Catanaは、AWSの人工知能および機械学習スペシャリストソリューションアーキテクトです。 
-He helps customers develop and scale their ML solutions in the AWS Cloud. 
-彼は、顧客がAWSクラウドでMLソリューションを開発し、スケールさせるのを支援します。 
-Ioan has over 20 years of experience mostly in software architecture design and cloud engineering. 
-Ioanは、主にソフトウェアアーキテクチャ設計とクラウドエンジニアリングにおいて20年以上の経験を持っています。
-
-Mark Roy is a Principal Machine Learning Architect for AWS, helping customers design and build AI/ML solutions. 
-Mark Royは、AWSのプリンシパル機械学習アーキテクトであり、顧客がAI/MLソリューションを設計し、構築するのを支援しています。 
-Mark’s work covers a wide range of ML use cases, with a primary interest in computer vision, deep learning, and scaling ML across the enterprise. 
-Markの仕事は、コンピュータビジョン、深層学習、企業全体でのMLのスケーリングに主に関心を持ち、幅広いMLユースケースをカバーしています。 
-He has helped companies in many industries, including insurance, financial services, media and entertainment, healthcare, utilities, and manufacturing. 
-彼は、保険、金融サービス、メディアとエンターテインメント、ヘルスケア、ユーティリティ、製造業など、多くの業界の企業を支援してきました。 
-Mark holds six AWS certifications, including the ML Specialty Certification. 
-Markは、MLスペシャリティ認定を含む6つのAWS認定を保持しています。 
-Prior to joining AWS, Mark was an architect, developer, and technology leader for over 25 years, including 19 years in financial services. 
-AWSに参加する前、Markは25年以上にわたりアーキテクト、開発者、テクノロジーリーダーとして活動しており、そのうち19年間は金融サービスに従事していました。
-
-Brandon Chatham is a software engineer with the SageMaker Feature Store team. 
-Brandon Chathamは、SageMaker Feature Storeチームのソフトウェアエンジニアです。 
-He’s deeply passionate about building elegant systems that bring big data and machine learning to people’s fingertips. 
-彼は、大規模データと機械学習を人々の手の届くところに届ける洗練されたシステムを構築することに深い情熱を持っています。
-
-
-
-### Resources リソース
-- Getting Started 始めに
-- What's New 新着情報
-
-
-
-### Blog Topics ブログトピック
-- Amazon Bedrock
-- Amazon Comprehend
-- Amazon Kendra
-- Amazon Lex
-- Amazon Polly
-- Amazon Q
-- Amazon Rekognition
-- Amazon SageMaker
-- Amazon Textract
-
-
-
-### Follow フォロー
-
-- Twitter
-- Facebook
-- LinkedIn
-- Twitch
-- Email Updates
-- メール更新
-Create an AWS account
-AWSアカウントを作成
-
-
-
-## Learn 学ぶ
-
-- What Is AWS? 
-- AWSとは何ですか？
-
-- What Is Cloud Computing? 
-- クラウドコンピューティングとは何ですか？
-
-- What Is Generative AI? 
-- ジェネレーティブAIとは何ですか？
-
-- Cloud Computing Concepts Hub 
-- クラウドコンピューティング概念ハブ
-
-- AWS Cloud Security 
-- AWSクラウドセキュリティ
-
-- What's New 
-- 新着情報
-
-- Blogs 
-- ブログ
-
-- Press Releases 
-- プレスリリース
-
-
-
-## Resources リソース
-
-- Getting Started 始めに
-- Training トレーニング
-- AWS Solutions Library AWSソリューションライブラリ
-- Architecture Center アーキテクチャセンター
-- Product and Technical FAQs 製品および技術に関するFAQ
-- Analyst Reports アナリストレポート
-- AWS Partners AWSパートナー
-- AWS Inclusion, Diversity & Equity AWSの包括性、多様性、平等
-
-
-
-## Developers 開発者
-
-- Developer Center 開発者センター
-- SDKs & Tools SDKおよびツール
-- .NET on AWS AWS上の.NET
-- Python on AWS AWS上のPython
-- Java on AWS AWS上のJava
-- PHP on AWS AWS上のPHP
-- JavaScript on AWS AWS上のJavaScript
-
-
-
-## Help ヘルプ
-- Contact Us お問い合わせ
-- File a Support Ticket サポートチケットを提出する
-- AWS re:Post AWS re:Post
-- Knowledge Center ナレッジセンター
-- AWS Support Overview AWSサポートの概要
-- Get Expert Help 専門家の支援を受ける
-- AWS Accessibility AWSアクセシビリティ
-- Legal 法的情報
-English 英語
-Amazon is an Equal Opportunity Employer: Minority / Women / Disability / Veteran / Gender Identity / Sexual Orientation / Age.
-アマゾンは平等な機会を提供する雇用主です：少数派 / 女性 / 障害者 / 退役軍人 / 性別のアイデンティティ / 性的指向 / 年齢。
-facebook
-linkedin
-instagram
-twitch
-youtube
-podcasts
-email
-- Privacy プライバシー
-- Site terms サイト利用規約
-- Cookie Preferences クッキーの設定
-© 2025, Amazon Web Services, Inc. or its affiliates. All rights reserved.
-© 2025年、アマゾンウェブサービス株式会社またはその関連会社。全著作権所有。
+<!-- ここまで読んだ! -->
