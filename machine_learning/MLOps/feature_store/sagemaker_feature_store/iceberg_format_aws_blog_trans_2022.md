@@ -68,116 +68,69 @@ Icebergをテーブルフォーマットとして、テーブルメンテナン�
 
 ## Creating feature groups using Iceberg table format
 
-Icebergをテーブルフォーマットとして選択する必要があります。 
 新しいフィーチャグループを作成する際には、Icebergをテーブルフォーマットとして選択する必要があります。
-
 A new optional parameter TableFormat can be set either interactively using Amazon SageMaker Studio or through code using the API or the SDK. 
-新しいオプションのパラメータTableFormatは、Amazon SageMaker Studioを使用してインタラクティブに設定するか、APIまたはSDKを使用してコードを通じて設定できます。
-
+**新しいオプションのパラメータ`TableFormat`**は、Amazon SageMaker Studioを使用してインタラクティブに設定するか、APIまたはSDKを使用してコードを通じて設定できます。
 This parameter accepts the values ICEBERG or GLUE (for the current AWS Glue format). 
-このパラメータは、ICEBERGまたはGLUE（現在のAWS Glueフォーマット）という値を受け入れます。
-
+このパラメータは、**ICEBERGまたはGLUE（現在のAWS Glueフォーマット）という値**を受け入れます。
 The following code snippet shows you how to create a feature group using the Iceberg format and FeatureGroup.create API of the SageMaker SDK. 
 以下のコードスニペットは、Icebergフォーマットを使用してフィーチャグループを作成する方法と、SageMaker SDKのFeatureGroup.create APIを示しています。
 
-```
-orders_feature_group_iceberg.create(s3_uri=f"s3://{s3_bucket_name}/{prefix}",record_identifier_name=record_identifier_feature_name,event_time_feature_name=event_time_feature_name,role_arn=role,enable_online_store=True,table_format=TableFormatEnum.ICEBERG)
-```
-(
-s3_uri
-=
-"s3://{s3_bucket_name}/{prefix}"
-record_identifier_name
-=
-event_time_feature_name
-=
-role_arn
-=
-enable_online_store
-=
-table_format
-=
-)
-Bash
 The table will be created and registered automatically in the AWS Glue Data Catalog. 
-テーブルは自動的に作成され、AWS Glueデータカタログに登録されます。
+**テーブルは自動的に作成され、AWS Glueデータカタログに登録**されます。
 
 Now that the orders_feature_group_iceberg is created, you can ingest features using your ingestion pipeline of choice. 
-orders_feature_group_icebergが作成されたので、好みの取り込みパイプラインを使用してフィーチャを取り込むことができます。
-
+orders_feature_group_icebergが作成されたので、**好みの取り込みパイプラインを使用してフィーチャを取り込む**ことができます。(= `ingest` APIの他にも公式で色んな方法がある、ってこと...??:thinking:)
 In this example, we ingest records using the FeatureGroup.ingest() API, which ingests records from a Pandas DataFrame. 
-この例では、Pandas DataFrameからレコードを取り込むFeatureGroup.ingest() APIを使用してレコードを取り込みます。
-
+この例では、Pandas DataFrameからレコードを取り込む`FeatureGroup.ingest()` APIを使用してレコードを取り込みます。
 You can also use the FeatureGroup().put_record API to ingest individual records or to handle streaming sources. 
-また、FeatureGroup().put_record APIを使用して個々のレコードを取り込むことや、ストリーミングソースを処理することもできます。
-
+また、FeatureGroup().put_record APIを使用して、個々のレコードを取り込むことやストリーミングソースを処理することもできます。
 Spark users can also ingest Spark dataframes using our Spark Connector. 
 Sparkユーザーは、私たちのSparkコネクタを使用してSparkデータフレームを取り込むこともできます。
 
-```
-orders_fg=FeatureGroup(name=orders_feature_group_iceberg_name,sagemaker_session=feature_store_session)orders_fg.ingest(data_frame=order_data,wait=True)
-```
-=
-(
-=
-sagemaker_session
-=
-)
-(
-=
-wait
-=
-)
-Bash
 You can verify that the records have been ingested successfully by running a query against the offline feature store. 
 オフラインフィーチャストアに対してクエリを実行することで、レコードが正常に取り込まれたことを確認できます。
-
 You can also navigate to the S3 location and see the new folder structure. 
 また、S3の場所に移動して新しいフォルダ構造を見ることもできます。
 
-
+<!-- ここまで読んだ! -->
 
 ## Executing Iceberg table management procedures アイスバーグテーブル管理手順の実行
 
 Amazon Athena is a serverless SQL query engine that natively supports Iceberg management procedures. 
-Amazon Athenaは、アイスバーグ管理手順をネイティブにサポートするサーバーレスSQLクエリエンジンです。
-
+**Amazon Athenaは、アイスバーグ管理手順をネイティブにサポートするサーバーレスSQLクエリエンジン**です。
 In this section, you will use Athena to manually compact the offline feature group you created. 
-このセクションでは、Athenaを使用して、作成したオフラインフィーチャーグループを手動で圧縮します。
-
+このセクションでは、**Athenaを使用して、作成したオフラインフィーチャーグループを手動で圧縮**します。
 Note you will need to use Athena engine version 3. 
 Athenaエンジンのバージョン3を使用する必要があります。
-
 For this, you can create a new workgroup, or configure an existing workgroup, and select the recommended Athena engine version 3. 
 そのためには、新しいワークグループを作成するか、既存のワークグループを構成し、推奨されるAthenaエンジンバージョン3を選択できます。
-
 For more information and instructions for changing your Athena engine version, refer to Changing Athena engine versions. 
 Athenaエンジンのバージョンを変更するための詳細情報と手順については、「Changing Athena engine versions」を参照してください。
 
-As data accumulates into an Iceberg table, queries may gradually become less efficient because of the increased processing time required to open additional files. 
-データがアイスバーグテーブルに蓄積されるにつれて、追加のファイルを開くために必要な処理時間が増加するため、クエリの効率が徐々に低下する可能性があります。
+<!-- ここまで読んだ! -->
 
+As data accumulates into an Iceberg table, queries may gradually become less efficient because of the increased processing time required to open additional files. 
+**データがアイスバーグテーブルに蓄積されるにつれて、追加のファイルを開くために必要な処理時間が増加するため、クエリの効率が徐々に低下する可能性**があります。
 Compaction optimizes the structural layout of the table without altering table content. 
-圧縮は、テーブルの内容を変更することなく、テーブルの構造的レイアウトを最適化します。
+**圧縮は、テーブルの内容を変更することなく、テーブルの構造的レイアウトを最適化**します。
+(なるほど、データが溜まる時にたまにparquetファイルをまとめる、ってことか...!:thinking:)
 
 To perform compaction, you use the OPTIMIZE table REWRITE DATA compaction table maintenance command in Athena. 
-圧縮を実行するには、AthenaでOPTIMIZE table REWRITE DATA圧縮テーブルメンテナンスコマンドを使用します。
-
+圧縮を実行するには、**Athenaで`OPTIMIZE table REWRITE DATA`圧縮テーブルメンテナンスコマンドを使用**します。
 The following syntax shows how to optimize the data layout of a feature group stored using the Iceberg table format. 
 以下の構文は、アイスバーグテーブル形式を使用して保存されたフィーチャーグループのデータレイアウトを最適化する方法を示しています。
-
 The sagemaker_featurestore represents the name of the SageMaker Feature Store database, and orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334 is our feature group table name. 
 `sagemaker_featurestore`はSageMaker Feature Storeデータベースの名前を表し、`orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334`は私たちのフィーチャーグループテーブル名です。
 
-```
+```bash
 OPTIMIZE sagemaker_featurestore.orders-feature-group-iceberg-post-comp-03-14-05-17-1670076334 REWRITE DATA USING BIN_PACK
 ```
 
-Bash
+<!-- ここまで読んだ! -->
 
 After running the optimize command, you use the VACUUM procedure, which performs snapshot expiration and removes orphan files. 
 最適化コマンドを実行した後、VACUUM手順を使用します。これにより、スナップショットの有効期限が切れ、孤立したファイルが削除されます。
-
 These actions reduce metadata size and remove files that are not in the current table state and are also older than the retention period specified for the table. 
 これらのアクションは、メタデータのサイズを削減し、現在のテーブル状態にないファイルや、テーブルに指定された保持期間よりも古いファイルを削除します。
 
