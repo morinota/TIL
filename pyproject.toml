@@ -1,38 +1,39 @@
-[tool.poetry]
+[project]
 name = "til"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "Today I Learned - Learning repository"
 readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "sagemaker>=2.231.0",
+    "locust>=2.31.4",
+    "loguru>=0.7.2",
+    "ruff>=0.6.3",
+    "scipy>=1.14.1",
+    "langchain>=0.3.0",
+    "boto3>=1.36.7",
+    "polars>=1.21.0",
+    "pandera>=0.22.1",
+    "matplotlib>=3.10.0",
+    "pymc>=5.20.0",
+    "langgraph>=0.3.20",
+    "mcp>=1.6.0",
+    "typer>=0.15.2",
+    "feast>=0.48.1",
+    "playwright>=1.52.0",
+    "pillow>=11.2.1",
+    "pytesseract>=0.3.13",
+    "reportlab>=4.4.1",
+    "pyautogui>=0.9.54",
+    "torch>=2.8.0",
+    "libsql>=0.1.10",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.12,<3.13"
-sagemaker = "^2.231.0"
-locust = "^2.31.4"
-loguru = "^0.7.2"
-ruff = "^0.6.3"
-scipy = "^1.14.1"
-langchain = "^0.3.0"
-boto3 = "^1.36.7"
-polars = "^1.21.0"
-pandera = "^0.22.1"
-matplotlib = "^3.10.0"
-pymc = "^5.20.0"
-langgraph = "^0.3.20"
-mcp = "^1.6.0"
-typer = "^0.15.2"
-feast = "^0.48.1"
-playwright = "^1.52.0"
-pillow = "^11.2.1"
-pytesseract = "^0.3.13"
-reportlab = "^4.4.1"
-pyautogui = "^0.9.54"
-torch = "^2.8.0"
-libsql = "^0.1.10"
-
-[tool.poetry.group.dev.dependencies]
-locust = "^2.32.5"
-ipykernel = "^6.29.5"
+[tool.uv]
+dev-dependencies = [
+    "locust>=2.32.5",
+    "ipykernel>=6.29.5",
+]
 
 [tool.ruff.lint]
 extend-select = ["I"]
@@ -44,6 +45,3 @@ max-line-length = 120
 [tool.ruff]
 line-length = 120
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
