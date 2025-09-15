@@ -31,10 +31,7 @@ dependencies = [
 ]
 
 [tool.uv]
-dev-dependencies = [
-    "locust>=2.32.5",
-    "ipykernel>=6.29.5",
-]
+dev-dependencies = ["locust>=2.32.5", "ipykernel>=6.29.5"]
 
 [tool.ruff.lint]
 extend-select = ["I"]
@@ -45,4 +42,3 @@ max-line-length = 120
 
 [tool.ruff]
 line-length = 120
-
