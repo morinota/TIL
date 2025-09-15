@@ -95,7 +95,7 @@ We focus on applying the two-tower framework to improve the retrieval system of 
 Similar to language tasks, negative sampling plays a critical role in training two-tower neural networks in recommendations.  
 言語タスクと同様に、ネガティブサンプリングは推薦におけるツータワーニューラルネットワークのトレーニングにおいて重要な役割を果たします。
 Especially, in recommendation, users’ positive feedback are often collected, and counterfactuals on items not shown are very hard to obtain.  
-特に推薦においては、ユーザーのポジティブフィードバックがしばしば収集され、**表示されていないアイテムに関する反事実**を得ることは非常に困難です。(ここで反実仮想の観点が出てきてる...!)
+特に推薦においては、ユーザーのポジティブフィードバックがしばしば収集され、**表示されていないアイテムに関する反事実を得ることは非常に困難**です。(ここで反実仮想の観点が出てきてる...!)
 A popular sampling approach [1, 7] for fitting a softmax output distribution is to sample according to the unigram distribution of items.  
 ソフトマックス出力分布にフィットさせるための一般的なサンプリングアプローチ[1, 7]は、アイテムのユニグラム分布に従ってサンプリングすることです。
 The work in [24] extends unigram sampling to the two-tower setting by using batch negatives, i.e., using the positive items in a mini batch as shared negatives for all queries in the same batch.  
@@ -108,18 +108,18 @@ This is because the training data is derived from user feedback logs, and users 
 Items that are not favored by the existing system are less likely to get user feedback.  
 **既存のシステムに好まれないアイテムは、ユーザーフィードバックを得る可能性が低くなります**。(そっか。showとtap両方のログを取れてるケースでも、この観点は問題になるのか。だからこそ、データ収集方策は探索的要素を持ってないとね、というモチベーションが出てくる...!:thinking_face:)
 Accordingly, sampling batch negatives only from training data will end up with a model lacking resolution for long-tail apps, which seldom appear in the training data.  
-したがって、トレーニングデータからのみバッチネガティブをサンプリングすると、トレーニングデータにほとんど現れないロングテールアプリに対する解像度が欠けたモデルになります。
+したがって、**トレーニングデータからのみバッチネガティブをサンプリングすると、トレーニングデータにほとんど現れないロングテールアプリに対する解像度が欠けたモデルになります**。
 
 Inspired by the aforementioned constraint of batch negatives, we propose a novel sampling approach called Mixed Negative Sampling (MNS), where the idea is to use a mixture of unigram and uniform distributions.  
 前述のバッチネガティブの制約に触発されて、ユニグラムと一様分布の混合を使用する新しいサンプリングアプローチであるMixed Negative Sampling (MNS)を提案します。
 In particular, in addition to the negatives sampled from batch training data, we uniformly sample negatives from the candidate corpus to serve as additional negatives.  
-特に、バッチトレーニングデータからサンプリングされたネガティブに加えて、候補コーパスからネガティブを一様にサンプリングして追加のネガティブとして使用します。
+特に、**バッチトレーニングデータからサンプリングされたネガティブに加えて、候補コーパスからネガティブを一様にサンプリングして追加のネガティブとして使用**します。
 This two-stream negative sampling enables us to: (1) reduce selection bias by bringing in samples from the entire candidate corpus; (2) adjust the sampling distribution by changing the number of additional negative samples from the corpus.  
 この二重ストリームネガティブサンプリングにより、次のことが可能になります：(1) 全候補コーパスからサンプルを取り入れることで選択バイアスを減少させること；(2) コーパスからの追加ネガティブサンプルの数を変更することでサンプリング分布を調整すること。
 We further demonstrate the effectiveness of our retrieval system with both offline and online experiments on Google Play.  
 さらに、Google Playでのオフラインおよびオンライン実験を通じて、私たちの検索システムの有効性を示します。
 Offline studies showed that MNS significantly improves retrieval quality.  
-オフラインの研究では、MNSが検索品質を大幅に改善することが示されました。
+オフラインの研究では、MNSがretrieve品質を大幅に改善することが示されました。
 In addition, online A/B testing shows that the two-tower model trained with MNS leads to more high-quality app installs from for Google Play.  
 さらに、オンラインA/Bテストでは、MNSでトレーニングされたツータワーモデルがGoogle Playからの高品質なアプリインストールを増加させることが示されています。
 The lessons from this case study sheds light for other large-scale recommendation systems dealing with huge item catalogs.  
