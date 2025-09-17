@@ -377,10 +377,8 @@ To accept the resource share invite, complete the following steps:
 
 In the target (consumer) account, open the AWS RAM console.
 ターゲット（コンシューマ）アカウントで、AWS RAMコンソールを開きます。
-
 Under Shared with me in the navigation pane, choose Resource shares.
 ナビゲーションペインの「Shared with me」から「Resource shares」を選択します。
-
 Choose the new pending resource share.
 新しい保留中のリソース共有を選択します。
 
@@ -390,7 +388,7 @@ Choose Accept resource share.
 The process of accepting the resource share using the AWS CLI is the same as for the previous discoverability section, with the get-resource-share-invitations and accept-resource-share-invitation commands.
 AWS CLIを使用してリソース共有を受け入れるプロセスは、前の発見可能性セクションと同様で、get-resource-share-invitationsおよびaccept-resource-share-invitationコマンドを使用します。
 
-
+<!-- ここまで読んだ! -->
 
 ## Sample notebooks showcasing this new capability 新機能を示すサンプルノートブック
 
@@ -405,57 +403,47 @@ m9_03_nb2_cross-account-consumer.ipynb – これはあなたの消費者AWSア�
 
 The first script shows how to create the discoverability resource share for existing feature groups at the admin or owner account and share it with another consumer account programmatically using the AWS RAM API create_resource_share().
 最初のスクリプトは、管理者またはオーナーアカウントの既存のフィーチャーグループの発見可能性リソース共有を作成し、AWS RAM APIのcreate_resource_share()を使用して別の消費者アカウントとプログラム的に共有する方法を示しています。
-
 It also shows how to grant access permissions to existing feature groups at the owner account and share these with another consumer account using AWS RAM.
 また、オーナーアカウントの既存のフィーチャーグループにアクセス権限を付与し、これをAWS RAMを使用して別の消費者アカウントと共有する方法も示しています。
-
 You need to provide your consumer AWS account ID before running the notebook.
 ノートブックを実行する前に、あなたの消費者AWSアカウントIDを提供する必要があります。
 
 The second script accepts the AWS RAM invitations to discover and access cross-account feature groups from the owner level.
 2番目のスクリプトは、オーナーレベルからクロスアカウントフィーチャーグループを発見しアクセスするためのAWS RAMの招待を受け入れます。
-
 Then it shows how to discover cross-account feature groups that are on the owner account and list these on the consumer account.
 次に、オーナーアカウントにあるクロスアカウントフィーチャーグループを発見し、これを消費者アカウントにリストする方法を示します。
-
 You can also see how to access in read/write cross-account feature groups that are on the owner account and perform the following operations from the consumer account: describe(), get_record(), ingest(), and delete_record().
-また、オーナーアカウントにある読み書き可能なクロスアカウントフィーチャーグループにアクセスし、消費者アカウントから次の操作を実行する方法も確認できます：describe()、get_record()、ingest()、およびdelete_record()。
+**また、オーナーアカウントにある読み書き可能なクロスアカウントフィーチャーグループにアクセスし、消費者アカウントから次の操作を実行する方法も確認できます**：describe()、get_record()、ingest()、およびdelete_record()。
+(Athenaによるpoint-in-time correct joinもたぶんできるってことだよね??:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 ## Conclusion 結論
 
 The SageMaker Feature Store cross-account capability offers several compelling benefits. 
 SageMaker Feature Storeのクロスアカウント機能は、いくつかの魅力的な利点を提供します。
-
 Firstly, it facilitates seamless collaboration by enabling sharing of feature groups across multiple AWS accounts. 
 まず、複数のAWSアカウント間でフィーチャーグループを共有できることで、シームレスなコラボレーションを促進します。
-
 This enhances data accessibility and utilization, allowing teams in different accounts to use shared features for their ML workflows. 
 これによりデータのアクセス性と利用が向上し、異なるアカウントのチームが共有されたフィーチャーをMLワークフローで使用できるようになります。
 
 Additionally, the cross-account capability enhances data governance and security. 
 さらに、クロスアカウント機能はデータガバナンスとセキュリティを強化します。
-
 With controlled access and permissions through AWS RAM, organizations can maintain a centralized feature store while ensuring that each account has tailored access levels. 
-AWS RAMを通じて制御されたアクセスと権限を持つことで、組織は中央集権的なフィーチャーストアを維持しつつ、各アカウントに合わせたアクセスレベルを確保できます。
-
+**AWS RAMを通じて制御されたアクセスと権限を持つことで、組織は中央集権的なフィーチャーストアを維持しつつ、各アカウントに合わせたアクセスレベルを確保できます**。
 This not only streamlines data management, but also strengthens security measures by limiting access to authorized users. 
 これはデータ管理を効率化するだけでなく、認可されたユーザーへのアクセスを制限することでセキュリティ対策を強化します。
 
 Furthermore, the ability to share feature groups across accounts simplifies the process of building and deploying ML models in a collaborative environment. 
 さらに、アカウント間でフィーチャーグループを共有できることで、コラボレーティブな環境でのMLモデルの構築と展開のプロセスが簡素化されます。
-
 It fosters a more integrated and efficient workflow, reducing redundancy in data storage and facilitating the creation of robust models with shared, high-quality features. 
 これにより、より統合された効率的なワークフローが促進され、データストレージの冗長性が減少し、共有された高品質のフィーチャーを用いた堅牢なモデルの作成が容易になります。
-
 Overall, the Feature Store’s cross-account capability optimizes collaboration, governance, and efficiency in ML development across diverse AWS accounts. 
 全体として、Feature Storeのクロスアカウント機能は、さまざまなAWSアカウントにおけるML開発のコラボレーション、ガバナンス、効率を最適化します。
-
 Give it a try, and let us know what you think in the comments. 
 ぜひお試しください。コメントでご意見をお聞かせください。
 
-
+<!-- ここまで読んだ! -->
 
 ### About the Authors 著者について
 
@@ -489,64 +477,4 @@ With a strong foundation in both theory and practical applications, he holds a P
 His expertise spans a broad spectrum, encompassing scalable architectures, distributed computing, big data analytics, micro services and cloud infrastructures for organizations. 
 彼の専門知識は、スケーラブルなアーキテクチャ、分散コンピューティング、ビッグデータ分析、マイクロサービス、組織のためのクラウドインフラストラクチャにわたります。
 
-Post navigation
-←
-→
-
-
-
-## Related Posts 関連投稿
-
-### Learn Your Way uses AI to transform textbook materials into interactive guides.
-### Learn Your WayはAIを使用して教科書の資料をインタラクティブなガイドに変換します。
-17 September, 2025
-2025年9月17日
-17 September, 2025
-2025年9月17日
-
-
-
-### Streamline access to ISO-rating content changes with Verisk rating insights and Amazon Bedrock
-ISO評価コンテンツの変更へのアクセスを、Veriskの評価インサイトとAmazon Bedrockを使用して効率化する
-
-17 September, 2025
-2025年9月17日
-17 September, 2025
-2025年9月17日
-
-
-
-### Leave a CommentCancel Reply コメントを残すキャンセル返信
-
-Your email address will not be published.Required fields are marked*
-あなたのメールアドレスは公開されません。必須項目には*が付いています。
-
-Your email address will not be published.
-あなたのメールアドレスは公開されません。
-
-Required fields are marked*
-必須項目には*が付いています。
-
-*
-名前*
-
-Email*
-メールアドレス*
-
-Website
-ウェブサイト
-
-Save my name, email, and website in this browser for the next time I comment.
-次回コメントする際に、このブラウザに私の名前、メールアドレス、ウェブサイトを保存します。
-
-Copyright © 2025 HKU SPACE AI Hub
-著作権 © 2025 HKU SPACE AI Hub
-
-Privacy Policy
-プライバシーポリシー
-
-#page
-ページ
-
-Scroll to Top
-上にスクロール
+<!-- ここまで読んだ! -->
