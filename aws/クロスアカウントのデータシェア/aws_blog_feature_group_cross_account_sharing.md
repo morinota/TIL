@@ -6,7 +6,6 @@ refs: https://aihub.hkuspace.hku.hk/2024/02/14/amazon-sagemaker-feature-store-no
 14 February, 2024  
 2024年2月14日
 
-
 Amazon SageMaker Feature Store is a fully managed, purpose-built repository to store, share, and manage features for machine learning (ML) models.  
 Amazon SageMaker Feature Storeは、機械学習（ML）モデルのための特徴を保存、共有、管理するために特別に設計された完全管理型リポジトリです。
 Features are inputs to ML models used during training and inference.  
