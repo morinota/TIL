@@ -1,0 +1,1355 @@
+refs: https://aws.amazon.com/jp/blogs/machine-learning/enable-feature-reuse-across-accounts-and-teams-using-amazon-sagemaker-feature-store/
+
+
+## Select your cookie preferences クッキーの設定を選択してください
+
+We use essential cookies and similar tools that are necessary to provide our site and services. 
+私たちは、サイトとサービスを提供するために必要な必須クッキーおよび類似のツールを使用します。
+
+We use performance cookies to collect anonymous statistics, so we can understand how customers use our site and make improvements. 
+私たちは、パフォーマンスクッキーを使用して匿名の統計を収集し、顧客がどのようにサイトを利用しているかを理解し、改善を行います。
+
+Essential cookies cannot be deactivated, but you can choose “Customize” or “Decline” to decline performance cookies. 
+必須クッキーは無効にすることはできませんが、パフォーマンスクッキーを拒否するために「カスタマイズ」または「拒否」を選択することができます。
+
+If you agree, AWS and approved third parties will also use cookies to provide useful site features, remember your preferences, and display relevant content, including relevant advertising. 
+同意する場合、AWSおよび承認された第三者もクッキーを使用して、便利なサイト機能を提供し、あなたの設定を記憶し、関連するコンテンツや広告を表示します。
+
+To accept or decline all non-essential cookies, choose “Accept” or “Decline.” 
+すべての非必須クッキーを受け入れるか拒否するには、「受け入れる」または「拒否」を選択してください。
+
+To make more detailed choices, choose “Customize.” 
+より詳細な選択を行うには、「カスタマイズ」を選択してください。
+
+Accept
+受け入れる
+
+Decline
+拒否
+
+Customize
+カスタマイズ
+
+
+
+## Customize cookie preferences クッキーの設定をカスタマイズ
+
+Customize cookie preferences クッキーの設定をカスタマイズ
+We use cookies and similar tools (collectively, "cookies") for the following purposes. 
+私たちは、以下の目的のためにクッキーおよび類似のツール（総称して「クッキー」）を使用します。
+
+
+
+### Essential 必要なクッキー
+
+Essential cookies are necessary to provide our site and services and cannot be deactivated. 
+必要なクッキーは、私たちのサイトとサービスを提供するために必要であり、無効にすることはできません。
+They are usually set in response to your actions on the site, such as setting your privacy preferences, signing in, or filling in forms.
+これらは通常、プライバシー設定の変更、サインイン、またはフォームの記入など、サイト上でのあなたの行動に応じて設定されます。
+
+
+
+### Performance パフォーマンス
+
+Performance cookies provide anonymous statistics about how customers navigate our site so we can improve site experience and performance. 
+パフォーマンスクッキーは、顧客が当サイトをどのようにナビゲートしているかに関する匿名の統計を提供し、サイトの体験とパフォーマンスを改善するために使用します。
+Approved third parties may perform analytics on our behalf, but they cannot use the data for their own purposes. 
+承認された第三者は、私たちの代わりに分析を行うことができますが、彼ら自身の目的でデータを使用することはできません。
+
+
+
+### Functional 機能的
+
+Functional cookies help us provide useful site features, remember your preferences, and display relevant content. 
+機能的クッキーは、私たちが便利なサイト機能を提供し、あなたの好みを記憶し、関連するコンテンツを表示するのに役立ちます。
+Approved third parties may set these cookies to provide certain site features. 
+承認された第三者は、特定のサイト機能を提供するためにこれらのクッキーを設定する場合があります。
+If you do not allow these cookies, then some or all of these services may not function properly. 
+これらのクッキーを許可しない場合、これらのサービスの一部またはすべてが正しく機能しない可能性があります。
+Allowed
+許可されました
+
+
+
+### Advertising 広告
+
+Advertising cookies may be set through our site by us or our advertising partners and help us deliver relevant marketing content. 
+広告クッキーは、私たちまたは私たちの広告パートナーによって当サイトを通じて設定され、関連性のあるマーケティングコンテンツを提供するのに役立ちます。
+
+If you do not allow these cookies, you will experience less relevant advertising. 
+これらのクッキーを許可しない場合、関連性の低い広告が表示されることになります。
+
+Allowed 
+許可されました
+
+Blocking some types of cookies may impact your experience of our sites. 
+特定の種類のクッキーをブロックすると、当サイトの利用体験に影響を与える可能性があります。
+
+You may review and change your choices at any time by selecting Cookie preferences in the footer of this site. 
+当サイトのフッターにある「Cookie preferences」を選択することで、いつでも選択を確認し、変更することができます。
+
+We and selected third-parties use cookies or similar technologies as specified in the AWS Cookie Notice. 
+私たちおよび選択された第三者は、AWS Cookie Noticeに記載されているように、クッキーまたは類似の技術を使用します。
+
+Blocking some types of cookies may impact your experience of our sites. 
+特定の種類のクッキーをブロックすると、当サイトの利用体験に影響を与える可能性があります。
+
+You may review and change your choices at any time by selecting Cookie preferences in the footer of this site. 
+当サイトのフッターにある「Cookie preferences」を選択することで、いつでも選択を確認し、変更することができます。
+
+We and selected third-parties use cookies or similar technologies as specified in the AWS Cookie Notice. 
+私たちおよび選択された第三者は、AWS Cookie Noticeに記載されているように、クッキーまたは類似の技術を使用します。
+
+AWS Cookie Notice 
+AWSクッキーノーティス
+
+Cancel 
+キャンセル
+
+Save preferences 
+設定を保存
+
+
+
+## Your privacy choices あなたのプライバシーの選択
+
+Your privacy choices
+あなたのプライバシーの選択
+
+We and our advertising partners (“we”) may use information we collect from or about you to show you ads on other websites and online services. 
+私たちと私たちの広告パートナー（「私たち」）は、あなたから収集した情報を使用して、他のウェブサイトやオンラインサービスで広告を表示することがあります。
+
+Under certain laws, this activity is referred to as “cross-context behavioral advertising” or “targeted advertising.” 
+特定の法律の下では、この活動は「クロスコンテキスト行動広告」または「ターゲット広告」と呼ばれます。
+
+To opt out of our use of cookies or similar technologies to engage in these activities, select “Opt out of cross-context behavioral ads” and “Save preferences” below. 
+これらの活動に参加するためのクッキーや類似の技術の使用をオプトアウトするには、以下の「クロスコンテキスト行動広告をオプトアウトする」と「設定を保存」を選択してください。
+
+If you clear your browser cookies or visit this site from a different device or browser, you will need to make your selection again. 
+ブラウザのクッキーをクリアするか、異なるデバイスまたはブラウザからこのサイトにアクセスすると、再度選択を行う必要があります。
+
+For more information about cookies and how we use them, read our Cookie Notice. 
+クッキーおよびその使用方法に関する詳細については、私たちのクッキーノーティスをお読みください。
+
+Cookie Notice
+クッキーノーティス
+
+Allow cross-context behavioral ads
+クロスコンテキスト行動広告を許可する
+
+Opt out of cross-context behavioral ads
+クロスコンテキスト行動広告をオプトアウトする
+
+To opt out of the use of other identifiers, such as contact information, for these activities, fill out the form here. 
+これらの活動に対して、連絡先情報などの他の識別子の使用をオプトアウトするには、こちらのフォームに記入してください。
+
+here
+こちら
+
+For more information about how AWS handles your information, read the AWS Privacy Notice. 
+AWSがあなたの情報をどのように扱うかについての詳細は、AWSプライバシーノーティスをお読みください。
+
+AWS Privacy Notice
+AWSプライバシーノーティス
+
+Cancel
+キャンセル
+
+Save preferences
+設定を保存
+
+
+
+## Unable to save cookie preferences クッキーの設定を保存できません
+
+Unable to save cookie preferences  
+クッキーの設定を保存できません  
+
+We will only store essential cookies at this time, because we were unable to save your cookie preferences.  
+現在、クッキーの設定を保存できなかったため、必須のクッキーのみを保存します。  
+
+If you want to change your cookie preferences, try again later using the link in the AWS console footer, or contact support if the problem persists.  
+クッキーの設定を変更したい場合は、AWSコンソールのフッターにあるリンクを使用して後で再試行するか、問題が解決しない場合はサポートに連絡してください。  
+
+Dismiss  
+閉じる  
+
+- Filter: All  
+- フィルター: すべて  
+
+Filter: All  
+フィルター: すべて  
+
+- English  
+- 英語  
+
+- Contact us  
+- お問い合わせ  
+
+- Support  
+- サポート  
+
+- My account  
+- マイアカウント  
+
+English  
+英語  
+
+Contact us  
+お問い合わせ  
+
+Support  
+サポート  
+
+My account  
+マイアカウント  
+
+- Agentic AI  
+- エージェンティックAI  
+
+- Discover AWS  
+- AWSを発見する  
+
+- Products  
+- 製品  
+
+- Solutions  
+- ソリューション  
+
+- Pricing  
+- 価格  
+
+- Resources  
+- リソース  
+
+Agentic AI  
+エージェンティックAI  
+
+Discover AWS  
+AWSを発見する  
+
+Products  
+製品  
+
+Solutions  
+ソリューション  
+
+Pricing  
+価格  
+
+Resources  
+リソース  
+
+- Filter: All  
+- フィルター: すべて  
+
+- Sign in to console  
+- コンソールにサインイン  
+
+- Create Account  
+- アカウントを作成  
+
+Filter: All  
+フィルター: すべて  
+
+Filter: All  
+フィルター: すべて  
+
+Sign in to console  
+コンソールにサインイン  
+
+Create Account  
+アカウントを作成  
+
+AWS Blogs  
+AWSブログ  
+
+- Home  
+- ホーム  
+
+- Blogs  
+- ブログ  
+
+- Editions  
+- エディション  
+
+Home  
+ホーム  
+
+
+
+## Artificial Intelligence 人工知能
+
+
+
+# Enable feature reuse across accounts and teams using Amazon SageMaker Feature Store
+# アカウント間およびチーム間での機能再利用を可能にするAmazon SageMaker Feature Store
+
+by Arunprasath Shankar, Mark Roy, and Stefan Natu  
+著者: アルンプラサス・シャンカール、マーク・ロイ、ステファン・ナトゥ
+
+on 23 MAR 2021  
+2021年3月23日
+
+in Amazon SageMaker, Artificial Intelligence  
+分野: Amazon SageMaker、人工知能
+
+Amazon SageMaker Feature Store is a new capability of Amazon SageMaker that helps data scientists and machine learning (ML) engineers securely store, discover, and share curated data used in training and prediction workflows.  
+Amazon SageMaker Feature Storeは、データサイエンティストや機械学習（ML）エンジニアがトレーニングおよび予測ワークフローで使用するキュレーションデータを安全に保存、発見、共有するのを助ける、Amazon SageMakerの新しい機能です。
+
+As organizations build data-driven applications using ML, they’re constantly assembling and moving features between more and more functional teams.  
+組織がMLを使用してデータ駆動型アプリケーションを構築するにつれて、機能をますます多くの機能チーム間で組み立てたり移動させたりしています。
+
+This constant movement of data can lead to inconsistencies in features and become a bottleneck when designing ML initiatives spanning multiple teams.  
+データのこの継続的な移動は、機能の不整合を引き起こし、複数のチームにまたがるMLイニシアチブを設計する際のボトルネックになる可能性があります。
+
+For example, an ecommerce company might have several data science and engineering teams working on different aspects of their platform.  
+例えば、eコマース企業は、プラットフォームの異なる側面に取り組むいくつかのデータサイエンスおよびエンジニアリングチームを持っているかもしれません。
+
+The Core Search team focuses on query understanding and information retrieval tasks.  
+コアサーチチームは、クエリ理解と情報検索タスクに焦点を当てています。
+
+The Product Success team solves problems involving customer reviews and feedback signals.  
+プロダクトサクセスチームは、顧客レビューやフィードバック信号に関する問題を解決します。
+
+The Personalization team uses clickstream and session data to create ML models for personalized recommendations.  
+パーソナライズチームは、クリックストリームとセッションデータを使用して、パーソナライズされた推奨のためのMLモデルを作成します。
+
+Additionally, data engineering teams like the Data Curation team can curate and validate user-specific information, which is an essential component that other teams can use.  
+さらに、データエンジニアリングチーム（データキュレーションチームなど）は、他のチームが使用できる重要なコンポーネントであるユーザー固有の情報をキュレーションおよび検証できます。
+
+A Feature Store works as a unified interface between these teams, enabling one team to leverage the features generated by other teams, which minimizes the operational overhead of replicating and moving features across teams.  
+Feature Storeは、これらのチーム間の統一インターフェースとして機能し、1つのチームが他のチームによって生成された機能を活用できるようにし、チーム間で機能を複製および移動する際の運用オーバーヘッドを最小限に抑えます。
+
+Training a production-ready ML model typically involves access to diverse set of features that aren’t always owned and maintained by the team that is building the model.  
+本番環境向けのMLモデルをトレーニングするには、通常、モデルを構築しているチームが常に所有および維持しているわけではない多様な機能へのアクセスが必要です。
+
+A common practice for organizations that apply ML is to think of these data science teams as individual groups that work independently with limited collaboration.  
+MLを適用する組織にとって一般的な慣行は、これらのデータサイエンスチームを独立して作業する個別のグループと考えることです。
+
+This results in ML workflows with no standardized way to share features across teams, which becomes a crucial limiting factor for data science productivity and makes it harder for data scientists to build new and complex models.  
+これにより、チーム間で機能を共有する標準化された方法がないMLワークフローが生じ、データサイエンスの生産性にとって重要な制約要因となり、データサイエンティストが新しい複雑なモデルを構築するのが難しくなります。
+
+With a shared feature store, organizations can achieve economies of scale.  
+共有のFeature Storeを使用することで、組織は規模の経済を達成できます。
+
+As more shared features become available, it becomes easier and cheaper for teams to build and maintain new models.  
+共有機能が増えるにつれて、チームが新しいモデルを構築および維持するのが容易かつ安価になります。
+
+These models can reuse features that are already developed, tested, and offered using a centralized feature store.  
+これらのモデルは、中央集権的なFeature Storeを使用してすでに開発、テスト、提供されている機能を再利用できます。
+
+This post captures the essential cross-account architecture patterns for Feature Store that can be implemented in an organization with many data engineering and data science teams operating in different AWS accounts.  
+この投稿では、異なるAWSアカウントで運営される多くのデータエンジニアリングおよびデータサイエンスチームを持つ組織で実装できるFeature Storeの重要なクロスアカウントアーキテクチャパターンを紹介します。
+
+We share how to enable sharing of features between accounts through a step-by-step example, which you can try out yourself with the code in our GitHub repo.  
+アカウント間での機能共有を有効にする方法をステップバイステップの例を通じて共有します。これは、私たちのGitHubリポジトリのコードを使って自分で試すことができます。
+
+
+
+## SageMaker Feature Store overview 概要
+
+By default, a SageMaker Feature Store is local to the account in which it is created, but it can also be centralized and shared by many accounts. 
+デフォルトでは、SageMaker Feature Storeは作成されたアカウントにローカルですが、中央集権化され、複数のアカウントで共有することもできます。
+
+An organization with multiple teams can have one centralized feature store that is shared across teams, as well as separate feature stores for use by individual teams. 
+複数のチームを持つ組織は、チーム間で共有される1つの中央集権的なフィーチャーストアと、個々のチームが使用するための別々のフィーチャーストアを持つことができます。
+
+The separate stores can either hold feature groups that are of a sensitive nature or that are specific to a unique ML workload. 
+別々のストアは、機密性の高いフィーチャーグループや特定のユニークなMLワークロードに特化したフィーチャーグループを保持することができます。
+
+In this post, you first learn about the centralized feature store pattern. 
+この記事では、まず中央集権的フィーチャーストアパターンについて学びます。
+
+This pattern prescribes a central interface through which teams can create and publish new features, and from which other teams (or systems) can consume features. 
+このパターンは、チームが新しいフィーチャーを作成および公開できる中央インターフェースを規定し、他のチーム（またはシステム）がフィーチャーを利用できるようにします。
+
+It also ensures that you have a single source of truth for feature data across your organization and simplifies resource management. 
+また、組織全体でフィーチャーデータの単一の真実のソースを持つことを保証し、リソース管理を簡素化します。
+
+Next, you learn about the combined feature store pattern, which allows teams to maintain their own feature stores local to their account, while still being able to access shared features from the centralized feature store. 
+次に、チームが自分のアカウントにローカルなフィーチャーストアを維持しながら、中央集権的フィーチャーストアから共有フィーチャーにアクセスできるようにするcombined feature storeパターンについて学びます。
+
+These local feature stores are usually built for data science experimentation. 
+これらのローカルフィーチャーストアは通常、データサイエンスの実験のために構築されます。
+
+By combining shared features from the centralized store with local features, teams can derive new enhanced features that can help when building more complex ML models. 
+中央集権的ストアからの共有フィーチャーとローカルフィーチャーを組み合わせることで、チームはより複雑なMLモデルを構築する際に役立つ新しい強化フィーチャーを導出できます。
+
+You can also use the local stores to store sensitive data that can’t be shared across the organization for regulatory and compliance reasons. 
+また、規制やコンプライアンスの理由から組織全体で共有できない機密データをローカルストアに保存することもできます。
+
+Lastly, we briefly cover a less common pattern involving replication of feature data. 
+最後に、フィーチャーデータの複製に関するあまり一般的でないパターンについて簡単に説明します。
+
+
+
+## Centralized feature store 中央集権型フィーチャーストア
+
+Organizations can maximize the benefits of a feature store when it’s centralized. 
+組織は、フィーチャーストアが中央集権型であるときにその利点を最大化できます。
+
+The centralized feature store pattern demonstrates how feature pipelines from multiple accounts can write to one centralized feature store, and how multiple other accounts can consume these features. 
+中央集権型フィーチャーストアのパターンは、複数のアカウントからのフィーチャーパイプラインが1つの中央集権型フィーチャーストアに書き込む方法と、複数の他のアカウントがこれらのフィーチャーを利用する方法を示しています。
+
+This is a common pattern among mid- to large-sized enterprises where multiple teams manage different types of data or different parts of an application. 
+これは、中規模から大規模の企業において、複数のチームが異なる種類のデータやアプリケーションの異なる部分を管理する一般的なパターンです。
+
+The process of hypothesizing, selecting, and transforming data inputs into a usable form suitable for ML models is called feature engineering. 
+データ入力を仮定し、選択し、機械学習（ML）モデルに適した使用可能な形式に変換するプロセスは、フィーチャーエンジニアリングと呼ばれます。
+
+A feature pipeline encapsulates all the steps of the feature engineering process needed to convert raw data into useful features that ML models take as input for predictions. 
+フィーチャーパイプラインは、生データを機械学習モデルが予測のための入力として受け取る有用なフィーチャーに変換するために必要なフィーチャーエンジニアリングプロセスのすべてのステップをカプセル化します。
+
+Maintaining feature pipelines is an expensive, time-consuming, and error-prone process. 
+フィーチャーパイプラインの維持は、高コストで時間がかかり、エラーが発生しやすいプロセスです。
+
+Also, replicating feature recipes and transformations across accounts can lead to inconsistencies and skew in feature characteristics. 
+さらに、アカウント間でフィーチャーレシピや変換を複製すると、フィーチャーの特性に不整合や偏りが生じる可能性があります。
+
+Because a centralized feature store facilitates knowledge sharing, teams don’t have to recreate feature recipes and rewrite pipelines from scratch in every project. 
+中央集権型フィーチャーストアは知識の共有を促進するため、チームはすべてのプロジェクトでフィーチャーレシピを再作成したり、パイプラインをゼロから書き直したりする必要がありません。
+
+In this pattern, instead of writing features locally to an account-specific feature store, features are written to a centralized feature store. 
+このパターンでは、フィーチャーをアカウント固有のフィーチャーストアにローカルに書き込むのではなく、フィーチャーは中央集権型フィーチャーストアに書き込まれます。
+
+The centralized store serves as the central vault and creates a standardized way to access and maintain features for cross-team collaboration. 
+中央集権型ストアは中央の金庫として機能し、チーム間のコラボレーションのためにフィーチャーにアクセスし、維持するための標準化された方法を作成します。
+
+It acts as an enabler and accelerator for AI adoption, reducing time to market for ML solutions, and allows for centralized governance and access control to ML features. 
+これはAIの採用を促進し、機械学習ソリューションの市場投入までの時間を短縮し、機械学習フィーチャーへの中央集権的なガバナンスとアクセス制御を可能にします。
+
+You can grant access to external accounts, users, or roles to read and write individual feature groups in keeping with your data access policies. 
+外部アカウント、ユーザー、またはロールに対して、データアクセスポリシーに従って個々のフィーチャーグループを読み書きするアクセスを付与できます。
+
+AWS recommends enforcing least privilege access to only the feature groups that you need for your job function. 
+AWSは、職務機能に必要なフィーチャーグループに対して最小特権アクセスを強制することを推奨しています。
+
+This is managed by the underlying AWS Identity and Access Management (IAM) policies. 
+これは、基盤となるAWSアイデンティティおよびアクセス管理（IAM）ポリシーによって管理されます。
+
+You can further refine access control with feature group tags and IAM conditions to decide which principals can perform specific actions. 
+フィーチャーグループタグやIAM条件を使用してアクセス制御をさらに洗練させ、どのプリンシパルが特定のアクションを実行できるかを決定できます。
+
+When you’re using a centralized store at scale, it’s important to also implement proper feature governance to ensure feature groups are well designed, have feature pipelines that are documented and supported, and have processes in place to ensure feature quality. 
+中央集権型ストアを大規模に使用する場合、フィーチャーグループが適切に設計され、文書化されサポートされているフィーチャーパイプラインを持ち、フィーチャーの品質を確保するためのプロセスが整備されていることを保証するために、適切なフィーチャーガバナンスを実装することが重要です。
+
+This type of governance helps earn the trust required for feature reuse across teams. 
+この種のガバナンスは、チーム間でのフィーチャー再利用に必要な信頼を得るのに役立ちます。
+
+Before walking through an example, let’s identify some key feature store concepts. 
+例を通じて説明する前に、いくつかの重要なフィーチャーストアの概念を特定しましょう。
+
+First, feature groups are logical groups of features, typically originating from the same feature pipeline. 
+まず、フィーチャーグループは、通常同じフィーチャーパイプラインから派生したフィーチャーの論理グループです。
+
+An offline store contains large volumes of historical feature data used to create training and testing data for model development, or by batch applications for model scoring. 
+オフラインストアは、モデル開発のためのトレーニングおよびテストデータを作成するために使用される大量の履歴フィーチャーデータを含んでいます。また、バッチアプリケーションによるモデルスコアリングにも使用されます。
+
+The purpose of the online store is to serve these same features in real time with low latency. 
+オンラインストアの目的は、これらの同じフィーチャーをリアルタイムで低遅延で提供することです。
+
+Unlike the offline store, which is append-only, the goal of the online store is to serve the most recent feature values. 
+オフラインストアが追加専用であるのに対し、オンラインストアの目標は最新のフィーチャー値を提供することです。
+
+Behind the scenes, Feature Store automatically carries out data synchronization between the two stores. 
+裏では、フィーチャーストアが自動的に2つのストア間でデータの同期を行います。
+
+If you ingest new feature values into the online store, they’re automatically appended to the offline store. 
+オンラインストアに新しいフィーチャー値を取り込むと、それらは自動的にオフラインストアに追加されます。
+
+However, you can also create offline and online stores separately if this is a requirement for your team or project. 
+ただし、これはチームやプロジェクトの要件である場合、オフラインストアとオンラインストアを別々に作成することもできます。
+
+The following diagram depicts three functional teams, each with its own feature pipeline writing to a feature group in a centralized feature store. 
+以下の図は、各自のフィーチャーパイプラインを持つ3つの機能チームが、中央集権型フィーチャーストアのフィーチャーグループに書き込む様子を示しています。
+
+The Personalization account manages user session data collected from a customer-facing application and owns a feature pipeline that produces a feature group called Sessions with features derived from the session data. 
+パーソナライゼーションアカウントは、顧客向けアプリケーションから収集されたユーザーセッションデータを管理し、セッションデータから派生したフィーチャーを持つSessionsというフィーチャーグループを生成するフィーチャーパイプラインを所有しています。
+
+This pipeline writes the generated feature values to the centralized feature store. 
+このパイプラインは、生成されたフィーチャー値を中央集権型フィーチャーストアに書き込みます。
+
+Likewise, a feature pipeline in the Product Success account is responsible for producing features in the Reviews feature group, and the Data Curation account produces features in the Users feature group. 
+同様に、プロダクトサクセスアカウントのフィーチャーパイプラインは、Reviewsフィーチャーグループのフィーチャーを生成する責任があり、データキュレーションアカウントはUsersフィーチャーグループのフィーチャーを生成します。
+
+The centralized feature store account holds all features received from the three producer accounts, mapped to three feature groups: Sessions, Reviews, and Users. 
+中央集権型フィーチャーストアアカウントは、3つのプロデューサーアカウントから受け取ったすべてのフィーチャーを保持し、3つのフィーチャーグループ（Sessions、Reviews、Users）にマッピングします。
+
+Feature pipelines can write to the centralized feature store by assuming a specific IAM role that is created in the centralized store account. 
+フィーチャーパイプラインは、中央集権型ストアアカウントに作成された特定のIAMロールを引き受けることによって、中央集権型フィーチャーストアに書き込むことができます。
+
+We discuss how to enable this cross-account role later in this post. 
+このクロスアカウントロールを有効にする方法については、後でこの投稿で説明します。
+
+External accounts can also query features from the feature groups in the centralized store for training or inference, as shown in the preceding architecture diagram. 
+外部アカウントも、前述のアーキテクチャ図に示されているように、トレーニングや推論のために中央集権型ストアのフィーチャーグループからフィーチャーをクエリできます。
+
+For training, you can assume the IAM role from the centralized store and run cross-account Amazon Athena queries (as shown in the diagram), or initiate an Amazon EMR or SageMaker Processing job to create training datasets. 
+トレーニングの場合、中央集権型ストアからIAMロールを引き受けてクロスアカウントのAmazon Athenaクエリを実行することができます（図に示されているように）、またはAmazon EMRやSageMaker Processingジョブを開始してトレーニングデータセットを作成することができます。
+
+In case of real-time inference, you can read online features directly via the same assumed IAM role for cross-account access. 
+リアルタイム推論の場合、クロスアカウントアクセスのために同じ引き受けたIAMロールを介してオンラインフィーチャーを直接読み取ることができます。
+
+In this model, the centralized feature store usually resides in a production account. 
+このモデルでは、中央集権型フィーチャーストアは通常、プロダクションアカウントに存在します。
+
+Applications using this store can either live in this account or in other accounts with cross-account access to the centralized feature store. 
+このストアを使用するアプリケーションは、このアカウント内に存在するか、中央集権型フィーチャーストアへのクロスアカウントアクセスを持つ他のアカウントに存在することができます。
+
+You can replicate this entire structure in lower environments, such as development or staging, for testing infrastructure changes before promoting them to production. 
+この全体の構造を、開発やステージングなどの下位環境に複製して、プロダクションに昇格させる前にインフラストラクチャの変更をテストすることができます。
+
+
+
+## Combined feature store 結合フィーチャーストア
+
+In this section, we discuss a variant of the centralized feature store pattern called the combined feature store pattern. 
+このセクションでは、中央集権的フィーチャーストアパターンの一種である結合フィーチャーストアパターンについて説明します。
+
+In feature engineering, a common practice is to combine existing features to derive new features. 
+フィーチャーエンジニアリングにおいて、一般的な手法は既存のフィーチャーを組み合わせて新しいフィーチャーを導出することです。
+
+When teams combine shared features from the centralized store with local features in their own feature store, they can derive new enhanced features to help build more complex data models. 
+チームが中央集権的ストアからの共有フィーチャーと自分たちのフィーチャーストアのローカルフィーチャーを組み合わせると、より複雑なデータモデルを構築するのに役立つ新しい強化フィーチャーを導出できます。
+
+We know from the previous section that the centralized store makes it easy for any data science team to access external features and use them with their existing pool of features to compound and evolve new features. 
+前のセクションから、中央集権的ストアは、どのデータサイエンスチームでも外部フィーチャーにアクセスし、それを既存のフィーチャープールと組み合わせて新しいフィーチャーを生成・進化させるのを容易にすることがわかります。
+
+Security and compliance is another use case for teams to maintain a team-specific feature store in addition to accessing features from the centralized store. 
+セキュリティとコンプライアンスは、中央集権的ストアからフィーチャーにアクセスすることに加えて、チーム固有のフィーチャーストアを維持するための別のユースケースです。
+
+Many teams require specific access rights that aren’t granted to everyone in the organization. 
+多くのチームは、組織内のすべての人に付与されない特定のアクセス権を必要とします。
+
+For example, it might not be feasible to publish features that are extracted from sensitive data to a centralized feature store within the organization. 
+例えば、機密データから抽出されたフィーチャーを組織内の中央集権的フィーチャーストアに公開することは実現不可能かもしれません。
+
+In the following architecture diagram, the centralized feature store is the account that collects and catalogs all the features received from multiple feature pipelines into one central repository. 
+次のアーキテクチャ図では、中央集権的フィーチャーストアは、複数のフィーチャーパイプラインから受け取ったすべてのフィーチャーを1つの中央リポジトリに収集し、カタログ化するアカウントです。
+
+In this example, the account of the combined store belongs to the Core Search team. 
+この例では、結合ストアのアカウントはCore Searchチームに属しています。
+
+This account is the consumer of the shareable features from the centralized store. 
+このアカウントは、中央集権的ストアからの共有可能なフィーチャーの消費者です。
+
+In addition, this account manages user keyword data collected via a customer-facing search application. 
+さらに、このアカウントは、顧客向け検索アプリケーションを通じて収集されたユーザーキーワードデータを管理します。
+
+This account maintains its own local offline and online stores. 
+このアカウントは、自身のローカルオフラインおよびオンラインストアを維持します。
+
+These local stores are populated by a feature pipeline set up locally to ingest user query keyword data and generate features. 
+これらのローカルストアは、ユーザーのクエリキーワードデータを取り込み、フィーチャーを生成するためにローカルに設定されたフィーチャーパイプラインによって構成されます。
+
+These features are grouped under a feature group named Keywords. 
+これらのフィーチャーは、Keywordsという名前のフィーチャーグループにグループ化されます。
+
+Feature Store by default automatically creates an AWS Glue table for this feature group, which is registered in the AWS Glue Data Catalog in this account. 
+フィーチャーストアはデフォルトで、このフィーチャーグループのためにAWS Glueテーブルを自動的に作成し、このアカウントのAWS Glueデータカタログに登録されます。
+
+The metadata of this table points to the Amazon S3 location of the feature group in this account’s offline store. 
+このテーブルのメタデータは、このアカウントのオフラインストアにおけるフィーチャーグループのAmazon S3の場所を指し示します。
+
+The combined store account can also access feature groups Sessions, Reviews, and Users from the centralized store. 
+結合ストアアカウントは、中央集権的ストアからフィーチャーグループSessions、Reviews、およびUsersにもアクセスできます。
+
+You can enable cross-account access by role, which we discuss in the next sections. 
+ロールによるクロスアカウントアクセスを有効にすることができ、これについては次のセクションで説明します。
+
+Data scientists and researchers can use Athena to query feature groups created locally and join these internal features with external features derived from the centralized store for data science experiments. 
+データサイエンティストや研究者は、Athenaを使用してローカルで作成されたフィーチャーグループをクエリし、これらの内部フィーチャーを中央集権的ストアから導出された外部フィーチャーと結合してデータサイエンス実験を行うことができます。
+
+
+
+## Cross-account access overview クロスアカウントアクセスの概要
+
+This section provides an overview of how to enable cross-account access for Feature Store between two accounts using an assumed role via AWS Security Token Service (AWS STS). 
+このセクションでは、AWS Security Token Service (AWS STS) を介して、2つのアカウント間でFeature Storeのクロスアカウントアクセスを有効にする方法の概要を提供します。
+
+AWS STS is a web service that enables you to request temporary, limited-privilege credentials for IAM users. 
+AWS STSは、IAMユーザーのために一時的で制限された特権の資格情報をリクエストすることを可能にするウェブサービスです。
+
+AWS STS returns a set of temporary security credentials that you can use to access AWS resources that you might not normally have access to. 
+AWS STSは、通常アクセスできない可能性のあるAWSリソースにアクセスするために使用できる一時的なセキュリティ資格情報のセットを返します。
+
+These temporary credentials consist of an access key ID, secret access key, and security token. 
+これらの一時的な資格情報は、アクセスキーID、シークレットアクセスキー、およびセキュリティトークンで構成されています。
+
+To demonstrate this process, assume we have two accounts, A and B, as shown in the following diagram. 
+このプロセスを示すために、以下の図に示すように、アカウントAとBの2つのアカウントがあると仮定します。
+
+Account B maintains a centralized online and offline feature store. 
+アカウントBは、中央集権的なオンラインおよびオフラインのフィーチャーストアを維持しています。
+
+Account A needs access to both online and offline stores contained in Account B. 
+アカウントAは、アカウントBに含まれるオンラインおよびオフラインストアの両方にアクセスする必要があります。
+
+To enable this, we create a role in Account B and let Account A assume that role using AWS STS. 
+これを可能にするために、アカウントBにロールを作成し、アカウントAがAWS STSを使用してそのロールを引き受けることを許可します。
+
+This enables Account A to behave like Account B, with permissions to perform specific actions identified by the role. 
+これにより、アカウントAはアカウントBのように振る舞い、ロールによって特定されたアクションを実行するための権限を持つことができます。
+
+AWS services like SageMaker (processing and training jobs, endpoints) and AWS Lambda used from Account A can assume the IAM role created in Account B by using an AWS STS client (see code block later in this post). 
+アカウントAから使用されるSageMaker（処理およびトレーニングジョブ、エンドポイント）やAWS LambdaなどのAWSサービスは、AWS STSクライアントを使用してアカウントBで作成されたIAMロールを引き受けることができます（この投稿の後のコードブロックを参照）。
+
+This grants them the needed permissions to access resources like Amazon S3, Athena, and the AWS Glue Data Catalog inside Account B. 
+これにより、アカウントB内のAmazon S3、Athena、およびAWS Glue Data Catalogなどのリソースにアクセスするために必要な権限が付与されます。
+
+After the services in Account A acquire the necessary permissions to the resources, they can access both the offline and online store in Account B. 
+アカウントAのサービスがリソースへの必要な権限を取得した後、アカウントBのオフラインおよびオンラインストアの両方にアクセスできるようになります。
+
+Depending on the choice of your service, you also need to add the IAM execution role for that service to the trusted policy of the cross-account IAM role in Account B. 
+サービスの選択に応じて、そのサービスのIAM実行ロールをアカウントBのクロスアカウントIAMロールの信頼ポリシーに追加する必要があります。
+
+We discuss this in detail in the following section. 
+この点については、次のセクションで詳しく説明します。
+
+The preceding architecture diagram shows how Account A assumes a role from Account B to read and write to both online and offline stores contained within Account B. 
+前述のアーキテクチャ図は、アカウントAがアカウントBからロールを引き受け、アカウントB内のオンラインおよびオフラインストアの両方に読み書きする方法を示しています。
+
+The seven steps in the diagram are as follows: 
+図の7つのステップは次のとおりです。
+
+1. Account B creates a role that can be assumed by others (for our use case, Account A). 
+1. アカウントBは、他のアカウント（私たちのユースケースではアカウントA）が引き受けることができるロールを作成します。
+
+2. Account A assumes the IAM role from Account B using AWS STS. 
+2. アカウントAは、AWS STSを使用してアカウントBからIAMロールを引き受けます。
+
+Account A can now generate temporary credentials that can be used to create AWS service clients that behave as if they are inside Account B. 
+アカウントAは、アカウントB内にいるかのように振る舞うAWSサービスクライアントを作成するために使用できる一時的な資格情報を生成できるようになります。
+
+3. In Account A, SageMaker and other service clients (such as Amazon S3 and Athena) are created using the temporary credentials via the assumed role. 
+3. アカウントAでは、引き受けたロールを介して一時的な資格情報を使用してSageMakerや他のサービスクライアント（Amazon S3やAthenaなど）が作成されます。
+
+4. The service clients in Account A can now create feature groups and populate feature values into Account B’s centralized online store using the AWS SDK. 
+4. アカウントAのサービスクライアントは、AWS SDKを使用してフィーチャーグループを作成し、アカウントBの中央集権的なオンラインストアにフィーチャー値を入力できるようになります。
+
+5. The online store in Account B automatically syncs with the offline store, also in Account B. 
+5. アカウントBのオンラインストアは、アカウントB内のオフラインストアと自動的に同期します。
+
+6. The Athena service client inside Account A runs cross-account queries to read, group, and materialize feature sets using Athena tables inside Account B. 
+6. アカウントA内のAthenaサービスクライアントは、アカウントB内のAthenaテーブルを使用してフィーチャーセットを読み取り、グループ化し、具現化するためのクロスアカウントクエリを実行します。
+
+Because the offline store exists in Account B, the corresponding AWS Glue tables, metadata catalog entries, and S3 objects all reside within Account B. 
+オフラインストアがアカウントBに存在するため、対応するAWS Glueテーブル、メタデータカタログエントリ、およびS3オブジェクトはすべてアカウントB内に存在します。
+
+Account A can use the AWS STS assume role to query the offline features (S3 objects) inside Account B. 
+アカウントAは、AWS STSのロールを引き受けてアカウントB内のオフラインフィーチャー（S3オブジェクト）をクエリできます。
+
+7. Athena query results are returned back as feature datasets into Account A’s S3 bucket. 
+7. Athenaのクエリ結果は、アカウントAのS3バケットにフィーチャーデータセットとして返されます。
+
+The temporary credentials use the AWS STS GetSessionToken API and are limited to 1 hour. 
+一時的な資格情報は、AWS STS GetSessionToken APIを使用し、1時間に制限されています。
+
+You can extend the duration of your session by using RefreshableCredentials, a Botocore class that can automatically refresh the credentials to work with your long-running applications beyond the 1-hour timeframe. 
+セッションの期間を延長するには、BotocoreクラスのRefreshableCredentialsを使用することで、1時間の時間枠を超えて長時間実行されるアプリケーションで動作するために資格情報を自動的に更新できます。
+
+An example notebook demonstrating this is available in our GitHub repo. 
+これを示す例のノートブックは、私たちのGitHubリポジトリで入手できます。
+
+
+
+## Create cross-account access クロスアカウントアクセスの作成
+
+This section details all the steps to create the cross-account access roles, policies, and permissions to enable shareability of features between Accounts A and B according to our architecture. 
+このセクションでは、私たちのアーキテクチャに従って、アカウントAとアカウントBの間で機能の共有を可能にするためのクロスアカウントアクセスロール、ポリシー、および権限を作成するためのすべての手順を詳述します。
+
+
+
+### Create a Feature Store access role フィーチャーストアアクセスロールの作成
+
+From Account B, we create a Feature Store access role. 
+アカウントBから、フィーチャーストアアクセスロールを作成します。 
+This is the role assumed by AWS services inside Account A to gain access to resources in Account B.
+これは、アカウントA内のAWSサービスがアカウントBのリソースにアクセスするために引き受けるロールです。
+
+1. On the IAM console, in the navigation pane, choose Roles.
+1. IAMコンソールのナビゲーションペインで、「Roles」を選択します。
+2. Choose Create role.
+2. 「Create role」を選択します。
+3. Choose AWS account.
+3. 「AWS account」を選択します。
+4. Choose Another AWS account.
+4. 「Another AWS account」を選択します。
+5. For Account ID, enter the 12-digit account ID of Account B.
+5. 「Account ID」には、アカウントBの12桁のアカウントIDを入力します。
+6. Choose Next to move to the Add permissions section.
+6. 「Next」を選択して、権限の追加セクションに移動します。
+
+1. In the Permissions section, search for and attach the following AWS managed policies: AmazonSageMakerFullAccess (you can further restrict this to least privileges based on your use case) AmazonSageMakerFeatureStoreAccess
+1. 権限セクションで、次のAWS管理ポリシーを検索して添付します：AmazonSageMakerFullAccess（使用例に基づいて最小権限にさらに制限できます）AmazonSageMakerFeatureStoreAccess
+2. AmazonSageMakerFullAccess (you can further restrict this to least privileges based on your use case)
+2. AmazonSageMakerFullAccess（使用例に基づいて最小権限にさらに制限できます）
+3. AmazonSageMakerFeatureStoreAccess
+3. AmazonSageMakerFeatureStoreAccess
+4. Create and attach a custom policy to this new role (provide the S3 bucket name in Account A where the Athena query results collected in Account B are written):
+4. この新しいロールにカスタムポリシーを作成して添付します（アカウントBで収集されたAthenaクエリ結果が書き込まれるアカウントAのS3バケット名を提供します）：
+
+```
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Sid": "AthenaResultsS3BucketCrossAccountAccessPolicy",
+"Effect": "Allow",
+"Action": [
+"s3:GetBucketLocation",
+"s3:GetObject",
+"s3:ListBucket",
+"s3:PutObjectAcl",
+"s3:PutObject"
+],
+"Resource": [
+"arn:aws:s3:::<ATHENA RESULTS BUCKET NAME IN ACCOUNT A>",
+"arn:aws:s3:::<ATHENA RESULTS BUCKET NAME IN ACCOUNT A>/*"
+]
+}
+]
+}
+```
+```
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Sid": "AthenaResultsS3BucketCrossAccountAccessPolicy",
+"Effect": "Allow",
+"Action": [
+"s3:GetBucketLocation",
+"s3:GetObject",
+"s3:ListBucket",
+"s3:PutObjectAcl",
+"s3:PutObject"
+],
+"Resource": [
+"arn:aws:s3:::<アカウントAのATHENA結果バケット名>",
+"arn:aws:s3:::<アカウントAのATHENA結果バケット名>/*"
+]
+}
+]
+}
+```
+<ATHENA RESULTS BUCKET NAME IN ACCOUNT A>
+<アカウントAのATHENA結果バケット名>
+JSON
+When you use this new AWS STS cross-account role from Account A, it can run Athena queries against the offline store content in Account B. 
+この新しいAWS STSクロスアカウントロールをアカウントAから使用すると、アカウントBのオフラインストアコンテンツに対してAthenaクエリを実行できます。 
+The custom policy allows Athena (inside Account B) to write back the results to a results bucket in Account A. 
+カスタムポリシーにより、Athena（アカウントB内）が結果をアカウントAの結果バケットに書き戻すことができます。 
+Make sure that this results bucket is created in Account A before you create the preceding policy.
+この結果バケットは、前述のポリシーを作成する前にアカウントAに作成されていることを確認してください。
+
+Alternatively, you can let the centralized feature store in Account B maintain all the Athena query results in an S3 bucket. 
+または、アカウントBの集中型フィーチャーストアにすべてのAthenaクエリ結果をS3バケットに保持させることもできます。 
+In this case, you have to set up cross-account Amazon S3 read access policies for external accounts to read the saved results (S3 objects).
+この場合、外部アカウントが保存された結果（S3オブジェクト）を読み取るためのクロスアカウントAmazon S3読み取りアクセスポリシーを設定する必要があります。
+
+1. After you attach the policies, choose Next.
+1. ポリシーを添付した後、「Next」を選択します。
+2. Enter a name for this role (for example, cross-account-assume-role).
+2. このロールの名前を入力します（例：cross-account-assume-role）。
+3. On the Summary page for the created role, under Trust relationships, choose Edit trust relationship.
+3. 作成したロールの概要ページで、「Trust relationships」の下にある「Edit trust relationship」を選択します。
+4. Edit the access control policy document as shown in the following code:
+4. 次のコードに示すように、アクセス制御ポリシードキュメントを編集します：
+
+```
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Effect": "Allow",
+"Principal": {
+"AWS": [
+"arn:aws:iam::<ACCOUNT A ID>:root"
+],
+"Service": [
+"sagemaker.amazonaws.com",
+"athena.amazonaws.com"
+]
+},
+"Action": "sts:AssumeRole",
+"Condition": {}
+}
+]
+}
+```
+```
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Effect": "Allow",
+"Principal": {
+"AWS": [
+"arn:aws:iam::<アカウントA ID>:root"
+],
+"Service": [
+"sagemaker.amazonaws.com",
+"athena.amazonaws.com"
+]
+},
+"Action": "sts:AssumeRole",
+"Condition": {}
+}
+]
+}
+```
+<ACCOUNT A ID>
+<アカウントA ID>
+JSON
+The preceding code adds SageMaker and Athena as services in the Principal section. 
+前述のコードは、PrincipalセクションにSageMakerとAthenaをサービスとして追加します。 
+If you want more external accounts or roles to assume this role, you can add their corresponding ARNs in this section.
+他の外部アカウントやロールがこのロールを引き受けることを希望する場合は、このセクションに対応するARNを追加できます。
+
+
+
+### Create a SageMaker notebook instance SageMakerノートブックインスタンスの作成
+
+From Account A, create a SageMaker notebook instance with an IAM execution role. 
+アカウントAから、IAM実行ロールを持つSageMakerノートブックインスタンスを作成します。このロールは、アカウントAのSageMakerノートブックに、アカウントB内のフィーチャーストアでアクションを実行するために必要な権限を付与します。 
+Alternatively, if you’re not using a SageMaker notebook and using Lambda instead, you need to create a role for Lambda with the same attached policies as shown in this section.
+代わりに、SageMakerノートブックを使用せずにLambdaを使用する場合は、このセクションに示されているのと同じポリシーを添付したLambda用のロールを作成する必要があります。
+
+By default, the following policies are attached when you create a new execution role for a SageMaker notebook:
+デフォルトでは、SageMakerノートブックの新しい実行ロールを作成すると、次のポリシーが添付されます。
+- AmazonSageMaker-ExecutionPolicy
+- AmazonSageMakerFullAccess
+
+We need to create and attach two additional custom policies. 
+私たちは、2つの追加のカスタムポリシーを作成して添付する必要があります。 
+
+First, create a custom policy with the following code, which allows the execution role in Account A to perform certain S3 actions needed to interact with the offline store in Account B:
+最初に、次のコードを持つカスタムポリシーを作成します。これにより、アカウントAの実行ロールがアカウントBのオフラインストアと対話するために必要な特定のS3アクションを実行できるようになります。
+```
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Sid": "FeatureStoreS3AccessPolicy",
+"Effect": "Allow",
+"Action": [
+"s3:PutObject",
+"s3:GetBucketAcl",
+"s3:GetObjectAcl"
+],
+"Resource": [
+"arn:aws:s3:::<OFFLINE STORE BUCKET NAME IN ACCOUNT B>",
+"arn:aws:s3:::<OFFLINE STORE BUCKET NAME IN ACCOUNT B>/*"
+]
+}
+]
+}
+```
+<OFFLINE STORE BUCKET NAME IN ACCOUNT B>
+<OFFLINE STORE BUCKET NAME IN ACCOUNT B>
+
+You can also attach the AWS managed policy AmazonSageMakerFeatureStoreAccess, if your offline store S3 bucket name contains the SageMaker keyword.
+オフラインストアのS3バケット名にSageMakerキーワードが含まれている場合は、AWS管理ポリシーAmazonSageMakerFeatureStoreAccessを添付することもできます。
+
+Second, create the following custom policy, which allows the SageMaker notebook in Account A to assume the role (cross-account-assume-role) created in Account B:
+次に、アカウントAのSageMakerノートブックがアカウントBで作成されたロール（cross-account-assume-role）を引き受けることを許可する次のカスタムポリシーを作成します。
+```
+{
+"Version": "2012-10-17",
+"Statement": {
+"Effect": "Allow",
+"Action": "sts:AssumeRole",
+"Resource": "arn:aws:iam::<ACCOUNT B ID>:role/cross-account-assume-role"
+}
+}
+```
+<ACCOUNT B ID>
+
+We know Account A can access the online and offline store in Account B. 
+アカウントAがアカウントBのオンラインおよびオフラインストアにアクセスできることはわかっています。 
+
+When Account A assumes the cross-account AWS STS role of Account B, it can run Athena queries inside Account B against its offline store. 
+アカウントAがアカウントBのクロスアカウントAWS STSロールを引き受けると、アカウントB内のオフラインストアに対してAthenaクエリを実行できます。 
+
+However, the results of these queries (feature datasets) need to be saved in Account A’s S3 bucket in order to enable model training. 
+しかし、これらのクエリの結果（フィーチャーデータセット）は、モデルのトレーニングを可能にするためにアカウントAのS3バケットに保存する必要があります。 
+
+Therefore, we need to create a bucket in Account A that can store the Athena query results as well as create a bucket policy (see the following code). 
+したがって、Athenaクエリの結果を保存できるアカウントAのバケットを作成し、バケットポリシーを作成する必要があります（次のコードを参照）。 
+
+This policy allows the cross-account AWS STS role to write and read objects in this bucket:
+このポリシーは、クロスアカウントAWS STSロールがこのバケット内のオブジェクトを読み書きできるようにします。
+```
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Sid": "MyStatementSid",
+"Effect": "Allow",
+"Principal": {
+"AWS": [
+"arn:aws:iam::<ACCOUNT B>:role/cross-account-assume-role"
+]
+},
+"Action": "s3:*",
+"Resource": [
+"arn:aws:s3:::<ATHENA RESULTS BUCKET NAME IN ACCOUNT A>",
+"arn:aws:s3:::<ATHENA RESULTS BUCKET NAME IN ACCOUNT A>/*"
+]
+}
+]
+}
+```
+<ACCOUNT B>
+<ATHENA RESULTS BUCKET NAME IN ACCOUNT A>
+<ATHENA RESULTS BUCKET NAME IN ACCOUNT A>
+
+
+
+### Modify the trust relationship policy 信頼関係ポリシーの修正
+
+Because we created an IAM execution role in Account A, we use the ARN of this role to modify the trust relationships policy of the cross-account assume role in Account B:
+アカウントAにIAM実行ロールを作成したため、このロールのARNを使用してアカウントBのクロスアカウントアサムロールの信頼関係ポリシーを修正します：
+
+```
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Effect": "Allow",
+"Principal": {
+"AWS": [
+"ARN OF SAGEMAKER EXECUTION ROLE CREATED IN ACCOUNT A"
+],
+"Service": [
+"sagemaker.amazonaws.com",
+"athena.amazonaws.com"
+]
+},
+"Action": "sts:AssumeRole",
+"Condition": {}
+}
+]
+}
+```
+ARN OF SAGEMAKER EXECUTION ROLE CREATED IN ACCOUNT A
+アカウントAで作成されたSAGEMAKER実行ロールのARN
+JSON
+
+
+
+### Validate the setup process セットアッププロセスの検証
+
+After you set up all the roles and accompanying policies, you can validate the setup by running the example notebooks in the GitHub repo. 
+すべてのロールとそれに伴うポリシーを設定した後、GitHubリポジトリの例のノートブックを実行することでセットアップを検証できます。
+
+The following code block is an excerpt from the example notebook and must be run in a SageMaker notebook running within Account A. 
+以下のコードブロックは例のノートブックからの抜粋であり、Account A内で実行されるSageMakerノートブックで実行する必要があります。
+
+It demonstrates how you can assume the cross-account role from Account B using AWS STS via the AssumeRole API call. 
+これは、AWS STSを介してAssumeRole API呼び出しを使用して、Account Bからクロスアカウントロールを引き受ける方法を示しています。
+
+This call returns a set of temporary credentials that Account A can use to create any service clients. 
+この呼び出しは、Account Aが任意のサービスクライアントを作成するために使用できる一連の一時的な認証情報を返します。
+
+When you use these clients, your code uses the permissions of the assumed role, and acts as if it belongs to Account B. 
+これらのクライアントを使用すると、コードは引き受けたロールの権限を使用し、Account Bに属しているかのように動作します。
+
+For more information, see assume_role in the AWS SDK for Python (Boto 3) documentation. 
+詳細については、AWS SDK for Python (Boto 3) ドキュメントの assume_role を参照してください。
+
+```
+import boto3
+
+# Create STS client
+sts = boto3.client('sts')
+
+# Role assumption B -> A
+CROSS_ACCOUNT_ASSUME_ROLE = 'arn:aws:iam::<ACCOUNT B ID>:role/cross-account-assume-role'
+metadata = sts.assume_role(RoleArn=CROSS_ACCOUNT_ASSUME_ROLE, RoleSessionName='FeatureStoreCrossAccountAccessDemo')
+
+# Get temporary credentials
+access_key_id = metadata['Credentials']['AccessKeyId']
+secret_access_key = metadata['Credentials']['SecretAccessKey']
+session_token = metadata['Credentials']['SessionToken']
+region = boto3.Session().region_name
+
+boto_session = boto3.Session(region_name=region)
+
+# Create SageMaker clients
+sagemaker_client = boto3.client('sagemaker', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key, aws_session_token=session_token)
+
+# Create SageMaker Feature Store runtime clients
+sagemaker_featurestore_runtime_client = boto3.client(service_name='sagemaker-featurestore-runtime', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key, aws_session_token=session_token)
+
+...
+
+offline_config = {'OfflineStoreConfig': {'S3StorageConfig': {'S3Uri': f's3://{OFFLINE_STORE_BUCKET}'}}}
+sagemaker_client.create_feature_group(FeatureGroupName=FEATURE_GROUP_NAME, RecordIdentifierFeatureName=record_identifier_feature_name, EventTimeFeatureName=event_time_feature_name, FeatureDefinitions=feature_definitions, Description='< DESCRIPTION >', Tags='< LIST OF TAGS >', OnlineStoreConfig={'EnableOnlineStore': True}, RoleArn=CROSS_ACCOUNT_ASSUME_ROLE, **offline_config)
+
+...
+
+sagemaker_featurestore_runtime_client.put_record(FeatureGroupName=FEATURE_GROUP_NAME, Record=record)
+
+
+
+# Create STS client STSクライアントの作成
+
+=
+.
+(
+'sts'
+)
+=
+.
+(
+'sts'
+)
+
+
+
+# Role assumption B -> A 役割の引き受け B -> A
+
+'arn:aws:iam::<ACCOUNT B ID>:role/cross-account-assume-role' 
+'arn:aws:iam::<ACCOUNT B ID>:role/cross-account-assume-role' 
+
+<ACCOUNT B ID> 
+<ACCOUNT B ID> 
+=
+= 
+.
+
+( 
+( 
+= 
+, 
+= 
+'FeatureStoreCrossAccountAccessDemo' 
+'FeatureStoreCrossAccountAccessDemo' 
+) 
+) 
+
+
+
+# Get temporary credentials 一時的な資格情報の取得
+
+=
+[
+'Credentials'
+]
+=
+[
+'AccessKeyId'
+]
+=
+[
+'Credentials'
+]
+=
+[
+'SecretAccessKey'
+]
+=
+[
+'Credentials'
+]
+=
+[
+'SessionToken'
+]
+=
+.
+(
+)
+.
+=
+.
+(
+=
+)
+
+
+
+# Create SageMaker client SageMakerクライアントの作成
+
+=
+.
+(
+'sagemaker'
+,
+=
+,
+=
+,
+=
+)
+
+
+
+# Create SageMaker Feature Store runtime client
+SageMaker Feature Store ランタイムクライアントを作成する
+
+=
+.
+(
+=
+'sagemaker-featurestore-runtime'
+,
+=
+,
+=
+,
+=
+)
+.
+.
+.
+=
+{
+'OfflineStoreConfig'
+:
+{
+'S3StorageConfig'
+:
+{
+'S3Uri'
+:
+f's3://{OFFLINE_STORE_BUCKET}'
+f's3://
+{OFFLINE_STORE_BUCKET}
+{
+}
+'
+}
+}
+}
+.
+(
+=
+,
+=
+,
+=
+,
+=
+,
+=
+'< DESCRIPTION >'
+,
+=
+'< LIST OF TAGS >'
+,
+=
+{
+'EnableOnlineStore'
+:
+True
+}
+,
+=
+,
+**
+)
+.
+.
+.
+.
+(
+=
+,
+=
+)
+
+Python
+Python
+
+After you create the SageMaker clients as per the preceding code example in Account A, you can create feature groups and populate features into Account B’s centralized online and offline store. 
+アカウントAの前述のコード例に従ってSageMakerクライアントを作成した後、アカウントBの中央集権的なオンラインおよびオフラインストアにフィーチャーグループを作成し、フィーチャーを格納することができます。
+
+For more information about how to create, describe, and delete feature groups, see create_feature_group in the Boto3 documentation. 
+フィーチャーグループの作成、説明、削除方法の詳細については、Boto3ドキュメントのcreate_feature_groupを参照してください。
+
+You can also use the Feature Store runtime client to put and get feature records to and from feature groups.
+また、Feature Store ランタイムクライアントを使用して、フィーチャーグループにフィーチャーレコードを追加したり取得したりすることもできます。
+
+
+
+## Offline store replication オフラインストアの複製
+
+Reproducibility is the ability to recreate an ML model exactly, so if you use the same features as input, the model returns the same output as the original model. 
+再現性とは、MLモデルを正確に再作成する能力であり、同じ特徴を入力として使用すると、モデルは元のモデルと同じ出力を返します。 
+This is essentially what we strive to achieve between the models we develop in a research environment and deploy in a production environment. 
+これは、研究環境で開発したモデルと本番環境で展開するモデルの間で達成しようとする本質的な目標です。 
+Replicating feature engineering pipelines across accounts is a complex and time-consuming process that can introduce model discrepancies if not implemented properly. 
+アカウント間での特徴エンジニアリングパイプラインの複製は、複雑で時間のかかるプロセスであり、適切に実装されない場合、モデルの不一致を引き起こす可能性があります。 
+If the feature set used to train a model changes after the training phase, it may be difficult or impossible to reproduce a model. 
+モデルのトレーニングフェーズ後に使用される特徴セットが変更されると、モデルを再現することが難しいか不可能になる場合があります。 
+
+Applications that reside on AWS usually have several distinct environments and accounts, such as development, testing, staging, and production. 
+AWS上に存在するアプリケーションは通常、開発、テスト、ステージング、および本番など、いくつかの異なる環境とアカウントを持っています。 
+To achieve automated deployment of the application across different environments, we use CI/CD pipelines. 
+異なる環境にわたるアプリケーションの自動デプロイを実現するために、CI/CDパイプラインを使用します。 
+Organizations often need to maintain isolated work environments and multiple copies of data in the same or different AWS Regions, or across different AWS accounts. 
+組織はしばしば、同じまたは異なるAWSリージョン内、または異なるAWSアカウント間で、隔離された作業環境とデータの複数のコピーを維持する必要があります。 
+In the context of Feature Store, some companies may want to replicate offline feature store data. 
+Feature Storeの文脈では、一部の企業はオフラインフィーチャーストアデータを複製したいと考えるかもしれません。 
+Offline store replication via Amazon S3 replication can be a useful pattern in this case. 
+この場合、Amazon S3の複製を介したオフラインストアの複製は有用なパターンとなる可能性があります。 
+This pattern enables isolated environments and accounts to retrain ML models using full feature sets without using cross-account roles or permissions. 
+このパターンにより、隔離された環境とアカウントがクロスアカウントロールや権限を使用せずに、完全な特徴セットを使用してMLモデルを再トレーニングすることが可能になります。
+
+
+
+## Conclusion 結論
+
+In this post, we demonstrated various architecture patterns like the centralized feature store, combined feature store, and other design considerations for SageMaker Feature Store that are essential to cross-functional data science collaboration. 
+この記事では、中央集約型フィーチャーストア、統合フィーチャーストア、そしてクロスファンクショナルなデータサイエンスのコラボレーションに不可欠なSageMaker Feature Storeのさまざまなアーキテクチャパターンと設計上の考慮事項を示しました。
+We also showed how to set up cross-account access using AWS STS.
+また、AWS STSを使用してクロスアカウントアクセスを設定する方法も示しました。
+
+To learn more about Feature Store capabilities and use cases, see Understanding the key capabilities of Amazon SageMaker Feature Store and Using streaming ingestion with Amazon SageMaker Feature Store to make ML-backed decisions in near-real time.
+Feature Storeの機能とユースケースについて詳しく知りたい方は、「Understanding the key capabilities of Amazon SageMaker Feature Store」と「Using streaming ingestion with Amazon SageMaker Feature Store to make ML-backed decisions in near-real time」をご覧ください。
+
+If you have any comments or questions, please leave them in the comments section.
+ご意見や質問がある場合は、コメント欄にお寄せください。
+
+
+
+### About the Authors 著者について
+
+Arunprasath Shankaris an Artificial Intelligence and Machine Learning (AI/ML) Specialist Solutions Architect with AWS, helping global customers scale their AI solutions effectively and efficiently in the cloud. 
+Arunprasath Shankarは、AWSの人工知能および機械学習（AI/ML）スペシャリストソリューションアーキテクトであり、グローバルな顧客がクラウドでAIソリューションを効果的かつ効率的にスケールするのを支援しています。
+In his spare time, Arun enjoys watching sci-fi movies and listening to classical music.
+余暇には、ArunはSF映画を観たり、クラシック音楽を聴いたりするのを楽しんでいます。
+
+Mark Royis a Principal Machine Learning Architect for AWS, helping AWS customers design and build AI/ML solutions. 
+Mark Royは、AWSのプリンシパル機械学習アーキテクトであり、AWSの顧客がAI/MLソリューションを設計し構築するのを支援しています。
+Mark’s work covers a wide range of ML use cases, with a primary interest in computer vision, deep learning, and scaling ML across the enterprise. 
+Markの仕事は、コンピュータビジョン、深層学習、企業全体でのMLのスケーリングに主に関心を持ち、幅広いMLユースケースをカバーしています。
+He has helped companies in many industries, including Insurance, Financial Services, Media and Entertainment, Healthcare, Utilities, and Manufacturing. 
+彼は、保険、金融サービス、メディアとエンターテインメント、ヘルスケア、ユーティリティ、製造業など、多くの業界の企業を支援してきました。
+Mark holds 6 AWS certifications, including the ML Specialty Certification. 
+Markは、MLスペシャリティ認定を含む6つのAWS認定を保持しています。
+Prior to joining AWS, Mark was an architect, developer, and technology leader for 25+ years, including 19 years in financial services. 
+AWSに参加する前、Markは25年以上にわたりアーキテクト、開発者、テクノロジーリーダーとして活動しており、そのうち19年間は金融サービスに従事していました。
+
+Stefan Natuis a Sr. AI/ML Specialist Solutions Architect at Amazon Web Services. 
+Stefan Natuは、Amazon Web ServicesのシニアAI/MLスペシャリストソリューションアーキテクトです。
+He is focused on helping financial services customers build end-to-end machine learning solutions on AWS. 
+彼は、金融サービスの顧客がAWS上でエンドツーエンドの機械学習ソリューションを構築するのを支援することに注力しています。
+In his spare time, he enjoys reading machine learning blogs, playing the guitar, and exploring the food scene in New York City. 
+余暇には、彼は機械学習のブログを読んだり、ギターを弾いたり、ニューヨーク市の食文化を探求したりするのを楽しんでいます。
+
+
+
+### Resources リソース
+- Getting Started 始めに
+- What's New 新着情報
+
+
+
+### Blog Topics ブログトピック
+- Amazon Bedrock
+- Amazon Comprehend
+- Amazon Kendra
+- Amazon Lex
+- Amazon Polly
+- Amazon Q
+- Amazon Rekognition
+- Amazon SageMaker
+- Amazon Textract
+
+
+
+### Follow フォロー
+
+- Twitter
+- Facebook
+- LinkedIn
+- Twitch
+- Email Updates
+- メール更新
+Create an AWS account
+AWSアカウントを作成
+
+
+
+## Learn 学ぶ
+
+- What Is AWS? 
+- AWSとは何ですか？
+
+- What Is Cloud Computing? 
+- クラウドコンピューティングとは何ですか？
+
+- What Is Generative AI? 
+- ジェネレーティブAIとは何ですか？
+
+- Cloud Computing Concepts Hub 
+- クラウドコンピューティング概念ハブ
+
+- AWS Cloud Security 
+- AWSクラウドセキュリティ
+
+- What's New 
+- 新着情報
+
+- Blogs 
+- ブログ
+
+- Press Releases 
+- プレスリリース
+
+
+
+## Resources リソース
+- Getting Started 始めに
+- Training トレーニング
+- AWS Solutions Library AWSソリューションライブラリ
+- Architecture Center アーキテクチャセンター
+- Product and Technical FAQs 製品および技術に関するFAQ
+- Analyst Reports アナリストレポート
+- AWS Partners AWSパートナー
+- AWS Inclusion, Diversity & Equity AWSの包括性、多様性、平等
+
+
+
+## Developers 開発者
+
+- Developer Center 開発者センター
+- SDKs & Tools SDKとツール
+- .NET on AWS AWS上の.NET
+- Python on AWS AWS上のPython
+- Java on AWS AWS上のJava
+- PHP on AWS AWS上のPHP
+- JavaScript on AWS AWS上のJavaScript
+
+
+
+## Help ヘルプ
+- Contact Us お問い合わせ
+- File a Support Ticket サポートチケットを提出する
+- AWS re:Post AWS re:Post
+- Knowledge Center ナレッジセンター
+- AWS Support Overview AWSサポートの概要
+- Get Expert Help 専門家の支援を受ける
+- AWS Accessibility AWSのアクセシビリティ
+- Legal 法的情報
+English 英語
+Amazon is an Equal Opportunity Employer: Minority / Women / Disability / Veteran / Gender Identity / Sexual Orientation / Age. 
+アマゾンは平等な機会を提供する雇用主です：少数派 / 女性 / 障害者 / 退役軍人 / 性別のアイデンティティ / 性的指向 / 年齢。
+
+facebook facebook
+linkedin linkedin
+instagram instagram
+twitch twitch
+youtube youtube
+podcasts ポッドキャスト
+email メール
+- Privacy プライバシー
+- Site terms サイト利用規約
+- Cookie Preferences クッキーの設定
+© 2025, Amazon Web Services, Inc. or its affiliates. All rights reserved. 
+© 2025年、アマゾンウェブサービス株式会社またはその関連会社。全著作権所有。
