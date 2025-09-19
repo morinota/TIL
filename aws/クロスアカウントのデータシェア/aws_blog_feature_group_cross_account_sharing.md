@@ -26,7 +26,7 @@ This new capability promotes collaboration and minimizes duplicate work for team
 
 With this launch, account owners can grant access to select feature groups by other accounts using AWS Resource Access Manager (AWS RAM).  
 このリリースにより、**アカウント所有者はAWSリソースアクセスマネージャー（AWS RAM）を使用して、他のアカウントによる特定のfeature groupへのアクセスを許可できます**。
-After they’re granted access, users of those accounts can conveniently view all of their feature groups, including the shared ones, through Amazon SageMaker Studio or SDKs.  
+After they’re granted access, users of those accounts can conveniently view all of their feature groups, including the shared ones, through Amazon SageMaker Studio or SDKs.
 アクセスが許可されると、これらのアカウントのユーザーは、Amazon SageMaker Studioや**SDKを通じて**、共有されたものを含むすべての特徴グループを便利に表示できます。
 This enables teams to discover and utilize features developed by other teams, fostering knowledge sharing and efficiency.  
 これにより、チームは他のチームが開発した特徴を発見し、利用できるようになり、知識の共有と効率性が促進されます。
