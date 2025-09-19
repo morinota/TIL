@@ -3,7 +3,7 @@ refs: https://aihub.hkuspace.hku.hk/2024/02/14/amazon-sagemaker-feature-store-no
 # Amazon SageMaker Feature Store now supports cross-account sharing, discovery, and access
 # Amazon SageMaker Feature Storeがクロスアカウント共有、発見、アクセスをサポートするようになりました
 
-14 February, 2024  
+14 February, 2024
 2024年2月14日
 
 Amazon SageMaker Feature Store is a fully managed, purpose-built repository to store, share, and manage features for machine learning (ML) models.  
@@ -44,9 +44,9 @@ We show how to set it up and run a sample demonstration, as well as the benefits
 
 ## Who needs a cross-account feature store 誰がクロスアカウントフィーチャーストアを必要とするのか
 
-Organizations need to securely share features across teams to build accurate ML models, while preventing unauthorized access to sensitive data. 
+Organizations need to securely share features across teams to build accurate ML models, while preventing unauthorized access to sensitive data.
 組織は、正確な機械学習（ML）モデルを構築するために、チーム間でフィーチャーを安全に共有する必要があり、同時に機密データへの不正アクセスを防ぐ必要があります。 
-SageMaker Feature Store now allows granular sharing of features across accounts via AWS RAM, enabling collaborative model development with governance. 
+SageMaker Feature Store now allows granular sharing of features across accounts via AWS RAM, enabling collaborative model development with governance.
 SageMaker Feature Storeは、**AWS RAMを介してアカウント間でフィーチャーの詳細な共有**を可能にし、ガバナンスを伴う共同モデル開発を実現します。
 
 - メモ: AWS RAMって?
