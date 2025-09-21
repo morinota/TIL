@@ -1,5 +1,7 @@
+refs: https://papers.nips.cc/paper_files/paper/2011/hash/e53a0a2978c28872a4505bdb51db06dc-Abstract.html
 
 # An Empirical Evaluation of Thompson Sampling  
+
 **Olivier Chapelle**  
 Yahoo! Research  
 Santa Clara, CA  
@@ -8,17 +10,6 @@ chap@yahoo-inc.com
 Yahoo! Research  
 Santa Clara, CA  
 lihong@yahoo-inc.com  
-
-# トンプソンサンプリングの実証評価  
-**オリビエ・シャペル**  
-Yahoo! Research  
-サンタクララ, CA  
-chap@yahoo-inc.com  
-**リホン・リー**  
-Yahoo! Research  
-サンタクララ, CA  
-lihong@yahoo-inc.com  
-
 
 
 ## Abstract 要約
