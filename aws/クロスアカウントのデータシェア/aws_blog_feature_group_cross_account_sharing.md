@@ -159,7 +159,7 @@ For example, if you make the resource owner account discoverable by the resource
 This permission is granted to resource consumer accounts by using the SageMaker catalog resource type. 
 この権限は、SageMakerカタログリソースタイプを使用してリソース消費者アカウントに付与されます。
 
-Access permissions– When you grant an access permission, you do so at the feature group resource level (not the account level). 
+**Access permissions**– When you grant an access permission, you do so at the feature group resource level (not the account level). 
 アクセス権限 - アクセス権限を付与する場合、アカウントレベルではなくフィーチャグループリソースレベルで行います。
 This gives you more granular control over granting access to data. 
 これにより、データへのアクセスを付与する際に、より細かい制御が可能になります。
