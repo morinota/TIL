@@ -344,15 +344,15 @@ Ranking by click-through rate often promotes deceptive videos that the user does
 Our features are segregated with the traditional taxonomy of categorical and continuous/ordinal features.
 私たちの特徴量は、伝統的な分類法である**categorical特徴量**と**continuous/ordinal特徴量**に分別される。
 The categorical features we use vary widely in their cardinality - some are binary (e.g.whether the user is logged-in) while others have millions of possible values (e.g.the user’s last search query).
-我々が使用するカテゴリカルな特徴量は、そのカーディナリティが大きく異なる。あるものはバイナリであり（例：ユーザーがログインしているかどうか）、あるものは何百万もの可能な値を持つ（例：ユーザーの最後の検索クエリ）。
+**我々が使用するカテゴリカルな特徴量は、そのカーディナリティが大きく異なる。あるものはバイナリであり（例：ユーザーがログインしているかどうか）、あるものは何百万もの可能な値を持つ（例：ユーザーの最後の検索クエリ）**。
 Features are further split according to whether they contribute only a single value (“uni-valent”) or a set of values (“multivalent”).
-特徴量はさらに、単一の値（“uni-valent”）だけを寄与するか、一連の値（“multivalent”）を寄与するかによって分けられる。
+特徴量はさらに、**単一の値（“uni-valent”）だけを寄与するか、一連の値（“multivalent”）を寄与するか**によって分けられる。
 An example of a univalent categorical feature is the video ID of the impression being scored, while a corresponding multivalent feature might be a bag of the last N video IDs the user has watched.
 **uni-valentのカテゴリカル特徴量の例としては、採点対象のimpressionのビデオID**があり、**対応するmulti-valentの特徴量としては、ユーザが視聴した直近のN個のビデオIDのbag**がある。
 We also classify features according to whether they describe properties of the item (“impression”) or properties of the user/context (“query”).
-また、アイテム(“impression”)の特性を表すか、ユーザ/コンテキスト("query")の特性を表すかによって、特徴量を分類する。
+また、**アイテム(“impression”)の特性を表すか、ユーザ/コンテキスト("query")の特性を表すかによって、特徴量を分類**する。
 Query features are computed once per request while impression features are computed for each item scored.
-**query特徴量はリクエストごとに1回計算される**が、impression特徴量はスコアされたアイテムごとに計算される。
+**query特徴量はリクエストごとに1回計算される**が、impression特徴量はスコアされるアイテムごとに計算される。(ユーザタワー側はリアルタイム推論、アイテムタワー側はバッチor非同期推論...!:thinking:)
 
 ### 4.1.1. Feature Engineering フィーチャーエンジニアリング
 
