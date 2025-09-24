@@ -204,7 +204,7 @@ Figure 3 shows the general network architecture with additional non-video watch 
 ![fig3]()
 
 Figure 3: Deep candidate generation model architecture showing embedded sparse features concatenated with dense features. Embeddings are averaged before concatenation to transform variable sized bags of sparse IDs into fixed-width vectors suitable for input to the hidden layers. All hidden layers are fully connected. In training, a cross-entropy loss is minimized with gradient descent on the output of the sampled softmax. At serving, an approximate nearest neighbor lookup is performed to generate hundreds of candidate video recommendations.
-図3：ディープ候補生成モデルのアーキテクチャは、埋め込まれた疎な特徴を密な特徴と連結したものである。エンベッディングは連結前に平均化され、スパースIDの可変サイズのバッグを隠れ層への入力に適した固定幅のベクトルに変換する。すべての隠れ層は完全に接続されている。訓練では、サンプリングされたソフトマックスの出力に対して勾配降下法を用いてクロスエントロピー損失が最小化される。サービング時には、近似最近傍探索が実行され、何百ものビデオ推薦候補が生成される。
+図3：ディープ候補生成モデルのアーキテクチャは、埋め込まれた疎な特徴を密な特徴と連結したものである。**エンベッディングは連結前に平均化され、スパースIDの可変サイズのバッグを隠れ層への入力に適した固定幅のベクトルに変換**する。すべての隠れ層はfully connected layerである。訓練では、サンプリングされたソフトマックスの出力に対して勾配降下法を用いてクロスエントロピー損失が最小化される。サービング時には、近似最近傍探索が実行され、何百ものビデオ推薦候補が生成される。
 
 ## 3.3. Heterogeneous Signals 異種シグナル
 
@@ -301,17 +301,17 @@ Adding features and depth significantly improves precision on holdout data as sh
 In these experiments, a vocabulary of 1M videos and 1M search tokens were embedded with 256 floats each in a maximum bag size of 50 recent watches and 50 recent searches.
 これらの実験では、1Mのビデオと1Mの検索トークンのvocabularyを、それぞれ256個のフロート(=embedding の次元数)で、**最近の視聴50個と最近の検索50個の最大バッグサイズに埋め込んだ**。
 The softmax layer outputs a multinomial distribution over the same 1M video classes with a dimension of 256 (which can be thought of as a separate output video embedding).
-ソフトマックス層は、256次元の同じ1Mビデオクラス(これはそれぞれの出力ビデオ埋め込みと考えることができる)上のmultinomial distributionを出力する。(出力は、$\mathbb{R}^{1M \times 256}$ ??)
+ソフトマックス層は、同じ1Mのビデオクラスにわたる多項分布を256の次元で出力する（これは別の出力ビデオ埋め込みと考えることができる）.
 These models were trained until convergence over all YouTube users, corresponding to several epochs over the data.
 これらのモデルは、全ユーチューバーに対して収束するまで学習され、データに対する数回のエポックに相当する。
 Network structure followed a common “tower” pattern in which the bottom of the network is widest and each successive hidden layer halves the number of units (similar to Figure 3).
 ネットワーク構造は一般的な **"tower"パターン**に従っており、**ネットワークの下部が最も広く、各隠れ層はユニット数が半分になる**（図3と同様）.(tower patternって呼ばれるんだ...!)
 The depth zero network is effectively a linear factorization scheme which performed very similarly to the predecessor system.
-**深さ0のネットワークは、事実上、線形因数分解スキームであり、前身のシステムと非常によく似た性能を発揮した。**
+深さゼロのネットワークは、実質的に線形の因子分解スキームであり、前任のシステムと非常によく似たパフォーマンスを発揮した。
 Width and depth were added until the incremental benefit diminished and convergence became difficult:
-幅と深さは、増分的な利益が減少し、収束が困難になるまで追加された：
+幅と深さは、増分的な利益が減少し、収束が困難になるまで追加された: 
 
-- Depth 0: A linear layer simply transforms the concatenation layer to match the softmax dimension of 256. 線形レイヤーは、単純に連結レイヤーを256のソフトマックス次元に合うように変換する。(Factorization machine的な?)
+- Depth 0: A linear layer simply transforms the concatenation layer to match the softmax dimension of 256. 線形レイヤーは、単純に連結レイヤーを256のソフトマックス次元に合うように変換する。
 - Depth 1: 256 ReLU
 - Depth 2: 512 ReLU → 256 ReLU
 - Depth 3: 1024 ReLU → 512 ReLU → 256 ReLU
@@ -396,20 +396,20 @@ Similar to candidate generation, we use embeddings to map sparse categorical fea
 Each unique ID space (“vocabulary”) has a separate learned embedding with dimension that increases approximately proportional to the logarithm of the number of unique values.
 それぞれのユニークなID空間(“vocabulary”)は、ユニークな値の数の対数にほぼ比例して増加する次元を持つ別々の学習された埋め込みを持つ。
 These vocabularies are simple look-up tables built by passing over the data once before training.
-これらのボキャブラリーは、トレーニングの前に一度データを渡すことで構築される単純な**look-up tables(=連想配列とか!dictとか!:thinking:)**である。
+これらのボキャブラリーは、**トレーニングの前に一度データを渡すことで構築される単純なlook-up tables(=連想配列とか!dictとか!:thinking:)**である。
 Very large cardinality ID spaces (e.g.video IDs or search query terms) are truncated by including only the top N after sorting based on their frequency in clicked impressions.
 **非常に大きなカーディナリティのIDスペース(ビデオIDや検索クエリ用語など)は、クリックされたインプレッションにおける頻度に基づいてソートした後、上位N件のみを含めることによって切り捨てられる**。
 Out-of-vocabulary values are simply mapped to the zero embedding.
 ボキャブラリー外の値は、単純にゼロ埋め込みにマッピングされる。
 As in candidate generation, multivalent categorical feature embeddings are averaged before being fed in to the network.
-候補生成と同様に、multi-valentのカテゴリー特徴埋め込みは、ネットワークに入力される前に平均化される。
+**候補生成と同様に、multi-valentのカテゴリー特徴埋め込みは、ネットワークに入力される前に平均化**される。
 
 Importantly, categorical features in the same ID space also share underlying emeddings.
 重要なのは、同じID空間内のカテゴリカル特徴量も、その根底にあるembeddingを共有することである。
 For example, there exists a single global embedding of video IDs that many distinct features use (video ID of the impression, last video ID watched by the user, video ID that “seeded” the recommendation, etc.).Despite the shared embedding, each feature is fed separately into the network so that the layers above can learn specialized representations per feature.
 例えば、多くの異なる特徴量が使用するビデオID(impressionのビデオID、ユーザが視聴した最後のビデオID、推薦の「種」となったビデオIDなど)の単一のグローバルな埋め込みが存在する。共有された埋め込みにもかかわらず、各特徴量は、上の層が特徴量ごとに特化した表現を学習できるように、**ネットワークに別々に供給される**。
 Sharing embeddings is important for improving generalization, speeding up training and reducing memory requirements.
-**エンベッディングを共有することは、汎化性能を向上させ、トレーニングを高速化し、必要なメモリを削減するために重要である**。
+**エンベッディングを共有することは、汎化性能を向上させ、トレーニングを高速化し、必要なメモリを削減するために重要**である。
 The overwhelming majority of model parameters are in these high-cardinality embedding spaces - for example, one million IDs embedded in a 32 dimensional space have 7 times more parameters than fully connected layers 2048 units wide.
 例えば、32次元空間に埋め込まれた100万個のIDは、2048ユニット幅の完全連結レイヤーの7倍のパラメーターを持つ。
 
