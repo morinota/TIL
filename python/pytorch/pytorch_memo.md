@@ -218,12 +218,13 @@ tensor([[ 4.0000,  5.1000,  6.3000]])
 
 ## transforms/Dataset/DataLoaderの役割について
 
-- refs:
-  - [PyTorch transforms/Dataset/DataLoaderの基本動作を確認する](https://qiita.com/takurooo/items/e4c91c5d78059f92e76d)
-  - [Pytorch+Polarsで高速で動作するDatasetを作る](https://zenn.dev/wotb_pythonista/articles/c5453b6e3d4625)
-  - [Pytorch DataLoaderで学習高速化！num_workersを増やすだけじゃダメ！](https://blog.master-of-ai.jp/posts/dataloader/)
-  - [PyTorchでの学習・推論を高速化するコツ集](https://qiita.com/sugulu_Ogawa_ISID/items/62f5f7adee083d96a587)
-  - [torch.tensor への変換における Numpy と Polars の速度比較](https://zenn.dev/uchiiii/articles/f58519345987ca)
+- refs (読んだらチェック!):
+  - [x] [PyTorch transforms/Dataset/DataLoaderの基本動作を確認する](https://qiita.com/takurooo/items/e4c91c5d78059f92e76d)
+  - [x] [Pytorch+Polarsで高速で動作するDatasetを作る](https://zenn.dev/wotb_pythonista/articles/c5453b6e3d4625)
+  - [x] [torch.tensor への変換における Numpy と Polars の速度比較](https://zenn.dev/uchiiii/articles/f58519345987ca)
+  - [ ] [Pytorch DataLoaderで学習高速化！num_workersを増やすだけじゃダメ！](https://blog.master-of-ai.jp/posts/dataloader/)
+  - [ ] [PyTorchでの学習・推論を高速化するコツ集](https://qiita.com/sugulu_Ogawa_ISID/items/62f5f7adee083d96a587)
+
 
 ### transforms/dataset/dataloaderのざっくり役割・関係性メモ
 
