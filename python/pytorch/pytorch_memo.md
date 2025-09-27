@@ -381,6 +381,7 @@ for epoch in epochs:
 
 ```python
     def __getitem__(self, idx):
+        # このpolars.dataframe.row(idx)はtupleを返す.
         features = np.array(self.dataframe.row(idx)[:-1])
         target = np.array(self.dataframe.row(idx)[-1])
         features = self.dataframe.row(idx)[:-1]
@@ -389,5 +390,49 @@ for epoch in epochs:
             target, dtype=torch.float32
         )
 ```
+
+### Pytorch DataLoaderで学習高速化の話。
+
+- 基本的なDataLoaderの使い方は以下:
+  - `loader = DataLoader(my_dataset, batch_size=32, shuffle=True)`
+- しかしこれだとDataLoaderの能力を完全には発揮できていないっぽい。
+- DataLoaderの引数:
+  - `dataset`引数
+  - `batch_size`引数
+  - `shuffle`引数: epochごとにデータをシャッフルするかどうか。
+  - `num_workers`引数: 並列データ読み込みのプロセス数。
+  - `pin_memory`引数: CPU -> GPU転送を非同期に (CUDA環境ならTrueにするのが良いらしい)。
+  - `drop_last`引数: 最後に余る端数バッチを捨てるかどうか。
+  - `persistent_workers`引数: Trueにすると、DataLoaderのプロセスがエポック間で生き続ける。
+  - `prefetch_factor`引数: バッチの先読み数。
+- 高速化に関連する重要な引数たち:
+  - その1: `num_workers`
+  - その2: `persistent_workers`
+    - 通常，DataLoaderが最後のバッチまでの処理を行うとプロセスを終了する。
+    - そうすると次のエポック開始時にプロセスを再生成する必要がある。
+    - そこでpersistent_workersをTrueとすることで，プロセスを終了させず，次のエポックに再利用することができる。
+  - その3: `prefetch_factor`
+    - 各プロセスが先読みするバッチ数を指定できる。
+    - 通常は1つのプロセスにつき2つのバッチしか読み込んでおらず，バッチデータを投げ込んで処理している間待機状態となる。
+    - この時間で次のバッチを読み込み，空いている時間を効率よく使うことができる。
+    - ただし，バッチデータを多く保持するので，メモリのオバーフローに注意。
+
+例:
+
+```python
+DataLoader(ds, 
+            batch_size=32, 
+            shuffle=True, 
+            num_workers=4,
+            pin_memory=True, 
+            prefetch_factor=4, 
+            persistent_workers=True, 
+            drop_last=True)
+```
+
+- 上記の場合...
+  - 4つのプロセス(num_workers=4)が4バッチ分先読み(prefetch_factor=4)しているので，最大で16バッチがモデル入力のキューに溜まることになる。
+  - サンプル数に換算すると、4*4*32=512サンプル分がメモリ上にスタンバイされることになる。
+  - よってメモリの占有率は上昇するが、読み込みに時間がかかるデータにおいては、先に裏で読み込みを行うことで学習時間の短縮が期待できる。
 
 
