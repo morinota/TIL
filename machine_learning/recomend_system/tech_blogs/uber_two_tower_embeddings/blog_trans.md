@@ -257,21 +257,23 @@ This reduces the model size by 20 times because we only have millions of stores,
 ### Layer sharing between two towers 2つのタワー間でレイヤーを共有
 
 Another very important innovation of the TTE model we developed is that we enforce neural module layer sharing between the two towers, and this is not typical in most textbook TTE models, but it turns out to be very important for the TTE model for Eats homefeed.
-私たちが開発したTTEモデルのもう一つの非常に重要な革新点は、**2つのタワー間でニューラルモジュールのレイヤーを共有することを強制すること**である。(??)
+**私たちが開発したTTEモデルのもう一つの非常に重要な革新点は、2つのタワー間でニューラルモジュールのレイヤーを共有することを強制すること**である。(??)
 
 Layer sharing is not new, and it originates from pattern recognition models as early as 1989’s Zip Code Recognition Paper and popularized by AlexNet.
 レイヤーの共有は新しいものではなく、1989年のZip Code Recognition PaperやAlexNetによって一般化されたパターン認識モデルに端を発している。
 It is also widely used in transformer models.
-また、トランスモデルにも広く使用されている。
+また、transformerモデルにも広く使用されている。
 Nevertheless, the layer sharing in the above examples are used inside each module, while in TTE we enforce layer sharing between two relatively independent tower modules.
 とはいえ、上記の例のレイヤーシェアリングは各モジュール内部で使用されているのに対し、**TTEでは比較的独立した2つのタワーモジュール間でレイヤーシェアリングを実施している。**
 We will discuss one type of layer sharing we developed as an example: where the query tower and item tower share the same UUID Embedding Layer.
-クエリ・タワーとアイテム・タワーが同じUUIDエンベッディング・レイヤーを共有する場合である.
+クエリ・タワーとアイテム・タワーが同じUUIDエンベッディング・レイヤーを共有する場合である、私たちが開発したレイヤー共有の一例について説明する。
 
 ![](https://blog.uber-cdn.com/cdn-cgi/image/width=886,quality=80,onerror=redirect,format=auto/wp-content/uploads/2023/07/Figure5.png)
 
 Figure 5: A sketch graph to show how the layer sharing plays role in two tower model
 図5：2タワーモデルにおけるレイヤー共有の役割を示すスケッチグラフ
+
+<!-- ここまで読んだ! -->
 
 ## System Integration and Improvements システムの統合と改善
 
@@ -285,7 +287,7 @@ This means two- tower embeddings gain the benefits of Michelangelo across the en
 To simplify data preparation and serving, Michelangelo’s Feature Store, Palette, was enhanced with a tighter integration with Uber’s search platform.
 データの準備と提供を簡素化するため、ミケランジェロのフィーチャーストアであるパレットは、ウーバーの検索プラットフォームとの統合を強化した。
 This integration means that embeddings registered in the feature store can be served both online and offline using a config-driven approach.
-この統合は、フィーチャーストアに登録されたエンベッディングを、コンフィグ主導のアプローチでオンラインでもオフラインでも提供できることを意味する。
+**この統合は、フィーチャーストアに登録されたエンベッディングを、コンフィグ主導のアプローチでオンラインでもオフラインでも提供できること**を意味する。
 Previously, for online serving Palette features were only accessible through Michelangelo’s prediction service and key/value store pairing.
 以前は、パレットのオンラインサービス機能は、ミケランジェロの予測サービスとキー／バリューストアのペアリングを通じてのみアクセス可能だった。
 
@@ -301,12 +303,14 @@ By creating proper Michelangelo models, we gain the benefits of standardized pro
 Figure 6: E2E pipeline flow that shows how the two embeddings are used in uber eats recommender system
 図6：ユーバーイーツ・レコメンダー・システムで2つのエンベッディングがどのように使用されるかを示すE2Eパイプライン・フロー
 
+<!-- ここまで読んだ! -->
+
 # Challenges チャレンジ
 
 ## Model Size モデルサイズ
 
 After conducting ablation studies, we have found that utilizing the eater_id and store_id is crucial for improving the performance of the model.
-アブレーション研究を行った結果、eater_idとstore_idを活用することがモデルのパフォーマンスを向上させるために重要であることがわかりました。
+**アブレーション研究を行った結果、eater_idとstore_idを活用することがモデルのパフォーマンスを向上させるために重要**であることがわかりました。(たぶんこれ自体をentity embeddingして使うってことかな?? オンライン学習でnn.embeddingのvocablaryを増やしてくことってできるんだろうか...??:thinking:)
 These features possess high cardinality and incorporating them has led to a larger model size.
 **これらの特徴は高いカーディナリティを持ち、これらを組み込むことでモデルサイズが大きくなっている**。
 However, training and deploying this large model size poses a significant challenge to our current infrastructure, demanding substantial computational resources.
@@ -328,10 +332,12 @@ This list is used to generate all relevant metrics, including recall@k and busin
 By incorporating context-specific factors, our evaluation framework ensures that the TTE model’s performance is assessed in a way that is relevant and meaningful for real-world scenarios.
 コンテキスト固有の要因を組み込むことで、我々の評価フレームワークは、TTEモデルの性能が実世界のシナリオに関連し、意味のある方法で評価されることを保証する。
 
+<!-- ここまで読んだ! -->
+
 # Result and Takeaways 結果と教訓
 
 Two-Tower Embeddings is the first DL platform at Uber for FPR and Embeddings as a feature.
-ツータワー・エンベッディングは、FPR(=candidate retrieve)と特徴量としてのエンベッディングのためのウーバー初のDLプラットフォームである。
+**ツータワー・エンベッディングは、FPR(=candidate retrieve)と特徴量としてのエンベッディングのためのウーバー初のDLプラットフォーム**である。
 To get here, we delivered 3 models, with significant improvements between each version.
 ここまで来るのに、私たちは3つのモデルを提供し、それぞれのバージョン間で大幅な改良を加えてきた。
 
@@ -345,19 +351,19 @@ Specifically:
 具体的には
 
 - Our single global model replaces thousands of city DeepMF models 私たちの単一のグローバルモデルが、何千もの都市のDeepMFモデルを置き換える
-
 - It is now scaleable to hundreds of millions eaters, millions of stores, hundreds of millions of grocery items 現在では、数億人の消費者、数百万の店舗、数億の食料品に拡張可能である。
-
 - We decreased model training from hundred of thousands of core-hours to thousands of core-hours per week モデルのトレーニングは、週あたり数十万コア時間から数千コア時間に減少した。
 
 However, we didn’t stop there.
 しかし、私たちはそれだけにとどまらなかった。
 TTE is now used in 3 production use cases, with more to come:
-TTEは現在、3つのプロダクションユースケースで使用されており、今後もさらに増える予定だ：
+**TTEは現在、3つのプロダクションユースケースで使用されており、今後もさらに増える予定**だ：
 
 - FPR of Eats home feed (store recommendation) イーツのhome feed（店舗推薦）のFPR(candidate retrieve)
 - Final ranking layer for Eats item feed (grocery recommendation) Eatsアイテムフィードの最終ランキングレイヤー（食料品の推薦） (candidate ranking)
 - To generate transferrable features for any downstream task including Eats SPR and risk. Eats SPRとリスクを含む、あらゆる**下流タスクに転用可能な特徴量**を生成する。
+
+<!-- ここまで読んだ! -->
 
 ## How is Uber Standing out in this Competitive Space? Uberはこの競争空間でどのように際立っているのか？
 
@@ -366,12 +372,14 @@ The innovation is very specific to Uber’s business.
 For example, we focused on addressing the challenge of handling high-cardinality features, such as UUID, in building recommendation systems.
 例えば、推薦システムを構築する上で、**UUIDのようなhigh-cardinalityを持つ特徴量を扱うという課題**に焦点を当てた。
 The proposed bag-of-words approach and layer-sharing technique were introduced as innovative solutions to this problem, resulting in a significant reduction in model size and improved performance, as demonstrated by offline and online evaluations.
-この問題に対する革新的な解決策として、提案されたBag-of-Wordsアプローチとレイヤー共有技術が導入され、オフラインおよびオンライン評価により、モデルサイズの大幅な縮小と性能の向上が実証された。
+この問題に対する革新的な解決策として、**提案されたBag-of-Wordsアプローチとレイヤー共有技術**が導入され、オフラインおよびオンライン評価により、モデルサイズの大幅な縮小と性能の向上が実証された。
 
 Our work contributes to the development of more efficient and effective recommendation systems, particularly in the retrieval phase.
 我々の研究は、**特にretrieve段階において、より効率的で効果的な推薦システムの開発に貢献する**。
 By building on existing state-of-the-art techniques, the proposed methods have the potential to inspire further research in this area, with the ultimate goal of enabling more efficient and effective recommendation systems in the future.
 既存の最先端技術を基礎とすることで、提案された手法は、将来、より効率的で効果的な推薦システムを実現するという究極の目標に向けて、この分野におけるさらなる研究を促す可能性を秘めている。
+
+<!-- ここまで読んだ! -->
 
 # What’s Next? 次は何だ？
 
@@ -389,7 +397,7 @@ TTEの利用を組織全体に広げることで、大きな価値を引き出�
 With its ability to process large volumes of data quickly and accurately, TTE can provide valuable insights and inform decision-making across a wide range of teams and departments.
 大量のデータを迅速かつ正確に処理する能力により、TTEは幅広いチームや部門にわたって貴重な洞察を提供し、意思決定に役立てることができる。
 
-## Embeddings as a Feature 特徴としての埋め込み
+## Embeddings as a Feature 特徴量としての埋め込み
 
 Our team is actively working to generate embeddings that are general enough to be utilized across a diverse range of applications and use cases.
 私たちのチームは、**多様なアプリケーションやユースケースで活用できるような一般的なエンベッディングの生成**に積極的に取り組んでいます。
@@ -397,3 +405,5 @@ By developing more versatile and adaptable embeddings, we believe that we can en
 より汎用的で適応性の高いエンベッディングを開発することで、さまざまな機械学習モデルのパフォーマンスを向上させ、イノベーションと成長のための新たな機会を引き出すことができると信じています。
 Users can benefit from the embeddings we have generated by directly using them as input features for their models, thereby streamlining the development process and improving overall performance.
 ユーザは、我々が生成した埋め込みをモデルの入力特徴として直接使用することで、開発プロセスを合理化し、全体的なパフォーマンスを向上させることができます。
+
+<!-- ここまで読んだ! -->
