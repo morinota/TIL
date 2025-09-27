@@ -216,4 +216,177 @@ embedding(input)
 tensor([[ 4.0000,  5.1000,  6.3000]])
 ```
 
+## transforms/Dataset/DataLoaderの役割について
+
+- refs:
+  - [PyTorch transforms/Dataset/DataLoaderの基本動作を確認する](https://qiita.com/takurooo/items/e4c91c5d78059f92e76d)
+  - [Pytorch+Polarsで高速で動作するDatasetを作る](https://zenn.dev/wotb_pythonista/articles/c5453b6e3d4625)
+  - [Pytorch DataLoaderで学習高速化！num_workersを増やすだけじゃダメ！](https://blog.master-of-ai.jp/posts/dataloader/)
+  - [PyTorchでの学習・推論を高速化するコツ集](https://qiita.com/sugulu_Ogawa_ISID/items/62f5f7adee083d96a587)
+  - [torch.tensor への変換における Numpy と Polars の速度比較](https://zenn.dev/uchiiii/articles/f58519345987ca)
+
+### transforms/dataset/dataloaderのざっくり役割・関係性メモ
+
+- ざっくり役割
+  - transforms: 
+    - データの前処理を担当するモジュール。
+  - Dataset:
+    - データと対応するラベルを1組返すモジュール。
+    - データを返す時にtransformsを使って前処理したものを返す。
+  - DataLoader:
+    - Datasetからデータをバッチサイズに固めて返すモジュール。
+- 3モジュールの関係性: 
+  - **Datasetはtransformsを制御して、DataLoaderはDatasetを制御する(i.e. 依存する, 参照する?)という関係性**。
+  - 使い方の流れ:
+    - 1. Datasetクラスをインスタンス化する際に、transformsを引数として渡す。
+    - 2. DataLoaderクラスをインスタンス化する際に、Datasetを引数として渡す。
+    - 3. 学習時にDataLoaderからデータとラベルをバッチサイズで取得する。
+
+#### transformsの実装のお約束:
+
+- 必要な条件(1つ):
+  - 予め用意されているtransformsの動作に習うために **「コール可能なクラス」として実装する必要がある**
+    - (「コール可能」とは__call__を実装しているクラスのこと...!:thinking:)
+- なぜコール可能にする必要がある??
+  - 公式チュートリアルによると...
+    - >We will write them as callable classes instead of simple functions so that parameters of the transform need not be passed everytime it’s called.
+  - **つまり、クラスにしておけば、インスタンス化時に前処理に使うパラメータを全部渡して置けるので、前処理を実行するたびにパラメータを渡すという手間が省けるから**。
+
+ex. 
+
+```python
+class Square(object):
+    def __init__(self):
+        pass
+    
+    def __call__(self, sample: int) -> int:
+        # 任意の前処理を実装
+        return sample ** 2
+
+transform = Square()
+print(transform(1)) # -> 1
+print(transform(2)) # -> 4
+print(transform(3)) # -> 9
+print(transform(4)) # -> 16
+```
+
+#### Datasetの実装のお約束:
+
+- PyTorchでは有名なデータセットがあらかじめtorchvision.datasetsに定義されている。**自前のデータを扱いたいときは自分のデータをリードして返してくれるDatasetを実装する必要**がある。
+- 必要な条件(3つ):
+  - 一つ目: `torch.utils.data.Dataset`を継承すること。
+  - 二つ目: `__len__`メソッドを実装すること。
+    - (`len(obj)`で実行されたときにコールされる関数...!:thinking:)
+  - 三つ目: `__getitem__`メソッドを実装すること。
+    - (`obj[idx]`のようにindex指定されたときにコールされる関数...!:thinking:)
+
+ex. 
+
+```python
+import torch
+
+# 必要条件1: torch.utils.data.Datasetを継承してること。
+class MyDataset(torch.utils.data.Dataset):
+  def __init__(self, data_num, transform=None):
+        self.transform = transform
+        self.data_num = data_num
+        self.data = []
+        self.label = []
+        for x in range(self.data_num):
+            self.data.append(x) # 0 から (data_num-1) までのリスト
+            self.label.append(x%2 == 0) # 偶数ならTrue 奇数ならFalse
+    
+    # 必要条件2: __len__メソッドを実装してること。
+    def __len__(self):
+        return self.data_num
+
+    # 必要条件3: __getitem__メソッドを実装してること。
+    def __getitem__(self, idx):
+        out_data = self.data[idx]
+        out_label =  self.label[idx]
+        
+        # ポイント: データを返す前にtransformで前処理をしてから返してるところ。
+        if self.transform:
+            out_data = self.transform(out_data)
+            
+        return out_data, out_label
+  
+# 呼び出し例
+data_set = MyDataset(10, transform=None)
+print(data_set[0]) # -> (0, True)
+print(data_set[1]) # -> (1, False)
+print(data_set[2]) # -> (2, True)
+print(data_set[3]) # -> (3, False)
+print(data_set[4]) # -> (4, True)
+
+# 先ほど実装したtransformsを渡してみる.
+# データが二乗されていることに注目.
+data_set = MyDataset(10, transform=Square())
+print(data_set[0]) # -> (0, True)
+print(data_set[1]) # -> (1, False)
+print(data_set[2]) # -> (4, True)
+print(data_set[3]) # -> (9, False)
+print(data_set[4]) # -> (16, True)
+```
+
+#### DataLoaderの実装のお約束:
+
+- DataLoaderは、上で説明したDatasetの仕組みを利用してバッチサイズ分のデータを生成する。
+- また、データのシャッフル機能も持つ。
+- **データを返す時は、データをtensor型に変換して返す。**
+  - tensor型は計算グラフを保持することができるデータ型なので、DeepLearningの勾配計算に不可欠なデータ型。
+- 基本的には自前で用意する必要はなく、`torch.utils.data.DataLoader`をインスタンス化して十分に対応できるケースがほとんど。
+
+ex. 
+
+```python
+import torch
+data_set = MyDataset(10, transform=Square())
+dataloader = torch.utils.data.DataLoader(data_set, batch_size=2, shuffle=True)
+
+for i in dataloader:
+    print(i)
+
+# [tensor([ 4, 25]), tensor([1, 0])]
+# [tensor([64,  0]), tensor([1, 1])]
+# [tensor([36, 16]), tensor([1, 1])]
+# [tensor([1, 9]), tensor([0, 0])]
+# [tensor([81, 49]), tensor([0, 0])]
+```
+
+学習の際には、dataloaderのループを更にepochのループで被せるイメージ。
+
+```python
+epochs = 4
+for epoch in epochs:
+    for i in dataloader:
+        # 学習処理
+```
+
+### Datasetクラスはpandasベースやnumpyベースよりもpolarsベースが高速らしい!
+
+- 機械学習モデルの学習や推論では、column単位のアクセスではなくrow単位のアクセスの頻度が多く、それが高速に動作する事は非常に重要のはず。
+  - **polarsはrow単位のアクセスが苦手なはず。なぜならデータを内部でarrow formatで保持しているから。その代わりにcolumn単位のアクセスが得意**。
+- なのになぜpolarsベースが早くなるのか??
+  - numpyとpolarsを、純粋なrow単位のrandom accessで比較するとnumpyの方がかなり高速。
+  - でも、**numpy.array -> torch.tensorの変換のoverheadが非常に大きいらしく**、row単位のアクセスの差が誤差になるくらい。
+    - tuple -> torch.tensorの変換の方がやや早いらしい。
+    - でもtorch.from_numpy()の場合はnumpy.arrayのコピーを作らないから、速度向上が見込めるらしい。
+  - 結果として、polarsの方がnumpyよりも高速になるらしい。
+    - polarsの場合は、df -> tuple -> torch.tensorの変換で、numpy.arrayを経由しないから早くなってるみたい。
+
+
+例:
+
+```python
+    def __getitem__(self, idx):
+        features = np.array(self.dataframe.row(idx)[:-1])
+        target = np.array(self.dataframe.row(idx)[-1])
+        features = self.dataframe.row(idx)[:-1]
+        target = self.dataframe.row(idx)[-1]
+        return torch.tensor(features, dtype=torch.float32), torch.tensor(
+            target, dtype=torch.float32
+        )
+```
+
 
