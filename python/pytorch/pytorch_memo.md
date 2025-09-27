@@ -223,7 +223,8 @@ tensor([[ 4.0000,  5.1000,  6.3000]])
   - [x] [Pytorch+Polarsで高速で動作するDatasetを作る](https://zenn.dev/wotb_pythonista/articles/c5453b6e3d4625)
   - [x] [torch.tensor への変換における Numpy と Polars の速度比較](https://zenn.dev/uchiiii/articles/f58519345987ca)
   - [x] [Pytorch DataLoaderで学習高速化！num_workersを増やすだけじゃダメ！](https://blog.master-of-ai.jp/posts/dataloader/)
-  - [ ] [PyTorchでの学習・推論を高速化するコツ集](https://qiita.com/sugulu_Ogawa_ISID/items/62f5f7adee083d96a587)
+  - [x] [PyTorchでの学習・推論を高速化するコツ集](https://qiita.com/sugulu_Ogawa_ISID/items/62f5f7adee083d96a587)
+  - [x] Two-Tower モデルで作る高速でスケーラブルなレコメンドシステム(https://note.com/kokopelli_inc/n/nd89c1b89b741)
 
 
 ### transforms/dataset/dataloaderのざっくり役割・関係性メモ
@@ -401,7 +402,6 @@ for epoch in epochs:
   - `batch_size`引数
   - `shuffle`引数: epochごとにデータをシャッフルするかどうか。
   - `num_workers`引数: 並列データ読み込みのプロセス数。
-    - pytorch推奨 `os.cpu_count()`, もしくは 2くらいあれば十分という意見もある。
   - `pin_memory`引数: CPU -> GPU転送を非同期に (CUDA環境ならTrueにするのが良いらしい)。
   - `drop_last`引数: 最後に余る端数バッチを捨てるかどうか。
   - `persistent_workers`引数: Trueにすると、DataLoaderのプロセスがエポック間で生き続ける。
@@ -436,4 +436,7 @@ DataLoader(ds,
   - サンプル数に換算すると、4*4*32=512サンプル分がメモリ上にスタンバイされることになる。
   - よってメモリの占有率は上昇するが、読み込みに時間がかかるデータにおいては、先に裏で読み込みを行うことで学習時間の短縮が期待できる。
 
+### NVIDIAが提唱するpytorch高速化tips
 
+- `num_workers`は `os.cpu_count()`
+  - 一方で2くらいあれば十分という意見もある。
