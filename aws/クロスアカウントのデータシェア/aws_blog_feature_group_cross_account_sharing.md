@@ -1,5 +1,7 @@
 refs: https://aihub.hkuspace.hku.hk/2024/02/14/amazon-sagemaker-feature-store-now-supports-cross-account-sharing-discovery-and-access/
 
+<!-- オフラインストアへのアクセスは、なんかコレだけじゃダメっぽい?? -->
+
 # Amazon SageMaker Feature Store now supports cross-account sharing, discovery, and access
 # Amazon SageMaker Feature Storeがクロスアカウント共有、発見、アクセスをサポートするようになりました
 

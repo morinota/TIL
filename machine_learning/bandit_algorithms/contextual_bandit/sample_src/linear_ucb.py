@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 import numpy as np
-from contextual_bandit_interface import Arm, Context, ContextualBanditInterface
+from contextual_bandit_interface import Arm, ContextualBanditInterface
 
 
 class LinUCB(ContextualBanditInterface):

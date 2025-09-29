@@ -7,7 +7,7 @@ Matching users based on mutual preferences is a fundamental aspect of services d
 相互の好みに基づいてユーザーをマッチングすることは、求人検索やデーティングアプリケーションなどの相互推薦に基づくサービスの基本的な側面です。
 Although A/B tests remain the gold standard for evaluating new policies in recommender systems for matching markets, it is costly and impractical for frequent policy updates. 
 **A/Bテストはマッチング市場のレコメンダーシステムにおける新しいポリシーを評価するための金標準であり続けていますが、頻繁なポリシー更新にはコストがかかり、実用的ではありません**。
-Off-Policy Evaluation (OPE) thus plays a crucial role by enabling the evaluation of recommendation policies using only offline logged data naturally collected on the platform. 
+Off-Policy Evaluation (OPE) thus plays a crucial role by enabling the evaluation of recommendation policies using only offline logged data naturally collected on the platform.
 したがって、オフポリシー評価（OPE）は、プラットフォーム上で自然に収集されたオフラインのログデータのみを使用して推薦ポリシーを評価できるため、重要な役割を果たします。
 However, unlike conventional recommendation settings, the large scale and bidirectional nature of user interactions in matching platforms introduce variance issues and exacerbate reward sparsity, making standard OPE methods unreliable. 
 しかし、従来の推薦設定とは異なり、マッチングプラットフォームにおけるユーザーインタラクションの大規模かつ双方向の性質は、分散の問題を引き起こし、報酬の希薄化を悪化させるため、標準的なOPE手法は信頼性がありません。
