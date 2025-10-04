@@ -249,6 +249,9 @@ $$
 where $\omega_j = e^{\langle u, v_j \rangle - \log(Q_j)}$ incorporates the logQ correction utilized in sampled softmax [1, 2]. 
 ここで、$\omega_j = e^{\langle u, v_j \rangle - \log(Q_j)}$ は、サンプリングされたソフトマックスで使用されるlogQ補正を組み込みます[1, 2]。
 
+<!-- 上記は、一般化したネガティブサンプリングの話 -->
+<!-- 下記で、代表的なネガティブサンプリング手法として、バッチネガティブサンプリングを紹介してる -->
+
 A commonly-used sampling strategy for two-tower DNN model is the batch negative sampling.
 two-tower DNNモデルの一般的に使用されるサンプリング戦略は、**バッチネガティブサンプリング**です。
 Specifically, batch negative sampling treats other items in the same training batch as sampled negatives and therefore the sampling distribution Q follows the unigram distribution based on item frequency. 
