@@ -255,15 +255,15 @@ where $\omega_j = e^{\langle u, v_j \rangle - \log(Q_j)}$ incorporates the logQ 
 A commonly-used sampling strategy for two-tower DNN model is the batch negative sampling.
 two-tower DNNモデルの一般的に使用されるサンプリング戦略は、**バッチネガティブサンプリング**です。
 Specifically, batch negative sampling treats other items in the same training batch as sampled negatives and therefore the sampling distribution Q follows the unigram distribution based on item frequency. 
-具体的には、バッチネガティブサンプリングは、同じトレーニングバッチ内の他のアイテムをサンプリングされたネガティブとして扱い、したがってサンプリング分布$Q$はアイテムの頻度に基づくユニグラム分布に従います。
+具体的には、バッチネガティブサンプリングは、**同じトレーニングバッチ内の他のアイテムをサンプリングされたネガティブとして扱い**、したがってサンプリング分布$Q$はアイテムの頻度(観測頻度? tap頻度?)に基づくユニグラム分布に従います。
 It avoids feeding additional negative samples to the right tower and thus saves computation cost. 
-これにより、右の塔に追加のネガティブサンプルを供給することを避け、計算コストを節約します。
+これにより、右の塔(=アイテムタワー?)に追加のネガティブサンプルを供給することを避け、計算コストを節約します。
 Figure 2 shows the computation process in one training batch. 
 図2は、1つのトレーニングバッチにおける計算プロセスを示しています。
 Given B pairs of {query, item} in a batch, features of B queries and B items go through the left and right towers of the model, respectively, producing B × K (K is the embedding dimension) embedding matrices U and V. 
 バッチ内にBペアの{クエリ、アイテム}が与えられると、B個のクエリとB個のアイテムの特徴がそれぞれモデルの左の塔と右の塔を通過し、B × K（Kは埋め込み次元）埋め込み行列$U$と$V$を生成します。
 Then the logits matrix can be calculated as $L = UV^T$. 
-次に、logits行列は$L = UV^T$として計算できます。
+次に、**logits行列**は$L = UV^T$として計算できます。(shapeはbatch_size x batch_sizeになる...!:thinking_face:)
 While the batch negative sampling significantly improves training speed, we discuss its problems in the next sub-section and propose an alternative sampling strategy accordingly. 
 **バッチネガティブサンプリングはトレーニング速度を大幅に改善**しますが、次の小節でその問題について議論し、それに応じて代替のサンプリング戦略を提案します。
 
@@ -272,7 +272,7 @@ While the batch negative sampling significantly improves training speed, we disc
 ### 3.3 Mixed Negative Sampling 混合ネガティブサンプリング
 
 Controlling bias and variance of the gradient estimator is critical to model quality. 
-**勾配推定器のバイアスと分散を制御することは、モデルの品質にとって重要**です。(OPEやOPLっぽい観点だ...!:thinking_face:)
+**勾配推定器のバイアスと分散を制御することは、モデルの品質にとって重要**です。(OPEやOPL、というか統計的推定っぽい観点だ...!:thinking_face:)
 There are two ways to reduce bias and variance [2]: (1) increasing the sample size; (2) reducing the discrepancy between proposed Q distribution and target distribution P.
 バイアスと分散を減少させる方法は2つあります[2]： (1) サンプルサイズの増加; (2) 提案されたQ分布とターゲット分布Pとの不一致を減少させることです。
 (結局Q分布とか使ってるってことは、どちらかというとDM推定量的な話なのかな...!:thinking_face:)
@@ -282,7 +282,7 @@ In case of training two-tower DNN models, batch negative sampling implicitly set
 It has 2 problems in recommendation scenarios:
 推薦シナリオには2つの問題があります：
 - (1) Selection bias: for example, an item with no user feedback will not be included as a candidate app in the training data. 
-  - (1) 選択バイアス：例えば、ユーザーフィードバックのないアイテムは、トレーニングデータの候補アプリとして含まれません。
+  - (1) 選択バイアス：例えば、ユーザーフィードバックのないアイテムは、トレーニングデータの候補アイテムとして含まれません。
   Thus it will never be sampled as a negative with batch negative sampling. 
   したがって、バッチネガティブサンプリングではネガティブとしてサンプリングされることは決してありません。
   Consequently, the model lacks capability to differentiate items with sparse feedback w.r.t other items.
