@@ -233,18 +233,24 @@ $$
 
 The second term represents the expectation of ∇θ (⟨u,vj⟩) with respect to P(·|x) (referred to as target distribution). It is generally impractical to compute the second term over all items in a huge corpus. As a result, we approximate this expectation by sampling a small number of items using importance sampling [2].
 第二項は P(·|x)に関する∇θ (⟨u,vj⟩)の期待値を表しており（これをターゲット分布と呼びます）、**巨大なコーパス内のすべてのアイテムに対して第二項を計算することは一般的に実用的ではありません**。その結果、**この期待値を重要サンプリング[2]を使用して少数のアイテムをサンプリングすることによって近似**します。
+
+<!-- そうか、上記の話は、そもそもなぜネガティブサンプリングをするんだっけというモチベーションの話を、loss関数の勾配の定義式を導入して解説してくれたのか...!:thinking: -->
+
 Specifically, we sample a subset of items C′ from the corpus with a predefined distribution Q with Qj being the sampling probability of item j and estimate the second term in Equation (3) as:
 具体的には、事前定義された分布Qを使用してコーパスからアイテムのサブセット$C'$をサンプリングし、アイテム$j$のサンプリング確率が$Q_j$であるとして、式(3)の第二項を次のように推定します：
 
 $$
-\mathbb{E}_P [\nabla_\theta (\langle u, v_j \rangle)] \approx \sum_{j' \in C'} \omega_j \nabla_\theta (\langle u, v_{j'} \rangle), 
+% 式3の第二項 = 離散確率変数の期待値の式なので、sumから抽象化してEで表してる。
+\mathbb{E}_P [\nabla_\theta (\langle u, v_j \rangle)] 
+\\
+\approx \sum_{j' \in C'} \omega_j \nabla_\theta (\langle u, v_{j'} \rangle), 
 $$
 
 where $\omega_j = e^{\langle u, v_j \rangle - \log(Q_j)}$ incorporates the logQ correction utilized in sampled softmax [1, 2]. 
-ここで、$\omega_j = e^{\langle u, v_j \rangle - \log(Q_j)}$は、サンプリングされたソフトマックスで使用されるlogQ補正を組み込みます[1, 2]。
+ここで、$\omega_j = e^{\langle u, v_j \rangle - \log(Q_j)}$ は、サンプリングされたソフトマックスで使用されるlogQ補正を組み込みます[1, 2]。
 
 A commonly-used sampling strategy for two-tower DNN model is the batch negative sampling. 
-二塔DNNモデルの一般的に使用されるサンプリング戦略は、**バッチネガティブサンプリング**です。
+two-tower DNNモデルの一般的に使用されるサンプリング戦略は、**バッチネガティブサンプリング**です。
 Specifically, batch negative sampling treats other items in the same training batch as sampled negatives and therefore the sampling distribution Q follows the unigram distribution based on item frequency. 
 具体的には、バッチネガティブサンプリングは、同じトレーニングバッチ内の他のアイテムをサンプリングされたネガティブとして扱い、したがってサンプリング分布$Q$はアイテムの頻度に基づくユニグラム分布に従います。
 It avoids feeding additional negative samples to the right tower and thus saves computation cost. 
