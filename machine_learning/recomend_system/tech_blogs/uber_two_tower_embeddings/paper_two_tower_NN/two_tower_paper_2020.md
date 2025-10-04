@@ -3,6 +3,7 @@ https://storage.googleapis.com/gweb-research2023-media/pubtools/6090.pdf
 # Mixed Negative Sampling for Learning Two-tower Neural Networks in Recommendations  
 
 ### ABSTRACT 要約
+
 Learning query and item representations is important for building large scale recommendation systems. 
 クエリとアイテムの表現を学習することは、大規模な推薦システムを構築するために重要です。
 
@@ -25,29 +26,6 @@ We also conduct online A/B testing and demonstrate that the two-tower retrieval 
 Information Retrieval, Neural Networks, Context-aware Recommender Systems, Extreme Classification
 情報検索、ニューラルネットワーク、コンテキスト対応推薦システム、極端な分類
 
-**ACM Reference Format:** Ji Yang, Xinyang Yi, Derek Zhiyuan Cheng, Lichan Hong, Yang Li, Simon Xiaoming Wang, Taibai Xu, and Ed H. Chi. 2020. Mixed Negative Sampling for Learning Two-tower Neural Networks in Recommendations. 
-**ACM 参考フォーマット:** Ji Yang, Xinyang Yi, Derek Zhiyuan Cheng, Lichan Hong, Yang Li, Simon Xiaoming Wang, Taibai Xu, および Ed H. Chi. 2020. 推薦における二塔型ニューラルネットワーク学習のための混合ネガティブサンプリング。
-
-In _Companion Proceedings of the Web Conference 2020 (WWW ’20 Companion), April 20–24, 2020, Taipei, Taiwan. ACM, New York, NY, USA, 7 pages._ 
-_2020年ウェブ会議（WWW ’20 Companion）付録論文集において、2020年4月20日から24日、台湾台北。ACM、ニューヨーク、NY、アメリカ、7ページ。_
-
-This paper is published under the Creative Commons Attribution 4.0 International (CC-BY 4.0) license. 
-この論文は、クリエイティブ・コモンズ 表示 4.0 国際（CC-BY 4.0）ライセンスの下で公開されています。
-
-Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution. 
-著者は、適切な帰属をもって、個人および法人のウェブサイトで作品を配布する権利を留保します。
-
-_WWW ’20 Companion, April 20–24, 2020, Taipei, Taiwan_ 
-_WWW ’20 Companion、2020年4月20日から24日、台湾台北_
-
-© 2020 IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY 4.0 License. 
-© 2020 IW3C2（国際ワールドワイドウェブ会議委員会）、クリエイティブ・コモンズ CC-BY 4.0 ライセンスの下で公開。
-
-ACM ISBN 978-1-4503-7024-0/20/04. 
-ACM ISBN 978-1-4503-7024-0/20/04。
-
-[https://doi.org/10.1145/3366424.3386195](https://doi.org/10.1145/3366424.3386195)
-[https://doi.org/10.1145/3366424.3386195](https://doi.org/10.1145/3366424.3386195)
 
 ## 1 INTRODUCTION はじめに
 
@@ -116,23 +94,25 @@ In particular, in addition to the negatives sampled from batch training data, we
 特に、**バッチトレーニングデータからサンプリングされたネガティブに加えて、候補コーパスからネガティブを一様にサンプリングして追加のネガティブとして使用**します。
 This two-stream negative sampling enables us to: (1) reduce selection bias by bringing in samples from the entire candidate corpus; (2) adjust the sampling distribution by changing the number of additional negative samples from the corpus.  
 この二重ストリームネガティブサンプリングにより、次のことが可能になります：(1) 全候補コーパスからサンプルを取り入れることで選択バイアスを減少させること；(2) コーパスからの追加ネガティブサンプルの数を変更することでサンプリング分布を調整すること。
-We further demonstrate the effectiveness of our retrieval system with both offline and online experiments on Google Play.  
+We further demonstrate the effectiveness of our retrieval system with both offline and online experiments on Google Play.
 さらに、Google Playでのオフラインおよびオンライン実験を通じて、私たちの検索システムの有効性を示します。
-Offline studies showed that MNS significantly improves retrieval quality.  
+Offline studies showed that MNS significantly improves retrieval quality.
 オフラインの研究では、MNSがretrieve品質を大幅に改善することが示されました。
 In addition, online A/B testing shows that the two-tower model trained with MNS leads to more high-quality app installs from for Google Play.  
-さらに、オンラインA/Bテストでは、MNSでトレーニングされたツータワーモデルがGoogle Playからの高品質なアプリインストールを増加させることが示されています。
-The lessons from this case study sheds light for other large-scale recommendation systems dealing with huge item catalogs.  
+さらに、**オンラインA/Bテスト**では、MNSでトレーニングされたツータワーモデルがGoogle Playからの高品質なアプリインストールを増加させることが示されています。
+The lessons from this case study sheds light for other large-scale recommendation systems dealing with huge item catalogs.
 このケーススタディからの教訓は、大規模なアイテムカタログを扱う他の大規模推薦システムに光を当てます。
 
 In summary, our contributions are:  
 要約すると、私たちの貢献は次のとおりです：
 
+(この貢献1は、two-towerモデルが実運用で扱いやすいよという話...!!:thinking_face:)
 - Real-world application. We showcase how to apply the dual-encoder framework to improve a large scale, production app recommendation system.  
 - 実世界の応用。私たちは、デュアルエンコーダーフレームワークを適用して大規模な生産アプリ推薦システムを改善する方法を示します。
 In particular, we show how to leverage the item tower to mitigate the well-known cold-start problem of embedding-based approaches. 
 特に、埋め込みベースのアプローチのよく知られた**コールドスタート問題を軽減するためにアイテムタワーを活用する方法**を示します。(MFと比べてって話か)
 
+(他のTwo-towerモデルのアプローチと比較した、本論文の新規性の話...!!:thinking_face:)
 - Mixed negative sampling. 
 - 混合ネガティブサンプリング。(これはtwo-towerモデルの学習方法の話なので、あまり興味ない...!:thinking_face:)
 We present the problem of selection bias in the commonly used unigram and batch negative sampling methods, and propose a novel negative sampling approach called mixed negative sampling. 
@@ -173,7 +153,7 @@ However, neither hierarchical softmax nor sampled softmax is applicable to our t
 People started to adopt two-tower DNNs to learn representation from content features in language models [6, 16, 19].  
 人々は、**言語モデル[6, 16, 19]におけるコンテンツ特徴から表現を学習するためにツータワーDNNを採用し始めました**。(そういう経緯なのか...!:thinking_face:)
 Two-tower DNNs have also been introduced for retrieval task to leverage rich content feature on item side in recommender systems with application in video recommendations [24], where batch negative sampling based on item frequency estimation is adopted to correct sampling bias.  
-ツータワーDNNは、アイテム側の豊富なコンテンツ特徴を活用するために検索タスクにも導入されており、ビデオ推薦[24]におけるアプリケーションでは、アイテム頻度推定に基づくバッチネガティブサンプリングが採用されてサンプリングバイアスを修正しています。
+ツータワーDNNは、アイテム側の豊富なコンテンツ特徴を活用するために検索タスクにも導入されており、**ビデオ推薦[24]におけるアプリケーションでは、アイテム頻度推定に基づくバッチネガティブサンプリングが採用されてサンプリングバイアスを修正**しています。
 In contrast, our work found it important to reduce the selection bias brought by batch negative sampling in the application for app recommendations, which has not been considered in existing works to the best of our knowledge.  
 対照的に、私たちの研究では、アプリ推薦のアプリケーションにおいて**バッチネガティブサンプリングによってもたらされる選択バイアスを減少させることが重要である**と考えています。これは、既存の研究では考慮されていないと私たちの知る限りではあります。
 (まあ反実仮想的な部分をどうにか考慮する必要があるよね、という議論はあるんだな)
@@ -231,9 +211,11 @@ $$
 To simplify notations, we denote u as the embedding for a given query x and vj as the embedding for item j from the corpus C. 
 記法を簡略化するために、$u$を与えられたクエリ$x$の埋め込み、$v_j$をコーパス$C$からのアイテム$j$の埋め込みとします。
 The cross-entropy loss for a {query (x), item (y_l, positive label)} pair becomes: 
-{クエリ(x)、アイテム(y_l, 正のラベル)}ペアのクロスエントロピー損失は次のようになります：
+{クエリ(x)、アイテム(y_l, 正のラベル)}ペアのクロスエントロピー損失は次のようになります:
+(これは、1+Kの多クラス分類問題とみなした話...!:thinking_face:)
 
 <!-- ここまで読んだ! 正直、この辺りの損失関数はあんまり今回は興味ない!結局ケースバイケースなので:thinking_face:) -->
+<!-- ↑とは当時言ってたが、実際にtwo-towerモデルを運用するようになって、かなり興味が出た!笑 -->
 
 $$
 L = -\log(P(y_l | x)) = -\log \left( \frac{e^{\langle u, v_l \rangle}}{\sum_{j \in C} e^{\langle u, v_j \rangle}} \right). 
@@ -243,11 +225,14 @@ Taking gradient of Equation (2) with respect to parameter θ gives
 式(2)のパラメータ$\theta$に関する勾配を取ると、
 
 $$
-勾配の式
+\nabla_{\theta} L = \nabla_{\theta} (- \log(P(y_l | x))) 
+\\
+= - \nabla_{\theta} (\langle u, v_l \rangle) + \sum_{j \in C} P(y_{j} | x) \nabla_{\theta} (\langle u, v_j \rangle)
+\tag{3}
 $$
 
 The second term represents the expectation of ∇θ (⟨u,vj⟩) with respect to P(·|x) (referred to as target distribution). It is generally impractical to compute the second term over all items in a huge corpus. As a result, we approximate this expectation by sampling a small number of items using importance sampling [2].
-第二項は P(·|x)に関する∇θ (⟨u,vj⟩)の期待値を表しており（これをターゲット分布と呼びます）、巨大なコーパス内のすべてのアイテムに対して第二項を計算することは一般的に実用的ではありません。その結果、重要サンプリングを使用して、この期待値を少数のアイテムで近似します[2]。
+第二項は P(·|x)に関する∇θ (⟨u,vj⟩)の期待値を表しており（これをターゲット分布と呼びます）、**巨大なコーパス内のすべてのアイテムに対して第二項を計算することは一般的に実用的ではありません**。その結果、**この期待値を重要サンプリング[2]を使用して少数のアイテムをサンプリングすることによって近似**します。
 Specifically, we sample a subset of items C′ from the corpus with a predefined distribution Q with Qj being the sampling probability of item j and estimate the second term in Equation (3) as:
 具体的には、事前定義された分布Qを使用してコーパスからアイテムのサブセット$C'$をサンプリングし、アイテム$j$のサンプリング確率が$Q_j$であるとして、式(3)の第二項を次のように推定します：
 
@@ -259,7 +244,7 @@ where $\omega_j = e^{\langle u, v_j \rangle - \log(Q_j)}$ incorporates the logQ 
 ここで、$\omega_j = e^{\langle u, v_j \rangle - \log(Q_j)}$は、サンプリングされたソフトマックスで使用されるlogQ補正を組み込みます[1, 2]。
 
 A commonly-used sampling strategy for two-tower DNN model is the batch negative sampling. 
-二塔DNNモデルの一般的に使用されるサンプリング戦略は、バッチネガティブサンプリングです。
+二塔DNNモデルの一般的に使用されるサンプリング戦略は、**バッチネガティブサンプリング**です。
 Specifically, batch negative sampling treats other items in the same training batch as sampled negatives and therefore the sampling distribution Q follows the unigram distribution based on item frequency. 
 具体的には、バッチネガティブサンプリングは、同じトレーニングバッチ内の他のアイテムをサンプリングされたネガティブとして扱い、したがってサンプリング分布$Q$はアイテムの頻度に基づくユニグラム分布に従います。
 It avoids feeding additional negative samples to the right tower and thus saves computation cost. 
@@ -271,7 +256,7 @@ Given B pairs of {query, item} in a batch, features of B queries and B items go 
 Then the logits matrix can be calculated as $L = UV^T$. 
 次に、logits行列は$L = UV^T$として計算できます。
 While the batch negative sampling significantly improves training speed, we discuss its problems in the next sub-section and propose an alternative sampling strategy accordingly. 
-バッチネガティブサンプリングはトレーニング速度を大幅に改善しますが、次の小節でその問題について議論し、それに応じて代替のサンプリング戦略を提案します。
+**バッチネガティブサンプリングはトレーニング速度を大幅に改善**しますが、次の小節でその問題について議論し、それに応じて代替のサンプリング戦略を提案します。
 
 <!-- ここまで読んだ! -->
 
