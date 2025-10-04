@@ -335,7 +335,7 @@ We use a deep neural network with similar architecture as candidate generation t
 The list of videos is then sorted by this score and returned to the user.
 ビデオのリストはこのスコアでソートされ、ユーザに返される。
 Our final ranking objective is constantly being tuned based on live A/B testing results but is generally a simple function of expected watch time per impression.
-最終的なランキングの目的関数は、ライブのA/Bテストの結果に基づいて常に調整されていますが、一般的には、インプレッションあたりの予想視聴時間の単純な関数です。
+**最終的なランキングの目的関数は、ライブのA/Bテストの結果に基づいて常に調整されていますが、一般的には、インプレッションあたりの視聴時間の期待値という単純な関数**です。
 Ranking by click-through rate often promotes deceptive videos that the user does not complete (“clickbait”) whereas watch time better captures engagement [13, 25].
 **クリックスルー率によるランキングは、しばしばユーザが完了しない偽の動画（「クリックベイト」）を促進するのに対し、視聴時間はengagementをよりよく捉える[13, 25]**。
 
@@ -366,7 +366,7 @@ The main challenge is in representing a temporal sequence of user actions and ho
 主な課題は、ユーザアクションの時間的sequenceを表現することと、これらのアクションがどのように採点されるビデオのimpressionと関連しているかを表現することである。
 
 We observe that the most important signals are those that describe a user’s previous interaction with the item itself and other similar items, matching others’ experience in ranking ads [7].
-最も重要なシグナルは、**ユーザのアイテム自体や他の類似アイテムとの過去のinteractionを記述するもの**であり、広告のランキングにおける他の人の経験と一致することが観察される[7]。
+**最も重要なシグナルは、ユーザのアイテム自体や他の類似アイテムとの過去のinteractionを記述するもの**であり、広告のランキングにおける他の人の経験と一致することが観察される[7]。
 As an example, consider the user’s past history with the channel that uploaded the video being scored
 一例として、採点対象の動画をアップロードしたチャンネルでのユーザの過去の履歴を考えてみましょう。
 how many videos has the user watched from this channel?

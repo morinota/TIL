@@ -203,7 +203,7 @@ p_{i} = \frac{exp(y^{+}_{i})}{exp(y^{+}_{i}) + \sum_{j=1}^{K} exp(y^{-}_{j})}
 $$
 
 - 損失関数:
-  - ニュースのクリック確率予測問題を、**擬似的な(K + 1)個分類タスクとして定式化**し、損失関数を「全てのpositive sample $S$ の負の対数尤度」として以下のように定式化する
+  - **ニュースのクリック確率予測問題を、擬似的な(K + 1)個分類タスクとして定式化**し、損失関数を「全てのpositive sample $S$ の負の対数尤度」として以下のように定式化する
     - (要はmaximum likelihood estimation...!:thinking:)
     - pytorchでいうところの`nn.functional.cross_entropy`を使うやつか...!:thinking:
 

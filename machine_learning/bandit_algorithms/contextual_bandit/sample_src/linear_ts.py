@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import numpy as np
 import polars as pl
 
@@ -33,6 +36,50 @@ class LinTS:
             self.b += reward * combined_context
 
         self.is_fitted = True
+
+    def save(self, filepath: str) -> None:
+        """モデルパラメータをJSON形式で保存する
+
+        Args:
+            filepath: 保存先のファイルパス（.json拡張子推奨）
+        """
+        if not self.is_fitted:
+            raise ValueError("モデルがフィットされていません")
+
+        params = {
+            "v": float(self.v),
+            "A": self.A.tolist(),  # NumPy配列をリストに変換
+            "b": self.b.tolist(),  # NumPy配列をリストに変換
+            "is_fitted": bool(self.is_fitted),
+            "A_shape": list(self.A.shape),  # 形状情報を保存
+            "b_shape": list(self.b.shape)
+        }
+
+        Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(params, f, indent=2, ensure_ascii=False)
+
+    @classmethod
+    def load(cls, filepath: str, v: float = None) -> "LinTS":
+        """保存されたJSONファイルからモデルパラメータを読み込んで初期化する
+
+        Args:
+            filepath: 読み込むJSONファイルパス
+            v: ノイズの分散パラメータ（Noneの場合は保存された値を使用）
+
+        Returns:
+            読み込まれたモデル
+        """
+        with open(filepath, "r", encoding="utf-8") as f:
+            params = json.load(f)
+
+        model = cls(v=v if v is not None else params["v"])
+        # リストからNumPy配列に復元
+        model.A = np.array(params["A"]).reshape(params["A_shape"])
+        model.b = np.array(params["b"]).reshape(params["b_shape"])
+        model.is_fitted = params["is_fitted"]
+
+        return model
 
     def sample(self, context_df: pl.DataFrame, action_df: pl.DataFrame) -> pl.DataFrame:
         """Thompson Samplingで最適なアームを選択
@@ -121,3 +168,23 @@ if __name__ == "__main__":
     # Thompson Samplingでアーム選択
     result = model.sample(context_df, action_df)
     print(f"選択されたアーム: {result}")
+
+    # モデルの保存
+    print("\n--- モデルの保存と読み込み ---")
+    model.save("model_params.json")
+    print("モデルを model_params.json に保存しました")
+
+    # 新しいモデルとして読み込み
+    loaded_model = LinTS.load("model_params.json")
+    print(f"モデルを読み込みました。v={loaded_model.v}")
+    print(f"パラメータ形状: A={loaded_model.A.shape}, b={loaded_model.b.shape}")
+
+    # 読み込んだモデルで推論
+    new_result = loaded_model.sample(context_df, action_df)
+    print(f"読み込んだモデルでの選択: {new_result}")
+
+    # vを変更して読み込み（探索率を調整）
+    exploration_model = LinTS.load("model_params.json", v=1.0)  # より探索的に
+    print(f"\n探索率を高めたモデル（v={exploration_model.v}）")
+    exploration_result = exploration_model.sample(context_df, action_df)
+    print(f"探索的モデルでの選択: {exploration_result}")

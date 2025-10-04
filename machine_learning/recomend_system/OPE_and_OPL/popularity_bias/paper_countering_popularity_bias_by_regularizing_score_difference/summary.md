@@ -482,3 +482,32 @@ def test_train_bpr(
     for epoch_loss in loss_histroy:
         assert epoch_loss >= 0
 ```
+
+## 対照学習のPytorchでの実装メモ
+
+- `nn.functional.cross_entropy()`が結構使いやすそう。
+  - 多クラス分類とかでよく使われる損失関数。
+  - 引数:
+    - `input`: モデルの出力 (バッチサイズ x クラス数)
+    - `target`: 正解ラベル (バッチサイズ) (各サンプルの正解クラスのインデックスを表すint配列)
+    - `weight`: 各クラスの重み (クラス数) (オプション)
+    - `size_average`: Trueなら損失を平均化, Falseなら合計 (デフォルトTrue)
+    - `ignore_index`: 無視するクラスのインデックス (デフォルト-100)
+    - `reduce`: 損失を縮約するかどうか (デフォルトTrue)
+    - `reduction`: 'none', 'mean', 'sum'のいずれか (デフォルト'mean')
+    - `label_smoothing`: ラベル平滑化の値 (デフォルト0.0)
+  - ざっくり挙動:
+    - `input`で渡されたlogitsをsoftmax関数で確率質量関数に変換。
+    - その確率分布と、`target`で指定された正解ラベルとのクロスエントロピー(=分布間の距離指標?)を計算。
+    - 「正解ラベルの確率質量が高い(i.e. 分布の形状が似てるほど?)ほどlossが小さくなり、低ければ大きくなる」イメージ。
+
+数式だと
+
+$$
+loss(x, class) = - \log{\frac{exp(x[class])}{\sum_j exp(x[j])}}
+$$
+
+- contrastive learningでの用途:
+  - バッチ内の各サンプルを正例として扱い、他のサンプルを負例として扱うように使用可能。
+  - 特にin-batch negativeでは、バッチ内の他のすべてのサンプルを負例として扱ったりする。
+  - でもアイテムの重複は排除した方が良さそう。
