@@ -324,6 +324,12 @@ Width and depth were added until the incremental benefit diminished and converge
 
 # 4. Ranking ランキング
 
+- メモ:
+  - 読んだ感じ、rerankingフェーズはtwo-towerじゃなくて、1つのタワー型モデルって感じ。
+  - DNN -> ロジスティック回帰という1タワー構成。
+  - 入力として、retrieveフェーズのtwo-towerモデルで作ったアイテム埋め込みや、視聴履歴のアイテム埋め込みsequence、その他ユーザやアイテムのメタ情報を特徴量として入力してるみたい。
+    - retrieveフェーズのtwo-towerについても、アイテムタワー側は単純なentity embedding層。なのでコールドスタートアイテムには弱い。
+
 The primary role of ranking is to use impression data to specialize and calibrate candidate predictions for the particular user interface.
 ランキングの主な役割は、**インプレッション・データを使って、特定のユーザ・インターフェースの予測候補を特化させ、calibrate(較正, 調節, 校正)すること**である。
 For example, a user may watch a given video with high probability generally but is unlikely to click on the specific homepage impression due to the choice of thumbnail image.
