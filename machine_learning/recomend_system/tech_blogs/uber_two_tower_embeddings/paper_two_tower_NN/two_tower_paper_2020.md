@@ -256,6 +256,7 @@ A commonly-used sampling strategy for two-tower DNN model is the batch negative 
 two-tower DNNモデルの一般的に使用されるサンプリング戦略は、**バッチネガティブサンプリング**です。
 Specifically, batch negative sampling treats other items in the same training batch as sampled negatives and therefore the sampling distribution Q follows the unigram distribution based on item frequency. 
 具体的には、バッチネガティブサンプリングは、**同じトレーニングバッチ内の他のアイテムをサンプリングされたネガティブとして扱い**、したがってサンプリング分布$Q$はアイテムの頻度(観測頻度? tap頻度?)に基づくユニグラム分布に従います。
+(補足: ここで"unigram"と書いてるのは、**アイテム単体での出現頻度**に基づく分布みたいなイメージ...!:thinking:)
 It avoids feeding additional negative samples to the right tower and thus saves computation cost. 
 これにより、右の塔(=アイテムタワー?)に追加のネガティブサンプルを供給することを避け、計算コストを節約します。
 Figure 2 shows the computation process in one training batch. 
@@ -275,7 +276,6 @@ Controlling bias and variance of the gradient estimator is critical to model qua
 **勾配推定器のバイアスと分散を制御することは、モデルの品質にとって重要**です。(OPEやOPL、というか統計的推定っぽい観点だ...!:thinking_face:)
 There are two ways to reduce bias and variance [2]: (1) increasing the sample size; (2) reducing the discrepancy between proposed Q distribution and target distribution P.
 バイアスと分散を減少させる方法は2つあります[2]： (1) サンプルサイズの増加; (2) 提案されたQ分布とターゲット分布Pとの不一致を減少させることです。
-(結局Q分布とか使ってるってことは、どちらかというとDM推定量的な話なのかな...!:thinking_face:)
 
 In case of training two-tower DNN models, batch negative sampling implicitly sets sampling distribution Q to be unigram item frequency distribution. 
 2タワーDNNモデルのトレーニングの場合、**バッチネガティブサンプリングは暗黙的にサンプリング分布Qをユニグラムアイテム頻度分布に設定**します。
