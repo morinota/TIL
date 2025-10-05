@@ -153,15 +153,17 @@ $$
 (ユーザベクトルとアイテムベクトルの内積を、temperature無しのsoftmax関数に通して、確率にしてる感じ。)
 
 where u ∈ R N represents a high-dimensional “embedding” of the user, context pair and the vj ∈ R N represent embeddings of each candidate video.
-ここで、**$u \in \mathbb{R}^{N}$ はユーザーとコンテキストのペアの高次元の「埋め込み」**を表し、$v_{j} \in \mathbb{R}^{N}$ は各候補ビデオの埋め込みを表す。(ユーザのembeddingではなく、user \* contextのembedding??)
+ここで、**$u \in \mathbb{R}^{N}$ はユーザーとコンテキストのペアの高次元の「埋め込み」**を表し、$v_{j} \in \mathbb{R}^{N}$ は各候補ビデオの埋め込みを表す。(たぶんcontextは日時とか...!)
 In this setting, an embedding is simply a mapping of sparse entities (individual videos, users etc.) into a dense vector in R N .
 **この設定では、埋め込みとは、単に疎なエンティティ（個々のビデオ、ユーザーなど）を $\mathbb{R}^{N}$の密なベクトルにマッピングすること**である。(ふむふむ。sparce -> dense)
 The task of the deep neural network is to learn user embeddings u as a function of the user’s history and context that are useful for discriminating among videos with a softmax classifier.
-**ディープ・ニューラル・ネットワークのタスクは、ソフトマックス分類器で動画を識別するのに有用な、ユーザの履歴とコンテキストの関数としてのユーザー埋め込み $u$ を学習すること**である。(=たぶん分類問題を学習させたNNの、encoder的に、中間層の出力をembeddingとして抜き出してる感じっぽい...!)
+**ディープ・ニューラル・ネットワークのタスクは、ソフトマックス分類器で動画を識別するのに有用な、ユーザの履歴とコンテキストの関数としてのユーザー埋め込み $u$ を学習すること**である。
 Although explicit feedback mechanisms exist on YouTube (thumbs up/down, in-product surveys, etc.) we use the implicit feedback [16] of watches to train the model, where a user completing a video is a positive example.
 YouTubeには、明示的なフィードバック・メカニズム（サムズアップ／ダウン、商品内アンケートなど）が存在するが、**私たちはモデルをトレーニングするために、ユーザーがビデオを完走したことをpositiveな例とする、視聴の暗黙的フィードバック[16]を使用する**。(一部explicit feedbackもあるが、基本的にはimplicit feedbackを使う...!)
 This choice is based on the orders of magnitude more implicit user history available, allowing us to produce recommendations deep in the tail where explicit feedback is extremely sparse.
 この選択は、**利用可能な暗黙のユーザ履歴が桁違いに多い**ことに基づいており、**明示的なフィードバックが極端に少ない様なlong-tailアイテムの奥深くまで**レコメンデーションを作成することを可能にしている。(確かに、explicit feedbackのみのモデルではlong-tailアイテムは考慮できなそう...! implicit feedbackを使ってもpopularity biasを対策しないとlong-tailアイテムの推薦はつくりにくいけど...!)
+
+<!-- ここまで読んだ! -->
 
 ### 3.1.1. Efficient Extreme Multiclass 効率的なエクストリーム・マルチクラス
 
@@ -190,10 +192,11 @@ A/Bテストの結果は、最近傍探索アルゴリズムの選択に対し�
 
 Inspired by continuous bag of words language models [14], we learn high dimensional embeddings for each video in a fixed vocabulary and feed these embeddings into a feedforward neural network.
 continuous bag of words言語モデル[14]にヒントを得て、**各動画の高次元の埋め込みを固定語彙(=fixed vocabulary)で学習し、これらの埋め込みをフィードフォワード・ニューラル・ネットワークに入力**する。(->これが一番下の入力??)
+(アイテムタワーって、シンプルなentity embedding層だけっぽい?? でもこれってコールドスタートアイテムに対応できなくない...??:thinking:)
 A user’s watch history is represented by a variable-length sequence of sparse video IDs which is mapped to a dense vector representation via the embeddings.
 ユーザの視聴履歴は、**スパースなビデオIDの可変長sequence**で表現され、embeddingを介して**密なベクトル表現にマッピングされる**。
 The network requires fixed-sized dense inputs and simply averaging the embeddings performed best among several strategies (sum, component-wise max, etc.).
-このネットワークは、**固定サイズの密な入力を必要**とし、いくつかの戦略(合計、成分ごとの最大値など)の中で、単純に埋め込みを平均化することが最も良い結果を出した。
+このネットワークは、固定サイズの密な入力を必要とし、いくつかの戦略(合計、成分ごとの最大値など)の中で、**単純に埋め込みを平均化することが最も良い結果**を出した。(mean poolingでよかったって話か...!:thinking:)
 Importantly, the embeddings are learned jointly with all other model parameters through normal gradient descent backpropagation updates.
 重要なことは、**embeddingは、通常の勾配降下バックプロパゲーション更新を通じて、他のすべてのモデルパラメータと共同で学習される**ことである。(じゃあ実際には、sparseなsequenceをdenseなembeddingに変換する処理もarchitectureに含まれる??)
 Features are concatenated into a wide first layer, followed by several layers of fully connected Rectified Linear Units (ReLU) [6].
@@ -205,6 +208,8 @@ Figure 3 shows the general network architecture with additional non-video watch 
 
 Figure 3: Deep candidate generation model architecture showing embedded sparse features concatenated with dense features. Embeddings are averaged before concatenation to transform variable sized bags of sparse IDs into fixed-width vectors suitable for input to the hidden layers. All hidden layers are fully connected. In training, a cross-entropy loss is minimized with gradient descent on the output of the sampled softmax. At serving, an approximate nearest neighbor lookup is performed to generate hundreds of candidate video recommendations.
 図3：ディープ候補生成モデルのアーキテクチャは、埋め込まれた疎な特徴を密な特徴と連結したものである。**エンベッディングは連結前に平均化され、スパースIDの可変サイズのバッグを隠れ層への入力に適した固定幅のベクトルに変換**する。すべての隠れ層はfully connected layerである。訓練では、サンプリングされたソフトマックスの出力に対して勾配降下法を用いてクロスエントロピー損失が最小化される。サービング時には、近似最近傍探索が実行され、何百ものビデオ推薦候補が生成される。
+
+<!-- ここまで読んだ! -->
 
 ## 3.3. Heterogeneous Signals 異種シグナル
 
