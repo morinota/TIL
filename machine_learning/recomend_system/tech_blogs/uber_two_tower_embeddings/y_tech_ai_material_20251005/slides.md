@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 header: 'RecSysの実運用で人気なTwo-Towerモデル! と言ってもいろんなバリエーションがありそうだなぁと思った話'
-footer: 'Y-tech AI勉強会 2025/10/05 https://x.com/moritama7431'
+footer: 'Y-tech AI勉強会 2025/10/07 https://x.com/moritama7431'
 ---
 
 # RecSysの実運用で人気なTwo-Towerモデル!
