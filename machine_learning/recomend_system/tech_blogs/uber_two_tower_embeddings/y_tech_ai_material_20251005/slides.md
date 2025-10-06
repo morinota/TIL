@@ -6,17 +6,7 @@ header: 'RecSysの実運用で人気なTwo-Towerモデル! と言ってもいろ
 footer: 'Y-tech AI勉強会 2025/10/07 https://x.com/moritama7431'
 ---
 
-# RecSysの実運用で人気なTwo-Towerモデル!
-
-と言ってもいろんなバリエーションがありそうだなぁと思った話
-
----
-
-## なんで今回このトピックを話したいんだっけ??
-
-- TODO
-
----
+# RecSysの実運用で人気なTwo-Towerモデル! と言っても、いざ採用しようとするといろんなバリエーションがありそうだなぁと思った話
 
 <!--
 
@@ -59,16 +49,27 @@ footer: 'Y-tech AI勉強会 2025/10/07 https://x.com/moritama7431'
       - (そもそも多様なNNアーキテクチャの中でTwo-towerを選ぶ意思決定をすること、その理由をきちんと言語化して納得できる説明ができること、もMLOpsを司るエンジニアとして腕の見せどころのはず...!:thinking:)
 -->
 
-## 今日のアウトライン
+---
 
-1. はじめに: そもそもTwo-towerモデルって??なんで人気なんだっけ??
-2. 主張1: ネットワーク構造のバリエーション
-3. 主張2: 学習方法のバリエーション
-4. まとめ
+## なんで今回このトピックを話したいんだっけ??
+
+- ここ数年、RecSysの実運用でTwo-Towerモデルが結構人気!
+- 実は我々もまさにTwo-Towerモデルを採用し運用に移ろうとしてるフェーズ。
+  - ただ当然「単に人気だからTwo-Towerモデルを採用しよう!」ではなく、「全てのアーキテクチャはトレードオフ」であることを念頭に置いた上で、なぜ実運用で人気なのか、自社ドメインで採用するべきなのかをきちんと言語化・説明できるようにしたい。
+- また、実際に運用しようとすると、**Two-Towerモデルにも色々なバリエーションがあって、DS・MLエンジニア・MLOpsエンジニアが意思決定しないといけないことが結構ある**なぁと感じた。
 
 ---
 
-<!-- _class: lead -->
+
+
+## 今日のアウトライン
+
+1. はじめに: そもそもTwo-towerモデルって??なんで人気なんだっけ??
+2. 主張1: Two-towerのネットワーク構造のバリエーションが色々ある!
+3. 主張2: Two-towerの学習方法のバリエーションが色々ある!
+4. まとめ
+
+---
 
 # はじめに
 
@@ -76,37 +77,72 @@ footer: 'Y-tech AI勉強会 2025/10/07 https://x.com/moritama7431'
 
 ## RecSysの実運用でTwo-Towerモデルが結構人気
 
-Googleさん、Uberさん、リクルートさん、ZOZOさん、日経さん、etc...
+- Googleさんの論文(Youtube, Google Playの事例)
+  - [Deep Neural Networks for YouTube Recommendations](https://static.googleusercontent.com/media/research.google.com/ja//pubs/archive/45530.pdf)
+  - [Mixed Negative Sampling for Learning Two-tower Neural Networks in Recommendations](https://storage.googleapis.com/gweb-research2023-media/pubtools/6090.pdf)
+- Uberさんの事例: [Innovative Recommendation Applications Using Two Tower Embeddings at Uber](https://www.uber.com/en-JP/blog/innovative-recommendation-applications-using-two-tower-embeddings/)
+- リクルートさんの事例: [Two-Towerモデルと近似最近傍探索による候補生成ロジックの導入](https://blog.recruit.co.jp/data/articles/two-tower-model/#%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E5%89%8D%E5%87%A6%E7%90%86)
+- ZOZOさんの事例: [ZOZOTOWNホーム画面のパーソナライズ - Two-Towerモデルで実現するモジュールの並び順最適化](https://techblog.zozo.com/entry/zozotown-home-module-personalization-v1)
+- 日経さんの事例: [日経電子版のアプリトップ「おすすめ」をTwo Towerモデルでリプレースしました](https://hack.nikkei.com/blog/replace_ai_rec_by_two_tower/)
+- etc...
 
 ---
 
-## Two-Towerモデルってざっくり何だっけ??
+## Two-Towerモデルってざっくり何だっけ??　(1/2)
+
+![alt text](image.png)
+
+
+---
+
+## Two-Towerモデルってざっくり何だっけ?? (2/2)
 
 - 2つの独立したニューラルネットワーク（タワー）を用いた推薦モデル。
+  - NLP分野のdual encoderを推薦・検索タスクに応用したもの。
+- two-towerモデルの構成要素
   - User Tower: ユーザ特徴を埋め込みベクトルに変換。
   - Item Tower: アイテム特徴を埋め込みベクトルに変換。
-  - predictionモジュール: 両タワーの出力を元に(ユーザ, アイテム)ペアに関するスコアを算出。
-- NLP分野のdual encoderモデルを推薦・検索タスクに応用したもの。
+  - predictionモジュール: 両タワーの出力を元に(ユーザ, アイテム)ペアに関する何らかのスコアを算出。スコアを元に何を推薦するかの意思決定を行う。
 
 ---
 
-## なんでRecSysの実運用で人気なんだっけ??
+## なんでRecSysの実運用で人気なんだっけ?? (1/2)
 
-NNの恩恵を受けつつ、推論時のスケーラビリティと処理速度を両立させやすい
+### 結論: **DNN系モデルの恩恵は受けつつ、推論時のスケーラビリティと処理速度をコスト効率良く実現できるから!**
 
-- Item埋め込みを事前計算してオフラインで保存
-- 推論時はUser埋め込みのみをリアルタイム計算
-- ANN検索で高速に候補アイテムを検索
-
-計算量: O(q × M) → O(M) + O(q)
+- まず非DNN系モデルと比較して...
+  - 様々な種類・形状の特徴量を柔軟に考慮することができる表現力の高さ!
+- 他のDNN系モデルと比較して...
+  - **推論コストが低く実現できる!**
+    - ユーザとアイテムの情報を独立した2つのタワーで処理できる構造により、**計算コストの重い処理を事前計算しておける!**
+    - **ANN検索との相性 ◎** なので、更にスケーラビリティ up も!
 
 ---
 
-## 先に参考文献を紹介
+## なんでRecSysの実運用で人気なんだっけ?? (2/3)
 
-1. Google Play事例 (2020): [Mixed Negative Sampling...](https://storage.googleapis.com/gweb-research2023-media/pubtools/6090.pdf)
-2. Uber事例 (2023): [Innovative Recommendation Applications...](https://www.uber.com/en-JP/blog/innovative-recommendation-applications-using-two-tower-embeddings/)
-3. TODO: その他
+### Two-Tower型アーキテクチャは、**大量のレコードに対してリアルタイムで軽量にコスト効率よく推論できる稀有な選択肢**である。
+
+- 一般的に、 DNNモデルは推論コストが高い。
+  - 大量ユーザに対してリアルタイム推論でレイテンシ要件を満たすためには、GPU付きの高価なサーバを複数台、常時稼働させる必要があったり...!
+- 一方で、**Two-Tower型アーキテクチャは、ユーザとアイテムの情報を独立した2つのタワーでそれぞれ処理できる**のが最大の強み。
+  - この構造により、**計算コストの重い処理を事前に計算しておける**ので、リアルタイムに推薦結果を作るときは超軽量&シンプルな計算だけで済む！
+  - ex. ユーザタワーは日次バッチ, アイテムタワーはストリーミングorマイクロバッチ、最後の内積計算のみリアルタイム演算, etc.
+
+---
+
+## なんでRecSysの実運用で人気なんだっけ?? (3/3)
+
+RecSysの実運用で**Two-Towerモデルが活躍してるシーンは大きく3種類な印象**...! :thinking:
+
+1. レイテンシ要件の厳しい**リアルタイム推薦**をコスト効率よく実現したいケース
+   - ex. GoogleさんのYoutube, Google Playの事例,　Uberさんの事例, 日経さんの事例, etc.
+2. **膨大な推薦アイテム候補に対する推薦**をコスト効率よく実現したいケース
+   - ex. GoogleさんのYoutube, Google Playの事例, Uberさんの事例, リクルートさんの事例, ZOZOさんの事例, etc.
+3. ユーザやアイテムのrichな**特徴量としての埋め込み表現**を学習する用途。
+   - ex. Netflixさんの事例, Uberさんの事例, etc.
+
+
 
 ---
 
