@@ -75,11 +75,13 @@ Often, both users and content are represented by sets of features.
 User features may include historical activities at an aggregated level as well as declared demographic information.
 ユーザ特徴量には、申告された人口統計情報だけでなく、集約されたレベルでの過去の活動が含まれる場合があります。
 Content features may contain descriptive information and categories.
-コンテンツの特徴には、説明的な情報やカテゴリーが含まれることがある。
+**コンテンツの特徴には、説明的な情報やカテゴリー**が含まれることがある。
 In this scenario, exploration and exploitation have to be deployed at an individual level since the views of different users on the same content can vary significantly.
-このシナリオでは、同じコンテンツに対する異なるユーザーの見解が大きく異なる可能性があるため、探索と利用を個人レベルで展開する必要がある。
+このシナリオでは、同じコンテンツに対する異なるユーザーの見解が大きく異なる可能性があるため、探索と活用を個人レベルで展開する必要がある。
 Since there may be a very large number of possible choices or actions available, it becomes critical to recognize commonalities between content items and to transfer that knowledge across the content pool.
 可能性のある選択肢や行動が非常に多く存在する可能性があるため、**コンテンツitem間の共通性を認識**(=action embedding的な)し、**その知識をコンテンツプール全体に伝達**することが重要になる。
+
+<!-- ここまで読んだ! -->
 
 Traditional recommender systems, including collaborative filtering, content-based filtering and hybrid approaches, can provide meaningful recommendations at an individual level by leveraging users' interests as demonstrated by their past activity.
 協調フィルタリング、コンテンツベースフィルタリング、ハイブリッドアプローチを含む従来のレコメンダーシステムは、過去のアクティビティによって示されるユーザーの興味を活用することで、個人レベルで有意義なレコメンデーションを提供することができる。
@@ -91,9 +93,9 @@ Hybrid approaches [11] have been developed by combining two or more recommendati
 ハイブリッドアプローチ[11]は、2つ以上の推薦テクニックを組み合わせることによって開発されてきた。例えば、**協調フィルタリングが新しいアイテムを推薦できないことは、一般的にコンテンツベースフィルタリングと組み合わせることによって緩和される**。
 
 However, as noted above, in many web-based scenarios, the content universe undergoes frequent changes, with content popularity changing over time as well.
-しかし、前述のように、**多くのウェブベースのシナリオでは、コンテンツユニバース(=推薦可能なitem poolの事??)は頻繁に変更され、コンテンツの人気も時間とともに変化する**。
+しかし、前述のように、**多くのウェブベースのシナリオでは、コンテンツユニバース(=推薦可能なitem poolの事?? 行動空間的な...!)は頻繁に変更され、コンテンツの人気も時間とともに変化する**。
 Furthermore, a significant number of visitors are likely to be entirely new with no historical consumption record whatsoever; this is known as a cold-start situation [21].
-さらに、かなりの数の訪問者は、過去の消費記録がまったくない、まったく新しい訪問者である可能性が高い；これはコールドスタート状況として知られている[21]。
+さらに、かなりの数の訪問者は、過去の消費記録がまったくない、まったく新しい訪問者である可能性が高い；これはコールドスタート(ユーザ!)状況として知られている[21]。
 These issues make traditional recommender-system approaches difficult to apply, as shown by prior empirical studies [12].
 これらの問題は、先行する実証的研究[12]が示すように、従来のレコメンダー・システム・アプローチの適用を困難にしている。
 It thus becomes indispensable to learn the goodness of match between user interests and content when one or both of them are new.
@@ -104,7 +106,7 @@ However, acquiring such information can be expensive and may reduce user satisfa
 The above problem is indeed known as a feature-based exploration/exploitation problem.
 上記の問題は、まさに**feature-based exploration/exploitation problem(特徴に基づく探索/利用問題)**として知られている。
 In this paper, we formulate it as a contextual bandit problem, a principled approach in which a learning algorithm sequentially selects articles to serve users based on contextual information of the user and articles, while simultaneously adapting its article-selection strategy based on user-click feedback to maximize total user clicks in the long run.
-これは、学習アルゴリズムが、ユーザと記事の文脈情報に基づいて、ユーザに提供する記事を順次選択し、同時に、長期的にユーザの総クリック数を最大化するために、ユーザクリックフィードバックに基づいて記事選択戦略を適応させる原理的なアプローチである。
+これは、**学習アルゴリズムが、ユーザと記事の文脈情報に基づいて、ユーザに提供する記事を順次選択し、同時に、長期的にユーザの総クリック数を最大化するために、ユーザクリックフィードバックに基づいて記事選択戦略を適応させる原理的なアプローチ**である。
 We define a bandit problem and then review some existing approaches in Section 2.
 バンディット問題を定義し、セクション2で既存のアプローチをレビューする。
 Then, we propose a new algorithm, LinUCB, in Section 3 which has a similar regret analysis to the best known algorithms for competing with the best linear predictor, with a lower computational overhead.
@@ -135,7 +137,7 @@ In trial $t$:
 - 1. The algorithm observes the current user $u_t$ and a set $A_t$ of arms or actions together with their feature vectors $x_{t,a}$ for $a \in A_{t}$. The vector xt,a summarizes information of both the user ut and arm a, and will be referred to as the context.
 - このアルゴリズムは、現在のユーザーutと、アームまたはアクションの集合Atを、その特徴ベクトルxt,aとともに、a∈Atについて観察する。 **ベクトルxt,aは、ユーザーutとアームaの両方の情報を要約しており、コンテキストと呼ばれる**。
 - 2. Based on observed payoffs in previous trials, A chooses an arm at ∈ At, and **receives** payoff rt,a t whose expectation depends on both the user ut and the arm at.
-- 2.以前の試行で観察されたペイオフ(=報酬?)に基づいて、アルゴリズムはアームat∈Atを選択し、期待値がユーザ $u_t$ とアーム $a_t$ の両方に依存するペイオフ(報酬) $r_{t,a_t}$ を受け取る。
+- 2.以前の試行で観察されたペイオフ(=報酬?)に基づいて、アルゴリズムはアーム $a_{t} \in A_{t}$ を選択し、期待値がユーザ $u_t$ とアーム $a_t$ の両方に依存するペイオフ(報酬) $r_{t,a_t}$ を受け取る。
 - 3. The algorithm then improves its arm-selection strategy with the new observation, (xt,a t , at, rt,a t ). It is important to em-phasize here that no feedback (namely, the payoff rt,a) is observed for unchosen arms a = at. The consequence of this fact is discussed in more details in the next subsection.
 - 3. その後アルゴリズムは、新しい観測値 $(x_{t, a_t}, a_t, r_{t, a_t})$ でaction選択戦略を改善する。ここで重要な事は、選ばれてないarms $a \neq a_{t}$ にはfeedback(=報酬 $r_{t, a}$)が観測されない、という事。(=反実仮想的な問題設定...!)
 
@@ -155,10 +157,9 @@ R_{A}(T) := $\mathbb{E}[\sum_{t=1}^{T} r_{t, a_{t}^*}]$ - $\mathbb{E}[\sum_{t=1}
 $$
 
 An important special case of the general contextual bandit problem is the well-known K-armed bandit in which (i) the arm set At remains unchanged and contains K arms for all t, and (ii) the user ut (or equivalently, the context) is the same for all t.
-一般的なコンテキスト・バンディット問題の重要な特殊ケースは、よく知られたKアームド・バンディットである: (i)arm集合 $A_t$ は変化せず、すべての$t$に対して $K$ アームが含まれる。そして ユーザ $u_t$ (同様にcontext) が全ての $t$ で同じケース。(=要はcontextを気にしない)
-
+一般的なコンテクストバンディット問題の重要な特殊ケース(=実運用ではあり得ないケースってこと??:thinking:)は、よく知られたK-armed banditであり、(i)アームセットAtはすべてのtで不変でK個のアームを含み、(ii)ユーザut（または同等にコンテキスト）はすべてのtで同じである。
 Since both the arm set and contexts are constant at every trial, they make no difference to a bandit algorithm, and so we will also refer to this type of bandit as a context-free bandit.
-**アームセットもコンテキストも試行ごとに一定**であるため、バンディット・アルゴリズムに違いはない。
+**アームセットとコンテキストの両方が各試行で一定**であるため、バンディットアルゴリズムには違いがなく、このタイプのバンディットを**context-free bandit**とも呼ぶ。(あ、そういうことね!:thinking:)
 
 In the context of article recommendation, we may view articles in the pool as arms.
 記事推薦の文脈では、**プール内の記事をarmとみなす**ことができる。
@@ -172,9 +173,9 @@ Furthermore, in web services we often have access to user information which can 
 For example, it is much more likely for a male teenager to be interested in an article about iPod products rather than retirement plans.
 たとえば、ティーンエイジャーの男性は、退職金プランよりもiPod製品の記事に興味を持つ可能性が高い。
 Therefore, we may "summarize" users and articles by a set of informative features that describe them compactly.
-したがって、**ユーザや記事をコンパクトに記述する情報量の多い特徴量によって「要約」することができる**。(i.e. 低次元に投射する...!)
+したがって、**ユーザや記事をコンパクトに記述する情報量の多い特徴量によって「要約」することができる**。(i.e. あ、ユーザidや記事idなどのone-hotベクトルを、特徴量を使ってdenseなベクトルに変換するってことね!:thinking:)
 By doing so, a bandit algorithm can generalize CTR information from one article/user to another, and learn to choose good articles more quickly, especially for new users and articles.
-そうすることで、バンディットアルゴリズムは、**ある記事/ユーザから別の記事/ユーザへのCTR情報を一般化**し、**特に新しいユーザや記事に対して**、より迅速に良い記事を選択することを学ぶことができる。(記事の特徴量はテキストを使えばOKだけど、新規でも入手できるユーザの特徴量なんかあるかなぁ...オンボーディング回答...!:thinking:)
+そうすることで、バンディットアルゴリズムは、**ある記事/ユーザから別の記事/ユーザへのCTR情報を一般化**し、**特に新しいユーザや記事に対して、より迅速に良い記事を選択すること**を学ぶことができる。(記事の特徴量はテキストを使えばOKだけど、新規でも入手できるユーザの特徴量なんかあるかなぁ...オンボーディング回答...!:thinking:)
 
 <!-- ここまで読んだ! -->
 
