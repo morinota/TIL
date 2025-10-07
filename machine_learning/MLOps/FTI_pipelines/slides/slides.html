@@ -338,7 +338,7 @@ ul.task-list li input[type="checkbox"] {
 </figure>
 </div>
 <ul>
-<li>特徴:
+<li><p>特徴:</p>
 <ul>
 <li><strong>3種類の独立したML Pipelines = Feature pipelines, Training pipelines, Inference pipelines を持つFTI Pipelinesアーキテクチャ</strong>。</li>
 <li>各種pipelineが生成・消費する成果物(ex. 特徴量、学習済みモデル)は、共通の永続化ストレージレイヤーを介して共有される。
@@ -346,23 +346,23 @@ ul.task-list li input[type="checkbox"] {
 <li>多くのonline MLシステムではユーザ履歴やcontextも使用するが、特徴量ストアはそれらを事前に計算された特徴量の1つとして保存し、学習pipeline, 推論pipelineに提供する。</li>
 </ul></li>
 </ul></li>
-<li>良さげなところ:
+<li><p>良さげなところ:</p>
 <ul>
 <li>学習と推論で、一貫した特徴量を保証できる。</li>
 <li>FとTとIが完全に分かれているので、それぞれのリソース最適化がしやすい。(ex. 特徴量作成を並列化したり、学習時はGPU付きの大きなインスタンスを使ったり…!)</li>
 <li>各pipelineの状況に応じて、言語や、orchestratorに何を使うか、batch処理かonline処理かon-demand実行か、などを柔軟に選択できる。</li>
 </ul></li>
-<li>イマイチなところ:
+<li><p>イマイチなところ:</p>
 <ul>
 <li>ブログ内では特に記述なし。</li>
 <li>まあでも、<strong>全てのアーキテクチャはトレードオフ</strong>なので、他のアーキテクチャと比較した欠点は存在するはず。まあ例えば管理すべきpipelineの数が増えるから、運用上の複雑性増加とか、管理すべきリソースの増加とか…??<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul></li>
-<li>(ML特有の技術的負債を踏まえた印象):
+<li><p>(ML特有の技術的負債を踏まえた印象):</p>
 <ul>
 <li>FとTが独立してるので、新しい特徴量を追加したい場合は、元データから特徴量を作って特徴量ストアに保存するFeature pipelineを一つ新規作成すれば良い。なので、<strong>Pipeline Jungles問題のリスクは低そう</strong>…?<span class="emoji" data-emoji="thinking">🤔</span></li>
 <li>異なるMLモデルを比較するような実験をしたい場合、Training Pipelineだけをモデルの数だけ新規追加したら良い。<strong>Dead Experimental Codepaths問題も発生しにくそう</strong>…?<span class="emoji" data-emoji="thinking">🤔</span></li>
 </ul></li>
-<li>(ソフトウェアの複雑さ管理の観点を踏まえた印象):
+<li><p>(ソフトウェアの複雑さ管理の観点を踏まえた印象):</p>
 <ul>
 <li>各pipelineの責任(i.e.&nbsp;役割?責務?関心?)が明確!!</li>
 <li>モジュラー性が高い!!
