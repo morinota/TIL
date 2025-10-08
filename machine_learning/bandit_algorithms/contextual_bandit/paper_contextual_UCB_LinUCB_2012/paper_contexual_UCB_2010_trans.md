@@ -182,7 +182,7 @@ By doing so, a bandit algorithm can generalize CTR information from one article/
 ## 2.2 Existing Bandit Algorithms 2.2 既存のバンディット・アルゴリズム
 
 The fundamental challenge in bandit problems is the need for balancing exploration and exploitation.
-バンディット問題における基本的な課題は、探索と搾取のバランスをとる必要性である。
+バンディット問題における基本的な課題は、探索と活用のバランスをとる必要性である。
 To minimize the regret in Eq.(1), an algorithm A exploits its past experience to select the arm that appears best.
 式(1)のregretを最小化する場合、アルゴリズムAは過去の経験を利用し、最適と思われる腕を選択する。
 On the other hand, this seemingly optimal arm may in fact be suboptimal, due to imprecision in A's knowledge.
@@ -256,7 +256,7 @@ Such an approach, however, is expensive in general.
 In this work, we show that a confidence interval can be computed efficiently in closed form when the payoff model is linear, and call this algorithm LinUCB.
 本研究では、**報酬モデルが線形である場合に、信頼区間をclosed-formで効率的に計算できること**を示し、このアルゴリズムを**LinUCB**と呼ぶ。
 For convenience of exposition, we first describe the simpler form for disjoint linear models, and then consider the general case of hybrid models in Section 3.2.We note LinUCB is a generic contextual bandit algorithms which applies to applications other than personalized news article recommendation.
-説明の便宜上、まずdisjoint線形モデルのより単純な形式を説明し、次にセクション3.2でハイブリッドモデルの一般的なケースを考察する。LinUCBは、パーソナライズされたニュース記事推薦以外のアプリケーションにも適用可能な汎用contextual banditアルゴリズムであることに注意されたい。
+説明の便宜上、まずdisjoint線形モデルのより単純な形式を説明し、次にセクション3.2でハイブリッドモデルの一般的なケースを考察する。**LinUCBは、パーソナライズされたニュース記事推薦以外のアプリケーションにも適用可能な汎用contextual banditアルゴリズムであること**に注意されたい。
 
 ## 3.1 LinUCB with Disjoint Linear Models 3.1 disjoint線形モデルによるLinUCB
 
@@ -332,49 +332,56 @@ Algorithm 1 gives a detailed description of the entire LinUCB algorithm, whose o
 Note the value of α given in Eq.(4) may be conservatively large in some applications, and so optimizing this parameter may result in higher total payoffs in practice.
 式(4)で与えられるαの値は、アプリケーションによっては保守的に大きくなる可能性があるため、このパラメータを最適化することで、実際には総ペイオフが高くなる可能性があることに注意。
 Like all UCB methods, LinUCB always chooses the arm with highest UCB (as in Eq.(5))
-**すべてのUCB手法と同様に、LinUCBは常に最も高いUCBを持つアームを選択する**(式5).
+**すべてのUCB手法と同様に、LinUCBは常に最も高いUCBスコアを持つアームを選択する**(式5).
 
 This algorithm has a few nice properties.
 このアルゴリズムにはいくつかの優れた特性がある。
 First, its computational complexity is linear in the number of arms and at most cubic in the number of features.
-**第一に、その計算量はarm数に対して線形**であり、特徴の数に対して最大でも三乗である.
+**第一に、その計算量はarm数に対して線形**であり、**特徴の数に対して最大でも三乗**である.
 To decrease computation further, we may update Aa t in every step (which takes O(d2) time), but compute and cache $Q_a := A_{a}^{-1}$ (for all a) periodically instead of in realtime.
 さらに計算量を減らすために、$A_{a_t}$ を毎ステップ更新し（これにはO(d2)時間がかかる）、$Q_a := A_{a}^{-1}$ を（すべてのaについて）リアルタイムではなく定期的に計算し、キャッシュすることもできる。
+
+<!-- ここ大事そう! -->
 Second, the algorithm works well for a dynamic arm set, and remains efficient as long as the size of At is not too large.
-**第二に、このアルゴリズムは動的なアームセットに対してうまく機能し**、Atのサイズが大きすぎない限り効率的であり続ける.
+**第二に、このアルゴリズムは動的なアームセットに対してうまく機能し、Atのサイズが大きすぎない限り効率的であり続ける.**
 This case is true in many applications.
 このケースは多くの用途で当てはまる.
 In news article recommendation, for instance, editors add/remove articles to/from a pool and the pool size remains essentially constant.
-例えば、**ニュース記事の推薦では、編集者はプールに記事を追加/削除し、プールのサイズは基本的に一定**である。
+例えば、**ニュース記事の推薦では、編集者はプールに記事を追加/削除し、プールのサイズは基本的に一定**である。(=動的なarm setだけど、サイズは一定! コンテンツプールが変化してもモデルパラメータはアイテム間で独立だからいい感じに保持できるってこと??:thinking:)
+
 Third, although it is not the focus of the present paper, we can adapt the analysis from [6] to show the following: if the arm set At is fixed and contains K arms, then the confidence interval (i.e., the right-hand side of Eq.(4)) decreases fast enough with more and more data, and then prove the strong regret bound of Õ( √ KdT ), matching the state-of-the-art result [6] for bandits satisfying Eq.(2).
-第三に、本論文の焦点ではないが、我々は[6]の分析を適応して、次のことを示すことができる: **arm集合 $A_t$ が固定され**、K個のアームを含む場合、信頼区間(すなわち、式(4)の右辺)は、より多くのデータとともに十分に速く減少し、そして、式(2)を満たすバンディットのための最先端の結果[6]と一致する、Õ( √ KdT )の強い後悔の境界を証明する。
+第三に、本論文の焦点ではないが、我々は[6]の分析を適応して、次のことを示すことができる: **arm集合 $A_t$ が固定され**、K個のアームを含む場合、信頼区間(すなわち、式(4)の右辺)は、より多くのデータとともに十分に速く減少し、そして、式(2)を満たすバンディットのためのstate-of-the-artの結果[6]と一致する、Õ( √ KdT )の強い後悔の境界を証明する。
 These theoretical results indicate fundamental soundness and efficiency of the algorithm.
 これらの理論結果は、アルゴリズムの基本的な健全性と効率性を示している。
+
+<!-- ここまで読んだ! -->
 
 Finally, we note that, under the assumption that input features xt,a were drawn i.i.d.from a normal distribution (in addition to the modeling assumption in Eq.( 2)), Pavlidis et al.[22] came up with a similar algorithm that uses a least-squares solution θ θ θa instead of our ridge-regression solution ( θ θ θa in Eq.( 3)) to compute the UCB.
 最後に、（式(2)のモデリング仮定に加えて）入力特徴量 $x_{t,a}$ が正規分布からi.i.d.描画されたという仮定の下で、Pavlidisら[22]は、UCBを計算するために、我々のリッジ回帰解（式(3)の $\hat{\theta}_{a}$）の代わりに最小二乗解 $\tilde{\theta}_{a}$ を使用する同様のアルゴリズムを考え出したことに注目する。
 However, our approach (and theoretical analysis) is more general and remains valid even when input features are nonstationary.
-しかし、**我々のアプローチ（および理論的分析）はより一般的であり、入力特徴が非定常(=特徴量がi.i.d.正規分布からサンプリングされた仮定が満たせないケース??)であっても有効**である。
+しかし、我々のアプローチ（および理論的分析）はより一般的であり、入力特徴が非定常(=特徴量がi.i.d.正規分布からサンプリングされた仮定が満たせないケース??)であっても有効である。
 More importantly, we will discuss in the next section how to extend the basic Algorithm 1 to a much more interesting case not covered by Pavlidis et al.
 さらに重要なのは、基本的なアルゴリズム1を、Pavlidisらによってカバーされていない、より興味深いケースに拡張する方法について、次のセクションで議論することである。
+
+<!-- ここまで読んだ! -->
 
 ## 3.2 LinUCB with Hybrid Linear Models ハイブリッド線形モデルによるLinUCB
 
 Algorithm 1 (or the similar algorithm in [22]) computes the inverse of the matrix, D ⊤ a Da + I d (or D ⊤ a Da), where Da is again the design matrix with rows corresponding to features in the training data.
-アルゴリズム1は、行列($D_{a}^{T} D_{a} + I_{d}$ or $D_{a}^{T} D_{a}$)の逆行列を計算する。
+アルゴリズム1は、行列($D_{a}^{T} D_{a} + I_{d}$ or $D_{a}^{T} D_{a}$)の逆行列を計算する。(デザイン行列ってやつ??:thinking:)
 These matrices of all arms have fixed dimension d × d, and can be updated efficiently and incrementally.
 すべてのアームのこれらの行列は、固定された次元d×dを持ち、効率的かつインクリメンタルに更新することができる。
 Moreover, their inverses can be computed easily as the parameters in Algorithm 1 are disjoint: the solution θ θ θa in Eq.(3) is not affected by training data of other arms, and so can be computed separately.
-さらに、アルゴリズム1のパラメータは不連続であるため、それらの逆数を簡単に計算することができる： 式(3)の解 $\theta_{a}$ は、他のアームのトレーニングデータの影響を受けないため、別々に計算することができる.
+さらに、アルゴリズム1のパラメータは不連続であるため、それらの逆数を簡単に計算することができる： **式(3)の解 $\theta_{a}$ は、他のアームのトレーニングデータの影響を受けないため、別々に計算することができる**.
 We now consider the more interesting case with hybrid models.
 次に、ハイブリッド・モデルを使った、より興味深いケースを考えてみよう。
 
 In many applications including ours, it is helpful to use features that are shared by all arms, in addition to the arm-specific ones.
-私たちを含む多くのアプリケーションでは、アーム固有の機能(parameter)に加えて、すべてのアームで共有される機能(parameter)を使用することが有用である。
+**私たちを含む多くのアプリケーションでは、アーム固有の特徴量(parameter)に加えて、すべてのアームで共有される特徴量(parameter)を使用することが有用**である。
 For example, in news article recommendation, a user may prefer only articles about politics for which this provides a mechanism.
 例えば、ニュース記事の推薦において、ユーザーは政治に関する記事だけを好むかもしれない。
 Hence, it is helpful to have features that have both shared and non-shared components.
-したがって、共有componentと非共有componentの両方を持つ機能があると便利だ。
+したがって、共有componentと非共有componentの両方を持つ特徴量があると便利だ。
 Formally, we adopt the following hybrid model by adding another linear term to the right-hand side of Eq(2):.
 形式的には、式(2)の右辺に別の線形項を追加して、以下のハイブリッドモデルを採用する。
 
@@ -388,12 +395,12 @@ $$
 where zt,a ∈ R k is the feature of the current user/article combination, and β is an unknown coefficient vector common to all arms.
 ここで、**$z_{t,a} \in \mathbb{R}^k$ は現在 $t$ のユーザと記事の組み合わせの特徴であり、$\beta^{*}$はすべてのアームに共通する未知の係数ベクトル**である。
 This model is hybrid in the sense that some of the coefficients β are shared by all arms, while others θ a are not.
-このモデルは、ある係数 $\beta^{*}$ はすべてのアームに共有され、他の係数 $\theta_{a}^{*}$ は共有されないという意味でハイブリッドである。
+**このモデルは、ある係数 $\beta^{*}$ はすべてのアームに共有され、他の係数 $\theta_{a}^{*}$ は共有されないという意味でハイブリッド**である。
 
 ![algorithm 2]()
 
 For hybrid models, we can no longer use Algorithm 1 as the confidence intervals of various arms are not independent due to the shared features.
-ハイブリッドモデルの場合、、共有された特徴量のため、様々なアームの信頼区間は独立ではないので、アルゴリズム1はもはや使えない。
+ハイブリッドモデルの場合、共有された特徴量のため、様々なアームの信頼区間は独立ではないので、アルゴリズム1はもはや使えない。
 Fortunately, there is an efficient way to compute an UCB along the same line of reasoning as in the previous section.
 幸いなことに、前節と同じ理屈でUCBを計算する効率的な方法がある。
 The derivation relies heavily on block matrix inversion techniques.
@@ -401,7 +408,7 @@ The derivation relies heavily on block matrix inversion techniques.
 Due to space limitation, we only give the pseudocode in Algorithm 2 (where lines 5 and 12 compute the ridge-regression solution of the coefficients, and line 13 computes the confidence interval), and leave detailed derivations to a full paper.
 紙面の都合上、アルゴリズム2の擬似コード(5行目と12行目が係数のリッジ回帰解を計算し、13行目が信頼区間を計算する)のみを示し、詳細な導出は論文に譲る。
 Here, we only point out the important fact that the algorithm is computationally efficient since the building blocks in the algorithm (A0, b0, Aa, Ba, and ba) all have fixed dimensions and can be updated incrementally.
-ここでは、アルゴリズムの構成要素 $(A_0, b_0, A_a, B_a, b_a)$ はすべて固定された次元を持ち、インクリメンタルに更新できるため、アルゴリズムが計算効率に優れているという重要な事実のみを指摘する。
+ここでは、**アルゴリズムの構成要素 $(A_0, b_0, A_a, B_a, b_a)$ はすべて固定された次元を持ち、インクリメンタルに更新できるため、アルゴリズムが計算効率に優れている**という重要な事実のみを指摘する。(重要だ...!)
 Furthermore, quantities associated with arms not existing in At no longer get involved in the computation.
 さらに、$A_t$に存在しない arm に関連する量は、もはや計算に関与しない。
 Finally, we can also compute and cache the inverses (A −1 0 and A −1 a ) periodically instead of at the end of each trial to reduce the per-trial computational complexity to O(d 2 + k 2 ).
@@ -585,6 +592,8 @@ We used this day's events (called "tuning data") for model validation to decide 
 Then we ran these algorithms with tuned parameters on a one-week event set (called "evaluation data") in the random bucket from May 03-09, which contained about 36 million events.
 次に、パラメータを調整したこれらのアルゴリズムを、5月03日～09日のランダムバケットに含まれる1週間のイベントセット(evaluation dataと呼ばれる)に対して実行した。
 
+<!-- ここまで読んだ! -->
+
 ### 5.2.2 Feature Construction 5.2.2 フィーチャー構築
 
 We now describe the user/article features constructed for our experiments.
@@ -595,13 +604,13 @@ Two sets of features for the disjoint and hybrid models, respectively, were used
 We start with raw user features that were selected by "support".
 まずは、"サポート"によって選ばれた生のユーザの特徴から。(supportってなんだっけ? 特徴量選択の話? アソシエーションルールにそんな評価指標あった気もする...)
 The support of a feature is the fraction of users having that feature.
-ある特徴量の支持率は、その特徴を持つユーザの割合である。
+ある特徴量の"support"は、その特徴を持つユーザの割合である。(欠損値の割合??)
 To reduce noise in the data, we only selected features with high support.
 データのノイズを減らすため、**支持率の高い特徴のみを選択**した。
 Specifically, we used a feature when its support is at least 0.1.
-具体的には、支持率が少なくとも0.1以上である場合に、その特徴量を使用した。
+**具体的には、支持率が少なくとも0.1以上である場合に、その特徴量を使用**した。(i.e. 欠損値が全ユーザの90%以上を占める場合、その特徴量は捨てるって意味か...! :thinking:)
 Then, each user was originally represented by a raw feature vector of over 1000 categorical components, which include: (i) demographic information: gender (2 classes) and age discretized into 10 segments; (ii) geographic features: about 200 metropolitan locations worldwide and U.S.states; and (iii) behavioral categories: about 1000 binary categories that summarize the user's consumption history within Yahoo! properties.
-次に、各ユーザは、元々、1000以上のカテゴリコンポーネントからなる生の特徴ベクトルで表現されていた:(i)人口統計学的情報：性別（2クラス）と10セグメントに離散化された年齢、(ii)地理的特徴：世界中の約200の大都市所在地と米国の州、(iii)行動カテゴリ：**ヤフーのプロパティ内でのユーザの消費履歴を要約する約1000のバイナリカテゴリ**。(=たぶんembeddingというよりは、tf-idfみたいなsparseベクトル??, token空間)
+次に、各ユーザは、元々、1000以上のカテゴリコンポーネントからなる生の特徴ベクトルで表現されていた:(i)人口統計学的情報：**性別（2クラス）と10セグメントに離散化された年齢**、(ii)地理的特徴：世界中の約200の大都市所在地と米国の州、(iii)行動カテゴリ：**ヤフーのプロパティ内でのユーザの消費履歴を要約する約1000のバイナリカテゴリ**。(=たぶんembeddingというよりは、tf-idfみたいなsparseベクトル??, token空間)
 Other than these features, no other information was used to identify a user.
 これらの特徴量以外には、ユーザを特定するための情報は使われていない。
 
@@ -618,7 +627,7 @@ Now each article and user was represented by a feature vector of 83 and 1193 ent
 ここで、各記事とユーザーは、それぞれ83と1193エントリーの特徴ベクトルで表現された。
 
 To further reduce dimensionality and capture nonlinearity in these raw features, we carried out conjoint analysis based on random exploration data collected in September 2008.
-さらに次元を減らし、これらの生特徴の非線形性を捉えるために、2008年9月に収集されたランダム探索データ(=tuning data?)に基づいてconjoint分析(共起分析的な??)を行った。
+**さらに次元を減らし、これらの生特徴の非線形性を捉えるために**、2008年9月に収集されたランダム探索データ(=tuning data?)に基づいてconjoint分析(共起分析的な??)を行った。
 Following a previous approach to dimensionality reduction [13], we projected user features onto article categories and then clustered users with similar preferences into groups.
 次元削減のための以前のアプローチ[13]に従って、ユーザーの特徴を記事のカテゴリーに投影し、類似した嗜好を持つユーザをグループにクラスタリングした。
 More specifically:
@@ -628,18 +637,21 @@ More specifically:
 - 最初にロジスティック回帰(LR)を使って、$\phi_{u}^{T} W \phi_{a}$ がユーザ $u$ が記事 $a$ をクリックする確率を近似するように、未加工のユーザ/記事特徴を与えられたクリック確率の bi-linear モデルを当てはめた。
 
 - Raw user features were then projected onto an induced space by computing $\psi_{u} := \phi_{u}^T W$. Here, the i th component in ψ ψ ψu for user u may be interpreted as the degree to which the user likes the i th category of articles. K-means was applied to group users in the induced ψ ψ ψu space into 5 clusters.
-- そして、生のユーザー特徴は、$\psi_{u} := \phi_{u}^T W$ を計算することによって誘導空間に投影された。ここで、ユーザuに対する $\psi_{u}$ のi番目の成分は、ユーザが記事のi番目のカテゴリを好む度合いとして解釈される。K-meansは、誘導された $\psi_{u}$ 空間内のユーザを5つのクラスターにグループ化するために適用された。
+- そして、生のユーザー特徴は、$\psi_{u} := \phi_{u}^T W$ を計算することによって誘導空間に投影された。ここで、ユーザuに対する $\psi_{u}$ のi番目の成分は、ユーザが記事のi番目のカテゴリを好む度合いとして解釈される。K-meansは、誘導された $\psi_{u}$ 空間内のユーザを**5つのクラスターにグループ化**するために適用された。
+(two-towerのuser-embeddingを使うイメージでもいいのかな??:thinking:)
 
 - The final user feature was a six-vector: five entries corresponded to membership of that user in these 5 clusters (computed with a Gaussian kernel and then normalized so that they sum up to unity), and the sixth was a constant feature 1.
-- 最終的なユーザ 特徴量は6ベクトルであった: そのうち5つのエントリは、これらの5つのクラスターにおけるそのユーザーのメンバーシップに対応し(ガウスカーネルで計算され、それらの合計が1になるように正規化される)、6番目は定数特徴1であった。(5つの要素はone-hot encoding的なbinaryかと思ったけどそうでもない?)
+- **最終的なユーザ 特徴量は6ベクトル**であった: そのうち5つのエントリは、これらの5つのクラスターにおけるそのユーザーのメンバーシップに対応し(ガウスカーネルで計算され、それらの合計が1になるように正規化される)、6番目は定数特徴1であった。(5つの要素はone-hot encoding的なbinaryかと思ったけどそうでもない?)
 
 At trial t, each article a has a separate six-dimensional feature xt,a that is exactly the six-dimensional feature constructed as above for user ut.
 試行 $t$ において、各記事aは、ユーザ $u_t$ について上記のように構築された6次元特徴量 $x_{t,a}$ を持つ。
 Since these article features do not overlap, they are for disjoint linear models defined in Section 3.
 これらの記事の特徴量は重ならないので、セクション3で定義されたdisjointな線形モデルのためのものである。
 
+<!-- 上記はユーザ特徴量の前処理の話 -->
+
 For each article a, we performed the same dimensionality reduction to obtain a six-dimensional article feature (including a constant 1 feature).
-各記事aについて、同じように次元削減を行い、6次元の記事特徴(定数1の特徴を含む)を得た。
+各記事aについて、同じように次元削減を行い、**6次元の記事特徴(定数1の特徴を含む)**を得た。
 Its outer product with a user feature gave 6 × 6 = 36 features, denoted $z_{t,a} \in \mathbb{R}^{36}$, that corresponded to the shared features in Eq.(6), and thus (zt,a, xt,a) could be used in the hybrid linear model.
 そのユーザ特徴量との外積は6×6＝36個の特徴量を与え、$z_{t,a} \in \mathbb{R}^{36}$ と表される。これは、式(6)のshared特徴量に対応するため、$(z_{t,a}, x_{t,a})$ をハイブリッド線形モデルに用いることができる。
 Note the features zt,a contains user-article interaction information, while xt,a contains user information only.
