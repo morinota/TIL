@@ -706,13 +706,14 @@ The offset serves as an initialization on CTR estimate for new content, a.k.a."w
 We re-trained the bilinear logistic regression model studied in [12] on Sept 2008 random traffic data, using features zt,a constructed above.
 我々は，[12]で研究されたバイリニア・ロジスティック回帰モデルを，上記で構築した特徴量zt,aを用いて，2008年9月のランダム・トラフィック・データで再トレーニングした．
 The selection criterion then becomes the sum of the context-free CTR estimate and a bilinear term for a user-specific CTR adjustment.
-選択基準は、文脈のないCTR推定値と、ユーザー固有のCTR調整のためのバイリニア項の合計となる。
+**選択基準は、文脈のないCTR推定値と、ユーザー固有のCTR調整のためのバイリニア項の合計**となる。
 In training, CTR was estimated using the context-free ǫ-greedy with ǫ = 1.
 訓練では、↪Ll_1EB = 1の文脈自由(context-free ↪L_1EB↩-greedy)を用いてCTRを推定した。
+(つまり、「全体傾向（context-free CTR）＋ユーザー補正（warm start）」でCTRを初期化するイメージ...!!:thinking:)
 
 • ǫ-greedy (warm): This algorithm is the same as ǫ-greedy except it adds the user-specific CTR correction to the article's context-free CTR estimate.
 
-- ↪L_1-greedy (warm)： このアルゴリズムは↪Ll_1-reedy と同じですが、ユーザー固有の CTR 補正を記事のcontext-fee CTR 推定値に加えます。
+- ↪L_1-greedy (warm)： このアルゴリズムは↪Ll_1-reedy と同じですが、**ユーザー固有の CTR 補正を記事のcontext-fee CTR 推定値に加えます。**
   • ucb (warm): This algorithm is the same as the previous one but replaces ǫ-greedy with ucb.
 - ucb (warm)： このアルゴリズムは前のものと同じだが、 ↪L_1-greedy を ucb に置き換えたものである。
 
@@ -754,7 +755,7 @@ For convenience, we will use the term "CTR" from now on instead of "relative CTR
 For each algorithm, we are interested in two CTRs motivated by our application, which may be useful for other similar applications.
 各アルゴリズムについて、我々は、**我々のアプリケーションによって動機づけられた2つのCTR**に興味がある。
 When deploying the methods to Yahoo!'s front page, one reasonable way is to randomly split all traffic to this page into two buckets [3].
-ヤフー!のトップページにメソッドを展開する場合、1つの合理的な方法は、このページへのすべてのトラフィックをランダムに**2つのバケツに分割すること**である[3]。(=これって要はhold-out法的な意味??)
+ヤフー!のトップページにメソッドを展開する場合、1つの合理的な方法は、このページへのすべてのトラフィックをランダムに**2つのバケツに分割すること**である[3]。(要するにA/Bテストか!:thinking:)
 The first, called "learning bucket", usually consists of a small fraction of traffic on which various bandit algorithms are run to learn/estimate article CTRs.
 "learning bucket"と呼ばれる最初のバケツは、通常、記事のCTRを学習/推定するために様々なバンディットアルゴリズムが実行されるトラフィックのごく一部で構成されています。
 The other, called "deployment bucket", is where Yahoo! Front Page greedily serves users using CTR estimates obained from the learning bucket.
@@ -867,18 +868,18 @@ In contrast, exploration in upper confidence bound methods are effectively guide
 Our experimental results imply the effectiveness of upper confidence bound methods and we believe they have similar benefits in many other applications as well.
 我々の実験結果は、UCBの有効性を示唆しており、他の多くのアプリケーションにおいても同様の利点があると信じている。
 
-#### On the Size of Data
+#### On the Size of Data　データのサイズについて
 
-データのサイズについて
+<!-- このセクションは実運用で重要そう -->
 
 One of the challenges in personalized web services is the scale of the applications.
-パーソナライズされたウェブサービスにおける課題の1つは、アプリケーションの規模である。
+**パーソナライズされたウェブサービスにおける課題の1つは、アプリケーションの規模**である。
 In our problem, for example, a small pool of news articles were hand-picked by human editors.
 例えば、私たちの問題では、ニュース記事の小さなプールは人間の編集者によって手作業で選ばれた。
 But if we wish to allow more choices or use automated article selection methods to determine the article pool, the number of articles can be too large even for the high volume of Yahoo! traffic.
 しかし、より多くの選択肢を許容したり、記事プールを決定するために自動化された記事選択方法を使用したい場合、記事の数はヤフーのトラフィック量が多いにもかかわらず多すぎる可能性があります。
 Therefore, it becomes critical for an algorithm to quickly identify a good match between user interests and article contents when data are sparse.
-したがって、データがまばらな場合、ユーザーの興味と記事の内容の間の良い一致を素早く識別するアルゴリズムが重要になる。
+**したがって、データがまばらな場合、ユーザーの興味と記事の内容の間の良い一致を素早く識別するアルゴリズムが重要になる。**
 In our experiments, we artificially reduced data size (to the levels of 30%, 20%, 10%, 5%, and 1%, respectively) to mimic the situation where we have a large article pool but a fixed volume of traffic.
 実験では、データサイズを人為的に縮小し（それぞれ30％、20％、10％、5％、1％）、記事プールは大きいがトラフィック量は一定という状況を模倣した。
 
@@ -887,7 +888,7 @@ To better visualize the comparison results, we use bar graphs in Figure 4 to plo
 A few observations are in order.
 いくつかの見解を述べておこう。
 First, at all data sparsity levels, features were still useful.
-まず、どのようなデータ疎密レベルにおいても、特徴は依然として有用であった。
+**まず、どのようなデータ疎密レベルにおいても、特徴量は依然として有用**であった。
 At the level of 1%, for instance, we observed a 10.3% improvement of linucb (hybrid)'s CTR in the deployment bucket (1.493) over ucb's (1.354).
 例えば、1％のレベルでは、デプロイメントバケットにおけるlinucb（ハイブリッド）のCTR（1.493）は、ucbのCTR（1.354）よりも10.3％向上している。
 
@@ -918,17 +919,17 @@ We believe it was no coincidence.
 Recall that features in our disjoint model are actually normalized membership measures of a user in the five clusters described in Section 5.2.2.
 我々のdisjointモデルにおける特徴量は、実際にはセクション5.2.2で説明した5つのクラスターにおけるユーザの正規化されたメンバーシップ測定値であることを思い出してください。
 Hence, these features may be viewed as a "soft" version of the user assignment process adopted by ucb (seg).
-したがって、これらの特徴量は、ucb(seg)が採用したユーザー割り当てプロセスの「ソフト」バージョンとみなすことができる。
+**したがって、これらの特徴量は、ucb(seg)が採用したユーザー割り当てプロセスの「ソフト」バージョンとみなすことができる**。
 
 ![fig5]()
 
 Figure 5 plots the histogram of a user's relative membership measure to the closest cluster, namely, the largest component of the user's five, non-constant features.
 図5は、**最も近いクラスター**、すなわちユーザーの5つの特徴量のうち最も大きい成分(一定でない特徴量)に対するユーザーの相対的なメンバーシップ尺度のヒストグラムをプロットしたものである。
 It is clear that most users were quite close to one of the five cluster centers: the maximum membership of about 85% users were higher than 0.5, and about 40% of them were higher than 0.8.Therefore, many of these features have a highly dominating component, making the feature vector similar to the "hard" version of user group assignment.
-約85％のユーザの最大メンバーシップは0.5より高く、約40％のユーザーは0.8より高かった。**したがって、これらの特徴量の多くは非常に支配的な成分を持ち、特徴量ベクトルはユーザーグループ割り当ての「ハード」バージョンに似ている**。
+約85％のユーザの最大メンバーシップは0.5より高く、約40％のユーザーは0.8より高かった。**したがって、これらの特徴量の多くは非常に支配的な成分を持ち、特徴量ベクトルはユーザーグループ割り当ての「ハード」バージョンに似ている**。(ユーザがあるクラスターに強く属している場合、特徴量ベクトルはそのクラスターにほぼ一致するから。なのでユーザセグメント毎のcontect-free banditと同じような結果になる...!:thinking:)
 
 We believe that adding more features with diverse components, such as those found by principal component analysis, would be necessary to further distinguish linucb (disjoint) from ucb (seg).
-我々は、linucb（disjoint）とucb（seg）をさらに区別するためには、主成分分析によって見出されるような多**様な成分を持つ特徴量をさらに加えることが必要**だと考えている。
+我々は、**linucb（disjoint）とucb（seg）をさらに区別するためには、主成分分析によって見出されるような多様な成分を持つ特徴量をさらに加えることが必要**だと考えている。
 
 # 6. CONCLUSIONS 6. 結論
 
