@@ -5,7 +5,7 @@ print(f"{wandb.__version__=}")
 
 wandb.init(
     project="test-project",  # The name of the project(実験の人まとまり)
-    # 1回の実行(run)名 (同名のrunが作れてしまうので注意!)
+    # 1回の実行(run)名 (同名のrunが作れてしまうので注意! 実際にはrun_idでユニークに識別されてるらしい。)
     # なので基本的には、timestampなどでユニークにするのが良さそうかも。
     name="test-run-1",
     config={  # hyperparameterなどを記録
@@ -15,6 +15,9 @@ wandb.init(
     },
 )
 # wandb.init()の返り値はRunオブジェクト。wandb.runでもアクセス可能。
+
+if wandb.run:
+    print(f"{wandb.run=}, {wandb.run.id=}")
 
 # wandb.configはinit()に渡したconfigを保持するdict-likeなオブジェクト
 config = wandb.config
@@ -48,5 +51,21 @@ wandb.log(
     }
 )
 
+# 定性的な結果もログ可能 (例えば、画像やテキストなど)
+# ここではサンプルユーザへの推薦コンテンツリストをログ
+data = [
+    [12345, "cont001", "推しアイテムA", 1],
+    [12345, "cont002", "推しアイテムB", 2],
+    [12345, "cont003", "推しアイテムC", 3],
+    [12345, "cont004", "推しアイテムD", 4],
+    [12345, "cont005", "推しアイテムE", 5],
+    [12345, "cont006", "推しアイテムF", 6],
+    [12345, "cont007", "推しアイテムG", 7],
+    [12345, "cont008", "推しアイテムH", 8],
+    [12345, "cont009", "推しアイテムI", 9],
+    [12345, "cont010", "推しアイテムJ", 10],
+]
+columns = ["user_id", "content_id", "title", "rank"]
+wandb.log({"sample_recommended_items": wandb.Table(data=data, columns=columns)})
 # # 実行終了時にwandb.finish()を呼ぶ (省略可、自動で呼ばれる)
 # wandb.finish()
