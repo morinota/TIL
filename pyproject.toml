@@ -28,6 +28,7 @@ dependencies = [
     "torch>=2.8.0",
     "libsql>=0.1.10",
     "mlflow>=3.3.2",
+    "wandb>=0.22.2",
 ]
 
 [tool.uv]
