@@ -8,4 +8,14 @@
   - 無料プランは「保存できるデータ容量」に上限あり（プロジェクトやチーム合計でGB単位の制限、いっぱいになると追加アップロード不可）
   - 小規模チーム向け。
   - 重い画像や、モデルのチェックポイントなどを保存する場合は、データサイズが大きいので有料プランを検討する必要があるらしい。
+    - **ストレージ上限は5GBまでらしい。あと権限管理が「管理者/メンバー」のみ。trackingに関連する制限はこれくらい!**
     - じゃあ逆に、configやmetricsの値や軽いテーブルデータのログだけなら無料プランで十分かも??:thinking:
+
+## Sagemaker TrainingJobなどのAWSコンテナ環境からwandbを使う場合
+
+- refs:
+  - 公式のdocs: https://docs.wandb.ai/guides/integrations/sagemaker/
+- `WANDB_API_KEY`を環境変数にセットさえしておけば良いっぽい。
+  - **まあ実運用では、parameter storeとかにAPI keyを保存しておいて、TrainingJobの起動後に取得するのが無難そう??**
+  - 公式docsだと、`secrets.env`というファイルに保存する方法を紹介してた。
+
