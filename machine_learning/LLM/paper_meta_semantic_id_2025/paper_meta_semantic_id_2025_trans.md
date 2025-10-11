@@ -133,60 +133,49 @@ Section 8 concludes.
 #### Item representations in recommendation 推薦におけるアイテム表現
 
 Many modern deep learning recommendation models use trained embeddings to represent categorical (“sparse”) features(Covington etal.,2016; Naumov etal.,2019; Naumov,2019). 
-多くの現代の深層学習推薦モデルは、訓練された埋め込みを使用してカテゴリカル（「スパース」）特徴を表現します（Covington etal.,2016; Naumov etal.,2019; Naumov,2019）。
-
+多くの現代の深層学習推薦モデルは、訓練された埋め込みを使用してカテゴリカル（「スパース」）特徴を表現します（Covington etal.,2016; Naumov etal.,2019; Naumov,2019）。(=これがいわゆるentity embedding!:thinking:)
 A simple solution to high item cardinality is to use random hashing(Weinberger etal.,2009), but random hash collisions can be undesirable. 
 高いアイテムのカーディナリティに対する簡単な解決策は、ランダムハッシングを使用することです（Weinberger etal.,2009）が、ランダムハッシュの衝突は望ましくない場合があります。
-
 One option is to modify the hashing procedure. 
 1つの選択肢は、ハッシング手順を修正することです。
-
 Under this category, collision-free hashing(Liu etal.,2022)introduces individual embeddings for each item by dynamically free the memory of embeddings for retired items. 
-このカテゴリの下では、collision-free hashing（Liu etal.,2022）が、退役アイテムの埋め込みのメモリを動的に解放することによって、各アイテムの個別の埋め込みを導入します。
-
+このカテゴリの下では、collision-free hashing（Liu etal.,2022）が、**退役アイテムの埋め込みのメモリを動的に解放すること**によって、各アイテムの個別の埋め込みを導入します。(うん、特にニュース推薦だとretired itemsあるよなぁ...:thinking:)
 Double hashing(Zhang etal.,2020)utilizes two independent hash functions to reduce memory usage, but still has random collision. 
 Double hashing（Zhang etal.,2020）は、メモリ使用量を削減するために2つの独立したハッシュ関数を利用しますが、依然としてランダムな衝突があります。
-
 Learning to hash methods(Wang etal.,2017)focus on similarity preserving by training ML-based hash functions. 
 Learning to hash手法（Wang etal.,2017）は、MLベースのハッシュ関数を訓練することによって類似性を保持することに焦点を当てています。
-
 There have also been works that address impression skew through contrastive learning or clustering(Yao etal.,2021; Chang etal.,2024); we view these as complementary approaches. 
 対照学習やクラスタリングを通じて印象の偏りに対処する研究もあります（Yao etal.,2021; Chang etal.,2024）；私たちはこれらを補完的なアプローチと見なしています。
-
 We take a holistic approach of designing a stable ID space, to minimize the need for hashing and to address embedding representation shifting directly. 
 私たちは、ハッシングの必要性を最小限に抑え、埋め込み表現のシフトに直接対処するために、安定したID空間を設計する包括的なアプローチを取ります。
 
-
+<!-- ここまで読んだ! -->
 
 #### Stable embedding representation 安定埋め込み表現
 
 Stable ID is inspired by tokenization approaches in NLP, which learn a fixed vocabulary of tokens to represent text in language modeling(Sennrich,2015; Kudo,2018; Devlin,2018). 
 Stable IDは、NLPにおけるトークン化アプローチに触発されており、言語モデリングにおいてテキストを表現するための固定されたトークンの語彙を学習します(Sennrich,2015; Kudo,2018; Devlin,2018)。
-
 In designing a tokenization scheme for item recommendation, Hou et al. (2023) proposes to vector-quantize the embeddings learned from an item content understanding model; 
 アイテム推薦のためのトークン化スキームを設計するにあたり、Hou et al. (2023)はアイテムコンテンツ理解モデルから学習した埋め込みをベクトル量子化することを提案しています。
-
 Qu et al. (2024) introduce a masked vector-quantizer to transfer the learned representations from collaborative filtering models to a generative recommender. 
 Qu et al. (2024)は、協調フィルタリングモデルから生成的レコメンダーへの学習した表現を転送するために、マスク付きベクトル量子化器を導入しています。
-
 Semantic ID is introduced concurrently in (Singh et al., 2023; Rajput et al., 2024), which is based on (Hou et al., 2023) and uses an RQ-VAE for quantization, showing its benefits in generalization performance and sequential recommendation, respectively. 
 Semantic IDは(Singh et al., 2023; Rajput et al., 2024)で同時に導入されており、(Hou et al., 2023)に基づいており、量子化のためにRQ-VAEを使用し、一般化性能と逐次推薦におけるその利点をそれぞれ示しています。
-
 In this work, we adapt Semantic ID as our stable ID method and analyze its effectiveness in addressing the three challenges in online item recommendation. 
 本研究では、Semantic IDを私たちの安定ID手法として適応させ、オンラインアイテム推薦における3つの課題に対処する効果を分析します。
 
-
+<!-- ここまで読んだ! -->
 
 ## 3Ranking Model Overview 3 ランキングモデルの概要
 
 The recommendation problem is posed as a classification task, where a data point is the user- and item-side features associated with an item impression or conversion and a binary label indicating whether or not the user interacted or converted for that item. 
-推薦問題は分類タスクとして定式化され、データポイントはアイテムのインプレッションまたはコンバージョンに関連するユーザ側およびアイテム側の特徴と、そのアイテムに対してユーザが相互作用したかどうかを示すバイナリラベルで構成されます。
+推薦問題は分類タスクとして定式化され、データポイントはアイテムのインプレッションまたはコンバージョンに関連するユーザ側およびアイテム側の特徴と、そのアイテムに対してユーザが相互作用したかどうかを示すバイナリラベルで構成されます。(うんうん、典型的なbandit feedbackの構造だ:thinking:)
 We now give a brief overview of the ranking model architecture.
 ここでは、ランキングモデルのアーキテクチャについて簡単に概説します。
 
-
-
 ### 3.1 Model モデル
+
+(DLRMって主要な方法論なのかな。初めて聞いた...!:thinking:)
 
 The recommendation system follows a deep neural architecture based on the DLRM (Covington et al., 2016; Naumov et al., 2019). 
 推薦システムは、DLRM（Covington et al., 2016; Naumov et al., 2019）に基づく深層ニューラルアーキテクチャに従います。
@@ -201,12 +190,11 @@ Second, these are concatenated into a single list which goes through the interac
 Third, the output of the interaction layer is transformed via an MLP to produce the logit score and a sigmoid is taken to output a probability. 
 第三に、相互作用層の出力はMLPを介して変換され、ロジットスコアが生成され、シグモイドが取られて確率が出力されます。
 The model is trained using cross-entropy loss. 
-モデルはクロスエントロピー損失を使用して訓練されます。
-
+モデルはクロスエントロピー損失を使用して訓練されます。(=つまり2値分類タスクが代理学習問題なのかな...!:thinking:)
 In the remainder of the paper we focus on the information aggregation section of the model. 
 論文の残りの部分では、モデルの情報集約セクションに焦点を当てます。
 
-
+<!-- ここまで読んだ! -->
 
 #### Embedding module 埋め込みモジュール
 
@@ -214,78 +202,60 @@ Let $I$ be the total number of raw IDs in the system and let $[1..N]$ denote the
 $I$をシステム内の生のIDの総数とし、$[1..N]$を$1$から$N$までの整数とします。
 
 The embedding table is a matrix $\mathbf{E} \in \mathbb{R}^{H \times d_{m}}$, where $d_{m}$ is the embedding dimension and $H$ is the number of embeddings.
-埋め込みテーブルは行列$\mathbf{E} \in \mathbb{R}^{H \times d_{m}}$であり、$d_{m}$は埋め込み次元、$H$は埋め込みの数です。
-
+埋め込みテーブルは行列 $\mathbf{E} \in \mathbb{R}^{H \times d_{m}}$ であり、$d_{m}$ は埋め込み次元、$H$ は埋め込みの数です。
 Let $f=(f_{1},\dots,f_{G}):[1..I]\to[1..H]^{G}$ be an embedding lookup function that maps a raw ID to $G$ embedding table row indices.
 $f=(f_{1},\dots,f_{G}):[1..I]\to[1..H]^{G}$を、生のIDを$G$個の埋め込みテーブル行インデックスにマッピングする埋め込みルックアップ関数とします。
-
 Then for each raw ID $x \in [1..I]$, the sparse module looks up embedding rows $\mathbf{e}_{f_{1}}(x),\dots,\mathbf{e}_{f_{G}}(x)$ and produces a single output embedding via sum-pooling, $\mathbf{e}_{f}(x):=\sum_{i=1}^{G}\mathbf{e}_{f_{i}}(x)$.
-次に、各生のID $x \in [1..I]$について、スパースモジュールは埋め込み行$\mathbf{e}_{f_{1}}(x),\dots,\mathbf{e}_{f_{G}}(x)$を参照し、合計プーリングを介して単一の出力埋め込み$\mathbf{e}_{f}(x):=\sum_{i=1}^{G}\mathbf{e}_{f_{i}}(x)$を生成します。
+次に、各生のID $x \in [1..I]$について、スパースモジュールは埋め込み行$\mathbf{e}_{f_{1}}(x),\dots,\mathbf{e}_{f_{G}}(x)$を参照し、合計プーリングを介して単一の出力埋め込み $\mathbf{e}_{f}(x):=\sum_{i=1}^{G}\mathbf{e}_{f_{i}}(x)$ を生成します。
 
 $$
 \mathbf{e}_{f}(x):=\sum_{i=1}^{G}\mathbf{e}_{f_{i}}(x)
 $$
 
-
+<!-- ここまで読んだ! -->
 
 #### Sparse module スパースモジュール
 
 A sparse feature is a set $\mathbf{x}:=\{x_{1},\dots,x_{n}\}$ of raw IDs. 
 スパース特徴は、生のIDの集合 $\mathbf{x}:=\{x_{1},\dots,x_{n}\}$ です。
-
 For instance, this could be a set of $n$ product category IDs a given item belongs to. 
-例えば、これは特定のアイテムが属する $n$ 個の製品カテゴリIDの集合である可能性があります。
-
+例えば、これは**特定のアイテムが属する $n$ 個の製品カテゴリIDの集合**である可能性があります。
 We usually produce a single embedding $\mathbf{e}_{f}(\mathbf{x})$ by sum-pooling embeddings $\mathbf{e}_{f}(x_{i})$ for constituent raw IDs. 
-私たちは通常、構成する生のIDの埋め込み $\mathbf{e}_{f}(x_{i})$ を合計プーリングして、単一の埋め込み $\mathbf{e}_{f}(\mathbf{x})$ を生成します。
+私たちは通常、構成する生のIDの埋め込み $\mathbf{e}_{f}(x_{i})$ を**合計プーリング**して、単一の埋め込み $\mathbf{e}_{f}(\mathbf{x})$ を生成します。
 
-
+<!-- ここまで読んだ! -->
 
 #### User history module ユーザ履歴モジュール
 
 We model a user’s item interaction history as a sequence of sparse features 𝐱u:=(𝐱1u,…,𝐱Tu) assigns superscript 𝐱𝑢 superscript subscript 𝐱1𝑢… superscript subscript 𝐱𝑇𝑢 
 私たちは、ユーザのアイテムインタラクション履歴をスパース特徴のシーケンスとしてモデル化します $\mathbf{x}^{u}:=(\mathbf{x}_{1}^{u},\dots,\mathbf{x}_{T}^{u})$。
-
 and the corresponding interaction timestamps. 
 および対応するインタラクションのタイムスタンプ。
-
 When working with these features, there are system constraints due to the number of items and the sequence length $T$. 
-これらの特徴を扱う際には、アイテムの数とシーケンスの長さ $T$ によるシステム制約があります。
-
+これらの特徴を扱う際には、**アイテムの数とシーケンスの長さ $T$ によるシステム制約**があります。
 We include item interaction history for up to three months, which brings the item cardinality for the model to process to over one billion. 
-私たちは、最大三ヶ月のアイテムインタラクション履歴を含めており、モデルが処理するアイテムのカーディナリティは10億を超えます。
-
+私たちは、**最大三ヶ月のアイテムインタラクション履歴を含めており、モデルが処理するアイテムのカーディナリティは10億を超えます**。
 It is important for the user history module to contextualize the sequence of features before they are further processed downstream. 
 ユーザ履歴モジュールが、これらの特徴のシーケンスを文脈化することは、さらなる下流処理の前に重要です。
-
 We describe the architecture below. 
 以下にアーキテクチャを説明します。
 
 First, we use the sparse module to embed each sparse feature 𝐱iusuperscriptsubscript𝐱𝑖𝑢 
 まず、スパースモジュールを使用して各スパース特徴 $\mathbf{x}_{i}^{u}$ を埋め込みます。
-
 and obtain a learned timestamp embedding; the sum is 𝐞fu(𝐱iu)superscriptsubscript𝐞𝑓𝑢superscriptsubscript𝐱𝑖𝑢 
 学習されたタイムスタンプ埋め込みを取得し、その合計は $\mathbf{e}_{f}^{u}(\mathbf{x}_{i}^{u})$ です。
-
 Let 𝐗=[𝐞fu(x1u);…;𝐞fu(xTu)]⊺∈ℝT×dm 
 $\mathbf{X}=\left[\mathbf{e}_{f}^{u}(x_{1}^{u});\dots;\mathbf{e}_{f}^{u}(x_{T}^{u})\right]^{\intercal}\in\mathbb{R}^{T\times d_{m}}$ とします。
-
 denote the resulting encoding. 
 これは結果のエンコーディングを示します。
-
 We then contextualize this sequence of embeddings via an aggregation module. 
-次に、集約モジュールを介してこの埋め込みのシーケンスを文脈化します。
-
+次に、**集約モジュールを介してこの埋め込みのシーケンスを文脈化**します。
 We use one of the following three aggregation module architectures: Bypass, Transformer, and Pooled Multihead Attention (PMA), which are defined in Appendix A. 
 次の3つの集約モジュールアーキテクチャのいずれかを使用します：バイパス、トランスフォーマー、およびプールされたマルチヘッドアテンション（PMA）。これらは付録Aで定義されています。
 
-
+<!-- ここまで読んだ! -->
 
 ### 3.2Metrics メトリクス
-
-3.2
-
-
 
 #### Normalized Entropy 正規化エントロピー
 
