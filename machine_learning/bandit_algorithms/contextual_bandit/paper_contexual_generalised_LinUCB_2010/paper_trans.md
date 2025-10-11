@@ -1,42 +1,6 @@
 
 # Parametric Bandits: The Generalized Linear Case  
 
-**Sarah Filippi**  
-LTCI  
-Telecom ParisTech et CNRS  
-Paris, France  
-
-```
-filippi@telecom-paristech.fr  
-```
-
-**Aurélien Garivier**  
-LTCI  
-Telecom ParisTech et CNRS  
-Paris, France  
-
-```
-garivier@telecom-paristech.fr  
-```
-
-**Olivier Cappé**  
-LTCI  
-Telecom ParisTech et CNRS  
-Paris, France  
-
-```
-cappe@telecom-paristech.fr  
-```
-
-**Csaba Szepesvári**  
-RLAI Laboratory  
-University of Alberta  
-Edmonton, Canada  
-
-```
-szepesva@ualberta.ca  
-```
-
 ## Abstract 要約
 
 We consider structured multi-armed bandit problems based on the Generalized Linear Model (GLM) framework of statistics.
