@@ -261,84 +261,75 @@ We use one of the following three aggregation module architectures: Bypass, Tran
 
 We measure model performance by normalized entropy (NE), defined as the model cross-entropy divided by the cross-entropy from predicting the data mean frequency of positive labels. 
 モデルの性能は、正規化エントロピー（NE）によって測定され、これはモデルのクロスエントロピーを、正のラベルのデータ平均頻度を予測することによるクロスエントロピーで割ったものとして定義されます。
-
 The NE equation is
 NEの方程式は
 
 $$
 NE = \frac{-\frac{1}{N} \sum_{i=1}^{N} y_{i} \log(p_{i})}{-\frac{1}{N} \sum_{i=1}^{N} y_{i} \log(p)}
 $$
-$$
-NE = \frac{-\frac{1}{N} \sum_{i=1}^{N} y_{i} \log(p_{i})}{-\frac{1}{N} \sum_{i=1}^{N} y_{i} \log(p)}
-$$
+
 
 where $N$ is the number of training examples, $y_{i} \in \{0,1\}$ is the label for example $i$, $p_{i}$ is the model prediction for example $i$, and $p = \frac{\sum_{i=1}^{N} y_{i}}{N}$. 
 ここで、$N$はトレーニング例の数、$y_{i} \in \{0,1\}$は例$i$のラベル、$p_{i}$は例$i$のモデル予測、$p = \frac{\sum_{i=1}^{N} y_{i}}{N}$です。
-
 Lower is better.
 値が低いほど良いです。
 
-
+<!-- ここまで読んだ! -->
 
 ## 4Semantic ID and Parameterizations
 
 The primary motivation for Semantic ID is to design an efficient clustering schema to represent items that allows knowledge sharing between items with shared semantics. 
-Semantic IDの主な動機は、共有された意味を持つアイテム間で知識を共有できるようにアイテムを表現する効率的なクラスタリングスキーマを設計することです。
-
+Semantic IDの主な動機は、**共有された意味を持つアイテム間で知識を共有できるようにアイテムを表現する効率的なクラスタリングスキーマを設計すること**です。
 Intuitively, if we have hundreds of ads about pizza that different users clicked on, we would want an example involving one of the ads to be informed by the other ads’ representations. 
-直感的に言えば、異なるユーザーがクリックしたピザに関する数百の広告がある場合、私たちはその広告の一つに関する例が他の広告の表現から情報を得ることを望むでしょう。
-
+**直感的に言えば、異なるユーザーがクリックしたピザに関する数百の広告がある場合、私たちはその広告の一つに関する例が他の広告の表現から情報を得ること**を望むでしょう。
 We craft the design of Semantic ID to potentially address the data-related challenges of item cardinality, impression skew, and ID drifting described in Section 5. 
 私たちは、セクション5で説明されているアイテムのカーディナリティ、インプレッションの偏り、IDの漂流というデータ関連の課題に対処する可能性のあるSemantic IDの設計を考案します。
-
 Compared to embedding representations based on random clusters, semantics-based representations will likely be more stable over time. 
-ランダムクラスタに基づく埋め込み表現と比較して、意味に基づく表現は時間とともにより安定する可能性があります。
-
+**ランダムクラスタに基づく埋め込み表現と比較して、意味に基づく表現は時間とともにより安定する可能性があります**。
 Semantics-based clustering will also allow tail items to learn from more training examples. 
 意味に基づくクラスタリングは、テールアイテムがより多くのトレーニング例から学ぶことを可能にします。
-
 The learning from items that have left the system can also be utilized, and embedding weights for new items do not have to be learned from scratch. 
-システムから離れたアイテムからの学習も活用でき、新しいアイテムの埋め込み重みはゼロから学習する必要はありません。
-
+**システムから離れたアイテムからの学習も活用でき、新しいアイテムの埋め込み重みはゼロから学習する必要はありません。** (それこそ用途としてはtwo-towerでも満たせる感じなのかな...!:thinking:)
 We investigate these hypotheses empirically in Section 6. 
 私たちは、これらの仮説をセクション6で実証的に調査します。
 
 First, we give an overview of Semantic ID in Section 4.1. 
 まず、セクション4.1でSemantic IDの概要を説明します。
-
 We then describe token parameterization in Section 4.2. 
 次に、セクション4.2でトークンのパラメータ化について説明します。
-
 This step is crucial to incorporate Semantic ID into the recommendation model. 
 このステップは、Semantic IDを推薦モデルに組み込むために重要です。
 
-
+<!-- ここまで読んだ! -->
 
 ### 4.1 概要
 
 Semantic IDs are learned for items in two stages: first, apply a content understanding model to the items’ text, image, or video to produce dense content embeddings. 
-Semantic IDは、アイテムに対して2段階で学習されます。まず、アイテムのテキスト、画像、または動画にコンテンツ理解モデルを適用して、密なコンテンツ埋め込みを生成します。 
-
+Semantic IDは、アイテムに対して2段階で学習されます。まず、アイテムのテキスト、画像、または動画にコンテンツ理解モデルを適用して、**密なコンテンツ埋め込み**を生成します。 
 Then, train an RQ-VAE(Zeghidour etal.,2021)on the content embeddings to obtain a vector quantization for each item, which is represented as a sequence of coarse-to-fine discrete codes called the item’s Semantic ID.
-次に、コンテンツ埋め込みに対してRQ-VAE（Zeghidour et al., 2021）を訓練し、各アイテムのベクトル量子化を取得します。これは、アイテムのSemantic IDと呼ばれる粗から細への離散コードのシーケンスとして表されます。
+次に、コンテンツ埋め込みに対してRQ-VAE（Zeghidour et al., 2021）を訓練し、各アイテムの**ベクトル量子化**を取得します。これは、アイテムのSemantic IDと呼ばれる粗から細への離散コードのシーケンスとして表されます。
+
+(あ、ツイートで見たのは、なんで密な埋め込みのままではダメで、わざわざ離散化するんだろう? モチベーション何? っていう話だったな...!:thinking:)
 
 Figure 1:
 図1：
-
 The RQVAE model with L=3.
 L=3のRQ-VAEモデル。
 
 Let $L$ be the number of layers (i.e., length of the sequence) and $K$ be the codebook size (i.e., number of clusters at each layer). 
 $L$を層の数（すなわち、シーケンスの長さ）とし、$K$をコードブックのサイズ（すなわち、各層のクラスタ数）とします。
-
 RQ-VAE consists of an encoder that maps the content embedding $\mathbf{x} \in \mathbb{R}^{D}$ to a continuous latent representation, $\mathbf{z} \in \mathbb{R}^{D^{\prime}}$, a residual quantizer that quantizes $\mathbf{z}$ into a series of discrete codes $\mathbf{c}:=(c_{1},\dots,c_{L}) \in K^{L}$, and a decoder that reconstructs $\mathbf{x}$ from $\mathbf{c}$. 
 RQ-VAEは、コンテンツ埋め込み$\mathbf{x} \in \mathbb{R}^{D}$を連続的な潜在表現$\mathbf{z} \in \mathbb{R}^{D^{\prime}}$にマッピングするエンコーダ、$\mathbf{z}$を一連の離散コード$\mathbf{c}:=(c_{1},\dots,c_{L}) \in K^{L}$に量子化する残差量子化器、および$\mathbf{c}$から$\mathbf{x}$を再構築するデコーダで構成されています。
-
 This is done by associating each layer $l$ with a codebook which is a set of $K$ vectors $\{\mathbf{v}^{l}_{k}\}_{k=1}^{K}$. 
 これは、各層$l$を$K$ベクトルの集合$\{\mathbf{v}^{l}_{k}\}_{k=1}^{K}$に関連付けることによって行われます。
-
 The sequence of discrete codes is hierarchical: $c_{l}$ corresponds to the codebook vector $\mathbf{v}^{l}_{c_{l}}$ that approximates $\mathbf{r}_{l}$, the remaining residual from $\mathbf{z}$ after recursively applying the codebook vectors from layers $(l-1)$ to 1, i.e.,
 離散コードのシーケンスは階層的です：$c_{l}$は、$\mathbf{r}_{l}$を近似するコードブックベクトル$\mathbf{v}^{l}_{c_{l}}$に対応し、これは$\mathbf{z}$からの残りの残差であり、層$(l-1)$から1までのコードブックベクトルを再帰的に適用した後のものです。
+
+$$
+r_{l} := z - \sum_{i=1}^{l-1} v^{i}_{c_{i}},
+c_{l} := \arg\min_{c} \| v^{l}_{c} - r_{l} \|_{2}.
+\tag{2}
+$$
 
 In Section 4.2, we provide more intuition on the nature of RQ-VAE’s hierarchical clustering and how it informs the choice of token parameterization.
 セクション4.2では、RQ-VAEの階層的クラスタリングの性質と、それがトークンのパラメータ化の選択にどのように影響するかについて、より直感的な説明を提供します。
@@ -346,13 +337,17 @@ In Section 4.2, we provide more intuition on the nature of RQ-VAE’s hierarchic
 The RQ-VAE is trained using two loss terms, a reconstruction loss and a loss that encourages the residuals and codebook vectors to be close to each other, 
 RQ-VAEは、再構築損失と残差とコードブックベクトルが互いに近くなるように促す損失の2つの損失項を使用して訓練されます。
 
+$$
+L_{RQ-VAE} = ||x - dec(c)||^2 + 
+$$
+
 where $\text{dec}(\mathbf{c})$ is the result of applying the decoder to the codes $\mathbf{c}$, $\text{sg}(\cdot)$ corresponds to the stop-gradient operator, and $\beta$ is a hyperparameter we set to 0.5 in the experiments. 
 ここで、$\text{dec}(\mathbf{c})$は、コード$\mathbf{c}$にデコーダを適用した結果であり、$\text{sg}(\cdot)$はストップグラデイント演算子に対応し、$\beta$は実験で0.5に設定したハイパーパラメータです。
 
 A Semantic ID is defined as the sequence of discrete codes $(c_{1},\dots,c_{L})$ produced by the encoder and residual quantizer.
 Semantic IDは、エンコーダと残差量子化器によって生成された離散コードのシーケンス$(c_{1},\dots,c_{L})$として定義されます。
 
-
+<!-- ここまで読んだ! -->
 
 ### 4.2 Token Parameterization トークンのパラメータ化
 
@@ -449,14 +444,12 @@ ii) Prefix-ngramの深さを増すことでNEパフォーマンスが向上し�
 iii) increasing the RQ-VAE cardinality improves NE performance. 
 iii) RQ-VAEの基数を増やすことでNEパフォーマンスが向上します。
 
-
+<!-- 後で読む! -->
 
 ## 5Item Impression Distribution Issues 5アイテムのインプレッション分布の問題
 
 In this section, we discuss the data distribution aspects that present challenges for recommendation modeling in Meta ads ranking and how we address them with the use of Semantic ID. 
 このセクションでは、Meta広告ランキングにおける推薦モデルに対する課題を提示するデータ分布の側面と、Semantic IDを使用してそれらにどのように対処するかについて議論します。
-
-
 
 #### Item cardinality アイテムの基数
 
