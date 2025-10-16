@@ -931,41 +931,54 @@ We detail the successful productionization of Semantic ID features in Meta’s a
 
 <!-- ここまで読んだ! -->
 
-
 ## Appendix A Aggregation Module Architectures 付録A 集約モジュールのアーキテクチャ
 
-Bypass. Apply a linear weight matrix $\mathbf{W} \in \mathbb{R}^{d_{m} \times d_{m}}$ to each embedding separately,  
-バイパス。各埋め込みに対して線形重み行列 $\mathbf{W} \in \mathbb{R}^{d_{m} \times d_{m}}$ を適用します。
+### Bypass. バイパス。
 
-(5)  
-(5)
+Apply a linear weight matrix $\mathbf{W} \in \mathbb{R}^{d_{m} \times d_{m}}$ to each embedding separately,  
+各埋め込みに対して線形重み行列 $\mathbf{W} \in \mathbb{R}^{d_{m} \times d_{m}}$ を適用します。
 
-Transformer (Vaswani, 2017). Apply a Transformer layer to the embedding sequence. The attention submodule is defined as  
-Transformer (Vaswani, 2017)。埋め込みシーケンスにTransformer層を適用します。注意サブモジュールは次のように定義されます。
+$$
+Bypass(X) := XW
+\tag{5}
+$$
 
-(6)  
-(6)
+
+### Transformer (Vaswani, 2017). 
+
+Apply a Transformer layer to the embedding sequence. The attention submodule is defined as  
+埋め込みシーケンスにTransformer層を適用します。注意サブモジュールは次のように定義されます。
+
+$$
+Attention(X) := \text{softmax}\left(\frac{XW^{Q}(XW^{K})^{T}}{\sqrt{d_{m}}}\right)XW^{V}
+\tag{6}
+$$
 
 where $\mathbf{W}^{Q}, \mathbf{W}^{K}, \mathbf{W}^{V} \in \mathbb{R}^{d_{m} \times d_{a}}$ are the query, key, and value weight matrices, respectively, and $d_{a}$ is the query/key/value vector dimension. The full Transformer module is given by  
 ここで、$\mathbf{W}^{Q}, \mathbf{W}^{K}, \mathbf{W}^{V} \in \mathbb{R}^{d_{m} \times d_{a}}$ はそれぞれクエリ、キー、バリューの重み行列であり、$d_{a}$ はクエリ/キー/バリューのベクトル次元です。完全なTransformerモジュールは次のように与えられます。
 
-(7)  
-(7)
+$$
+X^{(1)} = Attention(LayerNorm(X)) + X
+\tag{7}
+$$
 
-(8)  
-(8)
+$$
+X^{(2)} = MLP(LayerNorm(X^{(1)})) + X^{(1)}
+\tag{8}
+$$
 
 where LayerNorm and MLP designate the standard layer norm and position-wise MLP layers. We add standard positional embeddings to the encoding before applying Transformer or PMA modules.  
 ここで、LayerNormとMLPは標準のレイヤーノルムと位置ごとのMLP層を指定します。TransformerまたはPMAモジュールを適用する前に、エンコーディングに標準的な位置埋め込みを追加します。
 
-Pooled Multihead Attention (PMA) (Lee et al., 2019). Apply a Transformer layer to the embedding sequence, but replace the attention query vectors with $d_{s}$ learnable weight vectors. The PMA attention submodule is defined as  
-プールされたマルチヘッドアテンション (PMA) (Lee et al., 2019)。埋め込みシーケンスにTransformer層を適用しますが、注意クエリベクトルを$d_{s}$の学習可能な重みベクトルに置き換えます。PMA注意サブモジュールは次のように定義されます。
+### Pooled Multihead Attention (PMA) (Lee et al., 2019). 
 
-Pooled Multihead Attention (PMA)  
-プールされたマルチヘッドアテンション (PMA)
+Apply a Transformer layer to the embedding sequence, but replace the attention query vectors with $d_{s}$ learnable weight vectors. The PMA attention submodule is defined as  
+埋め込みシーケンスにTransformer層を適用しますが、注意クエリベクトル ($d_{m}$) を$d_{s}$の学習可能な重みベクトルに置き換えます。PMA注意サブモジュールは次のように定義されます。
 
-(9)  
-(9)
+$$
+PMAttention(X) := \text{softmax}\left(\frac{S(XW^{K})^{T}}{\sqrt{d_{m}}}\right)XW^{V}
+\tag{9}
+$$
 
 where $\mathbf{S} \in \mathbb{R}^{d_{s} \times d_{a}}$ is comprised of $d_{s}$ learnable query vectors, or seeds. In our experiments, $d_{s} = 32$.  
 ここで、$\mathbf{S} \in \mathbb{R}^{d_{s} \times d_{a}}$ は$d_{s}$の学習可能なクエリベクトル、またはシードから構成されます。私たちの実験では、$d_{s} = 32$です。
@@ -973,7 +986,7 @@ where $\mathbf{S} \in \mathbb{R}^{d_{s} \times d_{a}}$ is comprised of $d_{s}$ l
 The PMA module is formed using the same equations as for the Transformer module (Equations 7 and 8), except that PMAttention is used in place of Attention.  
 PMAモジュールは、Transformerモジュールと同じ方程式（方程式7および8）を使用して形成されますが、Attentionの代わりにPMAttentionが使用されます。
 
-
+<!-- ここまで読んだ! -->
 
 ## Appendix B セマンティックIDのクリック分布
 
