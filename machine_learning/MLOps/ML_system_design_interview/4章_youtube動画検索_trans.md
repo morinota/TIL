@@ -1,65 +1,13 @@
 refs: https://bytebytego.com/courses/machine-learning-system-design-interview/youtube-video-search
 
-
-Unlock Full Access with 50% off
-50%オフでフルアクセスを解除
-
-Login
-ログイン
-
-
-
-## Machine Learning System Design Interview 機械学習システム設計インタビュー
-- 01Introduction and Overview 01はじめにと概要
-- 02Visual Search System 02視覚検索システム
-- 03Google Street View Blurring System 03Googleストリートビューぼかしシステム
-- 04YouTube Video Search 04YouTube動画検索
-- 05Harmful Content Detection 05有害コンテンツ検出
-- 06Video Recommendation System 06動画推薦システム
-- 07Event Recommendation System 07イベント推薦システム
-- 08Ad Click Prediction on Social Platforms 08ソーシャルプラットフォームにおける広告クリック予測
-- 09Similar Listings on Vacation Rental Platforms 09バケーションレンタルプラットフォームにおける類似リスティング
-- 10Personalized News Feed 10パーソナライズされたニュースフィード
-- 11People You May Know 11あなたが知っているかもしれない人々
-01Introduction and Overview 01はじめにと概要
-01Introduction and Overview 01はじめにと概要
-02Visual Search System 02視覚検索システム
-02Visual Search System 02視覚検索システム
-03Google Street View Blurring System 03Googleストリートビューぼかしシステム
-03Google Street View Blurring System 03Googleストリートビューぼかしシステム
-04YouTube Video Search 04YouTube動画検索
-04YouTube Video Search 04YouTube動画検索
-05Harmful Content Detection 05有害コンテンツ検出
-05Harmful Content Detection 05有害コンテンツ検出
-06Video Recommendation System 06動画推薦システム
-06Video Recommendation System 06動画推薦システム
-07Event Recommendation System 07イベント推薦システム
-07Event Recommendation System 07イベント推薦システム
-08Ad Click Prediction on Social Platforms 08ソーシャルプラットフォームにおける広告クリック予測
-08Ad Click Prediction on Social Platforms 08ソーシャルプラットフォームにおける広告クリック予測
-09Similar Listings on Vacation Rental Platforms 09バケーションレンタルプラットフォームにおける類似リスティング
-09Similar Listings on Vacation Rental Platforms 09バケーションレンタルプラットフォームにおける類似リスティング
-10Personalized News Feed 10パーソナライズされたニュースフィード
-10Personalized News Feed 10パーソナライズされたニュースフィード
-11People You May Know 11あなたが知っているかもしれない人々
-11People You May Know 11あなたが知っているかもしれない人々
-Unlock Full Access with 50% off 50%オフでフルアクセスを解除
-Login ログイン
-
-
-
 # YouTube Video Search YouTube動画検索
 
 On video-sharing platforms such as YouTube, the number of videos can quickly grow into the billions. 
 YouTubeのような動画共有プラットフォームでは、動画の数は急速に数十億に達する可能性があります。
-
 In this chapter, we design a video search system that can efficiently handle this volume of content. 
-この章では、この膨大なコンテンツ量を効率的に処理できる動画検索システムを設計します。
-
+この章では、この**膨大なコンテンツ量を効率的に処理できる動画検索システム**を設計します。
 As shown in Figure 4.1, the user enters text into the search box, and the system displays the most relevant videos for the given text. 
 図4.1に示すように、ユーザは検索ボックスにテキストを入力し、システムは指定されたテキストに最も関連性の高い動画を表示します。
-
-
 
 ### Clarifying Requirements 要件の明確化
 
