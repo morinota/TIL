@@ -14,6 +14,7 @@ It's constantly updating while other entities creating new posts.
 
 
 ## Requirement 要件  
+
 ### Functional requirement 機能要件  
 1. News feed is generated using the posts from other entities in the system that the user followed or the user might be interested in.  
 1. ニュースフィードは、ユーザがフォローしているシステム内の他のエンティティからの投稿や、ユーザが興味を持つ可能性のある投稿を使用して生成されます。  

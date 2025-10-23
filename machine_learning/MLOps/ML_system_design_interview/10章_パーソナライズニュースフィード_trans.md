@@ -106,7 +106,7 @@ For example, a user may click on a post, but find it is not worth reading.
 
 Option 2: Maximize the number of specific explicit reactions, such as likes, shares, and hides  
 **選択肢2：特定の明示的反応の数を最大化する（例：いいね、シェア、非表示）**
-With this option, we choose explicit reactions as a proxy for user opinions about a post.  
+With this option, we choose explicit reactions as a proxy for user opinions about a post.
 この選択肢では、投稿に対するユーザの意見の代理として明示的反応を選択します。  
 The advantage of this approach is that explicit signals usually carry more weight than implicit signals.  
 このアプローチの利点は、明示的信号が通常、暗黙的信号よりも重みを持つことです。  
