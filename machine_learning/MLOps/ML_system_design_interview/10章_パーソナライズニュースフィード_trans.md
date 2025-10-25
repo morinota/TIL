@@ -573,6 +573,7 @@ Note that the number of negative data points is usually much higher than positiv
 **負のデータポイントの数は通常、正のデータポイントよりもはるかに多いことに注意**してください。
 To avoid having an imbalanced dataset, we create negative data points to equal the number of positive data points. 
 不均衡なデータセットを避けるために、**正のデータポイントの数と等しくなるように負のデータポイントを作成**します。
+(やっぱり基本的にはpositiveとnegativeの数が1:1位がいいのかな...! 元々は1:100の割合でFBログが存在するとしたら、negativeサンプルを1/100にアンダーサンプリングするとか...??:thinking:)
 Figure 10.11 shows positive and negative data points for the "like" reaction. 
 図10.11は、「いいね」反応に対する正のデータポイントと負のデータポイントを示しています。
 
