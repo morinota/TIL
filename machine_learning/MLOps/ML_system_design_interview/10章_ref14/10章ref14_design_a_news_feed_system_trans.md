@@ -411,25 +411,27 @@ Instead of simply ranking the feeds chronologically, today's ranking algorithms 
 単にフィードを時系列でランク付けするのではなく、今日のランキングアルゴリズムは、より関連性の高い投稿が高くランク付けされるように努めています。
 
 - Select features that can determine the relevance of a feed item, e.g. number of likes, comments, shares, time of update, whether the post has images/videos, etc.
-- フィードアイテムの関連性を決定できる特徴を選択します。例えば、いいねの数、コメント、シェア、更新時刻、投稿に画像や動画が含まれているかどうかなどです。
-
+  - フィードアイテムの関連性を決定できる特徴量を選択します。例えば、いいねの数、コメント、シェア、更新時刻、投稿に画像や動画が含まれているかどうかなどです。
 - Compute the score based on the features.
-- 特徴に基づいてスコアを計算します。
-
+  - 特徴量に基づいてスコアを計算します。
+  - (ここはヒューリスティックなルールベースでもいいし、MLモデルでもいいよね...!:thinking:)
 - Rank the posts using the score.
-- スコアを使用して投稿をランク付けします。
+  - スコアを使用して投稿をランク付けします。
 
 Set up metrics like user stickiness, retention, ads revenue, etc. to determine whether our ranking algorithm are good.
-ユーザーの定着率、リテンション、広告収益などの指標を設定して、私たちのランキングアルゴリズムが良いかどうかを判断します。
+ユーザーの定着率、リテンション、広告収益などの指標を設定して、私たちのランキングアルゴリズムが良いかどうかを判断します。(うんうん、オンライン評価:thinking:)
 
+<!-- ここまで読んだ! -->
 
+## Data Partitioning データの分割
 
-## Data Partitioning データの分割  
-### Sharding posts and metadata 投稿とメタデータのシャーディング  
+### Sharding posts and metadata 投稿とメタデータのシャーディング
+
 As we have more users and posts, we need to scale our system by distributing our data onto multiple machines such that we can read/write efficiently.  
 ユーザと投稿が増えるにつれて、私たちはデータを複数のマシンに分散させることによってシステムをスケールアップする必要があります。これにより、効率的に読み書きができるようになります。
+(=推論パイプラインや推論サービスをauto scalingする的な話...!!:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 ### Sharding feed data フィードデータのシャーディング
 
@@ -438,55 +440,32 @@ Since we only store a limited number of feeds in memory, we shouldn't distribute
 
 We can partition the user feed data based on userId.
 ユーザフィードデータをuserIdに基づいてパーティション分割できます。
-
 We hash the userId and map the hash to a cache server.
 私たちはuserIdをハッシュ化し、そのハッシュをキャッシュサーバにマッピングします。
-
-We would need to use consistent hashing.
+We would need to use [consistent hashing](https://liuzhenglaichn.gitbook.io/systemdesign/consistent-hashing).
 一貫したハッシュを使用する必要があります。
 
-
+- shardingの話メモ:
+  - 「各ユーザーのニュースフィード（タイムライン）データの分散設計」の話。
+    - ex. “ユーザーAのニュースフィードをサーバーあちこちにバラして保存” → これはダメ。取得するときに全部のサーバーからかき集める必要が出て、超遅くなる😵
+    - うんうん。そりゃそうだ...!:thinking:
+  - なのであるべき姿は以下:
+    - 1ユーザーのフィードは必ず1サーバーにまとまって存在する。
+    - どのサーバーに置くかは userIdをハッシュして決める。
+    - そのハッシュの結果を Consistent Hashing（コンシステントハッシュ） でマッピングする。
+  - consistent hashingって??
+    - 分散キャッシュや大規模ストレージでよく使われる手法。
+    - サーバーの増減があっても、影響を受けるデータが最小限になるようにハッシュ空間を分割する方法。
 
 ## Questions 質問
 
 1. is Facebook using SQL or NoSQL?https://blog.yugabyte.com/facebooks-user-db-is-it-sql-or-nosql/
-1. FacebookはSQLを使用していますか、それともNoSQLですか？https://blog.yugabyte.com/facebooks-user-db-is-it-sql-or-nosql/
+   1. FacebookはSQLを使用していますか、それともNoSQLですか？https://blog.yugabyte.com/facebooks-user-db-is-it-sql-or-nosql/
 
 2. How is the pagination implemented if the posts are not sorted chronologically?
-2. 投稿が時系列でソートされていない場合、ページネーションはどのように実装されていますか？
+   1. 投稿が時系列でソートされていない場合、ページネーションはどのように実装されていますか？
 
 3. Sharding data in designing twitter.
-3. Twitterの設計におけるデータのシャーディング。
+   1. Twitterの設計におけるデータのシャーディング。
 
-is Facebook using SQL or NoSQL?https://blog.yugabyte.com/facebooks-user-db-is-it-sql-or-nosql/
-FacebookはSQLを使用していますか、それともNoSQLですか？https://blog.yugabyte.com/facebooks-user-db-is-it-sql-or-nosql/
-
-How is the pagination implemented if the posts are not sorted chronologically?
-投稿が時系列でソートされていない場合、ページネーションはどのように実装されていますか？
-
-Sharding data in designing twitter.
-Twitterの設計におけるデータのシャーディング。
-
-PreviousData Partitioning
-前のデータパーティショニング
-
-Previous
-前
-
-Data Partitioning
-データパーティショニング
-
-NextTimeline creation with sharded data
-次はシャーディングされたデータによるタイムラインの作成
-
-Next
-次
-
-Timeline creation with sharded data
-シャーディングされたデータによるタイムラインの作成
-
-Last updated2 years ago
-最終更新：2年前
-
-Was this helpful?
-役に立ちましたか？
+<!-- ここまで読んだ! -->
