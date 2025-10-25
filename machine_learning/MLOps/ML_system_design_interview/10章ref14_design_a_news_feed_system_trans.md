@@ -211,7 +211,7 @@ The system will need to update Alice's news feed:
    投稿: リレーショナルデータベース  
    Media (image/video): blob storage  
    メディア（画像/動画）: BLOBストレージ  
-   Metadata: relational database  
+   Metadata: relational database
    メタデータ: リレーショナルデータベース  
 
 4.  Dedicated services: 専用サービス:  
@@ -222,8 +222,12 @@ The system will need to update Alice's news feed:
 
 ### Architecture アーキテクチャ
 
+![]()
+
 ## Detailed Design 詳細設計  
+
 ### Feed generation フィード生成  
+
 #### Basic Implementation (Fan-out read) 基本実装（ファンアウトリード）
 
 ```
@@ -231,22 +235,6 @@ SELECT FeedItemID FROM FeedItem WHERE SourceID in(
 SELECT EntityOrFriendID FROM UserFollow WHERE UserID =
 <current_user_id>
 )ORDER BY CreationDate DESCLIMIT 100
-```
-```
-SELECT FeedItemID FROM FeedItem WHERE SourceID in
-SELECT FeedItemID FROM FeedItem WHERE SourceID in
-(
-SELECT EntityOrFriendID FROM UserFollow WHERE UserID =
-<current_user_id>
-)
-(
-SELECT EntityOrFriendID FROM UserFollow WHERE UserID =
-<current_user_id>
-)
-ORDER BY CreationDate DESC
-ORDER BY CreationDate DESC
-LIMIT 100
-LIMIT 100
 ```
 
 Issues of this implementation:  
@@ -256,136 +244,166 @@ Issues of this implementation:
    1. 友達やフォローが多いユーザーにとって非常に遅く、膨大な数の投稿に対してソート、マージ、ランキングを行う必要があります。
 
 2. We generate the timeline when a user loads their page. This could be quite slow and have high latency.  
-   2. ユーザーがページを読み込むときにタイムラインを生成します。これは非常に遅く、高いレイテンシを持つ可能性があります。
+   1. **ユーザーがページを読み込むときにタイムラインを生成します。これは非常に遅く、高いレイテンシを持つ可能性があります**。
+   (あ、だから今回のアーキテクチャではストリーミングで特徴量生成 -> ランキングキャッシュを事前に作る仕組みにしてるのか...!:thinking:)
+   (SNSのフォロータイムラインはこれでいいかもだけど、**ニュース推薦だと新着ニュースが追加されるたびに全ユーザに表示され得るようにしたいから、結局ストリーミングじゃなくてリアルタイムで都度ランキングを作る仕組み**の方が望ましそうだな...! :thinking:)
 
-3. For live updates, each status update will result in feed updates for all followers. This could result in high backlogs in our Newsfeed Generation Service.  
-   3. ライブアップデートの場合、各ステータス更新はすべてのフォロワーに対するフィード更新を引き起こします。これにより、ニュースフィード生成サービスに高いバックログが発生する可能性があります。
+3. For live updates, each status update will result in feed updates for all followers. This could result in high backlogs in our Newsfeed Generation Service.
+   1. ライブアップデートの場合、各ステータス更新はすべてのフォロワーに対するフィード更新を引き起こします。これにより、ニュースフィード生成サービスに高いバックログが発生する可能性があります。
 
 To improve the efficiency, we can pre-generate the timeline and store it in a memory.  
 効率を改善するために、タイムラインを事前に生成し、メモリに保存することができます。
 
-
+<!-- ここまで読んだ! -->
 
 #### Offline Generation (Fan-out write) オフライン生成（ファンアウト書き込み）
 
 We can have dedicated servers that are continuously generating users' newsfeed and storing them in memory. 
-専用のサーバーを用意し、ユーザーのニュースフィードを継続的に生成してメモリに保存することができます。
-
+専用のサーバーを用意し、**ユーザーのニュースフィードを継続的に生成してメモリに保存する**ことができます。(i.e. リアルタイムじゃなくてストリーミング推論...!:thinking:)
 Whenever a user requests for the news feed, we can simply serve it from the pre-generated, stored location. 
-ユーザーがニュースフィードを要求すると、事前に生成された保存場所から単純に提供できます。
+**ユーザーがニュースフィードを要求すると、事前に生成された保存場所から単純に提供**できます。
 
 How many feed items should we store in memory for a user's feed? 
 ユーザーのフィードのために、メモリにどれだけのフィードアイテムを保存すべきでしょうか？
-
 Adjust on usage pattern. 
 使用パターンに応じて調整します。
 
 Should we generate (and keep in memory) newsfeed for all users? 
-すべてのユーザーのためにニュースフィードを生成（およびメモリに保持）すべきでしょうか？
-
+**すべてのユーザーのためにニュースフィードを生成（およびメモリに保持）すべき**でしょうか？ (そうそう、ストリーミングとかバッチだとそうなるよな...!:thinking:)
 For users that don't login frequently. 
 頻繁にログインしないユーザーの場合です。
-
 Simple solution: LRU based cache. 
-簡単な解決策：LRUベースのキャッシュです。
-
+簡単な解決策：**LRU (Least Recently Used) ベースのキャッシュ**です。
+(=つまり、最近アクセスされたユーザのフィードだけキャッシュする仕組み...! 一定のアクセス頻度があるユーザはこれでOK。そうじゃないユーザはリアルタイム推論で作るってこと??もしくは久しぶりのログインではデフォルトのランキングを返すとか??どのみちリアルタイムにランキングを作る仕組みはあったほうが体験が良さそう...!:thinking:)
 Smarter solution: learn the login pattern of users. What time? Which days of week? 
 より賢い解決策：ユーザーのログインパターンを学習します。何時に？週のどの日に？
+(=例えば「この人は毎朝9時にアプリ開くから、その直前にフィードを生成しておこう」
+みたいな予測をするイメージ....!:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 ### Feed publishing フィードの公開
 
 The process of pushing a post to all the followers is called afanout.
-投稿をすべてのフォロワーにプッシュするプロセスは、afanoutと呼ばれます。
-
-
+**投稿をすべてのフォロワーにプッシュするプロセスは、fanoutと呼ばれます。**
 
 #### fanout read (pull) ファンアウトリード（プル）
+
+
 
 When you request for news feed, you creates a read request to the system. 
 ニュースフィードをリクエストすると、システムに対してリードリクエストが作成されます。
 With fanout read, the read request is fanned out to all your followees to read their posts. 
 ファンアウトリードでは、リードリクエストがすべてのフォロイーに配信され、彼らの投稿を読むことができます。
+(ある1ユーザに対する候補コンテンツを収集するフェーズにて、そのユーザがフォローしている全ユーザに対して投稿の取得リクエストを送る、みたいな話か...!:thinking:)
+
+![]()
 
 Pro: 利点
+
 1. The cost of write operation is low. 
-1. 書き込み操作のコストは低いです。
+   1. 書き込み操作のコストは低いです。
 2. Easier to do different aggregation strategies when reading the data. 
-2. データを読み取る際に、異なる集約戦略を実行するのが容易です。
+   1. データを読み取る際に、異なる集約戦略を実行するのが容易です。
 
 Con: 欠点
+
 1. The read operation is super costly for a user who has lots of followees. 
-1. フォロイーが多いユーザーにとって、リード操作は非常にコストがかかります。
+   1. フォロイーが多いユーザーにとって、リード操作は非常にコストがかかります。
 2. new data can't be shown to the users until they pull. 
-2. 新しいデータは、ユーザーがプルするまで表示されません。
+   1. 新しいデータは、ユーザーがプルするまで表示されません。
 3. If we periodically pull to fetch latest posts, it's hard to find the right pull cadence and most of the pull requests will result in an empty response, causing waste of resources. 
-3. 最新の投稿を取得するために定期的にプルすると、適切なプルの間隔を見つけるのが難しく、ほとんどのプルリクエストが空の応答を返し、リソースの無駄を引き起こします。
+   1. 最新の投稿を取得するために定期的にプルすると、適切なプルの間隔を見つけるのが難しく、ほとんどのプルリクエストが空の応答を返し、リソースの無駄を引き起こします。
 
 This architecture is better for write-intensive application. 
 このアーキテクチャは、書き込み集約型アプリケーションに適しています。
 
+- fanout read(プル型)のメモ:
+  - ざっくりいうと「読む時に頑張る方式」！
+    - 投稿が発生した瞬間は、何も特別な処理をしない(DBに保存するだけ)。
+    - ユーザがニュースフィードを見にきたタイミングで、「フォローしてる人たちの投稿を全部読みに行く(=pull)」という動作をする。
+    - つまり、read時に「どの投稿を表示するか」をリアルタイムで収集する。
+  - メリット:
+    - 書き込み(write)が軽い!
+    - 投稿を保存するだけで済むから、新しい書き込みが頻繁にあるアプリでは効率的。
+  - デメリット
+    - 特にフォロイーが多い人の読み込みが超重い!
+    - 新しい投稿は、ユーザがニュースフィードを見に来るまで表示されない(そりゃそうじゃない??:thinking:)。
+  - よって、**書き込み（投稿）が頻繁だけど、読むのはそこまで多くないタイプのアプリに向いてる方式**...!!:thinking:
 
+<!-- ここまで読んだ! -->
 
 #### fanout write (push) 
 
 When you send a new post, you creates a write request to the system. 
 新しい投稿を送信すると、システムに書き込みリクエストが作成されます。 
 With fanout write, the write request is fanned out to all your followers to update their newsfeed. 
-ファンアウト書き込みでは、書き込みリクエストがすべてのフォロワーに配信され、彼らのニュースフィードが更新されます。
+**ファンアウト書き込みでは、書き込みリクエストがすべてのフォロワーに配信され、彼らのニュースフィードが更新**されます。
+
+![]()
 
 Pro: 
-利点: 
+利点:
+
 1. The cost of read operation is low. 
-1. 読み取り操作のコストは低いです。 
+   1. 読み取り操作のコストは低いです。 
 
 Con: 
-欠点: 
-1. The write operation is super costly for a user who has millions of followers. 
-1. 書き込み操作は、数百万のフォロワーを持つユーザーにとって非常に高コストです。 
-2. For inactive users or those rarely log in, pre-computing news feeds waste computing resources. 
-2. 非アクティブなユーザーやほとんどログインしないユーザーにとって、ニュースフィードの事前計算は計算リソースを無駄にします。 
+欠点:
 
-The write operation is super costly for a user who has millions of followers. 
-書き込み操作は、数百万のフォロワーを持つユーザーにとって非常に高コストです。 
-For inactive users or those rarely log in, pre-computing news feeds waste computing resources. 
-非アクティブなユーザーやほとんどログインしないユーザーにとって、ニュースフィードの事前計算は計算リソースを無駄にします。 
+1. The write operation is super costly for a user who has millions of followers. 
+   1. 書き込み操作は、数百万のフォロワーを持つユーザーにとって非常に高コストです。 
+2. For inactive users or those rarely log in, pre-computing news feeds waste computing resources. 
+   1. **非アクティブなユーザーやほとんどログインしないユーザーにとって、ニュースフィードの事前計算は計算リソースを無駄にします**。(うんうん、これがバッチ推論やストリーミング推論でランキングを事前生成する方式のデメリットだよね...!:thinking:)
 
 This architecture is better for read-intensive application. 
 このアーキテクチャは、読み取り集約型アプリケーションに適しています。 
 Take twitter as example, its readRate >> writeRate. 
-Twitterを例に取ると、読み取り率は書き込み率よりもはるかに高いです。 
+**Twitterを例に取ると、読み取り率は書き込み率よりもはるかに高い**です。 
 
 For systems have less latency requirement, we can use this approach as well. 
 レイテンシ要件が少ないシステムでは、このアプローチを使用することもできます。 
 For example, WeChat Public Accounts do fanout write and all their followers get notified after some latency ranging from seconds to minutes. 
-例えば、WeChatの公式アカウントはファンアウト書き込みを行い、すべてのフォロワーは数秒から数分の遅延の後に通知を受け取ります。
+**例えば、WeChatの公式アカウントはファンアウト書き込みを行い、すべてのフォロワーは数秒から数分の遅延の後に通知を受け取ります**。
 
+- fanout write(プッシュ型)のメモ:
+  - ざっくりいうと「**書く時に頑張る方式**」！
+    - 誰かが投稿した瞬間、それをフォロワー全員のフィードに反映させる。
+    - なので、ユーザがタイムラインを開いた時には、すでに自分に関係ある投稿一覧が計算済み。
+    - つまり、「読む時には軽くて早い」けど「書く時にはめっちゃ重い」って構造。
+  - メリット:
+    - 読み込み(read)が軽い!
+      - ニュースフィードを見に来たタイミングで、事前に生成されたフィードをキャッシュから返すだけで済むから高速。
+  - デメリット
+    - 特にフォロワーが多い人の書き込みが超重い!
+    - 非アクティブなユーザのフィードを事前生成するのはリソースの無駄。
+  - よって、**読み込み（ニュースフィードを見ること）が頻繁だけど、書き込み（投稿）がそこまで多くないタイプのアプリに向いてる方式**...!!:thinking:
+    - ex. Twitterは**書き込み << 読み込み** だから、こっちの方式が向いてるとのこと。
 
+<!-- ここまで読んだ! -->
 
 #### Hybrid ハイブリッド
 
-Idea 1. For users who has lots of followers, stop fanout write for their new posts. 
-アイデア1. フォロワーが多いユーザに対しては、新しい投稿のファンアウト書き込みを停止します。 
-Instead, the followers fanout read the celebrities' updates.
-その代わりに、フォロワーは有名人の更新をファンアウトして読みます。
+- Idea 1. For users who has lots of followers, stop fanout write for their new posts. アイデア1. フォロワーが多いユーザに対しては、新しい投稿のファンアウト書き込みを停止します。 
+  - Instead, the followers fanout read the celebrities' updates.その代わりに、フォロワーは有名人の更新をファンアウトして読みます。
+- Idea 2. When users send new posts, limit the fanout write to only their online followers. アイデア2. ユーザが新しい投稿を送信する際には、ファンアウト書き込みをオンラインのフォロワーのみに制限します。
 
-Idea 2. When users send new posts, limit the fanout write to only their online followers.
-アイデア2. ユーザが新しい投稿を送信する際には、ファンアウト書き込みをオンラインのフォロワーのみに制限します。
+**How many feed items can we return to the client in each request?**
+各リクエストでクライアントに返すことができるフィードアイテムの数はどれくらいですか？
 
-How many feed items can we return to the client in each request?
-各リクエストでクライアントに返すことができるフィードアイテムの数はどれくらいですか？ 
 The backend should have some maximum limit. 
-バックエンドには最大制限が必要です。 
+**バックエンドには最大制限が必要**です。
 But it should be configurable by the client so that different client (mobile vs desktop) can have different limits.
-ただし、異なるクライアント（モバイルとデスクトップ）で異なる制限を持てるように、クライアントによって設定可能であるべきです。
+ただし、**異なるクライアント（モバイルとデスクトップ）で異なる制限を持てるように、クライアントによって設定可能であるべき**です。
+(うんうん...!:thinking:)
 
-Should we always notify users if there are new posts available for their newsfeed?
-ユーザに対して、ニュースフィードに新しい投稿がある場合は常に通知すべきでしょうか？ 
+**Should we always notify users if there are new posts available for their newsfeed?** ユーザに対して、ニュースフィードに新しい投稿がある場合は常に通知すべきでしょうか？ 
+
 For mobile devices where data usage is relatively expensive, "Live Update" should be configurable by the client.
 データ使用量が比較的高価なモバイルデバイスの場合、「ライブアップデート」はクライアントによって設定可能であるべきです。
+(まあサービスによってはそもそも通知しない方針のところも全然あるよね。これも結局のところwriteとreadの頻度次第だけど、全ての投稿を通知しちゃったら鬱陶しいケースも多いはず:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 ## Feed Ranking フィードランキング
 
