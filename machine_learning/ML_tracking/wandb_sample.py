@@ -51,6 +51,43 @@ wandb.log(
     }
 )
 
+# ベースライン指標も一緒に記録する例
+# 推薦タスクで、DNN推薦とベースライン（ランダム推薦、CB推薦）を比較するケース
+
+# 最終epoch後にベースラインも含めて評価指標を記録
+# 例：precision@100の比較
+baseline_random_precision = 0.05  # ランダム推薦のprecision@100
+baseline_cb_precision = 0.35  # CB推薦のprecision@100
+dnn_precision = 0.65  # DNN推薦のprecision@100
+
+# 1回のrunで全てのモデルの指標を記録
+# /で区切るとwandbのUIで階層的に表示されるので便利...!:thinking:
+wandb.log(
+    {
+        "precision@100/random": baseline_random_precision,
+        "precision@100/cb": baseline_cb_precision,
+        "precision@100/dnn": dnn_precision,
+    }
+)
+
+# 同様に他の指標も記録可能
+wandb.log(
+    {
+        "recall@100/random": 0.03,
+        "recall@100/cb": 0.28,
+        "recall@100/dnn": 0.52,
+        "ndcg@100/random": 0.04,
+        "ndcg@100/cb": 0.31,
+        "ndcg@100/dnn": 0.61,
+    }
+)
+
+# summaryとしても記録しておくと、run一覧で簡単に比較できる
+if wandb.run:
+    wandb.run.summary["final_precision@100/random"] = baseline_random_precision
+    wandb.run.summary["final_precision@100/cb"] = baseline_cb_precision
+    wandb.run.summary["final_precision@100/dnn"] = dnn_precision
+
 # 定性的な結果もログ可能 (例えば、画像やテキストなど)
 # ここではサンプルユーザへの推薦コンテンツリストをログ
 data = [
