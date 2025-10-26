@@ -616,7 +616,7 @@ $$
 
 #### Offline metrics オフライン指標
 
-During the offline evaluation, we measure the performance of our model in predicting different reactions.  
+During the offline evaluation, we measure the performance of our model in predicting different reactions.
 **オフライン評価中に、私たちは異なる反応を予測する際のモデルの性能を測定**します。  
 To evaluate the performance of an individual type of reaction, we can use binary classification metrics, such as precision and recall.  
 特定の反応タイプの性能を評価するために、精度や再現率などの二項分類指標を使用できます。  

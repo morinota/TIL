@@ -1,37 +1,6 @@
 refs: https://bytebytego.com/courses/machine-learning-system-design-interview/video-recommendation-system
 
 
-Unlock Full Access with 50% off 50%オフでフルアクセスを解除
-Login ログイン
-
-
-
-## Machine Learning System Design Interview
-## 機械学習システム設計インタビュー
-
-- 01Introduction and Overview
-- 01イントロダクションと概要
-- 02Visual Search System
-- 02ビジュアル検索システム
-- 03Google Street View Blurring System
-- 03Googleストリートビューぼかしシステム
-- 04YouTube Video Search
-- 04YouTubeビデオ検索
-- 05Harmful Content Detection
-- 05有害コンテンツ検出
-- 06Video Recommendation System
-- 06ビデオ推薦システム
-- 07Event Recommendation System
-- 07イベント推薦システム
-- 08Ad Click Prediction on Social Platforms
-- 08ソーシャルプラットフォームにおける広告クリック予測
-- 09Similar Listings on Vacation Rental Platforms
-- 09バケーションレンタルプラットフォームにおける類似リスティング
-- 10Personalized News Feed
-- 10パーソナライズされたニュースフィード
-- 11People You May Know
-- 11あなたが知っているかもしれない人々
-
 # Video Recommendation System 動画推薦システム
 
 Recommendation systems play a key role in video and music streaming services. 
