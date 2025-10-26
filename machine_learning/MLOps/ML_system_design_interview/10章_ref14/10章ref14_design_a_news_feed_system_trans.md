@@ -40,7 +40,7 @@ It's constantly updating while other entities creating new posts.
 
 ## Capacity Estimation 容量推定
 
-(このあたりのキャパシティの推定の手順とか考え方とか、参考になりそう...!:thinking:)
+(このあたりの推定の手順とか考え方とか、参考になりそう...!:thinking:)
 
 > During the fourth quarter of 2019, Facebook reported almost 1.66 billion daily active users (DAU). 
 2019年第4四半期に、Facebookは**約16.6億のデイリーアクティブユーザー（DAU）**を報告しました。
