@@ -251,7 +251,7 @@ Issues of this implementation:
 3. For live updates, each status update will result in feed updates for all followers. This could result in high backlogs in our Newsfeed Generation Service.
    1. ライブアップデートの場合、各ステータス更新はすべてのフォロワーに対するフィード更新を引き起こします。これにより、ニュースフィード生成サービスに高いバックログが発生する可能性があります。
 
-To improve the efficiency, we can pre-generate the timeline and store it in a memory.  
+To improve the efficiency, we can pre-generate the timeline and store it in a memory.
 効率を改善するために、タイムラインを事前に生成し、メモリに保存することができます。
 
 <!-- ここまで読んだ! -->

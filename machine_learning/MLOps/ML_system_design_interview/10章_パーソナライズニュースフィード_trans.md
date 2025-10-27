@@ -408,7 +408,7 @@ All posts liked by a user are represented by a list of post IDs. The same logic 
 Why is it important? Users' previous engagements are usually helpful in determining their future engagements.
 なぜ重要なのか？**ユーザの過去の関与は、通常、将来の関与を決定するのに役立ちます。**
 How to prepare it? Extract features from each post that the user interacted with.
-どのように準備するのか？ユーザが相互作用した各投稿から特徴を抽出します。
+どのように準備するのか？ユーザが相互作用した**各投稿から特徴を抽出**します。(各投稿の特徴量を集約するイメージか...!:thinking:)
 
 ###### Being mentioned in a post
 

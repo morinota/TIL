@@ -48,7 +48,7 @@ This requires the design of learning algorithms able to adapt to environment mod
 <!-- ここまで読んだ! -->
 
 In the past years, the bandit literature focused on the design of algorithms that handle specific classes of NS-MABs characterized by certain regularity conditions. 
-過去数年間、バンディット文献は、特定の規則性条件によって特徴付けられるNS-MABの特定のクラスを処理するアルゴリズムの設計に焦点を当ててきました。
+過去数年間、バンディット文献は、**特定の規則性条件によって特徴付けられるNS-MAB**の特定のクラスを処理するアルゴリズムの設計に焦点を当ててきました。(Sliding window系手法ってシンプルだけど、やや後発なのか...!!:thinking:)
 The piecewise-constant abruptly changing MABs [23, 40, 33, 6, 10, 11] are characterized by expected rewards that remain constant during some rounds and change at unknown rounds, called breakpoints. 
 区分定数的に急激に変化するMAB[23, 40, 33, 6, 10, 11]は、いくつかのラウンドで期待報酬が一定であり、未知のラウンドで変化することが特徴です。これらのラウンドはブレークポイントと呼ばれます。
 Another form of regularity are the smoothly changing MABs [15, 48] where the expected rewards vary by a limited amount across rounds. 
@@ -60,16 +60,19 @@ NS-MABにおける後悔最小化に対処するために、いくつかのア�
 Among them, Thompson sampling (TS) [47] is one of the most widely used bandit algorithms for its simplicity in implementation and its good empirical performance. 
 その中でも、**トンプソンサンプリング（TS）[47]は、実装の簡便さと良好な経験的パフォーマンスのために最も広く使用されているバンディットアルゴリズムの一つ**です。
 However, the classical TS algorithm is devised for stationary MABs where they enjoy strong theoretical guarantees [29, 4, 5]. 
-しかし、古典的なTSアルゴリズムは、強力な理論的保証を享受する定常MAB用に設計されています[29, 4, 5]。
+**しかし、古典的なTSアルゴリズムは、強力な理論的保証を享受する定常MAB用に設計されています**[29, 4, 5]。
 Variations to the classical TS have been proposed to tackle NS-MABs including sliding-window [48] and discounted [39, 38, 17] approaches. 
 **古典的なTSのバリエーションが、スライディングウィンドウ[48]や割引[39, 38, 17]アプローチを含むNS-MABに対処するために提案**されています。
 These algorithms come often with theoretical guarantees for specific classes of NS-MABs, namely piecewise-constant abruptly changing and smoothly changing. 
 これらのアルゴリズムは、しばしば特定のクラスのNS-MAB、すなわち区分定数的に急激に変化するものと滑らかに変化するものに対する理論的保証を伴います。
 
+<!-- ここまで読んだ! -->
+
 ### Original Contributions 本論文のオリジナルな貢献
 
 In this paper, differently from what is often done in literature, we provide a unifying analysis of sliding-window TS algorithms that does not rely on the specific form of non-stationarity (namely piecewise-constant abruptly changing and smoothly changing). 
-本論文では、文献でしばしば行われることとは異なり、**特定の非定常性の形態（すなわち区分定数的に急激に変化するものと滑らかに変化するもの）に依存しないスライディングウィンドウTSアルゴリズム**の統一的な分析を提供します。(なるほど、SW-TSの特性って、非定常性の形態に依存しないってことなのか...!!:thinking:)
+本論文では、文献でしばしば行われることとは異なり、**特定の非定常性の形態（すなわち区分定数的に急激に変化するものと滑らかに変化するもの）に依存しないスライディングウィンドウTSアルゴリズム**の統一的な分析を提供します。
+(なるほど、SW-TS系の手法の強みって、非定常性の形態に依存しないってことなのか...!!:thinking:)
 Our novel analysis shed lights on the inherent complexity of the regret minimization problem in general NS-MABs and introduces new quantities to characterize quantitatively such a complexity. 
 私たちの新しい分析は、一般的なNS-MABにおける後悔最小化問題の固有の複雑さに光を当て、その複雑さを定量的に特徴付ける新しい量を導入します。
 Furthermore, we extend and correct the original analysis of Trovò et al. [48]. 
@@ -79,6 +82,8 @@ In Appendix D, we show that some passages of the analysis by Trovò et al. [48] 
 Finally, we show how the state-of-the-art results for the specific forms of non-stationarity (namely piecewise-constant abruptly changing and smoothly changing) can be retrieved as a particular case of our analysis. 
 最後に、特定の非定常性の形態（すなわち区分定数的に急激に変化するものと滑らかに変化するもの）に対する最先端の結果が、私たちの分析の特別なケースとして再取得できる方法を示します。
 
+<!-- ここまで読んだ! -->
+
 The content of the paper is summarized as follows: 
 本論文の内容は以下のように要約されます：
 
@@ -87,129 +92,107 @@ The content of the paper is summarized as follows:
 - In Section III, we provide the setting, the assumptions on the reward distributions, and the definition of cumulative regret. 
   - セクションIIIでは、設定、報酬分布に関する仮定、および累積後悔の定義を提供します。
 - In Section IV, we describe two TS-inspired algorithms, namely Beta-SWTS and $\gamma$-SWGTS based on a sliding-window approach, exploiting the $\tau$ (being $\tau$ the window size) most recent samples to estimate the expected rewards. 
-- セクションIVでは、スライディングウィンドウアプローチに基づくBeta-SWTSと$\gamma$-SWGTSという2つのTSに触発されたアルゴリズムを説明し、期待報酬を推定するために$\tau$（$\tau$はウィンドウサイズ）の最も最近のサンプルを利用します。
+  - セクションIVでは、スライディングウィンドウアプローチに基づくBeta-SWTSと$\gamma$-SWGTSという2つのTSに触発されたアルゴリズムを説明し、期待報酬を推定するために$\tau$（$\tau$はウィンドウサイズ）の最も最近のサンプルを利用します。
 
 - In the first part of Section V, we introduce new quantities to characterize how complex is to learn with sliding-window algorithms in an NS-MAB with expected rewards evolving with no particular form of non-stationarity. 
-- セクションVの前半では、特定の非定常性の形態を持たない期待報酬が進化するNS-MABにおいて、スライディングウィンドウアルゴリズムで学習することがどれほど複雑であるかを特徴付ける新しい量を導入します。
-
-In particular, we define two sets, namely the learnable set and the unlearnable set (Definition V.1), to describe in which rounds an algorithm exploiting the most recent samples only is expected to identify the optimal arm. 
-特に、最も最近のサンプルのみを利用するアルゴリズムが最適なアームを特定することが期待されるラウンドを説明するために、学習可能なセットと学習不可能なセット（定義V.1）という2つのセットを定義します。
-
-Furthermore, we define a new suboptimality gap notion, $\Delta_{\tau}$ (Definition V.2) that will be employed in the analysis. 
-さらに、分析で使用される新しい非最適性ギャップの概念$\Delta_{\tau}$（定義V.2）を定義します。
+  - セクションVの前半では、特定の非定常性の形態を持たない期待報酬が進化するNS-MABにおいて、スライディングウィンドウアルゴリズムで学習することがどれほど複雑であるかを特徴付ける新しい量を導入します。
+  In particular, we define two sets, namely the learnable set and the unlearnable set (Definition V.1), to describe in which rounds an algorithm exploiting the most recent samples only is expected to identify the optimal arm. 
+  特に、最も最近のサンプルのみを利用するアルゴリズムが最適なアームを特定することが期待されるラウンドを説明するために、学習可能なセットと学習不可能なセット（定義V.1）という2つのセットを定義します。
+  Furthermore, we define a new suboptimality gap notion, $\Delta_{\tau}$ (Definition V.2) that will be employed in the analysis. 
+  さらに、分析で使用される新しい非最適性ギャップの概念$\Delta_{\tau}$（定義V.2）を定義します。
 
 - In the second part of Section V, we derive novel unifying regret upper bounds of the Beta-SWTS and $\gamma$-SWGTS algorithms described in Section IV, for Bernoulli and subgaussian rewards, respectively. 
-- セクションVの後半では、セクションIVで説明したBeta-SWTSおよび$\gamma$-SWGTSアルゴリズムの新しい統一的な後悔上限を、ベルヌーイおよびサブガウス報酬に対して導出します。
-
-Our analysis exploits the quantities previously defined to characterize the complexity of the learning problem and makes no assumption on the underlying form of non-stationarity. 
-私たちの分析は、学習問題の複雑さを特徴付けるために以前に定義された量を利用し、基礎となる非定常性の形態に関する仮定を行いません。
+  - セクションVの後半では、セクションIVで説明したBeta-SWTSおよび$\gamma$-SWGTSアルゴリズムの新しい統一的な後悔上限を、ベルヌーイおよびサブガウス報酬に対して導出します。
+  Our analysis exploits the quantities previously defined to characterize the complexity of the learning problem and makes no assumption on the underlying form of non-stationarity. 
+  私たちの分析は、学習問題の複雑さを特徴付けるために以前に定義された量を利用し、基礎となる非定常性の形態に関する仮定を行いません。
 
 - We leverage the results of Section V to derive regret upper bounds for the abruptly changing NS-MABs (Section VI) and the smoothly changing NS-MABs (Section VII). 
-- セクションVの結果を利用して、急激に変化するNS-MAB（セクションVI）および滑らかに変化するNS-MAB（セクションVII）の後悔上限を導出します。
-
-Moreover, we show how our bounds are comparable with the state-of-the-art ones derived with analyses tailored for the specific form of non-stationarity. 
-さらに、私たちの境界が特定の非定常性の形態に合わせた分析から導出された最先端のものとどのように比較可能であるかを示します。
+  - セクションVの結果を利用して、急激に変化するNS-MAB（セクションVI）および滑らかに変化するNS-MAB（セクションVII）の後悔上限を導出します。
+  Moreover, we show how our bounds are comparable with the state-of-the-art ones derived with analyses tailored for the specific form of non-stationarity. 
+  さらに、私たちの境界が特定の非定常性の形態に合わせた分析から導出された最先端のものとどのように比較可能であるかを示します。
 
 - In Section VIII, we experimentally compare the performance of the analyzed algorithms with those in the bandit literature that are devised to learn in non-stationary scenarios. 
-- セクションVIIIでは、分析したアルゴリズムのパフォーマンスを、非定常シナリオで学習するために設計されたバンディット文献のアルゴリズムと実験的に比較します。
+  - セクションVIIIでは、分析したアルゴリズムのパフォーマンスを、非定常シナリオで学習するために設計されたバンディット文献のアルゴリズムと実験的に比較します。
 
 The proofs of the results presented in the main paper are reported in Appendix A and B. 
 本論文で提示された結果の証明は、付録AおよびBに記載されています。
 
-
+<!-- ここまで読んだ! -->
 
 ## IIRelated works II 関連研究
 
 In this section, we survey the main related works about TS and approaches for regret minimization in NS-MABs. 
 このセクションでは、TSに関する主な関連研究と、NS-MABにおける後悔最小化のアプローチを調査します。
 
-
-
 ### II-A Thompson Sampling
 
 TS was introduced in 1933 [47] for allocating experimental effort in online sequential decision-making problems, and its effectiveness has been investigated both empirically [14,44] and theoretically [5,29] only in the last decades. 
 TSは1933年に[47]オンライン逐次意思決定問題における実験的努力の配分のために導入され、その効果は過去数十年にわたり、実証的[14,44]および理論的[5,29]に調査されてきました。
-
 The algorithm has found widespread applications in various fields, including online advertising [25,2,3], clinical trials [8], recommendation systems [30] and hyperparameter tuning for machine learning methods [28]. 
-このアルゴリズムは、オンライン広告[25,2,3]、臨床試験[8]、推薦システム[30]、および機械学習手法のハイパーパラメータ調整[28]など、さまざまな分野で広く応用されています。
-
+**このアルゴリズムは、オンライン広告[25,2,3]、臨床試験[8]、推薦システム[30]、および機械学習手法のハイパーパラメータ調整[28]など、さまざまな分野で広く応用**されています。
 TS is optimal in the stationary case, i.e., achieving instance-dependent regret matching the lower bound [31]. 
-TSは定常状態の場合に最適であり、すなわち、インスタンス依存の後悔が下限[31]に一致することを達成します。
-
+**TSは定常状態の場合に最適**であり、すなわち、インスタンス依存の後悔が下限[31]に一致することを達成します。
 However, it has been shown in multiple cases that in NS-MABs [24,48,34] or in adversarial settings [13] it provides poor performances in terms of regret. 
-しかし、NS-MABs[24,48,34]や敵対的設定[13]においては、後悔の観点から性能が悪いことが複数のケースで示されています。
+しかし、**NS-MABs[24,48,34]や敵対的設定[13]においては、後悔の観点から性能が悪いことが複数のケースで示されています**。(non-stationary環境やadversarial環境では、TSはあまり強くないのか...!!:thinking:)
 
+<!-- ここまで読んだ! -->
 
-
-### II-B 非定常バンディット
+### II-B 非定常バンディット(Non-Stationary Bandits)
 
 Lately,UCB1andTSalgorithms inspired the development of techniques to face the inherent complexities of NS-MABs[50]. 
 最近、UCB1およびTSアルゴリズムは、NS-MABs（非定常マルチアームバンディット）の固有の複雑さに対処するための技術の開発を促しました[50]。
-
 The main idea behind these newly crafted algorithms is to forget past observations, removing samples from the statistics of the arms’ expected reward. 
-これらの新たに作成されたアルゴリズムの主なアイデアは、過去の観測を忘れ、アームの期待報酬の統計からサンプルを除去することです。
+**これらの新たに作成されたアルゴリズムの主なアイデアは、過去の観測を忘れ、アームの期待報酬の統計からサンプルを除去すること**です。
 
 Two main approaches are present in the bandit literature to forget past observations: passive and active. 
-過去の観測を忘れるためのバンディット文献には、主に2つのアプローチがあります：受動的アプローチと能動的アプローチです。
+**過去の観測を忘れるためのバンディット文献には、主に2つのアプローチがあります：受動的アプローチと能動的アプローチ**です。
 
 The former iteratively discards the information coming from the far past, making decisions using only the most recent samples coming from the arms selected by the algorithms. 
-前者は、遠い過去からの情報を反復的に廃棄し、アルゴリズムによって選択されたアームからの最新のサンプルのみを使用して意思決定を行います。
-
+前者は、遠い過去からの情報を反復的に廃棄し、アルゴリズムによって選択された**アームからの最新のサンプルのみを使用して意思決定を行います。**
 Examples of such a family of algorithms are Discounted-TS[39], DUCB[24], which employ a multiplicative discount factor to reduce the impact of samples seen in the past. 
 このようなアルゴリズムの例としては、Discounted-TS[39]やDUCB[24]があり、これらは過去に見たサンプルの影響を減少させるために乗法的割引因子を使用します。
-
 It has been shown that these algorithms achieve regret of order $O(\sqrt{\Upsilon_{T}T}\log(T))$ in piecewise-constant abruptly changing environments, where $\Upsilon_{T}$ is the number breakpoint present during the learning horizon $T$. 
 これらのアルゴリズムは、区分定数の急激に変化する環境において、$O(\sqrt{\Upsilon_{T}T}\log(T))$の後悔を達成することが示されています。ここで、$\Upsilon_{T}$は学習ホライズン$T$の間に存在するブレークポイントの数です。
-
 Finally, SW-UCB[24] used a sliding-window approach in combination with an upper confidence bound to get a regret of order $O(\sqrt{\Upsilon_{T}T\log(T)})$ in the same setting. 
 最後に、SW-UCB[24]は、スライディングウィンドウアプローチを上限信頼区間と組み合わせて使用し、同じ設定で$O(\sqrt{\Upsilon_{T}T\log(T)})$の後悔を得ました。
 
+<!-- ここまで読んだ! -->
+
 Instead, the active approach encompasses the use of change-detection techniques[9] to decide when it is the case to discard old samples. 
 一方、能動的アプローチは、古いサンプルを廃棄するタイミングを決定するために変化検出技術[9]を使用します。
-
 This occurs when a sufficiently large change affects the arms’ expected rewards. 
 これは、十分に大きな変化がアームの期待報酬に影響を与えるときに発生します。
-
 Among the active approaches to deal with the abruptly changing bandits, we mention CUSUM-UCB[33] and BR-MAB[40]. 
 急激に変化するバンディットに対処するための能動的アプローチの中で、CUSUM-UCB[33]とBR-MAB[40]を挙げます。
-
 They achieve a regret of order $O\left(\sqrt{\Upsilon_{T}T\log(\frac{T}{\Upsilon_{T}})}\right)$. 
 これらは、$O\left(\sqrt{\Upsilon_{T}T\log(\frac{T}{\Upsilon_{T}})}\right)$の後悔を達成します。
-
 Instead, in the same setting, GLR-klUCB[11], based on the use of KL-UCB as a bandit selection algorithm and a nonparametric change point method, achieve an $O(\sqrt{\Upsilon_{T}T\log(T)})$ regret. 
 同じ設定の中で、KL-UCBをバンディット選択アルゴリズムとして使用し、非パラメトリック変化点法に基づくGLR-klUCB[11]は、$O(\sqrt{\Upsilon_{T}T\log(T)})$の後悔を達成します。
-
 Another approach that is worth mentioning is RExp3[10], which builds on Exp3[7], adding scheduled restarts to the original algorithm, and it handles arbitrary evolutions of the expected rewards as long as they are constrained within $[0,1]$ and the learner knows the total variation $V_{T}$ of the expected reward, providing an $O(V_{T}^{\frac{1}{3}}T^{\frac{2}{3}})$ regret. 
 言及する価値のある別のアプローチはRExp3[10]で、これはExp3[7]に基づき、元のアルゴリズムにスケジュールされた再起動を追加し、期待報酬の任意の進化を扱います。期待報酬が$[0,1]$に制約され、学習者が期待報酬の総変動$V_{T}$を知っている限り、$O(V_{T}^{\frac{1}{3}}T^{\frac{2}{3}})$の後悔を提供します。
-
 Finally, different approaches to developing TS-like algorithms in NS-MABs resort to de-prioritizing information that more quickly loses usefulness and deriving a bound on the Bayesian regret of the algorithm. 
 最後に、NS-MABsにおけるTSのようなアルゴリズムを開発するための異なるアプローチは、より早く有用性を失う情報の優先度を下げ、アルゴリズムのベイズ後悔に対する境界を導出することに依存します。
 
+<!-- ここまで読んだ! 能動的アプローチは実運用のハードル高いかもと思いあまりちゃんと読んでないが -->
+
 As a final remark, we point out that differently from CUSUM-UCB, GLR-klUCB and BR-MAB, we are able to characterize the regret for any NS-MAB, as long as the distribution of the rewards is either Bernoulli or subgaussian, and in a more general setting than the piecewise-constant abruptly-changing ones. 
 最後に、CUSUM-UCB、GLR-klUCB、BR-MABとは異なり、報酬の分布がベルヌーイまたはサブガウスである限り、任意のNS-MABに対する後悔を特定できることを指摘します。また、区分定数の急激に変化するものよりも一般的な設定であることも強調します。
-
 Furthermore, differently from the analysis of RExp3, we retrieve guarantees on the performance also for expected rewards that are not bounded in $[0,1]$. 
 さらに、RExp3の分析とは異なり、$[0,1]$に制約されない期待報酬に対しても性能の保証を得ることができます。
-
 Moreover, we highlight that in the work by Liu et al. [34], the authors evaluate the Bayesian regret while we retrieve frequentist bounds on the performance that are notoriously more informative. 
 さらに、Liuらの研究[34]では、著者たちがベイズ後悔を評価しているのに対し、私たちは性能に関する頻度主義的な境界を取得しており、これは著名により情報量が多いです。
-
 In [15], the authors dealt with non-stationary, smoothly-changing bandits, a setting in which the expected rewards evolve for a limited amount between two rounds. 
 文献[15]では、著者たちは非定常で滑らかに変化するバンディットに対処しており、これは期待報酬が2ラウンドの間に限られた量で進化する設定です。
-
 They designed SW-KL-UCB they achieve a $O(H(\Delta,T)+\frac{T\log(\tau)}{\Delta^{2}\tau})$ regret, where the order of $H(\Delta,T)$ depends on the bandit instance and $\Delta$ is the minimum non-zero distance of the expected rewards within the learning horizon between the best arm and the suboptimal arms. 
 彼らはSW-KL-UCBを設計し、$O(H(\Delta,T)+\frac{T\log(\tau)}{\Delta^{2}\tau})$の後悔を達成しました。ここで、$H(\Delta,T)$のオーダーはバンディットのインスタンスに依存し、$\Delta$は最良アームと最適でないアームの間の学習ホライズン内での期待報酬の最小非ゼロ距離です。
-
 Recently paper [38] analyzed the regret of the $\gamma$-SWGTS algorithm. 
 最近の論文[38]では、$\gamma$-SWGTSアルゴリズムの後悔が分析されました。
-
 However, the authors do not face the far more challenging Beta-Binomial case and consider only the piece-wise constant abruptly changing settings. 
 しかし、著者たちははるかに困難なベータ-二項分布のケースには対処せず、区分定数の急激に変化する設定のみを考慮しています。
-
 We also remark that [38] cite a preprint version of the present paper [19, https://arxiv.org/abs/2409.05181]. 
 また、[38]が本論文のプレプリント版[19, https://arxiv.org/abs/2409.05181]を引用していることも指摘します。
 
-
+<!-- 雑にここまで読んだ! -->
 
 ## III 問題定義
 
@@ -230,7 +213,7 @@ and observes a realization of the reward $X_{I_t,t}$.
 The reward for each arm $i \in \llbracket K \rrbracket \coloneqq \{1,\ldots,K\}$ 
 各アーム $i \in \llbracket K \rrbracket \coloneqq \{1,\ldots,K\}$ に対する報酬は 
 at round $t \in \llbracket T \rrbracket$ is modeled by a random variable $X_{i,t}$ 
-ラウンド $t \in \llbracket T \rrbracket$ において、確率変数 $X_{i,t}$ によってモデル化されます。 
+ラウンド $t \in \llbracket T \rrbracket$ において、確率変数 $X_{i,t}$ によってモデル化されます。
 described by a distribution unknown to the learner. 
 これは学習者には未知の分布によって記述されます。 
 We denote by $\mu_{i,t} \coloneqq \mathbb{E}[X_{i,t}]$ 
