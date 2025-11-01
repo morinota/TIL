@@ -196,295 +196,137 @@ We also remark that [38] cite a preprint version of the present paper [19, https
 
 ## III 問題定義
 
-At each round $t \in \llbracket T \rrbracket$, 
-各ラウンド $t \in \llbracket T \rrbracket$ において、 
-let $a,b \in \mathbb{N}$, with $a < b$, 
-$a,b \in \mathbb{N}$ とし、$a < b$ とします。 
-we denote with $\llbracket a,b \rrbracket \coloneqq \{a,\dots,b\}$ 
-$\llbracket a,b \rrbracket \coloneqq \{a,\dots,b\}$ と表記します。 
-and $\llbracket a \rrbracket \coloneqq \llbracket 1,a \rrbracket$. 
-また、$\llbracket a \rrbracket \coloneqq \llbracket 1,a \rrbracket$ とします。 
-where $T \in \mathbb{N}$ is the learning horizon, 
-$T \in \mathbb{N}$ は学習のホライズンであり、 
-the learner selects an arm $I_t \in \llbracket K \rrbracket$ 
-学習者は、有限の $K$ 本のアームの中から $I_t \in \llbracket K \rrbracket$ を選択し、 
-and observes a realization of the reward $X_{I_t,t}$. 
-報酬 $X_{I_t,t}$ の実現を観察します。 
-The reward for each arm $i \in \llbracket K \rrbracket \coloneqq \{1,\ldots,K\}$ 
-各アーム $i \in \llbracket K \rrbracket \coloneqq \{1,\ldots,K\}$ に対する報酬は 
-at round $t \in \llbracket T \rrbracket$ is modeled by a random variable $X_{i,t}$ 
-ラウンド $t \in \llbracket T \rrbracket$ において、確率変数 $X_{i,t}$ によってモデル化されます。
-described by a distribution unknown to the learner. 
-これは学習者には未知の分布によって記述されます。 
-We denote by $\mu_{i,t} \coloneqq \mathbb{E}[X_{i,t}]$ 
-期待報酬を $\mu_{i,t} \coloneqq \mathbb{E}[X_{i,t}]$ と表記します。 
-the corresponding expected reward. 
-これが対応する期待報酬です。 
-We study two types of distributions of the rewards encoded by the following assumptions. 
-私たちは、以下の仮定によって符号化された報酬の2種類の分布を研究します。 
 
-Assumption III.1 
-仮定 III.1 
-. 
-For every arm $i \in \llbracket K \rrbracket$ and round $t \in \llbracket T \rrbracket$, 
-すべてのアーム $i \in \llbracket K \rrbracket$ とラウンド $t \in \llbracket T \rrbracket$ に対して、 
-the reward $X_{i,t}$ is s.t. $X_{i,t} \sim \textit{Be}(\mu_{i,t})$, 
-報酬 $X_{i,t}$ は $X_{i,t} \sim \textit{Be}(\mu_{i,t})$ となります。 
-where $\textit{Be}(\mu)$ denotes a Bernoulli distribution with parameter $\mu \in [0,1]$. 
-ここで、$\textit{Be}(\mu)$ はパラメータ $\mu \in [0,1]$ を持つベルヌーイ分布を示します。 
+At each round t ∈ ⟦ T ⟧ ,4 where T ∈ ℕ is the learning horizon, the learner selects an arm I t ∈ ⟦ K ⟧ among a finite set of K arms and observes a realization of the reward X I t , t . 
+各ラウンド $t \in \llbracket T \rrbracket$ において、$T \in \mathbb{N}$ は学習のホライズンであり、学習者は、有限の $K$ 本のアームの中から $I_t \in \llbracket K \rrbracket$ を選択し、報酬 $X_{I_t,t}$ の実現を観察します。
+The reward for each arm i ∈ ⟦ K ⟧ ≔ { 1 , … , K } at round t ∈ ⟦ T ⟧ is modeled by a random variable X i , t described by a distribution unknown to the learner. 
+各アーム $i \in \llbracket K \rrbracket \coloneqq \{1,\ldots,K\}$ に対する報酬は、ラウンド $t \in \llbracket T \rrbracket$ において、確率変数 $X_{i,t}$ によってモデル化されます。これは学習者には未知の分布によって記述されます。
+We denote by μ i , t ≔ 𝔼 ⁢ [ X i , t ] the corresponding expected reward. 
+私たちは、期待報酬を $\mu_{i,t} \coloneqq \mathbb{E}[X_{i,t}]$ と表記します。これが対応する期待報酬です。
+We study two types of distributions of the rewards encoded by the following assumptions.
+私たちは、以下の仮定によって符号化された**報酬の2種類の分布**を研究します。 
 
-Assumption III.2 
-仮定 III.2 
-. 
-For every arm $i \in \llbracket K \rrbracket$ and round $t \in \llbracket T \rrbracket$, 
-すべてのアーム $i \in \llbracket K \rrbracket$ とラウンド $t \in \llbracket T \rrbracket$ に対して、 
-the reward $X_{i,t}$ is s.t. $X_{i,t} \sim \textit{SubG}(\mu_{i,t},\lambda^{2})$, 
-報酬 $X_{i,t}$ は $X_{i,t} \sim \textit{SubG}(\mu_{i,t},\lambda^{2})$ となります。 
-where $\textit{SubG}(\mu,\lambda^{2})$ denotes a generic subgaussian distribution with finite mean $\mu \in \mathbb{R}$ and proxy variance $\lambda^{2}$. 
-ここで、$\textit{SubG}(\mu,\lambda^{2})$ は有限の平均 $\mu \in \mathbb{R}$ と代理分散 $\lambda^{2}$ を持つ一般的なサブガウス分布を示します。 
+- 定式化メモ:
+  - (基本的には、カジノのスロットマシンの例を想定すればOK!:thinking:)
+  - ラウンド: $t \in \llbracket T \rrbracket$ (1ラウンド目からTラウンド目まで)
+  - アーム: $i \in \llbracket K \rrbracket$ (1本目のアームからK本目のアームまで)
+  - 学習者: ラウンドごとにアームを1本選択する
+  - 報酬: 各アーム$i$のラウンド$t$での報酬は確率変数 $X_{i,t}$ でモデル化される
+    - 期待報酬 (=観測される報酬の期待値): $\mu_{i,t} = \mathbb{E}[X_{i,t}]$
+    - 報酬分布は、学習者には未知。各アーム $i$ ごとに ラウンド $t$ ごとに異なる可能性ある(non-stationary setting)
 
+<!-- ここまで読んだ! -->
+
+Assumption III.1 (Bernoulli rewards). 
+仮定 III.1 (ベルヌーイ報酬).
+For every arm i ∈ ⟦ K ⟧ and round t ∈ ⟦ T ⟧ , the reward X i , t is s.t. X i , t ∼ Be ⁢ ( μ i , t ) , where Be ⁢ ( μ ) denotes a Bernoulli distribution with parameter μ ∈ [ 0 , 1 ] .
+全てのアーム $i \in K$ とラウンド $t \in T$ に対して、報酬 $X_{i,t}$ は $X_{i,t} \sim \textit{Be}(\mu_{i,t})$ となります。ここで、$\textit{Be}(\mu)$ はパラメータ $\mu \in [0,1]$ を持つベルヌーイ分布を示します。
+(つまり、報酬がbinary(0か1)である場合の設定...!!:thinking:)
+
+<!-- ここまで読んだ! -->
+
+Assumption III.2 (Subgaussian rewards). 
+仮定 III.2 (サブガウス報酬).
+For every arm i ∈ ⟦ K ⟧ and round t ∈ ⟦ T ⟧ , the reward X i , t is s.t. X i , t ∼ SubG ⁢ ( μ i , t , λ 2 ) , where SubG ⁢ ( μ , λ 2 ) denotes a generic subgaussian distribution with finite mean μ ∈ ℝ and proxy variance λ 2 .5
+全てのアーム $i \in K $ とラウンド $t \in T$ に対して、報酬 $X_{i,t}$ は $X_{i,t} \sim \textit{SubG}(\mu_{i,t},\lambda^{2})$ となります。ここで、$\textit{SubG}(\mu,\lambda^{2})$ は有限の平均 $\mu \in \mathbb{R}$ と代理分散 $\lambda^{2}$ を持つ一般的なサブガウス分布を示します。5
+(つまり、報酬が連続値を取る場合の設定ってこと...!!普通の正規分布じゃなくて"サブ"ガウス...??:thinking:)
+
+---注釈
 A random variable $X$ with expectation $\mu$ is $\lambda^{2}$-subgaussian if for every $s \in \mathbb{R}$ it holds that 
 期待値 $\mu$ を持つ確率変数 $X$ は、すべての $s \in \mathbb{R}$ に対して 
 $\mathbb{E}[\exp(s(X-\mu))] \leq \exp(s^{2}\lambda^{2}/2)$. 
 $\mathbb{E}[\exp(s(X-\mu))] \leq \exp(s^{2}\lambda^{2}/2)$ であるとき、$\lambda^{2}$-サブガウスと呼ばれます。 
+---
 
-The goal of the learner $\mathfrak{A}$ is to minimize the expected cumulative dynamic frequentist regret $R_{T}(\mathfrak{A})$ 
-学習者 $\mathfrak{A}$ の目標は、期待累積動的頻度的後悔 $R_{T}(\mathfrak{A})$ を最小化することです。 
-over the learning horizon $T$, defined as the cumulative difference between the reward of an oracle that chooses at each time the arm with the largest expected reward at round $t$, 
-学習のホライズン $T$ において、各時点で最大の期待報酬を持つアームを選択するオラクルの報酬と、 
-defined as $i^{*}(t) \in \mathop{\text{argmax}}_{i \in \llbracket K \rrbracket} \mu_{i,t}$, 
-定義される $i^{*}(t) \in \mathop{\text{argmax}}_{i \in \llbracket K \rrbracket} \mu_{i,t}$ と、 
-and expected reward $\mu_{I_{t},t}$ of the arm $I_{t}$ selected by the learner for the round, formally: 
-学習者がラウンドのために選択したアーム $I_{t}$ の期待報酬 $\mu_{I_{t},t}$ の累積差を定義します。 
-(1) 
-(1) 
+- サブガウス報酬に関するメモ:
+  - サブガウス分布 = 正規分布(ガウス分布)と同じくらい、もしくはそれよりも急速に尾部が減少する分布。
+  - 「ある確率変数Xが $\lambda^{2}$-サブガウス分布に従う」ことの定義が、上記の注釈で書かれてる内容。確率分布の分散が一定以下になるよね、という定義...!!:thinking:
+
+<!-- ここまで読んだ! -->
+
+The goal of the learner $\mathfrak{A}$ is to minimize the expected cumulative dynamic frequentist regret $R_{T}(\mathfrak{A})$ over the learning horizon $T$, defined as the cumulative difference between the reward of an oracle that chooses at each time the arm with the largest expected reward at round $t$, defined as $i^{*}(t) \in \mathop{\text{argmax}}_{i \in \llbracket K \rrbracket} \mu_{i,t}$, and expected reward $\mu_{I_{t},t}$ of the arm $I_{t}$ selected by the learner for the round, formally: 
+学習者 $\mathfrak{A}$ の目標は、学習ホライズン $T$ にわたる期待累積動的頻度主義的後悔 $R_{T}(\mathfrak{A})$ を最小化することです。これは、各時点でラウンド $t$ における最大の期待報酬を持つアームを選択するオラクルの報酬と、学習者がラウンドのために選択したアーム $I_{t}$ の期待報酬 $\mu_{I_{t},t}$ との累積差として正式に定義されます。$i^{*}(t) \in \mathop{\text{argmax}}_{i \in \llbracket K \rrbracket} \mu_{i,t}$ と定義されます。
+
+$$
+R_{T}(A) := \mathbb{E} \left[ \sum_{t=1}^{T} \left( \mu_{i^{*}(t),t} - \mu_{I_{t},t} \right) \right].
+\tag{1}
+$$
+
 where the expected value is taken w.r.t. the randomness of the rewards and the possible randomness of the algorithm. 
-ここで、期待値は報酬のランダム性とアルゴリズムの可能なランダム性に関して取られます。 
-In the following, as is often done in the NS-MABs literature (e.g., [11,33,40,48,24]) we provide results on the expected value of the pull of the arms $\mathbb{E}[N_{i,T}]$, 
-以下では、NS-MABs 文献でよく行われるように（例：[11,33,40,48,24]）、アームの引きの期待値 $\mathbb{E}[N_{i,T}]$ に関する結果を提供します。 
-where $N_{i,T}$ is the random variable representing the number of total pulls of the arm $i$ at round $T$ excluding the rounds in which $i$ is optimal, 
-ここで、$N_{i,T}$ はラウンド $T$ におけるアーム $i$ の総引きの数を表す確率変数であり、$i$ が最適であるラウンドを除外します。 
-formally defined as $N_{i,T} = \sum_{t=1}^{T} \mathds{1}\{I_{t}=i,\,i\neq i^{*}(t)\}$. 
-正式には $N_{i,T} = \sum_{t=1}^{T} \mathds{1}\{I_{t}=i,\,i\neq i^{*}(t)\}$ と定義されます。 
+ここで、期待値は、報酬のランダム性(=報酬の確率分布!:thinking:)とアルゴリズムの可能なランダム性(=意思決定方策の確率分布!:thinking:)に関して取られます。
+In the following, as is often done in the NS-MABs literature (e.g., [11,33,40,48,24]) we provide results on the expected value of the pull of the arms $\mathbb{E}[N_{i,T}]$, where $N_{i,T}$ is the random variable representing the number of total pulls of the arm $i$ at round $T$ excluding the rounds in which $i$ is optimal, formally defined as $N_{i,T} = \sum_{t=1}^{T} \mathds{1}\{I_{t}=i,\,i\neq i^{*}(t)\}$. 
+以下では、NS-MABsの文献（例：[11,33,40,48,24]）でよく行われているように、**アームのプルの期待値 $\mathbb{E}[N_{i,T}]$ に関する結果を提供します。ここで、$N_{i,T}$ は、アーム $i$ の総プル数を表す確率変数**であり、$i$ が最適であるラウンドを除外しています。(iが最適だったラウンドを除外するのはなんでだろ...??累積regretの計算では無意味だから...??:thinking:)
+正式には、$N_{i,T} = \sum_{t=1}^{T} \mathds{1}\{I_{t}=i,\,i\neq i^{*}(t)\}$ と定義されます。
 
-
+<!-- ここまで読んだ! -->
 
 ## IVAlgorithms IV アルゴリズム
 
 We analyze twosliding-windowalgorithms, namely theBeta-SWTS, proposed in[48], and theγ𝛾\gammaitalic_γ-SWGTS, introduced byFiandri etal. [20], both inspired by the classical TS algorithm. 
-私たちは、2つのスライディングウィンドウアルゴリズム、すなわち、[48]で提案されたBeta-SWTSと、Fiandriらによって導入されたγ-SWGTSを分析します。どちらも古典的なTSアルゴリズムに触発されています。
-
+私たちは、**2つのスライディングウィンドウアルゴリズム**、すなわち、[48]で提案された**Beta-SWTS**と、Fiandriらによって導入された**γ-SWGTS**を分析します。どちらも古典的なTSアルゴリズムに触発されています。(GTSのGはガウスの意味??:thinking:)
 Similarly to what happens withSW-UCB, they handle the problem posed by the dynamical nature of the expected rewards by exploiting only the subset of the most recent collected rewards, i.e., within a sliding window of sizeτ∈ℕ𝜏ℕ\tau\in\mathbb{N}italic_τ ∈ blackboard_N. 
-SW-UCBと同様に、彼らは期待報酬の動的な性質によって引き起こされる問題を、最近収集された報酬のサブセットのみを利用することで対処します。すなわち、サイズτ∈ℕのスライディングウィンドウ内でです。
-
+SW-UCBと同様に、彼らは**期待報酬の動的な性質によって引き起こされる問題を、最近収集された報酬のサブセットのみを利用することで対処**します。すなわち、サイズ $\tau \in \mathbb{N}$ のスライディングウィンドウ内でです。
+(うんうん、SW系の手法はわかりやすい...!:thinking:)
 This allows us to handle the bias given by the least recent collected rewards, which, in an NS-MAB, may be non-representative of the current expected rewards. 
-これにより、NS-MABにおいて、最も最近収集された報酬が現在の期待報酬を代表しない可能性があるため、最も古い収集された報酬によるバイアスを扱うことができます。
+これにより、NS-MABにおいて、最も最近収集された報酬が現在の期待報酬を代表しない可能性があるため、最も古い収集された報酬によるバイアスを扱うことができます。(??)
+
+<!-- ここまで読んだ! -->
 
 The pseudocode ofBeta-SWTSfor Bernoulli-distributed rewards is presented in Algorithm1, while the pseudocode ofγ𝛾\gammaitalic_γ-SWGTSfor subgaussian rewards is presented in Algorithm2. 
 Bernoulli分布の報酬に対するBeta-SWTSの擬似コードはアルゴリズム1に示されており、サブガウス報酬に対するγ-SWGTSの擬似コードはアルゴリズム2に示されています。
-
 They are based on the principle ofconjugate-priorupdates. 
 彼らは共役事前更新の原則に基づいています。
-
 The key difference from the classical TS stands in discarding older examples, thanks to the window widthτ𝜏\tauitalic_τ, through a sliding-window mechanism. 
-古典的なTSとの主な違いは、スライディングウィンドウメカニズムを通じて、ウィンドウ幅τによって古い例を捨てることにあります。
-
+**古典的なTSとの主な違いは、スライディングウィンドウメカニズムを通じて、ウィンドウ幅τによって古い例を捨てること**にあります。(うんうん。SW系アプローとはそうだよね:thinking:)
 This way, the prior remains sufficiently spread over time, ensuring ongoing exploration, essential to deal with non-stationarity. 
 このようにして、事前分布は時間とともに十分に広がり続け、非定常性に対処するために不可欠な継続的な探索を保証します。
 
-For every roundt∈⟦T⟧t\in\llbracket T\rrbracketitalic_t ∈ ⟦ italic_T ⟧and armi∈⟦K⟧i\in\llbracket K\rrbracketitalic_i ∈ ⟦ italic_K ⟧, we denote withνi,tsubscript𝜈𝑖𝑡\nu_{i,t}italic_ν start_POSTSUBSCRIPT italic_i , italic_t end_POSTSUBSCRIPTthe prior distribution for the parameterμi,tsubscript𝜇𝑖𝑡\mu_{i,t}italic_μ start_POSTSUBSCRIPT italic_i , italic_t end_POSTSUBSCRIPTaftert𝑡titalic_trounds. 
-各ラウンド$t \in \llbracket T \rrbracket$およびアーム$i \in \llbracket K \rrbracket$に対して、パラメータ$\mu_{i,t}$の事前分布を$\nu_{i,t}$で示します。
+<!-- ここまで読んだ! -->
 
-ForBeta-SWTS, an uninformative prior is set, i.e.,νi,1≔Beta(1,1)≔subscript𝜈𝑖1𝐵𝑒𝑡𝑎11\nu_{i,1}\coloneqq Beta(1,1)italic_ν start_POSTSUBSCRIPT italic_i , 1 end_POSTSUBSCRIPT ≔ italic_B italic_e italic_t italic_a ( 1 , 1 )(Line3), whereBeta(α,β)𝐵𝑒𝑡𝑎𝛼𝛽Beta(\alpha,\beta)italic_B italic_e italic_t italic_a ( italic_α , italic_β )is a Beta distribution with parametersα,β≥0𝛼𝛽0\alpha,\beta\geq 0italic_α , italic_β ≥ 0. 
-Beta-SWTSでは、情報を持たない事前分布が設定されます。すなわち、$\nu_{i,1} \coloneqq \text{Beta}(1,1)$（行3）であり、ここで$\text{Beta}(\alpha,\beta)$はパラメータ$\alpha,\beta \geq 0$を持つベータ分布です。
+- 各ラウンド$t \in T $およびアーム $i \in  K$ に対して、パラメータ $\mu_{i,t}$ の事前分布を $\nu_{i,t}$ で示します。
+- Beta-SWTSでは、無情報事前分布(uninformative prior)が設定されます。
+- すなわち、$\nu_{i,1} := \text{Beta}(1,1)$（行3）であり、ここで$\text{Beta}(\alpha,\beta)$ はパラメータ $\alpha,\beta \geq 0$ を持つベータ分布です。
+- ラウンド $t$ におけるアーム $i$ の期待報酬の事後分布は、$\nu_{i,t} := \text{Beta}(S_{i,t,\tau} + 1, N_{i,t,\tau} - S_{i,t,\tau} + 1)$ で与えられます。(うんうん。binary報酬の普通のbanditだ...!:thinking:)
+- ここで、$N_{i,t,\tau} := \sum_{s=\max{\{t-\tau,1\}}}^{t-1}\mathds{1}{\{I_{s}=i\}}$は、アーム $i$ が直近の $\min{\{t,\tau\}}$ ラウンドで選択された回数です。
+- また、$S_{i,t,\tau} := \sum_{s=\max\{{t-\tau,1}\}}^{t-1}X_{i,s}\mathds{1}{\{I_{s}=i\}}$は、アーム$i$が直近の$\min{\{t,\tau\}}$ラウンドで収集した累積報酬です。
+- 各ラウンド $t$ および各アーム $i$ に対して、アルゴリズムは $\theta_{i,t,\tau}$ からランダムサンプルを引きます。これは、いわゆるトンプソンサンプルです（行5）。
+- 次に、サンプルの値が最も大きいアームが選択されます（行6）。
+- 収集した報酬 $X_{I_{t},t}$ に基づいて、事前分布 $\nu_{i,t+1}$ が更新されます（行10）。(=観測報酬に基づいて信念を更新...!:thinking:)
 
-The posterior of the expected reward of armi𝑖iitalic_iat roundt𝑡titalic_tis given byνi,t≔Beta(Si,t,τ+1,Ni,t,τ−Si,t,τ+1)≔subscript𝜈𝑖𝑡𝐵𝑒𝑡𝑎subscript𝑆𝑖𝑡𝜏1subscript𝑁𝑖𝑡𝜏subscript𝑆𝑖𝑡𝜏1\nu_{i,t}\coloneqq Beta(S_{i,t,\tau}+1,N_{i,t,\tau}-S_{i,t,\tau}+1)italic_ν start_POSTSUBSCRIPT italic_i , italic_t end_POSTSUBSCRIPT ≔ italic_B italic_e italic_t italic_a ( italic_S start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT + 1 , italic_N start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT - italic_S start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT + 1 ), 
-アーム$i$の期待報酬の事後分布は、$\nu_{i,t} \coloneqq \text{Beta}(S_{i,t,\tau}+1,N_{i,t,\tau}-S_{i,t,\tau}+1)$で与えられます。
+<!-- ここまで読んだ! -->
 
-whereNi,t,τ≔∑s=max{t−τ,1}t−1𝟙{Is=i}≔subscript𝑁𝑖𝑡𝜏superscriptsubscript𝑠𝑡𝜏1𝑡11subscript𝐼𝑠𝑖N_{i,t,\tau}\coloneqq\sum_{s=\max{\{t-\tau,1\}}}^{t-1}\mathds{1}{\{I_{s}=i\}}italic_N start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT ≔ ∑ start_POSTSUBSCRIPT italic_s = roman_max { italic_t - italic_τ , 1 } end_POSTSUBSCRIPT start_POSTSUPERSCRIPT italic_t - 1 end_POSTSUPERSCRIPT blackboard_1 { italic_I start_POSTSUBSCRIPT italic_s end_POSTSUBSCRIPT = italic_i }is the number of times armi𝑖iitalic_iwas selected in the lastmin{t,τ}𝑡𝜏\min{\{t,\tau\}}roman_min { italic_t , italic_τ }rounds, 
-ここで、$N_{i,t,\tau} \coloneqq \sum_{s=\max{\{t-\tau,1\}}}^{t-1}\mathds{1}{\{I_{s}=i\}}$は、アーム$i$が直近の$\min{\{t,\tau\}}$ラウンドで選択された回数です。
+- γ-SWGTSアルゴリズムは、いくつかの違いを除いて、Beta-SWTSと同じ原則を共有しています。 
+- 特に、すべてのアームが1回プレイされるKラウンドの初期化の後（行3）、各ラウンド$t$において、事前分布は $\nu_{i,t} := \mathcal{N}(\frac{S_{i,t,\tau}}{N_{i,t,\tau}}, \frac{1}{\gamma N_{i,t,\tau}})$ として定義されます。
+  - 一次元正規分布...!:thinking:
+  - ここで、$\mathcal{N}(\alpha,\beta)$ は平均 $\alpha \in \mathbb{R}$、分散$\beta \geq 0$ のガウス分布です。
+  - $S_{i,t,\tau}$ および $N_{i,t,\tau}$ は上記のように定義され(=beta-SWTS)と同じ!)、$\gamma > 0$は後で設定されるハイパーパラメータです。
+- 各ラウンド $t$ および各アーム $i$ に対して、アルゴリズムは $\nu_{i,t}$ からランダムサンプル $\theta_{i,t,\tau}$ を引き（行13）、最も大きなトンプソンサンプルを持つアームが選択されます（行14）。
+- アームに関する情報がない場合、すなわち$N_{i,t,\tau} = 0$のとき、アームは強制的にプレイされ、事前分布が常に明確に定義されるようになります（行10）。
+- 次に、収集した報酬$X_{I_{t},t}$に基づいて、事前分布$\nu_{i,t+1}$が更新されます（行19）。(=プレイについて観測された報酬に基づいて、信念を更新...!:thinking:)
 
-andSi,t,τ≔∑s=max{t−τ,1}t−1Xi,s𝟙{Is=i}≔subscript𝑆𝑖𝑡𝜏superscriptsubscript𝑠𝑡𝜏1𝑡1subscript𝑋𝑖𝑠1subscript𝐼𝑠𝑖S_{i,t,\tau}\coloneqq\sum_{s=\max\{{t-\tau,1}\}}^{t-1}X_{i,s}\mathds{1}{\{I_{s}=i\}}italic_S start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT ≔ ∑ start_POSTSUBSCRIPT italic_s = roman_max { italic_t - italic_τ , 1 } end_POSTSUBSCRIPT start_POSTSUPERSCRIPT italic_t - 1 end_POSTSUPERSCRIPT italic_X start_POSTSUBSCRIPT italic_i , italic_s end_POSTSUBSCRIPT blackboard_1 { italic_I start_POSTSUBSCRIPT italic_s end_POSTSUBSCRIPT = italic_i }is the cumulative reward collected by armi𝑖iitalic_iin the lastmin{t,τ}𝑡𝜏\min{\{t,\tau}\}roman_min { italic_t , italic_τ }rounds. 
-また、$S_{i,t,\tau} \coloneqq \sum_{s=\max\{{t-\tau,1}\}}^{t-1}X_{i,s}\mathds{1}{\{I_{s}=i\}}$は、アーム$i$が直近の$\min{\{t,\tau\}}$ラウンドで収集した累積報酬です。
+<!-- ここまで読んだ! -->
 
-At each roundt𝑡titalic_tand for each armi𝑖iitalic_i, the algorithm draws a random sample fromθi,t,τsubscript𝜃𝑖𝑡𝜏\theta_{i,t,\tau}italic_θ start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT, a.k.a.Thompson sample (Line5); 
-各ラウンド$t$および各アーム$i$に対して、アルゴリズムは$\theta_{i,t,\tau}$からランダムサンプルを引きます。これは、いわゆるトンプソンサンプルです（行5）。
-
-then, the arm whose sample has the largest value gets played (Line6). 
-次に、サンプルの値が最も大きいアームが選択されます（行6）。
-
-Based on the collected rewardXIt,tsubscript𝑋subscript𝐼𝑡𝑡X_{I_{t},t}italic_X start_POSTSUBSCRIPT italic_I start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT , italic_t end_POSTSUBSCRIPTthe prior distributionsνi,t+1subscript𝜈𝑖𝑡1\nu_{i,t+1}italic_ν start_POSTSUBSCRIPT italic_i , italic_t + 1 end_POSTSUBSCRIPTare updated (Line10). 
-収集した報酬$X_{I_{t},t}$に基づいて、事前分布$\nu_{i,t+1}$が更新されます（行10）。
-
-Theγ𝛾\gammaitalic_γ-SWGTSalgorithm shares the same principles ofBeta-SWTSwith some differences. 
-γ-SWGTSアルゴリズムは、いくつかの違いを除いて、Beta-SWTSと同じ原則を共有しています。
-
-In particular, afterK𝐾Kitalic_Krounds of initialization in which every arm is played once (Line3), at every roundt𝑡titalic_t, the prior distribution is defined asνi,t≔𝒩(Si,t,τNi,t,τ,1γNi,t,τ)≔subscript𝜈𝑖𝑡𝒩subscript𝑆𝑖𝑡𝜏subscript𝑁𝑖𝑡𝜏1𝛾subscript𝑁𝑖𝑡𝜏\nu_{i,t}\coloneqq\mathcal{N}\left(\frac{S_{i,t,\tau}}{N_{i,t,\tau}},\frac{1}{\gamma N_{i,t,\tau}}\right)italic_ν start_POSTSUBSCRIPT italic_i , italic_t end_POSTSUBSCRIPT ≔ caligraphic_N ( divide start_ARG italic_S start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT end_ARG start_ARG italic_N start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT end_ARG , divide start_ARG 1 end_ARG start_ARG italic_γ italic_N start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT end_ARG ), 
-特に、すべてのアームが1回プレイされるKラウンドの初期化の後（行3）、各ラウンド$t$において、事前分布は$\nu_{i,t} \coloneqq \mathcal{N}\left(\frac{S_{i,t,\tau}}{N_{i,t,\tau}},\frac{1}{\gamma N_{i,t,\tau}}\right)$として定義されます。
-
-where𝒩(α,β)𝒩𝛼𝛽\mathcal{N}(\alpha,\beta)caligraphic_N ( italic_α , italic_β )is a Gaussian distribution with meanα∈ℝ𝛼ℝ\alpha\in\mathbb{R}italic_α ∈ blackboard_Rand varianceβ≥0𝛽0\beta\geq 0italic_β ≥ 0, 
-ここで、$\mathcal{N}(\alpha,\beta)$は平均$\alpha \in \mathbb{R}$、分散$\beta \geq 0$のガウス分布です。
-
-withSi,t,τsubscript𝑆𝑖𝑡𝜏S_{i,t,\tau}italic_S start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPTandNi,t,τsubscript𝑁𝑖𝑡𝜏N_{i,t,\tau}italic_N start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPTdefined as above, andγ>0𝛾0\gamma>0italic_γ > 0is a hyperparameter whose value will be set later. 
-$S_{i,t,\tau}$および$N_{i,t,\tau}$は上記のように定義され、$\gamma > 0$は後で設定されるハイパーパラメータです。
-
-At each roundt𝑡titalic_tand for each armi𝑖iitalic_i, the algorithm draws a random sampleθi,t,τsubscript𝜃𝑖𝑡𝜏\theta_{i,t,\tau}italic_θ start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPTfromνi,tsubscript𝜈𝑖𝑡\nu_{i,t}italic_ν start_POSTSUBSCRIPT italic_i , italic_t end_POSTSUBSCRIPT(Line13) and the arm with the largest Thompson sample is played (Line14). 
-各ラウンド$t$および各アーム$i$に対して、アルゴリズムは$\nu_{i,t}$からランダムサンプル$\theta_{i,t,\tau}$を引き（行13）、最も大きなトンプソンサンプルを持つアームが選択されます（行14）。
-
-Whenever there is no information about an arm, i.e., whenNi,t,τ=0subscript𝑁𝑖𝑡𝜏0N_{i,t,\tau}=0italic_N start_POSTSUBSCRIPT italic_i , italic_t , italic_τ end_POSTSUBSCRIPT = 0, the arm is forced to play, so that the prior distribution is always well defined (Line10). 
-アームに関する情報がない場合、すなわち$N_{i,t,\tau} = 0$のとき、アームは強制的にプレイされ、事前分布が常に明確に定義されるようになります（行10）。
-
-Then, based on the collected rewardXIt,tsubscript𝑋subscript𝐼𝑡𝑡X_{I_{t},t}italic_X start_POSTSUBSCRIPT italic_I start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT , italic_t end_POSTSUBSCRIPTthe prior distributionsνi,t+1subscript𝜈𝑖𝑡1\nu_{i,t+1}italic_ν start_POSTSUBSCRIPT italic_i , italic_t + 1 end_POSTSUBSCRIPTare updated (Line19). 
-次に、収集した報酬$X_{I_{t},t}$に基づいて、事前分布$\nu_{i,t+1}$が更新されます（行19）。
-
-Algorithm 1 アルゴリズム 1
-Beta-SWTS
-1: 
-Input: Number of arms, learning horizon, window 
-1: 
-入力: アームの数、学習ホライズン、ウィンドウ
-2: 
-Set for each 
-2: 
-各アームに対して設定
-3: 
-Set for each 
-3: 
-各アームに対して設定
-4: 
-for do 
-4: 
-for do
-5: 
-Sample for each 
-5: 
-各アームに対してサンプルを引く
-6: 
-Select 
-6: 
-選択
-7: 
-Pull arm 
-7: 
-アームを引く
-8: 
-Collect reward 
-8: 
-報酬を収集
-9: 
-Update and for each 
-9: 
-更新し、各アームに対して
-10: 
-Update for each 
-10: 
-各アームに対して更新
-11: 
-end for 
-11: 
-終了
-Algorithm 2 アルゴリズム 2
--SWGTS
-1: 
-Input: Number of arms, learning horizon, parameter, window 
-1: 
-入力: アームの数、学習ホライズン、パラメータ、ウィンドウ
-2: 
-Play every arm once: 
-2: 
-すべてのアームを1回プレイする:
-3: 
-for do 
-3: 
-for do
-4: 
-Pull arm 
-4: 
-アームを引く
-5: 
-Collect reward 
-5: 
-報酬を収集
-6: 
-Set 
-6: 
-設定
-7: 
-end for 
-7: 
-終了
-8: 
-Set for each 
-8: 
-各アームに対して設定
-9: 
-for do 
-9: 
-for do
-10: 
-if then 
-10: 
-if then
-11: 
-Select 
-11: 
-選択
-12: 
-else 
-12: 
-else
-13: 
-Sample for each 
-13: 
-各アームに対してサンプルを引く
-14: 
-Select 
-14: 
-選択
-15: 
-end if 
-15: 
-終了
-16: 
-Pull arm 
-16: 
-アームを引く
-17: 
-Collect reward 
-17: 
-報酬を収集
-18: 
-Update and for each 
-18: 
-更新し、各アームに対して
-19: 
-Update for each 
-19: 
-各アームに対して更新
-20: 
-end for 
-20: 
-終了
-
-
-
-## VRegret Analysis for the General Non-Stationary Environment
-一般非定常環境におけるVレグレット分析
+## VRegret Analysis for the General Non-Stationary Environment 一般非定常環境におけるレグレット分析
 
 In this paper, we investigate NS-MABs in a unifying framework allowing the mean rewards $\mu_{i,t}$ to change arbitrarily over time with no particular regularity, as long as the Assumption III.1 or Assumption III.2 is met. 
-本論文では、平均報酬 $\mu_{i,t}$ が特定の規則性なしに時間とともに任意に変化することを許可する統一的な枠組みの中で、NS-MABを調査します。これは、仮定 III.1 または仮定 III.2 が満たされる限りです。
-
+本論文では、**期待報酬 $\mu_{i,t}$ が特定の規則性なしに時間とともに任意に変化することを許可する統一的な枠組み**の中で、NS-MABを調査します。これは、仮定 III.1 または仮定 III.2 が満たされる限りです。
 Beginning from this general regret analysis, in Sections VI and VII, we particularize it for the cases in which $\mu_{i,t}$ satisfies additional regularity conditions, i.e., abrupt and smoothly changing, respectively. 
 この一般的なレグレット分析から始めて、セクション VI と VII では、$\mu_{i,t}$ が追加の規則性条件、すなわち急激に変化する場合と滑らかに変化する場合に特化します。
-
 We start the analysis by introducing a definition to characterize the rounds during which the algorithms can effectively assess the best arm even in the presence of non-stationarity. 
 私たちは、非定常性が存在する場合でも、アルゴリズムが効果的に最良のアームを評価できるラウンドを特徴付ける定義を導入することから分析を始めます。
 
-**Definition V.1**  
+<!-- ここまで読んだ! -->
+
+**Definition V.1** (Unlearnable set $F_{\tau}$ and learnable set $F_{\tau}^{C}$)
 **定義 V.1**
 
 For every window size $\tau \in \mathbb{N}$, the unlearnable set $\mathcal{F}_{\tau}$ is defined as any superset of $\mathcal{F}_{\tau}^{\prime}$ defined as: 
 すべてのウィンドウサイズ $\tau \in \mathbb{N}$ に対して、学習不可能な集合 $\mathcal{F}_{\tau}$ は、次のように定義される $\mathcal{F}_{\tau}^{\prime}$ の任意の上位集合として定義されます。
+
+$$
+F
+\tag{2}
+$$
 
 and the learnable set $\mathcal{F}_{\tau}^{\complement}$ is defined as $\mathcal{F}_{\tau}^{\complement} \coloneqq \llbracket T \rrbracket \setminus \mathcal{F}_{\tau}$. 
 そして、学習可能な集合 $\mathcal{F}_{\tau}^{\complement}$ は、$\mathcal{F}_{\tau}^{\complement} \coloneqq \llbracket T \rrbracket \setminus \mathcal{F}_{\tau}$ と定義されます。
