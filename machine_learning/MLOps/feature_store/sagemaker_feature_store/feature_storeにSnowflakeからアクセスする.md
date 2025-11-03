@@ -47,7 +47,7 @@
 CREATE OR REPLACE CATALOG INTEGRATION <カタログ統合の名前>
   CATALOG_SOURCE = GLUE
   TABLE_FORMAT = ICEBERG
-  GLUE_AWS_ROLE_ARN = '<IAMロールのARN>'
+  GLUE_AWS_ROLE_ARN = '<IAMロールのARN>' -- Snowflakeに付与したい権限をまとめたIAMロールのARNってイメージ!
   GLUE_CATALOG_ID = '<Glue Data Catalog を管理する AWS アカウント ID>'
   GLUE_REGION = '<Glue Data Catalog の AWS リージョン>'
   CATALOG_NAMESPACE = '<Glue Data Catalog のデータベース名>'  
