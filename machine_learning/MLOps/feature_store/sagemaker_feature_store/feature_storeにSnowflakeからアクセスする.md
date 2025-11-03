@@ -187,7 +187,7 @@ Snowflakeでテーブルを作成する前に、IAMポリシー に s3:GetObject
 ```
 
 続いて以下のSQLを実行して、Snowflake側にIcebergテーブルを作成する。
-(データの実体はS3上にあるんだよね??:thinking: あくまで口を作る的な...!:thinking:)
+(データの実体はS3上、テーブルメタデータはGlue Data Catalogにあるので、あくまでエイリアスを作る的なイメージ...!:thinking:)
 
 ```sql
 --データベース、スキーマ作成
@@ -195,8 +195,8 @@ USE DATABASE db;
 USE SCHEMA sc;
 --Icebergテーブル作成
 CREATE ICEBERG TABLE db.sc.<テーブル名>
-  EXTERNAL_VOLUME='<作成した外部ボリューム>' 
-  CATALOG='<作成したカタログ統合>'
+  EXTERNAL_VOLUME='<作成した外部ボリューム>' -- データの実体はS3上にあるので、そのS3URLを指す外部ボリュームを指定
+  CATALOG='<作成したカタログ統合>' -- テーブルのメタデータはGlue Data Catalogで管理されているので、そのGlue Data Catalogにアクセスするためのカタログ統合を指定
   CATALOG_TABLE_NAME='<Glue Data Catalogにあるテーブル名>';
 ```
 
