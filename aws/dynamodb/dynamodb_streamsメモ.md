@@ -39,14 +39,17 @@
 - refs:
   - [https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/with-ddb.html](https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/with-ddb.html)
 - DynamoDB Streamsでは、Lambda関数を使用して、DynamoDBテーブルが更新されるたびに追加の作業を実行できる。
-  - event source mappingを使用して、DynamoDB StreamsとLambda関数を関連付ける必要がある。
-  - 複数のevent source mappingを使用して、複数のlambda関数で同じストリーミングデータを処理したり、1つの関数で複数のストリームを処理したりできる。
+  - **event source mapping**を使用して、DynamoDB StreamsとLambda関数を関連付ける必要がある。
+    - 複数のevent source mappingを使用して、複数のlambda関数で同じストリーミングデータを処理したり、1つの関数で複数のストリームを処理したりできる。
 - Lamdbaは2種類の方法でDynamoDB Streamsからデータを取得できる: **ポーリングストリーム**と**バッチストリーム**。
   - デフォルトではポーリングストリームを使用する。
     - この場合、Lambdaは新しいストリームレコードが利用可能になると同時に関数を呼び出す。
   - 前者で効率悪くなる場合、バッチストリームを使用する。
     - 具体的には、「バッチ処理ウィンドウ」を設定して、最大5分間bufferしてから一括処理することが可能。
-- 
+- 注意点: **パイプライン内の実装は冪等であるべき!**
+  - Lambda event source mappingは、各イベント(=ストリームレコード)を**少なくとも1回処理する(=at-least-once delivery)ことを保証**する。
+  - 逆に言えば、同じイベントを重複して処理してしまう可能性がある。
+  - なので、Lambda関数の実装は冪等にすることが強く推奨されてる。
 
 ## DynamoDB Streamsの活用事例: チャネルコーポレーション(海外企業)の場合
 
