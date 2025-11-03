@@ -101,6 +101,9 @@ Amazon OpenSearch Service
       - ストリーミングデータを一時的にバッファリングし、指定した条件（サイズや時間）でまとめて送信可能。
         - size buffering: ex. 1MBに達したら送信
         - time buffering: ex. 60秒経ったら送信
+  - よくある使われ方:
+    - パターン1: DynamoDB Streams → Firehose → S3
+    - パターン2: アプリケーション → Firehose → S3 (アプリケーションログの保存など)
 
 ```
 DynamoDB Table (Streams有効化)
