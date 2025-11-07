@@ -95,21 +95,6 @@ Amazon OpenSearch Service
 
 このパターンのアーキテクチャ例:
 
-- Kinesis Data Firehoseざっくりメモ:
-  - フルマネージド型のストリーミングデータ配信サービス。
-    - リアルタイムデータを自動的に様々な送信先（S3、Redshift、OpenSearchなど）に配信してくれる。
-    - 従量課金(GB単位)
-  - 特徴:
-    - フルマネージド型。
-      - サーバー管理不要。自動スケーリング。インフラの構築・運用が不要。
-    - buffering機能。
-      - ストリーミングデータを一時的にバッファリングし、指定した条件（サイズや時間）でまとめて送信可能。
-        - size buffering: ex. 1MBに達したら送信
-        - time buffering: ex. 60秒経ったら送信
-  - よくある使われ方:
-    - パターン1: DynamoDB Streams → Firehose → S3
-    - パターン2: アプリケーション → Firehose → S3 (アプリケーションログの保存など)
-
 ```
 DynamoDB Table (Streams有効化)
     | 
@@ -124,5 +109,35 @@ S3 (永続化・長期保存)
     |
     v
 ex. 後続のバッチ処理達??
+```
+
+- Kinesis Data Firehoseざっくりメモ:
+  - フルマネージド型のストリーミングデータ配信サービス。
+    - **リアルタイムデータを自動的に様々な送信先（S3、Redshift、OpenSearchなど）に配信してくれる**。
+    - 従量課金(GB単位)
+  - 特徴:
+    - フルマネージド型。
+      - サーバー管理不要。自動スケーリング。インフラの構築・運用が不要。
+    - buffering機能。
+      - ストリーミングデータを一時的にバッファリングし、指定した条件（サイズや時間）でまとめて送信可能。
+        - size buffering: ex. 1MBに達したら送信
+        - time buffering: ex. 60秒経ったら送信
+  - よくある使われ方:
+    - パターン1: DynamoDB Streams → Firehose → S3
+    - パターン2: アプリケーション → Firehose → S3 (アプリケーションログの保存など)
+
+```typescript
+// firehoseの定義の例
+new firehose.DeliveryStream(this, "DeliveryStream", {
+    deliveryStreamName: `${envName}-dynamodb-streams-to-s3`,
+    // あれ? srcの情報はどこで指定するんだっけ?
+    // ここで配信先やbuffering設定を指定
+    destination: new destinations.S3Bucket(bucket, {
+        bufferingInterval: cdk.Duration.seconds(60),
+        bufferingSize: cdk.Size.mebibytes(5),
+        compression: destinations.Compression.GZIP,
+        dataOutputPrefix: "my-data/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/",
+    }),
+});
 ```
 

@@ -340,7 +340,7 @@ Intuitively, $\mathcal{F}_{\tau}^{\complement}$ collects all the rounds $t \in \
 This enables the introduction of a general definition for the suboptimality gaps $\Delta_{\tau}$ that encodes how challenging it is to identify the optimal arm relying on the rewards collected in the past $\tau$ rounds only. 
 これにより、過去 $\tau$ ラウンドで収集された報酬のみに依存して最適アームを特定することがどれほど困難であるかを符号化する一般的な定義であるサブオプティマリティギャップ $\Delta_{\tau}$ を導入できます。
 
-**Definition V.2**  
+**Definition V.2**
 **定義 V.2**
 
 For every window size $\tau \in \mathbb{N}$, the general suboptimality gap is defined as follows: 
