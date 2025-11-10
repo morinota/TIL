@@ -66,6 +66,16 @@ Therefore, it is necessary to update the model periodically.
 そのため、定期的にモデルを更新する必要がある.
 Although there are some online recommendation methods [11, 24] that can capture the dynamic change of news features and user preference through online model updates, they only try to optimize the current reward (e.g., Click Through Rate), and hence ignore what effect the current recommendation might bring to the future.
 **オンラインモデル更新により、ニュースの特徴やユーザの嗜好の動的変化を捉えることができるオンライン推薦手法** [11, 24] もありますが、それらは現在の報酬（例えば、クリック率）を最適化しようとするだけであり、**現在の推薦が将来にもたらすであろう影響を無視している**.
+
+<!-- ここまで読んだ -->
+
+Second, current recommendation methods [23, 35, 36, 43] usually only consider the click / no click labels or ratings as users’ feedback.
+次に、現在の推薦手法[23, 35, 36, 43]は、通常、クリックを考慮するのみである.
+However, how soon one user will return to this service [48] will also indicate how satisfied this user is with the recommendation.
+しかし、**あるユーザがどれだけ早くこのサービスに戻ってくるか**[48]は、このユーザが推薦にどれだけ満足しているかを示すことにもなる.
+Nevertheless, there has been little work in trying to incorporate user return pattern to help improve recommendation..
+とはいえ、**ユーザの帰省パターン**を取り入れて、レコメンデーションの改善に役立てようという試みは、これまでほとんど行われてこなかった.
+
 An example showing the necessity of considering future is given in Example 1.1..
 未来を考える必要性を示す例として、例1.1.を挙げる.
 
@@ -80,12 +90,7 @@ This suggests, recommending the latter piece of news will introduce larger futur
 Therefore, considering future rewards will help to improve recommendation performance in the long run..
 そのため、将来の報酬を考慮することで、長期的にレコメンデーションパフォーマンスを向上させることができる.
 
-Second, current recommendation methods [23, 35, 36, 43] usually only consider the click / no click labels or ratings as users’ feedback.
-次に、現在の推薦手法[23, 35, 36, 43]は、通常、クリックを考慮するのみである.
-However, how soon one user will return to this service [48] will also indicate how satisfied this user is with the recommendation.
-しかし、**あるユーザがどれだけ早くこのサービスに戻ってくるか**[48]は、このユーザが推薦にどれだけ満足しているかを示すことにもなる.
-Nevertheless, there has been little work in trying to incorporate user return pattern to help improve recommendation..
-とはいえ、**ユーザの帰省パターン**を取り入れて、レコメンデーションの改善に役立てようという試みは、これまでほとんど行われてこなかった.
+<!-- ここまで読んだ -->
 
 The third major issue of current recommendation methods is its tendency to keep recommending similar items to users, which might decrease users’ interest in similar topics.
 現在の推薦手法の3つ目の大きな問題は、**ユーザに似たようなものを推薦し続ける傾向があり、ユーザの類似した話題への興味を低下させる可能性があること**.
@@ -320,7 +325,7 @@ In order to focus on the analysis of the reinforcement learning recommendation f
 But they can be easily integrated into our framework for better performance..
 しかし、これらは我々のフレームワークに簡単に統合することができ、より良いパフォーマンスを実現することができます。
 
-## Deep Reinforcement Recommendation Deep Reinforcementのススメ。
+## Deep Reinforcement Recommendation 
 
 Considering the previous mentioned dynamic feature of news recommendation and the need to estimate future reward, we apply a Deep Q-Network (DQN) [31] to model the probability that one user may click on one specific piece of news.
 前述したニュース推薦の動的な特徴と将来の報酬を推定する必要性を考慮し、あるユーザがある特定のニュースをクリックする確率をモデル化するために、Deep Q-Network (DQN) [31] を適用する.
