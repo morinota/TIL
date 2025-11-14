@@ -742,393 +742,307 @@ After this baseline is achieved, you can try more esoteric approaches.
 
 <!-- ここまで読んだ! -->
 
-#### Rule #18: Explore with features of content that generalize across contexts. ルール #18: コンテキストを超えて一般化するコンテンツの特徴を探索する。
+#### Rule #18: Explore with features of content that generalize across contexts. ルール #18: コンテキストを超えて一般化するコンテンツの特徴量を探索する。
 
 Often a machine learning system is a small part of a much bigger picture. 
 機械学習システムはしばしば、はるかに大きな全体の一部に過ぎません。
-
 For example, if you imagine a post that might be used in What’s Hot, many people will plus-one, reshare, or comment on a post before it is ever shown in What's Hot. 
 たとえば、「What's Hot」で使用される可能性のある投稿を想像すると、多くの人々はその投稿が「What's Hot」に表示される前に、プラスワンしたり、再共有したり、コメントしたりします。
-
 If you provide those statistics to the learner, it can promote new posts that it has no data for in the context it is optimizing. 
 これらの統計を学習者に提供すると、最適化しているコンテキストにおいてデータがない新しい投稿を促進することができます。
-
 YouTube Watch Next could use number of watches, or co-watches (counts of how many times one video was watched after another was watched) from YouTube search. 
 YouTube Watch Nextは、YouTube検索からの視聴回数や共同視聴（ある動画が視聴された後に別の動画が視聴された回数）を使用できます。
-
 You can also use explicit user ratings. 
 明示的なユーザー評価も使用できます。
-
 Finally, if you have a user action that you are using as a label, seeing that action on the document in a different context can be a great feature. 
 最後に、ラベルとして使用しているユーザーアクションがある場合、そのアクションが異なるコンテキストで文書に現れることは素晴らしい特徴となる可能性があります。
-
 All of these features allow you to bring new content into the context. 
-これらすべての特徴により、新しいコンテンツをコンテキストに取り入れることができます。
-
+**これらすべての特徴により、新しいコンテンツをコンテキストに取り入れることができます。** (他の出面でのログも使って特徴量にしよう! そしたらコールドスタートアイテム問題も軽減できるよね、みたいな話かな...!:thinking:)
 Note that this is not about personalization: figure out if someone likes the content in this context first, then figure out who likes it more or less. 
-これはパーソナライズに関するものではありません。まず、このコンテキストで誰かがそのコンテンツを好むかどうかを判断し、その後、誰がより好むか、またはあまり好まないかを判断します。
+これはパーソナライズに関するものではありません。**まず、このコンテキストで誰かがそのコンテンツを好むかどうかを判断し**、その後、誰がより好むか、またはあまり好まないかを判断します。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #19: Use very specific features when you can. ルール #19: 可能な限り非常に特定の特徴を使用すること。
 
 With tons of data, it is simpler to learn millions of simple features than a few complex features. 
-大量のデータがある場合、少数の複雑な特徴を学ぶよりも、数百万の単純な特徴を学ぶ方が簡単です。
-
+大量のデータがある場合、少数の複雑な特徴量を学ぶよりも、数百万の単純な特徴量を学ぶ方が簡単です。
 Identifiers of documents being retrieved and canonicalized queries do not provide much generalization, but align your ranking with your labels on head queries. 
 取得される文書の識別子や標準化されたクエリはあまり一般化を提供しませんが、ヘッドクエリに対するラベルとランキングを整合させます。
-
 Thus, don’t be afraid of groups of features where each feature applies to a very small fraction of your data, but overall coverage is above 90%. 
-したがって、各特徴がデータのごく一部にしか適用されない特徴のグループを恐れないでください。ただし、全体のカバレッジは90％を超えています。
-
+**したがって、各特徴量がデータのごく一部にしか適用されない特徴のグループを恐れないでください**。ただし、全体のカバレッジは90％を超えています。
 You can use regularization to eliminate the features that apply to too few examples. 
 正則化を使用して、あまりにも少ない例にしか適用されない特徴を排除することができます。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #20: Combine and modify existing features to create new features in human-understandable ways.
 #### ルール #20: 既存の特徴を組み合わせて修正し、人間が理解できる方法で新しい特徴を作成する。
 
 There are a variety of ways to combine and modify features. 
-特徴を組み合わせて修正する方法はさまざまです。
-
+特徴量を組み合わせて修正する方法はさまざまです。
 Machine learning systems such as TensorFlow allow you to pre-process your data through transformations. 
 TensorFlowのような機械学習システムは、変換を通じてデータを前処理することを可能にします。
-
 The two most standard approaches are "discretizations" and "crosses". 
-最も一般的なアプローチは「離散化」と「クロス」です。
+**最も一般的なアプローチは「離散化」と「クロス」です。**
 
 Discretization consists of taking a continuous feature and creating many discrete features from it. 
-離散化は、連続的な特徴を取り、それから多くの離散的な特徴を作成することです。
-
+離散化は、連続的な特徴量を取り、それから多くの離散的な特徴量を作成することです。
 Consider a continuous feature such as age. 
 年齢のような連続的な特徴を考えてみましょう。
-
 You can create a feature which is 1 when age is less than 18, another feature which is 1 when age is between 18 and 35, et cetera. 
 年齢が18未満のときに1となる特徴や、年齢が18歳から35歳の間のときに1となる別の特徴などを作成できます。
-
 Don’t overthink the boundaries of these histograms: basic quantiles will give you most of the impact. 
-これらのヒストグラムの境界を深く考えすぎないでください：基本的な分位数がほとんどの影響を与えます。
+これらのヒストグラムの境界を深く考えすぎないでください：**基本的な分位数がほとんどの影響を与えます。**
 
 Crosses combine two or more feature columns. 
 クロスは、2つ以上の特徴列を組み合わせます。
-
 A feature column, in TensorFlow's terminology, is a set of homogenous features, (e.g. {male, female}, {US, Canada, Mexico}, et cetera). 
 TensorFlowの用語では、特徴列とは同質の特徴のセットです（例：{男性、女性}、{米国、カナダ、メキシコ}など）。
-
 A cross is a new feature column with features in, for example, {male, female} × {US, Canada, Mexico}. 
 クロスは、例えば、{男性、女性} × {米国、カナダ、メキシコ}の特徴を持つ新しい特徴列です。
-
 This new feature column will contain the feature (male, Canada). 
 この新しい特徴列には、特徴(male, Canada)が含まれます。
-
 If you are using TensorFlow and you tell TensorFlow to create this cross for you, this (male, Canada) feature will be present in examples representing male Canadians. 
 TensorFlowを使用していて、このクロスを作成するように指示すると、この(male, Canada)特徴は男性カナダ人を表す例に存在します。
-
 Note that it takes massive amounts of data to learn models with crosses of three, four, or more base feature columns. 
 3つ、4つ、またはそれ以上の基本的な特徴列のクロスを持つモデルを学習するには、大量のデータが必要であることに注意してください。
 
 Crosses that produce very large feature columns may overfit. 
 非常に大きな特徴列を生成するクロスは、過剰適合する可能性があります。
-
 For instance, imagine that you are doing some sort of search, and you have a feature column with words in the query, and you have a feature column with words in the document. 
 例えば、何らかの検索を行っていて、クエリ内の単語を含む特徴列と、文書内の単語を含む特徴列があると想像してください。
-
 You can combine these with a cross, but you will end up with a lot of features (see Rule #21). 
 これらをクロスで組み合わせることができますが、多くの特徴が生成されることになります（ルール #21を参照）。
 
 When working with text there are two alternatives. 
 テキストを扱う際には、2つの選択肢があります。
-
 The most draconian is a dot product. 
 最も厳格な方法はドット積です。
-
 A dot product in its simplest form simply counts the number of words in common between the query and the document. 
 ドット積は、その最も単純な形では、クエリと文書の間で共通する単語の数を単にカウントします。
-
 This feature can then be discretized. 
 この特徴はその後、離散化することができます。
-
 Another approach is an intersection: thus, we will have a feature which is present if and only if the word "pony" is in both the document and the query, 
 別のアプローチは交差です：したがって、「pony」という単語が文書とクエリの両方に存在する場合にのみ存在する特徴を持つことになります。
-
 and another feature which is present if and only if the word "the" is in both the document and the query. 
 そして、「the」という単語が文書とクエリの両方に存在する場合にのみ存在する別の特徴を持つことになります。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #21: The number of feature weights you can learn in a linear model is roughly proportional to the amount of data you have.
 #### ルール #21: 線形モデルで学習できる特徴量の重みの数は、持っているデータの量に大まかに比例します。
 
 There are fascinating statistical learning theory results concerning the appropriate level of complexity for a model, but this rule is basically all you need to know. 
 モデルの適切な複雑さに関する興味深い統計的学習理論の結果がありますが、このルールが基本的に知っておくべきすべてです。
-
 I have had conversations in which people were doubtful that anything can be learned from one thousand examples, or that you would ever need more than one million examples, because they get stuck in a certain method of learning. 
 私は、ある特定の学習方法に固執しているため、1000の例から何かを学ぶことができるのか、または100万の例以上が必要になることはないのではないかと疑問を持つ人々との会話を持ったことがあります。
-
 The key is to scale your learning to the size of your data: 
 重要なのは、データのサイズに合わせて学習をスケールさせることです。
 
 1. If you are working on a search ranking system, and there are millions of different words in the documents and the query and you have 1000 labeled examples, then you should use a dot product between document and query features, TF-IDF, and a half-dozen other highly human-engineered features. 1000 examples, a dozen features. 
-1. もし検索ランキングシステムに取り組んでいて、文書やクエリに数百万の異なる単語があり、1000のラベル付き例がある場合、文書とクエリの特徴の間でドット積を使用し、TF-IDFや他の数個の高度に人間が設計した特徴を使用すべきです。1000の例、約12の特徴。
+   1. もし検索ランキングシステムに取り組んでいて、文書やクエリに数百万の異なる単語があり、1000のラベル付き例がある場合、文書とクエリの特徴の間でドット積を使用し、TF-IDFや他の数個の高度に人間が設計した特徴を使用すべきです。1000の例、約12の特徴。
 
 2. If you have a million examples, then intersect the document and query feature columns, using regularization and possibly feature selection. 
-2. もし100万の例があるなら、文書とクエリの特徴列を交差させ、正則化とおそらく特徴選択を使用します。
-
-This will give you millions of features, but with regularization you will have fewer. Ten million examples, maybe a hundred thousand features. 
-これにより数百万の特徴が得られますが、正則化を使用すると数は少なくなります。1000万の例があれば、約10万の特徴になるかもしれません。
+   1. もし100万の例があるなら、文書とクエリの特徴列を交差させ、正則化とおそらく特徴選択を使用します。
+    This will give you millions of features, but with regularization you will have fewer. Ten million examples, maybe a hundred thousand features. 
+    これにより数百万の特徴が得られますが、正則化を使用すると数は少なくなります。1000万の例があれば、約10万の特徴になるかもしれません。
 
 3. If you have billions or hundreds of billions of examples, you can cross the feature columns with document and query tokens, using feature selection and regularization. 
-3. もし数十億または数百億の例があるなら、特徴列を文書とクエリのトークンと交差させ、特徴選択と正則化を使用できます。
-
-You will have a billion examples, and 10 million features. 
-これにより、10億の例と1000万の特徴が得られます。
-
-Statistical learning theory rarely gives tight bounds, but gives great guidance for a starting point. 
-統計的学習理論は厳密な境界を示すことは稀ですが、出発点としての優れた指針を提供します。
+   1. もし数十億または数百億の例があるなら、特徴列を文書とクエリのトークンと交差させ、特徴選択と正則化を使用できます。
+    You will have a billion examples, and 10 million features. 
+    これにより、10億の例と1000万の特徴が得られます。
+    Statistical learning theory rarely gives tight bounds, but gives great guidance for a starting point. 
+    統計的学習理論は厳密な境界を示すことは稀ですが、出発点としての優れた指針を提供します。
 
 In the end, use Rule #28 to decide what features to use. 
 最終的には、ルール #28を使用してどの特徴を使用するかを決定します。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #22: Clean up features you are no longer using. ルール #22: もはや使用していない機能を整理する。
 
 Unused features create technical debt. 
-未使用の機能は技術的負債を生み出します。 
+未使用の特徴量は技術的負債を生み出します。 
 If you find that you are not using a feature, and that combining it with other features is not working, then drop it out of your infrastructure. 
-もし機能を使用していないことがわかり、他の機能と組み合わせても効果がない場合は、その機能をインフラから削除してください。 
+もし特徴量を使用していないことがわかり、他の特徴量と組み合わせても効果がない場合は、その特徴量をインフラから削除してください。 
 You want to keep your infrastructure clean so that the most promising features can be tried as fast as possible. 
-インフラをクリーンに保ち、最も有望な機能をできるだけ早く試せるようにしたいのです。 
+インフラをクリーンに保ち、最も有望な特徴量をできるだけ早く試せるようにしたいのです。 
 If necessary, someone can always add back your feature. 
-必要であれば、誰かがあなたの機能を再追加することができます。
+必要であれば、誰かがあなたの特徴量を再追加することができます。
 
 Keep coverage in mind when considering what features to add or keep. 
-どの機能を追加または保持するかを考える際には、カバレッジを考慮してください。 
+どの特徴量を追加または保持するかを考える際には、カバレッジを考慮してください。 
 How many examples are covered by the feature? 
-その機能によってカバーされる例はどのくらいありますか？ 
+その特徴量によってカバーされる例はどのくらいありますか？ 
 For example, if you have some personalization features, but only 8% of your users have any personalization features, it is not going to be very effective. 
-例えば、パーソナライズ機能がいくつかあるが、ユーザのうち8%しかパーソナライズ機能を持っていない場合、それはあまり効果的ではありません。
+例えば、パーソナライズ特徴量がいくつかあるが、ユーザのうち8%しかパーソナライズ特徴量を持っていない場合、それはあまり効果的ではありません。
 
 At the same time, some features may punch above their weight. 
-同時に、いくつかの機能はその重さ以上の効果を発揮することがあります。 
+同時に、いくつかの特徴量はその重さ以上の効果を発揮することがあります。 
 For example, if you have a feature which covers only 1% of the data, but 90% of the examples that have the feature are positive, then it will be a great feature to add. 
-例えば、データの1%しかカバーしていない機能があるが、その機能を持つ例の90%がポジティブである場合、それは追加するのに素晴らしい機能となります。
+例えば、データの1%しかカバーしていない特徴量があるが、その特徴量を持つ例の90%がポジティブである場合、それは追加するのに素晴らしい特徴量となります。
 
-
+<!-- ここまで読んだ! -->
 
 ### Human Analysis of the System システムの人間分析
 
 Before going on to the third phase of machine learning, it is important to 
 機械学習の第三段階に進む前に、重要なことがあります。
-
 focus on something that is not taught in any machine learning class: how to 
 機械学習の授業では教えられないことに焦点を当てることです。それは、
-
 look at an existing model, and improve it. This is more of an art than a 
 既存のモデルを見て、それを改善する方法です。これは科学というよりも芸術であり、
-
 science, and yet there are several antipatterns that it helps to avoid. 
 それでも、避けるべきいくつかのアンチパターンがあります。
-
-
 
 #### Rule #23: You are not a typical end user. ルール #23: あなたは典型的なエンドユーザーではありません。
 
 This is perhaps the easiest way for a team to get bogged down. 
 これは、おそらくチームが行き詰まる最も簡単な方法です。
-
 While there are a lot of benefits to fishfooding (using a prototype within your team) and dogfooding (using a prototype within your company), employees should look at whether the performance is correct. 
 フィッシュフーディング（チーム内でプロトタイプを使用すること）やドッグフーディング（会社内でプロトタイプを使用すること）には多くの利点がありますが、従業員はパフォーマンスが正しいかどうかを確認する必要があります。
-
 While a change which is obviously bad should not be used, anything that looks reasonably near production should be tested further, either by paying laypeople to answer questions on a crowdsourcing platform, or through a live experiment on real users. 
-明らかに悪い変更は使用すべきではありませんが、製品に近いと思われるものは、クラウドソーシングプラットフォームで素人に質問に答えてもらうか、実際のユーザーに対するライブ実験を通じて、さらにテストする必要があります。
+**明らかに悪い変更は使用すべきではありませんが、製品に近いと思われるものは、クラウドソーシングプラットフォームで素人に質問に答えてもらうか、実際のユーザーに対するライブ実験を通じて、さらにテストする必要があります**。
 
 There are two reasons for this. 
 これには二つの理由があります。
-
 The first is that you are too close to the code. 
 第一の理由は、あなたがコードに近すぎることです。
-
 You may be looking for a particular aspect of the posts, or you are simply too emotionally involved (e.g. confirmation bias). 
 あなたは投稿の特定の側面を探しているか、単に感情的に関与しすぎている可能性があります（例：確証バイアス）。
-
 The second is that your time is too valuable. 
 第二の理由は、あなたの時間が非常に貴重であることです。
-
 Consider the cost of nine engineers sitting in a one hour meeting, and think of how many contracted human labels that buys on a crowdsourcing platform. 
 9人のエンジニアが1時間の会議に座っているコストを考慮し、それがクラウドソーシングプラットフォームでどれだけの契約された人間のラベルを購入できるかを考えてみてください。
 
 If you really want to have user feedback, use user experience methodologies. 
 もし本当にユーザーフィードバックを得たいのであれば、ユーザーエクスペリエンスの手法を使用してください。
-
 Create user personas (one description is in Bill Buxton’s Sketching User Experiences) early in a process and do usability testing (one description is in Steve Krug’s Don’t Make Me Think) later. 
 プロセスの初期段階でユーザーペルソナ（ビル・バクストンの『Sketching User Experiences』に一つの説明があります）を作成し、後でユーザビリティテスト（スティーブ・クルーグの『Don’t Make Me Think』に一つの説明があります）を行ってください。
-
 User personas involve creating a hypothetical user. 
 ユーザーペルソナは仮想のユーザーを作成することを含みます。
-
 For instance, if your team is all male, it might help to design a 35-year-old female user persona (complete with user features), and look at the results it generates rather than 10 results for 25-to-40 year old males. 
 例えば、チームが全員男性である場合、35歳の女性ユーザーペルソナ（ユーザーの特徴を含む）を設計し、25歳から40歳の男性に対する10の結果ではなく、それが生成する結果を見てみると良いでしょう。
-
 Bringing in actual people to watch their reaction to your site (locally or remotely) in usability testing can also get you a fresh perspective. 
 実際の人々を招いて、ユーザビリティテストであなたのサイトに対する反応を見てもらうこと（ローカルまたはリモートで）も、新しい視点を得ることができます。
-
-
 
 #### Rule #24: Measure the delta between models. ルール #24: モデル間の差分を測定する。
 
 One of the easiest and sometimes most useful measurements you can make before any users have looked at your new model is to calculate just how different the new results are from production. 
 ユーザが新しいモデルを見ていない段階で行える最も簡単で、時には最も有用な測定の一つは、新しい結果が本番環境とどれほど異なるかを計算することです。
-
 For instance, if you have a ranking problem, run both models on a sample of queries through the entire system, and look at the size of the symmetric difference of the results (weighted by ranking position). 
 例えば、ランキングの問題がある場合、両方のモデルをサンプルクエリのセットでシステム全体に通して実行し、結果の対称差の大きさ（ランキング位置で重み付けされた）を見てください。
-
 If the difference is very small, then you can tell without running an experiment that there will be little change. 
 もし差が非常に小さい場合、実験を行わなくても、ほとんど変化がないことがわかります。
-
 If the difference is very large, then you want to make sure that the change is good. 
 もし差が非常に大きい場合、その変化が良いものであることを確認したいです。
-
 Looking over queries where the symmetric difference is high can help you to understand qualitatively what the change was like. 
 対称差が大きいクエリを見直すことで、変化がどのようなものであったかを定性的に理解するのに役立ちます。
-
 Make sure, however, that the system is stable. 
 ただし、システムが安定していることを確認してください。
-
 Make sure that a model when compared with itself has a low (ideally zero) symmetric difference. 
 モデルが自分自身と比較したときに、低い（理想的にはゼロの）対称差を持つことを確認してください。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #25: When choosing models, utilitarian performance trumps predictive power. 
 #### ルール #25: モデルを選択する際には、実用的なパフォーマンスが予測力を上回る。
 
 Your model may try to predict click-through rate. 
 あなたのモデルはクリック率を予測しようとするかもしれません。
-
 However, in the end, the key question is what you do with that prediction. 
 しかし、最終的には、その予測をどのように利用するかが重要な問いです。
-
 If you are using it to rank documents, then the quality of the final ranking matters more than the prediction itself. 
-もしそれを文書のランキングに使用しているのであれば、最終的なランキングの質が予測そのものよりも重要です。
-
+**もしそれを文書のランキングに使用しているのであれば、最終的なランキングの質が予測そのものよりも重要です。**
 If you predict the probability that a document is spam and then have a cutoff on what is blocked, then the precision of what is allowed through matters more. 
 もし文書がスパムである確率を予測し、ブロックするもののカットオフを設定するのであれば、通過を許可するものの精度がより重要です。
-
 Most of the time, these two things should be in agreement: when they do not agree, it will likely be on a small gain. 
 ほとんどの場合、これら二つのことは一致しているべきです：もし一致しない場合、それはおそらく小さな利益に関することです。
-
 Thus, if there is some change that improves log loss but degrades the performance of the system, look for another feature. 
-したがって、ログ損失を改善するがシステムのパフォーマンスを低下させるような変更がある場合は、別の特徴を探してください。
-
+**したがって、ログ損失を改善するがシステムのパフォーマンスを低下させるような変更がある場合は、別の特徴量を探してください。**
 When this starts happening more often, it is time to revisit the objective of your model. 
 このようなことがより頻繁に起こり始めたら、あなたのモデルの目的を再検討する時です。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #26: Look for patterns in the measured errors, and create new features. 
 #### ルール #26: 測定された誤差のパターンを探し、新しい特徴を作成する。
 
 Suppose that you see a training example that the model got "wrong". 
 モデルが「間違った」と判断したトレーニング例を見たとしましょう。
-
 In a classification task, this error could be a false positive or a false negative. 
 分類タスクでは、この誤りは偽陽性または偽陰性である可能性があります。
-
 In a ranking task, the error could be a pair where a positive was ranked lower than a negative. 
 ランキングタスクでは、誤りはポジティブがネガティブよりも低くランク付けされたペアである可能性があります。
-
 The most important point is that this is an example that the machine learning system knows it got wrong and would like to fix if given the opportunity. 
-最も重要な点は、これは機械学習システムが間違ったことを認識しており、機会があれば修正したいと考えている例であるということです。
-
+**最も重要な点は、これは機械学習システムが間違ったことを認識しており、機会があれば修正したいと考えている例であるということです**。
 If you give the model a feature that allows it to fix the error, the model will try to use it. 
 もしあなたがモデルに誤りを修正するための特徴を与えれば、モデルはそれを使おうとします。
 
 On the other hand, if you try to create a feature based upon examples the system doesn’t see as mistakes, the feature will be ignored. 
 一方で、システムが誤りと見なさない例に基づいて特徴を作成しようとすると、その特徴は無視されます。
-
 For instance, suppose that in Play Apps Search, someone searches for "free games". 
 例えば、Play Apps Searchで誰かが「無料ゲーム」を検索したとしましょう。
-
 Suppose one of the top results is a less relevant gag app. 
 トップの結果の一つがあまり関連性のないギャグアプリであるとします。
-
 So you create a feature for "gag apps". 
 そこで、「ギャグアプリ」のための特徴を作成します。
-
 However, if you are maximizing number of installs, and people install a gag app when they search for free games, the "gag apps" feature won’t have the effect you want. 
 しかし、インストール数を最大化しようとしている場合、ユーザーが「無料ゲーム」を検索したときにギャグアプリをインストールするなら、「ギャグアプリ」特徴はあなたが望む効果を持たないでしょう。
 
 Once you have examples that the model got wrong, look for trends that are outside your current feature set. 
 モデルが間違った例を持っている場合は、現在の特徴セットの外にあるトレンドを探してください。
-
 For instance, if the system seems to be demoting longer posts, then add post length. 
 例えば、システムが長い投稿を降格させているようであれば、投稿の長さを追加します。
-
 Don’t be too specific about the features you add. 
 追加する特徴についてあまり具体的にならないでください。
-
 If you are going to add post length, don’t try to guess what long means, just add a dozen features and let the model figure out what to do with them (see Rule #21). 
-投稿の長さを追加する場合は、「長い」が何を意味するかを推測しようとせず、十数個の特徴を追加し、モデルにそれらをどう扱うかを考えさせてください（ルール #21を参照）。
-
+**投稿の長さを追加する場合は、「長い」が何を意味するかを推測しようとせず、十数個の特徴を追加し、モデルにそれらをどう扱うかを考えさせてください**（ルール #21を参照）。
 That is the easiest way to get what you want. 
 それがあなたが望むものを得る最も簡単な方法です。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #27: Try to quantify observed undesirable behavior. ルール #27: 観察された望ましくない行動を定量化しよう。
 
 Some members of your team will start to be frustrated with properties of the system they don’t like which aren’t captured by the existing loss function. 
 チームの一部のメンバーは、既存の損失関数に捉えられていないシステムの特性に対して不満を持ち始めるでしょう。
-
 At this point, they should do whatever it takes to turn their gripes into solid numbers. 
 この時点で、彼らは自分たちの不満を具体的な数値に変えるために何でもするべきです。
-
 For example, if they think that too many "gag apps" are being shown in Play Search, they could have human raters identify gag apps. 
 例えば、彼らがPlay Searchにおいて「ギャグアプリ」が多すぎると考えている場合、人間の評価者にギャグアプリを特定させることができます。
-
 (You can feasibly use humanlabelled data in this case because a relatively small fraction of the queries account for a large fraction of the traffic.) 
 （この場合、比較的小さな割合のクエリが大きな割合のトラフィックを占めるため、人間がラベル付けしたデータを実際に使用することができます。）
 
 If your issues are measurable, then you can start using them as features, objectives, or metrics. 
-もしあなたの問題が測定可能であれば、それらを特徴、目的、または指標として使用し始めることができます。
-
+**もしあなたの問題が測定可能であれば、それらを特徴、目的、または指標として使用し始めることができます**。
 The general rule is "measure first, optimize second". 
-一般的なルールは「まず測定し、次に最適化する」です。
+**一般的なルールは「まず測定し、次に最適化する」です。**
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #28: Be aware that identical short-term behavior does not imply identical long-term behavior. 
 #### ルール #28: 同一の短期的な挙動が同一の長期的な挙動を意味しないことに注意してください。
 
 Imagine that you have a new system that looks at every doc_id and exact_query, 
 新しいシステムがすべてのdoc_idとexact_queryを見ていると想像してください。
-
 and then calculates the probability of click for every doc for every query. 
 そして、すべてのクエリに対して各ドキュメントのクリック確率を計算します。
-
 You find that its behavior is nearly identical to your current system in both 
 あなたは、その挙動が現在のシステムとほぼ同一であることを、サイドバイサイドテストとA/Bテストの両方で確認します。
-
 side by sides and A/B testing, so given its simplicity, you launch it. 
 そのシンプルさを考慮して、それを導入します。
-
 However, you notice that no new apps are being shown. Why? 
 しかし、新しいアプリが表示されていないことに気付きます。なぜでしょうか？
-
 Well, since your system only shows a doc based on its own history with that query, 
 実際、あなたのシステムはそのクエリに対する自身の履歴に基づいてのみドキュメントを表示するため、
-
 there is no way to learn that a new doc should be shown. 
 新しいドキュメントを表示すべきであることを学ぶ方法がありません。
-
 The only way to understand how such a system would work long-term is to have 
 そのようなシステムが長期的にどのように機能するかを理解する唯一の方法は、
-
 it train only on data acquired when the model was live. 
 モデルが稼働しているときに取得したデータのみでトレーニングさせることです。
-
 This is very difficult. 
 これは非常に難しいことです。
 
