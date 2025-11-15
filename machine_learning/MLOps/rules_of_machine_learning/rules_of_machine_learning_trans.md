@@ -1046,7 +1046,10 @@ it train only on data acquired when the model was live.
 This is very difficult. 
 これは非常に難しいことです。
 
+- メモ: 要するにA/Bテスト中は良いパフォーマンスを示してても、本番環境にローンチしたらユーザーの行動が変わってしまい、長期的には悪化してしまう可能性がある、という話。
+  - ex. モデルAをテスト環境で訓練して短期的に良好な結果を得たとしても、それを**本番環境でローンチすると、モデルAがユーザーの行動を変え、その結果、次にモデルAを訓練するために集まるデータ（フィードバックループ）の質や傾向が変わってしまう**ことがあります。理想は、**モデルAが本番環境で実際にデータを生成している間のデータのみを使って**、モデルAを評価・訓練し直すこと。
 
+<!-- ここまで読んだ! -->
 
 ### Training-Serving Skew トレーニング-サービングのずれ
 
@@ -1054,42 +1057,43 @@ Training-serving skew is a difference between performance during training and pe
 トレーニング-サービングのずれとは、トレーニング中のパフォーマンスとサービング中のパフォーマンスの違いです。
 This skew can be caused by:
 このずれは、以下の要因によって引き起こされる可能性があります。
+
 - A discrepancy between how you handle data in the training and serving pipelines.
-- トレーニングとサービングのパイプラインでデータを処理する方法の不一致。
+  - トレーニングとサービングのパイプラインでデータを処理する方法の不一致。
 - A change in the data between when you train and when you serve.
-- トレーニング時とサービング時のデータの変化。
+  - トレーニング時とサービング時のデータの変化。
 - A feedback loop between your model and your algorithm.
-- モデルとアルゴリズムの間のフィードバックループ。
+  - モデルとアルゴリズムの間のフィードバックループ。
 
 We have observed production machine learning systems at Google with training-serving skew that negatively impacts performance. 
 私たちは、Googleの生産機械学習システムにおいて、パフォーマンスに悪影響を及ぼすトレーニング-サービングのずれを観察しました。
 The best solution is to explicitly monitor it so that system and data changes don’t introduce skew unnoticed.
 最良の解決策は、システムやデータの変更が気づかれずにずれを引き起こさないように、明示的に監視することです。
 
+<!-- ここまで読んだ! -->
 
-
-#### Rule #29: 
-
-The best way to make sure that you train like you serve is to save the set of features used at serving time, and then pipe those features to a log to use them at training time. 
-トレーニングがサービングと同じように行われることを確実にする最良の方法は、サービング時に使用される特徴のセットを保存し、それらの特徴をログにパイプしてトレーニング時に使用することです。
+#### Rule #29: The best way to make sure that you train like you serve is to save the set of features used at serving time, and then pipe those features to a log to use them at training time. トレーニングがサービングと同じように行われることを確実にする**最良の方法は、サービング時に使用される特徴のセットを保存し、それらの特徴をログにパイプしてトレーニング時に使用すること**です。
 
 Even if you can’t do this for every example, do it for a small fraction, such that you can verify the consistency between serving and training (see Rule #37). 
 すべての例に対してこれを行うことができなくても、一部の例に対して行い、サービングとトレーニングの一貫性を確認できるようにします（Rule #37を参照）。
-
 Teams that have made this measurement at Google were sometimes surprised by the results. 
 Googleでこの測定を行ったチームは、結果に驚くことがありました。
-
 YouTube home page switched to logging features at serving time with significant quality improvements and a reduction in code complexity, and many teams are switching their infrastructure as we speak. 
 YouTubeのホームページは、サービング時に特徴をログに記録するように切り替え、品質の大幅な改善とコードの複雑さの削減を実現しました。そして、多くのチームが現在、インフラを切り替えています。
 
+- メモ: 推論ログを記録する際に、その時の特徴量の値も一緒に保存しておく、という話。
+  - こうすることで、後でそのログを使って、実際にサービングで使われた特徴量と、その後に観測されたFBラベルを使ってモデルを再学習できる。
+  - これにより、トレーニングとサービングのずれ（training-serving skew）が絶対に発生しないようにできる。
+  - 推論ログの全てでこれをやってしまうとデータ量が膨大になってしまうので、一部のログだけでも十分に価値はある。
+    - -> 一部の推論ログで監視できれば、他のログでもずれが発生していないことを確認できる
+    - Googleチームはこの方法を採用し、システムやデータの変更が気づかないうちにdata skewを引き起こすのを明示的に監視できるようになったとのこと。
 
+<!-- ここまで読んだ! -->
 
 #### Rule #30: Importance-weight sampled data, don’t arbitrarily drop it! ルール #30: 重要度重み付けされたサンプルデータを使用し、恣意的に削除しないこと！
 
-When you have too much data, there is a temptation to take files 1-12, and ignore files 13-99. 
-データが多すぎると、ファイル1-12を選び、ファイル13-99を無視したくなる誘惑があります。 
-This is a mistake. 
-これは間違いです。 
+When you have too much data, there is a temptation to take files 1-12, and ignore files 13-99. This is a mistake. 
+**データが多すぎると、ファイル1-12を選び、ファイル13-99を無視したくなる誘惑があります。 これは間違いです**。
 Although data that was never shown to the user can be dropped, importance weighting is best for the rest. 
 ユーザーに一度も表示されなかったデータは削除できますが、残りのデータには重要度重み付けが最適です。 
 Importance weighting means that if you decide that you are going to sample example X with a 30% probability, then give it a weight of 10/3. 
@@ -1097,473 +1101,363 @@ Importance weighting means that if you decide that you are going to sample examp
 With importance weighting, all of the calibration properties discussed in Rule #14 still hold. 
 重要度重み付けを使用すると、ルール#14で議論されたすべてのキャリブレーション特性が依然として保持されます。
 
+- メモ: 恣意的にunder-samplingしないで、importance weightingを使いましょう、という話。
 
+<!-- ここまで読んだ! -->
 
-#### Rule #31: Beware that if you join data from a table at training and serving time, the data in the table may change.
-
-Rule #31: トレーニング時とサービング時にテーブルからデータを結合する場合、テーブル内のデータが変更される可能性があることに注意してください。
+#### Rule #31: Beware that if you join data from a table at training and serving time, the data in the table may change.　Rule #31: トレーニング時とサービング時にテーブルからデータを結合する場合、テーブル内のデータが変更される可能性があることに注意してください。
 
 Say you join doc ids with a table containing features for those docs (such as number of comments or clicks).
-
 ドキュメントIDを、コメント数やクリック数などの特徴を含むテーブルと結合するとします。
-
 Between training and serving time, features in the table may be changed.
-
 トレーニング時とサービング時の間に、テーブル内の特徴が変更される可能性があります。
-
 Your model's prediction for the same document may then differ between training and serving.
-
 その結果、同じドキュメントに対するモデルの予測がトレーニング時とサービング時で異なる場合があります。
-
 The easiest way to avoid this sort of problem is to log features at serving time (see Rule #32).
-
 この種の問題を避ける最も簡単な方法は、サービング時に特徴をログに記録することです（Rule #32を参照）。
-
 If the table is changing only slowly, you can also snapshot the table hourly or daily to get reasonably close data.
-
 テーブルがゆっくりとしか変化しない場合は、テーブルを毎時または毎日スナップショットして、合理的に近いデータを取得することもできます。
-
 Note that this still doesn’t completely resolve the issue.
-
 ただし、これでも問題が完全に解決されるわけではないことに注意してください。
+(これは基本的には、Feature Storeでtimestamp付きで特徴量の値を追跡できてれば良い、って話だよね!:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #32: Re-use code between your training pipeline and your serving pipeline whenever possible.
 
 Batch processing is different than online processing. 
 バッチ処理はオンライン処理とは異なります。
-
 In online processing, you must handle each request as it arrives (e.g. you must do a separate lookup for each query), whereas in batch processing, you can combine tasks (e.g. making a join). 
 オンライン処理では、リクエストが到着するたびにそれを処理しなければなりません（例えば、各クエリに対して別々のルックアップを行う必要があります）が、バッチ処理ではタスクを結合することができます（例えば、結合を行うことができます）。
-
 At serving time, you are doing online processing, whereas training is a batch processing task. 
 サービング時にはオンライン処理を行い、トレーニングはバッチ処理タスクです。
-
 However, there are some things that you can do to re-use code. 
-ただし、コードを再利用するためにできることがいくつかあります。
-
+ただし、**コードを再利用するためにできること**がいくつかあります。
 For example, you can create an object that is particular to your system where the result of any queries or joins can be stored in a very human readable way, and errors can be tested easily. 
 例えば、システムに特有のオブジェクトを作成し、クエリや結合の結果を非常に人間が読みやすい方法で保存し、エラーを簡単にテストできるようにすることができます。
-
 Then, once you have gathered all the information, during serving or training, you run a common method to bridge between the human-readable object that is specific to your system, and whatever format the machine learning system expects. 
 次に、すべての情報を収集したら、サービングまたはトレーニング中に、システムに特有の人間が読みやすいオブジェクトと、機械学習システムが期待する形式との間を橋渡しする共通のメソッドを実行します。
-
 This eliminates a source of training-serving skew. 
 これにより、トレーニングとサービングのずれの原因が排除されます。
-
 As a corollary, try not to use two different programming languages between training and serving. 
-その結果として、トレーニングとサービングの間で異なる2つのプログラミング言語を使用しないようにしてください。
-
+**その結果として、トレーニングとサービングの間で異なる2つのプログラミング言語を使用しないようにしてください。** (あともしくはFeature Pipelineを分けるかだよね:thinking:)
 That decision will make it nearly impossible for you to share code. 
-その決定は、コードを共有することをほぼ不可能にします。
+**その決定は、コードを共有することをほぼ不可能にします。**
 
+<!-- ここまで読んだ! -->
 
+#### Rule #33: If you produce a model based on the data until January 5th, test the model on the data from January 6th and after. ルール #33: 1月5日までのデータに基づいてモデルを作成した場合、1月6日以降のデータでモデルをテストしてください。
 
-#### Rule #33: If you produce a model based on the data until January 5th, test the model on the data from January 6th and after.
-ルール #33: 1月5日までのデータに基づいてモデルを作成した場合、1月6日以降のデータでモデルをテストしてください。
+(学習データと評価データの間のfuture data leakを避ける話...! ランダムに分けるのではなくtime-seriesで分割しようね:thinking:)
 
 In general, measure performance of a model on the data gathered after the data you trained the model on, as this better reflects what your system will do in production.
 一般的に、モデルを訓練したデータの後に収集したデータでモデルの性能を測定してください。これは、あなたのシステムが本番環境でどのように機能するかをよりよく反映します。
-
 If you produce a model based on the data until January 5th, test the model on the data from January 6th.
 1月5日までのデータに基づいてモデルを作成した場合、1月6日のデータでモデルをテストしてください。
-
 You will expect that the performance will not be as good on the new data, but it shouldn’t be radically worse.
-新しいデータでの性能がそれほど良くないことを予想するでしょうが、劇的に悪くなるべきではありません。
-
+**新しいデータでの性能がそれほど良くないことを予想するでしょうが、劇的に悪くなるべきではありません。**
 Since there might be daily effects, you might not predict the average click rate or conversion rate, but the area under the curve, which represents the likelihood of giving the positive example a score higher than a negative example, should be reasonably close.
 日々の影響があるかもしれないので、平均クリック率やコンバージョン率を予測できないかもしれませんが、正の例に負の例よりも高いスコアを与える可能性を表す曲線の下の面積は、合理的に近いはずです。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #34: In binary classification for filtering (such as spam detection or determining interesting emails), make small short-term sacrifices in performance for very clean data.
-
 ルール #34: フィルタリング（スパム検出や興味のあるメールの判定など）のための二項分類において、非常にクリーンなデータのために短期的にパフォーマンスを少し犠牲にすること。
 
 In a filtering task, examples which are marked as negative are not shown to the user. 
-
 フィルタリングタスクでは、ネガティブとしてマークされた例はユーザーに表示されません。
-
 Suppose you have a filter that blocks 75% of the negative examples at serving. 
-
 例えば、提供時に75%のネガティブ例をブロックするフィルタがあるとします。
-
 You might be tempted to draw additional training data from the instances shown to users. 
-
-ユーザーに表示されたインスタンスから追加のトレーニングデータを引き出したくなるかもしれません。
-
+ユーザーに表示されたインスタンスから追加のトレーニングデータを引き出したくなるかもしれません。(=継続的学習はしたくなる...!:thinking:)
 For example, if a user marks an email as spam that your filter let through, you might want to learn from that. 
-
 例えば、ユーザーがフィルタを通過させたメールをスパムとしてマークした場合、それから学びたいと思うかもしれません。
 
 But this approach introduces sampling bias. 
-
 しかし、このアプローチはサンプリングバイアスを引き起こします。
-
 You can gather cleaner data if instead during serving you label 1% of all traffic as "held out", and send all held out examples to the user. 
-
-代わりに、提供時に全トラフィックの1%を「保持」としてラベル付けし、すべての保持された例をユーザーに送信することで、よりクリーンなデータを収集できます。
-
+**代わりに、提供時に全トラフィックの1%を「保持」としてラベル付けし、すべての保持された例をユーザーに送信することで、よりクリーンなデータを収集できます。** (これって探索的に負例と判断されたものもちょっとだけ出してみよう、ってこと??:thinking:)
 Now your filter is blocking at least 74% of the negative examples. 
-
 これで、フィルタは少なくとも74%のネガティブ例をブロックしています。
-
 These held out examples can become your training data. 
-
 これらの保持された例は、あなたのトレーニングデータとなる可能性があります。
 
 Note that if your filter is blocking 95% of the negative examples or more, this approach becomes less viable. 
-
 フィルタが95%以上のネガティブ例をブロックしている場合、このアプローチはあまり実行可能ではなくなります。
-
 Even so, if you wish to measure serving performance, you can make an even tinier sample (say 0.1% or 0.001%). 
 
 それでも、提供パフォーマンスを測定したい場合は、さらに小さなサンプル（例えば0.1%または0.001%）を作成できます。
-
 Ten thousand examples is enough to estimate performance quite accurately. 
-
 1万の例があれば、パフォーマンスをかなり正確に推定するのに十分です。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #35: Beware of the inherent skew in ranking problems. 
 #### ルール #35: ランキング問題に内在する偏りに注意せよ。
 
 When you switch your ranking algorithm radically enough that different results show up, you have effectively changed the data that your algorithm is going to see in the future. 
 ランキングアルゴリズムを大幅に変更して異なる結果が表示される場合、実質的に将来アルゴリズムが見るデータを変更したことになります。
-
 This kind of skew will show up, and you should design your model around it. 
 この種の偏りは現れるため、モデルをそれに基づいて設計する必要があります。
-
 There are multiple different approaches. 
 いくつかの異なるアプローチがあります。
-
 These approaches are all ways to favor data that your model has already seen. 
-これらのアプローチはすべて、モデルがすでに見たデータを優遇する方法です。
+**これらのアプローチはすべて、モデルがすでに見たデータを優遇する方法**です。
 
 1. Have higher regularization on features that cover more queries as opposed to those features that are on for only one query. 
-1. 一つのクエリのみに関連する特徴ではなく、より多くのクエリをカバーする特徴に対して高い正則化を持たせること。
-
-This way, the model will favor features that are specific to one or a few queries over features that generalize to all queries. 
-このようにすることで、モデルはすべてのクエリに一般化する特徴よりも、一つまたは少数のクエリに特化した特徴を優遇します。
-
-This approach can help prevent very popular results from leaking into irrelevant queries. 
-このアプローチは、非常に人気のある結果が無関係なクエリに漏れ出すのを防ぐのに役立ちます。
-
-Note that this is opposite the more conventional advice of having more regularization on feature columns with more unique values. 
-これは、より多くのユニークな値を持つ特徴列に対してより多くの正則化を行うという従来のアドバイスとは逆であることに注意してください。
+   1. 一つのクエリのみに関連する特徴ではなく、より多くのクエリをカバーする特徴に対して高い正則化を持たせること。
+  This way, the model will favor features that are specific to one or a few queries over features that generalize to all queries. 
+  このようにすることで、モデルはすべてのクエリに一般化する特徴よりも、一つまたは少数のクエリに特化した特徴を優遇します。
+  This approach can help prevent very popular results from leaking into irrelevant queries. 
+  このアプローチは、非常に人気のある結果が無関係なクエリに漏れ出すのを防ぐのに役立ちます。
+  Note that this is opposite the more conventional advice of having more regularization on feature columns with more unique values. 
+  これは、より多くのユニークな値を持つ特徴列に対してより多くの正則化を行うという従来のアドバイスとは逆であることに注意してください。
 
 2. Only allow features to have positive weights. 
-2. 特徴が正の重みを持つことのみを許可する。
-
-Thus, any good feature will be better than a feature that is "unknown". 
-したがって、良い特徴は「未知」の特徴よりも優れたものになります。
+   1. 特徴が正の重みを持つことのみを許可する。
+  Thus, any good feature will be better than a feature that is "unknown". 
+  したがって、良い特徴は「未知」の特徴よりも優れたものになります。
 
 3. Don’t have document-only features. 
-3. ドキュメント専用の特徴を持たない。
+   1. **ドキュメント専用の特徴を持たないようにする。**
+  This is an extreme version of #1. 
+  これはルール#1の極端なバージョンです。
+  For example, even if a given app is a popular download regardless of what the query was, you don’t want to show it everywhere. 
+  例えば、特定のアプリがクエリに関係なく人気のダウンロードであっても、それをどこにでも表示したくはありません。
+  Not having document-only features keeps that simple. 
+  ドキュメント専用の特徴を持たないことで、それがシンプルになります。(これってどういう意味?? 単一のアイテムで一意になる特徴量を持たないようにしよう、って話かな...!:thinking:)
+  The reason you don’t want to show a specific popular app everywhere has to do with the importance of making all the desired apps reachable.   
+  特定の人気アプリをどこにでも表示したくない理由は、すべての望ましいアプリにアクセス可能にすることの重要性に関係しています。
+  For instance, if someone searches for "bird watching app", they might download "angry birds", but that certainly wasn’t their intent. 
+  例えば、誰かが「バードウォッチングアプリ」を検索した場合、彼らは「アングリーバード」をダウンロードするかもしれませんが、それは確かに彼らの意図ではありませんでした。
+  Showing such an app might improve download rate, but leave the user’s needs ultimately unsatisfied. 
+  そのようなアプリを表示することはダウンロード率を向上させるかもしれませんが、最終的にユーザーのニーズを満たさない結果になります。
 
-This is an extreme version of #1. 
-これはルール#1の極端なバージョンです。
-
-For example, even if a given app is a popular download regardless of what the query was, you don’t want to show it everywhere. 
-例えば、特定のアプリがクエリに関係なく人気のダウンロードであっても、それをどこにでも表示したくはありません。
-
-Not having document-only features keeps that simple. 
-ドキュメント専用の特徴を持たないことで、それがシンプルになります。
-
-The reason you don’t want to show a specific popular app everywhere has to do with the importance of making all the desired apps reachable. 
-特定の人気アプリをどこにでも表示したくない理由は、すべての望ましいアプリにアクセス可能にすることの重要性に関係しています。
-
-For instance, if someone searches for "bird watching app", they might download "angry birds", but that certainly wasn’t their intent. 
-例えば、誰かが「バードウォッチングアプリ」を検索した場合、彼らは「アングリーバード」をダウンロードするかもしれませんが、それは確かに彼らの意図ではありませんでした。
-
-Showing such an app might improve download rate, but leave the user’s needs ultimately unsatisfied. 
-そのようなアプリを表示することはダウンロード率を向上させるかもしれませんが、最終的にユーザーのニーズを満たさない結果になります。
-
-
+<!-- ここまで読んだ! -->
 
 #### Rule #36: Avoid feedback loops with positional features. ルール #36: 位置特徴によるフィードバックループを避ける。
 
 The position of content dramatically affects how likely the user is to interact with it. 
 コンテンツの位置は、ユーザーがそれに対してどれだけインタラクトする可能性に大きく影響します。
-
 If you put an app in the first position it will be clicked more often, 
 アプリを最初の位置に置くと、より頻繁にクリックされるでしょう、
-
 and you will be convinced it is more likely to be clicked. 
 そして、それがクリックされる可能性が高いと確信することになります。
-
 One way to deal with this is to add positional features, i.e. features about the position of the content in the page. 
-これに対処する一つの方法は、位置特徴、つまりページ内のコンテンツの位置に関する特徴を追加することです。
-
+**これに対処する一つの方法は、位置特徴、つまりページ内のコンテンツの位置に関する特徴を追加すること**です。
+(あるいはユーザ行動にカスケードモデルを仮定したアプローチを使うとか、もひとつのアプローチになるはず...!:thinking:)
 You train your model with positional features, and it learns to weight, for example, the feature "1stposition" heavily. 
 位置特徴を用いてモデルを訓練すると、例えば「1stposition」という特徴に重みを付けることを学習します。
-
 Your model thus gives less weight to other factors for examples with "1stposition=true". 
 その結果、モデルは「1stposition=true」の例に対して他の要因に対して少ない重みを与えます。
-
-Then at serving you don't give any instances the positional feature, 
-その後、提供時には、いかなるインスタンスにも位置特徴を与えず、
-
-or you give them all the same default feature, 
-またはすべてに同じデフォルトの特徴を与えます、
-
-because you are scoring candidates before you have decided the order in which to display them. 
-なぜなら、表示する順序を決定する前に候補をスコアリングしているからです。
-
+Then at serving you don't give any instances the positional feature, or you give them all the same default feature, because you are scoring candidates before you have decided the order in which to display them. 
+**サービング時には、位置特徴を持つインスタンスを与えないか、すべて同じデフォルトの特徴を与えます。なぜなら、表示する順序を決定する前に候補をスコアリングしているから**です。
 Note that it is important to keep any positional features somewhat separate from the rest of the model because of this asymmetry between training and testing. 
-訓練とテストの間のこの非対称性のために、位置特徴をモデルの他の部分からある程度分離しておくことが重要です。
-
+訓練とテストの間のこの非対称性のために、**位置特徴をモデルの他の部分からある程度分離しておくこと**が重要です。(なるほど、単に特徴量として追加するだけでは微妙なのか...!:thinking:)
 Having the model be the sum of a function of the positional features and a function of the rest of the features is ideal. 
 位置特徴の関数と他の特徴の関数の合計としてモデルを構成することが理想的です。
-
 For example, don’t cross the positional features with any document feature. 
 例えば、位置特徴を任意のドキュメント特徴と交差させないでください。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #37: Measure Training/Serving Skew. ルール #37: トレーニング/サービングの偏りを測定する。
 
 There are several things that can cause skew in the most general sense. 
 最も一般的な意味での偏りを引き起こす要因はいくつかあります。
-
 Moreover, you can divide it into several parts: 
 さらに、これをいくつかの部分に分けることができます。
 
 - The difference between the performance on the training data and the holdout data. 
-- トレーニングデータとホールドアウトデータのパフォーマンスの違い。
-
-In general, this will always exist, and it is not always bad. 
-一般的に、これは常に存在し、必ずしも悪いことではありません。
+  - トレーニングデータとホールドアウトデータのパフォーマンスの違い。
+  In general, this will always exist, and it is not always bad. 
+  一般的に、これは常に存在し、必ずしも悪いことではありません。
 
 - The difference between the performance on the holdout data and the "next-day" data. 
-- ホールドアウトデータと「翌日」データのパフォーマンスの違い。
-
-Again, this will always exist. 
-再び、これは常に存在します。
-
-You should tune your regularization to maximize the next-day performance. 
-翌日のパフォーマンスを最大化するために、正則化を調整する必要があります。
-
-However, large drops in performance between holdout and next-day data may indicate that some features are time-sensitive and possibly degrading model performance. 
-ただし、ホールドアウトデータと翌日データの間でパフォーマンスが大幅に低下する場合は、いくつかの特徴が時間に敏感であり、モデルのパフォーマンスを低下させている可能性があることを示しているかもしれません。
+  - ホールドアウトデータと「翌日」データのパフォーマンスの違い。
+  Again, this will always exist. 
+  再び、これは常に存在します。
+  You should tune your regularization to maximize the next-day performance. 
+  翌日のパフォーマンスを最大化するために、正則化を調整する必要があります。
+  However, large drops in performance between holdout and next-day data may indicate that some features are time-sensitive and possibly degrading model performance. 
+  ただし、ホールドアウトデータと翌日データの間でパフォーマンスが大幅に低下する場合は、いくつかの特徴が時間に敏感であり、モデルのパフォーマンスを低下させている可能性があることを示しているかもしれません。
 
 - The difference between the performance on the "next-day" data and the live data. 
-- 「翌日」データとライブデータのパフォーマンスの違い。
+  - 「翌日」データとライブデータのパフォーマンスの違い。
+  If you apply a model to an example in the training data and the same example at serving, it should give you exactly the same result (see Rule #5). 
+  トレーニングデータの例にモデルを適用し、サービング時に同じ例に適用した場合、正確に同じ結果を返すべきです（ルール #5を参照）。
+  Thus, a discrepancy here probably indicates an engineering error. 
+  したがって、ここでの不一致はおそらくエンジニアリングエラーを示しています。
 
-If you apply a model to an example in the training data and the same example at serving, it should give you exactly the same result (see Rule #5). 
-トレーニングデータの例にモデルを適用し、サービング時に同じ例に適用した場合、正確に同じ結果を返すべきです（ルール #5を参照）。
-
-Thus, a discrepancy here probably indicates an engineering error. 
-したがって、ここでの不一致はおそらくエンジニアリングエラーを示しています。
-
-
+<!-- ここまで読んだ! --> 
 
 ## ML Phase III: Slowed Growth, Optimization Refinement, and Complex Models MLフェーズIII: 成長の鈍化、最適化の洗練、複雑なモデル
 
 There will be certain indications that the second phase is reaching a close. 
 第二フェーズが終わりに近づいていることを示すいくつかの兆候があります。
-
 First of all, your monthly gains will start to diminish. 
 まず第一に、あなたの月次の利益は減少し始めるでしょう。
-
 You will start to have tradeoffs between metrics: you will see some rise and others fall in some experiments. 
 メトリクス間でトレードオフが発生し始めます：いくつかの実験では、ある指標が上昇し、他の指標が下降するのを見るでしょう。
-
 This is where it gets interesting. 
 ここが面白くなるところです。
-
 Since the gains are harder to achieve, the machine learning has to get more sophisticated. 
 利益を得ることが難しくなるため、機械学習はより洗練される必要があります。
-
 A caveat: this section has more blue-sky rules than earlier sections. 
 注意点：このセクションには、以前のセクションよりも多くの理想的なルールがあります。
-
 We have seen many teams go through the happy times of Phase I and Phase II machine learning. 
-私たちは、多くのチームがフェーズIとフェーズIIの機械学習の幸せな時期を経験するのを見てきました。
-
+**私たちは、多くのチームがフェーズIとフェーズIIの機械学習の幸せな時期を経験するのを見てきました。**
 Once Phase III has been reached, teams have to find their own path. 
 フェーズIIIに達すると、チームは自分たちの道を見つけなければなりません。
 
+<!-- ここまで読んだ! -->
 
-
-#### Rule #38: Don’t waste time on new features if unaligned objectives have become the issue.
-
-#### ルール #38: 一致しない目標が問題になっている場合、新しい機能に時間を浪費しないこと。
+#### Rule #38: Don’t waste time on new features if unaligned objectives have become the issue.　ルール #38: 一致しない目標が問題になっている場合、新しい機能に時間を浪費しないこと。
 
 As your measurements plateau, your team will start to look at issues that are outside the scope of the objectives of your current machine learning system. 
 測定値が横ばいになると、チームは現在の機械学習システムの目標の範囲外にある問題に目を向け始めます。
-
 As stated before, if the product goals are not covered by the existing algorithmic objective, you need to change either your objective or your product goals. 
 前述のように、製品の目標が既存のアルゴリズムの目標に含まれていない場合、目標または製品の目標のいずれかを変更する必要があります。
-
 For instance, you may optimize clicks, plus-ones, or downloads, but make launch decisions based in part on human raters. 
 例えば、クリック数、プラスワン、ダウンロードを最適化することはできますが、リリースの決定は部分的に人間の評価者に基づいて行うことがあります。
 
+<!-- ここまで読んだ! -->
 
-
-#### Rule #39: Launch decisions are a proxy for long-term product goals. 
-
-Rule #39: ローンチの決定は長期的な製品目標の代理である。
+#### Rule #39: Launch decisions are a proxy for long-term product goals. 　Rule #39: ローンチの決定は長期的な製品目標の代理である。
 
 Alice has an idea about reducing the logistic loss of predicting installs. 
 アリスは、インストール予測のロジスティック損失を減少させるアイデアを持っています。
-
 She adds a feature. 
-彼女は新しい機能を追加します。
-
+彼女は新しい特徴量を追加します。
 The logistic loss drops. 
 ロジスティック損失は低下します。
-
 When she does a live experiment, she sees the install rate increase. 
-彼女がライブ実験を行うと、インストール率が増加するのが見えます。
-
+彼女がライブ実験=A/Bテストを行うと、インストール率が増加するのが見えます。
 However, when she goes to a launch review meeting, someone points out that the number of daily active users drops by 5%. 
 しかし、彼女がローンチレビュー会議に行くと、誰かが日次アクティブユーザー数が5%減少していることを指摘します。
-
 The team decides not to launch the model. 
 チームはそのモデルをローンチしないことを決定します。
-
 Alice is disappointed, but now realizes that launch decisions depend on multiple criteria, only some of which can be directly optimized using ML. 
-アリスは失望しますが、ローンチの決定は複数の基準に依存しており、そのうちのいくつかはMLを使用して直接最適化できることに気づきます。
+**アリスは失望しますが、ローンチの決定は複数の基準に依存しており、そのうちのいくつかはMLを使用して直接最適化できることに気づきます**。
 
-The truth is that the real world is not dungeons and dragons: there are no "hit points" identifying the health of your product. 
+The truth is that the real world is not dungeons and dragons: there are no "hit points" identifying the health of your product.
 真実は、現実の世界はダンジョンズ＆ドラゴンズではなく、製品の健康状態を示す「ヒットポイント」は存在しないということです。
-
 The team has to use the statistics it gathers to try to effectively predict how good the system will be in the future. 
 チームは収集した統計を使用して、将来システムがどれほど良くなるかを効果的に予測しようとしなければなりません。
-
 They need to care about engagement, 1 day active users (DAU), 30 DAU, revenue, and advertiser’s return on investment. 
 彼らはエンゲージメント、1日アクティブユーザー（DAU）、30日DAU、収益、広告主の投資収益率を気にする必要があります。
-
 These metrics that are measurable in A/B tests in themselves are only a proxy for more longterm goals: satisfying users, increasing users, satisfying partners, and profit, 
-A/Bテストで測定可能なこれらの指標は、ユーザーを満足させ、ユーザーを増やし、パートナーを満足させ、利益を上げるというより長期的な目標の代理に過ぎません。
-
+**A/Bテストで測定可能なこれらの指標は、ユーザーを満足させ、ユーザーを増やし、パートナーを満足させ、利益を上げるというより長期的な目標の代理に過ぎません**。
 which even then you could consider proxies for having a useful, high quality product and a thriving company five years from now. 
 これらは、今後5年間で有用で高品質な製品と繁栄する会社を持つことの代理と見なすことができます。
 
 The only easy launch decisions are when all metrics get better (or at least do not get worse). 
-すべての指標が改善される（または少なくとも悪化しない）ときだけが、簡単なローンチの決定です。
-
+**すべての指標が改善される（または少なくとも悪化しない）ときだけが、簡単なローンチの決定**です。
 If the team has a choice between a sophisticated machine learning algorithm, and a simple heuristic, if the simple heuristic does a better job on all these metrics, it should choose the heuristic. 
 チームが洗練された機械学習アルゴリズムと単純なヒューリスティックの間で選択肢がある場合、単純なヒューリスティックがすべての指標でより良い結果を出すなら、ヒューリスティックを選ぶべきです。
-
 Moreover, there is no explicit ranking of all possible metric values. 
 さらに、すべての可能な指標値の明示的なランキングは存在しません。
-
 Specifically, consider the following two scenarios: 
 具体的には、次の2つのシナリオを考えてみてください。
 
+- Experiment:
+  - A: 
+    - Daily Active Users = 1 million
+    - Revenue/Day = $4 million
+  - B:
+    - Daily Active Users = 2 million
+    - Revenue/Day = $2 million
+
 If the current system is A, then the team would be unlikely to switch to B. 
 現在のシステムがAであれば、チームはBに切り替える可能性は低いでしょう。
-
 If the current system is B, then the team would be unlikely to switch to A. 
 現在のシステムがBであれば、チームはAに切り替える可能性は低いでしょう。
-
 This seems in conflict with rational behavior; however, predictions of changing metrics may or may not pan out, and thus there is a large risk involved with either change. 
 これは合理的な行動と矛盾しているように見えますが、指標の変化の予測は実現するかどうかわからず、したがってどちらの変更にも大きなリスクが伴います。
-
 Each metric covers some risk with which the team is concerned. 
 各指標は、チームが懸念しているリスクの一部をカバーしています。
 
 Moreover, no metric covers the team’s ultimate concern, "where is my product going to be five years from now"? 
-さらに、どの指標もチームの最終的な懸念である「私の製品は5年後にどこにあるのか？」をカバーしていません。
+さらに、どの指標もチームの最終的な懸念である「私の製品は5年後にどうなっているのか？」をカバーしていません。
 
 Individuals, on the other hand, tend to favor one objective that they can directly optimize. 
-一方、個人は直接最適化できる1つの目標を好む傾向があります。
-
+**一方、個人は直接最適化できる1つの目標を好む傾向があります**。
 Most machine learning tools favor such an environment. 
 ほとんどの機械学習ツールは、そのような環境を好みます。
-
 An engineer banging out new features can get a steady stream of launches in such an environment. 
 新機能を次々と開発するエンジニアは、そのような環境で安定したローンチの流れを得ることができます。
-
 There is a type of machine learning, multi-objective learning, which starts to address this problem. 
-この問題に取り組み始める機械学習の一種であるマルチオブジェクティブラーニングがあります。
-
+**この問題に取り組み始める機械学習の一種であるマルチオブジェクティブラーニング**があります。
 For instance, one can formulate a constraint satisfaction problem that has lower bounds on each metric, and optimizes some linear combination of metrics. 
-例えば、各指標に下限を持つ制約充足問題を定式化し、指標のいくつかの線形結合を最適化することができます。
-
+例えば、各指標に下限を持つ制約充足問題を定式化し、**指標のいくつかの線形結合を最適化**することができます。
 However, even then, not all metrics are easily framed as machine learning objectives: 
-しかし、それでもすべての指標が機械学習の目的として簡単に定義できるわけではありません。
-
+**しかし、それでもすべての指標が機械学習の目的として簡単に定義できるわけではありません**。
 if a document is clicked on or an app is installed, it is because that the content was shown. 
 ドキュメントがクリックされたりアプリがインストールされたりするのは、そのコンテンツが表示されたからです。
-
 But it is far harder to figure out why a user visits your site. 
-しかし、ユーザーがあなたのサイトを訪れる理由を見つけるのははるかに難しいです。
-
+**しかし、ユーザーがあなたのサイトを訪れる理由を見つけるのははるかに難しい**です。(因果関係が定かじゃないもんね...:thinking:)
 How to predict the future success of a site as a whole is AI-complete: as hard as computer vision or natural language processing. 
 サイト全体の将来の成功を予測することはAI完全であり、コンピュータビジョンや自然言語処理と同じくらい難しいです。
 
-
+<!-- ここまで読んだ! -->
 
 #### Rule #40: Keep ensembles simple. ルール #40: アンサンブルはシンプルに保つ。
 
 Unified models that take in raw features and directly rank content are the easiest models to debug and understand. 
-生の特徴を取り込み、コンテンツを直接ランク付けする統一モデルは、デバッグや理解が最も容易なモデルです。しかし、an ensemble of models (a "model" which combines the scores of other models) can work better. 
-しかし、他のモデルのスコアを組み合わせる「モデル」であるアンサンブルモデルは、より良い結果を出すことがあります。To keep things simple, each model should either be an ensemble only taking the input of other models, or a base model taking many features, but not both. 
-シンプルに保つために、各モデルは他のモデルの入力のみを受け取るアンサンブルであるか、多くの特徴を受け取るベースモデルであるべきであり、両方であってはいけません。If you have models on top of other models that are trained separately, then combining them can result in bad behavior. 
+生の特徴量を取り込み、コンテンツを直接ランク付けする統一モデルは、デバッグや理解が最も容易なモデルです。
+However, an ensemble of models (a "model" which combines the scores of other models) can work better. 
+しかし、モデルのアンサンブル（他のモデルのスコアを組み合わせる「モデル」）は、より良く機能することがあります。
+To keep things simple, each model should either be an ensemble only taking the input of other models, or a base model taking many features, but not both. 
+**物事をシンプルに保つために、各モデルは他のモデルの入力のみを受け取るアンサンブルであるか、多くの特徴を受け取るベースモデルであるべきですが、その両方ではいけません**。
+If you have models on top of other models that are trained separately, then combining them can result in bad behavior. 
 別々に訓練されたモデルの上に他のモデルがある場合、それらを組み合わせると悪い動作を引き起こす可能性があります。
-
 Use a simple model for ensembling that takes only the output of your "base" models as inputs. 
-アンサンブルには、あなたの「ベース」モデルの出力のみを入力として受け取るシンプルなモデルを使用してください。You also want to enforce properties on these ensemble models. 
-また、これらのアンサンブルモデルに特性を強制したいと思います。For example, an increase in the score produced by a base model should not decrease the score of the ensemble. 
-例えば、ベースモデルによって生成されたスコアの増加は、アンサンブルのスコアを減少させてはなりません。Also, it is best if the incoming models are semantically interpretable (for example, calibrated) so that changes of the underlying models do not confuse the ensemble model. 
-また、入ってくるモデルが意味的に解釈可能（例えば、キャリブレーションされている）であることが望ましく、基礎モデルの変更がアンサンブルモデルを混乱させないようにします。Also, enforce that an increase in the predicted probability of an underlying classifier does not decrease the predicted probability of the ensemble. 
+**アンサンブルには、あなたの「ベース」モデルの出力のみを入力として受け取るシンプルなモデルを使用してください。**
+You also want to enforce properties on these ensemble models. 
+また、これらのアンサンブルモデルに特性を強制したいと思います。
+For example, an increase in the score produced by a base model should not decrease the score of the ensemble. 
+例えば、ベースモデルによって生成されたスコアの増加は、アンサンブルのスコアを減少させてはなりません。
+Also, it is best if the incoming models are semantically interpretable (for example, calibrated) so that changes of the underlying models do not confuse the ensemble model. 
+また、入ってくるモデルが意味的に解釈可能（例えば、キャリブレーションされている）であることが望ましく、基礎モデルの変更がアンサンブルモデルを混乱させないようにします。
+Also, enforce that an increase in the predicted probability of an underlying classifier does not decrease the predicted probability of the ensemble. 
 さらに、基礎分類器の予測確率の増加がアンサンブルの予測確率を減少させないように強制します。
 
+<!-- ここまで読んだ! -->
 
-
-#### Rule #41: When performance plateaus, look for qualitatively new sources of information to add rather than refining existing signals.
-
-Rule #41: パフォーマンスが横ばいになったときは、既存の信号を洗練させるのではなく、質的に新しい情報源を追加することを検討してください。
+#### Rule #41: When performance plateaus, look for qualitatively new sources of information to add rather than refining existing signals.　Rule #41: パフォーマンスが横ばいになったときは、既存の信号を洗練させるのではなく、質的に新しい情報源を追加することを検討してください。
 
 You’ve added some demographic information about the user. 
 ユーザに関するいくつかの人口統計情報を追加しました。
-
 You've added some information about the words in the document. 
 文書内の単語に関する情報も追加しました。
-
 You have gone through template exploration, and tuned the regularization. 
 テンプレートの探索を行い、正則化を調整しました。
-
 You haven’t seen a launch with more than a 1% improvement in your key metrics in a few quarters. 
 ここ数四半期で、主要な指標に1%以上の改善をもたらすローンチを見たことがありません。
-
 Now what? 
 さて、次はどうしますか？
 
 It is time to start building the infrastructure for radically different features, such as the history of documents that this user has accessed in the last day, week, or year, or data from a different property. 
-このユーザが過去1日、1週間、または1年にアクセスした文書の履歴や、別のプロパティからのデータなど、根本的に異なる機能のためのインフラを構築し始める時です。
-
+**このユーザが過去1日、1週間、または1年にアクセスした文書の履歴や、別のプロパティからのデータなど、根本的に異なる特徴量のためのインフラを構築し始める時**です。
 Use wikidata entities or something internal to your company (such as Google’s knowledge graph). 
 Wikidataエンティティや、あなたの会社内部の何か（例えばGoogleの知識グラフ）を使用してください。
-
 Use deep learning. 
 深層学習を使用してください。
-
 Start to adjust your expectations on how much return you expect on investment, and expand your efforts accordingly. 
-投資に対するリターンの期待値を調整し、それに応じて努力を拡大し始めてください。
-
+**投資に対するリターンの期待値を調整し、それに応じて努力を拡大し始めてください**。
 As in any engineering project, you have to weigh the benefit of adding new features against the cost of increased complexity. 
-どんなエンジニアリングプロジェクトでもそうですが、新しい機能を追加することの利点と、複雑さの増加に伴うコストを天秤にかける必要があります。
+**どんなエンジニアリングプロジェクトでもそうですが、新しい機能を追加することの利点と、複雑さの増加に伴うコストを天秤にかける必要があります。**
 
+<!-- ここまで読んだ! -->
 
-
-#### Rule #42: Don’t expect diversity, personalization, or relevance to be as correlated with popularity as you think they are.
-ルール #42: 多様性、パーソナライズ、または関連性が人気と同じくらい相関していると期待しないでください。
+#### Rule #42: Don’t expect diversity, personalization, or relevance to be as correlated with popularity as you think they are. ルール #42: 多様性、パーソナライズ、または関連性が人気と同じくらい相関していると期待しないでください。
 
 Diversity in a set of content can mean many things, with the diversity of the source of the content being one of the most common. 
 コンテンツのセットにおける多様性は多くの意味を持ち、コンテンツのソースの多様性が最も一般的なものの一つです。
-
 Personalization implies each user gets their own results. 
 パーソナライズは、各ユーザーが自分自身の結果を得ることを意味します。
-
 Relevance implies that the results for a particular query are more appropriate for that query than any other. 
 関連性は、特定のクエリに対する結果が他のどの結果よりもそのクエリに適していることを意味します。
-
 Thus all three of these properties are defined as being different from the ordinary. 
 したがって、これらの3つの特性はすべて、通常とは異なるものとして定義されます。
 
@@ -1572,90 +1466,65 @@ The problem is that the ordinary tends to be hard to beat.
 
 Note that if your system is measuring clicks, time spent, watches, +1s, reshares, et cetera, you are measuring the popularity of the content. 
 あなたのシステムがクリック、費やした時間、視聴、+1、再共有などを測定している場合、あなたはコンテンツの人気を測定していることに注意してください。
-
 Teams sometimes try to learn a personal model with diversity. 
 チームは時々、多様性を持つ個人モデルを学ぼうとします。
-
 To personalize, they add features that would allow the system to personalize (some features representing the user’s interest) or diversify (features indicating if this document has any features in common with other documents returned, such as author or content), and find that those features get less weight (or sometimes a different sign) than they expect. 
-パーソナライズするために、彼らはシステムがパーソナライズできるようにする特徴（ユーザーの興味を表すいくつかの特徴）や多様化できる特徴（この文書が他の返された文書と共通の特徴を持っているかどうかを示す特徴、例えば著者やコンテンツ）を追加し、これらの特徴が期待したよりも重みが少ない（または時には異なる符号を持つ）ことを発見します。
+パーソナライズするために、彼らはシステムがパーソナライズできるようにする特徴量（ユーザーの興味を表すいくつかの特徴）や多様化できる特徴（この文書が他の返された文書と共通の特徴を持っているかどうかを示す特徴、例えば著者やコンテンツ）を追加し、**これらの特徴が期待したよりも重みが少ない（または時には異なる符号を持つ）ことを発見します。**
 
 This doesn’t mean that diversity, personalization, or relevance aren’t valuable. 
-これは、多様性、パーソナライズ、または関連性が価値がないという意味ではありません。
-
+**これは、多様性、パーソナライズ、または関連性が価値がないという意味ではありません。**
 As pointed out in the previous rule, you can do postprocessing to increase diversity or relevance. 
 前のルールで指摘されたように、あなたは多様性や関連性を高めるために後処理を行うことができます。
-
 If you see longer term objectives increase, then you can declare that diversity/relevance is valuable, aside from popularity. 
-もし長期的な目標が増加するのを見た場合、あなたは多様性/関連性が人気とは別に価値があると宣言することができます。
-
+**もし長期的な目標が増加するのを見た場合、あなたは多様性/関連性が人気とは別に価値があると宣言することができます。**
 You can then either continue to use your postprocessing, or directly modify the objective based upon diversity or relevance. 
 その後、あなたは後処理を続けるか、多様性や関連性に基づいて目標を直接修正することができます。
 
+<!-- ここまで読んだ! -->
 
-
-#### Rule #43: Your friends tend to be the same across different products. Your interests tend not to be.
-ルール #43: あなたの友人は異なる製品間で同じ傾向がありますが、あなたの興味はそうではありません。
+#### Rule #43: Your friends tend to be the same across different products. Your interests tend not to be. ルール #43: あなたの友人は異なる製品間で同じ傾向がありますが、あなたの興味はそうではありません。
 
 Teams at Google have gotten a lot of traction from taking a model predicting the closeness of a connection in one product, and having it work well on another.
 Googleのチームは、ある製品における接続の近さを予測するモデルを取り入れ、それが別の製品でもうまく機能することで多くの成果を上げています。
-
 Your friends are who they are. 
-あなたの友人はそのままの友人です。
-
+あなたの友人はあなたの友人です。
 On the other hand, I have watched several teams struggle with personalization features across product divides.
-一方で、私はいくつかのチームが製品間のパーソナライズ機能に苦労しているのを見てきました。
-
+**一方で、私はいくつかのチームがproductの違いを超えたパーソナライズ機能で苦労しているのを見てきました。**
 Yes, it seems like it should work. 
 はい、うまくいくはずのように思えます。
-
 For now, it doesn’t seem like it does. 
 現時点では、うまくいっているようには見えません。
-
 What has sometimes worked is using raw data from one property to predict behavior on another.
 時には、あるプロパティからの生データを使用して別のプロパティでの行動を予測することがうまくいくことがあります。
-
 Also, keep in mind that even knowing that a user has a history on another property can help.
 また、ユーザーが別のプロパティでの履歴を持っていることを知っているだけでも役立つことを忘れないでください。
-
 For instance, the presence of user activity on two products may be indicative in and of itself.
-例えば、2つの製品におけるユーザー活動の存在自体が示唆的である可能性があります。
+例えば、2つの製品におけるユーザ活動の存在自体が示唆的である可能性があります。
 
-
+<!-- ここまで読んだ! -->
 
 ## Related Work 関連研究
 
 There are many documents on machine learning at Google as well as externally.
 Google内外には、機械学習に関する多くの文書があります。
+
 - Machine Learning Crash Course:
 an introduction to applied machine learning.
-- Machine Learning Crash Course: 実用的な機械学習への入門。
+  - Machine Learning Crash Course: 実用的な機械学習への入門。
 - Machine Learning: A Probabilistic Approach by Kevin Murphy for an understanding of the field of machine learning.
-- Machine Learning: A Probabilistic Approach（ケビン・マーフィー著）: 機械学習の分野を理解するための書籍。
-- Good Data Analysis:
-a data science approach to thinking about data sets.
-- Good Data Analysis: データセットについて考えるためのデータサイエンスアプローチ。
+  - Machine Learning: A Probabilistic Approach（ケビン・マーフィー著）: 機械学習の分野を理解するための書籍。
+- Good Data Analysis: a data science approach to thinking about data sets.
+  - Good Data Analysis: データセットについて考えるためのデータサイエンスアプローチ。
 - Deep Learning by Ian Goodfellow et al for learning nonlinear models.
-- Deep Learning（イアン・グッドフェロー他著）: 非線形モデルを学ぶための書籍。
+  - Deep Learning（イアン・グッドフェロー他著）: 非線形モデルを学ぶための書籍。
 - Google paper on technical debt, which has a lot of general advice.
-- Googleの技術的負債に関する論文: 多くの一般的なアドバイスが含まれています。
+  - Googleの技術的負債に関する論文: 多くの一般的なアドバイスが含まれています。
 - Tensorflow Documentation.
-- Tensorflowのドキュメント。
+  - Tensorflowのドキュメント。
 
 
 
-## Acknowledgements 謝辞
-
-Thanks to David Westbrook, Peter Brandt, Samuel Ieong, Chenyu Zhao, Li Wei,
-Michalis Potamias, Evan Rosen, Barry Rosenberg, Christine Robson, James Pine,
-Tal Shaked, Tushar Chandra, Mustafa Ispir, Jeremiah Harmsen, Konstantinos
-Katsiapis, Glen Anderson, Dan Duckworth, Shishir Birmiwal, Gal Elidan, Su Lin
-Wu, Jaihui Liu, Fernando Pereira, and Hrishikesh Aradhye for many corrections,
-suggestions, and helpful examples for this document. 
-この文書に対する多くの修正、提案、役立つ例を提供してくれたDavid Westbrook、Peter Brandt、Samuel Ieong、Chenyu Zhao、Li Wei、Michalis Potamias、Evan Rosen、Barry Rosenberg、Christine Robson、James Pine、Tal Shaked、Tushar Chandra、Mustafa Ispir、Jeremiah Harmsen、Konstantinos Katsiapis、Glen Anderson、Dan Duckworth、Shishir Birmiwal、Gal Elidan、Su Lin Wu、Jaihui Liu、Fernando Pereira、そしてHrishikesh Aradhyeに感謝します。
-Also, thanks to Kristen Lefevre, Suddha Basu, and Chris Berg who helped with an earlier version. 
-また、以前のバージョンを手伝ってくれたKristen Lefevre、Suddha Basu、Chris Bergにも感謝します。
-Any errors, omissions, or (gasp!) unpopular opinions are my own.
-いかなる誤り、脱落、または（驚愕！）不人気な意見は私自身のものです。
+<!-- ここまで読んだ! -->
 
 
 
@@ -1666,23 +1535,16 @@ There are a variety of references to Google products in this document.
 To provide more context, I give a short description of the most common examples below.
 より多くの文脈を提供するために、最も一般的な例について簡単に説明します。
 
-
-
 ### YouTube Overview YouTubeの概要
 
 YouTube is a streaming video service. 
 YouTubeはストリーミングビデオサービスです。
-
 Both YouTube Watch Next and YouTube Home Page teams use ML models to rank video recommendations. 
 YouTube Watch NextチームとYouTubeホームページチームの両方が、ビデオ推薦をランク付けするためにMLモデルを使用しています。
-
 Watch Next recommends videos to watch after the currently playing one, 
 Watch Nextは、現在再生中のビデオの後に視聴するビデオを推薦します。
-
 while Home Page recommends videos to users browsing the home page. 
 一方、ホームページは、ホームページを閲覧しているユーザーにビデオを推薦します。
-
-
 
 ### Google Play 概要
 
@@ -1691,8 +1553,6 @@ Google Playには、さまざまな問題を解決する多くのモデルがあ
 Play Search, Play Home Page Personalized Recommendations, and ‘Users Also Installed’ apps all use machine learning.
 Play Search、Playホームページのパーソナライズされた推奨、そして「ユーザーがインストールしたアプリ」すべてが機械学習を使用しています。
 
-
-
 ### Google Plus Overview 概要
 
 Google Plus used machine learning in a variety of situations: ranking posts in the "stream" of posts being seen by the user, ranking "What’s Hot" posts (posts that are very popular now), ranking people you know, et cetera. 
@@ -1700,98 +1560,4 @@ Google Plusは、ユーザーが見ている「ストリーム」の投稿のラ
 Google Plus closed down all personal accounts in 2019, and was replaced by Google Currents for business accounts on July 6, 2020. 
 Google Plusは2019年にすべての個人アカウントを閉鎖し、2020年7月6日にビジネスアカウント用にGoogle Currentsに置き換えられました。
 
-Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License, and code samples are licensed under the Apache 2.0 License. 
-特に記載がない限り、このページの内容はクリエイティブ・コモンズ 表示 4.0 ライセンスの下でライセンスされており、コードサンプルはApache 2.0ライセンスの下でライセンスされています。
-For details, see the Google Developers Site Policies. 
-詳細については、Google Developers Site Policiesを参照してください。
-Java is a registered trademark of Oracle and/or its affiliates. 
-JavaはOracleおよびその関連会社の登録商標です。
-Last updated 2025-08-25 UTC. 
-最終更新日 2025年8月25日 UTC。
-
-- ConnectBlogBlueskyInstagramLinkedInX (Twitter)YouTube
-- Blog
-- Bluesky
-- Instagram
-- LinkedIn
-- X (Twitter)
-- YouTube
-- ProgramsGoogle Developer ProgramGoogle Developer GroupsGoogle Developer ExpertsAcceleratorsGoogle Cloud & NVIDIA
-- Google Developer Program
-- Google Developer Groups
-- Google Developer Experts
-- Accelerators
-- Google Cloud & NVIDIA
-- Developer consolesGoogle API ConsoleGoogle Cloud Platform ConsoleGoogle Play ConsoleFirebase ConsoleActions on Google ConsoleCast SDK Developer ConsoleChrome Web Store DashboardGoogle Home Developer Console
-- Google API Console
-- Google Cloud Platform Console
-- Google Play Console
-- Firebase Console
-- Actions on Google Console
-- Cast SDK Developer Console
-- Chrome Web Store Dashboard
-- Google Home Developer Console
-
-
-
-### Connect 接続
-
-- Blog ブログ
-- Bluesky ブルースカイ
-- Instagram インスタグラム
-- LinkedIn リンクトイン
-- X (Twitter) X（ツイッター）
-- YouTube ユーチューブ
-
-
-
-### Programs プログラム
-
-- Google Developer Program
-- Google Developer Groups
-- Google Developer Experts
-- Accelerators
-- Google Cloud & NVIDIA
-
-
-
-### Developer consoles 開発者コンソール
-- Google API Console
-- Google Cloud Platform Console
-- Google Play Console
-- Firebase Console
-- Actions on Google Console
-- Cast SDK Developer Console
-- Chrome Web Store Dashboard
-- Google Home Developer Console
-- Android
-- Chrome
-- Firebase
-- Google Cloud Platform
-- Google AI
-- All products
-- Terms
-- Privacy
-- Manage cookies
-- English
-- Deutsch
-- Español
-- Español – América Latina
-- Français
-- Indonesia
-- Italiano
-- Polski
-- Português – Brasil
-- Tiếng Việt
-- Türkçe
-- Русский
-- עברית
-- العربيّة
-- فارسی
-- हिंदी
-- বাংলা
-- ภาษาไทย
-- 中文 – 简体
-- 中文 – 繁體
-- 日本語
-- 한국어
+<!-- ここまで読んだ! -->
