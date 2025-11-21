@@ -552,7 +552,7 @@ The distinguishing feature of model-based RL is that it assumes P the dynamics m
 モデルベースのRLの特徴は、動的モデルPが知られており、学習可能であると仮定することです。
 This is in contrast to other forms of RL where P such a dynamics model is neither known nor learnable.  
 これは、他の形式のRLにおいて、Pのような動的モデルが知られておらず、学習可能でないことと対照的です。
-
+強化学習
 **2.4** **Offline RL**  
 **2.4** **オフラインRL**
 

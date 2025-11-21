@@ -28,7 +28,7 @@ refs: https://developers.google.com/machine-learning/guides/rules-of-ml
 - Prioritize building robust infrastructure and simple models before incorporating complex machine learning algorithms.  
   **複雑な機械学習アルゴリズムを取り入れる前に、堅牢なインフラとシンプルなモデルの構築を優先してください**。
 
-- Leverage existing heuristics and domain knowledge to enhance model performance and system intuition.  
+- Leverage existing heuristics and domain knowledge to enhance model performance and system intuition.
   既存のヒューリスティックやドメイン知識を活用して、モデルのパフォーマンスとシステムの直感を向上させてください。
 
 - Continuously iterate and refine models through feature engineering and addressing potential pitfalls like training-serving skew.  
@@ -38,7 +38,7 @@ refs: https://developers.google.com/machine-learning/guides/rules-of-ml
   **機械学習の目標を測定可能な製品目標と整合させ、長期的なユーザー満足を優先**してください。
 
 - Explore new data sources and features when performance plateaus, considering user relationships and external information.  
-  パフォーマンスが停滞した際には、新しいデータソースや特徴を探求し、ユーザーの関係や外部情報を考慮してください。
+  **パフォーマンスが停滞した際には、新しいデータソースや特徴量を探求**し、ユーザーの関係や外部情報を考慮してください。
 
 <!-- ここまで読んだ! -->
 
@@ -93,12 +93,13 @@ The following terms will come up repeatedly in our discussion of effective machi
 
 ## Overview 概要
 
+(このoverviewいいね! MLOpsエンジニアが成果をスケールさせるためにめちゃ重要じゃん...!!:thinking:)
+
 To make great products:
 素晴らしい製品を作るためには：
 **do machine learning like the great engineer you are, not like the great
 machine learning expert you aren’t.**
 **あなたが優れたエンジニアであるように機械学習を行い、あなたが優れた機械学習の専門家でないように行わないでください**。
-
 Most of the problems you will face are, in fact, engineering problems. 
 実際、あなたが直面する問題のほとんどはエンジニアリングの問題です。
 Even with all the resources of a great machine learning expert, most of the gains
@@ -111,9 +112,9 @@ So, the basic approach is:
 1. Make sure your pipeline is solid end to end.
    1. パイプラインがエンドツーエンドで堅牢であることを確認してください。
 2. Start with a reasonable objective.
-   1. 妥当な目標から始めてください。
+   1. 妥当な目的関数から始めてください。
 4. Add common-sense features in a simple way.
-   1. 常識的な特徴をシンプルな方法で追加してください。
+   1. 常識的な特徴量をシンプルな方法で追加してください。
 5. Make sure that your pipeline stays solid.
    1. パイプラインが堅牢であり続けることを確認してください。
 
@@ -132,19 +133,20 @@ See the section on Phase III machine learning projects.
 
 This document is arranged as follows:
 この文書は次のように構成されています：
+
 1. The first part should help you understand whether
 the time is right for building a machine learning system.
-1. 最初の部分は、機械学習システムを構築するのに適した時期かどうかを理解するのに役立ちます。
-2. The second part is about deploying your
+   1. 最初の部分は、機械学習システムを構築するのに適した時期かどうかを理解するのに役立ちます。
+1. The second part is about deploying your
 first pipeline.
-2. 第二部は、最初のパイプラインを展開することについてです。
-3. The third part is about launching and
+   1. 第二部は、最初のパイプラインを展開することについてです。
+1. The third part is about launching and
 iterating while adding new features to your pipeline, how to evaluate models
 and training-serving skew.
-3. 第三部は、パイプラインに新しい機能を追加しながら立ち上げと反復を行うこと、モデルの評価方法、トレーニングとサービングのずれについてです。
-4. The final part is about what to do when you reach a plateau.
-4. 最後の部分は、停滞に達したときに何をすべきかについてです。
-5. Afterwards, there is a list of related work and an appendix with some
+1. 第三部は、パイプラインに新しい機能を追加しながら立ち上げと反復を行うこと、モデルの評価方法、トレーニングとサービングのずれについてです。
+2. The final part is about what to do when you reach a plateau.
+3. 最後の部分は、停滞に達したときに何をすべきかについてです。
+4. Afterwards, there is a list of related work and an appendix with some
 background on the systems commonly used as examples in this document.
 その後、関連する作業のリストと、この文書で一般的に例として使用されるシステムに関する背景情報を含む付録があります。
 
@@ -155,18 +157,18 @@ background on the systems commonly used as examples in this document.
 #### Rule #1: Don’t be afraid to launch a product without machine learning.　ルール #1: 機械学習なしで製品を立ち上げることを恐れないでください。  
 
 Machine learning is cool, but it requires data.  
-機械学習は魅力的ですが、データが必要です。  
+**機械学習は魅力的ですが、データが必要**です。(機械学習なしでリリースして、データを収集して、機械学習で改善する...!:thinking:)
 Theoretically, you can take data from a different problem and then tweak the model for a new product, but this will likely underperform basicheuristics.  
 理論的には、異なる問題からデータを取得し、新しい製品のためにモデルを調整することができますが、これは基本的なヒューリスティックに劣る可能性が高いです。  
 If you think that machine learning will give you a 100% boost, then a heuristic will get you 50% of the way there.  
-もし機械学習が100%の向上をもたらすと考えているなら、ヒューリスティックは50%のところまで到達させてくれます。  
+もし機械学習が100%の向上をもたらすと考えているなら、ヒューリスティックは50%のところまで到達させてくれます。 
 For instance, if you are ranking apps in an app marketplace, you could use the install rate or number of installs as heuristics.  
 例えば、アプリマーケットプレイスでアプリをランキングする場合、インストール率やインストール数をヒューリスティックとして使用できます。  
 If you are detecting spam, filter out publishers that have sent spam before.  
 スパムを検出する場合、以前にスパムを送信した出版社を除外してください。  
 Don’t be afraid to use human editing either.  
 人間の編集を使用することを恐れないでください。  
-If you need to rank contacts, rank the most recently used highest (or even rank alphabetically).  
+If you need to rank contacts, rank the most recently used highest (or even rank alphabetically). 
 もし連絡先をランク付けする必要があるなら、最も最近使用したものを最上位にランク付けするか（またはアルファベット順にランク付けしてください）。  
 If machine learning is not absolutely required for your product, don't use it until you have data.  
 **もし機械学習があなたの製品に絶対に必要でないなら、データが得られるまで使用しないでください。**
@@ -176,12 +178,12 @@ If machine learning is not absolutely required for your product, don't use it un
 #### Rule #2: First, design and implement metrics. 
 
 Before formalizing what your machine learning system will do, track as much as possible in your current system. 
-まず、機械学習システムが何をするかを正式に定義する前に、現在のシステムでできるだけ多くのことを追跡してください。
+まず、機械学習システムが何をするかを正式に定義する前に、現在のシステムで**できるだけ多くのことを追跡**してください。(プロダクトの色んな指標を監視できるようにしよう!って話...!:thinking:)
 Do this for the following reasons: 
 以下の理由からこれを行ってください：
 
 1. It is easier to gain permission from the system’s users earlier on. 
-   1. システムのユーザーから早期に許可を得る方が簡単です。
+   1. システムのユーザから早期に許可を得る方が簡単です。
 2. If you think that something might be a concern in the future, it is better to get historical data now. 
    1. 将来的に何かが懸念事項になる可能性があると思うなら、今のうちに履歴データを取得する方が良いです。
 3. If you design your system with metric instrumentation in mind, things will go better for you in the future. 
@@ -202,8 +204,6 @@ Also, note that an experiment framework, in which you can group users into bucke
 **また、ユーザーをバケットにグループ化し、実験ごとに統計を集計できる実験フレームワークが重要**です。
 See Rule #12. 
 ルール#12を参照してください。
-
-<!-- ここまで読んだ! -->
 
 By being more liberal about gathering metrics, you can gain a broader picture of your system. 
 メトリックの収集に対してより自由であれば、システムの全体像を把握できます。
@@ -276,7 +276,7 @@ Once you have a system that does these three things reliably, you have done most
 これらの3つのことを信頼性高く行うシステムができれば、あなたはほとんどの作業を終えたことになります。
 Your simple model provides you with baseline metrics and a baseline behavior that you can use to test more complex models. 
 あなたのシンプルなモデルは、**より複雑なモデルをテストするために使用できるベースラインのメトリクスとベースラインの動作を提供**します。
-Some teams aim for a "neutral" first launch: a first launch that explicitly deprioritizes machine learning gains, to avoid getting distracted. 
+Some teams aim for a "neutral" first launch: a first launch that explicitly deprioritizes machine learning gains, to avoid getting distracted.
 一部のチームは**「中立的」な初回ローンチ**を目指します。これは、機械学習の利益を明示的に優先順位を下げて、気を散らさないようにする初回ローンチです。
 
 - メモ: "neutral" first launchって? 
@@ -297,7 +297,7 @@ Specifically:
    アルゴリズムにデータを取り込むテストを行います。
    Check that feature columns that should be populated are populated. 
    満たされるべき特徴列が満たされていることを確認します。
-   Where privacy permits, manually inspect the input to your training algorithm. 
+   Where privacy permits, manually inspect the input to your training algorithm.
    プライバシーが許可される場合は、トレーニングアルゴリズムへの入力を手動で検査します。
    If possible, check statistics in your pipeline in comparison to statistics for the same data processed elsewhere. 
    可能であれば、パイプライン内の統計を、他の場所で処理された同じデータの統計と比較して確認します。
@@ -318,7 +318,7 @@ Also, it is important to understand your data: see Practical Advice for Analysis
 #### Rule #6: Be careful about dropped data when copying pipelines. 
 #### ルール #6: パイプラインをコピーする際にデータが失われないように注意する。
 
-Often we create a pipeline by copying an existing pipeline (i.e., cargo cult programming), and the old pipeline drops data that we need for the new pipeline. 
+Often we create a pipeline by copying an existing pipeline (i.e., cargo cult programming), and the old pipeline drops data that we need for the new pipeline.
 私たちはしばしば、既存のパイプラインをコピーすることによって新しいパイプラインを作成します（つまり、カゴカルトプログラミング）が、古いパイプラインは新しいパイプラインに必要なデータを失っています。
 For example, the pipeline for Google Plus What’s Hot drops older posts (because it is trying to rank fresh posts). 
 例えば、Google PlusのWhat’s Hotのパイプラインは古い投稿を削除します（新しい投稿をランク付けしようとしているためです）。
@@ -344,7 +344,7 @@ There is an existing system for ranking, or classifying, or whatever problem you
 This means that there are a bunch of rules and heuristics. 
 これは、多くのルールやヒューリスティックが存在することを意味します。
 These same heuristics can give you a lift when tweaked with machine learning. 
-これらのヒューリスティックは、機械学習で調整されると、あなたに助けを与えることができます。
+**これらのヒューリスティックは、機械学習で調整されると、あなたに助けを与えることができます。** (heuristicsで活用されてた情報を特徴量で使おう〜！って話か...!:thinking:)
 Your heuristics should be mined for whatever information they have, for two reasons. 
 あなたのヒューリスティックは、2つの理由から、持っている情報を掘り起こすべきです。
 First, the transition to a machine learned system will be smoother. 
@@ -357,7 +357,7 @@ There are four ways you can use an existing heuristic:
 - Preprocess using the heuristic. 
   - **ヒューリスティックを使用して前処理**を行います。
     If the feature is incredibly awesome, then this is an option. 
-    その特徴が非常に優れている場合、これは選択肢です。
+    その特徴量が非常に優れている場合、これは選択肢です。
     For example, if, in a spam filter, the sender has already been blacklisted, don’t try to relearn what "blacklisted" means. 
     **例えば、スパムフィルターで送信者がすでにブラックリストに載っている場合、「ブラックリストに載っている」とは何かを再学習しようとしないでください。**
     Block the message. 
@@ -382,7 +382,7 @@ There are four ways you can use an existing heuristic:
     アンサンブルに適用されるいくつかの技術がここでも適用されます（ルール #40を参照）。
 
 - Modify the label. 
-  - ラベルを修正します。
+  - ラベルを修正します。(=ラベルにheuristic的な情報を組み込むってことか...!:thinking:)
     This is an option when you feel that the heuristic captures information not currently contained in the label. 
     これは、ヒューリスティックが現在ラベルに含まれていない情報を捉えていると感じるときの選択肢です。
     For example, if you are trying to maximize the number of downloads, but you also want quality content, then maybe the solution is to multiply the label by the average number of stars the app received. 
@@ -440,20 +440,20 @@ Also notice that freshness can change over time, especially when feature columns
 Many machine learning systems have a stage where you export the model to serving. 
 多くの機械学習システムには、モデルを提供するためにエクスポートする段階があります。
 If there is an issue with an exported model, it is a user-facing issue. 
-エクスポートされたモデルに問題がある場合、それはユーザに影響を与える問題です。
+export(=デプロイ?)されたモデルに問題が発生すると、それはuser-facing(ユーザ影響のある)な問題になります。
 
 Do sanity checks right before you export the model. 
-モデルをエクスポートする直前に、サニティチェックを行ってください。
+モデルをエクスポートする直前に、健全性チェックを行ってください。
 Specifically, make sure that the model’s performance is reasonable on held out data. 
 具体的には、モデルの性能が保持されたデータに対して合理的であることを確認してください。
 Or, if you have lingering concerns with the data, don’t export a model. 
 また、データに対して懸念が残っている場合は、モデルをエクスポートしないでください。
 Many teams continuously deploying models check the area under the ROC curve (or AUC) before exporting. 
 **モデルを継続的にデプロイしている多くのチームは、エクスポートする前にROC曲線の下の面積（AUC）を確認します。** (デプロイ前にオフライン評価でチェックしようって話か...!:thinking:)
-Issues about models that haven’t been exported require an email alert, but issues on a user-facing model may require a page. 
-エクスポートされていないモデルに関する問題はメールアラートが必要ですが、ユーザーに影響を与えるモデルの問題はページが必要な場合があります。
-So better to wait and be sure before impacting users. 
-したがって、ユーザーに影響を与える前に待って確実にする方が良いです。
+Issues about models that haven’t been exported require an email alert, but issues on a user-facing model may require a page.
+未exportのモデルに関する問題はエンジニアへの単にアラートを送るだけで済むが、user-facingなモデルの問題は緊急呼び出しが必要になる可能性もある。
+So better to wait and be sure before impacting users.
+したがって、ユーザに影響を与える前に保証する方が良いです。
 
 <!-- ここまで読んだ! -->
 
@@ -484,8 +484,9 @@ If you find that the person who understands a feature column is leaving, make su
 フィーチャーカラムを理解している人が退職することがわかった場合は、誰かがその情報を持っていることを確認してください。
 Although many feature columns have descriptive names, it's good to have a more detailed description of what the feature is, where it came from, and how it is expected to help. 
 多くのフィーチャーカラムには説明的な名前がありますが、フィーチャーが何であるか、どこから来たのか、どのように役立つと期待されているのかについて、より詳細な説明を持つことが重要です。
+(たぶんこれはFeature Storeが受け持つような責務の話のはず。ここまだ十分にできてないな...:thinking:)
 
-<!-- ここまで読んだ!ここまだ十分にできてないな...:thinking: -->
+<!-- ここまで読んだ! -->
 
 ### Your First Objective 最初の目標
 
@@ -505,20 +506,20 @@ See also Rule #2.
 You want to make money, make your users happy, and make the world a better place. 
 あなたはお金を稼ぎ、ユーザーを幸せにし、世界をより良い場所にしたいと思っています。
 There are tons of metrics that you care about, and you should measure them all (see Rule #2). 
-**あなたが気にする指標はたくさんあり、すべてを測定すべき**です（ルール #2を参照）。
+**あなたが気にするmetricsはたくさんあり、すべてを測定すべき**です（ルール #2を参照）。
 However, early in the machine learning process, you will notice them all going up, even those that you do not directly optimize. 
-しかし、機械学習プロセスの初期段階では、直接最適化していない指標でさえもすべてが上昇していることに気付くでしょう。
+しかし、機械学習プロセスの初期段階では、直接最適化していないmetricsでさえもすべてが上昇していることに気付くでしょう。
 For instance, suppose you care about number of clicks and time spent on the site. 
 例えば、クリック数とサイトでの滞在時間を気にしているとしましょう。
 If you optimize for number of clicks, you are likely to see the time spent increase. 
 クリック数を最適化すると、滞在時間が増加する可能性が高いです。
 
 So, keep it simple and don’t think too hard about balancing different metrics when you can still easily increase all the metrics. 
-**ですので、シンプルに保ち、すべての指標を簡単に増加させることができるときに、異なる指標のバランスを考えすぎないようにしましょう。**
+**ですので、シンプルに保ち、すべてのmetricsを簡単に増加させることができるときに、異なるmetricsのバランスを考えすぎないようにしましょう。**
 Don’t take this rule too far though: do not confuse your objective with the ultimate health of the system (see Rule #39). 
-ただし、このルールを行き過ぎて適用しないでください: あなたの目的とシステムの最終的な健全性を混同しないでください（ルール #39を参照）。
+ただし、このルールを行き過ぎて適用しないでください: あなたの目的とシステムの最終的な健全性を混同しないでください（ルール #39を参照）。(うんうん、あくまで最初はってことだよね!)
 And, if you find yourself increasing the directly optimized metric, but deciding not to launch, some objective revision may be required. 
-**そして、直接最適化された指標が増加しているのに、ローンチしないことを決定した場合は、目的の見直しが必要かもしれません。** (確かに、じゃあなんでその目的を最適化してるんだ、って話になるからね...!:thinking:)
+**そして、直接最適化されたmetricsが増加しているのに、ローンチしないことを決定した場合は、objectiveの見直しが必要かもしれません。** (確かに、じゃあなんでその目的を最適化してるんだ、って話になるからね...!:thinking:)
 
 <!-- ここまで読んだ! -->
 
@@ -531,18 +532,18 @@ You think you do but then as you stare at the data and side-by-side analysis of 
 Further, different team members often can't agree on the true objective. 
 さらに、異なるチームメンバーはしばしば真の目標について合意できません。
 The ML objective should be something that is easy to measure and is a proxy for the "true" objective. 
-機械学習の目標は、測定が容易であり、「真の」目標の代理となるものであるべきです。
+**機械学習の目標は、測定が容易であり、「真の」目標の代理となるものであるべき**です。
 In fact, there is often no "true" objective (see Rule #39). 
 実際、しばしば「真の」目標は存在しません（ルール #39を参照）。
 So train on the simple ML objective, and consider having a "policy layer" on top that allows you to add additional logic (hopefully very simple logic) to do the final ranking. 
 **したがって、シンプルな機械学習の目標でトレーニングし、最終的なランキングを行うために追加のロジック（できれば非常にシンプルなロジック）を追加できる「ポリシーレイヤー」を上に持つことを検討してください。**
 The easiest thing to model is a user behavior that is directly observed and attributable to an action of the system: 
-**モデル化する最も簡単なことは、直接観察可能でシステムのアクションに帰属可能なユーザーの行動**です：
+**モデル化しやすいのは、システムのアクションに直接観察され、attributableな(帰属される?)ユーザ行動です：**
 (以下はいずれも、わかりやすく観察可能で、システムのアクションに対して「すぐ」わかるし「誰が何をどうしたか」がはっきりしてるmetrics...!:thinking:)
 
-- Was this ranked link clicked? 
+- Was this ranked link clicked?
   - このランク付けされたリンクはクリックされましたか？
-- Was this ranked object downloaded? 
+- Was this ranked object downloaded?
   - このランク付けされたオブジェクトはダウンロードされましたか？
 - Was this ranked object forwarded/replied to/emailed? 
   - このランク付けされたオブジェクトは転送/返信/メールされましたか？
@@ -564,9 +565,9 @@ Avoid modeling indirect effects at first:
   - 日々のアクティブユーザーはどのくらいでしたか？
 
 Indirect effects make great metrics, and can be used during A/B testing and during launch decisions. 
-**間接的な効果は優れた指標を作り、A/Bテストやローンチの決定時に使用できます。** (オンライン評価のmetricsとして有効だけど、最初の目的関数としては避けたほうが良い、って話か...!:thinking:)
+**間接的な効果は優れたmetricsを作り、A/Bテストやローンチの決定時に使用できます。** (オンライン評価のmetricsとして有効だけど、最初の目的関数としては避けたほうが良い、って話か...!:thinking:)
 Finally, don’t try to get the machine learning to figure out: 
-最後に、機械学習に以下を解決させようとしないでください：
+最後に、機械学習に以下を解決させようとしないでください:
 
 - Is the user happy using the product? 
   - ユーザーは製品を使用して満足していますか？

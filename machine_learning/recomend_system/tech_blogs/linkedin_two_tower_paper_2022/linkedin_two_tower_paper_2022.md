@@ -9,7 +9,7 @@ Rohan Ramanath [∗], Hakan Inan [∗][,][+], Gungor Polatkan [∗], Bo Hu, Qi G
 
 ##### LinkedIn Corporation, USA  
 LinkedIn Corporation, アメリカ合衆国  
-
+i
 #### ABSTRACT 要約
 
 Talent search and recommendation systems at LinkedIn strive to match the potential candidates to the hiring needs of a recruiter or a hiring manager expressed in terms of a search query or a job posting. 

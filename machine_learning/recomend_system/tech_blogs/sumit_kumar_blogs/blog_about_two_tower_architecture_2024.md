@@ -101,6 +101,7 @@ The following figure shows some examples in the context of neural matching appli
 
 As you can see, the Two Tower model (Figure a) is a representation-based ranker architecture, which independently computes embeddings for the query and documents and estimates their similarity via interaction between them at the output layer. 
 ご覧のように、**Two Towerモデル（図a）は、表現に基づくランカーアーキテクチャ**であり、**クエリとドキュメントの埋め込みを独立して計算し、出力層での相互作用を通じてそれらの類似性を推定**します。(この言語化、わかりやすすぎる...!!ありがたい :pray:)
+(そうそう、だからTwo Towerモデルって基本的には表現学習 representation learning の一種とも言えるんだよね...!!:thinking:)
 The other paradigms represent more interaction-focused rankers. 
 **他のパラダイムは、より相互作用に焦点を当てた**ランカーを表しています。
 Models like DRMM, and KNRM (Figure b) model word- and phrase-level relationships across query and document using an interaction matrix and then feed it to a neural network like CNN or MLP. 
