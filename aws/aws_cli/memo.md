@@ -35,3 +35,14 @@ delete: s3://sagemaker-ap-northeast-1-882697291358/HogehogePipeline/code/9fe5616
 % aws s3 rb s3://sagemaker-ap-northeast-1-882697291358
 remove_bucket: sagemaker-ap-northeast-1-882697291358
 ```
+
+## AWS CLI S3コマンドメモ
+
+
+### `aws s3 cp` と `aws s3 sync` の違い
+
+- cpコマンド:
+  - 指定したファイルやディレクトリ配下の全ファイルを、毎回全部コピーする。
+- syncコマンド:
+  - **ディレクトリ同士の差分同期コマンド**。
+  - srcとdstのディレクトリを比較して、新規ファイル・更新されたファイルだけを探してコピーしてくれる。同じものは無視してくれるのがポイント。
