@@ -1013,13 +1013,13 @@ At this point, they should do whatever it takes to turn their gripes into solid 
 この時点で、彼らは自分たちの不満を具体的な数値に変えるために何でもするべきです。
 For example, if they think that too many "gag apps" are being shown in Play Search, they could have human raters identify gag apps. 
 例えば、彼らがPlay Searchにおいて「ギャグアプリ」が多すぎると考えている場合、人間の評価者にギャグアプリを特定させることができます。
-(You can feasibly use humanlabelled data in this case because a relatively small fraction of the queries account for a large fraction of the traffic.) 
+(You can feasibly use humanlabelled data in this case because a relatively small fraction of the queries account for a large fraction of the traffic.)
 （この場合、比較的小さな割合のクエリが大きな割合のトラフィックを占めるため、人間がラベル付けしたデータを実際に使用することができます。）
 
 If your issues are measurable, then you can start using them as features, objectives, or metrics. 
-**もしあなたの問題が測定可能であれば、それらを特徴、目的、または指標として使用し始めることができます**。
+**もしあなたの問題が測定可能であれば、それらを特徴量、目的(=目的関数)、または指標(=A/Bテストで計測するmetrics)として使用し始めることができます**。
 The general rule is "measure first, optimize second". 
-**一般的なルールは「まず測定し、次に最適化する」です。**
+**一般的なルールは「まず測定し、次に最適化する」です。** (これ響いた!:thinking:)
 
 <!-- ここまで読んだ! -->
 
