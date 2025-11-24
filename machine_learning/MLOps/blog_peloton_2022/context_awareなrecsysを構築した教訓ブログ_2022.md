@@ -21,11 +21,11 @@ We also detailed the drawbacks of using the LSTMNet, such as the lack of context
 In this post, we lay out how we have been building out Context-Aware Recommender Systems (CARS) to iterate on the LSTMNet. 
 この投稿では、LSTMNetを反復するために、どのようにコンテキスト対応レコメンダーシステム（CARS）を構築してきたかを説明します。
 We will first motivate the need to be context-aware when making recommendations, then dive deep into the lessons we have learned along the way, and finally wrap up with what is planned for ahead. 
-まず、推薦を行う際にコンテキストを意識する必要性を説明し、その後、私たちが学んできた教訓について詳しく掘り下げ、最後に今後の計画についてまとめます。
+まず、**推薦を行う際にコンテキストを意識する必要性**を説明し、その後、私たちが学んできた教訓について詳しく掘り下げ、最後に今後の計画についてまとめます。
 
 <!-- ここまで読んだ! -->
 
-### UNDERSTANDING THE IMPORTANCE OF CONTEXT FOR FITNESS フィットネスにおける文脈の重要性の理解
+## UNDERSTANDING THE IMPORTANCE OF CONTEXT FOR FITNESS フィットネスにおける文脈の重要性の理解
 
 Fitness is a journey that is unique to each individual with an infinite possibilities of paths. 
 フィットネスは、無限の可能性を持つ各個人に特有の旅です。
@@ -119,7 +119,7 @@ Consequently, an ideal recommender system at Peloton must be context-aware and b
 (こういうコンテキスト的な特徴量って、Feature Storeに保存する、とかではなさそうだよなぁ...:thinking:)
 <!-- ここまで読んだ! -->
 
-### THE LIMITATIONS OF LSTMNET LSTMNetの限界
+## THE LIMITATIONS OF LSTMNET LSTMNetの限界
 
 As explained in the previous blog post, the LSTMNet represents each user with the sequence of classes that the user has been taking. 
 前回のブログ記事で説明したように、LSTMNetは各ユーザをそのユーザが受講しているクラスのシーケンスで表現します。 
@@ -148,7 +148,7 @@ To address these issues, instead of relying on the model to implicitly capture a
 
 <!-- ここまで読んだ! -->
 
-### HOW CONTEXT-AWARE RECOMMENDER MODELS WORK コンテキスト対応推薦モデルの動作
+## HOW CONTEXT-AWARE RECOMMENDER MODELS WORK コンテキスト対応推薦モデルの動作
 
 Context-Aware Recommender models are a suite of Click-Through Rate (CTR) models that can flexibly accept any kinds of inputs such as explicit features and user context, no matter if they are continuous or categorical.
 コンテキスト対応推薦モデルは、明示的な特徴やユーザコンテキストなど、連続的であろうとカテゴリカルであろうと、あらゆる種類の入力を柔軟に受け入れることができるクリック率（CTR）モデルの一群です。(CTR予測モデル、って言い切っちゃってるのは個人的にどうかと思う...!:thinking:)
@@ -177,7 +177,7 @@ Similarly, in “chilly” start settings where an existing Peloton Member onboa
 By making our recommender systems context-aware, we achieve one central system that will be able to handle all cohorts of users regardless of their current stages in their journey of fitness. 
 私たちの推薦システムをコンテキスト対応にすることで、フィットネスの旅の現在の段階に関係なく、すべてのユーザコホートを処理できる中央システムを実現します。 
 
-### SHIFT FROM BATCH PROCESSING TO ONLINE INFERENCE バッチ処理からオンライン推論への移行
+## SHIFT FROM BATCH PROCESSING TO ONLINE INFERENCE バッチ処理からオンライン推論への移行
 
 One important observation to note about using real-time context, such as hour of the day, as an input to calculate recommendations is that the model must also make the predictions in real-time. 
 **リアルタイムコンテキスト（例えば、時間帯）を入力として使用して推薦を計算する際の重要な観察点は、モデルもリアルタイムで予測を行う必要があるということ**です。(もしくは高頻度、例えばhourlyでバッチ推論する手もあるか。いやでも確かにリアルタイム推論にした方が効率的なのかな...!:thinking:)
@@ -203,10 +203,13 @@ At this time, we have completed the first stage of this monumental change, and i
 
 ## WHERE THE RUBBER MET THE ROAD: LESSONS LEARNED どこでゴムが道路に接触したか：得られた教訓
 
+- 補足:
+  - 「where the rubber meets the road」は英語の慣用句で、「理論や計画が実際の行動や実践に移される瞬間」や「実際の状況で試される瞬間」を指す。
+
 ### Make Each End-to-End Iteration Quick as Possible 各エンドツーエンドの反復をできるだけ迅速に行う
 
 Building machine learning models is all about trying out as many ideas as possible, as quickly as possible.  
-**機械学習モデルの構築は、できるだけ多くのアイデアをできるだけ早く試すことに関するもの**です。  
+**機械学習モデルの構築は、できるだけ多くのアイデアをできるだけ早く試すことに関するもの**です。
 This is especially true when developing a context-aware model, since there are suddenly infinitely more knobs to tune.  
 これは、コンテキスト対応モデルを開発する際に特に当てはまります。なぜなら、**調整すべきノブが無限に増えるから**です。 (確かに、id-onlyな手法に比べて自由度が格段に上がるから...!:thinking:)
 We didn’t quite have this problem in the LSTMNet, since the only input is the workout history of users for that model.  
@@ -339,7 +342,9 @@ As we shift gears into the next stage of building out our fully context-aware re
 
 ### Generating Contextual Rows of Content コンテキストに基づくコンテンツの行の生成
 
-CARS can be used to expand the variety of rows of content we show on our homescreen. 
+(Rows of content = 特定のテーマに基づくコンテンツのリスト、例えば横カルーセルで表示されるようなやつ...!:thinking:)
+
+CARS can be used to expand the variety of rows of content we show on our homescreen.
 CARSは、私たちのホームスクリーンに表示するコンテンツの行の多様性を拡大するために使用できます。
 By leveraging the time context, we could create new rows such as “Start your Morning With…” or “End your Day With…” that are filled with content the user may particularly like at those specific times of the day. 
 **時間のコンテキストを活用することで、「朝を始めるには…」や「一日を終えるには…」のような新しい行を作成でき、これらは特定の時間にユーザが特に好むコンテンツで満たされます**。(時間のcontext特徴量を元に、コンテンツ編成を作れるのか...!:thinking:)
