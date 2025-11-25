@@ -35,7 +35,7 @@ Learning to rank is an important sub-field of information retrieval (IR), which 
 Considering the type of learning approach used, all ranking models can be classified into three categories, i.e., pointwise, pairwise, and listwise. 
 **使用される学習アプローチの種類を考慮すると、すべてのランキングモデルは、ポイントワイズ、ペアワイズ、リストワイズの3つのカテゴリに分類できます**。
 The ranking models are either trained on indirect objective functions, such as classification related functions, or direct objective functions related to the evaluation measures. 
-ランキングモデルは、分類関連の関数のような間接的な目的関数、または評価指標に関連する直接的な目的関数のいずれかで訓練されます。
+ランキングモデルは、分類関連の関数のような間接的な目的関数、または評価指標に関連する直接的な目的関数のいずれかで訓練されます。(うんうん..)
 Direct optimization of IR measures has been a long standing challenge in the learning-to-rank domain. 
 **IR指標の直接最適化は、ランキング学習の分野における長年の課題**です。
 If we only consider bounded IR measures such as MAP, a theoretical justification is provided regarding the superiority of direct optimization techniques(Qin etal.,2010). 
@@ -184,7 +184,7 @@ The goal of the agent is to maximize the cumulative reward it achieves by learni
 The term agent is generally used to refer to an entity or model that interacts with the environment. 
 **「エージェント」という用語は、一般的に環境と相互作用するエンティティまたはモデルを指します**。(お、いい定義！引用しやすそう...!:thinking:)
 Contextual Bandit is a variant of the bandit problem that conditions its action on the context or state of the environment and observes the reward for the chosen action only. 
-コンテキストバンディットは、アクションを環境のコンテキストまたは状態に条件付け、選択されたアクションに対する報酬のみを観察するバンディット問題の変種です。
+コンテキストバンディットは、アクションを環境のコンテキストまたは状態に条件付け、選択されたアクションに対する報酬のみを観察するバンディット問題のvariantです。
 It forms a subclass of Markov decision processes with the length of each episode being one. 
 これは、**各エピソードの長さが1であるマルコフ決定過程のサブクラス(=contexual banditと言えるってことか...!:thinking:)**を形成します。
 Formally, assume there is an environment with context space $X$ and action space $A$. 
