@@ -607,27 +607,28 @@ This ultimately forms a tight closed loop for the machine learning models where 
 <!-- ここまで読んだ! -->
 
 One important consideration when experimenting with a real-time training data generating system is the need to build protection mechanisms against anomalies that could corrupt the online learning system. 
-リアルタイムトレーニングデータ生成システムを実験する際の重要な考慮事項の一つは、オンライン学習システムを損なう可能性のある異常に対する保護メカニズムを構築する必要があることです。
-
+リアルタイムトレーニングデータ生成システムを実験する際の重要な考慮事項の一つは、**オンライン学習システムを損なう可能性のある異常**に対する保護メカニズムを構築する必要があることです。
 Let us give a simple example. 
 簡単な例を挙げましょう。
-
 If the click stream becomes stale because of some data infrastructure issue, the online joiner will produce training data that has a very small or even zero empirical CTR. 
-データインフラストラクチャの問題によりクリックストリームが古くなると、オンラインジョイナーは非常に小さいか、ゼロの実際のCTRを持つトレーニングデータを生成します。
-
+**データインフラストラクチャの問題によりクリックストリームが古くなると、オンラインジョイナーは非常に小さいか、ゼロの実際のCTRを持つトレーニングデータを生成**します。
 As a consequence of this the real-time trainer will begin to incorrectly predict very low, or close to zero probabilities of click. 
 この結果、リアルタイムトレーナーは非常に低い、またはゼロに近いクリックの確率を誤って予測し始めます。
-
 The expected value of an ad will naturally depend on the estimated probability of click, and one consequence of incorrectly predicting very low CTR is that the system may show a reduced number of ad impressions. 
 広告の期待値は自然にクリックの推定確率に依存し、非常に低いCTRを誤って予測することの一つの結果は、システムが広告インプレッションの数を減少させる可能性があることです。
-
 Anomaly detection mechanisms can help here. 
-異常検出メカニズムがここで役立ちます。
-
+**異常検出メカニズム**がここで役立ちます。
 For example, one can automatically disconnect the online trainer from the online joiner if the real-time training data distribution changes abruptly. 
-例えば、リアルタイムトレーニングデータの分布が急激に変化した場合、オンライントレーナーをオンラインジョイナーから自動的に切断することができます。
+例えば、**リアルタイムトレーニングデータの分布が急激に変化した場合、オンライントレーナーをオンラインジョイナーから自動的に切断することができます**。
+(なるほど...!)
 
+- メモ: リアルタイム学習を運用する際の重要な考慮点 = データ共有の異常検出。
+  - ex. システムの不具合で**clickストリームのみが止まってしまった場合**...
+    - オンラインジョイナーは「impressionはあるがclickが全然ない」という誤った学習データを生成し続ける可能性がある。
+    - これをそのまま学習すると、モデルが壊れてしまう。最悪の場合、広告配信が激減するなどの大問題に発展する可能性もある。
+    - そのため、データの分布が急激に変化した場合に学習を自動で遮断するような、異常検知(anomaly detection)の仕組みが不可欠。
 
+<!-- ここまで読んだ! -->
 
 ## 5. メモリとレイテンシの制御 5.1 ブースティングツリーの数
 
