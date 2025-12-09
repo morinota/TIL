@@ -630,12 +630,18 @@ For example, one can automatically disconnect the online trainer from the online
 
 <!-- ここまで読んだ! -->
 
-## 5. メモリとレイテンシの制御 5.1 ブースティングツリーの数
+## 5. メモリとレイテンシの制御 
+
+### 5.1 ブースティングツリーの数
 
 The more trees in the model the longer the time required to make a prediction. 
 モデルにツリーが多いほど、予測に必要な時間が長くなります。
 In this part, we study the effect of the number of boosted trees on estimation accuracy. 
 この部分では、ブースティングツリーの数が推定精度に与える影響を調査します。
+
+![]()
+Figure 5: Experiment result for number of boosting trees. Different series corresponds to different submodels. The x-axis is the number of boosting trees. Y-axis is normalized entropy.
+**図5: ブースティングツリーの数に関する実験結果。異なる系列は異なるサブモデルに対応します。X軸はブースティングツリーの数、Y軸は正規化エントロピーです。**
 
 We vary the number of trees from 1 to 2,000 and train the models on one full day of data, and test the prediction performance on the next day. 
 ツリーの数を1から2,000まで変化させ、1日のデータでモデルを訓練し、次の日に予測性能をテストします。
@@ -643,185 +649,189 @@ We constrain that no more than 12 leaves in each tree.
 各ツリーに12葉を超えないように制約を設けます。
 Similar to previous experiments, we use normalized entropy as an evaluation metric. 
 前回の実験と同様に、評価指標として正規化エントロピーを使用します。
-
 The experimental results are shown in Figure 5. 
 実験結果は図5に示されています。
 Normalized entropy decreases as we increase the number of boosted trees. 
 ブースティングツリーの数を増やすにつれて、正規化エントロピーは減少します。
-
 However, the gain from adding trees yields diminishing return. 
-しかし、ツリーを追加することによる利得は減少していきます。
+**しかし、ツリーを追加することによる利得は減少していきます。**
 Almost all NE improvement comes from the first 500 trees. 
 正規化エントロピーの改善のほとんどは最初の500本のツリーから得られます。
 The last 1,000 trees decrease NE by less than 0.1%. 
 残りの1,000本のツリーは、正規化エントロピーを0.1%未満しか減少させません。
-
 Moreover, we see that the normalized entropy for submodel 2 begins to regress after 1,000 trees. 
 さらに、サブモデル2の正規化エントロピーは1,000本のツリーを超えると後退し始めます。
 The reason for this phenomenon is overfitting. 
-この現象の理由は過学習です。
+**この現象の理由は過学習です。** (深すぎると逆に良くないのか... これってvalidationデータで早期終了させると解消できるのかな...! それともそもそも浅くすべきなのか:thinking:)
 Since the training data for submodel 2 is 4x smaller than that in submodel 0 and 1. 
 サブモデル2の訓練データはサブモデル0および1のデータの4倍小さいためです。
 
+<!-- ここまで読んだ! -->
 
+- メモ: GBDTの木の数と精度の関係。
+  - 「モデルのサイズと予測速度に直結する、木の数をどこまで増やすべきか」問題。
+  - 実験:
+    - 木の数を1から2000まで変化させて学習し、翌日の予測精度を評価。
+    - 各木の葉の数は12以下に制約。
+  - 結果: 
+    - **収穫逓減(diminishing return, しゅうかくていげん)の法則**が働く。
+      - 木を増やすほど精度は向上するが、その改善幅は徐々に小さくなっていく。
+      - 精度の向上のほとんどは、最初の500本の木から得られる。
+      - それ以降の1000本の木は、正規化エントロピーを0.1%未満しか減少させない。
+    - 過学習のリスク:
+      - データ量が少ないケースでは、木の数を増やしすぎる(1000本以上)と逆に精度が悪化した。
+  - 結論:
+    - 計算コストとメモリを抑えるために、木の数を制限することは合理的。
 
-## 5.2 特徴の重要性のブースティング
+## 5.2 Boosting feature importance 
 
 Feature count is another model characteristic that can influence trade-offs between estimation accuracy and computation performance. 
-特徴の数は、推定精度と計算性能のトレードオフに影響を与える別のモデルの特性です。 
-
+**特徴の数は、推定精度と計算性能のトレードオフに影響を与える別のモデルの特性**です。 
 To better understand the effect of feature count we first apply a feature importance to each feature. 
-特徴の数の影響をよりよく理解するために、まず各特徴に対して特徴の重要性を適用します。
+特徴の数の影響をよりよく理解するために、まず各特徴に対してfeature importanceを適用します。
 
 In order to measure the importance of a feature we use the statistic Boosting Feature Importance, which aims to capture the cumulative loss reduction attributable to a feature. 
-特徴の重要性を測定するために、私たちはBoosting Feature Importanceという統計量を使用します。これは、特徴に起因する累積損失の削減を捉えることを目的としています。
-
+feature importanceを測定するために、私たちは**Boosting Feature Importanceという統計量を使用します。これは、特徴に起因する累積損失の削減を捉えることを目的としています。**
 In each tree node construction, a best feature is selected and split to maximize the squared error reduction. 
 各ツリーノードの構築において、最良の特徴が選択され、二乗誤差の削減を最大化するように分割されます。
-
-Since a feature can be used in multiple trees, the (Boosting Feature Importance) for each feature is determined by summing the total reduction for a specific feature across all trees. 
-特徴は複数の木で使用できるため、各特徴の（Boosting Feature Importance）は、すべての木にわたる特定の特徴の総削減を合計することによって決定されます。
+Since a feature can be used in multiple trees, the (Boosting Feature Importance) for each feature is determined by summing the total reduction for a specific feature across all trees.
+特徴は複数の木で使用できるため、**各特徴の（Boosting Feature Importance）は、すべての木にわたる特定の特徴の総削減を合計**することによって決定されます。
+(tree系モデルのfeature importanceってこういう計算方法なんだな...!:thinking:)
 
 Typically, a small number of features contributes the majority of explanatory power while the remaining features have only a marginal contribution. 
 通常、少数の特徴が大部分の説明力に寄与し、残りの特徴はわずかな寄与しか持ちません。
-
-We see this same pattern when plotting the number of features versus their cumulative feature importance in Figure 6. 
+We see this same pattern when plotting the number of features versus their cumulative feature importance in Figure 6.
 図6において、特徴の数とその累積特徴重要性をプロットすると、この同じパターンが見られます。
 
-**Figure 6: Boosting feature importance. X-axis corresponds to number of features. We draw feature importance in log scale on the left-hand side primary y-axis, while the cumulative feature importance is shown with the right-hand side secondary y-axis.**  
+![]()
+**Figure 6: Boosting feature importance. X-axis corresponds to number of features. We draw feature importance in log scale on the left-hand side primary y-axis, while the cumulative feature importance is shown with the right-hand side secondary y-axis.**
 **図6: ブースティング特徴の重要性。X軸は特徴の数に対応します。左側の主Y軸には対数スケールで特徴の重要性を描き、右側の副Y軸には累積特徴の重要性を示します。**
 
 From the above result, we can see that the top 10 features are responsible for about half of the total feature importance, while the last 300 features contribute less than 1% feature importance. 
-上記の結果から、上位10の特徴が総特徴重要性の約半分を占めているのに対し、最後の300の特徴は1%未満の特徴重要性に寄与していることがわかります。
-
+上記の結果から、**上位10の特徴が総特徴重要性の約半分を占めている**のに対し、最後の300の特徴は1%未満の特徴重要性に寄与していることがわかります。
 Based on this finding, we further experiment with only keeping the top 10, 20, 50, 100 and 200 features, and evaluate how the performance is effected. 
 この発見に基づいて、上位10、20、50、100、200の特徴のみを保持する実験をさらに行い、パフォーマンスにどのように影響するかを評価します。
-
 The result of the experiment is shown in Figure 7. 
 実験の結果は図7に示されています。
-
 From the figure, we can see that the normalized entropy has similar diminishing return property as we include more features. 
-図から、正規化エントロピーがより多くの特徴を含めるにつれて、類似の収益逓減特性を持つことがわかります。
+図から、正規化エントロピーが**より多くの特徴を含めるにつれて、類似の収益逓減特性を持つ**ことがわかります。
 
-In the following, we will do some study on the usefulness of historical and contextual features. 
-次に、歴史的および文脈的特徴の有用性についていくつかの研究を行います。
-
-Due to the data sensitivity in nature and the company policy, we are not able to reveal the detail on the actual features we use. 
-データの性質上の敏感さと会社の方針により、私たちが使用する実際の特徴の詳細を明らかにすることはできません。
-
-Some example contextual features can be local time of day, day of week, etc. 
-いくつかの例として、文脈的特徴には、日中のローカル時間、曜日などがあります。
-
-Historical features can be the cumulative number of clicks on an ad, etc. 
-歴史的特徴には、広告の累積クリック数などがあります。
-
-
-
-## 5.3 歴史的特徴
-
-The features used in the Boosting model can be categorized into two types: contextual features and historical features.  
-Boostingモデルで使用される特徴は、文脈特徴と歴史的特徴の2種類に分類できます。
-
-The value of contextual features depends exclusively on current information regarding the context in which an ad is to be shown, such as the device used by the users or the current page that the user is on.  
-文脈特徴の値は、ユーザが使用しているデバイスやユーザが現在いるページなど、広告が表示される文脈に関する現在の情報のみに依存します。
-
-On the contrary, the historical features depend on previous interaction for the ad or user, for example the click through rate of the ad in last week, or the average click through rate of the user.  
-対照的に、歴史的特徴は広告やユーザの以前のインタラクションに依存します。例えば、先週の広告のクリック率やユーザの平均クリック率などです。
-
+![]()
 **Figure 7: Results for Boosting model with top features. We draw calibration on the left-hand side primary y-axis, while the normalized entropy is shown with the right-hand side secondary y-axis.**  
 **図7: トップ特徴を用いたBoostingモデルの結果。左側の主y軸にキャリブレーションを描き、右側の副y軸には正規化エントロピーが示されています。**
 
-In this part, we study how the performance of the system depends on the two types of features.  
-この部分では、システムのパフォーマンスが2種類の特徴にどのように依存するかを調査します。
+- メモ:
+  - 「膨大な数の特徴量を全て使う必要があるのか」問題。
+  - 実験: 
+    - 特徴量重要度(具体的には、Boosting Feature Importance)を計算し、重要度の高い順に特徴量をソート。
+  - 結果:
+    - 特徴量重要度の偏り
+      - 上位10個の特徴量で、全体の特徴量重要度の約50%を占める。
+      - 逆に、下位300個の特徴量は全体の1%未満しか寄与しない。
+    - 特徴量の削減
+      - 上位の特徴量(ex. 20, 50個)のみを使って学習しても、精度の低下はゆるやか。こちらも同様に収穫逓減の法則が働いてる感じ...!:thinking:
+  - 結論:
+    - 特徴量の数をアグレッシブに減らしても制度への影響は軽微であり、メモリ効率を大幅に改善できる。
 
+---
+
+In the following, we will do some study on the usefulness of historical and contextual features. 
+次に、歴史的および文脈的特徴の有用性についていくつかの研究を行います。
+Due to the data sensitivity in nature and the company policy, we are not able to reveal the detail on the actual features we use. 
+**データの性質上の敏感さと会社の方針により、私たちが使用する実際の特徴の詳細を明らかにすることはできません。**
+Some example contextual features can be local time of day, day of week, etc. 
+いくつかの例として、文脈的特徴には、日中のローカル時間、曜日などがあります。
+Historical features can be the cumulative number of clicks on an ad, etc. 
+歴史的特徴には、広告の累積クリック数などがあります。
+
+## 5.3 歴史的特徴
+
+The features used in the Boosting model can be categorized into two types: contextual features and historical features.
+Boostingモデルで使用される特徴は、**文脈特徴(contextual features)と歴史的特徴(historical features)の2つのタイプ**に分類できます。
+The value of contextual features depends exclusively on current information regarding the context in which an ad is to be shown, such as the device used by the users or the current page that the user is on.  
+文脈特徴の値は、ユーザが使用しているデバイスやユーザが現在いるページなど、広告が表示される文脈に関する現在の情報のみに依存します。
+On the contrary, the historical features depend on previous interaction for the ad or user, for example the click through rate of the ad in last week, or the average click through rate of the user.  
+対照的に、歴史的特徴は広告やユーザの以前のインタラクションに依存します。例えば、先週の広告のクリック率やユーザの平均クリック率などです。
+
+![]()
+Figure 8: Results for historical feature percentage. X-axis corresponds to number of features. Y-axis give the percentage of historical features in top kimportant features.
+**図8: 歴史的特徴の割合に関する結果。X軸は特徴の数に対応し、Y軸は上位k個の重要な特徴における歴史的特徴の割合を示します。**
+
+In this part, we study how the performance of the system depends on the two types of features.
+この部分では、システムのパフォーマンスが2種類の特徴にどのように依存するかを調査します。
 Firstly we check the relative importance of the two types of features.  
 まず、2種類の特徴の相対的重要性を確認します。
-
 We do so by sorting all features by importance, then calculate the percentage of historical features in first k-important features.  
-すべての特徴を重要性でソートし、最初のk個の重要な特徴における歴史的特徴の割合を計算します。
-
+すべての特徴を重要性でソートし、**最初のk個の重要な特徴における歴史的特徴の割合を計算**します。
 The result is shown in Figure 8.  
 その結果は図8に示されています。
-
 From the result, we can see that historical features provide considerably more explanatory power than contextual features.  
-結果から、歴史的特徴が文脈特徴よりもかなり多くの説明力を提供することがわかります。
-
+結果から、**歴史的特徴が文脈特徴よりもかなり多くの説明力を提供**することがわかります。
 The top 10 features ordered by importance are all historical features.  
-重要性で並べた上位10の特徴はすべて歴史的特徴です。
-
+**重要性で並べた上位10の特徴はすべて歴史的特徴**です。
 Among the top 20 features, there are only 2 contextual features despite historical feature occupying roughly 75% of the features in this dataset.  
 上位20の特徴の中で、歴史的特徴がこのデータセットの約75%を占めているにもかかわらず、文脈特徴はわずか2つしかありません。
-
 To better understand the comparative value of the features from each type in aggregate we train two Boosting models with only contextual features and only historical features, then compare the two models with the complete model with all features.  
 各タイプの特徴の比較価値をよりよく理解するために、文脈特徴のみと歴史的特徴のみを用いた2つのBoostingモデルを訓練し、次にすべての特徴を含む完全モデルと2つのモデルを比較します。
-
 The result is shown in Table 4.  
 その結果は表4に示されています。
 
-From the table, we can again verify that in aggregate historical features play a larger role than contextual features.  
-表から、歴史的特徴が文脈特徴よりも全体として大きな役割を果たすことを再確認できます。
-
------
-**Table 4: Boosting model with different types of features**  
+![]**Table 4: Boosting model with different types of features**  
 **表4: 異なるタイプの特徴を用いたBoostingモデル**
 
-Type of features NE (relative to Contextual)  
-特徴のタイプ NE（文脈に対して）
-
-All 95.65%  
-すべて 95.65%
-
-Historical 96.32%  
-歴史的 96.32%
-
-Contextual 100% (reference)  
-文脈 100%（基準）
-
-Without only contextual features, we measure 4.5% loss in prediction accuracy.  
-文脈特徴のみを除くと、予測精度が4.5%低下します。
-
+From the table, we can again verify that in aggregate historical features play a larger role than contextual features.  
+表から、**歴史的特徴が文脈特徴よりも全体として大きな役割を果たすこと**を再確認できます。
+Without only historical features, we measure 4.5% loss in prediction accuracy.  
+歴史的特徴のみを除くと、予測精度の低下は4.5%と測定されます。
 On the contrary, without contextual features, we suffer less than 1% loss in prediction accuracy.  
 対照的に、文脈特徴を除くと、予測精度の低下は1%未満です。
 
 It should be noticed that contextual features are very important to handle the cold start problem.  
-文脈特徴はコールドスタート問題を扱うために非常に重要であることに注意すべきです。
-
+**文脈特徴はコールドスタート問題を扱うために非常に重要であることに注意すべき**です。
 For new users and ads, contextual features are indispensable for a reasonable click through rate prediction.  
 新しいユーザや広告にとって、文脈特徴は合理的なクリック率予測に不可欠です。
 
 In next step, we evaluate the trained models with only historical features or contextual features on the consecutive weeks to test the feature dependency on data freshness.  
-次のステップでは、連続した週にわたって歴史的特徴または文脈特徴のみを用いた訓練モデルを評価し、データの新鮮さに対する特徴の依存性をテストします。
-
+次のステップでは、連続した週にわたって歴史的特徴または文脈特徴のみを用いた訓練モデルを評価し、**データの新鮮さに対する特徴の依存性をテスト**します。
 The result is shown in Figure 9.  
 その結果は図9に示されています。
 
+![]()
 **Figure 9: Results for data freshness for different type of features. X-axis is the evaluation date while y-axis is the normalized entropy.**  
 **図9: 異なるタイプの特徴に対するデータの新鮮さの結果。X軸は評価日、Y軸は正規化エントロピーです。**
 
 From the figure, we can see that the model with contextual features relies more heavily on data freshness than historical features.  
-図から、文脈特徴を持つモデルが歴史的特徴よりもデータの新鮮さにより依存していることがわかります。
-
+図から、**文脈特徴を持つモデルが歴史的特徴よりもデータの新鮮さにより依存している**ことがわかります。
 It is in line with our intuition, since historical features describe long-time accumulated user behaviour, which is much more stable than contextual features.  
 これは私たちの直感に合致しており、歴史的特徴は長期間にわたって蓄積されたユーザの行動を記述するため、文脈特徴よりもはるかに安定しています。
 
+<!-- ここまで読んだ! -->
 
+- メモ: 特徴量の「種類」による貢献度の違い。
+  - Boostingモデルで使用される特徴は、文脈特徴(contextual features)と歴史的特徴(historical features)の2つに分類できる。
+    - 文脈特徴: 広告が表示される文脈に関する現在の情報に基づく特徴 (ex. ユーザのデバイス、時間帯、閲覧してるページなど)。
+    - 歴史的特徴: 過去の広告クリック数やユーザの過去のCTRなど、蓄積された履歴情報
+  - 実験: 
+    - 歴史的特徴量の圧倒的な重要性!
+      - 特徴量重要度の大きさでソートすると、上位10個は全て歴史的特徴だった。
+      - 文脈特徴のみを除外しても精度低下は1%未満。一方、歴史的特徴を除外すると4.5%の精度低下。
+    - ただし、文脈特徴が不要という話ではない!
+      - 履歴データが全くない「新規ユーザ」や「新規広告」に対して妥当な予測を行うために、文脈特徴は不可欠。
+    - データの新鮮さ(freshness)への依存度が、特徴量の種類によって異なる。
+      - 文脈特徴量に依存するモデルほど、データの新鮮さ(data freshness)に敏感だった。歴史的特徴量は長期的なユーザ行動を表すためより安定的だが、文脈特徴量は変化しやすいから。
 
 ## 6. 大規模なトレーニングデータへの対処
 
 A full day of Facebook ads impression data can contain a huge amount of instances. 
 1日のFacebook広告インプレッションデータは、膨大な数のインスタンスを含む可能性があります。
-
 Note that we are not able to reveal the actual number as it is confidential. 
 実際の数は機密情報であるため、明らかにすることはできません。
-
 But a small fraction of a day’s worth of data can have many hundreds of millions of instances. 
 しかし、1日のデータのごく一部でも、数億のインスタンスを持つことがあります。
-
 A common technique used to control the cost of training is reducing the volume of training data. 
-トレーニングコストを抑えるために一般的に使用される手法は、トレーニングデータの量を減らすことです。
-
+**トレーニングコストを抑えるために一般的に使用される手法は、トレーニングデータの量を減らすこと**です。
 In this section we evaluate two techniques for down sampling data, uniform subsampling and negative down sampling. 
-このセクションでは、データのダウンサンプリングのための2つの手法、均一サブサンプリングとネガティブダウンサンプリングを評価します。
+このセクションでは、**データのダウンサンプリングのための2つの手法、均一サブサンプリングとネガティブダウンサンプリング**を評価します。
 
 In each case we train a set of boosted tree models with 600 trees and evaluate these using both calibration and normalized entropy. 
 各ケースで、600本の木を持つブーステッドツリーモデルのセットをトレーニングし、キャリブレーションと正規化エントロピーの両方を使用して評価します。
