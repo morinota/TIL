@@ -832,43 +832,45 @@ A common technique used to control the cost of training is reducing the volume o
 **トレーニングコストを抑えるために一般的に使用される手法は、トレーニングデータの量を減らすこと**です。
 In this section we evaluate two techniques for down sampling data, uniform subsampling and negative down sampling. 
 このセクションでは、**データのダウンサンプリングのための2つの手法、均一サブサンプリングとネガティブダウンサンプリング**を評価します。
-
 In each case we train a set of boosted tree models with 600 trees and evaluate these using both calibration and normalized entropy. 
 各ケースで、600本の木を持つブーステッドツリーモデルのセットをトレーニングし、キャリブレーションと正規化エントロピーの両方を使用して評価します。
 
-
+<!-- ここまで読んだ! -->
 
 ## 6.1 Uniform subsampling 一様サブサンプリング
 
-Uniform subsampling of training rows is a tempting approach for reducing data volume because it is both easy to implement and the resulting model can be used without modification on both the subsampled training data and non-subsampled test data. 
-トレーニング行の一様サブサンプリングは、データ量を削減するための魅力的なアプローチです。なぜなら、実装が簡単であり、得られたモデルはサブサンプリングされたトレーニングデータと非サブサンプリングのテストデータの両方で修正なしに使用できるからです。
+Uniform subsampling of training rows is a tempting approach for reducing data volume because it is both easy to implement and the resulting model can be used without modification on both the subsampled training data and non-subsampled test data.
+トレーニング行の一様サブサンプリングは、データ量を削減するための魅力的なアプローチです。なぜなら、**実装が簡単であり、得られたモデルはサブサンプリングされたトレーニングデータと非サブサンプリングのテストデータの両方で修正なしに使用できるから**です。
 In this part, we evaluate a set of roughly exponentially increasing subsampling rates. 
 この部分では、ほぼ指数関数的に増加するサブサンプリング率のセットを評価します。
 For each rate we train a boosted tree model sampled at that rate from the base dataset. 
 各サンプリング率に対して、その率でベースデータセットからサンプリングされたブーステッドツリーモデルをトレーニングします。
 We vary the subsampling rate in {0.001, 0.01, 0.1, 0.5, 1}. 
-サブサンプリング率は{0.001, 0.01, 0.1, 0.5, 1}の範囲で変化させます。
+**サブサンプリング率は{0.001, 0.01, 0.1, 0.5, 1}の範囲で変化**させます。
+
+![]()
+**Figure 10: Experiment result for data volume. The** **X-axis corresponds to number of training instances.** **We draw calibration on the left-hand side primary** **y-axis, while the normalized entropy is shown with** **the right-hand side secondary y-axis.**
+**図10: データ量に関する実験結果。X軸はトレーニングインスタンスの数に対応します。左側の主y軸にキャリブレーションを描き、右側の副y軸には正規化エントロピーが示されています。**
+
 The result for data volume is shown in Figure 10. 
 データ量の結果は図10に示されています。
-It is in **Figure 10: Experiment result for data volume. The** **X-axis corresponds to number of training instances.** **We draw calibration on the left-hand side primary** **y-axis, while the normalized entropy is shown with** **the right-hand side secondary y-axis.**
-これは**図10: データ量に関する実験結果。X軸はトレーニングインスタンスの数に対応します。** **左側の主y軸にはキャリブレーションを描き、右側の副y軸には正規化エントロピーが示されています。**
-line with our intuition that more data leads to better performance. 
-これは、より多くのデータがより良いパフォーマンスにつながるという私たちの直感に沿った結果です。
+It is in line with our intuition that more data leads to better performance. 
+私たちの直感に沿って、より多くのデータがより良いパフォーマンスにつながることがわかります。
 Moreover, the data volume demonstrates diminishing return in terms of prediction accuracy. 
-さらに、データ量は予測精度に関して収穫逓減を示しています。
+**さらに、データ量は予測精度に関して収穫逓減(diminishing return, しゅうかくていげん)を示しています**。
 By using only 10% of the data, the normalized entropy is only a 1% reduction in performance relative to the entire training data set. 
-データの10%のみを使用することで、正規化エントロピーは全体のトレーニングデータセットに対してパフォーマンスがわずか1%減少するだけです。
+**データの10%のみを使用することで、正規化エントロピーは全体のトレーニングデータセットに対してパフォーマンスがわずか1%減少するだけ**です。
 The calibration at this sampling rate shows no performance reduction. 
 このサンプリング率でのキャリブレーションは、パフォーマンスの低下を示しません。
 
-
+<!-- ここまで読んだ! -->
 
 ## 6.2 Negative down sampling ネガティブダウンサンプリング
 
 Class imbalance has been studied by many researchers and has been shown to have significant impact on the performance of the learned model. 
 クラスの不均衡は多くの研究者によって研究されており、学習したモデルの性能に大きな影響を与えることが示されています。
 In this part, we investigate the use of negative down sampling to solve the class imbalance problem. 
-この部分では、クラスの不均衡問題を解決するためにネガティブダウンサンプリングの使用を調査します。
+この部分では、**クラスの不均衡問題を解決するためにネガティブダウンサンプリング**の使用を調査します。
 We empirically experiment with different negative down sampling rate to test the prediction accuracy of the learned model. 
 異なるネガティブダウンサンプリングレートで実験を行い、学習したモデルの予測精度をテストします。
 We vary the rate in {0.1, 0.01, 0.001, 0.0001}. 
@@ -880,6 +882,9 @@ From the result, we can see that the negative down sampling rate has significant
 The best performance is achieved with negative down sampling rate set to 0.025. 
 最良の性能は、ネガティブダウンサンプリングレートを0.025に設定したときに達成されます。
 
+![]()
+Experiment result for negative down sampling. The X-axis corresponds to different negative down sampling rate. We draw calibration on the left-hand side primary y-axis, while the normalized entropy is shown with the right-hand side secondary y-axis.
+**図11: ネガティブダウンサンプリングに関する実験結果。X軸は異なるネガティブダウンサンプリング率に対応します。左側の主y軸にキャリブレーションを描き、右側の副y軸には正規化エントロピーが示されています。**
 
 
 ## 6.3 モデルの再キャリブレーション
@@ -891,11 +896,41 @@ Note that, if a model is trained in a data set with negative downsampling, it al
 For example, if the average CTR before sampling is 0.1% and we do a 0.01 negative downsampling, the empirical CTR will become roughly 10%. 
 例えば、サンプリング前の平均CTRが0.1%で、0.01のネガティブダウンサンプリングを行うと、経験的CTRはおおよそ10%になります。 
 We need to re-calibrate the model for live traffic experiment and get back to the 0.1% prediction with $q = p + \frac{(1 - p)p}{w}$ 
-私たちは、ライブトラフィック実験のためにモデルを再キャリブレーションし、$q = p + \frac{(1 - p)p}{w}$を用いて0.1%の予測に戻す必要があります。 
+私たちは、**ライブトラフィック実験のためにモデルを再キャリブレーションし、$q = p + \frac{(1 - p)p}{w}$を用いて0.1%の予測に戻す必要があります**。 
 where p is the prediction in downsampling space and w the negative downsampling rate. 
 ここで、$p$はダウンサンプリング空間での予測、$w$はネガティブダウンサンプリング率です。
 
+<!-- ここまで読んだ! -->
 
+- メモ: 計算コストを抑えつつモデルの学習を行うためのデータ削減テクニックとその影響の話。
+  - Facebook広告では、1日分のデータだけでも数億のインスタンスを含むことがある。なので全てをそのまま学習させるのは計算資源の観点から非効率。
+  - そこで、2つのサンプリング手法を検証。
+      - 1. 一様サブサンプリング(uniform subsampling)
+      - 2. ネガティブダウンサンプリング(negative down sampling)
+  - 一様サブサンプリングについて。
+    - データをランダムに間引いて学習データ量を減らす手法。
+    - 実験結果:
+      - データ量を減らすと精度は低下するが、ここでも「収穫逓減(diminishing return)」の法則がみられた。
+      - 具体的には、データの10%のみを使用しても、精度指標は1%しか悪化しなかった。
+    - 結論: 
+      - 計算コストを1/10に圧縮しても、実用上で十分な制度を維持できることを示唆してる。
+  - ネガティブダウンサンプリングについて。
+    - click予測タスク特有の「クラス不均衡(class imbalance)」問題に対処するための手法。
+      - 基本的に正例は全て保持し、圧倒的多数を占める「負例」のみを間引く。
+    - 実験結果:
+      - 負例のサンプリング率を変化させて実験した結果、割合0.025で最良の精度を達成した。
+    - 結論:
+      - 学習速度を劇的に向上させるだけでなく、クラスバランスを整えることでモデルの精度自体も改善する効果がありそう。
+    - モデルの再キャリブレーションの必要性
+      - ネガティブダウンサンプリングを用いて学習したモデルは、ダウンサンプリング空間での予測をキャリブレーションしている(ex. 本来0.1%のCTRが、負例を減らしたことで10%に見えるなど)
+      - したがって、実際のトラフィックで使用する際には、モデルが出力する予測確率 $p$ を、本来の空間における確率 $q$ に戻すための数式補正が必要。
+
+$$
+q = \frac{p}{p + (1 - p) / w}
+$$
+
+- ここで
+  - $w$ はダウンサンプリングの割合
 
 ## 7. DISCUSSION 議論
 
