@@ -440,6 +440,7 @@ $$
       - 逆に、勾配が小さく安定してくると、徐々に学習率が下がっていく。
     - 結果: 論文内では、一番良いパフォーマンスを示した。
       - 理由: ベイズ的なアプローチ（BOPR）と同様に、**モデルパラメータの各値の「不確実性」に応じて学習の強さを自動調整できるため。まだ確信が持てない（勾配が大きい）特徴量は強く学習し、確信が持てるようになったら学習を弱めるという理想的な挙動**をしてる。
+
 The first three schemes set learning rates individually per feature. 
 最初の3つのスキームは、特徴ごとに個別に学習率を設定します。
 The last two use the same rate for all features. 
@@ -450,7 +451,7 @@ All the tunable parameters are optimized by grid search (optima detailed in Tabl
 <!-- ここまで読んだ! -->
 
 We lower bound the learning rates by 0.00001 for continuous learning. 
-連続学習のために、学習率の下限を0.00001に設定します。
+**連続学習のために、学習率の下限を0.00001に設定**します。(なるほど、AdaGrad + 下限値を設定するのが良さそうだな...!!:thinking:)
 We train and test LR models on same data with the above learning rate schemes. 
 上記の学習率スキームを使用して、同じデータでLRモデルを訓練およびテストします。
 The experiment results are shown in Figure 3. 
@@ -470,153 +471,140 @@ Since each training instance may consist of different features, some popular fea
 各トレーニングインスタンスは異なる特徴で構成される可能性があるため、人気のある特徴は他の特徴よりもはるかに多くのトレーニングインスタンスを受け取ります。
 Under the global learning rate scheme, the learning rate for the features with fewer instances decreases too fast, and prevents convergence to the optimum weight. 
 グローバル学習率スキームの下では、インスタンスが少ない特徴の学習率が急速に減少し、最適な重みへの収束を妨げます。
-
 Although the per-weight learning rates scheme addresses this problem, it still fails because it decreases the learning rate for all features too fast. 
 重みごとの学習率スキームはこの問題に対処しますが、すべての特徴の学習率を急速に減少させるため、依然として失敗します。
-
 Training terminates too early where the model converges to a sub-optimal point. 
 トレーニングは早すぎる段階で終了し、モデルがサブ最適点に収束します。
-
 This explains why this scheme has the worst performance among all the choices. 
 これが、このスキームがすべての選択肢の中で最も悪いパフォーマンスを示す理由です。
 
+<!-- ここまで読んだ! -->
+
 It is interesting to note that the BOPR update equation (3) for the mean is most similar to per-coordinate learning rate version of SGD for LR. 
 BOPRの平均に対する更新方程式（3）が、LRの特徴ごとの学習率バージョンのSGDに最も類似していることは興味深いです。
-
 The effective learning rate for BOPR is specific to each coordinate, and depends on the posterior variance of the weight associated to each individual coordinate, as well as the “surprise” of label given what the model would have predicted [7]. 
 BOPRの効果的な学習率は各座標に特有であり、各個別の座標に関連する重みの事後分散や、モデルが予測した内容に基づくラベルの「驚き」に依存します[7]。
 
 We carry out an experiment to compare the prediction performance of LR trained with per-coordinate SGD and BOPR. 
 私たちは、特徴ごとのSGDで訓練されたLRとBOPRの予測性能を比較する実験を行います。
-
 We train both LR and BOPR models on the same training data and evaluate the prediction performance on the next day. 
 同じトレーニングデータでLRとBOPRモデルの両方を訓練し、翌日の予測性能を評価します。
-
 The result is shown in Table 3. 
 結果は表3に示されています。
 
+![]()
 **Table 3: Per-coordinate online LR versus BOPR**
 **表3: 特徴ごとのオンラインLR対BOPR**
-
-|Model Type|NE (relative to LR)|
-|---|---|
-|LR|100% (reference)|
-|BOPR|99.82%|
 
 Perhaps as one would expect, given the qualitative similarity of the update equations, BOPR and LR trained with SGD with per-coordinate learning rate have very similar prediction performance in terms of both NE and also calibration (not shown in the table). 
 更新方程式の定性的な類似性を考慮すると予想通りかもしれませんが、BOPRと特徴ごとの学習率でSGDで訓練されたLRは、NEとキャリブレーションの両方において非常に類似した予測性能を持っています（表には示されていません）。
 
 One advantages of LR over BOPR is that the model size is half, given that there is only a weight associated to each sparse feature value, rather than a mean and a variance. 
-LRのBOPRに対する一つの利点は、各スパース特徴値に関連付けられた重みのみがあるため、モデルサイズが半分であることです。
-
+**LRのBOPRに対する一つの利点は、各スパース特徴値に関連付けられた重みのみがあるため、モデルサイズが半分であること**です。(BOPRは、各回帰係数について平均と分散の2つを保持する必要があるから、みたいな感じかな...!:thinking:)
 Depending on the implementation, the smaller model size may lead to better cache locality and thus faster cache lookup. 
 実装によっては、より小さなモデルサイズがキャッシュの局所性を向上させ、結果としてキャッシュの検索が速くなる可能性があります。
-
 In terms of computational expense at prediction time, the LR model only requires one inner product over the feature vector and the weight vector, while BOPR models needs two inner products for both variance vector and mean vector with the feature vector. 
-予測時の計算コストに関して、LRモデルは特徴ベクトルと重みベクトルの間で1つの内積のみを必要としますが、BOPRモデルは特徴ベクトルとの間で分散ベクトルと平均ベクトルの両方に対して2つの内積を必要とします。
-
+**予測時の計算コストに関して、LRモデルは特徴ベクトルと重みベクトルの間で1つの内積のみを必要としますが、BOPRモデルは特徴ベクトルとの間で分散ベクトルと平均ベクトルの両方に対して2つの内積を必要とします。** (LinTSは2つの内積をとるわけじゃない気がするから、ここはちょっと違いかな...!:thinking:)
 One important advantage of BOPR over LR is that being a Bayesian formulation, it provides a full predictive distribution over the probability of click. 
-BOPRのLRに対する重要な利点の一つは、ベイズの定式化であるため、クリックの確率に対する完全な予測分布を提供することです。
-
+BOPRのLRに対する重要な利点の一つは、ベイズの定式化であるため、クリックの確率に対する完全な予測分布を提供することです。(点推定じゃなくて区間推定、みたいな話か...!:thinking:)
 This can be used to compute percentiles of the predictive distribution, which can be used for explore/exploit learning schemes [3]. 
-これは予測分布のパーセンタイルを計算するために使用でき、探索/活用学習スキーム[3]に利用できます。
+これは予測分布のパーセンタイルを計算するために使用でき、**探索/活用学習スキーム[3]に利用できます。**
 
-
+<!-- ここまで読んだ! -->
 
 ## 4. ONLINE DATA JOINER
 
 The previous section established that fresher training data results in increased prediction accuracy. 
-前のセクションでは、新しいトレーニングデータが予測精度の向上につながることを示しました。
-
+前のセクションでは、**新しいトレーニングデータが予測精度の向上につながる**ことを示しました。
 It also presented a simple model architecture where the linear classifier layer is trained online. 
 また、線形分類器層がオンラインでトレーニングされるシンプルなモデルアーキテクチャを提示しました。
 
-This section introduces an experimental system that generates real-time training data used to train the linear classifier via online learning. 
-このセクションでは、オンライン学習を通じて線形分類器をトレーニングするために使用されるリアルタイムトレーニングデータを生成する実験システムを紹介します。
+<!-- ここまで読んだ! -->
 
+This section introduces an experimental system that generates real-time training data used to train the linear classifier via online learning. 
+このセクションでは、オンライン学習を通じて線形分類器をトレーニングするために使用される**リアルタイムトレーニングデータを生成する実験システム**を紹介します。
 We will refer to this system as the “online joiner” since the critical operation it does is to join labels (click/no-click) to training inputs (ad impressions) in an online manner. 
 このシステムを「オンラインジョイナー」と呼びます。なぜなら、重要な操作は、ラベル（クリック/非クリック）をトレーニング入力（広告インプレッション）にオンラインで結合するからです。
-
 Similar infrastructure is used for stream learning for example in the Google Advertising System [1]. 
-同様のインフラは、例えばGoogle広告システム[1]におけるストリーム学習にも使用されています。
-
+**同様のインフラは、例えばGoogle広告システム[1]におけるストリーム学習にも使用されています。**
 The online joiner outputs a real-time training data stream to an infrastructure called Scribe [10]. 
 オンラインジョイナーは、Scribe [10]と呼ばれるインフラにリアルタイムトレーニングデータストリームを出力します。
-
 While the positive labels (clicks) are well defined, there is no such thing as a “no click” button the user can press. 
-ポジティブラベル（クリック）は明確に定義されていますが、ユーザーが押すことのできる「非クリック」ボタンは存在しません。
-
+**ポジティブラベル（クリック）は明確に定義されていますが、ユーザーが押すことのできる「非クリック」ボタンは存在しません。**
 For this reason, an impression is considered to have a negative no click label if the user did not click the ad after a fixed, and sufficiently long period of time after seeing the ad. 
-このため、ユーザーが広告を見た後、固定された十分に長い時間内に広告をクリックしなかった場合、そのインプレッションはネガティブな非クリックラベルを持つと見なされます。
-
+**このため、ユーザーが広告を見た後、固定された十分に長い時間内に広告をクリックしなかった場合、そのインプレッションはネガティブな非クリックラベルを持つと見なされます。**
 The length of the waiting time window needs to be tuned carefully. 
-待機時間ウィンドウの長さは慎重に調整する必要があります。
+**待機時間ウィンドウの長さは慎重に調整する必要があります。** (うんうん...!:thinking:)
 
 Using too long a waiting window delays the real-time training data and increases the memory allocated to buffering impressions while waiting for the click signal. 
 待機ウィンドウが長すぎると、リアルタイムトレーニングデータが遅延し、クリック信号を待っている間にインプレッションをバッファリングするために割り当てられるメモリが増加します。
-
+(なるほど.これはオンライン学習固有のインフラの課題だ...!:thinking:)
 A too short time window causes some of the clicks to be lost, since the corresponding impression may have been flushed out and labeled as non-clicked. 
-時間ウィンドウが短すぎると、対応するインプレッションがフラッシュアウトされ、非クリックとしてラベル付けされる可能性があるため、一部のクリックが失われることになります。
-
-This negatively affects “click coverage,” the fraction of all clicks successfully joined to impressions. 
+**時間ウィンドウが短すぎると、対応するインプレッションがフラッシュアウトされ、非クリックとしてラベル付けされる可能性があるため、一部のクリックが失われることになります。**
+This negatively affects “click coverage,” the fraction of all clicks successfully joined to impressions.
 これは「クリックカバレッジ」に悪影響を及ぼし、すべてのクリックの中でインプレッションに成功裏に結合された割合を低下させます。
-
 As a result, the online joiner system must strike a balance between recency and click coverage. 
-その結果、オンラインジョイナーシステムは新鮮さとクリックカバレッジのバランスを取る必要があります。
+その結果、**オンラインジョイナーシステムは新鮮さとクリックカバレッジのバランスを取る必要**があります。
 
 Not having full click coverage means that the real-time training set will be biased: the empirical CTR that is somewhat lower than the ground truth. 
 完全なクリックカバレッジがないことは、リアルタイムトレーニングセットがバイアスを持つことを意味します。すなわち、実際のCTRが真実よりもやや低くなります。
-
 This is because a fraction of the impressions labeled non-clicked would have been labeled as clicked if the waiting time had been long enough. 
-これは、非クリックとしてラベル付けされたインプレッションの一部が、待機時間が十分に長ければクリックとしてラベル付けされていたであろうからです。
-
+これは、**非クリックとしてラベル付けされたインプレッションの一部が、待機時間が十分に長ければクリックとしてラベル付けされていたであろうから**です。
 In practice however, we found that it is easy to reduce this bias to decimal points of a percentage with waiting window sizes that result in manageable memory requirements. 
-しかし、実際には、管理可能なメモリ要件を満たす待機ウィンドウサイズでこのバイアスを小数点以下のパーセンテージに減少させることが容易であることがわかりました。
-
+しかし、**実際には、管理可能なメモリ要件を満たす待機ウィンドウサイズでこのバイアスを小数点以下のパーセンテージに減少させることが容易である**ことがわかりました。(なるほどね、ストリーミングパイプラインのメモリに乗る範囲で待てば全然OKだった、って話かな...!:thinking:)
 In addition, this small bias can be measured and corrected for. 
 さらに、この小さなバイアスは測定され、修正することができます。
-
 More study on the window size and efficiency can be found at [6]. 
 ウィンドウサイズと効率に関するさらなる研究は[6]にあります。
-
 The online joiner is designed to perform a distributed stream-to-stream join on ad impressions and ad clicks utilizing a request ID as the primary component of the join predicate. 
 オンラインジョイナーは、リクエストIDを結合述語の主要なコンポーネントとして利用し、広告インプレッションと広告クリックの分散ストリーム間結合を実行するように設計されています。
-
 A request ID is generated every time a user performs an action on Facebook that triggers a refresh of the content they are exposed to. 
 リクエストIDは、ユーザーがFacebook上でコンテンツのリフレッシュを引き起こすアクションを実行するたびに生成されます。
-
 A schematic data and model flow for the online joiner consequent online learning is shown in Figure 4. 
 オンラインジョイナーによるオンライン学習のためのデータとモデルの流れの概略は図4に示されています。
-
 The initial data stream is generated when a user visits Facebook and a request is made to the ranker for candidate ads. 
 初期データストリームは、ユーザーがFacebookを訪れ、候補広告のためにランカーにリクエストが行われたときに生成されます。
-
 The ads are passed back to the user’s device and in parallel each ad and the associated features used in ranking that impression are added to the impression stream. 
 広告はユーザーのデバイスに返され、並行して各広告とそのインプレッションのランキングに使用される関連機能がインプレッションストリームに追加されます。
-
 If the user chooses to click the ad, that click will be added to the click stream. 
 ユーザーが広告をクリックすることを選択した場合、そのクリックはクリックストリームに追加されます。
-
 To achieve the stream-to-stream join the system utilizes a HashQueue consisting of a First-InFirst-Out queue as a buffer window and a hash map for fast random access to label impressions. 
 ストリーム間結合を実現するために、システムはバッファウィンドウとしてのFIFOキューと、ラベルインプレッションへの高速ランダムアクセスのためのハッシュマップで構成されるHashQueueを利用します。
-
 A HashQueue typically has three kinds of operations on key-value pairs: enqueue, dequeue and lookup. 
 HashQueueは通常、キー-バリューペアに対して3種類の操作を持ちます：enqueue、dequeue、およびlookupです。
-
 For example, to enqueue an item, we add the item to the front of a queue and create a key in the hash map with value pointing to the item of the queue. 
 例えば、アイテムをenqueueするには、アイテムをキューの前に追加し、ハッシュマップにそのアイテムを指す値を持つキーを作成します。
-
 Only after the full join window has expired will the labelled impression be emitted to the training stream. 
 完全な結合ウィンドウが期限切れになった後にのみ、ラベル付けされたインプレッションがトレーニングストリームに出力されます。
-
 If no click was joined, it will be emitted as a negatively labeled example. 
-クリックが結合されなかった場合、それはネガティブラベルの例として出力されます。
+**クリックが結合されなかった場合、それはネガティブラベルの例として出力されます。**
+
+- メモ: クリック有り(正例)ラベルとクリック無し(負例)ラベルの作り方の話。
+  - オンライン学習を行うために必要なOnline Data Joiner。
+    - モデルに入力データ(広告のimp)と正解ラベル(clickしたか否か)のセットを流し込む必要がある。しかし両者は別々のタイミング(i.e. 別々のストリーム)で発生する。
+      - 入力データ (いつ誰にどの広告を表示したか) → 広告表示時に発生(impressionストリーム)
+      - 正解ラベル (その広告がクリックされたか否か) → クリック時に発生(clickストリーム)
+    - Online Joinerは、この時間差のある2つのストリームを、リクエストIDをキーとしてリアルタイムでjoinし、学習用データストリームとして出力するシステム。
+  - オンライン学習システムで最も難しい技術的課題の1つは、**「クリックされなかった(負例)」というラベルをいつ確定させるか**。
+    - 「クリック無しボタン」がないのでシステム側で判断する必要がある。
+  - 論文では「待機ウィンドウ(waiting window)」という概念を導入してこれを解決してるが、ここには重要なトレードオフがある。
+    - 待機ウィンドウの仕組み: impressionが発生した後、固定期間(ウィンドウサイズ)だけclickを待つ。その間にclickが発生しなければ負例として学習データに出力する。
+    - トレードオフ:
+      - ウィンドウサイズが長いほど...
+        - 利点: clickの取りこぼしが減り、データが正確になる(高いclick coverage)。
+        - 欠点: ストリーミングパイプラインのメモリ使用量が増大。また学習への反映が遅れる(データの新鮮さが下がる)。
+      - 一方、ウィンドウサイズが短いほど...
+        - 利点: ストリーミングパイプラインのメモリ使用量が減少。学習への反映が早まりデータの新鮮さが向上。
+        - 欠点: 本当はclickされたのにウィンドウ終了後にclickが来た場合、負例として誤ってラベル付けして学習してしまう(click coverageの低下)。
+
+<!-- ここまで読んだ! -->
 
 In this experimental setup the trainer learns continuously from the training stream and publishes new models periodically to the Ranker. 
 この実験設定では、トレーナーはトレーニングストリームから継続的に学習し、新しいモデルを定期的にランカーに公開します。
-
 This ultimately forms a tight closed loop for the machine learning models where changes in feature distribution or model performance can be captured, learned on, and rectified in short succession. 
-これにより、特徴分布やモデル性能の変化を短期間で捉え、学習し、修正できる機械学習モデルの厳密なクローズドループが形成されます。
+これにより、**特徴分布やモデル性能の変化を短期間で捉え、学習し、修正できる機械学習モデルの厳密なクローズドループが形成**されます。
+
+<!-- ここまで読んだ! -->
 
 One important consideration when experimenting with a real-time training data generating system is the need to build protection mechanisms against anomalies that could corrupt the online learning system. 
 リアルタイムトレーニングデータ生成システムを実験する際の重要な考慮事項の一つは、オンライン学習システムを損なう可能性のある異常に対する保護メカニズムを構築する必要があることです。
