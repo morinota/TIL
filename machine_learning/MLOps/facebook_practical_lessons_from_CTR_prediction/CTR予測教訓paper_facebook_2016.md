@@ -939,45 +939,46 @@ We have presented some practical lessons from experimenting with Facebook ads da
 This has inspired a promising hybrid model architecture for click prediction.
 これにより、クリック予測のための有望なハイブリッドモデルアーキテクチャが生まれました。
 
-_• Data freshness matters. It is worth retraining at least_ daily. 
-_• データの新鮮さは重要です。少なくとも毎日再訓練する価値があります。_ 
+教訓1
+- Data freshness matters. It is worth retraining at least_ daily. 
+データの新鮮さは重要です。少なくとも毎日再訓練する価値があります。
 In this paper we have gone further and discussed various online learning schemes. 
 本論文ではさらに進んで、さまざまなオンライン学習スキームについて議論しました。 
 We also presented infrastructure that allows generating real-time training data.
 また、リアルタイムのトレーニングデータを生成するためのインフラストラクチャも提示しました。
 
-_• Transforming real-valued input features with boosted_ decision trees significantly increases the prediction accuracy of probabilistic linear classifiers. 
-_• ブーストされた決定木を用いて実数値の入力特徴を変換することは、確率的線形分類器の予測精度を大幅に向上させます。_ 
+- Transforming real-valued input features with boosted_ decision trees significantly increases the prediction accuracy of probabilistic linear classifiers. 
+ブーストされた決定木を用いて実数値の入力特徴を変換することは、確率的線形分類器の予測精度を大幅に向上させます。
 This motivates a hybrid model architecture that concatenates boosted decision trees and a sparse linear classifier.
 これにより、ブーストされた決定木とスパース線形分類器を連結するハイブリッドモデルアーキテクチャが動機づけられます。
 
-_• Best online learning method: LR with per-coordinate_ learning rate, which ends up being comparable in performance with BOPR, and performs better than all other LR SGD schemes under study. 
-_• 最良のオンライン学習方法：座標ごとの学習率を持つLRで、これはBOPRと性能が同等であり、研究対象の他のすべてのLR SGDスキームよりも優れた性能を発揮します。_ 
+- Best online learning method: LR with per-coordinate_ learning rate, which ends up being comparable in performance with BOPR, and performs better than all other LR SGD schemes under study. 
+最良のオンライン学習方法：座標ごとの学習率を持つLRで、これはBOPRと性能が同等であり、研究対象の他のすべてのLR SGDスキームよりも優れた性能を発揮します。_ 
 (Table 4, Fig 12)
 （表4、図12）
 
 We have described tricks to keep memory and latency contained in massive scale machine learning applications.
 私たちは、大規模な機械学習アプリケーションにおいてメモリとレイテンシを抑えるためのトリックを説明しました。
 
-_• We have presented the tradeoff between the number of_ boosted decision trees and accuracy. 
-_• ブーストされた決定木の数と精度のトレードオフを提示しました。_ 
+- We have presented the tradeoff between the number of_ boosted decision trees and accuracy. 
+ブーストされた決定木の数と精度のトレードオフを提示しました。_ 
 It is advantageous to keep the number of trees small to keep computation and memory contained.
 計算とメモリを抑えるためには、木の数を少なく保つことが有利です。
 
-_• Boosted decision trees give a convenient way of doing_ feature selection by means of feature importance. 
-_• ブーストされた決定木は、特徴の重要性を用いて特徴選択を行う便利な方法を提供します。_ 
+- Boosted decision trees give a convenient way of doing_ feature selection by means of feature importance. 
+ブーストされた決定木は、特徴の重要性を用いて特徴選択を行う便利な方法を提供します。_ 
 One can aggressively reduce the number of active features whilst only moderately hurting prediction accuracy.
 アクティブな特徴の数を積極的に減らすことができ、予測精度に対しては中程度の影響しか与えません。
 
-_• We have analyzed the effect of using historical fea-_ tures in combination with context features. 
-_• 歴史的特徴をコンテキスト特徴と組み合わせて使用する効果を分析しました。_ 
+- We have analyzed the effect of using historical fea-_ tures in combination with context features. 
+歴史的特徴をコンテキスト特徴と組み合わせて使用する効果を分析しました。_ 
 For ads and users with history, these features provide superior predictive performance than context features.
-広告や履歴のあるユーザーにとって、これらの特徴はコンテキスト特徴よりも優れた予測性能を提供します。
+履歴のある広告とユーザーにとって、これらの特徴はコンテキスト特徴よりも優れた予測性能を提供します。
 
 Finally, we have discussed ways of subsampling the training data, both uniformly but also more interestingly in a biased way where only the negative examples are subsampled.
 最後に、トレーニングデータを均等にサンプリングする方法と、より興味深く、負の例のみをサンプリングするバイアスのかかった方法について議論しました。
 
-
+<!-- ここまで読んだ! -->
 
 ## 8. REFERENCES 参考文献
 
