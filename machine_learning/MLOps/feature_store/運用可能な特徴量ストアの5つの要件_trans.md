@@ -93,7 +93,7 @@ Some features may be updated every minute, 24 hours, 2 weeks, or even 1 month, t
 Others may change every time a user logs into an account or swipes a credit card. 
 他のフィーチャーは、ユーザーがアカウントにログインするたびやクレジットカードをスワイプするたびに変更されることがあります。
 It’s crucial to track not only when these features were updated, but also keep a full history of those changes. 
-これらのフィーチャーがいつ更新されたかを追跡するだけでなく、その変更の完全な履歴を保持することが重要です。
+**これらのフィーチャーがいつ更新されたかを追跡するだけでなく、その変更の完全な履歴を保持することが重要**です。
 
 (リークを防ぐ、的なことは書いてないな...!:thinking:)
 
@@ -134,7 +134,7 @@ A feature store has typically been segmented into two distinct workloads, offlin
 
 These two workloads are often handled by two separate feature stores, each with their own dedicated compute engines, that communicate with each other as necessary. 
 **これらの2つのワークロードは、しばしばそれぞれ専用のコンピューティングエンジンを持つ2つの別々のフィーチャーストアによって処理され、必要に応じて相互に通信します**。(ex. DWHとRedisなど! :thinking:)
-That is problematic. 
+That is problematic.
 これは問題です。
 Ideally you would have one engine that is both your “offline” and your “online” feature store. 
 **理想的には、1つのエンジンが「オフライン」と「オンライン」のフィーチャーストアの両方を担うべき**です。(うんうん、せめてユーザ側にその境界が情報隠蔽されてて欲しいよなぁ)
