@@ -44,17 +44,21 @@
     - フルマネージドサービスではなく、AWSのメジャーなサービス(S3, DynamoDB等)を組み合わせた自前Feature Storeに移行を考えている。
     - SageMaker Feature Storeでは、上記の要件を満たすのが難しい点がいくつかあった。
       - backfill -> 大量の読み書きが高コスト(なぜならオフラインストア限定の書き込みAPIが存在しないから)
-      - ストリーミング/マイクロバッチでの高頻度の読み書き -> こちらはOK。
+      - ストリーミング/マイクロバッチでの高頻度の読み書き -> こちらは一旦対応してるOK。
       - 学習コスト -> マイナーサービスなのでかなり高め。Sagemaker固有の仕様なども多い。
         - 基本的にFeature Storeとしての各種機能はAPIとして抽象化されているため、資金が無尽蔵にあるならば、学習コストはあまり問題にならないかも。
         - ただし、結局自社のユースケースやコスト事情に合わせて最適化したい場合、マイナーサービスの実装の詳細を理解してカスタマイズする必要が出てくることが多かった。
           - ex. オフラインストアの実体は標準S3バケット上のIcebergテーブル。backfill時に大量の読み書きを効率的に行うには公式APIではなく自前でIcebergテーブルを直接操作する必要がある。
-      - 
-      - 
 
-## 参考になりそうなメモ:
 
-- (TODO: 関連資料のリンクを追加)
+## 参考資料
+
+- [5 Minimum Requirements of an Operational Feature Store](https://medium.com/data-for-ai/5-minimum-requirements-of-an-operational-feature-store-ab1436ca1a2c)
+  - 自分の感想メモ記事: [hoge]()
+- [Feature Store: The Definitive Guide](https://www.hopsworks.ai/dictionary/feature-store)
+  - 自分の感想メモ記事: [hoge]()
+- [Feature Store Architecture and How to Build One](https://www.qwak.com/post/feature-store-architecture)
+- [Beware the data science pin factory: The power of the full-stack data science generalist and the perils of division of labor through function](https://multithreaded.stitchfix.com/blog/2019/03/11/FullStackDS-Generalists/)
 
 ### 発表タイトル:
 
