@@ -61,6 +61,7 @@
 - [Beware the data science pin factory: The power of the full-stack data science generalist and the perils of division of labor through function](https://multithreaded.stitchfix.com/blog/2019/03/11/FullStackDS-Generalists/)
 - [実践MLOps 作って理解する機械学習システムの構築と運用](https://www.ohmsha.co.jp/book/9784274233982/)
 - [事例でわかるMLOps 機械学習の成果をスケールさせる処方箋](https://www.kspub.co.jp/book/detail/5369562.html)
+- [Feature Stores: Components of a Data Science Factory[Guide]](https://neptune.ai/blog/feature-stores-components-of-a-data-science-factory-guide)
 
 
 ### 発表タイトル:
