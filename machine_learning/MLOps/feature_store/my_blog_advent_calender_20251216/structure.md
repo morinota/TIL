@@ -63,14 +63,14 @@
 - [事例でわかるMLOps 機械学習の成果をスケールさせる処方箋](https://www.kspub.co.jp/book/detail/5369562.html)
 - [Feature Stores: Components of a Data Science Factory[Guide]](https://neptune.ai/blog/feature-stores-components-of-a-data-science-factory-guide)
 
-
 ### 発表タイトル:
-
-Feature Store、フルマネージドサービス使うか自前で作るか ~Sagemaker Feature Storeを3ヶ月試験運用して得た気づきたち~
 
 #### タイトル案
 
-- (TODO: 他のタイトル案を追加)
+- ニュースアプリで本当に効くFeature Store設計：4ヶ月の学びを全部まとめた
+- ニュースサービスに必要なFeature Storeの条件：4ヶ月の実践で見えた本質
+- 高速更新 × 歴史的特徴量 × オンライン推論：ニュースアプリに最適なFeature Storeを考える
+- “止まらないデータ”と戦うニュースアプリのためのFeature Store設計
 
 ### なんの課題解決の話を書きたいんだっけ??
 
