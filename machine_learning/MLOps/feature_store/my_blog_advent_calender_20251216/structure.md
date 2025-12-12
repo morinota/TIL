@@ -1,6 +1,6 @@
 
 
-## 何を書きたいか
+## ざっくり何を書きたいか？
 
 - 4ヶ月ほど、SageMaker Feature Storeを試験運用してみた経験をもとに、自社で価値を発揮するFeature Storeを構築する上でどんな点が重要そうか、という自分の現時点での見解を書きたい。
   - 4ヶ月間の試験運用での学び: 何が重要か。
@@ -54,18 +54,22 @@
   - シンプルなより多種多様な特徴量を活用したMLモデルの運用のため。
     - 自社でのML活用のメインの1つ = ニュース推薦
     - これまでは、協調フィルタリングベース手法 → 内容ベース手法がメイン。扱う特徴量の種類がかなり限られており、Feature Storeの必要性はあまり高くなかった。
-    - しかし最近では、よりユーザに価値のある情報を見つけてエンゲージメントを高めるために、多種多様な特徴量を活用するようなcontext-awareな推薦手法への進化が必要だった。
-    - その上で、バッチ推論 & リアルタイム推論の両方のユースケースがある中で、多種多様な特徴量を効率的に管理・取得できる仕組みが望ましかった。
+    - しかし最近では、よりユーザに価値のある情報を見つけてエンゲージメントを高めるために、多種多様な特徴量を活用するようなcontext-awareな推薦手法への進化が求められていた。
+    - バッチ推論 & リアルタイム推論の両方のユースケースがある中で、多種多様な特徴量を効率的に管理・取得できる仕組みが必要だった。
+      - また複雑性の高いcontext-awareな推薦手法を運用経験のあるメンバーが少なかったため、Feature Storeのような抽象化された仕組みがあると助かる面もあった。歴史的特徴量の管理などのノウハウもあまり社内に蓄積されていなかった。だからマネージドなFeature Storeを試験運用して勘所を掴みたかった。
   - 開発組織内でのMLモデルの活用が活発化してきたため。
     - この1年で、事業部向かいのチーム(ストリームアラインドチーム)自身が、MLモデルを活用した機能改善や分析に積極的に取り組むようになってきた。
     - 以前は機械学習技術は複雑なサブシステムとして専属チームのみが扱っていたが、Claude Codeなどのコーディングエージェントの登場により、ハードルが下がってきた感がある。
     - そのため、MLを使う人たちが特徴量にアクセスしやすい仕組み・有効な特徴量を効果的に共有できる仕組みが望ましかった。
 
+- ざっくりそもそもFeature Storeとは?? どんな性質を持つ、どんな役割のコンポーネントなのか??
+  - hoge
+
 ## 参考資料
 
-- [5 Minimum Requirements of an Operational Feature Store](https://medium.com/data-for-ai/5-minimum-requirements-of-an-operational-feature-store-ab1436ca1a2c)
-  - 自分の感想メモ記事: [hoge]()
 - [Feature Store: The Definitive Guide](https://www.hopsworks.ai/dictionary/feature-store)
+  - 自分の感想メモ記事: [hoge]()
+- [5 Minimum Requirements of an Operational Feature Store](https://medium.com/data-for-ai/5-minimum-requirements-of-an-operational-feature-store-ab1436ca1a2c)
   - 自分の感想メモ記事: [hoge]()
 - [Feature Store Architecture and How to Build One](https://www.qwak.com/post/feature-store-architecture)
 - [Beware the data science pin factory: The power of the full-stack data science generalist and the perils of division of labor through function](https://multithreaded.stitchfix.com/blog/2019/03/11/FullStackDS-Generalists/)
@@ -81,6 +85,7 @@
 - ニュースサービスに必要なFeature Storeの条件：4ヶ月の実践で見えた本質
 - 高速更新 × 歴史的特徴量 × オンライン推論：ニュースアプリに最適なFeature Storeを考える
 - “止まらないデータ”と戦うニュースアプリのためのFeature Store設計
+- NewsPicksで真に価値を発揮するFeature Storeに必要なもの~SageMaker Feature Storeを4ヶ月試験運用した学びから~
 
 ### なんの課題解決の話を書きたいんだっけ??
 
