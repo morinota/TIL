@@ -47,6 +47,8 @@
 ## 参考資料
 
 - [Beware the data science pin factory: The power of the full-stack data science generalist and the perils of division of labor through function](https://multithreaded.stitchfix.com/blog/2019/03/11/FullStackDS-Generalists/)
+- [](https://www.producttalk.org/product-discovery/)
+- [ノイアーというケーススタディ。現代サッカーのスイーパーはGKである](https://www.footballista.jp/special/37340)s
 
 ### 発表タイトル:
 
