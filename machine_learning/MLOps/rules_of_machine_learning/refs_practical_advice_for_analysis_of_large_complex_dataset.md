@@ -51,7 +51,7 @@ Anytime you are producing new analysis code, you need to look at examples of the
 新しい分析コードを生成するたびに、基礎となるデータの例とコードがそれらの例をどのように解釈しているかを確認する必要があります。これなしで複雑な分析コードを動作させることはほぼ不可能です。分析は、基礎となるデータから多くの特徴を削除して有用な要約を生成しています。個々の例の完全な複雑さを確認することで、要約が合理的であるという自信を得ることができます。
 
 You should be doing stratified sampling to look at a good sample across the distribution of values so you are not too focussed on the most common cases.
-層化サンプリングを行い、値の分布全体にわたる良いサンプルを確認して、最も一般的なケースに過度に焦点を当てないようにする必要があります。
+**層化サンプリングを行い、値の分布全体にわたる良いサンプルを確認して、最も一般的なケースに過度に焦点を当てないようにする必要があります。**
 
 For example, if you are computing Time to Click, make sure you look at examples throughout your distribution, especially the extremes. If you don’t have the right tools/visualization to look at your data, you need to work on those first.
 例えば、クリックまでの時間を計算している場合、分布全体、特に極端な例を確認してください。データを確認するための適切なツールや視覚化がない場合は、まずそれらに取り組む必要があります。
@@ -181,7 +181,6 @@ If you gather completely new data and try to learn something new, you won’t kn
 
 Typically, exploratory data analysis for a complex problem is iterative. You will discover anomalies, trends, or other features of the data. Naturally, you will make hypotheses to explain this data. It’s essential that you don’t just make a hypothesis and proclaim it to be true. Look for evidence (inside or outside the data) to confirm/deny this theory. For example, If you believe an anomaly is due to the launch of some other feature or a holiday in Katmandu, make sure that the population the feature launched to is the only one affected by the anomaly. Alternatively, make sure that the magnitude of the change is consistent with the expectations of the launch.
 通常、複雑な問題の探索的データ分析は反復的です。データの異常、傾向、またはその他の特徴を発見します。自然に、このデータを説明するための仮説を立てます。**仮説を立ててそれが真実であると宣言するだけではなく、証拠（データ内外）を探してこの理論を確認/否定することが不可欠**です。例えば、ある異常が他の機能の開始やカトマンズの休日によるものであると信じている場合、その機能が開始されたポピュレーションだけが異常の影響を受けていることを確認してください。あるいは、変化の大きさが開始の期待と一致していることを確認してください。
-
 
 Good data analysis will have a story to tell. To make sure it’s the right story, you need to tell the story to yourself, predict what else you should see in the data if that hypothesis is true, then look for evidence that it’s wrong. One way of doing this is to ask yourself, “What experiments would I run that would validate/invalidate the story I am telling?” Even if you don’t/can’t do these experiments, it may give you ideas on how to validate with the data that you do have.
 優れたデータ分析には語るべきストーリーがあります。正しいストーリーであることを確認するために、自分自身にストーリーを伝え、その仮説が真実である場合にデータで他に何を見るべきかを予測し、それが間違っているという証拠を探す必要があります。**これを行う一つの方法は、「自分が伝えているストーリーを検証/無効化するためにどのような実験を行うか？」と自問すること**です。これらの実験を行わない/できない場合でも、持っているデータで検証する方法についてのアイデアを得ることができます。
