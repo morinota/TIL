@@ -85,7 +85,7 @@
 - ニュースサービスに必要なFeature Storeの条件：4ヶ月の実践で見えた本質
 - 高速更新 × 歴史的特徴量 × オンライン推論：ニュースアプリに最適なFeature Storeを考える
 - “止まらないデータ”と戦うニュースアプリのためのFeature Store設計
-- **NewsPicksで真に価値を発揮するFeature Storeに必要なもの~SageMaker Feature Storeを4ヶ月試験運用した学びから見えてきたこと~**
+- **NewsPicksで真に価値を発揮するFeature Storeに必要な観点たち~SageMaker Feature Storeを4ヶ月試験運用した学びから見えてきたこと~**
 
 ### なんの課題解決の話を書きたいんだっけ??
 
