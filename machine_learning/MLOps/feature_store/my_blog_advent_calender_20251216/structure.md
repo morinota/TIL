@@ -76,6 +76,7 @@
 - [実践MLOps 作って理解する機械学習システムの構築と運用](https://www.ohmsha.co.jp/book/9784274233982/)
 - [事例でわかるMLOps 機械学習の成果をスケールさせる処方箋](https://www.kspub.co.jp/book/detail/5369562.html)
 - [Feature Stores: Components of a Data Science Factory[Guide]](https://neptune.ai/blog/feature-stores-components-of-a-data-science-factory-guide)
+- [Rules of Machine Learning: Best Practices for ML Engineering](https://developers.google.com/machine-learning/guides/rules-of-ml?hl=ja)
 
 ### 発表タイトル:
 
@@ -91,18 +92,53 @@
 
 #### 主メッセージ:
 
-NewsPicksで価値を発揮するFeature Storeにとって重要なのは、
+NewsPicksで価値を発揮するFeature Storeの重要観点は...
 
-① 歴史的特徴量の生成・管理やbackfillが容易にできること、
-② オンラインストアを柔軟に有効化できて、高頻度の読み書きにも対応できること
-③ 新しい特徴量の試行錯誤やオフラインでの読み書きが低コスト・高速で、MLを使う人たちがアクセスしやすいこと
-
-この3つだな〜っていうのが、4ヶ月試験運用してみた現時点での結論！
+1. 歴史的特徴量の管理やbackfillが容易であること。
+2. ストリーミング/マイクロバッチでの高頻度の読み書きに現実的なコストで対応できること。
+3. 新しい特徴量の試行錯誤を安く・高速に回せること
+4. MLを使う人たちからアクセスしやすく、発見しやすいこと
 
 #### ピラミッド構造:
 
-- はじめに:
+- はじめに
+  - 本記事の目的
+  - 4ヶ月の試験運用を通して何を言語化したいのか
+- 背景: NewsPicksで機械学習の成果をスケールさせるために特徴量ストアが必要になってきたんです!
+  - 1. まず特徴量は、機械学習プロダクトの成否を左右する中心資産なんです!
+  - 2. そして特徴量ストアは、プロダクション環境で特徴量を扱う上で重要な役割のコンポーネントなんです!
+  - 3. そしてNewsPicksでも特徴量ストアの必要性が高まってきたんです! なのでSageMaker Feature Storeを4ヶ月試験運用してみたんです!
+    - いきなりゼロから自前でFeature Storeを構築するのは工数もかかるし不確実性も高いので、まずはフルマネージドサービスであるSageMaker Feature Storeを試験的に一部のプロジェクトに組み込んで試験運用してみた。
+- 本論: NewsPicksで価値を発揮するFeature Storeの重要観点4つはこれだと思うんです!
+  - 1. 歴史的特徴量の管理やbackfillが容易であることが重要なんです!
+  - 2. ストリーミング/マイクロバッチでの高頻度の読み書きに現実的なコストで対応できることが重要なんです!
+  - 3. 新しい特徴量の試行錯誤を安く・高速に回せることが重要なんです!
+  - 4. MLを使う人たちからアクセスしやすく、発見しやすいことが重要なんです!
+- 今後の取り組み
+  - 既存のフルマネージドサービスでは上記の要件を満たすのが難しい点がいくつかあったため、自前Feature Storeでの運用を考えているんです!
+- おわりに
+  - 本記事で言いたかったことの総括
+
+- はじめに: 本記事を書くことの意味づけ
+  - 機械学習の実運用における特徴量の重要性! 特徴量は機械学習プロダクトの成否を左右する中心資産だ!
+    - (Rules of Machine Learningより) Even with all the resources of a great machine learning expert, most of the gains come from great features, not great machine learning algorithms. (優れた機械学習の専門家のすべてのリソースを持っていても、ほとんどの利益は優れた特徴量から得られ、優れた機械学習アルゴリズムからは得られません)
+    - (Facebook 広告CTR予測の教訓論文より) Not surprisingly, the most important thing is to have the right features. (驚くべきことではないが、最も重要なことは適切な特徴量を持つことです。)
+    - メッセージ: 機械学習プロダクトの成功には、まず有益な情報を捉えた価値を発揮する特徴量が最重要!
+  - 機械学習の実運用における特徴量ストアという概念の重要性
+    - 特徴量は機械学習プロダクトの成否を左右する中心資産なわけだが、本番運用では以下の課題が必ず発生する:
+  - なぜNewsPicksで今Feature Storeを導入したいのか??
+  - なぜFeature Storeが必要だったのか??
+    - 推薦まわりの高度化（context-aware化）
+    - ML活用者の増加（ストリームアラインドチームの台頭など）
+    - 特徴量の管理・再利用がめちゃ大事になってきた
+  - SageMaker Feature Store を4ヶ月試験運用して得た「実感ベースの気づき」がテーマです、という導入。
+  - 本記事の目的: NewsPicksで価値を発揮するFeature Storeの重要観点を4つに整理して共有すること。
 - 背景:
-- 本論:
-- 
+  - Featureとは?なぜ重要なのか?
+  - Feature Storeとは? なぜ重要なのか?
+- 本論: NewsPicksで価値を発揮するFeature Storeの重要観点4つ
+  - 1. 歴史的特徴量の管理やbackfillが容易であること。
+  - 2. ストリーミング/マイクロバッチでの高頻度の読み書きに現実的なコストで対応できること。
+  - 3. 新しい特徴量の試行錯誤を安く・高速に回せること
+  - 4. MLを使う人たちからアクセスしやすく、発見しやすいこと
 - おわりに:
