@@ -45,6 +45,10 @@
     - SageMaker Feature Storeでは、上記の要件を満たすのが難しい点がいくつかあった。
       - backfill -> 大量の読み書きが高コスト(なぜならオフラインストア限定の書き込みAPIが存在しないから)
       - ストリーミング/マイクロバッチでの高頻度の読み書き -> こちらは一旦対応してるOK。
+      - アクセスしやすさ!
+        - DWHやBIツールとの連携 -> AWS公式のSagemaker Python SDKはAthena経由APIを提供してるが、NPではあまりAthenaを使ってないので親和性が低め。
+        - 開発者たちが、Snowflake経由でパッと特徴量を参照したり分析したりできる仕組みが望ましいが、Sagemaker Feature StoreはSnowflakeとの連携しづらさがあった。
+          - Icebergテーブルの連携に苦戦、ここを解決しようと思うと、結局内部実装を細かく理解する必要が出てきて、フルマネージドサービスの恩恵が薄れる。
       - 学習コスト -> マイナーサービスなのでかなり高め。Sagemaker固有の仕様なども多い。
         - 基本的にFeature Storeとしての各種機能はAPIとして抽象化されているため、資金が無尽蔵にあるならば、学習コストはあまり問題にならないかも。
         - ただし、結局自社のユースケースやコスト事情に合わせて最適化したい場合、マイナーサービスの実装の詳細を理解してカスタマイズする必要が出てくることが多かった。
@@ -106,7 +110,10 @@ NewsPicksで価値を発揮するFeature Storeの重要観点は...
   - 4ヶ月の試験運用を通して何を言語化したいのか
 - 背景: NewsPicksで機械学習の成果をスケールさせるために特徴量ストアが必要になってきたんです!
   - 1. まず特徴量は、機械学習プロダクトの成否を左右する中心資産なんです!
+    - ほとんどの利益は優れた特徴量から得られ、優れた機械学習アルゴリズムからは得られない。
+    - 驚くべきことではないが、最も重要なことは適切な特徴量を持つこと。
   - 2. そして特徴量ストアは、プロダクション環境で特徴量を扱う上で重要な役割のコンポーネントなんです!
+    - オフライン環境で機械学習モデルを実験する上では、特に特徴量ストアなしの「場当たり的な」特徴量管理でも大きな問題はない。
   - 3. そしてNewsPicksでも特徴量ストアの必要性が高まってきたんです! なのでSageMaker Feature Storeを4ヶ月試験運用してみたんです!
     - いきなりゼロから自前でFeature Storeを構築するのは工数もかかるし不確実性も高いので、まずはフルマネージドサービスであるSageMaker Feature Storeを試験的に一部のプロジェクトに組み込んで試験運用してみた。
 - 本論: NewsPicksで価値を発揮するFeature Storeの重要観点4つはこれだと思うんです!
@@ -121,8 +128,8 @@ NewsPicksで価値を発揮するFeature Storeの重要観点は...
 
 - はじめに: 本記事を書くことの意味づけ
   - 機械学習の実運用における特徴量の重要性! 特徴量は機械学習プロダクトの成否を左右する中心資産だ!
-    - (Rules of Machine Learningより) Even with all the resources of a great machine learning expert, most of the gains come from great features, not great machine learning algorithms. (優れた機械学習の専門家のすべてのリソースを持っていても、ほとんどの利益は優れた特徴量から得られ、優れた機械学習アルゴリズムからは得られません)
-    - (Facebook 広告CTR予測の教訓論文より) Not surprisingly, the most important thing is to have the right features. (驚くべきことではないが、最も重要なことは適切な特徴量を持つことです。)
+    - (Rules of Machine Learningより) Even with all the resources of a great machine learning expert, most of the gains come from great features, not great machine learning algorithms.(優れた機械学習の専門家のすべてのリソースを持っていても、ほとんどの利益は優れた特徴量から得られ、優れた機械学習アルゴリズムからは得られません)
+    - (Facebook 広告CTR予測の教訓論文より) Not surprisingly, the most important thing is to have the right features.(驚くべきことではないが、最も重要なことは適切な特徴量を持つことです)
     - メッセージ: 機械学習プロダクトの成功には、まず有益な情報を捉えた価値を発揮する特徴量が最重要!
   - 機械学習の実運用における特徴量ストアという概念の重要性
     - 特徴量は機械学習プロダクトの成否を左右する中心資産なわけだが、本番運用では以下の課題が必ず発生する:
