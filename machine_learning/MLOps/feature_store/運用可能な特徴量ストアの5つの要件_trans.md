@@ -1,3 +1,5 @@
+refs: https://medium.com/data-for-ai/5-minimum-requirements-of-an-operational-feature-store-ab1436ca1a2c
+
 # 5 Minimum Requirements of an Operational Feature Store
 # 操作可能なフィーチャーストアの最小要件5つ
 

@@ -102,8 +102,7 @@ machine learning expert you aren’t.**
 **あなたが優れたエンジニアであるように機械学習を行い、あなたが優れた機械学習の専門家でないように行わないでください**。
 Most of the problems you will face are, in fact, engineering problems. 
 実際、あなたが直面する問題のほとんどはエンジニアリングの問題です。
-Even with all the resources of a great machine learning expert, most of the gains
-come from great features, not great machine learning algorithms. 
+Even with all the resources of a great machine learning expert, most of the gains come from great features, not great machine learning algorithms. 
 **優れた機械学習の専門家のすべてのリソースを持っていても、ほとんどの利益は優れた特徴量から得られ、優れた機械学習アルゴリズムからは得られません。**
 
 So, the basic approach is:
@@ -169,13 +168,13 @@ If you are detecting spam, filter out publishers that have sent spam before.
 Don’t be afraid to use human editing either.  
 人間の編集を使用することを恐れないでください。  
 If you need to rank contacts, rank the most recently used highest (or even rank alphabetically). 
-もし連絡先をランク付けする必要があるなら、最も最近使用したものを最上位にランク付けするか（またはアルファベット順にランク付けしてください）。  
-If machine learning is not absolutely required for your product, don't use it until you have data.  
+もし連絡先をランク付けする必要があるなら、最も最近使用したものを最上位にランク付けするか（またはアルファベット順にランク付けしてください）。
+If machine learning is not absolutely required for your product, don't use it until you have data.
 **もし機械学習があなたの製品に絶対に必要でないなら、データが得られるまで使用しないでください。**
 
 <!-- ここまで読んだ! -->
 
-#### Rule #2: First, design and implement metrics. 
+#### Rule #2: First, design and implement metrics.
 
 Before formalizing what your machine learning system will do, track as much as possible in your current system. 
 まず、機械学習システムが何をするかを正式に定義する前に、現在のシステムで**できるだけ多くのことを追跡**してください。(プロダクトの色んな指標を監視できるようにしよう!って話...!:thinking:)

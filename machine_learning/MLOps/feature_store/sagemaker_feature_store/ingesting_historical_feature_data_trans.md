@@ -1,4 +1,4 @@
-
+https://towardsdatascience.com/ingesting-historical-feature-data-into-sagemaker-feature-store-5618e41a11e6/
 
 # Ingesting Historical Feature Data into SageMaker Feature Store 歴史的特徴データをSageMaker Feature Storeに取り込む方法    
 How to backfill the SageMaker Offline Feature Store by writing directly into S3 S3に直接書き込むことでSageMakerオフラインFeature Storeをバックフィルする方法
