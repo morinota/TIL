@@ -4,7 +4,7 @@
 ## What is a feature store? 特徴ストアとは何ですか？
 
 A feature store is a data platform that supports the development and operation of machine learning systems by managing the storage and efficient querying of feature data. 
-特徴ストアは、特徴データのストレージと効率的なクエリ処理を管理することによって、機械学習システムの開発と運用をサポートするデータプラットフォームです。
+特徴量ストアは、特徴データのストレージと効率的なクエリ処理を管理することによって、機械学習システムの開発と運用をサポートするデータプラットフォームです。
 Machine learning systems can be real-time, batch or stream processing systems, and the feature store is a general purpose data platform that supports a multitude of write and read workloads, including batch and streaming writes, to batch and point read queries, and even approximate nearest neighbour search. 
 **機械学習システムはリアルタイム、バッチ、またはストリーム処理システム**であり、特徴ストアはバッチおよびストリーミング書き込みからバッチおよびポイント読み取りクエリ、さらには近似最近傍検索まで、多様な書き込みおよび読み取りワークロードをサポートする汎用データプラットフォームです。
 Feature stores also provide compute support to ML pipelines that create and use features, including ensuring the consistent computation of features in different (offline and online) ML pipelines. 
@@ -15,7 +15,7 @@ Feature stores also provide compute support to ML pipelines that create and use 
 ## What is a feature and why do I need a specialized store for them? 特徴とは何か、そしてなぜそれらのための専門のストアが必要なのか？
 
 A feature is a measure property of some entity that has predictive power for a machine learning model. 
-特徴量(feature)とは、ある対象(entity)の属性(property)を数値化したもので、かつ機械学習モデルの予測に役立つものである。
+特徴量(feature)とは、ある対象(entity)の属性(property)を数値化したもので、機械学習モデルにとって予測力を持つものです。
 Feature data is used to train ML models, and make predictions in batch ML systems and online ML systems. 
 特徴量データは、MLモデルのトレーニングや、バッチMLシステムおよびオンラインMLシステムでの予測に使用されます。
 Features can be computed either when they are needed or in advance and used later for training and inference. 
