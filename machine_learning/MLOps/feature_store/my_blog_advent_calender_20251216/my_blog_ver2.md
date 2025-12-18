@@ -25,7 +25,7 @@
 ### 特徴量は、機械学習プロダクトの成否を左右する中心資産だ！
 
 最初に特徴量について簡単に説明します。
-「特徴量(Feature)」とは、ある対象(entity, ex. ユーザ, 記事, etc.)の属性(property)を数値化したもので、機械学習モデルの入力情報として予測や意思決定に役立つデータのことを指します。
+「特徴量(Feature)」とは、ある対象(entity, ex. ユーザ, 記事, etc.)の属性(property)を数値化したもので、機械学習モデルの入力情報として予測や意思決定に役立つデータとして定義されています（参考: [Feature Store: The Definitive Guide](https://www.hopsworks.ai/dictionary/feature-store)）。
 例えばNewsPicksプロダクト内での特徴量の例としては、以下のようなものがあります。
 
 - ユーザの場合の特徴量: 年齢、性別、過去のニュース閲覧履歴, アクセス頻度, etc.
@@ -272,3 +272,10 @@ SageMaker Feature Store は比較的新しいサービスであり、仕様や�
 また、「[Rules of Machine Learning](https://developers.google.com/machine-learning/guides/rules-of-ml)」でも、**MLプロジェクトで直面する問題の多くはエンジニアリングの問題であり、優れた特徴量の重要性や堅牢なデータパイプラインの優先度の高さが強調**されています。
 
 MLOps（ビジネスで機械学習の成果をスケールさせる）のために、特徴量ストアも含めたMLプラットフォーム基盤も頑張るし、フルサイクルデータゼネラリスト的な役割も頑張っていくぞ！やっていくぞ〜！
+
+## 参考文献
+
+- [Feature Store: The Definitive Guide](https://www.hopsworks.ai/dictionary/feature-store)
+- [5 Minimum Requirements of an Operational Feature Store](https://medium.com/data-for-ai/5-minimum-requirements-of-an-operational-feature-store-ab1436ca1a2c)
+- [Rules of Machine Learning: Best Practices for ML Engineering](https://developers.google.com/machine-learning/guides/rules-of-ml?hl=ja)
+- [Beware the data science pin factory: The power of the full-stack data science generalist and the perils of division of labor through function](https://multithreaded.stitchfix.com/blog/2019/03/11/FullStackDS-Generalists/)
