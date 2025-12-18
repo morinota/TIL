@@ -267,7 +267,8 @@ SageMaker Feature Store は比較的新しいサービスであり、仕様や�
 
 最後の最後に、特徴量ストアのようなMLプラットーフォーム基盤への投資に関する、最近の自分のお気持ちを記述して締めくくりたいと思います:)
 
-元NetflixのVP of Data Science and EngieeringのEric Colson氏は、「**機械学習プロジェクトは不確実性が高いから、実践しながら学びながら改善し続けるために、分業制ではなくフルサイクルのデータサイエンスゼネラリスト人材がいいんだ〜!**」と述べています。そして続けて「これらの人材の活躍は、**作業するための堅牢で適度に抽象化されたデータプラットフォームの前提に大きく依存**している」とも主張しています。
+元NetflixのVP of Data Science and EngieeringのEric Colson氏は、「**機械学習プロジェクトは不確実性が高いから、実践しながら学びながら改善し続けるために、分業制ではなくフルサイクルのデータサイエンスゼネラリスト人材がいいんだ〜!**」と述べています。そして続けて「これらの人材の活躍は、**作業するための堅牢で適度に抽象化されたデータプラットフォームの前提に大きく依存**している」とも主張しています（参考: [Beware the data science pin factory: The power of the full-stack data science generalist and the perils of division of labor through function](https://multithreaded.stitchfix.com/blog/2019/03/11/FullStackDS-Generalists/)）
+
 また、「[Rules of Machine Learning](https://developers.google.com/machine-learning/guides/rules-of-ml)」でも、**MLプロジェクトで直面する問題の多くはエンジニアリングの問題であり、優れた特徴量の重要性や堅牢なデータパイプラインの優先度の高さが強調**されています。
 
 MLOps（ビジネスで機械学習の成果をスケールさせる）のために、特徴量ストアも含めたMLプラットフォーム基盤も頑張るし、フルサイクルデータゼネラリスト的な役割も頑張っていくぞ！やっていくぞ〜！
