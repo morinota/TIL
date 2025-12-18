@@ -48,7 +48,7 @@ Googleの機械学習プロダクト・プロジェクトに関する指針を�
 
 > （驚くべきことではないが、**最も重要なことは適切な特徴量を持つこと**です。）
 
-> （論文「Practical Lessons from Predicting Clicks on Ads at Facebook」より引用）
+> （論文「[Practical Lessons from Predicting Clicks on Ads at Facebook](https://research.facebook.com/publications/practical-lessons-from-predicting-clicks-on-ads-at-facebook/)」より引用）
 
 つまり、**特徴量は、機械学習モデルの性能ひいては機械学習プロダクト・プロジェクトの成否を左右する重要な中心資産である**と考えている訳です。
 
