@@ -222,7 +222,7 @@ SageMaker Feature Store のオフラインストアは S3 + Iceberg をベース
 また、分析用途として Snowsight 上の notebook で Tree 系モデルを使い特徴量の重要度分析を行いたい、といったユースケースもありました。この点でも、Athena ではなく Snowflake 経由で特徴量にアクセスできることが望ましい状況でした。
 
 そこで、SageMaker Feature Store が生成する S3 上の Iceberg テーブルを、Snowflake の外部テーブルとして読み込むことも試みましたが、連携には苦戦しました。
-具体的には、Sagemaker側でのIceberg テーブルの初期化時に生成される 0 byte の data file が Snowflake 側で読み込みエラーを引き起こし外部テーブルとして取り込めないという問題に直面しました。当時は明確な解決策が見つからず連携を断念したのでした。
+具体的には、Sagemaker側でのIceberg テーブルの初期化時に生成される0バイトのデータファイルが Snowflake 側で読み込みエラーを引き起こし外部テーブルとして取り込めないという問題に直面しました。当時は明確な解決策が見つからず連携を断念したのでした。
 
 <figure class="figure-image figure-image-fotolife" title="図: 開発組織で日常的に使われているDWH/BIツールからアクセスしやすいこと">[f:id:morinota:20251217154504p:plain]<figcaption>図: 開発組織で日常的に使われているDWH/BIツールからアクセスしやすいこと</figcaption></figure>
 
