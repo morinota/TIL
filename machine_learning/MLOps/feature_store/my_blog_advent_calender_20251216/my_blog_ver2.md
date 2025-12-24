@@ -276,10 +276,10 @@ MLOps（ビジネスで機械学習の成果をスケールさせる）のため
 
 ## 参考文献
 
-- [Sagemaker Feature Store 公式ドキュメント](https://docs.aws.amazon.com/sagemaker/latest/dg/feature-store.html)
 - [Feature Store: The Definitive Guide](https://www.hopsworks.ai/dictionary/feature-store)
 - [Rules of Machine Learning: Best Practices for ML Engineering](https://developers.google.com/machine-learning/guides/rules-of-ml?hl=ja)
 - [Practical Lessons from Predicting Clicks on Ads at Facebook](https://research.facebook.com/publications/practical-lessons-from-predicting-clicks-on-ads-at-facebook/)
 - [From MLOps to ML Systems with Feature/Training/Inference Pipelines](https://www.hopsworks.ai/post/mlops-to-ml-systems-with-fti-pipelines)
+- [Sagemaker Feature Store 公式ドキュメント](https://docs.aws.amazon.com/sagemaker/latest/dg/feature-store.html)
 - [5 Minimum Requirements of an Operational Feature Store](https://medium.com/data-for-ai/5-minimum-requirements-of-an-operational-feature-store-ab1436ca1a2c)
 - [Beware the data science pin factory: The power of the full-stack data science generalist and the perils of division of labor through function](https://multithreaded.stitchfix.com/blog/2019/03/11/FullStackDS-Generalists/)
