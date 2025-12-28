@@ -29,7 +29,7 @@
 
 ### LF側で特定のIAMロールに権限を付与する方法
 
-特定のS3テーブルバケットへのアクセス権限を付与する場合の手順:
+特定のS3テーブルバケットへのアクセス権限を付与する場合、aws cliの`aws lakeformation grant-permissions`コマンドを使って以下のように実行できる。
 
 ```bash
 ## データベースへの権限付与
@@ -49,3 +49,5 @@ aws lakeformation grant-permissions \
   --resource "{\"Table\": {\"CatalogId\": \"${AWS_ACCOUNT_ID}:s3tablescatalog/${TABLE_BUCKET_NAME}\", \"DatabaseName\": \"main\", \"TableWildcard\": {} }}" \　## ここでは特定のバケット内の全テーブルに対して権限を付与している
   --permissions "ALL" 
 ```
+
+aws lakeformation grant-permissionsコマンドと同じ操作をcdkでも実行できる??
