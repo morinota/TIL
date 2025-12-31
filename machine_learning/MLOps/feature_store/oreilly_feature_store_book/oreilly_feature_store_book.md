@@ -1,11 +1,9 @@
 refs: /Users/masato.morita/Documents/Oreilly_feature_store_book/OReilly Book - Building ML Systems with a Feature Store_final.pdf
 
+# Building Machine Learning Systems with a Feature Store 
 
-## Building 機械学習システムの構築
-# 機能ストアを用いた機械学習システム
-###### バッチ、リアルタイム、LLMシステム  
-## Building 機械学習システムの構築
-# 機能ストアを用いた機械学習システム  
+## Introduction
+
 -----
 ###### “効率的で実世界のMLシステムを構築することに真剣なすべての人のために。”
 Ritchie Vink, Polarsの発明者、Polars Inc.のCEO兼創設者
@@ -15,7 +13,9 @@ Niall Murphy, O’Reilly著者、Stanzaの共同創設者兼CEO
 Hannes Mühleisen, DuckDBの共同創設者、DuckDB LabsのCEO
 ###### “ML実務者にとっての素晴らしいサービスで、ベストプラクティスと明確なステップバイステップガイドを提供します。”
 Eric Bernhardsson, ModalのCEO
-###### 機能ストアを用いた機械学習システムの構築
+
+### 機能ストアを用いた機械学習システムの構築
+
 機能ストアを用いた機械学習（ML）システムの構築に関する新しい統一アプローチを理解しましょう。
 この実用的な本を使用して、データサイエンティストとMLエンジニアは、バッチ、リアルタイム、エージェント型MLシステムを詳細に開発し、運用する方法を学びます。
 著者のJim Dowlingは、スケールでMLおよびAIシステムを開発、テスト、運用するための基本的な原則と実践を紹介します。あなたは、どのAIシステムも独立した機能、トレーニング、推論パイプラインに分解でき、共有データレイヤーで接続されていることを理解するでしょう。例示されたMLシステムを通じて、MLシステムの最も難しい部分—データ—に取り組み、データを特徴や埋め込みに変換する方法、AIのためのデータモデルを設計する方法を学びます。  
@@ -28,7 +28,9 @@ ISBN:  978-1-098-16524-6
 **Jim Dowling**はHopsworksのCEOおよび共同創設者です。彼はKTH王立工科大学でスウェーデン初の深層学習コースを教え、受賞歴のあるHopsFSファイルシステムの研究を主導しました。また、PyData Stockholmを共同設立し、年次Feature Store Summitを組織しています。  
 -----
 -----
+
 ###### 機能ストアを用いた機械学習システムの構築に対する称賛
+
 私はUberで機能ストアの台頭を目の当たりにしました。そこでML駆動の製品はバッチおよびリアルタイムデータで運用されていました。Jim Dowlingはこのカテゴリを定義するのを助け、この本はすべてのエンジニアに重要な生産グレードのMLシステムを出荷するための実用的なプレイブックを提供します。
 _—Vinoth Chandar, Onehouse Inc.のCEO兼創設者_
 この本は、現代の特徴エンジニアリングが実際にどのように行われるかを示しています：スケーラブルで表現力豊かなツールを中心にしています。データフレームエンジン、機能ストア、MLパイプラインがどのようにシームレスに連携できるかを示すことで、研究と生産のギャップを埋めています。
@@ -996,7 +998,9 @@ If any of the following describe you, you’ll find this book valuable:
 - スケーラブルで信頼性が高く、保守可能なMLシステムを構築したいMLエンジニア
 - A developer who wants to build ML systems, whether for a portfolio or for fun 
 - ポートフォリオのためでも、楽しみのためでも、MLシステムを構築したい開発者
+
 ###### What This Book Is Not この本は何ではないか
+
 This book is not a traditional MLOps book that starts with experiment tracking and how to package and deploy software with containers and infrastructure as code. 
 この本は、実験追跡やソフトウェアをコンテナやインフラストラクチャとしてコードでパッケージ化しデプロイする方法から始まる伝統的なMLOpsの本ではありません。
 We do not discuss Docker, Terraform, or AWS CloudFormation. 
@@ -1004,8 +1008,10 @@ Docker、Terraform、またはAWS CloudFormationについては議論しませ�
 We don’t need them as we assume support for automatic containerization of pipelines. 
 パイプラインの自動コンテナ化のサポートを前提としているため、これらは必要ありません。
 We also don’t cover experiment tracking due to our focus on ML systems over model training, the rise in AutoML (and the corresponding drop in the importance of hyperparameter tuning), and the fact that a model registry is all you need to store model evaluation results and support model governance. 
-また、モデル訓練よりもMLシステムに焦点を当てているため、実験追跡についても扱いません。AutoMLの台頭（およびハイパーパラメータ調整の重要性の低下）や、モデル評価結果を保存しモデルガバナンスをサポートするために必要なのはモデルレジストリだけであるという事実もあります。
+また、モデル訓練よりもMLシステムに焦点を当てているため、実験追跡についても扱いません。**AutoMLの台頭（およびハイパーパラメータ調整の重要性の低下）や、モデル評価結果を保存しモデルガバナンスをサポートするために必要なのはモデルレジストリだけである**という事実もあります。(なるほど、そういう思想なのね...!:thinking:)
+
 ###### Outline of the Book 本の概要
+
 The book is arranged into six logical parts, with each part consisting of a group of chapters. 
 この本は6つの論理的な部分に分かれており、各部分は章のグループで構成されています。
 Each chapter stands in its own right and has exercises to help deepen your understanding of the concepts and technologies introduced. 
@@ -1022,57 +1028,44 @@ In Chapter 3, you’ll build your first ML system.
 第3章では、最初のMLシステムを構築します。
 You’ll identify an air quality sensor near where you live and build an air quality forecasting system using ML along with a dashboard
 あなたの住んでいる近くの空気質センサーを特定し、MLを使用して空気質予測システムを構築し、ダッシュボードを作成します。
-
-
-
-. In Chapter 3, you’ll build your first ML system. 
-第3章では、最初のMLシステムを構築します。
-
-You’ll identify an air quality sensor near where you live and build an air quality forecasting system using ML along with a dashboard. 
-あなたは、住んでいる近くの空気質センサーを特定し、MLを使用してダッシュボードと共に空気質予測システムを構築します。
-
 You will also query it with natural language using an LLM. 
 また、LLMを使用して自然言語でクエリを実行します。
 
+<!-- ここまで読んだ! -->
+
 Part II introduces feature stores for ML and a real-time credit card fraud example that will be covered throughout the book. 
 第II部では、MLのためのフィーチャーストアと、本書全体で取り上げるリアルタイムのクレジットカード詐欺の例を紹介します。
-
 In Chapter 4, we provide an overview of the main characteristics of a feature store, including the problems it solves by storing feature data for training and inference in feature groups, querying feature data using feature views, preventing offline/online skew through supporting the taxonomy of data transformations, and data modeling. 
 第4章では、フィーチャーストアの主な特徴の概要を提供します。これには、フィーチャーグループ内でのトレーニングと推論のためのフィーチャーデータを保存することによって解決する問題、フィーチャービューを使用してフィーチャーデータをクエリすること、データ変換の分類法をサポートすることによってオフライン/オンラインの偏りを防ぐこと、データモデリングが含まれます。
-
 In Chapter 5, we introduce the Hopsworks feature store, its multitenant project security model, and its APIs for reading and writing with ML pipelines with feature groups and feature views, as well as running ML pipelines as jobs. 
 第5章では、Hopsworksフィーチャーストア、そのマルチテナントプロジェクトセキュリティモデル、およびフィーチャーグループとフィーチャービューを使用したMLパイプラインでの読み書きのためのAPI、さらにMLパイプラインをジョブとして実行する方法を紹介します。
 
 Part III is about data transformations for AI systems using frameworks such as Pandas, Polars, Apache Spark, Apache Flink, and Feldera. 
 第III部では、Pandas、Polars、Apache Spark、Apache Flink、Felderaなどのフレームワークを使用したAIシステムのためのデータ変換について説明します。
-
 Chapter 6 describes data transformations for feature pipelines, including data validation with Great Expectations. 
 第6章では、フィーチャーパイプラインのためのデータ変換について説明し、Great Expectationsを使用したデータ検証を含みます。
-
 Chapter 7 describes feature transformations for training and inference pipelines, including real-time transformations. 
 第7章では、トレーニングと推論パイプラインのためのフィーチャー変換について説明し、リアルタイム変換を含みます。
-
 Chapter 8 describes how to design and schedule batch feature pipelines. 
 第8章では、バッチフィーチャーパイプラインを設計し、スケジュールする方法について説明します。
-
 Chapter 9 describes how to design and operate streaming feature pipelines, including windowed aggregations and rolling aggregations. 
 第9章では、ウィンドウ集約やローリング集約を含むストリーミングフィーチャーパイプラインを設計し、運用する方法について説明します。
 
+<!-- ここまで読んだ! -->
+
 Part IV is about training models. 
 第IV部では、モデルのトレーニングについて説明します。
-
 In Chapter 10, we start by describing how to build training datasets from a feature store and how to train a decision tree from timeseries data. 
 第10章では、フィーチャーストアからトレーニングデータセットを構築する方法と、時系列データから決定木をトレーニングする方法について説明します。
-
 We then look at training models with unstructured data, including finetuning LLMs with low-rank adaptation (LoRA) and training PyTorch models with Ray. 
 次に、非構造化データを使用したモデルのトレーニングについて見ていきます。これには、低ランク適応（LoRA）を使用したLLMのファインチューニングや、Rayを使用したPyTorchモデルのトレーニングが含まれます。
-
 We also outline the scalability challenges in distributed training. 
 また、分散トレーニングにおけるスケーラビリティの課題についても概説します。
 
+<!-- ここまで読んだ! -->
+
 Part V is about making predictions in batch, real-time, and agentic AI systems. 
 第V部では、バッチ、リアルタイム、エージェントAIシステムにおける予測の作成について説明します。
-
 In Chapter 11, we look at batch inference and how to scale it with PySpark. 
 第11章では、バッチ推論とそれをPySparkでスケールする方法について見ていきます。
 
