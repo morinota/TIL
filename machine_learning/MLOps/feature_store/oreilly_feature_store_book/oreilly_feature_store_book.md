@@ -1068,48 +1068,40 @@ Part V is about making predictions in batch, real-time, and agentic AI systems.
 第V部では、バッチ、リアルタイム、エージェントAIシステムにおける予測の作成について説明します。
 In Chapter 11, we look at batch inference and how to scale it with PySpark. 
 第11章では、バッチ推論とそれをPySparkでスケールする方法について見ていきます。
-
 We also look at real-time inference and deployment APIs. 
 また、リアルタイム推論とデプロイメントAPIについても見ていきます。
-
 We look at model serving using KServe, both with and without graphics processing units (GPUs), including vLLM for serving LLMs. 
 KServeを使用したモデルサービングについて、GPUを使用する場合としない場合の両方を見ていきます。LLMを提供するためのvLLMも含まれます。
-
 In Chapter 12, we introduce agents and LLM workflows. 
 第12章では、エージェントとLLMワークフローを紹介します。
-
 We look at LlamaIndex, RAG, and protocols for using tools (like the Model Context Protocol [MCP]) and other agents (like Agent-to-Agent [A2A]). 
 LlamaIndex、RAG、およびツール（Model Context Protocol [MCP]のような）や他のエージェント（Agent-to-Agent [A2A]のような）を使用するためのプロトコルについて見ていきます。
-
 We also compare the agentic workflow with LLM workflows and introduce a development process for agents. 
 また、エージェントワークフローとLLMワークフローを比較し、エージェントのための開発プロセスを紹介します。
 
+<!-- ここまで読んだ! -->
+
 Part VI is about MLOps. 
 第VI部では、MLOpsについて説明します。
-
 In Chapter 13, we cover offline tests for AI systems, from unit tests for features (to enforce their contract), to ML pipeline integration tests, to blue/green tests for deployments, to evals for agents. 
 第13章では、AIシステムのためのオフラインテストについて、機能のユニットテスト（契約を強制するため）、MLパイプライン統合テスト、デプロイメントのためのブルー/グリーンテスト、エージェントのための評価までをカバーします。
-
 We also cover governance and automatic containerization for ML pipelines. 
 また、MLパイプラインのためのガバナンスと自動コンテナ化についても説明します。
-
 In Chapter 14, we cover observability for AI systems, built on logging/traces and metrics for models and agents. 
 第14章では、モデルとエージェントのためのログ/トレースとメトリクスに基づいたAIシステムの可観測性について説明します。
-
 We look at how feature monitoring and model monitoring are built from logs, as well as evals from agent traces. 
 フィーチャーモニタリングとモデルモニタリングがログからどのように構築されるか、またエージェントトレースからの評価について見ていきます。
-
 We look at how metrics help models meet service-level objectives through autoscaling. 
 メトリクスがどのようにモデルがサービスレベルの目標を自動スケーリングを通じて達成するのを助けるかについて見ていきます。
-
 We conclude the book in Chapter 15 with a case study on how to build a personalized video recommender system, similar to TikTok’s, and the dirty dozen fallacies of MLOps. 
-第15章では、TikTokに似たパーソナライズされたビデオレコメンダーシステムを構築する方法に関するケーススタディと、MLOpsの12の誤謬について結論を述べます。
+**第15章では、TikTokに似たパーソナライズされたビデオレコメンダーシステムを構築する方法に関するケーススタディと、MLOpsの12の誤謬について結論を述べます**。
 
 The book is deliberately light on references compared with the academic articles I usually write. 
 この本は、私が通常書く学術記事と比較して、意図的に参考文献が少なくなっています。
-
 I hope the book will still guide you to deeper sources of information on the topics covered and give credit to all the technologies and ideas it builds on. 
 この本が、取り上げたトピックに関するより深い情報源への道しるべとなり、基盤となるすべての技術やアイデアにクレジットを与えることを願っています。
+
+<!-- ここまで読んだ! -->
 
 ###### Conventions Used in This Book
 ###### 本書で使用される規約
