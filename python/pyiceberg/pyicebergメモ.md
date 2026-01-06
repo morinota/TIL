@@ -225,8 +225,6 @@ with table.transaction() as transaction:
   - **デフォルトでは、PyIcebergの本コンテキストマネージャは、破壊的な変更の実行を防止する**。
     - もし破壊的な変更を試みた場合、`IncompatibleSchemaChangeError`例外が発生する。
     - ただし`allow_incompatible_changes=True`パラメータを指定することで、破壊的な変更も明示的に許可できる。
-  - 
-
 
 ### PyIcebergでIcebergテーブルのパーティション進化を管理する (Partition Evolution with PyIceberg)
 
