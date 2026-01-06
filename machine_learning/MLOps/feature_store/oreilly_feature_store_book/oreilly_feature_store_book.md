@@ -1301,30 +1301,21 @@ Thanks to Jason for the competitive book finishing rivalry.
 Thanks to all my family and friends for the craic, the football, the surfing, the golf, the card games, the rafting, hiking, skiing, ice skating, and all the wonderful things we do together that make life the ride it is.  
 家族や友人たちには、楽しい時間、サッカー、サーフィン、ゴルフ、カードゲーム、ラフティング、ハイキング、スキー、アイススケート、そして私たちが一緒にするすべての素晴らしいことに感謝します。それらが人生を素晴らしいものにしてくれます。
 
------
 ###### PART I #### The FTI Pipeline Architecture for Machine Learning Systems  
------  
------  
 
-
-
+<!-- ここまで読んだ! --> 
 ## CHAPTER 1: Building Machine Learning Systems 第1章: 機械学習システムの構築
 
 Imagine you have been tasked with producing a financial forecast for the upcoming financial year. 
 あなたは、来るべき会計年度の財務予測を作成する任務を与えられたと想像してください。
-
 You decide to use machine learning (ML), as there is a lot of available data, but, not unexpectedly, the data is spread across many different places—in spreadsheets and many different tables in the data warehouse. 
 利用可能なデータがたくさんあるため、機械学習（ML）を使用することに決めましたが、予想通り、データはスプレッドシートやデータウェアハウスのさまざまなテーブルに分散しています。
-
 You have been working for several years at the same organization, and this is not the first time you have been given this task. 
 あなたは同じ組織で数年間働いており、このタスクを与えられるのはこれが初めてではありません。
-
 Every year to date, the final output of your model has been a Power‐ Point presentation showing the financial projections. 
 これまでの毎年、あなたのモデルの最終出力は財務予測を示すPowerPointプレゼンテーションでした。
-
 Each year, you trained a new model, your model made only one prediction, and you were finished with it. 
 毎年、新しいモデルを訓練し、モデルは1つの予測を行い、それで終わりでした。
-
 Each year, you started effectively from scratch. 
 毎年、実質的にゼロから始めていました。
 
