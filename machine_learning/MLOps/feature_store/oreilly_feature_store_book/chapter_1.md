@@ -268,34 +268,28 @@ Unstructured data is typically stored in files, sometimes very large files of GB
 非構造化データは通常、ファイルに保存され、時には数GB以上の非常に大きなファイルとして保存され、ファイルシステムやオブジェクトストア（Amazon S3など）に保存されます。
 Deep learning has made huge strides in solving prediction problems with unstructured data. 
 **深層学習は、非構造化データを用いた予測問題の解決において大きな進展を遂げました。**
-
 Image tag‐ ging services, self-driving cars, voice transcription systems, and many other AI systems are all trained with vast amounts of manually labeled unstructured data.
 画像タグ付けサービス、自動運転車、音声転写システム、そして多くの他のAIシステムは、すべて膨大な量の手動でラベル付けされた非構造化データで訓練されています。
 
-###### API-scraped data
-###### APIスクレイピングデータ
+##### API-scraped data　APIスクレイピングデータ
 
 More and more data is being stored and processed in software-as-a-service (SaaS) systems, and it is, therefore, becoming more important to be able to retrieve or scrape data from such services using their public APIs. 
-ますます多くのデータがソフトウェア・アズ・ア・サービス（SaaS）システムに保存され、処理されており、そのため、これらのサービスから公開APIを使用してデータを取得またはスクレイピングできることがますます重要になっています。
-
+**ますます多くのデータがソフトウェア・アズ・ア・サービス（SaaS）システムに保存され、処理されており、そのため、これらのサービスから公開APIを使用してデータを取得またはスクレイピングできることがますます重要**になっています。
 Similarly, as society is becoming increasingly digitized, more data is becoming available on websites that can be scra‐ ped and used as data sources for AI systems. 
-同様に、社会がますますデジタル化されるにつれて、ウェブサイト上でスクレイピング可能なデータが増え、AIシステムのデータソースとして使用できるようになっています。
-
+同様に、**社会がますますデジタル化されるにつれて、ウェブサイト上でスクレイピング可能なデータが増え、AIシステムのデータソースとして使用できるようになっています**。(なるほど確かに...自社データソースだけにこだわる理由はそこまでないんだよなぁ...:thinking:)
 There are low-code software systems that know about the APIs to popular SaaS platforms (like Salesforce and HubSpot) and can pull data from those platforms into data warehouses, such as Airbyte. 
 SalesforceやHubSpotなどの人気のSaaSプラットフォームのAPIを知っているローコードソフトウェアシステムがあり、これらのプラットフォームからデータをデータウェアハウス（Airbyteなど）に引き込むことができます。
-
 But sometimes, external APIs or websites will not have data integration support, and you will need to scrape the data. 
 しかし、時には外部APIやウェブサイトがデータ統合サポートを持っていないことがあり、その場合はデータをスクレイピングする必要があります。
-
 In Chapter 3, you will build an air quality prediction ML system that scrapes data from the closest public air quality sensor data source to where you live (there are tens of thousands of these available on the internet today— and one is probably closer to you than you imagine).
 第3章では、あなたが住んでいる場所に最も近い公共の空気質センサーのデータソースからデータをスクレイピングする空気質予測MLシステムを構築します（今日、インターネット上にはこれらが数万件あり、あなたが想像するよりも近くにあるかもしれません）。
 
-###### Mutable Data
-###### 可変データ
+<!-- ここまで読んだ! -->
+
+#### Mutable Data　 可変データ
 
 Even though working with data is often seen as the majority of the work in building and operating ML systems, existing ML courses typically only use the simplest form of data: immutable datasets. 
-データを扱うことは、MLシステムの構築と運用における作業の大部分と見なされることが多いですが、既存のMLコースは通常、最も単純なデータ形式である不変データセットのみを使用します。
-
+**データを扱うことは、MLシステムの構築と運用における作業の大部分と見なされることが多い**ですが、既存のMLコースは通常、最も単純なデータ形式である**不変データセット(immutable datasets)**のみを使用します。
 Smaller datasets (a few GBs at most) are typically stored in comma-separated values (CSV) files, while larger datasets (GBs to TBs) are usually available in a more compressible file format, such as Apache Parquet.[2]
 小規模なデータセット（最大数GB）は通常、カンマ区切り値（CSV）ファイルに保存されますが、大規模なデータセット（GBからTB）は通常、Apache Parquetのようなより圧縮可能なファイル形式で利用可能です。[2]
 
@@ -309,14 +303,11 @@ _test.csv_ The test set you should use to evaluate the performance of your train
 _test.csv_ 訓練したモデルの性能を評価するために使用すべきテストセット
 
 The data is static, and your job is to train an ML model to predict whether a given passenger survives the sinking of the Titanic or not. 
-データは静的であり、あなたの仕事は、特定の乗客がタイタニックの沈没から生き残るかどうかを予測するMLモデルを訓練することです。
-
+**データは静的**であり、あなたの仕事は、特定の乗客がタイタニックの沈没から生き残るかどうかを予測するMLモデルを訓練することです。
 Your first task is to perform basic feature engineering on the data. 
 最初のタスクは、データに対して基本的な特徴エンジニアリングを行うことです。
-
 For example, there are some missing values that you need to fill in (or impute), and you need to remove columns that have no power to predict whether a given passenger survives the sinking of the _Titanic or not. 
 例えば、埋める必要のある欠損値がいくつかあり、特定の乗客がタイタニックの沈没から生き残るかどうかを予測する力を持たない列を削除する必要があります。
-
 The_ _Titanic dataset is popular, as you can learn the basics of data cleaning, transforming_ data into features, and fitting a model to the data.
 _タイタニックデータセットは人気があり、データクリーニングの基本、データを特徴に変換すること、そしてデータにモデルを適合させることを学ぶことができます。
 
@@ -324,266 +315,249 @@ Immutable files are not suitable as the data layer of record in an enterprise wh
 不変ファイルは、EUの一般データ保護規則（GDPR）やカリフォルニア州消費者プライバシー法（CCPA）が、ユーザーにデータの削除や更新を許可し、その使用と出所を追跡することを要求する企業の記録データ層としては適していません。
 
 There are, however, no new passengers arriving for the Titanic. 
-ただし、タイタニックには新しい乗客が到着することはありません。
-
+**ただし、タイタニックには新しい乗客が到着することはありません。**
 So you don’t have to worry about adding new passengers to the dataset as they arrive, removing a passen‐ ger from the dataset because of a GDPR request from a close relative, or selecting a subset of the available passengers as training data because you can’t or don’t want to train your model on all available data. 
 したがって、到着する新しい乗客をデータセットに追加したり、近親者からのGDPRリクエストに基づいてデータセットから乗客を削除したり、すべての利用可能なデータでモデルを訓練できない、または訓練したくないために利用可能な乗客のサブセットをトレーニングデータとして選択したりすることを心配する必要はありません。
-
 You will also need to re-create the training and test sets from whatever rows you select as your training data.
 また、トレーニングデータとして選択した行からトレーニングセットとテストセットを再作成する必要があります。
 
-Production ML systems typically work with _mutable data. 
-プロダクションMLシステムは通常、_可変データ_ を扱います。
+<!-- ここまで読んだ! -->
 
+Production ML systems typically work with _mutable data. 
+**プロダクションMLシステムは通常、mutable dataを扱います。**
 Mutable data is typically_ stored in a row-oriented or column-oriented store and supports efficient inserts, appends, updates, and deletions. 
 可変データは通常、行指向または列指向ストアに保存され、効率的な挿入、追加、更新、および削除をサポートします。
-
 This introduces challenges for data scientists who have only used Python to read and write feature data. 
 これにより、特徴データを読み書きするためにPythonのみを使用してきたデータサイエンティストにとっての課題が生じます。
-
 In the past, they had to learn SQL and work directly with the database, but now, they can also read/write mutable data using Python and DataFrame APIs, which is the main focus of this book.
 過去には、SQLを学び、データベースと直接作業する必要がありましたが、現在ではPythonとDataFrame APIを使用して可変データを読み書きすることもでき、これが本書の主な焦点です。
 
+---
+
+補足: 
 2 Parquet files store tabular data in a columnar format—the values for each column are stored together, ena‐ bling faster aggregate operations at the column level (such as the average value for a numerical column) and [better compression, with both dictionary and run-length encoding.](https://oreil.ly/bEjOI)
 2 Parquetファイルは、表形式データを列指向形式で保存します—各列の値は一緒に保存され、列レベルでの集約操作（数値列の平均値など）を高速化し、[辞書とランレングスエンコーディングの両方でより良い圧縮を実現します。](https://oreil.ly/bEjOI)
 
 3 The Titanic dataset is a well-known example of a binary classification problem in ML, where you have to train a model to predict whether a given passenger will survive or not.  
 3 タイタニックデータセットは、特定の乗客が生き残るかどうかを予測するモデルを訓練する必要があるMLのバイナリ分類問題のよく知られた例です。
 
+---
 
-
-. In Chapters 6 and 7, we dive into the details of data transformations to create features for batch, real-time, and LLM ML systems.
+Mutable data introduces challenges for feature engineering.
+**可変データは、特徴エンジニアリングに課題をもたらします。**
+There are many data transformations—such as aggregations, binning, and dimensionality reduction, and traditionally called “data preparation steps”—that can be performed before storing feature data in databases (or feature stores). 
+多くのデータ変換—集約、ビニング、次元削減など、伝統的に「データ準備ステップ」と呼ばれるもの—は、特徴データをデータベース（または特徴ストア）に保存する前に実行できます。
+However, there are also data transforma‐ tions, such as encoding (categorical) strings into a numerical representation and nor‐ malizing numerical variables, that are parameterized by the training data. 
+しかし、（カテゴリカル）文字列を数値表現にエンコードしたり、数値変数を正規化したりするなど、トレーニングデータによってパラメータ化されるデータ変換もあります。
+As you don’t know what the training data is until you select it and read from your data store, these data transformations happen after reading from the data store. 
+データストアから選択して読み取るまでトレーニングデータが何であるかはわからないため、これらのデータ変換はデータストアから読み取った後に発生します。
+In Chapter 2, we introduce a taxonomy of data transformations for ML that helps you identify whether you should perform data transformations before saving feature data or after reading data from the feature store. 
+第2章では、MLのためのデータ変換の分類法を紹介し、**特徴データを保存する前にデータ変換を実行するか、特徴ストアからデータを読み取った後に実行するかを特定**するのに役立てます。
+In Chapters 6 and 7, we dive into the details of data transformations to create features for batch, real-time, and LLM ML systems.
 第6章と第7章では、バッチ、リアルタイム、およびLLM MLシステムのための特徴を作成するためのデータ変換の詳細に深く掘り下げます。
 
-###### A Brief History of Machine Learning Systems
-###### 機械学習システムの簡単な歴史
+<!-- ここまで読んだ! -->
+
+### A Brief History of Machine Learning Systems　機械学習システムの簡単な歴史
 
 In the mid-2010s, revolutionary ML systems started appearing in consumer internet applications, such as image tagging in Facebook and Google Translate. 
-2010年代中頃、革命的なMLシステムがFacebookの画像タグ付けやGoogle翻訳などの消費者向けインターネットアプリケーションに登場し始めました。
-
+**2010年代中頃、革命的なMLシステムがFacebookの画像タグ付けやGoogle翻訳などの消費者向けインターネットアプリケーションに登場し始めました。** (それくらいの時期なんだ...! :thinking:)
 The first generation of ML systems were either batch ML systems that made predictions on a schedule (see Figure 1-1) or interactive online ML systems that made predictions in response to user actions.
 最初の世代のMLシステムは、スケジュールに基づいて予測を行うバッチMLシステム（図1-1を参照）またはユーザーのアクションに応じて予測を行うインタラクティブなオンラインMLシステムのいずれかでした。
 
+![]()
 _Figure 1-1. A monolithic batch ML system that can run in either training mode or inference mode._
 _図1-1. トレーニングモードまたは推論モードのいずれかで実行できるモノリシックなバッチMLシステム。_
 
 A challenge in building batch ML systems is to ensure that the features created for training data and the features created for batch inference are consistent. 
-バッチMLシステムを構築する際の課題は、トレーニングデータのために作成された特徴とバッチ推論のために作成された特徴が一貫していることを保証することです。
-
+**バッチMLシステムを構築する際の課題は、トレーニングデータのために作成された特徴とバッチ推論のために作成された特徴が一貫していることを保証すること**です。
 This can be achieved by building a batch program (or pipeline) that is run in either training mode or inference mode. 
 これは、トレーニングモードまたは推論モードのいずれかで実行されるバッチプログラム（またはパイプライン）を構築することで達成できます。
-
 The monolithic architecture ensures the same “Create Features” code is run to create training data (from historical data) and inference data (from new data).  
 モノリシックアーキテクチャは、トレーニングデータ（履歴データから）と推論データ（新しいデータから）を作成するために同じ「特徴を作成する」コードが実行されることを保証します。
 
+<!-- ここまで読んだ! -->
+
 In Figure 1-2, you can see an interactive ML system that receives requests from clients and responds with predictions in real time. 
 図1-2では、クライアントからのリクエストを受け取り、リアルタイムで予測に応答するインタラクティブなMLシステムを見ることができます。
-
 In this architecture, you need two separate systems—an offline training pipeline and an online model-serving service.
 このアーキテクチャでは、オフラインのトレーニングパイプラインとオンラインのモデル提供サービスという2つの別々のシステムが必要です。
-
 You can no longer ensure consistent features between training and inference by having a single monolithic program. 
-単一のモノリシックプログラムを持つことで、トレーニングと推論の間で一貫した特徴を保証することはできなくなります。
-
+**単一のモノリシックプログラムを持つことで、トレーニングと推論の間で一貫した特徴を保証することはできなくなります。**
 Early solutions to this problem involved versioning the feature creation source code and ensuring that both training and serving use the same version.
 この問題に対する初期の解決策は、特徴作成のソースコードのバージョン管理を行い、トレーニングと提供の両方が同じバージョンを使用することを保証することでした。
 
+![]()
 _Figure 1-2. A (real-time) interactive ML system requires a separate offline training system from the online inference systems. Notice that the online inference pipeline is stateless. We will see later that stateful online inference pipelines require adding a feature store to this architecture._
 _図1-2. （リアルタイム）インタラクティブMLシステムは、オンライン推論システムとは別のオフライントレーニングシステムを必要とします。オンライン推論パイプラインはステートレスであることに注意してください。後で、ステートフルなオンライン推論パイプラインには、このアーキテクチャにフィーチャーストアを追加する必要があることを見ていきます。_
 
 Stateless online ML systems were, and still are, useful in some cases. 
-ステートレスオンラインMLシステムは、いくつかのケースで有用でしたし、今でも有用です。
-
+**ステートレスオンラインMLシステム**は、いくつかのケースで有用でしたし、今でも有用です。
 For example, an image tagging program can take a photo as input, and an image classification model predicts the bounding boxes and labels for objects identified in the image. 
 例えば、画像タグ付けプログラムは写真を入力として受け取り、画像内で識別されたオブジェクトのバウンディングボックスとラベルを予測する画像分類モデルがあります。
-
 The first chatbots that used LLMs were stateless online ML systems. 
-LLMを使用した最初のチャットボットは、ステートレスオンラインMLシステムでした。
-
+**LLMを使用した最初のチャットボットは、ステートレスオンラインMLシステムでした。**
 The chatbot server received user input as a prediction request and appended the user input to a system prompt. 
 チャットボットサーバーは、ユーザー入力を予測リクエストとして受け取り、ユーザー入力をシステムプロンプトに追加しました。
-
 The system prompt was the text, added by the chatbot developer, that typically instructed the LLM to be helpful, not abusive, and not to reveal sensitive information. 
 システムプロンプトは、チャットボット開発者によって追加されたテキストで、通常はLLMに対して役立つように、攻撃的でないように、そして機密情報を明らかにしないように指示しました。
-
 The combined prompt was then sent to an LLM that returned a response. 
 その後、結合されたプロンプトがLLMに送信され、応答が返されました。
-
 LLM responses were simply predictions of the most probable sequence of characters that follow the combined prompt.
 LLMの応答は、結合されたプロンプトに続く最も可能性の高い文字のシーケンスの予測に過ぎませんでした。
 
 Stateless online ML systems are, however, limited by their training data. 
-しかし、ステートレスオンラインMLシステムは、そのトレーニングデータによって制限されています。
-
+**しかし、ステートレスオンラインMLシステムは、そのトレーニングデータによって制限されています。**
 The image classifier can only identify objects from the fixed number of labels in its training data. 
 画像分類器は、トレーニングデータにある固定された数のラベルからのみオブジェクトを識別できます。
-
 The chatbot cannot answer questions about events that happened after the creation of its training data. 
-チャットボットは、トレーニングデータの作成後に発生したイベントに関する質問に答えることができません。
-
+**チャットボットは、トレーニングデータの作成後に発生したイベントに関する質問に答えることができません。**
 You can overcome this limitation by providing history and context information as input into a model. 
-この制限を克服するためには、履歴とコンテキスト情報をモデルへの入力として提供することができます。
-
+**この制限を克服するためには、履歴とコンテキスト情報をモデルへの入力として提供することができます。**
 For example, an online recommender model could take as input recent products you viewed or liked in order to predict products to recommend to you. 
 例えば、オンラインレコメンダーモデルは、最近あなたが閲覧したり好んだ製品を入力として受け取り、あなたに推奨する製品を予測することができます。
-
 That is, passing your recent history as input features is sufficient for the model to make predictions with recent data—you don’t need to retrain the model with information about your recent orders. 
-つまり、最近の履歴を入力特徴として渡すことは、モデルが最近のデータで予測を行うのに十分です—最近の注文に関する情報でモデルを再トレーニングする必要はありません。
-
+**つまり、最近の履歴を入力特徴量として渡すことは、モデルが最近のデータで予測を行うのに十分です—最近の注文に関する情報でモデルを再トレーニングする必要はありません。**
 Similarly, we will see that you can also retrieve and add context information to an LLM’s prompt so that it can answer questions about events that happened after its training cutoff time. 
 同様に、LLMのプロンプトにコンテキスト情報を取得して追加することで、トレーニングのカットオフ時間以降に発生したイベントに関する質問に答えることができることも見ていきます。
-
 For example, an LLM trained in 2024 could tell you who won the 2025 NBA finals if you include in the prompt the Wikipedia article about the 2025 NBA finals.
 例えば、2024年にトレーニングされたLLMは、2025年NBAファイナルに関するWikipedia記事をプロンプトに含めれば、2025年NBAファイナルの勝者を教えてくれるでしょう。
 
-But where does this context and history come from? 
-しかし、このコンテキストと履歴はどこから来るのでしょうか？
+<!-- ここまで読んだ! -->
 
+But where does this context and history come from? 
+**しかし、このコンテキストと履歴はどこから来るのでしょうか？**
 The client requesting the prediction can pass it as parameters, but more often than not, the client is an application whose state is stored in a database. 
 予測をリクエストするクライアントは、それをパラメータとして渡すことができますが、クライアントはデータベースに状態が保存されているアプリケーションであることが多いです。
-
 For example, our recommender model may need input features created from a user’s recent activity and historical orders. 
-例えば、私たちのレコメンダーモデルは、ユーザーの最近の活動や履歴注文から作成された入力特徴を必要とするかもしれません。
-
+**例えば、私たちのレコメンダーモデルは、ユーザーの最近の活動や履歴注文から作成された入力特徴を必要とするかもしれません。**
 But the source data for the features can’t be sent by the client, as it is stored in the client’s database. 
 しかし、特徴のためのソースデータはクライアントのデータベースに保存されているため、クライアントによって送信することはできません。
-
 What if, instead, the features were created and stored by a separate stateful system and the online model could just read those features when a prediction request arrived?
-代わりに、特徴が別のステートフルシステムによって作成され保存され、オンラインモデルが予測リクエストが到着したときにそれらの特徴を読み取ることができたらどうでしょうか？
+**代わりに、特徴量が別のステートフルシステムによって作成され保存され、オンラインモデルが予測リクエストが到着したときにそれらの特徴を読み取ることができたらどうでしょうか？**
 
-The general problem of building stateful online ML systems was first addressed by feature stores, which were introduced as a new category of platform by Uber in 2017, [with their article on their internal Michelangelo platform. 
-ステートフルなオンラインMLシステムを構築する一般的な問題は、2017年にUberによって新しいプラットフォームのカテゴリとして導入されたフィーチャーストアによって最初に取り上げられました。[彼らの内部のMichelangeloプラットフォームに関する記事で。 
+<!-- ここまで読んだ! -->
 
-Feature stores manage the](https://oreil.ly/k5_DV) transformation and storage of context and history as features that can be easily used by online models (see Figure 1-3).
-フィーチャーストアは、オンラインモデルで簡単に使用できる特徴としてコンテキストと履歴の変換と保存を管理します（図1-3を参照）。
+The general problem of building stateful online ML systems was first addressed by feature stores, which were introduced as a new category of platform by Uber in 2017, [with their article on their internal Michelangelo platform. Feature stores manage the](https://oreil.ly/k5_DV) transformation and storage of context and history as features that can be easily used by online models (see Figure 1-3).
+ステートフルなオンラインMLシステムを構築するという一般的な問題は、2017年にUberによって新しいプラットフォームカテゴリとして導入されたフィーチャーストアによって最初に対処されました。[彼らの内部Michelangeloプラットフォームに関する記事で。フィーチャーストアは、オンラインモデルで簡単に使用できる特徴として、コンテキストと履歴の変換と保存を管理します（図1-3を参照）。](https://oreil.ly/k5_DV) (図1-3参照)
+(ウーバーさんのFeature Storeのブログって、こういうステートフルなリアルタイムMLシステムの文脈だったのか...!!:thinking:)
 
+![]()
 _Figure 1-3. Many (real-time) interactive ML systems also require history and context to make personalized predictions. The feature store enables personalized history and context to be retrieved at low latency as precomputed features for online models._
 _図1-3. 多くの（リアルタイム）インタラクティブMLシステムは、パーソナライズされた予測を行うために履歴とコンテキストを必要とします。フィーチャーストアは、オンラインモデルのための事前計算された特徴としてパーソナライズされた履歴とコンテキストを低遅延で取得できるようにします。_
 
-A feature pipeline reads historical or new data from one or more data sources, transforms it into features, and stores the feature data in the feature store. 
-フィーチャーパイプラインは、1つまたは複数のデータソースから履歴データまたは新しいデータを読み取り、それを特徴に変換し、フィーチャーストアに特徴データを保存します。
+<!-- ここまで読んだ! -->
 
+A feature pipeline reads historical or new data from one or more data sources, transforms it into features, and stores the feature data in the feature store. 
+**フィーチャーパイプラインは、1つまたは複数のデータソースから履歴データまたは新しいデータを読み取り、それを特徴に変換し、フィーチャーストアに特徴データを保存します。**
 Online inference programs use API calls to retrieve the precomputed feature data that is then passed to models for online predictions. 
 オンライン推論プログラムは、API呼び出しを使用して事前計算された特徴データを取得し、それをモデルに渡してオンライン予測を行います。
-
-As the feature store collects feature data over time, it is  
-フィーチャーストアが時間の経過とともに特徴データを収集するにつれて、それは
-
-also used to create training data for training models. 
-トレーニングモデルのためのトレーニングデータを作成するためにも使用されます。
-
+As the feature store collects feature data over time, it is also used to create training data for training models. 
+フィーチャーストアは時間の経過とともに特徴データを収集するため、モデルのトレーニングのためのトレーニングデータを作成するためにも使用されます。
 Feature pipelines can be batch programs that run on a schedule, but feature data can then only be as fresh as the most recent run. 
-フィーチャーパイプラインは、スケジュールに基づいて実行されるバッチプログラムであることがありますが、フィーチャーデータは最も最近の実行の新鮮さに制限されます。
-
+**フィーチャーパイプラインは、スケジュールに基づいて実行されるバッチプログラムであることがありますが、フィーチャーデータは最も最近の実行の新鮮さに制限されます**。(うんうん...ストリーミングプログラムじゃない限り...!:thinking:)
 If you need to make very recent events (such as user activity in the last 10 minutes) available as features, you can write a feature pipeline as a stream processing program. 
-非常に最近のイベント（例えば、過去10分間のユーザー活動）を特徴として利用可能にする必要がある場合、フィーチャーパイプラインをストリーム処理プログラムとして記述することができます。
-
+**非常に最近のイベント（例えば、過去10分間のユーザー活動）を特徴として利用可能にする必要がある場合、フィーチャーパイプラインをストリーム処理プログラムとして記述することができます。** (うんうん...!:thinking:)
 Batch and streaming feature pipelines are covered in Chapters 8 and 9, while feature stores and data transformations are explored in Chapters 4 to 7.
 バッチおよびストリーミングフィーチャーパイプラインは第8章と第9章で扱われ、フィーチャーストアとデータ変換は第4章から第7章で探求されます。
-
 The term ML pipeline is a collective term that refers to any of the feature pipelines, training pipelines, and inference pipelines that make up the ML system.
-MLパイプラインという用語は、MLシステムを構成するフィーチャーパイプライン、トレーニングパイプライン、および推論パイプラインのいずれかを指す総称です。
+**MLパイプラインという用語は、MLシステムを構成するフィーチャーパイプライン、トレーニングパイプライン、および推論パイプラインのいずれかを指す総称です。** (あ、これ今後のブログで引用できる文言だ...!!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 Stateless LLM applications, such as the first chatbots, faced a challenge similar to that faced by stateless ML systems—they needed to incorporate relevant and timely context as input, not just for events that happened after the training data cutoff time but also for private data not scraped by LLMs for training. 
-最初のチャットボットのようなステートレスLLMアプリケーションは、ステートレスMLシステムが直面したのと同様の課題に直面しました—彼らは、トレーニングデータのカットオフ時間以降に発生したイベントだけでなく、トレーニングのためにLLMによってスクレイピングされなかったプライベートデータに対しても、関連性がありタイムリーなコンテキストを入力として組み込む必要がありました。
-
+**最初のチャットボットのようなステートレスLLMアプリケーションは、ステートレスMLシステムが直面したのと同様の課題に直面しました—彼らは、トレーニングデータのカットオフ時間以降に発生したイベントだけでなく、トレーニングのためにLLMによってスクレイピングされなかったプライベートデータに対しても、関連性がありタイムリーなコンテキストを入力として組み込む必要がありました。**(なるほど確かに...!! :thinking:)
 The solution was to include context data, retrieved at request time, in system prompts. 
-解決策は、リクエスト時に取得されたコンテキストデータをシステムプロンプトに含めることでした。
-
+解決策は、リクエスト時に取得されたコンテキストデータをシステムプロンプトに含めることでした。(chipさんが言うところの「context-construction」ってやつか...!!:thinking:)
 The first such approach to gain widespread adoption was RAG using a vector database (see Figure 1-4).
-広く採用された最初のアプローチは、ベクターデータベースを使用したRAGでした（図1-4を参照）。
+広く採用された最初のアプローチは、ベクターデータベースを使用したRAGでした（図1-4を参照）。(うんうん...!:thinking:)
 
 _Figure 1-4. LLM systems can retrieve relevant context data at request time and add the context data to the prompt in a process known as retrieval-augmented generation (RAG)._
 _図1-4. LLMシステムは、リクエスト時に関連するコンテキストデータを取得し、リトリーバル拡張生成（RAG）として知られるプロセスでプロンプトにコンテキストデータを追加できます。_
 
+<!-- ここまで読んだ! -->
+
 The first RAG-powered LLM applications took the user input as a string and queried a vector database with the input string, returning chunks of text similar to the input using approximate nearest neighbor (ANN) search. 
-最初のRAG駆動のLLMアプリケーションは、ユーザー入力を文字列として受け取り、入力文字列でベクターデータベースにクエリを実行し、近似最近傍（ANN）検索を使用して入力に類似したテキストのチャンクを返しました。
-
+最初のRAG駆動のLLMアプリケーションは、ユーザ入力を文字列として受け取り、入力文字列でベクターデータベースにクエリを実行し、近似最近傍（ANN）検索を使用して入力に類似したテキストのチャンクを返しました。(うんうんまさに...!:thinking:)
 Any context information you wanted to include in the system prompt must first have been written to the vector database, and you needed a vector embedding pipeline to keep that data up to date.
-システムプロンプトに含めたいコンテキスト情報は、最初にベクターデータベースに書き込まれている必要があり、そのデータを最新の状態に保つためにはベクター埋め込みパイプラインが必要でした。
-
+**システムプロンプトに含めたいコンテキスト情報は、最初にベクターデータベースに書き込まれている必要があり、そのデータを最新の状態に保つためにはベクター埋め込みパイプラインが必要でした。**
 The pipeline transformed the source data into chunks of text that were then transformed into vector embeddings using an embedding model. 
 パイプラインは、ソースデータをテキストのチャンクに変換し、それを埋め込みモデルを使用してベクター埋め込みに変換しました。
-
 The vector embeddings were then written to a vector index so they could later be used for ANN search. 
 その後、ベクター埋め込みはベクターインデックスに書き込まれ、後でANN検索に使用できるようにされました。
-
 The system prompt was then no longer static, as it was a prompt template with both instructions and empty slots that were filled in with text retrieved from the vector index. 
-システムプロンプトはもはや静的ではなく、指示とベクターインデックスから取得されたテキストで埋められた空のスロットを持つプロンプトテンプレートになりました。
-
+**システムプロンプトはもはや静的ではなく、指示とベクターインデックスから取得されたテキストで埋められた空のスロットを持つプロンプトテンプレートになりました。**(うんうん確かに...!:thinking:)
 The prompt was also finite in size and defined by the LLM’s context window.
 プロンプトはサイズが有限であり、LLMのコンテキストウィンドウによって定義されていました。
-
 The context window stores both the input and output of the LLM, and recent LLMs have a context window of anything from a few KBs to a few MBs in size. 
 コンテキストウィンドウはLLMの入力と出力の両方を保存し、最近のLLMは数KBから数MBのサイズのコンテキストウィンドウを持っています。
-
 The challenge of preparing and retrieving context data for LLMs is known as context engineering. 
-LLMのためのコンテキストデータを準備し取得する課題は、コンテキストエンジニアリングとして知られています。
-
+**LLMのためのコンテキストデータを準備し取得する課題は、コンテキストエンジニアリングとして知られています。**
 The goal of context engineering is to construct a prompt from user input and context data that maximizes the performance of the LLM’s output for a given input.
-コンテキストエンジニアリングの目標は、ユーザー入力とコンテキストデータからプロンプトを構築し、特定の入力に対するLLMの出力のパフォーマンスを最大化することです。
+**コンテキストエンジニアリングの目標は、ユーザ入力とコンテキストデータからプロンプトを構築し、特定の入力に対するLLMの出力のパフォーマンスを最大化することです。** (なるほど...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 The first LLM applications were tightly focused assistants that helped in coding, answering medical questions, and even creating cooking recipes. 
 最初のLLMアプリケーションは、コーディング、医療質問への回答、さらには料理レシピの作成を支援することに特化したアシスタントでした。
-
 As LLM applications took on increasingly complex tasks, they required more autonomy in what data to query and what tasks to execute. 
-LLMアプリケーションがますます複雑なタスクを引き受けるようになると、どのデータをクエリし、どのタスクを実行するかについてより多くの自律性が必要になりました。
-
+**LLMアプリケーションがますます複雑なタスクを引き受けるようになると、どのデータをクエリし、どのタスクを実行するかについてより多くの自律性が必要になりました。**
 Agents are a class of LLM application that have a level of autonomy in how to query diverse data sources (vector indexes, search engines, feature stores, etc.) to retrieve relevant context data and how to plan and execute tasks to achieve goals. 
 エージェントは、関連するコンテキストデータを取得するために多様なデータソース（ベクターインデックス、検索エンジン、フィーチャーストアなど）をクエリする方法や、目標を達成するためにタスクを計画し実行する方法において自律性を持つLLMアプリケーションのクラスです。
-
 Anthropic defines agents as “systems where LLMs dynamically direct their own processes and tool usage, maintaining control over how they accomplish tasks.” 
-Anthropicはエージェントを「LLMが自らのプロセスとツールの使用を動的に指揮し、タスクを達成する方法を制御するシステム」と定義しています。
-
+**Anthropicはエージェントを「LLMが自らのプロセスとツールの使用を動的に指揮し、タスクを達成する方法を制御するシステム」と定義**しています。(これもブログ記事書く時に引用できそう...!:thinking:)
 Agents represent a paradigm shift from human-machine interaction to primarily machine-machine interaction. 
-エージェントは、人間と機械の相互作用から主に機械と機械の相互作用へのパラダイムシフトを表しています。
-
+エージェントは、**人間と機械の相互作用から主に機械と機械の相互作用へのパラダイムシフト**を表しています。
 Users set high-level goals, and developers provide agents with the tools and context required to achieve those goals.
 ユーザーは高レベルの目標を設定し、開発者はエージェントがそれらの目標を達成するために必要なツールとコンテキストを提供します。
 
+<!-- ここまで読んだ! -->
+
 Figure 1-5 shows how LLM RAG applications evolved to agentic AI systems where online inference programs have become agent programs. 
 図1-5は、LLM RAGアプリケーションがエージェントAIシステムに進化し、オンライン推論プログラムがエージェントプログラムになった様子を示しています。
-
 Agents have a unified standard, called Model Context Protocol (MCP), for retrieving RAG data from a variety of data sources and using internal and external APIs as tools.
 エージェントは、さまざまなデータソースからRAGデータを取得し、内部および外部APIをツールとして使用するための統一された標準であるモデルコンテキストプロトコル（MCP）を持っています。
 
+![]()
 _Figure 1-5. Agents require the same data processing pipelines to prepare context data for use in LLMs, but they have more autonomy in deciding on what actions to take to execute tasks._
 _図1-5. エージェントは、LLMで使用するためのコンテキストデータを準備するために同じデータ処理パイプラインを必要としますが、タスクを実行するためにどのアクションを取るかを決定する際により多くの自律性を持っています。_
 
 In both LLM application and agent architectures, the training of LLMs is optional, but it can be added by fine-tuning a foundation LLM using instruction data from a feature store; see Chapter 10. 
-LLMアプリケーションとエージェントアーキテクチャの両方において、LLMのトレーニングはオプションですが、フィーチャーストアからの指示データを使用して基盤となるLLMをファインチューニングすることで追加できます；第10章を参照してください。
-
+**LLMアプリケーションとエージェントアーキテクチャの両方において、LLMのトレーニングはオプション**ですが、フィーチャーストアからの指示データを使用して基盤となるLLMをファインチューニングすることで追加できます；第10章を参照してください。
 You’ll encounter the same engineering challenges with agents as with ML systems, such as how to precompute context data and vector embeddings and make them queryable.
-エージェントにおいても、MLシステムと同様のエンジニアリングの課題に直面します。例えば、コンテキストデータとベクター埋め込みを事前計算し、それらをクエリ可能にする方法などです。
-
-
-
-. You’ll encounter the same engineering challenges with agents as with ML systems, such as how to precompute context data and vector embeddings and make them queryable. 
-エージェントに関しても、MLシステムと同様のエンジニアリングの課題に直面します。例えば、コンテキストデータやベクトル埋め込みを事前に計算し、それらをクエリ可能にする方法などです。 
+**エージェントにおいても、MLシステムと同様のエンジニアリングの課題に直面します。例えば、コンテキストデータとベクター埋め込みを事前計算し、それらをクエリ可能にする方法**などです
 We cover vector embedding pipelines in Chapters 5 and 6 and RAG and context engineering in Chapter 12. 
 ベクトル埋め込みパイプラインについては第5章と第6章で、RAGとコンテキストエンジニアリングについては第12章で説明します。 
+
+<!-- ここまで読んだ! -->
+
+---
+(補足)
 Is it an ML system or an AI system? 
 これはMLシステムですか、それともAIシステムですか？ 
 An ML system is a type of AI system that learns from data through ML algorithms and statistical models. 
-MLシステムは、MLアルゴリズムと統計モデルを通じてデータから学習するAIシステムの一種です。 
+**MLシステムは、MLアルゴリズムと統計モデルを通じてデータから学習するAIシステムの一種**です。 
 AI is a broader term that also covers search, memory, and many of the techniques used to build agents. 
 AIはより広い用語で、検索、メモリ、エージェントを構築するために使用される多くの技術も含まれます。 
 As such, we often use the terms batch ML system, real-time ML system, and agentic AI system to describe different AIs. 
-そのため、バッチMLシステム、リアルタイムMLシステム、エージェントAIシステムという用語を使って異なるAIを説明することがよくあります。 
+**そのため、バッチMLシステム、リアルタイムMLシステム、エージェントAIシステムという用語を使って異なるAIを説明することがよくあります。 **
 We will use the most general term, AI system, except in cases where we refer to a specific class of ML system. 
 特定のMLシステムのクラスを指す場合を除いて、最も一般的な用語であるAIシステムを使用します。 
 
-###### MLOps and LLMOps
+<!-- ここまで読んだ! -->
+
+### MLOps and LLMOps
+
 The evolution of ML system architectures described here, from stateless to stateful systems, did not happen in a vacuum. 
-ここで説明するMLシステムアーキテクチャの進化は、ステートレスからステートフルシステムへのものであり、真空の中で起こったわけではありません。 
-It happened within a new field of ML engineering called machine learning operations (MLOps) that can be dated back to 2015, 
-これは、2015年に遡る機械学習オペレーション（MLOps）と呼ばれる新しいMLエンジニアリングの分野の中で起こりました。 
-[when authors at Google published a canonical paper entitled “Hidden Technical Debt](https://oreil.ly/oeHjv) [in Machine Learning Systems”. 
-Googleの著者たちが「Hidden Technical Debt」という標準的な論文を発表したときです。 
+ここで説明するMLシステムアーキテクチャの進化は、ステートレスからステートフルシステムへのものであり、真空の中で起こったわけではありません。
+It happened within a new field of ML engineering called machine learning operations (MLOps) that can be dated back to 2015, [when authors at Google published a canonical paper entitled “Hidden Technical Debt](https://oreil.ly/oeHjv) in Machine Learning Systems”. 
+それはMLエンジニアリングの新しい分野
+(MLOpsって2015年からなんだ...!もう10年、まだ10年??:thinking:)
 The paper cemented in ML developers’ minds the](https://oreil.ly/oeHjv) adage that only a small percentage of the work in building ML systems is training models. 
-この論文は、MLシステムを構築する作業の中で、モデルのトレーニングはほんの一部であるという格言をML開発者の心に定着させました。 
+この論文は、MLシステムを構築する作業の中で、モデルのトレーニングはほんの一部であるという格言をML開発者の心に定着させました。(有名な図のやつね! :thinking:)
 Most of the work is in data management and building and operating the ML system infrastructure. 
-ほとんどの作業はデータ管理やMLシステムインフラの構築と運用にあります。 
+**ほとんどの作業はデータ管理やMLシステムインフラの構築と運用にあります。** 
+
 Inspired by the DevOps movement in software engineering, 
 ソフトウェアエンジニアリングにおけるDevOps運動に触発され、 
 MLOps is a set of practices and processes for building reliable and scalable ML systems that can be quickly and incrementally developed, tested, and rolled out to production using automation where possible. 
@@ -593,37 +567,51 @@ MLOpsの実践は、開発ループを短縮し、ソフトウェアやデータ
 Many developers with a data science background are intimidated by the systems focus of MLOps on automation, testing, and operations. 
 データサイエンスのバックグラウンドを持つ多くの開発者は、MLOpsの自動化、テスト、運用に対するシステムの焦点に圧倒されます。 
 In contrast, DevOps’ North Star is to get to a minimum viable product (MVP) as fast as possible and then iteratively improve that MVP. 
-対照的に、DevOpsの北極星は、できるだけ早く最小限の実用的製品（MVP）に到達し、その後そのMVPを反復的に改善することです。 
+**対照的に、DevOpsの北極星は、できるだけ早く最小限の実用的製品（MVP）に到達し、その後そのMVPを反復的に改善することです。**
 In Chapter 2, we will introduce our process for building an MVP. 
 第2章では、MVPを構築するためのプロセスを紹介します。 
-[4 Wikipedia states that DevOps integrates and automates the work of software development (Dev) and IT operations (Ops) as a means for improving and shortening the systems development life cycle.  
-[4 Wikipediaによれば、DevOpsはソフトウェア開発（Dev）とIT運用（Ops）の作業を統合し自動化することで、システム開発ライフサイクルを改善し短縮する手段です。 
+
+<!-- ここまで読んだ! -->
+
+---
+(補足)
+4 Wikipedia states that DevOps integrates and automates the work of software development (Dev) and IT operations (Ops) as a means for improving and shortening the systems development life cycle.  
+4 Wikipediaによれば、DevOpsはソフトウェア開発（Dev）とIT運用（Ops）の作業を統合し自動化することで、システム開発ライフサイクルを改善し短縮する手段です。 
 
 -----
+
 The journey from building an MVP to having a reliable ML system involves more levels of testing than those for a traditional software system. 
 MVPを構築することから信頼性のあるMLシステムを持つことへの旅は、従来のソフトウェアシステムのテストよりも多くのレベルのテストを含みます。 
 Small bugs in either input data or code can easily cause an ML model to make incorrect predictions. 
-入力データやコードの小さなバグが、MLモデルが不正確な予測をする原因となることがあります。 
+**入力データやコードの小さなバグが、MLモデルが不正確な予測をする原因となることがあります。** 
 ML systems require significant engineering effort to test and ensure that they produce high-quality predictions that are free from bias. 
-MLシステムは、高品質でバイアスのない予測を生成することを確認するために、重要なエンジニアリング作業を必要とします。 
+MLシステムは、高品質でバイアスのない予測を生成することを確認するために、重要なエンジニアリング作業を必要とします。
 Testing occurs at all stages in ML system development, from feature engineering to model training to model deployment. 
 テストは、特徴エンジニアリングからモデルのトレーニング、モデルのデプロイメントまで、MLシステム開発のすべての段階で行われます。 
 In traditional software systems, you have to test the code and integrations. 
-従来のソフトウェアシステムでは、コードと統合をテストする必要があります。 
+**従来のソフトウェアシステムでは、コードと統合(integration)をテストする必要**があります。 
 In ML systems, you also need tests and monitoring for both input data and models. 
-MLシステムでは、入力データとモデルの両方に対してテストと監視が必要です。 
+**MLシステムでは、入力データとモデルの両方に対してもテストと監視が必要**です。
+
+<!-- ここまで読んだ! -->
+
 Tests that are run at development time include: 
-開発時に実行されるテストには以下が含まれます： 
-_Unit tests_ These validate feature logic (changes to feature logic can pollute training data). 
-_単体テスト_ これらは特徴ロジックを検証します（特徴ロジックの変更はトレーニングデータを汚染する可能性があります）。 
-_Integration tests_ These validate ML pipelines, helping catch errors in your Python code. 
-_統合テスト_ これらはMLパイプラインを検証し、Pythonコードのエラーをキャッチするのに役立ちます。 
-_Model validation tests_ These check for good performance and bias. 
-_モデル検証テスト_ これらは良好なパフォーマンスとバイアスをチェックします。 
-_Evals_ These are for safety, reliability, and performance of LLM applications and agents. 
-_評価_ これらはLLMアプリケーションとエージェントの安全性、信頼性、パフォーマンスのためのものです。 
+開発時に実行されるテストには以下が含まれます: 
+
+- _Unit tests_ These validate feature logic (changes to feature logic can pollute training data). 
+  - _単体テスト_ これらは特徴ロジックを検証します（特徴ロジックの変更はトレーニングデータを汚染する可能性があります）。 
+- _Integration tests_ These validate ML pipelines, helping catch errors in your Python code. 
+  - _統合テスト_ これらはMLパイプラインを検証し、Pythonコードのエラーをキャッチするのに役立ちます。 
+- _Model validation tests_ These check for good performance and bias. 
+  - _モデル検証テスト_ これらは良好なパフォーマンスとバイアスをチェックします。 
+- _Evals_ These are for safety, reliability, and performance of LLM applications and agents. 
+  - _評価_ これらはLLMアプリケーションとエージェントの安全性、信頼性、パフォーマンスのためのものです。 
+
+<!-- ここまで読んだ! -->
+
 Monitoring and tests run in production ML include: 
 運用MLで実行される監視とテストには以下が含まれます： 
+
 _Data validation tests_ These prevent bad data from entering your system. 
 _データ検証テスト_ これらは悪いデータがシステムに入るのを防ぎます。 
 _Model performance monitoring_ Most models degrade in performance over time. 
