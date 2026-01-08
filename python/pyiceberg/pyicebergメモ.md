@@ -1,5 +1,12 @@
 ## これは何?
 
+- Apache Icebergテーブル形式をPythonから操作するためのライブラリ、PyIcebergについてのざっくりメモ。
+
+## refs:
+
+- [PyIceberg Tutorial: Manage Apache Iceberg Tables in Python](https://estuary.dev/blog/getting-started-pyiceberg/)
+- [Schema evolution](https://py.iceberg.apache.org/api/#schema-evolution)
+
 
 ## ざっくりメモ
 
