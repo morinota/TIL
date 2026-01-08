@@ -12,318 +12,262 @@ Each year, you trained a new model, your model made only one prediction, and you
 毎年、新しいモデルを訓練し、モデルは1つの予測を行い、それで終わりでした。
 Each year, you started effectively from scratch. 
 毎年、実質的にゼロから始めていました。
-
 You had to find the data sources (again), rerequest access to the data to create the features for your model, and then dig out the Jupyter notebook from last year and update it with new data and improvements to your model. 
 データソースを（再度）見つけ、モデルの特徴を作成するためにデータへのアクセスを再リクエストし、昨年のJupyterノートブックを掘り出して新しいデータとモデルの改善で更新する必要がありました。
 
 This year, however, you realize that it may be worth investing the time in building the scaffolding for this project so that you have less work to do next year. 
-しかし、今年はこのプロジェクトのための足場を構築するために時間を投資する価値があることに気づきます。そうすれば、来年の作業が少なくて済みます。
-
+**しかし、今年はこのプロジェクトのための足場を構築するために時間を投資する価値があることに気づきます。そうすれば、来年の作業が少なくて済みます。**
 So instead of delivering a PowerPoint, you decide to build a dashboard. 
 したがって、PowerPointを提供する代わりに、ダッシュボードを構築することに決めました。
-
 Instead of requesting one-off access to the data, you build feature pipelines that extract the historical data from its source(s) and compute the features (and labels) used in your model. 
 一時的なデータアクセスをリクエストする代わりに、データのソースから履歴データを抽出し、モデルで使用される特徴（およびラベル）を計算する特徴パイプラインを構築します。
-
 You have an insight that the feature pipelines can be used to do two things: compute both the historical features used to train your model and the features that will be used as inputs into your trained model, which outputs the predictions. 
-特徴パイプラインは2つのことに使用できるという洞察があります。モデルを訓練するために使用される履歴的特徴と、訓練されたモデルに入力として使用される特徴の両方を計算することです。
-
+**特徴パイプラインは2つのことに使用できるという洞察があります。モデルを訓練するために使用される履歴的特徴と、訓練されたモデルに入力として使用される特徴の両方を計算すること**です。
 Now, after training your model, you can connect it to the feature pipelines to make predictions that power your dashboard. 
 今、モデルを訓練した後、特徴パイプラインに接続してダッシュボードを動かす予測を行うことができます。
-
 You thank yourself when you only have to tweak this ML system by adding/updating/removing features and training a new model. 
 特徴を追加/更新/削除し、新しいモデルを訓練することで、このMLシステムを調整するだけで済むと自分に感謝します。
-
 You update the frequency of your financial forecasts to quarterly with no extra work. 
 追加の作業なしで、財務予測の頻度を四半期ごとに更新します。
-
 You use the time you saved in grunt data sourcing, cleaning, and feature engineering to investigate new ML frameworks and model architectures, resulting in a much-improved financial model, much to the delight of your boss.  
 データソーシング、クリーニング、特徴エンジニアリングで節約した時間を使って、新しいMLフレームワークやモデルアーキテクチャを調査し、結果として大幅に改善された財務モデルを作成し、上司を喜ばせます。
 
------
-This example shows the difference between training a model to make a one-off prediction on a static dataset and building a batch ML system—a system that automates reading from data sources, transforming data into features, training models, performing inference on new data with the model, and updating a dashboard with the model’s predictions. 
-この例は、静的データセットに対して一度きりの予測を行うためにモデルを訓練することと、データソースからの読み取りを自動化し、データを特徴に変換し、モデルを訓練し、新しいデータに対してモデルで推論を行い、モデルの予測でダッシュボードを更新するバッチMLシステムを構築することの違いを示しています。
+<!-- ここまで読んだ! -->
 
+This example shows the difference between training a model to make a one-off prediction on a static dataset and building a batch ML system—a system that automates reading from data sources, transforming data into features, training models, performing inference on new data with the model, and updating a dashboard with the model’s predictions. 
+**この例は、静的データセットに対して一度きりの予測を行うためにモデルを訓練することと、データソースからの読み取りを自動化し、データを特徴に変換し、モデルを訓練し、新しいデータに対してモデルで推論を行い、モデルの予測でダッシュボードを更新するバッチMLシステムを構築することの違いを示しています。**
 The dashboard is the value delivered by the model to stakeholders. 
-ダッシュボードは、モデルがステークホルダーに提供する価値です。
+**ダッシュボードは、モデルがステークホルダーに提供する価値**です。
 
 If you want a model to generate repeated value, the model should make predictions more than once. 
 モデルに繰り返し価値を生成させたい場合、モデルは1回以上予測を行う必要があります。
-
 That means you are not finished when you have evaluated the model’s performance on a test set drawn from your static dataset. 
 つまり、静的データセットから抽出したテストセットでモデルのパフォーマンスを評価したときに、あなたは終わりではありません。
-
 Instead, you will have to build _ML pipelines, which are programs that transform raw data into features, feed_ features to your model for easy retraining, and feed new features to your model so that it can make predictions, generating value with every new prediction it makes. 
 代わりに、生のデータを特徴に変換し、モデルに特徴を供給して簡単に再訓練できるようにし、新しい特徴をモデルに供給して予測を行わせる_ MLパイプラインを構築する必要があります。これにより、モデルが行う新しい予測ごとに価値を生成します。
 
 With this book, you will embark on the same journey from training models on static datasets to building _ML systems—from decision trees to deep learning to LLM-_ powered (large language model) agents. 
 この本を通じて、静的データセットでモデルを訓練することから_ MLシステムを構築する同じ旅に出ることになります。決定木から深層学習、LLM（大規模言語モデル）を活用したエージェントまで。
-
 The most important part of that journey is working with dynamic data. 
-その旅の最も重要な部分は、動的データを扱うことです。
-
+**その旅の最も重要な部分は、動的データを扱うこと**です。
 This means moving from static data (such as the hand-curated datasets used in ML competitions found on Kaggle.com and crafting prompts for LLMs), to batch data that’s updated at some interval (hourly, daily, weekly, yearly), to the real-time data that’s needed to build intelligent interactive applications. 
 これは、静的データ（Kaggle.comで見つかるMLコンペティションで使用される手作りのデータセットやLLMのためのプロンプト作成など）から、ある間隔（毎時、毎日、毎週、毎年）で更新されるバッチデータ、そしてインテリジェントなインタラクティブアプリケーションを構築するために必要なリアルタイムデータに移行することを意味します。
 
-###### The Anatomy of a Machine Learning System 機械学習システムの構造
+<!-- ここまで読んだ! -->
+
+### The Anatomy of a Machine Learning System 機械学習システムの構造
 
 One of the main challenges you will face in building ML systems is managing the data that is used to train models and the data that models make predictions with. 
 MLシステムを構築する際に直面する主な課題の1つは、モデルを訓練するために使用されるデータと、モデルが予測を行うために使用するデータを管理することです。
-
 We can categorize ML systems by how they process the new data that is used to make predictions. 
 MLシステムは、予測を行うために使用される新しいデータを処理する方法によって分類できます。
-
 Does the ML system make predictions on a schedule (for example, once per day), or does it run 24/7, making predictions in response to user requests? 
 MLシステムは、スケジュールに従って予測を行いますか（たとえば、1日1回）、それとも24時間365日稼働し、ユーザーのリクエストに応じて予測を行いますか？
 
+<!-- ここまで読んだ! -->
+
 Spotify’s Discovery Weekly is an example of a batch ML system, which is a recommendation engine that, once per week, predicts which songs you might want to listen to and adds them to your playlist. 
-SpotifyのDiscovery WeeklyはバッチMLシステムの一例で、週に1回、あなたが聴きたい曲を予測し、それをプレイリストに追加するレコメンデーションエンジンです。
-
-In a batch ML system, the ML system reads a batch of data (from all 575M+ users in the case of Spotify) and makes predictions using the trained recommender ML model for all rows in the batch of data. 
+**SpotifyのDiscovery WeeklyはバッチMLシステムの一例で、週に1回、あなたが聴きたい曲を予測し、それをプレイリストに追加するレコメンデーションエンジンです。**
+In a batch ML system, the ML system reads a batch of data (from all 575M+ users in the case of Spotify) and makes predictions using the trained recommender ML model for all rows in the batch of data.
 バッチMLシステムでは、MLシステムはデータのバッチ（Spotifyの場合、575M以上のユーザーから）を読み取り、バッチ内のすべての行に対して訓練されたレコメンダーMLモデルを使用して予測を行います。
-
 The model takes all of the input features (such as how often you listen to music and the genres of music you listen to) and makes a prediction of the 30 “best” songs for you for the upcoming week. 
 モデルはすべての入力特徴（音楽を聴く頻度や聴く音楽のジャンルなど）を取り込み、次の週にあなたにとっての「ベスト」な30曲を予測します。
-
 The predictions are then stored in a database (Cassandra), and when you log on, the Spotify weekly recommendation list is downloaded from the database and shown as recommendations in the user interface. 
 予測はデータベース（Cassandra）に保存され、ログインするとSpotifyの週間レコメンデーションリストがデータベースからダウンロードされ、ユーザーインターフェースにレコメンデーションとして表示されます。
 
-TikTok’s recommendation engine, on the other hand, is famous for adapting its recommendations in near real time as you click and watch its short-form videos. 
-一方、TikTokのレコメンデーションエンジンは、あなたが短い動画をクリックして視聴する際に、ほぼリアルタイムでレコメンデーションを適応させることで有名です。
+<!-- ここまで読んだ! -->
 
+TikTok’s recommendation engine, on the other hand, is famous for adapting its recommendations in near real time as you click and watch its short-form videos. 
+**一方、TikTokのレコメンデーションエンジンは、あなたが短い動画をクリックして視聴する際に、ほぼリアルタイムでレコメンデーションを適応させることで有名**です。
 TikTok’s recommendation service is a _real-time ML system. It predicts which videos to_ show you as you scroll and watch videos. 
 TikTokのレコメンデーションサービスは_リアルタイムMLシステムです。スクロールして動画を視聴する際に、どの動画を_表示するかを予測します。
-
 Andrej Karpathy, ex-head of AI at Tesla, said TikTok’s recommendation engine “is scary good. It’s digital crack.” 
 テスラの元AI責任者であるAndrej Karpathyは、TikTokのレコメンデーションエンジンについて「恐ろしいほど優れている。デジタルクラックだ」と述べました。
-
 TikTok was the first online video platform to include real-time recommendations, which gave it a competitive advantage over incumbents that enabled it to build the world’s second most popular online video platform. 
-TikTokはリアルタイムレコメンデーションを含む最初のオンライン動画プラットフォームであり、これにより既存のプラットフォームに対して競争優位性を持ち、世界で2番目に人気のあるオンライン動画プラットフォームを構築することができました。
+**TikTokはリアルタイムレコメンデーションを含む最初のオンライン動画プラットフォーム**であり、これにより既存のプラットフォームに対して競争優位性を持ち、世界で2番目に人気のあるオンライン動画プラットフォームを構築することができました。
+
+<!-- ここまで読んだ! -->
 
 Lovable is a coding assistant for building web applications from a chat window on its website. 
 Lovableは、ウェブサイトのチャットウィンドウからウェブアプリケーションを構築するためのコーディングアシスタントです。
-
 It is the fastest-growing software company to reach $100 million in revenue, which took it just eight months. 
 これは、わずか8ヶ月で1億ドルの収益に達した最も急成長しているソフトウェア会社です。
-
 Lovable is an _agentic AI system that takes your_ instructions and uses an LLM to create and run your web application as TypeScript code along with CSS styling and an optional integrated database. 
 Lovableは、あなたの指示を受け取り、LLMを使用してウェブアプリケーションをTypeScriptコードとして作成し、CSSスタイリングとオプションの統合データベースを使用して実行する_エージェンティックAIシステムです。
-
 Agentic systems have natural language interfaces. 
 エージェンティックシステムは自然言語インターフェースを持っています。
-
 You give them a high-level goal or task to execute, and they work with a high degree of autonomy to achieve your goal or task. 
 あなたは彼らに高レベルの目標やタスクを実行するように指示し、彼らはその目標やタスクを達成するために高い自律性で作業します。
-
 Agentic systems are more often interactive systems than batch systems, but both are possible. 
-エージェンティックシステムはバッチシステムよりもインタラクティブシステムであることが多いですが、両方とも可能です。
+エージェンティックシステムはバッチシステムよりもインタラクティブシステムであることが多いですが、**両方とも可能**です。(??)
 
 This book provides a unified architecture, based around ML pipelines, for building these three types of ML systems: batch, real-time, and LLM applications. 
 この本は、バッチ、リアルタイム、LLMアプリケーションの3種類のMLシステムを構築するためのMLパイプラインを基にした統一アーキテクチャを提供します。
-
 In particular, this book addresses the data challenges in building ML systems. 
-特に、この本はMLシステムを構築する際のデータの課題に対処します。
-
+特に、**この本はMLシステムを構築する際のデータの課題に対処**します。
 Most ML systems need to process different types of data from different data sources, both for training models and for making predictions (inferences). 
 ほとんどのMLシステムは、モデルを訓練するためと予測（推論）を行うために、異なるデータソースから異なる種類のデータを処理する必要があります。
-
 For example, when TikTok recommends videos to you, it uses your recent viewing behavior (clicks, swipes, likes), your historical viewing behavior and preferences, and aggregated information such as what videos are trending right now for users like you, near you. 
 たとえば、TikTokがあなたに動画を推薦する際、最近の視聴行動（クリック、スワイプ、いいね）、過去の視聴行動や好み、そしてあなたのようなユーザーに近い場所で現在トレンドになっている動画などの集約情報を使用します。
-
 Processing all of this data in ML pipelines at scale is a significant engineering challenge that we cover in this book. 
-これらすべてのデータを大規模にMLパイプラインで処理することは、この本で取り上げる重要なエンジニアリングの課題です。
+**これらすべてのデータを大規模にMLパイプラインで処理することは、この本で取り上げる重要なエンジニアリングの課題**です。
 
-###### Types of Machine Learning 機械学習の種類
+<!-- ここまで読んだ! -->
+
+#### Types of Machine Learning 機械学習の種類
 
 The main types of machine learning used in ML systems are supervised learning, unsupervised learning, self-supervised learning, reinforcement learning, and in-context learning: 
 MLシステムで使用される主な機械学習の種類は、教師あり学習、教師なし学習、自己教師あり学習、強化学習、インコンテキスト学習です。
 
 _Supervised learning_ In supervised learning, you train a model with data containing features and labels. 
 _教師あり学習_ 教師あり学習では、特徴とラベルを含むデータでモデルを訓練します。
-
 Each row in a training dataset contains a set of input feature values and a label (the outcome, given the input feature values). 
 訓練データセットの各行には、入力特徴値のセットとラベル（入力特徴値に基づく結果）が含まれています。
-
 Supervised ML algorithms learn relationships between the labels (also called the target variables) and the input feature values. 
 教師ありMLアルゴリズムは、ラベル（ターゲット変数とも呼ばれる）と入力特徴値との関係を学習します。
-
 Supervised ML is used to solve classification problems, in which the ML system will answer yes-or-no questions (Is there a hot dog in this photo?) or make a multi-class classification (What type of hot dog is this?). 
 教師ありMLは、MLシステムがイエスまたはノーの質問に答える（この写真にホットドッグはありますか？）か、マルチクラス分類を行う（これはどのタイプのホットドッグですか？）ために使用されます。
-
 Supervised ML is also used to solve regression problems, in which the model predicts a numeric value using the input feature values (e.g., by estimating the price of an apartment, given input features such as its area, condition, and location). 
 教師ありMLは、モデルが入力特徴値を使用して数値を予測する回帰問題を解決するためにも使用されます（たとえば、面積、状態、場所などの入力特徴に基づいてアパートの価格を推定することによって）。
-
 Finally, supervised ML is also used to fine-tune chatbots using open source LLMs. 
 最後に、教師ありMLはオープンソースのLLMを使用してチャットボットを微調整するためにも使用されます。
-
 For example, if you train a chatbot with questions (features) and answers (labels) from the legal profession, your chatbot can be fine-tuned so that it talks like a lawyer.  
 たとえば、法律業界からの質問（特徴）と回答（ラベル）でチャットボットを訓練すると、チャットボットは弁護士のように話すように微調整できます。
 
------
+<!-- ここまで読んだ! -->
 _Unsupervised learning_ In contrast, unsupervised learning algorithms learn from input features without any labels. 
 _教師なし学習_ 対照的に、教師なし学習アルゴリズムはラベルなしの入力特徴から学習します。
-
 For example, you could train an anomaly detection system with credit card transactions, and if an anomalous credit card transaction arrives, you could flag it as suspicious and potentially fraudulent. 
 たとえば、クレジットカード取引で異常検知システムを訓練し、異常なクレジットカード取引が発生した場合、それを疑わしいものとしてフラグを立て、潜在的に詐欺的であると見なすことができます。
 
 _Self-supervised learning_ Self-supervised learning involves generating a labeled dataset from a fully unlabeled one. 
-_自己教師あり学習_ 自己教師あり学習は、完全にラベルのないデータセットからラベル付きデータセットを生成することを含みます。
-
+_自己教師あり学習_ 自己教師あり学習は、**完全にラベルのないデータセットからラベル付きデータセットを生成することを含み**ます。
 The main method of generating the labeled dataset is _masking. 
 ラベル付きデータセットを生成する主な方法は_マスキングです。
-
 For natural language processing (NLP), you can provide a piece of text and mask out individual words (via masked language modeling) and train a model to predict the missing word. 
 自然言語処理（NLP）では、テキストの一部を提供し、個々の単語をマスクアウト（マスクされた言語モデリングを介して）し、欠落している単語を予測するモデルを訓練できます。
-
 Here, you know the label (the missing word), so you can train the model using any supervised learning algorithm. 
 ここでは、ラベル（欠落している単語）を知っているので、任意の教師あり学習アルゴリズムを使用してモデルを訓練できます。
-
 In NLP, you can also mask out entire sentences with next-sentence prediction that can teach a model to understand longer-term dependencies across sentences. 
 NLPでは、次の文の予測を使用して、モデルが文間の長期的な依存関係を理解できるように、全体の文をマスクアウトすることもできます。
-
 The language model BERT uses both masked language modeling and next-sentence prediction for training. 
 言語モデルBERTは、訓練のためにマスクされた言語モデリングと次の文の予測の両方を使用します。
-
 Similarly, with image classification, you can mask out a (randomly chosen) small part of each image and then train a model to reproduce the original image with as high fidelity as possible. 
 同様に、画像分類では、各画像の（ランダムに選ばれた）小さな部分をマスクアウトし、元の画像をできるだけ高い忠実度で再現するモデルを訓練できます。
 
+<!-- ここまで読んだ! -->
+
 _Reinforcement learning_ Reinforcement learning (RL) is another type of ML algorithm (not covered in this book). 
 _強化学習_ 強化学習（RL）は、別のタイプのMLアルゴリズムです（この本では扱っていません）。
-
 RL is concerned with learning how to make optimal decisions. 
 RLは、最適な意思決定を行う方法を学ぶことに関係しています。
 
+<!-- ここまで読んだ! -->
+
 _In-context learning_ Supervised ML, unsupervised ML, and RL can only learn with the data they are trained on. 
 _インコンテキスト学習_ 教師ありML、教師なしML、RLは、訓練されたデータでのみ学習できます。
-
-
-
-. RL is concerned with learning how to make optimal decisions.
-RLは最適な意思決定を学ぶことに関係しています。
-
-_In-context learning_ Supervised ML, unsupervised ML, and RL can only learn with the data they are trained on. 
-_インコンテキスト学習_ 監視付き機械学習（Supervised ML）、非監視付き機械学習（Unsupervised ML）、および強化学習（RL）は、訓練されたデータでのみ学習できます。
-
 However, LLMs that are large enough exhibit a different type of ML: in-context learning, which is the ability to learn to solve new tasks by providing context (examples) in the prompt to the LLM. 
-しかし、十分に大きなLLMは異なるタイプの機械学習を示します：インコンテキスト学習です。これは、LLMへのプロンプトにコンテキスト（例）を提供することによって新しいタスクを解決する方法を学ぶ能力です。
-
+しかし、十分に大きなLLMは異なるタイプの機械学習を示します：**インコンテキスト学習です。これは、LLMへのプロンプトにコンテキスト（例）を提供することによって新しいタスクを解決する方法を学ぶ能力**です。
 LLMs exhibit in-context learning even though they are trained only with the objective of next-token prediction.
 LLMsは、次のトークン予測の目的でのみ訓練されているにもかかわらず、インコンテキスト学習を示します。
-
 Agents build on in-context learning, but they require context engineering to get the relevant data into the LLM’s prompt. 
 エージェントはインコンテキスト学習に基づいて構築されますが、関連データをLLMのプロンプトに取り込むためにはコンテキストエンジニアリングが必要です。
-
 With in-context learning, the newly learned skill is forgotten directly after the LLM’s context window is emptied—no model weights are updated as they are during model training.
-インコンテキスト学習では、新しく学習したスキルはLLMのコンテキストウィンドウが空になるとすぐに忘れられます—モデルの重みはモデル訓練中のように更新されません。
+**インコンテキスト学習では、新しく学習したスキルはLLMのコンテキストウィンドウが空になるとすぐに忘れられます**—モデルの重みはモデル訓練中のように更新されません。
+
+<!-- ここまで読んだ! -->
 
 ChatGPT is a good example of an AI system that uses a combination of different types of ML. 
 ChatGPTは、異なるタイプの機械学習の組み合わせを使用するAIシステムの良い例です。
-
 ChatGPT includes an LLM pretrained with self-supervised learning, supervised learning to fine-tune the foundation model to create a task-specific model (such as a chatbot), and RL (with human feedback) to align the task-specific model with human values (e.g., to remove bias and vulgarity in a chatbot).
-ChatGPTは、自己教師あり学習で事前訓練されたLLM、基盤モデルを微調整してタスク特化型モデル（チャットボットなど）を作成するための監視付き学習、およびタスク特化型モデルを人間の価値観に合わせるための強化学習（人間のフィードバックを伴う）を含んでいます（例：チャットボットのバイアスや下品さを取り除くため）。
-
+**ChatGPTは、自己教師あり学習で事前訓練されたLLM、基盤モデルを微調整してタスク特化型モデル（チャットボットなど）を作成するための教師あり学習、およびタスク特化型モデルを人間の価値観に合わせるための強化学習（人間のフィードバックを伴う）を含んでいます**（例：チャットボットのバイアスや下品さを取り除くため）。
 Finally, LLMs can learn from the data in the input prompt by using in-context learning.
 最後に、LLMsはインコンテキスト学習を使用して入力プロンプトのデータから学ぶことができます。
 
------
-###### Data Sources
-###### データソース
+<!-- ここまで読んだ! -->
+
+#### Data Sources　データソース
 
 Data for ML systems can, in principle, come from any available data source. 
 MLシステムのデータは、原則として、利用可能な任意のデータソースから取得できます。
-
 That said, some data sources and data formats are more popular as input into ML systems.
 とはいえ、いくつかのデータソースやデータフォーマットは、MLシステムへの入力としてより一般的です。
-
 In this section, we introduce the data sources most commonly encountered in enterprise computing.[1]
-このセクションでは、エンタープライズコンピューティングで最も一般的に遭遇するデータソースを紹介します。[1]
+このセクションでは、**エンタープライズコンピューティングで最も一般的に遭遇するデータソース**を紹介します。[1]
 
-###### Tabular data
-###### 表形式データ
+<!-- ここまで読んだ! -->
+
+##### Tabular data　表形式データ
 
 _Tabular data is data stored as tables containing columns and rows, typically in a data‐_ base. 
 _表形式データは、通常データベース内の列と行を含むテーブルとして保存されるデータです。_
-
 There are two main types of databases that are sources of data for ML:
-MLのデータソースとなるデータベースには、主に2つのタイプがあります：
+**MLのデータソースとなるデータベースには、主に2つのタイプ**があります: 
 
 _Row-oriented stores_ These include relational databases and NoSQL databases. 
 _行指向ストア_ これには、リレーショナルデータベースとNoSQLデータベースが含まれます。
-
 They have a storage layout that is optimized for reading and writing rows of data.
 これらは、データの行を読み書きするために最適化されたストレージレイアウトを持っています。
 
 _Column-oriented stores_ These include _data warehouses and_ _data lakehouses. 
 _列指向ストア_ これには、_データウェアハウス_ と_データレイクハウス_ が含まれます。
-
 They have a storage layout_ that is optimized for reading and processing columns of data (such as computing the min/max/average/sum for a column).
 これらは、データの列を読み取り処理するために最適化されたストレージレイアウトを持っています（例えば、列の最小/最大/平均/合計を計算するなど）。
 
 As a developer, you need to familiarize yourself with the APIs and query languages for both row-oriented and column-oriented stores. 
 開発者として、行指向ストアと列指向ストアの両方のAPIとクエリ言語に慣れる必要があります。
-
-For example, SQL and objectrelational mappers (ORM) are used by relational databases (MySQL, Postgres), keyvalue APIs (Cassandra, RocksDB), and JSON store APIs (MongoDB). 
+For example, SQL and objectrelational mappers (ORM) are used by relational databases (MySQL, Postgres), keyvalue APIs (Cassandra, RocksDB), and JSON store APIs (MongoDB).
 例えば、SQLやオブジェクトリレーショナルマッパー（ORM）は、リレーショナルデータベース（MySQL、Postgres）、キー値API（Cassandra、RocksDB）、およびJSONストアAPI（MongoDB）で使用されます。
-
 Columnar stores typically support reading and writing data with SQL and DataFrame APIs (Spark, Pandas, Polars).
 列指向ストアは通常、SQLおよびDataFrame API（Spark、Pandas、Polars）を使用してデータの読み書きをサポートします。
 
 In enterprises, much of the data generated by applications is stored in row-oriented stores. 
-企業では、アプリケーションによって生成されたデータの多くが行指向ストアに保存されます。
-
+**企業では、アプリケーションによって生成されたデータの多くが行指向ストアに保存されます。**
 Most enterprises have a large number of such databases, and instead of analyz‐ ing the data directly in place, they typically employ data pipelines that transfer some or all of the operational data to a centralized, scalable columnar store. 
-ほとんどの企業はそのようなデータベースを多数持っており、データを直接分析するのではなく、通常はデータパイプラインを使用して、運用データの一部またはすべてを中央集権的でスケーラブルな列指向ストアに転送します。
-
+**ほとんどの企業はそのようなデータベースを多数持っており、データを直接分析するのではなく、通常はデータパイプラインを使用して、運用データの一部またはすべてを中央集権的でスケーラブルな列指向ストアに転送します。**
 This enables analysts to process all historical data for the whole company in a platform. 
 これにより、アナリストはプラットフォーム上で会社全体のすべての履歴データを処理できます。
-
 This ana‐ lytical data is also the most common data source for AI systems in enterprises.
 この分析データは、企業のAIシステムにとって最も一般的なデータソースでもあります。
 
-###### Event data
-###### イベントデータ
+<!-- ここまで読んだ! -->
+
+##### Event data　イベントデータ
 
 _Event data contains a record of discrete occurrences or actions that happen at specific_ points in time, such as clicks on a website or a reading from a sensor. 
 _イベントデータは、特定の_ 時点で発生する離散的な出来事やアクションの記録を含みます。例えば、ウェブサイトのクリックやセンサーからの読み取りなどです。
-
 An _event-_ _streaming platform, such as Apache Kafka, is a data platform for collecting and tem‐_ porarily storing event data for downstream consumers of the event data. 
 _イベントストリーミングプラットフォーム_（Apache Kafkaなど）は、イベントデータの下流の消費者のためにイベントデータを収集し、一時的に保存するためのデータプラットフォームです。
-
 Examples of consumers are columnar data stores that store raw event data for subsequent analysis as well as stream processing programs that enable you to build real-time ML systems that react within a second of your click or swipe on their website.
-消費者の例としては、後続の分析のために生のイベントデータを保存する列指向データストアや、ウェブサイトでのクリックやスワイプに対して1秒以内に反応するリアルタイムMLシステムを構築できるストリーム処理プログラムがあります。
+**消費者の例としては、後続の分析のために生のイベントデータを保存する列指向データストアや、ウェブサイトでのクリックやスワイプに対して1秒以内に反応するリアルタイムMLシステムを構築できるストリーム処理プログラム**があります。
 
-###### Graph data
-###### グラフデータ
+<!-- ここまで読んだ! -->
+
+##### Graph data　グラフデータ
 
 _Graph data is represented as nodes (entities) and edges (relationships). 
 _グラフデータは、ノード（エンティティ）とエッジ（関係）として表現されます。_
-
 Graph data‐_ bases support the efficient storage and retrieval of complex, interconnected graph data. 
 グラフデータベースは、複雑で相互接続されたグラフデータの効率的な保存と取得をサポートします。
-
 The rich connectivity and attributes inherent in the graph enable ML models for link prediction and fraud detection. 
 グラフに固有の豊富な接続性と属性は、リンク予測や詐欺検出のためのMLモデルを可能にします。
-
 LLMs can also use graph databases as structured knowledge sources for improved reasoning and question answering.
 LLMsは、改善された推論や質問応答のための構造化された知識ソースとしてグラフデータベースを使用することもできます。
 
-###### Unstructured data
-###### 非構造化データ
+<!-- ここまで読んだ! -->
+
+##### Unstructured data　 非構造化データ
 
 Data that has a schema (a SQL table, a JSON object, or graph data) is called structured _data. 
-スキーマ（SQLテーブル、JSONオブジェクト、またはグラフデータ）を持つデータは、構造化データと呼ばれます。
-
+**スキーマ（SQLテーブル、JSONオブジェクト、またはグラフデータ）を持つデータは、構造化データと呼ばれます。**
 All other types of data are grouped into the antonymous category of unstructured_ _data. 
 その他のすべてのデータタイプは、非構造化データという対義語のカテゴリに分類されます。
-
 This includes text (PDFs, docs, HTML, markdown), image, video, and audio data. 
 これには、テキスト（PDF、ドキュメント、HTML、マークダウン）、画像、動画、音声データが含まれます。
-
 Unstructured data is typically stored in files, sometimes very large files of GBs of data or more, and stored in filesystems or object stores, like Amazon S3. 
 非構造化データは通常、ファイルに保存され、時には数GB以上の非常に大きなファイルとして保存され、ファイルシステムやオブジェクトストア（Amazon S3など）に保存されます。
-
 Deep learning has made huge strides in solving prediction problems with unstructured data. 
-深層学習は、非構造化データを用いた予測問題の解決において大きな進展を遂げました。
+**深層学習は、非構造化データを用いた予測問題の解決において大きな進展を遂げました。**
 
 Image tag‐ ging services, self-driving cars, voice transcription systems, and many other AI systems are all trained with vast amounts of manually labeled unstructured data.
 画像タグ付けサービス、自動運転車、音声転写システム、そして多くの他のAIシステムは、すべて膨大な量の手動でラベル付けされた非構造化データで訓練されています。
