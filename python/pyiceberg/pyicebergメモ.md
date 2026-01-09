@@ -39,6 +39,15 @@
 
 ### PyIcebergでIcebergテーブルをクエリする (Querying Iceberg Tables with PyIceberg)
 
+- 注目: scan()メソッドとrow_filter引数の振る舞いについてメモ
+  - scan()は、Icebergテーブルに対して「**読み取りプラン(DataScan)**」を作るAPI。
+    - 返り値のDataScanオブジェクトに対して`to_arrow()`, `to_pandas()`, `to_polars()`, `to_duckdb()`などのメソッドを呼ぶと、実データがロードされる感じ。
+  - row_filter引数は、「どの行を読むか(WHERE句っぽい感じ)」の条件を渡せる。
+    - `str` か `BooleanExpression` オブジェクトを渡せる。
+  - 挙動としては...
+    - **Icebergはパーティション情報やファイル統計を見て、「条件に絶対マッチしないParquetファイルはそもそも読まない(ファイルプルーニング)」を行う。**
+    - その後残ったファイルに対しては、エンジン側(polarsやpandasなど)が行レベルのフィルタを実際に適用する、という分業になってる。
+
 基本的なテーブル全体のスキャンは以下のように行う。
 
 ```python
@@ -153,45 +162,75 @@ print(result.to_string(preview_cols=10))
 
 ### PyIcebergでデータを更新または削除する (Updating and Deleteing Data with PyIceberg)
 
-Icebergテーブルのデータを更新するには、以下のように行う。
+参考: https://py.iceberg.apache.org/api/#upsert
+
+- PyIcebergのupsertとは??
+  - upsertは、Icebergテーブルに対して "更新(update)" と "挿入(insert)" を同時にやってくれる操作のこと。
+    - 既存の行 (識別子で一致するもの) は更新される。
+    - 新しい行 (識別子で一致しないもの) は挿入される。
+    - 何もしなくていい行はそのまま。
+    - (識別子は主キーみたいなもの)
+  - つまり、**テーブル作成時に識別子フィールド(identifier fields)を指定しておけば、`upsert()`メソッドでupsert操作を実現できる**
+    - 逆に、識別子フィールドが指定されていないとupsertはできない??
+    - `upsert()`メソッドの実装次第だが...どうだろ??
+      - 参考: https://py.iceberg.apache.org/reference/pyiceberg/table/#pyiceberg.table.Table
+      - `join_cols`引数があるので、識別子フィールドがなくてもupsertできる可能性あり。
 
 ```python
+from pyiceberg.schema import Schema
+from pyiceberg.types import IntegerType, NestedField, StringType
+
 import pyarrow as pa
-from pyiceberg.expressions import EqualTo
-import datetime
 
-# 'updated_at'カラムの
-
-# 1. まず更新したい行を検索
-filtered_table = iceberg_table \
-  .scan(row_filter=EqualTo('id', 4)) \
-  .to_arrow()
-
-# 2. 'updated_at'カラムのindexとフィールドを取得
-updated_at_col_index = filtered_table.column_names.index('updated_at')
-updated_at_col_field = filtered_table.field(updated_at_col_index)
-
-# 3. 現在のUTCタイムスタンプをISOフォーマットで取得
-current_utc_timestamp = datetime.datetime.utcnow().isoformat()
-
-# 4. 'updated_at'カラムを現在のタイムスタンプでreplace
-updated_table = filtered_table.set_column(
-  updated_at_col_index, 
-  updated_at_col_field, 
-  # もしupdated_atカラムがstring型ならこうする。
-  pa.array([current_utc_timestamp], type=pa.string())
-  # もしupdated_atカラムがtimestamp型なら例えばこうなる
-  # pa.array([datetime.datetime.utcnow()], type=pa.timestamp('us')
+# その1: Icebergテーブル作成時に、識別子フィールド(identifier fields)を指定しておく。
+schema = Schema(
+    NestedField(1, "city", StringType(), required=True),
+    NestedField(2, "inhabitants", IntegerType(), required=True),
+    # Mark City as the identifier field, also known as the primary-key
+    identifier_field_ids=[1]
 )
+tbl = catalog.create_table("default.cities", schema=schema)
 
-# 5. Icebergテーブルの既存の行を上書き
-iceberg_table.overwrite(
-  df=updated_table,
-  overwrite_filter=EqualTo('id', 4)
+# その2: DataFrameやArrow Tableなどのデータを準備して、Table.append()メソッドでデータを追加する。
+arrow_schema = pa.schema(
+    [
+        pa.field("city", pa.string(), nullable=False),
+        pa.field("inhabitants", pa.int32(), nullable=False),
+    ]
 )
+df = pa.Table.from_pylist(
+    [
+        {"city": "Amsterdam", "inhabitants": 921402},
+        {"city": "San Francisco", "inhabitants": 808988},
+        {"city": "Drachten", "inhabitants": 45019},
+        {"city": "Paris", "inhabitants": 2103000},
+    ],
+    schema=arrow_schema
+)
+tbl.append(df)
+
+# その3: 同じ識別子フィールド(identifier fields)を持つデータを再度準備して、Table.upsert()メソッドでデータを更新または挿入する。
+df = pa.Table.from_pylist(
+    [
+        # Will be updated, the inhabitants has been updated
+        {"city": "Drachten", "inhabitants": 45505},
+
+        # New row, will be inserted
+        {"city": "Berlin", "inhabitants": 3432000},
+
+        # Ignored, already exists in the table
+        {"city": "Paris", "inhabitants": 2103000},
+    ],
+    schema=arrow_schema
+)
+upd = tbl.upsert(df)
+
+assert upd.rows_updated == 1
+assert upd.rows_inserted == 1
+
 ```
 
-同様に、Icebergテーブルのデータを削除するには以下のように行う。
+また、Icebergテーブルのデータを削除するには以下のように行う。
 
 ```python
 from pyiceberg.expressions import EqualTo
