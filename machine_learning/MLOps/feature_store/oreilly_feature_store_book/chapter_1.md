@@ -596,7 +596,7 @@ In ML systems, you also need tests and monitoring for both input data and models
 <!-- ここまで読んだ! -->
 
 Tests that are run at development time include: 
-開発時に実行されるテストには以下が含まれます: 
+**開発時に実行されるテスト**には以下が含まれます: 
 
 - _Unit tests_ These validate feature logic (changes to feature logic can pollute training data). 
   - _単体テスト_ これらは特徴ロジックを検証します（特徴ロジックの変更はトレーニングデータを汚染する可能性があります）。 
@@ -610,24 +610,26 @@ Tests that are run at development time include:
 <!-- ここまで読んだ! -->
 
 Monitoring and tests run in production ML include: 
-運用MLで実行される監視とテストには以下が含まれます： 
+**ML運用で実行される監視とテスト**には以下が含まれます:
 
-_Data validation tests_ These prevent bad data from entering your system. 
-_データ検証テスト_ これらは悪いデータがシステムに入るのを防ぎます。 
-_Model performance monitoring_ Most models degrade in performance over time. 
-_モデルパフォーマンス監視_ ほとんどのモデルは時間とともにパフォーマンスが低下します。 
-_Feature drift detection_ This checks whether the input data at inference time is statistically significantly different from the model’s training data. 
-_特徴ドリフト検出_ これは、推論時の入力データがモデルのトレーニングデータと統計的に有意に異なるかどうかをチェックします。 
-_A/B tests_ These are run for new versions of models before rolling them out to production. 
-_A/Bテスト_ これらは新しいモデルのバージョンを運用に展開する前に実行されます。 
-_Guardrails_ These are run for LLM inputs and outputs to prevent harmful responses. 
-_ガードレール_ これらはLLMの入力と出力に対して有害な応答を防ぐために実行されます。 
+- _Data validation tests_ These prevent bad data from entering your system. 
+  - _データ検証テスト_ これらは悪いデータがシステムに入るのを防ぎます。 
+- _Model performance monitoring_ Most models degrade in performance over time. 
+  - _モデルパフォーマンス監視_ ほとんどのモデルは時間とともにパフォーマンスが低下します。 
+- _Feature drift detection_ This checks whether the input data at inference time is statistically significantly different from the model’s training data. 
+  - _特徴ドリフト検出_ これは、推論時の入力データがモデルのトレーニングデータと統計的に有意に異なるかどうかをチェックします。 
+- _A/B tests_ These are run for new versions of models before rolling them out to production. 
+  - _A/Bテスト_ これらは新しいモデルのバージョンを運用に展開する前に実行されます。 
+- _Guardrails_ These are run for LLM inputs and outputs to prevent harmful responses. 
+  - _ガードレール_ これらはLLMの入力と出力に対して有害な応答を防ぐために実行されます。 
+
 This list of tests and checks for ML systems has grown in parallel with the formation of MLOps communities that are aligning around a shared set of values and beliefs. 
 MLシステムのためのテストとチェックのリストは、共通の価値観と信念に基づいて整列するMLOpsコミュニティの形成と並行して成長しています。 
 What are their MLOps principles?  
 彼らのMLOpsの原則は何ですか？ 
 
------
+<!-- ここまで読んだ! -->
+
 MLOps folks believe that testing should have minimal friction on your development speed. 
 MLOpsの人々は、テストが開発速度に最小限の摩擦を持つべきだと信じています。 
 Automating the execution of your tests helps improve your productivity. 
@@ -639,15 +641,18 @@ CIの人気プラットフォームには、GitHub Actions、Jenkins、Azure Dev
 CI is not a prerequisite for starting to build ML systems. 
 CIはMLシステムの構築を開始するための前提条件ではありません。 
 If you have a data science background, comprehensive testing is something you may not have experience with, and it is OK to take time to incrementally add testing to both your arsenal and the ML systems you build. 
-データサイエンスのバックグラウンドがある場合、包括的なテストは経験がないかもしれませんが、あなたの武器と構築するMLシステムの両方にテストを段階的に追加するために時間をかけることは問題ありません。 
+データサイエンスのバックグラウンドがある場合、包括的なテストは経験がないかもしれませんが、**あなたの武器と構築するMLシステムの両方にテストを段階的に追加するために時間をかけることは問題ありません。**
 You can start with unit tests for functions, model performance and bias testing in your training pipelines, and integration tests for all of your ML pipelines. 
 関数の単体テスト、トレーニングパイプラインでのモデルパフォーマンスとバイアスのテスト、すべてのMLパイプラインの統合テストから始めることができます。 
 You can automate your tests by adding CI support to run your tests whenever you push code to your source code repository. 
-コードをソースコードリポジトリにプッシュするたびにテストを実行するCIサポートを追加することで、テストを自動化できます。 
+コードをソースコードリポジトリにプッシュするたびにテストを実行するCIサポートを追加することで、テストを自動化できます。
 You can add automated tests after you have validated that your MVP is worth maintaining. 
-MVPが維持する価値があると確認した後に、自動テストを追加できます。 
+**MVPが維持する価値があると確認した後に、自動テストを追加できます。**
+
+<!-- ここまで読んだ! -->
+
 MLOps folks love that feeling when you push changes in your source code and your ML artifact or system is automatically deployed. 
-MLOpsの人々は、ソースコードに変更をプッシュし、MLアーティファクトやシステムが自動的にデプロイされる感覚が大好きです。 
+**MLOpsの人々は、ソースコードに変更をプッシュし、MLアーティファクトやシステムが自動的にデプロイされる感覚が大好きです。**
 Deployments are often associated with the concept of development (dev), preproduction (preprod), and production (prod) environments. 
 デプロイメントは、開発（dev）、プレプロダクション（preprod）、およびプロダクション（prod）環境の概念に関連付けられることがよくあります。 
 ML assets are developed in the dev environment, tested in preprod, and tested again before deployment in the prod environment. 
@@ -659,70 +664,96 @@ In this book, we work with the philosophy that you can build, test, and run your
 The data your ML system can access may be dependent on which environment you deploy in (dev may not have access to production data). 
 MLシステムがアクセスできるデータは、デプロイする環境によって異なる場合があります（devはプロダクションデータにアクセスできないかもしれません）。 
 We will look at CD in detail in Chapter 13. 
-第13章ではCDについて詳しく見ていきます。 
+第13章ではCDについて詳しく見ていきます。
+
+<!-- ここまで読んだ! -->
+
 MLOps folks generally live by the well-known database community maxim of “garbage in, garbage out.” 
-MLOpsの人々は一般的に「ゴミが入ればゴミが出る」というデータベースコミュニティの格言に従っています。 
+MLOpsの人々は一般的に「**ゴミが入ればゴミが出る(garbage in, garbage out)**」というデータベースコミュニティの格言に従っています。 
 Many ML systems use data that has few or no guarantees on its quality, and blindly ingesting garbage data can lead to very well-trained models that still predict garbage. 
-多くのMLシステムは、その品質に対する保証がほとんどないか全くないデータを使用しており、盲目的にゴミデータを取り込むことは、非常に良く訓練されたモデルが依然としてゴミを予測する原因となります。 
+**多くのMLシステムは、その品質に対する保証がほとんどないか全くないデータを使用しており、盲目的にゴミデータを取り込むことは、非常に良く訓練されたモデルが依然としてゴミを予測する原因となります。**
 In Chapter 6, we will design and write data validation tests for feature pipelines. 
 第6章では、特徴パイプラインのためのデータ検証テストを設計し、記述します。 
 We will detail the mitigating actions you can take if you identify data as incorrect, missing, or corrupt. 
 データが不正確、欠落、または破損していると特定した場合に取ることができる緩和策について詳しく説明します。 
+
+<!-- ここまで読んだ! -->
+
 MLOps folks dream of a big green button for upgrading the system and a big red button for rolling back a problematic upgrade. 
 MLOpsの人々は、システムをアップグレードするための大きな緑のボタンと、問題のあるアップグレードを元に戻すための大きな赤のボタンを夢見ています。 
 Versioning of both features and models is a necessary prerequisite for both A/B testing and upgrading/downgrading an ML system without downtime. 
-機能とモデルのバージョン管理は、A/BテストとダウンタイムなしでMLシステムをアップグレード/ダウングレードするための必要な前提条件です。 
+**特徴量とモデルのバージョン管理は、A/BテストとダウンタイムなしでMLシステムをアップグレード/ダウングレードするための必要な前提条件**です。 
 Versioning enables you to quickly roll back your changes to a working earlier version of the model and the versioned features that feed it. 
-バージョン管理により、変更をモデルの動作する以前のバージョンと、それに供給するバージョン管理された機能に迅速にロールバックできます。 
-MLOps folks don’t like the surprises that arise when a new version of their LLM or [agent (like a version of Amazon Q, a coding agent, that could wipe users’ filesystems](https://oreil.ly/qO2z3) [clean!) introduces unexpected behavior. 
-MLOpsの人々は、新しいバージョンのLLMや[エージェント（ユーザーのファイルシステムを消去する可能性のあるAmazon Qのバージョンのような）が予期しない動作を引き起こすときに生じる驚きを好みません。 
-In Chapter 13, we will look at designing and](https://oreil.ly/qO2z3) running evals to evaluate changes to your LLM applications and agents before they go into production.  
-第13章では、LLMアプリケーションとエージェントの変更を運用に入れる前に評価するための評価を設計し、実行する方法を見ていきます。 
+バージョン管理により、変更をモデルの動作する以前のバージョンと、それに供給するバージョン管理された特徴量に迅速にロールバックできます。 
 
------
+<!-- ここまで読んだ! -->
+
+MLOps folks don’t like the surprises that arise when a new version of their LLM or [agent (like a version of Amazon Q, a coding agent, that could wipe users’ filesystems](https://oreil.ly/qO2z3) [clean!) introduces unexpected behavior. 
+MLOpsの人々は、新しいバージョンのLLMや[エージェント（ユーザーのファイルシステムを消去する可能性のあるAmazon Qのバージョンのような）が予期しない動作を引き起こすときに生じる驚きを好みません。
+In Chapter 13, we will look at designing and](https://oreil.ly/qO2z3) running evals to evaluate changes to your LLM applications and agents before they go into production.  
+第13章では、LLMアプリケーションとエージェントの変更を運用に入れる前に評価するための評価を設計し、実行する方法を見ていきます。
+
+<!--  ここまで読んだ! -->
+
 MLOps folks love to know how their systems are performing. 
-MLOpsの人々は、自分たちのシステムがどのように機能しているかを知ることが大好きです。 
-A production AI system should collect metrics to build dashboards and alerts for: 
-運用AIシステムは、ダッシュボードとアラートを構築するためのメトリクスを収集する必要があります： 
+**MLOpsの人々は、自分たちのシステムがどのように機能しているかを知ることが大好き**です。 
+A production AI system should collect metrics to build dashboards and alerts for:
+本番AIシステムは、ダッシュボードとアラートを構築するためのメトリクスを収集する必要があります：
+
 - Monitoring the quality of your models’ predictions with respect to some business key performance indicator (KPI) 
-- いくつかのビジネスの主要業績評価指標（KPI）に関するモデルの予測の質を監視すること 
+  - いくつかのビジネスの主要業績評価指標（KPI）に関するモデルの予測の質を監視すること 
 - Monitoring newly arriving data for drift 
-- 新しく到着するデータのドリフトを監視すること 
+  - 新しく到着するデータのドリフトを監視すること 
 - Measuring the performance (throughput and latency) of your ML platform (model serving, feature store, vector index, LLMs, and ML pipelines) 
-- MLプラットフォーム（モデル提供、特徴ストア、ベクトルインデックス、LLM、MLパイプライン）のパフォーマンス（スループットとレイテンシ）を測定すること 
+  - MLプラットフォーム（モデル提供、特徴ストア、ベクトルインデックス、LLM、MLパイプライン）のパフォーマンス（スループットとレイテンシ）を測定すること
+
+<!-- ここまで読んだ! -->
+ 
 MLOps folks need logs from operational services to debug and improve AI systems. 
-MLOpsの人々は、AIシステムをデバッグし改善するために運用サービスからのログが必要です。 
+MLOpsの人々は、**AIシステムをデバッグし改善するために運用サービスからのログが必要**です。 
 Eyeballing model logs is a powerful technique for error analysis in LLMs, as described in Chapter 14. 
 モデルログを目視で確認することは、LLMにおけるエラー分析のための強力な手法です（第14章で説明します）。 
 They also need logs to debug errors and understand model performance in classical ML systems. 
 彼らはまた、エラーをデバッグし、従来のMLシステムにおけるモデルのパフォーマンスを理解するためのログが必要です。 
+
+<!-- ここまで読んだ! -->
+
 Be warned. 
 警告します。 
-This book takes a nontraditional approach to MLOps. 
-この本はMLOpsに対して非伝統的なアプローチを取ります。 
-You will not learn Terraform to program infrastructure as code, how to write Dockerfiles and containerize pipelines, or how to become a Kubernetes whiz. 
+This book takes a nontraditional approach to MLOps.
+**この本はMLOpsに対して非伝統的なアプローチを取ります。**
+You will not learn Terraform to program infrastructure as code, how to write Dockerfiles and containerize pipelines, or how to become a Kubernetes whiz.
 インフラをコードとしてプログラムするためのTerraformの使い方、Dockerfileの書き方やパイプラインのコンテナ化、Kubernetesの達人になる方法を学ぶことはありません。 
 Instead, you’ll learn to test, version, operate, and monitor the ML pipelines that power your AI systems. 
-代わりに、AIシステムを支えるMLパイプラインをテストし、バージョン管理し、運用し、監視する方法を学びます。 
+代わりに、AIシステムを支えるMLパイプラインをテストし、バージョン管理し、運用し、監視する方法を学びます。(これらがめちゃめちゃ非伝統的か、っていうと別に全然そうでもない気もする...!!:thinking:)
 
-###### A Unified Architecture for AI Systems: Feature, Training, and Inference Pipelines
+<!-- ここまで読んだ! -->
+
+### A Unified Architecture for AI Systems: Feature, Training, and Inference Pipelines
+
 _Modularity in software is the capacity to decompose a system into smaller, more manageable modules that can be independently developed and composed into a complete software system. 
-_ソフトウェアにおけるモジュラリティは、システムをより小さく、管理しやすいモジュールに分解し、それらを独立して開発し、完全なソフトウェアシステムに組み合わせる能力です。 
+_ソフトウェアにおけるモジュラリティ(=モジュラー性...!:thinking:)は、システムをより小さく、管理しやすいモジュールに分解し、それらを独立して開発し、完全なソフトウェアシステムに組み合わせる能力です。 
 Modularity helps us build better-quality, more reliable software systems, as it allows modules to be independently tested. 
-モジュラリティは、モジュールを独立してテストできるため、より高品質で信頼性の高いソフトウェアシステムを構築するのに役立ちます。 
+**モジュラリティは、モジュールを独立してテストできるため、より高品質で信頼性の高いソフトウェアシステムを構築するのに役立ちます。**
 AI systems can also benefit from modularity because it enables teams to build higher-quality AI systems faster. 
 AIシステムもモジュラリティの恩恵を受けることができ、チームがより高品質なAIシステムをより迅速に構築できるようになります。 
+
+<!-- ここまで読んだ! -->
+
 Implementing modularity involves structuring your AI system so that its functionality is separated into independent components that can be independently developed, run, and tested. 
 モジュラリティを実装することは、AIシステムの機能を独立したコンポーネントに分離し、それらを独立して開発、実行、テストできるように構造化することを含みます。 
 Modules should be kept small and easy to understand and document. 
-モジュールは小さく、理解しやすく、文書化しやすいものであるべきです。 
-Modules should enable reuse of functionality in AI systems, clear separation of work between teams, and better communication between those teams through shared understanding of the concepts and interfaces in the AI system. 
-モジュールは、AIシステムにおける機能の再利用、チーム間の作業の明確な分離、AIシステム内の概念とインターフェースに関する共通理解を通じたチーム間のより良いコミュニケーションを可能にするべきです。 
-Earlier in this chapter, we presented five different AI system architectures for batch, stateless real-time, stateful real-time, RAG LLM, and agentic AI systems. 
+**モジュールは小さく、理解しやすく、文書化しやすいものであるべき**です。 
+Modules should enable reuse of functionality in AI systems, clear separation of work between teams, and better communication between those teams through shared understanding of the concepts and interfaces in the AI system.
+**モジュールは、AIシステムにおける機能の再利用、チーム間の作業の明確な分離、AIシステム内の概念とインターフェースに関する共通理解を通じたチーム間のより良いコミュニケーションを可能にするべきです。**
+
+<!-- ここまで読んだ! -->
+
+Earlier in this chapter, we presented five different AI system architectures for batch, stateless real-time, stateful real-time, RAG LLM, and agentic AI systems.
 この章の前半では、バッチ、ステートレスリアルタイム、ステートフルリアルタイム、RAG LLM、エージェントAIシステムのための5つの異なるAIシステムアーキテクチャを提示しました。 
-These are useful architectural patterns that you can employ when developing a new AI system. 
+These are useful architectural patterns that you can employ when developing a new AI system.
 これらは、新しいAIシステムを開発する際に利用できる有用なアーキテクチャパターンです。 
-However, the architectures are very different, and it is challenging for developers to jump from one to another or transfer learnings from one architecture to another.  
+However, the architectures are very different, and it is challenging for developers to jump from one to another or transfer learnings from one architecture to another.
 しかし、アーキテクチャは非常に異なり、開発者が一つから別のものに飛び移ったり、一つのアーキテクチャから別のアーキテクチャに学びを移転するのは難しいです。 
 
 -----
