@@ -1,135 +1,128 @@
-## CHAPTER 2: Machine Learning Pipelines
-## 第2章: 機械学習パイプライン
+## CHAPTER 2: Machine Learning Pipelines 第2章: 機械学習パイプライン
 
 In one of my favorite episodes of _The Simpsons, when Homer Simpson heard that_ bacon, ham, and pork chops all came from the same animal, he couldn’t believe it: “Yeah, right, Lisa, a wonderful, magical animal.” 
 私のお気に入りの『ザ・シンプソンズ』のエピソードの一つで、ホーマー・シンプソンがベーコン、ハム、ポークチョップがすべて同じ動物から来ていると聞いたとき、彼は信じられなかった。「そうだね、リサ、素晴らしくて魔法のような動物だ」と彼は言った。
-
 I had the same reaction when I asked ChatGPT 4.1 for a definition of an ML pipeline. 
 私も同じ反応を示しました。ChatGPT 4.1にMLパイプラインの定義を尋ねたときです。
-
 It told me that an ML pipeline performs data collection, feature engineering, model training, model evaluation, model deployment, model monitoring, inference, and maintenance. 
 それは、MLパイプラインがデータ収集、特徴量エンジニアリング、モデルのトレーニング、モデルの評価、モデルのデプロイ、モデルの監視、推論、メンテナンスを行うと教えてくれました。
-
 “Yeah, right, GPT, a wonderful, magical monolithic ML pipeline,” I thought. 
 「そうだね、GPT、素晴らしくて魔法のような単一のMLパイプラインだ」と私は思いました。
-
 It even claimed its ML pipeline was modular! 
-それは、MLパイプラインがモジュール式であるとも主張していました！
+それは、MLパイプラインがモジュラーであるとさえ主張しました！
+
+<!-- ここまで読んだ! -->
 
 It’s no wonder that when I ask 10 different data scientists for a definition of an ML pipeline, I typically get 10 different answers. 
-10人の異なるデータサイエンティストにMLパイプラインの定義を尋ねると、通常10通りの異なる答えが返ってくるのも不思議ではありません。
-
+**10人の異なるデータサイエンティストにMLパイプラインの定義を尋ねると、通常10通りの異なる答えが返ってくる**のも不思議ではありません。
 There is no agreement on what its inputs and outputs are. 
 その入力と出力が何であるかについての合意はありません。
-
 If a developer tells you they built their AI system using an ML pipeline, what information can you glean from that? 
 もし開発者がMLパイプラインを使用してAIシステムを構築したと言った場合、そこからどのような情報を得ることができるでしょうか？
-
 In my opinion, the term ML pipeline, as it is currently used, could be “considered harmful” when communicating about building AI systems.[1] 
-私の意見では、現在の使われ方では、MLパイプラインという用語はAIシステムの構築についてコミュニケーションを取る際に「有害と見なされる」可能性があります。
-
+**私の意見では、現在の使われ方では、MLパイプラインという用語はAIシステムの構築についてコミュニケーションを取る際に「有害と見なされる」可能性があります。**
 In this book, we strive to be more rigorous. 
 この本では、私たちはより厳密であることを目指しています。
-
 We describe AI systems in terms of concrete pipelines used to build them. 
-私たちは、AIシステムを構築するために使用される具体的なパイプラインの観点から説明します。
-
+私たちは、**AIシステムを構築するために使用される具体的なパイプラインの観点**から説明します。
 We reserve the use of the term ML pipeline to describe any individual pipeline or group of pipelines in an AI system. 
 私たちは、AIシステム内の個々のパイプラインまたはパイプラインのグループを説明するためにMLパイプラインという用語の使用を留保します。
 
-A pipeline is a computer program that has clearly defined inputs and outputs (that is, it has a well-defined interface) and runs either on a schedule or continuously. 
-パイプラインとは、明確に定義された入力と出力（つまり、明確に定義されたインターフェースを持つ）を持ち、スケジュールに従ってまたは継続的に実行されるコンピュータプログラムです。
+<!-- ここまで読んだ! -->
 
+A pipeline is a computer program that has clearly defined inputs and outputs (that is, it has a well-defined interface) and runs either on a schedule or continuously. 
+**パイプラインとは、明確に定義された入力と出力（つまり、明確に定義されたインターフェースを持つ）を持ち、スケジュールに従ってまたは継続的に実行されるコンピュータプログラム**です。
 An ML _pipeline is any pipeline that outputs ML artifacts used in an AI system. 
 MLパイプラインとは、AIシステムで使用されるMLアーティファクトを出力する任意のパイプラインです。
-
 We name a_ concrete ML pipeline after the ML artifact(s) it creates or modifies. 
-私たちは、具体的なMLパイプラインを、それが作成または変更するMLアーティファクトにちなんで名付けます。
-
+私たちは、具体的なMLパイプラインを、**それが作成または変更するMLアーティファクトにちなんで**名付けます。
 ML pipelines that create ML artifacts include a feature pipeline that outputs features, a vector embedding pipeline that outputs embeddings, a training pipeline that outputs a trained model, and an inference pipeline that outputs predictions. 
 MLアーティファクトを作成するMLパイプラインには、特徴を出力する特徴パイプライン、埋め込みを出力するベクトル埋め込みパイプライン、トレーニングされたモデルを出力するトレーニングパイプライン、予測を出力する推論パイプラインが含まれます。
-
+(あ、FTI以外にも vector embedding pipelineという用語も出てきた...!!:thinking:)
 ML pipelines that modify ML artifacts include a model validation pipeline that transitions a model from unvalidated to validated and a model deployment pipeline that deploys a model to production. 
-MLアーティファクトを変更するMLパイプラインには、モデルを未検証から検証済みに移行するモデル検証パイプラインと、モデルを本番環境にデプロイするモデルデプロイメントパイプラインが含まれます。
-
+MLアーティファクトを変更するMLパイプラインには、モデルを未検証から検証済みに移行する**モデル検証パイプライン(model validation pipeline)**と、モデルを本番環境にデプロイする**モデルデプロイメントパイプライン(model deployment pipeline)**が含まれます。
 In this chapter, we cover many of the different possible ML pipelines, but we will double-click on the most important ML pipelines for building an AI system— feature pipelines, training pipelines, and inference pipelines. 
 この章では、さまざまな可能なMLパイプラインについて説明しますが、AIシステムを構築するための最も重要なMLパイプライン—特徴パイプライン、トレーニングパイプライン、推論パイプライン—に焦点を当てます。
-
 Three pipelines and the truth. 
 三つのパイプラインと真実。
 
-###### Building ML Systems with ML Pipelines
-###### MLパイプラインを使用したMLシステムの構築
+<!-- ここまで読んだ! -->
+
+###　Building ML Systems with ML Pipelines　MLパイプラインを使用したMLシステムの構築
 
 Before we look at how to develop ML pipelines, we will look at a development process for building AI systems. 
 MLパイプラインを開発する方法を見る前に、AIシステムを構築するための開発プロセスを見ていきます。
-
 AI systems are software systems, and software engineering methodologies help guide you when building software systems. 
 AIシステムはソフトウェアシステムであり、ソフトウェア工学の手法はソフトウェアシステムを構築する際の指針となります。
-
 The first generation of software development processes for ML, such as Microsoft’s [Team Data Science](https://oreil.ly/HO-FD) [Process, concentrated primarily on data collection and modeling but did not address](https://oreil.ly/HO-FD) how to build AI systems. 
 MLのためのソフトウェア開発プロセスの第一世代は、Microsoftの[Team Data Science](https://oreil.ly/HO-FD) [Processのように、主にデータ収集とモデリングに集中していましたが、AIシステムの構築方法には触れていませんでした。](https://oreil.ly/HO-FD)
-
 As such, those processes were quickly superseded by MLOps, which focuses on automation, versioning, and collaboration between developers and operations to build AI systems. 
 そのため、これらのプロセスはすぐにMLOpsに取って代わられました。MLOpsは、AIシステムを構築するための自動化、バージョン管理、開発者と運用の協力に焦点を当てています。
 
-###### Minimal Viable Prediction Service
-###### 最小限の実行可能な予測サービス
+<!-- ここまで読んだ! -->
+
+#### Minimal Viable Prediction Service 最小限の実行可能な予測サービス
 
 We introduce here a minimal MLOps development methodology based on getting as quickly as possible to a minimal viable AI system, or minimal viable prediction service (MVPS). 
-ここでは、最小限の実行可能なAIシステム、または最小限の実行可能な予測サービス（MVPS）にできるだけ早く到達することに基づいた最小限のMLOps開発手法を紹介します。
+ここでは、**最小限の実行可能なAIシステム、または最小限の実行可能な予測サービス（MVPS）にできるだけ早く到達すること**に基づいた最小限のMLOps開発手法を紹介します。
+I followed this MVPS process in my course on building AI systems at KTH, and it has enabled students to get to a working AI system (that uses a novel data source to solve a novel prediction problem) within a few days, at most.
+私はKTHでのAIシステム構築に関するコースでこのMVPSプロセスを実践し、**学生たちは数日以内に（新しいデータソースを使用して新しい予測問題を解決する）動作するAIシステムに到達することができました。**
 
-I followed this MVPS process in my course on building AI systems at KTH, and it has enabled students to get to a working AI system (that uses a novel data source to solve a novel prediction problem) within a few days, at most. 
-私はKTHでのAIシステム構築に関するコースでこのMVPSプロセスを実践し、学生たちは数日以内に（新しいデータソースを使用して新しい予測問題を解決する）動作するAIシステムに到達することができました。
+<!-- ここまで読んだ! -->
+
+---
+(コラム的なやつ!)
 
 ML artifacts include models, features, training data, vector indexes, model deployments, and prediction/context logs. 
-MLアーティファクトには、モデル、特徴、トレーニングデータ、ベクトルインデックス、モデルデプロイメント、予測/コンテキストログが含まれます。
-
+**MLアーティファクトには、モデル、特徴、トレーニングデータ、ベクトルインデックス、モデルデプロイメント、予測/コンテキストログが含まれます。**
 ML artifacts are stateful objects that are produced by ML pipelines and are managed by your ML infrastructure services. 
 MLアーティファクトは、MLパイプラインによって生成され、MLインフラストラクチャサービスによって管理される状態を持つオブジェクトです。
-
 Most ML artifacts are immutable, with the exception of feature data, vector indexes, and model deployments that can be updated in place. 
-ほとんどのMLアーティファクトは不変ですが、特徴データ、ベクトルインデックス、およびその場で更新可能なモデルデプロイメントは例外です。
+**ほとんどのMLアーティファクトは不変ですが、特徴データ、ベクトルインデックス、およびその場で更新可能なモデルデプロイメントは例外です。**
+
+---
+
+<!-- ここまで読んだ! -->
 
 The MVPS development process, shown in Figure 2-1, starts with identifying: 
 図2-1に示すMVPS開発プロセスは、以下の特定から始まります：
 
 - The prediction problem you want to solve 
-- 解決したい予測問題
+  - 解決したい予測問題
 - The KPI metrics you want to improve 
-- 改善したいKPIメトリクス
+  - 改善したいKPIメトリクス
 - The data sources you have available for use 
-- 使用可能なデータソース
+  - 使用可能なデータソース
 
 Once you have identified these three pillars that make up your AI system, you will need to map your prediction problem to an ML proxy metric—a target you will optimize in your AI system. 
-AIシステムを構成するこれらの三つの柱を特定したら、予測問題をMLプロキシメトリック—AIシステムで最適化するターゲット—にマッピングする必要があります。
-
+**AIシステムを構成するこれらの三つの柱**を特定したら、**予測問題をML proxy metric、つまりAIシステムで最適化するターゲットにマッピング**する必要があります。
 This is often the most challenging step. 
-これはしばしば最も難しいステップです。
-
+これは**しばしば最も難しいステップ**です。(DSの腕が問われる部分...!!:thinking:)
 The ML proxy metric should also positively correlate with the KPI(s). 
-MLプロキシメトリックは、KPIと正の相関関係を持つべきです。
+**ML proxy metricはKPIと正の相関を持つべき**です。
 
+![]()
 _Figure 2-1. The MVPS process for developing ML systems starts in the leftmost circle by_ _identifying a prediction problem, how to measure its success using KPIs, and how to map_ _it onto an ML proxy metric. Based on the identified prediction problem and data sour‐_ _ces, you implement the FTI pipeline, as well as either a user interface or integration with_ _an external system that consumes the prediction. The arcs connecting the circles repre‐_ _sent the iterative nature of the development process, where you often revise your pipe‐_ _lines based on user feedback and changes to requirements._ 
 _Figure 2-1. MLシステムを開発するためのMVPSプロセスは、最も左の円から始まり、予測問題を特定し、KPIを使用してその成功を測定する方法、そしてそれをMLプロキシメトリックにマッピングする方法を示します。特定された予測問題とデータソースに基づいて、FTIパイプラインを実装し、予測を消費するユーザーインターフェースまたは外部システムとの統合を行います。円をつなぐ弧は、開発プロセスの反復的な性質を表しており、ユーザーのフィードバックや要件の変更に基づいてパイプラインを修正することがよくあります。_
 
+<!-- ここまで読んだ! -->
+
 Next comes the implementation phase, where you typically work from left to right, but at any time you can circle back if you need to redefine your prediction problem, KPIs, or data sources. 
 次に実装フェーズがあり、通常は左から右に作業しますが、予測問題、KPI、またはデータソースを再定義する必要がある場合は、いつでも戻ることができます。
-
 The implementation steps are: 
 実装手順は以下の通りです：
 
 1. Develop a minimal feature pipeline that can both backfill historical data and write incremental production data to your feature store. 
-1. 過去のデータをバックフィルし、増分の生産データを特徴ストアに書き込むことができる最小限の特徴パイプラインを開発します。
+   1. 過去のデータをバックフィルし、増分のproductionデータを特徴量ストアに書き込むことができる**最小限の特徴量パイプラインを開発**します。
 
 2. Develop a minimal training pipeline if you need a custom model (skip this step if you are using a pretrained model, such as an LLM). 
-2. カスタムモデルが必要な場合は、最小限のトレーニングパイプラインを開発します（事前トレーニングされたモデル、例えばLLMを使用している場合はこのステップをスキップします）。
+   1. カスタムモデルが必要な場合は、最小限のトレーニングパイプラインを開発します（事前トレーニングされたモデル、例えばLLMを使用している場合はこのステップをスキップします）。
 
 3. Develop an inference pipeline to make predictions with your model. This could be a batch program, an online inference program, an LLM application, or an agent. 
-3. モデルを使用して予測を行うための推論パイプラインを開発します。これはバッチプログラム、オンライン推論プログラム、LLMアプリケーション、またはエージェントである可能性があります。
+   1. モデルを使用して予測を行うための推論パイプラインを開発します。これはバッチプログラム、オンライン推論プログラム、LLMアプリケーション、またはエージェントである可能性があります。
 
 4. Develop a UI or dashboard so stakeholders can try out your MVPS and you can iteratively improve it. 
-4. ステークホルダーがMVPSを試すことができ、あなたがそれを反復的に改善できるようにUIまたはダッシュボードを開発します。
+   1. **ステークホルダーがMVPSを試すことができ、あなたがそれを反復的に改善できるようにUIまたはダッシュボードを開発**します。
 
 Let’s start at the beginning with an example ecommerce store where you want to predict items or content that a user is interested in. 
 ユーザーが興味を持つアイテムやコンテンツを予測したいeコマースストアの例から始めましょう。
