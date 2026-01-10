@@ -124,18 +124,16 @@ The implementation steps are:
 4. Develop a UI or dashboard so stakeholders can try out your MVPS and you can iteratively improve it. 
    1. **ステークホルダーがMVPSを試すことができ、あなたがそれを反復的に改善できるようにUIまたはダッシュボードを開発**します。
 
+<!-- ここまで読んだ! -->
+
 Let’s start at the beginning with an example ecommerce store where you want to predict items or content that a user is interested in. 
 ユーザーが興味を持つアイテムやコンテンツを予測したいeコマースストアの例から始めましょう。
-
 For recommending items in an ecommerce store, the KPI could be increased conversion as measured by users placing items in their shopping cart. 
-eコマースストアでアイテムを推薦する場合、KPIはユーザーがアイテムをショッピングカートに入れることによって測定されるコンバージョンの増加である可能性があります。
-
+eコマースストアでアイテムを推薦する場合、**KPIはユーザーがアイテムをショッピングカートに入れることによって測定されるコンバージョンの増加**である可能性があります。
 For content, a measurable business KPI could be maximized user engagement, as measured by the time a user spends on the service. 
 コンテンツの場合、測定可能なビジネスKPIは、ユーザーがサービスに費やす時間によって測定されるユーザーエンゲージメントの最大化である可能性があります。
-
 Your goal as a data scientist or ML engineer is to take the prediction problem and business KPIs and translate them into an AI system that optimizes some ML metric (or _target). 
-データサイエンティストまたはMLエンジニアとしてのあなたの目標は、予測問題とビジネスKPIを取り、それらをいくつかのMLメトリック（またはターゲット）を最適化するAIシステムに変換することです。
-
+データサイエンティストまたはMLエンジニアとしてのあなたの目標は、**予測問題とビジネスKPIを設定し、それらをいくつかのML metric (もしくはtarget)を最適化するAIシステムに変換すること**です。
 The ML metric might be a direct match to a business KPI, such as the_ probability that a user places an item in a shopping cart, or the ML metric might be a proxy metric for the business KPI, such as the expected time a user will engage with a recommended piece of content (which is a proxy for increasing user engagement on the platform). 
 MLメトリックは、ユーザーがアイテムをショッピングカートに入れる確率のようにビジネスKPIと直接一致する場合もあれば、ユーザーが推薦されたコンテンツにどれだけの時間関与するかの期待値のようにビジネスKPIのプロキシメトリックである場合もあります（これはプラットフォーム上のユーザーエンゲージメントの増加のプロキシです）。
 
