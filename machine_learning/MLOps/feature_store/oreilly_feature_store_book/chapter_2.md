@@ -217,19 +217,20 @@ That means you will need to make any changes to your source code, such as:
 つまり、ソースコードに次のような変更を加える必要があります：
 
 - The set of features computed or the data they are computed from
-- 計算された特徴のセットまたはそれらが計算されるデータ
+  - 計算された特徴量のセットまたはそれらが計算されるデータ
 - How you train the model (its model architecture or hyperparameters) to improve its performance or reduce any bias
-- モデルのトレーニング方法（モデルアーキテクチャやハイパーパラメータ）を改善するための性能向上やバイアスの軽減
+  - パフォーマンスを改善したり、バイアスを減らしたりするために、モデルのトレーニング方法（モデルアーキテクチャまたはハイパーパラメータ）
 - For batch ML systems, making predictions more (or less) frequently or changing the sink where you save your predictions
-- バッチMLシステムの場合、予測をより頻繁（または少なく）行うか、予測を保存する先を変更する
+  - バッチMLシステムの場合、予測をより頻繁（または少なく）行うか、予測を保存する先を変更する
 - For online ML systems, changes in the request latency or feature freshness requirements
-- オンラインMLシステムの場合、リクエストのレイテンシやフィーチャーの新鮮さの要件の変更
+  - オンラインMLシステムの場合、リクエストのレイテンシやフィーチャーの新鮮さの要件の変更
 - For LLM applications and agents, changes in context engineering, tools, or LLM versions
-- LLMアプリケーションやエージェントの場合、コンテキストエンジニアリング、ツール、またはLLMバージョンの変更
+  - LLMアプリケーションやエージェントの場合、コンテキストエンジニアリング、ツール、またはLLMバージョンの変更
+
+<!-- ここまで読んだ! -->
 
 At the system architecture level, we can modularize the AI system into our three (or more) pipelines—the feature pipeline, training pipeline, and inference pipeline. 
 システムアーキテクチャのレベルでは、AIシステムを3つ（またはそれ以上）のパイプライン、すなわちフィーチャーパイプライン、トレーニングパイプライン、推論パイプラインにモジュール化できます。
-
 This level of modularity enables you to develop each pipeline independently—so long as you don’t break the data contract for each pipeline. 
 このモジュール性のレベルにより、各パイプラインを独立して開発できるようになります—各パイプラインのデータ契約を破らない限り。
 
