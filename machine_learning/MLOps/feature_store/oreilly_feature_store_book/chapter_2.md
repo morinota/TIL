@@ -47,8 +47,8 @@ Three pipelines and the truth.
 三つのパイプラインと真実。
 
 <!-- ここまで読んだ! -->
-
-###　Building ML Systems with ML Pipelines　MLパイプラインを使用したMLシステムの構築
+　
+### Building ML Systems with ML Pipelines　MLパイプラインを使用したMLシステムの構築
 
 Before we look at how to develop ML pipelines, we will look at a development process for building AI systems. 
 MLパイプラインを開発する方法を見る前に、AIシステムを構築するための開発プロセスを見ていきます。
@@ -134,98 +134,85 @@ For content, a measurable business KPI could be maximized user engagement, as me
 コンテンツの場合、測定可能なビジネスKPIは、ユーザーがサービスに費やす時間によって測定されるユーザーエンゲージメントの最大化である可能性があります。
 Your goal as a data scientist or ML engineer is to take the prediction problem and business KPIs and translate them into an AI system that optimizes some ML metric (or _target). 
 データサイエンティストまたはMLエンジニアとしてのあなたの目標は、**予測問題とビジネスKPIを設定し、それらをいくつかのML metric (もしくはtarget)を最適化するAIシステムに変換すること**です。
-The ML metric might be a direct match to a business KPI, such as the_ probability that a user places an item in a shopping cart, or the ML metric might be a proxy metric for the business KPI, such as the expected time a user will engage with a recommended piece of content (which is a proxy for increasing user engagement on the platform). 
-MLメトリックは、ユーザーがアイテムをショッピングカートに入れる確率のようにビジネスKPIと直接一致する場合もあれば、ユーザーが推薦されたコンテンツにどれだけの時間関与するかの期待値のようにビジネスKPIのプロキシメトリックである場合もあります（これはプラットフォーム上のユーザーエンゲージメントの増加のプロキシです）。
+The ML metric might be a direct match to a business KPI, such as the_ probability that a user places an item in a shopping cart, or the ML metric might be a proxy metric for the business KPI, such as the expected time a user will engage with a recommended piece of content (which is a proxy for increasing user engagement on the platform).
+**MLメトリックは、ユーザーがアイテムをショッピングカートに入れる確率のようにビジネスKPIと直接一致する場合もあれば、ユーザが推薦されたコンテンツにどれだけの時間関与するかの期待値のようにビジネスKPIのプロキシメトリックである場合もあります**（これはプラットフォーム上のユーザーエンゲージメントの増加のプロキシです）。
+
+<!-- ここまで読んだ! -->
 
 Once you have your prediction problem, KPIs, and ML target, you need to think about how to create training data with features that have predictive power for your target, based on your available data. 
-予測問題、KPI、およびMLターゲットが決まったら、利用可能なデータに基づいて、ターゲットに対して予測力を持つ特徴を持つトレーニングデータを作成する方法を考える必要があります。
-
+予測問題、KPI、およびMLターゲットが決まったら、**利用可能なデータに基づいて、ターゲットに対して予測力を持つ特徴を持つトレーニングデータを作成する方法を考える必要があります。**
 You should start by enumerating and obtaining access to the data sources that feed your AI system. 
 まず、AIシステムにデータを供給するデータソースを列挙し、アクセスを取得することから始めるべきです。
-
-You then need to understand the data, so that you can effectively create features from that data. 
-次に、そのデータを理解する必要があります。そうすれば、そのデータから効果的に特徴を作成できます。
-
+You then need to understand the data, so that you can effectively create features from that data.
+**次に、そのデータを理解する必要があります。そうすれば、そのデータから効果的に特徴量を作成できます。**
 Exploratory data analysis (EDA) is a first step you’ll often take to gain an understanding of your data, its quality, and whether there is a dependency between any features and the target variable. 
-探索的データ分析（EDA）は、データ、その品質、および特徴とターゲット変数の間に依存関係があるかどうかを理解するためにしばしば行う最初のステップです。
-
+**探索的データ分析（EDA）は、データ、その品質、および特徴量とターゲット変数の間に依存関係があるかどうかを理解するためにしばしば行う最初のステップ**です。
 EDA typically helps develop domain knowledge of the data, if you are not yet familiar with the domain. 
-EDAは通常、データのドメイン知識を発展させるのに役立ちます。もしまだそのドメインに不慣れであれば。
-
+**EDAは通常、データのドメイン知識を発展させるのに役立ちます。もしまだそのドメインに不慣れであれば。**
 It can help you identify which variables could or should be used or created for a model and their predictive power for the model. 
 それは、モデルに使用または作成されるべき変数を特定し、それらのモデルに対する予測力を明らかにするのに役立ちます。
-
 You can start EDA by examining your data and its distributions using an LLM-powered assistant, such as Hopsworks Brewer, or ingesting your data into a feature store that computes data statistics on ingestion. 
 EDAは、Hopsworks BrewerのようなLLM駆動のアシスタントを使用してデータとその分布を調べるか、データを取り込む際にデータ統計を計算する特徴ストアにデータを取り込むことで開始できます。
-
 If needed, you can perform more detailed EDA in notebooks by analyzing the data visually and using statistics. 
 必要に応じて、ノートブックでデータを視覚的に分析し、統計を使用してより詳細なEDAを実施できます。
 
+<!-- ここまで読んだ! -->
+
 The next (unavoidable) step is to identify the different technologies you will use to build the FTI pipelines (see Figure 2-2). 
 次の（避けられない）ステップは、FTIパイプラインを構築するために使用するさまざまな技術を特定することです（図2-2を参照）。
-
 We recommend using a kanban board for this. 
-これにはカンバンボードの使用をお勧めします。
-
+これには**カンバンボード**の使用をお勧めします。
 A _kanban board is a visual tool that will track work as it moves through the_ MVPS process, featuring columns for different stages and cards for individual tasks. 
 カンバンボードは、MVPSプロセスを通じて作業を追跡する視覚的なツールであり、異なるステージのための列と個々のタスクのためのカードを特徴としています。
-
 Atlassian Jira and GitHub Projects are examples of kanban boards widely used by developers. 
 Atlassian JiraやGitHub Projectsは、開発者によく使用されるカンバンボードの例です。
 
+![]()
 _Figure 2-2. The kanban board for our MVPS identifies the potential data sources, tech‐_ _nologies used for ML pipelines, and types of consumers of predictions produced by AI_ _systems. Here, we show some of the possible data sources, frameworks, and orchestrators_ _used in ML pipelines and AI apps that consume predictions._ 
 _Figure 2-2. 私たちのMVPSのカンバンボードは、潜在的なデータソース、MLパイプラインに使用される技術、およびAIシステムによって生成される予測の消費者の種類を特定します。ここでは、MLパイプラインおよび予測を消費するAIアプリで使用される可能性のあるデータソース、フレームワーク、およびオーケストレーターのいくつかを示します。_
 
+<!-- ここまで読んだ! -->
+
 It is a good activity to fill in the MVPS kanban board before you start to implement your AI system, to get an overview of the AI system you’re building. 
 AIシステムを実装する前にMVPSカンバンボードを埋めることは、構築しているAIシステムの概要を把握するための良い活動です。
-
 You should make the title of the kanban board the name of the prediction problem your AI system solves, and then you should fill in the data sources, the AI applications that will consume the predictions, and the technologies you intend to use to implement the FTI pipelines. 
 カンバンボードのタイトルをAIシステムが解決する予測問題の名前にし、次にデータソース、予測を消費するAIアプリケーション、およびFTIパイプラインを実装するために使用する予定の技術を記入するべきです。
-
 You can also annotate the different kanban lanes with nonfunctional requirements, such as the volume, velocity, and freshness requirements for the feature pipelines or the service-level objective (SLO) for the response times for an online inference pipeline. 
-異なるカンバンレーンに、特徴パイプラインのボリューム、速度、新鮮さの要件や、オンライン推論パイプラインの応答時間に関するサービスレベル目標（SLO）などの非機能要件を注釈することもできます。
-
+**異なるカンバンレーンに、特徴パイプラインのボリューム、速度、新鮮さの要件や、オンライン推論パイプラインの応答時間に関するサービスレベル目標（SLO）などの非機能要件を注釈することもできます。**
 After you have produced a draft of your system architecture, you can move on to writing code. 
-システムアーキテクチャのドラフトを作成した後、コードの記述に進むことができます。
-
+**システムアーキテクチャのドラフトを作成した後、コードの記述に進むことができます。**
 You may later change the technologies chosen and the nonfunctional requirements, but it’s good practice to have a vision for where you want to go. 
-後で選択した技術や非機能要件を変更することもありますが、どこに行きたいのかのビジョンを持つことは良い習慣です。
+後で選択した技術や非機能要件を変更することもありますが、**どこに行きたいのかのビジョンを持つことは良い習慣**です。
+
+<!-- ここまで読んだ! -->
 
 At this point, you have an understanding of your data and the features you need, so now you have to extract both the target observations (or labels) and features from your data sources. 
 この時点で、データと必要な特徴を理解しているので、データソースからターゲット観測（またはラベル）と特徴の両方を抽出する必要があります。
-
-
-
-. This involves building feature pipelines from your data sources.
+This involves building feature pipelines from your data sources.
 これは、データソースから特徴パイプラインを構築することを含みます。
-
 The output of your feature pipelines will be the features and observations/labels that are stored in a feature store. 
-特徴パイプラインの出力は、フィーチャーストアに保存される特徴と観測値/ラベルになります。
-
-If you have an existing feature store and you are fortunate enough that it already contains the target(s) and/or features you need, you can skip implementing the feature pipelines.  
+**特徴パイプラインの出力は、フィーチャーストアに保存される特徴と観測値/ラベル**になります。
+(ラベルも特徴量ストアに保存すべきなのかな〜...!! 少なくともラベルはオンラインストアに保存する必要はないよね...!!:thinking:)
+If you have an existing feature store and you are fortunate enough that it already contains the target(s) and/or features you need, you can skip implementing the feature pipelines.
 既存のフィーチャーストアがあり、必要なターゲットや特徴がすでに含まれている場合は、特徴パイプラインの実装をスキップできます。
 
-From the feature store, you can create your training data and then implement a training pipeline to train your model that you save to a model registry. 
+From the feature store, you can create your training data and then implement a training pipeline to train your model that you save to a model registry.
 フィーチャーストアからトレーニングデータを作成し、モデルレジストリに保存するモデルをトレーニングするためのトレーニングパイプラインを実装できます。
-
 Finally, you implement an inference pipeline that uses your model and new feature data to make predictions, and you add a UI or dashboard to create your MVPS. 
 最後に、モデルと新しいフィーチャーデータを使用して予測を行う推論パイプラインを実装し、MVPSを作成するためのUIまたはダッシュボードを追加します。
-
 This MVPS development process is iterative, as you incrementally improve the FTI pipelines. 
-このMVPS開発プロセスは反復的であり、FTIパイプラインを段階的に改善します。
-
+**このMVPS開発プロセスは反復的であり、FTIパイプラインを段階的に改善します。**
 You add testing, validation, and automation. 
 テスト、検証、自動化を追加します。
-
 You can later add different environments for development, staging, and production.
-後で開発、ステージング、プロダクション用の異なる環境を追加できます。
+**後で開発、ステージング、プロダクション用の異なる環境を追加できます。**
 
-###### Writing Modular Code for ML Pipelines
-###### MLパイプラインのためのモジュラーコードの記述
+<!-- ここまで読んだ! -->
+
+#### Writing Modular Code for ML Pipelines MLパイプラインのためのモジュラーコードの記述
 
 A successful AI system will need to be updated and maintained over time. 
 成功したAIシステムは、時間の経過とともに更新および維持される必要があります。
-
 That means you will need to make any changes to your source code, such as:
 つまり、ソースコードに次のような変更を加える必要があります：
 
