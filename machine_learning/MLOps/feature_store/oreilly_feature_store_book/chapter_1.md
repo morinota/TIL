@@ -745,37 +745,31 @@ Implementing modularity involves structuring your AI system so that its function
 Modules should be kept small and easy to understand and document. 
 **モジュールは小さく、理解しやすく、文書化しやすいものであるべき**です。 
 Modules should enable reuse of functionality in AI systems, clear separation of work between teams, and better communication between those teams through shared understanding of the concepts and interfaces in the AI system.
-**モジュールは、AIシステムにおける機能の再利用、チーム間の作業の明確な分離、AIシステム内の概念とインターフェースに関する共通理解を通じたチーム間のより良いコミュニケーションを可能にするべきです。**
+**モジュールは、AIシステムにおける機能(functionality)の再利用、チーム間の作業の明確な分離、AIシステム内の概念とインターフェースに関する共通理解を通じたチーム間のより良いコミュニケーションを可能にするべきです。**
 
 <!-- ここまで読んだ! -->
 
 Earlier in this chapter, we presented five different AI system architectures for batch, stateless real-time, stateful real-time, RAG LLM, and agentic AI systems.
-この章の前半では、バッチ、ステートレスリアルタイム、ステートフルリアルタイム、RAG LLM、エージェントAIシステムのための5つの異なるAIシステムアーキテクチャを提示しました。 
+この章の前半では、バッチ、ステートレスリアルタイム、ステートフルリアルタイム、RAG LLM、エージェントAIシステムのための**5つの異なるAIシステムアーキテクチャ**を提示しました。 
 These are useful architectural patterns that you can employ when developing a new AI system.
 これらは、新しいAIシステムを開発する際に利用できる有用なアーキテクチャパターンです。 
 However, the architectures are very different, and it is challenging for developers to jump from one to another or transfer learnings from one architecture to another.
 しかし、アーキテクチャは非常に異なり、開発者が一つから別のものに飛び移ったり、一つのアーキテクチャから別のアーキテクチャに学びを移転するのは難しいです。 
 
------
-Luckily, we can do better
-幸運なことに、私たちはより良いことができます。
-
-
+<!-- ここまで読んだ! -->
 
 Luckily, we can do better. 
 幸運なことに、私たちはより良いことができます。
-
 There is a unified architecture for developing all AI systems that follows a natural decomposition of any AI system into feature creation, model training, and inference pipelines. 
-すべてのAIシステムを開発するための統一されたアーキテクチャがあり、これは任意のAIシステムを特徴の作成、モデルのトレーニング、および推論パイプラインに自然に分解します。
-
+**すべてのAIシステムを開発するための統一されたアーキテクチャがあり、これは任意のAIシステムを特徴の作成、モデルのトレーニング、および推論パイプラインに自然に分解します。**
 At KTH, my students built AI systems in teams as project work, and despite the fact that they built all different AI systems, they could easily divide the work in building their systems and communicate their system architecture with this feature/training/inference (FTI) decomposition. 
 KTHでは、私の学生たちがプロジェクト作業としてチームでAIシステムを構築しました。彼らは異なるAIシステムを構築しましたが、システムの構築において作業を簡単に分担し、この特徴/トレーニング/推論（FTI）分解を用いてシステムアーキテクチャを伝えることができました。
-
 In enterprises, different teams can take responsibility for the different parts: feature creation can require help from data engineers, model training is the realm of data scientists, and inference can involve folks from IT operations. 
 企業では、異なるチームが異なる部分の責任を負うことができます。特徴の作成にはデータエンジニアの助けが必要な場合があり、モデルのトレーニングはデータサイエンティストの領域であり、推論にはIT運用の人々が関与することがあります。
-
 ML engineers are expected to contribute to all three classes of pipeline. 
-MLエンジニアは、すべての3つのパイプラインクラスに貢献することが期待されています。
+**MLエンジニアは、すべての3つのパイプラインクラスに貢献することが期待されています。**(まかせろ...!!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 The three different ML pipelines have clear inputs and outputs and can be developed, tested, and operated independently: 
 3つの異なるMLパイプラインは明確な入力と出力を持ち、独立して開発、テスト、運用することができます。
@@ -791,213 +785,190 @@ _推論パイプライン_ これらは特徴データとモデルを入力と�
 
 Modularity only helps if the modules can be easily composed into functioning systems. 
 モジュール性は、モジュールが機能するシステムに簡単に構成できる場合にのみ役立ちます。
-
 Good examples of this are web applications that are still being built 30 years later with separate presentation, business logic, and database modules. 
 良い例としては、30年後も別々のプレゼンテーション、ビジネスロジック、およびデータベースモジュールを持つウェブアプリケーションがあります。
-
 Microservice architectures, on the other hand, can suffer when there are too many microservices, as that increases operational complexity when they are composed into a single system. 
 一方、マイクロサービスアーキテクチャは、マイクロサービスが多すぎると、単一のシステムに構成される際に運用の複雑さが増すため、問題が生じることがあります。
-
 For our AI system decomposition, we can naturally compose our AI system from the three types of ML pipeline by making them independent programs that are connected with a shared data layer that consists of a feature store and model registry. 
 私たちのAIシステムの分解において、特徴ストアとモデルレジストリで構成される共有データレイヤーで接続された独立したプログラムとして、3種類のMLパイプラインから自然にAIシステムを構成することができます。
 
+<!-- ここまで読んだ! -->
+
 The feature store stores real-time data in a row-oriented store for low latency access from online inference pipelines and agents, historical data in a columnar data store for training models and batch inference, and vector embeddings in a vector index for inference pipelines and agents. 
-特徴ストアは、オンライン推論パイプラインとエージェントからの低遅延アクセスのために行指向ストアにリアルタイムデータを保存し、モデルのトレーニングとバッチ推論のために列指向データストアに履歴データを保存し、推論パイプラインとエージェントのためにベクトルインデックスにベクトル埋め込みを保存します。
+**特徴ストアは、オンライン推論パイプラインとエージェントからの低遅延アクセスのために行指向ストアにリアルタイムデータを保存し、モデルのトレーニングとバッチ推論のために列指向データストアに履歴データを保存し、推論パイプラインとエージェントのためにベクトルインデックスにベクトル埋め込みを保存**します。
+(あ、オンラインストア と オフラインストアの2種類だけじゃなくて、ベクトルストアも含めて、3つを内包してると考えてもいいのか! :thinking: なんとなく、ベクトル検索機能を持つオンラインストアを採用する必要があるのかなと悩んでた...!!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 We can now define an AI system as a set of independent feature pipelines, training pipelines, and inference pipelines that are connected via a feature store and model registry (see Figure 1-6). 
 これで、AIシステムを特徴ストアとモデルレジストリを介して接続された独立した特徴パイプライン、トレーニングパイプライン、および推論パイプラインのセットとして定義できます（図1-6を参照）。
 
+![]()
 _Figure 1-6. An AI system with a feature pipeline, a training pipeline, and an inference pipeline, operationally connected through a feature store. Inference pipelines can be anything from batch programs to model serving programs to agents. Operational logs need to be collected for monitoring and debugging AI systems._ 
-_図1-6. 特徴パイプライン、トレーニングパイプライン、および推論パイプラインを持つAIシステムで、特徴ストアを介して運用的に接続されています。推論パイプラインは、バッチプログラムからモデル提供プログラム、エージェントまで何でも可能です。運用ログは、AIシステムの監視とデバッグのために収集する必要があります。_
+_図1-6. 特徴パイプライン、トレーニングパイプライン、および推論パイプラインを持つAIシステムで、特徴ストアを介して運用的に接続されています。推論パイプラインは、バッチプログラムからモデル提供プログラム、エージェントまで何でも可能です。**運用ログは、AIシステムの監視とデバッグのために収集する必要があります。_**
+
+<!-- ここまで読んだ! -->
 
 Feature pipelines ingest both backfill and production data and compute feature data that is stored as tabular data in the feature store. 
 特徴パイプラインは、バックフィルデータと生産データの両方を取り込み、特徴データを計算して特徴ストアに表形式データとして保存します。
-
 Feature pipelines can be either batch programs or stream processing programs. 
 特徴パイプラインは、バッチプログラムまたはストリーム処理プログラムのいずれかです。
-
 Training pipelines read training data from the feature store and store any trained models they produce in the model registry. 
 トレーニングパイプラインは、特徴ストアからトレーニングデータを読み取り、生成したトレーニング済みモデルをモデルレジストリに保存します。
-
 Inference pipelines output predictions using a model (either downloaded from the model registry or via an API) and new feature data (precomputed from the feature store and/or computed from data available at prediction request time). 
 推論パイプラインは、モデル（モデルレジストリからダウンロードしたものまたはAPI経由のもの）と新しい特徴データ（特徴ストアから事前計算されたものおよび/または予測リクエスト時に利用可能なデータから計算されたもの）を使用して予測を出力します。
 
+<!-- ここまで読んだ! -->
+
 The ML pipelines can be run on potentially any compute engine. 
-MLパイプラインは、潜在的に任意のコンピュートエンジンで実行できます。
-
+**MLパイプラインは、潜在的に任意のコンピュートエンジンで実行できます。**
 Popular batch compute engines include SQL in data warehouses, Spark, Pandas, Polars, and DuckDB. 
-一般的なバッチコンピュートエンジンには、データウェアハウスのSQL、Spark、Pandas、Polars、およびDuckDBが含まれます。
-
+**一般的なバッチコンピュートエンジンには、データウェアハウスのSQL、Spark、Pandas、Polars、およびDuckDBが含まれます。**
 Popular stream processing engines include Flink, Spark Structured Streaming, and Feldera. 
 一般的なストリーム処理エンジンには、Flink、Spark Structured Streaming、およびFelderが含まれます。
-
 Training pipelines are most commonly implemented in Python, as are online inference pipelines and agents. 
 トレーニングパイプラインは最も一般的にPythonで実装されており、オンライン推論パイプラインやエージェントも同様です。
-
 Batch inference pipelines are often written with PySpark, Pandas, and Polars. 
 バッチ推論パイプラインは、PySpark、Pandas、およびPolarsで書かれることが多いです。
 
-###### Classes of AI Systems with a Feature Store
-###### 特徴ストアを持つAIシステムのクラス
+<!-- ここまで読んだ! -->
+
+#### Classes of AI Systems with a Feature Store　特徴ストアを持つAIシステムの分類
 
 An AI system is defined by how it computes its predictions, not by the type of application that consumes the predictions. 
-AIシステムは、予測をどのように計算するかによって定義され、予測を消費するアプリケーションの種類によって定義されるわけではありません。
-
+**AIシステムは、予測をどのように計算するかによって定義され**、予測を消費するアプリケーションの種類によって定義されるわけではありません。
 AI systems with a feature store can be categorized as: 
 特徴ストアを持つAIシステムは次のように分類できます。
 
-_Real-time (interactive) ML systems_ These make predictions in response to user requests. 
+- _Real-time (interactive) ML systems_ These make predictions in response to user requests. 
 _リアルタイム（インタラクティブ）MLシステム_ これらはユーザーのリクエストに応じて予測を行います。
-
 They can compute features on demand from prediction request parameters and/or read precomputed features from the feature store or other external systems. 
 これらは、予測リクエストパラメータからオンデマンドで特徴を計算したり、特徴ストアや他の外部システムから事前計算された特徴を読み取ったりできます。
-
 Stream processing is often used to precompute features that are fresh, enabling interactive ML systems to react faster to user actions compared with batch feature pipelines. 
-ストリーム処理は、フレッシュな特徴を事前計算するためにしばしば使用され、インタラクティブMLシステムがバッチ特徴パイプラインと比較してユーザーのアクションにより迅速に反応できるようにします。
+**ストリーム処理は、フレッシュな特徴量を事前計算するためにしばしば使用され、インタラクティブMLシステムがバッチ特徴パイプラインと比較してユーザーのアクションにより迅速に反応できるようにします。**
 
-_Agentic workflows_ These are user-guided AI systems that, with some level of autonomy, achieve goals by using LLMs and tools (i.e., execute actions on external systems and acquire context information by using data sources such as a vector index, a row-oriented data store, a column-oriented data store, and external APIs). 
+- _Agentic workflows_ These are user-guided AI systems that, with some level of autonomy, achieve goals by using LLMs and tools (i.e., execute actions on external systems and acquire context information by using data sources such as a vector index, a row-oriented data store, a column-oriented data store, and external APIs). 
 _エージェンティックワークフロー_ これらはユーザーがガイドするAIシステムで、ある程度の自律性を持ち、LLMやツールを使用して目標を達成します（つまり、外部システムでアクションを実行し、ベクトルインデックス、行指向データストア、列指向データストア、外部APIなどのデータソースを使用してコンテキスト情報を取得します）。
-
 Feature pipelines, vector-embedding pipelines, and real-time feature engineering create context data for use by agents. 
-特徴パイプライン、ベクトル埋め込みパイプライン、およびリアルタイム特徴エンジニアリングは、エージェントが使用するためのコンテキストデータを作成します。
+**特徴パイプライン、ベクトル埋め込みパイプライン、およびリアルタイム特徴エンジニアリングは、エージェントが使用するためのコンテキストデータを作成**します。
 
-_Batch ML systems_ These run batch inference programs on a schedule. 
+- _Batch ML systems_ These run batch inference programs on a schedule. 
 _バッチMLシステム_ これらはスケジュールに従ってバッチ推論プログラムを実行します。
-
 They take new feature data and a model and output predictions that are typically stored in some downstream database (called an inference store), to be consumed later by some ML-enabled application. 
-これらは新しい特徴データとモデルを取り込み、予測を出力します。これらの予測は通常、下流のデータベース（推論ストアと呼ばれる）に保存され、後でML対応アプリケーションによって消費されます。
+これらは新しい特徴量データとモデルを取り込み、予測を出力します。これらの予測は通常、**下流のデータベース（推論ストアと呼ばれる）に保存され、後でML対応アプリケーションによって消費**されます。(inference storeって名前初めて聞いた! :thinking:)
 
-_Stream processing ML systems_ These use an embedded model to make predictions on streaming data without user input. 
+- _Stream processing ML systems_ These use an embedded model to make predictions on streaming data without user input. 
 _ストリーム処理MLシステム_ これらは埋め込まれたモデルを使用して、ユーザー入力なしでストリーミングデータに対して予測を行います。
-
 They are often machine-to-machine ML systems. 
-これらはしばしば機械間MLシステムです。
-
+これらはしばしば**machine-to-machine なMLシステム**です。
 For example, a network intrusion detection ML system could use stream processing to extract features from network traffic and a model to predict network intrusion. 
 例えば、ネットワーク侵入検知MLシステムは、ストリーム処理を使用してネットワークトラフィックから特徴を抽出し、ネットワーク侵入を予測するモデルを使用することができます。
 
-Real-time ML systems and agentic workflows are both interactive systems that provide a prediction request API, handle concurrent prediction requests, and use a model to make predictions. 
-リアルタイムMLシステムとエージェンティックワークフローはどちらも、予測リクエストAPIを提供し、同時予測リクエストを処理し、モデルを使用して予測を行うインタラクティブシステムです。
+<!-- ここまで読んだ! -->
 
+Real-time ML systems and agentic workflows are both interactive systems that provide a prediction request API, handle concurrent prediction requests, and use a model to make predictions. 
+リアルタイムMLシステムとエージェンティックワークフローはどちらも、**予測リクエストAPIを提供し、同時予測リクエストを処理し、モデルを使用して予測を行うインタラクティブシステム**です。
 The distinction we use is that real-time ML systems have a custom-trained model (not an LLM, but perhaps a decision tree or deep learning model) hosted internally on model-serving infrastructure and a relatively simple online inference pipeline. 
 私たちが使用する区別は、リアルタイムMLシステムがカスタムトレーニングされたモデル（LLMではなく、決定木や深層学習モデルの可能性があります）をモデル提供インフラストラクチャに内部的にホストし、比較的単純なオンライン推論パイプラインを持つということです。
-
+(これはreal-time ML systems / Agentic workflowsの区別の仕方の話!:thinking:)
 In contrast, agentic workflows have a more complex online inference pipeline program, an agent program, that uses both tools and an LLM typically accessed via an external API. 
 対照的に、エージェンティックワークフローは、ツールと通常外部APIを介してアクセスされるLLMの両方を使用する、より複雑なオンライン推論パイプラインプログラム、エージェントプログラムを持っています。
+
+<!-- ここまで読んだ! -->
 
 The following are AI systems that we will build in this book: 
 以下は、この本で構築するAIシステムです。
 
-_Batch ML systems_ In Chapter 3, you will build an air quality prediction dashboard that shows air quality forecasts for a location near you. 
+- _Batch ML systems_ In Chapter 3, you will build an air quality prediction dashboard that shows air quality forecasts for a location near you. 
 _バッチMLシステム_ 第3章では、あなたの近くの場所の空気質予測を表示する空気質予測ダッシュボードを構築します。
-
 It will use observations of air quality from a public sensor and weather data as features. 
 これは、公共センサーからの空気質の観測と天候データを特徴として使用します。
-
 You will train a model to predict air quality using weather forecast data. 
 あなたは、天気予報データを使用して空気質を予測するモデルをトレーニングします。
 
-_Real-time ML systems_ From Chapter 4 onward, we will develop a credit card fraud detection ML system. 
+- _Real-time ML systems_ From Chapter 4 onward, we will develop a credit card fraud detection ML system. 
 _リアルタイムMLシステム_ 第4章以降、クレジットカード詐欺検出MLシステムを開発します。
-
 It will take a credit card transaction, retrieve precomputed features about recent use of the credit card from a feature store, and then build a feature vector that’s sent to a decision tree model you train to predict whether the transaction is suspected of fraud or not. 
 これは、クレジットカード取引を受け取り、特徴ストアからクレジットカードの最近の使用に関する事前計算された特徴を取得し、次に、取引が詐欺の疑いがあるかどうかを予測するためにトレーニングした決定木モデルに送信される特徴ベクトルを構築します。
-
 In Chapter 15, we will build a video recommender system, similar to TikTok’s, based on the retrieval-and-ranking architecture. 
-第15章では、TikTokに似た動画推薦システムを、取得とランキングのアーキテクチャに基づいて構築します。
-
-It will use stream processing to create features from user actions, such as clicks and swipes, a two-tower embedding model for retrieval, and a faster eXtreme Gradient Boosting (XGBoost) model for ranking. 
+第15章では、TikTokに似た動画推薦システムを、retrieval-and-rankingアーキテクチャに基づいて構築します。(2-stages推薦ってやつね...!:thinking:)
+It will use stream processing to create features from user actions, such as clicks and swipes, a two-tower embedding model for retrieval, and a faster eXtreme Gradient Boosting (XGBoost) model for ranking.
 これは、ユーザーのアクション（クリックやスワイプなど）から特徴を作成するためにストリーム処理を使用し、取得のための2タワー埋め込みモデルと、ランキングのためのより高速なeXtreme Gradient Boosting（XGBoost）モデルを使用します。
 
-_Agentic AI systems_ We will add LLM capabilities to our air quality prediction system and our TikTok recommender systems, with examples of agents in LlamaIndex. 
+- _Agentic AI systems_ We will add LLM capabilities to our air quality prediction system and our TikTok recommender systems, with examples of agents in LlamaIndex. 
 _エージェンティックAIシステム_ 私たちは、空気質予測システムとTikTok推薦システムにLLM機能を追加し、LlamaIndexにおけるエージェントの例を示します。
 
-###### ML Frameworks and ML Infrastructure Used in This Book
-###### この本で使用されるMLフレームワークとMLインフラストラクチャ
+<!-- ここまで読んだ! -->
+
+#### ML Frameworks and ML Infrastructure Used in This Book この本で使用されるMLフレームワークとMLインフラストラクチャ
 
 In this book, we will build AI systems using programs written in Python. 
 この本では、Pythonで書かれたプログラムを使用してAIシステムを構築します。
-
 Given that we aim to build AI systems, not the ML infrastructure underpinning them, we have to make decisions about what platforms to cover in this book. 
 私たちがAIシステムを構築することを目指しているため、それを支えるMLインフラストラクチャではなく、この本でどのプラットフォームをカバーするかについて決定を下す必要があります。
-
 Given space restrictions, we have to restrict ourselves to a set of well-motivated choices. 
 スペースの制約を考慮して、私たちは十分に根拠のある選択肢のセットに制限する必要があります。
 
 For programming, we chose Python as it is accessible to developers, the dominant language of data science, and increasingly important in data engineering. 
 プログラミングには、開発者にとってアクセスしやすく、データサイエンスの主要な言語であり、データエンジニアリングにおいてますます重要になっているPythonを選びました。
-
 We will use open source frameworks in Python, including Pandas and Polars for feature engineering, Scikit-Learn and PyTorch for ML, and KServe for model serving. 
-私たちは、特徴エンジニアリングのためのPandasとPolars、MLのためのScikit-LearnとPyTorch、モデル提供のためのKServeを含むPythonのオープンソースフレームワークを使用します。
-
+私たちは、特徴エンジニアリングのためのPandasとPolars、MLのためのScikit-LearnとPyTorch、**モデル提供のためのKServeを含むPythonのオープンソースフレームワーク**を使用します。(KServe初めて聞いた...!:thinking:)
 Python can be used for everything from creating features from raw data, to model training, to developing user interfaces for our AI systems. 
 Pythonは、生データから特徴を作成することから、モデルのトレーニング、AIシステムのユーザーインターフェースの開発まで、すべてに使用できます。
-
 We will also use pretrained LLMs—open source foundation models. 
 私たちはまた、事前トレーニングされたLLM（オープンソースの基盤モデル）を使用します。
-
 When appropriate, we will also provide examples using other programming frameworks or languages widely used in the enterprise, such as Spark and dbt/SQL for scalable data processing, and stream processing frameworks for real-time ML systems. 
 適切な場合には、スケーラブルなデータ処理のためのSparkやdbt/SQL、リアルタイムMLシステムのためのストリーム処理フレームワークなど、企業で広く使用されている他のプログラミングフレームワークや言語を使用した例も提供します。
-
 That said, the example AI systems presented in this book were developed so that only knowledge of Python is a prerequisite. 
-とはいえ、この本で提示される例のAIシステムは、Pythonの知識のみが前提条件となるように開発されています。
+とはいえ、**この本で提示される例のAIシステムは、Pythonの知識のみが前提条件となるように開発**されています。
+
+<!-- ここまで読んだ! -->
 
 To run our Python programs as pipelines in the cloud, we’ll use serverless platforms like Modal and GitHub Actions. 
 私たちのPythonプログラムをクラウドでパイプラインとして実行するために、ModalやGitHub Actionsのようなサーバーレスプラットフォームを使用します。
-
-Both GitHub and Modal offer a free tier (although Modal requires credit card registration) that will enable you to run the ML pipelines introduced in this book. 
+Both GitHub and Modal offer a free tier (although Modal requires credit card registration) that will enable you to run the ML pipelines introduced in this book.
 GitHubとModalの両方は、（Modalはクレジットカード登録が必要ですが）この本で紹介されているMLパイプラインを実行できる無料プランを提供しています。
-
 If you have a dedicated Hopsworks cluster, you can also run your ML pipelines there. 
 専用のHopsworksクラスターがある場合、そこでもMLパイプラインを実行できます。
-
 If you have any other platform for running Python jobs, the ML pipeline examples here should also work. 
-Pythonジョブを実行するための他のプラットフォームがある場合、ここでのMLパイプラインの例も機能するはずです。
+**Pythonジョブを実行するための他のプラットフォームがある場合、ここでのMLパイプラインの例も機能するはずです。**
+(Modalってなに?? Pythonコードをそのままクラウドで実行できるサーバーレス実行基盤らしい。ローカルで書いたPython関数を、ほぼ設定なしでGPU/CPU付きのクラウドに投げられるのが強みっぽい。:thinking:)
+
+<!-- ここまで読んだ! -->
 
 For exploratory data analysis, model training, and other nonoperational services, we will use open source Jupyter Notebooks. 
-探索的データ分析、モデルのトレーニング、およびその他の非運用サービスには、オープンソースのJupyter Notebooksを使用します。
-
+**探索的データ分析、モデルのトレーニング、およびその他の非運用サービスには、オープンソースのJupyter Notebooksを使用**します。
 Finally, for (serverless) user interfaces hosted in the cloud, we will use Streamlit, which also provides a free cloud tier. 
 最後に、クラウドでホストされる（サーバーレス）ユーザーインターフェースには、無料のクラウドプランも提供しているStreamlitを使用します。
-
 Alternatives would be Hugging Face Spaces and Gradio. 
 代替案としては、Hugging Face SpacesやGradioがあります。
 
+<!-- ここまで読んだ! -->
+
 We will use Hopsworks as serverless ML infrastructure, using its feature store, model registry, and model-serving platform to manage features and models. 
 私たちは、HopsworksをサーバーレスMLインフラストラクチャとして使用し、その特徴ストア、モデルレジストリ、およびモデル提供プラットフォームを使用して特徴とモデルを管理します。
-
 Hopsworks is open source, was the first open source and enterprise feature store, and has a free tier for its serverless platform. 
 Hopsworksはオープンソースであり、最初のオープンソースおよびエンタープライズ特徴ストアであり、サーバーレスプラットフォームのための無料プランがあります。
-
 The other reason for using Hopsworks is that I am one of its developers, so I can provide deeper insights into its inner workings as a representative ML infrastructure platform. 
-Hopsworksを使用するもう一つの理由は、私がその開発者の一人であるため、代表的なMLインフラストラクチャプラットフォームとしての内部動作についてより深い洞察を提供できることです。
-
-
-
-. The other reason for using Hopsworks is that I am one of its developers, so I can provide deeper insights into its inner workings as a representative ML infrastructure platform. 
-Hopsworksを使用するもう一つの理由は、私がその開発者の一人であるため、代表的なMLインフラストラクチャプラットフォームとしての内部動作についてより深い洞察を提供できることです。
-
+**Hopsworksを使用するもう一つの理由は、私がその開発者の一人であるため、代表的なMLインフラストラクチャプラットフォームとしての内部動作についてより深い洞察を提供できること**です。
 With Hopsworks’ free serverless tier, you can deploy and operate your AI systems without cost or the need to install or operate ML infrastructure platforms. 
 Hopsworksの無料サーバーレスティアを使用すると、コストをかけずにAIシステムを展開および運用でき、MLインフラストラクチャプラットフォームをインストールまたは運用する必要もありません。
-
 That said, given that all of the examples are in common open source Python frameworks, you can easily modify the provided examples to replace Hopsworks with any combination of an existing feature store (such as Feast), a model registry, and a model serving platform (such as MLflow). 
 とはいえ、すべての例が一般的なオープンソースのPythonフレームワークであるため、提供された例を簡単に修正して、Hopsworksを既存のフィーチャーストア（Feastなど）、モデルレジストリ、およびモデルサービングプラットフォーム（MLflowなど）の任意の組み合わせに置き換えることができます。
-
 Alternatively, you could use Databricks, Google Cloud Platform (GCP) Vertex, or Amazon Web Services (AWS) SageMaker. 
 あるいは、Databricks、Google Cloud Platform（GCP）Vertex、またはAmazon Web Services（AWS）SageMakerを使用することもできます。
 
-###### Summary 要約
+<!-- ここまで読んだ! -->
+
+### Summary 要約
+
 In this chapter, we introduced batch, real-time, and LLM AI systems with a feature store. 
 この章では、バッチ、リアルタイム、およびLLM AIシステムとフィーチャーストアを紹介しました。
-
 We introduced the main properties of AI systems, their architecture, and the ML pipelines that power them. 
 AIシステムの主な特性、そのアーキテクチャ、およびそれらを支えるMLパイプラインを紹介しました。
-
 We introduced MLOps and its historical evolution as a set of best practices for developing and evolving AI systems, and we presented a new architecture for AI systems as FTI pipelines connected with a feature store. 
 MLOpsとその歴史的進化をAIシステムを開発および進化させるためのベストプラクティスのセットとして紹介し、フィーチャーストアに接続されたFTIパイプラインとしてのAIシステムの新しいアーキテクチャを提示しました。
-
 In the next chapter, we will look closer at this new FTI architecture for building AI systems and how you can build AI systems faster and more reliably as connected FTI pipelines. 
 次の章では、AIシステムを構築するためのこの新しいFTIアーキテクチャを詳しく見ていき、接続されたFTIパイプラインとしてAIシステムをより速く、より信頼性高く構築する方法について説明します。
 
-
-
+<!-- ここまで読んだ! -->
