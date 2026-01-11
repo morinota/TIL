@@ -230,72 +230,65 @@ That means you will need to make any changes to your source code, such as:
 <!-- ここまで読んだ! -->
 
 At the system architecture level, we can modularize the AI system into our three (or more) pipelines—the feature pipeline, training pipeline, and inference pipeline. 
-システムアーキテクチャのレベルでは、AIシステムを3つ（またはそれ以上）のパイプライン、すなわちフィーチャーパイプライン、トレーニングパイプライン、推論パイプラインにモジュール化できます。
+**システムアーキテクチャのレベルでは、AIシステムを3つ（またはそれ以上）のパイプライン、すなわちフィーチャーパイプライン、トレーニングパイプライン、推論パイプラインにモジュール化できます。**
 This level of modularity enables you to develop each pipeline independently—so long as you don’t break the data contract for each pipeline. 
-このモジュール性のレベルにより、各パイプラインを独立して開発できるようになります—各パイプラインのデータ契約を破らない限り。
-
+このモジュール性のレベルにより、各パイプラインを独立して開発できるようになります—**各パイプラインのデータ契約を破らない限り。**
 The data contract for each pipeline includes its input/output schema and any nonfunctional requirements, such as data validation rules for feature pipelines, model performance or bias for a training pipeline, or the SLO for an online inference pipeline. 
 各パイプラインのデータ契約には、その入力/出力スキーマや、フィーチャーパイプラインのデータ検証ルール、トレーニングパイプラインのモデル性能やバイアス、オンライン推論パイプラインのSLOなどの非機能要件が含まれます。
 
 However, inside each ML pipeline, you also need to write modular code that follows best practices in software engineering. 
 しかし、各MLパイプライン内では、ソフトウェア工学のベストプラクティスに従ったモジュラーコードを書く必要があります。
-
 Your source code should be tested and easy to maintain, and it should be DRY (“Do not repeat yourself”). 
 ソースコードはテストされ、メンテナンスが容易であるべきであり、DRY（「繰り返さない」）であるべきです。
-
 If the source code for your ML pipelines is a bunch of spaghetti notebooks, it will be hard to build reliable ML pipelines. 
-MLパイプラインのソースコードがスパゲッティノートブックの集まりである場合、信頼性の高いMLパイプラインを構築するのは難しくなります。
-
+**MLパイプラインのソースコードがスパゲッティノートブックの集まりである場合、信頼性の高いMLパイプラインを構築するのは難しくなります。**
 How will you test the code in your notebooks to make sure any changes you make work correctly before you deploy them to production? 
 ノートブック内のコードをどのようにテストして、変更が本番環境にデプロイする前に正しく機能することを確認しますか？
-
 How will you onboard new developers to work on the codebase? 
 新しい開発者をどのようにコードベースに参加させますか？
 
+<!-- ここまで読んだ! -->
+
 The approach that we recommend you take when writing ML pipelines in Python is to refactor your source code into functions or classes. 
 私たちがPythonでMLパイプラインを書く際に推奨するアプローチは、ソースコードを関数またはクラスにリファクタリングすることです。
-
 You decompose the steps in your ML pipeline into a set of functions that, when composed together, implement the ML pipeline program. 
-MLパイプラインのステップを一連の関数に分解し、それらを組み合わせることでMLパイプラインプログラムを実装します。
-
+**MLパイプラインのステップを一連の関数に分解し、それらを組み合わせることでMLパイプラインプログラムを実装**します。
 Each function should encapsulate a manageable piece of related work, and functions can be reused in different parts of your codebase. 
 各関数は関連する作業の管理可能な部分をカプセル化し、関数はコードベースの異なる部分で再利用できます。
-
 You hide the implementation of the function (with all of its complexity) behind an interface. 
 関数の実装（そのすべての複雑さ）をインターフェースの背後に隠します。
-
 In Python, the interface to a function is the function’s signature—its name, parameters, and return type(s). 
 Pythonでは、関数へのインターフェースは関数のシグネチャ—その名前、パラメータ、および戻り値の型です。
 
-###### Notebooks as ML Pipelines?
-###### MLパイプラインとしてのノートブック？
+<!-- ここまで読んだ! -->
+
+---
+(コラム的なやつ)
+Notebooks as ML Pipelines? MLパイプラインとしてのノートブック？
 
 It is best practice to store feature functions in Python modules (not in notebooks), so they can be independently unit-tested and reused in different ML pipelines. 
 フィーチャー関数はPythonモジュールに保存するのがベストプラクティスです（ノートブックではなく）、これにより独立してユニットテストが可能で、異なるMLパイプラインで再利用できます。
-
 However, the ML pipeline program can still be a notebook that imports and uses the feature functions. 
 ただし、MLパイプラインプログラムは、フィーチャー関数をインポートして使用するノートブックであることもできます。
-
 If you want to run an ML pipeline as a notebook, you will need to use a platform that supports scheduling notebooks as jobs (such as Jupyter Notebooks on Hopsworks). 
 MLパイプラインをノートブックとして実行したい場合は、ノートブックをジョブとしてスケジュールすることをサポートするプラットフォーム（HopsworksのJupyter Notebooksなど）を使用する必要があります。
-
 We don’t recommend using Google Colaboratory (Colab) notebooks, as they do not work well with Git. 
 Google Colaboratory（Colab）ノートブックの使用は推奨しません。なぜなら、Gitとの相性が良くないからです。
-
 Without Git support, it is hard to import Python modules from files in your GitHub repository into your Colab notebook. 
 Gitのサポートがないと、GitHubリポジトリ内のファイルからPythonモジュールをColabノートブックにインポートするのが難しくなります。
 
+---
+
 We start by looking at some example feature engineering code that we want to refactor to make it easier to test and more maintainable. 
 テストしやすく、メンテナンスしやすくするためにリファクタリングしたいフィーチャーエンジニアリングコードの例を見ていきます。
-
 In the following feature pipeline code, there is a compute_features function that performs data transformations on a Pandas DataFrame. 
 以下のフィーチャーパイプラインコードには、Pandas DataFrame上でデータ変換を行うcompute_features関数があります。
-
 It is an example of nonmodular feature engineering in Pandas: 
-これは、Pandasにおける非モジュラーなフィーチャーエンジニアリングの例です：
+これは、Pandasにおける**非モジュラーなフィーチャーエンジニアリングの例**です：
 
-```   
-import pandas as pd   
+```python
+import pandas as pd
+
 def compute_features(df: pd.DataFrame) -> pd.DataFrame:   
     if config["region"] == "UK":   
         df["holidays"] = is_uk_holiday (df["year"], df["week"])   
@@ -306,41 +299,37 @@ def compute_features(df: pd.DataFrame) -> pd.DataFrame:
     df["spend_shift_3weeks"] = df["spend"].shift(3)   
     df["special_feature1"] = compute_bespoke_feature(df)   
     return df   
+
 df = pd.read_parquet("my_table.parquet")   
 df = compute_features(df)
 ```
 
 This code is not modular, as one function computes five features (holidays, avg_3wk_spend, acquisition_cost, spend_shift_3weeks, and special_feature1). 
-このコードはモジュラーではなく、1つの関数が5つの特徴（holidays、avg_3wk_spend、acquisition_cost、spend_shift_3weeks、special_feature1）を計算しています。
-
+**このコードはモジュラーではなく、1つの関数が5つの特徴（holidays、avg_3wk_spend、acquisition_cost、spend_shift_3weeks、special_feature1）を計算**しています。
 It is difficult to write independent tests for each of the individual features, there is no dedicated documentation for each feature, and debugging requires understanding the whole compute_features function.
 各個別の特徴に対して独立したテストを書くのが難しく、各特徴に専用のドキュメントがなく、デバッグにはcompute_features関数全体を理解する必要があります。
 
-
+<!-- ここまで読んだ! -->
 
 A solution to these problems is to refactor this code as feature functions that update a DataFrame containing the features. 
-これらの問題に対する解決策は、特徴を含むDataFrameを更新する特徴関数としてこのコードをリファクタリングすることです。
-
+これらの問題に対する解決策は、**特徴を含むDataFrameを更新する特徴関数としてこのコードをリファクタリングすること**です。
 This idea comes originally from Apache Hamilton. 
-このアイデアは元々Apache Hamiltonから来ています。
-
+**このアイデアは元々Apache Hamiltonから**来ています。
 For each feature computed, you define a new feature function. 
 計算された各特徴に対して、新しい特徴関数を定義します。
-
 You can create the features as columns in a DataFrame (Pandas, PySpark, or Polars) by applying the feature functions in the correct order. 
 特徴関数を正しい順序で適用することによって、DataFrame（Pandas、PySpark、またはPolars）の列として特徴を作成できます。
-
 For example, here, we compute the column `acquisition_cost` as the spend divided by the number of users who sign up for our service (signups): 
 例えば、ここでは、列`acquisition_cost`を支出を私たちのサービス（サインアップ）にサインアップするユーザーの数で割ったものとして計算します：
 
-```  
+```python
 df['acquisition_cost'] = df['spend'] / df['signups']
 ```
 
 We refactor the logic used to compute the `acquisition_cost` into a function as follows: 
 `acquisition_cost`を計算するために使用されるロジックを次のように関数にリファクタリングします：
 
-```  
+```python
 def acquisition_cost(spend: pd.Series, signups: pd.Series) -> pd.Series: 
     """Acquisition cost per user is total spend divided by number of signups.""" 
     return spend / signups
@@ -348,20 +337,18 @@ def acquisition_cost(spend: pd.Series, signups: pd.Series) -> pd.Series:
 
 We also write functions for the other four features. 
 他の4つの特徴のための関数も作成します。
-
 At first glance, this increases the number of lines of code we have to write. 
 一見すると、これにより書かなければならないコードの行数が増えます。
-
 However, we now have a documented function that can potentially be reused within the same program or by different programs. 
 しかし、これにより、同じプログラム内または異なるプログラムによって再利用される可能性のある文書化された関数を持つことができます。
-
 We can now write a unit test for `acquisition_cost`, as follows: 
-これで、`acquisition_cost`のユニットテストを次のように書くことができます：
+これで、`acquisition_cost`のユニットテストを次のように書くことができます:
+(確かにSQL等でまとめて複数の特徴量を計算する場合って、単体テストとかで特徴量生成の動作は保証できないよなぁ...:thinking:)
 
-```  
+```python
 @pytest.fixture 
 def get_spends(self) -> pd.DataFrame: 
-    return pd.DataFrame([[20, 40], [5, 4], [4, 10], 
+    return pd.DataFrame([20, 40], [5, 4], [4, 10], 
                          columns=["spends", "signups", "acquisition_cost"]) 
 
 def test_spend_per_signup(get_spends: Callable): 
@@ -371,359 +358,307 @@ def test_spend_per_signup(get_spends: Callable):
 ```
 
 This unit test enforces a contract for how `acquisition_cost` is computed. 
-このユニットテストは、`acquisition_cost`がどのように計算されるかの契約を強制します。
-
+このユニットテストは、**`acquisition_cost`がどのように計算されるかの契約を強制**します。
 If anybody changes how `acquisition_cost` is computed, the unit test will fail, indicating that its contract is broken for downstream clients that use the `acquisition_cost feature.` 
 誰かが`acquisition_cost`の計算方法を変更すると、ユニットテストは失敗し、`acquisition_cost feature`を使用する下流のクライアントに対してその契約が破損していることを示します。
-
 You can, of course, still update the feature logic for `acquisition_cost`, but that should typically be performed by creating a new version of the feature, and the new version would require a new unit test. 
-もちろん、`acquisition_cost`の特徴ロジックを更新することはできますが、通常は特徴の新しいバージョンを作成することによって行われるべきであり、新しいバージョンには新しいユニットテストが必要です。
-
+**もちろん、`acquisition_cost`の特徴ロジックを更新することはできますが、通常は特徴の新しいバージョンを作成することによって行われるべきであり、新しいバージョンには新しいユニットテストが必要です。** (なるほど。だからロジックを更新するたびに、新しい特徴量カラムが追加されていく運用を推奨してるのかな...!!:thinking:)
 We will cover versioning features in Chapter 5. 
-特徴のバージョン管理については第5章で説明します。
+特徴のバージョン管理については第5章で説明します。(気になる...!!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 In this example, our functions are data transformations on a DataFrame in a feature pipeline. 
 この例では、私たちの関数は特徴パイプライン内のDataFrameに対するデータ変換です。
-
-How does the feature pipeline save the final DataFrame to a feature store? 
+How does the feature pipeline save the final DataFrame to a feature store?
 特徴パイプラインは最終的なDataFrameを特徴ストアにどのように保存するのでしょうか？
-
 Feature stores typically provide DataFrame APIs (Pandas, Apache Spark, Polars) for ingesting DataFrames in a feature group, which is a table in which feature stores save their data. 
 特徴ストアは通常、特徴グループ内のDataFrameを取り込むためのDataFrame API（Pandas、Apache Spark、Polars）を提供します。特徴グループは、特徴ストアがデータを保存するテーブルです。
-
 Our approach to writing modular feature engineering is to build a DataFrame containing feature data (a featurized DataFrame) using feature functions (see Figure 2-3).  
-モジュラー特徴エンジニアリングを書くための私たちのアプローチは、特徴関数を使用して特徴データを含むDataFrame（特徴化されたDataFrame）を構築することです（図2-3を参照）。
+modular feature engineeringを書くための私たちのアプローチは、特徴関数を使用して特徴データを含むDataFrame（特徴化されたDataFrame）を構築することです（図2-3を参照）。
 
+![]()
 _Figure 2-3. A Python-centric approach to writing feature pipelines involves building a DataFrame using feature functions and then writing it to a feature group in the feature store. The data can later be read from feature groups by training and inference pipelines using a feature query engine._  
-図2-3. 特徴パイプラインを書くためのPython中心のアプローチは、特徴関数を使用してDataFrameを構築し、それを特徴ストアの特徴グループに書き込むことを含みます。データは後で、特徴クエリエンジンを使用してトレーニングおよび推論パイプラインによって特徴グループから読み取ることができます。
+図2-3. 特徴パイプラインを書くためのPython中心のアプローチは、feature functionsを使用してDataFrameを構築し、それを特徴ストアの特徴グループに書き込むことを含みます。データは後で、特徴クエリエンジンを使用してトレーニングおよび推論パイプラインによって特徴グループから読み取ることができます。
+
+<!-- ここまで読んだ! -->
 
 Each featurized DataFrame is written to a feature group in the feature store as a commit (append/update/delete). 
 各特徴化されたDataFrameは、コミット（追加/更新/削除）として特徴ストアの特徴グループに書き込まれます。
-
 The feature group stores the mutable set of features created over time. 
 特徴グループは、時間の経過とともに作成された可変の特徴セットを保存します。
-
 Training and inference pipelines can later use a feature query service to read a consistent snapshot of feature data from one or more feature groups to train a model or to make predictions, respectively. 
 トレーニングおよび推論パイプラインは、後で特徴クエリサービスを使用して、1つまたは複数の特徴グループから特徴データの一貫したスナップショットを読み取り、モデルをトレーニングしたり予測を行ったりすることができます。
 
 In this book, we will apply the feature functions approach to modularizing Python code for data transformations. 
-この本では、データ変換のためのPythonコードをモジュール化するために特徴関数アプローチを適用します。
-
+この本では、**データ変換のためのPythonコードをモジュール化するためにfeature functionsアプローチを適用**します。
 Although our previous example covered a feature pipeline, we will follow the same coding practice of encapsulating data transformations in functions in both training and inference pipelines. 
 前の例では特徴パイプラインをカバーしましたが、トレーニングパイプラインと推論パイプラインの両方でデータ変換を関数にカプセル化する同じコーディングプラクティスに従います。
-
 In the next section, we will see that some data transformations still need to be performed in training and inference pipelines, depending on the type of feature you are creating: a reusable feature, a model-specific feature, or a real-time feature. 
-次のセクションでは、作成している特徴のタイプ（再利用可能な特徴、モデル固有の特徴、またはリアルタイムの特徴）に応じて、トレーニングおよび推論パイプラインでまだ実行する必要があるデータ変換があることを見ていきます。
+次のセクションでは、**作成している特徴のタイプ（再利用可能な特徴、モデル固有の特徴、またはリアルタイムの特徴）に応じて、トレーニングおよび推論パイプラインでまだ実行する必要があるデータ変換があること**を見ていきます。
 
-###### A Taxonomy for Data Transformations in ML Pipelines  
-###### MLパイプラインにおけるデータ変換の分類
+<!-- ここまで読んだ! -->
+
+### A Taxonomy for Data Transformations in ML Pipelines MLパイプラインにおけるデータ変換の分類
 
 ML pipelines consist of a sequence of data transformations. 
-MLパイプラインは、一連のデータ変換で構成されています。
-
+**MLパイプラインは、一連のデータ変換で構成されています** (学習も推論も、全てデータ変換とみなせるのか...!!:thinking:)
 From data sources, to features, to models and predictions, data is successively transformed from one format into another, until the final predictions are consumed by clients. 
 データソースから特徴、モデル、予測に至るまで、データは次々と異なる形式に変換され、最終的な予測がクライアントによって消費されるまで続きます。
-
 However, not all data transformations in ML pipelines are the same. 
 しかし、MLパイプライン内のすべてのデータ変換が同じであるわけではありません。
-
 Firstly, the feature store stores feature data that can be reused across many models. 
 まず第一に、特徴ストアは多くのモデルで再利用できる特徴データを保存します。
-
 That means feature pipelines that write feature data to the feature store should perform data transformations that create reusable features.  
-つまり、特徴データを特徴ストアに書き込む特徴パイプラインは、再利用可能な特徴を作成するデータ変換を実行する必要があります。
+つまり、**特徴データを特徴ストアに書き込む特徴パイプラインは、再利用可能な特徴を作成するデータ変換を実行する必要があります。**
 
 Some data transformations, however, produce features that are not reusable across models. 
 しかし、いくつかのデータ変換は、モデル間で再利用できない特徴を生成します。
-
 For example, many ML frameworks require you to transform strings into a numerical representation before they can be used as input. 
-例えば、多くのMLフレームワークでは、文字列を入力として使用する前に数値表現に変換する必要があります。
-
+例えば、多くのMLフレームワークでは、**文字列を入力として使用する前に数値表現に変換する必要**があります。
 This transformation is known as encoding a categorical variable and is parameterized by the set of categories found in the model’s training dataset. 
 この変換は、カテゴリ変数のエンコーディングとして知られ、モデルのトレーニングデータセットに見つかるカテゴリのセットによってパラメータ化されます。
-
 If you train two models on two different training datasets, each with a different set of categories, they will encode the strings differently. 
-異なるカテゴリのセットを持つ2つの異なるトレーニングデータセットで2つのモデルをトレーニングすると、それぞれが文字列を異なる方法でエンコードします。
-
+**異なるカテゴリのセットを持つ2つの異なるトレーニングデータセットで2つのモデルをトレーニングすると、それぞれが文字列を異なる方法でエンコードします。**
 The data transformation is, therefore, specific to the model and its training dataset. 
-したがって、データ変換はモデルとそのトレーニングデータセットに特有のものです。
-
+したがって、このデータ変換はモデルとそのトレーニングデータセットに特有のものです。
 Similarly, for numerical variables, we have data transformations that are parameterized by a model’s training dataset and, therefore, not reusable across models. 
-同様に、数値変数についても、モデルのトレーニングデータセットによってパラメータ化されたデータ変換があり、したがってモデル間で再利用できません。
-
+同様に、**数値変数についても、モデルのトレーニングデータセットによってパラメータ化されたデータ変換があり、したがってモデル間で再利用できません**。
 You can normalize or scale a numerical value using its mean/minimum/maximum/standard deviation that you calculate from values in the training data. 
-トレーニングデータの値から計算した平均/最小/最大/標準偏差を使用して、数値を正規化またはスケーリングできます。
-
+例えばトレーニングデータの値から計算した平均/最小/最大/標準偏差を使用して、数値を正規化またはスケーリングできます。
 Some models need normalized numerical variables, such as gradient-descent models (deep learning), while others, such as decision trees, do not benefit from normalization. 
-いくつかのモデルは、勾配降下モデル（深層学習）などの正規化された数値変数を必要としますが、決定木などの他のモデルは正規化から利益を得ません。
+一部のモデルは正規化された数値変数を必要とします（勾配降下モデル（深層学習）など）が、決定木などの他のモデルは正規化から利益を得ません。
+
+<!-- ここまで読んだ! -->
 
 Another data transformation that is performed outside of a feature pipeline is a real-time data transformation that’s performed in real-time ML systems. 
 特徴パイプラインの外で実行される別のデータ変換は、リアルタイムMLシステムで実行されるリアルタイムデータ変換です。
-
 Feature pipelines precompute features, but online models may need data transformations on parameters to a prediction request. 
-特徴パイプラインは特徴を事前計算しますが、オンラインモデルは予測リクエストのパラメータに対するデータ変換を必要とする場合があります。
-
+**特徴パイプラインは特徴を事前計算しますが、オンラインモデルは予測リクエストのパラメータに対するデータ変換を必要とする場合があります。** (例えば検索クエリとか?? 推論の時間帯などのcontextとか??:thinking:)
 These on-demand transformations are performed in online inference pipelines, for example, in a Python user-defined function. 
 これらのオンデマンド変換は、例えばPythonのユーザー定義関数内のオンライン推論パイプラインで実行されます。
 
+<!-- ここまで読んだ! -->
+
 To address both of these challenges, we now introduce a taxonomy for data transformations in ML pipelines that use a feature store. 
-これらの2つの課題に対処するために、特徴ストアを使用するMLパイプラインにおけるデータ変換の分類を紹介します。
-
+**これらの2つの課題**に対処するために、特徴ストアを使用するMLパイプラインにおけるデータ変換の分類を紹介します。
 The taxonomy organizes data transformations into three different classes: model-dependent, model-independent, and on-demand transformations. 
-この分類は、データ変換を3つの異なるクラスに整理します：モデル依存、モデル非依存、オンデマンド変換です。
-
+この分類は、**データ変換を3つの異なるクラスに整理します：モデル依存、モデル非依存、オンデマンド変換**です。
 This classification helps inform you in which ML pipeline(s) to implement the data transformation. 
-この分類は、どのMLパイプラインでデータ変換を実装するかを知らせるのに役立ちます。
-
+この分類は、**どのMLパイプラインでそのデータ変換を実装するか**を知らせるのに役立ちます。
 But, before looking at the taxonomy, we will first introduce feature types. 
 しかし、分類を見る前に、まず特徴のタイプを紹介します。
 
-###### Feature Types and Model-Dependent Transformations  
-###### 特徴タイプとモデル依存変換
+<!-- ここまで読んだ! -->
+
+#### Feature Types and Model-Dependent Transformations 特徴タイプとモデル依存変換
 
 A data type for a variable in a programming language defines the set of valid operations on that variable—invalid operations will cause an error, at either compile time (in Java and Rust) or runtime (in Python). 
 プログラミング言語における変数のデータ型は、その変数に対する有効な操作のセットを定義します—無効な操作は、コンパイル時（JavaやRust）または実行時（Python）にエラーを引き起こします。
-
 Feature types are data type extensions that are useful for understanding the set of valid transformations on a variable in ML. 
-特徴タイプは、MLにおける変数の有効な変換のセットを理解するのに役立つデータ型の拡張です。
-
+**特徴タイプは、MLにおける変数の有効な変換のセットを理解するのに役立つデータ型の拡張**です。
 For example, we can encode a categorical variable, but we cannot encode a numerical feature. 
 例えば、カテゴリ変数をエンコードできますが、数値特徴をエンコードすることはできません。
-
 Similarly, we can tokenize a string (categorical) input into an LLM but not a numerical feature. 
 同様に、文字列（カテゴリ）入力をLLMにトークン化できますが、数値特徴はできません。
-
 We can normalize, standardize, or scale a numerical variable but not a categorical variable. 
 数値変数を正規化、標準化、またはスケーリングできますが、カテゴリ変数はできません。
 
-In Figure 2-4, we define the set of feature types as categorical variables (strings, enums, booleans), numerical variables (int, float, double), and arrays (lists, vector embeddings). 
-図2-4では、特徴タイプのセットをカテゴリ変数（文字列、列挙型、ブール値）、数値変数（int、float、double）、および配列（リスト、ベクトル埋め込み）として定義します。
+<!-- ここまで読んだ! -->
 
+In Figure 2-4, we define the set of feature types as categorical variables (strings, enums, booleans), numerical variables (int, float, double), and arrays (lists, vector embeddings). 
+図2-4では、**特徴タイプのセットをカテゴリ変数（文字列、列挙型、ブール値）、数値変数（int、float、double）、および配列（リスト、ベクトル埋め込み）として定義**します。
 In ML literature, arrays are not often described as a feature type. 
 ML文献では、配列は特徴タイプとしてあまり説明されません。
-
 However, they are now ubiquitous in AI systems, in particular as vector embeddings. 
 しかし、現在、配列はAIシステムにおいて普遍的であり、特にベクトル埋め込みとして使用されています。
-
 A vector embedding is a fixed-size array of either floating-point numbers or integers that stores a compressed representation of some higher-dimensional data. 
 ベクトル埋め込みは、浮動小数点数または整数の固定サイズの配列であり、いくつかの高次元データの圧縮表現を保存します。
-
 Lists and vector embeddings are now widely supported as data types in feature stores—and they have well-defined sets of valid transformations. 
 リストとベクトル埋め込みは、現在、特徴ストアでデータ型として広くサポートされており、明確に定義された有効な変換のセットを持っています。
-
 For example, taking the three most recent entries in a list is a valid operation on a list, as is indexing/querying a vector embedding. 
 例えば、リスト内の3つの最新のエントリを取得することはリストに対する有効な操作であり、ベクトル埋め込みのインデックス付け/クエリも同様です。
 
+![]()
 _Figure 2-4. Feature types in ML can be categorized into one of three different classes: categorical, numerical, or an array. Within those categories, there are further subclasses. Ordinal variables have a natural order (e.g., low/medium/high), while nominal variables do not. Ratio variables have a defined zero point, while interval variables do not. Arrays can be lists of values or embedding vectors._  
 図2-4. MLにおける特徴タイプは、3つの異なるクラスのいずれかに分類できます：カテゴリ、数値、または配列。そのカテゴリ内にはさらにサブクラスがあります。順序変数には自然な順序があります（例：低/中/高）が、名義変数にはありません。比率変数には定義されたゼロ点がありますが、区間変数にはありません。配列は値のリストまたは埋め込みベクトルです。
 
-Feature types lack programming language support; instead, they are supported in ML frameworks and libraries. 
-特徴タイプはプログラミング言語のサポートが不足しています。代わりに、MLフレームワークやライブラリでサポートされています。
+<!-- ここまで読んだ! -->
 
+Feature types lack programming language support; instead, they are supported in ML frameworks and libraries. 
+**特徴タイプはプログラミング言語のサポートが不足しています。代わりに、MLフレームワークやライブラリでサポートされています。**
 For example, in Python, you may use an ML framework such as Scikit-Learn, TensorFlow, XGBoost, or PyTorch, and each framework has its own implementation of the encoding/scaling/normalization/min-max scaling transformations for their own feature types. 
 例えば、Pythonでは、Scikit-Learn、TensorFlow、XGBoost、またはPyTorchなどのMLフレームワークを使用することができ、各フレームワークはそれぞれの特徴タイプに対するエンコーディング/スケーリング/正規化/最小-最大スケーリング変換の独自の実装を持っています。
 
 These transformations are specific to ML. 
 これらの変換はMLに特有のものです。
-
 They make feature data compatible with a particular ML framework or improve model performance, such as normalization that improves convergence of gradient-descent-based ML algorithms. 
 これにより、特徴データは特定のMLフレームワークと互換性があり、勾配降下ベースのMLアルゴリズムの収束を改善する正規化など、モデルのパフォーマンスを向上させます。
-
 As described earlier, these transformations are not reusable across other models, and for this reason, we call these transformations model-dependent transformations (MDTs). 
-前述のように、これらの変換は他のモデル間で再利用できず、この理由から、これらの変換をモデル依存変換（MDT）と呼びます。
+前述のように、**これらの変換は他のモデル間で再利用できず、この理由から、これらの変換をモデル依存変換（MDT）と呼びます。**
 
 The transformations are dependent on the model and/or its training data. 
 これらの変換はモデルおよび/またはそのトレーニングデータに依存しています。
-
 You should not perform these transformations in feature pipelines, before the feature store. 
 これらの変換は、特徴ストアの前に特徴パイプラインで実行すべきではありません。
-
 Instead, you should apply MDTs twice: first in the training pipeline, when creating training data, and second in the inference pipeline. 
-代わりに、MDTを2回適用する必要があります：最初はトレーニングデータを作成する際のトレーニングパイプラインで、2回目は推論パイプラインでです。
-
+**代わりに、MDTを2回適用する必要があります：最初はトレーニングデータを作成する際のトレーニングパイプラインで、2回目は推論パイプラインでです。** (だよね...!:thinking:)
 And as the training and inference pipelines are different programs, you need to make sure there is no skew between the implementation of your MDTs in the training and inference pipelines. 
-トレーニングパイプラインと推論パイプラインは異なるプログラムであるため、トレーニングパイプラインと推論パイプラインにおけるMDTの実装間に偏りがないことを確認する必要があります。
-
+トレーニングパイプラインと推論パイプラインは異なるプログラムであるため、**トレーニングパイプラインと推論パイプラインにおけるMDTの実装間に偏りがないことを確認する必要**があります。
 If there is skew, your model may perform poorly, and it will be difficult to identify the cause of the poor performance. 
 偏りがあると、モデルのパフォーマンスが低下し、パフォーマンスの低下の原因を特定するのが難しくなります。
 
-Another problem with MDTs is that the transformed feature data is not amenable to EDA. 
-MDTのもう一つの問題は、変換された特徴データがEDA（探索的データ分析）に適していないことです。
-
-
+<!-- ここまで読んだ! -->
 
 Another problem with MDTs is that the transformed feature data is not amenable to EDA. 
 MDTのもう一つの問題は、変換された特徴データがEDA（探索的データ分析）に適していないことです。
-
 For example, if you normalize the annual income variable, you make the data hard to analyze: it is easier for a data scientist to understand and visualize an income of $74,580 than its normalized value of 0.541. 
 例えば、年収変数を正規化すると、データの分析が難しくなります。データサイエンティストにとって、$74,580の収入を理解し視覚化する方が、正規化された値0.541を理解するよりも簡単です。
-
 There is also a problem with storing normalized/scaled/encoded feature data in the feature store. 
-正規化された/スケーリングされた/エンコードされた特徴データをフィーチャーストアに保存することにも問題があります。
-
+**正規化された/スケーリングされた/エンコードされた特徴データをフィーチャーストアに保存することにも問題があります。**
 For example, if you have a feature group (table) that stores normalized new annual income data, every time you add/remove/update rows in that table, you have to recompute all of the existing annual income feature data, as the new data changes the mean/standard deviation for existing rows. 
 例えば、正規化された新しい年収データを保存するフィーチャーグループ（テーブル）がある場合、そのテーブルに行を追加/削除/更新するたびに、既存の年収特徴データをすべて再計算する必要があります。新しいデータが既存の行の平均/標準偏差を変更するためです。
-
 This makes even very small writes to a feature group very expensive (this is called write amplification). 
-これにより、フィーチャーグループへの非常に小さな書き込みでさえも非常に高価になります（これを書き込み増幅と呼びます）。
+**これにより、フィーチャーグループへの非常に小さな書き込みでさえも非常に高価になります。これを書き込み増幅（write amplification）と呼びます。**
 
-###### Reusable Features with Model-Independent Transformations
-###### モデル非依存変換による再利用可能な特徴
+<!-- ここまで読んだ! -->
+
+#### Reusable Features with Model-Independent Transformations モデル非依存変換による再利用可能な特徴
 
 Data engineers are typically not very familiar with the MDTs introduced in the last section, as they are specific to ML. 
 データエンジニアは、通常、前のセクションで紹介されたMDTにあまり精通していません。これはMLに特有のものだからです。
-
 The types of data transformations that data engineers are familiar with that are widely used in feature engineering are (windowed) aggregations (such as the max/min of some numerical variable), windowed counts (for example, the number of clicks per day), and any transformations to create recency, frequency, monetary value (RFM) features. 
-データエンジニアがよく知っている特徴エンジニアリングで広く使用されるデータ変換の種類は、（ウィンドウ化された）集約（例えば、数値変数の最大/最小）、ウィンドウ化されたカウント（例えば、1日のクリック数）、および最近性、頻度、金銭的価値（RFM）特徴を作成するための変換です。
-
+データエンジニアがよく知っている特徴エンジニアリングで広く使用されるデータ変換の種類は、**（ウィンドウ化された）集約（例えば、数値変数の最大/最小）、ウィンドウ化されたカウント（例えば、1日のクリック数）、および最近性、頻度、金銭的価値（RFM）特徴を作成するための変換**です。
 These transformations create features that can be reused across many models and are called model-independent transformations (MITs). 
-これらの変換は、多くのモデルで再利用できる特徴を作成し、モデル非依存変換（MIT）と呼ばれます。
-
+これらの変換は、**多くのモデルで再利用できる特徴を作成し、モデル非依存変換（MIT）**と呼ばれます。
 MITs are computed once in batch or streaming feature pipelines, and the reusable feature data produced by them is stored in the feature store, to be used later by downstream training and inference pipelines. 
 MITは、バッチまたはストリーミングフィーチャーパイプラインで一度計算され、それによって生成された再利用可能な特徴データはフィーチャーストアに保存され、後で下流のトレーニングおよび推論パイプラインで使用されます。
 
-###### Real-Time Features with On-Demand Transformations
-###### オンデマンド変換によるリアルタイム特徴
+<!-- ここまで読んだ! -->
+
+#### Real-Time Features with On-Demand Transformations オンデマンド変換によるリアルタイム特徴
 
 What if I have a real-time ML system and the data required to compute my feature is only available as part of a prediction request? 
-リアルタイムMLシステムがあり、特徴を計算するために必要なデータが予測リクエストの一部としてのみ利用可能な場合はどうなりますか？
-
+リアルタイムMLシステムがあり、**特徴を計算するために必要なデータが予測リクエストの一部としてのみ利用可能な場合**はどうなりますか？(まさに検索クエリとかだね...!!:thinking:)
 In that case, I will have to compute the feature in the online inference pipeline in what is called an on-demand transformation (ODT). 
-その場合、オンライン推論パイプラインで特徴を計算する必要があり、これをオンデマンド変換（ODT）と呼びます。
-
+その場合、**オンライン推論パイプラインで特徴を計算する必要があり、これをオンデマンド変換（ODT）**と呼びます。
 Often, the prediction requests and their parameters are logged for later use. 
-しばしば、予測リクエストとそのパラメータは後で使用するためにログに記録されます。
-
+**しばしば、予測リクエストとそのパラメータは後で使用するためにログに記録されます。**
 For example, you may want to reuse the same input data to create reusable feature data for the feature store. 
 例えば、同じ入力データを再利用してフィーチャーストアの再利用可能な特徴データを作成したい場合があります。
-
 Or you could use that historical data as inputs for MDTs. 
 また、その履歴データをMDTの入力として使用することもできます。
-
 We will see in Chapter 7 how you can implement ODTs as user-defined functions (UDFs). 
 第7章では、ODTをユーザー定義関数（UDF）として実装する方法を見ていきます。
-
 And the same UDF used in an online inference pipeline can be reused in a feature pipeline to create reusable features from historical data. 
-オンライン推論パイプラインで使用される同じUDFは、フィーチャーパイプラインで再利用され、履歴データから再利用可能な特徴を作成できます。
+**オンライン推論パイプラインで使用される同じUDFは、フィーチャーパイプラインで再利用され、履歴データから再利用可能な特徴を作成できます。** (上述されてるように、予測リクエストとそのパラメータはログに記録されるから...!!:thinking:)
+Our approach will prevent skew—there should be no difference between the data transformation in the online inference pipeline and the data in the feature pipeline.
+私たちのアプローチは、スキューを防ぎます。オンライン推論パイプラインのデータ変換とフィーチャーパイプラインのデータの間に違いがあってはなりません。(UDFで共通化してるから??:thinking:)
 
-Our approach will prevent skew—there should be no difference between the data transformation in the online inference pipeline and the data in the feature pipeline. 
-私たちのアプローチは、スキューを防ぎます。オンライン推論パイプラインのデータ変換とフィーチャーパイプラインのデータの間に違いがあってはなりません。
+<!-- ここまで読んだ! -->
 
-###### The ML Transformation Taxonomy and ML Pipelines
-###### ML変換の分類とMLパイプライン
+#### The ML Transformation Taxonomy and ML Pipelines ML変換の分類とMLパイプライン
 
 Now that we have introduced the three different types of features and the three different data transformations that create them (model-independent, model-dependent, and on-demand), we can present a taxonomy for data transformations in ML (see Figure 2-5). 
 異なる3種類の特徴と、それらを生成する3種類のデータ変換（モデル非依存、モデル依存、オンデマンド）を紹介したので、MLにおけるデータ変換の分類を提示できます（図2-5を参照）。
-
 Our taxonomy includes:
 私たちの分類には以下が含まれます：
 
 - Model-independent transformations that produce reusable features that are stored in a feature store
-- 再利用可能な特徴を生成し、フィーチャーストアに保存されるモデル非依存変換
+  - 再利用可能な特徴を生成し、フィーチャーストアに保存されるモデル非依存変換
 - Model-dependent transformations that produce features specific to a single model
-- 単一のモデルに特有の特徴を生成するモデル依存変換
+  - 単一のモデルに特有の特徴を生成するモデル依存変換
 - On-demand transformations that require request-time data to be computed in online inference pipelines but can also be computed in feature pipelines on historical data
-- リクエスト時のデータをオンライン推論パイプラインで計算する必要があるオンデマンド変換ですが、履歴データのフィーチャーパイプラインでも計算できます。
+  - リクエスト時のデータをオンライン推論パイプラインで計算する必要があるオンデマンド変換ですが、履歴データのフィーチャーパイプラインでも計算できます。
 
+![]()
 _Figure 2-5. The taxonomy of data transformations for ML that create reusable features, model-specific features, and real-time features._
 _図2-5. 再利用可能な特徴、モデル特有の特徴、リアルタイム特徴を生成するMLのデータ変換の分類。_
+
+<!-- ここまで読んだ! -->
 
 In Figure 2-6, we can see how the different data transformations in our taxonomy map onto our FTI pipelines. 
 図2-6では、私たちの分類における異なるデータ変換がFTIパイプラインにどのようにマッピングされるかを見ることができます。
 
+![]()
 _Figure 2-6. Data transformations for ML and the ML pipelines they are performed in._
 _図2-6. MLのデータ変換とそれが実行されるMLパイプライン。_
 
 Notice that MITs are only performed in feature pipelines. 
-MITはフィーチャーパイプラインでのみ実行されることに注意してください。
-
+**MITはフィーチャーパイプラインでのみ実行されることに注意**してください。
 However, MDTs are performed in both the training and inference pipelines. 
 しかし、MDTはトレーニングパイプラインと推論パイプラインの両方で実行されます。
-
 On-demand transformations are also performed in two different pipelines—the online inference pipeline and the feature pipeline. 
 オンデマンド変換は、オンライン推論パイプラインとフィーチャーパイプラインの2つの異なるパイプラインでも実行されます。
-
 Batch inference pipelines do not support ODTs, as they do not have request-time parameters—their precomputed features are computed in feature pipelines, and any inference time transformations are MDTs. 
-バッチ推論パイプラインはODTをサポートしていません。リクエスト時のパラメータがないためです。事前計算された特徴はフィーチャーパイプラインで計算され、推論時の変換はMDTです。
-
+**バッチ推論パイプラインはODTをサポートしていません。リクエスト時のパラメータがないためです。**事前計算された特徴はフィーチャーパイプラインで計算され、推論時の変換はMDTです。
 Whenever the same data transformation is performed in different pipelines, you need to ensure there is no skew between the different implementations. 
-異なるパイプラインで同じデータ変換が実行される場合、異なる実装間にスキューがないことを確認する必要があります。
-
+**異なるパイプラインで同じデータ変換が実行される場合、異なる実装間にスキューがないことを確認する必要があります。**
 One final point to note is that MDTs can also be applied to request parameters in online inference pipelines, but they differ from ODTs in that they cannot be applied in feature pipelines. 
-最後に注意すべき点は、MDTはオンライン推論パイプラインのリクエストパラメータにも適用できますが、フィーチャーパイプラインには適用できないため、ODTとは異なります。
-
+**最後に注意すべき点は、MDTはオンライン推論パイプラインのリクエストパラメータにも適用できますが、フィーチャーパイプラインには適用できないため、ODTとは異なります。** (ふむふむなるほど...!!:thinking:)
 So some real-time features can be model-independent features, while others are model-dependent. 
-したがって、一部のリアルタイム特徴はモデル非依存特徴であり、他はモデル依存特徴です。
-
+したがって、**一部のリアルタイム特徴はモデル非依存特徴であり、他はモデル依存特徴**です。
 We call the real-time, model-independent features the on-demand features. 
-リアルタイムのモデル非依存特徴をオンデマンド特徴と呼びます。
+**リアルタイムのモデル非依存特徴をオンデマンド特徴**と呼びます。
 
 Now that we have introduced our classification of data transformations, we can dive into more details on our three ML pipelines, starting with the feature pipeline. 
 データ変換の分類を紹介したので、フィーチャーパイプラインから始めて、3つのMLパイプラインの詳細に入っていきましょう。
 
-###### Feature Pipelines
-###### フィーチャーパイプライン
+<!-- ここまで読んだ! -->
+
+### Feature Pipelines フィーチャーパイプライン
 
 A feature pipeline is a program that orchestrates the execution of a dataflow graph of model-independent and on-demand data transformations. 
 フィーチャーパイプラインは、モデル非依存およびオンデマンドデータ変換のデータフローグラフの実行を調整するプログラムです。
-
 These transformations include extracting data from a source, data validation and cleaning, feature extraction, aggregation, dimensionality reduction (such as creating vector embeddings), binning, feature crossing, and other feature engineering steps on input data to create and/or update feature data. 
 これらの変換には、ソースからデータを抽出すること、データの検証とクリーニング、特徴抽出、集約、次元削減（ベクトル埋め込みの作成など）、ビニング、特徴交差、および入力データに対するその他の特徴エンジニアリングステップが含まれ、特徴データを作成および/または更新します。
 
 A batch or streaming feature pipeline can apply some or all of these types of data transformations to create features that are stored in a feature store, as shown in Figure 2-7. 
 バッチまたはストリーミングフィーチャーパイプラインは、これらのデータ変換のいくつかまたはすべてを適用して、フィーチャーストアに保存される特徴を作成できます（図2-7参照）。
-
 The figure also shows two other specialized feature pipelines: a vector embedding pipeline, which creates vector embeddings that are stored in a vector index (in the feature store), and the feature data validation pipeline, which is an asynchronous program that runs data validation rules against feature data stored in a feature store. 
-この図には、ベクトル埋め込みを作成し、ベクトルインデックス（フィーチャーストア内）に保存するベクトル埋め込みパイプラインと、フィーチャーストアに保存された特徴データに対してデータ検証ルールを実行する非同期プログラムであるフィーチャーデータ検証パイプラインの2つの専門的なフィーチャーパイプラインも示されています。
+この図には、**ベクトル埋め込みを作成し、ベクトルインデックス（フィーチャーストア内）に保存するベクトル埋め込みパイプラインと、フィーチャーストアに保存された特徴データに対してデータ検証ルールを実行する非同期プログラムであるフィーチャーデータ検証パイプラインの2つの専門的なフィーチャーパイプライン達**も示されています。
 
+![]()
 _Figure 2-7. Classes of feature pipeline._
 _図2-7. フィーチャーパイプラインのクラス。_
 
+<!-- ここまで読んだ! -->
+
 A feature pipeline is, however, more than just a program that executes data transformations. 
-しかし、フィーチャーパイプラインは単にデータ変換を実行するプログラム以上のものです。
-
+しかし、**フィーチャーパイプラインは単にデータ変換を実行するプログラム以上のもの**です。
 It has to be able to connect and read data from the data sources, it needs to save its feature data to a feature store, and it also has nonfunctional requirements, such as: 
-データソースからデータを接続して読み取ることができ、フィーチャーデータをフィーチャーストアに保存する必要があり、また、以下のような非機能要件もあります：
+データソースからデータを接続して読み取ることができ、フィーチャーデータをフィーチャーストアに保存する必要があり、また、以下のような**非機能要件**もあります：
 
-_Backfilling or incremental data_ The same feature pipeline should be able to create feature data using historical data or new data (production) that arrives in batches or as a stream of incoming data. 
+- _Backfilling or incremental data_ 
+The same feature pipeline should be able to create feature data using historical data or new data (production) that arrives in batches or as a stream of incoming data. 
 _バックフィリングまたは増分データ_ 同じフィーチャーパイプラインは、履歴データまたはバッチまたはストリーミングで到着する新しいデータ（プロダクション）を使用してフィーチャーデータを作成できる必要があります。
 
-###### Fault tolerance
-###### フォールトトレランス
-
+- Fault tolerance フォールトトレランス
 Failures and retries in feature pipelines should not result in corrupt or duplicate data. 
-フィーチャーパイプラインでの失敗や再試行は、破損したデータや重複データを生じるべきではありません。
+**フィーチャーパイプラインでの失敗や再試行は、破損したデータや重複データを生じるべきではありません。**
 
-###### Scalability
-###### スケーラビリティ
-
+- Scalability スケーラビリティ
 You must ensure that the feature pipeline is provisioned with enough resources to process the expected data volume. 
 フィーチャーパイプラインが予想されるデータ量を処理するために十分なリソースを確保していることを確認する必要があります。
 
-###### Feature freshness
-###### フィーチャーの新鮮さ
-
+- Feature freshness フィーチャーの新鮮さ
 What is the maximum permissible age of precomputed feature data used by clients? 
-クライアントが使用する事前計算されたフィーチャーデータの最大許容年齢はどのくらいですか？
-
+**クライアントが使用する事前計算されたフィーチャーデータの最大許容年齢はどのくらいですか？**
 Do feature freshness requirements mean you have to implement the feature pipeline as a stream processing program, or can it be a batch program? 
 フィーチャーの新鮮さの要件は、フィーチャーパイプラインをストリーム処理プログラムとして実装する必要があることを意味しますか、それともバッチプログラムとして実装できますか？
 
-###### Governance and security requirements
-###### ガバナンスとセキュリティ要件
-
+- Governance and security requirements ガバナンスとセキュリティ要件
 Where can the data be processed, who can process the data, will processing create a tamperproof audit log, and will the features be organized and tagged for discoverability? 
 データはどこで処理できますか？誰がデータを処理できますか？処理は改ざん防止の監査ログを作成しますか？特徴は整理され、発見可能性のためにタグ付けされますか？
 
-###### Data quality guarantees
-###### データ品質保証
-
+- Data quality guarantees データ品質保証
 Does your feature pipeline validate data before it is written to the feature store or asynchronously, after the data has landed in the feature store? 
-フィーチャーパイプラインは、データがフィーチャーストアに書き込まれる前にデータを検証しますか、それともデータがフィーチャーストアに到着した後に非同期で検証しますか？
+フィーチャーパイプラインは、データがフィーチャーストアに書き込まれる前にデータを検証しますか、それともデータがフィーチャーストアに到着した後に非同期で検証しますか？(今は前者でやってるな〜...!!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 Let’s start with the data sources for your feature pipeline—where do they come from? 
 フィーチャーパイプラインのデータソースはどこから来るのか、始めましょう。
-
 Imagine developing a new feature pipeline and getting data from a source you’ve never parsed before (for example, an existing table in a data warehouse). 
 新しいフィーチャーパイプラインを開発し、以前に解析したことのないソース（例えば、データウェアハウス内の既存のテーブル）からデータを取得することを想像してください。
 
