@@ -696,98 +696,85 @@ You can address scalability and feature freshness requirements by implementing a
 スケーラビリティとフィーチャーの新鮮さの要件に対処するために、さまざまなフレームワークや言語のいずれかでフィーチャーパイプラインを実装できます。
 You have to select the best technology based on your feature freshness requirements, your data input sizes, and the skills available in your team. 
 フィーチャーの新鮮さの要件、データ入力サイズ、およびチームに利用可能なスキルに基づいて、最適な技術を選択する必要があります。
-
 Different data processing engines have different capabilities for (1) efficient processing, (2) scalable processing, and (3) ease of development and operation. 
 異なるデータ処理エンジンは、（1）効率的な処理、（2）スケーラブルな処理、（3）開発と運用の容易さに対して異なる能力を持っています。
-
 For example, if your batch feature pipeline processes less than 1 GB per execution, Pandas is a good framework to start with. 
 例えば、バッチフィーチャーパイプラインが1回の実行で1GB未満を処理する場合、Pandasは良いフレームワークの出発点です。
-
 For workloads up to 10s of GBs, Polars is a good choice. 
-10GBまでのワークロードには、Polarsが良い選択です。
-
+**10GBまでのワークロードには、Polarsが良い選択**です。
 And for TB-scale workloads, Apache Spark and SQL are popular choices. 
-TBスケールのワークロードには、Apache SparkとSQLが人気の選択肢です。
-
+**TBスケールのワークロードには、Apache SparkとSQLが人気の選択肢**です。
 While we have looked at DataFrame processing frameworks so far, dbt is also a popular framework for executing feature pipelines defined in SQL. 
-これまでDataFrame処理フレームワークを見てきましたが、dbtもSQLで定義されたフィーチャーパイプラインを実行するための人気のフレームワークです。
-
-
-
-. While we have looked at DataFrame processing frameworks so far, dbt is also a popular framework for executing feature pipelines defined in SQL. 
-これまでDataFrame処理フレームワークを見てきましたが、dbtはSQLで定義されたフィーチャーパイプラインを実行するための人気のあるフレームワークでもあります。
-
+これまでDataFrame処理フレームワークを見てきましたが、**dbtもSQLで定義されたフィーチャーパイプラインを実行するための人気のフレームワーク**です。
 The dbt framework adds some modularity to SQL by enabling transformations to be defined in separate files (dbt calls them models) as a form of pipeline. 
 dbtフレームワークは、変換を別のファイル（dbtではモデルと呼ばれます）で定義できるようにすることで、SQLにいくつかのモジュール性を追加します。
-
 The pipelines can then be chained together to implement a feature pipeline, with the final output to a feature group in a feature store. 
 これにより、パイプラインを連結してフィーチャーパイプラインを実装でき、最終的な出力はフィーチャーストアのフィーチャーグループに送られます。
 
+<!-- ここまで読んだ! -->
+
 When your AI system needs fresh feature data, you may need to use stream processing to compute features. 
-AIシステムが新鮮なフィーチャーデータを必要とする場合、フィーチャーを計算するためにストリーム処理を使用する必要があるかもしれません。
-
+**AIシステムが新鮮なフィーチャーデータを必要とする場合、フィーチャーを計算するためにストリーム処理を使用する必要があるかも**しれません。
 For stream processing feature pipelines that produce the freshest features, Feldera is an open source SQL-based engine that has a low barrier to entry, while larger-scale workloads can use Apache Flink, which scales to PB-sized workloads. 
-最新のフィーチャーを生成するストリーム処理フィーチャーパイプラインには、FelderaというオープンソースのSQLベースのエンジンがあり、参入障壁が低い一方で、大規模なワークロードにはPBサイズのワークロードにスケールするApache Flinkを使用できます。
-
+最新のフィーチャーを生成するストリーム処理フィーチャーパイプラインには、**FelderaというオープンソースのSQLベースのエンジン**があり、参入障壁が低い一方で、大規模なワークロードにはPBサイズのワークロードにスケールするApache Flinkを使用できます。
+(Feldera 初めてきいた...!!:thinking:)
 If you want Python-based streaming feature pipelines, then Spark Structured Streaming is a reasonable choice, although it introduces more latency than either Feldera or Flink due to the fact that it processes events in batches (instead of per event). 
-Pythonベースのストリーミングフィーチャーパイプラインを希望する場合、Spark Structured Streamingは合理的な選択ですが、イベントをバッチで処理するため（イベントごとではなく）、FelderaやFlinkよりも遅延が大きくなります。
-
+**Pythonベースのストリーミングフィーチャーパイプラインを希望する場合、Spark Structured Streamingは合理的な選択ですが、イベントをバッチで処理するため（イベントごとではなく）、FelderaやFlinkよりも遅延が大きくなります。** (つまりマイクロバッチ的な意味...??:thinking:)
 We cover batch feature pipelines in Chapter 8 and streaming feature pipelines in Chapter 9. 
 バッチフィーチャーパイプラインについては第8章で、ストリーミングフィーチャーパイプラインについては第9章で説明します。
 
-###### Training Pipelines
-###### トレーニングパイプライン
+<!-- ここまで読んだ! -->
+
+### Training Pipelines トレーニングパイプライン
 
 A training pipeline is a program that performs tasks from reading feature data from a feature store, to applying model-dependent transformations to the feature data, to training a model with an ML framework, to validating the trained model for performance and absence of bias, to publishing the model to a model registry, and finally to deploying the model to production for inference. 
-トレーニングパイプラインは、フィーチャーストアからフィーチャーデータを読み取り、モデル依存の変換をフィーチャーデータに適用し、MLフレームワークでモデルをトレーニングし、トレーニングされたモデルの性能とバイアスの有無を検証し、モデルをモデルレジストリに公開し、最終的に推論のためにモデルを本番環境にデプロイするタスクを実行するプログラムです。
-
+**トレーニングパイプラインは、フィーチャーストアからフィーチャーデータを読み取り、モデル依存の変換をフィーチャーデータに適用し、MLフレームワークでモデルをトレーニングし、トレーニングされたモデルの性能とバイアスの有無を検証し、モデルをモデルレジストリに公開し、最終的に推論のためにモデルを本番環境にデプロイするタスクを実行するプログラム**です。
 Training pipelines are run either on demand or on a schedule (for example, new models could be retrained and redeployed once per day or week). 
 トレーニングパイプラインは、オンデマンドまたはスケジュールに従って実行されます（たとえば、新しいモデルは1日または1週間に1回再トレーニングおよび再デプロイされる可能性があります）。
 
+<!-- ここまで読んだ! -->
+
 Figure 2-8 shows four different classes of training pipeline. 
-図2-8は、4つの異なるトレーニングパイプラインのクラスを示しています。
-
+図2-8は、**4つの異なるトレーニングパイプラインのクラス**を示しています。
 The first class is the complete training pipeline that performs all of the training pipeline tasks. 
-最初のクラスは、トレーニングパイプラインのすべてのタスクを実行する完全なトレーニングパイプラインです。
-
+**最初のクラスは、トレーニングパイプラインのすべてのタスクを実行する完全なトレーニングパイプライン**です。
 It starts by selecting, filtering, and joining the feature data it needs from the feature store, and it completes when it has uploaded a trained and validated model to the model registry. 
 これは、フィーチャーストアから必要なフィーチャーデータを選択、フィルタリング、結合することから始まり、トレーニングされ検証されたモデルをモデルレジストリにアップロードしたときに完了します。
 
+![]()
 _Figure 2-8. Classes of training pipelines._
 _Figure 2-8. トレーニングパイプラインのクラス_
 
 Other specialized training pipelines can perform subsets of these tasks. 
-他の専門的なトレーニングパイプラインは、これらのタスクのサブセットを実行できます。
-
+**他の専門的なトレーニングパイプラインは、これらのタスクのサブセットを実行**できます。
 A model deployment pipeline downloads a model from a model registry and deploys it for batch or online serving. 
 モデルデプロイメントパイプラインは、モデルレジストリからモデルをダウンロードし、バッチまたはオンラインサービス用にデプロイします。
-
 For online models, the model is typically deployed to model serving infrastructure. 
 オンラインモデルの場合、モデルは通常、モデルサービスインフラストラクチャにデプロイされます。
-
 It is often a separate pipeline from the training pipeline, as it is an operational step that may require human approval and may need to be reverted if there is a problem with the deployment. 
 これは、デプロイメントに問題が発生した場合に人間の承認が必要であったり、元に戻す必要がある運用ステップであるため、トレーニングパイプラインとは別のパイプラインであることが多いです。
-
 Model deployment often involves A/B tests, in which the model is first deployed as a shadow version and later promoted to the active version if it demonstrates good enough performance and behavior. 
-モデルデプロイメントには、A/Bテストが含まれることが多く、モデルは最初にシャドーバージョンとしてデプロイされ、十分な性能と動作を示した場合にアクティブバージョンに昇格されます。
+**モデルデプロイメントには、A/Bテストが含まれることが多く、モデルは最初にシャドーバージョンとしてデプロイされ、十分な性能と動作を示した場合にアクティブバージョンに昇格**されます。
+
+<!-- ここまで読んだ! -->
 
 Model validation can also be performed in its own model validation pipeline, where the model is asynchronously evaluated for performance and compliance after it has been saved to the model registry. 
 モデル検証は、モデルがモデルレジストリに保存された後に性能とコンプライアンスが非同期に評価されるモデル検証パイプラインでも実行できます。
-
 This is useful when model validation is a computationally intensive step that does not require GPUs but the model training pipeline uses GPUs. 
-これは、モデル検証がGPUを必要としない計算集約的なステップであり、モデルトレーニングパイプラインがGPUを使用する場合に便利です。
-
+**これは、モデル検証がGPUを必要としない計算集約的なステップであり、モデルトレーニングパイプラインがGPUを使用する場合に便利**です。(なるほどね、全部GPUインスタンスで計算させるよりも分けたほうがコスト効率良いよね的な話かな...!!:thinking:)
 This way, model training can complete and release the GPUs, and model validation can run later on cheaper CPUs. 
 このようにして、モデルトレーニングは完了し、GPUを解放でき、モデル検証は後でより安価なCPUで実行できます。
 
-For models with large training datasets that take time to materialize, the training pipeline can be further decomposed into a training dataset pipeline, which selects, filters, and joins feature data from a feature store, applies model-dependent transformations to the feature data, and saves the final training data as files. 
-大規模なトレーニングデータセットを持ち、具現化に時間がかかるモデルの場合、トレーニングパイプラインはさらにトレーニングデータセットパイプラインに分解でき、フィーチャーストアからフィーチャーデータを選択、フィルタリング、結合し、モデル依存の変換をフィーチャーデータに適用し、最終的なトレーニングデータをファイルとして保存します。
+<!-- ここまで読んだ! -->
 
+For models with large training datasets that take time to materialize, the training pipeline can be further decomposed into a training dataset pipeline, which selects, filters, and joins feature data from a feature store, applies model-dependent transformations to the feature data, and saves the final training data as files. 
+**大規模なトレーニングデータセットを持ち、具現化に時間がかかるモデルの場合、トレーニングパイプラインはさらにトレーニングデータセットパイプラインに分解でき**、フィーチャーストアからフィーチャーデータを選択、フィルタリング、結合し、モデル依存の変換をフィーチャーデータに適用し、最終的なトレーニングデータをファイルとして保存します。
 The files are stored in a filesystem or an object store (such as S3). 
 ファイルはファイルシステムまたはオブジェクトストア（S3など）に保存されます。
 
-###### Inference Pipelines
-###### 推論パイプライン
+<!-- ここまで読んだ! -->
+
+### Inference Pipelines 推論パイプライン
 
 An inference pipeline is a program that reads in new feature data (either precomputed or as parameters in a prediction request), applies transformations to the feature data (on-demand and/or model-dependent transformations), and outputs predictions with the model. 
 推論パイプラインは、新しいフィーチャーデータ（事前計算されたものまたは予測リクエストのパラメータとして）を読み込み、フィーチャーデータに変換を適用し（オンデマンドおよび/またはモデル依存の変換）、モデルを使用して予測を出力するプログラムです。
