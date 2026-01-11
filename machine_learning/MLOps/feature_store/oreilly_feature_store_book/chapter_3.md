@@ -318,7 +318,7 @@ In general, you should also examine the data in a notebook to check its complete
 In the following code snippet, we read the CSV file as a Pandas DataFrame and then keep only those columns we need from our air quality dataset (the date and our target, pm25): 
 次のコードスニペットでは、CSVファイルをPandas DataFrameとして読み込み、空気質データセットから必要な列（日時とターゲットであるpm25）のみを保持します：
 
-```  
+```python
 # you may need to rename columns in your CSV file to 'pm25' and 'date'   
 # CSVファイル内の列名を「pm25」と「date」に変更する必要があるかもしれません。  
 df = pd.read_csv("../../data/stockholm-hornsgatan-108.csv", parse_dates=['date'], skipinitialspace=True)   
@@ -327,45 +327,41 @@ df_aq = df[["date", "pm25"]]
 
 We also read the `country,` `city,` `street, and` `url for the sensor from` _.env using a_ Pydantic settings object and add them as columns to df_aq. 
 私たちはまた、_.envからセンサーの`country`、`city`、`street`、および`url`をPydantic設定オブジェクトを使用して読み込み、df_aqに列として追加します。
-
 We will use the city col‐ umn to join our air quality data with the weather features for the same date. 
 私たちは、同じ日付の天候特徴と空気質データを結合するために、city列を使用します。
-
 We use the city value to retrieve the longitude and latitude that is required to download the weather data. 
 私たちは、天候データをダウンロードするために必要な経度と緯度を取得するためにcityの値を使用します。
-
 The `country,` `city, and` `street columns are` _helper columns that are_ used when we create a dashboard with air quality forecasts. 
 `country`、`city`、および`street`列は、空気質予測のダッシュボードを作成する際に使用される_補助列です。
-
 We also store `country,` ``` city, street, url, HOPSWORKS_API_KEY, and AQICN_API_KEY as a secret in Hops‐ works, 
 私たちはまた、`country`、`city`、`street`、`url`、`HOPSWORKS_API_KEY`、および`AQICN_API_KEY`をHopsworksの秘密として保存します。
-
 so that later notebooks (daily feature pipeline, training pipeline, and inference pipeline) do not need to read their values from the .env file. 
 これにより、後のノートブック（デイリーフィーチャーパイプライン、トレーニングパイプライン、推論パイプライン）は、.envファイルからその値を読み取る必要がなくなります。
 
+<!-- ここまで読んだ! -->
+
 The second part of evaluating dataset completeness is to check for missing data. 
 データセットの完全性を評価するための2つ目の部分は、欠損データをチェックすることです。
-
 You can call the isna() function on the DataFrame to list any missing values. 
 DataFrameに対してisna()関数を呼び出すことで、欠損値をリストアップできます。
-
 However, that may produce a huge number of rows as output, so instead, we will apply a sum() to the result of isna(), summarizing how many values are missing for each column in df: 
 ただし、それは大量の行を出力する可能性があるため、代わりにisna()の結果にsum()を適用し、dfの各列に対して欠損している値の数を要約します：
 
-```  
+```python
 df.isna().sum()
 ``` 
 
 You can then remove any rows with any missing columns by calling: 
 次に、欠損列を持つ行を削除するには、次のように呼び出します：
 
-```  
+```python
 df.dropna(inplace=True)
 ``` 
 
+<!-- ここまで読んだ! -->
+
 Removing missing observations is reasonable at this point, as there will be no point in collecting data where either the date or the target is missing. 
 この時点で欠損観測値を削除することは合理的です。なぜなら、日付またはターゲットが欠損しているデータを収集する意味がないからです。
-
 Often, at this point, we would dive deeper into identifying data sources and candidate features for our model. 
 通常、この時点で、私たちはデータソースとモデルの候補特徴を特定するためにさらに深く掘り下げます。
 
