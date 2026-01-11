@@ -778,145 +778,123 @@ The files are stored in a filesystem or an object store (such as S3).
 
 An inference pipeline is a program that reads in new feature data (either precomputed or as parameters in a prediction request), applies transformations to the feature data (on-demand and/or model-dependent transformations), and outputs predictions with the model. 
 推論パイプラインは、新しいフィーチャーデータ（事前計算されたものまたは予測リクエストのパラメータとして）を読み込み、フィーチャーデータに変換を適用し（オンデマンドおよび/またはモデル依存の変換）、モデルを使用して予測を出力するプログラムです。
-
 Depending on whether the ML system is a real-time (interactive) ML system or a batch ML system, your inference pipeline will be either a batch program or a program invoked by a prediction request on the model serving infrastructure. 
 MLシステムがリアルタイム（インタラクティブ）MLシステムであるかバッチMLシステムであるかに応じて、推論パイプラインはバッチプログラムまたはモデルサービスインフラストラクチャ上の予測リクエストによって呼び出されるプログラムのいずれかになります。
-
 Agents are mostly interactive AI systems, where client queries trigger a loop of LLM calls and external tool executions before a response is returned. 
 エージェントは主にインタラクティブなAIシステムであり、クライアントのクエリがLLM呼び出しと外部ツールの実行のループをトリガーし、応答が返される前に実行されます。
 
 Figure 2-9 shows three classes of inference pipelines: batch inference pipelines, online inference pipelines, and agentic pipelines. 
-図2-9は、バッチ推論パイプライン、オンライン推論パイプライン、およびエージェントパイプラインの3つのクラスを示しています。
+図2-9は、**バッチ推論パイプライン、オンライン推論パイプライン、およびエージェントパイプラインの3つのクラス**を示しています。
 
+![]()
 _Figure 2-9. Classes of inference pipeline._
 _Figure 2-9. 推論パイプラインのクラス_
 
+<!-- ここまで読んだ! -->
+
 The batch inference pipeline reads inference data as precomputed features from the feature store, downloads the model from the model registry, and outputs predictions using the inference data as input into the model. 
 バッチ推論パイプラインは、フィーチャーストアから事前計算されたフィーチャーとして推論データを読み込み、モデルレジストリからモデルをダウンロードし、推論データをモデルへの入力として使用して予測を出力します。
-
 Batch inference pipelines are typically implemented as Python programs using Pandas, Polars, or Spark, although some data warehouses now support batch inference with UDFs using SQL. 
 バッチ推論パイプラインは通常、Pandas、Polars、またはSparkを使用したPythonプログラムとして実装されますが、一部のデータウェアハウスは現在、SQLを使用したUDFでバッチ推論をサポートしています。
-
 Batch inference pipelines are run on a schedule by some orchestrator (such as Apache Airflow) and make predictions for all the rows in the input DataFrame (or SQL table) using the model, and the predictions are typically stored in a table in a database, from where consumers use those predictions. 
-バッチ推論パイプラインは、Apache Airflowなどのオーケストレーターによってスケジュールに従って実行され、モデルを使用して入力DataFrame（またはSQLテーブル）のすべての行に対して予測を行い、予測は通常データベースのテーブルに保存され、消費者はそれらの予測を使用します。
-
-An example of a batch inference ML system was a daily surf height prediction service I wrote for a beach in Ireland (Lahinch), where I have surfed a lot. 
+バッチ推論パイプラインは、Apache Airflowなどのオーケストレーターによってスケジュールに従って実行され、モデルを使用して入力DataFrame（またはSQLテーブル）のすべての行に対して予測を行い、**予測は通常データベースのテーブルに保存され、消費者はそれらの予測を使用**します。
+An example of a batch inference ML system was a daily surf height prediction service I wrote for a beach in Ireland (Lahinch), where I have surfed a lot.
 バッチ推論MLシステムの例として、私がアイルランドのビーチ（ラヒンチ）で書いた日々のサーフ高さ予測サービスがあります。私はそこでたくさんサーフィンをしました。
-
 It scrapes data from weather and ocean swell forecast websites and publishes a dashboard every day. 
-これは、天気と海のうねり予測のウェブサイトからデータをスクレイピングし、毎日ダッシュボードを公開します。
-
+これは、**天気と海のうねり予測のウェブサイトからデータをスクレイピングし、毎日ダッシュボードを公開**します。
 Batch inference pipelines tend not to have a large number of parameters. 
 バッチ推論パイプラインは、多くのパラメータを持たない傾向があります。
-
 Maybe they will be parameterized by a start_time and end_time or the last_processed_timestamp for inference data. 
-おそらく、推論データのstart_timeとend_time、またはlast_processed_timestampでパラメータ化されるでしょう。
-
+**おそらく、推論データのstart_timeとend_time、またはlast_processed_timestampでパラメータ化されるでしょう。** (うんうんなるほど...!!:thinking:)
 Or maybe the inference data will be a set of entities (such as users), in which case we pass the entity IDs as a parameter. 
-または、推論データがエンティティのセット（ユーザーなど）である場合、その場合はエンティティIDをパラメータとして渡します。
+**または、推論データがエンティティのセット（ユーザーなど）である場合、その場合はエンティティIDをパラメータとして渡します。**
+
+<!-- ここまで読んだ! -->
 
 An online inference pipeline takes the request parameters, reads any precomputed features from the feature store if needed, performs any data transformations on the precomputed features and request parameters to create a feature vector, calls the model with the feature vector, logs the prediction and features (for monitoring and debugging), and finally returns the prediction to the client. 
-オンライン推論パイプラインは、リクエストパラメータを受け取り、必要に応じてフィーチャーストアから事前計算されたフィーチャーを読み込み、事前計算されたフィーチャーとリクエストパラメータに対してデータ変換を行い、フィーチャーベクトルを作成し、フィーチャーベクトルを使用してモデルを呼び出し、予測とフィーチャーをログに記録（監視とデバッグ用）し、最終的に予測をクライアントに返します。
-
+**オンライン推論パイプラインは、リクエストパラメータを受け取り、必要に応じてフィーチャーストアから事前計算されたフィーチャーを読み込み、事前計算されたフィーチャーとリクエストパラメータに対してデータ変換を行い、フィーチャーベクトルを作成し、フィーチャーベクトルを使用してモデルを呼び出し、予測とフィーチャーをログに記録（監視とデバッグ用）し、最終的に予測をクライアントに返します。**
 An online inference pipeline is a network-hosted service that makes predictions in response to prediction requests. 
 オンライン推論パイプラインは、予測リクエストに応じて予測を行うネットワークホストサービスです。
-
 It is typically a Python program and has an API called the deployment API, which is described in Chapter 11. 
 これは通常Pythonプログラムであり、Chapter 11で説明されているデプロイメントAPIと呼ばれるAPIを持っています。
-
 The deployment API includes ID(s) for the entities the prediction is being made for, as well as any parameters required to compute real-time features for the model. 
 デプロイメントAPIには、予測が行われるエンティティのIDと、モデルのリアルタイムフィーチャーを計算するために必要なパラメータが含まれています。
-
 The ID(s) are used to retrieve precomputed features for the entities. 
 IDは、エンティティの事前計算されたフィーチャーを取得するために使用されます。
-
 The Python program for the online inference pipeline is typically deployed alongside the model on a model serving infrastructure, such as KServe or a FastAPI server. 
 オンライン推論パイプラインのPythonプログラムは、通常、KServeやFastAPIサーバーなどのモデルサービスインフラストラクチャ上でモデルと一緒にデプロイされます。
-
 See Chapter 11 for details. 
 詳細については第11章を参照してください。
 
-Finally, the agentic pipeline is similar to an online inference pipeline in that it is a network-hosted Python program that has a deployment API for client queries and responses. 
-最後に、エージェントパイプラインは、クライアントのクエリと応答のためのデプロイメントAPIを持つネットワークホストのPythonプログラムである点で、オンライン推論パイプラインに似ています。
+<!-- ここまで読んだ! -->
 
+Finally, the agentic pipeline is similar to an online inference pipeline in that it is a network-hosted Python program that has a deployment API for client queries and responses. 
+最後に、エージェントパイプラインは、クライアントのクエリと応答のためのデプロイメントAPIを持つネットワークホストのPythonプログラムである点で、**オンライン推論パイプラインに似ています。**
 The agent itself is typically written in an agentic framework, such as LlamaIndex, LangGraph, LangChain, or CrewAI. 
 エージェント自体は通常、LlamaIndex、LangGraph、LangChain、またはCrewAIなどのエージェントフレームワークで記述されます。
-
 The agent program has an LLM and access to a set of tools along with the schema for each tool. 
 エージェントプログラムはLLMを持ち、各ツールのスキーマとともにツールのセットにアクセスします。
-
 A tool is an action the agent can execute (such as making an external API call or querying a [RAG] data source). 
 ツールは、エージェントが実行できるアクションです（外部API呼び出しや[RAG]データソースのクエリなど）。
-
 The set of available tools is either statically defined or discovered by the agent at runtime. 
 利用可能なツールのセットは、静的に定義されるか、エージェントが実行時に発見します。
-
 After the agent receives a query from a client, it runs in a loop performing the following actions until it returns a response to the client. 
 エージェントがクライアントからのクエリを受け取った後、クライアントに応答を返すまで、次のアクションを実行するループで実行されます。
-
 First, it sends the LLM the query and the list of available tools, and it asks the LLM what tool it should use. 
 最初に、LLMにクエリと利用可能なツールのリストを送信し、どのツールを使用すべきかをLLMに尋ねます。
-
 The LLM returns with either one or more tools to use and the parameters for those tools or the final response to the client. 
 LLMは、使用するツールとそのツールのパラメータ、またはクライアントへの最終応答を返します。
-
 If the LLM responds with a tool to use, the agent executes the tool and sends the result, along with previous tool use history, to the LLM. 
 LLMが使用するツールを返した場合、エージェントはそのツールを実行し、結果を以前のツール使用履歴とともにLLMに送信します。
-
 The agent keeps looping in tool use/response steps until the LLM indicates a final response should be sent to the client. 
 エージェントは、LLMがクライアントに最終応答を送信する必要があることを示すまで、ツール使用/応答ステップのループを続けます。
 
-###### Titanic Survival as an ML System Built with ML Pipelines
-###### MLパイプラインを使用して構築されたMLシステムとしてのタイタニック生存
+<!-- ここまで読んだ! -->
+
+### Titanic Survival as an ML System Built with ML Pipelines MLパイプラインを使用して構築されたMLシステムとしてのタイタニック生存
 
 We now introduce our first example ML system, which we built with our three ML pipelines, using one of the best-known ML problems—predicting the probability of a passenger surviving the sinking of the Titanic. 
 ここで、私たちの3つのMLパイプラインを使用して構築した最初の例のMLシステムを紹介します。これは、最もよく知られたML問題の1つであるタイタニックの沈没から乗客が生存する確率を予測するものです。
-
 The Titanic passenger survival data is a static dataset. 
-タイタニックの乗客生存データは静的データセットです。
-
+**タイタニックの乗客生存データは静的データセット**です。
 An ML model is trained and evaluated on the static dataset. 
 MLモデルは静的データセットでトレーニングされ、評価されます。
-
 That makes it a good introductory dataset for learning ML, as you skip the step of creating the training data. 
 これにより、トレーニングデータを作成するステップをスキップできるため、MLを学ぶための良い入門データセットとなります。
-
 But we want to move beyond the idea of just training models with a static data dump. 
-しかし、私たちは単に静的データダンプでモデルをトレーニングするという考えを超えたいと考えています。
+しかし、**私たちは単に静的データダンプでモデルをトレーニングするという考えを超えたい**と考えています。
+
+<!-- ここまで読んだ! -->
 
 In Figure 2-10, we see the outline of our ML system in a kanban board, including its data sources, its final output (a dashboard), and the technologies used to implement our ML system. 
 図2-10では、データソース、最終出力（ダッシュボード）、およびMLシステムを実装するために使用される技術を含む、カンバンボード上のMLシステムの概要を示しています。
 
+![]()
 _Figure 2-10. The MVPS kanban board for our Titanic passenger survival ML system._
 _Figure 2-10. タイタニック乗客生存MLシステムのMVPSカンバンボード_
 
 We will use the Titanic Survival dataset for historical data, as shown in Figure 2-11. 
 図2-11に示すように、歴史的データにはタイタニック生存データセットを使用します。
 
+![]()
 _Figure 2-11. Our Titanic Survival dataset. The passenger_id column uniquely identifies each row—it is not a feature. We augmented the dataset with the datetime column—the original dataset has 891 rows with the date of the Titanic disaster, while each new (synthetic) row has the datetime of its creation._
 _Figure 2-11. 私たちのタイタニック生存データセット。passenger_id列は各行を一意に識別します—これはフィーチャーではありません。私たちはdatetime列でデータセットを拡張しました—元のデータセットにはタイタニックの災害の日付を持つ891行があり、各新しい（合成）行にはその作成日時があります。_
 
-We will then write a synthetic data creation function that creates new passengers for the Titanic. 
-次に、タイタニックの新しい乗客を作成する合成データ作成関数を書きます。
+<!-- ここまで読んだ! -->
 
+We will then write a synthetic data creation function that creates new passengers for the Titanic. 
+次に、**タイタニックの新しい乗客を作成する合成データ作成関数**を書きます。
 The synthetic passenger feature values are drawn from the same distribution as the original dataset, so we will not have any problems with feature drift or any need to retrain our model. 
 合成乗客のフィーチャー値は元のデータセットと同じ分布から引き出されるため、フィーチャードリフトの問題やモデルを再トレーニングする必要はありません。
-
 It’s an overly simplified example but still a useful one for getting started with dynamic data. 
-これは過度に単純化された例ですが、動的データを始めるためには依然として有用です。
+これは過度に単純化された例ですが、**動的データを始めるためには依然として有用**です。
 
 We will write both the historic and new feature data to a single feature group in the Hopsworks feature store with a feature pipeline written in Python using Pandas. 
 私たちは、Pandasを使用してPythonで書かれたフィーチャーパイプラインを使用して、歴史的データと新しいフィーチャーデータの両方をHopsworksフィーチャーストアの単一のフィーチャーグループに書き込みます。
-
-
-
-We will write both the historic and new feature data to a single feature group in the Hopsworks feature store with a feature pipeline written in Python using Pandas. 
-私たちは、Pythonを使用してPandasで書かれたフィーチャーパイプラインを使用して、Hopsworksフィーチャーストアの単一のフィーチャーグループに歴史的および新しいフィーチャーデータの両方を書き込みます。
-
 We will then schedule the feature pipeline to run once per day, creating one new passenger for the Titanic for that day: 
-次に、フィーチャーパイプラインを1日1回実行するようにスケジュールし、その日に対してTitanicの新しい乗客を1人作成します：
+次に、**フィーチャーパイプラインを1日1回実行するようにスケジュールし、その日に対してTitanicの新しい乗客を1人作成**します：
 
-```   
+```python
 import pandas as pd   
 import hopsworks   
 BACKFILL=True   
@@ -937,25 +915,22 @@ fg.insert(df)
 ``` 
 
 Our training pipeline starts by selecting the features we want to use in our model and creating a feature view to represent the input features and output labels/targets for our model. 
-私たちのトレーニングパイプラインは、モデルで使用したい特徴を選択し、入力特徴と出力ラベル/ターゲットを表すフィーチャービューを作成することから始まります。
-
+私たちのトレーニングパイプラインは、モデルで使用したい特徴を選択し、**入力特徴と出力ラベル/ターゲットを表すフィーチャービューを作成することから**始まります。(feature viewってなんだ?? 特徴量-ラベルがjoinされたデータセットのキャッシュ的なやつっぽい??:thinking:)
 We use the feature view to read training data, which is randomly split into 20% test set and 80% train set, from the Titanic passenger survival data. 
 私たちはフィーチャービューを使用して、Titanicの乗客生存データからトレーニングデータを読み込みます。このデータはランダムに20％のテストセットと80％のトレーニングセットに分割されます。
-
 We will then train the model with XGBoost, a gradient-boosted decision tree library in Python. 
 次に、Pythonの勾配ブースト決定木ライブラリであるXGBoostを使用してモデルをトレーニングします。
-
 Finally, we save our trained model to Hopsworks’ model registry: 
 最後に、トレーニングしたモデルをHopsworksのモデルレジストリに保存します：
 
-```   
+```Python
 import xgboost   
 
 fg = fs.get_feature_group(name="titanic", version=1)   
 fv = fs.get_or_create_feature_view(name="titanic", version=1, \     
     labels=['survived'], \     
     query=fg.select_features()   
-)   
+)
 
 X_train, X_test, y_train, y_test = fv.train_test_split(test_size=0.2)   
 model = xgboost.XGBClassifier()   
@@ -971,12 +946,11 @@ mr_model.save("model_dir")
 ```
 
 We will write a batch inference pipeline that is scheduled to run once per day. 
-私たちは、1日1回実行されるようにスケジュールされたバッチ推論パイプラインを書きます。
-
+私たちは、**1日1回実行されるようにスケジュールされたバッチ推論パイプライン**を書きます。
 It will read any new synthetic passengers from the feature store, download our trained model from the model registry, use the model to predict whether the synthetic passengers survived or not, and log predictions with the feature view to the feature store: 
-このパイプラインは、フィーチャーストアから新しい合成乗客を読み込み、モデルレジストリからトレーニング済みモデルをダウンロードし、モデルを使用して合成乗客が生存したかどうかを予測し、フィーチャービューを使用してフィーチャーストアに予測を記録します：
+このパイプラインは、フィーチャーストアから新しい合成乗客を読み込み、モデルレジストリからトレーニング済みモデルをダウンロードし、モデルを使用して合成乗客が生存したかどうかを予測し、フィーチャービューを使用してフィーチャーストアに予測を記録します。(inference storeとして、feature viewに推論結果を書き込むのか:thinking:)
 
-```   
+```Python
 retrieved_model = mr.get_model(name="titanic", version=1)   
 saved_model_dir = retrieved_model.download()   
 model = xgboost.XGBClassifier()   
@@ -987,58 +961,50 @@ prediction = model.predict(row_data)
 ```
 
 This ML system solves what is called a counterfactual (what-if) prediction problem. 
-このMLシステムは、反事実（what-if）予測問題と呼ばれるものを解決します。
-
+このMLシステムは、反事実（what-if）予測問題と呼ばれるものを解決します。(??)
 What if there were a passenger who was male, was 49 years old, and traveled third class on the Titanic—what’s the probability he would have survived? 
 もしTitanicに男性で49歳の乗客がいて、3等に乗っていたとしたら、彼が生存した確率はどれくらいでしょうか？
-
 The full source code for this “Titanic passenger survival as an ML system” example is found in the book’s source code repository in GitHub. 
 この「Titanic乗客生存をMLシステムとして」の例の完全なソースコードは、書籍のソースコードリポジトリのGitHubにあります。
-
 It also includes an interactive UI written in Python using Gradio to ask the model what-if questions about passenger survival probabilities. 
 また、乗客の生存確率に関するwhat-if質問をモデルに尋ねるために、Gradioを使用してPythonで書かれたインタラクティブなUIも含まれています。
+(Gradio = Pythonで簡単にWeb UIを作れるライブラリらしい:thinking:)
+
+<!-- ここまで読んだ! -->
 
 To get started with this example, you will need to install the Hopsworks Python client library. 
 この例を始めるには、Hopsworks Pythonクライアントライブラリをインストールする必要があります。
-
 On Linux and Apple, this involves calling: 
 LinuxおよびAppleでは、次のコマンドを実行します：
 
-```   
+```
 pip install hopsworks[python]
 ``` 
 
 In Windows, you first need to pip install the Twofish library, before you install the Hopsworks library. 
 Windowsでは、最初にTwofishライブラリをpipでインストールし、その後Hopsworksライブラリをインストールする必要があります。
-
 You will also need to create an account on Hopsworks Serverless, and you will also need to obtain a Hopsworks API key (User → Account → API) and save it to an .env file in the root of the course repository, so that you can securely read from and write to Hopsworks. 
 また、Hopsworks Serverlessでアカウントを作成し、Hopsworks APIキー（ユーザー→アカウント→API）を取得して、コースリポジトリのルートにある.envファイルに保存する必要があります。これにより、Hopsworksから安全に読み書きできます。
-
 You can run the first notebook and let it prompt you to create a Hopsworks API key, or you can follow the docs. 
 最初のノートブックを実行して、Hopsworks APIキーを作成するように促されるか、ドキュメントに従うことができます。
-
 Hopsworks offers a free forever serverless tier with 35 GB of free storage, which is more than enough to complete the projects in this book. 
-Hopsworksは、35GBの無料ストレージを持つ永続的な無料サーバーレスプランを提供しており、これはこの本のプロジェクトを完了するのに十分です。
+**Hopsworksは、35GBの無料ストレージを持つ永続的な無料サーバーレスプランを提供しており、**これはこの本のプロジェクトを完了するのに十分です。
 
-###### Summary 要約
+<!-- ここまで読んだ! -->
+
+### Summary 要約
 
 When building AI systems, we start with the ML pipelines and the data transformations performed in the feature, training, and inference pipelines. 
 AIシステムを構築する際、私たちはMLパイプラインとフィーチャー、トレーニング、推論パイプラインで行われるデータ変換から始めます。
-
 We introduced a taxonomy for data transformations for ML pipelines based around reusable features (created by model-independent transformations in feature pipelines), model-specific features (created by model-dependent transformations in training/inference pipelines), and real-time features (created by on-demand transformations in online inference pipelines that can also be applied to historical data to create features in feature pipelines). 
 私たちは、MLパイプラインのデータ変換の分類法を導入しました。これは、再利用可能な特徴（フィーチャーパイプラインでのモデル非依存の変換によって作成）、モデル特有の特徴（トレーニング/推論パイプラインでのモデル依存の変換によって作成）、およびリアルタイム特徴（オンライン推論パイプラインでのオンデマンド変換によって作成され、フィーチャーパイプラインでの特徴を作成するために歴史的データにも適用できる）に基づいています。
-
 We closed out the chapter with our first ML system—a dynamic data version of the Titanic passenger survival prediction problem. 
 私たちは、Titanic乗客生存予測問題の動的データバージョンである最初のMLシステムで章を締めくくりました。
-
 We showed how to build both batch and interactive ML systems for Titanic passenger survival. 
 私たちは、Titanic乗客生存のためのバッチおよびインタラクティブなMLシステムの構築方法を示しました。
-
 In the next chapter, we will go one step further and you will build an AI system for your neighborhood or region. 
 次の章では、さらに一歩進んで、あなたの近所や地域のためのAIシステムを構築します。
-
 You will build an air quality prediction service for the neighborhood you live in, and we will use the same frameworks used in the Titanic example—Python, Pandas, XGBoost, and Gradio. 
 あなたは、住んでいる近所のための空気質予測サービスを構築し、Titanicの例で使用されるのと同じフレームワーク—Python、Pandas、XGBoost、Gradioを使用します。
 
-
-
+<!-- ここまで読んだ! -->
