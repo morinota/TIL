@@ -1,129 +1,101 @@
-## CHAPTER 3: Your Friendly Neighborhood Air Quality Forecasting Service
-## 第3章: あなたの親しみやすい近隣の空気質予測サービス
+## CHAPTER 3: Your Friendly Neighborhood Air Quality Forecasting Service　第3章: あなたの親しみやすい近隣の空気質予測サービス
 
 The first ML project we will build is an air quality forecasting service for a neighborhood you care about. 
 私たちが構築する最初のMLプロジェクトは、あなたが気にかけている近隣の空気質予測サービスです。
-
 We will follow the MVPS process from Chapter 2—divide et _impera (divide and conquer). 
-私たちは、第2章のMVPSプロセスに従い、分割して征服します（divide et impera）。
-
+私たちは、**第2章のMVPSプロセスに従い**、分割して征服します（divide et impera）。
 Your work will be a public service built to survive, so please put some time and care into it and your community will love you for it. 
 あなたの仕事は、持続可能な公共サービスとなるため、時間と労力をかけてください。そうすれば、あなたのコミュニティはあなたを愛してくれるでしょう。
-
 I have a personal interest in this project as I have two boys with cystic fibrosis, a genetic disorder that primarily affects the lungs. 
 私はこのプロジェクトに個人的な関心を持っています。なぜなら、私は肺に主に影響を与える遺伝性疾患である嚢胞性線維症を持つ2人の息子がいるからです。
-
 They were born on the same day, two years apart, and diagnosed the same day. 
 彼らは同じ日に生まれ、2年の差があり、同じ日に診断されました。
-
 Anyway, I think I speak for the whole cystic fibrosis community in saying this would be a fantastic service for us and many others! 
 とにかく、私は嚢胞性線維症コミュニティ全体を代表して、これは私たちや他の多くの人々にとって素晴らしいサービスになると言いたいです！
 
+<!-- ここまで読んだ! -->
+
 The prediction problem our AI system will solve is to predict the air quality for a public air quality sensor close to your home or work, or wherever. 
 私たちのAIシステムが解決する予測問題は、あなたの家や職場、またはどこにでも近い公共の空気質センサーの空気質を予測することです。
-
 A worldwide community of Internet of Things (IoT) hobbyists place sensors in their gardens and balconies and publish air quality measurements on the internet. 
 世界中のIoT愛好家のコミュニティが、自宅の庭やバルコニーにセンサーを設置し、空気質の測定値をインターネット上に公開しています。
-
 Where I live in Stockholm, there are over 30 public sensors, and in my home city of Dublin, there are over 40. 
 私が住んでいるストックホルムには30以上の公共センサーがあり、私の故郷ダブリンには40以上のセンサーがあります。
-
 There is a world air quality index website where you can find a sensor on the map to build your AI system on. 
 AIシステムを構築するためのセンサーを地図上で見つけることができる世界の空気質指数のウェブサイトがあります。
-
 Pick one that both (1) has historical data—we will train an ML model on the historical data, so if you have a few years of data, that is great—and (2) produces reliable measurements (some sensors are turned off for periods of time or malfunction). 
-(1) 歴史的データがあり—私たちはその歴史的データを使ってMLモデルを訓練しますので、数年分のデータがあれば素晴らしいです—かつ (2) 信頼できる測定値を生成するセンサーを選んでください（いくつかのセンサーは一定期間オフになったり、故障したりします）。
-
+**(1) 歴史的データがあり—私たちはその歴史的データを使ってMLモデルを訓練しますので、数年分のデータがあれば素晴らしいです—かつ (2) 信頼できる測定値を生成するセンサーを選んでください（いくつかのセンサーは一定期間オフになったり、故障したりします）。**
 A reliable sensor will enable your AI system to continue to collect measurement data, enabling you to retrain and improve the model as more data becomes available. 
 信頼できるセンサーは、AIシステムが測定データを収集し続けることを可能にし、より多くのデータが利用可能になるにつれてモデルを再訓練し、改善することを可能にします。
-
 Even though you will provide a free public service to your community, it won’t cost you a penny—we will run the system on free serverless services (GitHub and Hopsworks). 
-あなたがコミュニティに無料の公共サービスを提供するにもかかわらず、あなたに一銭もかかりません—私たちは無料のサーバーレスサービス（GitHubとHopsworks）でシステムを運用します。
+**あなたがコミュニティに無料の公共サービスを提供するにもかかわらず、あなたに一銭もかかりません—私たちは無料のサーバーレスサービス（GitHubとHopsworks）でシステムを運用します。**
+
+<!-- ここまで読んだ! -->
 
 Air quality prediction is a pretty straightforward ML problem. 
 空気質予測は非常に単純なML問題です。
-
 We will model the prediction problem as a regression problem—we’ll predict the value of PM2.5. 
-私たちは予測問題を回帰問題としてモデル化します—PM2.5の値を予測します。
-
+私たちは**予測問題を回帰問題としてモデル化**します—PM2.5の値を予測します。
 PM2.5 is a fine particulate measure for particles that are 2.5 micrometers or less in diameter, and high levels increase the risk of health problems like low birth weight, heart disease, and lung disease. 
 PM2.5は、直径が2.5マイクロメートル以下の微細粒子の測定値であり、高いレベルは低出生体重、心臓病、肺疾患などの健康問題のリスクを高めます。
-
 High levels of PM2.5 also reduce visibility, causing the air to appear hazy. 
 PM2.5の高いレベルは視界を悪化させ、空気がかすんで見える原因にもなります。
-
 What are the features we will use to predict the level of PM2.5? 
-PM2.5のレベルを予測するために使用する特徴は何ですか？
-
+**PM2.5のレベルを予測するために使用する特徴は何ですか？**
 PM2.5 is correlated with wind speed/direction, temperature, and precipitation, so we will use weather forecast data to predict air quality as measured in PM2.5. 
-PM2.5は風速/風向、温度、降水量と相関しているため、私たちは天気予報データを使用してPM2.5で測定された空気質を予測します。
-
+**PM2.5は風速/風向、温度、降水量と相関しているため、私たちは天気予報データを使用してPM2.5で測定された空気質を予測します。**
 This makes sense because air quality is generally better when the wind blows in a particular direction—if you live beside a busy road, wind direction is crucial. 
-これは理にかなっています。なぜなら、空気質は一般的に風が特定の方向に吹くときに良くなるからです—もしあなたが混雑した道路のそばに住んでいるなら、風向きは重要です。
-
+**これは理にかなっています。**なぜなら、空気質は一般的に風が特定の方向に吹くときに良くなるからです—もしあなたが混雑した道路のそばに住んでいるなら、風向きは重要です。
 Air quality is often worse in colder weather, as cold air is denser and moves slower than warm air, and in cities where more people may drive than bike when commuting. 
 空気質は寒い天候では悪化することが多いです。なぜなら、冷たい空気は密度が高く、暖かい空気よりも遅く動くからです。また、通勤時に自転車よりも車を利用する人が多い都市でも同様です。
-
 Even parts of India that don’t experience cold winter weather have worse air quality in the winter months. 
 寒い冬の天候を経験しないインドの一部でも、冬の月には空気質が悪化します。
 
+<!-- ここまで読んだ! -->
+
 But wait. 
 しかし、待ってください。
-
 You may have read that air quality forecasting is a solved problem. 
 あなたは、空気質予測が解決された問題であると読んだかもしれません。
-
 In 2024, Microsoft AI built Aurora, a deep learning model that predicts air pollution for the whole world. 
 2024年、Microsoft AIはAuroraを構築しました。これは、世界全体の大気汚染を予測する深層学習モデルです。
-
 Microsoft’s use of AI was championed as a huge step forward compared with the physical models of air quality, which are computed on high-performance computing infrastructure by the European Union’s Copernicus project. 
 MicrosoftのAIの使用は、EUのコペルニクスプロジェクトによって高性能コンピューティングインフラで計算される物理モデルと比較して、大きな前進と称賛されました。
-
 However, as of mid-2024, if you examine the performance of Aurora in a city, such as Stockholm, you will see its predictions are not very accurate compared with the actual air quality sensor readings you can find on aqicn.org. 
 しかし、2024年中頃の時点で、ストックホルムのような都市でAuroraのパフォーマンスを調べると、aqicn.orgで見つけることができる実際の空気質センサーの読み取り値と比較して、その予測があまり正確でないことがわかります。
-
 Your challenge is therefore to build an AI system that produces better air quality predictions than Aurora for the location of your chosen air quality sensor at a fraction of its cost. 
-したがって、あなたの課題は、選択した空気質センサーの位置に対してAuroraよりも優れた空気質予測を生成するAIシステムを、コストの一部で構築することです。
-
+**したがって、あなたの課題は、選択した空気質センサーの位置に対してAuroraよりも優れた空気質予測を生成するAIシステムを、コストの一部で構築することです。**
 In this project, better-quality data and a decision tree ML model will outperform deep learning. 
-このプロジェクトでは、より高品質のデータと決定木MLモデルが深層学習を上回ります。
+**このプロジェクトでは、より高品質のデータと決定木MLモデルが深層学習を上回ります。** (やはりデータエンジニアリングの課題が大事...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 Finally, every project benefits from a wow factor. 
-最後に、すべてのプロジェクトは「ワオ」要素の恩恵を受けます。
-
+**最後に、すべてのプロジェクトは wow factor (驚きや感動を与える要素) から利益を得ます。**
+(wow factor = 驚きや感動を与える要素、らしい:thinking:)
 We will sprinkle some GenAI dust on the project by making your air quality forecasting service “friendly” by giving it a voice-driven UI powered by an LLM. 
-私たちは、LLMによって駆動される音声インターフェースを持たせることで、あなたの空気質予測サービスを「親しみやすく」するために、プロジェクトに少しGenAIの魔法を振りかけます。
+私たちは、**LLMによって駆動される音声インターフェースを持たせることで、あなたの空気質予測サービスを「親しみやすく」するために、プロジェクトに少しGenAIの魔法**を振りかけます。
 
-###### AI System Overview
-###### AIシステムの概要
+<!-- ここまで読んだ! -->
+
+### AI System Overview AIシステムの概要
 
 In my course at KTH, students did project work to build a unique AI system that solved a prediction problem using a dynamic data source. 
 私のKTHのコースでは、学生たちが動的データソースを使用して予測問題を解決するユニークなAIシステムを構築するプロジェクト作業を行いました。
-
 But before they started their project, they had to get it approved, and I found that the simplest way to do so was with a prediction service card (see Table 3-1). 
 しかし、彼らがプロジェクトを始める前に、承認を得る必要があり、最も簡単な方法は予測サービスカード（表3-1を参照）を使用することだとわかりました。
-
 The card is a slimmed-down version of the kanban board from Figure 2-2, omitting the implementation details. 
 このカードは、実装の詳細を省略した図2-2のカンバンボードの簡略版です。
+(カンバンボード = 仕事の進行状況を視覚的に管理するためのツール)
 
------
+![]()
 _Table 3-1. AI system card for our air quality forecasting service_
 表3-1. 私たちの空気質予測サービスのAIシステムカード
 
-**Dynamic data sources** **Prediction problem** **UI or API** **Monitoring**  
-**動的データソース** **予測問題** **UIまたはAPI** **モニタリング**  
-Air quality sensor data: _[https://aqicn.org](https://aqicn.org)_ Weather forecasts: _[https://open-meteo.com](https://open-meteo.com)_  
-空気質センサーデータ: _[https://aqicn.org](https://aqicn.org)_ 天気予報: _[https://open-meteo.com](https://open-meteo.com)_  
-Daily forecast of the level of PM2.5 for the next seven days at the position of an existing air quality sensor  
-既存の空気質センサーの位置における次の7日間のPM2.5レベルの毎日の予測  
-A web page with graphs and an LLM-powered UI in Python  
-グラフとPythonでのLLM駆動のUIを持つウェブページ  
-Hindcast graphs show prediction performance of our model  
-ヒンドキャストグラフは、私たちのモデルの予測性能を示します  
+<!-- ここまで読んだ! -->
 
 The AI system card succinctly summarizes the system’s key properties, including the data sources and the prediction problem it solves. 
-AIシステムカードは、データソースや解決する予測問題を含むシステムの主要な特性を簡潔に要約しています。
-
+**AIシステムカードは、データソースや解決する予測問題を含むシステムの主要な特性を簡潔に要約しています。**
 For example, with air quality, there are many possible air quality prediction problems, such as predicting PM10 levels (larger particles that include dust from roads and construction sites), and NO2 (nitrogen dioxide) levels (pollution mostly from internal combustion engine vehicles). 
 例えば、空気質に関しては、PM10レベル（道路や建設現場からのほこりを含む大きな粒子）やNO2（窒素二酸化物）レベル（主に内燃機関車両からの汚染）を予測するなど、多くの可能な空気質予測問題があります。
 
