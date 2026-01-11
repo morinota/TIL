@@ -98,145 +98,116 @@ The AI system card succinctly summarizes the system’s key properties, includin
 **AIシステムカードは、データソースや解決する予測問題を含むシステムの主要な特性を簡潔に要約しています。**
 For example, with air quality, there are many possible air quality prediction problems, such as predicting PM10 levels (larger particles that include dust from roads and construction sites), and NO2 (nitrogen dioxide) levels (pollution mostly from internal combustion engine vehicles). 
 例えば、空気質に関しては、PM10レベル（道路や建設現場からのほこりを含む大きな粒子）やNO2（窒素二酸化物）レベル（主に内燃機関車両からの汚染）を予測するなど、多くの可能な空気質予測問題があります。
-
 The prediction service card also includes the data sources, which makes it useful as a feasibility test that the data exists and is accessible for your prediction problem. 
 予測サービスカードにはデータソースも含まれており、データが存在し、予測問題にアクセス可能であるかどうかの実現可能性テストとして役立ちます。
-
 You should also define how the predictions produced by our AI system will be consumed—by a UI or API. 
-また、私たちのAIシステムが生成する予測がどのように消費されるか（UIまたはAPIによって）を定義する必要があります。
-
+また、**私たちのAIシステムが生成する予測がどのように消費されるか（UIまたはAPIによって）を定義**する必要があります。
 A UI is a very powerful tool for communicating the value of your model to stakeholders, and it is now straightforward to build functional UIs in Python. 
-UIは、モデルの価値を利害関係者に伝えるための非常に強力なツールであり、Pythonで機能的なUIを構築することは今や簡単です。
-
+**UIは、モデルの価値を利害関係者に伝えるための非常に強力なツールであり、Pythonで機能的なUIを構築することは今や簡単**です。
 In our AI system, we will use LLMs to improve the accessibility of our service—you should be able to ask the air quality forecasting service questions in natural language. 
 私たちのAIシステムでは、LLMを使用してサービスのアクセシビリティを向上させます—あなたは空気質予測サービスに自然言語で質問できるようになるべきです。
-
 And, finally, you should outline how you will monitor the performance of your running AI system to ensure it is performing as expected. 
 最後に、実行中のAIシステムのパフォーマンスを監視し、期待通りに機能していることを確認する方法を概説する必要があります。
 
+<!-- ここまで読んだ! -->
+
 We will use open source and free serverless services to build our AI system—GitHub Actions/Pages and Hopsworks. 
 私たちは、オープンソースで無料のサーバーレスサービスを使用してAIシステムを構築します—GitHub Actions/PagesとHopsworksです。
-
 We will write the following Jupyter notebooks in Python: 
 私たちは、以下のJupyterノートブックをPythonで作成します：
+(新プロジェクトの際は、以下の4つを実装するイメージでOKのはず...!!:thinking:)
 
 - Feature groups to store our data and backfill them with historical data  
-- データを保存し、歴史的データでバックフィルするための特徴グループ  
+  - データを保存し、歴史的データでバックフィルするための特徴グループ  
 - A daily feature pipeline to retrieve new data and store it in the feature store  
-- 新しいデータを取得し、特徴ストアに保存するための毎日の特徴パイプライン  
+  - 新しいデータを取得し、特徴ストアに保存するための毎日の特徴パイプライン  
 - A training pipeline to train an XGBoost regression model and save it in the model registry  
-- XGBoost回帰モデルを訓練し、モデルレジストリに保存するためのトレーニングパイプライン  
+  - XGBoost回帰モデルを訓練し、モデルレジストリに保存するためのトレーニングパイプライン  
 - A batch inference pipeline to download the model, make predictions on new feature data, and read from the feature store to produce air quality forecast/hindcast graphs  
-- モデルをダウンロードし、新しい特徴データに対して予測を行い、特徴ストアから読み取って空気質予測/ヒンドキャストグラフを生成するためのバッチ推論パイプライン  
+  - モデルをダウンロードし、新しい特徴データに対して予測を行い、特徴ストアから読み取って空気質予測/ヒンドキャストグラフを生成するためのバッチ推論パイプライン  
 
 We will also use a number of libraries in Python and other technologies to build the system, including: 
 私たちはまた、システムを構築するためにPythonや他の技術でいくつかのライブラリを使用します：
 
 - REST APIs to read data from our air quality and weather data sources  
-- 空気質および天気データソースからデータを読み取るためのREST API  
+  - 空気質および天気データソースからデータを読み取るためのREST API  
 - Pandas for processing the data  
-- データ処理のためのPandas  
+  - データ処理のためのPandas  
 - Hopsworks to store feature data and models  
-- 特徴データとモデルを保存するためのHopsworks  
+  - 特徴データとモデルを保存するためのHopsworks  
 - XGBoost for our ML model as a gradient-boosted decision tree  
-- 勾配ブースト決定木としてのMLモデルのためのXGBoost  
-
------
+  - 勾配ブースト決定木としてのMLモデルのためのXGBoost  
 - GitHub Actions to schedule our notebooks to run daily  
-- 毎日ノートブックを実行するためにGitHub Actionsを使用  
+  - 毎日ノートブックを実行するためにGitHub Actionsを使用  
 - GitHub Pages as a dashboard web page containing the forecasts/hindcast graphs  
-- 予測/ヒンドキャストグラフを含むダッシュボードウェブページとしてのGitHub Pages  
+  - 予測/ヒンドキャストグラフを含むダッシュボードウェブページとしてのGitHub Pages  
 
 We will also write a Streamlit Python application with a voice and text-powered UI, backed by the open source Whisper transformer model that translates voice to text and an LLM that translates from text to function calls on our AI system. 
 私たちはまた、音声とテキスト駆動のUIを持つStreamlit Pythonアプリケーションを作成します。これは、音声をテキストに変換するオープンソースのWhisperトランスフォーマーモデルと、テキストからAIシステムの関数呼び出しに変換するLLMによって支えられています。
 
 That is a lot of technologies for our first project, but don’t be overawed. 
 これは私たちの最初のプロジェクトにとって多くの技術ですが、圧倒されないでください。
-
 Just like much great music can be made with three chords, many great AI systems can be made from a feature pipeline, a training pipeline, and an inference pipeline. 
-素晴らしい音楽が3つのコードで作られるように、多くの素晴らしいAIシステムは特徴パイプライン、トレーニングパイプライン、推論パイプラインから作られます。
+**素晴らしい音楽が3つのコードで作られるように、多くの素晴らしいAIシステムは特徴パイプライン、トレーニングパイプライン、推論パイプラインから作られます。**
 
-###### Air Quality Data
-###### 空気質データ
+<!-- ここまで読んだ! -->
+
+### Air Quality Data 空気質データ
 
 Thousands of hobbyists around the world have installed air quality sensors and made their measurements publicly and freely available. 
 世界中の何千人もの愛好家が空気質センサーを設置し、その測定値を公開かつ無料で利用可能にしています。
-
 You can locate many of these air quality sensors with both historical and live data using the aqicn.org map. 
 aqicn.orgの地図を使用して、歴史的データとライブデータの両方を持つ多くの空気質センサーを見つけることができます。
-
 The website is an aggregator of sensor data from many sources, but as a community service, it provides no guarantees on the data quality. 
 このウェブサイトは多くのソースからのセンサーデータの集約者ですが、コミュニティサービスとしてデータの品質に対する保証は提供していません。
 
 I have selected a sensor in Stockholm that has both live and historical data available. 
 私は、ライブデータと歴史的データの両方が利用可能なストックホルムのセンサーを選びました。
-
 I chose it because it is very close to the Hopsworks office. 
 私はそれを選んだ理由は、Hopsworksのオフィスに非常に近いからです。
 
+![]()
 _Figure 3-1. Export the air quality sensor’s historical data by clicking on the “Download this data (CSV format)” button._  
 _図3-1. 「このデータをダウンロード（CSV形式）」ボタンをクリックして空気質センサーの歴史的データをエクスポートします。_
 
------
 You should pick a sensor either close to you or somewhere special to you. 
 あなたは、自分の近くにあるセンサーか、特別な場所にあるセンサーを選ぶべきです。
-
 Scroll down the page and you will find a button to download the historical data for that sensor. 
 ページを下にスクロールすると、そのセンサーの歴史的データをダウンロードするためのボタンが見つかります。
-
-If you can’t find the download link for the historical measurements on your sensor’s web page, you can probably find it in the World Air Quality Historical Database. 
+If you can’t find the download link for the historical measurements on your sensor’s web page, you can probably find it in the World Air Quality Historical Database.
 センサーのウェブページで歴史的測定値のダウンロードリンクが見つからない場合、世界空気質歴史データベースで見つけることができるかもしれません。
-
 If you still can’t find the download link, pick another sensor. 
 それでもダウンロードリンクが見つからない場合は、別のセンサーを選んでください。
-
 Unfortunately, as of mid-2025, there is no API call available to download historical data, so you have to perform this step manually. 
-残念ながら、2025年中頃の時点で、歴史的データをダウンロードするためのAPI呼び出しは利用できないため、このステップを手動で実行する必要があります。
-
+**残念ながら、2025年中頃の時点で、歴史的データをダウンロードするためのAPI呼び出しは利用できないため、このステップを手動で実行する必要があります。**
 You will also need to create an API key on the AQICN website so that your feature pipeline can read the latest air quality values. 
 また、あなたの特徴パイプラインが最新の空気質値を読み取れるように、AQICNウェブサイトでAPIキーを作成する必要があります。
 
 Download the CSV file. 
 CSVファイルをダウンロードしてください。
-
 I renamed mine _air-quality-data.csv. 
 私は自分のファイルを_air-quality-data.csvに名前を変更しました。
-
 For your sensor, you should rename the CSV file you downloaded if it has spaces or unusual characters. 
 あなたのセンサーの場合、ダウンロードしたCSVファイルにスペースや異常な文字が含まれている場合は、名前を変更するべきです。
-
 You should open the CSV file in a text editor to check whether its column names are as expected. 
 CSVファイルをテキストエディタで開いて、列名が期待通りであるかどうかを確認する必要があります。
-
 Our backfilling Python program will read the CSV file into a Pandas DataFrame and expect that the CSV file has a header line and that two of the columns are named pm25 and date. 
 私たちのバックフィリングPythonプログラムは、CSVファイルをPandas DataFrameに読み込み、CSVファイルにヘッダー行があり、2つの列がpm25とdateという名前であることを期待します。
-
 If there are more columns, that is OK, as the program will ignore them. 
 他に列があっても問題ありません。プログラムはそれらを無視します。
-
-
-
-. If there are more columns, that is OK, as the program will ignore them. 
-もし列がもっとあっても問題ありません。プログラムはそれらを無視します。
-
 However, some files do not have a `pm25 column—instead, they have` ``` min/max/median/stdev daily measurements for PM2.5. 
 しかし、一部のファイルには`pm25`列がなく、代わりにPM2.5の最小/最大/中央値/標準偏差の毎日の測定値があります。
-
 The easiest way to fix this is to just rename the median column to pm25 in the header in your CSV file. 
 これを修正する最も簡単な方法は、CSVファイルのヘッダーで中央値の列名をpm25に変更することです。
-
 You also have to have the date column. 
 また、日付列も必要です。
 
 You can now create the GitHub repository for the project by forking the [book’s](https://github.com/featurestorebook/mlfs-book) [GitHub repository to your GitHub account. 
 これで、[本の](https://github.com/featurestorebook/mlfs-book) GitHubリポジトリをフォークして、プロジェクトのためのGitHubリポジトリを作成できます。
-
 You should move your CSV file to the](https://github.com/featurestorebook/mlfs-book) _data directory in your forked repository and replace the existing_ _data/air-quality-_ _data.csv file. 
 フォークしたリポジトリの_dataディレクトリにCSVファイルを移動し、既存の_data/air-quality-data.csvファイルを置き換える必要があります。
-
 You should also create an .env file from the .env.example template. 
 また、.env.exampleテンプレートから.envファイルを作成する必要があります。
-
 You need to update the following values in the .env file with your API key values and the URL, country, city, and street for your chosen sensor: 
 次に、.envファイル内の以下の値を、選択したセンサーのAPIキーの値、URL、国、都市、通りで更新する必要があります：
 
@@ -251,113 +222,99 @@ AQICN_STREET=hornsgatan-108
 
 The .env file should not be committed to GitHub (it is in the .gitignore file). 
 .envファイルはGitHubにコミットしてはいけません（それは.gitignoreファイルに含まれています）。
-
 Commit and push your CSV file to GitHub. 
 CSVファイルをGitHubにコミットしてプッシュしてください。
-
 The CSV files are quite small (mine is 58 KB), so there is no problem storing them in GitHub. 
-CSVファイルは非常に小さい（私のは58 KBです）ので、GitHubに保存することに問題はありません。
-
+**CSVファイルは非常に小さい（私のは58 KBです）ので、GitHubに保存することに問題はありません。**
 Files of GBs worth of data or larger are not suitable for storage in source-code repositories like GitHub.[2] 
-GB単位のデータやそれ以上のファイルは、GitHubのようなソースコードリポジトリに保存するのには適していません。
-
+**GB単位のデータやそれ以上のファイルは、GitHubのようなソースコードリポジトリに保存するのには適していません。**
 When you’re working in Python, we strongly recommend that you create a virtual environment for the book, 
 Pythonで作業しているときは、本のために仮想環境を作成することを強くお勧めします。
-
 [using a Python dependency management framework such as Conda, Poetry, virtualenv,](https://conda.io) [or pipenv. 
 Conda、Poetry、virtualenv、またはpipenvのようなPython依存関係管理フレームワークを使用して。
-
 The dependencies introduced for our project can be installed in your virtual](https://github.com/pypa/pipenv) environment. 
 私たちのプロジェクトのために導入された依存関係は、あなたの仮想環境にインストールできます。
-
-2 Large files should be stored in highly available, scalable distributed storage, such as an S3 compatible object store. 
+Large files should be stored in highly available, scalable distributed storage, such as an S3 compatible object store. 
 大きなファイルは、高可用性でスケーラブルな分散ストレージ、例えばS3互換のオブジェクトストアに保存するべきです。
-
 These are also currently the cheapest places to store large files.  
 これらは現在、大きなファイルを保存するための最も安価な場所でもあります。
-
-environment. 
-環境。
-
 See the book’s source code repository for details on setting up a virtual environment and installing your Python dependencies for this project. 
 このプロジェクトのための仮想環境の設定とPython依存関係のインストールに関する詳細は、本のソースコードリポジトリを参照してください。
-
 In Chapter 2, we already discussed how to create your Hopsworks account and download an API key. 
 第2章では、Hopsworksアカウントの作成方法とAPIキーのダウンロード方法についてすでに説明しました。
 
-###### Exploratory Dataset Analysis
-###### 探索的データセット分析
+<!-- ここまで読んだ! -->
+
+### Exploratory Dataset Analysis 探索的データセット分析
 
 Before we jump in and start building, we should take some time to understand the data we will work with. 
 私たちが飛び込んで構築を始める前に、私たちが扱うデータを理解するための時間を取るべきです。
-
 In general, there are six properties or dimensions of any data source that you should understand before using it to solve a prediction problem:  
-一般的に、予測問題を解決するためにデータソースを使用する前に理解すべき6つの特性または次元があります：
+一般的に、**予測問題を解決するためにデータソースを使用する前に理解すべき6つの特性または次元**があります：
 
 - Validity
-- 有効性
+  - 有効性
 - Accuracy
-- 精度
+  - 精度
 - Consistency  
-- 一貫性
+  - 一貫性
 - Uniqueness
-- 一意性
+  - 一意性
 - Update frequency
-- 更新頻度
+  - 更新頻度
 - Completeness  
-- 完全性
+  - 完全性
 
 Let’s now examine our air quality and weather data sources through this lens. 
 それでは、この視点から私たちの空気質と天候データソースを検討してみましょう。
 
+<!-- ここまで読んだ! -->
+
+---
+(コラム的なやつ!)
+
 We recommend using Jupyter Notebooks instead of Google Cola‐ boratory (Colab) for this book. 
 この本では、Google Colaboratory（Colab）の代わりにJupyter Notebooksを使用することをお勧めします。
-
 The first cell in each notebook adds support for Colab, but you will have to update it to point to your forked repository. 
 各ノートブックの最初のセルはColabのサポートを追加しますが、フォークしたリポジトリを指すように更新する必要があります。
-
 Colab currently does not have good support for GitHub, so every notebook has to clone the repository and install all dependencies before it can run. 
 Colabは現在、GitHubのサポートが不十分であるため、すべてのノートブックはリポジトリをクローンし、実行する前にすべての依存関係をインストールする必要があります。
-
 There is also no support for sav‐ ing any changes you make to notebooks back to GitHub. 
 ノートブックに加えた変更をGitHubに保存するためのサポートもありません。
-
 Colab is still useful, however, if you need a free GPU. 
 ただし、無料のGPUが必要な場合、Colabは依然として便利です。
 
-###### Air Quality Data
-###### 空気質データ
+---
+
+<!-- ここまで読んだ! -->
+
+#### Air Quality Data 空気質データ
 
 How does our air quality data source rank on these six properties of dataset quality? 
 私たちの空気質データソースは、これらのデータセット品質の6つの特性においてどのように評価されますか？
 
 We will start with data validity, a measure of how accurately the data reflects what it is intended to measure. 
-データの有効性、つまりデータが意図された測定をどれだけ正確に反映しているかを測る指標から始めます。
-
+**データの有効性、つまりデータが意図された測定をどれだけ正確に反映しているかを測る指標**から始めます。
 We focus on measuring PM2.5 rather than PM10 or NO2, as, [according to the UN, “PM2.5…poses the greatest health threat,” according to current](https://oreil.ly/s79gI) knowledge. 
 私たちは、PM10やNO2ではなくPM2.5の測定に焦点を当てます。なぜなら、[国連によれば、「PM2.5…は最大の健康リスクをもたらす」とのことです](https://oreil.ly/s79gI)。
-
 Next up is data accuracy, which refers to how close the measurements are to the true value. 
-次にデータの精度についてです。これは測定値が真の値にどれだけ近いかを指します。
-
+次に**データの精度についてです。これは測定値が真の値にどれだけ近いか**を指します。
 The _[aqicn.org website tells me that my sensor’s data in Stockholm](http://aqicn.org)_ comes from “SLB·analys—Air Quality Management and Operator in the City of Stock‐ holm” and the “European Environment Agency.” 
 _[aqicn.orgのウェブサイトによれば、私のセンサーのデータはストックホルムの「SLB·analys—空気質管理および運営者」と「欧州環境庁」から来ています](http://aqicn.org)。
-
 Therefore, I am inclined to trust the data accuracy. 
 したがって、私はデータの精度を信頼する傾向があります。
 
 Returning to the stockholm-hornsgatan-108 dataset, we claim that the data is unique. 
 ストックホルムのhornsgatan-108データセットに戻ると、私たちはデータが一意であると主張します。
-
 After a web search, I am not aware of any other public air quality sensor on that street. 
 ウェブ検索の結果、その通りに他の公共の空気質センサーが存在することは知りません。
-
 Looking at the data from Figure 3-1, I can see that the data is mostly complete, quite _consistent (the colors indicating air quality follow a predictable pattern), and_ timely (it arrives hourly).  
 図3-1のデータを見ると、データはほぼ完全であり、かなり_一貫性があり（空気質を示す色は予測可能なパターンに従っています）、_タイムリーです（毎時到着します）。
 
+<!-- ここまで読んだ! -->
+
 In general, you should also examine the data in a notebook to check its completeness. 
 一般的に、データの完全性を確認するためにノートブックでデータを調べるべきです。
-
 In the following code snippet, we read the CSV file as a Pandas DataFrame and then keep only those columns we need from our air quality dataset (the date and our target, pm25): 
 次のコードスニペットでは、CSVファイルをPandas DataFrameとして読み込み、空気質データセットから必要な列（日時とターゲットであるpm25）のみを保持します：
 
