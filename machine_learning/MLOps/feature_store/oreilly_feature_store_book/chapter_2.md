@@ -657,47 +657,43 @@ Does your feature pipeline validate data before it is written to the feature sto
 
 <!-- ここまで読んだ! -->
 
-Let’s start with the data sources for your feature pipeline—where do they come from? 
+Let’s start with the data sources for your feature pipeline—where do they come from?
 フィーチャーパイプラインのデータソースはどこから来るのか、始めましょう。
 Imagine developing a new feature pipeline and getting data from a source you’ve never parsed before (for example, an existing table in a data warehouse). 
 新しいフィーチャーパイプラインを開発し、以前に解析したことのないソース（例えば、データウェアハウス内の既存のテーブル）からデータを取得することを想像してください。
-
-The table may have been gathering data for a while, so you could run your data transformations against the historical data in the table to backfill feature data into your feature store. 
+The table may have been gathering data for a while, so you could run your data transformations against the historical data in the table to backfill feature data into your feature store.
 そのテーブルはしばらくデータを収集していた可能性があるため、テーブル内の履歴データに対してデータ変換を実行して、フィーチャーストアにフィーチャーデータをバックフィルすることができます。
-
 You may also want to change the data transformations in your feature pipeline, so again, you’ll want to backfill feature data from the source table (with your new transformations). 
-フィーチャーパイプラインのデータ変換を変更したい場合もあるため、再度、ソーステーブルからフィーチャーデータをバックフィルしたいと思うでしょう（新しい変換を使用して）。
-
+**フィーチャーパイプラインのデータ変換を変更したい場合もあるため、再度、ソーステーブルからフィーチャーデータをバックフィルしたいと思うでしょう（新しい変換を使用して）。** (これめっちゃあるんだよなぁ...!!:thinking:)
 Your data warehouse table will also probably have new data available at some cadence (for example, hourly or daily). 
-データウェアハウステーブルには、一定の間隔（例えば、毎時または毎日）で新しいデータが利用可能になる可能性もあります。
-
+**データウェアハウステーブルには、一定の間隔（例えば、毎時または毎日）で新しいデータが利用可能になる可能性**もあります。
 In this case, your feature pipeline should be able to extract the new data from the table, compute the new feature data, and make incremental updates (appends, deletes, or updates) to the feature data in the feature store. 
 この場合、フィーチャーパイプラインはテーブルから新しいデータを抽出し、新しいフィーチャーデータを計算し、フィーチャーストア内のフィーチャーデータに対して増分更新（追加、削除、または更新）を行うことができる必要があります。
 
+<!-- ここまで読んだ! -->
+
 What does the feature data that is created by your feature pipeline look like? 
 フィーチャーパイプラインによって作成されるフィーチャーデータはどのようなものですか？
-
 The output feature data is typically in tabular format (one or more DataFrame[s] or table[s]) and is typically stored in a feature group(s) in the feature store. 
 出力フィーチャーデータは通常、表形式（1つ以上のDataFrameまたはテーブル）であり、通常はフィーチャーストアのフィーチャーグループに保存されます。
-
 Feature groups store feature data in tables that are used by clients for both training and inference (both online applications and batch programs). 
 フィーチャーグループは、トレーニングと推論（オンラインアプリケーションとバッチプログラムの両方）にクライアントが使用するテーブルにフィーチャーデータを保存します。
 
-Ideally, feature pipelines should be tolerant of failures by being idempotent and making atomic updates to feature groups. 
-理想的には、フィーチャーパイプラインは冪等性を持ち、フィーチャーグループに対して原子的な更新を行うことで、失敗に対して耐性を持つべきです。
+<!-- ここまで読んだ! -->
 
+Ideally, feature pipelines should be tolerant of failures by being idempotent and making atomic updates to feature groups. 
+**理想的には、フィーチャーパイプラインは冪等性を持ち、フィーチャーグループに対して原子的な更新を行うことで、失敗に対して耐性を持つべき**です。
 _Idempotence implies they should produce the same result even if they are run more than once._ 
 _冪等性は、複数回実行されても同じ結果を生成する必要があることを意味します。_
-
 _Atomicity implies that updates should be applied all at once, so if a feature pipeline fails before completion, partial updates with corrupted or missing data should not be applied to feature groups._ 
-_原子性は、更新が一度に適用されるべきであり、フィーチャーパイプラインが完了する前に失敗した場合、破損したデータや欠損データを含む部分的な更新がフィーチャーグループに適用されるべきではないことを意味します。_
-
+_原子性は、更新が一度に適用されるべきであり、フ**ィーチャーパイプラインが完了する前に失敗した場合、破損したデータや欠損データを含む部分的な更新がフィーチャーグループに適用されるべきではないこと**を意味します。_
 The benefit of idempotence and atomicity is that you can safely rerun a feature pipeline in the event of a failure. 
-冪等性と原子性の利点は、失敗が発生した場合にフィーチャーパイプラインを安全に再実行できることです。
+**冪等性と原子性の利点は、失敗が発生した場合にフィーチャーパイプラインを安全に再実行できること**です。
+
+<!-- ここまで読んだ! -->
 
 You can address scalability and feature freshness requirements by implementing a feature pipeline in one of a number of different frameworks and languages. 
 スケーラビリティとフィーチャーの新鮮さの要件に対処するために、さまざまなフレームワークや言語のいずれかでフィーチャーパイプラインを実装できます。
-
 You have to select the best technology based on your feature freshness requirements, your data input sizes, and the skills available in your team. 
 フィーチャーの新鮮さの要件、データ入力サイズ、およびチームに利用可能なスキルに基づいて、最適な技術を選択する必要があります。
 
