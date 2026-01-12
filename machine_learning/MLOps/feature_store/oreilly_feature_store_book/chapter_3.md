@@ -558,8 +558,9 @@ There is no feature engineering required in this example.
 We will read all of the data as numerical feature data and will not encode that data before it is written to feature groups. 
 すべてのデータを数値的な特徴データとして読み取り、特徴グループに書き込む前にそのデータをエンコードしません。 
 The code shown for downloading the sensor readings and weather forecasts is found in the functions/util.py module: 
-センサーの読み取り値と天気予報をダウンロードするためのコードは、functions/util.pyモジュールにあります： 
-```   
+センサーの読み取り値と天気予報をダウンロードするためのコードは、functions/util.pyモジュールにあります：
+
+```Python
    url = f"{aqicn_url}/?token={AQI_API_KEY}"   
    data = trigger_request(url)   
    aq_today_df = pd.DataFrame()   
@@ -579,11 +580,13 @@ The code shown for downloading the sensor readings and weather forecasts is foun
    hourly_df = # populate with responses data   
    daily_df = hourly_df.between_time('11:59', '12:01')   
    weather_fg.insert(daily_df) 
-``` 
+```
+
 Our API calls to aqicn and Open-Meteo return the air quality and weather forecast data, respectively, and we put the returned data into Pandas DataFrames that are then inserted into their respective feature groups. 
 aqicnおよびOpen-MeteoへのAPI呼び出しは、それぞれ空気質データと天気予報データを返し、返されたデータをPandas DataFrameに入れ、それをそれぞれの特徴グループに挿入します。 
 When you insert the DataFrame into the feature group, its data validation rules will be executed. 
 DataFrameを特徴グループに挿入すると、そのデータ検証ルールが実行されます。 
+
 You can see the results of your historical feature pipeline executions in the Hops‐ works UI. 
 Hopsworks UIで過去の特徴パイプラインの実行結果を見ることができます。 
 Log in to Hopsworks and navigate to “Feature group” → “Recent activity” to see the result of ingestion runs. 
@@ -593,168 +596,160 @@ You can inspect the content of your feature group in “Feature group” → “
 Have a look at “Feature group” → “Feature sta‐ tistics” to see descriptive statistics computed over the data inserted and the data vali‐ dation results in “Feature group” → “Expectations.” 
 「Feature group」→「Feature statistics」で挿入されたデータに対して計算された記述統計と、「Feature group」→「Expectations」でのデータ検証結果を確認してください。 
 
-###### Training Pipeline トレーニングパイプライン
+<!-- ここまで読んだ! -->
+
+### Training Pipeline トレーニングパイプライン
 
 We decided that we would model PM2.5 as a regression problem, and we know we will only have a few hundred or possibly a thousand rows or so. 
-私たちは、PM2.5を回帰問題としてモデル化することに決め、数百行またはおそらく千行程度しかないことを知っています。 
+私たちは、PM2.5を回帰問題としてモデル化することに決め、数百行またはおそらく千行程度しかないことを知っています。
 This is decidedly in the realm of small data, so we will not use deep learning. 
-これは明らかに小さなデータの範疇にあるため、深層学習は使用しません。 
+**これは明らかに小さなデータの範疇にあるため、深層学習は使用しません。**
 Instead, we will use the [go-to ML framework for small data—XGBoost, an open source gradient-boosted](https://oreil.ly/fbhXp) decision tree framework. 
-代わりに、私たちは小さなデータのための定番のMLフレームワークであるXGBoost（オープンソースの勾配ブースト決定木フレームワーク）を使用します。 
+代わりに、私たちは**小さなデータのための定番のMLフレームワークであるXGBoost（オープンソースの勾配ブースト決定木フレームワーク）を使用**します。 
 XGBoost works well out of the box, and we won’t do any 
 XGBoostは、すぐに使える状態でうまく機能し、私たちは何も行いません。
-
-
-
 hyperparameter tuning here—we will leave that as an exercise for you to squeeze more performance out of the model.
 ここではハイパーパラメータの調整について触れますが、モデルのパフォーマンスをさらに引き出すための演習として残しておきます。
 
+<!-- ここまで読んだ! -->
+
 We will start by selecting the features we are going to use in our model. 
 私たちは、モデルで使用する特徴量を選択することから始めます。
-
 For this, we will use the feature view in Hopsworks. 
 そのために、Hopsworksのフィーチャービューを使用します。
-
 A _feature view defines the schema for a_ model—its input features and output targets (or labels). 
-フィーチャービューはモデルのスキーマを定義します—その入力特徴量と出力ターゲット（またはラベル）です。
-
-Hopsworks provides a Pandas-like API for selecting features from different feature groups and then joining the selected features together using a query object. 
+**フィーチャービューはモデルのスキーマ、つまり入力特徴量と出力ターゲット（またはラベル）を定義**します。(そういう機能なのか...!!:thinking:)
+Hopsworks provides a Pandas-like API for selecting features from different feature groups and then joining the selected features together using a query object.
 Hopsworksは、異なるフィーチャーグループから特徴量を選択し、選択した特徴量をクエリオブジェクトを使用して結合するためのPandasのようなAPIを提供します。
-
 The select() and select_all() methods on a feature group return a `query object that provides a` `join() method` (more details in Chapter 5). 
 フィーチャーグループのselect()およびselect_all()メソッドは、`join()メソッドを提供するクエリオブジェクト`を返します（詳細は第5章を参照）。
-
 When you create the feature view, you also specify which of the selected features are the label columns. 
 フィーチャービューを作成する際に、選択した特徴量の中でどれがラベル列であるかも指定します。
-
 The code for selecting the features from the feature groups, joining them together using the common `'city' column, and` creating the feature view looks like this: 
 フィーチャーグループから特徴量を選択し、共通の'city'列を使用してそれらを結合し、フィーチャービューを作成するためのコードは次のようになります：
 
-```  
+```Python  
 selected_features = \  
 air_quality_fg.select(['pm25']).join(weather_fg.select_all(on=['city']))  
+
 feature_view = fs.create_feature_view(  
-name='air_quality_fv',  
-version=version,  
-labels=['pm25'],  
-query=selected_features  
+  name='air_quality_fv',  
+  version=version,  
+  labels=['pm25'],  
+  query=selected_features  
 )
 ```
 
 With a feature view object, you can now create training data: 
 フィーチャービューオブジェクトを使用して、トレーニングデータを作成できます：
 
-```  
+```Python
 X_train, X_test, y_train, y_test = feature_view.train_test_split(test_size=0.2)
 ```
 
 Here, we read training data as Pandas DataFrames, which are randomly split (80/20) into training set features (X_train), training set labels (y_train), test set features (X_test), and test set labels (y_test). 
 ここでは、トレーニングデータをPandas DataFrameとして読み込み、ランダムに分割（80/20）してトレーニングセットの特徴量（X_train）、トレーニングセットのラベル（y_train）、テストセットの特徴量（X_test）、およびテストセットのラベル（y_test）を作成します。
-
-In a single call, `train_test_split reads the` data, joins the air quality and weather data, and then performs a Scikit-Learn random split of the data into features and labels for both training and test sets. 
-1回の呼び出しで、`train_test_splitはデータを読み込み、`空気質と天気データを結合し、次にScikit-Learnのランダム分割を行ってトレーニングセットとテストセットの特徴量とラベルに分けます。
-
+In a single call, train_test_split reads the data, joins the air quality and weather data, and then performs a Scikit-Learn random split of the data into features and labels for both training and test sets. 
+**1回の呼び出しで、train_test_splitはデータを読み込み、空気質と天気データを結合し、次にScikit-Learnのランダム分割を行ってトレーニングセットとテストセットの特徴量とラベルに分けます**。
 The reason I chose a random split over a time-series split is that our chosen features are not time dependent. 
-私が時間系列分割よりもランダム分割を選んだ理由は、選択した特徴量が時間に依存しないからです。
-
+私が**時間系列分割よりもランダム分割を選んだ理由は、選択した特徴量が時間に依存しないから**です。
 A useful exercise would be to improve this air quality model by adding features related to air quality (historical air quality, seasonality factors, and so on) and change to a time-series split. 
 有用な演習として、空気質に関連する特徴量（過去の空気質、季節要因など）を追加してこの空気質モデルを改善し、時間系列分割に変更することが考えられます。
 
 We can now train our model using `XGBoostRegressor. 
 これで、`XGBoostRegressor`を使用してモデルをトレーニングできます。
+We simply fit our model to` our features and labels from the training set, using the default hyperparameters for XGBoostRegressor: 
+私たちは単に、XGBoostRegressorのデフォルトのハイパーパラメータを使用して、トレーニングセットからの特徴量とラベルにモデルを適合させます：
 
-We simply fit our model to` our features and labels from the training set, using the default hyperparameters for 
-私たちは、トレーニングセットからの特徴量とラベルにモデルを適合させるだけで、デフォルトのハイパーパラメータを使用します。
-
-``` 
-XGBoostRegressor:  
+```Python
 clf = XGBRegressor()  
 clf.fit(X_train, y_train)
 ```
 
 Training should only take a few milliseconds. 
 トレーニングには数ミリ秒しかかからないはずです。
-
 Then, you can evaluate the trained model, clf, using the features from our test set to produce predictions, y_pred: 
-次に、テストセットからの特徴量を使用してトレーニングされたモデルclfを評価し、予測y_predを生成できます：
+次に、テストセットからの特徴量を使用してトレーニングされたモデルclfを評価し、予測y_predを生成できます:
 
-```  
+```Python
 y_pred = clf.predict(X_test)  
 mse = mean_squared_error(y_test, y_pred, squared=False)  
 r2 = r2_score(y_test, y_pred)  
 plot_importance(clf, max_num_features=4)
 ```
 
+<!-- ここまで読んだ! -->
+
 Because we are modeling PM2.5 prediction as a regression problem, we are using mean squared error (MSE) and R-squared error as metrics to evaluate model performance. 
 私たちはPM2.5の予測を回帰問題としてモデル化しているため、モデルのパフォーマンスを評価するための指標として平均二乗誤差（MSE）とR二乗誤差を使用しています。
-
 An alternative to MSE is the mean absolute error (MAE), but MSE punishes a model more if its predictions are wildly off from the outcome compared with MAE. 
 MSEの代替として平均絶対誤差（MAE）がありますが、MSEは予測が結果から大きく外れた場合にモデルに対してより厳しいペナルティを与えます。
-
 With the scikit-learn library, it just takes a method call to compute one of many different model performance metrics when you have your outcomes (y_test) and your predictions (y_pred) readily available. 
-scikit-learnライブラリを使用すると、結果（y_test）と予測（y_pred）がすぐに利用可能な場合、さまざまなモデルパフォーマンス指標の1つを計算するのにメソッド呼び出しだけで済みます。
-
+**scikit-learnライブラリを使用すると、結果（y_test）と予測（y_pred）がすぐに利用可能な場合、さまざまなモデルパフォーマンス指標の1つを計算するのにメソッド呼び出しだけで済みます。**
 We also calculate feature importance, which we later save as a PNG file. 
-また、特徴量の重要度も計算し、後でPNGファイルとして保存します。
+**また、特徴量の重要度も計算し、後でPNGファイルとして保存**します。
+
+<!-- ここまで読んだ! -->
 
 Now, we need to save the output of this training pipeline, our trained model, clf, to a model registry. 
 今、私たちはこのトレーニングパイプラインの出力、トレーニングされたモデルclfをモデルレジストリに保存する必要があります。
-
 We will use the Hopsworks model registry. 
 Hopsworksのモデルレジストリを使用します。
-
 This process involves first saving the model to a local directory and then registering the model to the model reg‐ istry, including its name (air_quality_xgboost_model) and description, its evalua‐ tion metrics, and the feature view used to create the training data for the model: 
-このプロセスでは、まずモデルをローカルディレクトリに保存し、その後、モデルの名前（air_quality_xgboost_model）や説明、評価指標、モデルのトレーニングデータを作成するために使用されたフィーチャービューを含めてモデルレジストリに登録します：
+**このプロセスでは、まずモデルをローカルディレクトリに保存し、その後、モデルの名前（air_quality_xgboost_model）や説明、評価指標、モデルのトレーニングデータを作成するために使用されたフィーチャービューを含めてモデルレジストリに登録**します：
+(feature viewも含めるのか、まあデータの実体ではないから特にでかいファイルではないはずだから、登録すればいいか。データセットを作る設計図的なものだから再現性の観点から必要なのか...1:thinking:)
 
-```  
+```Python
 model_dir = "air_quality_model"  
 os.makedirs(model_dir + "/images")  
 clf.save_model(model_dir + "/model.json")  
-plt.savefig(model_dir + "/images/feature_importance.png")  
+plt.savefig(model_dir + "/images/feature_importance.png")
+
 mr = project.get_model_registry()  
 mr.python.create_model(  
-name="air_quality_xgboost_model",  
-description="Air Quality (PM2.5) predictor.",  
-metrics={ "MSE": mse, "r2": r2 },  
-feature_view = feature_view  
+  name="air_quality_xgboost_model",  
+  description="Air Quality (PM2.5) predictor.",  
+  metrics={ "MSE": mse, "r2": r2 },  
+  feature_view = feature_view  
 )  
 mr.save(model_dir)
 ```
 
+<!-- ここまで読んだ! -->
+
 The model registry client extracts the schema and lineage for the model using the feature view object. 
 モデルレジストリクライアントは、フィーチャービューオブジェクトを使用してモデルのスキーマと系譜を抽出します。
-
 Any other files in the local directory containing the model will also be uploaded, and any PNG/JPEG files in the _images subdirectory_ (feature_importance.png) will be shown in the “Model evaluation images” section (see Figure 3-2).  
 モデルを含むローカルディレクトリ内の他のファイルもアップロードされ、_imagesサブディレクトリ内のPNG/JPEGファイル（feature_importance.png）は「モデル評価画像」セクションに表示されます（図3-2を参照）。
 
+![]()
 _Figure 3-2. Our XGBoost regression model is stored in the model registry, along with_ _model metrics and two model evaluation images._
 図3-2. 私たちのXGBoost回帰モデルは、モデルメトリクスと2つのモデル評価画像とともにモデルレジストリに保存されています。
 
+<!-- ここまで読んだ! -->
+
 Notice that every time we register a model, we get a new version of the model. 
 モデルを登録するたびに、新しいバージョンのモデルが得られることに注意してください。
-
 Unlike feature groups and feature views, we don’t need to provide the version for the model when creating it—an auto-incrementing version number will be assigned to the newly registered model. 
-フィーチャーグループやフィーチャービューとは異なり、モデルを作成する際にバージョンを提供する必要はありません—新しく登録されたモデルには自動インクリメントのバージョン番号が割り当てられます。
-
+フィーチャーグループやフィーチャービューとは異なり、**モデルを作成する際にバージョンを提供する必要はありません—新しく登録されたモデルには自動インクリメントのバージョン番号が割り当てられます。**
 With our trained model in the model registry, we can now write our batch inference pipeline that will generate our air quality dashboard. 
 モデルレジストリにトレーニングされたモデルがあるので、空気質ダッシュボードを生成するバッチ推論パイプラインを書くことができます。
 
-###### Batch Inference Pipeline
-###### バッチ推論パイプライン
+<!-- ここまで読んだ! -->
+
+### Batch Inference Pipeline　バッチ推論パイプライン
 
 The batch inference pipeline is a Python program that downloads the trained model from the model registry, fetches the weather forecast feature data, and uses the model and the weather forecast data to predict air quality for the next seven days. 
 バッチ推論パイプラインは、モデルレジストリからトレーニングされたモデルをダウンロードし、天気予報の特徴データを取得し、モデルと天気予報データを使用して次の7日間の空気質を予測するPythonプログラムです。
-
 We will make seven different predictions, one for each of the seven days. 
 私たちは7日間それぞれに対して1つの異なる予測を行います。
-
 We will create a [graph of the air quality forecasts using Plotly, save that graph as a PNG file, and push](https://plotly.com) that PNG file to a GitHub repository that contains a public website with GitHub Pages. 
 Plotlyを使用して空気質予測のグラフを作成し、そのグラフをPNGファイルとして保存し、そのPNGファイルをGitHub Pagesを含む公開ウェブサイトを持つGitHubリポジトリにプッシュします。
 
 First, we need to download our model from the model registry and load it using the 
 まず、モデルレジストリからモデルをダウンロードし、次のようにして`XGBRegressor`オブジェクトを使用してロードする必要があります：
 
-```  
+```Python  
 model_ref = mr.get_model(  
 name="air_quality_xgboost_model",  
 version=1,  
@@ -767,42 +762,37 @@ retrieved_xgboost_model.load_model(saved_model_dir + "/model.json")
 Then, we read a batch of inference data (our weather forecast data for the next seven days) using the weather feature group: 
 次に、天気フィーチャーグループを使用して推論データのバッチ（次の7日間の天気予報データ）を読み込みます：
 
-```  
+```Python  
 batch_df = weather_fg.filter(weather_fg.date >= today).read()
 ```
 
 The `batch_df DataFrame now contains the weather forecast features for the next` seven days. 
 `batch_df` DataFrameには、次の7日間の天気予報の特徴量が含まれています。
-
 With these features, we can now make the predictions using the model: 
 これらの特徴量を使用して、モデルを使って予測を行うことができます：
 
-```  
+```Python  
 features = batch_df[['temperature_2m_mean', 'precipitation_sum', \  
-'wind_speed_10m_max', 'wind_direction_10m_dominant']]  
+'wind_speed_10m_max', 'wind_direction_10m_dominant']]
 batch_df['predicted_pm25'] = model.predict(features)  
 batch_df['days_before_forecast_day'] = range(1, len(batch_df)+1)
 ```
 
 We store the predictions in the pm25_predicted column of batch_df along with the number of days before the forecast. 
 予測を`batch_df`の`pm25_predicted`列に保存し、予測までの日数も記録します。
-
 There are seven forecasts, one for each day. 
 7つの予測があり、各日ごとに1つずつです。
-
 The first one is seven days beforehand, and the last forecast is one day beforehand. 
 最初の予測は7日前のもので、最後の予測は1日前のものです。
-
 This `days_before_forecast_day column will help us evaluate the performance of our` 
 この`days_before_forecast_day`列は、私たちのモデルのパフォーマンスを評価するのに役立ちます。
-
 model depending on how many days in advance it is forecasting. 
 モデルが何日前に予測しているかに応じて評価します。
-
 We are going to save `batch_df to the feature store, to be used to monitor the features/predictions, as batch_df includes the predictions, feature values, and helper columns: 
-`batch_df`をフィーチャーストアに保存し、特徴量/予測を監視するために使用します。`batch_df`には予測、特徴量の値、補助列が含まれています：
+**`batch_df`をフィーチャーストアに保存し、特徴量/予測を監視するために使用**します。`batch_df`には予測、特徴量の値、補助列が含まれています：
+(推論結果だけじゃなくて、その時に使った特徴量もセットでfeature storeに保存するのか。なるほど。これは名前的に、**多分inference storeとは別物で、あくまでmonitoring用のfeature group**ってことっぽいな...!:thinking:)
 
-```  
+```Python
 monitoring_fg = fs.get_or_create_feature_group(  
 name='monitoring_aq',  
 description='Monitor Air Quality predictions’,  
@@ -814,11 +804,10 @@ monitoring_fg.insert(batch_df)
 
 We also have to plot our air quality prediction dashboard. 
 また、空気質予測ダッシュボードをプロットする必要があります。
-
 We will use the plotly library: 
 plotlyライブラリを使用します：
 
-```  
+```Python  
 import plotly.express as px  
 fig = px.line(batch_df, x = "date", y = "pm25_predicted", title = "..")  
 ….  
@@ -827,174 +816,137 @@ fig.write_image(file="forecast.png", format="png", width=1920, height=1280)
 
 We will use a GitHub Action to publish the _forecast.png file on a web page, as_ described in the next section (see Figure 3-3). 
 次のセクションで説明するように、GitHub Actionを使用して_webpage上に_forecast.pngファイルを公開します（図3-3を参照）。
+(うんうん、やはり推論結果の出力は監視用feature groupからは行ってない:thinking:)
 
+![]()
 _Figure 3-3. The GitHub Pages website contains our air quality forecast as a Plotly chart_ _and the hindcast (shown here) that shows both the predicted PM2.5 and actual PM2.5_ _values._
 図3-3. GitHub Pagesウェブサイトには、私たちの空気質予測がPlotlyチャートとして表示され、ここに示されているように、予測されたPM2.5と実際のPM2.5値の両方を示すヒンドキャストが含まれています。
 
 Finally, we create some hindcast PNG files that compare our model’s predictions, from the monitoring feature group data, and the outcomes, from the air quality feature group data. 
 最後に、監視フィーチャーグループデータからのモデルの予測と、空気質フィーチャーグループデータからの結果を比較するヒンドキャストPNGファイルを作成します。
-
+(これの意味 = 過去の予測と実際の値を比較するグラフを作る、ってことかな...!!:thinking:)
 See the batch inference pipeline notebook in the book’s source code repository for details. 
 詳細については、本のソースコードリポジトリにあるバッチ推論パイプラインノートブックを参照してください。
 
-###### Running the Pipelines
-###### パイプラインの実行
+<!-- ここまで読んだ! -->
+
+### Running the Pipelines パイプラインの実行
 
 To get started, you should run the Jupyter notebooks on your laptop to ensure they work as expected. 
 始めるには、Jupyterノートブックをノートパソコンで実行して、期待通りに動作することを確認する必要があります。
-
 Run them from the first cell to the last cell. 
 最初のセルから最後のセルまで実行してください。
-
-You should switch to the Hopsworks UI after running each notebook to see the changes made—such as creating a feature group, writing to a feature group, creating a feature view, and saving a trained model to the model registry. 
+You should switch to the Hopsworks UI after running each notebook to see the changes made—such as creating a feature group, writing to a feature group, creating a feature view, and saving a trained model to the model registry.
 各ノートブックを実行した後、Hopsworks UIに切り替えて、フィーチャーグループの作成、フィーチャーグループへの書き込み、フィーチャービューの作成、トレーニングされたモデルをモデルレジストリに保存するなどの変更を確認してください。
 
 First, run the feature backfill notebook (1_air_quality_feature_backfill.ipynb). 
 まず、フィーチャーバックフィルノートブック（1_air_quality_feature_backfill.ipynb）を実行します。
-
 This will create the air_quality and weather feature groups. 
 これにより、air_qualityおよびweatherフィーチャーグループが作成されます。
-
 You should then run the feature pipeline (2_air_quality_feature_pipeline.ipynb) and check the feature groups to see if new rows have been added to them as expected. 
 次に、フィーチャーパイプライン（2_air_quality_feature_pipeline.ipynb）を実行し、フィーチャーグループに新しい行が追加されているかどうかを確認します。
-
-Then, you can train your model by running the model training pipeline (3_air_quality_training_pipeline.ipynb); verify that the feature view (air_quality_fv) was created and the trained_
-次に、モデルトレーニングパイプライン（3_air_quality_training_pipeline.ipynb）を実行してモデルをトレーニングできます。フィーチャービュー（air_quality_fv）が作成され、トレーニングされた_
-
-
-
-model is in the model registry. 
-モデルはモデルレジストリにあります。
-
+Then, you can train your model by running the model training pipeline (3_air_quality_training_pipeline.ipynb); verify that the feature view (air_quality_fv) was created and the trained_model is in the model registry. 
+次に、モデルトレーニングパイプライン（3_air_quality_training_pipeline.ipynb）を実行してモデルをトレーニングできます。フィーチャービュー（air_quality_fv）が作成され、trained_modelがモデルレジストリにあることを確認してください。
 Finally, test that your batch inference pipeline (4_air_quality_batch_inference.ipynb) works as expected—it should have created an ``` aq_predictions feature group. 
 最後に、バッチ推論パイプライン（4_air_quality_batch_inference.ipynb）が期待通りに動作するかテストしてください。これは、``` aq_predictions フィーチャーグループを作成しているはずです。
-
 If you find a bug, please post a GitHub issue. 
 バグを見つけた場合は、GitHubのイシューを投稿してください。
-
 If you can improve the code, please file a pull request (PR). 
 コードを改善できる場合は、プルリクエスト（PR）を提出してください。
-
 If you need help, please ask questions on the Hopsworks Slack linked in the book’s GitHub repository. 
 助けが必要な場合は、本のGitHubリポジトリにリンクされたHopsworks Slackで質問してください。
 
-###### Scheduling the Pipelines as a GitHub Action
-###### パイプラインをGitHub Actionとしてスケジュールする
+<!-- ここまで読んだ! -->
+
+#### Scheduling the Pipelines as a GitHub Action パイプラインをGitHub Actionとしてスケジュールする
 
 We will use GitHub Actions to schedule the feature and batch inference pipelines and build our dashboard using GitHub Pages. 
 私たちは、GitHub Actionsを使用してフィーチャーおよびバッチ推論パイプラインをスケジュールし、GitHub Pagesを使用してダッシュボードを構築します。
-
 As of 2024, GitHub’s free tier gives you 2,000 free minutes of compute every month. 
 2024年現在、GitHubの無料プランでは、毎月2,000分の無料コンピュート時間が提供されます。
-
 That is more than enough to run our feature and batch inference pipelines. 
 これは、私たちのフィーチャーおよびバッチ推論パイプラインを実行するには十分すぎるほどです。
-
 You can run the training pipeline on a Jupyter notebook on your laptop—we won’t run it on a schedule for now. 
 トレーニングパイプラインは、ノートパソコンのJupyterノートブックで実行できますが、今のところスケジュールで実行することはありません。
-
 For our UI, we will use GitHub Pages (which hosts web pages for your GitHub repository); 
 私たちのUIには、GitHub Pages（GitHubリポジトリのウェブページをホストする）を使用します。
-
 in GitHub’s free tier, as of 2024, web pages cannot be larger than 1 GB and pages have a soft bandwidth limit of 100 GB per month. 
 2024年現在、GitHubの無料プランでは、ウェブページは1GBを超えることができず、ページには月あたり100GBのソフトバンド幅制限があります。
-
 This should be more than enough for this project. 
 これは、このプロジェクトには十分すぎるほどです。
 
+---
+(コラム)
+
 There are many different platforms that we can use to schedule our pipelines. 
 私たちがパイプラインをスケジュールするために使用できるさまざまなプラットフォームがあります。
-
 In my ID2223 course, students could choose between [Modal and GitHub Actions. 
 私のID2223コースでは、学生は[ModalとGitHub Actionsの間で選択できました。
-
 Modal’s free tier is generous and its](http://modal.com) developer experience is great, 
 Modalの無料プランは寛大で、その開発者体験は素晴らしいですが、
-
 but Modal requires a credit card for access and can’t schedule notebooks (only Python programs). 
 Modalはアクセスにクレジットカードを必要とし、ノートブックをスケジュールすることはできません（Pythonプログラムのみ）。
+There are many other serverless compute platforms that offer orchestration capabilities that you could use instead to run the Python programs, including Google Cloud Run, Azure Logic Apps, AWS Step Functions, [Fly.io, any managed Airflow platform, Dag‐](http://Fly.io) ster, and Mage AI. 
+他にも、Pythonプログラムを実行するために使用できるオーケストレーション機能を提供する多くのサーバーレスコンピューティングプラットフォームがあります。これには、Google Cloud Run、Azure Logic Apps、AWS Step Functions、[Fly.io、管理されたAirflowプラットフォーム、Dagster、およびMage AI](http://Fly.io)が含まれます。
 
-There are many other serverless compute platforms that offer orchestration capabilities that you could use instead to run the Python programs, 
-Pythonプログラムを実行するために使用できるオーケストレーション機能を提供する他のサーバーレスコンピュートプラットフォームも多数あります。
+---
 
-including Google Cloud Run, Azure Logic Apps, AWS Step Functions, [Fly.io, any managed Airflow platform, Dag‐](http://Fly.io) ster, and Mage AI. 
-Google Cloud Run、Azure Logic Apps、AWS Step Functions、[Fly.io、任意の管理されたAirflowプラットフォーム、Dagster、Mage AIなどが含まれます。
+<!-- ここまで読んだ! -->
 
 So what is GitHub Actions? 
 では、GitHub Actionsとは何ですか？
-
 It is a continuous integration and continuous deployment (CI/CD) platform that allows you to automate your build, test, and deployment pipelines. 
-それは、ビルド、テスト、およびデプロイメントパイプラインを自動化することを可能にする継続的インテグレーションおよび継続的デプロイメント（CI/CD）プラットフォームです。
-
+それは、**ビルド、テスト、およびデプロイメントパイプラインを自動化することを可能にする継続的インテグレーションおよび継続的デプロイメント（CI/CD）プラットフォーム**です。
 GitHub Actions is typically used to schedule tests (unit tests or integration tests) and deploy artifacts. 
 GitHub Actionsは通常、テスト（単体テストまたは統合テスト）をスケジュールし、アーティファクトをデプロイするために使用されます。
-
 In our case, our feature and batch inference pipelines can be considered deployment pipelines that create features in the feature store and build our dashboard artifacts for GitHub Pages. 
-私たちの場合、フィーチャーおよびバッチ推論パイプラインは、フィーチャーストアにフィーチャーを作成し、GitHub Pages用のダッシュボードアーティファクトを構築するデプロイメントパイプラインと見なすことができます。
+**私たちの場合、フィーチャーおよびバッチ推論パイプラインは、フィーチャーストアにフィーチャーを作成し、GitHub Pages用のダッシュボードアーティファクトを構築するデプロイメントパイプラインと見なすことができます**。(なるほど...特徴量生成もバッチ推論もデプロイと解釈してるのか...!:thinking:)
 
 For your GitHub Action to run successfully, you need to set the HOPSWORKS_API_KEY as a repository secret, 
 GitHub Actionを正常に実行するには、HOPSWORKS_API_KEYをリポジトリのシークレットとして設定する必要があります。
-
 so that your pipelines can authenticate with Hopsworks. 
 これにより、パイプラインがHopsworksと認証できるようになります。
 
 You can then proceed to define the YAML file containing the GitHub Actions, 
 次に、GitHub Actionsを含むYAMLファイルを定義できます。
-
 which is found in the GitHub repository at .github/workflows/air-quality-daily.yml. 
 これは、GitHubリポジトリの.github/workflows/air-quality-daily.ymlにあります。
-
 You can run the workflow in the GitHub Actions UI for your repository by clicking on “Run workflow.”  
 リポジトリのGitHub Actions UIで「Run workflow」をクリックすることで、ワークフローを実行できます。
 
 The workflow code shows the actions taken by the workflow. 
 ワークフローコードは、ワークフローによって実行されるアクションを示しています。
-
 First, you’ll notice that the scheduled execution of this action has been commented out. 
 まず、このアクションのスケジュール実行がコメントアウトされていることに気付くでしょう。
-
-When you have successfully run this GitHub Action without errors, 
-このGitHub Actionをエラーなしで正常に実行したら、
-
-you can uncomment the `schedule` and - cron lines near the beginning of the file 
-ファイルの最初の方にある`schedule`と-cronの行のコメントを外すことができます。
-
+When you have successfully run this GitHub Action without errors, you can uncomment the `schedule` and - cron lines near the beginning of the file 
+**このGitHub Actionをエラーなしで正常に実行したら、ファイルの先頭近くにある`schedule`および-cron行のコメントを解除できます**。(この流れいいよね...!:thinking:)
 and this GitHub Action will then run daily at 6:11 a.m. 
 そうすると、このGitHub Actionは毎日午前6時11分に実行されます。
 
+<!-- ここまで読んだ! -->
+
 The steps the workflow will take are as follows. 
 ワークフローが実行するステップは次のとおりです。
-
 First, the workflow will run the steps on a container that uses the latest version of Ubuntu. 
 まず、ワークフローは最新のUbuntuバージョンを使用するコンテナでステップを実行します。
-
 Second, it will check out the code in this GitHub repository to a local directory in the container 
 次に、コンテナ内のローカルディレクトリにこのGitHubリポジトリのコードをチェックアウトします。
-
 and change the current working directory to the root directory of the repository. 
 そして、現在の作業ディレクトリをリポジトリのルートディレクトリに変更します。
-
 Third, it will install Python. 
 次に、Pythonをインストールします。
-
 Fourth, it will install all the Python dependencies in the requirements.txt file using pip (after upgrading pip to the latest version). 
 第四に、requirements.txtファイル内のすべてのPython依存関係をpipを使用してインストールします（pipを最新バージョンにアップグレードした後）。
-
 Finally, it will run the feature pipeline followed by the batch inference pipeline, 
 最後に、フィーチャーパイプラインを実行し、その後にバッチ推論パイプラインを実行します。
-
 after it sets the HOPSWORKS_API_KEY as an environment variable. 
 その後、HOPSWORKS_API_KEYを環境変数として設定します。
-
 Our GitHub Actions execute our feature pipeline and batch inference notebooks 
 私たちのGitHub Actionsは、フィーチャーパイプラインとバッチ推論ノートブックを実行します。
-
 with the help of the nbconvert utility that first transforms the notebook into a Python program 
 これは、最初にノートブックをPythonプログラムに変換するnbconvertユーティリティの助けを借りて行われます。
-
 and then runs the program from the first cell to the last cell. 
 その後、プログラムは最初のセルから最後のセルまで実行されます。
-
 The HOPSWORKS_API_KEY environment variable is set so that these pipelines can authenticate with Hopsworks: 
 HOPSWORKS_API_KEY環境変数は、これらのパイプラインがHopsworksと認証できるように設定されています：
 
@@ -1026,120 +978,87 @@ jupyter nbconvert --to notebook --execute 2_air_quality_feature_pipeline.ipynb
 jupyter nbconvert --to notebook --execute 4_air_quality_batch_inference.ipynb
 ```
 
-###### Building the Dashboard as a GitHub Page
-###### GitHub Pageとしてダッシュボードを構築する
+<!-- ここまで読んだ! -->
+
+#### Building the Dashboard as a GitHub Page GitHub Pageとしてダッシュボードを構築する
 
 Our GitHub Action also includes steps to commit and push the PNG files created by the batch inference pipeline to our GitHub repository 
 私たちのGitHub Actionには、バッチ推論パイプラインによって作成されたPNGファイルをGitHubリポジトリにコミットしてプッシュするステップも含まれています。
-
 and then to build and publish a GitHub Page containing the Air Quality Forecasting Dashboard (with our PNG charts). 
 その後、空気質予測ダッシュボード（PNGチャートを含む）を含むGitHub Pageを構築して公開します。
-
-The GitHub Action YAML file contains a step called `git-auto-commit-` 
-GitHub ActionのYAMLファイルには、`git-auto-commit-`というステップが含まれています。
-
-``` action that pushes the new PNG files to our GitHub repository and rebuilds the Git‐ 
-``` これは、新しいPNGファイルをGitHubリポジトリにプッシュし、GitHub Pagesを再構築します。
-
+The GitHub Action YAML file contains a step called `git-auto-commit-` action that pushes the new PNG files to our GitHub repository and rebuilds the GitHub Pages.
+GitHub Action YAMLファイルには、`git-auto-commit-`アクションと呼ばれるステップが含まれており、新しいPNGファイルをGitHubリポジトリにプッシュし、GitHub Pagesを再構築します。
 You shouldn’t need to change this code: 
 このコードを変更する必要はありません：
 
-```      
+``` 
 - name: publish GitHub Pages       
-uses: stefanzweifel/git-auto-commit-action@v4       
+    uses: stefanzweifel/git-auto-commit-action@v4       
 [ … ]
 ``` 
 
 Note that every time the action runs, in your GitHub history, it will be shown as a commit by you to the repository. 
 アクションが実行されるたびに、GitHubの履歴には、リポジトリへのコミットとしてあなたが表示されることに注意してください。
-
 For the `git-auto-commit-action step to run successfully, 
 `git-auto-commit-action`ステップが正常に実行されるためには、
-
 you first have to enable GitHub Pages in your repository. 
 まず、リポジトリでGitHub Pagesを有効にする必要があります。
-
 Go to Settings → Pages → Branch (main → /docs) and click on Save. 
 設定 → ページ → ブランチ（main → /docs）に移動し、保存をクリックします。
-
 This will create the GitHub Page for your repository. 
-これにより、リポジトリのGitHub Pageが作成されます。
-
+これにより、**リポジトリのGitHub Pageが作成**されます。
 And that’s it. 
 これで完了です。
-
 Once you have the GitHub Page enabled and your GitHub Action runs your workflow every day, 
 GitHub Pageが有効になり、GitHub Actionが毎日ワークフローを実行するようになると、
-
 your dashboard will be updated daily with the latest air quality forecasts! 
 ダッシュボードは最新の空気質予測で毎日更新されます！
 
-###### Function Calling with LLMs
-###### LLMを用いた関数呼び出し
+<!-- ここまで読んだ! -->
+
+### Function Calling with LLMs LLMを用いた関数呼び出し
 
 You now should have a working air quality forecasting system powered by ML. 
 これで、MLによって動かされる空気質予測システムが機能しているはずです。
-
 But we want to make it even more accessible by adding a voice-activated UI. 
 しかし、音声操作のUIを追加することで、さらにアクセスしやすくしたいと考えています。
-
 For this, we are going to use two different open source transformer models 
 これには、2つの異なるオープンソースのトランスフォーマーモデルを使用します。
-
 (see Figure 3-4 and the notebook 5_function_calling.ipynb in the repository): 
-（図3-4およびリポジトリ内のノートブック5_function_calling.ipynbを参照）：
+（図3-4およびリポジトリ内のノートブック5_function_calling.ipynbを参照）:
 
 1. Whisper transcribes audio into text—users speak and ask a question to our application, and the model outputs what the user said as text. 
-1. Whisperは音声をテキストに書き起こします。ユーザーはアプリケーションに質問をし、モデルはユーザーが言ったことをテキストとして出力します。
+   1. Whisperは音声をテキストに書き起こします。ユーザーはアプリケーションに質問をし、モデルはユーザーが言ったことをテキストとして出力します。
 
 2. The transcribed text will then be fed into a fine-tuned Llama 3 8B LLM that will return one function (from a set of four available functions), including the parameter values to that function. 
-2. 書き起こされたテキストは、微調整されたLlama 3 8B LLMに入力され、4つの利用可能な関数のセットから1つの関数（その関数へのパラメータ値を含む）を返します。
+   1. 書き起こされたテキストは、微調整されたLlama 3 8B LLMに入力され、4つの利用可能な関数のセットから1つの関数（その関数へのパラメータ値を含む）を返します。
 
-3. The chosen function will be executed, returning either historical air quality measurements or a forecast for air quality, 
-3. 選択された関数が実行され、過去の空気質測定値または空気質の予測のいずれかを返します。
-
-and that output will be fed back into the LLM as part of the prompt along with your original voice-issued question to the same Llama 3 8B LLM. 
-その出力は、元の音声で発行された質問とともに同じLlama 3 8B LLMへのプロンプトの一部としてLLMにフィードバックされます。
+3. The chosen function will be executed, returning either historical air quality measurements or a forecast for air quality, and that output will be fed back into the LLM as part of the prompt along with your original voice-issued question to the same Llama 3 8B LLM. 
+    1. 選択された関数が実行され、過去の空気質測定値または空気質の予測が返され、その出力は、元の音声発行された質問とともにプロンプトの一部として同じLlama 3 8B LLMにフィードバックされます。
 
 4. The LLM will return a human-understandable answer about the air quality (whether it’s safe or healthy) that is not just about the PM2.5 levels. 
-4. LLMは、PM2.5レベルだけでなく、空気質についての人間が理解できる回答（安全か健康か）を返します。
+   1. LLMは、PM2.5レベルだけでなく、空気質についての人間が理解できる回答（安全か健康か）を返します。
 
-_Figure 3-4. Our voice-activated UI uses Whisper to transcribe a user query that triggers_ 
-_Figure 3-4. 私たちの音声操作UIは、Whisperを使用してユーザーのクエリを転写し、トリガーします_
+![]()
+_Figure 3-4. Our voice-activated UI uses Whisper to transcribe a user query that triggers a function to be executed that will return either historical air quality measurements from the feature group or forecasts from the model. Those results will be passed again to the LLM that answers the original question, but the prompt will also include the exter-nal context information provided by our air quality AI system. This is RAG without a vector database.
+図3-4. 私たちの音声操作UIは、Whisperを使用してユーザークエリを書き起こし、関数を実行してフィーチャーグループからの過去の空気質測定値またはモデルからの予測を返します。これらの結果は再びLLMに渡され、元の質問に答えますが、プロンプトには空気質AIシステムによって提供される外部コンテキスト情報も含まれます。これは、ベクトルデータベースを使用しないRAGです。
 
-_a function to be executed that will return either historical air quality measurements_ 
-_実行される関数が、過去の空気質測定値を返すか、_
-
-_from the feature group or forecasts from the model. Those results will be passed again to_ 
-_フィーチャーグループまたはモデルからの予測を返します。これらの結果は再び_
-
-_the LLM that answers the original question, but the prompt will also include the exter‐_ 
-_元の質問に答えるLLMに渡されますが、プロンプトには外部の_
-
-_nal context information provided by our air quality AI system. This is RAG without a_ 
-_私たちの空気質AIシステムによって提供されるコンテキスト情報も含まれます。これは、ベクトルデータベースなしのRAGです。_
+<!-- ここまで読んだ! -->
 
 We are building our voice-activated UI using the paradigm of RAG using function calling with LLMs. 
 私たちは、LLMを用いた関数呼び出しのパラダイムを使用して、音声操作UIを構築しています。
-
 With LLMs, the user enters some text, called the prompt, and the LLM returns with a response. 
 LLMを使用すると、ユーザーはプロンプトと呼ばれるテキストを入力し、LLMは応答を返します。
-
 For chat-based LLMs, like OpenAI’s ChatGPT, the response is usually a conversational-style response. 
 OpenAIのChatGPTのようなチャットベースのLLMでは、応答は通常、会話スタイルの応答です。
-
 Function calling with LLMs involves the user entering a prompt, 
 LLMを用いた関数呼び出しでは、ユーザーがプロンプトを入力しますが、
-
 but now, the LLM will respond with a JSON object containing the function to execute 
 今度は、LLMが実行する関数を含むJSONオブジェクトで応答します。
-
 (from a set of available functions) along with the parameters to pass to that function. 
 （利用可能な関数のセットから）およびその関数に渡すパラメータとともに。
-
 We will use an LLM that is fine-tuned to return JSON objects describing the functions. 
 私たちは、関数を説明するJSONオブジェクトを返すように微調整されたLLMを使用します。
-
 We can then parse the JSON object and use it to execute one of our predefined functions: 
 その後、JSONオブジェクトを解析し、私たちの事前定義された関数の1つを実行するために使用できます：
 
@@ -1149,43 +1068,35 @@ We can then parse the JSON object and use it to execute one of our predefined fu
 - get_historical_data_in_date_range
 
 That is, users will not be able to get answers to arbitrary questions about air quality— 
-つまり、ユーザーは空気質に関する任意の質問に対する回答を得ることはできません—
-
+つまり、**ユーザーは空気質に関する任意の質問に対する回答を得ることはできません—**
 only historical readings and air quality forecasts. 
 過去の測定値と空気質の予測のみです。
-
 You can ask questions like “What was the air quality like last month?” or “What will the air quality be like on Tuesday?” 
 「先月の空気質はどうでしたか？」や「火曜日の空気質はどうなりますか？」のような質問をすることができます。
 
+<!-- ここまで読んだ! -->
+
 After you pass the list of function declarations in a query to the function-calling LLM, 
 関数呼び出しLLMにクエリ内で関数宣言のリストを渡すと、
-
 it tries to answer the user query with one of the provided functions. 
 それは、提供された関数の1つでユーザーのクエリに答えようとします。
-
 The LLM understands the purpose of a function by analyzing its function declaration. 
 LLMは、関数宣言を分析することで関数の目的を理解します。
-
 The model doesn’t actually call the function. 
 モデルは実際には関数を呼び出しません。
-
 Instead, you parse the response to call the function that the model returns. 
-代わりに、モデルが返す関数を呼び出すために応答を解析します。
+代わりに、**モデルが返す関数を呼び出すために応答を解析**します。
 
 Here are the two forecast functions that we provide in the prompt. 
 ここに、プロンプトで提供する2つの予測関数があります。
-
 The other two historical functions are not shown here, as they have similar definitions. 
 他の2つの履歴関数は、定義が似ているためここでは示されていません。
-
 Notice that they are quite verbose, with human-understandable parameter names, 
 それらは非常に冗長であり、人間が理解できるパラメータ名を持っていることに注意してください。
-
 a description, and descriptions of all arguments and return values: 
 説明とすべての引数および戻り値の説明があります：
 
-
-
+```Python
 def get_future_data_for_date \ 
 (date: str, city_name: str, feature_view, model) -> pd.DataFrame: 
 """ 
@@ -1212,44 +1123,17 @@ Returns:
 pd.DataFrame: data for the specified date range and city.
 """
 ```
-```md
-def get_future_data_for_date \ 
-(date: str, city_name: str, feature_view, model) -> pd.DataFrame: 
-""" 
-特定の日付と都市のPM2.5データを予測します。フィーチャービューとモデルを考慮します。
-引数: 
-date (str): 目標となる未来の日付（形式は 'YYYY-MM-DD'）。
-city_name (str): 予測を行う都市の名前。
-feature_view: バッチデータを取得するために使用されるフィーチャービュー。
-model: 予測に使用される機械学習モデル。
-戻り値: 
-pd.DataFrame: 目標日からの各日の予測PM2.5値。
-""" 
-def get_future_data_in_date_range(date_start: str, date_end: str, \ 
-city_name: str, feature_view, model) -> pd.DataFrame: 
-""" 
-特定の日付範囲と都市のデータをフィーチャービューから取得します。
-引数: 
-date_start (str): 開始日（形式は "%Y-%m-%d"）。
-date_end (str): 終了日（形式は "%Y-%m-%d"）。
-city_name (str): データを取得する都市の名前。
-feature_view: フィーチャービューオブジェクト。
-model: 予測に使用される機械学習モデル。
-戻り値: 
-pd.DataFrame: 指定された日付範囲と都市のデータ。
-"""
-```
-```md
-We designed the following prompt template for the function-calling query to our LLM as follows. 
+
+<!-- ここまで読んだ! -->
+
+We designed the following prompt template for the function-calling query to our LLM as follows.
+我々は次のように、LLMへの関数呼び出しクエリのためのプロンプトテンプレートを設計しました。
 First, we defined the available functions, and then we included the JSON representation of those functions, including their parameters, types, and descriptions. 
+まず、利用可能な関数を定義し、その後、関数のパラメータ、型、および説明を含むJSON表現を追加しました。
 The fine-tuned LLM should also receive hints about which function to choose and be told not to return a function unless it is confident one of them matches the user query: 
-```
-```md
-次のように、関数呼び出しクエリのためのプロンプトテンプレートを設計しました。 
-まず、利用可能な関数を定義し、その後、関数のパラメータ、型、および説明を含むJSON表現を追加しました。 
 微調整されたLLMは、どの関数を選択するかについてのヒントを受け取り、ユーザークエリに一致する関数があると確信しない限り、関数を返さないように指示されるべきです: 
-```
-```md
+
+```Python
 prompt = f"""<|im_start|>system 
 You are a helpful assistant with access to the following functions: 
 get_future_data_for_date 
@@ -1260,20 +1144,7 @@ get_historical_data_in_date_range
 {serialize_function_to_json(get_future_data_in_date_range)} 
 {serialize_function_to_json(get_historical_air_quality_for_date)} 
 {serialize_function_to_json(get_historical_data_in_date_range)}
-```
-```md
-prompt = f"""<|im_start|>system 
-あなたは、次の関数にアクセスできる有用なアシスタントです: 
-get_future_data_for_date 
-get_future_data_in_date_range 
-get_historical_air_quality_for_date 
-get_historical_data_in_date_range 
-{serialize_function_to_json(get_future_data_for_date)} 
-{serialize_function_to_json(get_future_data_in_date_range)} 
-{serialize_function_to_json(get_historical_air_quality_for_date)} 
-{serialize_function_to_json(get_historical_data_in_date_range)}
-```
-```md
+
 You need to choose what function to use and retrieve parameters for this function from the user input. 
 Today is {datetime.date.today().strftime("%A")}, {datetime.date.today()}.
 IMPORTANT: If the user query contains 'will', it is very likely that you will need to use the get_future_data function. 
@@ -1288,101 +1159,58 @@ To use these functions respond with:
 Edge cases you must handle: 
 - If there are no functions that match the user request, you will respond politely that you cannot help.<|im_end|> 
 ```
-```md
-どの関数を使用するかを選択し、ユーザー入力からこの関数のパラメータを取得する必要があります。 
-今日は {datetime.date.today().strftime("%A")}, {datetime.date.today()} です。
-重要: ユーザークエリに 'will' が含まれている場合、get_future_data 関数を使用する必要がある可能性が非常に高いです。 
-注意: フィーチャービューとモデルのパラメータは無視してください。 
-注意: 日付は YYYY-MM-DD 形式で提供する必要があります。 
-これらの関数を使用するには、次のように応答してください: 
-<multiplefunctions> 
-<functioncall> {fn} </functioncall> 
-<functioncall> {fn} </functioncall> 
-...
-</multiplefunctions> 
-処理しなければならないエッジケース: 
-- ユーザーのリクエストに一致する関数がない場合は、丁寧に助けられないことを伝えます。<|im_end|> 
-```
-```md
+
 The prompt for the second LLM query can be found in the source code repository. 
 It is not shown here as it is straightforward—it includes the results of the function call, the original user query, some domain knowledge about air quality questions, and today’s date. 
-```
-```md
 2回目のLLMクエリのためのプロンプトは、ソースコードリポジトリにあります。 
 ここでは表示されていませんが、簡単なもので、関数呼び出しの結果、元のユーザークエリ、空気質に関するドメイン知識、そして今日の日付が含まれています。 
-```
-```md
 The 5_function_calling.ipynb notebook needs a GPU to run efficiently. 
 It also has its own set of Python requirements that you need to install: 
-```
-```md
 5_function_calling.ipynb ノートブックは、効率的に実行するためにGPUが必要です。 
 また、インストールする必要がある独自のPython要件があります: 
-```
+
 ```md
 pip install -r requirements-llm.txt
 ```
-```md
-``` 
-pip install -r requirements-llm.txt
-```
-```md
+
 If you do not have one on your laptop, you can use Google Colab with a T4 GPU at no cost (you will need a Google account, though). 
 You need to uncomment and run the first two cells in the notebook to install the LLM Python requirements and download some Python modules. 
-```
-```md
 ノートパソコンにGPUがない場合は、Googleアカウントが必要ですが、無料でT4 GPUを使用できるGoogle Colabを利用できます。 
 ノートブックの最初の2つのセルのコメントを外して実行し、LLMのPython要件をインストールし、いくつかのPythonモジュールをダウンロードする必要があります。 
-```
-```md
 The notebook quantizes the weights in the Llama 3 8B to 4 bits, reducing its size in memory so that the LLM will run on a T4 GPU (which has 16 GB of RAM). 
 Weight quantization does not appear to negatively affect LLM performance for our system. 
-```
-```md
 ノートブックは、Llama 3 8Bの重みを4ビットに量子化し、メモリ内のサイズを削減して、LLMがT4 GPU（16 GBのRAMを搭載）で実行できるようにします。 
 重みの量子化は、私たちのシステムにおけるLLMのパフォーマンスに悪影響を与えないようです。 
-```
-```md
+
+<!-- ここまで読んだ! -->
+
 There is also a Streamlit program (streamlit_app.py) that wraps the same LLM program in a UI. 
 Streamlit is a framework for building a UI as an imperative program [written in Python. 
 You can host it in a free serverless service such as streamlit.io or](http://streamlit.io) _[huggingface.co.](http://huggingface.co)_  
-```
-```md
 同じLLMプログラムをUIでラップするStreamlitプログラム（streamlit_app.py）もあります。 
 Streamlitは、命令型プログラムとしてUIを構築するためのフレームワークです[Pythonで記述されています。 
 それをstreamlit.ioや](http://streamlit.io) _[huggingface.co.](http://huggingface.co)_ のような無料のサーバーレスサービスでホストできます。 
-```
-```md
-###### Summary and Exercises
+
+### Summary and Exercises
+
 In this chapter, we built our first AI system together—an air quality forecasting service. 
+この章では、一緒に最初のAIシステム、空気質予測サービスを構築しました。
 We decomposed the problem into five Python programs in total—a program to create and backfill feature groups, an operational feature pipeline that downloads air quality readings and weather forecasts, a model training pipeline that we run on demand, a batch-inference pipeline that outputs an air quality forecast chart and a hindcast as PNG files, and an LLM-powered program with a voice-driven UI for our service. 
+問題を合計5つのPythonプログラムに分解しました。フィーチャーグループを作成およびバックフィルするプログラム、空気質の読み取り値と天気予報をダウンロードする運用フィーチャーパイプライン、オンデマンドで実行するモデルトレーニングパイプライン、空気質予測チャートとヒンドキャストをPNGファイルとして出力するバッチ推論パイプライン、そしてサービスの音声駆動UIを備えたLLM搭載プログラムです。
 We also defined a GitHub Action workflow as a YAML file to schedule the feature pipeline and batch inference pipeline to run daily. 
 That was a good chunk of work, but now you have an AI system that you and your community can be proud of. 
-```
-```md
-###### 要約と演習
-この章では、私たちが共同で最初のAIシステム—空気質予測サービスを構築しました。 
-問題を合計5つのPythonプログラムに分解しました—フィーチャーグループを作成しバックフィルするプログラム、空気質の読み取り値と天気予報をダウンロードする運用フィーチャーパイプライン、オンデマンドで実行するモデルトレーニングパイプライン、空気質予測チャートとPNGファイルとしてのヒンドキャストを出力するバッチ推論パイプライン、そして私たちのサービスのための音声駆動UIを持つLLM駆動プログラムです。 
-また、フィーチャーパイプラインとバッチ推論パイプラインを毎日実行するようにスケジュールするためのYAMLファイルとしてGitHub Actionワークフローを定義しました。 
-これは大きな作業でしたが、今ではあなたとあなたのコミュニティが誇りに思えるAIシステムを持っています。 
-```
-```md
+さらに、GitHub ActionワークフローをYAMLファイルとして定義し、フィーチャーパイプラインとバッチ推論パイプラインを毎日実行するようにスケジュールしました。
+
 The following exercises will help you learn how to iteratively improve your air quality prediction system:
+後述の演習は、空気質予測システムを反復的に改善する方法を学ぶのに役立ちます：
+
 - Add a lagged PM2.5 feature to your air quality prediction model. 
 Start by adding yesterday’s PM2.5 value and then see if two days or three days help improve model accuracy.
+  ラグ付きPM2.5フィーチャーを空気質予測モデルに追加します。 
+  まず、昨日のPM2.5値を追加し、次に2日または3日がモデルの精度向上に役立つかどうかを確認します。
+
 - Determine what risks there are in adding historical PM2.5 values to predict future PM2.5 values.  
-```
-```md
-次の演習は、空気質予測システムを反復的に改善する方法を学ぶのに役立ちます:
-- 空気質予測モデルに遅延PM2.5フィーチャーを追加します。 
-まず、昨日のPM2.5値を追加し、その後、2日または3日がモデルの精度を向上させるかどうかを確認します。
-- 将来のPM2.5値を予測するために過去のPM2.5値を追加することにどのようなリスクがあるかを特定します。  
-```
-```md
-###### PART II #### Feature Stores  
-```
-```md
-###### PART II #### フィーチャーストア  
+  将来のPM2.5値を予測するために過去のPM2.5値を追加することにどのようなリスクがあるかを判断します。
 
-
+<!-- ここまで読んだ! -->
 
