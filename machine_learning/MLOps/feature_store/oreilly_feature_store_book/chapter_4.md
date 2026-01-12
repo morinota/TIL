@@ -1,8 +1,8 @@
+# Part 2: Feature Stores
 ## CHAPTER 4: Feature Stores 第4章: フィーチャーストア
 
 As we have seen in the first three chapters, data management is one of the most challenging aspects of building and operating AI systems. 
-最初の3章で見たように、データ管理はAIシステムの構築と運用において最も困難な側面の1つです。
-
+最初の3章で見たように、**データ管理はAIシステムの構築と運用において最も困難な側面の1つ**です。
 In the last chapter, we used a feature store to build our air quality forecasting system. 
 前の章では、フィーチャーストアを使用して空気質予測システムを構築しました。
 
