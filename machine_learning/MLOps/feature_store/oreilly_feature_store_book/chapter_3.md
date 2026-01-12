@@ -358,53 +358,52 @@ You can then remove any rows with any missing columns by calling:
 df.dropna(inplace=True)
 ``` 
 
+Removing missing observations is reasonable at this point, as there will be no point in collecting data where either the date or the target is missing. 
+**この時点で欠損観測値を削除することは合理的です。なぜなら、日付またはターゲットが欠損しているデータを収集する意味がないから**です。
+
 <!-- ここまで読んだ! -->
 
-Removing missing observations is reasonable at this point, as there will be no point in collecting data where either the date or the target is missing. 
-この時点で欠損観測値を削除することは合理的です。なぜなら、日付またはターゲットが欠損しているデータを収集する意味がないからです。
 Often, at this point, we would dive deeper into identifying data sources and candidate features for our model. 
-通常、この時点で、私たちはデータソースとモデルの候補特徴を特定するためにさらに深く掘り下げます。
-
+**通常、この時点で、私たちはデータソースとモデルの候補特徴を特定するためにさらに深く掘り下げます。**
 We would try to identify features that have predictive power for the target (PM2.5). 
 私たちは、ターゲット（PM2.5）に対して予測力を持つ特徴を特定しようとします。
-
 If there are not enough samples for deep learning models to be performant, we might try to engineer features that capture domain knowledge about our prediction problem. 
 深層学習モデルが性能を発揮するためのサンプルが不十分な場合、私たちは予測問題に関するドメイン知識を捉える特徴をエンジニアリングしようとするかもしれません。
-
 However, we will skip those steps in this case, to model it as a simpler prediction problem. 
 しかし、今回はそれらのステップをスキップし、より単純な予測問題としてモデル化します。
-
 We will use weather features for our model, as they have good predictive power for PM2.5 levels. 
 私たちは、PM2.5レベルに対して良好な予測力を持つため、モデルに天候特徴を使用します。
-
 There will be room for improvement in the model we will train, but right now, our goal is to build an MVPS for our air qual‐ ity forecasting problem. 
-私たちがトレーニングするモデルには改善の余地がありますが、今のところ、私たちの目標は空気質予測問題のためのMVPSを構築することです。
+私たちがトレーニングするモデルには改善の余地がありますが、**今のところ、私たちの目標は空気質予測問題のためのMVPSを構築すること**です。
 
-
+<!-- ここまで読んだ! -->
 
 ###### Weather Data 天気データ
 
-[We will use Open-Meteo to download both historical weather data and weather fore‐](https://open-meteo.com) cast data for the same location as that of your chosen air quality sensor. 
-私たちは、選択した空気質センサーと同じ場所の過去の天気データと天気予報データをダウンロードするためにOpen-Meteoを使用します。 
-The weather data from Open-Meteo ranks very high on all of our six axes of dataset quality. 
-Open-Meteoの天気データは、私たちのデータセット品質の6つの軸すべてで非常に高い評価を得ています。 
-OpenMeteo provides two different free APIs: one to download historical weather data and one for weather forecasts. 
-OpenMeteoは、過去の天気データをダウンロードするためのAPIと天気予報用のAPIの2つの異なる無料APIを提供しています。 
+[We will use Open-Meteo to download both historical weather data and weather fore‐](https://open-meteo.com) cast data for the same location as that of your chosen air quality sensor.
+私たちは、選択した空気質センサーと同じ場所の過去の天気データと天気予報データをダウンロードするためにOpen-Meteoを使用します。
+The weather data from Open-Meteo ranks very high on all of our six axes of dataset quality.
+Open-Meteoの天気データは、私たちのデータセット品質の6つの軸すべてで非常に高い評価を得ています。
+OpenMeteo provides two different free APIs: one to download historical weather data and one for weather forecasts.
+OpenMeteoは、過去の天気データをダウンロードするためのAPIと天気予報用のAPIの2つの異なる無料APIを提供しています。
 You do not need an API key. 
-APIキーは必要ありません。 
+APIキーは必要ありません。
 If you are not sure of the best city to use for your weather data, you can search for available weather locations at [Open-Meteo’s Historical Weather API page. In contrast to air quality data, which is](https://oreil.ly/q7LYd) very localized (two neighboring streets could have very different air quality condi‐ tions), weather data at the city or even region level is probably good enough for your model. 
 天気データに最適な都市がわからない場合は、[Open-Meteoの過去の天気APIページで利用可能な天気の場所を検索できます。空気質データは非常に局所的であるのに対し（隣接する2つの通りで空気質条件が非常に異なる可能性があります）、都市レベルまたは地域レベルの天気データは、おそらくモデルにとって十分です。 
+
+<!-- ここまで読んだ! -->
 
 We will restrict ourselves to those weather conditions that are universally available at weather stations and have the highest predictive power for air quality: precipitation, wind speed, wind direction, and temperature. 
 私たちは、気象観測所で普遍的に利用可能で、空気質に対して最も予測力の高い気象条件（降水量、風速、風向、温度）に制限します。 
 The Open-Meteo APIs expect longi‐ tude and latitude as parameters for your weather location. 
 Open-MeteoのAPIは、天気の場所のパラメータとして経度と緯度を期待します。 
 We use the geopy library to resolve the longitude and latitude for a city name that you need to specify (you may need to enter the longitude and latitude manually, if the geopy server blocks your IP). 
-私たちは、指定する必要がある都市名の経度と緯度を解決するためにgeopyライブラリを使用します（geopyサーバーがあなたのIPをブロックする場合は、経度と緯度を手動で入力する必要があるかもしれません）。 
+私たちは、指定する必要がある都市名の経度と緯度を解決するためにgeopyライブラリを使用します（geopyサーバーがあなたのIPをブロックする場合は、経度と緯度を手動で入力する必要があるかもしれません）。
 
 In the following code snippet using the historical API, we need to provide the loca‐ tion and time range as longitude, latitude, start_date, and end_date parameters: 
 以下のコードスニペットでは、過去のAPIを使用して、経度、緯度、start_date、およびend_dateパラメータとして位置と時間範囲を提供する必要があります： 
-```     
+
+```Python     
      url = "https://archive-api.open-meteo.com/v1/archive"     
      params = {       
        "latitude": latitude,       
@@ -415,10 +414,12 @@ In the following code snippet using the historical API, we need to provide the l
          "wind_speed_10m_max", "wind_direction_10m_dominant"]     
      }     
      responses = openmeteo.weather_api(url, params=params) 
-``` 
-天気予報データは、同様のREST呼び出しによって取得されます： 
+```
+
 The weather forecast data will be retrieved by a similar REST call: 
-```     
+天気予報データは、同様のREST呼び出しによって取得されます： 
+
+```Python     
      url = "https://api.open-meteo.com/v1/ecmwf"     
      params = {       
        "latitude": latitude,       
@@ -427,67 +428,79 @@ The weather forecast data will be retrieved by a similar REST call:
          "wind_speed_10m", "wind_direction_10m"]     
      }     
      responses = openmeteo.weather_api(url, params=params) 
-``` 
+```
+
 However, you should note that our forecast API call receives hourly forecasts but our historical API call retrieves aggregate data over a day (i.e., mean temperature, sum of precipitation, and max wind speed). 
 ただし、予報API呼び出しは時間ごとの予報を受け取りますが、過去のAPI呼び出しは1日の集計データ（すなわち、平均温度、降水量の合計、最大風速）を取得することに注意してください。 
-This is not ideal, but it is good enough for our purposes (we did say the model could be improved!). 
-これは理想的ではありませんが、私たちの目的には十分です（モデルは改善できると言いました！）。 
+This is not ideal, but it is good enough for our purposes (we did say the model could be improved!).
+**これは理想的ではありませんが、私たちの目的には十分です（モデルは改善できると言いました！）。** 
 
 There are two utility functions, get_historical_weather() and get_weather_fore ``` cast(), defined in weather-util.py that return the weather data as Pandas DataFrames:   
 2つのユーティリティ関数、get_historical_weather()とget_weather_forecast()がweather-util.pyに定義されており、天気データをPandas DataFrameとして返します：   
+
+```Python
    historical_weather_df = util.get_historical_weather("Stockholm", "2019-01-01",     
      "2024-03-01")   
    weather_forecast_df = util.get_weather_forecast("Stockholm") 
-``` 
+```
+
 Note that these functions make network calls, so the code may fail if the program does not have internet connectivity. 
 これらの関数はネットワーク呼び出しを行うため、プログラムがインターネット接続を持っていない場合、コードが失敗する可能性があります。 
 The same holds for the function we will use to retrieve real-time air quality data. 
 リアルタイムの空気質データを取得するために使用する関数にも同様のことが当てはまります。 
 
-###### Creating and Backfilling Feature Groups 特徴グループの作成とバックフィリング
+<!-- ここまで読んだ! -->
+
+### Creating and Backfilling Feature Groups 特徴グループの作成とバックフィリング
 
 We will store our featurized DataFrames in feature groups in the Hopsworks Feature Store. 
-私たちは、特徴化されたDataFrameをHopsworks Feature Storeの特徴グループに保存します。 
+私たちは、特徴化されたDataFrameをHopsworks Feature Storeの特徴グループに保存します。
 We will have two feature groups: one for air quality data (containing the obser‐ vations of PM2.5 values, the location, and the timestamps for those observations) and another to store both the historical weather observations and the weather forecast data. 
-空気質データ用の1つの特徴グループ（PM2.5値の観測、位置、およびそれらの観測のタイムスタンプを含む）と、過去の天気観測と天気予報データの両方を保存するための別の特徴グループの2つを持ちます。 
+**空気質データ用の1つの特徴グループ（PM2.5値の観測、位置、およびそれらの観測のタイムスタンプを含む）と、過去の天気観測と天気予報データの両方を保存するための別の特徴グループの2つを持ちます。**  (あまりガチャガチャ特徴量エンジニアリングする前の、シンプルな特徴量セットって感じだな...!!:thinking:)
 Feature groups store the incremental feature data created over time: 
-特徴グループは、時間の経過とともに作成された増分特徴データを保存します： 
-```   
-   air_quality_fg = fs.get_or_create_feature_group(     
-     name='air_quality',     
-     description='Air Quality observations daily',     
-     version=1,     
-     primary_key=['country', 'city', 'street'],     
-     expectation_suite = aq_expectation_suite,     
-     event_time="date",   
-   )     
-   air_quality_fg.insert(df_aq) 
-``` 
+特徴グループは、時間の経過とともに作成された増分特徴データを保存します:
+
+```Python
+air_quality_fg = fs.get_or_create_feature_group(     
+  name='air_quality',     
+  description='Air Quality observations daily',     
+  version=1,     
+  primary_key=['country', 'city', 'street'],     
+  expectation_suite = aq_expectation_suite,
+  event_time="date", # event_timeって言葉はSagemakerでもHopsworksでも共通言語なのか...!:thinking:
+)
+air_quality_fg.insert(df_aq)
+```
+
 We call get_or_create_feature_group(), instead of just create_feature_group(), as we want the notebook to be idempotent (create_feature_group() fails if the fea‐ ture group already exists): 
-私たちは、ノートブックが冪等性を持つように、単にcreate_feature_group()の代わりにget_or_create_feature_group()を呼び出します（feature groupがすでに存在する場合、create_feature_group()は失敗します）： 
-```   
-   weather_fg = fs.get_or_create_feature_group(     
-     name='weather',     
-     description='Historical daily weather observations and weather forecasts',     
-     version=1,     
-     primary_key=['city'],     
-     event_time="date",     
-     expectation_suite = weather_expectation_suite   
-   )   
-   weather_fg.insert(df_weather) 
-``` 
+私たちは、**ノートブックが冪等性を持つように、単にcreate_feature_group()の代わりにget_or_create_feature_group()を呼び出します**（feature groupがすでに存在する場合、create_feature_group()は失敗します）： 
+(テーブル作成とテーブル取得を一緒にやるのって、アプリケーションとインフラの分離の観点からはあまり良くない気もするけど...!! :thinking:)
+
+```Python   
+weather_fg = fs.get_or_create_feature_group(     
+  name='weather',     
+  description='Historical daily weather observations and weather forecasts',     
+  version=1,     
+  primary_key=['city'],     
+  event_time="date",     
+  expectation_suite = weather_expectation_suite   
+)   
+weather_fg.insert(df_weather) 
+```
+
 Notice that both feature groups define an expectation_suite parameter. 
-両方の特徴グループがexpectation_suiteパラメータを定義していることに注意してください。 
+両方の特徴グループがexpectation_suiteパラメータを定義していることに注意してください。。
 This is a set of data validation rules that we declaratively attach once to the feature group but are applied every time we write a DataFrame to the feature group.i 
-これは、私たちが一度特徴グループに宣言的に付加するデータ検証ルールのセットですが、DataFrameを特徴グループに書き込むたびに適用されます。 
+これは、私たちが一度特徴グループに宣言的に付加するデータ検証ルールのセットですが、DataFrameを特徴グループに書き込むたびに適用されます。
 
 We can define data quality tests to validate data retrieved from the air quality and weather data sources. 
-空気質データと天気データソースから取得したデータを検証するためのデータ品質テストを定義できます。 
+空気質データと天気データソースから取得したデータを検証するためのデータ品質テストを定義できます。
 These will help identify faults in the sensor from the moment [they start happening. Great Expectations is a popular open source library for declara‐](https://greatexpectations.io) tively specifying data validation rules. 
-これにより、センサーの故障を特定するのに役立ちます。Great Expectationsは、データ検証ルールを宣言的に指定するための人気のオープンソースライブラリです。 
+これにより、センサーの故障を特定するのに役立ちます。**Great Expectationsは、データ検証ルールを宣言的に指定するための人気のオープンソースライブラリ**です。(Panderaとかと似た感じなのかな...!! :thinking:)
 In the following code snippet, we define an expectation in Great Expectations that checks all the values in the pm25 column in our DataFrame, df, to make sure that the scraped values are neither negative nor greater than 500 (a reasonable upper limit for the expected PM2.5 values for my location): 
-以下のコードスニペットでは、私たちのDataFrameであるdfのpm25列のすべての値をチェックし、スクレイピングされた値が負でないこと、または500を超えないことを確認するGreat Expectationsでの期待を定義します（私の場所のPM2.5値の期待される上限として合理的な値）： 
-```   
+以下のコードスニペットでは、私たちのDataFrameであるdfのpm25列のすべての値をチェックし、スクレイピングされた値が負でないこと、または500を超えないことを確認するGreat Expectationsでの期待を定義します（私の場所のPM2.5値の期待される上限として合理的な値）:
+
+```Python
    import great_expectations as ge   
    aq_expectation_suite = ge.core.ExpectationSuite(     
      expectation_suite_name="aq_expectation_suite"   
@@ -503,34 +516,42 @@ In the following code snippet, we define an expectation in Great Expectations th
        }     
      )   
    ) 
-``` 
+```
+
 In Hopsworks, you can easily add a notification (via Slack or email) if a data valida‐ tion rule fails and set the policy to either ingest the data and warn or fail the inges‐ tion. 
 Hopsworksでは、データ検証ルールが失敗した場合に通知（Slackまたはメール経由）を簡単に追加し、データを取り込んで警告するか、取り込みを失敗させるかのポリシーを設定できます。 
-In the book’s source code repository, there are also similar expectations defined for the weather data in the temperature_2m and precipitation columns. 
+In the book’s source code repository, there are also similar expectations defined for the weather data in the temperature_2m and precipitation columns.
 本書のソースコードリポジトリには、temperature_2mおよびprecipitation列の天気データに対しても同様の期待が定義されています。 
 
-###### Feature Pipeline 特徴パイプライン
+<!-- ここまで読んだ! -->
+
+### Feature Pipeline 特徴パイプライン
 
 We just presented the program that creates the feature groups and backfills them with historical data. 
 私たちは、特徴グループを作成し、過去のデータでバックフィルするプログラムを提示しました。 
 But we also need to process new data daily. 
 しかし、毎日新しいデータを処理する必要もあります。 
 We could extend our pre‐ vious program and parameterize it to run in either backfill mode or normal mode. 
-以前のプログラムを拡張し、バックフィルモードまたは通常モードで実行するようにパラメータ化することもできます。 
+以前のプログラムを拡張し、**バックフィルモードまたは通常モードで実行するようにパラメータ化することもできます。** 
 But, instead, we will write the daily feature pipeline as a separate program—this sepa‐ rates the concerns of creating the feature groups and backfilling them from daily updates to the feature groups. 
-しかし、代わりに、日次の特徴パイプラインを別のプログラムとして記述します。これにより、特徴グループを作成し、バックフィルすることと、特徴グループへの日次更新の懸念が分離されます。 
+しかし、**代わりに、日次の特徴パイプラインを別のプログラムとして記述します。これにより、特徴グループを作成し、バックフィルすることと、特徴グループへの日次更新の懸念が分離**されます。
+(どっちの設計がいいんだろうな〜もちろんケースバイケースだけど、両者のトレードオフは認識しておきたい...!!:thinking:)
 The common functions used by the backfill and daily feature pipelines are defined in modules in the mlfs/airquality package. 
-バックフィルと日次特徴パイプラインで使用される共通の関数は、mlfs/airqualityパッケージのモジュールに定義されています。 
+バックフィルと日次特徴パイプラインで使用される共通の関数は、mlfs/airqualityパッケージのモジュールに定義されています。
+
+<!-- ここまで読んだ! -->
+
 The daily feature pipeline will be scheduled to run once per day, performing the fol‐ lowing tasks: 
-日次の特徴パイプラインは、1日1回実行されるようにスケジュールされ、以下のタスクを実行します： 
+日次の特徴パイプラインは、1日1回実行されるようにスケジュールされ、以下のタスクを実行します：
+
 - Read today’s PM2.5 measurement 
-- 今日のPM2.5測定を読み取る 
+  - 今日のPM2.5測定を読み取る 
 - Read today’s weather data measurements  
-- 今日の天気データ測定を読み取る 
+  - 今日の天気データ測定を読み取る 
 - Read the weather forecast data for the next seven days 
-- 次の7日間の天気予報データを読み取る 
+  - 次の7日間の天気予報データを読み取る 
 - Insert all of this data into the air quality and weather feature groups 
-- これらすべてのデータを空気質と天気の特徴グループに挿入する 
+  - これらすべてのデータを空気質と天気の特徴グループに挿入する 
 
 There is no feature engineering required in this example. 
 この例では特徴エンジニアリングは必要ありません。 
