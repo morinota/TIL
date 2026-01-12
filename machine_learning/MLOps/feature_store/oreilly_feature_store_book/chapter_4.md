@@ -5,85 +5,81 @@ As we have seen in the first three chapters, data management is one of the most 
 最初の3章で見たように、**データ管理はAIシステムの構築と運用において最も困難な側面の1つ**です。
 In the last chapter, we used a feature store to build our air quality forecasting system. 
 前の章では、フィーチャーストアを使用して空気質予測システムを構築しました。
-
 The feature store stored the output of the feature pipelines, provided training data for the training pipeline, and provided inference data for the batch inference pipeline. 
 フィーチャーストアはフィーチャーパイプラインの出力を保存し、トレーニングパイプラインのためのトレーニングデータを提供し、バッチ推論パイプラインのための推論データを提供しました。
-
 The feature store is a central data platform that stores, manages, and serves features for both training and inference. 
 フィーチャーストアは、トレーニングと推論の両方のためのフィーチャーを保存、管理、提供する中央データプラットフォームです。
-
 It also ensures consistency between features used in training and inference, and it enables the construction of modular AI systems by providing a shared data layer and well-defined APIs to connect FTI pipelines. 
 また、トレーニングと推論で使用されるフィーチャー間の一貫性を確保し、FTIパイプラインを接続するための共有データレイヤーと明確に定義されたAPIを提供することで、モジュラーAIシステムの構築を可能にします。
+
+<!-- ここから読んだ! -->
 
 In this chapter, we will dive deeper into feature stores and answer the following questions: 
 この章では、フィーチャーストアについてさらに深く掘り下げ、以下の質問に答えます。
 
 - What problems does the feature store solve, and when do I need one? 
-- フィーチャーストアはどのような問題を解決し、いつ必要ですか？
-
+  - フィーチャーストアはどのような問題を解決し、いつ必要ですか？
 - What is a feature group, how does it store data, and how do I write to one? 
-- フィーチャーグループとは何か、どのようにデータを保存し、どのように書き込むのですか？
-
+  - フィーチャーグループとは何か、どのようにデータを保存し、どのように書き込むのですか？
 - How do I design a data model for feature groups? 
-- フィーチャーグループのデータモデルをどのように設計しますか？
-
+  - フィーチャーグループのデータモデルをどのように設計しますか？
 - How do I read feature data spread over many feature groups for training or inference? 
-- トレーニングまたは推論のために、多くのフィーチャーグループに分散したフィーチャーデータをどのように読み取りますか？
+  - トレーニングまたは推論のために、多くのフィーチャーグループに分散したフィーチャーデータをどのように読み取りますか？
 
 We will look at how feature stores are built from a columnar store, a row-oriented store, and a vector index. 
-フィーチャーストアがカラムストア、行指向ストア、ベクトルインデックスからどのように構築されるかを見ていきます。
-
+**フィーチャーストアがカラムストア、行指向ストア、ベクトルインデックスからどのように構築されるか**を見ていきます。
 We will describe how feature stores solve challenges related to feature reuse, how to manage time-series data, and how to prevent skew between FTI pipelines. 
 フィーチャーストアがフィーチャーの再利用に関連する課題をどのように解決し、時系列データをどのように管理し、FTIパイプライン間の偏りをどのように防ぐかを説明します。
-
 And throughout the chapter, we will also weave in a motivating example of a real-time ML system that predicts credit card fraud. 
 章全体を通して、クレジットカード詐欺を予測するリアルタイムMLシステムの動機付けとなる例も織り交ぜます。
 
------
-###### A Feature Store for Fraud Prediction 詐欺予測のためのフィーチャーストア
+<!-- ここまで読んだ! -->
+
+### A Feature Store for Fraud Prediction 詐欺予測のためのフィーチャーストア
 
 We start by presenting the problem of how to design a feature store for an ML system that makes real-time fraud predictions for credit card transactions. 
-まず、クレジットカード取引のリアルタイム詐欺予測を行うMLシステムのためのフィーチャーストアをどのように設計するかという問題を提示します。
-
+まず、**クレジットカード取引のリアルタイム詐欺予測を行うMLシステムのためのフィーチャーストアをどのように設計するか**という問題を提示します。
 The ML system card for the system is shown in Table 4-1. 
 システムのMLシステムカードは表4-1に示されています。
 
-_Table 4-1. ML system card for our real-time credit card fraud prediction service_  
-**Dynamic data sources** **Prediction problem** **UI or API** **Monitoring**  
-クレジットカード取引はイベントストリーミングプラットフォームに到着します。クレジットカード、発行者、商人の詳細はデータウェアハウスのテーブルにあります。  
-詐欺が疑われるクレジットカード取引かどうか  
-疑わしい詐欺取引を拒否するリアルタイムAPI  
-疑わしい詐欺と実際に報告された詐欺のオフライン調査  
+![]()
+_Table 4-1. ML system card for our real-time credit card fraud prediction service_ 
+表4-1. リアルタイムクレジットカード詐欺予測サービスのMLシステムカード
 
 The source data for our ML system comes from a data mart consisting of a data warehouse and an event-streaming platform, such as Apache Kafka or AWS Kinesis (see Figure 4-1). 
-私たちのMLシステムのソースデータは、データウェアハウスとApache KafkaやAWS Kinesisなどのイベントストリーミングプラットフォームで構成されるデータマートから来ています（図4-1を参照）。
+私たちのMLシステムのソースデータは、**データウェアハウスとApache KafkaやAWS Kinesisなどのイベントストリーミングプラットフォームで構成されるデータマート**から来ています（図4-1を参照）。
+(基本的にはどこも同じような感じな気がする...!!:thinkink:)
 
+![]()
 _Figure 4-1. We design our feature store by identifying and creating features from the data sources, organizing the features into tables called feature groups, selecting features from different feature groups for use in a model by creating a feature view, and creating training/inference data with the feature view._  
 図4-1. データソースからフィーチャーを特定し作成し、フィーチャーをフィーチャーグループと呼ばれるテーブルに整理し、モデルで使用するために異なるフィーチャーグループからフィーチャーを選択し、フィーチャービューを作成し、フィーチャービューを使用してトレーニング/推論データを作成します。
 
 Starting from our data sources, we will learn how to build a feature store in four main steps: 
-データソースから始めて、フィーチャーストアを構築する方法を4つの主要なステップで学びます。
+**データソースから始めて、フィーチャーストアを構築する方法を4つの主要なステップで**学びます。
 
 1. Identify entities and features for those entities. 
-1. エンティティとそのエンティティのフィーチャーを特定します。
+   1. エンティティとそのエンティティのフィーチャーを特定します。
 
 2. Organize entities into tables of features (feature groups) and identify relationships between feature groups.  
-2. エンティティをフィーチャーのテーブル（フィーチャーグループ）に整理し、フィーチャーグループ間の関係を特定します。
+   1. エンティティをフィーチャーのテーブル（フィーチャーグループ）に整理し、フィーチャーグループ間の関係を特定します。
 
 3. Select the features for a model, from potentially different feature groups, in a feature view. 
-3. フィーチャービュー内で、異なるフィーチャーグループからモデルのためのフィーチャーを選択します。
+   1. フィーチャービュー内で、異なるフィーチャーグループからモデルのためのフィーチャーを選択します。
 
 4. Retrieve data for model training and batch/online inference with the feature view. 
-4. フィーチャービューを使用してモデルのトレーニングとバッチ/オンライン推論のためのデータを取得します。
+   1. フィーチャービューを使用してモデルのトレーニングとバッチ/オンライン推論のためのデータを取得します。
+
+(上記の4ステップを意識しておきたい...!:thinking:)
 
 This chapter will provide more details on what feature groups and feature views are, but before that, we will look at the history of feature stores, what makes up a feature store (its anatomy), and when you may need a feature store. 
 この章では、フィーチャーグループとフィーチャービューが何であるかについての詳細を提供しますが、その前にフィーチャーストアの歴史、フィーチャーストアを構成するもの（その解剖学）、およびフィーチャーストアが必要な場合について見ていきます。
 
-###### Brief History of Feature Stores フィーチャーストアの簡単な歴史
+<!-- ここまで読んだ! -->
+
+### Brief History of Feature Stores フィーチャーストアの簡単な歴史
 
 As mentioned in Chapter 1, Uber introduced the first feature store as part of its Michelangelo platform. 
 第1章で述べたように、UberはMichelangeloプラットフォームの一部として最初のフィーチャーストアを導入しました。
-
 Michelangelo includes a feature store (called Palette), a model registry, and model serving capabilities. 
 Michelangeloにはフィーチャーストア（Paletteと呼ばれる）、モデルレジストリ、およびモデル提供機能が含まれています。
 
