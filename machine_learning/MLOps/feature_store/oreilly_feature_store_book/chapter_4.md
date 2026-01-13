@@ -79,158 +79,145 @@ This chapter will provide more details on what feature groups and feature views 
 ### Brief History of Feature Stores フィーチャーストアの簡単な歴史
 
 As mentioned in Chapter 1, Uber introduced the first feature store as part of its Michelangelo platform. 
-第1章で述べたように、UberはMichelangeloプラットフォームの一部として最初のフィーチャーストアを導入しました。
+第1章で述べたように、**UberはMichelangeloプラットフォームの一部として最初のフィーチャーストアを導入**しました。
 Michelangelo includes a feature store (called Palette), a model registry, and model serving capabilities. 
-Michelangeloにはフィーチャーストア（Paletteと呼ばれる）、モデルレジストリ、およびモデル提供機能が含まれています。
-
+Michelangeloにはフィーチャーストア（Paletteと呼ばれる）、モデルレジストリ、およびモデルサービング機能が含まれています。
 Michelangelo also introduced a domain-specific language (DSL) to define feature pipelines. 
 Michelangeloはまた、フィーチャーパイプラインを定義するためのドメイン特化型言語（DSL）を導入しました。
-
 In the DSL, you define what type of feature to compute on what data source (such as counting the number of user clicks in the last seven days using a clicks table), and Michelangelo transpiles your feature definition into a Spark program and runs it on a schedule (for example, hourly or daily). 
-DSLでは、どのデータソースでどのタイプのフィーチャーを計算するかを定義します（例えば、クリックテーブルを使用して過去7日間のユーザクリック数をカウントするなど）、そしてMichelangeloはフィーチャー定義をSparkプログラムに変換し、スケジュールに従って実行します（例えば、毎時または毎日）。
+DSLでは、どのデータソースでどのタイプのフィーチャーを計算するかを定義します（例えば、クリックテーブルを使用して過去7日間のユーザクリック数をカウントするなど）、そして**Michelangeloはフィーチャー定義をSparkプログラムに変換し、スケジュールに従って実行します（例えば、毎時または毎日）**。
+
+<!-- ここまで読んだ! -->
 
 In late 2018, Hopsworks introduced the first open source feature store. 
 2018年末に、Hopsworksは最初のオープンソースフィーチャーストアを導入しました。
-
 Hopsworks was also the first API-based feature store, where external pipelines read and write feature data using a DataFrame API and there is no built-in pipeline orchestration. 
-Hopsworksはまた、外部パイプラインがDataFrame APIを使用してフィーチャーデータを読み書きする最初のAPIベースのフィーチャーストアであり、組み込みのパイプラインオーケストレーションはありません。
-
+**Hopsworksはまた、外部パイプラインがDataFrame APIを使用してフィーチャーデータを読み書きする最初のAPIベースのフィーチャーストア**であり、組み込みのパイプラインオーケストレーションはありません。
 The API-based feature store enables you to write pipelines in different frameworks/languages (for example, Flink, PySpark, and Pandas). 
 APIベースのフィーチャーストアは、異なるフレームワーク/言語（例えば、Flink、PySpark、Pandas）でパイプラインを書くことを可能にします。
-
 In late 2019, the open source Feast feature store adopted the same API-based architecture for reading/writing feature data. 
 2019年末に、オープンソースのFeastフィーチャーストアはフィーチャーデータの読み書きのために同じAPIベースのアーキテクチャを採用しました。
-
 Now, feature stores from GCP, AWS, and Databricks follow the API-based architecture, while the most popular DSL-based feature store is Tecton. 
-現在、GCP、AWS、DatabricksのフィーチャーストアはAPIベースのアーキテクチャに従っており、最も人気のあるDSLベースのフィーチャーストアはTectonです。
-
+現在、GCP、AWS、Databricksのフィーチャーストアは**APIベースのアーキテクチャ**に従っており、最も人気のあるDSLベースのフィーチャーストアはTectonです。
 In the rest of this chapter, we describe the common functionality offered by both API-based and DSL-based feature stores, while in the next chapter, we will look at the Hopsworks feature store, which is representative of API-based feature stores. 
 この章の残りの部分では、APIベースとDSLベースのフィーチャーストアの両方が提供する共通機能について説明しますが、次の章ではAPIベースのフィーチャーストアの代表例であるHopsworksフィーチャーストアを見ていきます。
 
+---
+(コラム)
 The term feature platform has been used to describe feature stores that support managed feature pipelines. 
 フィーチャープラットフォームという用語は、管理されたフィーチャーパイプラインをサポートするフィーチャーストアを説明するために使用されています。
-
 Most feature stores, including Hopsworks, are also feature platforms based on this definition. 
 Hopsworksを含むほとんどのフィーチャーストアは、この定義に基づくフィーチャープラットフォームでもあります。
-
 Finally, an AI lakehouse is a feature store that uses lakehouse tables as its offline store and has an integrated online store for building real-time ML systems. 
 最後に、AIレイクハウスは、レイクハウステーブルをオフラインストアとして使用し、リアルタイムMLシステムを構築するための統合オンラインストアを持つフィーチャーストアです。
 
 -----
-###### The Anatomy of a Feature Store フィーチャーストアの解剖学
+
+<!-- ここまで読んだ! -->
+
+### The Anatomy of a Feature Store フィーチャーストアの解剖学
 
 A feature store is a factory that produces and stores feature data. 
 フィーチャーストアはフィーチャーデータを生成し保存する工場です。
-
 It enables the faster production of higher-quality features by managing the storage and transformation of data for training and inference, and it allows you to reuse features in any model. 
-トレーニングと推論のためのデータの保存と変換を管理することで、高品質のフィーチャーをより迅速に生産でき、任意のモデルでフィーチャーを再利用できるようにします。
-
+トレーニングと推論のためのデータの保存と変換を管理することで、**高品質のフィーチャーをより迅速に生産でき、任意のモデルでフィーチャーを再利用できるように**します。
 In Figure 4-2, we can see the main inputs and outputs and the data transformations managed by a feature store. 
 図4-2では、フィーチャーストアが管理する主な入力と出力、およびデータ変換を見ることができます。
 
+![]()
 _Figure 4-2. Feature stores help transform and store feature data. A feature store organizes the data transformations to create consistent snapshots of training data for models, as well as the batches of inference data for batch ML systems and the online inference data for real-time ML systems._  
 図4-2. フィーチャーストアはフィーチャーデータの変換と保存を助けます。フィーチャーストアは、モデルのためのトレーニングデータの一貫したスナップショットを作成するためのデータ変換を整理し、バッチMLシステムのための推論データのバッチとリアルタイムMLシステムのためのオンライン推論データを作成します。
 
------
+<!-- ここまで読んだ! -->
+
 _Feature pipelines are programs that feed a feature store with feature data. 
 フィーチャーパイプラインは、フィーチャーストアにフィーチャーデータを供給するプログラムです。
-
 They take new data or historical data as input and transform it into reusable feature data, using model-independent transformations (MITs). 
-新しいデータまたは履歴データを入力として受け取り、モデルに依存しない変換（MIT）を使用して再利用可能なフィーチャーデータに変換します。
-
+**新しいデータまたは履歴データを入力として受け取り、モデルに依存しない変換（MIT）を使用して再利用可能なフィーチャーデータに変換**します。
 On-demand transformations (ODTs) can also be applied to historical data in feature pipelines. 
 オンデマンド変換（ODT）もフィーチャーパイプラインの履歴データに適用できます。
-
 Feature pipelines can be batch or streaming programs, and they update feature data over time. 
 フィーチャーパイプラインはバッチまたはストリーミングプログラムであり、時間の経過とともにフィーチャーデータを更新します。
-
 That is, the feature store stores mutable feature data. 
-つまり、フィーチャーストアは可変のフィーチャーデータを保存します。
-
+つまり、**フィーチャーストアはmutableなフィーチャーデータを保存**します。
 For supervised ML, labels can also be stored in a feature store and are treated as feature data until they are used to create training or inference data, in which case, the feature store is aware of which columns are features and which columns are labels. 
-教師ありMLの場合、ラベルもフィーチャーストアに保存でき、トレーニングまたは推論データを作成するまでフィーチャーデータとして扱われます。この場合、フィーチャーストアはどの列がフィーチャーでどの列がラベルであるかを認識しています。
+**教師ありMLの場合、ラベルもフィーチャーストアに保存でき、トレーニングまたは推論データを作成するまでフィーチャーデータとして扱われます**。この場合、フィーチャーストアはどの列がフィーチャーでどの列がラベルであるかを認識しています。
+(まあラベルは基本的にはオフラインストアだけで十分だよね。それだったらコストも安いしいいかも:thinking: event_timeでpartitioningとかしておけば、必要な期間のラベルだけ効率的に読み出せるし...!)
+
+<!-- ここまで読んだ! -->
 
 Feature stores enable the creation of versioned training datasets by taking a point-in-time consistent snapshot of feature data (see “For Time-Series Data” on page 80) and then applying model-dependent transformations (MDTs) to the features (and labels). 
-フィーチャーストアは、フィーチャーデータの時点で一貫したスナップショットを取得することによってバージョン管理されたトレーニングデータセットの作成を可能にし（「時系列データについて」80ページ参照）、その後、フィーチャー（およびラベル）にモデル依存の変換（MDT）を適用します。
-
-Training datasets are used to train models, and the feature store should store the lineage of the training dataset for models. 
+フィーチャーストアは、**フィーチャーデータの時点で一貫したスナップショットを取得することによってバージョン管理されたトレーニングデータセットの作成を可能**にし（「時系列データについて」80ページ参照）、その後、フィーチャー（およびラベル）にモデル依存の変換（MDT）を適用します。
+Training datasets are used to train models, and the feature store should store the lineage of the training dataset for models.
 トレーニングデータセットはモデルのトレーニングに使用され、フィーチャーストアはモデルのトレーニングデータセットの系譜を保存する必要があります。
+
+<!-- ここまで読んだ! -->
 
 A feature store also creates point-in-time consistent snapshots of feature data for batch inference, which should have the same MDTs applied to them as were applied when creating the training data for the model used in batch inference. 
 フィーチャーストアはまた、バッチ推論のためのフィーチャーデータの時点で一貫したスナップショットを作成します。これには、バッチ推論に使用されるモデルのトレーニングデータを作成する際に適用されたのと同じMDTが適用されるべきです。
-
 A feature store also provides low-latency feature data to online applications or services. 
 フィーチャーストアは、オンラインアプリケーションやサービスに低遅延のフィーチャーデータも提供します。
-
 Model deployments receive prediction requests, and parameters from the prediction request can be used to compute on-demand features and retrieve precomputed rows of feature data from the feature store. 
 モデルのデプロイメントは予測リクエストを受け取り、予測リクエストからのパラメータを使用してオンデマンドフィーチャーを計算し、フィーチャーストアから事前計算されたフィーチャーデータの行を取得できます。
-
 Any on-demand and precomputed features are merged into a feature vector that can have further MDTs applied to it (the same as those applied in training) before the model makes a prediction with the transformed feature vector. 
-すべてのオンデマンドおよび事前計算されたフィーチャーは、フィーチャーベクトルに統合され、モデルが変換されたフィーチャーベクトルで予測を行う前に、さらにMDTを適用できます（トレーニングで適用されたものと同じ）。
+**すべてのオンデマンドおよび事前計算されたフィーチャーは、フィーチャーベクトルに統合され、モデルが変換されたフィーチャーベクトルで予測を行う前に、さらにMDTを適用できます**（トレーニングで適用されたものと同じ）。
+
+<!-- ここまで読んだ! -->
 
 Feature stores support and organize the data transformations in the taxonomy from Chapter 2. 
 フィーチャーストアは、章2の分類法におけるデータ変換をサポートし、整理します。
-
 MITs are applied only in feature pipelines on new or historical data to produce reusable feature data. 
 MITは、新しいデータまたは履歴データのフィーチャーパイプラインでのみ適用され、再利用可能なフィーチャーデータを生成します。
-
 ODTs are a special class of MIT that is applied in both feature pipelines and online inference pipelines—feature stores should guarantee that exactly the same transformation is executed in the feature and online inference pipelines; otherwise, there is a risk of skew. 
 ODTは、フィーチャーパイプラインとオンライン推論パイプラインの両方に適用されるMITの特別なクラスです。フィーチャーストアは、フィーチャーとオンライン推論パイプラインでまったく同じ変換が実行されることを保証する必要があります。そうでなければ、偏りのリスクがあります。
-
 MDTs are applied in training pipelines, batch inference pipelines, and online inference pipelines. 
 MDTは、トレーニングパイプライン、バッチ推論パイプライン、およびオンライン推論パイプラインに適用されます。
 
 Again, the feature store should ensure that the same transformation is executed in the training and inference pipelines, preventing skew. 
 再度、フィーチャーストアは、トレーニングと推論パイプラインで同じ変換が実行されることを保証し、偏りを防ぐ必要があります。
 
------
+<!-- ここまで読んだ! -->
+
 Feature stores support the composition of MITs, MDTs, and ODTs in pipelines by enforcing the constraint that MDTs always come after model-independent (and on-demand) transformations. 
-フィーチャーストアは、MDTが常にモデルに依存しない（およびオンデマンド）変換の後に来るという制約を強制することによって、パイプライン内でのMIT、MDT、およびODTの構成をサポートします。
-
+フィーチャーストアは、**MDTが常にモデルに依存しない（およびオンデマンド）変換の後に来るという制約を強制する**ことによって、パイプライン内でのMIT、MDT、およびODTの構成をサポートします。
 That is, MDTs are always the last transformations in a directed acyclic graph (DAG), just before the model is called. 
-つまり、MDTは常に有向非巡回グラフ（DAG）内の最後の変換であり、モデルが呼び出される直前です。
-
+つまり、**MDTは常に有向非巡回グラフ（DAG）内の最後の変換であり、モデルが呼び出される直前**です。
 Also, ODTs typically come after MITs in a DAG, as MITs are precomputed features and ODTs can only be computed at request time (and can take precomputed features as parameters). 
-また、ODTは通常DAG内のMITの後に来ます。MITは事前計算されたフィーチャーであり、ODTはリクエスト時にのみ計算でき（事前計算されたフィーチャーをパラメータとして受け取ることができます）、この章は主にフィーチャーデータの保存、モデリング、およびクエリに関するものです。
-
+また、**ODTは通常DAG内のMITの後に来ます**。MITは事前計算されたフィーチャーであり、ODTはリクエスト時にのみ計算でき（事前計算されたフィーチャーをパラメータとして受け取ることができます）、この章は主にフィーチャーデータの保存、モデリング、およびクエリに関するものです。
 Chapters 6 and 7 will address the MITs, MDTs, and ODTs. 
 第6章と第7章では、MIT、MDT、およびODTについて扱います。
 
-###### When Do You Need a Feature Store? フィーチャーストアはいつ必要ですか？
+<!-- ここまで読んだ! -->
+
+### When Do You Need a Feature Store? フィーチャーストアはいつ必要ですか？
 
 When is it appropriate for you to use a feature store? 
 フィーチャーストアを使用するのに適切なタイミングはいつですか？
-
 Many organizations already have operational databases, an object store, and a data warehouse or lakehouse. 
 多くの組織はすでに運用データベース、オブジェクトストア、およびデータウェアハウスまたはレイクハウスを持っています。
-
 Why would they need a new data platform? 
 なぜ新しいデータプラットフォームが必要なのでしょうか？
-
 The following are scenarios where a feature store can help. 
 以下は、フィーチャーストアが役立つシナリオです。
 
-###### For Context and History in Real-Time ML Systems リアルタイムMLシステムにおけるコンテキストと履歴のために
+<!-- ここまで読んだ! -->
+
+#### For Context and History in Real-Time ML Systems リアルタイムMLシステムにおけるコンテキストと履歴のために
 
 We saw in Chapter 1 how real-time ML systems need history and context to make personalized predictions 
 第1章で、リアルタイムMLシステムがパーソナライズされた予測を行うために履歴とコンテキストが必要であることを見ました。
-
-
-
-. In general, when you have a real-time prediction problem but the prediction request has low information content, you can benefit from a feature store to provide context and history to enrich the prediction request. 
+In general, when you have a real-time prediction problem but the prediction request has low information content, you can benefit from a feature store to provide context and history to enrich the prediction request. 
 一般的に、リアルタイム予測問題があり、予測リクエストの情報量が少ない場合、フィーチャーストアを利用して文脈や履歴を提供し、予測リクエストを豊かにすることができます。
-
 For example, a credit card transaction has limited information in the prediction request—only the credit card number, the merchant ID (unique identifier), the timestamp, the IP address for the transaction location, data on whether the credit card purchase was at a terminal or online (meaning whether the card was present or not), and the amount of money spent. 
 例えば、クレジットカード取引は予測リクエストにおいて限られた情報しか持っていません—クレジットカード番号、マーチャントID（ユニーク識別子）、タイムスタンプ、取引場所のIPアドレス、クレジットカード購入が端末で行われたかオンラインで行われたか（カードが存在したかどうかを意味します）、および支出金額のみです。
-
 Building an accurate credit card fraud prediction service with AI by using only that input data is almost impossible, as you would be missing historical information about credit card transactions. 
-その入力データのみを使用して正確なクレジットカード詐欺予測サービスをAIで構築することはほぼ不可能です。なぜなら、クレジットカード取引に関する履歴情報が欠けているからです。
-
+**その入力データのみを使用して正確なクレジットカード詐欺予測サービスをAIで構築することはほぼ不可能です。なぜなら、クレジットカード取引に関する履歴情報が欠けているから**です。
 But with a feature store, you can enrich the prediction request at runtime with history and context information about the credit card’s recent usage, the customer details, the issuing bank’s details, and the merchant’s details, thus enabling a powerful model for predicting fraud. 
-しかし、フィーチャーストアを使用することで、クレジットカードの最近の使用状況、顧客の詳細、発行銀行の詳細、マーチャントの詳細に関する履歴と文脈情報で予測リクエストを実行時に豊かにすることができ、詐欺を予測するための強力なモデルを実現できます。
+しかし、**フィーチャーストアを使用することで、クレジットカードの最近の使用状況、顧客の詳細、発行銀行の詳細、マーチャントの詳細に関する履歴と文脈情報で予測リクエストを実行時に豊かにすることができ、詐欺を予測するための強力なモデルを実現**できます。
 
-###### For Time-Series Data
-###### 時系列データについて
+<!-- ここまで読んだ! -->
+
+#### For Time-Series Data 時系列データについて
 
 Many retail, telecommunications, and financial ML systems are built on time-series data. 
 多くの小売、通信、金融の機械学習システムは時系列データに基づいて構築されています。

@@ -12,12 +12,6 @@ refs: /Users/masato.morita/Downloads/paper.pdf
 ### Facebook 1601 Willow Road, Menlo Park, CA, United States
 
 
-```md
-## {panjunfeng, oujin, joaquinq, sbowers}@fb.com
-```  
-
-
-
 ## ABSTRACT 要約
 
 Online advertising allows advertisers to only bid and pay for measurable user responses, such as clicks on ads. 
@@ -56,7 +50,7 @@ The efficiency of an ads auction depends on the accuracy and calibration of clic
 The click prediction system needs to be robust and adaptive, and capable of learning from massive volumes of data. 
 クリック予測システムは堅牢で適応性があり、大量のデータから学習できる必要があります。
 The goal of this paper is to share insights derived from experiments performed with these requirements in mind and executed against real world data. 
-この論文の目的は、これらの要件を考慮して実施された実験から得られた洞察を共有し、実世界のデータに対して実行されたものです。
+この論文の目的は、これらの要件を念頭に置いて実行され、実際のデータに対して実行された実験から得られた洞察を共有することです。
 
 In sponsored search advertising, the user query is used to retrieve candidate ads, which explicitly or implicitly are matched to the query. 
 スポンサー検索広告では、ユーザのクエリを使用して候補広告を取得し、これらは明示的または暗黙的にクエリにマッチします。
