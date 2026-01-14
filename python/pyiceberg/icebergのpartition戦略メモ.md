@@ -6,7 +6,7 @@
 
 - [Iceberg Partitioning vs. Hive Partitioning](https://olake.io/iceberg/hive-partitioning-vs-iceberg-partitioning/)
 - [Apache Iceberg Table Optimization #8: Hidden Pitfalls — Compaction and Partition Evolution in Apache Iceberg](https://dev.to/alexmercedcoder/apache-iceberg-table-optimization-8-hidden-pitfalls-compaction-and-partition-evolution-in-13f1)
-- [What is Hidden Partitioning in Apache Iceberg?](https://www.stackgazer.com/p/what-is-hidden-partitioning-in-apache-iceberg)
+- [x] [What is Hidden Partitioning in Apache Iceberg?](https://www.stackgazer.com/p/what-is-hidden-partitioning-in-apache-iceberg)
 - [Best Practices for Optimizing Apache Iceberg Performance](https://www.starburst.io/blog/best-practices-for-optimizing-apache-iceberg-performance/)
 - [Iceberg Partitioning and Performance Optimization](https://conduktor.io/glossary/iceberg-partitioning-and-performance-optimization)
 
