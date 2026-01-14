@@ -8,14 +8,15 @@
 - [Apache Iceberg Table Optimization #8: Hidden Pitfalls — Compaction and Partition Evolution in Apache Iceberg](https://dev.to/alexmercedcoder/apache-iceberg-table-optimization-8-hidden-pitfalls-compaction-and-partition-evolution-in-13f1)
 - [x] [What is Hidden Partitioning in Apache Iceberg?](https://www.stackgazer.com/p/what-is-hidden-partitioning-in-apache-iceberg)
 - [Best Practices for Optimizing Apache Iceberg Performance](https://www.starburst.io/blog/best-practices-for-optimizing-apache-iceberg-performance/)
-- [Iceberg Partitioning and Performance Optimization](https://conduktor.io/glossary/iceberg-partitioning-and-performance-optimization)
+- [x] [Iceberg Partitioning and Performance Optimization](https://conduktor.io/glossary/iceberg-partitioning-and-performance-optimization)
 
 ##　Icebergのpartition戦略についてメモ:
 
 - 「**どのカラムをどう変換して分割すべきか**」を**クエリパターンから逆算**して設計するのが基本!
 - Icebergのpartitionの特徴:
   - Icebergでは**hidden partition**。
-    - hidden partition = 後で!
+    - hidden partition = ユーザにpartitionの認識を追わせることなく、クエリパフォーマンスを向上させるメタデータ駆動型アプローチ。
+      - 背景として、従来のデータレイク(Hiveテーブル形式など)のpartitioning schemeでは、partitioningをユーザに公開し、ストレージレイアウトを理解し、クエリ内でpartition列を明示的に参照することを強制してた。
     - クエリ描く人がpartition keyを意識しなくて良いっぽい...!:thinking:
   - day(timestamp)やbucket(id, 16)などの「transform」を定義しておくと、クエリ時にwhere句のfilterが自動でpartition filterに変換されてスキャン量を減らしてくれる。
   - 途中から `day(ts)` → `month(ts)` 等のように**partition specを変更する「partition evolution」も可能。なので最初の設計をミスっても詰みにならないのがかなりありがたい。**
