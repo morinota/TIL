@@ -336,5 +336,4 @@ Apache Icebergで大規模データの動的な性質を受け入れましょう
 Take control, ride the wave of data evolution, and remain agile, efficient, and ahead of the competition.
 コントロールを取り、データの進化の波に乗り、機敏で効率的、そして競争の先を行きましょう。
 
-
 <!-- ここまで読んだ! -->

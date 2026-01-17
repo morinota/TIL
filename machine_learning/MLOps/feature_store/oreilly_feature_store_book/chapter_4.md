@@ -1,5 +1,6 @@
-# Part 2: Feature Stores
-## CHAPTER 4: Feature Stores 第4章: フィーチャーストア
+Part 2: Feature Stores
+
+## 1. CHAPTER 4: Feature Stores 第4章: フィーチャーストア
 
 As we have seen in the first three chapters, data management is one of the most challenging aspects of building and operating AI systems. 
 最初の3章で見たように、**データ管理はAIシステムの構築と運用において最も困難な側面の1つ**です。
@@ -35,7 +36,7 @@ And throughout the chapter, we will also weave in a motivating example of a real
 
 <!-- ここまで読んだ! -->
 
-### A Feature Store for Fraud Prediction 詐欺予測のためのフィーチャーストア
+### 1.1. A Feature Store for Fraud Prediction 詐欺予測のためのフィーチャーストア
 
 We start by presenting the problem of how to design a feature store for an ML system that makes real-time fraud predictions for credit card transactions. 
 まず、**クレジットカード取引のリアルタイム詐欺予測を行うMLシステムのためのフィーチャーストアをどのように設計するか**という問題を提示します。
@@ -76,7 +77,7 @@ This chapter will provide more details on what feature groups and feature views 
 
 <!-- ここまで読んだ! -->
 
-### Brief History of Feature Stores フィーチャーストアの簡単な歴史
+### 1.2. Brief History of Feature Stores フィーチャーストアの簡単な歴史
 
 As mentioned in Chapter 1, Uber introduced the first feature store as part of its Michelangelo platform. 
 第1章で述べたように、**UberはMichelangeloプラットフォームの一部として最初のフィーチャーストアを導入**しました。
@@ -115,7 +116,7 @@ Finally, an AI lakehouse is a feature store that uses lakehouse tables as its of
 
 <!-- ここまで読んだ! -->
 
-### The Anatomy of a Feature Store フィーチャーストアの解剖学
+### 1.3. The Anatomy of a Feature Store フィーチャーストアの解剖学
 
 A feature store is a factory that produces and stores feature data. 
 フィーチャーストアはフィーチャーデータを生成し保存する工場です。
@@ -189,7 +190,7 @@ Chapters 6 and 7 will address the MITs, MDTs, and ODTs.
 
 <!-- ここまで読んだ! -->
 
-### When Do You Need a Feature Store? フィーチャーストアはいつ必要ですか？
+### 1.4. When Do You Need a Feature Store? フィーチャーストアはいつ必要ですか？
 
 When is it appropriate for you to use a feature store? 
 フィーチャーストアを使用するのに適切なタイミングはいつですか？
@@ -202,7 +203,7 @@ The following are scenarios where a feature store can help.
 
 <!-- ここまで読んだ! -->
 
-#### For Context and History in Real-Time ML Systems リアルタイムMLシステムにおけるコンテキストと履歴のために
+#### 1.4.1. For Context and History in Real-Time ML Systems リアルタイムMLシステムにおけるコンテキストと履歴のために
 
 We saw in Chapter 1 how real-time ML systems need history and context to make personalized predictions 
 第1章で、リアルタイムMLシステムがパーソナライズされた予測を行うために履歴とコンテキストが必要であることを見ました。
@@ -217,370 +218,316 @@ But with a feature store, you can enrich the prediction request at runtime with 
 
 <!-- ここまで読んだ! -->
 
-#### For Time-Series Data 時系列データについて
+#### 1.4.2. For Time-Series Data 時系列データのために
 
 Many retail, telecommunications, and financial ML systems are built on time-series data. 
-多くの小売、通信、金融の機械学習システムは時系列データに基づいて構築されています。
-
+**多くの小売、通信、金融の機械学習システムは時系列データに基づいて構築**されています。
 The air quality and weather data from Chapter 3 is time-series data that we update once per day and store in feature groups along with the timestamps for each observation or forecast. 
 第3章の空気質と気象データは時系列データであり、私たちはこれを1日1回更新し、各観測または予測のタイムスタンプとともにフィーチャーグループに保存します。
-
 Time-series data is a sequence of data points for successive points in time. 
 時系列データは、連続する時間のデータポイントのシーケンスです。
-
 A major challenge in using time-series data for ML is how to read (query) feature data that is spread over many tables—you want to read point-in-time correct training data from the different tables without introducing future data leakage or including any stale feature values (see Figure 4-3).  
-機械学習における時系列データの使用における主要な課題は、多くのテーブルに分散しているフィーチャーデータをどのように読み取る（クエリする）かです—異なるテーブルから未来のデータリークを引き起こしたり、古いフィーチャー値を含めたりすることなく、時点に正しいトレーニングデータを読み取る必要があります（図4-3を参照）。
+機械学習における時系列データの使用における主要な課題は、**多くのテーブルに分散しているフィーチャーデータをどのように読み取る（クエリする）か**です—異なるテーブルから未来のデータリークを引き起こしたり、古いフィーチャー値を含めたりすることなく、時点に正しいトレーニングデータを読み取る必要があります（図4-3を参照）。
 
+![]()
 _Figure 4-3. Creating point-in-time correct training data from time-series data that’s spread over different relational tables is hard. The solution starts from the table containing the labels/targets (Fraud Label), pulling in columns (features) from the tables containing the features (Transactions and Bank). If you include feature values from the future, you have future data leakage. If you include a feature value that is stale, you also have data leakage._  
-_図4-3. 異なるリレーショナルテーブルに分散している時系列データから時点に正しいトレーニングデータを作成するのは難しいです。解決策は、ラベル/ターゲット（Fraud Label）を含むテーブルから始まり、フィーチャーを含むテーブル（TransactionsとBank）から列（フィーチャー）を引き込むことです。未来のフィーチャー値を含めると、未来のデータリークが発生します。古いフィーチャー値を含めると、データリークが発生します。_
+_図4-3. **異なるリレーショナルテーブルに分散している時系列データから時点に正しいトレーニングデータを作成するのは難しい**です。解決策は、ラベル/ターゲット（Fraud Label）を含むテーブルから始まり、フィーチャーを含むテーブル（TransactionsとBank）から列（フィーチャー）を引き込むことです。未来のフィーチャー値を含めると、未来のデータリークが発生します。古いフィーチャー値を含めると、データリークが発生します。_
 
 Feature stores provide support for reading point-in-time correct training data from different tables containing time-series feature data. 
 フィーチャーストアは、時系列フィーチャーデータを含む異なるテーブルから時点に正しいトレーニングデータを読み取るためのサポートを提供します。
-
 The solution, described later in this chapter, is to query data with temporal joins. 
-この章の後半で説明する解決策は、時間的結合を使用してデータをクエリすることです。
-
+この章の後半で説明する解決策は、**時間的結合(temporal joins)**を使用してデータをクエリすることです。
 Writing correct temporal joins is hard, but feature stores make it easier by providing APIs for reading consistent snapshots of feature data using temporal joins. 
 正しい時間的結合を書くのは難しいですが、フィーチャーストアは時間的結合を使用してフィーチャーデータの一貫したスナップショットを読み取るためのAPIを提供することで、これを容易にします。
 
+<!-- ここまで読んだ! -->
+
+---
+(コラム)
 You may have previously encountered data leakage in the context of training models. 
 以前にモデルのトレーニングの文脈でデータリークに遭遇したことがあるかもしれません。
-
 For example, if you leak data from your test set or any external dataset into your training dataset, your model may perform better during testing than when it is used in production on unseen data. 
-例えば、テストセットや外部データセットからトレーニングデータセットにデータが漏れた場合、モデルはテスト中により良いパフォーマンスを発揮するかもしれませんが、未見のデータで本番環境で使用されるときにはそうではありません。
-
+**例えば、テストセットや外部データセットからトレーニングデータセットにデータが漏れた場合、モデルはテスト中により良いパフォーマンスを発揮するかもしれませんが、未見のデータで本番環境で使用されるときにはそうではありません。**
 Future data leakage occurs when you build training datasets from time-series data and incorrectly introduce one or more feature data points from the future. 
 未来のデータリークは、時系列データからトレーニングデータセットを構築し、未来の1つまたは複数のフィーチャーデータポイントを誤って導入する場合に発生します。
-
-_Stale features include a feature value that is older than the actual feature value at the time of an observation._  
+_Stale features include a feature value that is older than the actual feature value at the time of an observation._ 
 _古いフィーチャーには、観測時の実際のフィーチャー値よりも古いフィーチャー値が含まれます。_
 
-###### For Improved Collaboration with the FTI Pipeline Architecture
-###### FTIパイプラインアーキテクチャによるコラボレーションの改善
+---
+
+#### 1.4.3. For Improved Collaboration with the FTI Pipeline Architecture FTIパイプラインアーキテクチャによるコラボレーションの改善のために
 
 An important reason many models do not reach production is that organizations have silos around the teams that collaborate to develop and operate AI systems. 
-多くのモデルが本番環境に到達しない重要な理由は、組織内にAIシステムを開発・運用するために協力するチームの周りにサイロが存在することです。
-
+**多くのモデルが本番環境に到達しない重要な理由は、組織内にAIシステムを開発・運用するために協力するチームの周りにサイロが存在すること**です。
 In Figure 4-4, you can see a siloed organization where the data engineering team has a metaphorical wall between it and the data science team and there is a similar wall between the data science team and the ML engineering team. 
 図4-4では、データエンジニアリングチームとデータサイエンスチームの間に比喩的な壁があり、データサイエンスチームとMLエンジニアリングチームの間にも同様の壁があるサイロ型の組織を見ることができます。
-
 In this siloed organization, collaboration involves data and models being thrown over the wall from one team to another. 
 このサイロ型の組織では、コラボレーションはデータとモデルが一つのチームから別のチームに投げ渡されることを含みます。
 
+![]()
 _Figure 4-4. If you are a data scientist in an organization with this method of collaboration (where you receive dumps of data and you throw models over the wall to production), Conway’s Law implies you will only ever train models and not contribute to production systems._  
 _図4-4. このようなコラボレーション方法の組織にいるデータサイエンティストであれば（データのダンプを受け取り、モデルを本番環境に投げ渡す場合）、コンウェイの法則は、あなたがモデルをトレーニングするだけで、本番システムに貢献しないことを示唆しています。_
 
 The system for collaboration at this organization is an example of _Conway’s Law,_ according to which the process of collaboration (throwing assets over walls) mirrors the siloed communication structure among teams. 
-この組織におけるコラボレーションのシステムは、_コンウェイの法則_の例であり、コラボレーションのプロセス（資産を壁越しに投げること）がチーム間のサイロ型コミュニケーション構造を反映しています。
-
+**この組織におけるコラボレーションのシステムは、_コンウェイの法則_の例であり、コラボレーションのプロセス（資産を壁越しに投げること）がチーム間のサイロ型コミュニケーション構造を反映**しています。
 The feature store solves the organizational challenges of collaboration among teams by providing a shared platform for collaboration when building and operating AI systems. 
-フィーチャーストアは、AIシステムを構築・運用する際にチーム間のコラボレーションのための共有プラットフォームを提供することで、組織のコラボレーションに関する課題を解決します。
-
+フィーチャーストアは、**AIシステムを構築・運用する際にチーム間のコラボレーションのための共有プラットフォームを提供することで、組織のコラボレーションに関する課題を解決**します。
 The FTI pipelines from Chapter 2 also help with collaboration. 
 第2章のFTIパイプラインもコラボレーションに役立ちます。
-
 They decompose an AI system into modular pipelines that use the feature store, acting as the shared data layer connecting the pipelines. 
-これらは、フィーチャーストアを使用するモジュール式パイプラインにAIシステムを分解し、パイプラインを接続する共有データ層として機能します。
-
+これらは、フィーチャーストアを使用するモジュール式パイプラインにAIシステムを分解し、**パイプラインを接続する共有データ層**として機能します。
 The responsibilities for the FTI pipelines map cleanly onto the teams that develop and operate production AI systems: 
 FTIパイプラインの責任は、本番AIシステムを開発・運用するチームに明確にマッピングされます：
 
 - Data scientists and data engineers collaborate to build and operate feature pipelines. 
-- データサイエンティストとデータエンジニアは、フィーチャーパイプラインを構築・運用するために協力します。
-
+  - データサイエンティストとデータエンジニアは、フィーチャーパイプラインを構築・運用するために協力します。
 - Data scientists train and evaluate the models. 
-- データサイエンティストはモデルをトレーニングし、評価します。
-
+  - データサイエンティストはモデルをトレーニングし、評価します。
 - Data scientists and operations engineers write inference pipelines and integrate models with external systems.  
-- データサイエンティストとオペレーションエンジニアは推論パイプラインを作成し、モデルを外部システムと統合します。
+  - データサイエンティストとオペレーションエンジニアは推論パイプラインを作成し、モデルを外部システムと統合します。
 
 But if a data scientist helps build operational pipelines and deploy models to production, they are no longer a data scientist, they are an ML engineer. 
 しかし、データサイエンティストが運用パイプラインの構築を手伝い、モデルを本番環境にデプロイする場合、彼らはもはやデータサイエンティストではなく、MLエンジニアです。
-
 This is, I believe, the future for most data scientists working today. 
 これは、私が考えるに、今日働いているほとんどのデータサイエンティストの未来です。
-
 You have to be able to build and operate AI systems or your employer will find an ML engineer who will do it for you. 
-AIシステムを構築・運用できる必要があります。さもなければ、雇用主はあなたのためにそれを行うMLエンジニアを見つけるでしょう。
+**AIシステムを構築・運用できる必要があります。さもなければ、雇用主はあなたのためにそれを行うMLエンジニアを見つけるでしょう。**
 
-###### For Governance of ML Systems
-###### MLシステムのガバナンスについて
+<!-- ここまで読んだ! -->
+
+#### 1.4.4. For Governance of ML Systems MLシステムのガバナンスのため
 
 Feature stores help ensure that an organization’s governance processes keep feature data secure and accountable throughout its lifecycle. 
 フィーチャーストアは、組織のガバナンスプロセスがフィーチャーデータをそのライフサイクル全体で安全かつ説明責任を持って保持することを確保するのに役立ちます。
-
 That means auditing actions taken in your feature store for accountability and tracking lineage from source data to features to models. 
 つまり、フィーチャーストアで行われたアクションを監査して説明責任を果たし、ソースデータからフィーチャー、モデルへの系譜を追跡することを意味します。
-
 Feature stores manage mutable data that needs to comply with regulatory requirements, such as the European Union’s AI Act that categorizes AI systems into four different risk levels: unacceptable, high, limited, and minimal. 
 フィーチャーストアは、AIシステムを受け入れられない、高リスク、制限付き、最小限の4つの異なるリスクレベルに分類する欧州連合のAI法など、規制要件に準拠する必要がある可変データを管理します。
 
 Beyond data storage, a feature store also needs support for _lineage for compliance_ with other legal and regulatory requirements involving tracking the origin, history, and use of data sources, features, training data, and models in AI systems. 
-データストレージを超えて、フィーチャーストアは、AIシステムにおけるデータソース、フィーチャー、トレーニングデータ、モデルの起源、履歴、使用を追跡する他の法的および規制要件に準拠するための_系譜のサポート_も必要です。
-
+データストレージを超えて、フィーチャーストアは、AIシステムにおけるデータソース、フィーチャー、トレーニングデータ、モデルの起源、履歴、使用を追跡する他の法的および規制要件に準拠するための lineage for compliance_ のサポートも必要です。(lineage for compliance = 簡単にいうと...コンプライアンスを守るための系譜管理？:thinking:)
 Lineage also enables the reproducibility of features, training data, and models; improved debugging through quicker root cause analysis; and usage analysis for features. 
 系譜は、フィーチャー、トレーニングデータ、モデルの再現性を可能にし、迅速な根本原因分析を通じてデバッグを改善し、フィーチャーの使用分析を可能にします。
-
 Lineage tells you where AI assets are used, but it does not tell you whether a particular feature is allowed to be used in a particular model—for example, a high-risk AI system. 
-系譜はAI資産がどこで使用されているかを教えてくれますが、特定のフィーチャーが特定のモデル（例えば、高リスクのAIシステム）で使用することが許可されているかどうかは教えてくれません。
-
+**系譜はAI資産がどこで使用されているかを教えてくれますが**、特定のフィーチャーが特定のモデル（例えば、高リスクのAIシステム）で使用することが許可されているかどうかは教えてくれません。
 Access control, while necessary, does not help here either, as it only informs you whether you have the right to read/write the data, not whether your model will be compliant if you use a certain feature. 
 アクセス制御は必要ですが、ここでは役に立ちません。なぜなら、それはデータを読み書きする権利があるかどうかを知らせるだけであり、特定のフィーチャーを使用した場合にモデルが準拠するかどうかは知らせないからです。
-
 For compliance, feature stores support custom metadata to describe the scope and context under which a feature can be used. 
-コンプライアンスのために、フィーチャーストアはフィーチャーが使用できる範囲と文脈を説明するカスタムメタデータをサポートします。
-
+**コンプライアンスのために、フィーチャーストアはフィーチャーが使用できる範囲と文脈を説明するカスタムメタデータをサポートします。**
 For example, you might tag features that have personally identifiable information (PII). 
-例えば、個人を特定できる情報（PII）を含むフィーチャーにタグを付けることができます。
-
+**例えば、個人を特定できる情報（PII）を含むフィーチャーにタグを付ける**ことができます。(自前でこれをやるのは結構大変かも。テーブル粒度ならまだしも、フィーチャー粒度でやるのは...:thinking:)
 With lineage (from data sources, to features, to training data, to models) and PII metadata tags for features, you can easily identify which models use features containing PII data. 
 系譜（データソースからフィーチャー、トレーニングデータ、モデルまで）とフィーチャーのPIIメタデータタグを使用することで、どのモデルがPIIデータを含むフィーチャーを使用しているかを簡単に特定できます。
 
-###### For Discovery and Reuse of AI Assets
-###### AI資産の発見と再利用について
+<!-- ここまで読んだ! -->
+
+#### 1.4.5. For Discovery and Reuse of AI Assets AI資産の発見と再利用のために
 
 _[Feature reuse is a much advertised benefit of feature stores. Meta reported that “most](https://oreil.ly/tIf4d)_ features are used by many models” in their feature store, and the most popular one hundred features are reused in over a hundred different models each. 
-_[フィーチャーの再利用はフィーチャーストアの大きな利点として宣伝されています。Metaは「ほとんどのフィーチャーが多くのモデルで使用されている」と報告しており、最も人気のある100のフィーチャーはそれぞれ100以上の異なるモデルで再利用されています。_
-
+[**フィーチャーの再利用はフィーチャーストアの大きな利点として宣伝されています。Metaは「ほとんどのフィーチャーが多くのモデルで使用されている」と報告しており、最も人気のある100のフィーチャーはそれぞれ100以上の異なるモデルで再利用されています。**
 The benefits of feature reuse include improvements in the quality of features through increased usage and scrutiny, reduced storage cost, and reduced feature development and operational costs, as models that reuse features do not need new feature pipelines. 
-フィーチャーの再利用の利点には、使用と精査の増加を通じたフィーチャーの質の向上、ストレージコストの削減、フィーチャー開発および運用コストの削減が含まれます。フィーチャーを再利用するモデルは新しいフィーチャーパイプラインを必要としません。
-
+**フィーチャーの再利用の利点には、使用と精査の増加を通じたフィーチャーの質の向上、ストレージコストの削減、フィーチャー開発および運用コストの削減が含まれます**。フィーチャーを再利用するモデルは新しいフィーチャーパイプラインを必要としません。
 Computed features are stored in the feature store and published to a feature registry, enabling users to easily discover and understand features. 
-計算されたフィーチャーはフィーチャーストアに保存され、フィーチャーレジストリに公開され、ユーザーがフィーチャーを簡単に発見し理解できるようにします。
-
+計算されたフィーチャーはフィーチャーストアに保存され、フィーチャーレジストリに公開され、**ユーザーがフィーチャーを簡単に発見し理解できるように**します。
 The feature registry is a component in a feature store that has an API and UI to browse and search for available features, feature definitions, statistics on feature data, and metadata describing features.  
-フィーチャーレジストリは、利用可能なフィーチャー、フィーチャー定義、フィーチャーデータの統計、およびフィーチャーを説明するメタデータをブラウズおよび検索するためのAPIとUIを持つフィーチャーストアのコンポーネントです。
+**フィーチャーレジストリは、利用可能なフィーチャー、フィーチャー定義、フィーチャーデータの統計、およびフィーチャーを説明するメタデータをブラウズおよび検索するためのAPIとUIを持つフィーチャーストアのコンポーネント**です。(これも自前で作るのは一定工数必要だから、まあSnowsightで代用して問題があれば別途考える、みたいな感じかな〜:thinking:)
 
------
-###### For Elimination of Offline-Online Feature Skew
-###### オフライン-オンラインフィーチャースキューの排除について
+
+#### 1.4.6. For Elimination of Offline-Online Feature Skew　オフライン-オンラインフィーチャースキューの排除のために
 
 _Feature skew occurs when significant differences exist between the data transformation code in either an ODT or an MDT in an offline pipeline (a feature pipeline or a training pipeline, respectively) and the data transformation code for the ODT or MDT in the corresponding inference pipeline. 
-_フィーチャースキューは、オフラインパイプライン（フィーチャーパイプラインまたはトレーニングパイプライン）内のODTまたはMDTのデータ変換コードと、対応する推論パイプライン内のODTまたはMDTのデータ変換コードの間に重要な違いが存在する場合に発生します。
-
+**feature skewは、オフラインパイプライン（フィーチャーパイプラインまたはトレーニングパイプライン）内のODTまたはMDTのデータ変換コードと、対応する推論パイプライン内のODTまたはMDTのデータ変換コードの間に重要な違いが存在する場合に発生**します。
 Feature skew can result in silently degraded model performance that is difficult to discover. 
-フィーチャースキューは、発見が難しい静かに劣化したモデルパフォーマンスを引き起こす可能性があります。
-
+**フィーチャースキューは、発見が難しい静かなモデルパフォーマンスの低下**をもたらす可能性があります。
 It may show up as the model not generalizing well to the new data during inference due to the discrepancies in the data transformations. 
 データ変換の不一致により、推論中にモデルが新しいデータにうまく一般化しないことが示される場合があります。
-
 Without a feature store, it is easy to write different implementations for an ODT or MDT—one implementation for the feature or training pipeline and a different one for the inference pipeline. 
-フィーチャーストアがないと、ODTまたはMDTの異なる実装を書くのは簡単です—フィーチャーまたはトレーニングパイプライン用の1つの実装と、推論パイプライン用の異なる実装です。
-
+**フィーチャーストアがないと、ODTまたはMDTの異なる実装を書くのは簡単**です—フィーチャーまたはトレーニングパイプライン用の1つの実装と、推論パイプライン用の異なる実装です。
 In software engineering, we say that such data transformation code is not DRY. 
-ソフトウェアエンジニアリングでは、そのようなデータ変換コードはDRYではないと言います。
-
+ソフトウェアエンジニアリングでは、**そのようなデータ変換コードはDRYではない**と言います。
 Feature stores support the definition and management of ODTs and MDTs, and they ensure that the same function is applied in the offline and inference pipelines. 
 フィーチャーストアはODTとMDTの定義と管理をサポートし、オフラインパイプラインと推論パイプラインで同じ機能が適用されることを保証します。
 
-###### For Centralizing Your Data for AI in a Single Platform
-###### AIのためのデータを単一プラットフォームに集中させることについて
+<!-- ここまで読んだ! -->
+
+#### 1.4.7. For Centralizing Your Data for AI in a Single Platform　AIのためのデータを単一プラットフォームに集中化するために
 
 Feature stores aspire to be a central platform that manages all data needed to train and operate AI systems. 
-フィーチャーストアは、AIシステムをトレーニングおよび運用するために必要なすべてのデータを管理する中央プラットフォームを目指しています。
-
+**フィーチャーストアは、AIシステムをトレーニングおよび運用するために必要なすべてのデータを管理する中央プラットフォームを目指しています。** (必要な全てのデータってことはラベルもか...!:thinking:)
 Existing feature stores have a hybrid architecture, including an offline store and an online store with a vector index to store vector embeddings and support similarity search. 
-既存のフィーチャーストアは、オフラインストアとベクトル埋め込みを保存し、類似性検索をサポートするベクトルインデックスを持つオンラインストアを含むハイブリッドアーキテクチャを持っています。
+既存のフィーチャーストアは、オフラインストアと、ベクトルインデックスを備えたオンラインストアを含むハイブリッドアーキテクチャを持っています。ベクトルインデックスは、ベクトル埋め込みを保存し、類似性検索をサポートします。
 
 An online store is used by online applications to retrieve feature vectors for entities. 
 オンラインストアは、オンラインアプリケーションによってエンティティのフィーチャーベクトルを取得するために使用されます。
-
 It is a row-oriented data store, where data is stored in relational tables or in a NoSQL data structure (like key-value pairs or JSON objects). 
 これは行指向のデータストアであり、データはリレーショナルテーブルまたはNoSQLデータ構造（キー-バリューのペアやJSONオブジェクトなど）に保存されます。
-
-
-
-. It is a row-oriented data store, where data is stored in relational tables or in a NoSQL data structure (like key-value pairs or JSON objects). 
-それは行指向のデータストアであり、データはリレーショナルテーブルまたはNoSQLデータ構造（キー-バリュー ペアやJSONオブジェクトなど）に格納されます。
-
 The key properties of row-oriented data stores are:
-行指向データストアの主な特性は次のとおりです。
+**行指向データストアの主な特性**は次のとおりです。
 
 - Low-latency and high-throughput CRUD (create, read, update, delete) operations using either SQL or NoSQL
-- SQLまたはNoSQLを使用した低遅延で高スループットのCRUD（作成、読み取り、更新、削除）操作
+  - SQLまたはNoSQLを使用した低遅延で高スループットのCRUD（作成、読み取り、更新、削除）操作
 - Support for primary keys to retrieve features for specific entities
-- 特定のエンティティの特徴を取得するための主キーのサポート
+  - 特定のエンティティの特徴を取得するための主キーのサポート
 - Support for time to live (TTL) for tables and/or rows to expire stale feature data
-- 古い特徴データを期限切れにするためのテーブルおよび/または行の生存時間（TTL）のサポート
+  - **古い特徴データを期限切れにするためのテーブルおよび/または行の生存時間（TTL）のサポート**
 - High availability through replication and data integrity through ACID (atomicity, consistency, isolation, durability) transactions
-- レプリケーションによる高可用性とACID（原子性、一貫性、隔離性、耐久性）トランザクションによるデータ整合性の確保
+  - レプリケーションによる高可用性とACID（原子性、一貫性、隔離性、耐久性）トランザクションによるデータ整合性の確保
 - Support for secondary indexes to support more complex queries (such as online aggregations)
-- より複雑なクエリ（オンライン集計など）をサポートするためのセカンダリインデックスのサポート
+  - より複雑なクエリ（オンライン集計など）をサポートするためのセカンダリインデックスのサポート
 
------
+<!-- ここまで読んだ! -->
+
 An offline store is a columnar store. 
-オフラインストアは列指向ストアです。
-
+一方で、**オフラインストアは列指向ストア**です。
 Column-oriented data stores:
 列指向データストアは次のようになります。
 
 - Are central data platforms that store historical data for analytics
-- 分析のための履歴データを保存する中央データプラットフォームです。
+  - 分析のための**履歴データ**を保存する中央データプラットフォームです。
 - Provide low-cost storage for large volumes of data (including columnar compression of data) at the cost of high latency for row-based retrieval of data
-- 行ベースのデータ取得に高遅延を伴う代わりに、大量のデータ（データの列指向圧縮を含む）に対して低コストのストレージを提供します。
+  - **行ベースのデータ取得に高遅延を伴う代わりに、大量のデータ（データの列指向圧縮を含む）に対して低コストのストレージを提供**します。
 - Enable faster complex queries than do row-oriented stores through more efficient data pruning and data movement, aided by data models designed to support complex queries
-- 複雑なクエリをサポートするように設計されたデータモデルによって支援され、より効率的なデータプルーニングとデータ移動を通じて、行指向ストアよりも高速な複雑なクエリを可能にします。
+  - 複雑なクエリをサポートするように設計されたデータモデルによって支援され、より効率的なデータプルーニングとデータ移動を通じて、**行指向ストアよりも高速な複雑なクエリを可能に**します。
 
 The offline stores for existing feature stores are lakehouses. 
-既存のフィーチャーストアのオフラインストアはレイクハウスです。
-
+**既存のフィーチャーストアのオフラインストアはレイクハウス**です。
 A lakehouse is a combination of a data lake for storage and a data warehouse for querying the data. 
-レイクハウスは、データの保存のためのデータレイクとデータのクエリのためのデータウェアハウスの組み合わせです。
-
+**レイクハウスは、データの保存のためのデータレイクとデータのクエリのためのデータウェアハウスの組み合わせ**です。
 In contrast to a data warehouse, a lakehouse is an open platform that separates the storage of columnar data from the query engines that use it. 
-データウェアハウスとは対照的に、レイクハウスは列指向データのストレージをそれを使用するクエリエンジンから分離するオープンプラットフォームです。
-
+データウェアハウスとは対照的に、**レイクハウスは列指向データのストレージをそれを使用するクエリエンジンから分離するオープンプラットフォーム**です。(なるほど、じゃあS3 TablesにIcebergテーブルを作って、Athenaやsnowflake等でクエリする設計は、レイクハウスの一例と言えるのか...!:thinking:)
 Lakehouse tables can be queried by many different query engines. 
-レイクハウスのテーブルは、多くの異なるクエリエンジンによってクエリされることができます。
-
+**レイクハウスのテーブルは、多くの異なるクエリエンジンによってクエリされることができます。*
+(=これが「レイクハウス」か否かの本質か...!! オフラインストアはレイクハウスであるべき:thinking:)
 The main open source standards for a lakehouse are the open table formats (OTFs) for data storage (Apache Iceberg, Delta Lake, Apache Hudi). 
-レイクハウスの主なオープンソース標準は、データストレージのためのオープンテーブルフォーマット（OTF）（Apache Iceberg、Delta Lake、Apache Hudi）です。
-
+レイクハウスの主なオープンソース標準は、データストレージのための**オープンテーブルフォーマット（OTF）**（**Apache Iceberg**、Delta Lake、Apache Hudi）です。
 An OTF consists of data files (Parquet files) and metadata that enables ACID updates to the Parquet files—a commit for every batch append/update/delete operation. 
 OTFは、データファイル（Parquetファイル）と、ParquetファイルへのACID更新を可能にするメタデータで構成されており、バッチの追加/更新/削除操作ごとにコミットが行われます。
-
 The commit history is stored as metadata and enables time-travel support for lakehouse tables, where you can query historical versions of tables (using a commit ID or timestamp). 
 コミット履歴はメタデータとして保存され、レイクハウスのテーブルに対するタイムトラベルサポートを可能にし、テーブルの履歴バージョンをクエリすることができます（コミットIDまたはタイムスタンプを使用）。
-
 Lakehouse tables also support schema evolution (you can add columns to your table without breaking clients), as well as partitioning, indexing, and data skipping for faster queries. 
 レイクハウスのテーブルは、スキーマの進化（クライアントを壊すことなくテーブルに列を追加できる）や、パーティショニング、インデクシング、データスキッピングによる高速クエリもサポートしています。
 
+<!-- ここまで読んだ! -->
+
 An offline and/or online store may also support storing vector embeddings in a vector index that supports approximate nearest neighbor (ANN) search for feature data. 
-オフラインおよび/またはオンラインストアは、特徴データのための近似最近傍（ANN）検索をサポートするベクトルインデックスにベクトル埋め込みを保存することもサポートする場合があります。
-
+**オフラインおよび/またはオンラインストアは、特徴データのための近似最近傍（ANN）検索をサポートするベクトルインデックスにベクトル埋め込みを保存することもサポートする場合**があります。
 Feature stores include either a separate standalone vector database (such as Weaviate or Pinecone) or an existing row-oriented database that supports a vector index and ANN search (such as Postgres PGVector, OpenSearch, or MongoDB). 
-フィーチャーストアには、独立したスタンドアロンのベクトルデータベース（WeaviateやPineconeなど）またはベクトルインデックスとANN検索をサポートする既存の行指向データベース（Postgres PGVector、OpenSearch、MongoDBなど）が含まれます。
-
+フィーチャーストアには、独立したスタンドアロンのベクトルデータベース（WeaviateやPineconeなど）またはベクトルインデックスとANN検索をサポートする既存の行指向データベース（**Postgres PGVector**、OpenSearch、MongoDBなど）が含まれます。
 Now that we have covered why and when you may need a feature store, we will look into storing data in feature stores in feature groups. 
 フィーチャーストアが必要な理由とタイミングを説明したので、フィーチャーストアにおけるデータの保存方法をフィーチャーグループで見ていきます。
 
------
-###### Feature Groups フィーチャーグループ
+<!-- ここまで読んだ! -->
+
+
+### 1.5. Feature Groups フィーチャーグループ
 
 Feature stores use feature groups to hide the complexity of writing and reading data to/from the different offline and online data stores. 
 フィーチャーストアは、異なるオフラインおよびオンラインデータストアへのデータの書き込みと読み取りの複雑さを隠すためにフィーチャーグループを使用します。
-
 We encountered feature groups in Chapters 2 and 3, but we haven’t formally defined them. 
 私たちは第2章と第3章でフィーチャーグループに出会いましたが、正式に定義していませんでした。
-
 Feature groups are tables in which the features are columns and the feature data is stored in offline and online stores. 
 フィーチャーグループは、特徴が列であり、フィーチャーデータがオフラインおよびオンラインストアに保存されるテーブルです。
-
 Not all feature stores use the term feature groups—some vendors call them feature sets or feature tables, but they refer to the same concept. 
-すべてのフィーチャーストアがフィーチャーグループという用語を使用するわけではありません。一部のベンダーはそれらをフィーチャーセットまたはフィーチャーテーブルと呼びますが、同じ概念を指しています。
-
+**すべてのフィーチャーストアがフィーチャーグループという用語を使用するわけではありません。一部のベンダーはそれらをフィーチャーセットまたはフィーチャーテーブルと呼びますが、同じ概念を指しています。**
 We prefer the term feature group, as the data is potentially stored in a group of tables, in more than one store. 
-私たちはフィーチャーグループという用語を好みます。なぜなら、データは複数のストアにわたるテーブルのグループに保存される可能性があるからです。
-
+私たちは**フィーチャーグループという用語を好みます。なぜなら、データは複数のストアにわたるテーブルのグループに保存される可能性があるから**です。
+(なるほどね、もし「feature table」だと、オフラインストア用のテーブルと、オンラインストア用のテーブルが両方あるから、混乱を招くもんなぁ...!:thinking:)
 We will cover the most salient and fundamental properties of feature groups, but note that your feature store might have some differences, so consult its documentation before building your feature pipelines. 
-フィーチャーグループの最も重要で基本的な特性をカバーしますが、あなたのフィーチャーストアにはいくつかの違いがあるかもしれないので、フィーチャーパイプラインを構築する前にそのドキュメントを参照してください。
-
+**フィーチャーグループの最も重要で基本的な特性**をカバーしますが、あなたのフィーチャーストアにはいくつかの違いがあるかもしれないので、フィーチャーパイプラインを構築する前にそのドキュメントを参照してください。
 Caveat emptor.
 購入者注意。
 
-A feature group consists of a schema, metadata, a table in an offline store, an optional table in an online store, and an optional vector index. 
-フィーチャーグループは、スキーマ、メタデータ、オフラインストアのテーブル、オンラインストアのオプションのテーブル、およびオプションのベクトルインデックスで構成されます。
+<!-- ここまで読んだ! -->
 
+A feature group consists of a schema, metadata, a table in an offline store, an optional table in an online store, and an optional vector index. 
+**フィーチャーグループは、スキーマ、メタデータ、オフラインストアのテーブル、オンラインストアのオプションのテーブル、およびオプションのベクトルインデックスで構成**されます。
 The metadata typically contains the feature group’s:
 メタデータには通常、フィーチャーグループの次の情報が含まれます。
 
 - name
-- 名前
+  - 名前
 - version (a number)
-- バージョン（数値）
+  - バージョン（数値）
 - entity_id (a primary key, defined over one or more columns)
-- entity_id（主キー、1つ以上の列に対して定義される）
+  - entity_id（主キー、1つ以上の列に対して定義される）
 - online_enabled—whether the feature group’s online table is used or not
-- online_enabled—フィーチャーグループのオンラインテーブルが使用されているかどうか
+  - online_enabled—フィーチャーグループのオンラインテーブルが使用されているかどうか
 - event_time column (optional)
-- event_time列（オプション）
+  - event_time列（オプション）
 - Tags to help with discovery and governance
-- 発見とガバナンスを助けるためのタグ
+  - 発見とガバナンスを助けるためのタグ
 
 The entity_id is needed to retrieve rows of online feature data and prevent duplicate data, while the version number enables support for A/B tests of features by different models and enables schema-breaking changes to feature groups. 
-entity_idはオンラインフィーチャーデータの行を取得し、重複データを防ぐために必要であり、バージョン番号は異なるモデルによるフィーチャーのA/Bテストをサポートし、フィーチャーグループに対するスキーマを破る変更を可能にします。
-
+**entity_idはオンラインフィーチャーデータの行を取得し、重複データを防ぐために必要**であり、**バージョン番号は異なるモデルによるフィーチャーのA/Bテストをサポート**(なるほど...まあ新しいカラムを追加するでもいいのかな...?:thinking:)し、フィーチャーグループに対するスキーマを破る変更を可能にします。
 The event_time column is used by the feature store to create point-in-time consistent training data from time-series feature data. 
-event_time列は、フィーチャーストアが時系列フィーチャーデータから時点で一貫したトレーニングデータを作成するために使用されます。
-
+**event_time列は、フィーチャーストアが時系列フィーチャーデータから時点で一貫したトレーニングデータを作成するために使用**されます。
 Depending on your feature store, a feature group may support some or all of the following:
 フィーチャーストアによっては、フィーチャーグループが以下のいずれかまたはすべてをサポートする場合があります。
+(へぇ〜 foreign keyも...!:thinking:)
 
 - foreign_key columns (references to a primary key in another feature group)
-- foreign_key列（別のフィーチャーグループの主キーへの参照）
+  - foreign_key列（別のフィーチャーグループの主キーへの参照）
 - A partition_key column (used for faster queries through partition pruning)
-- partition_key列（パーティショニングプルーニングを通じて高速クエリに使用される）
+  - partition_key列（パーティショニングプルーニングを通じて高速クエリに使用される）
 - vector embedding features that are indexed for similarity search
-- 類似検索のためにインデックスされたベクトル埋め込みフィーチャー
+  - 類似検索のためにインデックスされたベクトル埋め込みフィーチャー
 - feature definitions that define the data transformations used to create the features stored in the feature group
-- フィーチャーグループに保存されるフィーチャーを作成するために使用されるデータ変換を定義するフィーチャー定義
+  - フィーチャーグループに保存されるフィーチャーを作成するために使用されるデータ変換を定義するフィーチャー定義
 
------
 In Figure 4-5, we can see a feature group containing different columns related to credit card transactions. 
 図4-5では、クレジットカード取引に関連する異なる列を含むフィーチャーグループを見ることができます。
-
 You will notice that most columns are not feature columns.
-ほとんどの列がフィーチャー列ではないことに気付くでしょう。
+**ほとんどの列がフィーチャー列ではないこと**に気付くでしょう。
 
+![]()
 _Figure 4-5. Rows are uniquely identified with a combination of the entity ID and the_ ``` event_time. 
 _図4-5. 行は、entity IDと``` event_timeの組み合わせで一意に識別されます。
-
 You can have a foreign key that points to a row in a different feature group and a partition key that is used for push-down filters for faster queries. 
 別のフィーチャーグループの行を指す外部キーと、高速クエリのためのプッシュダウンフィルターに使用されるパーティションキーを持つことができます。
-
 The index columns are not features. 
 インデックス列はフィーチャーではありません。
-
 Any feature could be used as a label when creating training data from the feature group.
 フィーチャーグループからトレーニングデータを作成する際に、任意のフィーチャーをラベルとして使用することができます。
 
+<!-- ここまで読んだ! -->
 
-
-The first four columns are collectively known as _index columns—the_ `cc_num is the` entity ID, ts is the timestamp for the transaction (its event time), the account_id is a foreign key to `account_fg (not shown), and` `day is a partition key column enabling` queries that filter by `day to be faster by only reading the needed data (for example,` reading yesterday’s feature data will not read all rows, only the rows where the `day` value is yesterday).
-最初の4つの列は、総称して _インデックス列_ と呼ばれます。`cc_num` はエンティティID、`ts` はトランザクションのタイムスタンプ（そのイベント時間）、`account_id` は `account_fg`（表示されていません）への外部キーであり、`day` は `day` でフィルタリングするクエリをより迅速にするためのパーティションキー列です（例えば、昨日の特徴データを読み取る場合、すべての行を読み取るのではなく、`day` 値が昨日の行のみを読み取ります）。
-
+The first four columns are collectively known as _index columns—the_ `cc_num is the` entity ID, ts is the timestamp for the transaction (its event time), the account_id is a foreign key to `account_fg` (not shown), and day is a partition key column enabling` queries that filter by `day to be faster by only reading the needed data (for example,` reading yesterday’s feature data will not read all rows, only the rows where the `day` value is yesterday).
+**最初の4つの列は、総称して index columns** として知られています。`cc_num` はエンティティIDであり、`ts` は取引のタイムスタンプ（そのイベント時間）であり、`account_id` は `account_fg` への外部キーです（表示されていません）。`day` はパーティションキー列であり、`day` でフィルタリングするクエリを可能にし、必要なデータのみを読み取ることで高速化します（例えば、昨日のフィーチャーデータを読む場合、すべての行を読むのではなく、`day` 値が昨日の行のみを読み取ります）。
 The next three columns (amount, category, and embedding_col) are features—the embedding_col is a vector embedding that is indexed for similarity search in the vector index.
 次の3つの列（`amount`、`category`、および `embedding_col`）は特徴です。`embedding_col` はベクトル埋め込みであり、ベクトルインデックスでの類似性検索のためにインデックスされています。
-
 Finally, the is_fraud column is also a feature column but is identified as a label in the figure.
 最後に、`is_fraud` 列も特徴列ですが、図ではラベルとして識別されています。
-
 That is because features can also be labels—the `is_fraud` column could be a label in one model but a feature in another model.
-これは、特徴がラベルにもなり得るためです。`is_fraud` 列は、あるモデルではラベルであり、別のモデルでは特徴である可能性があります。
-
+**これは、特徴がラベルにもなり得るためです。`is_fraud` 列は、あるモデルではラベルであり、別のモデルでは特徴である可能性があります。**(なるほど...! semantic modelの出力とかは、ラベルであり特徴量でもある、みたいな感じかな...!:thinking:)
 For this reason, labels are not defined in feature groups but are only defined when you select the features and labels for your model.
 このため、ラベルは特徴グループでは定義されず、モデルの特徴とラベルを選択する際にのみ定義されます。
 
+<!-- ここまで読んだ! -->
+
 You can perform inserts, updates, and deletes on feature groups, either via a batch (DataFrame) API or a streaming API (for real-time ML systems).
 特徴グループに対しては、バッチ（DataFrame）APIまたはストリーミングAPI（リアルタイムMLシステム用）を介して挿入、更新、削除を行うことができます。
-
 As a feature group has a schema, your feature store defines the set of supported data types for features—strings, integers, arrays, and so on.
 特徴グループにはスキーマがあるため、特徴ストアは特徴のためのサポートされるデータ型のセット（文字列、整数、配列など）を定義します。
-
 In most features, either you can explicitly define the schema for a feature group or the feature store will infer its schema using the first DataFrame written to it.
 ほとんどの特徴では、特徴グループのスキーマを明示的に定義するか、特徴ストアが最初に書き込まれたDataFrameを使用してそのスキーマを推測します。
-
 If a feature group contains time-series data, the event_time column value should capture the timestamp for when the feature values in that row were valid (not when the row of data was ingested).
 特徴グループに時系列データが含まれている場合、`event_time` 列の値は、その行の特徴値が有効であった時刻のタイムスタンプをキャプチャする必要があります（データの行が取り込まれた時ではありません）。
-
 If the feature group contains non-time-series data, you can omit the event_time column.
-特徴グループに非時系列データが含まれている場合、`event_time` 列を省略できます。
+**特徴グループに非時系列データが含まれている場合、`event_time` 列を省略できます**。(うんうん、そうあるべきだよな...!:thinking:)
 
 The entity ID is a unique identifier for an entity that has feature values.
-エンティティIDは、特徴値を持つエンティティの一意の識別子です。
-
+エンティティIDは、**特徴値を持つエンティティの一意の識別子**です。
 The entity ID can be either a natural key or a surrogate key.
 エンティティIDは、自然キーまたは代理キーのいずれかです。
-
 An example of a natural key is an email address or Social Security number for a user, while an example of a surrogate key is a sequential number, such as an auto-increment number, representing a user.
 自然キーの例は、ユーザーのメールアドレスや社会保障番号であり、代理キーの例は、ユーザーを表す自動インクリメント番号などの連続番号です。
 
-###### Feature Groups Store Untransformed Feature Data
-###### 特徴グループは未変換の特徴データを保存します
+<!-- ここまで読んだ! -->
+
+#### 1.5.1. Feature Groups Store Untransformed Feature Data　特徴グループは未変換の特徴データを保存します
 
 Feature pipelines write untransformed feature data to feature groups.
 特徴パイプラインは、未変換の特徴データを特徴グループに書き込みます。
-
 The untransformed feature data becomes transformed feature data after MDTs are applied to feature data read in training and inference pipelines.
 未変換の特徴データは、トレーニングおよび推論パイプラインで読み取られた特徴データにMDTが適用された後、変換された特徴データになります。
 
@@ -599,8 +546,8 @@ In the case of standardization, this is because updates first require reading al
 - Exploratory data analysis works best with unencoded feature data—it is hard for a data scientist to understand descriptive statistics for a numerical feature that has been scaled.
 - 探索的データ分析は、エンコードされていない特徴データで最も効果的に機能します。スケーリングされた数値特徴の記述統計をデータサイエンティストが理解するのは難しいです。
 
-###### Feature Definitions and Feature Groups
-###### 特徴定義と特徴グループ
+###### 1.5.1.0.1. Feature Definitions and Feature Groups
+###### 1.5.1.0.2. 特徴定義と特徴グループ
 
 A feature definition is the source code that defines the data transformations used to create one or more features in a feature group.
 特徴定義は、特徴グループ内の1つ以上の特徴を作成するために使用されるデータ変換を定義するソースコードです。
@@ -614,8 +561,8 @@ For example, it could be a Pandas, Polars, or Spark program for a batch feature 
 In DSL-based feature stores, a feature definition is not just the declarative transformations that create the features but also the specification for the feature pipeline (batch, streaming, or on-demand).
 DSLベースの特徴ストアでは、特徴定義は特徴を作成する宣言的変換だけでなく、特徴パイプライン（バッチ、ストリーミング、またはオンデマンド）の仕様でもあります。
 
-###### Writing to Feature Groups
-###### 特徴グループへの書き込み
+###### 1.5.1.0.3. Writing to Feature Groups
+###### 1.5.1.0.4. 特徴グループへの書き込み
 
 Feature stores provide an API to ingest feature data.
 特徴ストアは、特徴データを取り込むためのAPIを提供します。
@@ -665,8 +612,8 @@ For feature groups storing time-series data, the online store can again store ei
 That is, a TTL can be specified for each row or feature group so that feature data is removed when its TTL has expired.
 つまり、各行または特徴グループにTTLを指定でき、TTLが期限切れになると特徴データが削除されます。
 
-###### Feature freshness
-###### 特徴の新鮮さ
+###### 1.5.1.0.5. Feature freshness
+###### 1.5.1.0.6. 特徴の新鮮さ
 
 The freshness of feature data in feature groups is defined as the total time taken from when an event is first read by a feature pipeline to when the computed feature becomes available for use in an inference pipeline (see Figure 4-7).
 特徴グループ内の特徴データの新鮮さは、イベントが特徴パイプラインによって最初に読み取られてから、計算された特徴が推論パイプラインで使用可能になるまでの総時間として定義されます（図4-7を参照）。
@@ -689,8 +636,8 @@ Within a second of a user action, feature values are created and made available 
 If it took minutes, instead of seconds, TikTok’s recommender would not feel like it tracks your intent in real time—the AI would feel too laggy to be useful as a recommender.
 もしそれが秒ではなく分かかると、TikTokのレコメンダーはリアルタイムであなたの意図を追跡しているようには感じられません。AIはレコメンダーとして有用であるには遅すぎると感じられるでしょう。
 
-###### Data validation
-###### データ検証
+###### 1.5.1.0.7. Data validation
+###### 1.5.1.0.8. データ検証
 
 Some feature stores support _data validation when writing feature data to feature_ groups.
 一部の特徴ストアは、特徴データを特徴グループに書き込む際の _データ検証_ をサポートしています。
@@ -713,8 +660,8 @@ For example, it is often OK to have missing feature values in a feature group, a
 Now that we’ve covered what a feature group is, what it stores, and how you update one, let’s now look at how to design a data model for feature groups.
 特徴グループが何であるか、何を保存するか、どのように更新するかを説明したので、次に特徴グループのデータモデルを設計する方法を見てみましょう。
 
-###### Data Models for Feature Groups
-###### 特徴グループのデータモデル
+###### 1.5.1.0.9. Data Models for Feature Groups
+###### 1.5.1.0.10. 特徴グループのデータモデル
 
 If the feature store is to be the source of our data for AI, we need to understand how to model the data stored in its feature groups.
 特徴ストアがAIのデータソースとなる場合、その特徴グループに保存されているデータをどのようにモデル化するかを理解する必要があります。
@@ -7407,8 +7354,8 @@ The dimension tables are updated by ETL (extract, transform, load) or ELT (extra
 We will now see how we can use the credit card transaction events in Kafka and the dimension tables to build our realtime fraud detection ML system. 
 これから、Kafka内のクレジットカード取引イベントと次元テーブルを使用して、リアルタイムの不正検出MLシステムを構築する方法を見ていきます。
 
-###### Labels are facts, and features are dimensions
-###### ラベルは事実であり、特徴は次元です
+###### 1.5.1.0.11. Labels are facts, and features are dimensions
+###### 1.5.1.0.12. ラベルは事実であり、特徴は次元です
 
 In a feature store, the facts are the labels (or targets/observations) for our models, while the features are dimensions for the labels. 
 フィーチャーストアでは、事実はモデルのラベル（またはターゲット/観察）であり、特徴はラベルの次元です。
@@ -7434,8 +7381,8 @@ Irrespective of whether the feature values change slowly or quickly, if we want 
 If you don’t know when and how a feature changes its value over time, then training data created using that feature could have future data leakage or include stale feature values. 
 特徴が時間の経過とともにいつどのように値を変更するかがわからない場合、その特徴を使用して作成されたトレーニングデータは、将来のデータリークを引き起こしたり、古い特徴値を含む可能性があります。
 
-###### Feature stores and SCD types
-###### フィーチャーストアとSCDタイプ
+###### 1.5.1.0.13. Feature stores and SCD types
+###### 1.5.1.0.14. フィーチャーストアとSCDタイプ
 
 Dimension modeling in data warehousing introduced SCD types to store changing values of dimensions (features). 
 データウェアハウジングにおける次元モデリングは、次元（特徴）の変更される値を保存するためにSCDタイプを導入しました。
@@ -7653,8 +7600,8 @@ The feature groups will need to be stored in both online and offline stores, as 
 We will now design two different data models, first using the star schema and then using the snowflake schema.
 それでは、最初にスター・スキーマを使用し、次にスノーフレーク・スキーマを使用して、2つの異なるデータモデルを設計します。
 
-###### Star schema data model
-###### スター・スキーマデータモデル
+###### 1.5.1.0.15. Star schema data model
+###### 1.5.1.0.16. スター・スキーマデータモデル
 
 The star schema data model is supported by all major feature stores. 
 スター・スキーマデータモデルは、すべての主要なフィーチャーストアでサポートされています。
@@ -7689,8 +7636,8 @@ For example, the `cc_trans_aggs_fg` feature group is computed by a streaming fea
 Note that we follow an idiom of appending _fg to feature group names to differentiate them from the tables in our data mart.
 フィーチャーグループ名に_fgを追加して、データマート内のテーブルと区別するという慣用句に従っていることに注意してください。
 
-###### Snowflake schema data model
-###### スノーフレーク・スキーマデータモデル
+###### 1.5.1.0.17. Snowflake schema data model
+###### 1.5.1.0.18. スノーフレーク・スキーマデータモデル
 
 The snowflake schema is a data model that, like the star schema, consists of tables containing labels and features. 
 スノーフレーク・スキーマは、スター・スキーマと同様に、ラベルとフィーチャーを含むテーブルで構成されるデータモデルです。
@@ -7725,8 +7672,8 @@ In the star schema, however, our real-time ML system needs to additionally provi
 This makes the real-time ML system more complex—either the client provides the values for `bank_id` and `account_id` as parameters or you have to maintain an additional mapping table from `cc_num` to `bank_id` and `account_id`.
 これにより、リアルタイムMLシステムがより複雑になります。クライアントが`bank_id`と`account_id`の値をパラメータとして提供するか、`cc_num`から`bank_id`および`account_id`への追加のマッピングテーブルを維持する必要があります。
 
-###### Feature Store Data Model for Inference
-###### 推論のためのフィーチャーストアデータモデル
+###### 1.5.1.0.19. Feature Store Data Model for Inference
+###### 1.5.1.0.20. 推論のためのフィーチャーストアデータモデル
 
 Labels are obviously not available during inference—our model predicts them. 
 ラベルは推論中には明らかに利用できません—私たちのモデルがそれらを予測します。
@@ -7739,8 +7686,8 @@ They can all be passed as parameters in a prediction request (the foreign keys t
 
 
 
-###### feature groups and the `amount features), resolved via mapping tables (for star sche‐` mas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs. Label feature groups do not store inference data for
-###### 特徴グループと`amount features`は、マッピングテーブル（スタースキーマ用）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、及び``` days_to_card_expiry）またはMDTsで計算されます。ラベル特徴グループは、推論データを保存しません。
+###### 1.5.1.0.21. feature groups and the `amount features), resolved via mapping tables (for star sche‐` mas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs. Label feature groups do not store inference data for
+###### 1.5.1.0.22. 特徴グループと`amount features`は、マッピングテーブル（スタースキーマ用）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、及び``` days_to_card_expiry）またはMDTsで計算されます。ラベル特徴グループは、推論データを保存しません。
 
 ``` features. The label feature group is offline only, storing only historical data for fea‐ tures to create offline training data.
 ラベル特徴グループはオフライン専用で、オフラインのトレーニングデータを作成するための特徴の履歴データのみを保存します。
@@ -7943,8 +7890,8 @@ Starting from the label feature group (cc_trans_fg), it joins in features from t
 . For each row in the
 各行に対して、最終出力の中で、結合された行は、ラベル特徴グループの``` event_tsの値に最も近いが、それよりも小さいevent_tsを持っています。これはLEFT JOINであり、INNER JOINではありません。なぜなら、INNER JOINは、ラベルテーブルの外部キーが特徴テーブルの行と一致しない場合、トレーニングデータから行を除外するからです。
 
-###### Online Inference with a Feature View
-###### 特徴ビューを用いたオンライン推論
+###### 1.5.1.0.23. Online Inference with a Feature View
+###### 1.5.1.0.24. 特徴ビューを用いたオンライン推論
 In online inference, the feature view provides APIs for retrieving precomputed features, similarity search with vector indexes, and computing ODTs and MDTs. 
 オンライン推論では、特徴ビューが事前計算された特徴を取得するためのAPI、ベクトルインデックスを用いた類似検索、ODTsおよびMDTsの計算を提供します。 
 In the credit card fraud example ML system, there are two queries required to retrieve the features from our data model at request time:
@@ -7964,8 +7911,8 @@ The feature_vector could be of the list type, a NumPy array, or even a DataFrame
 特徴ベクトルは、モデルが期待する入力形式に応じて、リスト型、NumPy配列、またはDataFrameである可能性があります。
 
 -----
-###### Summary and Exercises
-###### まとめと演習
+###### 1.5.1.0.25. Summary and Exercises
+###### 1.5.1.0.26. まとめと演習
 Feature stores are the data layer for AI systems. 
 フィーチャーストアはAIシステムのデータ層です。 
 We dived deep into the anatomy of a feature store, and we looked at when it is appropriate for you to use one. 
