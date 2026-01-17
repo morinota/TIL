@@ -530,90 +530,78 @@ Feature pipelines write untransformed feature data to feature groups.
 特徴パイプラインは、未変換の特徴データを特徴グループに書き込みます。
 The untransformed feature data becomes transformed feature data after MDTs are applied to feature data read in training and inference pipelines.
 未変換の特徴データは、トレーニングおよび推論パイプラインで読み取られた特徴データにMDTが適用された後、変換された特徴データになります。
-
 In general, feature groups should not store transformed feature values (that is, MDTs should not have been applied) because:
-一般的に、特徴グループは変換された特徴値を保存すべきではありません（つまり、MDTは適用されていないはずです）理由は以下の通りです：
+**一般的に、特徴グループは変換された特徴値を保存すべきではありません（つまり、MDTは適用されていないはずです）**理由は以下の通りです：
 
 - The feature data is not reusable across models (model-specific transformations transform the data for use by a single model or set of related models).
-- 特徴データはモデル間で再利用できません（モデル固有の変換は、単一のモデルまたは関連するモデルのセットで使用するためにデータを変換します）。
+  - 特徴データはモデル間で再利用できません（モデル固有の変換は、単一のモデルまたは関連するモデルのセットで使用するためにデータを変換します）。
 
 - It can introduce _write amplification. If the MDT is parameterized by training_ data, such as standardizing a numerical feature, the time taken to perform a write becomes proportional to the number of rows in the feature group, not the num‐ ber of rows being written.
-- 書き込み増幅を引き起こす可能性があります。MDTがトレーニングデータによってパラメータ化されている場合（例えば、数値特徴の標準化など）、書き込みを実行するのにかかる時間は、書き込まれる行の数ではなく、特徴グループ内の行の数に比例します。
-
-In the case of standardization, this is because updates first require reading all existing rows, recomputing the mean and standard deviation, and then updating the values of all rows with the new mean and standard deviation.
-標準化の場合、これは、更新が最初にすべての既存の行を読み取り、平均と標準偏差を再計算し、その後新しい平均と標準偏差で全ての行の値を更新する必要があるためです。
+  - **書き込み増幅を引き起こす可能性があります。MDTがトレーニングデータによってパラメータ化されている場合（例えば、数値特徴の標準化など）、書き込みを実行するのにかかる時間は、書き込まれる行の数ではなく、特徴グループ内の行の数に比例**します。
+    In the case of standardization, this is because updates first require reading all existing rows, recomputing the mean and standard deviation, and then updating the values of all rows with the new mean and standard deviation.
+    標準化の場合、これは、更新が最初にすべての既存の行を読み取り、平均と標準偏差を再計算し、その後新しい平均と標準偏差で全ての行の値を更新する必要があるためです。
 
 - Exploratory data analysis works best with unencoded feature data—it is hard for a data scientist to understand descriptive statistics for a numerical feature that has been scaled.
-- 探索的データ分析は、エンコードされていない特徴データで最も効果的に機能します。スケーリングされた数値特徴の記述統計をデータサイエンティストが理解するのは難しいです。
+  - **探索的データ分析は、エンコードされていない特徴データで最も効果的に機能します。**スケーリングされた数値特徴の記述統計をデータサイエンティストが理解するのは難しいです。
 
-###### 1.5.1.0.1. Feature Definitions and Feature Groups
-###### 1.5.1.0.2. 特徴定義と特徴グループ
+<!-- ここまで読んだ! -->
+
+#### 1.5.2. Feature Definitions and Feature Groups　 特徴定義と特徴グループ
 
 A feature definition is the source code that defines the data transformations used to create one or more features in a feature group.
-特徴定義は、特徴グループ内の1つ以上の特徴を作成するために使用されるデータ変換を定義するソースコードです。
-
+**特徴量定義は、特徴グループ内の1つ以上の特徴を作成するために使用されるデータ変換を定義するソースコード**です。(=feature pipelineの実装コード?? :thinking:)
 In API-based feature stores, this is the source code for your MITs (and ODTs) in your feature pipelines.
 APIベースの特徴ストアでは、これは特徴パイプライン内のMIT（およびODT）のためのソースコードです。
-
 For example, it could be a Pandas, Polars, or Spark program for a batch feature pipeline.
-例えば、バッチ特徴パイプラインのためのPandas、Polars、またはSparkプログラムである可能性があります。
-
+例えば、**バッチ特徴パイプラインのためのPandas、Polars、またはSparkプログラム**である可能性があります。
 In DSL-based feature stores, a feature definition is not just the declarative transformations that create the features but also the specification for the feature pipeline (batch, streaming, or on-demand).
 DSLベースの特徴ストアでは、特徴定義は特徴を作成する宣言的変換だけでなく、特徴パイプライン（バッチ、ストリーミング、またはオンデマンド）の仕様でもあります。
 
-###### 1.5.1.0.3. Writing to Feature Groups
-###### 1.5.1.0.4. 特徴グループへの書き込み
+<!-- ここまで読んだ! -->
+
+#### 1.5.3. Writing to Feature Groups 特徴グループへの書き込み
 
 Feature stores provide an API to ingest feature data.
 特徴ストアは、特徴データを取り込むためのAPIを提供します。
-
 The feature store manages the complexity of updating the feature data after ingestion in the offline store, online store, and vector index on your behalf—the updates in the background are transpar‐ ent to you as a developer.
-特徴ストアは、オフラインストア、オンラインストア、およびベクトルインデックスでの取り込み後の特徴データの更新の複雑さをあなたの代わりに管理します。バックグラウンドでの更新は、開発者であるあなたには透明です。
-
+**特徴ストアは、オフラインストア、オンラインストア、およびベクトルインデックスでの取り込み後の特徴データの更新の複雑さをあなたの代わりに管理**します。バックグラウンドでの更新は、開発者であるあなたには透明です。
 Figure 4-6 shows two different types of APIs for ingesting feature data.
-図4-6は、特徴データを取り込むための2つの異なるタイプのAPIを示しています。
-
+図4-6は、**特徴データを取り込むための2つの異なるタイプのAPI**を示しています。
 In Figure 4-6(a), you have a single batch API for clients to write feature data to the offline store.
 図4-6(a)では、クライアントが特徴データをオフラインストアに書き込むための単一のバッチAPIがあります。
-
 The offline store is normally a lakehouse table, and it pro‐ [vides change data capture (CDC) APIs where you can read the data changes for the](https://oreil.ly/3jlEE) latest commit.
 オフラインストアは通常、レイクハウステーブルであり、最新のコミットのデータ変更を読み取ることができる変更データキャプチャ（CDC）APIを提供します。
-
 A background process runs either periodically or continually, reads any new commits since the last time it ran, and copies them to the online store and/or vector index.
-バックグラウンドプロセスは、定期的または継続的に実行され、最後に実行された時からの新しいコミットを読み取り、それらをオンラインストアおよび/またはベクトルインデックスにコピーします。
-
+**バックグラウンドプロセスは、定期的または継続的に実行され、最後に実行された時からの新しいコミットを読み取り、それらをオンラインストアおよび/またはベクトルインデックスにコピー**します。(prodのオフラインストア-devのオフラインストア間のデータコピーも、こういう感じでcommitを見てやると良かったりするのかな...!:thinking:)
 For feature groups storing time-series data, the online store only stores the latest feature data for each entity (the row with the most recent event_time key value for each primary key).
-時系列データを保存する特徴グループの場合、オンラインストアは各エンティティの最新の特徴データのみを保存します（各主キーに対して最も最近の `event_time` キー値を持つ行）。
+**時系列データを保存する特徴グループの場合、オンラインストアは各エンティティの最新の特徴データのみを保存**します（各主キーに対して最も最近の `event_time` キー値を持つ行）。(うんうん、以前の気づきの認識通り...!:thinking:)
 
+![]()
 _Figure 4-6. Two different feature store architectures. In (a), clients write to the offline_ _feature store, and updates are periodically synchronized to the online store and vector_ _index. In (b), clients can also write via a stream API to an event-streaming platform,_ _after which updates are streamed to the online store and vector index and then periodi‐_ _cally synchronized to the offline store._
 図4-6. 2つの異なる特徴ストアアーキテクチャ。(a)では、クライアントがオフライン特徴ストアに書き込み、更新が定期的にオンラインストアおよびベクトルインデックスに同期されます。(b)では、クライアントがイベントストリーミングプラットフォームへのストリームAPIを介して書き込むこともでき、その後、更新がオンラインストアおよびベクトルインデックスにストリーミングされ、定期的にオフラインストアに同期されます。
 
+<!-- ここまで読んだ! -->
+
 In Figure 4-6(b), there are two APIs: a batch API and a stream API.
 図4-6(b)では、バッチAPIとストリームAPIの2つのAPIがあります。
-
 Clients can use the batch API to write to only the offline store.
 クライアントは、バッチAPIを使用してオフラインストアにのみ書き込むことができます。
-
 If a feature group is online_enabled, clients write to the stream API.
 特徴グループが `online_enabled` の場合、クライアントはストリームAPIに書き込みます。
-
 Clients that write to the stream API can be either batch programs (Spark, Pandas, Polars) or stream processing programs (Flink, Spark Structured Streaming).
-ストリームAPIに書き込むクライアントは、バッチプログラム（Spark、Pandas、Polars）またはストリーム処理プログラム（Flink、Spark Structured Streaming）のいずれかです。
-
+**ストリームAPIに書き込むクライアントは、バッチプログラム（Spark、Pandas、Polars）またはストリーム処理プログラム（Flink、Spark Structured Streaming）のいずれか**です。
 Clients can use the stream API to write directly to the online store and vector index (here via an event-streaming platform), and updates are mate‐ rialized periodically to the offline store.
-クライアントは、ストリームAPIを使用してオンラインストアおよびベクトルインデックスに直接書き込むことができ（ここではイベントストリーミングプラットフォームを介して）、更新は定期的にオフラインストアにマテリアライズされます。
-
+クライアントは、ストリームAPIを使用してオンラインストアおよびベクトルインデックスに直接書き込むことができ（ここではイベントストリーミングプラットフォームを介して）、**更新は定期的にオフラインストアにマテリアライズ**されます。
+(なるほど、先にオンラインストアに書き込んで、オフラインストアには後で定期的にまとめて書き込む、という設計か...!:thinking:)
 Feature data is available at lower latency in the online store via the stream API—that is, the stream API enables fresher features.
 特徴データは、ストリームAPIを介してオンラインストアで低遅延で利用可能です。つまり、ストリームAPIは新鮮な特徴を可能にします。
-
 For feature groups storing time-series data, the online store can again store either the latest feature data for each entity (the row with the most recent event_time key value for each primary key) or all feature data for entities subject to a TTL.
 時系列データを保存する特徴グループの場合、オンラインストアは再び各エンティティの最新の特徴データ（各主キーに対して最も最近の `event_time` キー値を持つ行）またはTTLの対象となるエンティティのすべての特徴データを保存できます。
-
 That is, a TTL can be specified for each row or feature group so that feature data is removed when its TTL has expired.
 つまり、各行または特徴グループにTTLを指定でき、TTLが期限切れになると特徴データが削除されます。
 
-###### 1.5.1.0.5. Feature freshness
-###### 1.5.1.0.6. 特徴の新鮮さ
+###### 1.5.3.0.1. Feature freshness
+###### 1.5.3.0.2. 特徴の新鮮さ
 
 The freshness of feature data in feature groups is defined as the total time taken from when an event is first read by a feature pipeline to when the computed feature becomes available for use in an inference pipeline (see Figure 4-7).
 特徴グループ内の特徴データの新鮮さは、イベントが特徴パイプラインによって最初に読み取られてから、計算された特徴が推論パイプラインで使用可能になるまでの総時間として定義されます（図4-7を参照）。
@@ -636,8 +624,8 @@ Within a second of a user action, feature values are created and made available 
 If it took minutes, instead of seconds, TikTok’s recommender would not feel like it tracks your intent in real time—the AI would feel too laggy to be useful as a recommender.
 もしそれが秒ではなく分かかると、TikTokのレコメンダーはリアルタイムであなたの意図を追跡しているようには感じられません。AIはレコメンダーとして有用であるには遅すぎると感じられるでしょう。
 
-###### 1.5.1.0.7. Data validation
-###### 1.5.1.0.8. データ検証
+###### 1.5.3.0.3. Data validation
+###### 1.5.3.0.4. データ検証
 
 Some feature stores support _data validation when writing feature data to feature_ groups.
 一部の特徴ストアは、特徴データを特徴グループに書き込む際の _データ検証_ をサポートしています。
@@ -660,8 +648,8 @@ For example, it is often OK to have missing feature values in a feature group, a
 Now that we’ve covered what a feature group is, what it stores, and how you update one, let’s now look at how to design a data model for feature groups.
 特徴グループが何であるか、何を保存するか、どのように更新するかを説明したので、次に特徴グループのデータモデルを設計する方法を見てみましょう。
 
-###### 1.5.1.0.9. Data Models for Feature Groups
-###### 1.5.1.0.10. 特徴グループのデータモデル
+###### 1.5.3.0.5. Data Models for Feature Groups
+###### 1.5.3.0.6. 特徴グループのデータモデル
 
 If the feature store is to be the source of our data for AI, we need to understand how to model the data stored in its feature groups.
 特徴ストアがAIのデータソースとなる場合、その特徴グループに保存されているデータをどのようにモデル化するかを理解する必要があります。
@@ -7354,8 +7342,8 @@ The dimension tables are updated by ETL (extract, transform, load) or ELT (extra
 We will now see how we can use the credit card transaction events in Kafka and the dimension tables to build our realtime fraud detection ML system. 
 これから、Kafka内のクレジットカード取引イベントと次元テーブルを使用して、リアルタイムの不正検出MLシステムを構築する方法を見ていきます。
 
-###### 1.5.1.0.11. Labels are facts, and features are dimensions
-###### 1.5.1.0.12. ラベルは事実であり、特徴は次元です
+###### 1.5.3.0.7. Labels are facts, and features are dimensions
+###### 1.5.3.0.8. ラベルは事実であり、特徴は次元です
 
 In a feature store, the facts are the labels (or targets/observations) for our models, while the features are dimensions for the labels. 
 フィーチャーストアでは、事実はモデルのラベル（またはターゲット/観察）であり、特徴はラベルの次元です。
@@ -7381,8 +7369,8 @@ Irrespective of whether the feature values change slowly or quickly, if we want 
 If you don’t know when and how a feature changes its value over time, then training data created using that feature could have future data leakage or include stale feature values. 
 特徴が時間の経過とともにいつどのように値を変更するかがわからない場合、その特徴を使用して作成されたトレーニングデータは、将来のデータリークを引き起こしたり、古い特徴値を含む可能性があります。
 
-###### 1.5.1.0.13. Feature stores and SCD types
-###### 1.5.1.0.14. フィーチャーストアとSCDタイプ
+###### 1.5.3.0.9. Feature stores and SCD types
+###### 1.5.3.0.10. フィーチャーストアとSCDタイプ
 
 Dimension modeling in data warehousing introduced SCD types to store changing values of dimensions (features). 
 データウェアハウジングにおける次元モデリングは、次元（特徴）の変更される値を保存するためにSCDタイプを導入しました。
@@ -7600,8 +7588,8 @@ The feature groups will need to be stored in both online and offline stores, as 
 We will now design two different data models, first using the star schema and then using the snowflake schema.
 それでは、最初にスター・スキーマを使用し、次にスノーフレーク・スキーマを使用して、2つの異なるデータモデルを設計します。
 
-###### 1.5.1.0.15. Star schema data model
-###### 1.5.1.0.16. スター・スキーマデータモデル
+###### 1.5.3.0.11. Star schema data model
+###### 1.5.3.0.12. スター・スキーマデータモデル
 
 The star schema data model is supported by all major feature stores. 
 スター・スキーマデータモデルは、すべての主要なフィーチャーストアでサポートされています。
@@ -7636,8 +7624,8 @@ For example, the `cc_trans_aggs_fg` feature group is computed by a streaming fea
 Note that we follow an idiom of appending _fg to feature group names to differentiate them from the tables in our data mart.
 フィーチャーグループ名に_fgを追加して、データマート内のテーブルと区別するという慣用句に従っていることに注意してください。
 
-###### 1.5.1.0.17. Snowflake schema data model
-###### 1.5.1.0.18. スノーフレーク・スキーマデータモデル
+###### 1.5.3.0.13. Snowflake schema data model
+###### 1.5.3.0.14. スノーフレーク・スキーマデータモデル
 
 The snowflake schema is a data model that, like the star schema, consists of tables containing labels and features. 
 スノーフレーク・スキーマは、スター・スキーマと同様に、ラベルとフィーチャーを含むテーブルで構成されるデータモデルです。
@@ -7672,8 +7660,8 @@ In the star schema, however, our real-time ML system needs to additionally provi
 This makes the real-time ML system more complex—either the client provides the values for `bank_id` and `account_id` as parameters or you have to maintain an additional mapping table from `cc_num` to `bank_id` and `account_id`.
 これにより、リアルタイムMLシステムがより複雑になります。クライアントが`bank_id`と`account_id`の値をパラメータとして提供するか、`cc_num`から`bank_id`および`account_id`への追加のマッピングテーブルを維持する必要があります。
 
-###### 1.5.1.0.19. Feature Store Data Model for Inference
-###### 1.5.1.0.20. 推論のためのフィーチャーストアデータモデル
+###### 1.5.3.0.15. Feature Store Data Model for Inference
+###### 1.5.3.0.16. 推論のためのフィーチャーストアデータモデル
 
 Labels are obviously not available during inference—our model predicts them. 
 ラベルは推論中には明らかに利用できません—私たちのモデルがそれらを予測します。
@@ -7686,8 +7674,8 @@ They can all be passed as parameters in a prediction request (the foreign keys t
 
 
 
-###### 1.5.1.0.21. feature groups and the `amount features), resolved via mapping tables (for star sche‐` mas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs. Label feature groups do not store inference data for
-###### 1.5.1.0.22. 特徴グループと`amount features`は、マッピングテーブル（スタースキーマ用）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、及び``` days_to_card_expiry）またはMDTsで計算されます。ラベル特徴グループは、推論データを保存しません。
+###### 1.5.3.0.17. feature groups and the `amount features), resolved via mapping tables (for star sche‐` mas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs. Label feature groups do not store inference data for
+###### 1.5.3.0.18. 特徴グループと`amount features`は、マッピングテーブル（スタースキーマ用）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、及び``` days_to_card_expiry）またはMDTsで計算されます。ラベル特徴グループは、推論データを保存しません。
 
 ``` features. The label feature group is offline only, storing only historical data for fea‐ tures to create offline training data.
 ラベル特徴グループはオフライン専用で、オフラインのトレーニングデータを作成するための特徴の履歴データのみを保存します。
@@ -7890,8 +7878,8 @@ Starting from the label feature group (cc_trans_fg), it joins in features from t
 . For each row in the
 各行に対して、最終出力の中で、結合された行は、ラベル特徴グループの``` event_tsの値に最も近いが、それよりも小さいevent_tsを持っています。これはLEFT JOINであり、INNER JOINではありません。なぜなら、INNER JOINは、ラベルテーブルの外部キーが特徴テーブルの行と一致しない場合、トレーニングデータから行を除外するからです。
 
-###### 1.5.1.0.23. Online Inference with a Feature View
-###### 1.5.1.0.24. 特徴ビューを用いたオンライン推論
+###### 1.5.3.0.19. Online Inference with a Feature View
+###### 1.5.3.0.20. 特徴ビューを用いたオンライン推論
 In online inference, the feature view provides APIs for retrieving precomputed features, similarity search with vector indexes, and computing ODTs and MDTs. 
 オンライン推論では、特徴ビューが事前計算された特徴を取得するためのAPI、ベクトルインデックスを用いた類似検索、ODTsおよびMDTsの計算を提供します。 
 In the credit card fraud example ML system, there are two queries required to retrieve the features from our data model at request time:
@@ -7911,8 +7899,8 @@ The feature_vector could be of the list type, a NumPy array, or even a DataFrame
 特徴ベクトルは、モデルが期待する入力形式に応じて、リスト型、NumPy配列、またはDataFrameである可能性があります。
 
 -----
-###### 1.5.1.0.25. Summary and Exercises
-###### 1.5.1.0.26. まとめと演習
+###### 1.5.3.0.21. Summary and Exercises
+###### 1.5.3.0.22. まとめと演習
 Feature stores are the data layer for AI systems. 
 フィーチャーストアはAIシステムのデータ層です。 
 We dived deep into the anatomy of a feature store, and we looked at when it is appropriate for you to use one. 
