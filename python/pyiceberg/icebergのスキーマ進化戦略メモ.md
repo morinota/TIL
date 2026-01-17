@@ -7,7 +7,9 @@
 - [公式ドキュメント](https://iceberg.apache.org/docs/1.7.1/evolution/)
 - [How to Achieve Seamless Schema Evolution with Apache Iceberg](https://www.coditation.com/blog/achieve-seamless-schema-evolution-with-apache-iceberg)
 
-## ざっくりメモ
+
+
+## 公式ドキュメントを読んだメモ:
 
 - Icebergのスキーマ進化(Schema Evolution)は、以下の変更をサポートしてる:
   - カラムの追加(Add):
