@@ -900,65 +900,57 @@ Table 4-3 shows how feature stores implement SCD Types 0, 2, and 4 with the rela
 
 Type 0 SCD is a feature group that stores immutable feature data. 
 Type 0 SCDは不変の特徴データを保存するフィーチャーグループです。
-
 If you do not define the event_time column for your feature group, you have a feature group with Type 0 SCD. 
 フィーチャーグループにevent_time列を定義しない場合、Type 0 SCDを持つフィーチャーグループがあります。
-
 Type 2 SCD is an offline-only feature group (for batch ML systems), where we have the historical records for the time-series data. 
 Type 2 SCDはオフライン専用のフィーチャーグループ（バッチMLシステム用）で、時系列データの履歴レコードを持っています。
-
 In classical Type 2 SCD, it is assumed that rows need both an `end_date and an` `effective_date (as multiple` dimension values may be valid at any point in time). 
 古典的なType 2 SCDでは、行には`end_date`と`effective_date`の両方が必要であると仮定されます（複数の次元値が任意の時点で有効である可能性があるため）。
-
 However, in the feature store, we don’t need an end_date—only the effective_date, called the event_time, as only a single feature value is valid at any given point in time. 
 しかし、フィーチャーストアでは、end_dateは必要ありません—有効な特徴値は任意の時点で1つだけであるため、event_timeと呼ばれるeffective_dateのみが必要です。
-
 Type 4 SCD is implemented as a feature group, backed by tables in both the online and offline stores. 
 Type 4 SCDはフィーチャーグループとして実装され、オンラインストアとオフラインストアの両方のテーブルによってサポートされます。
-
 A table in the online store stores the latest feature data values, and a table with the same name and schema in the offline store stores all of the historical feature data values. 
-オンラインストアのテーブルは最新の特徴データ値を保存し、オフラインストアの同じ名前とスキーマのテーブルはすべての履歴的な特徴データ値を保存します。
-
-In traditional Type 4 SCD, the historical table does not store the latest values, but feature stores support a variant of Type 4 SCD where the offline store stores both the latest feature values and the historical values. 
+**オンラインストアのテーブルは最新の特徴データ値を保存し、オフラインストアの同じ名前とスキーマのテーブルはすべての履歴的な特徴データ値を保存**します。
+In traditional Type 4 SCD, the historical table does not store the latest values, but feature stores support a variant of Type 4 SCD where the offline store stores both the latest feature values and the historical values.
 従来のType 4 SCDでは、履歴テーブルは最新の値を保存しませんが、フィーチャーストアはオフラインストアが最新の特徴値と履歴値の両方を保存するType 4 SCDのバリアントをサポートしています。
-
 Feature stores hide the complexity of designing a data model that implements these three different SCD types by implementing the data models in their read/write APIs. 
 フィーチャーストアは、読み取り/書き込みAPIでデータモデルを実装することによって、これらの3つの異なるSCDタイプを実装するデータモデルの設計の複雑さを隠します。
-
 For example, in the AWS SageMaker feature store (an API-based feature store), you only need to specify the event_time column when defining a feature group:
 例えば、AWS SageMakerフィーチャーストア（APIベースのフィーチャーストア）では、フィーチャーグループを定義する際にevent_time列を指定するだけで済みます：
 
 
-
-feature_group.create(     description = "Some info about the feature group",     feature_group_name = "feature_group_name",     event_time_feature_name = event_time_feature_name,     enable_online_store = True,     ...
-tags = ["tag1","tag2"]   )
-feature_group.create(     description = "フィーチャーグループに関する情報",     feature_group_name = "feature_group_name",     event_time_feature_name = event_time_feature_name,     enable_online_store = True,     ...
-tags = ["tag1","tag2"]   )
+```python
+feature_group.create(
+    description = "Information about the feature group",
+    feature_group_name = "feature_group_name",
+    event_time_feature_name = event_time_feature_name,
+    enable_online_store = True,
+    ...
+    tags = ["tag1","tag2"]
+)
+```
 
 Writes to this feature group will create Type 4 SCD features, with the latest feature data in a key-value store (ElastiCache or DynamoDB), and historical feature data in a columnar store (Apache Iceberg).
-このフィーチャーグループへの書き込みは、最新のフィーチャーデータをキー-バリューストア（ElastiCacheまたはDynamoDB）に、過去のフィーチャーデータをカラムストア（Apache Iceberg）に格納するType 4 SCDフィーチャーを作成します。
+**このフィーチャーグループへの書き込みは、最新のフィーチャーデータをキー-バリューストア（ElastiCacheまたはDynamoDB）に、過去のフィーチャーデータをカラムストア（Apache Iceberg）に格納する**Type 4 SCDフィーチャーを作成します。
 
-###### Real-Time Credit Card Fraud Detection ML System
-###### リアルタイムクレジットカード不正検知MLシステム
+#### 1.6.2. Real-Time Credit Card Fraud Detection ML System  リアルタイムクレジットカード不正検知MLシステム
 
 Let’s now start designing our real-time ML system to predict whether a credit card transaction is fraudulent. 
 それでは、クレジットカード取引が不正であるかどうかを予測するためのリアルタイムMLシステムの設計を始めましょう。
-
 This operational ML system (online inference pipeline) has a service-level objective (SLO) of 50 ms latency or lower to make the decision on whether there is suspicion of fraud or not. 
-この運用MLシステム（オンライン推論パイプライン）は、不正の疑いがあるかどうかの決定を下すために、50ms以下のレイテンシーというサービスレベル目標（SLO）を持っています。
-
+この運用MLシステム（オンライン推論パイプライン）は、不正の疑いがあるかどうかの決定を下すために、**50ms以下のレイテンシーというサービスレベル目標（SLO）**を持っています。
 It receives a prediction request with the credit card transaction details, retrieves precomputed features from the feature store, computes ODTs, merges the precomputed and real-time features in a single feature vector, applies any MDTs, makes the prediction, logs the prediction and the features, and returns the prediction (fraud or not fraud) to the client.
 このシステムは、クレジットカード取引の詳細を含む予測リクエストを受け取り、フィーチャーストアから事前計算されたフィーチャーを取得し、ODTsを計算し、事前計算されたフィーチャーとリアルタイムフィーチャーを単一のフィーチャーベクターに統合し、任意のMDTsを適用し、予測を行い、予測とフィーチャーをログに記録し、予測（不正または不正でない）をクライアントに返します。
 
+<!-- ここまで読んだ! -->
+
 To build this system and meet our SLO, we will need to write a streaming feature pipeline to create features directly from the events from Kafka, as shown in Figure 4-8. 
 このシステムを構築し、SLOを満たすために、Kafkaからのイベントから直接フィーチャーを作成するストリーミングフィーチャーパイプラインを書く必要があります（図4-8を参照）。
-
 Stream processing enables us to compute aggregations on recent historical activity on credit cards, such as how often a card has been used in the last 5 minutes, 15 minutes, or hour. 
-ストリーム処理により、クレジットカードの最近の履歴活動に基づいて集計を計算することが可能になります。たとえば、過去5分、15分、または1時間にカードがどのくらい使用されたかを計算できます。
-
+ストリーム処理により、クレジットカードの最近の履歴活動に基づいて集計を計算することが可能になります。**たとえば、過去5分、15分、または1時間にカードがどのくらい使用されたかを計算**できます。
 These features are called _windowed aggregations, as they com‐_ pute an aggregation over events that happen in a window of time. 
-これらのフィーチャーは「ウィンドウ集計」と呼ばれ、特定の時間ウィンドウ内で発生するイベントに基づいて集計を計算します。
-
+**これらのフィーチャーは「ウィンドウ集計」と呼ばれ、特定の時間ウィンドウ内で発生するイベントに基づいて集計を計算します。**
 It would not be possible to compute these features within our SLO if we only used the `credit_card_transactions` table in our data mart, as it is only updated hourly. 
 データマート内の`credit_card_transactions`テーブルのみを使用した場合、これらのフィーチャーをSLO内で計算することは不可能です。なぜなら、このテーブルは1時間ごとにしか更新されないからです。
 
@@ -986,8 +978,8 @@ However, when we want to train models with these features, the training data wil
 So we need to identify the features and then design a data model for the feature groups.
 したがって、フィーチャーを特定し、その後フィーチャーグループのデータモデルを設計する必要があります。
 
-###### Data model for our real-time fraud detection ML system
-###### リアルタイム不正検知MLシステムのデータモデル
+###### 1.6.2.0.1. Data model for our real-time fraud detection ML system
+###### 1.6.2.0.2. リアルタイム不正検知MLシステムのデータモデル
 
 We are using a supervised ML model for predicting fraud, so we will need to have some labeled observations of fraud. 
 私たちは不正を予測するために教師ありMLモデルを使用しているため、不正のラベル付き観察がいくつか必要です。
@@ -1047,8 +1039,8 @@ The feature groups will need to be stored in both online and offline stores, as 
 We will now design two different data models, first using the star schema and then using the snowflake schema.
 それでは、最初にスター・スキーマを使用し、次にスノーフレーク・スキーマを使用して、2つの異なるデータモデルを設計します。
 
-###### 1.6.1.2.1. Star schema data model
-###### 1.6.1.2.2. スター・スキーマデータモデル
+###### 1.6.2.0.3. Star schema data model
+###### 1.6.2.0.4. スター・スキーマデータモデル
 
 The star schema data model is supported by all major feature stores. 
 スター・スキーマデータモデルは、すべての主要なフィーチャーストアでサポートされています。
@@ -1083,8 +1075,8 @@ For example, the `cc_trans_aggs_fg` feature group is computed by a streaming fea
 Note that we follow an idiom of appending _fg to feature group names to differentiate them from the tables in our data mart.
 フィーチャーグループ名に_fgを追加して、データマート内のテーブルと区別するという慣用句に従っていることに注意してください。
 
-###### 1.6.1.2.3. Snowflake schema data model
-###### 1.6.1.2.4. スノーフレーク・スキーマデータモデル
+###### 1.6.2.0.5. Snowflake schema data model
+###### 1.6.2.0.6. スノーフレーク・スキーマデータモデル
 
 The snowflake schema is a data model that, like the star schema, consists of tables containing labels and features. 
 スノーフレーク・スキーマは、スター・スキーマと同様に、ラベルとフィーチャーを含むテーブルで構成されるデータモデルです。
@@ -1119,8 +1111,8 @@ In the star schema, however, our real-time ML system needs to additionally provi
 This makes the real-time ML system more complex—either the client provides the values for `bank_id` and `account_id` as parameters or you have to maintain an additional mapping table from `cc_num` to `bank_id` and `account_id`.
 これにより、リアルタイムMLシステムがより複雑になります。クライアントが`bank_id`と`account_id`の値をパラメータとして提供するか、`cc_num`から`bank_id`および`account_id`への追加のマッピングテーブルを維持する必要があります。
 
-###### 1.6.1.2.5. Feature Store Data Model for Inference
-###### 1.6.1.2.6. 推論のためのフィーチャーストアデータモデル
+###### 1.6.2.0.7. Feature Store Data Model for Inference
+###### 1.6.2.0.8. 推論のためのフィーチャーストアデータモデル
 
 Labels are obviously not available during inference—our model predicts them. 
 ラベルは推論中には明らかに利用できません—私たちのモデルがそれらを予測します。
@@ -1133,8 +1125,8 @@ They can all be passed as parameters in a prediction request (the foreign keys t
 
 
 
-###### 1.6.1.2.7. feature groups and the `amount features), resolved via mapping tables (for star sche‐` mas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs. Label feature groups do not store inference data for
-###### 1.6.1.2.8. 特徴グループと`amount features`は、マッピングテーブル（スタースキーマ用）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、及び``` days_to_card_expiry）またはMDTsで計算されます。ラベル特徴グループは、推論データを保存しません。
+###### 1.6.2.0.9. feature groups and the `amount features), resolved via mapping tables (for star sche‐` mas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs. Label feature groups do not store inference data for
+###### 1.6.2.0.10. 特徴グループと`amount features`は、マッピングテーブル（スタースキーマ用）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、及び``` days_to_card_expiry）またはMDTsで計算されます。ラベル特徴グループは、推論データを保存しません。
 
 ``` features. The label feature group is offline only, storing only historical data for fea‐ tures to create offline training data.
 ラベル特徴グループはオフライン専用で、オフラインのトレーニングデータを作成するための特徴の履歴データのみを保存します。
@@ -1337,8 +1329,8 @@ Starting from the label feature group (cc_trans_fg), it joins in features from t
 . For each row in the
 各行に対して、最終出力の中で、結合された行は、ラベル特徴グループの``` event_tsの値に最も近いが、それよりも小さいevent_tsを持っています。これはLEFT JOINであり、INNER JOINではありません。なぜなら、INNER JOINは、ラベルテーブルの外部キーが特徴テーブルの行と一致しない場合、トレーニングデータから行を除外するからです。
 
-###### 1.6.1.2.9. Online Inference with a Feature View
-###### 1.6.1.2.10. 特徴ビューを用いたオンライン推論
+###### 1.6.2.0.11. Online Inference with a Feature View
+###### 1.6.2.0.12. 特徴ビューを用いたオンライン推論
 In online inference, the feature view provides APIs for retrieving precomputed features, similarity search with vector indexes, and computing ODTs and MDTs. 
 オンライン推論では、特徴ビューが事前計算された特徴を取得するためのAPI、ベクトルインデックスを用いた類似検索、ODTsおよびMDTsの計算を提供します。 
 In the credit card fraud example ML system, there are two queries required to retrieve the features from our data model at request time:
@@ -1357,8 +1349,8 @@ The feature_vector could be of the list type, a NumPy array, or even a DataFrame
 特徴ベクトルは、モデルが期待する入力形式に応じて、リスト型、NumPy配列、またはDataFrameである可能性があります。
 
 -----
-###### 1.6.1.2.11. Summary and Exercises
-###### 1.6.1.2.12. まとめと演習
+###### 1.6.2.0.13. Summary and Exercises
+###### 1.6.2.0.14. まとめと演習
 Feature stores are the data layer for AI systems. 
 フィーチャーストアはAIシステムのデータ層です。 
 We dived deep into the anatomy of a feature store, and we looked at when it is appropriate for you to use one. 
