@@ -1,8 +1,8 @@
 refs: https://aclanthology.org/2025.acl-industry.5.pdf
 
 
-# SimUSER: Simulating User Behavior with Large Language Models for Recommender System Evaluation  
-# SimUSER: 大規模言語モデルを用いたユーザ行動のシミュレーションによる推薦システム評価  
+SimUSER: Simulating User Behavior with Large Language Models for Recommender System Evaluation  
+SimUSER: 大規模言語モデルを用いたユーザ行動のシミュレーションによる推薦システム評価  
 
 Nicolas Bougie[1], Narimasa Watanabe[1]  
 ニコラス・ブージー[1], 渡辺成正[1]
@@ -12,7 +12,7 @@ Nicolas Bougie[1], Narimasa Watanabe[1]
 
 Woven by Toyota
 
-## Abstract 要約
+### 0.1. Abstract 要約
 
 Recommender systems play a central role in numerous real-life applications, yet evaluating their performance remains a significant challenge due to the gap between offline metrics and online behaviors. 
 レコメンダーシステムは多くの実生活のアプリケーションで中心的な役割を果たしていますが、**オフラインの指標とオンラインの行動とのギャップのために、そのパフォーマンスを評価することは依然として大きな課題**です。
@@ -31,7 +31,7 @@ Finally, we refine recommender system parameters based on offline A/B test resul
 
 <!-- ここまで読んだ! -->
 
-## 1 Introduction はじめに
+## 1. 1 Introduction はじめに
 
 Recommender systems (RS) have become an indispensable component of our day-to-day lives from e-commerce to social media by offering personalized user experience and improving satisfaction (Li et al., 2024). 
 レコメンダーシステム（RS）は、eコマースからソーシャルメディアに至るまで、パーソナライズされたユーザ体験を提供し、満足度を向上させることで、私たちの日常生活に欠かせない要素となっています（Li et al., 2024）。 
@@ -86,7 +86,7 @@ Following action selection, the user engages in self-reflection to synthesize me
 
 <!-- ここまで読んだ! -->
 
-## 2 Related Work 関連研究
+## 2. 2 Related Work 関連研究
 
 Conversational RS initially tackled the recommendation problem using bandit models, emphasizing the quick update of traditional systems through item selection and binary feedback from synthetic users (Christakopoulou et al., 2016). 
 **会話型推薦システム（Conversational RS）は、最初にバンディットモデルを使用して推薦問題に取り組み**、アイテム選択と合成ユーザからの二項フィードバックを通じて従来のシステムの迅速な更新を強調しました（Christakopoulou et al., 2016）。(合成ユーザって事はオフライン学習的なこと??:thinking:)
@@ -119,7 +119,7 @@ Finally, we introduce multi-round preference elicitation and causal action refin
 
 <!-- ここまで読んだ! -->
 
-## 3 Methodology 方法論
+## 3. 3 Methodology 方法論
 
 Simulated USERs provides a framework for systematically assessing recommender systems by engaging in interactions and providing feedback.
 Simulated USERsは、相互作用に参加しフィードバックを提供することによって、推薦システムを体系的に評価するためのフレームワークを提供します。(**Simulated USERs = SimUSER**...!:thinking:)
@@ -128,7 +128,7 @@ Phase 1 matches historical data with a set of personas to enable nuanced and rea
 Phase 2 utilizes the identified personas, historical data, and novel reasoning mechanisms to generate synthetic users with human-like behavior. 
 フェーズ2では、特定されたペルソナ、歴史的データ、および新しい推論メカニズムを利用して、人間のような行動を持つ合成ユーザを生成します。
 
-### Problem Formulation. 問題の定式化。
+### 3.1. Problem Formulation. 問題の定式化。
 
 Given a user $u \in U$ and an item $i \in I$, the aggregated rating of the item is denoted by the aggregated rating of the item is denoted by $R_{i} = \frac{1}{\sum_{u \in U} y_{ui}} \sum_{u \in U} y_{ui} r_{ui}$,
 ユーザ $u \in U$ とアイテム $i \in I$ が与えられた場合、アイテムの集約評価は $R_{i} = \frac{1}{\sum_{u \in U} y_{ui}} \sum_{u \in U} y_{ui} r_{ui}$ と示されます、
@@ -141,7 +141,7 @@ In this study, we seek to discover $y_{ui}$ and $r_{ui}$ for an unseen recommend
 
 <!-- ここまで読んだ! -->
 
-### **3.1 Persona Matching via Consistency Check** 一貫性チェックによるペルソナマッチング
+### 3.2. **3.1 Persona Matching via Consistency Check** 一貫性チェックによるペルソナマッチング
 
 This phase involves assessing the most plausible persona based on historical data. 
 このフェーズでは、歴史的データに基づいて最も妥当なペルソナを評価します。
@@ -153,7 +153,7 @@ Personality traits are defined by the Big Five personality facets: Openness, Con
 Given the difficulty of obtaining such granular features in real-world settings, our methodology seeks to systematically infer personas from the user’s interaction history. 
 **実世界の設定でそのような詳細な特徴を取得することの難しさを考慮し、私たちの方法論はユーザの相互作用履歴からペルソナを体系的に推測することを目指します。**
 
-#### **Persona Extraction. ペルソナ抽出。
+#### 3.2.1. **Persona Extraction. ペルソナ抽出。
 
 For a user $u$ with interactions $\{(i_0, r_{ui_0}), \ldots, (i_n, r_{ui_n})\}$, we query the LLM to produce a short summary $s_u$ of the user’s preferences. 
 ユーザ $u$ が相互作用 $\{(i_0, r_{ui_0}), \ldots, (i_n, r_{ui_n})\}$ を持つ場合、LLMにユーザの嗜好の短い要約 $s_u$ を生成するように問い合わせます。
@@ -170,7 +170,7 @@ For each user, a set of $m$ ($m = 5$) candidate personas is generated, denoted a
 
 <!-- ここまで読んだ! -->
 
-#### Self-Consistent Persona Evaluation. **自己一貫性ペルソナ評価。
+#### 3.2.2. Self-Consistent Persona Evaluation. **自己一貫性ペルソナ評価。
 
 We then assess the consistency of the candidate personas to $\mathcal{P}$ to identify the most plausible one. 
 次に、候補ペルソナの一貫性を $\mathcal{P}$ に評価し、**最も妥当なものを特定**します。
@@ -197,12 +197,12 @@ The candidate persona $p$ with the highest score $s$ is assigned to the user.
 
 <!-- ここまで読んだ! -->
 
-### **3.2 Engaging in Interactions with RS** レコメンダーシステムとの相互作用への参加
+### 3.3. **3.2 Engaging in Interactions with RS** レコメンダーシステムとの相互作用への参加
 
 In Phase 2, given a user $u$ and discovered persona $p$, we present a cognitive architecture built upon LLMs comprising four modules: persona, perception, memory, and action. 
 フェーズ2では、ユーザ $u$ と発見されたペルソナ $p$ が与えられた場合、私たちは**ペルソナ、知覚、記憶、行動の4つのモジュールからなるLLMに基づいた認知アーキテクチャ**を提示します。
 
-#### **3.2.1 Persona Module** **3.2.1 ペルソナモジュール**
+#### 3.3.1. **3.2.1 Persona Module** **3.2.1 ペルソナモジュール**
 
 To lay a reliable foundation for the generative agent’s subsequent interactions and evaluations, benchmark datasets are used for initialization of the persona module. 
 生成エージェントのその後の相互作用と評価のための信頼できる基盤を築くために、ベンチマークデータセットがペルソナモジュールの初期化に使用されます。
@@ -215,7 +215,7 @@ Habits account for user tendencies in engagement, conformity, and variety (Zhang
 
 <!-- ここまで読んだ! -->
 
-#### **3.2.2 Perception Module** **3.2.2 知覚モジュール**
+#### 3.3.2. **3.2.2 Perception Module** **3.2.2 知覚モジュール**
 
 A primary factor in decision-making is visual stimuli due to their significant influence on curiosity and emotion (Liu et al., 2024). 
 **意思決定における主要な要因は、好奇心や感情に対する重要な影響を持つ視覚刺激**です（Liu et al., 2024）。
@@ -230,14 +230,14 @@ The caption $i_{\text{caption}}$ of an item $i$ is generated by querying GPT-4 t
 
 <!-- ここまで読んだ! -->
 
-#### **3.2.3 Memory Module**  **3.2.3 記憶モジュール**
+#### 3.3.3. **3.2.3 Memory Module**  **3.2.3 記憶モジュール**
 
 It is critical for an agent to maintain a memory of the knowledge and experience it has of the world and others. 
 エージェントが世界や他者に関する知識と経験の記憶を維持することは重要です。
 SimUSER uses an episodic memory for interaction history and knowledge-graph memory to capture user-item relationships. 
 SimUSERは、相互作用履歴のためのエピソード記憶と、ユーザ-アイテム関係をキャプチャするための知識グラフ記憶を使用します。
 
-##### Episodic Memory. エピソード記憶。
+##### 3.3.3.1. Episodic Memory. エピソード記憶。
 
 **Episodic Memory** stores the interactions with the RS. The memory is initially populated with the user’s viewing and rating history. 
 エピソード記憶はRSとの相互作用を保存します。記憶は、ユーザの視聴および評価履歴で最初に構成されます。
@@ -252,7 +252,7 @@ For a query $q$, we retrieve top-$k_1$ documents using cosine similarity: $s(q, 
 
 <!-- ここまで読んだ! -->
 
-##### **Knowledge-Graph Memory  知識グラフ記憶**
+##### 3.3.3.2. **Knowledge-Graph Memory  知識グラフ記憶**
 
 User behaviors in RS are influenced by both internal factors (personality) and external factors (Zhao et al., 2014). 
 **RSにおけるユーザ行動は、内部要因（性格）と外部要因の両方に影響されます**（Zhao et al., 2014）。
@@ -273,7 +273,7 @@ SimUSERは、類似の関係と特性を持つ証拠を取得することによ�
     - 先入観・文脈: 「このメディアの記事は信頼できる」「この著者の記事は面白い」「過去に似たニュースが炎上してた」
     - 関係性ベース: 「この会社の記事 -> 以前読んだあの企業と関連」「この政策 -> あの政治家・政党と関係あり」
 
-##### **Memory Initialization** **記憶の初期化**
+##### 3.3.3.3. **Memory Initialization** **記憶の初期化**
 
 The KG memory is initially populated using real-world datasets. 
 KG記憶は、実世界のデータセットを使用して最初に構成されます。
@@ -299,7 +299,7 @@ $$
 
 <!-- ここまで読んだ! -->
 
-##### **Graph-Aware Dynamic Item Retrieval ** **グラフ認識型動的アイテム取得**
+##### 3.3.3.4. **Graph-Aware Dynamic Item Retrieval ** **グラフ認識型動的アイテム取得**
 
 For a user $u$, the retrieval function takes a query item $x$ as input and returns a set of similar items along with their metadata (e.g., ratings). 
 ユーザ $u$ に対して、取得関数はクエリアイテム $x$ を入力として受け取り、類似アイテムのセットとそのメタデータ（例：評価）を返します。
@@ -338,14 +338,14 @@ making retrieval sensitive to both past interactions of the user $u$ and communi
 
 <!-- ここまで読んだ! -->
 
-### **3.3 Brain Module** **3.3 ブレインモジュール**
+### 3.4. **3.3 Brain Module** **3.3 ブレインモジュール**
 
 We endow each agent with a decision-making module that derives subsequent actions. 
 各エージェントに、次のアクションを導出する意思決定モジュールを与えます。
 To replicate human-like sequential reasoning, we employ Chain-of-Thought prompting across five key steps. 
 人間のような逐次的推論を再現するために、**5つの重要なステップにわたってChain-of-Thoughtプロンプティングを採用**します。
 
-#### **Multi-round Preference Elicitation: ** **マルチラウンド好みの引き出し**
+#### 3.4.1. **Multi-round Preference Elicitation: ** **マルチラウンド好みの引き出し**
 
 Agents browse items page by page, deciding whether to [WATCH] or [SKIP] based on their preferences and history. 
 エージェントはページごとにアイテムを閲覧し、**嗜好と履歴に基づいて[WATCH]または[SKIP]を決定**します。
@@ -367,7 +367,7 @@ $$
 To improve decision-making, we expand retrieved documents each round ($k_1 \leftarrow k_1 + \Delta k$ and $k_2 \leftarrow k_2 + \Delta k$) until reaching a final decision $\delta[\text{final}]$. 
 意思決定を改善するために、各ラウンドで取得したドキュメントを拡張します（$k_1 \leftarrow k_1 + \Delta k$ および $k_2 \leftarrow k_2 + \Delta k$）最終決定 $\delta[\text{final}]$ に達するまで。
 
-#### **Item Evaluation** **アイテム評価**
+#### 3.4.2. **Item Evaluation** **アイテム評価**
 
 After selecting items of interest, agents express both explicit ratings (1-5) and subjective feelings about watched items, which update their memory and influence future cognition. 
 興味のあるアイテムを選択した後、エージェントは視聴したアイテムに対する明示的な評価（1-5）と主観的な感情の両方を表現し、これが彼らの記憶を更新し、将来の認知に影響を与えます。
@@ -378,7 +378,7 @@ They are formatted as plain text and provided as input to the LLM, which generat
 
 <!-- ここまで読んだ! -->
 
-#### Action Selection: アクション選択
+#### 3.4.3. Action Selection: アクション選択
 
 Based item evaluation and interaction history, agents decide whether to [EXIT] the system, navigate to [NEXT]/[PREVIOUS] pages, or [CLICK] on items for details. 
 アイテム評価とインタラクション履歴に基づいて、エージェントはシステムを[EXIT]するか、[NEXT]/[PREVIOUS]ページに移動するか、アイテムの詳細を[CLICK]するかを決定します。
@@ -389,7 +389,7 @@ Upon exiting, a satisfaction interview captures opinions about presented recomme
 
 <!-- ここまで読んだ! -->
 
-#### Causal Action Refinement 因果によるアクションの洗練
+#### 3.4.4. Causal Action Refinement 因果によるアクションの洗練
 
 To address subop-** timal decision-making (e.g., premature exits), we introduce a causal reasoning step where agents generate questions (Q = LLM (atent, H, p, Pcausal)) to validate tentative actions. 
 最適でない意思決定（例：早期退出）に対処するために、エージェントが仮のアクションを検証するための質問を生成する因果推論ステップを導入します（Q = LLM (atent, H, p, Pcausal)）。
@@ -398,7 +398,7 @@ For each counterfactual scenario (e.g., "What would happen if you exited _now?")
 
 <!-- ここまで読んだ! -->
 
-#### Post-interaction Reflection インタラクション後の反省
+#### 3.4.5. Post-interaction Reflection インタラクション後の反省
 
 Post-interaction reflection lets agents learn from interactions and improve future alignment with their persona. 
 インタラクション後の反省により、エージェントは相互作用から学び、将来のペルソナとの整合性を改善できます。
@@ -411,329 +411,176 @@ The post-interaction reflections are fed back into the episodic memory.
 
 <!-- ここまで読んだ! -->
 
-## 4 Experiments 実験
+## 4. 4 Experiments 実験
 
-**Settings. All agents are powered by the GPT-4o-** mini version of ChatGPT, except when specified differently, with the number of agents set to 1,000.  
-**設定。すべてのエージェントは、指定がない限り、ChatGPTのGPT-4o-ミニバージョンによって動作し、エージェントの数は1,000に設定されています。**
+**Settings.** 
+設定。
+All agents are powered by the GPT-4o-mini version of ChatGPT, except when specified differently, with the number of agents set to 1,000.  
+すべてのエージェントは、指定がない限り、**ChatGPTのGPT-4o-ミニバージョンによって動作**し、エージェントの数は1,000に設定されています。(あ、じゃあ結構安く試せるのかな...!:thinking:)
 
-**Baselines We compare SimUSER against RecA-**  
-**ベースライン。SimUSERをRecAと比較します。**  
+**Baselines ベースライン** 
+We compare SimUSER against RecAgent and Agent4Rec, which represent the closest comparable methods. When possible, we report the results of RecMind, an agent-based RS. Some experiments involve two versions of SimUSER: SimUSER(zero) and SimUSER(sim), where SimUSER(sim) agents first interact with the RS — grounding interactions and filling their memories, before answering the tasks.
+私たちは、最も近い比較可能な方法を表すRecAgentとAgent4Recに対してSimUSERを比較します。可能な場合、エージェントベースのRSであるRecMindの結果を報告します。いくつかの実験では、SimUSERの2つのバージョンが含まれます：SimUSER(zero)とSimUSER(sim)、ここでSimUSER(sim)エージェントは最初にRSと相互作用し、相互作用を基礎付けて記憶を埋めてからタスクに答えます。
 
-46  
------  
-**MovieLens** **AmazonBook** **Steam**  
-**MovieLens** **AmazonBook** **Steam**  
+<!-- ここまで読んだ! -->
 
-**Method(1:m)** **Accuracy** **Precision** **Recall** **F1 Score** **Accuracy** **Precision** **Recall** **F1 Score** **Accuracy** **Precision** **Recall** **F1 Score**  
-**方法(1:m)** **精度** **適合率** **再現率** **F1スコア** **精度** **適合率** **再現率** **F1スコア** **精度** **適合率** **再現率** **F1スコア**  
-
-RecAgent (1:1) 0.5807 0.6391 0.6035 0.6205 0.6035 0.6539 0.6636 0.6587 0.6267 0.6514 0.6490 0.6499  
-RecAgent (1:1) 0.5807 0.6391 0.6035 0.6205 0.6035 0.6539 0.6636 0.6587 0.6267 0.6514 0.6490 0.6499  
-
-RecAgent (1:3) 0.5077 0.7396 0.3987 0.5181 0.6144 0.6676 0.4001 0.5003 0.5873 0.6674 0.3488 0.4576  
-RecAgent (1:3) 0.5077 0.7396 0.3987 0.5181 0.6144 0.6676 0.4001 0.5003 0.5873 0.6674 0.3488 0.4576  
-
-RecAgent (1:9) 0.4800 0.7491 0.2168 0.3362 0.6222 0.6641 0.1652 0.2647 0.5995 0.6732 0.1744 0.2772  
-RecAgent (1:9) 0.4800 0.7491 0.2168 0.3362 0.6222 0.6641 0.1652 0.2647 0.5995 0.6732 0.1744 0.2772  
-
-Agent4Rec (1:1) 0.6912 0.7460 0.6914 0.6982 0.7190 0.7276 0.7335 0.7002 0.6892 0.7059 0.7031 0.6786  
-Agent4Rec (1:1) 0.6912 0.7460 0.6914 0.6982 0.7190 0.7276 0.7335 0.7002 0.6892 0.7059 0.7031 0.6786  
-
-Agent4Rec (1:3) 0.6675 0.7623 0.4210 0.5433 0.6707 0.6909 0.4423 0.5098 0.6505 0.7381 0.4446 0.5194  
-Agent4Rec (1:3) 0.6675 0.7623 0.4210 0.5433 0.6707 0.6909 0.4423 0.5098 0.6505 0.7381 0.4446 0.5194  
-
-Agent4Rec (1:9) 0.6175 0.7753 0.2139 0.3232 0.6617 0.6939 0.2369 0.3183 0.6021 0.7213 0.1901 0.2822  
-Agent4Rec (1:9) 0.6175 0.7753 0.2139 0.3232 0.6617 0.6939 0.2369 0.3183 0.6021 0.7213 0.1901 0.2822  
-
-SimUSER (1:1) **0.7912** 0.7976 **0.7576** **0.7771** **0.8221** **0.7969** **0.7841** **0.7904** **0.7905** 0.8033 **0.7848** **0.7939**  
-SimUSER (1:1) **0.7912** 0.7976 **0.7576** **0.7771** **0.8221** **0.7969** **0.7841** **0.7904** **0.7905** 0.8033 **0.7848** **0.7939**  
-
-SimUSER (1:3) 0.7737 0.8173 0.5223 **0.6373** 0.6629 0.7547 0.5657 **0.6467** 0.7425 **0.8048** 0.5376 **0.6446**  
-SimUSER (1:3) 0.7737 0.8173 0.5223 **0.6373** 0.6629 0.7547 0.5657 **0.6467** 0.7425 **0.8048** 0.5376 **0.6446**  
-
-SimUSER (1:9) 0.6791 **0.8382** 0.3534 **0.4972** 0.6497 0.7588 0.3229 **0.4530** 0.7119 0.7823 0.2675 **0.3987**  
-SimUSER (1:9) 0.6791 **0.8382** 0.3534 **0.4972** 0.6497 0.7588 0.3229 **0.4530** 0.7119 0.7823 0.2675 **0.3987**  
-
-Table 1: User preference alignment across MovieLens, AmazonBook, and Steam datasets.  
-**表1：MovieLens、AmazonBook、Steamデータセットにおけるユーザの嗜好の整合性。**  
-
-**Methods** **MovieLens** **AmazonBook** **Steam** **RMSE** **MAE** **RMSE** **MAE** **RMSE** **MAE**  
-**方法** **MovieLens** **AmazonBook** **Steam** **RMSE** **MAE** **RMSE** **MAE** **RMSE** **MAE**  
-
-MF 1.2142 0.9971 1.2928 0.9879 1.3148 1.0066  
-MF 1.2142 0.9971 1.2928 0.9879 1.3148 1.0066  
-
-AFM 1.1762 0.8723 1.3006 1.1018 1.2763 0.9724  
-AFM 1.1762 0.8723 1.3006 1.1018 1.2763 0.9724  
-
-RecAgent 1.1021 0.7632 1.2587 1.1191 1.0766 0.9598  
-RecAgent 1.1021 0.7632 1.2587 1.1191 1.0766 0.9598  
-
-RecMind-SI (few-shot) 1.0651 0.6731 1.2139 0.9434 0.9291 0.6981  
-RecMind-SI (few-shot) 1.0651 0.6731 1.2139 0.9434 0.9291 0.6981  
-
-Agent4Rec 0.7612 0.7143 0.8788 0.6712 0.7577 0.6880  
-Agent4Rec 0.7612 0.7143 0.8788 0.6712 0.7577 0.6880  
-
-SimUSER(sim ⋅ persona) **0.5020** **0.4460** **0.5676** **0.4210** **0.5866** **0.5323**  
-SimUSER(sim ⋅ persona) **0.5020** **0.4460** **0.5676** **0.4210** **0.5866** **0.5323**  
-
-SimUSER(zero ⋅ w/o persona) 0.6663 0.5501 0.6865 0.6329 0.6976 0.6544  
-SimUSER(zero ⋅ w/o persona) 0.6663 0.5501 0.6865 0.6329 0.6976 0.6544  
-
-SimUSER(zero ⋅ persona) 0.5813 0.5298 0.6542 0.5116 0.6798 0.6151  
-SimUSER(zero ⋅ persona) 0.5813 0.5298 0.6542 0.5116 0.6798 0.6151  
-
-SimUSER(sim ⋅ w/o persona) 0.5844 0.5410 0.6712 0.5441 0.6888 0.6401  
-SimUSER(sim ⋅ w/o persona) 0.5844 0.5410 0.6712 0.5441 0.6888 0.6401  
-
-Table 2: Rating prediction performance. Bold: best results; underlined: second-best. SimUSER’s improvements are statistically significant (p < 0.05).  
-**表2：評価予測性能。太字：最良の結果；下線：2番目に良い。SimUSERの改善は統計的に有意です（p < 0.05）。**  
-
-gent and Agent4Rec, which represent the closest comparable methods. When possible, we report the results of RecMind, an agent-based RS. Some experiments involve two versions of SimUSER: SimUSER(zero) and SimUSER(sim), where SimUSER(sim) agents first interact with the RS — grounding interactions and filling their memories, before answering the tasks.  
-**gentとAgent4Recは、最も近い比較可能な方法を表しています。可能な場合、エージェントベースのRSであるRecMindの結果を報告します。一部の実験では、SimUSERの2つのバージョン、SimUSER(zero)とSimUSER(sim)が関与しており、SimUSER(sim)エージェントは最初にRSと相互作用し、相互作用を基にして記憶を満たした後、タスクに回答します。**  
-
-**4.1** **Believably of Synthetic Users**  
-**4.1 合成ユーザの信頼性**  
+### 4.1. **4.1** **Believably of Synthetic Users** 合成ユーザの信頼性**  
 
 In order to appropriately respond to recommendations, synthetic users must possess a clear understanding of their own preferences.  
-推奨に適切に応答するためには、合成ユーザは自分の嗜好を明確に理解している必要があります。  
-
+推奨に適切に応答するためには、**合成ユーザは自分の嗜好を明確に理解している必要**があります。  
 Thereby, we query the agents to classify items based on whether their human counterparts have interacted with them or not.  
-したがって、エージェントに対して、人間の対応者がアイテムと相互作用したかどうかに基づいてアイテムを分類するように問い合わせます。  
-
+したがって、エージェントに対して、人間の対応者がアイテムと相互作用したかどうかに基づいてアイテムを分類するように問い合わせます。
 We randomly assigned 20 items to each of 1,000 agents, with varying ratios (1:m where _m ∈_ 1, 3, 9 ) of items users had interacted with { } to non-interacted items (yui = 0).  
-1,000人のエージェントそれぞれに20個のアイテムをランダムに割り当て、ユーザが相互作用したアイテムと非相互作用アイテムの比率（1:m、ここで _m ∈_ 1, 3, 9）を変えました。  
-
+各1,000エージェントに20のアイテムをランダムに割り当て、ユーザが相互作用したアイテムの比率（1:m、ここで _m ∈_ 1、3、9）を非相互作用アイテム（yui = 0）に設定します。
 We treat this as a binary classification task, taking values between 0 and 1.  
 これをバイナリ分類タスクとして扱い、0と1の間の値を取ります。  
-
 Table 1 shows SimUSER agents accurately identified items aligned with their tastes, significantly outperforming RecAgent and Agent4Rec across all distractor levels (paired t-tests, 95% confidence, p < 0.002).  
-表1は、SimUSERエージェントが自分の嗜好に合ったアイテムを正確に特定し、すべての気を散らすレベルでRecAgentとAgent4Recを大幅に上回ったことを示しています（対応のt検定、95%の信頼度、p < 0.002）。  
+表1は、SimUSERエージェントが自分の嗜好に合ったアイテムを正確に特定し、すべての気を散らすレベルでRecAgentとAgent4Recを大幅に上回ったことを示しています（対応のt検定、95%の信頼度、p < 0.002）。
 
-**4.2** **Rating Items**  
-**4.2 アイテムの評価**  
+<!-- ここまで読んだ! -->
+
+### 4.2. **4.2** **Rating Items** アイテムの評価**  
 
 A key task when interacting with a RS is rating items.  
 RSと相互作用する際の重要なタスクは、アイテムを評価することです。  
-
-We compare several LLM-based baselines,  
-いくつかのLLMベースのベースラインを比較します。  
-
-_P view_ _N_ like _P like_ _N_ exit _Ssat_  
-_P view_ _N_ like _P like_ _N_ exit _Ssat_  
-
-Random 0.301 3.12 0.252 2.85 2.66  
-ランダム 0.301 3.12 0.252 2.85 2.66  
-
-Pop 0.395 4.08 0.372 2.90 3.32  
-ポップ 0.395 4.08 0.372 2.90 3.32  
-
-MF 0.461 **5.91** 0.443 3.05 3.65  
-MF 0.461 **5.91** 0.443 3.05 3.65  
-
-MultVAE 0.514 5.38 0.455 3.18 3.78  
-MultVAE 0.514 5.38 0.455 3.18 3.78  
-
-LightGCN **0.557** 5.45 **0.448** **3.29** **3.92**  
-LightGCN **0.557** 5.45 **0.448** **3.29** **3.92**  
-
-Table 3: Evaluation of recommendation strategies on a recommendation task from the MovieLens dataset.  
-**表3：MovieLensデータセットからの推薦タスクにおける推薦戦略の評価。**  
-
-along with traditional recommendation baselines: MF (Koren et al., 2009) and AFM (Xiao et al., 2017).  
-従来の推薦ベースラインであるMF（Koren et al., 2009）およびAFM（Xiao et al., 2017）とともに。  
-
+We compare several LLM-based baselines,  along with traditional recommendation baselines: MF (Koren et al., 2009) and AFM (Xiao et al., 2017).  
+私たちは、いくつかのLLMベースのベースラインと、従来の推薦ベースライン：MF（Koren et al., 2009）およびAFM（Xiao et al., 2017）を比較します。
 Across all tasks (Table 2), SimUSER considerably outperforms other LLM-powered agents, mainly due to its KG memory that encapsulates priors about items and their relationships with user interactions.  
-すべてのタスク（表2）において、SimUSERは他のLLM駆動のエージェントを大幅に上回り、主にアイテムとユーザの相互作用との関係に関する事前情報をカプセル化したKGメモリによるものです。  
-
+すべてのタスク（表2）において、SimUSERは他のLLM駆動のエージェントを大幅に上回りました。主に、アイテムとユーザの相互作用との関係に関する事前情報をカプセル化するKGメモリのおかげです。
 Agent4Rec shows higher RMSE due to hallucinations with niche items not embedded in its LLM weights.  
 Agent4Recは、LLMの重みに埋め込まれていないニッチアイテムに関する幻覚のため、より高いRMSEを示します。  
-
 Notably, incorporating a few steps of simulation always decreases the MAE of the model (SimUSER(sim)).  
 特に、いくつかのシミュレーションステップを組み込むことで、常にモデルのMAEが減少します（SimUSER(sim)）。  
-
 This is because the grounded interactions augment the context during the multi-round assessment, demonstrating that agents can refine their own preferences for unrated items through interactions with the simulator.  
 これは、基盤となる相互作用がマルチラウンド評価中のコンテキストを増強し、エージェントがシミュレーターとの相互作用を通じて未評価のアイテムに対する自分の嗜好を洗練できることを示しています。  
 
-**4.3** **Recommender System Evaluation**  
-**4.3 レコメンダーシステムの評価**  
+### 4.3. **4.3** **Recommender System Evaluation** レコメンダーシステムの評価**  
 
 Understanding the efficacy of various recommendation algorithms is crucial for enhancing user satisfaction.  
-さまざまな推薦アルゴリズムの有効性を理解することは、ユーザの満足度を向上させるために重要です。  
-
+**さまざまな推薦アルゴリズムの有効性を理解することは、ユーザの満足度を向上させるために重要**です。  
 By simulating human proxies, we can better predict how users will engage with recommender systems, providing valuable interactive metrics.  
 人間の代理をシミュレートすることで、ユーザがレコメンダーシステムとどのように関与するかをよりよく予測でき、貴重なインタラクティブメトリクスを提供します。  
-
 We compare various recommendation strategies, including most popular (Pop), matrix factorization (MF) (Koren et al., 2009), LightGCN (He et al., 2020), and MultVAE (Liang et al., 2018), using the MovieLens dataset.  
 MovieLensデータセットを使用して、最も人気のある（Pop）、行列分解（MF）（Koren et al., 2009）、LightGCN（He et al., 2020）、およびMultVAE（Liang et al., 2018）を含むさまざまな推薦戦略を比較します。  
-
 Upon exiting, agents rated their satisfaction on a scale from 1 to 10.  
 エージェントは、退出時に1から10のスケールで満足度を評価しました。  
-
-Ratings above 3 were considered indicative of a _like. Metrics include average viewing ratio (P view),_  
-3を超える評価は「好む」を示すものと見なされました。メトリクスには、平均視聴比率（P view）が含まれます。  
-
-47  
------  
-**MovieLens** **AmazonBook** **Steam**  
-**MovieLens** **AmazonBook** **Steam**  
-
-RecAgent 3.01 ± 0.14 3.14 ± 0.13 2.96 ± 0.17  
-RecAgent 3.01 ± 0.14 3.14 ± 0.13 2.96 ± 0.17  
-
-Agent4Rec 3.04 ± 0.12 3.21 ± 0.14 3.09 ± 0.16  
-Agent4Rec 3.04 ± 0.12 3.21 ± 0.14 3.09 ± 0.16  
-
-SimUSER(w/o persona) 3.72 ± 0.18* 3.65 ± 0.21* 3.61 ± 0.24*  
-SimUSER(w/o persona) 3.72 ± 0.18* 3.65 ± 0.21* 3.61 ± 0.24*  
-
-SimUSER(persona) **4.41±0.16*** **3.99±0.18*** **4.02±0.23***  
-SimUSER(persona) **4.41±0.16*** **3.99±0.18*** **4.02±0.23***  
-
-Table 4: Human-likeness score evaluated by GPT-4o across recommendation domains. *Significant improvements over best baseline (p < 0.05).  
-**表4：推薦ドメイン全体でGPT-4oによって評価された人間らしさスコア。*最良のベースラインに対する有意な改善（p < 0.05）。**  
-
-average number of likes (N like), average ratio of likes (P like), average exit page number (N exit), and average user satisfaction score (Ssat).  
-平均「いいね」の数（N like）、平均「いいね」の比率（P like）、平均退出ページ数（N exit）、および平均ユーザ満足度スコア（Ssat）。  
-
+Ratings above 3 were considered indicative of a _like. Metrics include average viewing ratio (P view), average number of likes (N like), average ratio of likes (P like), average exit page number (N exit), and average user satisfaction score (Ssat).  
+3以上の評価は、好意を示すものと見なされました。メトリクスには、平均視聴率（P view）、平均いいね数（N like）、平均いいね率（P like）、平均退出ページ数（N exit）、および平均ユーザ満足度スコア（Ssat）が含まれます。
 Table 3 demonstrates that agents exhibit higher satisfaction with advanced recommendations versus random and Pop methods, consistent with real-life trends.  
-表3は、エージェントがランダムおよびポップ手法に対して高度な推薦に対してより高い満足度を示すことを示しており、実際の傾向と一致しています。  
+表3は、エージェントがランダムおよびポップ手法と比較して高度な推奨に対してより高い満足度を示すことを示しており、実際の傾向と一致しています。
 
-**4.4** **LLM Evaluator**  
-**4.4 LLM評価者**  
+![]()
+Table 3: Evaluation of recommendation strategies on arecommendation task from the MovieLens dataset.
+表3：MovieLensデータセットからの推薦タスクにおける推薦戦略の評価。
+
+<!-- ここまで読んだ! -->
+
+### 4.4. **4.4** **LLM Evaluator**  
+
+![]()
+Table 4: Human-likeness score evaluated by GPT-4o across recommendation domains. *Significant improvements over best baseline (p < 0.05).  
+**表4：推薦ドメイン全体でGPT-4oによって評価された人間らしさスコア。*最良のベースラインに対する有意な改善（p < 0.05）。** 
 
 As LLM Evaluators (Chiang and Lee, 2023) achieve comparable performance with human evaluators, we use GPT-4o to assess whether agent interactions appear human or AI-generated using a 5-point Likert scale, with higher scores indicating stronger resemblance to human-like responses.  
-LLM評価者（Chiang and Lee, 2023）が人間の評価者と同等のパフォーマンスを達成するため、GPT-4oを使用してエージェントの相互作用が人間のものかAI生成のものかを評価します。5段階のリッカートスケールを使用し、高いスコアは人間らしい応答に似ていることを示します。  
-
+LLM評価者（Chiang and Lee, 2023）が人間の評価者と同等のパフォーマンスを達成するため、**GPT-4oを使用してエージェントの相互作用が人間のものかAI生成のものかを評価**します。5段階のリッカートスケールを使用し、高いスコアは人間らしい応答に似ていることを示します。
 Results in Table 4 show our method significantly outperforms Agent4Rec.  
 表4の結果は、私たちの方法がAgent4Recを大幅に上回ることを示しています。  
-
 The memory and persona modules are among the main factors contributing to the faithfulness of our method.  
-メモリとペルソナモジュールは、私たちの方法の信頼性に寄与する主な要因の一つです。  
-
+**メモリとペルソナモジュールは、私たちの方法の信頼性に寄与する主な要因の一つ**です。  
 We also noticed that letting the agent estimate its tiredness, feeling and emotion greatly enhances the believability and consistency of its responses.  
 また、エージェントに疲労感、感情、感覚を推定させることで、その応答の信頼性と一貫性が大幅に向上することに気付きました。  
-
 On the other hand, Agent4Rec’s tendencies to [EXIT] the recommender system early and provide inconsistent ratings for similar items — ranging from low to high, contribute to suspicions of AI involvement.  
-一方、Agent4Recがレコメンダーシステムを早期に[EXIT]し、類似アイテムに対して一貫性のない評価を提供する傾向（低から高まで）は、AIの関与に対する疑念を助長します。  
+一方、Agent4Recがレコメンダーシステムを早期に[EXIT]し、類似アイテムに対して一貫性のない評価を提供する傾向（低から高まで）は、**AIの関与に対する疑念を助長**します。
 
-**4.5** **SimUSER for Offline A/B Testing**  
-**4.5 オフラインA/BテストのためのSimUSER**  
+<!-- ここまで読んだ! -->
+
+### 4.5. 4.5 SimUSER for Offline A/B Testing オフラインA/BテストのためのSimUSER
+
+![]()
+Figure 1: Spearman correlation between estimated and actual engagement metrics. Higher values indicate better alignment with ground truth metrics.  
+図1：推定されたエンゲージメントメトリクスと実際のエンゲージメントメトリクスとの間のスピアマン相関。高い値は真のメトリクスとのより良い整合性を示します。
 
 We have access a proprietary dataset of 55 online A/B tests, encompassing hundred of thousands of food item recommendations.  
-私たちは、数十万の食品アイテム推薦を含む55のオンラインA/Bテストの独自データセットにアクセスできます。  
-
+私たちは、**数十万の食品アイテム推薦を含む55のオンラインA/Bテストの独自データセット**にアクセスできます。
 Each test evaluates variations in recommendation strategies, with the average number of visited pages as the primary business metric.  
-各テストは、推薦戦略のバリエーションを評価し、訪問ページの平均数を主要なビジネスメトリクスとしています。  
-
+**各テストは、推薦戦略のバリエーションを評価し、訪問ページの平均数を主要なビジネスメトリクスとしています。**
 The results, shown in Fig 1, indicate that SimUSER achieves the highest correlation with ground truth values, significantly outperforming Agent4Rec and RecAgent.  
 図1に示す結果は、SimUSERが真の値との相関が最も高く、Agent4RecおよびRecAgentを大幅に上回ることを示しています。  
-
 Statistical tests were conducted to validate the significance of SimUSER’s performance over the baselines, with pvalues below 0.05 for all comparisons.  
 SimUSERのパフォーマンスがベースラインを上回ることの有意性を検証するために統計的テストが実施され、すべての比較でp値が0.05未満でした。  
+SimUSER effectively captures user engagement, offering a cost-effective alternative to online A/B testing.
+**SimUSERはユーザのエンゲージメントを効果的に捉え、オンラインA/Bテストのコスト効果の高い代替手段を提供**します。  
 
-SimUSER effectively captures user engagement, offering a cost-effective alternative to online A/B testing.  
-SimUSERはユーザのエンゲージメントを効果的に捉え、オンラインA/Bテストのコスト効果の高い代替手段を提供します。  
 
-Figure 1: Spearman correlation between estimated and actual engagement metrics. Higher values indicate better alignment with ground truth metrics.  
-**図1：推定されたエンゲージメントメトリクスと実際のエンゲージメントメトリクスとの間のスピアマン相関。高い値は真のメトリクスとのより良い整合性を示します。**  
 
-**Method** _P view_ _N_ like _P like_ _N_ exit _Ssat_  
-**方法** _P view_ _N_ like _P like_ _N_ exit _Ssat_  
+### 4.6. Optimizing RS with SimUSER SimUSERによるRSの最適化
 
-Baseline 0.521 5.44 0.458 3.21 3.82  
-ベースライン 0.521 5.44 0.458 3.21 3.82  
-
-Traditional (nDCG@10) 0.535 5.52 0.462 3.26 3.86  
-従来型（nDCG@10） 0.535 5.52 0.462 3.26 3.86  
-
-SimUSER **0.561** **5.80** **0.517** **3.87** **4.09**  
-SimUSER **0.561** **5.80** **0.517** **3.87** **4.09**  
-
+![]()
 Table 5: Performance comparison of parameter selection strategies on various engagement metrics.  
-**表5：さまざまなエンゲージメントメトリクスにおけるパラメータ選択戦略のパフォーマンス比較。**  
-
-**4.6** **Optimizing RS with SimUSER**  
-**4.6 SimUSERによるRSの最適化**  
+表5：さまざまなエンゲージメントメトリクスにおけるパラメータ選択戦略のパフォーマンス比較。
 
 We examine whether selecting RS parameters based on SimUSER evaluation or traditional offline metrics (nDCG@10 - TRAD), translates to improved business metrics in the real world.  
-SimUSER評価または従来のオフラインメトリクス（nDCG@10 - TRAD）に基づいてRSパラメータを選択することが、実世界のビジネスメトリクスの改善につながるかどうかを検討します。  
-
+SimUSER評価または従来のオフラインメトリクス（nDCG@10 - TRAD）に基づいてRSパラメータを選択することが、実世界のビジネスメトリクスの改善につながるかどうかを検討します。
+(オフライン学習の話か、あるいは複数のモデル選択肢の中から最適なものを選ぶ話かな...？:thinking:)
 We employ the same proprietary dataset.  
 同じ独自データセットを使用します。  
-
 The online performance of the baseline system and the two strategies are presented in Table 5.  
-ベースラインシステムと2つの戦略のオンラインパフォーマンスは表5に示されています。  
-
+ベースラインシステムと2つの戦略のオンラインパフォーマンスは表5に示されています。
 TRAD results in performance on par with the original baseline, demonstrating similar findings as in (Jannach and Jugovac, 2019) — offline metrics do not necessarily translate to business metrics.  
-TRADは元のベースラインと同等のパフォーマンスを示し、（Jannach and Jugovac, 2019）と同様の結果を示しています — オフラインメトリクスは必ずしもビジネスメトリクスに変換されるわけではありません。  
-
+TRADは元のベースラインと同等のパフォーマンスを示し、（Jannach and Jugovac, 2019）と同様の結果を示しています — オフラインメトリクスは必ずしもビジネスメトリクスに変換されるわけではありません。
 SimUSER achieves higher engagement and satisfaction, with improvements in average viewing ratio and satisfaction.  
 SimUSERは、平均視聴比率と満足度の改善により、より高いエンゲージメントと満足度を達成します。  
 
+<!-- ここまで読んだ! -->
 
-
-## 5 Conclusion 結論
+## 5. Conclusion 結論
 
 We present a simulation framework for leveraging LLMs as believable user proxies. 
 私たちは、LLMを信頼できるユーザプロキシとして活用するためのシミュレーションフレームワークを提案します。
-
 Our two-phase approach includes persona matching and interactive RS assessment, seeking to align user interactions more closely with real-world user behaviors. 
-私たちの二段階アプローチは、ペルソナマッチングとインタラクティブRS評価を含み、ユーザのインタラクションを実世界のユーザ行動により密接に一致させることを目指しています。
-
+私たちの二段階アプローチは、**ペルソナマッチングとインタラクティブRS評価**を含み、ユーザのインタラクションを実世界のユーザ行動により密接に一致させることを目指しています。
 We evaluate SimUSER across various recommendation domains, including movies, books, and video games. 
 私たちは、映画、書籍、ビデオゲームなど、さまざまな推薦ドメインにわたってSimUSERを評価します。
-
 Results demonstrate closer alignment of our agents with their human counterparts at both micro and macro levels. 
 結果は、私たちのエージェントがマイクロおよびマクロの両レベルで人間の対応者とより密接に一致していることを示しています。
-
 We further explore the influence of thumbnails on user engagement and the significance of reviews in user decision-making. 
-私たちはさらに、サムネイルがユーザのエンゲージメントに与える影響と、ユーザの意思決定におけるレビューの重要性を探ります。
-
+**私たちはさらに、サムネイルがユーザのエンゲージメントに与える影響と、ユーザの意思決定におけるレビューの重要性**を探ります。
 Experimental findings highlight the potential of LLM-driven simulations in bridging the gap between offline metrics and business metrics. 
-実験結果は、LLM駆動のシミュレーションがオフラインメトリクスとビジネスメトリクスのギャップを埋める可能性を強調しています。
-
+**実験結果は、LLM駆動のシミュレーションがオフラインメトリクスとビジネスメトリクスのギャップを埋める可能性を強調しています。**
 As a future direction, we seek to complement our current GPT-4o-based assessments of human-likeness with human evaluation, to further validate the realism of agent behavior. 
 将来的な方向性として、私たちは現在のGPT-4oに基づく人間らしさの評価を人間評価で補完し、エージェントの行動のリアリズムをさらに検証することを目指しています。
-
 In addition, we plan to investigate the extent to which LLM-specific biases may influence simulated decisions and explore mitigation strategies. 
 さらに、LLM特有のバイアスがシミュレーションされた意思決定にどの程度影響を与えるかを調査し、緩和戦略を探る計画です。
 
+<!-- ここまで読んだ! -->
 
-
-## 6 Ethics Statement 倫理声明
+## 6. 6 Ethics Statement 倫理声明
 
 This paper proposes an LLM-empowered agent framework designed to simulate user interactions with recommender systems in a realistic and costeffective manner. 
 本論文は、ユーザとレコメンダーシステムとのインタラクションを現実的かつコスト効果の高い方法でシミュレートするために設計されたLLM（大規模言語モデル）を活用したエージェントフレームワークを提案します。
-
 While our approach offers significant benefits in terms of scalability and efficiency, it also raises ethical considerations. 
 私たちのアプローチは、スケーラビリティと効率性の面で重要な利点を提供しますが、倫理的な考慮事項も提起します。
-
 The use of such agents could lead to unintended consequences, such as bias amplification, where the synthetic agents might inadvertently reinforce existing stereotypes or present skewed recommendations due to biases in the training data. 
-このようなエージェントの使用は、意図しない結果を招く可能性があり、例えばバイアスの増幅が挙げられます。合成エージェントは、トレーニングデータのバイアスにより、既存のステレオタイプを無意識に強化したり、歪んだ推薦を提示したりする可能性があります。
+**このようなエージェントの使用は、意図しない結果を招く可能性があり、例えばバイアスの増幅が挙げられます。合成エージェントは、トレーニングデータのバイアスにより、既存のステレオタイプを無意識に強化したり、歪んだ推薦を提示したりする可能性があります。**
+
+<!-- ここまで読んだ! -->
 
 Additionally, there is a risk of manipulation of user preferences, as the synthetic agents could be used to subtly influence user behavior by consistently promoting certain types of content without explicit user consent. 
-さらに、合成エージェントは、明示的なユーザの同意なしに特定のタイプのコンテンツを一貫して推進することで、ユーザの好みを巧妙に操作するリスクがあります。
-
-Furthermore, simulating interactions at a broad scale could result in the identification and exploitation of behavioral patterns that might encourage specific user behaviors, potentially leading to negative societal impacts. 
+さらに、**合成エージェントは、明示的なユーザの同意なしに特定のタイプのコンテンツを一貫して推進することで、ユーザの好みを巧妙に操作するリスク**があります。
+Furthermore, simulating interactions at a broad scale could result in the identification and exploitation of behavioral patterns that might encourage specific user behaviors, potentially leading to negative societal impacts.
 さらに、大規模でのインタラクションのシミュレーションは、特定のユーザ行動を促進する可能性のある行動パターンの特定と悪用を招く可能性があり、社会に対して否定的な影響を及ぼす可能性があります。
-
 Finally, there is a concern that developers or designers might use synthetic users and displace the role of humans and system stakeholders in the design process. 
 最後に、開発者やデザイナーが合成ユーザを使用し、設計プロセスにおける人間やシステムの利害関係者の役割を置き換える懸念があります。
-
 We suggest that synthetic uses should not be a substitute for real human input in studies and design processes. 
-私たちは、合成ユーザの使用が研究や設計プロセスにおける実際の人間の入力の代替となるべきではないと提案します。
-
+**私たちは、合成ユーザの使用が研究や設計プロセスにおける実際の人間の入力の代替となるべきではないと提案します。**
 Rather, these agents should be leveraged during the initial design phases to explore concepts, especially in situations where recruiting human participants is impractical or where testing certain theories with real people could be challenging or pose risks. 
-むしろ、これらのエージェントは、特に人間の参加者を募集することが非現実的である場合や、実際の人々で特定の理論をテストすることが困難またはリスクを伴う場合に、概念を探求するために初期設計段階で活用されるべきです。
-
+**むしろ、これらのエージェントは、特に人間の参加者を募集することが非現実的である場合や、実際の人々で特定の理論をテストすることが困難またはリスクを伴う場合に、概念を探求するために初期設計段階で活用されるべき**です。
 By adhering to these principles, we can ensure that the deployment of synthetic users in the wild is ethical and socially responsible. 
 これらの原則を遵守することで、合成ユーザの実社会での展開が倫理的かつ社会的に責任あるものであることを確保できます。
 
+<!-- ここまで読んだ! -->
 
-
-## References 参考文献
+## 7. References 参考文献
 
 Richard C Atkinson and Richard M Shiffrin. 1968. Human memory: A proposed system and its control processes. In Psychology of learning and motivation, volume 2, pages 89–195. Elsevier.  
 リチャード・C・アトキンソンとリチャード・M・シフリン。1968年。人間の記憶：提案されたシステムとその制御プロセス。『学習と動機付けの心理学』第2巻、ページ89–195。エルゼビア。
@@ -839,7 +686,7 @@ Tong Zhao, Julian McAuley, and Irwin King. 2014. Leveraging social connections t
 
 
 
-## A Experimental Setup 実験設定
+## 8. A Experimental Setup 実験設定
 
 **Experimental Settings. We separate the dataset** into training, validation, and test sets (80/10/10%), using a time-based split. 
 **実験設定。データセットを** トレーニング、バリデーション、テストセット（80/10/10%）に分割し、時間ベースの分割を使用します。
@@ -1123,7 +970,7 @@ Finally, the LLM is queried to adjust the action if the consistency score is low
 
 
 
-## B Pseudo-Code 擬似コード
+## 9. B Pseudo-Code 擬似コード
 
 We present the pseudo-code for SimUSER agent.
 SimUSERエージェントの擬似コードを示します。
@@ -1183,7 +1030,7 @@ Figure 4: Ratings vs feelings on IMDB dataset. Comparison between human (top lef
 
 
 
-## C Additional Experiments C 追加実験
+## 10. C Additional Experiments C 追加実験
 
 **C.1** **Rating Distribution 評価分布**  
 Beyond individual rating alignment, human proxies must replicate real-world behavior at the macro level.  
@@ -1622,7 +1469,7 @@ This suggests the perception module contributes to more visually and emotionally
 
 
 
-## D Discussion 議論
+## 11. D Discussion 議論
 
 We acknowledge that our method has certain limitations. 
 私たちは、私たちの方法にはいくつかの制限があることを認めます。
@@ -1648,7 +1495,7 @@ In some scenarios, many users exhibit limited engagement, particularly in cold-s
 This constraint reduces the effectiveness of our persona module,  
 この制約は、私たちのペルソナモジュールの効果を減少させます。
 
-59  
+13. 59  
 -----
 
 **Methods** **MovieLens** **AmazonBook** **Steam** **RMSE** **MAE** **RMSE** **MAE** **RMSE** **MAE**  
@@ -1706,7 +1553,7 @@ An important future direction is developing an image-based simulator to better c
 
 
 
-## E Cost Analysis コスト分析
+## 12. E Cost Analysis コスト分析
 
 We report the cost of running SimUSER per 1000 users. 
 私たちは、1000ユーザあたりのSimUSERの運用コストを報告します。
@@ -1725,7 +1572,7 @@ The cost difference mainly stems from the integration of images to enable visual
 
 
 
-## F Running Time Analysis 実行時間分析
+## 13. F Running Time Analysis 実行時間分析
 
 We compare the running time of SimUSER and Agent4Rec for 1,000 user interactions with GPT4o. 
 私たちは、1,000のユーザインタラクションに対するSimUSERとAgent4Recの実行時間をGPT4oで比較します。
