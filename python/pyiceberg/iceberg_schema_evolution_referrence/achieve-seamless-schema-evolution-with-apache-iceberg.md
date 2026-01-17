@@ -156,7 +156,7 @@ By comparing the time required to add a column to a massive 1TB table, we'll ill
     - Read After Change: 15%パフォーマンス低下
 
 Iceberg's performance advantage is undeniable. 
-Icebergのパフォーマンスの利点は否定できません。 
+Icebergのパフォーマンスの利点は否定できません。
 While Hive struggles with significant read performance degradation and lengthy table rewrites for column additions, Iceberg executes these operations nearly instantaneously without impacting read speeds. 
 Hiveは列の追加に対して著しい読み取りパフォーマンスの低下や長時間のテーブル書き換えに苦しむ一方で、Icebergは読み取り速度に影響を与えることなく、これらの操作をほぼ瞬時に実行します。
 
