@@ -341,76 +341,75 @@ making retrieval sensitive to both past interactions of the user $u$ and communi
 ### **3.3 Brain Module** **3.3 ブレインモジュール**
 
 We endow each agent with a decision-making module that derives subsequent actions. 
-**各エージェントに、次のアクションを導出する意思決定モジュールを与えます。**
-
+各エージェントに、次のアクションを導出する意思決定モジュールを与えます。
 To replicate human-like sequential reasoning, we employ Chain-of-Thought prompting across five key steps. 
-**人間のような逐次的推論を再現するために、5つの重要なステップにわたってChain-of-Thoughtプロンプティングを採用します。**
+人間のような逐次的推論を再現するために、**5つの重要なステップにわたってChain-of-Thoughtプロンプティングを採用**します。
 
-**Multi-round Preference Elicitation: Agents** 
-**マルチラウンド好みの引き出し：エージェントは**
+#### **Multi-round Preference Elicitation: ** **マルチラウンド好みの引き出し**
 
-browse items page by page, deciding whether to [WATCH] or [SKIP] based on their preferences and history. 
-**アイテムをページごとにブラウズし、好みと履歴に基づいて [WATCH] または [SKIP] するかを決定します。**
-
+Agents browse items page by page, deciding whether to [WATCH] or [SKIP] based on their preferences and history. 
+エージェントはページごとにアイテムを閲覧し、**嗜好と履歴に基づいて[WATCH]または[SKIP]を決定**します。
 To mitigate the inherent positive bias in LLMs, SimUSER incorporates a pickiness modifier (You are {pickiness} about {item_type}). 
-**LLMの内在的なポジティブバイアスを軽減するために、SimUSERは選り好み修飾子（あなたは {item_type} に対して {pickiness} です）を組み込みます。**
-
+LLMの内在的なポジティブバイアスを軽減するために、SimUSERは選り好み修飾子（あなたは {item_type} に対して {pickiness} です）を組み込みます。
 When available, we enrich item descriptions with thumbnail captions for multimodal reasoning. 
-**利用可能な場合、マルチモーダル推論のためにアイテムの説明をサムネイルキャプションで豊かにします。**
-
+利用可能な場合、マルチモーダル推論のためにアイテムの説明をサムネイルキャプションで豊かにします。
 A multi-round strategy first forms an initial decision $\delta[0]$ based on persona $p$, pickiness $\rho$, and retrieved evidences $E_{k1}$ and $G_{k2}$ from episodic and KG memory. 
-**マルチラウンド戦略は、最初にペルソナ $p$、選り好み $\rho$、およびエピソード記憶とKG記憶から取得した証拠 $E_{k1}$ と $G_{k2}$ に基づいて初期決定 $\delta[0]$ を形成します。**
-
+マルチラウンド戦略は、**最初にペルソナ $p$、選り好み $\rho$、およびエピソード記憶とKG記憶から取得した証拠 $E_{k1}$ と $G_{k2}$ に基づいて初期決定 $\delta[0]$ を形成**します。
 Then, it identifies contradictions between its choice and persona. 
-**次に、それは自らの選択とペルソナとの間の矛盾を特定します。**
-
+次に、それは自らの選択とペルソナとの間の矛盾を特定します。
 If conflicts arise or supporting evidence is insufficient, the agent refines its decision: 
-**もし矛盾が生じたり、支持する証拠が不十分な場合、エージェントはその決定を洗練させます：**
+もし矛盾が生じたり、支持する証拠が不十分な場合、エージェントはその決定を洗練させます：
 
 $$
 \delta[t] = \text{LLM}(P_{\text{watch}}, \delta[t-1], p, E_{k1}, G_{k2})
 $$
-**$$
-\delta[t] = \text{LLM}(P_{\text{watch}}, \delta[t-1], p, E_{k1}, G_{k2})
-$$**
 
 To improve decision-making, we expand retrieved documents each round ($k_1 \leftarrow k_1 + \Delta k$ and $k_2 \leftarrow k_2 + \Delta k$) until reaching a final decision $\delta[\text{final}]$. 
-**意思決定を改善するために、各ラウンドで取得したドキュメントを拡張します（$k_1 \leftarrow k_1 + \Delta k$ および $k_2 \leftarrow k_2 + \Delta k$）最終決定 $\delta[\text{final}]$ に達するまで。**
+意思決定を改善するために、各ラウンドで取得したドキュメントを拡張します（$k_1 \leftarrow k_1 + \Delta k$ および $k_2 \leftarrow k_2 + \Delta k$）最終決定 $\delta[\text{final}]$ に達するまで。
 
-**Item Evaluation After selecting items of inter-** 
-**アイテム評価 興味のあるアイテムを選択した後、**
+#### **Item Evaluation** **アイテム評価**
 
-est, agents express both explicit ratings (1-5) and subjective feelings about watched items, which update their memory and influence future cognition. 
-**エージェントは、明示的な評価（1-5）と視聴したアイテムに対する主観的な感情の両方を表現し、これが彼らの記憶を更新し、将来の認知に影響を与えます。**
+After selecting items of interest, agents express both explicit ratings (1-5) and subjective feelings about watched items, which update their memory and influence future cognition. 
+興味のあるアイテムを選択した後、エージェントは視聴したアイテムに対する明示的な評価（1-5）と主観的な感情の両方を表現し、これが彼らの記憶を更新し、将来の認知に影響を与えます。
+Unlike existing approaches (Zhang et al., 2023) that neglect rating rationales, Instead, SimUSER leverages the paths of retrieved evidences from the KG memory, $u - E_1 \rightarrow l - E_2 \rightarrow ... - E_1 \rightarrow i$.
+評価の根拠を無視する既存のアプローチ（Zhang et al., 2023）とは異なり、SimUSERはKG記憶から取得した証拠のパス、$u - E_1 \rightarrow l - E_2 \rightarrow ... - E_1 \rightarrow i$ を活用します。
+They are formatted as plain text and provided as input to the LLM, which generates ratings while explaining how persona, evidences and paths compare to the shortlisted items and influence their rating.
+それらはプレーンテキストとしてフォーマットされ、LLMへの入力として提供され、ペルソナ、証拠、およびパスがどのように候補アイテムと比較され、評価に影響を与えるかを説明しながら評価を生成します。
 
-Unlike existing approaches (Zhang et al., 2023) that neglect rating rationales, Instead, SimUSER leverages the paths of retrieved evidences from the KG memory, 
-**評価の根拠を無視する既存のアプローチ（Zhang et al., 2023）とは異なり、SimUSERはKG記憶から取得した証拠のパスを活用します。**
+<!-- ここまで読んだ! -->
 
+#### Action Selection: アクション選択
 
-
-. . ._ −E→l _i, They are_ formatted as plain text and provided as input to the LLM, which generates ratings while explaining how persona, evidences and paths compare to the shortlisted items and influence their rating.
-. . ._ −E→l _i、彼らはプレーンテキストとしてフォーマットされ、LLMへの入力として提供され、LLMは評価を生成し、ペルソナ、証拠、経路がショートリストされたアイテムとどのように比較され、評価にどのように影響するかを説明します。
-
-**Action Selection: Based item evaluation and in-** teraction history, agents decide whether to [EXIT] the system, navigate to [NEXT]/[PREVIOUS] pages, or [CLICK] on items for details. 
-**アクション選択：アイテム評価とインタラクション履歴に基づいて、エージェントはシステムを[EXIT]するか、[NEXT]/[PREVIOUS]ページに移動するか、アイテムの詳細を[CLICK]するかを決定します。** 
+Based item evaluation and interaction history, agents decide whether to [EXIT] the system, navigate to [NEXT]/[PREVIOUS] pages, or [CLICK] on items for details. 
+アイテム評価とインタラクション履歴に基づいて、エージェントはシステムを[EXIT]するか、[NEXT]/[PREVIOUS]ページに移動するか、アイテムの詳細を[CLICK]するかを決定します。
 This decision involves estimating its satisfaction with previous recommendations, fatigue level, and emotional state. 
 この決定には、以前の推奨に対する満足度、疲労レベル、および感情状態を推定することが含まれます。 
 Upon exiting, a satisfaction interview captures opinions about presented recommendations.
 退出時に、満足度インタビューが提示された推奨に関する意見を収集します。
 
-**Causal Action Refinement: To address subop-** timal decision-making (e.g., premature exits), we introduce a causal reasoning step where agents generate questions (Q = LLM (atent, H, p, Pcausal)) to validate tentative actions. 
-**因果アクションの洗練：最適でない意思決定（例：早期退出）に対処するために、エージェントが仮のアクションを検証するための質問を生成する因果推論ステップを導入します（Q = LLM (atent, H, p, Pcausal)）。** 
+<!-- ここまで読んだ! -->
+
+#### Causal Action Refinement 因果によるアクションの洗練
+
+To address subop-** timal decision-making (e.g., premature exits), we introduce a causal reasoning step where agents generate questions (Q = LLM (atent, H, p, Pcausal)) to validate tentative actions. 
+最適でない意思決定（例：早期退出）に対処するために、エージェントが仮のアクションを検証するための質問を生成する因果推論ステップを導入します（Q = LLM (atent, H, p, Pcausal)）。
 For each counterfactual scenario (e.g., "What would happen if you exited _now?"), the agent estimates outcomes and adjusts_ its final action based on cause-effect consistency.
 各反事実的シナリオ（例：「今退出したらどうなるか？」）について、エージェントは結果を推定し、因果関係の一貫性に基づいて最終アクションを調整します。
 
-**Post-interaction Reflection: Post-interaction** reflection lets agents learn from interactions and improve future alignment with their persona. 
-**ポストインタラクションの反省：ポストインタラクションの反省により、エージェントはインタラクションから学び、将来のペルソナとの整合性を向上させることができます。** 
+<!-- ここまで読んだ! -->
+
+#### Post-interaction Reflection インタラクション後の反省
+
+Post-interaction reflection lets agents learn from interactions and improve future alignment with their persona. 
+インタラクション後の反省により、エージェントは相互作用から学び、将来のペルソナとの整合性を改善できます。
 After collecting interaction data, the agent first determines what to reflect on, then extracts insights and cites the particular records that served as evidence for the insights. 
 インタラクションデータを収集した後、エージェントはまず何を反省するかを決定し、次に洞察を抽出し、洞察の証拠として機能した特定の記録を引用します。 
 The post-interaction reflections are fed back into the episodic memory.
 ポストインタラクションの反省はエピソード記憶にフィードバックされます。
 
+(SimUserのエージェント、結構ヘビーな意思決定ステップだなぁ...まあユーザを頑張って模倣しようとするとこうならざるを得ないのかな:thinking:)
 
+<!-- ここまで読んだ! -->
 
 ## 4 Experiments 実験
 
