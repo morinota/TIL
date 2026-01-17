@@ -59,9 +59,31 @@ Let's delve into how Iceberg outperforms other data lake formats in terms of sch
 Icebergがスキーマ進化の柔軟性において他のデータレイクフォーマットを上回る方法を掘り下げてみましょう。 
 
 ![]()
+- メモ: テーブル形式の比較表の内容
+  - Apache Iceberg
+    - Add Column: できる
+    - Drop Column: できる
+    - Rename Column: できる
+    - Change Column Type: できる(限定的)
+    - Reorder Columns: できる
+    - Schema Evolution at Write(書き込み時のスキーマ進化): できる
+  - Apache Hudi
+    - Add Column: できる
+    - Drop Column: できる
+    - Rename Column: できない
+    - Change Column Type: できない
+    - Reorder Columns: できない
+    - Schema Evolution at Write(書き込み時のスキーマ進化): できる
+  - Delta Lake:
+    - Add Column: できる
+    - Drop Column: できる
+    - Rename Column: できる
+    - Change Column Type: できる
+    - Reorder Columns: できない
+    - Schema Evolution at Write(書き込み時のスキーマ進化):　できる
 
 Iceberg stands out as the premier platform for schema evolution, offering the most comprehensive and flexible capabilities in the market. 
-Icebergはスキーマ進化のための主要なプラットフォームとして際立っており、市場で最も包括的で柔軟な機能を提供しています。
+**Icebergはスキーマ進化のための主要なプラットフォームとして際立っており**、市場で最も包括的で柔軟な機能を提供しています。
 
 <!-- ここまで読んだ! -->
 
@@ -124,6 +146,14 @@ By comparing the time required to add a column to a massive 1TB table, we'll ill
 **1TBの大規模なテーブルに列を追加するのに必要な時間を比較**することで、従来のHiveテーブルに対する大幅な速度の利点を示します。
 
 ![]()
+
+- メモ: ベンチマーク結果の内容
+  - Apache Iceberg:
+    - Add Column (1TB table): 0秒
+    - Read After Change: 影響なし
+  - Apache Hive:
+    - Add Column (1TB table): 4.5時間
+    - Read After Change: 15%パフォーマンス低下
 
 Iceberg's performance advantage is undeniable. 
 Icebergのパフォーマンスの利点は否定できません。 
