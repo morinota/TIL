@@ -1146,211 +1146,237 @@ For example, the `cc_trans_aggs_fg` feature group is computed by a streaming fea
 Note that we follow an idiom of appending _fg to feature group names to differentiate them from the tables in our data mart.
 **フィーチャーグループ名に_fgを追加して、データマート内のテーブルと区別するという慣用句に従っていること**に注意してください。
 
-###### 1.6.2.2.1. Snowflake schema data model
-###### 1.6.2.2.2. スノーフレーク・スキーマデータモデル
+<!-- ここまで読んだ! -->
+
+##### 1.6.2.3. Snowflake schema data model スノーフレーク・スキーマデータモデル
 
 The snowflake schema is a data model that, like the star schema, consists of tables containing labels and features. 
-スノーフレーク・スキーマは、スター・スキーマと同様に、ラベルとフィーチャーを含むテーブルで構成されるデータモデルです。
-
+**スノーフレーク・スキーマは、スター・スキーマと同様に、ラベルとフィーチャーを含むテーブルで構成されるデータモデル**です。
 In contrast to the star schema, however, in the snowflake schema the feature data is normalized, making the snowflake schema suitable as a data model for both online and offline tables. 
-ただし、スター・スキーマとは異なり、スノーフレーク・スキーマではフィーチャーデータが正規化されているため、オンラインおよびオフラインテーブルのデータモデルとして適しています。
-
+**ただし、スター・スキーマとは異なり、スノーフレーク・スキーマではフィーチャーデータが正規化されているため、オンラインおよびオフラインテーブルのデータモデルとして適しています。**
 Each feature is split until it is normalized (see Figure 4-10). 
 各フィーチャーは正規化されるまで分割されます（図4-10を参照）。
-
 That is, there is no redundancy in the feature tables—no duplicated features.
 つまり、フィーチャーテーブルには冗長性がなく、重複したフィーチャーはありません。
 
-_Figure 4-10. Snowflake schema data model for our feature store for credit card fraud prediction._
-_図4-10. クレジットカード不正予測のためのフィーチャーストアのスノーフレーク・スキーマデータモデル。_
+![]()
+Figure 4-10. Snowflake schema data model for our feature store for credit card fraud prediction.
+図4-10. クレジットカード不正予測のためのフィーチャーストアのスノーフレーク・スキーマデータモデル。
+
+- メモ: 図4-10の内容
+  - label feature groups (ラベルフィーチャーグループ)
+    - `cc_trans_fg`
+      - t_id (PK) (クレジットカード取引ID)
+      - cc_num (クレジットカード番号)
+        - `cc_trans_aggs_fg` への外部キー
+      - merchant_id (マーチャントID)
+        - `merchant_fg` への外部キー
+      - ammount (取引金額)
+      - ip_address (IPアドレス)
+      - haversine_distance (ハバーサイン距離)
+      - time_since_last_transaction (前回の取引からの時間)
+      - days_to_card_expiry (カードの有効期限までの日数)
+      - card_present (カードの有無)
+      - is_fraud (不正かどうか)
+      - event_time (イベント時間)
+  - feature groups (通常のフィーチャーグループ)
+    - `cc_trans_aggs_fg` (クレジットカードの取引集計フィーチャーグループ)
+      - cc_num (PK) (クレジットカード番号)
+      - account_id (アカウントID)
+        - `account_fg` への外部キー (ここがスター・スキーマと異なる点...!スタースキーマの場合はラベルフィーチャーグループに直接外部キーがあった!:thinking:)
+      - bank_id (銀行ID) 
+        - `bank_fg` への外部キー (ここも上に同じ!:thinking:)
+      - {num}/{sum}_trans_last_10_mins (過去10分間の取引数/合計)
+      - {num}/{sum}_trans_last_hour (過去1時間の取引数/合計)
+      - {num}/{sum}_trans_last_day (過去1日の取引数/合計)
+      - {num}/{sum}_trans_last_week (過去1週間の取引数/合計)
+      - prev_ts_transaction (前回の取引のタイムスタンプ)
+      - prev_ip_transaction (前回の取引のIPアドレス)
+      - prev_card_present (前回の取引のカードの有無)
+      - event_time (イベント時間)
+    - `merchant_fg` (業者フィーチャーグループ)
+      - merchant_id (PK) (業者ID)
+      - country (国)
+      - category (カテゴリ)
+      - chargeback_rate_prev_month (前月のチャージバック率)
+      - chargeback_rate_prev_week (前週のチャージバック率)
+      - last_modified (最終更新日)
+    - `account_fg` (アカウントフィーチャーグループ)
+      - account_id (PK) (アカウントID)
+      - zipcode (郵便番号)
+      - cc_expiry_date (クレジットカード有効期限)
+      - card_type (カードの種類)
+      - status (ステータス)
+      - last_modified (最終更新日)
+    - `bank_fg` (銀行フィーチャーグループ)
+      - bank_id (PK) (銀行ID)
+      - country (国)
+      - credit_rating (信用格付け)
+      - days_since_bank_cr_changed (銀行の信用格付けが変更されてからの日数)
+      - last_modified (最終更新日)
 
 In the snowflake schema, you can see that the label feature group now only has two foreign keys, compared to four foreign keys in the star schema data model. 
-スノーフレーク・スキーマでは、ラベルフィーチャーグループが現在、スター・スキーマデータモデルの4つの外部キーに対して、わずか2つの外部キーしか持っていないことがわかります。
-
+**スノーフレーク・スキーマでは、ラベルフィーチャーグループが現在、スター・スキーマデータモデルの4つの外部キーに対して、わずか2つの外部キーしか持っていない**ことがわかります。
 As we will see in the next section, the advantage of the snowflake schema here over the star schema is clearest when building a real-time ML system. 
-次のセクションで見るように、リアルタイムMLシステムを構築する際に、スノーフレーク・スキーマの利点がスター・スキーマに対して最も明確になります。
-
+次のセクションで見るように、**リアルタイムMLシステムを構築する際に、スノーフレーク・スキーマの利点がスター・スキーマに対して最も明確になります。**
 In a real-time ML system, the foreign keys in the label feature groups need to be provided as part of prediction requests by clients. 
-リアルタイムMLシステムでは、ラベルフィーチャーグループの外部キーは、クライアントによって予測リクエストの一部として提供する必要があります。
-
+**リアルタイムMLシステムでは、ラベルフィーチャーグループの外部キーは、クライアントによって予測リクエストの一部として提供する必要**があります。
 With a snowflake schema, clients only need to provide the `cc_num` and `merchant_id` as request parameters to retrieve all of the features—features from the nested tables are retrieved with a subquery. 
 スノーフレーク・スキーマを使用すると、クライアントはすべてのフィーチャーを取得するために`cc_num`と`merchant_id`のみをリクエストパラメータとして提供すればよく、ネストされたテーブルからのフィーチャーはサブクエリで取得されます。
-
 In the star schema, however, our real-time ML system needs to additionally provide the `bank_id` and `account_id` as request parameters. 
 しかし、スター・スキーマでは、リアルタイムMLシステムは追加で`bank_id`と`account_id`をリクエストパラメータとして提供する必要があります。
-
 This makes the real-time ML system more complex—either the client provides the values for `bank_id` and `account_id` as parameters or you have to maintain an additional mapping table from `cc_num` to `bank_id` and `account_id`.
-これにより、リアルタイムMLシステムがより複雑になります。クライアントが`bank_id`と`account_id`の値をパラメータとして提供するか、`cc_num`から`bank_id`および`account_id`への追加のマッピングテーブルを維持する必要があります。
+これにより、**リアルタイムMLシステムがより複雑になります。クライアントが`bank_id`と`account_id`の値をパラメータとして提供するか、`cc_num`から`bank_id`および`account_id`への追加のマッピングテーブルを維持する必要があります。**
 
-###### 1.6.2.2.3. Feature Store Data Model for Inference
-###### 1.6.2.2.4. 推論のためのフィーチャーストアデータモデル
+<!-- ここまで読んだ! -->
+
+### 1.7. Feature Store Data Model for Inference 推論のためのフィーチャーストアデータモデル
 
 Labels are obviously not available during inference—our model predicts them. 
 ラベルは推論中には明らかに利用できません—私たちのモデルがそれらを予測します。
-
 Similarly, the index columns, the event time, and features in our label feature group (`cc_trans_fg`) are not available as precomputed features at online inference time. 
 同様に、インデックス列、イベント時間、およびラベルフィーチャーグループ（`cc_trans_fg`）内のフィーチャーは、オンライン推論時に事前計算されたフィーチャーとしては利用できません。
+They can all be passed as parameters in a prediction request (the foreign keys to the feature groups and the amount features), resolved via mapping tables (for star schemas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs.
+それらはすべて、予測リクエストのパラメータとして渡されます（フィーチャーグループへの外部キーと金額フィーチャー）。また、マッピングテーブル（スター・スキーマの場合）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、および``` days_to_card_expiry）またはMDTsで計算されます。
+Label feature groups do not store inference data for features. The label feature group is offline only, storing only historical data for fea‐ tures to create offline training data.
+ラベルフィーチャーグループは、フィーチャーの推論データを保存しません。**ラベルフィーチャーグループはオフライン専用であり、オフライントレーニングデータを作成するためのフィーチャーの履歴データのみを保存**します。
 
-They can all be passed as parameters in a prediction request (the foreign keys to the
-これらはすべて、予測リクエストのパラメータとして渡すことができます（外部キーとして）。
+<!-- ここまで読んだ! -->
 
-
-
-###### 1.6.2.2.5. feature groups and the `amount features), resolved via mapping tables (for star sche‐` mas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs. Label feature groups do not store inference data for
-###### 1.6.2.2.6. 特徴グループと`amount features`は、マッピングテーブル（スタースキーマ用）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、及び``` days_to_card_expiry）またはMDTsで計算されます。ラベル特徴グループは、推論データを保存しません。
-
-``` features. The label feature group is offline only, storing only historical data for fea‐ tures to create offline training data.
-ラベル特徴グループはオフライン専用で、オフラインのトレーニングデータを作成するための特徴の履歴データのみを保存します。
-
-###### Online Inference
-###### オンライン推論
+#### 1.7.1. Online Inference オンライン推論
 
 For online inference, a prediction request includes as parameters entity IDs (foreign keys), any passed feature values (for features in the label feature group), and any parameters needed to compute on-demand features (see Figure 4-11). 
-オンライン推論では、予測リクエストには、エンティティID（外部キー）、ラベル特徴グループの特徴に対して渡された特徴値、およびオンデマンド特徴を計算するために必要なパラメータが含まれます（図4-11を参照）。
-
+オンライン推論では、**予測リクエストには、エンティティID（外部キー）、ラベル特徴グループの特徴に対して渡された特徴値、およびオンデマンド特徴を計算するために必要なパラメータが含まれます**（図4-11を参照）。
 The online inference pipeline uses the foreign keys to retrieve all the precomputed features from child online feature groups. 
-オンライン推論パイプラインは、外部キーを使用して子オンライン特徴グループからすべての事前計算された特徴を取得します。
-
+オンライン推論パイプラインは、**外部キーを使用して子オンライン特徴グループからすべての事前計算された特徴を取得**します。
 Feature stores provide either language-level APIs (such as Python) or a REST API to retrieve the precomputed features.
 特徴ストアは、事前計算された特徴を取得するために、言語レベルのAPI（Pythonなど）またはREST APIを提供します。
 
-_Figure 4-11. During online inference, the rows in the label feature group are not avail‐_ _able as precomputed values. Instead, the parameters in a prediction request should_ _include the foreign keys (cc_num and merchant_id) and the passed features (amount,_ ``` ip_address, and card_present). The other features from the label feature group are
-_Figure 4-11. オンライン推論中、ラベル特徴グループの行は事前計算された値として利用できません。代わりに、予測リクエストのパラメータには、外部キー（cc_numおよびmerchant_id）と渡された特徴（amount、``` ip_address、及びcard_present）を含める必要があります。ラベル特徴グループの他の特徴は
+![]()
+Figure 4-11. During online inference, the rows in the label feature group are not avail‐ able as precomputed values. Instead, the parameters in a prediction request should include the foreign keys (cc_num and merchant_id) and the passed features (amount, ip_address, and card_present). The other features from the label feature group are computed with ODTs (haversine_distance, time_since_last_trans, days_to_card_expiry).
+図4-11. オンライン推論中、ラベルフィーチャーグループの行は事前計算された値として利用できません。代わりに、予測リクエストのパラメータには、外部キー（cc_numおよびmerchant_id）と渡された特徴量（amount、ip_address、およびcard_present）を含める必要があります。**ラベルフィーチャーグループからの他の特徴量は、ODTs（haversine_distance、time_since_last_trans、days_to_card_expiry）で計算**されます。
 
-``` _computed with ODTs (haversine_distance, time_since_last_trans,_ ``` days_to_card_expiry).
-``` ODTs（haversine_distance、time_since_last_trans、``` days_to_card_expiry）で計算されます。
+- メモ: 図4-11の内容
+  - リクエストから渡されるパラメータ
+    - feature group達の外部キー (これを使って、事前計算された特徴量達を取得する)
+      - cc_num (クレジットカード番号)
+      - merchant_id (マーチャントID)
+    - 直接渡される特徴量たち
+      - amount (取引金額)
+      - ip_address (IPアドレス)
+      - card_present (カードの有無)
+  - 渡されたパラメータを使って計算される特徴量たち (ODTs)
+    - haversine_distance (ハバーサイン距離)
+    - time_since_last_transaction (前回の取引からの時間)
+    - days_to_card_expiry (カードの有効期限までの日数)
 
-###### Batch Inference
-###### バッチ推論
+<!-- ここまで読んだ! -->
+
+#### 1.7.2. Batch Inference バッチ推論
 
 Batch inference has data modeling challenges that are similar to those you’ll encounter with online inference. 
 バッチ推論には、オンライン推論で直面するのと同様のデータモデリングの課題があります。
-
 Imagine our real-time credit card fraud prediction problem as a batch ML system that predicts whether each of yesterday’s credit card transactions were fraudulent or not. 
 私たちのリアルタイムのクレジットカード詐欺予測問題を、昨日の各クレジットカード取引が詐欺であったかどうかを予測するバッチMLシステムとして考えてみてください。
-
 In this case, the labels are not available, of course. 
 この場合、ラベルはもちろん利用できません。
-
 We could replace the streaming feature pipeline that updates `cc_trans_fg` with a batch feature pipeline. 
 `cc_trans_fg`を更新するストリーミング特徴パイプラインをバッチ特徴パイプラインに置き換えることができます。
-
-Alternatively, we could use the `credit_card_transac` ``` tions table in our data mart and reimplement the three ODTs as MDTs (in the train‐
-``` ングおよびバッチ推論パイプラインで）。
+Alternatively, we could use the `credit_card_transac` tions table in our data mart and reimplement the three ODTs as MDTs (in the training and batch inference pipelines).
+あるいは、データマート内の`credit_card_transactions`テーブルを使用し、3つのODTsをMDTsとして再実装することもできます（トレーニングおよびバッチ推論パイプラインで）。
 
 Feature stores often support batch inference data APIs, such as:
 特徴ストアは、次のようなバッチ推論データAPIをサポートすることがよくあります。
 
-- Read all feature data that has arrived in a given time frame.
-- 特定の時間枠内に到着したすべての特徴データを読み取ります。
-
-- Read all the latest feature data for a batch of entities (such as all active users).
-- エンティティのバッチ（すべてのアクティブユーザーなど）に対する最新の特徴データをすべて読み取ります。
+- ケース(1) Read all feature data that has arrived in a given time frame.
+  - 特定の時間枠内に到着したすべての特徴データを読み取ります。
+- ケース(2) Read all the latest feature data for a batch of entities (such as all active users).
+  - エンティティのバッチ（すべてのアクティブユーザーなど）に対する最新の特徴データをすべて読み取ります。
 
 An alternative API is to allow batch inference clients to provide a Spine DataFrame containing the foreign keys and timestamps for features. 
 別のAPIは、バッチ推論クライアントが特徴の外部キーとタイムスタンプを含むSpine DataFrameを提供できるようにすることです。
-
 The feature store takes the Spine DataFrame and joins columns containing the feature values from the feature groups (using the foreign keys and timestamps to retrieve the correct feature values).
-特徴ストアはSpine DataFrameを受け取り、特徴グループからの特徴値を含む列を結合します（外部キーとタイムスタンプを使用して正しい特徴値を取得します）。
-
+特徴ストアはSpine DataFrameを受け取り、特徴グループからの特徴値を含む列を結合します（外部キーとタイムスタンプを使用して正しい特徴値を取得します）。(うん、Sagemaker Feature Storeの取得APIもこれっぽい感じ...!:thinking:)
 The Spine DataFrame approach does not work well for case (1) but works well for case (2). 
 Spine DataFrameアプローチはケース（1）にはうまく機能しませんが、ケース（2）にはうまく機能します。
-
 Spine DataFrames also only work with star schema data models. 
 Spine DataFrameはスタースキーマデータモデルでのみ機能します。
-
 You have to do the work of adding all foreign keys to the Spine DataFrame, which is easy if we want to read the latest feature values for all users, and we pass a Spine DataFrame containing all user IDs. 
-すべての外部キーをSpine DataFrameに追加する作業を行う必要があります。これは、すべてのユーザーの最新の特徴値を読み取る場合には簡単で、すべてのユーザーIDを含むSpine DataFrameを渡します。
-
+すべての外部キーをSpine DataFrameに追加する作業を行う必要があります。これは、すべてのユーザの最新の特徴値を読み取る場合には簡単で、すべてのユーザーIDを含むSpine DataFrameを渡します。
 However, reading all feature data since yesterday requires a more complex query over feature groups, and here, dedicated batch inference APIs to support such queries are helpful.
 しかし、昨日以降のすべての特徴データを読み取るには、特徴グループに対してより複雑なクエリが必要であり、ここでそのようなクエリをサポートする専用のバッチ推論APIが役立ちます。
 
-###### Reading Feature Data with a Feature View
-###### 特徴ビューを使用した特徴データの読み取り
+<!-- ここまで読んだ! -->
+
+### 1.8. Reading Feature Data with a Feature View　特徴ビューを使用した特徴データの読み取り
 
 After you have designed a data model for your feature store, you need to be able to query it to read training and inference data. 
 特徴ストアのデータモデルを設計した後、トレーニングデータと推論データを読み取るためにクエリを実行できる必要があります。
-
 Feature stores do not provide full SQL query support for reading feature data. 
 特徴ストアは、特徴データを読み取るための完全なSQLクエリサポートを提供しません。
-
 Instead, they provide language-level APIs (Python, Java, etc.) and/or a REST API for retrieving training data, batch inference data, and online inference data. 
 代わりに、トレーニングデータ、バッチ推論データ、およびオンライン推論データを取得するための言語レベルのAPI（Python、Javaなど）および/またはREST APIを提供します。
-
 But, reading precomputed feature data is not the only task for a feature store. 
-しかし、事前計算された特徴データを読み取ることは、特徴ストアの唯一のタスクではありません。
-
+**しかし、事前計算された特徴データを読み取ることは、特徴ストアの唯一のタスクではありません。**
 The feature store should also apply any MDTs and ODTs before returning feature data to clients.
 特徴ストアは、クライアントに特徴データを返す前に、すべてのMDTsおよびODTsを適用する必要があります。
 
 Feature stores provide an abstraction that hides the complexity of retrieving/comput‐ ing features for training and inference for a specific model (or group of related mod‐ els) called a feature view.  
-特徴ストアは、特定のモデル（または関連するモデルのグループ）に対するトレーニングと推論のための特徴を取得/計算する複雑さを隠す抽象化を提供します。これを特徴ビューと呼びます。
+**特徴量ストアは、特定のモデル（または関連するモデルのグループ）に対するトレーニングと推論のための特徴を取得/計算する複雑さを隠す抽象化を提供します。これをfeature viewと呼びます。** (あ、MDTとかを吸収したものがFeature Viewなのか...:thinking:)
 
 The feature view is a selection of features and, optionally, labels to be used by one or more models for training and inference. 
-特徴ビューは、1つまたは複数のモデルによるトレーニングと推論に使用される特徴と、オプションでラベルの選択です。
-
+特徴ビューは、1つまたは複数のモデルによるトレーニングと推論に使用される特徴量たちと、オプションでラベルも含まれます。
 The features in a feature view may come from one or more feature groups.
 特徴ビュー内の特徴は、1つまたは複数の特徴グループから来る場合があります。
-
 When you have defined a feature view, you can typically use it to:
 特徴ビューを定義したら、通常は次のように使用できます。
 
 - Retrieve point-in-time correct training data
-- 時点に正しいトレーニングデータを取得します。
-
+  - 時点に正しいトレーニングデータを取得します。
 - Retrieve point-in-time correct batch inference data
-- 時点に正しいバッチ推論データを取得します。
-
+  - 時点に正しいバッチ推論データを取得します。
 - Retrieve precomputed features using foreign keys (entity IDs)
-- 外部キー（エンティティID）を使用して事前計算された特徴を取得します。
-
+  - 外部キー（エンティティID）を使用して事前計算された特徴を取得します。
 - Apply MDTs to features when reading feature data for training and inference
-- トレーニングと推論のために特徴データを読み取る際にMDTsを特徴に適用します。
-
+  - トレーニングと推論のために特徴データを読み取る際にMDTsを特徴に適用します。
 - Apply ODTs in online inference pipelines
-- オンライン推論パイプラインでODTsを適用します。
+  - オンライン推論パイプラインでODTsを適用します。
 
 The feature view prevents skew between training and inference by ensuring that the same ordered sequence of features is returned when reading training and inference data, and that the same MDTs are applied to the training and inference data read from the feature store. 
-特徴ビューは、トレーニングデータと推論データを読み取る際に同じ順序の特徴が返されることを保証し、特徴ストアから読み取ったトレーニングデータと推論データに同じMDTsが適用されることを保証することで、トレーニングと推論の間の偏りを防ぎます。
-
+特徴量ビューは、トレーニングデータと推論データを読み取る際に同じ順序の特徴が返されることを保証し、特徴ストアから読み取ったトレーニングデータと推論データに同じMDTsが適用されることを保証することで、トレーニングと推論の間の偏りを防ぎます。
 Feature views also apply ODTs in online inference pipelines and ensure they are consistent with the feature pipeline.
 特徴ビューは、オンライン推論パイプラインでもODTsを適用し、特徴パイプラインと一貫性があることを保証します。
 
 For training and batch inference data, feature stores support reading data as either DataFrames or files. 
 トレーニングおよびバッチ推論データの場合、特徴ストアはデータをDataFrameまたはファイルとして読み取ることをサポートします。
-
 For small data volumes, Pandas DataFrames are popular, but when data volumes exceed a few GBs, some feature stores support reading to Polars and/or Spark DataFrames. 
 小さなデータボリュームの場合、Pandas DataFramesが人気ですが、データボリュームが数GBを超えると、一部の特徴ストアはPolarsおよび/またはSpark DataFramesへの読み取りをサポートします。
-
 Spark DataFrames are, however, not that widely used in training pipelines, and when they are, they typically call `df.to_pandas() to trans‐` form the Spark DataFrame into a Pandas DataFrame. 
 ただし、Spark DataFramesはトレーニングパイプラインで広く使用されているわけではなく、使用される場合は通常、`df.to_pandas()`を呼び出してSpark DataFrameをPandas DataFrameに変換します。
-
 For large amounts of data (that don’t fit in a Polars or Pandas DataFrame), feature stores support creating training data as files in an external filesystem or object store, in file formats such as Parquet, CSV, and TFRecord (TensorFlow’s row-oriented file format that is also supported by PyTorch).
-大量のデータ（PolarsまたはPandas DataFrameに収まらないデータ）については、特徴ストアは外部ファイルシステムまたはオブジェクトストアにファイルとしてトレーニングデータを作成することをサポートし、Parquet、CSV、TFRecord（TensorFlowの行指向ファイル形式で、PyTorchでもサポートされています）などのファイル形式を使用します。
+**大量のデータ（PolarsまたはPandas DataFrameに収まらないデータ）については、特徴ストアは外部ファイルシステムまたはオブジェクトストアにファイルとしてトレーニングデータを作成することをサポート**し、Parquet、CSV、TFRecord（TensorFlowの行指向ファイル形式で、PyTorchでもサポートされています）などのファイル形式を使用します。
+
+<!-- ここまで読んだ! -->
 
 Different feature stores use different names for feature views, including _Feature‐_ _Lookup (Databricks) and FeatureService (Feast, Tecton). 
-異なる特徴ストアは、特徴ビューに異なる名前を使用しており、_Feature‐_ _Lookup（Databricks）やFeatureService（Feast、Tecton）などがあります。
-
+異なる特徴ストアは、特徴ビューに異なる名前を使用しており、Feature Lookup（Databricks）やFeatureService（Feast、Tecton）などがあります。
 I prefer the term feature view due to its close relationship to views from relational databases—a feature view is a selection of columns from different feature groups, and it is metadata-only (feature views do not store data). 
-私は、特徴ビューという用語を好みます。これは、リレーショナルデータベースのビューとの密接な関係があるためです。特徴ビューは異なる特徴グループからの列の選択であり、メタデータのみです（特徴ビューはデータを保存しません）。
-
+**私は、Feature Viewという用語を好みます。リレーショナルデータベースのビューと密接な関係があるためです—特徴ビューは、異なる特徴グループからの列の選択であり、メタデータのみです（特徴ビューはデータを保存しません）。**
 A feature view is also not a service when it is used in train‐ ing or batch inference pipelines, and it is not just a selection of features (as implied by a FeatureLookup). 
 特徴ビューは、トレーニングまたはバッチ推論パイプラインで使用されるときにサービスではなく、単なる特徴の選択ではありません（FeatureLookupが示唆するように）。
-
 In online inference, a feature view can be either deployed as a net‐ work service or embedded inside a model deployment. 
-オンライン推論では、特徴ビューはネットワークサービスとしてデプロイされるか、モデルデプロイメント内に埋め込まれることができます。
-
+**オンライン推論では、特徴量ビューはネットワークサービスとしてデプロイされるか、モデルデプロイメント内に埋め込まれることができます。** (特徴量ビューはオンラインストアに保存するとかでは無いんだな、メモリキャッシュしておく的な感じだろうか...??:thinking:)
 For these reasons, we use the term feature view.  
 これらの理由から、私たちは特徴ビューという用語を使用します。
 
 Feature views can be extended to support client-side transformations (MDTs and ODTs). 
-特徴ビューは、クライアント側の変換（MDTsおよびODTs）をサポートするように拡張できます。
-
+**特徴ビューは、クライアント側の変換（MDTsおよびODTs）をサポートするように拡張できます。** (あ、Feature Viewが必ずしもMDT/ODTを内包しているわけでは無いんだな...:thinking:)
 For example, Hopsworks has support for declaratively attaching MDTs to selected features in a feature view, and feature views transparently compute both MDTs and ODTs when reading data from the feature store.
-例えば、Hopsworksは、特徴ビュー内の選択された特徴にMDTsを宣言的に添付するサポートを提供しており、特徴ビューは特徴ストアからデータを読み取る際にMDTsとODTsの両方を透過的に計算します。
+例えば、Hopsworksは、特徴ビュー内の選択された特徴にMDTsを宣言的に添付するサポートを提供しており、特徴ビューは特徴ストアからデータを読み取る際にMDTsとODTsの両方を透過的に計算します。(そうだよね、MDTの内容をFeature Store側に伝える必要があるもんな...!:thinking:)
 
-###### Point-in-Time Correct Training Data with Feature Views
-###### 特徴ビューを使用した時点に正しいトレーニングデータの作成
+<!-- ここまで読んだ! -->
+
+#### 1.8.1. Point-in-Time Correct Training Data with Feature Views 時点整合なトレーニングデータと特徴ビュー
 
 When creating training data from time-series features, the goal is to ensure point-in_time correctness: every feature value joined to a label must be the one that was avail‐_ able at the label’s event time, without including future data or stale values. 
 時系列特徴からトレーニングデータを作成する際の目標は、時点に正しいことを保証することです：ラベルに結合されたすべての特徴値は、未来のデータや古い値を含めずに、ラベルのイベント時間に利用可能であったものでなければなりません。
@@ -1365,12 +1391,12 @@ The following apply to each label row:
 以下は各ラベル行に適用されます：
 
 1. The join includes only feature rows whose event_time is less than or equal to the label’s event_time.
-1. 結合には、event_timeがラベルのevent_time以下の特徴行のみが含まれます。
+2. 結合には、event_timeがラベルのevent_time以下の特徴行のみが含まれます。
 
-2. From those, you select the row with the most recent event_time before or equal to the label’s timestamp.
-2. その中から、ラベルのタイムスタンプ以前または同時の最も最近のevent_timeを持つ行を選択します。
+3. From those, you select the row with the most recent event_time before or equal to the label’s timestamp.
+4. その中から、ラベルのタイムスタンプ以前または同時の最も最近のevent_timeを持つ行を選択します。
 
-3. If no feature rows meet the condition, the join returns `NULL values for those` features.
+5. If no feature rows meet the condition, the join returns `NULL values for those` features.
 3. 条件を満たす特徴行がない場合、結合はそれらの特徴に対して`NULL値を返します。
 
 The temporal join is implemented as an `ASOF LEFT JOIN. The` `ASOF condition` ensures that there is no future data leakage for the joined feature values, and the LEFT ``` JOIN ensures that label rows are preserved even when no matching feature rows exist.
@@ -1400,8 +1426,8 @@ Starting from the label feature group (cc_trans_fg), it joins in features from t
 . For each row in the
 各行に対して、最終出力の中で、結合された行は、ラベル特徴グループの``` event_tsの値に最も近いが、それよりも小さいevent_tsを持っています。これはLEFT JOINであり、INNER JOINではありません。なぜなら、INNER JOINは、ラベルテーブルの外部キーが特徴テーブルの行と一致しない場合、トレーニングデータから行を除外するからです。
 
-###### 1.6.2.2.7. Online Inference with a Feature View
-###### 1.6.2.2.8. 特徴ビューを用いたオンライン推論
+###### 1.7.2.0.1. Online Inference with a Feature View
+###### 1.7.2.0.2. 特徴ビューを用いたオンライン推論
 In online inference, the feature view provides APIs for retrieving precomputed features, similarity search with vector indexes, and computing ODTs and MDTs. 
 オンライン推論では、特徴ビューが事前計算された特徴を取得するためのAPI、ベクトルインデックスを用いた類似検索、ODTsおよびMDTsの計算を提供します。 
 In the credit card fraud example ML system, there are two queries required to retrieve the features from our data model at request time:
@@ -1420,8 +1446,8 @@ The feature_vector could be of the list type, a NumPy array, or even a DataFrame
 特徴ベクトルは、モデルが期待する入力形式に応じて、リスト型、NumPy配列、またはDataFrameである可能性があります。
 
 -----
-###### 1.6.2.2.9. Summary and Exercises
-###### 1.6.2.2.10. まとめと演習
+###### 1.8.1.0.1. Summary and Exercises
+###### 1.8.1.0.2. まとめと演習
 Feature stores are the data layer for AI systems. 
 フィーチャーストアはAIシステムのデータ層です。 
 We dived deep into the anatomy of a feature store, and we looked at when it is appropriate for you to use one. 
