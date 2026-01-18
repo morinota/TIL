@@ -1,447 +1,107 @@
 refs: https://www.chaosgenius.io/blog/iceberg-vs-delta-lake-schema-partition/
 
-
-header section ヘッダーセクション
-Chaos Genius カオス・ジーニアス
-- PlatformPLATFORMAutonomous AgentsEnterprise Cost ObservabilityCost Visibility & InsightsTrack spend across warehouses, clusters, queries, jobs, and users, and more. 
-- プラットフォーム プラットフォーム 自律エージェント 企業コストの可視化 コストの可視性と洞察 倉庫、クラスター、クエリ、ジョブ、ユーザーなどを通じて支出を追跡します。
-Instance TuningOptimize cluster and warehouse sizing for better utilization. 
-- インスタンスチューニング クラスターと倉庫のサイズを最適化して、より良い利用を実現します。
-Workoad TuningTune queries and Spark jobs to cut compute costs. 
-- ワークロードチューニング クエリとSparkジョブを調整して計算コストを削減します。
-Database OptimizationClean up unused data to reduce storage costs. 
-- データベース最適化 未使用のデータをクリーンアップしてストレージコストを削減します。
-Alerts & ReportingGet alerts and reports on cost spikes and inefficiencies. 
-- アラートと報告 コストの急増や非効率性に関するアラートと報告を受け取ります。
-Snowflake AgentsBook Demo 
-- Snowflakeエージェント デモを予約
-Databricks AgentsBook Demo 
-- Databricksエージェント デモを予約
-Amazon EMR AgentsJoin Waitlist 
-- Amazon EMRエージェント ウェイトリストに参加
-Redshift AgentsJoin Waitlist 
-- Redshiftエージェント ウェイトリストに参加
-- Pricing 価格設定
-- Blog ブログ
-- About Us 私たちについて
-
-
-
-## PLATFORM プラットフォーム
-
-Autonomous Agents
-自律エージェント
-
-Enterprise Cost Observability
-企業コストの可視化
-
-Cost Visibility & Insights
-コストの可視化と洞察
-Track spend across warehouses, clusters, queries, jobs, and users, and more.
-倉庫、クラスター、クエリ、ジョブ、ユーザーなどにわたる支出を追跡します。
-
-Instance Tuning
-インスタンス調整
-Optimize cluster and warehouse sizing for better utilization.
-クラスターと倉庫のサイズを最適化して、より良い利用を実現します。
-
-Workoad Tuning
-ワークロード調整
-Tune queries and Spark jobs to cut compute costs.
-クエリとSparkジョブを調整して、計算コストを削減します。
-
-Database Optimization
-データベース最適化
-Clean up unused data to reduce storage costs.
-未使用のデータをクリーンアップして、ストレージコストを削減します。
-
-Alerts & Reporting
-アラートと報告
-Get alerts and reports on cost spikes and inefficiencies.
-コストの急増や非効率に関するアラートと報告を受け取ります。
-
-Snowflake Agents
-Snowflakeエージェント
-Book Demo
-デモを予約
-
-Databricks Agents
-Databricksエージェント
-Book Demo
-デモを予約
-
-Amazon EMR Agents
-Amazon EMRエージェント
-
-Redshift Agents
-Redshiftエージェント
-
-Autonomous Agents
-自律エージェント
-
-Enterprise Cost Observability
-企業コストの可視化
-
-Snowflake Agents
-Snowflakeエージェント
-Book Demo
-デモを予約
-
-Databricks Agents
-Databricksエージェント
-Book Demo
-デモを予約
-
-Amazon EMR Agents
-Amazon EMRエージェント
-
-Redshift Agents
-Redshiftエージェント
-
-Cost Visibility & Insights
-コストの可視化と洞察
-Track spend across warehouses, clusters, queries, jobs, and users, and more.
-倉庫、クラスター、クエリ、ジョブ、ユーザーなどにわたる支出を追跡します。
-
-Instance Tuning
-インスタンス調整
-Optimize cluster and warehouse sizing for better utilization.
-クラスターと倉庫のサイズを最適化して、より良い利用を実現します。
-
-Workoad Tuning
-ワークロード調整
-Tune queries and Spark jobs to cut compute costs.
-クエリとSparkジョブを調整して、計算コストを削減します。
-
-Instance Tuning
-インスタンス調整
-Clean up unused data to reduce storage costs.
-未使用のデータをクリーンアップして、ストレージコストを削減します。
-
-Alerts & Reporting
-アラートと報告
-Get alerts and reports on cost spikes and inefficiencies.
-コストの急増や非効率に関するアラートと報告を受け取ります。
-
-Hero Section Starts
-ヒーローセクション開始
-
-Snowflake Decoded: A Practical Guide to Cost Optimization Strategies
-Snowflakeの解読：コスト最適化戦略の実用ガイド
-
-Cost Optimization
-コスト最適化
-Get E-book for Free
-無料でE-bookを入手
-
-Thank you
-ありがとうございます
-The e-book has been sent to your email.
-E-bookはあなたのメールに送信されました。
-
-Withintwo weeks, we had already realised enough savings to pay for a year’s worth of license. It was that good — that intuitive
-2週間以内に、私たちはすでに1年分のライセンスを支払うのに十分な節約を実現しました。それほど良かった — それほど直感的でした。
-
-two weeks
-2週間
-
-enough savings
-十分な節約
-
-CTO
-最高技術責任者
-
-
-
-## Start Saving. Instantly. 今すぐ節約を始めましょう。
-
-Data leaders from 40+ countries trust Chaos Genius to manage their Snowflake costs
-40カ国以上のデータリーダーが、Snowflakeのコスト管理にChaos Geniusを信頼しています。
-
-Annual Snowflake Spend
-年間Snowflake支出
-- upto $100K
-- $100K – $500K
-- $500K – $1M
-- $1M+
-$100K未満
-$100K – $500K
-$500K – $1M
-$1M以上
-
-Thank you
-ありがとうございます。
-
-A Snowflake expert from our team will be in touch very shortly.
-私たちのチームのSnowflake専門家がすぐにご連絡いたします。
-
-Save up to 50% on your Databricks Costs
-Databricksのコストを最大50%節約
-
-Save up to 50%
-最大50%節約
-
-The first ever Databricks co-pilot
-初のDatabricksコーパイロット
-
-Get started
-始めましょう
-
-Thank you
-ありがとうございます。
-
-Someone from our team will get in touch shortly.
-私たちのチームの誰かがすぐにご連絡いたします。
-
-Trusted by Data Leaders Worldwide
-世界中のデータリーダーに信頼されています。
-
-Table Of Contents
-目次
-
-1. Apache Iceberg vs Delta Lake (II): Schema and Partition Evolution
-   1. Apache Iceberg vs Delta Lakeの比較（II）：スキーマとパーティションの進化
-   - Schema Evolution—Apache Iceberg vs Delta Lake
-   - スキーマの進化—Apache Iceberg vs Delta Lake
-   - Partition Evolution—Apache Iceberg vs Delta Lake
-   - パーティションの進化—Apache Iceberg vs Delta Lake
-   - Data Skipping and Indexing—Apache Iceberg vs Delta Lake
-   - データスキップとインデックス作成—Apache Iceberg vs Delta Lake
-   - Performance and Scalability—Apache Iceberg vs Delta Lake
-   - パフォーマンスとスケーラビリティ—Apache Iceberg vs Delta Lake
-   - Ecosystem and Community Support—Apache Iceberg vs Delta Lake
-   - エコシステムとコミュニティサポート—Apache Iceberg vs Delta Lake
-   - Data Manipulation (DML Operations)—Apache Iceberg vs Delta Lake
-   - データ操作（DML操作）—Apache Iceberg vs Delta Lake
-   - Use Cases and Adoption—Apache Iceberg vs Delta Lake
-   - ユースケースと採用—Apache Iceberg vs Delta Lake
-   - Choosing Between Apache Iceberg vs Delta Lake
-   - Apache IcebergとDelta Lakeの選択
-   - Conclusion
-   - 結論
-   - FAQs
-   - よくある質問
-
-2. Schema Evolution—Apache Iceberg vs Delta Lake
-   2. スキーマの進化—Apache Iceberg vs Delta Lake
-   - Apache Iceberg
-   - Apache Iceberg
-   - Delta Lake
-   - Delta Lake
-   - Partition Evolution—Apache Iceberg vs Delta Lake
-   - パーティションの進化—Apache Iceberg vs Delta Lake
-   - Data Skipping and Indexing—Apache Iceberg vs Delta Lake
-   - データスキップとインデックス作成—Apache Iceberg vs Delta Lake
-   - Performance and Scalability—Apache Iceberg vs Delta Lake
-   - パフォーマンスとスケーラビリティ—Apache Iceberg vs Delta Lake
-
-3. Apache Iceberg
-   3. Apache Iceberg
-
-4. Delta Lake
-   4. Delta Lake
-
-5. Partition Evolution—Apache Iceberg vs Delta Lake
-   5. パーティションの進化—Apache Iceberg vs Delta Lake
-
-6. Apache Iceberg
-   6. Apache Iceberg
-
-7. Delta Lake
-   7. Delta Lake
-
-8. Data Skipping and Indexing—Apache Iceberg vs Delta Lake
-   8. データスキップとインデックス作成—Apache Iceberg vs Delta Lake
-
-9. Apache Iceberg
-   9. Apache Iceberg
-
-10. Delta Lake
-    10. Delta Lake
-
-11. Performance and Scalability—Apache Iceberg vs Delta Lake
-    11. パフォーマンスとスケーラビリティ—Apache Iceberg vs Delta Lake
-
-12. Apache Iceberg Performance
-    12. Apache Icebergのパフォーマンス
-
-13. Delta Lake Performance
-    13. Delta Lakeのパフォーマンス
-
-14. Apache Iceberg Scalability
-    14. Apache Icebergのスケーラビリティ
-
-15. Delta Lake Scalability
-    15. Delta Lakeのスケーラビリティ
-
-16. Ecosystem and Community Support—Apache Iceberg vs Delta Lake
-    16. エコシステムとコミュニティサポート—Apache Iceberg vs Delta Lake
-
-17. Apache Iceberg—A Diverse Community
-    17. Apache Iceberg—多様なコミュニティ
-
-18. Delta Lake—Databricks-Led but Growing
-    18. Delta Lake—Databricks主導だが成長中
-
-19. Data Manipulation (DML Operations)—Apache Iceberg vs Delta Lake
-    19. データ操作（DML操作）—Apache Iceberg vs Delta Lake
-
-20. Apache Iceberg
-    20. Apache Iceberg
-
-21. Delta Lake
-    21. Delta Lake
-
-22. Use Cases and Adoption—Apache Iceberg vs Delta Lake
-    22. ユースケースと採用—Apache Iceberg vs Delta Lake
-
-23. Apache Iceberg
-    23. Apache Iceberg
-
-24. Delta Lake
-    24. Delta Lake
-
-25. Choosing Between Apache Iceberg vs Delta Lake
-    25. Apache IcebergとDelta Lakeの選択
-
-26. Use Apache Iceberg if:
-    26. Apache Icebergを使用する場合：
-
-27. Use Delta Lake if:
-    27. Delta Lakeを使用する場合：
-
-28. Conclusion
-    28. 結論
-
-29. FAQs
-    29. よくある質問
-
-# Apache Iceberg vs Delta Lake (II): Schema and Partition Evolution
-# Apache Iceberg vs Delta Lake（II）：スキーマとパーティションの進化
+# Apache Iceberg vs Delta Lake (II): Schema and Partition Evolution Apache Iceberg vs Delta Lake（II）：スキーマとパーティションの進化
 
 In part one of Apache Iceberg vs Delta Lake we compared Apache Iceberg vs Delta Lake across origin, architecture, metadata management, query engine compatibility, and ACID transactions.
 Apache Iceberg vs Delta Lakeの第1部では、起源、アーキテクチャ、メタデータ管理、クエリエンジンの互換性、ACIDトランザクションに関してApache IcebergとDelta Lakeを比較しました。
-
 Now, in this second part, we’ll compare them on schema evolution, partition evolution, data skipping and indexing, performance, scalability, ecosystem, and use cases.
 さて、この第2部では、スキーマの進化、パーティションの進化、データスキップとインデックス作成、パフォーマンス、スケーラビリティ、エコシステム、ユースケースについて比較します。
 
-### Schema Evolution—Apache Iceberg vs Delta Lake
-### スキーマの進化—Apache Iceberg vs Delta Lake
+## Schema Evolution—Apache Iceberg vs Delta Lake スキーマの進化—Apache Iceberg vs Delta Lake
 
-#### Apache Iceberg
-#### Apache Iceberg
+### Apache Iceberg
+
 Apache Iceberg is great at schema evolution, allows adding, dropping, and reordering columns, and widening column types.
-Apache Icebergはスキーマの進化に優れており、列の追加、削除、並べ替え、列の型の拡張を許可します。
-
+**Apache Icebergはスキーマ進化に優れており、列の追加、削除、並べ替え、列の型の拡張を許可**します。
 These changes are stored in the metadata files so you can query historical data even after schema changes.
 これらの変更はメタデータファイルに保存されるため、スキーマ変更後でも履歴データをクエリできます。
-
 This is critical for long-term data management as it avoids having to rewrite data files when schema changes happen.
 これは、スキーマ変更が発生した際にデータファイルを再書き込みする必要がなくなるため、長期的なデータ管理にとって重要です。
 
-#### Delta Lake
-#### Delta Lake
-Delta Lake also supports schema evolution but it’s limited compared to Iceberg.
-Delta Lakeもスキーマの進化をサポートしていますが、Icebergと比較すると制限があります。
+<!-- ここまで読んだ! -->
 
+### Delta Lake Delta Lake
+
+Delta Lake also supports schema evolution but it’s limited compared to Iceberg.
+**Delta Lakeもスキーマの進化をサポートしていますが、Icebergと比較すると制限があります。**(あ、そうなのか...!:thinking:)
 It allows adding columns and widening column types but has restrictions on other types of changes.
 列の追加や列の型の拡張は可能ですが、他の種類の変更には制限があります。
-
 Schema changes in Delta Lake are stored in the delta log which tracks all changes to the table’s schema and data.
 Delta Lakeのスキーマ変更は、テーブルのスキーマとデータへのすべての変更を追跡するデルタログに保存されます。
 
-Save up to 50% on your Databricks spend in a few minutes!
-数分でDatabricksの支出を最大50%節約！
+<!-- ここまで読んだ! -->
 
-### Partition Evolution—Apache Iceberg vs Delta Lake
-### パーティションの進化—Apache Iceberg vs Delta Lake
+## Partition Evolution—Apache Iceberg vs Delta Lake パーティションの進化—Apache Iceberg vs Delta Lake
 
-#### Apache Iceberg
-#### Apache Iceberg
+### Apache Iceberg
+
 One of the coolest features of Apache Iceberg is partition evolution.
-Apache Icebergの最も素晴らしい機能の1つは、パーティションの進化です。
-
+**Apache Icebergの最も素晴らしい機能の1つは、パーティション進化**です。
 You can change the partitioning scheme of a table without having to rewrite the data.
 データを再書き込みすることなく、テーブルのパーティショニングスキームを変更できます。
-
 This is especially useful for large tables where repartitioning would be too expensive.
 これは、再パーティショニングが高コストになる大規模なテーブルに特に便利です。
-
 Iceberg does this through its manifest files which store detailed metadata about the partitions and data files.
 Icebergは、パーティションとデータファイルに関する詳細なメタデータを保存するマニフェストファイルを通じてこれを実現します。
 
-#### Delta Lake
-#### Delta Lake
-Delta Lake has been working on partition evolution but it’s not as featureful or integrated as Iceberg’s.
-Delta Lakeはパーティションの進化に取り組んでいますが、Icebergのように機能が豊富で統合されているわけではありません。
+### Delta Lake
 
+Delta Lake has been working on partition evolution but it’s not as featureful or integrated as Iceberg’s.
+**Delta Lakeはパーティションの進化に取り組んでいますが、Icebergのように機能が豊富で統合されているわけではありません。**(この点もIcebergの方が進んでるのか...!:thinking:)
 While recent versions have added some support, Apache Iceberg is still more advanced in this area.
 最近のバージョンではいくつかのサポートが追加されましたが、Apache Icebergはこの分野で依然としてより進んでいます。
 
-### Data Skipping and Indexing—Apache Iceberg vs Delta Lake
-### データスキップとインデックス作成—Apache Iceberg vs Delta Lake
+## Data Skipping and Indexing—Apache Iceberg vs Delta Lake データスキップとインデックス作成—Apache Iceberg vs Delta Lake
 
 Both Apache Iceberg vs Delta Lake use data skipping to improve query performance but they do it in slightly different ways:
-Apache IcebergとDelta Lakeの両方は、クエリパフォーマンスを向上させるためにデータスキップを使用しますが、わずかに異なる方法で行います。
+Apache IcebergとDelta Lakeの両方は、クエリパフォーマンスを向上させるためにデータスキップを使用しますが、わずかに異なる方法で行います。(partition pruningの話かな...?:thinking:)
 
-#### Apache Iceberg
-#### Apache Iceberg
+### Apache Iceberg 
+
 Apache Iceberg stores statistics about each data file in the manifest files, including min/max values for columns and null counts.
 Apache Icebergは、列の最小/最大値やNULLカウントを含む各データファイルの統計をマニフェストファイルに保存します。
-
 This allows the query engine to skip entire data files, and speed up the query.
 これにより、クエリエンジンはデータファイル全体をスキップでき、クエリを高速化します。
-
 This distributed approach allows Iceberg to manage metadata more efficiently.
 この分散アプローチにより、Icebergはメタデータをより効率的に管理できます。
 
-#### Delta Lake
-#### Delta Lake
+### Delta Lake
+
 Delta Lake also collects statistics and stores them in the delta log.
 Delta Lakeも統計を収集し、それをデルタログに保存します。
-
 These can be used for data skipping but the centralized nature of the delta log can make it less efficient than Iceberg’s distributed approach.
-これらはデータスキップに使用できますが、デルタログの集中型の性質はIcebergの分散アプローチよりも効率が悪くなる可能性があります。
-
+これらはデータスキップに使用できますが、**デルタログの集中型の性質はIcebergの分散アプローチよりも効率が悪くなる可能性**があります。
 Delta Lake relies on checkpoint files to summarize these statistics periodically which adds some overhead.
 Delta Lakeは、これらの統計を定期的に要約するためにチェックポイントファイルに依存しており、これがいくつかのオーバーヘッドを追加します。
 
-### Performance and Scalability—Apache Iceberg vs Delta Lake
-### パフォーマンスとスケーラビリティ—Apache Iceberg vs Delta Lake
+<!-- ここまで読んだ! -->
+
+## Performance and Scalability—Apache Iceberg vs Delta Lake パフォーマンスとスケーラビリティ—Apache Iceberg vs Delta Lake
 
 When comparing Apache Iceberg vs Delta Lake for performance and scalability, there are several key differences to consider, based on their architectures and feature sets.
 Apache IcebergとDelta Lakeのパフォーマンスとスケーラビリティを比較する際には、アーキテクチャと機能セットに基づいて考慮すべきいくつかの重要な違いがあります。
 
-#### Apache Iceberg Performance
-#### Apache Icebergのパフォーマンス
+### Apache Iceberg Performance　
+
 - Metadata Management: Iceberg has great metadata management.
-- メタデータ管理：Icebergは優れたメタデータ管理を提供します。
-
-By breaking down metadata into manifest files, manifest list files, and metadata files, Iceberg can plan and execute queries efficiently.
-メタデータをマニフェストファイル、マニフェストリストファイル、メタデータファイルに分解することで、Icebergは効率的にクエリを計画し実行できます。
-
-This allows Iceberg to prune partitions well, which helps with query performance, especially for highly selective queries.
-これにより、Icebergはパーティションを適切にプルーニングでき、特に選択性の高いクエリのパフォーマンス向上に寄与します。
+  - メタデータ管理：Icebergは優れたメタデータ管理を提供します。
+    By breaking down metadata into manifest files, manifest list files, and metadata files, Iceberg can plan and execute queries efficiently.
+    **メタデータをマニフェストファイル、マニフェストリストファイル、メタデータファイルに分解することで、Icebergは効率的にクエリを計画し実行できます。**
+    This allows Iceberg to prune partitions well, which helps with query performance, especially for highly selective queries.
+    これにより、Icebergはパーティションを適切にプルーニングでき、特に選択性の高いクエリのパフォーマンス向上に寄与します。
 
 - Write Strategy: Iceberg's primary write strategy for updates and deletes is Copy-on-Write (CoW).
-- 書き込み戦略：Icebergの更新および削除の主な書き込み戦略はCopy-on-Write（CoW）です。
+  - 書き込み戦略：**Icebergの更新および削除の主な書き込み戦略はCopy-on-Write（CoW）**です。
+    In this approach, when data is modified, the affected data files are rewritten entirely.
+    このアプローチでは、データが変更されると、影響を受けたデータファイルが完全に再書き込みされます。
+    While this can lead to write amplification for frequent updates, reads are generally fast as they only process valid, non-overlapping data files. 
+    **これは頻繁な更新に対して書き込み増幅を引き起こす可能性がありますが**、読み取りは一般的に速く、有効な非重複データファイルのみを処理します。
+    Iceberg also offers an optional Merge-on-Read (MoR) strategy, especially beneficial for streaming workloads or high write throughput, where changes are recorded as 'diffs' and merged at read time, though this can increase read complexity. 
+    Icebergは、オプションのMerge-on-Read（MoR）戦略も提供しており、特にストリーミングワークロードや高い書き込みスループットに有益です。ここでは、変更が「diff」として記録され、読み取り時にマージされますが、これにより読み取りの複雑さが増す可能性があります。
 
-In this approach, when data is modified, the affected data files are rewritten entirely.
-このアプローチでは、データが変更されると、影響を受けたデータファイルが完全に再書き込みされます。
+<!-- ここまで読んだ! -->
 
-
-
-. In this approach, when data is modified, the affected data files are rewritten entirely. 
-このアプローチでは、データが変更されると、影響を受けるデータファイルが完全に書き換えられます。
-
-While this can lead to write amplification for frequent updates, reads are generally fast as they only process valid, non-overlapping data files. 
-これは頻繁な更新に対して書き込み増幅を引き起こす可能性がありますが、読み取りは一般的に速く、有効な非重複データファイルのみを処理します。
-
-Iceberg also offers an optional Merge-on-Read (MoR) strategy, especially beneficial for streaming workloads or high write throughput, where changes are recorded as 'diffs' and merged at read time, though this can increase read complexity. 
-Icebergは、オプションのMerge-on-Read（MoR）戦略も提供しており、特にストリーミングワークロードや高い書き込みスループットに有益です。ここでは、変更が「diff」として記録され、読み取り時にマージされますが、これにより読み取りの複雑さが増す可能性があります。
-
-#### Delta Lake Performance
-#### Delta Lakeのパフォーマンス
+### Delta Lake Performance Delta Lakeのパフォーマンス
 
 - Data Skipping and Compaction: Delta Lake has data skipping and automatic compaction. 
 - データスキップとコンパクション：Delta Lakeはデータスキップと自動コンパクションを備えています。
