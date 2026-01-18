@@ -950,133 +950,204 @@ To build this system and meet our SLO, we will need to write a streaming feature
 Stream processing enables us to compute aggregations on recent historical activity on credit cards, such as how often a card has been used in the last 5 minutes, 15 minutes, or hour. 
 ストリーム処理により、クレジットカードの最近の履歴活動に基づいて集計を計算することが可能になります。**たとえば、過去5分、15分、または1時間にカードがどのくらい使用されたかを計算**できます。
 These features are called _windowed aggregations, as they com‐_ pute an aggregation over events that happen in a window of time. 
-**これらのフィーチャーは「ウィンドウ集計」と呼ばれ、特定の時間ウィンドウ内で発生するイベントに基づいて集計を計算します。**
+**これらのフィーチャーは「ウィンドウ集計」と呼ばれ**、特定の時間ウィンドウ内で発生するイベントに基づいて集計を計算します。
 It would not be possible to compute these features within our SLO if we only used the `credit_card_transactions` table in our data mart, as it is only updated hourly. 
-データマート内の`credit_card_transactions`テーブルのみを使用した場合、これらのフィーチャーをSLO内で計算することは不可能です。なぜなら、このテーブルは1時間ごとにしか更新されないからです。
-
+データマート内の`credit_card_transactions`テーブルのみを使用した場合、これらのフィーチャーをSLO内で計算することは不可能です。なぜなら、このテーブルは1時間ごとにしか更新されないからです。(DWHやデータマートから特徴量取得するだけだと、特徴量のリアルタイム性の要件を満たせない、って話か。レイクハウスアーキテクチャ...!:thinking:)
 We can, however, compute other features from the data mart, such as the credit rating of the bank that issued the credit card and the number of chargebacks for the merchant that processed the credit card transaction.
 しかし、データマートからは、クレジットカードを発行した銀行の信用評価や、クレジットカード取引を処理した商人のチャージバック数など、他のフィーチャーを計算することができます。
 
-We will also create real-time features from the input request data with ODTs. 
-また、ODTsを使用して入力リクエストデータからリアルタイムフィーチャーも作成します。
+<!-- ここまで読んだ! -->
 
+We will also create real-time features from the input request data with ODTs. 
+また、**ODTsを使用して入力リクエストデータからリアルタイムフィーチャーも作成**します。
 A feature with good predictive power for geographic fraud attacks is the distance and time between consecutive credit card transactions. 
 地理的な不正攻撃に対して良好な予測力を持つフィーチャーは、連続するクレジットカード取引間の距離と時間です。
-
 If the distance is large and the time is short, that is often indicative of fraud. 
 距離が大きく、時間が短い場合、それはしばしば不正を示すものです。
-
 For this, we compute `haversine_distance` and `time_since_last_transaction` features.
 このために、`haversine_distance`と`time_since_last_transaction`フィーチャーを計算します。
-
 We have described here an ML system that contains a mix of features computed using stream processing, batch processing, and ODTs. 
 ここでは、ストリーム処理、バッチ処理、およびODTsを使用して計算されたフィーチャーの混合を含むMLシステムについて説明しました。
-
 However, when we want to train models with these features, the training data will be stored in feature groups in the feature store. 
 ただし、これらのフィーチャーを使用してモデルをトレーニングしたい場合、トレーニングデータはフィーチャーストアのフィーチャーグループに保存されます。
-
 So we need to identify the features and then design a data model for the feature groups.
-したがって、フィーチャーを特定し、その後フィーチャーグループのデータモデルを設計する必要があります。
+したがって、**フィーチャーを特定し、その後フィーチャーグループのデータモデルを設計する必要**があります。
 
-###### 1.6.2.0.1. Data model for our real-time fraud detection ML system
-###### 1.6.2.0.2. リアルタイム不正検知MLシステムのデータモデル
+<!-- ここまで読んだ! -->
 
-We are using a supervised ML model for predicting fraud, so we will need to have some labeled observations of fraud. 
-私たちは不正を予測するために教師ありMLモデルを使用しているため、不正のラベル付き観察がいくつか必要です。
+##### 1.6.2.1. Data model for our real-time fraud detection ML system リアルタイム不正検知MLシステムのデータモデル
 
-For this, there is a new `cc_fraud` table, not in the data mart, with a `t_id` column (the unique identity for credit card transactions) that contains the credit card transactions identified as fraudulent, along with columns for the person who reported the fraud and an explanation for why the transaction is marked as fraudulent. 
+We are using a supervised ML model for predicting fraud, so we will need to have some labeled observations of fraud.
+私たちは不正を予測するために教師ありMLモデルを使用しているため、**不正のラベル付き観察(labeled observations)が必要**です。
+For this, there is a new `cc_fraud` table, not in the data mart, with a `t_id` column (the unique identity for credit card transactions) that contains the credit card transactions identified as fraudulent, along with columns for the person who reported the fraud and an explanation for why the transaction is marked as fraudulent.
 これには、データマートには存在しない新しい`cc_fraud`テーブルがあり、`t_id`列（クレジットカード取引の一意の識別子）が含まれており、不正と特定されたクレジットカード取引が含まれています。また、不正を報告した人と、なぜその取引が不正としてマークされているのかの説明が含まれています。
-
 The fraud team updates the `cc_fraud` table weekly in a Postgres database it manages. 
 不正チームは、管理しているPostgresデータベース内の`cc_fraud`テーブルを毎週更新します。
-
 Using the `cc_fraud` table, the data mart, and the event-streaming platform, we can create features that have predictive power for fraud and the labels, as shown in Table 4-4.
 `cc_fraud`テーブル、データマート、およびイベントストリーミングプラットフォームを使用することで、表4-4に示すように、不正に対する予測力を持つフィーチャーとラベルを作成できます。
 
+![]()
 _Table 4-4. Features we can create from our data mart and event-streaming platform for credit card fraud_
-_表4-4. クレジットカード不正に対してデータマートとイベントストリーミングプラットフォームから作成できるフィーチャー_
+表4-4. クレジットカード不正に対してデータマートとイベントストリーミングプラットフォームから作成できる特徴量一覧
 
-**Data sources** **Simple features** **Engineered features**
-**データソース** **シンプルなフィーチャー** **エンジニアリングされたフィーチャー**
-
-``` credit_card_transactions account_details cc_fraud credit_card_transactions credit_card_transactions card_details
-``` credit_card_transactions account_details cc_fraud credit_card_transactions credit_card_transactions card_details
-```
-
-``` ``` amount ip_address card_present card_type status
-``` ``` amount ip_address card_present card_type status
-```
-
-``` ``` {num}/{sum}_trans_last_10_mins {num}/{sum}_trans_last_hour {num}/{sum}_trans_last_day {num}/{sum}_trans_last_week prev_ts_transaction prev_ip_transaction prev_card_present_transaction haversine_distance time_since_last_transaction
-``` ``` {num}/{sum}_trans_last_10_mins {num}/{sum}_trans_last_hour {num}/{sum}_trans_last_day {num}/{sum}_trans_last_week prev_ts_transaction prev_ip_transaction prev_card_present_transaction haversine_distance time_since_last_transaction
-```
-
-``` ``` is_fraud
-``` ``` is_fraud
-```
-
-``` ``` days_to_card_expiry
-``` ``` days_to_card_expiry
-```
-
-``` ``` account_details zipcode
-``` ``` account_details zipcode
-```
-
-``` ``` merchant_details category chargeback_rate_prev_month chargeback_rate_prev_week bank_details credit_rating days_since_bank_cr_changed
-``` ``` merchant_details category chargeback_rate_prev_month chargeback_rate_prev_week bank_details credit_rating days_since_bank_cr_changed
-```
+- メモ: 表4-4の内容
+  - データソース = creadit_card_transactions(クレジットカード取引イベント), account_details(アカウント詳細)
+    - Simple Features(シンプルな特徴量)
+      - amount (取引金額)
+      - ip_address (IPアドレス)
+      - card_present (カードの有無)
+    - Engineered Features(エンジニアリングされた特徴量)
+      - {num}/{sum}_trans_last_10_mins (過去10分間の取引数/合計)
+      - {num}/{sum}_trans_last_hour (過去1時間の取引数/合計)
+      - {num}/{sum}_trans_last_day (過去1日の取引数/合計)
+      - {num}/{sum}_trans_last_week (過去1週間の取引数/合計)
+      - prev_ts_transaction (前回の取引のタイムスタンプ)
+      - prev_ip_transaction (前回の取引のIPアドレス)
+      - prev_card_present_transaction (前回の取引のカードの有無)
+      - haversine_distance (ハバーサイン距離)
+      - time_since_last_transaction (前回の取引からの時間)
+  - データソース = cc_fraud(不正テーブル), credit_card_transactions(クレジットカード取引イベント)
+    - Simple Features(シンプルな特徴量)
+      - is_fraud (不正かどうか)
+  - データソース = credit_card_transactions(クレジットカード取引イベント), card_details(カード詳細)
+    - Simple Features(シンプルな特徴量)
+      - card_type (カードの種類)
+      - status (カードのステータス)
+    - Engineered Features(エンジニアリングされた特徴量)
+      - days_to_card_expiry (カードの有効期限までの日数)
+  - データソース = account_details(アカウント詳細)
+    - Engineered Features(エンジニアリングされた特徴量)
+      - zipcode (郵便番号)
+  - データソース = merchant_details(業者の詳細)
+    - Simple Features(シンプルな特徴量)
+      - category (カテゴリ)
+    - Engineered Features(エンジニアリングされた特徴量)
+      - category (カテゴリ)
+      - chargeback_rate_prev_month (前月のチャージバック率)
+      - chargeback_rate_prev_week (前週のチャージバック率)
+  - データソース = bank_details(銀行の詳細)
+    - Simple Features(シンプルな特徴量)
+      - credit_rating (信用格付け)
+    - Engineered Features(エンジニアリングされた特徴量)
+      - days_since_bank_cr_changed (銀行の信用格付けが変更されてからの日数)
 
 There are many frameworks and programming languages that we could use to create these features, and we will look at source code for them in the next few chapters. 
 これらのフィーチャーを作成するために使用できる多くのフレームワークやプログラミング言語がありますが、次の章ではそれらのソースコードを見ていきます。
-
 For now, we are interested in the data model for our feature groups that we will design to store and query these features, as well as the fraud labels. 
-今のところ、これらのフィーチャーと不正ラベルを保存およびクエリするために設計するフィーチャーグループのデータモデルに興味があります。
-
+**今のところ、これらのフィーチャーと不正ラベルを保存およびクエリするために設計するフィーチャーグループのデータモデルに興味があります。**(うんうん...!:thinking:)
 The feature groups will need to be stored in both online and offline stores, as we will, respectively, use these features in our real-time ML system for inference and in our offline training pipeline.
 フィーチャーグループは、リアルタイムMLシステムで推論に使用するためのオンラインストアと、オフライントレーニングパイプラインで使用するためのオフラインストアの両方に保存する必要があります。
-
 We will now design two different data models, first using the star schema and then using the snowflake schema.
-それでは、最初にスター・スキーマを使用し、次にスノーフレーク・スキーマを使用して、2つの異なるデータモデルを設計します。
+それでは、**最初にスター・スキーマを使用し、次にスノーフレーク・スキーマを使用して、2つの異なるデータモデルを設計**します。
 
-###### 1.6.2.0.3. Star schema data model
-###### 1.6.2.0.4. スター・スキーマデータモデル
+<!-- ここまで読んだ! -->
+
+##### 1.6.2.2. Star schema data model スター・スキーマデータモデル
 
 The star schema data model is supported by all major feature stores. 
 スター・スキーマデータモデルは、すべての主要なフィーチャーストアでサポートされています。
-
 In Figure 4-9, we can see that the `cc_trans_fg` feature group containing the fraud labels is called a label feature group.
 図4-9では、不正ラベルを含む`cc_trans_fg`フィーチャーグループがラベルフィーチャーグループと呼ばれていることがわかります。
 
+![]()
 _Figure 4-9. Star schema data model for our credit card fraud prediction ML system._ 
-_図4-9. クレジットカード不正予測MLシステムのためのスター・スキーマデータモデル。_
+図4-9. クレジットカード不正予測MLシステムのためのスター・スキーマデータモデル。
+Labels (and on-demand features) are the facts, while feature groups are the dimension tables._
+**ラベル（およびオンデマンドフィーチャー）はfactsであり、フィーチャーグループはdimensionテーブル**です。
 
-_Labels (and on-demand features) are the facts, while feature groups are the dimension tables._
-_ラベル（およびオンデマンドフィーチャー）は事実であり、フィーチャーグループは次元テーブルです。_
+- メモ: 図4-9の内容
+  - label feature group (ラベルフィーチャーグループ)
+    - `cc_trans_fg`
+      - t_id (PK) (クレジットカード取引ID)
+      - cc_num (クレジットカード番号)
+        - `cc_trans_aggs_fg` への外部キー
+      - account_id (アカウントID)
+        - `account_fg` への外部キー
+      - merchant_id (マーチャントID)
+        - `merchant_fg` への外部キー
+      - bank_id (銀行ID)
+        - `bank_fg` への外部キー
+      - ammount (取引金額)
+      - ip_address (IPアドレス)
+      - haversine_distance (ハバーサイン距離)
+      - time_since_last_transaction (前回の取引からの時間)
+      - days_to_card_expiry (カードの有効期限までの日数)
+      - card_present (カードの有無)
+      - is_fraud (不正かどうか)
+      - event_time (イベント時間)
+  - feature groups (通常のフィーチャーグループ)
+    - `cc_trans_aggs_fg`
+      - cc_num (PK) (クレジットカード番号)
+      - {num}/{sum}_trans_last_10_mins (過去10分間の取引数/合計)
+      - {num}/{sum}_trans_last_hour (過去1時間の取引数/合計)
+      - {num}/{sum}_trans_last_day (過去1日の取引数/合計)
+      - {num}/{sum}_trans_last_week (過去1週間の取引数/合計)
+      - prev_ts_transaction (前回の取引のタイムスタンプ)
+      - prev_ip_transaction (前回の取引のIPアドレス)
+      - prev_card_present (前回の取引のカードの有無)
+      - event_time (イベント時間)
+    - `account_fg`
+      - account_id (PK) (アカウントID)
+      - zipcode (郵便番号)
+      - cc_expiry_date (クレジットカード有効期限)
+      - card_type (カードの種類)
+      - status (ステータス)
+      - last_modified (最終更新日)
+    - `merchant_fg`
+      - merchant_id (PK) (業者ID)
+      - country (国)
+      - category (カテゴリ)
+      - chargeback_rate_prev_month (前月のチャージバック率)
+      - chargeback_rate_prev_week (前週のチャージバック率)
+      - last_modified (最終更新日)
+    - `bank_fg`
+      - bank_id (PK) (銀行ID)
+      - country (国)
+      - credit_rating (信用格付け)
+      - days_since_bank_cr_changed (銀行の信用格付けが変更されてからの日数)
+      - last_modified (最終更新日)
 
 The feature group that contains the labels for our credit card transaction (fraud or not fraud) is known as the label feature group. 
 クレジットカード取引（不正または不正でない）のラベルを含むフィーチャーグループは、ラベルフィーチャーグループとして知られています。
-
 In practice, a label feature group is just a normal feature group. 
 実際には、ラベルフィーチャーグループは通常のフィーチャーグループに過ぎません。
-
 As we will see later, it is only when we select the features and labels for our model that we need to identify the columns in feature groups as either a feature or a label.
 後で見るように、モデルのためにフィーチャーとラベルを選択する際にのみ、フィーチャーグループ内の列をフィーチャーまたはラベルとして特定する必要があります。
 
-In the star schema data model, you can see that the label feature group contains foreign keys to the four feature groups that contain features computed from the data mart tables and the event-streaming platform. 
-スター・スキーマデータモデルでは、ラベルフィーチャーグループがデータマートテーブルとイベントストリーミングプラットフォームから計算されたフィーチャーを含む4つのフィーチャーグループへの外部キーを含んでいることがわかります。
+<!-- ここまで読んだ! -->
 
+---
+
+(コラム)
+Labels in Spine DataFrames
+ラベルはSpine DataFrameに含まれる
+
+Some feature stores do not support storing labels in feature groups. 
+**いくつかのフィーチャーストアは、フィーチャーグループにラベルを保存することをサポートしていません。**
+Instead, for these feature stores, clients provide the labels, label timestamps (event_time), and entity IDs for feature groups (containing features they want to include) when creating training data and inference data.
+その代わりに、これらのフィーチャーストアでは、クライアントはトレーニングデータと推論データを作成する際に、ラベル、ラベルのタイムスタンプ（event_time）、およびフィーチャーグループのエンティティID（含めたいフィーチャーを含む）を提供します。(うん。Sagemaker Feature Storeもこれに該当する...!:thinking:)
+In the Feast feature store, clients provide the labels, label time‐ stamps, and entity IDs in a DataFrame called the Spine DataFrame. 
+Feastフィーチャーストアでは、クライアントはSpine DataFrameと呼ばれるDataFrameでラベル、ラベルのタイムスタンプ、およびエンティティIDを提供します。
+The Spine Data‐ Frame contains the same data as our label feature group, but it is not persisted to the feature store. 
+Spine DataFrameはラベルフィーチャーグループと同じデータを含んでいますが、フィーチャーストアに永続化されていません。
+The Spine DataFrame can also contain additional columns (features) for creating training data.  However, this is bad practice as additional columns can result in skew, because you have to ensure that any additional columns provided when reading training data are also included (in the same order, with the same data types) when read‐ ing inference data.
+**Spine DataFrameは、トレーニングデータを作成するための追加の列（フィーチャー）も含むことができます。ただし、これは悪い習慣です。**追加の列はスキューを引き起こす可能性があるためです。トレーニングデータを読み取る際に提供される追加の列が、推論データを読み取る際にも同じ順序で同じデータ型で含まれていることを確認する必要があります。
+
+---
+
+<!-- ここまで読んだ! -->
+
+In the star schema data model, you can see that the label feature group contains foreign keys to the four feature groups that contain features computed from the data mart tables and the event-streaming platform.
+スター・スキーマデータモデルでは、**ラベルフィーチャーグループが4つのフィーチャーグループへの外部キーを含んでいること**がわかります。これらのフィーチャーグループには、データマートテーブルとイベントストリーミングプラットフォームから計算されたフィーチャーが含まれています。
 These feature groups are all updated independently in separate feature pipelines that run on their own schedule. 
 これらのフィーチャーグループはすべて、独自のスケジュールで実行される別々のフィーチャーパイプラインで独立して更新されます。
-
 For example, the `cc_trans_aggs_fg` feature group is computed by a streaming feature pipeline, while the `account_fg`, `bank_fg`, and `merchant_fg` feature groups are computed by batch jobs that run daily. 
 たとえば、`cc_trans_aggs_fg`フィーチャーグループはストリーミングフィーチャーパイプラインによって計算され、一方で`account_fg`、`bank_fg`、および`merchant_fg`フィーチャーグループは毎日実行されるバッチジョブによって計算されます。
-
 Note that we follow an idiom of appending _fg to feature group names to differentiate them from the tables in our data mart.
-フィーチャーグループ名に_fgを追加して、データマート内のテーブルと区別するという慣用句に従っていることに注意してください。
+**フィーチャーグループ名に_fgを追加して、データマート内のテーブルと区別するという慣用句に従っていること**に注意してください。
 
-###### 1.6.2.0.5. Snowflake schema data model
-###### 1.6.2.0.6. スノーフレーク・スキーマデータモデル
+###### 1.6.2.2.1. Snowflake schema data model
+###### 1.6.2.2.2. スノーフレーク・スキーマデータモデル
 
 The snowflake schema is a data model that, like the star schema, consists of tables containing labels and features. 
 スノーフレーク・スキーマは、スター・スキーマと同様に、ラベルとフィーチャーを含むテーブルで構成されるデータモデルです。
@@ -1111,8 +1182,8 @@ In the star schema, however, our real-time ML system needs to additionally provi
 This makes the real-time ML system more complex—either the client provides the values for `bank_id` and `account_id` as parameters or you have to maintain an additional mapping table from `cc_num` to `bank_id` and `account_id`.
 これにより、リアルタイムMLシステムがより複雑になります。クライアントが`bank_id`と`account_id`の値をパラメータとして提供するか、`cc_num`から`bank_id`および`account_id`への追加のマッピングテーブルを維持する必要があります。
 
-###### 1.6.2.0.7. Feature Store Data Model for Inference
-###### 1.6.2.0.8. 推論のためのフィーチャーストアデータモデル
+###### 1.6.2.2.3. Feature Store Data Model for Inference
+###### 1.6.2.2.4. 推論のためのフィーチャーストアデータモデル
 
 Labels are obviously not available during inference—our model predicts them. 
 ラベルは推論中には明らかに利用できません—私たちのモデルがそれらを予測します。
@@ -1125,8 +1196,8 @@ They can all be passed as parameters in a prediction request (the foreign keys t
 
 
 
-###### 1.6.2.0.9. feature groups and the `amount features), resolved via mapping tables (for star sche‐` mas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs. Label feature groups do not store inference data for
-###### 1.6.2.0.10. 特徴グループと`amount features`は、マッピングテーブル（スタースキーマ用）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、及び``` days_to_card_expiry）またはMDTsで計算されます。ラベル特徴グループは、推論データを保存しません。
+###### 1.6.2.2.5. feature groups and the `amount features), resolved via mapping tables (for star sche‐` mas), or computed with ODTs (time_since_last_trans, haversine_distance, and ``` days_to_card_expiry) or MDTs. Label feature groups do not store inference data for
+###### 1.6.2.2.6. 特徴グループと`amount features`は、マッピングテーブル（スタースキーマ用）を介して解決されるか、ODTs（time_since_last_trans、haversine_distance、及び``` days_to_card_expiry）またはMDTsで計算されます。ラベル特徴グループは、推論データを保存しません。
 
 ``` features. The label feature group is offline only, storing only historical data for fea‐ tures to create offline training data.
 ラベル特徴グループはオフライン専用で、オフラインのトレーニングデータを作成するための特徴の履歴データのみを保存します。
@@ -1329,8 +1400,8 @@ Starting from the label feature group (cc_trans_fg), it joins in features from t
 . For each row in the
 各行に対して、最終出力の中で、結合された行は、ラベル特徴グループの``` event_tsの値に最も近いが、それよりも小さいevent_tsを持っています。これはLEFT JOINであり、INNER JOINではありません。なぜなら、INNER JOINは、ラベルテーブルの外部キーが特徴テーブルの行と一致しない場合、トレーニングデータから行を除外するからです。
 
-###### 1.6.2.0.11. Online Inference with a Feature View
-###### 1.6.2.0.12. 特徴ビューを用いたオンライン推論
+###### 1.6.2.2.7. Online Inference with a Feature View
+###### 1.6.2.2.8. 特徴ビューを用いたオンライン推論
 In online inference, the feature view provides APIs for retrieving precomputed features, similarity search with vector indexes, and computing ODTs and MDTs. 
 オンライン推論では、特徴ビューが事前計算された特徴を取得するためのAPI、ベクトルインデックスを用いた類似検索、ODTsおよびMDTsの計算を提供します。 
 In the credit card fraud example ML system, there are two queries required to retrieve the features from our data model at request time:
@@ -1349,8 +1420,8 @@ The feature_vector could be of the list type, a NumPy array, or even a DataFrame
 特徴ベクトルは、モデルが期待する入力形式に応じて、リスト型、NumPy配列、またはDataFrameである可能性があります。
 
 -----
-###### 1.6.2.0.13. Summary and Exercises
-###### 1.6.2.0.14. まとめと演習
+###### 1.6.2.2.9. Summary and Exercises
+###### 1.6.2.2.10. まとめと演習
 Feature stores are the data layer for AI systems. 
 フィーチャーストアはAIシステムのデータ層です。 
 We dived deep into the anatomy of a feature store, and we looked at when it is appropriate for you to use one. 
