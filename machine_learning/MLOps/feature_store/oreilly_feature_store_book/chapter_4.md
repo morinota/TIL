@@ -394,7 +394,7 @@ The offline stores for existing feature stores are lakehouses.
 A lakehouse is a combination of a data lake for storage and a data warehouse for querying the data. 
 **レイクハウスは、データの保存のためのデータレイクとデータのクエリのためのデータウェアハウスの組み合わせ**です。
 In contrast to a data warehouse, a lakehouse is an open platform that separates the storage of columnar data from the query engines that use it. 
-データウェアハウスとは対照的に、**レイクハウスは列指向データのストレージをそれを使用するクエリエンジンから分離するオープンプラットフォーム**です。(なるほど、じゃあS3 TablesにIcebergテーブルを作って、Athenaやsnowflake等でクエリする設計は、レイクハウスの一例と言えるのか...!:thinking:)
+データウェアハウスとは対照的に、**レイクハウスは列指向データのストレージをそれを使用するクエリエンジンから分離するオープンプラットフォーム**です。(なるほど、じゃあS3 TablesにIcebergテーブルを作って、AthenaやSnowflakeやPyIcebergなどの任意のクエリエンジンでクエリする設計は、レイクハウスの一例と言えるのか...!:thinking:)
 Lakehouse tables can be queried by many different query engines. 
 **レイクハウスのテーブルは、多くの異なるクエリエンジンによってクエリされることができます。*
 (=これが「レイクハウス」か否かの本質か...!! オフラインストアはレイクハウスであるべき:thinking:)
@@ -1379,103 +1379,141 @@ For example, Hopsworks has support for declaratively attaching MDTs to selected 
 #### 1.8.1. Point-in-Time Correct Training Data with Feature Views 時点整合なトレーニングデータと特徴ビュー
 
 When creating training data from time-series features, the goal is to ensure point-in_time correctness: every feature value joined to a label must be the one that was avail‐_ able at the label’s event time, without including future data or stale values. 
-時系列特徴からトレーニングデータを作成する際の目標は、時点に正しいことを保証することです：ラベルに結合されたすべての特徴値は、未来のデータや古い値を含めずに、ラベルのイベント時間に利用可能であったものでなければなりません。
-
+**時系列特徴からトレーニングデータを作成する際の目標は、時点に正しいことを保証することです：ラベルに結合されたすべての特徴値は、未来のデータや古い値を含めずに、ラベルのイベント時間に利用可能であったものでなければなりません。**
 This is typically done using a temporal join.
 これは通常、時間的結合を使用して行われます。
 
 A temporal join starts from the table containing labels, then joins in features from other tables based on matching entity IDs and event-time alignment. 
 時間的結合は、ラベルを含むテーブルから始まり、次に一致するエンティティIDとイベント時間の整合性に基づいて他のテーブルから特徴を結合します。
-
 The following apply to each label row:
 以下は各ラベル行に適用されます：
 
 1. The join includes only feature rows whose event_time is less than or equal to the label’s event_time.
-2. 結合には、event_timeがラベルのevent_time以下の特徴行のみが含まれます。
+   1. 結合には、event_timeがラベルのevent_time以下の特徴行のみが含まれます。
 
-3. From those, you select the row with the most recent event_time before or equal to the label’s timestamp.
-4. その中から、ラベルのタイムスタンプ以前または同時の最も最近のevent_timeを持つ行を選択します。
+2. From those, you select the row with the most recent event_time before or equal to the label’s timestamp.
+   1. その中から、ラベルのタイムスタンプ以前または同時の最も最近のevent_timeを持つ行を選択します。
 
-5. If no feature rows meet the condition, the join returns `NULL values for those` features.
-3. 条件を満たす特徴行がない場合、結合はそれらの特徴に対して`NULL値を返します。
+3. If no feature rows meet the condition, the join returns `NULL values for those` features.
+   1. **条件を満たす特徴行がない場合、結合はそれらの特徴に対して`NULL値を返します。** (落とすんじゃなくてleft join的にnullを入れるんだ...!:thinking:)
 
 The temporal join is implemented as an `ASOF LEFT JOIN. The` `ASOF condition` ensures that there is no future data leakage for the joined feature values, and the LEFT ``` JOIN ensures that label rows are preserved even when no matching feature rows exist.
-時間的結合は`ASOF LEFT JOIN`として実装されます。`ASOF条件`は、結合された特徴値に対する未来のデータ漏洩がないことを保証し、LEFT ``` JOINは、一致する特徴行が存在しない場合でもラベル行が保持されることを保証します。
-
+時間的結合は`ASOF LEFT JOIN`として実装されます。`ASOF条件`は、結合された特徴値に対する未来のデータ漏洩がないことを保証し、LEFT JOINは、一致する特徴行が存在しない場合でもラベル行が保持されることを保証します。
 The number of rows in the training data should be the same as the number of rows in the table containing the labels.
 トレーニングデータの行数は、ラベルを含むテーブルの行数と同じであるべきです。
 
+---
+(コラム)
 The ASOF keyword is not yet part of the ANSI SQL standard. 
 ASOFキーワードはまだANSI SQL標準の一部ではありません。
+As a consequence, some databases (such as ClickHouse and Feldera) use LEFT ASOF JOIN, others (such as DuckDB) use ASOF LEFT JOIN, and Snowflake supports ASOF JOIN (it can only be a left join).
+その結果、いくつかのデータベース（ClickHouseやFelderaなど）はLEFT ASOF JOINを使用し、他のデータベース（DuckDBなど）はASOF LEFT JOINを使用し、SnowflakeはASOF JOINをサポートしています（これは左結合のみです）。
 
-As a consequence, some databases (such as ClickHouse and Feldera) use ```        LEFT ASOF JOIN, others (such as DuckDB) use ASOF LEFT JOIN,
-その結果、一部のデータベース（ClickHouseやFelderなど）は``` LEFT ASOF JOINを使用し、他のデータベース（DuckDBなど）はASOF LEFT JOINを使用します。
+---
 
-and Snowflake supports ASOF JOIN (it can only be a left join).
-SnowflakeはASOF JOINをサポートしています（左結合のみです）。
+<!-- ここまで読んだ! -->
 
-In Figure 4-12, we can see how the `ASOF LEFT JOIN creates the training data from` four different feature groups (we omitted account_fg for brevity). 
-図4-12では、`ASOF LEFT JOINが4つの異なる特徴グループからトレーニングデータを作成する様子を見ることができます（簡潔さのためにaccount_fgは省略しました）。
+In Figure 4-12, we can see how the ASOF LEFT JOIN creates the training data from four different feature groups (we omitted account_fg for brevity). 
+図4-12では、ASOF LEFT JOINが4つの異なる特徴グループからトレーニングデータを作成する様子を見ることができます（簡潔さのためにaccount_fgは省略しました）。
+Starting from the label feature group (cc_trans_fg), it joins in features from the other three feature groups (cc_trans_aggs_fg, bank_fg, merchant_fg), as of the event_time in cc_trans.
+ラベルフィーチャーグループ（cc_trans_fg）から始まり、cc_transのevent_time時点で他の3つの特徴グループ（cc_trans_aggs_fg、bank_fg、merchant_fg）から特徴を結合します。
 
-Starting from the label feature group (cc_trans_fg), it joins in features from the other three feature groups (cc_trans_aggs_fg, `bank_fg,` `merchant_fg), as of the` `event_time in` ``` cc_trans.
-ラベル特徴グループ（cc_trans_fg）から始まり、他の3つの特徴グループ（cc_trans_aggs_fg、`bank_fg、` `merchant_fg）から特徴を結合します。これは、``` cc_transのevent_timeに基づいています。
+![]()
+Figure 4-12. Creating point-in-time correct training data from time-series data requires an ASOF LEFT JOIN query that starts from the table containing the labels, pulling in col‐ umns (features) from the tables containing the features, with the ASOF condition ensur‐ ing that there is no future data leakage for the feature values.
+図4-12. 時系列データから時点に正しいトレーニングデータを作成するには、ラベルを含むテーブルから始まり、特徴を含むテーブルから列（特徴）を引き出すASOF LEFT JOINクエリが必要であり、**ASOF条件は特徴値に対する未来のデータ漏洩がないことを保証**します。
+
+<!-- ここまで読んだ! -->
+
+For example, in our credit card fraud data model, if we want to create training data from January 1, 2022, we could execute the following nested ASOF LEFT JOIN on our label table and feature groups (some column names are abbreviated for conciseness):
+例えば、クレジットカード詐欺データモデルで、2022年1月1日からトレーニングデータを作成したい場合、ラベルテーブルと特徴グループに対して次のネストされたASOF LEFT JOINを実行できます（一部の列名は簡潔さのために省略されています）：
+
+```sql
+select 
+    label.amount,
+    aggs.last_week,
+    bank.country,
+    bank.credit_rating as b_rating,
+    mechant.chrgbk,
+    label.fraud
+from cc_trans_fg as label
+ASOF LEFT JOIN cc_trans_aggs_fg AS aggs
+    ON label.cc_num = aggs.cc_num
+    AND aggs.event_ts <= label.event_ts
+ASOF LEFT JOIN bank_fg AS bank
+    ON aggs.bank_id = bank.bank_id
+    AND bank.event_ts <= label.event_ts
+ASOF LEFT JOIN merchant_fg AS merchant
+    ON label.merc_id = merchant.merc_id
+    AND merchant.event_ts <= label.event_ts
+WHERE label.event_ts > '2022-01-01 00:00';
 ```
 
+The above query returns all the rows in the label feature group where the event_ts is greater than January 1, 2022, and it joins each row with one column from cc_trans_aggs_fg (last_week), the two columns from bank_fg (rating and country), and one column from the merchant_fg table (chrgbk). 
+上記のクエリは、event_tsが2022年1月1日より大きいラベルフィーチャーグループのすべての行を返し、cc_trans_aggs_fg（last_week）からの1つの列、bank_fg（ratingとcountry）からの2つの列、およびmerchant_fgテーブルからの1つの列（chrgbk）で各行を結合します。
+For each row in the final output, a joined row has the event_ts that is closest to but less than the value of event_ts in the label feature group. It is a LEFT JOIN, not an INNER JOIN, as the INNER JOIN excludes rows from the training data where a foreign key in the label table does not match a row in a feature table.
+最終出力の各行について、結合された行は、ラベルフィーチャーグループのevent_tsの値に最も近いがそれより小さいevent_tsを持ちます。**これはINNER JOINではなくLEFT JOIN**です。INNER JOINは、ラベルテーブルの外部キーが特徴テーブルの行と一致しない場合にトレーニングデータから行を除外するためです。
 
+<!-- ここまで読んだ! -->
 
-. For each row in the
-各行に対して、最終出力の中で、結合された行は、ラベル特徴グループの``` event_tsの値に最も近いが、それよりも小さいevent_tsを持っています。これはLEFT JOINであり、INNER JOINではありません。なぜなら、INNER JOINは、ラベルテーブルの外部キーが特徴テーブルの行と一致しない場合、トレーニングデータから行を除外するからです。
+#### 1.8.2. Online Inference with a Feature View　特徴ビューを用いたオンライン推論
 
-###### 1.7.2.0.1. Online Inference with a Feature View
-###### 1.7.2.0.2. 特徴ビューを用いたオンライン推論
 In online inference, the feature view provides APIs for retrieving precomputed features, similarity search with vector indexes, and computing ODTs and MDTs. 
-オンライン推論では、特徴ビューが事前計算された特徴を取得するためのAPI、ベクトルインデックスを用いた類似検索、ODTsおよびMDTsの計算を提供します。 
+オンライン推論では、特徴ビューが事前計算された特徴を取得するためのAPI、ベクトルインデックスを用いた類似検索、ODTsおよびMDTsの計算を提供します。
 In the credit card fraud example ML system, there are two queries required to retrieve the features from our data model at request time:
 クレジットカード詐欺の例のMLシステムでは、リクエスト時にデータモデルから特徴を取得するために必要な2つのクエリがあります：
+
 - A primary key lookup for the merchant features using merchant_id
-- merchant_idを使用したマーチャント特徴の主キー検索
+  - merchant_idを使用した事業者特徴の主キー検索
 - A left join to read the aggregation and bank features using cc_num
-- cc_numを使用して集約および銀行の特徴を読み取るための左結合
+  - cc_numを使用して集約および銀行特徴を読み取るためのleft join
+
 The feature view provides a single API call, `get_feature_vector(), that executes` both of these queries and also applies any ODTs and MDTs before returning a feature vector: 
-特徴ビューは、これらの2つのクエリを実行し、特徴ベクトルを返す前にODTsおよびMDTsを適用する単一のAPI呼び出し`get_feature_vector()`を提供します：
-```  
+特徴ビューは、これらの2つのクエリを実行し、**特徴ベクトルを返す前にODTsおよびMDTsを適用する単一のAPI呼び出し`get_feature_vector()`を提供**します：
+(こういうIFになってると使いやすいのか~ :thinking:)
+
+```python
 feature_vector = feature_view.get_feature_vector(  
 entry = [{"cc_num": 1234567811112222, "merchant_id": 212}]  
-)  
+)
+```
+
 The feature_vector could be of the list type, a NumPy array, or even a DataFrame, depending on the input format expected by the model.  
 特徴ベクトルは、モデルが期待する入力形式に応じて、リスト型、NumPy配列、またはDataFrameである可能性があります。
 
------
-###### 1.8.1.0.1. Summary and Exercises
-###### 1.8.1.0.2. まとめと演習
+<!-- ここまで読んだ! -->
+
+### 1.9. Summary and Exercises
+
 Feature stores are the data layer for AI systems. 
 フィーチャーストアはAIシステムのデータ層です。 
 We dived deep into the anatomy of a feature store, and we looked at when it is appropriate for you to use one. 
 私たちはフィーチャーストアの構造を深く掘り下げ、いつそれを使用するのが適切かを見てきました。 
 We looked at how feature groups store feature data in multiple data stores: row-oriented, column-oriented, and vector indexes. 
-フィーチャーグループが行指向、列指向、ベクトルインデックスの複数のデータストアにフィーチャーデータをどのように保存するかを見ました。 
+フィーチャーグループが**行指向、列指向、ベクトルインデックスの複数のデータストアにフィーチャーデータをどのように保存するか**を見ました。 
 We also learned about how to organize your feature data in a data model for batch and real-time ML systems. 
 バッチおよびリアルタイムのMLシステムのためにフィーチャーデータをデータモデルでどのように整理するかについても学びました。 
 We introduced feature views and described how they query feature data for training and inference without skew. 
 フィーチャービューを紹介し、トレーニングと推論のためにフィーチャーデータを歪みなくクエリする方法を説明しました。 
+
 In the next chapter, we will look at a specific feature store, the Hopsworks feature store.
 次の章では、特定のフィーチャーストアであるHopsworksフィーチャーストアを見ていきます。 
 The following exercises will help you learn how to design your own data models. 
 以下の演習は、独自のデータモデルを設計する方法を学ぶのに役立ちます。 
 In each exercise, ask yourself if you need to add a new feature group or new foreign keys to existing feature groups, how you will compute the new feature (batch or streaming), and so on:
-各演習で、新しいフィーチャーグループを追加する必要があるか、既存のフィーチャーグループに新しい外部キーを追加する必要があるか、新しいフィーチャーをどのように計算するか（バッチまたはストリーミング）、などを自問してください：
+各演習で、新しいフィーチャーグループを追加する必要があるか、**既存のフィーチャーグループに新しい外部キーを追加する必要があるか**、新しいフィーチャーをどのように計算するか（バッチまたはストリーミング）、などを自問してください：
+
 - Describe the feature pipeline that you would use to compute a new feature: average merchant spend per month. 
-- 新しいフィーチャーを計算するために使用するフィーチャーパイプラインを説明してください：月ごとの平均マーチャント支出。 
-What are its inputs/outputs and batch/streaming, and where would you add the feature to our data model?
-その入力/出力は何で、バッチ/ストリーミングはどうなっていて、どこにそのフィーチャーをデータモデルに追加しますか？
+  - 新しいフィーチャーを計算するために使用するフィーチャーパイプラインを説明してください：月ごとの平均マーチャント支出。 
+  What are its inputs/outputs and batch/streaming, and where would you add the feature to our data model?
+  その入力/出力は何で、バッチ/ストリーミングはどうなっていて、どこにそのフィーチャーをデータモデルに追加しますか？
+
 - Add a total credit card lifetime spend feature.
-- クレジットカードの生涯支出の合計フィーチャーを追加してください。 
+  - クレジットカードの生涯支出の合計フィーチャーを追加してください。 
 - A new device ID becomes available as part of each credit card transaction. 
-- 新しいデバイスIDが各クレジットカード取引の一部として利用可能になります。 
-How will you update your data model for your feature groups? 
-フィーチャーグループのためにデータモデルをどのように更新しますか？ 
-What new features could you use?  
-どのような新しいフィーチャーを使用できますか？
+  - 新しいデバイスIDが各クレジットカード取引の一部として利用可能になります。 
+  How will you update your data model for your feature groups? 
+  フィーチャーグループのためにデータモデルをどのように更新しますか？ 
+  What new features could you use?  
+  どのような新しいフィーチャーを使用できますか？
 
-
-
+<!-- ここまで読んだ! -->
