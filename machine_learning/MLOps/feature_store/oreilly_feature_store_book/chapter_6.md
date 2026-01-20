@@ -1,65 +1,72 @@
-## CHAPTER 6: Model-Independent Transformations
-## 第6章：モデル非依存の変換
+# CHAPTER 6: Model-Independent Transformations 第6章：モデル非依存の変換
 
 Our focus now switches to how to write the data transformation logic for feature pipelines. 
-私たちの焦点は、フィーチャーパイプラインのデータ変換ロジックを書く方法に移ります。
-
+私たちの焦点は、**フィーチャーパイプラインのデータ変換ロジック**を書く方法に移ります。
 As we explained in Chapter 2, feature pipelines are the programs that execute model-independent data transformations to produce reusable features that are stored in the feature store. 
-第2章で説明したように、フィーチャーパイプラインは、フィーチャーストアに保存される再利用可能な特徴を生成するためにモデル非依存のデータ変換を実行するプログラムです。
-
+第2章で説明したように、**フィーチャーパイプラインは、フィーチャーストアに保存される再利用可能な特徴を生成するためにモデル非依存のデータ変換を実行するプログラム**です。
 That is, the feature data created could be used by potentially many different models—not just the first model you are developing the feature pipeline for. 
-つまり、作成されたフィーチャーデータは、フィーチャーパイプラインのために開発している最初のモデルだけでなく、潜在的に多くの異なるモデルで使用される可能性があります。
-
+つまり、作成されたフィーチャーデータは、フィーチャーパイプラインのために開発している**最初のモデルだけでなく、潜在的に多くの異なるモデルで使用される可能性**があります。
 Feature reuse results in higher-quality features through increased usage and testing, reduced storage costs, and reduced feature development and operational costs. 
-フィーチャーの再利用は、使用とテストの増加、ストレージコストの削減、フィーチャー開発および運用コストの削減を通じて、より高品質のフィーチャーをもたらします。
-
+**フィーチャーの再利用は、使用とテストの増加、ストレージコストの削減、フィーチャー開発および運用コストの削減を通じて、より高品質のフィーチャーをもたらします**。
 And remember, the lowest-cost feature pipeline is the one you don’t have to create. 
 そして、最もコストのかからないフィーチャーパイプラインは、作成する必要がないものです。
 
 Examples of model-independent transformations (MITs) include the extraction, validation, aggregation, compression (EVAC) transformations: 
-モデル非依存の変換（MIT）の例には、抽出、検証、集約、圧縮（EVAC）変換が含まれます：
+**モデル非依存の変換（MIT）の例には、抽出(extraction)、検証(validation)、集約(aggregation)、圧縮(compression)（EVAC）変換**が含まれます。
+(モデル非依存変換は、四種類の変換操作に分類できるのか...!:thinking:)
 
 - Feature extraction (lagged features, binning, and chunking for LLMs) 
-- フィーチャー抽出（遅延フィーチャー、ビニング、LLM用のチャンク化）
-
+  - フィーチャー抽出（遅延フィーチャー、ビニング、LLM用のチャンク化）
 - Data validation (with Great Expectations) and data cleaning 
-- データ検証（Great Expectationsを使用）およびデータクリーニング
-
+  - データ検証（Great Expectationsを使用）およびデータクリーニング
 - Aggregation (counts and sums for time windows) 
-- 集約（時間ウィンドウのカウントと合計）
-
+  - 集約（時間ウィンドウのカウントと合計）
 - Compression (vector embeddings) 
-- 圧縮（ベクトル埋め込み）
+  - 圧縮（ベクトル埋め込み）
 
 We will also look at how we can compose transformations in feature pipelines to improve the modularity, testability, and performance of your feature pipelines. 
 私たちはまた、フィーチャーパイプライン内で変換を構成して、フィーチャーパイプラインのモジュール性、テスト可能性、およびパフォーマンスを向上させる方法を見ていきます。
-
 However, we will start by setting up our development process—how to organize the source code into packages and what technologies we can use to implement our transformations in feature pipelines. 
 ただし、最初に開発プロセスを設定します—ソースコードをパッケージに整理する方法と、フィーチャーパイプラインで変換を実装するために使用できる技術についてです。
 
-###### Source Code Organization ソースコードの整理
+<!-- ここまで読んだ -->
+
+## Source Code Organization ソースコードの整理
 
 We will use the source code for our credit card fraud project as a template for how to organize source code so that it follows production best practices for developing ML pipelines. 
 私たちは、クレジットカード詐欺プロジェクトのソースコードを、MLパイプラインを開発するための生産ベストプラクティスに従うようにソースコードを整理する方法のテンプレートとして使用します。
-
 We need to move beyond just writing notebooks if we are to build production-quality pipelines, and that means following software engineering practices such as test-driven development with continuous integration and continuous deployment (CI/CD). 
-生産品質のパイプラインを構築するためには、単にノートブックを書くことを超える必要があり、それはテスト駆動開発や継続的インテグレーションおよび継続的デプロイメント（CI/CD）などのソフトウェア工学のプラクティスに従うことを意味します。
-
+**production品質のパイプラインを構築するためには、単にノートブックを書くことを超える必要があり、それはテスト駆動開発や継続的インテグレーションおよび継続的デプロイメント（CI/CD）などのソフトウェア工学のプラクティスに従うことを意味します。**
 If you make changes to your source code, tests will give you increased confidence that the changes you made will not break either a pipeline or a client that is dependent on an artifact created by your pipeline—whether that artifact is a feature, a training dataset, a model, or a prediction. 
 ソースコードに変更を加えると、テストは、あなたが行った変更がパイプラインや、あなたのパイプラインによって作成されたアーティファクト（フィーチャー、トレーニングデータセット、モデル、または予測）に依存するクライアントを壊さないという自信を高めます。
-
 By automating the execution of the tests, you will not slow down your iteration speed when developing. 
-テストの実行を自動化することで、開発時の反復速度を遅くすることはありません。
-
+**テストの実行を自動化することで、開発時の反復速度を遅くすることはありません。**
 If you have never written a unit test before, don’t worry—LLMs (such as ChatGPT) can help you get started creating unit tests. 
 ユニットテストを書いたことがない場合でも心配しないでください—LLM（ChatGPTのような）は、ユニットテストの作成を始めるのに役立ちます。
+
+<!-- ここまで読んだ -->
 
 We use a directory structure that organizes all the source code we need to build, test, and run our entire credit card fraud prediction system (see Figure 6-1). 
 私たちは、クレジットカード詐欺予測システム全体を構築、テスト、実行するために必要なすべてのソースコードを整理するディレクトリ構造を使用します（図6-1を参照）。
 
+![]()
 _Figure 6-1. For an AI system built with Python, we organize our source code for produc‐_ _tion by placing the different programs, functions, and tests into different directories, sep‐_ _arating production code in the project from EDA in notebooks and helper scripts._ 
 _図6-1. Pythonで構築されたAIシステムの場合、異なるプログラム、関数、およびテストを異なるディレクトリに配置することで、プロダクション用のソースコードを整理し、プロジェクト内のプロダクションコードをノートブックやヘルパースクリプトのEDAから分離します。_
 
+```bash
+credit_card_fraud_project/
+├── notebooks/ # EDA, reports, etc.
+├── requirements.txt # Global pip dependencies for project
+├── project-name # package name
+│   ├── pipelines # Feature/training/inference pipelines
+│   │   ├── features/ # Features computed in functions
+│   ├── tests/ # Unit and pipeline tests
+
+
+├── scripts/ # Batch scripts: run notebooks and tests
+```
+
+<!-- ここまで読んだ -->
 
 
 The source code for the different FTI pipelines is stored in a pipelines directory. 

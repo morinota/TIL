@@ -1,46 +1,37 @@
-## CHAPTER 5: Hopsworks Feature Store 第5章: Hopsworksフィーチャーストア
+# CHAPTER 5: Hopsworks Feature Store 第5章: Hopsworksフィーチャーストア
 
 In this chapter, we will look in depth at the Hopsworks feature store. 
 この章では、Hopsworksフィーチャーストアについて詳しく見ていきます。
-
 Hopsworks is a platform for the development and operation of batch, real-time, and LLM AI systems at scale. 
 Hopsworksは、バッチ、リアルタイム、およびLLM AIシステムの開発と運用のためのプラットフォームです。
-
 It can be installed on as little as one server or as many as hundreds of servers. 
 1台のサーバーから数百台のサーバーまでインストールできます。
-
 Hopsworks includes a feature store as well as a complete MLOps and compute platform, but we will focus on the feature store in this chapter. 
 Hopsworksにはフィーチャーストアと完全なMLOpsおよびコンピュートプラットフォームが含まれていますが、この章ではフィーチャーストアに焦点を当てます。
-
 We will show how to implement the data model for our credit card fraud model from Chapter 4 in Hopsworks. 
 第4章のクレジットカード詐欺モデルのデータモデルをHopsworksで実装する方法を示します。
-
 We will also see how the feature store concepts from the previous chapter are represented in Hopsworks using code snippets in Python. 
 前の章のフィーチャーストアの概念が、Pythonのコードスニペットを使用してHopsworksでどのように表現されるかも見ていきます。
-
 We will start with projects in Hopsworks—a secure, collaborative space for storing your feature data, training data, and models. 
 Hopsworksのプロジェクトから始めます。これは、フィーチャーデータ、トレーニングデータ、およびモデルを保存するための安全で共同作業ができるスペースです。
 
-###### Hopsworks Projects Hopsworksプロジェクト
+<!-- ここまで読んだ -->
+
+## Hopsworks Projects Hopsworksプロジェクト
 
 A Hopsworks cluster is organized into projects, where each project has a unique name. 
 Hopsworksクラスターはプロジェクトに整理されており、各プロジェクトにはユニークな名前があります。
-
 Hopsworks projects are secure spaces for teams to collaborate and manage data and models for AI. 
 Hopsworksプロジェクトは、チームがAIのデータとモデルを共同で管理するための安全なスペースです。
-
 Similar to a repository in GitHub, a project has team members (with role-based access control), but instead of storing source code, Hopsworks projects store data for AI. 
 GitHubのリポジトリに似て、プロジェクトにはチームメンバー（役割ベースのアクセス制御付き）がいますが、ソースコードを保存する代わりに、HopsworksプロジェクトはAIのデータを保存します。
-
 Each project has its own feature store, a model registry, model deployments, and datasets for general-purpose file storage. 
 各プロジェクトには独自のフィーチャーストア、モデルレジストリ、モデルデプロイメント、および一般的なファイルストレージ用のデータセットがあります。
 
 The following code snippet shows how to get a reference to a project object when you log in to Hopsworks. 
 以下のコードスニペットは、Hopsworksにログインしたときにプロジェクトオブジェクトへの参照を取得する方法を示しています。
-
 If you do not enter the name of the project, Hopsworks will return a reference to your main project (the project you created when you registered your account on hopsworks.ai). 
 プロジェクトの名前を入力しない場合、Hopsworksはメインプロジェクト（hopsworks.aiでアカウントを登録したときに作成したプロジェクト）への参照を返します。
-
 With your project, you can get a reference to its feature store as follows: 
 プロジェクトを使用して、次のようにフィーチャーストアへの参照を取得できます。
 
@@ -50,19 +41,20 @@ project = hopsworks.login()
 fs = project.get_feature_store()
 ```
 
+<!-- ここまで読んだ -->
+
 The hopsworks.login() method also has parameters for the hostname (or IP) and port of the Hopsworks cluster, as well as the API key (either as a value or a file containing the API key). 
 hopsworks.login()メソッドには、Hopsworksクラスターのホスト名（またはIP）とポート、およびAPIキー（値またはAPIキーを含むファイルのいずれか）のパラメータもあります。
-
 In this book, we will use serverless Hopsworks, which has a hostname of _c.app.hopsworks.ai and a port of 443. 
 この本では、ホスト名が_c.app.hopsworks.aiでポートが443のサーバーレスHopsworksを使用します。
-
 In this book, we call hopsworks.login() without parameters, instead setting `HOPSWORKS_API_KEY` as an environment variable in your program. 
 この本では、パラメータなしでhopsworks.login()を呼び出し、代わりにプログラム内で`HOPSWORKS_API_KEY`を環境変数として設定します。
-
 If you are not using Hopsworks serverless, you will also need to set `HOPSWORKS_HOST` and `HOPSWORKS_PROJECT` environment variables—set them in an .env file in the root directory of the book’s source code repository. 
 Hopsworksサーバーレスを使用していない場合は、`HOPSWORKS_HOST`と`HOPSWORKS_PROJECT`環境変数も設定する必要があります。これらは、本のソースコードリポジトリのルートディレクトリにある.envファイルに設定します。
 
-###### Storing Files in a Project プロジェクト内のファイルの保存
+<!-- ここまで読んだ -->
+
+### Storing Files in a Project プロジェクト内のファイルの保存
 
 Every project in Hopsworks has directories where you can store data. 
 Hopsworksのすべてのプロジェクトには、データを保存できるディレクトリがあります。
