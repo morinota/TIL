@@ -449,6 +449,7 @@ The lakehouse makes that future accessible today.
 
 
 ## Related Concepts 関連概念
+
 - Streaming ETL vs Traditional ETL
 - Real-Time Analytics with Streaming Data
 - Data Pipeline Orchestration with Streaming
@@ -462,34 +463,5 @@ Real-Time Analytics with Streaming Data
 Data Pipeline Orchestration with Streaming
 ストリーミングを用いたデータパイプラインのオーケストレーション
 
-
-
-## Related Articles 関連記事
-
-- Apache Iceberg: Open Table Format for Huge Analytic Tables
-- Delta Lake Transaction Log: How It Works
-- Schema Evolution in Apache Iceberg
-- Time Travel with Apache Iceberg
-- Iceberg Partitioning and Performance Optimization
-- Delta Lake Liquid Clustering: Modern Partitioning
-- Delta Lake Deletion Vectors: Efficient Row-Level Deletes
-- Iceberg Catalog Management: Hive, Glue, and Nessie
-- What is Apache Flink: Stateful Stream Processing
-- Kafka Connect: Building Data Integration Pipelines
-- Data Governance Framework: Roles and Responsibilities
-- What is a Data Catalog: Modern Data Discovery
-
-- Apache Iceberg: 大規模分析テーブルのためのオープンテーブルフォーマット
-- Delta Lake トランザクションログ: その仕組み
-- Apache Icebergにおけるスキーマ進化
-- Apache Icebergによるタイムトラベル
-- Icebergのパーティショニングとパフォーマンス最適化
-- Delta Lake リキッドクラスタリング: 現代的なパーティショニング
-- Delta Lake 削除ベクター: 効率的な行レベルの削除
-- Iceberg カタログ管理: Hive, Glue, および Nessie
-- Apache Flinkとは: 状態を持つストリーム処理
-- Kafka Connect: データ統合パイプラインの構築
-- データガバナンスフレームワーク: 役割と責任
-- データカタログとは: 現代的なデータ発見
 
 <!-- ここまで読んだ! -->

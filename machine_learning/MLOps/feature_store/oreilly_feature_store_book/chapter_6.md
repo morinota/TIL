@@ -1,4 +1,4 @@
-# CHAPTER 6: Model-Independent Transformations 第6章：モデル非依存の変換
+# 1. CHAPTER 6: Model-Independent Transformations 第6章：モデル非依存の変換
 
 Our focus now switches to how to write the data transformation logic for feature pipelines. 
 私たちの焦点は、**フィーチャーパイプラインのデータ変換ロジック**を書く方法に移ります。
@@ -31,7 +31,7 @@ However, we will start by setting up our development process—how to organize t
 
 <!-- ここまで読んだ -->
 
-## Source Code Organization ソースコードの整理
+## 1.1. Source Code Organization ソースコードの整理
 
 We will use the source code for our credit card fraud project as a template for how to organize source code so that it follows production best practices for developing ML pipelines. 
 私たちは、クレジットカード詐欺プロジェクトのソースコードを、MLパイプラインを開発するための生産ベストプラクティスに従うようにソースコードを整理する方法のテンプレートとして使用します。
@@ -49,10 +49,6 @@ If you have never written a unit test before, don’t worry—LLMs (such as Chat
 We use a directory structure that organizes all the source code we need to build, test, and run our entire credit card fraud prediction system (see Figure 6-1). 
 私たちは、クレジットカード詐欺予測システム全体を構築、テスト、実行するために必要なすべてのソースコードを整理するディレクトリ構造を使用します（図6-1を参照）。
 
-![]()
-_Figure 6-1. For an AI system built with Python, we organize our source code for produc‐_ _tion by placing the different programs, functions, and tests into different directories, sep‐_ _arating production code in the project from EDA in notebooks and helper scripts._ 
-_図6-1. Pythonで構築されたAIシステムの場合、異なるプログラム、関数、およびテストを異なるディレクトリに配置することで、プロダクション用のソースコードを整理し、プロジェクト内のプロダクションコードをノートブックやヘルパースクリプトのEDAから分離します。_
-
 ```bash
 credit_card_fraud_project/
 ├── notebooks/ # EDA, reports, etc.
@@ -60,549 +56,465 @@ credit_card_fraud_project/
 ├── project-name # package name
 │   ├── pipelines # Feature/training/inference pipelines
 │   │   ├── features/ # Features computed in functions
-│   ├── tests/ # Unit and pipeline tests
-
-
-├── scripts/ # Batch scripts: run notebooks and tests
+│   └── tests/
+│       ├── feature-tests # Unit tests for feature functions
+│       └── pipeline-tests # End-to-end tests for pip
+└── scripts # Batch scripts: run notebooks and tests
 ```
+_Figure 6-1. For an AI system built with Python, we organize our source code for produc‐_ _tion by placing the different programs, functions, and tests into different directories, sep‐_ _arating production code in the project from EDA in notebooks and helper scripts._ 
+_図6-1. Pythonで構築されたAIシステムの場合、異なるプログラム、関数、およびテストを異なるディレクトリに配置することで、プロダクション用のソースコードを整理し、プロジェクト内のプロダクションコードをノートブックやヘルパースクリプトのEDAから分離します。_
 
 <!-- ここまで読んだ -->
 
-
 The source code for the different FTI pipelines is stored in a pipelines directory. 
 異なるFTIパイプラインのソースコードは、pipelinesディレクトリに保存されています。
-
 For easier maintenance, we will store the _tests in separate files in a dedicated directory_ outside of our pipeline programs, as this separates the code for our pipelines from the code for testing. 
 メンテナンスを容易にするために、私たちはパイプラインプログラムの外に専用のディレクトリに_テストを別のファイルに保存します_。これにより、パイプラインのコードとテストのコードが分離されます。
-
 We will have two different types of tests: feature tests, which are unit tests for computing features, and pipeline tests, which are end-to-end tests for pipelines. 
-私たちは、特徴を計算するためのユニットテストである特徴テストと、パイプラインのエンドツーエンドテストであるパイプラインテストの2種類のテストを用意します。
-
+私たちは、**特徴を計算するためのユニットテストである特徴テストと、パイプラインのエンドツーエンドテストであるパイプラインテストの2種類のテストを用意**します。
 Similarly, it is a good idea to separate the functions used to compute features from the programs that implement the FTI pipelines. 
-同様に、FTIパイプラインを実装するプログラムから特徴を計算するために使用される関数を分離することは良い考えです。
-
+**同様に、FTIパイプラインを実装するプログラムから特徴を計算するために使用される関数を分離することは良い考え**です。(うんうん。SQL側では生データを取得するようにする場合は、feature functionを単体テストで振る舞い保証しやすいよね...!:thinking:)
 We place feature functions in the _features directory. 
-私たちは特徴関数を_featuresディレクトリに配置します。
-
+私たちは特徴量関数 (feature functions) をfeaturesディレクトリに配置します。
 If you follow this code structure, you will be able to iterate_ quickly and not have to later refactor your code for production. 
 このコード構造に従えば、迅速に反復作業ができ、後で本番用にコードをリファクタリングする必要がなくなります。
 
+<!-- ここまで読んだ -->
+
 We call this type of project structure a monorepo, as the source code for our entire AI system is in a single source code repository. 
 この種のプロジェクト構造をモノレポと呼びます。なぜなら、私たちのAIシステム全体のソースコードが単一のソースコードリポジトリにあるからです。
-
 The advantage of a monorepo over separate repositories for the FTI pipelines is that we don’t have to create and manage installable Python libraries for any shared code between the ML pipelines. 
-FTIパイプラインのための別々のリポジトリに対するモノレポの利点は、MLパイプライン間の共有コードのためにインストール可能なPythonライブラリを作成および管理する必要がないことです。
-
+**FTIパイプラインのための別々のリポジトリに対するモノレポの利点は、MLパイプライン間の共有コードのためにインストール可能なPythonライブラリを作成および管理する必要がないこと**です。
 The monorepo also does not hinder creating separate production-quality deployments for the FTI pipelines. 
-モノレポは、FTIパイプラインのための別々の生産品質のデプロイを作成することを妨げません。
-
+モノレポは、FTIパイプラインのための別々のproduction-qualityのデプロイを作成することを妨げません。
 For example, each ML pipeline can have its own requirements.txt file in its own directory that will be used to build an executable container image for the ML pipeline. 
 例えば、各MLパイプラインは、自身のディレクトリに独自のrequirements.txtファイルを持ち、これがMLパイプラインの実行可能なコンテナイメージを構築するために使用されます。
 
+<!-- ここまで読んだ -->
+
 Notice that notebooks is a separate directory. 
 notebooksは別のディレクトリであることに注意してください。
-
 It is typically not part of the production code in the project. 
 通常、プロジェクトの本番コードの一部ではありません。
-
 It is there to create insights into creating production code—to perform EDA to understand the data and the prediction problem and to communicate those insights to other stakeholders. 
-それは、本番コードを作成するための洞察を生み出すために存在します。データと予測問題を理解するためのEDAを実行し、その洞察を他の利害関係者に伝えるためです。
-
+**それは、本番コードを作成するための洞察を生み出すために存在します。データと予測問題を理解するためのEDAを実行し、その洞察を他の利害関係者に伝えるため**です。(うん。notebook自体を書いちゃだめ、って話ではないんだよな...!:thinking:)
 That said, on some platforms (like Hopsworks and Databricks), you can run notebooks as jobs, so you can run feature, training, and batch inference pipelines as jobs, if you really want to. 
 とはいえ、HopsworksやDatabricksのような一部のプラットフォームでは、ノートブックをジョブとして実行できるため、必要であれば特徴、トレーニング、およびバッチ推論パイプラインをジョブとして実行できます。
-
 The scripts directory is not production code and is there to store utility shell scripts for running tests on pipelines during development. 
-scriptsディレクトリは本番コードではなく、開発中にパイプラインのテストを実行するためのユーティリティシェルスクリプトを保存するために存在します。
+scriptsディレクトリは本番コードではなく、**開発中にパイプラインのテストを実行するためのユーティリティシェルスクリプトを保存するために存在**します。(じゃあ本番デプロイ用のスクリプトをここに置くのは微妙なのかな...?:thinking:)
 
 Python library dependencies are needed to containerize ML pipeline programs and are included in the project directory as at least one global requirements.txt file (for all ML pipelines). 
 MLパイプラインプログラムをコンテナ化するためにはPythonライブラリの依存関係が必要であり、プロジェクトディレクトリには少なくとも1つのグローバルrequirements.txtファイル（すべてのMLパイプライン用）が含まれています。
-
 Most of you who have had some experience developing in Python will have already opened the gates of pip dependency hell. 
 Pythonでの開発経験があるほとんどの方は、すでにpip依存関係の地獄の扉を開いていることでしょう。
-
 It’s part of the rite of passage for Python developers to have some library you never heard of cause your program to fail because of a non-backward-compatible upgrade. 
 Python開発者にとって、聞いたことのないライブラリが非後方互換のアップグレードのためにプログラムを失敗させることは、通過儀礼の一部です。
-
 So please, version your Python dependencies. 
 ですので、Pythonの依存関係にバージョンを付けてください。
 
+<!-- ここまで読んだ -->
+
 In our credit card fraud project, I included versioned Python library dependencies for each of our three ML pipelines in a single _requirements.txt file. 
 私たちのクレジットカード詐欺プロジェクトでは、3つのMLパイプラインそれぞれのバージョン付きPythonライブラリ依存関係を単一の_requirements.txtファイルに含めました。
+You can install the_ Python dependencies in your virtual environment by calling: 
+あなたは次のコマンドで仮想環境にPython依存関係をインストールすることができます：
 
-You can install the_ Python dependencies in your virtual environment by calling: ```   uv pip install -r requirements.txt
-``` 
-Pythonの依存関係は、次のコマンドを実行することで仮想環境にインストールできます: ```   uv pip install -r requirements.txt
+```bash
+uv pip install -r requirements.txt
 ```
 
 We are using `uv pip as it is much faster than` `pip. 
-私たちは`uv pip`を使用しています。なぜなら、`pip`よりもはるかに速いからです。
-
+**私たちは`uv pip`を使用しています。なぜなら、`pip`よりもはるかに速いからです。**　(そうなのか...!:thinking:)
 It is also possible to use a more` [feature-rich dependency management library, such as Poetry. 
 より多機能な依存関係管理ライブラリ（Poetryなど）を使用することも可能です。
-
 Poetry is great for large](https://oreil.ly/wHcmd) projects, and it manages the Python virtual environment lifecycle using a _pypro‐_ _ject.toml file. 
 Poetryは大規模なプロジェクトに最適で、_pyproject.tomlファイルを使用してPython仮想環境のライフサイクルを管理します。
-
 We will use uv/pip and requirements.txt files, as they have a lower bar‐_ rrier to entry and better integration with platforms that build container images from _requirements.txt files._ 
 私たちはuv/pipとrequirements.txtファイルを使用します。なぜなら、これらは参入障壁が低く、requirements.txtファイルからコンテナイメージを構築するプラットフォームとの統合が優れているからです。
+(uv pipって初めて聞いたな...!:thinking:)
 
-###### Feature Pipelines
-###### 特徴パイプライン
+<!-- ここまで読んだ -->
+
+## 1.2. Feature Pipelines 特徴パイプライン
 
 Feature pipelines read data from some data sources, transform that data to create fea‐ tures, and write their output feature data to the feature store. 
-特徴パイプラインは、いくつかのデータソースからデータを読み込み、そのデータを変換して特徴を作成し、出力された特徴データをフィーチャーストアに書き込みます。
-
+**特徴パイプラインは、いくつかのデータソースからデータを読み込み、そのデータを変換して特徴を作成し、出力された特徴データをフィーチャーストアに書き込みます。**
 Before we dive deep into feature engineering, we will look at a number of popular open source data transfor‐ mation engines. 
 特徴エンジニアリングに深く入る前に、いくつかの人気のあるオープンソースデータ変換エンジンを見ていきます。
-
 Given a group of features you want to compute together (and write to a feature group), you should understand the trade-offs between using different available engines, based on the expected data volume and the freshness requirements for the features. 
-一緒に計算したい特徴のグループ（およびフィーチャーグループに書き込む）を考慮すると、期待されるデータ量と特徴の新鮮さの要件に基づいて、異なる利用可能なエンジンを使用する際のトレードオフを理解する必要があります。
-
+一緒に計算したい(そしてfeature groupに書き込みたい)特徴量のグループを考慮すると、予想されるデータ量と特徴の新鮮さの要件に基づいて、利用可能なさまざまなエンジンを使用することのトレードオフを理解する必要があります。
 Most compute engines for feature engineering fall into one of the fol‐ lowing computing paradigms: 
-特徴エンジニアリングのためのほとんどの計算エンジンは、以下の計算パラダイムのいずれかに分類されます。
+**特徴エンジニアリングのためのほとんどの計算エンジンは、以下の計算パラダイムのいずれかに分類されます。**
 
 - Stream processing for streaming feature pipelines (Python, Java, or SQL) 
-- ストリーミング特徴パイプラインのためのストリーム処理（Python、Java、またはSQL）
-
+  - ストリーミング特徴パイプラインのためのストリーム処理（Python、Java、またはSQL）
 - DataFrames for batch feature pipelines (Python) 
-- バッチ特徴パイプラインのためのDataFrames（Python）
-
+  - バッチ特徴パイプラインのためのDataFrames（Python）
 - Data warehouses for batch feature pipelines (SQL) 
-- バッチ特徴パイプラインのためのデータウェアハウス（SQL）
+  - バッチ特徴パイプラインのためのデータウェアハウス（SQL）
 
 There are also other specialist compute engines for feature engineering, including some that leverage GPUs, but due to space considerations, we restrict ourselves to widely adopted open source engines: Pandas, Polars, Apache Spark, Apache Flink, and Feldera (a stream processing engine using SQL). 
 特徴エンジニアリングのための他の専門的な計算エンジンもあり、GPUを活用するものもありますが、スペースの都合上、広く採用されているオープンソースエンジン（Pandas、Polars、Apache Spark、Apache Flink、SQLを使用したストリーム処理エンジンであるFeldera）に制限します。
-
 In Figure 6-2, you can see how to select the best data processing frameworks, organized by whether they: 
 図6-2では、最適なデータ処理フレームワークを選択する方法を示しています。これは、次のように整理されています。
 
 - Scale to process data that is too big to be processed by a single server (Apache Spark, Apache Flink) 
-- 単一のサーバーで処理できないほど大きなデータを処理するためにスケールする（Apache Spark、Apache Flink）
-
+  - 単一のサーバで処理できないほど大きなデータを処理するためにスケールする（Apache Spark、Apache Flink）
 - Are stream processing frameworks (Feldera, Apache Flink, Spark Structured Streaming) 
-- ストリーム処理フレームワークである（Feldera、Apache Flink、Spark Structured Streaming）
-
+  - ストリーム処理フレームワークである（Feldera、Apache Flink、Spark Structured Streaming）
 - Support real-time computation of feature data in prediction requests (Python UDFs) 
-- 予測リクエストにおける特徴データのリアルタイム計算をサポートする（Python UDF）
-
+  - 予測リクエストにおける特徴データのリアルタイム計算をサポートする（Python UDF）
 - Are batch data transformations (Pandas, Polars, DuckDB, and PySpark)  
-- バッチデータ変換である（Pandas、Polars、DuckDB、PySpark）
+  - バッチデータ変換である（Pandas、Polars、DuckDB、PySpark）
 
+![]()
 _Figure 6-2. Data transformations in different DataFrame, SQL, and stream processing_ _frameworks have different latency and scalability properties. 
 _Figure 6-2. 異なるDataFrame、SQL、およびストリーム処理フレームワークにおけるデータ変換は、異なるレイテンシとスケーラビリティの特性を持っています。
-
 For each feature pipeline,_ _you should select the best framework, given the scale and latency requirements of the_ _features it creates._ 
-各特徴パイプラインに対して、作成する特徴のスケールとレイテンシ要件を考慮して、最適なフレームワークを選択する必要があります。
+**各特徴パイプラインに対して、作成する特徴のスケールとレイテンシ要件を考慮して、最適なフレームワークを選択する必要があります。**
+
+<!-- ここまで読んだ -->
 
 For stream processing, Apache Flink and Spark Structured Streaming are widely used as distributed, scalable frameworks. 
 ストリーム処理において、Apache FlinkとSpark Structured Streamingは、分散型でスケーラブルなフレームワークとして広く使用されています。
-
 Both, however, have steep learning curves and high operational overhead. 
 しかし、どちらも急な学習曲線と高い運用コストがあります。
-
 Feldera is a single-machine stream processing engine with support for incremental computation with SQL and a lower barrier to entry (see Chapter 9). 
 Felderaは、SQLによる増分計算をサポートする単一マシンのストリーム処理エンジンであり、参入障壁が低いです（第9章を参照）。
 
 For batch processing with DataFrames, Pandas, Polars, and PySpark are the main frameworks that we will work with in this chapter. 
 DataFramesを使用したバッチ処理では、Pandas、Polars、およびPySparkがこの章で扱う主要なフレームワークです。
-
 Batch processing with SQL can be performed in data warehouses (such as Snowflake, BigQuery, Databricks Photon, and Redshift) or on single-host SQL engines (such as DuckDB). 
 SQLを使用したバッチ処理は、データウェアハウス（Snowflake、BigQuery、Databricks Photon、Redshiftなど）や単一ホストのSQLエンジン（DuckDBなど）で実行できます。
-
 The dbt framework has become popular for orchestrating feature engineering pipelines as a series of SQL commands. 
 dbtフレームワークは、一連のSQLコマンドとして特徴エンジニアリングパイプラインをオーケストレーションするために人気を博しています。
-
 Table 6-1 provides a guide to when you should choose one engine over another.  
-表6-1は、どのエンジンを選択すべきかのガイドを提供します。
+表6-1は、**どのエンジンを選択すべきかのガイド**を提供します。
 
+![]()
 _Table 6-1. Frameworks for computing features at different data volumes and feature freshness_ _levels_ 
 _表6-1. 異なるデータボリュームと特徴の新鮮さレベルで特徴を計算するためのフレームワーク_
 
-**Data volume** **Feature freshness Candidate frameworks** **Example feature pipelines for AI systems** 
-**データボリューム** **特徴の新鮮さ 候補フレームワーク** **AIシステムの例の特徴パイプライン**
+- メモ: 表6-1の内容
+  - データボリューム=Large, 特徴量の新鮮さ=1-3 secsの場合
+    - フレームワーク = Flink (Java)
+    - 例: 大規模 recsys のクリックストリーム
+  - データボリューム=Small-Medium, 特徴量の新鮮さ=1-3 secsの場合
+    - フレームワーク = Feldera (SQL)
+    - 例: リアルタイム物流、小規模クリックストリーム処理、サイバーセキュリティイベント
+  - データボリューム=Small, 特徴量の新鮮さ=1-3 secsの場合
+    - フレームワーク = Python: Pathway and Quix
+    - 例: 侵入検知、Industry 4.0、エッジコンピューティング
+  - データボリューム=Large, 特徴量の新鮮さ=Mins to hrsの場合
+    - フレームワーク = PySpark or dbt/SQL
+    - 例: パーソナライズされたマーケティングキャンペーンとセグメンテーション、バッチ詐欺、顧客離脱、クレジットスコアリング、需要予測
+  - データボリューム=Large unstructured, 特徴量の新鮮さ=Mins to hrsの場合
+    - フレームワーク = PySpark
+    - 例: 画像拡張、テキスト処理（例：チャンク化）、ビデオ前処理（PySpark）
+  - データボリューム=Small-Medium, 特徴量の新鮮さ=Mins to hrsの場合
+    - フレームワーク = Pandas, Polars, and DuckDB
+    - 例: APIからのデータ取得のための小規模データボリューム
+  - データボリューム=Small-Large, 特徴量の新鮮さ=Mins to hrsの場合
+    - フレームワーク = Optionally with GPUs: Pandas, Polars, and PySpark
+    - 例: RAGのためのベクトル埋め込みテキストチャンクパイプラインおよびビデオ前処理
 
-Large 1-3 secs Flink (Java) Clickstreams for scalable recommenders  
-大規模 1-3秒 Flink（Java） スケーラブルなレコメンダーのためのクリックストリーム
-
-Small-Medium 1-3 secs Feldera (SQL) Real-time logistics, smaller clickstream processing, and cybersecurity events  
-小規模-中規模 1-3秒 Feldera（SQL） リアルタイムの物流、小規模なクリックストリーム処理、サイバーセキュリティイベント
-
-Small 1-3 secs Python: Pathway and Quix  
-小規模 1-3秒 Python: PathwayとQuix  
-Intrusion detection, Industry 4.0, and edge computing  
-侵入検知、Industry 4.0、およびエッジコンピューティング
-
-Large Mins to hrs PySpark or dbt/SQL Personalized marketing campaigns and segmentation, batch fraud, customer churn, credit scoring, and demand forecasting  
-大規模 分から分 PySparkまたはdbt/SQL パーソナライズされたマーケティングキャンペーンとセグメンテーション、バッチ詐欺、顧客離脱、クレジットスコアリング、需要予測
-
-Large unstructured  
-Mins to hrs PySpark Image augmentation, text processing (e.g., chunking), and video preprocessing (PySpark)  
-大規模非構造化  
-分から分 PySpark 画像拡張、テキスト処理（例：チャンク化）、およびビデオ前処理（PySpark）
-
-Small-Medium Mins to hrs Pandas, Polars, and DuckDB  
-小規模-中規模 分から分 Pandas、Polars、およびDuckDB  
-同様に、APIからのデータ取得のための小規模データボリューム
-
-Small-Large Mins to hrs Optionally with GPUs: Pandas, Polars, and PySpark  
-小規模-大規模 分から分 オプションでGPUを使用：Pandas、Polars、およびPySpark  
-RAGのためのベクトル埋め込みテキストチャンクパイプラインおよびビデオ前処理
+<!-- ここまで読んだ! -->
 
 In general, you should choose stream processing if you are building a real-time ML system that needs fresh precomputed features. 
 一般的に、リアルタイムMLシステムを構築していて、新鮮な事前計算された特徴が必要な場合は、ストリーム処理を選択すべきです。
-
 If feature freshness is not important, you should probably write a batch feature pipeline, as it will have lower operational costs. 
-特徴の新鮮さが重要でない場合は、バッチ特徴パイプラインを書くべきです。なぜなら、それは運用コストが低くなるからです。
-
+**特徴の新鮮さが重要でない場合は、バッチ特徴パイプラインを書くべきです。なぜなら、それは運用コストが低くなるから**です。
 You should prefer DataFrame compute engines (Pandas/Polars/PySpark) over SQL when: 
-次のような場合は、SQLよりもDataFrame計算エンジン（Pandas/Polars/PySpark）を好むべきです。
+次のような場合は、**SQLよりもDataFrame計算エンジン（Pandas/Polars/PySpark）を好むべき**です。(あ、この判断機になる...!:thinking:)
 
 - You need to fetch data from APIs. 
-- APIからデータを取得する必要がある。
-
+  - APIからデータを取得する必要がある場合。
 - Extensive data cleaning is required. 
-- 大規模なデータクリーニングが必要です。
-
+  - 大規模なデータクリーニングが必要な場合。
 - You need to transform unstructured data (images, video, text). 
-- 非構造化データ（画像、ビデオ、テキスト）を変換する必要がある。
-
+  - 非構造化データ（画像、ビデオ、テキスト）を変換する必要がある場合。
 - You need to use feature engineering libraries that are only available in Python. 
-- Pythonでのみ利用可能な特徴エンジニアリングライブラリを使用する必要がある。
-
+  - Pythonでのみ利用可能な特徴エンジニアリングライブラリを使用する必要がある場合。
 - You need to write transformations with custom logic. 
-- カスタムロジックで変換を書く必要がある。
+  - カスタムロジックで変換を書く必要がある場合。
 
 You can scale up feature engineering with DataFrames on a single machine by switch‐ ing from Pandas to Polars, which makes better use of available memory and CPUs. 
-PandasからPolarsに切り替えることで、単一のマシン上でDataFramesを使用した特徴エンジニアリングをスケールアップできます。Polarsは利用可能なメモリとCPUをより良く活用します。
-
+**PandasからPolarsに切り替えることで、単一のマシン上でDataFramesを使用した特徴エンジニアリングをスケールアップできます。Polarsは利用可能なメモリとCPUをより良く活用します。**
 When data volumes are too large for a single machine, you can use PySpark, which can be scaled out over many workers to TB- or PB-sized workloads. 
 データボリュームが単一のマシンには大きすぎる場合は、PySparkを使用できます。これは、多くのワーカーにスケールアウトしてTBまたはPBサイズのワークロードを処理できます。
 
+<!-- ここまで読んだ -->
+
 We will now briefly cover SQL for feature engineering. 
 次に、特徴エンジニアリングのためのSQLについて簡単に説明します。
-
 You should use SQL over DataFrames when you have a batch feature pipeline, all of the source data is in the data warehouse or lakehouse, and your feature engineering can be implemented in SQL. 
-バッチ特徴パイプラインがあり、すべてのソースデータがデータウェアハウスまたはレイクハウスにあり、特徴エンジニアリングをSQLで実装できる場合は、DataFramesよりもSQLを使用すべきです。
-
+**バッチ特徴パイプラインがあり、すべてのソースデータがデータウェアハウスまたはレイクハウスにあり、特徴エンジニアリングをSQLで実装できる場合は、DataFramesよりもSQLを使用すべき**です。
 SQL-based feature engineering is declarative, leveraging the power of relational operations and the scale of data warehouses or query engines on top of lakehouse tables. 
-SQLベースの特徴エンジニアリングは宣言的であり、リレーショナル操作の力とデータウェアハウスやレイクハウステーブルの上にあるクエリエンジンのスケールを活用します。
+SQLベースの特徴エンジニアリングは宣言的であり、**リレーショナル操作の力とデータウェアハウスやレイクハウステーブルの上にあるクエリエンジンのスケールを活用します。** (SQLで書けるものは書いた方が、基本的にパフォーマンス良さそうってことか...!:thinking:)
 
 For example, in Hopsworks, you can run SQL-based transformations against either an external feature group or a feature group stored in Hopsworks. 
 例えば、Hopsworksでは、外部フィーチャーグループまたはHopsworksに保存されたフィーチャーグループに対してSQLベースの変換を実行できます。
-
 For external feature groups, you can write feature pipelines in dbt/SQL directly in the source data warehouse. 
 外部フィーチャーグループの場合、ソースデータウェアハウス内で直接dbt/SQLで特徴パイプラインを書くことができます。
-
 These transform the data in the external table directly. 
 これにより、外部テーブル内のデータが直接変換されます。
-
 If the external feature group is online-enabled, you need a Python model to your dbt workflow that writes the updated data to the online feature group. 
 外部フィーチャーグループがオンライン対応の場合、更新されたデータをオンラインフィーチャーグループに書き込むdbtワークフローにPythonモデルが必要です。
-
 For feature groups in Hopsworks, you can use Spark SQL or DuckDB. 
 Hopsworksのフィーチャーグループには、Spark SQLまたはDuckDBを使用できます。
-
 Spark SQL can be used to transform data in Spark DataFrames, and then you write the transformed DataFrame to a feature group in Hopsworks. 
 Spark SQLを使用してSpark DataFrames内のデータを変換し、変換されたDataFrameをHopsworksのフィーチャーグループに書き込みます。
-
 For DuckDB, you can perform transformations using SQL in a Python program and pass the final feature data as an Arrow table to a Pandas or Polars Data‐ Frame that is then written to the feature group. 
 DuckDBの場合、Pythonプログラム内でSQLを使用して変換を実行し、最終的な特徴データをArrowテーブルとしてPandasまたはPolars DataFrameに渡し、それをフィーチャーグループに書き込みます。
 
-###### Data Transformations for DataFrames
-###### DataFramesのためのデータ変換
+<!-- ここまで読んだ -->
+
+## 1.3. Data Transformations for DataFrames データフレームのデータ変換
 
 Feature engineering with both DataFrames and SQL tables involves performing rowwise and column-wise transformations on the data. 
 DataFramesとSQLテーブルの両方を使用した特徴エンジニアリングは、データに対して行単位および列単位の変換を実行することを含みます。
-
 One useful way to understand each data transformation is to study how it transforms the rows and columns in your DataFrame(s) or SQL table(s). 
 各データ変換を理解するための有用な方法は、それがDataFrameまたはSQLテーブル内の行と列をどのように変換するかを研究することです。
 
 You need to know what the result of the data transformations will be—will they add or remove columns, reduce the number of rows, or add more rows? 
 データ変換の結果がどうなるかを知る必要があります。列を追加または削除するのか、行数を減らすのか、または行を追加するのか？
-
 Figure 6-3 shows the different classes of transformations that can be performed on tabular data. 
 図6-3は、表形式データに対して実行できるさまざまな変換のクラスを示しています。
-
 In the discussion that follows, we will restrict ourselves to data transformations on Data‐ Frames 
 以下の議論では、DataFramesに対するデータ変換に制限します。
-
-
-
-. In the discussion that follows, we will restrict ourselves to data transformations on Data‐ Frames. 
-以下の議論では、DataFrameに対するデータ変換に制限します。
-
 The code snippets are in a mix of PySpark, Pandas, and Polars. 
 コードスニペットは、PySpark、Pandas、およびPolarsの混合です。
-
 Similar to Pandas, Polars is a DataFrame engine that runs on a single machine, but it scales to handle much larger data volumes thanks to better memory management and multi‐ core support. 
-Pandasと同様に、Polarsは単一のマシンで動作するDataFrameエンジンですが、より良いメモリ管理とマルチコアサポートのおかげで、はるかに大きなデータボリュームを処理するためにスケールします。
-
+**Pandasと同様に、Polarsは単一のマシンで動作するDataFrameエンジンですが、より良いメモリ管理とマルチコアサポートのおかげで、はるかに大きなデータボリュームを処理するためにスケール**します。
 There are a number of important classes of transformations that we cover: 
 私たちが扱う重要な変換のクラスがいくつかあります：
 
 - Expressions (df.with_columns(..)) are available in both Polars and PySpark. 
-- 表現（df.with_columns(..)）は、PolarsとPySparkの両方で利用可能です。
-
+  - 表現（df.with_columns(..)）は、PolarsとPySparkの両方で利用可能です。
 - Pandas user-defined functions (UDFs) are available in PySpark. 
-- Pandasのユーザー定義関数（UDF）は、PySparkで利用可能です。
-
+  - Pandasのユーザー定義関数（UDF）は、PySparkで利用可能です。
 - Python UDFs (apply) are available in Pandas and Polars. 
-- Python UDF（apply）は、PandasとPolarsで利用可能です。
-
+  - Python UDF（apply）は、PandasとPolarsで利用可能です。
 - filter and join transformations are available in Polars, Pandas, and PySpark. 
-- filterおよびjoin変換は、Polars、Pandas、およびPySparkで利用可能です。
-
+  - filterおよびjoin変換は、Polars、Pandas、およびPySparkで利用可能です。
 - groupBy (group_by in Polars) and aggregate are available in Polars, Pandas, and PySpark.  
-- groupBy（Polarsではgroup_by）および集約は、Polars、Pandas、およびPySparkで利用可能です。
+  - groupBy（Polarsではgroup_by）および集約は、Polars、Pandas、およびPySparkで利用可能です。
 
------
+![]()
 _Figure 6-3. Data transformations produce output DataFrames that often do not match_ _the shape of the input DataFrame(s). 
-_Figure 6-3. データ変換は、出力DataFrameが入力DataFrameの形状と一致しないことが多いことを示しています。
-
+_Figure 6-3. **データ変換は、出力DataFrameが入力DataFrameの形状と一致しないことが多いこと**を示しています。
 Some transformations add rows and/or columns, some keep the same number of rows, and some reduce the number of rows and/or columns._ 
 いくつかの変換は行や列を追加し、いくつかは同じ数の行を保持し、いくつかは行や列の数を減少させます。
 
 We can classify DataFrame transformations into the following cardinalities: 
-DataFrameの変換を以下のカーディナリティに分類できます：
+**DataFrameの変換を以下のカーディナリティに分類**できます：
 
-_Row size–preserving transformation_ 
-_行サイズを保持する変換_
-
+- **Row size–preserving transformation (行サイズを保持する変換)**
 With this, you add a new column to an existing DataFrame without changing the number of rows. 
 これにより、行数を変更せずに既存のDataFrameに新しい列を追加します。
-
 Feature extraction is a typical example of one such data transformation. 
 特徴抽出は、そのようなデータ変換の典型的な例です。
 
-_Row/column size–reducing transformation_ 
-_行/列サイズを減少させる変換_
-
+- **Row/column size–reducing transformation (行/列サイズを削減する変換)**
 With this, the input DataFrame has more rows than the output DataFrame. 
 これにより、入力DataFrameの行数は出力DataFrameの行数よりも多くなります。
-
 Examples of such transformations include _group by aggregations,_ _filtering, and_ data compression (vector embeddings and principal component analysis).  
 このような変換の例には、_group by集約、_フィルタリング、および_データ圧縮（ベクトル埋め込みおよび主成分分析）が含まれます。
 
------
-_Row/column size–increasing transformation_ 
-_行/列サイズを増加させる変換_
-
+- **Row/column size–increasing transformation (行/列サイズを増加させる変換)**
 With this, the input DataFrame has fewer rows than the output DataFrame. 
 これにより、入力DataFrameの行数は出力DataFrameの行数よりも少なくなります。
-
 A common example is feature extraction that involves exploding JSON objects, lists, or dicts stored in columns in DataFrames. 
 一般的な例は、DataFrameの列に格納されたJSONオブジェクト、リスト、または辞書を展開する特徴抽出です。
-
 Cross-joins also belong here, as do user-defined table functions (in PySpark). 
 クロスジョインもここに含まれ、ユーザー定義テーブル関数（PySparkで）も含まれます。
 
-_Join transformations_ 
-_結合変換_
-
+- **Join transformations (結合変換)**
 These involve merging together two input DataFrames to produce a single Data‐ Frame (with more columns than either of the input DataFrames). 
 これには、2つの入力DataFrameをマージして、1つのDataFrameを生成することが含まれます（入力DataFrameのいずれよりも多くの列を持つ）。
-
 Joins are needed when you have data from different sources and you want to compute fea‐ tures using data from both sources. 
-異なるソースからのデータがあり、両方のソースのデータを使用して特徴を計算したい場合、結合が必要です。
-
+**異なるソースからのデータがあり、両方のソースのデータを使用して特徴を計算したい場合、結合が必要**です。
 Joins are sometimes needed to build the final DataFrame that is written to a feature group. 
 結合は、特徴グループに書き込まれる最終的なDataFrameを構築するために時々必要です。
 
-###### Row Size–Preserving Transformations
-###### 行サイズを保持する変換
+<!-- ここまで読んだ! -->
+
+### 1.3.1. Row Size–Preserving Transformations (行サイズを保持する変換)
 
 Here is an example of a row size–preserving transformation, implemented as a Pan‐ das function operating on a Series (column in the DataFrame) that identifies rows that include outliers by setting a Boolean value for is_outlier in a new column in the DataFrame: 
 ここに、行サイズを保持する変換の例があります。これは、DataFrameの列であるSeriesに対して動作するPandas関数として実装されており、DataFrameの新しい列でis_outlierのブール値を設定することによって外れ値を含む行を特定します：
 
-```  
-   def detect_outliers(value_series: pd.Series) -> pd.Series: 
-     """Add a column that indicates whether the row is an outlier""" 
-     mean = value_series.mean() 
-     std_dev = value_series.std() 
-     z_scores = (value_series - mean) / std_dev 
-     return np.abs(z_scores) > 3   
-   df["is_outlier"] = detect_outliers(df["value"])
+```python
+def detect_outliers(value_series: pd.Series) -> pd.Series: 
+  """Add a column that indicates whether the row is an outlier""" 
+  mean = value_series.mean() 
+  std_dev = value_series.std() 
+  z_scores = (value_series - mean) / std_dev 
+  return np.abs(z_scores) > 3   
+df["is_outlier"] = detect_outliers(df["value"])
 ``` 
 
 We may compose this transformation in Pandas with a row-reducing transformation that removes the rows that are considered outliers: 
 この変換をPandasで、外れ値と見なされる行を削除する行削減変換と組み合わせることができます：
 
-```  
-   def remove_outliers(df: pd.DataFrame) -> pd.DataFrame: 
-     """Remove the rows in the DataFrame where is_outlier is True""" 
-     return df[df["is_outlier"] == False]   
-   df_filtered = remove_outliers(df)
+```python
+def remove_outliers(df: pd.DataFrame) -> pd.DataFrame: 
+  """Remove the rows in the DataFrame where is_outlier is True""" 
+  return df[df["is_outlier"] == False]   
+df_filtered = remove_outliers(df)
 ``` 
 
 Other examples of row size–preserving data transformations include: 
 行サイズを保持するデータ変換の他の例には、以下が含まれます：
 
 - Applying a UDF as a lambda function in Polars (or an apply in Pandas, or a Pan‐ das UDF in PySpark). 
-- PolarsでUDFをラムダ関数として適用すること（またはPandasでapply、またはPySparkでPandas UDF）。
-
+PolarsでUDFをラムダ関数として適用すること（またはPandasでapply、またはPySparkでPandas UDF）。
 This Polars code that stores the squared value of a column in `new_col applies the lambda function to` `col1 using the` `map_elements func‐` tion. 
-このPolarsコードは、`new_col`に列の平方値を格納し、`map_elements`関数を使用して`col1`にラムダ関数を適用します。
-
+このPolarsコードは、`new_col`に列の平方値を格納し、`map_elements`関数を使用して`col1`にラムダ関数を適用しす。
 Note that map_elements executes Python functions row by row and is not vectorized: 
-map_elementsはPython関数を行ごとに実行し、ベクトル化されていないことに注意してください：
+**map_elementsはPython関数を行ごとに実行し、ベクトル化されていないことに注意**してください：
 
-```     
-     df = df.with_columns(       
-       pl.col("col1").map_elements(lambda x: x * 2).alias("new_col")     
-     )
+```python
+df = df.with_columns(       
+  pl.col("col1").map_elements(lambda x: x * 2).alias("new_col")     
+)
 ```
------
-- A rolling window expression in Polars that computes the mean amount spent on a credit card for the previous three days: 
-- 過去3日間のクレジットカードでの支出の平均額を計算するPolarsのローリングウィンドウ式：
 
-```     
-     df.with_columns(       
-       (col("amount").rolling_mean(3).over("cc_num")).alias("rolling_avg")     
-     )
-```  
+- A rolling window expression in Polars that computes the mean amount spent on a credit card for the previous three days: 
+過去3日間のクレジットカードでの支出の平均額を計算するPolarsのローリングウィンドウ式：
+
+```python
+df.with_columns(       
+  (col("amount").rolling_mean(3).over("cc_num")).alias("rolling_avg")     
+)
+```
 
 - Conditional transformations (when, `then,` `otherwise,` `select). 
-- 条件付き変換（when、`then`、`otherwise`、`select）。
-
+条件付き変換（when、`then`、`otherwise`、`select）。
 Here, if` `col is 0,` then set new_col to positive. 
 ここでは、`col`が0の場合、`new_col`をpositiveに設定します。
-
 If not, then set it to non_positive: 
 そうでない場合は、non_positiveに設定します：
 
-```     
+```
      df.with_columns(       
        (pl.when(df["col"]==0)       
        .then("positive").otherwise("non_positive"))       
        .alias("new_col")     
      )
-```  
+```
 
 - Temporal transformations that capture time-related information about the data. 
-- データに関する時間関連情報をキャプチャする時間的変換。
-
+データに関する時間関連情報をキャプチャする時間的変換。
 Here, we compute the number of days since the bank’s credit rating was last changed: 
 ここでは、銀行の信用評価が最後に変更されてからの日数を計算します：
 
-```     
-     df.with_columns(       
-       (pl.lit(datetime.now()) - pl.col("last_modified"))       
-       .dt.total_days()       
-       .alias("days_since_bank_cr_changed")     
-     )
+```python    
+df.with_columns(       
+  (pl.lit(datetime.now()) - pl.col("last_modified"))       
+  .dt.total_days()       
+  .alias("days_since_bank_cr_changed")     
+)
 ```  
 
 - Sorting and ranking. 
-- ソートとランキング。
-
+ソートとランキング。
 This code computes in rank_col the rank of each value in `col: 
 このコードは、`col`の各値のランクをrank_colに計算します：
 
-```     
-     df.with_columns(pl.col("col").rank().alias("rank_col"))
+```python
+df.with_columns(pl.col("col").rank().alias("rank_col"))
 ```  
 
 - Mathematical transformations. 
-- 数学的変換。
-
+数学的変換。
 Here, we store the sum of `col1 and` `col2 in` `sum_col: 
 ここでは、`col1`と`col2`の合計を`sum_col`に格納します：
 
 ```     
-     df.with_columns((pl.col("col1") + pl.col("col2")).alias("sum_col"))
+df.with_columns((pl.col("col1") + pl.col("col2")).alias("sum_col"))
 ```  
 
 - String transformations. 
-- 文字列変換。
-
+文字列変換。
 This transformation uppercases the string in `name and` stores it in uppercase_name: 
 この変換は、`name`の文字列を大文字にし、`uppercase_name`に格納します：
 
-```     
-     df.with_columns(uppercase_name = pl.col("name").str.to_uppercase())
+``` 
+df.with_columns(uppercase_name = pl.col("name").str.to_uppercase())
 ```  
 
 - Lag and lead. 
-- ラグとリード。
-
+ラグとリード。
 This code stores yesterday’s pm25 value in lagged_pm25: 
 このコードは、昨日のpm25値を`lagged_pm25`に格納します：
 
 ```     
-     df.with_columns(lagged_pm25 = pl.col("pm25").shift(1))
+df.with_columns(lagged_pm25 = pl.col("pm25").shift(1))
 ```  
 
-###### Row and Column Size–Reducing Transformations
-###### 行と列のサイズを減少させる変換
+<!-- ここまで読んだ! -->
 
-``` 
+### 1.3.2. Row and Column Size–Reducing Transformations (行および列サイズを削減する変換)
+
 _Aggregations are examples of a well-known data transformation that reduces the_ 
 _ number of rows from the input DataFrame (or table). 
-_集約は、入力DataFrame（またはテーブル）から行数を減少させるよく知られたデータ変換の例です。
-
+集約は、入力DataFrame（またはテーブル）から行数を減少させるよく知られたデータ変換の例です。
 Aggregations summarize data over a column and optionally an additional time window (a time range of data), cap‐ turing trends or temporal patterns. 
-集約は、列にわたってデータを要約し、オプションで追加の時間ウィンドウ（データの時間範囲）を指定し、トレンドや時間的パターンを捉えます。
-
+**集約は、列にわたってデータを要約し、オプションで追加の時間ウィンドウ（データの時間範囲）を指定し、トレンドや時間的パターンを捉えます。**
 Aggregations are useful in AI systems with sparse data and temporal patterns, such as fraud detection, recommendation engines, and predictive maintenance applications. 
-集約は、詐欺検出、推薦エンジン、予測保守アプリケーションなど、スパースデータと時間的パターンを持つAIシステムで有用です。
+**集約は、詐欺検出、推薦エンジン、予測保守アプリケーションなど、スパースデータと時間的パターンを持つAIシステムで有用**です。(参考になりそう...!:thinking:)
 
-
+<!-- ここまで読んだ! -->
 
 Aggregations are functions that summarize a window of data. 
 集約は、データのウィンドウを要約する関数です。
-
 The data could include all of the input data or a time window, which is a period over which the aggregation is performed. 
 データには、すべての入力データまたは集約が行われる期間である時間ウィンドウが含まれる場合があります。
-
 Common aggregation functions include: 
 一般的な集約関数には以下が含まれます：
 
-_Count_ Number of events 
+- _Count_ Number of events 
 _Count_ イベントの数
 
-_Sum_ Total value (e.g., total transaction amount) 
+- _Sum_ Total value (e.g., total transaction amount) 
 _Sum_ 合計値（例：総取引額）
 
-_Mean/median_ Average value 
+- _Mean/median_ Average value 
 _Mean/median_ 平均値
 
-_Max/min_ Extreme values 
+- _Max/min_ Extreme values 
 _Max/min_ 極端な値
 
-_Standard deviation/variance_ Measure of variability 
+- _Standard deviation/variance_ Measure of variability 
 _Standard deviation/variance_ 変動性の測定
 
-_Percentiles_ Specific thresholds, such as the 90th percentile 
+- _Percentiles_ Specific thresholds, such as the 90th percentile 
 _Percentiles_ 特定の閾値（例：90パーセンタイル）
 
 Aggregations are computed for entities, for example: 
-集約は、例えば以下のエンティティに対して計算されます：
+**集約は、例えば以下のエンティティに対して計算**されます：
+(うん。色んな粒度で集約できるよね...!:thinking:)
 
 - Per credit card 
-- クレジットカードごと
-
+  - クレジットカードごと
 - Per customer 
-- 顧客ごと
-
+  - 顧客ごと
 - Per merchant/bank 
-- 商人/銀行ごと
-
+  - 商人/銀行ごと
 - Per product/item 
-- 製品/アイテムごと
+  - 製品/アイテムごと
 
 In SQL and PySpark you use `group_by and a` _window. 
 SQLやPySparkでは、`group_by`と`window`を使用します。
-
 Polars supports grouping by_ time windows through the `groupby_rolling and` `groupby_dynamic methods and` then applying aggregations. 
 Polarsは、`groupby_rolling`および`groupby_dynamic`メソッドを通じて時間ウィンドウによるグルーピングをサポートし、その後集約を適用します。
-
 Pandas supports time-based grouping through resample and rolling, which can be combined with aggregation functions. 
 Pandasは、リサンプリングとロールを通じて時間ベースのグルーピングをサポートしており、集約関数と組み合わせることができます。
-
 Here is an example aggregation in Polars without a time window that handles missing data by filling missing values with the forward fill strategy (replacing null values with the last valid nonnull value that appeared earlier in the data), before grouping and summing the amount: 
 以下は、時間ウィンドウなしでのPolarsにおける集約の例で、欠損データを前方埋め戦略（null値をデータ内で以前に出現した最後の有効な非null値で置き換える）で処理し、グルーピングと合計を行う前のものです：
 
-```  
+```Python 
 filled_df = (df.with_columns(pl.col("amount").fill_null(strategy="forward"))          
 .group_by("cc_num", maintain_order=True)          
 .agg([            
@@ -701,8 +613,8 @@ kNN検索は、提供されたベクトル埋め込みに意味的に近いベ�
 The size of k can range from a few to a few hundred records. 
 kのサイズは、数件から数百件のレコードまでの範囲になります。
 
-###### Row/Column Size–Increasing Transformations 
-###### 行/列サイズ増加変換
+###### 1.3.2.0.0.1. Row/Column Size–Increasing Transformations 
+###### 1.3.2.0.0.2. 行/列サイズ増加変換
 
 It is becoming more common to store JSON objects in columns in tables. 
 テーブルの列にJSONオブジェクトを保存することが一般的になりつつあります。
@@ -798,8 +710,8 @@ Similarly, we also unpivot columns into rows using unpivot:
 dv_unpivot = df.unpivot(index=["cc_num"], on=["category"])
 ```
 
-###### Join Transformations 
-###### 結合変換
+###### 1.3.2.0.0.3. Join Transformations 
+###### 1.3.2.0.0.4. 結合変換
 
 A common requirement when selecting features for a model is to include features that “belong” to different entities. 
 モデルの特徴を選択する際の一般的な要件は、「異なるエンティティに属する」特徴を含めることです。
@@ -844,8 +756,8 @@ LEFT（OUTER）JOINは、結合操作における左側のDataFrameに対して�
 tion, but an `INNER JOIN will be either a row size–preserving or row size–reducing` transformation, depending on whether there are matching rows in the right-hand DataFrame for all rows in the left-hand DataFrame (preserving) or not (reducing). 
 しかし、`INNER JOIN`は、左側のDataFrameのすべての行に対して右側のDataFrameに一致する行があるかどうかに応じて、行サイズを保持するか行サイズを減少させる変換になります（保持する場合）またはそうでない場合（減少する場合）。
 
-###### DAG of Feature Functions 
-###### 特徴関数のDAG
+###### 1.3.2.0.0.5. DAG of Feature Functions 
+###### 1.3.2.0.0.6. 特徴関数のDAG
 
 In Chapter 2, we argued that feature logic (transformations) should be factored into feature functions to improve code modularity and make transformations unittestable. 
 第2章では、特徴ロジック（変換）は特徴関数に分割されるべきであり、コードのモジュール性を向上させ、変換をユニットテスト可能にするべきだと主張しました。
@@ -915,8 +827,8 @@ DAGの中間ノードと葉ノードの両方がDataFrameをフィーチャー�
 Here, df1 is writ‐ ten to feature group 1, dfM is written to feature group M, and dfN is written to feature group N. 
 ここでは、df1がフィーチャーグループ1に書き込まれ、dfMがフィーチャーグループMに、dfNがフィーチャーグループNに書き込まれます。
 
-###### Lazy DataFrames
-###### レイジーDataFrames
+###### 1.3.2.0.0.7. Lazy DataFrames
+###### 1.3.2.0.0.8. レイジーDataFrames
 
 Pandas supports _eager evaluation of operations on DataFrames. 
 PandasはDataFrameに対する操作の_即時評価をサポートしています。
@@ -962,15 +874,15 @@ detecting credit card fraud. However, all of these steps are only executed when 
 ただし、これらのすべてのステップは、コードが最後の行に達したとき、つまり内容を読み取るアクションであるcollect()があるときにのみ実行されます：
 
 ```   
-# Lazy loading with pl.scan_csv   
-# pl.scan_csvを使用したレイジーローディング   
+# 2. Lazy loading with pl.scan_csv   
+# 3. pl.scan_csvを使用したレイジーローディング   
 lazy_df = pl.scan_csv("transactions.csv")   
 lazy_df = lazy_df.with_columns([     
     (pl.col("amount") - pl.col("amount").mean()).alias("deviation_from_mean")   
 ])   
 result = lazy_df.collect() 
-# 平均からの偏差のための新しい列を作成し、平均を計算します。   
-# 実行をトリガーし、結果を収集します   
+# 4. 平均からの偏差のための新しい列を作成し、平均を計算します。   
+# 5. 実行をトリガーし、結果を収集します   
 ```
 
 ###### Vectorized Compute, Multicore, and Arrow
@@ -1167,10 +1079,10 @@ The following code snippet demonstrates how to build a feature pipeline that per
        'age': [25, 30, 35, 40],     
        'salary': [50000, 60000, 75000, 90000]   
    })   
-   # Convert Pandas DataFrame to PyArrow Table (zero-copy if possible)   
-   # Zero-copy if all columns are already Arrow-compatible types   
+   # 6. Convert Pandas DataFrame to PyArrow Table (zero-copy if possible)   
+   # 7. Zero-copy if all columns are already Arrow-compatible types   
    arrow_table = pa.Table.from_pandas(pdf)   
-   # Convert to Polars DataFrame (zero-copy)   
+   # 8. Convert to Polars DataFrame (zero-copy)   
    pldf = pl.from_arrow(arrow_table)   
    pldf_transformed = pldf.with_columns([     
        pl.when(pl.col('age') < 35)     
@@ -1181,7 +1093,7 @@ The following code snippet demonstrates how to build a feature pipeline that per
    arrow_table_transformed = pldf_transformed.to_arrow()   
    con = duckdb.connect()   
    con.register('employee_table', arrow_table_transformed)   
-   # Transform salary to categorical in DuckDB SQL   
+   # 9. Transform salary to categorical in DuckDB SQL   
    result_df = con.execute("""
 ``` 
 ```
@@ -1328,7 +1240,7 @@ import torch
 from torchvision import transforms  
 from PIL import Image  
 image = Image.open("path/to/your/image.png")  
-# Define a transformation pipeline to convert the image into a tensor  
+# 10. Define a transformation pipeline to convert the image into a tensor  
 transform = transforms.Compose([ transforms.ToTensor() ])  
 image_tensor = transform(image)  
 ```
@@ -1598,8 +1510,8 @@ def compute_mean(days):
 The sum of squares is an alternative approach we could have used, but it requires an additional column storing the sum of squares, so we prefer the weighted mean approach, as it requires one less column to store in our daily aggregations feature group.
 平方和は私たちが使用できた代替アプローチですが、平方和を保存する追加の列が必要です。そのため、日次集計フィーチャーグループに保存する列が1つ少なくて済む加重平均アプローチを好みます。
 
-###### Summary and Exercises
-###### 要約と演習
+###### 10.0.0.0.0.1. Summary and Exercises
+###### 10.0.0.0.0.2. 要約と演習
 
 In this chapter, we introduced guidelines for writing model-independent transformations in feature pipelines. 
 この章では、フィーチャーパイプラインにおけるモデル非依存の変換を書くためのガイドラインを紹介しました。

@@ -93,7 +93,7 @@ Apache IcebergとDelta Lakeのパフォーマンスとスケーラビリティ�
 - Write Strategy: Iceberg's primary write strategy for updates and deletes is Copy-on-Write (CoW).
   - 書き込み戦略：**Icebergの更新および削除の主な書き込み戦略はCopy-on-Write（CoW）**です。
     In this approach, when data is modified, the affected data files are rewritten entirely.
-    このアプローチでは、データが変更されると、影響を受けたデータファイルが完全に再書き込みされます。
+    このアプローチでは、**データが変更されると、影響を受けたデータファイルが完全に再書き込みされます。** (overwriteとかってことだよね...! 単にappendの場合は新しいデータファイルが増えるはず:thinking:)
     While this can lead to write amplification for frequent updates, reads are generally fast as they only process valid, non-overlapping data files. 
     **これは頻繁な更新に対して書き込み増幅を引き起こす可能性がありますが**、読み取りは一般的に速く、有効な非重複データファイルのみを処理します。
     Iceberg also offers an optional Merge-on-Read (MoR) strategy, especially beneficial for streaming workloads or high write throughput, where changes are recorded as 'diffs' and merged at read time, though this can increase read complexity. 
@@ -104,28 +104,25 @@ Apache IcebergとDelta Lakeのパフォーマンスとスケーラビリティ�
 ### Delta Lake Performance Delta Lakeのパフォーマンス
 
 - Data Skipping and Compaction: Delta Lake has data skipping and automatic compaction. 
-- データスキップとコンパクション：Delta Lakeはデータスキップと自動コンパクションを備えています。
-
+データスキップとコンパクション：Delta Lakeはデータスキップと自動コンパクションを備えています。
 It categorizes data files by metadata to skip unnecessary data during queries. 
 メタデータによってデータファイルを分類し、クエリ中に不要なデータをスキップします。
-
 It also compacts small Parquet files into larger ones periodically, reducing the overhead of managing many small files and thus query performance. 
-また、小さなParquetファイルを定期的に大きなファイルに圧縮し、多くの小さなファイルを管理するオーバーヘッドを削減し、クエリパフォーマンスを向上させます。
+また、**小さなParquetファイルを定期的に大きなファイルに圧縮**し、多くの小さなファイルを管理するオーバーヘッドを削減し、クエリパフォーマンスを向上させます。
 
 - Write Strategy (Copy-on-Write): Delta Lake primarily uses a Copy-on-Write (CoW) strategy for updates and deletes, where modified data records result in new files being written, and old files are marked for removal. 
-- 書き込み戦略（Copy-on-Write）：Delta Lakeは主に更新と削除のためにCopy-on-Write（CoW）戦略を使用しており、変更されたデータレコードは新しいファイルの書き込みを引き起こし、古いファイルは削除のためにマークされます。
-
+書き込み戦略（Copy-on-Write）：Delta Lakeは主に更新と削除のためにCopy-on-Write（CoW）戦略を使用しており、変更されたデータレコードは新しいファイルの書き込みを引き起こし、古いファイルは削除のためにマークされます。
 This approach ensures transactional consistency and simplifies read operations, as readers only see the latest, consistent version of the data. 
 このアプローチはトランザクションの一貫性を確保し、リーダーがデータの最新で一貫したバージョンのみを表示するため、読み取り操作を簡素化します。
-
 While it can lead to write amplification, Delta Lake's optimizations help manage this effectively. 
 書き込み増幅を引き起こす可能性がありますが、Delta Lakeの最適化はこれを効果的に管理するのに役立ちます。
 
-#### Apache Iceberg Scalability
-#### Apache Icebergのスケーラビリティ
+<!-- ここまで読んだ! -->
+
+### Apache Iceberg Scalability　Apache Icebergのスケーラビリティ
 
 - Scalability: Apache Iceberg can handle petabyte-scale datasets easily, supports partition evolution and schema evolution without having to rewrite a lot of data. 
-- スケーラビリティ：Apache Icebergはペタバイト規模のデータセットを容易に処理でき、データを多く書き換えることなくパーティションの進化とスキーマの進化をサポートします。
+  - スケーラビリティ：**Apache Icebergはペタバイト規模のデータセットを容易に処理でき、データを多く書き換えることなくパーティションの進化とスキーマの進化をサポート**します。
 
 This makes Iceberg very scalable and can handle a lot of data without performance degradation. 
 これにより、Icebergは非常にスケーラブルであり、パフォーマンスの低下なしに大量のデータを処理できます。
