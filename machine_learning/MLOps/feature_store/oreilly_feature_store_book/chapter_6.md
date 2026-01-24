@@ -679,49 +679,39 @@ dv_unpivot = df.unpivot(index=["cc_num"], on=["category"])
 ### 1.3.4. Join Transformations 
 
 A common requirement when selecting features for a model is to include features that “belong” to different entities. 
-モデルの特徴を選択する際の一般的な要件は、「異なるエンティティに属する」特徴を含めることです。
+**モデルの特徴を選択する際の一般的な要件は、「異なるエンティティに属する」特徴を含めること**です。
 For example, say that you could have features in different feature groups with different entity IDs (e.g., cc_num, account_id), but you would like to use features from both feature groups in your model. 
 例えば、異なるエンティティID（例：cc_num、account_id）を持つ異なるフィーチャーグループに特徴がある場合、両方のフィーチャーグループから特徴をモデルで使用したいとします。
-
 In this case, you’ll often need to join two or more DataFrames together using a common join key. 
 この場合、共通の結合キーを使用して2つ以上のDataFrameを結合する必要があります。
-
 The following is an example of joining two DataFrames together in Polars. 
 以下は、Polarsで2つのDataFrameを結合する例です。
 
 Note that Pandas uses the merge method instead of join for this operation (PySpark uses join): 
 Pandasはこの操作に対してjoinの代わりにmergeメソッドを使用することに注意してください（PySparkはjoinを使用します）：
 
-```  
+```Python
 merged_df = transaction_df.join(account_df, on="cc_num", how="inner")
 ```
 
 Here, we perform an inner join, which will take every row in transaction_df and look for a matching cc_num in account_df. 
 ここでは、inner joinを実行し、transaction_dfのすべての行を取得し、account_dfで一致するcc_numを探します。
-
 It will skip rows in transaction_df that do not have a matching cc_num in account_df. 
 account_dfに一致するcc_numがないtransaction_dfの行はスキップされます。
-
-But what if there is no account information for a transaction and we still would like to include the transaction (as we can infer reason‐ 
-しかし、取引に対するアカウント情報がない場合、取引を含めたい場合（合理的な値をトレーニングや推論中に推測できるため）、どうすればよいでしょうか？
-
-able values for the account during training or inference)? 
-アカウントの合理的な値をトレーニングや推論中に推測できる場合はどうすればよいでしょうか？
-
+But what if there is no account information for a transaction and we still would like to include the transaction (as we can infer reason‐able values for the account during training or inference)? 
+しかし、取引に対するアカウント情報がなくても、取引を含めたい場合はどうでしょうか（トレーニングまたは推論中にアカウントの合理的な値を推測できるため）？
 In that case, we can change the policy to a left (outer) join, with how="left". 
 その場合、ポリシーを左（外部）結合に変更し、how="left"とします。
-
 INNER JOIN and LEFT JOIN are the most widely used joins for feature engineering. 
 INNER JOINとLEFT JOINは、特徴エンジニアリングで最も広く使用される結合です。
-
 Note that a LEFT (OUTER) JOIN will be a row size–preserving transformation for the left-hand DataFrame in the join opera‐ 
 LEFT（OUTER）JOINは、結合操作における左側のDataFrameに対して行サイズを保持する変換になります。
-
 tion, but an `INNER JOIN will be either a row size–preserving or row size–reducing` transformation, depending on whether there are matching rows in the right-hand DataFrame for all rows in the left-hand DataFrame (preserving) or not (reducing). 
 しかし、`INNER JOIN`は、左側のDataFrameのすべての行に対して右側のDataFrameに一致する行があるかどうかに応じて、行サイズを保持するか行サイズを減少させる変換になります（保持する場合）またはそうでない場合（減少する場合）。
 
-###### 1.3.4.0.0.1. DAG of Feature Functions 
-###### 1.3.4.0.0.2. 特徴関数のDAG
+<!-- ここまで読んだ! -->
+
+## 1.4. DAG of Feature Functions 
 
 In Chapter 2, we argued that feature logic (transformations) should be factored into feature functions to improve code modularity and make transformations unittestable. 
 第2章では、特徴ロジック（変換）は特徴関数に分割されるべきであり、コードのモジュール性を向上させ、変換をユニットテスト可能にするべきだと主張しました。
@@ -730,13 +720,13 @@ A feature pipeline is a series of well-defined steps that transform source data 
 フィーチャーパイプラインは、ソースデータをフィーチャーストアに書き込まれる特徴に変換する一連の明確に定義されたステップです：
 
 1. Read data from one or more data sources into one or more DataFrames. 
-1. 1つ以上のデータソースから1つ以上のDataFrameにデータを読み込みます。
+2. 1つ以上のデータソースから1つ以上のDataFrameにデータを読み込みます。
 
-2. Apply feature functions to transform data into features and to join features together. 
-2. 特徴関数を適用してデータを特徴に変換し、特徴を結合します。
+3. Apply feature functions to transform data into features and to join features together. 
+4. 特徴関数を適用してデータを特徴に変換し、特徴を結合します。
 
-3. Write a DataFrame containing featurized data to the corresponding feature group.  
-3. 特徴化されたデータを含むDataFrameを対応するフィーチャーグループに書き込みます。
+5. Write a DataFrame containing featurized data to the corresponding feature group.  
+6. 特徴化されたデータを含むDataFrameを対応するフィーチャーグループに書き込みます。
 
 You should parametrize the feature pipeline by its data input so that you can run the feature pipeline either with historical data or with new incremental data. 
 フィーチャーパイプラインは、そのデータ入力によってパラメータ化するべきであり、そうすることで、フィーチャーパイプラインを過去のデータまたは新しい増分データのいずれかで実行できるようにします。
@@ -791,8 +781,8 @@ DAGの中間ノードと葉ノードの両方がDataFrameをフィーチャー�
 Here, df1 is writ‐ ten to feature group 1, dfM is written to feature group M, and dfN is written to feature group N. 
 ここでは、df1がフィーチャーグループ1に書き込まれ、dfMがフィーチャーグループMに、dfNがフィーチャーグループNに書き込まれます。
 
-###### 1.3.4.0.0.3. Lazy DataFrames
-###### 1.3.4.0.0.4. レイジーDataFrames
+###### 1.4.0.0.0.1. Lazy DataFrames
+###### 1.4.0.0.0.2. レイジーDataFrames
 
 Pandas supports _eager evaluation of operations on DataFrames. 
 PandasはDataFrameに対する操作の_即時評価をサポートしています。
