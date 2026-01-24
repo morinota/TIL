@@ -90,7 +90,7 @@ At the same time, data lakes have suffered from three main problems - security, 
 同時に、データレイクはこれらの利点にもかかわらず、**主に3つの問題（セキュリティ、品質、パフォーマンス）**に悩まされています。 
 Since all the data is stored and managed as files, it does not provide fine-grained access control on the contents of files, but only coarse-grained access governing who can access what files or directories. 
 すべてのデータがファイルとして保存および管理されているため、ファイルの内容に対する詳細なアクセス制御を提供せず、誰がどのファイルやディレクトリにアクセスできるかを管理する粗いアクセス制御のみを提供します。
-The query performance is poor because the formats are not optimized for fast access, and listing files is computationally expensive. 
+The query performance is poor because the formats are not optimized for fast access, and listing files is computationally expensive.
 フォーマットが高速アクセスに最適化されていないため、クエリパフォーマンスは悪く、ファイルのリスト表示は計算コストが高くなります。
 In short, organizations end up moving data into other systems to make use of the data, unless the applications can tolerate noise (i.e. machine learning). 
 要するに、アプリケーションがノイズ（すなわち機械学習）を許容できない限り、組織はデータを利用するために他のシステムにデータを移動させることになります。 

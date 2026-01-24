@@ -475,22 +475,22 @@ Common aggregation functions include:
 一般的な集約関数には以下が含まれます：
 
 - _Count_ Number of events 
-_Count_ イベントの数
+  _Count_ イベントの数
 
 - _Sum_ Total value (e.g., total transaction amount) 
-_Sum_ 合計値（例：総取引額）
+  _Sum_ 合計値（例：総取引額）
 
 - _Mean/median_ Average value 
-_Mean/median_ 平均値
+  _Mean/median_ 平均値
 
 - _Max/min_ Extreme values 
-_Max/min_ 極端な値
+  _Max/min_ 極端な値
 
 - _Standard deviation/variance_ Measure of variability 
-_Standard deviation/variance_ 変動性の測定
+  _Standard deviation/variance_ 変動性の測定
 
 - _Percentiles_ Specific thresholds, such as the 90th percentile 
-_Percentiles_ 特定の閾値（例：90パーセンタイル）
+  _Percentiles_ 特定の閾値（例：90パーセンタイル）
 
 Aggregations are computed for entities, for example: 
 **集約は、例えば以下のエンティティに対して計算**されます：
@@ -505,10 +505,12 @@ Aggregations are computed for entities, for example:
 - Per product/item 
   - 製品/アイテムごと
 
+<!-- ここまで読んだ! -->
+
 In SQL and PySpark you use `group_by and a` _window. 
-SQLやPySparkでは、`group_by`と`window`を使用します。
-Polars supports grouping by_ time windows through the `groupby_rolling and` `groupby_dynamic methods and` then applying aggregations. 
-Polarsは、`groupby_rolling`および`groupby_dynamic`メソッドを通じて時間ウィンドウによるグルーピングをサポートし、その後集約を適用します。
+SQLやPySparkでは、`group_by`と`window`を使用します。(確かに、集約関数の適用は、基本的に group by関数かwindow関数を使うことになるのか...!:thinking:)
+Polars supports grouping by_ time windows through the `groupby_rolling and` `groupby_dynamic methods and` then applying aggregations.
+**Polarsは、`groupby_rolling`および`groupby_dynamic`メソッドを通じて時間ウィンドウによるグルーピングをサポートし、その後集約を適用します。**
 Pandas supports time-based grouping through resample and rolling, which can be combined with aggregation functions. 
 Pandasは、リサンプリングとロールを通じて時間ベースのグルーピングをサポートしており、集約関数と組み合わせることができます。
 Here is an example aggregation in Polars without a time window that handles missing data by filling missing values with the forward fill strategy (replacing null values with the last valid nonnull value that appeared earlier in the data), before grouping and summing the amount: 
@@ -524,80 +526,59 @@ pl.col("amount").sum().alias("total_amount")
 .explode(["event_time"]))
 ```
 
-In the previous code snippet, the output DataFrame, `filled_df, includes the` 
-前のコードスニペットでは、出力DataFrame `filled_df`には以下が含まれます：
+<!-- ここまで読んだ! -->
 
-``` event_time column from df and adds the new total_amount column containing the 
-`df`の`event_time`列が含まれ、新しい`total_amount`列が集約の結果を含みます。
+In the previous code snippet, the output DataFrame, filled_df, includes the event_time column from df and adds the new total_amount column containing the result of the aggregation. All other columns from df were not retained, as aggrega‐ tions typically reduce the number of columns. For example, if you are computing the sum of the transactions for a credit card number, it is not meaningful to retain the category column in that transformation. If you want to compute an aggregate for the category column, you perform a separate transformation on that column.
+前のコードスニペットでは、出力DataFrameであるfilled_dfにはdfからのevent_time列が含まれ、集約の結果を含む新しいtotal_amount列が追加されます。dfの他のすべての列は保持されません。なぜなら、集約は通常、列数を減少させるからです。例えば、クレジットカード番号の取引の合計を計算している場合、その変換でcategory列を保持することは意味がありません。category列の集約を計算したい場合は、その列に対して別の変換を実行します。
 
-All other columns from `df were not retained, as aggrega‐` 
-`df`の他のすべての列は保持されませんでした。集約は通常、列の数を減少させるためです。
+<!-- ここまで読んだ! -->
 
-tions typically reduce the number of columns. 
-集約は通常、列の数を減少させます。
-
-For example, if you are computing the sum of the transactions for a credit card number, it is not meaningful to retain the ``` category column in that transformation. 
-例えば、クレジットカード番号の取引の合計を計算している場合、その変換で`category`列を保持することは意味がありません。
-
-If you want to compute an aggregate for the category column, you perform a separate transformation on that column. 
-`category`列の集約を計算したい場合は、その列に対して別の変換を行います。
-
-``` 
 Aggregations support different types of time windows, some of which are row-size reducing and some of which are not. 
 集約は異なるタイプの時間ウィンドウをサポートしており、その中には行サイズを減少させるものとそうでないものがあります。
-
 Rolling window aggregations compute an out‐ 
 ロールウィンドウ集約は、出力を計算します。
-
 put for every row in the source DataFrame and are therefore not row-size reducing. 
 ソースDataFrameのすべての行に対して出力を計算し、したがって行サイズを減少させません。
-
 In contrast, tumbling windows compute an output for all events in a window length, so they typically reduce the number of rows. 
 対照的に、タンブリングウィンドウはウィンドウの長さ内のすべてのイベントに対して出力を計算するため、通常は行数を減少させます。
-
 For example, if your window length is one week and there are, on average, 20 transactions per week, you will reduce the number of rows, on average, by a factor of 20. 
 例えば、ウィンドウの長さが1週間で、平均して週に20件の取引がある場合、平均して行数を20倍に減少させます。
 
 Sometimes aggregations require composing transformations. 
 時には、集約が変換の構成を必要とします。
-
 For example, suppose we want to compute the following: “Find the maximum amount for each cc_num that has two or more transactions from the same category.” 
 例えば、次の計算を行いたいとします：「同じカテゴリから2件以上の取引がある各`cc_num`の最大金額を見つける。」
-
 First, we need to group by ``` cc_num, then we have to remove those transactions that have only one entry for a 
 まず、`cc_num`でグループ化し、次に特定のカテゴリに対して1件のみの取引を持つものを削除する必要があります。
-
 given category, and then for each remaining category (with >1 transaction), we have to find the maximum amount. 
 特定のカテゴリに対して、残りのカテゴリ（取引が1件以上）ごとに最大金額を見つける必要があります。
-
 This may seem like a complex example, but it is not uncommon when you need to find specific signals in the data that are predictive for your problem at hand. 
 これは複雑な例に思えるかもしれませんが、手元の問題に対して予測的な特定の信号をデータ内で見つける必要がある場合は珍しくありません。
-
 Polars lets us elegantly and efficiently compose `group_by` aggregations and expressions: 
 Polarsは、`group_by`集約と式を優雅かつ効率的に構成することを可能にします：
 
-```  
+```Python
 df3 = df.group_by("cc_num").agg(     
-pl.col("amount").filter(pl.col("category").count() > 1).max()   
+    # 1つより多いトランザクションを持つカテゴリのamountの最大値を見つける
+    pl.col("amount").filter(pl.col("category").count() > 1).max()   
 )
 ```
 
-Vector embeddings are another data transformation type that compresses input data into a smaller number of rows and columns. 
-ベクトル埋め込みは、入力データをより少ない行と列に圧縮する別のデータ変換タイプです。
+<!-- ここまで読んだ! -->
 
+Vector embeddings are another data transformation type that compresses input data into a smaller number of rows and columns. 
+**ベクトル埋め込みは、入力データをより少ない行と列に圧縮する別のデータ変換タイプ**です。
+(ex. Two-towerモデルは、複数の列を受け取って固定長のベクトルに圧縮するタイプのデータ変換とみなせるかな...!:thinking:)
 You create a vector embedding from some high-dimensional input data (rows and columns) by passing it through an _embedding model that then outputs a vector. 
 高次元の入力データ（行と列）からベクトル埋め込みを作成するには、_embedding modelを通して渡し、その後ベクトルを出力します。
-
 The vector is a fixed-sized array (its_ length is known as its _dimension) containing (normally 32-bit) floating-point num‐_ bers. 
-ベクトルは固定サイズの配列で（その長さは次元として知られています）、通常は32ビットの浮動小数点数を含みます。
-
+**ベクトルは固定サイズの配列で（その長さは次元として知られています）**、通常は32ビットの浮動小数点数を含みます。
 The embedding model is a deep learning model, so if you are transforming a large volume of data into vector embeddings, you may be able to speed up the process considerably by performing the data transformations on GPUs rather than CPUs. 
 埋め込みモデルは深層学習モデルであるため、大量のデータをベクトル埋め込みに変換する場合、CPUではなくGPUでデータ変換を行うことでプロセスを大幅に加速できる可能性があります。
-
 In the following example code, we encode the explanation string for a fraudulent credit card transaction with the SentenceTransformer embedding model: 
 以下の例のコードでは、SentenceTransformer埋め込みモデルを使用して不正なクレジットカード取引の説明文字列をエンコードします：
 
-```  
+```Python  
 from sentence_transformers import SentenceTransformer   
 model = SentenceTransformer('all-MiniLM-L6-v2')   
 embeddings = model.encode(df["explanation"].to_list())   
@@ -606,98 +587,81 @@ df = df.with_columns(embedding_explanation=pl.lit(embeddings))
 
 If you write this vector embedding to a vector database (or a feature group in Hops‐ works), you can then search for records with similar explanation strings using _k-nearest neighbors (kNN) search. 
 このベクトル埋め込みをベクトルデータベース（またはHopsworksのフィーチャーグループ）に書き込むと、_k-nearest neighbors (kNN) searchを使用して、類似の説明文字列を持つレコードを検索できます。
-
 kNN search is a probabilistic algorithm that returns_ _k records containing vector embeddings that are semantically close to the provided_ vector embedding. 
 kNN検索は、提供されたベクトル埋め込みに意味的に近いベクトル埋め込みを含む_k件のレコードを返す確率的アルゴリズムです。
-
 The size of k can range from a few to a few hundred records. 
 kのサイズは、数件から数百件のレコードまでの範囲になります。
 
-###### 1.3.2.0.0.1. Row/Column Size–Increasing Transformations 
-###### 1.3.2.0.0.2. 行/列サイズ増加変換
+<!-- ここまで読んだ! -->
+
+### 1.3.3. Row/Column Size–Increasing Transformations 　(行/列サイズを増加させる変換)
 
 It is becoming more common to store JSON objects in columns in tables. 
-テーブルの列にJSONオブジェクトを保存することが一般的になりつつあります。
-
+**テーブルの列にJSONオブジェクトを保存することが一般的になりつつあります。**
 To create features from values in the JSON object, you may need to first extract the values in the JSON object as new columns and/or new rows. 
 JSONオブジェクトの値から特徴を作成するには、まずJSONオブジェクト内の値を新しい列および/または新しい行として抽出する必要があります。
-
 You can do this by exploding the column containing the JSON object. 
 これは、JSONオブジェクトを含む列を爆発させることで行うことができます。
-
 In Polars, this involves calling unnest to explode the struct into separate columns: 
-Polarsでは、unnestを呼び出して構造体を別々の列に爆発させることが含まれます：
+Polarsでは、unnestを呼び出して**構造体(struct)を別々の列に展開すること**が含まれます：
 
-```  
+```Python
 df = pl.DataFrame({     
-"json_col": [       
-{"name": "Alice", "age": 25, "city": "Palo Alto"},       
-{"name": "Bob", "age": 30, "city": "Dublin"},     
+    "json_col": [       
+    {"name": "Alice", "age": 25, "city": "Palo Alto"},       
+    {"name": "Bob", "age": 30, "city": "Dublin"},     
 ]})   
 df_exploded = df.unnest("json_col")
 ```
 
 If you have JSON objects in a column, in Polars, you can define them first as a struct and then `unnest the column to explode details into separate columns. 
 列にJSONオブジェクトがある場合、Polarsでは、最初にそれらを構造体として定義し、その後`unnest`を使用して詳細を別々の列に爆発させることができます。
-
 At the end, `df_exploded contains the columns ["name", "age", "city"]. 
 最終的に、`df_exploded`には["name", "age", "city"]の列が含まれます。
 
 In PySpark, user-defined table functions (UDTFs) are functions that transform a sin‐ 
 PySparkでは、ユーザー定義テーブル関数（UDTF）は、単一の入力行を複数の出力行に変換する関数です。
-
 gle input row into multiple output rows. 
 単一の入力行を複数の出力行に変換します。
-
 In contrast, UDFs work on a row-to-row basis. 
 対照的に、UDFは行対行で動作します。
-
 UDTFs can, for example, explode a JSON structure in a column to multiple rows based on deeply nested fields. 
 UDTFは、例えば、深くネストされたフィールドに基づいて列内のJSON構造を複数の行に爆発させることができます。
-
 UDTFs are not available in Polars or Pandas. 
 UDTFはPolarsやPandasでは利用できません。
-
 UDTFs execute in parallel across Spark tasks. 
 UDTFはSparkタスク全体で並行して実行されます。
-
 PySpark has supported custom UDTFs since Spark 3.5. 
 PySparkはSpark 3.5以降、カスタムUDTFをサポートしています。
-
 As of Spark 4.0, UDTFs support both vectorized execution via Apache Arrow (for higher performance) and polymorphic schemas (where the out‐ 
 Spark 4.0以降、UDTFはApache Arrowを介したベクトル化実行（より高いパフォーマンスのため）と多相スキーマをサポートしています。
-
 put schema can depend on input parameters). 
 出力スキーマは入力パラメータに依存する場合があります）。
-
 For maximum performance, custom UDTFs can be written in Java/Scala Spark. 
 最大のパフォーマンスを得るために、カスタムUDTFはJava/Scala Sparkで記述できます。
 
 Exploding JSON objects is not the only row size–increasing data transformation. 
-JSONオブジェクトを爆発させることは、行サイズを増加させるデータ変換の唯一の方法ではありません。
+JSONオブジェクトを展開することは、行サイズを増加させるデータ変換の唯一の方法ではありません。
+Imagine we want to create a feature for the total spending of each customer per transaction category. 
+**各取引カテゴリごとの各顧客の総支出の特徴量を作成したい**と想像してください。
+(ニュースアプリでも、各ユーザの、各カテゴリごとの直近半年の記事閲覧数とか、記事滞在時間とか、そういう特徴量を作りたいことは多そう...!:thinking:)
+However, transactions are organized by cc_num (entity ID), so we need to pivot the DataFrame to transform columns into rows and compute a ``` spend_category column: 
+しかし、取引はcc_num（エンティティID）によって整理されているため、DataFrameをピボットして列を行に変換し、spend_category列を計算する必要があります：
 
-Imagine we want to create a feature for the total spending of each customer per trans‐ 
-各顧客の取引カテゴリごとの総支出の特徴を作成したいとします。
-
-action category. 
-取引カテゴリごとに。
-
-However, transactions are organized by `cc_num (entity ID), so we` 
-しかし、取引は`cc_num（エンティティID）`で整理されているため、
-
-need to pivot the DataFrame to transform columns into rows and compute a ``` spend_category column: 
-DataFrameをピボットして列を行に変換し、`spend_category`列を計算する必要があります：
-
-```  
+```Python
+# 各cc_num(=顧客id的なやつ)ごとに「カテゴリ別の支出」という特徴量を作成したい
 pivot = (     
-df.group_by(["cc_num", "category"])     
-.agg(pl.col("amount").sum())     
-.pivot(on="category", values="amount", index="cc_num")     
-.fill_null(0)   
+  # cc_numとcategoryでグループ化
+  df.group_by(["cc_num", "category"])
+    # 支出額の合計を計算
+    .agg(pl.col("amount").sum())     
+    # category列を行に変換
+    .pivot(on="category", values="amount", index="cc_num")
+    # null値を0で埋める
+    .fill_null(0)   
 )
-```
 
-```  
+# 各カラムがspend_<category_name>になるようにリネーム
 pivot = pivot.rename(     
 {col: f"spend_{col}" for col in pivot.columns if col != "cc_num"}   
 )
@@ -706,16 +670,16 @@ pivot = pivot.rename(
 Similarly, we also unpivot columns into rows using unpivot: 
 同様に、unpivotを使用して列を行に戻すこともできます：
 
-```  
+```Python  
 dv_unpivot = df.unpivot(index=["cc_num"], on=["category"])
 ```
 
-###### 1.3.2.0.0.3. Join Transformations 
-###### 1.3.2.0.0.4. 結合変換
+<!-- ここまで読んだ! -->
+
+### 1.3.4. Join Transformations 
 
 A common requirement when selecting features for a model is to include features that “belong” to different entities. 
 モデルの特徴を選択する際の一般的な要件は、「異なるエンティティに属する」特徴を含めることです。
-
 For example, say that you could have features in different feature groups with different entity IDs (e.g., cc_num, account_id), but you would like to use features from both feature groups in your model. 
 例えば、異なるエンティティID（例：cc_num、account_id）を持つ異なるフィーチャーグループに特徴がある場合、両方のフィーチャーグループから特徴をモデルで使用したいとします。
 
@@ -756,8 +720,8 @@ LEFT（OUTER）JOINは、結合操作における左側のDataFrameに対して�
 tion, but an `INNER JOIN will be either a row size–preserving or row size–reducing` transformation, depending on whether there are matching rows in the right-hand DataFrame for all rows in the left-hand DataFrame (preserving) or not (reducing). 
 しかし、`INNER JOIN`は、左側のDataFrameのすべての行に対して右側のDataFrameに一致する行があるかどうかに応じて、行サイズを保持するか行サイズを減少させる変換になります（保持する場合）またはそうでない場合（減少する場合）。
 
-###### 1.3.2.0.0.5. DAG of Feature Functions 
-###### 1.3.2.0.0.6. 特徴関数のDAG
+###### 1.3.4.0.0.1. DAG of Feature Functions 
+###### 1.3.4.0.0.2. 特徴関数のDAG
 
 In Chapter 2, we argued that feature logic (transformations) should be factored into feature functions to improve code modularity and make transformations unittestable. 
 第2章では、特徴ロジック（変換）は特徴関数に分割されるべきであり、コードのモジュール性を向上させ、変換をユニットテスト可能にするべきだと主張しました。
@@ -827,8 +791,8 @@ DAGの中間ノードと葉ノードの両方がDataFrameをフィーチャー�
 Here, df1 is writ‐ ten to feature group 1, dfM is written to feature group M, and dfN is written to feature group N. 
 ここでは、df1がフィーチャーグループ1に書き込まれ、dfMがフィーチャーグループMに、dfNがフィーチャーグループNに書き込まれます。
 
-###### 1.3.2.0.0.7. Lazy DataFrames
-###### 1.3.2.0.0.8. レイジーDataFrames
+###### 1.3.4.0.0.3. Lazy DataFrames
+###### 1.3.4.0.0.4. レイジーDataFrames
 
 Pandas supports _eager evaluation of operations on DataFrames. 
 PandasはDataFrameに対する操作の_即時評価をサポートしています。
