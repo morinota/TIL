@@ -1,91 +1,71 @@
-## CHAPTER 7: Model-Dependent and On-Demand Transformations
-## 第7章: モデル依存型およびオンデマンド変換
+# 1. CHAPTER 7: Model-Dependent and On-Demand Transformations 第7章: モデル依存型およびオンデマンド変換
 
 In this chapter, we will look at data transformations in training and inference pipelines and how to ensure that transformations in both pipelines are equivalent. 
-この章では、トレーニングと推論パイプラインにおけるデータ変換と、両方のパイプラインでの変換が等価であることを保証する方法について見ていきます。
-
+この章では、トレーニングと推論パイプラインにおけるデータ変換と、**両方のパイプラインでの変換が等価であることを保証する方法**について見ていきます。
 We introduced model-dependent transformations (MDTs) in Chapter 2 as data transformations that are performed on data after it has been read from the feature store and that create features that are specific to one model. 
-第2章では、特徴ストアから読み取ったデータに対して行われ、特定のモデルに固有の特徴を生成するデータ変換として、モデル依存型変換（MDT）を紹介しました。
-
+第2章では、**特徴ストアから読み取ったデータに対して行われ、特定のモデルに固有の特徴を生成するデータ変換として、モデル依存型変換（MDT, Model-Dependent Transformations）**を紹介しました。
 There are two broad classes of MDTs—feature transformations (for numerical and categorical features) and transformations that are tightly coupled to only one model. 
-MDTには大きく分けて2つのクラスがあります。数値およびカテゴリ特徴のための特徴変換と、特定のモデルに密接に結びついた変換です。
-
+**MDTには大きく分けて2つのクラスがあります。数値およびカテゴリ特徴のための特徴変換と、特定のモデルに密接に結びついた変換**です。
 An example of the former is one-hot encoding of categorical variables, while an example of the latter is text encoding for an LLM. 
 前者の例はカテゴリ変数のワンホットエンコーディングであり、後者の例はLLMのためのテキストエンコーディングです。
-
 We also look at how to prevent _skew between MDTs that are applied separately in_ training and inference pipelines. 
 また、トレーニングと推論パイプラインで別々に適用されるMDT間の_偏りを防ぐ方法_についても見ていきます。
-
 This is not always as trivial as applying the same versioned function in both training and inference pipelines, as many MDTs are stateful, requiring the same state (the model’s training data statistics) as a parameter in both training and inference pipelines. 
-これは、トレーニングと推論パイプラインの両方で同じバージョンの関数を適用することが常に簡単ではないためです。多くのMDTは状態を持ち、トレーニングと推論パイプラインの両方で同じ状態（モデルのトレーニングデータ統計）をパラメータとして必要とします。
-
+これは、**トレーニングと推論パイプラインの両方で同じバージョンの関数を適用することが常に簡単ではないためです。多くのMDTは状態を持ち、**トレーニングと推論パイプラインの両方で同じ状態（モデルのトレーニングデータ統計）をパラメータとして必要とします。
 We start by introducing common examples of feature transformations and different classes of model-specific transformations. 
 まず、一般的な特徴変換の例と、モデル固有の変換の異なるクラスを紹介します。
-
 We then look at different mechanisms for preventing skew, including Scikit-Learn pipelines, PyTorch transforms, and transformation functions in feature views for Hopsworks. 
 次に、Scikit-Learnパイプライン、PyTorch変換、Hopsworksの特徴ビューにおける変換関数など、偏りを防ぐためのさまざまなメカニズムを見ていきます。
-
 We also cover our final class of data transformation—on-demand transformations (ODTs) that are found in online inference pipelines and feature pipelines and are typically stateless transformation functions. 
 最後に、オンライン推論パイプラインや特徴パイプラインに見られるオンデマンド変換（ODT）というデータ変換の最終クラスについても説明します。これらは通常、状態を持たない変換関数です。
-
 Then, we finish the chapter with unit testing of transformation functions with pytest. 
 最後に、pytestを使用した変換関数の単体テストで章を締めくくります。
 
-###### Feature Transformations
-###### 特徴変換
+<!-- ここまで読んだ! -->
+
+## 1.1. Feature Transformations 1.1. 特徴変換
 
 Feature transformations can enhance the performance and convergence of various types of ML models. 
 特徴変換は、さまざまなタイプのMLモデルのパフォーマンスと収束を向上させることができます。
-
 For example, most ML algorithms cannot accept strings as input, and they need to be transformed into a numerical format. 
-例えば、ほとんどのMLアルゴリズムは文字列を入力として受け入れることができず、数値形式に変換する必要があります。
-
+**例えば、ほとんどのMLアルゴリズムは文字列を入力として受け入れることができず、数値形式に変換する必要があります。**
 The final input to an ML model is typically a numeric array. 
 MLモデルへの最終入力は通常、数値配列です。
-
 Similarly, deep learning models often require numerical features to be normalized or transformed to follow a normal distribution to help ensure proper convergence. 
-同様に、深層学習モデルは、数値特徴が正規分布に従うように正規化または変換されることを必要とし、適切な収束を確保します。
+**同様に、深層学習モデルは、数値特徴が正規分布に従うように正規化または変換されることを必要とし**、適切な収束を確保します。
 
 Different feature transformations are performed on a specific feature type (categorical or numerical). 
 異なる特徴変換は、特定の特徴タイプ（カテゴリまたは数値）に対して実行されます。
-
 The feature type helps identify which feature transformation is appropriate. 
 特徴タイプは、どの特徴変換が適切であるかを特定するのに役立ちます。
-
 For example, encoding is used to convert categorical variables into a numerical format, while scaling adjusts the range or distribution of numerical variables. 
 例えば、エンコーディングはカテゴリ変数を数値形式に変換するために使用され、スケーリングは数値変数の範囲や分布を調整します。
-
 These transformations are often parameterized by properties of the training data, such as the set of categories or descriptive statistics (min, max, mean, standard deviation, or mode). 
 これらの変換は、カテゴリのセットや記述統計（最小値、最大値、平均、標準偏差、または最頻値）など、トレーニングデータの特性によってパラメータ化されることがよくあります。
-
 For example, when you one-hot encode a categorical variable, you first enumerate all of the categories in the training data, before you can encode the string as a binary vector. 
 例えば、カテゴリ変数をワンホットエンコーディングする場合、まずトレーニングデータ内のすべてのカテゴリを列挙し、その後に文字列をバイナリベクトルとしてエンコードします。
-
 Similarly, when applying standardization (also called z-score normalization) to numerical variables, the mean and standard deviation must first be computed from the training data and then used to consistently scale all feature values in the dataset. 
-同様に、数値変数に標準化（zスコア正規化とも呼ばれる）を適用する場合、平均と標準偏差はまずトレーニングデータから計算され、その後、データセット内のすべての特徴値を一貫してスケーリングするために使用されます。
+**同様に、数値変数に標準化（zスコア正規化とも呼ばれる）を適用する場合、平均と標準偏差はまずトレーニングデータから計算され、その後、データセット内のすべての特徴値を一貫してスケーリングするために使用されます。**
 
-###### Encoding Categorical Variables
-###### カテゴリ変数のエンコーディング
+<!-- ここまで読んだ! -->
 
-In feature-encoding algorithms, the set of categories may change over time, and to handle this, you should include a special category (called “unknown” or “other”) for any new categories that appear during inference. 
-特徴エンコーディングアルゴリズムでは、カテゴリのセットは時間とともに変化する可能性があり、これに対処するために、推論中に現れる新しいカテゴリのために特別なカテゴリ（「不明」または「その他」と呼ばれる）を含めるべきです。
+### 1.1.1. Encoding Categorical Variables カテゴリ変数のエンコーディング
 
+In feature-encoding algorithms, the set of categories may change over time, and to handle this, you should include a special category (called “unknown” or “other”) for any new categories that appear during inference.
+**特徴エンコーディングアルゴリズムでは、カテゴリのセットは時間とともに変化する可能性があり、これに対処するために、推論中に現れる新しいカテゴリのために特別なカテゴリ（「不明」または「その他」と呼ばれる）を含めるべき**です。
 For example, the merchant category code given for a credit card payment is important for many bonus rewards programs that give points for a specific type of spending, such as travel. 
 例えば、クレジットカード支払いに対して与えられる商業カテゴリコードは、旅行などの特定の支出タイプに対してポイントを付与する多くのボーナス報酬プログラムにとって重要です。
-
 Each merchant typically has a single category that is added to a credit card payment. 
 各商業者は通常、クレジットカード支払いに追加される単一のカテゴリを持っています。
-
 In Table 7-1, we one-hot encode the categories. 
 表7-1では、カテゴリをワンホットエンコーディングします。
-
 For simplicity, I only show four categories, whereas in reality, there are hundreds. 
-簡単のために、私は4つのカテゴリのみを示しますが、実際には数百あります。
-
-Each one-hot-encoded array represents a category with a 1 in the category’s position in the array and a 0 in all other positions. 
+**簡単のために、私は4つのカテゴリのみを示しますが、実際には数百あります。**
+Each one-hot-encoded array represents a category with a 1 in the category’s position in the array and a 0 in all other positions.
 各ワンホットエンコーディングされた配列は、配列内のカテゴリの位置に1を持ち、他のすべての位置に0を持つカテゴリを表します。
 
-_Table 7-1. One-hot encoding of the merchant category for a credit card payment_
+![]()
+**Table 7-1. One-hot encoding of the merchant category for a credit card payment**
 **表7-1. クレジットカード支払いのための商業カテゴリのワンホットエンコーディング**
 **Merchant category** **One-hot encoded**
 **商業カテゴリ** **ワンホットエンコーディング**
@@ -94,230 +74,216 @@ Eating places and restaurants [0,1,0,0]
 Car rental [0,0,1,0]  
 Hotels, motels, and resorts [0,0,0,1]  
 
-One-hot encoding is not recommended when there is _high cardinality (i.e., a large_ number of categories), as each category adds a new dimension, increasing memory usage. 
-高いカーディナリティ（すなわち、多くのカテゴリ）がある場合、ワンホットエンコーディングは推奨されません。各カテゴリが新しい次元を追加し、メモリ使用量が増加するためです。
+<!-- ここまで読んだ! -->
 
+One-hot encoding is not recommended when there is _high cardinality (i.e., a large_ number of categories), as each category adds a new dimension, increasing memory usage. 
+**高いカーディナリティ（すなわち、多くのカテゴリ）がある場合、ワンホットエンコーディングは推奨されません。**各カテゴリが新しい次元を追加し、メモリ使用量が増加するためです。
 It is also unsuitable when there is an ordinal relationship between categories, as it does not preserve order, as shown in Table 7-2. 
 また、カテゴリ間に順序関係がある場合にも不適切です。表7-2に示すように、順序を保持しないためです。
-
 If there is an ordinal relationship between the variables, then the ordinal encoder preserves ordering in the transformed categories. 
 変数間に順序関係がある場合、順序エンコーダは変換されたカテゴリの順序を保持します。
 
-_Table 7-2. Popular algorithms for encoding categorical feature data_
+![]()
+**Table 7-2. Popular algorithms for encoding categorical feature data**
 **表7-2. カテゴリ特徴データのエンコーディングに関する一般的なアルゴリズム**
 **Algorithm** **Purpose** **Use case**  
 **アルゴリズム** **目的** **使用例**  
-One-hot encoder Transforms categorical data into one-hot-encoded vectors (an array of bytes, with each category representing one bit)  
-ワンホットエンコーダは、カテゴリデータをワンホットエンコーディングされたベクトル（各カテゴリが1ビットを表すバイトの配列）に変換します。  
-Transforming to one-hot encoder when there is no ordinal relationship and low to medium cardinality  
-順序関係がなく、カーディナリティが低いから中程度のときにワンホットエンコーダに変換します。  
-Ordinal encoder Transforms categorical data into an integer  
-順序エンコーダは、カテゴリデータを整数に変換します。  
-Encoding features that have an ordinal relationship  
-順序関係のある特徴をエンコードします。  
-Feature hasher Uses the hashing trick to transform categorical data into a fixed-size vector  
-特徴ハッシャーは、ハッシングトリックを使用してカテゴリデータを固定サイズのベクトルに変換します。  
-High-dimensional data with many unique categories  
-多くのユニークなカテゴリを持つ高次元データ  
+
+- メモ: 表7-2の内容
+  - Algorithm, Purpose, Use case
+  - One-hot encoder
+    - 目的:
+      - Transforms categorical data into one-hot-encoded vectors (an array of bytes, with each category representing one bit) カテゴリデータをワンホットエンコーディングされたベクトル（各カテゴリが1ビットを表すバイトの配列）に変換します。
+    - ユースケース:
+      - Transforming to one-hot encoder when there is no ordinal relationship and low to medium cardinality 順序関係がなく、カーディナリティが低いから中程度のときにワンホットエンコーダに変換します。
+  - Ordinal encoder:
+    - 目的:
+      - Transforms categorical data into an integer カテゴリデータを整数に変換します。
+    - ユースケース:
+      - Encoding features that have an ordinal relationship 順序関係のある特徴をエンコードします。
+  - Feature hasher:
+    - 目的:
+      - Uses the hashing trick to transform categorical data into a fixed-size vector 特徴ハッシャーは、ハッシングトリックを使用してカテゴリデータを固定サイズのベクトルに変換します。
+    - ユースケース:
+      - High-dimensional data with many unique categories 多くのユニークなカテゴリを持つ高次元データ
+  - Label encoder:
+    - 目的:
+      - Transforms categorical data into an integer カテゴリデータを整数に変換します。
+    - ユースケース:
+      - Encoding target/label variable as integers ターゲット/ラベル変数を整数としてエンコードします。
+
+<!-- ここまで読んだ! -->
 
 For features with a very large number of categories, feature hashing (the _feature_ _hasher encoding algorithm) reduces dimensionality by mapping categories to a fixed-size hash table, though this introduces the risk of hash collisions (that is, different cat‐ egories mapping to the same value). 
-非常に多くのカテゴリを持つ特徴に対して、特徴ハッシング（_特徴_ _ハッシャーエンコーディングアルゴリズム）は、カテゴリを固定サイズのハッシュテーブルにマッピングすることによって次元を削減しますが、これによりハッシュ衝突（異なるカテゴリが同じ値にマッピングされるリスク）が生じます。
-
+非常に多くのカテゴリを持つ特徴に対して、**Feature Hashing(特徴量ハッシング, feature hasher encoding algorithm)**は、カテゴリを固定サイズのハッシュテーブルにマッピングすることによって次元を削減しますが、これによりハッシュ衝突（異なるカテゴリが同じ値にマッピングされるリスク）が生じます。
 Be sure that your ML algorithm can tolerate possible hash collisions if you use a feature hasher. 
 特徴ハッシャーを使用する場合は、MLアルゴリズムが可能なハッシュ衝突に耐えられることを確認してください。
-
 Finally, label encoding is often used for encoding the target/label variable as integers, thus preserving ordering. 
-最後に、ラベルエンコーディングは、ターゲット/ラベル変数を整数としてエンコードするためにしばしば使用され、これにより順序が保持されます。
-
+**最後に、ラベルエンコーディングは、ターゲット/ラベル変数を整数としてエンコードするためにしばしば使用され、これにより順序が保持**されます。
 Many ML algorithms, such as Scikit-Learn’s logistic regression and XGBoost’s multiclass classification, require labels (target variables) to be integer encoded. 
 Scikit-Learnのロジスティック回帰やXGBoostの多クラス分類など、多くのMLアルゴリズムは、ラベル（ターゲット変数）が整数エンコードされることを要求します。
 
 Note that for some tree-based algorithms, such as _[CatBoost, you do not need to](https://catboost.ai)_ encode categorical variables. 
-_[CatBoost](https://catboost.ai)などの一部の木ベースのアルゴリズムでは、カテゴリ変数をエンコードする必要はありません。_
-
+[CatBoost](https://catboost.ai)などの一部の木ベースのアルゴリズムでは、カテゴリ変数をエンコードする必要はありません。_
 CatBoost can handle categorical variables with high cardinality, and it preserves ordinal information—without the need to spend CPU cycles encoding the categorical data. 
-CatBoostは高いカーディナリティを持つカテゴリ変数を処理でき、カテゴリデータをエンコードするためにCPUサイクルを費やす必要なく、順序情報を保持します。
-
+**CatBoostは高いカーディナリティを持つカテゴリ変数を処理でき、カテゴリデータをエンコードするためにCPUサイクルを費やす必要なく、順序情報を保持**します。
 CatBoost can also train models with lots of categorical variables with better performance than XGBoost, for example, through automatically extracting complex interactions between categorical features and by reducing overfitting. 
 CatBoostは、カテゴリ特徴間の複雑な相互作用を自動的に抽出し、過剰適合を減少させることによって、XGBoostよりも優れたパフォーマンスで多くのカテゴリ変数を持つモデルをトレーニングすることもできます。
 
-###### Distributions of Numerical Variables
-###### 数値変数の分布
+<!-- ここまで読んだ! -->
+
+### 1.1.2. Distributions of Numerical Variables 数値変数の分布
 
 Many ML algorithms only work well when a numerical feature follows a particular data distribution. 
-多くのMLアルゴリズムは、数値特徴が特定のデータ分布に従う場合にのみうまく機能します。
-
+**多くのMLアルゴリズムは、数値特徴が特定のデータ分布に従う場合にのみうまく機能します。**
 For example, if the distribution of your numerical feature data is skewed and your ML algorithm is based on gradient descent (such as neural networks or linear regression), you should standardize the data. 
-例えば、数値特徴データの分布が歪んでいて、MLアルゴリズムが勾配降下法（ニューラルネットワークや線形回帰など）に基づいている場合、データを標準化する必要があります。
-
-Standardization transforms a numerical variable’s distribution to have a mean of zero and a unit variance (standard deviation) of one. 
+例えば、**数値特徴データの分布が歪んでいて、MLアルゴリズムが勾配降下法（ニューラルネットワークや線形回帰など）に基づいている場合、データを標準化する必要があります。**
+Standardization transforms a numerical variable’s distribution to have a mean of zero and a unit variance (standard deviation) of one.
 標準化は、数値変数の分布を平均0、分散（標準偏差）1に変換します。
-
 This will improve gradient descent’s convergence speed and subsequent model stability. 
 これにより、勾配降下法の収束速度とその後のモデルの安定性が向上します。
 
 Figure 7-1 shows some of the most common distributions for numerical variables. 
 図7-1は、数値変数の最も一般的な分布のいくつかを示しています。
-
 It is good practice to identify the distribution of each numerical variable, so that when you use an ML algorithm with that feature, you know which transformation algorithm, if any, to apply to the feature data. 
-各数値変数の分布を特定することは良い習慣であり、その特徴を持つMLアルゴリズムを使用する際に、どの変換アルゴリズムを特徴データに適用すべきかを知ることができます。
+**各数値変数の分布を特定することは良い習慣であり**、その特徴を持つMLアルゴリズムを使用する際に、どの変換アルゴリズムを特徴データに適用すべきかを知ることができます。(あまりやってないかも...!:thinking:)
 
-_Figure 7-1. An illustrative guide to some common numerical feature distributions. The_ _log-normal distribution has a longer tail than the exponential distribution and is not a_ _max at 0 on the x-axis._  
-_図7-1. 一部の一般的な数値特徴分布に関する説明ガイド。対数正規分布は指数分布よりも長い尾を持ち、x軸の0で最大ではありません。_
+<!-- ここまで読んだ! -->
+
+![]()
+**Figure 7-1. An illustrative guide to some common numerical feature distributions. The log-normal distribution has a longer tail than the exponential distribution and is not a max at 0 on the x-axis.**
+**図7-1. 一部の一般的な数値特徴分布に関する説明ガイド。対数正規分布は指数分布よりも長い尾を持ち、x軸の0で最大ではありません。**
 
 Returning to our credit card fraud system, we give examples of these distributions for credit card transactions: 
 クレジットカード詐欺システムに戻ると、クレジットカード取引のこれらの分布の例を示します。
 
-- The `credit_rating for a bank typically follows a` _normal distribution, with a_ small number of banks having the highest and lowest ratings and most banks clustered around the mean rating. 
-- 銀行の`credit_ratingは通常、_正規分布に従い、最も高いおよび最も低い評価を持つ銀行は少数であり、ほとんどの銀行は平均評価の周りに集まっています。_
+- The `credit_rating` for a bank typically follows a normal distribution, with a small number of banks having the highest and lowest ratings and most banks clustered around the mean rating. 
+  - 銀行の`credit_ratingは通常、正規分布に従い、最も高いおよび最も低い評価を持つ銀行は少数であり、ほとんどの銀行は平均評価の周りに集まっています。
 
-- A _uniform distribution means each possible value has an equal probability of_ occurring. 
-- _一様分布は、各可能な値が発生する確率が等しいことを意味します。_
+- A uniform distribution means each possible value has an equal probability of occurring. 
+  - 一様分布は、各可能な値が発生する確率が等しいことを意味します。
+  None of our features in the credit card model are truly uniform. 
+  クレジットカードモデルの特徴の中には、真に一様なものはありません。
+  Often, variables may start with a uniform distribution, but through grouping or transformation, you can extract new features that have more informative, non‐ uniform distributions. 
+  **しばしば、変数は一様分布から始まることがありますが、グループ化や変換を通じて、より情報量の多い非一様分布を持つ新しい特徴を抽出することができます。**
 
-None of our features in the credit card model are truly uniform. 
-クレジットカードモデルの特徴の中には、真に一様なものはありません。
+- The binomial distribution models discrete outcomes (success/failure) over multiple independent trials.
+  二項分布は、複数の独立した試行における離散的な結果（成功/失敗）をモデル化します。
+  Although not a feature in our credit card model, the probability that a merchant terminal will work or not could be represented as a binomial distribution with a reliability probability of, say, 0.98; that is, 98% of transactions would be successfully processed without errors. 
+  クレジットカードモデルの特徴ではありませんが、商業端末が機能するかどうかの確率は、信頼性確率が0.98である二項分布として表すことができます。つまり、98%の取引がエラーなしで正常に処理されることになります。
 
-Often, variables may start with a uniform distribution, but through grouping or transformation, you can extract new features that have more informative, non‐ uniform distributions. 
-しばしば、変数は一様分布から始まることがありますが、グループ化や変換を通じて、より情報量の多い非一様分布を持つ新しい特徴を抽出することができます。
+- The Poisson distribution models the number of times independent events occur within a fixed interval of time.
+  ポアソン分布は、固定された時間間隔内で独立したイベントが発生する回数をモデル化します。
+  For example, we could model how many credit card fraud detections occur on average per day as a Poisson distribution. 
+  例えば、1日に平均して何件のクレジットカード詐欺検出が発生するかをポアソン分布としてモデル化できます。
+  The model can decide when to generate alerts if the number of credit card fraud detections is deemed to be anomalous. 
+  モデルは、クレジットカード詐欺検出の数が異常であると見なされる場合にアラートを生成するタイミングを決定できます。
 
-- The binomial distribution models discrete outcomes (success/failure) over multiple independent trials. 
-- _二項分布は、複数の独立した試行における離散的な結果（成功/失敗）をモデル化します。_
-
-Although not a feature in our credit card model, the probability that a merchant terminal will work or not could be represented as a binomial distribution with a reliability probability of, say, 0.98; that is, 98% of transactions would be successfully processed without errors. 
-クレジットカードモデルの特徴ではありませんが、商業端末が機能するかどうかの確率は、信頼性確率が0.98である二項分布として表すことができます。つまり、98%の取引がエラーなしで正常に処理されることになります。
-
-- The _Poisson distribution models the number of times independent events occur_ within a fixed interval of time. 
-- _ポアソン分布は、固定された時間間隔内で独立したイベントが発生する回数をモデル化します。_
-
-For example, we could model how many credit card fraud detections occur on average per day as a Poisson distribution. 
-例えば、1日に平均して何件のクレジットカード詐欺検出が発生するかをポアソン分布としてモデル化できます。
-
-The model can decide when to generate alerts if the number of credit card fraud detections is deemed to be anomalous. 
-モデルは、クレジットカード詐欺検出の数が異常であると見なされる場合にアラートを生成するタイミングを決定できます。
-
-- The _exponential distribution can model the time between independent transac‐_ tions, when events occur continuously and independently at a constant average rate. 
-- _指数分布は、イベントが一定の平均レートで連続的かつ独立に発生する場合の独立した取引間の時間をモデル化できます。_
-
-For example, the average waiting time between card transactions is three hours, meaning short intervals (minutes) are common and much longer waits (days) are less frequent. 
-例えば、カード取引間の平均待機時間は3時間であり、短い間隔（数分）が一般的で、はるかに長い待機時間（数日）は少ないことを意味します。
+- The exponential distribution can model the time between independent transactions, when events occur continuously and independently at a constant average rate.
+  指数分布は、イベントが一定の平均レートで連続的かつ独立に発生する場合の独立した取引間の時間をモデル化できます。
+  For example, the average waiting time between card transactions is three hours, meaning short intervals (minutes) are common and much longer waits (days) are less frequent. 
+  例えば、カード取引間の平均待機時間は3時間であり、短い間隔（数分）が一般的で、はるかに長い待機時間（数日）は少ないことを意味します。
 
 - The amount spent in a credit card transaction follows a skewed distribution, with a large number of small amounts and a small number of large amounts. 
-- クレジットカード取引での支出額は歪んだ分布に従い、多くの小額と少数の大額があります。
+  クレジットカード取引での支出額は歪んだ分布に従い、多くの小額と少数の大額があります。
 
 - The bimodal distribution can help us model the amount spent by each customer on a holiday using two different subgroups—each of which follows a normal distribution. 
-- バイモーダル分布は、異なる2つのサブグループを使用して、休日に各顧客が支出した金額をモデル化するのに役立ちます。各サブグループは正規分布に従います。
-
-Regular shoppers spend a mean of $200 (the first peak) and holiday shoppers spend a mean of $800 (the second peak). 
-通常の買い物客は平均200ドル（最初のピーク）を支出し、休日の買い物客は平均800ドル（2番目のピーク）を支出します。
+  バイモーダル分布は、異なる2つのサブグループを使用して、休日に各顧客が支出した金額をモデル化するのに役立ちます。各サブグループは正規分布に従います。
+  Regular shoppers spend a mean of $200 (the first peak) and holiday shoppers spend a mean of $800 (the second peak). 
+  通常の買い物客は平均200ドル（最初のピーク）を支出し、休日の買い物客は平均800ドル（2番目のピーク）を支出します。
 
 - Finally, the amount spent in individual credit card transactions typically follows a type of skewed distribution called the log-normal distribution. 
-- 最後に、個々のクレジットカード取引での支出額は、通常、対数正規分布と呼ばれるタイプの歪んだ分布に従います。
+  最後に、個々のクレジットカード取引での支出額は、通常、対数正規分布と呼ばれるタイプの歪んだ分布に従います。
+  Its characteristics are that the amounts are nonnegative and it is positively skewed to the right (most payments are small, with fewer large payments). 
+  その特徴は、金額が非負であり、右に正の歪みがあることです（ほとんどの支払いは小額で、大きな支払いは少ない）。
 
-Its characteristics are that the amounts are nonnegative and it is positively skewed to the right (most payments are small, with fewer large payments). 
-その特徴は、金額が非負であり、右に正の歪みがあることです（ほとんどの支払いは小額で、大きな支払いは少ない）。
+<!-- ここまで読んだ! -->
 
+### 1.1.3. Transforming Numerical Variables 数値変数の変換
 
-
-. Its characteristics are that the amounts are nonnegative and it is positively skewed to the right (most payments are small, with fewer large payments).  
-その特徴は、金額が非負であり、右に正の歪みがあることです（ほとんどの支払いは小額で、大きな支払いは少ないです）。  
-
-###### Transforming Numerical Variables
-###### 数値変数の変換
+(標準化 (Standardization) と正規化 (Normalization) の違いが記述されててよかった...!:thinking:)
 
 Standardizing numerical feature distributions is a common transformation that should be performed on many ML algorithms—not just the gradient descent mentioned earlier but also kNN and support vector machines (SVMs).  
-数値特徴の分布を標準化することは、多くの機械学習アルゴリズムで行うべき一般的な変換です。これは、前述の勾配降下法だけでなく、kNNやサポートベクターマシン（SVM）にも当てはまります。
-
+**数値特徴の分布を標準化することは、多くの機械学習アルゴリズムで行うべき一般的な変換**です。これは、前述の勾配降下法だけでなく、kNNやサポートベクターマシン（SVM）にも当てはまります。
 An alternative to standardization is _normalization (also known as_ _min-max scaling), which similarly_ improves model convergence speed but does so by only scaling the range of values.  
-標準化の代替手段は、_正規化（min-maxスケーリングとも呼ばれる）_であり、同様にモデルの収束速度を改善しますが、値の範囲をスケーリングするだけで行います。
-
-Normalization rescales values to a fixed range, such as 0 to 1, while preserving their original distribution shape.  
-正規化は、値を0から1のような固定範囲に再スケーリングし、元の分布の形状を保持します。
-
+標準化の代替手段は、**正規化（min-maxスケーリングとも呼ばれる）**であり、同様にモデルの収束速度を改善しますが、値の範囲をスケーリングするだけで行います。
+Normalization rescales values to a fixed range, such as 0 to 1, while preserving their original distribution shape.
+正規化は、値を0から1のような固定範囲に再スケーリングし、**元の分布の形状を保持**します。
 Standardization, in contrast, also transforms the distribution shape.  
-対照的に、標準化は分布の形状も変換します。
+**対照的に、標準化は分布の形状も変換します。**
 
 For example, credit card transaction amounts can range from $0.01 to $10,000, and account balances can range from $0 to millions of dollars.  
 例えば、クレジットカードの取引金額は$0.01から$10,000までの範囲であり、口座残高は$0から数百万ドルまでの範囲です。
-
 If you don’t standardize or normalize the amounts and balances, gradient descent can produce large, erratic updates during training.  
-金額や残高を標準化または正規化しないと、勾配降下法はトレーニング中に大きく不規則な更新を生成する可能性があります。
-
+**金額や残高を標準化または正規化しないと、勾配降下法はトレーニング中に大きく不規則な更新を生成する可能性があります。**
 Clustering algorithms, like kNN and SVMs, rely on distance values and also benefit from standardization or normalization, as do probabilistic models, like Gaussian Naive Bayes.  
 kNNやSVMのようなクラスタリングアルゴリズムは距離値に依存し、標準化や正規化の恩恵を受けます。ガウスナイーブベイズのような確率モデルも同様です。
-
 In such models, without standardization or normalization, an amount or account balance with a large range of values can dominate other features in a model.  
 そのようなモデルでは、標準化や正規化がないと、大きな範囲の値を持つ金額や口座残高がモデル内の他の特徴を支配する可能性があります。
 
 So when should you choose normalization over standardization?  
-では、いつ正規化を標準化の代わりに選ぶべきでしょうか？
-
+では、**いつ正規化を標準化の代わりに選ぶべきでしょうか？**
 Here are two rules of thumb:  
 以下に2つの経験則を示します：
 
 - Normalization is often a good fit for neural networks and when the original feature distribution is important.  
   正規化は、ニューラルネットワークや元の特徴分布が重要な場合に適していることが多いです。
-
-- For example, if outliers in your data are meaningful and not anomalies, normalization may be preferred because it preserves the original shape of the distribution.  
+  For example, if outliers in your data are meaningful and not anomalies, normalization may be preferred because it preserves the original shape of the distribution.  
   例えば、データ内の外れ値が意味のあるものであり異常でない場合、正規化は元の分布の形状を保持するため好まれることがあります。
 
 - Standardization is usually preferred for linear models, distance-based algorithms, and when you assume features should be normally distributed.  
   標準化は通常、線形モデル、距離ベースのアルゴリズム、および特徴が正規分布であるべきと仮定する場合に好まれます。
 
 Ultimately, the best choice depends on your data and model, so you may need to experiment with both approaches.  
-最終的には、最適な選択はデータとモデルに依存するため、両方のアプローチを試す必要があるかもしれません。
+**最終的には、最適な選択はデータとモデルに依存するため、両方のアプローチを試す必要があるかもしれません。**
 
-Another important class of transformation is _log transformations.  
-もう一つの重要な変換のクラスは、_対数変換_です。
+<!-- ここまで読んだ! -->
 
+Another important class of transformation is log transformations.  
+**もう一つの重要な変換のクラスは、対数変換(log transformations)**です。
 Highly skewed numerical variables, such as transaction amounts, can negatively impact model performance, especially when outliers dominate the data.  
-取引金額のような高度に歪んだ数値変数は、特に外れ値がデータを支配する場合、モデルのパフォーマンスに悪影響を及ぼす可能性があります。
-
+**取引金額のような高度に歪んだ数値変数は、特に外れ値がデータを支配する場合、モデルのパフォーマンスに悪影響を及ぼす可能性**があります。
 Log transformations help reduce skewness and compress the range of values, making the distribution closer to normal and reducing the influence of extreme values.  
 対数変換は歪みを減少させ、値の範囲を圧縮し、分布を正規に近づけ、極端な値の影響を減少させます。
-
 Log transformations are especially effective for right-skewed data.  
 対数変換は特に右に歪んだデータに対して効果的です。
-
 However, your data should not contain zeros or negative values, since the logarithm is undefined for those cases.  
 ただし、データにはゼロや負の値が含まれてはいけません。なぜなら、対数はその場合に定義されないからです。
-
 If your data does include zeros, you can use a modified transformation such as log 1 + x .  
 データにゼロが含まれている場合は、log 1 + xのような修正された変換を使用できます。
 
+<!-- ここまで読んだ! -->
+
 Not all ML algorithms require transformation of numerical features, though.  
-ただし、すべての機械学習アルゴリズムが数値特徴の変換を必要とするわけではありません。
-
+**ただし、すべての機械学習アルゴリズムが数値特徴の変換を必要とするわけではありません。**
 There is no need to transform numerical features for tree-based models, such as gradient-boosted decision trees and random forests, since they are unaffected by the scale of features when splitting nodes.  
-勾配ブースト決定木やランダムフォレストのような木ベースのモデルでは、ノードを分割する際に特徴のスケールに影響されないため、数値特徴を変換する必要はありません。
-
+**勾配ブースト決定木やランダムフォレストのような木ベースのモデルでは、ノードを分割する際に特徴のスケールに影響されないため、数値特徴を変換する必要はありません。**
 However, certain transformations, such as reducing extreme skewness or simplifying feature interactions, improve tree model performance.  
-ただし、極端な歪みを減少させたり、特徴の相互作用を単純化したりするような特定の変換は、木モデルのパフォーマンスを向上させます。
-
+**ただし、極端な歪みを減少させたり**、特徴の相互作用を単純化したりするような特定の変換は、木モデルのパフォーマンスを向上させます。
 For example, log-transforming a highly skewed variable can help balance splits and allow the model to better capture patterns across the data range.  
 例えば、高度に歪んだ変数を対数変換することで、分割をバランスさせ、モデルがデータ範囲全体のパターンをよりよく捉えることができます。
 
+<!-- ここまで読んだ! -->
+
 When you’re computing transformations, you must first make a full pass of the feature values of some of them to compute descriptive statistics, such as the mean, standard deviation, minimum, and maximum values.  
 変換を計算する際は、まずいくつかの特徴値の完全なパスを実行して、平均、標準偏差、最小値、最大値などの記述統計を計算する必要があります。
-
 The second pass can then update each data point by applying the transformation.  
 次のパスでは、変換を適用して各データポイントを更新できます。
-
 Here are examples of how common transformations are computed:  
 以下は、一般的な変換がどのように計算されるかの例です：
 
 - Normalization involves adjusting the range of feature values so that they fit within a specific range, typically between zero and one.  
   正規化は、特徴値の範囲を調整して特定の範囲（通常は0から1の間）に収めることを含みます。
+  The most common method of normalization is min-max scaling, where, for each data point, you subtract the minimum value and divide by the maximum value minus the minimum value:  
+  **正規化の最も一般的な方法はmin-maxスケーリング**であり、各データポイントについて最小値を引き、最大値から最小値を引いた値で割ります：
 
-- The most common method of normalization is min-max scaling, where, for each data point, you subtract the minimum value and divide by the maximum value minus the minimum value:  
-  正規化の最も一般的な方法はmin-maxスケーリングであり、各データポイントについて最小値を引き、最大値から最小値を引いた値で割ります：  
   $$  
   x_{\text{normalized}} = \frac{x - x_{\text{min}}}{x_{\text{max}} - x_{\text{min}}}  
   $$  
 
 - Standardization involves subtracting the mean and dividing by the standard deviation for every data point.  
   標準化は、各データポイントについて平均を引き、標準偏差で割ることを含みます。
-
-- It centers the data around zero and scales it based on the standard deviation:  
+  It centers the data around zero and scales it based on the standard deviation:  
   これはデータをゼロの周りに中心化し、標準偏差に基づいてスケーリングします：  
   $$  
   x_{\text{standardized}} = \frac{x - \mu}{\sigma}  
@@ -325,184 +291,166 @@ Here are examples of how common transformations are computed:
   ここで、$\sigma$は標準偏差、$\mu$は平均です。
 
 - Log transformations apply a logarithmic function to each data point, typically base 10 or base e (denoted as ln):  
-  対数変換は、各データポイントに対数関数を適用します。通常は底10または底e（lnとして示される）です：  
+  対数変換は、各データポイントに対数関数を適用します。**通常は底10または底e（lnとして示される）**です：  
+  
   $$  
   x_{\text{log}} = \ln x  
   $$  
 
 - Reciprocal transformation takes the reciprocal (i.e., the inverse) of each value.  
-  逆数変換は、各値の逆数（すなわち逆）を取ります。
-
-- The reciprocal of a number x is 1/x.  
+  **逆数変換**は、各値の逆数（すなわち逆）を取ります。
+  The reciprocal of a number x is 1/x.  
   数字$x$の逆数は$1/x$です。
-
-- It can help reduce the skewness of a dataset and stabilize its variance:  
+  It can help reduce the skewness of a dataset and stabilize its variance:  
   これはデータセットの歪みを減少させ、分散を安定させるのに役立ちます：  
+  
   $$  
   x_{\text{reciprocal}} = \frac{1}{x}  
   $$  
 
 - Exponential transformation of a numerical variable x involves applying an exponential function.  
-  数値変数$x$の指数変換は、指数関数を適用することを含みます。
-
-- It can linearize relationships between variables when dealing with exponential growth or decay patterns, or it can give greater weight to larger values in a dataset:  
-  これは、指数的成長または減衰パターンを扱う際に変数間の関係を線形化したり、データセット内の大きな値により大きな重みを与えたりすることができます：  
+  数値変数 $x$ の**指数変換**は、指数関数を適用することを含みます。
+  It can linearize relationships between variables when dealing with exponential growth or decay patterns, or it can give greater weight to larger values in a dataset:  
+  これは、**指数的成長または減衰パターンを扱う際に変数間の関係を線形化**したり、データセット内の大きな値により大きな重みを与えたりすることができます：  
   $$  
   x_{\text{exp}} = a \cdot e^{b \cdot x}  
   $$  
   ここで、$a$はスケーリング係数、$b$は成長率を制御します。
 
 - Box-Cox transformation stabilizes the variance in a numerical variable, making it more closely approximate a normal distribution.  
-  Box-Cox変換は数値変数の分散を安定させ、正規分布により近づけます。
-
-- A good value for the hyperparameter, _λ, can be estimated using maximum likelihood estimation, such that it_ minimizes the skewness of the transformed data, making it as close to normal as possible.  
+  **Box-Cox変換**は数値変数の分散を安定させ、正規分布により近づけます。
+  A good value for the hyperparameter, _λ, can be estimated using maximum likelihood estimation, such that it_ minimizes the skewness of the transformed data, making it as close to normal as possible.  
   ハイパーパラメータ_λ_の良い値は、最大尤度推定を使用して推定でき、変換されたデータの歪みを最小化し、できるだけ正規に近づけます。
-
-- When 𝜆 = 0, the Box-Cox transformation becomes the natural log:  
+  When 𝜆 = 0, the Box-Cox transformation becomes the natural log:  
   𝜆 = 0のとき、Box-Cox変換は自然対数になります：  
   $$  
   x_{\text{box-cox}}^{\lambda} = \frac{x^{\lambda} - 1}{\lambda}  
-  $$  
+  $$ 
 
-###### Storing Transformed Feature Data in a Feature Group
-###### 特徴グループに変換された特徴データを保存する
+### 1.1.4. Storing Transformed Feature Data in a Feature Group 特徴グループに変換された特徴データを保存する
 
 In general, you should not store transformed feature data in feature groups, as it precludes feature reuse by models and introduces write amplification when new data is written to a feature group.  
-一般的に、変換された特徴データを特徴グループに保存すべきではありません。なぜなら、それはモデルによる特徴の再利用を妨げ、新しいデータが特徴グループに書き込まれるときに書き込みの増幅を引き起こすからです。
-
+**一般的に、変換された特徴データを特徴グループに保存すべきではありません。なぜなら、それはモデルによる特徴の再利用を妨げ、新しいデータが特徴グループに書き込まれるときに書き込みの増幅(write amplification)を引き起こすから**です。
 However, in a case where you require the lowest possible latency in a real-time ML system, precomputing as much as possible can help shave off microseconds or milliseconds from prediction request latency.  
-ただし、リアルタイムの機械学習システムで可能な限り低いレイテンシを要求する場合、できるだけ多くを事前計算することで、予測リクエストのレイテンシからマイクロ秒またはミリ秒を削減するのに役立ちます。
-
+**ただし、リアルタイムの機械学習システムで可能な限り低いレイテンシを要求する場合、できるだけ多くを事前計算することで、予測リクエストのレイテンシからマイクロ秒またはミリ秒を削減するのに役立ちます。** (確かに、例外はあるよね、ってことか...!:thinking:)
 Milliseconds can be worth millions for some companies.  
 ミリ秒は、いくつかの企業にとって何百万ドルの価値があります。
-
 If you absolutely have to apply your feature transformations before the feature store, you can create a separate online-only feature group for your model, including its own dedicated feature pipeline.  
-もし、どうしても特徴ストアの前に特徴変換を適用する必要がある場合は、モデルのために専用の特徴パイプラインを含むオンライン専用の特徴グループを作成できます。
-
+**もし、どうしても特徴ストアの前に特徴変換を適用する必要がある場合は、モデルのために専用の特徴パイプラインを含むオンライン専用の特徴グループを作成できます。**
 The feature pipeline should use the training dataset statistics for your model to apply feature transformations.  
 特徴パイプラインは、モデルのためにトレーニングデータセットの統計を使用して特徴変換を適用する必要があります。
-
 This “transformed” feature group should be online only, so it will only store the latest feature values and you will not need to recompute existing feature data for every write.  
-この「変換された」特徴グループはオンライン専用であるべきで、最新の特徴値のみを保存し、すべての書き込みに対して既存の特徴データを再計算する必要はありません。
-
+**この「変換された」特徴グループはオンライン専用であるべき**で、最新の特徴値のみを保存し、すべての書き込みに対して既存の特徴データを再計算する必要はありません。（ここは意識したい!:thinking:）
 If some of the features are reused in other models, you should update your feature pipeline to first compute the untransformed features and write them to the shared, untransformed feature group.  
 他のモデルで一部の特徴が再利用される場合は、最初に未変換の特徴を計算し、それを共有の未変換特徴グループに書き込むように特徴パイプラインを更新する必要があります。
-
 Then, after applying the feature transformations, you should write the transformed features to the transformed online feature group.  
 その後、特徴変換を適用した後、変換された特徴を変換されたオンライン特徴グループに書き込む必要があります。
-
 This works for both batch and streaming feature pipelines.  
 これは、バッチおよびストリーミングの特徴パイプラインの両方で機能します。
 
-###### Model-Specific Transformations
-###### モデル特有の変換
+<!-- ここまで読んだ! -->
 
-_Model-specific transformations are a catchall for any data transformation that is not a_ feature transformation but is specific to one model.  
-_モデル特有の変換は、特徴変換ではなく、特定のモデルに特有のデータ変換の総称です。
+## 1.2. Model-Specific Transformations　モデル特有の変換
 
+Model-specific transformations are a catchall for any data transformation that is not a feature transformation but is specific to one model.  
+**Model-specific transformations(モデル特有の変換)**は、特徴変換ではなく、特定のモデルに特有のデータ変換の総称です。
 We will look at a couple of examples of such transformations.  
 このような変換のいくつかの例を見ていきます。
-
 For example, a popular way to impute missing inference data is to first compute the mean/median/mode for features in the training data and replace the missing values with one of the computed values.  
 例えば、欠損した推論データを補完する一般的な方法は、まずトレーニングデータの特徴の平均/中央値/最頻値を計算し、欠損値を計算された値の1つで置き換えることです。
-
 Another example, which does not require training data statistics, is determining how to transform timestamps for features so that they are aligned with the timestamps for targets/labels.  
 もう一つの例は、トレーニングデータの統計を必要とせず、特徴のタイムスタンプをターゲット/ラベルのタイムスタンプに合わせるためにどのように変換するかを決定することです。
-
 This transformation enables you to create training data with a more efficient `INNER JOIN` instead of an ASOF LEFT JOIN.  
 この変換により、ASOF LEFT JOINの代わりにより効率的な`INNER JOIN`を使用してトレーニングデータを作成できます。
 
-###### Outlier Handling Methods
-###### 外れ値処理方法
+### 1.2.1. Outlier Handling Methods 外れ値処理方法
 
-_Outlier detection identifies and handles anomalous data points that can skew model_ training and lead to poor predictions.  
-_外れ値検出は、モデルのトレーニングを歪め、予測の質を低下させる可能性のある異常なデータポイントを特定し処理します。
-
+Outlier detection identifies and handles anomalous data points that can skew model training and lead to poor predictions.  
+外れ値検出は、モデルのトレーニングを歪め、予測の質を低下させる可能性のある異常なデータポイントを特定し処理します。
 Where possible, it is preferable to not ingest anomalous data points into a feature group, for example, by using Great Expectations to identify and remove them in feature pipelines.  
-可能な限り、外れ値データポイントを特徴グループに取り込まない方が望ましいです。例えば、Great Expectationsを使用して特徴パイプラインでそれらを特定し削除します。
-
+**可能な限り、外れ値データポイントを特徴グループに取り込まない方が望ましいです。例えば、Great Expectationsを使用して特徴パイプラインでそれらを特定し削除します。** (外れ値の対応は、基本的にfeature pipeline側の責務なのか...!!:thinking:)
 Sometimes, however, feature groups can contain anomalous data, and you’ll then have to perform outlier detection as MDTs.  
 ただし、場合によっては、特徴グループに異常なデータが含まれることがあり、その場合はMDTとして外れ値検出を実行する必要があります。
 
+<!-- ここまで読んだ! -->
+
 Scikit-Learn has good support for both univariate (one-feature) and multivariate (multiple-feature) approaches.  
 Scikit-Learnは、単変量（1つの特徴）および多変量（複数の特徴）アプローチの両方に対して良好なサポートを提供しています。
-
 For univariate data, it includes statistical techniques such as the z-score and the interquartile range (IQR) method.  
 単変量データの場合、zスコアや四分位範囲（IQR）法などの統計的手法が含まれています。
-
 For multivariate data, it provides algorithms like the Isolation Forest and Local Outlier Factor (LOF).  
 多変量データの場合、Isolation ForestやLocal Outlier Factor（LOF）などのアルゴリズムが提供されています。
-
 Here is an example that removes small outlier payments (the bottom 0.2% of amounts) in credit card transactions:  
 以下は、クレジットカード取引における小さな外れ値の支払い（金額の下位0.2%）を削除する例です：  
-```  
+
+```python  
 Q1 = df['amount'].quantile(0.002)  
 outliers = df[(df['amount'] < Q1)]  
 ```  
 
 If large outlier payments remain, a log transformation can help reduce their influence by compressing high values.  
 大きな外れ値の支払いが残っている場合、対数変換は高い値を圧縮することでその影響を減少させるのに役立ちます。
-
 Generally, you should perform outlier removal before log transformations, and remember, log transformations do not help with small or negative outliers.  
-一般的に、対数変換の前に外れ値の削除を行うべきであり、対数変換は小さな外れ値や負の外れ値には効果がないことを覚えておいてください。
+**一般的に、対数変換の前に外れ値の削除を行うべきであり**、対数変換は小さな外れ値や負の外れ値には効果がないことを覚えておいてください。
 
-###### Imputing Missing Values
-###### 欠損値の補完
+<!-- ここまで読んだ! -->
+
+### 1.2.2. Imputing Missing Values　欠損値の補完
 
 Missing values can sometimes be identified in EDA and handled by not including features in a feature view.  
 欠損値は、探索的データ分析（EDA）で特定されることがあり、特徴ビューに特徴を含めないことで処理されます。
-
 For example, you may not select a feature for a model because it has too many missing values.  
 例えば、欠損値が多すぎるためにモデルのために特徴を選択しないことがあります。
-
 In a production feature pipeline, a missing value in a row may be so important that it invalidates all of the other values in that row—in which case the entire row is dropped.  
-生産環境の特徴パイプラインでは、行内の欠損値が非常に重要であり、その行内の他のすべての値を無効にする場合、その行全体が削除されます。
-
+**production環境の特徴パイプラインでは、行内の欠損値が非常に重要であり、その行内の他のすべての値を無効にする場合、その行全体が削除されます。**
 Often, however, we choose to deal with missing values by imputing them in training and inference pipelines.  
 しかし、しばしば、トレーニングおよび推論パイプラインで欠損値を補完することで対処することを選択します。
-
 A list of popular techniques for imputing missing data is shown in Figure 7-2.i  
 欠損データを補完するための一般的な手法のリストは、図7-2.iに示されています。
 
+![]()
+**Figure 7-2. Different techniques for the imputation of missing data in training and inference pipelines, based on whether the data is time-series data or not. For non-time-series data, we can use descriptive statistics computed from the training dataset to impute missing values.**
+**図7-2. トレーニングおよび推論パイプラインにおける欠損データの補完のための異なる手法。データが時系列データであるかどうかに基づいています。非時系列データの場合、トレーニングデータセットから計算された記述統計を使用して欠損値を補完できます。**
 
+- メモ: 図7-2の内容
+  - Imputation in training and inference pipelines(トレーニングおよび推論パイプラインでの補完)
+    - Non-time-series data(非時系列データ)
+      - Impute with descriptive statistics(mean/median/mode)(記述統計（平均/中央値/最頻値）で補完)
+      - Model-based imputation(モデルベースの補完, ex. kNN)
+    - Time-series data(時系列データ)
+      - Forward filling(前方補完)
+      - Backward filling(後方補完)
+      - Model-based imputation(モデルベースの補完, ex. linear)
 
-_Figure 7-2. Different techniques for the imputation of missing data in training and inference pipelines, based on whether the data is time-series data or not. For non-time-series data, we can use descriptive statistics computed from the training dataset to impute missing values._
-_Figure 7-2. トレーニングおよび推論パイプラインにおける欠損データの補完のための異なる手法。データが時系列データであるかどうかに基づいています。非時系列データの場合、トレーニングデータセットから計算された記述統計を使用して欠損値を補完できます。_
+In Pandas, we can impute missing time-series data using forward filling as follows:
+次のように、Pandasを使用して欠損した時系列データを**前方補完**で補完できます：
 
-_In Pandas, we can impute missing time-series data using forward filling as follows:_
-_次のように、Pandasを使用して欠損した時系列データを前方補完で補完できます：_
-
-```  
+```python  
+# groupby()の後にffill()を使用して'amount'列を前方補完します
 df_forward_filled = df.sort_values("event_time").groupby("cc_num")["amount"].ffill()
-```  
-```  
-df_forward_filled = df.sort_values("event_time").groupby("cc_num")["amount"].ffill()
-```  
-_Forward filling takes the last valid (nonmissing) value, uses it to fill in the missing values forward for all columns in the DataFrame, and stores the output in a new DataFrame._
-_前方補完は、最後の有効（欠損でない）値を取り、それを使用してDataFrame内のすべての列の欠損値を前方に補完し、出力を新しいDataFrameに保存します。_
+```
 
-_It is also possible to impute missing values with backward filling that takes the next valid (nonmissing) value and uses it to fill in the missing values backward._
-_次の有効（欠損でない）値を取り、それを使用して欠損値を後方に補完するバックワードフィリングでも欠損値を補完できます。_
+Forward filling takes the last valid (nonmissing) value, uses it to fill in the missing values forward for all columns in the DataFrame, and stores the output in a new DataFrame.
+**前方補完(forward filling)**は、最後の有効（欠損でない）値を取り、それを使用してDataFrame内のすべての列の欠損値を前方に補完し、出力を新しいDataFrameに保存します。(これはfeature pipeline側でやるべきか、それともMDT側でやるべきなんだろうか...??:thinking:)
 
-_In this Pandas operation, we only backfill the `amount` column and update the same DataFrame:_
-_このPandas操作では、`amount`列のみを後方補完し、同じDataFrameを更新します：_
+It is also possible to impute missing values with backward filling that takes the next valid (nonmissing) value and uses it to fill in the missing values backward.
+次の有効（欠損でない）値を取り、それを使用して欠損値を後方に補完する**後方補完(backward filling)**で欠損値を補完することも可能です。
+In this Pandas operation, we only backfill the `amount` column and update the same DataFrame:
+このPandas操作では、`amount`列のみを後方補完し、同じDataFrameを更新します：
 
-```  
+```python
+# groupby()の後にbfill()を使用して'amount'列を後方補完します
 df["amount"] = df.sort_values("event_time").groupby("cc_num")["amount"].bfill()
 ```  
-```  
-df["amount"] = df.sort_values("event_time").groupby("cc_num")["amount"].bfill()
-```  
-_What happens if you have large volumes of data (10s of GBs or more) that Pandas cannot scale to process?_
-_もしPandasが処理できないほどの大容量データ（数十GB以上）がある場合はどうなりますか？_
 
-_You could use PySpark instead of Pandas. PySpark doesn’t have native library support, but you can use a window function (unboundedPreceding or unboundedFollowing) to implement forward and backward filling, respectively, for a specific column._
-_Pandasの代わりにPySparkを使用できます。PySparkにはネイティブライブラリのサポートはありませんが、ウィンドウ関数（unboundedPrecedingまたはunboundedFollowing）を使用して、特定の列に対して前方および後方補完を実装できます。_
+What happens if you have large volumes of data (10s of GBs or more) that Pandas cannot scale to process?
+もしPandasが処理できないほどの大容量データ（数十GB以上）がある場合はどうなりますか？
+You could use PySpark instead of Pandas. PySpark doesn't have native library support, but you can use a window function (unboundedPreceding or unboundedFollowing) to implement forward and backward filling, respectively, for a specific column.
+Pandasの代わりにPySparkを使用できます。PySparkにはネイティブライブラリのサポートはありませんが、ウィンドウ関数（unboundedPrecedingまたはunboundedFollowing）を使用して、特定の列に対して前方および後方補完を実装できます。
+Here, we forward-fill `amount` and specify the primary key as the orderBy column:
+ここでは、`amount`を前方補完し、主キーをorderBy列として指定します：
 
-_Here, we forward-fill `amount` and specify the primary key as the orderBy column:_
-_ここでは、`amount`を前方補完し、主キーをorderBy列として指定します：_
-
-```  
+```python  
 window_spec = Window.partitionBy("cc_num").orderBy("event_time")     
 .rowsBetween(Window.unboundedPreceding, Window.currentRow)   
 # Forward fill the 'amount' column with missing values   
@@ -510,50 +458,33 @@ df_forward_filled = df.withColumn(
 "filled_amount", F.last("amount", ignoreNulls=True).over(window_spec)   
 )
 ```  
-```  
-window_spec = Window.partitionBy("cc_num").orderBy("event_time")     
-.rowsBetween(Window.unboundedPreceding, Window.currentRow)   
-# 欠損値を持つ'amount'列を前方補完します   
-df_forward_filled = df.withColumn(     
-"filled_amount", F.last("amount", ignoreNulls=True).over(window_spec)   
-)
-```  
-_This will sort the data by `event_time` within each `cc_num. So if there is a missing `amount, it will be replaced by the most recent credit card amount on that card._
-_これにより、各`cc_num`内で`event_time`によってデータがソートされます。したがって、欠損した`amount`がある場合、それはそのカードの最新のクレジットカードの金額に置き換えられます。_
 
-_Here is the same example for backward-filling missing values:_
-_欠損値を後方補完するための同じ例は次のとおりです：_
+This will sort the data by `event_time` within each `cc_num`. So if there is a missing `amount`, it will be replaced by the most recent credit card amount on that card.
+これにより、各`cc_num`内で`event_time`によってデータがソートされます。したがって、欠損した`amount`がある場合、それはそのカードの最新のクレジットカードの金額に置き換えられます。
+Here is the same example for backward-filling missing values:
+欠損値を後方補完するための同じ例は次のとおりです：
 
-```  
+```python  
 window_spec_back = Window.partitionBy("cc_num").orderBy("event_time")     
 .rowsBetween(Window.currentRow, Window.unboundedFollowing)   
 # Backward fill the 'amount' column with missing values   
 df_backward_filled = df.withColumn(     
 "filled_amount", F.first("amount", ignoreNulls=True).over(window_spec_back))
 ```  
-```  
-window_spec_back = Window.partitionBy("cc_num").orderBy("event_time")     
-.rowsBetween(Window.currentRow, Window.unboundedFollowing)   
-# 欠損値を持つ'amount'列を後方補完します   
-df_backward_filled = df.withColumn(     
-"filled_amount", F.first("amount", ignoreNulls=True).over(window_spec_back))
-```  
-_Note that these operations are expensive in Spark and require shuffling and sorting the data over all workers._
-_これらの操作はSparkでは高コストであり、すべてのワーカー間でデータのシャッフルとソートが必要です。_
 
-_To scale window functions in PySpark, you need to set a partition key and make sure partition sizes are balanced (if there is a skew in the partition sizes, performance will be negatively impacted)._
-_PySparkでウィンドウ関数をスケールするには、パーティションキーを設定し、パーティションサイズが均等であることを確認する必要があります（パーティションサイズに偏りがある場合、パフォーマンスに悪影響を及ぼします）。_
+Note that these operations are expensive in Spark and require shuffling and sorting the data over all workers.
+これらの操作はSparkでは高コストであり、すべてのワーカー間でデータのシャッフルとソートが必要です。
+To scale window functions in PySpark, you need to set a partition key and make sure partition sizes are balanced (if there is a skew in the partition sizes, performance will be negatively impacted).
+PySparkでウィンドウ関数をスケールするには、パーティションキーを設定し、パーティションサイズが均等であることを確認する必要があります（パーティションサイズに偏りがある場合、パフォーマンスに悪影響を及ぼします）。
+In contrast, sorting in Pandas is a relatively cheap in-memory operation.
+対照的に、Pandasでのソートは比較的安価なメモリ内操作です。
 
-_In contrast, sorting in Pandas is a relatively cheap in-memory operation._
-_対照的に、Pandasでのソートは比較的安価なメモリ内操作です。_
+What about filling non-time-series data using imputation?
+欠損値補完を使用して非時系列データを補完する場合はどうなりますか？
+In Scikit-Learn pipelines, we can impute missing values using classes in their impute module, such as the `SimpleImputer` class.
+scikit-Learnパイプラインでは、`SimpleImputer`クラスなどのimputeモジュールのクラスを使用して欠損値を補完できます。
 
-_What about filling non-time-series data using imputation?_
-_欠損値補完を使用して非時系列データを補完する場合はどうなりますか？_
-
-_In Scikit-Learn pipelines, we can impute missing values using classes in their `impute module, such as the`_
-_Scikit-Learnのパイプラインでは、`impute`モジュール内のクラスを使用して欠損値を補完できます。例えば、_
-
-```  
+```  python
 from sklearn.impute import SimpleImputer   
 from sklearn.pipeline import Pipeline   
 pipeline = Pipeline(steps=[     
@@ -564,42 +495,26 @@ pipeline.fit_transform(df[["amount"]]),
 columns=["amount"]   
 )
 ```  
-```  
-from sklearn.impute import SimpleImputer   
-from sklearn.pipeline import Pipeline   
-pipeline = Pipeline(steps=[     
-('imputer', SimpleImputer(strategy='mean'))   
-])   
-df_imputed = pd.DataFrame(     
-pipeline.fit_transform(df[["amount"]]),     
-columns=["amount"]   
-)
-```  
-_This code replaces all missing values with the mean value computed over the selected columns in your DataFrame._
-_このコードは、DataFrame内の選択された列に対して計算された平均値で、すべての欠損値を置き換えます。_
 
-_If the DataFrame stores the training set, this works well._
-_もしDataFrameがトレーニングセットを保存している場合、これはうまく機能します。_
+This code replaces all missing values with the mean value computed over the selected columns in your DataFrame.
+このコードは、DataFrame内の選択された列に対して計算された平均値で、すべての欠損値を置き換えます。
+If the DataFrame stores the training set, this works well.
+もしDataFrameがトレーニングセットを保存している場合、これはうまく機能します。
+Pipeline objects can be stored with their embedded model in the model registry.
+**パイプラインオブジェクトは、モデルレジストリ内の埋め込まれたモデルと共に保存できます。**
+This enables the same Scikit-Learn pipeline object to be downloaded to an inference pipeline, applying the same imputation transformations during inference and thus ensuring no training-serving skew.
+これにより、**同じScikit-Learnパイプラインオブジェクトを推論パイプラインにダウンロードでき、推論中に同じ補完変換を適用し、トレーニングとサービスの偏りがないことを保証**します。
 
-_Pipeline objects can be stored with their embedded model in the model registry._
-_パイプラインオブジェクトは、モデルレジストリ内の埋め込まれたモデルと共に保存できます。_
+Again, what happens if your data is too large to fit on a single machine?
+再度、もしデータが単一のマシンに収まらないほど大きい場合はどうなりますか？
+Scikit-Learn pipelines only work on a single machine, so in this case, you can use declarative MDTs on feature views in Hopsworks.
+Scikit-Learnのパイプラインは単一のマシンでのみ機能するため、この場合はHopsworksのフィーチャービューで宣言的MDTを使用できます。
+Hopsworks can use either Pandas or Spark as a backend for creating training datasets with feature views, so this solution scales to very large-sized (TBs or larger) training datasets.
+Hopsworksは、フィーチャービューを使用してトレーニングデータセットを作成するためのバックエンドとしてPandasまたはSparkのいずれかを使用できるため、このソリューションは非常に大きなサイズ（TB以上）のトレーニングデータセットにスケールします。
+In this example, we min_max_scale the amount feature when we create training data using the feature view object:
+この例では、フィーチャービューオブジェクトを使用してトレーニングデータを作成する際に、amountフィーチャーをmin_max_scaleします：
 
-_This enables the same Scikit-Learn pipeline object to be downloaded to an inference pipeline, applying the same imputation transformations during inference and thus ensuring no training-serving skew._
-_これにより、同じScikit-Learnパイプラインオブジェクトを推論パイプラインにダウンロードでき、推論中に同じ補完変換を適用し、トレーニングとサービスの偏りがないことを保証します。_
-
-_Again, what happens if your data is too large to fit on a single machine?_
-_再度、もしデータが単一のマシンに収まらないほど大きい場合はどうなりますか？_
-
-_Scikit-Learn pipelines only work on a single machine, so in this case, you can use declarative MDTs on feature views in Hopsworks._
-_Scikit-Learnのパイプラインは単一のマシンでのみ機能するため、この場合はHopsworksのフィーチャービューで宣言的MDTを使用できます。_
-
-_Hopsworks can use either Pandas or Spark as a backend for creating training datasets with feature views, so this solution scales to very large-sized (TBs or larger) training datasets._
-_Hopsworksは、フィーチャービューを使用してトレーニングデータセットを作成するためのバックエンドとしてPandasまたはSparkのいずれかを使用できるため、このソリューションは非常に大きなサイズ（TB以上）のトレーニングデータセットにスケールします。_
-
-_In this example, we min_max_scale the amount feature when we create training data using the feature view object:_
-_この例では、フィーチャービューオブジェクトを使用してトレーニングデータを作成する際に、amountフィーチャーをmin_max_scaleします：_
-
-```  
+```  python
 from hopsworks.hsfs.builtin_transformations import min_max_scaler   
 feature_view = fs.create_feature_view(     
 name='transactions_view',     
@@ -610,94 +525,74 @@ transformation_functions = [min_max_scaler("amount")]
 # missing values will be imputed during training data creation   
 feature_view.create_training_data(test_size=0.2)
 ```  
-```  
-from hopsworks.hsfs.builtin_transformations import min_max_scaler   
-feature_view = fs.create_feature_view(     
-name='transactions_view',     
-query=query,     
-labels=["fraud_label"],     
-transformation_functions = [min_max_scaler("amount")]   
-)   
-# トレーニングデータ作成中に欠損値が補完されます   
-feature_view.create_training_data(test_size=0.2)
-```  
-_For more advanced use cases, you can try model-based imputation that uses statistical models to estimate and fill in missing values._
-_より高度なユースケースでは、統計モデルを使用して欠損値を推定し補完するモデルベースの補完を試すことができます。_
 
-_See Statistical Analysis with Missing Data by Roderick Little and Donald Rubin (Wiley) for details._
-_詳細については、Roderick LittleとDonald Rubin（Wiley）の「欠損データの統計分析」を参照してください。_
+For more advanced use cases, you can try model-based imputation that uses statistical models to estimate and fill in missing values.
+より高度なユースケースでは、統計モデルを使用して欠損値を推定し補完するモデルベースの補完を試すことができます。
+See Statistical Analysis with Missing Data by Roderick Little and Donald Rubin (Wiley) for details.
+詳細については、Roderick LittleとDonald Rubin（Wiley）の「欠損データの統計分析」を参照してください。
 
-###### Data Cleaning as Model-Based Transformations
-###### モデルベースの変換としてのデータクリーニング
+### 1.2.3. Data Cleaning as Model-Based Transformations モデルベースの変換としてのデータクリーニング
 
-_Data cleaning can be guided by heuristics, training data statistics, or a model trained on the data._
-_データクリーニングは、ヒューリスティック、トレーニングデータの統計、またはデータに基づいてトレーニングされたモデルによってガイドされることがあります。_
+Data cleaning can be guided by heuristics, training data statistics, or a model trained on the data.
+データクリーニングは、ヒューリスティック、トレーニングデータの統計、またはデータに基づいてトレーニングされたモデルによってガイドされることがあります。
+Model-based cleaning is most effective when the features and their distributions remain relatively stable between training and inference.
+**モデルベースのクリーニングは、特徴とその分布がトレーニングと推論の間で比較的安定している場合に最も効果的です。**
+An example of data cleaning is the preprocessing done by Meta to clean text data before pretraining LLMs.
+データクリーニングの例として、MetaがLLMの事前トレーニング前にテキストデータをクリーンアップするために行った前処理があります。
+Pretraining benefits from removing noise from low-quality tokens.
+事前トレーニングは、低品質のトークンからノイズを除去することで利益を得ます。
+Meta states that when they are training Llama 3.1, "We use a token-distribution Kullback-Leibler divergence to filter out documents containing excessive numbers of outlier tokens compared to the training corpus distribution…we developed a series of data-filtering pipelines…using heuristic filters, NSFW (not safe for work) filters, semantic deduplication approaches, and text classifiers to predict data quality."
+Metaは、Llama 3.1をトレーニングしているときに、「トークン分布のKullback-Leiblerダイバージェンスを使用して、トレーニングコーパス分布と比較して外れ値トークンの数が過剰な文書をフィルタリングします…ヒューリスティックフィルタ、NSFW（作業に適さない）フィルタ、意味的重複排除アプローチ、データ品質を予測するためのテキスト分類器を使用して、一連のデータフィルタリングパイプラインを開発しました。」と述べています。
+This sounds like a chicken-and-egg problem.
+これは鶏と卵の問題のように聞こえます。
+How do you know what the training corpus distribution is when you are trying to create a clean training corpus?
+クリーンなトレーニングコーパスを作成しようとしているとき、トレーニングコーパスの分布が何であるかをどうやって知ることができますか？
+Their solution was, "We used Llama 2 to generate the training data for the text-quality classifiers that are powering Llama 3."
+彼らの解決策は、「Llama 2を使用してLlama 3を支えるテキスト品質分類器のトレーニングデータを生成しました。」でした。
+That is, they assumed that the text for pretraining LLMs follows a stable distribution from version 2 to version 3.
+つまり、彼らはLLMの事前トレーニング用のテキストがバージョン2からバージョン3までの安定した分布に従うと仮定しました。
+So training data for Llama 3.1 could also be used to train text-quality classifiers for Llama 4, and so on.
+したがって、Llama 3.1のトレーニングデータはLlama 4のテキスト品質分類器をトレーニングするためにも使用できるでしょう。
 
-_Model-based cleaning is most effective when the features and their distributions remain relatively stable between training and inference._
-_モデルベースのクリーニングは、特徴とその分布がトレーニングと推論の間で比較的安定している場合に最も効果的です。_
+<!-- ここまで読んだ! -->
 
-_An example of data cleaning is the preprocessing done by Meta to clean text data before pretraining LLMs._
-_データクリーニングの例として、MetaがLLMの事前トレーニング前にテキストデータをクリーンアップするために行った前処理があります。_
+Note that the LLM's text-quality classifiers only run in the training dataset (or feature) pipeline.
+注意すべきは、LLMのテキスト品質分類器はトレーニングデータセット（またはフィーチャー）パイプラインでのみ実行されるということです。
+They are not MDTs that run in both training and inference pipelines.
+彼らはトレーニングと推論の両方のパイプラインで実行されるMDTではありません。
 
-_Pretraining benefits from removing noise from low-quality tokens._
-_事前トレーニングは、低品質のトークンからノイズを除去することで利益を得ます。_
+Data cleaning is needed before training, but you make predictions on unclean data, so you shouldn't apply data cleaning transformations during inference.
+トレーニングの前にデータクリーニングが必要ですが、汚れたデータに対して予測を行うため、推論中にデータクリーニング変換を適用すべきではありません。
 
-_Meta states that when they are training Llama 3.1, “We use a token-distribution Kullback-Leibler divergence to filter out documents containing excessive numbers of outlier tokens compared to the training corpus distribution…we developed a series of data-filtering pipelines…using heuristic filters, NSFW (not safe for work) filters, semantic deduplication approaches, and text classifiers to predict data quality.”_
-_Metaは、Llama 3.1をトレーニングしているときに、「トークン分布のKullback-Leiblerダイバージェンスを使用して、トレーニングコーパス分布と比較して外れ値トークンの数が過剰な文書をフィルタリングします…ヒューリスティックフィルタ、NSFW（作業に適さない）フィルタ、意味的重複排除アプローチ、データ品質を予測するためのテキスト分類器を使用して、一連のデータフィルタリングパイプラインを開発しました。」と述べています。_
+There are many good open source libraries that can be used for model-based data cleaning.
+モデルベースのデータクリーニングに使用できる優れたオープンソースライブラリが多数あります。
 
-_This sounds like a chicken-and-egg problem._
-_これは鶏と卵の問題のように聞こえます。_
+For example, Cleanlab is a Python package that identifies and corrects label errors in training datasets, providing confidence estimates for the correctness of each label.
+例えば、Cleanlabはトレーニングデータセット内のラベルエラーを特定し修正するPythonパッケージであり、各ラベルの正確性に対する信頼度を提供します。
 
-_How do you know what the training corpus distribution is when you are trying to create a clean training corpus?_
-_クリーンなトレーニングコーパスを作成しようとしているとき、トレーニングコーパスの分布が何であるかをどうやって知ることができますか？_
+[Lightly is an open library for computer vision that creates image embeddings](https://oreil.ly/DKg48) and then uses clustering and similarity search to help select, prioritize, or pseudo-label samples without full manual annotation.
+[Lightlyは、画像埋め込みを作成するコンピュータビジョン用のオープンライブラリであり](https://oreil.ly/DKg48)、その後、クラスタリングと類似性検索を使用して、完全な手動注釈なしでサンプルを選択、優先順位付け、または擬似ラベル付けを支援します。
 
-_Their solution was, “We used Llama 2 to generate the training data for the text-quality classifiers that are powering Llama 3.”_
-_彼らの解決策は、「Llama 2を使用してLlama 3を支えるテキスト品質分類器のトレーニングデータを生成しました。」でした。_
+This makes Lightly useful in image tasks where acquiring labeled data is challenging or expensive.
+これにより、ラベル付きデータの取得が困難または高価な画像タスクでLightlyが役立ちます。
 
-_That is, they assumed that the text for pretraining LLMs follows a stable distribution from version 2 to version 3._
-_つまり、彼らはLLMの事前トレーニング用のテキストがバージョン2からバージョン3までの安定した分布に従うと仮定しました。_
+Cleanlab is more widely used on tabular datasets where it can identify and correct label errors, although it can also be used on text and image datasets.
+Cleanlabは、ラベルエラーを特定し修正できるため、表形式データセットでより広く使用されていますが、テキストや画像データセットにも使用できます。
 
-_So training data for Llama 3.1 could also be used to train text-quality classifiers for Llama 4, and so on._
-_したがって、Llama 3.1のトレーニングデータはLlama 4のテキスト品質分類器をトレーニングするためにも使用できるでしょう。_
+###### 1.2.3.0.0.2. Target-/Label-Dependent Transformations
+###### 1.2.3.0.0.3. ターゲット/ラベル依存の変換
 
-_Note that the LLM’s text-quality classifiers only run in the training dataset (or feature) pipeline._
-_注意すべきは、LLMのテキスト品質分類器はトレーニングデータセット（またはフィーチャー）パイプラインでのみ実行されるということです。_
+There are some data transformations that are parameterized by properties of the label/target, such as its timestamp.
+ラベル/ターゲットのプロパティ（例えば、タイムスタンプ）によってパラメータ化されるデータ変換があります。
 
-_They are not MDTs that run in both training and inference pipelines._
-_彼らはトレーニングと推論の両方のパイプラインで実行されるMDTではありません。_
+Sometimes, you can delay computing features until the label and its properties become known.
+時には、ラベルとそのプロパティが知られるまで特徴の計算を遅らせることができます。
 
-_Data cleaning is needed before training, but you make predictions on unclean data, so you shouldn’t apply data cleaning transformations during inference._
-_トレーニングの前にデータクリーニングが必要ですが、汚れたデータに対して予測を行うため、推論中にデータクリーニング変換を適用すべきではありません。_
+This enables you to compute these features only when needed.
+これにより、必要なときにのみこれらの特徴を計算できます。
 
-_There are many good open source libraries that can be used for model-based data cleaning._
-_モデルベースのデータクリーニングに使用できる優れたオープンソースライブラリが多数あります。_
-
-_For example, Cleanlab is a Python package that identifies and corrects label errors in training datasets, providing confidence estimates for the correctness of each label._
-_例えば、Cleanlabはトレーニングデータセット内のラベルエラーを特定し修正するPythonパッケージであり、各ラベルの正確性に対する信頼度を提供します。_
-
-_[Lightly is an open library for computer vision that creates image embeddings](https://oreil.ly/DKg48) and then uses clustering and similarity search to help select, prioritize, or pseudo-label samples without full manual annotation._
-_[Lightlyは、画像埋め込みを作成するコンピュータビジョン用のオープンライブラリであり](https://oreil.ly/DKg48)、その後、クラスタリングと類似性検索を使用して、完全な手動注釈なしでサンプルを選択、優先順位付け、または擬似ラベル付けを支援します。_
-
-_This makes Lightly useful in image tasks where acquiring labeled data is challenging or expensive._
-_これにより、ラベル付きデータの取得が困難または高価な画像タスクでLightlyが役立ちます。_
-
-_Cleanlab is more widely used on tabular datasets where it can identify and correct label errors, although it can also be used on text and image datasets._
-_Cleanlabは、ラベルエラーを特定し修正できるため、表形式データセットでより広く使用されていますが、テキストや画像データセットにも使用できます。_
-
-###### Target-/Label-Dependent Transformations
-###### ターゲット/ラベル依存の変換
-
-_There are some data transformations that are parameterized by properties of the label/target, such as its timestamp._
-_ラベル/ターゲットのプロパティ（例えば、タイムスタンプ）によってパラメータ化されるデータ変換があります。_
-
-_Sometimes, you can delay computing features until the label and its properties become known._
-_時には、ラベルとそのプロパティが知られるまで特徴の計算を遅らせることができます。_
-
-_This enables you to compute these features only when needed._
-_これにより、必要なときにのみこれらの特徴を計算できます。_
-
-_A good example of a label-dependent transformation in the context of credit card fraud detection is time_since_last_transaction, which is calculated relative to the current transaction’s timestamp and the timestamp for the most recent previous transaction:_
-_クレジットカード詐欺検出の文脈におけるラベル依存の変換の良い例は、time_since_last_transactionであり、これは現在のトランザクションのタイムスタンプと最も最近の前のトランザクションのタイムスタンプに対して相対的に計算されます：_
+A good example of a label-dependent transformation in the context of credit card fraud detection is time_since_last_transaction, which is calculated relative to the current transaction's timestamp and the timestamp for the most recent previous transaction:
+クレジットカード詐欺検出の文脈におけるラベル依存の変換の良い例は、time_since_last_transactionであり、これは現在のトランザクションのタイムスタンプと最も最近の前のトランザクションのタイムスタンプに対して相対的に計算されます：
 
 ```  
 def time_since_last_transaction(event_time, prev_ts_transaction):     
@@ -707,58 +602,56 @@ return event_time - prev_ts_transaction
 def time_since_last_transaction(event_time, prev_ts_transaction):     
 return event_time - prev_ts_transaction
 ```  
-###### Expensive Features Are Computed When Needed
-###### 高コストの特徴は必要なときに計算される
+###### 1.2.3.0.0.4. Expensive Features Are Computed When Needed
+###### 1.2.3.0.0.5. 高コストの特徴は必要なときに計算される
 
-_Sometimes it is too expensive to precompute features for all entities in feature pipelines._
-_時には、フィーチャーパイプライン内のすべてのエンティティの特徴を事前に計算するのは高コストすぎることがあります。_
+Sometimes it is too expensive to precompute features for all entities in feature pipelines.
+時には、フィーチャーパイプライン内のすべてのエンティティの特徴を事前に計算するのは高コストすぎることがあります。
 
-_If your AI system will not consume all of the features that have been precomputed, you can compute them as MDTs._
-_もしあなたのAIシステムが事前に計算されたすべての特徴を消費しない場合、それらをMDTとして計算できます。_
+If your AI system will not consume all of the features that have been precomputed, you can compute them as MDTs.
+もしあなたのAIシステムが事前に計算されたすべての特徴を消費しない場合、それらをMDTとして計算できます。
 
-_For example, imagine you write a batch feature pipeline that runs daily to compute `days_since_bank_cr_changed. But your` (re)training pipeline only runs monthly, and the batch inference pipeline using the feature only runs weekly._
-_例えば、毎日実行されるバッチフィーチャーパイプラインを書いたと想像してください。`days_since_bank_cr_changed`を計算します。しかし、あなたの（再）トレーニングパイプラインは月に1回しか実行されず、フィーチャーを使用するバッチ推論パイプラインは週に1回しか実行されません。_
+For example, imagine you write a batch feature pipeline that runs daily to compute `days_since_bank_cr_changed`. But your (re)training pipeline only runs monthly, and the batch inference pipeline using the feature only runs weekly.
+例えば、毎日実行されるバッチフィーチャーパイプラインを書いたと想像してください。`days_since_bank_cr_changed`を計算します。しかし、あなたの（再）トレーニングパイプラインは月に1回しか実行されず、フィーチャーを使用するバッチ推論パイプラインは週に1回しか実行されません。
 
-_Then you have to recompute `days_since_bank_cr_changed` 7 times before it is used for inference and 30 times before it is used for training._
-_そのため、推論に使用される前に`days_since_bank_cr_changed`を7回、トレーニングに使用される前に30回再計算する必要があります。_
+Then you have to recompute `days_since_bank_cr_changed` 7 times before it is used for inference and 30 times before it is used for training.
+そのため、推論に使用される前に`days_since_bank_cr_changed`を7回、トレーニングに使用される前に30回再計算する必要があります。
 
-_That is a lot of wasteful computation._
-_これは非常に無駄な計算です。_
+That is a lot of wasteful computation.
+これは非常に無駄な計算です。
 
-_Instead, your training pipeline can compute `days_since_bank_cr_changed` as a MDT in training and batch inference pipelines._
-_その代わりに、トレーニングパイプラインはトレーニングおよびバッチ推論パイプラインでMDTとして`days_since_bank_cr_changed`を計算できます。_
+Instead, your training pipeline can compute `days_since_bank_cr_changed` as a MDT in training and batch inference pipelines.
+その代わりに、トレーニングパイプラインはトレーニングおよびバッチ推論パイプラインでMDTとして`days_since_bank_cr_changed`を計算できます。
 
-_If all of your features can be implemented as MDTs, you may even be able to eliminate your feature pipelines and thus reduce your operational burden._
-_もしすべての特徴をMDTとして実装できるなら、フィーチャーパイプラインを排除し、運用負担を軽減できるかもしれません。_
+If all of your features can be implemented as MDTs, you may even be able to eliminate your feature pipelines and thus reduce your operational burden.
+もしすべての特徴をMDTとして実装できるなら、フィーチャーパイプラインを排除し、運用負担を軽減できるかもしれません。
 
-###### Tokenizers and Chat Templates for LLMs
-###### LLMのためのトークナイザーとチャットテンプレート
+###### 1.2.3.0.0.6. Tokenizers and Chat Templates for LLMs
+###### 1.2.3.0.0.7. LLMのためのトークナイザーとチャットテンプレート
 
-_When you pass text to an LLM for training or for inference, that text needs to be first transformed into tokens by the LLM’s tokenizer before it is fed into the LLM._
-_トレーニングまたは推論のためにテキストをLLMに渡すとき、そのテキストは最初にLLMのトークナイザーによってトークンに変換される必要があります。その後、LLMに供給されます。_
+When you pass text to an LLM for training or for inference, that text needs to be first transformed into tokens by the LLM's tokenizer before it is fed into the LLM.
+トレーニングまたは推論のためにテキストをLLMに渡すとき、そのテキストは最初にLLMのトークナイザーによってトークンに変換される必要があります。その後、LLMに供給されます。
 
-_Every LLM has its own tokenizer, and the process is known as tokenization._
-_すべてのLLMには独自のトークナイザーがあり、このプロセスはトークン化として知られています。_
+Every LLM has its own tokenizer, and the process is known as tokenization.
+すべてのLLMには独自のトークナイザーがあり、このプロセスはトークン化として知られています。
 
-_For example, Llama 3’s tokenizer, on average, tokenizes one word into two to three tokens—each token is, on average, four characters long._
-_例えば、Llama 3のトークナイザーは、平均して1つの単語を2〜3のトークンにトークン化します—各トークンは平均して4文字の長さです。_
+For example, Llama 3's tokenizer, on average, tokenizes one word into two to three tokens—each token is, on average, four characters long.
+例えば、Llama 3のトークナイザーは、平均して1つの単語を2〜3のトークンにトークン化します—各トークンは平均して4文字の長さです。
 
-_Llama 3 has a tokenization dictionary with a vocabulary of 128K tokens._
-_Llama 3には、128Kトークンの語彙を持つトークン化辞書があります。_
+Llama 3 has a tokenization dictionary with a vocabulary of 128K tokens.
+Llama 3には、128Kトークンの語彙を持つトークン化辞書があります。
 
-_Tokenization is an MDT, as it is tightly coupled to the version of your LLM._
-_トークン化はMDTであり、あなたのLLMのバージョンに密接に結びついています。_
+Tokenization is an MDT, as it is tightly coupled to the version of your LLM.
+トークン化はMDTであり、あなたのLLMのバージョンに密接に結びついています。
 
-_For example, Llama 3 tokenized text cannot be fed into a Llama 2 or Llama 4 model._
-_例えば、Llama 3でトークン化されたテキストはLlama 2またはLlama 4モデルに供給することはできません。_
+For example, Llama 3 tokenized text cannot be fed into a Llama 2 or Llama 4 model.
+例えば、Llama 3でトークン化されたテキストはLlama 2またはLlama 4モデルに供給することはできません。
 
-_A common problem I have seen among practitioners who fine-tune LLMs is that they encounter skew between training and inference time, due to different versions of_
-_私がLLMをファインチューニングする実務者の間で見た一般的な問題は、異なるバージョンのためにトレーニングと推論の時間に偏りが生じることです。_
+A common problem I have seen among practitioners who fine-tune LLMs is that they encounter skew between training and inference time, due to different versions of tokenizers in their training pipeline and online inference pipeline.
+私がLLMをファインチューニングする実務者の間で見た一般的な問題は、トレーニングパイプラインとオンライン推論パイプラインで異なるバージョンのトークナイザーを使用しているために、トレーニングと推論の時間に偏りが生じることです。
 
 
 
-tokenizers in their training pipeline and online inference pipeline. 
-トークナイザーは、トレーニングパイプラインとオンライン推論パイプラインで使用されます。
 
 A solution is to use the Hugging Face (HF) chat template. 
 解決策は、Hugging Face (HF) チャットテンプレートを使用することです。
@@ -777,20 +670,20 @@ tokenized_prompt = tokenizer.apply_chat_template(chat, tokenize=True)
 ``` 
 このHFチャットテンプレートを使用することで、トークン化による歪みを防ぐために、トレーニングと推論で同じモデルバージョンがインスタンス化されていることを確認するだけで済みます。
 
-_Text chunking for LLMs for fine-tuning and RAG breaks documents into pieces (pages, paragraphs, sentences, etc.) and is an MIT performed in a feature pipeline._ 
+Text chunking for LLMs for fine-tuning and RAG breaks documents into pieces (pages, paragraphs, sentences, etc.) and is an MIT performed in a feature pipeline.
 LLMsのファインチューニングとRAGのためのテキストチャンクは、ドキュメントを部分（ページ、段落、文など）に分割し、特徴パイプラインで実行されるMITです。
 
-The chunked text can then be reused at inference time with RAG. 
+The chunked text can then be reused at inference time with RAG.
 チャンク化されたテキストは、推論時にRAGで再利用できます。
 
-_Text tokenization, however, is model dependent and, therefore, performed in training and inference pipelines._ 
+Text tokenization, however, is model dependent and, therefore, performed in training and inference pipelines.
 ただし、テキストトークン化はモデル依存であるため、トレーニングおよび推論パイプラインで実行されます。
 
 You should not couple text chunking with text tokenization if you want to index reusable chunked text for LLMs in a vector index. 
 ベクトルインデックスでLLMsの再利用可能なチャンク化されたテキストをインデックス化したい場合、テキストチャンクとテキストトークン化を結びつけるべきではありません。
 
-###### Transformations in Scikit-Learn Pipelines
-###### Scikit-Learnパイプラインにおける変換
+###### 1.2.3.0.0.8. Transformations in Scikit-Learn Pipelines
+###### 1.2.3.0.0.9. Scikit-Learnパイプラインにおける変換
 
 Scikit-Learn provides a library of transformers that can implement MDTs in both training and inference pipelines without skew. 
 Scikit-Learnは、トレーニングおよび推論パイプラインの両方で歪みなくMDTを実装できるトランスフォーマーのライブラリを提供します。
@@ -943,8 +836,8 @@ PySparkやPandasのようなArrowバックのDataFrameは、大規模データ�
 In the next section, we will introduce feature transformations for Hopsworks Feature Views that work with Arrow-backed DataFrames. 
 次のセクションでは、ArrowバックのDataFrameで動作するHopsworks Feature Viewsのための特徴変換を紹介します。
 
-###### Transformations in Feature Views
-###### 特徴ビューにおける変換
+###### 1.2.3.0.0.10. Transformations in Feature Views
+###### 1.2.3.0.0.11. 特徴ビューにおける変換
 
 Feature views in Hopsworks support the execution of transformation functions when reading features from the feature store. 
 Hopsworksの特徴ビューは、特徴ストアから特徴を読み込む際に変換関数の実行をサポートしています。
@@ -1148,8 +1041,8 @@ There is also the operational overhead of operating the feature pipeline, which 
 Figure 7-3 shows flowcharts that help guide you in how to implement ``` days_to_card_expiry: as an MIT, MDT, or ODT. 
 図7-3は、``` days_to_card_expiryをMIT、MDT、またはODTとして実装する方法をガイドするフローチャートを示しています。
 
-_Figure 7-3. These flowcharts guide you on how to implement the days_to_card_expiry_ _feature, depending on whether it will be (a) used by batch ML systems or (b) computed_ _at real time._ 
-_図7-3. これらのフローチャートは、days_to_card_expiryフィーチャーを実装する方法をガイドします。これは、（a）バッチMLシステムで使用されるか、（b）リアルタイムで計算されるかによります。_
+**Figure 7-3. These flowcharts guide you on how to implement the days_to_card_expiry feature, depending on whether it will be (a) used by batch ML systems or (b) computed at real time.**
+**図7-3. これらのフローチャートは、days_to_card_expiryフィーチャーを実装する方法をガイドします。これは、（a）バッチMLシステムで使用されるか、（b）リアルタイムで計算されるかによります。**
 
 If the feature will be used by a batch ML system, you should implement the feature as an MDT if you will not reuse the computed feature or if you don’t want the overhead of the feature pipeline. 
 フィーチャーがバッチMLシステムで使用される場合、計算されたフィーチャーを再利用しない場合やフィーチャーパイプラインのオーバーヘッドを避けたい場合は、フィーチャーをMDTとして実装する必要があります。
@@ -1262,7 +1155,7 @@ We switch tracks now to look at transformations on unstructured data (image, aud
 ML systems trained with unstructured data typically use deep learning algorithms and transform the data into tensors for model input. 
 非構造化データでトレーニングされたMLシステムは、通常、深層学習アルゴリズムを使用し、データをモデル入力用のテンソルに変換します。
 
-_Convolu‐_ _tional neural networks (CNNs) and_ _transformer architectures (transformers) are the_ most popular deep learning model architectures. 
+Convolutional neural networks (CNNs) and transformer architectures (transformers) are the most popular deep learning model architectures. 
 _畳み込みニューラルネットワーク（CNN）と_ _トランスフォーマーアーキテクチャ（トランスフォーマー）は、最も人気のある深層学習モデルアーキテクチャです。
 
 PyTorch is the most popular frame‐ work for deep learning, with alternatives including TensorFlow and JAX. 
@@ -1291,8 +1184,8 @@ The online inference pipeline takes an uploaded image of a person as input, the 
 The source code for this example is found in the book’s GitHub repository. 
 この例のソースコードは、本のGitHubリポジトリにあります。
 
-_Figure 7-4. A real-time ML system that predicts your celebrity twin using image classification. It uses PyTorch and Torchvision. Some image preprocessing is offloaded to the feature pipeline and executed in ODTs and image augmentation. Other image preprocessing tasks are executed as MDTs in both the training and online inference pipelines._ 
-_図7-4. 画像分類を使用してあなたの有名人の双子を予測するリアルタイムMLシステム。PyTorchとTorchvisionを使用しています。一部の画像前処理はフィーチャーパイプラインにオフロードされ、ODTsおよび画像拡張で実行されます。他の画像前処理タスクは、トレーニングおよびオンライン推論パイプラインの両方でMDTsとして実行されます。_
+**Figure 7-4. A real-time ML system that predicts your celebrity twin using image classification. It uses PyTorch and Torchvision. Some image preprocessing is offloaded to the feature pipeline and executed in ODTs and image augmentation. Other image preprocessing tasks are executed as MDTs in both the training and online inference pipelines.**
+**図7-4. 画像分類を使用してあなたの有名人の双子を予測するリアルタイムMLシステム。PyTorchとTorchvisionを使用しています。一部の画像前処理はフィーチャーパイプラインにオフロードされ、ODTsおよび画像拡張で実行されます。他の画像前処理タスクは、トレーニングおよびオンライン推論パイプラインの両方でMDTsとして実行されます。**
 
 The benefit of the FTI architecture in this example is that it shifts image transformations from the training pipeline to the feature pipeline. 
 この例におけるFTIアーキテクチャの利点は、画像変換をトレーニングパイプラインからフィーチャーパイプラインに移すことです。
@@ -1529,23 +1422,23 @@ If you want to unit-test individual features, you should factor your code so tha
 As we use Python functions to implement the feature logic, we can use a unit test to validate that the code that computes a feature correctly follows a specification defined by the unit test itself. 
 私たちはPython関数を使用して機能ロジックを実装するため、ユニットテストを使用して、機能を計算するコードがユニットテスト自体によって定義された仕様に正しく従っていることを検証できます。
 
-That is, the unit test is a specification of the invariants, _preconditions, and postconditions for the feature logic:_ 
-つまり、ユニットテストは機能ロジックの不変条件、_前提条件、及び後続条件の仕様です：
+That is, the unit test is a specification of the invariants, preconditions, and postconditions for the feature logic:
+つまり、ユニットテストは機能ロジックの不変条件、前提条件、及び後続条件の仕様です：
 
-_Invariant_ A condition that remains true throughout the lifetime of the function—it is true before and after the function call and also within the scope of the function. 
-_不変条件_ 関数のライフタイム全体にわたって真である条件です。関数呼び出しの前後および関数のスコープ内でも真です。
+**Invariant** A condition that remains true throughout the lifetime of the function—it is true before and after the function call and also within the scope of the function.
+**不変条件** 関数のライフタイム全体にわたって真である条件です。関数呼び出しの前後および関数のスコープ内でも真です。
 
 Invariants are more applicable to stateful objects, where certain properties need to hold true across multiple function calls. 
 不変条件は、特定のプロパティが複数の関数呼び出しにわたって真である必要がある状態を持つオブジェクトにより適用されます。
 
-_Precondition_ Must be true before a function can be executed correctly. 
-_前提条件_ 関数が正しく実行される前に真でなければなりません。
+**Precondition** Must be true before a function can be executed correctly.
+**前提条件** 関数が正しく実行される前に真でなければなりません。
 
 It defines a valid input and/or state for the function to be executed without error. 
 それは、関数がエラーなしに実行されるための有効な入力および/または状態を定義します。
 
-_Postcondition_ A condition or set of conditions that must hold true after a function or method completes its execution. 
-_後続条件_ 関数またはメソッドが実行を完了した後に真でなければならない条件または条件のセットです。
+**Postcondition** A condition or set of conditions that must hold true after a function or method completes its execution.
+**後続条件** 関数またはメソッドが実行を完了した後に真でなければならない条件または条件のセットです。
 
 Often, they are related to stateful functions—functions that modify external state—but you can also validate the output of stateless functions. 
 しばしば、これらは外部状態を変更する状態を持つ関数に関連していますが、無状態関数の出力を検証することもできます。
@@ -1553,17 +1446,17 @@ Often, they are related to stateful functions—functions that modify external s
 In our days_to_card_expiry function, we can see examples of our conditions: 
 私たちのdays_to_card_expiry関数では、条件の例を見ることができます：
 
-_Precondition_ The cc_expiry_date cannot be earlier than the transaction_date. 
-_前提条件_ cc_expiry_dateはtransaction_dateよりも早くてはなりません。
+**Precondition** The cc_expiry_date cannot be earlier than the transaction_date.
+**前提条件** cc_expiry_dateはtransaction_dateよりも早くてはなりません。
 
-_Postcondition_ Our function is stateless (it depends only on its input arguments), but we can still validate a postcondition—if it doesn’t throw an exception, it should return either zero or a positive integer value. 
-_後続条件_ 私たちの関数は無状態です（入力引数のみに依存します）が、後続条件を検証することはできます。例外をスローしない場合、ゼロまたは正の整数値を返すべきです。
+**Postcondition** Our function is stateless (it depends only on its input arguments), but we can still validate a postcondition—if it doesn't throw an exception, it should return either zero or a positive integer value.
+**後続条件** 私たちの関数は無状態です（入力引数のみに依存します）が、後続条件を検証することはできます。例外をスローしない場合、ゼロまたは正の整数値を返すべきです。
 
-_Invariant_ There are no invariants tested in our preceding unit tests, mostly because it is a stateless function call we are testing. 
-_不変条件_ 前のユニットテストでは不変条件はテストされていません。主に、私たちがテストしているのは無状態の関数呼び出しだからです。
+**Invariant** There are no invariants tested in our preceding unit tests, mostly because it is a stateless function call we are testing.
+**不変条件** 前のユニットテストでは不変条件はテストされていません。主に、私たちがテストしているのは無状態の関数呼び出しだからです。
 
-You need to understand three additional concepts to write unit tests in pytest: _test_ _functions, assertions, and test setup. 
-pytestでユニットテストを書くためには、3つの追加の概念を理解する必要があります：_テスト_ _関数、アサーション、およびテストセットアップ。
+You need to understand three additional concepts to write unit tests in pytest: test functions, assertions, and test setup. 
+pytestでユニットテストを書くためには、3つの追加の概念を理解する必要があります：テスト関数、アサーション、およびテストセットアップ。
 
 Unit tests may be written either as functions (as in the preceding example) or as methods in classes. 
 ユニットテストは、関数（前の例のように）またはクラス内のメソッドとして書くことができます。
@@ -1577,8 +1470,8 @@ A test class must be named Test*, and test functions or methods must be named te
 [In Figure 7-5, we can see that pytest is run during development as offline tests—not](https://oreil.ly/Qy5aN) when pipelines have been deployed to production (as online tests). 
 [図7-5では、pytestが開発中にオフラインテストとして実行される様子が見えます。これは、パイプラインが本番環境に展開されたとき（オンラインテストとして）ではありません。]
 
-_Figure 7-5. Diagram showing pytest running unit tests offline. They should run with zero friction during development._ 
-_図7-5. pytestがオフラインでユニットテストを実行している様子を示す図。開発中は摩擦なく実行されるべきです。_
+**Figure 7-5. Diagram showing pytest running unit tests offline. They should run with zero friction during development.**
+**図7-5. pytestがオフラインでユニットテストを実行している様子を示す図。開発中は摩擦なく実行されるべきです。**
 
 You typically run unit tests in your development environment before you create a pull request (PR). 
 通常、プルリクエスト（PR）を作成する前に、開発環境でユニットテストを実行します。
@@ -1646,8 +1539,8 @@ PRをマージするときは、コミットをスクワッシュする（すべ
 In the long run, it pays to keep your house tidy! 
 長期的には、整理整頓を保つことが重要です！
 
-###### A Testing Methodology
-###### テスト方法論
+###### 1.2.3.0.0.12. A Testing Methodology
+###### 1.2.3.0.0.13. テスト方法論
 
 After covering all that tactical work on defining unit tests, running tests, and automating tests, we need to consider how we write tests and what we should test. 
 ユニットテストの定義、テストの実行、自動化に関するすべての戦術的作業をカバーした後、私たちはテストを書く方法と何をテストすべきかを考慮する必要があります。
@@ -1709,8 +1602,8 @@ A good way to start is to list out what you want to test.
 Then decide what you should test offline using pytest and what to test at runtime with data validation checks, A/B tests, and feature/model monitoring. 
 次に、pytestを使用してオフラインでテストすべきことと、データ検証チェック、A/Bテスト、機能/モデルモニタリングで実行時にテストすべきことを決定します。
 
-###### Summary and Exercises
-###### まとめと演習
+###### 1.2.3.0.0.14. Summary and Exercises
+###### 1.2.3.0.0.15. まとめと演習
 
 In this chapter, we looked at MDTs and ODTs from both a data science perspective and an engineering perspective. 
 この章では、データサイエンスの視点とエンジニアリングの視点の両方からMDTとODTを見てきました。

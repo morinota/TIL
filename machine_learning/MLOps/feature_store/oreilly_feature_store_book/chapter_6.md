@@ -714,216 +714,205 @@ tion, but an `INNER JOIN will be either a row size–preserving or row size–re
 ## 1.4. DAG of Feature Functions 
 
 In Chapter 2, we argued that feature logic (transformations) should be factored into feature functions to improve code modularity and make transformations unittestable. 
-第2章では、特徴ロジック（変換）は特徴関数に分割されるべきであり、コードのモジュール性を向上させ、変換をユニットテスト可能にするべきだと主張しました。
-
+第2章では、**特徴ロジック（変換）は特徴関数に分割されるべきであり、コードのモジュール性を向上させ、変換をユニットテスト可能にするべき**だと主張しました。
 A feature pipeline is a series of well-defined steps that transform source data into features that are written in the feature store: 
 フィーチャーパイプラインは、ソースデータをフィーチャーストアに書き込まれる特徴に変換する一連の明確に定義されたステップです：
 
 1. Read data from one or more data sources into one or more DataFrames. 
-2. 1つ以上のデータソースから1つ以上のDataFrameにデータを読み込みます。
-
-3. Apply feature functions to transform data into features and to join features together. 
-4. 特徴関数を適用してデータを特徴に変換し、特徴を結合します。
-
-5. Write a DataFrame containing featurized data to the corresponding feature group.  
-6. 特徴化されたデータを含むDataFrameを対応するフィーチャーグループに書き込みます。
+   1. 1つ以上のデータソースから1つ以上のDataFrameにデータを読み込みます。
+2. Apply feature functions to transform data into features and to join features together. 
+   1. 特徴関数を適用してデータを特徴に変換し、特徴を結合します。
+3. Write a DataFrame containing featurized data to the corresponding feature group.  
+   1. 特徴化されたデータを含むDataFrameを対応するフィーチャーグループに書き込みます。
 
 You should parametrize the feature pipeline by its data input so that you can run the feature pipeline either with historical data or with new incremental data. 
-フィーチャーパイプラインは、そのデータ入力によってパラメータ化するべきであり、そうすることで、フィーチャーパイプラインを過去のデータまたは新しい増分データのいずれかで実行できるようにします。
-
+フィーチャーパイプラインは、そのデータ入力によってパラメータ化するべきであり、そうすることで、**フィーチャーパイプラインを過去のデータまたは新しい増分データのいずれかで実行できるようにします。**
 Assuming your data source supports data skipping, you should only select the columns you need and filter out the rows you don’t need. 
 データソースがデータスキップをサポートしていると仮定すると、必要な列のみを選択し、必要のない行をフィルタリングするべきです。
-
 If you work with small data, you may be able to get away with reading all the data from your data source into a DataFrame and then dropping the extra columns and filtering out the data you don’t need. 
 小さなデータを扱う場合、データソースからすべてのデータをDataFrameに読み込み、その後余分な列を削除し、必要のないデータをフィルタリングすることで済むかもしれません。
-
-
-
-. However, with large data volumes, this is not possible, and you’ll need to push down your selec‐ tions and filters to the data source.
+However, with large data volumes, this is not possible, and you’ll need to push down your selec‐ tions and filters to the data source.
 しかし、大量のデータがある場合、これは不可能であり、選択やフィルタをデータソースにプッシュダウンする必要があります。
 
 Once you have read your source data into DataFrame(s), the feature pipeline organi‐ zes the feature functions in a dataflow graph. 
 ソースデータをDataFrameに読み込むと、フィーチャーパイプラインはフィーチャー関数をデータフローグラフに整理します。
-
 A dataflow graph is a directed acyclic graph (DAG) that has inputs (data sources), nodes (DataFrames), edges (feature func‐ tions), and outputs (feature groups). 
 データフローグラフは、入力（データソース）、ノード（DataFrame）、エッジ（フィーチャー関数）、および出力（フィーチャーグループ）を持つ有向非巡回グラフ（DAG）です。
-
 Figure 6-4 shows three different feature func‐ tions—g(), h(), and j()—in which df is read from the data source and g() is applied to df to produce df1. 
 図6-4は、データソースからdfが読み込まれ、g()がdfに適用されてdf1が生成される3つの異なるフィーチャー関数—g()、h()、j()—を示しています。
-
 Then, h() and j() are applied to (potentially different) columns in df1 in parallel, producing dfM and dfN, respectively. 
 次に、h()とj()がdf1の（異なる可能性のある）列に並行して適用され、それぞれdfMとdfNが生成されます。
-
 (Note that PySpark and Polars support parallel executions, while Pandas does not.)
 （PySparkとPolarsは並行実行をサポートしていますが、Pandasはサポートしていません。）
 
-_Figure 6-4. A feature pipeline reads new data or backfill data into a DataFrame (df)_
-_図6-4. フィーチャーパイプラインは新しいデータまたはバックフィルデータをDataFrame（df）に読み込み、_
-
-_and then applies a DAG of data transformations on df using feature functions f, g, h,_ 
-_そして、dfに対してフィーチャー関数f、g、hを使用してデータ変換のDAGを適用します。_
-
-_and j. The output of each feature function g, h, and j is a DataFrame that is written to_ 
-_各フィーチャー関数g、h、jの出力は、_
-
-_feature group 1, M, and N, respectively._ 
-それぞれフィーチャーグループ1、M、Nに書き込まれるDataFrameです。
+![]()
+_Figure 6-4. A feature pipeline reads new data or backfill data into a DataFrame (df) and then applies a DAG of data transformations on df using feature functions f, g, h, and j. The output of each feature function g, h, and j is a DataFrame that is written to feature group 1, M, and N, respectively.
+図6-4. フィーチャーパイプラインは、**新しいデータまたはバックフィルデータをDataFrame（df）に読み込み**、次にフィーチャー関数f、g、h、およびjを使用してdfにデータ変換のDAGを適用します。各フィーチャー関数g、h、およびjの出力は、それぞれフィーチャーグループ1、M、およびNに書き込まれるDataFrameです。
 
 The graph structure inherently represents dependencies among the transformations, as one featurized DataFrame can be the input to another. 
 グラフ構造は、変換間の依存関係を本質的に表現しており、1つのフィーチャー化されたDataFrameが別のDataFrameの入力となることができます。
-
 When the output of one transformation is used as the input to another transformation, we say that the data transformations have been composed, as presented in Chapter 4. 
 1つの変換の出力が別の変換の入力として使用されるとき、データ変換が合成されたと言います（第4章で説明されています）。
-
 Both intermediate and leaf nodes in the DAG can write DataFrames to feature groups. 
-DAGの中間ノードと葉ノードの両方がDataFrameをフィーチャーグループに書き込むことができます。
-
-Here, df1 is writ‐ ten to feature group 1, dfM is written to feature group M, and dfN is written to feature group N. 
+**DAGの中間ノードと葉ノードの両方がDataFrameをフィーチャーグループに書き込むことができます。**
+(なるほど。じゃあfeature groupとfeature pipelineが必ずしも1:1対応であるべき、という固定観念は捨てた方がいいかも...!:thinking:)
+Here, df1 is writ‐ ten to feature group 1, dfM is written to feature group M, and dfN is written to feature group N.
 ここでは、df1がフィーチャーグループ1に書き込まれ、dfMがフィーチャーグループMに、dfNがフィーチャーグループNに書き込まれます。
 
-###### 1.4.0.0.0.1. Lazy DataFrames
-###### 1.4.0.0.0.2. レイジーDataFrames
+<!-- ここまで読んだ! -->
+
+### 1.4.1. Lazy DataFrames
 
 Pandas supports _eager evaluation of operations on DataFrames. 
-PandasはDataFrameに対する操作の_即時評価をサポートしています。
-
+PandasはDataFrameに対する操作の**即時評価 (eager evaluation)** をサポートしています。
 Each command is_ processed right away, and in a Jupyter notebook, you can view the result of the opera‐ tion directly after it has been executed. 
 各コマンドはすぐに処理され、Jupyterノートブックでは、操作が実行された直後にその結果を直接見ることができます。
-
 This is a powerful approach for learning to write data transformations in Pandas. 
 これは、Pandasでデータ変換を書くことを学ぶための強力なアプローチです。
-
 In contrast, DataFrame frameworks that sup‐ port lazy evaluation, such as Polars and PySpark, can wait across multiple steps before the commands are executed. 
-対照的に、PolarsやPySparkのようにレイジー評価をサポートするDataFrameフレームワークは、コマンドが実行される前に複数のステップで待機することができます。
-
+対照的に、PolarsやPySparkのように**遅延評価 (lazy evaluation)**をサポートするDataFrameフレームワークは、コマンドが実行される前に複数のステップにわたって待つことができます。
 Waiting provides the possibility to optimize the execu‐ tion of the steps. 
-待機することで、ステップの実行を最適化する可能性が提供されます。
-
+**待機することで、ステップの実行を最適化する可能性が提供されます。** (これがlazy evaluationの肝か...!:thinking:)
 But how long do you wait before executing? 
-しかし、実行する前にどれくらい待つべきでしょうか？
-
+**しかし、実行する前にどれくらい待つべきでしょうか？**
 Lazy DataFrames are like a quantum state, in which the act of observing gives you the result. 
 レイジーDataFramesは量子状態のようなもので、観察する行為が結果をもたらします。
-
 With Lazy DataFrames, an action (reading the contents of a DataFrame or writing it to external storage) triggers the execution of the transformations on it. 
 レイジーDataFramesでは、アクション（DataFrameの内容を読み取ることや外部ストレージに書き込むこと）が、その上での変換の実行をトリガーします。
-
 While eager evaluation is great for beginners, it is not great for performance. 
-即時評価は初心者には素晴らしいですが、パフォーマンスには向いていません。
-
+**即時評価は初心者には素晴らしいですが、パフォーマンスには向いていません。**
 As data volumes inexorably increase, you should learn to work with Lazy DataFrames. 
-データ量が避けられないほど増加するにつれて、レイジーDataFramesを使いこなすことを学ぶべきです。
-
+**データ量が避けられないほど増加するにつれて、レイジーDataFramesを使いこなすことを学ぶべき**です。
+(なるほど...!じゃあ今、即時評価で特徴量生成してる処理が時間かかってる場合、遅延評価に変えることでパフォーマンス改善できる可能性がある、ということか...!:thinking:)
 Both Polars and PySpark are built around Lazy DataFrames. 
-PolarsとPySparkの両方は、レイジーDataFramesを中心に構築されています。
+**PolarsとPySparkの両方は、レイジーDataFramesを中心に構築**されています。
 
-The following code snippet in Polars creates a Lazy DataFrame from a CSV file, com‐ putes the `mean value of the` `amount column, and then computes the` `devia` 
-以下のPolarsのコードスニペットは、CSVファイルからレイジーDataFrameを作成し、`amount`列の`平均値を計算し、次に` `devia`を計算します。
+<!-- ここまで読んだ! -->
 
-``` 
-tion_from_mean by subtracting the mean from the amount. This is a useful feature in 
-平均からamountを引くことによって`devia`を計算します。これは、クレジットカード詐欺を検出するのに役立つ機能です。
+The following code snippet in Polars creates a Lazy DataFrame from a CSV file, com‐ putes the mean value of the amount column, and then computes the deviation_from_mean by subtracting the mean from the amount. 
+Polarsの次のコードスニペットは、CSVファイルからレイジーDataFrameを作成し、amount列の平均値を計算し、次に平均からamountを引いてdeviation_from_meanを計算します。
+This is a useful feature in detecting credit card fraud. However, all of these steps are only executed when the code reaches the last line—where there is an action, collect(), to read its contents: 
+**ただし、これらのすべてのステップは、コードが最後の行に達したとき、つまり内容を読み取るアクションである`collect()`があるときにのみ実行されます**：
 
-detecting credit card fraud. However, all of these steps are only executed when the code reaches the last line—where there is an action, collect(), to read its contents: 
-ただし、これらのすべてのステップは、コードが最後の行に達したとき、つまり内容を読み取るアクションであるcollect()があるときにのみ実行されます：
+```Python  
+# pl.scan_csvを使用したレイジーローディング   
+lazy_df = pl.scan_csv("transactions.csv")
 
-```   
-# 2. Lazy loading with pl.scan_csv   
-# 3. pl.scan_csvを使用したレイジーローディング   
-lazy_df = pl.scan_csv("transactions.csv")   
+# 平均を計算し、そして　deviation_from_mean(平均からの偏差)のための新しいカラムを作成
 lazy_df = lazy_df.with_columns([     
     (pl.col("amount") - pl.col("amount").mean()).alias("deviation_from_mean")   
-])   
+])
+
+# 実行をトリガーし、結果を収集
 result = lazy_df.collect() 
-# 4. 平均からの偏差のための新しい列を作成し、平均を計算します。   
-# 5. 実行をトリガーし、結果を収集します   
 ```
 
-###### Vectorized Compute, Multicore, and Arrow
-###### ベクトル化計算、マルチコア、およびArrow
+<!-- ここまで読んだ! -->
 
-For performance reasons, we avoid writing data transformation code using Data‐ Frames and native Python language features such as `for/while loops, list compre‐` 
-パフォーマンスの理由から、DataFrameや`for/whileループ、リスト内包表記、`のようなネイティブPython言語機能を使用してデータ変換コードを書くことを避けます。
+### 1.4.2. Vectorized Compute, Multicore, and Arrow　ベクトル化計算、マルチコア、およびArrow
 
-hensions, and map/reduce functions. 
-hensions、およびmap/reduce関数を使用します。
-
+For performance reasons, we avoid writing data transformation code using Data‐ Frames and native Python language features such as `for/while loops, list comprehensions, and map/reduce functions. 
+**パフォーマンス上の理由から、DataFramesやfor/whileループ、リスト内包表記、map/reduce関数などのネイティブPython言語機能を使用してデータ変換コードを書くことは避けます。**
 The code examples we have introduced thus far are based on idioms such as `with_columns(...) and Pandas UDFs. 
-これまでに紹介したコード例は、`with_columns(...)やPandas UDFs`のようなイディオムに基づいています。
-
-DataFrame transformations that follow these idioms are executed by a vectorized compute engine and not executed in native Python code. 
-これらのイディオムに従ったDataFrameの変換は、ベクトル化計算エンジンによって実行され、ネイティブPythonコードでは実行されません。
-
-They are orders of magnitude faster
-それらは桁違いに速いです。
-
-
-
-than native Python code for two main reasons. 
-ネイティブPythonコードよりも2つの主な理由で遅くなります。
-
+これまでに紹介したコード例は、with_columns(...)やPandas UDFsのようなイディオムに基づいています。
+(idioms: 慣用句、イディオム、決まり文句的なやつ)
+DataFrame transformations that follow these idioms are executed by a vectorized compute engine and not executed in native Python code. They are orders of magnitude faster than native Python code for two main reasons. 
+データフレーム変換は、これらのイディオムに従う場合、**ベクトル化された計算エンジンによって実行され、ネイティブのPythonコードでは実行されません。これは、主に2つの理由でネイティブのPythonコードよりも桁違いに高速**です。
 First, Python’s standard execution model is interpreted bytecode that lacks native vectorization. 
 第一に、Pythonの標準実行モデルは、ネイティブベクトル化を欠いた解釈されたバイトコードです。
 
+- メモ: 第一の理由「Pythonの標準実行モデルはネイティブベクトル化を欠いている」について詳しく理解する
+  - ざっと結論:
+    - Pythonの標準的な実行モデルは、CPUを"雑に"しか扱えない!
+    - 配列まとめてドーン!が苦手。
+  - Pythonの標準的な実行モデルの動き:
+    - ex. `x = x + 1 # xは配列`
+    - 内部の挙動としては、Pythonインタプリタが、配列xの各要素に対して1を足す命令を逐次的に実行している。
+  - 「ネイティブベクトル化」とは何ができないのか??
+    - CPUには本来、以下のような命令セットが備わっている:
+      - **SIMD (Single Instruction, Multiple Data): 単一の命令で複数のデータを同時に処理できる**
+      - ex. 「この配列xの全要素に対して一気に1を足せ!」「16個同時に掛け算しろ!」
+    - でもPythonの標準的な実行モデルは、こういう命令セットを活用できない。
+      - `x = x + 1`のようなコードを書いても、PythonインタプリタはSIMD命令を使わずに、配列xの各要素に対して1を足す命令を逐次的に実行してしまう。
+  - じゃあ高速なライブラリは何をしてるのか??
+    - ex. NumPy, Pandas, Polars, PyArrow
+    - これらは以下のようなアプローチを取っている:
+      - C / C++ / Rustで実装。中身はネイティブコード。
+        - OS / CPU 向けにコンパイル可能で、CPUの命令セットを直接実行できるコード
+      - Pythonはwrapperとして指示を出すだけ。
+      - ネイティブコードの中で、SIMD命令を活用して高速に配列演算を実行。
+    - ちなみに...Python UDFを使ってしまうと...**Python UDFの処理がPythonインタプリタ上で逐次的に実行されてしまうため、SIMD命令が活用されず、遅くなってしまう。**
+      - ex. `df['new_col'] = df['col'].apply(lambda x: x + 1)`
+
 Second, Python programs are constrained by the Global Interpreter Lock, which prevents efficient scalability on multiple CPU cores. 
-第二に、Pythonプログラムはグローバルインタプリタロックによって制約されており、複数のCPUコアでの効率的なスケーラビリティを妨げます。
+第二に、**PythonプログラムはGIL(Global Interpreter Lock)**によって制約されており、複数のCPUコアでの効率的なスケーラビリティを妨げています。
+
+- メモ: 第二の理由「PythonプログラムのGILがマルチコアを殺している」について詳しく理解する
+  - 結論:
+    - Pythonは基本的に1プロセス1コア縛り。
+  - **GIL(Global Interpreter Lock, グローバルインタプリタロック)**とは何か??
+    - Pythonインタプリタには「**同時に1スレッドしか実行するな!**」という巨大なロックが存在する。
+    - 理由は...
+      - メモリ管理を安全にするため。
+      - 実装をシンプルにするため。
+    - 問題点:
+      - スレッドは複数あっても同時にPythonコードを実行できるのは1つだけ。
+        - ex. CPUコア8個あっても実質1個しか使ってない。
+  - じゃあマルチレッド意味ないの??
+    - I/O (通信・ファイル読み込み) は有効。
+    - CPU計算はほぼ意味ない。
+  - だからベクトル化エンジン達はどう回避してる??
+    - C / C++ / Rustで実装。中身はネイティブコード。
+    - GILの影響を受けずに、マルチコアをフル活用できる。
+    - だからpolarsとかが推されてる。
 
 A vectorized compute engine performs operations on large arrays or data structures by applying single instructions to multiple data points simultaneously. 
-ベクトル化された計算エンジンは、単一の命令を複数のデータポイントに同時に適用することによって、大きな配列やデータ構造に対して操作を実行します。
-
+ベクトル化された計算エンジンは、単一の命令を複数のデータポイントに同時に適用することによって、大きな配列やデータ構造に対して操作を実行します。(これはまさに上のメモの、SIMDの話そのままやん...!:thinking:)
 This process is called _single instruction, multiple data (SIMD). 
-このプロセスは「単一命令・複数データ（SIMD）」と呼ばれます。
-
+このプロセスは「**単一命令・複数データ（SIMD, Single Instruction, Multiple Data）**」と呼ばれます。
 These operations can also be parallelized across multiple CPU cores to further improve scalability. 
 これらの操作は、さらにスケーラビリティを向上させるために、複数のCPUコアにわたって並列化することもできます。
-
 Pandas, Polars, and PySpark all have vectorized compute engines. 
-Pandas、Polars、およびPySparkはすべて、ベクトル化された計算エンジンを持っています。
-
+**Pandas、Polars、およびPySparkはすべて、ベクトル化された計算エンジンを持っています。**
 Polars and PySpark both have good multicore support, while Pandas 2.x with PyArrow backend has some multicore support. 
-PolarsとPySparkはどちらも優れたマルチコアサポートを持っていますが、Pandas 2.xはPyArrowバックエンドを使用することで一部のマルチコアサポートを提供しています。
+**PolarsとPySparkはどちらも優れたマルチコアサポートを持っています**が、Pandas 2.xはPyArrowバックエンドを使用することで一部のマルチコアサポートを提供しています。
 
 You should write your data transformations so that they are executed in the vectorized compute engine rather than run in Python as interpreted bytecode (see Figure 6-5). 
-データ変換は、Pythonで解釈されたバイトコードとして実行されるのではなく、ベクトル化された計算エンジンで実行されるように記述するべきです（図6-5を参照）。
-
-A trivial example would be writing a for loop to process a Pandas DataFrame. 
-単純な例としては、Pandas DataFrameを処理するためにforループを書くことが挙げられます。
-
-Please, don’t do this. 
-これをしないでください。
-
+**データ変換は、Pythonで解釈されたバイトコードとして実行されるのではなく、ベクトル化された計算エンジンで実行されるように記述するべき**です（図6-5を参照）。
+A trivial example would be writing a for loop to process a Pandas DataFrame. Please, don’t do this. 
+単純な例としては、Pandas DataFrameを処理するためにforループを書くことが挙げられます。これをしないでください。
 A more common performance bottleneck in Pandas is a Python UDF that you apply to a DataFrame. 
-Pandasにおけるより一般的なパフォーマンスのボトルネックは、DataFrameに適用するPython UDFです。
-
+**Pandasにおけるより一般的なパフォーマンスのボトルネックは、DataFrameに適用するPython UDFです。**
 This will involve the data being copied from the backing store (which is Arrow-supported in Pandas v2) into Python objects, where the UDF is executed and then converted back to Arrow format. 
 これは、データがバックストア（Pandas v2でArrowに対応）からPythonオブジェクトにコピーされ、そこでUDFが実行され、その後Arrow形式に戻されることを含みます。
 
+
+
+![]()
 _Figure 6-5. Native Python transformations are much slower than native vectorized transformations. 
 図6-5. ネイティブPython変換は、ネイティブベクトル化変換よりもはるかに遅いです。
-
 Pandas and PySpark support Arrow transformations with Pandas UDFs. 
 PandasとPySparkは、Pandas UDFを使用したArrow変換をサポートしています。
-
 Polars and DuckDB also natively process Arrow data. 
 PolarsとDuckDBもArrowデータをネイティブに処理します。
-
 Arrow enables zero-copy data transfers between compute engines._ 
 Arrowは、計算エンジン間でのゼロコピーデータ転送を可能にします。
+
+<!-- ここまで読んだ! -->
 
 For example, the following Python UDF, executed with `apply in Pandas, takes 7.35 seconds on my laptop (Windows Subsystem for Linux, 32 GB RAM, 8 CPUs): 
 例えば、次のPython UDFは、Pandasで`apply`を使用して実行すると、私のノートパソコン（Windows Subsystem for Linux、32 GB RAM、8 CPU）で7.35秒かかります：
 
-```  
-   num_rows = 10_000_000   
-   df = pd.DataFrame({ 'value': np.random.rand(num_rows) * 100})   
-   def python_udf(val: float) -> float:     
-       return val * 1.1 + math.sin(val)   
-   df['apply_result'] = df['value'].apply(python_udf)
+```Python
+num_rows = 10_000_000   
+df = pd.DataFrame({ 'value': np.random.rand(num_rows) * 100})   
+def python_udf(val: float) -> float:     
+    return val * 1.1 + math.sin(val)   
+df['apply_result'] = df['value'].apply(python_udf)
 ``` 
-```
+
 Pandas 2.x supports either NumPy or Arrow as a backing vectorized compute engine. 
 Pandas 2.xは、NumPyまたはArrowをバックエンドのベクトル化計算エンジンとしてサポートしています。
-
 If I rewrite the same UDF as a native UDF with NumPy, it completes in only 0.28 seconds: 
 同じUDFをNumPyを使用したネイティブUDFとして書き直すと、わずか0.28秒で完了します：
 
@@ -933,125 +922,129 @@ If I rewrite the same UDF as a native UDF with NumPy, it completes in only 0.28 
        return series * 1.1 + np.sin(series)   
    df['pandas_udf_result'] = numpy_udf(df['value'])
 ``` 
-```
+
 I can also rewrite the same code as an expression in Polars, and it will have roughly the same execution time as the vectorized UDF in Pandas: 
 同じコードをPolarsの式として書き直すこともでき、Pandasのベクトル化UDFとほぼ同じ実行時間になります：
 
-```  
-   import polars as pl   
-   df_polars = pl.DataFrame({'value': np.random.rand(num_rows) * 100})   
-   df_polars_expr = df.with_columns(     
-       (pl.col("value") * 1.1 + pl.col("value").sin()).alias("result")   
-   )
+```Python  
+import polars as pl
+
+df_polars = pl.DataFrame({'value': np.random.rand(num_rows) * 100})
+
+df_polars_expr = df.with_columns(     
+    (pl.col("value") * 1.1 + pl.col("value").sin()).alias("result")   
+)
 ``` 
-```
+
 In this case, the Polars code is not faster than Pandas. 
 この場合、PolarsのコードはPandasよりも速くありません。
-
 Polars has good multicore support, but this code is not easily parallelized. 
 Polarsは優れたマルチコアサポートを持っていますが、このコードは簡単には並列化できません。
-
 Polars, however, has better memory management for larger data volumes. 
-しかし、Polarsは大きなデータボリュームに対してより良いメモリ管理を提供します。
-
+しかし、**Polarsは大きなデータボリュームに対してより良いメモリ管理**を提供します。
 I can run this Polars code with 500M rows, but the Pandas code crashes at that scale. 
-このPolarsコードは500M行で実行できますが、その規模ではPandasコードがクラッシュします。
-
+**このPolarsコードは500M行で実行できますが、その規模ではPandasコードがクラッシュします。**
 I can also rewrite the above code as a PySpark program with a Pandas UDF. 
 上記のコードをPandas UDFを使用したPySparkプログラムとして書き直すこともできます。
-
 PySpark supports lazy evaluation, withColumn expressions, and Pandas UDFs: 
 PySparkは遅延評価、withColumn式、およびPandas UDFをサポートしています：
 
-```  
-   from pyspark.sql.functions import pandas_udf, col   
-   df = spark.createDataFrame(     
-       pd.DataFrame({'value': np.random.rand(num_rows) * 100})   
-   )   
-   @pandas_udf("double")   
-   def sample_pandas_udf(value: pd.Series) -> pd.Series:     
-       return value * 1.1 + np.sin(value)   
-   df = df.withColumn("pandas_udf_result", sample_pandas_udf(col("value")))
+```  Python
+from pyspark.sql.functions import pandas_udf, col   
+df = spark.createDataFrame(     
+    pd.DataFrame({'value': np.random.rand(num_rows) * 100})   
+)   
+@pandas_udf("double")   
+def sample_pandas_udf(value: pd.Series) -> pd.Series:     
+    return value * 1.1 + np.sin(value)   
+df = df.withColumn("pandas_udf_result", sample_pandas_udf(col("value")))
 ``` 
-```
+
 The preceding code uses Arrow to efficiently transfer data between PySpark’s Java Virtual Machine (JVM) and Python. 
 前述のコードは、Arrowを使用してPySparkのJava仮想マシン（JVM）とPython間でデータを効率的に転送します。
-
 We can also rewrite the previous code in PySpark as a withColumn expression: 
 前のコードをPySparkでwithColumn式として書き直すこともできます：
 
-```  
-   from pyspark.sql.functions import col, sin   
-   df = df.withColumn(     
-       "result", (col("value") * 1.1 + sin(col("value")))   
-   )
+```Python
+from pyspark.sql.functions import col, sin   
+df = df.withColumn(     
+    "result", (col("value") * 1.1 + sin(col("value")))   
+)
 ``` 
-```
+
 This code uses PySpark’s SQL expression API and is performed natively in the Spark JVM engine, without the need to transfer data from the JVM to the Pandas UDF. 
 このコードはPySparkのSQL式APIを使用し、Spark JVMエンジン内でネイティブに実行され、JVMからPandas UDFにデータを転送する必要はありません。
-
 Lastly, we can rewrite the above code in Python using DuckDB, a high-performance embedded SQL engine: 
-最後に、DuckDBという高性能の埋め込みSQLエンジンを使用して、上記のコードをPythonで書き直すことができます：
+最後に、**DuckDBという高性能の埋め込みSQLエンジン**を使用して、上記のコードをPythonで書き直すことができます：
+(あ、こういう風に入力をdfとしてDuckDBでデータ変換を実装できるのか...!:thinking:)
 
-```  
-   import duckdb   
-   con = duckdb.connect()   
-   con.register("input_df", df)   
-   result_df = con.execute("""     
-       SELECT       
-           value,       
-           value * 1.1 + SIN(value) AS result     
-       FROM input_df   
-   """).fetchdf()
-``` 
+```Python 
+import duckdb   
+con = duckdb.connect()   
+con.register("input_df", df)   
+result_df = con.execute("""     
+    SELECT       
+        value,       
+        value * 1.1 + SIN(value) AS result     
+    FROM input_df   
+""").fetchdf()
 ```
+
 This returns result_df as a Pandas DataFrame and transfers data to and from Pandas using Arrow. 
 これにより、result_dfがPandas DataFrameとして返され、Arrowを使用してPandasとの間でデータが転送されます。
 
 Pandas, Polars, PySpark, and DuckDB all can natively exchange their data as Arrow tables, in what is known as _zero (memory) copy. 
 Pandas、Polars、PySpark、およびDuckDBはすべて、データをArrowテーブルとしてネイティブに交換でき、これを「ゼロ（メモリ）コピー」と呼びます。
-
 So you can move DataFrames among Pandas, Polars, and DuckDB by reading the source DataFrame as an Arrow table and then creating a DataFrame from that Arrow table in your target framework. 
-したがって、ソースDataFrameをArrowテーブルとして読み取り、そのArrowテーブルからターゲットフレームワークでDataFrameを作成することによって、Pandas、Polars、およびDuckDB間でDataFrameを移動できます。
-
+したがって、**ソースDataFrameをArrowテーブルとして読み取り、そのArrowテーブルからターゲットフレームワークでDataFrameを作成することによって、Pandas、Polars、およびDuckDB間でDataFrameを移動**できます。
 This way, you can write feature pipelines that perform some data transformations in DuckDB, some in Pandas, and some in Polars—without any overhead when moving DataFrames among the different engines. 
-このようにして、DuckDBでいくつかのデータ変換を行い、Pandasでいくつかを行い、Polarsでいくつかを行うフィーチャーパイプラインを書くことができ、異なるエンジン間でDataFrameを移動する際のオーバーヘッドはありません。
-
+**このようにして、DuckDBでいくつかのデータ変換を行い、Pandasでいくつかを行い、Polarsでいくつかを行うフィーチャーパイプラインを書くことができ、異なるエンジン間でDataFrameを移動する際のオーバーヘッドはありません。**
 PySpark, in contrast, is a distributed compute engine, where DataFrames are partitioned across workers. 
 対照的に、PySparkは分散計算エンジンであり、DataFrameはワーカー間で分割されます。
-
-Converting a PySpark DataFrame to a Pandas DataFrame requires first collecting the distributed PySpark DataFrame on the driver node—a process that can potentially overload the driver, resulting in an out-of-memory error. 
+Converting a PySpark DataFrame to a Pandas DataFrame requires first collecting the distributed PySpark DataFrame on the driver node—a process that can potentially overload the driver, resulting in an out-of-memory error.
 PySpark DataFrameをPandas DataFrameに変換するには、まず分散PySpark DataFrameをドライバーノードで収集する必要があります。このプロセスは、ドライバーを過負荷にし、メモリエラーを引き起こす可能性があります。
 
-The following code snippet demonstrates how to build a feature pipeline that performs processing steps in different compute engines, efficiently transferring data among them using Arrow: 
-次のコードスニペットは、異なる計算エンジンで処理ステップを実行し、Arrowを使用してデータを効率的に転送するフィーチャーパイプラインを構築する方法を示しています：
+---
+(コラム)
+Arrow
+Arrow is a language-independent in-memory columnar format that is an efficient for‐ mat for data interchange among different programming languages and frameworks, and it also supports dictionary compression. Since Arrow data is already in a serial‐ ized format, it can be directly sent over the network or shared between processes without converting to or from other formats. For example, Arrow Flight is a network protocol for transferring Arrow data from Hopsworks to Python clients. Arrow is also efficient for feature engineering tasks such as computing aggregations on columns, as it is an in-memory columnar format. PyArrow is a popular Python library for work‐ ing Arrow data.
+**Arrowは、異なるプログラミング言語やフレームワーク間でのデータ交換に効率的な言語非依存のインメモリ列指向フォーマット**であり、辞書圧縮もサポートしています。Arrowデータはすでにシリアル化された形式であるため、他の形式に変換することなく、ネットワークを介して直接送信したり、プロセス間で共有したりできます。たとえば、Arrow Flightは、HopsworksからPythonクライアントへのArrowデータ転送のためのネットワークプロトコルです。Arrowはインメモリ列指向フォーマットであるため、列に対する集計の計算などの特徴エンジニアリングタスクにも効率的です。PyArrowは、Arrowデータを扱うための人気のあるPythonライブラリです。
 
-```  
+---
+
+<!-- ここまで読んだ! -->
+
+The following code snippet demonstrates how to build a feature pipeline that performs processing steps in different compute engines, efficiently transferring data among them using Arrow: 
+次のコードスニペットは、異なる計算エンジンで処理ステップを実行し、Arrowを使用してデータを効率的に転送するフィーチャーパイプラインを構築する方法を示しています:
+
+```Python
    import pyarrow as pa   
    pdf = pd.DataFrame({     
        'name': ['Alice', 'Bob', 'Charlie', 'David'],     
        'age': [25, 30, 35, 40],     
        'salary': [50000, 60000, 75000, 90000]   
-   })   
-   # 6. Convert Pandas DataFrame to PyArrow Table (zero-copy if possible)   
-   # 7. Zero-copy if all columns are already Arrow-compatible types   
-   arrow_table = pa.Table.from_pandas(pdf)   
-   # 8. Convert to Polars DataFrame (zero-copy)   
-   pldf = pl.from_arrow(arrow_table)   
+   })  
+   # pandas DataFrameをPyArrowテーブルに変換
+   # もしすべての列がすでにArrow互換の型であれば、ゼロコピーされる
+   arrow_table = pa.Table.from_pandas(pdf)
+
+   # polars DataFrameに変換 (ゼロコピー)
+   pldf = pl.from_arrow(arrow_table) 
+
    pldf_transformed = pldf.with_columns([     
        pl.when(pl.col('age') < 35)     
        .then(pl.lit('Young'))     
        .otherwise(pl.lit('GettingOn'))     
        .alias('age_category')   
-   ])   
+   ])
+
    arrow_table_transformed = pldf_transformed.to_arrow()   
+   
    con = duckdb.connect()   
    con.register('employee_table', arrow_table_transformed)   
-   # 9. Transform salary to categorical in DuckDB SQL   
-   result_df = con.execute("""
-``` 
-```
-```     
+   
+   # DuckDB SQLで給与をカテゴリカルに変換
+   result_df = con.execute("""  
        SELECT name, age_category,       
            CASE         
                WHEN salary < 60000 THEN 'Junior'         
@@ -1062,134 +1055,111 @@ The following code snippet demonstrates how to build a feature pipeline that per
    """).df()   
    con.close()   
    fg.insert(result_df)
-``` 
 ```
+
 First, we create a Pandas DataFrame, `pdf, containing employees’ names, ages, and salaries. 
 まず、従業員の名前、年齢、給与を含むPandas DataFrame `pdf`を作成します。
-
 Then we convert it to a PyArrow Table, `arrow_table, with (typically) zero copy. 
 次に、通常ゼロコピーでPyArrowテーブル`arrow_table`に変換します。
-
 Next, we load this into Polars and transform the employee’s age into a new categorical column, age_category. 
 次に、これをPolarsに読み込み、従業員の年齢を新しいカテゴリ列`age_category`に変換します。
-
 After that, we convert the Polars DataFrame back to Arrow and register it as a table in DuckDB, where we add a categorical variable, `salary_band (junior, senior, or staff), using SQL. 
 その後、Polars DataFrameをArrowに戻し、DuckDBにテーブルとして登録し、SQLを使用してカテゴリ変数`salary_band（ジュニア、シニア、またはスタッフ）`を追加します。
-
 The final result is a DataFrame that we insert into a feature group. 
 最終的な結果は、フィーチャーグループに挿入されるDataFrameです。
 
-###### Data Types
-###### データ型
+<!-- ここまで読んだ! -->
+
+### 1.4.3. Data Types
 
 When you write code in ML pipelines, you work with the corresponding Polars/Pandas/PySpark/SQL data types. 
 MLパイプラインでコードを書くときは、対応するPolars/Pandas/PySpark/SQLデータ型を使用します。
-
 However, ML pipelines interoperate via a shared data layer, the feature store, and every feature store has its own set of supported data types. 
 しかし、MLパイプラインは共有データレイヤーであるフィーチャーストアを介して相互運用し、各フィーチャーストアには独自のサポートされているデータ型のセットがあります。
-
 One complication can arise if you use frameworks in the feature pipeline that are different from those you use with the training/inference pipelines. 
 フィーチャーパイプラインで使用するフレームワークが、トレーニング/推論パイプラインで使用するものと異なる場合、1つの複雑さが生じる可能性があります。
-
 For example, the feature pipeline could run in PySpark, while the training pipeline could use Pandas to feed samples to the model. 
 例えば、フィーチャーパイプラインはPySparkで実行される可能性がありますが、トレーニングパイプラインはPandasを使用してモデルにサンプルを供給することができます。
-
 However, PySpark supports a set of data types that’s different from the one Pandas supports. 
 ただし、PySparkはPandasがサポートするものとは異なるデータ型のセットをサポートしています。
-
 The feature store connects these two pipelines by storing data in its native data types and casting data to/from the framework’s data types. 
 フィーチャーストアは、データをネイティブデータ型で保存し、フレームワークのデータ型にデータをキャストすることによって、これら2つのパイプラインを接続します。
 
 For example, imagine your PySpark feature pipeline writes to a feature group a Spark DataFrame with four columns of type: `TimestampType,` `DateType,` `StringType, and` `BinaryType. 
 例えば、PySparkフィーチャーパイプラインが、`TimestampType`、`DateType`、`StringType`、および`BinaryType`の4つの列を持つSpark DataFrameをフィーチャーグループに書き込むと想像してください。
-
 The training and batch inference pipelines read these features into Pandas DataFrames. 
 トレーニングおよびバッチ推論パイプラインは、これらのフィーチャーをPandas DataFrameに読み込みます。
-
 These pipelines should read data with compatible data types from the offline feature groups. 
 これらのパイプラインは、オフラインフィーチャーグループから互換性のあるデータ型のデータを読み込む必要があります。
-
 Hopsworks stores offline feature data with Hive data types, so when a Pandas client reads the features using the Hopsworks API, they are cast to the Pandas data types to become `datetime64[ns],` `datetime64[ns],` `object, and` `object. 
 HopsworksはオフラインフィーチャーデータをHiveデータ型で保存するため、PandasクライアントがHopsworks APIを使用してフィーチャーを読み込むと、Pandasデータ型にキャストされて`datetime64[ns]`、`datetime64[ns]`、`object`、および`object`になります。
 
 The feature store is responsible for storing the feature data in its native data types and ensuring that different combinations of frameworks can read and write data as expected. 
-フィーチャーストアは、フィーチャーデータをネイティブデータ型で保存し、異なるフレームワークの組み合わせが期待通りにデータを読み書きできるようにする責任があります。
-
-It should ensure that, irrespective of whether you use SQL, Pandas, Polars, PySpark, or Flink for the feature pipeline, the training and inference pipelines will be 
-それは、フィーチャーパイプラインにSQL、Pandas、Polars、PySpark、またはFlinkを使用するかどうかにかかわらず、トレーニングおよび推論パイプラインが
-
-
-
-able to read the feature data in supported DataFrame engines. 
-サポートされているDataFrameエンジンでフィーチャーデータを読み取ることができます。
-
+**フィーチャーストアは、フィーチャーデータをネイティブデータ型で保存し、異なるフレームワークの組み合わせが期待通りにデータを読み書きできるようにする責任があります。**
+It should ensure that, irrespective of whether you use SQL, Pandas, Polars, PySpark, or Flink for the feature pipeline, the training and inference pipelines will be able to read the feature data in supported DataFrame engines. 
+SQL、Pandas、Polars、PySpark、またはFlinkをフィーチャーパイプラインに使用するかどうかに関係なく、トレーニングおよび推論パイプラインがサポートされているDataFrameエンジンでフィーチャーデータを読み取ることができるようにする必要があります。
 There is one exception you may encounter, however. 
 ただし、1つの例外が発生する可能性があります。
-
 There is potential for a loss of precision for some data types if your feature pipeline compute engine supports higher-precision data types than the feature store or if a training/inference pipeline compute engine supports lower-precision data types than the feature store. 
 フィーチャーパイプラインの計算エンジンがフィーチャーストアよりも高精度のデータ型をサポートしている場合や、トレーニング/推論パイプラインの計算エンジンがフィーチャーストアよりも低精度のデータ型をサポートしている場合、一部のデータ型で精度の損失が発生する可能性があります。
-
 There is also the added complication that the feature store stores data in both offline tables and online tables, each of which may support different data types. 
-さらに、フィーチャーストアはオフラインテーブルとオンラインテーブルの両方にデータを保存しており、それぞれ異なるデータ型をサポートしている可能性があるという複雑さもあります。
+**さらに、フィーチャーストアはオフラインテーブルとオンラインテーブルの両方にデータを保存しており、それぞれ異なるデータ型をサポートしている可能性があるという複雑さ**もあります。
 
 In Hopsworks, the offline table uses Hive data types while the online table uses MySQL data types. 
-Hopsworksでは、オフラインテーブルはHiveデータ型を使用し、オンラインテーブルはMySQLデータ型を使用します。
-
+**Hopsworksでは、オフラインテーブルはHiveデータ型を使用**し、オンラインテーブルはMySQLデータ型を使用します。
 The details of the mappings from Spark and Pandas data types to the respective Hive and MySQL data types are found in the [Hopsworks](https://oreil.ly/NkGat) [documentation.](https://oreil.ly/NkGat) 
+(オフラインテーブルはIcebergテーブル形式じゃないのかな...??:thinking:)
 SparkおよびPandasデータ型からそれぞれのHiveおよびMySQLデータ型へのマッピングの詳細は、[Hopsworks](https://oreil.ly/NkGat)の[ドキュメント](https://oreil.ly/NkGat)にあります。
 
-###### Arrays, structs, maps, and tensors
-###### 配列、構造体、マップ、およびテンソル
+<!-- ここまで読んだ! -->
 
-Hopsworks stores the expected primitive data types (int, `string,` `boolean,` `float,` ``` double, long, decimal, timestamp, date) as well as complex data types, such as arrays, structs, and maps. 
-Hopsworksは、期待される基本データ型（int、`string`、`boolean`、`float`、``` double、long、decimal、timestamp、date）および配列、構造体、マップなどの複雑なデータ型を保存します。
+#### 1.4.3.1. Arrays, structs, maps, and tensors 配列、構造体、マップ、およびテンソル
 
+Hopsworks stores the expected primitive data types (int, `string,` `boolean,` `float,` double, long, decimal, timestamp, date) as well as complex data types, such as arrays, structs, and maps. 
+Hopsworksは、期待される基本データ型（int、string、boolean、float、double、long、decimal、timestamp、date）だけでなく、配列(arrays)、構造体(structs)、マップ(maps)などの複雑なデータ型も保存します。
 Vector embeddings are stored as an array of floats. 
-ベクトル埋め込みは、浮動小数点数の配列として保存されます。
-
+**ベクトル埋め込みは、浮動小数点数の配列(array)として保存**されます。(あ、hopsworksもvector型があるわけじゃなくて、floatのarrayとして保存するのか...!:thinking:)
 The other main data structure in machine learning is the tensor. 
-機械学習におけるもう1つの主要なデータ構造はテンソルです。
-
+**機械学習におけるもう1つの主要なデータ構造はテンソルです。**
 A tensor is a multidimensional numerical data structure that can represent data in one or more dimensions. 
-テンソルは、1つ以上の次元でデータを表現できる多次元数値データ構造です。
-
+**テンソルは、1つ以上の次元でデータを表現できる多次元数値データ構造**です。
 Unlike traditional matrices, which are two-dimensional, tensors extend to three or more dimensions. 
 従来の行列が二次元であるのに対し、テンソルは三次元以上に拡張されます。
-
 In deep learning, tensors are commonly constructed from unstructured data, such as images (for 3D tensors), videos (for 4D tensors), and audio signals (for 1D tensors), enabling the representation and processing of complex data formats (see Figure 6-6). 
 深層学習では、テンソルは一般的に、画像（3Dテンソル用）、動画（4Dテンソル用）、音声信号（1Dテンソル用）などの非構造化データから構築され、複雑なデータ形式の表現と処理を可能にします（図6-6を参照）。
 
+![]()
 _Figure 6-6. Tensor data structures generalize to store anything from scalars to arrays and matrices and higher-dimensional data._ 
 _図6-6. テンソルデータ構造は、スカラーから配列、行列、さらには高次元データまでを保存するために一般化されます。_
 
+<!-- ここまで読んだ! -->
+
 Audio data is 1D as audio input is sampled and quantized, although it can be stored as 2D data when you have many tracks, such as left and right channels for stereo sound. 
 音声データは、音声入力がサンプリングされ量子化されるため1Dですが、ステレオ音声の左チャンネルと右チャンネルのように多くのトラックがある場合は2Dデータとして保存できます。
-
 Image data typically contains pixels with an X, Y offset and a color channel—making it three-dimensional (3D) data. 
 画像データは通常、X、Yオフセットとカラーチャンネルを持つピクセルを含んでおり、三次元（3D）データになります。
-
 Video data has an additional channel for the frame number—making it 4D data. 
 動画データにはフレーム番号用の追加のチャンネルがあり、これにより4Dデータになります。
-
 Audio, images, and videos can be transformed into tensor data and used for training and inference in deep learning.  
 音声、画像、動画はテンソルデータに変換され、深層学習のトレーニングと推論に使用できます。
 
+<!-- ここまで読んだ! -->
+
 PyTorch is the most popular framework for deep learning. 
 PyTorchは深層学習の最も人気のあるフレームワークです。
-
 PyTorch represents tensors as instances of the `torch.Tensor class, with the default data type being` ``` torch.float32 (torch.int64 is the default for integer tensors). 
 PyTorchはテンソルを`torch.Tensor`クラスのインスタンスとして表現し、デフォルトのデータ型は``` torch.float32（整数テンソルのデフォルトはtorch.int64）です。
-
 You can print the shape of a tensor by using the `shape attribute of` `torch.Tensor:` ``` print(tensor.shape). 
 テンソルの形状は、`torch.Tensor`の`shape`属性を使用して印刷できます：``` print(tensor.shape)。
 
-We typically do not store tensors in a feature store. 
-通常、フィーチャーストアにテンソルを保存することはありません。
+<!-- ここまで読んだ! -->
 
+We typically do not store tensors in a feature store. 
+**通常、フィーチャーストアにテンソルを保存することはありません。**
 Instead, training/inference pipelines transform unstructured data (in compressed file formats such as PNG, MP4, and MP3 for images, video, and sound, respectively) into tensors after it has been read from files: 
 代わりに、トレーニング/推論パイプラインは、ファイルから読み取った後に非構造化データ（画像、動画、音声用のPNG、MP4、MP3などの圧縮ファイル形式）をテンソルに変換します：
 
-```  
+```Python
 import torch  
 from torchvision import transforms  
 from PIL import Image  
@@ -1200,49 +1170,41 @@ image_tensor = transform(image)
 ```
 
 It is, however, sometimes desirable to preprocess the files in a training dataset pipeline that outputs tensors as files, such as in TFRecord files. 
-ただし、TFRecordファイルのように、テンソルをファイルとして出力するトレーニングデータセットパイプラインでファイルを前処理することが望ましい場合があります。
-
+**ただし、TFRecordファイルのように、テンソルをファイルとして出力するトレーニングデータセットパイプラインでファイルを前処理することが望ましい場合があります。**
 TFRecord is a file format that natively stores serialized tensors. 
 TFRecordは、シリアライズされたテンソルをネイティブに保存するファイル形式です。
-
 Using TFRecord files can reduce the amount of CPU preprocessing needed in training pipelines by removing the need to transform unstructured data into tensors. 
 TFRecordファイルを使用することで、非構造化データをテンソルに変換する必要がなくなるため、トレーニングパイプラインで必要なCPU前処理の量を減らすことができます。
-
 This can help improve GPU utilization levels— assuming CPU preprocessing is a bottleneck in the training pipeline. 
 これにより、GPUの利用率を向上させることができます—CPU前処理がトレーニングパイプラインのボトルネックであると仮定した場合。
 
-###### Implicit or explicit schemas for feature groups
-###### フィーチャーグループの暗黙的または明示的なスキーマ
+<!-- ここまで読んだ! -->
 
-In Chapter 5, we described how the schema of a feature group can be inferred from the first DataFrame inserted into it. 
+#### 1.4.3.2. Implicit or explicit schemas for feature groups フィーチャーグループの暗黙的または明示的なスキーマ
+
+In Chapter 5, we described how the schema of a feature group can be inferred from the first DataFrame inserted into it.
 第5章では、フィーチャーグループのスキーマが最初に挿入されたDataFrameから推測できる方法について説明しました。
-
 You may already have written programs that read CSV files into DataFrames in Pandas, Polars, or PySpark and noticed that they don’t always infer the “correct” data types. 
 すでにPandas、Polars、またはPySparkでCSVファイルをDataFrameに読み込むプログラムを書いたことがあり、必ずしも「正しい」データ型を推測しないことに気付いているかもしれません。
-
 By correct, we mean the data type you wanted, not the one you got. 
 ここで言う「正しい」とは、あなたが望んでいたデータ型のことであり、得られたデータ型のことではありません。
-
 For example, Pandas can infer the schema of columns when reading CSV files, but if one of the columns is a datetime column, Pandas by default infers it is an object (string) dtype. 
 たとえば、PandasはCSVファイルを読み込む際に列のスキーマを推測できますが、列の1つがdatetime列である場合、Pandasはデフォルトでそれをオブジェクト（文字列）dtypeとして推測します。
-
 You can fix this by passing a parameter with the columns that contains dates (parse_dates=['col1',..,'colN']). 
 これを修正するには、日付を含む列を持つパラメータを渡すことで（parse_dates=['col1',..,'colN']）、修正できます。
-
 PySpark is not much better at parsing CSV files, as it assumes all columns are strings, unless you set ``` inferSchema=True. 
 PySparkはCSVファイルの解析においてあまり改善されておらず、すべての列が文字列であると仮定します。`inferSchema=True`を設定しない限り。
 
 In production feature pipelines, it is generally considered best practice to explicitly specify the schema for a feature group, which helps to prevent any type inference errors or precision errors when inferring data types. 
-本番環境のフィーチャーパイプラインでは、フィーチャーグループのスキーマを明示的に指定することが一般的にベストプラクティスと見なされており、データ型を推測する際の型推測エラーや精度エラーを防ぐのに役立ちます。
-
+**本番環境のフィーチャーパイプラインでは、フィーチャーグループのスキーマを明示的に指定することが一般的にベストプラクティスと見なされており**、データ型を推測する際の型推測エラーや精度エラーを防ぐのに役立ちます。(やっぱりそうだよね...!:thinking:)
 If in doubt, spell it (the schema) out. 
-疑問がある場合は、スキーマを明示的に記述してください。
-
+**疑問がある場合は、スキーマを明示的に記述してください。**
 Here is an example of how to specify an explicit schema for a feature group in Hopsworks:  
 Hopsworksでフィーチャーグループの明示的なスキーマを指定する方法の例を示します：
 
-```  
-from hsfs.feature import Feature  
+```Python
+from hsfs.feature import Feature
+
 features = [  
     Feature(name="id",type="int", online_type="int"),  
     Feature(name="name",type="string",online_type="varchar(2000)")  
@@ -1256,206 +1218,164 @@ fg.save(features)
 Note that you can also explicitly define the data types for the offline store (type="..") and the online store (online_type="..") as part of the feature group schema. 
 オフラインストア（type=".."）およびオンラインストア（online_type=".."）のデータ型をフィーチャーグループスキーマの一部として明示的に定義することもできます。
 
-###### Credit Card Fraud Features
-###### クレジットカード詐欺機能
+<!-- ここまで読んだ! -->
+
+## 1.5. Credit Card Fraud Features クレジットカード詐欺機能
 
 We now look at MITs to create features for our credit card fraud detection system. 
 ここでは、クレジットカード詐欺検出システムのための機能を作成するためのMITを見ていきます。
-
+(MIT = model independent transformation = モデル非依存変換だよね...!:thinking:)
 We start by noting the data-related challenges in building a robust credit card fraud detection system. 
-堅牢なクレジットカード詐欺検出システムを構築する際のデータ関連の課題に注目します。
-
+堅牢なクレジットカード詐欺検出システムを構築する際の**データ関連の課題**に注目します。
 They include: 
 これには以下が含まれます：
 
-_Class imbalance_ We have very few examples of fraud compared with nonfraud transactions. 
-_クラスの不均衡_ 詐欺の例は、非詐欺のトランザクションと比較して非常に少ないです。
+- Class imbalance: We have very few examples of fraud compared with nonfraud transactions. 
+  - クラスの不均衡: 非詐欺トランザクションと比較して、詐欺の例は非常に少ないです。
+- Nonstationary prediction: problems_ Fraudsters constantly come up with novel strategies for fraud, so we will need to frequently retrain our model on the latest data. 
+  - 非定常予測問題: 詐欺師は常に新しい詐欺戦略を考案するため、最新のデータでモデルを頻繁に再トレーニングする必要があります。
 
-_Nonstationary prediction problems_ Fraudsters constantly come up with novel strategies for fraud, so we will need to frequently retrain our model on the latest data. 
-_非定常予測問題_ 詐欺師は常に新しい詐欺戦略を考案するため、最新のデータでモデルを頻繁に再トレーニングする必要があります。
+- Data drift: This arises where unseen patterns in transaction activity are common. 
+  - データドリフト: これは、トランザクション活動における未見のパターンが一般的な場合に発生します。
 
-_Data drift_ This arises where unseen patterns in transaction activity are common. 
-_データドリフト_ これは、トランザクション活動における未見のパターンが一般的な場合に発生します。
-
-_ML fraud models_ These are typically used in addition to rule-based approaches that detect simple fraud schemes and patterns. 
-_機械学習詐欺モデル_ これらは通常、単純な詐欺スキームやパターンを検出するルールベースのアプローチに加えて使用されます。
+- ML fraud models: These are typically used in addition to rule-based approaches that detect simple fraud schemes and patterns. 
+  - 機械学習詐欺モデル: これらは通常、単純な詐欺スキームやパターンを検出するルールベースのアプローチに加えて使用されます。
 
 In Chapter 4, we introduced the features we want to create from our source data. 
 第4章では、ソースデータから作成したい機能を紹介しました。
-
 We now present the MITs used to create those features. 
 ここでは、これらの機能を作成するために使用されるMITを示します。
-
 Figure 6-7 shows the feature pipeline that uses the tables (and event-streaming platform) in our data mart as the data sources. 
 図6-7は、データマート内のテーブル（およびイベントストリーミングプラットフォーム）をデータソースとして使用するフィーチャーパイプラインを示しています。
-
 The data mart includes credit card transactions as events in an event-streaming platform, a fact table that the credit card transaction events are persisted to, the four dimension “details” tables, and the cc_fraud table that contains labels.  
 データマートには、イベントストリーミングプラットフォーム内のイベントとしてのクレジットカードトランザクション、クレジットカードトランザクションイベントが永続化されるファクトテーブル、4つの次元「詳細」テーブル、およびラベルを含むcc_fraudテーブルが含まれています。
 
+![]()
 _Figure 6-7. Dataflow graph from the data mart to the feature groups via MITs. Notice that some data transformations are composed from other transformations (the input of a transformation is the output of another transformation) and that joins bring features from different entities (cards, accounts, merchants) together._ 
 _図6-7. データマートからフィーチャーグループへのデータフローグラフ（MITを介して）。いくつかのデータ変換が他の変換から構成されていることに注意してください（変換の入力は別の変換の出力です）および結合が異なるエンティティ（カード、アカウント、商人）から機能をまとめることを示しています。_
 
 We will now take a new approach to defining our transformation logic. 
-これから、変換ロジックを定義する新しいアプローチを取ります。
-
+これから、**変換ロジックを定義する新しいアプローチ**を取ります。
 Instead of presenting the source code, we will present the prompts that I used to create the transformation logic by using an LLM. 
-ソースコードを提示する代わりに、LLMを使用して変換ロジックを作成するために使用したプロンプトを提示します。
-
+ソースコードを提示する代わりに、**LLMを使用して変換ロジックを作成するために使用したプロンプト**を提示します。
 Table 6-2 shows the prompts I used to create the transformation code in the book’s source code repository. 
 表6-2は、書籍のソースコードリポジトリで変換コードを作成するために使用したプロンプトを示しています。
-
 As of mid-2025, LLMs are very good at generating Pandas, Polars, and PySpark source code from natural language instructions. 
 2025年中頃の時点で、LLMは自然言語の指示からPandas、Polars、およびPySparkのソースコードを生成するのが非常に得意です。
-
 You may have to prepend the logical models for your tables (see Chapter 8) so that the LLM understands the data types and the semantics of the columns it is working with. 
 LLMが作業している列のデータ型と意味を理解できるように、テーブルの論理モデルを前に追加する必要があるかもしれません（第8章を参照）。
-
 Hopsworks provides its own LLM assistant, Brewer, that provides details of data sources and feature groups, making it easier to develop the transformation logic.  
 Hopsworksは、データソースとフィーチャーグループの詳細を提供する独自のLLMアシスタントBrewerを提供しており、変換ロジックの開発を容易にします。
 
+![]()
 _Table 6-2. LLM prompts that create Polars code to create features from our data sources_ 
 _表6-2. データソースから機能を作成するためのPolarsコードを生成するLLMプロンプト_
 
-**Feature** **Prompt to write code for feature** 
-**機能** **機能のコードを書くためのプロンプト**
-
-``` 
-chargeback_rate_prev_week 
-```
-From merchant_details, write Polars code to compute a 7-day tumbling window using chargeback_rate_prev_day. 
-merchant_detailsから、chargeback_rate_prev_dayを使用して7日間のタムブリングウィンドウを計算するPolarsコードを書いてください。
-
-Read up from the FG with overlap for the 7 days before our start date, as we don’t want empty first. 
-最初が空でないように、開始日より前の7日間のオーバーラップを持つFGから読み取ります。
-
-We want this feature function to take start/end dates, so it can both backfill and take new data.  
-この機能関数には開始日と終了日を受け取らせたいので、バックフィルと新しいデータを取得できるようにします。
-
-`time_since_last_trans` 
-`time_since_last_trans` 
-
-Join cc_trans_aggs_fg with cc_trans_fg, using cc_num to produce DataFrame df. 
-cc_trans_aggs_fgとcc_trans_fgをcc_numを使用して結合し、DataFrame dfを生成します。
-
-Then, compute time_since_last_trans in a Python UDF, using Polars by subtracting prev_ts_transaction from event_time. 
-次に、prev_ts_transactionをevent_timeから引いてPolarsを使用してPython UDFでtime_since_last_transを計算します。
-
-Apply the Python UDF to df to compute the new feature.  
-新しい機能を計算するためにPython UDFをdfに適用します。
-
-`days_to_card_expiry` 
-`days_to_card_expiry` 
-
-Join card_details with cc_trans_fg, using cc_num to produce DataFrame df. 
-card_detailsとcc_trans_fgをcc_numを使用して結合し、DataFrame dfを生成します。
-
-Then, compute days_to_card_expiry in a Pandas UDF by subtracting event_time from cc_expiry_date. 
-次に、event_timeをcc_expiry_dateから引いてPandas UDFでdays_to_card_expiryを計算します。
-
-Apply the Pandas UDF to df to compute the new feature.  
-新しい機能を計算するためにPandas UDFをdfに適用します。
+- メモ: 表6-2の内容
+  - 特徴量名 = chargeback_rate_prev_week
+    - 特徴量のコードを書くためのプロンプト
+      - merchant_detailsから、chargeback_rate_prev_dayを使用して7日間のタムブリングウィンドウを計算するPolarsコードを書いてください。
+      - 最初が空でないように、開始日より前の7日間のオーバーラップを持つFGから読み取ります。
+      - この機能関数には開始日と終了日を受け取らせたいので、バックフィルと新しいデータを取得できるようにします。
+  - 特徴量名 = time_since_last_trans
+    - 特徴量のコードを書くためのプロンプト
+      - cc_trans_aggs_fgとcc_trans_fgをcc_numを使用して結合し、DataFrame dfを生成します。
+      - 次に、prev_ts_transactionをevent_timeから引いてPolarsを使用してPython UDFでtime_since_last_transを計算します。
+      - 新しい機能を計算するためにPython UDFをdfに適用します。
+  - 特徴量名 = days_to_card_expiry
+    - 特徴量のコードを書くためのプロンプト
+      - card_detailsとcc_trans_fgをcc_numを使用して結合し、DataFrame dfを生成します。
+      - 次に、event_timeをcc_expiry_dateから引いてPandas UDFでdays_to_card_expiryを計算します。
+      - 新しい機能を計算するためにPandas UDFをdfに適用します。
 
 There are many other data transformations for our credit card example system that you can find in the book’s source code repository. 
 書籍のソースコードリポジトリには、クレジットカードの例システムに対する他の多くのデータ変換があります。
-
 The features are a mix of simple features (copied directly from the source table), some that were computed by using map functions (days_since_credit_rating_changed), and a lot of features that require maintaining state across data transformations, such as those that summarize observed events over windows of time (like an hour, minute, or day). 
-機能は、ソーステーブルから直接コピーされた単純な機能、マップ関数を使用して計算された機能（days_since_credit_rating_changed）、および時間のウィンドウ（1時間、1分、1日など）にわたって観察されたイベントを要約するために状態を維持する必要がある多くの機能の組み合わせです。
-
+特徴量は、ソーステーブルから直接コピーされた単純な特徴量、マップ関数を使用して計算された特徴量（days_since_credit_rating_changed）、および時間のウィンドウ（1時間、1分、1日など）にわたって観察されたイベントを要約するために状態を維持する必要がある多くの特徴量の組み合わせです。
 In particular, all the features computed for the cc_trans_aggs_fg feature group require stateful data transformations. 
-特に、cc_trans_aggs_fgフィーチャーグループのために計算されたすべての機能は、状態を持つデータ変換を必要とします。
-
+特に、cc_trans_aggs_fgフィーチャーグループのために計算されたすべての特徴量は、状態を持つデータ変換を必要とします。
 In Chapter 9, we will look at how to implement these model-independent data transformations in streaming feature pipelines. 
 第9章では、ストリーミングフィーチャーパイプラインにおけるこれらのモデル非依存のデータ変換を実装する方法を見ていきます。
 
+<!-- ここまで読んだ! -->
+
 When writing the data transformations with the help of LLMs, consider that sometimes the generated code has bugs. 
 LLMの助けを借りてデータ変換を書くときは、生成されたコードにバグがあることがあることを考慮してください。
-
 For example, sometimes GPT-4o hallucinates that Polars DataFrames support the widely used Pandas DataFrame apply function, which is used to apply a UDF to the DataFrame. 
 たとえば、時々GPT-4はPolars DataFrameが広く使用されているPandas DataFrameのapply関数をサポートしていると誤認識し、これはUDFをDataFrameに適用するために使用されます。
-
 When I get errors, I paste the error log into my LLM’s prompt and ask it to fix the bug. 
 エラーが発生したときは、エラーログをLLMのプロンプトに貼り付けてバグを修正するように頼みます。
-
 Generally, this works. 
 一般的に、これは機能します。
-
 But you still need to understand the code produced. 
 しかし、生成されたコードを理解する必要があります。
-
 Ultimately, you sign off on the code being correct. 
 最終的には、コードが正しいことを確認します。
-
-
-
-. Generally, this works. But you still need to understand the code produced. 
-一般的に、これは機能します。しかし、生成されたコードを理解する必要があります。
-
-Ultimately, you sign off on the code being correct. 
-最終的には、あなたがそのコードが正しいと承認します。
-
 For this reason, unit testing your feature functions becomes even more critical. 
-この理由から、あなたの機能関数の単体テストはさらに重要になります。
-
+**この理由から、あなたの特徴量関数の単体テストはさらに重要になります。**
 Again, I use LLMs to generate the unit tests for the feature functions I write. 
 再度、私は自分が書いた機能関数の単体テストを生成するためにLLMsを使用します。
-
 Again, I inspect the generated unit tests for correctness before I incorporate them. 
 再度、私はそれらを組み込む前に生成された単体テストの正確性を確認します。
 
-###### Composition of Transformations 変換の構成
+<!-- ここまで読んだ! -->
+
+## 1.6. Composition of Transformations 変換の構成
 
 In batch pipelines, we often compute aggregations (such as min, max, mean, median, and standard deviation) over a window of time, such as an hour or a day. 
-バッチパイプラインでは、通常、1時間や1日などの時間ウィンドウにわたって集約（最小値、最大値、平均、中央値、標準偏差など）を計算します。
-
+**バッチパイプラインでは、通常、1時間や1日などの時間ウィンドウにわたって集約（最小値、最大値、平均、中央値、標準偏差など）を計算**します。
 Often more than one time window contains useful predictive signals for models. 
-しばしば、1つ以上の時間ウィンドウがモデルにとって有用な予測信号を含んでいます。
-
+しばしば、**1つ以上の時間ウィンドウがモデルにとって有用な予測信号を含んでいます。**
 For example, we could compute aggregates once per day but also trailing 7-day and trailing 30-day aggregates, as shown in Figure 6-8. 
 例えば、私たちは1日に1回集約を計算することもできますが、トレーリング7日間およびトレーリング30日間の集約も計算できます（図6-8に示されています）。
 
-
-
+![]()
 _Figure 6-8. We can compute single-day and multiday aggregations in the same feature pipeline. Multiday aggregations combine the current daily aggregation with the historical daily aggregations read from the feature store._
-_Figure 6-8. 同じフィーチャーパイプラインで単日および複数日集計を計算できます。複数日集計は、現在の1日集計とフィーチャーストアから読み取った過去の1日集計を組み合わせます。_
+Figure 6-8. 同じフィーチャーパイプラインで単日および複数日集計を計算できます。複数日集計は、現在の1日集計とフィーチャーストアから読み取った過去の1日集計を組み合わせます。
 
 Ideally, we should compute the larger windows (30-day and 7-day) from the smallest window (1-day) to reduce the amount of work needed to compute aggregations.
 理想的には、集計を計算するために必要な作業量を減らすために、最小のウィンドウ（1日）から大きなウィンドウ（30日および7日）を計算するべきです。
-
 Table 6-3 shows how to compute popular aggregations for larger windows from smaller windows.
 表6-3は、より小さなウィンドウからより大きなウィンドウの人気のある集計を計算する方法を示しています。
 
+![]()
 _Table 6-3. Roll-up of common aggregations from 1-day windows to 7-day windows_
 **集計** **1日集計から7日集計を計算する方法**
-count Sum the previous 7 days together.
-count 過去7日間の合計を計算します。
 
-sum Sum the previous 7 days together.
-sum 過去7日間の合計を計算します。
-
-max/min Get the max/min over all the previous 7 days.
-max/min 過去7日間の最大値/最小値を取得します。
-
-stddev We need to compute and store additional daily data. For each day, we also need the count of records. Then, we can compute the 7-day aggregate using the sum of squares.
-stddev 追加の1日データを計算して保存する必要があります。各日について、レコードのカウントも必要です。次に、平方和を使用して7日集計を計算できます。
-
-mean We need to compute and store additional daily data. For each day, we also need the count of records. Then, we can compute the 7-day aggregate as a weighted mean.
-mean 追加の1日データを計算して保存する必要があります。各日について、レコードのカウントも必要です。次に、加重平均として7日集計を計算できます。
-
-approxQuantile We need to compute and store complete sorted lists of daily values. With approximate summaries like TDigests or histograms, we can approximate 7-day quantiles by merging daily distributions.
-approxQuantile 完全にソートされた日次値のリストを計算して保存する必要があります。TDigestsやヒストグラムのような近似要約を使用すると、日次分布をマージすることで7日分位数を近似できます。
-
-distinct count For an accurate result, we need to store the unique values for each day and perform a set union.
-distinct count 正確な結果を得るためには、各日のユニークな値を保存し、集合の和を実行する必要があります。 
-Approximate answers are possible with HyperLogLog (memory efficient but worst accuracy) or Bitmap/Bloom Filters (moderate memory efficiency and better accuracy).
-近似的な回答は、HyperLogLog（メモリ効率が良いが精度が最悪）またはBitmap/Bloom Filters（中程度のメモリ効率とより良い精度）を使用することで可能です。
+- メモ: 表6-3の内容
+  - Aggregation Type 集計タイプ & How to compute from 1-day windows 1日ウィンドウからの計算方法
+    - `count`
+      - Sum the previous 7 days together.
+      - 過去7日間の合計を計算します。
+    - `sum`
+      - Sum the previous 7 days together.
+      - 過去7日間の合計を計算します。
+    - `max/min`
+      - Get the max/min over all the previous 7 days.
+      - 過去7日間の最大値/最小値を取得します。
+    - `stddev`
+      - We need to compute and store additional daily data. For each day, we also need the count of records. Then, we can compute the 7-day aggregate using the sum of squares.
+      - 追加の1日データを計算して保存する必要があります。各日について、レコードのカウントも必要です。次に、平方和を使用して7日集計を計算できます。
+    - `mean`
+      - We need to compute and store additional daily data. For each day, we also need the count of records. Then, we can compute the 7-day aggregate as a weighted mean.
+      - 追加の1日データを計算して保存する必要があります。各日について、レコードのカウントも必要です。次に、加重平均として7日集計を計算できます。
+    - `approxQuantile`
+      - We need to compute and store complete sorted lists of daily values. With approximate summaries like TDigests or histograms, we can approximate 7-day quantiles by merging daily distributions.
+      - 完全にソートされた日次値のリストを計算して保存する必要があります。TDigestsやヒストグラムのような近似要約を使用すると、日次分布をマージすることで7日分位数を近似できます。
+    - `distinct count`
+      - For an accurate result, we need to store the unique values for each day and perform a set union.
+      - 正確な結果を得るためには、各日のユニークな値を保存し、集合の和を実行する必要があります。 
+      - Approximate answers are possible with HyperLogLog (memory efficient but worst accuracy) or Bitmap/Bloom Filters (moderate memory efficiency and better accuracy).
+      - 近似的な回答は、HyperLogLog（メモリ効率が良いが精度が最悪）またはBitmap/Bloom Filters（中程度のメモリ効率とより良い精度）を使用することで可能です。
 
 For example, in PySpark, we can compute a multiday mean using the weighted mean approach. The PySpark code looks as follows:
 例えば、PySparkでは、加重平均アプローチを使用して複数日の平均を計算できます。PySparkのコードは次のようになります：
 
-```   
-def compute_mean(days):     
+```   python
+def compute_mean(days):
+    # 過去days日の加重平均を計算する   
     window_spec = \       
-        Window.partitionBy("user_id").orderBy("date").rowsBetween(-days, 0)       
+        Window.partitionBy("user_id").orderBy("date").rowsBetween(-days, 0)
     df = df.withColumn(f"{days}d_avg",       
         F.sum(F.col("daily_mean") * F.col("daily_count")).over(window_spec) /       
         F.sum("daily_count").over(window_spec))
@@ -1464,35 +1384,30 @@ def compute_mean(days):
 The sum of squares is an alternative approach we could have used, but it requires an additional column storing the sum of squares, so we prefer the weighted mean approach, as it requires one less column to store in our daily aggregations feature group.
 平方和は私たちが使用できた代替アプローチですが、平方和を保存する追加の列が必要です。そのため、日次集計フィーチャーグループに保存する列が1つ少なくて済む加重平均アプローチを好みます。
 
-###### 10.0.0.0.0.1. Summary and Exercises
-###### 10.0.0.0.0.2. 要約と演習
+<!-- ここまで読んだ! -->
+
+## 1.7. Summary and Exercises 要約と演習
 
 In this chapter, we introduced guidelines for writing model-independent transformations in feature pipelines. 
 この章では、フィーチャーパイプラインにおけるモデル非依存の変換を書くためのガイドラインを紹介しました。
-
 We began by describing best practices for how to organize the source code for your system in a monorepo, what the common data sources for feature pipelines are, and the data types you need to work with when writing feature pipelines.
 私たちは、モノレポ内でシステムのソースコードを整理するためのベストプラクティス、フィーチャーパイプラインの一般的なデータソース、フィーチャーパイプラインを書く際に扱う必要があるデータ型について説明しました。
-
 We looked at different classes of data transformations for DataFrames, depending on how they add or remove columns and/or rows.
 私たちは、列や行を追加または削除する方法に応じて、DataFrameのデータ変換の異なるクラスを見ました。
-
 We also looked at data transformation examples in Pandas, Polars, and PySpark and how Arrow can efficiently transfer data among these different engines.
 また、Pandas、Polars、PySparkにおけるデータ変換の例と、Arrowがこれらの異なるエンジン間でデータを効率的に転送できる方法についても見ました。
-
 We finally introduced examples of model-independent data transformations for our credit card fraud system, including binning for categorical data, mapping functions, RFM features, and aggregations.
 最後に、カテゴリデータのビニング、マッピング関数、RFM特徴、集計を含む、クレジットカード詐欺システムのためのモデル非依存のデータ変換の例を紹介しました。
-
 The following exercises will help you learn how to design and write MITs:
 以下の演習は、MITを設計し、書く方法を学ぶのに役立ちます：
 
 - You are tasked with developing a credit card fraud detection ML system. The credit card issuer estimates that there will be at most 50K transactions per day for the current year, growing to at most 100K transactions per day for the next two years. You have 12 months of historical transaction data. Your team does not have a strong data engineering background. Your data mart tables are stored on Iceberg on S3. Which data engineering framework would you choose to write your batch feature pipelines?
-- クレジットカード詐欺検出MLシステムを開発する任務があります。クレジットカード発行者は、今年は1日あたり最大50Kのトランザクションがあると見積もっており、次の2年間で最大100Kのトランザクションに成長すると予想しています。あなたは12ヶ月の過去のトランザクションデータを持っています。あなたのチームは強力なデータエンジニアリングのバックグラウンドを持っていません。あなたのデータマートテーブルはS3のIcebergに保存されています。バッチフィーチャーパイプラインを書くためにどのデータエンジニアリングフレームワークを選びますか？
+  - クレジットカード詐欺検出MLシステムを開発する任務があります。クレジットカード発行者は、今年は1日あたり最大50Kのトランザクションがあると見積もっており、次の2年間で最大100Kのトランザクションに成長すると予想しています。あなたは12ヶ月の過去のトランザクションデータを持っています。あなたのチームは強力なデータエンジニアリングのバックグラウンドを持っていません。あなたのデータマートテーブルはS3のIcebergに保存されています。バッチフィーチャーパイプラインを書くためにどのデータエンジニアリングフレームワークを選びますか？
 
 - Answer the previous question again, but this time when data volumes are 10 million transactions per day.
-- 前の質問に再度答えてください。ただし、データ量が1日あたり1000万トランザクションの場合です。
+  - 前の質問に再度答えてください。ただし、データ量が1日あたり1000万トランザクションの場合です。
 
 - Assume you have a new column, `email, in the` `account_details table. Use an` LLM to help write a feature function that transforms an email address into a numerical feature that represents the quality of the email address. Hint: use an LLM, tell it to use the email-validator Python library, and tell it to use the email address domain name to help determine the “score” for the email address.
-- 新しい列`email`が`account_details`テーブルにあると仮定します。LLMを使用して、メールアドレスを数値的な特徴に変換するフィーチャー関数を書くのを手伝ってください。この数値的な特徴は、メールアドレスの品質を表します。ヒント：LLMを使用し、email-validator Pythonライブラリを使用するように指示し、メールアドレスのドメイン名を使用してメールアドレスの「スコア」を決定するのを手伝ってください。
+  - 新しい列`email`が`account_details`テーブルにあると仮定します。LLMを使用して、メールアドレスを数値的な特徴に変換するフィーチャー関数を書くのを手伝ってください。この数値的な特徴は、メールアドレスの品質を表します。ヒント：LLMを使用し、email-validator Pythonライブラリを使用するように指示し、メールアドレスのドメイン名を使用してメールアドレスの「スコア」を決定するのを手伝ってください。
 
-
-
+<!-- ここまで読んだ! -->
