@@ -559,107 +559,85 @@ So training data for Llama 3.1 could also be used to train text-quality classifi
 Note that the LLM's text-quality classifiers only run in the training dataset (or feature) pipeline.
 注意すべきは、LLMのテキスト品質分類器はトレーニングデータセット（またはフィーチャー）パイプラインでのみ実行されるということです。
 They are not MDTs that run in both training and inference pipelines.
-彼らはトレーニングと推論の両方のパイプラインで実行されるMDTではありません。
-
+**それら(学習データのクリーニング)はトレーニングと推論の両方のパイプラインで実行されるMDTではありません。**
 Data cleaning is needed before training, but you make predictions on unclean data, so you shouldn't apply data cleaning transformations during inference.
 トレーニングの前にデータクリーニングが必要ですが、汚れたデータに対して予測を行うため、推論中にデータクリーニング変換を適用すべきではありません。
 
 There are many good open source libraries that can be used for model-based data cleaning.
 モデルベースのデータクリーニングに使用できる優れたオープンソースライブラリが多数あります。
-
 For example, Cleanlab is a Python package that identifies and corrects label errors in training datasets, providing confidence estimates for the correctness of each label.
 例えば、Cleanlabはトレーニングデータセット内のラベルエラーを特定し修正するPythonパッケージであり、各ラベルの正確性に対する信頼度を提供します。
-
 [Lightly is an open library for computer vision that creates image embeddings](https://oreil.ly/DKg48) and then uses clustering and similarity search to help select, prioritize, or pseudo-label samples without full manual annotation.
 [Lightlyは、画像埋め込みを作成するコンピュータビジョン用のオープンライブラリであり](https://oreil.ly/DKg48)、その後、クラスタリングと類似性検索を使用して、完全な手動注釈なしでサンプルを選択、優先順位付け、または擬似ラベル付けを支援します。
-
 This makes Lightly useful in image tasks where acquiring labeled data is challenging or expensive.
 これにより、ラベル付きデータの取得が困難または高価な画像タスクでLightlyが役立ちます。
-
 Cleanlab is more widely used on tabular datasets where it can identify and correct label errors, although it can also be used on text and image datasets.
 Cleanlabは、ラベルエラーを特定し修正できるため、表形式データセットでより広く使用されていますが、テキストや画像データセットにも使用できます。
 
-###### 1.2.3.0.0.2. Target-/Label-Dependent Transformations
-###### 1.2.3.0.0.3. ターゲット/ラベル依存の変換
+<!-- ここまで読んだ! -->
+
+### 1.2.4. Target-/Label-Dependent Transformations ターゲット/ラベル依存の変換
 
 There are some data transformations that are parameterized by properties of the label/target, such as its timestamp.
-ラベル/ターゲットのプロパティ（例えば、タイムスタンプ）によってパラメータ化されるデータ変換があります。
-
+**ラベル/ターゲットのプロパティ（例えば、タイムスタンプ）によってパラメータ化されるデータ変換**があります。
 Sometimes, you can delay computing features until the label and its properties become known.
-時には、ラベルとそのプロパティが知られるまで特徴の計算を遅らせることができます。
-
+**時には、ラベルとそのプロパティが知られるまで特徴の計算を遅らせることができます。** (うんうん。これはだからMDTとして実装しちゃえばいいよね、って話か...!まあ前述の通り場合によってはMDTもFeeature Storeに入れてもいいかもだが:thinking:)
 This enables you to compute these features only when needed.
 これにより、必要なときにのみこれらの特徴を計算できます。
-
 A good example of a label-dependent transformation in the context of credit card fraud detection is time_since_last_transaction, which is calculated relative to the current transaction's timestamp and the timestamp for the most recent previous transaction:
-クレジットカード詐欺検出の文脈におけるラベル依存の変換の良い例は、time_since_last_transactionであり、これは現在のトランザクションのタイムスタンプと最も最近の前のトランザクションのタイムスタンプに対して相対的に計算されます：
+クレジットカード詐欺検出の文脈におけるラベル依存の変換の良い例は、time_since_last_transaction であり、これは現在のトランザクションのタイムスタンプと最も最近の前のトランザクションのタイムスタンプに対して相対的に計算されます：
+(あ〜例えば「ユーザの前回アクセスからの経過時間」とか「アイテムが公開されてからの経過時間」とかもこれに該当するよね...!!:thinking:)
 
-```  
+```  python
 def time_since_last_transaction(event_time, prev_ts_transaction):     
 return event_time - prev_ts_transaction
 ```  
-```  
-def time_since_last_transaction(event_time, prev_ts_transaction):     
-return event_time - prev_ts_transaction
-```  
-###### 1.2.3.0.0.4. Expensive Features Are Computed When Needed
-###### 1.2.3.0.0.5. 高コストの特徴は必要なときに計算される
+
+<!-- ここまで読んだ! -->
+
+### 1.2.5. Expensive Features Are Computed When Needed　高コストの特徴は必要なときに計算される
 
 Sometimes it is too expensive to precompute features for all entities in feature pipelines.
-時には、フィーチャーパイプライン内のすべてのエンティティの特徴を事前に計算するのは高コストすぎることがあります。
-
+**時には、フィーチャーパイプライン内のすべてのエンティティの特徴を事前に計算するのは高コストすぎることがあります。**
 If your AI system will not consume all of the features that have been precomputed, you can compute them as MDTs.
 もしあなたのAIシステムが事前に計算されたすべての特徴を消費しない場合、それらをMDTとして計算できます。
-
 For example, imagine you write a batch feature pipeline that runs daily to compute `days_since_bank_cr_changed`. But your (re)training pipeline only runs monthly, and the batch inference pipeline using the feature only runs weekly.
 例えば、毎日実行されるバッチフィーチャーパイプラインを書いたと想像してください。`days_since_bank_cr_changed`を計算します。しかし、あなたの（再）トレーニングパイプラインは月に1回しか実行されず、フィーチャーを使用するバッチ推論パイプラインは週に1回しか実行されません。
-
 Then you have to recompute `days_since_bank_cr_changed` 7 times before it is used for inference and 30 times before it is used for training.
 そのため、推論に使用される前に`days_since_bank_cr_changed`を7回、トレーニングに使用される前に30回再計算する必要があります。
-
 That is a lot of wasteful computation.
 これは非常に無駄な計算です。
-
 Instead, your training pipeline can compute `days_since_bank_cr_changed` as a MDT in training and batch inference pipelines.
-その代わりに、トレーニングパイプラインはトレーニングおよびバッチ推論パイプラインでMDTとして`days_since_bank_cr_changed`を計算できます。
-
+**その代わりに、トレーニングパイプラインはトレーニングおよびバッチ推論パイプラインでMDTとして`days_since_bank_cr_changed`を計算できます。**
 If all of your features can be implemented as MDTs, you may even be able to eliminate your feature pipelines and thus reduce your operational burden.
 もしすべての特徴をMDTとして実装できるなら、フィーチャーパイプラインを排除し、運用負担を軽減できるかもしれません。
+(まあもしその特徴量がそのユースケースでしか使われないなら、って話だけどね:thinking:)
 
-###### 1.2.3.0.0.6. Tokenizers and Chat Templates for LLMs
-###### 1.2.3.0.0.7. LLMのためのトークナイザーとチャットテンプレート
+<!-- ここまで読んだ! -->
+
+### 1.2.6. Tokenizers and Chat Templates for LLMs LLMのためのトークナイザーとチャットテンプレート
 
 When you pass text to an LLM for training or for inference, that text needs to be first transformed into tokens by the LLM's tokenizer before it is fed into the LLM.
-トレーニングまたは推論のためにテキストをLLMに渡すとき、そのテキストは最初にLLMのトークナイザーによってトークンに変換される必要があります。その後、LLMに供給されます。
-
+トレーニングまたは推論のためにテキストをLLMに渡すとき、そのテキストは最初にLLMの**トークナイザーによってトークンに変換される必要**があります。その後、LLMに供給されます。
 Every LLM has its own tokenizer, and the process is known as tokenization.
 すべてのLLMには独自のトークナイザーがあり、このプロセスはトークン化として知られています。
-
 For example, Llama 3's tokenizer, on average, tokenizes one word into two to three tokens—each token is, on average, four characters long.
 例えば、Llama 3のトークナイザーは、平均して1つの単語を2〜3のトークンにトークン化します—各トークンは平均して4文字の長さです。
-
 Llama 3 has a tokenization dictionary with a vocabulary of 128K tokens.
 Llama 3には、128Kトークンの語彙を持つトークン化辞書があります。
 
 Tokenization is an MDT, as it is tightly coupled to the version of your LLM.
-トークン化はMDTであり、あなたのLLMのバージョンに密接に結びついています。
-
+**トークナイズはMDT**であり、あなたのLLMのバージョンに密接に結びついています。(確かに、各モデル特有の変換だよね、これも:thinking:)
 For example, Llama 3 tokenized text cannot be fed into a Llama 2 or Llama 4 model.
 例えば、Llama 3でトークン化されたテキストはLlama 2またはLlama 4モデルに供給することはできません。
-
 A common problem I have seen among practitioners who fine-tune LLMs is that they encounter skew between training and inference time, due to different versions of tokenizers in their training pipeline and online inference pipeline.
-私がLLMをファインチューニングする実務者の間で見た一般的な問題は、トレーニングパイプラインとオンライン推論パイプラインで異なるバージョンのトークナイザーを使用しているために、トレーニングと推論の時間に偏りが生じることです。
-
-
-
-
+私がLLMをファインチューニングする実務者の間で見た**一般的な問題は、トレーニングパイプラインとオンライン推論パイプラインで異なるバージョンのトークナイザーを使用しているために、トレーニングと推論の時間に偏りが生じること**です。
 A solution is to use the Hugging Face (HF) chat template. 
 解決策は、Hugging Face (HF) チャットテンプレートを使用することです。
-
 HF chat templates are tightly coupled with the tokenizer, and they define a conversation as a single string that can be tokenized in the format expected by the model: 
 HFチャットテンプレートはトークナイザーと密接に結びついており、会話をモデルが期待する形式でトークン化できる単一の文字列として定義します：
 
-```   
+```   python
 from transformers import AutoTokenizer   
 tokenizer=AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B")   
 chat = [     
@@ -668,22 +646,28 @@ chat = [
 ]   
 tokenized_prompt = tokenizer.apply_chat_template(chat, tokenize=True)
 ``` 
+
+With the HF chat template, we only need to ensure that the same model version is instantiated in training and inference to prevent skew due to tokenization.
 このHFチャットテンプレートを使用することで、トークン化による歪みを防ぐために、トレーニングと推論で同じモデルバージョンがインスタンス化されていることを確認するだけで済みます。
 
-Text chunking for LLMs for fine-tuning and RAG breaks documents into pieces (pages, paragraphs, sentences, etc.) and is an MIT performed in a feature pipeline.
-LLMsのファインチューニングとRAGのためのテキストチャンクは、ドキュメントを部分（ページ、段落、文など）に分割し、特徴パイプラインで実行されるMITです。
+<!-- ここまで読んだ! -->
 
+---
+(コラム)
+Text chunking for LLMs for fine-tuning and RAG breaks documents into pieces (pages, paragraphs, sentences, etc.) and is an MIT performed in a feature pipeline.
+**LLMsのファインチューニングとRAGのためのテキストチャンクは、ドキュメントを部分（ページ、段落、文など）に分割し、特徴パイプラインで実行されるMIT(モデル非依存変換)**です。
 The chunked text can then be reused at inference time with RAG.
 チャンク化されたテキストは、推論時にRAGで再利用できます。
-
 Text tokenization, however, is model dependent and, therefore, performed in training and inference pipelines.
-ただし、テキストトークン化はモデル依存であるため、トレーニングおよび推論パイプラインで実行されます。
-
+ただし、**テキストトークナイズはモデル依存**であるため、トレーニングおよび推論パイプラインで実行されます。
 You should not couple text chunking with text tokenization if you want to index reusable chunked text for LLMs in a vector index. 
-ベクトルインデックスでLLMsの再利用可能なチャンク化されたテキストをインデックス化したい場合、テキストチャンクとテキストトークン化を結びつけるべきではありません。
+ベクトルインデックスでLLMsの再利用可能なチャンク化されたテキストをインデックス化したい場合、**テキストチャンクとテキストトークン化を結びつけるべきではありません。**
 
-###### 1.2.3.0.0.8. Transformations in Scikit-Learn Pipelines
-###### 1.2.3.0.0.9. Scikit-Learnパイプラインにおける変換
+---
+
+<!-- ここまで読んだ! -->
+
+## 1.3. Transformations in Scikit-Learn Pipelines Scikit-Learnパイプラインにおける変換
 
 Scikit-Learn provides a library of transformers that can implement MDTs in both training and inference pipelines without skew. 
 Scikit-Learnは、トレーニングおよび推論パイプラインの両方で歪みなくMDTを実装できるトランスフォーマーのライブラリを提供します。
@@ -836,8 +820,8 @@ PySparkやPandasのようなArrowバックのDataFrameは、大規模データ�
 In the next section, we will introduce feature transformations for Hopsworks Feature Views that work with Arrow-backed DataFrames. 
 次のセクションでは、ArrowバックのDataFrameで動作するHopsworks Feature Viewsのための特徴変換を紹介します。
 
-###### 1.2.3.0.0.10. Transformations in Feature Views
-###### 1.2.3.0.0.11. 特徴ビューにおける変換
+###### 1.3.0.0.0.2. Transformations in Feature Views
+###### 1.3.0.0.0.3. 特徴ビューにおける変換
 
 Feature views in Hopsworks support the execution of transformation functions when reading features from the feature store. 
 Hopsworksの特徴ビューは、特徴ストアから特徴を読み込む際に変換関数の実行をサポートしています。
@@ -1539,8 +1523,8 @@ PRをマージするときは、コミットをスクワッシュする（すべ
 In the long run, it pays to keep your house tidy! 
 長期的には、整理整頓を保つことが重要です！
 
-###### 1.2.3.0.0.12. A Testing Methodology
-###### 1.2.3.0.0.13. テスト方法論
+###### 1.3.0.0.0.4. A Testing Methodology
+###### 1.3.0.0.0.5. テスト方法論
 
 After covering all that tactical work on defining unit tests, running tests, and automating tests, we need to consider how we write tests and what we should test. 
 ユニットテストの定義、テストの実行、自動化に関するすべての戦術的作業をカバーした後、私たちはテストを書く方法と何をテストすべきかを考慮する必要があります。
@@ -1602,8 +1586,8 @@ A good way to start is to list out what you want to test.
 Then decide what you should test offline using pytest and what to test at runtime with data validation checks, A/B tests, and feature/model monitoring. 
 次に、pytestを使用してオフラインでテストすべきことと、データ検証チェック、A/Bテスト、機能/モデルモニタリングで実行時にテストすべきことを決定します。
 
-###### 1.2.3.0.0.14. Summary and Exercises
-###### 1.2.3.0.0.15. まとめと演習
+###### 1.3.0.0.0.6. Summary and Exercises
+###### 1.3.0.0.0.7. まとめと演習
 
 In this chapter, we looked at MDTs and ODTs from both a data science perspective and an engineering perspective. 
 この章では、データサイエンスの視点とエンジニアリングの視点の両方からMDTとODTを見てきました。
