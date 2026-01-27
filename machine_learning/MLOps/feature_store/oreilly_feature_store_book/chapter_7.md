@@ -671,23 +671,18 @@ You should not couple text chunking with text tokenization if you want to index 
 
 Scikit-Learn provides a library of transformers that can implement MDTs in both training and inference pipelines without skew. 
 Scikit-Learnは、トレーニングおよび推論パイプラインの両方で歪みなくMDTを実装できるトランスフォーマーのライブラリを提供します。
-
 Scikit-Learn also provides a pipeline object to manage both a sequence of transformers and the model. 
 Scikit-Learnは、トランスフォーマーのシーケンスとモデルの両方を管理するためのパイプラインオブジェクトも提供します。
-
 You can pickle and save the pipeline object in a model registry, instead of just saving the model. 
 モデルを保存するだけでなく、パイプラインオブジェクトをモデルレジストリにピクル化して保存できます。
-
 The pipeline object includes both the transformers and the model, as well as any training data parameters (mean, min, max, and encoding maps) needed to apply the feature transformations. 
 パイプラインオブジェクトには、トランスフォーマーとモデルの両方、ならびに特徴変換を適用するために必要なトレーニングデータパラメータ（平均、最小、最大、エンコーディングマップ）が含まれています。
-
 Then, in an inference pipeline, you download the pipeline object (not the model) and use it to apply MDTs and make predictions in a single method call. 
 次に、推論パイプラインでは、パイプラインオブジェクト（モデルではなく）をダウンロードし、それを使用してMDTを適用し、単一のメソッド呼び出しで予測を行います。
-
 In the training pipeline, you create and use the pipeline as follows: 
 トレーニングパイプラインでは、次のようにパイプラインを作成して使用します：
 
-```   
+```   python
 import joblib   
 X_train, X_test, y_train, y_test = fv.train_test_split(test_size=0.2)   
 categorical_features = \     
@@ -722,130 +717,108 @@ joblib.dump(clf, "cc_fraud/cc_fraud.pkl")
 mr_model = mr.register_sklearn_model(name=”cc_fraud”, feature_view=fv,..)   
 mr_model.save("cc_fraud")
 ``` 
-私たちは、Scikit-Learnパイプラインで一般的に遭遇する大きなNumPy配列を保存/読み込む際に、Pythonのネイティブピクルライブラリよりも効率的であるため、joblibを使用します。
 
+We use joblib instead of Python’s native pickle library as it is more efficient when sav‐ ing/loading the large NumPy arrays that are commonly encountered in Scikit-Learn pipelines.
+私たちは、Scikit-Learnパイプラインで一般的に遭遇する大きなNumPy配列を保存/読み込む際に、Pythonのネイティブピクルライブラリよりも効率的であるため、joblibを使用します。
 In batch inference, we read a batch of feature values to score from the feature store, download the pipeline object (including the transformers and the model), and make predictions: 
 バッチ推論では、特徴ストアからスコアリングするための特徴値のバッチを読み込み、パイプラインオブジェクト（トランスフォーマーとモデルを含む）をダウンロードし、予測を行います：
 
-```   
+```python
 model_dir = mr.download_model(name="cc_fraud", version=1)   
-clf = joblib.load(os.path.join(model_dir, "cc_fraud.pkl"))   
+clf = joblib.load(os.path.join(model_dir, "cc_fraud.pkl")) 
+
 # Get feature data arrived since yesterday for scoring   
 df = fv.get_batch_data(start_time=datetime.now()-timedelta(days=1))   
 df["predicted_fraud"] = clf.predict(df)
 ``` 
+
 The model.predict() method applies all of the pipeline transformations before calling predict on the model. 
 model.predict()メソッドは、モデルのpredictを呼び出す前に、すべてのパイプライン変換を適用します。
-
 You need to be careful to use the same version of joblib when building the containers for your training and inference pipelines; otherwise, you may have problems deserializing the pipeline. 
 トレーニングおよび推論パイプラインのコンテナを構築する際には、同じバージョンのjoblibを使用するように注意が必要です。さもなければ、パイプラインのデシリアライズに問題が発生する可能性があります。
 
-
-
 Scikit-Learn has a number of built-in transformations that may be useful in your training and inference pipelines. 
-Scikit-Learnには、トレーニングおよび推論パイプラインで役立つ可能性のある多くの組み込み変換があります。
-
+**Scikit-Learnには、トレーニングおよび推論パイプラインで役立つ可能性のある多くの組み込み変換があります。**
 For imputing values, Scikit-Learn transformers can replace missing values, NaNs (“not a number”), or other placeholders with either default values or computed values. 
 値を補完するために、Scikit-Learnのトランスフォーマーは、欠損値、NaN（「数値ではない」）、または他のプレースホルダーをデフォルト値または計算された値で置き換えることができます。
-
 The SimpleImputer is a univariate algorithm that imputes missing values for a feature using only nonmissing values for that feature. 
 SimpleImputerは、特定の特徴の非欠損値のみを使用して、その特徴の欠損値を補完する単変量アルゴリズムです。
-
 You can define what a missing value is with the `missing_values` parameter (the default is np.nan). 
 欠損値が何であるかは、`missing_values`パラメータ（デフォルトはnp.nan）で定義できます。
-
 The available SimpleImputer strategies are mean, median, constant (also set the fill_value parameter to the default value to replace the missing value with), and most_frequent, the mode of that feature. 
 利用可能なSimpleImputerの戦略は、平均、中央値、定数（欠損値を置き換えるためのデフォルト値にfill_valueパラメータを設定することも含む）、およびその特徴の最頻値（most_frequent）です。
-
 In contrast, the IterativeImputer implements model-based imputation and uses all features to estimate a missing value (it is a multivariate algorithm). 
 対照的に、IterativeImputerはモデルベースの補完を実装し、すべての特徴を使用して欠損値を推定します（これは多変量アルゴリズムです）。
-
 Another more sophisticated technique is to generate multiple imputations and apply an analysis pipeline to the imputations. 
 もう一つのより洗練された技術は、複数の補完を生成し、それに分析パイプラインを適用することです。
 
 For categorical variables, Scikit-Learn supports the OneHotEncoder, which is suitable for categorical variables with a low or medium cardinality. 
-カテゴリ変数に対して、Scikit-LearnはOneHotEncoderをサポートしており、これは低または中程度のカーディナリティを持つカテゴリ変数に適しています。
-
+**カテゴリ変数に対して、Scikit-LearnはOneHotEncoderをサポートしており、これは低または中程度のカーディナリティを持つカテゴリ変数に適しています。**
 You can exclude infrequent categories with the min_frequency parameter, which removes categories with a cardinality smaller than min_frequency. 
 min_frequencyパラメータを使用して、頻度の低いカテゴリを除外できます。これにより、カーディナリティがmin_frequencyより小さいカテゴリが削除されます。
-
 You can also specify a default category called infrequent by setting the handle_unknown parameter to 'infrequent_if_exist', which will set the category for any new category encountered in inference to infrequent. 
 handle_unknownパラメータを'infrequent_if_exist'に設定することで、infrequentというデフォルトカテゴリを指定することもでき、推論中に遭遇した新しいカテゴリのカテゴリをinfrequentに設定します。
-
 You can also set handle_unknown to ignore, which will produce a one-hot encoded array with zeros for all columns. 
 handle_unknownをignoreに設定すると、すべての列に対してゼロの値を持つワンホットエンコードされた配列が生成されます。
-
 The default for handle_unknown is to raise an error if a new category is encountered during inference. 
 handle_unknownのデフォルトは、推論中に新しいカテゴリが遭遇した場合にエラーを発生させることです。
-
 Scikit-Learn also supports an OrdinalEncoder for categories with a natural ordering and a TargetEncoder for encoding unordered categories with high cardinality, for example, a zip code in the United States (US). 
-Scikit-Learnは、自然な順序を持つカテゴリ用のOrdinalEncoderと、高カーディナリティの順序なしカテゴリをエンコードするためのTargetEncoderもサポートしています。例えば、アメリカ合衆国の郵便番号などです。
+**Scikit-Learnは、自然な順序を持つカテゴリ用のOrdinalEncoderと、高カーディナリティの順序なしカテゴリをエンコードするためのTargetEncoderもサポート**しています。例えば、アメリカ合衆国の郵便番号などです。
+
+<!-- ここまで読んだ! -->
 
 For numerical variables, Scikit-Learn provides a number of classes in the sklearn.preprocessing package. 
-数値変数に対して、Scikit-Learnはsklearn.preprocessingパッケージ内にいくつかのクラスを提供しています。
-
+数値変数に対して、Scikit-Learnは`sklearn.preprocessing`パッケージ内にいくつかのクラスを提供しています。
 The StandardScaler class standardizes a numerical feature, and it implements Scikit-Learn’s Transformer API to compute the mean and standard deviation of a training set (X_train), which are then saved in the Pipeline object. 
 StandardScalerクラスは数値特徴を標準化し、Scikit-LearnのトランスフォーマーAPIを実装してトレーニングセット（X_train）の平均と標準偏差を計算し、それらはPipelineオブジェクトに保存されます。
-
 The MinMaxScaler scales features to lie between zero and one (or some other minimum and maximum), preserving the shape of the distribution. 
 MinMaxScalerは特徴をゼロと一の間（または他の最小値と最大値の間）にスケーリングし、分布の形状を保持します。
-
 MaxAbsScaler is better at preserving sparsity than MinMaxScaler. 
 MaxAbsScalerはMinMaxScalerよりもスパース性を保持するのに優れています。
 
 Other important numerical transformations are quantile and power transforms that perform monotonic transformations to approximate the Gaussian, preserving the rank order of the data. 
 他の重要な数値変換には、データの順位を保持しながらガウス分布を近似する単調変換を行う分位数変換とパワー変換があります。
-
 They can both map feature data from any distribution to a distribution that approximates the Gaussian distribution. 
 これらはどちらも、任意の分布からガウス分布を近似する分布に特徴データをマッピングできます。
-
 From the power transforms, Scikit-Learn supports both the Box-Cox and Yeo-Johnson algorithms. 
 パワー変換から、Scikit-LearnはBox-CoxおよびYeo-Johnsonアルゴリズムの両方をサポートしています。
-
 In Scikit-Learn, you can normalize a NumPy array (or Pandas DataFrame backed by a NumPy array) by applying the `preprocessing.normalize` function to specify one of the available norms: l1, l2 (default), or max. 
 Scikit-Learnでは、`preprocessing.normalize`関数を適用して、利用可能なノルムの1つ（l1、l2（デフォルト）、またはmax）を指定することで、NumPy配列（またはNumPy配列に基づくPandas DataFrame）を正規化できます。
-
 The l1 norm updates (scales) the values so that the sum of the absolute values is one, the l2 norm scales the values so that the sum of the squares of the values is equal to one, and the max norm scales the values so that the largest absolute value within each sample is 1. 
 l1ノルムは値を更新（スケーリング）して絶対値の合計が1になるようにし、l2ノルムは値をスケーリングして値の二乗の合計が1になるようにし、maxノルムは各サンプル内の最大絶対値が1になるように値をスケーリングします。
-
 For example, with the l2 norm, the array of values [3, 4, 0] would be normalized to [0.6, 0.8, 0]. 
 例えば、l2ノルムを使用すると、値の配列[3, 4, 0]は[0.6, 0.8, 0]に正規化されます。
 
 As of 2025, the transformation algorithms in Scikit-Learn’s preprocessing package operate on NumPy arrays and do not natively support Arrow-backed DataFrames. 
 2025年現在、Scikit-Learnの前処理パッケージの変換アルゴリズムはNumPy配列で動作し、ArrowバックのDataFrameをネイティブにサポートしていません。
-
 Arrow-backed DataFrames, such as those in PySpark and Pandas, are more scalable for large datasets. 
 PySparkやPandasのようなArrowバックのDataFrameは、大規模データセットに対してよりスケーラブルです。
-
 In the next section, we will introduce feature transformations for Hopsworks Feature Views that work with Arrow-backed DataFrames. 
 次のセクションでは、ArrowバックのDataFrameで動作するHopsworks Feature Viewsのための特徴変換を紹介します。
 
-###### 1.3.0.0.0.2. Transformations in Feature Views
-###### 1.3.0.0.0.3. 特徴ビューにおける変換
+<!-- ここまで読んだ! -->
+
+## 1.4. Transformations in Feature Views　特徴ビューにおける変換
 
 Feature views in Hopsworks support the execution of transformation functions when reading features from the feature store. 
-Hopsworksの特徴ビューは、特徴ストアから特徴を読み込む際に変換関数の実行をサポートしています。
-
+Hopsworksの**特徴ビューは、特徴ストアから特徴を読み込む際に変換関数の実行をサポート**しています。
 There are built-in transformation functions—such as one_hot_encoder, min_max_scalar, and label_encoder—that can be defined as part of a feature view. 
 one_hot_encoder、min_max_scalar、label_encoderなどの組み込み変換関数があり、これらは特徴ビューの一部として定義できます。
-
 They take features in the feature view as input parameters and return one or more transformed feature values. 
 これらは特徴ビュー内の特徴を入力パラメータとして受け取り、1つ以上の変換された特徴値を返します。
-
 You can also write your own user-defined (custom) transformation functions for features in a feature view. 
 特徴ビュー内の特徴に対して独自のユーザー定義（カスタム）変換関数を書くこともできます。
 
 Transformation functions are executed in the Hopsworks client after it has read data with a feature view but before it returns the feature data. 
 変換関数は、Hopsworksクライアントが特徴ビューでデータを読み込んだ後、特徴データを返す前に実行されます。
-
 Feature view transformations are MDTs that guarantee no skew between training and inference. 
-特徴ビューの変換は、トレーニングと推論の間に偏りがないことを保証するMDTです。
-
+**特徴ビューの変換は、トレーニングと推論の間に偏りがないことを保証するMDT**です。
 Any training data parameters (mean, min, max, and encoding maps) needed to apply feature transformations are stored in training dataset objects that are saved in the model registry, along with the model and the feature view used to create the training data. 
 特徴変換を適用するために必要なトレーニングデータパラメータ（平均、最小、最大、エンコーディングマップ）は、トレーニングデータを作成するために使用されたモデルおよび特徴ビューとともにモデルレジストリに保存されるトレーニングデータセットオブジェクトに保存されます。
-
 Then in an inference pipeline, the model, along with its feature view and training data object, is downloaded, and its feature view retrieves feature data and applies MDTs to create feature vectors used for model prediction. 
 その後、推論パイプラインでは、モデルとその特徴ビューおよびトレーニングデータオブジェクトがダウンロードされ、特徴ビューが特徴データを取得し、MDTを適用してモデル予測に使用される特徴ベクトルを作成します。
+
+<!-- ここまで読んだ! -->
 
 In the following code snippet, we define a feature view over credit card transaction features and declaratively apply three built-in feature transformations to three different features—min_max_scaler to the amount feature, one_hot_encoder to the category feature, and label_encoder to the fraud label. 
 次のコードスニペットでは、クレジットカード取引の特徴に対する特徴ビューを定義し、amount特徴にmin_max_scaler、category特徴にone_hot_encoder、fraudラベルにlabel_encoderという3つの異なる特徴に3つの組み込み特徴変換を宣言的に適用します。
@@ -864,36 +837,30 @@ fv = fs.create_feature_view(
 )
 ```
 
-When you create a feature view, the transformation_functions list specifies transformations that are applied to named features in the feature view. 
-特徴ビューを作成するとき、transformation_functionsリストは特徴ビュー内の名前付き特徴に適用される変換を指定します。
+<!-- ここまで読んだ! -->
 
+When you create a feature view, the transformation_functions list specifies transformations that are applied to named features in the feature view. 
+**特徴ビューを作成するとき、transformation_functionsリストは特徴ビュー内の名前付き特徴に適用される変換を指定**します。
 Each entry in the list contains the name of the transformation function and the names of features from the feature view as input parameters. 
 リスト内の各エントリには、変換関数の名前と特徴ビューからの特徴の名前が入力パラメータとして含まれています。
-
 You can also include index columns or helper columns as parameters to a transformation function. 
 インデックス列やヘルパー列を変換関数のパラメータとして含めることもできます。
-
 In the above example, the transformation functions are univariate (one-to-one) functions that take a single feature as input and return a transformed value as output. 
 上記の例では、変換関数は単変量（1対1）関数であり、単一の特徴を入力として受け取り、変換された値を出力として返します。
-
 You can also write custom multivariate functions that can take one to many features as input and return one to many transformed features as output. 
-1つ以上の特徴を入力として受け取り、1つ以上の変換された特徴を出力として返すカスタム多変量関数を書くこともできます。
+**1つ以上の特徴を入力として受け取り、1つ以上の変換された特徴を出力として返すカスタム多変量関数を書くこともできます。** (feature hashingとかは結構複数のカテゴリ特徴量をまとめて変換するケースもあるよね...!:thinking:)
 
 If no feature names are provided explicitly in the transformation_functions list, the transformation function will default to using the feature name(s) in the feature view that matches the name of the parameter(s) in the transformation function definition. 
 transformation_functionsリストに特徴名が明示的に提供されていない場合、変換関数は変換関数定義内のパラメータ名と一致する特徴ビュー内の特徴名を使用することがデフォルトとなります。
-
 This works well with user-defined transformations, but not with built-in transformations. 
 これはユーザー定義の変換にはうまく機能しますが、組み込みの変換には機能しません。
-
 It’s good practice to be explicit in the feature view definition and provide feature names so that developers can see what transformations are applied to which features. 
 特徴ビューの定義で明示的に特徴名を提供することは良い習慣であり、開発者がどの特徴にどの変換が適用されているかを確認できるようにします。
 
 Let’s look at how transformation functions for feature views work in practice. 
 特徴ビューの変換関数が実際にどのように機能するかを見てみましょう。
-
 In the following code snippet, we use a feature view to read DataFrames containing the features and labels in the training and test sets. 
 次のコードスニペットでは、特徴ビューを使用してトレーニングセットとテストセットの特徴とラベルを含むDataFrameを読み込みます。
-
 By default, the transformation functions are executed inside the train_test_split method and the returned DataFrames contain the transformed feature data: 
 デフォルトでは、変換関数はtrain_test_splitメソッド内で実行され、返されるDataFrameには変換された特徴データが含まれます。
 
@@ -903,7 +870,6 @@ X_train, X_test, y_train, y_test = fv.train_test_split(test_size=0.1)
 
 Similarly, when we read a batch of inference data, it will, by default, return transformed feature data. 
 同様に、推論データのバッチを読み込むと、デフォルトで変換された特徴データが返されます。
-
 Here, however, we read untransformed inference data with the feature view by setting Transformed=False: 
 ただし、ここではTransformed=Falseを設定することで、特徴ビューを使用して変換されていない推論データを読み込みます。
 
@@ -922,58 +888,42 @@ features = fv.get_feature_vector(serving_keys={"cc_num": "1234 0432 0122 9833"})
 
 Transformation functions can change the schema of the feature data read from the feature view, as they can return more or fewer columns than there are features in the feature view. 
 変換関数は、特徴ビューから読み込まれた特徴データのスキーマを変更することができ、特徴ビューにある特徴の数よりも多くまたは少ない列を返すことができます。
-
-For example, one_hot_encoding can transform a string column into
-例えば、one_hot_encodingは文字列列を変換できます。
-
-
-
-hundreds of columns in a returned DataFrame (one column for each category). 
-返されたDataFrameには数百の列があり（各カテゴリごとに1列）、
-
+For example, one_hot_encoding can transform a string column into hundreds of columns in a returned DataFrame (one column for each category). 
+例えば、one_hot_encodingは文字列列を返されるDataFrame内の数百の列に変換できます（各カテゴリに対して1つの列）。
 The feature view, however, ensures that the number and order of columns in the returned data will be consistent when reading training and inference data. 
 しかし、フィーチャービューは、トレーニングデータと推論データを読み込む際に、返されるデータの列の数と順序が一貫していることを保証します。
-
 As a developer, you only need to work with the model’s feature view and the training/inference data created by it. 
 開発者としては、モデルのフィーチャービューとそれによって作成されたトレーニング/推論データのみを扱えばよいです。
-
 You generally do not work with the model signature—the schema of the DataFrame input to the model. 
 一般的に、モデルのシグネチャ（モデルへのDataFrame入力のスキーマ）を扱うことはありません。
-
 The feature view is responsible for mapping its features to and from the model signature. 
 フィーチャービューは、その特徴をモデルのシグネチャにマッピングする責任があります。
-
 This means, for example, that when working with categorical features, you only work with the string column (in the feature view), not with the one-hot encoded columns (in the training/inference data). 
-例えば、カテゴリカルフィーチャーを扱う場合、フィーチャービュー内の文字列列のみを扱い、トレーニング/推論データ内のワンホットエンコードされた列は扱いません。
+つまり、例えば、カテゴリ特徴を扱う場合、ワンホットエンコードされた列（トレーニング/推論データ）ではなく、文字列列（フィーチャービュー内）だけを扱います。
+
+<!-- ここまで読んだ! -->
 
 You can also define your own custom transformations for feature views as user-defined transformation functions. 
 フィーチャービューに対して、ユーザー定義の変換関数として独自のカスタム変換を定義することもできます。
-
 A user-defined transformation function is a Python or Pandas UDF with the @hopsworks.udf annotation. 
 ユーザー定義の変換関数は、@hopsworks.udfアノテーションを持つPythonまたはPandas UDFです。
-
 Pandas UDFs can be scaled to process large volumes of data, in either Pandas or PySpark, while Python UDFs do not scale well. 
 Pandas UDFは、PandasまたはPySparkのいずれかで大量のデータを処理するためにスケールできますが、Python UDFはうまくスケールしません。
-
 Python UDFs, however, have lower latency in online inference pipelines than Pandas UDFs. 
 ただし、Python UDFはPandas UDFよりもオンライン推論パイプラインでのレイテンシが低くなります。
-
 For this reason, when possible, the best practice is to write transformation functions as Python functions that can be executed as either a Pandas UDF (in a feature/training/batch-inference pipeline) or a Python UDF (in an online inference pipeline). 
 このため、可能な限り、変換関数はPandas UDF（フィーチャー/トレーニング/バッチ推論パイプライン内）またはPython UDF（オンライン推論パイプライン内）として実行できるPython関数として記述するのがベストプラクティスです。
-
 We call these types of transformation functions _mixed-mode_ UDFs, as they can run as either Pandas UDFs or Python UDFs, depending on the context. 
 これらのタイプの変換関数を_mixed-mode_ UDFと呼びます。これは、文脈に応じてPandas UDFまたはPython UDFとして実行できるためです。
-
 In general, only simple UDFs can be written as mixed-mode UDFs. 
 一般的に、単純なUDFのみがmixed-mode UDFとして記述できます。
 
 Here is an example of a mixed-mode transformation function that encodes information about how much a transaction deviates from the mean transaction amount from the training dataset. 
 以下は、トレーニングデータセットの平均取引額からの取引の偏差をエンコードするmixed-mode変換関数の例です。
-
 Hopsworks automatically fills in statistics for the training dataset in the stats object: 
 Hopsworksは、statsオブジェクト内のトレーニングデータセットの統計を自動的に埋め込みます：
 
-```   
+```   python
 stats = TransformationStatistics("amount")   
 @hopsworks.udf(float)   
 def transaction_amount_deviation(amount, statistics=stats):     
@@ -982,20 +932,21 @@ def transaction_amount_deviation(amount, statistics=stats):
 
 In a training pipeline, `amount is a` `pd.Series and` `statistics.amount.mean is a` scalar, so it executes as a vectorized function in Pandas. 
 トレーニングパイプラインでは、`amountは` `pd.Seriesであり、` `statistics.amount.meanは` スカラーであるため、Pandas内でベクトル化された関数として実行されます。
-
 However, in online inference, ``` amount is a float, so the function executes as a low-latency Python UDF. 
 ただし、オンライン推論では、``` amountはfloatであるため、関数は低レイテンシのPython UDFとして実行されます。
 
+<!-- ここまで読んだ! -->
+
 We can also explicitly define a user-defined transformation function to run in Pandas _mode, in both training and inference. 
 トレーニングと推論の両方でPandas _modeで実行されるユーザー定義の変換関数を明示的に定義することもできます。
-
 This can be executed as a Pandas UDF by_ PySpark. 
 これは、PySparkによってPandas UDFとして実行できます。
-
 Here, we compute days_to_card_expiry in a transformation function that takes as inputs two features from a feature view, the `cc_expiry_date and` ``` event_time, that it expects are pd.Series containing dates. 
 ここでは、`cc_expiry_date`と``` event_timeの2つのフィーチャーを入力として受け取り、日付を含むpd.Seriesであることを期待する変換関数内でdays_to_card_expiryを計算します。
-
 It computes and returns days_to_card_expiry with int value for each input:   
+それは各入力に対してint値でdays_to_card_expiryを計算して返します：
+
+```python
 @hopsworks.udf(return_type=int, mode="pandas")   
 def days_to_card_expiry(cc_expiry_date, event_time):     
     return (cc_expiry_date - event_time).dt.days
@@ -1009,47 +960,49 @@ As this transformation function does not include training data statistics, it ca
 
 Sometimes features can be implemented as either an MIT or an MDT. 
 時には、フィーチャーはMITまたはMDTのいずれかとして実装できます。
-
 For example, in Chapter 6 we described how to compute days_to_card_expiry with an MIT in a feature pipeline. 
 例えば、第6章では、フィーチャーパイプラインでMITを使用してdays_to_card_expiryを計算する方法について説明しました。
-
 The feature pipeline, however, will have to run daily to ensure ``` days_to_card_expiry is correct. 
 ただし、フィーチャーパイプラインは、``` days_to_card_expiryが正しいことを保証するために、毎日実行する必要があります。
-
 If the feature pipeline fails to run on a given day (or runs at any time other than midnight), then clients risk reading incorrect feature data. 
 特定の日にフィーチャーパイプラインが実行されなかった場合（または真夜中以外の時間に実行された場合）、クライアントは不正確なフィーチャーデータを読み取るリスクがあります。
-
 There is also the operational overhead of operating the feature pipeline, which you don’t have with the MDT that is only run when needed in training and inference pipelines. 
 フィーチャーパイプラインを運用するための運用オーバーヘッドもありますが、これはトレーニングおよび推論パイプラインで必要なときにのみ実行されるMDTにはありません。
-
 Figure 7-3 shows flowcharts that help guide you in how to implement ``` days_to_card_expiry: as an MIT, MDT, or ODT. 
-図7-3は、``` days_to_card_expiryをMIT、MDT、またはODTとして実装する方法をガイドするフローチャートを示しています。
+図7-3は、days_to_card_expiry (=カード有効期限までの日数)をMIT、MDT、またはODTとして実装する方法をガイドするフローチャートを示しています。
 
+
+![]()
 **Figure 7-3. These flowcharts guide you on how to implement the days_to_card_expiry feature, depending on whether it will be (a) used by batch ML systems or (b) computed at real time.**
 **図7-3. これらのフローチャートは、days_to_card_expiryフィーチャーを実装する方法をガイドします。これは、（a）バッチMLシステムで使用されるか、（b）リアルタイムで計算されるかによります。**
 
-If the feature will be used by a batch ML system, you should implement the feature as an MDT if you will not reuse the computed feature or if you don’t want the overhead of the feature pipeline. 
-フィーチャーがバッチMLシステムで使用される場合、計算されたフィーチャーを再利用しない場合やフィーチャーパイプラインのオーバーヘッドを避けたい場合は、フィーチャーをMDTとして実装する必要があります。
+- メモ: 図7-3の内容
+  - (a) バッチMLシステムで使用される場合
+    - Will this feature be reused in many models? Is the overhead of scheduling a feature pipeline daily acceptable? (この特徴量は多くのモデルで再利用されますか？毎日フィーチャーパイプラインをスケジュールするオーバーヘッドは許容できますか？)
+      - Yes → MIT(モデル非依存変換)として実装すべき!
+      - No → MDT(モデル依存変換)として実装すべき!
+  - (b) リアルタイムで計算される場合
+    - Do I want to precompute this feature in a feature pipeline? (この特徴量をフィーチャーパイプラインで事前計算したいですか？)
+      - Yes → ODT(オンデマンド変換)として実装すべき!
+      - No → MDT(モデル依存変換)として実装すべき!
 
+If the feature will be used by a batch ML system, you should implement the feature as an MDT if you will not reuse the computed feature or if you don’t want the overhead of the feature pipeline. 
+フィーチャーがバッチMLシステムで使用される場合、**計算されたフィーチャーを再利用しない場合やフィーチャーパイプラインのオーバーヘッドを避けたい場合は、フィーチャーをMDTとして実装**する必要があります。
 Otherwise, it should be an MIT. 
 そうでなければ、それはMITであるべきです。
-
 If days_to_card_expiry is a real-time feature that requires at least one request time parameter to be computed, you should implement it as an MDT if you do not want to be able to precompute the feature using historical data and save it in the feature store for use by many models. 
 days_to_card_expiryが、計算に少なくとも1つのリクエスト時間パラメータを必要とするリアルタイムフィーチャーである場合、歴史的データを使用してフィーチャーを事前計算し、多くのモデルで使用するためにフィーチャーストアに保存したくない場合は、MDTとして実装する必要があります。
-
 Otherwise, it should be an ODT. 
-そうでなければ、それはODTであるべきです。
+そうでなければ、それはODT(Online Demand Transformation)であるべきです。
 
 In our other example user-defined transformation, transaction_amount_deviation has to be an MDT as it takes amount as a request time parameter and a training data statistic (amount.mean) as a parameter. 
 別の例のユーザー定義変換であるtransaction_amount_deviationは、amountをリクエスト時間パラメータとして受け取り、トレーニングデータ統計（amount.mean）をパラメータとして受け取るため、MDTでなければなりません。
-
 ODTs do not have training data statistics as parameters, as they are computed offline in feature pipelines (where there is no training data, only reusable feature data). 
 ODTはトレーニングデータ統計をパラメータとして持たず、フィーチャーパイプラインでオフラインで計算されます（トレーニングデータはなく、再利用可能なフィーチャーデータのみがあります）。
-
 User-defined transformation functions are attached to feature views in the same way as built-in transformation functions are: 
 ユーザー定義の変換関数は、組み込みの変換関数と同様にフィーチャービューに添付されます：
 
-```   
+```   python
 fv = fs.create_feature_view(     
     ... 
     transformation_functions = \       
@@ -1059,45 +1012,37 @@ fv = fs.create_feature_view(
 
 You can read the preceding syntax as follows: the days_to_card_expiry transforma‐ tion function is applied to the `cc_expiry_date and` `event_time features in the fea‐` ture view. 
 前述の構文は次のように読むことができます：days_to_card_expiry変換関数は、フィーチャービュー内の`cc_expiry_date`と`event_time`フィーチャーに適用されます。
-
 There is no days_to_card_expiry feature defined in the feature view, just the transformation function to create it. 
 フィーチャービューにはdays_to_card_expiryフィーチャーは定義されておらず、それを作成するための変換関数のみがあります。
-
 The days_to_card_expiry function is run as a Pandas UDF in a training pipeline and a batch inference pipeline. 
 days_to_card_expiry関数は、トレーニングパイプラインとバッチ推論パイプラインでPandas UDFとして実行されます。
-
 If you need to create large volumes of training data, you should write a training dataset pipeline in PySpark that uses one of the `fv.create_train*(..) methods to save the training` data as files. 
 大量のトレーニングデータを作成する必要がある場合は、`fv.create_train*(..)`メソッドの1つを使用してトレーニングデータをファイルとして保存するPySparkのトレーニングデータセットパイプラインを記述する必要があります。
-
 PySpark will partition the DataFrame across many workers and execute the transformation function as a Pandas UDF at each worker, with the workers inde‐ pendently saving the training data they create as files. 
 PySparkはDataFrameを多くのワーカーに分割し、各ワーカーでPandas UDFとして変換関数を実行し、ワーカーは独立して作成したトレーニングデータをファイルとして保存します。
 
-###### On-Demand Transformations
-同じ変換関数は、フィーチャービューで使用されるのと同様に、トレーニングデータ統計をパラメータとして含まない限り、HopsworksでODTとして使用できます。
+<!-- ここまで読んだ! -->
+
+## 1.5. On-Demand Transformations
 
 The same transformation functions used in feature views can be used as ODTs in Hopsworks as long as they do not include training data statistics as a parameter. 
-ODTは、リクエスト時間パラメータとフィーチャービューで読み取られる事前計算されたフィーチャーの組み合わせを持つことがあります。
-
+同じ変換関数は、フィーチャービューで使用されるのと同様に、トレーニングデータ統計をパラメータとして含まない限り、HopsworksでODTとして使用できます。
 ODTs may have a combination of request-time parameters and precomputed features read with the feature view. 
-時には、推論ヘルパー列をフィーチャービューに追加します。これにより、ODTを計算するために使用される事前計算されたフィーチャーデータが提供されます。
-
-Sometimes you add inference helper columns to the feature view, as they provide precomputed feature data that is used to compute an ODT. 
+ODTは、request-timeパラメータ(=リクエスト時に提供されるパラメータ)と、特徴ビューで読み取られた事前計算された特徴の組み合わせを持つ場合があります。
+Sometimes you add inference helper columns to the feature view, as they provide precomputed feature data that is used to compute an ODT.
+場合によっては、**ODTを計算するために使用される事前計算された特徴データを提供するため、特徴ビューに推論ヘルパー列を追加**します。(ex. これは例えば、ユーザーの年齢を計算するために生年月日を含む列を追加する場合とか...!:thinking:)
 ODTs differ from MDTs in where they are registered. 
 ODTは、MDTとは異なり、どこに登録されるかが異なります。
-
 You register ODTs with a feature group rather than with a feature view, as ODTs can be executed in feature pipelines. 
 ODTはフィーチャーパイプラインで実行できるため、フィーチャービューではなくフィーチャーグループに登録します。
-
 Feature views know which of their features are computed as ODTs and compute them in online inference pipelines. 
 フィーチャービューは、どのフィーチャーがODTとして計算されるかを知っており、オンライン推論パイプラインでそれらを計算します。
-
 ODTs can also be univariate or multivariate functions. 
 ODTは、単変量または多変量関数であることもできます。
+In the following code, a real-time feature, days_to_card_expiry, is defined for  cc_trans_fg: 
+以下のコードでは、リアルタイムフィーチャーであるdays_to_card_expiryが cc_trans_fgのために定義されています：
 
-In the following code, a real-time feature, days_to_card_expiry, is defined for ``` cc_trans_fg: 
-以下のコードでは、リアルタイムフィーチャーであるdays_to_card_expiryが``` cc_trans_fgのために定義されています：
-
-```   
+```   python
 fg = feature_store.create_feature_group(name="cc_trans_fg",           
     version=1,           
     description="Transaction Features",           
@@ -1112,105 +1057,89 @@ fg.insert(df) # transformation functions are run on insertion
 
 The ODT is executed in this feature pipeline when you call `fg.insert(df). 
 ODTは、`fg.insert(df)`を呼び出すと、このフィーチャーパイプラインで実行されます。
-
 The names of the parameters for the `days_to_card_expiry function need to match the` names of columns in df; otherwise, you will get an error. 
 `days_to_card_expiry`関数のパラメータ名は、df内の列名と一致する必要があります。そうでなければ、エラーが発生します。
-
 Sometimes a df can contain columns used to compute the ODT, but those columns are not features in the feature group. 
 時には、dfがODTを計算するために使用される列を含むことがありますが、それらの列はフィーチャーグループ内のフィーチャーではありません。
-
 In this case, you can tell the ODT to `drop those columns from` `df after the` feature has been computed: 
 この場合、ODTに対して、フィーチャーが計算された後に`dfからこれらの列を削除する`ように指示できます：
 
-```   
+```   python
 @hopsworks.udf(return_type=float, drop=["cc_expiry_date"])
 ```
 
 MDTs can also use the same `drop syntax to drop columns. 
 MDTも同じ`drop構文を使用して列を削除できます。
-
 In Chapter 11, we will look at how both ODTs and MDTs are executed in online inference pipelines. 
 第11章では、ODTとMDTの両方がオンライン推論パイプラインでどのように実行されるかを見ていきます。
 
-###### PyTorch Transformations
-We switch tracks now to look at transformations on unstructured data (image, audio, video, or text data). 
-ここで、非構造化データ（画像、音声、動画、またはテキストデータ）に対する変換を見ていきます。
+<!-- ここまで読んだ! -->
 
+## 1.6. PyTorch Transformations
+
+We switch tracks now to look at transformations on unstructured data (image, audio, video, or text data). 
+ここで、**非構造化データ（画像、音声、動画、またはテキストデータ）に対する変換**を見ていきます。
 ML systems trained with unstructured data typically use deep learning algorithms and transform the data into tensors for model input. 
 非構造化データでトレーニングされたMLシステムは、通常、深層学習アルゴリズムを使用し、データをモデル入力用のテンソルに変換します。
-
 Convolutional neural networks (CNNs) and transformer architectures (transformers) are the most popular deep learning model architectures. 
 _畳み込みニューラルネットワーク（CNN）と_ _トランスフォーマーアーキテクチャ（トランスフォーマー）は、最も人気のある深層学習モデルアーキテクチャです。
-
 PyTorch is the most popular frame‐ work for deep learning, with alternatives including TensorFlow and JAX. 
 PyTorchは深層学習のための最も人気のあるフレームワークであり、TensorFlowやJAXなどの代替手段もあります。
-
 In ML systems built with PyTorch, we can also benefit from refactoring our data transformation code into MITs, MDTs, and ODTs in FTI pipelines. 
 PyTorchで構築されたMLシステムでは、FTIパイプライン内でデータ変換コードをMIT、MDT、およびODTにリファクタリングすることで利益を得ることができます。
-
 These data trans‐ formations will, however, output tensors or work with tensors—up to now, we have only looked at MITs, MDTs, and ODTs that work with tabular data. 
-ただし、これらのデータ変換はテンソルを出力するか、テンソルで作業します。これまで、私たちは表形式データで動作するMIT、MDT、およびODTのみを見てきました。
-
-
+ただし、これらのデータ変換はテンソルを出力するか、テンソルで作業します。**これまで、私たちは表形式データで動作するMIT、MDT、およびODTのみを見てきました。** (あ、確かに...!:thinking:)
 
 We will look at PyTorch transformations from the context of an example ML system that predicts your celebrity twin using an image classification model.[1] 
 私たちは、画像分類モデルを使用してあなたの有名人の双子を予測する例のMLシステムの文脈からPyTorchの変換を見ていきます。[1]
-
 Figure 7-4 shows a real-time ML system based on the FTI architecture. 
 図7-4は、FTIアーキテクチャに基づくリアルタイムMLシステムを示しています。
-
 The training pipeline fine-tunes a ResNet model using the CelebA dataset. 
 トレーニングパイプラインは、CelebAデータセットを使用してResNetモデルを微調整します。
-
 The online inference pipeline takes an uploaded image of a person as input, the image is transformed into an input tensor, and the model predicts the closest-matching celebrity by using the input tensor. 
 オンライン推論パイプラインは、アップロードされた人物の画像を入力として受け取り、その画像を入力テンソルに変換し、モデルは入力テンソルを使用して最も一致する有名人を予測します。
-
 The source code for this example is found in the book’s GitHub repository. 
 この例のソースコードは、本のGitHubリポジトリにあります。
 
+
+![]()
 **Figure 7-4. A real-time ML system that predicts your celebrity twin using image classification. It uses PyTorch and Torchvision. Some image preprocessing is offloaded to the feature pipeline and executed in ODTs and image augmentation. Other image preprocessing tasks are executed as MDTs in both the training and online inference pipelines.**
 **図7-4. 画像分類を使用してあなたの有名人の双子を予測するリアルタイムMLシステム。PyTorchとTorchvisionを使用しています。一部の画像前処理はフィーチャーパイプラインにオフロードされ、ODTsおよび画像拡張で実行されます。他の画像前処理タスクは、トレーニングおよびオンライン推論パイプラインの両方でMDTsとして実行されます。**
 
 The benefit of the FTI architecture in this example is that it shifts image transformations from the training pipeline to the feature pipeline. 
 この例におけるFTIアーキテクチャの利点は、画像変換をトレーニングパイプラインからフィーチャーパイプラインに移すことです。
-
 This reduces the number of image transformations that are performed on CPUs in the training pipeline, before the input tensors are passed to the GPU for model training. 
 これにより、入力テンソルがモデルのトレーニングのためにGPUに渡される前に、トレーニングパイプラインでCPU上で実行される画像変換の数が減ります。
-
 If training is bottlenecked on high CPU load due to a large amount of image preprocessing, offloading transformations to the feature pipeline will increase GPU utilization during training. 
 トレーニングが大量の画像前処理による高いCPU負荷でボトルネックになっている場合、変換をフィーチャーパイプラインにオフロードすることで、トレーニング中のGPUの利用率が向上します。
-
 The feature pipeline performs the following tasks: image resizing, image centering, jitter control, and image augmentation. 
-フィーチャーパイプラインは、次のタスクを実行します：画像のリサイズ、画像のセンタリング、ジッター制御、および画像拡張。
-
+**フィーチャーパイプラインは、次のタスクを実行します：画像のリサイズ、画像のセンタリング、ジッター制御、および画像拡張。**
 Image augmentation occurs when you create many variations on the same input image for training data—you can flip an image, change its colors, or erase part of an image randomly (for self-supervised learning with transformers). 
 画像拡張は、トレーニングデータのために同じ入力画像の多くのバリエーションを作成する際に発生します。画像を反転させたり、色を変更したり、画像の一部をランダムに消去したりできます（トランスフォーマーを使用した自己教師あり学習のために）。
-
 Image augmentation helps CNNs generalize better, as the different variations of the same image prevent the model from overfitting on a single image by learning features that are invariant to transformations. 
 画像拡張は、同じ画像の異なるバリエーションが、変換に対して不変な特徴を学ぶことによってモデルが単一の画像に過剰適合するのを防ぐため、CNNがより良く一般化するのに役立ちます。
 
+<!-- ここまで読んだ! -->
+
 Image augmentation happens after we resize, center crop, and color jitter images. 
 画像拡張は、画像をリサイズし、センタークロップし、色のジッターを適用した後に行われます。
-
 So if we want to migrate `ImageAugmentation from the training pipeline to the feature` pipeline, we also need to migrate `Resize,` `CenterCrop, and` `ColorJitter to the feature pipeline to run as ODTs. 
 したがって、`ImageAugmentationをトレーニングパイプラインからフィーチャーパイプラインに移行したい場合、`Resize、` `CenterCrop、および` `ColorJitterをフィーチャーパイプラインに移行してODTsとして実行する必要があります。
-
 We will also need to run those transformations in the online inference pipeline on uploaded images. 
 また、アップロードされた画像に対してオンライン推論パイプラインでそれらの変換を実行する必要があります。
-
 The feature pipeline will output transformed and augmented images as PNG files. 
 フィーチャーパイプラインは、変換された拡張画像をPNGファイルとして出力します。
-
 In both training and online inference, we need to convert the PNG files to tensors, which we perform in MDTs. 
 トレーニングとオンライン推論の両方で、PNGファイルをテンソルに変換する必要があり、これはMDTsで実行します。
 
 PyTorch provides a library for image transformations called Torchvision v2, and it supports built-in transformations for images. 
 PyTorchは、Torchvision v2という画像変換用のライブラリを提供しており、画像のための組み込み変換をサポートしています。
-
 The following code snippet shows how to define a custom ImageAugmentation transformation by composing transformation functions: 
 以下のコードスニペットは、変換関数を組み合わせてカスタムImageAugmentation変換を定義する方法を示しています：
 
-```  
+<!-- ここまで読んだ! -->
+
+```  python
 import torchvision.transforms.v2 as v2  
 class ImageAugmentation(nn.Module):     
     def __init__(self, flip_prob=0.5, rotation_range=(-30, 30)):       
@@ -1236,14 +1165,12 @@ model_dependent_transforms = v2.Compose([
 
 PyTorch provides datasets as a data structure to store your features and labels. 
 PyTorchは、特徴とラベルを保存するためのデータ構造としてデータセットを提供します。
-
 There are pre-created datasets, and you can create your own custom datasets using the provided base classes. 
 事前に作成されたデータセットがあり、提供されたベースクラスを使用して独自のカスタムデータセットを作成できます。
-
 You can apply the transformations to a dataset in PyTorch before training a model, as shown here:  
 PyTorchでモデルをトレーニングする前に、データセットに変換を適用できます。以下に示します：
 
-```  
+```  python
 dataset = datasets.ImageFolder(root='images/train',     
     transform=model_independent_transforms )   
 dataloader = DataLoader(dataset, batch_size=32, num_workers=4)   
@@ -1254,77 +1181,70 @@ for images, labels in dataloader:
 From this example PyTorch system, you can see the benefits of the FTI pipeline architecture in improved code modularity and preprocessing images using feature pipelines. 
 この例のPyTorchシステムから、FTIパイプラインアーキテクチャの利点が、コードのモジュール性の向上とフィーチャーパイプラインを使用した画像の前処理にあることがわかります。
 
-###### Using pytest
+<!-- ここまで読んだ! -->
+
+## 1.7. Using pytest
+
 Transformation functions and feature functions from feature pipelines create features. 
 フィーチャーパイプラインからの変換関数とフィーチャー関数は、フィーチャーを作成します。
-
 Once a feature has been created and is used by downstream training or inference pipelines, then between the function that creates the feature and the user of the feature, there is an implicit agreement that the feature logic should not change unexpectedly. 
-フィーチャーが作成され、下流のトレーニングまたは推論パイプラインで使用されると、フィーチャーを作成する関数とフィーチャーのユーザーの間には、フィーチャーロジックが予期せず変更されないという暗黙の合意があります。
-
+**フィーチャーが作成され、下流のトレーニングまたは推論パイプラインで使用されると、フィーチャーを作成する関数とフィーチャーのユーザーの間には、フィーチャーロジックが予期せず変更されないという暗黙の合意**があります。
 Changes in how a feature is computed can break clients. 
-フィーチャーの計算方法の変更は、クライアントを壊す可能性があります。
-
+**フィーチャーの計算方法の変更は、クライアントを壊す可能性があります。** (まあそうだよね...!:thinking:)
 Unit tests help ensure that developers do not make unexpected changes to how features are computed, and that helps developers make safe, incremental upgrades to their ML pipelines. 
 ユニットテストは、開発者がフィーチャーの計算方法に予期しない変更を加えないようにし、開発者がMLパイプラインに安全で段階的なアップグレードを行うのに役立ちます。
 
 As much of the focus of this book is on Python, we will look in detail at the most popular unit testing framework in Python, pytest, and how we can use it to test transformation functions and, later, feature pipelines. 
 この本の多くの焦点がPythonにあるため、Pythonで最も人気のあるユニットテストフレームワークであるpytestを詳細に見ていき、変換関数や後のフィーチャーパイプラインをテストするためにどのように使用できるかを見ていきます。
-
 If you write feature pipelines in another language, such as SQL or Java/Spark, then you can use other testing frameworks, such as unit testing with dbt and JUnit, respectively. 
 SQLやJava/Sparkなどの別の言語でフィーチャーパイプラインを書く場合は、それぞれdbtやJUnitを使用したユニットテストなど、他のテストフレームワークを使用できます。
 
-###### Unit Tests
+<!-- ここまで読んだ! -->
+
+### 1.7.1. Unit Tests
+
 Let’s look at our example feature, days_to_card_expiry, and how and why we would test it: 
 例のフィーチャーであるdays_to_card_expiryを見て、そのテスト方法と理由を考えてみましょう：
 
-```  
+```  python
 def days_to_card_expiry(cc_expiry_date, event_time):     
     return (cc_expiry_date - event_time).dt.days
 ```
 
 This is a straightforward but undocumented function. 
 これは簡単ですが、文書化されていない関数です。
-
 A junior developer discovered that the function would not work with a log transformation if the card expired on the same day as it was used. 
 ジュニア開発者は、カードが使用された同じ日に期限切れになった場合、関数がログ変換で機能しないことを発見しました。
-
 Log transformations are undefined if the value is zero or negative. 
 値がゼロまたは負の場合、ログ変換は未定義です。
-
 So the developer changed the code to return 1 rather than a negative number: 
 そこで、開発者は負の数ではなく1を返すようにコードを変更しました：
 
-```  
+```  python
 def days_to_card_expiry(cc_expiry_date, event_time):     
     days_remaining = (cc_expiry_date - event_time).dt.days     
     return max(days_remaining, 1)
 ```
 
-A senior developer, stressed from their current project, performs a cursory review, approves the code, and lets it go into production. 
-現在のプロジェクトにストレスを感じているシニア開発者は、ざっとレビューを行い、コードを承認し、プロダクションに投入します。
-
-Suddenly, the credit card fraud detection model performance degrades. 
-突然、クレジットカード詐欺検出モデルのパフォーマンスが低下します。
-
+A senior developer, stressed from their current project, performs a cursory review, approves the code, and lets it go into production. Suddenly, the credit card fraud detection model performance degrades. 
+現在のプロジェクトにストレスを感じているシニア開発者は、ざっとレビューを行い、コードを承認し、プロダクションに投入します。**突然、クレジットカード詐欺検出モデルのパフォーマンスが低下**します。
 The senior developer reverts the change to the transformation function and removes the log transformation, resolving the bug for now. 
 シニア開発者は変換関数の変更を元に戻し、ログ変換を削除して、今のところバグを解決します。
 
+<!-- ここまで読んだ! -->
+
 How could we have identified this problem before it rolled out? 
 この問題を展開前にどのように特定できたでしょうか？
-
 Studies have shown that code reviews and documentation are not very effective in finding many bugs. 
-研究によると、コードレビューや文書化は、多くのバグを見つけるのにあまり効果的ではありません。
-
+**研究によると、コードレビューや文書化は、多くのバグを見つけるのにあまり効果的ではありません。**
 Performing unit tests is a more structured way of finding bugs earlier—before code review. 
-ユニットテストを実施することは、コードレビューの前にバグを早期に見つけるためのより構造化された方法です。
-
+**ユニットテストを実施することは、コードレビューの前にバグを早期に見つけるためのより構造化された方法**です。
 Here are a few unit tests for days_to_card_expiry. 
 days_to_card_expiryのいくつかのユニットテストを以下に示します。
-
 The test_days_to_today_expiry test would have failed as a result of the junior developer’s changes, and the change would never have made it to production: 
 test_days_to_today_expiryテストは、ジュニア開発者の変更の結果として失敗しており、その変更は決してプロダクションに到達しなかったでしょう：
 
-```  
+```  python
 import pytest   
 def test_days_to_future_expiry():     
     future_date = datetime.date.today() + datetime.timedelta(days=30)     
@@ -1340,92 +1260,83 @@ def test_expired_card():
 
 These unit tests were suggested to me by an LLM—I copied in the function and asked it to write some pytest unit tests for me. 
 これらのユニットテストは、LLMによって提案されました。私は関数をコピーし、いくつかのpytestユニットテストを書くように頼みました。
-
 The unit tests cover the following potential error cases: 
 ユニットテストは、以下の潜在的なエラーケースをカバーしています：
 
 ``` 
-test_days_to_future_expiry
+test_days_to_future_expiry (有効期限が未来の日付のケース)
 ``` 
 これは、カードが未来の数日後に期限切れになる「通常の」ケースです（LLMは30日を合理的な未来の日付として選びました）。これは10日、40日、80日でも構いません。おそらく10,000日ではありません。実際、ここには未来の日数が多すぎる場合のテストはありません。これは演習として追加できます。
 
 ``` 
-test_days_to_today_expiry
+test_days_to_today_expiry (有効期限が今日の日付のケース)
 ``` 
 コンピュータ科学者はゼロから数え始めますが、一般の人々は1から数え始めるため、オフバイワンエラーが発生することがよくあります。これは良いエッジケーステストです。
 
 ``` 
-test_expired_card
+test_expired_card (有効期限が過去の日付のケース)
 ``` 
 days_to_card_expiryの新しい実装は、cc_expiry_dateが取引日より前である場合にValueErrorがスローされることを確認します。
 
 The LLM worked reasonably well at generating the unit tests for our function, as its function name, parameter names, and variable names are human readable. 
 LLMは、関数名、パラメータ名、および変数名が人間にとって読みやすいため、私たちの関数のユニットテストを生成するのにかなりうまく機能しました。
-
 The LLM understood the semantics of the function—what the function is supposed to do. 
 LLMは関数の意味を理解しており、関数が何をするべきかを把握しています。
-
 Naturally, I did a code review of LLM-generated unit tests, and I was happy with them. 
 当然のことながら、私はLLMが生成したユニットテストのコードレビューを行い、満足しました。
-
 If you want more complicated feature functions, you will probably have to write them yourself—or at least handle some edge cases yourself. 
 より複雑なフィーチャー関数が必要な場合は、おそらく自分で書く必要があります。あるいは、少なくともいくつかのエッジケースを自分で処理する必要があります。
-
 Don’t just blindly trust LLMs to generate correct unit tests. 
 LLMが正しいユニットテストを生成することを盲目的に信頼しないでください。
-
 Trust is good, but validation is better. 
 信頼は良いですが、検証はさらに良いです。
 
+<!-- ここまで読んだ! -->
 
+---
+(コラム)
 
 A failure to introduce automated testing is what brought global IT infrastructure to its knees in mid-2024, when a bug was introduced into the Windows kernel by the security company CrowdStrike, causing Windows to crash. 
 自動テストを導入しなかったことが、2024年中頃に世界のITインフラを麻痺させた原因です。これは、セキュリティ会社CrowdStrikeによってWindowsカーネルにバグが導入され、Windowsがクラッシュしたことによるものです。
-
 The bug was that a developer did not check whether an element in a struct was null before using it. 
 そのバグは、開発者が構造体内の要素がnullであるかどうかを使用する前に確認しなかったことに起因しています。
-
 They admitted that they hadn’t tested the code change that was rolled out to servers worldwide, causing widespread delays at airports and railways and problems at many retailers and other internet companies. 
 彼らは、世界中のサーバに展開されたコード変更をテストしていなかったことを認めており、その結果、空港や鉄道での広範な遅延や、多くの小売業者や他のインターネット企業での問題を引き起こしました。
-
 I wouldn’t have wanted to be that junior developer, but they weren’t the main culprit. 
 私はそのジュニア開発者になりたくはありませんでしたが、彼らが主な原因ではありませんでした。
-
 Engineering leaders didn’t introduce automated testing, a fundamental software engineering practice that would have detected the bug before it was rolled out into production. 
 エンジニアリングリーダーは、自動テストを導入しませんでした。これは、バグが本番環境に展開される前に検出できた基本的なソフトウェアエンジニアリングの実践です。
 
-###### Implementing pytest unit tests
-###### pytestユニットテストの実装
+---
+
+#### 1.7.1.1. Implementing pytest unit tests pytestユニットテストの実装
 
 Unit tests are defined on Python functions. 
 ユニットテストはPython関数に対して定義されます。
-
 If you want to unit-test individual features, you should factor your code so that each feature is computed by a single function. 
 個々の機能をユニットテストしたい場合は、各機能が単一の関数によって計算されるようにコードを整理する必要があります。
-
 As we use Python functions to implement the feature logic, we can use a unit test to validate that the code that computes a feature correctly follows a specification defined by the unit test itself. 
 私たちはPython関数を使用して機能ロジックを実装するため、ユニットテストを使用して、機能を計算するコードがユニットテスト自体によって定義された仕様に正しく従っていることを検証できます。
-
 That is, the unit test is a specification of the invariants, preconditions, and postconditions for the feature logic:
-つまり、ユニットテストは機能ロジックの不変条件、前提条件、及び後続条件の仕様です：
+つまり、**ユニットテストは特徴量ロジックの不変条件(invariants)、前提条件(preconditions)、および後続条件(postconditions)の仕様**です：
+(つまり、「観察可能な振る舞い」だったり「契約(contract)」だったりするやつね...!:thinking:)
 
 **Invariant** A condition that remains true throughout the lifetime of the function—it is true before and after the function call and also within the scope of the function.
 **不変条件** 関数のライフタイム全体にわたって真である条件です。関数呼び出しの前後および関数のスコープ内でも真です。
-
 Invariants are more applicable to stateful objects, where certain properties need to hold true across multiple function calls. 
 不変条件は、特定のプロパティが複数の関数呼び出しにわたって真である必要がある状態を持つオブジェクトにより適用されます。
 
 **Precondition** Must be true before a function can be executed correctly.
 **前提条件** 関数が正しく実行される前に真でなければなりません。
-
 It defines a valid input and/or state for the function to be executed without error. 
 それは、関数がエラーなしに実行されるための有効な入力および/または状態を定義します。
 
 **Postcondition** A condition or set of conditions that must hold true after a function or method completes its execution.
 **後続条件** 関数またはメソッドが実行を完了した後に真でなければならない条件または条件のセットです。
-
 Often, they are related to stateful functions—functions that modify external state—but you can also validate the output of stateless functions. 
 しばしば、これらは外部状態を変更する状態を持つ関数に関連していますが、無状態関数の出力を検証することもできます。
+
+<!-- ここまで読んだ! -->
 
 In our days_to_card_expiry function, we can see examples of our conditions: 
 私たちのdays_to_card_expiry関数では、条件の例を見ることができます：
@@ -1437,47 +1348,45 @@ In our days_to_card_expiry function, we can see examples of our conditions:
 **後続条件** 私たちの関数は無状態です（入力引数のみに依存します）が、後続条件を検証することはできます。例外をスローしない場合、ゼロまたは正の整数値を返すべきです。
 
 **Invariant** There are no invariants tested in our preceding unit tests, mostly because it is a stateless function call we are testing.
-**不変条件** 前のユニットテストでは不変条件はテストされていません。主に、私たちがテストしているのは無状態の関数呼び出しだからです。
+**不変条件** 前のユニットテストでは不変条件はテストされていません。主に、私たちがテストしているのは無状態の関数呼び出しだからです。(ステートレスの関数の場合は不変条件はなくて、pre/post条件がメインになるよね...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 You need to understand three additional concepts to write unit tests in pytest: test functions, assertions, and test setup. 
 pytestでユニットテストを書くためには、3つの追加の概念を理解する必要があります：テスト関数、アサーション、およびテストセットアップ。
-
 Unit tests may be written either as functions (as in the preceding example) or as methods in classes. 
 ユニットテストは、関数（前の例のように）またはクラス内のメソッドとして書くことができます。
-
 Also, pytest has a naming convention to automatically discover test modules/classes/functions. 
 また、pytestにはテストモジュール/クラス/関数を自動的に発見するための命名規則があります。
-
 A test class must be named Test*, and test functions or methods must be named test_* (as in the preceding example). 
 テストクラスはTest*という名前でなければならず、テスト関数またはメソッドはtest_*という名前でなければなりません（前の例のように）。
 
 [In Figure 7-5, we can see that pytest is run during development as offline tests—not](https://oreil.ly/Qy5aN) when pipelines have been deployed to production (as online tests). 
 [図7-5では、pytestが開発中にオフラインテストとして実行される様子が見えます。これは、パイプラインが本番環境に展開されたとき（オンラインテストとして）ではありません。]
 
+![]()
 **Figure 7-5. Diagram showing pytest running unit tests offline. They should run with zero friction during development.**
 **図7-5. pytestがオフラインでユニットテストを実行している様子を示す図。開発中は摩擦なく実行されるべきです。**
 
 You typically run unit tests in your development environment before you create a pull request (PR). 
-通常、プルリクエスト（PR）を作成する前に、開発環境でユニットテストを実行します。
-
+**通常、プルリクエスト（PR）を作成する前に、開発環境でユニットテストを実行**します。
 When you submit your PR to a staging branch, a CI/CD environment should also run the unit tests and ask you to fix your code and resubmit your PR if any of the unit tests are failing. 
-PRをステージングブランチに提出すると、CI/CD環境もユニットテストを実行し、ユニットテストが失敗した場合はコードを修正してPRを再提出するように求めるべきです。
-
+**PRをステージングブランチに提出すると、CI/CD環境もユニットテストを実行**し、ユニットテストが失敗した場合はコードを修正してPRを再提出するように求めるべきです。(うんうん...!:thinking:)
 With our directory structure from Chapter 6 (you depend on the default Python behavior of putting the current directory in sys.path), you can run your unit tests in your development environment from the root directory of the credit card project’s directory in the source code repository: 
 第6章のディレクトリ構造を使用すると（現在のディレクトリをsys.pathに置くというPythonのデフォルトの動作に依存します）、ソースコードリポジトリ内のクレジットカードプロジェクトのルートディレクトリから開発環境でユニットテストを実行できます：
 
-```   
+```
 python -m pytest
 ```
 
 You only need to install the pytest library during development or when automated tests are run after you commit code to GitHub. 
 pytestライブラリは、開発中またはコードをGitHubにコミットした後に自動テストが実行されるときにのみインストールする必要があります。
-
 You don’t need pytest installed in your production pipelines. 
-本番環境のパイプラインにはpytestをインストールする必要はありません。
+**本番環境のパイプラインにはpytestをインストールする必要はありません。**
 
-###### Running pytest as part of a GitHub Action
-###### GitHub Actionの一部としてpytestを実行する
+<!-- ここまで読んだ! -->
+
+#### 1.7.1.2. Running pytest as part of a GitHub Action　GitHub Actionの一部としてpytestを実行する
 
 You can define a GitHub Action that will run the pytest unit tests whenever code is pushed to the main branch or whenever a pull request is created for the main branch: 
 コードがメインブランチにプッシュされるたび、またはメインブランチにプルリクエストが作成されるたびにpytestユニットテストを実行するGitHub Actionを定義できます：
@@ -1513,106 +1422,83 @@ jobs:
 
 You can click on failed actions in GitHub to see the logs for why a unit test failed. 
 GitHubで失敗したアクションをクリックすると、ユニットテストが失敗した理由のログを見ることができます。
-
 Finally, when the test passes and after a code review, you want to merge the new PR to the main branch. 
 最後に、テストが合格し、コードレビューが完了したら、新しいPRをメインブランチにマージしたいと思います。
-
 When you merge the PR, you should squash your commits (turn all your commits into one big commit) to get rid of your messy trail of commits. 
-PRをマージするときは、コミットをスクワッシュする（すべてのコミットを1つの大きなコミットに変換する）べきです。これにより、混乱したコミットの履歴を取り除くことができます。
-
+**PRをマージするときは、コミットをスクワッシュする（すべてのコミットを1つの大きなコミットに変換する）べきです。これにより、混乱したコミットの履歴を取り除くことができます。** ( squash mergeが推奨されてるのか...!:thinking:)
 In the long run, it pays to keep your house tidy! 
 長期的には、整理整頓を保つことが重要です！
 
-###### 1.3.0.0.0.4. A Testing Methodology
-###### 1.3.0.0.0.5. テスト方法論
+<!-- ここまで読んだ! -->
+
+### 1.7.2. A Testing Methodology　テスト方法論
 
 After covering all that tactical work on defining unit tests, running tests, and automating tests, we need to consider how we write tests and what we should test. 
 ユニットテストの定義、テストの実行、自動化に関するすべての戦術的作業をカバーした後、私たちはテストを書く方法と何をテストすべきかを考慮する必要があります。
-
 For that, we need a methodology for structuring test cases. 
-そのためには、テストケースを構造化するための方法論が必要です。
-
+そのためには、**テストケースを構造化するための方法論**が必要です。
 I recommend using [the](https://oreil.ly/Tjokv) _[arrange, act, assert pattern that arranges the inputs and targets, acts on the target](https://oreil.ly/Tjokv)_ behavior, and asserts expected outcomes. 
-私は、入力とターゲットを整理し、ターゲットに対して行動し、期待される結果を主張する_ [arrange, act, assertパターン](https://oreil.ly/Tjokv)の使用をお勧めします。
-
+私は、入力とターゲットを整理し、ターゲットに対して行動し、期待される結果を主張する_ [arrange, act, assertパターン](https://oreil.ly/Tjokv)の使用をお勧めします。(AAAパターン大好き! :thinking:)
 This is the structure we use in the examples here. 
 これは、ここでの例で使用する構造です。
-
 However, how do you know what to test and how to test it? 
 しかし、何をテストすべきか、どのようにテストすべきかをどうやって知るのでしょうか？
-
 Testing is not always required for all features. 
-テストはすべての機能に対して常に必要なわけではありません。
-
+**テストはすべての機能に対して常に必要なわけではありません。**
 If the feature is a revenue driver at your company, then you probably should test it thoroughly, but if your feature is experimental, then maybe it requires minimal or no testing for now. 
 その機能が会社の収益を生むものであれば、徹底的にテストするべきですが、機能が実験的であれば、今のところ最小限のテストまたはテストなしで済むかもしれません。
-
 That said, our preferred testing methodology for features is a simple recipe: 
 とはいえ、機能に対する私たちの推奨するテスト方法論はシンプルなレシピです：
 
 1. Write unit tests for all feature and transformation functions (MITs, MDTs, and ODTs) and check your test code coverage (what percentage of the code paths are covered by unit tests). 
-1. すべての機能および変換関数（MIT、MDT、ODT）に対してユニットテストを書き、テストコードカバレッジ（ユニットテストでカバーされているコードパスの割合）を確認します。
+   1. すべての機能および変換関数（MIT、MDT、ODT）に対してユニットテストを書き、テストコードカバレッジ（ユニットテストでカバーされているコードパスの割合）を確認します。
 
 2. Test feature pipelines, training pipelines, and batch inference pipelines with end-to-end tests. 
-2. エンドツーエンドテストを使用して、機能パイプライン、トレーニングパイプライン、およびバッチ推論パイプラインをテストします。
+   1. **エンドツーエンドテストを使用して、機能パイプライン、トレーニングパイプライン、およびバッチ推論パイプラインをテスト**します。
 
 3. Write unit tests for utility functions and other important untested code paths. 
-3. ユーティリティ関数や他の重要な未テストのコードパスに対してユニットテストを書きます。
+   1. ユーティリティ関数や他の重要な未テストのコードパスに対してユニットテストを書きます。
 
 This methodology will help get you started, but it is not a panacea. 
 この方法論は、あなたを始める手助けをしますが、万能ではありません。
-
 For example, imagine you write a feature to compute monthly aggregations but forget to include code handling the leap year. 
 例えば、月次集計を計算する機能を書いたが、うるう年を処理するコードを含めるのを忘れたとします。
-
 With this methodology, you would not see that the leap year code path was not covered in test code coverage. 
 この方法論では、うるう年のコードパスがテストコードカバレッジにカバーされていないことに気づかないでしょう。
-
 Only when you first discover the bug will you fix it, and then you should write a unit test to ensure that you don’t have a regression where the leap year bug appears again. 
-最初にバグを発見したときに修正し、その後、うるう年のバグが再発しないことを確認するためにユニットテストを書くべきです。
-
+**最初にバグを発見したときに修正し、その後、うるう年のバグが再発しないことを確認するためにユニットテストを書くべき**です。
 What will help is testing with more edge cases in your input data and anticipating edge cases. 
 役立つのは、入力データでより多くのエッジケースをテストし、エッジケースを予測することです。
-
 You should use LLMs to help suggest edge cases for testing. 
 テストのためのエッジケースを提案するためにLLMを使用すべきです。
 
 Although there are different schools of thought regarding test-driven development, we do not think that test-first development is productive when you are experimenting. 
-テスト駆動開発に関する異なる考え方があるものの、実験中にテストファースト開発が生産的であるとは考えていません。
-
+**テスト駆動開発に関する異なる考え方があるものの、実験中にテストファースト開発が生産的であるとは考えていません。**
 A good way to start is to list out what you want to test. 
-始める良い方法は、テストしたいことをリストアップすることです。
-
+**始める良い方法は、テストしたいことをリストアップすること**です。
 Then decide what you should test offline using pytest and what to test at runtime with data validation checks, A/B tests, and feature/model monitoring. 
 次に、pytestを使用してオフラインでテストすべきことと、データ検証チェック、A/Bテスト、機能/モデルモニタリングで実行時にテストすべきことを決定します。
 
-###### 1.3.0.0.0.6. Summary and Exercises
-###### 1.3.0.0.0.7. まとめと演習
+<!-- ここまで読んだ! -->
+
+## 1.8. Summary and Exercises  まとめと演習
 
 In this chapter, we looked at MDTs and ODTs from both a data science perspective and an engineering perspective. 
 この章では、データサイエンスの視点とエンジニアリングの視点の両方からMDTとODTを見てきました。
-
 We presented why and how you transform both categorical variables and numerical features into numerical representations. 
 カテゴリ変数と数値特徴を数値表現に変換する理由と方法を示しました。
-
 We looked at different frameworks for implementing MDTs without any skew between training and inference pipelines. 
 トレーニングパイプラインと推論パイプラインの間に歪みがないMDTを実装するためのさまざまなフレームワークを見てきました。
-
 We introduced pipelines and transformers in Scikit-Learn, which work well with smaller data volumes in NumPy arrays. 
 NumPy配列の小さなデータボリュームでうまく機能するScikit-Learnのパイプラインとトランスフォーマーを紹介しました。
-
 We looked at transformation functions in Hopsworks, how they scale to handle large data volumes with Pandas UDFs, and how they can be used to implement both MDTs and ODTs. 
 Hopsworksの変換関数、Pandas UDFを使用して大規模データボリュームを処理する方法、そしてそれらがどのようにMDTとODTの両方を実装するために使用できるかを見てきました。
-
 We then looked at how to organize transformations in FTI pipelines using an example PyTorch system. 
 次に、例としてPyTorchシステムを使用してFTIパイプラインで変換を整理する方法を見てきました。
-
 This included writing different MITs, MDTs, and ODTs for images and tensor data. 
 これには、画像やテンソルデータのためのさまざまなMIT、MDT、ODTを書くことが含まれます。
-
 Finally, we concluded with an introduction to pytest and how it can be used to unit-test transformation functions. 
 最後に、pytestの紹介と、それが変換関数のユニットテストにどのように使用できるかを結論付けました。
-
 Now that we have covered the MITs, MDTs, and ODTs for creating features, we can look at how we write pipelines to run them. 
 機能を作成するためのMIT、MDT、ODTをカバーしたので、これらを実行するためのパイプラインを書く方法を見ていきましょう。
 
@@ -1620,19 +1506,17 @@ The following exercises will help you learn how to design your own MDTs and ODTs
 以下の演習は、独自のMDTとODTを設計する方法を学ぶのに役立ちます：
 
 - I have a feature I would like to implement that is specific to one model but is quite computationally complex. 
-- 特定のモデルに特有で、計算的に複雑な機能を実装したいと思っています。
-
+  - 特定のモデルに特有で、計算的に複雑な機能を実装したいと思っています。
 I want to minimize online latency for retrieving or computing it. 
 それを取得または計算する際のオンラインレイテンシを最小限に抑えたいです。
-
 Should I implement it as an MIT, MDT, or ODT? 
 それをMIT、MDT、またはODTとして実装すべきですか？
 
 - I am building a batch ML system that requires daily retraining and makes daily predictions. 
-- 毎日再トレーニングを必要とし、毎日予測を行うバッチMLシステムを構築しています。
-
+  - 毎日再トレーニングを必要とし、毎日予測を行うバッチMLシステムを構築しています。
 Can I implement it as a single monolithic pipeline with MITs or MDTs? 
 それをMITまたはMDTを使用して単一のモノリシックパイプラインとして実装できますか？
 
 
+<!-- ここまで読んだ! -->
 
