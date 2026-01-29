@@ -85,8 +85,7 @@
 
 ## 実際にS3TablesとPyIcebergで試してみた!
 
-- Pyicebergのドキュメントを参考にしつつ、Icebergテーブルを作成し、スキーマ進化を試してみた。
-  - (なお、S3 Tablesバケット上に作成してる)
+Pyicebergのドキュメントを参考にしつつ、Icebergテーブルを作成し、スキーマ進化を試してみた。
 
 まず、初期スキーマでIcebergテーブルを作成する。
 
@@ -97,7 +96,10 @@ from pyiceberg.partitioning import PartitionField, PartitionSpec
 from pyiceberg.transforms import DayTransform, BucketTransform
 from pyiceberg.catalog import load_catalog
 
-# 初期スキーマを定義
+# カタログに接続
+catalog = load_catalog(...)
+
+# Icebergテーブルのスキーマを定義
 initial_schema = Schema(
     NestedField(
         field_id=1,
@@ -114,13 +116,6 @@ initial_schema = Schema(
         doc="履歴特徴量のバージョン管理用のカラム",
     ),
     NestedField(
-        field_id=3,
-        name="created",
-        field_type=TimestamptzType(),
-        required=False,
-        doc="レコード作成日時",
-    ),
-    NestedField(
         field_id=4,
         name="feature_1",
         field_type=LongType(),
@@ -129,13 +124,10 @@ initial_schema = Schema(
     ),
 )
 
-# パーティション仕様を定義
+# パーティション仕様を定義(今回は本筋ではないので簡単に)
 partition_spec = PartitionSpec(
     PartitionField(source_id=2, field_id=1000, transform=DayTransform(), name="event_time_day"),
 )
-
-# カタログに接続
-catalog = load_catalog(...)
 
 # テーブルを作成
 table = catalog.create_table(
@@ -145,11 +137,11 @@ table = catalog.create_table(
 )
 ```
 
-### スキーマ進化を試す
+### スキーマ進化1としてカラム追加を試す。
 
 次に、このテーブルに対してスキーマ進化を試す。以下の変更を行う:
+
 - カラム追加: `user_feature_3`という新しいカラムを追加
-- パーティション進化: `user_id`のバケットパーティションを追加
 
 ```python
 # 変更後のスキーマを定義
