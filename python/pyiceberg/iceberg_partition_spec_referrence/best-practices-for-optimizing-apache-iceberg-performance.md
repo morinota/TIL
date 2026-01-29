@@ -1,339 +1,40 @@
 refs: https://www.starburst.io/blog/best-practices-for-optimizing-apache-iceberg-performance/
 
-
-- Why StarburstComparisonWhy StarburstLearn our benefitsarrow_right_altStarburst vs TrinoCompare Starburstarrow_right_altCustomersCustomers at StarburstClient solutionsarrow_right_altSecurity & TrustData safety focusarrow_right_altProfessional ServicesExpert solutionsarrow_right_altSupportGet help 24/7arrow_right_alt
-- なぜStarburstか比較なぜStarburstの利点を学ぶarrow_right_altStarburst vs TrinoStarburstを比較するarrow_right_alt顧客Starburstの顧客ソリューションarrow_right_altセキュリティと信頼データの安全性に焦点を当てるarrow_right_altプロフェッショナルサービス専門的なソリューションarrow_right_altサポート24時間年中無休で支援を受けるarrow_right_alt
-- Why StarburstLearn our benefitsarrow_right_alt
-- なぜStarburstか私たちの利点を学ぶarrow_right_alt
-- Starburst vs TrinoCompare Starburstarrow_right_alt
-- Starburst vs TrinoStarburstを比較するarrow_right_alt
-- Customers at StarburstClient solutionsarrow_right_alt
-- Starburstの顧客クライアントソリューションarrow_right_alt
-- Security & TrustData safety focusarrow_right_alt
-- セキュリティと信頼データの安全性に焦点を当てるarrow_right_alt
-- Professional ServicesExpert solutionsarrow_right_alt
-- プロフェッショナルサービス専門的なソリューションarrow_right_alt
-- SupportGet help 24/7arrow_right_alt
-- サポート24時間年中無休で支援を受けるarrow_right_alt
-- ProductsStarburst GalaxyFully managed lakehouse from data ingestion to data sharingarrow_right_altStarburst EnterpriseSelf-managed lakehouse with 7x more horsepower than OS Trinoarrow_right_altDell Data LakehouseModern on-premises storage, SQL engine, and compute for on-prem and hybrid lakehousesarrow_right_alt
-- 製品Starburst Galaxyデータの取り込みからデータ共有まで完全に管理されたレイクハウスarrow_right_altStarburst EnterpriseOS Trinoの7倍のパワーを持つ自己管理型レイクハウスarrow_right_altDell Data Lakehouse最新のオンプレミスストレージ、SQLエンジン、オンプレミスおよびハイブリッドレイクハウス用のコンピュートarrow_right_alt
-- SolutionsUse casesArtificial Intelligencearrow_right_altOpen Data Lakehousearrow_right_altIcehouse Architecturearrow_right_altData Applicationsarrow_right_altData Productsarrow_right_altData Mesharrow_right_altELT Data Processingarrow_right_altData Migrationsarrow_right_altStarburst Enterprise for Governmentarrow_right_altHadoop Modernizationarrow_right_alt
-- ソリューションユースケース人工知能arrow_right_altオープンデータレイクハウスarrow_right_altアイスハウスアーキテクチャarrow_right_altデータアプリケーションarrow_right_altデータ製品arrow_right_altデータメッシュarrow_right_altELTデータ処理arrow_right_altデータ移行arrow_right_altStarburst Enterprise for Governmentarrow_right_altHadoopの近代化arrow_right_alt
-- IndustryFinancial ServicesData-driven bankingarrow_right_altHealthcare & Life SciencesInnovations in carearrow_right_altRetail & CPGInsights for growtharrow_right_altManufacturingSmarter productionarrow_right_alt
-- 業界金融サービスデータ駆動型バンキングarrow_right_altヘルスケアとライフサイエンスケアの革新arrow_right_alt小売とCPG成長のための洞察arrow_right_alt製造よりスマートな生産arrow_right_alt
-- PartnersPartner ListingMeet Our Partnersarrow_right_altStarburst OrbitLearning Portalarrow_right_altBecome a PartnerJoin our networkarrow_right_altPartner LoginPartner portal accessarrow_right_altPartner Certification ProgramGet Certified Todayarrow_right_altDellPowered by Starburstarrow_right_alt
-- パートナーリストパートナーに会うarrow_right_altStarburst Orbit学習ポータルarrow_right_altパートナーになる私たちのネットワークに参加するarrow_right_altパートナーログインパートナーポータルアクセスarrow_right_altパートナー認証プログラム今日認証を取得するarrow_right_altDellStarburstによって提供されるarrow_right_alt
-- Pricing
-- 価格
-- ResourcesEventsAI & Datanova On-DemandShaping the future of dataarrow_right_altLaunch PointBring Your AI to Your Data, Lakesidearrow_right_altEvent CalendarUpcoming gatheringsarrow_right_altConnectDevCenterConnect and sharearrow_right_altForumDiscuss and discoverarrow_right_altDocumentationTechnical OverviewHelpful materialsarrow_right_altStarburst GalaxyUser guidesarrow_right_altStarburst EnterpriseUser guidesarrow_right_altClientsTrusted partnershipsarrow_right_altBlog, Guides & WebinarsBlogInsights and updatesarrow_right_altResourcesGuides and toolsarrow_right_altTraining & CertificationStarburst AcademyTraining and coursesarrow_right_altTutorialsStep-by-step guidesarrow_right_alt
-- リソースイベントAI & Datanovaオンデマンドデータの未来を形作るarrow_right_altランチポイントAIをデータに持ち込む、レイクサイドarrow_right_altイベントカレンダー今後の集まりarrow_right_alt接続DevCenter接続して共有arrow_right_altフォーラム議論と発見arrow_right_altドキュメンテーション技術概要役立つ資料arrow_right_altStarburst Galaxyユーザーガイドarrow_right_altStarburst Enterpriseユーザーガイドarrow_right_altクライアント信頼できるパートナーシップarrow_right_altブログ、ガイド＆ウェビナーブログ洞察と更新arrow_right_altリソースガイドとツールarrow_right_altトレーニング＆認証Starburst Academyトレーニングとコースarrow_right_altチュートリアルステップバイステップガイドarrow_right_alt
-- AboutCompanyAbout usarrow_right_altCareersJoin our teamarrow_right_altNewsroomNews and eventsarrow_right_altContact UsGet in toucharrow_right_altStarburst’s mission is to free our customers to see the invisible and achieve the impossible
-- 会社私たちについてarrow_right_altキャリア私たちのチームに参加するarrow_right_altニュースルームニュースとイベントarrow_right_altお問い合わせご連絡くださいarrow_right_altStarburstの使命は、顧客が見えないものを見て不可能を達成できるようにすることです
-
-
-
-- ClientsTrusted partnershipsarrow_right_alt
-- クライアント信頼されたパートナーシップ→
-
-Technical OverviewHelpful materials
-技術概要役立つ資料
-
-Technical Overview
-技術概要
-
-Helpful materials
-役立つ資料
-
-arrow_right_alt
-Starburst GalaxyUser guides
-→
-- Starburst Galaxyユーザーガイド
-
-Starburst GalaxyUser guides
-Starburst Galaxyユーザーガイド
-
-Starburst Galaxy
-Starburst Galaxy
-
-User guides
-ユーザーガイド
-
-arrow_right_alt
-Starburst EnterpriseUser guides
-→
-- Starburst Enterpriseユーザーガイド
-
-Starburst EnterpriseUser guides
-Starburst Enterpriseユーザーガイド
-
-Starburst Enterprise
-Starburst Enterprise
-
-User guides
-ユーザーガイド
-
-arrow_right_alt
-ClientsTrusted partnerships
-→
-- クライアント信頼されたパートナーシップ
-
-Clients
-クライアント
-
-Trusted partnerships
-信頼されたパートナーシップ
-
-arrow_right_alt
-Blog, Guides & Webinars
-→
-- ブログ、ガイド、ウェビナー
-
-- BlogInsights and updatesarrow_right_alt
-→
-- ブログインサイトと更新→
-
-- ResourcesGuides and toolsarrow_right_alt
-→
-- リソースガイドとツール→
-
-BlogInsights and updates
-ブログインサイトと更新
-
-Blog
-ブログ
-
-Insights and updates
-インサイトと更新
-
-arrow_right_alt
-ResourcesGuides and tools
-→
-- リソースガイドとツール
-
-Resources
-リソース
-
-Guides and tools
-ガイドとツール
-
-arrow_right_alt
-Training & Certification
-→
-- トレーニングと認証
-
-- Starburst AcademyTraining and coursesarrow_right_alt
-→
-- Starburst Academyトレーニングとコース→
-
-- TutorialsStep-by-step guidesarrow_right_alt
-→
-- チュートリアルステップバイステップガイド→
-
-Starburst AcademyTraining and courses
-Starburst Academyトレーニングとコース
-
-Starburst Academy
-Starburst Academy
-
-Training and courses
-トレーニングとコース
-
-arrow_right_alt
-TutorialsStep-by-step guides
-→
-- チュートリアルステップバイステップガイド
-
-Tutorials
-チュートリアル
-
-Step-by-step guides
-ステップバイステップガイド
-
-arrow_right_alt
-- CompanyAbout usarrow_right_alt
-→
-- 会社私たちについて→
-
-- CareersJoin our teamarrow_right_alt
-→
-- キャリア私たちのチームに参加→
-
-CompanyAbout us
-会社私たちについて
-
-Company
-会社
-
-About us
-私たちについて
-
-arrow_right_alt
-CareersJoin our team
-→
-- キャリア私たちのチームに参加
-
-Careers
-キャリア
-
-Join our team
-私たちのチームに参加
-
-arrow_right_alt
-- NewsroomNews and eventsarrow_right_alt
-→
-- ニュースルームニュースとイベント→
-
-- Contact UsGet in toucharrow_right_alt
-→
-- お問い合わせご連絡→
-
-NewsroomNews and events
-ニュースルームニュースとイベント
-
-Newsroom
-ニュースルーム
-
-News and events
-ニュースとイベント
-
-arrow_right_alt
-Contact UsGet in touch
-→
-- お問い合わせご連絡
-
-Contact Us
-お問い合わせ
-
-Get in touch
-ご連絡
-
-arrow_right_alt
-#### Starburst’s mission is to free our customers to see the invisible and achieve the impossible
-#### Starburstの使命は、顧客が見えないものを見て、不可能を達成できるようにすることです。
-
--
-- Contact Us
-- お問い合わせ
-
-- Login
-- ログイン
-
-- Start Free
-- 無料で始める
-
-# Best Practices for Optimizing Apache Iceberg Performance
-# Apache Icebergパフォーマンス最適化のためのベストプラクティス
-
-- Lester MartinDeveloper AdocateStarburst
-- Lester Martin開発者アドボケートStarburst
-
-- Evan SmithTechnical Content ManagerStarburst Data
-- Evan Smith技術コンテンツマネージャーStarburst Data
-
-Lester Martin
-Lester Martin
-
-Developer Adocate
-開発者アドボケート
-
-Starburst
-Starburst
-
-Evan Smith
-Evan Smith
-
-Technical Content Manager
-技術コンテンツマネージャー
-
-Starburst Data
-Starburst Data
-
-- Lester MartinDeveloper AdocateStarburst
-- Lester Martin開発者アドボケートStarburst
-
-- Evan SmithTechnical Content ManagerStarburst Data
-- Evan Smith技術コンテンツマネージャーStarburst Data
-
-Lester Martin
-Lester Martin
-
-Developer Adocate
-開発者アドボケート
-
-Starburst
-Starburst
-
-Evan Smith
-Evan Smith
-
-Technical Content Manager
-技術コンテンツマネージャー
-
-Starburst Data
-Starburst Data
-
-Share
-共有
-
-#### More deployment options
-#### さらなる展開オプション
-
-- Request Enterprise trial license key→
-- エンタープライズ試用ライセンスキーをリクエスト→
-
-
-
-## Start for Free with Starburst Galaxy 無料でStarburst Galaxyを始める
-
-Try our free trial today and see how you can improve your data performance. 
-今日、私たちの無料トライアルを試して、データパフォーマンスをどのように向上させることができるかをご覧ください。
-
-
-
-## Top Signs You’re Ready for a Data Lakehouse データレイクハウスの準備が整ったサイン
+# 1. Best Practices for Optimizing Apache Iceberg Performance　Apache Icebergパフォーマンス最適化のためのベストプラクティス
 
 You’ve heard the promise. Iceberg delivers warehouse-like performance on data lake infrastructure. 
 あなたはその約束を聞いたことがあるでしょう。Icebergはデータレイクインフラストラクチャ上で倉庫のようなパフォーマンスを提供します。
-
 It handles petabyte-scale Apache Iceberg tables. 
 それはペタバイト規模のApache Icebergテーブルを処理します。
-
 It’s faster than Hive. 
 それはHiveよりも速いです。
 
 But there’s a problem with this. 
 しかし、これには問題があります。
-
 Potential doesn’t equal actual. 
 可能性は実際とは等しくありません。
-
 Getting peak performance from Iceberg isn’t automatic. 
-Icebergからピークパフォーマンスを得ることは自動的ではありません。
-
+**Icebergからピークパフォーマンスを得ることは自動的ではありません。**
 It requires intentional data architectural design choices, a robust data maintenance strategy, and consistent upkeep. 
 それには意図的なデータアーキテクチャ設計の選択、堅牢なデータメンテナンス戦略、および一貫した維持管理が必要です。
-
 Without proper optimization strategies, even the most promising data platform can fall short of expectations. 
-適切な最適化戦略がなければ、最も有望なデータプラットフォームでさえ期待を下回ることがあります。
+**適切な最適化戦略がなければ、最も有望なデータプラットフォームでさえ期待を下回ることがあります。**
 
 In this article, we’ll look at why Iceberg has become central to lakehouse architecture and how to ensure you continue to get the best performance from your implementation. 
 この記事では、なぜIcebergがレイクハウスアーキテクチャの中心になったのか、そして実装から最高のパフォーマンスを得続けるための方法を見ていきます。
-
 We’ll also explore automation options that reduce the heavy lifting for data engineering teams. 
 また、データエンジニアリングチームの負担を軽減する自動化オプションについても探ります。
 
+<!-- ここまで読んだ! -->
 
-
-## The benefits of Apache Iceberg Apache Icebergの利点
+## 1.1. The benefits of Apache Iceberg Apache Icebergの利点
 
 Let’s start at the beginning. 
 まずは始めましょう。
-
 Apache Iceberg is a data lakehouse open table format. 
 Apache Icebergはデータレイクハウスのオープンテーブルフォーマットです。
-
 It’s not a storage system itself but rather a layer on top of your existing data lake storage. 
-それ自体はストレージシステムではなく、既存のデータレイクストレージの上にあるレイヤーです。
+**それ自体はストレージシステムではなく、既存のデータレイクストレージの上にあるレイヤー**です。(うんうん、トランザクション&メタデータレイヤー、という呼ばれ方をしてた...!:thinking:)
 
 Iceberg adds several critical features that address some of the key shortcomings of its predecessors, namely Apache Hive. 
 Icebergは、前任者であるApache Hiveのいくつかの主要な欠点に対処するための重要な機能をいくつか追加しています。
@@ -343,7 +44,6 @@ Specifically:
 
 - A metadata-driven approach with table metadata that yields better overall performance when compared to Hive. 
   メタデータ駆動型のアプローチで、テーブルメタデータを使用することで、Hiveと比較して全体的なパフォーマンスが向上します。
-
   Iceberg metadata provides efficient query planning through its enhanced metadata collection. 
   Icebergのメタデータは、強化されたメタデータ収集を通じて効率的なクエリ計画を提供します。
 
@@ -351,161 +51,157 @@ Specifically:
   ACIDトランザクションにより、パーティション間で一貫した操作を保証し、信頼性の高いリアルタイムデータの取り込みと更新を可能にします。
 
 - Easy schema evolution, allowing you to alter and change your table structures without expensive migration as your business changes over time. 
-  簡単なスキーマ進化により、ビジネスの変化に応じて高額な移行なしにテーブル構造を変更できます。
+  **簡単なスキーマ進化**により、ビジネスの変化に応じて高額な移行なしにテーブル構造を変更できます。
 
 - Time travel and rollbacks, enabled by detailed snapshotting whenever an Iceberg table changes. 
   Icebergテーブルが変更されるたびに詳細なスナップショットを取得することで、タイムトラベルとロールバックが可能になります。
-
   This functionality allows you to query historical states in a dataset easily. 
   この機能により、データセット内の過去の状態を簡単にクエリできます。
 
-### Iceberg + Trino Iceberg + Trino
+<!-- ここまで読んだ! -->
+
+### 1.1.1. Iceberg + Trino Iceberg + Trino
 
 Now for the interesting part, connecting Iceberg and Trino. 
 さて、面白い部分、IcebergとTrinoを接続することです。
-
 Iceberg on its own is impressive, but to really shine, it needs to be used in the appropriate data ecosystem. 
-Icebergは単独でも印象的ですが、本当に輝くためには適切なデータエコシステムで使用する必要があります。
-
+Icebergは単独でも印象的ですが、**本当に輝くためには適切なデータエコシステムで使用する必要**があります。
 This is particularly true when combined with a distributed SQL query engine like Trino. 
-これは、Trinoのような分散SQLクエリエンジンと組み合わせたときに特に当てはまります。
-
+これは、Trinoのような**分散SQLクエリエンジンと組み合わせたときに特に当てはまります。** 
 Iceberg is designed to support tables with petabytes of data; meanwhile, Trino is designed to process them at scale. 
-Icebergはペタバイトのデータを持つテーブルをサポートするように設計されており、一方でTrinoはそれらをスケールで処理するように設計されています。
-
+**Icebergはペタバイトのデータを持つテーブルをサポートするように設計**されており、一方でTrinoはそれらをスケールで処理するように設計されています。
+When combined, Iceberg and Trino provide a powerful solution for managing and querying large-scale data lakes.
+組み合わせることで、IcebergとTrinoは大規模なデータレイクを管理およびクエリするための強力なソリューションを提供します。
 Together, they create the Icehouse data architecture (which we’ve written on extensively in the past). 
 これらを組み合わせることで、Icehouseデータアーキテクチャが作成されます（私たちは過去にこれについて広範に執筆しています）。
 
-### How Iceberg optimizes query performance Icebergがクエリパフォーマンスを最適化する方法
+- メモ: 分散SQLクエリエンジン(distributed SQL query engine)とは?
+  - **1つのSQLクエリを、複数のノード(サーバー)に分散して並列実行するクエリエンジン**。
+  - AthenaとかSnowflakeとかも、これに当てはまる?? :thinking:
+    - AthenaはドンピシャでYes! Snowflakeも広義でYes!
+  - 代表例を分類:
+    - OSS/自前ホスティング系
+      - Trino, Presto, etc.
+    - マネージド分散SQLサービス系
+      - **Athena**, BigQuery, Redshift Serverless, etc.
+      - (これらは中身で上述のPresto/Trino系が動いてるらしい...!!:thinking:)
+    - DWH型 (独自エンジン)
+      - Snowflake
+      - 完全に独自実装だが、中身は分散SQLクエリエンジンの一種と考えられる。
+      - Icebergも「外部テーブル」として扱える。
+  - まあもちろんPyIcebergで十分な時もあるだろうが、それこそ書き込みの時とか。readなどで真価を発揮するのはAthenaなどの分散SQLクエリエンジンなのか...!:thinking:
+
+<!-- ここまで読んだ! -->
+
+### 1.1.2. How Iceberg optimizes query performance Icebergがクエリパフォーマンスを最適化する方法
 
 How does Iceberg achieve its half of the optimization equation? 
 Icebergは最適化の方程式の半分をどのように達成するのでしょうか？
-
 The answer lies in its value for data discovery, coupled with its ability to adapt and change easily, as a result of its metadata collection and ACID compliance. 
-その答えは、データ発見の価値と、メタデータ収集およびACID準拠の結果として容易に適応し変化する能力にあります。
-
+その答えは、**データ発見の価値と、メタデータ収集およびACID準拠の結果として容易に適応し変化する能力**にあります。
 The result is not only versatile, but also performant. 
 その結果は、単に多用途であるだけでなく、パフォーマンスも優れています。
 
 How much faster is Iceberg? 
 Icebergはどれくらい速いのでしょうか？
-
 According to the Apache Iceberg project, when managed well, Iceberg can yield 10x performance improvements over Hive. 
 Apache Icebergプロジェクトによると、適切に管理されている場合、IcebergはHiveに対して10倍のパフォーマンス向上をもたらすことができます。
-
 We’ve written on Iceberg performance before, and we continue to see Iceberg outperform other data architectures, especially when coupled with Trino. 
 私たちは以前にIcebergのパフォーマンスについて執筆しており、特にTrinoと組み合わせたときにIcebergが他のデータアーキテクチャを上回るのを引き続き確認しています。
 
+<!-- ここまで読んだ! -->
 
-
-## Key performance optimizations for Apache Iceberg
-## Apache Icebergのための主要なパフォーマンス最適化
+## 1.2. Key performance optimizations for Apache Iceberg　Apache Icebergのための主要なパフォーマンス最適化
 
 Again, though, this isn’t a given. 
 しかし、これは当然のことではありません。
-
 Iceberg has many inherent advantages that make it capable of high performance, but to get this level of performance, you need to take certain steps in your data architecture to achieve this potential.
 Icebergには高いパフォーマンスを実現するための多くの固有の利点がありますが、このレベルのパフォーマンスを得るためには、データアーキテクチャにおいて特定の手順を踏む必要があります。
 
-### What steps do you need to take to ensure that Iceberg performs optimally?
-### Icebergが最適に動作することを保証するために、どのような手順を踏む必要がありますか？
+### 1.2.1. What steps do you need to take to ensure that Iceberg performs optimally?　Icebergが最適に動作することを保証するために、どのような手順を踏む必要がありますか？
 
 There are many ways to fine-tune Iceberg. 
 Icebergを微調整する方法はいくつもあります。
-
 One starting point is to ensure that all tables are structured properly. 
 一つの出発点は、すべてのテーブルが適切に構造化されていることを確認することです。
-
 This includes partitioning, and Iceberg handles partitioning very differently than other technologies like Hive. 
 これにはパーティショニングが含まれ、IcebergはHiveのような他の技術とは非常に異なる方法でパーティショニングを処理します。
-
 To get results, the right partitioning strategy, query patterns, and maintenance routines make all the difference.
-結果を得るためには、適切なパーティショニング戦略、クエリパターン、およびメンテナンスルーチンが重要です。
+結果を得るためには、**適切なパーティショニング戦略、クエリパターン、およびメンテナンスルーチンが重要**です。
+(S3 Tablesの場合は、メンテナンスルーチンは任せられるのかな...!!:thinking:)
 
 Files can be written with organization strategies such as sorting and bucketing to improve performance when access patterns are well understood.
 アクセスパターンがよく理解されている場合、ファイルはソートやバケット化などの組織戦略を用いて書き込むことができ、パフォーマンスを向上させます。
 
-### Why you need to maintain Iceberg properly
-### Icebergを適切に維持する必要がある理由
+<!-- ここまで読んだ! -->
+
+### 1.2.2. Why you need to maintain Iceberg properly Icebergを適切に維持する必要がある理由
 
 Additionally, you need to ensure that performance does not degrade over time due to a phenomenon known as the small files problem.
-さらに、パフォーマンスが時間とともに劣化しないように、small files problem（小ファイル問題）として知られる現象に対処する必要があります。
-
+さらに、**パフォーマンスが時間とともに劣化しないように、small files problem（小ファイル問題）として知られる現象に対処する必要があります。**
 This problem occurs due to the frequency and volume of data modifications and how those changes are implemented with versioning strategies, including Merge-on-Read (MOR).
 この問題は、データの変更頻度と量、そしてそれらの変更がMerge-on-Read（MOR）を含むバージョニング戦略でどのように実装されるかによって発生します。
-
 While data updates via MOR help maintain lineage for the table snapshots that make Iceberg so valuable, they do represent a maintenance challenge if left unchecked.
 MORを介したデータの更新は、Icebergを非常に価値のあるものにするテーブルスナップショットの系譜を維持するのに役立ちますが、放置するとメンテナンスの課題を引き起こします。
 
 Without regular maintenance, you can encounter performance decreases as tables change.
-定期的なメンテナンスがないと、テーブルが変更されるにつれてパフォーマンスが低下する可能性があります。
-
+**定期的なメンテナンスがないと、テーブルが変更されるにつれてパフォーマンスが低下する可能性**があります。
 Understanding these trade-offs between flexibility and optimization is essential for data engineering teams.
 柔軟性と最適化の間のこれらのトレードオフを理解することは、データエンジニアリングチームにとって不可欠です。
 
 We love Iceberg. 
 私たちはIcebergが大好きです。
-
 And we’ve spent a lot of time leveraging its power for our customers. 
 私たちはその力を顧客のために活用するために多くの時間を費やしてきました。
-
 We’ve consistently identified the following optimization strategies as yielding the biggest performance bang for your buck:
-私たちは、次の最適化戦略が最も大きなパフォーマンス向上をもたらすことを一貫して特定しています：
+**私たちは、次の最適化戦略が最も大きなパフォーマンス向上をもたらすことを一貫して特定しています：**
 
-- Partitioning
-- Sorted tables
-- File management and compaction
-- Snapshot management
-- Monitoring and measuring performance
-
-- パーティショニング
-- ソートされたテーブル
-- ファイル管理と圧縮
-- スナップショット管理
-- パフォーマンスの監視と測定
+- Partitioning (まあめちゃ効果的だよね...!!:thinking:)
+- Sorted tables (なんだろ??:thinking:)
+- File management and compaction ファイル管理と圧縮 (これはS3 Tablesにお任せできるのかな...!!:thinking:)
+- Snapshot management スナップショット管理 (これもS3 Tablesにお任せできるのかな...!!:thinking:)
+- Monitoring and measuring performance パフォーマンスの監視と測定 (これもS3 Tablesにお任せできるのかな...!!:thinking:)
 
 Let’s look at each one in turn.
 それぞれを順に見ていきましょう。
 
-### Partitioning
-### パーティショニング
+<!-- ここまで読んだ! -->
+
+### 1.2.3. Partitioning パーティショニング
 
 Good partitioning acts as a filtering system at the directory level. 
 良いパーティショニングは、ディレクトリレベルでのフィルタリングシステムとして機能します。
-
 When you partition tables correctly, Iceberg enables partition pruning during query scanning, dramatically reducing the files that need to be read.
 テーブルを正しくパーティショニングすると、Icebergはクエリスキャン中にパーティションプルーニングを可能にし、読み取る必要のあるファイルを大幅に削減します。
 
 Not all tables are big enough to partition. 
 すべてのテーブルがパーティショニングするのに十分な大きさであるわけではありません。
-
 Generally, a table’s overall file size footprint should be at least 1TB before utilizing partitions.
-一般的に、テーブルの全体的なファイルサイズは、パーティションを利用する前に少なくとも1TBであるべきです。
+**一般的に、テーブルの全体的なファイルサイズは、パーティションを利用する前に少なくとも1TBであるべき**です。
+(ん？？合計で1TB未満のテーブルはパーティショニングしないほうが良い、という意味...??:thinking:)
 
-#### Choose efficient partition columns
-#### 効率的なパーティション列を選択する
+<!-- ここまで読んだ! -->
+
+#### 1.2.3.1. Choose efficient partition columns　効率的なパーティション列を選択する
 
 Pick low-cardinality columns with fairly uniform distributions. 
-低カーディナリティの列を選び、比較的一様な分布を持つものを選択します。
-
+**低カーディナリティの列を選び、比較的一様な分布を持つもの**を選択します。(なるほど、じゃあbucket()とかもまさに一様分布だ...!!:thinking:)
 Time-series data works well: partition by month or day using timestamp columns, depending on your data volume.
-時系列データはうまく機能します：データ量に応じて、タイムスタンプ列を使用して月または日でパーティションを分けます。
-
+**時系列データはうまく機能します：データ量に応じて、タイムスタンプ列を使用して月または日でパーティションを分けます。**
 Columns like region, product_category, or customer_segment can also be effective. 
 region、product_category、customer_segmentのような列も効果的です。
-
+(product_categoryって、アイテムの種別か...!! partition用のカラムとして追加してもいいかも。:thinking:)
 Avoid high-cardinality columns, such as user IDs or transaction IDs, as they create too many partitions.
 ユーザーIDやトランザクションIDのような高カーディナリティの列は避けてください。これらはあまりにも多くのパーティションを作成します。
 
-#### Avoid over-partitioning
-#### 過剰なパーティショニングを避ける
+<!-- ここまで読んだ! -->
+
+#### 1.2.3.2. Avoid over-partitioning　過剰なパーティショニングを避ける
 
 At a minimum, your total file size per partition should be in the 1GB – 10GB range, but ideally be 10GB – 100GB.
-最低でも、パーティションごとの総ファイルサイズは1GBから10GBの範囲であるべきですが、理想的には10GBから100GBであるべきです。
-
+**最低でも、パーティションごとの総ファイルサイズは1GBから10GBの範囲であるべきですが、理想的には10GBから100GBであるべき**です。
 Individual file sizes themselves should be targeted at 100MB+ each to maintain optimal read performance.
-個々のファイルサイズは、最適な読み取りパフォーマンスを維持するために100MB以上を目指すべきです。
-
+**個々のファイルサイズは、最適な読み取りパフォーマンスを維持するために100MB以上を目指すべき**です。(これ、なってない気がするな...!!:thinking:)
 This keeps the number of files in the range of 100-1000 files.
 これにより、ファイルの数は100〜1000ファイルの範囲に保たれます。
 
@@ -515,8 +211,8 @@ Too many small partitions hurt more than they help.
 If your daily data is only 2GB, partition by month instead.
 もし日々のデータがわずか2GBであれば、月ごとにパーティションを分けるべきです。
 
-#### Leverage hidden partitioning
-#### 隠れたパーティショニングを活用する
+#### 1.2.3.3. Leverage hidden partitioning
+#### 1.2.3.4. 隠れたパーティショニングを活用する
 
 Unlike Hive, Iceberg doesn’t force users to think about partition columns in their queries. 
 Hiveとは異なり、Icebergはユーザーにクエリ内でパーティション列を考慮させることを強制しません。
@@ -527,14 +223,14 @@ Hidden partitioning automatically routes queries to the right partitions based o
 This prevents user errors and simplifies query writing.
 これにより、ユーザーエラーが防止され、クエリの記述が簡素化されます。
 
-#### Consider partition evolution
-#### パーティションの進化を考慮する
+#### 1.2.3.5. Consider partition evolution
+#### 1.2.3.6. パーティションの進化を考慮する
 
 As your use cases change, Iceberg allows you to modify your partitioning strategy without rewriting data, adapting to new query patterns as your workloads evolve.
 ユースケースが変化するにつれて、Icebergはデータを再書き込みすることなくパーティショニング戦略を変更できるようにし、ワークロードが進化するにつれて新しいクエリパターンに適応します。
 
-### Sorted tables and bucketing
-### ソートされたテーブルとバケット化
+### 1.2.4. Sorted tables and bucketing
+### 1.2.5. ソートされたテーブルとバケット化
 
 Data written in sorted order by one or more columns enables aggressive file skipping during queries.
 1つまたは複数の列でソートされた順序で書き込まれたデータは、クエリ中に積極的なファイルスキップを可能にします。
@@ -598,8 +294,8 @@ It also means lower compute requirements.
 Your queries run faster and cheaper.
 あなたのクエリはより速く、より安価に実行されます。
 
-### File management and compaction
-### ファイル管理と圧縮
+### 1.2.6. File management and compaction
+### 1.2.7. ファイル管理と圧縮
 
 Iceberg offers a number of high-level features, including time travel and cross-version analysis.
 Icebergは、タイムトラベルやクロスバージョン分析を含む多くの高レベルの機能を提供しています。
@@ -611,8 +307,8 @@ and
 cheaper.
 . あなたのクエリはより速く、かつ安価に実行されます。
 
-### File management and compaction
-### ファイル管理と圧縮
+### 1.2.8. File management and compaction
+### 1.2.9. ファイル管理と圧縮
 
 Iceberg offers a number of high-level features, including time travel and cross-version analysis. 
 Icebergは、タイムトラベルやバージョン間分析を含む多くの高レベル機能を提供します。
@@ -706,8 +402,8 @@ Best practices for compaction:
 - With time-based partitioning, you can stop compacting data files once it is no longer being modified 
 - 時間ベースのパーティショニングを使用すると、データファイルがもはや変更されなくなった時点で圧縮を停止できます。
 
-### Snapshot management
-### スナップショット管理
+### 1.2.10. Snapshot management
+### 1.2.11. スナップショット管理
 
 Over time, Iceberg accumulates old snapshots and associated metadata. 
 時間が経つにつれて、Icebergは古いスナップショットと関連するメタデータを蓄積します。
@@ -775,8 +471,8 @@ ALTER TABLE catalog.schema.table EXECUTE rewrite_manifests;
 This reduces the number of manifest files the query engine must read, improving query planning efficiency. 
 これにより、クエリエンジンが読み取る必要のあるマニフェストファイルの数が減少し、クエリ計画の効率が向上します。
 
-### Monitoring and measuring performance
-### パフォーマンスの監視と測定
+### 1.2.12. Monitoring and measuring performance
+### 1.2.13. パフォーマンスの監視と測定
 
 You can’t improve what you don’t measure. 
 測定しないものは改善できません。
@@ -822,7 +518,7 @@ Regular monitoring helps you catch performance problems before they impact users
 
 
 
-## Not all data needs to be in Iceberg
+## 1.3. Not all data needs to be in Iceberg
 すべてのデータがIcebergにある必要があるわけではありません。
 
 This leaves one question unaddressed.
@@ -878,7 +574,7 @@ Don’t let migration become a blocker to new projects.
 
 
 
-## The Icehouse: Delivering performance + flexibility
+## 1.4. The Icehouse: Delivering performance + flexibility
 
 Starburst Icehouse architecture implements precisely this level of choice with data centralization.
 Starburst Icehouseアーキテクチャは、データの集中化によってまさにこのレベルの選択肢を実現します。
@@ -931,7 +627,7 @@ Ingest data from Kafka Streaming or from AWS S3 using our new file ingest, which
 To learn more about how Starburst can give you both choice and performance for Apache Iceberg, contact us today.
 StarburstがApache Icebergに対して選択肢とパフォーマンスの両方を提供できる方法について詳しく知りたい場合は、今日中にお問い合わせください。
 
-### Start for Free with Starburst Galaxy
+### 1.4.1. Start for Free with Starburst Galaxy
 Starburst Galaxyで無料で始めましょう。
 
 Rocket Fuel for AI
@@ -998,7 +694,7 @@ Read our reviews on
 
 
 
-## Cookie Notice クッキーノーティス
+## 1.5. Cookie Notice クッキーノーティス
 
 This site uses cookies for performance, analytics, personalization and advertising purposes. 
 このサイトは、パフォーマンス、分析、パーソナライズ、および広告の目的でクッキーを使用しています。
@@ -1007,27 +703,27 @@ For more information about how we use cookies please see our Cookie Policy.
 
 
 
-## Manage Consent Preferences 同意設定の管理
+## 1.6. Manage Consent Preferences 同意設定の管理
 
-#### Essential/Strictly Necessary Cookies 必須/厳密に必要なクッキー
+#### 1.6.0.1. Essential/Strictly Necessary Cookies 必須/厳密に必要なクッキー
 These cookies are essential in order to enable you to move around the website and use its features, such as accessing secure areas of the website.  
 これらのクッキーは、ウェブサイト内を移動し、ウェブサイトの機能（例えば、ウェブサイトの安全なエリアにアクセスすること）を使用できるようにするために不可欠です。
 
-#### Analytical/Performance Cookies 分析/パフォーマンスクッキー
+#### 1.6.0.2. Analytical/Performance Cookies 分析/パフォーマンスクッキー
 Toggle Analytical/Performance Cookies  
 分析/パフォーマンスクッキーを切り替えます。
 
 These are analytics cookies that allow us to collect information about how visitors use a website, for instance which pages visitors go to most often, and if they get error messages from web pages.  
 これらは分析クッキーで、訪問者がウェブサイトをどのように使用しているかに関する情報を収集することを可能にします。例えば、訪問者が最も頻繁にアクセスするページや、ウェブページからエラーメッセージを受け取るかどうかなどです。
 
-#### Functional/Preference Cookies 機能/設定クッキー
+#### 1.6.0.3. Functional/Preference Cookies 機能/設定クッキー
 Toggle Functional/Preference Cookies  
 機能/設定クッキーを切り替えます。
 
 These cookies allow our website to properly function and in particular will allow you to use its more personal features.  
 これらのクッキーは、私たちのウェブサイトが適切に機能することを可能にし、特により個人的な機能を使用できるようにします。
 
-#### Targeting/Advertising Cookies ターゲティング/広告クッキー
+#### 1.6.0.4. Targeting/Advertising Cookies ターゲティング/広告クッキー
 Toggle Targeting/Advertising Cookies  
 ターゲティング/広告クッキーを切り替えます。
 
