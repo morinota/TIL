@@ -1,5 +1,4 @@
-# Feature Store調べてたらレイクハウスアーキテクチャに行き着いてIcebergテーブル形式について調べた!
-
+# Feature Store調べてたらレイクハウスアーキテクチャに行き着いてIcebergテーブル形式について調べた! スキーマ進化編!
 ## これは何??
 
 - Icebergテーブル形式のスキーマ進化(Schema Evolution)やパーティション進化(Partition Evolution)について調査し、試しに実行してみたメモです。
