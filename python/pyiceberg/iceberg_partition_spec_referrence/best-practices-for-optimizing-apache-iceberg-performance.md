@@ -206,10 +206,10 @@ This keeps the number of files in the range of 100-1000 files.
 これにより、ファイルの数は100〜1000ファイルの範囲に保たれます。
 
 Too many small partitions hurt more than they help. 
-あまりにも多くの小さなパーティションは、助けるよりも害を及ぼします。
-
+**あまりにも多くの小さなパーティションは、助けるよりも害を及ぼします。**
 If your daily data is only 2GB, partition by month instead.
-もし日々のデータがわずか2GBであれば、月ごとにパーティションを分けるべきです。
+**もし日々のデータがわずか2GBであれば、月ごとにパーティションを分けるべき**です。
+(でも日付単位でクエリすることが多いんだとしたら、日付単位でpartitionしたほうがデータスキャン量は減るよなあ...うーん...!!:thinking:)
 
 #### 1.2.3.3. Leverage hidden partitioning
 #### 1.2.3.4. 隠れたパーティショニングを活用する
