@@ -1517,6 +1517,5 @@ Should I implement it as an MIT, MDT, or ODT?
 Can I implement it as a single monolithic pipeline with MITs or MDTs? 
 それをMITまたはMDTを使用して単一のモノリシックパイプラインとして実装できますか？
 
-
 <!-- ここまで読んだ! -->
 
