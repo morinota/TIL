@@ -423,7 +423,7 @@ You can’t improve what you don’t measure.
 Track these metrics consistently to understand your table health and query performance: 
 これらのメトリックを一貫して追跡して、テーブルの健康状態とクエリパフォーマンスを理解します：
 
-File statistics. 
+File statistics.
 ファイル統計。
 Monitor file counts and sizes over time. 
 時間の経過とともにファイルの数とサイズを監視します。
