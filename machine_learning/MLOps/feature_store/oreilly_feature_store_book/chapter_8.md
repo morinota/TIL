@@ -1,84 +1,71 @@
-## CHAPTER 8: Batch Feature Pipelines 第8章: バッチフィーチャーパイプライン
+CHAPTER 8: Batch Feature Pipelines 第8章: バッチフィーチャーパイプライン
 
 In the previous two chapters, we looked at how to implement data transformations to create reusable features and model-specific features. 
 前の2章では、再利用可能な特徴とモデル固有の特徴を作成するためのデータ変換の実装方法を見てきました。
-
 Now we’ll look at how to productionize the creation of reusable feature data using batch feature pipelines. 
 ここでは、バッチフィーチャーパイプラインを使用して再利用可能なフィーチャーデータの作成をプロダクション化する方法を見ていきます。
-
 A batch feature pipeline is a program that reads data from data sources, applies MITs to the extracted data, and stores the computed feature data in the feature store. 
-バッチフィーチャーパイプラインは、データソースからデータを読み取り、抽出されたデータにMITを適用し、計算されたフィーチャーデータをフィーチャーストアに保存するプログラムです。
-
+**バッチフィーチャーパイプラインは、データソースからデータを読み取り、抽出されたデータにMITを適用し、計算されたフィーチャーデータをフィーチャーストアに保存するプログラム**です。
 The batch feature pipeline can run on a schedule, for example, once per hour or day, incrementally processing new data as it becomes available for processing. 
 バッチフィーチャーパイプラインは、例えば1時間または1日ごとにスケジュールで実行され、新しいデータが処理可能になると、それをインクリメンタルに処理します。
-
 It can also be run on demand to transform a large volume of historical data into features, in a process known as backfilling. 
 また、バックフィリングと呼ばれるプロセスで、大量の履歴データをフィーチャーに変換するために、オンデマンドで実行することもできます。
 
-The goal of a batch feature pipeline is to automate feature creation in what is known as batch processing, which is efficient in its use of resources compared with processing a single record at a time. 
-バッチフィーチャーパイプラインの目的は、バッチ処理として知られるフィーチャー作成を自動化することであり、これは1レコードずつ処理する場合と比較してリソースの使用が効率的です。
+<!-- ここまで読んだ! -->
 
+The goal of a batch feature pipeline is to automate feature creation in what is known as batch processing, which is efficient in its use of resources compared with processing a single record at a time. 
+バッチフィーチャーパイプラインの目的は、バッチ処理として知られるフィーチャー作成を自動化することであり、**これは1レコードずつ処理する場合と比較してリソースの使用が効率的**です。
 For example, imagine comparing the time it takes to empty a dishwasher one glass or plate at a time with unloading batches of plates and glasses. 
 例えば、食器洗い機を1つのグラスや皿ずつ空にするのにかかる時間と、皿やグラスのバッチを一度に空にするのにかかる時間を比較してみてください。
-
 Similarly, in data processing, processing batches of data is much more efficient than processing one record at a time. 
 同様に、データ処理においても、データのバッチを処理することは、1レコードずつ処理するよりもはるかに効率的です。
-
 Also, if batch processing is performed daily, you can take advantage of lower-cost off-peak processing time at night. 
-また、バッチ処理が毎日行われる場合、夜間のオフピーク処理時間を利用してコストを削減できます。
-
+**また、バッチ処理が毎日行われる場合、夜間のオフピーク処理時間を利用してコストを削減**できます。
 Another operational benefit, compared with stream processing, is that errors only need to be fixed before the next scheduled run of your batch feature pipeline—you might not need to be woken up by your pager to fix your pipeline. 
-ストリーム処理と比較した場合のもう1つの運用上の利点は、エラーを修正する必要があるのは次のバッチフィーチャーパイプラインのスケジュールされた実行の前だけで済むため、パイプラインを修正するために呼び出される必要がないことです。
-
+ストリーム処理と比較した場合のもう1つの運用上の利点は、エラーはバッチフィーチャーパイプラインの次のスケジュールされた実行前に修正するだけで済むため、パイプラインを修正するためにページャーで起こされる必要がないかもしれません。
 The downside of batch processing is that your feature data is only guaranteed to be as fresh as the time interval between batch processing runs. 
 バッチ処理の欠点は、フィーチャーデータがバッチ処理の実行間隔と同じだけ新鮮であることが保証されるだけであることです。
 
+<!-- ここまで読んだ! -->
+
 In this chapter, you will also learn how to create synthetic data for our credit card fraud data mart by prompting an LLM to create a program that generates the synthetic data. 
 この章では、LLMに合成データを生成するプログラムを作成させることで、クレジットカード詐欺データマートのための合成データを作成する方法も学びます。
-
 You will also learn how to write a batch feature pipeline that can be parameterized against data sources to run in either backfill or production (incremental data processing) mode. 
 また、バックフィルまたはプロダクション（インクリメンタルデータ処理）モードで実行するためにデータソースに対してパラメータ化できるバッチフィーチャーパイプラインを書く方法も学びます。
-
 We will introduce orchestrators for running batch feature pipelines. 
 バッチフィーチャーパイプラインを実行するためのオーケストレーターを紹介します。
-
 Finally, you will learn how to design a data contract for groups by providing data quality guarantees. 
 最後に、データ品質保証を提供することで、グループのためのデータ契約を設計する方法を学びます。
-
 This will involve validating feature data before it is stored in the feature store by using Great Expectations and performing data governance checks using schematized tags for feature groups. 
 これは、Great Expectationsを使用してフィーチャーデータがフィーチャーストアに保存される前に検証し、フィーチャーグループのためのスキーマ化されたタグを使用してデータガバナンスチェックを実施することを含みます。
 
-###### Batch Feature Pipelines バッチフィーチャーパイプライン
+<!-- ここまで読んだ! -->
+
+## 1. Batch Feature Pipelines バッチフィーチャーパイプライン
 
 Feature pipelines are a type of data pipeline—a program that automates the transfer and transformation of data from one or more data sources to a destination data store, known as the data sink. 
 フィーチャーパイプラインは、データパイプラインの一種であり、1つまたは複数のデータソースからデータを転送および変換し、データシンクとして知られる宛先データストアに自動化するプログラムです。
-
 In Chapter 4, we introduced two popular classes of data pipelines, ETL and ELT pipelines. 
-第4章では、ETLとELTパイプラインという2つの人気のあるデータパイプラインのクラスを紹介しました。
-
+第4章では、**ETLとELTパイプラインという2つの人気のあるデータパイプラインのクラスを紹介**しました。(そうだっけ??:thinking:)
 ETL pipelines transform the data before it is written to the destination, while ELT pipelines write the data to the destination and then transform the data in place (typically using SQL in a data warehouse). 
-ETLパイプラインは、データを宛先に書き込む前に変換しますが、ELTパイプラインはデータを宛先に書き込み、その後データをその場で変換します（通常はデータウェアハウスでSQLを使用）。
-
+**ETLパイプラインは、データを宛先に書き込む前に変換しますが、ELTパイプラインはデータを宛先に書き込み、その後データをその場で変換します（通常はデータウェアハウスでSQLを使用）。**
 Data pipelines are operational services that need to either run on a schedule (in which case they are called batch data pipelines) or run 24/7 (in which case they are called streaming data pipelines). 
 データパイプラインは、スケジュールで実行する必要がある運用サービス（この場合はバッチデータパイプラインと呼ばれます）または24時間365日実行する必要があるサービス（この場合はストリーミングデータパイプラインと呼ばれます）です。
-
 Batch feature pipelines are batch data pipelines that transform source data into feature data and typically store their output in a feature store. 
 バッチフィーチャーパイプラインは、ソースデータをフィーチャーデータに変換し、通常はその出力をフィーチャーストアに保存するバッチデータパイプラインです。
 
 Batch feature pipelines can be implemented as ELT or ETL pipelines, but they are most commonly ETL pipelines. 
 バッチフィーチャーパイプラインはELTまたはETLパイプラインとして実装できますが、最も一般的なのはETLパイプラインです。
-
 ELT pipelines are SQL programs, and they are efficient and easy to use to create popular features such as aggregations, statistical features, and lagged features. 
 ELTパイプラインはSQLプログラムであり、集約、統計的特徴、遅延特徴などの人気のある特徴を作成するために効率的で使いやすいです。
-
 However, SQL is limited in its feature engineering capabilities, and most batch feature pipelines are ETL programs. 
-しかし、SQLはフィーチャーエンジニアリングの能力に制限があり、ほとんどのバッチフィーチャーパイプラインはETLプログラムです。
-
+**しかし、SQLはフィーチャーエンジニアリングの能力に制限があり、ほとんどのバッチフィーチャーパイプラインはETLプログラムです。**
 Batch feature pipelines as ETL programs are typically Python programs (Pandas, Polars, PySpark) and support richer feature creation capabilities by leveraging the Python ecosystem of data transformation libraries. 
-ETLプログラムとしてのバッチフィーチャーパイプラインは、通常はPythonプログラム（Pandas、Polars、PySpark）であり、Pythonのデータ変換ライブラリのエコシステムを活用することで、より豊富なフィーチャー作成機能をサポートします。
-
+**ETLプログラムとしてのバッチフィーチャーパイプラインは、通常はPythonプログラム（Pandas、Polars、PySpark）であり、Pythonのデータ変換ライブラリのエコシステムを活用することで、より豊富なフィーチャー作成機能をサポート**します。
 For example, there are Python libraries for creating vector embeddings, web scraping, reading from third-party APIs, and easy API integration with LLMs for data processing and information retrieval. 
 例えば、ベクトル埋め込みの作成、ウェブスクレイピング、サードパーティAPIからの読み取り、データ処理および情報取得のためのLLMとの簡単なAPI統合のためのPythonライブラリがあります。
+
+<!-- ここまで読んだ! -->
 
 Batch feature pipelines as ETL programs have a common structure: 
 ETLプログラムとしてのバッチフィーチャーパイプラインは、共通の構造を持っています。
@@ -87,54 +74,57 @@ ETLプログラムとしてのバッチフィーチャーパイプラインは�
    1. プログラムの実行は、オーケストレーターによってスケジュールまたはトリガーされます。
 
 2. Input data is read from one or more data sources with start/end timestamps for the time range of input data to process for this run. 
-   2. 入力データは、今回の実行で処理する入力データの時間範囲の開始/終了タイムスタンプを持つ1つまたは複数のデータソースから読み取られます。
+   1. 入力データは、**今回の実行で処理する入力データの時間範囲の開始/終了タイムスタンプ**を持つ1つまたは複数のデータソースから読み取られます。
 
 3. A directed acyclic graph (DAG) of MITs creates feature data for feature groups. 
-   3. MITの有向非巡回グラフ（DAG）がフィーチャーグループのためのフィーチャーデータを作成します。
+   1. MITの有向非巡回グラフ（DAG）がフィーチャーグループのためのフィーチャーデータを作成します。
 
 4. A set of data and schema validation checks are applied to the feature data. 
-   4. フィーチャーデータに対してデータおよびスキーマの検証チェックが適用されます。
+   1. フィーチャーデータに対してデータおよびスキーマの検証チェックが適用されます。
 
 5. Feature data is saved to one or more feature groups. 
-   5. フィーチャーデータは1つまたは複数のフィーチャーグループに保存されます。
+   1. フィーチャーデータは1つまたは複数のフィーチャーグループに保存されます。
 
 We will start by looking at different types of data sources for feature pipelines (for both batch and streaming). 
 私たちは、フィーチャーパイプラインのためのさまざまなタイプのデータソース（バッチとストリーミングの両方）を見ていくことから始めます。
 
-###### Feature Pipeline Data Sources フィーチャーパイプラインデータソース
+## 2. Feature Pipeline Data Sources フィーチャーパイプラインデータソース
 
 Ground zero for data for AI systems consists of the applications, services, and devices connected to users, machines, and the real world. 
 AIシステムのデータの出発点は、ユーザー、機械、現実世界に接続されたアプリケーション、サービス、デバイスで構成されています。
-
 They produce data that is stored in operational databases, lakehouses or data warehouses (on object stores), and event-streaming platforms. 
-これらは、運用データベース、レイクハウスまたはデータウェアハウス（オブジェクトストア上）、およびイベントストリーミングプラットフォームに保存されるデータを生成します。
-
+これらは、**運用データベース、レイクハウスまたはデータウェアハウス（オブジェクトストア上）、およびイベントストリーミングプラットフォームに保存されるデータを生成**します。
 These data stores are the main data sources for feature pipelines, and they fall into one of three classes: batch sources, (event) stream sources, and API sources (see Figure 8-1). 
-これらのデータストアはフィーチャーパイプラインの主要なデータソースであり、バッチソース、（イベント）ストリームソース、APIソースの3つのクラスのいずれかに分類されます（図8-1を参照）。
+これらのデータストアはフィーチャーパイプラインの主要なデータソースであり、**バッチソース、（イベント）ストリームソース、APIソースの3つのクラスのいずれかに分類**されます（図8-1を参照）。
 
+![]()
 _Figure 8-1. Simplified architecture of data stores and data flows to (batch and streaming) feature pipelines. Feature pipelines can process data from batch data sources, stream data sources, and API sources._  
 _図8-1. データストアと（バッチおよびストリーミング）フィーチャーパイプラインへのデータフローの簡略化されたアーキテクチャ。フィーチャーパイプラインは、バッチデータソース、ストリームデータソース、およびAPIソースからデータを処理できます。_
 
+- メモ: 図8-1の内容
+  - feature pipelineへのデータの流れ
+    - 1. まずアプリケーションやサービスが出発点。
+    - 2. それらがデータ生成し、Operational DBやイベントバスにデータを生成する。
+    - 3. Operational DBやイベントバスからDWHやデータレイクにもデータが流れる。
+    - 4. 2と3のデータソースから、batch feature pipelineやstreaming feature pipelineがデータを取得し、feature storeにfeature dataを書き込む。
+
 Backfilling typically uses batch data sources (column-oriented databases, row-oriented databases, object stores) to read historical data. 
 バックフィリングは通常、バッチデータソース（列指向データベース、行指向データベース、オブジェクトストア）を使用して履歴データを読み取ります。
-
 Scheduled batch feature pipelines or streaming feature pipelines read new incremental data from any or all of the batch, stream, and API data sources. 
-スケジュールされたバッチフィーチャーパイプラインまたはストリーミングフィーチャーパイプラインは、バッチ、ストリーム、およびAPIデータソースのいずれかまたはすべてから新しいインクリメンタルデータを読み取ります。
-
+スケジュールされたバッチフィーチャーパイプライン(=backfillじゃないやつ!)またはストリーミングフィーチャーパイプラインは、バッチ、ストリーム、およびAPIデータソースのいずれかまたはすべてから新しいインクリメンタルデータを読み取ります。
 Feature pipelines, through ODTs, can use external APIs as data sources. 
 フィーチャーパイプラインは、ODTを通じて外部APIをデータソースとして使用できます。
-
 Streaming feature pipelines typically have an event-streaming platform (stream source) as the main data source. 
 ストリーミングフィーチャーパイプラインは通常、イベントストリーミングプラットフォーム（ストリームソース）を主要なデータソースとしています。
 
-###### Batch Data Sources バッチデータソース
+<!-- ここまで読んだ! -->
+
+### 2.1. Batch Data Sources バッチデータソース
 
 Columnar stores, row-oriented stores, object stores, and NoSQL stores are canonical examples of batch data sources. 
 列指向ストア、行指向ストア、オブジェクトストア、およびNoSQLストアは、バッチデータソースの典型的な例です。
-
 Batch data is read as structured data, and your batch program reads data from it using both a driver library (a dependency you often have to install) and connection details (the hostname/port, database, and credentials for authentication). 
 バッチデータは構造化データとして読み取られ、バッチプログラムはドライバライブラリ（通常インストールする必要がある依存関係）と接続詳細（ホスト名/ポート、データベース、および認証のための資格情報）を使用してデータを読み取ります。
-
 The most important batch data sources for building AI systems include: 
 AIシステムを構築するための最も重要なバッチデータソースには以下が含まれます。
 
@@ -248,8 +238,8 @@ This is known as a _full table scan and should be avoided at all_ costs.
 It can consume so many resources in the database that it jeopardizes the database’s ability to serve other concurrent clients. 
 これにより、データベース内のリソースが消費されすぎて、他の同時クライアントにサービスを提供するデータベースの能力が危険にさらされる可能性があります。
 
-###### Streaming Data Sources
-###### ストリーミングデータソース
+###### 2.1.0.0.1. Streaming Data Sources
+###### 2.1.0.0.2. ストリーミングデータソース
 
 _Event streams are continuous data sources and building blocks for real-time ML sys‐_ _tems. 
 イベントストリームは連続データソースであり、リアルタイムMLシステムの構成要素です。
@@ -290,8 +280,8 @@ Similarly, a PySpark batch application can run on a sched‐ ule, consume the la
 If your AI system requires fresh feature data from the event stream source, you should write a streaming feature pipeline (see Chapter 9), and if it doesn’t have strict feature freshness requirements, a batch feature pipeline may be easier to operate and more efficient to run. 
 AIシステムがイベントストリームソースから新鮮なフィーチャーデータを必要とする場合は、ストリーミングフィーチャーパイプラインを書くべきです（第9章を参照）。厳密なフィーチャーの新鮮さの要件がない場合は、バッチフィーチャーパイプラインの方が操作が簡単で、効率的に実行できるかもしれません。
 
-###### Unstructured Data in Object Stores and Filesystems
-###### オブジェクトストアとファイルシステムの非構造化データ
+###### 2.1.0.0.3. Unstructured Data in Object Stores and Filesystems
+###### 2.1.0.0.4. オブジェクトストアとファイルシステムの非構造化データ
 
 Text data, image data, video data, and much scientific data (such as medical imaging data and Earth observation data) are collectively called _unstructured data. 
 テキストデータ、画像データ、ビデオデータ、および多くの科学データ（医療画像データや地球観測データなど）は、総称して非構造化データと呼ばれます。
@@ -353,8 +343,8 @@ Then, you could easily search for paragraphs with free-text search using the vec
 You could make the filename, page number, and paragraph number as a primary key, enabling filtering and fast lookup for text. 
 ファイル名、ページ番号、および段落番号を主キーとして設定することで、テキストのフィルタリングと迅速なルックアップを可能にできます。
 
-###### API and SaaS Sources
-###### APIおよびSaaSソース
+###### 2.1.0.0.5. API and SaaS Sources
+###### 2.1.0.0.6. APIおよびSaaSソース
 
 With the emergence of SaaS and microservice architectures, an increasing amount of enterprise data is only accessible via APIs, often HTTP/REST APIs. 
 SaaSおよびマイクロサービスアーキテクチャの出現により、企業データの増加は、しばしばHTTP/REST APIを介してのみアクセス可能です。
@@ -382,9 +372,9 @@ For these cases, feature stores provide support for ODTs that can read the sourc
 
 
 
-###### Synthetic Credit Card Data with LLMs
+###### 2.1.0.0.7. Synthetic Credit Card Data with LLMs
 Now that we have introduced the common data sources, we will build the data mart for our credit card fraud prediction system. 
-###### LLMを用いた合成クレジットカードデータ
+###### 2.1.0.0.8. LLMを用いた合成クレジットカードデータ
 一般的なデータソースを紹介したので、クレジットカード詐欺予測システムのためのデータマートを構築します。
 
 Synthetic data is gaining adoption as a data source for building and experimenting with AI systems, particularly in regulated industries, where real data may be scarce or there are restrictions on working with privacy-sensitive data. 
@@ -396,9 +386,9 @@ Many companies now provide synthetic data for purchase in such regulated industr
 Synthetic data is also increasingly being used to train LLMs, as they are hitting a scaling wall, having used up all globally available text data‐ sets as training data. 
 合成データは、LLMのトレーニングにもますます使用されており、これまでに利用可能なすべてのテキストデータセットをトレーニングデータとして使い果たしたため、スケーリングの壁に直面しています。
 
-###### A Logical Model for the Data Mart and the LLM
+###### 2.1.0.0.9. A Logical Model for the Data Mart and the LLM
 Currently, there are no high-quality public datasets containing credit card transaction data with which to build our fraud detection system. 
-###### データマートとLLMのための論理モデル
+###### 2.1.0.0.10. データマートとLLMのための論理モデル
 現在、私たちの詐欺検出システムを構築するためのクレジットカード取引データを含む高品質の公開データセットは存在しません。
 
 For reasons of data privacy, credit card issuers do not make credit card transaction details public. 
@@ -1170,7 +1160,7 @@ expectation_suite = ge.core.ExpectationSuite( .. )
 fg.save_expectation_suite(  
     expectation_suite, run_validation=True, validation_ingestion_policy="ALWAYS"  
 )  
-# remove the expectation suite from the feature group  
+1. remove the expectation suite from the feature group  
 fg.delete_expectation_suite()  
 ```  
 ここでは、`validation_ingestion_policy`を`ALWAYS`に設定しており、この場合、データ検証ルールが失敗してもデータがフィーチャーグループに書き込まれます。
@@ -1208,8 +1198,8 @@ The `check_for_pii_data()` function can be implemented using a library such as D
 In the near future, LLMs will probably be used to aid PII checks. 
 近い将来、LLMがPIIチェックを支援するために使用される可能性があります。
 
-###### Summary and Exercises
-###### 要約と演習
+###### 2.1.0.0.11. Summary and Exercises
+###### 2.1.0.0.12. 要約と演習
 Batch feature pipelines are programs that run on a schedule, applying MITs to data read from batch/streaming/API sources to create reusable feature data that should be validated before it is written to a feature group. 
 バッチフィーチャーパイプラインは、スケジュールに従って実行されるプログラムであり、バッチ/ストリーミング/APIソースから読み取ったデータにMITを適用して、フィーチャーグループに書き込む前に検証されるべき再利用可能なフィーチャーデータを作成します。
 
