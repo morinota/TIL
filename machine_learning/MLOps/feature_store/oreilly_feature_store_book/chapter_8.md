@@ -122,7 +122,7 @@ Streaming feature pipelines typically have an event-streaming platform (stream s
 ### 2.1. Batch Data Sources バッチデータソース
 
 Columnar stores, row-oriented stores, object stores, and NoSQL stores are canonical examples of batch data sources. 
-列指向ストア、行指向ストア、オブジェクトストア、およびNoSQLストアは、バッチデータソースの典型的な例です。
+**列指向ストア、行指向ストア、オブジェクトストア、およびNoSQLストアは、バッチデータソースの典型的な例**です。
 Batch data is read as structured data, and your batch program reads data from it using both a driver library (a dependency you often have to install) and connection details (the hostname/port, database, and credentials for authentication). 
 バッチデータは構造化データとして読み取られ、バッチプログラムはドライバライブラリ（通常インストールする必要がある依存関係）と接続詳細（ホスト名/ポート、データベース、および認証のための資格情報）を使用してデータを読み取ります。
 The most important batch data sources for building AI systems include: 
@@ -138,63 +138,54 @@ _NoSQL data stores_ These are scalable operational data stores that store specia
 _NoSQLデータストア_ これらは、特定の種類のデータを保存するスケーラブルな運用データストアです。
 
 - Key-value stores (such as DynamoDB and Redis) are designed for low latency and scale. Clients can read values by providing one or more keys.  
-- キー-バリューストア（DynamoDBやRedisなど）は、低遅延とスケールのために設計されています。クライアントは1つまたは複数のキーを提供することで値を読み取ることができます。
+  - キー-バリューストア（DynamoDBやRedisなど）は、低遅延とスケールのために設計されています。クライアントは1つまたは複数のキーを提供することで値を読み取ることができます。
 
 - Document-oriented stores (such as OpenSearch and Elasticsearch) are designed for free-text search of text within documents.  
-- ドキュメント指向ストア（OpenSearchやElasticsearchなど）は、ドキュメント内のテキストのフリーテキスト検索のために設計されています。
+  - ドキュメント指向ストア（OpenSearchやElasticsearchなど）は、ドキュメント内のテキストのフリーテキスト検索のために設計されています。
 
 - JSON-like document stores (such as MongoDB) are designed for low latency and scale, where clients can read and write JSON objects.  
-- JSONライクなドキュメントストア（MongoDBなど）は、低遅延とスケールのために設計されており、クライアントはJSONオブジェクトを読み書きできます。
+  - JSONライクなドキュメントストア（MongoDBなど）は、低遅延とスケールのために設計されており、クライアントはJSONオブジェクトを読み書きできます。
 
 - Graph databases (such as Neo4j) are designed to store and query data structured as a graph of nodes and edges.  
-- グラフデータベース（Neo4jなど）は、ノードとエッジのグラフとして構造化されたデータを保存およびクエリするために設計されています。
+  - グラフデータベース（Neo4jなど）は、ノードとエッジのグラフとして構造化されたデータを保存およびクエリするために設計されています。
 
 - Vector databases (such as Weaviate and Qdrant) are designed for similarity search on compressed data, where clients can store and search with vector embeddings.  
-- ベクトルデータベース（WeaviateやQdrantなど）は、圧縮データに対する類似性検索のために設計されており、クライアントはベクトル埋め込みを使用して保存および検索できます。
+  - ベクトルデータベース（WeaviateやQdrantなど）は、圧縮データに対する類似性検索のために設計されており、クライアントはベクトル埋め込みを使用して保存および検索できます。
 
 One significant difference among the batch data sources is whether they provide data with a schema (known as structured data or tabular data) or data that does not have a schema (called unstructured data).  
-バッチデータソースの間の重要な違いの1つは、スキーマを持つデータ（構造化データまたは表形式データとして知られる）を提供するか、スキーマを持たないデータ（非構造化データと呼ばれる）を提供するかです。
-
+**バッチデータソースの間の重要な違いの1つは、スキーマを持つデータ（構造化データまたは表形式データとして知られる）を提供するか、スキーマを持たないデータ（非構造化データと呼ばれる）を提供するか**です。
 For example, PDF files contain text and images, but they do not have a schema.  
 例えば、PDFファイルにはテキストと画像が含まれていますが、スキーマはありません。
-
 Video and image data is also considered to be unstructured data.  
 ビデオおよび画像データも非構造化データと見なされます。
-
 In contrast, much of the data from both SQL and NoSQL data sources is structured/tabular data.  
 対照的に、SQLおよびNoSQLデータソースのデータの多くは構造化/表形式データです。
-
 A table in a relational database has a schema containing named/typed columns.  
 リレーショナルデータベースのテーブルには、名前付き/型付きの列を含むスキーマがあります。
-
 A JSON object contains (nested) key-value pairs, where the keys are strings and the values can be strings, numbers, objects, arrays, Booleans, or null.  
 JSONオブジェクトには（ネストされた）キー-バリューペアが含まれており、キーは文字列で、値は文字列、数値、オブジェクト、配列、ブール値、またはnullである可能性があります。
-
 An event in an event-streaming platform can either be a JSON object or have an Avro schema (like a table with named/typed columns).  
 イベントストリーミングプラットフォームのイベントは、JSONオブジェクトであるか、Avroスキーマを持つことができます（名前付き/型付きの列を持つテーブルのように）。
-
 A vector embedding has a data type (a floating-point number with a fixed number of dimensions).  
 ベクトル埋め込みにはデータ型（固定次元数の浮動小数点数）が存在します。
+
+<!-- ここまで読んだ! -->
 
 Figure 8-2 shows a lakehouse as a batch data source for a batch or streaming feature pipeline.  
 図8-2は、バッチまたはストリーミングフィーチャーパイプラインのためのバッチデータソースとしてのレイクハウスを示しています。
 
-
-
+![]()
 _Figure 8-2. Batch feature pipeline performing feature engineering on data from a batch_ _data source (a lakehouse table) and writing the feature data to a feature group in the_ _feature store._
 _Figure 8-2. バッチフィーチャーパイプラインがバッチデータソース（レイクハウステーブル）からデータに対してフィーチャーエンジニアリングを行い、フィーチャーデータをフィーチャーストアのフィーチャーグループに書き込む。_
 
 The lakehouse table is stored in daily partitions, and when the batch program runs once per day, it reads and processes only yesterday’s data, bounding the amount of data that needs to be processed. 
 レイクハウステーブルは日次パーティションに保存されており、バッチプログラムが1日1回実行されると、昨日のデータのみを読み込み処理し、処理する必要のあるデータの量を制限します。
-
 When the batch program backfills from historical data, it will need more resources as it will read and process many more partitions of data. 
-バッチプログラムが履歴データからバックフィルを行うときは、より多くのリソースが必要になります。なぜなら、より多くのデータパーティションを読み込み処理するからです。
-
+**バッチプログラムが履歴データからバックフィルを行うときは、より多くのリソースが必要になります。なぜなら、より多くのデータパーティションを読み込み処理するからです。**
 If the size of a batch exceeds the memory or processing capacity of a single machine, you will need to use a distributed batch-processing program, such as PySpark, that can scale up to process larger batches using many parallel workers. 
 バッチのサイズが単一のマシンのメモリまたは処理能力を超える場合は、PySparkのような分散バッチ処理プログラムを使用する必要があります。これにより、多くの並列ワーカーを使用してより大きなバッチを処理することができます。
-
 An alternative is to rerun the batch program for every partition, but this will be an order of magnitude slower than using PySpark. 
-別の方法は、すべてのパーティションに対してバッチプログラムを再実行することですが、これはPySparkを使用するよりも桁違いに遅くなります。
+**別の方法は、すべてのパーティションに対してバッチプログラムを再実行することですが、これはPySparkを使用するよりも桁違いに遅くなります。** (こうやって順番にbackfillするよりも、並列化できるならした方が高速だよね...!:thinking:)
 
 For this reason, my advice is to choose a batch-processing framework that meets your maximum expected load during backfilling. 
 このため、私のアドバイスは、バックフィル中の最大予想負荷に対応するバッチ処理フレームワークを選択することです。
