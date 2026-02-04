@@ -40,8 +40,19 @@
 
 ## Sort order evolution (ソート順進化)
 
-- Icebergテーブルでは、各データファイルやdeleteファイルに対して、どのようにデータが並べられてるか(ソート情報)を宣言できる。
-  - この並び順の定義が sort order。
+- sorting機能
+  - Icebergテーブルは、partition内のデータをカラムでソートすることで、クエリ性能を向上できる.
+  - **ソート順（sort order）**として、データファイルまたは delete ファイルごとに宣言できる。
+- ソート順(sort order)の定義:
+  - **ソート順ID（sort order id）**と、**ソートフィールド**のリストによって定義される。
+  - ソートフィールドのリスト内での順序が、**データに対してソートが適用される順番**を表す。
+- 各ソートフィールドは以下で定義される:
+  - テーブルスキーマ内のソースカラム(単一or複数)のfield ID。
+  - ソースカラムからソート対象の値を生成するための 変換関数(transform function)。
+  - ソート方向(ascending or descending)。
+  - nullの扱いを表すnull order
+    - nulls first (nullを最初に)
+    - nulls last (nullを最後に)
   - partition specと同様に、クエリのスキャン計画の最適化に使われる!
 - スキーマやpartition仕様と同様に、既存Icebergテーブルのsort orderも後から変更できる。
   - sort orderをevolveしても、以前のソート順で書き込まれた古いデータはそのまま変更されない。
