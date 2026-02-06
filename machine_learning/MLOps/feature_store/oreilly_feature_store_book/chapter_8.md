@@ -185,68 +185,56 @@ When the batch program backfills from historical data, it will need more resourc
 If the size of a batch exceeds the memory or processing capacity of a single machine, you will need to use a distributed batch-processing program, such as PySpark, that can scale up to process larger batches using many parallel workers. 
 バッチのサイズが単一のマシンのメモリまたは処理能力を超える場合は、PySparkのような分散バッチ処理プログラムを使用する必要があります。これにより、多くの並列ワーカーを使用してより大きなバッチを処理することができます。
 An alternative is to rerun the batch program for every partition, but this will be an order of magnitude slower than using PySpark. 
-**別の方法は、すべてのパーティションに対してバッチプログラムを再実行することですが、これはPySparkを使用するよりも桁違いに遅くなります。** (こうやって順番にbackfillするよりも、並列化できるならした方が高速だよね...!:thinking:)
-
-For this reason, my advice is to choose a batch-processing framework that meets your maximum expected load during backfilling. 
+**別の方法は、すべてのパーティションに対してバッチプログラムを再実行することですが、これはPySparkを使用するよりも桁違いに遅くなります。** 
+(こうやって順番にbackfillするよりも、並列化できるならした方が高速だよね...!:thinking:)
+For this reason, my advice is to choose a batch-processing framework that meets your maximum expected load during backfilling.
 このため、私のアドバイスは、バックフィル中の最大予想負荷に対応するバッチ処理フレームワークを選択することです。
-
 You won’t have the same resource challenges when backfilling with a streaming program, as they process data incrementally. 
 ストリーミングプログラムでバックフィルを行う場合は、データをインクリメンタルに処理するため、同じリソースの課題はありません。
-
 Note that they exit immediately after finishing backfilling. 
 バックフィルを完了した後、すぐに終了することに注意してください。
 
 In this example, the batch feature pipeline is an ETL program. 
 この例では、バッチフィーチャーパイプラインはETLプログラムです。
-
 However, if you have a SQL data source, you can create features by pushing SQL queries down to the database or data warehouse. 
 ただし、SQLデータソースがある場合は、SQLクエリをデータベースまたはデータウェアハウスにプッシュすることでフィーチャーを作成できます。
-
 This works fine if the data sink for the features is only the offline store. 
 フィーチャーのデータシンクがオフラインストアのみである場合、これは問題ありません。
-
 For example, in Hopsworks an external feature group can be a table in an external lakehouse. 
 たとえば、Hopsworksでは、外部フィーチャーグループは外部レイクハウスのテーブルである可能性があります。
-
 However, if you need to load the feature data into the online store or vector index, an ETL program is needed. 
 ただし、フィーチャーデータをオンラインストアまたはベクトルインデックスにロードする必要がある場合は、ETLプログラムが必要です。
 
 The advice here for partitioning holds for columnar stores, but it does not translate to operational databases as batch data sources. 
 ここでのパーティショニングに関するアドバイスはカラムストアに当てはまりますが、バッチデータソースとしての運用データベースには当てはまりません。
-
 For row-oriented data stores, partitioning of data by time interval is less common. 
 行指向データストアでは、時間間隔によるデータのパーティショニングはあまり一般的ではありません。
-
 Instead, indexes can be defined over columns in the table to speed up read queries. 
 その代わりに、テーブル内の列にインデックスを定義して読み取りクエリを高速化できます。
-
 If you want to backfill from a row-oriented table, it should have a timestamp column (event time) and you should have an index on that column; otherwise, incremental and backfill runs will read all records in the table. 
 行指向テーブルからバックフィルを行いたい場合は、タイムスタンプ列（イベント時間）を持ち、その列にインデックスを持っている必要があります。そうでないと、インクリメンタルおよびバックフィルの実行はテーブル内のすべてのレコードを読み取ります。
-
 This is known as a _full table scan and should be avoided at all_ costs. 
-これはフルテーブルスキャンとして知られ、あらゆるコストで回避すべきです。
-
+**これはフルテーブルスキャンとして知られ、あらゆるコストで回避すべきです。**
 It can consume so many resources in the database that it jeopardizes the database’s ability to serve other concurrent clients. 
 これにより、データベース内のリソースが消費されすぎて、他の同時クライアントにサービスを提供するデータベースの能力が危険にさらされる可能性があります。
 
-###### 2.1.0.0.1. Streaming Data Sources
-###### 2.1.0.0.2. ストリーミングデータソース
+<!-- ここまで読んだ! -->
+
+### 2.2. Streaming Data Sources　ストリーミングデータソース
 
 _Event streams are continuous data sources and building blocks for real-time ML sys‐_ _tems. 
 イベントストリームは連続データソースであり、リアルタイムMLシステムの構成要素です。
-
 Event-streaming platforms are stores for event data, transporting events between a producer and a consumer. 
-イベントストリーミングプラットフォームはイベントデータのストレージであり、プロデューサーとコンシューマーの間でイベントを輸送します。
-
+イベントストリーミングプラットフォームはイベントデータのストレージであり、プロデューサーとコンシューマーの間でイベントを輸送します。(ex. AWSでいうと、Kinesisとか?)
 For example, the producer could be an application or a service, while the consumer could be a streaming or batch feature pipeline (see Figure 8-3). 
-たとえば、プロデューサーはアプリケーションやサービスであり、コンシューマーはストリーミングまたはバッチフィーチャーパイプラインである可能性があります（図8-3を参照）。
+たとえば、**プロデューサーはアプリケーションやサービスであり、コンシューマーはストリーミングまたはバッチフィーチャーパイプライン**である可能性があります（図8-3を参照）。
 
+![]()
 _Figure 8-3. Streaming feature pipelines continuously consume events from an event-_ _streaming platform, compute features, and write the computed features to the feature_ _store. Batch feature pipelines can also compute features from event stream sources._ 
 _Figure 8-3. ストリーミングフィーチャーパイプラインは、イベントストリーミングプラットフォームからイベントを継続的に消費し、フィーチャーを計算し、計算されたフィーチャーをフィーチャーストアに書き込みます。バッチフィーチャーパイプラインもイベントストリームソースからフィーチャーを計算できます。_
 
 Event streams are continuously processed as unbounded (potentially infinite) input data, and the output features written to the feature store are also unbounded in size. 
 イベントストリームは、無限の可能性を持つ入力データとして継続的に処理され、フィーチャーストアに書き込まれる出力フィーチャーもサイズに制限がありません。
-
 The most popular event-streaming platforms for storing and publishing events are Apache Kafka, RabbitMQ, Amazon Kinesis, Google Cloud Pub/Sub, and Azure Event Hubs. 
 イベントを保存および公開するための最も人気のあるイベントストリーミングプラットフォームは、Apache Kafka、RabbitMQ、Amazon Kinesis、Google Cloud Pub/Sub、およびAzure Event Hubsです。
 
@@ -271,8 +259,8 @@ Similarly, a PySpark batch application can run on a sched‐ ule, consume the la
 If your AI system requires fresh feature data from the event stream source, you should write a streaming feature pipeline (see Chapter 9), and if it doesn’t have strict feature freshness requirements, a batch feature pipeline may be easier to operate and more efficient to run. 
 AIシステムがイベントストリームソースから新鮮なフィーチャーデータを必要とする場合は、ストリーミングフィーチャーパイプラインを書くべきです（第9章を参照）。厳密なフィーチャーの新鮮さの要件がない場合は、バッチフィーチャーパイプラインの方が操作が簡単で、効率的に実行できるかもしれません。
 
-###### 2.1.0.0.3. Unstructured Data in Object Stores and Filesystems
-###### 2.1.0.0.4. オブジェクトストアとファイルシステムの非構造化データ
+###### 2.2.0.0.1. Unstructured Data in Object Stores and Filesystems
+###### 2.2.0.0.2. オブジェクトストアとファイルシステムの非構造化データ
 
 Text data, image data, video data, and much scientific data (such as medical imaging data and Earth observation data) are collectively called _unstructured data. 
 テキストデータ、画像データ、ビデオデータ、および多くの科学データ（医療画像データや地球観測データなど）は、総称して非構造化データと呼ばれます。
@@ -334,8 +322,8 @@ Then, you could easily search for paragraphs with free-text search using the vec
 You could make the filename, page number, and paragraph number as a primary key, enabling filtering and fast lookup for text. 
 ファイル名、ページ番号、および段落番号を主キーとして設定することで、テキストのフィルタリングと迅速なルックアップを可能にできます。
 
-###### 2.1.0.0.5. API and SaaS Sources
-###### 2.1.0.0.6. APIおよびSaaSソース
+###### 2.2.0.0.3. API and SaaS Sources
+###### 2.2.0.0.4. APIおよびSaaSソース
 
 With the emergence of SaaS and microservice architectures, an increasing amount of enterprise data is only accessible via APIs, often HTTP/REST APIs. 
 SaaSおよびマイクロサービスアーキテクチャの出現により、企業データの増加は、しばしばHTTP/REST APIを介してのみアクセス可能です。
@@ -363,9 +351,9 @@ For these cases, feature stores provide support for ODTs that can read the sourc
 
 
 
-###### 2.1.0.0.7. Synthetic Credit Card Data with LLMs
+###### 2.2.0.0.5. Synthetic Credit Card Data with LLMs
 Now that we have introduced the common data sources, we will build the data mart for our credit card fraud prediction system. 
-###### 2.1.0.0.8. LLMを用いた合成クレジットカードデータ
+###### 2.2.0.0.6. LLMを用いた合成クレジットカードデータ
 一般的なデータソースを紹介したので、クレジットカード詐欺予測システムのためのデータマートを構築します。
 
 Synthetic data is gaining adoption as a data source for building and experimenting with AI systems, particularly in regulated industries, where real data may be scarce or there are restrictions on working with privacy-sensitive data. 
@@ -377,9 +365,9 @@ Many companies now provide synthetic data for purchase in such regulated industr
 Synthetic data is also increasingly being used to train LLMs, as they are hitting a scaling wall, having used up all globally available text data‐ sets as training data. 
 合成データは、LLMのトレーニングにもますます使用されており、これまでに利用可能なすべてのテキストデータセットをトレーニングデータとして使い果たしたため、スケーリングの壁に直面しています。
 
-###### 2.1.0.0.9. A Logical Model for the Data Mart and the LLM
+###### 2.2.0.0.7. A Logical Model for the Data Mart and the LLM
 Currently, there are no high-quality public datasets containing credit card transaction data with which to build our fraud detection system. 
-###### 2.1.0.0.10. データマートとLLMのための論理モデル
+###### 2.2.0.0.8. データマートとLLMのための論理モデル
 現在、私たちの詐欺検出システムを構築するためのクレジットカード取引データを含む高品質の公開データセットは存在しません。
 
 For reasons of data privacy, credit card issuers do not make credit card transaction details public. 
@@ -1189,8 +1177,8 @@ The `check_for_pii_data()` function can be implemented using a library such as D
 In the near future, LLMs will probably be used to aid PII checks. 
 近い将来、LLMがPIIチェックを支援するために使用される可能性があります。
 
-###### 2.1.0.0.11. Summary and Exercises
-###### 2.1.0.0.12. 要約と演習
+###### 2.2.0.0.9. Summary and Exercises
+###### 2.2.0.0.10. 要約と演習
 Batch feature pipelines are programs that run on a schedule, applying MITs to data read from batch/streaming/API sources to create reusable feature data that should be validated before it is written to a feature group. 
 バッチフィーチャーパイプラインは、スケジュールに従って実行されるプログラムであり、バッチ/ストリーミング/APIソースから読み取ったデータにMITを適用して、フィーチャーグループに書き込む前に検証されるべき再利用可能なフィーチャーデータを作成します。
 
