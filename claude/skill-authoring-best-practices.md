@@ -1,290 +1,77 @@
 refs: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
 
+# 1. Skill authoring best practices　スキル作成のベストプラクティス
 
-$
-/
-$
-- Developer Guide
-- API Reference
-- MCP
-- Resources
-- Release Notes
-Search...
-⌘K
-Intro to Claude
-Claudeの紹介
-Quickstart
-クイックスタート
-Models overview
-モデルの概要
-Choosing a model
-モデルの選択
-What's new in Claude 4.6
-Claude 4.6の新機能
-Migration guide
-移行ガイド
-Model deprecations
-モデルの非推奨
-Pricing
-価格設定
-Features overview
-機能の概要
-Using the Messages API
-Messages APIの使用
-Handling stop reasons
-停止理由の処理
-Prompting best practices
-プロンプトのベストプラクティス
-Context windows
-コンテキストウィンドウ
-Compaction
-圧縮
-Context editing
-コンテキスト編集
-Prompt caching
-プロンプトキャッシング
-Extended thinking
-拡張思考
-Adaptive thinking
-適応思考
-Effort
-努力
-Streaming Messages
-ストリーミングメッセージ
-Batch processing
-バッチ処理
-Citations
-引用
-Multilingual support
-多言語サポート
-Token counting
-トークンカウント
-Embeddings
-埋め込み
-Vision
-ビジョン
-PDF support
-PDFサポート
-Files API
-ファイルAPI
-Search results
-検索結果
-Structured outputs
-構造化出力
-Overview
-概要
-How to implement tool use
-ツールの使用を実装する方法
-Fine-grained tool streaming
-細粒度ツールストリーミング
-Bash tool
-Bashツール
-Code execution tool
-コード実行ツール
-Programmatic tool calling
-プログラムによるツール呼び出し
-Computer use tool
-コンピュータ使用ツール
-Text editor tool
-テキストエディタツール
-Web fetch tool
-Webフェッチツール
-Web search tool
-Web検索ツール
-Memory tool
-メモリツール
-Tool search tool
-ツール検索ツール
-Overview
-概要
-Quickstart
-クイックスタート
-Best practices
-ベストプラクティス
-Skills for enterprise
-企業向けスキル
-Using Skills with the API
-APIを使用したスキル
-Overview
-概要
-Quickstart
-クイックスタート
-TypeScript SDK
-TypeScript SDK
-TypeScript V2 (preview)
-TypeScript V2（プレビュー）
-Python SDK
-Python SDK
-Migration Guide
-移行ガイド
-Guides
-ガイド
-MCP connector
-MCPコネクタ
-Remote MCP servers
-リモートMCPサーバー
-Amazon Bedrock
-Amazon Bedrock
-Microsoft Foundry
-Microsoft Foundry
-Vertex AI
-Vertex AI
-Overview
-概要
-Prompt generator
-プロンプトジェネレーター
-Use prompt templates
-プロンプトテンプレートの使用
-Prompt improver
-プロンプト改善ツール
-Be clear and direct
-明確かつ直接的に
-Use examples (multishot prompting)
-例を使用する（マルチショットプロンプティング）
-Let Claude think (CoT)
-Claudeに考えさせる（CoT）
-Use XML tags
-XMLタグの使用
-Give Claude a role (system prompts)
-Claudeに役割を与える（システムプロンプト）
-Chain complex prompts
-複雑なプロンプトを連鎖させる
-Long context tips
-長いコンテキストのヒント
-Extended thinking tips
-拡張思考のヒント
-Define success criteria
-成功基準の定義
-Develop test cases
-テストケースの開発
-Using the Evaluation Tool
-評価ツールの使用
-Reducing latency
-レイテンシの削減
-Reduce hallucinations
-幻覚の削減
-Increase output consistency
-出力の一貫性を高める
-Mitigate jailbreaks
-脱獄の軽減
-Streaming refusals
-ストリーミング拒否
-Reduce prompt leak
-プロンプト漏れの削減
-Keep Claude in character
-Claudeをキャラクターに保つ
-Admin API overview
-管理APIの概要
-Data residency
-データの居住地
-Workspaces
-ワークスペース
-Usage and Cost API
-使用とコストAPI
-Claude Code Analytics API
-Claudeコード分析API
-Zero Data Retention
-ゼロデータ保持
-Agent Skills
-エージェントスキル
-Best practices
-ベストプラクティス
-Agent Skills
-エージェントスキル
-# Skill authoring best practices
-スキル作成のベストプラクティス
-Copy page
-ページをコピー
 Good Skills are concise, well-structured, and tested with real usage. This guide provides practical authoring decisions to help you write Skills that Claude can discover and use effectively.
-良いスキルは簡潔で、構造が明確で、実際の使用でテストされています。このガイドは、Claudeが効果的に発見し使用できるスキルを書くための実用的な作成の決定を提供します。
+良いスキルは簡潔で、構造が明確で、実際の使用でテストされています。このガイドは、**Claudeが効果的に発見し使用できるスキルを書くための実用的な作成**の決定を提供します。
 For conceptual background on how Skills work, see the Skills overview.
 スキルがどのように機能するかの概念的な背景については、スキルの概要を参照してください。
 
+<!-- ここまで読んだ! -->
 
+## 1.1. Core principles コア原則
 
-## Core principles コア原則
-
-### Concise is key 簡潔さが重要
+### 1.1.1. Concise is key 簡潔さが重要
 
 The context window is a public good. 
 コンテキストウィンドウは公共財です。
-
 Your Skill shares the context window with everything else Claude needs to know, including:
 あなたのスキルは、Claudeが知っておく必要のある他のすべての情報とコンテキストウィンドウを共有します。これには以下が含まれます：
+
 - The system prompt
-- システムプロンプト
+  - システムプロンプト
 - Conversation history
-- 会話履歴
+  - 会話履歴
 - Other Skills' metadata
-- 他のスキルのメタデータ
+  - 他のスキルのメタデータ
 - Your actual request
-- あなたの実際のリクエスト
+  - あなたの実際のリクエスト
 
 Not every token in your Skill has an immediate cost. 
 あなたのスキル内のすべてのトークンが即座にコストを持つわけではありません。
-
 At startup, only the metadata (name and description) from all Skills is pre-loaded. 
-起動時には、すべてのスキルからのメタデータ（名前と説明）のみが事前にロードされます。
-
+**起動時には、すべてのスキルからのメタデータ（名前と説明）のみが事前にロードされます。**
+(なるほどね、メタデータが長大だとcontext windowを大量に消費しちゃうわけか...! :thinking:)
 Claude reads SKILL.md only when the Skill becomes relevant, and reads additional files only as needed. 
 Claudeは、スキルが関連するようになるときにのみSKILL.mdを読み、必要に応じて追加のファイルを読みます。
-
 However, being concise in SKILL.md still matters: once Claude loads it, every token competes with conversation history and other context. 
 しかし、SKILL.mdで簡潔であることは依然として重要です。Claudeがそれをロードすると、すべてのトークンが会話履歴や他のコンテキストと競合します。
 
 Default assumption: Claude is already very smart 
-デフォルトの仮定：Claudeはすでに非常に賢いです。
-
+**デフォルトの仮定：Claudeはすでに非常に賢いです。**
 Only add context Claude doesn't already have. 
 Claudeがすでに持っていないコンテキストのみを追加してください。
-
 Challenge each piece of information:
 各情報を検証してください：
+
 - "Does Claude really need this explanation?"
-- 「Claudeは本当にこの説明を必要としていますか？」
+  - 「Claudeは本当にこの説明を必要としていますか？」
 - "Can I assume Claude knows this?"
-- 「Claudeがこれを知っていると仮定してもよいですか？」
+  - 「Claudeがこれを知っていると仮定してもよいですか？」
 - "Does this paragraph justify its token cost?"
-- 「この段落はそのトークンコストを正当化していますか？」
+  - 「この段落はそのトークンコストを正当化していますか？」
 
 Good example: Concise (approximately 50 tokens):
 良い例：簡潔（約50トークン）：
-```
+
+```md
 ## Extract PDF text
+
 Use pdfplumber for text extraction:
-```python
+
+python
 import pdfplumber
 with pdfplumber.open("file.pdf") as pdf:
     text = pdf.pages[0].extract_text()
 ```
-```  
 
-
-
-## Extract PDF text PDFテキストの抽出
-
-Use pdfplumber for text extraction: 
-テキスト抽出にはpdfplumberを使用します：
-
-```python
-```python
-import pdfplumber 
-import pdfplumber 
-import pdfplumberをインポートします。
-with pdfplumber.open("file.pdf") as pdf: 
-with pdfplumber.open("file.pdf") as pdf: 
-"file.pdf"を開くときにpdfplumberを使用します。
-text = pdf.pages[0].extract_text() 
-text = pdf.pages[0].extract_text() 
-ページ0からテキストを抽出します。
-```
-```
 Bad example: Too verbose(approximately 150 tokens): 
 悪い例：冗長すぎる（約150トークン）：
 
-```
+```md
 ## Extract PDF text PDF (Portable Document Format) files are a common file format that contains text, images, and other content. 
 ## PDFテキストの抽出 PDF（ポータブルドキュメントフォーマット）ファイルは、テキスト、画像、その他のコンテンツを含む一般的なファイル形式です。
+
 To extract text from a PDF, you'll need to use a library. 
 PDFからテキストを抽出するには、ライブラリを使用する必要があります。
 There are many libraries available for PDF processing, but we recommend pdfplumber because it's easy to use and handles most cases well. 
@@ -293,79 +80,68 @@ First, you'll need to install it using pip.
 まず、pipを使用してインストールする必要があります。
 Then you can use the code below... 
 その後、以下のコードを使用できます...
-The concise version assumes Claude knows what PDFs are and how libraries work. 
-簡潔なバージョンは、ClaudeがPDFとは何か、ライブラリがどのように機能するかを知っていると仮定しています。
+```
 
-### Set appropriate degrees of freedom 
-### 適切な自由度を設定する
+The concise version assumes Claude knows what PDFs are and how libraries work. 
+**簡潔なバージョンは、ClaudeがPDFとは何か、ライブラリがどのように機能するかを知っていると仮定しています。**
+
+<!-- ここまで読んだ! -->
+
+### 1.1.2. Set appropriate degrees of freedom 適切な自由度を設定する
+
 Match the level of specificity to the task's fragility and variability. 
 タスクの脆弱性と変動性に応じて特異性のレベルを一致させます。
-High freedom (text-based instructions): 
-高い自由度（テキストベースの指示）：
+
+#### 1.1.2.1. High freedom (text-based instructions):  高い自由度（テキストベースの指示）：
+
 Use when: 
 使用する場合：
+
 - Multiple approaches are valid 
-- 複数のアプローチが有効です
+  - 複数のアプローチが有効です
 - Decisions depend on context 
-- 決定は文脈に依存します
+  - 決定は文脈に依存します
 - Heuristics guide the approach 
-- ヒューリスティックがアプローチを導きます
-Example: 
-例：
-```
+  - ヒューリスティックがアプローチを導きます
+
+Example: 例：
+
+```md
 ## Code review process 
 ## コードレビューのプロセス
 1. Analyze the code structure and organization 
-1. コードの構造と組織を分析します
+    1. コードの構造と組織を分析します
 2. Check for potential bugs or edge cases 
-2. 潜在的なバグやエッジケースを確認します
+    2.  潜在的なバグやエッジケースを確認します
 3. Suggest improvements for readability and maintainability 
-3. 可読性と保守性の向上を提案します
+    3. 可読性と保守性の向上を提案します
 4. Verify adherence to project conventions 
-4. プロジェクトの規約への準拠を確認します
-```  
+    4. プロジェクトの規約への準拠を確認します
+```
 
-
-
-## Code review process コードレビューのプロセス
-
-1. Analyze the code structure and organization  
-1. コードの構造と組織を分析する
-
-2. Check for potential bugs or edge cases  
-2. 潜在的なバグやエッジケースをチェックする
-
-3. Suggest improvements for readability and maintainability  
-3. 可読性と保守性の向上を提案する
-
-4. Verify adherence to project conventions  
-4. プロジェクトの規約への遵守を確認する
-
-Medium freedom(pseudocode or scripts with parameters):  
-中程度の自由度（パラメータを持つ擬似コードまたはスクリプト）：
+#### 1.1.2.2. Medium freedom(pseudocode or scripts with parameters):   中程度の自由度（パラメータを持つ擬似コードまたはスクリプト）：
 
 Use when:  
 使用する場合：
 
 - A preferred pattern exists  
-- 好ましいパターンが存在する
+  - 好ましいパターンが存在する
 
 - Some variation is acceptable  
-- いくつかのバリエーションが許容される
+  - いくつかのバリエーションが許容される
 
 - Configuration affects behavior  
-- 設定が動作に影響を与える
+  - 設定が動作に影響を与える
 
 Example:  
 例：
 
-```
-## Generate report  
-## レポートを生成する
+```md
+## Generate report レポートを生成する
 Use this template and customize as needed:  
 このテンプレートを使用し、必要に応じてカスタマイズしてください：
 
-```python
+python
 def generate_report(data, format="markdown", include_charts=True):  
     # Process data  
     # データを処理する
@@ -376,28 +152,9 @@ def generate_report(data, format="markdown", include_charts=True):
     # Optionally include visualizations  
     # 必要に応じて視覚化を含める
 ```
-```  
 
+#### 1.1.2.3. Low freedom(specific scripts, few or no parameters): 自由度が低い（特定のスクリプト、パラメータが少ないまたはない）：
 
-
-## Generate report レポートの生成
-
-Use this template and customize as needed:
-このテンプレートを使用し、必要に応じてカスタマイズしてください：
-```python
-```python
-def generate_report(data, format="markdown", include_charts=True):
-def generate_report(data, format="markdown", include_charts=True):
-# Process data
-# データを処理する
-# Generate output in specified format
-# 指定された形式で出力を生成する
-# Optionally include visualizations
-# 必要に応じて視覚化を含める
-```
-```
-Low freedom(specific scripts, few or no parameters):
-自由度が低い（特定のスクリプト、パラメータが少ないまたはない）：
 Use when:
 使用する場合：
 - Operations are fragile and error-prone
@@ -408,65 +165,53 @@ Use when:
 - 特定の順序に従う必要がある
 Example:
 例：
-```
+
+```md
 ## Database migration データベース移行
+
 Run exactly this script:
 このスクリプトを正確に実行してください：
-```bash
+
+bash
 python scripts/migrate.py --verify --backup
-```
+
 Do not modify the command or add additional flags.
 コマンドを変更したり、追加のフラグを加えたりしないでください。
-
-
-
-## Database migration データベース移行
-
-Run exactly this script: 
-このスクリプトを正確に実行してください：
-```bash
-```bash
-pythonscripts/migrate.py--verify--backup
-python
-scripts/migrate.py
---verify
---backup
 ```
-```
-Do not modify the command or add additional flags. 
-コマンドを変更したり、追加のフラグを加えたりしないでください。
 
 Analogy: Think of Claude as a robot exploring a path: 
 例えとして、Claudeを道を探検するロボットと考えてください：
-- Narrow bridge with cliffs on both sides: There's only one safe way forward. Provide specific guardrails and exact instructions (low freedom). Example: database migrations that must run in exact sequence. 
-- 両側に崖のある狭い橋：進むべき安全な道は一つだけです。具体的なガードレールと正確な指示を提供してください（自由度が低い）。例：正確な順序で実行しなければならないデータベース移行。
-- Open field with no hazards: Many paths lead to success. Give general direction and trust Claude to find the best route (high freedom). Example: code reviews where context determines the best approach. 
-- 危険のない開けた野原：成功に至る道は多くあります。一般的な方向性を示し、Claudeが最良のルートを見つけることを信頼してください（自由度が高い）。例：文脈が最良のアプローチを決定するコードレビュー。
 
-### Test with all models you plan to use 
-### 使用予定のすべてのモデルでテストしてください
+- Narrow bridge with cliffs on both sides: There's only one safe way forward. Provide specific guardrails and exact instructions (low freedom). Example: database migrations that must run in exact sequence. 
+  - **両側に崖のある狭い橋：進むべき安全な道は一つだけです。具体的なガードレールと正確な指示を提供してください**（自由度が低い）。例：正確な順序で実行しなければならないデータベース移行。
+- Open field with no hazards: Many paths lead to success. Give general direction and trust Claude to find the best route (high freedom). Example: code reviews where context determines the best approach. 
+  - **危険のない開けた野原：成功に至る道は多くあります。一般的な方向性を示し、Claudeが最良のルートを見つけることを信頼してください（自由度が高い）**。例：文脈が最良のアプローチを決定するコードレビュー。
+
+<!-- ここまで読んだ! -->
+
+### 1.1.3. Test with all models you plan to use 使用予定のすべてのモデルでテストしてください
 
 Skills act as additions to models, so effectiveness depends on the underlying model. 
 スキルはモデルに追加されるものであり、その効果は基盤となるモデルに依存します。テストする際の考慮事項はモデルによって異なります：
+
 - Claude Haiku(fast, economical): Does the Skill provide enough guidance? 
-- Claude Haiku（迅速で経済的）：スキルは十分なガイダンスを提供していますか？
+  - Claude Haiku（迅速で経済的）：スキルは十分なガイダンスを提供していますか？
 - Claude Sonnet(balanced): Is the Skill clear and efficient? 
-- Claude Sonnet（バランスの取れた）：スキルは明確で効率的ですか？
+  - Claude Sonnet（バランスの取れた）：スキルは明確で効率的ですか？
 - Claude Opus(powerful reasoning): Does the Skill avoid over-explaining? 
-- Claude Opus（強力な推論）：スキルは過剰な説明を避けていますか？
+  - Claude Opus（強力な推論）：スキルは過剰な説明を避けていますか？
 
 What works perfectly for Opus might need more detail for Haiku. 
 Opusにとって完璧に機能するものは、Haikuにとってはより詳細が必要かもしれません。If you plan to use your Skill across multiple models, aim for instructions that work well with all of them. 
 複数のモデルでスキルを使用する予定がある場合は、すべてのモデルでうまく機能する指示を目指してください。
 
+<!-- ここまで読んだ! -->
 
-
-## Skill structure スキル構造
+## 1.2. Skill structure スキル構造
 
 YAML Frontmatter: The SKILL.md frontmatter requires two fields:
-YAML Frontmatter: SKILL.mdのフロントマターには、2つのフィールドが必要です。
+YAML Frontmatter: **SKILL.mdのフロントマターには、2つのフィールドが必要**です。
 
-name:
 name:
 - Maximum 64 characters
 - 最大64文字
@@ -477,7 +222,6 @@ name:
 - Cannot contain reserved words: "anthropic", "claude"
 - 予約語「anthropic」や「claude」を含むことはできません。
 
-description:
 description:
 - Must be non-empty
 - 空であってはなりません。
@@ -491,34 +235,36 @@ description:
 For complete Skill structure details, see the Skills overview.
 スキル構造の詳細については、スキルの概要を参照してください。
 
-### Naming conventions 命名規則
+<!-- ここまで読んだ! -->
+
+### 1.2.1. Naming conventions 命名規則
 
 Use consistent naming patterns to make Skills easier to reference and discuss.
 一貫した命名パターンを使用して、スキルを参照しやすく、議論しやすくします。
-
 We recommend using gerund form (verb + -ing) for Skill names, as this clearly describes the activity or capability the Skill provides.
-スキル名には動名詞形（動詞 + -ing）を使用することをお勧めします。これにより、スキルが提供する活動や能力が明確に説明されます。
+**スキル名には動名詞形（動詞 + -ing）を使用することをお勧め**します。これにより、スキルが提供する活動や能力が明確に説明されます。
 
 Remember that the name field must use lowercase letters, numbers, and hyphens only.
 nameフィールドは小文字のアルファベット、数字、ハイフンのみを使用する必要があります。
 
 Good naming examples (gerund form):
 良い命名の例（動名詞形）：
+
 - processing-pdfs
 - analyzing-spreadsheets
 - managing-databases
 - testing-code
 - writing-documentation
 
-Acceptable alternatives:
-許容される代替案：
+Acceptable alternatives:許容される代替案：
+
 - Noun phrases: pdf-processing, spreadsheet-analysis
 - 名詞句: pdf-processing, spreadsheet-analysis
 - Action-oriented: process-pdfs, analyze-spreadsheets
 - アクション指向: process-pdfs, analyze-spreadsheets
 
-Avoid:
-避けるべきもの：
+Avoid:避けるべきもの：
+
 - Vague names: helper, utils, tools
 - 曖昧な名前: helper, utils, tools
 - Overly generic: documents, data, files
@@ -528,8 +274,8 @@ Avoid:
 - Inconsistent patterns within your skill collection
 - スキルコレクション内の不一致パターン
 
-Consistent naming makes it easier to:
-一貫した命名は、以下を容易にします：
+Consistent naming makes it easier to:一貫した命名は、以下を容易にします：
+
 - Reference Skills in documentation and conversations
 - ドキュメントや会話でスキルを参照すること
 - Understand what a Skill does at a glance
@@ -539,20 +285,21 @@ Consistent naming makes it easier to:
 - Maintain a professional, cohesive skill library
 - プロフェッショナルで一貫したスキルライブラリを維持すること
 
-### Writing effective descriptions 効果的な説明の作成
+<!-- ここまで読んだ! -->
+
+### 1.2.2. Writing effective descriptions 効果的な説明の作成
 
 The description field enables Skill discovery and should include both what the Skill does and when to use it.
 descriptionフィールドはスキルの発見を可能にし、スキルが何をするのか、いつ使用するのかの両方を含む必要があります。
-
 Always write in third person. The description is injected into the system prompt, and inconsistent point-of-view can cause discovery problems.
 常に三人称で書いてください。説明はシステムプロンプトに挿入され、不一致な視点は発見の問題を引き起こす可能性があります。
 
 - Good: "Processes Excel files and generates reports"
-- 良い例: "Excelファイルを処理し、レポートを生成します"
+  - 良い例: "Excelファイルを処理し、レポートを生成します"
 - Avoid: "I can help you process Excel files"
-- 避けるべき例: "私はあなたがExcelファイルを処理するのを手伝うことができます"
+  - 避けるべき例: "私はあなたがExcelファイルを処理するのを手伝うことができます"
 - Avoid: "You can use this to process Excel files"
-- 避けるべき例: "これを使ってExcelファイルを処理できます"
+  - 避けるべき例: "これを使ってExcelファイルを処理できます"
 
 Be specific and include key terms. Include both what the Skill does and specific triggers/contexts for when to use it.
 具体的であり、重要な用語を含めてください。スキルが何をするのか、いつ使用するのかの特定のトリガーや文脈を含めてください。
@@ -603,7 +350,7 @@ description: Does stuff with files
 ```
 description: ファイルに関する作業を行います
 
-### Progressive disclosure patterns プログレッシブ開示パターン
+### 1.2.3. Progressive disclosure patterns プログレッシブ開示パターン
 
 SKILL.md serves as an overview that points Claude to detailed materials as needed, like a table of contents in an onboarding guide.
 SKILL.mdは、Claudeが必要に応じて詳細な資料にアクセスできるようにする概要として機能します。これは、オンボーディングガイドの目次のようなものです。
@@ -620,7 +367,7 @@ Practical guidance:
 - Use the patterns below to organize instructions, code, and resources effectively
 - 以下のパターンを使用して、指示、コード、およびリソースを効果的に整理してください。
 
-#### Visual overview: From simple to complex ビジュアル概要：シンプルから複雑へ
+#### 1.2.3.1. Visual overview: From simple to complex ビジュアル概要：シンプルから複雑へ
 
 A basic Skill starts with just a SKILL.md file containing metadata and instructions:
 基本的なスキルは、メタデータと指示を含むSKILL.mdファイルから始まります。
@@ -642,19 +389,19 @@ pdf/
     └── validate.py       # Validation script
 ```
 
-#### Pattern 1: High-level guide with references パターン1：参照を含む高レベルガイド
+#### 1.2.3.2. Pattern 1: High-level guide with references パターン1：参照を含む高レベルガイド
 ```
 ---name: pdf-processing
 description: Extracts text and tables from PDF files, fills forms, and merges documents. Use when working with PDF files or when the user mentions PDFs, forms, or document extraction.
 ---# PDF Processing
-## Quick start
+## 1.3. Quick start
 Extract text with pdfplumber:
 ```python
 import pdfplumber
 with pdfplumber.open("file.pdf") as pdf:
     text = pdf.pages[0].extract_text()
 ```
-## Advanced features
+## 1.3. Advanced features
 **Form filling**: See [FORMS.md](FORMS.md) for complete guide
 **API reference**: See [REFERENCE.md](REFERENCE.md) for all methods
 **Examples**: See [EXAMPLES.md](EXAMPLES.md) for common patterns
@@ -737,11 +484,11 @@ bigquery-skill/
 ```
 
 ```
-# BigQuery Data Analysis  
-# BigQueryデータ分析
+# 2. BigQuery Data Analysis  
+# 3. BigQueryデータ分析
 
-## Available datasets  
-## 利用可能なデータセット
+## 3.1. Available datasets  
+## 3.2. 利用可能なデータセット
 
 **Finance**: Revenue, ARR, billing → See [reference/finance.md](reference/finance.md)  
 **財務**: 収益、ARR、請求 → [reference/finance.md](reference/finance.md)を参照してください。
@@ -755,8 +502,8 @@ bigquery-skill/
 **Marketing**: Campaigns, attribution, email → See [reference/marketing.md](reference/marketing.md)  
 **マーケティング**: キャンペーン、帰属、メール → [reference/marketing.md](reference/marketing.md)を参照してください。
 
-## Quick search  
-## クイック検索
+## 3.3. Quick search  
+## 3.4. クイック検索
 
 Find specific metrics using grep:  
 grepを使用して特定のメトリクスを見つける:
@@ -769,7 +516,7 @@ grep -i "api usage" reference/product.md
 
 
 
-## Available datasets 利用可能なデータセット
+## 3.5. Available datasets 利用可能なデータセット
 
 **Finance**: Revenue, ARR, billing → See [reference/finance.md](reference/finance.md)  
 **Finance**  
@@ -789,7 +536,7 @@ grep -i "api usage" reference/product.md
 
 
 
-## Quick search クイック検索
+## 3.6. Quick search クイック検索
 
 Find specific metrics using grep:  
 特定のメトリクスをgrepを使用して見つける：
@@ -812,16 +559,16 @@ Show basic content, link to advanced content:
 基本的なコンテンツを表示し、高度なコンテンツへのリンクを提供します：
 
 ```
-# DOCX Processing  
-# DOCX処理
+# 4. DOCX Processing  
+# 5. DOCX処理
 
-## Creating documents  
-## ドキュメントの作成  
+## 5.1. Creating documents  
+## 5.2. ドキュメントの作成  
 Use docx-js for new documents. See [DOCX-JS.md](DOCX-JS.md).  
 新しいドキュメントにはdocx-jsを使用します。詳細は[DOCX-JS.md](DOCX-JS.md)を参照してください。
 
-## Editing documents  
-## ドキュメントの編集  
+## 5.3. Editing documents  
+## 5.4. ドキュメントの編集  
 For simple edits, modify the XML directly.  
 簡単な編集の場合は、XMLを直接修正します。
 
@@ -833,7 +580,7 @@ For simple edits, modify the XML directly.
 
 
 
-## Creating documents 文書の作成
+## 5.5. Creating documents 文書の作成
 
 Use docx-js for new documents. 
 新しい文書にはdocx-jsを使用してください。
@@ -843,7 +590,7 @@ See [DOCX-JS.md](DOCX-JS.md).
 
 
 
-## Editing documents 文書の編集
+## 5.6. Editing documents 文書の編集
 
 For simple edits, modify the XML directly.  
 簡単な編集の場合は、XMLを直接修正してください。
@@ -857,7 +604,7 @@ For simple edits, modify the XML directly.
 Claude reads REDLINING.md or OOXML.md only when the user needs those features.  
 Claudeは、ユーザーがそれらの機能を必要とする場合にのみ、REDLINING.mdまたはOOXML.mdを読みます。
 
-### Avoid deeply nested references 深くネストされた参照を避ける
+### 5.6.1. Avoid deeply nested references 深くネストされた参照を避ける
 
 Claude may partially read files when they're referenced from other referenced files.  
 Claudeは、他の参照ファイルから参照されているファイルを部分的に読むことがあります。
@@ -878,18 +625,18 @@ Bad example: Too deep:
 # SKILL.mdSee [advanced.md](advanced.md)...# advanced.mdSee [details.md](details.md)...# details.mdHere's the actual information...
 ```
 
-# SKILL.md  
-# SKILL.md  
+# 6. SKILL.md  
+# 7. SKILL.md  
 See [advanced.md](advanced.md)...  
 [advanced.md](advanced.md)を参照してください...
 
-# advanced.md  
-# advanced.md  
+# 8. advanced.md  
+# 9. advanced.md  
 See [details.md](details.md)...  
 [details.md](details.md)を参照してください...
 
-# details.md  
-# details.md  
+# 10. details.md  
+# 11. details.md  
 Here's the actual information...  
 ここに実際の情報があります...
 
@@ -900,8 +647,8 @@ Good example: One level deep:
 # SKILL.md**Basic usage**: [instructions in SKILL.md]**Advanced features**: See [advanced.md](advanced.md)**API reference**: See [reference.md](reference.md)**Examples**: See [examples.md](examples.md)
 ```
 
-# SKILL.md  
-# SKILL.md  
+# 12. SKILL.md  
+# 13. SKILL.md  
 **Basic usage**: [instructions in SKILL.md]  
 **基本的な使用法**: [SKILL.mdの指示]  
 
@@ -914,7 +661,7 @@ Good example: One level deep:
 **Examples**: See [examples.md](examples.md)  
 **例**: [examples.md](examples.md)を参照してください。
 
-### Structure longer reference files with table of contents  
+### 13.0.1. Structure longer reference files with table of contents  
 長い参照ファイルには目次を構成する
 
 For reference files longer than 100 lines, include a table of contents at the top.  
@@ -930,12 +677,12 @@ Example:
 # API Reference## Contents-Authentication and setup-Core methods (create, read, update, delete)-Advanced features (batch operations, webhooks)-Error handling patterns-Code examples## Authentication and setup...## Core methods...
 ```
 
-# API Reference  
-# API Reference  
+# 14. API Reference  
+# 15. API Reference  
 
 
 
-## Contents 目次
+## 15.1. Contents 目次
 - Authentication and setup 認証とセットアップ
 - Core methods (create, read, update, delete) コアメソッド（作成、読み取り、更新、削除）
 - Advanced features (batch operations, webhooks) 高度な機能（バッチ操作、ウェブフック）
@@ -944,13 +691,13 @@ Example:
 
 
 
-## Authentication and setup 認証と設定
+## 15.2. Authentication and setup 認証と設定
 
-## Authentication and setup 認証と設定
+## 15.3. Authentication and setup 認証と設定
 
 
 
-## Core methods コアメソッド
+## 15.4. Core methods コアメソッド
 
 Claude can then read the complete file or jump to specific sections as needed.
 Claudeはその後、完全なファイルを読み取ることも、必要に応じて特定のセクションにジャンプすることもできます。
@@ -959,8 +706,8 @@ For details on how this filesystem-based architecture enables progressive disclo
 
 
 
-## Workflows and feedback loops ワークフローとフィードバックループ
-### Use workflows for complex tasks 複雑なタスクにはワークフローを使用する
+## 15.5. Workflows and feedback loops ワークフローとフィードバックループ
+### 15.5.1. Use workflows for complex tasks 複雑なタスクにはワークフローを使用する
 Break complex operations into clear, sequential steps. 
 複雑な操作を明確で順序立てたステップに分解します。 
 For particularly complex workflows, provide a checklist that Claude can copy into its response and check off as it progresses. 
@@ -1036,8 +783,8 @@ The checklist pattern works for any complex, multi-step process.
 Example 2: PDF form filling workflow(for Skills with code): 
 例 2: PDFフォーム記入ワークフロー（コードを使用したスキル用）：
 ```
-## PDF form filling workflow 
-## PDFフォーム記入ワークフロー
+## 15.6. PDF form filling workflow 
+## 15.7. PDFフォーム記入ワークフロー
 Copy this checklist and check off items as you complete them: 
 このチェックリストをコピーして、完了した項目にチェックを入れてください：
 
@@ -1170,8 +917,8 @@ Example 1: Style guide compliance(for Skills without code):
 例1: スタイルガイドの準拠（コードなしのスキル用）：
 
 ```
-## Content review process  
-## コンテンツレビューのプロセス
+## 15.8. Content review process  
+## 15.9. コンテンツレビューのプロセス
 
 1. Draft your content following the guidelines in STYLE_GUIDE.md  
 1. STYLE_GUIDE.mdのガイドラインに従ってコンテンツをドラフトする
@@ -1208,7 +955,7 @@ Example 1: Style guide compliance(for Skills without code):
 
 
 
-## Content review process コンテンツレビューのプロセス
+## 15.10. Content review process コンテンツレビューのプロセス
 
 1. Draft your content following the guidelines in STYLE_GUIDE.md  
 1. STYLE_GUIDE.mdのガイドラインに従ってコンテンツをドラフトします。
@@ -1393,8 +1140,8 @@ For strict requirements(like API responses or data formats):
 厳密な要件（APIレスポンスやデータ形式など）の場合：
 
 ```
-## Report structureALWAYS use this exact template structure:
-## レポート構造は常にこの正確なテンプレート構造を使用してください：
+## 15.11. Report structureALWAYS use this exact template structure:
+## 15.12. レポート構造は常にこの正確なテンプレート構造を使用してください：
 ```markdown
 # [Analysis Title] 
 ## Executive summary 
@@ -1491,7 +1238,7 @@ Adjust sections as needed for the specific analysis type.
 
 
 
-## Report structure 報告書の構成
+## 15.13. Report structure 報告書の構成
 
 Here is a sensible default format, but use your best judgment based on the analysis:
 ここに合理的なデフォルト形式がありますが、分析に基づいて最良の判断を使用してください。
@@ -1534,7 +1281,7 @@ For Skills where output quality depends on seeing examples, provide input/output
 出力の質が例を見ることに依存するスキルの場合、通常のプロンプティングと同様に入力/出力ペアを提供してください：
 
 ```
-## Commit message format コミットメッセージのフォーマット
+## 15.14. Commit message format コミットメッセージのフォーマット
 Generate commit messages following these examples:
 以下の例に従ってコミットメッセージを生成してください：
 
@@ -1584,7 +1331,7 @@ Follow this style: type(scope): brief description, then detailed explanation.
 
 
 
-## Commit message format コミットメッセージのフォーマット
+## 15.15. Commit message format コミットメッセージのフォーマット
 
 Generate commit messages following these examples:
 以下の例に従ってコミットメッセージを生成します：
@@ -1643,8 +1390,8 @@ Examples help Claude understand the desired style and level of detail more clear
 Guide Claude through decision points:  
 Claudeを意思決定ポイントに導きます：  
 ```
-## Document modification workflow  
-## ドキュメント修正ワークフロー  
+## 15.16. Document modification workflow  
+## 15.17. ドキュメント修正ワークフロー  
 1. Determine the modification type:  
 1. 修正タイプを決定します：  
 **Creating new content?** → Follow "Creation workflow" below  
@@ -1672,7 +1419,7 @@ Claudeを意思決定ポイントに導きます：
 
 
 
-## Document modification workflow 文書修正ワークフロー
+## 15.18. Document modification workflow 文書修正ワークフロー
 
 1. Determine the modification type:  
 1. 修正タイプを決定する:  
@@ -1706,8 +1453,8 @@ If workflows become large or complicated with many steps, consider pushing them 
 
 
 
-## Evaluation and iteration 評価と反復
-### Build evaluations first 最初に評価を構築する
+## 15.19. Evaluation and iteration 評価と反復
+### 15.19.1. Build evaluations first 最初に評価を構築する
 Create evaluations BEFORE writing extensive documentation. 
 広範な文書を書く前に評価を作成します。 
 This ensures your Skill solves real problems rather than documenting imagined ones. 
@@ -1775,7 +1522,7 @@ Users can create their own evaluation system.
 Evaluations are your source of truth for measuring Skill effectiveness. 
 評価は、スキルの効果を測定するための真実の源です。
 
-### Develop Skills iteratively with Claude Claudeを使ってスキルを反復的に開発する
+### 15.19.2. Develop Skills iteratively with Claude Claudeを使ってスキルを反復的に開発する
 The most effective Skill development process involves Claude itself. 
 最も効果的なスキル開発プロセスは、Claude自体を含みます。 
 Work with one instance of Claude ("Claude A") to create a Skill that will be used by other instances ("Claude B"). 
@@ -1886,7 +1633,7 @@ Why this approach works:
 Claude A understands agent needs, you provide domain expertise, Claude B reveals gaps through real usage, and iterative refinement improves Skills based on observed behavior rather than assumptions. 
 Claude Aはエージェントのニーズを理解し、あなたはドメインの専門知識を提供し、Claude Bは実際の使用を通じてギャップを明らかにし、反復的な洗練が観察された行動に基づいてスキルを改善します。
 
-### Observe how Claude navigates Skills Claudeがスキルをどのようにナビゲートするかを観察する
+### 15.19.3. Observe how Claude navigates Skills Claudeがスキルをどのようにナビゲートするかを観察する
 As you iterate on Skills, pay attention to how Claude actually uses them in practice 
 スキルを反復する際には、Claudeが実際にそれらをどのように使用するかに注意を払ってください。
 
@@ -1906,9 +1653,9 @@ Iterate based on these observations rather than assumptions. The 'name' and 'des
 
 
 
-## Anti-patterns to avoid 避けるべきアンチパターン
+## 15.20. Anti-patterns to avoid 避けるべきアンチパターン
 
-### Avoid Windows-style paths Windowsスタイルのパスを避ける
+### 15.20.1. Avoid Windows-style paths Windowsスタイルのパスを避ける
 Always use forward slashes in file paths, even on Windows:  
 ファイルパスでは常にスラッシュ（/）を使用し、Windowsでも同様です：
 - ✓Good:scripts/helper.py,reference/guide.md  
@@ -1918,7 +1665,7 @@ Always use forward slashes in file paths, even on Windows:
 Unix-style paths work across all platforms, while Windows-style paths cause errors on Unix systems.  
 Unixスタイルのパスはすべてのプラットフォームで機能しますが、WindowsスタイルのパスはUnixシステムでエラーを引き起こします。
 
-### Avoid offering too many options 選択肢を多く提供しない
+### 15.20.2. Avoid offering too many options 選択肢を多く提供しない
 Don't present multiple approaches unless necessary:  
 必要でない限り、複数のアプローチを提示しないでください：
 ```
@@ -1943,7 +1690,7 @@ OCRが必要なスキャンPDFには、代わりにpdf2imageとpytesseractを使
 
 
 
-## Advanced: Skills with executable code 高度なスキル：実行可能なコードを含むスキル
+## 15.21. Advanced: Skills with executable code 高度なスキル：実行可能なコードを含むスキル
 
 The sections below focus on Skills that include executable scripts. 
 以下のセクションでは、実行可能なスクリプトを含むスキルに焦点を当てます。
@@ -1951,7 +1698,7 @@ The sections below focus on Skills that include executable scripts.
 If your Skill uses only markdown instructions, skip to Checklist for effective Skills. 
 スキルがマークダウンの指示のみを使用する場合は、効果的なスキルのチェックリストに進んでください。
 
-### Solve, don't punt 解決する、逃げない
+### 15.21.1. Solve, don't punt 解決する、逃げない
 
 When writing scripts for Skills, handle error conditions rather than punting to Claude. 
 スキルのためにスクリプトを書くときは、Claudeに逃げるのではなく、エラー条件を処理してください。
@@ -2046,7 +1793,7 @@ TIMEOUT = 47  # なぜ47？
 RETRIES = 5    # なぜ5？
 ```
 
-### Provide utility scripts ユーティリティスクリプトを提供する
+### 15.21.2. Provide utility scripts ユーティリティスクリプトを提供する
 
 Even if Claude could write a script, pre-made scripts offer advantages: 
 たとえClaudeがスクリプトを書くことができたとしても、事前に作成されたスクリプトには利点があります：
@@ -2127,7 +1874,7 @@ python scripts/fill_form.py input.pdf fields.json output.pdf
 
 
 
-## Utility scripts ユーティリティスクリプト
+## 15.22. Utility scripts ユーティリティスクリプト
 
 **analyze_form.py**: Extract all form fields from PDF  
 **analyze_form.py**: PDFからすべてのフォームフィールドを抽出します。
@@ -2165,7 +1912,7 @@ pythonscripts/fill_form.py input.pdf fields.json output.pdf
 python scripts/fill_form.py input.pdf fields.json output.pdf
 ```
 
-### Use visual analysis  
+### 15.22.1. Use visual analysis  
 視覚分析を使用する
 
 When inputs can be rendered as images, have Claude analyze them:  
@@ -2185,7 +1932,7 @@ When inputs can be rendered as images, have Claude analyze them:
 
 
 
-## Form layout analysis フォームレイアウト分析
+## 15.23. Form layout analysis フォームレイアウト分析
 
 1.Convert PDF to images:  
 1. PDFを画像に変換します：
@@ -9102,9 +8849,9 @@ reader = PdfReader("file.pdf")
 
 
 
-## Technical notes 技術ノート
+## 15.24. Technical notes 技術ノート
 
-### YAML frontmatter requirements YAMLフロントマターの要件
+### 15.24.1. YAML frontmatter requirements YAMLフロントマターの要件
 The SKILL.md frontmatter requires name and description fields with specific validation rules:  
 SKILL.mdのフロントマターは、特定の検証ルールを持つnameおよびdescriptionフィールドを必要とします：
 - name: Maximum 64 characters, lowercase letters/numbers/hyphens only, no XML tags, no reserved words  
@@ -9114,7 +8861,7 @@ SKILL.mdのフロントマターは、特定の検証ルールを持つnameお�
 See the Skills overview for complete structure details.  
 完全な構造の詳細については、Skills overviewを参照してください。
 
-### Token budgets トークン予算
+### 15.24.2. Token budgets トークン予算
 Keep SKILL.md body under 500 lines for optimal performance.  
 SKILL.mdの本文は最適なパフォーマンスのために500行未満に保ってください。 
 If your content exceeds this, split it into separate files using the progressive disclosure patterns described earlier.  
@@ -9124,12 +8871,12 @@ For architectural details, see the Skills overview.
 
 
 
-## Checklist for effective Skills 効果的なスキルのためのチェックリスト
+## 15.25. Checklist for effective Skills 効果的なスキルのためのチェックリスト
 
 Before sharing a Skill, verify:
 スキルを共有する前に、確認してください：
 
-### Core quality コア品質
+### 15.25.1. Core quality コア品質
 - Description is specific and includes key terms
 - 説明は具体的で、重要な用語を含んでいます。
 - Description includes both what the Skill does and when to use it
@@ -9151,7 +8898,7 @@ Before sharing a Skill, verify:
 - Workflows have clear steps
 - ワークフローには明確なステップがあります。
 
-### Code and scripts コードとスクリプト
+### 15.25.2. Code and scripts コードとスクリプト
 - Scripts solve problems rather than punt to Claude
 - スクリプトは問題を解決し、Claudeに投げることはありません。
 - Error handling is explicit and helpful
@@ -9169,7 +8916,7 @@ Before sharing a Skill, verify:
 - Feedback loops included for quality-critical tasks
 - 品質が重要なタスクのためにフィードバックループが含まれています。
 
-### Testing テスト
+### 15.25.3. Testing テスト
 - At least three evaluations created
 - 少なくとも3つの評価が作成されています。
 - Tested with Haiku, Sonnet, and Opus
@@ -9181,7 +8928,7 @@ Before sharing a Skill, verify:
 
 
 
-## Next steps 次のステップ
+## 15.26. Next steps 次のステップ
 
 Create your first Skill  
 最初のSkillを作成します。
@@ -9287,7 +9034,7 @@ Was this page helpful?
 - Next steps  
 - 次のステップ
 
-### Solutions ソリューション
+### 15.26.1. Solutions ソリューション
 - AI agents  
 - AIエージェント
 - Code modernization  
@@ -9305,13 +9052,13 @@ Was this page helpful?
 - Life sciences  
 - 生命科学
 
-### Partners パートナー
+### 15.26.2. Partners パートナー
 - Amazon Bedrock  
 - Amazon Bedrock
 - Google Cloud's Vertex AI  
 - Google CloudのVertex AI
 
-### Learn 学ぶ
+### 15.26.3. Learn 学ぶ
 - Blog  
 - ブログ
 - Catalog  
@@ -9335,7 +9082,7 @@ Was this page helpful?
 - Startups program  
 - スタートアッププログラム
 
-### Company 会社
+### 15.26.4. Company 会社
 - Anthropic  
 - Anthropic
 - Careers  
@@ -9353,7 +9100,7 @@ Was this page helpful?
 - Transparency  
 - 透明性
 
-### Learn 学ぶ
+### 15.26.5. Learn 学ぶ
 - Blog  
 - ブログ
 - Catalog  
@@ -9377,7 +9124,7 @@ Was this page helpful?
 - Startups program  
 - スタートアッププログラム
 
-### Help and security ヘルプとセキュリティ
+### 15.26.6. Help and security ヘルプとセキュリティ
 - Availability  
 - 利用可能性
 - Status  
@@ -9387,7 +9134,7 @@ Was this page helpful?
 - Discord  
 - Discord
 
-### Terms and policies 利用規約とポリシー
+### 15.26.7. Terms and policies 利用規約とポリシー
 - Privacy policy  
 - プライバシーポリシー
 - Responsible disclosure policy  
