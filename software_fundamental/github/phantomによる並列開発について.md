@@ -1,4 +1,7 @@
-refs: https://github.com/aku11i/phantom
+refs: 
+
+- https://github.com/aku11i/phantom
+- 並列でコーディングエージェントを大量に動かす開発方法が増えてる感: [Claude Code Meetup Tokyo参加録](https://note.com/higu_engineer/n/n3661dd1f126f)
 
 ## 1. Phantomによる並列開発について
 
