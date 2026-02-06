@@ -87,6 +87,30 @@
 
 - refs: 
   - [How to Achieve Seamless Schema Evolution with Apache Iceberg　Apache](https://www.coditation.com/blog/achieve-seamless-schema-evolution-with-apache-iceberg)
+- 導入
+  - ビジネスって常に進化するから、それに合わせてデータインフラ周りも進化していく必要があるよね。
+  - Icebergテーブル形式は、他の現代風のテーブル形式と比較しても、**シームレスなスキーマ進化**が得意だよ!
+    - レイクハウスアーキテクチャで採用され得る他のテーブル形式 (Apache HudiとかDelta Lakeとか) と比較しても、Icebergは特にスキーマ進化が得意だよ!
+- 実際の例: 大規模なEコマースプラットフォームで
+  - 最初: 製品カタログのスキーマは以下のような構造だったとする。
+    - id (bigint)
+    - name (string)
+    - price (double)
+    - category (string)
+  - ビジネスの成長に伴い、以下のようなスキーマ変更が必要になりうる。
+    - 製品の説明(description)カラムを追加
+    - 多様な通貨をサポートするために、priceカラムをネスト構造のpricesカラムに変更
+  - 上記の変更を、テーブル全体を書き直すことなく即座にスキーマ更新できる。
+- スキーマ進化のパフォーマンス比較
+  - 1TBの大規模なテーブルにカラム追加した場合のパフォーマンス比較 (Apache Iceberg vs Apache Hive)
+  - Apache Iceberg:
+    - Add Column (1TB table): 0秒
+    - Read After Change: 影響なし
+  - Apache Hive:
+    - Add Column (1TB table): 4.5時間
+    - Read After Change: 15%パフォーマンス低下
+- 
+  - 
 
 ## 実際にS3TablesとPyIcebergで試してみた!
 
