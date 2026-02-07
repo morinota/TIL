@@ -466,7 +466,7 @@ if __name__ == "__main__":
 ```
 
 
-#### 5.1.1. ガバナンスの重要性
+#### 4.6.1. ガバナンスの重要性
 
 大きな柔軟性には強力なガバナンスが必要:
 
@@ -476,7 +476,7 @@ if __name__ == "__main__":
 - すべての利害関係者への変更通知
 
 
-## 6. 参考リンク
+## 5. 参考リンク
 
 - [Apache Iceberg公式ドキュメント - Evolution](https://iceberg.apache.org/docs/1.7.1/evolution/)
 - [How to Achieve Seamless Schema Evolution with Apache Iceberg](https://www.coditation.com/blog/achieve-seamless-schema-evolution-with-apache-iceberg)
