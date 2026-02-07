@@ -13,14 +13,24 @@
 > "A table format in the simplest term is a way to organize dataset files to represent them as a single 'table'." (テーブルフォーマットとは、簡単に言うと、データセットファイルを1つの「テーブル」として表現する方法のこと。)
 > ([What's a table format and why do we need one?](https://medium.com/@shreekumar-saparia/whats-a-table-format-and-why-do-we-need-one-51373b94e1c5) より引用)
 
-- lakehouseアーキテクチャにおいて、テーブルフォーマットは**データレイク上のデータを管理・操作するための中間レイヤー**として機能する
-  - Transaction & Metadata Layer (トランザクションとメタデータのレイヤー)
+- レイクハウスアーキテクチャにおいて、テーブルフォーマットは**データレイク上のデータを管理・操作するための中間レイヤー**として機能する
+  - Transaction & Metadata Layer (トランザクションとメタデータのレイヤー)!
+  - **データレイクを「ちゃんとしたテーブル」として扱えるようにするための中間レイヤー!**
 
 ### テーブルフォーマットがなぜ必要になったんだっけ??
 
-- 1980年代に、分析クエリに最適化された専用のDBとして**DWH(データウェアハウス)**が登場!
-- 2010年代に入ると、多様なタイプの膨大な量ののデータを低コストで保存する需要が高まり、**データレイク(Data Lake)**が登場!
-  - データレイクが提供したこと
+- 1980年代に、意思決定支援のために分析クエリに最適化された専用のDBが必要に...**DWH(データウェアハウス)**が登場!
+  - データウェアハウスが提供したこと:
+    - 事前定義されたスキーマを持つ、構造化されたデータストレージ。
+    - データの整合性を保証するACIDトランザクション。
+    - BIのための大量データに対する高性能なSQLクエリ。
+    - スキーマ検証を通じたデータ品質の向上。
+  - しかしデータウェアハウスの問題点!
+    - スケールアップが高コスト。
+    - 非構造化データ(画像, 動画, ログファイルなど)の保存が困難。
+    - データをロードするために高額なETLプロセスが必要。
+- 2010年代に入ると、多様なタイプの膨大な量ののデータを低コストで保存する需要が高まった...**データレイク(Data Lake)**が登場!
+  - データレイクが提供したこと:
     - 1. コスト効率の良いストレージ
     - 2. 任意のデータ形式(parquetとか)を許容できるschema-on-readの柔軟性 (読み取り時にスキーマを適用)
     - 3. 画像、動画、ログファイルなど、多様なデータタイプの保存
@@ -28,11 +38,10 @@
 - しかしデータレイクの問題点!
   - 1. **適切なガバナンスがないと、「data swamp (データの沼)」になり、時間の経過とともにデータ品質が低下する無秩序なリポジトリ**になってしまう...!!
   - 2. ACIDトランザクションのサポートが欠如しており、データの整合性を確保するのが難しい
-  - 3. SQLクエリのパフォーマンスが、DWHと比べて劣ることが多い
-- そこで登場したのが、**テーブルフォーマット (Table format)**!
-  - データレイクストレージの上に位置する、**トランザクションとメタデータを管理する中間レイヤー (Metadata & Transaction Layer)**
-  - この中間レイヤーを追加することで、データレイクの利点を活かしつつ、DWHのようなガバナンスとパフォーマンスを得る
-  - データレイクを「ちゃんとしたテーブル」として扱えるようにするための中間レイヤー
+  - 3. **SQLクエリのパフォーマンスが、DWHと比べてしばしば劣る...!**
+- そこで2020年台に登場したのが、テーブルフォーマット! (を用いたレイクハウスアーキテクチャ!)
+  - データレイクストレージの上に、トランザクションとメタデータを管理する中間レイヤー (Metadata & Transaction Layer)としてテーブルフォーマットを配置することで、データウェアハウス
+  - この中間レイヤーを追加することで、データレイクの利点を活かしつつ、DWHのようなガバナンスとパフォーマンスを得る事を目指す。
 
 ### テーブルフォーマットの例
 
@@ -214,7 +223,6 @@ table = catalog.create_table(
 次に、このテーブルに対してスキーマ進化を試す。以下の変更を行う:
 
 - カラム追加: `user_feature_3`という新しいカラムを追加
-- パーティション追加: `user_id_bucket`という新しいパーティションフィールドを追加
 
 ```python
 # 変更後のスキーマを定義
@@ -226,18 +234,11 @@ evolved_schema = Schema(
     # 新しいカラムを追加
     NestedField(field_id=6, name="user_feature_3", field_type=StringType(), required=False),
 )
-
-# 変更後のパーティション仕様を定義
-evolved_partition_spec = PartitionSpec(
-    PartitionField(source_id=2, field_id=1000, transform=DayTransform(), name="event_time_day"),
-    # 新しいパーティションフィールドを追加
-    PartitionField(source_id=1, field_id=1001, transform=BucketTransform(16), name="user_id_bucket"),
-)
 ```
 
 ### スキーマ差分を検出する
 
-スキーマとパーティションの差分を検出するロジック:
+スキーマの差分を検出するロジック:
 
 ```python
 from dataclasses import dataclass
@@ -250,15 +251,6 @@ class SchemaChange:
     field_name: str
     new_field_name: str | None = None
     field: NestedField | None = None
-    is_destructive: bool = False
-
-@dataclass
-class PartitionChange:
-    """パーティション変更の種類"""
-    change_type: Literal["add_field", "rename_field", "remove_field"]
-    partition_name: str
-    new_partition_name: str | None = None
-    partition_field: PartitionField | None = None
     is_destructive: bool = False
 
 def detect_schema_changes(current_schema: Schema, desired_schema: Schema) -> list[SchemaChange]:
@@ -304,56 +296,11 @@ def detect_schema_changes(current_schema: Schema, desired_schema: Schema) -> lis
 
     return changes
 
-def detect_partition_changes(current_spec: PartitionSpec, desired_spec: PartitionSpec) -> list[PartitionChange]:
-    """現在のパーティション仕様と期待するパーティション仕様の差分を検出"""
-    changes: list[PartitionChange] = []
-
-    current_fields_by_id = {f.field_id: f for f in current_spec.fields}
-    desired_fields_by_id = {f.field_id: f for f in desired_spec.fields}
-
-    # 追加・リネームを検出
-    for field_id, desired_field in desired_fields_by_id.items():
-        if field_id not in current_fields_by_id:
-            changes.append(
-                PartitionChange(
-                    change_type="add_field",
-                    partition_name=desired_field.name,
-                    partition_field=desired_field,
-                    is_destructive=False,
-                )
-            )
-        else:
-            current_field = current_fields_by_id[field_id]
-            if current_field.name != desired_field.name:
-                changes.append(
-                    PartitionChange(
-                        change_type="rename_field",
-                        partition_name=current_field.name,
-                        new_partition_name=desired_field.name,
-                        is_destructive=False,
-                    )
-                )
-
-    # 削除を検出
-    for field_id, current_field in current_fields_by_id.items():
-        if field_id not in desired_fields_by_id:
-            changes.append(
-                PartitionChange(
-                    change_type="remove_field",
-                    partition_name=current_field.name,
-                    is_destructive=True,
-                )
-            )
-
-    return changes
-
 # 実際に差分を検出
 table = catalog.load_table("public.test_schema_evolution")
 schema_changes = detect_schema_changes(table.schema(), evolved_schema)
-partition_changes = detect_partition_changes(table.spec(), evolved_partition_spec)
 
 print("Schema changes:", schema_changes)
-print("Partition changes:", partition_changes)
 ```
 
 ### スキーマ変更を適用する
@@ -395,40 +342,8 @@ def apply_schema_changes(table: Table, changes: list[SchemaChange], allow_destru
                 update.delete_column(path=change.field_name)
                 print(f"✅ カラム削除: {change.field_name}")
 
-def apply_partition_changes(table: Table, changes: list[PartitionChange], allow_destructive_changes: bool = False) -> None:
-    """検出されたパーティション変更をテーブルに適用"""
-    if not changes:
-        return
-
-    destructive_changes = [c for c in changes if c.is_destructive]
-    if destructive_changes and not allow_destructive_changes:
-        print(f"破壊的な変更が検出されました: {destructive_changes}")
-        print("破壊的変更を適用するには allow_destructive_changes=True を指定してください")
-        return
-
-    with table.update_spec() as update:
-        for change in changes:
-            if change.change_type == "add_field":
-                if change.partition_field:
-                    update.add_field(
-                        source_column_name=change.partition_field.source_id,
-                        transform=change.partition_field.transform,
-                        partition_field_name=change.partition_field.name,
-                    )
-                    print(f"✅ パーティションフィールド追加: {change.partition_field.name}")
-
-            elif change.change_type == "rename_field":
-                if change.new_partition_name:
-                    update.rename_field(change.partition_name, change.new_partition_name)
-                    print(f"✅ パーティションフィールドリネーム: {change.partition_name} → {change.new_partition_name}")
-
-            elif change.change_type == "remove_field":
-                update.remove_field(change.partition_name)
-                print(f"✅ パーティションフィールド削除: {change.partition_name}")
-
 # 変更を適用
 apply_schema_changes(table, schema_changes)
-apply_partition_changes(table, partition_changes)
 ```
 
 ### 宣言的スキーマ管理の実装
@@ -439,20 +354,14 @@ apply_partition_changes(table, partition_changes)
 # schema_definitions.py
 """Feature Store用のIcebergテーブルスキーマ定義"""
 
-# テーブル名、スキーマ、パーティション仕様のマッピング
+# テーブル名とスキーマのマッピング
 TABLES = {
-    "test_schema_evolution": (
-        Schema(
-            NestedField(field_id=1, name="user_id", field_type=LongType(), required=False),
-            NestedField(field_id=2, name="event_time", field_type=TimestamptzType(), required=False),
-            NestedField(field_id=3, name="created", field_type=TimestamptzType(), required=False),
-            NestedField(field_id=4, name="feature_1", field_type=LongType(), required=False),
-            NestedField(field_id=6, name="user_feature_3", field_type=StringType(), required=False),
-        ),
-        PartitionSpec(
-            PartitionField(source_id=2, field_id=1000, transform=DayTransform(), name="event_time_day"),
-            PartitionField(source_id=1, field_id=1001, transform=BucketTransform(16), name="user_id_bucket"),
-        ),
+    "test_schema_evolution": Schema(
+        NestedField(field_id=1, name="user_id", field_type=LongType(), required=False),
+        NestedField(field_id=2, name="event_time", field_type=TimestamptzType(), required=False),
+        NestedField(field_id=3, name="created", field_type=TimestamptzType(), required=False),
+        NestedField(field_id=4, name="feature_1", field_type=LongType(), required=False),
+        NestedField(field_id=6, name="user_feature_3", field_type=StringType(), required=False),
     ),
 }
 ```
@@ -463,7 +372,7 @@ TABLES = {
 
 import typer
 from schema_definitions import TABLES
-from schema_evolution import detect_schema_changes, detect_partition_changes, apply_schema_changes, apply_partition_changes
+from schema_evolution import detect_schema_changes, apply_schema_changes
 
 def main(mode: str, namespace: str = "public"):
     """Feature Store用のIcebergテーブルを初期化・管理
@@ -473,7 +382,7 @@ def main(mode: str, namespace: str = "public"):
     catalog = load_catalog(...)
 
     # 全テーブルの差分を検出
-    for table_name, (desired_schema, partition_spec) in TABLES.items():
+    for table_name, desired_schema in TABLES.items():
         table_identifier = f"{namespace}.{table_name}"
 
         try:
@@ -481,16 +390,13 @@ def main(mode: str, namespace: str = "public"):
 
             # 既存テーブルのスキーマ変更をチェック
             schema_changes = detect_schema_changes(table.schema(), desired_schema)
-            partition_changes = detect_partition_changes(table.spec(), partition_spec)
 
-            if schema_changes or partition_changes:
+            if schema_changes:
                 print(f"[~] {table_identifier}")
                 print("  Schema:", schema_changes)
-                print("  Partition:", partition_changes)
 
                 if mode == "deploy":
                     apply_schema_changes(table, schema_changes)
-                    apply_partition_changes(table, partition_changes)
 
         except Exception:
             # テーブルが存在しない場合は新規作成
@@ -499,42 +405,11 @@ def main(mode: str, namespace: str = "public"):
                 catalog.create_table(
                     identifier=table_identifier,
                     schema=desired_schema,
-                    partition_spec=partition_spec,
                 )
 
 if __name__ == "__main__":
     typer.run(main)
 ```
-
-## 補足: その他の進化機能
-
-### Sort Order Evolution(ソート順進化)
-
-スキーマ進化と同様に、Icebergは**ソート順(sort order)**の進化もサポートする:
-
-- テーブルはpartition内のデータをカラムでソートすることでクエリ性能を向上できる
-- ソート順は、ソート順IDとソートフィールドのリストによって定義される
-- 各ソートフィールドは以下で定義:
-  - ソースカラムのfield ID
-  - 変換関数(transform function)
-  - ソート方向(ascending/descending)
-  - null order(nulls first/nulls last)
-- ソート順を変更しても、以前のソート順で書き込まれた古いデータはそのまま保持される
-
-### DML操作とCopy-on-Write戦略
-
-Icebergは、UPDATE・DELETE・MERGE操作において以下の戦略を採用:
-
-- **デフォルト: Copy-on-Write(CoW)**
-  - データファイル内の単一の行が変更・削除された場合でも、データファイル全体を再書き込み
-  - 頻繁な更新に対して書き込み増幅を引き起こす可能性があるが、読み取りは高速
-  - フィルターによって全パーティションを剪定できる場合は、メタデータのみの削除が可能
-
-- **オプション: Merge-on-Read(MoR)**
-  - データファイルを即座に書き換えず、「削除ファイル」を生成して追跡
-  - 位置削除(positional deletes)や等価削除(equality deletes)をサポート
-  - 頻繁な小規模更新やストリーミングワークロードに有益
-  - 読み取り時にデータと削除ファイルをマージする追加オーバーヘッドが発生
 
 ## 学びと考察
 
@@ -544,8 +419,7 @@ Icebergは、UPDATE・DELETE・MERGE操作において以下の戦略を採用:
 - 一意なカラムID管理により、スキーマ変更時の正しさが保証され、副作用がない
 - Delta LakeやHudiと比較して、カラムの順序変更や名前変更などの柔軟性が高い
 - 柔軟なデータモデリングにより、新データ製品の市場投入時間を最大35%短縮し、データチームの生産性を40%向上できる(2023 Databricks調査)
-- スキーマ進化だけでなく、ソート順進化やパーティション進化もサポートし、データレイク全体の進化を支援
-- Copy-on-WriteとMerge-on-Readの両戦略を提供し、ワークロードに応じた選択が可能
+- スキーマ進化だけでなく、ソート順進化やパーティション進化などもサポートし、データレイク全体の進化を支援
 
 ### 自分の考察
 
@@ -577,7 +451,7 @@ Icebergのスキーマ進化機能は、機械学習のFeature Storeにおいて
 - **Iceberg**: 急速に進化するスキーマ、ベンダーニュートラル、複数処理エンジンの統合が必要な場合
 - **Delta Lake**: Databricksエコシステムとの深い統合、厳密なACID準拠が必要な場合
 
-ただし、スキーマ進化の柔軟性とパーティション進化の観点では、Icebergが明確な優位性を持つ。
+ただし、スキーマ進化の柔軟性の観点では、Icebergが明確な優位性を持つ。
 
 ## 参考リンク
 
