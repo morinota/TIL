@@ -1,23 +1,38 @@
 タイトル: Feature Store調べてたらレイクハウスアーキテクチャに行き着いてIceberg Table formatについて調べた! スキーマ進化編!
 
-## 1. はじめに: Apache Iceberg Table formatとは何かをざっくりまとめる
+## なんでこの記事を書いたの??
 
-### 1.1. ざっくりApache Icebergとは??
+自分はMLOps分野に興味があって普段から色々調べているのですが、Feature Storeに関する書籍を読んでいたら、以下のような記述がありました。
+
+> The offline stores for existing feature stores are lakehouses. (既存のフィーチャーストアの**オフラインストアはレイクハウス**である)
+
+> In contrast to a data warehouse, a lakehouse is an open platform that separates the storage of columnar data from the query engines that use it. (データウェアハウスとは対照的に、レイクハウスは、**列指向データのストレージをそれを使用するクエリエンジンから分離**するオープンプラットフォームである)
+
+> The main open source standards for a lakehouse are the open table formats (OTFs) for data storage (Apache Iceberg, Delta Lake, Apache Hudi). (レイクハウスの主なオープンソース標準は、データストレージのためのオープンテーブルフォーマット（OTF）（**Apache Iceberg**、Delta Lake、Apache Hudi）である)
+
+元々業務関連でS3 TablesやIcebergテーブルフォーマットについてなんとな〜く調べていたので、MLOpsとIcebergが繋がった感じがしました。嬉しくなったので調べた内容を記事に残します:)
+（ちなみに「レイクハウス」という言葉は初知りでした。なるほど、じゃあS3 TablesにIcebergテーブルで特徴量レコードを保存して、AthenaやSnowflakeやPyIcebergなどの任意のクエリエンジンでクエリできるようにする設計は、レイクハウスアーキテクチャの一例と言えるのか...!:thinking:）
+
+## 前提: Apache Iceberg Table formatってなんだっけ??
+
+### ざっくりApache Icebergとは??
 
 - オープンソースのテーブルフォーマット (Table format)
 - Netflixが開発し、Apache Software Foundationに寄贈された
 - モダンなテーブルフォーマットの中で、一番人気があるっぽい
 
-### 1.2. そもそも「テーブルフォーマット (Table format)」とは??
+### そもそも「テーブルフォーマット (Table format)」とは??
 
 > "A table format in the simplest term is a way to organize dataset files to represent them as a single 'table'." (テーブルフォーマットとは、簡単に言うと、データセットファイルを1つの「テーブル」として表現する方法のこと。)
 > ([What's a table format and why do we need one?](https://medium.com/@shreekumar-saparia/whats-a-table-format-and-why-do-we-need-one-51373b94e1c5) より引用)
 
 - レイクハウスアーキテクチャにおいて、テーブルフォーマットは**データレイク上のデータを管理・操作するための中間レイヤー**として機能する
   - Transaction & Metadata Layer (トランザクションとメタデータのレイヤー)!
-  - **データレイクを「ちゃんとしたテーブル」として扱えるようにするための中間レイヤー!**
+- かなりラフな言い方をすると、**データレイクを「ちゃんとしたテーブル」として扱えるようにするための中間レイヤー**...!!:thinking:
 
-### 1.3. テーブルフォーマットがなぜ必要になったんだっけ??
+### テーブルフォーマットがなぜ必要になったんだっけ??
+
+データウェアハウス → データレイク → レイクハウス(with テーブルフォーマット)みたいな流れみたい。
 
 - 1980年代に、意思決定支援のために分析クエリに最適化された専用のDBが必要に...**DWH(データウェアハウス)**が登場!
   - データウェアハウスが提供したこと:
@@ -41,9 +56,9 @@
     - 3. **SQLクエリのパフォーマンスが、DWHと比べてしばしば劣る...!**
 - そこで2020年台に登場したのが、テーブルフォーマット! (を用いたレイクハウスアーキテクチャ!)
   - データレイクストレージの上に、トランザクションとメタデータを管理する中間レイヤー (Metadata & Transaction Layer)としてテーブルフォーマットを配置して、クエリエンジンを分離した構造。
-  - この中間レイヤーを追加することで、データレイクの利点を活かしつつ、DWHのようなガバナンスとパフォーマンスを得る事を目指す。
+  - この中間レイヤーを追加することで、データレイクの利点を活かしつつ、DWHのようなガバナンスとパフォーマンスを得る事を目指す!
 
-### 1.4. テーブルフォーマットの例
+### テーブルフォーマット達
 
 - 最初に登場した元祖っぽいテーブルフォーマット
   - Apache Hive
@@ -52,18 +67,16 @@
   - Delta Lake
   - Apache Hudi
 
-その中で今回は、Apache Icebergのスキーマ進化(Schema Evolution)について調査・試行したメモです。
+その中で今回は、モダンなテーブルフォーマットの中で一番人気があるっぽいApache Icebergについて、スキーマ進化(Schema Evolution)について調査・試行してみました!
 
-## 2. 背景・課題: なぜスキーマ進化が重要なのか?
+## 背景: スキーマ進化のしやすさって重要だよね!!
 
 - データレイクの運用において、**ビジネス要件の変化に応じてスキーマを進化させる必要性は避けられない**。
-  - 特徴量ストアを運用する上でも、少なくとも新しい特徴量の追加はガンガン発生するよね...!!:thinking:
-- 従来のHiveテーブルなどでは、スキーマ変更時にテーブル全体の書き換えが必要となり、数時間から数日のダウンタイムと高額なコストが発生する。
+  - (実際にMLOps文脈でFeature Storeストアとして運用する上でも、**少なくともMLモデル改善の試行錯誤の中で新しい特徴量の追加はガンガン発生**するよね...!!:thinking:)
+- 従来のHiveテーブルフォーマットなどでは、スキーマ変更時にテーブル全体の書き換えが必要となり、数時間から数日のダウンタイムと高額なコストが発生するらしい。
 - IDCの予測によれば、2025年までに世界のデータ空間は175ゼタバイトに達すると見られており、こうした指数関数的なデータ成長に対応できる柔軟なデータモデリング手法が求められている。
 
-## 3. 本論: Icebergのスキーマ進化 (Schema Evolution) どんな感じ?
-
-### 3.1. 公式ドキュメントを読んだメモ!
+## 本論: Icebergのスキーマ進化 (Schema Evolution) どんな感じ?
 
 公式ドキュメントによると、Icebergのスキーマ進化は以下の変更をサポートしてる:
 
@@ -83,9 +96,7 @@
 
 **上記の変更は全部、メタデータだけ変える、データファイルは書き直さない**という仕組み。だからパフォーマンス的にも優しい。
 
-#### 3.1.1. 正しさの保証 (Correctness)
-
-スキーマ進化による変更がお互いに独立してて、副作用はないことを保証してる。
+またスキーマ進化による変更がお互いに独立してて、副作用はないことを保証してる。
 
 具体的には...
 
@@ -94,90 +105,35 @@
 - その3: カラム更新しても、既存の別カラムには影響しない
 - その4: カラム順序を変更しても、対応する値は変わらない
 
-**どうやって正しさを保証してるのか??**
+どうやって正しさを保証してるのか??
 
 - Icebergは、**テーブル内の各カラムを一意なID(field ID)で管理**してる
   - よって、**新しいカラムを追加した時は必ず新しいIDが割り当てられる**。既存データが間違って使われることはない
-  - もしカラムを名前で追跡する形式だと、削除時や名前変更時に問題が起きやすい
-  - もしカラムを位置で追跡する形式だと、削除時に既存の他カラムに影響を与えてしまう
+- もしもID管理ではなかったら...
+  - 名前で追跡する形式だと...削除時や名前変更時に問題が起きやすい
+  - 位置で追跡する形式だと...削除時に既存の他カラムに影響を与えてしまう
 
-### 3.2. 他のテーブルフォーマットとの比較
+現代風の他のテーブルフォーマットと比べても、もっとも柔軟で包括的なスキーマ進化機能を持つらしい。([How to Achieve Seamless Schema Evolution with Apache Iceberg](https://www.coditation.com/blog/achieve-seamless-schema-evolution-with-apache-iceberg) より)
 
-主要なテーブルフォーマット間のスキーマ進化機能比較:
-
-| 機能 | Apache Iceberg | Delta Lake | Apache Hudi |
-|------|----------------|------------|-------------|
-| カラム追加 | ○ | ○ | ○ |
-| カラム削除 | ○ | ○ | ○ |
-| カラム名変更 | ○ | ○ | × |
-| カラム型変更 | ○(限定的) | ○ | × |
-| カラム順序変更 | ○ | × | × |
-| 書き込み時のスキーマ進化 | ○ | ○ | ○ |
-
-Icebergは**スキーマ進化のための主要なプラットフォーム**として、市場で最も包括的で柔軟な機能を提供している。
-
-### 3.3. スキーマ進化のパフォーマンス比較
-
-1TBの大規模なテーブルにカラム追加した場合のパフォーマンス比較 (Apache Iceberg vs Apache Hive):
-
-| テーブルフォーマット | カラム追加時間 | 読み取りパフォーマンスへの影響 |
-|---------------------|---------------|------------------------------|
-| Apache Iceberg | 0秒 | 影響なし |
-| Apache Hive | 4.5時間 | 15%低下 |
-
-Icebergは、Hiveが苦しむ長時間のテーブル書き換えや読み取りパフォーマンス低下を回避し、操作をほぼ瞬時に実行する。
-
-### 3.4. 実際の例: 大規模なEコマースプラットフォームで
-
-最初: 製品カタログのスキーマは以下のような構造だったとする。
-
-```python
-# 初期スキーマ
-CREATE TABLE products (
-    id BIGINT,
-    name STRING,
-    price DECIMAL(10, 2),
-    category STRING
-)
-```
-
-ビジネスの成長に伴い、以下のようなスキーマ変更が必要になりうる:
-
-```python
-# 1. 製品の説明(description)カラムを追加
-ALTER TABLE products ADD COLUMN description STRING
-
-# 2. マルチ通貨サポートのためのネスト構造を追加
-ALTER TABLE products ADD COLUMN prices STRUCT<
-    usd:DECIMAL(10,2),
-    eur:DECIMAL(10,2),
-    gbp:DECIMAL(10,2)
->
-
-# 3. デフォルト値付きカラムの追加
-ALTER TABLE products ADD COLUMN avg_rating FLOAT DEFAULT 0.0
-
-# 4. カラムの名前変更
-ALTER TABLE products RENAME COLUMN category TO product_category
-```
-
-上記の変更を、テーブル全体を書き直すことなく即座にスキーマ更新できる。**既存のETLプロセスやクエリは影響を受けず、過去のデータには古いスキーマを、新しい情報には新しいスキーマをシームレスにアクセス**できる。
-
-## 4. 実際にS3TablesとPyIcebergで試してみた!
+## 実際にS3TablesとPyIcebergで試してみた!
 
 Pyicebergのドキュメントを参考にしつつ、Icebergテーブルを作成し、スキーマ進化を試してみた。
 
-### 4.1. 初期スキーマでIcebergテーブルを作成
+### 初期スキーマでIcebergテーブルを作成
+
+まず動作確認用のIcebergテーブルを新規作成する。
+なおFeature Storeを意識して、テーブルスキーマは、エンティティ識別子として`user_id`カラム、ダミーの特徴量として`feature_1`カラムを持つようにした。
 
 ```python
 from pyiceberg.schema import Schema
 from pyiceberg.types import LongType, NestedField, StringType, TimestamptzType
 from pyiceberg.catalog import load_catalog
+import polars as pl
 
-# カタログに接続
+# 1. カタログに接続(S3Tablesとか)
 catalog = load_catalog(...)
 
-# Icebergテーブルのスキーマを定義
+# 2. Icebergテーブルのスキーマを定義
 initial_schema = Schema(
     NestedField(
         field_id=1,
@@ -195,64 +151,45 @@ initial_schema = Schema(
     ),
 )
 
-# テーブルを作成
+# 3. テーブルを作成
 table = catalog.create_table(
     identifier="public.test_schema_evolution",
     schema=initial_schema,
 )
 
-# 初期データを書き込み
-import polars as pl
-
+# 4. 初期データを書き込み
 initial_data = pl.DataFrame({
     "user_id": [1, 2, 3],
     "feature_1": [100, 200, 300],
 })
-
 table.append(initial_data)
 
-# データを読み込んで確認
+# 5. データを読み込んで確認
 df = table.scan().to_polars()
-print("初期データ:")
 print(df)
-# 出力例:
+# 出力:
+# shape: (3, 2)
 # ┌─────────┬───────────┐
-# │ user_id │ feature_1 │
-# │ ---     │ ---       │
-# │ i64     │ i64       │
+# │ user_id ┆ feature_1 │
+# │ ---     ┆ ---       │
+# │ i64     ┆ i64       │
 # ╞═════════╪═══════════╡
-# │ 1       │ 100       │
-# │ 2       │ 200       │
-# │ 3       │ 300       │
+# │ 1       ┆ 100       │
+# │ 2       ┆ 200       │
+# │ 3       ┆ 300       │
 # └─────────┴───────────┘
 ```
 
-### 4.2. スキーマ進化1としてカラム追加を試す
+OK! 無事にIcebergテーブルが作成され、初期データも書き込めた!
 
-次に、このテーブルに対してスキーマ進化を試す。以下の変更を行う:
+### スキーマ進化のパターン1つ目: カラム追加
 
-- カラム追加: `feature_2`という新しいカラムを追加
-
-```python
-# 変更後のスキーマを定義
-evolved_schema = Schema(
-    NestedField(field_id=1, name="user_id", field_type=LongType(), required=False),
-    NestedField(field_id=2, name="feature_1", field_type=LongType(), required=False),
-    # 新しいカラムを追加
-    NestedField(field_id=3, name="feature_2", field_type=StringType(), required=False),
-)
-```
-
-### 4.3. ad-hocにスキーマを変更してみる
-
-PyIcebergのAPIを使って、直接テーブルのスキーマを変更してみる:
-
-#### カラム追加
+次に、このテーブルに対してスキーマ進化1種類目としてカラム追加を試す。
+具体的には、`feature_2`という新しいカラムを追加する。
+Pyicebergでは以下のように `update_schema` コンテキストマネージャを使ってスキーマ変更を行えるみたい。
+カラム追加の場合は `update.add_column` メソッドを使う。
 
 ```python
-# テーブルを再読み込み
-table = catalog.load_table("public.test_schema_evolution")
-
 # カラムを追加
 with table.update_schema() as update:
     update.add_column(
@@ -261,63 +198,61 @@ with table.update_schema() as update:
         required=False,
         doc="テスト用特徴量2",
     )
-    print("✅ カラム追加: feature_2")
 
-# スキーマを確認
-print(table.schema())
+# スキーマ更新の反映を確認
+table = table.refresh()
+print(f"更新後のスキーマ:\n{table.schema()}")
+# 出力:
+# 更新後のスキーマ:
+# table {
+#   1: user_id: optional long (ユーザーID)
+#   2: feature_1: optional long (テスト用特徴量1)
+#   3: feature_2: optional string (テスト用特徴量2)
+# }
 
-# 既存データを読み込んで確認
+# 既存レコードがどうなってるか確認
 df_after_add = table.scan().to_polars()
-print("\nカラム追加後の既存データ:")
-print(df_after_add)
-# 出力例:
+print(f"カラム追加後の既存データ:\n{df_after_add}")
+# 出力:
+# shape: (3, 3)
 # ┌─────────┬───────────┬───────────┐
-# │ user_id │ feature_1 │ feature_2 │
-# │ ---     │ ---       │ ---       │
-# │ i64     │ i64       │ str       │
+# │ user_id ┆ feature_1 ┆ feature_2 │
+# │ ---     ┆ ---       ┆ ---       │
+# │ i64     ┆ i64       ┆ str       │
 # ╞═════════╪═══════════╪═══════════╡
-# │ 1       │ 100       │ null      │
-# │ 2       │ 200       │ null      │
-# │ 3       │ 300       │ null      │
+# │ 1       ┆ 100       ┆ null      │
+# │ 2       ┆ 200       ┆ null      │
+# │ 3       ┆ 300       ┆ null      │
 # └─────────┴───────────┴───────────┘
-# => 既存データは保持され、新しいカラムはnull
 
-# 新しいスキーマでデータを追加
-new_data = pl.DataFrame({
-    "user_id": [4],
-    "feature_1": [400],
-    "feature_2": ["value_4"],
-})
-table.append(new_data)
 
-df_after_insert = table.scan().to_polars()
-print("\n新しいデータ追加後:")
-print(df_after_insert)
-# 出力例:
-# ┌─────────┬───────────┬───────────┐
-# │ user_id │ feature_1 │ feature_2 │
-# │ ---     │ ---       │ ---       │
-# │ i64     │ i64       │ str       │
-# ╞═════════╪═══════════╪═══════════╡
-# │ 1       │ 100       │ null      │
-# │ 2       │ 200       │ null      │
-# │ 3       │ 300       │ null      │
-# │ 4       │ 400       │ value_4   │
-# └─────────┴───────────┴───────────┘
 ```
 
-#### カラム名変更
+既存レコードは保持され、新しいカラムはnullで初期化されていることが確認できた!
+
+### スキーマ進化のパターン2: カラムの名前変更
+
+PyIcebergでは、`update.rename_column` メソッドを使えばいいっぽい。
 
 ```python
-# カラムの名前を変更
+# 1. スキーマ進化操作 (カラム名変更) を実行
 with table.update_schema() as update:
     update.rename_column("feature_1", "feature_1_renamed")
-    print("✅ カラムリネーム: feature_1 → feature_1_renamed")
 
-# リネーム後のデータを確認
+# 2. スキーマを確認
+table = table.refresh()
+print(table.schema())
+# 出力:
+# table {
+#   1: user_id: optional long (ユーザーID)
+#   2: feature_1_renamed: optional long (テスト用特徴量1)
+#   3: feature_2: optional string (テスト用特徴量2)
+# }
+
+# 3. スキーマ進化後のデータを確認
 df_after_rename = table.scan().to_polars()
-print("\nカラムリネーム後:")
 print(df_after_rename)
+
 # 出力例:
 # ┌─────────┬──────────────────┬───────────┐
 # │ user_id │ feature_1_renamed│ feature_2 │
@@ -327,22 +262,33 @@ print(df_after_rename)
 # │ 1       │ 100              │ null      │
 # │ 2       │ 200              │ null      │
 # │ 3       │ 300              │ null      │
-# │ 4       │ 400              │ value_4   │
 # └─────────┴──────────────────┴───────────┘
-# => カラム名が変更され、データはそのまま保持される
 ```
 
-#### カラム削除
+スキーマ進化の操作が成功し、データはそのまま保持されていることが確認できた!
+
+### スキーマ進化のパターン3: カラム削除
+
+PyIcebergでは、`update.delete_column` メソッドを使う。
+また、Pyicebergではデフォルトでは破壊的なスキーマ変更 (カラム削除など) をブロックするようになっているので、`update_schema` コンテキストマネージャの引数に `allow_incompatible_changes=True` を指定する必要がある。
 
 ```python
-# カラムを削除（破壊的変更なので注意）
+# 1. スキーマ進化操作 (カラム削除) を実行
 with table.update_schema(allow_incompatible_changes=True) as update:
+    
     update.delete_column("feature_2")
-    print("✅ カラム削除: feature_2")
 
-# 削除後のデータを確認
+# 2. スキーマを確認
+table = table.refresh()
+print(table.schema())
+# 出力:
+# table {
+#   1: user_id: optional long (ユーザーID)
+#   2: feature_1_renamed: optional long (テスト用特徴量1)
+# }
+
+# 3. スキーマ進化後のデータを確認
 df_after_delete = table.scan().to_polars()
-print("\nカラム削除後:")
 print(df_after_delete)
 # 出力例:
 # ┌─────────┬──────────────────┐
@@ -353,197 +299,39 @@ print(df_after_delete)
 # │ 1       │ 100              │
 # │ 2       │ 200              │
 # │ 3       │ 300              │
-# │ 4       │ 400              │
 # └─────────┴──────────────────┘
-# => feature_2カラムが削除され、他のカラムはそのまま
 ```
 
-このように、PyIcebergのAPIを使えば簡単にスキーマ変更ができ、各操作でデータが適切に保持されることが確認できる。
+スキーマ進化の操作が成功し、データはそのまま保持されていることが確認できた!
 
-### 4.4. 実運用に向けた宣言的スキーマ管理
+## 終わりに
 
-ここまでad-hocにスキーマ変更を試してきたが、実運用では`cdk diff`や`cdk deploy`のように、**宣言的にスキーマを管理**できると便利。
+本記事ではざっくり以下の内容についてまとめた!
 
-宣言的なスキーマ管理とは、「理想のスキーマ」をコードで定義しておき、現在のテーブルスキーマとの差分を自動検出して適用する仕組みのこと。これにより以下のメリットが得られる:
+- テーブルフォーマットってなんだっけ??
+- Apach Icebergってなんだっけ??
+- Icebergのスキーマ進化ってどんな感じ??
+- PyIcebergで実際にスキーマ進化を試してみた!
 
-- **Infrastructure as Code**: スキーマ定義をGitで管理でき、変更履歴の追跡とレビューが容易
-- **安全性**: 適用前に差分を確認でき、意図しない変更を防止できる
-- **自動化**: CI/CDパイプラインに組み込んで、スキーマ変更を自動適用できる
+Icebergテーブルフォーマットのスキーマ進化に関するポイントは以下の通り:
 
-以下、この仕組みの実装例を示す。
+- **メタデータのみの変更**: スキーマ進化はメタデータの更新のみで完結し、既存のデータファイルを書き換えない
+- **Field IDベースの管理**: カラムを一意なIDで追跡することで、名前変更や順序変更の際も既存データとの対応関係を正しく保てる
+- **既存データの保護**: 新規カラム追加時は既存レコードでnullが入り、削除したカラムのデータは保持される(メタデータ上で非表示になるだけ)
 
-#### スキーマ定義ファイル
+最後に実運用の観点では以下の点を意識したいなと思った。
 
-すべてのテーブルスキーマを一元管理する:
-
-```python
-# schema_definitions.py
-"""Feature Store用のIcebergテーブルスキーマ定義"""
-
-# テーブル名とスキーマのマッピング
-TABLES = {
-    "test_schema_evolution": Schema(
-        NestedField(field_id=1, name="user_id", field_type=LongType(), required=False),
-        NestedField(field_id=2, name="feature_1", field_type=LongType(), required=False),
-        NestedField(field_id=3, name="feature_2", field_type=StringType(), required=False),
-    ),
-}
-```
-
-#### 差分検出と適用のロジック
-
-```python
-# schema_evolution.py
-"""スキーマ差分検出と適用のロジック"""
-
-from dataclasses import dataclass
-from typing import Literal
-from pyiceberg.table import Table
-
-@dataclass
-class SchemaChange:
-    """スキーマ変更の種類"""
-    change_type: Literal["add_column", "rename_column", "delete_column"]
-    field_name: str
-    new_field_name: str | None = None
-    field: NestedField | None = None
-    is_destructive: bool = False
-
-def detect_schema_changes(current_schema: Schema, desired_schema: Schema) -> list[SchemaChange]:
-    """現在のスキーマと期待するスキーマの差分を検出"""
-    changes: list[SchemaChange] = []
-
-    current_fields_by_id = {f.field_id: f for f in current_schema.fields}
-    desired_fields_by_id = {f.field_id: f for f in desired_schema.fields}
-
-    # 追加・リネームを検出
-    for field_id, desired_field in desired_fields_by_id.items():
-        if field_id not in current_fields_by_id:
-            changes.append(
-                SchemaChange(
-                    change_type="add_column",
-                    field_name=desired_field.name,
-                    field=desired_field,
-                    is_destructive=False,
-                )
-            )
-        else:
-            current_field = current_fields_by_id[field_id]
-            if current_field.name != desired_field.name:
-                changes.append(
-                    SchemaChange(
-                        change_type="rename_column",
-                        field_name=current_field.name,
-                        new_field_name=desired_field.name,
-                        is_destructive=False,
-                    )
-                )
-
-    # 削除を検出
-    for field_id, current_field in current_fields_by_id.items():
-        if field_id not in desired_fields_by_id:
-            changes.append(
-                SchemaChange(
-                    change_type="delete_column",
-                    field_name=current_field.name,
-                    is_destructive=True,
-                )
-            )
-
-    return changes
-
-def apply_schema_changes(table: Table, changes: list[SchemaChange], allow_destructive_changes: bool = False) -> None:
-    """検出されたスキーマ変更をテーブルに適用"""
-    if not changes:
-        return
-
-    destructive_changes = [c for c in changes if c.is_destructive]
-    if destructive_changes and not allow_destructive_changes:
-        print(f"破壊的な変更が検出されました: {destructive_changes}")
-        print("破壊的変更を適用するには allow_destructive_changes=True を指定してください")
-        return
-
-    with table.update_schema(allow_incompatible_changes=allow_destructive_changes) as update:
-        for change in changes:
-            if change.change_type == "add_column":
-                if change.field:
-                    update.add_column(
-                        path=change.field.name,
-                        field_type=change.field.field_type,
-                        required=change.field.required,
-                        doc=change.field.doc,
-                    )
-                    print(f"✅ カラム追加: {change.field.name}")
-
-            elif change.change_type == "rename_column":
-                if change.new_field_name:
-                    update.rename_column(change.field_name, change.new_field_name)
-                    print(f"✅ カラムリネーム: {change.field_name} → {change.new_field_name}")
-
-            elif change.change_type == "delete_column":
-                update.delete_column(path=change.field_name)
-                print(f"✅ カラム削除: {change.field_name}")
-```
-
-#### CLIツール
-
-```python
-# create_iceberg_tables.py
-"""Feature Store用のIcebergテーブルを初期化するCLIツール"""
-
-import typer
-from schema_definitions import TABLES
-from schema_evolution import detect_schema_changes, apply_schema_changes
-
-def main(mode: str, namespace: str = "public"):
-    """Feature Store用のIcebergテーブルを初期化・管理
-
-    mode: "diff"=差分表示のみ, "deploy"=テーブル作成+スキーマ進化
-    """
-    catalog = load_catalog(...)
-
-    # 全テーブルの差分を検出
-    for table_name, desired_schema in TABLES.items():
-        table_identifier = f"{namespace}.{table_name}"
-
-        try:
-            table = catalog.load_table(table_identifier)
-
-            # 既存テーブルのスキーマ変更をチェック
-            schema_changes = detect_schema_changes(table.schema(), desired_schema)
-
-            if schema_changes:
-                print(f"[~] {table_identifier}")
-                print("  Schema:", schema_changes)
-
-                if mode == "deploy":
-                    apply_schema_changes(table, schema_changes)
-
-        except Exception:
-            # テーブルが存在しない場合は新規作成
-            print(f"[+] {table_identifier}")
-            if mode == "deploy":
-                catalog.create_table(
-                    identifier=table_identifier,
-                    schema=desired_schema,
-                )
-
-if __name__ == "__main__":
-    typer.run(main)
-```
+- **宣言的なスキーマ管理**できるようにしたい! :thinking:
+  - 例えばAWS CDKの`cdk diff`/`cdk deploy`のように、期待するテーブルスキーマをgithub上でコードとして管理し、差分検出→適用という流れを自動化しておきたい。
+  - ↑ができれば、テーブルが今どんな状態かが分かりやすいし、スキーマ進化の承認フローも簡単だし、変更履歴を追跡しやすいし...!
+- またスキーマ進化をデプロイする際には、**先にテスト環境で事前に試せるように**したい。
+  - 既存のクエリや読み書きするデータパイプライン達への影響を確認したいので。
+  - まあFeature Storeとして運用するなら、特にカラム追加 (i.e. 新しい特徴量の追加)は気軽にできるような気がする。特徴量パイプラインさえ更新すればいいので...!!
 
 
-#### 4.6.1. ガバナンスの重要性
+また、本記事ではスキーマ進化のみを扱ったが、Icebergにはパーティション進化やソート順進化といった機能もある。これらについては別途調査・検証していきたい。
 
-大きな柔軟性には強力なガバナンスが必要:
-
-- スキーマ変更を管理・追跡する堅牢なプロセスの実装
-- 意味のあるデフォルト値の使用(列追加時)
-- ステージング環境での徹底的なテスト
-- すべての利害関係者への変更通知
-
-
-## 5. 参考リンク
+## 参考資料
 
 - [Apache Iceberg公式ドキュメント - Evolution](https://iceberg.apache.org/docs/1.7.1/evolution/)
 - [How to Achieve Seamless Schema Evolution with Apache Iceberg](https://www.coditation.com/blog/achieve-seamless-schema-evolution-with-apache-iceberg)
