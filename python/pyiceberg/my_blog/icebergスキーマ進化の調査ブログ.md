@@ -1,17 +1,18 @@
-タイトル: Feature Store調べてたらレイクハウスアーキテクチャに行き着いてIceberg Table formatについて調べた! スキーマ進化編!
+<!-- タイトル: Feature Store調べてたらレイクハウスアーキテクチャと繋がったのでIcebergテーブルフォーマットについて調べた! スキーマ進化編! -->
 
-## なんでこの記事を書いたの??
+## はじめに: なんでこの記事を書いたの??
 
-自分はMLOps分野に興味があって普段から色々調べているのですが、Feature Storeに関する書籍を読んでいたら、以下のような記述がありました。
+自分はビジネスでMLの成果をいかにスケールさせるかに興味があるので、普段からMLOps周りの情報を眺めてるのですが、Feature Storeに関する書籍を読んでいたら、以下のような記述がありました。
 
 > The offline stores for existing feature stores are lakehouses. (既存のフィーチャーストアの**オフラインストアはレイクハウス**である)
 
 > In contrast to a data warehouse, a lakehouse is an open platform that separates the storage of columnar data from the query engines that use it. (データウェアハウスとは対照的に、レイクハウスは、**列指向データのストレージをそれを使用するクエリエンジンから分離**するオープンプラットフォームである)
 
 > The main open source standards for a lakehouse are the open table formats (OTFs) for data storage (Apache Iceberg, Delta Lake, Apache Hudi). (レイクハウスの主なオープンソース標準は、データストレージのためのオープンテーブルフォーマット（OTF）（**Apache Iceberg**、Delta Lake、Apache Hudi）である)
+> (いずれも [Building Machine Learning Systems with a Feature Store](https://www.oreilly.com/library/view/building-machine-learning/9781098165222/) より引用)
 
-元々業務関連でS3 TablesやIcebergテーブルフォーマットについてなんとな〜く調べていたので、MLOpsとIcebergが繋がった感じがしました。嬉しくなったので調べた内容を記事に残します:)
-（ちなみに「レイクハウス」という言葉は初知りでした。なるほど、じゃあS3 TablesにIcebergテーブルで特徴量レコードを保存して、AthenaやSnowflakeやPyIcebergなどの任意のクエリエンジンでクエリできるようにする設計は、レイクハウスアーキテクチャの一例と言えるのか...!:thinking:）
+元々業務関連でもS3 TablesやIcebergテーブルフォーマットについてなんとな〜く調べていたので、MLOpsとIcebergが繋がった感じがして嬉しくなりました! よって調べた内容を記録に残します!
+（ちなみに「レイクハウス」という言葉は恥ずかしながら初知りでした! :pray: なるほど、じゃあ例えばS3 TablesにIcebergテーブルで特徴量レコードを保存して、AthenaやSnowflakeやPyIcebergなどの任意のクエリエンジンでクエリできるようにする設計は、レイクハウスアーキテクチャの一例と言えるのか...!:thinking:）
 
 ## 前提: Apache Iceberg Table formatってなんだっけ??
 
@@ -304,7 +305,7 @@ print(df_after_delete)
 
 スキーマ進化の操作が成功し、データはそのまま保持されていることが確認できた!
 
-## 終わりに
+## おわりに
 
 本記事ではざっくり以下の内容についてまとめた!
 
@@ -337,3 +338,4 @@ Icebergテーブルフォーマットのスキーマ進化に関するポイン�
 - [How to Achieve Seamless Schema Evolution with Apache Iceberg](https://www.coditation.com/blog/achieve-seamless-schema-evolution-with-apache-iceberg)
 - [Apache Iceberg vs Delta Lake (II): Schema and Partition Evolution](https://www.chaosgenius.io/blog/iceberg-vs-delta-lake-schema-partition/)
 - [What's a table format and why do we need one?](https://medium.com/@shreekumar-saparia/whats-a-table-format-and-why-do-we-need-one-51373b94e1c5)
+- [Building Machine Learning Systems with a Feature Store](https://www.oreilly.com/library/view/building-machine-learning/9781098165222/)
