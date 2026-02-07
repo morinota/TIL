@@ -56,11 +56,10 @@
 
 ## 2. 背景・課題: なぜスキーマ進化が重要なのか?
 
-データレイクの運用において、ビジネス要件の変化に応じてスキーマを進化させる必要性は避けられない。
-
-従来のHiveテーブルなどでは、スキーマ変更時にテーブル全体の書き換えが必要となり、数時間から数日のダウンタイムと高額なコストが発生する。また、柔軟性のないスキーマ管理は、ソーシャルメディアハンドルの追加やマルチ通貨対応といった新機能追加を困難にし、データチームの生産性を低下させてきた。
-
-IDCの予測によれば、2025年までに世界のデータ空間は175ゼタバイトに達すると見られており、こうした指数関数的なデータ成長に対応できる柔軟なデータモデリング手法が求められている。
+- データレイクの運用において、**ビジネス要件の変化に応じてスキーマを進化させる必要性は避けられない**。
+  - 特徴量ストアを運用する上でも、少なくとも新しい特徴量の追加はガンガン発生するよね...!!:thinking:
+- 従来のHiveテーブルなどでは、スキーマ変更時にテーブル全体の書き換えが必要となり、数時間から数日のダウンタイムと高額なコストが発生する。
+- IDCの予測によれば、2025年までに世界のデータ空間は175ゼタバイトに達すると見られており、こうした指数関数的なデータ成長に対応できる柔軟なデータモデリング手法が求められている。
 
 ## 3. 本論: Icebergのスキーマ進化 (Schema Evolution) どんな感じ?
 
@@ -173,8 +172,6 @@ Pyicebergのドキュメントを参考にしつつ、Icebergテーブルを作�
 ```python
 from pyiceberg.schema import Schema
 from pyiceberg.types import LongType, NestedField, StringType, TimestamptzType
-from pyiceberg.partitioning import PartitionField, PartitionSpec
-from pyiceberg.transforms import DayTransform, BucketTransform
 from pyiceberg.catalog import load_catalog
 
 # カタログに接続
@@ -187,17 +184,10 @@ initial_schema = Schema(
         name="user_id",
         field_type=LongType(),
         required=False,
-        doc="ユーザーID(エンティティの識別子)",
+        doc="ユーザーID",
     ),
     NestedField(
         field_id=2,
-        name="event_time",
-        field_type=TimestamptzType(),
-        required=False,
-        doc="履歴特徴量のバージョン管理用のカラム",
-    ),
-    NestedField(
-        field_id=4,
         name="feature_1",
         field_type=LongType(),
         required=False,
@@ -205,16 +195,10 @@ initial_schema = Schema(
     ),
 )
 
-# パーティション仕様を定義
-partition_spec = PartitionSpec(
-    PartitionField(source_id=2, field_id=1000, transform=DayTransform(), name="event_time_day"),
-)
-
 # テーブルを作成
 table = catalog.create_table(
     identifier="public.test_schema_evolution",
     schema=initial_schema,
-    partition_spec=partition_spec,
 )
 ```
 
@@ -222,17 +206,15 @@ table = catalog.create_table(
 
 次に、このテーブルに対してスキーマ進化を試す。以下の変更を行う:
 
-- カラム追加: `user_feature_3`という新しいカラムを追加
+- カラム追加: `feature_2`という新しいカラムを追加
 
 ```python
 # 変更後のスキーマを定義
 evolved_schema = Schema(
     NestedField(field_id=1, name="user_id", field_type=LongType(), required=False),
-    NestedField(field_id=2, name="event_time", field_type=TimestamptzType(), required=False),
-    NestedField(field_id=3, name="created", field_type=TimestamptzType(), required=False),
-    NestedField(field_id=4, name="feature_1", field_type=LongType(), required=False),
+    NestedField(field_id=2, name="feature_1", field_type=LongType(), required=False),
     # 新しいカラムを追加
-    NestedField(field_id=6, name="user_feature_3", field_type=StringType(), required=False),
+    NestedField(field_id=3, name="feature_2", field_type=StringType(), required=False),
 )
 ```
 
@@ -358,10 +340,8 @@ apply_schema_changes(table, schema_changes)
 TABLES = {
     "test_schema_evolution": Schema(
         NestedField(field_id=1, name="user_id", field_type=LongType(), required=False),
-        NestedField(field_id=2, name="event_time", field_type=TimestamptzType(), required=False),
-        NestedField(field_id=3, name="created", field_type=TimestamptzType(), required=False),
-        NestedField(field_id=4, name="feature_1", field_type=LongType(), required=False),
-        NestedField(field_id=6, name="user_feature_3", field_type=StringType(), required=False),
+        NestedField(field_id=2, name="feature_1", field_type=LongType(), required=False),
+        NestedField(field_id=3, name="feature_2", field_type=StringType(), required=False),
     ),
 }
 ```
