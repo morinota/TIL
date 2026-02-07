@@ -243,13 +243,162 @@ evolved_schema = Schema(
 )
 ```
 
-### 4.3. スキーマ差分を検出する
+### 4.3. ad-hocにスキーマを変更してみる
 
-スキーマの差分を検出するロジック:
+PyIcebergのAPIを使って、直接テーブルのスキーマを変更してみる:
+
+#### カラム追加
 
 ```python
+# テーブルを再読み込み
+table = catalog.load_table("public.test_schema_evolution")
+
+# カラムを追加
+with table.update_schema() as update:
+    update.add_column(
+        path="feature_2",
+        field_type=StringType(),
+        required=False,
+        doc="テスト用特徴量2",
+    )
+    print("✅ カラム追加: feature_2")
+
+# スキーマを確認
+print(table.schema())
+
+# 既存データを読み込んで確認
+df_after_add = table.scan().to_polars()
+print("\nカラム追加後の既存データ:")
+print(df_after_add)
+# 出力例:
+# ┌─────────┬───────────┬───────────┐
+# │ user_id │ feature_1 │ feature_2 │
+# │ ---     │ ---       │ ---       │
+# │ i64     │ i64       │ str       │
+# ╞═════════╪═══════════╪═══════════╡
+# │ 1       │ 100       │ null      │
+# │ 2       │ 200       │ null      │
+# │ 3       │ 300       │ null      │
+# └─────────┴───────────┴───────────┘
+# => 既存データは保持され、新しいカラムはnull
+
+# 新しいスキーマでデータを追加
+new_data = pl.DataFrame({
+    "user_id": [4],
+    "feature_1": [400],
+    "feature_2": ["value_4"],
+})
+table.append(new_data)
+
+df_after_insert = table.scan().to_polars()
+print("\n新しいデータ追加後:")
+print(df_after_insert)
+# 出力例:
+# ┌─────────┬───────────┬───────────┐
+# │ user_id │ feature_1 │ feature_2 │
+# │ ---     │ ---       │ ---       │
+# │ i64     │ i64       │ str       │
+# ╞═════════╪═══════════╪═══════════╡
+# │ 1       │ 100       │ null      │
+# │ 2       │ 200       │ null      │
+# │ 3       │ 300       │ null      │
+# │ 4       │ 400       │ value_4   │
+# └─────────┴───────────┴───────────┘
+```
+
+#### カラム名変更
+
+```python
+# カラムの名前を変更
+with table.update_schema() as update:
+    update.rename_column("feature_1", "feature_1_renamed")
+    print("✅ カラムリネーム: feature_1 → feature_1_renamed")
+
+# リネーム後のデータを確認
+df_after_rename = table.scan().to_polars()
+print("\nカラムリネーム後:")
+print(df_after_rename)
+# 出力例:
+# ┌─────────┬──────────────────┬───────────┐
+# │ user_id │ feature_1_renamed│ feature_2 │
+# │ ---     │ ---              │ ---       │
+# │ i64     │ i64              │ str       │
+# ╞═════════╪══════════════════╪═══════════╡
+# │ 1       │ 100              │ null      │
+# │ 2       │ 200              │ null      │
+# │ 3       │ 300              │ null      │
+# │ 4       │ 400              │ value_4   │
+# └─────────┴──────────────────┴───────────┘
+# => カラム名が変更され、データはそのまま保持される
+```
+
+#### カラム削除
+
+```python
+# カラムを削除（破壊的変更なので注意）
+with table.update_schema(allow_incompatible_changes=True) as update:
+    update.delete_column("feature_2")
+    print("✅ カラム削除: feature_2")
+
+# 削除後のデータを確認
+df_after_delete = table.scan().to_polars()
+print("\nカラム削除後:")
+print(df_after_delete)
+# 出力例:
+# ┌─────────┬──────────────────┐
+# │ user_id │ feature_1_renamed│
+# │ ---     │ ---              │
+# │ i64     │ i64              │
+# ╞═════════╪══════════════════╡
+# │ 1       │ 100              │
+# │ 2       │ 200              │
+# │ 3       │ 300              │
+# │ 4       │ 400              │
+# └─────────┴──────────────────┘
+# => feature_2カラムが削除され、他のカラムはそのまま
+```
+
+このように、PyIcebergのAPIを使えば簡単にスキーマ変更ができ、各操作でデータが適切に保持されることが確認できる。
+
+### 4.4. 実運用に向けた宣言的スキーマ管理
+
+ここまでad-hocにスキーマ変更を試してきたが、実運用では`cdk diff`や`cdk deploy`のように、**宣言的にスキーマを管理**できると便利。
+
+宣言的なスキーマ管理とは、「理想のスキーマ」をコードで定義しておき、現在のテーブルスキーマとの差分を自動検出して適用する仕組みのこと。これにより以下のメリットが得られる:
+
+- **Infrastructure as Code**: スキーマ定義をGitで管理でき、変更履歴の追跡とレビューが容易
+- **安全性**: 適用前に差分を確認でき、意図しない変更を防止できる
+- **自動化**: CI/CDパイプラインに組み込んで、スキーマ変更を自動適用できる
+
+以下、この仕組みの実装例を示す。
+
+#### スキーマ定義ファイル
+
+すべてのテーブルスキーマを一元管理する:
+
+```python
+# schema_definitions.py
+"""Feature Store用のIcebergテーブルスキーマ定義"""
+
+# テーブル名とスキーマのマッピング
+TABLES = {
+    "test_schema_evolution": Schema(
+        NestedField(field_id=1, name="user_id", field_type=LongType(), required=False),
+        NestedField(field_id=2, name="feature_1", field_type=LongType(), required=False),
+        NestedField(field_id=3, name="feature_2", field_type=StringType(), required=False),
+    ),
+}
+```
+
+#### 差分検出と適用のロジック
+
+```python
+# schema_evolution.py
+"""スキーマ差分検出と適用のロジック"""
+
 from dataclasses import dataclass
 from typing import Literal
+from pyiceberg.table import Table
 
 @dataclass
 class SchemaChange:
@@ -303,20 +452,6 @@ def detect_schema_changes(current_schema: Schema, desired_schema: Schema) -> lis
 
     return changes
 
-# 実際に差分を検出
-table = catalog.load_table("public.test_schema_evolution")
-schema_changes = detect_schema_changes(table.schema(), evolved_schema)
-
-print("Schema changes:", schema_changes)
-```
-
-### 4.4. スキーマ変更を適用する
-
-検出した差分を実際にテーブルに適用する:
-
-```python
-from pyiceberg.table import Table
-
 def apply_schema_changes(table: Table, changes: list[SchemaChange], allow_destructive_changes: bool = False) -> None:
     """検出されたスキーマ変更をテーブルに適用"""
     if not changes:
@@ -348,77 +483,9 @@ def apply_schema_changes(table: Table, changes: list[SchemaChange], allow_destru
             elif change.change_type == "delete_column":
                 update.delete_column(path=change.field_name)
                 print(f"✅ カラム削除: {change.field_name}")
-
-# 変更を適用
-apply_schema_changes(table, schema_changes)
 ```
 
-### 4.5. スキーマ進化後のデータ読み書き確認
-
-スキーマ進化後、既存データと新しいデータがどう扱われるかを確認する:
-
-```python
-# スキーマ進化後、既存データを読み込んで確認
-df_after_evolution = table.scan().to_polars()
-print("\nスキーマ進化後の既存データ:")
-print(df_after_evolution)
-# 出力例:
-# ┌─────────┬───────────┬───────────┐
-# │ user_id │ feature_1 │ feature_2 │
-# │ ---     │ ---       │ ---       │
-# │ i64     │ i64       │ str       │
-# ╞═════════╪═══════════╪═══════════╡
-# │ 1       │ 100       │ null      │
-# │ 2       │ 200       │ null      │
-# │ 3       │ 300       │ null      │
-# └─────────┴───────────┴───────────┘
-# => 既存データはそのまま保持され、新しいカラムはnullになっている
-
-# 新しいスキーマでデータを追加
-new_data = pl.DataFrame({
-    "user_id": [4, 5],
-    "feature_1": [400, 500],
-    "feature_2": ["new_value_1", "new_value_2"],
-})
-
-table.append(new_data)
-
-# 全データを読み込んで確認
-df_all = table.scan().to_polars()
-print("\n新しいデータ追加後:")
-print(df_all)
-# 出力例:
-# ┌─────────┬───────────┬─────────────┐
-# │ user_id │ feature_1 │ feature_2   │
-# │ ---     │ ---       │ ---         │
-# │ i64     │ i64       │ str         │
-# ╞═════════╪═══════════╪═════════════╡
-# │ 1       │ 100       │ null        │
-# │ 2       │ 200       │ null        │
-# │ 3       │ 300       │ null        │
-# │ 4       │ 400       │ new_value_1 │
-# │ 5       │ 500       │ new_value_2 │
-# └─────────┴───────────┴─────────────┘
-# => 古いスキーマのデータと新しいスキーマのデータが共存している
-```
-
-### 4.6. 宣言的スキーマ管理の実装
-
-すべてのテーブルスキーマを一元管理し、宣言的に管理する実装例:
-
-```python
-# schema_definitions.py
-"""Feature Store用のIcebergテーブルスキーマ定義"""
-
-# テーブル名とスキーマのマッピング
-TABLES = {
-    "test_schema_evolution": Schema(
-        NestedField(field_id=1, name="user_id", field_type=LongType(), required=False),
-        NestedField(field_id=2, name="feature_1", field_type=LongType(), required=False),
-        NestedField(field_id=3, name="feature_2", field_type=StringType(), required=False),
-    ),
-}
-```
+#### CLIツール
 
 ```python
 # create_iceberg_tables.py
