@@ -1,4 +1,4 @@
-## CHAPTER 2: Machine Learning Pipelines 第2章: 機械学習パイプライン
+## 1. CHAPTER 2: Machine Learning Pipelines 第2章: 機械学習パイプライン
 
 In one of my favorite episodes of _The Simpsons, when Homer Simpson heard that_ bacon, ham, and pork chops all came from the same animal, he couldn’t believe it: “Yeah, right, Lisa, a wonderful, magical animal.” 
 私のお気に入りの『ザ・シンプソンズ』のエピソードの一つで、ホーマー・シンプソンがベーコン、ハム、ポークチョップがすべて同じ動物から来ていると聞いたとき、彼は信じられなかった。「そうだね、リサ、素晴らしくて魔法のような動物だ」と彼は言った。
@@ -48,7 +48,7 @@ Three pipelines and the truth.
 
 <!-- ここまで読んだ! -->
 　
-### Building ML Systems with ML Pipelines　MLパイプラインを使用したMLシステムの構築
+### 1.1. Building ML Systems with ML Pipelines　MLパイプラインを使用したMLシステムの構築
 
 Before we look at how to develop ML pipelines, we will look at a development process for building AI systems. 
 MLパイプラインを開発する方法を見る前に、AIシステムを構築するための開発プロセスを見ていきます。
@@ -61,7 +61,7 @@ As such, those processes were quickly superseded by MLOps, which focuses on auto
 
 <!-- ここまで読んだ! -->
 
-#### Minimal Viable Prediction Service 最小限の実行可能な予測サービス
+#### 1.1.1. Minimal Viable Prediction Service 最小限の実行可能な予測サービス
 
 We introduce here a minimal MLOps development methodology based on getting as quickly as possible to a minimal viable AI system, or minimal viable prediction service (MVPS). 
 ここでは、**最小限の実行可能なAIシステム、または最小限の実行可能な予測サービス（MVPS）にできるだけ早く到達すること**に基づいた最小限のMLOps開発手法を紹介します。
@@ -190,7 +190,7 @@ At this point, you have an understanding of your data and the features you need,
 この時点で、データと必要な特徴を理解しているので、データソースからターゲット観測（またはラベル）と特徴の両方を抽出する必要があります。
 This involves building feature pipelines from your data sources.
 これは、データソースから特徴パイプラインを構築することを含みます。
-The output of your feature pipelines will be the features and observations/labels that are stored in a feature store. 
+The output of your feature pipelines will be the features and observations/labels that are stored in a feature store.
 **特徴パイプラインの出力は、フィーチャーストアに保存される特徴と観測値/ラベル**になります。
 (ラベルも特徴量ストアに保存すべきなのかな〜...!! 少なくともラベルはオンラインストアに保存する必要はないよね...!!:thinking:)
 If you have an existing feature store and you are fortunate enough that it already contains the target(s) and/or features you need, you can skip implementing the feature pipelines.
@@ -209,7 +209,7 @@ You can later add different environments for development, staging, and productio
 
 <!-- ここまで読んだ! -->
 
-#### Writing Modular Code for ML Pipelines MLパイプラインのためのモジュラーコードの記述
+#### 1.1.2. Writing Modular Code for ML Pipelines MLパイプラインのためのモジュラーコードの記述
 
 A successful AI system will need to be updated and maintained over time. 
 成功したAIシステムは、時間の経過とともに更新および維持される必要があります。
@@ -399,7 +399,7 @@ In the next section, we will see that some data transformations still need to be
 
 <!-- ここまで読んだ! -->
 
-### A Taxonomy for Data Transformations in ML Pipelines MLパイプラインにおけるデータ変換の分類
+### 1.2. A Taxonomy for Data Transformations in ML Pipelines MLパイプラインにおけるデータ変換の分類
 
 ML pipelines consist of a sequence of data transformations. 
 **MLパイプラインは、一連のデータ変換で構成されています** (学習も推論も、全てデータ変換とみなせるのか...!!:thinking:)
@@ -451,7 +451,7 @@ But, before looking at the taxonomy, we will first introduce feature types.
 
 <!-- ここまで読んだ! -->
 
-#### Feature Types and Model-Dependent Transformations 特徴タイプとモデル依存変換
+#### 1.2.1. Feature Types and Model-Dependent Transformations 特徴タイプとモデル依存変換
 
 A data type for a variable in a programming language defines the set of valid operations on that variable—invalid operations will cause an error, at either compile time (in Java and Rust) or runtime (in Python). 
 プログラミング言語における変数のデータ型は、その変数に対する有効な操作のセットを定義します—無効な操作は、コンパイル時（JavaやRust）または実行時（Python）にエラーを引き起こします。
@@ -523,7 +523,7 @@ This makes even very small writes to a feature group very expensive (this is cal
 
 <!-- ここまで読んだ! -->
 
-#### Reusable Features with Model-Independent Transformations モデル非依存変換による再利用可能な特徴
+#### 1.2.2. Reusable Features with Model-Independent Transformations モデル非依存変換による再利用可能な特徴
 
 Data engineers are typically not very familiar with the MDTs introduced in the last section, as they are specific to ML. 
 データエンジニアは、通常、前のセクションで紹介されたMDTにあまり精通していません。これはMLに特有のものだからです。
@@ -536,7 +536,7 @@ MITは、バッチまたはストリーミングフィーチャーパイプラ�
 
 <!-- ここまで読んだ! -->
 
-#### Real-Time Features with On-Demand Transformations オンデマンド変換によるリアルタイム特徴
+#### 1.2.3. Real-Time Features with On-Demand Transformations オンデマンド変換によるリアルタイム特徴
 
 What if I have a real-time ML system and the data required to compute my feature is only available as part of a prediction request? 
 リアルタイムMLシステムがあり、**特徴を計算するために必要なデータが予測リクエストの一部としてのみ利用可能な場合**はどうなりますか？(まさに検索クエリとかだね...!!:thinking:)
@@ -557,7 +557,7 @@ Our approach will prevent skew—there should be no difference between the data 
 
 <!-- ここまで読んだ! -->
 
-#### The ML Transformation Taxonomy and ML Pipelines ML変換の分類とMLパイプライン
+#### 1.2.4. The ML Transformation Taxonomy and ML Pipelines ML変換の分類とMLパイプライン
 
 Now that we have introduced the three different types of features and the three different data transformations that create them (model-independent, model-dependent, and on-demand), we can present a taxonomy for data transformations in ML (see Figure 2-5). 
 異なる3種類の特徴と、それらを生成する3種類のデータ変換（モデル非依存、モデル依存、オンデマンド）を紹介したので、MLにおけるデータ変換の分類を提示できます（図2-5を参照）。
@@ -606,7 +606,7 @@ Now that we have introduced our classification of data transformations, we can d
 
 <!-- ここまで読んだ! -->
 
-### Feature Pipelines フィーチャーパイプライン
+### 1.3. Feature Pipelines フィーチャーパイプライン
 
 A feature pipeline is a program that orchestrates the execution of a dataflow graph of model-independent and on-demand data transformations. 
 フィーチャーパイプラインは、モデル非依存およびオンデマンドデータ変換のデータフローグラフの実行を調整するプログラムです。
@@ -725,7 +725,7 @@ We cover batch feature pipelines in Chapter 8 and streaming feature pipelines in
 
 <!-- ここまで読んだ! -->
 
-### Training Pipelines トレーニングパイプライン
+### 1.4. Training Pipelines トレーニングパイプライン
 
 A training pipeline is a program that performs tasks from reading feature data from a feature store, to applying model-dependent transformations to the feature data, to training a model with an ML framework, to validating the trained model for performance and absence of bias, to publishing the model to a model registry, and finally to deploying the model to production for inference. 
 **トレーニングパイプラインは、フィーチャーストアからフィーチャーデータを読み取り、モデル依存の変換をフィーチャーデータに適用し、MLフレームワークでモデルをトレーニングし、トレーニングされたモデルの性能とバイアスの有無を検証し、モデルをモデルレジストリに公開し、最終的に推論のためにモデルを本番環境にデプロイするタスクを実行するプログラム**です。
@@ -774,7 +774,7 @@ The files are stored in a filesystem or an object store (such as S3).
 
 <!-- ここまで読んだ! -->
 
-### Inference Pipelines 推論パイプライン
+### 1.5. Inference Pipelines 推論パイプライン
 
 An inference pipeline is a program that reads in new feature data (either precomputed or as parameters in a prediction request), applies transformations to the feature data (on-demand and/or model-dependent transformations), and outputs predictions with the model. 
 推論パイプラインは、新しいフィーチャーデータ（事前計算されたものまたは予測リクエストのパラメータとして）を読み込み、フィーチャーデータに変換を適用し（オンデマンドおよび/またはモデル依存の変換）、モデルを使用して予測を出力するプログラムです。
@@ -851,7 +851,7 @@ The agent keeps looping in tool use/response steps until the LLM indicates a fin
 
 <!-- ここまで読んだ! -->
 
-### Titanic Survival as an ML System Built with ML Pipelines MLパイプラインを使用して構築されたMLシステムとしてのタイタニック生存
+### 1.6. Titanic Survival as an ML System Built with ML Pipelines MLパイプラインを使用して構築されたMLシステムとしてのタイタニック生存
 
 We now introduce our first example ML system, which we built with our three ML pipelines, using one of the best-known ML problems—predicting the probability of a passenger surviving the sinking of the Titanic. 
 ここで、私たちの3つのMLパイプラインを使用して構築した最初の例のMLシステムを紹介します。これは、最もよく知られたML問題の1つであるタイタニックの沈没から乗客が生存する確率を予測するものです。
@@ -992,7 +992,7 @@ Hopsworks offers a free forever serverless tier with 35 GB of free storage, whic
 
 <!-- ここまで読んだ! -->
 
-### Summary 要約
+### 1.7. Summary 要約
 
 When building AI systems, we start with the ML pipelines and the data transformations performed in the feature, training, and inference pipelines. 
 AIシステムを構築する際、私たちはMLパイプラインとフィーチャー、トレーニング、推論パイプラインで行われるデータ変換から始めます。

@@ -1,6 +1,6 @@
-# O'Reilly Feature Store Book 第2章: MLパイプラインの分類と設計
+O'Reilly Feature Store Book 第2章: MLパイプラインの分類と設計
 
-## 元記事情報
+## 1. 元記事情報
 
 - **タイトル(原文)**: CHAPTER 2: Machine Learning Pipelines
 - **書籍**: O'Reilly Feature Store for Machine Learning (著者不明)
@@ -9,19 +9,19 @@
 
 ---
 
-## 概要
+## 2. 概要
 
 「MLパイプライン」という用語は曖昧すぎて有害である。本章では、AIシステムを構成する具体的なパイプライン(Feature-Training-Inference Pipeline: FTI)と、それぞれのパイプラインで実行すべきデータ変換の分類(MIT/MDT/ODT)を明確に定義する。また、最小限の実行可能な予測サービス(MVPS)開発プロセスと、モジュラーなコード設計のベストプラクティスを紹介する。
 
-## 背景・課題
+## 3. 背景・課題
 
-### MLパイプラインという用語の曖昧性
+### 3.1. MLパイプラインという用語の曖昧性
 
 10人のデータサイエンティストに「MLパイプライン」の定義を尋ねると、10通りの異なる答えが返ってくる。ChatGPTはMLパイプラインが「データ収集、特徴量エンジニアリング、モデル訓練、評価、デプロイ、監視、推論、メンテナンス」のすべてを行うと説明するが、これは「素晴らしくて魔法のような単一のMLパイプライン」という非現実的なものだ。
 
 この曖昧さは、AIシステムの構築についてコミュニケーションを取る際に「有害と見なされる」可能性がある。
 
-### 本書のアプローチ
+### 3.2. 本書のアプローチ
 
 本書では、より厳密なアプローチを取る:
 
@@ -37,41 +37,90 @@ MLパイプラインの例:
 - **Model Validation Pipeline**: モデルを未検証から検証済みに移行
 - **Model Deployment Pipeline**: モデルを本番環境にデプロイ
 
-## 主要なポイント
+## 4. 主要なポイント
 
-### 1. MVPS(最小限の実行可能な予測サービス)開発プロセス
+### 4.1. MVPS(最小限の実行可能な予測サービス)開発プロセス
 
 MVPSプロセスは、できるだけ早く動作するAIシステムに到達することを目指す:
 
-#### 特定フェーズ
+![図2-1: MVPSプロセス](images/figure_2_1_mvps_process.svg)
+
+#### 4.1.1. 特定フェーズ
 
 1. **予測問題**: 解決したい問題を定義
 2. **KPIメトリクス**: 改善したいビジネス指標
 3. **データソース**: 使用可能なデータ
 4. **ML proxy metric**: 予測問題をMLが最適化するターゲットにマッピング(最も難しいステップ)
 
-#### 実装フェーズ
+#### 4.1.2. 実装フェーズ
 
-1. **特徴パイプライン**: 過去のデータのバックフィルと増分productionデータの書き込み
-2. **トレーニングパイプライン**: カスタムモデルが必要な場合(事前訓練済みモデルを使う場合はスキップ)
-3. **推論パイプライン**: バッチ、オンライン、LLMアプリ、またはエージェント
-4. **UI/ダッシュボード**: ステークホルダーが試せるインターフェース
+以下の手順でMVPSを構築することになる。
+(ただし、予測問題、KPI、データソースを再定義する必要がある場合は、いつでも前のフェーズに戻ることができる)
 
-#### 開発支援ツール
+- 手順1: **最小限の特徴量パイプライン(feature pipeline)**: 
+  - 過去のデータをバックフィルし、増分のproductionデータを特徴量ストアに書き込むことができること。
+- 手順2: **最小限のトレーニングパイプライン**: 
+  - カスタムモデルが必要な場合(事前訓練済みモデルを使う場合はスキップ)
+- 手順3: **最小限の推論パイプライン**:
+  - モデルを使用して予測を行うための推論パイプライン。これはバッチプログラム or オンライン推論プログラム or LLMアプリケーション or エージェントである可能性。
+- 手順4: **最小限のUI or ダッシュボード**:
+  - ステークホルダーがMVPSを試すことができること。開発者がそれを見てシステムをiterativeに改善できること。
+
+(個人的には、MVPSの中にちゃんと「手順4: 最小限のUI or ダッシュボード」が含めることが重要だと思った! やはり、実際に動かせるものを早期に見せることがステークホルダーとの共通認識を作る上で有効であり、逆に開発メンバーしか見えない状態だと不十分! 「隠してたらダメになる」とも言うし、最速でオープンな状態にしたい気持ち...!!:thinking:)
+
+#### 4.1.3. カンバンボードを使ったMVPSの可視化
+
+![図2-2: MVPSカンバンボード](images/figure_2_2_mvps_kanban.svg)
 
 - **カンバンボード**: データソース、FTI技術、予測消費者の種類を可視化
-- **非機能要件の注釈**: ボリューム、速度、新鮮さ、SLOなど
+  - そもそも「カンバンボード」って？？
+    - 一言でいうと「**タスクの流れを見える化するボード**」のこと。
+      - 列 = タスクの状態(未着手/作業中/レビュー中/完了など)
+      - カード = 1タスク(チケット,issue, 作業単位)
+      - 基本的には列がメインだが、「行 = 人, 優先度, スプリント」などで意味を持たせる場合もある。
+    - 由来: 
+      - トヨタの生産方式(製造業)発祥
+      - 「必要なものを、必要な分だけ、必要なタイミングで」それを見える化したのがカンバン。
+  - AIシステムを実装する前にMVPSカンバンボードを埋める事は、構築してるAIシステムの概要を把握する上で非常に有効。
+    - まず、カンバンボードのタイトルをAIシステムが解決する予測問題の名前にする。
+    - 次に、データソース、予測を消費するAIアプリケーション、FTIパイプラインを実装するために使う予定の技術を記入する。
+    - 別のカンバンレーン(=行)を使って、非機能要件を注釈することもできる。
+      - ex. 特徴量パイプラインのボリューム・速度・新鮮さの要件、オンライン推論パイプラインの応答時間のSLOなど。
 
-### 2. モジュラーコードの記述
+### 4.2. モジュラーコードの記述
 
-#### 問題: スパゲッティノートブック
+- 成功したAIシステムは、長期間にわたって維持・更新される必要がある -> 維持・更新を容易にするために、モジュラー性の高さが重要!
+  - 具体的には、ソースコードに以下の変更を加えることになる:
+    - 特徴量の追加・削除・変更、データソースの変更
+    - モデルのアーキテクチャ・学習方法・ハイパーパラメータの変更
+    - バッチAIシステムの場合、予測頻度の変更、予測の保存先の変更
+    - オンラインAIシステムの場合、応答速度や特徴量の新鮮さの要件の変更
+    - LLMアプリケーションやエージェントの場合、コンテキストエンジニアリング、ツールセット、LLMモデルバージョンの変更。
+
+- システムアーキテクチャレベルの話:
+  - AIシステムを3つ(orそれ以上)のパイプライン達に分割することでモジュラー性を高める事ができる。i.e. feature/training/inference pipelines architecture (FTIアーキテクチャ)
+  - この高いモジュラー性により、**各パイプラインのデータ契約を破らない限り**、各パイプラインを独立して変更できる。
+    - 「各パイプラインのデータ契約」の例: 
+      - パイプラインの入力/出力スキーマ
+      - 特徴量パイプラインのデータvalidationルール
+      - 学習パイプラインのモデル性能SLO
+      - 推論パイプラインの応答時間SLO
+
+- 各MLパイプラインのコードレベルの話:
+  - ソフトウェア工学のベストプラクティスに従ったモジュラーコード設計が必要。
+    - ソースコードはテストされ、メンテナンスが容易で、DRY(Don't Repeat Yourself)であるべき。
+  - **MLパイプラインのソースコードがスパゲッティノートブックの集まりである場合、信頼性の高いMLパイプラインを構築するのは難しくなる**...!!
+
+- 
+
+#### 4.2.1. 問題: スパゲッティノートブック
 
 ノートブックにすべてのコードを詰め込むと:
 - テストが困難
 - 新しい開発者のオンボーディングが困難
 - メンテナンスが困難
 
-#### 解決策: Feature Functions
+#### 4.2.2. 解決策: Feature Functions
 
 Apache Hamiltonのアイデアに基づき、各特徴を個別の関数として定義:
 
@@ -95,7 +144,7 @@ def acquisition_cost(spend: pd.Series, signups: pd.Series) -> pd.Series:
     return spend / signups
 ```
 
-#### メリット
+#### 4.2.3. メリット
 
 - 各特徴の独立したユニットテストが可能
 - 関数が契約(contract)を強制し、破壊的変更を検知
@@ -103,17 +152,21 @@ def acquisition_cost(spend: pd.Series, signups: pd.Series) -> pd.Series:
 - デバッグが容易
 - 再利用可能
 
-#### Feature Functionのワークフロー
+#### 4.2.4. Feature Functionのワークフロー
+
+![図2-3: Feature Pipelineアーキテクチャ](images/figure_2_3_feature_pipeline_arch.svg)
 
 1. DataFrameを構築(feature functionsを適用)
 2. Feature Groupに書き込み(commit: append/update/delete)
 3. Training/Inference PipelineがFeature Query Serviceで読み取り
 
-### 3. データ変換の分類(Taxonomy)
+### 4.3. データ変換の分類(Taxonomy)
 
 MLパイプラインは一連のデータ変換で構成される。本章では、データ変換を3つのクラスに分類する:
 
-#### 3.1 Model-Independent Transformations (MIT)
+![図2-5: データ変換の分類](images/figure_2_5_transformation_taxonomy.svg)
+
+#### 4.3.1. 3.1 Model-Independent Transformations (MIT)
 
 **定義**: 多くのモデルで再利用できる特徴を作成する変換
 
@@ -126,7 +179,7 @@ MLパイプラインは一連のデータ変換で構成される。本章では
 
 **保存先**: Feature Storeに保存され、下流のTraining/Inference Pipelineで使用
 
-#### 3.2 Model-Dependent Transformations (MDT)
+#### 4.3.2. 3.2 Model-Dependent Transformations (MDT)
 
 **定義**: 特定のモデルとそのトレーニングデータに依存する変換
 
@@ -146,7 +199,7 @@ MLパイプラインは一連のデータ変換で構成される。本章では
 
 **注意点**: Training PipelineとInference Pipelineの実装間にスキューがないことを確認する必要がある
 
-#### 3.3 On-Demand Transformations (ODT)
+#### 4.3.3. 3.3 On-Demand Transformations (ODT)
 
 **定義**: リクエスト時のデータを使って計算される変換
 
@@ -162,7 +215,9 @@ MLパイプラインは一連のデータ変換で構成される。本章では
 
 **制約**: Batch Inference Pipelineはリクエスト時パラメータがないため、ODTをサポートしない
 
-#### 特徴タイプとの関係
+#### 4.3.4. 特徴タイプとの関係
+
+![図2-4: Feature Typesの分類](images/figure_2_4_feature_types.svg)
 
 **Feature Types**:
 - **Categorical**: 文字列、列挙型、ブール値
@@ -174,9 +229,11 @@ MLパイプラインは一連のデータ変換で構成される。本章では
 - Numericalは正規化可能だがエンコード不可
 - Arrayはインデックス/クエリ可能
 
-### 4. 3つの主要なMLパイプライン
+![図2-6: FTIパイプラインとデータ変換のマッピング](images/figure_2_6_fti_transformation_mapping.svg)
 
-#### 4.1 Feature Pipeline
+### 4.4. 3つの主要なMLパイプライン
+
+#### 4.4.1. 4.1 Feature Pipeline
 
 **定義**: Model-IndependentおよびOn-Demand変換のデータフローグラフを実行するプログラム
 
@@ -206,7 +263,9 @@ MLパイプラインは一連のデータ変換で構成される。本章では
 - **TBs**: Apache Spark、SQL、dbt
 - **Streaming**: Feldera(SQL)、Apache Flink、Spark Structured Streaming
 
-#### 4.2 Training Pipeline
+![図2-7: Feature Pipelineのクラス](images/figure_2_7_feature_pipeline_classes.svg)
+
+#### 4.4.2. 4.2 Training Pipeline
 
 **定義**: Feature Storeから特徴を読み取り、MDTを適用し、モデルを訓練し、検証し、Model Registryに公開し、本番環境にデプロイするプログラム
 
@@ -218,7 +277,9 @@ MLパイプラインは一連のデータ変換で構成される。本章では
 3. **Model Validation Pipeline**: 非同期でモデルを評価(GPUとCPUの分離でコスト効率化)
 4. **Training Dataset Pipeline**: 大規模データセット用に訓練データをファイルとして保存
 
-#### 4.3 Inference Pipeline
+![図2-8: Training Pipelineのクラス](images/figure_2_8_training_pipeline_classes.svg)
+
+#### 4.4.3. 4.3 Inference Pipeline
 
 **定義**: 新しい特徴データを読み込み、変換を適用し、モデルで予測を出力するプログラム
 
@@ -253,16 +314,22 @@ MLパイプラインは一連のデータ変換で構成される。本章では
      4. ツールの場合: 実行して結果をLLMに送信(ループ)
      5. 最終応答をクライアントに返却
 
-### 5. 実例: Titanic Survival MLシステム
+![図2-9: Inference Pipelineのクラス](images/figure_2_9_inference_pipeline_classes.svg)
 
-#### システム設計
+### 4.5. 実例: Titanic Survival MLシステム
+
+#### 4.5.1. システム設計
+
+![図2-10: Titanic生存予測 MVPSカンバンボード](images/figure_2_10_titanic_kanban.svg)
 
 - **予測問題**: タイタニック乗客の生存確率
 - **データソース**: Titanic Survival Dataset(静的) + 合成データ生成関数
 - **KPI**: Counterfactual予測("もし〜だったら"シナリオ)
 - **技術スタック**: Python(Pandas)、XGBoost、Hopsworks Feature Store、Gradio UI
 
-#### Feature Pipeline
+![図2-11: Titanicデータセット構造](images/figure_2_11_titanic_dataset.svg)
+
+#### 4.5.2. Feature Pipeline
 
 ```python
 import pandas as pd
@@ -286,7 +353,7 @@ fg.insert(df)
 - **スケジュール**: 1日1回実行、1人の新しい合成乗客を作成
 - **データ拡張**: datetime列を追加(元データはTitanic災害日、新規データは作成日時)
 
-#### Training Pipeline
+#### 4.5.3. Training Pipeline
 
 ```python
 import xgboost
@@ -314,7 +381,7 @@ mr_model.save("model_dir")
 - **Train/Test Split**: 80%訓練、20%テスト
 - **モデル**: XGBoost勾配ブースト決定木
 
-#### Batch Inference Pipeline
+#### 4.5.4. Batch Inference Pipeline
 
 ```python
 retrieved_model = mr.get_model(name="titanic", version=1)
@@ -329,14 +396,14 @@ prediction = model.predict(row_data)
 - **スケジュール**: 1日1回実行
 - **処理**: 新しい合成乗客の生存を予測し、Feature Viewに記録
 
-#### インタラクティブUI
+#### 4.5.5. インタラクティブUI
 
 - **フレームワーク**: Gradio(Python)
 - **機能**: "What-if"質問(例: 男性、49歳、3等クラスの乗客の生存確率は?)
 
-## 技術的な詳細
+## 5. 技術的な詳細
 
-### MLアーティファクトの定義
+### 5.1. MLアーティファクトの定義
 
 **MLアーティファクト**: MLパイプラインが生成し、MLインフラサービスが管理する状態を持つオブジェクト
 
@@ -352,9 +419,9 @@ prediction = model.predict(row_data)
 - ほとんどは不変(immutable)
 - 例外: 特徴データ、ベクトルインデックス、モデルデプロイメントは更新可能
 
-### データ変換分類の実践的な影響
+### 5.2. データ変換分類の実践的な影響
 
-#### MIT(Model-Independent Transformations)
+#### 5.2.1. MIT(Model-Independent Transformations)
 
 **実行場所**: Feature Pipelineのみ
 
@@ -363,7 +430,7 @@ prediction = model.predict(row_data)
 - Feature Storeで管理
 - EDAに適した形式で保存
 
-#### MDT(Model-Dependent Transformations)
+#### 5.2.2. MDT(Model-Dependent Transformations)
 
 **実行場所**: Training Pipeline + Inference Pipeline
 
@@ -372,7 +439,7 @@ prediction = model.predict(row_data)
 - **Write Amplification回避**: Feature Storeには保存しない
 - **バージョニング**: ロジック変更時は新バージョンの特徴を作成
 
-#### ODT(On-Demand Transformations)
+#### 5.2.3. ODT(On-Demand Transformations)
 
 **実行場所**: Online Inference Pipeline + Feature Pipeline(履歴データ)
 
@@ -380,9 +447,9 @@ prediction = model.predict(row_data)
 - UDF(User-Defined Function)として実装
 - 同じUDFを両パイプラインで再利用してスキューを防止
 
-### Feature Pipelineの設計パターン
+### 5.3. Feature Pipelineの設計パターン
 
-#### BackfillとIncremental Update
+#### 5.3.1. BackfillとIncremental Update
 
 同じパイプラインで両方をサポート:
 
@@ -399,23 +466,23 @@ else:
 fg.insert(df)  # Commitとして追加
 ```
 
-#### Idempotence(冪等性)
+#### 5.3.2. Idempotence(冪等性)
 
 - 複数回実行しても同じ結果
 - 失敗時に安全に再実行可能
 
-#### Atomicity(原子性)
+#### 5.3.3. Atomicity(原子性)
 
 - 更新が一度に適用される
 - 失敗時に部分的な更新が適用されない
 
-### Training Pipelineの分離パターン
+### 5.4. Training Pipelineの分離パターン
 
-#### パターン1: Complete Pipeline
+#### 5.4.1. パターン1: Complete Pipeline
 
 すべてを1つのパイプラインで実行(シンプルなケース)
 
-#### パターン2: 役割分離
+#### 5.4.2. パターン2: 役割分離
 
 1. **Training Dataset Pipeline**: データ準備(CPU)
 2. **Model Training**: モデル訓練(GPU)
@@ -427,9 +494,9 @@ fg.insert(df)  # Commitとして追加
 - 人間承認のポイント追加
 - ロールバック可能
 
-### Hopsworks環境のセットアップ
+### 5.5. Hopsworks環境のセットアップ
 
-#### インストール
+#### 5.5.1. インストール
 
 **Linux/macOS**:
 ```bash
@@ -442,15 +509,15 @@ pip install twofish
 pip install hopsworks[python]
 ```
 
-#### アカウント設定
+#### 5.5.2. アカウント設定
 
 1. Hopsworks Serverlessでアカウント作成(無料プランあり: 35GB)
 2. APIキー取得(User → Account → API)
 3. `.env`ファイルに保存
 
-## 学びと考察
+## 6. 学びと考察
 
-### 学んだこと
+### 6.1. 学んだこと
 
 1. **用語の明確化の重要性**: "MLパイプライン"という曖昧な用語ではなく、Feature/Training/Inference Pipelineと具体的に命名することで、コミュニケーションが明確になる
 
@@ -464,9 +531,9 @@ pip install hopsworks[python]
 
 5. **非機能要件の重要性**: スケーラビリティ、フォールトトレランス、特徴の新鮮さなどの非機能要件を、カンバンボードで早期に可視化することが重要
 
-### 自分の考察
+### 6.2. 自分の考察
 
-#### Feature Storeの中心性
+#### 6.2.1. Feature Storeの中心性
 
 本章で明確になったのは、Feature StoreがFTIパイプライン間の「契約(contract)」を定義する中心的な役割を果たすことだ。Feature Storeは単なるデータ保存場所ではなく:
 
@@ -474,7 +541,7 @@ pip install hopsworks[python]
 2. **スキーマとデータ契約の強制**: 下流パイプラインが依存できる安定したインターフェース
 3. **バージョニング**: 特徴ロジック変更時の影響範囲を制御
 
-#### ラベルの保存場所について
+#### 6.2.2. ラベルの保存場所について
 
 疑問点として、ラベル(target)もFeature Storeに保存すべきかという点がある。本章の実例では、Feature ViewでラベルとFeatureを結合している。
 
@@ -483,7 +550,7 @@ pip install hopsworks[python]
 
 おそらく、Offline Storeにのみラベルを保存し、Online StoreにはFeatureのみを保存する設計が合理的だろう。
 
-#### MDTのバージョニング戦略
+#### 6.2.3. MDTのバージョニング戦略
 
 MDTのロジック変更時に「新しいバージョンの特徴を作成する」という推奨は興味深い。これは:
 
@@ -493,7 +560,7 @@ MDTのロジック変更時に「新しいバージョンの特徴を作成す�
 
 この運用では、Feature Storeのストレージコストとクエリ複雑性のトレードオフを考慮する必要がある。不要になった古いバージョンの特徴を削除するガベージコレクションプロセスも重要だろう。
 
-#### Streaming処理の必要性判断
+#### 6.2.4. Streaming処理の必要性判断
 
 Feature Freshnessの要件によって、Batch vs Streaming処理を選択する。判断基準:
 
@@ -503,7 +570,7 @@ Feature Freshnessの要件によって、Batch vs Streaming処理を選択する
 
 コスト・複雑性・新鮮さのトレードオフを慎重に評価すべきだ。
 
-#### SQL vs Pythonの選択
+#### 6.2.5. SQL vs Pythonの選択
 
 Feature Pipelineの実装にSQLとPythonの両方が使われる。
 
@@ -519,7 +586,7 @@ Feature Pipelineの実装にSQLとPythonの両方が使われる。
 
 プロジェクトによって、チームのスキルとデータの場所を考慮して選択すべきだ。
 
-#### Titanic例の教育的価値
+#### 6.2.6. Titanic例の教育的価値
 
 Titanic Survivalの例は、静的データセットから動的システムへの移行を示す点で教育的だ。合成データ生成関数を使うことで:
 
@@ -529,7 +596,7 @@ Titanic Survivalの例は、静的データセットから動的システムへ�
 
 実務では、実際のストリーミングデータソースやリアルタイム予測が必要になるが、学習の第一歩としては優れている。
 
-## 参考リンク
+## 7. 参考リンク
 
 - [Apache Hamilton](https://github.com/dagworks-inc/hamilton): Feature Functionsアプローチのベース
 - [Hopsworks](https://www.hopsworks.ai/): Feature Store & Model Registry
@@ -537,7 +604,7 @@ Titanic Survivalの例は、静的データセットから動的システムへ�
 - [Gradio](https://www.gradio.app/): PythonでWeb UIを作成するフレームワーク
 - [書籍GitHubリポジトリ](https://github.com/featurestore): Titanic例の完全なソースコード
 
-## 次に読むべき章
+## 8. 次に読むべき章
 
 - **第5章**: 特徴のバージョニング詳細
 - **第7章**: ODTのUDF実装
