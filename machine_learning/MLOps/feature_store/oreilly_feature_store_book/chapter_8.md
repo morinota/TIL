@@ -469,9 +469,23 @@ You should schedule the resultant program to run once per day; see the book’s 
 
 <!-- ここまで読んだ! -->
 
-## 4. Backfilling and Incremental Updates
+## 4. Backfilling and Incremental Updates バックフィルとインクリメンタル更新
 
-window. After backfilling your feature groups for the first time, you need to keep your feature groups up-to-date by processing newly arrived or changed data. 
+With our new synthetic data generation programs, we can now run them to:
+私たちの新しい合成データ生成プログラムを使用して、次のことを実行できます：
+
+• Create historical data for our data mart, including fraudulent transactions.
+• Update the slowly changing tables daily.
+• Continuously add new credit card transactions to Apache Kafka.
+
+We will use this synthetic data to create feature data for our feature groups, using the transformations from Chapters 6 and 7. In Chapter 9, we will look at streaming fea‐ ture pipelines that update the cc_trans_aggs_fg feature group. Now, we focus on the batch feature pipelines containing the MITs.
+
+---
+(コラム)
+In data engineering, the term full load is often used instead of back‐ filling, and incremental load is preferred to incremental processing. A full load drops an existing table and then recomputes its data from the data source(s). With the adoption of lakehouse tables that support updates and deletes (not just appends), full loads have become less common. We prefer the term backfilling over full loads, as it is a more expansive term that covers recomputing all feature data (full loads) as well as recomputing missing data.
+---
+
+We start by backfilling our feature groups. You backfill when you create new feature data from historical data. This may be because you have no existing data in your fea‐ ture group and you need feature data to train a model, or because there are gaps in your production feature data due to an upstream data failure or a maintenance window. After backfilling your feature groups for the first time, you need to keep your feature groups up-to-date by processing newly arrived or changed data. 
 ウィンドウ。最初にフィーチャーグループをバックフィルした後は、新しく到着したデータや変更されたデータを処理することでフィーチャーグループを最新の状態に保つ必要があります。
 
 We will use incremental processing to process only the data that has changed since the most recent run of a batch feature pipeline. 
