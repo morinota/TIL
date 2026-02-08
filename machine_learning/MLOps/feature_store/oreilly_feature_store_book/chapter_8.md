@@ -125,6 +125,7 @@ Columnar stores, row-oriented stores, object stores, and NoSQL stores are canoni
 **列指向ストア、行指向ストア、オブジェクトストア、およびNoSQLストアは、バッチデータソースの典型的な例**です。
 Batch data is read as structured data, and your batch program reads data from it using both a driver library (a dependency you often have to install) and connection details (the hostname/port, database, and credentials for authentication). 
 バッチデータは構造化データとして読み取られ、バッチプログラムはドライバライブラリ（通常インストールする必要がある依存関係）と接続詳細（ホスト名/ポート、データベース、および認証のための資格情報）を使用してデータを読み取ります。
+
 The most important batch data sources for building AI systems include: 
 AIシステムを構築するための最も重要なバッチデータソースには以下が含まれます。
 
@@ -153,7 +154,7 @@ _NoSQLデータストア_ これらは、特定の種類のデータを保存す
   - ベクトルデータベース（WeaviateやQdrantなど）は、圧縮データに対する類似性検索のために設計されており、クライアントはベクトル埋め込みを使用して保存および検索できます。
 
 One significant difference among the batch data sources is whether they provide data with a schema (known as structured data or tabular data) or data that does not have a schema (called unstructured data).  
-**バッチデータソースの間の重要な違いの1つは、スキーマを持つデータ（構造化データまたは表形式データとして知られる）を提供するか、スキーマを持たないデータ（非構造化データと呼ばれる）を提供するか**です。
+**バッチデータソース間の重要な違いの1つは、スキーマを持つデータ（構造化データまたは表形式データとして知られる）を提供するか、スキーマを持たないデータ（非構造化データと呼ばれる）を提供するか**です。
 For example, PDF files contain text and images, but they do not have a schema.  
 例えば、PDFファイルにはテキストと画像が含まれていますが、スキーマはありません。
 Video and image data is also considered to be unstructured data.  
@@ -178,10 +179,10 @@ Figure 8-2 shows a lakehouse as a batch data source for a batch or streaming fea
 _Figure 8-2. Batch feature pipeline performing feature engineering on data from a batch_ _data source (a lakehouse table) and writing the feature data to a feature group in the_ _feature store._
 _Figure 8-2. バッチフィーチャーパイプラインがバッチデータソース（レイクハウステーブル）からデータに対してフィーチャーエンジニアリングを行い、フィーチャーデータをフィーチャーストアのフィーチャーグループに書き込む。_
 
-The lakehouse table is stored in daily partitions, and when the batch program runs once per day, it reads and processes only yesterday’s data, bounding the amount of data that needs to be processed. 
-レイクハウステーブルは日次パーティションに保存されており、バッチプログラムが1日1回実行されると、昨日のデータのみを読み込み処理し、処理する必要のあるデータの量を制限します。
+The lakehouse table is stored in daily partitions, and when the batch program runs once per day, it reads and processes only yesterday’s data, bounding the amount of data that needs to be processed.
+**レイクハウステーブルは日次パーティションに保存されており、バッチプログラムが1日1回実行されると、昨日のデータのみを読み込み処理し、処理する必要のあるデータの量を制限**します。(静的なエンティティデータも日次でパーティション切られてた方がいいのかな...!!:thinking:)
 When the batch program backfills from historical data, it will need more resources as it will read and process many more partitions of data. 
-**バッチプログラムが履歴データからバックフィルを行うときは、より多くのリソースが必要になります。なぜなら、より多くのデータパーティションを読み込み処理するからです。**
+**バッチプログラムが履歴データからバックフィルを行うときは、より多くのリソースが必要になります。なぜなら、より多くのデータパーティションを読み込み処理するからです。** (わかるよ〜:thinking:)
 If the size of a batch exceeds the memory or processing capacity of a single machine, you will need to use a distributed batch-processing program, such as PySpark, that can scale up to process larger batches using many parallel workers. 
 バッチのサイズが単一のマシンのメモリまたは処理能力を超える場合は、PySparkのような分散バッチ処理プログラムを使用する必要があります。これにより、多くの並列ワーカーを使用してより大きなバッチを処理することができます。
 An alternative is to rerun the batch program for every partition, but this will be an order of magnitude slower than using PySpark. 
@@ -193,6 +194,8 @@ You won’t have the same resource challenges when backfilling with a streaming 
 ストリーミングプログラムでバックフィルを行う場合は、データをインクリメンタルに処理するため、同じリソースの課題はありません。
 Note that they exit immediately after finishing backfilling. 
 バックフィルを完了した後、すぐに終了することに注意してください。
+
+<!-- ここまで読んだ! -->
 
 In this example, the batch feature pipeline is an ETL program. 
 この例では、バッチフィーチャーパイプラインはETLプログラムです。
@@ -240,196 +243,161 @@ The most popular event-streaming platforms for storing and publishing events are
 
 Apache Kafka is a popular open source event-streaming platform that stores events created by producers in a queue called a _topic. 
 Apache Kafkaは、プロデューサーによって作成されたイベントをトピックと呼ばれるキューに保存する人気のあるオープンソースのイベントストリーミングプラットフォームです。
-
 Consumers can listen to a topic for new events and process them as they become available. 
 コンシューマーはトピックで新しいイベントをリッスンし、利用可能になるとそれらを処理できます。
-
 Consumers can also reconnect to a topic and read all events that arrived since the last time they (the consum‐ ers) were connected. 
 コンシューマーはトピックに再接続し、前回接続してから到着したすべてのイベントを読み取ることもできます。
-
 For example, Spark Structured Streaming applications can run continuously, consuming events from a Kafka topic, computing features, and writing 
 たとえば、Spark Structured Streamingアプリケーションは継続的に実行され、Kafkaトピックからイベントを消費し、フィーチャーを計算し、書き込みます。
-
 them to the feature store. 
 それらをフィーチャーストアに。
-
 Similarly, a PySpark batch application can run on a sched‐ ule, consume the latest events that have arrived on the topic, compute features, write them to the feature store, and then exit. 
 同様に、PySparkバッチアプリケーションはスケジュールに従って実行され、トピックに到着した最新のイベントを消費し、フィーチャーを計算し、それらをフィーチャーストアに書き込み、その後終了します。
-
 If your AI system requires fresh feature data from the event stream source, you should write a streaming feature pipeline (see Chapter 9), and if it doesn’t have strict feature freshness requirements, a batch feature pipeline may be easier to operate and more efficient to run. 
-AIシステムがイベントストリームソースから新鮮なフィーチャーデータを必要とする場合は、ストリーミングフィーチャーパイプラインを書くべきです（第9章を参照）。厳密なフィーチャーの新鮮さの要件がない場合は、バッチフィーチャーパイプラインの方が操作が簡単で、効率的に実行できるかもしれません。
+**AIシステムがイベントストリームソースから新鮮なフィーチャーデータを必要とする場合は、ストリーミングフィーチャーパイプラインを書くべき**です（第9章を参照）。**厳密なフィーチャーの新鮮さの要件がない場合は、バッチフィーチャーパイプラインの方が操作が簡単で、効率的に実行できる**かもしれません。
+(うんうん! だから基本的には、「まずはバッチシステムで要件を満たせるか??」を考えるのが良いよね...!:thinking:)
 
-###### 2.2.0.0.1. Unstructured Data in Object Stores and Filesystems
-###### 2.2.0.0.2. オブジェクトストアとファイルシステムの非構造化データ
+### 2.3. Unstructured Data in Object Stores and Filesystems オブジェクトストアとファイルシステムの非構造化データ
 
 Text data, image data, video data, and much scientific data (such as medical imaging data and Earth observation data) are collectively called _unstructured data. 
 テキストデータ、画像データ、ビデオデータ、および多くの科学データ（医療画像データや地球観測データなど）は、総称して非構造化データと呼ばれます。
-
 It is unstructured as it lacks a schema—that is, it is not tabular data with typed columns. 
 これはスキーマが欠如しているため非構造化であり、すなわち型付き列を持つ表形式データではありません。
-
 Unstructured data is typically stored as files in either an object store or a filesystem. 
 非構造化データは通常、オブジェクトストアまたはファイルシステムのいずれかにファイルとして保存されます。
 
 Batch feature pipelines that process unstructured data as files are run on a time-based schedule or can be triggered by an alert that new files are available for processing. 
-非構造化データをファイルとして処理するバッチフィーチャーパイプラインは、時間ベースのスケジュールで実行されるか、新しいファイルが処理可能であるというアラートによってトリガーされることがあります。
-
+**非構造化データをファイルとして処理するバッチフィーチャーパイプラインは、時間ベースのスケジュールで実行されるか、新しいファイルが処理可能であるというアラートによってトリガーされる**ことがあります。
 Object stores and some filesystems provide a CDC API to provide such notifications. 
 オブジェクトストアや一部のファイルシステムは、そのような通知を提供するCDC APIを提供します。
-
 Figure 8-4 shows the files in the object store organized into time-stamped directories to enable efficient backfilling and incremental processing. 
 Figure 8-4は、オブジェクトストア内のファイルがタイムスタンプ付きのディレクトリに整理されており、効率的なバックフィルとインクリメンタル処理を可能にしていることを示しています。
-
 For example, if the batch program is parameterized with the latest date for files already processed, it can prune the files it processes to those directories containing files added after the provided date. 
-たとえば、バッチプログラムが既に処理されたファイルの最新の日付でパラメータ化されている場合、提供された日付以降に追加されたファイルを含むディレクトリに処理するファイルを絞り込むことができます。
+たとえば、**バッチプログラムが既に処理されたファイルの最新の日付でパラメータ化されている場合、提供された日付以降に追加されたファイルを含むディレクトリに処理するファイルを絞り込むことができます**。
+
+<!-- ここまで読んだ! -->
 
 _Figure 8-4. Incremental preprocessing of unstructured data. Typically, this is done in_ _batch jobs. For text documents and LLMs, you can clean text, update vector indexes,_ _and create instruction datasets for fine-tuning. For image processing, you can clean_ _images, augment them, and create training/inference tensor data (e.g., TFRecord files)_ _from them._ 
 _Figure 8-4. 非構造化データのインクリメンタル前処理。通常、これはバッチジョブで行われます。テキスト文書やLLMの場合、テキストをクリーンアップし、ベクトルインデックスを更新し、ファインチューニング用の指示データセットを作成できます。画像処理の場合、画像をクリーンアップし、拡張し、トレーニング/推論用のテンソルデータ（例：TFRecordファイル）を作成できます。_
 
 Audio, video, and image data are typically stored as compressed files in a filesystem or object store. 
 音声、ビデオ、および画像データは通常、ファイルシステムまたはオブジェクトストアに圧縮ファイルとして保存されます。
-
 Batch feature pipelines transform these files into new files as well as rows in feature groups. 
 バッチフィーチャーパイプラインは、これらのファイルを新しいファイルおよびフィーチャーグループ内の行に変換します。
-
 The new files, stored in the object store, can contain tensor data (such as TFRecord files for training and inference) or new files containing augmented/transformed/cleaned data. 
 オブジェクトストアに保存された新しいファイルは、テンソルデータ（トレーニングおよび推論用のTFRecordファイルなど）や、拡張/変換/クリーンアップされたデータを含む新しいファイルを含むことができます。
-
 Metadata can be extracted from the image/video/audio files, and vector embeddings can be computed from them, and this tabular data can be stored in feature groups. 
-メタデータは画像/ビデオ/音声ファイルから抽出でき、ベクトル埋め込みを計算でき、この表形式データはフィーチャーグループに保存できます。
-
+**メタデータは画像/ビデオ/音声ファイルから抽出でき、ベクトル埋め込みを計算でき、この表形式データはフィーチャーグループに保存できます。**
 As such, feature groups can be used to index audio, video, and image data, enabling similarity search with the vector index and filtering/lookup with metadata columns. 
 そのため、フィーチャーグループは音声、ビデオ、および画像データをインデックス化するために使用でき、ベクトルインデックスを使用した類似検索やメタデータ列を使用したフィルタリング/ルックアップを可能にします。
 
+<!-- ココまで読んだ! -->
+
 Text data is widely used in AI systems for _natural language processing (NLP) and_ LLMs, with examples of massively popular AI-powered services including Google Translate and OpenAI’s ChatGPT. 
 テキストデータは、自然言語処理（NLP）やLLMのためにAIシステムで広く使用されており、Google翻訳やOpenAIのChatGPTなどの非常に人気のあるAI駆動サービスの例があります。
-
 The text data (and now also image data) used to [train LLMs is massive—“Llama 3 is pretrained on over 15T tokens that were all col‐](https://oreil.ly/9NgTG) lected from publicly available sources,” consisting of hundreds of millions of text files or more. 
 LLMをトレーニングするために使用されるテキストデータ（そして現在は画像データも）は膨大です。「Llama 3は、すべて公開されているソースから収集された15Tトークン以上で事前トレーニングされています。」これは数億のテキストファイル以上で構成されています。
-
 This includes HTML, PDF, MD, and other file formats. 
 これにはHTML、PDF、MD、およびその他のファイル形式が含まれます。
-
 Batch feature pipelines can transform these text files into chunks of text stored as columns in feature groups. 
 バッチフィーチャーパイプラインは、これらのテキストファイルをフィーチャーグループの列として保存されるテキストのチャンクに変換できます。
-
 For example, you could extract paragraphs of text from PDF files and, for every paragraph, add to separate columns in your feature group the source filename, page number, paragraph number, and a vector embedding for the paragraph text. 
-たとえば、PDFファイルからテキストの段落を抽出し、各段落について、フィーチャーグループの別々の列にソースファイル名、ページ番号、段落番号、および段落テキストのベクトル埋め込みを追加できます。
-
+**たとえば、PDFファイルからテキストの段落を抽出し、各段落について、フィーチャーグループの別々の列にソースファイル名、ページ番号、段落番号、および段落テキストのベクトル埋め込みを追加できます。**
 Then, you could easily search for paragraphs with free-text search using the vector index. 
 その後、ベクトルインデックスを使用してフリーテキスト検索で段落を簡単に検索できます。
-
 You could make the filename, page number, and paragraph number as a primary key, enabling filtering and fast lookup for text. 
 ファイル名、ページ番号、および段落番号を主キーとして設定することで、テキストのフィルタリングと迅速なルックアップを可能にできます。
 
-###### 2.2.0.0.3. API and SaaS Sources
-###### 2.2.0.0.4. APIおよびSaaSソース
+<!-- ここまで読んだ! -->
+
+### 2.4. API and SaaS Sources　APIおよびSaaSソース
 
 With the emergence of SaaS and microservice architectures, an increasing amount of enterprise data is only accessible via APIs, often HTTP/REST APIs. 
 SaaSおよびマイクロサービスアーキテクチャの出現により、企業データの増加は、しばしばHTTP/REST APIを介してのみアクセス可能です。
-
 Popular enterprise SaaS APIs include Salesforce and HubSpot, where many enterprises store their sales and marketing data, respectively. 
 人気のある企業向けSaaS APIにはSalesforceやHubSpotがあり、多くの企業がそれぞれの販売およびマーケティングデータを保存しています。
-
 In general, API sources are not a great fit for feature pipelines, as popular technologies for feature pipelines (such as Spark and Python) often have to issue blocking REST calls that slow down feature pipelines. 
-一般的に、APIソースはフィーチャーパイプラインに適していません。なぜなら、フィーチャーパイプラインのための人気のある技術（SparkやPythonなど）は、しばしばフィーチャーパイプラインを遅くするブロッキングREST呼び出しを発行しなければならないからです。
-
+**一般的に、APIソースはフィーチャーパイプラインに適していません。なぜなら、フィーチャーパイプラインのための人気のある技術（SparkやPythonなど）は、しばしばフィーチャーパイプラインを遅くするブロッキングREST呼び出しを発行しなければならないから**です。
 A more common architectural pattern in industry is to have historical data scraped from APIs first written to a data warehouse or event-streaming platform by a data integration platform. 
 業界でより一般的なアーキテクチャパターンは、APIからスクレイピングされた履歴データが、データ統合プラットフォームによって最初にデータウェアハウスまたはイベントストリーミングプラットフォームに書き込まれることです。
-
 Data integration platforms are ETL or ELT tools that can backfill and incrementally copy data from hundreds of data sources to centralized data platforms, such as lakehouses. 
 データ統合プラットフォームは、ETLまたはELTツールであり、数百のデータソースから中央集約型データプラットフォーム（レイクハウスなど）にデータをバックフィルおよびインクリメンタルにコピーできます。
-
 Popular open source data integration platforms include [dltHub and Airbyte. 
 人気のあるオープンソースのデータ統合プラットフォームには、dltHubやAirbyteが含まれます。
-
 However, there may be use cases where the source data used to](https://oreil.ly/HMvVO) compute online features must be retrieved via a (HTTP) API at runtime. 
 ただし、オンラインフィーチャーを計算するために使用されるソースデータをランタイムで（HTTP）APIを介して取得する必要があるユースケースもあります。
-
 For these cases, feature stores provide support for ODTs that can read the source data from the API and create the feature(s) at request time. 
 これらのケースでは、フィーチャーストアはAPIからソースデータを読み取り、リクエスト時にフィーチャーを作成できるODTをサポートします。
 
+<!-- ここまで読んだ! -->
 
+## 3. Synthetic Credit Card Data with LLMs　LLMを用いた合成クレジットカードデータ
 
-###### 2.2.0.0.5. Synthetic Credit Card Data with LLMs
 Now that we have introduced the common data sources, we will build the data mart for our credit card fraud prediction system. 
-###### 2.2.0.0.6. LLMを用いた合成クレジットカードデータ
 一般的なデータソースを紹介したので、クレジットカード詐欺予測システムのためのデータマートを構築します。
-
 Synthetic data is gaining adoption as a data source for building and experimenting with AI systems, particularly in regulated industries, where real data may be scarce or there are restrictions on working with privacy-sensitive data. 
 合成データは、特に実データが不足しているか、プライバシーに敏感なデータの取り扱いに制限がある規制産業において、AIシステムの構築や実験のためのデータソースとして採用が進んでいます。
-
 Many companies now provide synthetic data for purchase in such regulated industries. 
 多くの企業が、こうした規制産業向けに合成データを販売しています。
-
 Synthetic data is also increasingly being used to train LLMs, as they are hitting a scaling wall, having used up all globally available text data‐ sets as training data. 
 合成データは、LLMのトレーニングにもますます使用されており、これまでに利用可能なすべてのテキストデータセットをトレーニングデータとして使い果たしたため、スケーリングの壁に直面しています。
 
-###### 2.2.0.0.7. A Logical Model for the Data Mart and the LLM
-Currently, there are no high-quality public datasets containing credit card transaction data with which to build our fraud detection system. 
-###### 2.2.0.0.8. データマートとLLMのための論理モデル
-現在、私たちの詐欺検出システムを構築するためのクレジットカード取引データを含む高品質の公開データセットは存在しません。
+<!-- ここまで読んだ! -->
 
+### 3.1. A Logical Model for the Data Mart and the LLM　データマートとLLMのための論理モデル
+
+Currently, there are no high-quality public datasets containing credit card transaction data with which to build our fraud detection system. 
+現在、私たちの詐欺検出システムを構築するためのクレジットカード取引データを含む高品質の公開データセットは存在しません。
 For reasons of data privacy, credit card issuers do not make credit card transaction details public. 
 データプライバシーの理由から、クレジットカード発行会社はクレジットカード取引の詳細を公開していません。
-
 To overcome this, we will generate synthetic data using an LLM and some domain knowledge I have from working on problems in this space. 
-これを克服するために、私たちはLLMを使用して合成データを生成し、この分野での問題に取り組んできた経験から得たドメイン知識を活用します。
+**これを克服するために、私たちはLLMを使用して合成データを生成し、この分野での問題に取り組んできた経験から得たドメイン知識を活用**します。
 
 First, we need to describe clearly the synthetic data we want to create. 
 まず、私たちが作成したい合成データを明確に説明する必要があります。
-
 LLMs will fill in any gaps if your description is ambiguous, which is an easy trap to fall into with natural language. 
 LLMは、説明があいまいな場合にギャップを埋めてくれますが、これは自然言語で陥りやすい罠です。
-
 What we will do instead of using natural language is define a _logical_ _model for the credit card data mart and ask the LLM to create the synthetic data for_ that logical model. 
-私たちが自然言語を使用する代わりに行うのは、クレジットカードデータマートのための_論理モデル_を定義し、その論理モデルのためにLLMに合成データを作成するよう依頼することです。
-
+**私たちが自然言語を使用する代わりに行うのは、クレジットカードデータマートのための_論理モデル_を定義し、その論理モデルのためにLLMに合成データを作成するよう依頼すること**です。
 The logical model is an extension of the entity-relationship (ER) diagram from Figure 4-8. 
 論理モデルは、図4-8のエンティティ-リレーションシップ（ER）ダイアグラムの拡張です。
-
 Defining a logical model is a typical step in database design after conceptual design, but before you create the actual tables (the physical model). 
 論理モデルを定義することは、概念設計の後、実際のテーブル（物理モデル）を作成する前のデータベース設計における典型的なステップです。
-
 The logical model adds details on columns—their data type, cardinality, and distribution, and whether they are primary keys or foreign keys. 
 論理モデルは、列の詳細（データ型、基数、分布、主キーまたは外部キーであるかどうか）を追加します。
-
 We will also add details to the tables, such as a description and how many rows it should contain. 
 また、テーブルに対して、説明や含むべき行数などの詳細も追加します。
 
 After adding our logical model to the LLM’s prompt, we will ask it to write code to create synthetic data for the tables and store that data in feature groups in Hops‐ works. 
-論理モデルをLLMのプロンプトに追加した後、テーブルの合成データを作成するためのコードを書かせ、そのデータをHopsworksのフィーチャーグループに保存するよう依頼します。
-
+**論理モデルをLLMのプロンプトに追加**した後、テーブルの合成データを作成するためのコードを書かせ、そのデータをHopsworksのフィーチャーグループに保存するよう依頼します。
 Our logical model is a comprehensive description of the tables, including:
 私たちの論理モデルは、テーブルの包括的な説明であり、以下を含みます：
 
 - The name and description of the table, including the number of rows
-- テーブルの名前と説明、行数を含む
+  - テーブルの名前と説明、行数を含む
 - The name, data type, and description of each column in the table
-- テーブル内の各列の名前、データ型、および説明
+  - テーブル内の各列の名前、データ型、および説明
 - If a column is an index column, one of the following types: primary key, foreign key (including the relationship: one-to-one or one-to-many), partition key, or event time
-- 列がインデックス列である場合、次のいずれかのタイプ：主キー、外部キー（関係：一対一または一対多を含む）、パーティションキー、またはイベント時間
+  - 列がインデックス列である場合、次のいずれかのタイプ：主キー、外部キー（関係：一対一または一対多を含む）、パーティションキー、またはイベント時間
 - If the column is a categorical variable, a listing of all of the categories (including their relative percentage distribution)
-- 列がカテゴリ変数である場合、すべてのカテゴリのリスト（相対的なパーセンテージ分布を含む）
+  - 列がカテゴリ変数である場合、すべてのカテゴリのリスト（相対的なパーセンテージ分布を含む）
 - The cardinality of a column (the number of unique values present in that column)
-- 列の基数（その列に存在するユニークな値の数）
-
+  - 列の基数（その列に存在するユニークな値の数）
 - The shape of the distribution of values in a numerical column
-- 数値列の値の分布の形状
+  - 数値列の値の分布の形状
 - The format of dates and timestamps (for example, a credit card expiry date includes only the year and month)
-- 日付とタイムスタンプの形式（例えば、クレジットカードの有効期限は年と月のみを含む）
+  - 日付とタイムスタンプの形式（例えば、クレジットカードの有効期限は年と月のみを含む）
 - Any missing values (including what percentage of values are null)
-- 欠損値（値がnullである割合を含む）
+  - 欠損値（値がnullである割合を含む）
 
 We need to define a logical model for the five tables in our data mart as well as the ``` cc_fraud table containing the labels. 
 私たちは、データマート内の5つのテーブルと、ラベルを含む``` cc_fraudテーブルの論理モデルを定義する必要があります。
-
 An example of the logical model for one of six tables is shown here. 
 6つのテーブルのうちの1つの論理モデルの例がここに示されています。
-
 The other logical models can be found in the book’s source code repository. 
 他の論理モデルは、書籍のソースコードリポジトリにあります。
 
+```md
 **Merchant Details:**
 **Name:** `merchant_details`
 **Description: Details about merchants that execute transactions.**
@@ -460,12 +428,48 @@ The other logical models can be found in the book’s source code repository.
 - cnt_chrgeback_prev_day: decimal(10,2)
 — Description: Number of chargebacks for this merchant during the previous day (Monday–Sunday)
 — 説明: 前日（月曜日から日曜日）にこの商人に対して発生したチャージバックの数
+```
 
 We now craft a prompt for the LLM to ask it to create the tables as DataFrames and use _Polars, instead of Pandas, as it scales better for generating millions of rows of_ data.  
 私たちは今、LLMにテーブルをDataFrameとして作成するよう依頼するプロンプトを作成し、_Pandasの代わりにPolarsを使用します。Polarsは数百万行のデータを生成するのにスケールが優れています。  
+
+<!-- ここまで読んだ! -->
+
+### 3.2. LLM Prompts to Generate the Synthetic Data
+
+I tested on the following prompt on GPT 4.1, and it creates a Python program that generates the synthetic data for our tables:
+
+```
+Below these instructions, you will find 6 different logical models for database tables. Write a Polars program to generate the data for these tables as DataFrames. Try to use Polars expressions for efficiency. If you can’t, it’s ok to use the Faker library. Write the DataFrames you created to new feature groups that you create in Hopsworks.
+<PASTE THE LOGICAL MODELS FOR THE 6 TABLES HERE>
 ```
 
+The Python program output by our LLM creates the DataFrames in the following order:
 
+1. The leaf nodes in our snowflake schema data model: account_details, bank_details, and merchant_details
+2. The inner nodes (in order from lowest to highest): card_details
+3. The root node: credit_card_transactions and then its dependent cc_fraud
+
+The synthetic data does not include any fraudulent transactions. We need to add some fraudulent transactions to the tables so our model can learn to identify them. For this, we can write a prompt such as the following:
+
+```
+Write a loop that repeats 1,000 times. Select a random credit card number from the card_details, and create a fraudulent transaction for that card that represents a geo‐ graphic attack—where the location of the IP addresses is so far apart and the time between the transactions is so low that the card holder could not realistically travel between the two locations within the time between the transactions. The card_present field should be true for the transaction and cc_fraud should add it as a row.
+Select another random credit card number from the card_details, and create a fraudu‐ lent transaction for that card where the card is used to make many small payments (between 5 and 50) within a short period of time (between 15 minutes and 1 hour). Add the transaction as a fraudulent transaction in cc_fraud.
+```
+
+Now we have some synthetic data for historical credit card transactions. We want to simulate updates to our data mart. Account, bank, and merchant details tables will be updated overnight as a batch job (they are slowly changing dimensions). The outline of a prompt for our LLM that generates a Polars program that runs daily is as follows:
+
+```
+Write a Polars program to read the contents of the credit_card_transactions feature group for the previous day as a Polars DataFrame. Then read all of the contents of the bank_details, card_details, account_details, and merchant_details feature groups.
+Then modify the DataFrames as follows and save them back as updates to feature groups in Hopsworks:
+Keep 0.001% of the cards rows with card status ‘Active’ and change that status to either ‘Blocked’ or ‘Lost/Stolen’ (choose uniformly at random). For the transactions table, group them by merchants, sum the amount of transactions for each merchant and then multiply that number by a uniform random number between 0.01% and 0.1%. The result is cnt_chrgeback_prev_day for that merchant. Update the merchants_fg with the new value result for cnt_chrgeback_prev_day and also update last_modified to the cur‐ rent time.
+```
+
+You should schedule the resultant program to run once per day; see the book’s source code repository. Finally, you need to prompt your LLM to generate a Python program that runs continuously, writing synthetic credit card transactions to the Apache Kafka topic in your data mart. Again, see the book’s source code repository for details.
+
+<!-- ここまで読んだ! -->
+
+## 4. Backfilling and Incremental Updates
 
 window. After backfilling your feature groups for the first time, you need to keep your feature groups up-to-date by processing newly arrived or changed data. 
 ウィンドウ。最初にフィーチャーグループをバックフィルした後は、新しく到着したデータや変更されたデータを処理することでフィーチャーグループを最新の状態に保つ必要があります。
@@ -485,8 +489,8 @@ Your batches of incremental data should be processed at a frequency that:
 - Ensures that your batch pipeline processing capacity matches the rate of arrival of new data—that the pipeline is not overwhelmed with too much data for one time interval (causing out-of-memory errors or not processing data in time) or overpro‐ visioned with excessive CPU and memory resources for other time intervals. 
 - バッチパイプラインの処理能力が新しいデータの到着率と一致することを保証します。つまり、パイプラインが一度の時間間隔に対して過剰なデータで圧倒されること（メモリエラーを引き起こしたり、データを時間内に処理できなかったりする）や、他の時間間隔に対して過剰なCPUおよびメモリリソースを持つことがないようにします。
 
-###### Polling and CDC for Incremental Data
-###### インクリメンタルデータのためのポーリングとCDC
+###### 4.0.0.0.1. Polling and CDC for Incremental Data
+###### 4.0.0.0.2. インクリメンタルデータのためのポーリングとCDC
 
 When you run any feature pipeline against a data source, you need to identify the data it should process. 
 データソースに対してフィーチャーパイプラインを実行する際には、処理すべきデータを特定する必要があります。
@@ -521,8 +525,8 @@ Your batch feature pipeline that performs incremental processing should use eith
 In general, CDC is preferable to polling, as polling can miss changes while CDC captures all changes. 
 一般的に、CDCはポーリングよりも好ましいです。なぜなら、ポーリングは変更を見逃す可能性がある一方で、CDCはすべての変更をキャプチャするからです。
 
-###### Polling
-###### ポーリング
+###### 4.0.0.0.3. Polling
+###### 4.0.0.0.4. ポーリング
 
 Polling is only used for batch data sources. 
 ポーリングはバッチデータソースにのみ使用されます。
@@ -548,8 +552,8 @@ For polling:
 - Polling can also miss late-arriving data in columnar tables if the client only reads the most recent partition (hour/day), as late-arriving data may be stored in earlier partitions. 
 - ポーリングは、クライアントが最新のパーティション（時間/日）しか読み取らない場合、列指向テーブルの遅れて到着したデータを見逃す可能性があります。遅れて到着したデータは、以前のパーティションに保存されている可能性があるからです。
 
-###### Change data capture
-###### 変更データキャプチャ
+###### 4.0.0.0.5. Change data capture
+###### 4.0.0.0.6. 変更データキャプチャ
 
 CDC resolves the problems of missing (or ghost) rows within a polling interval and late-arriving data. 
 CDCは、ポーリング間隔内の欠落（またはゴースト）行や遅れて到着したデータの問題を解決します。
@@ -573,8 +577,8 @@ For example, in Hopsworks feature groups, you can read the changes in a feature 
 df = fg.asof(end_timestamp, exclude_until=start_timestamp).read()
 ```
 
-###### Backfill and Incremental Processing in One Program
-###### バックフィルとインクリメンタル処理を1つのプログラムで
+###### 4.0.0.0.7. Backfill and Incremental Processing in One Program
+###### 4.0.0.0.8. バックフィルとインクリメンタル処理を1つのプログラムで
 
 A batch feature pipeline that is parameterized to be run against either historical data or incremental data requires abstracting out the data source, so that the query that reads from the data source can be given a start_time and an end_time for the range of data to be processed. 
 歴史的データまたはインクリメンタルデータに対して実行されるようにパラメータ化されたバッチフィーチャーパイプラインは、データソースを抽象化する必要があります。これにより、データソースから読み取るクエリに対して処理するデータの範囲のためにstart_timeとend_timeを指定できます。
@@ -633,8 +637,8 @@ We move on now to look at orchestrators that manage the scheduling and execution
 Job schedulers support cron-based scheduling of batch programs, but sometimes you need more capable workflow schedulers to schedule and manage the execution of DAGs of programs (tasks). 
 ジョブスケジューラーはバッチプログラムのcronベースのスケジューリングをサポートしますが、時にはプログラム（タスク）のDAGの実行をスケジュールおよび管理するために、より高機能なワークフロースケジューラーが必要です。
 
-###### Job Orchestrators
-###### ジョブオーケストレーター
+###### 4.0.0.0.9. Job Orchestrators
+###### 4.0.0.0.10. ジョブオーケストレーター
 
 In Chapter 3, we used GitHub Actions to run both a feature pipeline and a batch inference pipeline on a daily schedule. 
 第3章では、GitHub Actionsを使用してフィーチャーパイプラインとバッチ推論パイプラインの両方を毎日スケジュールで実行しました。
@@ -696,8 +700,8 @@ If your job is a PySpark job, you will also need to define any files that need t
 We will look now at two different job schedulers: Modal and Hopsworks. 
 これから、2つの異なるジョブスケジューラー、ModalとHopsworksについて見ていきます。
 
-###### Modal
-###### モーダル
+###### 4.0.0.0.11. Modal
+###### 4.0.0.0.12. モーダル
 
 Modal is a developer-friendly serverless platform to deploy, schedule, and manage Python jobs. 
 Modalは、Pythonジョブをデプロイ、スケジュール、および管理するための開発者に優しいサーバーレスプラットフォームです。
@@ -778,7 +782,7 @@ All the dependencies are defined in your Python program, and with _automatic con
 Modal charges based on compute/memory/GPU used per second. 
 Modalは、使用したコンピュート/メモリ/GPUに基づいて課金されます。
 
-###### Hopsworks Jobs
+###### 4.0.0.0.13. Hopsworks Jobs
 Hopsworks jobs run on the same Kubernetes cluster Hopsworks is installed on and can be Python (Pandas, Polars, etc.) or PySpark batch programs. 
 Hopsworksジョブは、Hopsworksがインストールされている同じKubernetesクラスター上で実行され、Python（Pandas、Polarsなど）またはPySparkバッチプログラムであることができます。
 
@@ -851,8 +855,8 @@ To overcome this, Hopsworks allows you to explicitly define lineage information 
 This lineage information is visualized in the Hopsworks UI and accessible via the Hopsworks API. 
 この系譜情報はHopsworksのUIで可視化され、Hopsworks APIを介してアクセス可能です。
 
-###### Workflow Orchestrators
-###### ワークフローオーケストレーター
+###### 4.0.0.0.14. Workflow Orchestrators
+###### 4.0.0.0.15. ワークフローオーケストレーター
 
 In contrast to job orchestrators that execute a single program, workflow orchestrators orchestrate the execution of many programs (or tasks), organized in a DAG. 
 単一のプログラムを実行するジョブオーケストレーターとは対照的に、ワークフローオーケストレーターはDAGに整理された多くのプログラム（またはタスク）の実行を調整します。
@@ -932,8 +936,8 @@ There are workflow orchestrators that are popular within data engineering that c
 We will look now at the most popular Python workflow orchestrator, Airflow, a general-purpose workflow orchestrator, and cloud provider workflow orchestrators for Azure, AWS, and GCP. 
 これから、最も人気のあるPythonワークフローオーケストレーターであるAirflow、汎用ワークフローオーケストレーター、およびAzure、AWS、GCPのクラウドプロバイダーのワークフローオーケストレーターを見ていきます。
 
-###### Airflow
-###### Airflow
+###### 4.0.0.0.16. Airflow
+###### 4.0.0.0.17. Airflow
 
 Apache Airflow is a popular open source orchestrator that allows you to define, schedule, and monitor workflows. 
 Apache Airflowは、ワークフローを定義、スケジュール、および監視することを可能にする人気のオープンソースオーケストレーターです。
@@ -962,8 +966,8 @@ Other popular sensors are an HttpSensor (which polls an HTTP endpoint until a sp
 You can define dependencies between tasks directly in the Python program that defines your DAG. 
 DAGを定義するPythonプログラム内で、タスク間の依存関係を直接定義できます。
 
-###### Cloud Provider Workflow Orchestrators
-###### クラウドプロバイダーのワークフローオーケストレーター
+###### 4.0.0.0.18. Cloud Provider Workflow Orchestrators
+###### 4.0.0.0.19. クラウドプロバイダーのワークフローオーケストレーター
 
 Azure Data Factory (ADF) is a generic workflow orchestrator that you can use to run Spark, Pandas, and Polars programs on Azure. 
 Azure Data Factory（ADF）は、Azure上でSpark、Pandas、およびPolarsプログラムを実行するために使用できる汎用ワークフローオーケストレーターです。
@@ -995,8 +999,8 @@ That lineage information, however, is typically not connected to artifacts, such
 Lineage information for ML assets is stored in MLOps platforms, such as Hopsworks, Vertex, Databricks, and SageMaker. 
 ML資産の系譜情報は、Hopsworks、Vertex、Databricks、SageMakerなどのMLOpsプラットフォームに保存されます。
 
-###### Data Contracts
-###### データ契約
+###### 4.0.0.0.20. Data Contracts
+###### 4.0.0.0.21. データ契約
 
 Data contracts for feature groups have aims that are similar to those of interface con‐ tracts in software engineering. 
 フィーチャーグループのデータ契約は、ソフトウェア工学におけるインターフェース契約の目的に似ています。
@@ -1070,8 +1074,8 @@ tag_search_result.to_dict()
 We can then check whether the returned ML assets conform to the governance policy or not and send an alert if there is a violation. 
 その後、返されたML資産がガバナンスポリシーに準拠しているかどうかを確認し、違反があればアラートを送信できます。
 
-###### Data Validation with Great Expectations in Hopsworks
-###### HopsworksにおけるGreat Expectationsを用いたデータ検証
+###### 4.0.0.0.22. Data Validation with Great Expectations in Hopsworks
+###### 4.0.0.0.23. HopsworksにおけるGreat Expectationsを用いたデータ検証
 
 Data quality guarantees are part of data contracts and require data validation. 
 データ品質の保証はデータ契約の一部であり、データ検証を必要とします。
@@ -1093,8 +1097,8 @@ Data is validated before it is written to feature groups, as one bad data point 
 _Figure 8-5. Data quality for ML requires shifting left data validation in the development process and therefore validating data earlier in its lifecycle than in traditional data engineering. ML requires more monitoring of operational data than business intelligence systems._
 _Figure 8-5. MLのデータ品質は、開発プロセスにおけるデータ検証を左にシフトさせ、従来のデータエンジニアリングよりもデータのライフサイクルの早い段階で検証することを必要とします。MLは、ビジネスインテリジェンスシステムよりも運用データの監視を多く必要とします。_
 
-###### WAP Pattern
-###### WAPパターン
+###### 4.0.0.0.24. WAP Pattern
+###### 4.0.0.0.25. WAPパターン
 In data engineering, data validation is shifted right in the data lifecycle compared with ML. 
 データエンジニアリングでは、データライフサイクルにおけるデータ検証はMLと比較して右にシフトします。
 
@@ -1177,8 +1181,8 @@ The `check_for_pii_data()` function can be implemented using a library such as D
 In the near future, LLMs will probably be used to aid PII checks. 
 近い将来、LLMがPIIチェックを支援するために使用される可能性があります。
 
-###### 2.2.0.0.9. Summary and Exercises
-###### 2.2.0.0.10. 要約と演習
+###### 4.0.0.0.26. Summary and Exercises
+###### 4.0.0.0.27. 要約と演習
 Batch feature pipelines are programs that run on a schedule, applying MITs to data read from batch/streaming/API sources to create reusable feature data that should be validated before it is written to a feature group. 
 バッチフィーチャーパイプラインは、スケジュールに従って実行されるプログラムであり、バッチ/ストリーミング/APIソースから読み取ったデータにMITを適用して、フィーチャーグループに書き込む前に検証されるべき再利用可能なフィーチャーデータを作成します。
 
