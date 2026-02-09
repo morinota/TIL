@@ -438,10 +438,12 @@ We now craft a prompt for the LLM to ask it to create the tables as DataFrames a
 ### 3.2. LLM Prompts to Generate the Synthetic Data
 
 I tested on the following prompt on GPT 4.1, and it creates a Python program that generates the synthetic data for our tables:
+私はGPT 4.1で次のプロンプトをテストし、テーブルの合成データを生成するPythonプログラムを作成しました：
 
 ```
 Below these instructions, you will find 6 different logical models for database tables. Write a Polars program to generate the data for these tables as DataFrames. Try to use Polars expressions for efficiency. If you can’t, it’s ok to use the Faker library. Write the DataFrames you created to new feature groups that you create in Hopsworks.
 <PASTE THE LOGICAL MODELS FOR THE 6 TABLES HERE>
+
 ```
 
 The Python program output by our LLM creates the DataFrames in the following order:
