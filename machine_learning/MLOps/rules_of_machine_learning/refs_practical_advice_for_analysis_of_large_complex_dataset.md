@@ -76,10 +76,8 @@ On the flip side, you sometimes have a small volume of data. Many changes will n
 
 One particular slicing you should almost always employ is to slice by units of time (we often use days, but other units may be useful also). This is because many disturbances to underlying data happen as our systems evolve over time. Typically the initial version of a feature or the initial data collection will be checked carefully, but it is not uncommon for something to break along the way.
 **ほぼ常に使用すべき特定のスライスは、時間単位でのスライス**です（通常は日を使用しますが、他の単位も有用な場合があります）。これは、基礎となるデータへの多くの妨害が時間の経過とともにシステムが進化するにつれて発生するためです。通常、機能の初期バージョンや初期のデータ収集は注意深く確認されますが、途中で何かが壊れることは珍しくありません。
-
 Just because a particular day or set of days is an outlier does not mean you should discard it. Use the data as a hook to find a causal reason for that day being different before you discard it.
 特定の日または一連の日が外れ値であるからといって、それを破棄すべきだというわけではありません。その日が異なる理由を見つけるためのフックとしてデータを使用し、破棄する前に原因を特定してください。
-
 The other benefit of looking at day over day data is it gives you a sense of the variation in the data that would eventually lead to confidence intervals or claims of statistical significance. This should not generally replace rigorous confidence interval calculation, but often with large changes you can see they will be statistically significant just from the day-over-day graphs.
 日々のデータを確認するもう一つの利点は、最終的に信頼区間や統計的有意性の主張につながるデータの変動を把握できることです。これは一般に厳密な信頼区間の計算に取って代わるものではありませんが、**大きな変化がある場合、日々のグラフからそれらが統計的に有意であることがわかることがよくあります。**
 

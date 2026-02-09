@@ -394,7 +394,7 @@ The offline stores for existing feature stores are lakehouses.
 A lakehouse is a combination of a data lake for storage and a data warehouse for querying the data. 
 **レイクハウスは、データの保存のためのデータレイクとデータのクエリのためのデータウェアハウスの組み合わせ**です。
 In contrast to a data warehouse, a lakehouse is an open platform that separates the storage of columnar data from the query engines that use it. 
-データウェアハウスとは対照的に、**レイクハウスは列指向データのストレージをそれを使用するクエリエンジンから分離するオープンプラットフォーム**です。(なるほど、じゃあS3 TablesにIcebergテーブルを作って、AthenaやSnowflakeやPyIcebergなどの任意のクエリエンジンでクエリする設計は、レイクハウスの一例と言えるのか...!:thinking:)
+データウェアハウスとは対照的に、**レイクハウスは列指向データのストレージをそれを使用するクエリエンジンから分離するオープンプラットフォーム**です。(なるほど、じゃあS3 TablesにIcebergテーブルを作って、AthenaやSnowflakeやPyIcebergなどの任意のクエリエンジンでクエリする設計は、レイクハウスアーキテクチャの一例と言えるのか...!:thinking:)
 Lakehouse tables can be queried by many different query engines. 
 **レイクハウスのテーブルは、多くの異なるクエリエンジンによってクエリされることができます。*
 (=これが「レイクハウス」か否かの本質か...!! オフラインストアはレイクハウスであるべき:thinking:)
