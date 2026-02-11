@@ -988,57 +988,49 @@ ML資産の系譜情報は、Hopsworks、Vertex、Databricks、SageMakerなど�
 
 ---
 
+<!-- ここまで読んだ! -->
+
 ## 7. Data Contracts データ契約
 
 Data contracts for feature groups have aims that are similar to those of interface con‐ tracts in software engineering. 
 フィーチャーグループのデータ契約は、ソフトウェア工学におけるインターフェース契約の目的に似ています。
-
 They should ensure that clients read and write data that conforms to the interface (or schema). 
-それらは、クライアントがインターフェース（またはスキーマ）に準拠したデータを読み書きすることを保証する必要があります。
-
+それらは、**クライアントがインターフェース（またはスキーマ）に準拠したデータを読み書きすることを保証**する必要があります。
 That is, the names and types of the col‐ umns in a DataFrame should match the names and types of columns in the corre‐ sponding feature group being written to or read from. 
 つまり、DataFrame内の列の名前と型は、書き込まれるまたは読み取られる対応するフィーチャーグループ内の列の名前と型と一致する必要があります。
-
 For example, Hopsworks performs schema validation on writing data to feature groups—checking that data values correspond to the data types defined in the feature group schema and that strings and rows do not exceed their maximum length. 
-たとえば、Hopsworksはフィーチャーグループにデータを書き込む際にスキーマ検証を行い、データ値がフィーチャーグループスキーマで定義されたデータ型に対応していること、および文字列や行が最大長を超えないことを確認します。
-
+たとえば、Hopsworksは**フィーチャーグループにデータを書き込む際にスキーマ検証を行い**、データ値がフィーチャーグループスキーマで定義されたデータ型に対応していること、および文字列や行が最大長を超えないことを確認します。
 Schema checking also vali‐ dates integrity constraints, such as ensuring there are no missing primary key values or missing event_time values (if the feature group stores time-series data). 
-スキーマチェックは、主キー値が欠落していないことや、event_time値が欠落していないこと（フィーチャーグループが時系列データを保存している場合）など、整合性制約も検証します。
+**スキーマチェックは、主キー値が欠落していないことや、event_time値が欠落していないこと（フィーチャーグループが時系列データを保存している場合）など、整合性制約も検証**します。
+(うんうん、feature pipelienの書き込み時に保証するべき...!:thinking:)
 
 In addition to schema validation, data contracts should provide guarantees on the quality of data and its timely delivery to data consumers. 
-スキーマ検証に加えて、データ契約はデータの品質とデータ消費者へのタイムリーな配信に関する保証を提供する必要があります。
-
-Many data sources for AI systems do not provide such guarantees, so it becomes the responsibility of the AI system to provide data quality and timeliness guarantees by answering the follow‐ ing questions:  
-AIシステムの多くのデータソースはそのような保証を提供しないため、AIシステムがデータ品質とタイムリーな配信の保証を提供する責任を負うことになります。以下の質問に答えることによって：
+**スキーマ検証に加えて、データ契約はデータの品質とデータ消費者へのタイムリーな配信に関する保証を提供する必要**があります。(提供する特徴量の品質を保証するのは、Feature Store側の責務か...!:thinking:)
+Many data sources for AI systems do not provide such guarantees, so it becomes the responsibility of the AI system to provide data quality and timeliness guarantees by answering the follow‐ ing questions:
+AIシステムの多くのデータソースはそのような保証を提供しないため、AIシステムの責任は、次の質問に答えることによってデータ品質とタイムリー性の保証を提供することになります：
 
 - What are the service-level objectives (SLOs) for a feature group?
-- フィーチャーグループのサービスレベル目標（SLO）は何ですか？
+  - フィーチャーグループのサービスレベル目標（SLO）は何ですか？
 - What is the domain (valid range) of values for any given feature?
-- 任意のフィーチャーの値のドメイン（有効範囲）は何ですか？
+  - 任意のフィーチャーの値のドメイン（有効範囲）は何ですか？
 - What is the expected and worst-case freshness for feature data?
-- フィーチャーデータの期待される新鮮さと最悪のケースは何ですか？
+  - フィーチャーデータの期待される新鮮さと最悪のケースは何ですか？
 - How late can data arrive before it should be discarded?
-- データはどれくらい遅れて到着することができ、廃棄されるべきですか？
+  - データはどれくらい遅れて到着することができ、廃棄されるべきですか？
 - What percentage of missing values can be tolerated for a given feature?
-- 特定のフィーチャーに対して許容できる欠損値の割合はどれくらいですか？
+  - 特定のフィーチャーに対して許容できる欠損値の割合はどれくらいですか？
 
 In Hopsworks, you can describe the SLO for a feature group using tags. 
 Hopsworksでは、タグを使用してフィーチャーグループのSLOを記述できます。
-
 You then need to implement the mechanisms to enforce the SLO defined in a tag. 
 次に、タグで定義されたSLOを強制するためのメカニズムを実装する必要があります。
-
-
-
-. You then need to implement the mechanisms to enforce the SLO defined in a tag. 
+You then need to implement the mechanisms to enforce the SLO defined in a tag. 
 次に、タグで定義されたSLOを強制するためのメカニズムを実装する必要があります。
-
 Chapters 13 and 14 introduce techniques from MLOps that can help you implement custom data contracts. 
 第13章と第14章では、カスタムデータ契約を実装するのに役立つMLOpsの技術を紹介します。
 
 You can also design governance policies with tags, such as whether or not a feature group is allowed to contain personally identifiable information (PII). 
 また、タグを使用してガバナンスポリシーを設計することもできます。たとえば、フィーチャーグループが個人を特定できる情報（PII）を含むことが許可されているかどうかです。
-
 In the following, we show how to attach metadata to a feature group using a tag: 
 以下に、タグを使用してフィーチャーグループにメタデータを添付する方法を示します。
 
@@ -1049,11 +1041,10 @@ fg.add_tag(name="PII", value="false")
 
 You can enforce a governance policy in code by checking whether the correct tags and/or tag values are set for an asset, such as a feature group, a feature view, a model, or a deployment. 
 フィーチャーグループ、フィーチャービュー、モデル、またはデプロイメントなどの資産に対して、正しいタグおよび/またはタグ値が設定されているかどうかを確認することで、コード内でガバナンスポリシーを強制できます。
-
 For example, here we search in the feature store for all feature groups, feature views, or features that have the tag “PII”: 
 たとえば、ここではフィーチャーストア内で「PII」タグを持つすべてのフィーチャーグループ、フィーチャービュー、またはフィーチャーを検索します。
 
-```  
+```python
 search_api = project.get_search_api()   
 tag_search_result = search_api.featurestore_search("PII")   
 tag_search_result.to_dict()
@@ -1062,67 +1053,61 @@ tag_search_result.to_dict()
 We can then check whether the returned ML assets conform to the governance policy or not and send an alert if there is a violation. 
 その後、返されたML資産がガバナンスポリシーに準拠しているかどうかを確認し、違反があればアラートを送信できます。
 
-###### 7.0.0.0.2. Data Validation with Great Expectations in Hopsworks
-###### 7.0.0.0.3. HopsworksにおけるGreat Expectationsを用いたデータ検証
+<!-- ここまで読んだ! -->
+
+## 8. Data Validation with Great Expectations in Hopsworks HopsworksにおけるGreat Expectationsを用いたデータ検証
 
 Data quality guarantees are part of data contracts and require data validation. 
 データ品質の保証はデータ契約の一部であり、データ検証を必要とします。
-
 In data engineering, it is often OK to validate data asynchronously after it has been written to a data warehouse. 
 データエンジニアリングでは、データがデータウェアハウスに書き込まれた後に非同期でデータを検証することがよくあります。
-
 This is because many dashboards are updated on a schedule, and so long as data is validated before the dashboards are updated, you are not at risk of displaying garbage. 
 これは、多くのダッシュボードがスケジュールに従って更新されるため、ダッシュボードが更新される前にデータが検証されていれば、無意味なデータを表示するリスクはありません。
-
 Figure 8-5 shows how ML shifts the data validation work to earlier in the data lifecycle, compared with data engineering for business intelligence. 
 図8-5は、MLがビジネスインテリジェンスのためのデータエンジニアリングと比較して、データライフサイクルの早い段階にデータ検証作業を移す方法を示しています。
-
 Data is validated before it is written to feature groups, as one bad data point could fail a training or inference run. 
-データはフィーチャーグループに書き込まれる前に検証されます。なぜなら、1つの不良データポイントがトレーニングや推論の実行を失敗させる可能性があるからです。
+**データはフィーチャーグループに書き込まれる前に検証されます。なぜなら、1つの不良データポイントがトレーニングや推論の実行を失敗させる可能性があるからです。** (なるほど確かに。だから「書き込まれた後に非同期でvalidationする」のでは不十分なのか...!:thinking:)
 
-
-
+![]()
 _Figure 8-5. Data quality for ML requires shifting left data validation in the development process and therefore validating data earlier in its lifecycle than in traditional data engineering. ML requires more monitoring of operational data than business intelligence systems._
 _Figure 8-5. MLのデータ品質は、開発プロセスにおけるデータ検証を左にシフトさせ、従来のデータエンジニアリングよりもデータのライフサイクルの早い段階で検証することを必要とします。MLは、ビジネスインテリジェンスシステムよりも運用データの監視を多く必要とします。_
 
-###### 7.0.0.0.4. WAP Pattern
-###### 7.0.0.0.5. WAPパターン
+---
+(コラム)
+
+WAP Pattern
+
 In data engineering, data validation is shifted right in the data lifecycle compared with ML. 
 データエンジニアリングでは、データライフサイクルにおけるデータ検証はMLと比較して右にシフトします。
-
 For example, the write-audit-publish (WAP) pattern involves first ingesting all source data unaltered to a landing area, often in an immutable format. 
 例えば、write-audit-publish (WAP)パターンでは、すべてのソースデータを変更せずにランディングエリアに取り込み、しばしば不変の形式で保存します。
-
-In the audit phase, one or more data pipelines apply data validation rules, detect anomalies, and identify duplicates. 
+In the audit phase, one or more data pipelines apply data validation rules, detect anomalies, and identify duplicates.
 監査フェーズでは、1つ以上のデータパイプラインがデータ検証ルールを適用し、異常を検出し、重複を特定します。
-
 In the publish phase, pipelines transform the validated data to a consumable layer for downstream applications. 
 公開フェーズでは、パイプラインが検証されたデータを下流アプリケーション用の消費可能なレイヤーに変換します。
-
 The medallion architecture is a variation of this pattern with bronze, silver, and gold tables. 
 メダリオンアーキテクチャは、このパターンの変種であり、ブロンズ、シルバー、ゴールドのテーブルがあります。
 
+---
+
 As introduced in Chapter 3, in Hopsworks, we can implement the data validation rules as an expectation suite in Great Expectations. 
 第3章で紹介したように、Hopsworksでは、データ検証ルールをGreat Expectationsの期待スイートとして実装できます。
-
 Another important part of data contracts are governance policies that should be enforced before inserting data. 
 データ契約のもう一つの重要な部分は、データを挿入する前に施行されるべきガバナンスポリシーです。
-
 Governance requires both a way to define a policy and a mechanism to enforce it. 
 ガバナンスには、ポリシーを定義する方法と、それを施行するメカニズムの両方が必要です。
-
 Hopsworks provides tags and schematized tags (see Chapter 13) to define policies and attach them to feature groups. 
 Hopsworksは、ポリシーを定義し、フィーチャーグループに添付するためのタグとスキーマ化されたタグ（第13章参照）を提供します。
 
 Figure 8-6 shows a feature pipeline that performs data transformations and then applies both data validation checks and governance policy enforcement checks before ingesting data into a feature group.
-_Figure 8-6. データをフィーチャーストアに書き込む前に、データ品質（Great Expectationsで記述されたポリシー）とデータガバナンスポリシーが遵守されていることを確認します。問題を通知するアラート。_
+図8-6は、データ変換を実行し、フィーチャーグループにデータを取り込む前にデータ検証チェックとガバナンスポリシー施行チェックの両方を適用するフィーチャーパイプラインを示しています。
+
+![]()
 
 You define data validation rules for features in an expectation suite defined in Great Expectations. 
 フィーチャーのデータ検証ルールは、Great Expectationsで定義された期待スイートで定義します。
-
 We saw in Chapter 3 that you can attach an expectation suite to a feature group when you create it. 
 第3章で、フィーチャーグループを作成する際に期待スイートを添付できることを見ました。
-
 You can also add an expectation suite to an existing feature group and remove the expectation suite from a feature group as follows: 
 既存のフィーチャーグループに期待スイートを追加したり、フィーチャーグループから期待スイートを削除したりすることもできます。
 
@@ -1134,57 +1119,52 @@ fg.save_expectation_suite(
 1. remove the expectation suite from the feature group  
 fg.delete_expectation_suite()  
 ```  
-ここでは、`validation_ingestion_policy`を`ALWAYS`に設定しており、この場合、データ検証ルールが失敗してもデータがフィーチャーグループに書き込まれます。
 
+ここでは、`validation_ingestion_policy`を`ALWAYS`に設定しており、この場合、データ検証ルールが失敗してもデータがフィーチャーグループに書き込まれます。
 The default policy is STRICT, in which case the feature pipeline will fail if any data validation rule fails— no data will be written to the feature group. 
-デフォルトのポリシーはSTRICTであり、この場合、データ検証ルールが失敗するとフィーチャーパイプラインは失敗し、データはフィーチャーグループに書き込まれません。
+**デフォルトのポリシーはSTRICTであり、この場合、データ検証ルールが失敗するとフィーチャーパイプラインは失敗し、データはフィーチャーグループに書き込まれません。** (うんうん。基本これで良さそう...!:thinking:)
 
 In feature pipelines, we can define governance policies as tags and implement our own enforcement checks. 
 フィーチャーパイプラインでは、ガバナンスポリシーをタグとして定義し、自分自身の施行チェックを実装できます。
-
 For example, we can define a NO_PII tag and attach it to a feature group. 
 例えば、NO_PIIタグを定義し、それをフィーチャーグループに添付できます。
-
 The policy is that this feature group should not contain PII data. 
 このフィーチャーグループにはPIIデータを含めてはいけないというポリシーです。
-
 We can implement a check_for_pii_data() function that enforces this policy. 
 このポリシーを施行するcheck_for_pii_data()関数を実装できます。
-
 First, we check whether the policy applies to the feature group by checking whether it has the NO_PII tag. 
 まず、NO_PIIタグがあるかどうかを確認することで、ポリシーがフィーチャーグループに適用されるかどうかを確認します。
-
 If it does, we pass the data into check_for_pii_data(), and if the data contains PII data, we raise an alert: 
 もしそうであれば、データをcheck_for_pii_data()に渡し、データにPIIデータが含まれている場合はアラートを発生させます。
 
-```  
+```python
 if fg.contains_tag("NO_PII"):  
     if check_for_pii_data(df):  
         fg.create_alert(receiver="email", severity="warning",  
             status=f"PII data")  
 ```  
+
 The `check_for_pii_data()` function can be implemented using a library such as DataProfiler. 
 `check_for_pii_data()`関数は、DataProfilerなどのライブラリを使用して実装できます。
-
 In the near future, LLMs will probably be used to aid PII checks. 
 近い将来、LLMがPIIチェックを支援するために使用される可能性があります。
 
-###### 7.0.0.0.6. Summary and Exercises
-###### 7.0.0.0.7. 要約と演習
+<!-- ここまで読んだ! -->
+
+## 9. Summary and Exercises 要約と演習
+
 Batch feature pipelines are programs that run on a schedule, applying MITs to data read from batch/streaming/API sources to create reusable feature data that should be validated before it is written to a feature group. 
 バッチフィーチャーパイプラインは、スケジュールに従って実行されるプログラムであり、バッチ/ストリーミング/APIソースから読み取ったデータにMITを適用して、フィーチャーグループに書き込む前に検証されるべき再利用可能なフィーチャーデータを作成します。
-
-In this chapter, we started by investigating the different types of data sources for batch feature pipelines, and we moved on to generating synthetic data for our credit card fraud data mart using LLMs. 
+In this chapter, we started by investigating the different types of data sources for batch feature pipelines, and we moved on to generating synthetic data for our credit card fraud data mart using LLMs.
 この章では、バッチフィーチャーパイプラインのさまざまなデータソースを調査することから始め、LLMを使用してクレジットカード詐欺データマートの合成データを生成することに移りました。
-
-We showed how to design a batch feature pipeline for our credit card fraud problem that is parameterized by a start_time and an end_time, enabling it to either backfill historical feature data or perform incremental processing on newly arrived data. 
+We showed how to design a batch feature pipeline for our credit card fraud problem that is parameterized by a start_time and an end_time, enabling it to either backfill historical feature data or perform incremental processing on newly arrived data.
 クレジットカード詐欺の問題に対するバッチフィーチャーパイプラインを、start_timeとend_timeでパラメータ化して設計する方法を示し、歴史的なフィーチャーデータをバックフィルするか、新しく到着したデータに対して増分処理を行うことができるようにしました。
-
 We also looked at how to run batch feature pipelines using job orchestrators or workflow orchestrators. 
 また、ジョブオーケストレーターやワークフローオーケストレーターを使用してバッチフィーチャーパイプラインを実行する方法も見ました。
-
 Finally, we introduced data contracts and looked at how to ensure that our feature pipelines provide SLOs for feature group data through data validation and data governance policy enforcement. 
 最後に、データ契約を紹介し、データ検証とデータガバナンスポリシーの施行を通じて、フィーチャーパイプラインがフィーチャーグループデータに対してSLOを提供することを保証する方法を見ました。
+
+<!-- ここまで読んだ! -->
 
 The following exercises will help you learn how to compose MITs into batch feature pipelines: 
 以下の演習は、MITをバッチフィーチャーパイプラインに組み込む方法を学ぶのに役立ちます。
@@ -1202,3 +1182,4 @@ _n_ [−] _n_
 - Write a Polars program that uses HyperLogLog to compute an approximate multi-day distinct count for credit card transactions using single-day distinct count aggregations. 
 - HyperLogLogを使用して、単日固有カウント集計を使用してクレジットカード取引の近似的な複数日固有カウントを計算するPolarsプログラムを書いてください。datasketchライブラリを使用します。
 
+<!-- ここまで読んだ! -->
