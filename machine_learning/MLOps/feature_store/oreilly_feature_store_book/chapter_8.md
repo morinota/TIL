@@ -654,8 +654,12 @@ So adjust your start and end times accordingly.
 したがって、start_timeとend_timeを適切に調整してください。
 
 - メモ: 同じバッチ特徴量パイプラインを、backfillにもincrementalにもそのまま使えるようにするための設計
-  - ポイント1: start_time / end_timeを外から渡す設計
-  - ポイント2: データソースを抽象化する.
+  - ポイント1: start_time / end_timeを外から渡す設計にする! (すなわち、処理対象のデータソースの抽象化!)
+    - 特徴量パイプラインのロジックを、与えられた期間のデータを処理するだけにする。
+    - ex. 
+      - `df = read(start_time, end_time)`
+      - `features = transform(df)`
+      - `write(features)`
   - ポイント3: 時間ウィンドウ集約のときに注意
 
 <!-- ここまで読んだ! -->
@@ -667,117 +671,93 @@ Job schedulers support cron-based scheduling of batch programs, but sometimes yo
 
 <!-- ここまで読んだ! -->
 
-###### 4.2.0.0.2. Job Orchestrators
-###### 4.2.0.0.3. ジョブオーケストレーター
+## 5. Job Orchestrators ジョブオーケストレーター
 
 In Chapter 3, we used GitHub Actions to run both a feature pipeline and a batch inference pipeline on a daily schedule. 
 第3章では、GitHub Actionsを使用してフィーチャーパイプラインとバッチ推論パイプラインの両方を毎日スケジュールで実行しました。
-
 The reason we used GitHub Actions is that it supports cron-based scheduling of Python programs with its free tier. 
 GitHub Actionsを使用した理由は、無料プランでPythonプログラムのcronベースのスケジューリングをサポートしているからです。
-
 It is not, how‐ ever, an orchestrator—it is a serverless DevOps platform. 
 ただし、オーケストレーターではなく、サーバーレスDevOpsプラットフォームです。
-
 An orchestrator is a service that schedules and coordinates the execution of programs with logging and fault tolerance. 
 オーケストレーターは、プログラムの実行をスケジュールし、ログ記録とフォールトトレランスを持って調整するサービスです。
-
 The goal of orchestration is to streamline and optimize the execution of fre‐ quent, repeatable processes and thus to help data teams more easily manage complex tasks and workflows. 
 オーケストレーションの目標は、頻繁で繰り返し可能なプロセスの実行を合理化し最適化することであり、データチームが複雑なタスクやワークフローをより簡単に管理できるようにすることです。
 
 A job orchestrator schedules the execution of Pandas/Polars/PySpark programs. 
 ジョブオーケストレーターは、Pandas/Polars/PySparkプログラムの実行をスケジュールします。
-
 There are many open source, serverless, and embedded job orchestrators you can choose from to manage the execution of your batch feature pipelines (and batch inference pipelines). 
 バッチフィーチャーパイプライン（およびバッチ推論パイプライン）の実行を管理するために選択できる多くのオープンソース、サーバーレス、埋め込み型のジョブオーケストレーターがあります。
-
 Job schedulers include more than just the ability to run programs. 
 ジョブスケジューラーは、プログラムを実行する能力だけでなく、以下の機能も含まれます：
 
 - A way to package your program with all its dependencies, for example, as containers 
-- プログラムをすべての依存関係と共にパッケージ化する方法、たとえば、コンテナとして
-
+  - プログラムをすべての依存関係と共にパッケージ化する方法、たとえば、コンテナとして
 - Support for one or more execution runtimes, for example, Kubernetes or AWS Fargate 
-- 1つ以上の実行ランタイムのサポート、たとえば、KubernetesやAWS Fargate
-
+  - 1つ以上の実行ランタイムのサポート、たとえば、KubernetesやAWS Fargate
 - Support for executing and monitoring programs from different languages and frameworks, such as Pandas, Polars, and PySpark 
-- Pandas、Polars、PySparkなど、異なる言語やフレームワークからプログラムを実行および監視するためのサポート
-
+  - Pandas、Polars、PySparkなど、異なる言語やフレームワークからプログラムを実行および監視するためのサポート
 - Logs for execution runs 
-- 実行のログ
+  - 実行のログ
 
 Some job schedulers also provide resource monitoring for jobs, alerting for failed jobs, and retry of failed jobs. 
-一部のジョブスケジューラーは、ジョブのリソース監視、失敗したジョブのアラート、および失敗したジョブの再試行も提供します。
-
+**一部のジョブスケジューラーは、ジョブのリソース監視、失敗したジョブのアラート、および失敗したジョブの再試行も提供**します。(Digdagとかもまさにそうだよね...!:thinking:)
 The things you have to define for your job (or each execution) include: 
 ジョブ（または各実行）に対して定義する必要があるものは次のとおりです：
 
 - The program and its dependencies (or a container) to be executed 
-- 実行されるプログラムとその依存関係（またはコンテナ）
-
+  - 実行されるプログラムとその依存関係（またはコンテナ）
 - The program arguments and environment variables, such as the start_time and end_time for incremental processing 
-- プログラム引数と環境変数、たとえば、インクリメンタル処理のためのstart_timeとend_time
-
+  - プログラム引数と環境変数、たとえば、インクリメンタル処理のためのstart_timeとend_time
 - The resources requested (number of CPUs, number of GPUs, and amount of memory) 
-- 要求されるリソース（CPUの数、GPUの数、メモリの量）
+  - 要求されるリソース（CPUの数、GPUの数、メモリの量）
+
+(↑まさに https://tech.uzabase.com/entry/2025/08/29/123338 の設計じゃん...!:thinking:)
 
 If the job is a Python program, you need either the Python program and its depen‐ dencies (requirements.txt file) or the program packaged as a container. 
 ジョブがPythonプログラムである場合、Pythonプログラムとその依存関係（requirements.txtファイル）またはプログラムをコンテナとしてパッケージ化する必要があります。
-
 If your job is a PySpark job, you will also need to define any files that need to be distributed with the program, such as JAR files, Python modules, and drivers. 
 ジョブがPySparkジョブである場合、JARファイル、Pythonモジュール、ドライバーなど、プログラムと共に配布する必要があるファイルも定義する必要があります。
-
 We will look now at two different job schedulers: Modal and Hopsworks. 
 これから、2つの異なるジョブスケジューラー、ModalとHopsworksについて見ていきます。
 
-###### 4.2.0.0.4. Modal
-###### 4.2.0.0.5. モーダル
+<!-- ここまで読んだ! -->
+
+### 5.1. Modal モーダル
 
 Modal is a developer-friendly serverless platform to deploy, schedule, and manage Python jobs. 
 Modalは、Pythonジョブをデプロイ、スケジュール、および管理するための開発者に優しいサーバーレスプラットフォームです。
-
 Modal supports automatic containerization. 
 Modalは自動コンテナ化をサポートしています。
-
 That is, there is no need to write and compile your own container images. 
 つまり、自分のコンテナイメージを作成してコンパイルする必要はありません。
-
 Instead, you add decorators to your Python functions to indicate: 
 代わりに、Python関数にデコレーターを追加して次のことを示します：
 
 - What family of Linux operating system you want to use (e.g., Debian) 
-- 使用したいLinuxオペレーティングシステムのファミリー（例：Debian）
-
+  - 使用したいLinuxオペレーティングシステムのファミリー（例：Debian）
 - How many resources the image will use (CPUs, GPUs, memory) 
-- イメージが使用するリソースの量（CPU、GPU、メモリ）
-
+  - イメージが使用するリソースの量（CPU、GPU、メモリ）
 - What pip-versioned Python libraries your function uses 
-- 関数が使用するpipバージョンのPythonライブラリ
-
+  - 関数が使用するpipバージョンのPythonライブラリ
 - How many instances of this function you want to execute in parallel 
-- この関数を並行して実行したいインスタンスの数
-
+  - この関数を並行して実行したいインスタンスの数
 - Where to read shared secrets from 
-- 共有シークレットをどこから読み取るか
-
+  - 共有シークレットをどこから読み取るか
 - A cron schedule for running the Python program 
-- Pythonプログラムを実行するためのcronスケジュール
-
-
+  - Pythonプログラムを実行するためのcronスケジュール
 
 When you run a program for the first time, Modal will compile containers for it and cache them. 
 プログラムを初めて実行すると、Modalはそのためのコンテナをコンパイルし、キャッシュします。
-
 If you don’t make changes that invalidate your container images, subsequent program runs will have very fast startup times. 
-コンテナイメージを無効にする変更を行わなければ、以降のプログラム実行は非常に速い起動時間を持ちます。
-
+**コンテナイメージを無効にする変更を行わなければ、以降のプログラム実行は非常に速い起動時間を持ちます。**
+(はいはい、ウォームスタート的な機能ね! まあバッチシステムであれば、2分ほどの起動時間は基本的に全然許容できるよね...!:thinking:)
 When you run a Modal program from the command line, `stdout and` `stderr for its containers are streamed` back to your console. 
 コマンドラインからModalプログラムを実行すると、そのコンテナの`stdout`と`stderr`がコンソールにストリーミングされます。
-
 Here is an example of a Modal-orchestrated batch feature pipeline that, once per day, downloads weather data and writes it as a Pandas DataFrame to Hopsworks: 
 以下は、Modalによって調整されたバッチフィーチャーパイプラインの例で、1日1回、天気データをダウンロードし、それをPandas DataFrameとしてHopsworksに書き込むものです：
 
-```   
+```python
    import modal   
    image = modal.Image.debian_slim(python_version="3.12").pip_install("hopsworks")   
    secret = modal.Secret.from_name(     
@@ -805,31 +785,25 @@ Here is an example of a Modal-orchestrated batch feature pipeline that, once per
 
 Modal programs are opinionated, fast to start, and easy to debug with logs going to `stdout and stderr. 
 Modalプログラムは意図が明確で、起動が速く、`stdout`と`stderr`にログが出力されるため、デバッグが容易です。
-
 All the dependencies are defined in your Python program, and with _automatic containerization (see_ Chapter 13), Modal manages the packaging of your program and its execution as a container on your behalf. 
 すべての依存関係はPythonプログラム内で定義されており、_自動コンテナ化（第13章を参照）_により、Modalはプログラムのパッケージングとその実行をあなたの代わりにコンテナとして管理します。
-
 Modal charges based on compute/memory/GPU used per second. 
 Modalは、使用したコンピュート/メモリ/GPUに基づいて課金されます。
 
-###### 4.2.0.0.6. Hopsworks Jobs
+<!-- ここまで読んだ! -->
+
+### 5.2. Hopsworks Jobs
+
 Hopsworks jobs run on the same Kubernetes cluster Hopsworks is installed on and can be Python (Pandas, Polars, etc.) or PySpark batch programs. 
 Hopsworksジョブは、Hopsworksがインストールされている同じKubernetesクラスター上で実行され、Python（Pandas、Polarsなど）またはPySparkバッチプログラムであることができます。
-
 Hopsworks jobs are not available on Hopsworks Serverless, which is used by this book, but they are available on the commercial offering. 
 Hopsworksジョブは、この本で使用されているHopsworks Serverlessでは利用できませんが、商業版では利用可能です。
-
 Jobs are executed as containers in the same Kubernetes namespace as is used by the Hopsworks project your job belongs to. 
 ジョブは、あなたのジョブが属するHopsworksプロジェクトで使用されるのと同じKubernetesネームスペース内でコンテナとして実行されます。
-
-
-
-Modal, Hopsworks supports automatic containerization, and there is no need to compile (Docker) containers, as Hopsworks builds them in the background when you install/remove Python dependencies from one of the many different Python environ‐ ments in your project. 
-Modalでは、Hopsworksが自動コンテナ化をサポートしており、（Docker）コンテナをコンパイルする必要はありません。Hopsworksは、プロジェクト内のさまざまなPython環境のいずれかからPython依存関係をインストール/削除するときに、バックグラウンドでそれらを構築します。
-
+Like Modal, Hopsworks supports automatic containerization, and there is no need to compile (Docker) containers, as Hopsworks builds them in the background when you install/remove Python dependencies from one of the many different Python environ‐ ments in your project. 
+Modalと同様に、Hopsworksは自動コンテナ化をサポートしており、多くの異なるPython環境の1つからPython依存関係をインストール/削除するときにHopsworksがバックグラウンドでコンテナを構築するため、（Docker）コンテナをコンパイルする必要はありません。
 You can customize one of the feature, training, or inference base container images by using the Hopsworks UI or API, and it can be reused by many different jobs. 
 HopsworksのUIまたはAPIを使用して、機能、トレーニング、または推論の基本コンテナイメージの1つをカスタマイズでき、さまざまなジョブで再利用できます。
-
 When you create a job, you need to specify:
 ジョブを作成する際には、次のことを指定する必要があります：
 
@@ -872,102 +846,87 @@ out_log_path, err_log_path = execution.download_logs()
 
 Many workflow orchestrators, such as Airflow, capture and visual‐ ize lineage information for the DAGs they compute. 
 Airflowなどの多くのワークフローオーケストレーターは、計算するDAGの系譜情報をキャプチャし、可視化します。
-
 Job orchestra‐ tors often delegate DAG visualization to the data processing framework. 
 ジョブオーケストレーターは、DAGの可視化をデータ処理フレームワークに委任することがよくあります。
-
 For example, PySpark supports DAG visualization, but Polars, Pandas, and DuckDB do not. 
 たとえば、PySparkはDAGの可視化をサポートしていますが、Polars、Pandas、およびDuckDBはサポートしていません。
-
 To overcome this, Hopsworks allows you to explicitly define lineage information when you create a feature group, by indicating in the parents parameter in the con‐ structor which feature groups are upstream of your current feature group. 
 これを克服するために、Hopsworksでは、フィーチャーグループを作成する際に、コンストラクタのparentsパラメータで現在のフィーチャーグループの上流にあるフィーチャーグループを示すことによって、系譜情報を明示的に定義できます。
-
 This lineage information is visualized in the Hopsworks UI and accessible via the Hopsworks API. 
 この系譜情報はHopsworksのUIで可視化され、Hopsworks APIを介してアクセス可能です。
 
-###### 4.2.0.0.7. Workflow Orchestrators
-###### 4.2.0.0.8. ワークフローオーケストレーター
+<!-- ここまで読んだ! -->
+
+## 6. Workflow Orchestrators ワークフローオーケストレーター
 
 In contrast to job orchestrators that execute a single program, workflow orchestrators orchestrate the execution of many programs (or tasks), organized in a DAG. 
-単一のプログラムを実行するジョブオーケストレーターとは対照的に、ワークフローオーケストレーターはDAGに整理された多くのプログラム（またはタスク）の実行を調整します。
-
+**単一のプログラムを実行するジョブオーケストレーターとは対照的に、ワークフローオーケストレーターはDAGに整理された多くのプログラム（またはタスク）の実行を調整します。**
+(あ、これがjob orchestratorとworkflow orchestratorの違いなのか! DAG間の依存関係とかを制御できるのが後者かな...!:thinking:)
+(シンプルに、ジョブ間の連結も、ジョブオーケストレーターではできないっぽいな! だから、AWS EventBridgeはジョブオーケストレーター寄りのサービスっぽい...!:thinking:)
 Multi‐step workflows decompose batch feature pipelines into tasks with dependencies between the tasks, making it easy to schedule, execute, and monitor pipelines where tasks rely on the success or failure of previous steps. 
 マルチステップワークフローは、バッチフィーチャーパイプラインをタスクに分解し、タスク間の依存関係を持たせることで、タスクが前のステップの成功または失敗に依存するパイプラインを簡単にスケジュール、実行、監視できるようにします。
-
 Workflow orchestrators are use‐ ful for breaking down larger programs into smaller tasks and providing observability and support for retry when tasks fail. 
-ワークフローオーケストレーターは、大きなプログラムを小さなタスクに分解し、タスクが失敗したときに観測性を提供し、再試行をサポートするのに役立ちます。
-
+**ワークフローオーケストレーターは、大きなプログラムを小さなタスクに分解し、タスクが失敗したときに観測性を提供し、再試行をサポートするのに役立ちます。**
 The tasks can also be implemented using differ‐ ent frameworks (Spark, Polars, dbt, etc.). 
 タスクは、異なるフレームワーク（Spark、Polars、dbtなど）を使用して実装することもできます。
-
 Often, however, a single program is good enough as a batch feature pipeline, and using a workflow orchestrator is typically overkill. 
-しかし、しばしば単一のプログラムがバッチフィーチャーパイプラインとして十分であり、ワークフローオーケストレーターを使用することは通常過剰です。
-
+**しかし、しばしば単一のプログラムがバッチフィーチャーパイプラインとして十分であり、ワークフローオーケストレーターを使用することは通常過剰です。**
+(うんうん、結局1つのfeature pipelineが一つのジョブ(i.e. 1つのインスタンス)で完結するなら、ジョブオーケストレーターで十分運用できる...!:thinking:)
 For example, Polars and PySpark programs are also implemented as a DAG of transformations, and it is often faster and more resource efficient to execute a sin‐ gle program than a DAG of many different tasks. 
-たとえば、PolarsおよびPySparkプログラムも変換のDAGとして実装されており、多くの異なるタスクのDAGを実行するよりも単一のプログラムを実行する方が速く、リソース効率が良いことがよくあります。
+たとえば、PolarsおよびPySparkプログラムも変換のDAGとして実装されており、**多くの異なるタスクのDAGを実行するよりも単一のプログラムを実行する方が速く、リソース効率が良いことがよくあります。**
+
+<!-- ここまで読んだ! -->
 
 Having said that, there are many orchestrators that are designed to execute ML pipe‐ lines. 
 とはいえ、MLパイプラインを実行するために設計された多くのオーケストレーターがあります。
-
 However, given the confusion of many vendors on what an ML pipeline is, many of these frameworks consider feature pipelines to be data pipelines and outside the scope of ML pipelines. 
-しかし、多くのベンダーがMLパイプラインとは何かについて混乱しているため、これらのフレームワークの多くはフィーチャーパイプラインをデータパイプラインと見なし、MLパイプラインの範囲外としています。
-
+**しかし、多くのベンダーがMLパイプラインとは何かについて混乱しているため、これらのフレームワークの多くはフィーチャーパイプラインをデータパイプラインと見なし、MLパイプラインの範囲外としています。**
 The ML pipeline orchestrators include:
 MLパイプラインオーケストレーターには以下が含まれます：
 
-_Kubeflow_ 
-_Kubeflow_ 
+- _Kubeflow_ 
 This is a Kubernetes native orchestrator for ML pipelines that was originally developed by Google but is now maintained by the community. 
 これは、元々Googleによって開発されたMLパイプライン用のKubernetesネイティブオーケストレーターですが、現在はコミュニティによって維持されています。
-
 Kubeflow is designed for training pipelines; it does not scale for feature pipelines or batch inference pipelines. 
 Kubeflowはトレーニングパイプライン用に設計されており、フィーチャーパイプラインやバッチ推論パイプラインにはスケールしません。
 
-_Metaflow_ 
-_Metaflow_ 
+- _Metaflow_ 
 This was originally developed by Netflix, and it defines a workflow as a DAG in Python and supports automatic containerization similar to Modal, but it can run on Kubernetes. 
 これは元々Netflixによって開発され、ワークフローをPythonのDAGとして定義し、Modalに似た自動コンテナ化をサポートしますが、Kubernetes上で実行できます。
-
 It lacks native support for scalable feature pipelines. 
 スケーラブルなフィーチャーパイプラインに対するネイティブサポートが欠けています。
 
-_Flyte_ 
-_Flyte_ 
+- _Flyte_ 
 This was originally developed at Lyft, and it supports running containers in Kubernetes as training and batch inference pipelines. 
 これは元々Lyftで開発され、トレーニングおよびバッチ推論パイプラインとしてKubernetesでコンテナを実行することをサポートします。
-
 It lacks support for scalable feature pipelines. 
 スケーラブルなフィーチャーパイプラインに対するサポートが欠けています。
 
-_ZenML_ 
-_ZenML_ 
+- _ZenML_ 
 This is an open source ML pipeline orchestrator similar to Metaflow, and it runs on Kubernetes and has good integrations with cloud platforms. 
 これはMetaflowに似たオープンソースのMLパイプラインオーケストレーターで、Kubernetes上で実行され、クラウドプラットフォームとの良好な統合があります。
-
 It lacks support for scalable feature pipelines. 
 スケーラブルなフィーチャーパイプラインに対するサポートが欠けています。
 
-_Vertex AI Pipelines, Azure ML, and SageMaker Pipelines_ 
-_Vertex AI Pipelines、Azure ML、およびSageMaker Pipelines_ 
+- _Vertex AI Pipelines, Azure ML, and SageMaker Pipelines_ 
 These are all specialized for training pipelines, rather than feature/batch inference pipelines. 
 これらはすべて、フィーチャー/バッチ推論パイプラインではなく、トレーニングパイプラインに特化しています。
-
 They use containers with prebuilt binaries for popular ML frameworks, but you also can create your own container images manually. 
-これらは人気のあるMLフレームワーク用の事前構築されたバイナリを持つコンテナを使用しますが、自分でコンテナイメージを手動で作成することもできます。
+これらは人気のあるMLフレームワーク用の事前構築されたバイナリを持つコンテナを使用しますが、**自分でコンテナイメージを手動で作成することもできます。**
 
 There are workflow orchestrators that are popular within data engineering that can be used to run ML pipelines, including:
 データエンジニアリング内で人気のあるワークフローオーケストレーターがあり、MLパイプラインを実行するために使用できます。これには以下が含まれます：
 
 - Cloud native Python-based workflow orchestrators, such as Dagster and Prefect
-- DagsterやPrefectなどのクラウドネイティブなPythonベースのワークフローオーケストレーター
+  - DagsterやPrefectなどのクラウドネイティブなPythonベースのワークフローオーケストレーター
 - Databricks Workflows, Snowflake tasks, and Google Dataform, which are all orchestrators for running more scalable Spark or SQL jobs
-- Databricks Workflows、Snowflakeタスク、およびGoogle Dataformは、すべてよりスケーラブルなSparkまたはSQLジョブを実行するためのオーケストレーターです
+  - Databricks Workflows、Snowflakeタスク、およびGoogle Dataformは、すべてよりスケーラブルなSparkまたはSQLジョブを実行するためのオーケストレーターです
 
 We will look now at the most popular Python workflow orchestrator, Airflow, a general-purpose workflow orchestrator, and cloud provider workflow orchestrators for Azure, AWS, and GCP. 
 これから、最も人気のあるPythonワークフローオーケストレーターであるAirflow、汎用ワークフローオーケストレーター、およびAzure、AWS、GCPのクラウドプロバイダーのワークフローオーケストレーターを見ていきます。
+<!-- ここまで読んだ! このセクションはあんまり読まなくてもいいかな! 具体的なオーケストレーたーツールの話だし...! -->
 
-###### 4.2.0.0.9. Airflow
-###### 4.2.0.0.10. Airflow
+### 6.1. Airflow
 
 Apache Airflow is a popular open source orchestrator that allows you to define, schedule, and monitor workflows. 
 Apache Airflowは、ワークフローを定義、スケジュール、および監視することを可能にする人気のオープンソースオーケストレーターです。
@@ -996,18 +955,14 @@ Other popular sensors are an HttpSensor (which polls an HTTP endpoint until a sp
 You can define dependencies between tasks directly in the Python program that defines your DAG. 
 DAGを定義するPythonプログラム内で、タスク間の依存関係を直接定義できます。
 
-###### 4.2.0.0.11. Cloud Provider Workflow Orchestrators
-###### 4.2.0.0.12. クラウドプロバイダーのワークフローオーケストレーター
+### 6.2. Cloud Provider Workflow Orchestrators クラウドプロバイダーのワークフローオーケストレーター
 
 Azure Data Factory (ADF) is a generic workflow orchestrator that you can use to run Spark, Pandas, and Polars programs on Azure. 
 Azure Data Factory（ADF）は、Azure上でSpark、Pandas、およびPolarsプログラムを実行するために使用できる汎用ワークフローオーケストレーターです。
-
 ADF organizes workflows into pipe‐ lines, which define a series of steps or activities needed for data integration or trans‐ formation. 
 ADFは、データ統合または変換に必要な一連のステップまたはアクティビティを定義するパイプラインにワークフローを整理します。
-
 Each pipeline can contain a sequence of activities, such as data movement, data transformation, and triggering external systems. 
 各パイプラインは、データ移動、データ変換、外部システムのトリガーなどのアクティビティのシーケンスを含むことができます。
-
 ADF orchestrates these activi‐ ties in a specific order, handling dependencies and conditional branching within a single pipeline. 
 ADFは、これらのアクティビティを特定の順序で調整し、単一のパイプライン内での依存関係や条件分岐を処理します。
 
@@ -1016,21 +971,24 @@ AWS Step Functionsは、AWS用の汎用サーバーレスワークフローオ�
 
 Google Cloud Composer is a fully managed orchestration service on GCP that is built on Airflow. 
 Google Cloud Composerは、Airflowに基づいたGCP上の完全に管理されたオーケストレーションサービスです。
-
 It allows users to connect and orchestrate various Google Cloud services and APIs, including BigQuery commands, Spark jobs on Dataproc, and ML pipelines on GCP Vertex. 
 これにより、ユーザーはBigQueryコマンド、Dataproc上のSparkジョブ、GCP Vertex上のMLパイプラインなど、さまざまなGoogle CloudサービスやAPIを接続し、調整できます。
 
+<!-- ここまで読んだ! -->
+
+---
+(コラム)
+
 Many workflow orchestrators come with built-in lineage informa‐ tion for tasks in their DAGs. 
 多くのワークフローオーケストレーターには、DAG内のタスクに対する組み込みの系譜情報が付属しています。
-
 That lineage information, however, is typically not connected to artifacts, such as feature groups, models, and deployments in an ML system. 
 ただし、その系譜情報は通常、MLシステム内のフィーチャーグループ、モデル、デプロイメントなどのアーティファクトに接続されていません。
-
 Lineage information for ML assets is stored in MLOps platforms, such as Hopsworks, Vertex, Databricks, and SageMaker. 
 ML資産の系譜情報は、Hopsworks、Vertex、Databricks、SageMakerなどのMLOpsプラットフォームに保存されます。
 
-###### 4.2.0.0.13. Data Contracts
-###### 4.2.0.0.14. データ契約
+---
+
+## 7. Data Contracts データ契約
 
 Data contracts for feature groups have aims that are similar to those of interface con‐ tracts in software engineering. 
 フィーチャーグループのデータ契約は、ソフトウェア工学におけるインターフェース契約の目的に似ています。
@@ -1104,8 +1062,8 @@ tag_search_result.to_dict()
 We can then check whether the returned ML assets conform to the governance policy or not and send an alert if there is a violation. 
 その後、返されたML資産がガバナンスポリシーに準拠しているかどうかを確認し、違反があればアラートを送信できます。
 
-###### 4.2.0.0.15. Data Validation with Great Expectations in Hopsworks
-###### 4.2.0.0.16. HopsworksにおけるGreat Expectationsを用いたデータ検証
+###### 7.0.0.0.2. Data Validation with Great Expectations in Hopsworks
+###### 7.0.0.0.3. HopsworksにおけるGreat Expectationsを用いたデータ検証
 
 Data quality guarantees are part of data contracts and require data validation. 
 データ品質の保証はデータ契約の一部であり、データ検証を必要とします。
@@ -1127,8 +1085,8 @@ Data is validated before it is written to feature groups, as one bad data point 
 _Figure 8-5. Data quality for ML requires shifting left data validation in the development process and therefore validating data earlier in its lifecycle than in traditional data engineering. ML requires more monitoring of operational data than business intelligence systems._
 _Figure 8-5. MLのデータ品質は、開発プロセスにおけるデータ検証を左にシフトさせ、従来のデータエンジニアリングよりもデータのライフサイクルの早い段階で検証することを必要とします。MLは、ビジネスインテリジェンスシステムよりも運用データの監視を多く必要とします。_
 
-###### 4.2.0.0.17. WAP Pattern
-###### 4.2.0.0.18. WAPパターン
+###### 7.0.0.0.4. WAP Pattern
+###### 7.0.0.0.5. WAPパターン
 In data engineering, data validation is shifted right in the data lifecycle compared with ML. 
 データエンジニアリングでは、データライフサイクルにおけるデータ検証はMLと比較して右にシフトします。
 
@@ -1211,8 +1169,8 @@ The `check_for_pii_data()` function can be implemented using a library such as D
 In the near future, LLMs will probably be used to aid PII checks. 
 近い将来、LLMがPIIチェックを支援するために使用される可能性があります。
 
-###### 4.2.0.0.19. Summary and Exercises
-###### 4.2.0.0.20. 要約と演習
+###### 7.0.0.0.6. Summary and Exercises
+###### 7.0.0.0.7. 要約と演習
 Batch feature pipelines are programs that run on a schedule, applying MITs to data read from batch/streaming/API sources to create reusable feature data that should be validated before it is written to a feature group. 
 バッチフィーチャーパイプラインは、スケジュールに従って実行されるプログラムであり、バッチ/ストリーミング/APIソースから読み取ったデータにMITを適用して、フィーチャーグループに書き込む前に検証されるべき再利用可能なフィーチャーデータを作成します。
 
