@@ -481,180 +481,194 @@ With our new synthetic data generation programs, we can now run them to:
 • Continuously add new credit card transactions to Apache Kafka.
 
 We will use this synthetic data to create feature data for our feature groups, using the transformations from Chapters 6 and 7. In Chapter 9, we will look at streaming fea‐ ture pipelines that update the cc_trans_aggs_fg feature group. Now, we focus on the batch feature pipelines containing the MITs.
+私たちはこの合成データを使用して、Chapter 6および7の変換を使用してフィーチャーグループのフィーチャーデータを作成します。Chapter 9では、cc_trans_aggs_fgフィーチャーグループを更新するストリーミングフィーチャーパイプラインを見ていきます。今、私たちはMITを含むバッチフィーチャーパイプラインに焦点を当てます。
 
 ---
 (コラム)
 In data engineering, the term full load is often used instead of back‐ filling, and incremental load is preferred to incremental processing. A full load drops an existing table and then recomputes its data from the data source(s). With the adoption of lakehouse tables that support updates and deletes (not just appends), full loads have become less common. We prefer the term backfilling over full loads, as it is a more expansive term that covers recomputing all feature data (full loads) as well as recomputing missing data.
+**データエンジニアリングでは、バックフィルの代わりにフルロードという用語がよく使用され、インクリメンタル処理よりもインクリメンタルロードが好まれます。**フルロードは既存のテーブルをドロップし、その後データソースからデータを再計算します。更新と削除（追加だけでなく）をサポートするレイクハウステーブルの採用により、フルロードはあまり一般的ではなくなっています。私たちは、すべてのフィーチャーデータ（フルロード）を再計算するだけでなく、欠損データを再計算することも含むより広範な用語であるため、フルロードよりもバックフィルという用語を好みます。
+
 ---
 
-We start by backfilling our feature groups. You backfill when you create new feature data from historical data. This may be because you have no existing data in your fea‐ ture group and you need feature data to train a model, or because there are gaps in your production feature data due to an upstream data failure or a maintenance window. After backfilling your feature groups for the first time, you need to keep your feature groups up-to-date by processing newly arrived or changed data. 
-ウィンドウ。最初にフィーチャーグループをバックフィルした後は、新しく到着したデータや変更されたデータを処理することでフィーチャーグループを最新の状態に保つ必要があります。
+<!-- ここまで読んだ! -->
 
+We start by backfilling our feature groups. You backfill when you create new feature data from historical data. This may be because you have no existing data in your fea‐ ture group and you need feature data to train a model, or because there are gaps in your production feature data due to an upstream data failure or a maintenance window. After backfilling your feature groups for the first time, you need to keep your feature groups up-to-date by processing newly arrived or changed data. 
+フィーチャーグループをバックフィルすることから始めます。**バックフィルは、履歴データから新しいフィーチャーデータを作成する場合に行います。これは、フィーチャーグループに既存のデータがなく、モデルをトレーニングするためのフィーチャーデータが必要な場合や、上流のデータ障害やメンテナンスウィンドウのために本番のフィーチャーデータにギャップがある場合など**です。(うんうん、あるある...!!:thinking:)
+フィーチャーグループを初めてバックフィルした後、新たに到着したデータまたは変更されたデータを処理して、フィーチャーグループを最新の状態に保つ必要があります。
 We will use incremental processing to process only the data that has changed since the most recent run of a batch feature pipeline. 
 私たちは、バッチフィーチャーパイプラインの最も最近の実行以降に変更されたデータのみを処理するために、インクリメンタル処理を使用します。
 
 Incremental processing is an efficient mechanism for processing any newly arrived data, allowing for frequent and manageable updates. 
-インクリメンタル処理は、新しく到着したデータを処理するための効率的なメカニズムであり、頻繁で管理可能な更新を可能にします。
-
+**インクリメンタル処理は、新しく到着したデータを処理するための効率的なメカニズム**であり、頻繁で管理可能な更新を可能にします。
 Your batches of incremental data should be processed at a frequency that: 
 インクリメンタルデータのバッチは、以下の頻度で処理されるべきです：
 
 - Ensures that feature freshness requirements (or other SLOs) are met for your downstream training and inference pipelines 
-- フィーチャーの新鮮さ要件（または他のSLO）が、下流のトレーニングおよび推論パイプラインに対して満たされることを保証します。
+  - **フィーチャーの新鮮さ要件（または他のSLO）が、下流のトレーニングおよび推論パイプラインに対して満たされることを保証**します。
 
 - Ensures that your batch pipeline processing capacity matches the rate of arrival of new data—that the pipeline is not overwhelmed with too much data for one time interval (causing out-of-memory errors or not processing data in time) or overpro‐ visioned with excessive CPU and memory resources for other time intervals. 
-- バッチパイプラインの処理能力が新しいデータの到着率と一致することを保証します。つまり、パイプラインが一度の時間間隔に対して過剰なデータで圧倒されること（メモリエラーを引き起こしたり、データを時間内に処理できなかったりする）や、他の時間間隔に対して過剰なCPUおよびメモリリソースを持つことがないようにします。
+  - **バッチパイプラインの処理能力が新しいデータの到着率と一致することを保証**します。つまり、パイプラインが一度の時間間隔に対して過剰なデータで圧倒されること（メモリエラーを引き起こしたり、データを時間内に処理できなかったりする）や、他の時間間隔に対して過剰なCPUおよびメモリリソースを持つことがないようにします。
 
-###### 4.0.0.0.1. Polling and CDC for Incremental Data
-###### 4.0.0.0.2. インクリメンタルデータのためのポーリングとCDC
+<!-- ここまで読んだ! -->
+
+### 4.1. Polling and CDC for Incremental Data　インクリメンタルデータのためのポーリングとCDC
 
 When you run any feature pipeline against a data source, you need to identify the data it should process. 
-データソースに対してフィーチャーパイプラインを実行する際には、処理すべきデータを特定する必要があります。
-
+データソースに対してフィーチャーパイプラインを実行する際には、**処理すべきデータを特定**する必要があります。
 The two most common methods of identifying which data has changed in the data source are: 
-データソース内でどのデータが変更されたかを特定する最も一般的な2つの方法は次のとおりです：
+**データソース内でどのデータが変更されたかを特定する最も一般的な2つの方法**は次のとおりです：
 
-_Polling_ A user-defined column in each table containing the last modified timestamp for the row. 
-_ポーリング_ 各テーブルにおいて、行の最終更新タイムスタンプを含むユーザー定義の列です。
-
+- _Polling_ A user-defined column in each table containing the last modified timestamp for the row. 
+**_ポーリング_** 各テーブルにおいて、行の最終更新タイムスタンプを含むユーザー定義の列です。
 This is essentially the event time for feature groups. 
 これは本質的にフィーチャーグループのイベント時間です。
-
 The batch program retrieves records with timestamps higher than its most recently processed row. 
-バッチプログラムは、最も最近処理された行よりも高いタイムスタンプを持つレコードを取得します。
+**バッチプログラムは、最も最近処理された行よりも高いタイムスタンプを持つレコードを取得**します。
 
-_Change data capture (CDC)_ A system-managed timestamp (and/or commit ID) storing the ingestion time for each row. 
-_変更データキャプチャ（CDC）_ 各行の取り込み時間を保存するシステム管理のタイムスタンプ（および/またはコミットID）です。
-
+- _Change data capture (CDC)_ A system-managed timestamp (and/or commit ID) storing the ingestion time for each row. 
+**_変更データキャプチャ（CDC）_** 各行の取り込み時間を保存するシステム管理のタイムスタンプ（および/またはコミットID）です。
 System-managed timestamps/commits are usually exposed via a CDC API, where a client can read all the data that has changed since a particular com‐ mit ID or timestamp. 
 システム管理のタイムスタンプ/コミットは通常CDC APIを介して公開され、クライアントは特定のコミットIDまたはタイムスタンプ以降に変更されたすべてのデータを読み取ることができます。
-
 Many row-oriented and column-oriented databases—such as Postgres and Snowflake, respectively—support CDC APIs. 
 多くの行指向および列指向のデータベース（PostgresやSnowflakeなど）は、CDC APIをサポートしています。
-
 Even lakehouses, such as Apache Hudi, provide CDC APIs. 
-Apache HudiのようなレイクハウスでもCDC APIを提供しています。
+**Apache HudiのようなレイクハウスでもCDC APIを提供**しています。
 
-Your batch feature pipeline that performs incremental processing should use either polling or CDC. 
+Your batch feature pipeline that performs incremental processing should use either polling or CDC.
 インクリメンタル処理を行うバッチフィーチャーパイプラインは、ポーリングまたはCDCのいずれかを使用する必要があります。
-
 In general, CDC is preferable to polling, as polling can miss changes while CDC captures all changes. 
-一般的に、CDCはポーリングよりも好ましいです。なぜなら、ポーリングは変更を見逃す可能性がある一方で、CDCはすべての変更をキャプチャするからです。
+**一般的に、CDCはポーリングよりも好ましいです。なぜなら、ポーリングは変更を見逃す可能性がある一方で、CDCはすべての変更をキャプチャするからです。** (Pollingの方が実装は簡単でシンプルなのかな??:thinking:)
 
-###### 4.0.0.0.3. Polling
-###### 4.0.0.0.4. ポーリング
+<!-- ここまで読んだ! -->
+
+#### 4.1.1. Polling ポーリング
 
 Polling is only used for batch data sources. 
 ポーリングはバッチデータソースにのみ使用されます。
-
 You define what data to read (with a query) and how often to run it against the data source (the _polling interval). 
 どのデータを読み取るか（クエリを使用）と、データソースに対してどのくらいの頻度で実行するか（_ポーリング間隔_）を定義します。
-
 The query should set a `start_time` and `end_time` for the event time index or partition key, so that only the requested data is read and returned to the client. 
 クエリは、イベント時間インデックスまたはパーティションキーのために`start_time`と`end_time`を設定する必要があります。これにより、要求されたデータのみが読み取られ、クライアントに返されます。
-
 Partition pruning is needed when you have large tables, as the alternative of the client reading all data and filtering out the new data will cause out-of-memory errors. 
 大きなテーブルがある場合、パーティションプルーニングが必要です。クライアントがすべてのデータを読み取り、新しいデータをフィルタリングする代替手段は、メモリエラーを引き起こすからです。
-
 For polling: 
 ポーリングの場合：
 
 - You need a default row fetch size to prevent out-of-memory errors. 
-- メモリエラーを防ぐために、デフォルトの行取得サイズが必要です。
+  - メモリエラーを防ぐために、デフォルトの行取得サイズが必要です。
 
 - Polling can miss updates to tables—for example, if a row is added and removed within a polling interval, polling will never see it. 
-- ポーリングはテーブルの更新を見逃す可能性があります。たとえば、ポーリング間隔内に行が追加されて削除された場合、ポーリングはそれを決して見ることができません。
+  - ポーリングはテーブルの更新を見逃す可能性があります。**たとえば、ポーリング間隔内に行が追加されて削除された場合、ポーリングはそれを決して見ることができません。** (うん。それはそうだね...!:thinking:)
 
 - Polling can also miss late-arriving data in columnar tables if the client only reads the most recent partition (hour/day), as late-arriving data may be stored in earlier partitions. 
-- ポーリングは、クライアントが最新のパーティション（時間/日）しか読み取らない場合、列指向テーブルの遅れて到着したデータを見逃す可能性があります。遅れて到着したデータは、以前のパーティションに保存されている可能性があるからです。
+  - ポーリングは、クライアントが最新のパーティション（時間/日）しか読み取らない場合、列指向テーブルの遅れて到着したデータを見逃す可能性があります。遅れて到着したデータは、以前のパーティションに保存されている可能性があるからです。
 
-###### 4.0.0.0.5. Change data capture
-###### 4.0.0.0.6. 変更データキャプチャ
+- メモ: 「Polling」について
+  - ざっくりPollingって何??
+    - 「**前回見たところ以降に更新されたデータだけ**、定期的に取りに行く方式」
+    - DBやテーブルに対して「この時間以降に更新された行をください」って自分から問い合わせるイメージ!
+  - ざっくりPollingの実装イメージ.
+    - 1. テーブルに「更新時刻」の列を用意しておく.
+    - 2. 前回の実行時刻を覚えておく.
+    - 3. 「前回の実行時刻以降に更新された行」を問い合わせるクエリを発行する.
+    - 4. 取得した行を処理する.
+  - Pollingが「バッチ専用」なのはなぜ??
+    - Pollingは以下が前提だから:
+      - 定期実行(5分ごと/1時間ごと/1日ごと etc.)
+      - DBやDWHをその都度スキャン。
+    - だからリアルタイムやストリーミングには向かない。batch pipeline向きのデータ特定(?)方法
+  - Pollingの短所:
+    - その1: 追加 -> 削除を見逃す。
+      - 行がポーリング間隔内に追加されて削除された場合、ポーリングはそれを見逃す。
+    - その2: 遅延データを見逃す。
+      - ex. テーブルの最新partition(ex. event_timeが今日の日付)だけをポーリングしてる場合、遅れて到着したデータが昨日のpartitionに入ってると見逃す。
+    - その3: 全件読んでupdatedをフィルタリングする方式はメモリエラーを引き起こす。
+      - なので特に大きいテーブルの場合はpartition pruningが必要。
+      - (そう考えるとpollingを使うクエリシナリオが頻繁に想定されるのであれば、updated_atをpartiiton specに使うべきなんだろうな...!:thinking: まあ動的特徴量の場合はevent_timeを元にPollingすればOKそう! :thinking:)
+
+<!-- ここまでよんだ! -->
+
+#### 4.1.2. Change data capture 変更データキャプチャ
 
 CDC resolves the problems of missing (or ghost) rows within a polling interval and late-arriving data. 
-CDCは、ポーリング間隔内の欠落（またはゴースト）行や遅れて到着したデータの問題を解決します。
-
+**CDCは、ポーリング間隔内の欠落（またはゴースト）行や遅れて到着したデータの問題を解決します。**
 CDC APIs are built on change logs that contain immutable events for every insertion, deletion, or update event in the table or database. 
 CDC APIは、テーブルまたはデータベース内のすべての挿入、削除、または更新イベントに対する不変のイベントを含む変更ログに基づいて構築されています。
-
 For example, if you insert a row and then delete the same row, there will be two separate events in the CDC history. 
-たとえば、行を挿入してから同じ行を削除すると、CDC履歴には2つの別々のイベントが記録されます。
-
+たとえば、**行を挿入してから同じ行を削除すると、CDC履歴には2つの別々のイベントが記録**されます。
 Late-arriving data will also be events in the CDC history. 
 遅れて到着したデータもCDC履歴のイベントとなります。
 
 Most lakehouse tables (Apache Hudi, Delta Lake, and Apache Iceberg), cloud data warehouses (Snowflake, BigQuery, Redshift), and row-oriented databases (Postgres, MySQL) provide CDC APIs. 
-ほとんどのレイクハウステーブル（Apache Hudi、Delta Lake、Apache Iceberg）、クラウドデータウェアハウス（Snowflake、BigQuery、Redshift）、および行指向データベース（Postgres、MySQL）はCDC APIを提供しています。
-
+**ほとんどのレイクハウステーブル（Apache Hudi、Delta Lake、Apache Iceberg）、クラウドデータウェアハウス（Snowflake、BigQuery、Redshift）、および行指向データベース（Postgres、MySQL）はCDC APIを提供**しています。
 For example, in Hopsworks feature groups, you can read the changes in a feature group between a start_timestamp and an end_timestamp by using: 
 たとえば、Hopsworksフィーチャーグループでは、次のようにしてstart_timestampとend_timestampの間のフィーチャーグループの変更を読み取ることができます：
 
-```  
+```python
 df = fg.asof(end_timestamp, exclude_until=start_timestamp).read()
 ```
 
-###### 4.0.0.0.7. Backfill and Incremental Processing in One Program
-###### 4.0.0.0.8. バックフィルとインクリメンタル処理を1つのプログラムで
+(DynamoDB StreamsもChange Data Captureの一種なのかな...!:thinking:)
+
+<!-- ここまで読んだ! -->
+
+### 4.2. Backfill and Incremental Processing in One Program　バックフィルとインクリメンタル処理を1つのプログラムで
 
 A batch feature pipeline that is parameterized to be run against either historical data or incremental data requires abstracting out the data source, so that the query that reads from the data source can be given a start_time and an end_time for the range of data to be processed. 
-歴史的データまたはインクリメンタルデータに対して実行されるようにパラメータ化されたバッチフィーチャーパイプラインは、データソースを抽象化する必要があります。これにより、データソースから読み取るクエリに対して処理するデータの範囲のためにstart_timeとend_timeを指定できます。
-
+**歴史的データまたはインクリメンタルデータに対して実行されるようにパラメータ化されたバッチフィーチャーパイプラインは、データソースを抽象化する必要があります。**これにより、データソースから読み取るクエリに対して処理するデータの範囲のためにstart_timeとend_timeを指定できます。
 Apart from that difference, the same batch program should be able to process either historical or incremental data, assuming it has been provided enough resources (memory and compute). 
 その違いを除けば、同じバッチプログラムは、十分なリソース（メモリと計算）が提供されていると仮定して、歴史的データまたはインクリメンタルデータのいずれかを処理できるはずです。
 
 In Hopsworks, we can simplify the problem by mounting tables from databases, lakehouses, and data warehouses as external feature groups. 
 Hopsworksでは、データベース、レイクハウス、データウェアハウスからのテーブルを外部フィーチャーグループとしてマウントすることで問題を簡素化できます。
-
 The external feature group has a connector to an external data source, provides a schema for the data it can read with a query, and has an `event_time` column that we use to read a time range of data with polling. 
-外部フィーチャーグループは外部データソースへのコネクタを持ち、クエリで読み取ることができるデータのスキーマを提供し、ポーリングでデータの時間範囲を読み取るために使用する`event_time`列を持っています。
-
+外部フィーチャーグループは外部データソースへのコネクタを持ち、クエリで読み取ることができるデータのスキーマを提供し、**ポーリングでデータの時間範囲を読み取るために使用する`event_time`列を持っています。** (静的特徴量はevent_timeいらないと思ってる...!:thinking)
 When you read data from the external feature group, you specify the `start_time` and optionally an `end_time`. 
 外部フィーチャーグループからデータを読み取るときは、`start_time`を指定し、オプションで`end_time`を指定します。
-
 If you omit the `end_time`, it will read all available records with `event_time` values greater than the `start_time. 
 `end_time`を省略すると、`start_time`よりも大きい`event_time`値を持つすべての利用可能なレコードを読み取ります。
-
 If you omit both `start_time` and `end_time`, it will read all available data. 
 `start_time`と`end_time`の両方を省略すると、すべての利用可能なデータを読み取ります。
-
 The feature pipeline can be written in Pandas or Polars for data volumes that can be processed on a single machine. 
-フィーチャーパイプラインは、単一のマシンで処理できるデータボリュームに対してPandasまたはPolarsで記述できます。
-
+**フィーチャーパイプラインは、単一のマシンで処理できるデータボリュームに対してPandasまたはPolarsで記述**できます。
 For larger data volumes, you should use PySpark. 
 より大きなデータボリュームの場合は、PySparkを使用する必要があります。
-
 The start and end times can be provided as command-line arguments or environment variables (shown here) when running the program: 
 プログラムを実行する際に、startとendの時間はコマンドライン引数または環境変数（ここに示す）として提供できます：
 
-```  
+```python
 start_time = os.environ.get('START_TIME')  
 end_time = os.environ.get('END_TIME')  
 df = credit_card_transactions_fg.read(start_time=start_time, end_time=end_time)
 ```
 
 There is one type of data transformation you do have to account for, though, when writing a batch feature pipeline that can process variable amounts of data—time window aggregations. 
-ただし、可変量のデータを処理できるバッチフィーチャーパイプラインを書く際には、考慮しなければならないデータ変換の一種があります。それは、時間ウィンドウ集約です。
-
+**ただし、可変量のデータを処理できるバッチフィーチャーパイプラインを書く際には、考慮しなければならないデータ変換の一種があります。それは、時間ウィンドウ集約**です。
 When you create time window aggregations, it is important to note that the batch of data you read for processing needs to be large enough to compute the windows, and you need to “slide” over the batch, computing new windows for every day in the batch. 
 時間ウィンドウ集約を作成する際には、処理のために読み取るデータのバッチがウィンドウを計算するのに十分な大きさである必要があり、バッチ内の毎日について新しいウィンドウを計算するためにバッチを「スライド」させる必要があることに注意することが重要です。
-
 For example, if you have read 30 days of data in your batch, for time windows with a length of 3 days, you can compute time window aggregations for only 28 days. 
-たとえば、バッチ内で30日分のデータを読み取った場合、長さ3日の時間ウィンドウに対して、時間ウィンドウ集約を計算できるのは28日分のみです。
-
+**たとえば、バッチ内で30日分のデータを読み取った場合、長さ3日の時間ウィンドウに対して、時間ウィンドウ集約を計算できるのは28日分のみです。**
 The oldest 2 days in the batch do not have the previous 3 days of transactions, so you can’t compute window aggregations for them. 
 バッチ内の最も古い2日間には前の3日間のトランザクションがないため、それらに対してウィンドウ集約を計算することはできません。
-
 So adjust your start and end times accordingly. 
 したがって、start_timeとend_timeを適切に調整してください。
 
+- メモ: 同じバッチ特徴量パイプラインを、backfillにもincrementalにもそのまま使えるようにするための設計
+  - ポイント1: start_time / end_timeを外から渡す設計
+  - ポイント2: データソースを抽象化する.
+  - ポイント3: 時間ウィンドウ集約のときに注意
+
+<!-- ここまで読んだ! -->
+
 We move on now to look at orchestrators that manage the scheduling and execution of batch programs. 
 次に、バッチプログラムのスケジューリングと実行を管理するオーケストレーターについて見ていきます。
-
 Job schedulers support cron-based scheduling of batch programs, but sometimes you need more capable workflow schedulers to schedule and manage the execution of DAGs of programs (tasks). 
 ジョブスケジューラーはバッチプログラムのcronベースのスケジューリングをサポートしますが、時にはプログラム（タスク）のDAGの実行をスケジュールおよび管理するために、より高機能なワークフロースケジューラーが必要です。
 
-###### 4.0.0.0.9. Job Orchestrators
-###### 4.0.0.0.10. ジョブオーケストレーター
+<!-- ここまで読んだ! -->
+
+###### 4.2.0.0.2. Job Orchestrators
+###### 4.2.0.0.3. ジョブオーケストレーター
 
 In Chapter 3, we used GitHub Actions to run both a feature pipeline and a batch inference pipeline on a daily schedule. 
 第3章では、GitHub Actionsを使用してフィーチャーパイプラインとバッチ推論パイプラインの両方を毎日スケジュールで実行しました。
@@ -716,8 +730,8 @@ If your job is a PySpark job, you will also need to define any files that need t
 We will look now at two different job schedulers: Modal and Hopsworks. 
 これから、2つの異なるジョブスケジューラー、ModalとHopsworksについて見ていきます。
 
-###### 4.0.0.0.11. Modal
-###### 4.0.0.0.12. モーダル
+###### 4.2.0.0.4. Modal
+###### 4.2.0.0.5. モーダル
 
 Modal is a developer-friendly serverless platform to deploy, schedule, and manage Python jobs. 
 Modalは、Pythonジョブをデプロイ、スケジュール、および管理するための開発者に優しいサーバーレスプラットフォームです。
@@ -798,7 +812,7 @@ All the dependencies are defined in your Python program, and with _automatic con
 Modal charges based on compute/memory/GPU used per second. 
 Modalは、使用したコンピュート/メモリ/GPUに基づいて課金されます。
 
-###### 4.0.0.0.13. Hopsworks Jobs
+###### 4.2.0.0.6. Hopsworks Jobs
 Hopsworks jobs run on the same Kubernetes cluster Hopsworks is installed on and can be Python (Pandas, Polars, etc.) or PySpark batch programs. 
 Hopsworksジョブは、Hopsworksがインストールされている同じKubernetesクラスター上で実行され、Python（Pandas、Polarsなど）またはPySparkバッチプログラムであることができます。
 
@@ -871,8 +885,8 @@ To overcome this, Hopsworks allows you to explicitly define lineage information 
 This lineage information is visualized in the Hopsworks UI and accessible via the Hopsworks API. 
 この系譜情報はHopsworksのUIで可視化され、Hopsworks APIを介してアクセス可能です。
 
-###### 4.0.0.0.14. Workflow Orchestrators
-###### 4.0.0.0.15. ワークフローオーケストレーター
+###### 4.2.0.0.7. Workflow Orchestrators
+###### 4.2.0.0.8. ワークフローオーケストレーター
 
 In contrast to job orchestrators that execute a single program, workflow orchestrators orchestrate the execution of many programs (or tasks), organized in a DAG. 
 単一のプログラムを実行するジョブオーケストレーターとは対照的に、ワークフローオーケストレーターはDAGに整理された多くのプログラム（またはタスク）の実行を調整します。
@@ -952,8 +966,8 @@ There are workflow orchestrators that are popular within data engineering that c
 We will look now at the most popular Python workflow orchestrator, Airflow, a general-purpose workflow orchestrator, and cloud provider workflow orchestrators for Azure, AWS, and GCP. 
 これから、最も人気のあるPythonワークフローオーケストレーターであるAirflow、汎用ワークフローオーケストレーター、およびAzure、AWS、GCPのクラウドプロバイダーのワークフローオーケストレーターを見ていきます。
 
-###### 4.0.0.0.16. Airflow
-###### 4.0.0.0.17. Airflow
+###### 4.2.0.0.9. Airflow
+###### 4.2.0.0.10. Airflow
 
 Apache Airflow is a popular open source orchestrator that allows you to define, schedule, and monitor workflows. 
 Apache Airflowは、ワークフローを定義、スケジュール、および監視することを可能にする人気のオープンソースオーケストレーターです。
@@ -982,8 +996,8 @@ Other popular sensors are an HttpSensor (which polls an HTTP endpoint until a sp
 You can define dependencies between tasks directly in the Python program that defines your DAG. 
 DAGを定義するPythonプログラム内で、タスク間の依存関係を直接定義できます。
 
-###### 4.0.0.0.18. Cloud Provider Workflow Orchestrators
-###### 4.0.0.0.19. クラウドプロバイダーのワークフローオーケストレーター
+###### 4.2.0.0.11. Cloud Provider Workflow Orchestrators
+###### 4.2.0.0.12. クラウドプロバイダーのワークフローオーケストレーター
 
 Azure Data Factory (ADF) is a generic workflow orchestrator that you can use to run Spark, Pandas, and Polars programs on Azure. 
 Azure Data Factory（ADF）は、Azure上でSpark、Pandas、およびPolarsプログラムを実行するために使用できる汎用ワークフローオーケストレーターです。
@@ -1015,8 +1029,8 @@ That lineage information, however, is typically not connected to artifacts, such
 Lineage information for ML assets is stored in MLOps platforms, such as Hopsworks, Vertex, Databricks, and SageMaker. 
 ML資産の系譜情報は、Hopsworks、Vertex、Databricks、SageMakerなどのMLOpsプラットフォームに保存されます。
 
-###### 4.0.0.0.20. Data Contracts
-###### 4.0.0.0.21. データ契約
+###### 4.2.0.0.13. Data Contracts
+###### 4.2.0.0.14. データ契約
 
 Data contracts for feature groups have aims that are similar to those of interface con‐ tracts in software engineering. 
 フィーチャーグループのデータ契約は、ソフトウェア工学におけるインターフェース契約の目的に似ています。
@@ -1090,8 +1104,8 @@ tag_search_result.to_dict()
 We can then check whether the returned ML assets conform to the governance policy or not and send an alert if there is a violation. 
 その後、返されたML資産がガバナンスポリシーに準拠しているかどうかを確認し、違反があればアラートを送信できます。
 
-###### 4.0.0.0.22. Data Validation with Great Expectations in Hopsworks
-###### 4.0.0.0.23. HopsworksにおけるGreat Expectationsを用いたデータ検証
+###### 4.2.0.0.15. Data Validation with Great Expectations in Hopsworks
+###### 4.2.0.0.16. HopsworksにおけるGreat Expectationsを用いたデータ検証
 
 Data quality guarantees are part of data contracts and require data validation. 
 データ品質の保証はデータ契約の一部であり、データ検証を必要とします。
@@ -1113,8 +1127,8 @@ Data is validated before it is written to feature groups, as one bad data point 
 _Figure 8-5. Data quality for ML requires shifting left data validation in the development process and therefore validating data earlier in its lifecycle than in traditional data engineering. ML requires more monitoring of operational data than business intelligence systems._
 _Figure 8-5. MLのデータ品質は、開発プロセスにおけるデータ検証を左にシフトさせ、従来のデータエンジニアリングよりもデータのライフサイクルの早い段階で検証することを必要とします。MLは、ビジネスインテリジェンスシステムよりも運用データの監視を多く必要とします。_
 
-###### 4.0.0.0.24. WAP Pattern
-###### 4.0.0.0.25. WAPパターン
+###### 4.2.0.0.17. WAP Pattern
+###### 4.2.0.0.18. WAPパターン
 In data engineering, data validation is shifted right in the data lifecycle compared with ML. 
 データエンジニアリングでは、データライフサイクルにおけるデータ検証はMLと比較して右にシフトします。
 
@@ -1197,8 +1211,8 @@ The `check_for_pii_data()` function can be implemented using a library such as D
 In the near future, LLMs will probably be used to aid PII checks. 
 近い将来、LLMがPIIチェックを支援するために使用される可能性があります。
 
-###### 4.0.0.0.26. Summary and Exercises
-###### 4.0.0.0.27. 要約と演習
+###### 4.2.0.0.19. Summary and Exercises
+###### 4.2.0.0.20. 要約と演習
 Batch feature pipelines are programs that run on a schedule, applying MITs to data read from batch/streaming/API sources to create reusable feature data that should be validated before it is written to a feature group. 
 バッチフィーチャーパイプラインは、スケジュールに従って実行されるプログラムであり、バッチ/ストリーミング/APIソースから読み取ったデータにMITを適用して、フィーチャーグループに書き込む前に検証されるべき再利用可能なフィーチャーデータを作成します。
 
