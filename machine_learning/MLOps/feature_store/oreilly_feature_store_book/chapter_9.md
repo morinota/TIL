@@ -205,426 +205,382 @@ Table 9-1 shows some real-time ML use cases that favor precomputed features and 
 _Table 9-1. Use cases that tend to favor either shift left or shift right for feature computation_ 
 _表9-1. フィーチャー計算においてシフト左またはシフト右を好む傾向のあるユースケース_
 
+- メモ: 表9-1 特徴量計算において、shift left/rightを好むユースケース達
+  - Fraud (詐欺) = shift left
+    - This requires real-time decisions with low latency. Precomputing features ensures that the inference pipeline can quickly retrieve these features, minimizing the need for costly, real-time computation.
+    - 低遅延でリアルタイムの意思決定を必要とします。フィーチャーを事前計算することで、推論パイプラインはこれらのフィーチャーを迅速に取得でき、コストのかかるリアルタイム計算の必要性を最小限に抑えます。
+  - Personalized recommendations (パーソナライズ推薦) = shift left
+    - Recommendations need to be served with low latency. Precomputing user preferences, product similarity scores, and historical behavior allows the system to respond quickly without complex, real-time computation. However, lightweight real-time updates (e.g., incorporating recent clicks or views) may complement this.
+    - 推薦は低遅延で提供される必要があります。ユーザーの好み、製品の類似スコア、過去の行動を事前計算することで、システムは複雑なリアルタイム計算なしで迅速に応答できます。ただし、軽量なリアルタイム更新（例：最近のクリックやビューを組み込むこと）はこれを補完する可能性があります。
+  - Dynamic pricing (動的価格設定) = shift right
+    - Pricing often depends on rapidly changing factors like supply, demand, competitor pricing, and external events. These variables may need to be retrieved using third-party APIs at runtime, requiring ODTs.
+    - 価格はしばしば供給、需要、競合他社の価格、外部イベントなどの**急速に変化する要因に依存**します。これらの変数は、ランタイムでサードパーティAPIを使用して取得する必要があり、ODTsを必要とします。
+  - Chatbots with browser-session context (ブラウザセッションコンテキストを持つチャットボット) = shift right
+    - The chatbot must consider dynamic, session-specific context (e.g., a user’s most recent query, the ongoing conversation context) in its predictions. This makes precomputing less effective since the system primarily relies on immediate conversational context for feature computation.
+    - チャットボットは、予測において**動的でセッション固有のコンテキスト（例：ユーザーの最近のクエリ、進行中の会話コンテキスト）を考慮する必要**があります。これにより、システムはフィーチャー計算のために即時の会話コンテキストに主に依存するため、事前計算が効果的でなくなります。
+  - Predictive maintenance (予測保守) = shift left
+    - Maintenance predictions are typically based on historical telemetry data, precomputed failure likelihoods, and trends. A shift-left approach enables efficient analysis of device health and reduces the computational burden during predictions by precomputing features like moving averages and anomaly scores.
+    - 保守予測は通常、過去のテレメトリデータ、事前計算された故障の可能性、およびトレンドに基づいています。シフト左アプローチは、デバイスの健康状態の効率的な分析を可能にし、移動平均や異常スコアなどのフィーチャーを事前計算することで、予測中の計算負担を軽減します。
+  - PII removal (PIIの削除) = shift left and right
+    - According to the data minimization principle, you should remove PII as early as possible in the pipeline to reduce the risk of exposing sensitive information throughout the data processing lifecycle. You still may have to check for PII at request time, necessitating ODTs.
+    - データ最小化の原則に従い、データ処理ライフサイクル全体で機密情報が露出するリスクを減らすために、パイプライン内でできるだけ早くPIIを削除する必要があります。リクエスト時にPIIを確認する必要がある場合もあり、ODTsを必要とします。
+
 <!-- ここまで読んだ! -->
-<!-- 後で表9-1の内容をまとめる! -->
-
-**Use case** **Precompute features or compute on demand?** 
-**ユースケース** **フィーチャーを事前計算するか、オンデマンドで計算するか？**
-
-Fraud _Shift left. This requires real-time decisions with low latency. Precomputing features ensures that the_ inference pipeline can quickly retrieve these features, minimizing the need for costly, real-time computation. 
-詐欺 _シフト左。これは低遅延でリアルタイムの意思決定を必要とします。フィーチャーを事前計算することで、推論パイプラインはこれらのフィーチャーを迅速に取得でき、コストのかかるリアルタイム計算の必要性を最小限に抑えます。
-
-Personalized recommendations _Shift left. Recommendations need to be served with low latency. Precomputing user preferences,_ product similarity scores, and historical behavior allows the system to respond quickly without complex, real-time computation. However, lightweight real-time updates (e.g., incorporating recent clicks or views) may complement this. 
-パーソナライズされた推奨 _シフト左。推奨は低遅延で提供される必要があります。ユーザーの好み、製品の類似スコア、過去の行動を事前計算することで、システムは複雑なリアルタイム計算なしで迅速に応答できます。ただし、軽量なリアルタイム更新（例：最近のクリックやビューを組み込むこと）はこれを補完する可能性があります。
-
-Dynamic pricing _Shift right. Pricing often depends on rapidly changing factors like supply, demand, competitor pricing,_ and external events. These variables may need to be retrieved using third-party APIs at runtime, requiring ODTs. 
-動的価格設定 _シフト右。価格はしばしば供給、需要、競合他社の価格、外部イベントなどの急速に変化する要因に依存します。これらの変数は、ランタイムでサードパーティAPIを使用して取得する必要があり、ODTsを必要とします。
-
-Chatbots with browser-session context _Shift right. The chatbot must consider dynamic, session-specific context (e.g., a user’s most recent_ query, the ongoing conversation context) in its predictions. This makes precomputing less effective since the system primarily relies on immediate conversational context for feature computation. 
-ブラウザセッションコンテキストを持つチャットボット _シフト右。チャットボットは、予測において動的でセッション固有のコンテキスト（例：ユーザーの最近のクエリ、進行中の会話コンテキスト）を考慮する必要があります。これにより、システムはフィーチャー計算のために即時の会話コンテキストに主に依存するため、事前計算が効果的でなくなります。
-
-Predictive maintenance _Shift left. Maintenance predictions are typically based on historical telemetry data, precomputed_ failure likelihoods, and trends. A shift-left approach enables efficient analysis of device health and reduces the computational burden during predictions by precomputing features like moving averages and anomaly scores. 
-予測保守 _シフト左。保守予測は通常、過去のテレメトリデータ、事前計算された故障の可能性、およびトレンドに基づいています。シフト左アプローチは、デバイスの健康状態の効率的な分析を可能にし、移動平均や異常スコアなどのフィーチャーを事前計算することで、予測中の計算負担を軽減します。
-
-PII removal _Shift left and right. According to the data minimization principle, you should remove PII as early as_ possible in the pipeline to reduce the risk of exposing sensitive information throughout the data processing lifecycle. You still may have to check for PII at request time, necessitating ODTs. 
-PIIの削除 _シフト左および右。データ最小化の原則に従い、データ処理ライフサイクル全体で機密情報が露出するリスクを減らすために、パイプライン内でできるだけ早くPIIを削除する必要があります。リクエスト時にPIIを確認する必要がある場合もあり、ODTsを必要とします。
 
 As always in computing, choices imply trade-offs. 
-コンピューティングにおいては常に、選択にはトレードオフが伴います。
-
+**コンピューティングにおいては常に、選択にはトレードオフが伴います。** (うんうん、「全てのアーキテクチャはトレードオフ」って言うもんね...!:thinking:)
 Shifting left may incur too much operational overhead and require new skills with stream processing, while shifting right could add too much latency and cost to your predictions. 
 シフト左は過剰な運用オーバーヘッドを引き起こし、ストリーム処理に新しいスキルを必要とする可能性がありますが、シフト右は予測に過剰なレイテンシとコストを追加する可能性があります。
-
 In addition, some types of ODTs, such as aggregations, may require specific support from your online feature store to be computed efficiently. 
 さらに、集約などの一部のODTのタイプは、効率的に計算されるためにオンラインフィーチャーストアからの特定のサポートを必要とする場合があります。
 
-###### 3.0.0.0.2. Shift-Right Architectures
-###### 3.0.0.0.3. シフト右アーキテクチャ
+<!-- ここまで読んだ! -->
+
+### 3.1. Shift-Right Architectures シフト右アーキテクチャ
 
 Figure 9-3 shows an on-demand feature computation architecture, in which there is no streaming feature pipeline and real-time features are computed by ODTs that push down aggregation computations to the online feature store. 
 図9-3は、ストリーミングフィーチャーパイプラインがなく、リアルタイムフィーチャーがODTsによって計算され、集約計算がオンラインフィーチャーストアにプッシュダウンされるオンデマンドフィーチャー計算アーキテクチャを示しています。
 
+![]()
 _Figure 9-3. Shift-right architectures can use fresh features by applications writing their_ _events directly to the feature store._ 
 _図9-3. シフト右アーキテクチャは、アプリケーションが自らのイベントを直接フィーチャーストアに書き込むことによって新鮮なフィーチャーを使用できます。_
 
 In this architecture, the AI-enabled application or service streams raw events created by it directly to the feature store (via a Kafka or a REST API). 
 このアーキテクチャでは、AI対応アプリケーションまたはサービスが自ら生成した生のイベントを直接フィーチャーストアにストリーミングします（KafkaまたはREST APIを介して）。
-
 The events get stored as rows in online feature groups and asynchronously materialized to the offline feature store (lakehouse tables). 
-イベントはオンラインフィーチャーグループの行として保存され、非同期的にオフラインフィーチャーストア（レイクハウステーブル）に具現化されます。
-
+**イベントはオンラインフィーチャーグループの行として保存され、非同期的にオフラインフィーチャーストア（レイクハウステーブル）に具現化**されます。
+(オンラインストアに書き込んだ方がいいんだろうか...:thinking:)
 The types of different data transformations that can be performed in ODT functions include: 
 ODT関数で実行できるさまざまなデータ変換のタイプには以下が含まれます：
 
 _Stateless transformations_ Computed using only request parameters 
-_ステートレス変換_ リクエストパラメータのみを使用して計算されます
+**_ステートレス変換_** リクエストパラメータのみを使用して計算されます
 
 _Stateful transformations_ Computed using a combination of request parameters and precomputed features read from the feature store 
-_ステートフル変換_ リクエストパラメータとフィーチャーストアから読み取った事前計算されたフィーチャーの組み合わせを使用して計算されます
+**_ステートフル変換_** リクエストパラメータとフィーチャーストアから読み取った事前計算されたフィーチャーの組み合わせを使用して計算されます
 
 _Stateful transformations with raw events_ Where you read records from the online feature store as a DataFrame and then perform transformations on the DataFrame 
-_生のイベントを使用したステートフル変換_ オンラインフィーチャーストアからレコードをDataFrameとして読み取り、その後DataFrameに対して変換を実行します
+**_生のイベントを使用したステートフル変換_** オンラインフィーチャーストアからレコードをDataFrameとして読み取り、その後DataFrameに対して変換を実行します
 
 _Stateful transformations with SQL_ Where transformations are executed in the online feature store directly as SQL expressions, returning transformed data as a DataFrame; for example, pushdown aggregations, as shown in Figure 9-3 
-_SQLを使用したステートフル変換_ 変換がオンラインフィーチャーストアで直接SQL式として実行され、変換されたデータがDataFrameとして返されます。例えば、図9-3に示すようにプッシュダウン集約があります。
-
-
+**_SQLを使用したステートフル変換_** 変換がオンラインフィーチャーストアで直接SQL式として実行され、変換されたデータがDataFrameとして返されます。例えば、図9-3に示すようにプッシュダウン集約があります。
 
 ODTs that can execute stateless transformations and precomputed transformations were introduced in Chapter 7 as Python UDFs and Pandas UDFs. 
 ステートレス変換と事前計算された変換を実行できるODTは、第7章でPython UDFおよびPandas UDFとして紹介されました。
-
 Stateful transformations with raw events are more compute intensive and may place high load on the online inference pipeline, network, and feature store. 
 生のイベントを用いたステートフル変換は、計算集約的であり、オンライン推論パイプライン、ネットワーク、およびフィーチャーストアに高い負荷をかける可能性があります。
-
 Figure 9-4 shows a shift-right architecture in which aggregations can be either performed with DataFrames in an ODT on the raw records or pushed down to the online feature store that executes them as SQL. 
 図9-4は、集約がODT内のDataFrameを使用して生のレコードで実行されるか、SQLとして実行するオンラインフィーチャーストアにプッシュダウンされるシフトライトアーキテクチャを示しています。
 
+![]()
 _Figure 9-4. Shift-right architecture that filters and transforms events in a streaming feature pipeline before they are written to the online feature store. ODTs compute aggregations from the events either locally with DataFrames or using a pushdown aggregation SQL command._  
 _図9-4. オンラインフィーチャーストアに書き込まれる前に、ストリーミングフィーチャーパイプラインでイベントをフィルタリングおよび変換するシフトライトアーキテクチャ。ODTsは、イベントから集約をローカルでDataFramesを使用して計算するか、プッシュダウン集約SQLコマンドを使用します。_
 
 In general, the ODT reading the raw records and processing them with DataFrames will have much higher latency and computation overhead than if the aggregations were pushed down to the online feature store and executed as SQL. 
 一般的に、生のレコードを読み取り、DataFramesで処理するODTは、集約がオンラインフィーチャーストアにプッシュダウンされてSQLとして実行される場合よりも、はるかに高いレイテンシと計算オーバーヘッドを持ちます。
 
+<!-- ここまで読んだ! -->
+
 We have already looked at how ODTs prevent offline-online skew, but how do ondemand SQL transformations prevent skew when the same SQL should be executed in a feature pipeline on historical data? 
 私たちはすでにODTがオフラインとオンラインのスキューを防ぐ方法を見てきましたが、同じSQLが履歴データのフィーチャーパイプラインで実行されるべきとき、オンデマンドSQL変換はどのようにスキューを防ぐのでしょうか？
-
 They can do this if the system provides language-level API calls that create the SQL that is ultimately executed. 
 システムが最終的に実行されるSQLを生成する言語レベルのAPI呼び出しを提供する場合、これを実現できます。
-
 For example, in Hopsworks, a Postgres-compliant SQL dialect is supported in both RonSQL (SQL run against RonDB REST server) and Spark SQL/DuckDB. 
 例えば、Hopsworksでは、Postgres準拠のSQL方言がRonSQL（RonDB RESTサーバーに対して実行されるSQL）とSpark SQL/DuckDBの両方でサポートされています。
 
 One caveat for on-demand SQL is that the online feature store must support a SQL API. 
 オンデマンドSQLの一つの注意点は、オンラインフィーチャーストアがSQL APIをサポートしている必要があることです。
-
 For example, not all online feature stores support pushdown aggregations, as many online feature stores are key-value stores without support for SQL. 
-例えば、すべてのオンラインフィーチャーストアがプッシュダウン集約をサポートしているわけではなく、多くのオンラインフィーチャーストアはSQLをサポートしていないキー-バリューストアです。
-
+例えば、すべてのオンラインフィーチャーストアがプッシュダウン集約をサポートしているわけではなく、**多くのオンラインフィーチャーストアはSQLをサポートしていないキー-バリューストア**です。(だよね...!:thinking:)
 An additional requirement for your online feature store is that it should support a TTL for rows. 
-オンラインフィーチャーストアに対する追加の要件は、行に対するTTLをサポートする必要があることです。
-
+**オンラインフィーチャーストアに対する追加の要件は、行に対するTTLをサポートする必要があること**です。
 The TTL can be specified at either the table level or the row level. 
 TTLは、テーブルレベルまたは行レベルのいずれかで指定できます。
-
 The reason a TTL is required is that online feature groups typically only store the latest feature values for entities. 
 TTLが必要な理由は、オンラインフィーチャーグループが通常、エンティティの最新のフィーチャー値のみを保存するためです。
-
 But when you want to perform online aggregations, the raw historical event data should be stored there (including features with older `event_times). 
-しかし、オンライン集約を実行したい場合、古い`event_times`を含む生の履歴イベントデータはそこに保存されるべきです。
-
+しかし、オンライン集約を実行したい場合、古い`event_times`を含む生の履歴イベントデータはそこに保存されるべきです。(オンライン集約はコスト的にもレイテンシ的にもかなり厳しいんじゃない??:thinking:)
 If your feature pipeline now writes raw data to the online feature store (instead of updating feature values for entities), your online feature data could keep growing, and eventually your online store could run out of free storage space. 
 もしあなたのフィーチャーパイプラインが現在、エンティティのフィーチャー値を更新するのではなく、生データをオンラインフィーチャーストアに書き込む場合、オンラインフィーチャーデータは増え続け、最終的にオンラインストアが空きストレージスペースを使い果たす可能性があります。
-
 The easiest way to limit the growth in online storage is to specify that rows in an online feature group have a TTL. 
 オンラインストレージの成長を制限する最も簡単な方法は、オンラインフィーチャーグループの行にTTLがあることを指定することです。
-
 That way, rows are “garbage collected” after the TTL, continually freeing up storage space. 
 そのようにして、行はTTLの後に「ガーベジコレクト」され、ストレージスペースが継続的に解放されます。
-
 The TTL for a row expires when: 
 行のTTLは次の条件で期限切れになります：
 
 _current_time > (event_time + TTL)_ 
-_current_time > (event_time + TTL)_
 
 where TTL is defined on either a per-row or a per-table basis. 
 ここで、TTLは行ごとまたはテーブルごとに定義されます。
-
 Per-table TTL means that all rows in the table are given the same TTL when created. 
 テーブルごとのTTLは、テーブル内のすべての行が作成時に同じTTLを与えられることを意味します。
-
 Hopsworks supports both per-table and per-row TTLs (via its online store, RonDB). 
 Hopsworksは、テーブルごとのTTLと行ごとのTTLの両方をサポートしています（オンラインストアRonDBを介して）。
-
 After a row has been created (or updated), current time advances, and eventually the TTL for the row expires, whereupon it is scheduled for automatic removal. 
 行が作成（または更新）された後、現在の時間が進み、最終的にその行のTTLが期限切れになり、自動削除のためにスケジュールされます。
 
+<!-- ここまで読んだ! -->
+
 One problem that can arise here, however, is that writes and deletions can get out of sync due to delays or failures in feature pipelines. 
 しかし、ここで発生する可能性のある一つの問題は、書き込みと削除がフィーチャーパイプラインの遅延や失敗により同期が取れなくなることです。
-
 As deletions always happen at the TTL interval, delays in writes can mean data becomes unavailable for some entities. 
 削除は常にTTLの間隔で行われるため、書き込みの遅延は、一部のエンティティに対してデータが利用できなくなることを意味します。
-
 [Uber described this problem in a talk at the Feature Store Summit 2024. In the case of a](https://oreil.ly/NMVsk) delayed write, you should also delay deletes. 
 [Uberは、2024年のFeature Store Summitでこの問題について説明しました。遅延書き込みの場合、削除も遅延させるべきです。]
-
 While Uber could not do this due to a lack of support for retroactively updating the TTL of already-written rows in Cassandra, Hopsworks’ database, RonDB, provides a purge window where expired rows are only deleted after the purge window has passed. 
 Uberは、Cassandraで既に書き込まれた行のTTLを遡って更新するサポートがないため、これを行うことができませんでしたが、HopsworksのデータベースRonDBは、期限切れの行がパージウィンドウが経過した後にのみ削除されるパージウィンドウを提供します。
-
 You can enable reading rows whose TTL has expired, but before the purge window has passed. 
 TTLが期限切れになった行の読み取りを有効にできますが、パージウィンドウが経過する前に行います。
-
 You can also temporarily extend the purge window if the delays are significant. 
 遅延が大きい場合は、一時的にパージウィンドウを延長することもできます。
 
-###### 3.0.0.0.4. Shift-Left Architectures
+<!-- ここまで読んだ! 我々の多くのユースケースでは次のshift-leftの方が重要そう...!!:thinking: -->
+
+### 3.2. Shift-Left Architectures
+
 Now we move on to the topic of the rest of this chapter—precomputing feature data in streaming feature pipelines. 
-###### 3.0.0.0.5. シフトレフトアーキテクチャ
 さて、私たちはこの章の残りのトピック、ストリーミングフィーチャーパイプラインにおけるフィーチャーデータの事前計算に移ります。
-
 We start by introducing the original (and now legacy) hybrid approach to building streaming feature pipelines as two separate pipelines: online feature engineering in a stream processing layer and offline feature creation in a batch pipeline. 
-まず、ストリーミングフィーチャーパイプラインを構築するための元の（そして現在はレガシーの）ハイブリッドアプローチを、ストリーム処理層でのオンラインフィーチャーエンジニアリングとバッチパイプラインでのオフラインフィーチャー作成という2つの別々のパイプラインとして紹介します。
-
+まず私たちは、ストリーミングフィーチャーパイプラインを構築するためのオリジナルの（そして現在はレガシーな）ハイブリッドアプローチを紹介します。これは、ストリーム処理レイヤーでのオンラインフィーチャーエンジニアリングとバッチパイプラインでのオフラインフィーチャー作成という2つの別々のパイプラインです。
 Then, we move on to the modern streaming-native architecture, where the same stream processing program is used for both online and offline feature engineering. 
 次に、オンラインとオフラインのフィーチャーエンジニアリングの両方に同じストリーム処理プログラムが使用される現代のストリーミングネイティブアーキテクチャに移ります。
 
-###### 3.0.0.0.6. Hybrid streaming-batch architecture
-The _hybrid streaming-batch architecture is a design in which you have two separate_ processing layers: a stream-processing pipeline for real-time feature engineering and a batch-processing pipeline for historical feature data creation (backfilling). 
-###### 3.0.0.0.7. ハイブリッドストリーミングバッチアーキテクチャ
-_ハイブリッドストリーミングバッチアーキテクチャは、リアルタイムフィーチャーエンジニアリングのためのストリーム処理パイプラインと、履歴フィーチャーデータ作成（バックフィリング）のためのバッチ処理パイプラインという2つの別々の処理層を持つ設計です。_
+#### 3.2.1. Hybrid streaming-batch architecture ハイブリッドストリーミングバッチアーキテクチャ
 
+The _hybrid streaming-batch architecture is a design in which you have two separate_ processing layers: a stream-processing pipeline for real-time feature engineering and a batch-processing pipeline for historical feature data creation (backfilling). 
+Hybrid streaming-batch architectureは、リアルタイムフィーチャーエンジニアリングのためのストリーム処理パイプラインと、履歴フィーチャーデータ作成（バックフィリング）のためのバッチ処理パイプラインという**2つの別々の処理レイヤーを持つ設計**です。
+(という事は、特徴量生成のロジックが変わった場合に、両者それぞれを修正する必要があるって話だな...! 下を読んだら違った。そこは共有ライブラリで共通化されてた:thinking:)
 Klarna presented its version of this architecture at AWS re:Invent 2024 (see Figure 9-5). 
 Klarnaは、AWS re:Invent 2024でこのアーキテクチャのバージョンを発表しました（図9-5を参照）。
 
-_Figure 9-5. A hybrid streaming-batch architecture is one where you backfill with batch feature pipelines, but real-time data processing is a streaming feature pipeline. © Tony_ _[Liu and Dragan Coric: “AWS re:Invent 2024—Klarna: Accelerating credit decisioning](https://oreil.ly/zL0Mk)_ _[with real-time data processing”.](https://oreil.ly/zL0Mk)_  
-_図9-5. ハイブリッドストリーミングバッチアーキテクチャは、バッチフィーチャーパイプラインでバックフィルを行いますが、リアルタイムデータ処理はストリーミングフィーチャーパイプラインです。© Tony_ _[LiuとDragan Coric: “AWS re:Invent 2024—Klarna: リアルタイムデータ処理による信用決定の加速](https://oreil.ly/zL0Mk)。”_
+![]()
+Figure 9-5. A hybrid streaming-batch architecture is one where you backfill with batch feature pipelines, but real-time data processing is a streaming feature pipeline. © Tony_ _[Liu and Dragan Coric: “AWS re:Invent 2024—Klarna: Accelerating credit decisioning](https://oreil.ly/zL0Mk)_ _[with real-time data processing”.](https://oreil.ly/zL0Mk)_  
+図9-5. ハイブリッドストリーミングバッチアーキテクチャは、バッチフィーチャーパイプラインでバックフィルを行いますが、リアルタイムデータ処理はストリーミングフィーチャーパイプラインです。© Tony_ _[LiuとDragan Coric: “AWS re:Invent 2024—Klarna: リアルタイムデータ処理による信用決定の加速](https://oreil.ly/zL0Mk)。”
+
+<!-- ここまで読んだ! -->
 
 In this system, Klarna prevents offline-online skew by writing the transformation logic once in a shared library that is used in both batch pipelines and streamprocessing pipelines. 
-このシステムでは、Klarnaは、バッチパイプラインとストリーム処理パイプラインの両方で使用される共有ライブラリに変換ロジックを一度書くことで、オフラインとオンラインのスキューを防ぎます。
-
+このシステムでは、Klarnaは、**バッチパイプラインとストリーム処理パイプラインの両方で使用される共有ライブラリに変換ロジックを一度書くことで、オフラインとオンラインのスキューを防ぎます。**
 Given that both streaming and batch programs need to be written in languages that can use the same shared feature computation libraries, they use a custom stream-processing framework. 
 ストリーミングプログラムとバッチプログラムの両方が、同じ共有フィーチャー計算ライブラリを使用できる言語で書かれる必要があるため、彼らはカスタムストリーム処理フレームワークを使用します。
-
 In general, you should avoid this architecture as it requires custom infrastructure and complex logic in libraries to enable them to be correctly run by both streaming and batch pipelines. 
-一般的に、このアーキテクチャはカスタムインフラストラクチャとライブラリ内の複雑なロジックを必要とするため、避けるべきです。
-
+**一般的に、このアーキテクチャはカスタムインフラストラクチャとライブラリ内の複雑なロジックを必要とするため、避けるべき**です。
 Instead, we will favor a _streaming-native architecture, in which a single stream-processing pipeline can process both real-time data and backfill feature data for training. 
-代わりに、リアルタイムデータとトレーニング用のバックフィルフィーチャーデータの両方を処理できる単一のストリーム処理パイプラインを持つ_ストリーミングネイティブアーキテクチャ_を支持します。
+代わりに、**リアルタイムデータとトレーニング用のバックフィルフィーチャーデータの両方を処理できる単一のストリーム処理パイプラインを持つ streaming-native architecture を支持**します。
 
+---
+(コラム)
 In the stream-processing community, the hybrid streaming-batch architecture is called a _Lambda architecture, while a streaming-native architecture is called a Kappa architecture. 
-ストリーム処理コミュニティでは、ハイブリッドストリーミングバッチアーキテクチャは_ラムダアーキテクチャ_と呼ばれ、ストリーミングネイティブアーキテクチャは_カッパアーキテクチャ_と呼ばれます。
-
+ストリーム処理コミュニティでは、**hybrid streaming-batch アーキテクチャは Lambda アーキテクチャ**と呼ばれ、**streaming-native アーキテクチャは Kappa アーキテクチャ**と呼ばれます。
 Knowing this terminology may help you communicate with a data engineer, but the terms _hybrid streaming-batch architecture and_ _streaming-native_ _architecture are easier to explain. 
-この用語を知っておくことでデータエンジニアとのコミュニケーションが助けられるかもしれませんが、_ハイブリッドストリーミングバッチアーキテクチャ_と_ストリーミングネイティブアーキテクチャ_という用語の方が説明しやすいです。
+**この用語を知っておくことでデータエンジニアとのコミュニケーションが助けられるかも**しれませんが、hybrid streaming-batch architecture と streaming-native architecture という用語の方が説明しやすいです。
 
-###### 3.0.0.0.8. Streaming-native architecture
+---
+
+- メモ: Hibrid streaming-batch architecture (Lambda architecture) の話
+  - 何それ? -> 処理レイヤーが2つあるアーキテクチャ
+    - リアルタイム特徴量エンジニアリングのためのストリーミングパイプライン
+    - 学習用の特徴量データのbackfillのためのバッチパイプライン
+  - 注意点: バッチとストリーミング間でのロジックのスキューを防ぐ必要あり!
+    - Klarnaは、**両方のパイプラインで使用される共有ライブラリ**に変換ロジックを書くことでこれを防いでいる。
+  - ただ本書籍的には、このアーキテクチャは非推奨らしい!
+    - 理由1: 言語縛りがある (両方のパイプラインで同じ共有フィーチャー計算ライブラリを使用できる言語で書かれる必要がある)
+    - 理由2: 共有ライブラリが複雑になり得る (両方のパイプラインで正しく実行できるようにするための複雑なロジックが必要になる可能性がある)
+
+<!-- ここまで読んだ! -->
+
+#### 3.2.2. Streaming-native architecture
+
 The streaming-native architecture uses the streaming feature pipeline to process both real-time event streams and historical data (see Figure 9-6). 
-###### 3.0.0.0.9. ストリーミングネイティブアーキテクチャ
-ストリーミングネイティブアーキテクチャは、ストリーミングフィーチャーパイプラインを使用してリアルタイムイベントストリームと履歴データの両方を処理します（図9-6を参照）。
+Streaming-native アーキテクチャは、ストリーミングフィーチャーパイプラインを使用して、リアルタイムイベントストリームと履歴データの両方を処理します（図9-6を参照）。
 
-_Figure 9-6. A streaming-native architecture has a streaming feature pipeline that runs in either real-time mode (processing event streams from an event-streaming platform) or backfill mode (processing historical events from a batch data source, such as a lakehouse table). The feature pipeline outputs its feature data to a feature store. Stream-processing engines manage state in a local state store and support failure recovery through checkpointing to a remote store._  
-_図9-6. ストリーミングネイティブアーキテクチャは、リアルタイムモード（イベントストリーミングプラットフォームからのイベントストリームを処理）またはバックフィルモード（湖ハウステーブルなどのバッチデータソースからの履歴イベントを処理）で実行されるストリーミングフィーチャーパイプラインを持っています。フィーチャーパイプラインは、そのフィーチャーデータをフィーチャーストアに出力します。ストリーム処理エンジンは、ローカルステートストアで状態を管理し、リモートストアへのチェックポイントを通じて障害回復をサポートします。_
+![]()
+Figure 9-6. A streaming-native architecture has a streaming feature pipeline that runs in either real-time mode (processing event streams from an event-streaming platform) or backfill mode (processing historical events from a batch data source, such as a lakehouse table). The feature pipeline outputs its feature data to a feature store. Stream-processing engines manage state in a local state store and support failure recovery through checkpointing to a remote store.
+図9-6. ストリーミングネイティブアーキテクチャは、リアルタイムモード（イベントストリーミングプラットフォームからのイベントストリームを処理）またはバックフィルモード（湖ハウステーブルなどのバッチデータソースからの履歴イベントを処理）で実行されるストリーミングフィーチャーパイプラインを持っています。フィーチャーパイプラインは、そのフィーチャーデータをフィーチャーストアに出力します。ストリーム処理エンジンは、ローカルステートストアで状態を管理し、リモートストアへのチェックポイントを通じて障害回復をサポートします。
+
 
 To remove the need for a batch layer that processes historical data, the streaming feature pipeline needs to be able to be run against both streaming and batch data sources and in different modes of operation, depending on whether it processes real-time data or historical data. 
-履歴データを処理するバッチレイヤーの必要性を取り除くために、ストリーミングフィーチャーパイプラインは、リアルタイムデータを処理するか履歴データを処理するかに応じて、ストリーミングデータソースとバッチデータソースの両方に対して実行でき、異なる動作モードで実行できる必要があります。
-
+履歴データを処理するバッチレイヤーの必要性を取り除くために、**ストリーミングフィーチャーパイプラインは、リアルタイムデータを処理するか履歴データを処理するかに応じて、ストリーミングデータソースとバッチデータソースの両方に対して実行でき、異なる動作モードで実行できる必要があります。** (この動作モードの話は、batch feature pipelineでも同様にあったよね。backfillモード or incrementalモードみたいな...!:thinking:)
 The most common operational modes for a streaming feature pipeline are: 
-ストリーミングフィーチャーパイプラインの最も一般的な運用モードは次のとおりです：
+ストリーミングフィーチャーパイプラインの最も一般的な運用モードは次のとおりです:
 
-_Real-time mode_ The streaming pipeline processes live event streams continuously, sourcing data from an event-streaming platform or other streaming data source. 
+- _Real-time mode_
+The streaming pipeline processes live event streams continuously, sourcing data from an event-streaming platform or other streaming data source. 
 _リアルタイムモード_ ストリーミングパイプラインは、イベントストリーミングプラットフォームや他のストリーミングデータソースからデータを取得し、ライブイベントストリームを継続的に処理します。
-
 The streaming engine runs 24/7 and should be highly available, automatically recovering from partial or complete failures. 
-ストリーミングエンジンは24時間365日稼働し、高い可用性を持ち、部分的または完全な障害から自動的に回復する必要があります。
+**ストリーミングエンジンは24時間365日稼働し、高い可用性を持ち、部分的または完全な障害から自動的に回復する必要**があります。(これの運用コストは正直かなり高いんだよなぁ...!:thinking:)
 
-_Stream replay_ This mode replays historical events through the streaming pipeline, simulating real-time processing. 
+- _Stream replay_
+This mode replays historical events through the streaming pipeline, simulating real-time processing. 
 _ストリームリプレイ_ このモードは、ストリーミングパイプラインを通じて履歴イベントをリプレイし、リアルタイム処理をシミュレートします。
-
 The replayed data can originate from a streaming data source (such as the event-streaming platform) or batch data source, and it is processed in the same order and timing as the original stream. 
 リプレイされたデータは、ストリーミングデータソース（イベントストリーミングプラットフォームなど）またはバッチデータソースから発生する可能性があり、元のストリームと同じ順序とタイミングで処理されます。
-
 The pipeline exits once the replay is complete. 
 パイプラインはリプレイが完了すると終了します。
 
-
-
-_Backfilling_ 
+- _Backfilling_ 
 このモードは、データのギャップに対処するか、通常はS3互換のオブジェクトストア上のレイクハウステーブルからバッチデータを処理します。 
 This mode addresses gaps in data or processes historical data from a batch data source, typically a lakehouse table on an S3-compatible object store. 
-
 After completing the backfilling process, the streaming pipeline exits. 
 バックフィリングプロセスが完了すると、ストリーミングパイプラインは終了します。
 
-_Stream reprocessing_ 
+- _Stream reprocessing_ 
+In this mode, updated logic is applied to already processed data by re-executing the stream. 
 このモードでは、ストリームを再実行することによって、すでに処理されたデータに更新されたロジックが適用されます。 
-_Stream reprocessing_ In this mode, updated logic is applied to already processed data by re-executing the stream. 
-
 The data source is often the original event-streaming platform but could also be the event-sourced data in a batch data source. 
 データソースは、元のイベントストリーミングプラットフォームであることが多いですが、バッチデータソース内のイベントソースデータである可能性もあります。 
-
 Stream reprocessing is often done to create new versions of feature groups (with different implementations of features). 
 ストリームの再処理は、しばしば異なる機能の実装を持つフィーチャーグループの新しいバージョンを作成するために行われます。 
-
 The streaming pipeline may either continue running 24/7 or exit if the reprocessing is a onetime task. 
 ストリーミングパイプラインは、24時間365日稼働し続けるか、再処理が一度限りのタスクであれば終了します。 
 
+<!-- ここまで読んだ! -->
+
 Many organizations store a full copy of the event stream in a process called _event_ _sourcing. 
-多くの組織は、_event sourcing_と呼ばれるプロセスでイベントストリームの完全なコピーを保存します。 
-
+多くの組織は、 **event sourcing と呼ばれるプロセスでイベントストリームの完全なコピーを保存**します。
 This involves copying the event stream to cheaper long-term storage in an object store. 
-これは、イベントストリームをオブジェクトストアの安価な長期ストレージにコピーすることを含みます。 
-
+これは、**イベントストリームをオブジェクトストアの安価な長期ストレージにコピーする**ことを含みます。
 Event sourcing is often needed as event-streaming platforms are not long-term data stores. 
-イベントソーシングは、イベントストリーミングプラットフォームが長期データストアではないため、しばしば必要とされます。 
-
+event-streamingプラットフォームは長期データストアではないため、event sourcingが必要なことがよくあります。
 They retain data for a relatively short period of time. 
 これらは、比較的短期間データを保持します。 
-
 For example, Apache Kafka stores data for only seven days by default. 
 例えば、Apache Kafkaはデフォルトでデータをわずか7日間しか保存しません。 
-
 But with event sourcing, a lakehouse table on an S3-compatible object store can be used as a data source for a streaming feature pipeline to replay, backfill, or reprocess a historical event stream. 
-しかし、イベントソーシングを使用することで、S3互換のオブジェクトストア上のレイクハウステーブルを、ストリーミングフィーチャーパイプラインのデータソースとして使用し、過去のイベントストリームを再生、バックフィル、または再処理することができます。 
-
+しかし、**event sourcingを使用すると、S3互換のオブジェクトストア上のレイクハウステーブルをストリーミングフィーチャーパイプラインのデータソースとして使用して、過去のイベントストリームを再生、バックフィル、または再処理できます。**
 Without event sourcing, you will often lose the ability to replay, backfill, or reprocess historical event streams when the data has been purged from the eventstreaming platform. 
-イベントソーシングがないと、データがイベントストリーミングプラットフォームから削除されたときに、過去のイベントストリームを再生、バックフィル、または再処理する能力を失うことがよくあります。 
+event sourcingがないと、イベントストリーミングプラットフォームからデータが削除されたときに、過去のイベントストリームを再生、バックフィル、または再処理する能力を失うことがよくあります。
+(イベントストリーミングプラットフォームが短期間しかデータを保持しない事をサポートするためのアーキテクチャ的な工夫として、event sourcing初めて知った...!:thinking:)
+
+<!-- ここまで読んだ! -->
 
 The main difference between streaming programs and batch programs is that streaming programs can perform both stateless and stateful data transformations. 
-ストリーミングプログラムとバッチプログラムの主な違いは、ストリーミングプログラムが無状態および有状態のデータ変換の両方を実行できることです。 
-
+**ストリーミングプログラムとバッチプログラムの主な違いは、ストリーミングプログラムがステートレスとステートフルの両方のデータ変換を実行できること**です。
 Batch programs perform only stateless data transformations. 
-バッチプログラムは無状態のデータ変換のみを実行します。 
-
-In our credit card fraud system, we use stateful data transformations to create stateful features. 
-私たちのクレジットカード詐欺システムでは、有状態のデータ変換を使用して有状態の特徴を作成します。 
-
+**バッチプログラムはステートレスのデータ変換のみを実行します。** 
+(だから例えば、前のevent_timeの特徴量レコードの値を元に、次のevent_timeの特徴量レコードの値を計算するような、いわゆるステートフルな特徴量生成は、バッチプログラムでは実装すべきじゃないって事だな...!!:thinking:)
+In our credit card fraud system, we use stateful data transformations to create stateful features.
+私たちのクレジットカード詐欺システムでは、ステートフルデータ変換を使用してステートフルフィーチャーを作成します。
 For example, aggregation features such as counts and sums of credit card transactions over different periods of time require historical data to be computed. 
 例えば、異なる期間にわたるクレジットカード取引のカウントや合計などの集約機能は、計算のために過去のデータを必要とします。 
-
 Stateful data transformation is one of the reasons why some developers consider stream processing to be a challenging development environment. 
-有状態のデータ変換は、いくつかの開発者がストリーム処理を挑戦的な開発環境と見なす理由の一つです。 
-
+ステートフルデータ変換は、いくつかの開発者がストリーム処理を挑戦的な開発環境と見なす理由の一つです。 
 Another source of complexity for developers is the set of data processing guarantees provided by event sources and streaming engines: 
-開発者にとってのもう一つの複雑さの源は、イベントソースとストリーミングエンジンによって提供されるデータ処理の保証のセットです：
+開発者にとってのもう一つの複雑さの原因は、イベントソースとストリーミングエンジンが提供するデータ処理保証のセットです：
 
-_Exactly-once_ 
+- _Exactly-once_ 
 各イベントは一度だけ処理され、重複や欠落がないことを保証します。 
 _Exactly-once_ Each event is processed once and only once, ensuring no duplicates or misses. 
 
-_At-least-once_ 
+- _At-least-once_ 
 イベントは1回以上処理され、データ損失はないが、重複イベントを許可します。 
 _At-least-once_ Events are processed one or more times, ensuring no data loss but allowing duplicate events. 
 
-_At-most-once_ 
-イベントは1回だけ処理されるか、まったく処理されないかで、低遅延を優先しますが、データ損失のリスクがあります。 
+- _At-most-once_ 
 _At-most-once_ Events are processed once or not at all, prioritizing low latency but risking data loss. 
+イベントは1回だけ処理されるか、まったく処理されないかで、低遅延を優先しますが、データ損失のリスクがあります。 
 
 Although some stream-processing engines support exactly-once semantics, by default they mostly provide at-least-once semantics. 
-いくつかのストリーム処理エンジンはexactly-onceセマンティクスをサポートしていますが、デフォルトでは主にat-least-onceセマンティクスを提供します。 
-
+**いくつかのストリーム処理エンジンはexactly-onceセマンティクスをサポートしていますが、デフォルトでは主にat-least-onceセマンティクスを提供**します。 
 The challenge with at-least-once semantics is that, through no fault of your own, your feature pipeline could introduce duplicate data. 
-at-least-onceセマンティクスの課題は、あなたの過失ではなく、フィーチャーパイプラインが重複データを導入する可能性があることです。 
-
+**at-least-onceセマンティクスの課題は、あなたの過失ではなく、フィーチャーパイプラインが重複データを導入する可能性があること**です。 
 Luckily, however, we will not have to concern ourselves with duplicate data, as we will use the Hopsworks feature store as a sink. 
 しかし幸運なことに、私たちはHopsworksフィーチャーストアをシンクとして使用するため、重複データについて心配する必要はありません。 
-
 It upgrades at-least-once data processing into exactly-once by: 
-これは、at-least-onceデータ処理をexactly-onceにアップグレードします：
+これは、次の方法でat-least-onceデータ処理をexactly-onceにアップグレードします：
 
 - Turning duplicate events into idempotent updates for the online store (RonDB) 
-- オンラインストア（RonDB）用の冪等更新に重複イベントを変換します。 
+  - オンラインストア（RonDB）用の冪等更新に重複イベントを変換します。 
 
 - Removing duplicate events for the offline store (Apache Hudi) 
-- オフラインストア（Apache Hudi）用の重複イベントを削除します。 
+  - オフラインストア（Apache Hudi）用の重複イベントを削除します。 
 
 This means you do not have to write extra code to deduplicate data in your streaming pipelines with Hopsworks. 
 これは、Hopsworksを使用してストリーミングパイプライン内のデータを重複排除するために追加のコードを書く必要がないことを意味します。 
-
 If you are using a feature store that does not provide exactly-once processing guarantees, you will need to manually deduplicate data or handle duplicate data in your training and inference pipelines. 
-exactly-once処理の保証を提供しないフィーチャーストアを使用している場合は、手動でデータを重複排除するか、トレーニングおよび推論パイプラインで重複データを処理する必要があります。 
+exactly-once処理の保証を提供しないフィーチャーストアを使用している場合は、手動でデータを重複排除するか、トレーニングおよび推論パイプラインで重複データを処理する必要があります。
 
-###### 3.0.0.0.10. Backpressure 
-ストリーミングフィーチャーパイプラインによって生成される負荷は、日中や季節によって異なることがよくあります。 
-###### 3.0.0.0.11. Backpressure 
+<!-- ここまで読んだ! -->
+
+---
+(コラム)
+Backpressure 
 The load created by streaming feature pipelines often varies throughout the day or season. 
-
+**ストリーミングフィーチャーパイプラインによって生成される負荷は、日中や季節によって異なる**ことがよくあります。 
 You should provision your stream-processing system so that it can handle the expected write load. 
 予想される書き込み負荷を処理できるように、ストリーム処理システムをプロビジョニングする必要があります。 
-
 Many stream-processing frameworks can handle unexpected peaks in event traffic through backpressure. 
 多くのストリーム処理フレームワークは、バックプレッシャーを通じてイベントトラフィックの予期しないピークを処理できます。 
-
 Backpressure is a flow control mechanism in stream processing that matches the rate of data production at the source with the rate of data consumption at the sink. 
 バックプレッシャーは、ストリーム処理におけるフロー制御メカニズムで、ソースでのデータ生成率とシンクでのデータ消費率を一致させます。 
-
 For example, when a streaming-feature pipeline in Apache Flink detects that it is processing data slower than it is receiving it, it signals upstream components to slow down or temporarily pause data flow. 
 例えば、Apache Flinkのストリーミングフィーチャーパイプラインが、受信するよりもデータを処理する速度が遅いことを検出した場合、上流のコンポーネントにデータフローを遅くするか、一時的に停止するように信号を送ります。 
-
 Apache Kafka, in turn, can throttle producers, allowing the system to handle load gracefully without dropping data. 
-一方、Apache Kafkaはプロデューサーを制限できるため、システムはデータを失うことなく負荷を優雅に処理できます。 
+4. 一方、Apache Kafkaはプロデューサーを制限できるため、システムはデータを失うことなく負荷を優雅に処理できます。 
+---
 
-###### 3.0.0.0.12. Writing Streaming Feature Pipelines 
-第6章では、バッチフィーチャーパイプラインがデータフロー_グラフとして構成されている方法を紹介しました。 
-###### 3.0.0.0.13. Writing Streaming Feature Pipelines 
+(Streaming feature pipeline設計も運用もコスト高そうで難しそうだなぁ...:thinking:)
+
+<!-- ここまで読んだ! -->
+
+## 4. Writing Streaming Feature Pipelines 
+
 In Chapter 6, we introduced how batch feature pipelines are structured as a dataflow _graph, with data sources as inputs, DataFrames as nodes, feature functions as edges,_ and feature groups as sinks. 
-
+チャプター6では、バッチフィーチャーパイプラインがデータフローグラフとして構成されていることを紹介しました。データソースが入力、DataFramesがノード、フィーチャー関数がエッジ、フィーチャーグループがシンクです。
 What we call the DAG of feature functions is, in fact, a dataflow program. 
 私たちがフィーチャー関数のDAGと呼ぶものは、実際にはデータフロープログラムです。 
-
 A _dataflow program models computation as a directed graph,_ where data flows between operations, enabling parallel and incremental processing. 
-_データフロープログラムは、計算を有向グラフとしてモデル化し、データが操作間で流れることで、並列かつ増分処理を可能にします。 
-
+_**データフロープログラムは、計算を有向グラフとしてモデル化し、データが操作間で流れることで、並列かつ増分処理を可能に**します。 
 Similarly, a streaming-feature pipeline is a dataflow program that starts with one or more event streams as input. 
 同様に、ストリーミングフィーチャーパイプラインは、1つ以上のイベントストリームを入力として開始するデータフロープログラムです。 
-
 The nodes are operators (that perform the data transformations), the edges represent data dependencies, and the feature groups are the sinks. 
 ノードはデータ変換を実行するオペレーターであり、エッジはデータ依存関係を表し、フィーチャーグループはシンクです。 
-
 While batch ETL programs work with DataFrames, stream-processing programs work with datastreams. 
-バッチETLプログラムはDataFramesで動作するのに対し、ストリーム処理プログラムはデータストリームで動作します。 
-
+**バッチETLプログラムはDataFramesで動作するのに対し、ストリーム処理プログラムはデータストリームで動作します。**
 A datastream represents a continuous, unbounded sequence of data records (an event stream) that are generated over time. 
-データストリームは、時間の経過とともに生成される連続的で無限のデータレコードのシーケンス（イベントストリーム）を表します。 
-
+**データストリームは、時間の経過とともに生成される連続的で無限のデータレコードのシーケンス（イベントストリーム）**を表します。 
 A comparison of datastreams and DataFrames is shown in Table 9-2. 
 データストリームとDataFramesの比較は、表9-2に示されています。 
 
+![]()
 _Table 9-2. Comparison of datastreams and DataFrames_ 
 表9-2. データストリームとDataFramesの比較 
 
-**Datastream** **DataFrame** 
-**データストリーム** **データフレーム** 
-
-Nature Continuous, unbounded flow of schematized data 
-性質 スキーマ化されたデータの連続的で無限のフロー 
-
-Static, finite collection of schematized data 
-静的で有限のスキーマ化されたデータのコレクション 
-
-Processing (Near) real-time processing producing fresh feature data 
-処理 （ほぼ）リアルタイム処理による新鮮なフィーチャーデータの生成 
-
-Batch processing with high latency feature data 
-高遅延のフィーチャーデータによるバッチ処理 
-
-Windowing Requires windows to segment data 
-ウィンドウ化 データをセグメント化するためにウィンドウが必要 
-
-Operates on the entire dataset 
-全体のデータセットで操作 
-
-State Stateful or stateless data processing 
-状態 有状態または無状態のデータ処理 
-
-Stateless data processing 
-無状態のデータ処理 
-
-Examples Financial transactions and clickstreams 
-例 金融取引とクリックストリーム 
-
-Database tables 
-データベーステーブル 
+- メモ: テーブル9-2 (データストリームとDataFramesの比較)
+  - 性質: 
+    - データストリーム: スキーマ化されたデータの連続的で無限のフロー
+    - DataFrames: 静的で有限のスキーマ化されたデータのコレクション
+  - 処理:
+    - データストリーム: （ほぼ）リアルタイム処理による新鮮なフィーチャーデータの生成
+    - DataFrames: 高遅延のフィーチャーデータによるバッチ処理
+  - ウィンドウ化:
+    - データストリーム: データをセグメント化するためにウィンドウが必要
+    - DataFrames: 全体のデータセットで操作
+  - 状態:
+    - データストリーム: 有状態または無状態のデータ処理
+    - DataFrames: 無状態のデータ処理
+  - 例:
+    - データストリーム: 金融取引とクリックストリーム
+    - DataFrames: データベーステーブル
 
 Both datastreams and DataFrames have schemas. 
 データストリームとDataFramesの両方にはスキーマがあります。 
-
 Operations on datastreams are typically stateful and time-sensitive (with low latency). 
 データストリームに対する操作は、通常、有状態で時間に敏感（低遅延）です。 
-
 Windows convert the infinite stream into a bounded set of events that are processed together. 
 ウィンドウは無限のストリームを、共に処理される有限のイベントセットに変換します。 
-
 Datastreams also enable easy incremental computation. 
 データストリームは、簡単な増分計算も可能にします。 
-
 In contrast, DataFrames represent a static, bounded collection of data (a table) and are processed in batches. 
 対照的に、DataFramesは静的で有限のデータコレクション（テーブル）を表し、バッチで処理されます。 
 
-###### 3.0.0.0.14. Dataflow Programming 
-データストリームを使用したデータフロープログラミングでは、オペレーターがその入力（データソースまたは他のオペレーター）からデータを消費し、データに対して計算を行い、出力（他のオペレーターまたは1つ以上のデータシンク）にデータを生成します。 
-###### 3.0.0.0.15. Dataflow Programming 
-In dataflow programming with datastreams, operators consume data from their inputs (either data sources or other operators), perform computations on the data, and produce data to their output (either other operators or one or more data sinks). 
+<!-- ここまで読んだ! -->
 
+### 4.1. Dataflow Programming 
+
+In dataflow programming with datastreams, operators consume data from their inputs (either data sources or other operators), perform computations on the data, and produce data to their output (either other operators or one or more data sinks). 
+データストリームを使用したデータフロープログラミングでは、オペレーターがその入力（データソースまたは他のオペレーター）からデータを消費し、データに対して計算を行い、出力（他のオペレーターまたは1つ以上のデータシンク）にデータを生成します。 
 Operators without input edges are called data sources and operators without output edges are called _data sinks. 
 入力エッジのないオペレーターはデータソースと呼ばれ、出力エッジのないオペレーターは_data sinks_と呼ばれます。 
 
@@ -671,7 +627,7 @@ _Random data exchange_ Data is randomly distributed across operators, balancing 
 Now that we have introduced the main abstractions in dataflow programming for stream processing, we will look at data transformations in operators. 
 ストリーム処理のためのデータフロープログラミングにおける主要な抽象概念を紹介したので、オペレーターにおけるデータ変換を見ていきます。 
 
-###### 3.0.0.0.16. Stateless and Stateful Data Transformations 
+###### 4.1.0.0.2. Stateless and Stateful Data Transformations 
 _Stateless data processing does not maintain any internal state, and stateless data transformations do not depend on any event in the past. 
 _無状態のデータ処理は内部状態を保持せず、無状態のデータ変換は過去のイベントに依存しません。 
 
@@ -760,9 +716,9 @@ Per-event processing enables subsecond feature freshness in real-time ML systems
 Apache Flink is distributed and can be scaled out on a cluster (up to thousands of nodes), while Feldera is currently a single-host engine (although it can still scale on modern hardware to process >1M events per second for many streaming workloads).
 Apache Flinkは分散型であり、クラスター上でスケールアウト可能（最大数千ノードまで）ですが、Felderaは現在シングルホストエンジンです（ただし、現代のハードウェア上で1秒あたり100万件以上のイベントを処理するためにスケールすることは可能です）。
 
-###### 3.0.0.0.17. Apache Flink
+###### 4.1.0.0.3. Apache Flink
 Flink’s DataStream API supports data transformation operators on an event stream, including:
-###### 3.0.0.0.18. Apache Flink（アパッチ・フリンク）
+###### 4.1.0.0.4. Apache Flink（アパッチ・フリンク）
 FlinkのDataStream APIは、イベントストリーム上のデータ変換オペレーターをサポートしており、以下を含みます：
 
 _map_ This applies a function to each event in the stream: 
@@ -825,8 +781,8 @@ return "Fraud detected on card: " + first.cardId;
 });
 ```
 
-###### 3.0.0.0.19. Feldera
-###### 3.0.0.0.20. Feldera（フェルデラ）
+###### 4.1.0.0.5. Feldera
+###### 4.1.0.0.6. Feldera（フェルデラ）
 Feldera provides a SQL API that supports a variety of data transformation operators on an event stream (represented internally as a table of records):
 Felderaは、イベントストリーム上のさまざまなデータ変換オペレーターをサポートするSQL APIを提供します（内部的にはレコードのテーブルとして表現されます）：
 
@@ -883,8 +839,8 @@ SELECT key, COUNT(*) AS count FROM stream WINDOW TUMBLING (10 SECONDS)
 RETAIN 1 HOUR GROUP BY key;
 ```
 
-###### 3.0.0.0.21. Benchmarking
-###### 3.0.0.0.22. ベンチマーキング
+###### 4.1.0.0.7. Benchmarking
+###### 4.1.0.0.8. ベンチマーキング
 There is a trade-off between latency and throughput in streaming systems.
 ストリーミングシステムには、レイテンシとスループットの間にトレードオフがあります。
 
@@ -903,8 +859,8 @@ When the system is overloaded and throughput keeps increasing, latency will even
 You should benchmark to find out the latency and throughput scalability limits of your streaming feature pipelines.
 ストリーミングフィーチャーパイプラインのレイテンシとスループットのスケーラビリティの限界を見つけるためにベンチマークを行うべきです。
 
-###### 3.0.0.0.23. Windowed Aggregations
-###### 3.0.0.0.24. ウィンドウ集約
+###### 4.1.0.0.9. Windowed Aggregations
+###### 4.1.0.0.10. ウィンドウ集約
 Windows define start and end boundaries over an event stream, enabling you to compute functions, such as aggregations, over the data within the window.
 ウィンドウはイベントストリームの開始と終了の境界を定義し、ウィンドウ内のデータに対して集約などの関数を計算できるようにします。
 
@@ -997,8 +953,8 @@ Aggregations are typically emitted at regular intervals (e.g., hourly, daily).
 Although global and session windows are useful, there are other far more popular types of windows for computing aggregated features for ML—the rolling aggregation and the time window.
 グローバルウィンドウとセッションウィンドウは便利ですが、MLのための集約された特徴を計算するための他のはるかに人気のあるウィンドウタイプがあります—ローリング集約と時間ウィンドウです。
 
-###### 3.0.0.0.25. Rolling Aggregations
-###### 3.0.0.0.26. ローリング集約
+###### 4.1.0.0.11. Rolling Aggregations
+###### 4.1.0.0.12. ローリング集約
 
 Rolling aggregations create the freshest aggregated features in streaming feature pipelines.
 ローリング集約は、ストリーミングフィーチャーパイプラインで最新の集約特徴を作成します。
@@ -1054,8 +1010,8 @@ The introduction of incremental views (covered later in this chapter) reduces th
 If your stream-processing engine does not support incremental views, you should probably use time window aggregations, as they are far less computationally intensive.
 ストリーム処理エンジンが増分ビューをサポートしていない場合は、時間ウィンドウ集約を使用することをお勧めします。なぜなら、それらははるかに計算負荷が少ないからです。
 
-###### 3.0.0.0.27. Time Window Aggregations
-###### 3.0.0.0.28. 時間ウィンドウ集約
+###### 4.1.0.0.13. Time Window Aggregations
+###### 4.1.0.0.14. 時間ウィンドウ集約
 
 A _time window is a set of temporally related, often contiguous, events. 
 _時間ウィンドウ_ は、時間的に関連する、しばしば連続したイベントの集合です。
@@ -1174,8 +1130,8 @@ The other solution is to have your streaming feature pipeline compute the featur
 If you do not want to miss any data, no matter how late it is, you should go with event sourcing.
 データを見逃したくない場合は、遅延の有無にかかわらず、イベントソーシングを選択すべきです。
 
-###### 3.0.0.0.29. Choosing the Best Window Type for Aggregations
-###### 3.0.0.0.30. 集約のための最適なウィンドウタイプの選択
+###### 4.1.0.0.15. Choosing the Best Window Type for Aggregations
+###### 4.1.0.0.16. 集約のための最適なウィンドウタイプの選択
 
 Table 9-3 provides a comparison of tumbling windows, hopping windows, and roll‐ ing aggregations.
 表9-3は、タンブリングウィンドウ、ホッピングウィンドウ、およびロール集約の比較を提供します。
@@ -1238,8 +1194,8 @@ They can scale if:
 - Your streaming engine supports incremental views.
 - あなたのストリーミングエンジンがインクリメンタルビューをサポートしている場合。
 
-###### 3.0.0.0.31. Rolling Aggregations with Incremental Views
-###### 3.0.0.0.32. インクリメンタルビューを持つロール集約
+###### 4.1.0.0.17. Rolling Aggregations with Incremental Views
+###### 4.1.0.0.18. インクリメンタルビューを持つロール集約
 
 Rolling aggregations can be implemented in Apache Flink with OVER aggregates that compute an aggregated value for every input row over a range of ordered rows.
 ロール集約は、Apache FlinkでOVER集約を使用して、順序付けられた行の範囲にわたって各入力行の集約値を計算することで実装できます。
@@ -1306,8 +1262,8 @@ If you chose a time window, pick the type from tumbling, hopping, or other.
 3. Handle missing data: decide how to treat windows with no data (for example, fill with zeros or NaNs). 
 3. 欠損データを処理します：データがないウィンドウをどのように扱うかを決定します（例えば、ゼロまたはNaNで埋めるなど）。
 
-###### 3.0.0.0.33. Credit Card Fraud Streaming Features
-###### 3.0.0.0.34. クレジットカード詐欺ストリーミング機能
+###### 4.1.0.0.19. Credit Card Fraud Streaming Features
+###### 4.1.0.0.20. クレジットカード詐欺ストリーミング機能
 
 In our credit card fraud system, we are interested in aggregations over credit card transactions, so we group the transactions by cc_num before we compute the aggregations. 
 私たちのクレジットカード詐欺システムでは、クレジットカード取引の集約に関心があるため、集約を計算する前に取引をcc_numでグループ化します。
@@ -1730,8 +1686,8 @@ fg = fs.create_feature_group(name="cc_trans_aggs_fg",
 fg.save(features) 
 ``` 
 
-###### 3.0.0.0.35. Summary and Exercises
-###### 3.0.0.0.36. まとめと演習
+###### 4.1.0.0.21. Summary and Exercises
+###### 4.1.0.0.22. まとめと演習
 
 Streaming feature pipelines and ODTs enable real-time ML systems to react at human interactive timescales to nonverbal actions in applications or services. 
 ストリーミングフィーチャーパイプラインとODTは、リアルタイムのMLシステムがアプリケーションやサービスにおける非言語的なアクションに対して人間のインタラクティブな時間スケールで反応できるようにします。
