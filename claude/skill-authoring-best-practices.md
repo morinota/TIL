@@ -290,7 +290,9 @@ Consistent naming makes it easier to:一貫した命名は、以下を容易に�
 ### 1.2.2. Writing effective descriptions 効果的な説明の作成
 
 The description field enables Skill discovery and should include both what the Skill does and when to use it.
-descriptionフィールドはスキルの発見を可能にし、スキルが何をするのか、いつ使用するのかの両方を含む必要があります。
+**descriptionフィールドはスキルの発見を可能にし、スキルが何をするのか、いつ使用するのかの両方を含む必要があります。**
+
+---
 Always write in third person. The description is injected into the system prompt, and inconsistent point-of-view can cause discovery problems.
 常に三人称で書いてください。説明はシステムプロンプトに挿入され、不一致な視点は発見の問題を引き起こす可能性があります。
 
@@ -300,10 +302,11 @@ Always write in third person. The description is injected into the system prompt
   - 避けるべき例: "私はあなたがExcelファイルを処理するのを手伝うことができます"
 - Avoid: "You can use this to process Excel files"
   - 避けるべき例: "これを使ってExcelファイルを処理できます"
+  
+---
 
 Be specific and include key terms. Include both what the Skill does and specific triggers/contexts for when to use it.
 具体的であり、重要な用語を含めてください。スキルが何をするのか、いつ使用するのかの特定のトリガーや文脈を含めてください。
-
 Each Skill has exactly one description field. The description is critical for skill selection: Claude uses it to choose the right Skill from potentially 100+ available Skills.
 各スキルには正確に1つの説明フィールドがあります。説明はスキル選択にとって重要です。Claudeはこれを使用して、利用可能な100以上のスキルから適切なスキルを選択します。
 
