@@ -1,6 +1,6 @@
 refs: https://olake.io/iceberg/hive-partitioning-vs-iceberg-partitioning/
 
-# Iceberg Partitioning vs. Hive Partitioning IcebergのパーティショニングとHiveのパーティショニング
+タイトル: Iceberg Partitioning vs. Hive Partitioning IcebergのパーティショニングとHiveのパーティショニング
 
 Sandeep Devarapalli
 
@@ -12,7 +12,7 @@ The blog explores the core concepts of partitioning, outlines the limitations of
 
 <!-- ここまで読んだ! -->
 
-## Introduction to Data Partitioning データパーティショニングの紹介
+## 1. Introduction to Data Partitioning データパーティショニングの紹介
 
 Partitioning a database is the process of breaking down a massive dataset into smaller datasets and distributing these smaller datasets across multiple host machines(partitions), based on key attributes. 
 データベースのパーティショニングは、**大規模なデータセットを小さなデータセットに分割**し、これらの小さなデータセットを主要な属性に基づいて複数のホストマシン（パーティション）に分配するプロセスです。 
@@ -87,7 +87,7 @@ Common Partitioning Strategies:The most widely used horizontal partitioning stra
 
 <!-- ここまで読んだ! -->
 
-### Why Partitioning Matters パーティショニングが重要な理由
+### 1.1. Why Partitioning Matters パーティショニングが重要な理由
 
 Why Partition? – The biggest benefit is **query performance**. 
 なぜパーティションを使用するのか？ - **最大の利点はクエリパフォーマンス**です。 
@@ -141,72 +141,80 @@ Motivation for Evolving Partitioning StrategiesTraditional partitioning techniqu
 The need for automated schema evolution, dynamic partition discovery, and reduced administrative overhead has spurred the development of advanced systems such as Apache Iceberg that decouple logical partitioning from physical storage structures. 
 自動化されたスキーマ進化、動的パーティション発見、および管理オーバーヘッドの削減の必要性は、論理パーティショニングを物理ストレージ構造から切り離すApache Icebergのような高度なシステムの開発を促進しました。 
 
+<!-- ここまで読んだ! -->
+
 Before delving into modern advancements, it is essential to appreciate how traditional systems, particularly Apache Hive, managed data partitioning. 
-現代の進展に入る前に、特にApache Hiveがデータパーティショニングをどのように管理していたかを理解することが重要です。 
+現代の進展に入る前に、特にApache Hiveがデータパーティショニングをどのように管理していたかを理解することが重要です。
 
 Explicit (Folder-Based) PartitioningIn traditional databases, partitioning was most often implemented using an explicit, folder-based approach. 
-明示的（フォルダベース）パーティショニング：従来のデータベースでは、パーティショニングは最も一般的に明示的なフォルダベースのアプローチを使用して実装されていました。 
-
+**明示的（フォルダベース）パーティショニング**：従来のデータベースでは、パーティショニングは最も一般的に明示的なフォルダベースのアプローチを使用して実装されていました。 
 Partition columns were mapped directly to physical directory structures on distributed file systems. 
-パーティション列は、分散ファイルシステム上の物理ディレクトリ構造に直接マッピングされていました。 
-
+パーティション列は、分散ファイルシステム上の物理ディレクトリ構造に直接マッピングされていました。
 This manual alignment meant that partitions had to be explicitly created, managed, and maintained through metadata updates and directory manipulation. 
 この手動の整合性により、パーティションは明示的に作成、管理、維持される必要があり、メタデータの更新やディレクトリの操作を通じて行われました。 
-
 While effective for smaller datasets, this approach incurs several limitations as datasets grow in size and complexity. 
 小規模なデータセットには効果的でしたが、このアプローチはデータセットがサイズと複雑さで成長するにつれていくつかの制限を伴います。 
 
-### Challenges with Hive's Traditional Partition Management Hiveの従来のパーティション管理の課題
+<!-- ここまで読んだ! -->
+
+### 1.2. Challenges with Hive's Traditional Partition Management Hiveの従来のパーティション管理の課題
 
 Apache Hive pioneered the use of explicit partitioning in data lakes. 
 Apache Hiveは、データレイクにおける明示的なパーティショニングの使用を先駆けました。 
-
 By relying on manually defined partition columns and physical directory hierarchies, Hive allowed users to define clear segmentation of data. 
 手動で定義されたパーティション列と物理ディレクトリ階層に依存することで、Hiveはユーザーがデータの明確なセグメンテーションを定義できるようにしました。 
-
 However, this strategy presented several inherent challenges: 
 しかし、この戦略はいくつかの固有の課題を提示しました：
 
 - Manual Management:Partitions had to be manually created and maintained. 
 - 手動管理：パーティションは手動で作成および維持する必要がありました。 
-
 As data evolved, the overhead of managing new partitions increased substantially. 
 データが進化するにつれて、新しいパーティションを管理するためのオーバーヘッドが大幅に増加しました。 
 
 - Inflexibility:Static partitioning schemes did not handle schema evolution systematically. 
-- 柔軟性の欠如：静的パーティショニングスキームは、スキーマの進化を体系的に処理しませんでした。 
-
+- **柔軟性の欠如**：静的パーティショニングスキームは、スキーマの進化を体系的に処理しませんでした。 
 Changing business requirements often demanded refactoring of the underlying storage layout. 
 ビジネス要件の変更は、しばしば基盤となるストレージレイアウトのリファクタリングを要求しました。 
 
 - Query Performance Bottlenecks:Especially in cloud environments, overhead from file listing operations and partition pruning can degrade performance, particularly when the number of partitions becomes extremely high. 
-- クエリパフォーマンスのボトルネック：特にクラウド環境では、ファイルリスト操作やパーティションプルーニングからのオーバーヘッドがパフォーマンスを低下させる可能性があり、特にパーティションの数が非常に多くなると顕著です。 
+- **クエリパフォーマンスのボトルネック**：特にクラウド環境では、ファイルリスト操作やパーティションプルーニングからのオーバーヘッドがパフォーマンスを低下させる可能性があり、特にパーティションの数が非常に多くなると顕著です。 
 
 These issues catalyzed the movement toward more dynamic, metadata-driven solutions. 
 これらの問題は、より動的でメタデータ駆動型のソリューションへの移行を促進しました。 
-
 Before we discuss these solutions, let us dig deeper into how partitioning works with Apache Hive. 
 これらのソリューションについて議論する前に、Apache Hiveでのパーティショニングの仕組みをさらに掘り下げてみましょう。 
+(あ、まだHiveのパーティショニングの深堀りが残ってるんだ...!:thinking:)
 
+<!-- ここまで読んだ! -->
 
+## 2. Deep Dive into Apache Hive Partitioning Apache Hiveのパーティショニングの深堀り
 
-## Deep Dive into Apache Hive Partitioning Apache Hiveのパーティショニングの深堀り
+### 2.1. Mechanics of Hive Partitioning Hiveパーティショニングのメカニズム
 
-### Mechanics of Hive Partitioning Hiveパーティショニングのメカニズム
 In Apache Hive, partitioning is achieved through the definition of explicit partition columns that correlate with physical directory paths in storage. 
 Apache Hiveでは、パーティショニングは、ストレージ内の物理ディレクトリパスと相関する明示的なパーティション列の定義を通じて実現されます。
 The metadata stored in Hive’s metastore directly reflects this structure, meaning that query performance depends heavily on how well these partitions are maintained and pruned at query time.
 Hiveのメタストアに保存されているメタデータは、この構造を直接反映しており、クエリパフォーマンスは、これらのパーティションがどれだけ適切に維持され、クエリ時にプルーニングされるかに大きく依存します。
 
-### Common Challenges and Bottlenecks 一般的な課題とボトルネック
+![]()
+
+<!-- ここまで読んだ! -->
+
+### 2.2. Common Challenges and Bottlenecks 一般的な課題とボトルネック
+
 The traditional Hive approach often encounters several pain points:
-従来のHiveアプローチは、しばしばいくつかの問題点に直面します：
+従来のHiveアプローチは、しばしばいくつかの問題点に直面します:
+
 - High File Listing Overhead: Especially in cloud storage environments (e.g., AWS S3), traversing large directory structures can become a performance bottleneck.
-- 高いファイルリストオーバーヘッド：特にクラウドストレージ環境（例：AWS S3）では、大きなディレクトリ構造を横断することがパフォーマンスのボトルネックになる可能性があります。
+高いファイルリストオーバーヘッド：特にクラウドストレージ環境（例：AWS S3）では、大きなディレクトリ構造を横断することがパフォーマンスのボトルネックになる可能性があります。
+
 - Manual Schema Modifications: Schema changes and partition evolutions require manual updates across both the physical layout and the metadata, increasing the risk of error.
-- 手動スキーマ変更：スキーマの変更やパーティションの進化には、物理レイアウトとメタデータの両方で手動の更新が必要であり、エラーのリスクが高まります。
+手動スキーマ変更：スキーマの変更やパーティションの進化には、物理レイアウトとメタデータの両方で手動の更新が必要であり、エラーのリスクが高まります。
+
 - Static Partitioning Strategies: Changing data patterns—such as variations in ingestion volume or dynamic schema evolution—are not easily accommodated without significant re-engineering.
-- 静的パーティショニング戦略：データパターンの変化（例：取り込み量の変動や動的スキーマの進化）には、重要な再設計なしには容易に対応できません。
+静的パーティショニング戦略：データパターンの変化（例：取り込み量の変動や動的スキーマの進化）には、重要な再設計なしには容易に対応できません。
+
+<!-- ここまで読んだ! -->
 
 For example, organizations often begin with a simple partitioning strategy, organizing their sales data by year and month, such as /sales/year=2024/month=04/. 
 例えば、組織はしばしばシンプルなパーティショニング戦略から始め、売上データを年と月で整理します（例：/sales/year=2024/month=04/）。
@@ -221,40 +229,44 @@ Addressing this requires repartitioning existing data, refactoring ingestion pip
 
 These challenges set the stage for the introduction of more sophisticated partitioning techniques that emphasize automation and metadata abstraction, as seen in Apache Iceberg.
 これらの課題は、Apache Icebergに見られるように、自動化とメタデータの抽象化を強調するより洗練されたパーティショニング技術の導入の舞台を整えます。
+(やっとIcebergの hidden partitioningの話に入るのか...!:thinking:)
 
+<!-- ここまで読んだ! -->
 
-
-## Apache Icebergの革新的なパーティショニングアプローチ
+## 3. Apache Icebergの革新的なパーティショニングアプローチ
 
 Apache Iceberg represents a radical departure from traditional partitioning. 
-Apache Icebergは、従来のパーティショニングからの根本的な逸脱を示しています。
+Apache Icebergは、**従来のパーティショニングからの根本的な逸脱**を示しています。
 Its focus on decoupling logical partitioning from physical layout has enabled several advances in how data lakes manage, evolve, and query datasets.
 論理的パーティショニングを物理的レイアウトから切り離すことに焦点を当てることで、データレイクがデータセットを管理、進化、クエリする方法においていくつかの進展を可能にしました。
 
-### Hidden or Metadata-Driven Partitioning
-### 隠れたまたはメタデータ駆動のパーティショニング
+### 3.1. Hidden or Metadata-Driven Partitioning 隠れたまたはメタデータ駆動のパーティショニング
+
+![]()
 
 Iceberg introduces the concept of "hidden" partitions, where the partitioning information is maintained in the metadata layer rather than relying on folder structure. 
-Icebergは、「隠れた」パーティションの概念を導入しており、パーティショニング情報はフォルダ構造に依存するのではなく、メタデータ層に保持されます。
+Icebergは、**「隠れた」パーティションの概念を導入**しており、**パーティショニング情報はフォルダ構造に依存するのではなく、メタデータ層に保持されます。**
 This metadata-driven approach provides several key benefits:
-このメタデータ駆動のアプローチは、いくつかの重要な利点を提供します：
+この**メタデータ駆動のアプローチ**は、いくつかの重要な利点を提供します：
+(メタデータ駆動アプローチに対して、Hiveテーブルフォーマットはフォルダ駆動?アプローチを採用してるのか...!)
 
 - Transparent Partition Management: Since partition information is embedded within the table metadata, end-users and query engines do not have to manage physical directories manually.
-- 透明なパーティション管理：パーティション情報がテーブルメタデータに埋め込まれているため、エンドユーザーやクエリエンジンは物理ディレクトリを手動で管理する必要がありません。
+透明なパーティション管理：パーティション情報がテーブルメタデータに埋め込まれているため、エンドユーザーやクエリエンジンは物理ディレクトリを手動で管理する必要がありません。
 
 - Partition Evolutions: Iceberg supports automatic partition evolution, allowing the system to adapt partitioning schemes based on observed query patterns and evolving data distributions. 
-- パーティションの進化：Icebergは自動パーティション進化をサポートしており、システムが観察されたクエリパターンや進化するデータ分布に基づいてパーティショニングスキームを適応させることを可能にします。
+**パーティション進化**：Icebergは自動パーティション進化をサポートしており、システムが観察されたクエリパターンや進化するデータ分布に基づいてパーティショニングスキームを適応させることを可能にします。
 Features like partition transforms enable on-the-fly modification of partition keys without the need for data reorganization.
-パーティション変換のような機能により、データの再編成を必要とせずにパーティションキーの即時変更が可能になります。
+パーティション変換のような機能により、**データの再編成を必要とせずにパーティションキーの即時変更が可能に**なります。
 
 - Decoupling from File Structure: By eliminating the strict dependency on folder hierarchies, Iceberg significantly reduces the performance overhead associated with file system operations and enables smooth schema evolution.
-- ファイル構造からの切り離し：フォルダ階層への厳密な依存を排除することで、Icebergはファイルシステム操作に関連するパフォーマンスオーバーヘッドを大幅に削減し、スムーズなスキーマ進化を可能にします。
+ファイル構造からの切り離し：**フォルダ階層への厳密な依存を排除することで、Icebergはファイルシステム操作に関連するパフォーマンスオーバーヘッドを大幅に削減**し、スムーズなスキーマ進化を可能にします。
 
-### Support for Schema Evolution and Time Travel
-### スキーマ進化とタイムトラベルのサポート
+<!-- ここまで読んだ! -->
+
+### 3.2. Support for Schema Evolution and Time Travel スキーマ進化とタイムトラベルのサポート
 
 Beyond partitioning, Iceberg also offers robust schema evolution capabilities. 
-パーティショニングを超えて、Icebergは堅牢なスキーマ進化機能も提供します。
+パーティショニングを超えて、Icebergは堅牢なスキーマ進化機能も提供します。(これもhidden partitioningも関係してるの?? っていうかメタデータ駆動だからスキーマ進化も柔軟にできるよねって話かな??:thinking:)
 Alterations—adding or renaming columns, or even safe type promotions—are managed in a way that retains backward compatibility.
 列の追加や名前変更、さらには安全な型昇格などの変更は、後方互換性を保持する方法で管理されます。
 Each change generates a new metadata snapshot (metadata.json), allowing for features such as time travel and versioned queries.
@@ -262,29 +274,23 @@ Each change generates a new metadata snapshot (metadata.json), allowing for feat
 This capability directly addresses the challenge of maintaining compatibility during a significant data transformation, ensuring that legacy queries continue to function with updated data models.
 この機能は、大規模なデータ変換中に互換性を維持するという課題に直接対処し、レガシークエリが更新されたデータモデルで引き続き機能することを保証します。
 
+<!-- ここまで読んだ! -->
 
-
-## Partitioning in Apache Hive vs. Apache Iceberg
-## Apache HiveとApache Icebergにおけるパーティショニング
+## 4. Partitioning in Apache Hive vs. Apache Iceberg Apache HiveとApache Icebergにおけるパーティショニング
 
 Partitioning behaves differently across database systems. 
 パーティショニングは、データベースシステムによって異なる動作をします。
-
 Let’s compare how Apache Hive (a SQL-on-Hadoop engine), and Apache Iceberg (a modern table format for data lakes) approach partitioning.
 Apache Hive（SQL-on-Hadoopエンジン）とApache Iceberg（データレイク用のモダンなテーブルフォーマット）がパーティショニングにどのようにアプローチしているかを比較しましょう。
 
-### Apache Hive’s Folder-Based Partitioning
-### Apache Hiveのフォルダベースのパーティショニング
+### 4.1. Apache Hive’s Folder-Based Partitioning Apache Hiveのフォルダベースのパーティショニング
 
 Apache Hive, a SQL engine for Hadoop, uses a very explicit partitioning approach tied to the file system. 
 Apache Hiveは、Hadoop用のSQLエンジンであり、ファイルシステムに結びついた非常に明示的なパーティショニングアプローチを使用します。
-
 When you partition a Hive table, each partition corresponds to a directory in HDFS containing the data files for that partition. 
 Hiveテーブルをパーティショニングすると、各パーティションはそのパーティションのデータファイルを含むHDFS内のディレクトリに対応します。
-
 The partition columns become part of the table’s metadata and also part of the file path. 
 パーティション列は、テーブルのメタデータの一部となり、ファイルパスの一部にもなります。
-
 For example, if we partition a Hive table by a country field and a year field, Hive will organize files like:
 例えば、国フィールドと年フィールドでHiveテーブルをパーティショニングすると、Hiveはファイルを次のように整理します。
 
@@ -294,43 +300,17 @@ For example, if we partition a Hive table by a country field and a year field, H
 /warehouse/my_table/country=IN/year=2023/part-00003.parquet
 ... etc.
 ```
-```
-/warehouse/my_table/country=US/year=2023/part-00001.parquet
-/warehouse/my_table/country=US/year=2024/part-00002.parquet
-/warehouse/my_table/country=IN/year=2023/part-00003.parquet
-... など。
-```
 
 Each country=.../year=... subfolder holds the rows matching that partition combination. 
 各country=.../year=...サブフォルダには、そのパーティションの組み合わせに一致する行が格納されています。
-
 This is often called Hive-style partitioning. 
 これはしばしばHiveスタイルのパーティショニングと呼ばれます。
-
 Querying the table with a filter on the partition columns (e.g. WHERE country='US' AND year=2023) will cause Hive (or other engines like Spark, Presto, Athena) to read only the files in that folder, skipping others – this is partition pruning by directory path.
-パーティション列にフィルタをかけてテーブルをクエリすると（例：WHERE country='US' AND year=2023）、Hive（またはSpark、Presto、Athenaなどの他のエンジン）はそのフォルダ内のファイルのみを読み取り、他のファイルはスキップします。これはディレクトリパスによるパーティションプルーニングです。
-
+パーティション列にフィルタをかけてテーブルをクエリすると（例：WHERE country='US' AND year=2023）、Hive（またはSpark、Presto、Athenaなどの他のエンジン）はそのフォルダ内のファイルのみを読み取り、他のファイルはスキップします。これは**ディレクトリパスによるパーティションプルーニング**です。
 To illustrate, let’s create a simple partitioned table in Hive and load some data:
 例を示すために、Hiveでシンプルなパーティショニングテーブルを作成し、いくつかのデータをロードしましょう。
 
-```
--- 1. Create a partitioned Hive table
-CREATE TABLE logs (
-    level STRING,
-    message STRING,
-    event_time TIMESTAMP
-) PARTITIONED BY (event_date STRING) -- partition key (typically a date or category)
-STORED AS PARQUET;
-
--- 2. Insert data into specific partitions (static partitioning)
-INSERT INTO logs PARTITION (event_date='2023-10-01') VALUES 
-('INFO', 'Job started', '2023-10-01 09:00:00'),
-('ERROR', 'Job failed', '2023-10-01 09:05:00');
-
-INSERT INTO logs PARTITION (event_date='2023-10-02') VALUES 
-('INFO', 'Job started', '2023-10-02 09:00:00');
-```
-```
+```sql
 -- 1. パーティショニングされたHiveテーブルを作成
 CREATE TABLE logs (
     level STRING,
@@ -358,69 +338,55 @@ If we run a query SELECT * FROM logs WHERE event_date='2023-10-01', Hive will re
 クエリ SELECT * FROM logs WHERE event_date='2023-10-01' を実行すると、Hiveはevent_date=2023-10-01フォルダ内のファイルのみを読み取り、他の日付には触れません。
 
 Hive supports static partitioning (as above, where you specify the partition value on insert) and dynamic partitioning, where the partition value is determined at runtime from data.
-Hiveは、静的パーティショニング（上記のように、挿入時にパーティション値を指定する）と、データから実行時にパーティション値が決定される動的パーティショニングをサポートしています。
+**Hiveは、静的パーティショニング（上記のように、挿入時にパーティション値を指定する）と、データから実行時にパーティション値が決定される動的パーティショニングをサポート**しています。
 
 For dynamic partitioning, you might insert from another table and let Hive split the output into partitions based on a column’s value.
 動的パーティショニングでは、別のテーブルから挿入し、Hiveに列の値に基づいて出力をパーティションに分割させることができます。
-
 This requires enabling some settings (like hive.exec.dynamic.partition=true) and often a INSERT ... SELECT query that selects the partition key as a column.
 これには、いくつかの設定（例えば、hive.exec.dynamic.partition=true）を有効にする必要があり、通常はパーティションキーを列として選択するINSERT ... SELECTクエリが必要です。
 
 One big characteristic of Hive partitioning is that it’s explicit – the partition columns are part of the table definition and need to be handled in queries.
 Hiveのパーティショニングの大きな特徴は、それが明示的であることです。パーティション列はテーブル定義の一部であり、クエリで処理する必要があります。
-
 You usually include the partition column in your WHERE clause to benefit from partition pruning; otherwise, Hive will scan all partitions.
-通常、パーティションプルーニングの恩恵を受けるためにWHERE句にパーティション列を含めます。そうしないと、Hiveはすべてのパーティションをスキャンします。
+**通常、パーティションプルーニングの恩恵を受けるためにWHERE句にパーティション列を含めます。そうしないと、Hiveはすべてのパーティションをスキャンします。**
 
 Another challenge is that Hive doesn’t inherently validate partition values against data – it’s possible to have data files in the wrong partition folder (say, a file in event_date=2023-10-01 folder actually containing some rows from 2023-10-02) if you’re not careful.
 もう一つの課題は、Hiveがデータに対してパーティション値を本質的に検証しないことです。注意しないと、間違ったパーティションフォルダにデータファイルが存在する可能性があります（例えば、event_date=2023-10-01フォルダ内のファイルが実際には2023-10-02の行を含んでいる場合など）。
-
 The burden is on the user/ETL process to correctly assign partitions.
-パーティションを正しく割り当てるのはユーザー/ETLプロセスの責任です。
+**パーティションを正しく割り当てるのはユーザー/ETLプロセスの責任です。**
 
 Changing a partitioning scheme in Hive later can be painful – it may involve creating a new table with a new partitioning and reloading or moving data.
-後でHiveのパーティショニングスキームを変更することは面倒な場合があります。新しいパーティショニングを持つ新しいテーブルを作成し、データを再ロードまたは移動する必要があるかもしれません。
+**後でHiveのパーティショニングスキームを変更することは面倒**な場合があります。新しいパーティショニングを持つ新しいテーブルを作成し、データを再ロードまたは移動する必要があるかもしれません。
 
 Despite these drawbacks, Hive’s approach was straightforward and widely adopted for big data. 
-これらの欠点にもかかわらず、Hiveのアプローチは簡潔であり、大規模データに広く採用されました。
-
+**これらの欠点にもかかわらず、Hiveのアプローチは簡潔であり、大規模データに広く採用されました。** (そうなんだ...!:thinking:)
 It integrates with tools like Apache Spark, Presto, and AWS Athena which all understand Hive-style partitioned folders.
 Apache Spark、Presto、AWS Athenaなどのツールと統合されており、これらはすべてHiveスタイルのパーティショニングフォルダを理解しています。
 
 The explicit partition directories make it easy to add or drop partitions by adding folders, and Hive’s metastore keeps track of available partitions.
 明示的なパーティションディレクトリにより、フォルダを追加することでパーティションを簡単に追加または削除でき、Hiveのメタストアは利用可能なパーティションを追跡します。
-
 However, as data scale grew (and the number of partitions grew), the Hive metastore could become a bottleneck, and the rigidness of explicit partition columns led to the evolution of new approaches like Iceberg.
-しかし、データのスケールが増加するにつれて（パーティションの数が増えるにつれて）、Hiveメタストアがボトルネックになる可能性があり、明示的なパーティション列の硬直性がIcebergのような新しいアプローチの進化を促しました。
+しかし、**データのスケールが増加するにつれて（パーティションの数が増えるにつれて）、Hiveメタストアがボトルネックになる**可能性があり、明示的なパーティション列の硬直性がIcebergのような新しいアプローチの進化を促しました。
+(なるほどなぁ〜HiveテーブルからIcebergテーブルに変えた際にクエリ性能が大きく改善した一因はここにあるのか...!:thinking:)
 
-### Apache Iceberg’s Metadata-Driven Partitioning
-### Apache Icebergのメタデータ駆動型パーティショニング
+<!-- ここまで読んだ! -->
+
+### 4.2. Apache Iceberg’s Metadata-Driven Partitioning Apache Icebergのメタデータ駆動型パーティショニング
 
 Apache Iceberg is a next-generation table format that handles partitioning quite differently. 
 Apache Icebergは、パーティショニングを非常に異なる方法で処理する次世代のテーブルフォーマットです。
-
 Iceberg introduces hidden partitioning, meaning the details of partitioning are abstracted away from the user – you don’t need to manually manage partition columns in your data or queries.
-Icebergは隠れたパーティショニングを導入しており、これはパーティショニングの詳細がユーザーから抽象化されていることを意味します。データやクエリ内でパーティション列を手動で管理する必要はありません。
-
+Icebergはhidden partitioningを導入しており、これは**パーティショニングの詳細がユーザーから抽象化されていることを意味します。**データやクエリ内でパーティション列を手動で管理する必要はありません。
 Instead, Iceberg uses a metadata layer (manifest files, etc.) to track which data files belong to which partitions, and it automatically applies partition pruning based on query filters.
-代わりに、Icebergはメタデータレイヤー（マニフェストファイルなど）を使用して、どのデータファイルがどのパーティションに属するかを追跡し、クエリフィルタに基づいて自動的にパーティションプルーニングを適用します。
+代わりに、**Icebergはメタデータレイヤー（マニフェストファイルなど）を使用して、どのデータファイルがどのパーティションに属するかを追跡**し、クエリフィルタに基づいて自動的にパーティションプルーニングを適用します。
 
 When you create an Iceberg table, you still specify a partitioning strategy, but it’s done in a declarative way.
 Icebergテーブルを作成する際には、依然としてパーティショニング戦略を指定しますが、それは宣言的な方法で行われます。
-
 For example, in a Spark SQL or Iceberg SQL environment, you might do:
 例えば、Spark SQLまたはIceberg SQL環境では、次のようにします。
 
-```
--- Creating an Iceberg table with partition transforms
-CREATE TABLE sales_data (
-    sale_id BIGINT,
-    amount DECIMAL(10,2),
-    sale_ts TIMESTAMP,
-    region STRING
-) USING iceberg PARTITIONED BY (days(sale_ts), region);
-```
-```
+
+```sql
 -- パーティション変換を使用してIcebergテーブルを作成
 CREATE TABLE sales_data (
     sale_id BIGINT,
@@ -432,92 +398,89 @@ CREATE TABLE sales_data (
 
 This defines an Iceberg table partitioned by day of sale timestamp and region. 
 これは、販売タイムスタンプの日と地域でパーティショニングされたIcebergテーブルを定義します。
-
 Unlike Hive, we don’t have to add an extra sale_date column or manually manage region-based directories — Iceberg automatically handles partitioning based on existing columns.
-Hiveとは異なり、追加のsale_date列を追加したり、地域ベースのディレクトリを手動で管理したりする必要はありません。Icebergは既存の列に基づいて自動的にパーティショニングを処理します。
-
+**Hiveとは異なり、追加のsale_date列を追加したり、地域ベースのディレクトリを手動で管理したりする必要はありません。**Icebergは既存の列に基づいて自動的にパーティショニングを処理します。
 Also, the query interface doesn’t change; we would query this table by sale_ts or region normally, and Iceberg will ensure it reads only the needed partitions.
 また、クエリインターフェースは変更されません。このテーブルを通常、sale_tsまたはregionでクエリし、Icebergは必要なパーティションのみを読み取ることを保証します。
 
 Iceberg partitioning supports transform functions on values, as shown above (days(sale_ts)). 
-Icebergのパーティショニングは、上記のように値に対する変換関数（days(sale_ts)など）をサポートしています。
-
+**Icebergのパーティショニングは、上記のように値に対する変換関数（days(sale_ts)など）をサポート**しています。
 Other supported transforms include year(), month(), hour(), bucket(N, column) for hashing into N buckets, and truncate(length, column) for prefix truncation.
 他にサポートされている変換には、year()、month()、hour()、bucket(N, column)（Nバケットへのハッシュ化）、およびtruncate(length, column)（プレフィックスの切り捨て）があります。
-
 This means you can partition by a year or month of a timestamp, or by a hash bucket, without creating separate columns – Iceberg handles computing the partition values.
 これにより、タイムスタンプの年や月、またはハッシュバケットでパーティショニングでき、別の列を作成する必要はありません。Icebergがパーティション値の計算を処理します。
-
 These are essentially the partition spec for the table.
-これらは本質的にテーブルのパーティション仕様です。
+これらは本質的にテーブルの**パーティション仕様**です。
+
+<!-- ここまで読んだ! -->
 
 Under the hood, Iceberg does not rely on directory names for partition pruning (though it may still organize files in folders). 
 内部的に、Icebergはパーティションプルーニングのためにディレクトリ名に依存しません（ただし、ファイルをフォルダに整理することはあります）。
-
+(確かに。S3 Tablesの中身のデータファイルのuriを見ると、なんとなくフォルダに分かれてそうな感じもする...!:thinking:)
 Instead, it maintains metadata files (manifests) that list all data files and their partition values. 
-代わりに、すべてのデータファイルとそのパーティション値をリストするメタデータファイル（マニフェスト）を保持します。
-
+代わりに、**すべてのデータファイルとそのパーティション値をリストするメタデータファイル（マニフェスト）を保持**します。
 When a query with a filter comes in, Iceberg’s API will read the metadata to quickly find which files satisfy the filter (e.g., which files have sale_ts in 2023 and region = 'EU').
-フィルタを持つクエリが来ると、IcebergのAPIはメタデータを読み取り、フィルタを満たすファイルを迅速に見つけます（例：2023年のsale_tsを持ち、region = 'EU'のファイル）。
+**フィルタを持つクエリが来ると、IcebergのAPIはメタデータを読み取り、フィルタを満たすファイルを迅速に見つけます（例：2023年のsale_tsを持ち、region = 'EU'のファイル）**。
+
+<!-- ここまで読んだ! -->
 
 This means no expensive directory listing at query time, and it also means users don’t need to include partition columns in queries – filtering on the original column is enough.
 これにより、クエリ時に高価なディレクトリリストを作成する必要がなくなり、ユーザーはクエリにパーティション列を含める必要がなくなります。元の列でフィルタリングするだけで十分です。
-
 For example, a query SELECT SUM(amount) FROM sales_data WHERE sale_ts >= '2023-10-01' AND sale_ts < '2023-11-01' AND region='EU' will automatically be pruned to only files in the October 2023 + EU partition, even though the query never mentioned “partition” or a separate date column.
 例えば、クエリ SELECT SUM(amount) FROM sales_data WHERE sale_ts >= '2023-10-01' AND sale_ts < '2023-11-01' AND region='EU' は、自動的に2023年10月+EUパーティション内のファイルのみにプルーニングされます。クエリは「パーティション」や別の日付列に言及していなくてもです。
 
 Another advantage is evolution: Iceberg allows changing the partition scheme without rewriting all data.
-もう一つの利点は進化です。Icebergは、すべてのデータを書き換えることなくパーティションスキームを変更することを許可します。
-
+**もう一つの利点は進化**です。Icebergは、すべてのデータを書き換えることなくパーティションスキームを変更することを許可します。
 You could repartition new data differently (a feature called partition evolution), and Iceberg can query both old and new partitions seamlessly.
-新しいデータを異なる方法で再パーティショニングすることができ（パーティション進化と呼ばれる機能）、Icebergは古いパーティションと新しいパーティションの両方をシームレスにクエリできます。
-
+**新しいデータを異なる方法で再パーティショニングすることができ（パーティション進化と呼ばれる機能）**、Icebergは古いパーティションと新しいパーティションの両方をシームレスにクエリできます。
 Also, Iceberg validates partition values at write time (since it’s doing the computation), preventing issues like data in wrong partitions.
 また、Icebergは書き込み時にパーティション値を検証します（計算を行っているため）、これにより間違ったパーティションにデータが存在する問題を防ぎます。
+
+<!-- ここまで読んだ! -->
 
 A quick over of Iceberg’s approach to partitioning:
 Icebergのパーティショニングアプローチの概要は次のとおりです。
 
 - No need to manage partition columns in data loading or querying – the framework takes care of it.
-- データのロードやクエリでパーティション列を管理する必要はありません。フレームワークがそれを処理します。
-
+  - データのロードやクエリでパーティション列を管理する必要はありません。フレームワークがそれを処理します。
 - Rich partition transforms out of the box (date/time, bucket, truncate).
-- すぐに使える豊富なパーティション変換（日時、バケット、切り捨て）。
-
+  - すぐに使える豊富なパーティション変換（日時、バケット、切り捨て）。
 - Metadata-driven – queries consult a centralized metadata (often a Metastore or catalog service) to find relevant data files, rather than hitting the filesystem for each partition. This is faster and scales to many more partitions.
-- メタデータ駆動型 – クエリは、各パーティションのファイルシステムにアクセスするのではなく、関連するデータファイルを見つけるために中央集権的なメタデータ（通常はメタストアまたはカタログサービス）を参照します。これにより、より多くのパーティションにスケールし、より高速になります。
+  - メタデータ駆動型 – クエリは、各パーティションのファイルシステムにアクセスするのではなく、関連するデータファイルを見つけるために中央集権的なメタデータ（通常はメタストアまたはカタログサービス）を参照します。これにより、より多くのパーティションにスケールし、より高速になります。
 
 - ACID compliance and time travel – as a bonus, Iceberg tables support atomic changes and snapshot isolation, so adding or removing data files (even in different partitions) is transactional and consistent.
-- ACID準拠とタイムトラベル – ボーナスとして、Icebergテーブルは原子的な変更とスナップショット隔離をサポートしているため、データファイルの追加や削除（異なるパーティション内でも）はトランザクション的で一貫性があります。
+  - ACID準拠とタイムトラベル – ボーナスとして、Icebergテーブルは原子的な変更とスナップショット隔離をサポートしているため、データファイルの追加や削除（異なるパーティション内でも）はトランザクション的で一貫性があります。
 
+<!-- ここまで読んだ! -->
 
-
-## Comparative Analysis of Partitioning Approaches 分割アプローチの比較分析
+## 5. Comparative Analysis of Partitioning Approaches 分割アプローチの比較分析
 
 Let’s compare how Hive, and Iceberg partitioning stack up in real-world scenarios, focusing on performance, manageability, and use cases.  
 HiveとIcebergのパーティショニングが実世界のシナリオでどのように比較されるか、パフォーマンス、管理のしやすさ、ユースケースに焦点を当てて比較します。
 
-### Performance and Query Speed パフォーマンスとクエリ速度
+### 5.1. Performance and Query Speed パフォーマンスとクエリ速度
 
 All partitioning methods aim to improve query speed by reading less data.  
-すべてのパーティショニング手法は、データを少なく読み込むことでクエリ速度を向上させることを目的としています。  
+**すべてのパーティショニング手法は、データを少なく読み込むことでクエリ速度を向上させることを目的**としています。  
 In traditional databases like PostgreSQL or in Hive, if a query can use the partition key in a filter, it will only scan that partition instead of the whole table – potentially speeding up queries by orders of magnitude if the data is large.  
 PostgreSQLのような従来のデータベースやHiveでは、クエリがフィルター内でパーティションキーを使用できる場合、そのクエリはテーブル全体ではなくそのパーティションのみをスキャンします。データが大きい場合、クエリの速度が桁違いに向上する可能性があります。  
 For example, Amazon Athena (which queries Hive-style data on S3) only reads the partitions needed, significantly cutting scan time and cost for partitioned data.  
 例えば、Amazon Athena（S3上のHiveスタイルのデータをクエリする）は、必要なパーティションのみを読み取り、パーティショニングされたデータのスキャン時間とコストを大幅に削減します。  
 However, Hive partitioning has some overhead: each query may need to communicate with the Hive metastore to fetch partition locations, and if you have thousands of partitions, planning the query can become slower.  
-しかし、Hiveのパーティショニングにはいくつかのオーバーヘッドがあります。各クエリは、パーティションの場所を取得するためにHiveメタストアと通信する必要があり、パーティションが数千ある場合、クエリの計画が遅くなる可能性があります。  
+しかし、Hiveのパーティショニングにはいくつかのオーバーヘッドがあります。各クエリは、パーティションの場所を取得するためにHiveメタストアと通信する必要があり、パーティションが数千ある場合、クエリの計画が遅くなる可能性があります。 
+
 Iceberg’s design generally yields equal or better performance for partitioned queries.  
 Icebergの設計は、一般的にパーティショニングされたクエリに対して同等またはそれ以上のパフォーマンスを発揮します。  
 Because Iceberg keeps an index of files (in manifests), it can quickly prune out not just partitions but individual files that don’t match a filter.  
-Icebergはファイルのインデックス（マニフェスト内）を保持しているため、パーティションだけでなくフィルターに一致しない個々のファイルも迅速に除外できます。  
+**Icebergはファイルのインデックス（マニフェスト内）を保持しているため、パーティションだけでなくフィルターに一致しない個々のファイルも迅速に除外できます。**  
 This can outperform Hive in scenarios with many small partitions.  
 これにより、多くの小さなパーティションがあるシナリオではHiveを上回ることができます。  
 In one financial use-case, adopting Iceberg showed query performance improvements up to 52% faster compared to querying the same data in a “vanilla” Hive/Parquet layout (Build a high-performance quant research platform with Apache Iceberg | AWS Big Data Blog).  
-ある金融のユースケースでは、Icebergを採用することで、同じデータを「バニラ」Hive/Parquetレイアウトでクエリする場合と比較して、クエリパフォーマンスが最大52%向上しました（Apache Icebergを使用して高性能な量的研究プラットフォームを構築する | AWSビッグデータブログ）。  
+ある金融のユースケースでは、Icebergを採用することで、同じデータを「バニラ」Hive/Parquetレイアウトでクエリする場合と比較して、**クエリパフォーマンスが最大52%向上**しました（Apache Icebergを使用して高性能な量的研究プラットフォームを構築する | AWSビッグデータブログ）。
 This is partly due to Iceberg’s ability to avoid full directory scans and skip metadata overhead, and also thanks to additional features like data file pruning (skipping irrelevant files based on statistics).  
-これは、Icebergが完全なディレクトリスキャンを回避し、メタデータのオーバーヘッドをスキップできる能力に起因しており、統計に基づいて無関係なファイルをスキップするデータファイルのプルーニングのような追加機能のおかげでもあります。  
+これは、Icebergが完全なディレクトリスキャンを回避し、メタデータのオーバーヘッドをスキップできる能力に起因しており、**統計に基づいて無関係なファイルをスキップするデータファイルのプルーニング**のような追加機能のおかげでもあります。  
 
+---
 Storage Efficiency: Partitioning can have side effects on storage.  
 ストレージ効率：パーティショニングはストレージに副作用をもたらすことがあります。  
 In Hive, each partition often results in multiple small files (especially if data ingestion is frequent and not consolidated).  
@@ -527,7 +490,7 @@ Lots of small files are inefficient on HDFS/S3 because of high overhead per file
 A gaming company with massive log data (Tencent Games) found that their old Hive-based pipeline required many pre-aggregations (materialized summaries per partition) to get decent performance.  
 膨大なログデータを持つゲーム会社（Tencent Games）は、古いHiveベースのパイプラインが適切なパフォーマンスを得るために多くの事前集計（パーティションごとのマテリアライズドサマリー）を必要とすることを発見しました。  
 By unifying data on Iceberg and using its features, they eliminated those extra data copies and reduced storage costs by 15x (Apache Iceberg | CelerData).  
-Iceberg上でデータを統合し、その機能を使用することで、彼らは余分なデータコピーを排除し、ストレージコストを15倍削減しました（Apache Iceberg | CelerData）。  
+**Iceberg上でデータを統合し、その機能を使用することで、彼らは余分なデータコピーを排除し、ストレージコストを15倍削減**しました（Apache Iceberg | CelerData）。  
 Iceberg helps here by enabling on-the-fly aggregation (with query engines reading base detail data) and by offering table-level compaction to merge small files.  
 Icebergは、クエリエンジンが基本の詳細データを読み取ることでオンザフライ集計を可能にし、小さなファイルをマージするためのテーブルレベルの圧縮を提供することでここで役立ちます。  
 One thing to consider is metadata storage.  
@@ -535,22 +498,28 @@ One thing to consider is metadata storage.
 Hive keeps partition info in its metastore (or Glue catalog) – if you have a partition for every day over 10 years, that’s 3,650 entries plus potentially subpartitions, etc.  
 Hiveはパーティション情報をメタストア（またはGlueカタログ）に保持します。10年間の毎日ごとにパーティションがある場合、それは3,650エントリに加えて潜在的なサブパーティションなどが含まれます。  
 Very fine-grained partitions (e.g. per hour or per user) can bloat the Hive metastore and even exceed its capacity.  
-非常に細かいパーティション（例：時間ごとやユーザーごと）は、Hiveメタストアを膨張させ、その容量を超える可能性があります。  
+**非常に細かいパーティション（例：時間ごとやユーザーごと）は、Hiveメタストアを膨張させ、その容量を超える可能性があります。**  
 Iceberg’s metadata (manifest files and a single table entry in the catalog) is typically more compact and scales to a huge number of partitions because it doesn’t rely on one metastore row per partition.  
-Icebergのメタデータ（マニフェストファイルとカタログ内の単一のテーブルエントリ）は、通常よりコンパクトであり、パーティションごとに1つのメタストア行に依存しないため、大量のパーティションにスケールします。  
-Imagine you want to partition clickstream data by hour over 3 years:  
-3年間のクリックストリームデータを時間ごとにパーティション分けしたいと想像してみてください：  
-- Hive: 24 hours/day × 365 days/year × 3 years = 26,280 partitions → 26,280 rows in the metastore. → Every query needs to scan partition metadata for thousands of entries.  
-- Hive: 24時間/日 × 365日/年 × 3年 = 26,280パーティション → メタストアに26,280行。 → すべてのクエリは数千のエントリのためにパーティションメタデータをスキャンする必要があります。  
-- Iceberg: Just one table entry in the catalog. All the partitioning by hour is handled via manifests. Query reads only relevant manifests efficiently — no explosion in the catalog.  
-- Iceberg: カタログ内に1つのテーブルエントリのみ。時間ごとのすべてのパーティショニングはマニフェストを介して処理されます。クエリは関連するマニフェストのみを効率的に読み取ります — カタログの爆発はありません。  
-This makes Iceberg more scalable in terms of number of partitions – you could partition by hour or have thousands of bucket partitions without crashing your catalog service.  
-これにより、Icebergはパーティションの数に関してよりスケーラブルになります。時間ごとにパーティション分けしたり、数千のバケットパーティションを持つことができ、カタログサービスがクラッシュすることはありません。  
+**Icebergのメタデータ（マニフェストファイルとカタログ内の単一のテーブルエントリ）は、通常よりコンパクトであり、パーティションごとに1つのメタストア行に依存しないため、大量のパーティションにスケールします。** 
 
-### Ease of Management 管理のしやすさ
+Imagine you want to partition clickstream data by hour over 3 years:  
+**3年間のクリックストリームデータを時間ごと**にパーティション分けしたいと想像してみてください： 
+
+- Hive: 24 hours/day × 365 days/year × 3 years = 26,280 partitions → 26,280 rows in the metastore. → Every query needs to scan partition metadata for thousands of entries.  
+Hive: 24時間/日 × 365日/年 × 3年 = **26,280パーティション** → メタストアに26,280行。 → すべてのクエリは数千のエントリのためにパーティションメタデータをスキャンする必要があります。  
+
+- Iceberg: Just one table entry in the catalog. All the partitioning by hour is handled via manifests. Query reads only relevant manifests efficiently — no explosion in the catalog.  
+Iceberg: カタログ内に**1つのテーブルエントリのみ**。時間ごとのすべてのパーティショニングはマニフェストを介して処理されます。クエリは関連するマニフェストのみを効率的に読み取ります — カタログの爆発はありません。 
+
+This makes Iceberg more scalable in terms of number of partitions – you could partition by hour or have thousands of bucket partitions without crashing your catalog service.  
+これにより、Icebergは**パーティションの数に関してよりスケーラブルに**なります。時間ごとにパーティション分けしたり、数千のバケットパーティションを持つことができ、カタログサービスがクラッシュすることはありません。 
+
+<!-- ここまで読んだ! -->
+
+### 5.2. Ease of Management 管理のしやすさ
 
 From a developer/operator perspective, Iceberg is the clear winner in ease of partition management.  
-開発者/オペレーターの観点から見ると、Icebergはパーティション管理のしやすさにおいて明らかな勝者です。  
+開発者/オペレーターの観点から見ると、**Icebergはパーティション管理のしやすさにおいて明らかな勝者**です。  
 You don’t have to manually add partitions or repair tables – when you insert data, Iceberg writes new files and updates metadata in one transaction.  
 パーティションを手動で追加したり、テーブルを修復したりする必要はありません。データを挿入すると、Icebergは新しいファイルを書き込み、メタデータを1つのトランザクションで更新します。  
 In Hive, you often had to run ALTER TABLE ADD PARTITION or MSCK REPAIR TABLE to tell the metastore about newly added partition folders (unless you used Hive’s insertion which does it for you).  
@@ -558,9 +527,10 @@ Hiveでは、通常、ALTER TABLE ADD PARTITIONやMSCK REPAIR TABLEを実行し�
 Forgetting to do this would result in data not found by queries.  
 これを忘れると、クエリでデータが見つからないことになります。  
 Also, with Hive you had to always remember to include partition filters in your queries (or else suffer a full scan), whereas Iceberg spares you that concern – you just query naturally by any filter, and if it happens to align with a partition, great, it will prune it for you automatically.  
-また、Hiveでは常にクエリにパーティションフィルターを含めることを忘れないようにしなければなりませんでした（さもなければフルスキャンを受けることになります）が、Icebergではその心配がありません。任意のフィルターで自然にクエリを実行するだけで、パーティションに一致する場合は、自動的にプルーニングされます。  
+また、Hiveでは常にクエリにパーティションフィルターを含めることを忘れないようにしなければなりませんでした（さもなければフルスキャンを受けることになります）が、Icebergではその心配がありません。任意のフィルターで自然にクエリを実行するだけで、パーティションに一致する場合は、自動的にプルーニングされます。
+
 Iceberg shines in flexibility.  
-Icebergは柔軟性において際立っています。  
+Icebergは**柔軟性**において際立っています。  
 Need to repartition the table? Iceberg allows adding a new partition spec.  
 テーブルを再パーティション分けする必要がありますか？Icebergでは新しいパーティション仕様を追加できます。  
 Need to roll back a change or query as of a previous data load? Iceberg supports time travel by snapshots.  
@@ -570,28 +540,36 @@ These go beyond partitioning but are related to how it manages data at a higher 
 Another convenience: migrating a table’s storage format (say Parquet to ORC) or compacting files is straightforward with Iceberg; with Hive you’d have to run a possibly expensive ETL job to rewrite the data.  
 もう一つの便利な点は、テーブルのストレージフォーマット（ParquetからORCなど）を移行したり、ファイルを圧縮したりするのがIcebergでは簡単であることです。Hiveでは、データを再書き込みするために高価なETLジョブを実行する必要があります。  
 
-### Scalability and Use Cases スケーラビリティとユースケース
+<!-- ここまで読んだ! -->
+
+### 5.3. Scalability and Use Cases スケーラビリティとユースケース
 
 In modern big data scenarios:  
-現代のビッグデータシナリオでは：  
+現代のビッグデータシナリオでは：
+
 - Hive partitioning was designed for huge scale on HDFS – multi-terabyte tables.  
-- Hiveのパーティショニングは、HDFS上での巨大なスケール（マルチテラバイトテーブル）向けに設計されました。  
+Hiveのパーティショニングは、HDFS上での巨大なスケール（マルチテラバイトテーブル）向けに設計されました。  
 It’s batch-oriented; good for nightly aggregations or historical analysis where you can afford a MapReduce or Spark job scanning partitions.  
 バッチ指向であり、夜間の集計や、MapReduceやSparkジョブでパーティションをスキャンする余裕がある歴史的分析に適しています。  
 Many firms (ad-tech, telecom, etc.) used Hive to store logs partitioned by date.  
 多くの企業（広告技術、通信など）は、日付でパーティション分けされたログを保存するためにHiveを使用しました。  
 The limitation is the query engines (MapReduce/Tez) were not interactive, and the maintenance could get cumbersome with thousands of partitions.  
 制限は、クエリエンジン（MapReduce/Tez）がインタラクティブでなく、数千のパーティションを持つとメンテナンスが煩雑になる可能性があることです。  
+
 - Iceberg is built for lakehouse environments – large-scale analytics with multiple engines (Spark, Trino/Presto, Flink, etc.) and is cloud-friendly.  
-- Icebergはレイクハウス環境向けに構築されており、複数のエンジン（Spark、Trino/Presto、Flinkなど）を使用した大規模な分析に適しており、クラウドフレンドリーです。  
+Icebergはレイクハウス環境向けに構築されており、複数のエンジン（Spark、Trino/Presto、Flinkなど）を使用した大規模な分析に適しており、クラウドフレンドリーです。  
 Fintech companies are adopting Iceberg for things like transaction data lakes or market data: query engines can do interactive analytics on petabytes of data partitioned by date or asset, and they benefit from Iceberg’s reliable schema and partition management.  
-フィンテック企業は、トランザクションデータレイクや市場データなどのためにIcebergを採用しています。クエリエンジンは、日付や資産でパーティション分けされたペタバイトのデータに対してインタラクティブな分析を行うことができ、Icebergの信頼性の高いスキーマとパーティション管理の恩恵を受けています。  
+フィンテック企業は、**トランザクションデータレイクや市場データ**などのためにIcebergを採用しています。クエリエンジンは、日付や資産でパーティション分けされたペタバイトのデータに対してインタラクティブな分析を行うことができ、Icebergの信頼性の高いスキーマとパーティション管理の恩恵を受けています。  
 In the gaming industry, as mentioned, Iceberg helps unify real-time and batch data.  
-前述のように、ゲーム業界ではIcebergがリアルタイムデータとバッチデータを統合するのに役立ちます。  
+前述のように、**ゲーム業界**ではIcebergがリアルタイムデータとバッチデータを統合するのに役立ちます。  
+
 A real example: Tencent’s gaming analytics moved from a lambda architecture (separate real-time DB and offline Hive store) to Iceberg, allowing them to query fresh and historical data in one place and simplifying their pipeline (no separate pre-aggregation store) (Apache Iceberg | CelerData).  
 実際の例として、Tencentのゲーム分析は、ラムダアーキテクチャ（リアルタイムDBとオフラインHiveストアを分離）からIcebergに移行し、彼らが新鮮なデータと歴史的データを1つの場所でクエリできるようにし、パイプラインを簡素化しました（別の事前集計ストアは不要）(Apache Iceberg | CelerData)。  
 This illustrates better scalability not just in data size, but in data architecture simplicity.  
 これは、データサイズだけでなく、データアーキテクチャのシンプルさにおいてもより良いスケーラビリティを示しています。  
+
+<!-- ここまで読んだ! -->
+
 Partitioning is indispensable for large datasets, but the technology you use dictates how much work it is to get right.  
 パーティショニングは大規模データセットには不可欠ですが、使用する技術が正しく行うための作業量を決定します。  
 Hive showed how partitioning can scale to big data, but at the cost of more manual management and less flexibility.  
@@ -599,19 +577,23 @@ Hiveは、パーティショニングがビッグデータにスケールでき�
 Iceberg and similar modern table formats (Delta Lake, Hudi) build on those lessons to give us the best of both worlds: the scale of data lakes with the manageability of databases.  
 Icebergや同様の現代的なテーブルフォーマット（Delta Lake、Hudi）は、これらの教訓を基にして、データレイクのスケールとデータベースの管理のしやすさの両方を提供します。  
 Partitioning in Iceberg is practically set-and-forget, allowing us to focus on using the data rather than babysitting partitions.  
-Icebergでのパーティショニングは実質的に設定して忘れることができ、パーティションを見守るのではなく、データの使用に集中できるようにします。  
+**Icebergでのパーティショニングは実質的に設定して忘れることができ**、パーティションを見守るのではなく、データの使用に集中できるようにします。  
 
-### Comparative Analysis: Hive vs. Iceberg HiveとIcebergの比較分析
+<!-- ここまで読んだ! -->
+
+### 5.4. Comparative Analysis: Hive vs. Iceberg HiveとIcebergの比較分析
 
 Side-by-side analysis of Apache Hive’s traditional partitioning and Apache Iceberg’s modern approach, focusing on cloud-native environments.  
-Apache Hiveの従来のパーティショニングとApache Icebergの現代的アプローチの並行分析を行い、クラウドネイティブ環境に焦点を当てます。  
+Apache Hiveの従来のパーティショニングとApache Icebergの現代的アプローチの並行分析を行い、クラウドネイティブ環境に焦点を当てます。 
+
+![表]()
+
 Next, let’s put some of this into practice with a quick implementation guide using Docker.  
 次に、Dockerを使用した簡単な実装ガイドでこれを実践してみましょう。  
 
 
 
-## Implementation Guide with Docker: Hive and Iceberg in Action
-## Dockerを使用した実装ガイド：HiveとIcebergの実践
+## 6. Implementation Guide with Docker: Hive and Iceberg in Action Dockerを使用した実装ガイド：HiveとIcebergの実践
 
 For a hands-on understanding, it’s useful to try creating and querying partitioned tables yourself. 
 実践的な理解のために、パーティション化されたテーブルを自分で作成し、クエリを実行してみることが有用です。
@@ -619,8 +601,8 @@ For a hands-on understanding, it’s useful to try creating and querying partiti
 In this guide, we'll create two tables — one in Hive and one in Iceberg — populate them with datasets, and observe how partitioning impacts query performance and behavior.
 このガイドでは、HiveとIcebergの2つのテーブルを作成し、データセットでそれらを埋め、パーティショニングがクエリのパフォーマンスと動作にどのように影響するかを観察します。
 
-### Environment Setup
-### 環境設定
+### 6.1. Environment Setup
+### 6.2. 環境設定
 
 We will use the official Apache Hive Docker image, which conveniently comes with Iceberg support. 
 私たちは、Icebergサポートが便利に付属している公式のApache Hive Dockerイメージを使用します。
@@ -631,8 +613,8 @@ This single container will run Hive Metastore and HiveServer2, and includes the 
 Ensure you have Docker installed, then run:
 Dockerがインストールされていることを確認し、次のコマンドを実行します：
 
-# Pull and start Hive 4.0 (which we use for Iceberg compatibility)
-# Hive 4.0をプルして起動します（Iceberg互換性のために使用します）
+Pull and start Hive 4.0 (which we use for Iceberg compatibility)
+Hive 4.0をプルして起動します（Iceberg互換性のために使用します）
 ```
 export HIVE_VERSION=4.0.0
 docker run -d -p 10000:10000 -p 10002:10002 \
@@ -665,8 +647,8 @@ docker exec -it hive4 beeline -u "jdbc:hive2://localhost:10000/default"
 This drops you into a SQL prompt. Now we can execute Hive SQL commands.
 これにより、SQLプロンプトに入ります。これでHive SQLコマンドを実行できます。
 
-### Create and use a demo database
-### デモデータベースの作成と使用
+### 6.3. Create and use a demo database
+### 6.4. デモデータベースの作成と使用
 
 ```
 CREATE DATABASE demo; USE demo;
@@ -675,8 +657,8 @@ CREATE DATABASE demo; USE demo;
 CREATE DATABASE demo;
 USE demo;
 ```
-### Create a Hive partitioned table
-### Hiveのパーティション化テーブルの作成
+### 6.5. Create a Hive partitioned table
+### 6.6. Hiveのパーティション化テーブルの作成
 
 Let’s make a traditional Hive-managed partitioned table and insert data.
 従来のHive管理のパーティション化テーブルを作成し、データを挿入しましょう。
@@ -748,8 +730,8 @@ Expected output:
 +------------------------+
 3 rows selected (0.065 seconds)
 ```
-### Querying Hive Correctly to Take Advantage of Partitioning
-### パーティショニングを活用するためのHiveの正しいクエリ
+### 6.7. Querying Hive Correctly to Take Advantage of Partitioning
+### 6.8. パーティショニングを活用するためのHiveの正しいクエリ
 
 Run this query:
 このクエリを実行します：
@@ -768,8 +750,8 @@ Although the intent was to select order between '2022-10-01' and '2022-12-31', H
 As a result, all partitions are scanned unnecessarily, even if only a subset of the data is needed.
 その結果、必要なデータのサブセットのみが必要であっても、すべてのパーティションが不必要にスキャンされます。
 
-#### Why This Happens
-#### これはなぜ起こるのか
+#### 6.8.1. Why This Happens
+#### 6.8.2. これはなぜ起こるのか
 
 In Hive's directory-based partitioning:
 Hiveのディレクトリベースのパーティショニングでは：
@@ -780,8 +762,8 @@ Hiveのディレクトリベースのパーティショニングでは：
 - Functions applied to partition columns break the pruning optimization.
 - パーティション列に適用される関数は、プルーニング最適化を壊します。
 
-### Create an Iceberg Partitioned Table
-### Icebergパーティション化テーブルの作成
+### 6.9. Create an Iceberg Partitioned Table
+### 6.10. Icebergパーティション化テーブルの作成
 
 Now for comparison, let’s create an Iceberg table in the same Hive environment. 
 比較のために、同じHive環境にIcebergテーブルを作成しましょう。
@@ -933,7 +915,7 @@ But the concepts would remain the same.
 
 
 
-## Conclusion 結論
+## 7. Conclusion 結論
 
 The shift from traditional Hive partitioning to Apache Iceberg’s metadata-driven approach marks a major step forward in how modern data lakes are built. 
 従来のHiveパーティショニングからApache Icebergのメタデータ駆動型アプローチへの移行は、現代のデータレイクの構築方法において大きな前進を示しています。
@@ -961,7 +943,7 @@ While speculative predictions suggest further significant performance improvemen
 
 
 
-## OLake
+## 8. OLake
 
 Achieve 5x speed data replication to Lakehouse format with OLake, our open source platform for efficient, quick and scalable big data ingestion for real-time analytics.
 OLakeを使用して、リアルタイム分析のための効率的で迅速かつスケーラブルなビッグデータ取り込みのオープンソースプラットフォームで、Lakehouseフォーマットへのデータ複製を5倍の速度で実現します。
@@ -981,7 +963,7 @@ OLake GitHubを探る
 - パーティショニング
 - OLake
 
-### Contents 目次
+### 8.1. Contents 目次
 - Introduction to Data Partitioning
 データパーティショニングの紹介
 - Why Partitioning Matters
@@ -1056,26 +1038,26 @@ Reading Progress
 0%
 読み進捗
 0%
-#### Share this article
+#### 8.1.1. Share this article
 この記事を共有する
 
 
 
-## FastestDataReplication
+## 9. FastestDataReplication
 
-### COMPANY 会社
+### 9.1. COMPANY 会社
 - About us 私たちについて
 - Contact us お問い合わせ
 - Branding ブランディング
 - Terms of Use 利用規約
 - Privacy Policy プライバシーポリシー
 
-### RESOURCES リソース
+### 9.2. RESOURCES リソース
 - Blogs ブログ
 - Docs ドキュメント
 - Search 検索
 
-### TOP READS 人気の読み物
+### 9.3. TOP READS 人気の読み物
 - Issues with Debezium Debeziumの問題
 - OLake Architecture OLakeアーキテクチャ
 
