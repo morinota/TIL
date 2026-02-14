@@ -1,155 +1,109 @@
 refs: https://olake.io/iceberg/hive-partitioning-vs-iceberg-partitioning/
 
+# Iceberg Partitioning vs. Hive Partitioning IcebergのパーティショニングとHiveのパーティショニング
 
-View upcoming webinars
-今後のウェビナーを表示
-
-- Iceberg Blogs
-- Query Engine
-- Webinars & Events
-- OLake Community
-- Top Contributors
-- Contributor's Program
-- Icebergブログ
-- クエリエンジン
-- ウェビナーとイベント
-- OLakeコミュニティ
-- トップ貢献者
-- 貢献者プログラム
-
-Search
-検索
-
-Search
-検索
-
-1.
-1.
-2. Iceberg
-2. Iceberg
-3. Iceberg Partitioning vs. Hive Partitioning
-3. IcebergのパーティショニングとHiveのパーティショニング
-
-# Iceberg Partitioning vs. Hive Partitioning
-# IcebergのパーティショニングとHiveのパーティショニング
-
-Sandeep Devarapalli
 Sandeep Devarapalli
 
 This blog presents an in-depth examination of modern data partitioning techniques, with a strong focus on the transition from Apache Hive's explicit, folder-based approach to Apache Iceberg's innovative metadata-driven partitioning.
-このブログでは、現代のデータパーティショニング技術について詳細に検討し、Apache Hiveの明示的なフォルダベースのアプローチから、Apache Icebergの革新的なメタデータ駆動型パーティショニングへの移行に強く焦点を当てています。
+このブログでは、**現代のデータパーティショニング技術**について詳細に検討し、Apache Hiveの明示的なフォルダベースのアプローチから、**Apache Icebergの革新的なメタデータ駆動型パーティショニング**への移行に強く焦点を当てています。
 
-The blog explores the core concepts of partitioning, outlines the limitations of legacy partitioning strategies, and explains how modern approaches have been architected to overcome the scalability and manageability challenges of large, evolving datasets.
-このブログでは、パーティショニングの基本概念を探求し、従来のパーティショニング戦略の限界を概説し、現代のアプローチが大規模で進化するデータセットのスケーラビリティと管理の課題を克服するためにどのように設計されているかを説明します。
+The blog explores the core concepts of partitioning, outlines the limitations of legacy partitioning strategies, and explains how modern approaches have been architected to overcome the scalability and manageability challenges of large, evolving datasets, the operational and management challenges posed by massive and evolving datasets.
+ブログでは、**パーティショニングの基本概念を探求**し、**レガシーなパーティショニング戦略の制限**を概説し、現代のアプローチが大規模で進化するデータセットのスケーラビリティと管理の課題を克服するためにどのように設計されているかを説明します。
 
-the operational and management challenges posed by massive and evolving datasets.
-大規模で進化するデータセットがもたらす運用および管理の課題。
-
-
+<!-- ここまで読んだ! -->
 
 ## Introduction to Data Partitioning データパーティショニングの紹介
 
 Partitioning a database is the process of breaking down a massive dataset into smaller datasets and distributing these smaller datasets across multiple host machines(partitions), based on key attributes. 
-データベースのパーティショニングは、大規模なデータセットを小さなデータセットに分割し、これらの小さなデータセットを主要な属性に基づいて複数のホストマシン（パーティション）に分配するプロセスです。 
-
+データベースのパーティショニングは、**大規模なデータセットを小さなデータセットに分割**し、これらの小さなデータセットを主要な属性に基づいて複数のホストマシン（パーティション）に分配するプロセスです。 
 Every host instance can hold multiple smaller datasets. 
 各ホストインスタンスは、複数の小さなデータセットを保持できます。 
 
-Every record in the database belongs to exactly one partition. 
-データベース内のすべてのレコードは、正確に1つのパーティションに属します。 
+![]()
 
+Every record in the database belongs to exactly one partition. 
+**データベース内のすべてのレコードは、正確に1つのパーティションに属します。** 
 Each partition acts as a database that can perform read and write operations on its own. 
 各パーティションは、独自に読み取りおよび書き込み操作を実行できるデータベースとして機能します。 
-
 We can either execute queries scoped to a single partition or distribute them across multiple partitions depending on the access pattern. 
 私たちは、アクセスパターンに応じて、単一のパーティションにスコープを持つクエリを実行するか、複数のパーティションに分散させることができます。 
-
 For example, a query like:SELECT * FROM orders WHERE month(order_ts) = 10;targets only the October partition, enabling Iceberg to skip all irrelevant files entirely. 
-例えば、`SELECT * FROM orders WHERE month(order_ts) = 10;`のようなクエリは、10月のパーティションのみを対象とし、Icebergがすべての無関係なファイルを完全にスキップできるようにします。 
+例えば、`SELECT * FROM orders WHERE month(order_ts) = 10;`のようなクエリは、10月のパーティションのみを対象とし、**Icebergがすべての無関係なファイルを完全にスキップ**できるようにします。 
 
 This process is critical for enhancing performance by reducing query scope (by scanning only relevant partitions instead of full datasets), enabling parallel processing (as different partitions can be read concurrently across multiple threads or nodes), and lowering storage costs (by avoiding redundant data duplication and minimizing the amount of data scanned during queries). 
-このプロセスは、クエリスコープを削減すること（フルデータセットではなく関連するパーティションのみをスキャンすること）によってパフォーマンスを向上させ、並列処理を可能にし（異なるパーティションを複数のスレッドやノードで同時に読み取ることができるため）、ストレージコストを削減するために重要です（冗長なデータの重複を避け、クエリ中にスキャンされるデータ量を最小限に抑えることによって）。 
+**このプロセスは、クエリスコープを削減すること（フルデータセットではなく関連するパーティションのみをスキャンすること）によってパフォーマンスを向上させ、並列処理を可能にし（異なるパーティションを複数のスレッドやノードで同時に読み取ることができるため）、ストレージコストを削減するために重要です（冗長なデータの重複を避け、クエリ中にスキャンされるデータ量を最小限に抑えることによって）。** 
 
 As data volumes continue to grow exponentially (to TBs)—driven by increased ingestion rates and analytics demands—the need for robust, flexible, and dynamically managed partitioning strategies has never been more acute. 
 データ量が指数関数的に増加し（TB単位）、取り込み率や分析要求の増加によって、堅牢で柔軟かつ動的に管理されたパーティショニング戦略の必要性はかつてないほど切実です。 
 
-Horizontal vs. Vertical Partitioning– Partitioning can behorizontal(splitting rows) orvertical(splitting columns). 
-水平パーティショニングと垂直パーティショニング - パーティショニングは、水平（行を分割）または垂直（列を分割）で行うことができます。 
+<!-- ここまで読んだ! -->
 
+Horizontal vs. Vertical Partitioning– Partitioning can behorizontal(splitting rows) orvertical(splitting columns). 
+**水平パーティショニングと垂直パーティショニング** - パーティショニングは、水平（行を分割）または垂直（列を分割）で行うことができます。 
 In horizontal partitioning, entire rows are separated into different tables or file sets based on some criteria, whereas vertical partitioning stores different columns in separate tables (often used to isolate cold infrequently-used columns). 
 水平パーティショニングでは、全行がいくつかの基準に基づいて異なるテーブルまたはファイルセットに分けられますが、垂直パーティショニングでは異なる列が別々のテーブルに保存されます（通常は、あまり使用されないコールド列を隔離するために使用されます）。 
 
 This blog focuses on horizontal partitioning (splitting rows), as it’s the common approach for scaling large tables in databases and data lakes. 
-このブログでは、データベースやデータレイクにおける大規模テーブルのスケーリングの一般的なアプローチである水平パーティショニング（行の分割）に焦点を当てます。 
+このブログでは、**データベースやデータレイクにおける大規模テーブルのスケーリングの一般的なアプローチである水平パーティショニング（行の分割）**に焦点を当てます。 
+
+<!-- ここまで読んだ! -->
 
 Common Partitioning Strategies:The most widely used horizontal partitioning strategies are: 
-一般的なパーティショニング戦略：最も広く使用されている水平パーティショニング戦略は次のとおりです：
+**一般的なパーティショニング戦略**：最も広く使用されている水平パーティショニング戦略は次のとおりです：
 
 - Range Partitioning:Each partition covers a continuous range of values for a partition key (such as dates or numeric IDs). 
-- 範囲パーティショニング：各パーティションは、パーティションキー（日時や数値IDなど）の連続した値の範囲をカバーします。 
-
-For example, a sales table might be partitioned by date range, with one partition per year or month. 
-例えば、売上テーブルは日付範囲でパーティション分けされ、年または月ごとに1つのパーティションがあります。 
-
-Queries can then target a specific range (e.g. sales in 2023) and skip other partitions entirely. 
-クエリは特定の範囲（例：2023年の売上）をターゲットにし、他のパーティションを完全にスキップできます。 
+    **範囲パーティショニング**：各パーティションは、パーティションキー（日時や数値IDなど）の連続した値の範囲をカバーします。 
+    For example, a sales table might be partitioned by date range, with one partition per year or month. 
+    例えば、売上テーブルは日付範囲でパーティション分けされ、年または月ごとに1つのパーティションがあります。 
+    Queries can then target a specific range (e.g. sales in 2023) and skip other partitions entirely. 
+    クエリは特定の範囲（例：2023年の売上）をターゲットにし、他のパーティションを完全にスキップできます。 
 
 - List Partitioning:Each partition is defined by an explicit list of values. 
-- リストパーティショニング：各パーティションは明示的な値のリストによって定義されます。 
-
-For example, a table of customers could be partitioned by region or country, with one partition for “USA”, one for “EU”, etc. 
-例えば、顧客のテーブルは地域や国によってパーティション分けされ、「USA」用の1つのパーティション、「EU」用の1つのパーティションなどがあります。 
-
-Data with a partition key matching one of the list values goes into the corresponding partition. 
-リストの値のいずれかと一致するパーティションキーを持つデータは、対応するパーティションに入ります。 
+    **リストパーティショニング**：各パーティションは明示的な値のリストによって定義されます。 
+    For example, a table of customers could be partitioned by region or country, with one partition for “USA”, one for “EU”, etc. 
+    例えば、顧客のテーブルは地域や国によってパーティション分けされ、「USA」用の1つのパーティション、「EU」用の1つのパーティションなどがあります。 
+    Data with a partition key matching one of the list values goes into the corresponding partition. 
+    リストの値のいずれかと一致するパーティションキーを持つデータは、対応するパーティションに入ります。 
 
 - Hash Partitioning:A hash function on a key (likeuser ID) determines the partition. 
-- ハッシュパーティショニング：キー（ユーザーIDなど）に対するハッシュ関数がパーティションを決定します。 
-
-This distributes rows evenly (pseudo-randomly) across partitions. 
-これにより、行がパーティション全体に均等に（擬似的にランダムに）分配されます。 
-
-Hash partitioning is useful when ranges or lists aren’t obvious, but you want to balance load. 
-ハッシュパーティショニングは、範囲やリストが明確でない場合に役立ちますが、負荷を均等に分配したい場合に有用です。 
-
-However, it’s considered the least useful strategy in many cases since it doesn’t group similar values – it’s mainly used to break up very large tables for manageability. 
-ただし、類似の値をグループ化しないため、多くの場合、最も役に立たない戦略と見なされます - 主に非常に大きなテーブルを管理可能にするために分割するために使用されます。 
-
-For instance, hashing might split a 2TB table into 10 roughly equal 200GB partitions just to make vacuuming or maintenance faster. 
-例えば、ハッシュを使用すると、2TBのテーブルを約等しい200GBの10個のパーティションに分割して、バキュームやメンテナンスを速くすることができます。 
+    **ハッシュパーティショニング**：キー（ユーザーIDなど）に対するハッシュ関数がパーティションを決定します。 
+    This distributes rows evenly (pseudo-randomly) across partitions. 
+    これにより、行がパーティション全体に均等に（擬似的にランダムに）分配されます。 
+    Hash partitioning is useful when ranges or lists aren’t obvious, but you want to balance load. 
+    ハッシュパーティショニングは、範囲やリストが明確でない場合に役立ちますが、負荷を均等に分配したい場合に有用です。 
+    However, it’s considered the least useful strategy in many cases since it doesn’t group similar values – it’s mainly used to break up very large tables for manageability. 
+    **ただし、類似の値をグループ化しないため、多くの場合、最も役に立たない戦略と見なされます** - 主に非常に大きなテーブルを管理可能にするために分割するために使用されます。(だよね...!クエリパフォーマンスの観点からは、あまり意味ない気がする...!:thinking:)
+    For instance, hashing might split a 2TB table into 10 roughly equal 200GB partitions just to make vacuuming or maintenance faster. 
+    例えば、ハッシュを使用すると、2TBのテーブルを約等しい200GBの10個のパーティションに分割して、**バキュームやメンテナンスを速くする**ことができます。(なるほど、その目的でhash partitioningは価値を発揮するのか...!:thinking:)
 
 - Composite Partitioning:Combining two or more methods, e.g. first partition by range, then within each range partition by list. 
-- 複合パーティショニング：2つ以上の方法を組み合わせます。例えば、最初に範囲でパーティション分けし、次に各範囲内でリストでパーティション分けします。 
+    **複合パーティショニング**：2つ以上の方法を組み合わせます。例えば、最初に範囲でパーティション分けし、次に各範囲内でリストでパーティション分けします。 
+    This can handle complex data distributions. 
+    これにより、複雑なデータ分布を処理できます。 
+    For example, partition a table by year (range), and within each year partition by region (list). 
+    例えば、テーブルを年（範囲）でパーティション分けし、各年内で地域（リスト）でパーティション分けします。 
+    Composite schemes offer flexibility but can be more complex to maintain. 
+    **複合スキームは柔軟性を提供しますが、維持管理がより複雑になる可能性があります。**
 
-This can handle complex data distributions. 
-これにより、複雑なデータ分布を処理できます。 
-
-For example, partition a table by year (range), and within each year partition by region (list). 
-例えば、テーブルを年（範囲）でパーティション分けし、各年内で地域（リスト）でパーティション分けします。 
-
-Composite schemes offer flexibility but can be more complex to maintain. 
-複合スキームは柔軟性を提供しますが、維持管理がより複雑になる可能性があります。 
+<!-- ここまで読んだ! -->
 
 ### Why Partitioning Matters パーティショニングが重要な理由
 
-Why Partition? – The biggest benefit isquery performance. 
-なぜパーティションを使用するのか？ - 最大の利点はクエリパフォーマンスです。 
-
+Why Partition? – The biggest benefit is **query performance**. 
+なぜパーティションを使用するのか？ - **最大の利点はクエリパフォーマンス**です。 
 Partitioning lets a query skip large chunks of data that are irrelevant. 
 パーティショニングにより、クエリは無関係な大きなデータの塊をスキップできます。 
-
 For example, if customers 0–1000 are in one partition and 1001–2000 in another, a query for customer ID 50 only needs to scan the first partition. 
 例えば、顧客0〜1000が1つのパーティションにあり、1001〜2000が別のパーティションにある場合、顧客ID50のクエリは最初のパーティションのみをスキャンする必要があります。 
 
+<!-- ここまで読んだ! -->
+
 Thispartition pruningreduces I/O and speeds up the query. 
 このパーティションプルーニングはI/Oを削減し、クエリを高速化します。 
-
 Partitioning also helpsmaintenance: each partition is smaller, making tasks like index rebuilds, backups, or deletes of old data (dropping a whole partition) more efficient. 
-パーティショニングはメンテナンスにも役立ちます：各パーティションは小さく、インデックスの再構築、バックアップ、古いデータの削除（全パーティションの削除）などのタスクをより効率的にします。 
-
+**パーティショニングはメンテナンスにも役立ちます**：各パーティションは小さく、インデックスの再構築、バックアップ、古いデータの削除（全パーティションの削除）などのタスクをより効率的にします。 
 Partitioning can aidscalabilityby distributing data across disks or nodes, and can even improveavailabilityby isolating failures to a subset of data. 
-パーティショニングは、ディスクやノードにデータを分散させることでスケーラビリティを助け、データのサブセットに障害を隔離することで可用性を向上させることもできます。 
-
+パーティショニングは、ディスクやノードに**データを分散させることでスケーラビリティ**を助け、データのサブセットに障害を隔離することで**可用性を向上**させることもできます。 
 For instance, placing partitions on different nodes so one node’s failure only affects its partition. 
 例えば、異なるノードにパーティションを配置することで、1つのノードの障害がそのパーティションにのみ影響を与えるようにします。 
 
@@ -157,35 +111,33 @@ These are the advantages of partitioning a database:
 これらはデータベースのパーティショニングの利点です：
 
 - Support for large datasets: The data is distributed across multiple machines beyond what a single machine can handle, thereby supporting large dataset use cases. 
-- 大規模データセットのサポート：データは、単一のマシンが処理できる以上の複数のマシンに分散され、大規模データセットのユースケースをサポートします。 
+  - **大規模データセットのサポート**：データは、単一のマシンが処理できる以上の複数のマシンに分散され、大規模データセットのユースケースをサポートします。 
 
 - Support for high throughput: Distributing data across multiple machines implies read and write queries can be independently handled by individual partitions. 
-- 高スループットのサポート：データを複数のマシンに分散させることで、読み取りおよび書き込みクエリを個々のパーティションが独立して処理できることを意味します。 
+  - **高スループットのサポート**：データを複数のマシンに分散させることで、読み取りおよび書き込みクエリを個々のパーティションが独立して処理できることを意味します。 
+    As a result, the database as a whole can support a larger throughput than what a single machine can handle. 
+    その結果、データベース全体は、単一のマシンが処理できるよりも大きなスループットをサポートできます。 
 
-As a result, the database as a whole can support a larger throughput than what a single machine can handle. 
-その結果、データベース全体は、単一のマシンが処理できるよりも大きなスループットをサポートできます。 
+<!-- ここまで読んだ! -->
 
 Limitations of Traditional Partitioning:Classic partitioning isn’t a silver bullet. 
-従来のパーティショニングの限界：クラシックパーティショニングは万能ではありません。 
-
+**従来のパーティショニングの限界**：クラシックパーティショニングは万能ではありません。 
 If not designed well, it canhurt performance– e.g. partitioning on a high-cardinality column (like a unique ID) creates many tiny partitions, causing overhead to manage and query them. 
-適切に設計されていない場合、パフォーマンスを損なう可能性があります - 例えば、高カーディナリティ列（ユニークIDなど）でのパーティショニングは、多くの小さなパーティションを作成し、それらを管理およびクエリするためのオーバーヘッドを引き起こします。 
-
+**適切に設計されていない場合、パフォーマンスを損なう可能性**があります - 例えば、高カーディナリティ列（ユニークIDなど）でのパーティショニングは、多くの小さなパーティションを作成し、それらを管理およびクエリするためのオーバーヘッドを引き起こします。 
 Some strategies like hash make it hard to do targeted queries, since data is essentially randomly distributed. 
-ハッシュのような戦略は、データが本質的にランダムに分散されるため、ターゲットクエリを実行するのが難しくなります。 
+**ハッシュのような戦略は、データが本質的にランダムに分散されるため、ターゲットクエリを実行するのが難しくなります。** (うんうん。やっぱり hash(user_id)などはあんまり有効な戦略ではない気がする...!:thinking:)
 
 In such cases, most queries end up scanningallpartitions (defeating the purpose of partitioning). 
-そのような場合、ほとんどのクエリはすべてのパーティションをスキャンすることになり（パーティショニングの目的を無効にします）、 
-
+**そのような場合、ほとんどのクエリはすべてのパーティションをスキャンすることになり（パーティショニングの目的を台無しにします）**。
 Additionally, older systems required a lot of manual setup and constraints: adding new partitions periodically, ensuring queries include partition filters, etc. 
 さらに、古いシステムでは、多くの手動設定や制約が必要でした：新しいパーティションを定期的に追加し、クエリにパーティションフィルターが含まれていることを確認するなどです。 
-
 There’s also a maintenance cost – each partition might need its own index or statistics, and too many partitions can overwhelm the query planner or metadata store. 
 メンテナンスコストもあります - 各パーティションには独自のインデックスや統計が必要な場合があり、パーティションが多すぎるとクエリプランナーやメタデータストアが圧倒される可能性があります。 
 
-Motivation for Evolving Partitioning StrategiesTraditional partitioning techniques, while effective in smaller environments, struggle under the weight of modern data volumes. 
-進化するパーティショニング戦略の動機：従来のパーティショニング技術は、小規模な環境では効果的ですが、現代のデータボリュームの重みに対して苦労しています。 
+<!-- ここまで読んだ! -->
 
+Motivation for Evolving Partitioning StrategiesTraditional partitioning techniques, while effective in smaller environments, struggle under the weight of modern data volumes. 
+**進化するパーティショニング戦略の動機**：従来のパーティショニング技術は、小規模な環境では効果的ですが、現代のデータボリュームの重みに対して苦労しています。 
 The need for automated schema evolution, dynamic partition discovery, and reduced administrative overhead has spurred the development of advanced systems such as Apache Iceberg that decouple logical partitioning from physical storage structures. 
 自動化されたスキーマ進化、動的パーティション発見、および管理オーバーヘッドの削減の必要性は、論理パーティショニングを物理ストレージ構造から切り離すApache Icebergのような高度なシステムの開発を促進しました。 
 
