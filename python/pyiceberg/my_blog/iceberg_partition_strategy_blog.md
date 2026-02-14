@@ -2,26 +2,25 @@
 
 ## はじめに: なんでこの記事を書いたの??
 
-Icebergテーブルフォーマットについて調べた経緯については前回の記事([Feature Store調べてたらレイクハウスアーキテクチャと繋がったのでIcebergテーブルフォーマットについて調べた! スキーマ進化編!](https://qiita.com/morinota/items/a670abb84cf5aca480b2))で書いたのですが、本記事はその続きで、**Icebergのパーティション戦略**について調べた内容をまとめたものになります。
+Icebergテーブルフォーマットについて調べてる経緯については、前回の記事([Feature Store調べてたらレイクハウスアーキテクチャと繋がったのでIcebergテーブルフォーマットについて調べた! スキーマ進化編!](https://qiita.com/morinota/items/a670abb84cf5aca480b2))で書きました。要約すると、自分はMLOpsに関心があってFeature Storeの本を読んでたら、オフラインストアの実装にレイクハウスアーキテクチャが採用されることが多いと書いてあったので、その中核技術であるIcebergテーブルフォーマットについて調べている、という感じです。
+前回はIcebergテーブルのスキーマ進化について調べた結果をまとめました。本記事はその続きで、**Icebergのパーティション戦略**について調べた内容をまとめたものになります。
 
-Feature Storeのオフラインストアとしてレイクハウスアーキテクチャを採用する場合、大量or大きな特徴量レコード達に対してなるべく高速 & 安価なクエリを実現することが重要です。
+Feature Storeのオフラインストアの要件として、大量or大きな特徴量レコード達に対してなるべく高速 & 安価なクエリを実現することが重要です。
 (注意点として、リアルタイムで低レイテンシアクセスできるほど高速、という意味ではないです!その役割はオフラインストアではなくオンラインストアが担うので。ここでは寧ろ、学習用/バッチ推論用に大きなデータセットを作成する際のクエリ性能の話をしています。)
+もし学習データセット作成時の**クエリが遅い or 高コストになってしまうと**、データサイエンティストが特徴量の探索やモデルのトレーニングを行う際のフィードバックループが遅くなってしまい、**結果的にモデルの品質向上やプロジェクトの成功に悪影響を与えてしまう可能性も高い**でしょう。
+特にMLプロジェクトの種類によっては、データサイズの大きい埋め込み表現などのベクトル型の特徴量を扱うことも多いので、何も気にしてないとクエリ性能が大幅に低下 or コスト爆増の可能性は十分に高いです。
 
-もし学習データセット作成時のクエリが遅い or 高コストになってしまうと、データサイエンティストが特徴量の探索やモデルのトレーニングを行う際のフィードバックループが遅くなってしまい、結果的にモデルの品質向上やプロジェクトの成功に悪影響を与えてしまう可能性も高いでしょう。
-特にMLプロジェクトの種類によっては、データサイズの大きい埋め込み表現などのベクトル型の特徴量を扱うことも多いので、何も気にしてないとクエリ性能が大幅に低下する可能性は十分に高いです。
+Icebergテーブルのクエリ性能を最大化するための重要な要素の一つに、パーティショニング(partitioning)戦略があります。
+本記事は、Icebergのパーティショニングの仕組み、パーティショニング戦略のtipsなどを調査した結果をまとめたものです。
 
-Icebergテーブルのクエリ性能を最大化するための重要な要素の一つが、**パーティション戦略**です。
-調べてみると、Apache Icebergの**Hidden Partitioning(隠れたパーティショニング)**という機能が、従来のHiveのパーティショニングと比べて圧倒的に柔軟で、かつパフォーマンスも良いらしい...!!:thinking:
-そこで本記事では、Icebergのパーティショニングの仕組み、最適化戦略、そしてベストプラクティスについて、複数の参考資料を基に整理してみました!
-
-### 参考資料
+## 参考資料
 
 - [What is Hidden Partitioning in Apache Iceberg?](https://www.stackgazer.com/p/what-is-hidden-partitioning-in-apache-iceberg)
 - [Iceberg Partitioning and Performance Optimization (Conduktor)](https://conduktor.io/glossary/iceberg-partitioning-and-performance-optimization)
 - [Best Practices for Optimizing Apache Iceberg Performance (Starburst)](https://www.starburst.io/blog/best-practices-for-optimizing-apache-iceberg-performance/)
 - [Iceberg Partitioning vs. Hive Partitioning](https://olake.io/iceberg/hive-partitioning-vs-iceberg-partitioning/)
 
-## 本論: Hidden Partitioning とは何か
+## Icebergのパーティショニングの仕組み (Hidden Partitioning) の話
 
 ### 従来のパーティショニングアプローチの課題
 
