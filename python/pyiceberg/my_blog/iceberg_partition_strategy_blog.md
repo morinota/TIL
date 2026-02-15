@@ -30,23 +30,114 @@
     - もし学習データセット作成時の**クエリが遅い or 高コストになってしまうと**、データサイエンティストが特徴量の探索やモデルのトレーニングを行う際のフィードバックループが遅くなってしまい、**結果的にモデルの品質向上やプロジェクトの成功に悪影響を与えてしまう可能性も高い**はず。
     - 特にMLプロジェクトの種類によっては、**データサイズの大きい埋め込み表現などのベクトル型の特徴量**を扱うことも多いので、何も気にしてないとクエリ性能が大幅に低下 or コスト爆増の可能性は十分に高いと思われる。
   - そして、**Icebergテーブルのクエリ性能を最大化するための重要な要素の一つに、パーティショニング(partitioning)戦略がある。**
-- よって本記事にて、Icebergのパーティショニングの仕組み、パーティショニング戦略のtipsなどを調査した結果をまとめて見てます!
+- よって本記事にて、Icebergのパーティショニングの仕組み、パーティショニング戦略のtipsなどを調査した結果をまとめてみているわけです。
 
 ## Icebergのパーティショニングの仕組み (Hidden Partitioning) の話
 
-- Icebergのパーティショニングは、**hidden partitioning**と呼ばれるアプローチを採用している。
-  - hidden partitioning = ユーザにpartitionの認識を追わせることなく、クエリパフォーマンスを向上させる**メタデータ駆動型アプローチ**。
-    - 背景として、従来のデータレイク(Hiveテーブル形式など)のパーティショニングの仕組みでは、partitioningをユーザに公開し、ストレージレイアウトを理解し、クエリ内でpartition列を明示的に参照することを強制してた。
-  - クエリ描く人がpartition keyを意識しなくて良いっぽい...!:thinking:
+Icebergのパーティショニングは、**hidden partitioning**と呼ばれるアプローチを採用してる。どうやらこれが結構いい感じらしいです...!:thinking:
+
+### そもそもpartitioningってどういう概念だっけという話。
+- partitioning = 巨大なデータセットを**小さな複数のデータセットに分割**し、**キー属性に基づいて複数のパーティション(区画, 仕切り)に分配**するプロセス。
+  - 全てのレコードは必ずどれか1つのパーティションに属する。
+  - 各パーティションは、read / write を独立に実行でき、論理的には小さなデータベースのように振る舞う。
+- なぜ分割したいのか??
+  - 大規模データでは、テーブル全体スキャンは高コスト(I/Oの量, 時間, クラウド料金)
+  - partitioningにより、クエリスコープを限定でき、不要なデータ塊をスキップできる(**partition pruning**と呼ばれる機能)
+    - ex. `select ... where month(order_ts) = 10` みたいなクエリがあったときに、10月のパーティションだけを対象とすれば良いので、他の全ての関連しないファイル達をスキップできるようになる
+- ちなみに...partitioningの分類: 水平 vs 垂直
+  - 水平パーティショニング(Horizontal Partitioning, splitting rows): 
+    - データセットを行単位で分割する方法。
+  - 垂直パーティショニング(Vertical Partitioning, splitting columns):
+    - データセットを列単位で分割する方法。
+  - 大規模テーブルの場合は水平パーティショニングが一般的。
+- ちなみに...一般的なpartitioning戦略
+  - **範囲パーティショニング(Range Partitioning)**: 
+    - 連続した値の範囲に基づいて行を分割する方法(ex. year/month/day)。時系列データと相性が良い。
+  - **リストパーティショニング(List Partitioning)**: 
+    - 明示的な値の集合に基づいて分割(ex. country=US/EU/JP)
+  - **ハッシュパーティショニング(Hash Partitioning)**: 
+    - ハッシュ関数を使用して行を分割(ex. user_idを16個のbucketに分割するみたいな)。
+    - 注意点: **類似値を同じパーティションに配置するような挙動じゃないので、クエリ最適化の観点では効果は薄いらしい。**
+  - **複合パーティショニング(Composite Partitioning)**: 
+    - 複数戦略を組み合わせる方法(ex. 日付で範囲パーティショニングして、その中でさらにregionでリストパーティショニングするみたいな)。
+- Partitioningがもたらすシステム的なメリット達:
+  - Reducing query scope (クエリのスコープを限定できる)
+  - Parallel processing (異なるパーティションに対して並列に読み書きできる)
+  - High throughput (I/Oの効率化により高スループットを実現できる)
+  - Scalability (複数マシンに異なるパーティションを分散できる)
+  - Maintenance (古いパーティションをアーカイブしたり削除したりするのが簡単)
+  - Availability (一部のパーティションが障害を起こしても、他のパーティションは利用可能なままにできる)
+
+### 従来 (Iceberg以前) のpartitioningの方法と問題点
+
+- Icebergより前の従来のテーブルフォーマット(Hiveなど)のpartitioningの仕組みは **Folder-based(Explicit) Partitioning**と呼ばれるアプローチを採用。
+  - ざっくり「**パーティション = ディレクトリ構造**」という仕組み!
+- このFolder-based Partitioningの何がつらいのか??
+  - 1. 手動管理つらい:
+    - パーティション追加・修復の運用が大変。
+  - 2. 柔軟性が低くてつらい:
+    - パーティションスキームの変更が困難。既存データを再書き込みする必要があることも多い。
+  - 3. クラウドでの大量のlist操作がつらい:
+    - S3のようなオブジェクトストレージで、ディレクトリを大量に辿るのがクエリのボトルネックになりやすい。
+  - 4. クエリがパーティションを意識する必要があってつらい:
+    - クエリを書く人が、どのようにパーティションが切られているかを明確に理解し、適切にwhere句でパーティションキーを参照する必要がある。
+      - ex. `select ... where month(order_ts) = 10` みたいなクエリを書けばpruningが効く。しかし、`select ... where order_ts >= '2023-10-01' and order_ts < '2023-11-01'` みたいなクエリを書いてしまうと、pruningが効かずに全てのパーティションをスキャンしてしまう。
+  - 5. メタストアが肥大化してつらい:
+    - パーティションが増えるほど、Glue catalogのようなメタストアが肥大化し、そこがクエリ性能のボトルネックになりやすい。
+
+### Icebergなどのモダンなpartitioningの方法と特徴
+
+- Icebergは、伝統的なfolder-based partitioningから脱却して、**hidden partitioning (i.e. メタデータ駆動型アプローチ)**を採用。
+  - 核となる思想は「Decouple partitioning from physical storage layout」。
+    - つまりPartitioningを物理的なストレージレイアウトから切り離し、メタデータで管理するアプローチ。
+  - パーティション情報はIcebergのメタデータファイル(manifestファイル)に保持される。
+    - 具体的には、**各データファイルがどのパーティションに属するかの情報**が、メタデータファイルに保存される。
+    - よってクエリ時の動作としては以下。
+      - まず Query predicate (クエリのwhere句の条件) を解析。
+      - 次に **メタデータファイルを参照して、条件を満たすパーティションに所属するデータファイル一覧を特定する。ここで高価なディレクトリのlist操作は発生しない!**
+      - 最後に、特定されたデータファイルだけをスキャンする。
+    - ↑はDirectory-based pruningに対してmetadata-driven file pruningと呼ばれるらしい。
+- このhidden partitioningの重要な利点たち:
+  - 1. パーティションカラムの詳細を意識しなくていい!
+    - パーティション情報がテーブルメタデータに入ってるので、エンドユーザがクエリ内で物理的なディレクトリ構造を意識する必要がない。
+  - 2. パーティション進化が楽。
+    - パーティションスキームの変更が柔軟で、既存データを再書き込みする必要もない。
+  - 3. list操作が不要でクエリ性能が向上。
+    - S3のようなオブジェクトストレージでディレクトリを大量に辿る必要がないので、クエリ性能が大幅に向上する。
+
+- Icebergのpartitioningの設定の流れ
+  - 1. テーブル作成時
+    - `PARTITIONED BY`句でパーティションの定義を宣言的(declarative)に指定する。
+    - この際 Iceberg が提供する**組み込みの変換関数(transform functions)を使用**して定義する。以下が変換関数の一覧。
+      - `identity(col)` - カラムの値をそのままパーティションキーにする。
+      - `years(ts), month(ts), day(ts), hour(ts)` - タイムスタンプを年/月/日/時間粒度に変換してパーティションキーにする。
+      - `bucket(N, col)` - カラムの値をN個のバケットにハッシュ分割してパーティションキーにする。
+      - `truncate(L, col)` - カラムの値を先頭L文字・桁で切り捨ててパーティションキーにする。
+  - 2. データ書き込み時
+    - Iceberg が partition spec に基づいて変換関数を噛ませて**partition values を自動計算**。
+    - データファイルを作成するとともに、各データファイルのpartition valueをメタデータファイルに登録する。
+  - 3. データ読み込み(クエリ)時
+    - クエリのwhere句の条件を解析。
+    - メタデータファイルを参照して、条件を満たすパーティションに所属するデータファイル一覧を特定し、スキャンする。
+  - 4. 必要に応じてパーティションスキームを変更する(Partition Evolution)
+    - データ量や頻出のクエリパターンが変化してきたら、パーティションスキームを変更することも有効。
+    - Icebergはパーティション進化が容易 (既存データを再書き込みする必要なし) なので。
+
+- パーティション進化の挙動
+  - 古いデータは古いパーティションスキームのまま、新しいデータは新しいパーティションスキームで書き込まれる。
+  - クエリは自動的に両方のスキームを活用
+  - データの書き換えは不要（Zero-Copy Evolution）
 
 ## Icebergのパーティショニング戦略のtips
 
 「**どのカラムをどう変換して分割すべきか**」を**クエリパターンから逆算**して設計するのが基本!
 
-- 基本的には、「よく使うWhere句(i.e. filter条件)」と「テーブルサイズ」から決める感じ!
+- 基本的には、「**よく使うWhere句(i.e. filter条件)**」と「**テーブルサイズ**」から決める感じ!
 - (1) そもそもpartitionすべきかの判断!
-  - 全体で1TB未満くらいのテーブルだったら、無理にpartition切らない方がシンプルで良いことも多い。
-  - パーティション進化できるので、データサイズの増加に応じて途中からpartition切るのも全然あり...!:thinking:
+  - 全体で1TB未満くらいのテーブルだったら、無理にpartition切らない方がシンプルで良いことも多いらしい。
+    - **過剰に小さくパーティションが切られていると逆にクエリ性能が悪化する事もある**らしい。
+      - (たぶんここで悪化するのはクエリ時間。スキャンする量は下がるはずなので、例えばAthenaの場合はコストが下がるはず...!:thinking:)
+  - まあ**パーティション進化が容易なので、まずは粗い粒度から始めて、データの増加やクエリパターンの変化がある場合などに必要に応じて洗練させていく**のが良さそう...!!:thinking:
 - (2) 時系列イベントテーブルなら...
   - まずは`day(event_time)`や`hour(event_time)`でpartition切るのが無難。
   - 1日にどれくらいデータ入るか見て、日次で多すぎるなら時間単位に、少なすぎるなら月単位を検討する感じ。
@@ -55,354 +146,17 @@
   - Nは「1partitionあたりの数百MB〜数GB」くらいに落ち着くように試す。
   - ただ個人的に、この `bucket()` という変換関数はあんまり意味ない気がしてる...!!:thinking:
     - **結局ハッシュに基づいて分割するだけなので、あんまりpartitioning pruningでクエリ性能を向上させるという効果は薄い**っぽい。
-
-## Partition Transform Functions（パーティション変換関数）
-
-Iceberg は、列の値をパーティション値に変換する組み込みの変換関数を提供します。
-
-### Temporal Transforms（時間変換）
-
-- `years(timestamp)` - 年単位でパーティション
-- `months(timestamp)` - 月単位でパーティション
-- `days(timestamp)` - 日単位でパーティション
-- `hours(timestamp)` - 時間単位でパーティション
-
-### Bucketing and Truncation（バケット化と切り捨て）
-
-- `bucket(N, col)` - N 個のバケットにハッシュパーティション
-- `truncate(width, col)` - 指定された幅に文字列または数値を切り捨て
-- `identity(col)` - 変換なし（そのまま使用）
-
-これらの変換は、パーティション値が書き込み時に導出され、メタデータにのみ保存され、データファイルに重複して保存されないことを保証します。
-
-### 多次元パーティショニングの例
-
-```sql
-CREATE TABLE user_activity (
-   user_id BIGINT,
-   session_id STRING,
-   activity_time TIMESTAMP,
-   region STRING,
-   activity_data STRING
-) PARTITIONED BY (
-   days(activity_time),
-   truncate(2, region),
-   bucket(user_id, 32)
-);
-```
-
-この戦略により、不要なデータをスキャンすることなく、時間範囲、地理的地域、および特定のユーザにわたる効率的なクエリが可能になります。
-
-## Partition Evolution（パーティションの進化）
-
-Hidden Partitioning の重要な利点の一つは、**データを再書き込みすることなくパーティションスキームを進化させる能力**です。
-
-```sql
--- 初期: 日単位のパーティショニング
-CREATE TABLE metrics (
-  metric_id BIGINT,
-  timestamp TIMESTAMP,
-  value DOUBLE
-)
-PARTITIONED BY (days(timestamp));
-
--- 後で: 時間単位のパーティショニングに進化
-ALTER TABLE metrics
-DROP PARTITION FIELD days(timestamp);
-
-ALTER TABLE metrics
-ADD PARTITION FIELD hours(timestamp);
-```
-
-### Version-Based Partition Specs
-
-Iceberg は、各パーティション仕様に一意の ID を割り当て、各データファイルにどの仕様が使用されたかを追跡します。
-
-**Netflixの事例では、パーティション進化を使用して、マルチペタバイトテーブルのパーティションスキームをダウンタイムや重大なパフォーマンスへの影響なしに移行できたそうです!** すごい...!!
-
-### パフォーマンスへの影響
-
-- 古いデータは日単位のパーティションのまま
-- 新しいデータの書き込みは時間単位のパーティショニングを使用
-- クエリは自動的に両方のスキームを活用
-- データの書き換えは不要（Zero-Copy Evolution）
-
-## パフォーマンス最適化のベストプラクティス
-
-### 1. 適切なパーティション列の選択
-
-**低カーディナリティの列を選び、比較的一様な分布を持つもの**を選択します。
-
-推奨される列の例：
-
-- 時系列データ: `days(timestamp)`, `hours(timestamp)`
-- カテゴリカルデータ: `region`, `product_category`, `customer_segment`
-- 高カーディナリティ列の場合: `bucket(user_id, N)`
-
-避けるべき列：
-
-- `user_id`, `transaction_id` などの高カーディナリティ列（バケット化を使わない場合）
-
-### 2. 過剰なパーティショニングを避ける
-
-**推奨されるパーティションサイズ**：
-
-- 最低: パーティションごとに 1GB - 10GB
-- 理想: パーティションごとに 10GB - 100GB
-- 個々のファイルサイズ: 100MB 以上
-
-**テーブルサイズの考慮**：
-
-- テーブルの全体的なファイルサイズは、パーティションを利用する前に少なくとも 1TB であるべき
-- 各追加次元は、パーティション数を乗算的に増加させる
-- 例: 365日 × 128バケット = 46,720パーティション
-  - 各パーティションに128MBのファイル1つを持つには、6TBのデータが必要
-  - 低ボリュームテーブルでは数千の小さなファイルが生成され、メタデータオーバーヘッドが増加
-
-### 3. 時間ベースのパーティショニング進化戦略
-
-データ量に応じて、パーティションの粒度を調整します。
-
-```sql
--- 戦略例:
--- 0-90日: 時間単位のパーティション（最近のデータ、高いクエリ頻度）
--- 91-365日: 日次パーティション（中程度の年齢のデータ）
--- 365日以上: 月次パーティション（アーカイブデータ、まれなクエリ）
-
--- 初期: 時間単位
-PARTITIONED BY (hours(timestamp));
-
--- 90日後: 日次パーティショニングに進化
-ALTER TABLE metrics ADD PARTITION FIELD days(timestamp);
-ALTER TABLE metrics DROP PARTITION FIELD hours(timestamp);
-```
-
-### 4. ファイル管理とコンパクション
-
-**Small Files Problem（小ファイル問題）**：
-
-Iceberg は、データセットが変更されるたびに新しいメタデータとデータファイルを生成します。これにより、多数の小さなファイルが増殖し、時間の経過とともにパフォーマンスが低下します。
-
-#### 問題の検出
-
-```sql
--- 100MB 未満のファイルを特定
-SELECT COUNT(*) as small_files
-FROM "catalog"."schema"."table$files"
-WHERE file_size_in_bytes < 100000000;
-```
-
-#### コンパクションの実行
-
-```sql
--- Trino の optimize コマンドで小さなファイルを統合
-ALTER TABLE catalog.schema.table
-EXECUTE optimize(file_size_threshold => '100MB');
-```
-
-#### コンパクションのベストプラクティス
-
-- 頻繁にクエリされるテーブルを優先する
-- 特定のパーティションを圧縮するためにフィルターを使用する
-- クエリワークロードに影響を与えないように、別のクラスターで実行することを検討
-- 時間ベースのパーティショニングでは、データファイルがもはや変更されなくなった時点で圧縮を停止
-
-### 5. スナップショット管理
-
-時間が経つにつれて、Iceberg は古いスナップショットと関連するメタデータを蓄積します。これらは Time Travel 機能を可能にしますが、ストレージを消費し、クエリ計画のパフォーマンスに影響を与える可能性があります。
-
-#### スナップショットの期限切れ
-
-```sql
--- 7日より古いスナップショットを削除
-ALTER TABLE catalog.schema.table
-EXECUTE expire_snapshots(retention_threshold => '7d');
-```
-
-#### 孤立したファイルの削除
-
-```sql
--- どのスナップショットにも参照されなくなったデータファイルを削除
-ALTER TABLE catalog.schema.table
-EXECUTE remove_orphan_files(retention_threshold => '3d');
-```
-
-#### マニフェストの再書き込み
-
-```sql
--- マニフェストファイルを統合してクエリ計画の効率を向上
-ALTER TABLE catalog.schema.table
-EXECUTE rewrite_manifests;
-```
-
-これにより、クエリエンジンが読み取る必要のあるマニフェストファイルの数が減少し、クエリ計画の効率が向上します。
-
-## 2025年のパフォーマンス向上（Iceberg 1.5+）
-
-### Position Delete Performance (Iceberg 1.5)
-
-Iceberg 1.5 では、行レベルの削除を持つテーブルのパフォーマンスを劇的に改善する最適化されたポジション削除処理が導入されました。
-
-```sql
--- Position Deletes がパーティション対応になり、より効率的に
-DELETE FROM events
-WHERE event_timestamp = '2024-06-15'
-  AND event_type = 'duplicate';
-```
-
-以前は、Position Deletes がすべてのパーティションにわたってクエリパフォーマンスに影響を与える可能性がありました。1.5 の最適化により、削除ファイルがパーティションを認識するようになり、削除を含まない全パーティションをスキップできるようになります。
-
-### Advanced Statistics Collection (Iceberg 1.6+)
-
-Iceberg 1.6 では、統計収集が強化されました：
-
-- より良い述語プッシュダウンのための列レベルの NULL カウント
-- HyperLogLog スケッチを使用した異なる値の推定
-- 高カーディナリティ列のための Bloom フィルター（オプション）
-
-```sql
-CREATE TABLE enhanced_events (
-  user_id BIGINT,
-  event_data STRING,
-  event_timestamp TIMESTAMP
-)
-PARTITIONED BY (days(event_timestamp))
-TBLPROPERTIES (
-  'write.metadata.metrics.column.user_id'='full',
-  'write.metadata.metrics.column.event_data'='counts'
-);
-```
-
-### REST Catalog Standard
-
-REST カタログは、2025 年のデプロイメントに推奨されるカタログ実装となりました。Hive Metastore や AWS Glue とは異なり、REST カタログは以下を提供します：
-
-- すべての Iceberg 実装にわたる標準化された API
-- 高同時実行ワークロードに対するより良いスケーラビリティ
-- テーブル間の原子的操作のためのマルチテーブルトランザクション
-- セキュアなデータアクセスのための組み込みの資格情報販売
-
-## ストリーミングエコシステムとの統合
-
-### Apache Kafka with Iceberg
-
-ストリーミング書き込みには、慎重なパーティション戦略の設計が必要です。
-
-```sql
--- ストリーミングデータに最適なパーティショニング
-CREATE TABLE kafka_events (
-    event_key STRING,
-    event_value STRING,
-    event_timestamp TIMESTAMP,
-    kafka_partition INT,
-    kafka_offset BIGINT
-) PARTITIONED BY (hours(event_timestamp));
-```
-
-ベストプラクティス：
-
-- ストリーミングデータには時間単位のパーティショニングを使用
-- ストリーミングジョブで自動圧縮を有効にする
-- コミット前にデータをバッファリングするように設定
-- パーティションの基数を監視して、過剰なパーティショニングを避ける
-
-### Flink and Spark Streaming
-
-```python
-# Spark Structured Streaming to Iceberg
-df.writeStream \
-  .format("iceberg") \
-  .outputMode("append") \
-  .option("fanout-enabled", "true") \
-  .option("target-file-size-bytes", "536870912") \
-  .partitionBy("days(event_timestamp)") \
-  .toTable("events")
-```
-
-`fanout-enabled` オプションは、複数のタスクが同時に同じパーティションに書き込む際のライター競合を防ぎます。ファナウトモードがない場合、パーティションへの同時書き込みを行うライターは、同じマニフェストファイルを更新するために競争し、リトライやスループットの低下を引き起こします。
-
-## パフォーマンス調整チェックリスト
-
-### 1. 適切なパーティションの粒度を選択
-
-- 高ボリュームテーブル: 時間単位またはバケットベース
-- 中ボリューム: 日単位
-- 低ボリューム: 月単位またはパーティショニングなし
-
-### 2. ファイルサイズを監視
-
-- 目標: ファイルあたり 128MB - 1GB
-- 100MB 未満のファイルには圧縮を使用
-- 必要に応じて大きなファイルを分割
-
-### 3. パーティションの進化を活用
-
-- 粗い粒度から始め、データが増えるにつれて洗練させる
-- 古いデータをより粗い粒度のパーティションにアーカイブ
-
-### 4. メタデータキャッシングを有効化
-
-- マニフェストファイルのカタログキャッシングを設定
-- クエリ計画のオーバーヘッドを削減
-
-### 5. カラム統計を使用
-
-- 統計収集が有効であることを確認
-- パーティションレベルのフィルタリングを超えたファイルを削除
-
-### 6. クエリパターンをテスト
-
-- クエリ実行計画を分析
-- パーティションとファイルの削除効果を確認
-
-## パフォーマンス監視
-
-**測定しないものは改善できません。**
-
-### ファイル統計
-
-```sql
--- ファイルの数とサイズを監視
-SELECT
-  COUNT(*) as file_count,
-  AVG(file_size_in_bytes) / 1024 / 1024 as avg_size_mb,
-  MIN(file_size_in_bytes) / 1024 / 1024 as min_size_mb,
-  MAX(file_size_in_bytes) / 1024 / 1024 as max_size_mb
-FROM "catalog"."schema"."table$files";
-```
-
-### Table Health Indicators
-
-Iceberg のメタデータテーブルを使用してテーブルの状態を理解します：
-
-- `$files` – データファイルのサイズと数を表示
-- `$manifests` – マニフェストファイルの健康状態と統合の必要性を追跡
-- `$snapshots` – スナップショットの蓄積を監視し、期限切れスケジュールを計画
-
-### クエリパフォーマンスメトリック
-
-- クエリの実行時間を追跡
-- スキャンされたデータと処理された行を監視
-- 劣化パターン（時間の経過とともに操作が徐々に遅くなること）を探し、メンテナンスが必要であることを示す
-
-## (補足) すべてのデータが Iceberg にある必要があるわけではない
-
-調べていて興味深かったポイントとして、「全部のデータをIcebergに移行しなくてもいい」という話がありました!
-
-データの集中化は万能ではありません。以下のようなデータセットを優先的にIcebergに移行することを検討すると良いそうです:
-
-- **ビジネスにとって重要**なデータ
-- **異なるユースケースで複数のユーザーによって頻繁にアクセスされる**データ
-- **Icebergの高度な機能から最も利益を得ることができる**データ
-
-パフォーマンスの向上が必要でない場合はデータをフェデレートのままにしておき、**移行が新しいプロジェクトの障害にならないように**しましょう。
-
-段階的なアプローチが推奨されています:
-
-1. Trinoなどのクエリツールを使用して、デフォルトで分散データにアクセス
-2. そこから、高価値データセットを特定して移動
-
-個人的には、Feature Storeの文脈では、モデル学習や推論で頻繁にアクセスする特徴量テーブルは優先的にIcebergに移行する価値がありそうだと思いました! :thinking:
+- (4) カラムのcardinalityを意識する
+  - row cardinalityなカラム (ex. countryが数十種類) → `identity(country)`は全然あり。
+  - high cardinalityなカラム (ex. user_idが数百万 ~ 数千万以上) → `bucket(16, user_id)`とか`truncate(3, user_id)`みたいに変換をかける。
+    - ただ上述した理由で`bucket()`はあまり効果的じゃない気がしてる。**なのでhigh cardinalityなカラム、特にuser_idやitem_idなどの連番っぽいカラムは、partitioningではなくsort order機能の方でクエリ性能を向上させる、のが有効なのかな〜**と思ってる...!:thinking:
+  - 基本的には、**低カーディナリティで比較的一様な分布を持つkey**がpartition keyに適してる。
+    - 推奨されるkeyの例:
+      - 時系列データ: `days(timestamp)`, `hours(timestamp)`
+      - カテゴリカルデータ: `region`, `product_category`, `customer_segment`
+      - 高カーディナリティ列の場合: `bucket(user_id, N)` (でもこれはハッシュパーティショニングなので個人的に微妙そう...!:thinking:)
+    - 避けるべきkeyの例:
+      - `user_id`, `transaction_id` などの高カーディナリティ列（バケット化を使わない場合）
 
 ## おわりに
 
