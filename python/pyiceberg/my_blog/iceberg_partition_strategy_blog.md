@@ -1,123 +1,60 @@
 <!-- タイトル: Feature Store調べてたらレイクハウスアーキテクチャと繋がったのでIcebergテーブルフォーマットについて調べた! パーティション戦略編! -->
 
-## はじめに: なんでこの記事を書いたの??
+<!-- 
 
-Icebergテーブルフォーマットについて調べてる経緯については、前回の記事([Feature Store調べてたらレイクハウスアーキテクチャと繋がったのでIcebergテーブルフォーマットについて調べた! スキーマ進化編!](https://qiita.com/morinota/items/a670abb84cf5aca480b2))で書きました。要約すると、自分はMLOpsに関心があってFeature Storeの本を読んでたら、オフラインストアの実装にレイクハウスアーキテクチャが採用されることが多いと書いてあったので、その中核技術であるIcebergテーブルフォーマットについて調べている、という感じです。
-前回はIcebergテーブルのスキーマ進化について調べた結果をまとめました。本記事はその続きで、**Icebergのパーティション戦略**について調べた内容をまとめたものになります。
+ブログ構造の検討
 
-Feature Storeのオフラインストアの要件として、大量or大きな特徴量レコード達に対してなるべく高速 & 安価なクエリを実現することが重要です。
-(注意点として、リアルタイムで低レイテンシアクセスできるほど高速、という意味ではないです!その役割はオフラインストアではなくオンラインストアが担うので。ここでは寧ろ、学習用/バッチ推論用に大きなデータセットを作成する際のクエリ性能の話をしています。)
-もし学習データセット作成時の**クエリが遅い or 高コストになってしまうと**、データサイエンティストが特徴量の探索やモデルのトレーニングを行う際のフィードバックループが遅くなってしまい、**結果的にモデルの品質向上やプロジェクトの成功に悪影響を与えてしまう可能性も高い**でしょう。
-特にMLプロジェクトの種類によっては、データサイズの大きい埋め込み表現などのベクトル型の特徴量を扱うことも多いので、何も気にしてないとクエリ性能が大幅に低下 or コスト爆増の可能性は十分に高いです。
+- TL;DR
+- はじめに: なんでこの記事を書いたの??
+- Icebergのパーティショニングの仕組み (Hidden Partitioning) の話
+- Icebergのパーティショニング戦略のtips
+  - 「どのカラムをどう変換して分割すべきか」をクエリパターンから逆算して設計するのが基本!
+- おわりに
+- 参考文献
 
-Icebergテーブルのクエリ性能を最大化するための重要な要素の一つに、パーティショニング(partitioning)戦略があります。
-本記事は、Icebergのパーティショニングの仕組み、パーティショニング戦略のtipsなどを調査した結果をまとめたものです。
+-->
 
-## 参考資料
+## TL;DR
 
-- [What is Hidden Partitioning in Apache Iceberg?](https://www.stackgazer.com/p/what-is-hidden-partitioning-in-apache-iceberg)
-- [Iceberg Partitioning and Performance Optimization (Conduktor)](https://conduktor.io/glossary/iceberg-partitioning-and-performance-optimization)
-- [Best Practices for Optimizing Apache Iceberg Performance (Starburst)](https://www.starburst.io/blog/best-practices-for-optimizing-apache-iceberg-performance/)
-- [Iceberg Partitioning vs. Hive Partitioning](https://olake.io/iceberg/hive-partitioning-vs-iceberg-partitioning/)
+- Icebergテーブルのパフォーマンスを最大化するための重要な要素の一つに、**パーティショニング(partitioning)戦略**がある。本記事はそれについて調査したもの。
+- hoge
+
+## はじめに: なんでこの記事を??
+
+- なぜIcebergテーブルフォーマットを??
+  - 要約すると、自分はMLOpsに関心があってFeature Storeの本を読んでたら、オフラインストアの実装にレイクハウスアーキテクチャが採用されることが多いと書いてあったので、その中核技術であるIcebergテーブルフォーマットについて調べている、という感じ。
+    - より詳細は、前回の記事([Feature Store調べてたらレイクハウスアーキテクチャと繋がったのでIcebergテーブルフォーマットについて調べた! スキーマ進化編!](https://qiita.com/morinota/items/a670abb84cf5aca480b2))へ!
+- なぜIcebergのパーティショニング戦略を??
+  - Feature Store (のオフラインストア) がビジネスで価値を発揮するための要件として、**大量or大きな特徴量レコード達に対してなるべく高速 & 安価なクエリ**を実現することが重要。
+    - (注意点として、リアルタイムで低レイテンシアクセスできるほど高速、という意味ではないです!その役割はオフラインストアではなくオンラインストアが担うので。ここでは寧ろ、学習用/バッチ推論用に大きなデータセットを作成する際のクエリ性能の話をしてます!)
+    - もし学習データセット作成時の**クエリが遅い or 高コストになってしまうと**、データサイエンティストが特徴量の探索やモデルのトレーニングを行う際のフィードバックループが遅くなってしまい、**結果的にモデルの品質向上やプロジェクトの成功に悪影響を与えてしまう可能性も高い**はず。
+    - 特にMLプロジェクトの種類によっては、**データサイズの大きい埋め込み表現などのベクトル型の特徴量**を扱うことも多いので、何も気にしてないとクエリ性能が大幅に低下 or コスト爆増の可能性は十分に高いと思われる。
+  - そして、**Icebergテーブルのクエリ性能を最大化するための重要な要素の一つに、パーティショニング(partitioning)戦略がある。**
+- よって本記事にて、Icebergのパーティショニングの仕組み、パーティショニング戦略のtipsなどを調査した結果をまとめて見てます!
 
 ## Icebergのパーティショニングの仕組み (Hidden Partitioning) の話
 
-### 従来のパーティショニングアプローチの課題
+- Icebergのパーティショニングは、**hidden partitioning**と呼ばれるアプローチを採用している。
+  - hidden partitioning = ユーザにpartitionの認識を追わせることなく、クエリパフォーマンスを向上させる**メタデータ駆動型アプローチ**。
+    - 背景として、従来のデータレイク(Hiveテーブル形式など)のパーティショニングの仕組みでは、partitioningをユーザに公開し、ストレージレイアウトを理解し、クエリ内でpartition列を明示的に参照することを強制してた。
+  - クエリ描く人がpartition keyを意識しなくて良いっぽい...!:thinking:
 
-まず、Icebergの前に、従来のデータレイクシステム（Hiveなど）のパーティショニングがどんな感じだったかを見てみましょう!
+## Icebergのパーティショニング戦略のtips
 
-従来の方式では、パーティショニングはディレクトリベースの物理的な組織として実装されます。
+「**どのカラムをどう変換して分割すべきか**」を**クエリパターンから逆算**して設計するのが基本!
 
-```
-/table/year=2025/month=04/day=01/data1.parquet
-/table/year=2025/month=04/day=02/data2.parquet
-/table/year=2025/month=05/day=01/data3.parquet
-```
-
-この方式では、**ユーザがクエリ内でパーティション列を明示的に参照する必要**があります。
-
-```sql
--- パーティション列を明示的に指定しないとフルスキャンが発生
-SELECT * FROM events
-WHERE event_timestamp = '2025-04-01';
-
--- パーティション列を指定することで、無関係なディレクトリを除外
-SELECT * FROM events
-WHERE year = 2025 AND month = 4 AND day = 1;
-```
-
-この方式の問題点：
-
-- 物理データレイアウトを理解する複雑さがユーザに押し付けられる
-- パーティショニングスキームとクエリが密結合してしまう
-- パーティション戦略の変更が困難 (i.e. パーティション進化ができない)
-
-### Iceberg の Hidden Partitioning の仕組み
-
-ではIcebergはどうでしょうか? Icebergは、**メタデータ駆動型アプローチ**により、パーティショニングをユーザから抽象化します!
-
-```sql
--- Iceberg のテーブル作成
-CREATE TABLE events (
-    event_id BIGINT,
-    user_id BIGINT,
-    event_timestamp TIMESTAMP,
-    event_type STRING
-) PARTITIONED BY (
-    days(event_timestamp),
-    bucket(user_id, 16)
-);
-
--- ユーザは元の列に対してクエリを実行するだけ
-SELECT * FROM events
-WHERE event_timestamp >= '2024-01-01' AND user_id = 12345;
-```
-
-**Iceberg のクエリプランナーが自動的に述語をパーティションフィルターに変換**し、関連するデータファイルのみを読み取ります。これにより：
-
-- ユーザはパーティショニングスキームを意識する必要がない
-- パーティション戦略の変更がクエリに影響しない
-- パフォーマンスは自動的に最適化される
-
-## Iceberg のメタデータアーキテクチャ
-
-Iceberg の Hidden Partitioning は、多層のメタデータアーキテクチャに基づいています。
-
-### 3つの主要コンポーネント
-
-1. **Metadata Files（メタデータファイル）**
-   - テーブルスキーマ、パーティション仕様、スナップショット、設定を保存
-
-2. **Manifest Lists（マニフェストリスト）**
-   - スナップショットのすべてのマニフェストを追跡
-   - 各マニフェストのパーティション値の範囲を含む
-
-3. **Manifest Files（マニフェストファイル）**
-   - データファイルの詳細を含む
-   - パーティション値や列レベルの統計を含む
-
-このアーキテクチャにより、データが物理的にどのように保存されているかと、論理的にどのように表現されているかを分離できます。
-
-### Multi-Level Filtering Algorithm（多層フィルタリングアルゴリズム）
-
-Iceberg は、読み取るファイルのセットを段階的に絞り込む 3 段階のフィルタリングを実行します。
-
-#### 1. Manifest List Filtering
-
-マニフェストリストに保存されたパーティション値の範囲を使用して、最初のフィルタリングを実行します。
-
-- O(1) のフィルタリング操作（従来の O(n) と比較）
-- テーブルサイズに応じた n の増加を回避
-
-#### 2. Manifest-Level Filtering
-
-正確なパーティション値の一致を適用します。
-
-#### 3. Data File Selection
-
-ファイルレベルの統計を使用してさらなるフィルタリングを実行します。
-
-Wang et al.のパフォーマンス研究では、この多層フィルタリングアプローチが、**特定のクエリパターンに対してデータスキャン量を最大95%削減**したことが示されています! すごい効果...!!
+- 基本的には、「よく使うWhere句(i.e. filter条件)」と「テーブルサイズ」から決める感じ!
+- (1) そもそもpartitionすべきかの判断!
+  - 全体で1TB未満くらいのテーブルだったら、無理にpartition切らない方がシンプルで良いことも多い。
+  - パーティション進化できるので、データサイズの増加に応じて途中からpartition切るのも全然あり...!:thinking:
+- (2) 時系列イベントテーブルなら...
+  - まずは`day(event_time)`や`hour(event_time)`でpartition切るのが無難。
+  - 1日にどれくらいデータ入るか見て、日次で多すぎるなら時間単位に、少なすぎるなら月単位を検討する感じ。
+- (3) ユーザ/テナント単位のアクセスが多いなら...
+  - 日付 + `bucket(user_id, 16)`みたいな、複合partitionを検討。
+  - Nは「1partitionあたりの数百MB〜数GB」くらいに落ち着くように試す。
+  - ただ個人的に、この `bucket()` という変換関数はあんまり意味ない気がしてる...!!:thinking:
+    - **結局ハッシュに基づいて分割するだけなので、あんまりpartitioning pruningでクエリ性能を向上させるという効果は薄い**っぽい。
 
 ## Partition Transform Functions（パーティション変換関数）
 
@@ -467,73 +404,11 @@ Iceberg のメタデータテーブルを使用してテーブルの状態を理
 
 個人的には、Feature Storeの文脈では、モデル学習や推論で頻繁にアクセスする特徴量テーブルは優先的にIcebergに移行する価値がありそうだと思いました! :thinking:
 
-## 学びと考察
-
-本記事でIcebergのパーティショニング戦略について調べてみて、以下のことを学びました!
-
-### 学んだこと
-
-- **Hidden Partitioningの革新性**: Icebergは、パーティショニングをユーザから完全に抽象化することで、Hiveの根本的な制限を克服しています
-  - ユーザは元の列に対してクエリを書くだけで、Icebergが自動的にパーティションフィルターに変換してくれる! これは本当に便利...!!
-- **Partition Evolutionの柔軟性**: データを再書き込みすることなくパーティションスキームを変更できることは、プロダクション環境で非常に重要です
-  - 例えば、データ量が増えてきたら日次パーティションから時間単位のパーティションに変更する、といった進化が簡単にできる!
-  - Netflixの事例では、マルチペタバイトテーブルのパーティションスキームをダウンタイムなしで移行できたらしい...すごい...!!
-- **多層最適化の重要性**: パーティショニングだけでなく、ファイル管理、スナップショット管理を組み合わせることで、真のパフォーマンス向上が得られます
-  - 小ファイル問題の解決(コンパクション)、古いスナップショットの削除、マニフェストの再書き込みなど、定期的なメンテナンスが重要
-- **過剰なパーティショニングのリスク**: パーティション数を増やすことが常に良いとは限らず、各パーティションに十分なデータ量が必要です
-  - 推奨: パーティションごとに10GB-100GB、個々のファイルサイズは100MB以上
-  - 低ボリュームテーブルで過剰にパーティションを切ると、数千の小さなファイルが生成されメタデータオーバーヘッドが増加する...!
-
-### Feature Storeへの応用を考えてみた
-
-Feature Storeの設計においても、Icebergのパーティション戦略は有効そうです! :thinking:
-
-- **静的特徴量(Static Features)**: `news_id`などのIDでソートされたテーブルとして設計し、範囲クエリを最適化
-  - `PARTITIONED BY (truncate(1000, news_id))`のように、IDの範囲でパーティション分割するのが良さそう
-- **動的特徴量(Dynamic Features)**: 時間ベースのパーティショニングと`bucket(entity_id, N)`を組み合わせた多次元パーティショニングを活用
-  - 例: `PARTITIONED BY (days(event_timestamp), bucket(user_id, 32))`
-  - 時間範囲とユーザIDでフィルタリングするクエリを高速化できる!
-- **アクセスパターンに応じた進化**: 最初は無難なパーティション設定で始め、クエリパフォーマンスの問題が出てきたらPartition Evolutionで調整
-  - 粗い粒度(月次など)から始めて、データが増えるにつれて細かい粒度(日次、時間単位)に進化させる戦略が良さそう
-
-### AWS S3 Tablesとの関係
-
-調べていて気づいたのですが、AWS S3 Tablesは、Icebergのメンテナンス作業(コンパクション、スナップショット管理、孤立ファイル削除など)を自動化するマネージドサービスなんですね! :thinking:
-
-- 定期的なメンテナンスタスクから解放され、パーティション戦略とスキーマ設計に集中できる
-- ただし、裏で何が行われているかを理解しておくことで、パフォーマンス低下時の調査が容易になる
-- つまり、本記事で学んだIcebergの内部の仕組みを理解しておけば、S3 Tablesをより効果的に使えるということ...!!
-
 ## おわりに
 
-本記事では、Apache Icebergのパーティショニング戦略について以下の内容をまとめました!
-
-- Hidden Partitioningとは何か? 従来のHiveとの違いは?
-- Icebergのメタデータアーキテクチャと多層フィルタリング
-- パーティション変換関数の使い方
-- Partition Evolution(パーティション進化)の仕組み
-- パフォーマンス最適化のベストプラクティス
-- Feature Storeへの応用を考えてみた
-
-Icebergのパーティショニング機能のポイントは以下の通り:
-
-- **Hidden Partitioning**: ユーザはパーティションスキームを意識せず、元の列に対してクエリを書くだけ。Icebergが自動的に最適化してくれる!
-- **Partition Evolution**: データを再書き込みすることなく、パーティションスキームを進化させられる。Zero-Copy Evolutionで柔軟な運用が可能!
-- **多層フィルタリング**: マニフェストリスト→マニフェスト→データファイルの3段階でフィルタリングし、データスキャン量を最大95%削減できる!
-- **適切な粒度の選択**: パーティションごとに10GB-100GB、ファイルあたり100MB以上が推奨。過剰なパーティショニングは逆効果!
-
-研究によると:
-
-- 変換ベースのパーティショニングは、クエリパターンに適切に整合させた場合、従来のアプローチと比較してクエリ実行時間を最大60%削減できる(Novotny et al.)
-- 多層フィルタリングアプローチは、特定のクエリパターンに対してデータスキャン量を最大95%削減(Wang et al.)
-- 適切に管理されたIcebergは、Hiveに対して10倍のパフォーマンス向上をもたらす(Apache Icebergプロジェクト)
-
-次回は、実際にPyIcebergを使ってパーティショニングを試してみたいと思います! :muscle:
-
-## 参考リンク
+## 参考資料
 
 - [What is Hidden Partitioning in Apache Iceberg?](https://www.stackgazer.com/p/what-is-hidden-partitioning-in-apache-iceberg)
 - [Iceberg Partitioning and Performance Optimization (Conduktor)](https://conduktor.io/glossary/iceberg-partitioning-and-performance-optimization)
 - [Best Practices for Optimizing Apache Iceberg Performance (Starburst)](https://www.starburst.io/blog/best-practices-for-optimizing-apache-iceberg-performance/)
-- [Apache Iceberg Documentation - Partitioning](https://iceberg.apache.org/docs/latest/partitioning/)
-- [Apache Iceberg - Partition Evolution](https://iceberg.apache.org/docs/latest/evolution/#partition-evolution)
+- [Iceberg Partitioning vs. Hive Partitioning](https://olake.io/iceberg/hive-partitioning-vs-iceberg-partitioning/)
