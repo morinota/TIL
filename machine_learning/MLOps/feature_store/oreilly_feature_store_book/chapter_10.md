@@ -1,8 +1,7 @@
-## CHAPTER 10: Training Pipelines 第10章: トレーニングパイプライン
+タイトル: CHAPTER 10: Training Pipelines 第10章: トレーニングパイプライン
 
 Model training is the broadest and deepest area of data science. 
 モデルのトレーニングは、データサイエンスの中で最も広範で深い分野です。
-
 We will cover the most important concepts and scalability challenges involved when training the full gamut of models, from decision trees with XGBoost, to deep learning at scale with Ray, to fine-tuning LLMs with low-rank adaptation (LoRA). 
 私たちは、XGBoostを用いた決定木から、Rayを用いた大規模な深層学習、低ランク適応（LoRA）を用いたLLMのファインチューニングまで、さまざまなモデルのトレーニングに関わる最も重要な概念とスケーラビリティの課題を扱います。
 
