@@ -1,36 +1,32 @@
-## CHAPTER 11: Inference Pipelines 推論パイプライン
+タイトル: CHAPTER 11: Inference Pipelines 推論パイプライン
 
 Inference pipelines define the type of AI system you are building. 
 推論パイプラインは、構築しているAIシステムの種類を定義します。
-
 Batch inference pipelines are batch AI systems, online inference pipelines are real-time AI systems, and agentic workflows are LLM-powered AI systems. 
 バッチ推論パイプラインはバッチAIシステムであり、オンライン推論パイプラインはリアルタイムAIシステムであり、エージェントワークフローはLLM（大規模言語モデル）駆動のAIシステムです。
-
 An inference pipeline is a program that acquires inference data, applies transformations to the input data to produce one or more feature vectors, and then feeds the feature vector(s) to one or more models that output predictions. 
-推論パイプラインは、推論データを取得し、入力データに変換を適用して1つ以上の特徴ベクトルを生成し、その後、特徴ベクトルを1つ以上のモデルに供給して予測を出力させるプログラムです。
-
+**推論パイプラインは、推論データを取得し、入力データに変換を適用して1つ以上の特徴ベクトルを生成し、その後、特徴ベクトルを1つ以上のモデルに供給して予測を出力させるプログラム**です。
 Inference pipelines can be anything from a batch/streaming/embedded program, to a network service with SLOs, to an agent that uses LLMs and tools to achieve a goal. 
-推論パイプラインは、バッチ/ストリーミング/組み込みプログラムから、SLO（サービスレベル目標）を持つネットワークサービス、LLMやツールを使用して目標を達成するエージェントまで、さまざまな形態を取ることができます。
-
+推論パイプラインは、バッチ/ストリーミング/組み込みプログラムから、SLO（サービスレベル目標）を持つネットワークサービス、LLMやツールを使用して目標を達成するエージェントまで、**さまざまな形態を取る**ことができます。
 Inference pipelines log their inputs and outputs so that you can monitor and debug their performance. 
 推論パイプラインは、その入力と出力をログに記録し、パフォーマンスを監視およびデバッグできるようにします。
 
+<!-- ここまで読んだ! -->
+
 This chapter covers challenges in writing batch, online, embedded, and streaming inference programs. 
 この章では、バッチ、オンライン、組み込み、ストリーミングの推論プログラムを書く際の課題について説明します。
-
 Agents and LLM workflows are covered in Chapter 12. 
 エージェントとLLMワークフローについては、第12章で説明します。
-
 You will learn how to design batch inference pipelines and scale them out with PySpark. 
 バッチ推論パイプラインを設計し、PySparkを使用してスケールアウトする方法を学びます。
-
 You will learn how to write online inference pipelines that retrieve context/history from the feature store and how to deploy models in model-serving infrastructure behind a deployment API. 
 フィーチャーストアからコンテキスト/履歴を取得するオンライン推論パイプラインを書く方法と、デプロイメントAPIの背後にあるモデル提供インフラストラクチャにモデルをデプロイする方法を学びます。
-
 You will learn how to embed a model in a stream-processing application and write a user interface for your AI system in Python. 
 ストリーム処理アプリケーションにモデルを埋め込み、PythonでAIシステムのユーザーインターフェースを書く方法を学びます。
 
-###### Batch Inference Pipelines バッチ推論パイプライン
+<!-- ここまで読んだ! -->
+
+## 1. Batch Inference Pipelines バッチ推論パイプライン
 
 Batch inference pipelines make non-time-critical predictions, run on a schedule, and output predictions to some kind of inference store, from which consumers asynchronously retrieve their predictions. 
 バッチ推論パイプラインは、時間に敏感でない予測を行い、スケジュールに従って実行し、何らかの推論ストアに予測を出力し、そこから消費者が非同期的に予測を取得します。
@@ -83,7 +79,7 @@ In the following sections, we describe batch inference pipelines that make predi
 We will also look at how to scale out batch inference pipelines using PySpark and how to refactor your data model to improve performance when writing to lakehouse tables. 
 また、PySparkを使用してバッチ推論パイプラインをスケールアウトする方法や、レイクハウステーブルに書き込む際のパフォーマンスを向上させるためにデータモデルをリファクタリングする方法についても見ていきます。
 
-###### Batch Predictions for a Time Range 時間範囲に対するバッチ予測
+###### 1.0.0.0.1. Batch Predictions for a Time Range 時間範囲に対するバッチ予測
 
 Figure 11-1 shows how you can use a feature view to retrieve both training data and batches of inference data for time ranges. 
 図11-1は、フィーチャービューを使用して、時間範囲のトレーニングデータとバッチの推論データの両方を取得する方法を示しています。
@@ -197,8 +193,8 @@ However, if you are using a different model registry than Hopsworks, you will ne
 If you don’t initialize the feature_view, its training_dataset_version defaults to 1. 
 フィーチャービューを初期化しない場合、そのトレーニングデータセットバージョンはデフォルトで1になります。
 
-###### Batch Predictions for Entities 
-###### エンティティのバッチ予測
+###### 1.0.0.0.2. Batch Predictions for Entities 
+###### 1.0.0.0.3. エンティティのバッチ予測
 
 Lakehouse tables that store the offline feature data for batch inference are often parti‐ tioned by time (e.g., hour or day, depending on the incoming data velocity). 
 バッチ推論のためのオフラインフィーチャーデータを保存するレイクハウステーブルは、しばしば時間（例：時間または日）でパーティション分けされています（受信データの速度に応じて）。
@@ -346,8 +342,8 @@ In this code snippet, we still have a full table scan of `transactions.
 In reality, you only use Spine DataFrames if you have a more efficient way to read the required entity IDs (probably, from an external system). 
 実際には、必要なエンティティIDを読み取るためのより効率的な方法がある場合にのみSpine DataFramesを使用します（おそらく外部システムから）。
 
-###### Scaling Batch Inference with PySpark 
-###### PySparkによるバッチ推論のスケーリング
+###### 1.0.0.0.4. Scaling Batch Inference with PySpark 
+###### 1.0.0.0.5. PySparkによるバッチ推論のスケーリング
 
 What if you have billions or more rows of batch inference data, such that it doesn’t fit in memory on a single host? 
 数十億行以上のバッチ推論データがあり、それが単一のホストのメモリに収まらない場合はどうしますか？
@@ -450,8 +446,8 @@ The predictions are stored in a new prediction column that is added to the origi
 The perfor‐ mance of this code can be further improved by caching xgb_model, so that it is loaded once per Spark application, instead of once per partition. 
 このコードのパフォーマンスは、xgb_modelをキャッシュすることでさらに改善でき、パーティションごとではなく、Sparkアプリケーションごとに1回だけロードされるようになります。
 
-###### Data Modeling for Batch Inference 
-###### バッチ推論のためのデータモデリング
+###### 1.0.0.0.6. Data Modeling for Batch Inference 
+###### 1.0.0.0.7. バッチ推論のためのデータモデリング
 
 Batch inference programs typically only process data from lakehouse tables. 
 バッチ推論プログラムは通常、レイクハウステーブルからのデータのみを処理します。
@@ -575,8 +571,8 @@ with torch.inference_mode(): # disable gradient computation
 print(top1_probs)
 ```
 
-###### Batch Inference for LLMs
-###### LLMのバッチ推論
+###### 1.0.0.0.8. Batch Inference for LLMs
+###### 1.0.0.0.9. LLMのバッチ推論
 
 You can write batch inference programs with Pandas, Polars, or PySpark. 
 Pandas、Polars、またはPySparkを使用してバッチ推論プログラムを書くことができます。
@@ -718,8 +714,8 @@ If you can either find or create a small enough fine-tuned model for your task, 
 There are also new libraries appearing for batch inference with LLMs, such as [fenic, where LLM inference is a column operation on DataFrames](https://oreil.ly/OG-oO) (map/classify/extract/semantic.join). 
 LLMを使用したバッチ推論のための新しいライブラリも登場しており、例えば[fenic](https://oreil.ly/OG-oO)では、LLM推論がDataFrame上の列操作として行われます（map/classify/extract/semantic.join）。
 
-###### Online Inference Pipelines
-###### オンライン推論パイプライン
+###### 1.0.0.0.10. Online Inference Pipelines
+###### 1.0.0.0.11. オンライン推論パイプライン
 
 Probably the most aspirational phrase used by budding ML engineers is “deploying a model.” 
 おそらく、これからのMLエンジニアが使う最も野心的なフレーズは「モデルをデプロイする」です。
@@ -736,8 +732,8 @@ If the model is not behind a remote API, then online inference pipelines first d
 Online inference pipelines are also connected to a feature store that provides precomputed features, similarity search, and logging. 
 オンライン推論パイプラインは、事前計算された特徴、類似性検索、およびログを提供するフィーチャーストアにも接続されています。
 
-###### Ensure Offline-Online Consistency for Libraries
-###### ライブラリのオフライン-オンライン整合性を確保する
+###### 1.0.0.0.12. Ensure Offline-Online Consistency for Libraries
+###### 1.0.0.0.13. ライブラリのオフライン-オンライン整合性を確保する
 
 In Chapter 2, we stated that you need to ensure there is no skew between offline and online implementations of ODTs and MDTs. 
 第2章では、ODTsとMDTsのオフラインおよびオンライン実装間に偏りがないことを確認する必要があると述べました。
@@ -763,8 +759,8 @@ The figure also shows how Hopsworks provides base containers for FTI pipelines w
 If you customize your container by adding Python dependencies or if you are not running ML pipelines on Hopsworks, you need to ensure that you install compatible versions of your libraries across your FTI pipelines.  
 Pythonの依存関係を追加してコンテナをカスタマイズする場合や、HopsworksでMLパイプラインを実行していない場合は、FTIパイプライン全体でライブラリの互換性のあるバージョンをインストールすることを確認する必要があります。
 
-###### Model Deployments with FastAPI
-###### FastAPIを使用したモデルのデプロイ
+###### 1.0.0.0.14. Model Deployments with FastAPI
+###### 1.0.0.0.15. FastAPIを使用したモデルのデプロイ
 
 A simplified model deployment is shown in Figure 11-5. 
 図11-5に、簡略化されたモデルのデプロイが示されています。
@@ -817,8 +813,8 @@ The `predict method` extracts the parameters from the `PredictionRequest object 
 In this simple example, the deployment API and the model signature (the ordered input and return types for the model) are identical. 
 このシンプルな例では、デプロイメントAPIとモデルシグネチャ（モデルのための順序付き入力および戻り値の型）は同一です。
 
-###### LLM Deployments
-###### LLMのデプロイ
+###### 1.0.0.0.16. LLM Deployments
+###### 1.0.0.0.17. LLMのデプロイ
 
 Could you use FastAPI to serve an LLM of any size? 
 FastAPIを使用して任意のサイズのLLMを提供できますか？
@@ -876,8 +872,8 @@ NVMe disks are needed to store and load massive LLM files to prevent training an
 DeepSeek introduced its own distributed filesystem, called Fire-Flyer File System (3FS), that uses NVMe disks to optimize filesystem performance during training. 
 DeepSeekは、トレーニング中のファイルシステムパフォーマンスを最適化するためにNVMeディスクを使用する独自の分散ファイルシステムであるFire-Flyer File System (3FS)を導入しました。
 
-###### Deployment API for Models and Feature Views
-###### モデルとフィーチャービューのためのデプロイメントAPI
+###### 1.0.0.0.18. Deployment API for Models and Feature Views
+###### 1.0.0.0.19. モデルとフィーチャービューのためのデプロイメントAPI
 
 In most online inference pipelines, the (model) deployment API and model signature differ, as not all features come via the prediction request. 
 ほとんどのオンライン推論パイプラインでは、（モデル）デプロイメントAPIとモデルシグネチャは異なります。なぜなら、すべての特徴が予測リクエストを介して提供されるわけではないからです。
@@ -1112,8 +1108,8 @@ You should configure the correct amount of resources (including the number of co
 You can also avail yourself of autoscaling to increase/decrease the number of active containers in response to changes in metrics, such as the number of prediction requests per second. 
 また、予測リクエストの数などのメトリクスの変化に応じて、アクティブなコンテナの数を増減させるためにオートスケーリングを利用することもできます。
 
-###### Model-Serving Frameworks with KServe
-###### KServeを使用したモデルサービングフレームワーク
+###### 1.0.0.0.20. Model-Serving Frameworks with KServe
+###### 1.0.0.0.21. KServeを使用したモデルサービングフレームワーク
 
 FastAPI lacks many enterprise capabilities, such as GPU allocation, elastic scalability, authentication, access control, and auditing. 
 FastAPIは、GPUの割り当て、弾力的なスケーラビリティ、認証、アクセス制御、監査など、多くのエンタープライズ機能が欠けています。
@@ -1254,8 +1250,8 @@ resources={"num_instances": 1,
 )
 ```
 
-###### Performance and Failure Handling
-###### パフォーマンスと障害処理
+###### 1.0.0.0.22. Performance and Failure Handling
+###### 1.0.0.0.23. パフォーマンスと障害処理
 
 We will look at how to write ODTs and MDTs in Python, so they can be run with lower latency as Python UDFs in online inference pipelines and with higher throughput as Pandas UDFs in feature pipelines. 
 ODTsとMDTsをPythonでどのように記述するかを見ていきます。これにより、オンライン推論パイプラインでPython UDFとして低レイテンシで実行でき、フィーチャーパイプラインでPandas UDFとして高スループットで実行できます。
@@ -1263,8 +1259,8 @@ ODTsとMDTsをPythonでどのように記述するかを見ていきます。こ
 If you need even lower-latency ODTs, we will look at native functions. 
 さらに低レイテンシのODTsが必要な場合は、ネイティブ関数を見ていきます。
 
-###### Mixed-Mode UDFs
-###### 混合モードUDFs
+###### 1.0.0.0.24. Mixed-Mode UDFs
+###### 1.0.0.0.25. 混合モードUDFs
 
 To estimate the difference in latency between Python UDFs and Pandas UDFs, I wrote a simple function that calculates the square of the input number. 
 Python UDFとPandas UDFのレイテンシの違いを推定するために、入力数の平方を計算する簡単な関数を書きました。
@@ -1371,8 +1367,8 @@ Write a unit test to ensure that both functions return the same results for typi
 If you do not need to use the ODT in your feature pipeline, you can reduce transformation latency even further with native UDFs. 
 フィーチャーパイプラインでODTを使用する必要がない場合、ネイティブUDFを使用することで変換レイテンシをさらに減少させることができます。
 
-###### Native UDFs and Log-and-Wait
-###### ネイティブUDFとログ・アンド・ウェイト
+###### 1.0.0.0.26. Native UDFs and Log-and-Wait
+###### 1.0.0.0.27. ネイティブUDFとログ・アンド・ウェイト
 
 If you need the lowest-latency UDFs for ODTs, you should implement them in a compiled language such as C, C++, or Rust. 
 ODTのために最低レイテンシのUDFが必要な場合は、C、C++、またはRustなどのコンパイル言語で実装する必要があります。
@@ -1398,8 +1394,8 @@ For larger batch sizes, it uses an LLVM just-in-time (JIT) engine (Gandiva) to c
 For smaller batch sizes, the vectorized Arrow function(s) increase latency compared with the native version, while for larger batch sizes, the vectorized execution reduces latency compared with the native version. 
 小さなバッチサイズの場合、ベクトル化されたArrow関数はネイティブバージョンと比較してレイテンシを増加させますが、大きなバッチサイズの場合、ベクトル化された実行はネイティブバージョンと比較してレイテンシを減少させます。
 
-###### Handling Failures in Online Inference Pipelines
-###### オンライン推論パイプラインにおける障害処理
+###### 1.0.0.0.28. Handling Failures in Online Inference Pipelines
+###### 1.0.0.0.29. オンライン推論パイプラインにおける障害処理
 
 Model deployments are operational services that need to be robust to data problems, failing or slow feature pipelines, and request failures. 
 モデルのデプロイメントは、データの問題、失敗または遅いフィーチャーパイプライン、リクエストの失敗に対して堅牢である必要がある運用サービスです。
@@ -1479,8 +1475,8 @@ You should only take the most recent value from the cache if the latest feature 
 - Fall back to a simpler model if data is missing. 
 - データが欠落している場合は、より単純なモデルにフォールバックします。
 
-###### Model Deployment SLOs
-###### モデルデプロイメントのSLO
+###### 1.0.0.0.30. Model Deployment SLOs
+###### 1.0.0.0.31. モデルデプロイメントのSLO
 
 Model prediction latency can be low when testing but high in a deployed model. 
 モデルの予測レイテンシは、テスト時には低いが、デプロイされたモデルでは高くなる可能性があります。
@@ -1536,8 +1532,8 @@ For any data retrieval steps that make network calls, you need to set low timeou
 If the timeout expires without a response, your online inference pipeline should catch the exception, and depending on whether the SLO allows it, it can either retry the call or impute the missing feature data. 
 タイムアウトが応答なしに期限切れになった場合、オンライン推論パイプラインは例外をキャッチし、SLOが許可するかどうかに応じて、呼び出しを再試行するか、欠落したフィーチャーデータを補完することができます。
 
-###### Inference with Embedded Models
-###### 埋め込みモデルによる推論
+###### 1.0.0.0.32. Inference with Embedded Models
+###### 1.0.0.0.33. 埋め込みモデルによる推論
 
 Many AI-enabled applications cannot afford or tolerate network calls to retrieve precomputed features or third-party data. 
 多くのAI対応アプリケーションは、事前計算されたフィーチャーやサードパーティデータを取得するためのネットワーク呼び出しを許容できません。
@@ -1574,8 +1570,8 @@ By loading the model from local disk (on startup), the application or model-serv
 Model predictions are made using the application’s hardware, so if the model needs hardware acceleration, you need to make sure that it will be available on the host.
 モデルの予測はアプリケーションのハードウェアを使用して行われるため、モデルがハードウェアアクセラレーションを必要とする場合は、ホストでそれが利用可能であることを確認する必要があります。
 
-###### Embedded AI-Enabled Applications
-###### 埋め込みAI対応アプリケーション
+###### 1.0.0.0.34. Embedded AI-Enabled Applications
+###### 1.0.0.0.35. 埋め込みAI対応アプリケーション
 
 Most high-performance and edge applications are not written in Python but rather in compiled languages such as C/C++, Rust, Go, and Java. 
 ほとんどの高性能およびエッジアプリケーションはPythonではなく、C/C++、Rust、Go、Javaなどのコンパイル言語で記述されています。
@@ -1593,8 +1589,8 @@ Similarly, the ONNX format provides a C++ API, again enabling C++ and Java appli
 同様に、ONNXフォーマットはC++ APIを提供しており、C++およびJavaアプリケーションがディープラーニングモデルを呼び出すことを可能にします（これらは通常、良好なパフォーマンスのためにハードウェアアクセラレーションを必要とします）。
 
 -----
-###### Stream-Processing AI-Enabled Applications
-###### ストリーム処理AI対応アプリケーション
+###### 1.0.0.0.36. Stream-Processing AI-Enabled Applications
+###### 1.0.0.0.37. ストリーム処理AI対応アプリケーション
 
 Stream-processing programs can use embedded models to make predictions on streams of incoming data. 
 ストリーム処理プログラムは、埋め込みモデルを使用して、受信データのストリームに対して予測を行うことができます。
@@ -1674,8 +1670,8 @@ Similarly, if there are a lot of traffic flows in a short time window from the s
 For more details on network intrusion detection with AI, see Sarika [Choudhary and Nishtha Kesswani’s article “Analysis of KDD-Cup’99, NSL-KDD and](https://oreil.ly/Aa2YS) [UNSW-NB15 Datasets using Deep Learning in IoT”.](https://oreil.ly/Aa2YS)
 AIを用いたネットワーク侵入検知の詳細については、Sarika [ChoudharyとNishtha Kesswaniの「KDD-Cup’99、NSL-KDDおよび](https://oreil.ly/Aa2YS) [UNSW-NB15データセットの分析に関する記事」を参照してください。](https://oreil.ly/Aa2YS)
 
-###### UIs for AI-Enabled Applications in Python
-###### PythonにおけるAI対応アプリケーションのUI
+###### 1.0.0.0.38. UIs for AI-Enabled Applications in Python
+###### 1.0.0.0.39. PythonにおけるAI対応アプリケーションのUI
 
 Often, you need to develop a quick UI for your AI system to provide feedback to stakeholders about how the system will work. 
 しばしば、AIシステムの動作についてステークホルダーにフィードバックを提供するために、迅速なUIを開発する必要があります。
@@ -1752,7 +1748,7 @@ Decorators are used here to cache function outputs so that they don’t get reco
 For our credit card fraud example, you should cache the model and feature view objects, so you don’t have to redownload them every time the UI is refreshed. 
 クレジットカード詐欺の例では、モデルとフィーチャービューオブジェクトをキャッシュする必要があります。そうすれば、UIが更新されるたびに再ダウンロードする必要がありません。
 
-###### Summary and Exercises 要約と演習
+###### 1.0.0.0.40. Summary and Exercises 要約と演習
 
 This chapter examined batch, online, embedded, and streaming inference pipelines. 
 この章では、バッチ、オンライン、埋め込み、ストリーミング推論パイプラインを検討しました。
