@@ -1612,20 +1612,16 @@ You should use it to compare different models on the same dataset to assess rela
 
 You should evaluate classification models by using the metrics of accuracy, precision, recall, and F1 score. 
 分類モデルは、精度、適合率、再現率、およびF1スコアの指標を使用して評価する必要があります。
-
 For our credit card fraud model, ROC AUC (receiver operating characteristic—area under the curve) measures the ability of a classification model to distinguish between classes by evaluating the trade-off between the true positive rate (sensitivity) and the false positive rate across different threshold values, with higher values indicating better model performance.
-私たちのクレジットカード詐欺モデルでは、ROC AUC（受信者動作特性—曲線下面積）が、異なる閾値における真陽性率（感度）と偽陽性率のトレードオフを評価することによって、分類モデルがクラスを区別する能力を測定し、高い値はより良いモデル性能を示します。
-
+**私たちのクレジットカード詐欺モデルでは、ROC AUC（受信者動作特性—曲線下面積）が、異なる閾値における真陽性率（感度）と偽陽性率のトレードオフを評価することによって、分類モデルがクラスを区別する能力を測定し、高い値はより良いモデル性能を示します。**
 In our credit card fraud model, we evaluate the model’s performance on the test set as the accuracy, F1 score, and ROC AUC.
 私たちのクレジットカード詐欺モデルでは、テストセットにおけるモデルの性能を精度、F1スコア、およびROC AUCとして評価します。
-
 The confusion matrix shows the counts for predicting correctly (true positive and true negative) and incorrectly (false positive and false negative) on the test set.
 混同行列は、テストセットにおける正しく予測した数（真陽性と真陰性）と誤って予測した数（偽陽性と偽陰性）を示します。
-
 Here is code to calculate these evaluation metrics using the model, predictions, and test set: 
 以下は、モデル、予測、およびテストセットを使用してこれらの評価指標を計算するためのコードです：
 
-```   
+```python
 from sklearn.metrics import accuracy_score, f1_score, confusion_matrix   
 y_pred = model.predict(X_test)   
 y_prob = model.predict_proba(X_test)[:, 1]    
@@ -1636,19 +1632,18 @@ cm = confusion_matrix(y_test, y_pred)
 roc_auc = roc_auc_score(y_test, y_prob)
 ```
 
-###### 7.1.0.0.2. Model Interpretability
-###### 7.1.0.0.3. モデルの解釈可能性
+<!-- ここまで読んだ! -->
+
+### 7.2. Model Interpretability モデルの解釈可能性
 
 In some domains where compliance is important, like finance, healthcare, and insurance, you need to understand and explain how an ML model makes its predictions, a concept known as model interpretability.
 金融、医療、保険など、コンプライアンスが重要な分野では、MLモデルがどのように予測を行うかを理解し説明する必要があります。これはモデルの解釈可能性として知られています。
-
 It adds transparency to the model’s predictions, building stakeholders’ trust and ensuring compliance with regulations.
 これはモデルの予測に透明性を加え、利害関係者の信頼を築き、規制への準拠を確保します。
-
 One popular technique for interpreting complex models is using SHAP (SHapley Additive exPlanations) values, which provide a unified measure of feature importance based on game theory:
 複雑なモデルを解釈するための一般的な手法の一つは、SHAP（SHapley Additive exPlanations）値を使用することで、これはゲーム理論に基づいた特徴の重要性の統一的な測定を提供します：
 
-```   
+```python
 import shap   
 explainer = shap.Explainer(model, X_test)   
 shap_values = explainer(X_test)   
@@ -1658,71 +1653,61 @@ shap.summary_plot(shap_values, X_test)
 
 SHAP values are particularly effective when used in decision trees and ensemble models, but they can also be applied to NNs using specialized explainers such as Deep Explainer.
 SHAP値は、決定木やアンサンブルモデルで使用されると特に効果的ですが、Deep Explainerなどの専門的な説明者を使用してNNにも適用できます。
-
 However, NNs’ nonlinear nature makes their interpretation challenging.
 しかし、NNの非線形性はその解釈を難しくします。
-
 There is, however, one technique that is widely used to evaluate NNs. 
-しかし、NNを評価するために広く使用されている手法があります。
-
+しかし、**NNを評価するために広く使用されている手法**があります。
 Ablation studies evaluate the contribution of different components or features of an NN by systematically “ablating” (removing or altering) parts of its architecture.
-アブレーションスタディは、NNの異なるコンポーネントや特徴の寄与を評価するために、そのアーキテクチャの一部を体系的に「アブレート」（削除または変更）することによって評価します。
-
+**アブレーションスタディは、NNの異なるコンポーネントや特徴の寄与を評価するために、そのアーキテクチャの一部を体系的に「アブレート」（削除または変更）することによって評価します。**
 By removing a feature, model layer, or regularizer and rerunning performance tests, you can determine how much the removed part contributed to overall model performance.
 特徴、モデル層、または正則化項を削除し、性能テストを再実行することによって、削除された部分が全体のモデル性能にどれだけ寄与したかを判断できます。
 
+---
+(コラム)
 Note that the inputs into the SHAP explainer, X_test, are the transformed feature values (the inputs into the model after MDTs have been applied).
 SHAP説明者への入力であるX_testは、変換された特徴値（MDTが適用された後のモデルへの入力）であることに注意してください。
-
 In feature monitoring (see Chapter 14), we commonly use the untransformed feature values as inputs into feature monitoring algorithms.
 特徴モニタリング（第14章を参照）では、通常、未変換の特徴値を特徴モニタリングアルゴリズムへの入力として使用します。
 
-###### 7.1.0.0.4. Model Bias Tests
-###### 7.1.0.0.5. モデルバイアステスト
+---
+
+<!-- ここまで読んだ! -->
+
+### 7.3. Model Bias Tests　モデルバイアステスト
 
 Model bias tests should assess and measure potential bias in a model.
 モデルバイアステストは、モデルにおける潜在的なバイアスを評価し測定する必要があります。
-
 If a model passes all bias tests, it can be marked as free from known bias and continue to production.
-モデルがすべてのバイアステストに合格すれば、既知のバイアスがないとマークされ、製品に進むことができます。
-
+モデルがすべてのバイアステストに合格すれば、既知のバイアスがないとマークされ、productionに進むことができます。
 For this, you need to extract different slices of evaluation data from the test dataset.
-これには、テストデータセットから異なる評価データのスライスを抽出する必要があります。
-
+これには、**テストデータセットから異なる評価データのスライスを抽出する必要**があります。
 For example, you can group users by gender, age, ethnicity, orientation, location, and so on.
-たとえば、ユーザーを性別、年齢、民族、オリエンテーション、場所などでグループ化できます。
-
+たとえば、**ユーザーを性別、年齢、民族、オリエンテーション、場所などでグループ化**できます。
 Model bias tests evaluate the model on these different subsets of users who are considered to be at risk of bias.
-モデルバイアステストは、バイアスのリスクがあると考えられるこれらの異なるユーザーのサブセットに対してモデルを評価します。
+**モデルバイアステストは、バイアスのリスクがあると考えられるこれらの異なるユーザーのサブセットに対してモデルを評価**します。
+
+<!-- ここまで読んだ! -->
 
 In Hopsworks, you can use filters and training helper columns in a feature view to help create evaluation data.
 Hopsworksでは、フィルターとトレーニングヘルパーカラムを特徴ビューで使用して評価データを作成できます。
-
 For example, a column describing a user could be their gender, and you may want to evaluate the model for gender bias.
 たとえば、ユーザーを説明する列は性別であり、性別バイアスについてモデルを評価したい場合があります。
-
 However, you don’t want to train the model using gender as a feature.
 ただし、性別を特徴としてモデルをトレーニングしたくはありません。
-
 That would probably introduce gender bias into the model.
 それはおそらくモデルに性別バイアスを導入することになります。
-
 Instead, you use the gender as a training helper column in your training data, using it to group rows into evaluation datasets, organized by gender.
 代わりに、性別をトレーニングデータのトレーニングヘルパーカラムとして使用し、性別で整理された評価データセットに行をグループ化します。
-
 The training helper columns are dropped before training and not returned when reading inference data, so they are not learned by the model:
 トレーニングヘルパーカラムはトレーニングの前に削除され、推論データを読み取るときには返されないため、モデルによって学習されません：
 
-```   
+```python
 fv = fs.create_feature_view(name="trans_fv", version=1,     
 training_helper_columns=["gender"],     
 ...
 )   
 X_train, X_test, y_train, y_test = fv.train_test_split(     
-test_size=0.2,
-```
-
-```     
+test_size=0.2, 
 training_helper_columns=True   
 )   
 X_train = X_train.drop("gender", axis=1) # Drop helper column before training   
@@ -1735,82 +1720,69 @@ y_female_pred = model.predict(X_female_test)
 female_accuracy = accuracy_score(y_female_test, y_female_pred)
 ```
 
-###### 7.1.0.0.6. Model File Formats and the Model Registry
-###### 7.1.0.0.7. モデルファイル形式とモデルレジストリ
+### 7.4. Model File Formats and the Model Registry モデルファイル形式とモデルレジストリ
 
 From a software engineering perspective, training a model is conceptually similar to compiling a program into a binary—you build once and deploy anywhere.
-ソフトウェア工学の観点から、モデルをトレーニングすることは、プログラムをバイナリにコンパイルすることに概念的に似ています。つまり、一度構築し、どこにでも展開します。
-
+ソフトウェア工学の観点から、**モデルをトレーニングすることは、プログラムをバイナリにコンパイルすることと概念的に似て**います。1回ビルドしてどこにでも展開できます。
 The model registry plays the same roles as the artifact registry in software engineering—it stores immutable models (as files) that can be later downloaded and used by inference pipelines.
-モデルレジストリは、ソフトウェア工学におけるアーティファクトレジストリと同じ役割を果たします。すなわち、後でダウンロードして推論パイプラインで使用できる不変のモデル（ファイルとして）を保存します。
-
+モデルレジストリは、ソフトウェア工学におけるアーティファクトレジストリと同じ役割を果たします。すなわち、**後でダウンロードして推論パイプラインで使用できる不変のモデル（ファイルとして）を保存**します。
 The most common file formats for saved models are:
 保存されたモデルの最も一般的なファイル形式は次のとおりです：
 
-_.safetensors_ Interoperable, efficient model format (PyTorch, TensorFlow, etc.) used by most LLMs and transformer models. 
-_.safetensors_は、ほとんどのLLMおよびトランスフォーマーモデルで使用される相互運用可能で効率的なモデル形式です。
-
+.safetensors Interoperable, efficient model format (PyTorch, TensorFlow, etc.) used by most LLMs and transformer models. 
+.safetensorsは、ほとんどのLLMおよびトランスフォーマーモデルで使用される相互運用可能で効率的なモデル形式です。
 Models larger than 2 GB are typically stored as sharded files to enable parallel loading of LLMs.
 2GBを超えるモデルは、通常、LLMの並列読み込みを可能にするためにシャードファイルとして保存されます。
 
-_.pkl_ Scikit-Learn models. 
-_.pkl_は、Scikit-Learnモデルです。
-
+.pkl Scikit-Learn models. 
+.pklは、Scikit-Learnモデルです。
 Create a pickled Python object using the joblib library.
 joblibライブラリを使用してピクルスされたPythonオブジェクトを作成します。
-
 Make sure you use the same version in training/inference pipelines. 
 トレーニング/推論パイプラインで同じバージョンを使用することを確認してください。
-
 Warning: pickle has a major, inherent security risk—it can execute arbitrary code when loading data.
 警告：pickleには重大な固有のセキュリティリスクがあります。データを読み込むときに任意のコードを実行する可能性があります。
 
-_.json_ XGBoost/LightGBM models. 
-_.json_は、XGBoost/LightGBMモデルです。
-
+.json XGBoost/LightGBM models. 
+.jsonは、XGBoost/LightGBMモデルです。
 You should prefer .json over .pkl.
-.jsonを.pklよりも優先するべきです。
+**.jsonを.pklよりも優先するべき**です。
+(そうなのか、なんでだろ、上記のようにpickleにはセキュリティリスクがあるから & バージョンを固定する必要があるからかな...!:thinking:)
 
-_.onnx_ Interoperable model format (PyTorch, TensorFlow, etc.) requires either Open Neural Network Exchange (ONNX) runtime or supported runtime, such as TensorRT.
-_.onnx_は、相互運用可能なモデル形式（PyTorch、TensorFlowなど）で、Open Neural Network Exchange（ONNX）ランタイムまたはTensorRTなどのサポートされたランタイムが必要です。
+.onnx Interoperable model format (PyTorch, TensorFlow, etc.) requires either Open Neural Network Exchange (ONNX) runtime or supported runtime, such as TensorRT.
+.onnxは、相互運用可能なモデル形式（PyTorch、TensorFlowなど）で、Open Neural Network Exchange（ONNX）ランタイムまたはTensorRTなどのサポートされたランタイムが必要です。
 
-_.pt and .pth_ Generic PyTorch checkpoint file formats that can be used to resume training.
-_.ptおよび.pth_は、トレーニングを再開するために使用できる一般的なPyTorchチェックポイントファイル形式です。
+.pt and .pth Generic PyTorch checkpoint file formats that can be used to resume training.
+.ptおよび.pthは、トレーニングを再開するために使用できる一般的なPyTorchチェックポイントファイル形式です。
 
-_.engine_ TensorRT file format that is optimized for NVIDIA GPUs and requires TensorRT server.
-_.engine_は、NVIDIA GPUに最適化されたTensorRTファイル形式で、TensorRTサーバーが必要です。
+.engine TensorRT file format that is optimized for NVIDIA GPUs and requires TensorRT server.
+.engineは、NVIDIA GPUに最適化されたTensorRTファイル形式で、TensorRTサーバーが必要です。
 
-_.pb and .h5_ TensorFlow model file formats (.pb is protobuf and .h5 is interoperable).
-_.pbおよび.h5_は、TensorFlowモデルファイル形式です（.pbはprotobufで、.h5は相互運用可能です）。
+.pb and .h5 TensorFlow model file formats (.pb is protobuf and .h5 is interoperable).
+.pbおよび.h5は、TensorFlowモデルファイル形式です（.pbはprotobufで、.h5は相互運用可能です）。
 
-_.bin and .ckpt with optimizer states (Lightning Checkpoints)_ These are used if you need optimizer states and full checkpoint information (not just model weights) for continued training or fine-tuning.
-_.binおよび.ckpt（オプティマイザーステート付き）（Lightning Checkpoints）は、継続的なトレーニングやファインチューニングのためにオプティマイザーステートと完全なチェックポイント情報（モデルの重みだけでなく）が必要な場合に使用されます。
+.bin and .ckpt with optimizer states (Lightning Checkpoints) These are used if you need optimizer states and full checkpoint information (not just model weights) for continued training or fine-tuning.
+.binおよび.ckpt（オプティマイザーステート付き）（Lightning Checkpoints）は、継続的なトレーニングやファインチューニングのためにオプティマイザーステートと完全なチェックポイント情報（モデルの重みだけでなく）が必要な場合に使用されます。
 
-###### 7.1.0.0.8. Model Cards
-###### 7.1.0.0.9. モデルカード
+<!-- ここまで読んだ! -->
+
+### 7.5. Model Cards モデルカード
 
 _Model cards are one-page overviews of models in the model registry that are increasingly required for governance and compliance._
-モデルカードは、モデルレジストリ内のモデルの1ページの概要であり、ガバナンスとコンプライアンスのためにますます必要とされています。
-
+**モデルカードは、モデルレジストリ内のモデルの1ページの概要**であり、ガバナンスとコンプライアンスのためにますます必要とされています。
 They are useful cheat sheets for sharing model information, particularly in a team where the person who trains the model is not the one who deploys it to production.
-これは、モデル情報を共有するための便利なチートシートであり、特にモデルをトレーニングする人がそれを製品に展開する人ではないチームにおいて役立ちます。
-
+これは、**モデル情報を共有するための便利なチートシート**であり、特にモデルをトレーニングする人がそれを製品に展開する人ではないチームにおいて役立ちます。
 A model card includes information about the model, its performance, whether it has passed validation tests, and usage instructions or guidance so that the model can be deployed to production.
 モデルカードには、モデルに関する情報、性能、検証テストに合格したかどうか、モデルを製品に展開できるようにするための使用指示やガイダンスが含まれています。
-
 It is common to include the results of the model’s evaluation and bias tests.
 モデルの評価結果やバイアステストの結果を含めることは一般的です。
-
 Often, these are PNG files—plots or graphs.
 これらはしばしばPNGファイル—プロットやグラフです。
 
 In general, the code in your training pipeline will be able to generate anywhere from 20% to 60% of the information in the following sample model card when you register your model.
 一般的に、モデルを登録する際に、トレーニングパイプライン内のコードは、以下のサンプルモデルカードの情報の20%から60%を生成できるでしょう。
-
-
-
-. For deployed models, your model card should strive to cover 100% of the categories, and you should have a process to ensure accurate and complete model cards:
-展開されたモデルの場合、モデルカードは100%のカテゴリをカバーするよう努めるべきであり、正確で完全なモデルカードを確保するためのプロセスを持つべきです。
+For deployed models, your model card should strive to cover 100% of the categories, and you should have a process to ensure accurate and complete model cards:
+デプロイされたモデルの場合、モデルカードは100%のカテゴリをカバーするように努めるべきであり、正確で完全なモデルカードを確保するプロセスを持つべきです：
 
 **Model Name/Version: [Model Name, Version Number]**
 **モデル名/バージョン: [モデル名、バージョン番号]**
@@ -1889,51 +1861,37 @@ In general, the code in your training pipeline will be able to generate anywhere
 - Contact Information: [Who to contact for questions]  
 - 連絡先情報: [質問がある場合の連絡先]  
 
------
-###### 7.1.0.0.10. Summary and Exercises
-###### 7.1.0.0.11. 要約と演習
+
+## 8. Summary and Exercises　要約と演習
+
 In this chapter, we took a whirlwind tour of the key challenges in developing and operating training pipelines. 
 この章では、トレーニングパイプラインの開発と運用における主要な課題を駆け足で紹介しました。
-
 Training pipelines are mostly the realm of data science— identifying the labels and features for your model, hyperparameter tuning, fitting the data to your model, and evaluating the performance and compliance of your model.
-トレーニングパイプラインは主にデータサイエンスの領域であり、モデルのラベルと特徴を特定し、ハイパーパラメータの調整を行い、データをモデルに適合させ、モデルのパフォーマンスとコンプライアンスを評価します。
-
+**トレーニングパイプラインは主にデータサイエンスの領域**であり、モデルのラベルと特徴を特定し、ハイパーパラメータの調整を行い、データをモデルに適合させ、モデルのパフォーマンスとコンプライアンスを評価します。
 But they also require data engineering skills, such as preparing labels and joining them to features. 
-しかし、ラベルを準備し、それを特徴に結合するなどのデータエンジニアリングスキルも必要です。
-
+**しかし、ラベルを準備し、それを特徴に結合するなどのデータエンジニアリングスキルも必要**です。
 And they can require the ML engineering skills of managing GPUs, scaling out training, and removing scalability bottlenecks in your training pipeline.
 また、GPUの管理、トレーニングのスケーリング、トレーニングパイプラインのスケーラビリティボトルネックを取り除くためのMLエンジニアリングスキルも必要です。
-
 Do the following exercises to help you learn how to do data-centric model training:
 データ中心のモデルトレーニングを学ぶために、以下の演習を行ってください。
 
 - You want to build a batch ML system that predicts churn for customers. 
-- 顧客の離脱を予測するバッチMLシステムを構築したいと考えています。
-
+顧客の離脱を予測するバッチMLシステムを構築したいと考えています。
 Your data mart has a fact table about customer interactions with support and marketing operations. 
 あなたのデータマートには、サポートおよびマーケティング業務との顧客インタラクションに関するファクトテーブルがあります。
-
 How could you use this fact table to provide labels/features for a customer churn model?
 このファクトテーブルをどのように使用して、顧客離脱モデルのラベル/特徴を提供できますか？
 
 - Select features for a target using mutual information. 
-- 相互情報量を使用してターゲットの特徴を選択します。
-
+相互情報量を使用してターゲットの特徴を選択します。
 First, find a public labeled tabular dataset. 
 まず、公開されたラベル付きの表形式データセットを見つけます。
-
 Then compute the mutual information between each feature and the target. 
 次に、各特徴とターゲットとの相互情報量を計算します。
-
 Finally, select the top N features and explain why you chose them.  
 最後に、上位Nの特徴を選択し、なぜそれを選んだのかを説明します。
 
------
------
-###### 7.1.0.0.12. PART V #### Inference and Agents  
-###### 7.1.0.0.13. 第V部 #### 推論とエージェント  
------
------  
+<!-- ここまで読んだ! -->
 
 
 
