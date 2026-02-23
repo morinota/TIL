@@ -45,3 +45,16 @@
   - null order(nulls first/nulls last)
 - **ソート順を変更しても、以前のソート順で書き込まれた古いデータはそのまま保持される**
   - -> 古いデータファイルに適用するには、optimizeなどのメンテナンスコマンドを実行する。
+
+## sort order進化後に既存レコードに適用する方法メモ。
+
+- refs:
+  - [Amazon AthenaのIcebergのVACUUM・OPTIMIZE実行時のS3上のデータファイルについて確認してみた](https://dev.classmethod.jp/articles/amazon-athena-iceberg-vacuum-optimize-s3-data-file-layout/)
+  - [optimizeコマンドの公式doc](https://docs.aws.amazon.com/ja_jp/athena/latest/ug/optimize-statement.html)
+- Athenaの`OPTIMIZE`コマンドについて。
+  - Icebergテーブル向けに提供されるAthenaのメンテナンスコマンドの一つ。
+  - でも今提供されてる`Optimize`コマンドは`bin-pack`アルゴリズムのみ。
+  - `bin-pack`アルゴリズムは、ファイルサイズを最適化するためのもので、ソート順の変更には対応していない。
+  - つまり、現状のAthenaの`OPTIMIZE`コマンドでは、ソート順の変更を既存のデータファイルに適用することはできないっぽい。
+  - ソートオーダーの変更を既存のデータファイルに適用するには、`sort`アルゴリズムや`z-order`アルゴリズムなど、ソート順の変更に対応したアルゴリズムを使用する必要がある。
+- S3 Tablesのコンパクション機能だと`sort`/`z-order`アルゴリズムが提供されてるから、これらを使用すればソート順の変更を既存のデータファイルに適用できるっぽい。
