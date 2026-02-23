@@ -55,7 +55,7 @@ Unlike partitioning, clustering does not create separate data files but optimize
 ### Similarities Between Partitioning and Clustering パーティショニングとクラスタリングの類似点
 
 Both partitioning and clustering aim to enhance query performance and data management efficiency. 
-パーティショニングとクラスタリングは、クエリパフォーマンスとデータ管理の効率を向上させることを目的としています。
+**パーティショニングとクラスタリングは、クエリパフォーマンスとデータ管理の効率を向上させることを目的と**しています。
 They achieve this by improving data locality and minimizing the amount of data scanned during queries. 
 これを実現するために、データの局所性を改善し、クエリ中にスキャンされるデータ量を最小限に抑えます。
 Both techniques require an understanding of your data and query patterns to be effective, as improper use can lead to suboptimal performance. 
