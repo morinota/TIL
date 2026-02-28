@@ -206,321 +206,241 @@ URの特徴は4つの主要なカテゴリに分けることができます：
   - コンテキスト関連の特徴（配達のETA/距離/料金、プロモーション、日中の時間帯、週の時間帯、祝日、天候条件など）
 
 In addition to traditional numerical and categorical feature types, we heavily used embeddings across all the feature categories, including both pre-trained embeddings from existing ML models and embedding layers trained as part of the model itself. 
-従来の数値およびカテゴリ型の特徴に加えて、私たちはすべての特徴カテゴリにわたって埋め込みを多く使用しました。これは事前学習済み埋め込みモデルとモデル自身の一部として学習される埋め込み層の両方を含みます。
-
-<!-- ここまで読んだ! -->
-
+**従来の数値およびカテゴリ型の特徴に加えて、私たちはすべての特徴カテゴリにわたって埋め込みを多く使用しました。これは事前学習済み埋め込みモデルとモデル自身の一部として学習される埋め込み層の両方を含みます。**
 The ETL for the batch features was developed and maintained through our internal tool Fabricator and the LTR UR model was implemented in PyTorch. 
 バッチ特徴のETLは、私たちの内部ツールFabricatorを通じて開発および維持され、LTR URモデルはPyTorchで実装されました。
 
+<!-- ここまで読んだ! -->
+
 With this model, we can show consumers items they might like despite the varying entity challenges. 
 このモデルを使用することで、私たちは消費者に異なるエンティティの課題にもかかわらず、彼らが好むかもしれないアイテムを示すことができます。
-
 The next step would be to expand our model beyond what we think they like so we can broaden our understanding of customer preferences. 
 次のステップは、私たちが彼らが好むと思うものを超えてモデルを拡張し、顧客の好みの理解を広げることです。
 
-
+<!-- ここまで読んだ! -->
 
 ## Exploring beyond exploitation 利用の枠を超えて
 
 Only focusing on exploitation can lead consumers into the so-called filter bubble/ideological frame problem. 
-利用にのみ焦点を当てることは、消費者をいわゆるフィルターバブル/イデオロギー的枠組みの問題に導く可能性があります。 
-
+**利用にのみ焦点を当てることは、消費者をいわゆるフィルターバブル/イデオロギー的枠組みの問題に導く可能性があります。**
 This occurs when existing consumers begin to perceive only a small subset of merchants with whom they are already familiar, creating a self-fulfilling prophecy in which consumers buy primarily similar items. 
 これは、既存の消費者がすでに知っている小さな商人のサブセットのみを認識し始め、消費者が主に類似のアイテムを購入する自己実現的予言を生み出すときに発生します。 
-
 Recommendations for new consumers might be biased toward their initial engagement rather than their true preferences; their homepage may be flooded with very similar options, reducing the amount of time left to explore. 
-新しい消費者への推薦は、彼らの真の好みではなく、初期の関与に偏る可能性があります。その結果、彼らのホームページは非常に似たオプションであふれ、探索に残される時間が減少します。 
+**新しい消費者への推薦は、彼らの真の好みではなく、初期の関与に偏る可能性があります。**その結果、彼らのホームページは非常に似たオプションであふれ、探索に残される時間が減少します。 
 
 This exploitation also may delay response to consumer preference changes over time because exploitation models have strong momentum for previous behaviors and are slow to adapt to new information. 
 この利用は、消費者の好みの変化に対する反応を時間とともに遅らせる可能性があります。なぜなら、利用モデルは以前の行動に対して強い慣性を持ち、新しい情報に適応するのが遅いからです。 
-
 Consumers also could become bored with what they perceive as a stale homepage; the lack of inspiration could depress order rates. 
 消費者は、古くなったホームページと認識するものに飽きてしまう可能性があります。インスピレーションの欠如は、注文率を低下させる可能性があります。 
-
 On the merchant side, over-exploitation could cause fairness issues over time as popular merchants become ever more dominant while new merchants recede into the platform’s background. 
-商人側では、過剰な利用が時間とともに公平性の問題を引き起こす可能性があります。人気のある商人がますます支配的になる一方で、新しい商人はプラットフォームの背景に退いていくからです。
+**商人側では、過剰な利用が時間とともに公平性の問題を引き起こす可能性があります。人気のある商人がますます支配的になる一方で、新しい商人はプラットフォームの背景に退いていくから**です。
 
-
+<!-- ここまで読んだ! -->
 
 ## Enabling exploration using upper confidence bound 上限信頼区間を用いた探索の促進
 
 To overcome these problems, we introduced a reinforcement learning approach based on aUCB algorithm to enable consumers to explore. 
-これらの問題を克服するために、私たちは消費者が探索できるようにするために、aUCBアルゴリズムに基づいた強化学習アプローチを導入しました。
-
+これらの問題を克服するために、私たちは消費者が探索できるようにするために、UCBアルゴリズムに基づいた強化学習アプローチを導入しました。
 In a greedy manner, the UCB algorithm favors exploration actions with the strongest potential to maximize rewards, where potential is quantified in terms of uncertainty. 
 貪欲な方法で、UCBアルゴリズムは報酬を最大化するための最も強い潜在能力を持つ探索アクションを優先します。この潜在能力は不確実性の観点から定量化されます。
-
 While there are various UCB variants with different assumptions and complexities, the core concept involves the expected reward and its associated uncertainty for a given action: 
 さまざまな仮定や複雑さを持つUCBのバリアントが存在しますが、コアの概念は特定のアクションに対する期待報酬とその関連する不確実性を含みます：
 
+<!-- ここまで読んだ! -->
+
 $$
-t \text{ is the total times of all the previous trials of recommending an entity } e \text{ to a consumer } c.
+e^{*}_{t, c} = \argmax_{e} [\hat{Q}_t(c, e) + \hat{U}_t(c, e)]
 $$
 
+where t is the total times of all the previous trials of recommending an entity e to a consumer c.
+ここで、$t$ は、消費者 $c$ にエンティティ $e$ を推薦するすべての以前の試行の合計回数です。
 $e^*_t, c$ is the optimal entity we want to recommend to a consumer $c$ at a time $t$; 
-$e_t, c$ は、時刻 $t$ に消費者 $c$ に推奨したい最適なエンティティです。
-
-$$
-e_t, c \text{ and } E_t, c \text{ are an individual entity and the entire entity set available to consumer } c \text{ at time } t, \text{ respectively.}
-$$
-
+$e^*_{t, c}$ は、時間 $t$ に消費者 $c$ に推薦したい最適なエンティティです。
+$e_{t, c} \in E_{t, c}$ are an individual entity and the entire entity set available to consumer c at time t, respectively;
+$e_{t, c} \in E_{t, c}$ は、時間 $t$ に消費者 $c$ が利用できる個々のエンティティとエンティティセット全体です。
 $\hat{Q}_t(c, e)$ is the expected reward for consumer $c$ on an entity $e$; 
 $\hat{Q}_t(c, e)$ は、消費者 $c$ に対するエンティティ $e$ の期待報酬です。
-
-$$
-\hat{U}_t(c, e) \text{ is the uncertainty of the reward for a consumer } c \text{ on an entity } e.
-$$
-
+$\hat{U}_t(c, e)$ is the uncertainty of the reward for a consumer $c$ on an entity $e$;
 $\hat{U}_t(c, e)$ は、消費者 $c$ に対するエンティティ $e$ の報酬の不確実性です。
+
+<!-- ここまで読んだ! -->
 
 Based on Hoeffding’s inequality for any bounded distribution, this approach guarantees that with only a probability of $e^{-2t\hat{U}_t(c, e)^2}$ could the actual reward $Q_t(c, e)$ be higher than the estimated UCB of $Q_t(c, e) + \hat{U}_t(c, e)$. 
 任意の有界分布に対するホフディングの不等式に基づいて、このアプローチは、実際の報酬 $Q_t(c, e)$ が推定されたUCB $Q_t(c, e) + \hat{U}_t(c, e)$ よりも高くなる確率が $e^{-2t\hat{U}_t(c, e)^2}$ であることを保証します。
-
 If we choose a very small constant $p$ for $e^{-2t\hat{U}_t(c, e)^2$, then we have: 
 もし $e^{-2t\hat{U}_t(c, e)^2}$ のために非常に小さな定数 $p$ を選ぶと、次のようになります：
 
+$$
+hoge
+$$
+
 To have higher confidence in our UCB estimation as we continue to collect more reward (conversion) data from our recommendations, we can reduce the threshold by setting $p = T^{-4}$ following the UCB1 algorithm: 
-私たちの推奨からの報酬（コンバージョン）データを収集し続けることでUCB推定に対する信頼を高めるために、UCB1アルゴリズムに従って $p = T^{-4}$ を設定することでしきい値を減少させることができます：
+私たちの推薦からの報酬（コンバージョン）データを収集し続けることでUCB推定に対する信頼を高めるために、UCB1アルゴリズムに従って $p = T^{-4}$ を設定することでしきい値を減少させることができます：
 
 $$
-T \text{ is the total trial times for consumer } c \text{ on all recommended entities, while } t \text{ is the total trial times of entity } e \text{ to consumer } c.
+hoge
 $$
-$T$ は、すべての推奨エンティティに対する消費者 $c$ の総試行回数であり、$t$ はエンティティ $e$ に対する消費者 $c$ の総試行回数です。
 
+where T is the total times of consumer $c$’s trials on all the recommended entities and t is the total times of consumer $c$’s trials on an entity $e$.
+ここで$T$ は、すべての推奨エンティティに対する消費者 $c$ の総試行回数であり、$t$ はエンティティ $e$ に対する消費者 $c$ の総試行回数です。
 
+<!-- ここまで読んだ! -->
 
 ## How we combined exploitation and exploration どのようにして利用と探索を組み合わせたか
 
 It is neither feasible nor optimal to directly implement the UCB in its original form because:
-UCBをそのままの形で直接実装することは、実現可能でも最適でもありません。なぜなら：
+**UCBをそのままの形で直接実装することは、実現可能でも最適でもありません**。なぜなら：
 
 - Each consumer can choose from thousands of stores and hundreds of thousands of items at a certain location and time, making it impossible to try each of them and hampering collection of cumulative conversion data to estimate the pConv.
-- 各消費者は特定の場所と時間で数千の店舗と数十万のアイテムから選択できるため、それぞれを試すことは不可能であり、pConvを推定するための累積コンバージョンデータの収集を妨げます。
+  - 各消費者は特定の場所と時間で数千の店舗と数十万のアイテムから選択できるため、それぞれを試すことは不可能であり、pConvを推定するための累積コンバージョンデータの収集を妨げます。
 
 - Estimating the expected pConv for entities with mixed types adds further complexity
-- 異なるタイプのエンティティに対する期待されるpConvを推定することは、さらなる複雑さを加えます。
+  - 異なるタイプのエンティティに対する期待されるpConvを推定することは、さらなる複雑さを加えます。
 
 - The recommendation engine produces a ranked list of entities for each consumer. But because a single app window can only show a few entities and because each consumer can choose how deep they wish to browse/scroll, there’s uncertainty around how many of the recommended entities will receive effective consumer feedback.
-- レコメンデーションエンジンは各消費者に対してエンティティのランク付けされたリストを生成します。しかし、単一のアプリウィンドウは数個のエンティティしか表示できず、各消費者はどれだけ深くブラウズ/スクロールするかを選択できるため、推奨されたエンティティのうちどれが効果的な消費者フィードバックを受けるかについての不確実性があります。
+  - レコメンデーションエンジンは各消費者に対してエンティティのランク付けされたリストを生成します。しかし、単一のアプリウィンドウは数個のエンティティしか表示できず、各消費者はどれだけ深くブラウズ/スクロールするかを選択できるため、推奨されたエンティティのうちどれが効果的な消費者フィードバックを受けるかについての不確実性があります。
 
 - When introducing fresh options for a consumer, we need to control uncertainty carefully so that they do not add confusion or interrupt the consumer experience.
-- 消費者に新しい選択肢を提供する際には、混乱を招いたり消費者体験を中断させたりしないように、不確実性を慎重に管理する必要があります。
+  - 消費者に新しい選択肢を提供する際には、混乱を招いたり消費者体験を中断させたりしないように、不確実性を慎重に管理する必要があります。
+
+<!-- ここまで読んだ! -->
 
 Given these considerations, our final solution was to integrate the UR into the UCB algorithm. 
 これらの考慮事項を踏まえ、私たちの最終的な解決策は、URをUCBアルゴリズムに統合することでした。
-
 This allows us to make scalable and smart trade-offs between exploitation and exploration, allowing fresh choices for consumers without disturbing their routing experience.
 これにより、利用と探索の間でスケーラブルで賢いトレードオフを行うことができ、消費者のルーティング体験を妨げることなく新しい選択肢を提供することが可能になります。
 
-
+<!-- ここまで読んだ! -->
 
 ## Defining the composite model 複合モデルの定義
 
 We define the reward from any recommendation as the consumer conversion within a certain time period; hence, the expected reward essentially is evaluated by the expected pConv for any consumer-entity pair. 
 私たちは、任意の推薦からの報酬を特定の時間枠内での消費者のコンバージョンとして定義します。したがって、期待される報酬は本質的に任意の消費者-エンティティペアに対する期待pConvによって評価されます。
-
 The consumer-entity impression is used to track the effective recommendation trial and estimate the uncertainty of the corresponding pConv. 
 消費者-エンティティのインプレッションは、効果的な推薦試行を追跡し、対応するpConvの不確実性を推定するために使用されます。
-
 The final UCB score is then obtained by blending the UR score (pConv) with the uncertainty. 
 最終的なUCBスコアは、URスコア（pConv）と不確実性を組み合わせることによって得られます。
-
 Data driving the UR and uncertainty is refreshed daily; the entire process could be viewed from a Bayesian perspective. 
 URと不確実性を駆動するデータは毎日更新されます。この全プロセスはベイズ的な視点から見ることができます。
-
 Each day, we assume the prior distribution for the pConv variable has the mean and standard deviation of the current UR score and uncertainty. 
 毎日、pConv変数の事前分布は現在のURスコアと不確実性の平均と標準偏差を持つと仮定します。
-
 We then compute the posterior distribution with another day’s consumer-entity engagement data: 
 次に、別の日の消費者-エンティティのエンゲージメントデータを用いて事後分布を計算します：
 
-where $N_c$ is the total impressions for the consumer $c$ on all recommended entities within a certain time period 
-ここで、$N_c$は特定の時間枠内で消費者$c$がすべての推奨エンティティに対して持つ総インプレッションです。
+$$
+score^{c,e}_{Comp} = Score^{c,e}_{UR} + C \sqrt{\frac{log{N_{c}}}{N_{c,m}}}
+$$
 
+where $N_c$ is the total impressions for the consumer $c$ on all recommended entities within a certain time period 
+ここで、$N_c$は特定の時間枠内で消費者$c$がすべての推薦エンティティに対して持つ総インプレッションです。
 $N_{c,m}$ is the impressions between consumer $c$ and entity $e$ within a certain time period 
 $N_{c,m}$は特定の時間枠内で消費者$c$とエンティティ$e$の間のインプレッションです。
-
 $C$ is the exploration coefficient. 
 $C$は探索係数です。
 
-The uncertainty increases slowly and logarithmically as a consumer’s total impression goes up but decays rapidly with the linear relationship as the specific impression for a certain entity increases. 
-不確実性は、消費者の総インプレッションが増加するにつれてゆっくりと対数的に増加しますが、特定のエンティティのインプレッションが増加するにつれて線形関係で急速に減少します。
+<!-- ここまで読んだ! -->
 
+The uncertainty increases slowly and logarithmically as a consumer’s total impression goes up but decays rapidly with the linear relationship as the specific impression for a certain entity increases. 
+**不確実性は、消費者の総インプレッションが増加するにつれてゆっくりと対数的に増加しますが、特定のエンティティのインプレッションが増加するにつれて線形関係で急速に減少**します。
 This relative relationship benefits the ranking system in two ways: 
-この相対的な関係は、ランキングシステムに2つの方法で利益をもたらします：
+この**相対的な関係は、ランキングシステムに2つの方法で利益**をもたらします：
 
 - It improves freshness when a consumer mostly engages with a few entities (for example, the top 10 on the homepage). 
-- 消費者が主に少数のエンティティ（例えば、ホームページのトップ10）に関与する場合、新鮮さが向上します。
-
+**消費者が主に少数のエンティティ（例えば、ホームページのトップ10）に関与する場合**、新鮮さが向上します。
 Although the UR scores for these entities remain high, their uncertainties will continue to drop rapidly. 
 これらのエンティティのURスコアは高いままですが、それらの不確実性は急速に低下し続けます。
-
 On the other hand, those entities without impressions would have their uncertainties continue to increase until they are large enough to force their way into the top 10. 
 一方、インプレッションのないエンティティは、不確実性が増加し続け、トップ10に入るのに十分な大きさになるまで続きます。
 
 - It aids quick homepage personalization when a consumer enjoys broad exploration. 
-- 消費者が広範な探索を楽しむとき、迅速なホームページのパーソナライズを助けます。
-
+**消費者が広範な探索を楽しむ場合**、迅速なホームページのパーソナライズを助けます。
 With multiple impressions for various entities, there is a consistent uncertainty drop for each of them such that the composite score converges to its UR score, which is sensitive to positive engagement signals such as clicks, orders, and good ratings. 
 さまざまなエンティティに対する複数のインプレッションがある場合、それぞれの不確実性は一貫して低下し、合成スコアはクリック、注文、良い評価などのポジティブなエンゲージメント信号に敏感なURスコアに収束します。
 
-We also add the exploration coefficient $C$ for the uncertainty because we are less interested in its accuracy but more in its scale, which directly determines how much disturbance will be introduced to the existing ranking (for example, how many new entities are surfaced higher and how different their positions are historically). 
-私たちは、不確実性のために探索係数$C$も追加します。なぜなら、私たちはその精度にはあまり関心がなく、そのスケールにもっと関心があるからです。これは、既存のランキングにどれだけの混乱がもたらされるか（例えば、どれだけの新しいエンティティがより高く表示され、歴史的にどれだけ異なる位置にあるか）を直接決定します。
+<!-- ここまで読んだ! -->
 
+We also add the exploration coefficient $C$ for the uncertainty because we are less interested in its accuracy but more in its scale, which directly determines how much disturbance will be introduced to the existing ranking (for example, how many new entities are surfaced higher and how different their positions are historically). 
+私たちは、不確実性のために探索係数$C$も追加します。なぜなら、**私たちはその精度にはあまり関心がなく、そのスケールにもっと関心があるからです。これは、既存のランキングにどれだけの混乱がもたらされるか（例えば、どれだけの新しいエンティティがより高く表示され、歴史的にどれだけ異なる位置にあるか）を直接決定**します。
 The optimal $C$ is then determined later through online experiments. 
 最適な$C$は、その後オンライン実験を通じて決定されます。
 
-
+<!-- ここまで読んだ! -->
 
 ## Integrating all models into a ranking framework モデルをランキングフレームワークに統合する
 
 The DoorDash homepage ranking framework with all these pieces put together is shown in Figure 4. 
 これらの要素をすべて統合したDoorDashのホームページランキングフレームワークは、図4に示されています。
-
 The exploitation component includes the FPR, SPR, and UR, while the exploration component introduces uncertainty to the expected pConv predicted by the UR. 
 利用部分はFPR、SPR、URを含み、探索部分はURによって予測される期待pConvに不確実性を導入します。
-
 By continuing to collect and update the engagement data through daily refreshed features, we can generate a more accurate mean of the pConv while building more confidence in our uncertainty estimation. 
 日々更新される特徴を通じてエンゲージメントデータを収集し更新し続けることで、pConvのより正確な平均を生成し、私たちの不確実性推定に対する信頼を高めることができます。
 
+![]()
 
+<!-- ここまで読んだ! -->
 
 ## Enabling a better homepage experience ホームページ体験の向上
 
 With the newly developed framework, we give consumers an improved dynamic experience, including:
-新たに開発されたフレームワークにより、私たちは消費者に改善された動的体験を提供します。これには以下が含まれます：
+新たに開発されたフレームワークにより、**私たちは消費者に改善された動的体験を提供します。これには以下が含まれます**:
+
 - Keeping the most relevant entities at the top (high UR scores)
 最も関連性の高いエンティティを上位に保持する（高いURスコア）
+
 - Downranking the entities that are somehow relevant (median UR scores) but have way too many impressions (low uncertainties)
-ある程度関連性のあるエンティティをランクダウンする（中央値のURスコア）が、表示回数が多すぎる（低い不確実性）
+関連性はあるが、インプレッションが多すぎる（低い不確実性）エンティティのランクを下げる（中央値URスコア）
+
 - Trying new entities from lower positions (low UR scores) that have little chance to be shown to the consumers (high uncertainties)
-消費者に表示される可能性が低い（高い不確実性）低い位置から新しいエンティティを試す（低いURスコア）
+消費者に表示される可能性がほとんどない（高い不確実性）低い位置から新しいエンティティを試す（低いURスコア）
+
 - Prioritizing the newly tried entities if they receive positive feedback from consumers as measured by orders or good ratings, which also represents improved UR scores with dropped uncertainties
-消費者からのポジティブなフィードバック（注文や良い評価）を受けた場合、新しく試したエンティティを優先する。これは、不確実性が低下した改善されたURスコアを示します。
+消費者からの注文や良い評価などのポジティブなフィードバックを受けた場合、優先的に新しく試したエンティティを表示します。これは、不確実性が低下したURスコアの改善も表しています。
+
 - Deemphasizing newly tried entities if there is no positive feedback from consumers — for instance, only views but no further actions. This represents low UR scores with dropped uncertainties
-消費者からポジティブなフィードバックがない場合（例えば、表示のみでその後のアクションがない場合）、新しく試したエンティティの重要性を低下させます。これは、不確実性が低下した低いURスコアを示します。
+消費者からのポジティブなフィードバックがない場合、優先度を下げる新たに試したエンティティ。例えば、ビューのみでそれ以上のアクションがない場合などです。これは、不確実性が低下した低いURスコアを表しています。
+
+<!-- ここまで読んだ! -->
 
 As can be seen in Figure 5, the change primarily impacts existing consumers who previously have browsed entities on our platform. 
-図5に示すように、この変更は主に以前に私たちのプラットフォームでエンティティを閲覧した既存の消費者に影響を与えます。
+図5に示すように、**この変更は主に以前に私たちのプラットフォームでエンティティを閲覧した既存の消費者に影響を与えます。**
 There is little impact on new consumers for whom we have no engagement data. 
-エンゲージメントデータがない新しい消費者にはほとんど影響がありません。
+**エンゲージメントデータがない新しい消費者にはほとんど影響がありません。**
 We show the example experience using carousel and store feeds separately because the homepage experience with mixed entities remains a work in progress.
 私たちは、カルーセルとストアフィードを別々に使用した体験の例を示します。なぜなら、混合エンティティを用いたホームページ体験はまだ進行中だからです。
 
+![]()
+
 With the developed framework, we observe consistent improvements in our online experiments. 
-開発されたフレームワークにより、私たちはオンライン実験において一貫した改善を観察しています。
+開発されたフレームワークにより、**私たちはオンライン実験において一貫した改善**を観察しています。
 The new experience drives more consumers to engage with our recommendations and convert on the homepage. 
-新しい体験は、より多くの消費者が私たちの推薦に関与し、ホームページでコンバージョンすることを促進します。
+**新しい体験は、より多くの消費者が私たちの推薦に関与し、ホームページでコンバージョンすることを促進します。**
 More consumers are interested in trying new merchants and items they never ordered before, which not only enriches their experience but also creates more opportunities for our local or new merchants rather than our enterprise ones.
 より多くの消費者が、これまで注文したことのない新しい商人やアイテムを試すことに興味を持っており、これは彼らの体験を豊かにするだけでなく、私たちの大手商人ではなく、地元の商人や新しい商人にとっての機会を増やします。
 
-
+<!-- ここまで読んだ! -->
 
 ## Conclusion 結論
 
 We have demonstrated here the challenges, opportunities, and goals for homepage recommendations at DoorDash. 
 私たちはここで、DoorDashにおけるホームページ推薦の課題、機会、目標を示しました。
-
 Two machine learning approaches — including a deep-learning LTR UR model and a reinforcement learning algorithm UCB — have been integrated into our existing ranking framework. 
 深層学習LTR URモデルと強化学習アルゴリズムUCBを含む2つの機械学習アプローチが、私たちの既存のランキングフレームワークに統合されました。
-
 Through online experiments, we have proven that the ranking framework can efficiently rank various entities with a smart trade-off between exploitation and exploration to optimize consumer experience, improve marketplace diversity and fairness, and drive DoorDash’s long-term growth. 
-オンライン実験を通じて、私たちはランキングフレームワークが、消費者体験を最適化し、市場の多様性と公平性を改善し、DoorDashの長期的成長を促進するために、利用と探索の間で賢いトレードオフを持ってさまざまなエンティティを効率的にランク付けできることを証明しました。
+オンライン実験を通じて、私たちはランキングフレームワークが、**消費者体験を最適化し、市場の多様性と公平性を改善し、DoorDashの長期的成長を促進するために、利用と探索の間で賢いトレードオフを持ってさまざまなエンティティを効率的にランク付けできること**を証明しました。
+
+<!-- ここまで読んだ! -->
 
 Our work to date shows positive results, but there are still potential improvements we can make. 
 これまでの私たちの作業は良好な結果を示していますが、まだ改善の余地があります。
-
 So far, we have only introduced exploration to vertical rankings. 
-これまで、私たちは垂直ランキングにのみ探索を導入しました。
-
+これまで、私たちは**垂直ランキング**にのみ探索を導入しました。
 But it could be promising for horizontal ranking within high-level entities such as store and item carousels at the SPR stage and possibly for candidate retrieval during the FPR stage. 
-しかし、SPR段階における店舗やアイテムカルーセルなどの高レベルエンティティ内での水平ランキングや、FPR段階での候補取得に対しても有望である可能性があります。
-
+しかし、SPR段階における店舗やアイテムカルーセルなどの**高レベルエンティティ内での水平ランキング**や、FPR段階での候補取得に対しても有望である可能性があります。
 Note, too, that the current exploration coefficient is uniform for all consumers; 
 また、現在の探索係数はすべての消費者に対して均一であることにも注意してください。
-
 we could personalize it for different consumers based on their shopping behavior and exploration sensitivity. 
 私たちは、消費者の購買行動や探索感度に基づいて、異なる消費者に対してそれをパーソナライズすることができます。
-
 Ultimately, Thompson sampling could be an alternative to test against the current UCB approach. 
 最終的には、Thompson samplingが現在のUCBアプローチに対抗するための代替手段となる可能性があります。
 
-
-
-## Acknowledgments 謝辞
-
-Special thanks to Josh Zhu, Jay Zhang, Parul Khurana, and Janice Hou who worked together to make this exciting work happen! 
-この刺激的な作業を実現するために共に働いてくれたJosh Zhu、Jay Zhang、Parul Khurana、Janice Houに特別な感謝を捧げます！ 
-Also thanks Di Li, Sandor Nyako, Eric Gu, Xiaochang Miao, Han Shu, Matthieu Monsch, Abhi Ramachandran, Chen Dong, Chun-Chen Kuo, Mengjiao Zhang, Kunal Moudgil, Mauricio Barrera, Melissa Hahn, Kurt Smith, Meng Chen, and Wu Han for sharing their insights on the development and support for the execution of the ideas in this blog post. 
-また、Di Li、Sandor Nyako、Eric Gu、Xiaochang Miao、Han Shu、Matthieu Monsch、Abhi Ramachandran、Chen Dong、Chun-Chen Kuo、Mengjiao Zhang、Kunal Moudgil、Mauricio Barrera、Melissa Hahn、Kurt Smith、Meng Chen、Wu Hanに、このブログ記事のアイデアの開発と実行に関する洞察を共有してくれたことに感謝します。 
-Our gratitude also goes to Elena Lin and Jessica Zhang for the data-driven insights and for helping us develop the experiment strategy and measurement framework. 
-データ駆動の洞察を提供し、実験戦略と測定フレームワークの開発を手助けしてくれたElena LinとJessica Zhangにも感謝します。 
-Thanks Ezra Berger for the continuous support, review, and editing of this article. 
-この記事の継続的なサポート、レビュー、編集をしてくれたEzra Bergerにも感謝します。
-
-
-
-## About the Author 著者について
--
--
-
-
-
-## Related Jobs 関連する仕事
-
-
-
-## Recent Blogs 最近のブログ
-
-Our stance on AI and Interviewing
-私たちのAIと面接に関する立場
-
-DoorDash celebrates the vibrant culture of Mexico City with new office opening
-DoorDashは新しいオフィスの開設を通じてメキシコシティの活気ある文化を祝います。
-
-DoorDash enhances Canada presence with new Toronto office opening
-DoorDashは新しいトロントオフィスの開設によりカナダでの存在感を強化します。
-
-- Careers Home
-- キャリアホーム
-- Mission & Values
-- ミッションと価値
-- Working at DoorDash
-- DoorDashでの働き方
-- Belonging
-- 所属感
-- Career Areas
-- キャリア分野
-- University Careers
-- 大学キャリア
-- Career Blog
-- キャリアブログ
-- Talent Network
-- タレントネットワーク
-- Search Jobs
-- 求人検索
-
-Statement of Non-Discrimination: In keeping with our beliefs and goals, no employee or applicant will face discrimination or harassment based on: race, color, ancestry, national origin, religion, age, gender, marital/domestic partner status, sexual orientation, gender identity or expression, disability status, or veteran status. 
-非差別声明：私たちの信念と目標に従い、従業員または応募者は、以下の理由に基づいて差別や嫌がらせを受けることはありません：人種、肌の色、先祖、国籍、宗教、年齢、性別、配偶者/パートナーの地位、性的指向、性別のアイデンティティまたは表現、障害の有無、または退役軍人の地位。
-
-Above and beyond discrimination and harassment based on “protected categories,” we also strive to prevent other subtler forms of inappropriate behavior (i.e., stereotyping) from ever gaining a foothold in our office. 
-「保護されたカテゴリー」に基づく差別や嫌がらせを超えて、私たちはオフィス内で他の微妙な不適切な行動（すなわち、ステレオタイプ）を決して根付かせないよう努めています。
-
-Whether blatant or hidden, barriers to success have no place at DoorDash. 
-明白であれ隠れたものであれ、成功への障壁はDoorDashには存在しません。
-
-We value a diverse workforce – people who identify as women, nonbinary or gender non-conforming, LGBTQIA+, American Indian or Native Alaskan, Black or African American, Hispanic or Latinx, Native Hawaiian or Other Pacific Islander, differently-abled, caretakers and parents, and veterans are strongly encouraged to apply. 
-私たちは多様な労働力を重視しています。女性、ノンバイナリーまたは性別に従わない人々、LGBTQIA+、アメリカ先住民またはアラスカ先住民、黒人またはアフリカ系アメリカ人、ヒスパニックまたはラティーノ、ハワイ先住民またはその他の太平洋諸島民、異なる能力を持つ人々、介護者や親、退役軍人の方々の応募を強く奨励します。
-
-Thank you to the Level Playing Field Institute for this statement of non-discrimination.
-非差別声明に関して、Level Playing Field Instituteに感謝します。
-
-© 2026 DoorDash
-© 2026 DoorDash
-
-#page
-#ページ
-
-Weglot 4.3.0
-Weglot 4.3.0
+<!-- ここまで読んだ! -->
