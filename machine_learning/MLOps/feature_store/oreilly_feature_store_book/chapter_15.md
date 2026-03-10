@@ -717,12 +717,14 @@ The figure shows a target P95 latency of 45 ms, with the breakdown for each step
 - Asynchronous logging of the input features and predictions takes ~1 ms.
   - 入力フィーチャーと予測の非同期ログ記録には約1ミリ秒かかります。
 
+<!-- ここまで読んだ! -->
+
 We assume that computing on-demand features takes less than 1 ms, giving a total of roughly 45 ms.
 オンデマンドフィーチャーの計算には1ミリ秒未満かかると仮定し、合計で約45ミリ秒となります。
 If you have a high standard deviation for the vector index and feature store lookups, you should be aware of the _[tail at scale, where p99 latencies can](https://oreil.ly/l7f0i)_ increase significantly.
 ベクトルインデックスとフィーチャーストアの検索に高い標準偏差がある場合、_「スケールでのテール、p99のレイテンシが大幅に増加する可能性がある」_ことに注意する必要があります。
 Given that we are logging all features and prediction requests for the ranking model, we can monitor its performance by writing a model-monitoring job, similar to how we did in Chapter 14.
-ランキングモデルのためにすべてのフィーチャーと予測リクエストをログ記録しているため、Chapter 14で行ったようにモデルモニタリングジョブを書くことでそのパフォーマンスを監視できます。
+**ランキングモデルのためにすべてのフィーチャーと予測リクエストをログ記録**しているため、Chapter 14で行ったようにモデルモニタリングジョブを書くことでそのパフォーマンスを監視できます。
 The outcomes become available in the interaction data (you should wait a few minutes for users to either view the recommendations or not), and you can easily compare predictions with outcomes.
 結果はインタラクションデータに利用可能になり（ユーザーが推薦を視聴するかどうか数分待つ必要があります）、予測と結果を簡単に比較できます。
 If the prediction performance degrades, you will need to retrain your ranking model or redesign it.
@@ -730,13 +732,14 @@ If the prediction performance degrades, you will need to retrain your ranking mo
 Or the prediction performance could be the result of upstream problems in the retrieval phase, in which case you may need to retrain or redesign the embedding models.
 また、予測性能は取得フェーズの上流の問題の結果である可能性があり、その場合は埋め込みモデルを再訓練または再設計する必要があります。
 
-###### 3.3.0.0.1. Agentic Search for Videos
-###### 3.3.0.0.2. 動画のエージェンティック検索
+<!-- ここまで読んだ! -->
+
+## 4. Agentic Search for Videos 動画のエージェンティック検索
 
 Your real-time recommendation system is the cash cow that should engage users for longer on your video player.
 あなたのリアルタイム推薦システムは、ユーザーを動画プレーヤーでより長く引きつけるべきキャッシュカウです。
 But now, you want to wow your users with new AI-powered features.
-しかし今、あなたは新しいAI駆動の機能でユーザーを驚かせたいと考えています。
+しかし今、あなたは新しいAI駆動の機能でユーザを驚かせたいと考えています。
 You could extend the system by allowing users to search for videos using free text.
 ユーザーが自由なテキストを使用して動画を検索できるようにすることで、システムを拡張できます。
 You could also add new feature pipelines that transcribe your videos, extract frames from them, and allow users to attach tags describing key moments in videos.
@@ -744,11 +747,14 @@ You could also add new feature pipelines that transcribe your videos, extract fr
 Figure 15-10 shows the architecture of an agent that can provide such free-text search capabilities, powered by LLMs.
 図15-10は、LLMによって駆動されるそのような自由テキスト検索機能を提供できるエージェントのアーキテクチャを示しています。
 
+![]()
 _Figure 15-10. Agentic search for videos using video and user context information._
 _図15-10. 動画とユーザーコンテキスト情報を使用した動画のエージェンティック検索_
 
+<!-- ここまで読んだ! -->
+
 Users can watch a video and ask questions about moments or scenes in the video.
-ユーザーは動画を視聴し、動画の瞬間やシーンについて質問できます。
+ユーザーは動画を視聴し、**動画の瞬間やシーンについて質問**できます。
 We can then use the active video_id to retrieve video_tags for that video, and an LLM will determine from the descriptions of the tags which one is most appropriate and change the offset in the video to pos_ms in the selected video_tags row.
 その後、アクティブなvideo_idを使用してその動画のvideo_tagsを取得し、LLMがタグの説明から最も適切なものを判断し、選択されたvideo_tags行の動画内のオフセットをpos_msに変更します。
 When a user is watching a video, the agent (powered by the LLM) will interpret the natural language query, retrieve all `video_tags for the current` `video_id, and select the most` relevant one.
@@ -759,8 +765,7 @@ The system will then seek the `pos_ms timestamp associated with that` tag.
 
 
 Similarly, a user can ask questions about all videos, and an ANN search of the transcripts vector index can be used to find the most similar video transcripts and then play the matched video. 
-同様に、ユーザーはすべてのビデオに関する質問をすることができ、トランスクリプトベクトルインデックスのANN検索を使用して最も類似したビデオトランスクリプトを見つけ、その後一致したビデオを再生することができます。
-
+同様に、**ユーザーはすべてのビデオに関する質問**をすることができ、トランスクリプトベクトルインデックスのANN検索を使用して最も類似したビデオトランスクリプトを見つけ、その後一致したビデオを再生することができます。
 For queries over all videos, the agent can perform an ANN search of the transcripts vector index or the videos vector index to find semantically similar segments or full videos and then play the top match. 
 すべてのビデオに対するクエリの場合、エージェントはトランスクリプトベクトルインデックスまたはビデオベクトルインデックスのANN検索を実行して、意味的に類似したセグメントやフルビデオを見つけ、その後トップマッチを再生することができます。
 
@@ -770,8 +775,11 @@ That concludes our case study, and I will finish off the book with some advice o
 It’s a summary of many of the lessons we learned throughout the book, with a bit of wit thrown in. 
 これは、本書を通じて学んだ多くの教訓の要約であり、少しのウィットが加えられています。
 
-###### 3.3.0.0.3. The Dirty Dozen of Fallacies of MLOps
-###### 3.3.0.0.4. MLOpsの誤謬のダーティダース
+
+<!-- ここまで読んだ! -->
+
+#### 4.0.0.0.2. The Dirty Dozen of Fallacies of MLOps
+####.0.0.0.3. MLOpsの誤謬のダーティダース
 
 There are a number of fallacies (bad assumptions) that MLOps practitioners often make that cause AI systems to never make it to production. 
 MLOpsの実践者がしばしば犯す誤謬（悪い仮定）がいくつかあり、それがAIシステムが本番環境に到達しない原因となります。
@@ -1108,8 +1116,8 @@ Instead, lineage information should be managed by the feature store and model re
 You are free to use the best orchestrator for each of your ML pipelines. 
 各MLパイプラインに最適なオーケストレーターを自由に使用できます。
 
-###### 3.3.0.0.5. The Ethical Responsibilities of AI Builders
-###### 3.3.0.0.6. AIビルダーの倫理的責任
+###### 4.0.0.0.4. The Ethical Responsibilities of AI Builders
+###### 4.0.0.0.5. AIビルダーの倫理的責任
 
 Finally, a word on your ethical responsibilities when you build an AI system. 
 最後に、AIシステムを構築する際の倫理的責任について一言。
@@ -1159,8 +1167,8 @@ Together, we can make AI a force for good, but without help from the law, we wil
 Follow that ethical code and help enforce it, and you will thank yourself for it when you later reflect back on your life. 
 その倫理コードに従い、それを施行する手助けをすれば、後に自分の人生を振り返ったときに自分を感謝することになるでしょう。
 
-###### 3.3.0.0.7. Summary
-###### 3.3.0.0.8. 要約
+###### 4.0.0.0.6. Summary
+###### 4.0.0.0.7. 要約
 
 This chapter introduced a case study of building your own TikTok-like personalized recommendation service for videos. 
 この章では、動画のための自分自身のTikTokのようなパーソナライズされたレコメンデーションサービスを構築するケーススタディを紹介しました。
@@ -1186,9 +1194,9 @@ Given the rate of improvements, today will always be the most important day for 
 Go forth and create, and may the force be with you. 
 前進して創造力があなたと共にあらんことを。
 
-###### 3.3.0.0.9. About the Author
+###### 4.0.0.0.8. About the Author
 **Jim Dowling is CEO of Hopsworks and a former associate professor at KTH Royal** Institute of Technology
-###### 3.3.0.0.10. 著者について
+###### 4.0.0.0.9. 著者について
 **ジム・ダウリングはHopsworksのCEOであり、KTH王立工科大学の元准教授です。**
 
 
@@ -1217,7 +1225,7 @@ He was the first evangelist for feature stores, helping to create the feature st
 He is the organizer of the annual feature store summit conference and the featurestore.org community, as well as co-organizer of PyData Stockholm. 
 彼は年次フィーチャーストアサミット会議とfeaturestore.orgコミュニティの主催者であり、PyData Stockholmの共同主催者でもあります。
 
-###### 3.3.0.0.11. Colophon コロフォン
+###### 4.0.0.0.10. Colophon コロフォン
 
 The animal on the cover of Building Machine Learning Systems with a Feature Store is a red-breasted pygmy parrot (Micropsitta bruijnii), native to the Maluku Islands and Melanesia. 
 『フィーチャーストアを用いた機械学習システムの構築』の表紙に描かれている動物は、マルク諸島とメラネシアに生息する赤胸のピグミーオウム（Micropsitta bruijnii）です。
