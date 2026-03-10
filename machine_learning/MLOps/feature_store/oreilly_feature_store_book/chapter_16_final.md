@@ -321,42 +321,35 @@ Together, we can make AI a force for good, but without help from the law, we wil
 Follow that ethical code and help enforce it, and you will thank yourself for it when you later reflect back on your life. 
 その倫理コードに従い、それを施行する手助けをすれば、後に自分の人生を振り返ったときに自分を感謝することになるでしょう。
 
-#### 2.0.0.0.2. Summary
-###### 2.0.0.0.3. 要約
+## 3. Summary要約
 
 This chapter introduced a case study of building your own TikTok-like personalized recommendation service for videos. 
 この章では、動画のための自分自身のTikTokのようなパーソナライズされたレコメンデーションサービスを構築するケーススタディを紹介しました。
-
 It covered the retrieval-and-ranking architecture, which builds on the two-tower embedding model for retrieval and a ranking model for personalizing recommendations. 
 それは、取得のための2タワー埋め込みモデルと、レコメンデーションをパーソナライズするためのランキングモデルに基づく取得とランキングのアーキテクチャをカバーしました。
-
 We covered the streaming, batch, and vector embedding feature pipelines for our system; the training pipelines for the user- and video-embedding models and the ranking model; and the online inference pipeline to implement retrieval and ranking for user requests. 
 私たちは、システムのためのストリーミング、バッチ、およびベクトル埋め込み特徴パイプライン、ユーザーおよび動画埋め込みモデルとランキングモデルのためのトレーニングパイプライン、ユーザーリクエストのための取得とランキングを実装するオンライン推論パイプラインをカバーしました。
-
 We finished with a flourish, adding an agent to support free-text search across and within videos, powered by LLMs. 
 私たちは、LLMによって駆動される動画全体および内部での自由形式検索をサポートするエージェントを追加して、華やかに締めくくりました。
-
 Finally, we concluded the book with a dirty dozen of fallacies for MLOps and LLMOps that you should avoid if you want to be successful in building AI systems. 
 最後に、AIシステムを構築する際に成功したいのであれば避けるべきMLOpsとLLMOpsの誤謬のダーティダズンで本書を締めくくりました。
-
 And there is no more important time in history for building AI systems than today. 
 そして、AIシステムを構築するための歴史の中で、今日ほど重要な時はありません。
-
 Given the rate of improvements, today will always be the most important day for building AI systems. 
-改善の速度を考えると、今日がAIシステムを構築するための最も重要な日であり続けるでしょう。
-
+**改善の速度を考えると、今日がAIシステムを構築するための最も重要な日であり続ける**でしょう。
 Go forth and create, and may the force be with you. 
 前進して創造力があなたと共にあらんことを。
 
-###### 2.0.0.0.4. About the Author
+## 4. About the Author
 **Jim Dowling is CEO of Hopsworks and a former associate professor at KTH Royal** Institute of Technology
-###### 2.0.0.0.5. 著者について
+###### 4.0.0.0.1. 著者について
 **ジム・ダウリングはHopsworksのCEOであり、KTH王立工科大学の元准教授です。**
 
 
 
 . He has led the development of Hopsworks, including the first open-source feature store for machine learning. 
 彼はHopsworksの開発を主導し、機械学習のための最初のオープンソースフィーチャーストアを含んでいます。
+
 
 He has a unique background in the intersection of data and AI. 
 彼はデータとAIの交差点において独自のバックグラウンドを持っています。
@@ -375,15 +368,15 @@ This combined background of data and AI helped him realize the vision of a featu
 
 He was the first evangelist for feature stores, helping to create the feature store product category through talks at industry conferences (like Data/AI Summit, PyData, and OSDC) and educational articles on feature stores. 
 彼はフィーチャーストアの最初のエバンジェリストであり、業界会議（Data/AI Summit、PyData、OSDCなど）での講演やフィーチャーストアに関する教育的な記事を通じてフィーチャーストア製品カテゴリの創出を助けました。
-
 He is the organizer of the annual feature store summit conference and the featurestore.org community, as well as co-organizer of PyData Stockholm. 
 彼は年次フィーチャーストアサミット会議とfeaturestore.orgコミュニティの主催者であり、PyData Stockholmの共同主催者でもあります。
 
-###### 2.0.0.0.6. Colophon コロフォン
+<!-- ここまで読ん -->
+
+## 5. Colophon コロフォン
 
 The animal on the cover of Building Machine Learning Systems with a Feature Store is a red-breasted pygmy parrot (Micropsitta bruijnii), native to the Maluku Islands and Melanesia. 
 『フィーチャーストアを用いた機械学習システムの構築』の表紙に描かれている動物は、マルク諸島とメラネシアに生息する赤胸のピグミーオウム（Micropsitta bruijnii）です。
-
 This parrot is a member of the smallest genus of parrot, with an average length of eight centimeters (a little over three inches). 
 このオウムは最も小さなオウムの属に属し、平均長は8センチメートル（約3インチ強）です。
 
@@ -419,3 +412,4 @@ The cover fonts are Gilroy Semibold and Guardian Sans.
 
 The text font is Adobe Minion Pro; the heading font is Adobe Myriad Condensed; and the code font is Dalton Maag’s Ubuntu Mono. 
 本文フォントはAdobe Minion Pro、見出しフォントはAdobe Myriad Condensed、コードフォントはDalton MaagのUbuntu Monoです。
+<!-- ここまで読んだ! -->
