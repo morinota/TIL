@@ -52,8 +52,13 @@
 ## +アルファ調査: クリックベイトを避けたいとして、そのまま合成した報酬関数の回帰タスクにするんじゃなくて、回帰タスクはbinary metricのままでsampling weightを使うアプローチの方がいい理由はなんだろう...!!:thinking:
 
 - refs:
-  - 1. Tencent(WeChat)の2022年の論文: [Reweighting Clicks with Dwell Time in Recommendation](https://arxiv.org/abs/2209.09000)
-    - ユーザ満足度を学習させるために、click をそのまま使うとノイズが多いのでdwell time で training sample を reweight してる手法。
+  - 1. Tencent(WeChatなどを開発運用してる大企業)の2022年の論文: [Reweighting Clicks with Dwell Time in Recommendation](https://arxiv.org/abs/2209.0
+    - DMMさんブログのやり方に近い話。
+    - 本論文の問題意識:
+      - “Simply considering each click equally in training may suffer from clickbaits … and fail to capture users’ real satisfaction.(**単に各クリックを同等に考慮するだけでは**、クリックベイトの問題に悩まされ、ユーザの本当の満足度を捉えられない可能性がある)”
+      - つまり clickはnoisyであり、clickbaitの可能性もあり、ユーザの満足度を捉えるには不十分な指標である。
+    - 本論文の大方針:
+      - “we focus on reweighting clicks with dwell time in recommendation. (推薦においてクリックを視聴時間で再重み付けすることに注力する)”
   - 2. Youtubeの2016年のTwo-tower論文: [Deep Neural Networks for YouTube Recommendations](https://arxiv.org/abs/1609.08675)
     - ランキングモデルを、視聴時間を最大化するように学習させるための具体的なhowとして、clickのBCE lossでロジスティック回帰学習なんだけど、その際に各training sampleをその視聴時間に応じて重み付けしてる。(負例は単位重み、正例は視聴時間に応じた重み)
   - 3. KDD2024年のHuaweiの論文: [Counteracting Duration Bias in Video Recommendation via Counterfactual Watch Time](https://arxiv.org/abs/2406.07932)
