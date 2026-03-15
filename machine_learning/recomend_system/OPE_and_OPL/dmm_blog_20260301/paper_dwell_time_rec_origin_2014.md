@@ -154,6 +154,8 @@ We will carefully analyze which of the existing practices and experiences, on dw
 We then list several pointers for MLR as it has been extensively studied in the past decade, followed by a brief discussion on CF, paying special attention to how implicit user feedback is used in CF. 
 次に、過去10年間にわたって広く研究されてきたMLRに関するいくつかの指針を挙げ、その後、CFに関する簡単な議論を行い、CFにおける暗黙のユーザーフィードバックの使用方法に特に注意を払います。
 
+<!-- ここまで読んだ! -->
+
 ### Dwell Time in Other Domains: 
 
 A significant amount of previous research on web search has investigated using post-click dwell time of each search result as an indicator of its relevance for web queries and how it can be applied for different web search tasks. 
@@ -180,56 +182,44 @@ In contrast, we focus on
 ### Learning To Rank in Web Search: 
 
 The field of MLR has significantly matured in the past decade, mainly due to the popularity of search engines. 
-ランク学習の分野は、主に検索エンジンの人気のおかげで、過去10年間で大幅に成熟しました。
+**ランク学習の分野は、主に検索エンジンの人気のおかげで**、過去10年間で大幅に成熟しました。
 Liu [12] and Li [10] provide an in-depth survey on this topic. 
 Liu [12]とLi [10]は、このトピックに関する詳細な調査を提供しています。
 Here, we point out that a fundamental issue with all existing MLR models is that they all optimize for relevance, an abstract yet important concept in IR. 
 ここで、すべての既存のMLRモデルに共通する根本的な問題は、すべてが関連性という、IRにおいて抽象的でありながら重要な概念を最適化していることです。
-
 In the standard setting, the “relevance” between a particular query and a list of documents is objective and the same for all users. 
 標準的な設定では、特定のクエリと文書のリストとの「関連性」は客観的であり、すべてのユーザーに対して同じです。
-
 For IR, “relevance” is judged by human experts through a manual process and is difficult to scale to millions of real queries. 
 IRにおいて、「関連性」は人間の専門家によって手動プロセスを通じて判断され、数百万の実際のクエリにスケールするのは困難です。
-
 In order to personalize IR, a natural alternative to “relevance” is to optimize CTR. 
 IRをパーソナライズするために、「関連性」の自然な代替手段はCTRを最適化することです。
-
 In this paper, we explore the possibility of optimizing for dwell time under the existing framework of gradient boosted decision trees [6]. 
 本論文では、勾配ブースト決定木の既存のフレームワークの下で滞在時間を最適化する可能性を探ります。
-
 However, other MLR models can also be used such as pair-wise models (e.g., RankBoost [5] and AdaRank [16]) and list-wise models (e.g., RankNet [3] and ListNet [4]). 
 ただし、RankBoost [5]やAdaRank [16]のようなペアワイズモデルや、RankNet [3]やListNet [4]のようなリストワイズモデルなど、他のMLRモデルも使用できます。
-
 Note that, we do not seek to propose new MLR models, but instead show the advantage of utilizing dwell time in existing models. 
 私たちは新しいMLRモデルを提案することを目指しているのではなく、既存のモデルにおける滞在時間の利用の利点を示すことを目指しています。
 
-**Collaborative Filtering: In CF systems, users’ satisfaction with** 
-**協調フィルタリング：CFシステムにおいて、ユーザーのアイテムに対する満足度は通常考慮されません。**
+### **Collaborative Filtering: 
 
-the items is usually not considered. 
-アイテムに対するユーザーの満足度は通常考慮されません。
-
+In CF systems, users’ satisfaction with the items is usually not considered. 
+CFシステムでは、ユーザーのアイテムに対する満足度は通常考慮されません。
 Almost all previous work in CF (e.g., [9, 1]) take only explicit feedback such as ratings, or “implicit” click-based feedback into account. 
 CFにおけるほとんどの以前の研究（例：[9, 1]）は、評価などの明示的なフィードバックや「暗黙の」クリックベースのフィードバックのみを考慮しています。
-
 Hu et al. [7] considered implicit feedback signal, such as whether a user clicks or reviews an item, and incorporated it into the matrix factorization framework. 
 Huら [7]は、ユーザーがアイテムをクリックするかレビューするかといった暗黙のフィードバック信号を考慮し、それを行列因子分解フレームワークに組み込みました。
-
 Rendle et al. [13] proposed a learning algorithm for binary implicit feedback datasets, which is essentially similar to AUC optimization. 
 Rendleら [13]は、バイナリの暗黙のフィードバックデータセットに対する学習アルゴリズムを提案しましたが、これは本質的にAUC最適化に類似しています。
-
 None of them went beyond binary implicit feedback to investigate the interactions between users and items. 
 彼らのいずれも、バイナリの暗黙のフィードバックを超えて、ユーザーとアイテムの相互作用を調査することはありませんでした。
-
 The approach of Yin et al. [19] is the closest to our work. 
 Yinら [19]のアプローチは、私たちの研究に最も近いものです。
+In that paper, the authors used a graphical model on the explicit feedback signals and dwell time data to predict the user’s score. 
+その論文では、著者は明示的なフィードバック信号と滞在時間データにグラフィカルモデルを使用して、ユーザーのスコアを予測しました。
+Our work is different in that our model does not require the presence of explicit user feedback.  
+私たちの研究は、私たちのモデルが明示的なユーザーフィードバックの存在を必要としない点で異なります。
 
-In that paper, the authors used a graphical model on the explicit feedback signals and dwell time 
-その論文では、著者たちは明示的なフィードバック信号と滞在時間に関するグラフィカルモデルを使用しました。
-
-1http://youtubecreator.blogspot.com/2012/08/youtube-now-whywe-focus-on-watch-time.html  
-1http://youtubecreator.blogspot.com/2012/08/youtube-now-whywe-focus-on-watch-time.html  
+<!-- ここまで読んだ! -->
 
 -----
 **Table 1: Client-side Logging Example**
@@ -256,11 +246,7 @@ He goes back to the article page _{Focus, t4}_ and comments on it.
 He closes the article page, or _{BeforeUnload, t5}_ clicks the back button to go to another page. 
 彼は記事ページを閉じるか、 _{BeforeUnload, t5}_、戻るボタンをクリックして別のページに移動します。
 
-data to predict the user’s score. 
-ユーザーのスコアを予測するためのデータです。
 
-Our work is different in that our model does not require the presence of explicit user feedback.  
-私たちの研究は、私たちのモデルが明示的なユーザーフィードバックの存在を必要としない点で異なります。
 
 **Table 2: Comparison of dwell time measurement. The first two** 
 **表2：滞在時間測定の比較。最初の2つの列はLE、中央の2つの列はFB、最後の2つの列はクライアントサイドのログに関するものです。**
