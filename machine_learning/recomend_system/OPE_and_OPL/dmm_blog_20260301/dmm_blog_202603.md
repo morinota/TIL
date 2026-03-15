@@ -63,8 +63,16 @@
     - ランキングモデルを、視聴時間を最大化するように学習させるための具体的なhowとして、clickのBCE lossでロジスティック回帰学習なんだけど、その際に各training sampleをその視聴時間に応じて重み付けしてる。(負例は単位重み、正例は視聴時間に応じた重み)
   - 3. KDD2024年のHuaweiの論文: [Counteracting Duration Bias in Video Recommendation via Counterfactual Watch Time](https://arxiv.org/abs/2406.07932)
     - 視聴時間の回帰タスクとして扱わない理由について、duration biasの問題を挙げて説明してる論文。
+  - 4. 2024年のニュース推薦の論文: [Time Matters: Enhancing News Recommendation with Dwell Time](https://arxiv.org/abs/2405.12486)
+  - 5. 滞在時間研究のクラシック論文(2014年): [Beyond Clicks: Dwell Time for Personalization](https://www.hongliangjie.com/publications/recsys2014.pdf)
+    - この論文の影響で、dwell time featureやdwell time weightingのアイデアが広まったっぽい。
 
-### なぜ合成報酬関数の回帰タスクにしないのかの話
+### 滞在時間研究のクラシック論文(2014年)の話:
+
+
+
+
+### 滞在時間や視聴時間を含む報酬関数を直接使う問題点の話
 
 - KDD2024年の論文の内容:
   - 背景: 
