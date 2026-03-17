@@ -13,16 +13,42 @@ WeChat, Tencent Beijing, China xiafengxia@tencent.com
 Leyu Lin  
 WeChat, Tencent Beijing, China goshawklin@tencent.com  
 
-リュービン・シエ[∗]  
-WeChat, テンセント 北京, 中国 ruobingxie@tencent.com  
-リン・マ[∗]  
-WeChat, テンセント 北京, 中国 carrotma@tencent.com  
-シャオリャン・ジャン  
-WeChat, テンセント 北京, 中国 modriczhang@tencent.com  
-フェン・シャ  
-WeChat, テンセント 北京, 中国 xiafengxia@tencent.com  
-レイユ・リン  
-WeChat, テンセント 北京, 中国 goshawklin@tencent.com  
+- 全体像メモ:
+  - 本論文の基礎となる主張:
+    - 「すべての click を同じ positive label として扱うのはよくないよね」って話。
+    - なぜなら、clickには以下のようなノイズがあるから:
+      - タイトル釣りでclickされた。
+      - タイトルと中身がズレてた(期待と違う)。
+      - とりあえず開いたけどすぐ閉じた。
+      - いずれもユーザ満足度は低いのに「1 click」として同じ扱いにしてしまう。
+    - よって、click後のユーザ満足度をより良く表す定量シグナルとしてdwell time (滞在時間)を用いて、clickをdwell timeで"再重み付け"する。
+  - 本論文の２つの新規性:
+    - その1: valid read を定義すること
+      - 「これは質の高いclickだよね」っていうclickを選別してる。
+    - その2: clickの再重み付けとしてdwell timeをそのままは使わない! 正規化関数を設計!
+      - 生の dwell time をそのまま報酬とか重みに設定すると、長文記事・長尺動画・元々読むのが遅いユーザ・ヘビーユーザを重視して過剰評価してしまう可能性あり。
+      - **dwell time を正規化した関数に通して、短すぎる滞在はしっかり罰しつつ、長すぎる滞在は飽和させる**
+  - 本論文が解こうとしてる問題:
+    - 論文内ではdwell time modelingの問いを2つに分けている.
+    - 問い1: 良い推薦システムって何??
+      - 著者たちの答えは「**ユーザを長く拘束することではなく、有益な情報を効率よく読ませること**」
+      - ただ単にdwell timeを伸ばすだけだと、以下のような問題が発生する
+        - 長い記事ばっかり出す
+        - ユーザを沼らせる
+        - "効率よく満足した"ことを評価できない
+    - 問い2: dwell timeで満足度をどう定量化する??
+      - ex. 1秒→15秒の改善と601秒→615秒の改善では、同じ+14秒でも意味が全然異なる。
+      - 前者は「誤クリックじゃなくてちゃんと読み始めた」に近い。
+      - **なので、dwell time は単調増加ならなんでもいいわけじゃなく、“初期で効いて、後半は飽和する形”がよい** と考えられる!
+  - 本論文の新規性1: valid readの設計
+    - 以下の**3種類のルール**でvalid readを作っている。
+    - ルール1: 共通閾値を超えたclick
+      - hoge
+    - ルール2: ライトユーザのclickは有効とみなす
+      - hoge
+    - ルール3: アイテムの長さに応じて閾値を変えたclick
+      - hoge
+
 
 ### 0.1. ABSTRACT  
 
