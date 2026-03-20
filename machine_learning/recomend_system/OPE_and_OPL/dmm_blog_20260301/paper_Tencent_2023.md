@@ -43,18 +43,25 @@ WeChat, Tencent Beijing, China goshawklin@tencent.com
         - ->あ、だから 報酬関数や sample weightingの時はlogに通すのか...!!:thinking:
   - 本論文の新規性1: valid readの設計
     - 以下の**3種類のルール**でvalid readを作っている。
-    - ルール1: 共通閾値を超えたclickはvalid readとみなす
-      - hoge
-    - ルール2: ライトユーザのclickはvalid readとみなす
-      - hoge
-    - ルール3: 各アイテムで相対的に長いdwell timeのclickはvalid readとみなす
-      - hoge
+    - ルール1: 共通閾値を超えたclickはvalid readとみなす!
+      - まず全体のdwell time分布を見ると、log(dwell time)は大体正規分布っぽいとみなせる。
+      - その上で、 $\mu$ を log(dwell time)の平均、 $\sigma$ を標準偏差として、下限閾値 $x_1 = \exp(\mu - \sigma)$ をvalid readの基準とする。
+      - **ちなみにWeChatの実データではこれが約15秒**。
+        - i.e. 15秒以上読まれたclickは、まずは"ちゃんと読まれたclick"とみなす!
+    - ルール2: ライトユーザのclickはvalid readとみなす!
+      - でも、ルール1だけで全員に同じ閾値を適用するだけだと、もともとサクサク読む人、そもそもクリック数が少ない人などの情報が落ちやすい。
+      - そこでライトユーザ救済として、直近1週間でクリック数が7未満のlight userは、全てのclickをsupervised signalとしてvalid read扱いにする。
+    - ルール3: 各アイテムについて相対的に長いdwell timeのclickはvalid readとみなす!
+      - **更に、短いニュースや短尺コンテンツはそもそもdwell timeが短くなりがち。**
+      - アイテム間の公平性を保つために、そのアイテムの過去clickの中で相対的に十分長いdwell timeならvalid readとみなす。
+        - 本論文内の具体的なhowとしては、各アイテムの過去clickのdwell time分布に対して、上側90%値を超えるclickは全てvalid readとみなしていた。
+    - (ルール4: **ノイズ除去として、dwell timeが5秒未満のクリックは全部除外**してる!)
     - valid readの意味:
       - 要するにvalid readは、**長く読まれたclickをそのまま意味するのではなく、ユーザ特性とアイテム特性を多少考慮した高品質clickラベル**、ってイメージ...!
-      - (clickをそのまま全てpositiveにせずに精錬ステップをかましているイメージ...!!)
+      - (i.e. clickをそのまま全てpositiveにせずに精錬ステップをかましているイメージ...!!)
   - 本論文の新規性2: dwell time正規化関数を用いたclickの再重みづけ!
     - 本論文では、valid readを選定した後で、その中でも更にdwell timeに応じて重み付けしてる。
-    - ただし、生のdwell timeやlog(dwell time)をそのまま使わず、sigmoid関数で変換してる。
+    - ただし、**生のdwell timeやlog(dwell time)をそのまま使わず、sigmoid関数で変換**してる。
       - 狙いは2つ:
         - 1: valid readの共通閾値近辺で勾配を大きくしたいから!
           - valid / invalid の境界、つまり 15秒付近で重みが敏感に変わるようにしたい。これで ちょい読み/ちゃんと読んだ の差を学習しやすくする。
@@ -68,7 +75,12 @@ WeChat, Tencent Beijing, China goshawklin@tencent.com
           - 単調増加
           - 実装も簡単
         - 雑にいうと“**15秒を超えるかどうかはすごく重要。でも200秒と250秒の差はそこまで重要じゃない**”を関数で表現しやすいから。
-        - log(dwell time)じゃないのは、15秒を超えるかどうか、を表現しづらいからかな?? :thinking:
+        - log(dwell time)との違いは?? 何がダメだからsigmoidにしてる?? :thinking:
+          - log関数もsigmoid関数の採用理由の一部は満たしてるはず...!
+            - ex. log関数も単調増加だし、実装も簡単。短時間帯ほど変化が大きい、も表現できる。
+          - 一方で、以下が差分:
+            - **log関数は飽和しない。**長すぎるdwell timeに対しても重みが増え続けてしまう。そのまま返す恒等関数よりはだいぶマシ。しかしまだ、長いコンテンツ、ヘビーユーザがまだ過剰評価される可能性がある。
+            - **「どこが重要か」を指定できない。**logは単に滑らかに増加するだけなので、valid readの境界(ex. 15秒付近)でここが一番大事! みたいな情報を表現できない!!
     - ハイパーパラメータの意味:
       - 論文では
 
