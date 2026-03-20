@@ -123,20 +123,42 @@ $$
       - VR + NDT (本論文の提案手法)
     - 一番AUCがよかったのがVR + NDTで、次いでVR + logDT。CTR単体は一番悪かった。
   - オンライン実験:
+    - (ACN = average click number, DT = dwell time, AIN = average impression number)
     - +valid read
-      - CTR +1.9%, ACN +2.478%, DT -1.7%
+      - CTR +1.9%, ACN +2.478%, DT -1.7%, AIN +0.6%
     - +valid read + NDT reweighting
-      - CTR +2.6%, ACN +4.1%, DT -3.5%
-    - Dwell timeは下がってるがCTRとACNは上がってる。これを論文内ではどう解釈してる??
-      - **"ユーザを長く拘束する"よりも、"ハズレclickを減らして、短時間でも読める体験"の方が良い**
-      - なので...
-        - 無駄に長く滞在する読書は減る。
-        - でもvalid readは増える。
-        - ユーザは次のいい記事にも進みやすい。
-        - 結果としてCTR/ACN/AINが上がる。という解釈。
-      - 本論文手法は、滞在時間最大化モデルではなく、読了効率改善モデルとして機能した、という解釈をしている。
-    - DTが下がるのに良いのか??
-      - hoge
+      - CTR +2.6%, ACN +4.1%, DT -3.5%, AIN +1.5%
+    - その1: なぜ CTR と ACN が上がるの？という解釈
+      - >using high-quality valid reads as training objectives can even improve CTR (高品質なvalid readをトレーニングの目的として使用することで、CTRさえも改善できる) 
+      - 解釈:
+        - before: 
+          - clickベースの目的関数 -> 釣りタイトル強い -> クリックはするけどすぐに離脱。
+        - after:
+          - valid readベースの目的関数 -> 「ちゃんと読まれる記事」を学習
+          - 無駄クリックが減る -> "あたり記事"が増える -> ユーザが次も読む。よってCTRもACNも上がってる。
+    - その2: なぜDTが下がるの？という解釈
+      - >inevitably sacrificing the performance of dwell time (滞在時間のパフォーマンスを犠牲にすることは避けられない)
+      - **このモデルは長く読ませることを目的にしていない。**
+      - 長すぎる記事（長尺コンテンツ）を過大評価しない。sigmoidで飽和させてるので。
+      - 結果として、ダラダラ長く読む行動が減る。"適切な長さで満足"が増える。
+    - その3: DT migraition (DT分布の変化)が観測された。
+      - 分析の軸:
+        - x軸 -> dwell timeの分位(P10~P90)
+        - y軸 -> ユーザのアクティブ度(クリック数で定義)
+        - z軸 -> dwell timeの改善率
+      - 観察1: short dwell time behaviors (P10/P20) have improvements(短時間だった行動が長くなっている!)
+        - 解釈: 誤クリックが減ってる!
+          - before: クリック -> 2秒で閉じる
+          - after : クリック -> 10秒読む
+        - つまり valid readが増えてる!
+      - 観察2: >too-long readings decrease (長すぎる読みが減っている!)
+        - duration biasが減ってる?
+      - 観察3: light users benefits(ライトユーザが特に改善!)
+        - もともとあまり読まないユーザのクリックもvalid readとして扱うルールが効いてる!
+        - before: ライトユーザのクリック -> 5秒で閉じる
+        - after : ライトユーザのクリック -> 20秒読む
+      - 結論としてvalid readが増えた!
+        - **本論文で実現したこと「長く読ませる」から「ちゃんと読ませる」への転換!**
 
 ### 0.1. ABSTRACT  
 
