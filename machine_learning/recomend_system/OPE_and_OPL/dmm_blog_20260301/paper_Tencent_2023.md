@@ -185,16 +185,16 @@ CCS CONCEPTS
 
 KEYWORDS  
 recommendation, valid read, dwell time, click reweighting  
-推奨、バリッドリード、滞在時間、クリック再重み付け  
+推奨、バリッドリード、滞在時間、クリック再重み付け
 
 <!-- ここまで読んだ! -->
 
 ## 1. 1 INTRODUCTION  
 
 Real-world personalized recommendation attempts to provide appropriate items based on user preferences.  
-実世界のパーソナライズされた推奨は、ユーザーの好みに基づいて適切なアイテムを提供しようとします。  
+実世界のパーソナライズされた推奨は、ユーザーの好みに基づいて適切なアイテムを提供しようとします。
 User feedback on items is natural and essential information to discover user interests.  
-アイテムに対するユーザーフィードバックは、ユーザーの興味を発見するための自然で重要な情報です。  
+アイテムに対するユーザーフィードバックは、ユーザーの興味を発見するための自然で重要な情報です。
 Click, which is a high-quality and widely-existed implicit feedback, is the dominating user behavior used in recommendation. Click-through rate (CTR) prediction is also the central objective [4, 19, 26].  
 クリックは、高品質で広く存在する暗黙のフィードバックであり、推奨に使用される支配的なユーザー行動です。クリック率（CTR）予測も中心的な目的です [4, 19, 26]。
 
