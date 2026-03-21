@@ -159,6 +159,7 @@ $$
         - after : ライトユーザのクリック -> 20秒読む
       - 結論としてvalid readが増えた!
         - **本論文で実現したこと「長く読ませる」から「ちゃんと読ませる」への転換!**
+
 ## ABSTRACT
 
 The click behavior is the most widely-used user positive feedback in recommendation.
