@@ -851,14 +851,14 @@ Our Click reweighting aims to improve valid reads for all users, thus inevitably
 (3) ACNとAINの改善は、ユーザーが私たちのシステムをより利用したいと考えていることを示唆しており、これは成長の核心的な原動力です。
 
 #### 1.0.13. 3.4 Online Dwell Time Migration
-#### 1.0.14. 3.4 オンライン滞在時間の移行
+#### 1.0.14. 3.4 オンライン滞在時間の移
+
+![]()
 
 In Fig. 3, we discover an interesting dwell time migration trend of users with different activeness. 
 図3では、異なる活動性を持つユーザーの滞在時間移行の興味深い傾向を発見しました。
-
 The x-axis indicates the quantile of dwell time (P10 is the shortest 10% dwell time), the y-axis indicates the activeness level (level7 is the most active users), and the z-axis indicates the dwell time changes from baseline to Click reweighting. 
 x軸は滞在時間の分位数を示し（P10は最短の10%の滞在時間）、y軸は活動レベルを示します（レベル7は最も活動的なユーザー）、z軸はベースラインからクリック再重み付けへの滞在時間の変化を示します。
-
 We find that: 
 私たちは次のことを発見しました：
 
