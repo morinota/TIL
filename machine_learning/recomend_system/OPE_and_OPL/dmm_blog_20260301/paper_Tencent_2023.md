@@ -434,22 +434,21 @@ We build four models with different objectives for offline evaluation and ablati
 私たちは、オフライン評価とアブレーション研究のために異なる目的を持つ4つのモデルを構築します：
 
 (a) Single CTR, which only uses CTR as the training objective. 
-(a) 単一CTR、これはCTRのみをトレーニング目的として使用します。
+  (a) 単一CTR、これはCTRのみをトレーニング目的として使用します。
 
 (b) CTR+logDT, which is an MTL model with both CTR and log dwell time as objectives following classical CTR+DT optimization [2, 16]. 
-(b) CTR+logDT、これは古典的なCTR+DT最適化 [2, 16] に従い、CTRとログ滞在時間の両方を目的とするMTLモデルです。
+  (b) CTR+logDT、これは古典的なCTR+DT最適化 [2, 16] に従い、CTRとログ滞在時間の両方を目的とするMTLモデルです。
 
 (c) VR+logDT, an MTL model with valid read (VR) and logDT objectives. 
-(c) VR+logDT、有効読取（VR）とログDTの目的を持つMTLモデルです。
+  (c) VR+logDT、有効読取（VR）とログDTの目的を持つMTLモデルです。
 
 (d) VR+NDT (i.e., the final Click reweighting model), which further replaces logDT with our normalized dwell time (NDT). 
-(d) VR+NDT（すなわち、最終的なクリック再重み付けモデル）、これはさらにログDTを私たちの正規化された滞在時間（NDT）に置き換えます。
+  (d) VR+NDT（すなわち、最終的なクリック再重み付けモデル）、これはさらにログDTを私たちの正規化された滞在時間（NDT）に置き換えます。
 
 We evaluate them on the valid read prediction task with AUC and RelaImpr as metrics following [4, 13]. 
 私たちは、[4, 13] に従って、AUCとRelaImprを指標として有効読取予測タスクでそれらを評価します。
-
 All baselines share the same neural network for single/MTL towers, with the same raw features and settings for fair comparisons. 
-すべてのベースラインは、単一/MTLタワーのために同じニューラルネットワークを共有し、公平な比較のために同じ生の特徴と設定を持っています。
+すべてのベースラインは、**単一/MTLタワーのために同じニューラルネットワークを共有し、公平な比較のために同じ生の特徴と設定を持っています。**
 
 **Table 1: Offline evaluation on valid read prediction.**
 **表1: 有効読取予測に関するオフライン評価。**
@@ -505,43 +504,39 @@ From Table 2 we find that:
 表2から私たちは次のことを発見しました：
 
 (1) Both CTR and ACN have significant improvements (𝑝 _< 0.05) armed with valid read. 
-(1) CTRとACNの両方が、有効読取を用いることで有意な改善を示しています（𝑝 _< 0.05）。
-
+(1) CTRとACNの両方が、valid readを用いることで有意な改善を示しています（𝑝 _< 0.05）。
 It is impressive that using high-quality valid reads as training objectives can even improve the online click-related metrics. 
-高品質な有効読取をトレーニング目的として使用することで、オンラインのクリック関連指標が改善されるのは印象的です。
-
+高品質なvalid readをトレーニング目的として使用することで、オンラインのクリック関連指標が改善されるのは印象的です。
 The improvements are further strengthened by adding normalized dwell time, which reconfirms the effectiveness of NDT on user experience. 
 改善は、正規化された滞在時間を追加することでさらに強化され、ユーザー体験に対するNDTの効果を再確認します。
 
 (2) The original dwell time modeling over-emphasizes long dwell time behaviors. 
 (2) 元の滞在時間モデリングは、長い滞在時間の行動を過度に強調しています。
-
 Our Click reweighting aims to improve valid reads for all users, thus inevitably sacrificing the performance of dwell time. 
-私たちのクリック再重み付けは、すべてのユーザーの有効読取を改善することを目指しているため、滞在時間のパフォーマンスを犠牲にせざるを得ません。
+私たちのクリック再重み付けは、すべてのユーザーのvalid readを改善することを目指しているため、滞在時間のパフォーマンスを犠牲にせざるを得ません。
 
 (3) The improvements in ACN and AIN further imply that users are more willing to use our system, which is the core driving force of growth. 
 (3) ACNとAINの改善は、ユーザーが私たちのシステムをより利用したいと考えていることを示唆しており、これは成長の核心的な原動力です。
+
+<!-- ここまで読んだ! -->
 
 ### 3.4 Online Dwell Time Migration
 
 > **Figure 3: Dwell time migration on different dwell time quantiles and different user activeness in an online system.**
 > 図3: オンラインシステムにおける異なる滞在時間の分位数と異なるユーザーの活動性に関する滞在時間の移行。
-> - x軸: dwell timeの分位数（P10は最短10%の滞在時間）
+> - x軸: dwell timeの分位数（P10は最短10%の滞在時間）(あ、滞在時間の値そのものではなく分位数を用いて比較するのわかりやすそうだな...!!一旦はユーザセグメントごとに分けないバージョンで出してみよう。:thinking:)
 > - y軸: ユーザーの活動レベル（level7が最も活動的）
 > - z軸: ベースラインからクリック再重み付けへの滞在時間の変化率
 > - 短い滞在時間（P10/P20）では改善（+5%〜+20%）、長い滞在時間（P80/P90）では減少（-5%〜-15%）
 
 In Fig. 3, we discover an interesting dwell time migration trend of users with different activeness. We find that:
 図3では、異なる活動性を持つユーザーの滞在時間移行の興味深い傾向を発見しました：
-
 (1) Both light and heavy users have more dwell time on their short dwell time behaviors (especially for less active users). It implies that users tend to have more valid reads.
 (1) ライトユーザーとヘビーユーザーの両方が、短い滞在時間の行動においてより多くの滞在時間を持っています（特に活動が少ないユーザー）。ユーザーがより多くの有効読取を持つ傾向があることを示唆しています。
-
 (2) The dwell time of too-long readings inevitably decreases, since too-long items are not over-emphasized due to the normalized dwell time. In contrast, our model pays more attention to the behaviors of light users on short items.
 (2) 長すぎる読書の滞在時間は必然的に減少します。正規化された滞在時間のために長すぎるアイテムは過度に強調されないからです。対照的に、モデルは短いアイテムに対するライトユーザーの行動により多くの注意を払います。
-
 (3) The DT migration matches our purpose to provide more informative and efficient recommendations. We hope users get a better reading experience rather than be stuck in our system.
-(3) DTの移行は、より情報豊かで効率的な推薦を提供するという目的に合致しています。ユーザーがシステムに閉じ込められるのではなく、より良い読書体験を得ることを望んでいます。
+(3) DTの移行は、**より情報豊かで効率的な推薦を提供**するという目的に合致しています。ユーザーがシステムに閉じ込められるのではなく、より良い読書体験を得ることを望んでいます。
 
 <!-- ここまで読んだ! -->
 
