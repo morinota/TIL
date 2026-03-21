@@ -545,13 +545,15 @@ In Fig. 3, we discover an interesting dwell time migration trend of users with d
 There are some efforts attempt to discover clickbaits and purify clicks [1, 3, 6, 11, 12]. In real-world scenarios, the dwell time of clicked items is natural and powerful user feedback that can quantify clicks [5, 7, 9, 20, 24]. The content features are often carefully encoded for dwell time prediction [16, 18]. Recently, some works adopt MTL or multi-optimization objectives to jointly consider CTR and dwell time predictions [2, 22, 27]. However, they do not fully address the over-emphasizing issue of too-long items. Zheng et al. [25] designs a watch time gain to measure the relative dwell time on an item, while it loses the essential information of the specific dwell time value in different items. In this work, we propose a novel behavior valid read with a normalized DT to better fit our purpose of enabling more efficient and informative readings.
 クリックベイトを発見しクリックを浄化する研究がいくつかあります [1, 3, 6, 11, 12]。実世界ではクリックされたアイテムの滞在時間は自然で強力なフィードバックです [5, 7, 9, 20, 24]。コンテンツ特徴は滞在時間予測のために慎重にエンコードされます [16, 18]。最近ではMTLやマルチ最適化目的でCTRと滞在時間の予測を共同で考慮する研究もあります [2, 22, 27]。しかし長すぎるアイテムの過度な強調の問題には完全に対処していません。Zheng et al. [25] は視聴時間利得を設計しましたが、異なるアイテム間の具体的な滞在時間値の情報を失います。本研究では、より効率的で情報豊かな読書を可能にするために正規化DTを持つvalid readを提案します。
 
+<!-- ここまで読んだ! -->
+
 ## 5 CONCLUSION AND FUTURE WORK
 
 In this work, we propose a simple yet effective way to reweight clicks via valid read based filtering with normalized dwell time based reweighting. The click reweighting framework has been deployed on a real-world recommender system in WeChat.
 本研究では、正規化された滞在時間に基づく再重み付けを用いた有効読取ベースのフィルタリングにより、クリックを再重み付けするシンプルかつ効果的な方法を提案しました。クリック再重み付けフレームワークはWeChatの実世界の推薦システムに展開されています。
 
 In the future, we will explore more sophisticated valid read modeling, and theoretically and experimentally investigate the pros and cons of our purposes of click reweighting via long-term online metrics.
-今後、より洗練された有効読書モデルを探求し、長期的なオンラインメトリクスを通じてクリック再重み付けの目的の利点と欠点を理論的・実験的に調査します。
+今後、より洗練された有効読書モデルを探求し、長期的なオンラインメトリクスを通じてクリック再重み付けの目的の利点と欠点を理的・実験的に調査します。
 
 <!-- ここまで読んだ! -->
 
@@ -636,3 +638,5 @@ In the future, we will explore more sophisticated valid read modeling, and theor
 
 [27] Tengfei Zhou, Hui Qian, Zebang Shen, Chao Zhang, Chengwei Wang, Shichen Liu, and Wenwu Ou. 2018. Jump: A joint predictor for user click and dwell time. In Proceedings of IJCAI.  
 [27] Tengfei Zhou, Hui Qian, Zebang Shen, Chao Zhang, Chengwei Wang, Shichen Liu、およびWenwu Ou. 2018. Jump：ユーザーのクリックと滞在時間のための共同予測器。IJCAIの論文集にて。  
+
+<!-- ここまで読んだ! -->
