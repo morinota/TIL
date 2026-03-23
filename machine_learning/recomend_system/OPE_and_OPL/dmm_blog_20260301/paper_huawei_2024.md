@@ -1,102 +1,37 @@
 refs: https://arxiv.org/html/2406.07932v2
 
+- TL;DR
+  - watch time = ユーザ興味ではない。バイアスが乗っている。
+  - 特に「動画の長さ」によるバイアスが大きい。
+  - なので「本来どれだけみたかったか(Counterfactual Watch Time, CWT)」を推定するモデルを提案。
+- 背景:
+  - 何が問題?? = duration bias
+    - 観測されたwatch time は、ユーザの興味 * 動画の長さ が混ざっている。
+  - 特に「最後まで見たケース」だと...**同じ完全視聴でも、動画の長さによってユーザの興味レベルが異なる可能性がある。**
+    - 完全視聴 = 高い興味 として扱われるが、実際は動画の長さによって異なる興味レベルを示す可能性がある。
+    - ex. 
+      - 30秒動画を完全視聴 = まあ普通。
+      - 10分動画を完全視聴 = かなり興味がある。
+- 提案手法: Counterfactual Watch Model (CWM)
+  - ざっくり「もし動画が無限に長かったら、ユーザはどれだけ見たかったか？」を推定するモデル。
+    - 論文での定義 = 動画が十分長い場合に、ユーザが見たいと思う時間。
+    - 動画の長さとは独立。
+  - 観測値との関係性:
+    - observed_watch_time != CWT
+    - observed_watch_time = min(CWT, video_duration)
+    - **観測されるのは、動画長によってCWTが切り詰められるたもの。**
+      - 特に完全視聴でこの現象が起きやすい。
+  - duration biasの原因
+    - 論文では、CWTが動画長で切り詰められることがduration biasの原因と主張。
+  - 論文で提案してること:
+    - CWTを導入
+    - 観測されたwatch timeからCWTを推定するモデル(CWM)を提案
+    - counterfactual likelihood functionを定義して、CWMを学習する方法を提案
+  - CWTからユーザ興味への変換
+    - cost-based transform functionを定義して、CWTをユーザ興味の推定値に変換。
 
-Back to arXiv
-Back to arXiv
-This is experimental HTML to improve accessibility. 
-これはアクセシビリティを改善するための実験的なHTMLです。
-We invite you to report rendering errors. 
-レンダリングエラーを報告することをお勧めします。
-Use Alt+Y to toggle on accessible reporting links and Alt+Shift+Y to toggle off. 
-Alt+Yを使用してアクセシブルな報告リンクを切り替え、Alt+Shift+Yを使用してオフにします。
-Learn more about this project and help improve conversions. 
-このプロジェクトについて詳しく学び、コンバージョンの改善を手伝ってください。
-Use Alt+Y to toggle on accessible reporting links and Alt+Shift+Y to toggle off. 
-Alt+Yを使用してアクセシブルな報告リンクを切り替え、Alt+Shift+Yを使用してオフにします。
-
-
-
-## Table of Contents 目次
-1. Abstract 要約
-2. 1Introduction はじめに
-3. 2Related work 関連研究
-4. 3Counterfactual watch time 反実仮想視聴時間
-   3.1Definition of counterfactual watch time 反実仮想視聴時間の定義
-   3.2The existence of counterfactual watch time 反実仮想視聴時間の存在
-      3.2.1Evidence 1: repeated playing 証拠1: 繰り返し再生
-      3.2.2Evidence 2: bimodal distribution 証拠2: 二峰性分布
-      3.2.3Explanation from counterfactual watch time 反実仮想視聴時間からの説明
-   3.3An economic view of user watching ユーザ視聴の経済的視点
-   3.4Limitation of existing methods 既存手法の限界
-5. 4Our approach 私たちのアプローチ
-   4.1Cost-based transform function コストベースの変換関数
-   4.2Counterfactual likelihood function 反実仮想尤度関数
-      4.2.1Formulation of the counterfactual likelihood function 反実仮想尤度関数の定式化
-      4.2.2Parameterize and optimize the likelihood function 尤度関数のパラメータ化と最適化
-   4.3Online inference オンライン推論
-6. 5Experiments and Results 実験と結果
-   5.1Experimental setting 実験設定
-      5.1.1Datasets データセット
-      5.1.2Evaluation 評価
-      5.1.3Baselines ベースライン
-   5.2Overall performance 全体的な性能
-   5.3Effectiveness on duration debiasing 時間バイアスの除去に対する効果
-   5.4Comparison with more baselines より多くのベースラインとの比較
-   5.5Ablation study アブレーションスタディ
-   5.6Online A/B Testing オンラインA/Bテスト
-7. 6Conclusion 結論
-8. AProof of theorem 1 定理1の証明
-9. BDetailed Experimental Setting 詳細な実験設定
-10. CThe Unbiasedness of Interest Labels 興味ラベルの無偏性
-11. DMore Experimental results さらなる実験結果
-    D.1Parameter sensitivity パラメータ感度
-    D.2Better fit to the true watch time distribution 真の視聴時間分布への適合性
-12. References 参考文献
-```
-
-```md
 # Counteracting Duration Bias in Video Recommendation via Counterfactual Watch Time
 動画推薦における時間バイアスの対抗：反実仮想視聴時間を用いて
-Haiyuan Zhao
-School of Information
-Renmin University of China
-Beijing
-China
-haiyuanzhao@ruc.edu.cn
-
-Guohao Cai
-Huawei Noah’s Ark Lab
-Shenzhen
-China
-caiguohao1@huawei.com
-
-Jieming Zhu
-Huawei Noah’s Ark Lab
-Shenzhen
-China
-jiemingzhu@ieee.org
-
-Zhenhua Dong
-Huawei Noah’s Ark Lab
-Shenzhen
-China
-dongzhenhua@huawei.com
-
-Jun Xu
-Gaoling School of Artificial Intelligence
-Renmin University of China
-Beijing
-China
-junxu@ruc.edu.cn
-
-and
-
-Ji-Rong Wen
-Gaoling School of Artificial Intelligence
-Renmin University of China
-Beijing
-China
-jrwen@ruc.edu.cn
 
 In video recommendation, an ongoing effort is to satisfy users’ personalized information needs by leveraging their logged watch time. 
 動画推薦において、ユーザのログされた視聴時間を活用して、ユーザの個別の情報ニーズを満たすための継続的な努力が行われています。
