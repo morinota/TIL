@@ -30,7 +30,11 @@ refs: https://arxiv.org/html/2406.07932v2
   - CWTからユーザ興味への変換
     - cost-based transform functionを定義して、CWTをユーザ興味の推定値に変換。
 - 実験結果:
-  - オフライン評価 & オンラインA/Bテストで評価。 
+  - 3つの実データセットによるオフライン評価 & オンラインA/Bテスト。
+  - オフライン評価
+    - hoge
+  - オンラインA/Bテスト
+  - hoge
 
 # Counteracting Duration Bias in Video Recommendation via Counterfactual Watch Time
 動画推薦における時間バイアスの対抗：反実仮想視聴時間を用いて
