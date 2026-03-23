@@ -29,6 +29,8 @@ refs: https://arxiv.org/html/2406.07932v2
     - counterfactual likelihood functionを定義して、CWMを学習する方法を提案
   - CWTからユーザ興味への変換
     - cost-based transform functionを定義して、CWTをユーザ興味の推定値に変換。
+- 実験結果:
+  - オフライン評価 & オンラインA/Bテストで評価。 
 
 # Counteracting Duration Bias in Video Recommendation via Counterfactual Watch Time
 動画推薦における時間バイアスの対抗：反実仮想視聴時間を用いて
