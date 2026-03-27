@@ -1,7 +1,31 @@
 refs: https://www.etsy.com/codeascraft/building-etsy-buyer-profiles-with-llms
 
 - メモ: 
-  - このブログの取り組みを一言で言うと「ユーザ行動ログ → LLM → 構造化された"意味的ユーザ特徴"」
+  - このブログの取り組みを一言で言うと「ユーザ行動ログ → LLM → **構造化された"意味的ユーザ特徴量"を作る!**」
+  - はじめに:
+    - ユーザの興味(buyer profiles)を理解することは、Etsyのpersonalized experienceの中心!
+    - でも、従来の検索・推薦は"nuanced interests(微妙で細かい興味)"を捉えるのが苦手
+    - そこで、LLMを使ってbuyer profilesを作る!
+  - buyer profileとは?
+    - 具体的には以下の3項目:
+      - preferred styles (好みのスタイル), ex. minimalist, boho, vintage, nature
+      - product categories (好みのカテゴリ), ex. home decor, jewelry
+      - shopping missions (ショッピングの目的), ex. 秋物セーターを探す、など
+  - 技術的な実装(Technical Implementation):
+    - Step1: データ取得
+      - ユーザの最近の検索、アイテムの閲覧、購入、お気に入りなどのセッションデータを内部ソース(Feature Store, BigQuery)から取得。
+    - Step2: LLMで解釈
+      - LLMでセッションデータを解釈させて、構造化されたbuyer profilesを生成
+      - 出力の特徴:
+        - categorical interests
+        - confidence hashmap
+        - explanation
+  - スケール問題と解決
+    - 初期課題 = めっちゃコストかかるし、めっちゃ時間かかる。
+    - 改善内容:
+      - データ基盤 = API → BigQuery (クラスタリング&パーティション化)
+      - 入力トークンの量を減らす = 2年分 → 9ヶ月分
+      - 並列処理 = batch size増加 + 並列処理 + 
 
 
 # Building Etsy Buyer Profiles with LLMs
