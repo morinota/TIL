@@ -691,7 +691,7 @@ Bucket A becomes the worst performing bucket in both metrics while bucket C outp
 Therefore, from our empirical experiences, optimizing dwell time not only achieves better user engagement metrics but also improves CTR as well. 
 **したがって、私たちの経験から、滞在時間を最適化することは、より良いユーザーエンゲージメント指標を達成するだけでなく、CTRも改善します。** 
 One plausible cause is when optimizing towards dwell-based engaging signals rather than high CTR, users may better like the content recommended, come back to the site and click more. 
-**一つの考えられる原因は、高いCTRではなく滞在時間に基づくエンゲージメント信号を最適化する際に、ユーザーが推薦されたコンテンツをより好み、サイトに戻ってきてさらにクリックする可能性があること**です。(まさにリテンションじゃん...!!:thinking:)
+**一つの考えられる原因は、高いCTRではなく滞在時間に基づくエンゲージメント信号を最適化する際に、ユーザが推薦されたコンテンツをより好み、サイトに戻ってきてさらにクリックする可能性があること**です。(まさにリテンションじゃん...!!:thinking:)
 We leave the thorough analysis of this finding as future work.
 この発見の徹底的な分析は今後の課題とします。
 
