@@ -31,10 +31,8 @@ We arrived at that conclusion on our own. We didn't have a name for it.
 
 ## AI-First Is Not the Same as Using AI AIファーストはAIを使うこととは違う
 
-Most companies bolt AI onto their existing process. An engineer opens Cursor. A PM drafts specs with ChatGPT. QA experiments with AI test generation. The workflow stays the same. Efficiency goes up 10 to 20 percent. Nothing structurally changes.
-**ほとんどの企業は既存のプロセスにAIを後付けする。エンジニアはCursorを開く。PMはChatGPTで仕様書を書く。QAはAIテスト生成を試す。ワークフローは変わらない。効率は10〜20%向上する。構造的には何も変わらない。**
-That is AI-assisted.
-それは「AI支援(AI-assisted)」だ。
+Most companies bolt AI onto their existing process. An engineer opens Cursor. A PM drafts specs with ChatGPT. QA experiments with AI test generation. The workflow stays the same. Efficiency goes up 10 to 20 percent. Nothing structurally changes.That is AI-assisted.
+**ほとんどの企業は既存のプロセスにAIを後付けする。エンジニアはCursorを開く。PMはChatGPTで仕様書を書く。QAはAIテスト生成を試す。ワークフローは変わらない。効率は10〜20%向上する。構造的には何も変わらない。**それは「AI支援(AI-assisted)」だ。
 
 <!-- ここまで読んだ! -->
 
