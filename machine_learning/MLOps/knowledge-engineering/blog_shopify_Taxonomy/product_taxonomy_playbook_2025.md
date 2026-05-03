@@ -29,7 +29,6 @@ Activewear is a parent category that distinguishes workout essentials from other
 
 From there, a customer can narrow their search using subcategories like Style or Fabric and select the specific product attribute they like. 
 そこから、顧客はスタイルや生地などのサブカテゴリを使用して検索を絞り込み、好みの特定の製品属性を選択できます。
-
 A clear taxonomy like this doesn't just improve site navigation—it also reinforces SET Active's brand identity. 
 このような明確な分類法は、サイトのナビゲーションを改善するだけでなく、SET Activeのブランドアイデンティティを強化します。
 
@@ -41,11 +40,10 @@ Free Go-to-Market Strategy Template
 
 Plan your product launch with precision. 
 製品の発売を正確に計画しましょう。
-
 Our template can help you reach and convert your target audience efficiently. 
 私たちのテンプレートは、ターゲットオーディエンスに効率的にリーチし、コンバージョンを促進するのに役立ちます。
 
-
+<!-- ここまで読んだ! -->
 
 ## Ecommerce product taxonomy examples Eコマース製品分類の例
 
@@ -82,7 +80,6 @@ It's a great example of how a well-built taxonomy can evolve as the company does
 
 Arhaus, a high-end home décor company, structures its product taxonomy around how customers naturally think about their spaces. 
 高級ホームデコール会社のArhausは、顧客が自分の空間について自然に考える方法に基づいて製品分類を構築しています。
-
 The site's top-level navigation is organized by room—Living, Dining, Bedroom, Outdoor—creating a category hierarchy that aligns with real-life product use cases.
 サイトのトップレベルのナビゲーションは、部屋ごとに（リビング、ダイニング、ベッドルーム、アウトドア）整理されており、実際の製品使用ケースに合ったカテゴリー階層を作成しています。
 
@@ -104,153 +101,134 @@ Alternatively, if they're looking for headphones but aren't sure what they want,
 あるいは、ヘッドフォンを探しているが何が欲しいかわからない場合は、すべてのヘッドフォンの製品ページを探索し、お気に入りのブランドや予算でフィルタリングできます。
 
 Headphones.com is a great example of how to build a product taxonomy that simplifies the experience for first-time site users, while still supporting advanced filtering for returning customers who know exactly what they want to purchase.
-Headphones.comは、初めてサイトを利用するユーザーの体験を簡素化し、購入したいものが明確なリピーターの顧客に対しても高度なフィルタリングをサポートする製品分類の構築方法の素晴らしい例です。
+Headphones.comは、初めてサイトを利用するユーザーの体験を簡素化し、**購入したいものが明確なリピーターの顧客に対しても高度なフィルタリングをサポートする製品分類の構築**方法の素晴らしい例です。
 
-
+<!-- ここまで読んだ! -->
 
 ## Why is product taxonomy important? なぜ製品の分類法が重要なのか？
 
 A smart product taxonomy can boost your sales by making it easy to find products online. 
-スマートな製品の分類法は、オンラインで製品を見つけやすくすることで、売上を向上させることができます。
-
+**スマートな製品の分類法は、オンラインで製品を見つけやすくする**ことで、売上を向上させることができます。
 This encourages shoppers to stay on the website longer, which increases the chances they will buy something. 
 これにより、買い物客はウェブサイトに長く滞在するようになり、何かを購入する可能性が高まります。
-
 An intuitive product taxonomy can also lead to a more satisfying user experience (UX) that turns first-time visitors into repeat customers. 
-直感的な製品の分類法は、初めての訪問者をリピーターに変える、より満足のいくユーザーエクスペリエンス（UX）をもたらすこともあります。
-
+**直感的な製品の分類法は、初めての訪問者をリピーターに変える、より満足のいくユーザーエクスペリエンス（UX）をもたらすこともあります。**
 Beyond the customer experience, a well-organized taxonomy impacts everything from ecommerce SEO to inventory management. 
-顧客体験を超えて、整理された分類法は、eコマースのSEOから在庫管理に至るまで、すべてに影響を与えます。
-
+**顧客体験を超えて、整理された分類法は、eコマースのSEOから在庫管理に至るまで、すべてに影響を与えます。**
 Here are the key benefits of a solid product taxonomy: 
 ここでは、堅実な製品の分類法の主な利点を紹介します。
+
+<!-- ここまで読んだ! -->
 
 ### Improved navigation and user experience 改善されたナビゲーションとユーザーエクスペリエンス
 
 There are two types of ecommerce shoppers: browsers and searchers. 
-eコマースの買い物客には、ブラウザとサーチャーの2種類があります。
-
+eコマースの買い物客には、**browsersとsearchersの2種類**があります。
 Browsers explore a website as casually as a window shopper. 
-ブラウザは、ウィンドウショッピングのようにカジュアルにウェブサイトを探索します。
-
+Browsersは、ウィンドウショッピングのようにカジュアルにウェブサイトを探索します。
 Searchers, on the other hand, know exactly what they want and head straight to the search bar. 
-一方、サーチャーは自分が欲しいものを正確に知っており、すぐに検索バーに向かいます。
+一方、searchersは自分が欲しいものを正確に知っており、すぐに検索バーに向かいます。
 
 A proper taxonomy supports both types of shoppers. 
-適切な分類法は、両方のタイプの買い物客をサポートします。
-
+**適切な分類法は、両方のタイプの買い物客をサポート**します。
 For browsers, it creates intuitive pathways through clearly labeled product categories and subcategories—like walking through a well-organized store where each aisle makes sense. 
-ブラウザにとっては、明確にラベル付けされた製品カテゴリやサブカテゴリを通る直感的な経路を作成します。これは、各通路が意味を持つ整理された店舗を歩くようなものです。
-
+browsersにとっては、**明確にラベル付けされた製品カテゴリやサブカテゴリを通る直感的な経路**を作成します。これは、**各通路が意味を持つ整理された店舗を歩くようなもの**です。
 This reduces friction, increases the time customers spend exploring your site, and encourages them to make a purchase. 
 これにより摩擦が減り、顧客がサイトを探索する時間が増え、購入を促します。
+
+<!-- ここまで読んだ! -->
 
 ### Better site search and product discovery より良いサイト検索と製品発見
 
 Searchers are goal-oriented shoppers. 
-サーチャーは目標指向の買い物客です。
-
+Searchersは目標指向の買い物客です。
 They have a specific product in mind and usually don't want to spend much time navigating a website. 
-彼らは特定の製品を考えており、通常はウェブサイトをナビゲートするのに多くの時間をかけたくありません。
-
+彼らは特定の製品を考えており、**通常はウェブサイトをナビゲートするのに多くの時間をかけたくありません。**
 A searcher is more likely to bypass the website menu and go right to the search bar, typing in keywords or phrases for the desired product. 
-サーチャーはウェブサイトのメニューをスキップして、検索バーに直接行き、欲しい製品のキーワードやフレーズを入力する可能性が高いです。
-
+**searcherはウェブサイトのメニューをスキップして、検索バーに直接行き、欲しい製品のキーワードやフレーズを入力する可能性が高い**です。
 Instead of overwhelming shoppers with broad or mismatched listings, organize your products into relevant product classes. 
-広範囲または不一致のリストで買い物客を圧倒するのではなく、製品を関連する製品クラスに整理します。
-
+**広範囲または不一致のリストで買い物客を圧倒するのではなく、製品を関連する製品クラスに整理**します。
 This approach enables your internal search engine to provide focused results, which benefits searchers. 
-このアプローチにより、内部検索エンジンが焦点を絞った結果を提供でき、サーチャーに利益をもたらします。
-
+このアプローチにより、内部検索エンジンが焦点を絞った結果を提供でき、searchersに利益をもたらします。
 For example, if someone searches for "blue cotton t-shirt," your optimized taxonomy ensures that's precisely what they'll see. 
 たとえば、誰かが「青いコットンTシャツ」を検索した場合、最適化された分類法により、正確にそれが表示されることが保証されます。
+
+<!-- ここまで読んだ! -->
 
 ### Optimize for search engines 検索エンジンの最適化
 
 Besides customers, a clear product taxonomy strategy also helps search engines understand your site. 
-顧客だけでなく、明確な製品分類戦略は、検索エンジンがあなたのサイトを理解するのにも役立ちます。
-
+**顧客だけでなく、明確な製品分類戦略は、検索エンジンがあなたのサイトを理解するのにも役立ちます。**
 When your product hierarchy is built around common search terms, it improves the chances that your pages will appear in relevant search results, including on platforms like Google Shopping. 
 製品の階層が一般的な検索用語に基づいて構築されていると、Googleショッピングのようなプラットフォームを含む関連する検索結果にページが表示される可能性が高まります。
-
 Structuring your catalog in a way that aligns with how people search—and how platforms categorize—can give you a competitive edge. 
 人々が検索する方法やプラットフォームが分類する方法に合わせてカタログを構造化することで、競争上の優位性を得ることができます。
-
 Mapping your categories and subcategories to the official Google product taxonomy ensures your product data is more easily interpreted. 
 カテゴリとサブカテゴリを公式のGoogle製品分類法にマッピングすることで、製品データがより簡単に解釈されることが保証されます。
-
 That improves feed performance, ad targeting, and SEO. 
 これにより、フィードのパフォーマンス、広告ターゲティング、SEOが向上します。
-
 For instance, if you browse the Google product category for dressers, you'll see options like Wood Dressers or Metal Dressers, along with filters for product attributes like drawer count or finish. 
 たとえば、ドレッサーのGoogle製品カテゴリをブラウズすると、Wood DressersやMetal Dressersのようなオプションが表示され、引き出しの数や仕上げなどの製品属性のフィルターも表示されます。
-
 When your site mimics this structure, search engines like Google are more likely to index your products correctly and match them with relevant queries. 
 あなたのサイトがこの構造を模倣すると、Googleのような検索エンジンは、製品を正しくインデックスし、関連するクエリと一致させる可能性が高くなります。
+
+<!-- ここまで読んだ! -->
 
 ### Streamlined inventory management 在庫管理の効率化
 
 By categorizing products accurately, you create a structure that mirrors how your business tracks, restocks, and analyzes inventory. 
 製品を正確に分類することで、ビジネスが在庫を追跡、再補充、分析する方法を反映した構造を作成します。
-
 When every item is grouped under the appropriate parent category, subcategory, and attribute, it becomes easier to monitor stock levels, forecast demands, and identify gaps. 
-すべてのアイテムが適切な親カテゴリ、サブカテゴリ、および属性の下にグループ化されると、在庫レベルを監視し、需要を予測し、ギャップを特定することが容易になります。
-
+**すべてのアイテムが適切な親カテゴリ、サブカテゴリ、および属性の下にグループ化されると、在庫レベルを監視し、需要を予測し、ギャップを特定することが容易に**なります。
 This product categorization also supports smoother integrations across systems like your warehouse management software, POS, and fulfillment tools. 
 この製品の分類は、倉庫管理ソフトウェア、POS、フルフィルメントツールなどのシステム間でのスムーズな統合もサポートします。
-
 Streamlining those integrations reduces errors and saves time during product updates and seasonal transitions. 
 これらの統合を効率化することで、エラーが減り、製品の更新や季節の移行時に時間を節約できます。
-
 The result? A leaner, more responsive inventory operation that scales with your catalog. 
 その結果は？カタログに合わせてスケールする、よりスリムで反応の良い在庫運用です。
+
+<!-- ここまで読んだ! -->
 
 ### Enhanced customer insights 顧客インサイトの向上
 
 Product taxonomies aren't just for organizing your business—it's also a smart way to learn how people shop. 
-製品の分類法は、ビジネスを整理するためだけでなく、人々がどのように買い物をするかを学ぶための賢い方法でもあります。
-
+**製品の分類法は、ビジネスを整理するためだけでなく、人々がどのように買い物をするかを学ぶための賢い方法でもあります。**
 Every time someone clicks a product category, uses a filter, or browses a collection, they're showing you what they care about. 
-誰かが製品カテゴリをクリックしたり、フィルターを使用したり、コレクションをブラウズしたりするたびに、彼らが何に関心を持っているかを示しています。
-
+誰かが製品カテゴリをクリックしたり、フィルターを使用したり、コレクションをブラウズしたりするたびに、**彼らが何に関心を持っているかを示しています。**
 By paying attention to those actions, you can spot useful patterns—like which items are getting popular, which categories might need updating, or where shoppers are dropping off. 
-これらの行動に注意を払うことで、どのアイテムが人気を集めているか、どのカテゴリが更新を必要としているか、または買い物客がどこで離脱しているかといった有用なパターンを見つけることができます。
-
+これらの行動に注意を払うことで、**どのアイテムが人気を集めているか、どのカテゴリが更新を必要としているか、または買い物客がどこで離脱しているかといった有用なパターンを見つけることができます。**
 This kind of insight can help you decide what to promote, what to restock, and how to improve your product mix. 
 この種のインサイトは、何をプロモートするか、何を再補充するか、製品のミックスをどのように改善するかを決定するのに役立ちます。
-
 In fact, a 2022 study found that a taxonomy-based analysis was 97 times faster at identifying customer similarities than traditional clustering methods like comparing individual product purchases. 
-実際、2022年の研究では、分類法に基づく分析が、個々の製品購入を比較するような従来のクラスタリング手法よりも顧客の類似性を特定するのが97倍速いことがわかりました。
-
+実際、**2022年の研究では、分類法に基づく分析が、個々の製品購入を比較するような従来のクラスタリング手法よりも顧客の類似性を特定するのが97倍速いこと**がわかりました。
 The findings were more accurate, too. 
 その結果は、より正確でもありました。
-
 That means using your taxonomy doesn't just keep things tidy—it can actually help you understand and serve your customers better. 
-つまり、分類法を使用することは、物事を整理するだけでなく、実際に顧客をよりよく理解し、サービスを提供するのに役立つということです。
+つまり、**分類法を使用することは、物事を整理するだけでなく、実際に顧客をよりよく理解し、サービスを提供するのに役立つ**ということです。
+
+<!-- ここまで読んだ! -->
 
 ### Clearer internal reporting 明確な内部報告
 
 A clear product taxonomy enables more precise and meaningful sales reporting. 
-明確な製品の分類法は、より正確で意味のある売上報告を可能にします。
-
+**明確な製品の分類法は、より正確で意味のある売上報告を可能に**します。
 Instead of relying on impressions or hunches to make decisions about your product mix, taxonomy lets you uncover trends and make informed decisions based on hard data. 
 製品ミックスに関する決定を印象や直感に頼るのではなく、分類法を使用することでトレンドを発見し、確かなデータに基づいて情報に基づいた決定を下すことができます。
-
 With clearly defined categories and attributes, you can track performance at a granular level—comparing not just menswear versus womenswear, but specific segments within those categories. 
-明確に定義されたカテゴリと属性を持つことで、パフォーマンスを詳細に追跡できます。メンズウェアとウィメンズウェアを比較するだけでなく、それらのカテゴリ内の特定のセグメントを比較することができます。
-
+**明確に定義されたカテゴリと属性を持つことで、パフォーマンスを詳細に追跡できます。**メンズウェアとウィメンズウェアを比較するだけでなく、それらのカテゴリ内の特定のセグメントを比較することができます。
 Use these detailed reports to refine your product assortment, allocate marketing spend, and prioritize high-converting items. 
 これらの詳細なレポートを使用して、製品の品揃えを洗練させ、マーケティング費用を配分し、コンバージョン率の高いアイテムを優先します。
+
+<!-- ここまで読んだ! -->
 
 ### Increased sales 売上の増加
 
 At the end of the day, your primary goal is to get more online shoppers to click the Add to Cart button and buy your products. 
 結局のところ、あなたの主な目標は、より多くのオンラインショッパーに「カートに追加」ボタンをクリックさせ、製品を購入させることです。
-
 Because product taxonomy makes the shopping journey smoother and more intuitive, customers can easily find the products that they actually want to purchase. 
-製品の分類法が買い物の旅をよりスムーズで直感的にするため、顧客は実際に購入したい製品を簡単に見つけることができます。
+**製品の分類法が買い物の旅をよりスムーズで直感的にするため、顧客は実際に購入したい製品を簡単に見つけることができます。**
 
-
+<!-- ここまで読んだ! -->
 
 ## How to build a product taxonomy 製品分類の構築方法
 
