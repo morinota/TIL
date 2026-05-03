@@ -232,13 +232,15 @@ Because product taxonomy makes the shopping journey smoother and more intuitive,
 
 ## How to build a product taxonomy 製品分類の構築方法
 
+<!-- あ、このブログってShopify Product Taxonomyの宣伝ブログだと思ってたけど、実際はProduct Taxonomyの重要性と構築方法を解説する内容だったのか...??:thinking: -->
+
 Here is a step-by-step guide to building a clear product taxonomy for your company:
 ここでは、あなたの会社のための明確な製品分類を構築するためのステップバイステップガイドを示します。
 
 ### 1. Conduct market research 市場調査を行う
 
 Before building your own taxonomy, understand how others structure theirs. 
-自分自身の分類を構築する前に、他の人がどのように自分の分類を構築しているかを理解してください。 
+**自分自身の分類を構築する前に、他の人がどのように自分の分類を構築しているかを理解してください。** (他社事例などの調査ってことかな...!!:thinking:)
 Market research reveals category structures and naming conventions that resonate with your audience. 
 市場調査は、あなたのオーディエンスに響くカテゴリ構造や命名規則を明らかにします。 
 This gives you a benchmark for usability and helps ensure your navigation feels familiar and intuitive from the start.
@@ -253,7 +255,9 @@ Do they use broad categories with strong filtering options, or more layered subc
 Is anything distracting or confusing? 
 何か気を散らすものや混乱を招くものはありますか？ 
 Take notes on what works and what doesn't.
-何が機能し、何が機能しないかについてメモを取ってください。
+**何が機能し、何が機能しないかについてメモを取ってください。**
+
+<!-- ここまで読んだ! -->
 
 ### 2. Build a product taxonomy framework 製品分類フレームワークを構築する
 
@@ -267,16 +271,18 @@ Add this to a sortable spreadsheet or database so you can start grouping items b
 If a group only contains a few items, consider nesting it under a broader category instead of giving it its own section. 
 グループにアイテムが少ししか含まれていない場合は、それに独自のセクションを与えるのではなく、より広いカテゴリの下にネストすることを検討してください。 
 Use SEO tools to identify the terms people actually search for, and let that inform both your category structure and your naming conventions.
-SEOツールを使用して、人々が実際に検索する用語を特定し、それをあなたのカテゴリ構造と命名規則の両方に反映させてください。
+**SEOツールを使用して、人々が実際に検索する用語を特定し、それをあなたのカテゴリ構造と命名規則の両方に反映**させてください。
+
+<!-- ここまで読んだ! -->
 
 ### 3. Create a product category template 製品カテゴリテンプレートを作成する
 
 Once you've established a framework, the next step is to standardize how product information is organized within each category. 
-フレームワークを確立したら、次のステップは各カテゴリ内で製品情報がどのように整理されるかを標準化することです。 
+フレームワークを確立したら、次のステップは**各カテゴリ内で製品情報がどのように整理されるかを標準化**することです。 
 This is where product category templates come in. 
 ここで製品カテゴリテンプレートが登場します。 
 Templates define the key attributes that are relevant for a specific type of product—like size, material, color, or brand—and ensure consistency across listings. 
-テンプレートは、サイズ、材料、色、ブランドなど、特定のタイプの製品に関連する主要な属性を定義し、リスト全体での一貫性を確保します。 
+**テンプレートは、サイズ、材料、色、ブランドなど、特定のタイプの製品に関連する主要な属性を定義し、リスト全体での一貫性を確保**します。 
 That consistency helps customers filter and compare items easily, while also making internal processes like tagging and reporting more efficient.
 その一貫性は、顧客がアイテムを簡単にフィルタリングし比較できるようにし、タグ付けや報告などの内部プロセスをより効率的にします。
 
@@ -296,24 +302,26 @@ Shopify Magic（商取引用に設計されたShopifyの人工知能ツール）
 Create product descriptions in seconds and get your products in front of shoppers faster than ever.
 数秒で製品説明を作成し、これまで以上に早く製品を買い物客の前に出すことができます。
 
+<!-- ここまで読んだ! -->
+
 ### 4. Test and refine テストと改善
 
 Your taxonomy isn't a set-it-and-forget-it system. 
 あなたの分類は、一度設定して忘れるようなシステムではありません。 
 As your product catalog and your customers' behavior evolves, so should your structure. 
-製品カタログや顧客の行動が進化するにつれて、あなたの構造も進化すべきです。 
+**製品カタログや顧客の行動が進化するにつれて、あなたの構造も進化すべきです。** 
 Track how shoppers move through your site: which filters they use, where they drop off, which categories underperform.
-買い物客があなたのサイトをどのように移動するかを追跡してください：どのフィルターを使用しているか、どこで離脱するか、どのカテゴリがパフォーマンスが悪いか。
+**買い物客があなたのサイトをどのように移動するかを追跡してください：どのフィルターを使用しているか、どこで離脱するか、どのカテゴリがパフォーマンスが悪いか。**
 
 Set a regular cadence—monthly or quarterly—to audit performance and make changes. 
-定期的なサイクル（月次または四半期ごと）を設定してパフォーマンスを監査し、変更を加えてください。 
+**定期的なサイクル（月次または四半期ごと）を設定してパフォーマンスを監査し、変更を加えてください。** 
 Consider adding new filters, renaming unclear categories, or consolidating low-performing branches of your taxonomy. 
-新しいフィルターを追加したり、不明瞭なカテゴリの名前を変更したり、パフォーマンスが低い分類の枝を統合することを検討してください。 
+**新しいフィルターを追加したり、不明瞭なカテゴリの名前を変更したり、パフォーマンスが低い分類の枝を統合することを検討してください。** 
 Over time, a responsive taxonomy not only improves customer experience but reveals deeper insights into what your customers value most.
 時間が経つにつれて、応答性のある分類は顧客体験を改善するだけでなく、顧客が最も重視するものに関する深い洞察を明らかにします。
 
 Ceremonia's founder Babba Rivera launched with just a single SKU, which helped her gather real-time feedback before expanding the beauty brand's product line.
-Ceremoniaの創設者Babba Riveraは、単一のSKUで立ち上げ、ビューティーブランドの製品ラインを拡大する前にリアルタイムのフィードバックを収集するのに役立ちました。 
+Ceremoniaの創設者Babba Riveraは、**単一のSKUで発売し、これはビューティーブランドの製品ラインを拡大する前にリアルタイムのフィードバックを収集するのに役立ちました。**
 As Babba puts it: "The moment you go live, you are able to collect feedback and data from potential customers. 
 Babbaが言うように、「あなたがライブになる瞬間、潜在的な顧客からフィードバックとデータを収集することができます。 
 And for Ceremonia, what that meant was going to market with one single SKU. 
@@ -322,9 +330,9 @@ So instead of introducing something that would require them to stop using a sham
 彼らがすでに使用しているシャンプーやコンディショナーをやめる必要がある製品を導入するのではなく、私は自問しました。「どのようにして、より低い参入障壁で誰かのヘアルーチンに入ることができるか？」 
 
 This kind of lean start lets your taxonomy—and your overall catalog—evolve naturally around proven customer needs.
-このようなリーンスタートは、あなたの分類と全体のカタログが実証された顧客のニーズに基づいて自然に進化することを可能にします。
+**このようなリーンスタートは、あなたの分類と全体のカタログが実証された顧客のニーズに基づいて自然に進化することを可能に**します。
 
-
+<!-- ここまで読んだ! -->
 
 ## Key elements of a product taxonomy 製品分類の主要要素
 
@@ -336,16 +344,18 @@ When building your own product taxonomy, it's important to start with the founda
 Start with a clear hierarchy that makes sense to your customers. 
 顧客にとって理解しやすい明確な階層から始めましょう。 
 Products should be grouped into categories and subcategories based on how people naturally browse or search. 
-製品は、人々が自然にブラウズまたは検索する方法に基づいて、カテゴリとサブカテゴリにグループ化されるべきです。 
+**製品は、人々が自然にブラウズまたは検索する方法に基づいて、カテゴリとサブカテゴリにグループ化されるべき**です。 
 Use filters, attributes, and tags to further refine product discovery—for example, by style, use case, or fit. 
-フィルター、属性、タグを使用して、製品の発見をさらに洗練させましょう。たとえば、スタイル、使用ケース、またはフィットによってです。 
+**フィルター、属性、タグを使用して、製品の発見をさらに洗練**させましょう。たとえば、スタイル、使用ケース、またはフィットによってです。 
 Shoppers should be able to land anywhere in your taxonomy and understand where they are and how to keep exploring.
 買い物客は、あなたの分類のどこにでもアクセスでき、自分がどこにいるのか、どのように探索を続けるかを理解できるべきです。
+
+<!-- ここまで読んだ! -->
 
 ### Common attributes 共通の属性
 
 Product attributes are essential for filtering and product comparison. 
-製品属性は、フィルタリングや製品比較に不可欠です。 
+**製品属性は、フィルタリングや製品比較に不可欠**です。 
 The more consistent they are across categories, the better your search and navigation will perform.
 カテゴリ間で一貫性が高いほど、検索とナビゲーションのパフォーマンスが向上します。 
 For instance, one attribute might be size—applicable to everything from leggings to storage bins. 
@@ -355,34 +365,40 @@ Another might be material, helping customers filter for cotton, ceramic, leather
 These shared attributes power your site's filters, support SEO, and help customers find exactly what they want faster.
 これらの共通属性は、サイトのフィルターを強化し、SEOをサポートし、顧客が求めるものをより早く見つけるのに役立ちます。
 
+<!-- ここまで読んだ! -->
+
 ### Consistent naming conventions 一貫した命名規則
 
 Clarity is everything. 
-明確さがすべてです。 
+**明確さがすべて**です。
 Use clear, descriptive names that reflect how your customers think—not internal jargon. 
-顧客の考え方を反映した明確で説明的な名前を使用し、内部用語は避けましょう。 
+**顧客の考え方を反映した明確で説明的な名前を使用し、内部用語は避けましょう。** 
 For example, a shopper shouldn't have to guess whether they'll find leggings under "Bottoms" or "Active Essentials."
 たとえば、買い物客は「ボトムス」または「アクティブエッセンシャルズ」の下にレギンスがあるかどうかを推測する必要はありません。 
 Stick to one naming style throughout—if you use "&" in one subcategory ("Tableware & Serveware"), don't switch to "and" in another. 
-全体を通して1つの命名スタイルに従いましょう。1つのサブカテゴリで「&」を使用する場合（「テーブルウェア＆サーブウェア」）、別のサブカテゴリで「and」に切り替えないでください。 
+**全体を通して1つの命名スタイルに従いましょう。1つのサブカテゴリで「&」を使用する場合（「テーブルウェア＆サーブウェア」）、別のサブカテゴリで「and」に切り替えないでください。** 
 This consistency helps with usability, search indexing, and internal training.
 この一貫性は、使いやすさ、検索インデックス、内部トレーニングに役立ちます。
+
+<!-- ここまで読んだ! -->
 
 ### Flexibility and scalability 柔軟性とスケーラビリティ
 
 As your catalog grows, new products and categories can throw a wrench in your carefully crafted taxonomy. 
-カタログが成長するにつれて、新しい製品やカテゴリが慎重に構築された分類に混乱をもたらす可能性があります。 
+カタログが成長するにつれて、新しい製品やカテゴリが慎重に構築された分類に混乱をもたらす可能性があります。
 That's why it's important to design your taxonomy to accommodate future growth. 
-そのため、将来の成長に対応できるように分類を設計することが重要です。 
+そのため、**将来の成長に対応できるように分類を設計することが重要**です。 
 It should evolve based on user feedback in order to enhance the customer experience, facilitate marketing, and respond to data analytics.
-顧客体験を向上させ、マーケティングを促進し、データ分析に応じるために、ユーザーフィードバックに基づいて進化するべきです。
+顧客体験を向上させ、マーケティングを促進し、データ分析に応じるために、**ユーザーフィードバックに基づいて進化するべき**です。
+
+<!-- ここまで読んだ! -->
 
 ### Brand and audience alignment ブランドとオーディエンスの整合性
 
 Your taxonomy is an extension of your brand voice. 
 あなたの分類は、ブランドの声の延長です。 
 It should speak in the language your audience uses. 
-それは、あなたのオーディエンスが使用する言語で話すべきです。 
+それは、**あなたのオーディエンスが使用する言語で話すべき**です。 
 The key is to balance creativity with clarity—aligning with your tone while still making it easy for customers to find what they're looking for.
 重要なのは、創造性と明確さのバランスを取ることです。トーンに合わせつつ、顧客が求めるものを見つけやすくすることです。 
 Your product taxonomy should feel native to your brand. 
@@ -394,9 +410,9 @@ I don't think we would ever come out with a traditional rectangular rug and call
 We understand that people come to us for something that's a little bit more exciting or a little bit out of the box."
 私たちは、人々がもう少し刺激的で、少し型破りなものを求めて私たちのところに来ることを理解しています。」 
 In other words, your category structure shouldn't just be clear—it should help customers instantly understand who you are as a brand.
-言い換えれば、あなたのカテゴリ構造は単に明確であるべきではなく、顧客がブランドとしてのあなたを瞬時に理解できるようにするべきです。
+言い換えれば、**あなたのカテゴリ構造は単に明確であるべきではなく、顧客がブランドとしてのあなたを瞬時に理解できるようにするべき**です。
 
-
+<!-- ここまで読んだ! -->
 
 ## Product taxonomy best practices 商品分類のベストプラクティス
 
@@ -407,7 +423,6 @@ Follow these ecommerce taxonomy best practices to make the most of the organizat
 
 The most effective product taxonomies are built around how customers shop—not how product teams think. 
 最も効果的な商品分類は、顧客がどのように買い物をするかに基づいて構築されており、商品チームが考える方法ではありません。
-
 Use your analytics to uncover patterns: how shoppers navigate your site, where they drop off, and what they search for. 
 分析を使用して、パターンを明らかにしてください：顧客がどのようにサイトをナビゲートし、どこで離脱し、何を検索しているか。
 
