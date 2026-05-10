@@ -1,14 +1,13 @@
 refs: https://arxiv.org/pdf/2408.08878v1
 
 
-## Knowledge Prompting: How Knowledge Engineers Use Large Language Models
-## 知識プロンプティング：知識エンジニアが大規模言語モデルをどのように使用するか
+Knowledge Prompting: How Knowledge Engineers Use Large Language Models / 知識プロンプティング：知識エンジニアが大規模言語モデルをどのように使用するか
 
-### ELISAVET KOUTSIANA[∗], King’s College London, United Kingdom 
-### JOHANNA WALKER[∗], King’s College London, United Kingdom 
-### MICHELLE NWACHUKWU, King’s College London, United Kingdom 
-### ALBERT MEROÑO-PEÑUELA, King’s College London, United Kingdom 
-### ELENA SIMPERL[∗], King’s College London, United Kingdom  
+**ELISAVET KOUTSIANA[∗]**, King’s College London, United Kingdom  
+**JOHANNA WALKER[∗]**, King’s College London, United Kingdom  
+**MICHELLE NWACHUKWU**, King’s College London, United Kingdom  
+**ALBERT MEROÑO-PEÑUELA**, King’s College London, United Kingdom  
+**ELENA SIMPERL[∗]**, King’s College London, United Kingdom  
 
 Despite many advances in knowledge engineering (KE), challenges remain in areas such as engineering knowledge graphs (KGs) at scale, keeping up with evolving domain knowledge, multilingualism, and multimodality. 
 知識工学（KE）における多くの進展にもかかわらず、スケールでの知識グラフ（KG）のエンジニアリング、進化するドメイン知識の把握、多言語性、マルチモーダリティなどの分野では課題が残っています。
@@ -52,7 +51,7 @@ Elisavet Koutsiana, Johanna Walker, Michelle Nwachukwu, Albert Meroño-Peñuela,
 
 
 
-## 1 INTRODUCTION イントロダクション
+## 1. INTRODUCTION / 1. イントロダクション
 
 Knowledge engineering (KE) is the process of capturing, structuring, representing and maintaining knowledge in a machine-readable way [84]. 
 知識工学（KE）は、知識を機械可読な方法でキャプチャ、構造化、表現、維持するプロセスです[84]。 
@@ -126,12 +125,13 @@ advise practitioners wishing to use advanced AI technologies responsibly.
 
 
 
-## 2 BACKGROUND AND RELATED WORK 背景と関連研究
+## 2. BACKGROUND AND RELATED WORK / 2. 背景と関連研究
 
 In this section, we describe the background and related work for KE, automation in KE, and responsible AI.  
 このセクションでは、知識工学（KE）、KEにおける自動化、および責任あるAIに関する背景と関連研究を説明します。
 
-**2.1** **Knowledge engineering 知識工学**  
+### 2.1 Knowledge engineering / 2.1 知識工学
+
 KGs represent real-world entities and their relations [38].  
 KG（知識グラフ）は、現実世界のエンティティとその関係を表現します[38]。  
 The graph structure offers efficient data management, availability of data in different modalities, use of machine learning and crowdsourcing techniques, and lowers cost.  
@@ -183,7 +183,8 @@ However, all this is disrupted by the advent of LLMs.
 Today, people and AI agents collaborate to engineer a KG, changing how knowledge engineers work.  
 今日、人々とAIエージェントはKGを構築するために協力し、知識エンジニアの働き方を変えています。
 
-**2.2** **Automation in knowledge engineering 知識工学における自動化**  
+### 2.2 Automation in knowledge engineering / 2.2 知識工学における自動化
+
 Automation has long held promise for KE tasks.  
 自動化は、KEタスクに対して長い間期待されてきました。  
 Various automatic processes are utilised for KE tasks, including knowledge extraction, refinement, and enrichment [86].  
@@ -273,7 +274,8 @@ LLMの出現は、KEに対する2つの視点を明らかにしました。KGは
 This study considers the second task.  
 この研究は、第二のタスクを考慮します。
 
-**2.3** **Responsible AI 責任あるAI**  
+### 2.3 Responsible AI / 2.3 責任あるAI
+
 Introducing the use of LLMs to KE requires a close understanding of how to use such AI responsibly.  
 KEにLLMの使用を導入するには、そのようなAIを責任を持って使用する方法を深く理解する必要があります。
 
@@ -410,7 +412,7 @@ Further, removal of bias is a difficult task as humans are prone to bias of many
 
 
 
-## 3 METHODOLOGY 方法論
+## 3. METHODOLOGY / 3. 方法論
 
 During August 2023 we organised a four-day research hackathon for knowledge engineers and AI researchers to investigate KE with prompt engineering.[3] 
 2023年8月に、知識エンジニアとAI研究者のための4日間の研究ハッカソンを開催し、プロンプトエンジニアリングを用いたKEを調査しました。[3] 
@@ -433,7 +435,7 @@ Each group investigated one of the topics presented in Table 1.
 Participants received high level descriptions of the projects but were free to choose which tools, methodologies, domains, and LLM techniques they focused on. 
 参加者はプロジェクトの高レベルの説明を受けましたが、どのツール、方法論、ドメイン、LLM技術に焦点を当てるかは自由に選択できました。 
 
-**3.1** **Data Collection and Preparation データ収集と準備**
+### 3.1 Data Collection and Preparation / 3.1 データ収集と準備
 
 Data was collected using three approaches to ensure rich data. 
 データは、豊富なデータを確保するために3つのアプローチを使用して収集されました。 
@@ -474,7 +476,7 @@ We used Otter.ai [5] to transcribe the interview recordings.
 This and the written data sources were then uploaded into NVIVO [6]. 
 これと書面データソースは、その後NVIVO [6]にアップロードされました。 
 
-**3.2** **Data Analysis データ分析**
+### 3.2 Data Analysis / 3.2 データ分析
 
 To address our research questions, we conducted thematic analysis across all the data. 
 研究質問に対処するために、すべてのデータにわたってテーマ分析を実施しました。 
@@ -536,7 +538,7 @@ Then they read the data corpus for the ground themes.
 Following this, the two researchers, advised by another senior researcher, discussed and confirmed the codebook presented in Appendix B. 
 その後、2人の研究者は、別の上級研究者の助言を受けて、付録Bに示されたコードブックについて議論し、確認しました。 
 
-**3.3** **Ethics 倫理**
+### 3.3 Ethics / 3.3 倫理
 
 The ethnographic study was approved by Authors’ institution’s Ethical Advisory Committee via the Full Application Form. 
 エスノグラフィック研究は、著者の所属機関の倫理諮問委員会によって、完全な申請書を通じて承認されました。 
@@ -559,10 +561,9 @@ No personal information was used in the analysis.
 
 
 
-## 4 RESULTS 結果
+## 4. RESULTS / 4. 結果
 
-**4.1** **What are the main challenges experienced by knowledge engineers when using LLMs for knowledge engineering tasks?**
-**知識エンジニアが知識工学タスクにLLMを使用する際に直面する主な課題は何ですか？**
+### 4.1 What are the main challenges experienced by knowledge engineers when using LLMs for knowledge engineering tasks? / 4.1 知識エンジニアが知識工学タスクにLLMを使用する際に直面する主な課題は何ですか？
 Testing the use of LLMs for KE tasks was been challenging for all participants. 
 KEタスクにLLMを使用することは、すべての参加者にとって困難でした。 
 Our observations during the hackathon revealed that the main concerns were identifying appropriate dataset to use, prompting LLMs efficiently, and evaluating the LLM outputs. 
@@ -625,8 +626,7 @@ However, in tasks such as designing competency questions or an ontology, there i
 Nevertheless, exploring the use of holistic LLM benchmarks such as HELM [8] was suggested (5). 
 それでも、HELM [8]のような全体的なLLMベンチマークの使用を探ることが提案されました（5）。 
 
-**4.2** **How do knowledge engineers evaluate LLMs’ output for their practices?**
-**4.2** **知識エンジニアは自らの実践のためにLLMの出力をどのように評価しますか？**
+### 4.2 How do knowledge engineers evaluate LLMs’ output for their practices? / 4.2 知識エンジニアは自らの実践のためにLLMの出力をどのように評価しますか？
 We further asked interviewees whether current evaluation techniques for KE tasks could be used to evaluate LLM outputs. 
 私たちはさらに、KEタスクのための現在の評価技術がLLMの出力を評価するために使用できるかどうかをインタビュー対象者に尋ねました。 
 Most respondents believed that evaluation mainly depends on the task, but highlighted that current evaluation metrics are not sufficient for many KE activities. 
@@ -717,8 +717,7 @@ If metrics are, “novel, it takes longer to review. If it’s a straightforward
 That’s not necessarily the way to go. So there’s a lot of work to be done in evaluation” (5).
 それが必ずしも進むべき道ではありません。したがって、評価には多くの作業が必要です」（5）。
 
-**4.3 What skills does a knowledge engineer need to incorporate LLMs into their practice?**
-**4.3 LLMを実践に取り入れるために知識エンジニアが必要とするスキルは何ですか？**
+### 4.3 What skills does a knowledge engineer need to incorporate LLMs into their practice? / 4.3 LLMを実践に取り入れるために知識エンジニアが必要とするスキルは何ですか？
 
 **Skills possessed and of use. As it is all collaborative practices, communication within teams was pointed out as an important skill in multi-disciplinary groups such as those at the hackathon (4), (5).**
 **持っているスキルと役立つスキル。すべてが協力的な実践であるため、ハッカソン（4）、（5）などの多分野グループにおいて、チーム内のコミュニケーションが重要なスキルとして指摘されました。**
@@ -834,8 +833,7 @@ Another interviewee mentioned using LLaMA and Hugging Face for the use of APIs w
 There was also an interviewee who felt they needed an enhancement of their coding skills and hardware skills, such as using GPU (9).
 また、コーディングスキルやハードウェアスキル、例えばGPUを使用するスキルの向上が必要だと感じているインタビュー対象者もいました（9）。
 
-**4.4 How aware are knowledge engineers of bias as an LLM/KG safety issue?**
-**4.4 知識エンジニアは、LLM/KGの安全性の問題としてのバイアスについてどれほど認識していますか？**
+### 4.4 How aware are knowledge engineers of bias as an LLM/KG safety issue? / 4.4 知識エンジニアは、LLM/KGの安全性の問題としてのバイアスについてどれほど認識していますか？
 
 Our question on responsible AI was initially framed in terms of “safety”, offering the respondents the opportunity to engage with any aspect of AI safety they felt relevant.
 私たちの責任あるAIに関する質問は、最初は「安全性」という観点から構成され、回答者が関連性を感じるAIの安全性の任意の側面に関与する機会を提供しました。
@@ -938,8 +936,7 @@ Whereas most respondents felt bias was found in data, a few perceived bias might
 One respondent felt that safety was not a concern in KGs (14). 
 ある回答者は、KGにおいて安全性は懸念事項ではないと感じていました（14）。
 
-**4.5 What factors may affect knowledge engineers’ trust and uptake of the LLM technology?** 
-**4.5 知識エンジニアのLLM技術に対する信頼と受け入れに影響を与える要因は何か？**
+### 4.5 What factors may affect knowledge engineers’ trust and uptake of the LLM technology? / 4.5 知識エンジニアのLLM技術に対する信頼と受け入れに影響を与える要因は何か？
 
 Interviewees have varied opinions on the use of LLMs to their practices. 
 インタビュー対象者は、LLMの使用に関してさまざまな意見を持っています。
@@ -994,7 +991,7 @@ An interviewee expressed that integrating KGs and LLMs was not required as LLMs 
 
 
 
-## 5 DISCUSSION 議論
+## 5. DISCUSSION / 5. 議論
 
 In this section we consider some of the key issues that arose from our results. 
 このセクションでは、私たちの結果から生じた重要な問題のいくつかを考察します。 
@@ -1007,8 +1004,7 @@ We then explore in some detail issues around skills, in particular prompting and
 Finally, we highlight the importance of transparency and explainability in KGs and we introduce the concept of “KG cards”. 
 最後に、KGにおける透明性と説明可能性の重要性を強調し、「KGカード」という概念を紹介します。 
 
-**5.1** **Issues in using large language models for knowledge engineering** 
-**5.1** **知識工学における大規模言語モデルの使用に関する問題**
+### 5.1 Issues in using large language models for knowledge engineering / 5.1 知識工学における大規模言語モデルの使用に関する問題
 
 A fundamental conflict occurs in the use of LLMs in KG work because of the ambiguity in the output of generative AIs. 
 生成AIの出力の曖昧さのため、KG作業におけるLLMの使用には根本的な対立があります。 
@@ -1060,8 +1056,7 @@ This could be potentially problematic for KE tasks, which requires logic over fe
 A comparable, well-researched situation is that of emotion in financial markets, which can move prices up or down based on public mood rather than underlying economic fundamentals. 
 類似の、よく研究された状況は、金融市場における感情の状況であり、これは基礎的な経済的ファンダメンタルズではなく、公共の気分に基づいて価格を上下させることができます。 
 
-**5.2** **Key skills - prompting** 
-**5.2** **重要なスキル - プロンプト作成**
+### 5.2 Key skills - prompting / 5.2 重要なスキル - プロンプト作成
 
 Prompting was a fascinating area of discussion. 
 プロンプト作成は興味深い議論の領域でした。 
@@ -1084,8 +1079,7 @@ Using crowdsourcing means for large-scale KG construction was a successful innov
 Additionally, incorporating a prompt engineer in the process, the “knowledge prompting engineer” could also bridge the skill gaps and enhance performance. 
 さらに、プロセスにプロンプトエンジニアを組み込むことで、「知識プロンプトエンジニア」がスキルのギャップを埋め、パフォーマンスを向上させることができるでしょう。 
 
-**5.3** **Key skills - bias** 
-**5.3** **重要なスキル - バイアス**
+### 5.3 Key skills - bias / 5.3 重要なスキル - バイアス
 
 There was a distinct lack of engagement with the processes of bias mitigation. 
 バイアス軽減のプロセスへの関与が明らかに不足していました。 
@@ -1110,8 +1104,7 @@ LLMをKEプロセスに統合することは、意図的または非意図的に
 This suggests an integrated review of the possible sources of harms introduced to KG when LLMs are utilised would be valuable. 
 これは、LLMが利用される際にKGに導入される可能性のある危害の源を統合的にレビューすることが価値があることを示唆しています。 
 
-**5.4** **KG cards to reduce harms** 
-**5.4** **危害を減らすためのKGカード**
+### 5.4 KG cards to reduce harms / 5.4 危害を減らすためのKGカード
 
 One way to implement this review of harms would be to develop KG data cards [65, 81], a set of detailed descriptions for transparency and explainability to ensure we produce and use trustworthy KGs. 
 この危害のレビューを実施する1つの方法は、KGデータカード[65, 81]を開発することであり、信頼できるKGを生成し使用するための透明性と説明可能性のための詳細な説明のセットです。 
@@ -1194,7 +1187,7 @@ The TransE example in the table shows that KG embedding model studies offer deta
 
 
 
-## 6 CONCLUSION 結論
+## 6. CONCLUSION / 6. 結論
 
 LLMs herald the emergence of a new era for many fields. 
 LLMは多くの分野に新しい時代の到来を告げています。 
@@ -1219,7 +1212,7 @@ However, it is crucial that those working in the field are appropriately skilled
 As well as training, this implies the need for documentation to accompany LLM-assisted KGs such as prompt templates and KG cards. 
 トレーニングに加えて、これはプロンプトテンプレートやKGカードなど、LLM支援のKGに付随する文書の必要性を示唆しています。 
 
-**6.1** **Limitations 制限事項**
+### 6.1 Limitations / 6.1 制限事項
 
 Participants were selected from European research labs that have a strong profile in either publishing in KE venues, 
 参加者は、KEの場での出版に強いプロファイルを持つヨーロッパの研究所から選ばれました。 
@@ -1234,7 +1227,7 @@ Furthermore, most interviewees were different-level PhD students,
 missing the opinion of researchers with more than 10 years of experience in the field. 
 この分野で10年以上の経験を持つ研究者の意見が欠けていました。 
 
-**6.2** **Contributions and Future Work 貢献と今後の研究**
+### 6.2 Contributions and Future Work / 6.2 貢献と今後の研究
 
 This is one of the first attempts to understand the interaction between knowledge engineers and LLMs. 
 これは、知識エンジニアとLLMの相互作用を理解するための最初の試みの一つです。 
@@ -1251,14 +1244,14 @@ In particular, a more detailed study on practical methods for identifying and mi
 across the entire development pipeline. 
 開発パイプライン全体にわたって。 
 
-**6.3** **Acknowledgements 謝辞**
+### 6.3 Acknowledgements / 6.3 謝辞
 
 This paper is produced as part of the MuseIT project which has been co-funded by the EU under the Grant Agreement number 101061441. 
 この論文は、EUの助成契約番号101061441の下で共同資金提供されたMuseITプロジェクトの一部として作成されました。 
 The authors would like to thank all the participants in the 2023 Knowledge Prompting Hackathon at King’s College London. 
 著者は、ロンドンのキングスカレッジで開催された2023年のKnowledge Prompting Hackathonのすべての参加者に感謝の意を表します。 
 
-**REFERENCES 参考文献**
+## REFERENCES / 参考文献
 
 [1] David Abián, F Guerra, J Martínez-Romanos, and Raquel Trillo-Lado. 2017. Wikidata and DBpedia: a comparative study. In Semanitic Keyword-based _Search on Structured Data Sources. Springer, 142–154._  
 [2] Bradley P Allen, Lise Stork, and Paul Groth. 2023. Knowledge Engineering using Large Language Models. arXiv preprint arXiv:2310.00637 (2023).  

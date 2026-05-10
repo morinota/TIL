@@ -1,17 +1,16 @@
 refs: https://arxiv.org/pdf/2310.00637
 
 
-## Knowledge Engineering using Large Language Models
-### Bradley P. Allen - University of Amsterdam, Amsterdam, NL
-### Lise Stork - Vrije Universiteit Amsterdam, Amsterdam, NL
-### Paul Groth - University of Amsterdam, Amsterdam, NL  
+Knowledge Engineering using Large Language Models / 知識工学と大規模言語モデルの利用
 
-## 知識工学と大規模言語モデルの利用
-### ブラッドリー・P・アレン - アムステルダム大学、オランダ
-### リゼ・ストーク - フリー大学アムステルダム、オランダ
-### ポール・グロス - アムステルダム大学、オランダ  
+**Bradley P. Allen** - University of Amsterdam, Amsterdam, NL  
+**Lise Stork** - Vrije Universiteit Amsterdam, Amsterdam, NL  
+**Paul Groth** - University of Amsterdam, Amsterdam, NL  
+**ブラッドリー・P・アレン** - アムステルダム大学、オランダ  
+**リゼ・ストーク** - フリー大学アムステルダム、オランダ  
+**ポール・グロス** - アムステルダム大学、オランダ  
 
-### Abstract
+## Abstract / 要約
 
 Knowledge engineering is a discipline that focuses on the creation and maintenance of processes that generate and apply knowledge. 
 知識工学は、知識を生成し適用するプロセスの創造と維持に焦点を当てた学問です。 
@@ -35,7 +34,7 @@ Additionally, we formulate key open research questions to tackle these direction
 
 <!-- ここまで読んだ! -->
 
-### 1 Introduction  
+## 1. Introduction / 1. はじめに
 
 Knowledge engineering (KE) is a discipline concerned with the development and maintenance of automated processes that generate and apply knowledge [4, 93]. 
 知識工学（KE）は、知識を生成し適用する自動化プロセスの開発と維持に関する学問です[4, 93]。 
@@ -105,7 +104,7 @@ These problems aim to determine the feasibility of and potential approaches to u
 
 <!-- ここまで読んだ! -->
 
-### 2 Forms of knowledge and their engineering 知識の形態とその工学
+## 2. Forms of knowledge and their engineering / 2. 知識の形態とその工学
 
 In the history of the computational investigation of knowledge engineering, knowledge has been often treated primarily as symbolic expressions. 
 知識工学の計算的調査の歴史において、知識は主にシンボリック表現として扱われてきました。 
@@ -118,7 +117,7 @@ We now illustrate this point by describing the many ways in which knowledge mani
 
 <!-- ここまで読んだ! -->
 
-### 2.1 The multimodal richness of knowledge: an example from biodiversity sciences 生物多様性科学における知識のマルチモーダルな豊かさの例
+### 2.1 The multimodal richness of knowledge: an example from biodiversity sciences / 2.1 生物多様性科学における知識のマルチモーダルな豊かさの例
 
 The ultimate goal of biodiversity science is to understand species evolution, variation, and distribution, but finds applications in a variety of other fields such as climate science and policy. 
 生物多様性科学の最終的な目標は、種の進化、変異、および分布を理解することであり、気候科学や政策などのさまざまな他の分野にも応用されています。 
@@ -205,7 +204,7 @@ To summarize:
 
 <!-- ここまで読んだ! -->
 
-### 2.2 KE as the transformation of knowledge expressed in natural language into knowledge expressed in a formal language KE（知識工学）とは、自然言語で表現された知識を形式言語で表現された知識に変換することです。
+### 2.2 KE as the transformation of knowledge expressed in natural language into knowledge expressed in a formal language / 2.2 KE（知識工学）とは、自然言語で表現された知識を形式言語で表現された知識に変換することです
 
 (↑のKEの定義は、単純明快で分かりやすいな...!!:thinking:)
 
@@ -237,8 +236,7 @@ This is done either by proxy through the action of autonomous agents, or in the 
 
 <!-- ここまで読んだ! -->
 
-### 2.3 LLMs as a general-purpose technology for transforming natural language into formal language
-### 2.3 LLM（大規模言語モデル）を自然言語を形式言語に変換するための汎用技術として
+### 2.3 LLMs as a general-purpose technology for transforming natural language into formal language / 2.3 LLM（大規模言語モデル）を自然言語を形式言語に変換するための汎用技術として
 
 Until recently, there have been two ways in which this sort of formalization could be performed: through the manual authoring of symbolic/logical representations, e.g., as in the traditional notion of expert systems [34], or through the use of machine learning and natural language processing to extract such representations automatically from natural language text [61]. 
 最近まで、この種の**形式化を行う方法は二つ**ありました：(1)象徴的/論理的表現の手動作成、たとえば伝統的な専門家システムの概念[34]のように、(2)または機械学習と自然言語処理を使用して、そのような表現を自然言語テキストから自動的に抽出する方法[61]です。
@@ -251,7 +249,7 @@ If one accepts the position that KE can be generally described as the process of
 
 <!-- ここまで読んだ! -->
 
-### 3 The use of LLMs in the practice of knowledge engineering: two scenarios 知識工学の実践におけるLLMsの使用：二つのシナリオ
+## 3. The use of LLMs in the practice of knowledge engineering: two scenarios / 3. 知識工学の実践におけるLLMsの使用：二つのシナリオ
 
 Given the above discussion, the natural question that arises is: what might be the utility and impact of the use of LLMs for the transformation of natural language into formal language, when applied in the context of the practice of knowledge engineering?
 上記の議論を踏まえると、**自然言語を形式言語に変換するためのLLMsの使用が、知識工学の実践の文脈でどのような有用性と影響を持つのか**という自然な疑問が生じます。
@@ -272,7 +270,7 @@ We now explore each of these scenarios in turn, and consider the open research p
 
 <!-- ここまで読んだ! -->
 
-### 3.1 LLMs as components or tools used in knowledge engineering 知識工学で使用されるコンポーネントまたはツールとしてのLLMs
+### 3.1 LLMs as components or tools used in knowledge engineering / 3.1 知識工学で使用されるコンポーネントまたはツールとしてのLLMs
 
 (こっちの活用はイメージしやすい!:thinking:)
 
@@ -351,7 +349,7 @@ Generalizing these into natural language and formal language inputs and outputs 
 
 <!-- ここまで読んだ! -->
 
-### 3.2 Knowledge engineering as prompt engineering プロンプトエンジニアリングとしての知識工学
+### 3.2 Knowledge engineering as prompt engineering / 3.2 プロンプトエンジニアリングとしての知識工学
 
 Given that LLMs enable knowledge modeling in natural language, it is conceivable that the programming of knowledge modules could take place entirely in natural language.
 LLMsが自然言語での知識モデリングを可能にすることを考えると、知識モジュールのプログラミングが完全に自然言語で行われる可能性があります。
@@ -400,7 +398,7 @@ surveys work in this direction.
 
 <!-- ここまで読んだ! -->
 
-### 4 Open research questions オープンリサーチクエスチョン
+## 4. Open research questions / 4. オープンリサーチクエスチョン
 
 Using the scenarios outlined above, we can identify a number of open research questions to be addressed to realize either or both of these two possible approaches to the use of LLMs in knowledge engineering.
 上記のシナリオを使用して、知識工学におけるLLMの使用に関するこれら2つの可能なアプローチのいずれかまたは両方を実現するために対処すべきオープンリサーチクエスチョンを特定できます。
@@ -411,9 +409,9 @@ For each of these open questions, we provide a link back to the biodiversity sce
 
 <!-- ここまで読んだ! -->
 
-### 4.1 Methodology 方法論
+### 4.1 Methodology / 4.1 方法論
 
-#### 4.1.1 How can knowledge engineering methodologies best be adapted to use LLMs? 知識工学の方法論は、LLMを使用するためにどのように最適に適応できるか？
+#### 4.1.1 How can knowledge engineering methodologies best be adapted to use LLMs? / 4.1.1 知識工学の方法論は、LLMを使用するためにどのように最適に適応できるか？
 
 How can we harmoniously meld the considerable body of work on knowledge engineering methodologies with the new capabilities presented by LLMs?
 私たちは、知識工学の方法論に関する膨大な研究とLLMが提供する新しい能力をどのように調和させることができるでしょうか？
@@ -442,7 +440,7 @@ Connecting back to the biodiversity domain, answering these questions would prov
 
 <!-- ここまで読んだ! -->
 
-#### 4.1.2 How do principles of content and data management apply to prompt engineering? コンテンツおよびデータ管理の原則は、プロンプトエンジニアリングにどのように適用されるか？
+#### 4.1.2 How do principles of content and data management apply to prompt engineering? / 4.1.2 コンテンツおよびデータ管理の原則は、プロンプトエンジニアリングにどのように適用されるか？
 
 Applying content and/or data management principles to collections of prompts and prompt templates, integral to work with LLMs, is an area ripe for exploration.
 LLMとの作業に不可欠なプロンプトとプロンプトテンプレートのコレクションにコンテンツおよび/またはデータ管理の原則を適用することは、探求に適した領域です。
@@ -461,7 +459,7 @@ Doing so is critical for biodiversity research and science in general where prec
 
 <!-- ここまで読んだ! -->
 
-#### 4.1.3 What are the cognitive norms that govern the conduct of KE? KEの実施を支配する認知規範とは何か？
+#### 4.1.3 What are the cognitive norms that govern the conduct of KE? / 4.1.3 KEの実施を支配する認知規範とは何か？
 
 A crucial area of inquiry involves the identification and understanding of cognitive norms, as described by Menary, that govern the practice of knowledge engineering.
 重要な調査領域は、Menaryによって説明された知識工学の実践を支配する認知規範の特定と理解です。
@@ -478,7 +476,7 @@ In the biodiversity sciences, this means understanding the cognitive norms speci
 
 <!-- ここまで読んだ! -->
 
-#### 4.1.4 How do LLMs impact the labor economics of KE? LLMはKEの労働経済にどのように影響するか？
+#### 4.1.4 How do LLMs impact the labor economics of KE? / 4.1.4 LLMはKEの労働経済にどのように影響するか？
 
 A related but distinct question pertains to the impact of LLMs on the economic costs associated with knowledge engineering.
 関連するが異なる質問は、**知識工学に関連する経済的コストに対するLLMの影響**に関するものです。
@@ -499,9 +497,9 @@ LLMベースのKEの発展は、生物多様性科学における知識専門家
 
 <!-- ここまで読んだ! -->
 
-### 4.2 Architecture アーキテクチャ
+### 4.2 Architecture / 4.2 アーキテクチャ
 
-#### 4.2.1 How can hybrid neuro-symbolic architectural models incorporate LLMs? ハイブリッド神経シンボリックアーキテクチャモデルは、どのようにLLMを組み込むことができるか？
+#### 4.2.1 How can hybrid neuro-symbolic architectural models incorporate LLMs? / 4.2.1 ハイブリッド神経シンボリックアーキテクチャモデルは、どのようにLLMを組み込むことができるか？
 
 Design patterns for hybrid neuro-symbolic systems offer a structured approach to comprehend the flow of data within a knowledge system.
 ハイブリッド神経シンボリックシステムのデザインパターンは、知識システム内のデータの流れを理解するための構造化されたアプローチを提供します。
@@ -518,7 +516,7 @@ Addressing these questions would shed light on tasks for which hybridization usi
 
 <!-- ここまで読んだ! -->
 
-### 4.2.2 How can prompt engineering patterns support reasoning in natural language?　プロンプトエンジニアリングパターンは、自然言語での推論をどのようにサポートできるか？
+#### 4.2.2 How can prompt engineering patterns support reasoning in natural language? / 4.2.2 プロンプトエンジニアリングパターンは、自然言語での推論をどのようにサポートできるか？
 
 One fundamental question that arises is how prompt engineering patterns can be utilized to facilitate reasoning in natural language.
 生じる基本的な質問は、プロンプトエンジニアリングパターンをどのように利用して自然言語での推論を促進できるかということです。
@@ -546,7 +544,7 @@ Given that biodiversity knowledge is often best represented in a variety of moda
 
 <!-- ここまで読んだ! -->
 
-#### 4.2.3 How can we manage bias, trust and control in LLMs using knowledge graphs? 知識グラフを使用してLLMにおけるバイアス、信頼、制御をどのように管理できますか？
+#### 4.2.3 How can we manage bias, trust and control in LLMs using knowledge graphs? / 4.2.3 知識グラフを使用してLLMにおけるバイアス、信頼、制御をどのように管理できますか？
 
 (Graph-RAG的なやつの話かな...!!:thinking:)
 Trust, control, and bias in LLMs, especially when these models leverage knowledge graphs, are critical areas to explore.
@@ -570,7 +568,7 @@ Moreover, novel update mechanisms can aid researchers to reliably update facts o
 
 <!-- ここまで読んだ! -->
 
-#### 4.2.4 Is extrinsic explanation sufficient? 外的説明は十分ですか？
+#### 4.2.4 Is extrinsic explanation sufficient? / 4.2.4 外的説明は十分ですか？
 
 A significant area of interest pertains to how we can effectively address the explainability of answers generated using LLMs.
 重要な関心のある領域は、**LLMを使用して生成された回答の説明可能性にどのように効果的に対処できるか**に関係しています。
@@ -593,7 +591,7 @@ In the sciences in general, answering these questions would aid explainability o
 
 <!-- ここまで読んだ! -->
 
-### 4.2.5 How can LLMs support the engineering of hybrid human/machine knowledge systems?　LLMはハイブリッド人間/機械知識システムのエンジニアリングをどのようにサポートできますか？
+#### 4.2.5 How can LLMs support the engineering of hybrid human/machine knowledge systems? / 4.2.5 LLMはハイブリッド人間/機械知識システムのエンジニアリングをどのようにサポートできますか？
 
 Another topic of interest involves exploring the potential of hybrid systems that combine human cognition with machine capabilities within a dialogical framework.
 もう一つの関心のあるトピックは、対話的な枠組みの中で人間の認知と機械の能力を組み合わせたハイブリッドシステムの可能性を探ることです。
@@ -610,9 +608,9 @@ Research in this avenue can help mitigate the workload of the knowledge expert, 
 
 <!-- ここまで読んだ! -->
 
-### 4.3 Evaluation 評価
+### 4.3 Evaluation / 4.3 評価
 
-#### 4.3.1 How do we evaluate knowledge systems with LLM components? LLMコンポーネントを持つ知識システムをどのように評価しますか？
+#### 4.3.1 How do we evaluate knowledge systems with LLM components? / 4.3.1 LLMコンポーネントを持つ知識システムをどのように評価しますか？
 
 The first point of interest involves the evaluation of knowledge-based systems, with a focus beyond just logic.
 最初の関心のあるポイントは、知識ベースのシステムの評価であり、単なる論理を超えた焦点を持っています。
@@ -639,14 +637,14 @@ One can think of improving access to collections, knowledge discovery, or accura
 
 <!-- ここまで読んだ! -->
 
-### 4.3.2 What is the relationship between evaluation and explainability? 評価と説明可能性の関係は何ですか？
+#### 4.3.2 What is the relationship between evaluation and explainability? / 4.3.2 評価と説明可能性の関係は何ですか？
 
 Lastly, there is an inherent dependency of evaluation on effective solutions for explainability within knowledge systems.
 最後に、評価は知識システム内の説明可能性に対する効果的な解決策に依存しています。
 Understanding this relationship could help in the creation of more comprehensive evaluation models that take into account not only the performance of a system but also its explainability.
 この関係を理解することは、システムのパフォーマンスだけでなく、その説明可能性も考慮に入れたより包括的な評価モデルの作成に役立つかもしれません。
 
-### 5 Summary 要約
+## 5. Summary / 5. 要約
 
 In this paper, we have advocated for a reconsideration of the practice and methodology of knowledge engineering in light of the emergence of LLMs.
 本論文では、LLMの出現を踏まえた知識エンジニアリングの実践と方法論の再考を提唱しました。

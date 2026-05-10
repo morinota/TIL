@@ -1,8 +1,9 @@
 refs: https://dl.acm.org/doi/epdf/10.1145/3543508
 
 
-# Semantic Knowledge Graphs for the News: A Review ニュースのためのセマンティック知識グラフ：レビュー  
-Andreas L. Opdahl, Tareq Al-Moslmi, Duc-Tien Dang-Nguyen, Marc Gallofré Ocaña, Bjørnar Tessem, Csaba Veres  
+Semantic Knowledge Graphs for the News: A Review / ニュースのためのセマンティック知識グラフ：レビュー
+
+**Andreas L. Opdahl, Tareq Al-Moslmi, Duc-Tien Dang-Nguyen, Marc Gallofré Ocaña, Bjørnar Tessem, Csaba Veres**  
 ACM Computing Surveys, Vol. 55, No. 7, Article 140. December 2022.
 
 
@@ -423,8 +424,7 @@ There has been a shift in recent years from research on algorithms and system ar
 A few of those recent papers also mention explainability. 
 最近のいくつかの論文では、説明可能性についても言及されています。
 
-### 3.2. Empirical Result Types  
-### 3.2. 実証結果のタイプ
+### 3.2. Empirical Result Types / 3.2. 実証結果のタイプ
 
 A large majority of the papers include an empirical evaluation of their technical proposals.  
 大多数の論文は、技術提案の実証評価を含んでいます。
@@ -564,8 +564,7 @@ In recent years, experiments are increasingly often supplemented by studies of a
 Other used research methods are industrial testing, case studies and examples, proof-of-concept demos, use cases, and user studies.  
 他に使用される研究方法には、産業テスト、ケーススタディと例、概念実証デモ、ユースケース、ユーザー研究があります。
 
-### 3.3. Intended Users  
-### 3.3. 対象ユーザー
+### 3.3. Intended Users / 3.3. 対象ユーザー
 
 **News users**: More than half the main papers aim to offer news services to the general public.  
 **ニュースユーザー**: 主要な論文の半数以上は、一般の人々にニュースサービスを提供することを目指しています。
@@ -680,8 +679,7 @@ Other main papers target professionals in domains such as economy and finance, e
 Other intended users/beneficiaries are newsrooms, knowledge-base maintainers, archivists, fake-news detectors and fact checkers, and different types of knowledge workers.  
 他の意図されたユーザー/受益者は、ニュースルーム、知識ベースの管理者、アーカイビスト、フェイクニュース検出器とファクトチェッカー、さまざまな種類の知識労働者です。
 
-### 3.4. Tasks  
-### 3.4. タスク
+### 3.4. Tasks / 3.4. タスク
 
 The main papers target a wide range of news production, dissemination, and consumption activities, such as search, recommendation, categorisation, and event detection.  
 主要な論文は、検索、推薦、分類、イベント検出など、ニュースの制作、普及、消費活動の幅広い範囲を対象としています。
@@ -1035,8 +1033,8 @@ Support for factual journalism is a related area that is growing.
 Automatic news detection is another emerging area that is becoming increasingly important. 
 自動ニュース検出は、ますます重要になっている別の新興分野です。
 
-### 3.5. Input Data  
-### 3.5. 入力データ  
+### 3.5. Input Data / 3.5. 入力データ
+
 
 The proposed approaches rely on a variety of sources and types of primary input data. 
 提案されたアプローチは、さまざまなソースとタイプの主要な入力データに依存しています。
@@ -1131,8 +1129,8 @@ In recent years, KGs are being used increasingly often to infuse world knowledge
 User histories have also been used in recent recommendation papers. 
 ユーザーヒストリーも最近の推薦論文で使用されています。
 
-### 3.6. News Life Cycle  
-### 3.6. ニュースライフサイクル  
+### 3.6. News Life Cycle / 3.6. ニュースライフサイクル
+
 
 The main papers also target different phases of the news life cycle. 
 主要な論文は、ニュースライフサイクルの異なるフェーズをターゲットにしています。
@@ -1185,8 +1183,8 @@ RDFLiveNewsは、統計的およびその他の機械学習技術を組み合わ
 Many main papers attempt to cover several of these life-cycle phases. 
 多くの主要な論文は、これらのライフサイクルフェーズのいくつかをカバーしようとしています。
 
-### 3.7. Semantic Techniques and Tools  
-### 3.7. 意味的技術とツール  
+### 3.7. Semantic Techniques and Tools / 3.7. 意味的技術とツール
+
 
 The main papers use a broad variety of semantic techniques and tools. 
 主要な論文は、幅広い意味的技術とツールを使用しています。
@@ -1409,8 +1407,8 @@ For example, although WordNet is not natively semantic, it is available as RDF a
 A recent trend is that Wikidata is becoming more popular compared to DBpedia. 
 最近の傾向は、WikidataがDBpediaと比較してより人気が高まっていることです。
 
-### 3.8. Other Techniques and Tools  
-### 3.8. その他の技術とツール  
+### 3.8. Other Techniques and Tools / 3.8. その他の技術とツール
+
 
 Most main papers use semantic knowledge graphs in combination with other techniques and tools. 
 ほとんどの主要な論文は、他の技術やツールと組み合わせてセマンティック知識グラフを使用しています。
@@ -1970,8 +1968,8 @@ Misinformation is another area of great importance, and in the domain of crises 
 There is so far little uptake of cross-language models like multi-lingual BERT and little research on exploiting dedicated language models for smaller languages for news purposes.  
 これまでのところ、マルチリンガルBERTのようなクロスランゲージモデルの採用は少なく、ニュース目的のために小さな言語用の専用言語モデルを活用する研究もほとんどありません。  
 
-### 4.4. Research Questions  
-### 4.4. 研究課題  
+### 4.4. Research Questions / 4.4. 研究課題
+
 
 We are now ready to answer the four research questions we posed in the Introduction.  
 私たちは、序論で提起した4つの研究課題に答える準備が整いました。  
@@ -2033,8 +2031,8 @@ Another much-referenced group of papers centres around what we have called the "
 The citation analysis shows that the main paper from the Neptuno project and the effort to make IPTC's news architecture semantic also are important.  
 引用分析は、Neptunoプロジェクトの主要な論文と、IPTCのニュースアーキテクチャをセマンティックにする努力も重要であることを示しています。  
 
-### 4.5. Limitations  
-### 4.5. 制限事項  
+### 4.5. Limitations / 4.5. 制限事項
+
 
 The most central limitation of our literature review is its scope.  
 私たちの文献レビューの最も中心的な制限は、その範囲です。  

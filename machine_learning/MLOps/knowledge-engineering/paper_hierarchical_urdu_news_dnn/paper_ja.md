@@ -1,117 +1,62 @@
 refs: https://arxiv.org/pdf/2107.03141
 
 
-## Hierarchical Text Classification of Urdu News using Deep Neural Network
-## ウルドゥー語ニュースの階層的テキスト分類に関する深層ニューラルネットワークの使用
+Hierarchical Text Classification of Urdu News using Deep Neural Network / ウルドゥー語ニュースの階層的テキスト分類に関する深層ニューラルネットワークの使用
 
-### TAIMOOR AHMED JAVED[∗], National University of Computer and Emerging Sciences, Islamabad, Pakistan 
-### WASEEM SHAHZAD, National University of Computer and Emerging Sciences, Islamabad, Pakistan 
-### UMAIR ARSHAD, National University of Computer and Emerging Sciences, Islamabad, Pakistan
-### TAIMOOR AHMED JAVED[∗], パキスタン、イスラマバードのコンピュータおよび新興科学大学 
-### WASEEM SHAHZAD, パキスタン、イスラマバードのコンピュータおよび新興科学大学 
-### UMAIR ARSHAD, パキスタン、イスラマバードのコンピュータおよび新興科学大学
+**TAIMOOR AHMED JAVED[∗]**, National University of Computer and Emerging Sciences, Islamabad, Pakistan  
+**WASEEM SHAHZAD**, National University of Computer and Emerging Sciences, Islamabad, Pakistan  
+**UMAIR ARSHAD**, National University of Computer and Emerging Sciences, Islamabad, Pakistan  
+**TAIMOOR AHMED JAVED[∗]**, パキスタン、イスラマバードのコンピュータおよび新興科学大学  
+**WASEEM SHAHZAD**, パキスタン、イスラマバードのコンピュータおよび新興科学大学  
+**UMAIR ARSHAD**, パキスタン、イスラマバードのコンピュータおよび新興科学大学
+
+## abstract
 
 Digital text is increasing day by day on the internet. 
 デジタルテキストは、インターネット上で日々増加しています。
-
 It is very challenging to classify a large and heterogeneous collection of data, which require improved information processing methods to organize text. 
 大規模で異種のデータコレクションを分類することは非常に困難であり、テキストを整理するためには改善された情報処理方法が必要です。
-
 To classify large size of corpus, one common approach is to use hierarchical text classification, which aims to classify textual data in a hierarchical structure. 
-大規模なコーパスを分類するための一般的なアプローチの一つは、階層的テキスト分類を使用することであり、これはテキストデータを階層構造で分類することを目的としています。
-
+**大規模なコーパスを分類するための一般的なアプローチの一つは、階層的テキスト分類を使用すること**であり、これはテキストデータを階層構造で分類することを目的としています。
 Several approaches have been proposed to tackle classification of text but most of the research has been done on English language. 
 テキストの分類に対処するためにいくつかのアプローチが提案されていますが、ほとんどの研究は英語に関して行われています。
-
 This paper proposes a deep learning model for hierarchical text classification of news in Urdu language - consisting of 51,325 sentences from 8 online news websites belonging to the following genres: Sports; Technology; and Entertainment. 
 本論文では、ウルドゥー語のニュースの階層的テキスト分類のための深層学習モデルを提案します - これは、スポーツ、技術、エンターテインメントというジャンルに属する8つのオンラインニュースウェブサイトからの51,325文で構成されています。
-
 The objectives of this paper are twofold: 
-本論文の目的は二つあります：
-
+**本論文の目的は二つ**あります：
 (1) to develop a large human-annotated dataset of news in Urdu language for hierarchical text classification; 
 (1) 階層的テキスト分類のためのウルドゥー語ニュースの大規模な人手注釈データセットを開発すること；
-
 and (2) to classify Urdu news hierarchically using our proposed model based on LSTM mechanism named as Hierarchical Multi-layer LSTMs (HMLSTM). 
 (2) Hierarchical Multi-layer LSTMs (HMLSTM)と呼ばれるLSTMメカニズムに基づいて、提案したモデルを使用してウルドゥー語ニュースを階層的に分類することです。
-
 Our model consists of two modules: 
 私たちのモデルは二つのモジュールで構成されています：
-
 Text Representing Layer, for obtaining text representation in which we use Word2vec embedding to transform the words to vector 
 テキスト表現層は、テキスト表現を取得するためのもので、Word2vec埋め込みを使用して単語をベクトルに変換します。
-
 and Urdu Hierarchical LSTM Layer (UHLSTML) an end-to-end fully connected deep LSTMs network to perform automatic feature learning, 
 ウルドゥー階層LSTM層（UHLSTML）は、特徴学習を自動的に行うためのエンドツーエンドの完全接続深層LSTMネットワークです。
-
 we train one LSTM layer for each level of the class hierarchy. 
 クラス階層の各レベルに対して1つのLSTM層を訓練します。
-
 We have performed extensive experiments on our self created dataset named as Urdu News Dataset for Hierarchical Text Classification (UNDHTC). 
 私たちは、ウルドゥー語ニュースの階層的テキスト分類のために作成したデータセット（UNDHTC）で広範な実験を行いました。
-
 The result shows that our proposed method is very effective for hierarchical text classification and it outperforms baseline methods significantly and also achieved good results as compare to deep neural model. 
 結果は、私たちの提案した方法が階層的テキスト分類に非常に効果的であり、ベースライン手法を大幅に上回り、深層ニューラルモデルと比較しても良好な結果を達成したことを示しています。
 
-CCS Concepts: 
-CCS概念：
+<!-- ここまで読んだ! -->
 
-• Computing methodologies → **Neural networks; Natural language processing; Super-** **vised learning; 
-• 情報システム →** _Clustering and classification._
-
-Additional Key Words and Phrases: 
-追加のキーワードとフレーズ：
-
-Hierarchical Urdu Text Classification,Natural language processing, Deep Neural Network, Urdu News Dataset
-階層的ウルドゥー語テキスト分類、自然言語処理、深層ニューラルネットワーク、ウルドゥー語ニュースデータセット
-
-**ACM Reference Format:** 
-**ACM参照形式：**
-
-Taimoor Ahmed Javed, Waseem Shahzad, and Umair Arshad. 2021. Hierarchical Text Classification of Urdu News using Deep Neural Network. 
-Taimoor Ahmed Javed, Waseem Shahzad、およびUmair Arshad. 2021. 深層ニューラルネットワークを使用したウルドゥー語ニュースの階層的テキスト分類。
-
-ACM Trans. Asian Low-Resour. Lang. Inf. Process. 37, 4, Article 111 (August 2021), 22 pages. 
-ACM Trans. Asian Low-Resour. Lang. Inf. Process. 37, 4, Article 111 (2021年8月)、22ページ。
-
-https://doi.org/10.1145/1122445.1122456
-https://doi.org/10.1145/1122445.1122456
-
-
-
-## 1 INTRODUCTION 1. はじめに
+## 1. INTRODUCTION / 1. はじめに
 
 Nowadays, electronic information extraction systems are omnipresent, from instant mobile messaging apps to automated archives having millions of data. 
 今日、電子情報抽出システムは、インスタントモバイルメッセージングアプリから数百万のデータを持つ自動アーカイブに至るまで、至る所に存在しています。 
-Due to large amount of data, it has
-大量のデータのため、それは
-
-Authors’ addresses: Taimoor Ahmed Javed, taimurahmed60@gmail.com, National University of Computer and Emerging Sciences, Islamabad, H-11/4, Islamabad, Islamabad Capital Territory, Pakistan, 44000; Waseem Shahzad, National University of Computer and Emerging Sciences, Islamabad, H-11/4, Islamabad, Pakistan, waseem.shahzad@nu.edu.pk; Umair Arshad, National University of Computer and Emerging Sciences, Islamabad, Pakistan.
-著者の住所: Taimoor Ahmed Javed, taimurahmed60@gmail.com, ナショナルコンピュータ大学および新興科学、イスラマバード、H-11/4、イスラマバード、イスラマバード首都圏、パキスタン、44000; Waseem Shahzad, ナショナルコンピュータ大学および新興科学、イスラマバード、H-11/4、イスラマバード、パキスタン、waseem.shahzad@nu.edu.pk; Umair Arshad, ナショナルコンピュータ大学および新興科学、イスラマバード、パキスタン。
-
-Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. 
-この作品のすべてまたは一部のデジタルまたは印刷コピーを個人または教室で使用するために作成する許可は、コピーが利益または商業的利益のために作成または配布されず、コピーにこの通知と最初のページに完全な引用が記載されている限り、無料で付与されます。 
-Copyrights for components of this work owned by others than ACM must be honored.
-ACM以外の他者が所有するこの作品のコンポーネントの著作権は尊重されなければなりません。 
-Abstracting with credit is permitted. 
-クレジット付きの要約は許可されています。 
-To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. 
-それ以外の方法でコピーしたり、再出版したり、サーバーに投稿したり、リストに再配布したりするには、事前の特定の許可および/または料金が必要です。 
-Request permissions from permissions@acm.org.
-許可はpermissions@acm.orgにリクエストしてください。 
-© 2021 Association for Computing Machinery.
-© 2021 コンピュータ機械協会。 
-2375-4699/2021/8-ART111 $15.00 [https://doi.org/10.1145/1122445.1122456](https://doi.org/10.1145/1122445.1122456)
-2375-4699/2021/8-ART111 $15.00 [https://doi.org/10.1145/1122445.1122456](https://doi.org/10.1145/1122445.1122456)
-
-
-
-## 111  
-
-111:2 Taimoor and Waseem, et al.  
-TaimoorとWaseemらは、多くの課題を生み出します。しかし、ユーザーがデータにアクセスし、解釈し、パターンや知識生成のためにデータを修正しやすくするために、これらのテキストコンテンツの一部を自動的に分類するという取り組みがあります。大量の電子データをカテゴリに整理することは、多くの個人や企業にとって関心のあるトピックになっています。この問題の唯一の解決策はテキスト分類です。テキスト分類は、文書をそのカテゴリに応じて分類するプロセスです。  
+Due to large amount of data, it has produce significant amount of challenges. 
+大量のデータのため、それは多くの課題を生み出します。
+However one initiative is to categorize some of this text content automatically, so that users can more easily access, interpret and modify data for patterns and knowledge generation. 
+しかし、ユーザーがデータにアクセスし、解釈し、パターンや知識生成のためにデータを修正しやすくするために、これらのテキストコンテンツの一部を自動的に分類するという取り組みがあります。
+Organizing large amount of electronic data into categories is becoming a topic of interest for many individuals and companies. 
+**大量の電子データをカテゴリに整理することは、多くの個人や企業にとって関心のあるトピックになっています。**
+The only solution to this problem is text classification. Text classification is the process to categorize documents according to its categories. 
+この問題の唯一の解決策はテキスト分類です。テキスト分類は、文書をそのカテゴリに応じて分類するプロセスです。 
 It uses a wide variety of areas of expertise which includes AI, NLP and machine learning.  
-それは、AI、NLP、機械学習を含むさまざまな専門分野を使用します。  
+それは、AI、NLP、機械学習を含むさまざまな専門分野を使用します。
 It uses a supervised learning based approach, in which we train a model by giving a large amount of data.  
 それは、モデルを大規模なデータを与えることによって訓練する、教師あり学習に基づくアプローチを使用します。  
 Recently, several algorithms have been proposed like SVM, k-Nearest Neighbor, Naive Bayes.  
@@ -137,13 +82,16 @@ YahooやWikipediaのようなウェブディレクトリは、階層テキスト
 There are different applications nowadays in which documents are organized as hierarchical structure.  
 現在、文書が階層構造として整理されるさまざまなアプリケーションがあります。  
 If we take a real world example, Hierarchical text classification is like a librarian job, who want to place a book in a shelf.  
-実世界の例を挙げると、階層テキスト分類は、本を棚に置きたい図書館員の仕事のようなものです。  
+**実世界の例を挙げると、階層テキスト分類は、本を棚に置きたい図書館員の仕事のようなもの**です。  
 Many organizations like IT companies, law firms and medical companies are taking advantage of automatic classification of documents.  
 IT企業、法律事務所、医療会社など、多くの組織が文書の自動分類の利点を享受しています。  
 Therefore, it shows that hierarchical classification have a significant impact on many applications and organizations.  
-したがって、階層分類は多くのアプリケーションや組織に重要な影響を与えることを示しています。  
+**したがって、階層分類は多くのアプリケーションや組織に重要な影響を与えることを示しています。**  
+
+<!-- ここまで読んだ! -->
+
 The Urdu language has a global reach and it is Pakistan’s national language.  
-ウルドゥー語は世界的な広がりを持ち、パキスタンの国語です。  
+ウルドゥー語は世界的な広がりを持ち、パキスタンの国語です。
 Urdu language is also being spoke in six states of India as their official language.  
 ウルドゥー語は、インドの6つの州でも公用語として話されています。  
 There are more than 12 million speakers in Pakistan and over 300 million speakers all across the globe [27].  
@@ -158,6 +106,9 @@ Since last 10 years, we saw a rapid growth in Urdu text documents like journals,
 過去10年間、ジャーナル、ウェブデータベース、オンラインニュース記事などのウルドゥー語のテキスト文書が急速に増加しました。  
 Because of these considerations, it raise the interest of researchers in the Urdu language.  
 これらの考慮事項により、ウルドゥー語に対する研究者の関心が高まっています。  
+
+<!-- ここまで読んだ! -->
+
 Mostly research work is done in English language for hierarchical text classification.  
 階層テキスト分類に関する研究は主に英語で行われています。  
 Recently, many researches shows that this topic is gaining a lot of interest nowadays.  
@@ -184,6 +135,10 @@ In fact mostly studies perform performance on machine learning methods.
 実際、ほとんどの研究は機械学習手法の性能を評価します。  
 Since, the proposed approach is based on deep neural network.  
 提案されたアプローチは深層ニューラルネットワークに基づいています。  
+
+<!-- ここまで読んだ! -->
+
+
 Neural networks have recently been shown to be efficient in conducting endways learning of hierarchical text classification.  
 ニューラルネットワークは最近、階層テキスト分類のエンドウェイ学習を行うのに効率的であることが示されています。  
 To fill a gap of hierarchical text classification for Urdu language and overcome the limitations of the above machine learning models and to obtain improved results for the Urdu document classification, we introduce a hierarchical model based on LSTM mechanism named as Hierarchical Multi-layer LSTMs (HMLSTM).  
@@ -218,6 +173,9 @@ We conduct a thorough evaluation of our proposed method on Urdu News dataset (UN
 私たちは、さまざまなドメインからのウルドゥー語ニュースデータセット（UNDHTC）に対して提案した方法の徹底的な評価を行います。  
 The experiment results show that our method can outperforms various baselines methods and deep neural model.  
 実験結果は、私たちの方法がさまざまなベースライン手法や深層ニューラルモデルを上回ることを示しています。  
+
+<!-- ここまで読んだ! -->
+
 The rest of this paper is structured as follows.  
 この論文の残りの部分は次のように構成されています。  
 In the next segment, we will be discussing related work.  
@@ -237,9 +195,9 @@ Section 6 presents the experiments and results.
 Section 7 concludes the paper and also future work is discussed.  
 第7節では、論文を締めくくり、今後の研究についても議論します。  
 
+<!-- ここまで読んだ! -->
 
-
-## 2 RELATED WORK 関連研究
+## 2. RELATED WORK / 2. 関連研究
 
 This section of the paper discusses recent efforts and contribution on hierarchical text classification and their methods used in similar areas which have an influence in this field. 
 このセクションでは、階層的テキスト分類に関する最近の取り組みと貢献、およびこの分野に影響を与える類似の領域で使用される手法について論じます。
@@ -636,7 +594,7 @@ Hierarchical Text Classification of Urdu News using Deep Neural Network 111:7
 
 
 
-## 3 HIERARCHICAL TEXT CLASSIFICATION BACKGROUND 階層的テキスト分類の背景
+## 3. HIERARCHICAL TEXT CLASSIFICATION BACKGROUND / 3. 階層的テキスト分類の背景
 
 Nowadays, text classification techniques are normally focused on a flat model. 
 現在、テキスト分類技術は通常、フラットモデルに焦点を当てています。
@@ -713,8 +671,10 @@ Fig. 2 shows the illustration of both structure.
 According to Freitas et al. (2007) and Sun et al. (2001), there are different types of hierarchical classification [28], which are discussed below. 
 Freitas et al.（2007）およびSun et al.（2001）によると、さまざまなタイプの階層的分類があり[28]、以下で説明します。
 
-**3.1** **Flat Classification フラット分類** Koller and Sahami (1997) proposed this approach[17]. 
-**3.1** **フラット分類** KollerとSahami（1997）はこのアプローチを提案しました[17]。
+### 3.1 Flat Classification / 3.1 フラット分類
+
+Koller and Sahami (1997) proposed this approach[17].  
+KollerとSahami（1997）はこのアプローチを提案しました[17]。
 
 It is the most simple and straightforward method to handle hierarchical classification and it totally neglects class hierarchy. 
 これは階層的分類を扱うための最も単純で直接的な方法であり、クラス階層を完全に無視します。
@@ -749,8 +709,10 @@ The main disadvantage is that this approach doesn’t explore complete informati
 Fig. 3. Flat classification approach. 
 図3. フラット分類アプローチ。
 
-**3.2** **Global (big bang) approach グローバル（ビッグバン）アプローチ** This approach is simple, relatively complicated model, in which the whole class hierarchy takes into account in a single run. 
-**3.2** **グローバル（ビッグバン）アプローチ** このアプローチはシンプルで、比較的複雑なモデルであり、全クラス階層を単一の実行で考慮します。
+### 3.2 Global (big bang) approach / 3.2 グローバル（ビッグバン）アプローチ
+
+This approach is simple, relatively complicated model, in which the whole class hierarchy takes into account in a single run.  
+このアプローチはシンプルで、比較的複雑なモデルであり、全クラス階層を単一の実行で考慮します。
 
 That means it classify data in one run. 
 つまり、データを1回の実行で分類します。
@@ -800,8 +762,10 @@ To determine a hierarchical class, the learning process is amended to include al
 Fig. 4. Global approach: one global classifier for the entire class hierarchy. 
 図4. グローバルアプローチ：全クラス階層のための1つのグローバル分類器。
 
-**3.3** **Hierarchically-Structured Local Classifiers 階層構造のローカル分類器** The third approach is called as local approach which is also known as top down approach. 
-**3.3** **階層構造のローカル分類器** 第三のアプローチはローカルアプローチと呼ばれ、トップダウンアプローチとしても知られています。
+### 3.3 Hierarchically-Structured Local Classifiers / 3.3 階層構造のローカル分類器
+
+The third approach is called as local approach which is also known as top down approach.  
+第三のアプローチはローカルアプローチと呼ばれ、トップダウンアプローチとしても知られています。
 
 This method uses predefined data classification scheme to construct a classification hierarchy. 
 この方法は、分類階層を構築するために事前定義されたデータ分類スキームを使用します。
@@ -901,7 +865,7 @@ In local classifier approach, there is also an issue of error propagation, which
 
 
 
-## 4 提案手法とデータセット
+## 4. PROPOSED METHODOLOGY AND DATASET / 4. 提案手法とデータセット
 
 In this section, we will discuss our proposed methodology and self created dataset for hierarchical text classification of urdu news. 
 このセクションでは、ウルドゥー語ニュースの階層的テキスト分類のための提案手法と自己作成したデータセットについて説明します。
@@ -915,7 +879,7 @@ Mainly, we use the Text Representing Layer to achieve a unified representation o
 After this, we apply our deep neural model Urdu Hierarchical LSTM Layer (UHLSTML) to predict hierarchical categories and sub categories of urdu news text. 
 その後、ウルドゥー階層LSTM層（UHLSTML）という深層ニューラルモデルを適用して、ウルドゥー語ニューステキストの階層的カテゴリとサブカテゴリを予測します。
 
-**4.1** **テキスト表現層**
+### 4.1 Text Representing Layer / 4.1 テキスト表現層
 
 In first phase of our approach HMLSTM, text representing layer TRL purpose is to make a unified representation of each urdu news text and their hierarchy structure. 
 私たちのアプローチHMLSTMの最初のフェーズでは、テキスト表現層TRLの目的は、各ウルドゥー語ニューステキストとその階層構造の統一表現を作成することです。
@@ -989,7 +953,7 @@ For this, we have used tensorflow keras [6] to-categorical which converts a clas
 After this our text representation layer obtained whole representation of data and achieved a unified representation of each urdu news text and the hierarchical category structured labels, we pass it towards our propose model UHLSTML. 
 これにより、私たちのテキスト表現層はデータの全体的な表現を取得し、各ウルドゥー語ニューステキストと階層的カテゴリ構造ラベルの統一表現を達成し、それを提案モデルUHLSTMLに渡します。
 
-**4.2** **ウルドゥー階層LSTM層**
+### 4.2 Urdu Hierarchical LSTM Layer / 4.2 ウルドゥー階層LSTM層
 
 Urdu Hierarchical LSTM layer is based on Hierarchically-Structured Local Classifiers approach in which we have Local classifier per level method. 
 ウルドゥー階層LSTM層は、階層構造ローカル分類器アプローチに基づいており、各レベルにローカル分類器を持つ方法です。
@@ -1045,7 +1009,7 @@ To calculate loss, categorical crossentropy is used.
 LSTM dropout is applied to the last LSTM layer to reduce over fitting and allow extra efficient learning. 
 LSTMドロップアウトは、過学習を減らし、より効率的な学習を可能にするために、最後のLSTM層に適用されます。
 
-**4.3** **提案データセット**
+### 4.3 Proposed Dataset / 4.3 提案データセット
 
 In supervised learning, the performance of the model mainly relies on dataset. 
 教師あり学習において、モデルの性能は主にデータセットに依存します。
@@ -1068,14 +1032,17 @@ The main goal of corpus development is to make use of it in comparison and evalu
 UNDHTC is classified into 12 categories that is 3 categories Sports, Technology and Entertainment which is further classified into 9 sub categories cricket, hockey, football, applications, mobile, internet, music, fashion and movies as shown in figure 11. 
 UNDHTCは、スポーツ、テクノロジー、エンターテインメントの3つのカテゴリに分類され、さらにクリケット、ホッケー、サッカー、アプリケーション、モバイル、インターネット、音楽、ファッション、映画の9つのサブカテゴリに分類されています（図11参照）。
 
-_4.3.1_ _データセット作成。最も多くのデータは、人気のあるパキスタンのウルドゥー語ニュースウェブサイトから収集されました_ 
-_（Daily Pakistan[3]、Urdupoint[4]、Express news[5]、Dawn news[6]、BBC Urdu[7]、ARYnews[8]、BOL news[9]、Hum news[10]）。データの収集を自動化するために、Chromeウェブブラウザ用のChromeドライバーを使用してSeleniumを使用しました。_
+#### 4.3.1 データセット作成
 
-_4.3.2_ _注釈。データセットのラベルは12のカテゴリに分かれています。_ 
-_私たちは、ウルドゥー語に関する確固たる知識を持つ同僚の支援を受けてデータセットにラベルを付けました。データの注釈のために、適切な指示と例を提供しました。ラベルは文の文脈と主題に応じて割り当てられました。_
+最も多くのデータは、人気のあるパキスタンのウルドゥー語ニュースウェブサイトから収集されました（Daily Pakistan[3]、Urdupoint[4]、Express news[5]、Dawn news[6]、BBC Urdu[7]、ARYnews[8]、BOL news[9]、Hum news[10]）。データの収集を自動化するために、Chromeウェブブラウザ用のChromeドライバーを使用してSeleniumを使用しました。
 
-_4.3.3_ _データセット統計。約299815件のニュースが_ 
-_異なるウェブサイトからスクレイピングツールを使用して抽出されました。57566件のニュースがクリーンアップされ、ラベル付けされ、表1に示すように、カテゴリ内の文書の総数は表2に示されています。次のセクションでは、実験について説明します。_
+#### 4.3.2 注釈
+
+データセットのラベルは12のカテゴリに分かれています。私たちは、ウルドゥー語に関する確固たる知識を持つ同僚の支援を受けてデータセットにラベルを付けました。データの注釈のために、適切な指示と例を提供しました。ラベルは文の文脈と主題に応じて割り当てられました。
+
+#### 4.3.3 データセット統計
+
+約299815件のニュースが異なるウェブサイトからスクレイピングツールを使用して抽出されました。57566件のニュースがクリーンアップされ、ラベル付けされ、表1に示すように、カテゴリ内の文書の総数は表2に示されています。次のセクションでは、実験について説明します。
 
 **表1. データセット統計**
 **Dataset Statistics**
@@ -1113,7 +1080,7 @@ were performed on this dataset and also compare results with baseline methods.
 
 
 
-## 5 EXPERIMENTS 実験
+## 5. EXPERIMENTS / 5. 実験
 
 In this section, we first introduce the dataset and apply preprocessing steps. 
 このセクションでは、まずデータセットを紹介し、前処理ステップを適用します。
@@ -1149,8 +1116,8 @@ Table 3. The training/test split for UNDHTC
 111:16 Taimoor and Waseem, et al.  
 図12. 実験フローダイアグラム。  
 
-**5.1** **Preprocessing**  
-**5.1** **前処理**  
+### 5.1 Preprocessing / 5.1 前処理
+
 
 We have applied basic pre-processing methods on our data. 
 私たちはデータに基本的な前処理方法を適用しました。
@@ -1170,8 +1137,10 @@ The structured representation of text data is efficiently controlled to improve 
 Preprocessing steps that we applied on our dataset are as follows. 
 私たちがデータセットに適用した前処理ステップは以下の通りです。
 
-_5.1.1_ _Tokenization. This is the initial step in the processing of any language of the NLP task. It_ transforms the phrases into valuable tokens or a single expression. 
-_5.1.1_ _トークン化。これはNLPタスクの任意の言語の処理における初期ステップです。これはフレーズを価値のあるトークンまたは単一の表現に変換します。_
+#### 5.1.1 Tokenization / 5.1.1 トークン化
+
+This is the initial step in the processing of any language of the NLP task. It transforms the phrases into valuable tokens or a single expression.  
+これはNLPタスクの任意の言語の処理における初期ステップです。これはフレーズを価値のあるトークンまたは単一の表現に変換します。
 
 It transforms raw text into a tokens chart, in which every token is a Word. 
 生のテキストをトークンチャートに変換し、各トークンが単語になります。
@@ -1185,8 +1154,10 @@ Urdu is a less linguistic tool and its signs face different problems as spatial 
 Here is a figure 13 which show urdu text converted into tokens. 
 ここに、ウルドゥー語のテキストがトークンに変換された図13があります。
 
-_5.1.2_ _Stop Words Removal. To remove unnecessary words we use stop words. It is used for removing_ words that carry little to no meaning. 
-_5.1.2_ _ストップワードの削除。不要な単語を削除するためにストップワードを使用します。これは意味をほとんど持たない単語を削除するために使用されます。_
+#### 5.1.2 Stop Words Removal / 5.1.2 ストップワードの削除
+
+To remove unnecessary words we use stop words. It is used for removing words that carry little to no meaning.  
+不要な単語を削除するためにストップワードを使用します。これは意味をほとんど持たない単語を削除するために使用されます。
 
 Natural languages are consist of meaningless words and functional words. 
 自然言語は無意味な単語と機能的な単語で構成されています。
@@ -1204,14 +1175,16 @@ By removing these words, we can get better results in our research work.
 Hierarchical Text Classification of Urdu News using Deep Neural Network 111:17  
 図13. ウルドゥー語のトークン化された文書  
 
-_5.1.3_ _Punctuation Removing. In Urdu, mostly used punctuation are ‘-‘, ’_’, and ‘.’. Such symbols do_ not have much value to be used as a feature for classification tasks. 
-_5.1.3_ _句読点の削除。ウルドゥー語で主に使用される句読点は「-」、「_」、および「。」です。これらの記号は_ 分類タスクの特徴として使用するにはあまり価値がありません。_
+#### 5.1.3 Punctuation Removing / 5.1.3 句読点の削除
+
+In Urdu, mostly used punctuation are ‘-‘, ’\_’, and ‘.’. Such symbols do not have much value to be used as a feature for classification tasks.  
+ウルドゥー語で主に使用される句読点は「-」、「\_」、および「。」です。これらの記号は分類タスクの特徴として使用するにはあまり価値がありません。
 
 So we remove these symbols by using regular expressions. 
 したがって、正規表現を使用してこれらの記号を削除します。
 
-**5.2** **Experimental Setup**  
-**5.2** **実験設定**  
+### 5.2 Experimental Setup / 5.2 実験設定
+
 
 All of our experiments were run on 6 core Intel Core i7 9750 @2.60GHz, with 16 GB RAM and GTX 1660ti GPU. 
 私たちのすべての実験は、6コアのIntel Core i7 9750 @2.60GHz、16GB RAM、およびGTX 1660ti GPUで実行されました。
@@ -1231,8 +1204,8 @@ Data was trained on 80% for training and 20% randomly selected for test as shown
 We have done our hardest to use the best parameters in our experiments. 
 私たちは実験で最良のパラメータを使用するために最善を尽くしました。
 
-**5.3** **Baselines and Deep Neural Model Comparison**  
-**5.3** **ベースラインと深層ニューラルモデルの比較**  
+### 5.3 Baselines and Deep Neural Model Comparison / 5.3 ベースラインと深層ニューラルモデルの比較
+
 
 We compare our proposed approach HMLSTM with several baseline methods, such as Naïve Bayes, Support Vector Machines (SVMs), Decision Tree, Random Forest, K-Nearest Neighbors, Logistic Regression and deep neural model such as convolutional neural network (CNN). 
 私たちは提案したアプローチHMLSTMを、Naïve Bayes、サポートベクターマシン（SVM）、決定木、ランダムフォレスト、K近傍法、ロジスティック回帰、深層ニューラルモデル（畳み込みニューラルネットワーク（CNN）など）と比較します。
@@ -1368,8 +1341,8 @@ We also applied “relu” activation layer on the output of every neuron.
 Drop out layer is also applied to reduce overfitting. 
 ドロップアウト層も適用して過学習を減少させます。
 
-**5.4** **Evaluation Metrics**  
-**5.4** **評価指標**  
+### 5.4 Evaluation Metrics / 5.4 評価指標
+
 
 To evaluate the performance of algorithms we have used three common evaluation metrics i.e. 
 アルゴリズムの性能を評価するために、私たちは3つの一般的な評価指標を使用しました。すなわち、
@@ -1397,8 +1370,8 @@ $$
 P_l = \frac{TP_l}{TP_l + FP_l}, \quad R_l = \frac{TP_l}{TP_l + FN_l}, \quad F1_{Macro} = \frac{1}{|C|} \sum_{l \in C} \frac{2P_l R_l}{P_l + R_l}
 $$
 
-**5.5** **Qualitative Analysis**  
-**5.5** **定性的分析**  
+### 5.5 Qualitative Analysis / 5.5 定性的分析
+
 
 To measure the performance of algorithms across different examples, we summarizes some of the examples from evaluation set as shown in figure 14. 
 アルゴリズムの性能を異なる例で測定するために、評価セットからのいくつかの例を図14に示します。
@@ -1412,8 +1385,8 @@ In first example, we can see that all baseline approaches fails, but HMLSTM and 
 However our model still needs improvement, as we can see in second example our model fails because it didn’t consider context of news due to presence of keywords like actor and drama. 
 しかし、私たちのモデルはまだ改善が必要です。2番目の例では、俳優やドラマのようなキーワードの存在により、ニュースの文脈を考慮しなかったため、モデルが失敗しています。
 
-**5.6** **Experimental Results**  
-**5.6** **実験結果**  
+### 5.6 Experimental Results / 5.6 実験結果
+
 
 To demonstrate practical significance of our proposed model, we compare HMLSTM with all the baselines. 
 提案したモデルの実用的な重要性を示すために、HMLSTMをすべてのベースラインと比較します。
@@ -1502,7 +1475,7 @@ demonstrates the effectiveness of our proposed approach for hierarchical text cl
 
 
 
-## 6 CONCLUSION AND FUTURE WORK 結論と今後の課題
+## 6. CONCLUSION AND FUTURE WORK / 6. 結論と今後の課題
 
 In this paper, we have proposed Hierarchical Multi-Layer LSTMs method built upon deep neural network which is used for hierarchical text classification of urdu news text. 
 本論文では、ウルドゥー語のニューステキストの階層的テキスト分類に使用される深層ニューラルネットワークに基づいた階層的マルチレイヤーLSTM手法を提案しました。
@@ -1528,7 +1501,7 @@ We will also try to develop Bi-LSTM based approach to to obtain improved hierarc
 In future, we will also try to optimize our model because it takes long training time. 
 将来的には、トレーニング時間が長いため、モデルの最適化にも取り組む予定です。
 
-**REFERENCES 参考文献**
+## REFERENCES / 参考文献
 [1] Md Nasim Adnan and Md Zahidul Islam. 2015. One Vs All Binarization Technique in the Context of Random Forest. In _ESANN 2015 proceedings. i6doc.com publication, Belgium, 385–390._  
 [2] Fawaz S Al-Anzi and Dia AbuZeina. 2018. Beyond vector space model for hierarchical Arabic text classification: A Markov chain approach. Information Processing & Management 54, 1 (2018), 105–115.  
 [3] Abbas Raza Ali and Maliha Ijaz. 2009. Urdu Text Classification. In Proceedings of the 7th International Conference on _Frontiers of Information Technology. Association for Computing Machinery, New York, NY, USA, 7._  

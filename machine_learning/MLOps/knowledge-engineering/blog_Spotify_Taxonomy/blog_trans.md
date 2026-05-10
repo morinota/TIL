@@ -1,7 +1,7 @@
 refs: https://engineering.atspotify.com/2024/10/how-we-generated-millions-of-content-annotations
 
 
-# How We Generated Millions of Content Annotations 私たちが数百万のコンテンツ注釈を生成した方法
+How We Generated Millions of Content Annotations / 私たちが数百万のコンテンツ注釈を生成した方法
 
 With the fields of machine learning (ML) and generative AI (GenAI) continuing to rapidly evolve and expand, it has become increasingly important for innovators in this field to anchor their model development on high-quality data.
 機械学習（ML）と生成AI（GenAI）の分野が急速に進化し拡大し続ける中で、この分野の革新者が**高品質なデータに基づいてモデル開発を行うことがますます重要に**なっています。

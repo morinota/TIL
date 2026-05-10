@@ -36,9 +36,7 @@ Sign in
 
 
 
-## Walmart Global Tech Blog
-
-## Walmart Global Tech Blog
+**Walmart Global Tech Blog**
 
 ·  
 ·  
@@ -49,8 +47,8 @@ We’re powering the next great retail disruption. Learn more about us—https:/
 Follow publication  
 フォローする出版物  
 
-# Transforming Text Classification with Semantic Search Techniques — Faiss  
-# セマンティック検索技術によるテキスト分類の変革 — Faiss  
+Transforming Text Classification with Semantic Search Techniques — Faiss / セマンティック検索技術によるテキスト分類の変革 — Faiss
+
 
 Harika SamalaFollow  
 Harika Samala  

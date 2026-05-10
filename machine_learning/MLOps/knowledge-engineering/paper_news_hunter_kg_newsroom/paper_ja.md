@@ -1,8 +1,9 @@
 refs: https://www.sciencedirect.com/science/article/pii/S0166361520305558
 
 
-# A knowledge-graph platform for newsrooms ニュースルームのための知識グラフプラットフォーム  
-Arne Berven, Ole A. Christensen, Sindre Moldeklev, Andreas L. Opdahl, Kjetil J. Villanger  
+A knowledge-graph platform for newsrooms / ニュースルームのための知識グラフプラットフォーム
+
+**Arne Berven, Ole A. Christensen, Sindre Moldeklev, Andreas L. Opdahl, Kjetil J. Villanger**  
 Computers in Industry 123 (2020) 103321
 
 

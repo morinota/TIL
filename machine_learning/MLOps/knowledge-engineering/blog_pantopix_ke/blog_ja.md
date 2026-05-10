@@ -1,7 +1,6 @@
 refs: https://pantopix.com/en/knowledge/how-knowledge-engineering-is-transforming-the-data-landscape-in-companies/
 
-# How knowledge engineering is transforming the data landscape in companies
-# 知識工学が企業のデータ環境をどのように変革しているか
+How knowledge engineering is transforming the data landscape in companies / 知識工学が企業のデータ環境をどのように変革しているか
 
 12. March 2026
 2026年3月12日
